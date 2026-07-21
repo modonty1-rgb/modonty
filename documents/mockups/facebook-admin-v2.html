@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Facebook Admin — Mockup v2</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0a; color: #e5e7eb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; min-height: 100vh; }
+
+  /* Layout */
+  .page { display: flex; flex-direction: column; gap: 20px; padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+  /* Header */
+  .header { display: flex; align-items: center; gap: 12px; }
+  .fb-icon { width: 36px; height: 36px; background: #1877F2; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .fb-icon svg { width: 20px; height: 20px; fill: white; }
+  .header-text h1 { font-size: 18px; font-weight: 600; }
+  .header-text p { font-size: 12px; color: #6b7280; margin-top: 1px; }
+  .connected-badge { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 12px; color: #4ade80; background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.2); border-radius: 999px; padding: 4px 12px; }
+  .dot-pulse { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:0.4 } }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .stat-card { background: #111; border: 1px solid #1f2937; border-radius: 10px; padding: 16px 20px; }
+  .stat-label { font-size: 11px; font-weight: 500; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-value { font-size: 28px; font-weight: 700; margin-top: 4px; }
+  .stat-value.danger { color: #f87171; }
+  .stat-value.success { color: #4ade80; }
+
+  /* Main split layout */
+  .main { display: grid; grid-template-columns: 1fr 360px; gap: 16px; align-items: start; }
+
+  /* Table card */
+  .table-card { background: #111; border: 1px solid #1f2937; border-radius: 10px; overflow: hidden; }
+  .table-card-header { padding: 14px 20px; border-bottom: 1px solid #1f2937; display: flex; align-items: center; justify-content: space-between; }
+  .table-card-title { font-size: 11px; font-weight: 500; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; }
+  .count-badge { background: #1f2937; color: #9ca3af; font-size: 11px; border-radius: 999px; padding: 2px 8px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 500; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #1f2937; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid #1a1a1a; cursor: pointer; transition: background 0.15s; }
+  tbody tr:hover { background: #161616; }
+  tbody tr.active { background: #0d1117; border-left: 2px solid #1877F2; }
+  tbody tr:last-child { border-bottom: none; }
+  td { padding: 12px 16px; vertical-align: middle; }
+
+  .article-thumb { width: 44px; height: 44px; border-radius: 6px; object-fit: cover; background: #1f2937; flex-shrink: 0; }
+  .article-thumb-placeholder { width: 44px; height: 44px; border-radius: 6px; background: #1f2937; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .article-info { display: flex; align-items: center; gap: 10px; }
+  .article-title { font-size: 13px; font-weight: 500; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .article-slug { font-size: 11px; color: #6b7280; margin-top: 2px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .client-name { font-size: 12px; color: #9ca3af; white-space: nowrap; }
+  .date-text { font-size: 11px; color: #6b7280; white-space: nowrap; }
+
+  .post-btn { display: inline-flex; align-items: center; gap: 5px; background: #1877F2; color: white; border: none; border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+  .post-btn:hover { background: #1565d8; }
+  .post-btn svg { width: 12px; height: 12px; fill: white; }
+
+  /* Preview panel */
+  .preview-panel { background: #111; border: 1px solid #1f2937; border-radius: 10px; overflow: hidden; position: sticky; top: 24px; }
+  .preview-header { padding: 14px 16px; border-bottom: 1px solid #1f2937; }
+  .preview-title { font-size: 11px; font-weight: 500; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; }
+  .preview-article-name { font-size: 12px; color: #e5e7eb; margin-top: 4px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .preview-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; gap: 10px; color: #4b5563; }
+  .preview-empty svg { width: 32px; height: 32px; fill: currentColor; opacity: 0.3; }
+  .preview-empty p { font-size: 12px; text-align: center; }
+
+  .preview-content { display: none; }
+  .preview-content.visible { display: block; }
+
+  /* Facebook post card */
+  .fb-post-card { margin: 16px; background: #1a1a2e; border: 1px solid #2d2d44; border-radius: 10px; overflow: hidden; }
+  .fb-post-top { padding: 12px; display: flex; align-items: center; gap: 8px; }
+  .fb-page-avatar { width: 36px; height: 36px; border-radius: 50%; background: #1877F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .fb-page-avatar svg { width: 18px; height: 18px; fill: white; }
+  .fb-page-info { flex: 1; }
+  .fb-page-name { font-size: 13px; font-weight: 600; color: #e5e7eb; }
+  .fb-page-meta { font-size: 11px; color: #6b7280; display: flex; align-items: center; gap: 4px; margin-top: 1px; }
+  .fb-caption-preview { padding: 0 12px 10px; font-size: 12px; color: #d1d5db; line-height: 1.5; word-break: break-word; }
+  .fb-caption-preview .article-link { color: #60a5fa; font-size: 11px; display: block; margin-top: 4px; }
+  .fb-post-image { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: #1f2937; display: flex; align-items: center; justify-content: center; color: #4b5563; font-size: 12px; }
+  .fb-post-image img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+  .fb-post-image-placeholder { width: 100%; aspect-ratio: 16/9; background: #1f2937; display: flex; align-items: center; justify-content: center; color: #4b5563; font-size: 12px; gap: 6px; }
+  .fb-engagement { padding: 8px 12px; border-top: 1px solid #2d2d44; display: flex; gap: 16px; }
+  .fb-action { font-size: 12px; color: #6b7280; display: flex; align-items: center; gap: 4px; }
+  .fb-action svg { width: 14px; height: 14px; fill: currentColor; }
+
+  /* Caption editor */
+  .caption-editor { padding: 12px 16px; border-top: 1px solid #1f2937; }
+  .caption-label { font-size: 11px; color: #6b7280; margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .caption-label span.count { color: #4b5563; }
+  .caption-textarea { width: 100%; background: #0a0a0a; border: 1px solid #1f2937; border-radius: 6px; color: #e5e7eb; font-size: 12px; line-height: 1.5; padding: 10px; resize: none; height: 90px; font-family: inherit; transition: border-color 0.15s; }
+  .caption-textarea:focus { outline: none; border-color: #1877F2; }
+
+  /* Image override */
+  .image-section { padding: 0 16px 12px; border-top: 1px solid #1f2937; margin-top: 0; padding-top: 12px; }
+  .image-label { font-size: 11px; color: #6b7280; margin-bottom: 6px; }
+  .image-preview-thumb { width: 100%; height: 80px; border-radius: 6px; background: #1f2937; object-fit: cover; display: block; }
+  .image-preview-placeholder { width: 100%; height: 60px; border-radius: 6px; background: #1f2937; display: flex; align-items: center; justify-content: center; color: #4b5563; font-size: 11px; gap: 4px; border: 1px dashed #2d2d44; }
+
+  /* Post action */
+  .post-action { padding: 12px 16px; border-top: 1px solid #1f2937; display: flex; gap: 8px; }
+  .btn-post { flex: 1; background: #1877F2; color: white; border: none; border-radius: 6px; padding: 9px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.15s; }
+  .btn-post:hover { background: #1565d8; }
+  .btn-post svg { width: 14px; height: 14px; fill: white; }
+  .btn-skip { background: transparent; color: #6b7280; border: 1px solid #1f2937; border-radius: 6px; padding: 9px 14px; font-size: 13px; cursor: pointer; transition: all 0.15s; }
+  .btn-skip:hover { background: #1f2937; color: #e5e7eb; }
+
+  /* Globe icon inline */
+  .globe-icon { display: inline-block; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="fb-icon">
+      <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </div>
+    <div class="header-text">
+      <h1>Facebook</h1>
+      <p>Manage and publish articles to Facebook Page</p>
+    </div>
+    <div class="connected-badge">
+      <span class="dot-pulse"></span>
+      Connected · Modonty
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-label">Pending Posts</div>
+      <div class="stat-value" style="color:#facc15">12</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Published This Month</div>
+      <div class="stat-value success">8</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Published</div>
+      <div class="stat-value">34</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Failed</div>
+      <div class="stat-value danger">2</div>
+    </div>
+  </div>
+
+  <!-- Main layout -->
+  <div class="main">
+
+    <!-- Table -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <span class="table-card-title">Published Articles — Pending Facebook Post</span>
+        <span class="count-badge">12 articles</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Article</th>
+            <th>Client</th>
+            <th>Published</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="articles-table">
+
+          <tr class="active" data-id="1"
+            data-title="كيف تختار أفضل محامي في جدة لقضيتك؟"
+            data-slug="best-lawyer-jeddah"
+            data-client="مكتب عدل للمحاماة"
+            data-date="28 Jun 2026"
+            data-desc="دليلك الشامل لاختيار محامٍ متخصص يضمن حقوقك القانونية في جدة — خطوات عملية ونصائح من خبراء."
+            data-image="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&h=338&fit=crop"
+            data-tags="#محامي_جدة #قانون #استشارة_قانونية">
+            <td><img class="article-thumb" src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=80&h=80&fit=crop" onerror="this.style.display='none'"/></td>
+            <td>
+              <div class="article-title">كيف تختار أفضل محامي في جدة لقضيتك؟</div>
+              <div class="article-slug">modonty.com/articles/best-lawyer-jeddah</div>
+            </td>
+            <td><span class="client-name">مكتب عدل للمحاماة</span></td>
+            <td><span class="date-text">28 Jun 2026</span></td>
+            <td>
+              <button class="post-btn" onclick="postArticle(1)">
+                <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                Post
+              </button>
+            </td>
+          </tr>
+
+          <tr data-id="2"
+            data-title="أبرز مزايا عيادات الأسنان في الرياض لعام 2026"
+            data-slug="dental-clinics-riyadh-2026"
+            data-client="عيادة نور الابتسامة"
+            data-date="27 Jun 2026"
+            data-desc="تعرّف على أحدث تقنيات طب الأسنان المتاحة في الرياض وكيف تختار العيادة المناسبة لاحتياجاتك."
+            data-image="https://images.unsplash.com/photo-1588776814546-1ffedbe47100?w=600&h=338&fit=crop"
+            data-tags="#أسنان #عيادة_أسنان #الرياض">
+            <td><img class="article-thumb" src="https://images.unsplash.com/photo-1588776814546-1ffedbe47100?w=80&h=80&fit=crop" onerror="this.style.display='none'"/></td>
+            <td>
+              <div class="article-title">أبرز مزايا عيادات الأسنان في الرياض لعام 2026</div>
+              <div class="article-slug">modonty.com/articles/dental-clinics-riyadh-2026</div>
+            </td>
+            <td><span class="client-name">عيادة نور الابتسامة</span></td>
+            <td><span class="date-text">27 Jun 2026</span></td>
+            <td>
+              <button class="post-btn" onclick="postArticle(2)">
+                <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                Post
+              </button>
+            </td>
+          </tr>
+
+          <tr data-id="3"
+            data-title="دليل التأمين الصحي للمقيمين في المملكة"
+            data-slug="health-insurance-guide-ksa"
+            data-client="شركة حماية للتأمين"
+            data-date="26 Jun 2026"
+            data-desc="كل ما تحتاج معرفته عن التأمين الصحي الإلزامي للمقيمين في المملكة العربية السعودية — الأنواع والأسعار والاختيار الصحيح."
+            data-image=""
+            data-tags="#تأمين_صحي #مقيمين #السعودية">
+            <td><div class="article-thumb-placeholder"><svg width="18" height="18" fill="#4b5563" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div></td>
+            <td>
+              <div class="article-title">دليل التأمين الصحي للمقيمين في المملكة</div>
+              <div class="article-slug">modonty.com/articles/health-insurance-guide-ksa</div>
+            </td>
+            <td><span class="client-name">شركة حماية للتأمين</span></td>
+            <td><span class="date-text">26 Jun 2026</span></td>
+            <td>
+              <button class="post-btn" onclick="postArticle(3)">
+                <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                Post
+              </button>
+            </td>
+          </tr>
+
+          <tr data-id="4"
+            data-title="أفضل 5 مطاعم مأكولات بحرية في جدة 2026"
+            data-slug="best-seafood-jeddah-2026"
+            data-client="مطعم البحر الأزرق"
+            data-date="25 Jun 2026"
+            data-desc="قائمة منتقاة بأفضل مطاعم المأكولات البحرية في جدة — طازج يومياً، أسعار مناسبة، وتجربة لا تُنسى."
+            data-image="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=338&fit=crop"
+            data-tags="#مطعم_جدة #مأكولات_بحرية #جدة">
+            <td><img class="article-thumb" src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=80&h=80&fit=crop" onerror="this.style.display='none'"/></td>
+            <td>
+              <div class="article-title">أفضل 5 مطاعم مأكولات بحرية في جدة 2026</div>
+              <div class="article-slug">modonty.com/articles/best-seafood-jeddah-2026</div>
+            </td>
+            <td><span class="client-name">مطعم البحر الأزرق</span></td>
+            <td><span class="date-text">25 Jun 2026</span></td>
+            <td>
+              <button class="post-btn" onclick="postArticle(4)">
+                <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                Post
+              </button>
+            </td>
+          </tr>
+
+          <tr data-id="5"
+            data-title="خطوات تأسيس شركة في السعودية 2026"
+            data-slug="company-setup-saudi-2026"
+            data-client="مكتب نخبة للاستشارات"
+            data-date="24 Jun 2026"
+            data-desc="دليل مبسّط لكل من يريد تأسيس شركة في المملكة — الأنواع، الخطوات الرسمية، التكاليف، والمدة الزمنية."
+            data-image="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=338&fit=crop"
+            data-tags="#تأسيس_شركة #اعمال #السعودية">
+            <td><img class="article-thumb" src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=80&h=80&fit=crop" onerror="this.style.display='none'"/></td>
+            <td>
+              <div class="article-title">خطوات تأسيس شركة في السعودية 2026</div>
+              <div class="article-slug">modonty.com/articles/company-setup-saudi-2026</div>
+            </td>
+            <td><span class="client-name">مكتب نخبة للاستشارات</span></td>
+            <td><span class="date-text">24 Jun 2026</span></td>
+            <td>
+              <button class="post-btn" onclick="postArticle(5)">
+                <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                Post
+              </button>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Preview panel -->
+    <div class="preview-panel">
+
+      <!-- Empty state -->
+      <div class="preview-empty" id="preview-empty">
+        <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        <p>Select an article to preview and edit before posting</p>
+      </div>
+
+      <!-- Preview content -->
+      <div class="preview-content" id="preview-content">
+
+        <div class="preview-header">
+          <div class="preview-title">Post Preview</div>
+          <div class="preview-article-name" id="preview-article-name"></div>
+        </div>
+
+        <!-- FB post card -->
+        <div class="fb-post-card">
+          <div class="fb-post-top">
+            <div class="fb-page-avatar">
+              <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </div>
+            <div class="fb-page-info">
+              <div class="fb-page-name">Modonty | مُدَوَّنَتِي</div>
+              <div class="fb-page-meta">
+                <span>Just now</span>
+                <span>·</span>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="#6b7280"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                <span>Public</span>
+              </div>
+            </div>
+          </div>
+          <div class="fb-caption-preview" id="fb-caption-preview" dir="rtl"></div>
+          <div id="fb-image-container">
+            <img id="fb-post-image" class="fb-post-image" style="display:none" src="" alt=""/>
+            <div id="fb-image-placeholder" class="fb-post-image-placeholder" style="display:none">
+              <svg width="16" height="16" fill="#4b5563" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+              No image — text post only
+            </div>
+          </div>
+          <div class="fb-engagement">
+            <span class="fb-action"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>Like</span>
+            <span class="fb-action"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>Comment</span>
+            <span class="fb-action"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>Share</span>
+          </div>
+        </div>
+
+        <!-- Caption editor -->
+        <div class="caption-editor">
+          <div class="caption-label">
+            <span>Edit Caption</span>
+            <span class="count" id="char-count">0 / 500</span>
+          </div>
+          <textarea class="caption-textarea" id="caption-textarea" placeholder="Write your caption..." dir="rtl" oninput="updateCaption()"></textarea>
+        </div>
+
+        <!-- Image info -->
+        <div class="image-section">
+          <div class="image-label">Featured Image</div>
+          <img id="image-preview-thumb" class="image-preview-thumb" style="display:none" src="" alt=""/>
+          <div id="image-preview-placeholder" class="image-preview-placeholder">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+            No image — text post will be used
+          </div>
+        </div>
+
+        <!-- Post action -->
+        <div class="post-action">
+          <button class="btn-post" id="post-btn-main">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Post to Facebook
+          </button>
+          <button class="btn-skip">Skip</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let currentArticle = null;
+
+  function buildCaption(title, desc, slug, tags) {
+    const link = `https://www.modonty.com/articles/${slug}`;
+    return `${title}\n\n${desc}\n\nشاركها مع من يحتاجها 🔗 ${link}${tags ? '\n\n' + tags : ''}`;
+  }
+
+  function selectRow(row) {
+    document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('active'));
+    row.classList.add('active');
+
+    const d = row.dataset;
+    currentArticle = d;
+
+    document.getElementById('preview-empty').style.display = 'none';
+    document.getElementById('preview-content').style.display = 'block';
+    document.getElementById('preview-article-name').textContent = d.title;
+
+    const caption = buildCaption(d.title, d.desc, d.slug, d.tags);
+    const textarea = document.getElementById('caption-textarea');
+    textarea.value = caption;
+    updateCaption();
+
+    // Image
+    const img = document.getElementById('fb-post-image');
+    const ph = document.getElementById('fb-image-placeholder');
+    const thumb = document.getElementById('image-preview-thumb');
+    const thumbPh = document.getElementById('image-preview-placeholder');
+
+    if (d.image) {
+      img.src = d.image; img.style.display = 'block'; ph.style.display = 'none';
+      thumb.src = d.image; thumb.style.display = 'block'; thumbPh.style.display = 'none';
+    } else {
+      img.style.display = 'none'; ph.style.display = 'flex';
+      thumb.style.display = 'none'; thumbPh.style.display = 'flex';
+    }
+  }
+
+  function updateCaption() {
+    const val = document.getElementById('caption-textarea').value;
+    document.getElementById('char-count').textContent = `${val.length} / 500`;
+    document.getElementById('fb-caption-preview').textContent = val;
+  }
+
+  function postArticle(id) {
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    if (row) selectRow(row);
+  }
+
+  // Row click
+  document.querySelectorAll('tbody tr').forEach(row => {
+    row.addEventListener('click', () => selectRow(row));
+  });
+
+  // Auto-select first row
+  const firstRow = document.querySelector('tbody tr');
+  if (firstRow) selectRow(firstRow);
+</script>
+</body>
+</html>

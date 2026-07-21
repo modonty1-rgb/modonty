@@ -1,0 +1,417 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مظلّة المحتوى — SEO Content Hub</title>
+<style>
+  :root{--ink:#0f1729;--dim:#5b6472;--line:#e4e8ef;--bg:#eef2f7;--primary:#0f766e;--green:#047857;--red:#b91c1c;--amber:#b45309;--amberbg:#fff7ed;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Tajawal","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.8;padding:24px 16px 60px}
+  .wrap{max-width:900px;margin:0 auto}
+  h1{font-size:22px;font-weight:800;text-align:center}
+  .sub{text-align:center;color:var(--dim);font-size:13.5px;margin:5px 0 22px}
+  h2{font-size:17px;font-weight:800;margin:26px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--line);display:flex;gap:8px;align-items:center}
+  h2 .n{background:var(--primary);color:#fff;width:25px;height:25px;border-radius:7px;display:grid;place-items:center;font-size:13px;flex:0 0 auto}
+  h3{font-size:15px;font-weight:800;margin:16px 0 8px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:11px;padding:12px 15px;margin:8px 0;font-size:13.5px}
+  code{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:0 5px;font-size:11.5px;direction:ltr;display:inline-block}
+  .tree{background:#0f1729;color:#e2e8f0;border-radius:11px;padding:15px 20px;font-size:14px;line-height:2;direction:rtl}
+  .tree .root{color:#5eead4;font-weight:800}
+  .tree .new{color:#a78bfa;font-weight:800}
+  .tree .tag{font-size:10.5px;background:#7c3aed;color:#fff;border-radius:5px;padding:1px 7px;margin-inline-start:6px}
+  .tree .old{color:#94a3b8}
+  .mk{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:10px 0;background:#fff;box-shadow:0 1px 3px rgba(15,23,41,.06)}
+  .mk-top{background:var(--primary);color:#fff;padding:9px 14px;font-weight:800;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .mk-top .pill2{background:rgba(255,255,255,.2);border-radius:999px;padding:2px 10px;font-size:11px}
+  .mk-body{padding:12px 14px}
+  .mk-cap{text-align:center;font-size:11.5px;color:var(--dim);margin:2px 0 10px}
+  .lrow{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;margin:5px 0;font-size:13px;background:#fff}
+  .lrow .nm{flex:1;font-weight:700}
+  .sc{font-weight:800;font-size:12px;padding:2px 9px;border-radius:999px}
+  .sc.g{background:#dcfce7;color:#166534}.sc.a{background:#fef3c7;color:#92400e}.sc.r{background:#fee2e2;color:#991b1b}
+  .btnm{background:var(--primary);color:#fff;border-radius:7px;padding:3px 12px;font-size:12px;font-weight:700}
+  .ring2{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;flex:0 0 auto}
+  .fld{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;background:#fbfcfe;margin-bottom:2px}
+  .fld .lb{font-size:11px;color:var(--dim);font-weight:700;margin-bottom:3px}
+  .cc{font-size:10.5px;color:var(--dim);text-align:end;margin-bottom:8px}
+  .serp{border:1px solid var(--line);border-radius:8px;padding:10px;background:#fff}
+  .serp .u{font-size:11px;color:#5b6472;direction:ltr;text-align:left}.serp .t{color:#1a0dab;font-size:15px;font-weight:600;margin:2px 0}.serp .d{font-size:12px;color:#4d5156}
+  .ctx{background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;padding:9px;font-size:12px}
+  .ctx .r{display:flex;gap:8px;margin:2px 0}.ctx .k{color:#6d28d9;width:68px;flex:0 0 auto;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .thumb{border:1px solid var(--line);border-radius:9px;overflow:hidden;font-size:11px;background:#fff}
+  .thumb .im{height:60px;background:linear-gradient(135deg,#e0e7ff,#f5f3ff);display:grid;place-items:center;color:#a1a1aa;font-size:20px}
+  .thumb .mt{padding:5px 7px;display:flex;justify-content:space-between;align-items:center;gap:4px}
+  .ty{font-size:9px;background:#eef2f7;color:#5b6472;border-radius:4px;padding:1px 5px;font-weight:700}
+  .auto{background:#ecfdf5;border:1px dashed #6ee7b7;border-radius:7px;padding:6px 9px;font-size:12px;color:#166534}
+  .two{display:grid;grid-template-columns:1.5fr 1fr;gap:12px}
+  .imgprev{height:120px;border-radius:9px;background:linear-gradient(135deg,#e0e7ff,#f5f3ff);display:grid;place-items:center;color:#a1a1aa;font-size:28px;margin-bottom:8px}
+  @media(max-width:640px){.two{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}}
+  .bph{font-size:14px;font-weight:800;margin:16px 0 5px;color:var(--primary);display:flex;gap:8px;align-items:center}
+  .bph .pn{background:var(--primary);color:#fff;border-radius:6px;padding:1px 9px;font-size:12px}
+  .bstep{display:flex;gap:11px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:5px 0}
+  .bstep .bbx{flex:0 0 auto;width:23px;height:23px;border-radius:6px;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--dim)}
+  .bstep .bt{font-weight:800;font-size:13.5px}
+  .bstep .bd2{color:var(--dim);font-size:12.5px;margin-top:1px}
+  .bstep .bf{font-size:11px;color:#7c3aed;direction:ltr;margin-top:3px}
+  .bstep.done{opacity:.6}.bstep.done .bbx{background:var(--green);border-color:var(--green);color:#fff}.bstep.done .bt{text-decoration:line-through}
+  .btag{display:inline-block;font-size:10px;font-weight:800;background:#eef2f7;color:var(--dim);border-radius:5px;padding:1px 6px;margin-inline-start:5px}
+  .ba{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
+  .ba .box{border-radius:10px;padding:10px 13px;font-size:13px}
+  .ba .before{background:#fef2f2;border:1px solid #fecaca}
+  .ba .after{background:#ecfdf5;border:1px solid #a7f3d0}
+  .ba .box .h{font-weight:800;font-size:12px;margin-bottom:4px}
+  .ba .before .h{color:var(--red)}.ba .after .h{color:var(--green)}
+  .srow{display:flex;gap:11px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin:6px 0;font-size:13.5px}
+  .srow .snum{flex:0 0 auto;width:24px;height:24px;border-radius:7px;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:12.5px;font-weight:800}
+  .srow.save{border-color:var(--amber);background:var(--amberbg)}
+  .srow.save .snum{background:var(--amber)}
+  .srow b{color:var(--primary)}
+  .who{display:inline-block;font-size:10.5px;font-weight:800;border-radius:5px;padding:1px 7px;margin-inline-start:4px}
+  .who.mgr{background:#e0e7ff;color:#3730a3}.who.writer{background:#dcfce7;color:#166534}.who.graphic{background:#f3e8ff;color:#6b21a8}.who.sys{background:#fef3c7;color:#92400e}
+  table{width:100%;border-collapse:collapse;margin:9px 0;font-size:13px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  th,td{padding:9px 11px;text-align:start;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#f8fafc;font-weight:800;font-size:12px}
+  td.c{text-align:center;width:34px;font-weight:800}
+  .foot{text-align:center;color:var(--dim);font-size:12px;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>مظلّة المحتوى — <span style="direction:ltr;display:inline-block">SEO Content Hub</span></h1>
+  <div class="sub">كل الـ SEO content في قسم الكاتب · الحفظ يعيد التوليد تلقائياً · النسبة موحّدة في كل مكان</div>
+
+  <div class="card" style="text-align:center;font-size:13px">
+    <b>الحالة:</b>
+    <span style="background:#dcfce7;color:#166534;font-weight:800;border-radius:6px;padding:2px 9px;margin:2px">🔒 R1</span>
+    <span style="background:#dcfce7;color:#166534;font-weight:800;border-radius:6px;padding:2px 9px;margin:2px">🔒 R2</span>
+    <span style="background:#dcfce7;color:#166534;font-weight:800;border-radius:6px;padding:2px 9px;margin:2px">🔒 R3</span>
+    <span style="background:#dcfce7;color:#166534;font-weight:800;border-radius:6px;padding:2px 9px;margin:2px">🔒 I1</span>
+    &nbsp;·&nbsp;
+    <span style="background:#dcfce7;color:#166534;font-weight:800;border-radius:6px;padding:2px 9px;margin:2px">🔒 I2</span>
+    <span style="background:#dcfce7;color:#166534;font-weight:800;border-radius:6px;padding:2px 9px;margin:2px">🔒 I3</span>
+    <span style="background:#dcfce7;color:#166534;font-weight:800;border-radius:6px;padding:2px 9px;margin:2px">🔒 R4</span>
+    <span style="background:#dcfce7;color:#166534;font-weight:800;border-radius:6px;padding:2px 9px;margin:2px">🔒 R5</span>
+    <span style="background:#dcfce7;color:#166534;font-weight:800;border-radius:6px;padding:2px 9px;margin:2px">🔒 R6</span>
+    <span style="background:#dcfce7;color:#166534;font-weight:800;border-radius:6px;padding:2px 9px;margin:2px">🔒 R7</span>
+    &nbsp;·&nbsp;
+    <span style="background:#dcfce7;color:#166534;font-weight:800;border-radius:6px;padding:2px 9px;margin:2px">🔒 N1</span>
+    <span style="background:#dcfce7;color:#166534;font-weight:800;border-radius:6px;padding:2px 9px;margin:2px">🔒 N2</span>
+    <span style="background:#dcfce7;color:#166534;font-weight:800;border-radius:6px;padding:2px 9px;margin:2px">🔒 M1</span>
+    <span style="background:#dcfce7;color:#166534;font-weight:800;border-radius:6px;padding:2px 9px;margin:2px">🔒 M2</span>
+  </div>
+
+  <h2><span class="n">١</span> البنية</h2>
+  <div class="tree">
+<span class="root">📝 Content</span>  <span class="old">← تحت المقالات · يملكها الكاتب</span>
+   ├ <span style="color:#e2e8f0">Articles</span>          <span class="old">(موجود)</span>
+   ├ <span class="new">SEO Client</span><span class="tag">جديد</span>  <span class="old">قائمة عملاء → نموذج: العنوان + الوصف</span>
+   └ <span class="new">SEO Images</span><span class="tag">جديد</span>  <span class="old">قائمة صور → نموذج: النص البديل + العنوان + الوصف</span>
+  </div>
+  <div class="card">
+    <b>يُشال:</b> حقول سيو العميل من قسم العملاء · كتابة سيو الصور من قسم الوسائط.<br>
+    <b>يبقى:</b> في صفحة العميل <b>شارة النسبة فقط</b> (🟢 جاهز / 🟠 ناقص %) + رابط لقسم الكاتب · في الوسائط الرفع/القص/التصميم للمصمّم.<br>
+    <b>النسبة</b> من مصدر حساب واحد (<code>computeClientSeoScore</code>) تظهر موحّدة: قائمة العملاء + صفحة العميل + قسم الكاتب.
+  </div>
+
+  <h2><span class="n">🎨</span> الموك‑أب (مرحلة ١) — شكل القسمين</h2>
+  <div class="mk-cap">تصوّر بصري للنقاش — نمط الأدمن (RTL · عنصر مهيمن · ألوان بمعنى). مو الكود النهائي.</div>
+
+  <h3 style="font-size:15px;font-weight:800;margin:14px 0 6px">أ) SEO Client — القائمة</h3>
+  <div class="mk">
+    <div class="mk-top"><span>🔍 SEO Client — العملاء</span><span class="pill2">ترتيب: الناقص أولاً ▾</span></div>
+    <div class="mk-body">
+      <div class="lrow"><span class="sc r">🔴 45%</span><span class="nm">عيادة الابتسامة للأسنان</span><span style="color:var(--dim);font-size:11px">ناقص: العنوان + الوصف</span><span class="btnm">افتح ←</span></div>
+      <div class="lrow"><span class="sc a">🟠 70%</span><span class="nm">مطعم البغدادية</span><span style="color:var(--dim);font-size:11px">ناقص: الوصف</span><span class="btnm">افتح ←</span></div>
+      <div class="lrow"><span class="sc g">🟢 100%</span><span class="nm">مؤسسة جبر للاستشارات</span><span style="color:var(--dim);font-size:11px">مكتمل</span><span class="btnm">افتح ←</span></div>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px;font-weight:800;margin:14px 0 6px">ب) SEO Client — <span style="color:var(--primary)">Dialog</span> (حقلان فقط · بلا route)</h3>
+  <div class="mk" style="max-width:600px;margin-inline:auto;box-shadow:0 8px 30px rgba(15,23,41,.18);border:2px solid var(--primary)">
+    <div class="mk-top"><span>✍️ عيادة الابتسامة للأسنان</span><span style="cursor:pointer">✕</span></div>
+    <div class="mk-body">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div class="ring2" style="background:conic-gradient(#dc2626 162deg,#e5e7eb 0)"><span style="background:#fff;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#dc2626">45%</span></div>
+        <div><div style="font-weight:800">جاهزية SEO — ناقص</div><div style="font-size:12px;color:var(--dim)">اكتب العنوان والوصف يرتفع الرقم فوراً</div></div>
+      </div>
+      <div class="two">
+        <div>
+          <div class="fld"><div class="lb">SEO Title</div>أفضل عيادة أسنان في جدة — تقويم وتجميل</div>
+          <div class="cc">42 / 51 حرف ✓</div>
+          <div class="fld"><div class="lb">SEO Description</div>عيادة الابتسامة: تقويم، زراعة، وتبييض أسنان بأحدث التقنيات في جدة، بإشراف نخبة استشاريين.</div>
+          <div class="cc">96 / 160 حرف ✓</div>
+          <div style="text-align:end;margin-top:4px"><span class="btnm">حفظ سيو العميل</span></div>
+        </div>
+        <div>
+          <div class="ctx" style="margin-bottom:8px"><div style="font-weight:800;color:#6d28d9;margin-bottom:4px">🏢 سياق العميل (قراءة)</div>
+            <div class="r"><span class="k">النشاط</span><span>عيادة أسنان</span></div>
+            <div class="r"><span class="k">المجال</span><span>الصحة (YMYL)</span></div>
+            <div class="r"><span class="k">المدينة</span><span>جدة</span></div>
+          </div>
+          <div class="serp"><div style="font-size:11px;color:var(--dim);margin-bottom:4px">معاينة Google</div>
+            <div class="u">modonty.com › clients › al-ibtisama</div>
+            <div class="t">أفضل عيادة أسنان في جدة — تقويم وتجميل</div>
+            <div class="d">عيادة الابتسامة: تقويم، زراعة، وتبييض أسنان بأحدث التقنيات…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px;font-weight:800;margin:18px 0 6px">ج) SEO Images — القائمة</h3>
+  <div class="mk">
+    <div class="mk-top"><span>🖼️ SEO Images — الصور</span><span class="pill2">ترتيب: الناقص أولاً ▾</span></div>
+    <div class="mk-body">
+      <div class="grid">
+        <div class="thumb"><div class="im">🖼️</div><div class="mt"><span class="ty">HERO</span><span class="sc r">40%</span></div></div>
+        <div class="thumb"><div class="im">🖼️</div><div class="mt"><span class="ty">GALLERY</span><span class="sc r">45%</span></div></div>
+        <div class="thumb"><div class="im">🏷️</div><div class="mt"><span class="ty">LOGO</span><span class="sc a">72%</span></div></div>
+        <div class="thumb"><div class="im">🖼️</div><div class="mt"><span class="ty">POST</span><span class="sc g">100%</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px;font-weight:800;margin:14px 0 6px">د) SEO Images — <span style="color:var(--primary)">Dialog</span> (بلا route)</h3>
+  <div class="mk" style="max-width:640px;margin-inline:auto;box-shadow:0 8px 30px rgba(15,23,41,.18);border:2px solid var(--primary)">
+    <div class="mk-top"><span>🎨 صورة غلاف — عيادة الابتسامة · <span style="opacity:.85">HERO · مدوّنتي</span></span><span style="cursor:pointer">✕</span></div>
+    <div class="mk-body">
+      <div class="two">
+        <div>
+          <div class="fld"><div class="lb">Alt Text <span style="color:#dc2626">*</span> (يكتبه الكاتب)</div>عيادة الابتسامة للأسنان في جدة — غرفة الكشف بأجهزة حديثة</div>
+          <div class="cc">58 حرف ✓</div>
+          <div class="fld"><div class="lb">Description (يكتبه الكاتب — اختياري)</div>لقطة داخل عيادة الابتسامة تُظهر أحدث أجهزة تشخيص الأسنان…</div>
+          <div class="auto" style="margin:6px 0"><b>الاسم التلقائي (name):</b> «عيادة الابتسامة» — الكود يركّبه من النوع + اسم العميل. (تقدر تكتب Title لتغلّبه.)</div>
+          <div style="text-align:end"><span class="btnm">حفظ سيو الصورة</span></div>
+        </div>
+        <div>
+          <div class="imgprev">🖼️</div>
+          <div class="ctx" style="margin-bottom:8px"><div style="font-weight:800;color:#6d28d9;margin-bottom:4px">📍 مستخدمة في</div>
+            <div class="r"><span class="k">العميل</span><span>عيادة الابتسامة (غلاف)</span></div>
+            <div class="r"><span class="k">النوع</span><span>HERO — إنتاج مدوّنتي</span></div>
+          </div>
+          <div class="ctx" style="background:#ecfdf5;border-color:#a7f3d0"><div style="font-weight:800;color:#166534;margin-bottom:4px">© ترخيص تلقائي (قراءة)</div>
+            <div class="r"><span class="k" style="color:#166534">Creator</span><span>مدوّنتي</span></div>
+            <div class="r"><span class="k" style="color:#166534">Copyright</span><span>© 2026 مدوّنتي</span></div>
+            <div class="r"><span class="k" style="color:#166534">License</span><span>/legal/copyright-policy</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="font-size:12.5px"><b>القرار: قائمة + Dialog (بلا route لكل عنصر)</b> — حقلان ما يستاهلون صفحة. كل قسم = <b>route قائمة واحد</b> فقط، والتحرير يفتح <b>Dialog</b> فوقها. أبسط، وأخفّ، وأنظف للصلاحيات (مسار واحد نحرسه بدل مسارين).</div>
+  <div class="card" style="font-size:12.5px"><b>ملاحظات الموك‑أب:</b> العنصر المهيمن = <b>حلقة/شارة النسبة</b> · الكاتب يكتب حقلين فقط والباقي تلقائي/سياق قراءة · معاينة Google حيّة للعميل · الترخيص والاسم <b>تلقائيان قراءة</b> في dialog الصورة. راجعه وقول لي التعديلات، ثم أبنيه كود طبق الأصل.</div>
+
+  <h2><span class="n">▶</span> الفلو — المرجعية بيننا</h2>
+  <div class="card" style="font-size:12.5px"><span class="who mgr">موظف العملاء</span> <span class="who writer">الكاتب</span> <span class="who graphic">المصمّم</span> <span class="who sys">النظام تلقائياً</span></div>
+
+  <h3>أ) سيو العميل</h3>
+  <div class="ba">
+    <div class="box before"><div class="h">قبل</div>موظف العملاء يلقى قدّامه حقول سيو ما يفهمها ولا هي شغله.</div>
+    <div class="box after"><div class="h">بعد</div>الحقول تنتقل للكاتب. صفحة العميل نظيفة، يبقى فيها شارة النسبة تنبّه لو ناقص.</div>
+  </div>
+  <div class="srow"><span class="snum">١</span><div><span class="who mgr">موظف العملاء</span> يدخل بيانات العميل عادي. يشوف بس شارة «SEO ناقص ٦٠٪».</div></div>
+  <div class="srow"><span class="snum">٢</span><div>الشارة الناقصة = تنبيه إن العميل يحتاج كاتب يكمّل سيوه.</div></div>
+  <div class="srow"><span class="snum">٣</span><div><span class="who writer">الكاتب</span> يفتح <b>SEO Client</b> → قائمة العملاء وجنب كلٍّ نسبته.</div></div>
+  <div class="srow"><span class="snum">٤</span><div>يختار عميلاً ناقصاً → يشوف <b>بيانات العميل قراءة‑فقط</b> كسياق + يكتب <b>العنوان</b> و<b>الوصف</b>.</div></div>
+  <div class="srow save"><span class="snum">٥</span><div>حفظ → <span class="who sys">النظام</span> يعيد بناء بيانات قوقل للعميل + <b>كل مقالاته</b>، وينشر لمدوّنتي.</div></div>
+  <div class="srow"><span class="snum">٦</span><div>النسبة ترتفع وتظهر محدّثة في كل مكان.</div></div>
+
+  <h3>ب) سيو الصور</h3>
+  <div class="ba">
+    <div class="box before"><div class="h">قبل</div>المصمّم يُطلب منه سيو ما يفهمه فيتركه ناقص · وتعديل الصورة ما كان يحدّث العميل لو شعاره.</div>
+    <div class="box after"><div class="h">بعد</div>المصمّم يرفع بس. الكاتب يكتب السيو، والحفظ يحدّث كل مكان تظهر فيه الصورة.</div>
+  </div>
+  <div class="srow"><span class="snum">١</span><div><span class="who graphic">المصمّم</span> يرفع الصورة ويقصّها ويصمّمها. ما يشوف حقول سيو.</div></div>
+  <div class="srow"><span class="snum">٢</span><div><span class="who writer">الكاتب</span> يفتح <b>SEO Images</b> → قائمة الصور وجنب كلٍّ نسبتها.</div></div>
+  <div class="srow"><span class="snum">٣</span><div>يختار صورة ناقصة → يشوف <b>الصورة + وين مستخدمة</b> كسياق + يكتب <b>النص البديل · العنوان · الوصف</b>.</div></div>
+  <div class="srow save"><span class="snum">٤</span><div>حفظ → <span class="who sys">النظام</span> يحدّث كل مقال يستخدم الصورة، <b>ولو شعار/غلاف عميل يحدّث سيو العميل كمان</b> (الثغرة المُصلَحة)، وينشر.</div></div>
+  <div class="srow"><span class="snum">٥</span><div>نسبة الصورة ترتفع وتظهر في القائمة.</div></div>
+
+  <h2><span class="n">⚠</span> الثغرات المرصودة (مرجعية — لا ننساها)</h2>
+  <table>
+    <tr><th style="width:60px">الحالة</th><th>الثغرة / النقطة (متحقّقة من الكود)</th><th style="width:120px">المعالجة</th></tr>
+    <tr>
+      <td style="color:var(--red);font-weight:800">⚠️ ثغرة</td>
+      <td><b>صورة → عميل:</b> تعديل سيو صورة (النص البديل…) عبر حفظ الوسائط يحدّث <b>المقالات</b> اللي تستخدمها، لكن <b>لا</b> يحدّث <b>العميل</b> لو الصورة شعاره (<code>logoMedia</code>) أو غلافه (<code>heroImageMedia</code>) → بيانات قوقل للعميل تظل قديمة حتى يُحفظ مرّة ثانية.</td>
+      <td>مرحلة ٤ — عند حفظ سيو الصورة، لو شعار/غلاف عميل نعيد توليد سيوه.</td>
+    </tr>
+    <tr>
+      <td style="color:var(--green);font-weight:800">✅ سليم</td>
+      <td><b>سيو العميل:</b> الحفظ يعيد توليد بيانات قوقل + الميتا + <b>كل مقالات العميل</b>، وتغيير الشعار/الغلاف كذلك.</td>
+      <td>نحافظ عليه — النقل يستدعي نفس الحفظ الكامل، ممنوع حفظ مختصر.</td>
+    </tr>
+    <tr>
+      <td style="color:var(--dim);font-weight:800">🔎 حدود</td>
+      <td><b>دائرة تأثير الصورة مقفولة:</b> فقط العميل (شعار/غلاف) والمقال (رئيسية/غاليري) يضمّنون صورة. لا مؤلف/تصنيف/صفحة → لا ثغرات مخفية غير المذكورة فوق.</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td style="color:var(--dim);font-weight:800">ℹ️ ملاحظة</td>
+      <td>الصورة نفسها <b>لا تخزّن</b> سيو — بياناتها المنظّمة تتولّد عند القراءة، فما فيها شي يبقى قديماً بذاته.</td>
+      <td>—</td>
+    </tr>
+  </table>
+
+  <h2><span class="n">✨</span> كمال سيو الصور (بحث قوقل الرسمي + فحص كودنا)</h2>
+  <div class="card" style="font-size:12.5px"><b>سيو الصورة مو alt بس — ~١٣ عامل، ونغطّي ١٠ ✅</b> (alt مسكور ٤٠pt · اسم ملف · أبعاد · WebP/AVIF · صور متجاوبة · lazy · HTTPS · <b>خريطة صور موجودة</b> مطابقة سياسة ٢٠٢٦ · og:image · primaryImageOfPage). الناقص ٣ بنود نكمّلها في قسم SEO Images:</div>
+  <table>
+    <tr><th style="width:40px">#</th><th>البند</th><th style="width:34%">العمل</th></tr>
+    <tr style="background:#ecfdf5"><td class="c" style="color:var(--green);font-weight:800">🔒 I1</td>
+      <td style="color:var(--green);font-weight:800">شارة الترخيص — مقفول ✅</td>
+      <td>مجموعة «Image Licensing» في Settings + نسبة تلقائية حسب النوع → بثّ في ImageObject (JSON-LD) → أهلية Licensable. (كل التفاصيل محسومة تحت.)</td></tr>
+    <tr style="background:#ecfdf5"><td class="c" style="color:var(--green);font-weight:800">🔒 I2</td>
+      <td style="color:var(--green);font-weight:800">حقول ImageObject — مقفول ✅</td>
+      <td>حقلان محفوظان بس ما يُبَثّان في الـ JSON-LD → نبثّهما:<br>
+      • <b><code>name</code></b> = <b>الكود يركّبه تلقائياً</b> من (نوع الصورة + اسم العميل/عنوان المقال). مثال: شعار → «شعار عيادة الابتسامة». صفر كتابة.<br>
+      • <b><code>description</code></b> = <b>الكاتب يكتبه</b> في خانة الوصف، ونوصّله للـ JSON-LD.<br>
+      التطبيق: بثّ + إعادة توليد، لا migration.</td></tr>
+    <tr style="background:#ecfdf5"><td class="c" style="color:var(--green);font-weight:800">🔒 I3</td>
+      <td style="color:var(--green);font-weight:800">سكور واحد للصورة — مقفول ✅</td>
+      <td><b>سكور واحد فقط نشتغل عليه = <code>computeMediaSeoScore</code> في dataLayer</b> (SOT، بجانب article/client/reference — موجود جاهز). العمل:<br>
+      • نوّجه <code>media-grid</code> وأي شاشة له، ونتقاعد النسخة المحلية <code>media-seo-config</code> (٨٥).<br>
+      • السكور يقيس الاسم في الرابط الفعلي <code>cloudinaryPublicId</code> (اللي يشوفه قوقل) مو <code>filename</code>.<br>
+      النتيجة: رقم سيو واحد للصورة في كل مكان.</td></tr>
+  </table>
+  <div class="card" style="font-size:12.5px"><b>I1 حقل بحقل — موجود عندنا مقابل يُضاف (متحقّق من الكود):</b></div>
+  <table>
+    <tr><th>حقل قوقل</th><th>حقلنا</th><th class="c">مخزّن</th><th class="c">UI</th><th class="c">يُبَث الآن</th><th style="width:32%">يُضاف</th></tr>
+    <tr><td><code>creditText</code></td><td><code>credit</code> (افتراضي «مدونتي»)</td><td class="c" style="color:var(--green)">✅</td><td class="c" style="color:var(--green)">✅</td><td class="c" style="color:var(--red)">❌</td><td>بثّ فقط — جاهز</td></tr>
+    <tr><td><code>creator</code></td><td><code>creator</code></td><td class="c" style="color:var(--green)">✅</td><td class="c" style="color:var(--green)">✅</td><td class="c" style="color:var(--red)">❌</td><td>بثّ فقط — جاهز</td></tr>
+    <tr><td><code>copyrightNotice</code></td><td><code>copyrightHolder</code></td><td class="c" style="color:var(--green)">✅</td><td class="c" style="color:var(--red)">❌</td><td class="c" style="color:var(--red)">❌</td><td><b>فاضي (لا UI)</b> → اشتقاق «© سنة + credit»</td></tr>
+    <tr><td><code>license</code></td><td><code>license</code> (label)</td><td class="c" style="color:var(--amber)">label</td><td class="c" style="color:var(--green)">✅</td><td class="c" style="color:var(--red)">❌</td><td>قوقل يبي <b>رابط</b> → خريطة label→URL أو صفحة ترخيص</td></tr>
+    <tr><td><code>acquireLicensePage</code></td><td>—</td><td class="c" style="color:var(--red)">❌</td><td class="c" style="color:var(--red)">❌</td><td class="c" style="color:var(--red)">❌</td><td><b>غير موجود</b> → رابط صفحة ترخيص</td></tr>
+    <tr><td><code>name</code>/<code>description</code></td><td><code>title</code>/<code>description</code></td><td class="c" style="color:var(--green)">✅</td><td class="c" style="color:var(--green)">✅</td><td class="c" style="color:var(--red)">❌</td><td>بثّ فقط — جاهز (I2)</td></tr>
+  </table>
+  <div class="card" style="font-size:12.5px">الخلاصة: <b>٤ حقول بثّ فقط</b> (credit·creator·title·description) · <b>٢ يحتاجان إضافة</b> (copyrightNotice اشتقاق · license+acquireLicensePage روابط). المصادر: Google Images best practices + Image license metadata (Licensable) + كودنا (<code>generate-organization-jsonld</code> · <code>media/seo-score</code>).</div>
+
+  <div class="card" style="border-inline-start:5px solid var(--primary);background:#f0fdfa;font-size:12.5px"><b>القرار المعماري — Settings + قاعدة ملكية تلقائية حسب النوع:</b> حقول الترخيص في مجموعة <b>«Image Licensing»</b> بالـ Settings (نفس نمط <code>metaRobots</code>). الجنريتور ينسب تلقائياً <b>حسب نوع الوسيط — صفر إدخال يدوي</b>:
+  <div style="margin-top:6px">
+    · <b><code>LOGO</code> + <code>GALLERY</code> → العميل</b> (يقدّم الشعار ويرفع الغاليري): creditText/creator/copyrightNotice = اسم العميل (© سنة + العميل).<br>
+    · <b>الباقي (<code>HERO</code>·<code>POST</code>·<code>OGIMAGE</code>·<code>TWITTER_IMAGE</code>·<code>CLIENT_MINI</code>·<code>GENERAL</code>) → مدوّنتي</b> (من إنتاجنا): من الـ Settings.
+  </div>
+  <span style="color:var(--dim)">license/acquireLicensePage = صفحة copyright-policy في الحالتين. (الـ CC/Stock النادر يبقى override يدوي.)</span></div>
+  <div class="card" style="font-size:12.5px"><b>وين تُكتب هالبيانات؟</b> داخل عُقد <code>ImageObject</code> في الـ <b>JSON-LD</b> (<code>@graph</code>) — الشعار في <code>logo</code> · الغاليري في <code>image[]</code> · الغلاف في <code>primaryImageOfPage</code> · صور المقال في Article JSON-LD. <b>مو تخزين جديد</b> — نثري العُقد الموجودة، وتُحفظ في <code>jsonLdStructuredData</code> وتُعاد توليدها بنفس الـ cascade. (قوقل يقرأها من structured data — طريقنا — أو IPTC داخل الملف، وما نستخدمه.)</div>
+  <div class="card" style="font-size:12.5px"><b>التطبيق على الموجود:</b> مو migration — إعادة توليد فقط (زر <b>Regenerate All SEO</b>) عشان تدخل عُقد الترخيص في الـ JSON-LD المخزّن. الجديد الوحيد = خانات «Image Licensing» في Settings (تُكتب مرة). <b>خريطة صور الـ sitemap منفصلة تماماً</b> (اكتشاف فقط — <code>image:loc</code>، والترخيص مُلغى منها رسمياً) → لا تتغيّر. <span style="color:var(--green);font-weight:800">✅ I1 محسوم تصميمياً.</span></div>
+
+  <div class="card" style="border-inline-start:5px solid var(--green);background:var(--greenbg);font-size:12.5px"><b>🔒 I2 — حلّ الـ name (الكود يركّبه تلقائياً، لا كتابة يدوية، لا random):</b> <code>name</code> و<code>description</code> محفوظان في الـ UI بس مو مبثوثين في الـ JSON-LD. الحل: نبثّهما، و<b>الـ name «الكود يركّبه بنفسه» من بيانات موجودة عندنا (اسم العميل / عنوان المقال) + نوع الصورة</b> — زي معادلة جاهزة، صفر إدخال:</div>
+  <table>
+    <tr><th>نوع الصورة</th><th>المعادلة</th><th>مثال (عميل «عيادة الابتسامة»)</th></tr>
+    <tr><td><code>LOGO</code></td><td>«شعار» + اسم العميل</td><td>شعار عيادة الابتسامة</td></tr>
+    <tr><td><code>HERO</code> / <code>CLIENT_MINI</code></td><td>اسم العميل</td><td>عيادة الابتسامة</td></tr>
+    <tr><td>صورة مقال</td><td>عنوان المقال</td><td>أفضل ٥ نصائح لتبييض الأسنان</td></tr>
+    <tr><td><code>GALLERY</code> (عميل)</td><td>اسم العميل + «صورة {رقم}»</td><td>عيادة الابتسامة — صورة ٣</td></tr>
+    <tr><td>احتياطي (بلا سياق)</td><td>النص البديل الجاهز</td><td>= <code>altText</code></td></tr>
+  </table>
+  <div class="tree" style="font-size:13px;line-height:1.9">
+<span class="old">التركيبة = [ كلمة ثابتة بالكود ] + [ بيانات موجودة بقاعدتنا ]</span>
+
+شعار   :  <span style="color:#f59e0b">«شعار »</span> + <span style="color:#5eead4">اسم العميل</span>            <span class="old">→ شعار عيادة الابتسامة</span>
+غلاف   :  <span style="color:#5eead4">اسم العميل</span>                    <span class="old">→ عيادة الابتسامة</span>
+مقال   :  <span style="color:#5eead4">عنوان المقال</span>                  <span class="old">→ أفضل ٥ نصائح لتبييض الأسنان</span>
+غاليري :  <span style="color:#5eead4">اسم العميل</span> + <span style="color:#f59e0b">« — صورة »</span> + <span style="color:#5eead4">رقم</span>  <span class="old">→ عيادة الابتسامة — صورة ٣</span>
+  </div>
+  <div class="card" style="font-size:12.5px"><span style="color:#b45309;font-weight:800">■</span> القطعة الثابتة (مثل «شعار ») مكتوبة بالكود مرة وحدة · <span style="color:#0d9488;font-weight:800">■</span> القطعة المتغيّرة (اسم العميل/عنوان المقال) يسحبها الكود من قاعدة البيانات وقت التوليد · يلصقهم = الاسم.</div>
+  <div class="card" style="font-size:12.5px"><b>فرق <code>name</code> عن <code>description</code>:</b> <code>name</code> = <b>الكود يركّبه تلقائياً</b> (تركيبة، ما يكتبه أحد). <code>description</code> = <b>الكاتب يكتبه</b> في خانة الوصف (شغله كخبير سيو — وصف تفصيلي للصورة)، وI2 بس <b>يبثّه</b> للـ JSON-LD (كان محفوظ وما يُبَث). لو الوصف فاضٍ → احتياطي <code>altText</code> أو بلا description.</div>
+  <div class="card" style="font-size:12.5px"><b>ملاحظات I2:</b> صفر كتابة يدوية (الكود يبنيه من اسم العميل/المقال + النوع) · <b>«تعارض الأسماء» مو مشكلة</b> — <code>name</code> مجرد وصف مو مفتاح فريد، يتكرر عادي · لو الكاتب كتب <code>title</code> يدوياً → يغلّبه (override اختياري) · <code>description</code> يُبَث من حقل الوصف المخزّن · التطبيق = بثّ + إعادة توليد، لا migration. <span style="color:var(--green);font-weight:800">✅ I2 محسوم.</span></div>
+  <table>
+    <tr><th>حقل</th><th>مصدره</th><th>القيمة (حسب النوع)</th></tr>
+    <tr><td><code>creditText</code></td><td>حسب النوع</td><td>Modonty‑types → <b>«مدونتي»</b> · LOGO/GALLERY → <b>اسم العميل</b></td></tr>
+    <tr><td><code>creator</code></td><td>حسب النوع</td><td>كائن <b>Organization</b> (مدوّنتي) أو العميل — نلفّ الاسم بكائن عند البثّ</td></tr>
+    <tr><td><code>copyrightNotice</code></td><td>مشتقّ</td><td><b>«© {السنة} {المالك}»</b> — المالك (مدوّنتي/العميل) حسب النوع، <b>السنة من الصورة</b></td></tr>
+    <tr><td><code>license</code></td><td>Settings</td><td><b>رابط</b> <code>modonty.com/legal/copyright-policy</code> · أو رابط CC الرسمي عند override</td></tr>
+    <tr><td><code>acquireLicensePage</code></td><td>Settings</td><td><b>رابط</b> نفس copyright-policy + قسم تواصل</td></tr>
+  </table>
+  <div class="card" style="border-inline-start:5px solid var(--green);background:var(--greenbg);font-size:12.5px"><b>لا صفحة جديدة — البنية موجودة:</b> <code>/legal/copyright-policy</code> مسار حيّ (page + metadata) ضمن ٦ صفحات قانونية. <b>لكن محتواها من الـ DB</b> (<code>modonty.slug=copyright-policy</code>) وغالباً فاضٍ الآن (زي terms/privacy المعلّقة). فنربط <code>license</code>+<code>acquireLicensePage</code> بها، <b>وشرط نكتب محتواها</b> (© مدوّنتي + شروط الاستخدام + كيف تطلب ترخيص/تواصل) ضمن مهمة الصفحات القانونية المعلّقة. + خريطة label→رابط (All Rights Reserved → الصفحة · CC-* → روابط CC الرسمية).</div>
+
+  <h2><span class="n">🔎</span> المراجعة العكسية النهائية — ثغرات ما مسكتها الخطة (محلولة)</h2>
+  <table>
+    <tr><th style="width:40px">#</th><th>الثغرة (من الكود)</th><th style="width:38%">الحل</th></tr>
+    <tr style="background:#ecfdf5"><td class="c" style="color:var(--green);font-weight:800">🔒 N1</td>
+      <td>بناء ImageObject <b>متكرّر في مولّدين وغير متسق</b>: مولّد العميل يخرج <code>caption</code> فقط · مولّد المقال يخرج <code>name</code>(=alt)+caption · الاثنان بلا license. (+معاينة الأدمن تبنيه بطريقة ثالثة → تكذب.)</td>
+      <td><b>دالة مشتركة واحدة <code>buildImageObject()</code> في dataLayer</b> يستدعيها: مولّد العميل + مولّد المقال + معاينة الأدمن. كل صورة بأي مكان تطلع بنفس الحقول (alt/name/description/dimensions + كل الترخيص). مصدر واحد. (يغطّي N3: المعاينة = الحقيقة.)</td></tr>
+    <tr style="background:#ecfdf5"><td class="c" style="color:var(--green);font-weight:800">🔒 N2</td>
+      <td>بوابة النشر تفحص <b>وجود</b> صورة رئيسية (<code>featuredImageId</code>) بس، <b>مو نصّها البديل</b> → مع alt الاختياري (R3) مقال ممكن يُنشر وصورته بلا alt.</td>
+      <td>نضيف فحص <b>alt الصورة الرئيسية</b> لسكور المقال/بوابة النشر → يتوافق مع «١٠٠٪ قبل الفهرسة». alt الاختياري وقت الرفع لا يسرّب صورة ناقصة للنشر.</td></tr>
+    <tr style="background:#ecfdf5"><td class="c" style="color:var(--green);font-weight:800">🔒 M1</td>
+      <td><b>فخّ الـ select — المولّدان غير متماثلين:</b> مولّد المقال <code>featuredImage: true</code> (كل الحقول ✅) · مولّد العميل <code>logoMedia/heroImageMedia: select{url,altText,width,height}</code> = ٤ فقط ❌. بلا توسيع → الترخيص/الاسم يطلعون فاضيين بصمت.</td>
+      <td>عند بناء <code>buildImageObject()</code> نوسّع select الوسائط في مولّد العميل — <b>ثلاثة مصادر: logo · hero · gallery</b> (+ تحويل <code>galleryImages</code> يمرّر الحقول) — ليشمل <code>title/description/credit/creator/license/type/dateCreated/cloudinaryPublicId</code>، يطابق المقال.</td></tr>
+    <tr style="background:#ecfdf5"><td class="c" style="color:var(--green);font-weight:800">🔒 M2</td>
+      <td><b>ترقيم الغاليري:</b> اسم «{العميل} — صورة {رقم}» يحتاج ترتيباً ثابتاً، والوسيط بلا حقل ترتيب.</td>
+      <td>نرقّم من ترتيب ثابت (<code>createdAt</code>) أو نشيل الرقم («{العميل} — صورة»).</td></tr>
+    <tr><td class="c" style="color:var(--green);font-weight:800">✅ M3</td>
+      <td><b>مبرّأة:</b> شيل حقول السيو من فورم العميل — هل يكسر الإنشاء؟</td>
+      <td><code>seoTitle</code>/<code>seoDescription</code> <b>اختياريان في السكيما</b> → آمن (إنشاء + تعديل).</td></tr>
+  </table>
+
+  <h2><span class="n">🔴</span> مخاطر التنفيذ (نقد ذاتي — متحقّق من الكود)</h2>
+  <table>
+    <tr><th style="width:40px">#</th><th style="width:40px">حدّة</th><th>المشكلة</th><th style="width:32%">المعالجة قبل البدء</th></tr>
+    <tr style="background:#ecfdf5"><td class="c">R1</td><td style="color:var(--green);font-weight:800">✅ محلول</td>
+      <td><b>نموذج الكاتب = <code>seoTitle</code> + <code>seoDescription</code> فقط.</b> بعد الفحص: <b>Knows Language</b> يجي من الـ settings (وخانته ميّتة أصلاً — تُشال) · <b>GBP</b> (٥ حقول، ميزة غير مفعّلة) + <b>Price Range</b> + <b>الإحداثيات</b> لكل عميل → تبقى بقسم العملاء (أدمن). الحقول المنصّية (robots/twitter/canonical/locale) أصلاً غير معروضة.</td>
+      <td>الكاتب: عنوان+وصف. التقني/المحلي: قسم العملاء. + شيل خانة Knows Language من نموذج العميل.</td></tr>
+    <tr style="background:#ecfdf5"><td class="c">R2</td><td style="color:var(--green);font-weight:800">✅ محلول</td>
+      <td><b>server action واحد: update العميل + إعادة توليد JSON-LD والـ Meta</b> (النمط الموجود <code>updateClient → generateClientSEO</code>). القلق مو في الفكرة — بس التنفيذ: لو أُرسل الكائن كامل بحقول فاضية قد يمسح.</td>
+      <td><b>update جزئي</b> — يكتب فقط الحقول المُرسَلة (<code>seoTitle/seoDescription</code>) ويتجاهل غير المُرسَل (الكود يسويه أصلاً بالمقارنة)، ثم يعيد التوليد.</td></tr>
+    <tr style="background:#ecfdf5"><td class="c">R3</td><td style="color:var(--green);font-weight:800">✅ محلول</td>
+      <td><b>المصمّم يرفع الصورة بس — بلا أي داتا سيو.</b> نشيل نموذج السيو من شاشة الرفع (<code>upload-zone/seo-form</code>)، و<code>altText</code> يصير اختياري في <code>createMedia</code>. تحرير alt/title/description كله من قسم المحتوى (الكاتب).</td>
+      <td>الصورة تطلع بـ alt فاضٍ = «ناقصة» بالسكور لين الكاتب يكمّلها (الفلو المقصود). ننبّه: أي عرض يعتمد alt يتحمّل الفراغ مؤقتاً.</td></tr>
+    <tr style="background:#ecfdf5"><td class="c" style="color:var(--green);font-weight:800">🔒 R4</td><td style="color:var(--green);font-weight:800">مقفول ✅</td>
+      <td><b>قائمة عمل الكاتب «الناقص أولاً».</b> تحقّقنا: <b>ما فيه <code>seoScore</code> مخزّن لأي كيان</b> — العميل/المقال/الصور كلهم يحسبون لحظياً وينجح.</td>
+      <td><b>حساب لحظي في الذاكرة</b> (الخيار أ) — نفس نمط العميل/المقال، صفر عمود جديد وصفر تعارض. التخزين (عمود <code>seoScore</code>) <b>مؤجّل</b>، فقط لو أثبت العدد الكبير بطئاً.</td></tr>
+    <tr style="background:#ecfdf5"><td class="c" style="color:var(--green);font-weight:800">🔒 R5</td><td style="color:var(--green);font-weight:800">مقفول ✅ — مخاطرة منخفضة</td>
+      <td><b>كلفة الـ cascade — الثقيل نادر:</b> ٣ حالات: (١) إعادة التوليد الشاملة = مرة واحدة بزر. (٢) حفظ سيو العميل يعيد كل مقالاته = ثقيل بس <b>نادر</b> (سيو العميل يُضبط مرة ويُنسى). (٣) تعديل مقال/صورة = <b>خفيف دايماً</b> (ذاك العنصر فقط). فالشغل اليومي خفيف.</td>
+      <td>نقيس حفظ عميل بمقالات كثيرة جداً؛ لو عمل timeout، نأجّل تحديث مقالاته للخلفية/طابور. اليومي ما يحتاج شي.</td></tr>
+    <tr style="background:#ecfdf5"><td class="c" style="color:var(--green);font-weight:800">🔒 R6</td><td style="color:var(--green);font-weight:800">توحيد ٣ → ١ — مقفول ✅</td>
+      <td><b>سيو العميل في ٣ أماكن اليوم:</b> صفحة <code>/seo</code> (تحرير) · تبويب SEO داخل <code>[id]</code> (قراءة تفصيلية) · شارة الهيدر (تودّي <code>/technical</code>). تشتّت وتكرار.</td>
+      <td><b>يبقى مدخل واحد:</b> شارة النسبة (قراءة) → تودّي <b>SEO Client</b> الجديد. <b>يُشال:</b> صفحة <code>/seo</code> (التحرير انتقل) + تبويب SEO التفصيلي. الهيدر يعيد توجيه الشارة من <code>/technical</code> → القسم الجديد. <b>مكافأة (P1):</b> شيل تبويب السيو يميت مسار الحفظ المنحرف <code>regenerateClientJsonLdAction</code> (اللي ما يعيد metaTags) → مسار حفظ عميل واحد، صفر عمل إضافي.</td></tr>
+    <tr style="background:#ecfdf5"><td class="c" style="color:var(--green);font-weight:800">🔒 R7</td><td style="color:var(--green);font-weight:800">مقفول ✅ — قرار: مؤجّل</td>
+      <td><b>الصلاحيات (ربط القسم بالكاتب) تُدخَل في تاسك الأدوار/التقسيم</b>، نتكلم فيها هناك — مو الآن.</td>
+      <td>نبني أقسام SEO Content الآن <b>أدمن-only</b>، وربط الصلاحيات ينتقل لتاسك الـ admin roles (<code>PERMISSIONS-DESIGN</code>).</td></tr>
+  </table>
+
+  <h2><span class="n">٢</span> Checklist التنفيذ — ٢٠ خطوة</h2>
+  <div class="card" style="font-size:12.5px"><b>القاعدة:</b> أكمل خطوة → أعلّمها ✅ وأخبرك → تراجعها → OK → اللي بعدها. الأساس أولاً (dataLayer) ثم الربط ثم الأقسام ثم النشر · <code>tsc</code> بعد كل مرحلة · تست حي في النهاية.</div>
+  <div class="card" style="border-inline-start:5px solid var(--red);background:#fef2f2;font-size:12.5px"><b>🥇 قاعدة حاكمة على كل الخطوات — هذا قلب المشروع، صفر تخمين:</b> كل حقل/خاصية/بنية في الـ JSON-LD والـ schema <b>تُتحقّق من المصدر الرسمي قبل كتابتها</b> — Google Search Central (Structured data · Image SEO · ImageObject · Licensable) + Schema.org (ImageObject spec) + Context7 (Next.js 16 / Prisma). ممنوع خاصية من الذاكرة. أي خطوة عليها وسم <b>✔docs</b> = ما تُكتب إلا بعد تأكيد المصدر، والمرجع يُذكر في التنفيذ.</div>
+
+  <div class="bph"><span class="pn">A</span> الأساس المشترك (dataLayer)</div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">دالة <code>buildImageObject()</code> مشتركة <span class="btag">N1·N3</span><span class="btag" style="background:#fee2e2;color:#991b1b">✔docs</span></div><div class="bd2">✅ بنّاء ImageObject واحد (pure): يجمّع alt/caption/name/description/dimensions/encodingFormat/dateCreated + كل الترخيص (creator/creditText/copyrightNotice/copyrightHolder/license/acquireLicensePage)، يحذف الفارغ. ١٥ خاصية متحقّقة من Schema.org + Google.</div><div class="bf">dataLayer/lib/seo/media/build-image-object.ts</div></div></div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">خانات «Image Licensing» في Settings + تعبئتها مرة <span class="btag">I1</span></div><div class="bd2">✅ ٣ حقول على Settings: <code>imageOwnerName</code>=«مدوّنتي» · <code>imageLicenseUrl</code>=رابط مطلق للـ copyright-policy · <code>imageAcquireLicensePageUrl</code>. <b>db push برقصة Prisma تمّت</b> (قتل ٥ سيرفرات→validate→generate). القيم صارت default في «Apply Defaults» (BUSINESS_DEFAULTS) وتظهر read-only في تبويب System. <b>ناقص لمسة واحدة يدوية:</b> ضغط زر «Apply Defaults» مرة لكتابة القيم على dev DB (ما شغّلت Playwright حسب قاعدتك).</div><div class="bf">schema.prisma · settings-actions.ts · seed-technical-defaults.ts · system-form.tsx</div></div></div>
+  <div class="bstep"><div class="bbx">2ب</div><div><div class="bt">محتوى صفحة copyright-policy <span class="btag">تبعية · مؤجّل بطلبك</span></div><div class="bd2">⏸️ نربط <code>license</code>/<code>acquireLicensePage</code> بالرابط الآن، ومحتوى الصفحة (© + شروط + تواصل) <b>تحدّثه لاحقاً مع بيانات الخصوصية</b> (قرارك: «link it later»).</div><div class="bf">DB modonty.slug=copyright-policy</div></div></div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">منطق الملكية + تركيبة الاسم حسب النوع <span class="btag">I1·I2·M2</span><span class="btag" style="background:#fee2e2;color:#991b1b">✔docs</span></div><div class="bd2">✅ <code>resolveImageAttribution</code>: LOGO/GALLERY→العميل · الباقي→مدوّنتي (من Settings) · name يُركّب حسب الجدول (شعار+عميل·عميل·عنوان المقال·عميل+«صورة{ن}»·احتياطي alt) · <code>copyrightNotice</code>=«© سنة+مالك» (تُحذف لو السنة مجهولة) · اسم يدوي يغلّب. يبثّ الـ٥ حقول المقفولة فقط.</div><div class="bf">build-image-object.ts</div></div></div>
+
+  <div class="bph"><span class="pn">B</span> ربط المولّدات بالبنّاء الواحد</div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">مولّد العميل: توسيع select (٣ مصادر) + استدعاء البنّاء <span class="btag">M1</span></div><div class="bd2">✅ logo·hero·gallery عبر البنّاء (+description/createdAt في الـselects + imageLicensing من Settings). <b>+توحيد المسارين:</b> «Regenerate All» (cascade) وتحديث الصناعة كانا يستدعيان <code>regenerateClientJsonLd</code> (بلا gallery/ترخيص) — <b>وجّهتهما للـ bundle</b> → مسار واحد، الترخيص في كل مكان (حلّ M1). <b>تصحيح:</b> <code>generateAndSaveClientJsonLd</code> <b>ليس ميتاً</b> — لا يزال حيّاً عبر <code>seo-tab.tsx</code> (تبويب سيو العميل)؛ حذفه يتطلّب حذف seo-tab أولاً (خطوة ١٣).</div><div class="bf">generate-organization-jsonld.ts · generate-client-seo-bundle.ts · cascade-all-seo.ts · update-industry.ts</div></div></div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">مولّد المقال: استدعاء البنّاء الواحد <span class="btag">N1</span></div><div class="bd2">✅ <code>buildImageArray</code> عبر البنّاء: featured (٣ نِسَب) + fallback + gallery. صور المقال=POST (مدوّنتي)، name=عنوان المقال، <code>license</code>=<b>رابط</b> (كان label خاطئ)، creator=Organization. الترخيص من Settings عبر PlatformBranding.</div><div class="bf">knowledge-graph-generator.ts · jsonld-storage.ts</div></div></div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">معاينة الأدمن = المخرَج الحقيقي <span class="btag">N3</span></div><div class="bd2">✅ <code>generateImageObjectStructuredData</code> يستدعي <code>buildImageObject</code> نفسه → شكل المعاينة (contentUrl/name/caption/description/dimensions) مطابق للمخرَج الحقيقي.</div><div class="bf">media/helpers/media-seo-config.ts</div></div></div>
+
+  <div class="bph"><span class="pn">C</span> توحيد سكور الصورة</div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">سكور صورة واحد فقط <span class="btag">I3</span></div><div class="bd2">✅ media-grid صار يستخدم <code>computeMediaSeoScore</code> (السوت ١٠٠) بدل السكور المحلي ٨٥ · media-segment-table يستخدم <code>seoScore</code> المحسوب أصلاً بالسوت (media-counts). رقم واحد في كل شاشة سكور.</div><div class="bf">media-grid.tsx · media-counts.ts</div></div></div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">السكور يقيس اسم الرابط الفعلي <span class="btag">I3</span></div><div class="bd2">✅ فحص «اسم الملف» يقرأ آخر مقطع من <code>cloudinaryPublicId</code> (الاسم اللي يفهرسه قوقل فعلاً) والـ<code>filename</code> احتياطي.</div><div class="bf">dataLayer/lib/seo/media/seo-score.ts</div></div></div>
+
+  <div class="bph"><span class="pn">D</span> بوابة النشر</div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">فحص alt الصورة الرئيسية في النشر <span class="btag">N2</span><span class="btag" style="background:#fee2e2;color:#991b1b">✔docs</span></div><div class="bd2">✅ حاجز صريح في <code>assertArticlePublishable</code>: صورة رئيسية بلا alt → النشر يُمنع برسالة توجّه لقسم «SEO Images». alt الاختياري وقت الرفع ما يسرّب صورة ناقصة.</div><div class="bf">assert-article-publishable.ts</div></div></div>
+
+  <div class="bph"><span class="pn">E</span> قسم SEO Client</div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">أكشن حفظ ضيّق <span class="btag">R2</span></div><div class="bd2">✅ <code>saveClientSeo</code>: auth + Zod + تحديث <b>جزئي</b> (seoTitle+seoDescription فقط) ثم <code>generateClientSEO</code> (يعيد توليد JSON-LD+metaTags عبر الـ bundle) + revalidate (modontyTag). جاهز للـ Dialog (خطوة ١٢).</div><div class="bf">clients/actions/clients-actions/save-client-seo.ts</div></div></div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">route قائمة SEO Client</div><div class="bd2">✅ server: يقرأ كل حقول السكور، يحسب <code>computeClientSeoScore</code>، يرتّب الناقص أولاً · صفوف بشارة نسبة + زر «افتح» يفتح Dialog.</div><div class="bf">app/(dashboard)/seo-client/page.tsx + components/seo-client-list.tsx</div></div></div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">Dialog تحرير العميل <span class="btag">R2</span></div><div class="bd2">✅ حلقة جاهزية + حقلان (SEO Title/Description + عدّادات) + سياق قراءة (مجال/مدينة/نشاط) + معاينة Google حيّة + حفظ عبر <code>saveClientSeo</code> → refresh.</div><div class="bf">seo-client/components/client-seo-dialog.tsx</div></div></div>
+  <div class="bstep"><div class="bbx">13</div><div><div class="bt">تنظيف قسم العملاء <span class="btag">R1·R6·P1 · محجوب</span></div><div class="bd2">🚧 <b>محجوب بقرار معماري واحد (الحذف صار ممكناً عبر PowerShell):</b> حذف <code>/seo</code> يترك <code>MediaSocialSection</code> (تعيين الشعار/الغلاف) بلا مكان — <b>وين ينتقل؟</b> (فورم تعديل العميل؟). + الكود «الميت» <b>حيّ فعلاً</b> عبر <code>seo-tab.tsx</code> (getClientJsonLd + regenerateClientJsonLdAction) — فالتسلسل: قرار الشعار/الغلاف → انقل → احذف seo-tab + /seo → عندها الكود يصير ميتاً فعلاً → احذفه. <b>لا أخمّن قرار المعمار.</b></div><div class="bf">clients form · /clients/[id]/seo · jsonld-actions</div></div></div>
+
+  <div class="bph"><span class="pn">F</span> قسم SEO Images</div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">route قائمة SEO Images</div><div class="bd2">✅ server: يقرأ الوسائط (سقف ٣٠٠ · مُعلَن في UI)، يحسب <code>computeMediaSeoScore</code>، يركّب «مستخدمة‑في» + الاسم التلقائي + المالك عبر <code>resolveImageAttribution</code>، يرتّب الناقص أولاً · شبكة بشارة نسبة + نوع.</div><div class="bf">app/(dashboard)/seo-images/page.tsx + components/seo-images-list.tsx</div></div></div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">Dialog تحرير الصورة</div><div class="bd2">✅ معاينة + «مستخدمة‑في» + Alt/Description (عدّادات) + الاسم التلقائي (قراءة، أخضر) + حفظ عبر <code>saveImageSeo</code>.</div><div class="bf">seo-images/components/image-seo-dialog.tsx</div></div></div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">alt اختياري بالرفع <span class="btag">R3</span></div><div class="bd2">✅ <code>createMedia</code> ما يفرض altText · زر الحفظ بالرفع ما يشترط alt · النص التوجيهي «ارفع فقط، الكاتب يضيف alt/desc في SEO Images». (نموذج السيو بالرفع بقي متاحاً اختيارياً — أقل هدماً؛ لم يعد إلزامياً.)</div><div class="bf">create-media.ts · use-upload-zone.ts · upload-zone/index.tsx</div></div></div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">حفظ الصورة → توليد العميل لو شعار/غلاف <span class="btag">ثغرة</span></div><div class="bd2">✅ <code>saveImageSeo</code> يعيد توليد كل عميل يضمّ الصورة (logoClients + heroImageClients + عميل الغاليري) → alt/description يدخلان JSON-LD المخزّن. سدّ ثغرة صورة→عميل.</div><div class="bf">media/actions/save-image-seo.ts</div></div></div>
+
+  <div class="bph"><span class="pn">G</span> القائمة الجانبية + النشر + التحقق</div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">مجموعة Content في القائمة الجانبية <span class="btag">R7</span></div><div class="bd2">✅ SEO Client + SEO Images أُضيفا تحت مجموعة «Articles» (بيت الكاتب) بأيقونتَي BadgeCheck + Images · أدمن-only الآن.</div><div class="bf">admin/components/admin/sidebar.tsx</div></div></div>
+  <div class="bstep done"><div class="bbx">✓</div><div><div class="bt">Regenerate All SEO على dev <span class="btag">مؤكّد بالنص الخام</span></div><div class="bd2">✅ ربطتُ <code>RegenerateAllSeoButton</code> بصفحة /clients (كان orphan) وشغّلته حيّاً: <b>«Done — 27 succeeded · 0 failed»</b>. تحقّق read-only: <b>٢٣/٢٧ عميل يحملون الترخيص</b> (كل عميل له صورة)؛ الـ٤ الباقون بلا أي صورة → لا ImageObject = لا ترخيص (صحيح). كل عميل له صورة → ترخيص كامل.</div><div class="bf">clients/page.tsx + regenerate-all-seo-button.tsx</div></div></div>
+  <div class="bstep"><div class="bbx">20</div><div><div class="bt">تست حي + tsc <span class="btag">R5 · جزئي ✓</span></div><div class="bd2">✅ tsc صفر أخطاء (٣ تطبيقات) · القسمان مُختبران حيّاً (حفظ عميل 30→49% · حفظ صورة → توليد العميل) · <b>Licensable مثبت بالنص الخام</b> (دار التعافي) · صفر أخطاء (عدا `[siteUrl drift]` المسبق). <b>باقٍ:</b> قياس عميل بمقالات كثيرة (R5) بعد Regenerate All.</div><div class="bf">Playwright · pnpm tsc</div></div></div>
+
+  <div class="foot">القرارات مقفولة · جاهز نبدأ بالمرحلة ١ لما تأذن.</div>
+</div>
+</body>
+</html>

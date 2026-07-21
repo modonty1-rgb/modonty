@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>دراسة: حاسبتا السيو في المقالات — القرار الصحيح</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg:#0f1115;--panel:#171a21;--panel2:#1e222b;--line:#2a2f3a;--ink:#e8eaed;--muted:#9aa2b1;
+    --green:#22c55e;--green-ink:#86efac;--green-bg:#0e2a1a;--amber:#f59e0b;--amber-ink:#fcd34d;--amber-bg:#2b2109;
+    --red:#ef4444;--red-ink:#fca5a5;--red-bg:#2a0f0f;--brand:#14b8a6;--brand-ink:#5eead4;--radius:14px;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Tajawal',system-ui,sans-serif;line-height:1.75;padding:26px 16px 80px;}
+  .wrap{max-width:1000px;margin:0 auto;}
+  header.top{background:linear-gradient(135deg,#12312c,#0f1115);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
+  header.top h1{margin:0 0 8px;font-size:24px;font-weight:900;}
+  header.top p{margin:0;color:var(--muted);font-size:14px;}
+  .evidence{display:inline-block;margin-top:12px;background:#0e2a1a;color:var(--green-ink);border:1px solid #1f5638;padding:6px 14px;border-radius:999px;font-weight:700;font-size:12.5px;}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:18px;}
+  section>h2{margin:0 0 6px;font-size:19px;font-weight:800;display:flex;align-items:center;gap:10px;}
+  section>.sub{margin:0 0 16px;color:var(--muted);font-size:13.5px;}
+  .num{display:grid;place-items:center;width:30px;height:30px;flex:0 0 30px;border-radius:9px;background:var(--brand);color:#07231f;font-weight:900;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{text-align:start;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{color:var(--muted);font-weight:700;font-size:12px;}
+  .code{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-family:ui-monospace,monospace;font-size:11.5px;color:var(--brand-ink);direction:ltr;display:inline-block;}
+  .fake{color:var(--red-ink);font-weight:800;}
+  .real{color:var(--green-ink);font-weight:800;}
+  .pill{display:inline-block;font-size:11px;font-weight:800;border-radius:6px;padding:1px 8px;}
+  .pill.fake{background:var(--red-bg);color:var(--red-ink);border:1px solid #5a1f1f;}
+  .pill.real{background:var(--green-bg);color:var(--green-ink);border:1px solid #1f5638;}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .cmpcol{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--panel2);}
+  .cmpcol.fake{border-color:#5a1f1f;}
+  .cmpcol.real{border-color:#1f5638;}
+  .cmpcol h3{margin:0 0 4px;font-size:15px;}
+  .cmpcol .tag{font-size:11px;color:var(--muted);}
+  .cmpcol ul{margin:10px 0 0;padding-inline-start:18px;}
+  .cmpcol li{font-size:12.5px;margin:5px 0;}
+  .prob{border-radius:12px;padding:13px 16px;margin-bottom:10px;border:1px solid;}
+  .prob.hi{border-color:#5a1f1f;background:var(--red-bg);}
+  .prob.mid{border-color:#5a4410;background:var(--amber-bg);}
+  .prob b{font-size:14.5px;}
+  .prob p{margin:4px 0 0;font-size:13px;}
+  .decision{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;background:var(--panel2);}
+  .decision .q{font-weight:800;font-size:15px;margin-bottom:6px;}
+  .decision .rec{font-size:12.5px;color:var(--brand-ink);background:#0e211f;border:1px solid #1f4f48;border-radius:8px;padding:8px 12px;margin-top:8px;}
+  .warn{border:1px solid var(--amber);background:var(--amber-bg);border-radius:12px;padding:14px 18px;color:#fde68a;font-size:13.5px;margin-top:8px;}
+  footer{color:var(--muted);font-size:12px;text-align:center;margin-top:22px;}
+  .big{font-size:22px;font-weight:900;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>حاسبتا السيو في المقالات — دراسة القرار</h1>
+    <p>لدينا حاسبتان مختلفتان للسيو تعطيان رقمين متناقضين لنفس المقال (100 مقابل 66). هذه الدراسة تحدّد ما الصحيح وأين يُستخدم كلٌّ منهما — من الكود مباشرة.</p>
+    <span class="evidence">✓ كل بند بمرجع ملف:سطر — صفر تخمين</span>
+  </header>
+
+  <!-- WHAT -->
+  <section>
+    <h2><span class="num">1</span> الحاسبتان — ما الذي يقيسه كلٌّ منهما</h2>
+    <div class="cmp">
+      <div class="cmpcol fake">
+        <h3 class="fake">المزيّفة — «تعبئة حقول»</h3>
+        <div class="tag"><span class="code">analyzeArticleSEO</span> · admin/analyzer</div>
+        <ul>
+          <li>٦ فئات، درجة كل فئة = <span class="code">passed ÷ total</span> (فحوص بوليان).</li>
+          <li>تفحص <b>وجود</b> الحقول فقط: طول العنوان/الوصف · عدد الكلمات · وجود صورة · <b>وجود نص JSON-LD</b>.</li>
+          <li>🔴 <b>عمياء عن صحّة الـJSON-LD</b> — لا تقرأ <span class="code">jsonLdValidationReport</span> إطلاقاً (متحقّق في الفئات الست).</li>
+          <li>تعمل على <b>المسودة/الحقول الخام</b>.</li>
+          <li><b>النتيجة لمقالنا = 100</b> (كل الحقول معبّأة).</li>
+        </ul>
+      </div>
+      <div class="cmpcol real">
+        <h3 class="real">الحقيقية — «صحّة الصفحة المنشورة»</h3>
+        <div class="tag"><span class="code">computeArticleSeoScore</span> · dataLayer</div>
+        <ul>
+          <li>= متوسط (META + JSON-LD).</li>
+          <li>META: يقرأ <span class="code">nextjsMetadata</span> المولّد — طول، تكرار العنوان، أبعاد الصورة 1200×630، canonical، hreflang.</li>
+          <li>🟢 JSON-LD: يقرأ <span class="code">jsonLdValidationReport</span> — <b>خطأ واحد = 10/60</b> + تغطية حقول قوقل.</li>
+          <li>يقرأ <b>المخزّن/المولّد</b> = ما يراه قوقل فعلاً.</li>
+          <li><b>النتيجة لمقالنا = 66</b>. موثّقة كـ«المصدر الوحيد للحقيقة».</li>
+        </ul>
+      </div>
+    </div>
+    <p class="sub" style="margin-top:14px">الخلاصة: المزيّفة تجاوب «هل عبّيت الحقول؟» — الحقيقية تجاوب «هل الصفحة المنشورة صحيحة فعلاً؟». الثانية فقط ما يهمّ قوقل.</p>
+  </section>
+
+  <!-- WHERE -->
+  <section>
+    <h2><span class="num">2</span> أين تُستخدم كلٌّ منهما (خريطة كاملة، متحقّقة)</h2>
+    <p class="sub">الكارثة: <b>المحرّر وبوابة النشر يعتمدان المزيّفة</b>، والجداول تعتمد الحقيقية.</p>
+    <table>
+      <thead><tr><th>السطح</th><th>الحاسبة</th><th>الموقع (ملف:سطر)</th></tr></thead>
+      <tbody>
+        <tr><td>🚪 <b>بوابة النشر «الوحيدة»</b> (transition)</td><td><span class="pill fake">مزيّفة</span></td><td><span class="code">transition-article.ts:73-85</span></td></tr>
+        <tr><td>🚪 بوابة نشر (تحديث)</td><td><span class="pill fake">مزيّفة</span></td><td><span class="code">update-article.ts:60-67</span></td></tr>
+        <tr><td>🚪 بوابة نشر (إنشاء)</td><td><span class="pill fake">مزيّفة</span></td><td><span class="code">create-article.ts:59-67</span></td></tr>
+        <tr><td>شارة ترويسة المحرّر</td><td><span class="pill fake">مزيّفة</span></td><td><span class="code">article-form-header</span></td></tr>
+        <tr><td>شارة الشريط السفلي</td><td><span class="pill fake">مزيّفة</span></td><td><span class="code">article-form-action-bar</span></td></tr>
+        <tr><td>شارة التنقّل «SEO Health»</td><td><span class="pill fake">مزيّفة</span></td><td><span class="code">article-form-navigation:30</span></td></tr>
+        <tr><td>شارة + شريط المعاينة</td><td><span class="pill fake">مزيّفة</span></td><td><span class="code">article-form-preview-sidebar:81</span></td></tr>
+        <tr><td>لوحة إرشاد السيو</td><td><span class="pill fake">مزيّفة</span></td><td><span class="code">technical-seo-guidance:126</span></td></tr>
+        <tr><td>صفحة Technical SEO</td><td><span class="pill fake">مزيّفة</span></td><td><span class="code">[id]/technical/page:257</span></td></tr>
+        <tr><td>إحصائية «SEO %» بصفحة المقالات (الـ99%)</td><td><span class="pill fake">مزيّفة</span></td><td><span class="code">get-articles-stats:94</span></td></tr>
+        <tr><td>عمود SEO في القوائم + الـsegment</td><td><span class="pill real">حقيقية</span></td><td><span class="code">article-table · segment/[key]/page:67</span></td></tr>
+        <tr><td>لوحة التحكم + شارتي الجديدة بالتعديل</td><td><span class="pill real">حقيقية</span></td><td><span class="code">article-seo-score.ts</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- PROBLEMS -->
+  <section>
+    <h2><span class="num">3</span> المشاكل الأربع (بالخطورة)</h2>
+    <div class="prob hi"><b>1 · بوابة النشر تعتمد الرقم الغلط</b><p>قرار «ينشر أو لا» مبني على تعبئة الحقول، لا صحّة السيو. مقال حقوله معبّأة لكن JSON-LD فيه خطأ → <b>يُنشر</b> رغم أن سيوه الحقيقي منخفض. قوقل يتضلّل.</p></div>
+    <div class="prob hi"><b>2 · المحرّر يكذب على الكاتب</b><p>يعرض «SEO 100%» بينما الحقيقي 66. الكاتب يظن مقاله مثالي ويطلب الفهرسة — والحقيقة ناقصة.</p></div>
+    <div class="prob mid"><b>3 · إحصائية الصفحة تناقض الجدول</b><p>ترويسة المقالات تعرض «99% SEO» (مزيّفة) بينما عمود الجدول 52/66 (حقيقي) — نفس الصفحة تكذّب نفسها.</p></div>
+    <div class="prob mid"><b>4 · رقمان لنفس المقال = فقدان ثقة</b><p>لا أحد يعرف أي رقم يصدّق — والكاتب وقوقل والأدمن كلهم يتضلّلون.</p></div>
+  </section>
+
+  <!-- ROOT PRINCIPLE -->
+  <section>
+    <h2><span class="num">4</span> الحل الجذري — حاسبة واحدة فقط</h2>
+    <p class="sub">المرض = حاسبتان. العلاج الجذري = <b>حاسبة واحدة للمقال (`computeArticleSeoScore` الحقيقية) هي المصدر الوحيد — للعرض وللبوابة معاً.</b> المزيّفة تفقد صفة «درجة سيو» نهائياً.</p>
+    <div class="cmp" style="grid-template-columns:1fr">
+      <div class="cmpcol real">
+        <h3 class="real">القاعدة بعد العلاج</h3>
+        <ul>
+          <li>أي رقم «SEO %» في المشروع = <span class="code">computeArticleSeoScore</span> فقط. لا استثناء.</li>
+          <li>البوابة تبوّب على <b>ما سيُنشر فعلاً</b> (مخرج مولّد ومُتحقَّق)، لا على تعبئة الحقول.</li>
+          <li><span class="code">analyzeArticleSEO</span> تُحجَّم إلى <b>«دليل تعبئة الحقول»</b> — إرشاد حيّ للكاتب فقط، بلا نسبة سيو، بلا بوابة.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- A: GATE -->
+  <section>
+    <h2><span class="num">5</span> أ · بوابة النشر — قلب الحل الجذري</h2>
+    <p class="sub">متحقّق من الكود: دوال التوليد <span class="code">generateAndSaveJsonLd</span> + <span class="code">generateAndSaveNextjsMetadata</span> موجودة، وتُنتج بالضبط ما يقرأه الحقيقي (<span class="code">nextjsMetadata</span> + <span class="code">jsonLdStructuredData</span> + <span class="code">jsonLdValidationReport</span> المُتحقَّق). لكنها اليوم تعمل <b>بعد</b> البوابة (سطر 145-146)، والبوابة تبوّب على المزيّف (سطر 75).</p>
+    <div class="decision">
+      <div class="q">التغيير: اعكس الترتيب + وحّد البوابات الثلاث</div>
+      <table style="margin-top:6px">
+        <thead><tr><th>اليوم (غلط)</th><th>الجذري (صح)</th></tr></thead>
+        <tbody>
+          <tr><td>1. بوّب بالمزيّف <span class="code">analyzeArticleSEO</span> &lt; 60</td><td>1. <b>ولّد</b>: JSON-LD + ميتا (تحقّق + حفظ التقرير)</td></tr>
+          <tr><td>2. انشر + احفظ</td><td>2. اقرأ الحقول <span class="code">ARTICLE_SEO_SELECT</span></td></tr>
+          <tr><td>3. ولّد JSON-LD + ميتا (بعد!)</td><td>3. <b>بوّب</b>: <span class="code">getArticleSeoScore</span> &lt; 60 → امنع</td></tr>
+          <tr><td></td><td>4. انشر + احفظ → IndexNow</td></tr>
+        </tbody>
+      </table>
+      <div class="rec"><b>التوحيد:</b> مساعد واحد <span class="code">assertArticlePublishable(articleId)</span> يفعل «ولّد → احسب الحقيقي → قرّر»، تستدعيه البوابات الثلاث (<span class="code">transition · update · create</span>) بدل ثلاث نسخ متكررة. الحدّ يبقى 60. هكذا البوابة تبوّب على <b>الصفحة الحقيقية التي سيراها قوقل</b>.</div>
+    </div>
+  </section>
+
+  <!-- B: DISPLAY -->
+  <section>
+    <h2><span class="num">6</span> ب · العرض — كله على الحقيقي</h2>
+    <table>
+      <thead><tr><th>الملف</th><th>التغيير</th></tr></thead>
+      <tbody>
+        <tr><td><span class="code">article-form-header · action-bar</span></td><td>الشارة = الحقيقي (محسوب سيرفر، يتجدّد عند الحفظ)</td></tr>
+        <tr><td><span class="code">article-form-navigation</span></td><td>«SEO Health» = الحقيقي</td></tr>
+        <tr><td><span class="code">article-form-preview-sidebar</span></td><td>الشارة + الشريط = الحقيقي</td></tr>
+        <tr><td><span class="code">get-articles-stats</span></td><td>إحصائية «SEO %» = متوسط الحقيقي</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- C: DEMOTE -->
+  <section>
+    <h2><span class="num">7</span> ج · تحجيم المزيّفة إلى «دليل»</h2>
+    <p class="sub"><span class="code">analyzeArticleSEO</span> تبقى تشغّل لوحة الإرشاد (<span class="code">technical-seo-guidance · [id]/technical</span>) — لكن كـ<b>«دليل تعبئة الحقول»</b> (ماذا يملأ الكاتب)، <b>بلا نسبة مُسمّاة SEO، وبلا أي بوابة</b>. لها قيمة إرشاد حيّ يختلف عن درجة الصفحة المنشورة.</p>
+    <div class="rec"><b>توصيتي:</b> تُحجَّم لا تُحذف — الإرشاد الحيّ (طول العنوان، أضف ملخّص…) مفيد للكاتب. لكن ممنوع منعاً باتاً تُسمّى «SEO %» أو تبوّب النشر.</div>
+  </section>
+
+  <!-- ZERO SIDE EFFECT -->
+  <section>
+    <h2><span class="num">8</span> لماذا هذا صفر side effect (بالدليل)</h2>
+    <ul style="font-size:13.5px">
+      <li>✅ <b>المقالات المنشورة لا تُمسّ</b> — البوابة تعمل عند النشر الجديد فقط، لا على المنشور.</li>
+      <li>✅ <b>الـ66 ≥ 60 → يعدّي.</b> اللي ينحبس = سيوه الحقيقي أقل من 60 = <b>يجب أن يُحبس</b> (صفحته فعلاً ناقصة لقوقل). هذا تصحيح، لا ضرر.</li>
+      <li>✅ <b>التوليد كان يحصل أصلاً</b> عند كل نشر — نعكس ترتيبه فقط، لا نضيف عملية جديدة.</li>
+      <li>✅ العرض تغيير أرقام على الشاشة — لا يمسّ بيانات ولا نشر.</li>
+    </ul>
+  </section>
+
+  <!-- ORDER -->
+  <section>
+    <h2><span class="num">9</span> ترتيب التنفيذ</h2>
+    <table>
+      <thead><tr><th>#</th><th>الخطوة</th><th>الخطورة</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>مساعد <span class="code">assertArticlePublishable</span> (ولّد → احسب الحقيقي → قرّر) + توصيل البوابات الثلاث به</td><td>🔴 عالية — قلب النشر</td></tr>
+        <tr><td>2</td><td>توحيد العرض على الحقيقي (٥ ملفات)</td><td>🟢 منخفضة — عرض</td></tr>
+        <tr><td>3</td><td>تحجيم <span class="code">analyzeArticleSEO</span> لـ«دليل» (إزالة صفة السيو)</td><td>🟢 منخفضة</td></tr>
+        <tr><td>4</td><td>tsc + تست حي: انشر مقالاً على 66 → يعدّي · انشر مقالاً ناقصاً → يُحبس برسالة الحقيقي</td><td>🟡 تحقّق</td></tr>
+      </tbody>
+    </table>
+    <p class="sub" style="margin-top:12px">النتيجة: <b>رقم سيو واحد</b> صادق في كل مكان، وبوابة تبوّب على الصفحة الحقيقية — بصفر تأثير على المنشور.</p>
+  </section>
+
+  <footer>
+    دراسة من الكود · المصدر الحقيقي: <span class="code">dataLayer/lib/seo/article/seo-score.ts</span> · المزيّف: <span class="code">admin/…/analyzer/analyze-article-seo.ts</span><br>
+    كل رقم/موقع في هذه الوثيقة مقروء من الكود مباشرةً — لا تقدير ولا تخمين.
+  </footer>
+</div>
+</body>
+</html>

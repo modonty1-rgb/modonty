@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Articles Sidebar — خط الإنتاج toggle</title>
+<style>
+  :root{ --bg:#0b1220; --panel:#0f172a; --line:#1e293b; --fg:#e2e8f0; --muted:#64748b;
+    --primary:#3b82f6; --badge:#ef4444; }
+  *{box-sizing:border-box}
+  body{margin:0;background:#060a14;color:var(--fg);
+    font-family:"Tajawal","Segoe UI",system-ui,sans-serif;padding:26px 16px}
+  .wrap{max-width:820px;margin:0 auto}
+  h1{font-size:17px;margin:0 0 4px}
+  .lead{color:var(--muted);font-size:13px;margin:0 0 22px;line-height:1.7}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:720px){.cols{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .card h2{font-size:13px;margin:0 0 2px;color:#fff}
+  .card .tag{font-size:11px;color:var(--muted);margin:0 0 12px}
+  .rec{border-color:var(--primary)}
+  .rec .tag{color:var(--primary)}
+
+  .side{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px;width:250px;max-width:100%}
+  .grp{display:flex;align-items:center;gap:8px;padding:8px 10px;font-size:13.5px;color:#fff;font-weight:600}
+  .chev{margin-inline-start:auto;color:var(--muted);font-size:11px}
+  .item{display:flex;align-items:center;gap:10px;padding:7px 12px 7px 20px;font-size:12.5px;
+    color:#cbd5e1;border-radius:8px;cursor:default}
+  .item:hover{background:#111c30}
+  .item.active{background:var(--primary);color:#fff}
+  .badge{margin-inline-start:auto;background:var(--badge);color:#fff;font-size:10px;font-weight:700;
+    min-width:18px;height:18px;border-radius:99px;display:grid;place-items:center;padding:0 5px}
+
+  /* the collapsible "خط الإنتاج" parent */
+  .toggle{display:flex;align-items:center;gap:9px;padding:8px 12px 8px 20px;font-size:12.5px;
+    color:#e2e8f0;border-radius:8px;cursor:pointer;font-weight:600}
+  .toggle:hover{background:#111c30}
+  .toggle.open{background:#111c30;color:#fff}
+  .toggle .sum{margin-inline-start:auto;display:flex;align-items:center;gap:6px}
+  .toggle .tot{background:var(--badge);color:#fff;font-size:10px;font-weight:700;border-radius:99px;padding:1px 7px}
+  .toggle .ar{color:var(--muted);font-size:10px;transition:transform .2s}
+  .toggle.open .ar{transform:rotate(90deg)}
+
+  /* nested steps: من → إلى */
+  .steps{border-inline-start:2px solid var(--line);margin:2px 0 6px 0;margin-inline-start:26px;padding-inline-start:6px}
+  .step{display:flex;align-items:center;gap:8px;padding:6px 10px;font-size:11.5px;color:#cbd5e1;border-radius:7px;cursor:default}
+  .step:hover{background:#111c30}
+  .flow{display:inline-flex;align-items:center;gap:5px}
+  .from{color:#94a3b8}
+  .arrow{color:var(--primary);font-weight:700}
+  .to{color:#e2e8f0;font-weight:600}
+  .step .badge{min-width:16px;height:16px;font-size:9.5px}
+
+  .note{font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.7}
+  .b{color:#fff}
+  .center{display:flex;justify-content:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>«خط الإنتاج» — توقّل قابل للطي في السايدبار</h1>
+  <p class="lead">السايدبار مساحته ضيّقة. فبدل خمسة روابط دائمة، «خط الإنتاج» عنصر واحد <b>يُطوى/يُفتح</b>. مطوي = يوفّر المساحة. مفتوح = يبيّن الخطوات <b>من → إلى</b> بوضوح، كل خطوة بعدّادها.</p>
+
+  <div class="cols">
+
+    <!-- COLLAPSED -->
+    <div class="card">
+      <h2>مطوي (الوضع الافتراضي)</h2>
+      <p class="tag">سطر واحد · يوفّر المساحة · العدّاد الكلي على الطيّة</p>
+      <div class="center">
+      <div class="side">
+        <div class="grp">📑 Articles <span class="chev">▲</span></div>
+        <div class="item">📄 All Articles</div>
+        <div class="item">➕ New Article</div>
+        <div class="toggle">🏭 خط الإنتاج
+          <span class="sum"><span class="tot">19</span><span class="ar">▸</span></span>
+        </div>
+        <div class="item">🔄 Status Maintenance</div>
+        <div class="item">🔧 Technical Review</div>
+        <div class="item">🔍 SEO Client</div>
+        <div class="item active">🖼 SEO Images</div>
+      </div>
+      </div>
+    </div>
+
+    <!-- EXPANDED -->
+    <div class="card rec">
+      <h2>مفتوح (بعد الضغط) ★</h2>
+      <p class="tag">يكشف الخطوات من → إلى، كل خطوة بعدّادها</p>
+      <div class="center">
+      <div class="side">
+        <div class="grp">📑 Articles <span class="chev">▲</span></div>
+        <div class="item">📄 All Articles</div>
+        <div class="item">➕ New Article</div>
+        <div class="toggle open">🏭 خط الإنتاج
+          <span class="sum"><span class="tot">19</span><span class="ar">▸</span></span>
+        </div>
+        <div class="steps">
+          <div class="step"><span class="flow"><span class="from">Writing</span><span class="arrow">→</span><span class="to">Draft</span></span></div>
+          <div class="step"><span class="flow"><span class="from">Draft</span><span class="arrow">→</span><span class="to">Approval</span></span><span class="badge">8</span></div>
+          <div class="step"><span class="flow"><span class="from">Approval</span><span class="arrow">→</span><span class="to">Revision</span></span><span class="badge">11</span></div>
+          <div class="step"><span class="flow"><span class="from">Revision</span><span class="arrow">→</span><span class="to">Draft</span></span></div>
+          <div class="step"><span class="flow"><span class="from">Scheduled</span><span class="arrow">→</span><span class="to">Published</span></span></div>
+        </div>
+        <div class="item">🔄 Status Maintenance</div>
+        <div class="item">🔧 Technical Review</div>
+        <div class="item">🔍 SEO Client</div>
+        <div class="item active">🖼 SEO Images</div>
+      </div>
+      </div>
+      <p class="note">كل خطوة تبقى رابطاً مستقلاً (نفس السلوك الحالي) — بس مخفية تحت الطيّة لين تفتحها. <span class="b">الفائدة: 5 عناصر تتحوّل لواحد، والخطوات من→إلى تظهر واضحة عند الحاجة.</span></p>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

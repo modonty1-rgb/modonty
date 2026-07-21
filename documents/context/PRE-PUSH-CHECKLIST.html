@@ -1,0 +1,137 @@
+<meta charset="utf-8" />
+<title>خطة الدفع — مدونتي</title>
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    --bg: #0b1020; --card: #131a2e; --line: #26304a; --ink: #e8ecf7;
+    --muted: #93a0bd; --amber: #f4b740; --red: #ff5d5d; --green: #35d19a;
+    --blue: #5aa0ff; --chip: #1c2540;
+  }
+  body {
+    margin: 0; padding: 28px 18px 80px; background: var(--bg); color: var(--ink);
+    font-family: "Tajawal", "Segoe UI", system-ui, sans-serif; direction: rtl;
+    line-height: 1.7; font-size: 15px;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 25px; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; margin: 14px 0; }
+  .card h2 { font-size: 16.5px; margin: 0 0 10px; display: flex; align-items: center; gap: 8px; }
+  .phase { color: var(--blue); font-weight: 800; }
+  .done { background: rgba(53,209,154,.07); border-color: rgba(53,209,154,.35); font-size: 13.5px; color: var(--muted); }
+  .done b { color: var(--green); }
+  .why { background: rgba(244,183,64,.06); border-color: rgba(244,183,64,.35); font-size: 13px; }
+  .why b { color: var(--amber); }
+  .critical { border-color: var(--red); background: rgba(255,93,93,.06); }
+  .critical h2 { color: var(--red); }
+  ul.chk { list-style: none; padding: 0; margin: 6px 0 0; }
+  ul.chk li { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+  ul.chk li:last-child { border-bottom: none; }
+  ul.chk input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--green); flex-shrink: 0; cursor: pointer; }
+  ul.chk label { cursor: pointer; }
+  code { background: #0a0f1e; border: 1px solid var(--line); border-radius: 8px; font-family: "Consolas", monospace; direction: ltr; padding: 1px 6px; font-size: 12.5px; }
+  .progress { position: sticky; top: 0; background: var(--bg); padding: 8px 0 12px; z-index: 5; }
+  .bar { height: 8px; background: var(--chip); border-radius: 20px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; width: 0; background: var(--green); transition: width .25s; }
+  .pct { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .reset { float: left; background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 8px; padding: 3px 10px; font-size: 11px; cursor: pointer; font-family: inherit; }
+</style>
+
+<div class="wrap">
+  <h1>🚦 خطة الدفع — المرجعية</h1>
+  <div class="sub">مدونتي · 2026-07-21 · فرع <code>main</code> · <b>الطاقم يطلع الليلة (التيم يشتغل بكرة).</b> الريلز مستثناة (Task).</div>
+
+  <div class="progress">
+    <button class="reset" onclick="resetAll()">تصفير</button>
+    <div class="bar"><i id="fill"></i></div>
+    <div class="pct" id="pct">0 من 0</div>
+  </div>
+
+  <!-- خلص -->
+  <div class="card done">
+    ✅ <b>خلص:</b> حذف الخردة (٥٣ ملف · ١٨٠→١٣٤) · فحص أسرار <code>.claude</code> نظيف · <code>tsc</code> modonty + console = صفر.
+  </div>
+
+  <!-- القاعدة الذهبية -->
+  <div class="card why">
+    <h2>🔑 القاعدة اللي تمنع القفل</h2>
+    الدخول صار يقرأ من <code>db.staff</code>، و<code>staff</code> على الإنتاج فاضي. <b>لا تبدّل الدخول قبل ما تتعبّى staff.</b> فالترتيب إجباري: طبّق schema → اجعل الدخول يقرأ <code>staff</code> <b>مع fallback لـ user</b> (بلا قفل أثناء الانتقال) → عبّي staff بالترحيل → تحقق → دوّر المفتاح → شِل الـ fallback.
+  </div>
+
+  <!-- Phase 1 -->
+  <div class="card critical">
+    <h2><span class="phase">Phase 1</span> — جهّز الطاقم (كود ناقص لازم يُبنى)</h2>
+    <ul class="chk" data-key="p1">
+      <li><input type="checkbox" id="a1" checked><label for="a1"><b>ترحيل bulk</b> <code>users</code>→<code>staff</code> يحفظ <code>_id</code> — <b style="color:var(--green)">✅ بُني</b> (نسخ لا نقل، idempotent): <code>migrate-admins-to-staff.ts</code> + كرت في <code>/database</code>.</label></li>
+      <li><input type="checkbox" id="a2" checked><label for="a2"><b>fallback مؤقت في الدخول</b> <code>db.staff ?? db.user</code> — <b style="color:var(--green)">✅ أُضيف</b> في <code>proxy.ts</code> · <code>admin-guard.ts</code> · <code>auth.config.ts</code>.</label></li>
+      <li><input type="checkbox" id="a3" checked><label for="a3">بقية ملفات <code>db.staff</code> — <b style="color:var(--green)">✅ آمنة</b>: <code>log-action</code> يكتب scalar داخل try/catch · forgot/reset ينحدران بلطف · لا قفل ولا كسر deploy.</label></li>
+    </ul>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="card">
+    <h2><span class="phase">Phase 2</span> — بوابات الجودة</h2>
+    <ul class="chk" data-key="p2">
+      <li><input type="checkbox" id="b1" checked><label for="b1"><code>tsc</code> على <b>admin</b> = <b style="color:var(--green)">✅ صفر</b> (بعد Phase 1 + النافبار).</label></li>
+      <li><input type="checkbox" id="b2" checked><label for="b2"><code>tsc</code> على <b>modonty</b> + <b>console</b> = <b style="color:var(--green)">✅ صفر</b>.</label></li>
+      <li><input type="checkbox" id="b3" checked><label for="b3"><code>build</code> admin + modonty + console = <b style="color:var(--green)">✅ نجحت الثلاثة</b> (Prisma client مولّد بـ Staff).</label></li>
+    </ul>
+  </div>
+
+  <!-- Phase 3 -->
+  <div class="card">
+    <h2><span class="phase">Phase 3</span> — نسخة احتياطية + إصدار + دفع</h2>
+    <ul class="chk" data-key="p3">
+      <li><input type="checkbox" id="c1" checked><label for="c1"><code>backup.sh</code> — <b style="color:var(--green)">✅ تمت</b> (dev · ٩٠ collection · 17M). أمان الإنتاج = نسخ Flex اليومية + نسخ-لا-نقل.</label></li>
+      <li><input type="checkbox" id="c2" checked><label for="c2">الإصدار — <b style="color:var(--green)">✅ رُفع</b>: admin <code>0.93.0</code> · modonty <code>1.76.0</code> · console <code>0.21.0</code>. (changelog يُسجّل بعد النشر.)</label></li>
+      <li><input type="checkbox" id="c3"><label for="c3"><b style="color:var(--amber)">⏸️ وقفة:</b> commit + <b>إذن دفع صريح من خالد</b> + <code>git push</code>.</label></li>
+    </ul>
+  </div>
+
+  <!-- Phase 4 -->
+  <div class="card critical">
+    <h2><span class="phase">Phase 4</span> — تطبيق الطاقم على الإنتاج (بالترتيب)</h2>
+    <ul class="chk" data-key="p4">
+      <li><input type="checkbox" id="d1"><label for="d1">طبّق schema على DB الإنتاج → تُخلق <code>staff</code> (فاضية). الدخول لسه شغّال عبر fallback.</label></li>
+      <li><input type="checkbox" id="d2"><label for="d2"><b>شغّل الترحيل (نسخ لا نقل)</b> → الثمانية يُنسخون لـ <code>staff</code> بنفس <code>_id</code>. <b style="color:var(--amber)">لا تحذفهم من <code>users</code>.</b></label></li>
+      <li><input type="checkbox" id="d3"><label for="d3">تحقق: دخول أدمن حقيقي من <code>staff</code> + الأدوار + إشعارات <code>staffId</code> + السجلات.</label></li>
+      <li><input type="checkbox" id="d4"><label for="d4">دوّر <code>AUTH_SECRET</code> على Vercel.</label></li>
+      <li><input type="checkbox" id="d5"><label for="d5"><b>بعد التأكد من الدخول من staff فقط:</b> احذف نسخ <code>users</code> القديمة + شِل الـ fallback (دفعة تالية).</label></li>
+    </ul>
+  </div>
+
+  <!-- Phase 5 -->
+  <div class="card">
+    <h2><span class="phase">Phase 5</span> — بعد النشر (تحقق شامل)</h2>
+    <ul class="chk" data-key="p5">
+      <li><input type="checkbox" id="e1"><label for="e1">دخول الأدمن يعمل على الإنتاج (عبر staff).</label></li>
+      <li><input type="checkbox" id="e2"><label for="e2"><code>/client-galleries</code> + <code>/media/maintenance</code> يفتحان بلا خطأ.</label></li>
+      <li><input type="checkbox" id="e3"><label for="e3">تست حي (PROD): زر «حوّل لـ WebP» + المعرض (إضافة/حذف صورة).</label></li>
+      <li><input type="checkbox" id="e4"><label for="e4">متغيرات Vercel سليمة — <code>DATABASE_URL</code> يبقى prod.</label></li>
+      <li><input type="checkbox" id="e5"><label for="e5"><code>ignoreCommand</code>: التطبيقات غير المتأثرة <code>CANCELED</code>.</label></li>
+    </ul>
+  </div>
+
+  <div class="sub" style="margin-top:18px">يُحفظ تلقائياً في المتصفح · التصفير من الزر أعلى الصفحة.</div>
+</div>
+
+<script>
+  const boxes = () => Array.from(document.querySelectorAll('input[type=checkbox]'));
+  const KEY = 'modonty-prepush-v4';
+  function save() {
+    const state = {}; boxes().forEach(b => state[b.id] = b.checked);
+    localStorage.setItem(KEY, JSON.stringify(state)); render();
+  }
+  function load() {
+    const s = JSON.parse(localStorage.getItem(KEY) || '{}');
+    boxes().forEach(b => { if (s[b.id]) b.checked = true; });
+  }
+  function render() {
+    const all = boxes(), done = all.filter(b => b.checked).length;
+    document.getElementById('fill').style.width = (all.length ? done/all.length*100 : 0) + '%';
+    document.getElementById('pct').textContent = done + ' من ' + all.length;
+  }
+  function resetAll() { localStorage.removeItem(KEY); boxes().forEach(b => b.checked = false); render(); }
+  boxes().forEach(b => b.addEventListener('change', save));
+  load(); render();
+</script>

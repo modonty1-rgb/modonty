@@ -50,6 +50,19 @@ export async function canDeleteMedia(id: string, clientId?: string) {
       };
     }
 
+    // Client-owned GALLERY / CLIENT_MINI images are live on the client's page (gallery
+    // ImageObject[] · sidebar slider · article client card) and consumed by clientId+type
+    // with NO back-relation — deleting one leaves a hole with no warning. Block it. Same
+    // data-loss class as the article-gallery guard above.
+    const CLIENT_LIVE_TYPES = new Set<string>(["GALLERY", "CLIENT_MINI"]);
+    if (usage.ownerClientId && CLIENT_LIVE_TYPES.has(usage.mediaType as string)) {
+      return {
+        canDelete: false,
+        reason:
+          "This image belongs to a client's gallery/card and is live on their page. Remove it from the client in the console first.",
+      };
+    }
+
     return { canDelete: true, usage };
   } catch (error) {
     return { canDelete: false, reason: "Failed to check media usage" };

@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SEO Images — Mockup v1</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --border:#e5e7eb; --muted:#6b7280;
+    --fg:#111827; --primary:#4f46e5;
+    --green-bg:rgba(16,185,129,.15); --green:#059669; --green-bd:rgba(16,185,129,.25);
+    --amber-bg:rgba(245,158,11,.15); --amber:#d97706; --amber-bd:rgba(245,158,11,.25);
+    --red-bg:rgba(239,68,68,.15); --red:#dc2626; --red-bd:rgba(239,68,68,.25);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font-family:"Tajawal","Segoe UI",system-ui,sans-serif;padding:28px 16px}
+  .wrap{max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:34px}
+  .intro{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px}
+  .intro h1{margin:0 0 6px;font-size:18px}
+  .intro p{margin:0;color:var(--muted);font-size:13px;line-height:1.7}
+
+  .screen{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .route{display:flex;align-items:center;gap:8px;padding:10px 16px;background:#0f172a;color:#e2e8f0;font-size:12px}
+  .route .dot{width:8px;height:8px;border-radius:99px;background:#22c55e}
+  .route code{font-family:ui-monospace,Menlo,monospace;color:#93c5fd;direction:ltr}
+  .route .arrow{margin-inline-start:auto;color:#64748b;font-size:11px}
+  .body{padding:16px}
+
+  .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .search{position:relative;max-width:280px;width:100%}
+  .search input{width:100%;height:32px;border:1px solid var(--border);border-radius:8px;
+    padding:0 30px 0 10px;font-size:12px;font-family:inherit;background:#fff}
+  .search svg{position:absolute;inset-inline-start:9px;top:9px;width:14px;height:14px;color:var(--muted)}
+  .count{font-size:12px;color:var(--muted);white-space:nowrap}
+
+  table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  th{font-size:11px;color:var(--muted);text-align:start;padding:8px 12px;font-weight:600;background:#fafafa;
+    border-bottom:1px solid var(--border);white-space:nowrap}
+  th .s{display:inline-flex;align-items:center;gap:4px}
+  td{font-size:12px;padding:9px 12px;border-bottom:1px solid var(--border)}
+  tr:last-child td{border-bottom:0}
+  tbody tr:nth-child(odd){background:rgba(0,0,0,.02)}
+  tbody tr.click{cursor:pointer}
+  tbody tr.click:hover{background:rgba(79,70,229,.05)}
+  .end{text-align:end}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;border-radius:99px;border:1px solid;
+    font-weight:800;font-size:11px;padding:2px 8px;line-height:1;white-space:nowrap}
+  .badge svg{width:12px;height:12px}
+  .b-green{background:var(--green-bg);color:var(--green);border-color:var(--green-bd)}
+  .b-amber{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-bd)}
+  .b-red{background:var(--red-bg);color:var(--red);border-color:var(--red-bd)}
+
+  .name{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+  .name svg{width:14px;height:14px;color:var(--muted);flex:none}
+  .name.mod svg{color:var(--primary)}
+  .type{font-size:10px;font-weight:700;text-transform:uppercase;background:#f1f1f4;color:var(--muted);
+    border-radius:5px;padding:2px 6px}
+  .warn{color:var(--amber)}
+  .ok{color:var(--muted)}
+  .truncate{max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+
+  .btn{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;font-size:12px;
+    font-family:inherit;border:1px solid var(--border);background:#fff;border-radius:8px;cursor:pointer;color:var(--fg)}
+  .btn svg{width:14px;height:14px}
+  .btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+  .pager{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:12px;color:var(--muted)}
+  .pager .grp{display:flex;gap:8px}
+
+  .subhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .subhead .who{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+
+  .note{font-size:12px;color:var(--muted);background:#fffbeb;border:1px solid var(--amber-bd);
+    border-radius:8px;padding:8px 12px;margin-top:10px}
+
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media(max-width:640px){.grid{grid-template-columns:repeat(2,1fr)}}
+  .imgcard{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;cursor:pointer;transition:box-shadow .15s}
+  .imgcard:hover{box-shadow:0 0 0 2px rgba(79,70,229,.4)}
+  .thumb{aspect-ratio:16/9;width:100%}
+  .imgmeta{display:flex;align-items:center;justify-content:space-between;padding:8px 10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="intro">
+    <h1>SEO Images — تصميم راوتين</h1>
+    <p>راوتان منفصلان (تنقّل حقيقي، لا غوص على نفس الصفحة): الرئيسي جدول عملاء، والضغط على العميل ينقل لصفحة صوره.
+    الصور تُعرض كجدول مختصر بلا معاينة كاملة — الكاتب يركّز على النص البديل والنتيجة.</p>
+  </div>
+
+  <!-- ============ SCREEN 1 ============ -->
+  <div class="screen">
+    <div class="route"><span class="dot"></span> الراوت الرئيسي <code>/seo-images</code><span class="arrow">جدول العملاء</span></div>
+    <div class="body">
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input placeholder="ابحث باسم العميل…" />
+        </div>
+        <span class="count">27 عميل</span>
+      </div>
+
+      <table>
+        <thead><tr>
+          <th><span class="s">SEO ↕</span></th>
+          <th><span class="s">العميل</span></th>
+          <th><span class="s">الصور ↕</span></th>
+          <th>الحالة</th>
+          <th></th>
+        </tr></thead>
+        <tbody>
+          <tr class="click">
+            <td><span class="badge b-red">G 34%</span></td>
+            <td><span class="name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14"/></svg>عيادة دار التعافي</span></td>
+            <td class="ok">5</td>
+            <td><span class="warn">3 بلا نص بديل</span></td>
+            <td class="end"><button class="btn">عرض الصور ←</button></td>
+          </tr>
+          <tr class="click">
+            <td><span class="badge b-amber">G 68%</span></td>
+            <td><span class="name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14"/></svg>مكتب جبر للمحاماة</span></td>
+            <td class="ok">3</td>
+            <td><span class="warn">1 بلا نص بديل</span></td>
+            <td class="end"><button class="btn">عرض الصور ←</button></td>
+          </tr>
+          <tr class="click">
+            <td><span class="badge b-green">G 96%</span></td>
+            <td><span class="name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14"/></svg>كيمازون</span></td>
+            <td class="ok">4</td>
+            <td class="ok">مكتملة</td>
+            <td class="end"><button class="btn">عرض الصور ←</button></td>
+          </tr>
+          <tr class="click" style="background:rgba(79,70,229,.04)">
+            <td><span class="badge b-amber">G 71%</span></td>
+            <td><span class="name mod"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>صور مدوّنتي — مقالات وعامة</span></td>
+            <td class="ok">42</td>
+            <td><span class="warn">9 بلا نص بديل</span></td>
+            <td class="end"><button class="btn">عرض الصور ←</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pager">
+        <span>صفحة 1 من 2</span>
+        <div class="grp"><button class="btn">→ السابق</button><button class="btn">التالي ←</button></div>
+      </div>
+      <div class="note">«صور مدوّنتي» صف مميّز آخر القائمة — يجمع صور المقالات والصور العامة اللي ما تخص عميلًا.</div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 2 ============ -->
+  <div class="screen">
+    <div class="route"><span class="dot"></span> راوت صور العميل <code>/seo-images/[clientId]</code><span class="arrow">بعد الضغط</span></div>
+    <div class="body">
+      <div class="subhead">
+        <button class="btn">→ كل العملاء</button>
+        <div class="who">عيادة دار التعافي <span class="badge b-red">G 34%</span></div>
+      </div>
+
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input placeholder="ابحث بالنوع أو النص البديل…" />
+        </div>
+        <span class="count">5 صور</span>
+      </div>
+
+      <div class="grid">
+        <div class="imgcard">
+          <div class="thumb" style="background:linear-gradient(135deg,#c7d2fe,#e0e7ff)"></div>
+          <div class="imgmeta"><span class="type">LOGO</span><span class="badge b-red">G 20%</span></div>
+        </div>
+        <div class="imgcard">
+          <div class="thumb" style="background:linear-gradient(135deg,#bbf7d0,#dcfce7)"></div>
+          <div class="imgmeta"><span class="type">HERO</span><span class="badge b-red">G 30%</span></div>
+        </div>
+        <div class="imgcard">
+          <div class="thumb" style="background:linear-gradient(135deg,#fde68a,#fef3c7)"></div>
+          <div class="imgmeta"><span class="type">GALLERY</span><span class="badge b-amber">G 60%</span></div>
+        </div>
+        <div class="imgcard">
+          <div class="thumb" style="background:linear-gradient(135deg,#a5f3fc,#cffafe)"></div>
+          <div class="imgmeta"><span class="type">GALLERY</span><span class="badge b-green">G 92%</span></div>
+        </div>
+      </div>
+
+      <div class="pager">
+        <span>صفحة 1 من 1</span>
+        <div class="grp"><button class="btn">→ السابق</button><button class="btn">التالي ←</button></div>
+      </div>
+      <div class="note">grid الصور بمعاينة — لكن بس صور هذا العميل. الضغط على أي صورة يفتح نافذة النص البديل + الوصف (كما هي الآن).</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { ClientCtaMode, ConversionType, CTAType, UserRole } from "@prisma/client";
+import { ClientCtaMode, ConversionType, CTAType } from "@prisma/client";
 import { bookingSchema, type BookingFormData } from "../helpers/schemas/booking-schema";
 import { notifyTelegram } from "@/lib/telegram/notify";
 import { createConversion } from "@/lib/conversion-tracking";
@@ -257,17 +257,14 @@ export async function submitBookingRequest(
     return fail("db_write_failed", "تعذّر حفظ طلب الحجز، حاول مرة ثانية.");
   }
 
-  // 6. Internal notification → client owner (fallback to an admin)
+  // 6. Internal notification → a staff admin (bell icon). Staff live in their own
+  //    table now, so the recipient is a staffId (not a users row).
   try {
-    let recipientUserId = client.userId;
-    if (!recipientUserId) {
-      const admin = await db.user.findFirst({ where: { role: UserRole.ADMIN }, select: { id: true } });
-      recipientUserId = admin?.id ?? null;
-    }
-    if (recipientUserId) {
+    const admin = await db.staff.findFirst({ where: { role: "ADMIN" }, select: { id: true } });
+    if (admin?.id) {
       await db.notification.create({
         data: {
-          userId: recipientUserId,
+          staffId: admin.id,
           clientId: client.id,
           type: "booking_request",
           title: "طلب حجز جديد",
@@ -286,8 +283,8 @@ export async function submitBookingRequest(
   try {
     let recipientEmail = client.user?.email ?? null;
     if (!recipientEmail) {
-      const admin = await db.user.findFirst({
-        where: { role: UserRole.ADMIN, email: { not: null } },
+      const admin = await db.staff.findFirst({
+        where: { role: "ADMIN", email: { not: null } },
         select: { email: true },
       });
       recipientEmail = admin?.email ?? null;

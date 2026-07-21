@@ -1,11 +1,14 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { db } from "@/lib/db";
+import { checkAdmin } from "@/lib/admin-guard";
 import { getClients, getClientsStats, ClientFilters } from "./actions/clients-actions";
 import { ClientsHeaderWrapper } from "./components/clients-header-wrapper";
 import { ClientsTabs } from "./components/clients-tabs";
+import { RegenerateAllSeoButton } from "./components/regenerate-all-seo-button";
 import {
   getJbrseoSubscribers,
   getJbrseoSubscriberStats,
@@ -27,6 +30,12 @@ function TableSkeleton() {
 }
 
 async function ClientsContent({ filters }: { filters: ClientFilters }) {
+  // Authoritative gate BEFORE any data fetch — the proxy is optimistic (trusts the
+  // JWT role), so a demoted admin holding a still-valid ADMIN token would slip past
+  // it. This fresh DB read stops the fetch, so no client data is ever streamed.
+  const gate = await checkAdmin();
+  if (gate.status !== "ok") redirect("/login");
+
   const [clients, stats, signupsRows, signupStats, tiers, defaults, allClientEmails, expiringThisMonth] = await Promise.all([
     getClients(filters),
     getClientsStats(),
@@ -53,6 +62,9 @@ async function ClientsContent({ filters }: { filters: ClientFilters }) {
 
   return (
     <ClientsHeaderWrapper clientCount={clients.length} stats={stats} expiringThisMonth={expiringThisMonth}>
+      <div className="mb-3 flex justify-end">
+        <RegenerateAllSeoButton clients={clients} />
+      </div>
       <ClientsTabs
         clientsCount={clients.length}
         signupsCount={signupStats.total}

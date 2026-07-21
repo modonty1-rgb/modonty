@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ImageIcon, Camera, ExternalLink, Monitor, Pencil, ChevronLeft } from "lucide-react";
-import { GoogleIcon } from "@/components/admin/icons/google-icon";
+import { ImageIcon, Camera, ExternalLink, Monitor, Pencil } from "lucide-react";
+import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { DeleteClientButton } from "./delete-client-button";
 import { ClientLogoModal } from "../../components/client-logo-modal";
 import { ClientHeroModal } from "../../components/client-hero-modal";
@@ -135,31 +135,7 @@ export function ClientHeader({ client, publicBaseUrl, seoScore }: ClientHeaderPr
         <div className="flex items-center gap-2 flex-wrap pb-0.5">
           {seoScore !== undefined && (
             // The SEO score opens the full guide (/technical): where the fault is and how to fix it.
-            <Link
-              href={`/clients/${client.id}/technical`}
-              title="افتح دليل السيو — وين الخلل وكيف تصلحه"
-              className="group flex items-center gap-2 px-3 py-1.5 rounded-md border bg-muted/30 min-w-[150px] hover:bg-muted/60 hover:border-primary/40 transition-colors"
-            >
-              <GoogleIcon className="h-4 w-4 shrink-0" />
-              <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
-                <div
-                  className={cn(
-                    "h-full rounded-full transition-all",
-                    seoScore >= 80 ? "bg-green-500" : seoScore >= 60 ? "bg-amber-500" : "bg-red-400",
-                  )}
-                  style={{ width: `${seoScore}%` }}
-                />
-              </div>
-              <span
-                className={cn(
-                  "text-xs font-semibold tabular-nums",
-                  seoScore >= 80 ? "text-green-500" : seoScore >= 60 ? "text-amber-500" : "text-red-400",
-                )}
-              >
-                {seoScore}%
-              </span>
-              <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0 group-hover:text-primary transition-colors" />
-            </Link>
+            <SeoScoreBadge score={seoScore} size="md" href={`/clients/${client.id}/technical`} />
           )}
           {client.url && (
             <Button variant="outline" size="sm" asChild>

@@ -1,11 +1,7 @@
 import { getMedia, getClients, getMediaStats, type MediaFilters } from "./actions/media-actions";
-import { db } from "@/lib/db";
-import { MEDIA_UNUSED_WHERE } from "@/lib/media/usage-where";
 import { MediaFilters as MediaFiltersComponent } from "./components/media-filters";
 import { MediaPageClient } from "./components/media-page-client";
 import { MediaStats } from "./components/media-stats";
-import { UnusedMediaButton } from "./components/unused-media-button";
-import { FixBrokenMediaButton } from "./components/fix-broken-media-button";
 
 export default async function MediaPage({
   searchParams,
@@ -36,26 +32,10 @@ export default async function MediaPage({
     page: params.page ? parseInt(params.page, 10) : 1,
   };
 
-  const [mediaResult, clients, stats, unusedItems] = await Promise.all([
+  const [mediaResult, clients, stats] = await Promise.all([
     getMedia(filters),
     getClients(),
     getMediaStats(),
-    db.media.findMany({
-      where: {
-        AND: [{ scope: { not: "PLATFORM" } }, MEDIA_UNUSED_WHERE],
-      },
-      orderBy: { createdAt: "desc" },
-      take: 100,
-      select: {
-        id: true,
-        filename: true,
-        url: true,
-        mimeType: true,
-        fileSize: true,
-        createdAt: true,
-        type: true,
-      },
-    }),
   ]);
 
   const transformedMedia = mediaResult.items.map((m) => ({
@@ -75,12 +55,9 @@ export default async function MediaPage({
           <MediaStats stats={stats} />
         </div>
         <div className="flex items-center gap-2">
-          <FixBrokenMediaButton />
           <MediaFiltersComponent clients={clients} defaultClientId={params.clientId} />
         </div>
       </div>
-
-      <UnusedMediaButton items={unusedItems} />
 
       <MediaPageClient
         media={transformedMedia}

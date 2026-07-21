@@ -64,8 +64,9 @@ function normalizeMediaTypeCounts(
   );
 }
 
-// Match /media list default scope filter — exclude PLATFORM-scoped media so stats reflect the visible universe
-const SCOPE_FILTER = { scope: { not: "PLATFORM" } } as const;
+// Match /media list default filter — exclude PLATFORM scope AND GALLERY images (client
+// galleries live in their own /client-galleries route now, not the general library).
+const SCOPE_FILTER = { scope: { not: "PLATFORM" }, type: { not: "GALLERY" } } as const;
 
 export async function getMediaStats() {
   try {

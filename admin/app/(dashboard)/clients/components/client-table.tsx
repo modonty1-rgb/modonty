@@ -21,6 +21,7 @@ import { SubscriptionStatus } from "@prisma/client";
 import { calculateDeliveryRate } from "../helpers/business-metrics";
 import type { ClientForList } from "../actions/clients-actions/types";
 import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
+import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
 import { ClientAvatar } from "./client-avatar";
 
@@ -478,18 +479,7 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
                     </TableCell>
                     <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                       {seoScore ? (
-                        <span
-                          className={cn(
-                            "inline-flex items-center justify-center min-w-[3rem] px-2 py-0.5 rounded-md text-sm font-bold tabular-nums",
-                            seoScore >= 80
-                              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
-                              : seoScore >= 50
-                                ? "bg-amber-500/15 text-amber-600 dark:text-amber-500"
-                                : "bg-red-500/15 text-red-600 dark:text-red-400",
-                          )}
-                        >
-                          {seoScore}%
-                        </span>
+                        <SeoScoreBadge score={seoScore} size="sm" href={`/clients/${client.id}/seo-technical`} />
                       ) : (
                         <Button variant="outline" size="sm" asChild>
                           <Link href={`/clients/${client.id}/seo`}>Setup SEO</Link>

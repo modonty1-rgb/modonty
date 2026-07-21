@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Media Maintenance — mockup v1</title>
+<style>
+  :root{
+    --bg:#f8fafc; --card:#ffffff; --line:#e5e7eb; --fg:#0f172a; --muted:#64748b;
+    --primary:#2563eb; --primary-fg:#ffffff;
+    --amber-bg:#fffbeb; --amber-line:#fcd34d; --amber-fg:#b45309; --amber-ico:#f59e0b;
+    --red:#dc2626; --green:#16a34a; --green-bg:#f0fdf4; --green-line:#bbf7d0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#060a14; --card:#0f172a; --line:#1e293b; --fg:#e2e8f0; --muted:#94a3b8;
+      --amber-bg:rgba(245,158,11,.08); --amber-line:rgba(245,158,11,.4); --amber-fg:#fbbf24;
+      --green-bg:rgba(22,163,74,.08); --green-line:rgba(22,163,74,.4); }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font-family:"Tajawal","Segoe UI",system-ui,sans-serif;padding:24px 16px;line-height:1.5}
+  .wrap{max-width:1000px;margin:0 auto}
+  .note{font-size:12px;color:var(--muted);margin:0 0 20px}
+  .note b{color:var(--fg)}
+
+  /* header */
+  .head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:8px}
+  h1{font-size:20px;margin:0}
+  .sub{font-size:12.5px;color:var(--muted);margin:2px 0 0}
+  .back{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);
+    border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--card);text-decoration:none}
+
+  /* summary chips */
+  .chips{display:flex;gap:10px;margin:18px 0 22px;flex-wrap:wrap}
+  .chip{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);
+    border-radius:10px;padding:8px 14px}
+  .chip .n{font-size:18px;font-weight:800}
+  .chip .l{font-size:11.5px;color:var(--muted)}
+  .chip.warn .n{color:var(--amber-fg)}
+
+  .grid{display:grid;grid-template-columns:1fr;gap:16px}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .card .top{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px}
+  .tl{display:flex;align-items:center;gap:12px;min-width:0}
+  .ico{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:19px;flex:none}
+  .ico.amber{background:var(--amber-bg);color:var(--amber-ico)}
+  .ico.blue{background:rgba(37,99,235,.1);color:var(--primary)}
+  .ico.green{background:var(--green-bg);color:var(--green)}
+  .t-title{font-size:14.5px;font-weight:700;margin:0}
+  .t-desc{font-size:12px;color:var(--muted);margin:3px 0 0;max-width:52ch}
+  .count{font-size:14.5px;font-weight:800;color:var(--amber-fg)}
+
+  .btn{display:inline-flex;align-items:center;gap:7px;border-radius:9px;padding:8px 15px;font-size:12.5px;
+    font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer;text-decoration:none;white-space:nowrap}
+  .btn.primary{background:var(--primary);color:var(--primary-fg);border-color:var(--primary)}
+  .btn.amber{background:var(--amber-fg);color:#fff;border-color:var(--amber-fg)}
+
+  /* amber accent strip for the unused card */
+  .card.warn{border-color:var(--amber-line)}
+  .card.warn .top{background:var(--amber-bg)}
+
+  /* inline review list (what the dialog shows) */
+  .list{border-top:1px solid var(--line)}
+  .row{display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:0}
+  .thumb{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,#e2e8f0,#cbd5e1);flex:none}
+  @media (prefers-color-scheme: dark){.thumb{background:linear-gradient(135deg,#1e293b,#334155)}}
+  .rname{font-size:12.5px;font-weight:600;margin:0}
+  .rmeta{font-size:11px;color:var(--muted);margin:2px 0 0}
+  .ract{display:flex;gap:6px;margin-inline-start:auto}
+  .mini{font-size:11px;padding:5px 9px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;display:inline-flex;gap:4px;align-items:center}
+  .mini.del{color:var(--red);border-color:transparent}
+  .more{padding:10px 18px;font-size:11.5px;color:var(--muted);background:var(--bg)}
+
+  /* result line for the scan */
+  .result{border-top:1px solid var(--line);padding:11px 18px;font-size:11.5px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
+  .result b{color:var(--fg)}
+  .result .k{color:var(--green);font-weight:700}
+
+  /* empty state */
+  .empty{display:flex;align-items:center;gap:10px;padding:16px 18px;background:var(--green-bg);border:1px solid var(--green-line);border-radius:12px;font-size:12.5px;color:var(--green);font-weight:600}
+
+  .section-label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin:26px 0 8px;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="note">موكب صفحة <b>Media → Maintenance</b> · مسار أدمن (وضوح + هرمية) · الأداتان منقولتان من الصفحة الرئيسية. الأرقام توضيحية.</p>
+
+  <!-- header -->
+  <div class="head">
+    <div>
+      <h1>Media Maintenance</h1>
+      <p class="sub">أدوات صيانة مكتبة الوسائط — تبقى المكتبة نظيفة وكل صورة شغّالة.</p>
+    </div>
+    <a class="back" href="#">→ Media Library</a>
+  </div>
+
+  <!-- summary chips: the numbers the page answers -->
+  <div class="chips">
+    <div class="chip warn"><span class="n">100</span><span class="l">ملف غير مستخدم</span></div>
+    <div class="chip"><span class="n">—</span><span class="l">صور مكسورة (شغّل الفحص)</span></div>
+  </div>
+
+  <div class="grid">
+
+    <!-- TOOL 1 — Unused files (dominant, amber) -->
+    <div class="card warn">
+      <div class="top">
+        <div class="tl">
+          <div class="ico amber">⚠️</div>
+          <div>
+            <p class="t-title"><span class="count">100</span> ملف غير مستخدم — غير مربوط بأي مقال أو عميل</p>
+            <p class="t-desc">راجع وقرّر لكل ملف: احتفظ · أعِد ربطه بتعديله · أو احذفه (يُحذف من Cloudinary وقاعدة البيانات).</p>
+          </div>
+        </div>
+        <button class="btn amber">مراجعة الملفات ←</button>
+      </div>
+
+      <!-- what opens: the review list (currently a dialog; shown inline here for context) -->
+      <div class="list">
+        <div class="row">
+          <div class="thumb"></div>
+          <div><p class="rname">clinic-hero-old.webp</p><p class="rmeta">HERO · 84 KB · رُفع 12/06/2026</p></div>
+          <div class="ract"><button class="mini">↗ فتح</button><button class="mini del">🗑 حذف</button></div>
+        </div>
+        <div class="row">
+          <div class="thumb"></div>
+          <div><p class="rname">gallery-shot-3.jpg</p><p class="rmeta">GALLERY · 210 KB · رُفع 09/06/2026</p></div>
+          <div class="ract"><button class="mini">↗ فتح</button><button class="mini del">🗑 حذف</button></div>
+        </div>
+        <div class="row">
+          <div class="thumb"></div>
+          <div><p class="rname">temp-upload-x9.png</p><p class="rmeta">GENERAL · 41 KB · رُفع 08/06/2026</p></div>
+          <div class="ract"><button class="mini">↗ فتح</button><button class="mini del">🗑 حذف</button></div>
+        </div>
+      </div>
+      <div class="more">… و97 ملفاً آخر · القائمة تفتح كاملة عند الضغط على «مراجعة الملفات»</div>
+    </div>
+
+    <!-- TOOL 2 — Broken images scan (blue) -->
+    <div class="card">
+      <div class="top">
+        <div class="tl">
+          <div class="ico blue">🖼️</div>
+          <div>
+            <p class="t-title">فحص الصور المكسورة</p>
+            <p class="t-desc">يفحص كل ملف مقابل Cloudinary — أي صورة ملفها محذوف يُبدَّل رابطها لصورة المنصّة الافتراضية بدل صورة مكسورة على الموقع. المصمّم يرفع البديل لاحقاً.</p>
+          </div>
+        </div>
+        <button class="btn primary">🖼️ Run scan</button>
+      </div>
+      <div class="result">
+        آخر فحص: <span>مفحوص <b>1,240</b></span> · <span>مكسور <b>3</b></span> · <span class="k">مُصلَح 3</span> · <span>متجاوَز <b>0</b></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- empty-state variant of the unused card (when count = 0) -->
+  <p class="section-label">حالة نظيفة (صفر ملفات غير مستخدمة)</p>
+  <div class="empty">✓ لا توجد ملفات غير مستخدمة — المكتبة نظيفة.</div>
+
+</div>
+</body>
+</html>

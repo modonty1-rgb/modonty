@@ -81,19 +81,18 @@ export async function registerCampaignInterestAction(input: Input): Promise<Resu
     });
 
     // Bell-icon ping for the team (one-shot — not the source of truth).
-    const targetUserId =
-      client.userId ??
-      (
-        await db.user.findFirst({
-          where: { role: "ADMIN" },
-          select: { id: true },
-        })
-      )?.id;
+    // Staff live in their own table now → notify a staffId.
+    const targetStaffId = (
+      await db.staff.findFirst({
+        where: { role: "ADMIN" },
+        select: { id: true },
+      })
+    )?.id;
 
-    if (targetUserId) {
+    if (targetStaffId) {
       await db.notification.create({
         data: {
-          userId: targetUserId,
+          staffId: targetStaffId,
           clientId,
           type: NOTIFICATION_TYPE,
           title: `طلب اهتمام بالحملات — ${client.name}`,

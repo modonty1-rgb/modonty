@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>التقرير النهائي — الكود المشترك (dataLayer)</title>
+<style>
+  :root{--bg:#0b1020;--card:#141b33;--card2:#1b2440;--line:#2a3357;--txt:#e8edff;--mut:#9aa6c8;--ok:#27c093;--warn:#f6b73c;--bad:#ff6b6b;--accent:#7c8cff;--violet:#a779ff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:"Tajawal","Segoe UI",Tahoma,sans-serif;line-height:1.7;padding:30px 16px}
+  .wrap{max-width:1040px;margin:0 auto}
+  h1{font-size:23px;margin:0 0 2px}
+  .sub{color:var(--mut);margin:0 0 18px;font-size:13.5px}
+  h2{font-size:17px;margin:24px 0 9px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  code{background:#0d1430;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12px;color:#cfe0ff;direction:ltr;display:inline-block}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin:6px 0}
+  th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mut);font-size:11.5px;background:var(--card2)}
+  .pill{padding:1px 8px;border-radius:999px;font-size:10.5px;font-weight:700;white-space:nowrap;display:inline-block}
+  .ok{background:rgba(39,192,147,.16);color:var(--ok);border:1px solid rgba(39,192,147,.4)}
+  .no{background:rgba(255,107,107,.14);color:var(--bad);border:1px solid rgba(255,107,107,.4)}
+  .warn{background:rgba(246,183,60,.14);color:var(--warn);border:1px solid rgba(246,183,60,.4)}
+  .done{background:rgba(124,140,255,.16);color:var(--accent);border:1px solid rgba(124,140,255,.45)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0}
+  .gate{background:linear-gradient(135deg,#1a2348,#221a44);border:1px solid var(--violet)}
+  .ev{color:var(--mut);font-size:11px;direction:ltr}
+  b.g{color:var(--ok)} b.r{color:var(--bad)} b.y{color:var(--warn)}
+  .foot{color:var(--mut);font-size:11.5px;text-align:center;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>📋 التقرير النهائي — الكود المشترك عبر التطبيقات الثلاثة</h1>
+  <p class="sub">2026-06-26 · مسح قاطع لـ <b>1940 ملف</b> بالبصمة (md5) + تحليل استيرادات كل مرشّح · صفر تخمين.</p>
+
+  <div class="card gate">
+    <b>الخلاصة في سطر:</b> بعد فحص كامل — الكود <b class="g">الآمن للنقل الآن</b> = <code>telegram/client.ts</code> + <code>telegram/geo.ts</code> + <code>ymyl-config.ts</code> (3 ملفات، صفر استيرادات، متطابقة 100%). كل الباقي إمّا <b class="r">متشابك</b> بكود محلي، أو <b class="y">متباعد</b> بين التطبيقات، أو معيار shadcn، أو مولّد تلقائيًا، أو أحادي-التطبيق.
+  </div>
+
+  <h2>✅ منجز (نُقل + فُحص حيًّا)</h2>
+  <div class="card">
+    <table>
+      <tr><th>العنصر</th><th>الوجهة</th><th>الحالة</th></tr>
+      <tr><td><code>formatBytes</code></td><td><code>dataLayer/lib/utils/</code> (folder+index)</td><td><span class="pill done">منجز · tsc×3 + live</span></td></tr>
+      <tr><td><code>getGTMSettings</code></td><td><code>dataLayer/lib/gtm/</code></td><td><span class="pill done">منجز · tsc×3 + live</span></td></tr>
+    </table>
+  </div>
+
+  <h2>🔎 كل المرشّحين — الحكم النهائي</h2>
+  <div class="card">
+    <table>
+      <tr><th>العنصر</th><th>متطابق في</th><th>الاستيرادات / الفرق</th><th>الحكم</th><th>التوصية</th></tr>
+
+      <tr><td><code>telegram/client.ts</code></td><td>modonty + console</td><td><b class="g">صفر استيرادات</b></td><td><span class="pill ok">آمن</span></td><td>انقل لـ dataLayer</td></tr>
+      <tr><td><code>telegram/geo.ts</code></td><td>modonty + console</td><td><b class="g">صفر استيرادات</b></td><td><span class="pill ok">آمن</span></td><td>انقل لـ dataLayer</td></tr>
+      <tr><td><code>seo/ymyl-config.ts</code></td><td>admin + console</td><td><b class="g">صفر استيرادات</b> (config نقي)</td><td><span class="pill ok">آمن</span></td><td>انقل لـ dataLayer</td></tr>
+
+      <tr><td><code>settings-singleton.ts</code> (stub)</td><td>modonty + console</td><td><code>server-only</code> فقط · ثابت واحد</td><td><span class="pill warn">آمن بس تافه</span></td><td>اختياري (admin يختلف)</td></tr>
+
+      <tr><td><code>telegram/notify.ts</code></td><td>modonty + console</td><td><b class="r">يستورد <code>@/lib/db</code> محلي</b> + <code>./events</code></td><td><span class="pill no">متشابك</span></td><td>لا تنقل</td></tr>
+      <tr><td><code>telegram/events.ts</code></td><td>modonty + console</td><td><b class="r">مختلف 20 سطر</b> بين التطبيقين</td><td><span class="pill no">متباعد</span></td><td>يبقى per-app</td></tr>
+      <tr><td><code>auth/[...nextauth]/route.ts</code></td><td>modonty + admin</td><td><b class="r">يستورد <code>@/lib/auth</code> محلي</b></td><td><span class="pill no">متشابك + حسّاس</span></td><td>يبقى per-app</td></tr>
+      <tr><td><code>GTMContainer.tsx</code></td><td>admin + console</td><td>متطابق بينهما لكن <b class="y">modonty يختلف</b> (lazyOnload)</td><td><span class="pill warn">component</span></td><td>يبقى per-app</td></tr>
+
+      <tr><td>shadcn: <code>textarea·tabs·skeleton</code></td><td>متفرّق</td><td>مكوّنات UI</td><td><span class="pill warn">معيار shadcn</span></td><td>لا تنقل (نسخة لكل تطبيق)</td></tr>
+      <tr><td><code>next-env.d.ts</code></td><td>الثلاثة</td><td>مولّد بواسطة Next</td><td><span class="pill warn">تلقائي</span></td><td>لا تلمسه</td></tr>
+
+      <tr><td><code>formatDate</code></td><td>admin + console</td><td><b class="r">19 نسخة بصيغ مختلفة</b></td><td><span class="pill no">متباعد كثيف</span></td><td>مهمة منفصلة خطيرة</td></tr>
+      <tr><td><code>formatNumber</code></td><td>admin + console</td><td><b class="r">6 نسخ بصيغ مختلفة</b></td><td><span class="pill no">متباعد</span></td><td>مهمة منفصلة</td></tr>
+
+      <tr><td><code>slugify·formatRelativeTime·capitalize</code></td><td>تطبيق واحد</td><td>غير مكرّر</td><td><span class="pill warn">YAGNI</span></td><td>يبقى — انقل وقت الحاجة</td></tr>
+      <tr><td><code>cn</code></td><td>الثلاثة</td><td>~162 مستورد</td><td><span class="pill warn">معيار shadcn</span></td><td>لا تنقل</td></tr>
+    </table>
+  </div>
+
+  <h2>🎯 التوصية النهائية</h2>
+  <div class="card">
+    <p><b class="g">ادفع المنجز (formatBytes + getGTMSettings) أولًا</b> — مفحوص وجاهز.</p>
+    <p>إن أردت توسيع المشترك بعده، <b>دفعة آمنة وحدة</b>: <code>telegram/client.ts</code> + <code>telegram/geo.ts</code> + <code>ymyl-config.ts</code> (3 ملفات، صفر استيرادات، نقل + repoint + حذف، بلا توفيق). live test واحد يغطّيها.</p>
+    <p style="margin-bottom:0"><b class="r">لا تُلمس بدون مهمة مخصّصة:</b> telegram notify/events · auth · formatDate/formatNumber — كلها متشابكة أو متباعدة، توحيدها يكسر سلوكًا بصمت.</p>
+  </div>
+
+  <p class="foot">انتهى التقرير. القرار التالي لك: push المنجز · أو دفعة Telegram-client+geo+ymyl الآمنة · أو الوقوف هنا.</p>
+
+</div>
+</body>
+</html>

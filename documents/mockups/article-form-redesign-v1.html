@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Article Form Redesign v1 — Modonty Admin</title>
+<style>
+  :root {
+    --bg: #09090b;
+    --bg-card: #18181b;
+    --bg-input: #09090b;
+    --bg-hover: #27272a;
+    --border: #27272a;
+    --border-focus: #3b82f6;
+    --text: #fafafa;
+    --text-muted: #71717a;
+    --text-label: #a1a1aa;
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --destructive: #ef4444;
+    --amber: #f59e0b;
+    --green: #22c55e;
+    --sidebar-w: 260px;
+    --radius: 6px;
+    --radius-sm: 4px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', -apple-system, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    height: 48px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    background: var(--bg);
+    position: sticky; top: 0; z-index: 50;
+    flex-shrink: 0;
+  }
+  .topbar-start { display: flex; align-items: center; gap: 8px; }
+  .breadcrumb { display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 13px; }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--text); }
+  .breadcrumb .sep { font-size: 11px; }
+  .breadcrumb .current { color: var(--text); font-weight: 500; }
+  .topbar-end { display: flex; align-items: center; gap: 8px; }
+  .badge-beta { background: #27272a; color: var(--text-muted); font-size: 10px; padding: 2px 6px; border-radius: 9999px; border: 1px solid var(--border); }
+
+  /* ── MAIN LAYOUT ── */
+  .layout { display: flex; flex: 1; overflow: hidden; }
+  .nav-sidebar {
+    width: var(--sidebar-w);
+    border-left: 1px solid var(--border);
+    background: var(--bg);
+    overflow-y: auto;
+    flex-shrink: 0;
+    padding: 12px 0;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 16px;
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 0;
+    transition: background .1s, color .1s;
+  }
+  .nav-item:hover { background: var(--bg-hover); color: var(--text); }
+  .nav-item.active { background: rgba(59,130,246,0.1); color: var(--primary); font-weight: 500; }
+  .nav-item .icon { width: 15px; height: 15px; opacity: .7; flex-shrink: 0; }
+  .nav-group-label { padding: 10px 16px 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); }
+  .nav-badge { margin-right: auto; background: var(--destructive); color: #fff; font-size: 10px; padding: 0 5px; border-radius: 9999px; line-height: 16px; }
+
+  /* ── CONTENT AREA ── */
+  .content-area {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── STEP TABS ── */
+  .step-nav {
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    position: sticky; top: 48px; z-index: 40;
+    background: var(--bg);
+  }
+  .step-tab {
+    display: flex; align-items: center; gap: 6px;
+    padding: 12px 14px 11px;
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    transition: color .15s;
+  }
+  .step-tab:hover { color: var(--text); }
+  .step-tab.active { color: var(--text); border-bottom-color: var(--primary); }
+  .step-num {
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    font-size: 11px; font-weight: 600;
+    background: var(--bg-hover);
+    color: var(--text-muted);
+  }
+  .step-tab.active .step-num { background: var(--primary); color: #fff; }
+  .step-tab.done .step-num { background: rgba(34,197,94,.15); color: var(--green); }
+  .step-tab.warn .step-num { background: rgba(245,158,11,.15); color: var(--amber); }
+  .step-pct {
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 9999px;
+    background: var(--bg-hover);
+    color: var(--text-muted);
+  }
+  .step-tab.active .step-pct { background: rgba(59,130,246,.15); color: var(--primary); }
+
+  /* ── FORM BODY ── */
+  .form-body {
+    padding: 24px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 20px;
+    align-items: start;
+    max-width: 1100px;
+  }
+
+  /* ── MAIN PANEL ── */
+  .main-panel { display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── SIDEBAR PANEL ── */
+  .side-panel {
+    display: flex; flex-direction: column; gap: 12px;
+    position: sticky; top: calc(48px + 45px + 24px);
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .card-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .card-header {
+    padding: 12px 16px 0;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: var(--text-muted);
+  }
+
+  /* ── FORM FIELDS ── */
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field-label {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 13px; font-weight: 500; color: var(--text-label);
+  }
+  .field-label .required { color: var(--destructive); margin-right: 2px; }
+  .field-label .counter { font-size: 11px; font-weight: 400; color: var(--text-muted); }
+  .field-hint { font-size: 11px; color: var(--text-muted); }
+  .field-url {
+    font-size: 11px; font-family: monospace;
+    color: var(--text-muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .field-url .url-slug { color: var(--text); }
+
+  input[type="text"],
+  textarea,
+  select {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 13px;
+    padding: 8px 10px;
+    width: 100%;
+    outline: none;
+    transition: border-color .15s;
+    font-family: inherit;
+    resize: none;
+  }
+  input[type="text"]:focus,
+  textarea:focus,
+  select:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 2px rgba(59,130,246,.15);
+  }
+  input.title-input {
+    font-size: 15px; font-weight: 500;
+    padding: 10px 12px;
+    height: 44px;
+  }
+  input.slug-input { font-family: monospace; font-size: 12px; direction: ltr; text-align: left; }
+  textarea { height: 80px; line-height: 1.6; }
+  select { height: 36px; cursor: pointer; }
+
+  /* slug lock state */
+  .slug-locked input { background: var(--bg-hover); color: var(--text-muted); cursor: not-allowed; }
+  .lock-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10px; color: var(--amber);
+    background: rgba(245,158,11,.1);
+    border: 1px solid rgba(245,158,11,.2);
+    padding: 1px 6px; border-radius: 9999px;
+  }
+
+  /* ── TAGS ── */
+  .tags-input {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 8px 10px; min-height: 38px;
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    cursor: text;
+  }
+  .tag-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(59,130,246,.15);
+    color: var(--primary);
+    border-radius: 9999px;
+    font-size: 11px; padding: 2px 8px;
+  }
+  .tag-chip .remove { cursor: pointer; opacity: .7; }
+  .tags-placeholder { color: var(--text-muted); font-size: 12px; }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--border); }
+
+  /* ── CHECKBOX ── */
+  .check-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .check-row:hover { border-color: #3f3f46; background: var(--bg-hover); }
+  .check-row.checked { border-color: rgba(59,130,246,.4); background: rgba(59,130,246,.05); }
+  .checkbox {
+    width: 16px; height: 16px; border-radius: 3px;
+    border: 1.5px solid var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .check-row.checked .checkbox { background: var(--primary); border-color: var(--primary); }
+  .check-content .check-title { font-size: 13px; font-weight: 500; }
+  .check-content .check-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+
+  /* ── LOGO PREVIEW ── */
+  .logo-preview {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px;
+    background: var(--bg-hover);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    margin-top: 4px;
+  }
+  .logo-img {
+    width: 32px; height: 32px; border-radius: 4px;
+    background: #3f3f46; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: var(--text-muted); flex-shrink: 0;
+  }
+  .logo-name { font-size: 12px; font-weight: 500; }
+  .logo-slug { font-size: 10px; color: var(--text-muted); font-family: monospace; }
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
+    border-top: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg);
+    position: sticky; bottom: 0; z-index: 40;
+    flex-shrink: 0;
+  }
+  .bottom-stats { display: flex; align-items: center; gap: 12px; }
+  .stat { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-muted); }
+  .stat-icon { width: 13px; height: 13px; opacity: .6; }
+  .seo-badge {
+    display: flex; align-items: center; gap: 5px;
+    padding: 3px 8px; border-radius: 9999px;
+    font-size: 11px; font-weight: 600;
+  }
+  .seo-low { background: rgba(239,68,68,.15); color: var(--destructive); }
+  .seo-mid { background: rgba(245,158,11,.15); color: var(--amber); }
+  .seo-high { background: rgba(34,197,94,.15); color: var(--green); }
+  .progress-pill {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--bg-hover); padding: 3px 8px; border-radius: 9999px; font-size: 11px;
+  }
+  .progress-bar-wrap { width: 48px; height: 4px; background: #3f3f46; border-radius: 9999px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 9999px; }
+  .bottom-actions { display: flex; align-items: center; gap: 8px; }
+  .btn {
+    padding: 7px 14px; border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    border: 1px solid transparent; display: flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .btn-ghost { background: transparent; border-color: var(--border); color: var(--text-muted); }
+  .btn-ghost:hover { background: var(--bg-hover); color: var(--text); }
+  .btn-outline { background: transparent; border-color: var(--border); color: var(--text); }
+  .btn-outline:hover { background: var(--bg-hover); }
+  .btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-publish { background: var(--green); border-color: var(--green); color: #fff; }
+
+  /* ── DECISION BOX ── */
+  .decisions {
+    margin: 24px;
+    border: 1px solid rgba(245,158,11,.3);
+    border-radius: var(--radius);
+    background: rgba(245,158,11,.05);
+    padding: 16px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .decisions-title { font-size: 12px; font-weight: 600; color: var(--amber); text-transform: uppercase; letter-spacing: .06em; }
+  .decision {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px;
+  }
+  .decision-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); flex-shrink: 0; margin-top: 5px; }
+  .decision-text { color: var(--text-muted); line-height: 1.5; }
+  .decision-text strong { color: var(--text); }
+  .locked-badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    background: rgba(34,197,94,.1); color: var(--green);
+    border: 1px solid rgba(34,197,94,.2);
+    padding: 1px 6px; border-radius: 9999px; font-size: 10px; font-weight: 600;
+  }
+  .open-badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    background: rgba(245,158,11,.1); color: var(--amber);
+    border: 1px solid rgba(245,158,11,.2);
+    padding: 1px 6px; border-radius: 9999px; font-size: 10px; font-weight: 600;
+  }
+
+  /* ── SECTION LABEL (inside card) ── */
+  .section-title {
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .07em;
+    color: var(--text-muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* ── ALERT ── */
+  .alert {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 10px 12px; border-radius: var(--radius-sm);
+    font-size: 12px; line-height: 1.5;
+    border: 1px solid rgba(245,158,11,.3);
+    background: rgba(245,158,11,.07);
+    color: #fbbf24;
+  }
+  .alert-icon { flex-shrink: 0; margin-top: 1px; }
+
+  /* ── STATUS LABEL ── */
+  .status-chip {
+    padding: 2px 8px; border-radius: 9999px;
+    font-size: 11px; font-weight: 500;
+  }
+  .status-draft { background: rgba(113,113,122,.15); color: var(--text-muted); border: 1px solid #3f3f46; }
+
+  /* ── GUIDE ANNOTATION ── */
+  .annotations { margin: 0 24px; display: flex; flex-direction: column; gap: 8px; }
+  .annotation-title { font-size: 12px; font-weight: 600; color: var(--primary); margin-bottom: 4px; }
+  .annotation {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px; color: var(--text-muted); line-height: 1.5;
+  }
+  .ann-num {
+    width: 18px; height: 18px; border-radius: 50%; background: rgba(59,130,246,.2);
+    color: var(--primary); font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+
+  /* icons inline svg */
+  svg { display: inline-block; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ TOP BAR ═══════════════════════════ -->
+<div class="topbar">
+  <div class="topbar-start">
+    <div class="breadcrumb">
+      <a href="#">Articles</a>
+      <span class="sep">›</span>
+      <span class="current">مقال جديد</span>
+    </div>
+    <span class="status-chip status-draft">مسودة جديدة</span>
+  </div>
+  <div class="topbar-end">
+    <span class="badge-beta">BETA</span>
+    <div style="width:28px;height:28px;border-radius:50%;background:#27272a;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#a1a1aa;">M</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ LAYOUT ════════════════════════════ -->
+<div class="layout">
+
+  <!-- ── LEFT NAV SIDEBAR ── -->
+  <nav class="nav-sidebar">
+    <div class="nav-group-label">المحتوى</div>
+    <div class="nav-item"><span>📋</span> All Articles</div>
+    <div class="nav-item active"><span>✏️</span> New Article</div>
+    <div class="nav-item">Writing → Draft</div>
+    <div class="nav-item">Draft → Approval <span class="nav-badge">1</span></div>
+    <div class="nav-group-label" style="margin-top:8px;">العملاء</div>
+    <div class="nav-item">Clients</div>
+    <div class="nav-item">Categories</div>
+  </nav>
+
+  <!-- ── CONTENT AREA ── -->
+  <main class="content-area">
+
+    <!-- STEP TABS -->
+    <div class="step-nav">
+      <div class="step-tab active">
+        <div class="step-num">1</div>
+        Basic
+        <div class="step-pct">33%</div>
+      </div>
+      <div class="step-tab">
+        <div class="step-num">2</div>
+        Content
+        <div class="step-pct">38%</div>
+      </div>
+      <div class="step-tab">
+        <div class="step-num">3</div>
+        Media
+        <div class="step-pct">0%</div>
+      </div>
+      <div class="step-tab warn">
+        <div class="step-num">4</div>
+        SEO
+        <div class="step-pct">0%</div>
+      </div>
+      <div class="step-tab">
+        <div class="step-num">5</div>
+        FAQs
+        <div class="step-pct">0%</div>
+      </div>
+      <div class="step-tab">
+        <div class="step-num">6</div>
+        Related
+        <div class="step-pct">0%</div>
+      </div>
+    </div>
+
+    <!-- FORM BODY — two columns -->
+    <div class="form-body">
+
+      <!-- ═══ MAIN PANEL (right/start — wider) ═══ -->
+      <div class="main-panel">
+
+        <!-- Card: Title + Slug -->
+        <div class="card">
+          <div class="card-header">محتوى المقال</div>
+          <div class="card-body">
+
+            <!-- Title -->
+            <div class="field">
+              <div class="field-label">
+                <span>Title <span class="required">*</span></span>
+                <span class="counter">0 / 80</span>
+              </div>
+              <input type="text" class="title-input" placeholder="اكتب عنواناً جذاباً يشد الزائر — هذا ما يراه في الصفحة" />
+              <span class="field-hint">يظهر كعنوان رئيسي H1 في صفحة المقال — يختلف عن عنوان SEO</span>
+            </div>
+
+            <!-- Slug -->
+            <div class="field">
+              <div class="field-label">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                  <span>Slug — الرابط الدائم</span>
+                </div>
+              </div>
+              <input type="text" class="slug-input" placeholder="اكتب الرابط يدوياً — مثال: افضل-عيادات-الاسنان-جدة" />
+              <span class="field-url">modonty.com/articles/<span class="url-slug">_</span></span>
+              <span class="field-hint" style="color:#ef4444;font-size:10px;">يتجمد بعد النشر ولا يتغير — تعديله يكسر روابط جوجل</span>
+            </div>
+
+            <!-- Excerpt -->
+            <div class="field">
+              <div class="field-label">
+                <span>Excerpt</span>
+                <span class="counter">0 / 160</span>
+              </div>
+              <textarea placeholder="ملخص قصير للمقال — يظهر في بطاقات الـ SEO والمشاركة على وسائل التواصل"></textarea>
+              <span class="field-hint">اكتب 150–160 حرف للحصول على أفضل ظهور في جوجل</span>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ SIDE PANEL (left/end — narrower, sticky) ═══ -->
+      <div class="side-panel">
+
+        <!-- Card: Publisher -->
+        <div class="card">
+          <div class="card-body">
+            <div class="section-title">الناشر والتصنيف</div>
+
+            <div class="field">
+              <div class="field-label">Client <span class="required">*</span></div>
+              <select>
+                <option>Select a client</option>
+                <option>جبر سيو</option>
+                <option>كيما زون</option>
+              </select>
+              <!-- Logo preview — shows after selecting -->
+              <div class="logo-preview" style="display:none">
+                <div class="logo-img">J</div>
+                <div>
+                  <div class="logo-name">جبر سيو</div>
+                  <div class="logo-slug">jabr-seo</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="field-label">Category</div>
+              <select>
+                <option>None</option>
+                <option>طب وصحة</option>
+                <option>قانون</option>
+                <option>أعمال</option>
+              </select>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Card: Tags -->
+        <div class="card">
+          <div class="card-body">
+            <div class="section-title">الوسوم</div>
+            <div class="field">
+              <div class="tags-input">
+                <span class="tag-chip">صحة أسنان <span class="remove">×</span></span>
+                <span class="tag-chip">جدة <span class="remove">×</span></span>
+                <span class="tags-placeholder">أضف وسماً...</span>
+              </div>
+              <span class="field-hint">الوسوم تساعد في التصنيف والظهور</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: Publish Settings -->
+        <div class="card">
+          <div class="card-body">
+            <div class="section-title">خيارات النشر</div>
+            <div class="check-row checked">
+              <div class="checkbox">
+                <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                  <path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="check-content">
+                <div class="check-title">Highlight on Homepage</div>
+                <div class="check-desc">يظهر في الواجهة الرئيسية والمقالات المميزة — يرفع أولوية Sitemap لـ 0.8</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- OPEN DECISIONS BOX -->
+    <div class="decisions">
+      <div class="decisions-title">📋 قرارات مفتوحة — v1</div>
+
+      <div class="decision">
+        <div class="decision-dot"></div>
+        <div class="decision-text">
+          <strong>التخطيط (عمودين vs عمود واحد)</strong> — توصيتي: عمودان (main + sidebar) لأن Tags وClient وCategory هي metadata وليست content. يقلل الـ scroll ويوضّح التسلسل المنطقي.
+          <br><span class="locked-badge">✅ مُثبَّت في الـ mockup</span>
+        </div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-dot"></div>
+        <div class="decision-text">
+          <strong>الـ Slug يدوي 100%</strong> — لا auto-generation من الـ title. الـ preview تحته يعرض النتيجة بعد slugify. مُنفَّذ في الكود.
+          <br><span class="locked-badge">✅ مُنفَّذ</span>
+        </div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-dot"></div>
+        <div class="decision-text">
+          <strong>YMYL Reviewer</strong> — يظهر فقط إذا العميل YMYL. نبقيه في Client card؟ أو ننقله لـ sidebar card منفصل؟
+          <br><span class="open-badge">⚡ قرار مفتوح</span>
+        </div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-dot"></div>
+        <div class="decision-text">
+          <strong>الـ Tags موقعها</strong> — حاليًا الـ mockup يضعها في sidebar. لو الكاتب يضيف tags كثيرة هل تطول الـ sidebar كثيراً؟ بديل: نرجعها للـ main panel بعد Excerpt.
+          <br><span class="open-badge">⚡ قرار مفتوح</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ANNOTATIONS -->
+    <div class="annotations" style="margin-bottom:24px;">
+      <div class="annotation-title">ملاحظات التصميم</div>
+      <div class="annotation">
+        <div class="ann-num">1</div>
+        <div><strong>عمودان بدل عمود واحد:</strong> Title + Slug + Excerpt في الـ main (اليمين)، Client + Category + Tags + Featured في الـ sidebar (اليسار). يختصر الـ scroll بنسبة ~50%.</div>
+      </div>
+      <div class="annotation">
+        <div class="ann-num">2</div>
+        <div><strong>Section headers أُزيلت:</strong> العناوين الفرعية الكبيرة (العميل والتصنيف / محتوى التعريفي) استُبدلت بـ section-title صغيرة داخل كل card تأخذ مساحة أقل وتبدو أنظف.</div>
+      </div>
+      <div class="annotation">
+        <div class="ann-num">3</div>
+        <div><strong>الـ Tags انتقلت للـ sidebar:</strong> هي metadata مثل Client وCategory، مش محتوى. موقعها الطبيعي مع باقي الـ settings.</div>
+      </div>
+      <div class="annotation">
+        <div class="ann-num">4</div>
+        <div><strong>Bottom bar ثابت:</strong> يبقى ظاهر دائماً في أسفل الشاشة بدل ما يختفي عند الـ scroll. يحتوي على SEO score + progress + save.</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════ BOTTOM BAR ════════════════════════ -->
+<div class="bottom-bar">
+  <div class="bottom-stats">
+    <div class="seo-badge seo-low">SEO 0%</div>
+    <div class="progress-pill">
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:12%"></div></div>
+      <span>12%</span>
+    </div>
+    <div class="stat">
+      <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      0 كلمة
+    </div>
+    <div class="stat">
+      <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      ‹1 دقيقة
+    </div>
+  </div>
+  <div class="bottom-actions">
+    <button class="btn btn-ghost">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      معاينة
+    </button>
+    <button class="btn btn-outline">حفظ كمسودة</button>
+    <button class="btn btn-primary">التالي: Content →</button>
+  </div>
+</div>
+
+</body>
+</html>

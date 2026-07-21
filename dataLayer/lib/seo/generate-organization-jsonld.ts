@@ -1,6 +1,11 @@
 import { Client } from "@prisma/client";
 import { safeOrganizationType, resolveOrganizationType, isLocalFamilyType } from "./organization-schema-types";
 import { YMYL_CATEGORIES, isYmylCategory } from "./ymyl-config";
+import {
+  buildImageObject,
+  resolveImageAttribution,
+  type ModontyImageDefaults,
+} from "./media/build-image-object";
 
 /**
  * The most specific schema.org type we can justify for this client from what we KNOW
@@ -41,12 +46,16 @@ interface ClientWithMedia extends Omit<Client, "contentPriorities"> {
     width: number | null;
     height: number | null;
     altText: string | null;
+    description?: string | null;
+    createdAt?: Date | string | null;
   } | null;
   heroImageMedia?: {
     url: string;
     width: number | null;
     height: number | null;
     altText: string | null;
+    description?: string | null;
+    createdAt?: Date | string | null;
   } | null;
   industry?: {
     id: string;
@@ -150,12 +159,21 @@ export function generateCompleteOrganizationJsonLd(
       altText?: string | null;
       width?: number | null;
       height?: number | null;
+      description?: string | null;
+      createdAt?: Date | string | null;
     }>;
+    // Modonty image-licensing defaults (Settings) → Google Licensable badge.
+    // Absent → images carry no licence block (same as before this feature).
+    imageLicensing?: ModontyImageDefaults;
   }
 ): JsonLdGraph {
   // Caller MUST pass options.siteUrl (loaded from loadSiteUrl()). Hardcoded fallback only as a safety net.
   const siteUrl = options?.siteUrl || "https://www.modonty.com";
   const siteName = options?.siteName || "Modonty";
+  const imageLicensing: ModontyImageDefaults = {
+    organizationUrl: siteUrl,
+    ...(options?.imageLicensing ?? {}),
+  };
   const graph: JsonLdNode[] = [];
 
   // Ensure clientPageUrl is absolute
@@ -207,14 +225,25 @@ export function generateCompleteOrganizationJsonLd(
     const logoWidth = client.logoMedia.width && client.logoMedia.width >= 112 ? client.logoMedia.width : 112;
     const logoHeight = client.logoMedia.height && client.logoMedia.height >= 112 ? client.logoMedia.height : 112;
     
-    organizationNode.logo = {
-      "@type": "ImageObject",
+    const logoAttr = resolveImageAttribution(
+      {
+        mediaType: "LOGO",
+        clientName: client.name,
+        clientUrl: absoluteClientPageUrl,
+        altText: client.logoMedia.altText,
+        dateCreated: client.logoMedia.createdAt,
+      },
+      imageLicensing,
+    );
+    organizationNode.logo = buildImageObject({
       url: logoUrl,
-      contentUrl: logoUrl,
       width: logoWidth,
       height: logoHeight,
-      ...(client.logoMedia.altText && { caption: client.logoMedia.altText }),
-    };
+      name: logoAttr.name,
+      caption: client.logoMedia.altText,
+      description: client.logoMedia.description,
+      licensing: logoAttr.licensing,
+    });
   }
 
   // Description
@@ -600,16 +629,31 @@ export function generateCompleteOrganizationJsonLd(
   // carry dimensions + caption for Google image search.
   if (Array.isArray(options?.galleryImages) && options.galleryImages.length > 0) {
     const galleryNodes = options.galleryImages
-      .map((g) => {
+      .map((g, i) => {
         const u = ensureAbsoluteUrl(g.url, siteUrl);
         if (!u) return null;
-        const node: JsonLdNode = { "@type": "ImageObject", url: u, contentUrl: u };
-        if (g.width) node.width = g.width;
-        if (g.height) node.height = g.height;
-        if (g.altText) node.caption = g.altText;
-        return node;
+        const attr = resolveImageAttribution(
+          {
+            mediaType: "GALLERY",
+            clientName: client.name,
+            clientUrl: absoluteClientPageUrl,
+            galleryIndex: i + 1,
+            altText: g.altText,
+            dateCreated: g.createdAt,
+          },
+          imageLicensing,
+        );
+        return buildImageObject({
+          url: u,
+          width: g.width,
+          height: g.height,
+          name: attr.name,
+          caption: g.altText,
+          description: g.description,
+          licensing: attr.licensing,
+        });
       })
-      .filter((n): n is JsonLdNode => n !== null);
+      .filter((n) => n !== null);
     if (galleryNodes.length > 0) {
       organizationNode.image = galleryNodes;
     }
@@ -694,14 +738,25 @@ export function generateCompleteOrganizationJsonLd(
   const ogImg = client.heroImageMedia;
   if (ogImg?.url) {
     const u = ensureAbsoluteUrl(ogImg.url, siteUrl) || ogImg.url;
-    webPageNode.primaryImageOfPage = {
-      "@type": "ImageObject",
+    const heroAttr = resolveImageAttribution(
+      {
+        mediaType: "HERO",
+        clientName: client.name,
+        clientUrl: absoluteClientPageUrl,
+        altText: ogImg.altText,
+        dateCreated: ogImg.createdAt,
+      },
+      imageLicensing,
+    );
+    webPageNode.primaryImageOfPage = buildImageObject({
       url: u,
-      contentUrl: u,
-      ...(ogImg.width && { width: ogImg.width }),
-      ...(ogImg.height && { height: ogImg.height }),
-      ...(ogImg.altText && { caption: ogImg.altText }),
-    };
+      width: ogImg.width,
+      height: ogImg.height,
+      name: heroAttr.name,
+      caption: ogImg.altText,
+      description: ogImg.description,
+      licensing: heroAttr.licensing,
+    });
   }
 
   graph.push(webPageNode);

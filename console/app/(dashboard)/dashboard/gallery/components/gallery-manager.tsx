@@ -26,14 +26,10 @@ export function GalleryManager({ initial }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [images, setImages] = useState<GalleryImage[]>(initial);
   const [uploading, setUploading] = useState(false);
+  // Locked decision أ (2026-07-07): default ON — the image also becomes a pending reel.
+  const [publishAsReel, setPublishAsReel] = useState(true);
 
   async function uploadOne(file: File): Promise<boolean> {
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-    if (!cloudName || !uploadPreset) {
-      toast.error("إعدادات الرفع غير مكتملة على الخادم");
-      return false;
-    }
     if (!file.type.startsWith("image/")) {
       toast.error(`«${file.name}» مش صورة — تم تجاهلها`);
       return false;
@@ -44,41 +40,37 @@ export function GalleryManager({ initial }: Props) {
     }
 
     let compressed: File;
+    let width: number | null = null;
+    let height: number | null = null;
     try {
       compressed = await compressToWebP(file);
+      const bitmap = await createImageBitmap(compressed);
+      width = bitmap.width;
+      height = bitmap.height;
+      bitmap.close();
     } catch {
       toast.error(`فشل ضغط «${file.name}»`);
       return false;
     }
 
+    // Upload through OUR server route — the Bunny password never reaches the browser.
     const fd = new FormData();
     fd.append("file", compressed);
-    fd.append("upload_preset", uploadPreset);
-    fd.append("asset_folder", "client-gallery");
-
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-      method: "POST",
-      body: fd,
-    });
-    if (!res.ok) {
-      toast.error(`فشل رفع «${file.name}»`);
-      return false;
-    }
-    const json = await res.json();
-    const url: string | undefined = json.secure_url || json.url;
-    if (!url) {
-      toast.error(`فشل رفع «${file.name}»`);
+    const res = await fetch("/api/upload-bunny", { method: "POST", body: fd });
+    const json = await res.json().catch(() => null);
+    if (!res.ok || !json?.url) {
+      toast.error(json?.error || `فشل رفع «${file.name}»`);
       return false;
     }
 
     const saved = await addGalleryImage({
-      url,
-      publicId: json.public_id ?? null,
-      filename: json.original_filename ?? file.name,
-      mimeType: json.format ? `image/${json.format}` : file.type,
-      width: typeof json.width === "number" ? json.width : null,
-      height: typeof json.height === "number" ? json.height : null,
-      fileSize: typeof json.bytes === "number" ? json.bytes : file.size,
+      url: json.url,
+      filename: file.name,
+      mimeType: "image/webp",
+      width,
+      height,
+      fileSize: compressed.size,
+      publishAsReel,
     });
     if (!saved.success) {
       toast.error(saved.error || "فشل حفظ الصورة");
@@ -134,6 +126,20 @@ export function GalleryManager({ initial }: Props) {
         </span>
         <span className="text-[11px]">JPG / PNG / WebP — تُضغط تلقائياً بصيغة WebP · حتى 20 ميجا</span>
       </button>
+
+      {/* Locked decision أ: default ON, client can opt out per upload batch */}
+      <label className="flex w-fit cursor-pointer items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          checked={publishAsReel}
+          onChange={(e) => setPublishAsReel(e.target.checked)}
+          className="size-4 accent-primary"
+        />
+        <span>
+          تظهر في <b>الريلز</b> كمان — بعد اعتماد مُدَوَّنَتِي
+          <span className="ms-1 text-xs text-muted-foreground">(لو ما تبغى، شيل العلامة قبل الرفع)</span>
+        </span>
+      </label>
 
       {/* Grid */}
       {images.length === 0 ? (

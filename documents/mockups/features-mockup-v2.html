@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كل المزايا — مدوّنتي</title>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:#FAFAF7;font-family:'Readex Pro',sans-serif;-webkit-font-smoothing:antialiased;color:#0A0A0A}
+  ::selection{background:#0A0A0A;color:#fff}
+  a{color:inherit;text-decoration:none}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .container{max-width:1080px;margin:0 auto;padding:0 28px}
+
+  /* Nav */
+  header.top{position:sticky;top:0;z-index:50;background:rgba(250,250,247,.85);backdrop-filter:blur(12px);border-bottom:1px solid #E5E5DC}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;max-width:1080px;margin:0 auto}
+  .nav-logo{font-weight:700;font-size:20px;letter-spacing:-.5px}
+  .nav-logo .a{color:#0E9F6E}
+  .nav-links{display:flex;gap:4px}
+  .nav-links a{font-size:14px;color:#3F3F38;padding:6px 10px;border-radius:8px}
+  .nav-links a:hover{background:rgba(10,10,10,.04)}
+  .nav-links a.active{color:#0A0A0A;font-weight:600}
+  .nav-cta{background:#0A0A0A;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;font-weight:500}
+
+  /* Hero */
+  .hero{padding:64px 0 40px;text-align:center;max-width:780px;margin:0 auto}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;border-radius:99px;border:1px solid #E5E5DC;background:#fff;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#3F3F38;margin-bottom:24px}
+  .eyebrow-dot{width:7px;height:7px;border-radius:99px;background:#0E9F6E;box-shadow:0 0 0 3px rgba(14,159,110,.16)}
+  .hero h1{font-size:52px;line-height:1.12;font-weight:600;letter-spacing:-1.6px;margin-bottom:20px;padding:0 18px}
+  .hero h1 .accent{color:#0E9F6E;background:linear-gradient(180deg,transparent 0%,transparent 78%,rgba(14,159,110,.16) 78%,rgba(14,159,110,.16) 100%);padding:0 4px}
+  .hero p{font-size:18px;line-height:1.7;color:#3F3F38;max-width:580px;margin:0 auto;padding:0 18px;font-weight:400}
+  .hero-ctas{display:inline-flex;gap:16px;align-items:center;margin-top:28px;flex-wrap:wrap;justify-content:center}
+  .btn-primary{background:#0A0A0A;color:#fff;padding:14px 26px;border-radius:12px;font-size:15px;font-weight:500}
+  .btn-link{color:#3F3F38;font-size:15px;font-weight:500;display:inline-flex;align-items:center;gap:6px;padding:8px 4px;border-bottom:1px solid transparent}
+  .btn-link:hover{border-color:#0A0A0A;color:#0A0A0A}
+
+  /* Hero stats strip — honest, verifiable numbers */
+  .hero-stats{margin-top:40px;display:inline-flex;flex-wrap:wrap;gap:30px;justify-content:center;padding:18px 26px;background:#fff;border:1px solid #E5E5DC;border-radius:16px}
+  .hs-item{text-align:center;min-width:96px}
+  .hs-n{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;color:#0A0A0A}
+  .hs-l{font-size:11.5px;color:#6B6B62;margin-top:3px;font-family:'IBM Plex Mono',monospace}
+
+  /* Systems overview cards */
+  .systems{padding:24px 0 8px}
+  .sys-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .sys-card{background:#fff;border:1px solid #E5E5DC;border-radius:16px;padding:20px 18px;text-align:center;transition:transform .15s,box-shadow .15s}
+  .sys-card:hover{transform:translateY(-3px);box-shadow:0 18px 40px -28px rgba(10,10,10,.28)}
+  .sys-emoji{font-size:24px;margin-bottom:10px}
+  .sys-card h3{font-size:15px;font-weight:600;margin-bottom:6px}
+  .sys-card p{font-size:12px;color:#6B6B62;line-height:1.6}
+
+  /* Section heads */
+  .sec{padding:60px 0}
+  .sec.alt{background:#fff;border-top:1px solid #E5E5DC;border-bottom:1px solid #E5E5DC}
+  .sec-head{margin-bottom:34px}
+  .sec-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#0E9F6E;letter-spacing:1px;margin-bottom:10px;font-weight:600}
+  .sec-title{font-size:32px;font-weight:600;letter-spacing:-.8px;line-height:1.2}
+  .sec-sub{font-size:15.5px;color:#3F3F38;line-height:1.75;margin-top:12px;max-width:640px}
+
+  /* Group label inside a system */
+  .group-label{display:flex;align-items:center;gap:10px;margin:30px 0 14px;font-size:13px;font-weight:600;color:#0A0A0A;font-family:'IBM Plex Mono',monospace;letter-spacing:.3px}
+  .group-label::after{content:"";flex:1;height:1px;background:#E5E5DC}
+  .group-label .gi{width:24px;height:24px;border-radius:7px;background:#E6F7EF;display:flex;align-items:center;justify-content:center;font-size:13px}
+
+  /* Benefit cards grid */
+  .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .bcard{background:#fff;border:1px solid #E5E5DC;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px}
+  .alt .bcard{background:#FAFAF7}
+  .bcard-head{display:flex;align-items:center;gap:9px}
+  .bcard-ico{width:30px;height:30px;border-radius:8px;background:#F4F4EE;border:1px solid #E5E5DC;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .bcard h4{font-size:14.5px;font-weight:600;line-height:1.35}
+  .bcard p{font-size:12.5px;color:#6B6B62;line-height:1.6}
+  .bcard ul{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:2px}
+  .bcard li{display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:#3F3F38;line-height:1.55}
+  .bcard li svg{flex-shrink:0;margin-top:3px}
+  .soon{font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700;color:#B96B00;background:#FFF4E5;border:1px solid #FFE1AC;padding:2px 7px;border-radius:5px;margin-inline-start:auto}
+  .tag-live{font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700;color:#07744F;background:#E6F7EF;border:1px solid #B5E5D0;padding:2px 7px;border-radius:5px;margin-inline-start:auto}
+
+  /* Telegram events grid */
+  .tg-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .tg-col{background:#fff;border:1px solid #E5E5DC;border-radius:14px;padding:16px}
+  .tg-col-title{font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .tg-count{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#6B6B62;background:#F4F4EE;border:1px solid #E5E5DC;padding:1px 7px;border-radius:5px}
+  .tg-chip{display:flex;align-items:center;gap:8px;font-size:12px;color:#3F3F38;padding:6px 0;border-bottom:1px solid #F4F4EE}
+  .tg-chip:last-child{border-bottom:none}
+  .tg-chip .e{font-size:14px;width:18px;text-align:center}
+
+  /* Packages matrix */
+  .pkg{overflow-x:auto;border:1px solid #E5E5DC;border-radius:16px;background:#fff}
+  table.pkg-table{width:100%;border-collapse:collapse;min-width:640px}
+  .pkg-table th,.pkg-table td{padding:16px 14px;text-align:center;border-bottom:1px solid #F4F4EE;font-size:13.5px}
+  .pkg-table thead th{background:#FAFAF7;border-bottom:1px solid #E5E5DC}
+  .pkg-table th.feat,.pkg-table td.feat{text-align:right;font-weight:500;color:#0A0A0A;width:30%}
+  .pkg-name{font-size:15px;font-weight:600}
+  .pkg-name.pop{color:#0E9F6E}
+  .pkg-price{font-family:'IBM Plex Mono',monospace;font-size:13px;color:#6B6B62;margin-top:3px;font-weight:500}
+  .pkg-price b{color:#0A0A0A;font-size:18px}
+  .pkg-table td .yes{color:#0E9F6E;font-weight:700}
+  .pkg-table td .no{color:#C9C9BE}
+  .pkg-pop-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:#fff;background:#0E9F6E;padding:2px 8px;border-radius:99px;margin-bottom:4px}
+  .pkg-note{font-size:12px;color:#6B6B62;margin-top:14px;text-align:center;line-height:1.7}
+
+  /* Compare */
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:920px;margin:0 auto}
+  .compare-card{background:#fff;border:1px solid #E5E5DC;border-radius:20px;padding:30px 26px}
+  .compare-card.win{background:#0A0A0A;color:#fff;border-color:#0A0A0A;position:relative;box-shadow:0 30px 70px -28px rgba(10,10,10,.5)}
+  .compare-card.win::before{content:"الحل";position:absolute;top:-13px;right:24px;background:#0E9F6E;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700;padding:5px 12px;border-radius:99px}
+  .compare-card .ceyebrow{font-family:'IBM Plex Mono',monospace;font-size:11.5px;margin-bottom:8px}
+  .compare-card.win .ceyebrow{color:#3DDC8C}
+  .compare-card:not(.win) .ceyebrow{color:#8A8A81}
+  .compare-card h3{font-size:21px;font-weight:600;margin-bottom:8px;letter-spacing:-.4px}
+  .compare-price{font-family:'IBM Plex Mono',monospace;font-size:14px;color:#6B6B62;margin-bottom:18px}
+  .compare-card.win .compare-price{color:#A5A599}
+  .compare-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .compare-list li{font-size:13.5px;line-height:1.6;display:flex;gap:8px;align-items:flex-start}
+  .compare-list li svg{flex-shrink:0;margin-top:3px}
+
+  /* CTA */
+  .final-cta{padding:56px 28px 84px;text-align:center}
+  .final-cta-card{max-width:880px;margin:0 auto;background:#0A0A0A;color:#fff;border-radius:24px;padding:52px 32px}
+  .final-cta h2{font-size:34px;font-weight:600;letter-spacing:-1px;margin-bottom:14px}
+  .final-cta p{font-size:16px;color:#A5A599;max-width:540px;margin:0 auto 28px;line-height:1.7}
+  .final-cta .ctas{display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .final-cta .btn-white{background:#fff;color:#0A0A0A;padding:14px 28px;border-radius:12px;font-size:15px;font-weight:600}
+  .final-cta .btn-ghost{background:rgba(255,255,255,.08);color:#fff;padding:14px 22px;border-radius:12px;font-size:15px;font-weight:500;border:1px solid rgba(255,255,255,.14)}
+
+  /* Footer */
+  footer{background:#0A0A0A;color:#A5A599;padding:36px 28px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:12px}
+  footer .logo{color:#fff;font-weight:700;font-size:15px;margin-bottom:6px}
+
+  /* Mobile */
+  @media (max-width:880px){
+    .nav-links{display:none}
+    .hero{padding:44px 0 32px}
+    .hero h1{font-size:32px;letter-spacing:-1.2px}
+    .hero p{font-size:15.5px}
+    .hero-stats{gap:18px;padding:14px 16px}
+    .hs-n{font-size:17px}
+    .sys-grid{grid-template-columns:1fr 1fr}
+    .sec{padding:44px 0}
+    .sec-title{font-size:24px}
+    .cat-grid{grid-template-columns:1fr}
+    .tg-wrap{grid-template-columns:1fr}
+    .compare-grid{grid-template-columns:1fr}
+    .final-cta h2{font-size:24px}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="top">
+  <div class="nav">
+    <div style="display:flex;align-items:center;gap:24px">
+      <div class="nav-logo">مدوّنتي<span class="a">.</span></div>
+      <nav class="nav-links">
+        <a href="#systems">المنظومات</a>
+        <a href="#console">لوحتك</a>
+        <a href="#page">صفحتك</a>
+        <a href="#production">الإنتاج</a>
+        <a href="#packages" class="active">الباقات</a>
+      </nav>
+    </div>
+    <a href="#packages" class="nav-cta">ابدأ الحين</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="eyebrow">
+    <span class="eyebrow-dot"></span>
+    <span>كل ما تحصل عليه باشتراكك — الدليل الكامل</span>
+  </div>
+  <h1>
+    اشتراك واحد —<br>
+    <span class="accent">منظومة كاملة</span>
+  </h1>
+  <p>من لوحة تحكّمك، إلى صفحتك العامة في مدوّنتي، إلى التصاميم والإنتاج التقني — كل مزية تحصل عليها فعليًا، مشروحة بالتفصيل.</p>
+  <div class="hero-ctas">
+    <a href="#packages" class="btn-primary">شوف الباقات</a>
+    <a href="#systems" class="btn-link">استعرض المزايا <span>←</span></a>
+  </div>
+  <div class="hero-stats">
+    <div class="hs-item"><div class="hs-n">٤</div><div class="hs-l">منظومات متكاملة</div></div>
+    <div class="hs-item"><div class="hs-n">٢٦</div><div class="hs-l">تنبيه فوري</div></div>
+    <div class="hs-item"><div class="hs-n">٢٨</div><div class="hs-l">فحص جودة / مقال</div></div>
+    <div class="hs-item"><div class="hs-n">٤</div><div class="hs-l">باقات مرنة</div></div>
+  </div>
+</section>
+
+<!-- SYSTEMS OVERVIEW -->
+<section class="systems" id="systems">
+  <div class="container">
+    <div class="sys-grid">
+      <div class="sys-card">
+        <div class="sys-emoji">📊</div>
+        <h3>لوحة تحكّمك</h3>
+        <p>تحليلات حيّة، إدارة المحتوى، Leads، حجوزات، وإشراف كامل.</p>
+      </div>
+      <div class="sys-card">
+        <div class="sys-emoji">🌐</div>
+        <h3>صفحتك العامة</h3>
+        <p>موقع مصغّر موثّق داخل شبكة مدوّنتي — مرئي ومفهرس في جوجل.</p>
+      </div>
+      <div class="sys-card">
+        <div class="sys-emoji">✍️</div>
+        <h3>مقالاتك</h3>
+        <p>محتوى احترافي بنسخة صوتية وصور والتقاط عملاء من كل مقال.</p>
+      </div>
+      <div class="sys-card">
+        <div class="sys-emoji">🛠️</div>
+        <h3>التصاميم والإنتاج</h3>
+        <p>SEO تقني كامل، بيانات منظّمة، وبوّابة جودة قبل كل نشر.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SYSTEM 1 — CONSOLE -->
+<section class="sec alt" id="console">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-eyebrow">المنظومة ٠١</div>
+      <h2 class="sec-title">لوحة تحكّمك — كل شيء في عينك</h2>
+      <p class="sec-sub">لوحة كاملة على <span class="mono">console.modonty.com</span> تدير منها نشاطك، تتابع الأرقام الحقيقية، وترد على عملائك — بلغة أعمال بسيطة.</p>
+    </div>
+
+    <!-- Group: Analytics -->
+    <div class="group-label"><span class="gi">📈</span> القياس والتحليل</div>
+    <div class="cat-grid">
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🏠</span><h4>اللوحة الرئيسية</h4></div>
+        <p>ملخّص شهري لحظي: المشاهدات، التفاعل، أعلى المقالات، وسجل نشاط مباشر.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">📊</span><h4>تحليلات Google Analytics 4</h4></div>
+        <ul>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L20 7"/></svg><span>الجمهور: أجهزة، زائر جديد مقابل عائد</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L20 7"/></svg><span>السلوك: وقت القراءة، عمق التمرير، الارتداد</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L20 7"/></svg><span>التوقيت: نمط اليوم والساعة + المصادر</span></li>
+        </ul>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">⚡</span><h4>زائر مباشر + Core Web Vitals</h4></div>
+        <p>عدّاد زوّار لحظي وأهم الصفحات الآن، مع مؤشرات سرعة الموقع (LCP · CLS · INP · TTFB).</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🩺</span><h4>فحص صحة الموقع</h4></div>
+        <p>تدقيق تقني فوري: الأمان، الأداء، SEO، الجوال، وسرعة Google PageSpeed.</p>
+      </div>
+    </div>
+
+    <!-- Group: Content -->
+    <div class="group-label"><span class="gi">✍️</span> المحتوى والوسائط</div>
+    <div class="cat-grid">
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">📝</span><h4>إدارة المقالات</h4></div>
+        <p>تراجع وتوافق على كل مقال قبل نشره، وتشوف إحصائيات كل مقال على حدة (مشاهدات، تفاعل، تحويلات).</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">📦</span><h4>خط الإنتاج والحصة</h4></div>
+        <p>تتابع حصتك الشهرية، المقالات قيد الكتابة، والمجدولة للنشر — كلها في مكان واحد.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🧩</span><h4>محتوى صفحتك</h4></div>
+        <p>تحرّر الخدمات، فريق العمل، الإنجازات، الاعتمادات، والفيديو التعريفي — يظهر مباشرة في صفحتك.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🖼️</span><h4>المعرض ومكتبة الوسائط</h4></div>
+        <p>ترفع صور المعرض (مع نص بديل لجوجل صور) وتدير كل وسائطك، وتختار الشعار وصورة الغلاف.</p>
+      </div>
+    </div>
+
+    <!-- Group: Profile & credibility -->
+    <div class="group-label"><span class="gi">🪪</span> ملفك ومصداقيتك</div>
+    <div class="cat-grid">
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🏢</span><h4>الملف التجاري</h4></div>
+        <p>بياناتك الكاملة: الاسم، الوصف، العنوان، ساعات العمل، السجل التجاري، والرقم الضريبي.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">✅</span><h4>اكتمال + جاهزية SEO</h4></div>
+        <p>مؤشّر يبيّن نسبة اكتمال ملفك والحقول الناقصة، وحالة جاهزية بياناتك المنظّمة لمحركات البحث.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🛡️</span><h4>التوثيق المهني (YMYL)</h4></div>
+        <p>للقطاعات الحسّاسة (طبي/قانوني/مالي): توثيق التراخيص مع جهة الاعتماد = ثقة فورية + شارة موثّق.</p>
+      </div>
+    </div>
+
+    <!-- Group: Engagement & moderation -->
+    <div class="group-label"><span class="gi">💬</span> التفاعل والإشراف</div>
+    <div class="cat-grid">
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">⭐</span><h4>تقييمات الزوّار</h4></div>
+        <p>تقييمات بنجوم من زوّارك — توافق عليها قبل ظهورها، وتظهر علنًا كتقييم تجميعي على صفحتك.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🗨️</span><h4>إشراف التعليقات</h4></div>
+        <p>تعليقات المقالات وتعليقات صفحتك — توافق/ترفض كلٌّ منها قبل النشر، تحكّم كامل.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">❓</span><h4>الأسئلة الشائعة وأسئلة الزوّار</h4></div>
+        <p>صندوق أسئلة الزوّار (Q&A) — ترد، وتنشر الإجابة، فتتحوّل لأسئلة شائعة على صفحتك وفي البحث.</p>
+      </div>
+    </div>
+
+    <!-- Group: Conversions -->
+    <div class="group-label"><span class="gi">🎯</span> العملاء والتحويلات</div>
+    <div class="cat-grid">
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🔥</span><h4>العملاء المحتملون (Leads)</h4></div>
+        <p>تصنيف تلقائي بنقاط حرارة: ساخن / مهتم / بارد / مؤهّل — مع درجة تفاعل لكل عميل.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">📅</span><h4>الحجوزات</h4></div>
+        <p>طلبات الحجز من زوّارك بحالة متابعة (جديد → تم التواصل → مكتمل → مؤرشف).</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">📩</span><h4>الدعم والمشتركون</h4></div>
+        <p>صندوق رسائل التواصل + قائمة المشتركين في نشرتك مع إحصائيات (نشط، موافقة، نمو).</p>
+      </div>
+    </div>
+
+    <!-- Group: Tools -->
+    <div class="group-label"><span class="gi">🧰</span> أدوات وتنبيهات</div>
+    <div class="cat-grid">
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🔍</span><h4>أدوات SEO</h4></div>
+        <p>استمارة نشاطك، الكلمات المستهدفة، وقائمة المنافسين — يستخدمها الفريق عند كتابة محتواك.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🔔</span><h4>تنبيهات تيليجرام الفورية</h4><span class="tag-live">٢٦ حدث</span></div>
+        <p>تصلك إشعارات لحظية على تيليجرام لكل حدث مهم (تفاصيلها في قسم التنبيهات أدناه).</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">⚙️</span><h4>الاشتراك والحساب</h4></div>
+        <p>تفاصيل باقتك وحالة الدفع والتواريخ، وإدارة كلمة المرور وربط بوت تيليجرام.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SYSTEM 2 — PUBLIC PAGE -->
+<section class="sec" id="page">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-eyebrow">المنظومة ٠٢</div>
+      <h2 class="sec-title">صفحتك العامة في مدوّنتي</h2>
+      <p class="sec-sub">موقع مصغّر احترافي على <span class="mono">modonty.com/clients/…</span> — داخل شبكة فيها جمهور وزوّار، ومفهرس في جوجل ببيانات منظّمة كاملة.</p>
+    </div>
+
+    <div class="group-label"><span class="gi">🪟</span> موقعك المصغّر</div>
+    <div class="cat-grid">
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🖼️</span><h4>هوية كاملة</h4></div>
+        <p>غلاف + شعار + اسم + قطاع + موقع + شريط إحصائيات (متابعون، مقالات، مشاهدات، تقييم).</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🛡️</span><h4>شارة «موثّق»</h4></div>
+        <p>شارة توثيق من مدوّنتي + صورة الاعتماد ورقم الترخيص — مصداقية تفصلك عن المنافسين.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🧩</span><h4>أقسام غنية</h4></div>
+        <ul>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L20 7"/></svg><span>خدمات · فريق · إنجازات · اعتمادات</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L20 7"/></svg><span>تقييمات بنجوم · أسئلة شائعة · معرض صور</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L20 7"/></svg><span>فيديو تعريفي · خريطة · ساعات العمل</span></li>
+        </ul>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">👆</span><h4>أزرار تفاعل وتواصل</h4></div>
+        <p>متابعة · حفظ · مشاركة · واتساب · حجز · اشتراك في النشرة — كلها تصلك كتنبيه فوري.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">⏰</span><h4>«مفتوح الآن» + تواصل سريع</h4></div>
+        <p>حالة العمل الآن، بطاقة تواصل سريع، وبطاقة Google Business — كلها على صفحتك.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">📰</span><h4>نشرتك البريدية</h4></div>
+        <p>زوّارك يشتركون مباشرة من صفحتك؛ كل مقال جديد يصلهم تلقائيًا.</p>
+      </div>
+    </div>
+
+    <div class="group-label"><span class="gi">🕸️</span> شبكة مدوّنتي</div>
+    <div class="cat-grid">
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🏠</span><h4>ظهور في الواجهة</h4></div>
+        <p>مقالاتك تظهر في الصفحة الرئيسية أمام كل زوّار مدوّنتي — بلا إعلانات ممولة.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🤝</span><h4>شريط الشركاء + فلتر الصناعة</h4></div>
+        <p>اسمك وشعارك في قائمة الشركاء، قابلة للتصفية حسب الصناعة = اكتشاف أسهل.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🔢</span><h4>إحصائيات الشبكة</h4></div>
+        <p>تفاعلك يضاف لأرقام مدوّنتي العامة (المشاهدات، التفاعلات، الشركاء) = إثبات اجتماعي مشترك.</p>
+      </div>
+    </div>
+
+    <div class="group-label"><span class="gi">🔎</span> SEO تقني على صفحتك</div>
+    <div class="cat-grid">
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🧬</span><h4>بيانات منظّمة (JSON-LD)</h4></div>
+        <p>Organization · LocalBusiness · FAQPage · BreadcrumbList · AggregateRating — تظهر صفحتك أغنى في نتائج جوجل.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🗺️</span><h4>خرائط الموقع والصور</h4></div>
+        <p>صفحتك ومقالاتك وصورك في خريطة الموقع وخريطة الصور = أرشفة أسرع في جوجل وجوجل صور.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">📤</span><h4>مشاركة احترافية</h4></div>
+        <p>صور OG/Twitter بقياس 1200×630 + روابط لغوية (hreflang) للسعودية ومصر = معاينة مرتّبة عند المشاركة.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SYSTEM 3 — ARTICLES -->
+<section class="sec alt" id="articles">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-eyebrow">المنظومة ٠٣</div>
+      <h2 class="sec-title">مقالاتك — محتوى يبيع</h2>
+      <p class="sec-sub">كل مقال ليس نصًّا فقط — بل تجربة قراءة كاملة وأداة التقاط عملاء.</p>
+    </div>
+    <div class="cat-grid">
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">📖</span><h4>تجربة قراءة احترافية</h4></div>
+        <ul>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L20 7"/></svg><span>نقاط رئيسية + جدول محتويات</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L20 7"/></svg><span>شريط تقدّم القراءة + مسار تنقّل</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L20 7"/></svg><span>مصادر/مراجع + بطاقة الكاتب</span></li>
+        </ul>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🎧</span><h4>نسخة صوتية</h4></div>
+        <p>كل مقال يصدر بنسخة صوتية يستمع لها الزائر — يرفع وقت الجلسة وتجربة الوصول.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🖼️</span><h4>صور ومعرض</h4></div>
+        <p>صورة بارزة + صور داخل المحتوى تظهر كمعرض، وكلها في خريطة الصور لجوجل.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">❤️</span><h4>تفاعل الزوّار</h4></div>
+        <p>إعجاب · حفظ · مشاركة (٦ منصات) · تعليقات بإشراف — كله يبني جمهورك.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🙋</span><h4>سؤال مباشر = Lead</h4></div>
+        <p>الزائر يسأل من داخل المقال، فيصلك تنبيه فوري ويُسجّل كعميل محتمل في لوحتك.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">📅</span><h4>حجز من المقال</h4></div>
+        <p>زر حجز داخل المقال نفسه = تحويل القارئ لعميل في لحظة الاهتمام.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🔗</span><h4>مقالات ذات صلة</h4></div>
+        <p>روابط ذكية لمقالاتك الأخرى (نفس العميل/الكاتب/التصنيف) = جلسات أطول.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🔥</span><h4>صفحة «الرائجة»</h4></div>
+        <p>مقالاتك المتفاعلة تظهر في صفحة الرائجة أمام كل زوّار المنصة.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SYSTEM 4 — PRODUCTION -->
+<section class="sec" id="production">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-eyebrow">المنظومة ٠٤</div>
+      <h2 class="sec-title">التصاميم والإنتاج التقني</h2>
+      <p class="sec-sub">الفريق ينتج لك لكل مقال حزمة تقنية كاملة، ويمرّرها على بوّابة جودة صارمة قبل أي نشر.</p>
+    </div>
+    <div class="cat-grid">
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🔧</span><h4>SEO كامل لكل مقال</h4></div>
+        <p>عنوان + وصف + رابط أساسي (canonical) + عناوين فرعية منظّمة + روابط داخلية.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🧬</span><h4>بيانات منظّمة مولّدة</h4></div>
+        <p>JSON-LD (Article + Organization + Breadcrumb + FAQ) يُولَّد ويُتحقّق منه آليًا — صفر عمل منك.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🖼️</span><h4>صور احترافية + OG</h4></div>
+        <p>صورة بارزة موثّقة الأبعاد مع نص بديل + صور مشاركة OG/Twitter بقياس 1200×630.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">✅</span><h4>بوّابة جودة ٢٨ فحص</h4></div>
+        <p>قبل النشر: قابلية الفهرسة، E-E-A-T، الصور، السكيما، التواريخ، والروابط — كلها 100%.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🔎</span><h4>طلب فهرسة Google</h4></div>
+        <p>بعد اجتياز الجودة، يُطلب فهرسة المقال عبر Google Search Console لظهور أسرع.</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">🎬</span><h4>ريلز + توزيع متعدد المنصات</h4><span class="soon">قريباً</span></div>
+        <p>إنتاج ريلز قصير وتوزيع تلقائي على منصات التواصل (قيد التطوير).</p>
+      </div>
+      <div class="bcard">
+        <div class="bcard-head"><span class="bcard-ico">📄</span><h4>تقرير شهري PDF</h4><span class="soon">قريباً</span></div>
+        <p>ملخّص أداء شهري + توصيات يصلك بالبريد (قيد التطوير).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TELEGRAM ALERTS -->
+<section class="sec alt" id="alerts">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-eyebrow">تنبيهات لحظية</div>
+      <h2 class="sec-title">٢٦ تنبيه فوري على تيليجرام</h2>
+      <p class="sec-sub">تشتغل تجارتك وأنت مطمئن — كل حدث مهم يصلك لحظيًا، وتتحكم في تفعيل/إيقاف كل نوع.</p>
+    </div>
+    <div class="tg-wrap">
+      <div class="tg-col">
+        <div class="tg-col-title">أحداث المقالات <span class="tg-count">١٣</span></div>
+        <div class="tg-chip"><span class="e">👁</span> مشاهدة مقال</div>
+        <div class="tg-chip"><span class="e">👍</span> إعجاب / 👎 عدم إعجاب</div>
+        <div class="tg-chip"><span class="e">⭐</span> حفظ المقال</div>
+        <div class="tg-chip"><span class="e">↗</span> مشاركة</div>
+        <div class="tg-chip"><span class="e">🎯</span> نقرة CTA / 🔗 رابط</div>
+        <div class="tg-chip"><span class="e">💬</span> تعليق / رد / إعجاب تعليق</div>
+        <div class="tg-chip"><span class="e">🎉</span> تحويل / 🔥 عميل عالي الاهتمام</div>
+      </div>
+      <div class="tg-col">
+        <div class="tg-col-title">أحداث صفحتك <span class="tg-count">٦</span></div>
+        <div class="tg-chip"><span class="e">👁</span> زيارة صفحتك</div>
+        <div class="tg-chip"><span class="e">➕</span> متابع جديد (بالاسم)</div>
+        <div class="tg-chip"><span class="e">↗</span> مشاركة صفحتك (بالمنصة)</div>
+        <div class="tg-chip"><span class="e">⭐</span> حفظ صفحتك</div>
+        <div class="tg-chip"><span class="e">💬</span> تعليق على صفحتك</div>
+        <div class="tg-chip"><span class="e">📧</span> اشتراك في نشرتك</div>
+      </div>
+      <div class="tg-col">
+        <div class="tg-col-title">تواصل مباشر <span class="tg-count">٤</span></div>
+        <div class="tg-chip"><span class="e">📩</span> رسالة دعم</div>
+        <div class="tg-chip"><span class="e">📣</span> اهتمام بحملة</div>
+        <div class="tg-chip"><span class="e">🙋</span> سؤال مباشر (Lead)</div>
+        <div class="tg-chip"><span class="e">📅</span> طلب حجز <span class="tag-live" style="margin-inline-start:6px">افتراضي مفعّل</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PACKAGES -->
+<section class="sec" id="packages">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-eyebrow">الباقات</div>
+      <h2 class="sec-title">اختر ما يناسب نموّك</h2>
+      <p class="sec-sub">كل الباقات تشمل صفحتك الموثّقة + لوحة التحكم الكاملة + التحليلات + التنبيهات. الفرق في حجم المحتوى الشهري.</p>
+    </div>
+    <div class="pkg">
+      <table class="pkg-table">
+        <thead>
+          <tr>
+            <th class="feat">الميزة</th>
+            <th><div class="pkg-name">مجاني</div><div class="pkg-price"><b>٠</b> ر.س</div></th>
+            <th><div class="pkg-name">الانطلاقة</div><div class="pkg-price"><b>٤٩٩</b> ر.س/شهر</div></th>
+            <th><div class="pkg-pop-badge">الأكثر طلبًا</div><div class="pkg-name pop">الزخم</div><div class="pkg-price"><b>١٢٩٩</b> ر.س/شهر</div></th>
+            <th><div class="pkg-name">الريادة</div><div class="pkg-price"><b>٢٩٩٩</b> ر.س/شهر</div></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="feat">مقالات شهريًا</td><td>—</td><td>٢</td><td>٥</td><td>١٢</td></tr>
+          <tr><td class="feat">صفحتك المصغّرة + شارة موثّق</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+          <tr><td class="feat">لوحة التحكم + تحليلات GA4</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+          <tr><td class="feat">نسخة صوتية + صور لكل مقال</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+          <tr><td class="feat">Leads + حجوزات + تنبيهات تيليجرام</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+          <tr><td class="feat">بوّابة جودة ٢٨ فحص + فهرسة Google</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="pkg-note">الأسعار بالريال السعودي (تتوفر بالجنيه المصري) · مزايا كل باقة قابلة للتخصيص من إدارة المنصة. عدد المقالات لكل باقة هو الفرق الأساسي.</p>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="sec alt">
+  <div class="container">
+    <div class="sec-head" style="text-align:center">
+      <div class="sec-eyebrow" style="color:#B0B0A5">مقارنة عملية</div>
+      <h2 class="sec-title">إيش الفرق فعلاً؟</h2>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <div class="ceyebrow">الطريقة التقليدية</div>
+        <h3>فريق محتوى داخلي</h3>
+        <div class="compare-price">تكلفة عالية شهريًا</div>
+        <ul class="compare-list">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D67878" stroke-width="2.5" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg><span>رواتب + توظيف + تدريب + إجازات</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D67878" stroke-width="2.5" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg><span>أدوات SEO وتحليلات منفصلة بتكلفة إضافية</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D67878" stroke-width="2.5" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg><span>تبدأ من صفر — بلا شبكة ولا جمهور</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D67878" stroke-width="2.5" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg><span>أنت تدير الفريق وتتابع الجودة</span></li>
+        </ul>
+      </div>
+      <div class="compare-card win">
+        <div class="ceyebrow">مدوّنتي</div>
+        <h3>اشتراك واحد — منظومة كاملة</h3>
+        <div class="compare-price">مجانًا — ثم من ٤٩٩ ر.س/شهر</div>
+        <ul class="compare-list">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3DDC8C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L20 7"/></svg><span>كتابة + إنتاج تقني + متابعة + تحليلات — شامل</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3DDC8C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L20 7"/></svg><span>SEO + بيانات منظّمة + بوّابة جودة مدمجة</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3DDC8C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L20 7"/></svg><span>صفحة موثّقة داخل شبكة وجمهور موجود</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3DDC8C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L20 7"/></svg><span>أنت توافق فقط — نحن ندير الباقي</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="final-cta-card">
+    <h2>جاهز تبدأ؟</h2>
+    <p>ابدأ مجانًا، واكتشف بنفسك المنظومة الكاملة — لوحتك، صفحتك الموثّقة، ومحتواك المُنتَج باحتراف.</p>
+    <div class="ctas">
+      <a href="#packages" class="btn-white">شوف الباقات</a>
+      <a href="#" class="btn-ghost">كلّمنا على واتساب</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">مدوّنتي</div>
+  <div>كل المزايا — دليل العميل · تعمل ضمن مظلّة شركة جبر الجنوبية للمقاولات</div>
+</footer>
+
+</body>
+</html>

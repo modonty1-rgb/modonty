@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mockup — prompt التسجيل عند لحظة النية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#0E065A; --blue:#3030FF; --teal:#00D8D8;
+    --bg:#0b0a1f; --card:#14132b; --card2:#1b1a36;
+    --ink:#f3f4ff; --muted:#9a9cc0; --line:#2a2950;
+    --green:#16a34a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;padding:28px 16px 80px}
+  .wrap{max-width:760px;margin:0 auto}
+  .title{font-size:24px;font-weight:800;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:24px}
+  .hint{font-size:12.5px;color:var(--teal);background:rgba(0,216,216,.08);border:1px solid rgba(0,216,216,.25);border-radius:10px;padding:9px 13px;margin-bottom:26px}
+
+  .lbl{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.02em;margin:24px 0 10px;display:flex;align-items:center;gap:8px}
+  .lbl::before{content:"";width:18px;height:2px;background:var(--blue);border-radius:2px}
+
+  /* context card (article / client) */
+  .ctx{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .ctx .head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .ctx .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--teal));flex:0 0 auto;display:grid;place-items:center;font-weight:800;color:#fff}
+  .ctx .head h3{font-size:15px;font-weight:700}
+  .ctx .head p{font-size:12px;color:var(--muted)}
+
+  /* engagement row */
+  .eng{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:.15s}
+  .btn:hover{border-color:var(--blue);color:#fff}
+  .btn .ic{font-size:16px}
+  .btn .n{color:var(--muted);font-size:13px}
+  .btn.follow{background:var(--blue);border-color:var(--blue);color:#fff}
+  .btn.follow:hover{background:#2424e0}
+  .old{margin-top:10px;font-size:12px;color:#6b6e92}
+  .old s{opacity:.7}
+
+  /* prompt modal */
+  .scrim{position:fixed;inset:0;background:rgba(5,4,18,.66);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+  .scrim.on{display:flex}
+  .prompt{width:100%;max-width:360px;background:var(--card);border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:18px;padding:24px 22px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+  .prompt .emoji{font-size:34px;line-height:1}
+  .prompt h4{font-size:19px;font-weight:800;margin:10px 0 4px}
+  .prompt p{font-size:13.5px;color:var(--muted);margin-bottom:18px}
+  .cta{display:block;width:100%;height:46px;border:0;border-radius:11px;background:var(--blue);color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:.15s}
+  .cta:hover{background:#2424e0}
+  .login{display:block;margin-top:12px;font-size:13px;color:var(--muted)}
+  .login a{color:#aeb0ff;text-decoration:none}
+  .login a:hover{text-decoration:underline}
+  .x{position:absolute;}
+  .closeRow{margin-top:14px}
+  .closex{background:none;border:0;color:#6b6e92;font-size:12px;cursor:pointer}
+
+  /* decision block */
+  .dec{margin-top:30px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .dec h3{font-size:16px;font-weight:800;color:#fff;margin-bottom:12px}
+  .opt{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px;font-size:13.5px}
+  .opt.pick{border:2px solid var(--blue);background:rgba(48,48,255,.08)}
+  .opt b{color:#fff}
+  .opt .tag{font-size:11px;font-weight:700;background:var(--blue);color:#fff;padding:2px 8px;border-radius:99px;margin-inline-start:6px}
+  .spec{margin-top:18px;font-size:12px;color:var(--muted);border-top:1px dashed var(--line);padding-top:14px}
+  .spec b{color:#cdd0ff}
+  .spec code{background:var(--card2);padding:1px 6px;border-radius:5px;color:#aeb0ff;font-size:11px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">prompt التسجيل عند لحظة النية</div>
+  <div class="sub">الزائر غير المسجّل — الأزرار صارت قابلة للضغط، وعند الضغط يظهر دعوة تحويل تشرح الفائدة في نفس اللحظة.</div>
+  <div class="hint">👆 اضغط «حفظ» في المقال أو «متابعة» عند العميل — يطلع لك الـ prompt المقترح.</div>
+
+  <!-- ARTICLE CONTEXT -->
+  <div class="lbl">سياق المقال — شريط التفاعل</div>
+  <div class="ctx">
+    <div class="head">
+      <div class="logo">ST</div>
+      <div><h3>هل ابتسامة هوليود دائمة؟</h3><p>عيادات سمايل تاون</p></div>
+    </div>
+    <div class="eng">
+      <button class="btn" onclick="openP('like')"><span class="ic">👍</span> إعجاب <span class="n">١٢</span></button>
+      <button class="btn" onclick="openP('save')"><span class="ic">🔖</span> حفظ <span class="n">٤</span></button>
+      <button class="btn" onclick="openP('share')"><span class="ic">↗</span> مشاركة</button>
+    </div>
+    <div class="old">الحالي: <s>أزرار معطّلة (رمادية) + سطر صغير «سجّل الدخول» يودّي لصفحة دخول</s></div>
+  </div>
+
+  <!-- CLIENT CONTEXT -->
+  <div class="lbl">سياق العميل — المتابعة</div>
+  <div class="ctx">
+    <div class="head">
+      <div class="logo">JB</div>
+      <div><h3>شركة جبر سيو</h3><p>١٢ مقال · تسويق رقمي</p></div>
+    </div>
+    <div class="eng">
+      <button class="btn follow" onclick="openP('follow')"><span class="ic">＋</span> متابعة</button>
+      <button class="btn" onclick="openP('cfav')"><span class="ic">♡</span> مفضّلة</button>
+    </div>
+    <div class="old">الحالي: الضغط يرمي الزائر مباشرة لـ <code>/users/login</code> (دخول، مش تسجيل)</div>
+  </div>
+
+  <!-- DECISION -->
+  <div class="dec">
+    <h3>سلوك الضغط — أيّهما؟</h3>
+    <div class="opt"><b>أ — توجيه مباشر</b> لصفحة التسجيل فورًا (بلا شرح). أسرع، لكن مفاجئ وبلا سياق.</div>
+    <div class="opt pick"><b>ب — prompt في اللحظة</b> <span class="tag">الموصى</span> يشرح الفائدة («احفظ مقالاتك») ثم زر «اشترك مجاناً». يحوّل أعلى لأنه يربط الفعل بالقيمة (NN/g: لا ترمِ المستخدم في مسار بلا سياق).</div>
+    <div class="spec">
+      <b>مواصفة المطابقة (HTML ↔ كود حقيقي):</b><br>
+      • الـ prompt = مكوّن shadcn <code>Dialog</code> (أو <code>Drawer</code> على الجوال) · الحواف <code>rounded-2xl</code> من توكِن النظام.<br>
+      • زر الأساسي = <code>variant="default"</code> (أزرق العلامة <code>#3030FF</code>) → <code>/users/register?callbackUrl=&lt;الصفحة&gt;</code>.<br>
+      • رابط «دخول» = نص خافت → <code>/users/login?callbackUrl=...</code>.<br>
+      • العنوان والأيقونة <b>سياقيان</b> حسب الفعل (حفظ/متابعة/إعجاب/تعليق/تقييم).<br>
+      • أزرار المقال تصير <b>مفعّلة</b> (تشيل <code>disabled</code>) — الضغط يفتح الـ prompt بدل لا شيء.<br>
+      • <b>ألوان الـ mockup الداكنة تمثيلية</b> — التطبيق يستخدم توكِنز الثيم الفعلية من <code>globals.css</code>.
+    </div>
+  </div>
+</div>
+
+<!-- PROMPT -->
+<div class="scrim" id="scrim" onclick="if(event.target===this)closeP()">
+  <div class="prompt">
+    <div class="emoji" id="pEmoji">🔖</div>
+    <h4 id="pTitle">احفظ مقالاتك المفضّلة</h4>
+    <p id="pSub">اشترك مجاناً بثانية، بدون أي التزام — ورجّعك لمكانك.</p>
+    <button class="cta">اشترك مجاناً</button>
+    <span class="login">لديك حساب؟ <a href="#">تسجيل الدخول</a></span>
+    <div class="closeRow"><button class="closex" onclick="closeP()">إغلاق</button></div>
+  </div>
+</div>
+
+<script>
+  var COPY = {
+    like:  {e:"👍", t:"عجبك المقال؟",            s:"اشترك مجاناً وخلّ إعجابك يُحفظ — ورجّعك لمكانك."},
+    save:  {e:"🔖", t:"احفظ مقالاتك المفضّلة",     s:"اشترك مجاناً بثانية، بدون أي التزام — ورجّعك لمكانك."},
+    share: {e:"↗",  t:"شارك وكوّن مكتبتك",         s:"اشترك مجاناً عشان تتابع وتحفظ اللي يهمّك."},
+    follow:{e:"🔔", t:"تابع جبر سيو ووصلك جديده",   s:"اشترك مجاناً وتابع تخصصك أول بأول."},
+    cfav:  {e:"♡",  t:"أضِف العميل لمفضّلتك",       s:"اشترك مجاناً عشان تجمع اللي يهمّك بمكان واحد."}
+  };
+  function openP(k){
+    var c=COPY[k]||COPY.save;
+    document.getElementById('pEmoji').textContent=c.e;
+    document.getElementById('pTitle').textContent=c.t;
+    document.getElementById('pSub').textContent=c.s;
+    document.getElementById('scrim').classList.add('on');
+  }
+  function closeP(){document.getElementById('scrim').classList.remove('on')}
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeP()});
+</script>
+</body>
+</html>

@@ -19,7 +19,7 @@ function optimizeAvatarUrl(url: string | undefined | null): string | null {
 
 export async function getUsers() {
   try {
-    const users = await db.user.findMany({
+    const users = await db.staff.findMany({
       where: { role: "ADMIN" },
       select: {
         id: true,
@@ -38,7 +38,7 @@ export async function getUsers() {
 
 export async function getUserById(id: string) {
   try {
-    return await db.user.findUnique({
+    return await db.staff.findUnique({
       where: { id },
       select: {
         id: true,
@@ -65,13 +65,13 @@ export async function createUser(data: {
       return { success: false, error: "Name, email, and password are required" };
     }
 
-    const existing = await db.user.findUnique({ where: { email: data.email } });
+    const existing = await db.staff.findUnique({ where: { email: data.email } });
     if (existing) {
       return { success: false, error: "This email is already registered" };
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
-    const created = await db.user.create({
+    const created = await db.staff.create({
       data: {
         name: data.name,
         email: data.email,
@@ -84,7 +84,7 @@ export async function createUser(data: {
     // Handing someone the keys to the admin. Note WHO was created — never the password,
     // not even the hash: this table is read by people, and a hash is still a secret.
     await logAction("user.create", {
-      entity: "User",
+      entity: "Staff",
       entityId: created.id,
       summary: `${data.name} (${data.email})`,
       metadata: { role: "ADMIN" },
@@ -109,7 +109,7 @@ export async function updateUser(
   try {
     const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
     if (data.email) {
-      const existing = await db.user.findUnique({ where: { email: data.email } });
+      const existing = await db.staff.findUnique({ where: { email: data.email } });
       if (existing && existing.id !== id) {
         return { success: false, error: "This email is already used by another account" };
       }
@@ -130,7 +130,7 @@ export async function updateUser(
       updateData.password = await bcrypt.hash(data.password, 10);
     }
 
-    const updated = await db.user.update({
+    const updated = await db.staff.update({
       where: { id },
       data: updateData,
     });
@@ -139,7 +139,7 @@ export async function updateUser(
     // that is exactly the kind of thing you need to be able to ask about later. The
     // password itself never appears here, in any form.
     await logAction("user.update", {
-      entity: "User",
+      entity: "Staff",
       entityId: id,
       summary: `${updated.name ?? "—"} (${updated.email ?? "—"})`,
       metadata: { passwordChanged: Boolean(data.password), self: id === session.user?.id },
@@ -155,18 +155,18 @@ export async function updateUser(
 export async function deleteUser(id: string) {
   try {
     const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
-    const adminCount = await db.user.count({ where: { role: "ADMIN" } });
+    const adminCount = await db.staff.count({ where: { role: "ADMIN" } });
     if (adminCount <= 1) {
       return { success: false, error: "Cannot remove the last admin. At least one admin must exist." };
     }
 
     // Read them before they are gone — afterwards there is no name left to log.
-    const doomed = await db.user.findUnique({ where: { id }, select: { name: true, email: true, role: true } });
+    const doomed = await db.staff.findUnique({ where: { id }, select: { name: true, email: true, role: true } });
 
-    await db.user.delete({ where: { id } });
+    await db.staff.delete({ where: { id } });
 
     await logAction("user.delete", {
-      entity: "User",
+      entity: "Staff",
       entityId: id,
       summary: doomed ? `${doomed.name ?? "—"} (${doomed.email ?? "—"})` : null,
       metadata: doomed?.role ? { role: doomed.role } : null,

@@ -18,8 +18,11 @@ import { computeMediaSeoScore } from "@modonty/database/lib/seo/media/seo-score"
  * client and reference scorers.
  */
 
-/** PLATFORM assets are ours (site logo, defaults), not part of the library an admin manages. */
-const SCOPE_FILTER = { scope: { not: "PLATFORM" } } as const;
+/**
+ * PLATFORM assets are ours (site logo, defaults), not part of the library an admin manages.
+ * GALLERY images are excluded too — client galleries live in /client-galleries now.
+ */
+const SCOPE_FILTER = { scope: { not: "PLATFORM" }, type: { not: "GALLERY" } } as const;
 
 /** Below this the image is not doing its job in search. Same band as everywhere else. */
 const FAILING = 60;
@@ -120,10 +123,10 @@ function score(m: RawMedia): number {
   return computeMediaSeoScore({
     filename: m.filename,
     altText: m.altText,
-    title: m.title,
     description: m.description,
     width: m.width,
     height: m.height,
+    type: m.type,
   }).score;
 }
 

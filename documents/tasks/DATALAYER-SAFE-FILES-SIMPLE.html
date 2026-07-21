@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الملفات اللي نقدر نوحّدها — تقرير مبسّط</title>
+<style>
+  :root{--bg:#0b1020;--card:#141b33;--line:#2a3357;--txt:#e8edff;--mut:#9aa6c8;--ok:#27c093;--bad:#ff6b6b;--accent:#7c8cff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:"Tajawal","Segoe UI",Tahoma,sans-serif;line-height:1.8;padding:30px 16px}
+  .wrap{max-width:880px;margin:0 auto}
+  h1{font-size:23px;margin:0 0 4px}
+  .sub{color:var(--mut);margin:0 0 18px;font-size:14px}
+  h2{font-size:17px;margin:24px 0 10px}
+  .banner{background:linear-gradient(135deg,#11321f,#0e2b3a);border:1px solid var(--ok);border-radius:12px;padding:14px 16px;margin:14px 0;font-size:14.5px}
+  .row{display:flex;align-items:flex-start;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin:8px 0}
+  .row.done{border-inline-start:5px solid var(--ok)}
+  .row.no{border-inline-start:5px solid var(--bad);padding:10px 15px}
+  .ico{font-size:19px;line-height:1.5}
+  .body{flex:1;min-width:0}
+  .name{font-weight:700;font-size:14.5px}
+  .name code{background:#0d1430;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:12.5px;color:#cfe0ff;direction:ltr;display:inline-block}
+  .desc{color:var(--mut);font-size:13px;margin-top:2px}
+  .chk{font-size:11.5px;color:#bfe9d8;margin-top:4px;direction:rtl}
+  .chk code{font-size:11px;color:#cfe0ff;background:#0d1430;border:1px solid var(--line);border-radius:5px;padding:0 5px;direction:ltr;display:inline-block}
+  .tag{font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap}
+  .t-done{background:rgba(39,192,147,.16);color:var(--ok);border:1px solid rgba(39,192,147,.4)}
+  .t-full{background:rgba(124,140,255,.16);color:var(--accent);border:1px solid rgba(124,140,255,.45)}
+  .foot{color:var(--mut);font-size:12px;text-align:center;margin-top:24px;line-height:1.9}
+  b.g{color:var(--ok)} b.r{color:var(--bad)} b.a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>📋 توحيد الكود المشترك — تقرير المتابعة</h1>
+  <p class="sub">الكود المكرّر بين التطبيقات الثلاثة (الأدمن · الكونسول · مودونتي) → مكان واحد مشترك (dataLayer). ننقل <b class="g">الآمن فقط</b> · كل شي على فرع منفصل · الإنتاج ما يتأثر إلا وقت الـ push.</p>
+
+  <div class="banner">🎉 <b class="g">تم إنجاز كل الكود الآمن للنقل (6 عناصر).</b> ما بقي شي آمن يُنقل — الباقي متشابك/متباعد ويُترك عمدًا.</div>
+
+  <h2>✅ منجز ومفحوص (6)</h2>
+
+  <div class="row done">
+    <div class="ico">✅</div><div class="body">
+      <div class="name"><code>formatBytes</code> <span class="tag t-done">منجز</span></div>
+      <div class="desc">يحوّل حجم الملف لصيغة مقروءة («180 KB»).</div>
+      <div class="chk">الفحص: <code>tsc</code> + رِندَر حيّ سابقًا.</div>
+    </div>
+  </div>
+
+  <div class="row done">
+    <div class="ico">✅</div><div class="body">
+      <div class="name"><code>getGTMSettings</code> <span class="tag t-done">منجز</span></div>
+      <div class="desc">يقرّر متى يشتغل تتبّع Google (مطفي في التطوير، شغّال في الإنتاج).</div>
+      <div class="chk">الفحص: <code>tsc</code> + رِندَر حيّ سابقًا.</div>
+    </div>
+  </div>
+
+  <div class="row done">
+    <div class="ico">✅</div><div class="body">
+      <div class="name"><code>gtm/dataLayer.ts</code> <span class="tag t-full">منجز · فحص متصفح كامل</span></div>
+      <div class="desc">يسجّل أحداث الزوار لـ Google (فتح صفحة · متابعة عميل).</div>
+      <div class="chk">الفحص: <code>tsc</code> (admin+modonty صفر) + الصفحة رِندَرت بلا خطأ + <b class="g">الأحداث دُفعت حيًّا ببياناتها الحقيقية</b> (page_view + client_context). أثبت إن <code>"use client"</code> يشتغل عبر الحزمة.</div>
+    </div>
+  </div>
+
+  <div class="row done">
+    <div class="ico">✅</div><div class="body">
+      <div class="name"><code>seo/ymyl-config.ts</code> <span class="tag t-done">منجز اليوم</span></div>
+      <div class="desc">قائمة تصنيف المحتوى الحسّاس (طبي · قانوني · مالي). بيانات ثابتة بلا منطق.</div>
+      <div class="chk">الفحص: <code>tsc</code> (admin+console صفر) لكل المستوردين السبعة + تطابق آلية الحل المثبتة حيًّا. <span style="color:var(--mut)">(بيانات نقية → ما تحتاج فحص متصفح.)</span></div>
+    </div>
+  </div>
+
+  <div class="row done">
+    <div class="ico">✅</div><div class="body">
+      <div class="name"><code>telegram/client.ts</code> <span class="tag t-done">منجز اليوم</span></div>
+      <div class="desc">يرسل تنبيهات تيليجرام.</div>
+      <div class="chk">الفحص: <code>tsc</code> (console+modonty صفر) + سيرفر modonty سليم بعد التعديل + تطابق آلية الحل المثبتة حيًّا.</div>
+    </div>
+  </div>
+
+  <div class="row done">
+    <div class="ico">✅</div><div class="body">
+      <div class="name"><code>telegram/geo.ts</code> <span class="tag t-done">منجز اليوم</span></div>
+      <div class="desc">يعرف بلد/مدينة الزائر من عنوان الـ IP.</div>
+      <div class="chk">الفحص: <code>tsc</code> (console+modonty صفر) + تطابق آلية الحل المثبتة حيًّا.</div>
+    </div>
+  </div>
+
+  <h2>🔴 ما نلمسها (عشان ما نكسر شي)</h2>
+  <div class="row no">
+    <div class="ico">🔴</div><div class="body">
+      <div class="desc" style="color:var(--txt)">
+        <b class="r">متشابكة أو مختلفة بين التطبيقات</b> — توحيدها يكسر سلوكًا بصمت:
+        <br><code>telegram/notify.ts</code> · <code>events.ts</code> · <code>email/faq-reply.ts</code> · <code>db.ts</code> · <code>auth</code> · <code>shadcn ui + globals.css</code> · <code>formatDate</code> · <code>formatNumber</code>
+      </div>
+    </div>
+  </div>
+
+  <p class="foot">
+    <b class="g">٦ منجزة</b> · <b class="r">الباقي يُترك</b> · انتهى الكود الآمن للنقل.<br>
+    <b class="g">✅ منشور على الإنتاج ومُتحقَّق حيًّا</b> — commit <code>2d70096</code> · النسخ: modonty 1.69.1 · admin 0.82.2 · console 0.18.2.<br>
+    Vercel: الثلاثة READY · الدومينات الثلاثة HTTP 200 · دوال GTM المنقولة دفعت أحداثًا حقيقية على modonty.com وGTM استقبلها (uniqueEventId مُسند). صفر مشاكل.
+  </p>
+
+</div>
+</body>
+</html>

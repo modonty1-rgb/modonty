@@ -1,0 +1,81 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فصل الطاقم — قائمة المهام</title>
+<style>
+  :root{--ink:#0f1729;--dim:#5b6472;--line:#e4e8ef;--bg:#eef2f7;--primary:#0f766e;--green:#047857;--greenbg:#ecfdf5;--emerald:#059669;--amber:#b45309;--amberbg:#fff7ed;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Tajawal","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.9;padding:26px 18px 60px}
+  .wrap{max-width:680px;margin:0 auto}
+  h1{font-size:22px;font-weight:800;text-align:center}
+  .sub{text-align:center;color:var(--dim);font-size:13.5px;margin:5px 0 8px}
+  .prog{text-align:center;font-weight:800;color:var(--emerald);font-size:14px;margin-bottom:20px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 17px;margin:8px 0;font-size:14.5px}
+  .good{border-inline-start:6px solid var(--green);background:var(--greenbg)}
+  .task{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:8px 0}
+  .task .bx{flex-shrink:0;width:26px;height:26px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center;font-size:14px;font-weight:800;color:var(--dim)}
+  .task .body{flex:1}
+  .task .t{font-weight:800;font-size:15px}
+  .task .d{color:var(--dim);font-size:13px;margin-top:2px}
+  .task.done{opacity:.6}
+  .task.done .bx{background:var(--emerald);border-color:var(--emerald);color:#fff}
+  .task.done .t{text-decoration:line-through;text-decoration-color:var(--dim)}
+  .task.now{border-color:var(--amber);box-shadow:0 0 0 3px #fde9d0}
+  .task.now .bx{border-color:var(--amber);color:var(--amber)}
+  .pill{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:999px;margin-inline-start:6px;vertical-align:middle}
+  .p-now{background:var(--amberbg);color:var(--amber)}.p-wait{background:#eef2f7;color:var(--dim)}
+  .calm{text-align:center;color:var(--dim);font-size:13px;margin-top:22px;line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>فصل الطاقم — قائمة المهام</h1>
+  <div class="sub">مرجعنا الوحيد · نخلّص مهمة مهمة · كل مهمة تخلص أعلّمك وتأذن للي بعدها</div>
+  <div class="prog" id="prog">5 / 6 خلصت ✅ · pentest 10/10</div>
+
+  <div class="card good"><b>القرار:</b> نطلّع الطاقم (الثمانية) في جدول مستقل. الأمان مقفول ١٠٠٪ أصلاً — هذا تحسين بنيوي، نمشي فيه بهدوء وأمان.</div>
+
+  <div class="task done">
+    <div class="bx">✓</div>
+    <div class="body"><div class="t">إضافة جدول الطاقم</div>
+      <div class="d">✅ نسخة احتياطية (٨٩ مجموعة) · جدول <code>Staff</code> أُنشئ فاضٍ · الطاقم الـ ٨ سليمون في مكانهم · صفر بيانات لُمست.</div></div>
+  </div>
+
+  <div class="task done">
+    <div class="bx">✓</div>
+    <div class="body"><div class="t">نسخ الطاقم الثمانية</div>
+      <div class="d">✅ الـ ٨ نُسخوا لجدول <code>Staff</code> بنفس المعرّف تماماً · كلهم <code>ADMIN</code> · الأصل في <code>User</code> سليم (نسخ فقط).</div></div>
+  </div>
+
+  <div class="task done">
+    <div class="bx">✓</div>
+    <div class="body"><div class="t">توجيه كود الأدمن</div>
+      <div class="d">✅ الدخول + الحراسة + الإدارة + استعادة كلمة السر تقرأ من <code>Staff</code> · فحص الأنواع صفر أخطاء · تعديل كود فقط (عكوس).</div></div>
+  </div>
+
+  <div class="task done">
+    <div class="bx">✓</div>
+    <div class="body"><div class="t">التنبيهات + حذف الدور الميت</div>
+      <div class="d">✅ تنبيهات الطاقم على حقل خاص بهم (٦ نُقلت بأمان) · جرس الأدمن ومدوّنتي والكونسول موجّهة · الدور الميت حُذف · فحص الأنواع صفر أخطاء في التطبيقات الثلاثة.</div></div>
+  </div>
+
+  <div class="task done">
+    <div class="bx">✓</div>
+    <div class="body"><div class="t">تحقق كامل</div>
+      <div class="d">✅ pentest ١٠/١٠: أدمن حقيقي يدخل من <code>Staff</code> ويقرأ العملاء · القارئ (مو في Staff) يُرفض · غير المسجّل/المزوّر محجوبان بلا تسريب · التنبيهات الـ ٦ سليمة.</div></div>
+  </div>
+
+  <div class="task now">
+    <div class="bx">٦</div>
+    <div class="body"><div class="t">الإنتاج + التنظيف النهائي <span class="pill p-now">بانتظار إذنك</span></div>
+      <div class="d">على الإنتاج: احتياطي → نقل الطاقم → تحقق → نشر + تدوير مفتاح الجلسات. <b>وأخيراً</b> (بعد إثبات الإنتاج): حذف نسخ الطاقم من <code>User</code> — شبكة الأمان تُرفع في النهاية فقط.</div></div>
+  </div>
+
+  <div class="note" style="border-color:var(--green);background:var(--greenbg)"><b>حالة dev:</b> الفصل شغّال ومتحقّق ١٠٠٪ — <b>pentest ١٠/١٠ + تست حي كامل</b> (عرض · إضافة طاقم · دخول الطاقم الجديد · خروج/دخول · حذف · تنبيهات). نسخ الطاقم باقية في <code>User</code> عمداً كشبكة أمان (غير مؤذية) حتى يثبت الإنتاج، ثم تُحذف. <b>ملاحظة تجميلية:</b> Sign Out يحوّل لـ prod host محلياً (<code>AUTH_URL</code>) — صحيح على الإنتاج.</div>
+
+  <div class="calm">خذ راحتك — ما في استعجال ولا نشر إلا في المهمة ٦.<br>الأمان مقفول، وأنا ماسك التفاصيل.</div>
+</div>
+</body>
+</html>

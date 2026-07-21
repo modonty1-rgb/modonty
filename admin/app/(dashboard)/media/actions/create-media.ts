@@ -79,10 +79,10 @@ export async function createMedia(data: CreateMediaData) {
     const session = await auth();
     if (!session) return { success: false, error: "Unauthorized" };
 
-    // Validate altText is required
-    if (!data.altText || data.altText.trim().length === 0) {
-      return { success: false, error: "Alt text is required for SEO and accessibility." };
-    }
+    // Alt text is OPTIONAL at upload — the graphic designer just uploads. The content
+    // writer adds alt + description later in the SEO Images section (which owns image SEO).
+    // The publish gate still blocks any article whose featured image has no alt (step 9),
+    // so a missing alt can never reach the index.
 
     // Validate clientId exists (skip for General / no client)
     if (data.clientId) {

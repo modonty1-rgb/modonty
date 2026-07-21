@@ -16,8 +16,13 @@ datasource db {
 
 enum UserRole {
   ADMIN
-  CLIENT
   EDITOR
+}
+
+// Company staff who sign in to the ADMIN app. Kept in a SEPARATE table from
+// public readers (User) so a reader can never gain admin access by a role flip.
+enum StaffRole {
+  ADMIN
 }
 
 enum ArticleStatus {
@@ -37,6 +42,7 @@ enum TrafficSource {
   SOCIAL
   EMAIL
   PAID
+  INTERNAL // same-site navigation (was misclassified as ORGANIC before 2026-07-07)
 }
 
 enum SubscriptionTier {
@@ -213,9 +219,43 @@ model User {
   notifications        Notification[]
   ownedClients         Client[]         @relation("ClientOwner")
   bookingRequests      BookingRequest[]
+  reelComments         ReelComment[]
+  reelCommentLikes     ReelCommentLike[]
+  reelCommentDislikes  ReelCommentDislike[]
+  reelLikes            ReelLike[]
+  reelFavorites        ReelFavorite[]
 
   @@index([role])
   @@map("users")
+}
+
+// Company staff (admin panel sign-in). Separate collection from `users` (public
+// readers). Migration copies the 8 admins here PRESERVING their _id, so every
+// existing reference to a staff id (createdBy/reviewedBy/authorId/notifications…)
+// keeps resolving. Relations to other models are added in a later step.
+model Staff {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  bio           String?
+
+  // Auth (admin uses credentials + JWT — no NextAuth adapter, so no Account/Session)
+  password             String?
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
+
+  role StaffRole @default(ADMIN)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notifications Notification[] @relation("StaffNotifications")
+
+  @@index([role])
+  @@map("staff")
 }
 
 model Account {
@@ -538,6 +578,7 @@ model Client {
   contactMessages  ContactMessage[]
   notifications    Notification[]
   bookingRequests  BookingRequest[]
+  reels            Reel[]
 
   // SEO Intake relations
   seoIntakes     SeoIntake[]
@@ -1048,6 +1089,7 @@ model Article {
   relatedTo   RelatedArticle[] @relation("ArticleRelatedTo")
   faqs        ArticleFAQ[]
   gallery     ArticleMedia[] // Image gallery for article
+  reels       Reel[] // Optional article↔reel link (reels are independent by design)
 
   // Interaction relations
   comments    Comment[]
@@ -1237,11 +1279,16 @@ model Analytics {
   clickThroughRate Float? // CTR for THIS view (if applicable)
 
   // Traffic sources - per view
-  source         TrafficSource @default(ORGANIC)
+  source         TrafficSource @default(DIRECT) // default was ORGANIC pre-2026-07-07 (misleading)
   searchEngine   String? // Google, Bing, etc.
   referrerDomain String?
   userAgent      String? // Browser user agent
   ipAddress      String? // IP address (for geo-location if needed)
+
+  // Geo - per view (Vercel edge headers: x-vercel-ip-country/-country-region/-city — free, no external API)
+  country String? // ISO 3166-1 alpha-2 (SA, EG, ...)
+  region  String? // ISO 3166-2 region portion
+  city    String? // decoded city name
 
   timestamp DateTime @default(now())
 
@@ -1553,6 +1600,16 @@ model ClientView {
   // Metadata
   userAgent String?
   referrer  String?
+
+  // Traffic source (classified — added 2026-07-07 with the geo fields)
+  source         TrafficSource @default(DIRECT)
+  searchEngine   String?
+  referrerDomain String?
+
+  // Geo - per view (Vercel edge headers — free, no external API)
+  country String? // ISO 3166-1 alpha-2
+  region  String? // ISO 3166-2 region portion
+  city    String? // decoded city name
 
   createdAt DateTime @default(now())
 
@@ -2150,6 +2207,12 @@ model Settings {
   articleDefaultSitemapChangeFreq String? // Default sitemap changefreq for articles (e.g. "weekly")
   articleDefaultSitemapPriority  Float?  // Default sitemap priority for articles (e.g. 0.5)
   defaultLicense                 String? // Default license URL for articles (e.g. CC-BY)
+  // Image licensing defaults (schema.org ImageObject → Google Licensable badge).
+  // Used for Modonty-PRODUCED images (HERO/POST/OGIMAGE/TWITTER_IMAGE/CLIENT_MINI/GENERAL);
+  // LOGO/GALLERY are attributed to the owning client at generation time instead.
+  imageOwnerName             String? // creator/creditText/copyrightHolder name (e.g. "مدوّنتي")
+  imageLicenseUrl            String? // URL to a page describing the licence (e.g. "/legal/copyright-policy")
+  imageAcquireLicensePageUrl String? // URL where users can acquire a licence / contact
   defaultIsAccessibleForFree     Boolean  @default(true) // Default for articles: free to access (structured data)
   defaultAlternateLanguages     Json?    // Default for articles: array of {hreflang, url} for hreflang
   defaultContentFormat         String?  // Default for articles: "markdown" | "html" | "rich_text"
@@ -2409,8 +2472,13 @@ model ContactMessage {
 
 model Notification {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Recipient is EITHER a reader (userId) OR a staff member (staffId). Readers
+  // keep userId; staff notifications (e.g. booking alerts) use staffId so they
+  // survive after staff are moved out of the users collection.
+  userId    String?  @db.ObjectId
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  staffId   String?  @db.ObjectId
+  staff     Staff?   @relation("StaffNotifications", fields: [staffId], references: [id], onDelete: Cascade)
   clientId  String?  @db.ObjectId
   client    Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
   type      String   // e.g. "contact_reply"
@@ -2421,6 +2489,7 @@ model Notification {
   createdAt DateTime @default(now())
 
   @@index([userId])
+  @@index([staffId])
   @@index([clientId])
   @@index([readAt])
   @@map("notifications")
@@ -2894,4 +2963,210 @@ model LicensingAuthority {
   @@unique([countryCode, category, code])
   @@index([countryCode, category])
   @@map("licensing_authorities")
+}
+
+// ============================================
+// REELS (locked decisions 2026-07-04: independent of articles · unified
+// image+video model · client uploads need admin approval · hidden-batch launch)
+// Video lives on Bunny Stream, image reels on Cloudinary. Full public URLs are
+// stored here — modonty holds ZERO Bunny secrets (locked decision).
+// ============================================
+
+enum ReelType {
+  VIDEO
+  IMAGE
+}
+
+enum ReelStatus {
+  DRAFT
+  PENDING_APPROVAL // client upload awaiting admin approval
+  APPROVED // approved, not yet live in the feed
+  PUBLISHED // live on the public feed + standalone watch page
+  REJECTED
+  ARCHIVED
+}
+
+enum ReelUploader {
+  ADMIN
+  CLIENT
+}
+
+enum ReelTranscriptStatus {
+  PENDING // auto transcription runs after approval (Arabic — language pinned manually)
+  DONE
+  FAILED
+  SKIPPED // IMAGE reels / transcription not applicable
+}
+
+model Reel {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  // Google requires a standalone watch page per video → unique slug
+  slug String @unique
+
+  // Optional article link (locked: reels are independent; this keeps the extension cheap)
+  articleId String?  @db.ObjectId
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
+
+  type ReelType
+
+  // VIDEO files (Bunny Stream) — full URLs, no secrets
+  bunnyVideoId String? // Bunny Stream video GUID
+  playbackUrl  String? // HLS playlist URL
+  mp4Url       String? // MP4 fallback — Google requires a fetchable file (no token auth)
+  thumbnailUrl String? // VideoObject.thumbnailUrl (required by Google)
+  // IMAGE reels (Cloudinary)
+  imageUrl String?
+
+  durationSec Int? // ≤ 90s locked limit — null for IMAGE
+  fileSize    Int? // bytes
+  width       Int?
+  height      Int?
+
+  // VideoObject.name + description — required by Google, missing = schema warning
+  title       String
+  description String
+
+  // Auto transcript after approval
+  transcript       String?
+  transcriptStatus ReelTranscriptStatus @default(PENDING)
+
+  // Workflow (6 states) — client uploads gated by admin approval
+  status          ReelStatus   @default(DRAFT)
+  uploadedBy      ReelUploader
+  rejectionReason String?
+  approvedAt      DateTime?
+  publishedAt     DateTime? // feed = newest first
+  revealedAt      DateTime? // hidden-batch launch — null = still hidden
+
+  // Cached counters (Article pattern) — TikTok-style rail: like/comment/favorite, no dislike (locked 2026-07-06)
+  viewsCount     Int @default(0)
+  likesCount     Int @default(0)
+  commentsCount  Int @default(0)
+  favoritesCount Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comments  ReelComment[]
+  likes     ReelLike[]
+  favorites ReelFavorite[]
+
+  @@index([clientId, status])
+  @@index([status, publishedAt])
+  @@index([articleId])
+  @@map("reels")
+}
+
+// Reel comments — same system as article comments (locked decision),
+// mirroring the ClientComment pattern (nesting + moderation + likes).
+model ReelComment {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  content String
+
+  reelId String @db.ObjectId
+  reel   Reel   @relation(fields: [reelId], references: [id], onDelete: Cascade)
+
+  authorId String? @db.ObjectId
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  parentId String?       @db.ObjectId
+  parent   ReelComment?  @relation("ReelCommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies  ReelComment[] @relation("ReelCommentReplies")
+
+  status   CommentStatus @default(PENDING)
+  isEdited Boolean       @default(false)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  editedAt  DateTime?
+
+  likes    ReelCommentLike[]
+  dislikes ReelCommentDislike[]
+
+  @@index([reelId, createdAt])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([status])
+  @@map("reel_comments")
+}
+
+model ReelCommentLike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  commentId String      @db.ObjectId
+  comment   ReelComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
+  @@unique([commentId, sessionId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("reel_comment_likes")
+}
+
+model ReelCommentDislike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  commentId String      @db.ObjectId
+  comment   ReelComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
+  @@unique([commentId, sessionId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("reel_comment_dislikes")
+}
+
+model ReelLike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  reelId String @db.ObjectId
+  reel   Reel   @relation(fields: [reelId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId // Optional - allow anonymous likes (ArticleLike pattern)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // Browser session ID for anonymous likes
+
+  createdAt DateTime @default(now())
+
+  @@unique([reelId, userId])
+  @@unique([reelId, sessionId])
+  @@index([reelId])
+  @@index([userId])
+  @@map("reel_likes")
+}
+
+model ReelFavorite {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  reelId String @db.ObjectId
+  reel   Reel   @relation(fields: [reelId], references: [id], onDelete: Cascade)
+
+  userId String @db.ObjectId // Required - favorites need user account (ArticleFavorite pattern)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([reelId, userId])
+  @@index([reelId])
+  @@index([userId])
+  @@map("reel_favorites")
 }

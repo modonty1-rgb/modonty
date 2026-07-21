@@ -1,0 +1,125 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نظام الصلاحيات — كل الـ routes</title>
+<style>
+  :root{--ink:#0f1729;--dim:#5b6472;--line:#e4e8ef;--bg:#eef2f7;--primary:#0f766e;--green:#047857;--greenbg:#ecfdf5;--amber:#b45309;--amberbg:#fff7ed;--media:#7c3aed;--mediabg:#f5f3ff;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Tajawal","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.75;padding:24px 16px 60px}
+  .wrap{max-width:1040px;margin:0 auto}
+  h1{font-size:22px;font-weight:800;text-align:center}
+  .sub{text-align:center;color:var(--dim);font-size:13.5px;margin:4px 0 20px}
+  h2{font-size:17px;font-weight:800;margin:24px 0 9px;padding-bottom:6px;border-bottom:2px solid var(--line);display:flex;gap:8px;align-items:center}
+  h2 .n{background:var(--primary);color:#fff;width:25px;height:25px;border-radius:7px;display:grid;place-items:center;font-size:13px;flex:0 0 auto}
+  .card{background:#fff;border:1px solid var(--line);border-radius:11px;padding:13px 16px;margin:8px 0;font-size:13.5px}
+  .role{border-inline-start:5px solid var(--primary);background:#f0fdfa;border-radius:9px;padding:8px 12px;margin:5px 0;font-size:13px}
+  table{width:100%;border-collapse:collapse;margin:9px 0;font-size:12.5px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  th,td{padding:8px 9px;text-align:center;border-bottom:1px solid var(--line);border-inline-end:1px solid var(--line);vertical-align:top}
+  th{background:#f8fafc;font-weight:800;font-size:11.5px}
+  td.sec{text-align:start;width:44%}
+  td.sec b{font-size:13px}
+  code{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:0 5px;font-size:11px;direction:ltr;display:inline-block;margin:1px 0}
+  .routes{margin-top:4px;line-height:1.95}
+  .full{color:var(--green);font-weight:800}.ro{color:var(--amber);font-weight:800}.no{color:#cbd5e1}
+  .legend{font-size:12.5px;color:var(--dim);margin:6px 0}
+  .mediarow td{background:var(--mediabg)}
+  .mediarow td.sec b{color:var(--media)}
+  .tagm{display:inline-block;font-size:10px;font-weight:800;color:#fff;background:var(--media);border-radius:5px;padding:1px 7px;margin-inline-start:6px;vertical-align:middle}
+  .dec{background:var(--amberbg);border:1px solid #fdba74;border-radius:9px;padding:9px 12px;margin:5px 0;font-size:13px}
+  .dec b{color:var(--amber)}
+  .foot{text-align:center;color:var(--dim);font-size:12px;margin-top:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>نظام الصلاحيات — كل الـ routes</h1>
+  <div class="sub">النظام كله = <b>جدول واحد</b> · تعدّل خانة = تغيّر صلاحية · سطر = دور جديد · مبني من قائمة المسارات الفعلية في الكود (٥١ مساراً)</div>
+
+  <h2><span class="n">١</span> الأدوار المقترحة (٤)</h2>
+  <div class="role"><b>🛡️ <code>ADMIN</code>:</b> أنت والإدارة — كامل الصلاحيات بما فيه النظام والطاقم وقاعدة البيانات. الدور الأعلى.</div>
+  <div class="role"><b>✍️ <code>WRITER</code> (كاتب):</b> المقالات + المحتوى (تصنيفات/وسوم) فقط — لا وسائط ولا نشر.</div>
+  <div class="role"><b>🎨 <code>GRAPHIC</code> (مصمّم):</b> الوسائط + النشر الاجتماعي فقط — لا يلمس المقالات.</div>
+  <div class="role"><b>🤝 <code>CLIENT_MGR</code> (مدير عملاء):</b> العملاء والحسابات والمراسلات والجمهور.</div>
+
+  <h2><span class="n">٢</span> الجدول: كل الـ routes × الأدوار</h2>
+  <div class="legend"><span class="full">✓</span> تعديل كامل · <span class="ro">👁</span> قراءة فقط · <span class="no">—</span> ممنوع (لا يظهر أصلاً في القائمة الجانبية)</div>
+  <table>
+    <tr><th>القسم + كل مساراته</th><th>🛡️<br>ADMIN</th><th>✍️<br>WRITER</th><th>🎨<br>GRAPHIC</th><th>🤝<br>CLIENT<br>_MGR</th></tr>
+
+    <tr>
+      <td class="sec"><b>١. لوحة التحكم</b><div class="routes"><code>/</code></div></td>
+      <td class="full">✓</td><td class="ro">👁</td><td class="ro">👁</td><td class="ro">👁</td>
+    </tr>
+
+    <tr>
+      <td class="sec"><b>٢. التحليلات والسيو</b><div class="routes"><code>/analytics</code> <code>/analytics/cta</code> <code>/analytics/engagement</code> <code>/analytics/leads</code> <code>/analytics/leads/bookings</code> <code>/analytics/leads/questions</code> <code>/seo</code> <code>/seo-health</code> <code>/search-console</code> <code>/bing-webmaster</code> <code>/inspect</code></div></td>
+      <td class="full">✓</td><td class="no">—</td><td class="no">—</td><td class="ro">👁</td>
+    </tr>
+
+    <tr>
+      <td class="sec"><b>٣. العملاء والحسابات</b><div class="routes"><code>/clients</code> <code>/clients/new</code> <code>/clients/accounts</code> <code>/clients/activate</code> <code>/clients/suspend</code> <code>/clients/[id]</code> <code>/clients/[id]/edit</code> <code>/clients/[id]/account</code> <code>/clients/[id]/seo</code> <code>/clients/[id]/technical</code> <code>/clients/segment/[key]</code></div></td>
+      <td class="full">✓</td><td class="no">—</td><td class="no">—</td><td class="full">✓</td>
+    </tr>
+
+    <tr>
+      <td class="sec"><b>٤. المقالات وسير العمل</b><div class="routes"><code>/articles</code> <code>/articles/new</code> <code>/articles/technical</code> <code>/articles/[id]</code> <code>/articles/[id]/edit</code> <code>/articles/[id]/technical</code> <code>/articles/pipeline/[id]</code> <code>/articles/segment/[key]</code> <code>/articles/workflow/[transition]</code> <code>/articles/workflow/maintenance</code> <code>/articles/workflow/quality-check/[articleId]</code></div></td>
+      <td class="full">✓</td><td class="full">✓</td><td class="no">—</td><td class="no">—</td>
+    </tr>
+
+    <tr>
+      <td class="sec"><b>٥. التصنيفات والمحتوى</b><div class="routes"><code>/categories</code> <code>/categories/new</code> <code>/categories/tree</code> <code>/categories/[id]</code> <code>/categories/[id]/edit</code> <code>/tags</code> <code>/tags/new</code> <code>/tags/[id]</code> <code>/tags/[id]/edit</code> <code>/authors</code> <code>/industries</code> <code>/industries/new</code> <code>/industries/[id]</code> <code>/industries/[id]/edit</code> <code>/intake</code> <code>/reference/segment/[key]</code></div></td>
+      <td class="full">✓</td><td class="full">✓</td><td class="no">—</td><td class="no">—</td>
+    </tr>
+
+    <tr class="mediarow">
+      <td class="sec"><b>٦. الوسائط <span class="tagm">MEDIA — قسم مستقل</span></b><div class="routes"><code>/media</code> <code>/media/upload</code> <code>/media/[id]/edit</code> <code>/media/segment/[key]</code></div></td>
+      <td class="full">✓</td><td class="no">—</td><td class="full">✓</td><td class="no">—</td>
+    </tr>
+
+    <tr>
+      <td class="sec"><b>٧. المراسلات</b><div class="routes"><code>/contact-messages</code> <code>/contact-messages/[id]</code> <code>/inbox</code> <code>/inbox/[clientId]</code></div></td>
+      <td class="full">✓</td><td class="no">—</td><td class="no">—</td><td class="full">✓</td>
+    </tr>
+
+    <tr>
+      <td class="sec"><b>٨. الجمهور</b><div class="routes"><code>/members</code> <code>/subscribers</code> <code>/chatbot-questions</code> <code>/campaigns/leads</code></div></td>
+      <td class="full">✓</td><td class="no">—</td><td class="no">—</td><td class="full">✓</td>
+    </tr>
+
+    <tr>
+      <td class="sec"><b>٩. النشر الاجتماعي</b><div class="routes"><code>/social/facebook</code> <code>/social/facebook/[articleId]</code> <code>/social/instagram</code></div></td>
+      <td class="full">✓</td><td class="no">—</td><td class="full">✓</td><td class="no">—</td>
+    </tr>
+
+    <tr>
+      <td class="sec"><b>١٠. محتوى مدوّنتي وإعداداته</b><div class="routes"><code>/modonty/faq</code> <code>/modonty/faq/[id]/edit</code> <code>/modonty/pages/[slug]</code> <code>/subscription-tiers</code> <code>/subscription-tiers/[id]/edit</code> · إعدادات المحتوى: <code>/settings/articles</code> <code>/settings/banner</code> <code>/settings/categories</code> <code>/settings/tags</code> <code>/settings/industries</code> <code>/settings/clients</code> <code>/settings/trending</code> <code>/settings/modonty</code> <code>/settings/brand</code> <code>/settings/disclaimer</code> <code>/settings/social</code> <code>/settings/reference-data</code></div></td>
+      <td class="full">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td>
+    </tr>
+
+    <tr>
+      <td class="sec"><b>١١. الإرشادات والتوثيق الداخلي</b><div class="routes"><code>/guidelines</code> + ٣٠ صفحة فرعية (about · articles · authors · brand · clients · golden-rules · icps · marketing-strategy · media · organization · positioning · prohibitions · sales-playbook · seo-visual · team-onboarding …)</div></td>
+      <td class="full">✓</td><td class="ro">👁</td><td class="ro">👁</td><td class="ro">👁</td>
+    </tr>
+
+    <tr>
+      <td class="sec"><b>١٢. النظام والتكاملات <span style="color:var(--amber);font-size:11px">(الأخطر)</span></b><div class="routes"><code>/users</code> (الطاقم) <code>/database</code> <code>/maintenance</code> <code>/export-data</code> <code>/emails</code> <code>/system-errors</code> <code>/changelog</code> · إعدادات نظام: <code>/settings/system</code> <code>/settings/defaults</code> <code>/settings/telegram</code> <code>/settings/jbr-seo</code> <code>/settings/business</code></div></td>
+      <td class="full">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td>
+    </tr>
+  </table>
+
+  <div class="card" style="border-inline-start:5px solid var(--green);background:var(--greenbg)"><b>🛡️ شبكة أمان — deny by default:</b> أي مسار <b>مش موجود</b> في الجدول = <b>ممنوع تلقائياً</b> لكل الأدوار عدا <code>ADMIN</code>. لو أضفنا مساراً جديداً مستقبلاً ونسيناه، النظام يحجبه عن غير الأدمن — ما ينفتح بالغلط. نفس مبدأ حراستنا الحالية في <code>proxy.ts</code>.</div>
+
+  <div class="card"><b>الـ prefix يغطّي التفاصيل:</b> صفحات التفاصيل والتحرير (<code>/clients/[id]/edit</code> · <code>/articles/[id]</code> · <code>/media/[id]/edit</code> …) تتبع قسمها الأب تلقائياً — الحماية على أول جزء من المسار، فما نعدّها وحدة وحدة. صفحات الدخول العامة (<code>/login</code> · <code>/forgot-password</code> · <code>/reset-password</code>) عامة أصلاً وخارج الجدول.</div>
+
+  <div class="card"><b>التطبيق (يطمئنك):</b> كل هذا يعيش في ملف واحد <code>admin/lib/permissions.ts</code> = خريطة «قسم → أي أدوار تشوفه». <code>proxy.ts</code> يفحص القسم قبل الرندر، والقائمة الجانبية تُفلتر تلقائياً، وكل <code>server action</code> يتأكد قبل الكتابة. تعديل صلاحية مستقبلاً = تغيير خانة في الجدول. الباقي التقني شغلي.</div>
+
+  <h2><span class="n">٣</span> الخلاصة — كل واحد في جسمه</h2>
+  <div class="card"><b>🛡️ ADMIN:</b> كل شي. · <b>✍️ WRITER:</b> المقالات + التصنيفات/الوسوم بس. · <b>🎨 GRAPHIC:</b> الوسائط + النشر بس. · <b>🤝 CLIENT_MGR:</b> العملاء + المراسلات + الجمهور بس. · الكل يقرأ لوحة التحكم والإرشادات.</div>
+  <div class="dec"><b>باقي قرار واحد:</b> أي خانة ثانية في الجدول تبي تغيّرها؟ لو تمام — أبدأ أبني الكود (<code>admin/lib/permissions.ts</code> + فحص القسم في <code>proxy.ts</code> + فلترة القائمة الجانبية).</div>
+
+  <div class="foot">اقتراح للنقاش · لسه ما كتبت كود · نبني بعد اتفاقك.</div>
+</div>
+</body>
+</html>

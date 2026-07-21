@@ -7,6 +7,7 @@ import { ArrowUpDown, Search } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import type { MediaRow } from "../../../../actions/media-counts";
 
 /**
@@ -37,11 +38,6 @@ const USED_LABEL: Record<string, string> = {
   hero: "client hero",
 };
 
-function seoTone(score: number): string {
-  if (score >= 80) return "text-emerald-600 dark:text-emerald-400";
-  if (score >= 60) return "text-amber-600 dark:text-amber-400";
-  return "text-red-600 dark:text-red-400";
-}
 
 export function MediaSegmentTable({ rows }: { rows: MediaRow[] }) {
   const [query, setQuery] = useState("");
@@ -169,7 +165,7 @@ export function MediaSegmentTable({ rows }: { rows: MediaRow[] }) {
                     )}
                   </TableCell>
                   <TableCell className="py-2 text-end">
-                    <span className={`font-bold tabular-nums ${seoTone(r.seoScore)}`}>{r.seoScore}</span>
+                    <SeoScoreBadge score={r.seoScore} size="sm" />
                   </TableCell>
                   <TableCell className="whitespace-nowrap py-2">
                     {r.usedAs.length === 0 ? (

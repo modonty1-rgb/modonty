@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>لماذا لا يسجّل الزائر؟ — تشخيص وخطة بدء الحل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy: #0E065A;
+    --blue: #3030FF;
+    --teal: #00D8D8;
+    --bg: #f5f6fc;
+    --card: #ffffff;
+    --ink: #14132b;
+    --muted: #6b6e87;
+    --line: #e7e8f2;
+    --red: #dc2626;
+    --amber: #d97706;
+    --green: #16a34a;
+    --redbg: #fef2f2;
+    --amberbg: #fffbeb;
+    --bluebg: #eef0ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Tajawal', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+    padding: 32px 16px 80px;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+
+  /* Header */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #1a0f8a 100%);
+    color: #fff;
+    border-radius: 20px;
+    padding: 34px 30px;
+    margin-bottom: 26px;
+    box-shadow: 0 14px 40px rgba(14,6,90,.22);
+  }
+  .hero .kicker {
+    display: inline-block;
+    background: rgba(255,255,255,.14);
+    color: #cfd3ff;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 5px 13px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+  }
+  .hero h1 { font-size: 30px; font-weight: 800; line-height: 1.35; margin-bottom: 10px; }
+  .hero p { color: #c7cbf2; font-size: 15px; max-width: 620px; }
+  .hero .meta { margin-top: 16px; font-size: 13px; color: #9fa4d8; }
+
+  /* Root question banner */
+  .root {
+    background: var(--card);
+    border: 2px solid var(--blue);
+    border-radius: 18px;
+    padding: 26px 28px;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 22px rgba(48,48,255,.08);
+  }
+  .root .tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--bluebg); color: var(--blue);
+    font-size: 12px; font-weight: 700;
+    padding: 5px 12px; border-radius: 999px; margin-bottom: 12px;
+  }
+  .root h2 { font-size: 23px; font-weight: 800; color: var(--navy); line-height: 1.5; }
+  .root .sub { color: var(--muted); font-size: 15px; margin-top: 8px; }
+
+  /* Section title */
+  .sec-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 20px; font-weight: 800; color: var(--navy);
+    margin: 34px 0 18px;
+  }
+  .sec-title .n {
+    width: 30px; height: 30px; border-radius: 9px;
+    background: var(--navy); color: #fff;
+    display: grid; place-items: center; font-size: 15px; font-weight: 700;
+  }
+
+  /* Barrier cards */
+  .barrier {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    position: relative;
+    border-inline-start: 6px solid var(--line);
+  }
+  .barrier.high { border-inline-start-color: var(--red); }
+  .barrier.root-cause { border-inline-start-color: var(--blue); background: linear-gradient(180deg,#fbfbff,#f4f5ff); }
+  .barrier.medium { border-inline-start-color: var(--amber); }
+
+  .barrier .top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .barrier .step {
+    width: 34px; height: 34px; border-radius: 10px; flex: 0 0 auto;
+    display: grid; place-items: center; font-weight: 800; font-size: 16px;
+    background: var(--bluebg); color: var(--blue);
+  }
+  .barrier h3 { font-size: 18px; font-weight: 700; flex: 1; min-width: 200px; }
+  .badge {
+    font-size: 12px; font-weight: 700; padding: 4px 11px; border-radius: 999px; white-space: nowrap;
+  }
+  .badge.b-high { background: var(--redbg); color: var(--red); }
+  .badge.b-root { background: var(--bluebg); color: var(--blue); }
+  .badge.b-med { background: var(--amberbg); color: var(--amber); }
+
+  .row { display: grid; grid-template-columns: 86px 1fr; gap: 6px 12px; font-size: 14.5px; }
+  .row dt { color: var(--muted); font-weight: 500; }
+  .row dd { color: var(--ink); }
+  .row dd.fix { color: var(--green); font-weight: 500; }
+  .row + .row { margin-top: 8px; }
+
+  /* Decision card */
+  .decision {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 24px 26px;
+    margin-top: 10px;
+  }
+  .decision h3 { font-size: 19px; font-weight: 800; color: var(--navy); margin-bottom: 6px; }
+  .decision > p.lead { color: var(--muted); font-size: 14.5px; margin-bottom: 18px; }
+  .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .opt {
+    border: 1px solid var(--line); border-radius: 13px; padding: 16px 18px; background: #fcfcff;
+  }
+  .opt.pick { border: 2px solid var(--blue); background: var(--bluebg); }
+  .opt .h { font-weight: 700; font-size: 15.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 7px; }
+  .opt .pin { font-size: 11px; font-weight: 700; background: var(--blue); color: #fff; padding: 3px 9px; border-radius: 999px; }
+  .opt ul { list-style: none; font-size: 13.5px; color: var(--muted); }
+  .opt li { padding-inline-start: 18px; position: relative; margin-bottom: 5px; }
+  .opt li::before { content: "—"; position: absolute; inset-inline-start: 0; color: var(--blue); }
+  .myrec {
+    margin-top: 16px; background: var(--navy); color: #fff; border-radius: 12px; padding: 15px 18px; font-size: 14.5px;
+  }
+  .myrec b { color: var(--teal); }
+
+  /* Evidence strip */
+  .evidence { margin-top: 34px; }
+  .evidence .note { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+  .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 13px; padding: 16px; text-align: center; }
+  .stat .v { font-size: 24px; font-weight: 800; color: var(--navy); }
+  .stat .v.zero { color: var(--red); }
+  .stat .l { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+
+  /* Next step */
+  .next {
+    margin-top: 34px; border: 1px dashed var(--blue); border-radius: 16px;
+    padding: 22px 24px; background: var(--bluebg);
+  }
+  .next h3 { font-size: 17px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+  .next p { font-size: 14.5px; color: #3a3c5c; }
+
+  /* Answered root (green) */
+  .root.answered { border-color: var(--green); box-shadow: 0 6px 22px rgba(22,163,74,.10); }
+  .root.answered .tag { background: #dcfce7; color: var(--green); }
+  .root.answered h2 { color: #14532d; }
+
+  /* Locked value grid */
+  .locked { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .lk {
+    display: flex; align-items: center; gap: 10px;
+    background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px;
+    padding: 13px 15px; font-size: 14.5px; font-weight: 500; color: #14532d;
+  }
+  .lk .ic { font-size: 20px; }
+
+  /* Out-of-scope note */
+  .scope-note {
+    margin-top: 18px; background: #fff7ed; border: 1px solid #fed7aa;
+    border-radius: 13px; padding: 14px 18px; font-size: 13.5px; color: #7c2d12; line-height: 1.7;
+  }
+  .scope-note b { color: var(--amber); }
+
+  @media (max-width: 640px) { .locked { grid-template-columns: 1fr; } }
+
+  @media (max-width: 640px) {
+    .opts { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2,1fr); }
+    .hero h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <span class="kicker">تشخيص + حل متفق عليه · مدوّنتي</span>
+    <h1>لماذا لا يسجّل الزائر؟ — والحل</h1>
+    <p>الزوّار يدخلون ويتفاعلون فعلاً — لكن ولا واحد يكمّل الاشتراك. اتفقنا على السبب الجذر وعلى القيمة. هذا الملف يركّز على حلّ المشكلة الرئيسية: نخلّي الزائر يشترك.</p>
+    <div class="meta">النسخة الثانية · 2026-06-23 · متفق على الفكرة — التنفيذ مرحلة لاحقة</div>
+  </header>
+
+  <!-- ROOT QUESTION -->
+  <section class="root answered">
+    <span class="tag">✓ السؤال الجذر — انحلّ</span>
+    <h2>الزائر يعطي بريده ويحدّد اهتماماته — فيوصله جديد تخصصه + عروض وكوبونات الشركاء اللي تهمّه فقط.</h2>
+    <p class="sub">قيمة صادقة ومخصّصة: ما نزعجه بكل شيء، نوصل له اللي يهمّه هو. هذا الجواب اللي يبرّر التسجيل.</p>
+  </section>
+
+  <!-- BARRIERS -->
+  <div class="sec-title"><span class="n">٤</span> الحواجز الأربعة في طريق الزائر</div>
+
+  <!-- 1 -->
+  <article class="barrier high">
+    <div class="top">
+      <span class="step">١</span>
+      <h3>ما يشوف الدعوة أصلاً</h3>
+      <span class="badge b-high">خطورة عالية</span>
+    </div>
+    <dl>
+      <div class="row"><dt>الحالة الآن</dt><dd>المدخل الوحيد للتسجيل = أيقونة باب صغيرة في زاوية الهيدر، <b>بلا أي كلمة</b>.</dd></div>
+      <div class="row"><dt>الأثر</dt><dd>الزائر لا ينتبه لها إطلاقاً — الدعوة غير موجودة عملياً.</dd></div>
+      <div class="row"><dt>الحل</dt><dd class="fix">زر نصّي واضح «اشترك مجاناً» في الهيدر، ظاهر فوق الطية في الجوال.</dd></div>
+    </dl>
+  </article>
+
+  <!-- 2 -->
+  <article class="barrier high">
+    <div class="top">
+      <span class="step">٢</span>
+      <h3>لو ضغطها — تودّيه لصفحة «دخول» مش «تسجيل»</h3>
+      <span class="badge b-high">خطورة عالية</span>
+    </div>
+    <dl>
+      <div class="row"><dt>الحالة الآن</dt><dd>الأيقونة تفتح صفحة تسجيل الدخول، والزائر جديد مالَه حساب.</dd></div>
+      <div class="row"><dt>الأثر</dt><dd>يحسّ «هذي مو لي» ويطلع — الفلو معكوس للزائر الجديد.</dd></div>
+      <div class="row"><dt>الحل</dt><dd class="fix">الزائر الجديد يبدأ من صفحة «إنشاء حساب»، مع رابط واضح لمن عنده حساب.</dd></div>
+    </dl>
+  </article>
+
+  <!-- 3 — ROOT -->
+  <article class="barrier root-cause">
+    <div class="top">
+      <span class="step">٣</span>
+      <h3>مافي سبب يدفعه يسجّل ← هذا الجذر</h3>
+      <span class="badge b-root">السبب الأعمق</span>
+    </div>
+    <dl>
+      <div class="row"><dt>الحالة الآن</dt><dd>السبب الوحيد المكتوب: «للتعليق والتفاعل مع المحتوى».</dd></div>
+      <div class="row"><dt>الأثر</dt><dd>القارئ جا يقرأ مقال — مايهمّه يعلّق. <b>مافي مقابل واضح: إيش يستفيد؟</b></dd></div>
+      <div class="row"><dt>الحل ✓</dt><dd class="fix">القيمة المعتمدة تحت: نشرة بجديد تخصصه + عروض الشركاء اللي تهمّه.</dd></div>
+    </dl>
+  </article>
+
+  <!-- 4 -->
+  <article class="barrier medium">
+    <div class="top">
+      <span class="step">٤</span>
+      <h3>لو وصل للتسجيل — الفورم ثقيل</h3>
+      <span class="badge b-med">خطورة متوسطة</span>
+    </div>
+    <dl>
+      <div class="row"><dt>الحالة الآن</dt><dd>٤ خانات: الاسم + البريد + كلمة المرور + تأكيدها — <b>وبدون زر Google</b> (موجود بالدخول ومنسي بالتسجيل).</dd></div>
+      <div class="row"><dt>الأثر</dt><dd>كل خانة زائدة = نقطة تسرّب جديدة.</dd></div>
+      <div class="row"><dt>الحل</dt><dd class="fix">زر Google أولاً + تقليل لخانتين (بريد + كلمة مرور)، والاسم اختياري.</dd></div>
+    </dl>
+  </article>
+
+  <!-- LOCKED VALUE -->
+  <div class="sec-title"><span class="n">✓</span> القيمة المعتمدة (متفق عليها)</div>
+  <section class="decision">
+    <h3>«اشترك» = بريد + اهتمامات</h3>
+    <p class="lead">حُسم النقاش: الزائر يشترك ببريده (احتكاك أقل، بلا كلمة مرور)، يحدّد تخصصاته، ونرقّيه لحساب كامل لاحقًا عند أول تعليق/حفظ.</p>
+    <div class="locked">
+      <div class="lk"><span class="ic">📧</span> يسجّل بريده في ملفه</div>
+      <div class="lk"><span class="ic">🎯</span> يختار اهتماماته (تخصصات)</div>
+      <div class="lk"><span class="ic">📨</span> يوصله جديد تخصصه فقط</div>
+      <div class="lk"><span class="ic">🎁</span> عروض/كوبونات الشركاء حسب اهتمامه</div>
+    </div>
+    <div class="scope-note">
+      <b>خارج نطاق الآن (مرحلة لاحقة):</b> محرّك إرسال الحملات · صلاحيات إرسال العميل/الأدمن · إلغاء الاشتراك. نركّز الحين على المشكلة الرئيسية فقط: نخلّي الزائر يشترك.
+    </div>
+  </section>
+
+  <!-- EVIDENCE -->
+  <div class="sec-title evidence-title" style="margin-bottom:6px"><span class="n">📊</span> الدليل من الأرقام الحقيقية</div>
+  <section class="evidence">
+    <p class="note">من Google Analytics — منذ الإطلاق، كامل المنصة (أرقام فعلية لا تقديرات).</p>
+    <div class="stats">
+      <div class="stat"><div class="v">7,667</div><div class="l">زيارة</div></div>
+      <div class="stat"><div class="v">682</div><div class="l">تفاعل حقيقي</div></div>
+      <div class="stat"><div class="v zero">≈ 0</div><div class="l">اشتراك نشرة</div></div>
+      <div class="stat"><div class="v zero">0</div><div class="l">حدث تسجيل مُقاس</div></div>
+    </div>
+    <p class="note" style="margin-top:12px">الخلاصة: التفاعل موجود (نقرات/مشاركات)، لكن الاشتراك ≈ صفر — تأكيد مباشر إن المشكلة في الدعوة والقيمة، لا في جذب الزوّار.</p>
+  </section>
+
+  <!-- NEXT -->
+  <section class="next">
+    <h3>الخطوة التالية</h3>
+    <p>نبدأ بحلّ المشكلة الرئيسية فقط: زر «اشترك مجاناً» واضح في الهيدر (حاجز ١) + شاشة اشتراك خفيفة فيها القيمة واختيار الاهتمام (حاجز ٣) + زر Google وتقليل الخانات (حاجز ٤). نوصّل الزائر للاشتراك — والإرسال والحملات مرحلة بعدها.</p>
+  </section>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Article Form — Full Vision v1</title>
+<style>
+:root {
+  --bg: #09090b;
+  --bg-card: #18181b;
+  --bg-input: #0f0f11;
+  --bg-hover: #27272a;
+  --border: #27272a;
+  --border-focus: #3b82f6;
+  --text: #fafafa;
+  --muted: #71717a;
+  --label: #a1a1aa;
+  --primary: #3b82f6;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --r: 6px;
+  --r-sm: 4px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;display:flex;flex-direction:column;min-height:100vh}
+
+/* TOP BAR */
+.topbar{height:48px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:var(--bg);position:sticky;top:0;z-index:50;flex-shrink:0}
+.bc{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px}
+.bc a{color:var(--muted);text-decoration:none}.bc a:hover{color:var(--text)}
+.bc .cur{color:var(--text);font-weight:500}
+.topbar-end{display:flex;align-items:center;gap:8px}
+.chip{padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:500}
+.chip-draft{background:#27272a;color:var(--muted);border:1px solid var(--border)}
+.chip-pub{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.avatar{width:28px;height:28px;border-radius:50%;background:#3f3f46;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--label)}
+
+/* STEP TABS */
+.step-nav{border-bottom:1px solid var(--border);display:flex;align-items:stretch;padding:0 20px;background:var(--bg);position:sticky;top:48px;z-index:40;overflow-x:auto;gap:2px}
+.step{display:flex;align-items:center;gap:6px;padding:11px 12px 10px;font-size:12px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .15s;user-select:none}
+.step:hover{color:var(--text)}
+.step.active{color:var(--text);border-bottom-color:var(--primary)}
+.sn{width:20px;height:20px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:10px;font-weight:700;background:var(--bg-hover);color:var(--muted);flex-shrink:0}
+.step.active .sn{background:var(--primary);color:#fff}
+.step.done .sn{background:rgba(34,197,94,.15);color:var(--green)}
+.step.warn .sn{background:rgba(245,158,11,.15);color:var(--amber)}
+.pct{font-size:10px;padding:1px 5px;border-radius:9999px;background:var(--bg-hover);color:var(--muted)}
+.step.active .pct{background:rgba(59,130,246,.12);color:var(--primary)}
+
+/* CONTENT */
+.page{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.tab-panel{display:none;flex:1}.tab-panel.active{display:flex;flex-direction:column;flex:1}
+
+/* GRID LAYOUTS */
+.two-col{display:grid;grid-template-columns:1fr 272px;gap:20px;padding:20px;align-items:start;max-width:1080px}
+.full-col{padding:20px;display:flex;flex-direction:column;gap:16px;max-width:880px}
+.seo-col{display:grid;grid-template-columns:1fr 340px;gap:20px;padding:20px;align-items:start;max-width:1080px}
+
+/* CARD */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.card-body{padding:16px;display:flex;flex-direction:column;gap:14px}
+.card-hd{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:12px 16px 0}
+
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:5px}
+.lbl{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:500;color:var(--label)}
+.lbl .req{color:var(--red);margin-right:2px}
+.lbl .cnt{font-size:10px;font-weight:400;color:var(--muted)}
+.hint{font-size:11px;color:var(--muted);line-height:1.4}
+.hint.danger{color:#fca5a5}
+.url-prev{font-size:11px;font-family:monospace;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.url-prev .slug-part{color:var(--text)}
+
+input[type=text],textarea,select{background:var(--bg-input);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-size:13px;padding:8px 10px;width:100%;outline:none;transition:border-color .15s,box-shadow .15s;font-family:inherit;resize:none}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--border-focus);box-shadow:0 0 0 2px rgba(59,130,246,.15)}
+.title-in{font-size:16px;font-weight:500;padding:10px 12px;height:46px}
+.slug-in{font-family:monospace;font-size:12px;direction:ltr;text-align:left}
+select{height:36px;cursor:pointer}
+textarea{line-height:1.6}
+.ta-sm{height:72px}
+.ta-md{height:96px}
+.ta-lg{height:200px}
+
+/* SECTION TITLE */
+.sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* CHECKBOX ROW */
+.check-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:var(--r-sm);border:1px solid var(--border);cursor:pointer;transition:border-color .12s,background .12s}
+.check-row:hover{background:var(--bg-hover)}
+.check-row.on{border-color:rgba(59,130,246,.35);background:rgba(59,130,246,.06)}
+.box{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--muted);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
+.check-row.on .box{background:var(--primary);border-color:var(--primary)}
+.ck-ttl{font-size:13px;font-weight:500}
+.ck-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4}
+
+/* TAGS */
+.tags-wrap{display:flex;flex-wrap:wrap;gap:5px;padding:7px 9px;min-height:36px;border:1px solid var(--border);border-radius:var(--r-sm);cursor:text}
+.tag{display:inline-flex;align-items:center;gap:3px;background:rgba(59,130,246,.12);color:var(--primary);border-radius:9999px;font-size:11px;padding:2px 8px}
+.tag .x{opacity:.6;cursor:pointer}
+.tags-ph{color:var(--muted);font-size:12px}
+
+/* EDITOR AREA */
+.editor-wrap{background:var(--bg-input);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;min-height:480px}
+.editor-toolbar{border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;background:var(--bg-card)}
+.tb-btn{padding:4px 8px;border-radius:var(--r-sm);border:none;background:transparent;color:var(--label);cursor:pointer;font-size:12px;font-weight:600;transition:background .1s,color .1s}
+.tb-btn:hover{background:var(--bg-hover);color:var(--text)}
+.tb-btn.active{background:rgba(59,130,246,.15);color:var(--primary)}
+.tb-sep{width:1px;height:18px;background:var(--border);margin:0 4px}
+.editor-body{padding:20px 24px;min-height:440px;color:var(--muted);font-size:14px;line-height:1.8}
+.editor-body p{margin-bottom:12px}
+.editor-body h2{color:var(--text);font-size:18px;font-weight:600;margin:20px 0 8px}
+.editor-body strong{color:var(--text)}
+
+/* MEDIA ZONE */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--r);padding:40px 20px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+.upload-zone:hover{border-color:var(--primary);background:rgba(59,130,246,.04)}
+.upload-icon{width:40px;height:40px;border-radius:50%;background:var(--bg-hover);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:18px}
+.upload-title{font-size:14px;font-weight:500;margin-bottom:4px}
+.upload-sub{font-size:12px;color:var(--muted)}
+
+/* IMAGE PREVIEW */
+.img-preview{border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.img-preview img,.img-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;background:#1c1c1f;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px}
+.img-actions{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:8px}
+
+/* GALLERY GRID */
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.gal-item{aspect-ratio:1;border-radius:var(--r-sm);background:#1c1c1f;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;cursor:pointer;transition:border-color .12s}
+.gal-item:hover{border-color:var(--primary)}
+.gal-add{border-style:dashed;cursor:pointer}.gal-add:hover{background:var(--bg-hover)}
+
+/* SEO PREVIEW */
+.seo-preview{background:#fff;border-radius:var(--r);padding:14px 16px;color:#202124}
+.seo-url{font-size:12px;color:#006621;margin-bottom:2px}
+.seo-title{font-size:17px;color:#1a0dab;font-weight:400;margin-bottom:4px;font-family:arial,sans-serif;line-height:1.3}
+.seo-desc{font-size:13px;color:#545454;font-family:arial,sans-serif;line-height:1.5}
+
+/* OG PREVIEW */
+.og-preview{border:1px solid #e4e6eb;border-radius:var(--r);overflow:hidden;background:#f0f2f5}
+.og-img{width:100%;height:120px;background:#c9cdd4;display:flex;align-items:center;justify-content:center;color:#65676b;font-size:12px}
+.og-body{padding:10px 12px}
+.og-domain{font-size:11px;color:#65676b;text-transform:uppercase;margin-bottom:2px}
+.og-title{font-size:14px;font-weight:600;color:#1c1e21;margin-bottom:2px}
+.og-desc{font-size:13px;color:#65676b}
+
+/* FAQ */
+.faq-item{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px}
+.faq-num{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.faq-del{margin-right:auto;background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:var(--r-sm);padding:3px 8px;font-size:11px;cursor:pointer}
+
+/* RELATED */
+.article-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:12px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:border-color .12s}
+.article-card:hover{border-color:var(--primary)}
+.article-card.selected{border-color:var(--primary);background:rgba(59,130,246,.05)}
+.art-thumb{width:48px;height:48px;border-radius:var(--r-sm);background:#27272a;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px}
+.art-title{font-size:13px;font-weight:500;margin-bottom:3px}
+.art-meta{font-size:11px;color:var(--muted)}
+
+/* BOTTOM BAR */
+.bottom{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;bottom:0;z-index:40;flex-shrink:0}
+.bstats{display:flex;align-items:center;gap:10px}
+.stat{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
+.seo-pill{display:flex;align-items:center;gap:4px;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600}
+.seo-low{background:rgba(239,68,68,.12);color:var(--red)}
+.seo-mid{background:rgba(245,158,11,.12);color:var(--amber)}
+.seo-hi{background:rgba(34,197,94,.12);color:var(--green)}
+.prog{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.pbar{width:44px;height:3px;background:#3f3f46;border-radius:9999px;overflow:hidden}
+.pfill{height:100%;background:var(--primary);border-radius:9999px}
+.bactions{display:flex;align-items:center;gap:8px}
+.btn{padding:7px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:background .1s,color .1s}
+.btn-ghost{background:transparent;border-color:var(--border);color:var(--muted)}.btn-ghost:hover{background:var(--bg-hover);color:var(--text)}
+.btn-out{background:transparent;border-color:var(--border);color:var(--text)}.btn-out:hover{background:var(--bg-hover)}
+.btn-pri{background:var(--primary);color:#fff}.btn-pri:hover{background:#2563eb}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#16a34a}
+.btn-sm{padding:4px 10px;font-size:11px}
+
+/* ALERT */
+.alert{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:var(--r-sm);font-size:12px;line-height:1.5}
+.alert-warn{border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.07);color:#fbbf24}
+
+/* LOGO PREVIEW */
+.logo-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg-hover);border-radius:var(--r-sm);border:1px solid var(--border)}
+.logo-av{width:30px;height:30px;border-radius:var(--r-sm);background:#3f3f46;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.logo-nm{font-size:12px;font-weight:500}
+.logo-sl{font-size:10px;color:var(--muted);font-family:monospace}
+
+/* RADIO GROUP */
+.radio-group{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.radio-opt{padding:8px 12px;border:1px solid var(--border);border-radius:var(--r-sm);cursor:pointer;transition:border-color .12s,background .12s;font-size:12px}
+.radio-opt:hover{background:var(--bg-hover)}
+.radio-opt.on{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.07);color:var(--primary);font-weight:500}
+
+/* BADGE */
+.badge{padding:1px 6px;border-radius:9999px;font-size:10px;font-weight:500}
+.badge-blue{background:rgba(59,130,246,.12);color:var(--primary)}
+.badge-green{background:rgba(34,197,94,.12);color:var(--green)}
+.badge-amber{background:rgba(245,158,11,.12);color:var(--amber)}
+.badge-red{background:rgba(239,68,68,.12);color:var(--red)}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="bc">
+    <a href="#">Articles</a>
+    <span style="opacity:.4">›</span>
+    <span class="cur">مقال جديد</span>
+  </div>
+  <div class="topbar-end">
+    <span class="chip chip-draft">مسودة جديدة</span>
+    <span class="avatar">M</span>
+  </div>
+</div>
+
+<!-- STEP TABS -->
+<div class="step-nav" id="stepNav">
+  <div class="step active" onclick="show(0)"><div class="sn">1</div> Basic <div class="pct">33%</div></div>
+  <div class="step" onclick="show(1)"><div class="sn">2</div> Content <div class="pct">0%</div></div>
+  <div class="step" onclick="show(2)"><div class="sn">3</div> Media <div class="pct">0%</div></div>
+  <div class="step warn" onclick="show(3)"><div class="sn">4</div> SEO <div class="pct">0%</div></div>
+  <div class="step" onclick="show(4)"><div class="sn">5</div> FAQs <div class="pct">0%</div></div>
+  <div class="step" onclick="show(5)"><div class="sn">6</div> Related <div class="pct">0%</div></div>
+</div>
+
+<!-- PAGE BODY -->
+<div class="page">
+
+<!-- ═══════════════════════════ TAB 1 — BASIC ═══════════════════════════ -->
+<div class="tab-panel active" id="tab0">
+  <div class="two-col">
+
+    <!-- MAIN -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <div class="card">
+        <div class="card-hd">محتوى المقال</div>
+        <div class="card-body">
+
+          <div class="field">
+            <div class="lbl">Title <span class="req">*</span> <span class="cnt">0 / 80</span></div>
+            <input type="text" class="title-in" placeholder="اكتب عنواناً جذاباً يشد الزائر — هذا ما يراه القارئ في الصفحة" />
+            <span class="hint">يظهر كعنوان رئيسي H1 — مختلف عن عنوان SEO الذي يظهر في جوجل</span>
+          </div>
+
+          <div class="field">
+            <div class="lbl">
+              <span style="display:flex;align-items:center;gap:5px">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+                Slug — الرابط الدائم
+              </span>
+            </div>
+            <input type="text" class="slug-in" placeholder="مثال: افضل-عيادات-الاسنان-جدة" />
+            <div class="url-prev">modonty.com/articles/<span class="slug-part">_</span></div>
+            <span class="hint danger">⚠ يتجمد بعد النشر — تعديله يكسر روابط جوجل</span>
+          </div>
+
+          <div class="field">
+            <div class="lbl">Excerpt <span class="cnt">0 / 160</span></div>
+            <textarea class="ta-sm" placeholder="ملخص قصير للمقال — يظهر في نتائج جوجل وبطاقات المشاركة"></textarea>
+            <span class="hint">اكتب 150–160 حرف للحصول على أفضل ظهور في نتائج البحث</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SIDEBAR -->
+    <div style="display:flex;flex-direction:column;gap:12px;position:sticky;top:calc(48px + 45px + 20px)">
+
+      <div class="card">
+        <div class="card-body">
+          <div class="sec-title">الناشر والتصنيف</div>
+
+          <div class="field">
+            <div class="lbl">Client <span class="req">*</span></div>
+            <select>
+              <option>Select a client</option>
+              <option selected>جبر سيو — jabr-seo</option>
+              <option>كيما زون</option>
+            </select>
+            <div class="logo-row">
+              <div class="logo-av">ج</div>
+              <div><div class="logo-nm">جبر سيو</div><div class="logo-sl">jabr-seo</div></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="lbl">Category</div>
+            <select><option>None</option><option>طب وصحة</option><option>قانون</option></select>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="sec-title">الوسوم</div>
+          <div class="field">
+            <div class="tags-wrap">
+              <span class="tag">صحة أسنان <span class="x">×</span></span>
+              <span class="tag">جدة <span class="x">×</span></span>
+              <span class="tags-ph">أضف وسماً...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="sec-title">خيارات النشر</div>
+          <div class="check-row on">
+            <div class="box">
+              <svg width="9" height="9" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+            </div>
+            <div><div class="ck-ttl">Highlight on Homepage</div><div class="ck-desc">يظهر في الرئيسية — يرفع أولوية Sitemap لـ 0.8</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TAB 2 — CONTENT ═════════════════════════ -->
+<div class="tab-panel" id="tab1">
+  <div style="padding:20px;max-width:880px;display:flex;flex-direction:column;gap:16px">
+
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="badge badge-blue">Rich Text</span>
+        <span style="font-size:11px;color:var(--muted)">340 كلمة · 2 دقيقة قراءة</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <div class="radio-group" style="grid-template-columns:auto auto">
+          <div class="radio-opt on">Rich Text</div>
+          <div class="radio-opt">Markdown</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="editor-wrap">
+      <div class="editor-toolbar">
+        <button class="tb-btn active">B</button>
+        <button class="tb-btn"><i>I</i></button>
+        <button class="tb-btn"><u>U</u></button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn">H1</button>
+        <button class="tb-btn active">H2</button>
+        <button class="tb-btn">H3</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn">≡</button>
+        <button class="tb-btn">•</button>
+        <button class="tb-btn">1.</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn">🔗</button>
+        <button class="tb-btn">🖼</button>
+        <button class="tb-btn">💬</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn">↩</button>
+        <button class="tb-btn">↪</button>
+      </div>
+      <div class="editor-body" dir="rtl">
+        <h2>مقدمة المقال</h2>
+        <p>اكتب محتوى المقال هنا. يدعم المحرر <strong>النص العريض</strong> والعناوين والقوائم والروابط والصور.</p>
+        <p style="color:var(--bg-hover)">|</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="sec-title">إحصائيات المحتوى</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center">
+          <div><div style="font-size:20px;font-weight:700;color:var(--text)">340</div><div style="font-size:11px;color:var(--muted)">كلمة</div></div>
+          <div><div style="font-size:20px;font-weight:700;color:var(--text)">2</div><div style="font-size:11px;color:var(--muted)">دقائق قراءة</div></div>
+          <div><div style="font-size:20px;font-weight:700;color:var(--amber)">متوسط</div><div style="font-size:11px;color:var(--muted)">عمق المحتوى</div></div>
+          <div><div style="font-size:20px;font-weight:700;color:var(--green)">2</div><div style="font-size:11px;color:var(--muted)">عناوين H2</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TAB 3 — MEDIA ═══════════════════════════ -->
+<div class="tab-panel" id="tab2">
+  <div style="padding:20px;display:grid;grid-template-columns:1fr 260px;gap:20px;max-width:1080px;align-items:start">
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <div class="card">
+        <div class="card-hd">صورة الغلاف</div>
+        <div class="card-body">
+          <div class="upload-zone">
+            <div class="upload-icon">🖼</div>
+            <div class="upload-title">اسحب صورة أو اضغط للاختيار</div>
+            <div class="upload-sub">PNG, JPG, WebP — بحد أقصى 5MB · مقاس موصى به 1200×630</div>
+          </div>
+          <div class="field">
+            <div class="lbl">Featured Image Alt Text</div>
+            <input type="text" placeholder="وصف الصورة باختصار — مهم للـ SEO وإمكانية الوصول" />
+            <span class="hint">وصف تلقائي إن تُركت فارغة. اكتب وصفاً دقيقاً للكلمة المفتاحية الرئيسية.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">معرض الصور</div>
+        <div class="card-body">
+          <div class="gallery-grid">
+            <div class="gal-item">📷</div>
+            <div class="gal-item">📷</div>
+            <div class="gal-item gal-add">＋</div>
+            <div class="gal-item gal-add">＋</div>
+          </div>
+          <span class="hint">صور إضافية للمقال — تظهر في الـ ImageObject JSON-LD</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;position:sticky;top:calc(48px+45px+20px)">
+
+      <div class="card">
+        <div class="card-body">
+          <div class="sec-title">معاينة البطاقة</div>
+          <div class="og-preview">
+            <div class="og-img">📷 Featured Image</div>
+            <div class="og-body" dir="rtl">
+              <div class="og-domain">modonty.com</div>
+              <div class="og-title">عنوان المقال هنا</div>
+              <div class="og-desc">ملخص المقال الذي يظهر عند المشاركة على وسائل التواصل</div>
+            </div>
+          </div>
+          <span class="hint">هكذا ستظهر البطاقة عند مشاركة المقال على تويتر وواتساب</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="sec-title">متطلبات SEO</div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span>صورة غلاف</span><span class="badge badge-amber">⚠ مطلوبة</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span>Alt Text</span><span class="badge badge-amber">⚠ مطلوب</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span>حجم 1200×630</span><span class="badge badge-amber">⚠ موصى به</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TAB 4 — SEO ════════════════════════════ -->
+<div class="tab-panel" id="tab3">
+  <div class="seo-col">
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <div class="card">
+        <div class="card-hd">عنوان ووصف جوجل</div>
+        <div class="card-body">
+
+          <div class="field">
+            <div class="lbl">SEO Title <span class="cnt">0 / 60</span></div>
+            <input type="text" placeholder="عنوان المقال | اسم العميل" />
+            <span class="hint">يظهر في نتائج جوجل — 50–60 حرف للظهور الكامل</span>
+          </div>
+
+          <div class="field">
+            <div class="lbl">Meta Description <span class="cnt">0 / 160</span></div>
+            <textarea class="ta-sm" placeholder="وصف جذاب يشجع على النقر — 150–160 حرف"></textarea>
+          </div>
+
+          <div class="field">
+            <div class="lbl">Canonical URL</div>
+            <input type="text" value="https://modonty.com/articles/" dir="ltr" style="text-align:left;font-family:monospace;font-size:11px" />
+            <span class="hint">الرابط المرجعي الأساسي — لمنع محتوى مكرر</span>
+          </div>
+
+          <div class="field">
+            <div class="lbl">Meta Robots</div>
+            <div class="radio-group">
+              <div class="radio-opt on">index, follow</div>
+              <div class="radio-opt">noindex, nofollow</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">Open Graph</div>
+        <div class="card-body">
+          <div class="field">
+            <div class="lbl">OG Title</div>
+            <input type="text" placeholder="يُعبّأ تلقائياً من SEO Title" />
+          </div>
+          <div class="field">
+            <div class="lbl">OG Description</div>
+            <textarea class="ta-sm" placeholder="يُعبّأ تلقائياً من Meta Description"></textarea>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="field">
+              <div class="lbl">OG Type</div>
+              <select><option>article</option><option>website</option></select>
+            </div>
+            <div class="field">
+              <div class="lbl">OG Locale</div>
+              <select><option>ar_SA</option><option>ar_EG</option><option>en_US</option></select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">Sitemap</div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="field">
+              <div class="lbl">Priority</div>
+              <select><option>0.8 — مميز</option><option selected>0.5 — عادي</option><option>0.3 — ثانوي</option></select>
+            </div>
+            <div class="field">
+              <div class="lbl">Change Frequency</div>
+              <select><option selected>weekly</option><option>monthly</option><option>daily</option></select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SEO SIDEBAR -->
+    <div style="display:flex;flex-direction:column;gap:12px;position:sticky;top:calc(48px+45px+20px)">
+
+      <div class="card">
+        <div class="card-body">
+          <div class="sec-title">معاينة جوجل</div>
+          <div class="seo-preview">
+            <div class="seo-url">modonty.com › articles › ...</div>
+            <div class="seo-title">أفضل عيادات الأسنان في جدة | جبر سيو</div>
+            <div class="seo-desc">دليل شامل لأفضل عيادات الأسنان في جدة مع المقارنة الكاملة للأسعار والتخصصات...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="sec-title">تقييم SEO</div>
+          <div style="text-align:center;padding:8px 0">
+            <div style="font-size:36px;font-weight:800;color:var(--amber)">42</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">من 100 — يحتاج تحسين</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:11px">
+            <div style="display:flex;justify-content:space-between"><span>✅ Canonical URL</span><span class="badge badge-green">مُطبَّق</span></div>
+            <div style="display:flex;justify-content:space-between"><span>❌ SEO Title</span><span class="badge badge-red">ناقص</span></div>
+            <div style="display:flex;justify-content:space-between"><span>❌ Meta Description</span><span class="badge badge-red">ناقص</span></div>
+            <div style="display:flex;justify-content:space-between"><span>❌ OG Image</span><span class="badge badge-red">ناقص</span></div>
+            <div style="display:flex;justify-content:space-between"><span>✅ Sitemap</span><span class="badge badge-green">مُطبَّق</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="sec-title">JSON-LD</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.5">
+            البيانات المنظّمة تُولَّد تلقائياً من بيانات المقال — لا تعديل يدوي.
+          </div>
+          <button class="btn btn-out btn-sm" style="width:100%;justify-content:center;margin-top:4px">عرض JSON-LD الحالي</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TAB 5 — FAQs ═══════════════════════════ -->
+<div class="tab-panel" id="tab4">
+  <div class="full-col">
+
+    <div class="alert alert-warn">
+      ⚡ الأسئلة الشائعة تُضاف تلقائياً لـ JSON-LD كـ FAQPage Schema — تحسّن ظهور المقال في جوجل بشكل مباشر.
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+
+      <div class="faq-item">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span class="faq-num">سؤال 1</span>
+          <button class="faq-del">حذف</button>
+        </div>
+        <div class="field">
+          <div class="lbl">السؤال</div>
+          <input type="text" value="ما هي أفضل عيادات الأسنان في جدة؟" />
+        </div>
+        <div class="field">
+          <div class="lbl">الإجابة <span class="cnt">0 / 300</span></div>
+          <textarea class="ta-md">تتميز جدة بوجود عدد من عيادات الأسنان المتخصصة التي تقدم خدمات متكاملة...</textarea>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span class="faq-num">سؤال 2</span>
+          <button class="faq-del">حذف</button>
+        </div>
+        <div class="field">
+          <div class="lbl">السؤال</div>
+          <input type="text" placeholder="اكتب السؤال..." />
+        </div>
+        <div class="field">
+          <div class="lbl">الإجابة <span class="cnt">0 / 300</span></div>
+          <textarea class="ta-md" placeholder="اكتب الإجابة..."></textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="btn btn-out" style="align-self:flex-start">＋ أضف سؤالاً</button>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="sec-title">تلميح</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">
+          اكتب 3–5 أسئلة تشمل الكلمات المفتاحية الرئيسية للمقال.<br>
+          إجابات قصيرة وواضحة (50–300 حرف) تعمل أفضل في نتائج جوجل.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TAB 6 — RELATED ════════════════════════ -->
+<div class="tab-panel" id="tab5">
+  <div class="full-col">
+
+    <div class="field">
+      <div class="lbl">البحث في المقالات</div>
+      <input type="text" placeholder="ابحث باسم المقال أو الكلمة المفتاحية..." />
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px">
+
+      <div class="article-card selected">
+        <div class="art-thumb">🦷</div>
+        <div>
+          <div class="art-title">دليل زراعة الأسنان الكاملة في جدة</div>
+          <div class="art-meta">جبر سيو · طب وصحة · 1,240 كلمة</div>
+        </div>
+        <div style="margin-right:auto"><span class="badge badge-green">✓ مُضاف</span></div>
+      </div>
+
+      <div class="article-card">
+        <div class="art-thumb">😁</div>
+        <div>
+          <div class="art-title">تجميل الأسنان بالفينير — الدليل الشامل</div>
+          <div class="art-meta">جبر سيو · طب وصحة · 890 كلمة</div>
+        </div>
+        <div style="margin-right:auto"><button class="btn btn-sm btn-out">أضف</button></div>
+      </div>
+
+      <div class="article-card">
+        <div class="art-thumb">🏥</div>
+        <div>
+          <div class="art-title">أفضل أطباء الأسنان في جدة 2024</div>
+          <div class="art-meta">جبر سيو · طب وصحة · 760 كلمة</div>
+        </div>
+        <div style="margin-right:auto"><button class="btn btn-sm btn-out">أضف</button></div>
+      </div>
+
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="sec-title">المقالات المُختارة (1)</div>
+        <div style="font-size:12px;color:var(--muted)">
+          المقالات المرتبطة تُضاف لـ JSON-LD كـ relatedLink وتساعد في ربط المحتوى وتحسين الـ crawlability.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- end page -->
+
+<!-- BOTTOM BAR -->
+<div class="bottom">
+  <div class="bstats">
+    <div class="seo-pill seo-low">SEO 0%</div>
+    <div class="prog">
+      <div class="pbar"><div class="pfill" style="width:12%"></div></div>
+      12%
+    </div>
+    <div class="stat">📄 0 كلمة</div>
+    <div class="stat">⏱ ‹1 دقيقة</div>
+  </div>
+  <div class="bactions">
+    <button class="btn btn-ghost">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      معاينة
+    </button>
+    <button class="btn btn-out">حفظ كمسودة</button>
+    <button class="btn btn-pri" id="nextBtn">التالي: Content ←</button>
+  </div>
+</div>
+
+<script>
+const tabs = ['Basic','Content','Media','SEO','FAQs','Related'];
+const next = ['Content','Media','SEO','FAQs','Related','نشر'];
+let cur = 0;
+
+function show(i) {
+  document.querySelectorAll('.tab-panel').forEach((p,j)=>{
+    p.classList.toggle('active', j===i);
+  });
+  document.querySelectorAll('.step').forEach((s,j)=>{
+    s.classList.toggle('active', j===i);
+  });
+  cur = i;
+  const nb = document.getElementById('nextBtn');
+  if(i === 5) {
+    nb.textContent = 'نشر المقال';
+    nb.className = 'btn btn-green';
+  } else {
+    nb.textContent = `التالي: ${next[i]} ←`;
+    nb.className = 'btn btn-pri';
+  }
+}
+
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  if(cur < 5) show(cur+1);
+});
+</script>
+</body>
+</html>

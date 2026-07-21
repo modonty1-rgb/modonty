@@ -147,14 +147,14 @@ export const MEDIA_SPECS: Record<MediaType, MediaSpec> = {
  * CLIENT_MINI is the client "mini / card" image (1.91:1) the designer uploads
  * (feeds the sidebar slider + article client card). OGIMAGE + TWITTER_IMAGE are
  * EXCLUDED upload roles: the client og:image / Twitter card are auto-derived from
- * the hero, nothing separate to upload.
+ * the hero, nothing separate to upload. GALLERY is EXCLUDED too — client galleries
+ * are managed in the dedicated /client-galleries route, not the general upload.
  */
 export const MEDIA_TYPE_ORDER: MediaType[] = [
   "POST",
   "HERO",
   "CLIENT_MINI",
   "LOGO",
-  "GALLERY",
   "GENERAL",
 ];
 

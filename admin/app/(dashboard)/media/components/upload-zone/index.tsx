@@ -15,7 +15,6 @@ import { ClientSelector } from "./components/client-selector";
 import { MediaTypeSelector } from "./components/media-type-selector";
 import { FileDropZone } from "./components/file-drop-zone";
 import { FilePreview } from "./components/file-preview";
-import { SEOForm } from "./components/seo-form";
 import { UploadProgress } from "./components/upload-progress";
 import { UploadSuccess } from "./components/upload-success";
 import { ImageEditorModal } from "./components/image-editor-modal";
@@ -103,8 +102,6 @@ export function UploadZone(props: UploadZoneProps) {
     isDragging,
     isLoadingClients,
     savingFileId,
-    seoForm,
-    setSeoForm,
     isUploading,
     isDisabled,
     handleMediaTypeChange,
@@ -220,86 +217,73 @@ export function UploadZone(props: UploadZoneProps) {
           {spec && <SpecBanner spec={spec} />}
 
           {activeFile ? (
-            <div className="grid gap-4 lg:grid-cols-5">
-              {/* Big preview — the focal point */}
-              <Card className="lg:col-span-3">
-                <CardContent className="space-y-3 pt-6">
-                  <FilePreview
-                    file={activeFile.file}
-                    previewUrl={activeFile.previewUrl}
-                    onReplace={() => {
-                      if (!isDisabled) fileInputRef.current?.click();
-                    }}
-                    onFileInput={handleFileInput}
-                    isDisabled={isDisabled}
-                    isDragging={isDragging}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    fileInputRef={fileInputRef}
-                  />
-                  {originalSize > 0 &&
-                    (activeFile.file.type === "image/webp" ? (
-                      <div className="flex flex-wrap items-center justify-center gap-2 rounded-md bg-muted/40 px-3 py-2 text-xs">
-                        <span className="text-muted-foreground">Original {formatBytes(originalSize)}</span>
-                        <span className="text-muted-foreground">→</span>
-                        <span className="font-semibold">WebP {formatBytes(activeFile.file.size)}</span>
-                        {activeFile.file.size < originalSize && (
-                          <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 font-semibold text-emerald-600 dark:text-emerald-400">
-                            −{Math.round((1 - activeFile.file.size / originalSize) * 100)}%
-                          </span>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="rounded-md bg-muted/40 px-3 py-2 text-center text-xs text-muted-foreground">
-                        Size: {formatBytes(activeFile.file.size)}
-                      </div>
-                    ))}
-                </CardContent>
-              </Card>
-
-              {/* Minimal form + save */}
-              <Card className="lg:col-span-2">
-                <CardContent className="space-y-4 pt-6">
-                  <SEOForm
-                    formData={seoForm}
-                    onChange={setSeoForm}
-                    isDisabled={isUploading && savingFileId === activeFile.id}
-                  />
-                  <Button
-                    onClick={() => handleSaveMedia(activeFile)}
-                    className="w-full gap-1.5"
-                    disabled={
-                      !seoForm.altText.trim() ||
-                      savingFileId === activeFile.id ||
-                      activeFile.status === "uploading"
-                    }
-                  >
-                    <Save className="h-4 w-4" />
-                    Save to Media Library
-                  </Button>
-                  <p className="text-center text-[11px] text-muted-foreground">
-                    {!seoForm.altText.trim()
-                      ? "Alt text is required to save"
-                      : "Caption, credit & license can be edited later in the library"}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+            // Single centered column — no SEO form to sit beside the preview anymore,
+            // so preview → size → save → hint stack vertically (no empty second card).
+            <Card className="mx-auto max-w-2xl">
+              <CardContent className="space-y-4 pt-6">
+                <FilePreview
+                  file={activeFile.file}
+                  previewUrl={activeFile.previewUrl}
+                  onReplace={() => {
+                    if (!isDisabled) fileInputRef.current?.click();
+                  }}
+                  onFileInput={handleFileInput}
+                  isDisabled={isDisabled}
+                  isDragging={isDragging}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  fileInputRef={fileInputRef}
+                />
+                {originalSize > 0 &&
+                  (activeFile.file.type === "image/webp" ? (
+                    <div className="flex flex-wrap items-center justify-center gap-2 rounded-md bg-muted/40 px-3 py-2 text-xs">
+                      <span className="text-muted-foreground">Original {formatBytes(originalSize)}</span>
+                      <span className="text-muted-foreground">→</span>
+                      <span className="font-semibold">WebP {formatBytes(activeFile.file.size)}</span>
+                      {activeFile.file.size < originalSize && (
+                        <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 font-semibold text-emerald-600 dark:text-emerald-400">
+                          −{Math.round((1 - activeFile.file.size / originalSize) * 100)}%
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="rounded-md bg-muted/40 px-3 py-2 text-center text-xs text-muted-foreground">
+                      Size: {formatBytes(activeFile.file.size)}
+                    </div>
+                  ))}
+                <Button
+                  onClick={() => handleSaveMedia(activeFile)}
+                  className="w-full gap-1.5"
+                  disabled={
+                    savingFileId === activeFile.id ||
+                    activeFile.status === "uploading"
+                  }
+                >
+                  <Save className="h-4 w-4" />
+                  Save to Media Library
+                </Button>
+                <p className="text-center text-[11px] text-muted-foreground">
+                  ارفع الصورة فقط — النص البديل والوصف يضيفهما الكاتب لاحقاً في قسم SEO Images
+                </p>
+              </CardContent>
+            </Card>
           ) : (
-            <FileDropZone
-              onFilesSelected={handleFileInput}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              isDisabled={isDisabled}
-              isDragging={isDragging}
-              specHint={
-                needsCrop
-                  ? `Crop to ${spec?.ratioLabel}${spec?.width ? ` · ${spec.width}×${spec.height}` : ""}`
-                  : "Free size"
-              }
-            />
+            <div className="mx-auto max-w-2xl">
+              <FileDropZone
+                onFilesSelected={handleFileInput}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                isDisabled={isDisabled}
+                isDragging={isDragging}
+                specHint={
+                  needsCrop
+                    ? `Crop to ${spec?.ratioLabel}${spec?.width ? ` · ${spec.width}×${spec.height}` : ""}`
+                    : "Free size"
+                }
+              />
+            </div>
           )}
         </section>
       )}

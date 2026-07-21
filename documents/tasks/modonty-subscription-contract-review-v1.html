@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>مراجعة قانونية — اتفاقية اشتراك مدونتي (v1)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:45 8% 95%; --paper:0 0% 100%; --ink:245 87% 19%; --muted:0 0% 36%;
+    --border:0 0% 86%; --primary:240 100% 59%; --accent:180 100% 42%;
+    --red:0 72% 51%; --amber:38 92% 50%; --green:142 71% 38%;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Tajawal',sans-serif;background:hsl(var(--bg));color:hsl(var(--ink));line-height:1.85;padding:24px 12px 80px}
+  .wrap{max-width:860px;margin:0 auto}
+
+  .head{background:hsl(var(--paper));border:1px solid hsl(var(--border));border-radius:14px;padding:22px 24px;margin-bottom:18px}
+  .head h1{font-size:22px;font-weight:800;margin-bottom:6px}
+  .head .sub{font-size:13px;color:hsl(var(--muted))}
+  .disclaimer{margin-top:12px;background:hsl(var(--amber)/.12);border:1px solid hsl(var(--amber)/.4);border-radius:10px;padding:10px 14px;font-size:12.5px;font-weight:600;color:hsl(var(--ink))}
+
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .legend span{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:hsl(var(--bg))}
+  .dot{width:10px;height:10px;border-radius:3px}
+  .d-red{background:hsl(var(--red))}.d-amber{background:hsl(var(--amber))}.d-green{background:hsl(var(--green))}.d-ok{background:hsl(var(--accent))}
+
+  .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+  .stat{background:hsl(var(--paper));border:1px solid hsl(var(--border));border-radius:12px;padding:12px;text-align:center}
+  .stat b{display:block;font-size:24px;font-weight:800}
+  .stat .lbl{font-size:11px;color:hsl(var(--muted));font-weight:600}
+  .stat.red b{color:hsl(var(--red))}.stat.amber b{color:hsl(var(--amber))}.stat.green b{color:hsl(var(--green))}.stat.ok b{color:hsl(var(--accent))}
+
+  .paper{background:hsl(var(--paper));border:1px solid hsl(var(--border));border-radius:14px;padding:8px 24px 24px}
+  .art{padding:18px 0;border-bottom:1px dashed hsl(var(--border))}
+  .art:last-child{border-bottom:0}
+  .art h2{font-size:16px;font-weight:800;color:hsl(var(--primary));margin-bottom:8px}
+  .art p,.art li{font-size:14px;color:hsl(var(--ink))}
+  .art ol,.art ul{padding-inline-start:22px;margin-top:4px}
+  .art li{margin-bottom:4px}
+  .blank{background:hsl(var(--amber)/.18);border-radius:4px;padding:0 4px;font-weight:700;color:hsl(28 80% 30%)}
+
+  .note{margin-top:12px;border-radius:10px;padding:10px 14px;font-size:13px;border-inline-start:4px solid}
+  .note .tag{font-weight:800;font-size:11px;display:inline-block;margin-bottom:2px}
+  .note.red{background:hsl(var(--red)/.08);border-color:hsl(var(--red))}
+  .note.red .tag{color:hsl(var(--red))}
+  .note.amber{background:hsl(var(--amber)/.1);border-color:hsl(var(--amber))}
+  .note.amber .tag{color:hsl(28 80% 35%)}
+  .note.green{background:hsl(var(--green)/.08);border-color:hsl(var(--green))}
+  .note.green .tag{color:hsl(var(--green))}
+  .note.ok{background:hsl(var(--accent)/.1);border-color:hsl(var(--accent))}
+  .note.ok .tag{color:hsl(186 90% 28%)}
+
+  .section-title{font-size:15px;font-weight:800;margin:26px 0 4px;color:hsl(var(--ink))}
+  .verdict{margin-top:20px;background:hsl(var(--accent)/.08);border:1px solid hsl(var(--accent)/.4);border-radius:12px;padding:16px 20px;font-size:14px}
+  .verdict b{color:hsl(186 90% 26%)}
+  .preamble-grid p{margin-bottom:6px}
+  code{background:hsl(var(--bg));padding:1px 5px;border-radius:4px;font-family:monospace;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <h1>مراجعة قانونية — اتفاقية اشتراك في منصة مدونتي</h1>
+    <div class="sub">نسخة المراجعة v1 · النص كما أرسلته + ملاحظاتي بند بند · 2026-06-13</div>
+    <div class="disclaimer">⚠️ لست محاميًا مرخّصًا. هذه مراجعة صياغة ومخاطر تساعدك تتفق على الصيغة؛ قبل الاعتماد النهائي على عملاء حقيقيين، مرّرها على محامٍ مرخّص.</div>
+    <div class="legend">
+      <span><i class="dot d-red"></i> خطر / تعارض — يُعالَج</span>
+      <span><i class="dot d-amber"></i> خانة فارغة / قرار مطلوب</span>
+      <span><i class="dot d-green"></i> تحسين مقترح</span>
+      <span><i class="dot d-ok"></i> بند متين — أبقِه</span>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="stat red"><b>4</b><span class="lbl">خطر / تعارض</span></div>
+    <div class="stat amber"><b>~13</b><span class="lbl">خانة/قرار</span></div>
+    <div class="stat green"><b>6</b><span class="lbl">تحسين</span></div>
+    <div class="stat ok"><b>قوي</b><span class="lbl">التقييم العام</span></div>
+  </div>
+
+  <div class="paper">
+
+    <!-- التمهيد -->
+    <div class="art">
+      <h2>التمهيد والأطراف <span style="font-size:11px;color:hsl(var(--green));font-weight:700">· الطرف الأول مُعبّأ من /trust</span></h2>
+      <p><b>الطرف الأول:</b> شركة جبر الجنوبية للمقاولات (شركة ذات مسؤولية محدودة) — التي تُشغّل منصة مدونتي · السجل التجاري <b>4030524305</b> · الرقم الوطني الموحّد <b>7036024383</b> · رأس المال 8,000,000 ﷼ · المقر: جدة، حي الشرفية، شارع أبو بكر الصديق · البريد الرسمي <b>modonty@modonty.com</b>.<br/><br/><b>الطرف الثاني:</b> [العميل · سجل تجاري/هوية · عنوان · إيميل معتمد].</p>
+      <div class="note ok"><span class="tag">✅ هوية الطرف الأول مؤكّدة (من صفحة /trust الرسمية)</span><br/>الاسم القانوني · السجل · الموحّد · رأس المال · العنوان · الإيميل — كلها من شهادة وزارة التجارة المنشورة. التحذير الأحمر أُغلق.</div>
+      <div class="note green"><span class="tag">🟢 ملاحظة مهنية خفيفة (قرارك)</span><br/>نشاط السجل «مقاولات»؛ يُفضّل التأكد أن أنشطة السجل تشمل «خدمات المحتوى الرقمي / الإعلان / تقنية المعلومات» لتغطية الخدمة المتعاقَد عليها (المنصة «تعمل ضمن مظلّة» الشركة حسب /trust).</div>
+      <div class="note amber"><span class="tag">🟡 يبقى الطرف الثاني</span><br/>بيانات العميل تُعبّأ تلقائيًا من حسابه وقت القبول (الاسم · السجل/الهوية · العنوان · الإيميل المعتمد — وجهة الإيميل التأكيدي والإشعارات، م.12 و18).</div>
+    </div>
+
+    <!-- 1 التعريفات -->
+    <div class="art">
+      <h2>المادة 1 — التعريفات</h2>
+      <p>المنصة · الخدمة · الباقة · المحتوى المنشور · السجل الإلكتروني · لوحة التحكم · النظام.</p>
+      <div class="note ok"><span class="tag">✅ متين</span><br/>تعريف «السجل الإلكتروني» دقيق (تاريخ/وقت القبول + رقم نسخة الشروط + بيانات الجلسة + الإيميل التأكيدي) — هذا أساس الحجية في م.12. أبقِه كما هو.</div>
+    </div>
+
+    <!-- 2 الموضوع -->
+    <div class="art">
+      <h2>المادة 2 — موضوع الاتفاقية</h2>
+      <p>تنظيم اشتراك العميل وفق الباقة والمدة والرسوم، وتحديد الحقوق والالتزامات.</p>
+      <div class="note ok"><span class="tag">✅ سليم</span><br/>مادة تمهيدية واضحة، لا تعديل.</div>
+    </div>
+
+    <!-- 3 النطاق -->
+    <div class="art">
+      <h2>المادة 3 — نطاق الخدمة والتسليمات</h2>
+      <p>نشر <span class="blank">[ ]</span> مقالة شهريًا مُحسَّنة + تحسينات تقنية + لوحة تحكم للمحتوى والتقارير. تفاصيل الباقة في صفحة الأسعار/ملحق الباقة (جزء من الاتفاقية). أي خدمة خارج الباقة = اتفاق ورسوم منفصلة.</p>
+      <div class="note amber"><span class="tag">🟡 خانة + قرار</span><br/>عدد المقالات شهريًا حسب الباقة. اربط «ملحق الباقة» بصفحة الأسعار الفعلية (Free·499·1299·2999) ليكون مُلزمًا ومحدّثًا.</div>
+      <div class="note green"><span class="tag">🟢 ركيزة ناقصة</span><br/>«<b>التوثيق / التحقّق من بيانات العميل</b>» ركيزة أساسية في عرض مدونتي (صفحة مخصّصة + توثيق + تحليلات حيّة) لكنها غير مذكورة في التسليمات. أضِفها لو ضمن الباقة.</div>
+      <div class="note green"><span class="tag">🟢 رخصة العرض العلني</span><br/>جوهر الخدمة = عرض صفحة العميل ومحتواه <b>علنًا على modonty.com</b>. يفضّل بند صريح يمنح الطرف الأول رخصة عرض/استضافة المحتوى علنًا طوال المدة (الآن ضمني فقط).</div>
+    </div>
+
+    <!-- 4 المدة -->
+    <div class="art">
+      <h2>المادة 4 — مدة الاشتراك والتجديد</h2>
+      <p>تبدأ من نشر أول مقالة، لمدة <span class="blank">[ ]</span> شهرًا (بلا فترة التهيئة). لو تأخّر النشر بسبب العميل، تبدأ بعد <span class="blank">[ ]</span> يومًا من القبول. تجديد تلقائي ما لم يُشعر طرف قبل <span class="blank">[ ]</span> يومًا.</p>
+      <div class="note red"><span class="tag">🔴 توافق مع العرض الحقيقي + التجديد التلقائي</span><br/>عرض مدونتي = <b>18 شهرًا</b> (12 مدفوعة + 6 مكافأة مؤسّسين). احسم: هل المدة 12 أو 18؟ وهل «التجديد التلقائي» (4.2) يتعارض مع إطار «المكافأة تنتهي مع اكتمال البنيان»؟ لو في تجديد تلقائي، لازم إشعار واضح للعميل قبل كل تجديد (حماية المستهلك).</div>
+      <div class="note amber"><span class="tag">🟡 خانات</span><br/>المدة (شهر) · مهلة بدء المدة (يوم) · مهلة إشعار عدم التجديد (يوم).</div>
+    </div>
+
+    <!-- 5 الرسوم -->
+    <div class="art">
+      <h2>المادة 5 — الرسوم والدفع <span style="font-size:11px;color:hsl(var(--red));font-weight:700">· محدّثة حسب ملاحظاتك</span></h2>
+      <p>رسوم <span class="blank">[ ]</span> <span class="blank">[ريال سعودي / جنيه مصري — حسب الدولة]</span> <span class="blank">[شهري/سنوي]</span> <b>شاملةً</b> ضريبة القيمة المضافة. السداد عبر التحويل البنكي للحساب المعتمد (<b>السعودي أو المصري</b>) أو عبر <b>InstaPay</b> للعملاء المصريين. فواتير إلكترونية. تأخّر &gt; <span class="blank">[ ]</span> يومًا = إيقاف. <b>5.5:</b> استرداد كامل لو لم يُؤسَّس الحساب خلال 14 يومًا.</p>
+      <div class="note ok"><span class="tag">✅ طبّقت تعديلاتك الثلاثة</span><br/>(1) عملة مزدوجة: <b>ريال</b> للسعودية · <b>جنيه</b> للعملاء المصريين. (2) الضريبة <b>شاملة في السعر</b> (بدّلت «مضافًا إليها (15%)» → «شاملةً»). (3) السداد: تحويل بنكي (حساب سعودي أو مصري) <b>أو InstaPay</b> للمصريين.</div>
+      <div class="note red"><span class="tag">🔴 العملة العابرة + الكيان + الضريبة — الآن مؤكّد: كيانان</span><br/>الحساب المصري باسم «<b>y t y for trading and contracting</b>» = كيان مصري مستقل (غير «جبر الجنوبية للمقاولات» السعودي). فالعميل المصري يدفع لكيان مصري بينما العقد الحالي يسمّي الكيان السعودي فقط. <b>توصيتي: «الطرف الأول» حسب الدولة</b> — السعودي للسعوديين (ضريبة 15% + ZATCA) · المصري للمصريين (ضريبة مصر + فوترتها). يوحّد المعادلة: المتعاقِد = المستفيد = مُصدِر الفاتورة. (نفس المالك، لكن الكيانان منفصلان نظاميًا → يفضّل تأكيد المعاملة الضريبية مع محاسب.)</div>
+      <div class="note red"><span class="tag">🔴 تعارض مُحفِّز المهلة (باقٍ)</span><br/>5.5 «14 يومًا من <b>التسجيل</b>» مقابل 7.1 «من <b>التسجيل والقبول</b>». وحّد المُحفِّز — والأنسب ربط الـ14 + الاسترداد بـ<b>تاريخ السداد</b>.</div>
+      <div class="note ok"><span class="tag">✅ بيانات الدفع (مُجمّعة)</span><br/><b>السعودية — تحويل بنكي:</b> آيبان <code>SA3100000000300001687908</code> · البنك الأهلي السعودي · اسم الحساب «شركة جبر سيو».<br/><b>مصر — InstaPay:</b> حسني ح**** م*** ج** · <code>01227002786</code>.<br/><b>مصر — تحويل بنكي:</b> بنك SAIB (فرع شيراتون) · اسم الحساب «y t y for trading and contracting» · آيبان <code>EG140035002902920303584810010</code> · حساب <code>2920303584810010</code> · SWIFT <code>SBNKEGCXXXX</code>.</div>
+      <div class="note green"><span class="tag">🟢 الأسماء — موضّحة (نفس المالك)</span><br/>أكّد خالد: صاحب InstaPay = صاحب الشركة نفسه، و«جبر سيو» لنفس الكيان → <b>لا أثر على صحة العقد</b>. ملاحظة محاسبية لاحقة فقط (قرارك): الشركة ذمّة قانونية منفصلة عن مالكها؛ تحويل إيراد الشركة لحساب <b>شخصي</b> (InstaPay) قد يثير «خلط ذمم» ومسائل محاسبية/ضريبية — يُفضّل لاحقًا حساب مصري <b>باسم الشركة</b>، وتأكيد أن «جبر سيو» اسم تجاري مسجّل على السجل 4030524305.</div>
+      <div class="note amber"><span class="tag">🟡 خانات</span><br/>المبلغ لكل عملة/باقة · شهري/سنوي · أيام التأخّر قبل الإيقاف.</div>
+    </div>
+
+    <!-- 6 عدم ضمان النتائج -->
+    <div class="art">
+      <h2>المادة 6 — عدم ضمان النتائج</h2>
+      <p>نتائج تحسين محركات البحث تعتمد على عوامل خارجة (خوارزميات). التزام الطرف الأول = بذل عناية مهنية، لا تحقيق ترتيب/نتيجة. عدم بلوغ ترتيب ليس إخلالًا.</p>
+      <div class="note ok"><span class="tag">✅ متين جدًا</span><br/>تحميك من ادّعاء «ضمنتوا لي ترتيب/زيارات»، ويتوافق مع سياستنا (لا أرقام/نتائج مضمونة). أبقِها كما هي.</div>
+    </div>
+
+    <!-- 7 التزامات الطرف الأول -->
+    <div class="art">
+      <h2>المادة 7 — التزامات الطرف الأول</h2>
+      <p>تأسيس حساب خلال 14 يومًا من التسجيل والقبول · جودة مهنية · مواعيد النشر · لوحة تحكم (= وفاء بالتقارير، بلا إرسال منفصل) · سرية البيانات.</p>
+      <div class="note ok"><span class="tag">✅ ذكية</span><br/>7.4 (لوحة التحكم تُغني عن إرسال تقارير منفصلة) تتوافق مع الكود (التحليلات الحيّة) وتقطع نزاع «ما وصلني تقرير».</div>
+      <div class="note amber"><span class="tag">🟡 مرتبط بـ5.5</span><br/>وحّد مُحفِّز الـ14 يومًا هنا مع م.5.5 (تسجيل/قبول/سداد).</div>
+    </div>
+
+    <!-- 8 التزامات العميل -->
+    <div class="art">
+      <h2>المادة 8 — التزامات العميل</h2>
+      <p>تزويد المعلومات والصلاحيات · الرد خلال <span class="blank">[ ]</span> أيام عمل (وإلا موافقة ضمنية) · السداد · عدم المخالفة. <b>8.5:</b> مسؤولية العميل 100% عمّا يزوّده ويُخلي مسؤولية الطرف الأول.</p>
+      <div class="note ok"><span class="tag">✅ 8.5 قوية ومهمة</span><br/>الإقرار بالملكية + الإخلاء = حمايتك من مطالبات الغير على صور/محتوى العميل. أبقِها.</div>
+      <div class="note amber"><span class="tag">🟡 خانة + صياغة</span><br/>أيام الرد: حدّد مدّة معقولة وواضحة (مثلًا 3–5 أيام عمل) لتثبيت «الموافقة الضمنية» وتفادي النزاع.</div>
+    </div>
+
+    <!-- 9 الملكية الفكرية -->
+    <div class="art">
+      <h2>المادة 9 — الملكية الفكرية</h2>
+      <p>العميل يملك المحتوى المنشور <b>بعد سداد كامل الرسوم</b> · الطرف الأول يحتفظ بالمنصة وأنظمتها وقوالبها · حق الإشارة للعميل تسويقيًا (opt-out كتابي).</p>
+      <div class="note ok"><span class="tag">✅ سليمة</span><br/>9.1/9.2 توازن صحيح (ملكية المحتوى مقابل السداد · المنصة تبقى لك). 9.3 (opt-out) جيدة.</div>
+      <div class="note green"><span class="tag">🟢 اربطها</span><br/>اربط 9.3 ببند العرض العلني المقترح في م.3 (عرض الصفحة على modonty.com).</div>
+    </div>
+
+    <!-- 10 السرية -->
+    <div class="art">
+      <h2>المادة 10 — السرية</h2>
+      <p>التزام متبادل بالسرية، يبقى ساريًا بعد انتهاء الاتفاقية.</p>
+      <div class="note ok"><span class="tag">✅ سليمة</span></div>
+    </div>
+
+    <!-- 11 حماية البيانات -->
+    <div class="art">
+      <h2>المادة 11 — حماية البيانات الشخصية</h2>
+      <p>التزام الطرفين بنظام حماية البيانات الشخصية (PDPL) ولوائحه.</p>
+      <div class="note ok"><span class="tag">✅ مهمة وصحيحة</span><br/>تأكّد عمليًا من التزام PDPL في جمع/معالجة بيانات العميل والزوّار (الدائرة الكاملة، لا نص فقط).</div>
+    </div>
+
+    <!-- 12 القبول الإلكتروني -->
+    <div class="art">
+      <h2>المادة 12 — القبول الإلكتروني وحجية السجل</h2>
+      <p>نقر «موافق» = قبول صريح وتوقيع إلكتروني مُلزِم · إيميل تأكيدي تلقائي للطرفين · السجل الإلكتروني (تاريخ/وقت + رقم نسخة + بيانات الجلسة + الإيميل) دليل وحجة (نظام التعاملات الإلكترونية + الإثبات) · تنازل عن دفع «مجرّد إلكتروني».</p>
+      <div class="note ok"><span class="tag">✅✅ العمود الفقري</span><br/>هذه المادة هي اللي تخلّي العقد الإلكتروني + الإيميل اللي يوصل العميل <b>مُلزمَين وذوي حجية</b>. متينة ومستندة للأنظمة الصحيحة. هذي اللي نبنيها في الكود (نقر «موافق» → تسجيل السجل → إيميل للطرفين).</div>
+    </div>
+
+    <!-- 13 تحديد المسؤولية -->
+    <div class="art">
+      <h2>المادة 13 — تحديد المسؤولية</h2>
+      <p>لا مسؤولية عن أضرار غير مباشرة/تبعية · السقف = إجمالي ما سدّده العميل خلال <span class="blank">[ ]</span> أشهر السابقة للضرر.</p>
+      <div class="note ok"><span class="tag">✅ حماية مهمة</span><br/>سقف المسؤولية + استبعاد الأضرار التبعية = درع أساسي. أبقِها.</div>
+      <div class="note amber"><span class="tag">🟡 خانة</span><br/>عدد الأشهر للسقف (شائع 3 أو 6 أو 12 — كل ما قلّ، أحمى لك).</div>
+    </div>
+
+    <!-- 14 الإنهاء -->
+    <div class="art">
+      <h2>المادة 14 — الإنهاء</h2>
+      <p>إنهاء بإشعار قبل <span class="blank">[ ]</span> يومًا · إنهاء فوري عند إخلال العميل بالسداد/مخالفة جوهرية · لا استرداد عن المدة الجارية.</p>
+      <div class="note red"><span class="tag">🔴 بند ناقص — مصير المحتوى بعد الإنهاء</span><br/>ما الذي يحصل لصفحة العميل ومحتواه العلني على modonty.com بعد الإنهاء؟ (يبقى؟ يُحذف؟ يُؤرشف؟ يُصدَّر للعميل؟). الصفحة المخصّصة ركيزة — لازم بند صريح يحسمها.</div>
+      <div class="note amber"><span class="tag">🟡 خانة + توحيد</span><br/>أيام إشعار الإنهاء (14.1) — ويفضّل توحيدها مع أيام عدم التجديد (4.2) لتفادي اللبس.</div>
+    </div>
+
+    <!-- 15 القوة القاهرة -->
+    <div class="art">
+      <h2>المادة 15 — القوة القاهرة</h2>
+      <p>لا مسؤولية عن إخلال بقوة قاهرة، مع الإشعار خلال مدة معقولة.</p>
+      <div class="note ok"><span class="tag">✅ سليمة</span></div>
+    </div>
+
+    <!-- 16 تعديل الشروط -->
+    <div class="art">
+      <h2>المادة 16 — تعديل الشروط</h2>
+      <p>للطرف الأول تحديث الشروط مع إشعار العميل، واستمراره = قبول · تُحفظ النسخة المقبولة برقم نسخة في السجل.</p>
+      <div class="note ok"><span class="tag">✅ ذكية</span><br/>ربط التعديل برقم نسخة في السجل الإلكتروني يتوافق تمامًا مع م.12 — يخليك تثبت أي نسخة قبلها كل عميل.</div>
+    </div>
+
+    <!-- 17 القانون الحاكم -->
+    <div class="art">
+      <h2>المادة 17 — القانون الحاكم وتسوية النزاعات</h2>
+      <p>أنظمة المملكة · تسوية ودية، فإن تعذّر → <span class="blank">[المحاكم المختصة بجدة / التحكيم — المركز السعودي للتحكيم التجاري]</span>.</p>
+      <div class="note amber"><span class="tag">🟡 قرار</span><br/>اختر واحدًا: <b>المحاكم</b> (أرخص، أنسب للمبالغ الصغيرة) أو <b>التحكيم</b> (أسرع وسرّي لكن مكلف). للاشتراكات الصغيرة عادةً المحاكم أنسب.</div>
+    </div>
+
+    <!-- 18 أحكام عامة -->
+    <div class="art">
+      <h2>المادة 18 — أحكام عامة</h2>
+      <p>كامل الاتفاق · العربية المعتمدة عند الاختلاف · بطلان جزئي لا يُبطل الباقي · الإشعارات على الإيميل المعتمد.</p>
+      <div class="note ok"><span class="tag">✅ سليمة</span></div>
+    </div>
+
+    <!-- القبول -->
+    <div class="art">
+      <h2>القبول</h2>
+      <p>قبول إلكتروني بالنقر على «موافق» بتاريخ [تلقائي]، نسخة الشروط رقم [ ] · (نسخة ورقية رسمية عند الطلب).</p>
+      <div class="note ok"><span class="tag">✅ يتوافق مع التطبيق</span><br/>التاريخ التلقائي + رقم النسخة = نفس ما سنخزّنه في الكود.</div>
+    </div>
+
+  </div>
+
+  <!-- بنود مقترحة للإضافة -->
+  <div class="section-title">➕ بنود يُنصح بإضافتها (قيمة قانونية)</div>
+  <div class="paper">
+    <div class="art" style="border:0;padding-top:14px">
+      <div class="note red" style="margin-top:0"><span class="tag">🔴 مصير المحتوى/الصفحة بعد الإنهاء</span><br/>(مكرّر من م.14) — أهم بند ناقص. يحسم بقاء/حذف/أرشفة/تصدير صفحة العميل العلنية.</div>
+      <div class="note green"><span class="tag">🟢 لا حصرية قطاعية</span><br/>توضيح أن مدونتي قد تخدم عملاء في نفس القطاع/المدينة (يتوافق مع نموذجنا متعدّد العملاء + فلتر الصناعات الجديد) — يمنع نزاع «خدمتوا منافسي».</div>
+      <div class="note green"><span class="tag">🟢 المكافآت (لا خصم)</span><br/>لو العرض يتضمّن أشهر/مقالات مكافأة (سياسة: لا خصم — مكافآت فقط)، اذكرها في ملحق الباقة لتكون مُلزمة وموثّقة.</div>
+      <div class="note green"><span class="tag">🟢 حدود المراجعات لكل مقال</span><br/>(اختياري) سقف لعدد التعديلات/المراجعات لكل مقال لضبط توسّع النطاق.</div>
+    </div>
+  </div>
+
+  <div class="verdict">
+    <b>الخلاصة:</b> الصيغة <b>قوية ومُحكَمة قانونيًا</b> ومبنية على أنظمة المملكة (التعاملات الإلكترونية · الإثبات · حماية البيانات · ضريبة القيمة المضافة · الفوترة الإلكترونية). م.6 (عدم الضمان) و م.8.5 (مسؤولية العميل) و م.12 (الحجية الإلكترونية) و م.13 (سقف المسؤولية) دروع ممتازة.
+    <br/><br/>قبل الاعتماد نحتاج فقط: <b>(1)</b> حسم الـ4 نقاط الحمراء (هوية الكيان · المدة + التجديد · توحيد مُحفِّز الـ14 يومًا · مصير المحتوى بعد الإنهاء) · <b>(2)</b> تعبئة الخانات الـ~13 · <b>(3)</b> النظر في الـ6 تحسينات.
+    <br/><br/>نراجعها معك بند بند، نقفل الصيغة النهائية، وبعدها ننتقل للكود (تخزين السجل + إيميل الطرفين).
+  </div>
+
+</div>
+</body>
+</html>

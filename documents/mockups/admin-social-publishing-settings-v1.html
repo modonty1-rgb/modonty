@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings › Social Publishing</title>
+<style>
+  :root{
+    --bg:#f4f6fa; --card:#ffffff; --card2:#fbfcfe; --bd:#e5e8ef; --bd2:#eef1f6;
+    --tx:#0f172a; --mut:#64748b; --mut2:#94a3b8;
+    --primary:#4f46e5; --primary-soft:#eef0fe;
+    --green:#16a34a; --green-soft:#e7f6ec;
+    --blue:#2563eb; --blue-soft:#e6effe;
+    --shadow:0 1px 2px rgba(15,23,42,.04),0 6px 22px rgba(15,23,42,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0a0e16; --card:#121826; --card2:#0e131f; --bd:#212a3b; --bd2:#1a2130;
+      --tx:#e5e9f0; --mut:#94a3b8; --mut2:#64748b; --primary:#818cf8; --primary-soft:#1c1f3a;
+      --green:#4ade80; --green-soft:#12291b; --blue:#60a5fa; --blue-soft:#0f2036;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 26px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0a0e16; --card:#121826; --card2:#0e131f; --bd:#212a3b; --bd2:#1a2130;
+    --tx:#e5e9f0; --mut:#94a3b8; --mut2:#64748b; --primary:#818cf8; --primary-soft:#1c1f3a;
+    --green:#4ade80; --green-soft:#12291b; --blue:#60a5fa; --blue-soft:#0f2036;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 26px rgba(0,0,0,.4);
+  }
+  :root[data-theme="light"]{
+    --bg:#f4f6fa; --card:#ffffff; --card2:#fbfcfe; --bd:#e5e8ef; --bd2:#eef1f6;
+    --tx:#0f172a; --mut:#64748b; --mut2:#94a3b8; --primary:#4f46e5; --primary-soft:#eef0fe;
+    --green:#16a34a; --green-soft:#e7f6ec; --blue:#2563eb; --blue-soft:#e6effe;
+    --shadow:0 1px 2px rgba(15,23,42,.04),0 6px 22px rgba(15,23,42,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--tx);
+    font-family:"Segoe UI",Tahoma,system-ui,-apple-system,sans-serif;line-height:1.6;padding:30px 20px 80px}
+  .wrap{max-width:760px;margin:0 auto}
+  .en{direction:ltr;unicode-bidi:isolate}
+
+  .crumb{font-size:11.5px;color:var(--mut2);font-weight:700;margin-bottom:8px}
+  .crumb .en{color:var(--mut)}
+  .head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+  .head h1{font-size:22px;font-weight:800;letter-spacing:-.3px}
+  .head p{font-size:13px;color:var(--mut);margin-top:2px}
+  .save{background:var(--primary);color:#fff;border:0;border-radius:10px;padding:9px 20px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:var(--shadow)}
+  .legend{display:flex;gap:12px;font-size:11px;color:var(--mut);margin:14px 0 18px;flex-wrap:wrap}
+  .legend b{font-weight:700}
+  .badge{font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;white-space:nowrap}
+  .badge.quick{background:var(--green-soft);color:var(--green)}
+  .badge.auto{background:var(--blue-soft);color:var(--blue)}
+
+  .card{background:var(--card);border:1px solid var(--bd);border-radius:16px;box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+  .card-h{padding:13px 16px;border-bottom:1px solid var(--bd);background:var(--card2);display:flex;align-items:center;gap:10px}
+  .card-h .ci{width:30px;height:30px;border-radius:9px;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;font-size:15px;flex:none}
+  .card-h h2{font-size:14px;font-weight:800}
+  .card-h .s{font-size:11px;color:var(--mut);font-weight:600}
+  .card-b{padding:14px 16px}
+
+  .row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bd2)}
+  .row:last-child{border-bottom:0}
+  .row .rl{flex:1;min-width:0}
+  .row .rt{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .row .rd{font-size:11.5px;color:var(--mut);margin-top:1px}
+
+  /* switch */
+  .sw{position:relative;width:40px;height:23px;flex:none;cursor:pointer}
+  .sw input{position:absolute;opacity:0;width:0;height:0}
+  .sw .tr{position:absolute;inset:0;background:var(--bd);border-radius:20px;transition:.2s}
+  .sw .kn{position:absolute;top:3px;inset-inline-start:3px;width:17px;height:17px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+  .sw input:checked + .tr{background:var(--primary)}
+  .sw input:checked + .tr + .kn{inset-inline-start:20px}
+
+  /* platform row */
+  .plat{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--bd);border-radius:12px;margin-bottom:8px;background:var(--card2)}
+  .plat:last-child{margin-bottom:0}
+  .plat .pic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:16px;color:#fff;flex:none}
+  .fb{background:#1877f2}.ig{background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af)}.x{background:#111}
+  :root[data-theme="dark"] .x{background:#333}
+  .plat .pn{flex:1;min-width:0}
+  .plat .pnt{font-size:13px;font-weight:800}
+  .plat .pns{font-size:10.5px;color:var(--mut)}
+  .plat .ctrls{display:flex;align-items:center;gap:16px;flex:none}
+  .ctrl-lbl{font-size:10px;color:var(--mut);font-weight:700;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .plat.off{opacity:.55}
+
+  /* template */
+  textarea,input[type=text]{width:100%;background:var(--card2);border:1px solid var(--bd);border-radius:10px;color:var(--tx);
+    font-family:inherit;font-size:12.5px;padding:10px 12px;resize:vertical;line-height:1.7}
+  textarea:focus,input:focus{outline:2px solid var(--primary);outline-offset:0;border-color:transparent}
+  .vars{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .var{font-size:11px;font-weight:700;background:var(--primary-soft);color:var(--primary);border-radius:7px;padding:3px 9px;cursor:pointer;border:1px solid color-mix(in srgb,var(--primary) 25%,transparent)}
+  .fld-lbl{font-size:11.5px;font-weight:800;color:var(--tx);margin:0 0 7px;display:flex;align-items:center;gap:8px}
+
+  /* segmented */
+  .seg{display:inline-flex;background:var(--bd2);border:1px solid var(--bd);border-radius:10px;padding:3px;gap:3px}
+  .seg button{border:0;background:transparent;color:var(--mut);font-family:inherit;font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer}
+  .seg button.on{background:var(--card);color:var(--tx);box-shadow:var(--shadow)}
+
+  /* utm preview */
+  .prev{margin-top:10px;background:var(--card2);border:1px dashed var(--bd);border-radius:10px;padding:10px 12px;font-size:11px;word-break:break-all}
+  .prev .k{color:var(--mut2);font-weight:700;font-size:10px;display:block;margin-bottom:3px}
+  .prev .u{color:var(--tx)}
+  .prev .utm{color:var(--green);font-weight:700}
+
+  .mini{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .mini label{font-size:12px;font-weight:700;color:var(--mut)}
+  .mini input[type=text]{width:90px}
+  .num{width:64px !important;text-align:center}
+
+  .tgl{position:fixed;top:16px;inset-inline-start:16px;z-index:9;background:var(--card);border:1px solid var(--bd);color:var(--tx);border-radius:20px;padding:6px 13px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
+  .sign{margin-top:22px;text-align:center;color:var(--mut2);font-size:11.5px}
+</style>
+</head>
+<body>
+<button class="tgl" onclick="(function(){var r=document.documentElement;var d=(r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'))==='dark';r.setAttribute('data-theme',d?'light':'dark');})()">🌓 الثيم</button>
+
+<div class="wrap">
+  <div class="crumb"><span class="en">Settings</span> › <span class="en" style="color:var(--tx);font-weight:800">Social Publishing</span></div>
+  <div class="head">
+    <div>
+      <h1>Social Publishing</h1>
+      <p>تحكّم بكيف يُنشر المقال على السوشيال — بدون ما تفتح كود أو env.</p>
+    </div>
+    <button class="save">حفظ</button>
+  </div>
+  <div class="legend">
+    <span><span class="badge quick">مكسب سريع</span> يغلّف سلوك موجود</span>
+    <span><span class="badge auto">أتمتة جديدة</span> يحتاج بناء</span>
+  </div>
+
+  <!-- 1. Platforms -->
+  <div class="card">
+    <div class="card-h"><div class="ci">📣</div><div><h2>المنصّات والنشر التلقائي</h2><div class="s">شغّل المنصّة، واختر تنشر تلقائي عند نشر المقال</div></div></div>
+    <div class="card-b">
+      <div class="plat">
+        <div class="pic fb">f</div>
+        <div class="pn"><div class="pnt">Facebook</div><div class="pns en">Page: Modonty · مربوط من env</div></div>
+        <div class="ctrls">
+          <div class="ctrl-lbl">مفعّل<label class="sw"><input type="checkbox" checked><span class="tr"></span><span class="kn"></span></label></div>
+          <div class="ctrl-lbl">تلقائي <span class="badge auto">جديد</span><label class="sw"><input type="checkbox" checked><span class="tr"></span><span class="kn"></span></label></div>
+        </div>
+      </div>
+      <div class="plat">
+        <div class="pic ig">📷</div>
+        <div class="pn"><div class="pnt">Instagram</div><div class="pns en">مربوط من env</div></div>
+        <div class="ctrls">
+          <div class="ctrl-lbl">مفعّل<label class="sw"><input type="checkbox" checked><span class="tr"></span><span class="kn"></span></label></div>
+          <div class="ctrl-lbl">تلقائي <span class="badge auto">جديد</span><label class="sw"><input type="checkbox"><span class="tr"></span><span class="kn"></span></label></div>
+        </div>
+      </div>
+      <div class="plat off">
+        <div class="pic x">𝕏</div>
+        <div class="pn"><div class="pnt">X · Twitter</div><div class="pns en">مربوط من env</div></div>
+        <div class="ctrls">
+          <div class="ctrl-lbl">مفعّل<label class="sw"><input type="checkbox"><span class="tr"></span><span class="kn"></span></label></div>
+          <div class="ctrl-lbl">تلقائي <span class="badge auto">جديد</span><label class="sw"><input type="checkbox" disabled><span class="tr"></span><span class="kn"></span></label></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Post content -->
+  <div class="card">
+    <div class="card-h"><div class="ci">✍️</div><div><h2>محتوى البوست</h2><div class="s">قالب موحّد لكل بوست</div></div></div>
+    <div class="card-b">
+      <div class="fld-lbl">قالب الكابشن <span class="badge quick">مكسب سريع</span></div>
+      <textarea rows="4">{title}
+
+{excerpt}
+
+اقرأ المقال كامل 👇
+{url}</textarea>
+      <div class="vars">
+        <span class="var en">{title}</span><span class="var en">{excerpt}</span>
+        <span class="var en">{url}</span><span class="var en">{client}</span>
+        <span class="var en">{category}</span>
+      </div>
+
+      <div class="fld-lbl" style="margin-top:16px">الهاشتاقات <span class="badge quick">مكسب سريع</span></div>
+      <input type="text" value="#مدونتي #محتوى" dir="rtl">
+
+      <div class="fld-lbl" style="margin-top:16px">مصدر الصورة <span class="badge quick">مكسب سريع</span></div>
+      <div class="seg">
+        <button class="on">الصورة المميّزة</button>
+        <button>توليد <span class="en">AI</span></button>
+        <button>بدون</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Link tracking -->
+  <div class="card">
+    <div class="card-h"><div class="ci">🔗</div><div><h2>تتبّع الروابط</h2><div class="s">اعرف أي منصّة تجيب لك زوّار</div></div></div>
+    <div class="card-b">
+      <div class="row">
+        <div class="rl"><div class="rt">إضافة <span class="en">UTM</span> للروابط المشاركة <span class="badge quick">مكسب سريع</span></div>
+          <div class="rd">يظهر مصدر الزيارة في التحليلات (Analytics)</div></div>
+        <label class="sw"><input type="checkbox" checked><span class="tr"></span><span class="kn"></span></label>
+      </div>
+      <div class="prev">
+        <span class="k">معاينة الرابط المنشور:</span>
+        <span class="u en">https://modonty.com/articles/دليل-الاستثمار<span class="utm">?utm_source=facebook&utm_medium=social&utm_campaign=auto</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Scheduling -->
+  <div class="card">
+    <div class="card-h"><div class="ci">🕒</div><div><h2>الجدولة <span class="badge auto" style="margin-inline-start:6px">أتمتة جديدة</span></h2><div class="s">وقت النشر وحدوده</div></div></div>
+    <div class="card-b">
+      <div class="fld-lbl">توقيت النشر</div>
+      <div class="seg">
+        <button>فوري</button>
+        <button class="on">وقت الذروة</button>
+      </div>
+      <div class="mini" style="margin-top:14px">
+        <label>ساعة الذروة</label><input type="text" class="num" value="21:00">
+        <label style="margin-inline-start:18px">أقصى بوستات/يوم</label><input type="text" class="num" value="3">
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Approval -->
+  <div class="card">
+    <div class="card-h"><div class="ci">✅</div><div><h2>الموافقة <span class="badge auto" style="margin-inline-start:6px">أتمتة جديدة</span></h2><div class="s">بوابة مراجعة قبل النشر</div></div></div>
+    <div class="card-b">
+      <div class="row">
+        <div class="rl"><div class="rt">تطلب موافقة أدمن قبل نشر أي بوست</div>
+          <div class="rd">إذا مطفأة: النشر التلقائي يطلع مباشرة</div></div>
+        <label class="sw"><input type="checkbox"><span class="tr"></span><span class="kn"></span></label>
+      </div>
+    </div>
+  </div>
+
+  <p class="sign">Modonty Admin · Settings › Social Publishing · موكاب · الألوان تقريبية — التنفيذ بتوكنات globals.css</p>
+</div>
+</body>
+</html>

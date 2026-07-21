@@ -73,9 +73,10 @@ export async function updateIndustry(
         select: { id: true },
       });
       if (industryClients.length > 0) {
-        const { regenerateClientJsonLd } = await import("@/app/(dashboard)/clients/helpers/client-seo-config/client-jsonld-storage");
+        // Shared bundle path — keeps image licensing + metaTags in sync with per-client save.
+        const { generateClientSEO } = await import("@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo");
         for (const client of industryClients) {
-          await regenerateClientJsonLd(client.id).catch(() => null);
+          await generateClientSEO(client.id).catch(() => null);
         }
       }
     } catch {

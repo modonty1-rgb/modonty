@@ -7,14 +7,15 @@
 //
 // Sources:
 //  - Google Images best practices: descriptive alt text is the primary signal, and a
-//    descriptive filename/URL is a documented ranking factor.
-//  - Schema.org ImageObject: name / description / width / height.
+//    descriptive filename/URL is a documented ranking factor. Google does NOT use the HTML
+//    img `title` attribute, so there is no "title" criterion here.
+//  - Schema.org ImageObject: caption / description / width / height. The `name` is composed
+//    automatically by the generator (never the media `title` field), so it is never scored.
 //  - Accessibility (WCAG 1.1.1): a non-decorative image without alt text is a failure.
 //
-// Weights (100): alt text 40 · dimensions 15 · title 15 · description 15 · filename 15.
-// Alt text carries nearly half the score on purpose — it is the one field that is both
-// a ranking signal and a legal-accessibility requirement, and it is the one that is
-// actually missing in practice.
+// Weights (100): alt text 50 · description 20 · dimensions 15 · filename 15.
+// Alt text carries half the score on purpose — it is the one field that is both a ranking
+// signal and a legal-accessibility requirement, and it is the one actually missing in practice.
 
 export type MediaCheckStatus = "good" | "warning" | "error";
 
@@ -34,11 +35,15 @@ export interface MediaSeoScore {
 
 export interface MediaSeoInput {
   filename?: string | null;
+  /** The Cloudinary public_id — the name that actually travels into the indexed URL. */
+  cloudinaryPublicId?: string | null;
   altText?: string | null;
-  title?: string | null;
   description?: string | null;
   width?: number | null;
   height?: number | null;
+  /** The media type — decides whether the 1200×630 share-image rule applies. When omitted the
+   *  strict share rule is used, so a share image is never silently over-scored. */
+  type?: string | null;
 }
 
 // Google truncates long alt text and ignores keyword-stuffed alt text.
@@ -50,6 +55,17 @@ const DESC_MAX = 160;
 const DIM_GOOD_W = 1200;
 const DIM_GOOD_H = 630;
 
+// Which media types are (or feed) a social share image and therefore need the 1200×630
+// Open Graph size. Everything else is a content image, and Google's Image SEO guidance sets
+// NO fixed pixel size for those — only "high resolution if possible" + "avoid extreme aspect
+// ratios". Verified against this codebase's og:image chain (client page = HERO||LOGO; article
+// page = featuredImage(POST)||HERO||LOGO) — GALLERY never feeds og. LOGO is only a last-resort
+// og fallback and is square by nature, so it is treated as content, not forced to 1200×630.
+const SHARE_IMAGE_TYPES = new Set<string>(["POST", "HERO", "OGIMAGE", "TWITTER_IMAGE", "CLIENT_MINI"]);
+// Google: "avoid an extreme aspect ratio" — wider than 3:1 or taller than 1:3 reads as a
+// banner/column strip and renders poorly in Google Images.
+const EXTREME_ASPECT = 3;
+
 /** Names a camera or a phone gave the file — they say nothing to a search engine. */
 const GENERIC_FILENAME = /^(img|dsc|photo|image|untitled|screenshot|snap|whatsapp)[\s_\-.\d]/i;
 
@@ -60,7 +76,7 @@ function str(v: unknown): string {
 export function computeMediaSeoScore(input: MediaSeoInput): MediaSeoScore {
   const checks: MediaSeoCheck[] = [];
 
-  // ── Alt text (40) — the ranking signal and the accessibility requirement ──
+  // ── Alt text (50) — the ranking signal and the accessibility requirement ──
   {
     const alt = str(input.altText);
     let earned = 0;
@@ -69,55 +85,63 @@ export function computeMediaSeoScore(input: MediaSeoInput): MediaSeoScore {
 
     if (alt) {
       if (alt.length >= ALT_MIN && alt.length <= ALT_MAX) {
-        earned = 40;
+        earned = 50;
         status = "good";
         hint = undefined;
       } else {
-        earned = 24;
+        earned = 30;
         status = "warning";
         hint = alt.length < ALT_MIN ? "النص البديل قصير جداً (<5 أحرف)" : "النص البديل طويل (>125) وسيُقصّ";
       }
     }
-    checks.push({ key: "altText", label: "النص البديل", status, hint, earned, max: 40 });
+    checks.push({ key: "altText", label: "النص البديل", status, hint, earned, max: 50 });
   }
 
-  // ── Dimensions (15) — no width/height means the browser cannot reserve space (CLS),
-  //    and the image cannot be used as a share image at all.
+  // ── Dimensions (15) — type-aware. Missing width/height always fails (the browser cannot
+  //    reserve space → CLS). Beyond that the bar depends on the role:
+  //      • Share images (og:image / twitter card) need 1200×630 (Open Graph spec).
+  //      • Content images (gallery / logo / general) follow Google Images: any recorded size
+  //        is fine, only an EXTREME aspect ratio is flagged. NO 1200×630 penalty — a client's
+  //        gallery photo is never a share image, so judging it by the share size is misleading.
   {
     const w = typeof input.width === "number" ? input.width : 0;
     const h = typeof input.height === "number" ? input.height : 0;
+    const type = str(input.type);
+    // Omitted type → strict (share) rule, so a share image is never silently over-scored.
+    const isShare = type ? SHARE_IMAGE_TYPES.has(type) : true;
     let earned = 0;
     let status: MediaCheckStatus = "error";
     let hint: string | undefined = "أبعاد الصورة غير مسجّلة";
 
     if (w > 0 && h > 0) {
-      if (w >= DIM_GOOD_W && h >= DIM_GOOD_H) {
-        earned = 15;
-        status = "good";
-        hint = undefined;
+      if (isShare) {
+        if (w >= DIM_GOOD_W && h >= DIM_GOOD_H) {
+          earned = 15;
+          status = "good";
+          hint = undefined;
+        } else {
+          earned = 9;
+          status = "warning";
+          hint = `${w}×${h} — أصغر من 1200×630، لا تصلح صورة مشاركة`;
+        }
       } else {
-        earned = 9;
-        status = "warning";
-        hint = `${w}×${h} — أصغر من 1200×630، لا تصلح صورة مشاركة`;
+        // Content image — Google Images: high resolution + a sane (non-extreme) aspect ratio.
+        const ratio = Math.max(w / h, h / w);
+        if (ratio > EXTREME_ASPECT) {
+          earned = 9;
+          status = "warning";
+          hint = `${w}×${h} — نسبة الشكل متطرّفة (شريط/عمود)، استخدم نسبة أقرب للطبيعي`;
+        } else {
+          earned = 15;
+          status = "good";
+          hint = undefined;
+        }
       }
     }
     checks.push({ key: "dimensions", label: "الأبعاد", status, hint, earned, max: 15 });
   }
 
-  // ── Title (15) — Schema.org ImageObject.name ──
-  {
-    const ok = Boolean(str(input.title));
-    checks.push({
-      key: "title",
-      label: "العنوان",
-      status: ok ? "good" : "warning",
-      hint: ok ? undefined : "أضف عنواناً — يُستخدم في ImageObject",
-      earned: ok ? 15 : 0,
-      max: 15,
-    });
-  }
-
-  // ── Description (15) — Schema.org ImageObject.description ──
+  // ── Description (20) — Schema.org ImageObject.description / caption ──
   {
     const desc = str(input.description);
     let earned = 0;
@@ -126,20 +150,23 @@ export function computeMediaSeoScore(input: MediaSeoInput): MediaSeoScore {
 
     if (desc) {
       if (desc.length >= DESC_MIN && desc.length <= DESC_MAX) {
-        earned = 15;
+        earned = 20;
         status = "good";
         hint = undefined;
       } else {
-        earned = 10;
+        earned = 13;
         hint = desc.length < DESC_MIN ? "الوصف قصير (<50)" : "الوصف طويل (>160)";
       }
     }
-    checks.push({ key: "description", label: "الوصف", status, hint, earned, max: 15 });
+    checks.push({ key: "description", label: "الوصف", status, hint, earned, max: 20 });
   }
 
-  // ── Filename (15) — the file's own name travels into the URL Google indexes ──
+  // ── Filename (15) — the name in the URL Google actually indexes. For a Cloudinary
+  //    asset that is the public_id's last segment, NOT the original upload filename.
   {
-    const name = str(input.filename).toLowerCase();
+    const publicId = str(input.cloudinaryPublicId);
+    const source = publicId ? publicId.split("/").pop() || publicId : str(input.filename);
+    const name = source.toLowerCase();
     let earned = 0;
     let status: MediaCheckStatus = "error";
     let hint: string | undefined = "لا يوجد اسم ملف";

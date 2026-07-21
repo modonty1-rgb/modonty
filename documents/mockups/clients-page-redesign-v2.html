@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>صفحة الشركاء — v2 · Hero = سلايدر المميّزين فقط</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --background:45 8% 95%; --foreground:245 87% 19%; --card:0 0% 100%;
+    --primary:240 100% 59%; --secondary:0 0% 96%; --accent:180 100% 42%;
+    --muted-foreground:0 0% 36%; --border:0 0% 86%; --gold:38 92% 50%;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Tajawal',sans-serif;background:hsl(var(--background));color:hsl(var(--foreground));line-height:1.6}
+  .wrap{max-width:1128px;margin:0 auto;padding:0 16px}
+  a{text-decoration:none;color:inherit}
+  .note{background:#fff;border:1px dashed hsl(var(--gold)/.6);border-radius:10px;padding:8px 12px;font-size:12.5px;margin:14px 0}
+  .chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;border-radius:999px;padding:3px 10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:#fff}
+  .verified{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:999px;background:hsl(var(--accent));color:#fff;font-size:10px;font-weight:900}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:10px;font-family:inherit;font-weight:800;cursor:pointer}
+
+  /* ===== HERO = FEATURED STAGE ===== */
+  .hero{background:linear-gradient(135deg,hsl(var(--foreground)),hsl(245 80% 26%));color:#fff;padding:20px 0 26px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(600px 240px at 88% -10%,hsl(var(--accent)/.25),transparent 60%);pointer-events:none}
+  .hero .inner{position:relative}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .eyebrow{font-size:13px;font-weight:800;color:#fff;display:flex;align-items:center;gap:7px}
+  .eyebrow .star{color:hsl(var(--gold))}
+  .search{display:flex;align-items:center;gap:8px;background:#fff;border-radius:10px;padding:8px 12px;min-width:240px}
+  .search input{border:0;outline:0;font-family:inherit;font-size:13.5px;width:100%;color:hsl(var(--foreground))}
+
+  /* slider — one slide at a time, arrows + dots + autoplay (NOT a free scroller) */
+  .stage{position:relative;padding:0 46px}
+  .viewport{overflow:hidden;border-radius:18px}
+  .track{display:flex;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+  .nav{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:40px;height:40px;border-radius:999px;background:rgba(255,255,255,.94);color:hsl(var(--foreground));display:grid;place-items:center;cursor:pointer;border:0;font-size:18px;box-shadow:0 3px 12px rgba(0,0,0,.3);transition:background .15s}
+  .nav:hover{background:#fff}
+  .nav.prev{inset-inline-start:0}
+  .nav.next{inset-inline-end:0}
+  .fcard{position:relative;flex:0 0 100%;height:240px;overflow:hidden;border:1px solid hsl(var(--gold)/.5);box-shadow:inset 0 0 0 1px hsl(var(--gold)/.3)}
+  .fcard .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .fcard .grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.82) 8%,rgba(0,0,0,.35) 45%,rgba(0,0,0,.15))}
+  .fcard .placeholder{position:absolute;inset:0;background:linear-gradient(135deg,hsl(var(--primary)),hsl(var(--accent)))}
+  .fcard .ribbon{position:absolute;top:14px;inset-inline-start:14px;background:hsl(var(--gold));color:#3a2a00;font-size:11.5px;font-weight:900;border-radius:999px;padding:4px 12px;display:inline-flex;gap:5px;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+  .fcard .body{position:absolute;inset-inline:0;bottom:0;padding:18px;display:flex;align-items:flex-end;gap:14px;color:#fff}
+  .fcard .logo{width:64px;height:64px;border-radius:14px;background:#fff;border:1px solid hsl(var(--border));box-shadow:0 4px 14px rgba(0,0,0,.3),0 0 0 4px #fff;display:grid;place-items:center;overflow:hidden;flex-shrink:0}
+  .fcard .logo img{width:100%;height:100%;object-fit:contain;padding:6px}
+  .fcard .logo .init{font-weight:900;font-size:22px;color:hsl(var(--primary))}
+  .fcard .info{flex:1;min-width:0}
+  .fcard h3{font-size:20px;font-weight:900;display:flex;align-items:center;gap:6px;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+  .fcard .row{display:flex;gap:7px;margin-top:7px;flex-wrap:wrap}
+  .fcard .visit{flex-shrink:0;background:#fff;color:hsl(var(--foreground));padding:9px 16px;font-size:13px;border-radius:10px}
+
+  .dots{display:flex;justify-content:center;gap:7px;margin-top:14px}
+  .dots i{width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.35);cursor:pointer;transition:width .3s,background .3s}
+  .dots i.on{width:22px;background:hsl(var(--gold))}
+
+  .orient{margin-top:16px;display:flex;justify-content:center;gap:26px;color:rgba(255,255,255,.85);font-size:13px}
+  .orient b{font-size:18px;font-weight:900;color:#fff}
+
+  /* ===== DIRECTORY (condensed) ===== */
+  .sec{padding:28px 0 6px}
+  .sec h2{font-size:19px;font-weight:900}
+  .sec .sub{font-size:13px;color:hsl(var(--muted-foreground));margin-top:2px}
+  .ind-chips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 4px}
+  .ind-chips .c{white-space:nowrap;font-size:12px;font-weight:700;border-radius:999px;padding:5px 12px;border:1px solid hsl(var(--border));background:#fff;color:hsl(var(--muted-foreground))}
+  .ind-chips .c.on{background:hsl(var(--primary)/.1);border-color:hsl(var(--primary));color:hsl(var(--primary))}
+  .dir{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px}
+  .pc{position:relative;background:#fff;border:1px solid hsl(var(--border));border-radius:16px;overflow:hidden;transition:transform .18s,box-shadow .18s,border-color .18s}
+  .pc:hover{transform:translateY(-4px);border-color:hsl(var(--primary)/.35);box-shadow:0 12px 26px rgba(0,0,0,.1)}
+  .pc .banner{position:relative;height:92px;overflow:hidden;background:linear-gradient(135deg,hsl(var(--foreground)),hsl(var(--primary)))}
+  .pc .banner img{width:100%;height:100%;object-fit:cover}
+  .pc .banner .star{position:absolute;top:10px;inset-inline-start:10px;background:hsl(var(--gold));color:#3a2a00;font-size:10.5px;font-weight:900;border-radius:999px;padding:2px 9px;display:inline-flex;gap:4px;align-items:center;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+  .pc .logo{position:absolute;top:62px;inset-inline-end:16px;width:58px;height:58px;border-radius:14px;background:#fff;border:1px solid hsl(var(--border));box-shadow:0 4px 12px rgba(0,0,0,.14),0 0 0 3px #fff;display:grid;place-items:center;overflow:hidden;z-index:2}
+  .pc .logo img{width:100%;height:100%;object-fit:contain;padding:6px}
+  .pc .logo .init{font-weight:900;font-size:18px;color:hsl(var(--primary))}
+  .pc .vc{position:absolute;bottom:-3px;inset-inline-start:-3px;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:999px;background:hsl(var(--accent));color:#fff;font-size:9px;font-weight:900;border:2px solid #fff}
+  .pc .body{padding:32px 16px 16px}
+  .pc h3{font-size:16px;font-weight:900;line-height:1.3}
+  .pc .ind{font-size:12px;color:hsl(var(--muted-foreground));margin-top:2px}
+  .pc .stats{display:flex;gap:16px;margin-top:13px;padding-top:12px;border-top:1px solid hsl(var(--border));font-size:12.5px;color:hsl(var(--muted-foreground))}
+  .pc .stats b{color:hsl(var(--foreground));font-weight:900}
+  .pc .visit{margin-top:13px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:10px;background:hsl(var(--primary)/.08);padding:9px;font-size:13px;font-weight:800;color:hsl(var(--primary));transition:background .15s,color .15s}
+  .pc:hover .visit{background:hsl(var(--primary));color:#fff}
+
+  .join{margin:28px 0 50px;border-radius:18px;background:linear-gradient(to left,hsl(var(--primary)),hsl(var(--primary)/.82));color:#fff;padding:32px;text-align:center}
+  .join h2{font-size:23px;font-weight:900}
+  .join p{color:rgba(255,255,255,.85);margin-top:8px}
+  .join .btn{margin-top:16px;background:#fff;color:hsl(var(--primary));padding:12px 26px;border-radius:999px}
+  @media(max-width:820px){ .dir{grid-template-columns:1fr 1fr} }
+  @media(max-width:560px){ .dir{grid-template-columns:1fr} .stage{padding:0 8px} .fcard{height:220px} }
+</style>
+</head>
+<body>
+
+<div class="wrap"><div class="note">📐 <b>v2</b> · الـ Hero = سلايدر <b>الشركاء المميّزين فقط</b> (<code>isFeatured</code> = المدفوع سنويًا). اسحب الكروت أفقيًا. شعار كيما زون حقيقي · الباقي gradient/أحرف · أرقام توضيحية.</div></div>
+
+<!-- HERO = FEATURED STAGE -->
+<section class="hero">
+  <div class="wrap inner">
+    <div class="topbar">
+      <div class="eyebrow"><span class="star">⭐</span> شركاؤنا المميّزون</div>
+      <div class="search">🔍 <input placeholder="ابحث عن شريك أو نشاط…" /></div>
+    </div>
+
+    <div class="stage">
+      <button class="nav prev" aria-label="السابق">›</button>
+      <button class="nav next" aria-label="التالي">‹</button>
+      <div class="viewport">
+      <div class="track" id="track">
+        <!-- featured card 1: real logo + real cover -->
+        <a class="fcard" href="#">
+          <img class="bg" src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780924974/clients/69e8927b6a15f350c2158a2e/img-58qqgjuqh.png" alt="">
+          <div class="grad"></div>
+          <span class="ribbon">⭐ شريك مميّز</span>
+          <div class="body">
+            <div class="logo"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1776849602/clients/69e8927b6a15f350c2158a2e/img-9udjjim55.png" alt="كيما زون"></div>
+            <div class="info">
+              <h3>كيما زون <span class="verified">✓</span></h3>
+              <div class="row"><span class="chip">الموضة والأزياء</span><span class="chip">📍 مصر</span></div>
+            </div>
+            <span class="visit">زيارة الصفحة</span>
+          </div>
+        </a>
+        <!-- featured card 2 -->
+        <a class="fcard" href="#">
+          <img class="bg" src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780840147/clients/69d5ec61e2087dee91fe99a1/img-3u8ndjjz5.png" alt="">
+          <div class="grad"></div>
+          <span class="ribbon">⭐ شريك مميّز</span>
+          <div class="body">
+            <div class="logo"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780832201/clients/69d5ec61e2087dee91fe99a1/img-3pih4munx.png" alt="شركة جبر سيو"></div>
+            <div class="info">
+              <h3>شركة جبر سيو <span class="verified">✓</span></h3>
+              <div class="row"><span class="chip">التقنية والذكاء الاصطناعي</span><span class="chip">📍 السعودية</span></div>
+            </div>
+            <span class="visit">زيارة الصفحة</span>
+          </div>
+        </a>
+        <!-- featured card 3 -->
+        <a class="fcard" href="#">
+          <img class="bg" src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780817740/clients/6a12f3a14c2ed9f7c5982391/cover-3gwg1m0dv.png" alt="">
+          <div class="grad"></div>
+          <span class="ribbon">⭐ شريك مميّز</span>
+          <div class="body">
+            <div class="logo"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1779701807/clients/6a12f3a14c2ed9f7c5982391/smile-town-dental-clinics-logo-for-oral-and-dental-care-serv-l0of357w4.jpg" alt="عيادات سمايل تاون"></div>
+            <div class="info">
+              <h3>عيادات سمايل تاون <span class="verified">✓</span></h3>
+              <div class="row"><span class="chip">الصحة والعافية</span><span class="chip">📍 مصر</span></div>
+            </div>
+            <span class="visit">زيارة الصفحة</span>
+          </div>
+        </a>
+      </div>
+      </div>
+
+      <div class="dots" id="dots"><i class="on"></i><i></i><i></i></div>
+    </div>
+  </div>
+</section>
+
+<!-- DIRECTORY -->
+<div class="wrap">
+  <div class="sec">
+    <h2>كل الشركاء</h2>
+    <div class="sub">٣٣ شريك · المميّزون يظهرون هنا أيضًا بنجمة ⭐</div>
+  </div>
+
+  <div class="ind-chips">
+    <span class="c on">الكل</span><span class="c">الصحة والعافية</span><span class="c">التقنية</span>
+    <span class="c">الموضة والأزياء</span><span class="c">العقارات</span><span class="c">ريادة الأعمال</span><span class="c">المطاعم</span>
+  </div>
+
+  <div class="dir">
+    <!-- featured (⭐) — real cover + logo -->
+    <a class="pc" href="#">
+      <div class="banner"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780924974/clients/69e8927b6a15f350c2158a2e/img-58qqgjuqh.png" alt=""><span class="star">⭐ مميّز</span></div>
+      <div class="logo"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1776849602/clients/69e8927b6a15f350c2158a2e/img-9udjjim55.png" alt="كيما زون"><span class="vc">✓</span></div>
+      <div class="body"><h3>كيما زون</h3><div class="ind">الموضة والأزياء · مصر</div><div class="stats"><span>📄 <b>٤</b> مقالات</span><span>👁 <b>٧٬١</b>k مشاهدة</span></div><div class="visit">زيارة الصفحة <span>←</span></div></div>
+    </a>
+    <a class="pc" href="#">
+      <div class="banner"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780840147/clients/69d5ec61e2087dee91fe99a1/img-3u8ndjjz5.png" alt=""><span class="star">⭐ مميّز</span></div>
+      <div class="logo"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780832201/clients/69d5ec61e2087dee91fe99a1/img-3pih4munx.png" alt="جبر سيو"><span class="vc">✓</span></div>
+      <div class="body"><h3>شركة جبر سيو</h3><div class="ind">التقنية والذكاء الاصطناعي · السعودية</div><div class="stats"><span>📄 <b>١٣</b> مقالات</span><span>👁 <b>٢١</b>k مشاهدة</span></div><div class="visit">زيارة الصفحة <span>←</span></div></div>
+    </a>
+    <a class="pc" href="#">
+      <div class="banner"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780817740/clients/6a12f3a14c2ed9f7c5982391/cover-3gwg1m0dv.png" alt=""><span class="star">⭐ مميّز</span></div>
+      <div class="logo"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1779701807/clients/6a12f3a14c2ed9f7c5982391/smile-town-dental-clinics-logo-for-oral-and-dental-care-serv-l0of357w4.jpg" alt="سمايل تاون"><span class="vc">✓</span></div>
+      <div class="body"><h3>عيادات سمايل تاون</h3><div class="ind">الصحة والعافية · مصر</div><div class="stats"><span>📄 <b>٨</b> مقالات</span><span>👁 <b>٣٬٢</b>k مشاهدة</span></div><div class="visit">زيارة الصفحة <span>←</span></div></div>
+    </a>
+    <!-- normal — no cover → gradient-fallback banner, no star -->
+    <a class="pc" href="#">
+      <div class="banner"></div>
+      <div class="logo"><span class="init">با</span><span class="vc">✓</span></div>
+      <div class="body"><h3>متجر باقتك</h3><div class="ind">التجارة الإلكترونية</div><div class="stats"><span>📄 <b>٢</b> مقالات</span><span>👁 <b>٤١٠</b> مشاهدة</span></div><div class="visit">زيارة الصفحة <span>←</span></div></div>
+    </a>
+    <a class="pc" href="#">
+      <div class="banner"></div>
+      <div class="logo"><span class="init">عأ</span><span class="vc">✓</span></div>
+      <div class="body"><h3>عيادة علاج الألم</h3><div class="ind">الصحة والعافية</div><div class="stats"><span>📄 <b>٥</b> مقالات</span><span>👁 <b>٩٨٠</b> مشاهدة</span></div><div class="visit">زيارة الصفحة <span>←</span></div></div>
+    </a>
+    <a class="pc" href="#">
+      <div class="banner"></div>
+      <div class="logo"><span class="init">دت</span><span class="vc">✓</span></div>
+      <div class="body"><h3>Dream to App</h3><div class="ind">التقنية</div><div class="stats"><span>📄 <b>١</b> مقال</span><span>👁 <b>٢٢٠</b> مشاهدة</span></div><div class="visit">زيارة الصفحة <span>←</span></div></div>
+    </a>
+  </div>
+</div>
+
+<!-- JOIN CTA -->
+<div class="wrap">
+  <div class="join">
+    <h2>هل تريد عملاء من جوجل — بدون إعلانات؟</h2>
+    <p>انضم لشركاء مدوّنتي واجعل المحتوى يبيع لصالحك على مدار الساعة</p>
+    <a class="btn" href="#">عملاء بلا إعلانات ↗</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  const track = document.getElementById('track');
+  const prev = document.querySelector('.nav.prev');
+  const next = document.querySelector('.nav.next');
+  const dots = [...document.getElementById('dots').children];
+  const n = track.children.length;
+  let i = 0, timer;
+  function go(k){
+    i = (k + n) % n;
+    // RTL: positive translateX reveals later slides (they sit to the left)
+    track.style.transform = 'translateX(' + (i * 100) + '%)';
+    dots.forEach((d, idx) => d.classList.toggle('on', idx === i));
+  }
+  function play(){ timer = setInterval(() => go(i + 1), 4500); }
+  function reset(){ clearInterval(timer); play(); }
+  prev.addEventListener('click', () => { go(i - 1); reset(); });   // → السابق
+  next.addEventListener('click', () => { go(i + 1); reset(); });   // ‹ التالي
+  dots.forEach((d, idx) => d.addEventListener('click', () => { go(idx); reset(); }));
+  const stage = document.querySelector('.stage');
+  stage.addEventListener('mouseenter', () => clearInterval(timer));
+  stage.addEventListener('mouseleave', play);
+  go(0); play();
+})();
+</script>
+
+</body>
+</html>

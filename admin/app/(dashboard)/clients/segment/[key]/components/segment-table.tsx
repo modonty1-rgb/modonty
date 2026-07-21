@@ -13,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 
 /**
  * The segment list. A dense operational table, not a card wall (Khalid 2026-07-13:
@@ -52,13 +53,6 @@ const CTA_LABEL: Record<string, string> = {
 };
 
 const BAD = new Set(["EXPIRED", "OVERDUE", "CANCELLED"]);
-
-/** Same bands as the clients table: 80+ good, 60+ watch, below failing. */
-function seoTone(score: number): string {
-  if (score >= 80) return "text-emerald-600 dark:text-emerald-400";
-  if (score >= 60) return "text-amber-600 dark:text-amber-400";
-  return "text-red-600 dark:text-red-400";
-}
 
 function fmt(iso: string | null): string {
   return iso ? iso.slice(0, 10) : "—";
@@ -207,7 +201,7 @@ export function SegmentTable({ clients }: { clients: SegmentClient[] }) {
                       )}
                     </TableCell>
                     <TableCell className="py-2 text-end">
-                      <span className={`font-bold tabular-nums ${seoTone(c.seoScore)}`}>{c.seoScore}</span>
+                      <SeoScoreBadge score={c.seoScore} size="sm" />
                     </TableCell>
                     <TableCell className="py-2 text-end font-semibold tabular-nums">
                       {c.articleCount}

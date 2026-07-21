@@ -355,7 +355,15 @@
       "Bash(curl -sL \"https://modonty.com/help/audio/general-pitch/manifest.json\")",
       "Bash(\"/c/Program Files/Google/Chrome/Application/chrome.exe\" --remote-debugging-port=9222 --user-data-dir=\"C:/Users/w2nad/chrome-mcp-profile\")",
       "Bash(disown echo *)",
-      "mcp__chrome-devtools__take_snapshot"
+      "mcp__chrome-devtools__take_snapshot",
+      "Bash(node c:/tmp/verify-jbrseo-plan.mjs)",
+      "Bash(node verify-jbrseo-plan.mjs)",
+      "Bash(echo \"--- exit:$? ---\")",
+      "Bash(Remove-Item -Force \"c:/Users/w2nad/Desktop/dreamToApp/MODONTY/admin/app/\\(dashboard\\)/subscription-tiers/components/tier-cards.tsx\", \"c:/Users/w2nad/Desktop/dreamToApp/MODONTY/admin/app/\\(dashboard\\)/subscription-tiers/components/tier-kpi-strip.tsx\", \"c:/Users/w2nad/Desktop/dreamToApp/MODONTY/admin/app/\\(dashboard\\)/subscription-tiers/components/sync-pricing-button.tsx\", \"c:/Users/w2nad/Desktop/dreamToApp/MODONTY/admin/app/\\(dashboard\\)/subscription-tiers/actions/sync-pricing.ts\", \"c:/Users/w2nad/Desktop/dreamToApp/MODONTY/admin/verify-jbrseo-plan.mjs\" -ErrorAction SilentlyContinue)",
+      "Bash(\"deleted\")",
+      "Bash(taskkill //F //PID 13824)",
+      "Bash(node -e \"for\\(const p of ['.claude/settings.json','.claude/settings.local.json']\\){try{const j=JSON.parse\\(require\\('fs'\\).readFileSync\\(p,'utf8'\\)\\);console.log\\('=== '+p+' ==='\\);console.log\\('deny:',JSON.stringify\\(\\(j.permissions&&j.permissions.deny\\)||[],null,1\\)\\);console.log\\('defaultMode:',j.permissions&&j.permissions.defaultMode\\);}catch\\(e\\){console.log\\(p,'ERR',e.message\\)}}\")",
+      "Bash(node -e \"const fs=require\\('fs'\\);const files=['modonty/app/articles/[slug]/components/booking-dialog.tsx','modonty/app/articles/[slug]/components/booking-form-lazy.tsx','admin/app/\\(dashboard\\)/subscription-tiers/components/tier-cards.tsx','admin/app/\\(dashboard\\)/subscription-tiers/components/tier-kpi-strip.tsx','admin/app/\\(dashboard\\)/subscription-tiers/actions/sync-pricing.ts','admin/app/\\(dashboard\\)/subscription-tiers/components/sync-pricing-button.tsx','admin/verify-jbrseo-plan.mjs'];for\\(const f of files\\){try{fs.unlinkSync\\(f\\);console.log\\('deleted:',f\\)}catch\\(e\\){console.log\\('skip:',f,e.code\\)}}\")"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [

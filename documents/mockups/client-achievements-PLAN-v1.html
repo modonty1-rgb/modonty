@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>خطة — إنجازات العميل (بطاقات القصة + صورة Bunny)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0f1115; --panel: #171a21; --panel2: #1e222b; --line: #2a2f3a;
+    --ink: #e8eaed; --muted: #9aa2b1; --brand: #14b8a6; --brand-ink: #5eead4;
+    --amber: #f59e0b; --amber-bg: #2b2109; --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Tajawal', system-ui, sans-serif; line-height: 1.7; padding: 28px 16px 70px; }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  header.top { background: linear-gradient(135deg, #12312c, #0f1115); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px; margin-bottom: 20px; }
+  header.top h1 { margin: 0 0 10px; font-size: 22px; font-weight: 900; }
+  .approved { display: inline-flex; align-items: center; gap: 8px; background: #0e2a1a; color: #86efac; border: 1px solid #1f5638; padding: 7px 14px; border-radius: 999px; font-weight: 700; font-size: 13px; }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; margin-bottom: 16px; }
+  section > h2 { margin: 0 0 14px; font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+  .num { display: grid; place-items: center; width: 28px; height: 28px; flex: 0 0 28px; border-radius: 8px; background: var(--brand); color: #07231f; font-weight: 900; font-size: 14px; }
+  .code { background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; font-family: ui-monospace, monospace; font-size: 12px; color: var(--brand-ink); direction: ltr; display: inline-block; }
+  .alert { border-radius: var(--radius); padding: 16px 20px; margin-bottom: 16px; border: 1px solid var(--amber); background: var(--amber-bg); }
+  .alert h2 { margin: 0 0 6px; font-size: 16px; font-weight: 800; color: #fcd34d; }
+  .alert p { margin: 4px 0; font-size: 13.5px; }
+  ol.phases { list-style: none; counter-reset: p; margin: 0; padding: 0; }
+  ol.phases > li { counter-increment: p; position: relative; padding: 12px 48px 12px 14px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 9px; background: var(--panel2); }
+  ol.phases > li::before { content: counter(p); position: absolute; inset-inline-start: 14px; top: 12px; width: 24px; height: 24px; display: grid; place-items: center; background: var(--brand); color: #07231f; border-radius: 7px; font-weight: 900; font-size: 13px; }
+  ol.phases b { font-size: 14px; }
+  ol.phases .files { display: block; margin-top: 3px; color: var(--muted); font-size: 12.5px; }
+
+  .decision { border: 1px solid var(--line); border-radius: 12px; padding: 15px 18px; margin-bottom: 11px; background: var(--panel2); }
+  .decision.locked { border-color: #1f5638; background: #0e1f17; }
+  .decision .q { font-weight: 800; font-size: 14.5px; margin-bottom: 10px; }
+  .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opt { cursor: pointer; border: 1px solid var(--line); background: var(--panel); border-radius: 10px; padding: 8px 14px; font-size: 13px; font-weight: 600; transition: .15s; user-select: none; }
+  .opt:hover { border-color: var(--brand); }
+  .opt.sel { background: var(--brand); color: #07231f; border-color: var(--brand); font-weight: 800; }
+  .opt .hint { display: block; font-size: 11px; font-weight: 500; color: var(--muted); margin-top: 2px; }
+  .opt.sel .hint { color: #0a2a25; }
+  .lockrow { display: flex; align-items: center; gap: 10px; margin-top: 11px; }
+  .lockbtn { cursor: pointer; border: 1px solid var(--brand); background: transparent; color: var(--brand-ink); border-radius: 8px; padding: 6px 16px; font-family: inherit; font-weight: 700; font-size: 12.5px; }
+  .lockbtn:hover { background: var(--brand); color: #07231f; }
+  .locked .lockbtn { display: none; }
+  .lockmark { display: none; color: #86efac; font-weight: 800; font-size: 13px; }
+  .locked .lockmark { display: inline; }
+
+  .preview { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .story { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--panel2); }
+  .story .img { aspect-ratio: 16 / 10; background: linear-gradient(135deg, #1f6f64, #123f39); display: grid; place-items: center; color: #7fe6d8; font-size: 12px; font-weight: 700; }
+  .story .body { padding: 13px 15px; }
+  .story .val { font-size: 30px; font-weight: 900; color: var(--brand-ink); line-height: 1; }
+  .story .lab { font-size: 13px; font-weight: 700; margin-top: 4px; }
+  .story .desc { font-size: 12px; color: var(--muted); margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>إنجازات العميل — بطاقات القصة</h1>
+    <span class="approved">✓ المعتمد: البديل «ب» — صورة (Bunny) + رقم + فقرة</span>
+  </header>
+
+  <section>
+    <h2><span class="num">1</span> الشكل المستهدف</h2>
+    <div class="preview">
+      <div class="story">
+        <div class="img">صورة 16:10 · Bunny</div>
+        <div class="body">
+          <div class="val">٢٥٠+</div>
+          <div class="lab">مشروع مُسلَّم</div>
+          <div class="desc">من متجر صغير إلى منصة تخدم آلاف الطلبات يومياً — سلّمنا وشغّلنا وتابعنا.</div>
+        </div>
+      </div>
+      <div class="story">
+        <div class="img">صورة 16:10 · Bunny</div>
+        <div class="body">
+          <div class="val">٩٨٪</div>
+          <div class="lab">رضا العملاء</div>
+          <div class="desc">قياس فعلي بعد كل تسليم — ونعيد الشغل لو ما وصل للمستوى.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="alert">
+    <h2>🚨 حالة مفاتيح Bunny (متحقّق منها)</h2>
+    <p>✅ <b>محليًا</b> — كل مفاتيح Bunny الـ18 في <span class="code">.env.shared</span> (منها مفاتيح الـ<span class="code">reels</span> الثلاثة). البناء والتست المحلي جاهز 100% الآن.</p>
+    <p>❌ <b>الإنتاج (Vercel)</b> — صفر مفاتيح Bunny في المشترك (66 متغيّر) وفي كل المشاريع (modonty / admin / console). فحص مُستنفَد.</p>
+    <p>عند الدفع: ننسخ مفاتيح الـ<span class="code">reels</span> الثلاثة على مشروع <b>console</b> (واحد واحد) مع مراعاة تدوير المفاتيح.</p>
+  </div>
+
+  <section>
+    <h2><span class="num">2</span> الخطة — 5 مراحل</h2>
+    <ol class="phases">
+      <li><b>السكيما</b><span class="files">أضيف <span class="code">image String?</span> + <span class="code">description String?</span> على <span class="code">type ClientAchievement</span>. رقصة Prisma.</span></li>
+      <li><b>مسار الرفع</b> <span style="color:#86efac;font-size:12px;font-weight:700">✓ المسار مقفول</span><span class="files">تعميم <span class="code">upload-bunny/route.ts</span> ليقبل مجلّد <span class="code">achievements</span> (قائمة بيضاء). المسار المعتمد:<br><span class="code" style="direction:ltr;margin-top:4px">modonty-reels-media.b-cdn.net/clients/{clientId}/achievements/{ts}-{rand}.webp</span></span></li>
+      <li><b>محرر الكونسول</b><span class="files">لكل إنجاز: منتقي صورة (ضغط → رفع → معاينة) + خانة فقرة + تنظيف الصورة اليتيمة.</span></li>
+      <li><b>عرض modonty</b><span class="files">إعادة كتابة <span class="code">client-results-section.tsx</span> لبطاقات القصة، مع تدرّج للإنجاز بلا صورة.</span></li>
+      <li><b>تست حي محلي ثم دفع</b><span class="files">الدفع للإنتاج معلّق على مفاتيح Bunny.</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><span class="num">3</span> قرارات تُقفل قبل البدء</h2>
+
+    <div class="decision locked" data-d="1">
+      <div class="q">1 · الصورة إلزامية أم اختيارية لكل إنجاز؟</div>
+      <div class="opts">
+        <div class="opt sel">اختيارية<span class="hint">موصى · تدرّج لطيف</span></div>
+        <div class="opt">إلزامية<span class="hint">كل بطاقة بصورة</span></div>
+      </div>
+      <div class="lockrow"><button class="lockbtn">🔒 أقفل</button><span class="lockmark">✓ مقفول</span></div>
+    </div>
+
+    <div class="decision locked" data-d="2">
+      <div class="q">2 · حذف الصورة القديمة عند الاستبدال؟</div>
+      <div class="opts">
+        <div class="opt sel">نعم<span class="hint">موصى · بلا ملفات ميتة</span></div>
+        <div class="opt">لا<span class="hint">أبسط الآن</span></div>
+      </div>
+      <div class="lockrow"><button class="lockbtn">🔒 أقفل</button><span class="lockmark">✓ مقفول</span></div>
+    </div>
+
+    <div class="decision locked" data-d="3">
+      <div class="q">3 · سقف الطول للنصوص</div>
+      <div class="opts">
+        <div class="opt sel">الفقرة: 250 حرف<span class="hint">معتمد</span></div>
+        <div class="opt sel">العنوان (label): 52 حرف<span class="hint">معتمد</span></div>
+      </div>
+      <div class="lockrow"><button class="lockbtn">🔒 أقفل</button><span class="lockmark">✓ مقفول</span></div>
+    </div>
+  </section>
+
+</div>
+<script>
+  document.querySelectorAll('.decision').forEach(function (d) {
+    var opts = d.querySelectorAll('.opt');
+    opts.forEach(function (o) {
+      o.addEventListener('click', function () {
+        if (d.classList.contains('locked')) return;
+        opts.forEach(function (x) { x.classList.remove('sel'); });
+        o.classList.add('sel');
+      });
+    });
+    d.querySelector('.lockbtn').addEventListener('click', function () { d.classList.add('locked'); });
+  });
+</script>
+</body>
+</html>

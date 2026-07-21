@@ -1,0 +1,146 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SeoScoreBadge — موك‑اب المكوّن المشترك</title>
+<style>
+  :root{
+    --ink:#0f1729;--dim:#5b6472;--line:#e4e8ef;--bg:#eef2f7;--card:#fff;
+    --green:#16a34a;--greenbg:#dcfce7;--greentx:#166534;
+    --amber:#d97706;--amberbg:#fef3c7;--ambertx:#92400e;
+    --red:#dc2626;--redbg:#fee2e2;--redtx:#991b1b;
+    --primary:#0f766e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Tajawal","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.8;padding:24px 16px 60px}
+  .wrap{max-width:920px;margin:0 auto}
+  h1{font-size:22px;font-weight:800;text-align:center}
+  .sub{text-align:center;color:var(--dim);font-size:13.5px;margin:5px 0 22px}
+  h2{font-size:16px;font-weight:800;margin:26px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--line);display:flex;gap:8px;align-items:center}
+  h2 .n{background:var(--primary);color:#fff;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:12px;flex:0 0 auto}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:10px 0}
+  code{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12px;direction:ltr;display:inline-block}
+  .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .lbl{font-size:12px;color:var(--dim);min-width:120px;font-weight:700}
+  .stack{display:flex;flex-direction:column;gap:10px}
+
+  /* ===== THE BADGE (this is what becomes the component) ===== */
+  .sb{display:inline-flex;align-items:center;gap:6px;font-weight:800;border-radius:999px;line-height:1;white-space:nowrap;border:1px solid transparent}
+  .sb.g{background:var(--greenbg);color:var(--greentx);border-color:#86efac}
+  .sb.a{background:var(--amberbg);color:var(--ambertx);border-color:#fcd34d}
+  .sb.r{background:var(--redbg);color:var(--redtx);border-color:#fca5a5}
+  /* Google G icon — multicolor brand mark (fixed colors, doesn't tint by tier) */
+  .sb .gi{width:13px;height:13px;flex:0 0 auto;display:block}
+  /* sizes */
+  .sb.sm{font-size:11px;padding:2px 8px}.sb.sm .gi{width:11px;height:11px}
+  .sb.md{font-size:13px;padding:3px 11px}.sb.md .gi{width:13px;height:13px}
+  .sb.lg{font-size:15px;padding:5px 14px}.sb.lg .gi{width:16px;height:16px}
+  /* link variant */
+  a.sb{text-decoration:none;cursor:pointer;transition:box-shadow .15s,transform .15s}
+  a.sb:hover{box-shadow:0 0 0 3px rgba(15,118,110,.18);transform:translateY(-1px)}
+
+  .mini{font-size:11px;color:var(--dim)}
+  table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  th,td{padding:9px 11px;text-align:start;border-bottom:1px solid var(--line);vertical-align:middle}
+  th{background:#f8fafc;font-weight:800;font-size:12px}
+
+  .lrow{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);margin:6px 0}
+  .lrow .nm{flex:1;font-weight:700;font-size:13.5px}
+  .btn{background:var(--primary);color:#fff;border-radius:8px;padding:4px 14px;font-size:12px;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .thumb{border:1px solid var(--line);border-radius:11px;overflow:hidden;background:var(--card)}
+  .thumb .im{height:64px;background:linear-gradient(135deg,#e0e7ff,#f5f3ff);display:grid;place-items:center;color:#a1a1aa;font-size:22px}
+  .thumb .mt{padding:6px 8px;display:flex;justify-content:space-between;align-items:center;gap:5px}
+  .ty{font-size:9px;background:#eef2f7;color:#5b6472;border-radius:4px;padding:1px 6px;font-weight:800}
+  @media(max-width:640px){.grid{grid-template-columns:repeat(2,1fr)}.lbl{min-width:90px}}
+
+  .note{background:#f0fdfa;border:1px solid #99f6e4;border-inline-start:5px solid var(--primary);border-radius:10px;padding:12px 14px;font-size:13px;margin:10px 0}
+  .foot{text-align:center;color:var(--dim);font-size:12px;margin-top:26px}
+</style>
+</head>
+<body>
+<!-- Google "G" logo — defined once, matches admin/components/admin/icons/google-icon.tsx -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="gicon" viewBox="0 0 48 48">
+    <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+    <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+    <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+    <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+  </symbol>
+</svg>
+
+<div class="wrap">
+  <h1><span style="direction:ltr;display:inline-block">SeoScoreBadge</span> — المكوّن المشترك</h1>
+  <div class="sub">شارة درجة سيو واحدة بشعار Google، بشكل ومنطق موحّدَين، تُستخدم في كل مكان · موك‑اب للاتفاق قبل البناء</div>
+
+  <!-- 1. Tiers -->
+  <h2><span class="n">١</span> الألوان حسب الدرجة (منطق واحد) — بشعار Google بدل النقطة</h2>
+  <div class="card">
+    <div class="row" style="gap:18px">
+      <div class="stack"><span class="mini">أحمر — أقل من الحدّ</span>
+        <div class="row"><span class="sb md r"><svg class="gi"><use href="#gicon"/></svg>20%</span><span class="sb md r"><svg class="gi"><use href="#gicon"/></svg>37%</span><span class="sb md r"><svg class="gi"><use href="#gicon"/></svg>45%</span></div></div>
+      <div class="stack"><span class="mini">برتقالي — متوسّط</span>
+        <div class="row"><span class="sb md a"><svg class="gi"><use href="#gicon"/></svg>55%</span><span class="sb md a"><svg class="gi"><use href="#gicon"/></svg>66%</span><span class="sb md a"><svg class="gi"><use href="#gicon"/></svg>72%</span></div></div>
+      <div class="stack"><span class="mini">أخضر — جيد</span>
+        <div class="row"><span class="sb md g"><svg class="gi"><use href="#gicon"/></svg>85%</span><span class="sb md g"><svg class="gi"><use href="#gicon"/></svg>95%</span><span class="sb md g"><svg class="gi"><use href="#gicon"/></svg>100%</span></div></div>
+    </div>
+    <div class="note" style="margin-top:14px"><b>شعار Google ثابت متعدد الألوان</b> (لا يتلوّن حسب الدرجة) — يعرّف الشارة كـ«درجة سيو/بحث» في أي مكان. لون <b>الخلفية والنص</b> فقط يتبع الدرجة.<br><br><b>سؤال العتبة (لازم نوحّدها):</b> الحالي مختلف بمكانين — قسمَا SEO يستخدمان <b>≥80 أخضر · ≥50 برتقالي · &lt;50 أحمر</b>، والصفحة التقنية/المقالات <b>≥80 · ≥60 · &lt;60</b>. الموك‑اب معروض بعتبة <b>80/50</b>.</div>
+  </div>
+
+  <!-- 2. Sizes -->
+  <h2><span class="n">٢</span> الأحجام</h2>
+  <div class="card">
+    <div class="stack">
+      <div class="row"><span class="lbl">sm (جداول كثيفة)</span><span class="sb sm r"><svg class="gi"><use href="#gicon"/></svg>37%</span><span class="sb sm a"><svg class="gi"><use href="#gicon"/></svg>66%</span><span class="sb sm g"><svg class="gi"><use href="#gicon"/></svg>92%</span></div>
+      <div class="row"><span class="lbl">md (افتراضي)</span><span class="sb md r"><svg class="gi"><use href="#gicon"/></svg>37%</span><span class="sb md a"><svg class="gi"><use href="#gicon"/></svg>66%</span><span class="sb md g"><svg class="gi"><use href="#gicon"/></svg>92%</span></div>
+      <div class="row"><span class="lbl">lg (رؤوس بارزة)</span><span class="sb lg r"><svg class="gi"><use href="#gicon"/></svg>37%</span><span class="sb lg a"><svg class="gi"><use href="#gicon"/></svg>66%</span><span class="sb lg g"><svg class="gi"><use href="#gicon"/></svg>92%</span></div>
+    </div>
+  </div>
+
+  <!-- 3. Variants -->
+  <h2><span class="n">٣</span> الخيارات (props)</h2>
+  <div class="card">
+    <div class="stack">
+      <div class="row"><span class="lbl">بشعار Google (افتراضي)</span><span class="sb md a"><svg class="gi"><use href="#gicon"/></svg>66%</span></div>
+      <div class="row"><span class="lbl">بلا شعار</span><span class="sb md a">66%</span></div>
+      <div class="row"><span class="lbl">بكلمة حالة</span><span class="sb md g"><svg class="gi"><use href="#gicon"/></svg>92% · سليم</span><span class="sb md r"><svg class="gi"><use href="#gicon"/></svg>37% · ناقص</span></div>
+      <div class="row"><span class="lbl">قابل للنقر (رابط)</span><a class="sb md r" href="#"><svg class="gi"><use href="#gicon"/></svg>37%</a><span class="mini">← مرّر الماوس: حلقة تركيز + رفع بسيط</span></div>
+    </div>
+  </div>
+
+  <!-- 4. In context -->
+  <h2><span class="n">٤</span> في سياقها الفعلي (نفس المكوّن)</h2>
+  <div class="card">
+    <div class="mini" style="margin-bottom:6px">أ) صف قائمة — SEO Client</div>
+    <div class="lrow"><a class="sb md r" href="#"><svg class="gi"><use href="#gicon"/></svg>37%</a><span class="nm">دكتور أمل زكريا للنساء والتوليد</span><span class="mini">ناقص: العنوان + الوصف</span><span class="btn">افتح ←</span></div>
+    <div class="lrow"><a class="sb md a" href="#"><svg class="gi"><use href="#gicon"/></svg>66%</a><span class="nm">مدوّنتي</span><span class="mini">ناقص: الوصف</span><span class="btn">افتح ←</span></div>
+    <div class="lrow"><a class="sb md g" href="#"><svg class="gi"><use href="#gicon"/></svg>100%</a><span class="nm">مؤسسة جبر للاستشارات</span><span class="mini">مكتمل</span><span class="btn">افتح ←</span></div>
+
+    <div class="mini" style="margin:14px 0 6px">ب) شبكة صور — SEO Images (حجم sm)</div>
+    <div class="grid">
+      <div class="thumb"><div class="im">🖼️</div><div class="mt"><span class="ty">HERO</span><span class="sb sm r"><svg class="gi"><use href="#gicon"/></svg>40%</span></div></div>
+      <div class="thumb"><div class="im">🖼️</div><div class="mt"><span class="ty">GALLERY</span><span class="sb sm a"><svg class="gi"><use href="#gicon"/></svg>72%</span></div></div>
+      <div class="thumb"><div class="im">🏷️</div><div class="mt"><span class="ty">LOGO</span><span class="sb sm a"><svg class="gi"><use href="#gicon"/></svg>66%</span></div></div>
+      <div class="thumb"><div class="im">🖼️</div><div class="mt"><span class="ty">POST</span><span class="sb sm g"><svg class="gi"><use href="#gicon"/></svg>100%</span></div></div>
+    </div>
+  </div>
+
+  <!-- 5. API -->
+  <h2><span class="n">٥</span> الواجهة البرمجية المقترحة</h2>
+  <div class="card">
+    <table>
+      <tr><th>Prop</th><th>النوع</th><th>الافتراضي</th><th>الوصف</th></tr>
+      <tr><td><code>score</code></td><td>number</td><td>—</td><td>الدرجة 0–100 (إلزامي)</td></tr>
+      <tr><td><code>size</code></td><td>"sm"|"md"|"lg"</td><td>"md"</td><td>الحجم</td></tr>
+      <tr><td><code>showIcon</code></td><td>boolean</td><td>true</td><td>عرض شعار Google (<code>GoogleIcon</code>)</td></tr>
+      <tr><td><code>label</code></td><td>boolean</td><td>false</td><td>إلحاق «سليم/ناقص» بعد النسبة</td></tr>
+      <tr><td><code>href</code></td><td>string?</td><td>—</td><td>لو مُرِّر → يصير رابط قابل للنقر</td></tr>
+    </table>
+    <div class="note"><b>مكان الملف:</b> <code>admin/components/shared/seo-score-badge.tsx</code> — يستورد <code>GoogleIcon</code> الموجود (<code>components/admin/icons/google-icon.tsx</code>) ومنطق العتبات في مكان واحد. بعد اعتمادك، أستبدل كل النسخ المكرّرة (SEO Client · SEO Images · media-grid · media-segment · وأي جدول درجات) بهذا المكوّن.</div>
+  </div>
+
+  <div class="foot">موك‑اب للنقاش — بعد «ابروف» أبنيه طبق الأصل وأستبدله في كل مكان.</div>
+</div>
+</body>
+</html>

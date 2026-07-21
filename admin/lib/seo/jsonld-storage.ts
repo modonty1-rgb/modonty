@@ -130,6 +130,9 @@ export async function generateAndSaveJsonLd(
           tiktokUrl: settings.tiktokUrl,
           pinterestUrl: settings.pinterestUrl,
           snapchatUrl: settings.snapchatUrl,
+          imageOwnerName: settings.imageOwnerName,
+          imageLicenseUrl: settings.imageLicenseUrl,
+          imageAcquireLicensePageUrl: settings.imageAcquireLicensePageUrl,
         }
       : null;
 

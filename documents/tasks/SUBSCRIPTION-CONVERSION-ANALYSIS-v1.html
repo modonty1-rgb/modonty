@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تحليل الاشتراكات — ليش التفاعل كويس بس ما في اشتراك؟</title>
+<style>
+  :root{
+    --bg:#0b1020; --card:#121a2e; --card2:#0f1729; --line:#1f2b45;
+    --txt:#e6edf7; --muted:#9fb0c9; --accent:#3b82f6;
+    --red:#ef4444; --amber:#f59e0b; --green:#22c55e; --cyan:#06b6d4;
+    --gold:#fbbf24;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Tajawal","Segoe UI",system-ui,sans-serif;
+    background:linear-gradient(160deg,#070b16,#0b1020 40%,#0a1428);
+    color:var(--txt); line-height:1.85; padding:24px; min-height:100vh;
+  }
+  .wrap{max-width:980px;margin:0 auto}
+  header.hero{
+    background:linear-gradient(135deg,#0d1424,#111827);
+    border:1px solid var(--line); border-radius:20px;
+    padding:34px 30px; margin-bottom:24px; position:relative; overflow:hidden;
+  }
+  header.hero::before{
+    content:""; position:absolute; inset-inline-start:-60px; top:-60px;
+    width:200px; height:200px; background:radial-gradient(circle,rgba(59,130,246,.25),transparent 70%);
+  }
+  .kicker{color:var(--accent); font-weight:700; font-size:14px; letter-spacing:.5px}
+  h1{font-size:30px; font-weight:800; margin:8px 0 6px; line-height:1.4}
+  .sub{color:var(--muted); font-size:15px}
+  .meta{display:flex; gap:18px; flex-wrap:wrap; margin-top:16px; font-size:13px; color:var(--muted)}
+  .meta b{color:var(--txt)}
+
+  section{
+    background:var(--card); border:1px solid var(--line);
+    border-radius:18px; padding:26px; margin-bottom:20px;
+  }
+  h2{font-size:22px; font-weight:800; margin-bottom:14px; display:flex; align-items:center; gap:10px}
+  h2 .n{
+    width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+    font-size:16px; background:rgba(59,130,246,.15); color:var(--accent); flex:none;
+  }
+  h3{font-size:17px; font-weight:700; margin:18px 0 8px; color:#fff}
+  p{margin-bottom:12px; color:#dce6f4}
+  .muted{color:var(--muted)}
+  strong{color:#fff}
+
+  .shock{
+    background:linear-gradient(135deg,rgba(239,68,68,.12),rgba(239,68,68,.04));
+    border:1px solid rgba(239,68,68,.4); border-radius:16px; padding:22px 24px; margin-bottom:20px;
+  }
+  .shock h2{color:#fecaca}
+  .proof{
+    background:var(--card2); border:1px dashed var(--line); border-radius:12px;
+    padding:14px 16px; margin-top:12px; font-size:15px;
+  }
+  .big{font-size:26px;font-weight:800;color:#fff}
+
+  table{width:100%; border-collapse:collapse; margin:10px 0; font-size:14.5px}
+  th,td{padding:11px 12px; text-align:start; border-bottom:1px solid var(--line)}
+  th{color:var(--muted); font-weight:700; font-size:13px; background:var(--card2)}
+  td b{color:#fff}
+  .num{font-variant-numeric:tabular-nums; font-weight:700}
+
+  .badge{display:inline-block; padding:3px 10px; border-radius:999px; font-size:12.5px; font-weight:700; white-space:nowrap}
+  .b-red{background:rgba(239,68,68,.15); color:#fca5a5; border:1px solid rgba(239,68,68,.35)}
+  .b-amber{background:rgba(245,158,11,.15); color:#fcd34d; border:1px solid rgba(245,158,11,.35)}
+  .b-green{background:rgba(34,197,94,.15); color:#86efac; border:1px solid rgba(34,197,94,.35)}
+  .b-cyan{background:rgba(6,182,212,.15); color:#67e8f9; border:1px solid rgba(6,182,212,.35)}
+
+  .prob{border-inline-start:4px solid var(--line); padding:4px 16px 4px; margin-bottom:18px}
+  .prob.red{border-color:var(--red)}
+  .prob.amber{border-color:var(--amber)}
+  .prob.cyan{border-color:var(--cyan)}
+  .prob h3{margin-top:6px}
+
+  .q{display:grid; grid-template-columns:auto 1fr; gap:12px 14px; align-items:start; margin-bottom:14px}
+  .q .mark{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-weight:800;flex:none}
+  .q .no{background:rgba(239,68,68,.15);color:#fca5a5}
+  .q .warn{background:rgba(245,158,11,.15);color:#fcd34d}
+
+  .sol{
+    background:var(--card2); border:1px solid var(--line); border-radius:14px;
+    padding:18px 20px; margin-bottom:14px; position:relative;
+  }
+  .sol .rank{
+    position:absolute; inset-inline-end:18px; top:16px; font-size:22px;
+  }
+  .sol h3{margin-top:0; padding-inline-end:40px}
+  .sol .tag{font-size:12.5px; color:var(--gold); font-weight:700}
+
+  .funnel{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:14px 0; font-size:15px}
+  .funnel .step{background:var(--card2); border:1px solid var(--line); border-radius:10px; padding:10px 16px; text-align:center}
+  .funnel .step b{display:block; font-size:22px; color:#fff}
+  .funnel .step span{font-size:12px; color:var(--muted)}
+  .funnel .arrow{color:var(--red); font-weight:800; font-size:20px}
+  .funnel .drop{color:#fca5a5; font-size:12px; font-weight:700}
+
+  .final{
+    background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(6,182,212,.06));
+    border:1px solid rgba(34,197,94,.35); border-radius:16px; padding:24px;
+  }
+  .final h2{color:#a7f3d0}
+  .terms{font-size:13px; color:var(--muted); margin-top:8px}
+  .terms code{background:var(--card2); padding:2px 8px; border-radius:6px; color:#cbd5e1; font-size:12px}
+  footer{text-align:center; color:var(--muted); font-size:13px; padding:18px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="kicker">جلسة عصف ذهني — تسويق</div>
+    <h1>ليش التفاعل «كويس» بس ما في اشتراكات؟</h1>
+    <p class="sub">تشخيص كامل مبني على بيانات Google Analytics الحيّة — صفر تخمين، صفر تعديل كود</p>
+    <div class="meta">
+      <span>📅 الفترة: <b>آخر ٢٨ يوم</b></span>
+      <span>🌐 الموقع: <b>modonty.com</b></span>
+      <span>📊 المصدر: <b>GA4 (قراءة فقط)</b></span>
+      <span>🗓️ التاريخ: <b>2026-06-25</b></span>
+    </div>
+  </header>
+
+  <!-- DECISIONS (TOP — our working surface) -->
+  <section style="background:var(--card);border-color:rgba(251,191,36,.35)">
+    <style>
+      .dec{padding:14px 0;border-bottom:1px solid var(--line)}
+      .dec .top{display:flex;gap:12px;align-items:flex-start}
+      .dec input{width:20px;height:20px;margin-top:2px;accent-color:var(--green);flex:none;cursor:pointer}
+      .dec .t{font-weight:800;color:#fff;flex:1;font-size:15.5px}
+      .dec .by{padding-inline-start:32px}
+      .dec p{margin:5px 0 0;color:#c7d2e4;font-size:14px}
+      .dec.locked{background:linear-gradient(135deg,rgba(34,197,94,.08),transparent);border-radius:10px;padding:12px 14px;border:1px solid rgba(34,197,94,.3);margin-bottom:8px}
+      .rec{font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;white-space:nowrap;margin-inline-start:8px}
+      .rec-yes{background:rgba(34,197,94,.15);color:#86efac;border:1px solid rgba(34,197,94,.35)}
+      .rec-today{background:rgba(59,130,246,.15);color:#93c5fd;border:1px solid rgba(59,130,246,.35)}
+      .rec-disc{background:rgba(245,158,11,.15);color:#fcd34d;border:1px solid rgba(245,158,11,.35)}
+      .rec-later{background:rgba(6,182,212,.12);color:#67e8f9;border:1px solid rgba(6,182,212,.3)}
+      .grp{font-size:13px;font-weight:800;color:var(--muted);margin:16px 0 8px;letter-spacing:.3px}
+    </style>
+    <h2><span class="n" style="background:rgba(251,191,36,.15);color:var(--gold)">🎯</span> قرارات نقفلها وحدة وحدة — نقاط نقاشنا</h2>
+    <p class="lead muted" style="margin-bottom:6px">نبدأ من هنا. التفاصيل والحقائق تحت. كل بند فيه توصيتي · ✅ مقفول · 🔵 مفتوح ننتظر قرارك.</p>
+
+    <div class="grp">✅ مقفول (اتفقنا)</div>
+    <div class="dec locked"><span class="t" style="font-size:15px">التنظيف مش رجعي — القديم يبقى، الجديد النظيف يتراكم فوقه.</span></div>
+    <div class="dec locked"><span class="t" style="font-size:15px">أوقف GA4 في بيئة الـ dev (الخيار ١) — اللوكل ما يلمس GA4 نهائياً.</span></div>
+    <div class="dec locked"><span class="t" style="font-size:15px">أ١ — أضف <code>page_location</code> لأحداث السيرفر — يوقف الـ١٢ ألف جلسة وهمية. <span class="rec rec-yes">معتمد</span></span></div>
+    <div class="dec locked"><span class="t" style="font-size:15px">أ٢ — انقل أحداث الزائر (signup_view, web_vitals, client_view…) للمتصفّح — تضمن الاندماج بالجلسة الحقيقية. <span class="rec rec-yes">معتمد</span></span></div>
+    <div class="dec locked"><span class="t" style="font-size:15px">أ٣ — GA4: علّم Key Events + استبعد جهازك (إعداد، بدون كود). <span class="rec rec-yes">معتمد</span></span></div>
+    <div class="dec locked"><span class="t" style="font-size:15px">ب — نظّف بأمان: مربع «موثّق من Google» لكل شريك حقيقي أصلاً (يفلتر حسب المسار)؛ التنظيف <strong>يزيده</strong> مش ينقصه. نعرضه كما هو ويكبر بالنمو. <span class="rec rec-yes">معتمد</span></span></div>
+    <div class="dec locked"><span class="t" style="font-size:15px">ج — فيسبوك (نصيحة · صفر كود): غيّر وجهة الإعلان من <code>/register</code> لمقال/صفحة شريك + إعادة استهداف. تطبّقها من لوحة فيسبوك. <span class="rec rec-yes">معتمد كنصيحة</span></span></div>
+    <div class="dec locked"><span class="t" style="font-size:15px">د — الاشتراك الأهم = <strong>متابعة شريك</strong> (أقل احتكاك). الثلاثة تجمع بلا تسليم → <strong>ابنِ التسليم أول</strong> (إشعار المتابعين بمقال جديد) ضمن مهمة «نظام الإيميلات الكامل» في PENDING-IDEAS-TODO، ثم انقل الطلب لبعد المقال. <span class="rec rec-yes">معتمد</span></span></div>
+    <div class="dec locked"><span class="t" style="font-size:15px">هـ — فعّل Hotjar بعد التنظيف — <strong>بحذر على الأداء</strong> (lazyOnload + قياس CWV بعده؛ الأداء أولوية #1 على مودونتي). <span class="rec rec-yes">معتمد · لاحقاً</span></span></div>
+
+    <p class="muted" style="margin-top:14px;font-size:13px">✅ <strong style="color:#86efac">كل القرارات مقفولة</strong> — جاهزين للتنفيذ بالترتيب (محور القياس أولاً).</p>
+  </section>
+
+  <!-- SHOCK -->
+  <div class="shock">
+    <h2>⚠️ أول شي، وبصراحة: فرضيتك غلط جزئياً</h2>
+    <p>أنت تقول «التفاعل كويس بس ما حد يشترك». الحقيقة من الأرقام: <strong>التفاعل مش كويس فعلاً — الرقم مضخّم بزيارات وهمية</strong>. البناء على فهم غلط يضيّع وقتك، فلازم نصحّح هذا أول.</p>
+    <div class="proof">
+      الدليل القاطع: عندك <span class="big">١٥٬٠٢١</span> جلسة مقابل <span class="big">٧٬٥٦١</span> مشاهدة صفحة فقط.
+      <p class="muted" style="margin-top:8px;margin-bottom:0">مستحيل رياضياً يكون عدد الجلسات أكبر من مشاهدات الصفحات لبشر حقيقيين — كل إنسان يفتح صفحة وحدة على الأقل. هذا التناقض وحده يثبت إن جزء ضخم من الترافيك آلي (بوتات) لا يفتح صفحات أصلاً.</p>
+    </div>
+  </div>
+
+  <!-- RAW DATA -->
+  <section>
+    <h2><span class="n">📊</span> البيانات الخام (٢٨ يوم)</h2>
+    <table>
+      <thead>
+        <tr><th>القناة</th><th>الجلسات</th><th>مشاهدات الصفحات</th><th>التفاعل</th><th>متوسط الجلسة</th><th>الحكم</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><b>Unassigned</b></td><td class="num">١١٬٩٩٠</td><td class="num">٥٨ فقط</td><td class="num">٠٪</td><td>٤٧ث</td><td><span class="badge b-red">🤖 وهمي / بوتات</span></td></tr>
+        <tr><td><b>إعلانات سوشيال</b> <span class="muted">(fb/paid)</span></td><td class="num">١٬٧٧٧</td><td class="num">١٬٨٦٢</td><td class="num">٧٪</td><td><b>٩ث</b></td><td><span class="badge b-amber">🥶 بارد يهرب</span></td></tr>
+        <tr><td><b>مباشر</b> <span class="muted">(Direct)</span></td><td class="num">٥١٠</td><td class="num">٣٬٠٣١</td><td class="num">٦٢٪</td><td>١٦ دقيقة</td><td><span class="badge b-green">✅ جمهور حقيقي</span></td></tr>
+        <tr><td><b>بحث عضوي</b> <span class="muted">(Organic)</span></td><td class="num">٤٥١</td><td class="num">١٬٦٦٣</td><td class="num">٦٢٪</td><td>٦ دقايق</td><td><span class="badge b-green">✅ جمهور حقيقي</span></td></tr>
+        <tr><td><b>إحالات</b> <span class="muted">(Referral)</span></td><td class="num">١٩٠</td><td class="num">٨٧٧</td><td class="num">٦٥٪</td><td>١٤ دقيقة</td><td><span class="badge b-green">✅ جمهور حقيقي</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>مسار الاشتراك (Signup Funnel)</h3>
+    <div class="funnel">
+      <div class="step"><b>١٬٨٢٦</b><span>شاف صفحة التسجيل</span></div>
+      <div class="arrow">←</div>
+      <div class="step"><b>٩</b><span>بدأ الفورم</span></div>
+      <span class="drop">سقوط ٩٩٬٥٪ 💥</span>
+      <div class="arrow">←</div>
+      <div class="step"><b>٣</b><span>أكمل التسجيل</span></div>
+    </div>
+    <p class="muted">النشرة البريدية = <b style="color:#fca5a5">٠ اشتراك</b> · متابعة شريك = ١٢ · جمهورك الحقيقي الفعلي ≈ <b>١٬١٥٠ جلسة فقط</b> (مش ١٥ ألف).</p>
+  </section>
+
+  <!-- DIAGNOSIS -->
+  <section>
+    <h2><span class="n">🔍</span> التشخيص — ٤ مشاكل مرتّبة بالحجم</h2>
+
+    <div class="prob red">
+      <h3>١ — ٨٠٪ من ترافيكك وهمي يعمي كل قياساتك <span class="badge b-red">حرِج</span></h3>
+      <p>قناة Unassigned = ١١٬٩٩٠ جلسة، تفاعل صفر، ٥٨ مشاهدة صفحة بس. هذي مش بشر. ما دام ٨٠٪ من الأرقام وهمية، أي استنتاج تبنيه على «المتوسطات» غلط من جذره. جمهورك الحقيقي ~١٬١٥٠ جلسة فقط.</p>
+    </div>
+
+    <div class="prob amber">
+      <h3>٢ — ميزانية إعلانات فيسبوك تتحرق على الصفحة الغلط <span class="badge b-amber">هدر مالي</span></h3>
+      <p>الإعلانات المدفوعة جابت ١٬٧٧٧ جلسة بتفاعل ٧٪ ومتوسط <strong>٩ ثواني</strong>، وصفحة <code style="background:#0f1729;padding:2px 6px;border-radius:4px">/users/register</code> استقبلت ١٬٢٩٩ جلسة هبوط. يعني تدفع لفيسبوك عشان تجيب ناس باردة <strong>وترميها مباشرة على جدار «أنشئ حساب»</strong>. الزائر جاء يتفرّج مش ينضم — يشوف الفورم، ما يهمّه، يطلع خلال ٩ ثواني. أكبر هدر مالي عندك.</p>
+    </div>
+
+    <div class="prob red">
+      <h3>٣ — الاشتراك ينهار عند «الرغبة» مش عند «الفورم» <span class="badge b-red">جوهر المشكلة</span></h3>
+      <p>السقوط الكارثي بين «شاف» (١٬٨٢٦) و«بدأ» (٩) = نص بالمئة. <strong>معناه المشكلة مش صعوبة الفورم</strong> — لو كانت الفورم، كان في ناس كثير يبدأون ويتعثّرون. الناس ما لمسوا الفورم أصلاً لأنه <strong>ما عندهم سبب يشتركون</strong>. تطلب منهم حساب بدري، قبل ما تعطيهم قيمة تستاهل التسجيل.</p>
+    </div>
+
+    <div class="prob cyan">
+      <h3>٤ — جمهورك الذهب صغير ومحدش يطلب منه الاشتراك صح <span class="badge b-cyan">فرصة ضائعة</span></h3>
+      <p>المباشر + العضوي + الإحالات يقعدون ٦ لـ ١٦ دقيقة ويقرأون فعلاً. <strong>المحتوى ممتاز لهم.</strong> لكنهم قلّة، ومحدش يلتقطهم في لحظة الرغبة (بعد ما يخلّص مقال ممتاز = أفضل لحظة تطلب اشتراك، وأنت ما تطلب).</p>
+    </div>
+  </section>
+
+  <!-- ROOT CAUSE UPDATE -->
+  <div class="shock" style="border-color:rgba(245,158,11,.45);background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(245,158,11,.04))">
+    <h2 style="color:#fde68a">🔄 تحديث (٢٦ يونيو) — السبب الجذري الحقيقي: مش بوتات، خلل في كود التتبّع تبعنا</h2>
+    <p>التشخيص الأول قال «٨٠٪ بوتات». <strong>هذا كان غلط.</strong> بعد الغوص في GA4 + قراءة الكود، الدليل القاطع يثبت إن الجلسات الوهمية <strong>من تطبيقنا نفسه</strong> — أحداث تتبّع تُرسل من السيرفر بدون سياق الصفحة.</p>
+
+    <h3 style="margin-top:18px">الدليل ١ — تقسيم اسم النطاق (hostName)</h3>
+    <table>
+      <thead><tr><th>النطاق</th><th>الجلسات</th><th>مشاهدات الصفحات</th><th>الحكم</th></tr></thead>
+      <tbody>
+        <tr><td><code style="background:#0b1020;padding:2px 6px;border-radius:4px">(not set)</code></td><td class="num">١١٬٩٦٧</td><td class="num">٠</td><td><span class="badge b-red">👻 جلسات وهمية</span></td></tr>
+        <tr><td><b>www.modonty.com</b></td><td class="num">٢٬٨٠١</td><td class="num">٥٬٤٣٠</td><td><span class="badge b-green">✅ ترافيكك الحقيقي</span></td></tr>
+        <tr><td><code style="background:#0b1020;padding:2px 6px;border-radius:4px">localhost</code></td><td class="num">١٩٢</td><td class="num">٢٬١٥٠</td><td><span class="badge b-amber">💻 جهازك أنت يلوّث GA4</span></td></tr>
+        <tr><td><code style="background:#0b1020;padding:2px 6px;border-radius:4px">127.0.0.1</code></td><td class="num">٣</td><td class="num">٦</td><td><span class="badge b-amber">💻 جهازك أنت</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>الدليل ٢ — الأحداث اللي تطلقها الجلسات الوهمية</h3>
+    <p class="muted" style="margin-bottom:0">web_vitals (٢٥٬٨٦٤) · signup_view (١٬٨٢٦) · client_view (٦٠١) · outbound_click (٥١٥) · article_view (٥٠٥) — بس <strong style="color:#fca5a5">page_view = ٦٩ فقط</strong>. وكل أحداث signup_view مسارها <code style="background:#0b1020;padding:2px 6px;border-radius:4px">(not set)</code> وكلها من قناة Unassigned.</p>
+
+    <h3>الدليل ٣ — السبب في الكود (مؤكّد)</h3>
+    <div class="proof">
+      <p style="margin-bottom:8px">الملف <code style="background:#0b1020;padding:2px 6px;border-radius:4px">lib/analytics/ga4-server.ts</code> يرسل كل الأحداث من السيرفر عبر بروتوكول القياس (Measurement Protocol) — مع <code style="background:#0b1020;padding:2px 6px;border-radius:4px">client_id</code> و<code style="background:#0b1020;padding:2px 6px;border-radius:4px">session_id</code> بس <strong style="color:#fca5a5">بدون <code style="background:#0b1020;padding:2px 6px;border-radius:4px">page_location</code></strong>. وكل الـ ٢٥ حدث يمرّون من نفس المسار.</p>
+      <p style="margin-bottom:0">بدون <code style="background:#0b1020;padding:2px 6px;border-radius:4px">page_location</code> جوجل ما يعرف النطاق (← not set) ولا يربط الحدث بصفحة (← ٠ مشاهدة) ولا يسند المصدر (← Unassigned). <strong>فكل زائر حقيقي يُحسب مرّتين:</strong> جلسة حقيقية من المتصفّح + جلسة وهمية من أحداث السيرفر.</p>
+    </div>
+    <p style="margin-top:14px;margin-bottom:0">📌 <strong>على النقيض</strong>، حدث <code style="background:#0b1020;padding:2px 6px;border-radius:4px">page_view</code> يُطلق من <strong>العميل</strong> (مسار GTM dataLayer) ويحمل <code style="background:#0b1020;padding:2px 6px;border-radius:4px">page_location: window.location.href</code> صح — ولهذا يظهر على نطاق www الحقيقي. الحل = نخلّي باقي الأحداث تمشي نفس مسار العميل الصحيح.</p>
+  </div>
+
+  <!-- 3 QUESTIONS -->
+  <section>
+    <h2><span class="n">❓</span> إجابة أسئلتك الثلاثة مباشرة</h2>
+    <div class="q">
+      <span class="mark no">✕</span>
+      <div><b>محتوى؟</b> لا. المحتوى شغّال — الجمهور الحقيقي يقعد ٦ لـ ١٦ دقيقة. مش هنا الخلل.</div>
+    </div>
+    <div class="q">
+      <span class="mark no">✕</span>
+      <div><b>UI/UX الفورم؟</b> مش الفورم نفسه (٩ ناس بس بدأوه). الخلل في <b>مكان وتوقيت طلب الاشتراك ومِن تطلبه</b>.</div>
+    </div>
+    <div class="q">
+      <span class="mark warn">!</span>
+      <div><b>Hotjar؟</b> تأكدت من الكود: مركّب بس <b>مطفّأ</b> (الـ Site ID فاضي في الـ env). مفيد، بس <b>مش الخطوة الأولى</b> — لو شغّلته الحين راح يسجّل غالبية بوتات وتطلع تسجيلات زبالة. مكانه الصح خطوة ٣، بعد تنظيف البيانات.</div>
+    </div>
+  </section>
+
+  <!-- SOLUTIONS -->
+  <section>
+    <h2><span class="n">🛠️</span> الحلول — ٤ محاور، خطوات ملموسة</h2>
+
+    <!-- محور أ -->
+    <h3 style="font-size:19px;color:#67e8f9;border-bottom:1px solid var(--line);padding-bottom:8px;margin-top:6px">المحور أ — أصلح القياس (عشان ترى الحقيقة)</h3>
+
+    <div class="sol">
+      <span class="tag">أ١ · كود · جذري</span>
+      <h3>انقل أحداث التفاعل من السيرفر للعميل</h3>
+      <p>الأحداث <code style="background:#0b1020;padding:2px 6px;border-radius:4px">signup_view · web_vitals · client_view · article_view · outbound_click · shares · follow_client</code> كلها تنطلق بتفاعل العميل — انقلها من مسار السيرفر (<code style="background:#0b1020;padding:2px 6px;border-radius:4px">ga4-server.ts</code>) لمسار GTM dataLayer العميل الموجود أصلاً (نفس المكان اللي يطلق <code style="background:#0b1020;padding:2px 6px;border-radius:4px">page_view</code> صح). <strong>النتيجة: تختفي ~١٢ ألف جلسة وهمية والإسناد يصير صحيح.</strong></p>
+    </div>
+    <div class="sol">
+      <span class="tag">أ٢ · كود · صغير</span>
+      <h3>خلّ السيرفر MP للأحداث الحقيقية فقط + أضف page_location</h3>
+      <p>الأحداث اللي لازم تتحقّق من السيرفر (<code style="background:#0b1020;padding:2px 6px;border-radius:4px">signup_complete · conversion_complete · newsletter_subscribe</code>) خلّها سيرفر، بس أضف <code style="background:#0b1020;padding:2px 6px;border-radius:4px">page_location</code> من <code style="background:#0b1020;padding:2px 6px;border-radius:4px">request.headers.get("referer")</code> في كل route.</p>
+    </div>
+    <div class="sol">
+      <span class="tag">أ٣ · إعداد GA4 · ٥ دقائق · بدون كود</span>
+      <h3>استبعد جهازك من GA4</h3>
+      <p>GA4 Admin ← Data Streams ← Configure tag settings ← Define internal traffic (أضف <code style="background:#0b1020;padding:2px 6px;border-radius:4px">localhost</code> + <code style="background:#0b1020;padding:2px 6px;border-radius:4px">127.0.0.1</code>) ← ثم Data Settings ← Data Filters ← فعّل «Internal Traffic» كـ <strong>Exclude</strong> (مش Testing).</p>
+    </div>
+    <div class="sol">
+      <span class="tag">أ٤ · إعداد GA4 · دقيقتين</span>
+      <h3>علّم Key Events + فعّل فلتر البوتات</h3>
+      <p>علّم <code style="background:#0b1020;padding:2px 6px;border-radius:4px">signup_complete</code> و<code style="background:#0b1020;padding:2px 6px;border-radius:4px">conversion_complete</code> كـ Key Events، عشان GA4 يحسب التحويل الحقيقي.</p>
+    </div>
+
+    <!-- محور ب -->
+    <h3 style="font-size:19px;color:#fcd34d;border-bottom:1px solid var(--line);padding-bottom:8px;margin-top:24px">المحور ب — أوقف هدر فيسبوك (أكبر تسريب مالي: ٦٣٪ من ترافيكك)</h3>
+
+    <div class="sol">
+      <span class="tag">ب١ · بدون كود · اليوم</span>
+      <h3>غيّر وجهة الإعلان</h3>
+      <p>من <code style="background:#0b1020;padding:2px 6px;border-radius:4px">/users/register</code> (جدار تسجيل بارد) ← لمقال قيّم أو صفحة شريك جذّابة. الزائر يتذوّق القيمة أول. <strong>يوقف الهدر فوراً بدون سطر كود.</strong></p>
+    </div>
+    <div class="sol">
+      <span class="tag">ب٢ · إعداد</span>
+      <h3>ركّب Meta Pixel + Conversions API</h3>
+      <p>عشان تقدر تعيد الاستهداف وتقيس التحويل الفعلي من الإعلان (مش بس النقرة).</p>
+    </div>
+    <div class="sol">
+      <span class="tag">ب٣ · إعداد</span>
+      <h3>اصنع جمهور إعادة استهداف</h3>
+      <p>«زوّار قرأوا مقال آخر ٣٠ يوم» ← استهدفهم بإعلان «اشترك / تابع»، هؤلاء دافئين. وأوقف الجمهور البارد الواسع، استخدم Lookalike من المتفاعلين/المشتركين.</p>
+    </div>
+
+    <!-- محور ج -->
+    <h3 style="font-size:19px;color:#86efac;border-bottom:1px solid var(--line);padding-bottom:8px;margin-top:24px">المحور ج — انقل طلب الاشتراك للحظة الرغبة</h3>
+
+    <div class="sol">
+      <span class="tag">ج١ · كود/UX</span>
+      <h3>شيل جدار التسجيل المسبق</h3>
+      <p>خلّ التصفّح حر — لا تطلب حساب قبل ما تعطي قيمة. التسجيل المبكّر هو اللي يقتل التحويل (شاف ١٬٨٢٦ ← بدأ ٩).</p>
+    </div>
+    <div class="sol">
+      <span class="tag">ج٢ · كود/UX · أعلى أثر</span>
+      <h3>CTA بعد نهاية المقال</h3>
+      <p>«تابع <strong>[اسم الشريك]</strong> — ييجيك جديده أول بأول» — طلب صغير مرتبط بقيمة قراها لتوّه، مش «أنشئ حساب» مجرّد.</p>
+    </div>
+    <div class="sol">
+      <span class="tag">ج٣ · UX</span>
+      <h3>اعرض المنفعة قبل الطلب + بسّط التسجيل</h3>
+      <p>بدل «سجّل دخول» ← «سجّل عشان تتابع شركاءك وتجيك مقالاتهم». واجعل التسجيل Google one-tap أو إيميل بخطوة وحدة.</p>
+    </div>
+
+    <!-- محور د -->
+    <h3 style="font-size:19px;color:#9fb0c9;border-bottom:1px solid var(--line);padding-bottom:8px;margin-top:24px">المحور د — بعد التنظيف (خلال أسبوعين)</h3>
+
+    <div class="sol">
+      <span class="tag">د١ · إعداد</span>
+      <h3>فعّل Hotjar على الجمهور الحقيقي</h3>
+      <p>املأ الـ Site ID الفاضي، وراقب خرائط حرارية + تسجيل جلسات على صفحة التسجيل وصفحات الشركاء — بعد ما البيانات تنظّف.</p>
+    </div>
+    <div class="sol">
+      <span class="tag">د٢ · قياس</span>
+      <h3>راقب الأرقام النظيفة + A/B test</h3>
+      <p>قارن التحويل قبل/بعد التنظيف، وجرّب صيغ ومواضع مختلفة لطلب الاشتراك.</p>
+    </div>
+  </section>
+
+  <!-- START HERE -->
+  <section style="background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(6,182,212,.06));border-color:rgba(59,130,246,.35)">
+    <h2><span class="n">🚦</span> من وين تبدأ — بالترتيب</h2>
+    <table>
+      <thead><tr><th>#</th><th>الخطوة</th><th>الأثر</th><th>الجهد</th></tr></thead>
+      <tbody>
+        <tr><td class="num">١</td><td>أ٣ + أ٤ — إعداد GA4 (استبعد جهازك + Key Events)</td><td>يوقف تلوّث جهازك فوراً</td><td><span class="badge b-green">٧ دقائق · اليوم</span></td></tr>
+        <tr><td class="num">٢</td><td>ب١ — غيّر وجهة إعلان فيسبوك</td><td>يوقف الهدر المالي فوراً</td><td><span class="badge b-green">بدون كود · اليوم</span></td></tr>
+        <tr><td class="num">٣</td><td>أ١ + أ٢ — إصلاح كود التتبّع</td><td>ينظّف ١٢ ألف جلسة وهمية</td><td><span class="badge b-amber">مهمة مرحلية</span></td></tr>
+        <tr><td class="num">٤</td><td>ج١–ج٣ — نقل طلب الاشتراك للحظة الرغبة</td><td>يرفع التحويل الحقيقي</td><td><span class="badge b-amber">مهمة مرحلية</span></td></tr>
+        <tr><td class="num">٥</td><td>د — Hotjar + قياس + A/B</td><td>تحسين مستمر</td><td><span class="badge b-cyan">بعد أسبوعين</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- OPEN QUESTIONS / MISSING NUMBERS -->
+  <section style="border-color:rgba(6,182,212,.3)">
+    <h2><span class="n" style="background:rgba(6,182,212,.15);color:var(--cyan)">❔</span> أرقام ناقصة نحتاجها قبل القرار النهائي</h2>
+    <ul style="list-style:none;padding:0">
+      <li style="padding:10px 0;border-bottom:1px solid var(--line)">💰 <strong>ميزانية إعلان فيسبوك الشهرية الحالية كم؟</strong> — عشان نحسب بالضبط كم ريال يُهدر على الترافيك البارد (١٬٧٧٧ جلسة بـ ٩ ثواني).</li>
+      <li style="padding:10px 0;border-bottom:1px solid var(--line)">🎯 <strong>إيش تعريف «الاشتراك» الأهم عندك؟</strong> — تسجيل حساب؟ متابعة شريك؟ نشرة بريدية؟ (نركّز التحسين على واحد).</li>
+      <li style="padding:10px 0;border-bottom:1px solid var(--line)">📅 <strong>من متى إعلان فيسبوك شغّال؟</strong> — عشان نقارن الفترة قبل/بعد.</li>
+      <li style="padding:10px 0">🔁 <strong>هل وجهة الإعلان تتغيّر من لوحة فيسبوك مباشرة، ولا محتاجة تعديل كود؟</strong></li>
+    </ul>
+  </section>
+
+  <!-- FINAL -->
+  <div class="final">
+    <h2>🎯 الخلاصة في سطر</h2>
+    <p style="margin-bottom:0">مشكلتك مش المحتوى ولا الفورم — تحتها مشكلتان: <strong>(١) قياس مكسور في كودك</strong> (أحداث سيرفر بلا <code style="background:#0b1020;padding:2px 6px;border-radius:4px">page_location</code> تخلق ١٢ ألف جلسة وهمية + جهازك المحلي يسرّب لـ GA4) يخفي <strong>(٢) مشكلة تسويق حقيقية</strong> — ٦٣٪ من ترافيكك إعلان فيسبوك بارد يهرب خلال ٩ ثواني، وطلب اشتراك في التوقيت الغلط. رتّب: <strong>إعداد GA4 اليوم ← غيّر وجهة الإعلان اليوم ← أصلح كود التتبّع ← انقل طلب الاشتراك للحظة الرغبة</strong>.</p>
+    <p class="terms" style="margin-top:16px">المصطلحات الإنجليزية: <code>Hotjar</code> · <code>Google Analytics 4 (GA4)</code> · <code>Facebook</code></p>
+  </div>
+
+  <footer>تقرير تشخيصي — modonty.com · جلسة عصف ذهني · أُنشئ 2026-06-25 · محدّث 2026-06-26 (السبب الجذري + الحلول + قرارات المراجعة) · صفر تعديل كود</footer>
+
+</div>
+</body>
+</html>

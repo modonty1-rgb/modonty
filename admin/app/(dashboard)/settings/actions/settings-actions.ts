@@ -135,6 +135,9 @@ export interface SiteOrgSettings {
   articleDefaultSitemapChangeFreq: string | null;
   articleDefaultSitemapPriority: number | null;
   defaultLicense: string | null;
+  imageOwnerName: string | null;
+  imageLicenseUrl: string | null;
+  imageAcquireLicensePageUrl: string | null;
   defaultIsAccessibleForFree: boolean;
   defaultAlternateLanguages: unknown;
   defaultContentFormat: string | null;
@@ -230,6 +233,9 @@ const DEFAULT_SETTINGS: AllSettings = {
   articleDefaultSitemapChangeFreq: null,
   articleDefaultSitemapPriority: null,
   defaultLicense: null,
+  imageOwnerName: null,
+  imageLicenseUrl: null,
+  imageAcquireLicensePageUrl: null,
   defaultIsAccessibleForFree: true,
   defaultAlternateLanguages: null,
   defaultContentFormat: null,
@@ -421,6 +427,9 @@ export async function getAllSettings(): Promise<AllSettings> {
         articleDefaultSitemapChangeFreq: newSettings.articleDefaultSitemapChangeFreq,
         articleDefaultSitemapPriority: newSettings.articleDefaultSitemapPriority,
         defaultLicense: newSettings.defaultLicense,
+        imageOwnerName: (newSettings as { imageOwnerName?: string | null }).imageOwnerName ?? null,
+        imageLicenseUrl: (newSettings as { imageLicenseUrl?: string | null }).imageLicenseUrl ?? null,
+        imageAcquireLicensePageUrl: (newSettings as { imageAcquireLicensePageUrl?: string | null }).imageAcquireLicensePageUrl ?? null,
         defaultIsAccessibleForFree: newSettings.defaultIsAccessibleForFree ?? true,
         defaultAlternateLanguages: (newSettings as { defaultAlternateLanguages?: unknown }).defaultAlternateLanguages ?? null,
         defaultContentFormat: (newSettings as { defaultContentFormat?: string | null }).defaultContentFormat ?? null,
@@ -559,6 +568,9 @@ export async function getAllSettings(): Promise<AllSettings> {
       articleDefaultSitemapChangeFreq: settings.articleDefaultSitemapChangeFreq,
         articleDefaultSitemapPriority: settings.articleDefaultSitemapPriority,
         defaultLicense: settings.defaultLicense,
+        imageOwnerName: (settings as { imageOwnerName?: string | null }).imageOwnerName ?? null,
+        imageLicenseUrl: (settings as { imageLicenseUrl?: string | null }).imageLicenseUrl ?? null,
+        imageAcquireLicensePageUrl: (settings as { imageAcquireLicensePageUrl?: string | null }).imageAcquireLicensePageUrl ?? null,
         defaultIsAccessibleForFree: (settings as { defaultIsAccessibleForFree?: boolean }).defaultIsAccessibleForFree ?? true,
         defaultAlternateLanguages: (settings as { defaultAlternateLanguages?: unknown }).defaultAlternateLanguages ?? null,
         defaultContentFormat: (settings as { defaultContentFormat?: string | null }).defaultContentFormat ?? null,
@@ -1126,6 +1138,9 @@ function siteOrgFromEnv(): Partial<SiteOrgSettings> {
     articleDefaultSitemapChangeFreq: process.env.NEXT_PUBLIC_ARTICLE_DEFAULT_SITEMAP_CHANGE_FREQ?.trim() || null,
     articleDefaultSitemapPriority: process.env.NEXT_PUBLIC_ARTICLE_DEFAULT_SITEMAP_PRIORITY != null && process.env.NEXT_PUBLIC_ARTICLE_DEFAULT_SITEMAP_PRIORITY !== "" ? Number(process.env.NEXT_PUBLIC_ARTICLE_DEFAULT_SITEMAP_PRIORITY) : null,
     defaultLicense: process.env.NEXT_PUBLIC_DEFAULT_LICENSE?.trim() || null,
+    imageOwnerName: null,
+    imageLicenseUrl: null,
+    imageAcquireLicensePageUrl: null,
     defaultCharset: process.env.NEXT_PUBLIC_DEFAULT_CHARSET?.trim() || null,
     defaultOgImageType: process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_TYPE?.trim() || null,
     defaultOgImageWidth: process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_WIDTH != null && process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_WIDTH !== "" ? Number(process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_WIDTH) : null,

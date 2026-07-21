@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { cookies, headers } from "next/headers";
+import { classifyTrafficSource } from "@/lib/analytics/classify-source";
+import { getGeoFromHeaders } from "@/lib/analytics/geo-headers";
 import { notifyTelegram } from "@/lib/telegram/notify";
 import { trackClientView } from "@/lib/analytics/events-registry";
 
@@ -9,7 +11,7 @@ const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
 
 export async function POST(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
@@ -37,8 +39,12 @@ export async function POST(
       });
     }
 
+    // External referrer comes from the browser (document.referrer) — the request's
+    // own Referer header is always our page URL (pre-2026-07-07 bug).
+    const body = (await request.json().catch(() => null)) as { referrer?: string | null } | null;
+    const referrer = body?.referrer?.trim() || null;
+
     const headersList = await headers();
-    const referrer = headersList.get("referer") || headersList.get("referrer") || null;
     const userAgent = headersList.get("user-agent") || null;
     const forwarded = headersList.get("x-forwarded-for");
     const ipAddress = forwarded ? forwarded.split(",")[0].trim() : headersList.get("x-real-ip") || headersList.get("cf-connecting-ip") || null;
@@ -58,6 +64,10 @@ export async function POST(
       return NextResponse.json({ ok: true, deduplicated: true });
     }
 
+    const host = headersList.get("host") || null;
+    const { source, referrerDomain, searchEngine } = classifyTrafficSource(referrer, null, host);
+    const { country, region, city } = getGeoFromHeaders(headersList);
+
     await db.clientView.create({
       data: {
         clientId: client.id,
@@ -66,6 +76,12 @@ export async function POST(
         referrer,
         userAgent,
         ipAddress,
+        source,
+        referrerDomain,
+        searchEngine,
+        country,
+        region,
+        city,
       },
     });
 

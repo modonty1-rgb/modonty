@@ -1,4 +1,5 @@
 import { SEOFieldConfig, SEODoctorConfig, SEOFieldValidator } from "@/components/shared/seo-doctor";
+import { buildImageObject } from "@modonty/database/lib/seo/media/build-image-object";
 
 const validateAltText: SEOFieldValidator = (value) => {
   if (value && typeof value === "string" && value.trim().length > 0) {
@@ -204,33 +205,21 @@ const validateCloudinaryPublicId: SEOFieldValidator = (value, data) => {
 };
 
 function generateImageObjectStructuredData(data: Record<string, unknown>): Record<string, unknown> {
-  const structuredData: Record<string, unknown> = {
-    "@context": "https://schema.org",
-    "@type": "ImageObject",
-  };
-
-  if (data.url) structuredData.contentUrl = data.url as string;
-  if (data.altText) structuredData.alternateName = data.altText as string;
-  if (data.title) structuredData.name = data.title as string;
-  if (data.description) structuredData.description = data.description as string;
-  if (data.width && data.height) {
-    structuredData.width = data.width as number;
-    structuredData.height = data.height as number;
-  }
-  if (data.encodingFormat) structuredData.encodingFormat = data.encodingFormat as string;
-  if (data.copyrightHolder) structuredData.copyrightHolder = data.copyrightHolder as string;
-  if (data.creator) structuredData.creator = data.creator as string;
-  if (data.dateCreated) {
-    const dateValue = data.dateCreated;
-    structuredData.dateCreated = typeof dateValue === "string" 
-      ? dateValue.split("T")[0] 
-      : (dateValue instanceof Date ? dateValue.toISOString().split("T")[0] : undefined);
-  }
-  // Note: Schema.org ImageObject does NOT have a standard "keywords" property.
-  // Keywords should be naturally incorporated into description, name, and alternateName.
-  // Meta keywords tag is deprecated by Google and not used for ranking.
-
-  return structuredData;
+  // N3 — the preview must not lie: it goes through the SAME shared builder that produces
+  // the real JSON-LD (buildImageObject), so contentUrl/name/caption/description/dimensions
+  // match exactly what ships. (Type-based licensing is resolved at generation time with
+  // the client/article context, which this per-image preview doesn't carry.)
+  const node = buildImageObject({
+    url: (data.url as string) || "",
+    name: (data.title as string | null) ?? null,
+    caption: (data.altText as string | null) ?? null,
+    description: (data.description as string | null) ?? null,
+    width: (data.width as number | null) ?? null,
+    height: (data.height as number | null) ?? null,
+    encodingFormat: (data.encodingFormat as string | null) ?? null,
+    dateCreated: (data.dateCreated as string | Date | null) ?? null,
+  });
+  return { "@context": "https://schema.org", ...node };
 }
 
 export const mediaSEOConfig: SEODoctorConfig = {

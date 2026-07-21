@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>Facebook Post Template — مودونتي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 48px 24px;
+  gap: 32px;
+  font-family: 'Tajawal', sans-serif;
+}
+
+/* ── The card: 1200×630 ── */
+.card {
+  width: 1200px;
+  height: 630px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+  display: flex;
+  flex-direction: column;
+  background: #07090f;
+  position: relative;
+}
+
+/* Hero image — 390px high, exact Cloudinary crop */
+.hero {
+  flex: 0 0 390px;
+  overflow: hidden;
+}
+.hero img {
+  width: 100%;
+  height: 390px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Text panel — remaining 240px */
+.panel {
+  flex: 1;
+  padding: 20px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #07090f;
+}
+
+.panel-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.title {
+  font-size: 25px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.45;
+  flex: 1;
+}
+
+/* Modonty logo pill */
+.logo {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #00c4a0;
+  padding: 6px 14px 6px 10px;
+  border-radius: 40px;
+}
+.logo-icon {
+  width: 26px; height: 26px;
+  background: #07090f;
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 900; color: #00c4a0;
+}
+.logo-name {
+  font-size: 14px; font-weight: 800; color: #07090f;
+}
+
+.panel-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.description {
+  font-size: 14px;
+  color: rgba(255,255,255,0.50);
+  line-height: 1.6;
+  max-width: 780px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.url {
+  direction: ltr;
+  font-size: 13px;
+  font-weight: 700;
+  color: #00c4a0;
+  white-space: nowrap;
+}
+
+/* accent line bottom */
+.accent {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #00c4a0, #0066ff, #00c4a0);
+}
+
+/* ── Feed size label ── */
+.note {
+  color: #444;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* ── Feed preview: scale down to ~500px wide ── */
+.feed-wrap {
+  width: 500px;
+  height: 262px;
+  overflow: hidden;
+  border-radius: 4px;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+.feed-inner {
+  width: 1200px;
+  height: 630px;
+  transform: scale(0.4167);
+  transform-origin: top right;
+  position: absolute;
+  top: 0; right: 0;
+}
+</style>
+</head>
+<body>
+
+<p class="note">Facebook Post Template — 1200 × 630 px</p>
+
+<!-- ── Full size ── -->
+<div class="card">
+  <div class="hero">
+    <img
+      src="https://res.cloudinary.com/dfegnpgwx/image/upload/c_pad,w_1200,h_390,b_rgb:07090f,f_auto,q_auto/v1782731733/clients/6a0e3539485eafc814f561bb/img-z4fyabzmo.webp"
+      alt="hero"
+    />
+  </div>
+  <div class="panel">
+    <div class="panel-top">
+      <div class="title">هل سيرتك الذاتية تُرفض؟ تعلّم اجتياز نظام ATS بنجاح</div>
+      <div class="logo">
+        <div class="logo-icon">م</div>
+        <span class="logo-name">مُدَوَّنَتِي</span>
+      </div>
+    </div>
+    <div class="panel-bottom">
+      <div class="description">هل يتم رفض سيرتك الذاتية دون سبب واضح؟ تعرّف على نظام ATS وكيف تكتب CV يجتاز الفلترة الآلية ويزيد فرصك في الحصول على مقابلات عمل.</div>
+      <div class="url">modonty.com/articles/نظام-ats</div>
+    </div>
+  </div>
+  <div class="accent"></div>
+</div>
+
+<!-- ── Feed preview ── -->
+<p class="note">كما يبان في الـ Feed</p>
+<div class="feed-wrap">
+  <div class="feed-inner">
+    <div class="card" style="border-radius:0;box-shadow:none">
+      <div class="hero">
+        <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/c_pad,w_1200,h_390,b_rgb:07090f,f_auto,q_auto/v1782731733/clients/6a0e3539485eafc814f561bb/img-z4fyabzmo.webp" alt="hero"/>
+      </div>
+      <div class="panel">
+        <div class="panel-top">
+          <div class="title">هل سيرتك الذاتية تُرفض؟ تعلّم اجتياز نظام ATS بنجاح</div>
+          <div class="logo"><div class="logo-icon">م</div><span class="logo-name">مُدَوَّنَتِي</span></div>
+        </div>
+        <div class="panel-bottom">
+          <div class="description">هل يتم رفض سيرتك الذاتية دون سبب واضح؟ تعرّف على نظام ATS...</div>
+          <div class="url">modonty.com/articles/نظام-ats</div>
+        </div>
+      </div>
+      <div class="accent"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

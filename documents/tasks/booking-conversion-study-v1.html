@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دراسة تحويل «احجز الآن» — لماذا صفر إكمال؟</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a;
+    --ink:#e8ebf1; --muted:#98a2b3; --dim:#6b7480;
+    --red:#ef4444; --amber:#f59e0b; --emerald:#10b981; --blue:#3b82f6; --violet:#8b5cf6;
+    --redbg:rgba(239,68,68,.12); --amberbg:rgba(245,158,11,.12); --emeraldbg:rgba(16,185,129,.12); --bluebg:rgba(59,130,246,.12);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Tajawal","Segoe UI",system-ui,-apple-system,"Noto Kufi Arabic",sans-serif;
+    line-height:1.85; font-size:16px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px; margin:0 auto; padding:28px 20px 80px}
+  .kicker{color:var(--dim); font-size:12.5px; letter-spacing:.5px; margin-bottom:6px}
+  h1{font-size:26px; line-height:1.35; margin:0 0 8px; font-weight:800}
+  h2{font-size:20px; margin:38px 0 14px; font-weight:800; display:flex; align-items:center; gap:10px}
+  h2 .n{display:inline-grid; place-items:center; width:30px; height:30px; border-radius:9px; background:var(--panel2); color:var(--blue); font-size:14px; font-weight:800; border:1px solid var(--line)}
+  h3{font-size:15.5px; margin:0 0 6px; font-weight:700}
+  p{margin:0 0 12px}
+  .sub{color:var(--muted); font-size:14.5px}
+  .hero{background:linear-gradient(180deg,rgba(239,68,68,.10),transparent 70%),var(--panel); border:1px solid var(--line); border-radius:18px; padding:24px 22px; margin-top:14px}
+  .bignum{display:flex; gap:26px; flex-wrap:wrap; margin:18px 0 4px}
+  .bignum .cell{flex:1; min-width:130px}
+  .bignum .v{font-size:40px; font-weight:800; line-height:1}
+  .bignum .v.red{color:var(--red)} .bignum .v.mut{color:var(--muted)}
+  .bignum .l{color:var(--dim); font-size:13px; margin-top:6px}
+  .arrow{align-self:center; color:var(--dim); font-size:26px}
+  .tag{display:inline-block; background:var(--redbg); color:var(--red); border:1px solid rgba(239,68,68,.3); border-radius:999px; padding:3px 12px; font-size:12.5px; font-weight:700}
+  .funnel{display:flex; flex-direction:column; gap:8px; margin:14px 0}
+  .step{display:flex; align-items:center; gap:12px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 16px}
+  .step .bar{height:10px; border-radius:6px; background:var(--blue)}
+  .step .lab{flex:1; font-size:14px}
+  .step .val{font-weight:800; font-size:15px}
+  .step.drop{border-color:rgba(239,68,68,.4); background:var(--redbg)}
+  .step.blind{border-style:dashed; border-color:var(--amber); background:var(--amberbg)}
+  .step.zero .val{color:var(--red)}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 18px; margin:12px 0}
+  .cause{border-inline-start:4px solid var(--line)}
+  .cause.c1{border-inline-start-color:var(--red)}
+  .cause.c2{border-inline-start-color:var(--amber)}
+  .cause.c3{border-inline-start-color:var(--amber)}
+  .cause.c4{border-inline-start-color:var(--blue)}
+  .cause.c5{border-inline-start-color:var(--violet)}
+  .cause .head{display:flex; align-items:center; gap:10px; margin-bottom:8px}
+  .rank{display:inline-grid; place-items:center; width:26px; height:26px; border-radius:8px; font-weight:800; font-size:13px; color:#0b0d11}
+  .rank.r1{background:var(--red)} .rank.r2{background:var(--amber)} .rank.r3{background:var(--amber)} .rank.r4{background:var(--blue)} .rank.r5{background:var(--violet)}
+  .sev{margin-inline-start:auto; font-size:11.5px; font-weight:700; padding:2px 10px; border-radius:999px}
+  .sev.high{background:var(--redbg); color:var(--red)} .sev.med{background:var(--amberbg); color:var(--amber)} .sev.low{background:var(--bluebg); color:var(--blue)}
+  .ev{background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:10px 14px; margin-top:10px; font-size:13.5px; color:var(--muted)}
+  .ev b{color:var(--ink); font-weight:700}
+  .chip{display:inline-block; background:#0b0d11; border:1px solid var(--line); color:var(--dim); border-radius:6px; padding:1px 8px; font-size:11.5px; font-family:"Segoe UI",system-ui; direction:ltr; margin:2px 2px 0}
+  ul{margin:8px 0 4px; padding-inline-start:22px} li{margin:5px 0}
+  .rec{display:flex; gap:12px; align-items:flex-start; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin:9px 0}
+  .rec .lev{flex-shrink:0; width:52px; text-align:center}
+  .rec .lev .dot{font-size:11px; font-weight:800; padding:2px 6px; border-radius:6px; display:block}
+  .rec .lev .dot.hi{background:var(--emeraldbg); color:var(--emerald)}
+  .rec .lev .dot.md{background:var(--bluebg); color:var(--blue)}
+  .rec .body h3{margin-bottom:3px}
+  .rec .body p{margin:0; font-size:13.5px; color:var(--muted)}
+  .callout{background:var(--bluebg); border:1px solid rgba(59,130,246,.3); border-radius:12px; padding:16px 18px; margin:14px 0}
+  .callout.amber{background:var(--amberbg); border-color:rgba(245,158,11,.3)}
+  code{background:#0b0d11; border:1px solid var(--line); border-radius:6px; padding:1px 7px; font-family:"Consolas",monospace; font-size:12.5px; color:#c8d0dc; direction:ltr; display:inline-block}
+  .src{font-size:13px; color:var(--muted)}
+  .src a{color:var(--blue); text-decoration:none; direction:ltr; display:inline-block}
+  .src li{margin:7px 0}
+  .foot{color:var(--dim); font-size:12.5px; text-align:center; margin-top:40px; border-top:1px solid var(--line); padding-top:18px}
+  .divider{height:1px; background:var(--line); margin:34px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="kicker">دراسة تحويل · صفحة الحجز · مدوّنتي — ١٩ يوليو ٢٠٢٦</div>
+  <h1>لماذا دخل ٤٠ زائرًا صفحة «احجز الآن» ولم يُكمل ولا واحد؟</h1>
+  <p class="sub">تشخيص مبني على أدلة: قياساتنا الفعلية + أفضل الممارسات الرسمية + سلوك المستخدم السعودي والمصري. الحالة المفحوصة: عيادة أسنان (YMYL طبّي) على الجوال.</p>
+
+  <div class="hero">
+    <span class="tag">معدّل تحويل = صفر بالمئة</span>
+    <div class="bignum">
+      <div class="cell"><div class="v mut">~٤٠</div><div class="l">زيارة لصفحة الحجز</div></div>
+      <div class="arrow">←</div>
+      <div class="cell"><div class="v red">٠</div><div class="l">طلب حجز مكتمل</div></div>
+      <div class="arrow">←</div>
+      <div class="cell"><div class="v red">٠ ﷼</div><div class="l">عائد على كل هذا الظهور</div></div>
+    </div>
+    <p class="sub" style="margin-top:14px; margin-bottom:0">هذا ليس ضعف تحويل — هذا <b style="color:var(--red)">انهيار كامل للقُمع</b>. كل زائر وصل هنا كلّف ظهورًا وجهدًا وربما إعلانًا، ثم غادر بلا أثر. قاعدة البيانات تؤكد: صفر صفوف في <code>BookingRequest</code> لهذا العميل.</p>
+  </div>
+
+  <!-- 1 -->
+  <h2><span class="n">١</span> الدليل القاطع — استعلمتُ GA4 مباشرة</h2>
+  <p>السؤال المفصلي: هل الزائر <b>ضغط زر التأكيد وفشل</b>، أم <b>غادر قبل أن يضغط أصلًا</b>؟ استعلمتُ قوقل أناليتكس (GA4 Data API) مباشرة بحساب الخدمة، لكل العملاء، آخر ٩٠ يومًا. النتيجة قاطعة:</p>
+
+  <div class="funnel">
+    <div class="step"><div class="bar" style="width:150px"></div><div class="lab">فتح صفحة الحجز <span class="chip">screenPageViews · /clients/*/book</span></div><div class="val">~٤٤</div></div>
+    <div class="step drop zero"><div class="bar" style="width:0"></div><div class="lab">ضغط «تأكيد الحجز» <span class="chip">booking_attempt</span></div><div class="val">٠</div></div>
+    <div class="step zero"><div class="bar" style="width:0"></div><div class="lab">رُفض بسبب الإقرار أو رقم غير صالح <span class="chip">booking_failed</span></div><div class="val">٠</div></div>
+    <div class="step drop zero"><div class="bar" style="width:0"></div><div class="lab">طلب انكتب فعلًا في قاعدتنا <span class="chip">booking_submit</span></div><div class="val">٠</div></div>
+  </div>
+
+  <div class="callout" style="background:var(--emeraldbg); border-color:rgba(16,185,129,.3)">
+    <h3 style="color:var(--emerald)">✅ الحكم: صفر ضغطات على الزر — انسحاب كامل قبل الإرسال</h3>
+    <p class="sub" style="margin:0 0 6px">في ٩٠ يومًا، عبر <b>كل</b> عيادات الحجز، لم يضغط ولا زائر واحد زر التأكيد. المشكلة <b>ليست</b> إقرارًا يرفضهم ولا خطأ إرسال (<code>booking_failed = 0</code>) — إنها انسحاب وهم <b>يقرؤون ويعبّون</b>، قبل الزر تمامًا. هذا يؤكد أن السبب هو <b>الأداة والعرض</b>، لا آلية الإرسال.</p>
+    <p class="sub" style="margin:0"><b>واستبعدتُ «القياس مكسور»:</b> نفس مسار الإرسال (server-side) يوصّل أحداثًا أخرى بكثرة في نفس الفترة — <code>client_view</code> ٩٤٦، <code>article_view</code> ١١١١، <code>conversion_complete</code> ٤٦، <code>contact_submit</code> ٥. البايبلاين حيّ، فالصفر صفرٌ حقيقي لا خلل قياس.</p>
+  </div>
+
+  <div class="callout amber">
+    <h3 style="color:var(--amber)">توزيع الزيارات (GA4 · ٩٠ يومًا)</h3>
+    <ul class="sub" style="margin:0">
+      <li>عيادات سمايل تاون لطب الأسنان — <b>٣١ مشاهدة / ٤ مستخدمين</b> (الأعلى بفارق كبير)</li>
+      <li>دكتور أحمد شيخ العرب — ٣ · عيادة دكتور عمرو مصطفى — ٣ · الدكتور عفت أحمد ذكي — ٢ · كيما زون — ٢</li>
+      <li>الباقون (الزهيري، شاهين النفسي، علاج الألم) — مشاهدة واحدة لكلٍّ</li>
+    </ul>
+    <p class="sub" style="margin:8px 0 0"><b>ملاحظة قياس ثانوية للإصلاح لاحقًا:</b> لا نملك حدثًا بين «فتح الصفحة» و«ضغط الزر» (لا «بدء تعبئة» مخصّص للحجز)، فلا نعرف <b>أين بالضبط</b> ضمن الصفحة ينسحبون. لكن السؤال الأكبر — هل ضغطوا؟ — أُجيب: لا.</p>
+  </div>
+
+  <!-- 2 -->
+  <h2><span class="n">٢</span> الأسباب الجذرية — مرتّبة بالأثر</h2>
+
+  <div class="card cause c1">
+    <div class="head"><span class="rank r1">١</span><h3>الأداة نفسها خاطئة ثقافيًّا: فورم بارد بدل محادثة</h3><span class="sev high">الأعلى أثرًا</span></div>
+    <p class="sub">هذا هو السبب الأكبر ويتجاوز أي تفصيل في التصميم. المستخدم السعودي والمصري — خصوصًا لقرار <b>طبّي</b> مع طبيب لم يسمع به قبل دقيقة — لا يريد أن يعبّئ استمارة لموقع اكتشفه للتو ويسلّم رقمه لصفحة مجهولة. يريد أن <b>يتحدّث</b>. الثقافة هنا علائقية: الثقة تُبنى بالكلام، لا بالنموذج.</p>
+    <div class="ev">
+      <b>الدليل:</b> ٧٥٪ من مواطني السعودية ومصر يستخدمون واتساب بانتظام · العملاء الذين يتواصلون عبر واتساب قبل الشراء يحوّلون بنسبة <b>٤٠–٦٠٪ أعلى</b> من مُرسِلي النماذج · في السوق السعودي الثقة تتفوّق على «سهولة الوصول» نفسها عند اختيار من يشتري منه.
+      <div style="margin-top:6px"><span class="chip">GOTOMENA — WhatsApp in the Arab World</span><span class="chip">Unifonic — Conversational Marketing KSA</span><span class="chip">Deewan / GMCSCO 2025</span></div>
+    </div>
+    <p class="sub" style="margin:10px 0 0"><b>الواقع عندنا:</b> قُمع «احجز الآن» يذهب للفورم فقط. واتساب موجود كزر عائم منفصل، لكن نداء الحجز الرئيسي لا يعطي خيار المحادثة — أي أننا نجبر الزائر على أضعف أداة تحويل في سوقه.</p>
+  </div>
+
+  <div class="card cause c2">
+    <div class="head"><span class="rank r2">٢</span><h3>عدد كبير جدًّا من العناصر التي يجب أن «يفكّر» فيها</h3><span class="sev high">عالٍ</span></div>
+    <p class="sub">وعد «احجز الآن» = فعل سريع. الواقع صفحة يعدّ فيها الزائر ~١٥ عنصرًا قبل الزر: الاسم، الجوال، البريد، خانة النشرة، ٤ أزرار أيام، «تاريخ آخر»، حقل تاريخ، ٣ أزرار فترات، الملاحظة، بطاقة الخصوصية، صندوق الإقرار، خانة الإقرار. أغلبها اختياري — لكن العين لا تعرف ذلك، تشوف <b>طول الصفحة</b> فتشعر بثِقل الالتزام وتنسحب.</p>
+    <div class="ev">
+      <b>الدليل (Baymard):</b> العدد المثالي ٧–٨ حقول، ومعدّل الإكمال ينخفض <b>٤–٦٪ عن كل حقل يتجاوز الثامن</b> — والمهم هو عدد الحقول التي «يفكّر» فيها المستخدم، لا عدد الخطوات. متوسّط التخلّي عن السلة عالميًّا ٧٠.٢٪ (تحليل ٥٠ دراسة).
+      <div style="margin-top:6px"><span class="chip">Baymard — Minimize Form Fields</span><span class="chip">Wroblewski — Web Form Design</span></div>
+    </div>
+    <p class="sub" style="margin:10px 0 0"><b>قاعدة Wroblewski:</b> لا تطلب إلا ما تحتاجه <b>في هذه اللحظة</b>؛ كل حقل تضيفه يضرب معدّل التحويل. الحل نمطه «الإفصاح التدريجي»: ابدأ بالحد الأدنى الذي يمشّي المستخدم، وأظهر الباقي فقط حين يصير مهمًّا.</p>
+  </div>
+
+  <div class="card cause c3">
+    <div class="head"><span class="rank r3">٣</span><h3>إقرار المسؤولية الطبّي (YMYL) يخيف ويعطّل الزر بصمت</h3><span class="sev med">عالٍ للعيادات</span></div>
+    <p class="sub">لأنها عيادة، يظهر صندوق كهرماني كبير بشروط ونصّ قابل للتمرير وخانة إلزامية في <b>آخر</b> الصفحة. والأسوأ: زر «تأكيد الحجز» فعليًّا معطّل حتى يعلّم عليها، والتلميح الوحيد سطر رمادي صغير تحته. زائر لأول مرة يقرأ هذا كأنه عائق قانوني مخيف عند لحظة القرار بالضبط.</p>
+    <div class="ev">
+      <b>دليل تقني (تحقّقت عبر Context7):</b> الفورم يستخدم وضع التحقّق الافتراضي <code>mode: 'onSubmit'</code> — يعني رسائل الخطأ لا تظهر إلا <b>بعد</b> ضغط الزر. فمن عبّى جواله ونسي الإقرار: يضغط، «ما يصير شي» ظاهريًّا، ثم يكتشف السبب. احتكاك في أسوأ لحظة.
+      <div style="margin-top:6px"><span class="chip">react-hook-form — Validation Modes (onTouched)</span></div>
+    </div>
+  </div>
+
+  <div class="card cause c4">
+    <div class="head"><span class="rank r4">٤</span><h3>الجوال هو الحقل الوحيد الإلزامي — وأكثر حقل يسبّب انسحابًا</h3><span class="sev med">متوسط</span></div>
+    <p class="sub">حقل الجوال هو الحقل الكلاسيكي عالي الاحتكاك (الأعلى انسحابًا بعد كلمة المرور)، لأن العقل الباطن يفترض «مكالمات مبيعات مزعجة». نحن نشرح سبب الطلب («عشان العيادة تتواصل معك — بدون رسائل تسويقية») وهذا <b>ممتاز</b> — لكن يبقى أنه العائق الوحيد الإلزامي بين الزائر والإرسال.</p>
+    <div class="ev">
+      <b>الدليل:</b> ١٤٪ يتخلّون إذا طُلب الجوال <b>بلا تفسير</b> · ٣٩٪ من المواقع تطلبه بلا أي تبرير. <b>ملاحظة إضافية:</b> الرقم يبدأ افتراضيًّا بـ<code>+966</code> بينما العيادة في مصر تخدم السعوديين والمصريين — الزائر المصري لازم يمسح ويعيد الكتابة.
+      <div style="margin-top:6px"><span class="chip">Baymard — Explain the Phone Field</span><span class="chip">NN/g — Required Fields</span></div>
+    </div>
+  </div>
+
+  <div class="card cause c5">
+    <div class="head"><span class="rank r5">٥</span><h3>هرمية مقلوبة + عجز في الثقة + طلب تسويقي دخيل</h3><span class="sev low">منخفض–متوسط</span></div>
+    <ul class="sub" style="margin-top:2px">
+      <li><b>أطول بلوك في الصفحة اختياري</b> (منتقي الوقت) — الهرمية تصرخ «التزام كبير» بدل «اترك رقمك ونتصل بك».</li>
+      <li><b>عجز ثقة أعلى الصفحة:</b> شعار و«موثّق من مدوّنتي» فقط. لا وقت ردّ، لا تقييمات، لا طمأنة تناسب قرارًا طبّيًّا لزائر بلا علاقة سابقة.</li>
+      <li><b>خانة نشرة «مدوّنتي» وسط فورم العيادة</b> — طلب تسويقي لمنصّتنا مدسوس داخل تدفّق حجز العميل، يخفّف الثقة ويشوّش النطاق.</li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 3 -->
+  <h2><span class="n">٣</span> التوصيات — مرتّبة بالرافعة</h2>
+
+  <div class="rec">
+    <div class="lev"><span class="dot hi">أعلى رافعة</span></div>
+    <div class="body"><h3>اجعل واتساب النداء الأساسي، والفورم بديلًا</h3><p>زر واحد «تواصل عبر واتساب» يفتح محادثة جاهزة باسم العيادة والموعد المبدئي — والفورم للي يفضّله. هذا التغيير الأعلى مردودًا حسب كل بحث السوق أعلاه (٤٠–٦٠٪ تحويل أعلى).</p></div>
+  </div>
+  <div class="rec">
+    <div class="lev"><span class="dot hi">أعلى رافعة</span></div>
+    <div class="body"><h3>قصّر العرض الافتراضي إلى: جوال + تأكيد</h3><p>الحقل الإلزامي الوحيد ظاهر، وكل الباقي (الاسم، البريد، الوقت، الملاحظة) خلف «أضف تفاصيل؟» بالإفصاح التدريجي. عمود واحد، أقل من ٨ عناصر مرئية.</p></div>
+  </div>
+  <div class="rec">
+    <div class="lev"><span class="dot hi">حرِج</span></div>
+    <div class="body"><h3>أصلح النقطة العمياء في القياس أولًا</h3><p>أضف حدث «فتح صفحة الحجز» و«بدء تعبئة» (أول لمس حقل). بدونها نظل نعالج في الظلام. هذا شرط لأي قرار قادم مبني على أرقام.</p></div>
+  </div>
+  <div class="rec">
+    <div class="lev"><span class="dot md">متوسطة</span></div>
+    <div class="body"><h3>خفّف احتكاك الإقرار الطبّي</h3><p>ابقِه (مطلوب قانونًا) لكن اجعله مضغوطًا ومفهومًا، وفعّل التحقّق الفوري (<code>onTouched</code>) حتى يعرف الزائر سبب توقّف الزر لحظيًّا لا بعد الضغط.</p></div>
+  </div>
+  <div class="rec">
+    <div class="lev"><span class="dot md">متوسطة</span></div>
+    <div class="body"><h3>مفتاح الدولة حسب بلد العميل + طمأنة وثقة</h3><p>عيادة مصر → افتراضي <code>+20</code>. وأضف أعلى الفورم: «يردّون خلال ساعات العمل»، تقييم/توثيق، وأزِل خانة نشرة مدوّنتي من فورم العميل.</p></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 4 -->
+  <h2><span class="n">٤</span> الخلاصة</h2>
+  <div class="card">
+    <p style="margin:0">صفر إكمال من ٤٤ زيارة ليس مصادفة — و<b>GA4 أثبت</b> أنه صفر ضغطات على الزر أصلًا. السبب الجذري الأول <b>ثقافي</b>: نطلب من مستخدم سعودي/مصري أن يعبّئ فورمًا باردًا لقرار طبّي، بينما أداته الطبيعية هي المحادثة. والثاني <b>تصميمي</b>: صفحة طويلة تخالف وعد «احجز الآن»، مع إقرار يخيف على مرأى العين. الانسحاب يحصل <b>قبل الضغط</b> — أي في أول نظرة وأول تمرير، لا في لحظة الإرسال.</p>
+    <p style="margin:14px 0 0"><b>الترتيب المقترح للتنفيذ:</b> (١) أضف واتساب كنداء أساسي والفورم بديلًا → (٢) قصّر العرض الافتراضي (جوال + تأكيد) بالإفصاح التدريجي → (٣) خفّف الإقرار وأضف إشارات الثقة أعلى الصفحة → (٤) أصلح القياس (حدث «بدء تعبئة») لنرى الإصلاح يشتغل. أبني موكب (mockup) للنسخة الجديدة قبل أي كود، على قاعدة «الموكب = عقد ملزم».</p>
+  </div>
+
+  <!-- Sources -->
+  <h2><span class="n">٥</span> المصادر</h2>
+  <ul class="src">
+    <li><a href="https://baymard.com/blog/checkout-flow-average-form-fields">Baymard Institute — Checkout Optimization: Minimize Form Fields</a> (عدد الحقول المثالي · انخفاض الإكمال ٤–٦٪ لكل حقل)</li>
+    <li><a href="https://baymard.com/blog/explain-phone-number-field">Baymard Institute — Explain Why the “Phone Field” Is Required</a> (١٤٪ تخلٍّ · ٣٩٪ بلا تفسير)</li>
+    <li><a href="https://jakobnielsenphd.substack.com/p/required-fields">Nielsen Norman (Jakob Nielsen) — Required Fields in Forms</a></li>
+    <li><a href="https://static.lukew.com/webforms_lukew.pdf">Luke Wroblewski — Best Practices for Form Design / Web Form Design</a> (الإفصاح التدريجي · عمود واحد)</li>
+    <li><a href="https://gotomena.com/blog/whatsapp-marketing-arab-world">GOTOMENA — WhatsApp Marketing in the Arab World</a> (٧٥٪ استخدام · تفضيل المحادثة على الفورم)</li>
+    <li><a href="https://www.unifonic.com/en/resources/talk-track-convert-why-conversational-marketing-is-saudi-arabias-next-big-growth-channel">Unifonic — Conversational Marketing in Saudi Arabia</a> (٤٠–٦٠٪ تحويل أعلى عبر واتساب)</li>
+    <li><a href="https://www.deewan.sa/blog/why-now-is-the-time-to-choose-whatsapp-for-your-business-in-saudi-arabia">Deewan — WhatsApp for Business in Saudi Arabia</a></li>
+    <li><a href="https://www.zuko.io/blog/optimizing-the-phone-number-field-on-forms">Zuko — Optimizing the Phone Number Field</a></li>
+    <li>React Hook Form — Validation Modes (<code>mode: onSubmit / onTouched</code>) — عبر Context7 · <span class="chip">/react-hook-form/documentation</span></li>
+  </ul>
+
+  <div class="foot">دراسة داخلية · مدوّنتي · عيادات الحجز (YMYL) · ١٩ يوليو ٢٠٢٦ — الأرقام السلوكية من مصادر خارجية موثّقة أعلاه؛ عدد ٤٤ فتحة / ٠ ضغطة / ٠ طلب <b>مُتحقَّق منه مباشرةً عبر GA4 Data API</b> (حساب الخدمة، آخر ٩٠ يومًا)، لا تخمين.</div>
+
+</div>
+</body>
+</html>

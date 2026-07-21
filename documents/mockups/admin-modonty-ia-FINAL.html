@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modonty Admin — الرؤية الكاملة</title>
+<style>
+  :root{
+    --bg:#f4f6fa; --card:#ffffff; --card2:#fbfcfe; --bd:#e5e8ef; --bd2:#eef1f6;
+    --tx:#0f172a; --mut:#64748b; --mut2:#94a3b8;
+    --primary:#4f46e5; --primary-soft:#eef0fe;
+    --green:#16a34a; --green-soft:#e7f6ec;
+    --amber:#d97706; --amber-soft:#fdf1de;
+    --blue:#2563eb; --blue-soft:#e6effe;
+    --shadow:0 1px 2px rgba(15,23,42,.04),0 6px 22px rgba(15,23,42,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0a0e16; --card:#121826; --card2:#0e131f; --bd:#212a3b; --bd2:#1a2130;
+      --tx:#e5e9f0; --mut:#94a3b8; --mut2:#64748b; --primary:#818cf8; --primary-soft:#1c1f3a;
+      --green:#4ade80; --green-soft:#12291b; --amber:#fbbf24; --amber-soft:#2a2109;
+      --blue:#60a5fa; --blue-soft:#0f2036;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 26px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0a0e16; --card:#121826; --card2:#0e131f; --bd:#212a3b; --bd2:#1a2130;
+    --tx:#e5e9f0; --mut:#94a3b8; --mut2:#64748b; --primary:#818cf8; --primary-soft:#1c1f3a;
+    --green:#4ade80; --green-soft:#12291b; --amber:#fbbf24; --amber-soft:#2a2109; --blue:#60a5fa; --blue-soft:#0f2036;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 26px rgba(0,0,0,.4);
+  }
+  :root[data-theme="light"]{
+    --bg:#f4f6fa; --card:#ffffff; --card2:#fbfcfe; --bd:#e5e8ef; --bd2:#eef1f6;
+    --tx:#0f172a; --mut:#64748b; --mut2:#94a3b8; --primary:#4f46e5; --primary-soft:#eef0fe;
+    --green:#16a34a; --green-soft:#e7f6ec; --amber:#d97706; --amber-soft:#fdf1de; --blue:#2563eb; --blue-soft:#e6effe;
+    --shadow:0 1px 2px rgba(15,23,42,.04),0 6px 22px rgba(15,23,42,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--tx);
+    font-family:"Segoe UI",Tahoma,system-ui,-apple-system,sans-serif;line-height:1.6;padding:32px 20px 70px}
+  .wrap{max-width:1120px;margin:0 auto}
+  .en{direction:ltr;unicode-bidi:isolate}
+
+  .brand{display:flex;align-items:center;gap:11px;margin-bottom:9px;flex-wrap:wrap}
+  .brand .dot{width:36px;height:36px;border-radius:10px;background:var(--primary);display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px}
+  .brand h1{font-size:21px;font-weight:800;letter-spacing:-.3px}
+  .brand .v{font-size:11px;color:var(--mut);border:1px solid var(--bd);border-radius:20px;padding:2px 10px;font-weight:700}
+  .lede{color:var(--mut);font-size:14px;max-width:760px;margin-bottom:24px}
+  .lede b{color:var(--tx)}
+
+  .cols{display:grid;grid-template-columns:290px 1fr;gap:18px;align-items:start}
+  @media (max-width:860px){.cols{grid-template-columns:1fr}}
+
+  .panel{background:var(--card);border:1px solid var(--bd);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+  .panel-h{padding:13px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;background:var(--card2)}
+  .panel-h .ico{width:28px;height:28px;border-radius:8px;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;font-size:14px}
+  .panel-h h3{font-size:13.5px;font-weight:800}
+  .panel-h .sub{font-size:11px;color:var(--mut);font-weight:600}
+  .panel-b{padding:13px}
+
+  /* sidebar */
+  .sb-top{display:flex;flex-direction:column;gap:2px;padding-bottom:11px;margin-bottom:9px;border-bottom:1px solid var(--bd2)}
+  .navrow{display:flex;align-items:center;gap:10px;padding:7px 11px;border-radius:9px;font-size:12.5px;color:var(--mut);font-weight:600}
+  .navrow .gi{width:16px;text-align:center;opacity:.85}
+  .navrow.head{color:var(--tx);font-weight:700;justify-content:space-between}
+  .navrow.head .l{display:flex;align-items:center;gap:10px}
+  .navrow .chev{font-size:10px;color:var(--mut2)}
+  .group{margin-bottom:2px}
+  .group.star{border:1px solid color-mix(in srgb,var(--primary) 35%,transparent);border-radius:12px;padding:5px;margin:9px 0;background:color-mix(in srgb,var(--primary-soft) 55%,transparent)}
+  .group.star>.navrow.head{color:var(--primary)}
+  .group.star>.navrow.head .new{font-size:9px;font-weight:800;background:var(--green-soft);color:var(--green);border-radius:20px;padding:1px 7px;margin-inline-start:6px}
+  .l1kids{padding-inline-start:6px;margin-top:3px;display:flex;flex-direction:column;gap:3px}
+  .submenu{background:var(--card);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+  .sub-head{display:flex;align-items:center;justify-content:space-between;padding:7px 11px;font-size:11.5px;font-weight:800;color:var(--tx)}
+  .sub-head .l{display:flex;align-items:center;gap:8px}
+  .sub-head .cnt{font-size:9px;font-weight:800;color:var(--mut);background:var(--bd2);border-radius:20px;padding:1px 7px}
+  .l2kids{padding-inline-start:10px;margin-inline-start:12px;border-inline-start:1px solid var(--bd2);margin:0 0 7px;display:flex;flex-direction:column;gap:1px}
+  .l2kids .navrow{padding:4px 9px;font-size:11px}
+  .l2kids .navrow .en{font-size:10.5px}
+  .direct{padding:5px 11px !important;font-size:12px !important;font-weight:700;color:var(--tx)}
+  .settings-row{margin-top:11px;padding-top:11px;border-top:1px solid var(--bd2)}
+  .settings-row .navrow{background:var(--primary-soft);color:var(--primary);font-weight:800}
+  .settings-row .navrow .lk{margin-inline-start:auto;font-size:9px;color:var(--primary);font-weight:800}
+
+  /* settings */
+  .set-lbl{display:flex;align-items:center;gap:9px;margin:2px 0 9px}
+  .set-lbl h4{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--mut)}
+  .set-lbl .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--bd),transparent)}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+  .scard{background:var(--card2);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;min-height:46px}
+  .scard .ci{width:30px;height:30px;border-radius:9px;background:var(--bd2);color:var(--mut);display:grid;place-items:center;font-size:14px;flex:none}
+  .scard .ct{font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+  .scard .mv{font-size:8.5px;font-weight:800;color:var(--blue);background:var(--blue-soft);border-radius:20px;padding:1px 7px}
+  .scard.ro{border-style:dashed;opacity:.8}
+  .scard.ro .lk{margin-inline-start:auto;font-size:8.5px;font-weight:800;color:var(--mut);border:1px solid var(--bd);border-radius:20px;padding:1px 7px}
+
+  /* integrations hero */
+  .integ{grid-column:1/-1;border:1px solid color-mix(in srgb,var(--primary) 30%,var(--bd));border-radius:14px;overflow:hidden;background:var(--card)}
+  .integ-h{display:flex;align-items:center;gap:10px;padding:11px 13px;background:linear-gradient(90deg,var(--primary-soft),transparent);border-bottom:1px solid var(--bd)}
+  .integ-h .ci{width:30px;height:30px;border-radius:9px;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:14px}
+  .integ-h .tt{font-size:13px;font-weight:800}
+  .integ-h .new{font-size:8.5px;font-weight:800;color:var(--green);background:var(--green-soft);border-radius:20px;padding:2px 8px}
+  .integ-h .sub{font-size:10.5px;color:var(--mut);margin-inline-start:auto;font-weight:600}
+  .conns{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;padding:11px}
+  .conn{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--bd);border-radius:9px;background:var(--card2);font-size:11.5px}
+  .conn .st{width:7px;height:7px;border-radius:50%;flex:none}
+  .conn .st.on{background:var(--green)}
+  .conn .st.wait{background:var(--amber)}
+  .conn .nm{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+  .conn .src{font-size:8px;font-weight:800;color:var(--mut2);border:1px solid var(--bd);border-radius:20px;padding:1px 6px}
+  .conn .src.ui{color:var(--green);border-color:color-mix(in srgb,var(--green) 35%,transparent)}
+
+  /* inventory strip */
+  .inv{margin-top:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media (max-width:860px){.inv{grid-template-columns:1fr}}
+  .invcard{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;box-shadow:var(--shadow)}
+  .invcard h5{font-size:12px;font-weight:800;margin-bottom:3px;display:flex;align-items:center;gap:8px}
+  .invcard .desc{font-size:10.5px;color:var(--mut);margin-bottom:10px}
+  .invcard .dot2{width:9px;height:9px;border-radius:3px}
+  .dot2.op{background:var(--mut)} .dot2.se{background:var(--primary)} .dot2.mo{background:var(--green)}
+  .chips{display:flex;flex-wrap:wrap;gap:5px}
+  .chip{font-size:10.5px;font-weight:600;background:var(--card2);border:1px solid var(--bd);border-radius:7px;padding:3px 7px}
+
+  .foot{margin-top:26px;background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px 20px;box-shadow:var(--shadow);font-size:13px;color:var(--mut)}
+  .foot b{color:var(--tx)}
+  .foot .row{display:flex;gap:10px;align-items:baseline;margin-top:8px}
+  .foot .row:first-of-type{margin-top:0}
+  .foot .k{color:var(--green);font-weight:800;flex:none;min-width:70px}
+  .sign{margin-top:20px;text-align:center;color:var(--mut2);font-size:11.5px}
+  .tgl{position:fixed;top:16px;inset-inline-start:16px;z-index:9;background:var(--card);border:1px solid var(--bd);color:var(--tx);border-radius:20px;padding:6px 13px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
+</style>
+</head>
+<body>
+<button class="tgl" onclick="(function(){var r=document.documentElement;var d=(r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'))==='dark';r.setAttribute('data-theme',d?'light':'dark');})()">🌓 الثيم</button>
+
+<div class="wrap">
+  <div class="brand">
+    <div class="dot">M</div>
+    <h1>الرؤية الكاملة — Sidebar + Settings + Integrations</h1>
+    <span class="v">Admin · FINAL v4</span>
+  </div>
+  <p class="lede">
+    الشريط الجانبي النهائي (مجموعة <b>Modonty</b> بـ submenus)، وصفحة <b>Settings</b> نظام+ربط فقط — فيها بطاقة <b>Integrations</b> جديدة تجمع حالة كل الاتصالات، و<span class="en">Email Templates</span> انتقل إليها. تحت: جرد كامل يبيّن التشغيلي مقابل الإعدادات.
+  </p>
+
+  <div class="cols">
+    <!-- SIDEBAR -->
+    <div class="panel">
+      <div class="panel-h"><div class="ico">☰</div><div><h3>Sidebar</h3><div class="sub">معتمد ✔</div></div></div>
+      <div class="panel-b">
+        <div class="sb-top">
+          <div class="navrow"><span class="gi">◫</span><span class="en">Social Media</span></div>
+          <div class="navrow"><span class="gi">◎</span><span class="en">Search Console</span></div>
+          <div class="navrow"><span class="gi">◍</span><span class="en">Bing Webmaster</span></div>
+          <div class="navrow"><span class="gi">📈</span><span class="en">SEO</span></div>
+          <div class="navrow"><span class="gi">▦</span><span class="en">Subscription Tiers</span></div>
+        </div>
+        <div class="group"><div class="navrow head"><span class="l"><span class="gi">💼</span><span class="en">Clients</span></span><span class="chev">▾</span></div></div>
+        <div class="group"><div class="navrow head"><span class="l"><span class="gi">📰</span><span class="en">Articles</span></span><span class="chev">▾</span></div></div>
+        <div class="group"><div class="navrow head"><span class="l"><span class="gi">📚</span><span class="en">Content</span></span><span class="chev">▾</span></div></div>
+
+        <div class="group star">
+          <div class="navrow head"><span class="l"><span class="gi">📖</span><span class="en">Modonty</span><span class="new">NEW</span></span><span class="chev">▴</span></div>
+          <div class="l1kids">
+            <div class="navrow direct"><span class="gi">🏛</span><span class="en">Homepage</span></div>
+            <div class="submenu">
+              <div class="sub-head"><span class="l"><span class="chev">▾</span><span class="en">Pages</span></span><span class="cnt">7</span></div>
+              <div class="l2kids">
+                <div class="navrow"><span class="gi">ⓘ</span><span class="en">About</span></div>
+                <div class="navrow"><span class="gi">?</span><span class="en">FAQ</span></div>
+                <div class="navrow"><span class="gi">§</span><span class="en">Terms</span></div>
+                <div class="navrow"><span class="gi">🤝</span><span class="en">User Agreement</span></div>
+                <div class="navrow"><span class="gi">🛡</span><span class="en">Privacy Policy</span></div>
+                <div class="navrow"><span class="gi">🍪</span><span class="en">Cookie Policy</span></div>
+                <div class="navrow"><span class="gi">©</span><span class="en">Copyright</span></div>
+              </div>
+            </div>
+            <div class="submenu">
+              <div class="sub-head"><span class="l"><span class="chev">▾</span><span class="en">Page SEO</span></span><span class="cnt">6</span></div>
+              <div class="l2kids">
+                <div class="navrow"><span class="gi">📰</span><span class="en">Articles</span></div>
+                <div class="navrow"><span class="gi">💼</span><span class="en">Clients</span></div>
+                <div class="navrow"><span class="gi">🗂</span><span class="en">Categories</span></div>
+                <div class="navrow"><span class="gi">🏷</span><span class="en">Tags</span></div>
+                <div class="navrow"><span class="gi">🏭</span><span class="en">Industries</span></div>
+                <div class="navrow"><span class="gi">🔥</span><span class="en">Trending</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="group"><div class="navrow head"><span class="l"><span class="gi">👥</span><span class="en">Audience</span></span><span class="chev">▾</span></div></div>
+        <div class="group"><div class="navrow head"><span class="l"><span class="gi">🔧</span><span class="en">System</span></span><span class="chev">▾</span></div></div>
+        <div class="settings-row"><div class="navrow"><span class="gi">⚙</span><span class="en">Settings</span><span class="lk">نظام + ربط</span></div></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="panel">
+      <div class="panel-h"><div class="ico">⚙</div><div><h3 class="en" style="font-weight:800">Settings</h3><div class="sub">نظام + اتصالات — بلا صفحات مودونتي</div></div></div>
+      <div class="panel-b">
+
+        <div class="set-lbl"><h4>Integrations &amp; connections</h4><span class="rule"></span></div>
+        <div class="integ" style="margin-bottom:14px">
+          <div class="integ-h">
+            <div class="ci">🔌</div><div class="tt en">Integrations</div><span class="new">NEW</span>
+            <span class="sub">مكان واحد لحالة كل الربط · الأسرار في env</span>
+          </div>
+          <div class="conns">
+            <div class="conn"><span class="st on"></span><span class="nm en">Meta · FB / IG</span><span class="src">env</span></div>
+            <div class="conn"><span class="st on"></span><span class="nm en">Twitter / X</span><span class="src">env</span></div>
+            <div class="conn"><span class="st on"></span><span class="nm en">Search Console</span><span class="src">env</span></div>
+            <div class="conn"><span class="st on"></span><span class="nm en">Bing Webmaster</span><span class="src">env</span></div>
+            <div class="conn"><span class="st wait"></span><span class="nm en">GA4 / GTM</span><span class="src">قريباً</span></div>
+            <div class="conn"><span class="st on"></span><span class="nm en">Cloudinary</span><span class="src">env</span></div>
+            <div class="conn"><span class="st on"></span><span class="nm en">Resend · Email</span><span class="src">env</span></div>
+            <div class="conn"><span class="st on"></span><span class="nm en">Replicate · AI</span><span class="src">env</span></div>
+            <div class="conn"><span class="st on"></span><span class="nm en">Telegram</span><span class="src ui">UI</span></div>
+          </div>
+        </div>
+
+        <div class="set-lbl"><h4>System &amp; sales</h4><span class="rule"></span></div>
+        <div class="cards">
+          <div class="scard"><div class="ci">✉</div><div class="ct en">Email Templates</div><span class="mv">MOVED</span></div>
+          <div class="scard"><div class="ci">◎</div><div class="ct en">JBR SEO</div></div>
+          <div class="scard"><div class="ci">🏦</div><div class="ct en">Reference Data</div></div>
+          <div class="scard"><div class="ci">🖼</div><div class="ct en">Default Images</div></div>
+          <div class="scard"><div class="ci">▤</div><div class="ct en">Disclaimer</div></div>
+          <div class="scard ro"><div class="ci">🛡</div><div class="ct en">System</div><span class="lk">Read-only</span></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- INVENTORY -->
+  <div class="inv">
+    <div class="invcard">
+      <h5><span class="dot2 op"></span> تشغيلي — يبقى بالشريط</h5>
+      <div class="desc">شغل يومي · بيانات · لوحات فحص</div>
+      <div class="chips">
+        <span class="chip en">Social Media</span><span class="chip en">Search Console</span>
+        <span class="chip en">Bing</span><span class="chip en">SEO</span>
+        <span class="chip en">Subscription Tiers</span><span class="chip en">Clients</span>
+        <span class="chip en">Articles</span><span class="chip en">Content</span>
+        <span class="chip en">Audience</span><span class="chip en">Database</span>
+        <span class="chip en">Maintenance</span><span class="chip en">Export</span>
+        <span class="chip en">Error Logs</span><span class="chip en">Admins</span>
+      </div>
+    </div>
+    <div class="invcard">
+      <h5><span class="dot2 se"></span> إعدادات — في Settings</h5>
+      <div class="desc">ضبط + ربط · يُضبط مرّة</div>
+      <div class="chips">
+        <span class="chip en">Integrations ✦</span><span class="chip en">Email Templates ⇢</span>
+        <span class="chip en">JBR SEO</span><span class="chip en">Reference Data</span>
+        <span class="chip en">Default Images</span><span class="chip en">Disclaimer</span>
+        <span class="chip en">System</span><span class="chip en">Telegram</span>
+      </div>
+    </div>
+    <div class="invcard">
+      <h5><span class="dot2 mo"></span> بيت مودونتي — بالشريط</h5>
+      <div class="desc">صفحات modonty.com العامة</div>
+      <div class="chips">
+        <span class="chip en">Homepage</span><span class="chip en">About</span>
+        <span class="chip en">FAQ</span><span class="chip en">Terms</span>
+        <span class="chip en">Privacy / Cookie / Copyright</span><span class="chip en">User Agreement</span>
+        <span class="chip en">Page SEO ×6</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="row"><span class="k">جديد</span><span>بطاقة <b><span class="en">Integrations</span></b> = لوحة حالة كل الاتصالات (متصل/قريباً · مصدر env أو UI). الأسرار تبقى في env، البطاقة تعرض الحالة فقط + تفتح إعداد Telegram.</span></div>
+    <div class="row"><span class="k">انتقل</span><span><span class="en">Email Templates</span> من مجموعة System بالشريط ← إلى Settings.</span></div>
+    <div class="row"><span class="k">لم ينتقل</span><span><span class="en">Social Media / Search Console / Bing / SEO</span> تشغيلية — تبقى بالشريط (مافيها إعداد UI، مفاتيحها env).</span></div>
+    <div class="row"><span class="k">الملفات</span><span><span class="en">sidebar.tsx</span> + <span class="en">settings/page.tsx</span> + بطاقة/صفحة <span class="en">Integrations</span> جديدة. صفر نقل مسارات موجودة.</span></div>
+  </div>
+
+  <p class="sign">Modonty Admin · الرؤية الكاملة v4 · الألوان تقريبية — التنفيذ بتوكنات globals.css</p>
+</div>
+</body>
+</html>

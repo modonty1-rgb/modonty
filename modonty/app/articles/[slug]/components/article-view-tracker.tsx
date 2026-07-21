@@ -26,7 +26,14 @@ export function ArticleViewTracker({ articleSlug }: ArticleViewTrackerProps) {
   useEffect(() => {
     loadTimeRef.current = Date.now();
     const slug = encodeURIComponent(articleSlug);
-    fetch(`/api/articles/${slug}/view`, { method: "POST" })
+    // Send the real entry context: document.referrer (external source) +
+    // location.href (UTM params) — the fetch's own Referer header is useless
+    // for source attribution (it's always this page).
+    fetch(`/api/articles/${slug}/view`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ referrer: document.referrer || null, url: window.location.href }),
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data?.analyticsId) analyticsIdRef.current = data.analyticsId;

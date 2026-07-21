@@ -20,7 +20,7 @@ export async function requestPasswordReset(
   const normalizedEmail = parsed.data;
 
   try {
-    const user = await db.user.findUnique({
+    const user = await db.staff.findUnique({
       where: { email: normalizedEmail },
     });
 
@@ -46,7 +46,7 @@ export async function requestPasswordReset(
       .update(plainToken)
       .digest("hex");
 
-    const updatedUser = await db.user.update({
+    const updatedUser = await db.staff.update({
       where: { id: user.id },
       data: {
         passwordResetToken: hashedToken,

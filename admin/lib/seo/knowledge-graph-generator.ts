@@ -25,6 +25,11 @@ import {
   Tag,
 } from "@prisma/client";
 import { buildYmylJsonLdGraph } from "./build-ymyl-jsonld";
+import {
+  buildImageObject,
+  resolveImageAttribution,
+  type ModontyImageDefaults,
+} from "@modonty/database/lib/seo/media/build-image-object";
 
 /**
  * Build Cloudinary URL for a specific aspect ratio (1:1, 4:3, 16:9).
@@ -71,6 +76,10 @@ export interface PlatformBranding {
   tiktokUrl?: string | null;
   pinterestUrl?: string | null;
   snapchatUrl?: string | null;
+  // Image licensing defaults (Settings) → Google Licensable badge on article images.
+  imageOwnerName?: string | null;
+  imageLicenseUrl?: string | null;
+  imageAcquireLicensePageUrl?: string | null;
 }
 
 // Author slugs that should be treated as the platform brand (Organization, not Person).
@@ -132,6 +141,14 @@ export function generateArticleKnowledgeGraph(
   // branding.siteUrl SHOULD come from loadSiteUrl() (DB-backed). Hardcoded fallback only as safety net.
   const siteUrl = branding?.siteUrl || "https://www.modonty.com";
 
+  // Modonty image-licensing defaults (Settings) → Google Licensable badge on article images.
+  const imageLicensing: ModontyImageDefaults = {
+    ownerName: branding?.imageOwnerName ?? null,
+    organizationUrl: siteUrl,
+    licenseUrl: branding?.imageLicenseUrl ?? null,
+    acquireLicensePageUrl: branding?.imageAcquireLicensePageUrl ?? null,
+  };
+
   // Single source: canonical URL = mainEntityOfPage = Article url (Schema.org + Google best practice)
   const raw = article.canonicalUrl || article.mainEntityOfPage;
   const articleUrl = raw
@@ -161,7 +178,7 @@ export function generateArticleKnowledgeGraph(
   graph.push(generateWebPageNode(article, articleUrl, ids, siteUrl));
 
   // 2. Article (main content)
-  graph.push(generateArticleNode(article, articleUrl, ids, siteUrl));
+  graph.push(generateArticleNode(article, articleUrl, ids, siteUrl, imageLicensing));
 
   // 3. Organization (Publisher/Client)
   graph.push(generateOrganizationNode(article.client, ids.publisher, siteUrl));
@@ -283,7 +300,8 @@ function generateArticleNode(
   article: ArticleWithFullRelations,
   articleUrl: string,
   ids: Record<string, string>,
-  siteUrl: string
+  siteUrl: string,
+  imageLicensing: ModontyImageDefaults = {}
 ): JsonLdNode {
   const node: JsonLdNode = {
     "@type": "Article",
@@ -331,7 +349,7 @@ function generateArticleNode(
   }
 
   // Add images (hero + gallery)
-  const images = buildImageArray(article, articleUrl, siteUrl);
+  const images = buildImageArray(article, articleUrl, siteUrl, imageLicensing);
   if (images.length > 0) {
     node.image = images.length === 1 ? images[0] : images;
   }
@@ -384,67 +402,45 @@ function buildImageArray(
   article: ArticleWithFullRelations,
   articleUrl: string,
   siteUrl: string = "https://www.modonty.com",
+  imageLicensing: ModontyImageDefaults = {},
 ): JsonLdNode[] {
-  const images: JsonLdNode[] = [];
+  // Article images are Modonty-PRODUCED (POST): name = article title, credit/license from
+  // Settings via resolveImageAttribution. One builder — same shape as client + admin preview.
+  const images: Array<Record<string, unknown>> = [];
+  const articleTitle = article.title;
 
   // Hero image (featuredImage) — emit 3 aspect ratios per Google Article rich results spec
   if (article.featuredImage) {
     const sourceUrl = article.featuredImage.url;
-    const sharedFields = {
-      ...(article.featuredImage.caption && { caption: article.featuredImage.caption }),
-      ...(article.featuredImage.altText && { name: article.featuredImage.altText }),
-      ...(article.featuredImage.license && { license: article.featuredImage.license }),
-      ...(article.featuredImage.creator && {
-        creator: {
-          "@type": "Person",
-          name: article.featuredImage.creator,
-        },
-      }),
-      ...(article.featuredImage.credit && { creditText: article.featuredImage.credit }),
-      ...(article.featuredImage.credit && {
-        copyrightHolder: { "@type": "Organization", name: article.featuredImage.credit },
-      }),
+    const attr = resolveImageAttribution(
+      {
+        mediaType: "POST",
+        articleTitle,
+        altText: article.featuredImage.altText,
+        dateCreated: article.featuredImage.createdAt,
+      },
+      imageLicensing,
+    );
+    const shared = {
+      name: attr.name,
+      caption: article.featuredImage.caption,
+      description: article.featuredImage.description,
+      licensing: attr.licensing,
     };
 
-    // Primary 16:9 (representativeOfPage)
     const url16x9 = buildAspectUrl(sourceUrl, "16:9");
-    images.push({
-      "@type": "ImageObject",
-      "@id": `${articleUrl}#primary-image`,
-      url: url16x9,
-      contentUrl: url16x9,
-      width: 1200,
-      height: 675,
-      ...sharedFields,
-      representativeOfPage: true,
-    });
+    images.push(
+      buildImageObject({ ...shared, id: `${articleUrl}#primary-image`, url: url16x9, width: 1200, height: 675, representativeOfPage: true }),
+    );
 
-    // 4:3 variant
     const url4x3 = buildAspectUrl(sourceUrl, "4:3");
     if (url4x3 !== url16x9) {
-      images.push({
-        "@type": "ImageObject",
-        "@id": `${articleUrl}#primary-image-4x3`,
-        url: url4x3,
-        contentUrl: url4x3,
-        width: 1200,
-        height: 900,
-        ...sharedFields,
-      });
+      images.push(buildImageObject({ ...shared, id: `${articleUrl}#primary-image-4x3`, url: url4x3, width: 1200, height: 900 }));
     }
 
-    // 1:1 variant (square — for AMP/mobile carousels)
     const url1x1 = buildAspectUrl(sourceUrl, "1:1");
     if (url1x1 !== url16x9) {
-      images.push({
-        "@type": "ImageObject",
-        "@id": `${articleUrl}#primary-image-1x1`,
-        url: url1x1,
-        contentUrl: url1x1,
-        width: 1200,
-        height: 1200,
-        ...sharedFields,
-      });
+      images.push(buildImageObject({ ...shared, id: `${articleUrl}#primary-image-1x1`, url: url1x1, width: 1200, height: 1200 }));
     }
   } else {
     // Fallback: client hero image -> client logo -> site default (same chain as metadata-generator)
@@ -452,67 +448,57 @@ function buildImageArray(
       article.client.heroImageMedia?.url ||
       article.client.logoMedia?.url ||
       `${siteUrl}/og-image.jpg`;
+    const attr = resolveImageAttribution({ mediaType: "POST", articleTitle }, imageLicensing);
+    const shared = { name: attr.name, licensing: attr.licensing };
 
-    // Emit 3 aspect ratios for fallback too (when on Cloudinary)
     const fallbackUrl16x9 = buildAspectUrl(fallbackUrl, "16:9");
-    images.push({
-      "@type": "ImageObject",
-      "@id": `${articleUrl}#primary-image`,
-      url: fallbackUrl16x9,
-      contentUrl: fallbackUrl16x9,
-      width: 1200,
-      height: 675,
-      representativeOfPage: true,
-    });
+    images.push(
+      buildImageObject({ ...shared, id: `${articleUrl}#primary-image`, url: fallbackUrl16x9, width: 1200, height: 675, representativeOfPage: true }),
+    );
 
     const fallbackUrl4x3 = buildAspectUrl(fallbackUrl, "4:3");
     if (fallbackUrl4x3 !== fallbackUrl16x9) {
-      images.push({
-        "@type": "ImageObject",
-        "@id": `${articleUrl}#primary-image-4x3`,
-        url: fallbackUrl4x3,
-        contentUrl: fallbackUrl4x3,
-        width: 1200,
-        height: 900,
-      });
+      images.push(buildImageObject({ ...shared, id: `${articleUrl}#primary-image-4x3`, url: fallbackUrl4x3, width: 1200, height: 900 }));
     }
 
     const fallbackUrl1x1 = buildAspectUrl(fallbackUrl, "1:1");
     if (fallbackUrl1x1 !== fallbackUrl16x9) {
-      images.push({
-        "@type": "ImageObject",
-        "@id": `${articleUrl}#primary-image-1x1`,
-        url: fallbackUrl1x1,
-        contentUrl: fallbackUrl1x1,
-        width: 1200,
-        height: 1200,
-      });
+      images.push(buildImageObject({ ...shared, id: `${articleUrl}#primary-image-1x1`, url: fallbackUrl1x1, width: 1200, height: 1200 }));
     }
   }
 
-  // Gallery images
+  // Gallery images — each keeps its own alt as name; still Modonty-produced licensing.
   if (article.gallery && article.gallery.length > 0) {
     article.gallery
       .sort((a, b) => a.position - b.position)
       .forEach((item, index) => {
-        images.push({
-          "@type": "ImageObject",
-          "@id": `${articleUrl}#image-${index + 2}`,
-          url: item.media.url,
-          contentUrl: item.media.url,
-          ...(item.media.width && { width: item.media.width }),
-          ...(item.media.height && { height: item.media.height }),
-          caption: item.caption || item.media.caption || undefined,
-          name: item.altText || item.media.altText || undefined,
-          ...(item.media.license && { license: item.media.license }),
-          ...(item.media.creator && { creator: { "@type": "Person", name: item.media.creator } }),
-          ...(item.media.credit && { creditText: item.media.credit }),
-          ...(item.media.credit && { copyrightHolder: { "@type": "Organization", name: item.media.credit } }),
-        });
+        const perImageName = item.altText || item.media.altText;
+        const attr = resolveImageAttribution(
+          {
+            mediaType: "POST",
+            articleTitle,
+            altText: perImageName,
+            dateCreated: item.media.createdAt,
+            manualName: perImageName,
+          },
+          imageLicensing,
+        );
+        images.push(
+          buildImageObject({
+            id: `${articleUrl}#image-${index + 2}`,
+            url: item.media.url,
+            width: item.media.width,
+            height: item.media.height,
+            name: attr.name,
+            caption: item.caption || item.media.caption,
+            description: item.media.description,
+            licensing: attr.licensing,
+          }),
+        );
       });
   }
 
-  return images;
+  return images as JsonLdNode[];
 }
 
 /**

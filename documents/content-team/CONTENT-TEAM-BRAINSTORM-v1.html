@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إدارة فريق المحتوى — ملف النقاش والقرار v1</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0E065A; --blue:#3030FF; --cyan:#00D8D8;
+    --bg:#F7F8FC; --card:#FFFFFF; --ink:#1A1A2E; --muted:#6B7280;
+    --open:#F59E0B; --open-bg:#FEF3C7; --locked:#10B981; --locked-bg:#D1FAE5;
+    --danger:#EF4444; --danger-bg:#FEE2E2;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--ink);line-height:1.9;padding-bottom:80px}
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px}
+
+  header.hero{background:linear-gradient(135deg,var(--navy) 0%,#1a0f7a 60%,var(--blue) 100%);color:#fff;padding:48px 0 40px;margin-bottom:32px}
+  .hero h1{font-size:30px;font-weight:900;margin-bottom:8px}
+  .hero .sub{color:#C7D2FE;font-size:16px}
+  .hero .meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+  .hero .chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:4px 16px;font-size:13.5px}
+  .hero .chip b{color:var(--cyan)}
+
+  h2.sec{font-size:22px;font-weight:800;color:var(--navy);margin:44px 0 6px;display:flex;align-items:center;gap:10px}
+  h2.sec::before{content:'';width:6px;height:26px;background:var(--blue);border-radius:3px;display:inline-block}
+  .sec-note{color:var(--muted);font-size:14px;margin-bottom:18px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+  .stat{background:var(--card);border:1px solid #E5E7EB;border-radius:14px;padding:18px}
+  .stat .k{font-size:13px;color:var(--muted);margin-bottom:4px}
+  .stat .v{font-size:18px;font-weight:800;color:var(--navy)}
+  .stat .d{font-size:13px;color:var(--muted);margin-top:4px}
+
+  .card{background:var(--card);border:1px solid #E5E7EB;border-radius:16px;padding:24px;margin-bottom:16px}
+  .card h3{font-size:17px;font-weight:800;color:var(--navy);margin-bottom:10px}
+
+  .quote{background:#EEF2FF;border-inline-start:4px solid var(--blue);border-radius:8px;padding:14px 18px;margin:12px 0;font-size:14.5px}
+  .quote .src{display:block;margin-top:6px;font-size:12.5px;color:var(--muted);direction:ltr;text-align:left}
+
+  .decision{background:var(--card);border:1px solid #E5E7EB;border-radius:16px;padding:0;margin-bottom:20px;overflow:hidden}
+  .decision .head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 22px;background:#FAFAFF;border-bottom:1px solid #EEF0F6;flex-wrap:wrap}
+  .decision .head .t{font-size:17px;font-weight:800;color:var(--navy)}
+  .decision .head .num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;border-radius:9px;background:var(--navy);color:#fff;font-weight:800;font-size:14px;margin-inline-end:10px}
+  .badge{border-radius:999px;padding:3px 14px;font-size:12.5px;font-weight:700;white-space:nowrap}
+  .badge.open{background:var(--open-bg);color:#92400E}
+  .badge.locked{background:var(--locked-bg);color:#065F46}
+  .decision .body{padding:18px 22px}
+  .decision .q{font-weight:700;margin-bottom:10px}
+  .opts{list-style:none;margin:10px 0}
+  .opts li{padding:8px 14px;border:1px solid #E5E7EB;border-radius:10px;margin-bottom:8px;font-size:14.5px;background:#FCFCFE}
+  .opts li b{color:var(--navy)}
+  .reco{background:linear-gradient(90deg,#ECFEFF,#F0FDFA);border:1px solid var(--cyan);border-radius:12px;padding:12px 16px;margin-top:12px;font-size:14.5px}
+  .reco::before{content:'💡 توصيتي: ';font-weight:800;color:#0E7490}
+  .khalid{background:#FFF7ED;border:1px dashed var(--open);border-radius:12px;padding:10px 16px;margin-top:10px;font-size:14px;color:#7C2D12}
+  .khalid::before{content:'⏳ ينتظر قرار خالد';font-weight:800;display:block;margin-bottom:2px}
+
+  table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;font-size:14px}
+  th{background:var(--navy);color:#fff;padding:10px 14px;text-align:start;font-weight:700}
+  td{padding:10px 14px;border-bottom:1px solid #EEF0F6;vertical-align:top}
+  tr:last-child td{border-bottom:none}
+
+  .phase{display:flex;gap:16px;margin-bottom:14px;background:var(--card);border:1px solid #E5E7EB;border-radius:14px;padding:18px 22px}
+  .phase .pnum{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px}
+  .phase h4{font-size:15.5px;font-weight:800;color:var(--navy);margin-bottom:4px}
+  .phase p{font-size:14px;color:#374151}
+  .phase .tag{font-size:12px;color:var(--muted)}
+
+  .foot{margin-top:48px;padding-top:20px;border-top:1px solid #E5E7EB;color:var(--muted);font-size:13px;text-align:center}
+  .en{direction:ltr;text-align:left;font-size:13px}
+  ul.plain{margin:6px 22px 6px 0}
+  ul.plain li{margin-bottom:5px;font-size:14.5px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>🧠 إدارة فريق المحتوى — ملف النقاش والقرار</h1>
+    <div class="sub">جلسة تخطيط: كيف نبني ماكينة محتوى منظمة، سريعة، وثابتة الجودة — بأقصى استفادة من الذكاء الاصطناعي</div>
+    <div class="meta">
+      <span class="chip">📅 افتتاح الجلسة: <b>2026-07-06</b></span>
+      <span class="chip">📌 الحالة: <b>نقاش نشط — التعويض والتوظيف مقفلان</b></span>
+      <span class="chip">🔒 القرارات المقفلة: <b>٤ / ١١</b></span>
+      <span class="chip">📁 النسخة: <b>v1</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ═══════════════ الواقع الحالي ═══════════════ -->
+<h2 class="sec">١ · الواقع الحالي (ثبّته خالد في الجلسة)</h2>
+<div class="sec-note">هذي الحقائق أساس كل القرارات تحت — لو تغيّرت، نراجع القرارات المبنية عليها.</div>
+<div class="grid">
+  <div class="stat"><div class="k">الفريق (صُحّح 2026-07-06)</div><div class="v">كاتب واحد اليوم</div><div class="d">+ سير ذاتية جاهزة من إعلان توظيف — الهدف ٥ كتّاب على دفعات، كلهم من مصر عن بُعد</div></div>
+  <div class="stat"><div class="k">الجمهور المستهدف</div><div class="v">السعودية أولاً</div><div class="d">ثم التوسع للسوق الخليجي</div></div>
+  <div class="stat"><div class="k">الإنتاج الشهري</div><div class="v">١٠–٣٠ مقال</div><div class="d">الهدف: انتظام وجودة أكثر من كمية</div></div>
+  <div class="stat"><div class="k">أداة الإدارة اليوم</div><div class="v">واتساب + مستندات قوقل</div><div class="d">تكليف بالرسائل، تسليم بالملفات، نقل يدوي للأدمن</div></div>
+  <div class="stat"><div class="k">الوجع المعلن</div><div class="v">ثلاثي</div><div class="d">بطء الإنتاج · جودة متذبذبة · لا نظام تنظيم ومتابعة</div></div>
+</div>
+
+<div class="card" style="margin-top:16px">
+  <h3>حقائق النظام القائمة (من وثائق المشروع — ما تحتاج قرار)</h3>
+  <ul class="plain">
+    <li><b>تسليمات كل مقال:</b> نص + صور + تصميم + صوت (والريلز للباقات الأعلى — مشروع مستقل قيد التجهيز).</li>
+    <li><b>بوابة الجودة الذهبية:</b> ١٠ مراحل تحقق كاملة قبل طلب الفهرسة — صفر تنازل (قاعدة مقفلة سابقاً).</li>
+    <li><b>مريم</b> (وكيلة السيو الذكية) موجودة للتدقيق والفحص، و<b>كلود</b> للتقنية والأتمتة.</li>
+    <li><b>الباقات:</b> مجاني · ٤٩٩ · ١٢٩٩ · ٢٩٩٩ ريال — كل باقة لها حصة مقالات شهرية.</li>
+    <li><b>عملاء حساسون (طبي وشبهه)</b> موجودون فعلاً — وثيقة الجاهزية الطبية في المشروع.</li>
+    <li><b>خارطة الطريق</b> أصلاً فيها «أتمتة كتابة المقالات» كمرحلة قادمة — هذي الجلسة بوابتها.</li>
+  </ul>
+</div>
+
+<!-- ═══════════════ الدراسة ═══════════════ -->
+<h2 class="sec">٢ · الدراسة — موقف قوقل الرسمي من المحتوى بالذكاء</h2>
+<div class="sec-note">تم التحقق من المصادر الرسمية في 2026-07-06 (قاعدة السيو الذهبية: مصادر رسمية فقط).</div>
+
+<div class="card">
+  <h3>✅ المسموح رسمياً</h3>
+  <p>قوقل <b>ما يحاسب على طريقة الإنتاج</b> — يحاسب على القيمة. المحتوى المكتوب بمساعدة الذكاء مقبول تماماً طالما هو «محتوى للناس أولاً» ويحمل خبرة حقيقية:</p>
+  <div class="quote">
+    «People-first content means content that's created primarily for people, and not to manipulate search engine rankings.»
+    <span class="src">Google Search Central — Creating helpful, reliable, people-first content</span>
+  </div>
+  <div class="quote">
+    «Is the use of automation, including AI-generation, self-evident to visitors through disclosures or in other ways?»
+    <span class="src">نفس المصدر — سؤال «How» ضمن إطار Who / How / Why</span>
+  </div>
+</div>
+
+<div class="card">
+  <h3>❌ الممنوع رسمياً — «إساءة المحتوى الموسّع»</h3>
+  <div class="quote">
+    «Scaled content abuse is when many pages are generated for the primary purpose of manipulating search rankings and not helping users.»<br>
+    «Using generative AI tools or other similar tools to generate many pages without adding value for users.»
+    <span class="src">Google Search Central — Spam policies (Scaled content abuse)</span>
+  </div>
+  <p>يعني الخطر <b>مش</b> استخدام الذكاء — الخطر هو التوليد الكمي بلا قيمة مضافة. وهذا عكس نموذج مُدَوَّنَتِي تماماً (مقالات معدودة، لكل عميل، ببوابة ١٠ مراحل).</p>
+</div>
+
+<div class="card">
+  <h3>⚠️ التشديد على المواضيع الحساسة (YMYL)</h3>
+  <div class="quote">
+    قوقل يعطي «even more weight to content that aligns with strong E-E-A-T» في مواضيع الصحة والمال والأمان — و«trust is most important».
+    <span class="src">نفس مصدر المحتوى المفيد — قسم E-E-A-T</span>
+  </div>
+  <p><b>الأثر المباشر علينا:</b> مقالات العملاء الطبيين والقانونيين والماليين تحتاج مسار مراجعة أثقل من البقية — وهذا جوهر القرار رقم ١ تحت.</p>
+</div>
+
+<div class="card">
+  <h3>📐 المبدأ التنظيمي الحديث — خط إنتاج بدل «كل كاتب يسوي كل شيء»</h3>
+  <p>النموذج الأذكى اليوم في عمليات المحتوى: <b>الذكاء يتكفل بالشغل الميكانيكي</b> (بحث الكلمات، الهيكل، المسودة الأولى، الميتا، الفحص التقني الأولي — تقريباً ٧٠٪ من زمن المقال)، و<b>البشر يضيفون اللي ما يقدر عليه الذكاء</b>: الخبرة الحقيقية، معلومات العميل الداخلية، التدقيق الواقعي، النبرة المحلية. النتيجة: الكاتب يتحول من «منتِج نص من الصفر» إلى <b>«محرر خبير يضيف القيمة»</b> — أسرع، أثبت جودة، وأرخص لكل مقال.</p>
+</div>
+
+<!-- ═══════════════ القرارات ═══════════════ -->
+<h2 class="sec">٣ · القرارات المفتوحة — تُقفل واحدة واحدة</h2>
+<div class="sec-note">كل قرار: السؤال + الخيارات + توصيتي. القفل يكون بكلمة «ابروف» على رقم القرار، وينسجل التاريخ هنا.</div>
+
+<!-- قرار ١ -->
+<div class="decision" id="d1">
+  <div class="head"><div class="t"><span class="num">١</span>نموذج الإنتاج — مين يكتب المسودة الأولى؟</div><span class="badge open">🔓 مفتوح</span></div>
+  <div class="body">
+    <div class="q">هذا القرار الأم — كل شيء بعده يُبنى عليه.</div>
+    <ul class="opts">
+      <li><b>(أ) بشري يكتب + ذكاء يساعد:</b> الوضع الأقرب للحالي. أبطأ وأغلى، والجودة تعتمد على مزاج الكاتب.</li>
+      <li><b>(ب) ذكاء يولّد المسودة + بشري يحرر ويضيف الخبرة:</b> أسرع بكثير وأثبت هيكلاً — لكن يحتاج محرر يقظ حتى ما تطلع مقالات «بلا روح».</li>
+      <li><b>(ج) هجين حسب حساسية العميل:</b> العملاء العاديون على نموذج (ب)، وعملاء YMYL (طبي/قانوني/مالي) على مسار مشدد: مسودة ذكاء + تحرير بشري + تدقيق حقائق إلزامي بمصادر.</li>
+    </ul>
+    <div class="reco">الخيار <b>(ج) الهجين</b> — قوقل نفسه يفرّق بين العادي والحساس، وعندك عملاء طبيون فعلاً. النموذج الواحد للجميع إما بطيء بلا داعي أو خطر بلا داعي.</div>
+    <div class="khalid">اعتماد النموذج + تحديد أي تصنيفات عملاء تُعامل YMYL.</div>
+  </div>
+</div>
+
+<!-- قرار ٢ -->
+<div class="decision" id="d2">
+  <div class="head"><div class="t"><span class="num">٢</span>إعادة تعريف الأدوار — خط إنتاج واضح</div><span class="badge locked">🔒 مقفل جزئياً 2026-07-06</span></div>
+  <div class="body">
+    <div class="q">اليوم: ٤–٦ أشخاص كلهم «كاتب». المقترح: أدوار متخصصة على خط واحد.</div>
+    <ul class="opts">
+      <li><b>محرر رئيسي (١):</b> البوابة البشرية للجودة — يراجع كل مقال قبل ما يوصلك. هو نقطة التواصل مع الكتّاب.</li>
+      <li><b>كتّاب/محررون (البقية):</b> يستلمون تكليفاً جاهزاً + مسودة ذكاء، ويسلمون مقالاً محرراً بقيمة مضافة.</li>
+      <li><b>الذكاء (كلود + مريم):</b> التخطيط، التكليفات، المسودات، الفحص التقني الأولي، تقارير الأداء.</li>
+      <li><b>خالد:</b> اعتماد نهائي فقط (وقرارات الاتجاه) — يخرج من التشغيل اليومي تدريجياً.</li>
+    </ul>
+    <div class="reco">عنق الزجاجة الحقيقي غالباً هو مراجعاتك أنت. رقِّ أفضل كاتب لمحرر رئيسي براتب/مقابل أعلى — أرخص وأسرع من توظيف خارجي، ويحفّز البقية.</div>
+    <div style="background:var(--locked-bg);border:1px solid var(--locked);border-radius:12px;padding:12px 16px;margin-top:12px;font-size:14.5px"><b>🔒 مقفل 2026-07-06 (البنية):</b> محرر رئيسي واحد + كتّاب محررون، و<b>كل كاتب يملك محفظة عملاء محددين</b> يكتب لهم باستمرار (هذا شرط عمولة العميل في القرار ٨) + الذكاء للتخطيط والمسودات والفحص + خالد اعتماد نهائي فقط.</div>
+    <div class="khalid">تسمية المحرر الرئيسي فقط — تُحسم بعد تقييم الدفعة الأولى من التوظيف (قرار ١١).</div>
+  </div>
+</div>
+
+<!-- قرار ٣ -->
+<div class="decision" id="d3">
+  <div class="head"><div class="t"><span class="num">٣</span>مكان إدارة الشغل — وين يعيش خط الإنتاج؟</div><span class="badge open">🔓 مفتوح</span></div>
+  <div class="body">
+    <div class="q">اليوم كل شيء واتساب ومستندات — وهذا مصدر ثلث الوجع.</div>
+    <ul class="opts">
+      <li><b>(أ) داخل الأدمن (بناء):</b> حالات للمقال (تكليف → مسودة → تحرير → مراجعة → معتمد → منشور → مفهرس) + تكليفات للكتّاب + تعليقات مراجعة. المقال أصلاً يعيش هناك والبوابة العشرية هناك — صفر نسخ ولصق.</li>
+      <li><b>(ب) أداة خارجية جاهزة:</b> أسرع تشغيلاً، لكنها طبقة مزامنة يدوية دائمة فوق الأدمن — الوجع يتحول ما يختفي.</li>
+      <li><b>(ج) البقاء على الوضع الحالي بقوالب أنظف:</b> أرخص، لكن ما يحل التنظيم جذرياً.</li>
+    </ul>
+    <div class="reco">الخيار <b>(أ)</b> لكن <b>على مرحلتين</b>: مرحلة انتقالية فورية (جدول تتبع واحد + قالب تكليف موحّد — صفر كود، تشتغل من بكرة) ثم البناء داخل الأدمن كمرحلة تطوير مخططة. ممنوع نبني قبل ما نجرب الفلو ورقياً شهراً — البناء على فلو ما انجرب = إعادة شغل.</div>
+    <div class="khalid">اعتماد مبدأ «الأدمن هو البيت النهائي» + الموافقة على المرحلة الانتقالية.</div>
+  </div>
+</div>
+
+<!-- قرار ٤ -->
+<div class="decision" id="d4">
+  <div class="head"><div class="t"><span class="num">٤</span>قالب التكليف الموحّد (البريف)</div><span class="badge open">🔓 مفتوح</span></div>
+  <div class="body">
+    <div class="q">أكبر سبب للجودة المتذبذبة: الكاتب يستلم «اكتب عن كذا» بدل تكليف كامل. المقترح: كل مقال يبدأ ببريف مولّد بالذكاء يشمل:</div>
+    <ul class="plain">
+      <li>العميل + جمهوره + نبرته · الكلمة المفتاحية ونية البحث · الهيكل المقترح (عناوين جاهزة)</li>
+      <li>المصادر المعتمدة · الطول المستهدف · <b>«مطلوب القيمة المضافة»</b>: إيش الخبرة الحقيقية اللي لازم الكاتب يضيفها (معلومة من العميل، مثال محلي، تجربة)</li>
+      <li>معايير القبول (مختصر بوابة الجودة) — الكاتب يعرف على إيش يُحاسب قبل ما يبدأ</li>
+    </ul>
+    <div class="reco">نبدأ فوراً: أصمم القالب وأولّد البريفات ضمن جلساتنا (صفر كود)، ولاحقاً يصير زر «توليد تكليف» داخل الأدمن ضمن مرحلة البناء.</div>
+    <div class="khalid">اعتماد بنود القالب — وبعدها أسلمك النسخة الأولى للتجربة على مقال حقيقي.</div>
+  </div>
+</div>
+
+<!-- قرار ٥ -->
+<div class="decision" id="d5">
+  <div class="head"><div class="t"><span class="num">٥</span>أتمتة بوابة الجودة — إيش آلي وإيش بشري؟</div><span class="badge open">🔓 مفتوح</span></div>
+  <div class="body">
+    <div class="q">العشر مراحل تظل مقدسة — السؤال مين ينفذ كل مرحلة:</div>
+    <ul class="opts">
+      <li><b>آلي بالكامل:</b> السيو التقني، الميتا، السكيما، الروابط الداخلية، الطول، بنية العناوين، السلاق.</li>
+      <li><b>آلي بمراجعة بشرية:</b> الأصالة والتشابه، اللغة والقواعد، توافق النبرة مع العميل.</li>
+      <li><b>بشري صرف:</b> دقة الحقائق، القيمة المضافة الحقيقية، ملاءمة المحتوى للعميل.</li>
+    </ul>
+    <div class="reco">الذكاء يفحص <b>أولاً</b> ويرجع تقرير جاهزية للكاتب نفسه قبل التسليم — المحرر الرئيسي ما يستلم إلا مقالاً نظيفاً تقنياً. هذا وحده يقص نصف زمن المراجعة.</div>
+    <div class="khalid">اعتماد التقسيم الثلاثي.</div>
+  </div>
+</div>
+
+<!-- قرار ٦ -->
+<div class="decision" id="d6">
+  <div class="head"><div class="t"><span class="num">٦</span>التقويم التحريري الشهري</div><span class="badge open">🔓 مفتوح</span></div>
+  <div class="body">
+    <div class="q">بدل التكليف العشوائي: بداية كل شهر يتولد تقويم كامل — كل عميل حسب حصة باقته.</div>
+    <ul class="plain">
+      <li>الذكاء يقترح مواضيع الشهر لكل عميل (فجوات كلمات + منافسين + مواسم + بيانات GSC الموصولة أصلاً)</li>
+      <li>أنت/المحرر الرئيسي يعتمد القائمة مرة واحدة · التوزيع على الكتّاب دفعة واحدة بمواعيد تسليم</li>
+      <li>الكاتب ما ينتظر تكليفاً أبداً — عنده شغل شهره كاملاً</li>
+    </ul>
+    <div class="reco">هذا القاتل الأول لـ«بطء الإنتاج» — الانتظار بين المقالات يختفي. نجربه أول شهر على عميلين ثم نعمم.</div>
+    <div class="khalid">اعتماد المبدأ + اختيار عميلَي التجربة.</div>
+  </div>
+</div>
+
+<!-- قرار ٧ -->
+<div class="decision" id="d7">
+  <div class="head"><div class="t"><span class="num">٧</span>سياسة استخدام الكتّاب للذكاء</div><span class="badge open">🔓 مفتوح</span></div>
+  <div class="body">
+    <div class="q">الكتّاب غالباً يستخدمون الذكاء أصلاً — بدون تنظيم. الخيار: منع (غير قابل للتطبيق) أو تنظيم.</div>
+    <ul class="opts">
+      <li><b>مسموح ومنظم:</b> برومبتات معتمدة منك موحدة للجميع + قاعدة صريحة: <b>ممنوع تسليم نص ذكاء بلا تحرير بشري وقيمة مضافة</b> — هذا خط الفصل بينا وبين «إساءة المحتوى الموسّع».</li>
+      <li><b>الكشف:</b> المحرر الرئيسي مسؤول عن كشف التسليم الخام (أدوات الكشف غير موثوقة رسمياً — العين المدربة أدق).</li>
+    </ul>
+    <div class="reco">تنظيم رسمي مكتوب داخل دليل الكتابة (قرار ١٠) — يحمي الجودة ويحمي موقف السيو، ويخلي أدوات الجميع موحدة بدل فوضى كل كاتب وأداته.</div>
+    <div class="khalid">اعتماد السياسة.</div>
+  </div>
+</div>
+
+<!-- قرار ٨ -->
+<div class="decision" id="d8">
+  <div class="head"><div class="t"><span class="num">٨</span>المحاسبة والدفع للكتّاب</div><span class="badge locked">🔒 مقفل 2026-07-06</span></div>
+  <div class="body">
+    <div class="q">قرار تجاري لك بالكامل — أنا أحط الإطار فقط:</div>
+    <ul class="plain">
+      <li><b>الدفع بالمقال المعتمد</b> (يجتاز البوابة) لا بالمقال المسلّم — يوقف حشو الكم.</li>
+      <li><b>مكافأة جودة:</b> نسبة قبول من أول مراجعة فوق حد معين = علاوة على المقال.</li>
+      <li>مع نموذج «مسودة ذكاء + تحرير بشري» زمن المقال ينخفض — <b>سعر المقال قابل لإعادة النظر</b> عادلاً للطرفين.</li>
+    </ul>
+    <div style="background:var(--locked-bg);border:1px solid var(--locked);border-radius:12px;padding:12px 16px;margin-top:12px;font-size:14.5px"><b>🔒 مقفل 2026-07-06 — الصيغة الرباعية النهائية:</b><br>
+      ١) أساسي رمزي شهري مقابل الالتزام والتفرغ (فكرة خالد كما هي)<br>
+      ٢) مبلغ لكل <b>مقال معتمد</b> يجتاز بوابة الجودة — العمود الفقري للدخل<br>
+      ٣) عمولة شهرية عن <b>كل عميل نشط تحت رعاية الكاتب</b> (فكرة خالد — مربوطة بملكية المحفظة في القرار ٢)<br>
+      ٤) مكافأة أثر <b>ربع سنوية</b> مقارنةً بالتوقع المحسوب لكل موضوع قبل الكتابة<br>
+      <b style="color:var(--danger)">مرفوض صراحةً:</b> مكافأة الوصول الخام لكل مقال — خارج سيطرة الكاتب (حجم الكلمة، المنافسة، الوقت) وتشوّه الحوافز نحو المواضيع السهلة. الأرقام نفسها قرار خالد وتبقى خارج الملف. المبدأ العام المثبت: <b>إنتاجية لا ساعات</b>.</div>
+  </div>
+</div>
+
+<!-- قرار ٩ -->
+<div class="decision" id="d9">
+  <div class="head"><div class="t"><span class="num">٩</span>قياس أداء الكتّاب</div><span class="badge locked">🔒 مقفل 2026-07-06</span></div>
+  <div class="body">
+    <div class="q">ثلاثة مقاييس فقط لكل كاتب (أكثر من كذا = ضجيج):</div>
+    <ul class="plain">
+      <li><b>الالتزام:</b> التسليم في الموعد.</li>
+      <li><b>الجودة:</b> نسبة القبول من أول مراجعة.</li>
+      <li><b>الأثر:</b> أداء مقالاته بعد النشر (ظهور ونقرات من GSC — الربط موجود أصلاً بالنظام).</li>
+    </ul>
+    <div class="reco">نبدأ يدوياً بجدول شهري بسيط يديره المحرر الرئيسي، ولوحة داخل الأدمن تجي مع مرحلة البناء (قرار ٣) — مش قبلها.</div>
+    <div style="background:var(--locked-bg);border:1px solid var(--locked);border-radius:12px;padding:12px 16px;margin-top:12px;font-size:14.5px"><b>🔒 مقفل 2026-07-06:</b> المقاييس الثلاثة معتمدة (التزام بالموعد · قبول من أول مراجعة · عدد المقالات المعتمدة). قياس الأثر (الظهور والنقرات من بيانات قوقل الموصولة بالنظام) يكون <b>ربع سنوياً ومقارنةً بتوقع محسوب لكل موضوع</b> — مش رقماً خاماً موحداً لكل المقالات. البداية يدوية، واللوحة مع مرحلة البناء.</div>
+  </div>
+</div>
+
+<!-- قرار ١٠ -->
+<div class="decision" id="d10">
+  <div class="head"><div class="t"><span class="num">١٠</span>دليل الكتابة الموحّد</div><span class="badge open">🔓 مفتوح</span></div>
+  <div class="body">
+    <div class="q">مرجع إلزامي واحد لكل الكتّاب (والجدد مستقبلاً): النبرة، المصطلحات، الممنوعات، هيكل المقال، قواعد السيو الأساسية، سياسة الذكاء (قرار ٧)، معايير القبول.</div>
+    <ul class="plain">
+      <li>الذكاء يولّد النسخة الأولى من <b>أفضل مقالاتك المعتمدة فعلاً</b> — الدليل يوصف الجودة اللي حصلت، مش جودة نظرية.</li>
+      <li>وثيقة واحدة قصيرة (صفحات معدودة) — الدليل الطويل ما ينقرأ.</li>
+    </ul>
+    <div class="reco">يتولد بعد قفل القرارات ١ و٤ و٧ لأنه يجمعها كلها — وهو أول تسليمة فعلية للفريق.</div>
+    <div class="khalid">تحديد ٣–٥ مقالات تعتبرها «المعيار الذهبي» ليتولد الدليل منها.</div>
+  </div>
+</div>
+
+<!-- قرار ١١ -->
+<div class="decision" id="d11">
+  <div class="head"><div class="t"><span class="num">١١</span>خطة التوظيف — دفعات تتبع نمو العملاء</div><span class="badge locked">🔒 مقفل 2026-07-06</span></div>
+  <div class="body">
+    <div class="q">عند خالد سير ذاتية جاهزة من إعلان توظيف. المبدأ المقفل: <b>الطاقة الإنتاجية تتبع عدد العملاء، مش العكس</b> — كاتب يحرر مسودات الذكاء يطلّع ١٥–٢٠ مقال معتمد شهرياً، فخمسة كتّاب دفعة واحدة = طاقة تفوق الطلب الحالي وكاتب بلا شغل يستقيل.</div>
+    <ul class="plain">
+      <li><b>الترشيح:</b> نحو ٦ مرشحين من السير الذاتية → <b>مقال تجريبي مدفوع</b> لكل واحد (الفلتر الحقيقي — السيرة الذاتية ما تثبت كتابة) على بريف موحّد (قرار ٤) عشان المقارنة تكون عادلة.</li>
+      <li><b>الدفعة الأولى:</b> توظيف <b>اثنين الآن</b> → الفريق ثلاثة مع الكاتب الحالي.</li>
+      <li><b>الدفعة الثانية:</b> نحو الهدف النهائي (خمسة) لما عدد العملاء يزيد — بقية السير الذاتية قائمة انتظار جاهزة.</li>
+      <li><b>شكل التعاقد:</b> عن بُعد من مصر · إنتاجية لا ساعات · على الصيغة الرباعية (قرار ٨).</li>
+    </ul>
+    <div style="background:var(--locked-bg);border:1px solid var(--locked);border-radius:12px;padding:12px 16px;margin-top:12px;font-size:14.5px"><b>🔒 مقفل 2026-07-06:</b> وافق خالد على التعديل من «٤ دفعة واحدة» إلى الدفعات — تقييم الدفعة الأولى يحدد أيضاً مرشح المحرر الرئيسي (قرار ٢).</div>
+  </div>
+</div>
+
+<!-- ═══════════════ الخطة ═══════════════ -->
+<h2 class="sec">٤ · خطة المراحل المقترحة (تتفعل بعد قفل القرارات)</h2>
+<div class="sec-note">مبنية على مبدأ: نصلح الفلو بالورق أولاً، وما نبني كوداً إلا على فلو مجرّب.</div>
+
+<div class="phase">
+  <div class="pnum">٠</div>
+  <div><h4>التأسيس — أسبوع واحد · صفر كود</h4>
+  <p>قالب التكليف الموحّد + جدول تتبع واحد (يستبدل فوضى واتساب) + دليل الكتابة v1 + ترشيح ~٦ من السير الذاتية وإطلاق المقال التجريبي المدفوع (قرار ١١).</p>
+  <div class="tag">يعالج: التنظيم والمتابعة (فوراً)</div></div>
+</div>
+<div class="phase">
+  <div class="pnum">١</div>
+  <div><h4>التشغيل التجريبي — شهر واحد · صفر كود</h4>
+  <p>أول تقويم تحريري شهري (عميلان) + تشغيل النموذج الهجين: بريف وذكاء ← كاتب يحرر ← فحص ذكاء ← محرر رئيسي ← اعتمادك. قياس: زمن المقال ونسبة القبول قبل/بعد.</p>
+  <div class="tag">يعالج: بطء الإنتاج + الجودة المتذبذبة — بأدلة رقمية</div></div>
+</div>
+<div class="phase">
+  <div class="pnum">٢</div>
+  <div><h4>البناء داخل الأدمن — بعد نجاح التجربة</h4>
+  <p>حالات المقال وسير العمل + تكليفات وإشعارات + زر توليد البريف + الفحص الآلي المدمج + لوحة أداء الكتّاب. يتخطط وقتها بملف PRD مستقل حسب أصول المشروع.</p>
+  <div class="tag">يعالج: التوسع — النظام يشيل بدل الذاكرة والرسائل</div></div>
+</div>
+
+<!-- ═══════════════ جدول الملخص ═══════════════ -->
+<h2 class="sec">٥ · ملخص القرارات</h2>
+<table>
+  <tr><th>#</th><th>القرار</th><th>توصيتي</th><th>الحالة</th><th>تاريخ القفل</th></tr>
+  <tr><td>١</td><td>نموذج الإنتاج</td><td>هجين — ذكاء+تحرير للعادي، مسار مشدد لـ YMYL</td><td>🔓 مفتوح</td><td>—</td></tr>
+  <tr><td>٢</td><td>الأدوار</td><td>بنية مقفلة: محرر رئيسي + كتّاب يملكون محافظ عملاء + ذكاء + خالد اعتماد — التسمية معلقة</td><td>🔒 مقفل جزئياً</td><td>2026-07-06</td></tr>
+  <tr><td>٣</td><td>مكان الإدارة</td><td>الأدمن نهائياً — بمرحلة انتقالية ورقية فورية</td><td>🔓 مفتوح</td><td>—</td></tr>
+  <tr><td>٤</td><td>قالب التكليف</td><td>بريف موحّد مولّد بالذكاء لكل مقال — يبدأ فوراً</td><td>🔓 مفتوح</td><td>—</td></tr>
+  <tr><td>٥</td><td>بوابة الجودة</td><td>ذكاء يفحص أولاً — المحرر يستلم مقالاً نظيفاً تقنياً</td><td>🔓 مفتوح</td><td>—</td></tr>
+  <tr><td>٦</td><td>التقويم التحريري</td><td>شهري مقدماً لكل عميل — تجربة على عميلين</td><td>🔓 مفتوح</td><td>—</td></tr>
+  <tr><td>٧</td><td>سياسة الذكاء للكتّاب</td><td>مسموح ومنظم — ممنوع التسليم الخام</td><td>🔓 مفتوح</td><td>—</td></tr>
+  <tr><td>٨</td><td>الدفع</td><td>أساسي رمزي + لكل مقال معتمد + عمولة عميل نشط + أثر ربع سنوي — مرفوض: الوصول الخام (الأرقام لخالد)</td><td>🔒 مقفل</td><td>2026-07-06</td></tr>
+  <tr><td>٩</td><td>قياس الأداء</td><td>التزام · قبول أول مراجعة · مقالات معتمدة + أثر ربع سنوي مقارنة بالتوقع</td><td>🔒 مقفل</td><td>2026-07-06</td></tr>
+  <tr><td>١٠</td><td>دليل الكتابة</td><td>يتولد من أفضل المقالات المعتمدة — بعد قفل ١+٤+٧</td><td>🔓 مفتوح</td><td>—</td></tr>
+  <tr><td>١١</td><td>خطة التوظيف</td><td>مقال تجريبي مدفوع لـ~٦ مرشحين → توظيف ٢ الآن (فريق ٣) → ٥ مع نمو العملاء</td><td>🔒 مقفل</td><td>2026-07-06</td></tr>
+</table>
+
+<!-- ═══════════════ سجل النقاش ═══════════════ -->
+<h2 class="sec">٦ · سجل النقاش</h2>
+<table>
+  <tr><th>التاريخ</th><th>البند</th><th>الخلاصة</th></tr>
+  <tr><td>2026-07-06</td><td>افتتاح الجلسة</td><td>خالد ثبّت الواقع: ١٠–٣٠ مقال/شهر · إدارة واتساب ومستندات · وجع ثلاثي (بطء + جودة + تنظيم). اعتمد نمط ملف القرار الواحد. تم التحقق من موقف قوقل الرسمي من محتوى الذكاء (مقبول people-first / ممنوع scaled abuse / تشديد YMYL).</td></tr>
+  <tr><td>2026-07-06</td><td>تصحيح الواقع</td><td>الفريق الفعلي <b>كاتب واحد فقط</b> (إجابة «٤–٦» الأولى كانت تشمل خطة التوظيف). عند خالد سير ذاتية جاهزة من إعلان توظيف · الجمهور: السعودية ثم الخليج · الكتّاب كلهم من مصر عن بُعد.</td></tr>
+  <tr><td>2026-07-06</td><td>نموذج خالد للتعويض</td><td>عرض خالد: راتب أساسي منخفض + عمولة على بقاء العميل + مكافأة وصول لكل مقال + توظيف ٤ دفعة واحدة، والربط بالإنتاجية لا الساعات. كلود وافق على الجوهر واعترض على نقطتين: مكافأة الوصول الخام (خارج سيطرة الكاتب وتشوّه الحوافز) والتوظيف دفعة واحدة (الطاقة تسبق الطلب فيستقيل الكاتب الفاضي).</td></tr>
+  <tr><td>2026-07-06</td><td>قفل ٢ + ٨ + ٩ + ١١</td><td>وافق خالد على التعديلين («متفق معك») → قُفلت: الصيغة الرباعية للتعويض (٨) + مقاييس الأداء الثلاثة والأثر الربع سنوي (٩) + بنية الأدوار وملكية المحافظ — التسمية معلقة (٢) + التوظيف بالدفعات مع المقال التجريبي المدفوع (١١).</td></tr>
+</table>
+
+<div class="foot">
+  ملف النقاش والقرار الوحيد لإدارة فريق المحتوى — أي تحديث يُضاف هنا بنفس الملف · مُدَوَّنَتِي © 2026
+  <div class="en">documents/content-team/CONTENT-TEAM-BRAINSTORM-v1.html</div>
+</div>
+
+</div>
+</body>
+</html>

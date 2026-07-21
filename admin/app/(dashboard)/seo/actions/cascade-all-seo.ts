@@ -46,16 +46,18 @@ export async function cascadeSettingsToAllEntities(): Promise<{
     batchGenerateIndustrySeo(),
   ]);
 
-  // 2. Clients — regenerate in parallel chunks of 5 (safe under Prisma MongoDB default pool)
-  const { regenerateClientJsonLd } = await import(
-    "@/app/(dashboard)/clients/helpers/client-seo-config/client-jsonld-storage"
+  // 2. Clients — regenerate in parallel chunks of 5 (safe under Prisma MongoDB default pool).
+  // Uses the SHARED bundle path (generateClientSEO) so image licensing + metaTags + JSON-LD
+  // stay identical to the per-client save — no divergence between cascade and single-save.
+  const { generateClientSEO } = await import(
+    "@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo"
   );
   const allClients = await db.client.findMany({ select: { id: true } });
   let clientSuccess = 0;
   for (let i = 0; i < allClients.length; i += CONCURRENCY) {
     const chunk = allClients.slice(i, i + CONCURRENCY);
     const results = await Promise.all(
-      chunk.map((c) => regenerateClientJsonLd(c.id).catch(() => ({ success: false }))),
+      chunk.map((c) => generateClientSEO(c.id).catch(() => ({ success: false }))),
     );
     clientSuccess += results.filter((r) => r.success).length;
   }

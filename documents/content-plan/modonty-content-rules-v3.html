@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قواعد كتّاب مدونتي — v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@500;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#131C26; --ink-soft:#3D4A59; --paper:#FFF; --line:#DCE1E7;
+    --accent:#0E7A5F; --accent-ink:#0A5946; --accent-tint:#EAF5F1;
+    --warn:#B3261E; --warn-tint:#FBEDEC;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:15.5px}
+  .page{max-width:820px;margin:0 auto;padding:0 26px 70px}
+  header.doc{border-bottom:3px solid var(--ink);padding:46px 0 26px;margin-bottom:34px}
+  .doc-meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:16px}
+  .doc-meta b{color:var(--accent-ink)}
+  h1{font-family:'Noto Kufi Arabic',sans-serif;font-weight:800;font-size:clamp(26px,5vw,38px);line-height:1.4}
+  h1 .sub{display:block;font-size:.45em;font-weight:700;color:var(--accent);margin-top:8px}
+  section{margin-top:44px}
+  h2{font-family:'Noto Kufi Arabic',sans-serif;font-weight:800;font-size:clamp(19px,3vw,23px);padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:16px}
+  h2 .n{color:var(--accent);margin-left:8px}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th{background:var(--ink);color:#fff;text-align:right;padding:9px 13px;font-weight:600;font-size:13px;font-family:'Noto Kufi Arabic',sans-serif}
+  td{padding:10px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#F7F9FA}
+  td b{color:var(--accent-ink)}
+  ul.r{list-style:none;margin:8px 0}
+  ul.r li{padding:7px 28px 7px 0;position:relative;font-size:14.5px}
+  ul.r li::before{content:"";position:absolute;right:5px;top:17px;width:8px;height:8px;border-radius:2px;background:var(--accent)}
+  .def{background:var(--accent-tint);border-right:5px solid var(--accent);border-radius:0 10px 10px 0;padding:13px 18px;margin:14px 0;font-size:14.5px}
+  .def b{color:var(--accent-ink)}
+  .warnbox{background:var(--warn-tint);border-right:5px solid var(--warn);border-radius:0 10px 10px 0;padding:13px 18px;margin:14px 0;font-size:14.5px;font-weight:600}
+  .steps{counter-reset:s;margin-top:6px}
+  .step{position:relative;padding:0 44px 18px 0}
+  .step::before{counter-increment:s;content:counter(s);position:absolute;right:0;top:2px;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:'Noto Kufi Arabic',sans-serif}
+  .step h4{font-family:'Noto Kufi Arabic',sans-serif;font-weight:700;font-size:15px;margin-bottom:3px}
+  .step p{font-size:14px;color:var(--ink-soft)}
+  .redlines{border:2px solid var(--warn);border-radius:12px;overflow:hidden;margin-top:10px}
+  .redlines .head{background:var(--warn);color:#fff;padding:10px 20px;font-family:'Noto Kufi Arabic',sans-serif;font-weight:700;font-size:14px}
+  .redlines ul{list-style:none;padding:12px 20px 14px;background:var(--warn-tint)}
+  .redlines li{padding:6px 26px 6px 0;position:relative;font-weight:600;font-size:14px}
+  .redlines li::before{content:"✕";position:absolute;right:0;top:6px;color:var(--warn);font-weight:800}
+  .sign{margin-top:54px;border-top:3px solid var(--ink);padding-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:30px}
+  .sign .lbl{font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:40px}
+  .sign .line{border-bottom:2px solid var(--ink);margin-bottom:6px}
+  .sign .hint{font-size:11.5px;color:var(--ink-soft)}
+  footer{margin-top:36px;font-size:12px;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+  @media(max-width:640px){.sign{grid-template-columns:1fr}}
+  @media print{body{font-size:12.5px}.page{max-width:100%;padding:0 6mm}section{margin-top:28px}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="doc">
+  <div class="doc-meta">
+    <span>سياسة ملزمة · الإصدار <b>v3</b></span>
+    <span>يوليو 2026</span>
+    <span><b>modonty.com</b> · JBR Techno</span>
+  </div>
+  <h1>قواعد كتّاب مدونتي
+    <span class="sub">كاتب مستقل · عمل عن بعد · محاسبة بالمخرجات</span>
+  </h1>
+</header>
+
+<!-- 1 -->
+<section>
+  <h2><span class="n">1</span>ثلاث مسؤوليات فقط</h2>
+  <p>المنصة تتولى كل الجوانب التقنية آلياً (البيانات المنظمة، الفهرسة، فحوص النشر). الكاتب مسؤول عن ثلاثة، ويُحاسَب عليها كاملة:</p>
+  <ul class="r">
+    <li><b>الكلمة الصحيحة</b> — استهداف يجتاز الشروط الخمسة (القسم 3)</li>
+    <li><b>النص الجيد</b> — يجتاز التدقيق بدرجة 80/100 فأعلى</li>
+    <li><b>الكمية الملتزم بها</b> — العدد الأسبوعي المحدد في العقد</li>
+  </ul>
+  <div class="warnbox">الدومين واحد والسمعة مشتركة: مقال رديء لعميل واحد يضر ترتيب جميع العملاء. لهذا التدقيق صارم والخطوط الحمراء نهائية.</div>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2><span class="n">2</span>نموذج العمل ورخصة النشر</h2>
+  <ul class="r">
+    <li>عمل عن بعد بالكامل، وقت مرن، لا دوام ولا حضور. الالتزام الوحيد: العدد الأسبوعي + الجودة + اجتماع أرقام أسبوعي (15 دقيقة أونلاين).</li>
+    <li>وحدة المحاسبة: <b>المقال المجتاز</b>. مقال أعيد من التدقيق لا يُحتسب حتى يُصحَّح.</li>
+    <li>التسليم أسبوعي موزّع — ممنوع تكديس إنتاج الشهر في أيامه الأخيرة.</li>
+    <li><b>أول 30 يوماً:</b> كل مقالاتك تُراجع قبل النشر. اجتياز 85% من أول مرة يمنحك <b>رخصة النشر المباشر</b> بلا مراجعة.</li>
+    <li><b>بعد الرخصة:</b> تنشر فوراً، والإدارة تدقق عينة عشوائية 10% من مقالاتك شهرياً. عينة تحت 80/100 تُصحّح خلال 48 ساعة. عينتان فاشلتان في ربع واحد = سحب الرخصة والعودة للمراجعة المسبقة 30 يوماً.</li>
+    <li>لكل كاتب عملاء ومواضيع مسندة بالاسم — لا تكتب خارج نطاقك.</li>
+  </ul>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2><span class="n">3</span>شروط اختيار الكلمة المفتاحية</h2>
+  <p>الكلمة الخاطئة = مقال بلا عائد مهما كانت جودته. قبل أي مقال، الكلمة تجتاز خمسة شروط تُوثَّق في نموذج التخطيط:</p>
+  <table>
+    <tr><th>#</th><th>الشرط</th><th>التحقق</th></tr>
+    <tr><td>1</td><td><b>تُبحث فعلاً في السعودية</b></td><td>دليل رقم من أداة (Keyword Planner / Semrush / Trends) — لا تخمين</td></tr>
+    <tr><td>2</td><td><b>نية البحث تطابق هدف العميل</b></td><td>معلوماتية / تجارية / شرائية — والمقال مبني عليها</td></tr>
+    <tr><td>3</td><td><b>قابلة للكسب الآن</b></td><td>عبارات محددة منخفضة المنافسة (3 كلمات فأكثر). الكلمات العامة الكبيرة مؤجلة حتى تقوى سلطة الدومين</td></tr>
+    <tr><td>4</td><td><b>لا تكرار داخل المنصة</b></td><td>ابحث في المنصة أولاً: الكلمة الواحدة يكتبها مقال واحد فقط على الدومين كله، لأي عميل</td></tr>
+    <tr><td>5</td><td><b>تنتمي لمحور</b></td><td>انظر تعريف المحور أدناه</td></tr>
+  </table>
+  <div class="def"><b>المحور (Topic Cluster):</b> مقال رئيسي شامل في موضوع العميل الأساسي، حوله مقالات فرعية تجيب أسئلة أدق، وكلها مربوطة بروابط داخلية بالمقال الرئيسي. مثال لعيادة أسنان: المقال الرئيسي «دليل زراعة الأسنان في السعودية» — والفرعية: «تكلفة زراعة السن الواحد»، «الفرق بين الزراعة والتركيب»، «مدة التعافي بعد الزراعة». كل مقال جديد إما يقوّي محوراً قائماً أو يؤسس محوراً جديداً بخطة (رئيسي + 5 فرعية على الأقل).</div>
+  <p><b>في التدقيق:</b> كلمة لا تجتاز الشروط = فشل عينة حتى لو كان النص ممتازاً.</p>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2><span class="n">4</span>خطوات المقال</h2>
+  <div class="steps">
+    <div class="step"><h4>خطّط</h4><p>وثّق الشروط الخمسة + حدد 3 مقالات للربط الداخلي + اقرأ أول 3 نتائج بحث للكلمة واكتب سطراً: «مقالي يتفوق عليها بـ ___». ما عندك إجابة؟ غيّر الكلمة أو الزاوية.</p></div>
+    <div class="step"><h4>ولّد المسودة</h4><p>الذكاء الاصطناعي مسموح ومطلوب — بأمر مبني على خطتك، لا أمر عام. المسودة مادة خام، ليست مقالاً.</p></div>
+    <div class="step"><h4>حرّر وأنسِن</h4><p>احذف التشكيل من النص العادي. لا تخلط فصحى بعامية. احذف عبارات القوالب («في عالم اليوم المتسارع»، «يُعد نقطة تحول»). أضف ما ليس في المصادر: رقم سعودي، مثال محلي، خطوة عملية. كل معلومة لها مصدر وتاريخ.</p></div>
+    <div class="step"><h4>هيّئ للاقتباس</h4><p>إجابة مباشرة مكتفية بذاتها في أول 40–60 كلمة من كل قسم — هي ما تقتبسه ملخصات قوقل المولّدة (AI Overviews) ومحركات الإجابة. قسم أسئلة شائعة من أسئلة الجمهور الحقيقية. أسماء صريحة بدل ضمائر غامضة.</p></div>
+    <div class="step"><h4>اعتمد بنفسك</h4><p>اتركه ساعة، اقرأه قراءة قارئ، وجاوب كتابةً: «هل يتعلم القارئ شيئاً لا تقدمه أول 3 نتائج؟» و«هل يوجد سطر واضح أنه آلي؟». اعتمادك توقيع مسجّل باسمك.</p></div>
+    <div class="step"><h4>انشر وتابع</h4><p>انشر عبر اللوحة (الفحوص آلية). تحقق من الفهرسة خلال 72 ساعة. بعد 60 يوماً راجع أداء المقال: واقف في المراكز 4–15؟ رشّحه للتحديث — تحديث مقال قريب من القمة أسرع عائداً من مقال جديد.</p></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2><span class="n">5</span>الأرقام</h2>
+  <table>
+    <tr><th>البند</th><th>الرقم</th></tr>
+    <tr><td>إنتاج الكاتب الأسبوعي (متوسط الطول، بالتحرير المدعوم)</td><td><b>14–16 مقالاً مجتازاً</b></td></tr>
+    <tr><td>إنتاج الفريق (5 كتّاب)</td><td>60–70 أسبوعياً ≈ 280 شهرياً</td></tr>
+    <tr><td>حصة تحديث المقالات القديمة (تُفعَّل من الشهر السادس)</td><td>20–30% من الإنتاج الشهري</td></tr>
+    <tr><td>حد اجتياز التدقيق</td><td>80/100 (لغة 30 · قيمة ومصداقية 30 · SEO/GEO 25 · أسلوب بشري 15)</td></tr>
+  </table>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2><span class="n">6</span>التقييم الشهري</h2>
+  <table>
+    <tr><th>المؤشر</th><th>الهدف</th><th>الوزن</th></tr>
+    <tr><td>الإنتاج مقابل المستهدف</td><td>100% (أدنى 90%)</td><td>30%</td></tr>
+    <tr><td>جودة العينات المدقَّقة</td><td>متوسط 85+ وصفر عينات فاشلة</td><td>30%</td></tr>
+    <tr><td>نتائج محفظتك (بعد 90 يوماً): فهرسة ≤ 7 أيام 90% · دخول أول 10 نتائج لـ 30% من المقالات خلال 3–6 أشهر · ظهور في AI Overviews</td><td>حسب النطاق المسند</td><td>25%</td></tr>
+    <tr><td>المواعيد + تصحيح العينات ≤ 48 ساعة</td><td>95%</td><td>15%</td></tr>
+  </table>
+  <table>
+    <tr><th>النتيجة</th><th>الإجراء</th></tr>
+    <tr><td>90+</td><td>مكافأة أداء</td></tr>
+    <tr><td>75–89</td><td>استمرار طبيعي</td></tr>
+    <tr><td>60–74</td><td>خطة تحسين شهر</td></tr>
+    <tr><td>أقل من 60 شهرين متتاليين</td><td>إنهاء التعاقد</td></tr>
+  </table>
+  <p>مؤشراتك مكشوفة لك أولاً بأول — لا مفاجآت آخر الشهر.</p>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2><span class="n">7</span>الدخل — ثلاث طبقات</h2>
+  <table>
+    <tr><th>الطبقة</th><th>القاعدة</th></tr>
+    <tr><td><b>1 · الأساسي</b></td><td>مبلغ شهري ثابت مقابل الحد الأدنى المجتاز. أقل من الراتب المكتبي المكافئ — مقابل مرونة كاملة وصفر مصاريف انتقال.</td></tr>
+    <tr><td><b>2 · مكافأة الأداء</b></td><td>شهرية، على نتيجة التقييم (القسم 6) — تكافئ ما تتحكم فيه من أول شهر.</td></tr>
+    <tr><td><b>3 · عمولة التجديد</b></td><td>نسبة من كل تجديد اشتراك لعملائك المسندين، من <b>التجديد الأول</b> وما بعده، مستمرة ما دام العميل يجدد وأنت على رأس العمل.</td></tr>
+  </table>
+  <ul class="r">
+    <li>انسحاب عميل لسبب موثَّق خارج المحتوى (إغلاق نشاط، خلاف سعري) لا يُحتسب عليك.</li>
+    <li>لا تُصرف عمولة عن عميل تراجعت جودة مقالاته في التدقيق عن 80 خلال ربع الصرف — الكتابة لإرضاء العميل على حساب معايير البحث تلغي العمولة.</li>
+    <li>النسب في ملحق مالي منفصل يُراجع كل 6 أشهر.</li>
+    <li>التعاقد: عقد تقديم خدمات بمخرجات محددة — ليس عقد عمل بدوام.</li>
+  </ul>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2><span class="n">8</span>الخطوط الحمراء</h2>
+  <div class="redlines">
+    <div class="head">إنذار نهائي أو إنهاء فوري</div>
+    <ul>
+      <li>نشر نص مولّد بلا تحرير بشري</li>
+      <li>انتحال متعمد</li>
+      <li>اختلاق مصدر أو إحصائية</li>
+      <li>معلومة طبية / مالية / قانونية بلا مصدر موثوق</li>
+      <li>الالتفاف على التدقيق أو النشر خارج نطاقك المسند</li>
+    </ul>
+  </div>
+</section>
+
+<div class="sign">
+  <div class="slot">
+    <div class="lbl">إقرار الكاتب: قرأت هذه القواعد وألتزم بها</div>
+    <div class="line"></div>
+    <div class="hint">الاسم · التوقيع · التاريخ</div>
+  </div>
+  <div class="slot">
+    <div class="lbl">اعتماد الإدارة</div>
+    <div class="line"></div>
+    <div class="hint">م. خالد علي — JBR Techno</div>
+  </div>
+</div>
+
+<footer>
+  <span>قواعد كتّاب مدونتي — v3 · يوليو 2026</span>
+  <span>وثيقة داخلية — تُراجع كل 6 أشهر</span>
+</footer>
+
+</div>
+</body>
+</html>

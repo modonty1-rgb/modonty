@@ -77,6 +77,10 @@ export async function getMedia(filters?: MediaFilters) {
       whereConditions.push(filters.used ? MEDIA_USED_WHERE : MEDIA_UNUSED_WHERE);
     }
 
+    // Client-gallery images are managed in their own /client-galleries route — never
+    // surface them in the general Media library.
+    whereConditions.push({ type: { not: "GALLERY" } });
+
     const where: Prisma.MediaWhereInput =
       whereConditions.length > 0 ? { AND: whereConditions } : {};
 

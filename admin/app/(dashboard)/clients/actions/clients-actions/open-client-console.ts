@@ -1,7 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/admin-guard";
 import { buildConsoleAccessUrl } from "@/lib/console-access";
 
 /**
@@ -12,19 +12,12 @@ import { buildConsoleAccessUrl } from "@/lib/console-access";
 export async function openClientConsoleAction(
   clientId: string,
 ): Promise<{ url: string } | { error: string }> {
-  // 1. ADMIN-only — impersonating a client is a privileged power. The session
-  // doesn't carry the role, so fetch it and fail closed (reject EDITOR/CLIENT,
-  // missing user, or any lookup error).
-  const session = await auth();
-  if (!session?.user) {
-    return { error: "Not authorized." };
-  }
-  const userId = (session.user as { id?: string }).id;
-  const me = userId
-    ? await db.user.findUnique({ where: { id: userId }, select: { role: true } }).catch(() => null)
-    : null;
-  if (me?.role !== "ADMIN") {
-    return { error: "Admins only — you don't have permission to open a client console." };
+  // 1. ADMIN-only — impersonating a client is a privileged power. Shared guard
+  // reads the role fresh from the DB and fails closed (EDITOR/CLIENT, missing
+  // user, or any lookup error all reject).
+  const gate = await requireAdmin();
+  if ("error" in gate) {
+    return { error: gate.error };
   }
 
   // 2. Client must exist.
@@ -41,7 +34,7 @@ export async function openClientConsoleAction(
 
   // 4. Audit (v1: log — a permanent audit trail is the hardening follow-up).
   console.log("[admin-console-access]", {
-    admin: session.user.email ?? session.user.name ?? "unknown",
+    adminId: gate.userId,
     clientId: client.id,
     clientName: client.name,
     at: new Date().toISOString(),

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>اتفاقية اشتراك في منصة مدونتي — نسخة العميل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:45 8% 95%; --paper:0 0% 100%; --ink:245 87% 19%; --muted:0 0% 36%;
+    --border:0 0% 88%; --primary:240 100% 59%; --accent:180 100% 42%;
+    --field:38 92% 50%;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Tajawal',sans-serif;background:hsl(var(--bg));color:hsl(var(--ink));line-height:1.95;padding:24px 12px 140px}
+  .doc{max-width:800px;margin:0 auto;background:hsl(var(--paper));border:1px solid hsl(var(--border));border-radius:16px;overflow:hidden;box-shadow:0 10px 40px -20px rgba(0,0,0,.25)}
+
+  /* ===== ترويسة ===== */
+  .brand{background:linear-gradient(135deg,hsl(245 60% 14%),hsl(240 80% 28%));color:#fff;padding:26px 32px}
+  .brand .logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:800}
+  .brand .logo .mark{width:42px;height:42px;border-radius:11px;background:#fff;display:grid;place-items:center;padding:5px;box-shadow:0 2px 10px rgba(0,0,0,.22)}
+  .brand .logo .mark svg{width:100%;height:100%;display:block}
+  .brand .umbrella{font-size:11.5px;opacity:.8;margin-top:6px}
+  .brand h1{font-size:19px;font-weight:800;margin-top:16px}
+  .brand .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;font-size:11px}
+  .brand .meta span{background:rgba(255,255,255,.14);padding:3px 10px;border-radius:999px}
+
+  .legend{background:hsl(var(--field)/.1);border-bottom:1px solid hsl(var(--border));padding:8px 32px;font-size:11.5px;color:hsl(28 70% 32%);font-weight:600}
+  .legend b{background:hsl(var(--field)/.22);padding:0 6px;border-radius:4px}
+
+  .body{padding:10px 32px 24px}
+
+  /* ===== صندوق «باختصار» ===== */
+  .summary-box{background:linear-gradient(135deg,hsl(var(--primary)/.06),hsl(var(--accent)/.07));border:1.5px solid hsl(var(--primary)/.3);border-radius:14px;padding:18px 20px;margin:18px 0 6px}
+  .summary-box h2{font-size:16px;font-weight:800;color:hsl(var(--primary));margin-bottom:12px}
+  .summary-box .sb-row{display:flex;gap:8px;margin-bottom:8px;font-size:13.5px;align-items:flex-start}
+  .summary-box .sb-row .lbl{font-weight:800;color:hsl(var(--ink));white-space:nowrap;flex-shrink:0}
+  .summary-box .sb-points{margin-top:12px;padding-top:12px;border-top:1px dashed hsl(var(--primary)/.25)}
+  .summary-box .sb-points .ttl{font-weight:800;font-size:12.5px;color:hsl(var(--ink));margin-bottom:8px}
+  .summary-box .sb-points .pt{display:flex;gap:8px;font-size:13px;margin-bottom:7px;color:hsl(var(--ink))}
+  .summary-box .sb-points .pt::before{content:"✔";color:hsl(186 90% 30%);font-weight:800;flex-shrink:0}
+  .summary-box .sb-foot{margin-top:12px;font-size:11.5px;color:hsl(var(--muted));font-style:italic}
+
+  /* الحقل المتغيّر */
+  .field{background:hsl(var(--field)/.16);border-bottom:1.5px dotted hsl(var(--field));padding:0 5px;border-radius:3px;font-weight:700;color:hsl(28 75% 28%);white-space:nowrap}
+
+  .parties{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0 6px}
+  .party{border:1px solid hsl(var(--border));border-radius:12px;padding:14px 16px;font-size:13px}
+  .party h3{font-size:12px;color:hsl(var(--muted));font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+  .party .nm{font-size:15px;font-weight:800;margin-bottom:4px}
+  .party .row{font-size:12px;color:hsl(var(--muted));margin-bottom:2px}
+  .preamble{font-size:13.5px;color:hsl(var(--ink));margin:14px 0}
+
+  .art{margin-top:20px}
+  .art h2{font-size:15.5px;font-weight:800;color:hsl(var(--primary));margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid hsl(var(--border))}
+  /* السطر المبسّط تحت كل مادة */
+  .art .plain{font-size:12.5px;color:hsl(186 60% 24%);background:hsl(var(--accent)/.09);border-radius:8px;padding:7px 12px;margin-bottom:10px;font-weight:600;line-height:1.75}
+  .art .plain::before{content:"💡 ";}
+  .art p,.art li{font-size:13.5px;color:hsl(var(--ink))}
+  .art ol{padding-inline-start:20px;margin-top:4px}
+  .art ol li{margin-bottom:5px}
+  .pay{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
+  .pay .ch{border:1px solid hsl(var(--border));border-radius:10px;padding:10px 12px;font-size:12.5px;background:hsl(var(--bg)/.5)}
+  .pay .ch b{color:hsl(var(--ink))}
+  .pay code{font-family:monospace;font-size:11.5px;background:hsl(var(--bg));padding:1px 5px;border-radius:4px;direction:ltr;display:inline-block}
+  .verify{margin-top:12px;background:hsl(var(--accent)/.1);border:1px solid hsl(var(--accent)/.45);border-radius:10px;padding:12px 14px;font-size:12.5px;line-height:1.85}
+  .verify ul{padding-inline-start:18px;margin-top:6px}
+  .verify li{margin-bottom:4px;font-size:12px}
+  .verify a{color:hsl(var(--primary));font-weight:700;text-decoration:none;direction:ltr;display:inline-block}
+  .verify a:hover{text-decoration:underline}
+
+  /* ===== ملخّص + قبول (sticky) ===== */
+  .accept-wrap{position:sticky;bottom:0;background:hsl(var(--paper));border-top:2px solid hsl(var(--accent));box-shadow:0 -8px 30px -16px rgba(0,0,0,.3);padding:16px 32px;border-radius:0 0 16px 16px}
+  .terms-summary{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+  .ts{flex:1;min-width:120px;background:hsl(var(--bg));border-radius:10px;padding:8px 12px;text-align:center}
+  .ts .k{font-size:10px;color:hsl(var(--muted));font-weight:600}
+  .ts .v{font-size:14px;font-weight:800;color:hsl(var(--ink))}
+  .chk{display:flex;align-items:flex-start;gap:9px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px}
+  .chk input{margin-top:4px;width:17px;height:17px;accent-color:hsl(var(--primary));flex-shrink:0}
+  .accept-btn{width:100%;padding:14px;border:0;border-radius:12px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;
+    background:hsl(var(--primary));color:#fff;transition:.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+  .accept-btn:disabled{background:hsl(var(--border));color:hsl(var(--muted));cursor:not-allowed}
+  .accept-btn:not(:disabled):hover{filter:brightness(1.08)}
+  .fine{font-size:10.5px;color:hsl(var(--muted));text-align:center;margin-top:8px}
+
+  .done{display:none;background:hsl(var(--accent)/.12);border:1px solid hsl(var(--accent));border-radius:12px;padding:16px;text-align:center}
+  .done .big{font-size:16px;font-weight:800;color:hsl(186 90% 24%)}
+  .done .small{font-size:12px;color:hsl(var(--muted));margin-top:6px}
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <!-- ترويسة -->
+  <div class="brand">
+    <div class="logo"><span class="mark"><svg viewBox="14.67 20.9 70.65 70.65" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="شعار مدونتي"><path fill="#3030FF" d="M79.36,91.55H20.64c-3.26,0-5.91-2.64-5.91-5.91V26.81c0-3.26,2.64-5.91,5.91-5.91h58.71c3.26,0,5.91,2.64,5.91,5.91v58.83C85.26,88.9,82.62,91.55,79.36,91.55z"/><rect x="25.59" y="69.22" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -42.5775 41.0813)" fill="#F3F3F3" width="5.42" height="5.42"/><path fill="#F3F3F3" d="M74.41,50.23v24.42h-5.43V50.23c0-4.49-3.64-8.14-8.13-8.14c-4.5,0-8.14,3.65-8.14,8.14v24.42h-5.42V50.23c0-4.49-3.65-8.14-8.14-8.14c-4.5,0-8.14,3.65-8.14,8.14V63.8h-5.42V50.23c0-0.92,0.09-1.83,0.27-2.72c0.4-2,1.25-3.84,2.44-5.42c0.77-1.02,1.68-1.93,2.72-2.71c2.26-1.7,5.08-2.72,8.14-2.72c3.05,0,5.86,1.01,8.14,2.72c1.02,0.76,1.93,1.68,2.71,2.71c0.77-1.02,1.68-1.93,2.72-2.71c2.27-1.7,5.08-2.72,8.14-2.72c3.05,0,5.86,1.01,8.13,2.72c1.03,0.76,1.95,1.68,2.72,2.71c1.18,1.58,2.03,3.42,2.45,5.42C74.31,48.4,74.41,49.31,74.41,50.23z"/></svg></span> مُدوّنتي</div>
+    <div class="umbrella">منصة المحتوى العربي للأعمال · www.modonty.com — تعمل ضمن مظلّة شركة جبر الجنوبية للمقاولات</div>
+    <h1>اتفاقية اشتراك في منصة مدونتي</h1>
+    <div class="meta">
+      <span>نسخة الشروط رقم <span style="color:hsl(var(--accent))">v1.0</span></span>
+      <span>تخضع لأنظمة المملكة العربية السعودية</span>
+      <span>قبول إلكتروني مُلزِم</span>
+    </div>
+  </div>
+
+  <div class="legend">🔸 الحقول <b>المظلّلة بالأصفر</b> تُعبّأ تلقائيًا حسب بيانات حسابك والباقة المختارة.</div>
+
+  <div class="body">
+
+    <!-- صندوق باختصار -->
+    <div class="summary-box">
+      <h2>📌 باختصار — قبل ما تقرأ التفاصيل</h2>
+      <div class="sb-row"><span class="lbl">وش تاخذ:</span><span>مقالات شهرية مُحسّنة لِجوجل + صفحة باسمك على مدونتي + لوحة تحليلات حيّة.</span></div>
+      <div class="sb-row"><span class="lbl">وش تدفع:</span><span>رسوم باقتك — شاملة الضريبة، بلا مفاجآت ولا رسوم مخفية.</span></div>
+      <div class="sb-row"><span class="lbl">المدة والإلغاء:</span><span>تبدأ من أول مقالة، وتقدر ما تجدّد بإشعار مسبق.</span></div>
+      <div class="sb-points">
+        <div class="ttl">٤ نقاط مهمة تعرفها:</div>
+        <div class="pt">نبني لك حضورًا حقيقيًا في محركات البحث بمحتوى احترافي مُحسّن.</div>
+        <div class="pt">المحتوى اللي ننشره يصير ملكك بعد سداد كامل الرسوم.</div>
+        <div class="pt">أنت مسؤول عن صحّة وقانونية أي مادة أو صورة تعطينا إياها.</div>
+        <div class="pt">نقرة «موافق» + البريد التأكيدي = توقيع رسمي مُلزِم نظاميًا في السعودية.</div>
+      </div>
+      <div class="sb-foot">التفاصيل الكاملة بالأسفل، وهي المرجع المُلزِم عند أي خلاف.</div>
+    </div>
+
+    <!-- الأطراف -->
+    <div class="parties">
+      <div class="party">
+        <h3>الطرف الأول</h3>
+        <div class="nm">منصة مُدوّنتي</div>
+        <div class="row">منصة المحتوى العربي للأعمال</div>
+        <div class="row">الموقع: www.modonty.com</div>
+        <div class="row">البريد: modonty@modonty.com</div>
+        <div style="margin-top:9px;padding-top:9px;border-top:1px solid hsl(var(--border))">
+          <div class="row">المُشغّل القانوني: <b style="color:hsl(var(--ink))">شركة جبر الجنوبية للمقاولات</b> (ش.ذ.م.م)</div>
+          <div class="row">سجل تجاري 4030524305 · الرقم الموحّد 7036024383</div>
+          <div class="row">رأس المال 8,000,000 ﷼</div>
+          <div class="row">جدة — الشرفية — أبو بكر الصديق</div>
+        </div>
+      </div>
+      <div class="party">
+        <h3>الطرف الثاني — العميل</h3>
+        <div class="nm"><span class="field">[اسم العميل/المنشأة]</span></div>
+        <div class="row">سجل/هوية: <span class="field">[ ]</span></div>
+        <div class="row">العنوان: <span class="field">[ ]</span></div>
+        <div class="row">البريد المعتمد: <span class="field">[email@client.com]</span></div>
+      </div>
+    </div>
+
+    <p class="preamble">حيث إن الطرف الأول يملك ويشغّل منصة رقمية للأعمال — ركيزتها إنتاج ونشر محتوى مدوّنات عربية مُحسَّنة لمحركات البحث وفق نظام اشتراك، وقد تتيح خدمات أخرى تُضاف إليها مستقبلاً — ورغب الطرف الثاني في الاشتراك والاستفادة من خدمة المحتوى، فقد اتفق الطرفان وهما بكامل أهليتهما المعتبرة شرعاً ونظاماً على ما يلي:</p>
+
+    <div class="art"><h2>المادة 1 — التعريفات</h2>
+      <div class="plain">تعريفات سريعة للكلمات المستخدمة في العقد — عشان كل شي واضح.</div>
+      <p>يُقصد بالألفاظ التالية المعاني المبيّنة قرينها ما لم يقتضِ السياق خلافه:</p>
+      <ol>
+        <li><b>المنصة:</b> منصة مدونتي الرقمية وأنظمتها وأدواتها التابعة للطرف الأول، وتشمل خدمة المحتوى وأي خدمات أخرى قد تُضاف إليها.</li>
+        <li><b>الخدمة:</b> إنتاج ونشر محتوى المدوّنات المُحسَّن لمحركات البحث وما يرتبط به من تحسينات تقنية وتقارير، وفق الباقة.</li>
+        <li><b>الباقة:</b> حزمة الخدمة المختارة، المحدِّدة لعدد المقالات والمزايا والرسوم.</li>
+        <li><b>المحتوى المنشور:</b> المقالات والمواد التي تُنتجها المنصة وتُنشر لمصلحة العميل.</li>
+        <li><b>السجل الإلكتروني:</b> البيانات التي تنشئها المنصة عند قبول العميل (تاريخ القبول ووقته، رقم نسخة الشروط، البيانات التقنية للجلسة، البريد التأكيدي).</li>
+        <li><b>لوحة التحكم:</b> الواجهة الرقمية للاطلاع على المحتوى المنشور وتقارير الأداء والمؤشرات بصورة ذاتية.</li>
+        <li><b>النظام:</b> الأنظمة واللوائح المعمول بها في المملكة العربية السعودية.</li>
+      </ol>
+    </div>
+
+    <div class="art"><h2>المادة 2 — موضوع الاتفاقية</h2>
+      <div class="plain">خلاصة الاتفاق: اشتراكك في مدونتي حسب باقتك.</div>
+      <p>تنظيم اشتراك العميل في منصة مدونتي واستفادته من الخدمة وفق الباقة والمدة والرسوم المتفق عليها، وتحديد حقوق الطرفين والتزاماتهما.</p>
+    </div>
+
+    <div class="art"><h2>المادة 3 — نطاق الخدمة والتسليمات</h2>
+      <div class="plain">وش تاخذ بالضبط: مقالات شهرية + لوحة تحكم. أي خدمة ثانية (مثل الحجوزات) مش داخلة وتُدفع لحالها.</div>
+      <ol>
+        <li>يلتزم الطرف الأول بتزويد العميل بالخدمة وفق الباقة المختارة، وتشمل: نشر <span class="field">[ ]</span> مقالة شهرياً مُحسَّنة لمحركات البحث، والتحسينات التقنية المرتبطة، وإتاحة لوحة تحكم للاطلاع على المحتوى المنشور وتقارير الأداء والمؤشرات.</li>
+        <li>تُحدَّد تفاصيل الباقة ومزاياها في صفحة الأسعار أو ملحق الباقة المعتمد، ويُعدّ جزءاً لا يتجزأ من هذه الاتفاقية.</li>
+        <li>تقتصر هذه الاتفاقية على <b>خدمة المحتوى</b> المحدّدة في الباقة. أي خدمات أخرى تتيحها المنصة حالياً أو تُضاف إليها مستقبلاً (كخدمات الحجوزات أو غيرها) <b>لا تُعدّ جزءاً من هذه الاتفاقية ولا التزاماً على الطرف الأول بموجبها</b>، وتخضع — عند رغبة العميل فيها — لاتفاق منفصل ورسوم إضافية.</li>
+      </ol>
+    </div>
+
+    <div class="art"><h2>المادة 4 — مدة الاشتراك والتجديد</h2>
+      <div class="plain">متى تبدأ المدة، وكيف تتجدّد تلقائيًا، وكيف توقف التجديد لو ما تبي.</div>
+      <ol>
+        <li>تبدأ مدة الاشتراك من تاريخ نشر أول مقالة لمصلحة العميل، ولمدة <span class="field">[ ]</span> شهراً، ولا تُحتسب ضمنها فترة التهيئة والإعداد. فإن تأخّر نشر أول مقالة بسبب عدم تزويد العميل بما يلزم، تبدأ المدة بعد مضي <span class="field">[ ]</span> يوماً من تاريخ القبول.</li>
+        <li>يُجدَّد الاشتراك تلقائياً لمدة مماثلة، ما لم يُشعِر أحد الطرفين الآخر برغبته في عدم التجديد قبل <span class="field">[ ]</span> يوماً من انتهاء المدة.</li>
+      </ol>
+    </div>
+
+    <div class="art"><h2>المادة 5 — الرسوم والدفع</h2>
+      <div class="plain">رسوم باقتك شاملة الضريبة، وطرق الدفع. تأخّر السداد = إيقاف مؤقت. وما فعّلنا حسابك خلال 14 يوم؟ تسترد فلوسك كاملة.</div>
+      <ol>
+        <li>يلتزم العميل بسداد رسوم الباقة المختارة <b>شاملةً</b> ضريبة القيمة المضافة (السعر النهائي بلا إضافات)، وفق المبلغ والعملة ودورة الفوترة المحدّدة في <span class="field">[صفحة الأسعار / ملحق الباقة]</span> المعتمد وقت الاشتراك.</li>
+        <li>يكون السداد عبر التحويل البنكي للحساب المعتمد للطرف الأول، أو عبر InstaPay للعملاء في مصر، وذلك على النحو التالي:
+          <div class="pay">
+            <div class="ch">🇸🇦 <b>السعودية — تحويل بنكي:</b> البنك الأهلي السعودي · آيبان <code>SA3100000000300001687908</code></div>
+            <div class="ch">🇪🇬 <b>مصر — InstaPay:</b> <code>01227002786</code></div>
+            <div class="ch">🇪🇬 <b>مصر — تحويل بنكي:</b> بنك SAIB (فرع شيراتون) · آيبان <code>EG140035002902920303584810010</code> · سويفت <code>SBNKEGCXXXX</code></div>
+          </div>
+        </li>
+        <li>تصدر الفواتير إلكترونياً وفق نظام الفوترة الإلكترونية المعتمد.</li>
+        <li>في حال التأخر عن السداد مدة تتجاوز <span class="field">[ ]</span> يوماً، يحق للطرف الأول إيقاف الخدمة، دون إخلال بحقه في المطالبة بكامل مستحقاته.</li>
+        <li>إذا لم يؤسّس الطرف الأول حساب العميل الأساسي على المنصة خلال (14) يوماً من تاريخ سداده، حقّ للعميل استرداد كامل المبلغ المدفوع.</li>
+      </ol>
+    </div>
+
+    <div class="art"><h2>المادة 6 — النتائج والترتيب في محركات البحث</h2>
+      <div class="plain">نبني لك حضورًا حقيقيًا في محركات البحث بمحتوى احترافي مُحسّن.</div>
+      <ol>
+        <li>يلتزم الطرف الأول بإنتاج محتوى احترافي مُحسّن لمحركات البحث وتهيئته تقنيًا، والعمل على بناء حضور العميل بصورة تراكمية.</li>
+        <li>تنحصر التزامات الطرف الأول في تنفيذ أعمال التحسين والنشر ببذل العناية المهنية المعتادة، دون التزام بمركز معيّن أو عدد زيارات محدّد.</li>
+        <li>لا يُعدّ عدم بلوغ مركز أو عدد زيارات معيّن إخلالاً، ما دامت الأعمال قد نُفّذت باحتراف.</li>
+      </ol>
+    </div>
+
+    <div class="art"><h2>المادة 7 — التزامات الطرف الأول (مدونتي)</h2>
+      <div class="plain">اللي علينا: نفتح حسابك خلال 14 يوم، ننشر في مواعيدنا، نوفّر لك لوحة تحكم، ونحفظ سرية بياناتك.</div>
+      <ol>
+        <li>تأسيس حساب أساسي للعميل خلال مدة لا تتجاوز (14) يوماً من تاريخ سداده وقبوله الاتفاقية.</li>
+        <li>تقديم الخدمة بالجودة المهنية المعتادة ووفق الباقة.</li>
+        <li>الالتزام بمواعيد النشر والتسليمات المتفق عليها.</li>
+        <li>إتاحة لوحة تحكم للعميل يطّلع من خلالها على المحتوى المنشور وتقارير الأداء والمؤشرات، ويُعدّ توفيرها وفاءً بالتزام الطرف الأول بشأن التقارير دون التزام بإرسالها منفصلة.</li>
+        <li>المحافظة على سرية بيانات العميل.</li>
+      </ol>
+    </div>
+
+    <div class="art"><h2>المادة 8 — التزامات العميل</h2>
+      <div class="plain">اللي عليك: تعطينا اللي نحتاجه، ترد على المراجعات بوقتها، تسدّد في موعدك، وتتحمّل مسؤولية موادك.</div>
+      <ol>
+        <li>تزويد الطرف الأول بالمعلومات والصلاحيات والوصول اللازم لتقديم الخدمة.</li>
+        <li>الرد على طلبات الاعتماد والمراجعة خلال <span class="field">[ ]</span> أيام عمل، وإلا عُدّ ذلك موافقة ضمنية.</li>
+        <li>سداد الرسوم في مواعيدها.</li>
+        <li>عدم استخدام الخدمة في أي غرض مخالف للنظام.</li>
+        <li>يتحمّل العميل المسؤولية الكاملة (100%) عن كل ما يزوّد به الطرف الأول من معلومات أو بيانات أو صور أو وثائق، ويقرّ بملكيته لحقوقها وبأنها لا تخالف النظام أو حقوق الغير، ويُخلي مسؤولية الطرف الأول عن أي ضرر أو مطالبة تنشأ عنها.</li>
+      </ol>
+    </div>
+
+    <div class="art"><h2>المادة 9 — الملكية الفكرية</h2>
+      <div class="plain">المحتوى يصير ملكك بعد السداد الكامل. المنصّة وأدواتها تبقى لنا. ولنا نعرض صفحتك ونذكرك كعميل (تقدر تعترض كتابةً).</div>
+      <ol>
+        <li>يملك العميل المحتوى المنشور لمصلحته بعد سداد كامل رسومه المستحقة.</li>
+        <li>يحتفظ الطرف الأول بكامل حقوقه على المنصة وأنظمتها ومنهجيتها وأدواتها وقوالبها، ولا ينتقل منها شيء للعميل.</li>
+        <li>يحق للطرف الأول عرض صفحة العميل ومحتواه علناً على المنصة طوال مدة الاشتراك، والإشارة إلى العميل ضمن قائمة عملائه لأغراض التسويق، ما لم يعترض العميل كتابةً.</li>
+      </ol>
+    </div>
+
+    <div class="art"><h2>المادة 10 — السرية</h2>
+      <div class="plain">كل طرف يحفظ سرية معلومات الطرف الثاني، حتى بعد انتهاء العقد.</div>
+      <p>يلتزم كل طرف بالمحافظة على سرية المعلومات التي يطّلع عليها بحكم هذه الاتفاقية، وعدم إفشائها أو استخدامها لغير أغراضها، وتبقى هذه الالتزامات سارية بعد انتهاء الاتفاقية.</p>
+    </div>
+
+    <div class="art"><h2>المادة 11 — حماية البيانات الشخصية</h2>
+      <div class="plain">نلتزم بنظام حماية البيانات الشخصية السعودي في أي بيانات نتعامل معها.</div>
+      <p>يلتزم الطرفان بأحكام نظام حماية البيانات الشخصية ولوائحه التنفيذية في المملكة، فيما يتعلق بجمع أي بيانات شخصية أو معالجتها أو حفظها، وبحدود ما تقتضيه طبيعة الخدمة.</p>
+    </div>
+
+    <div class="art"><h2>المادة 12 — القبول الإلكتروني وحجية السجل</h2>
+      <div class="plain">نقرة «موافق» + البريد التأكيدي = توقيع رسمي مُلزِم، وتقدر تتأكد من الأنظمة بنفسك (روابط رسمية بالأسفل).</div>
+      <ol>
+        <li>يُعدّ نقر العميل على زر «موافق» قبولاً صريحاً وتوقيعاً إلكترونياً مُلزِماً على كامل بنود هذه الاتفاقية.</li>
+        <li>يُرسَل بريد إلكتروني تأكيدي تلقائي إلى البريد الرسمي للطرف الأول وإلى البريد المعتمد للعميل فور القبول.</li>
+        <li>يقرّ الطرفان بأن السجل الإلكتروني الناتج عن القبول — بما يشمل تاريخ القبول ووقته، ورقم نسخة الشروط، والبيانات التقنية المرتبطة بالجلسة، والبريد التأكيدي — يُعدّ دليلاً معتمداً وحجة بينهما، استناداً إلى <b>نظام التعاملات الإلكترونية</b> الصادر بالمرسوم الملكي رقم (م/18) وتاريخ 8/3/1428هـ، و<b>نظام الإثبات</b> الصادر بالمرسوم الملكي رقم (م/43) وتاريخ 26/5/1443هـ (ولا سيّما المادة الخامسة والعشرون بشأن الدليل الرقمي).</li>
+        <li>يتنازل العميل عن أي دفع بعدم حجية هذا السجل لمجرد كونه إلكترونياً.</li>
+      </ol>
+      <div class="verify">
+        <b>🔎 للتحقّق بنفسك:</b> قبولك الإلكتروني (النقر على «موافق» + البريد التأكيدي) يُعدّ توقيعاً ومستنداً رسمياً مُلزِماً في المملكة العربية السعودية. يمكنك قراءة النظامين من مصدرهما الحكومي الرسمي — البوابة الوطنية للأنظمة (هيئة الخبراء بمجلس الوزراء):
+        <ul>
+          <li><a href="https://laws.boe.gov.sa" target="_blank" rel="noopener">laws.boe.gov.sa</a> — البوابة الوطنية للأنظمة (ابحث باسم النظام أو رقم المرسوم)</li>
+          <li><a href="https://laws.boe.gov.sa/BoeLaws/Laws/LawDetails/2716057c-c097-4bad-8e1e-ae1400c678d5/1" target="_blank" rel="noopener">نظام الإثبات (م/43) — النص الرسمي</a></li>
+          <li><a href="https://www.mof.gov.sa/docslibrary/RegulationsInstructions/DocLib/%D9%86%D8%B8%D8%A7%D9%85%20%D8%A7%D9%84%D8%AA%D8%B9%D8%A7%D9%85%D9%84%D8%A7%D8%AA%20%D8%A7%D9%84%D8%A5%D9%84%D9%83%D8%AA%D8%B1%D9%88%D9%86%D9%8A%D8%A9.pdf" target="_blank" rel="noopener">نظام التعاملات الإلكترونية (م/18) — PDF رسمي</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="art"><h2>المادة 13 — تحديد المسؤولية</h2>
+      <div class="plain">لو صار ضرر، مسؤوليتنا محدودة بما دفعته في فترة محدّدة، وما نتحمّل الأضرار غير المباشرة.</div>
+      <p>لا يُسأل الطرف الأول عن أي أضرار غير مباشرة أو تبعية، وفي جميع الأحوال لا تتجاوز مسؤوليته إجمالي ما سدده العميل من رسوم خلال <span class="field">[ ]</span> أشهر السابقة لواقعة الضرر.</p>
+    </div>
+
+    <div class="art"><h2>المادة 14 — الإنهاء</h2>
+      <div class="plain">كيف ينتهي العقد، ووش يصير بصفحتك بعده.</div>
+      <ol>
+        <li>يحق لأي طرف إنهاء الاتفاقية بإشعار كتابي قبل <span class="field">[ ]</span> يوماً.</li>
+        <li>يحق للطرف الأول الإنهاء فوراً عند إخلال العميل بالسداد أو مخالفته الجوهرية للاتفاقية.</li>
+        <li>لا يترتب على الإنهاء استرداد الرسوم المدفوعة عن مدة الاشتراك الجارية، ما لم يُتفق على خلاف ذلك.</li>
+        <li>بعد انتهاء الاتفاقية أو إنهائها، <span class="field">[تبقى صفحة العميل منشورة / تُؤرشَف / تُحذف خلال ( ) يوماً]</span>، ويحق للعميل طلب نسخة من محتواه المنشور.</li>
+      </ol>
+    </div>
+
+    <div class="art"><h2>المادة 15 — القوة القاهرة</h2>
+      <div class="plain">لو صار ظرف قاهر خارج الإرادة (كارثة مثلًا)، ما أحد يتحمّل مسؤولية التقصير الناتج عنه.</div>
+      <p>لا يُسأل أي طرف عن الإخلال الناتج عن قوة قاهرة خارجة عن إرادته، على أن يُشعِر الطرف الآخر خلال مدة معقولة.</p>
+    </div>
+
+    <div class="art"><h2>المادة 16 — تعديل الشروط</h2>
+      <div class="plain">لو حدّثنا الشروط نبلّغك، واستمرارك في الخدمة = موافقة، ونحفظ نسخة كل شروط وافقت عليها.</div>
+      <p>يحق للطرف الأول تحديث شروط الخدمة، على أن يُشعِر العميل بالنسخة المحدّثة، ويُعدّ استمرار العميل في استخدام الخدمة قبولاً بها. وتُحفظ نسخة الشروط التي قبلها العميل برقم نسخة في السجل الإلكتروني.</p>
+    </div>
+
+    <div class="art"><h2>المادة 17 — القانون الحاكم وتسوية النزاعات</h2>
+      <div class="plain">العقد يخضع لأنظمة السعودية، وأي خلاف يُحلّ ودّيًا أول، وإن تعذّر فأمام الجهة المختصة.</div>
+      <ol>
+        <li>تخضع هذه الاتفاقية وتُفسَّر وفق أنظمة المملكة العربية السعودية.</li>
+        <li>ما ينشأ من نزاع يُسوّى ودياً، فإن تعذّر فيُحال إلى <span class="field">[المحاكم المختصة في مدينة جدة]</span>.</li>
+      </ol>
+    </div>
+
+    <div class="art"><h2>المادة 18 — أحكام عامة</h2>
+      <div class="plain">أحكام ختامية: هذا كامل الاتفاق، والعربية هي المعتمدة، وبطلان بند ما يبطل الباقي.</div>
+      <ol>
+        <li>تمثّل هذه الاتفاقية وملحقاتها كامل الاتفاق بين الطرفين، وتلغي ما سبقها من تفاهمات.</li>
+        <li>النسخة العربية هي المعتمدة عند أي اختلاف في التفسير.</li>
+        <li>إذا بطل أي بند، تبقى باقي البنود سارية ونافذة.</li>
+        <li>تُوجَّه الإشعارات على البريد الإلكتروني المعتمد لكل طرف.</li>
+      </ol>
+    </div>
+
+  </div>
+
+  <!-- ملخّص + قبول إلكتروني -->
+  <div class="accept-wrap">
+    <div class="terms-summary">
+      <div class="ts"><div class="k">الباقة</div><div class="v"><span class="field">[ ]</span></div></div>
+      <div class="ts"><div class="k">الرسوم (شامل الضريبة)</div><div class="v"><span class="field">[ ] حسب الباقة</span></div></div>
+      <div class="ts"><div class="k">المدة</div><div class="v"><span class="field">[ ] شهر</span></div></div>
+      <div class="ts"><div class="k">المقالات</div><div class="v"><span class="field">[ ] / شهر</span></div></div>
+    </div>
+
+    <div id="form">
+      <label class="chk">
+        <input type="checkbox" id="agree" onchange="document.getElementById('btn').disabled=!this.checked" />
+        <span>أقررّ بأنني قرأت اتفاقية الاشتراك كاملةً وفهمت بنودها، وأوافق عليها موافقةً مُلزِمة.</span>
+      </label>
+      <button class="accept-btn" id="btn" disabled onclick="accept()">✔ موافق — قبول الاتفاقية إلكترونياً</button>
+      <div class="fine">بنقرك «موافق» يُسجَّل قبولك إلكترونياً (التاريخ والوقت + رقم النسخة + بيانات الجلسة) ويُرسَل إيميل تأكيدي لك وللطرف الأول — ويُعدّ ذلك توقيعاً مُلزِماً وفق نظام التعاملات الإلكترونية.</div>
+    </div>
+
+    <div class="done" id="done">
+      <div class="big">✅ تم قبول الاتفاقية</div>
+      <div class="small" id="doneInfo"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function accept(){
+    const now = new Date();
+    const stamp = now.toLocaleString('ar-SA',{dateStyle:'full',timeStyle:'medium'});
+    document.getElementById('form').style.display='none';
+    document.getElementById('done').style.display='block';
+    document.getElementById('doneInfo').innerHTML =
+      'نسخة الشروط: <b>v1.0</b><br/>وقت القبول: ' + stamp +
+      '<br/>أُرسل إيميل تأكيدي إلى بريدك وإلى modonty@modonty.com.';
+  }
+</script>
+</body>
+</html>

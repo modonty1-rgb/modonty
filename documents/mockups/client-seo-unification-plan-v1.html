@@ -1,0 +1,284 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>خطة سيو العميل — متحقَّقة من الكود 200%</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --border: #e4e7ec; --text: #1a1d21;
+    --muted: #667085; --primary: #6d28d9; --primary-soft: #f3edff;
+    --good: #059669; --good-soft: #ecfdf5; --warn: #d97706; --warn-soft: #fffbeb;
+    --bad: #dc2626; --code-bg: #0f172a; --code-fg: #e2e8f0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b0e14; --card: #141922; --border: #232a36; --text: #e6e9ef;
+      --muted: #8b95a5; --primary: #a78bfa; --primary-soft: #1e1b30;
+      --good: #34d399; --good-soft: #0c2a22; --warn: #fbbf24; --warn-soft: #2a220c;
+      --bad: #f87171; --code-bg: #0a0e16; --code-fg: #cbd5e1;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b0e14; --card: #141922; --border: #232a36; --text: #e6e9ef;
+    --muted: #8b95a5; --primary: #a78bfa; --primary-soft: #1e1b30;
+    --good: #34d399; --good-soft: #0c2a22; --warn: #fbbf24; --warn-soft: #2a220c;
+    --bad: #f87171; --code-bg: #0a0e16; --code-fg: #cbd5e1;
+  }
+  :root[data-theme="light"] {
+    --bg: #f6f7f9; --card: #ffffff; --border: #e4e7ec; --text: #1a1d21;
+    --muted: #667085; --primary: #6d28d9; --primary-soft: #f3edff;
+    --good: #059669; --good-soft: #ecfdf5; --warn: #d97706; --warn-soft: #fffbeb;
+    --bad: #dc2626; --code-bg: #0f172a; --code-fg: #e2e8f0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Tajawal", -apple-system, "Segoe UI", system-ui, sans-serif;
+    direction: rtl; line-height: 1.7; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 24px 18px 80px; }
+  code, .path, .ev code { direction: ltr; unicode-bidi: embed; font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; }
+
+  header.top { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand .dot { width: 34px; height: 34px; border-radius: 10px; background: var(--primary); display: grid; place-items: center; color: #fff; font-weight: 900; font-size: 18px; }
+  h1 { font-size: 20px; margin: 0; font-weight: 800; }
+  .sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .theme-btn { margin-inline-start: auto; background: var(--card); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 7px 12px; cursor: pointer; font-size: 13px; font-weight: 700; }
+
+  .verified-banner { background: var(--good-soft); border: 1px solid var(--good); border-radius: 14px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: var(--good); font-weight: 700; }
+  .verified-banner b { color: var(--text); }
+
+  .progress-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; margin-bottom: 22px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .ring { position: relative; width: 92px; height: 92px; flex-shrink: 0; }
+  .ring b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 22px; font-weight: 900; color: var(--primary); }
+  .progress-meta { flex: 1; min-width: 200px; }
+  .progress-meta h2 { margin: 0 0 6px; font-size: 15px; font-weight: 800; }
+  .bar { height: 9px; border-radius: 999px; background: var(--border); overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--primary); border-radius: 999px; transition: width .35s ease; }
+  .count { font-size: 13px; color: var(--muted); margin-top: 8px; }
+
+  .decision { background: var(--primary-soft); border: 1px solid var(--primary); border-radius: 16px; padding: 16px 18px; margin-bottom: 24px; }
+  .decision h3 { margin: 0 0 8px; font-size: 15px; font-weight: 800; }
+  .decision > p { margin: 0; font-size: 13px; color: var(--muted); }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  @media (max-width: 640px) { .split { grid-template-columns: 1fr; } }
+  .split .col { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+  .split .col .h { font-weight: 800; font-size: 13.5px; margin-bottom: 6px; }
+  .split .col ul { margin: 0; padding-inline-start: 18px; font-size: 12.5px; color: var(--muted); }
+  .split .col ul li { margin-bottom: 3px; }
+  .split .col ul li code { font-size: 11px; color: var(--text); }
+  .split .col.owner .h { color: var(--warn); }
+  .split .col.system .h { color: var(--primary); }
+  .split .col .proof { margin-top: 8px; font-size: 11px; color: var(--good); direction: ltr; text-align: left; }
+
+  .phase { background: var(--card); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 16px; overflow: hidden; }
+  .phase > summary { list-style: none; cursor: pointer; padding: 16px 18px; display: flex; align-items: center; gap: 12px; }
+  .phase > summary::-webkit-details-marker { display: none; }
+  .phase .pnum { width: 30px; height: 30px; border-radius: 9px; background: var(--primary-soft); color: var(--primary); display: grid; place-items: center; font-weight: 900; font-size: 14px; flex-shrink: 0; }
+  .phase .ptitle { font-weight: 800; font-size: 15px; flex: 1; }
+  .phase .pcount { font-size: 12px; font-weight: 700; color: var(--muted); background: var(--bg); border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px; }
+  .phase .chev { color: var(--muted); transition: transform .2s; }
+  .phase[open] .chev { transform: rotate(180deg); }
+  .tasks { border-top: 1px solid var(--border); padding: 6px 10px 12px; }
+
+  .task { display: flex; gap: 12px; padding: 12px 10px; border-radius: 12px; align-items: flex-start; }
+  .task + .task { border-top: 1px dashed var(--border); }
+  .task input[type=checkbox] { appearance: none; -webkit-appearance: none; width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 7px; cursor: pointer; flex-shrink: 0; margin-top: 2px; position: relative; background: var(--bg); transition: .15s; }
+  .task input[type=checkbox]:checked { background: var(--good); border-color: var(--good); }
+  .task input[type=checkbox]:checked::after { content: "✓"; position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-weight: 900; font-size: 14px; }
+  .task .body { flex: 1; min-width: 0; }
+  .task .tid { font-size: 11px; font-weight: 800; color: var(--primary); letter-spacing: .5px; }
+  .task .ttitle { font-weight: 700; font-size: 14.5px; margin: 1px 0 4px; }
+  .task.done .ttitle { text-decoration: line-through; color: var(--muted); }
+  .task .files { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+  .task .files .f { font-size: 11.5px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 2px 7px; }
+  .task .verify { font-size: 12.5px; color: var(--muted); }
+  .task .verify b { color: var(--good); font-weight: 800; }
+  .task .ev { margin-top: 5px; font-size: 11.5px; color: var(--good); background: var(--good-soft); border: 1px solid color-mix(in srgb, var(--good) 30%, transparent); border-radius: 7px; padding: 4px 8px; display: inline-block; }
+  .task .ev::before { content: "🔎 دليل: "; color: var(--muted); font-weight: 700; }
+
+  .tag { font-size: 10.5px; font-weight: 800; border-radius: 999px; padding: 2px 8px; margin-inline-start: 6px; vertical-align: middle; }
+  .tag.done { background: var(--good-soft); color: var(--good); }
+  .tag.build { background: var(--primary-soft); color: var(--primary); }
+  footer { text-align: center; color: var(--muted); font-size: 12.5px; margin-top: 26px; }
+  .reset { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 12px; margin-top: 10px; }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="dot">م</div>
+      <div>
+        <h1>خطة توحيد سيو العميل</h1>
+        <div class="sub">كل بند متحقَّق بقراءة الكود مباشرة (ملف:سطر) · v2 · 2026-07-18</div>
+      </div>
+    </div>
+    <button class="theme-btn" onclick="toggleTheme()">🌓 الثيم</button>
+  </header>
+
+  <div class="verified-banner">
+    ✅ هذه النسخة خالية من التخمين. كل «حقيقة» عليها <b>دليل من الكود</b> (ملف:سطر قرأته بنفسي هذه الجلسة). البنود التي هي <b>بناء</b> موسومة صراحةً، وليست ادعاءات عن الوضع الحالي.
+  </div>
+
+  <div class="progress-card">
+    <div class="ring">
+      <svg width="92" height="92" viewBox="0 0 92 92" style="transform: rotate(-90deg)">
+        <circle cx="46" cy="46" r="40" fill="none" stroke="var(--border)" stroke-width="9" />
+        <circle id="ringFill" cx="46" cy="46" r="40" fill="none" stroke="var(--primary)" stroke-width="9" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2" />
+      </svg>
+      <b id="ringPct">0%</b>
+    </div>
+    <div class="progress-meta">
+      <h2>التقدّم الكلّي</h2>
+      <div class="bar"><i id="barFill" style="width:0%"></i></div>
+      <div class="count"><span id="doneCount">0</span> من <span id="totalCount">0</span> بند مكتمل · يُحفظ في متصفحك تلقائياً</div>
+    </div>
+  </div>
+
+  <div class="decision">
+    <h3>🔒 تقسيم الملكية — مُتحقَّق من مولّد السيو</h3>
+    <p>العميل لا يُنشر عبر state machine → لا بوابة نشر مثل المقال. النواقص نوعان، والتصنيف أدناه مُثبَت من <code>dataLayer/lib/seo/generate-client-seo-bundle.ts</code>.</p>
+    <div class="split">
+      <div class="col owner">
+        <div class="h">📝 يحتاج بياناتك (يعبّيها العميل/الأدمن)</div>
+        <ul>
+          <li>عنوان السيو <code>seoTitle</code> — وإلا يصير = الاسم فقط</li>
+          <li>وصف السيو <code>seoDescription</code></li>
+          <li>الشعار <code>logoMediaId</code> · صورة الغلاف <code>heroImageMediaId</code></li>
+          <li>الهوية: <code>description·alternateName·url</code></li>
+          <li>التواصل: <code>phone·email·address</code></li>
+          <li>المعرّفات · <code>sameAs</code> · Local (geo/hours/priceRange)</li>
+        </ul>
+        <div class="proof">bundle.ts:215 → title = seoTitle || name</div>
+      </div>
+      <div class="col system">
+        <div class="h">🤖 النظام يصلحها تلقائياً (عند التوليد)</div>
+        <ul>
+          <li>البنية المهيكلة <code>jsonld.graph</code></li>
+          <li>صحّة JSON-LD <code>jsonld.valid</code> · التحذيرات</li>
+          <li>الرابط الأساسي <code>canonical</code></li>
+          <li>لغات الصفحة <code>hreflang</code></li>
+        </ul>
+        <div class="proof">bundle.ts:204 canonical fallback · 280-293 hreflang → settings</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="phases"></div>
+
+  <footer>
+    <div>«يخلص» = اضغط المربّع → يتحدّث التقدّم ويُحفظ · البناء بعد اعتماد خالد</div>
+    <button class="reset" onclick="resetAll()">تصفير كل الـ Check</button>
+  </footer>
+</div>
+
+<script>
+  const PHASES = [
+    {
+      n: 0, title: "الوضع الحالي — حقائق متحقَّقة بقراءة الكود (2026-07-18)", open: true,
+      tasks: [
+        { id: "0.1", t: "حاسبة واحدة للسيو (لا مكرّرة)", files: ["dataLayer/lib/seo/client/seo-score.ts"], v: "computeClientEntitySeo → {meta, jsonLd, overall}", ev: "seo-score.ts:21", done: true },
+        { id: "0.2", t: "لا يوجد مقياس مزيّف للعميل", files: [], v: "grep analyzeClientSEO = صفر نتائج", ev: "grep على مجلد admin", done: true },
+        { id: "0.3", t: "جدول العملاء يحسب بالمقياس الحقيقي", files: ["client-table.tsx"], v: "computeClientSeoScore(clientToSeoInput(client))", ev: "client-table.tsx:311", done: true },
+        { id: "0.4", t: "صفحة تفاصيل العميل تحسب بالمقياس الحقيقي", files: ["clients/[id]/page.tsx"], v: "نفس الحاسبة", ev: "page.tsx:186", done: true },
+        { id: "0.5", t: "صفحة /seo: درجة الجاهزية = المقياس الحقيقي (كانت مظنونة ناقصة — خطأ)", files: ["client-seo-form.tsx"], v: "«same scorer everywhere»", ev: "client-seo-form.tsx:255", done: true },
+        { id: "0.6", t: "computeGroupScores في الفورم = دليل تعبئة حيّ مقصود، لا انجراف", files: ["client-seo-form.tsx"], v: "نقاط تشخيص صغيرة أسفل الفورم", ev: "client-seo-form.tsx:217-224 · 665 · 722", done: true },
+        { id: "0.7", t: "المحوّل clientToSeoInput موجود أصلاً (لا حاجة لإنشائه)", files: ["dataLayer/lib/seo/client/from-client.ts"], v: "يحوّل صف العميل لمدخلات المقياس", ev: "from-client.ts:7", done: true },
+        { id: "0.8", t: "المولّد يعبّي canonical/hreflang تلقائياً (أساس تقسيم الملكية)", files: ["generate-client-seo-bundle.ts"], v: "canonical من slug · hreflang من settings", ev: "bundle.ts:204 · 280-293", done: true },
+        { id: "0.9", t: "صفحة /clients/[id]/technical غير موجودة → الشغل الحقيقي", files: [], v: "ls = لا مجلد technical", ev: "فحص المجلد", done: true },
+        { id: "0.10", t: "دليل المقال قابل لإعادة الاستخدام (نفس أنواع الفحوص)", files: ["articles/[id]/technical/page.tsx"], v: "يستورد SeoCheck+report من client/types", ev: "technical/page.tsx:7", done: true },
+        { id: "0.11", t: "إصلاح 404 على /clients (كاش Turbopack)", files: [], v: "GET /clients 200 بعد next dev نظيف", ev: "سجل السيرفر", done: true },
+      ]
+    },
+    {
+      n: 1, title: "بناء صفحة الدليل /technical للعميل (اللمبة)", open: true, tag: "build",
+      tasks: [
+        { id: "1.1", t: "أنشئ الصفحة — Server Component يجلب صف العميل ويحسب computeClientEntitySeo", files: ["clients/[id]/technical/page.tsx", "loading.tsx"], v: "getClientById + clientToSeoInput + computeClientEntitySeo", ev: "technical/page.tsx", done: true },
+        { id: "1.2", t: "حلقة الدرجة + المقياسان الفرعيان (META + JSON-LD)", files: ["technical/page.tsx"], v: "ScoreBar × 2 + ring SVG", done: true },
+        { id: "1.3", t: "الطريق من X% إلى 100% (كم بند عليك · كم على النظام)", files: ["technical/page.tsx"], v: "roadmap banner", done: true },
+        { id: "1.4", t: "تقسيم النواقص: 📝 بياناتك / 🤖 النظام", files: ["technical/page.tsx"], v: "DATA_KEYS split", done: true },
+        { id: "1.5", t: "ترجمة أخطاء JSON-LD لعربي واضح (Organization)", files: ["technical/page.tsx"], v: "plainJsonLdError() (logo/address/phone…)", done: true },
+        { id: "1.6", t: "عرض META JSON + JSON-LD الخام", files: ["technical/page.tsx"], v: "CodeBlock × 2", done: true },
+        { id: "1.7", t: "قسم «مكتمل» القابل للطي", files: ["technical/page.tsx"], v: "passed checks", done: true },
+      ]
+    },
+    {
+      n: 2, title: "ربط عرض السيو بالدليل + توحيد الأيقونة", open: true, tag: "build",
+      tasks: [
+        { id: "2.1", t: "شريحة السيو في هيدر التفاصيل = لينك لـ /technical (جنب Edit/Delete)", files: ["client-header.tsx"], v: "chip 67% → /technical", ev: "chip nearEdit=true", done: true },
+        { id: "2.2", t: "إزالة البانر المكرّر أسفل التفاصيل (الشريحة فوق تكفي)", files: ["clients/[id]/page.tsx"], v: "بلا تكرار", done: true },
+        { id: "2.3", t: "كرت الجاهزية في صفحة التعديل = لمحة + لينك للدليل (بدل الـ checklist المكرّر)", files: ["edit-workspace/edit-left-panel.tsx"], v: "checklist انشال + رابط للدليل", done: true },
+        { id: "2.4", t: "توحيد أيقونة SEO = شعار Google في كل مكان (بدل SEO/عدسة)", files: ["components/admin/icons/google-icon.tsx", "client-table.tsx", "client-header.tsx"], v: "أيقونة واحدة موحّدة", done: true },
+      ]
+    },
+    {
+      n: 3, title: "تحقّق + نشر", open: true, tag: "build",
+      tasks: [
+        { id: "3.1", t: "تأكيد حي: نفس الرقم في القائمة · التفاصيل · الدليل", files: [], v: "67 = 67 = 67 (جبر سيو)", ev: "Playwright: table + detail + technical", done: true },
+        { id: "3.2", t: "تتبّع الدائرة: تعديل بيانات كونسول → التوليد → الدرجة ترتفع في الدليل", files: [], v: "generateClientSEO → score↑" },
+        { id: "3.3", t: "tsc صفر أخطاء (admin)", files: [], v: "pnpm tsc --noEmit" },
+        { id: "3.4", t: "version bump + backup + changelog", files: ["admin/package.json"], v: "0.89.0 → 0.90.0" },
+        { id: "3.5", t: "push (بعد إذن خالد)", files: [], v: "بانتظار «ادفع»" },
+      ]
+    },
+  ];
+
+  const KEY = "client-seo-plan-v2";
+  let state = JSON.parse(localStorage.getItem(KEY) || "{}");
+
+  function render() {
+    const host = document.getElementById("phases");
+    host.innerHTML = "";
+    let total = 0, done = 0;
+    for (const ph of PHASES) {
+      const doneN = ph.tasks.filter(t => isDone(t)).length;
+      total += ph.tasks.length; done += doneN;
+      const det = document.createElement("details");
+      det.className = "phase";
+      if (ph.open) det.open = true;
+      const allDone = doneN === ph.tasks.length;
+      const tagHtml = allDone ? '<span class="tag done">مكتمل</span>' : (ph.tag === "build" ? '<span class="tag build">بناء</span>' : '');
+      det.innerHTML =
+        '<summary>' +
+          '<span class="pnum">' + ph.n + '</span>' +
+          '<span class="ptitle">' + ph.title + tagHtml + '</span>' +
+          '<span class="pcount">' + doneN + '/' + ph.tasks.length + '</span>' +
+          '<span class="chev">▾</span>' +
+        '</summary>' +
+        '<div class="tasks">' + ph.tasks.map(taskHtml).join("") + '</div>';
+      host.appendChild(det);
+    }
+    document.getElementById("totalCount").textContent = total;
+    document.getElementById("doneCount").textContent = done;
+    const pct = total ? Math.round(done / total * 100) : 0;
+    document.getElementById("ringPct").textContent = pct + "%";
+    document.getElementById("barFill").style.width = pct + "%";
+    const C = 251.2;
+    document.getElementById("ringFill").style.strokeDashoffset = C - (pct / 100) * C;
+  }
+
+  function isDone(t) { return t.done || state[t.id] === true; }
+
+  function taskHtml(t) {
+    const d = isDone(t);
+    const locked = t.done ? "disabled" : "";
+    return '<label class="task ' + (d ? 'done' : '') + '">' +
+      '<input type="checkbox" ' + (d ? 'checked' : '') + ' ' + locked + ' onchange="toggle(\'' + t.id + '\', this.checked)" />' +
+      '<div class="body">' +
+        '<div class="tid">TASK ' + t.id + (t.done ? '<span class="tag done">متحقَّق</span>' : '') + '</div>' +
+        '<div class="ttitle">' + t.t + '</div>' +
+        (t.files.length ? '<div class="files">' + t.files.map(f => '<span class="f path">' + f + '</span>').join("") + '</div>' : "") +
+        (t.v ? '<div class="verify">تحقّق: <b>' + t.v + '</b></div>' : "") +
+        (t.ev ? '<div class="ev"><code>' + t.ev + '</code></div>' : "") +
+      '</div>' +
+    '</label>';
+  }
+
+  function toggle(id, val) { state[id] = val; localStorage.setItem(KEY, JSON.stringify(state)); render(); }
+  function resetAll() { if (confirm("تصفير كل الـ Check؟")) { state = {}; localStorage.removeItem(KEY); render(); } }
+  function toggleTheme() {
+    const cur = document.documentElement.getAttribute("data-theme");
+    const next = cur === "dark" ? "light" : cur === "light" ? "dark" : (matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "dark");
+    document.documentElement.setAttribute("data-theme", next);
+  }
+  render();
+</script>

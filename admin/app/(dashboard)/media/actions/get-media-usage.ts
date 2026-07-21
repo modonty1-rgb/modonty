@@ -56,6 +56,10 @@ export async function getMediaUsage(id: string, clientId?: string) {
       featuredIn: media.featuredArticles,
       inArticle: inGallery,
       totalUsage: media.featuredArticles.length + inGallery.length,
+      // The image's own type + owning client — needed to protect client-owned GALLERY /
+      // CLIENT_MINI images (live on the client page with no back-relation) from deletion.
+      mediaType: media.type,
+      ownerClientId: media.clientId,
       clientUsage: {
         logoClients: media.logoClients,
         heroImageClients: media.heroImageClients,

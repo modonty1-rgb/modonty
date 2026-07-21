@@ -14,6 +14,7 @@ import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Eye, Folder
 import { cn } from "@/lib/utils";
 import { getArticleSeoScore } from "@/lib/seo/article-seo-score";
 import { GoogleIcon } from "@/components/admin/icons/google-icon";
+import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import type { Article as ArticleViewType } from "../[id]/helpers/article-view-types";
 
 type Article = ArticleViewType & {
@@ -24,17 +25,7 @@ function ArticleTableSEOScore({ article }: { article: ArticleViewType }) {
   // Shared dataLayer scorer — the same number the article badge and segment tables show.
   const score = useMemo(() => getArticleSeoScore(article), [article]);
 
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return 'bg-green-500 text-white';
-    if (score >= 60) return 'bg-yellow-500 text-white';
-    return 'bg-red-500 text-white';
-  };
-
-  return (
-    <Badge className={cn('px-2 py-0.5 text-xs font-semibold', getScoreColor(score))}>
-      {score}%
-    </Badge>
-  );
+  return <SeoScoreBadge score={score} size="sm" />;
 }
 
 interface ArticleTableProps {

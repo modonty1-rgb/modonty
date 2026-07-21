@@ -58,6 +58,7 @@ export type AuditEntity =
   | "Media"
   | "ContactMessage"
   | "User"
+  | "Staff"
   | "Settings"
   | "Database"
   | "Seo";
@@ -90,8 +91,8 @@ export async function logAction(action: AuditAction, options: LogOptions): Promi
     // they are allowed to do today. Best-effort — a failure here must not cost us the row.
     let role: string | null = null;
     try {
-      const user = await db.user.findUnique({ where: { id: userId }, select: { role: true } });
-      role = user?.role ?? null;
+      const staff = await db.staff.findUnique({ where: { id: userId }, select: { role: true } });
+      role = staff?.role ?? null;
     } catch {
       // leave null
     }

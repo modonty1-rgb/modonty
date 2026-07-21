@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مشكلة الحجز وحلّها — مستند واحد شامل</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a; --ink:#e8ebf1; --muted:#98a2b3; --dim:#6b7480;
+    --red:#ef4444; --amber:#f59e0b; --emerald:#10b981; --blue:#3b82f6; --violet:#8b5cf6;
+    --wa:#25d366; --p:#0ea5b7;
+    --redbg:rgba(239,68,68,.12); --amberbg:rgba(245,158,11,.12); --emeraldbg:rgba(16,185,129,.12); --bluebg:rgba(59,130,246,.12);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal","Segoe UI",system-ui,"Noto Kufi Arabic",sans-serif;line-height:1.85;font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1040px;margin:0 auto;padding:26px 20px 80px}
+  .kicker{color:var(--dim);font-size:12.5px;letter-spacing:.5px;margin-bottom:6px}
+  h1{font-size:26px;line-height:1.35;margin:0 0 8px;font-weight:800}
+  h2{font-size:20px;margin:40px 0 14px;font-weight:800;display:flex;align-items:center;gap:10px;padding-top:10px;border-top:1px solid var(--line)}
+  h2 .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--panel2);color:var(--blue);font-size:14px;font-weight:800;border:1px solid var(--line)}
+  h3{font-size:15px;margin:0 0 4px;font-weight:700}
+  p{margin:0 0 12px}
+  .sub{color:var(--muted);font-size:14.5px}
+  code{background:#0b0d11;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-family:Consolas,monospace;font-size:12.5px;color:#c8d0dc;direction:ltr;display:inline-block}
+  .chip{display:inline-block;background:#0b0d11;border:1px solid var(--line);color:var(--dim);border-radius:6px;padding:1px 8px;font-size:11.5px;font-family:"Segoe UI",system-ui;direction:ltr;margin:2px 2px 0}
+
+  .hero{background:linear-gradient(180deg,rgba(239,68,68,.10),transparent 70%),var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px 22px;margin-top:14px}
+  .tag{display:inline-block;border-radius:999px;padding:3px 12px;font-size:12.5px;font-weight:700}
+  .tag.red{background:var(--redbg);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+  .tag.green{background:var(--emeraldbg);color:var(--emerald);border:1px solid rgba(16,185,129,.3)}
+  .bignum{display:flex;gap:22px;flex-wrap:wrap;margin:16px 0 2px}
+  .bignum .cell{flex:1;min-width:120px}
+  .bignum .v{font-size:38px;font-weight:800;line-height:1}
+  .bignum .v.red{color:var(--red)} .bignum .v.mut{color:var(--muted)}
+  .bignum .l{color:var(--dim);font-size:13px;margin-top:6px}
+  .arrow{align-self:center;color:var(--dim);font-size:24px}
+
+  .funnel{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+  .step{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 15px}
+  .step .bar{height:10px;border-radius:6px;background:var(--blue)}
+  .step .lab{flex:1;font-size:13.5px}
+  .step .val{font-weight:800;font-size:15px}
+  .step.drop{border-color:rgba(239,68,68,.4);background:var(--redbg)}
+  .step.zero .val{color:var(--red)}
+
+  .callout{border-radius:12px;padding:15px 17px;margin:14px 0}
+  .callout.green{background:var(--emeraldbg);border:1px solid rgba(16,185,129,.3)}
+  .callout.blue{background:var(--bluebg);border:1px solid rgba(59,130,246,.3)}
+  .callout.amber{background:var(--amberbg);border:1px solid rgba(245,158,11,.3)}
+
+  .cause{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0;border-inline-start:4px solid var(--line)}
+  .cause.c1{border-inline-start-color:var(--red)} .cause.c2{border-inline-start-color:var(--amber)} .cause.c3{border-inline-start-color:var(--blue)}
+  .cause .head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+  .rank{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;font-weight:800;font-size:12px;color:#0b0d11}
+  .rank.r1{background:var(--red)} .rank.r2{background:var(--amber)} .rank.r3{background:var(--blue)}
+  .sev{margin-inline-start:auto;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px}
+  .sev.high{background:var(--redbg);color:var(--red)} .sev.med{background:var(--amberbg);color:var(--amber)}
+
+  /* before/after stage */
+  .stage{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;margin:20px 0}
+  .col{flex:1;min-width:300px;max-width:395px}
+  .col .cap{text-align:center;font-weight:800;font-size:13.5px;margin-bottom:10px;padding:6px;border-radius:8px}
+  .col.before .cap{background:var(--redbg);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+  .col.after .cap{background:var(--emeraldbg);color:var(--emerald);border:1px solid rgba(16,185,129,.25)}
+  .phone{background:#fff;color:#0d1220;border-radius:26px;padding:14px 14px 18px;box-shadow:0 30px 60px -20px rgba(0,0,0,.7);border:1px solid #e6e8ee}
+  .phone.dim{opacity:.6;filter:grayscale(.3)}
+  .notch{width:110px;height:5px;background:#d7dbe3;border-radius:99px;margin:2px auto 12px}
+  .m-back{color:#8a93a3;font-size:12.5px;margin-bottom:10px}
+  .m-head{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;padding:14px 10px;border:1px solid #eceef3;border-radius:16px;background:linear-gradient(180deg,rgba(14,165,183,.06),#fff)}
+  .m-logo{width:58px;height:58px;border-radius:16px;background:#eef7f9;display:grid;place-items:center;position:relative;border:2px solid rgba(14,165,183,.3);font-size:26px}
+  .m-logo .v{position:absolute;bottom:-4px;inset-inline-start:-4px;width:20px;height:20px;border-radius:99px;background:var(--p);color:#fff;display:grid;place-items:center;font-size:11px;border:2px solid #fff}
+  .m-name{font-weight:800;font-size:15px;color:#0d1220}
+  .m-trust{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;font-size:11px;color:#5b6472}
+  .m-trust b{color:#0d1220}.star{color:#f59e0b}
+  .m-body{padding:12px 2px 0}
+  .field{background:#f4f6f9;border:1px solid #e4e7ee;border-radius:11px;padding:11px 12px;font-size:13px;color:#8a93a3;margin:8px 0}
+  .field.small{padding:10px 12px}
+  .label{font-weight:700;font-size:12.5px;color:#3a4250;margin:12px 0 4px}
+  .chipsrow{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+  .mchip{background:#f4f6f9;border:1px solid #e4e7ee;border-radius:9px;padding:7px 10px;font-size:11.5px;color:#5b6472}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:13px;font-weight:800;font-size:14.5px;margin:10px 0}
+  .btn.wa{background:var(--wa);color:#fff} .btn.pri{background:var(--p);color:#fff} .btn.grey{background:#e9ebf0;color:#9aa2b0}
+  .or{display:flex;align-items:center;gap:10px;color:#9aa2b0;font-size:12px;margin:12px 0}
+  .or::before,.or::after{content:"";flex:1;height:1px;background:#e6e8ee}
+  .micro{font-size:11px;color:#8a93a3;text-align:center;margin-top:-2px}
+  .info{background:#f2fbfc;border:1px solid #b9dfe6;border-radius:11px;padding:9px 11px;font-size:11px;color:#256b76;margin:12px 0 0;display:flex;gap:7px;align-items:flex-start;line-height:1.6}
+  .disc-old{background:#fff7ed;border:1px solid #fde3c2;border-radius:11px;padding:9px 11px;font-size:11px;color:#9a6a2c;margin:10px 0;display:flex;gap:7px;align-items:flex-start}
+  .cb{width:15px;height:15px;border:1.5px solid #cbd2dc;border-radius:4px;flex-shrink:0;display:inline-block;margin-top:1px}
+  .disclose{display:flex;align-items:center;justify-content:center;gap:6px;color:var(--p);font-size:12.5px;font-weight:700;border:1px dashed #b9dfe6;border-radius:10px;padding:9px;margin:10px 0;background:#f2fbfc}
+  .pin{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:99px;background:var(--emerald);color:#04140d;font-size:10.5px;font-weight:800;vertical-align:middle;margin-inline-end:5px}
+  .pinr{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:99px;background:var(--red);color:#fff;font-size:10.5px;font-weight:800;vertical-align:middle;margin-inline-end:5px}
+
+  .count{display:flex;gap:14px;justify-content:center;margin:6px 0 0;flex-wrap:wrap}
+  .count .c{flex:1;min-width:130px;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .count .c .v{font-size:26px;font-weight:800}
+  .count .c.bad .v{color:var(--red)} .count .c.good .v{color:var(--emerald)}
+  .count .c .l{font-size:11.5px;color:var(--dim);margin-top:2px}
+
+  .change{display:flex;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:9px 0}
+  .change .pn{flex-shrink:0;width:26px;height:26px;border-radius:8px;background:var(--panel2);color:var(--emerald);font-weight:800;display:grid;place-items:center;font-size:13px;border:1px solid var(--line)}
+  .change p{margin:0;font-size:13px;color:var(--muted)}
+  .change .why{color:var(--dim);font-size:12px;margin-top:3px}
+
+  .lock{display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin:8px 0}
+  .lock .ic{flex-shrink:0;width:24px;height:24px;border-radius:7px;background:var(--emeraldbg);color:var(--emerald);display:grid;place-items:center;font-weight:800}
+  .lock.warn .ic{background:var(--amberbg);color:var(--amber)}
+  .lock b{color:var(--ink)}
+  ul{margin:8px 0 4px;padding-inline-start:22px} li{margin:5px 0}
+  .src{font-size:13px;color:var(--muted)} .src a{color:var(--blue);text-decoration:none;direction:ltr;display:inline-block} .src li{margin:6px 0}
+  .foot{color:var(--dim);font-size:12.5px;text-align:center;margin-top:40px;border-top:1px solid var(--line);padding-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="kicker">مستند واحد · مشكلة + حل · صفحة «احجز الآن» · مدوّنتي — ١٩ يوليو ٢٠٢٦</div>
+  <h1>لماذا لم يُكمل أحد الحجز — وكيف نصلحه</h1>
+  <p class="sub">تشخيص مؤكد بالبيانات (GA4) + حلّ مصمّم مربوط بالكونسول. هذا الموكب مُلزم: إن اعتمدته، أبنيه في الكود طبق الأصل ١٠٠٪.</p>
+
+  <div class="hero">
+    <span class="tag red">معدّل تحويل = صفر بالمئة</span>
+    <div class="bignum">
+      <div class="cell"><div class="v mut">٤٤</div><div class="l">فتحة لصفحة الحجز (GA4، ٩٠ يومًا)</div></div>
+      <div class="arrow">←</div>
+      <div class="cell"><div class="v red">٠</div><div class="l">ضغطة على زر التأكيد</div></div>
+      <div class="arrow">←</div>
+      <div class="cell"><div class="v red">٠</div><div class="l">طلب حجز مكتمل</div></div>
+    </div>
+  </div>
+
+  <!-- 1 evidence -->
+  <h2><span class="n">١</span> الدليل القاطع — استعلمتُ GA4 مباشرة</h2>
+  <p class="sub">استعلمتُ قوقل أناليتكس (GA4 Data API) بحساب الخدمة، كل العملاء، آخر ٩٠ يومًا. النتيجة قاطعة، لا تخمين:</p>
+  <div class="funnel">
+    <div class="step"><div class="bar" style="width:150px"></div><div class="lab">فتح صفحة الحجز <span class="chip">/clients/*/book</span></div><div class="val">~٤٤</div></div>
+    <div class="step drop zero"><div class="bar" style="width:0"></div><div class="lab">ضغط «تأكيد الحجز» <span class="chip">booking_attempt</span></div><div class="val">٠</div></div>
+    <div class="step zero"><div class="bar" style="width:0"></div><div class="lab">رُفض (إقرار/رقم غير صالح) <span class="chip">booking_failed</span></div><div class="val">٠</div></div>
+    <div class="step drop zero"><div class="bar" style="width:0"></div><div class="lab">طلب انكتب في قاعدتنا <span class="chip">booking_submit</span></div><div class="val">٠</div></div>
+  </div>
+  <div class="callout green">
+    <h3 style="color:var(--emerald)">✅ الحكم: صفر ضغطات — انسحاب كامل قبل الإرسال</h3>
+    <p class="sub" style="margin:0 0 6px">في ٩٠ يومًا، عبر <b>كل</b> العيادات، لم يضغط أحد الزر. المشكلة ليست إقرارًا يرفضهم ولا خطأ إرسال — إنها انسحاب وهم <b>يقرؤون ويعبّون</b>، قبل الزر. السبب: <b>الأداة والعرض</b>، لا آلية الإرسال.</p>
+    <p class="sub" style="margin:0"><b>واستبعدتُ «القياس مكسور»:</b> نفس المسار يوصّل <code>client_view</code> ٩٤٦، <code>article_view</code> ١١١١، <code>conversion_complete</code> ٤٦. البايبلاين حيّ، فالصفر حقيقي. (سمايل تاون وحدها ٣١ فتحة من الـ٤٤.)</p>
+  </div>
+
+  <!-- 2 causes -->
+  <h2><span class="n">٢</span> الأسباب الجذرية</h2>
+  <div class="cause c1">
+    <div class="head"><span class="rank r1">١</span><h3>الأداة خاطئة ثقافيًّا: فورم بارد بدل محادثة</h3><span class="sev high">الأعلى أثرًا</span></div>
+    <p class="sub" style="margin:0">المستخدم السعودي/المصري لقرار طبّي مع طبيب لم يسمع به قبل دقيقة لا يعبّئ استمارة لموقع اكتشفه للتو؛ يريد أن <b>يتحدّث</b>. <b>الدليل:</b> ٧٥٪ من السوق على واتساب، والمحادثة تحوّل ٤٠–٦٠٪ أعلى من النماذج، والثقة تتفوّق على «سهولة الوصول» في السوق السعودي.</p>
+    <div style="margin-top:6px"><span class="chip">GOTOMENA</span><span class="chip">Unifonic</span><span class="chip">Deewan 2025</span></div>
+  </div>
+  <div class="cause c2">
+    <div class="head"><span class="rank r2">٢</span><h3>عناصر كثيرة جدًّا (~١٥) تكسر وعد «احجز الآن»</h3><span class="sev high">عالٍ</span></div>
+    <p class="sub" style="margin:0">اسم، جوال، بريد، خانة نشرة، ٤ أزرار أيام، «تاريخ آخر»، ٣ أزرار فترات، ملاحظة، بطاقة خصوصية، صندوق إقرار، خانة إقرار. أغلبها اختياري لكن العين تشوف الطول فتنسحب. <b>Baymard:</b> الإكمال ينخفض ٤–٦٪ لكل حقل بعد الثامن. <b>Wroblewski:</b> لا تطلب إلا ما تحتاجه هذه اللحظة.</p>
+  </div>
+  <div class="cause c3">
+    <div class="head"><span class="rank r3">٣</span><h3>الإقرار الطبّي يخيف على مرأى العين + الزر يتعطّل بصمت</h3><span class="sev med">عالٍ للعيادات</span></div>
+    <p class="sub" style="margin:0">صندوق كهرماني كبير بنصّ قابل للتمرير وخانة إلزامية، والزر معطّل حتى تُعلَّم بلا تلميح واضح. الفورم يستخدم <code>mode:onSubmit</code> فالخطأ لا يظهر إلا بعد الضغط.</p>
+  </div>
+
+  <!-- 3 solution -->
+  <h2><span class="n">٣</span> الحل — قبل / بعد</h2>
+  <p class="sub">نقلب الترتيب: <b style="color:var(--wa)">واتساب النداء الأول</b>، و«اترك رقمك ونتصل بك» بديل من حقل واحد. <b>العيادة</b> — لا الزائر — تحدّد الموعد من الكونسول. والإقرار القانوني يُستبدل برسالة توضيح بسيطة.</p>
+  <div class="stage">
+
+    <!-- BEFORE -->
+    <div class="col before">
+      <div class="cap">قبل — ~١٥ عنصرًا · ٠ تحويل</div>
+      <div class="phone dim">
+        <div class="notch"></div>
+        <div class="m-back">‹ رجوع إلى العيادة</div>
+        <div class="m-head"><div class="m-logo">🦷<span class="v">✓</span></div><div class="m-name">احجز موعدك مع عيادة د. عمرو</div><div class="m-trust">عبّي بياناتك ونوصل طلبك</div></div>
+        <div class="m-body">
+          <div class="label"><span class="pinr">×</span> اسمك — اختياري</div><div class="field">مثال: أحمد محمد</div>
+          <div class="label">رقم جوالك</div><div class="field">+966</div>
+          <div class="label"><span class="pinr">×</span> بريدك — اختياري</div><div class="field">example@email.com</div>
+          <div class="disc-old"><span class="cb"></span><span class="pinr">×</span> أبغى عروض ونشرات «مدوّنتي»…</div>
+          <div class="label"><span class="pinr">×</span> وقت يناسبك — اختياري</div>
+          <div class="chipsrow"><span class="mchip">اليوم</span><span class="mchip">غدًا</span><span class="mchip">بعد غد</span><span class="mchip">📅 آخر</span></div>
+          <div class="chipsrow"><span class="mchip">صباحًا</span><span class="mchip">ظهرًا</span><span class="mchip">مساءً</span></div>
+          <div class="label">تحب تضيف تفاصيل؟</div><div class="field" style="padding-bottom:24px">مثال…</div>
+          <div class="disc-old"><span class="pinr">×</span> شروط الاستشارات وإخلاء المسؤولية — نص طويل… <span class="cb"></span></div>
+          <div class="btn grey">تأكيد الحجز</div>
+          <div class="micro">وافق على الإقرار أعلاه لتفعيل الإرسال</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AFTER -->
+    <div class="col after">
+      <div class="cap">بعد — خياران واضحان · حقل واحد كحد أقصى</div>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="m-back">‹ رجوع إلى العيادة</div>
+        <div class="m-head"><div class="m-logo">🦷<span class="v">✓</span></div><div class="m-name">عيادة دكتور عمرو مصطفى</div><div class="m-trust"><span><span class="star">★</span> <b>4.8</b></span> · <span>موثّق من مدوّنتي</span> · <span>يردّون خلال ساعات العمل</span></div></div>
+        <div class="m-body">
+          <div class="btn wa"><span style="font-size:17px">✆</span> تواصل عبر واتساب</div>
+          <div class="micro"><span class="pin">1</span> أسرع طريقة — رسالة جاهزة، رد مباشر</div>
+          <div class="or">أو</div>
+          <div class="label">اترك رقمك والعيادة تتصل بك</div>
+          <div class="field small" style="color:#0d1220;font-weight:700">🇪🇬 +20 &nbsp;•&nbsp;<span style="color:#b9bfc9;font-weight:400">1XX XXX XXXX</span></div>
+          <div class="btn pri"><span class="pin" style="background:#fff;color:var(--p)">2</span> اطلب اتصال</div>
+          <div class="micro"><span class="pin">3</span> العيادة تتواصل معك وتحدّد الموعد المناسب</div>
+          <div class="disclose"><span class="pin">4</span> ＋ أضف تفاصيل (اسمك، بريدك، أو وقت تفضّله)</div>
+          <div class="info"><span>ℹ️</span><span><span class="pin">5</span> «مدوّنتي» منصّة تعريفية تربطك بالعيادة — <b style="color:#0d1220">لسنا الجهة الطبية</b>؛ الموعد والاستشارة على العيادة.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="count">
+    <div class="c bad"><div class="v">~١٥</div><div class="l">عنصر يفكّر فيه الزائر (قبل)</div></div>
+    <div class="c good"><div class="v">٢</div><div class="l">خيار واضح: محادثة أو رقم (بعد)</div></div>
+    <div class="c good"><div class="v">٠</div><div class="l">خانات إلزامية تعطّل الزر</div></div>
+  </div>
+
+  <!-- 4 changes -->
+  <h2><span class="n">٤</span> ما الذي تغيّر بالضبط (وليش)</h2>
+  <div class="change"><div class="pn">1</div><div><h3>واتساب = النداء الأول (أخضر، بضغطة)</h3><p>يفتح محادثة برسالة جاهزة: «السلام عليكم، أبغى أحجز موعد في عيادة دكتور عمرو مصطفى 🌟». الضغطة تُسجَّل عبر <code>CtaTrackedLink</code> فما نخسر القياس.</p><p class="why">ليش: ٧٥٪ على واتساب، وتحويل أعلى ٤٠–٦٠٪. البنية جاهزة: <code>Client.phone</code> + <code>getWhatsAppLink()</code>.</p></div></div>
+  <div class="change"><div class="pn">2</div><div><h3>الفورم → «اترك رقمك» بحقل واحد</h3><p>جوال + «اطلب اتصال». يكتب <code>BookingRequest</code> في قاعدتنا + إشعار الكونسول + تلقرام كالآن — فالليد يبقى في نظامنا.</p><p class="why">ليش: Wroblewski — أقل احتكاك ممكن مع بقاء ملكية الليد.</p></div></div>
+  <div class="change"><div class="pn">3</div><div><h3>🔑 العيادة تحدّد الموعد (لا مُنتقي وقت للزائر)</h3><p>حذفنا أزرار اليوم/الفترة تمامًا. الطلب يصل للكونسول، والعيادة تقترح/تؤكّد الوقت الفعلي وتتواصل مع الزائر.</p><p class="why">ليش (قرارك): اختيار الزائر لوقت قد لا تلتزم به العيادة = احتكاك + توقّع كاذب. العيادة صاحبة الجدول.</p></div></div>
+  <div class="change"><div class="pn">4</div><div><h3>الإفصاح التدريجي لكل ما تبقّى</h3><p>الاسم، البريد، وأي وقت يفضّله الزائر — كلها اختيارية خلف «＋ أضف تفاصيل»، مطويّة افتراضيًّا.</p><p class="why">ليش: Baymard — المهم عدد ما «يراه» الزائر لا ما هو مطلوب.</p></div></div>
+  <div class="change"><div class="pn">5</div><div><h3>🔑 إلغاء التعهّد → رسالة توضيح بسيطة</h3><p>حذفنا الصندوق الطويل والخانة الإلزامية، ووضعنا سطرًا واضحًا غير معطِّل: «مدوّنتي منصّة تعريفية — لسنا الجهة الطبية». تُسجَّل موافقة ضمنية server-side بمجرد المتابعة.</p><p class="why">ليش (قرارك): الخانة تقتل التحويل وتخيف؛ والسطر الواضح يوضّح دور مدوّنتي دون عائق.</p></div></div>
+  <div class="change"><div class="pn">6</div><div><h3>طمأنة أعلى الصفحة + مفتاح دولة صحيح + حذف النشرة</h3><p>تقييم ⭐ + «موثّق» + «وقت الرد»؛ مفتاح الدولة يتبع بلد العميل (مصر → <code>+20</code>)؛ وخانة نشرة مدوّنتي تنتقل خارج فورم العميل.</p><p class="why">ليش: ثقة فورية لزائر بلا علاقة سابقة، وعدم إجبار المصري على تعديل <code>+966</code>.</p></div></div>
+
+  <!-- 5 console -->
+  <h2><span class="n">٥</span> الربط بالكونسول</h2>
+  <p class="sub">كل طلب (سواء من واتساب أو «اترك رقمك») يظهر للعيادة في الكونسول — هنا تُدار الدورة كاملة:</p>
+  <div class="callout blue">
+    <ul class="sub" style="margin:0">
+      <li><b>«اطلب اتصال»</b> → صف <code>BookingRequest</code> + إشعار + بريد + تلقرام → يظهر في <span class="chip">console.modonty.com/dashboard/bookings</span>.</li>
+      <li><b>العيادة من الكونسول</b> تشوف الرقم، تتواصل، و<b>تحدّد/تؤكّد الموعد</b> (بدل ما يختاره الزائر). حقل موعد مؤكَّد على مستوى الكونسول — بند بناء بسيط.</li>
+      <li><b>ضغطة واتساب</b> تُسجَّل كـ<code>CTAClick</code> فنقيس المسارين ونقارن أيّهما يحوّل أكثر.</li>
+    </ul>
+  </div>
+
+  <!-- 6 decisions -->
+  <h2><span class="n">٦</span> القرارات</h2>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (قرارك):</b> العيادة تحدّد الوقت — لا مُنتقي وقت للزائر. الزائر يذكر تفضيله اختياريًّا في «أضف تفاصيل» فقط.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (قرارك):</b> إلغاء تعهّد إخلاء المسؤولية بالكامل، واستبداله برسالة واضحة «مدوّنتي ليست الجهة الطبية».</div></div>
+  <div class="lock warn"><div class="ic">!</div><div><b>تحفّظي القانوني (بصراحة، لا مجاملة):</b> إلغاء الخانة يرفع التحويل لكن يُلغي «الموافقة المسجّلة». توصيتي — نُبقي <b>موافقة ضمنية</b> بجملة «بالمتابعة تقرّ بأن مدوّنتي منصّة تعريفية وليست الجهة الطبية»، ونسجّلها server-side. تكسب فكرتك مع غطاء قانوني بسيط. قرارك النهائي.</div></div>
+  <div class="lock warn"><div class="ic">!</div><div><b>ملاحظة تنفيذية:</b> <code>getWhatsAppNumber()</code> يفترض السعودية — رقم مصري مخزّن <code>01…</code> يتحوّل خطأً لـ<code>9661…</code>. نتحقّق من صيغة أرقام عملاء مصر (<code>+20</code>) قبل تفعيل واتساب لهم.</div></div>
+
+  <!-- 7 next -->
+  <h2><span class="n">٧</span> الخطوة التالية + المصادر</h2>
+  <div class="change" style="border-color:rgba(16,185,129,.35)">
+    <div class="pn" style="color:var(--emerald)">▶</div>
+    <div><h3>اعتمد الموكب → أبنيه بمراحل</h3>
+      <p>عند «ابروف»: (١) هيدر بالثقة + واتساب أساسي → (٢) الفورم حقل واحد + الإفصاح التدريجي → (٣) حذف مُنتقي الوقت + رسالة التوضيح بدل الإقرار → (٤) مفتاح الدولة + حذف النشرة → (٥) حقل الموعد المؤكَّد في الكونسول + حدث «بدء تعبئة» للقياس. tsc + تست حي على الجوال قبل أي push.</p>
+      <p class="why">ما زلنا في وضع «افهم فقط» — لن ألمس كودًا حتى تقول «نفّذ».</p>
+    </div>
+  </div>
+  <ul class="src" style="margin-top:14px">
+    <li><a href="https://baymard.com/blog/checkout-flow-average-form-fields">Baymard — Minimize Form Fields</a> · <a href="https://baymard.com/blog/explain-phone-number-field">Explain the Phone Field</a></li>
+    <li><a href="https://static.lukew.com/webforms_lukew.pdf">Luke Wroblewski — Web Form Design</a> · <a href="https://jakobnielsenphd.substack.com/p/required-fields">NN/g — Required Fields</a></li>
+    <li><a href="https://gotomena.com/blog/whatsapp-marketing-arab-world">GOTOMENA — WhatsApp in the Arab World</a> · <a href="https://www.unifonic.com/en/resources/talk-track-convert-why-conversational-marketing-is-saudi-arabias-next-big-growth-channel">Unifonic — Conversational Marketing KSA</a></li>
+    <li>React Hook Form — Validation Modes (<code>onTouched</code>) عبر Context7 · GA4 Data API (استعلام مباشر، حساب الخدمة)</li>
+  </ul>
+
+  <div class="foot">مستند مشكلة + حل · مدوّنتي · صفحة الحجز (YMYL) · ١٩ يوليو ٢٠٢٦ — عدد ٤٤/٠/٠ متحقَّق مباشرةً عبر GA4 Data API (٩٠ يومًا)؛ الأرقام السلوكية من المصادر أعلاه.</div>
+
+</div>
+</body>
+</html>

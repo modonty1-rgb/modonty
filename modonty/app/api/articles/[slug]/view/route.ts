@@ -2,45 +2,17 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { cookies, headers } from "next/headers";
-import { ArticleStatus, TrafficSource } from "@prisma/client";
+import { ArticleStatus } from "@prisma/client";
+import { classifyTrafficSource } from "@/lib/analytics/classify-source";
+import { getGeoFromHeaders } from "@/lib/analytics/geo-headers";
 import { notifyTelegram } from "@/lib/telegram/notify";
 import { trackArticleView } from "@/lib/analytics/events-registry";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
 
-function getSourceAndReferrerDomain(
-  referrer: string | null,
-  host: string | null
-): { source: TrafficSource; referrerDomain: string | null; searchEngine: string | null } {
-  if (!referrer || !referrer.startsWith("http")) {
-    return { source: TrafficSource.DIRECT, referrerDomain: null, searchEngine: null };
-  }
-  try {
-    const refUrl = new URL(referrer);
-    const refHost = refUrl.hostname.toLowerCase();
-    if (host && refHost === host.toLowerCase()) {
-      return { source: TrafficSource.ORGANIC, referrerDomain: refHost, searchEngine: null };
-    }
-    const searchEngines: Record<string, string> = {
-      "www.google.com": "Google",
-      "google.com": "Google",
-      "www.bing.com": "Bing",
-      "bing.com": "Bing",
-      "duckduckgo.com": "DuckDuckGo",
-    };
-    const searchEngine = searchEngines[refHost] ?? null;
-    if (searchEngine) {
-      return { source: TrafficSource.ORGANIC, referrerDomain: refHost, searchEngine };
-    }
-    return { source: TrafficSource.REFERRAL, referrerDomain: refHost, searchEngine: null };
-  } catch {
-    return { source: TrafficSource.DIRECT, referrerDomain: null, searchEngine: null };
-  }
-}
-
 export async function POST(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
@@ -77,14 +49,24 @@ export async function POST(
       });
     }
 
+    // The truth comes from the browser: document.referrer (external source) +
+    // location.href (UTM params). The request's own Referer header is always
+    // our page URL — relying on it misclassified every view as ORGANIC (pre-2026-07-07).
+    const body = (await request.json().catch(() => null)) as {
+      referrer?: string | null;
+      url?: string | null;
+    } | null;
+    const referrer = body?.referrer?.trim() || null;
+    const pageUrl = body?.url?.trim() || null;
+
     const headersList = await headers();
-    const referrer = headersList.get("referer") || headersList.get("referrer") || null;
     const host = headersList.get("host") || null;
     const userAgent = headersList.get("user-agent") || null;
     const forwarded = headersList.get("x-forwarded-for");
     const ipAddress = forwarded ? forwarded.split(",")[0].trim() : headersList.get("x-real-ip") || headersList.get("cf-connecting-ip") || null;
 
-    const { source, referrerDomain, searchEngine } = getSourceAndReferrerDomain(referrer, host);
+    const { source, referrerDomain, searchEngine } = classifyTrafficSource(referrer, pageUrl, host);
+    const { country, region, city } = getGeoFromHeaders(headersList);
 
     const session = await auth();
     const userId = session?.user?.id ?? undefined;
@@ -116,6 +98,9 @@ export async function POST(
           searchEngine,
           userAgent,
           ipAddress,
+          country,
+          region,
+          city,
         },
       }),
       db.article.update({

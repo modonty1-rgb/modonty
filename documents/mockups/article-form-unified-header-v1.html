@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Article Form — Unified Header Mockup v1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary:   #2563eb;
+      --success:   #16a34a;
+      --warning:   #d97706;
+      --danger:    #dc2626;
+      --muted:     #64748b;
+      --border:    #e2e8f0;
+      --bg:        #ffffff;
+      --bg-subtle: #f8fafc;
+      --fg:        #0f172a;
+    }
+    body { font-family: 'Tajawal', sans-serif; background: #f1f5f9; min-height: 100vh; }
+
+    /* ─── Unified header ─────────────────────────────────── */
+    .unified-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .header-bar {
+      display: flex; align-items: center;
+      height: 52px; padding: 0 16px;
+      gap: 4px;
+    }
+
+    /* ─── Back button ────────────────────────────────────── */
+    .back-btn {
+      display: flex; align-items: center; gap: 4px;
+      padding: 4px 10px; border-radius: 6px;
+      font-size: 13px; font-weight: 500; color: var(--muted);
+      background: transparent; border: none; cursor: pointer;
+      white-space: nowrap; flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .back-btn:hover { background: var(--bg-subtle); color: var(--fg); }
+    .back-btn svg { flex-shrink: 0; }
+
+    /* ─── Vertical divider ───────────────────────────────── */
+    .vdiv { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; margin: 0 4px; }
+
+    /* ─── Tab nav ────────────────────────────────────────── */
+    .tab-nav {
+      display: flex; align-items: stretch;
+      flex: 1; height: 52px;
+      overflow-x: auto; overflow-y: hidden;
+      scrollbar-width: none; gap: 0;
+    }
+    .tab-nav::-webkit-scrollbar { display: none; }
+
+    .tab {
+      display: flex; align-items: center; gap: 5px;
+      padding: 0 13px; height: 100%;
+      border: none; border-bottom: 2px solid transparent;
+      background: transparent; cursor: pointer;
+      font-size: 13px; font-weight: 500; color: var(--muted);
+      white-space: nowrap; transition: all 0.15s;
+      font-family: 'Tajawal', sans-serif;
+    }
+    .tab:hover { color: var(--fg); background: var(--bg-subtle); }
+    .tab.active { border-bottom-color: var(--primary); color: var(--fg); }
+
+    /* Step badge */
+    .badge {
+      display: flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; border-radius: 50%;
+      font-size: 9px; font-weight: 800; flex-shrink: 0;
+      line-height: 1;
+    }
+    .b-active  { background: var(--primary);  color: #fff; }
+    .b-done    { background: #dcfce7; color: var(--success); }
+    .b-warn    { background: #fef3c7; color: var(--warning); }
+    .b-error   { background: #fee2e2; color: var(--danger); }
+    .b-idle    { background: #f1f5f9; color: #94a3b8; }
+
+    /* Percentage label */
+    .pct {
+      font-size: 10px; font-weight: 700;
+      font-feature-settings: "tnum";
+    }
+    .p-active { color: var(--primary); }
+    .p-done   { color: var(--success); }
+    .p-warn   { color: var(--warning); }
+    .p-idle   { color: #94a3b8; }
+
+    /* ─── Action zone ────────────────────────────────────── */
+    .action-zone {
+      display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+    }
+
+    /* Completion ring chip */
+    .completion-chip {
+      display: flex; align-items: center; gap: 5px;
+      color: var(--muted); font-size: 12px; font-weight: 600;
+      padding: 0 6px; flex-shrink: 0;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 12px; border-radius: 6px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      white-space: nowrap; transition: all 0.15s;
+      font-family: 'Tajawal', sans-serif;
+    }
+    .btn-ghost   { color: var(--muted); background: transparent; border: 1px solid transparent; }
+    .btn-ghost:hover { background: var(--bg-subtle); color: var(--fg); }
+    .btn-outline { color: #374151; background: var(--bg); border: 1px solid var(--border); }
+    .btn-outline:hover { background: var(--bg-subtle); }
+    .btn-green   { color: #fff; background: var(--success); border: 1px solid var(--success); }
+    .btn-green:hover { background: #15803d; }
+
+    /* ─── Progress strip ─────────────────────────────────── */
+    .progress-strip { height: 2px; background: #e2e8f0; }
+    .progress-fill  { height: 2px; background: var(--primary); transition: width 0.4s ease; }
+
+    /* ─── Page content ───────────────────────────────────── */
+    .page-content {
+      padding-top: 62px; /* header 52 + strip 2 + gap 8 */
+    }
+
+    /* Design notes banner */
+    .notes-banner {
+      background: #fef3c7; border-bottom: 1px solid #fde68a;
+      padding: 8px 20px; font-size: 12px; color: #78350f;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* ─── Fake form ──────────────────────────────────────── */
+    .section-card {
+      background: var(--bg); border-radius: 12px;
+      border: 1px solid var(--border); padding: 24px;
+      margin-bottom: 16px;
+    }
+    .section-label {
+      font-size: 11px; font-weight: 700; color: #94a3b8;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      margin-bottom: 16px;
+    }
+    .two-col { display: grid; grid-template-columns: 1fr 260px; gap: 20px; }
+    .field-label {
+      font-size: 12px; font-weight: 600; color: #374151;
+      display: block; margin-bottom: 4px;
+    }
+    .field-input {
+      height: 40px; border: 1px solid var(--border); border-radius: 8px;
+      padding: 0 12px; display: flex; align-items: center;
+      font-size: 13px; color: #6b7280; margin-bottom: 12px;
+    }
+    .field-textarea {
+      height: 80px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--bg-subtle);
+    }
+    .field-select {
+      height: 40px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--bg-subtle); margin-bottom: 12px;
+    }
+
+    .scroll-spacer {
+      background: var(--bg); border-radius: 12px; border: 1px solid var(--border);
+      padding: 24px; height: 420px;
+      display: flex; align-items: center; justify-content: center;
+      color: #94a3b8; font-size: 13px; text-align: center;
+    }
+
+    /* ─── Comparison panel ───────────────────────────────── */
+    .comparison {
+      max-width: 700px; margin: 24px auto 0;
+      background: white; border-radius: 12px;
+      border: 1px solid var(--border); padding: 20px;
+      font-size: 13px;
+    }
+    .comparison h3 { font-size: 14px; font-weight: 700; color: var(--fg); margin-bottom: 12px; }
+    .cmp-row {
+      display: flex; gap: 12px; margin-bottom: 8px;
+      padding: 8px 12px; border-radius: 8px;
+    }
+    .cmp-now  { background: #fff7ed; }
+    .cmp-new  { background: #f0fdf4; }
+    .cmp-label { font-weight: 700; font-size: 12px; flex-shrink: 0; padding-top: 1px; }
+    .now-label { color: #c2410c; }
+    .new-label { color: #15803d; }
+
+    @media (max-width: 768px) {
+      .two-col { grid-template-columns: 1fr; }
+      .btn-ghost span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  UNIFIED HEADER                                            -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <header class="unified-header">
+    <div class="header-bar">
+
+      <!-- Back -->
+      <button class="back-btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        مقالات
+      </button>
+
+      <div class="vdiv"></div>
+
+      <!-- Tab navigation -->
+      <nav class="tab-nav" id="tabNav">
+
+        <button class="tab active" data-tab="1" onclick="activate(this)">
+          <span class="badge b-active">1</span>
+          أساسي
+          <span class="pct p-active">33%</span>
+        </button>
+
+        <button class="tab" data-tab="2" onclick="activate(this)">
+          <span class="badge b-warn">!</span>
+          المحتوى
+          <span class="pct p-warn">38%</span>
+        </button>
+
+        <button class="tab" data-tab="3" onclick="activate(this)">
+          <span class="badge b-idle">3</span>
+          الوسائط
+          <span class="pct p-idle">0%</span>
+        </button>
+
+        <button class="tab" data-tab="4" onclick="activate(this)">
+          <span class="badge b-idle">4</span>
+          SEO
+          <span class="pct p-idle">0%</span>
+        </button>
+
+        <button class="tab" data-tab="5" onclick="activate(this)">
+          <span class="badge b-idle">5</span>
+          الأسئلة
+          <span class="pct p-idle">0%</span>
+        </button>
+
+        <button class="tab" data-tab="6" onclick="activate(this)">
+          <span class="badge b-done">✓</span>
+          المرتبطة
+          <span class="pct p-done">100%</span>
+        </button>
+
+      </nav>
+
+      <div class="vdiv"></div>
+
+      <!-- Actions zone -->
+      <div class="action-zone">
+
+        <!-- Completion ring -->
+        <div class="completion-chip">
+          <svg width="22" height="22" viewBox="0 0 22 22" style="flex-shrink:0;">
+            <circle cx="11" cy="11" r="8" fill="none" stroke="#e2e8f0" stroke-width="2.5"/>
+            <!--
+              Circumference = 2π×8 ≈ 50.27
+              12% → dashoffset = 50.27 × (1−0.12) ≈ 44.24
+            -->
+            <circle cx="11" cy="11" r="8" fill="none" stroke="#2563eb" stroke-width="2.5"
+                    stroke-dasharray="50.27" stroke-dashoffset="44.24"
+                    stroke-linecap="round"
+                    style="transform:rotate(-90deg);transform-origin:50% 50%;"/>
+          </svg>
+          12%
+        </div>
+
+        <button class="btn btn-ghost" title="معاينة في تاب جديد" style="padding:5px 8px;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+          <span>معاينة</span>
+        </button>
+
+        <button class="btn btn-outline">حفظ مسودة</button>
+
+        <button class="btn btn-green">
+          نشر المقال
+          <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- Overall progress strip (2px) -->
+    <div class="progress-strip">
+      <div class="progress-fill" id="progressFill" style="width:12%;"></div>
+    </div>
+  </header>
+
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  PAGE CONTENT                                              -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="page-content">
+
+    <!-- Notes banner -->
+    <div class="notes-banner">
+      <span style="font-size:18px;">🎨</span>
+      <div>
+        <strong>Mockup v1 — Unified Header</strong> ·
+        الـ tabs + الأكشن في شريط واحد (52px) بدل header + footer منفصلَين ·
+        توفير <strong>~54px</strong> من أسفل المحتوى · شريط progress 2px في الأسفل
+      </div>
+    </div>
+
+    <!-- Simulated form — Basic step -->
+    <div style="max-width:1024px; margin:20px auto; padding:0 20px;">
+
+      <div class="section-card">
+        <div class="section-label">المعلومات الأساسية</div>
+        <div class="two-col">
+          <div>
+            <label class="field-label">عنوان المقال *</label>
+            <div class="field-input" style="color:#374151;">كيف تختار أفضل منتج لعملائك في السوق السعودي</div>
+
+            <label class="field-label">المسار (slug) *</label>
+            <div class="field-input" style="direction:ltr; justify-content:flex-end; color:#6b7280; font-size:12px;">
+              modonty.com / <strong style="color:#374151;">kayfa-takhtaar-afdal-muntaj</strong>
+            </div>
+
+            <label class="field-label">مقتطف</label>
+            <div class="field-textarea"></div>
+          </div>
+          <div>
+            <label class="field-label">العميل</label>
+            <div class="field-select"></div>
+
+            <label class="field-label">التصنيف</label>
+            <div class="field-select"></div>
+
+            <label class="field-label">الكاتب</label>
+            <div class="field-select"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll spacer — shows full-height freedom -->
+      <div class="scroll-spacer">
+        <div>
+          محتوى المقال يمتد حتى آخر الصفحة بدون أي شريط يحجبه من الأسفل
+          <br><br>
+          <span style="font-size:11px; color:#cbd5e1;">
+            (في التصميم الحالي كان الـ footer يحجب آخر 56px من المحتوى عند نهاية الـ scroll)
+          </span>
+        </div>
+      </div>
+
+      <!-- Comparison panel -->
+      <div class="comparison" style="margin-bottom:32px;">
+        <h3>📊 المقارنة — قبل وبعد</h3>
+
+        <div class="cmp-row cmp-now">
+          <span class="cmp-label now-label">الآن</span>
+          <span>
+            شريطان منفصلان: header فوق (tabs فقط) + footer تحت (أكشن فقط)
+            = 52px فوق + 56px تحت = <strong>108px محجوزة</strong>
+            + آخر 56px من المحتوى يختفي تحت الـ footer عند الـ scroll
+          </span>
+        </div>
+
+        <div class="cmp-row cmp-new">
+          <span class="cmp-label new-label">جديد</span>
+          <span>
+            شريط واحد موحّد: tabs + أكشن سوا = 52px فوق فقط
+            = <strong>توفير 56px</strong> (كامل مساحة الـ footer)
+            + المحتوى يوصل لآخر الشاشة بدون حجب
+          </span>
+        </div>
+
+        <div style="margin-top:16px; padding:12px; background:#f8fafc; border-radius:8px; font-size:12px; color:#475569; line-height:1.7;">
+          <strong>ملاحظات التنفيذ:</strong><br>
+          • الـ tabs تحتاج تكون <code>overflow-x:auto</code> للأجهزة الصغيرة<br>
+          • عند عرض < 900px: يمكن إخفاء نص "معاينة" وإبقاء الأيقونة فقط<br>
+          • عند عرض < 640px: "حفظ مسودة" → أيقونة فقط (💾)<br>
+          • شريط الـ 2px في الأسفل يتحرك مع اكتمال الخطوات
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function activate(btn) {
+      // Update tabs
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Update badge color for active tab
+      const badge = btn.querySelector('.badge');
+      const pct   = btn.querySelector('.pct');
+      const tabN  = parseInt(btn.dataset.tab);
+
+      // Mock progress per tab (matching the display)
+      const mockPct = [33, 38, 0, 0, 0, 100];
+      const p = mockPct[tabN - 1] ?? 0;
+
+      // Update progress fill
+      const circ = 50.27;
+      const offset = circ * (1 - p / 100);
+      document.getElementById('progressFill').style.width = p + '%';
+    }
+  </script>
+
+</body>
+</html>

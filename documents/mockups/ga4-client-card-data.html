@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>GA4 Client Card — Available Data</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0f1117; color: #e2e8f0; font-family: 'Segoe UI', Tahoma, sans-serif; padding: 32px; }
+  h1 { font-size: 18px; color: #94a3b8; margin-bottom: 24px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+  .card { background: #1e2130; border: 1px solid #2d3148; border-radius: 16px; overflow: hidden; }
+  .card-header { background: linear-gradient(135deg, #1a1a2e, #2563eb); height: 80px; position: relative; }
+  .card-badge { position: absolute; top: 8px; right: 10px; background: #f59e0b; color: #1a1a00; font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 20px; }
+  .card-logo { position: absolute; bottom: -24px; right: 12px; width: 52px; height: 52px; background: #fff; border-radius: 12px; border: 2px solid #2d3148; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #2563eb; font-size: 14px; }
+  .card-body { padding: 32px 14px 14px; }
+  .card-name { font-weight: 900; font-size: 15px; color: #f1f5f9; }
+  .card-industry { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+  /* ── Stat rows ── */
+  .stats { margin-top: 12px; border-top: 1px solid #2d3148; padding-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .stat-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+  .stat-label { color: #64748b; display: flex; align-items: center; gap: 5px; }
+  .stat-value { font-weight: 900; color: #f1f5f9; }
+  .stat-value.highlight { color: #38bdf8; }
+  .stat-value.green { color: #4ade80; }
+  .stat-value.amber { color: #fbbf24; }
+  .tag { font-size: 9px; padding: 1px 5px; border-radius: 4px; margin-right: 4px; }
+  .tag.ga4 { background: #1d4ed8; color: #bfdbfe; }
+  .tag.db { background: #374151; color: #9ca3af; }
+  .tag.new { background: #065f46; color: #6ee7b7; }
+
+  /* ── Labels ── */
+  .section-title { font-size: 11px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px; }
+  .option-label { font-size: 11px; padding: 2px 6px; border-radius: 4px; background: #2d3148; color: #94a3b8; margin-bottom: 6px; display: inline-block; }
+
+  .divider { border: none; border-top: 1px solid #2d3148; margin: 32px 0; }
+
+  /* metric pill */
+  .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 11px; margin: 3px; }
+  .pill.available { background: #1e3a5f; border: 1px solid #2563eb; color: #93c5fd; }
+  .pill.big { background: #14532d; border: 1px solid #16a34a; color: #86efac; }
+  .pill.platform { background: #3b1d8a; border: 1px solid #7c3aed; color: #c4b5fd; }
+
+  .note { font-size: 11px; color: #64748b; margin-top: 6px; line-height: 1.6; }
+  .winner { border: 2px solid #4ade80; }
+  .winner-label { background: #4ade80; color: #000; font-size: 10px; font-weight: 900; padding: 3px 10px; text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>📊 GA4 — البيانات المتاحة per-client في الكارت</h1>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-title">الكارت الحالي (ما هو موجود الآن)</div>
+<div class="grid">
+
+  <div>
+    <div class="option-label">✅ الحالي — بعد التحديث</div>
+    <div class="card">
+      <div class="card-header"><div class="card-logo">ط</div></div>
+      <div class="card-body">
+        <div class="card-name">طبيب الأسنان</div>
+        <div class="card-industry">الرعاية الصحية</div>
+        <div class="stats">
+          <div class="stat-row">
+            <div class="stat-label">📄 مقالات <span class="tag db">DB</span></div>
+            <div class="stat-value">٣</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">👁 مشاهدات الصفحة <span class="tag ga4">GA4</span></div>
+            <div class="stat-value highlight">٩٠</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-title">📦 كل البيانات المتاحة من GA4 per /clients/[slug]</div>
+
+<div>
+  <span class="pill available">👁 screenPageViews — مشاهدات الصفحة</span>
+  <span class="pill available">🔄 sessions — جلسات فريدة</span>
+  <span class="pill available">👤 activeUsers — مستخدمون نشطون</span>
+  <span class="pill available">⚡ eventCount — إجمالي الأحداث</span>
+  <span class="pill available">⏱ avgSessionDuration — متوسط وقت الجلسة</span>
+  <span class="pill available">📈 engagementRate — معدل التفاعل</span>
+  <span class="pill big">📰 article pageViews — مشاهدات مقالات العميل (GA4)</span>
+  <span class="pill big">🌐 إجمالي الوصول = profile + articles</span>
+  <span class="pill platform">🏢 منظومة مدونتي الكلية (site-wide stats)</span>
+</div>
+
+<p class="note">🟢 = أكبر رقم عادةً | 🔵 = per-client page فقط | 🟣 = رقم المنظومة الكلي كـ social proof</p>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-title">خيارات العرض — أيها يعطي أكبر تأثير؟</div>
+
+<div class="grid">
+
+  <!-- Option A: Total Reach -->
+  <div>
+    <div class="option-label">الخيار A — إجمالي الوصول (profile + articles)</div>
+    <div class="card">
+      <div class="card-header"><div class="card-logo">ط</div></div>
+      <div class="card-body">
+        <div class="card-name">طبيب الأسنان</div>
+        <div class="card-industry">الرعاية الصحية</div>
+        <div class="stats">
+          <div class="stat-row">
+            <div class="stat-label">📄 مقالات</div>
+            <div class="stat-value">٣</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">👁 إجمالي الوصول <span class="tag ga4">GA4</span></div>
+            <div class="stat-value highlight">٤٢١</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="note">profile views (90) + article views (331) = أكبر رقم حقيقي</p>
+  </div>
+
+  <!-- Option B: Events -->
+  <div>
+    <div class="option-label">الخيار B — الأحداث والتفاعل</div>
+    <div class="card">
+      <div class="card-header"><div class="card-logo">ط</div></div>
+      <div class="card-body">
+        <div class="card-name">طبيب الأسنان</div>
+        <div class="card-industry">الرعاية الصحية</div>
+        <div class="stats">
+          <div class="stat-row">
+            <div class="stat-label">📄 مقالات</div>
+            <div class="stat-value">٣</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">👁 مشاهدات</div>
+            <div class="stat-value">٩٠</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">⚡ تفاعل <span class="tag ga4">GA4</span></div>
+            <div class="stat-value green">٦٨٠</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="note">eventCount عادةً 5-10× المشاهدات — أكبر رقم في الكارت</p>
+  </div>
+
+  <!-- Option C: Platform context -->
+  <div>
+    <div class="option-label">الخيار C — رقم المنظومة كـ social proof</div>
+    <div class="card">
+      <div class="card-header"><div class="card-logo">ط</div></div>
+      <div class="card-body">
+        <div class="card-name">طبيب الأسنان</div>
+        <div class="card-industry">الرعاية الصحية</div>
+        <div class="stats">
+          <div class="stat-row">
+            <div class="stat-label">📄 مقالات</div>
+            <div class="stat-value">٣</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">👁 مشاهدات صفحته</div>
+            <div class="stat-value">٩٠</div>
+          </div>
+        </div>
+        <div style="margin-top:10px; background:#1a2535; border:1px solid #2563eb22; border-radius:8px; padding:8px; font-size:11px; color:#93c5fd; text-align:center;">
+          🌐 جزء من منظومة وصلت لـ <b style="color:#38bdf8">١٢,٥٩٨</b> زيارة هذا الشهر
+        </div>
+      </div>
+    </div>
+    <p class="note">العميل يشوف رقم المنصة الكبير — ينسى رقمه الصغير</p>
+  </div>
+
+  <!-- Option D: WINNER - Combined -->
+  <div>
+    <div class="winner-label">⭐ التوصية — الأذكى</div>
+    <div class="card winner">
+      <div class="card-header"><div class="card-logo">ط</div></div>
+      <div class="card-body">
+        <div class="card-name">طبيب الأسنان</div>
+        <div class="card-industry">الرعاية الصحية</div>
+        <div class="stats">
+          <div class="stat-row">
+            <div class="stat-label">📄 مقالات</div>
+            <div class="stat-value">٣</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">🌐 إجمالي الوصول <span class="tag ga4">GA4</span></div>
+            <div class="stat-value highlight">٤٢١</div>
+          </div>
+        </div>
+        <div style="margin-top:10px; background:#0d1f1a; border:1px solid #16a34a33; border-radius:8px; padding:7px; font-size:10.5px; color:#86efac; text-align:center; line-height:1.5;">
+          ضمن منظومة وصلت لـ <b style="color:#4ade80">١٢,٥٩٨</b> زيارة
+        </div>
+      </div>
+    </div>
+    <p class="note">إجمالي الوصول (profile + articles) + رقم المنظومة = أكبر تأثير نفسي</p>
+  </div>
+
+</div>
+
+<hr class="divider">
+
+<div class="section-title">ملاحظة فنية</div>
+<p class="note">
+  • إجمالي الوصول (profile + articles): يحتاج query إضافي — نجيب pagePath BEGINS_WITH /articles/ مع filter على اسم العميل أو نربطها بـ DB slugs.<br>
+  • eventCount per page: query بسيط، نفس الـ API call الحالي + metric إضافي.<br>
+  • رقم المنظومة: موجود أصلاً في getGa4FooterStats() — صفر تكلفة إضافية.
+</p>
+
+</body>
+</html>

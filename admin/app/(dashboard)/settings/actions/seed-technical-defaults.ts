@@ -39,7 +39,7 @@ const SEO_RULES: Record<string, unknown> = {
 
 // Business defaults — stable for 6+ months, editable via Apply Defaults
 const BUSINESS_DEFAULTS: Record<string, unknown> = {
-  siteUrl: "https://modonty.com",
+  siteUrl: "https://www.modonty.com",
   siteName: "Modonty",
   siteAuthor: "Modonty Team",
   inLanguage: "ar-SA",
@@ -47,7 +47,13 @@ const BUSINESS_DEFAULTS: Record<string, unknown> = {
   orgAreaServed: "SA",
   orgContactType: "customer service",
   orgContactAvailableLanguage: "ar, en",
-  orgSearchUrlTemplate: "https://modonty.com/search?q={search_term_string}",
+  orgSearchUrlTemplate: "https://www.modonty.com/search?q={search_term_string}",
+  // Image licensing defaults for Modonty-PRODUCED images (schema.org ImageObject →
+  // Google Licensable badge). LOGO/GALLERY are attributed to the owning client instead.
+  // license + acquireLicensePage MUST be absolute URLs (Google requirement).
+  imageOwnerName: "مدوّنتي",
+  imageLicenseUrl: "https://www.modonty.com/legal/copyright-policy",
+  imageAcquireLicensePageUrl: "https://www.modonty.com/legal/copyright-policy",
 };
 
 // Technical defaults — industry standards, never change

@@ -149,8 +149,8 @@ const CLIENT_SEO_SELECT = {
   gbpProfileUrl: true,
   gbpPlaceId: true,
   parentOrganizationId: true,
-  logoMedia: { select: { url: true, altText: true, width: true, height: true } },
-  heroImageMedia: { select: { url: true, altText: true, width: true, height: true } },
+  logoMedia: { select: { url: true, altText: true, width: true, height: true, description: true, createdAt: true } },
+  heroImageMedia: { select: { url: true, altText: true, width: true, height: true, description: true, createdAt: true } },
   industry: { select: { id: true, name: true } },
   parentOrganization: { select: { id: true, name: true, url: true, slug: true } },
 } as const;
@@ -166,6 +166,9 @@ const SETTINGS_SEO_SELECT = {
   twitterCreator: true,
   defaultAlternateLanguages: true,
   defaultHreflang: true,
+  imageOwnerName: true,
+  imageLicenseUrl: true,
+  imageAcquireLicensePageUrl: true,
 } as const;
 
 type JsonLdGraph = ReturnType<typeof generateCompleteOrganizationJsonLd>;
@@ -348,7 +351,7 @@ export async function generateClientSeoBundle(
     }),
     db.media.findMany({
       where: { clientId, type: "GALLERY" },
-      select: { url: true, altText: true, width: true, height: true },
+      select: { url: true, altText: true, width: true, height: true, description: true, createdAt: true },
       orderBy: { createdAt: "desc" },
       take: 30,
     }),
@@ -373,6 +376,8 @@ export async function generateClientSeoBundle(
     altText: m.altText,
     width: m.width,
     height: m.height,
+    description: m.description,
+    createdAt: m.createdAt,
   }));
 
   // The client's @type is decided INSIDE generateCompleteOrganizationJsonLd — it has to
@@ -384,7 +389,18 @@ export async function generateClientSeoBundle(
   const jsonLdGraph = generateCompleteOrganizationJsonLd(
     client as unknown as Parameters<typeof generateCompleteOrganizationJsonLd>[0],
     clientPageUrl,
-    { siteUrl, siteName, ...reviewOptions, galleryImages }
+    {
+      siteUrl,
+      siteName,
+      ...reviewOptions,
+      galleryImages,
+      imageLicensing: {
+        ownerName: settings?.imageOwnerName ?? null,
+        organizationUrl: siteUrl,
+        licenseUrl: settings?.imageLicenseUrl ?? null,
+        acquireLicensePageUrl: settings?.imageAcquireLicensePageUrl ?? null,
+      },
+    }
   );
   const jsonLdString = JSON.stringify(jsonLdGraph, null, 2);
 

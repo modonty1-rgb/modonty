@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>استكشف الفئات — مدونتي · موكب v2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #09090b;
+      --bg-2:      #111113;
+      --bg-card:   #18181b;
+      --border:    #27272a;
+      --border-2:  #3f3f46;
+      --text:      #fafafa;
+      --text-2:    #a1a1aa;
+      --text-3:    #71717a;
+      --primary:        #3b82f6;
+      --primary-faint:  rgba(59,130,246,0.12);
+      --primary-glow:   rgba(59,130,246,0.22);
+      --accent:         #06b6d4;
+      --accent-faint:   rgba(6,182,212,0.10);
+      --green:          #22c55e;
+      --green-faint:    rgba(34,197,94,0.10);
+      --amber:          #f59e0b;
+      --amber-faint:    rgba(245,158,11,0.10);
+      --purple:         #a855f7;
+      --purple-faint:   rgba(168,85,247,0.10);
+      --pink:           #ec4899;
+      --r: 12px;
+      --r-lg: 16px;
+    }
+
+    body {
+      font-family: 'Tajawal', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      direction: rtl;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ─── WATERMARK ─────────────────────────────── */
+    .watermark {
+      position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+      z-index: 9999;
+      background: rgba(9,9,11,0.92);
+      border: 1px dashed rgba(245,158,11,0.5);
+      border-radius: 100px;
+      padding: 5px 18px;
+      font-size: 12px; font-weight: 700; color: var(--amber);
+      backdrop-filter: blur(12px);
+      white-space: nowrap;
+    }
+
+    /* ─── HEADER ─────────────────────────────────── */
+    header {
+      height: 60px;
+      background: rgba(9,9,11,0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-weight: 900; font-size: 18px; color: var(--primary); letter-spacing: -0.5px; }
+    .nav { display: flex; gap: 24px; }
+    .nav a {
+      color: var(--text-2); text-decoration: none;
+      font-size: 14px; font-weight: 500;
+      transition: color .18s;
+    }
+    .nav a:hover, .nav a.active { color: var(--text); }
+    .hdr-btns { display: flex; gap: 10px; align-items: center; }
+    .hdr-link { color: var(--text-2); font-size: 13px; text-decoration: none; }
+    .hdr-cta {
+      background: var(--primary); border: none; color: white;
+      border-radius: 8px; padding: 8px 18px;
+      font-family: 'Tajawal', sans-serif; font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: opacity .18s;
+    }
+    .hdr-cta:hover { opacity: 0.85; }
+
+    /* ─── BREADCRUMB ─────────────────────────────── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      padding: 12px 0; font-size: 13px; color: var(--text-3);
+    }
+    .breadcrumb a { color: var(--text-3); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--text-2); }
+    .breadcrumb .sep { opacity: 0.35; }
+    .breadcrumb .current { color: var(--text-2); }
+
+    /* ─── CONTAINER ──────────────────────────────── */
+    .container { max-width: 1128px; margin: 0 auto; padding: 0 24px; }
+
+    /* ═══════════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════════ */
+    .hero {
+      position: relative; overflow: hidden;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .hero-bg {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 80% at 95% -10%, rgba(59,130,246,0.16) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 5%  110%, rgba(6,182,212,0.08) 0%, transparent 55%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .hero-inner {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 56px;
+      align-items: center;
+      padding: 60px 0 52px;
+    }
+
+    /* Badge */
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--primary-faint);
+      border: 1px solid rgba(59,130,246,0.28);
+      color: var(--primary);
+      border-radius: 100px; padding: 4px 14px;
+      font-size: 12px; font-weight: 700;
+      margin-bottom: 20px;
+    }
+    .hero-badge .pulse {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--primary);
+      animation: pdot 2s ease-in-out infinite;
+    }
+    @keyframes pdot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* Title */
+    h1.hero-title {
+      font-size: clamp(34px, 5vw, 54px);
+      font-weight: 900; letter-spacing: -1.5px; line-height: 1.08;
+      margin-bottom: 16px; color: var(--text);
+    }
+    h1.hero-title .hl { color: var(--primary); }
+
+    /* Desc */
+    .hero-desc {
+      font-size: 15px; color: var(--text-2);
+      max-width: 460px; line-height: 1.75; margin-bottom: 36px;
+    }
+
+    /* Stats row */
+    .hero-stats { display: flex; gap: 28px; }
+    .hero-stat { display: flex; align-items: center; gap: 11px; }
+    .stat-icon {
+      width: 42px; height: 42px; border-radius: 11px;
+      display: flex; align-items: center; justify-content: center; font-size: 19px;
+    }
+    .stat-icon.blue  { background: var(--primary-faint); }
+    .stat-icon.cyan  { background: var(--accent-faint);  }
+    .stat-icon.green { background: var(--green-faint);   }
+    .stat-num   { font-size: 24px; font-weight: 900; color: var(--text); line-height: 1; }
+    .stat-label { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+    /* Mosaic */
+    .hero-mosaic {
+      display: grid;
+      grid-template-columns: repeat(3, 90px);
+      grid-template-rows:  repeat(3, 62px);
+      gap: 7px;
+      transform: rotate(-4deg) translateX(10px);
+      opacity: 0.82;
+    }
+    .mc {
+      border-radius: 9px; overflow: hidden; position: relative;
+      border: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    .mc.big { grid-column: span 2; grid-row: span 2; font-size: 32px; }
+    .mc-lbl {
+      position: absolute; bottom: 0; right: 0; left: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.82));
+      font-size: 9px; font-weight: 700; color: #fff;
+      text-align: center; padding: 10px 4px 5px;
+    }
+    .mc.big .mc-lbl { font-size: 12px; padding: 14px 6px 7px; }
+
+    /* ═══════════════════════════════════════════════
+       MAIN
+    ═══════════════════════════════════════════════ */
+    main { padding: 44px 0 80px; }
+
+    /* ═══════════════════════════════════════════════
+       FILTER BAR — SINGLE SEARCH
+    ═══════════════════════════════════════════════ */
+    .filter-bar {
+      display: flex; gap: 8px; align-items: center;
+      margin-bottom: 28px;
+    }
+    .fsearch {
+      flex: 1;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r); padding: 0 14px; height: 44px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .fsearch:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-faint);
+    }
+    .fsearch input {
+      flex: 1; background: none; border: none; outline: none;
+      color: var(--text); font-family: 'Tajawal', sans-serif; font-size: 14px; direction: rtl;
+    }
+    .fsearch input::placeholder { color: var(--text-3); }
+    .fsearch-ico { color: var(--text-3); font-size: 16px; }
+    .fbtn {
+      background: var(--bg-card); border: 1.5px solid var(--border);
+      border-radius: var(--r); color: var(--text-2);
+      font-family: 'Tajawal', sans-serif; font-size: 13px; font-weight: 600;
+      padding: 0 14px; height: 44px; cursor: pointer; white-space: nowrap;
+      transition: all .18s; display: flex; align-items: center; gap: 5px;
+    }
+    .fbtn:hover  { border-color: var(--border-2); color: var(--text); }
+    .fbtn.active { border-color: var(--primary); color: var(--primary); background: var(--primary-faint); }
+    .fcount { font-size: 13px; color: var(--text-3); white-space: nowrap; }
+
+    /* ═══════════════════════════════════════════════
+       CATEGORY CARD GRID — 4 cols
+    ═══════════════════════════════════════════════ */
+    .cats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .ccard {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden; cursor: pointer;
+      text-decoration: none; display: block; position: relative;
+      transition: border-color .2s, box-shadow .2s, transform .2s;
+    }
+    .ccard:hover {
+      border-color: var(--cc-accent, var(--primary));
+      box-shadow: 0 8px 24px rgba(0,0,0,0.32);
+      transform: translateY(-1px);
+    }
+
+    /* Accent bar on start (right in RTL) */
+    .ccard::after {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 3px; height: 100%;
+      background: var(--cc-accent, var(--primary));
+      transform: scaleY(0); transform-origin: top;
+      transition: transform .22s;
+    }
+    .ccard:hover::after { transform: scaleY(1); }
+
+    /* Cover */
+    .cc-cov {
+      aspect-ratio: 16 / 7; position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+    }
+
+    /* Body */
+    .cc-body { padding: 13px 14px 14px; }
+    .cc-name { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
+    .cc-desc {
+      font-size: 12px; color: var(--text-3); line-height: 1.5; margin-bottom: 12px;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    /* Footer: avatar group + article chip */
+    .cc-foot {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    /* Avatar group */
+    .av-group {
+      display: flex; align-items: center;
+      direction: ltr; /* avatars always stack ltr visually */
+    }
+    .av {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-card);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800;
+      margin-left: -7px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .av-group .av:first-child { margin-left: 0; }
+    .av-more {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-card);
+      background: var(--bg-2);
+      color: var(--text-3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700;
+      margin-left: -7px;
+      flex-shrink: 0;
+    }
+    .av-label {
+      font-size: 11px; color: var(--text-3); margin-right: 10px;
+      direction: rtl;
+    }
+
+    /* Article chip */
+    .cc-art-chip {
+      display: inline-flex; align-items: center; gap: 3px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 2px 9px;
+      font-size: 11px; color: var(--text-3);
+      white-space: nowrap;
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      border-radius: 100px; padding: 2px 8px;
+      font-size: 11px; font-weight: 700;
+    }
+    .badge-hot  { background: var(--amber-faint); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+    .badge-new  { background: var(--green-faint);  color: var(--green);  border: 1px solid rgba(34,197,94,0.2);  }
+
+    /* Card with badge: badge goes inside cover, top-left */
+    .cc-cov-badge {
+      position: absolute; top: 8px; left: 8px;
+    }
+
+    /* ─── responsive ──────── */
+    @media (max-width: 900px) {
+      .hero-mosaic { display: none; }
+      .hero-inner  { grid-template-columns: 1fr; }
+      .cats-grid   { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 580px) {
+      .cats-grid  { grid-template-columns: 1fr; }
+      h1.hero-title { font-size: 30px; }
+      .hero-stats { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- WATERMARK -->
+<div class="watermark">⚡ موكب تصميم — v2 — للمراجعة فقط</div>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header>
+  <span class="logo">modonty</span>
+  <nav class="nav">
+    <a href="#">الرئيسية</a>
+    <a href="#">الشركاء</a>
+    <a href="#" class="active" style="color:var(--text)">الفئات</a>
+    <a href="#">الترتيب</a>
+  </nav>
+  <div class="hdr-btns">
+    <a href="#" class="hdr-link">دخول</a>
+    <button class="hdr-cta">اشترك مجاناً</button>
+  </div>
+</header>
+
+<!-- ═══════════════ BREADCRUMB ═══════════════ -->
+<div class="container">
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="#">🏠 الرئيسية</a>
+    <span class="sep">›</span>
+    <span class="current">الفئات</span>
+  </nav>
+</div>
+
+<!-- ═══════════════ HERO (no search) ═══════════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="container">
+    <div class="hero-inner">
+
+      <!-- Left: text -->
+      <div>
+        <div class="hero-badge">
+          <span class="pulse"></span>
+          دليل الشركاء الرقميين
+        </div>
+
+        <h1 class="hero-title">
+          اكتشف أفضل الشركات<br>
+          في كل <span class="hl">مجال</span>
+        </h1>
+
+        <p class="hero-desc">
+          تصفح الفئات المتخصصة واعثر على شركاء موثوقين —
+          ملفات كاملة وتقييمات حقيقية وبيانات Google المباشرة.
+        </p>
+
+        <!-- Stats only — no search here -->
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="stat-icon blue">📁</div>
+            <div>
+              <div class="stat-num">25</div>
+              <div class="stat-label">فئة متاحة</div>
+            </div>
+          </div>
+          <div class="hero-stat">
+            <div class="stat-icon cyan">📄</div>
+            <div>
+              <div class="stat-num">32</div>
+              <div class="stat-label">مقال منشور</div>
+            </div>
+          </div>
+          <div class="hero-stat">
+            <div class="stat-icon green">🏢</div>
+            <div>
+              <div class="stat-num">8</div>
+              <div class="stat-label">شريك موثوق</div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /text col -->
+
+      <!-- Right: mosaic grid -->
+      <div class="hero-mosaic" aria-hidden="true">
+        <div class="mc big" style="background:linear-gradient(135deg,#0f2744,#1e3a6e)">
+          🔍
+          <div class="mc-lbl">تحسين محركات البحث</div>
+        </div>
+        <div class="mc" style="background:linear-gradient(135deg,#1e4d2a,#0f2d15)">
+          📈
+          <div class="mc-lbl" style="font-size:8px">تسويق</div>
+        </div>
+        <div class="mc" style="background:linear-gradient(135deg,#3d1a5c,#1c0d30)">
+          💼
+          <div class="mc-lbl" style="font-size:8px">ريادة</div>
+        </div>
+        <div class="mc" style="background:linear-gradient(135deg,#4d2a0a,#2d1700)">
+          🏗️
+          <div class="mc-lbl" style="font-size:8px">إنشاءات</div>
+        </div>
+        <div class="mc" style="background:linear-gradient(135deg,#0a2d3d,#061828)">
+          💻
+          <div class="mc-lbl" style="font-size:8px">تقنية</div>
+        </div>
+        <div class="mc" style="background:linear-gradient(135deg,#4d0a2a,#2a0015)">
+          👗
+          <div class="mc-lbl" style="font-size:8px">موضة</div>
+        </div>
+        <div class="mc" style="background:linear-gradient(135deg,#3d1a1a,#200f0f)">
+          ❤️
+          <div class="mc-lbl" style="font-size:8px">صحة</div>
+        </div>
+      </div><!-- /mosaic -->
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main>
+  <div class="container">
+
+    <!-- ── Filter Bar — Single Search ──────── -->
+    <div class="filter-bar">
+      <div class="fsearch">
+        <span class="fsearch-ico">🔍</span>
+        <input type="text" placeholder="ابحث في الفئات... مثل: تسويق، تقنية، صحة">
+      </div>
+      <button class="fbtn active">الكل <span style="opacity:.6;font-size:12px">(25)</span></button>
+      <button class="fbtn">الأكثر مقالاً</button>
+      <button class="fbtn">🔥 رائج</button>
+      <button class="fbtn">✨ الأحدث</button>
+      <span class="fcount">25 فئة</span>
+    </div>
+
+    <!-- ── Categories Grid ──────────────────── -->
+    <div class="cats-grid">
+
+      <!-- 1 SEO -->
+      <a href="#" class="ccard" style="--cc-accent:#3b82f6">
+        <div class="cc-cov" style="background:linear-gradient(135deg,#0f2744,#1e3a5f);position:relative">
+          🔍
+          <span class="cc-cov-badge badge badge-hot">🔥 رائج</span>
+        </div>
+        <div class="cc-body">
+          <div class="cc-name">تحسين محركات البحث</div>
+          <div class="cc-desc">استراتيجيات SEO المتقدمة للظهور الرقمي</div>
+          <div class="cc-foot">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="av-group">
+                <div class="av" style="background:#0f2744;color:#60a5fa">ج</div>
+                <div class="av" style="background:#1e3d0f;color:#86efac">م</div>
+                <div class="av" style="background:#2a1050;color:#d8b4fe">ر</div>
+              </div>
+              <span class="av-label">3 شركاء</span>
+            </div>
+            <span class="cc-art-chip">📄 7 مقال</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 2 Marketing -->
+      <a href="#" class="ccard" style="--cc-accent:#22c55e">
+        <div class="cc-cov" style="background:linear-gradient(135deg,#1e4d2a,#0f2d15);position:relative">
+          📈
+          <span class="cc-cov-badge badge badge-hot">🔥 رائج</span>
+        </div>
+        <div class="cc-body">
+          <div class="cc-name">التسويق بالمحتوى</div>
+          <div class="cc-desc">محتوى احترافي يجذب العملاء ويبني العلامة</div>
+          <div class="cc-foot">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="av-group">
+                <div class="av" style="background:#1e4d2a;color:#86efac">ن</div>
+                <div class="av" style="background:#4d2a0a;color:#fbbf24">س</div>
+              </div>
+              <span class="av-label">2 شركاء</span>
+            </div>
+            <span class="cc-art-chip">📄 5 مقالات</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 3 Business -->
+      <a href="#" class="ccard" style="--cc-accent:#a855f7">
+        <div class="cc-cov" style="background:linear-gradient(135deg,#3d1a5c,#1c0d30);position:relative">
+          💼
+          <span class="cc-cov-badge badge badge-new">✨ جديد</span>
+        </div>
+        <div class="cc-body">
+          <div class="cc-name">ريادة الأعمال</div>
+          <div class="cc-desc">مقالات لرواد الأعمال في السوق العربي</div>
+          <div class="cc-foot">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="av-group">
+                <div class="av" style="background:#3d1a5c;color:#d8b4fe">ك</div>
+              </div>
+              <span class="av-label">1 شريك</span>
+            </div>
+            <span class="cc-art-chip">📄 4 مقالات</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 4 Construction -->
+      <a href="#" class="ccard" style="--cc-accent:#f59e0b">
+        <div class="cc-cov" style="background:linear-gradient(135deg,#4d2a0a,#2d1700)">🏗️</div>
+        <div class="cc-body">
+          <div class="cc-name">الإنشاءات والتعمير</div>
+          <div class="cc-desc">قطاع البناء والمقاولات في السوق السعودي</div>
+          <div class="cc-foot">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="av-group">
+                <div class="av" style="background:#4d2a0a;color:#fbbf24">ع</div>
+                <div class="av" style="background:#1e3a6e;color:#93c5fd">ب</div>
+                <div class="av" style="background:#1e4d2a;color:#86efac">خ</div>
+                <div class="av-more">+1</div>
+              </div>
+              <span class="av-label">4 شركاء</span>
+            </div>
+            <span class="cc-art-chip">📄 7 مقالات</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 5 Fashion -->
+      <a href="#" class="ccard" style="--cc-accent:#ec4899">
+        <div class="cc-cov" style="background:linear-gradient(135deg,#4d0a2a,#2a0015);position:relative">
+          👗
+          <span class="cc-cov-badge badge badge-new">✨ جديد</span>
+        </div>
+        <div class="cc-body">
+          <div class="cc-name">الموضة والجمال</div>
+          <div class="cc-desc">عالم الأزياء والجمال في الخليج</div>
+          <div class="cc-foot">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="av-group">
+                <div class="av" style="background:#4d0a2a;color:#f9a8d4">ل</div>
+                <div class="av" style="background:#2a0015;color:#ec4899">ه</div>
+              </div>
+              <span class="av-label">2 شركاء</span>
+            </div>
+            <span class="cc-art-chip">📄 3 مقالات</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 6 Tech -->
+      <a href="#" class="ccard" style="--cc-accent:#06b6d4">
+        <div class="cc-cov" style="background:linear-gradient(135deg,#0a2d3d,#061828)">💻</div>
+        <div class="cc-body">
+          <div class="cc-name">التقنية والبرمجة</div>
+          <div class="cc-desc">مقالات تقنية للمطورين وعشاق التكنولوجيا</div>
+          <div class="cc-foot">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="av-group">
+                <div class="av" style="background:#0a2d3d;color:#67e8f9">ف</div>
+              </div>
+              <span class="av-label">1 شريك</span>
+            </div>
+            <span class="cc-art-chip">📄 2 مقالات</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 7 Finance -->
+      <a href="#" class="ccard" style="--cc-accent:#22c55e">
+        <div class="cc-cov" style="background:linear-gradient(135deg,#1a3d2a,#0a2015)">🚀</div>
+        <div class="cc-body">
+          <div class="cc-name">الاستثمار والتمويل</div>
+          <div class="cc-desc">الاستثمار الذكي وإدارة الثروات</div>
+          <div class="cc-foot">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="av-group">
+                <div class="av" style="background:#1a3d2a;color:#86efac">ر</div>
+              </div>
+              <span class="av-label">1 شريك</span>
+            </div>
+            <span class="cc-art-chip">📄 1 مقال</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 8 Health -->
+      <a href="#" class="ccard" style="--cc-accent:#ef4444">
+        <div class="cc-cov" style="background:linear-gradient(135deg,#3d1a1a,#200f0f)">❤️</div>
+        <div class="cc-body">
+          <div class="cc-name">الصحة والعافية</div>
+          <div class="cc-desc">الصحة العامة واللياقة والعناية بالنفس</div>
+          <div class="cc-foot">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="av-group">
+                <div class="av" style="background:#3d1a1a;color:#fca5a5">ط</div>
+                <div class="av" style="background:#200f0f;color:#ef4444">ص</div>
+              </div>
+              <span class="av-label">2 شركاء</span>
+            </div>
+            <span class="cc-art-chip">📄 3 مقالات</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 9 Education -->
+      <a href="#" class="ccard" style="--cc-accent:#f59e0b">
+        <div class="cc-cov" style="background:linear-gradient(135deg,#3d2a0a,#201500)">🎓</div>
+        <div class="cc-body">
+          <div class="cc-name">التعليم والتطوير</div>
+          <div class="cc-desc">مصادر التعلم والنمو المهني في العالم العربي</div>
+          <div class="cc-foot">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="av-group">
+                <div class="av" style="background:#3d2a0a;color:#fde68a">ي</div>
+              </div>
+              <span class="av-label">1 شريك</span>
+            </div>
+            <span class="cc-art-chip">📄 2 مقالات</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 10 Travel -->
+      <a href="#" class="ccard" style="--cc-accent:#06b6d4">
+        <div class="cc-cov" style="background:linear-gradient(135deg,#0a3d4d,#062028)">✈️</div>
+        <div class="cc-body">
+          <div class="cc-name">السياحة والسفر</div>
+          <div class="cc-desc">وجهات سياحية ونصائح السفر في المنطقة</div>
+          <div class="cc-foot">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="av-group">
+                <div class="av" style="background:#0a3d4d;color:#67e8f9">س</div>
+              </div>
+              <span class="av-label">1 شريك</span>
+            </div>
+            <span class="cc-art-chip">📄 1 مقال</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 11 Legal -->
+      <a href="#" class="ccard" style="--cc-accent:#a855f7">
+        <div class="cc-cov" style="background:linear-gradient(135deg,#2a1a3d,#150d20)">⚖️</div>
+        <div class="cc-body">
+          <div class="cc-name">القانون والأنظمة</div>
+          <div class="cc-desc">الإطار القانوني والتشريعات في السوق السعودي</div>
+          <div class="cc-foot">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="av-group">
+                <div class="av" style="background:#2a1a3d;color:#d8b4fe">ق</div>
+              </div>
+              <span class="av-label">1 شريك</span>
+            </div>
+            <span class="cc-art-chip">📄 1 مقال</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 12 Food -->
+      <a href="#" class="ccard" style="--cc-accent:#ef4444">
+        <div class="cc-cov" style="background:linear-gradient(135deg,#3d1a0a,#200a00)">🍽️</div>
+        <div class="cc-body">
+          <div class="cc-name">الأغذية والمطاعم</div>
+          <div class="cc-desc">قطاع المطاعم والضيافة في الجزيرة العربية</div>
+          <div class="cc-foot">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="av-group">
+                <div class="av" style="background:#3d1a0a;color:#fca5a5">أ</div>
+              </div>
+              <span class="av-label">1 شريك</span>
+            </div>
+            <span class="cc-art-chip">📄 1 مقال</span>
+          </div>
+        </div>
+      </a>
+
+    </div><!-- /cats-grid -->
+
+  </div><!-- /container -->
+</main>
+
+<!-- ═══════════════ DECISIONS PANEL ═══════════════ -->
+<div style="background:var(--bg-2);border-top:1px solid var(--border);padding:40px 0;margin-top:20px">
+  <div class="container">
+    <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:20px;letter-spacing:1px">📋 قرارات — v1→v2 تغيّر / مفتوح</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-right:3px solid #22c55e;border-radius:var(--r);padding:14px">
+        <div style="font-size:12px;font-weight:700;color:#22c55e;margin-bottom:6px">✅ محسوم — Search واحد</div>
+        <div style="font-size:13px;color:var(--text-2);line-height:1.6">
+          الـ hero لا يحتوي بحثاً. البحث الوحيد في الـ filter bar أعلى الشبكة.
+        </div>
+      </div>
+
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-right:3px solid #22c55e;border-radius:var(--r);padding:14px">
+        <div style="font-size:12px;font-weight:700;color:#22c55e;margin-bottom:6px">✅ محسوم — حُذف Bento/Featured</div>
+        <div style="font-size:13px;color:var(--text-2);line-height:1.6">
+          لا فئات كبيرة وصغيرة. كل الفئات متساوية في الشبكة.
+        </div>
+      </div>
+
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-right:3px solid var(--primary);border-radius:var(--r);padding:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:6px">🔷 مفتوح — الـ Mosaic في Hero</div>
+        <div style="font-size:13px;color:var(--text-2);line-height:1.6">
+          الموكب: موزاييك يمين بتدوير -4deg.<br>
+          <strong style="color:var(--text)">توصيتي: أبقِه</strong> — عمق بصري فريد.
+        </div>
+      </div>
+
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-right:3px solid var(--amber);border-radius:var(--r);padding:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--amber);margin-bottom:6px">🔶 مفتوح — Avatar Group: حروف أم شعارات؟</div>
+        <div style="font-size:13px;color:var(--text-2);line-height:1.6">
+          الموكب: حروف ملونة (placeholder).<br>
+          في الكود الحقيقي: شعارات العملاء next/image.<br>
+          <strong style="color:var(--text)">توصيتي: شعارات في الكود</strong>.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

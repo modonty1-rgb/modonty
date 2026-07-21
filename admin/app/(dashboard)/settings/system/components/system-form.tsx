@@ -45,6 +45,9 @@ const BUSINESS_DEFAULTS: RuleRow[] = [
   { label: "Contact Type", key: "orgContactType", source: "Schema.org", url: "https://schema.org/contactType" },
   { label: "Available Languages", key: "orgContactAvailableLanguage", source: "ISO 639-1", url: "https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" },
   { label: "Search URL", key: "orgSearchUrlTemplate", source: "Schema.org", url: "https://schema.org/SearchAction" },
+  { label: "Image Owner Name", key: "imageOwnerName", source: "Schema.org", url: "https://schema.org/creditText" },
+  { label: "Image License URL", key: "imageLicenseUrl", source: "Google", url: "https://developers.google.com/search/docs/appearance/structured-data/image-license-metadata" },
+  { label: "Image Acquire License URL", key: "imageAcquireLicensePageUrl", source: "Google", url: "https://developers.google.com/search/docs/appearance/structured-data/image-license-metadata" },
 ];
 
 const TECHNICAL_DEFAULTS: RuleRow[] = [

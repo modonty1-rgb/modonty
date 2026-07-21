@@ -389,14 +389,7 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
       return;
     }
 
-    if (!seoForm.altText || seoForm.altText.trim().length === 0) {
-      toast({
-        title: "Alt Text Required",
-        description: "Alt text is required for SEO and accessibility.",
-        variant: "destructive",
-      });
-      return;
-    }
+    // Alt text is optional at upload — the writer adds it later in SEO Images.
 
     setSavingFileId(uploadFile.id);
 

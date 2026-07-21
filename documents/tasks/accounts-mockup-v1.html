@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>موكب صفحة الحسابات — v3</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Tajawal', sans-serif; }
+    body { background: #f6f7f9; color: #0f172a; }
+    .tnum { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body class="p-6">
+  <div class="mx-auto max-w-[1280px] space-y-5">
+
+    <!-- Header -->
+    <div>
+      <h1 class="text-xl font-extrabold flex items-center gap-2">
+        <span class="inline-flex h-7 w-7 items-center justify-center rounded-md bg-slate-900 text-white text-sm">💳</span>
+        Accounts
+      </h1>
+      <p class="text-sm text-slate-500 mt-1">مركز إدارة حسابات العملاء — التفعيل، الإيقاف، التجديد، والفواتير في مكان واحد.</p>
+    </div>
+
+    <!-- Conditional red alert (PREVIEW — appears only when overdue > 0) -->
+    <div class="rounded-lg border border-dashed border-red-300 bg-red-50/60 p-2.5 text-[11px] text-red-500">
+      معاينة تصميم فقط ↓ — هذا البانر يظهر <b>فقط لو فيه متأخرات سداد</b> (حالياً 0 فلا يظهر في الصفحة الحقيقية).
+    </div>
+    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 flex items-center gap-3">
+      <span class="inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-500/15 text-red-600 text-lg">⚠️</span>
+      <div class="flex-1">
+        <p class="text-sm font-bold text-red-700">2 accounts overdue</p>
+        <p class="text-xs text-red-600/80">راجعها وأرسل تذكير الدفع قبل انقطاع الخدمة.</p>
+      </div>
+      <button class="h-8 px-3 rounded-md bg-red-600 text-white text-xs font-bold">View overdue</button>
+    </div>
+
+    <!-- KPI row (Arabic labels — as original) -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="rounded-lg border bg-white p-4">
+        <div class="flex items-center gap-2.5">
+          <span class="flex h-9 w-9 items-center justify-center rounded-md bg-slate-100 text-slate-700">🗂️</span>
+          <div><p class="text-2xl font-extrabold tnum leading-none">26</p><p class="text-xs text-slate-500 mt-1">إجمالي الحسابات</p></div>
+        </div>
+      </div>
+      <div class="rounded-lg border bg-white p-4">
+        <div class="flex items-center gap-2.5">
+          <span class="flex h-9 w-9 items-center justify-center rounded-md bg-emerald-500/15 text-emerald-600">✅</span>
+          <div><p class="text-2xl font-extrabold tnum leading-none">26</p><p class="text-xs text-slate-500 mt-1">نشط</p></div>
+        </div>
+      </div>
+      <div class="rounded-lg border bg-white p-4">
+        <div class="flex items-center gap-2.5">
+          <span class="flex h-9 w-9 items-center justify-center rounded-md bg-red-500/15 text-red-600">⚠️</span>
+          <div><p class="text-2xl font-extrabold tnum leading-none">0</p><p class="text-xs text-slate-500 mt-1">متأخّر السداد</p></div>
+        </div>
+      </div>
+      <div class="rounded-lg border bg-white p-4">
+        <div class="flex items-center gap-2.5">
+          <span class="flex h-9 w-9 items-center justify-center rounded-md bg-violet-500/15 text-violet-600">⏳</span>
+          <div><p class="text-2xl font-extrabold tnum leading-none">0</p><p class="text-xs text-slate-500 mt-1">قرب الانتهاء (٣٠ يوم)</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table card (shadcn-style, English UI labels) -->
+    <div class="rounded-lg border bg-white">
+      <div class="p-3 border-b flex items-center gap-2">
+        <div class="relative max-w-sm w-full">
+          <span class="absolute start-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
+          <input placeholder="Search by name or email…" class="w-full h-9 rounded-md border bg-white ps-8 pe-3 text-sm outline-none focus:ring-2 focus:ring-slate-300" />
+        </div>
+        <span class="text-xs text-slate-400 shrink-0">26 accounts</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm whitespace-nowrap">
+          <thead>
+            <tr class="border-b bg-slate-50/60 text-[11px] text-slate-500">
+              <th class="text-start font-semibold px-4 py-2.5">Client</th>
+              <th class="text-center font-semibold px-2 py-2.5">Plan</th>
+              <th class="text-center font-semibold px-2 py-2.5">Billing</th>
+              <th class="text-center font-semibold px-2 py-2.5">Account</th>
+              <th class="text-center font-semibold px-2 py-2.5">Payment</th>
+              <th class="text-center font-semibold px-2 py-2.5">Subscribed</th>
+              <th class="text-center font-semibold px-2 py-2.5">Activation<span class="block text-[9px] font-normal text-slate-400">first published</span></th>
+              <th class="text-center font-semibold px-2 py-2.5">End</th>
+              <th class="text-end font-semibold px-4 py-2.5">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="[&>tr]:border-b [&>tr:last-child]:border-0">
+            <tr class="hover:bg-slate-50">
+              <td class="px-4 py-3">
+                <div class="font-semibold truncate max-w-[220px]">مؤسسة فرسان التعافي</div>
+                <div class="text-xs text-slate-400 truncate max-w-[220px]">Recoveryknights@icloud.com</div>
+              </td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 font-semibold text-slate-700">الانطلاق</span></td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 font-medium">Annual</span></td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 font-medium">ACTIVE</span></td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 font-medium">PAID</span></td>
+              <td class="px-2 py-3 text-center text-xs text-slate-500 tnum">6 Jul 2026</td>
+              <td class="px-2 py-3 text-center text-xs text-slate-700 font-medium tnum">15 Jul 2026</td>
+              <td class="px-2 py-3 text-center text-xs text-slate-400 tnum">—</td>
+              <td class="px-4 py-3">
+                <div class="flex justify-end">
+                  <a href="#" class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md border text-[11px] font-semibold hover:bg-slate-50" title="Account statement">
+                    <span>🧾</span> Statement <span class="text-[10px]">‹</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="px-4 py-3">
+                <div class="font-semibold truncate max-w-[220px]">دار التعافي للطب النفسي والإدمان</div>
+                <div class="text-xs text-slate-400 truncate max-w-[220px]">solomee86@gmail.com</div>
+              </td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 font-semibold text-slate-700">النمو</span></td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 font-medium">Annual</span></td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 font-medium">ACTIVE</span></td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 font-medium">PAID</span></td>
+              <td class="px-2 py-3 text-center text-xs text-slate-500 tnum">30 Jun 2026</td>
+              <td class="px-2 py-3 text-center text-xs text-slate-700 font-medium tnum">8 Jul 2026</td>
+              <td class="px-2 py-3 text-center text-xs text-slate-400 tnum">—</td>
+              <td class="px-4 py-3">
+                <div class="flex justify-end">
+                  <a href="#" class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md border text-[11px] font-semibold hover:bg-slate-50" title="Account statement">
+                    <span>🧾</span> Statement <span class="text-[10px]">‹</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            <!-- subscribed but NOT yet activated (no published article) -->
+            <tr class="hover:bg-slate-50">
+              <td class="px-4 py-3">
+                <div class="font-semibold truncate max-w-[220px]">pain core clinic- دكتور عمرو سعيد</div>
+                <div class="text-xs text-slate-400 truncate max-w-[220px]">dramrsaeed80@gmail.com</div>
+              </td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-violet-500/15 text-violet-700 font-semibold">الزخم</span></td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium">Monthly</span></td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 font-medium">ACTIVE</span></td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 font-medium">PENDING</span></td>
+              <td class="px-2 py-3 text-center text-xs text-slate-500 tnum">30 Jun 2026</td>
+              <td class="px-2 py-3 text-center text-xs tnum"><span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 font-medium">not activated</span></td>
+              <td class="px-2 py-3 text-center text-xs text-slate-400 tnum">—</td>
+              <td class="px-4 py-3">
+                <div class="flex justify-end">
+                  <a href="#" class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md border text-[11px] font-semibold hover:bg-slate-50" title="Account statement">
+                    <span>🧾</span> Statement <span class="text-[10px]">‹</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            <!-- design intent: overdue + expiring row -->
+            <tr class="hover:bg-slate-50 bg-red-50/30">
+              <td class="px-4 py-3">
+                <div class="font-semibold truncate max-w-[220px]">عيادة نموذجية (مثال متأخّر)</div>
+                <div class="text-xs text-slate-400 truncate max-w-[220px]">demo@example.com</div>
+              </td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 font-semibold text-slate-700">الريادة</span></td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 font-medium">Annual</span></td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 font-medium">ACTIVE</span></td>
+              <td class="px-2 py-3 text-center"><span class="text-[11px] px-2 py-0.5 rounded-full bg-red-500/15 text-red-600 font-medium">OVERDUE</span></td>
+              <td class="px-2 py-3 text-center text-xs text-slate-500 tnum">1 Jan 2025</td>
+              <td class="px-2 py-3 text-center text-xs text-slate-700 font-medium tnum">20 Jan 2025</td>
+              <td class="px-2 py-3 text-center text-xs tnum"><span class="text-amber-600">1 Aug 2026<span class="block text-[10px]">12d</span></span></td>
+              <td class="px-4 py-3">
+                <div class="flex justify-end">
+                  <a href="#" class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md border text-[11px] font-semibold hover:bg-slate-50" title="Account statement">
+                    <span>🧾</span> Statement <span class="text-[10px]">‹</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Empty state reference -->
+    <div class="rounded-lg border border-dashed bg-white">
+      <p class="text-[11px] text-slate-400 px-3 pt-3">Empty-state reference:</p>
+      <div class="px-4 py-10 text-center">
+        <div class="text-3xl mb-2">💳</div>
+        <p class="text-sm font-semibold text-slate-600">No accounts yet</p>
+        <p class="text-xs text-slate-400 mt-1">فعّل أول عميل من صفحة العملاء وبيظهر حسابه هنا.</p>
+      </div>
+    </div>
+
+    <div class="rounded-lg border bg-slate-50 p-3 text-[11px] text-slate-500 leading-relaxed">
+      <b>مصادر البيانات (مؤكّدة من السكيما):</b><br>
+      • <b>Plan</b> = اسم الباقة الفعلية من <code>client.subscriptionTierConfig.name</code> (fallback: enum BASIC/STANDARD/PRO/PREMIUM). الأسماء في الموكب تمثيلية.<br>
+      • <b>Billing</b> = Monthly / Annual من <b>آخر فاتورة</b> <code>Invoice.period</code> للعميل — «—» لو ما عنده فاتورة.<br>
+      • <b>Subscribed</b> = <code>client.subscriptionStartDate</code> (تاريخ الاشتراك).<br>
+      • <b>Activation</b> = <b>أول مقال منشور</b> = أقدم <code>datePublished</code> حيث <code>status=PUBLISHED</code> للعميل — «not activated» لو ما نُشر له مقال بعد. <b>هذا أساس ضبط الفوترة.</b><br>
+      • <b>End</b> يبقى كما هو (subscriptionEndDate = null حالياً → «—»).<br>
+      • زر الصف: <b>Statement</b> بدل «كشف الحساب» (يفتح كشف حساب العميل + الفواتير).
+    </div>
+
+    <p class="text-center text-[11px] text-slate-400 pt-1">موكب v3 — RTL · English UI labels · Track A (أدمن) · Subscribed + Activation.</p>
+  </div>
+</body>
+</html>

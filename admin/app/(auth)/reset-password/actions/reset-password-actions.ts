@@ -43,7 +43,7 @@ export async function resetPassword(
 
   try {
     // First, check if token exists (ignoring expiration) for debugging
-    const tokenExists = await db.user.findFirst({
+    const tokenExists = await db.staff.findFirst({
       where: { passwordResetToken: hashedToken },
       select: {
         id: true,
@@ -89,7 +89,7 @@ export async function resetPassword(
     // All checks passed, update password
     const hashedPassword = await bcrypt.hash(parsed.data.password, 10);
 
-    await db.user.update({
+    await db.staff.update({
       where: { id: tokenExists.id },
       data: {
         password: hashedPassword,

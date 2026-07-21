@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Publish — Business v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0c0c0c; color: #d1d5db; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 13px; }
+
+  .page { padding: 18px 24px; max-width: 1100px; margin: 0 auto; }
+
+  /* Header */
+  .header { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #1f1f1f; }
+  .back { font-size: 11px; color: #6b7280; cursor: pointer; }
+  .back:hover { color: #9ca3af; }
+  .sep { color: #374151; }
+  .page-title { font-size: 13px; font-weight: 600; color: #e5e7eb; }
+  .platform-pills { display: flex; gap: 5px; }
+  .pill { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 3px; }
+  .pill-fb { background: #1877F2; color: white; }
+  .pill-ig { background: #e1306c; color: white; }
+
+  /* Grid */
+  .grid { display: grid; grid-template-columns: 1fr 248px 248px; gap: 14px; align-items: start; }
+
+  /* Sections */
+  .section { margin-bottom: 10px; }
+  .section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; margin-bottom: 6px; }
+  .block { background: #161616; border: 1px solid #262626; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+  .block-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+
+  /* Inputs */
+  input[type=text], textarea {
+    width: 100%; background: #0c0c0c; border: 1px solid #262626; border-radius: 6px;
+    color: #e5e7eb; font-size: 12px; padding: 7px 10px; outline: none; font-family: inherit; transition: border-color .1s;
+  }
+  input[type=text]:focus, textarea:focus { border-color: #374151; }
+  textarea { resize: none; min-height: 76px; line-height: 1.5; }
+  .char { font-size: 10px; color: #4b5563; text-align: right; margin-top: 4px; }
+  .char.over { color: #ef4444; }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; gap: 4px; border-radius: 5px; cursor: pointer; border: none; font-family: inherit; transition: background .1s, color .1s; }
+  .btn-sm { font-size: 11px; padding: 4px 9px; height: 26px; }
+  .btn-ghost { background: transparent; color: #6b7280; border: 1px solid transparent; }
+  .btn-ghost:hover { background: #1f1f1f; color: #9ca3af; }
+  .btn-default { background: #1f1f1f; color: #9ca3af; border: 1px solid #262626; }
+  .btn-default:hover { background: #262626; color: #d1d5db; }
+  .btn-ai { color: #f59e0b; }
+  .btn-publish { width: 100%; height: 40px; font-size: 13px; font-weight: 600; justify-content: center; border-radius: 7px; }
+  .btn-publish-all { background: #1877F2; color: white; }
+  .btn-publish-all:hover { background: #1565c0; }
+  .btn-full { width: 100%; justify-content: center; height: 30px; }
+
+  /* Platform checkboxes */
+  .platform-list { display: flex; flex-direction: column; gap: 6px; }
+  .platform-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border: 1px solid #262626; border-radius: 6px; background: #0c0c0c; }
+  .platform-left { display: flex; align-items: center; gap: 8px; }
+  .platform-left input { accent-color: #6b7280; }
+  .platform-name { font-size: 12px; font-weight: 500; color: #d1d5db; }
+  .platform-desc { font-size: 10px; color: #4b5563; }
+
+  /* IG source */
+  .ig-source { padding: 10px; background: #161616; border: 1px solid #262626; border-radius: 8px; }
+  .tabs { display: flex; border: 1px solid #262626; border-radius: 5px; overflow: hidden; margin-bottom: 10px; }
+  .tab { flex: 1; padding: 5px; font-size: 11px; font-weight: 500; text-align: center; cursor: pointer; background: transparent; color: #6b7280; border: none; font-family: inherit; transition: background .1s; }
+  .tab.active { background: #262626; color: #d1d5db; }
+  .panel { display: none; }
+  .panel.on { display: block; }
+  .note { font-size: 10px; color: #4b5563; line-height: 1.5; margin-bottom: 8px; }
+  .note b { color: #6b7280; }
+
+  .gen-btn { width: 100%; height: 30px; background: #0c0c0c; border: 1px solid #374151; color: #9ca3af; font-size: 11px; font-weight: 500; border-radius: 5px; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background .1s; }
+  .gen-btn:hover { background: #1f1f1f; }
+  .gen-btn:disabled { opacity: .4; cursor: default; }
+  .status-ok { font-size: 10px; color: #10b981; margin-top: 6px; display: none; }
+  .status-err { font-size: 10px; color: #ef4444; margin-top: 6px; display: none; }
+
+  .media-thumb { border-radius: 4px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 2px solid transparent; background: #0c0c0c; transition: border-color .1s; }
+  .media-thumb:hover { border-color: #374151; }
+  .media-thumb.selected { border-color: #e1306c; }
+  .media-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .media-empty { width: 100%; height: 100%; background: #1f1f1f; }
+
+  /* Result banners */
+  .result-ok { background: #052e16; border: 1px solid #166534; color: #4ade80; font-size: 11px; padding: 8px 11px; border-radius: 6px; margin-bottom: 6px; display: none; }
+  .result-err { background: #450a0a; border: 1px solid #991b1b; color: #fca5a5; font-size: 11px; padding: 8px 11px; border-radius: 6px; margin-bottom: 6px; display: none; }
+
+  /* Previews */
+  .preview-col { position: sticky; top: 14px; }
+  .preview-col-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+  .badge { font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 600; }
+  .badge-ai { background: #052e16; color: #4ade80; }
+  .badge-up { background: #1e3a5f; color: #60a5fa; }
+
+  /* FB card */
+  .fb-card { background: #161616; border: 1px solid #262626; border-radius: 8px; overflow: hidden; }
+  .fb-header { padding: 8px 10px; display: flex; align-items: center; gap: 7px; }
+  .fb-avatar { width: 28px; height: 28px; background: #1877F2; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; flex-shrink: 0; }
+  .fb-name { font-size: 11px; font-weight: 600; color: #e5e7eb; }
+  .fb-time { font-size: 9px; color: #6b7280; }
+  .fb-body { padding: 0 10px 8px; font-size: 10px; color: #9ca3af; direction: rtl; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+  .fb-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: #1f1f1f; display: block; }
+  .fb-actions { display: flex; border-top: 1px solid #1f1f1f; }
+  .fb-action { flex: 1; padding: 5px; text-align: center; font-size: 10px; color: #6b7280; }
+
+  /* IG card */
+  .ig-card { background: #161616; border: 1px solid #262626; border-radius: 8px; overflow: hidden; }
+  .ig-header { padding: 8px 10px; display: flex; align-items: center; gap: 7px; }
+  .ig-avatar { width: 26px; height: 26px; background: #e1306c; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; flex-shrink: 0; }
+  .ig-user { font-size: 11px; font-weight: 600; color: #e5e7eb; }
+  .ig-img-area { width: 100%; aspect-ratio: 4/5; background: #0c0c0c; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; overflow: hidden; position: relative; }
+  .ig-placeholder { font-size: 10px; color: #374151; text-align: center; }
+  .ig-caption-area { padding: 7px 10px 4px; }
+  .ig-user-inline { font-size: 10px; font-weight: 700; color: #e5e7eb; }
+  .ig-cap { font-size: 10px; color: #9ca3af; direction: rtl; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
+  .ig-act { padding: 6px 10px 8px; font-size: 12px; color: #6b7280; display: flex; gap: 8px; }
+
+  /* Spinner */
+  .spin { width: 10px; height: 10px; border: 1.5px solid #374151; border-top-color: #9ca3af; border-radius: 50%; animation: rot .6s linear infinite; display: inline-block; }
+  @keyframes rot { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <span class="back">← Back</span>
+    <span class="sep">/</span>
+    <span class="page-title">Publish Article</span>
+    <span class="sep">·</span>
+    <div class="platform-pills">
+      <span class="pill pill-fb">FB</span>
+      <span class="pill pill-ig">IG</span>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- LEFT: editor -->
+    <div>
+
+      <!-- Article -->
+      <div class="block">
+        <div class="section-label">Article</div>
+        <div style="font-size:13px;font-weight:600;direction:rtl;margin-bottom:7px;color:#e5e7eb">
+          كيف تحسّن ظهور مشروعك في نتائج البحث السعودي
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span style="font-size:10px;background:#1f1f1f;padding:2px 7px;border-radius:3px;color:#6b7280">نادي الأعمال</span>
+          <span style="font-size:10px;color:#6b7280">02 Jul 2026</span>
+          <span style="font-size:10px;color:#3b82f6;cursor:pointer">View ↗</span>
+        </div>
+      </div>
+
+      <!-- Hook -->
+      <div class="block">
+        <div class="block-row">
+          <div class="section-label" style="margin:0">Hook</div>
+          <div style="display:flex;gap:4px">
+            <button class="btn btn-sm btn-ghost">Reset</button>
+            <button class="btn btn-sm btn-default btn-ai">✦ AI</button>
+          </div>
+        </div>
+        <input type="text" dir="rtl" value="وش يخلي زبائنك يلاقونك أول شي في Google؟">
+        <div style="font-size:9px;color:#4b5563;margin-top:4px">First line — shown before "See more"</div>
+      </div>
+
+      <!-- Body -->
+      <div class="block">
+        <div class="block-row">
+          <div class="section-label" style="margin:0">Body</div>
+          <div style="display:flex;gap:4px">
+            <button class="btn btn-sm btn-ghost">Reset</button>
+            <button class="btn btn-sm btn-default btn-ai">✦ AI</button>
+          </div>
+        </div>
+        <textarea dir="rtl">لما الزبون يدور خدمتك في Google، تبغى تكون أنت الأول. مش الشركة اللي جنبك. في المقال هذا، نشرح خطوات عملية تقدر تبدأها هذا الأسبوع.</textarea>
+        <div class="char">312 / 500</div>
+      </div>
+
+      <!-- Platforms -->
+      <div class="block">
+        <div class="section-label">Publish to</div>
+        <div class="platform-list">
+          <div class="platform-item">
+            <div class="platform-left">
+              <input type="checkbox" id="fb" checked>
+              <label for="fb">
+                <div class="platform-name">Facebook</div>
+                <div class="platform-desc">Page post with article image</div>
+              </label>
+            </div>
+          </div>
+          <div class="platform-item">
+            <div class="platform-left">
+              <input type="checkbox" id="ig" checked onchange="toggleIG(this)">
+              <label for="ig">
+                <div class="platform-name">Instagram</div>
+                <div class="platform-desc">4:5 portrait — requires image</div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="res-fb" class="result-ok">✅ Facebook published — Post ID: 120214065943830</div>
+      <div id="res-ig" class="result-ok">✅ Instagram published — Post ID: 17860261325136129</div>
+
+      <!-- Publish button -->
+      <button class="btn btn-publish btn-publish-all" onclick="doPublish(this)">
+        Publish to Facebook & Instagram
+      </button>
+
+    </div>
+
+    <!-- MIDDLE: FB -->
+    <div class="preview-col">
+      <div class="preview-col-label">
+        <span class="pill pill-fb" style="font-size:9px">FB</span> Preview
+      </div>
+      <div class="fb-card">
+        <div class="fb-header">
+          <div class="fb-avatar">M</div>
+          <div>
+            <div class="fb-name">Modonty | مُدَوَّنَتِي</div>
+            <div class="fb-time">Just now · 🌐</div>
+          </div>
+        </div>
+        <div class="fb-body" dir="rtl">✨ وش يخلي زبائنك يلاقونك أول شي في Google؟
+
+لما الزبون يدور خدمتك في Google، تبغى تكون أنت الأول. مش الشركة اللي جنبك.
+
+اقرأها الآن 👇
+🔗 modonty.com/articles/...
+
+#تحسين_البحث #السعودية</div>
+        <img class="fb-img"
+          src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto/v1780347592/clients/69d5ec61e2087dee91fe99a1/img-vozjcsedu.webp"
+          onerror="this.style.display='none'">
+        <div class="fb-actions">
+          <div class="fb-action">👍 Like</div>
+          <div class="fb-action">💬 Comment</div>
+          <div class="fb-action">↪ Share</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: IG -->
+    <div class="preview-col" id="ig-col">
+      <div class="preview-col-label" id="ig-col-label">
+        <span class="pill pill-ig" style="font-size:9px">IG</span> Preview · 4:5
+      </div>
+
+      <!-- IG image source — lives in the IG column -->
+      <div class="ig-source" id="ig-source" style="margin-bottom:10px">
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('ai',this)">✦ AI Generate</button>
+          <button class="tab" onclick="switchTab('upload',this)">📷 From Media</button>
+        </div>
+
+        <!-- AI -->
+        <div class="panel on" id="panel-ai">
+          <div class="note">FLUX 1.1 Pro · Saudi business context · No text · <b>$0.04/image</b></div>
+          <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate Preview</button>
+          <div class="status-ok" id="ai-ok">✓ Preview ready — Publish will use this image</div>
+          <div class="status-err" id="ai-err">Error message here</div>
+        </div>
+
+        <!-- From Media -->
+        <div class="panel" id="panel-upload">
+          <div style="font-size:10px;color:#4b5563;margin-bottom:8px">Select from article media library</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px" id="media-grid">
+            <div class="media-thumb" onclick="pickMedia(this,'https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto/v1780347592/clients/69d5ec61e2087dee91fe99a1/img-vozjcsedu.webp')">
+              <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto/v1780347592/clients/69d5ec61e2087dee91fe99a1/img-vozjcsedu.webp" onerror="this.parentElement.style.background='#1f1f1f'">
+            </div>
+            <div class="media-thumb" onclick="pickMedia(this,'')"><div class="media-empty"></div></div>
+            <div class="media-thumb" onclick="pickMedia(this,'')"><div class="media-empty"></div></div>
+            <div class="media-thumb" onclick="pickMedia(this,'')"><div class="media-empty"></div></div>
+            <div class="media-thumb" onclick="pickMedia(this,'')"><div class="media-empty"></div></div>
+            <div class="media-thumb" onclick="pickMedia(this,'')"><div class="media-empty"></div></div>
+          </div>
+          <div class="status-ok" id="up-ok">✓ Image selected</div>
+        </div>
+      </div>
+
+      <div class="ig-card">
+        <div class="ig-header">
+          <div class="ig-avatar">M</div>
+          <div class="ig-user">modonty</div>
+        </div>
+        <div class="ig-img-area" id="ig-area">
+          <div class="ig-placeholder">Generate preview<br>or upload image</div>
+        </div>
+        <div class="ig-caption-area">
+          <span class="ig-user-inline">modonty</span>
+          <div class="ig-cap" dir="rtl">✨ وش يخلي زبائنك يلاقونك أول شي في Google؟
+
+لما الزبون يدور خدمتك في Google، تبغى تكون أنت الأول.</div>
+        </div>
+        <div class="ig-act">♡ 💬 ✈</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleIG(cb) {
+  document.getElementById('ig-source').style.display = cb.checked ? 'block' : 'none';
+}
+
+function switchTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  el.classList.add('active');
+  document.getElementById('panel-' + id).classList.add('on');
+  resetIGPreview();
+}
+
+function resetIGPreview() {
+  document.getElementById('ig-area').innerHTML = '<div class="ig-placeholder">Generate preview<br>or upload image</div>';
+  document.getElementById('ig-col-label').innerHTML = '<span class="pill pill-ig" style="font-size:9px">IG</span> Preview · 4:5';
+}
+
+function doGenerate() {
+  const btn = document.getElementById('gen-btn');
+  const ok = document.getElementById('ai-ok');
+  const err = document.getElementById('ai-err');
+  ok.style.display = 'none'; err.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Generating…';
+  setTimeout(() => {
+    document.getElementById('ig-area').innerHTML = `
+      <div style="width:100%;height:100%;background:#111827;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px">
+        <div style="font-size:10px;color:#6b7280">FLUX 1.1 Pro output</div>
+        <div style="font-size:10px;color:#4b5563;text-align:center;line-height:1.4">AI-generated image<br>Saudi business context · no text</div>
+        <div style="font-size:9px;color:#10b981;margin-top:4px">✓ 1080 × 1350</div>
+      </div>`;
+    document.getElementById('ig-col-label').innerHTML = '<span class="pill pill-ig" style="font-size:9px">IG</span> Preview · 4:5 &nbsp;<span class="badge badge-ai">AI</span>';
+    ok.style.display = 'block';
+    btn.innerHTML = '↺ Regenerate';
+    btn.disabled = false;
+    btn.onclick = doGenerate;
+  }, 2000);
+}
+
+function pickMedia(el, url) {
+  document.querySelectorAll('.media-thumb').forEach(t => t.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('up-ok').style.display = 'block';
+  if (url) setIGImage(url, 'Media');
+}
+
+function setIGImage(src, label) {
+  document.getElementById('ig-area').innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;display:block">`;
+  document.getElementById('ig-col-label').innerHTML = `<span class="pill pill-ig" style="font-size:9px">IG</span> Preview · 4:5 &nbsp;<span class="badge badge-up">${label}</span>`;
+  document.getElementById('up-ok').style.display = 'block';
+}
+
+function doPublish(btn) {
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Publishing…';
+  setTimeout(() => {
+    document.getElementById('res-fb').style.display = 'block';
+    document.getElementById('res-ig').style.display = 'block';
+    btn.innerHTML = '✓ Published';
+    btn.style.background = '#166534';
+  }, 1600);
+}
+</script>
+</body>
+</html>

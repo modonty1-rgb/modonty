@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>Instagram Crop Comparison</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0a; color: #e5e5e5; font-family: 'Tajawal', 'Segoe UI', sans-serif; padding: 32px 24px; }
+  h1 { font-size: 18px; color: #fff; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 32px; }
+
+  .legend {
+    display: flex; gap: 16px; margin-bottom: 24px;
+  }
+  .badge {
+    font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 999px; letter-spacing: .5px;
+  }
+  .badge-orig { background: #374151; color: #9ca3af; }
+  .badge-sq   { background: #1e3a5f; color: #60a5fa; }
+  .badge-pt   { background: #3b1f5e; color: #c084fc; }
+
+  .article {
+    margin-bottom: 48px;
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .article-title {
+    padding: 14px 20px;
+    font-size: 13px;
+    color: #9ca3af;
+    background: #111827;
+    border-bottom: 1px solid #1f2937;
+  }
+
+  .crops {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+  .crop-col {
+    border-left: 1px solid #1f2937;
+    padding: 16px;
+    background: #0f172a;
+  }
+  .crop-col:last-child { border-left: none; }
+
+  .crop-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .dim { font-size: 10px; font-weight: 400; color: #6b7280; }
+
+  .img-wrap {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #1f2937;
+    position: relative;
+  }
+  .img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Aspect ratios for the wrapper */
+  .orig-wrap  { aspect-ratio: 1.91; }
+  .sq-wrap    { aspect-ratio: 1; }
+  .pt-wrap    { aspect-ratio: 4/5; }
+
+  .note {
+    margin-top: 8px;
+    font-size: 10px;
+    color: #6b7280;
+    line-height: 1.5;
+  }
+
+  .header-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    margin-bottom: 0;
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+  }
+  .header-cell {
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    border-left: 1px solid #1f2937;
+  }
+  .header-cell:last-child { border-left: none; }
+  .hc-orig { color: #9ca3af; }
+  .hc-sq   { color: #60a5fa; }
+  .hc-pt   { color: #c084fc; }
+</style>
+</head>
+<body>
+
+<h1>مقارنة مقاسات Instagram</h1>
+<p class="subtitle">نفس الصورة — 3 crop: الأصلي 1.91:1 · مربع 1:1 · بورتريه 4:5 — Cloudinary g_auto</p>
+
+<div class="header-row">
+  <div class="header-cell hc-orig">الأصلي (Facebook) · 1.91:1</div>
+  <div class="header-cell hc-sq">مربع · 1:1</div>
+  <div class="header-cell hc-pt">بورتريه · 4:5 ← أعلى تفاعل</div>
+</div>
+
+<div id="articles"></div>
+
+<script>
+const images = [
+  {
+    title: "ما الفرق بين SEO و SEM | JBR SEO",
+    url: "https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1780347592/clients/69d5ec61e2087dee91fe99a1/img-vozjcsedu.webp",
+    size: "1000×563"
+  },
+  {
+    title: "أهمية المحتوى لمحركات البحث",
+    url: "https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1780830230/clients/6a0d5ed14fb8550c7ad4bcdb/img-3oc2li7hc.webp",
+    size: "1399×781"
+  },
+  {
+    title: "توزيعات الأرباح الأسهم",
+    url: "https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1780829820/clients/6a0d5ed14fb8550c7ad4bcdb/img-3o3b81d25.webp",
+    size: "1400×764"
+  },
+  {
+    title: "دليل تداول الأسهم للمبتدئين",
+    url: "https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1780829125/clients/6a0d5ed14fb8550c7ad4bcdb/img-3noea2e0g.webp",
+    size: "1400×764"
+  },
+  {
+    title: "دليل الاستثمار في المملكة العربية السعودية",
+    url: "https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1780828759/clients/6a0d5ed14fb8550c7ad4bcdb/img-3ngk0bsm0.webp",
+    size: "800×447"
+  },
+  {
+    title: "تعرف على مصادر دخل إضافي في السعودية",
+    url: "https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1780827862/clients/6a0d5ed14fb8550c7ad4bcdb/img-3mxbzxfsf.webp",
+    size: "1000×545"
+  }
+];
+
+function toInstagramUrl(url, w, h) {
+  const transform = `w_${w},h_${h},c_fill,g_auto,f_auto,q_auto`;
+  return url.replace(/\/upload\/[^/]+\//, `/upload/${transform}/`);
+}
+
+const container = document.getElementById('articles');
+
+images.forEach(img => {
+  const squareUrl   = toInstagramUrl(img.url, 1080, 1080);
+  const portraitUrl = toInstagramUrl(img.url, 1080, 1350);
+
+  container.innerHTML += `
+    <div class="article">
+      <div class="article-title">${img.title} · <span style="color:#374151">${img.size}</span></div>
+      <div class="crops">
+        <div class="crop-col">
+          <div class="crop-label" style="color:#9ca3af">
+            الأصلي <span class="dim">1.91:1</span>
+          </div>
+          <div class="img-wrap orig-wrap">
+            <img src="${img.url}" alt="" loading="lazy">
+          </div>
+          <p class="note">يُقبل على Instagram لكن يأخذ أقل مساحة في الفيد</p>
+        </div>
+        <div class="crop-col">
+          <div class="crop-label" style="color:#60a5fa">
+            مربع <span class="dim">1080×1080</span>
+          </div>
+          <div class="img-wrap sq-wrap">
+            <img src="${squareUrl}" alt="" loading="lazy">
+          </div>
+          <p class="note">آمن ومناسب — لا قص حاد</p>
+        </div>
+        <div class="crop-col">
+          <div class="crop-label" style="color:#c084fc">
+            بورتريه <span class="dim">1080×1350</span>
+          </div>
+          <div class="img-wrap pt-wrap">
+            <img src="${portraitUrl}" alt="" loading="lazy">
+          </div>
+          <p class="note">أعلى engagement لأنه يملأ الشاشة — لكن يقص الجانبين</p>
+        </div>
+      </div>
+    </div>
+  `;
+});
+</script>
+</body>
+</html>

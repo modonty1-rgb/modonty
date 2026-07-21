@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Client Galleries — mockup v1</title>
+<style>
+  :root{
+    --bg:#f8fafc; --card:#ffffff; --line:#e5e7eb; --fg:#0f172a; --muted:#64748b;
+    --primary:#2563eb; --primary-fg:#fff; --red:#dc2626;
+    --thumb:#e2e8f0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#060a14; --card:#0f172a; --line:#1e293b; --fg:#e2e8f0; --muted:#94a3b8; --thumb:#1e293b; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font-family:"Tajawal","Segoe UI",system-ui,sans-serif;padding:24px 16px;line-height:1.5}
+  .wrap{max-width:1080px;margin:0 auto}
+  .lead{font-size:12px;color:var(--muted);margin:0 0 22px}
+  .lead b{color:var(--fg)}
+
+  .label{font-size:11px;font-weight:800;letter-spacing:.05em;color:var(--muted);text-transform:uppercase;margin:26px 0 10px}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+
+  /* header row */
+  .head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px}
+  .h-l{display:flex;align-items:center;gap:10px;min-width:0}
+  .h-title{font-size:15px;font-weight:700;margin:0}
+  .h-sub{font-size:11.5px;color:var(--muted);margin:2px 0 0}
+  .count-pill{background:var(--thumb);color:var(--muted);font-size:11px;font-weight:800;border-radius:99px;padding:2px 9px}
+
+  .btn{display:inline-flex;align-items:center;gap:6px;border-radius:9px;padding:8px 14px;font-size:12.5px;font-weight:700;
+    border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer;text-decoration:none;white-space:nowrap}
+  .btn.primary{background:var(--primary);color:var(--primary-fg);border-color:var(--primary)}
+  .btn.sm{padding:6px 11px;font-size:12px}
+  .search{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:7px 11px 7px 30px;font-size:12.5px;color:var(--fg);width:210px;
+    background-image:radial-gradient(circle at 12px 50%, var(--muted) 1.5px, transparent 2px);}
+
+  /* level 1 table */
+  table{width:100%;border-collapse:collapse}
+  th{font-size:11px;font-weight:700;color:var(--muted);text-align:start;padding:9px 16px;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.03em}
+  td{padding:11px 16px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
+  tr:last-child td{border-bottom:0}
+  .client{display:flex;align-items:center;gap:10px}
+  .avatar{width:34px;height:34px;border-radius:8px;background:var(--thumb);flex:none;display:grid;place-items:center;font-size:13px;font-weight:800;color:var(--muted);overflow:hidden}
+  .cname{font-weight:600}
+  .num{font-weight:800}
+  .row-act{text-align:end}
+
+  /* level 2 grid */
+  .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media(max-width:720px){.grid{grid-template-columns:repeat(2,1fr)}}
+  .tile{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+  .tile .img{aspect-ratio:1/1;background:linear-gradient(135deg,var(--thumb),color-mix(in srgb,var(--thumb) 70%, #94a3b8));display:grid;place-items:center;color:var(--muted);font-size:11px}
+  .tile .meta{padding:7px 9px;font-size:10.5px;color:var(--muted);display:flex;justify-content:space-between;gap:6px}
+  .del{position:absolute;top:7px;inset-inline-start:7px;width:26px;height:26px;border-radius:8px;border:0;
+    background:rgba(220,38,38,.92);color:#fff;font-size:13px;cursor:pointer;display:grid;place-items:center;opacity:.92}
+  .add-tile{border:2px dashed var(--line);border-radius:12px;display:grid;place-items:center;aspect-ratio:1/1;color:var(--muted);cursor:pointer;background:transparent}
+  .add-tile .plus{font-size:26px;line-height:1}
+  .add-tile .t{font-size:11.5px;margin-top:4px}
+
+  .empty{border:1px dashed var(--line);border-radius:14px;padding:34px;text-align:center;color:var(--muted);font-size:13px;background:var(--card)}
+
+  .flow{background:color-mix(in srgb, var(--primary) 6%, transparent);border:1px solid color-mix(in srgb, var(--primary) 25%, transparent);
+    border-radius:12px;padding:12px 14px;font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.8}
+  .flow b{color:var(--fg)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="lead">موكب <b>Client Galleries</b> — راوت مستقل، مستويان. مسار أدمن (وضوح + هرمية). GALLERY تخرج من <b>/media</b>. الأرقام توضيحية.</p>
+
+  <!-- ═══════ LEVEL 1 — clients table ═══════ -->
+  <p class="label">المستوى 1 · /client-galleries — جدول العملاء</p>
+  <div class="card">
+    <div class="head">
+      <div class="h-l">
+        <div>
+          <p class="h-title">Client Galleries</p>
+          <p class="h-sub">معرض صور كل عميل — يظهر على صفحته وفي ImageObject[] بالـ JSON-LD.</p>
+        </div>
+      </div>
+      <input class="search" placeholder="ابحث عن عميل…" />
+    </div>
+    <table>
+      <thead>
+        <tr><th>العميل</th><th>عدد الصور</th><th></th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="client"><div class="avatar">ع</div><span class="cname">دكتور عمر الديدي — dental center</span></div></td>
+          <td><span class="num">14</span> صورة</td>
+          <td class="row-act"><a class="btn sm" href="#l2">إدارة المعرض ←</a></td>
+        </tr>
+        <tr>
+          <td><div class="client"><div class="avatar">م</div><span class="cname">مدار حواء</span></div></td>
+          <td><span class="num">6</span> صور</td>
+          <td class="row-act"><a class="btn sm" href="#l2">إدارة المعرض ←</a></td>
+        </tr>
+        <tr>
+          <td><div class="client"><div class="avatar">ك</div><span class="cname">كيما زون</span></div></td>
+          <td><span class="num" style="color:var(--muted)">0</span> <span style="color:var(--muted)">— لا صور</span></td>
+          <td class="row-act"><a class="btn sm" href="#l2">إدارة المعرض ←</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════ LEVEL 2 — one client's gallery ═══════ -->
+  <p class="label" id="l2">المستوى 2 · /client-galleries/[clientId] — شبكة المعرض</p>
+  <div class="toolbar">
+    <div class="h-l">
+      <a class="btn sm" href="#">→ كل العملاء</a>
+      <div>
+        <span class="h-title" style="font-size:14px">دكتور عمر الديدي</span>
+        <span class="count-pill" style="margin-inline-start:6px">14 صورة</span>
+      </div>
+    </div>
+    <button class="btn primary">＋ إضافة صور</button>
+  </div>
+
+  <div class="grid">
+    <!-- add tile always first -->
+    <div class="add-tile"><div><div class="plus">＋</div><div class="t">أضف صورة</div></div></div>
+    <div class="tile"><button class="del" title="حذف">🗑</button><div class="img">1200×800</div><div class="meta"><span>gallery-1.webp</span><span>210 KB</span></div></div>
+    <div class="tile"><button class="del" title="حذف">🗑</button><div class="img">1080×1080</div><div class="meta"><span>case-a.webp</span><span>180 KB</span></div></div>
+    <div class="tile"><button class="del" title="حذف">🗑</button><div class="img">1600×900</div><div class="meta"><span>clinic.webp</span><span>240 KB</span></div></div>
+    <div class="tile"><button class="del" title="حذف">🗑</button><div class="img">1024×768</div><div class="meta"><span>team.webp</span><span>150 KB</span></div></div>
+    <div class="tile"><button class="del" title="حذف">🗑</button><div class="img">900×1200</div><div class="meta"><span>before.webp</span><span>170 KB</span></div></div>
+    <div class="tile"><button class="del" title="حذف">🗑</button><div class="img">1200×1200</div><div class="meta"><span>after.webp</span><span>200 KB</span></div></div>
+    <div class="tile"><button class="del" title="حذف">🗑</button><div class="img">1400×933</div><div class="meta"><span>room.webp</span><span>190 KB</span></div></div>
+  </div>
+
+  <div class="flow">
+    <b>سلوك الإضافة:</b> رفع الصورة → صف Media (type=GALLERY · scope=CLIENT) + <b>إعادة توليد سيو العميل</b>. بلا ريل (الريلز يبدأها العميل من الكونسول).<br />
+    <b>سلوك الحذف:</b> يشيل الصورة + الريلز المرتبطة (إن وُجدت) + ملف Bunny + يعيد توليد السيو — نفس دلالة الكونسول، بلا يتامى.
+  </div>
+
+  <!-- empty state -->
+  <p class="label">حالة فاضية (عميل بلا معرض)</p>
+  <div class="empty">🖼️ لا توجد صور في معرض هذا العميل بعد. اضغط «إضافة صور» لبدء المعرض.</div>
+
+</div>
+</body>
+</html>

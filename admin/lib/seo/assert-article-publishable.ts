@@ -55,5 +55,20 @@ export async function assertArticlePublishable(articleId: string): Promise<Publi
       error: `درجة السيو ${score}% — الحد الأدنى للنشر ${MIN_SEO_SCORE}%.${weak ? `\nالبنود الناقصة: ${weak}` : ""}`,
     };
   }
+
+  // N2 — a featured image without alt text must never reach the index. Alt is optional at
+  // upload time (the graphic designer just uploads), so the publish gate is where the
+  // "100% before indexing" rule is actually enforced for the image's accessibility signal.
+  const featured = await db.article.findUnique({
+    where: { id: articleId },
+    select: { featuredImage: { select: { altText: true } } },
+  });
+  if (featured?.featuredImage && !featured.featuredImage.altText?.trim()) {
+    return {
+      ok: false,
+      error: "الصورة الرئيسية بلا نص بديل (alt). أضِف النص البديل من قسم «SEO Images» قبل النشر.",
+    };
+  }
+
   return { ok: true };
 }

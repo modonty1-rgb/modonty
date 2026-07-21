@@ -20,11 +20,11 @@ const SEGMENTS: Record<MediaSegmentKey, MediaSegment> = {
   "no-alt": {
     title: "No alt text",
     description:
-      "Invisible in Google Images and unreadable by a screen reader. It is 40 points of the image's SEO score and the single most valuable field to fill.",
+      "Invisible in Google Images and unreadable by a screen reader. It is 50 points of the image's SEO score and the single most valuable field to fill.",
   },
   "failing-seo": {
     title: "Failing SEO",
-    description: "Below 60. Alt text, dimensions, title, description or filename is letting them down.",
+    description: "Below 60. Alt text, dimensions, description or filename is letting them down.",
   },
   "no-dimensions": {
     title: "No dimensions stored",

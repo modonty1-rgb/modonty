@@ -8,6 +8,7 @@ import { ArrowUpDown, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { GoogleIcon } from "@/components/admin/icons/google-icon";
+import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 
 /**
  * Article segment list — the same dense operational table as the client one:
@@ -34,12 +35,6 @@ type SortKey = "title" | "views" | "seoScore" | "publishedAt" | "updatedAt";
 /** Red when someone is waiting on someone. Muted when it is just where it sits. */
 const NEEDS_SOMEONE = new Set(["AWAITING_APPROVAL", "NEEDS_REVISION"]);
 
-/** Google-ish bands: 90+ is fine, 70+ needs a look, below that it is failing. */
-function seoTone(score: number): string {
-  if (score >= 90) return "text-emerald-600 dark:text-emerald-400";
-  if (score >= 70) return "text-amber-600 dark:text-amber-400";
-  return "text-red-600 dark:text-red-400";
-}
 
 function fmt(iso: string | null): string {
   return iso ? iso.slice(0, 10) : "—";
@@ -177,7 +172,7 @@ export function ArticleSegmentTable({ articles }: { articles: SegmentArticle[] }
                       </span>
                     </TableCell>
                     <TableCell className="py-2 text-end">
-                      <span className={`font-bold tabular-nums ${seoTone(a.seoScore)}`}>{a.seoScore}</span>
+                      <SeoScoreBadge score={a.seoScore} size="sm" />
                     </TableCell>
                     <TableCell className="py-2 text-end font-semibold tabular-nums">
                       {a.views.toLocaleString("en-US")}

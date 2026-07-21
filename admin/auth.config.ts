@@ -28,9 +28,24 @@ export const authConfig = {
         console.log("[Auth] Attempting login for:", email);
 
         try {
-          const user = await db.user.findUnique({
-            where: { email },
-          });
+          // TRANSITION FALLBACK: the admin panel authenticates against `staff`, but
+          // during the users→staff migration an admin may still live only in `users`
+          // (role ADMIN). Try staff first, then fall back to an ADMIN user so no one
+          // is locked out mid-migration. Remove once all admins are verified in `staff`.
+          const staffRow = await db.staff.findUnique({ where: { email } });
+          const user = staffRow
+            ? {
+                id: staffRow.id,
+                email: staffRow.email,
+                name: staffRow.name,
+                password: staffRow.password,
+                role: staffRow.role as string,
+              }
+            : await db.user.findUnique({ where: { email } }).then((u) =>
+                u && u.role === "ADMIN"
+                  ? { id: u.id, email: u.email, name: u.name, password: u.password, role: u.role as string }
+                  : null,
+              );
 
           console.log("[Auth] User lookup result:", {
             found: !!user,
@@ -64,6 +79,14 @@ export const authConfig = {
             return null;
           }
 
+          // ADMIN-ONLY GATE: this panel is staff-only. Registered visitors
+          // (role EDITOR) and the dead CLIENT value must never get an admin
+          // session, even with a valid password. Fail closed on any non-ADMIN.
+          if (user.role !== "ADMIN") {
+            console.error("[Auth] Login rejected: not an admin —", user.role);
+            return null;
+          }
+
           console.log("[Auth] Login successful for:", email);
           // Only return minimal user data to avoid ERR_RESPONSE_HEADERS_TOO_BIG
           // Do NOT include image/avatar as they can be large data URLs
@@ -71,6 +94,7 @@ export const authConfig = {
             id: user.id,
             email: user.email,
             name: user.name,
+            role: user.role,
           };
         } catch (error) {
           if (
@@ -91,6 +115,9 @@ export const authConfig = {
       if (user) {
         token.id = user.id;
         token.email = user.email;
+        // Persist role in the signed token so the proxy (network boundary) can
+        // enforce ADMIN before any route renders — no DB read at the edge.
+        token.role = (user as { role?: string }).role;
       }
       return token;
     },
@@ -101,6 +128,9 @@ export const authConfig = {
         }
         if (token?.email) {
           session.user.email = token.email as string;
+        }
+        if (token?.role) {
+          (session.user as { role?: string }).role = token.role as string;
         }
       }
       return session;

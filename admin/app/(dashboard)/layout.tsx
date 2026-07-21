@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { checkAdmin } from "@/lib/admin-guard";
 import { Sidebar } from "@/components/admin/sidebar";
 import { Header } from "@/components/admin/header";
 import { SidebarProvider } from "@/components/contexts/sidebar-context";
+import { NotAuthorized } from "./components/not-authorized";
 import { getArticleStatusCounts } from "./actions/article-status-counts";
 import { getMissingEssentialSeoFields } from "@/lib/seo/essential-seo-fields";
 import { EssentialSeoDialog } from "@/components/admin/essential-seo-dialog";
@@ -14,18 +15,15 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // SessionProvider is hoisted to root layout (app/layout.tsx) — pre-hydrated with session.
-  // We still call auth() here as the auth GATE for /dashboard tree (redirects unauthenticated users).
-  let session;
-  try {
-    session = await auth();
-  } catch (error) {
-    console.error("Auth error in dashboard layout:", error);
+  // Authoritative gate for the /dashboard tree: authenticated AND role === ADMIN.
+  // Unauthenticated → /login. Signed-in non-admin → render NotAuthorized inline
+  // (redirecting to /login would loop, since /login bounces any session to "/").
+  const gate = await checkAdmin();
+  if (gate.status === "unauthenticated") {
     redirect("/login");
   }
-
-  if (!session) {
-    redirect("/login");
+  if (gate.status === "forbidden") {
+    return <NotAuthorized />;
   }
 
   // Fetch article status counts once at layout level → passed to Sidebar as a prop

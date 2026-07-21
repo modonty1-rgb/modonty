@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BookOpen, LogOut, Moon, Sun } from "lucide-react";
 import { Breadcrumb } from "./breadcrumb";
-import { HeaderNav } from "./header-nav";
 import { NotificationsBell } from "./notifications-bell";
 import { HeaderFeedbackButton } from "./header-feedback-button";
 import { SyncLocalButton } from "./sync-local-button";
@@ -41,10 +40,6 @@ export function Header() {
       <div className="flex h-14 items-center justify-between px-6">
         <div className="flex items-center gap-4">
           <Breadcrumb />
-        </div>
-
-        <div className="flex items-center gap-4 flex-1 justify-center">
-          <HeaderNav />
         </div>
 
         <div className="flex items-center gap-2">

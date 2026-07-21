@@ -17,8 +17,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { SEOHealthGauge } from "@/components/shared/seo-doctor/seo-health-gauge";
-import { mediaSEOConfig } from "../helpers/media-seo-config";
+import { computeMediaSeoScore } from "@modonty/database/lib/seo/media/seo-score";
+import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { MediaType } from "@prisma/client";
 import { getMediaTypeLabel } from "../helpers/media-utils";
 
@@ -219,17 +219,25 @@ export function MediaGrid({
                     </div>
                   );
                 })()}
-                {isImage(infoMedia.mimeType) && (
-                  <div className="flex items-center justify-between py-1.5">
-                    <span className="text-muted-foreground">SEO Score</span>
-                    <SEOHealthGauge
-                      data={{ altText: infoMedia.altText, title: infoMedia.title, description: infoMedia.description, width: infoMedia.width, height: infoMedia.height, filename: infoMedia.filename, cloudinaryPublicId: infoMedia.cloudinaryPublicId }}
-                      config={mediaSEOConfig}
-                      size="sm"
-                      showScore
-                    />
-                  </div>
-                )}
+                {isImage(infoMedia.mimeType) && (() => {
+                  // ONE image SEO score — the shared dataLayer SOT (computeMediaSeoScore),
+                  // the same number the SEO Images section shows. No second local rubric.
+                  const { score } = computeMediaSeoScore({
+                    altText: infoMedia.altText,
+                    description: infoMedia.description,
+                    width: infoMedia.width,
+                    height: infoMedia.height,
+                    filename: infoMedia.filename,
+                    cloudinaryPublicId: infoMedia.cloudinaryPublicId,
+                    type: infoMedia.type,
+                  });
+                  return (
+                    <div className="flex items-center justify-between py-1.5">
+                      <span className="text-muted-foreground">SEO Score</span>
+                      <SeoScoreBadge score={score} size="sm" />
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </div>

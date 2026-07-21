@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Visitor Actions — إعادة تصميم لوحة التحكم (v1)</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --border:#e5e7eb; --muted:#6b7280; --fg:#0f172a;
+    --primary:#2563eb; --red:#dc2626; --amber:#d97706; --green:#059669; --violet:#7c3aed;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",Tahoma,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.7}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px}
+
+  /* ── page header ── */
+  .hero{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;border-radius:16px;padding:26px 28px;margin-bottom:26px}
+  .hero h1{font-size:24px;font-weight:800;margin-bottom:6px}
+  .hero p{color:#cbd5e1;font-size:14px}
+  .hero .meta{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+  .chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:3px 12px;font-size:12px}
+
+  /* ── sections ── */
+  section{margin-bottom:34px}
+  h2.sec{font-size:18px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  h2.sec .n{background:var(--fg);color:#fff;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:13px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+
+  .note{background:#fffbeb;border:1px solid #fde68a;border-inline-start:4px solid var(--amber);border-radius:10px;padding:12px 14px;font-size:13.5px;margin:14px 0}
+  .note strong{color:#92400e}
+  .bad{background:#fef2f2;border-color:#fecaca;border-inline-start-color:var(--red)}
+  .bad strong{color:#991b1b}
+  .ok{background:#ecfdf5;border-color:#a7f3d0;border-inline-start-color:var(--green)}
+  .ok strong{color:#065f46}
+
+  /* ── the admin UI preview (English, LTR) ── */
+  .app{direction:ltr;text-align:left;background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;font-family:"Segoe UI",system-ui,sans-serif}
+  .app h3{font-size:14px;font-weight:800;margin-bottom:2px}
+  .app h3 .win{font-weight:400;color:var(--muted);margin-left:8px}
+  .cards{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:12px}
+  .cards.old{grid-template-columns:repeat(5,1fr)}
+  .c{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 13px;min-height:120px;display:flex;flex-direction:column}
+  .c.alert{border-top:4px solid var(--red)}
+  .c.new{border-top:4px solid var(--primary)}
+  .c .lbl{font-size:11px;color:var(--muted);font-weight:600}
+  .c .val{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2;margin-top:2px}
+  .c.alert .val{color:var(--red)}
+  .c .hint{font-size:10.5px;color:var(--muted);margin-top:1px}
+  .c .split{margin-top:auto;padding-top:8px;border-top:1px dashed var(--border);font-size:10.5px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+  .c .split b{color:var(--fg);font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;border-radius:999px;padding:1px 7px;font-size:10px;font-weight:700}
+  .p-red{background:#fee2e2;color:#991b1b}
+  .p-green{background:#d1fae5;color:#065f46}
+  .p-blue{background:#dbeafe;color:#1e40af}
+  .p-violet{background:#ede9fe;color:#5b21b6}
+  .p-amber{background:#fef3c7;color:#92400e}
+  .p-gray{background:#f1f5f9;color:#475569}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
+  th{text-align:left;font-size:11px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);padding:7px 10px 7px 0}
+  td{padding:8px 10px 8px 0;border-bottom:1px solid #f1f5f9;vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  .bar{height:6px;border-radius:3px;background:var(--primary);display:inline-block;vertical-align:middle;margin-right:6px}
+  .num{font-variant-numeric:tabular-nums;font-weight:700}
+
+  .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
+  .kpi .c{min-height:74px}
+  .panel{margin-top:16px;border:1px solid var(--border);border-radius:12px;padding:14px}
+  .panel h4{font-size:12.5px;font-weight:800;margin-bottom:2px}
+  .panel .p-sub{font-size:11px;color:var(--muted)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+  .tabs{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+  .tab{border:1px solid var(--border);border-radius:8px;padding:5px 11px;font-size:12px;color:var(--muted);background:#fff}
+  .tab.on{background:var(--fg);color:#fff;border-color:var(--fg);font-weight:700}
+
+  /* ── decisions ── */
+  .d{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+  .d .head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .d .id{background:#eff6ff;color:var(--primary);font-weight:800;font-size:12px;border-radius:8px;padding:3px 9px}
+  .d .q{font-weight:800;font-size:14.5px}
+  .opt{border:1px solid var(--border);border-radius:9px;padding:9px 12px;margin-top:7px;font-size:13.5px}
+  .opt.rec{border-color:#86efac;background:#f0fdf4}
+  .opt .tag{float:left;font-size:11px;font-weight:800;color:var(--green)}
+  .why{font-size:12.5px;color:var(--muted);margin-top:7px}
+  code{background:#f1f5f9;border-radius:5px;padding:1px 6px;font-size:12px;font-family:"Cascadia Mono",Consolas,monospace;direction:ltr;display:inline-block}
+  .foot{border-top:1px solid var(--border);padding-top:16px;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <h1>Visitor Actions — إعادة تصميم شريط الكروت + التقارير الداخلية</h1>
+    <p>لوحة الأدمن · موكب v1 · الواجهة إنجليزي LTR (قاعدة الأدمن)، الشرح والقرارات عربي</p>
+    <div class="meta">
+      <span class="chip">📅 2026-07-13</span>
+      <span class="chip">🗂️ admin/app/(dashboard)</span>
+      <span class="chip">🔢 الأرقام أدناه حقيقية من modonty_dev</span>
+      <span class="chip">⚖️ الموكب = عقد ملزم</span>
+    </div>
+  </div>
+
+  <!-- ═══════════ 1. الوضع الحالي ═══════════ -->
+  <section>
+    <h2 class="sec"><span class="n">1</span> الوضع الحالي</h2>
+    <p class="sub">خمسة كروت، الرقم الكبير من قوقل أناليتكس والرقم الحقيقي من قاعدتنا مخبّأ كسطر صغير.</p>
+
+    <div class="app">
+      <h3>Visitor Actions — bookings · messages · questions · comments <span class="win">last 90 days</span></h3>
+      <div class="cards old">
+        <div class="c alert"><span class="lbl">Needs action (new)</span><span class="val">15</span><span class="hint">not contacted yet →</span></div>
+        <div class="c"><span class="lbl">Bookings</span><span class="val">0</span><span class="hint">DB: 9 →</span></div>
+        <div class="c"><span class="lbl">Contact messages</span><span class="val">5</span><span class="hint">DB: 2 →</span></div>
+        <div class="c"><span class="lbl">Reader questions</span><span class="val">2</span><span class="hint">DB: 0 →</span></div>
+        <div class="c"><span class="lbl">Comments</span><span class="val">1</span><span class="hint">DB: 7 →</span></div>
+      </div>
+    </div>
+
+    <div class="note bad">
+      <strong>الفجوات الست (بدليل من الكود، لا تخمين):</strong>
+      <ol style="margin:8px 22px 0">
+        <li><b>كرت الحجوزات يكذب.</b> الرقم الكبير <code>0</code> من قوقل، والحقيقة <code>9</code> في قاعدتنا. الحدث <code>booking_submit</code> لسه ما انرفع للإنتاج (في الدفعة المعلّقة) → قوقل ما شافه أبداً.</li>
+        <li><b>كرت الأسئلة ناقص بالتصميم.</b> <code>get-leads-detail.ts:107</code> يقرأ <code>clientFAQ</code> فقط بشرط <code>source:"user"</code> → أسئلة المقالات (<code>ArticleFAQ</code>) وأسئلة الشات‑بوت مالها وجود إطلاقاً.</li>
+        <li><b>ما في مقياس «بدون إجابة».</b> الكروت تعرض المجموع؛ الحالة <code>PENDING</code> موجودة في السكيما وغير مستخدمة في الكرت.</li>
+        <li><b>ما في تمييز زائر مجهول ↔ عضو مسجّل</b>، مع أن السكيما تدعمه (<code>authorId</code> null = مجهول · <code>userId</code> على الحجز).</li>
+        <li><b>صفر تجميع حسب العميل.</b> لا في الكرت ولا في التقرير — ما تعرف الحجوزات راحت لمن.</li>
+        <li><b>ما في عدد مشاهدين.</b> مع أن <code>totalUsers</code> جاهز ومستخدم في <code>get-ga4-activity.ts</code>.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═══════════ 2. الشريط الجديد ═══════════ -->
+  <section>
+    <h2 class="sec"><span class="n">2</span> شريط الكروت الجديد</h2>
+    <p class="sub">قاعدتنا = الرقم الكبير (لأنها القابلة للتنفيذ)، قوقل = سطر ثانوي. كل كرت يفتح تقريره الداخلي.</p>
+
+    <div class="app">
+      <h3>Visitor Actions <span class="win">last 90 days · DB = actionable · GA4 = traffic signal</span></h3>
+      <div class="cards">
+
+        <div class="c alert">
+          <span class="lbl">Needs action</span>
+          <span class="val">15</span>
+          <span class="hint">new · pending · unanswered</span>
+          <span class="split">
+            <span>Bookings <b>9</b> · Questions <b>4</b></span>
+            <span>Messages <b>2</b> · Comments <b>0</b></span>
+          </span>
+        </div>
+
+        <div class="c new">
+          <span class="lbl">Bookings</span>
+          <span class="val">9</span>
+          <span class="hint">DB · GA4: 0 <span class="pill p-amber">not live yet</span></span>
+          <span class="split">
+            <span>Kimazone <b>4</b></span>
+            <span>Jabr SEO <b>3</b></span>
+            <span>+2 more clients →</span>
+          </span>
+        </div>
+
+        <div class="c new">
+          <span class="lbl">Unanswered questions</span>
+          <span class="val">4</span>
+          <span class="hint">of 11 total · GA4: 2</span>
+          <span class="split">
+            <span>Article <b>3</b> · Client page <b>1</b></span>
+            <span><span class="pill p-gray">Guest 3</span> <span class="pill p-blue">Member 1</span></span>
+          </span>
+        </div>
+
+        <div class="c">
+          <span class="lbl">Contact messages</span>
+          <span class="val">2</span>
+          <span class="hint">DB · GA4: 5</span>
+          <span class="split">
+            <span>New <b>2</b> · Replied <b>0</b></span>
+            <span>Modonty <b>2</b> · Clients <b>0</b></span>
+          </span>
+        </div>
+
+        <div class="c">
+          <span class="lbl">Comments</span>
+          <span class="val">7</span>
+          <span class="hint">DB · GA4: 1</span>
+          <span class="split">
+            <span><span class="pill p-red">Pending 0</span> <span class="pill p-green">Approved 7</span></span>
+            <span><span class="pill p-gray">Guest 5</span> <span class="pill p-blue">Member 2</span></span>
+          </span>
+        </div>
+
+        <div class="c new">
+          <span class="lbl">Unique visitors</span>
+          <span class="val">1,284</span>
+          <span class="hint">GA4 totalUsers · 90d</span>
+          <span class="split">
+            <span>Sessions <b>2,041</b></span>
+            <span>Action rate <b>1.4%</b></span>
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="note ok">
+      <strong>ماذا تغيّر:</strong> الرقم الكبير صار من قاعدتنا (القابل للتنفيذ)، «Needs action» صار موزّعاً على نوعه، كل كرت يحمل تفصيلاً صغيراً في قاعه (أعلى ٢ عميل / معلّق‑مقابل‑مجاب / زائر‑مقابل‑عضو)، وأُضيف كرت المشاهدين مع نسبة التفاعل (كم زائر تحوّل لفعل).
+    </div>
+    <div class="note">
+      <strong>الأرقام:</strong> كل شي فوق حقيقي من <code>modonty_dev</code> ما عدا ثلاثة: عدد المشاهدين والجلسات (لسه ما استعلمت قوقل)، وتوزيع الحجوزات على العملاء، وأرقام الأسئلة (١١ إجمالي / ٤ بدون إجابة). أتحقق منها كلها قبل البناء.
+    </div>
+  </section>
+
+  <!-- ═══════════ 3. تقرير الحجوزات ═══════════ -->
+  <section>
+    <h2 class="sec"><span class="n">3</span> تقرير الحجوزات <span style="font-size:12px;font-weight:400;color:var(--muted)">/analytics/leads/bookings</span></h2>
+    <p class="sub">الضغط على كرت Bookings يفتح هذا — لا جدول مسطّح، تقرير حقيقي.</p>
+
+    <div class="app">
+      <h3>Bookings report <span class="win">last 90 days · source: our database</span></h3>
+
+      <div class="kpi">
+        <div class="c alert"><span class="lbl">New — needs contact</span><span class="val">9</span><span class="hint">nobody called them yet</span></div>
+        <div class="c"><span class="lbl">Contacted</span><span class="val">0</span><span class="hint">in progress</span></div>
+        <div class="c"><span class="lbl">Done</span><span class="val">0</span><span class="hint">closed</span></div>
+        <div class="c"><span class="lbl">Avg response time</span><span class="val">—</span><span class="hint">new → contacted</span></div>
+      </div>
+
+      <div class="two">
+        <div class="panel">
+          <h4>By client</h4>
+          <p class="p-sub">who is getting the bookings</p>
+          <table>
+            <tr><th>Client</th><th>Bookings</th><th>New</th><th></th></tr>
+            <tr><td><b>Kimazone</b></td><td class="num">4</td><td><span class="pill p-red">4</span></td><td><span class="bar" style="width:60px"></span></td></tr>
+            <tr><td><b>Jabr SEO</b></td><td class="num">3</td><td><span class="pill p-red">3</span></td><td><span class="bar" style="width:45px"></span></td></tr>
+            <tr><td><b>Demo Normal</b></td><td class="num">1</td><td><span class="pill p-red">1</span></td><td><span class="bar" style="width:15px"></span></td></tr>
+            <tr><td><b>Demo YMYL</b></td><td class="num">1</td><td><span class="pill p-red">1</span></td><td><span class="bar" style="width:15px"></span></td></tr>
+          </table>
+        </div>
+
+        <div class="panel">
+          <h4>By source — where they clicked</h4>
+          <p class="p-sub">tells you which surface actually converts</p>
+          <table>
+            <tr><th>Surface</th><th>Bookings</th><th></th></tr>
+            <tr><td><code>article_dock</code> <span class="p-sub">— sticky bar in article</span></td><td class="num">5</td><td><span class="bar" style="width:70px"></span></td></tr>
+            <tr><td><code>client_page</code> <span class="p-sub">— client profile</span></td><td class="num">3</td><td><span class="bar" style="width:42px"></span></td></tr>
+            <tr><td><code>article_card</code></td><td class="num">1</td><td><span class="bar" style="width:14px"></span></td></tr>
+            <tr><td><code>client_list</code></td><td class="num">0</td><td></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h4>All bookings — newest first</h4>
+        <div class="tabs">
+          <span class="tab on">All 9</span><span class="tab">New 9</span><span class="tab">Contacted 0</span><span class="tab">Done 0</span>
+          <span class="tab">Client: all ▾</span>
+        </div>
+        <table>
+          <tr><th>Name</th><th>Contact</th><th>Client</th><th>From</th><th>Preferred</th><th>Visitor</th><th>Status</th><th>When</th></tr>
+          <tr>
+            <td><b>محمد العتيبي</b></td>
+            <td dir="ltr">+966 5x xxx xxxx<br><span class="p-sub">m@example.com</span></td>
+            <td>Kimazone</td>
+            <td><span class="p-sub">📄 دليل تصميم المطابخ</span><br><code>article_dock</code></td>
+            <td class="num">2026-07-15 10:00</td>
+            <td><span class="pill p-gray">Guest</span></td>
+            <td><span class="pill p-red">new</span></td>
+            <td class="num p-sub">07-12 14:22</td>
+          </tr>
+          <tr>
+            <td><b>سارة الحربي</b></td>
+            <td dir="ltr">+966 5x xxx xxxx</td>
+            <td>Jabr SEO</td>
+            <td><code>client_page</code></td>
+            <td class="num">—</td>
+            <td><span class="pill p-blue">Member</span></td>
+            <td><span class="pill p-red">new</span></td>
+            <td class="num p-sub">07-11 09:05</td>
+          </tr>
+          <tr><td colspan="8" class="p-sub" style="text-align:center;padding:10px 0">… 7 more</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>لماذا «From» و«Visitor»:</strong> عمود <code>source</code> يجاوب «أي سطح يحوّل فعلاً» — لو الـ dock يجيب ٥ من ٩، تعرف وين تستثمر. وعمود Visitor يفرّق الزائر المجهول عن العضو المسجّل (<code>userId</code> في السكيما) — العضو له تاريخ كامل، المجهول ما له.
+    </div>
+  </section>
+
+  <!-- ═══════════ 4. تقرير الأسئلة ═══════════ -->
+  <section>
+    <h2 class="sec"><span class="n">4</span> تقرير الأسئلة <span style="font-size:12px;font-weight:400;color:var(--muted)">/analytics/leads/questions</span></h2>
+    <p class="sub">الافتراضي = بدون إجابة فقط. هذا الكرت الذي طلبته: «الأسئلة الموجودة ولم يتم الإجابة عليها».</p>
+
+    <div class="app">
+      <h3>Questions report <span class="win">last 90 days · article FAQ + client FAQ + chatbot</span></h3>
+
+      <div class="kpi">
+        <div class="c alert"><span class="lbl">Unanswered</span><span class="val">4</span><span class="hint">status = PENDING</span></div>
+        <div class="c"><span class="lbl">Answered</span><span class="val">7</span><span class="hint">published as FAQ</span></div>
+        <div class="c"><span class="lbl">From guests</span><span class="val">3</span><span class="hint">no account</span></div>
+        <div class="c"><span class="lbl">From members</span><span class="val">1</span><span class="hint">registered user</span></div>
+      </div>
+
+      <div class="two">
+        <div class="panel">
+          <h4>By client</h4>
+          <p class="p-sub">who owes an answer</p>
+          <table>
+            <tr><th>Client</th><th>Unanswered</th><th>Answered</th></tr>
+            <tr><td><b>Kimazone</b></td><td><span class="pill p-red">2</span></td><td class="num">4</td></tr>
+            <tr><td><b>Jabr SEO</b></td><td><span class="pill p-red">1</span></td><td class="num">3</td></tr>
+            <tr><td><b>Demo YMYL</b></td><td><span class="pill p-red">1</span></td><td class="num">0</td></tr>
+          </table>
+        </div>
+        <div class="panel">
+          <h4>Where the question came from</h4>
+          <p class="p-sub">article FAQ · client FAQ · chatbot</p>
+          <table>
+            <tr><th>Origin</th><th>Unanswered</th><th>Total</th></tr>
+            <tr><td>📄 Article (<code>ArticleFAQ</code>)</td><td><span class="pill p-red">3</span></td><td class="num">8</td></tr>
+            <tr><td>🏢 Client page (<code>ClientFAQ</code>)</td><td><span class="pill p-red">1</span></td><td class="num">3</td></tr>
+            <tr><td>🤖 via chatbot <span class="p-sub">(subset of both)</span></td><td><span class="pill p-red">1</span></td><td class="num">2</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h4>Questions</h4>
+        <div class="tabs">
+          <span class="tab on">Unanswered 4</span><span class="tab">Answered 7</span><span class="tab">All 11</span>
+          <span class="tab">Origin: all ▾</span><span class="tab">Client: all ▾</span>
+        </div>
+        <table>
+          <tr><th>Question</th><th>Where</th><th>Client</th><th>Asked by</th><th>Channel</th><th>Status</th><th>When</th><th></th></tr>
+          <tr>
+            <td style="max-width:280px"><b>هل الضمان يشمل الرخام الطبيعي؟</b></td>
+            <td><span class="p-sub">📄 دليل تصميم المطابخ</span></td>
+            <td>Kimazone</td>
+            <td>محمد <span class="pill p-gray">Guest</span></td>
+            <td><span class="pill p-violet">user</span></td>
+            <td><span class="pill p-red">PENDING</span></td>
+            <td class="num p-sub">07-12</td>
+            <td><span style="color:var(--primary);font-weight:700">Answer →</span></td>
+          </tr>
+          <tr>
+            <td style="max-width:280px"><b>كم يستغرق تنفيذ المطبخ؟</b></td>
+            <td><span class="p-sub">🏢 client page</span></td>
+            <td>Jabr SEO</td>
+            <td>سارة <span class="pill p-blue">Member</span></td>
+            <td><span class="pill p-amber">chatbot</span></td>
+            <td><span class="pill p-red">PENDING</span></td>
+            <td class="num p-sub">07-10</td>
+            <td><span style="color:var(--primary);font-weight:700">Answer →</span></td>
+          </tr>
+          <tr><td colspan="8" class="p-sub" style="text-align:center;padding:10px 0">… 2 more unanswered</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="note bad">
+      <strong>هذا هو الإصلاح الأهم:</strong> اليوم الكود يقرأ <code>clientFAQ</code> بشرط <code>source:"user"</code> فقط. النتيجة: أسئلة المقالات كلها + أسئلة الشات‑بوت <b>غير موجودة في الرقم إطلاقاً</b>. التقرير الجديد يقرأ المصدرين + الثلاث قنوات (<code>user</code> / <code>chatbot</code> / <code>manual</code>) ويفلتر <code>manual</code> (لأنها أسئلة كتبناها بأنفسنا، مو أسئلة زوار).
+    </div>
+  </section>
+
+  <!-- ═══════════ 5. القرارات ═══════════ -->
+  <section>
+    <h2 class="sec"><span class="n">5</span> قرارات مفتوحة — نقفلها واحداً واحداً</h2>
+    <p class="sub">توصيتي في الخيار الأخضر. قل «١ أ، ٢ ب…» أو «ابروف» لاعتماد كل الموصى بها.</p>
+
+    <div class="d">
+      <div class="head"><span class="id">قرار ١</span><span class="q">الرقم الكبير في الكرت: قاعدتنا أم قوقل؟</span></div>
+      <div class="opt rec"><span class="tag">موصى به</span><b>أ) قاعدتنا هي الرقم الكبير، وقوقل سطر ثانوي.</b> لأن الرقم القابل للتنفيذ هو من قاعدتنا (فيه اسم وجوال وحالة)، وقوقل اليوم يعطي <code>0</code> حجوزات بينما عندنا ٩ حقيقية.</div>
+      <div class="opt"><b>ب) نبقي قوقل هو الكبير</b> (الوضع الحالي).</div>
+      <div class="why">⚠️ هذا يعدّل قاعدة قديمة اتفقنا عليها: «قوقل مصدر الحقيقة». اقتراحي تعديلها لا إلغاؤها: قوقل مصدر الحقيقة <b>لحركة المرور</b> (زوّار، جلسات، مصادر)؛ وقاعدتنا مصدر الحقيقة <b>لأفعال الزوار</b> (حجز، سؤال، رسالة) لأنها هي التي تسجّلها فعلاً. لو رفضت، نبقيها كما هي — بس الكرت بيضل يعرض صفر.</div>
+    </div>
+
+    <div class="d">
+      <div class="head"><span class="id">قرار ٢</span><span class="q">أسئلة الشات‑بوت: تُحسب مع أسئلة الزوار؟</span></div>
+      <div class="opt rec"><span class="tag">موصى به</span><b>أ) نعم، تُحسب — مع وسم <span class="pill p-amber">chatbot</span> يميّزها.</b> السؤال سؤال زائر بغضّ النظر عن القناة، وتجاهله = فقدان عميل محتمل.</div>
+      <div class="opt"><b>ب) لا، الزوار فقط</b> (<code>source:"user"</code>) — الوضع الحالي.</div>
+      <div class="why">في الحالتين: <code>source:"manual"</code> مستبعد دائماً (هذه أسئلة كتبناها نحن للـ FAQ، ليست من زائر).</div>
+    </div>
+
+    <div class="d">
+      <div class="head"><span class="id">قرار ٣</span><span class="q">تفصيل العملاء داخل الكرت: كم عميل نعرض؟</span></div>
+      <div class="opt rec"><span class="tag">موصى به</span><b>أ) أعلى ٢ + «+N more».</b> يخلّي ارتفاع الكرت ثابتاً في الصف كله، والتفصيل الكامل في التقرير.</div>
+      <div class="opt"><b>ب) أعلى ٣</b> — معلومة أكثر، بس الكرت يطول والصف يتفاوت.</div>
+    </div>
+
+    <div class="d">
+      <div class="head"><span class="id">قرار ٤</span><span class="q">التقارير: صفحات منفصلة أم تبويبات في نفس الصفحة؟</span></div>
+      <div class="opt rec"><span class="tag">موصى به</span><b>أ) صفحات منفصلة</b> — <code>/analytics/leads/bookings</code> و<code>/analytics/leads/questions</code>. كل تقرير يجيب بياناته فقط (أسرع)، ورابطه قابل للحفظ والمشاركة.</div>
+      <div class="opt"><b>ب) نبقي <code>/analytics/leads</code> بتبويبات</b> — أقل ملفات، لكن كل فتحة تجيب الخمس مجموعات كاملة.</div>
+      <div class="why">صفحة <code>/analytics/leads</code> الحالية تبقى كما هي = «كل الأفعال» مجمّعة.</div>
+    </div>
+
+    <div class="d">
+      <div class="head"><span class="id">قرار ٥</span><span class="q">كرت المشاهدين: زوّار فريدون أم جلسات؟</span></div>
+      <div class="opt rec"><span class="tag">موصى به</span><b>أ) زوّار فريدون (<code>totalUsers</code>) رقماً كبيراً، والجلسات + نسبة التفاعل تحته.</b> «كم شخص» أوضح من «كم زيارة»، ونسبة التفاعل (الأفعال ÷ الزوار) هي المقياس الوحيد الذي يربط الكرت بباقي الصف.</div>
+      <div class="opt"><b>ب) الجلسات رقماً كبيراً.</b></div>
+    </div>
+
+    <div class="d">
+      <div class="head"><span class="id">قرار ٦</span><span class="q">النافذة الزمنية: ثابتة ٩٠ يوماً؟</span></div>
+      <div class="opt rec"><span class="tag">موصى به</span><b>أ) نبقيها ٩٠ يوماً ثابتة الآن</b>، ونضيف مبدّل (٧ / ٣٠ / ٩٠) لاحقاً لو احتجته. أبسط، وأسرع تنفيذاً.</div>
+      <div class="opt"><b>ب) مبدّل نطاق من أول يوم</b> — أقوى، بس يضيف حالة على كل الكروت والتقارير.</div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <b>بعد الاعتماد:</b> أبني الكود مطابقاً ١٠٠٪ لهذا الموكب — تعديل <code>get-leads-detail.ts</code> (إصلاح عدّ الأسئلة + إضافة التجميع)، إعادة كتابة <code>visitor-actions-breakdown.tsx</code>، وصفحتا تقرير جديدتان. صفر push بدون إذنك.
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hero — النسخة النهائية (كيما زون)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --background:45 8% 95%; --foreground:245 87% 19%; --card:0 0% 100%;
+    --primary:240 100% 59%; --secondary:0 0% 96%; --accent:180 100% 42%;
+    --muted-foreground:0 0% 36%; --border:0 0% 86%; --radius:.5rem;
+    --cover-ar:6.115; /* غلاف كيما زون 2544×416 — في الكود يُحسب من width/height */
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Tajawal',sans-serif;background:hsl(var(--background));color:hsl(var(--foreground));line-height:1.6;padding:24px 16px 80px}
+  .wrap{max-width:1128px;margin:0 auto}
+  .head{margin-bottom:8px;border-radius:14px;background:hsl(var(--card));border:1px solid hsl(var(--border));padding:18px 20px}
+  .head h1{font-size:20px;font-weight:900}
+  .head .badge{display:inline-block;font-size:11px;font-weight:900;color:#fff;background:hsl(var(--accent));border-radius:999px;padding:2px 10px;margin-inline-start:8px;vertical-align:middle}
+  .head p{font-size:13.5px;color:hsl(var(--muted-foreground));margin-top:5px}
+  .label{font-size:12.5px;font-weight:800;color:hsl(var(--muted-foreground));margin:24px 0 10px}
+
+  .frame{border:1px solid hsl(var(--border));border-radius:14px;overflow:hidden;background:hsl(var(--card))}
+
+  .logo-wrap{position:relative;flex:0 0 auto}
+  .logo-box{background:#fff;border:1px solid hsl(var(--border));border-radius:14px;overflow:hidden;display:grid;place-items:center;box-shadow:0 6px 16px rgba(0,0,0,.12),0 0 0 4px #fff}
+  .logo-box img{width:100%;height:100%;object-fit:contain;padding:7px}
+  .verified{position:absolute;bottom:-3px;inset-inline-start:-3px;display:inline-grid;place-items:center;border-radius:999px;background:hsl(var(--accent));color:#fff;border:2px solid #fff;font-weight:900;width:22px;height:22px;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+
+  .btn{border:0;border-radius:10px;font-family:inherit;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+  .btn-primary{background:hsl(var(--primary));color:#fff}
+  .btn-ghost{background:#fff;color:hsl(var(--foreground));border:1px solid hsl(var(--border))}
+  .btn-icon{background:#fff;color:hsl(var(--foreground));border:1px solid hsl(var(--border))}
+  .chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:hsl(var(--muted-foreground));background:hsl(var(--secondary));border:1px solid hsl(var(--border));border-radius:999px;padding:3px 10px}
+
+  /* DESKTOP */
+  .d .cover{width:100%;aspect-ratio:var(--cover-ar);max-height:220px;overflow:hidden;background:hsl(var(--foreground))}
+  .d .cover img{width:100%;height:100%;object-fit:cover;display:block}
+  .d .bar{display:flex;align-items:center;gap:16px;padding:16px 20px;background:#fff}
+  .d .id{display:flex;align-items:center;gap:13px;min-width:0}
+  .d .logo-box{width:70px;height:70px}
+  .d .nm h2{font-size:19px;font-weight:900;white-space:nowrap}
+  .d .nm .row2{display:flex;align-items:center;gap:8px;margin-top:3px}
+  .d .sep{width:1px;align-self:stretch;background:hsl(var(--border));margin:4px 2px}
+  .d .stats{display:flex;gap:18px;flex:0 0 auto}
+  .d .stats b{font-weight:900;font-size:15px}
+  .d .stats span{font-size:11.5px;color:hsl(var(--muted-foreground));margin-inline-start:4px}
+  .d .cta{display:flex;gap:9px;margin-inline-start:auto;flex:0 0 auto}
+  .d .btn{padding:10px 16px;font-size:13.5px}
+  .d .btn-icon{padding:10px 12px}
+
+  /* MOBILE */
+  .m{max-width:390px}
+  .m .cover{width:100%;overflow:hidden;background:hsl(var(--foreground));line-height:0}
+  .m .cover img{width:100%;height:auto;display:block}  /* الصورة كاملة بلا قص (نسبة الصورة) */
+  .m .body{padding:14px;background:#fff}
+  .m .idrow{display:flex;align-items:center;gap:13px}
+  .m .logo-box{width:64px;height:64px}
+  .m .nm h2{font-size:18px;font-weight:900}
+  .m .nm p{font-size:12.5px;color:hsl(var(--muted-foreground));margin-top:2px}
+  .m .strip{display:grid;grid-template-columns:repeat(3,1fr);margin-top:14px;border:1px solid hsl(var(--border));border-radius:12px;overflow:hidden}
+  .m .strip .c{text-align:center;padding:9px 4px;background:#fff}
+  .m .strip .c+.c{border-inline-start:1px solid hsl(var(--border))}
+  .m .strip b{display:block;font-weight:900;font-size:16px}
+  .m .strip span{font-size:11px;color:hsl(var(--muted-foreground))}
+  .m .cta{margin-top:12px;display:flex;flex-direction:column;gap:9px}
+  .m .cta .primary{padding:13px;font-size:15px;width:100%}
+  .m .cta .secondrow{display:flex;gap:9px}
+  .m .cta .secondrow .btn-ghost{flex:1;padding:11px}
+  .m .cta .secondrow .btn-icon{padding:11px 15px}
+
+  /* fidelity spec */
+  .spec{margin-top:14px;border:1px solid hsl(var(--border));border-radius:12px;background:#fff;padding:16px 18px;font-size:13px}
+  .spec h3{font-size:14px;font-weight:900;margin-bottom:8px}
+  .spec table{width:100%;border-collapse:collapse}
+  .spec td{padding:6px 8px;border-bottom:1px solid hsl(var(--border));vertical-align:top}
+  .spec td:first-child{font-weight:800;white-space:nowrap;color:hsl(var(--foreground));width:130px}
+  .spec code{background:hsl(var(--secondary));border:1px solid hsl(var(--border));border-radius:5px;padding:1px 6px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <h1>Hero — صفحة العميل<span class="badge">النهائية</span></h1>
+    <p>للموافقة («ابروف») → تُبنى طبق الأصل في <code>client-hero-v2.tsx</code>. الأرقام توضيحية (من الـ DB).</p>
+  </div>
+
+  <!-- DESKTOP -->
+  <div class="label">🖥️ ديسكتوب</div>
+  <div class="frame d">
+    <div class="cover"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780924974/clients/69e8927b6a15f350c2158a2e/img-58qqgjuqh.png" alt="غلاف كيما زون" /></div>
+    <div class="bar">
+      <div class="id">
+        <div class="logo-wrap">
+          <div class="logo-box"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1776849602/clients/69e8927b6a15f350c2158a2e/img-9udjjim55.png" alt="كيما زون" /></div>
+          <span class="verified">✓</span>
+        </div>
+        <div class="nm">
+          <h2>كيما زون</h2>
+          <div class="row2"><span class="chip">الموضة والأزياء</span><span class="chip">📍 مصر</span></div>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="stats">
+        <div><b>٤</b><span>مقالات</span></div>
+        <div><b>٣٨</b><span>متابع</span></div>
+        <div><b>٧٬١١٤</b><span>مشاهدة</span></div>
+      </div>
+      <div class="cta">
+        <button class="btn btn-primary">📅 احجز الآن</button>
+        <button class="btn btn-ghost">👥 متابعة</button>
+        <button class="btn btn-icon">🔗</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE -->
+  <div class="label">📱 جوال (الصورة كاملة — نفس البانر بلا قص)</div>
+  <div class="frame m">
+    <div class="cover"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780924974/clients/69e8927b6a15f350c2158a2e/img-58qqgjuqh.png" alt="غلاف كيما زون" /></div>
+    <div class="body">
+      <div class="idrow">
+        <div class="logo-wrap">
+          <div class="logo-box"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1776849602/clients/69e8927b6a15f350c2158a2e/img-9udjjim55.png" alt="كيما زون" /></div>
+          <span class="verified">✓</span>
+        </div>
+        <div class="nm">
+          <h2>كيما زون</h2>
+          <p>الموضة والأزياء · مصر</p>
+        </div>
+      </div>
+      <div class="strip">
+        <div class="c"><b>٤</b><span>مقالات</span></div>
+        <div class="c"><b>٣٨</b><span>متابع</span></div>
+        <div class="c"><b>٧٬١١٤</b><span>مشاهدة</span></div>
+      </div>
+      <div class="cta">
+        <button class="btn btn-primary primary">📅 احجز الآن</button>
+        <div class="secondrow">
+          <button class="btn btn-ghost">👥 متابعة</button>
+          <button class="btn btn-icon">🔗 مشاركة</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIDELITY SPEC -->
+  <div class="spec">
+    <h3>📐 مواصفة المطابقة (تُبنى زيها ١٠٠٪)</h3>
+    <table>
+      <tr><td>الغلاف — ديسكتوب</td><td><code>aspect-ratio</code> = صورة الغلاف (width/height) · <code>max-h-[220px]</code> · <code>object-cover</code></td></tr>
+      <tr><td>الغلاف — جوال</td><td>عرض كامل · <code>height:auto</code> (نسبة الصورة) — <b>الصورة كاملة بلا قص</b> (بانر عريض = شريط قصير على الجوال)</td></tr>
+      <tr><td>الشعار</td><td>٧٠px ديسكتوب / ٦٤px جوال · إطار <code>border</code> + <code>ring 4px #fff</code> + ظل · <code>object-contain</code> · بلا متدرّج</td></tr>
+      <tr><td>التوثيق</td><td>شارة ✓ <code>bg-accent</code> على زاوية الشعار — مرّة واحدة فقط</td></tr>
+      <tr><td>الاسم</td><td><code>h1</code> · ١٩px ديسكتوب / ١٨px جوال · <code>font-black</code></td></tr>
+      <tr><td>المجال + الموقع</td><td>chips (<code>bg-secondary</code> + <code>border</code>) — الموقع لو <code>addressCountry</code> موجود</td></tr>
+      <tr><td>الأرقام</td><td>مقالات (<code>_count.articles</code>) · متابعون (<code>followers</code>) · مشاهدات (<code>totalViews</code>) — بلا «تفاعلات»</td></tr>
+      <tr><td>الأزرار</td><td>احجز الآن (<code>primary</code>) + متابعة (<code>ghost</code>) + مشاركة (<code>icon</code>) · جوال: احجز عريض + الباقي تحت</td></tr>
+      <tr><td>التوكنز</td><td>كلها من <code>globals.css</code> (primary/accent/border/secondary/muted-foreground) · <code>radius .5rem</code></td></tr>
+      <tr><td>الملف</td><td><code>modonty/app/clients/[slug]/components/shell-hero/client-hero-v2.tsx</code></td></tr>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>

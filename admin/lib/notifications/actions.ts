@@ -17,12 +17,12 @@ export async function listMyNotificationsAction(
   limit: number = DEFAULT_LIMIT
 ): Promise<NotificationListResult> {
   const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) return { items: [], unreadCount: 0 };
+  const staffId = session?.user?.id;
+  if (!staffId) return { items: [], unreadCount: 0 };
 
   const [items, unreadCount] = await Promise.all([
     db.notification.findMany({
-      where: { userId },
+      where: { staffId },
       orderBy: { createdAt: "desc" },
       take: limit,
       select: {
@@ -38,7 +38,7 @@ export async function listMyNotificationsAction(
     }),
     db.notification.count({
       where: {
-        userId,
+        staffId,
         OR: [{ readAt: null }, { readAt: { isSet: false } }],
       },
     }),
@@ -52,14 +52,14 @@ export async function markNotificationReadAction(
   id: string
 ): Promise<{ success: boolean }> {
   const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) return { success: false };
+  const staffId = session?.user?.id;
+  if (!staffId) return { success: false };
 
   try {
     await db.notification.updateMany({
       where: {
         id,
-        userId,
+        staffId,
         OR: [{ readAt: null }, { readAt: { isSet: false } }],
       },
       data: { readAt: new Date() },
@@ -77,13 +77,13 @@ export async function markAllNotificationsReadAction(): Promise<{
   count: number;
 }> {
   const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) return { success: false, count: 0 };
+  const staffId = session?.user?.id;
+  if (!staffId) return { success: false, count: 0 };
 
   try {
     const result = await db.notification.updateMany({
       where: {
-        userId,
+        staffId,
         OR: [{ readAt: null }, { readAt: { isSet: false } }],
       },
       data: { readAt: new Date() },
