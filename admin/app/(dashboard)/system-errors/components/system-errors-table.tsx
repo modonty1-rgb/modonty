@@ -25,6 +25,29 @@ const routeTypeBadge: Record<string, string> = {
   proxy: "bg-gray-100 text-gray-700",
 };
 
+// Paths arrive percent-encoded (e.g. /clients/%D8%AF...) — decode so Arabic slugs
+// read naturally. Falls back to the raw value if the sequence is malformed.
+function decodePath(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+// source is tagged "<app>:<renderSource>" (e.g. "modonty:server"). Split so the
+// origin app shows as its own badge and you never have to guess where it failed.
+const appBadge: Record<string, string> = {
+  modonty: "bg-emerald-100 text-emerald-700",
+  admin: "bg-blue-100 text-blue-700",
+  console: "bg-violet-100 text-violet-700",
+};
+function parseSource(source: string): { app: string; detail: string } {
+  const i = source.indexOf(":");
+  if (i === -1) return { app: "unknown", detail: source };
+  return { app: source.slice(0, i), detail: source.slice(i + 1) };
+}
+
 export function SystemErrorsTable({ errors }: { errors: SystemError[] }) {
   const [list, setList] = useState(errors);
   const [isPending, startTransition] = useTransition();
@@ -81,17 +104,28 @@ export function SystemErrorsTable({ errors }: { errors: SystemError[] }) {
                 </p>
 
                 {/* meta row */}
-                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                  <span className="font-mono bg-muted px-1.5 py-0.5 rounded text-xs">
-                    {error.method} {error.path}
-                  </span>
-                  <Badge
-                    className={`text-[10px] px-1.5 py-0 font-normal border-0 ${routeTypeBadge[error.routeType] ?? "bg-gray-100 text-gray-700"}`}
-                  >
-                    {error.routeType}
-                  </Badge>
-                  <span className="text-muted-foreground/60">{error.routePath}</span>
-                </div>
+                {(() => {
+                  const { app, detail } = parseSource(error.source);
+                  return (
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      <Badge
+                        className={`text-[10px] px-1.5 py-0 font-medium border-0 uppercase ${appBadge[app] ?? "bg-gray-100 text-gray-700"}`}
+                      >
+                        {app}
+                      </Badge>
+                      <span dir="ltr" className="font-mono bg-muted px-1.5 py-0.5 rounded text-xs break-all">
+                        {error.method} {decodePath(error.path)}
+                      </span>
+                      <Badge
+                        className={`text-[10px] px-1.5 py-0 font-normal border-0 ${routeTypeBadge[error.routeType] ?? "bg-gray-100 text-gray-700"}`}
+                      >
+                        {error.routeType}
+                      </Badge>
+                      <span dir="ltr" className="text-muted-foreground/60 break-all">{decodePath(error.routePath)}</span>
+                      <span className="text-muted-foreground/40">{detail}</span>
+                    </div>
+                  );
+                })()}
 
                 {/* digest */}
                 {error.digest && (

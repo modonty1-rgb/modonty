@@ -116,6 +116,15 @@ export interface SignupCompleteParams {
   signup_source?: SignupSource;
 }
 
+// ─── Login funnel (1) — existing user returns via the login page ──────────────
+// Distinct from signup_start: this fires from /users/login (returning user),
+// not /users/register. Google-login for a brand-new user still counts a separate
+// signup_complete server-side (events.createUser) — no conflation.
+type LoginMethod = "google" | "email";
+export interface LoginStartParams {
+  login_method: LoginMethod;
+}
+
 // ─── Booking (1) — the highest-value lead, distinct GA4 event so counts
 // match our DB one-to-one (Khalid 2026-07-07: «Google = Database») ───────────
 export interface BookingSubmitParams extends ClientContext {
@@ -216,6 +225,7 @@ export const GA4_EVENTS = {
   signup_view: "signup_view",
   signup_start: "signup_start",
   signup_complete: "signup_complete",
+  login_start: "login_start",
   lead_qualified: "lead_qualified",
   web_vitals: "web_vitals",
 } as const;
@@ -308,6 +318,10 @@ export const trackSignupStart = (p: SignupStartParams, o?: TrackOptions) =>
   trackEvent(GA4_EVENTS.signup_start, p, o);
 export const trackSignupComplete = (p: SignupCompleteParams, o?: TrackOptions) =>
   trackEvent(GA4_EVENTS.signup_complete, p, o);
+
+// Login funnel
+export const trackLoginStart = (p: LoginStartParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.login_start, p, o);
 
 // Deferred
 export const trackLeadQualified = (p: LeadQualifiedParams, o?: TrackOptions) =>

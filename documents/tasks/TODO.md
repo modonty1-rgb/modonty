@@ -6,7 +6,26 @@
 >
 > **ما ليس TODO يبقى بمكانه:** ملفات القرارات (documents/reels/ · documents/content-team/) · المراجع والمواصفات (ARABIC-SLUG-DECISION، CLIENT-PAGE-BUILD-SPEC، ARTICLE-SEO-PERFECT-AUDIT قالب المراجعة، YMYL-FLOW-DISCUSSION…) · سجل ملاحظات التست الحي `documents/tasks/CLAUDE.md` · الموكبات HTML · SESSION-LOG.
 
-**Last Updated: 2026-07-21**
+**Last Updated: 2026-07-22**
+
+## ✅ Done — إصلاح دخول Google على modonty (سبب خفي كان يمنع تسجيل السبسكرايبر) — 2026-07-22
+
+- [x] **العَرَض:** زر «الدخول بـ Google» على `www.modonty.com` يشتغل بأماكن ولا يشتغل بأخرى — عميل مصري يضغط وما يصير شي (يرجع للصفحة بصمت). كان يمنع دخول/تسجيل سبسكرايبرز.
+- [x] **الجذر (بدليل حيّ):** `NEXTAUTH_URL` كان `https://modonty.com` (آبكس) بينما الكانونيكال `www` والآبكس يعمل 308→www. فالـ redirect_uri يروح آبكس والكوكي على www → جوجل يرجّع على الآبكس → **قفزة 308 عبر-هوست في منتصف الـcallback تُسقط كوكي `__Secure-` PKCE/state** على Safari/ITP/متصفحات التطبيقات الداخلية (الغالبة في مصر) → `OAuthCallbackError` صامت.
+- [x] **الإصلاح:** غُيّر `NEXTAUTH_URL` → `https://www.modonty.com` على Vercel + redeploy. تحقّق: www مسجّل مسبقاً في Google Console (بلا mismatch) → صفر خطر · بعد النشر: redirect_uri=www + كوكي=www (نفس الهوست، لا قفزة). **لا يغيّر AUTH_SECRET → ما طرد أحد.** محاكاة جوال (Playwright): الزر يوصل accounts.google.com بـ redirect_uri=www.
+- [x] **ذاكرة:** `project_modonty_oauth_host_www.md`.
+
+### تحصين تابع (كود — يحتاج push · modonty 1.77.0 + admin 0.93.1)
+- [x] **إظهار الإرور:** `login/page.tsx` صار Server Component يقرأ `?error=` ويعرض رسالة عربية (خريطة أكواد NextAuth عبر Context7) بدل الصمت. النموذج انتقل لـ `login/components/login-form.tsx`.
+- [x] **تسجيل الإرور عندنا:** `lib/log-error.ts` يرسل لـ `admin/api/internal/log-error` (مصدر `auth-oauth`) → يظهر في `/system-errors`. متحقّق: endpoint HTTP 200، السر يطابق الإنتاج.
+- [x] **كاش /system-errors:** الصفحة مكشوفة بـ Full Route Cache → أُضيف `revalidatePath("/system-errors")` بعد الكتابة، وإلا الخطأ يُسجّل بلا ما يبان.
+- [x] **GA4 `login_start`:** حدث مستقل (method google/email) + راوت `/api/track/login` + `trackLoginClient` + توصيل زرَّي الدخول. متحقّق: الراوت 200/400.
+- [x] **تسجيل الإنتاج فقط:** `logError` + `instrumentation.ts` (modonty) أُضيف حارس `VERCEL_ENV !== "production"` → أخطاء dev/preview ما تلوّث سجل الإنتاج (السر مشترك يصل dev). متحقّق: `autoExposeSystemEnvs=true`.
+- [x] **تغطية الكونسول:** `console/instrumentation.ts` جديد (كان أعمى تماماً) → يرسل لنفس السجل بمصدر `console:*`. متحقّق: `INTERNAL_LOG_SECRET` (shared) مربوط بالمشاريع الثلاثة. console `0.21.1`.
+- [x] **فك ترميز المسار في `/system-errors`:** `decodeURIComponent` آمن → `/clients/دكتور-محمد.../book` بدل `%D8%AF...` (مع `dir="ltr"`).
+- [x] **وسم التطبيق في السجل:** كل خطأ يوسم `modonty:`/`admin:`/`console:` (الثلاثة) + شارة تطبيق ملوّنة في العرض + حارس إنتاج على الأدمن أيضاً → السجل **إنتاج صافي وموسوم**.
+- [x] **إشعار Telegram لكل خطأ:** endpoint اللوق يرسل لـ `sendAdminTelegram` (بوت `@Modonty_admin_bot` · chat `TELEGRAM_ADMIN_CHAT_ID`) — نقطة واحدة تغطّي الثلاثة. متحقّق حيّ: البوت شغّال + رسالة بالشكل الحقيقي وصلت خالد. admin `0.93.1`.
+- [ ] **بعد النشر:** افتح `www.modonty.com/users/login?error=OAuthCallbackError` → الرسالة تبان + صفّ في `/system-errors` فوراً + إشعار Telegram · المسار عربي واضح · اضغط **Clear All** للصفوف القديمة الغامضة · احذف صفوف التست · تأكّد `login_start` في GA4 Realtime.
 
 ## 🔮 مستقبلي — فصل معرض العميل (GALLERY) في راوت مستقل (2026-07-21)
 

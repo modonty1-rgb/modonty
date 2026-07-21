@@ -7,6 +7,9 @@ export const onRequestError: Instrumentation.onRequestError = async (
   request,
   context
 ) => {
+  // Production only — dev/preview errors must not pollute the production log.
+  if (process.env.VERCEL_ENV !== "production") return;
+
   const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
   const secret = process.env.INTERNAL_LOG_SECRET;
 
@@ -26,7 +29,8 @@ export const onRequestError: Instrumentation.onRequestError = async (
         method: request.method,
         routePath: context.routePath,
         routeType: context.routeType,
-        source: context.renderSource ?? "unknown",
+        // App tag (<app>:<renderSource>) so the unified log shows which app failed.
+        source: `admin:${context.renderSource ?? "server"}`,
       }),
     });
   } catch {

@@ -1,142 +1,41 @@
-"use client";
+import { LoginForm } from "./components/login-form";
+import { logError } from "@/lib/log-error";
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { IconEmail } from "@/lib/icons";
-import { GoogleIcon } from "@/components/auth/google-icon";
-import Link from "@/components/link";
+// NextAuth redirects a failed sign-in back to this page (pages.signIn) with
+// ?error=<type> (client-safe types per Auth.js: OAuthCallbackError,
+// OAuthAccountNotLinked, AccessDenied, Verification, MissingCSRF, CredentialsSignin;
+// anything unsafe collapses to Configuration). Map each to Arabic so the failure
+// is no longer silent — the exact symptom that hid the www/apex OAuth-callback bug.
+const AUTH_ERROR_MESSAGES: Record<string, string> = {
+  OAuthCallbackError: "تعذّر إكمال الدخول عبر Google — انقطع الاتصال أثناء العودة. جرّب مرة ثانية.",
+  OAuthSignin: "تعذّر بدء الدخول عبر Google. حاول مرة ثانية.",
+  OAuthAccountNotLinked: "هذا البريد مسجّل بطريقة دخول أخرى. سجّل الدخول بنفس الطريقة السابقة.",
+  AccountNotLinked: "هذا البريد مسجّل بطريقة دخول أخرى. سجّل الدخول بنفس الطريقة السابقة.",
+  AccessDenied: "تم رفض الوصول. تأكد من السماح لمدوّنتي بالوصول لحسابك على Google.",
+  Verification: "انتهت صلاحية رابط التحقق. اطلب رابطاً جديداً.",
+  MissingCSRF: "انتهت الجلسة. حدّث الصفحة وحاول مجدداً.",
+  CredentialsSignin: "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+  Configuration: "حدث خطأ غير متوقع أثناء الدخول. حاول مرة ثانية.",
+};
 
-export default function LoginPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const rawCallback = searchParams.get("callbackUrl") ?? "/";
-  const callbackUrl = rawCallback.startsWith("/") ? rawCallback : "/";
-  const [loading, setLoading] = useState<string | null>(null);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; callbackUrl?: string }>;
+}) {
+  const { error, callbackUrl: rawCallback } = await searchParams;
+  const callbackUrl = rawCallback?.startsWith("/") ? rawCallback : "/";
 
-  const handleOAuthSignIn = async (provider: "google") => {
-    setLoading(provider);
-    try {
-      await signIn(provider, { callbackUrl });
-    } catch (error) {
-      console.error("Sign in error:", error);
-    } finally {
-      setLoading(null);
-    }
-  };
+  let initialError: string | undefined;
+  if (error) {
+    initialError = AUTH_ERROR_MESSAGES[error] ?? AUTH_ERROR_MESSAGES.Configuration;
+    // Surface the otherwise-silent OAuth failure in admin /system-errors.
+    await logError({
+      message: `Login failed: ${error}`,
+      path: "/users/login",
+      source: "modonty:auth-oauth",
+    });
+  }
 
-  const handleCredentialsSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading("credentials");
-    try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-      if (result?.ok) {
-        router.push(callbackUrl);
-        router.refresh();
-      }
-    } catch (error) {
-      console.error("Sign in error:", error);
-    } finally {
-      setLoading(null);
-    }
-  };
-
-  return (
-    <div className="bg-background flex items-center justify-center px-4 py-8 sm:py-24">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">تسجيل الدخول</CardTitle>
-          <CardDescription className="text-center">
-            سجل الدخول للتعليق والتفاعل مع المحتوى
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <button
-            type="button"
-            onClick={() => handleOAuthSignIn("google")}
-            disabled={loading !== null}
-            className="flex h-12 w-full items-center justify-center gap-3 rounded-md border border-[#747775] bg-white text-sm font-medium text-[#1F1F1F] shadow-sm transition-colors hover:bg-[#f8f9fa] disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <GoogleIcon />
-            {loading === "google" ? "جاري تسجيل الدخول..." : "تسجيل الدخول بـ Google"}
-          </button>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">أو</span>
-            </div>
-          </div>
-
-          <form onSubmit={handleCredentialsSignIn} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">البريد الإلكتروني</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="example@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">كلمة المرور</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <Button
-              type="submit"
-              disabled={loading !== null}
-              className="w-full h-12"
-              variant="default"
-            >
-              <IconEmail className="h-5 w-5 mr-2" />
-              {loading === "credentials" ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
-            </Button>
-
-            <div className="text-center">
-              <Link href="/users/forgot-password" className="text-sm text-muted-foreground hover:text-primary">
-                نسيت كلمة المرور؟
-              </Link>
-            </div>
-          </form>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">أو</span>
-            </div>
-          </div>
-
-          <div className="text-center text-sm">
-            <span className="text-muted-foreground">ليس لديك حساب؟ </span>
-            <Link href="/users/register" className="text-primary hover:underline">
-              سجل الآن
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
+  return <LoginForm callbackUrl={callbackUrl} initialError={initialError} />;
 }
