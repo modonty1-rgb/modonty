@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import NextImage from "next/image";
 import { Link2, RefreshCw, Pencil, ImageIcon } from "lucide-react";
@@ -9,14 +9,12 @@ import { FormInput, FormField, FormSelect, FormNativeSelect, FormTextarea } from
 import { SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CharacterCounter } from "@/components/shared/character-counter";
 import {
   ORGANIZATION_TYPES,
   type OrganizationType,
   LEGAL_FORMS,
   type LegalForm,
 } from "@modonty/database/lib/constants/client-classification";
-import { getSEOSettings, type SEOSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 
 import { SocialProfilesInput } from "../social-profiles-input";
 import { SlugChangeDialog } from "../slug-change-dialog";
@@ -132,13 +130,6 @@ export function ClientEditWorkspace({
 }: ClientEditWorkspaceProps) {
   const { watch, setValue, formState: { errors } } = form;
   const [slugDialogOpen, setSlugDialogOpen] = useState(false);
-  const [seoSettings, setSeoSettings] = useState<SEOSettings | null>(null);
-
-  useEffect(() => {
-    getSEOSettings()
-      .then(setSeoSettings)
-      .catch((e) => console.error("Failed to load SEO settings:", e));
-  }, []);
 
   const name = watch("name");
   const slug = watch("slug");
@@ -153,8 +144,6 @@ export function ClientEditWorkspace({
   const addressCountry = watch("addressCountry");
   const legalForm = watch("legalForm");
   const sameAs = watch("sameAs");
-  const seoTitle = (watch("seoTitle") || "") as string;
-  const seoDescription = (watch("seoDescription") || "") as string;
   const contentPriorities = watch("contentPriorities");
   const gbpProfileUrl = watch("gbpProfileUrl");
   const priceRange = watch("priceRange");
@@ -415,73 +404,27 @@ export function ClientEditWorkspace({
 
         {/* ── ZONE 4 · SEO ─────────────────────────────────────── */}
         <section>
-          <ZoneHeader index={4} id="z-seo" title="SEO" hint="Page meta + keywords + Google profile + parent org" />
+          <ZoneHeader
+            index={4}
+            id="z-seo"
+            title="SEO"
+            hint="Keywords · Google profile · parent org — title & description live in SEO Client"
+          />
           <div className="rounded-2xl border bg-card p-5 space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <FormInput
-                  label="SEO Title"
-                  name="seoTitle"
-                  value={seoTitle}
-                  onChange={(e) => setValue("seoTitle", e.target.value || null, { shouldValidate: true })}
-                  error={errors.seoTitle?.message}
-                  placeholder="e.g., Best Services in Saudi Arabia | Company Name"
-                  maxLength={51}
-                />
-                {seoSettings && (
-                  <div className="mt-1">
-                    <CharacterCounter
-                      current={seoTitle.length}
-                      min={seoSettings.seoTitleMin}
-                      max={seoSettings.seoTitleMax}
-                      restrict={seoSettings.seoTitleRestrict}
-                      className="ml-1"
-                      belowMinHint="Below recommended length. Titles 50-60 chars display fully in search."
-                      aboveMaxHint="Exceeds recommended length. Google truncates titles after ~60 chars."
-                    />
-                  </div>
-                )}
-              </div>
-              <FormNativeSelect
-                label="Parent Organization"
-                name="parentOrganizationId"
-                value={watch("parentOrganizationId") || ""}
-                onChange={(e) => setValue("parentOrganizationId", e.target.value || null, { shouldValidate: true })}
-                error={errors.parentOrganizationId?.message}
-              >
-                <option value="">None</option>
-                {clients.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </FormNativeSelect>
-            </div>
-
-            <div>
-              <FormTextarea
-                label="SEO Description"
-                name="seoDescription"
-                value={seoDescription}
-                onChange={(e) => setValue("seoDescription", e.target.value || null, { shouldValidate: true })}
-                rows={3}
-                error={errors.seoDescription?.message}
-                placeholder="e.g., Leading provider of professional services in Saudi Arabia…"
-              />
-              {seoSettings && (
-                <div className="mt-1">
-                  <CharacterCounter
-                    current={seoDescription.length}
-                    min={seoSettings.seoDescriptionMin}
-                    max={seoSettings.seoDescriptionMax}
-                    restrict={seoSettings.seoDescriptionRestrict}
-                    className="ml-1"
-                    belowMinHint="Too short. Ideal length is 120-158 characters for full display."
-                    aboveMaxHint="Exceeds recommended length. Keep it 120-158 characters."
-                  />
-                </div>
-              )}
-            </div>
+            <FormNativeSelect
+              label="Parent Organization"
+              name="parentOrganizationId"
+              value={watch("parentOrganizationId") || ""}
+              onChange={(e) => setValue("parentOrganizationId", e.target.value || null, { shouldValidate: true })}
+              error={errors.parentOrganizationId?.message}
+            >
+              <option value="">None</option>
+              {clients.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </FormNativeSelect>
 
             <FormTextarea
               label="Content Priorities (comma-separated) — keywords / knowsAbout"

@@ -1,4 +1,5 @@
 import type { Instrumentation } from "next";
+import { enrichError } from "@modonty/database/lib/system-error/enrich";
 
 export async function register() {}
 
@@ -14,6 +15,12 @@ export const onRequestError: Instrumentation.onRequestError = async (
   const secret = process.env.INTERNAL_LOG_SECRET;
   if (!secret) return;
 
+  const message = (err as Error).message || "Unknown error";
+  // renderType ("dynamic" | "dynamic-resume") flags PPR-resume errors; may be absent
+  // on older Next — read defensively, classification falls back to message signatures.
+  const renderType = (context as { renderType?: string }).renderType ?? null;
+  const meta = enrichError(request.headers, message, renderType);
+
   try {
     await fetch("https://admin.modonty.com/api/internal/log-error", {
       method: "POST",
@@ -22,7 +29,7 @@ export const onRequestError: Instrumentation.onRequestError = async (
         "x-internal-secret": secret,
       },
       body: JSON.stringify({
-        message: (err as Error).message || "Unknown error",
+        message,
         digest: (err as Error & { digest?: string }).digest ?? null,
         path: request.path,
         method: request.method,
@@ -30,6 +37,13 @@ export const onRequestError: Instrumentation.onRequestError = async (
         routeType: context.routeType,
         // App tag (<app>:<renderSource>) so the unified log shows which app failed.
         source: `modonty:${context.renderSource ?? "server"}`,
+        renderType,
+        category: meta.category,
+        device: meta.device,
+        botName: meta.botName,
+        country: meta.country,
+        city: meta.city,
+        userAgent: meta.userAgent,
       }),
     });
   } catch {

@@ -16,6 +16,13 @@ export async function getSystemErrors() {
       routePath: true,
       routeType: true,
       source: true,
+      category: true,
+      renderType: true,
+      device: true,
+      botName: true,
+      country: true,
+      city: true,
+      userAgent: true,
       createdAt: true,
     },
   });

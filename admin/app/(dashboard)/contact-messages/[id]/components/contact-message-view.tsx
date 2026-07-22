@@ -24,13 +24,17 @@ import {
   Globe,
   Monitor,
   Link as LinkIcon,
+  Send,
+  Loader2,
 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "../../components/status-badge";
 import {
   markAsRead,
   markAsReplied,
   updateContactMessageStatus,
   deleteContactMessage,
+  sendContactReply,
 } from "../../actions/contact-messages-actions";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -51,6 +55,7 @@ interface ContactMessage {
   subject: string;
   message: string;
   status: string;
+  replyBody: string | null;
   ipAddress: string | null;
   userAgent: string | null;
   referrer: string | null;
@@ -75,6 +80,36 @@ export function ContactMessageView({ message }: ContactMessageViewProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [replyText, setReplyText] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const handleSendReply = async () => {
+    const body = replyText.trim();
+    if (!body) return;
+    setSending(true);
+    try {
+      const result = await sendContactReply(message.id, body, true);
+      if (result.success) {
+        toast({
+          title: result.emailFailed ? "Reply saved — email failed" : "Reply sent",
+          description: result.emailFailed
+            ? "Saved and marked replied, but the email didn't go out. Try again or use the mail app."
+            : `Emailed to ${message.email} and marked as replied.`,
+          variant: result.emailFailed ? "destructive" : "success",
+        });
+        setReplyText("");
+        router.refresh();
+      } else {
+        toast({
+          title: messages.error.operation_failed,
+          description: result.error || "Couldn't send the reply",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setSending(false);
+    }
+  };
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -206,7 +241,7 @@ export function ContactMessageView({ message }: ContactMessageViewProps) {
                 <Button variant="outline" size="sm" asChild>
                   <a href={`mailto:${message.email}?subject=Re: ${message.subject}`}>
                     <Mail className="h-4 w-4 mr-2" />
-                    Reply
+                    Mail app
                   </a>
                 </Button>
               </div>
@@ -370,6 +405,44 @@ export function ContactMessageView({ message }: ContactMessageViewProps) {
                 </div>
               </>
             )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Send className="h-4 w-4" /> Reply
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Sends an email to {message.email} via Modonty and marks this message as replied.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {message.replyBody && (
+              <div className="rounded-md border border-emerald-500/30 bg-emerald-500/5 p-3">
+                <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">Your last reply</p>
+                <p className="mt-1 whitespace-pre-wrap text-sm">{message.replyBody}</p>
+              </div>
+            )}
+            <Textarea
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              placeholder={`Write your reply to ${message.name}…`}
+              rows={5}
+              disabled={sending}
+            />
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <a
+                href={`mailto:${message.email}?subject=Re: ${message.subject}`}
+                className="text-xs text-muted-foreground hover:underline"
+              >
+                or open in your mail app →
+              </a>
+              <Button onClick={handleSendReply} disabled={sending || !replyText.trim()}>
+                {sending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
+                Send Reply
+              </Button>
+            </div>
           </CardContent>
         </Card>
 

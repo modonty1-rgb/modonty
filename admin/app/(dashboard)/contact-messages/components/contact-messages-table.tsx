@@ -8,7 +8,7 @@ import { messages } from "@/lib/messages";
 import { StatusBadge } from "./status-badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { Eye, Trash2, Mail, Archive, CheckCircle } from "lucide-react";
+import { Eye, Trash2, Mail, Archive, CheckCircle, Reply, Send, Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,10 +20,20 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import {
   markAsRead,
   markAsReplied,
   updateContactMessageStatus,
   deleteContactMessage,
+  sendContactReply,
 } from "../actions/contact-messages-actions";
 import { useToast } from "@/hooks/use-toast";
 
@@ -53,6 +63,39 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [messageToDelete, setMessageToDelete] = useState<string | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
+  const [replyTarget, setReplyTarget] = useState<ContactMessage | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const handleSendReply = async () => {
+    if (!replyTarget) return;
+    const body = replyText.trim();
+    if (!body) return;
+    setSending(true);
+    try {
+      const result = await sendContactReply(replyTarget.id, body, true);
+      if (result.success) {
+        toast({
+          title: result.emailFailed ? "Reply saved — email failed" : "Reply sent",
+          description: result.emailFailed
+            ? "Saved and marked replied, but the email didn't go out."
+            : `Emailed to ${replyTarget.email} and marked as replied.`,
+          variant: result.emailFailed ? "destructive" : "success",
+        });
+        setReplyTarget(null);
+        setReplyText("");
+        router.refresh();
+      } else {
+        toast({
+          title: messages.error.operation_failed,
+          description: result.error || "Couldn't send the reply",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setSending(false);
+    }
+  };
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     setLoading(id);
@@ -239,6 +282,19 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
               header: "Actions",
               render: (message) => (
                 <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setReplyTarget(message);
+                      setReplyText("");
+                    }}
+                    disabled={loading === message.id}
+                  >
+                    <Reply className="h-4 w-4 me-1.5" />
+                    Reply
+                  </Button>
                   <Link href={`/contact-messages/${message.id}`}>
                     <Button
                       variant="ghost"
@@ -325,6 +381,49 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog
+        open={!!replyTarget}
+        onOpenChange={(open) => {
+          if (!open) {
+            setReplyTarget(null);
+            setReplyText("");
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reply to {replyTarget?.name}</DialogTitle>
+            <DialogDescription>
+              Sends an email to {replyTarget?.email} · Re: {replyTarget?.subject}
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            placeholder="Write your reply…"
+            rows={6}
+            disabled={sending}
+            autoFocus
+          />
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setReplyTarget(null);
+                setReplyText("");
+              }}
+              disabled={sending}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleSendReply} disabled={sending || !replyText.trim()}>
+              {sending ? <Loader2 className="h-4 w-4 me-2 animate-spin" /> : <Send className="h-4 w-4 me-2" />}
+              Send Reply
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

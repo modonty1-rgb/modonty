@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { runReport } from "@/lib/analytics/ga4-data-api";
-import { getBookPageOpens, getBookingFunnel } from "@/lib/analytics/book-funnel";
+import { getBookPageOpens, getBookingFunnel, getWhatsappClicks } from "@/lib/analytics/book-funnel";
 
 /**
  * Visitor Actions card row — approved mockup: documents/mockups/admin-visitor-actions-v1.html
@@ -41,6 +41,13 @@ export interface VisitorActionsSummary {
     /** Clients whose booking page got opened and produced zero bookings — biggest leak first. */
     leaks: Array<{ name: string; opened: number }>;
   };
+  /**
+   * WhatsApp funnel — the anonymous channel. `clicks` (GA4 booking_whatsapp_click)
+   * is the demand; `db` is the deduped BookingRequest(channel:whatsapp) rows that
+   * actually landed. clicks > 0 while db === 0 means the write path is broken and
+   * every WhatsApp lead is invisible in the console.
+   */
+  whatsapp: { clicks: number; db: number };
   questions: {
     unanswered: number;
     total: number;
@@ -48,6 +55,12 @@ export interface VisitorActionsSummary {
     fromArticle: number;
     fromClient: number;
     oldestWaitingDays: number | null;
+    /** Everything a client still owes an action on (any source, no time window). */
+    pendingAll: number;
+    /** team-prepared FAQs (source ≠ user) waiting for the client to APPROVE/publish. */
+    pendingTeam: number;
+    /** visitor-asked FAQs (source = user) waiting for the client to ANSWER. */
+    pendingVisitor: number;
   };
   messages: { db: number; ga4: number; newCount: number; replied: number; guest: number; member: number };
   comments: { db: number; ga4: number; pending: number; approved: number; onArticles: number; onClients: number };
@@ -152,10 +165,13 @@ export async function getVisitorActionsSummary(): Promise<VisitorActionsSummary>
 
   const ga4Promise = getGa4Signal();
   const opensPromise = getBookPageOpens();
+  const whatsappClicksPromise = getWhatsappClicks();
 
   const [
     bookingsTotal,
     bookingsNew,
+    whatsappDb,
+    bookingsFormNew,
     bookingsByClient,
     articleQTotal,
     articleQPending,
@@ -171,9 +187,18 @@ export async function getVisitorActionsSummary(): Promise<VisitorActionsSummary>
     commentsApproved,
     clientCommentsPending,
     clientCommentsApproved,
+    pendingArticleAll,
+    pendingClientAll,
+    pendingArticleUser,
+    pendingClientUser,
   ] = await Promise.all([
     db.bookingRequest.count({ where: w }),
     db.bookingRequest.count({ where: { ...w, status: "new" } }),
+    db.bookingRequest.count({ where: { ...w, channel: "whatsapp" } }),
+    // Callable leads only: form bookings carry a phone. WhatsApp bookings are anonymous
+    // (no number — the chat IS the contact) and already live in the WhatsApp row, so
+    // counting them here would double-count and mislabel them as "to call".
+    db.bookingRequest.count({ where: { ...w, status: "new", channel: "form" } }),
     db.bookingRequest.groupBy({ by: ["clientId"], where: w, _count: { _all: true } }),
     db.articleFAQ.count({ where: visitorQuestion }),
     db.articleFAQ.count({ where: { ...visitorQuestion, status: "PENDING" } }),
@@ -197,6 +222,12 @@ export async function getVisitorActionsSummary(): Promise<VisitorActionsSummary>
     db.comment.count({ where: { ...w, status: "APPROVED" } }),
     db.clientComment.count({ where: { ...w, status: "PENDING" } }),
     db.clientComment.count({ where: { ...w, status: "APPROVED" } }),
+    // ALL pending FAQs the client still owes an action on (any source, NO time window):
+    // manual/team = awaiting the client's APPROVAL · user/visitor = awaiting an ANSWER.
+    db.articleFAQ.count({ where: { status: "PENDING" } }),
+    db.clientFAQ.count({ where: { status: "PENDING" } }),
+    db.articleFAQ.count({ where: { status: "PENDING", source: VISITOR_SOURCE } }),
+    db.clientFAQ.count({ where: { status: "PENDING", source: VISITOR_SOURCE } }),
   ]);
 
   // groupBy returns ids only — resolve slugs so we can line them up against GA4.
@@ -228,6 +259,10 @@ export async function getVisitorActionsSummary(): Promise<VisitorActionsSummary>
   }));
 
   const questionsPending = articleQPending + clientQPending;
+  // Everything the client still owes an action on (approve OR answer), no time window.
+  const questionsPendingAll = pendingArticleAll + pendingClientAll;
+  const questionsPendingVisitor = pendingArticleUser + pendingClientUser;
+  const questionsPendingTeam = questionsPendingAll - questionsPendingVisitor;
   const commentsPendingTotal = commentsPending + clientCommentsPending;
   const commentsApprovedTotal = commentsApproved + clientCommentsApproved;
   const commentsTotal = commentsPendingTotal + commentsApprovedTotal;
@@ -237,12 +272,13 @@ export async function getVisitorActionsSummary(): Promise<VisitorActionsSummary>
     .sort((a, b) => a.getTime() - b.getTime())[0];
 
   const ga4 = await ga4Promise;
+  const whatsappClicks = await whatsappClicksPromise;
   const totalActions = bookingsTotal + articleQTotal + clientQTotal + messagesTotal + commentsTotal;
 
   return {
     needsAction: {
       total: bookingsNew + questionsPending + messagesNew + commentsPendingTotal,
-      bookings: bookingsNew,
+      bookings: bookingsFormNew,
       questions: questionsPending,
       messages: messagesNew,
       comments: commentsPendingTotal,
@@ -254,6 +290,7 @@ export async function getVisitorActionsSummary(): Promise<VisitorActionsSummary>
       failed: funnel.failed,
       leaks,
     },
+    whatsapp: { clicks: whatsappClicks, db: whatsappDb },
     questions: {
       unanswered: questionsPending,
       total: articleQTotal + clientQTotal,
@@ -263,6 +300,9 @@ export async function getVisitorActionsSummary(): Promise<VisitorActionsSummary>
       oldestWaitingDays: oldestPending
         ? Math.floor((Date.now() - oldestPending.getTime()) / (24 * 60 * 60 * 1000))
         : null,
+      pendingAll: questionsPendingAll,
+      pendingTeam: questionsPendingTeam,
+      pendingVisitor: questionsPendingVisitor,
     },
     messages: {
       db: messagesTotal,

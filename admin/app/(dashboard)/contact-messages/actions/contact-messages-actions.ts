@@ -3,6 +3,10 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
+import { sendEmail } from "@/lib/email/resend-client";
+
+const escapeHtml = (s: string): string =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 export interface ContactMessageFilters {
   status?: string;
@@ -160,6 +164,53 @@ export async function markAsReplied(id: string) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to mark message as replied";
     return { success: false, error: message };
+  }
+}
+
+/**
+ * Reply to a contact message from inside the dashboard — stores the reply, marks the
+ * message "replied", and (by default) emails the sender via Resend. Mirrors the client
+ * console's sendReply so admins don't need an external mail client.
+ */
+export async function sendContactReply(id: string, replyBody: string, viaEmail: boolean = true) {
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
+
+  const body = replyBody?.trim();
+  if (!body) return { success: false, error: "Reply cannot be empty" };
+
+  try {
+    const message = await db.contactMessage.findUnique({
+      where: { id },
+      select: { id: true, email: true, subject: true },
+    });
+    if (!message) return { success: false, error: "Message not found" };
+
+    await db.contactMessage.update({
+      where: { id },
+      data: { replyBody: body, status: "replied", repliedAt: new Date(), updatedAt: new Date() },
+    });
+
+    let emailFailed = false;
+    if (viaEmail) {
+      try {
+        await sendEmail({
+          from: process.env.RESEND_FROM || "Modonty <noreply@modonty.com>",
+          to: message.email,
+          subject: `Re: ${message.subject}`,
+          html: `<div style="font-family:system-ui,Segoe UI,Arial,sans-serif;font-size:14px;line-height:1.7;color:#111;white-space:pre-wrap">${escapeHtml(body)}</div>`,
+          text: body,
+        });
+      } catch {
+        emailFailed = true; // reply is saved either way — surface the email failure to the admin
+      }
+    }
+
+    revalidatePath("/contact-messages");
+    revalidatePath(`/contact-messages/${id}`);
+    return emailFailed ? { success: true, emailFailed: true } : { success: true };
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : "Failed to send reply";
+    return { success: false, error: msg };
   }
 }
 

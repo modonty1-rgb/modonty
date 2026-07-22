@@ -2650,9 +2650,18 @@ model SystemError {
   routePath  String
   routeType  String
   source     String
+  // Tracing enrichment (Khalid 2026-07-22) — turns the log from noise into triage.
+  category   String?  // "framework" (Next/React internals, not our bug) | "app" (ours)
+  renderType String?  // Next context.renderType: "dynamic" | "dynamic-resume" (PPR resume)
+  device     String?  // "mobile" | "tablet" | "desktop" | "bot"
+  botName    String?  // e.g. "Googlebot" when the UA is a known crawler
+  country    String?  // Vercel geo (x-vercel-ip-country)
+  city       String?  // Vercel geo (x-vercel-ip-city)
+  userAgent  String?  // raw UA — the ground truth for tracing
   createdAt  DateTime @default(now())
 
   @@index([createdAt])
+  @@index([category])
   @@map("system_errors")
 }
 

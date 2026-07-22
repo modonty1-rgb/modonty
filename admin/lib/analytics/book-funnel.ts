@@ -106,6 +106,28 @@ export async function getBookingFunnel(opened: number): Promise<BookingFunnel> {
   }
 }
 
+/**
+ * GA4 count of `booking_whatsapp_click` over the window — the demand side of the
+ * WhatsApp funnel. Every click counts (repeats included), so this is always ≥ the
+ * deduped DB whatsapp-lead count. GA4 down → 0 so it can never blank the strip.
+ */
+export async function getWhatsappClicks(): Promise<number> {
+  try {
+    const rep = await runReport({
+      dateRanges: [{ startDate: `${WINDOW_DAYS}daysAgo`, endDate: "today" }],
+      dimensions: [{ name: "eventName" }],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: {
+        filter: { fieldName: "eventName", stringFilter: { matchType: "EXACT", value: "booking_whatsapp_click" } },
+      },
+      limit: 1,
+    });
+    return Number(rep.rows?.[0]?.metricValues?.[0]?.value) || 0;
+  } catch {
+    return 0;
+  }
+}
+
 export async function getBookPageOpens(): Promise<BookPageOpens> {
   try {
     const rep = await runReport({
