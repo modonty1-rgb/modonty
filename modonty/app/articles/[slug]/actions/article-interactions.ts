@@ -41,7 +41,7 @@ function fireEngagement(
       if (art.clientId) {
         notifyTelegram(art.clientId, telegramKey, {
           title: art.title,
-          meta: actor.name ? { من: actor.name } : undefined,
+          meta: actor.name ? { الزائر: actor.name } : undefined,
         }).catch(() => {});
       }
       const params = {

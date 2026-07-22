@@ -11,6 +11,15 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
 
 const VALID_TYPES: CTAType[] = ["BUTTON", "LINK", "FORM", "BANNER", "POPUP"];
 
+// Arabic labels for the Telegram notification (enum values are English).
+const CTA_TYPE_AR: Record<CTAType, string> = {
+  BUTTON: "زر",
+  LINK: "رابط",
+  FORM: "نموذج",
+  BANNER: "بانر",
+  POPUP: "نافذة منبثقة",
+};
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -63,9 +72,22 @@ export async function POST(request: Request) {
         request.headers.get("x-real-ip") ||
         request.headers.get("cf-connecting-ip") ||
         null;
+      // Best-effort: show the actual article title (not the internal CTA label,
+      // which is an English analytics bucket and would leak into the message).
+      const articleTitle =
+        typeof articleId === "string" && articleId
+          ? (
+              await db.article
+                .findUnique({ where: { id: articleId }, select: { title: true } })
+                .catch(() => null)
+            )?.title
+          : undefined;
       notifyTelegram(clientId, "articleCtaClick", {
-        title: typeof label === "string" ? label : undefined,
-        meta: { النوع: type, الهدف: typeof targetUrl === "string" ? targetUrl : undefined },
+        title: articleTitle,
+        meta: {
+          النوع: CTA_TYPE_AR[type as CTAType],
+          الوجهة: typeof targetUrl === "string" ? targetUrl : undefined,
+        },
         ipAddress: ip,
         headers: request.headers,
       }).catch(() => {});

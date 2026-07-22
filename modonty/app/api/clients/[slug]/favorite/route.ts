@@ -89,7 +89,7 @@ export async function POST(
       null;
     notifyTelegram(client.id, "clientFavorite", {
       title: client.name,
-      meta: { بواسطة: session.user.name ?? session.user.email ?? "زائر" },
+      meta: { الزائر: session.user.name ?? session.user.email ?? "زائر" },
       ipAddress: ip,
       headers: request.headers,
     }).catch(() => {});

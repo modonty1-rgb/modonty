@@ -99,7 +99,7 @@ export async function POST(
       }
     };
     notifyTelegram(client.id, "clientView", {
-      meta: { من: formatReferrer(referrer) },
+      meta: { المصدر: formatReferrer(referrer) },
       ipAddress,
       headers: headersList,
     }).catch(() => {});

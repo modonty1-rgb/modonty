@@ -124,7 +124,7 @@ export async function POST(
         request.headers.get("cf-connecting-ip") ||
         null;
       notifyTelegram(client.id, "clientFollow", {
-        meta: { المتابع: session.user.name ?? session.user.email ?? "زائر" },
+        meta: { الزائر: session.user.name ?? session.user.email ?? "زائر" },
         ipAddress: ip,
         headers: request.headers,
       }).catch(() => {});

@@ -47,18 +47,18 @@ export interface TelegramEventDef {
 export const TELEGRAM_EVENTS: TelegramEventDef[] = [
   // Article (13)
   { key: "articleView", group: "article", label: "مشاهدة مقال", emoji: "👁" },
-  { key: "articleLike", group: "article", label: "لايك على مقال", emoji: "👍" },
-  { key: "articleDislike", group: "article", label: "ديسلايك على مقال", emoji: "👎" },
+  { key: "articleLike", group: "article", label: "إعجاب بمقال", emoji: "👍" },
+  { key: "articleDislike", group: "article", label: "عدم إعجاب بمقال", emoji: "👎" },
   { key: "articleFavorite", group: "article", label: "حفظ مقال في المفضلة", emoji: "⭐" },
   { key: "articleShare", group: "article", label: "مشاركة مقال", emoji: "↗" },
-  { key: "articleCtaClick", group: "article", label: "ضغط على CTA داخل المقال", emoji: "🎯" },
-  { key: "articleLinkClick", group: "article", label: "ضغط على رابط خارجي داخل المقال", emoji: "🔗" },
+  { key: "articleCtaClick", group: "article", label: "ضغط على زر", emoji: "🎯" },
+  { key: "articleLinkClick", group: "article", label: "ضغط على رابط خارجي", emoji: "🔗" },
   { key: "commentNew", group: "article", label: "تعليق جديد", emoji: "💬" },
   { key: "commentReply", group: "article", label: "رد على تعليق", emoji: "↩" },
-  { key: "commentLike", group: "article", label: "لايك على تعليق", emoji: "👍" },
-  { key: "commentDislike", group: "article", label: "ديسلايك على تعليق", emoji: "👎" },
-  { key: "conversion", group: "article", label: "تحويل (Conversion)", emoji: "🎉" },
-  { key: "leadHigh", group: "article", label: "Lead باهتمام عالٍ", emoji: "🔥" },
+  { key: "commentLike", group: "article", label: "إعجاب بتعليق", emoji: "👍" },
+  { key: "commentDislike", group: "article", label: "عدم إعجاب بتعليق", emoji: "👎" },
+  { key: "conversion", group: "article", label: "تحويل مكتمل", emoji: "🎉" },
+  { key: "leadHigh", group: "article", label: "زائر باهتمام عالٍ", emoji: "🔥" },
 
   // Client Page (6)
   { key: "clientView", group: "clientPage", label: "زيارة صفحة الشركة", emoji: "👁" },

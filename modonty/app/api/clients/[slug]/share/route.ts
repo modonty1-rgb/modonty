@@ -19,6 +19,18 @@ const PLATFORM_MAP: Record<string, SharePlatform> = {
   OTHER: SharePlatform.OTHER,
 };
 
+// Arabic labels for the Telegram notification (enum values are English).
+const SHARE_PLATFORM_AR: Record<SharePlatform, string> = {
+  [SharePlatform.TWITTER]: "إكس (تويتر)",
+  [SharePlatform.LINKEDIN]: "لينكدإن",
+  [SharePlatform.FACEBOOK]: "فيسبوك",
+  [SharePlatform.WHATSAPP]: "واتساب",
+  [SharePlatform.EMAIL]: "البريد",
+  [SharePlatform.COPY_LINK]: "نسخ الرابط",
+  [SharePlatform.PRINT]: "طباعة",
+  [SharePlatform.OTHER]: "أخرى",
+};
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -75,7 +87,7 @@ export async function POST(
       request.headers.get("cf-connecting-ip") ||
       null;
     notifyTelegram(client.id, "clientShare", {
-      meta: { المنصة: sharePlatform },
+      meta: { المنصة: SHARE_PLATFORM_AR[sharePlatform] },
       ipAddress: ip,
       headers: request.headers,
     }).catch(() => {});

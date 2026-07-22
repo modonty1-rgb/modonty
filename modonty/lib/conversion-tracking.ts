@@ -7,6 +7,22 @@ import { trackConversionComplete } from "@/lib/analytics/events-registry";
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
 
+// Arabic labels for the Telegram notification (enum values are English).
+const CONVERSION_TYPE_AR: Record<ConversionType, string> = {
+  SIGNUP: "تسجيل حساب",
+  CONTACT_FORM: "نموذج تواصل",
+  DOWNLOAD: "تنزيل",
+  NEWSLETTER: "اشتراك بالنشرة",
+  PURCHASE: "شراء",
+  TRIAL_START: "بدء تجربة",
+  DEMO_REQUEST: "طلب عرض توضيحي",
+  PHONE_CLICK: "ضغط رقم الجوال",
+  EMAIL_CLICK: "ضغط البريد",
+  DIRECTORY_VIEW: "مشاهدة الدليل",
+  BOOKING: "حجز",
+  LINK_CLICK: "ضغط رابط خارجي",
+};
+
 export async function getOrCreateSessionId(): Promise<string> {
   const cookieStore = await cookies();
   let sessionId = cookieStore.get(VIEW_SESSION_COOKIE)?.value;
@@ -54,8 +70,8 @@ export async function createConversion(data: CreateConversionData): Promise<void
   if (data.clientId) {
     notifyTelegram(data.clientId, "conversion", {
       meta: {
-        النوع: String(data.type),
-        ...(data.value ? { القيمة: `${data.value} ${data.currency ?? ""}` } : {}),
+        النوع: CONVERSION_TYPE_AR[data.type] ?? String(data.type),
+        ...(data.value ? { القيمة: `${data.value} ${data.currency ?? ""}`.trim() } : {}),
       },
       ipAddress: data.ipAddress ?? null,
     }).catch(() => {});

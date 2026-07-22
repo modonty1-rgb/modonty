@@ -8,6 +8,18 @@ import { trackArticleShare } from "@/lib/analytics/events-registry";
 const SHARE_RATE_LIMIT = 10;
 const SHARE_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
+// Arabic labels for the Telegram notification (enum values are English).
+const SHARE_PLATFORM_AR: Record<SharePlatform, string> = {
+  [SharePlatform.TWITTER]: "إكس (تويتر)",
+  [SharePlatform.LINKEDIN]: "لينكدإن",
+  [SharePlatform.FACEBOOK]: "فيسبوك",
+  [SharePlatform.WHATSAPP]: "واتساب",
+  [SharePlatform.EMAIL]: "البريد",
+  [SharePlatform.COPY_LINK]: "نسخ الرابط",
+  [SharePlatform.PRINT]: "طباعة",
+  [SharePlatform.OTHER]: "أخرى",
+};
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -86,8 +98,8 @@ export async function POST(
         request.headers.get("cf-connecting-ip") ||
         null;
       notifyTelegram(article.clientId, "articleShare", {
-        title: slug,
-        meta: { المنصة: sharePlatform },
+        title: article.title,
+        meta: { المنصة: SHARE_PLATFORM_AR[sharePlatform] },
         ipAddress: ip,
         headers: request.headers,
       }).catch(() => {});
