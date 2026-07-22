@@ -12,6 +12,10 @@ export const authConfig = {
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      // Safe for Google only: it verifies email ownership (email_verified).
+      // Auto-links a Google sign-in to an existing password account with the
+      // same email instead of throwing OAuthAccountNotLinked.
+      allowDangerousEmailAccountLinking: true,
     }),
     Credentials({
       name: "Credentials",

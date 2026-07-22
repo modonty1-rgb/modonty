@@ -17,17 +17,11 @@ export async function checkAdmin(): Promise<AdminGate> {
   const userId = (session?.user as { id?: string } | undefined)?.id;
   if (!userId) return { status: "unauthenticated" };
 
-  // TRANSITION FALLBACK: read the role from `staff`, else from an ADMIN `users` row,
-  // so admins mid-migration are not locked out. Remove once staff is fully populated.
+  // Authoritative role from `staff` — the admin panel's only identity table.
   const staffRow = await db.staff
     .findUnique({ where: { id: userId }, select: { role: true } })
     .catch(() => null);
-  const role =
-    staffRow?.role ??
-    (await db.user
-      .findUnique({ where: { id: userId }, select: { role: true } })
-      .catch(() => null))?.role;
-  if (role !== "ADMIN") return { status: "forbidden" };
+  if (staffRow?.role !== "ADMIN") return { status: "forbidden" };
 
   return { status: "ok", userId };
 }

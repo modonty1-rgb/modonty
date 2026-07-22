@@ -37,7 +37,9 @@ export async function getMembers(): Promise<Member[]> {
       email: u.email,
       image: u.image,
       via: u.password ? "email" : "google",
-      verified: Boolean(u.emailVerified),
+      // Google verifies email ownership at sign-in, so a Google member is verified
+      // even without our email-link flow (which only runs for password signups).
+      verified: Boolean(u.emailVerified) || !u.password,
       createdAt: u.createdAt,
     }));
   } catch {

@@ -26,7 +26,7 @@ export default auth(async (req) => {
   // Public auth pages: a signed-in admin → dashboard; everyone else → allow.
   if (isPublic) {
     if (userId) {
-      const me = await db.user
+      const me = await db.staff
         .findUnique({ where: { id: userId }, select: { role: true } })
         .catch(() => null);
       if (me?.role === "ADMIN") return NextResponse.redirect(new URL("/", req.nextUrl));
@@ -38,17 +38,11 @@ export default auth(async (req) => {
   if (!userId) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
-  // TRANSITION FALLBACK: role from `staff`, else from an ADMIN `users` row, so admins
-  // mid-migration reach the panel. Remove once staff is fully populated.
+  // Authoritative role from `staff` — the admin panel's only identity table.
   const staffRow = await db.staff
     .findUnique({ where: { id: userId }, select: { role: true } })
     .catch(() => null);
-  const role =
-    staffRow?.role ??
-    (await db.user
-      .findUnique({ where: { id: userId }, select: { role: true } })
-      .catch(() => null))?.role;
-  if (role !== "ADMIN") {
+  if (staffRow?.role !== "ADMIN") {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 

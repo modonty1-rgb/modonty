@@ -28,10 +28,7 @@ export const authConfig = {
         console.log("[Auth] Attempting login for:", email);
 
         try {
-          // TRANSITION FALLBACK: the admin panel authenticates against `staff`, but
-          // during the users→staff migration an admin may still live only in `users`
-          // (role ADMIN). Try staff first, then fall back to an ADMIN user so no one
-          // is locked out mid-migration. Remove once all admins are verified in `staff`.
+          // The admin panel authenticates against `staff` only.
           const staffRow = await db.staff.findUnique({ where: { email } });
           const user = staffRow
             ? {
@@ -41,11 +38,7 @@ export const authConfig = {
                 password: staffRow.password,
                 role: staffRow.role as string,
               }
-            : await db.user.findUnique({ where: { email } }).then((u) =>
-                u && u.role === "ADMIN"
-                  ? { id: u.id, email: u.email, name: u.name, password: u.password, role: u.role as string }
-                  : null,
-              );
+            : null;
 
           console.log("[Auth] User lookup result:", {
             found: !!user,
