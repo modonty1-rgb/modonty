@@ -7,8 +7,6 @@ import Placeholder from "@tiptap/extension-placeholder";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import Underline from "@tiptap/extension-underline";
-import { TextStyle } from "@tiptap/extension-text-style";
-import Color from "@tiptap/extension-color";
 import TextAlign from "@tiptap/extension-text-align";
 import Heading from "@tiptap/extension-heading";
 import CharacterCount from "@tiptap/extension-character-count";
@@ -164,8 +162,9 @@ export function RichTextEditor({
         },
       }),
       Underline,
-      TextStyle,
-      Color,
+      // TextStyle/Color removed: no color button exists in the toolbar — these only
+      // preserved hardcoded inline colors pasted from Word/Docs (black on dark = invisible).
+      // Dropping them makes text inherit the theme (dark-mode fix) + self-cleans on save.
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
@@ -803,7 +802,9 @@ export function RichTextEditor({
         </Dialog>
       </div>
 
-      <EditorContent editor={editor} className="min-h-[300px]" />
+      {/* Content scrolls inside a bounded box so the toolbar (above) + stats (below)
+          stay pinned and reachable on long articles — no scrolling back up to format. */}
+      <EditorContent editor={editor} className="min-h-[300px] max-h-[60vh] overflow-y-auto scrollbar-thin" />
 
       <div className="border-t border-border p-2 flex justify-between items-center text-xs text-muted-foreground">
         <div className="flex gap-3">
