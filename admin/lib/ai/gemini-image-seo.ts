@@ -19,6 +19,8 @@ export interface ImageSeoAiContext {
   keywords?: string[];
   /** 1-based position in the gallery — used to push distinct angles across images. */
   galleryIndex?: number | null;
+  /** When the image belongs to an article, its text is the PRIMARY source for alt/description. */
+  article?: { title?: string | null; excerpt?: string | null; body?: string | null } | null;
 }
 
 export async function generateImageSeoField(
@@ -48,7 +50,31 @@ export async function generateImageSeoField(
       ? "نص بديل (alt) من 5 إلى 125 حرفاً، وصفي مختصر يربط الصورة بمجال العميل ومدينته."
       : "وصف (description) من 50 إلى 160 حرفاً، أعمق قليلاً من النص البديل.";
 
-  const prompt = `أنت كاتب محتوى سعودي محترف متخصص في سيو الصور. هذه صورة من معرض أعمال العميل التالي.
+  // Article-owned image → the article's topic is the PRIMARY source (Khalid 2026-07-23).
+  const art = ctx.article;
+  const hasArticle = !!(art && (art.title || art.excerpt || art.body));
+
+  let prompt: string;
+  if (hasArticle) {
+    const aLines = [
+      art!.title && `- عنوان المقال: ${art!.title}`,
+      art!.excerpt && `- المقتطف: ${art!.excerpt}`,
+      art!.body && `- من محتوى المقال: ${art!.body.slice(0, 1200)}`,
+      ctx.clientName && `- الناشر: ${ctx.clientName}${ctx.city ? ` — ${ctx.city}` : ""}`,
+    ].filter(Boolean);
+
+    prompt = `أنت كاتب محتوى سعودي محترف متخصص في سيو الصور. الصورة التالية تخص المقال أدناه — اكتب نصاً يعكس موضوع المقال نفسه.
+مهم: لا تحلّل الصورة نفسها؛ استند لموضوع المقال.
+
+بيانات المقال:
+${aLines.join("\n")}
+
+لا تخترع تفاصيل غير مؤكدة (أرقام، أسماء، جوائز). اكتب بلهجة سعودية خليجية طبيعية وواضحة.
+
+اكتب: ${spec}
+أعِد النتيجة بصيغة JSON فقط: { "text": "..." }`;
+  } else {
+    prompt = `أنت كاتب محتوى سعودي محترف متخصص في سيو الصور. هذه صورة من معرض أعمال العميل التالي.
 مهم: لا تحلّل الصورة نفسها — اكتب بناءً على بيانات العميل أدناه فقط.
 
 بيانات العميل:
@@ -59,6 +85,7 @@ ${indexNote}
 
 اكتب: ${spec}
 أعِد النتيجة بصيغة JSON فقط: { "text": "..." }`;
+  }
 
   const body = {
     contents: [{ parts: [{ text: prompt }] }],

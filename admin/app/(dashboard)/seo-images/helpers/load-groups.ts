@@ -26,6 +26,12 @@ export interface SeoImageRow {
   score: number;
   altText: string | null;
   description: string | null;
+  /** Raw stored fields — the actual values behind the score, for a read-only data view. */
+  width: number | null;
+  height: number | null;
+  fileSize: number | null;
+  mimeType: string | null;
+  filename: string | null;
   usedIn: string;
   ownerLabel: string;
   autoName: string | null;
@@ -51,7 +57,7 @@ export interface SeoImageGroup {
   typeCounts: TypeCount[];
 }
 
-const MEDIA_SELECT = {
+export const MEDIA_SELECT = {
   id: true,
   url: true,
   type: true,
@@ -59,6 +65,8 @@ const MEDIA_SELECT = {
   description: true,
   width: true,
   height: true,
+  fileSize: true,
+  mimeType: true,
   filename: true,
   cloudinaryPublicId: true,
   dateCreated: true,
@@ -82,6 +90,19 @@ type MediaRow = {
   altText: string | null;
   dateCreated: Date | null;
   createdAt: Date;
+};
+
+/** The full media shape a SeoImageRow is built from (MEDIA_SELECT rows). */
+export type SeoImageMediaRow = MediaRow & {
+  id: string;
+  url: string;
+  description: string | null;
+  width: number | null;
+  height: number | null;
+  fileSize: number | null;
+  mimeType: string;
+  filename: string;
+  cloudinaryPublicId: string | null;
 };
 
 function usedInLabel(m: MediaRow): string {
@@ -110,52 +131,67 @@ function groupOf(m: MediaRow): { key: string; name: string; isModonty: boolean }
   return { key: MODONTY_KEY, name: MODONTY_NAME, isModonty: true };
 }
 
-export async function loadSeoImageGroups(): Promise<SeoImageGroup[]> {
-  const [media, siteUrl, settings] = await Promise.all([
-    db.media.findMany({ select: MEDIA_SELECT, take: LIMIT, orderBy: { createdAt: "desc" } }),
-    loadSiteUrl(),
-    getAllSettings(),
-  ]);
-
-  const defaults: ModontyImageDefaults = {
+/** Load the Modonty image-attribution defaults (owner name, license, org URL) once. Shared by
+ *  the groups loader and the single-image loader so both build identical rows. */
+export async function loadImageDefaults(): Promise<ModontyImageDefaults> {
+  const [siteUrl, settings] = await Promise.all([loadSiteUrl(), getAllSettings()]);
+  return {
     ownerName: settings?.imageOwnerName ?? null,
     organizationUrl: siteUrl,
     licenseUrl: settings?.imageLicenseUrl ?? null,
     acquireLicensePageUrl: settings?.imageAcquireLicensePageUrl ?? null,
   };
+}
+
+/** Build ONE SeoImageRow (score + checks + auto-name + labels) from a media row. The single
+ *  source of truth for the row shape — reused by /seo-images and the per-image dialog anywhere. */
+export function buildSeoImageRow(m: SeoImageMediaRow, defaults: ModontyImageDefaults): SeoImageRow {
+  const { score, checks } = computeMediaSeoScore({
+    filename: m.filename,
+    cloudinaryPublicId: m.cloudinaryPublicId,
+    altText: m.altText,
+    description: m.description,
+    width: m.width,
+    height: m.height,
+    type: m.type,
+  });
+  const ctx = ownerContext(m);
+  const attr = resolveImageAttribution(
+    { mediaType: m.type, clientName: ctx.clientName, articleTitle: ctx.articleTitle, altText: m.altText, dateCreated: m.dateCreated },
+    defaults,
+  );
+  const clientOwned = m.type === "LOGO" || m.type === "GALLERY";
+  return {
+    id: m.id,
+    url: m.url,
+    type: m.type,
+    score,
+    altText: m.altText,
+    description: m.description,
+    width: m.width,
+    height: m.height,
+    fileSize: m.fileSize,
+    mimeType: m.mimeType,
+    filename: m.filename,
+    usedIn: usedInLabel(m),
+    ownerLabel: clientOwned ? (ctx.clientName ?? "العميل") : (defaults.ownerName ?? "مدوّنتي"),
+    autoName: attr.name ?? null,
+    checks,
+  };
+}
+
+export async function loadSeoImageGroups(): Promise<SeoImageGroup[]> {
+  const [media, defaults] = await Promise.all([
+    db.media.findMany({ select: MEDIA_SELECT, take: LIMIT, orderBy: { createdAt: "desc" } }),
+    loadImageDefaults(),
+  ]);
 
   type PartialGroup = { key: string; name: string; isModonty: boolean; images: SeoImageRow[] };
   const groupMap = new Map<string, PartialGroup>();
 
   for (const raw of media) {
-    const m = raw as unknown as MediaRow & { id: string; url: string; description: string | null; width: number | null; height: number | null; filename: string; cloudinaryPublicId: string | null };
-    const { score, checks } = computeMediaSeoScore({
-      filename: m.filename,
-      cloudinaryPublicId: m.cloudinaryPublicId,
-      altText: m.altText,
-      description: m.description,
-      width: m.width,
-      height: m.height,
-      type: m.type,
-    });
-    const ctx = ownerContext(m);
-    const attr = resolveImageAttribution(
-      { mediaType: m.type, clientName: ctx.clientName, articleTitle: ctx.articleTitle, altText: m.altText, dateCreated: m.dateCreated },
-      defaults,
-    );
-    const clientOwned = m.type === "LOGO" || m.type === "GALLERY";
-    const row: SeoImageRow = {
-      id: m.id,
-      url: m.url,
-      type: m.type,
-      score,
-      altText: m.altText,
-      description: m.description,
-      usedIn: usedInLabel(m),
-      ownerLabel: clientOwned ? (ctx.clientName ?? "العميل") : (defaults.ownerName ?? "مدوّنتي"),
-      autoName: attr.name ?? null,
-      checks,
-    };
+    const m = raw as unknown as SeoImageMediaRow;
+    const row = buildSeoImageRow(m, defaults);
 
     const g = groupOf(m);
     const existing = groupMap.get(g.key);

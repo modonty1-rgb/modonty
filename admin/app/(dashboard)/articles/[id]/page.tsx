@@ -159,12 +159,19 @@ export default async function ArticleViewPage({ params }: { params: Promise<{ id
                 {a.readingTimeMinutes && <span>~{a.readingTimeMinutes} min read</span>}
               </div>
 
-              {/* Article Content */}
+              {/* Article Content — strip hardcoded inline color/background from the editor so
+                  the body inherits the theme (black inline colors were invisible in dark mode);
+                  alignment etc. kept. Deeper content-pipeline cleanup = the pending rewrite. */}
               <div
                 id="article-content"
-                className="prose prose-base md:prose-lg max-w-none mb-8"
+                className="prose prose-base md:prose-lg max-w-none mb-8 dark:prose-invert"
                 style={{ lineHeight: '1.6' }}
-                dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(a.content) }}
+                dangerouslySetInnerHTML={{
+                  __html: sanitizeHtmlContent(a.content).replace(
+                    /\b(?:background-)?color\s*:\s*[^;"'}]*;?/gi,
+                    "",
+                  ),
+                }}
               />
 
               {/* Gallery */}

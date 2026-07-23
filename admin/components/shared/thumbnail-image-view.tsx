@@ -49,6 +49,13 @@ interface ThumbnailImageViewProps {
   className?: string;
   thumbnailSize?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
+  /** Show the alt-text caption line under the image (default true). The image alt attribute
+   *  is always set for accessibility regardless — this only hides the visible duplicate. */
+  showAltText?: boolean;
+  /** Show the width×height badge under the image (default true). */
+  showDimensions?: boolean;
+  /** Show the filename line under the image (default true). */
+  showFilename?: boolean;
 
   // Labels (for i18n support)
   removeConfirmTitle?: string;
@@ -73,6 +80,9 @@ export function ThumbnailImageView({
   className,
   thumbnailSize = 'sm',
   fullWidth = false,
+  showAltText = true,
+  showDimensions = true,
+  showFilename = true,
   removeConfirmTitle = 'Remove Image',
   removeConfirmDescription = 'Are you sure you want to remove this image? This action cannot be undone.',
 }: ThumbnailImageViewProps) {
@@ -179,21 +189,21 @@ export function ThumbnailImageView({
           {/* Image Info */}
           <div className="p-4 space-y-3 bg-card">
             <div className="space-y-2">
-              {filename && (
+              {showFilename && filename && (
                 <p className="text-sm font-semibold line-clamp-1 text-foreground">{filename}</p>
               )}
-              {altText && (
+              {showAltText && altText && (
                 <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                   {altText}
                 </p>
               )}
-              <div className="flex items-center gap-2 flex-wrap">
-                {width && height && (
+              {showDimensions && width && height && (
+                <div className="flex items-center gap-2 flex-wrap">
                   <Badge variant="secondary" className="text-xs font-normal px-2 py-0.5">
                     {width} × {height}
                   </Badge>
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
             {/* Actions */}

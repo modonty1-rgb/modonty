@@ -20,6 +20,18 @@ const CLIENT_CTX = {
   industry: { select: { name: true } },
 } as const;
 
+const ARTICLE_CTX = { title: true, excerpt: true, content: true } as const;
+
+/** Strip HTML tags/entities from stored article content → plain text for the AI prompt. */
+function toPlainText(html: string | null | undefined): string {
+  if (!html) return "";
+  return html
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&[a-z]+;|&#\d+;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export async function generateImageSeoAi(
   mediaId: string,
   field: ImageSeoField,
@@ -40,13 +52,21 @@ export async function generateImageSeoAi(
       client: { select: CLIENT_CTX },
       logoClients: { select: CLIENT_CTX, take: 1 },
       heroImageClients: { select: CLIENT_CTX, take: 1 },
+      featuredArticles: { select: ARTICLE_CTX, take: 1 },
+      articleGallery: { select: { article: { select: ARTICLE_CTX } }, take: 1 },
     },
   });
   if (!media) return { success: false, error: "الصورة غير موجودة" };
 
+  // Article-owned image → the article is the PRIMARY source. Client stays as secondary context.
+  const articleRow = media.featuredArticles[0] ?? media.articleGallery[0]?.article ?? null;
+  const article = articleRow
+    ? { title: articleRow.title, excerpt: articleRow.excerpt, body: toPlainText(articleRow.content) }
+    : null;
+
   const client = media.client ?? media.logoClients[0] ?? media.heroImageClients[0] ?? null;
-  if (!client) {
-    return { success: false, error: "لا يوجد عميل مرتبط بالصورة — التوليد يعتمد على بيانات العميل." };
+  if (!client && !article) {
+    return { success: false, error: "لا يوجد مقال أو عميل مرتبط بالصورة — لا مصدر للتوليد." };
   }
 
   // 1-based position of this image among the client's gallery, to push distinct angles.
@@ -64,14 +84,15 @@ export async function generateImageSeoAi(
   try {
     const text = await generateImageSeoField(
       {
-        clientName: client.name,
-        industry: client.industry?.name ?? null,
-        city: client.addressCity,
-        businessBrief: client.businessBrief,
-        targetAudience: client.targetAudience,
-        services: client.services?.map((s) => s.title).filter(Boolean) ?? [],
-        keywords: client.keywords ?? [],
+        clientName: client?.name ?? null,
+        industry: client?.industry?.name ?? null,
+        city: client?.addressCity ?? null,
+        businessBrief: client?.businessBrief ?? null,
+        targetAudience: client?.targetAudience ?? null,
+        services: client?.services?.map((s) => s.title).filter(Boolean) ?? [],
+        keywords: client?.keywords ?? [],
         galleryIndex,
+        article,
       },
       field,
     );

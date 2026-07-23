@@ -6,7 +6,6 @@ import { Loader2, CheckCircle2, AlertTriangle, XCircle, Sparkles } from "lucide-
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { CharacterCounter } from "@/components/shared/character-counter";
@@ -48,9 +47,12 @@ interface Props {
   image: SeoImageRow | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** Called after a successful save. Callers that hold their own copy of the row (e.g. the
+   *  article editor) use this to re-fetch it; when omitted the dialog just refreshes the route. */
+  onSaved?: () => void;
 }
 
-export function ImageSeoDialog({ image, open, onOpenChange }: Props) {
+export function ImageSeoDialog({ image, open, onOpenChange, onSaved }: Props) {
   const { toast } = useToast();
   const router = useRouter();
   const [alt, setAlt] = useState("");
@@ -86,14 +88,18 @@ export function ImageSeoDialog({ image, open, onOpenChange }: Props) {
   async function handleSave() {
     if (!image) return;
     setSaving(true);
+    // Filename is automatic: on save the file is synced to the generated SEO name (server
+    // sanitizes + renames only if it actually differs, and skips images embedded in article text).
     const res = await saveImageSeo({
       mediaId: image.id,
       altText: alt.trim() || null,
       description: desc.trim() || null,
+      ...(image.autoName ? { filename: image.autoName } : {}),
     });
     setSaving(false);
     if (res.success) {
       toast({ title: "تم حفظ سيو الصورة", variant: "success" });
+      onSaved?.();
       router.refresh();
       onOpenChange(false);
     } else {
@@ -144,7 +150,7 @@ export function ImageSeoDialog({ image, open, onOpenChange }: Props) {
               })}
             </ul>
             <p className="mt-2 border-t pt-2 text-[11px] text-muted-foreground">
-              النص البديل والوصف تعدّلهما هنا. الأبعاد واسم الملف من مكتبة الوسائط.
+              النص البديل والوصف تعدّلهما هنا. اسم الملف والأبعاد يُدارَان تلقائياً.
             </p>
           </div>
           <div className="rounded-lg border border-dashed border-green-500/40 bg-green-500/[0.06] p-2.5 text-xs text-green-700 dark:text-green-400">
@@ -187,9 +193,7 @@ export function ImageSeoDialog({ image, open, onOpenChange }: Props) {
             </div>
             <div>
               <div className="flex items-center justify-between gap-2">
-                <Label htmlFor="desc">
-                  Description <span className="text-xs text-muted-foreground">(اختياري)</span>
-                </Label>
+                <Label htmlFor="desc">Description</Label>
                 <Button
                   type="button"
                   size="sm"
@@ -212,6 +216,16 @@ export function ImageSeoDialog({ image, open, onOpenChange }: Props) {
               />
               <div className="mt-1">
                 <CharacterCounter current={desc.length} min={50} max={160} restrict={false} />
+              </div>
+            </div>
+
+            {/* Filename is automatic — read-only. On save the file is renamed to the SEO name. */}
+            <div>
+              <Label>
+                اسم الملف <span className="text-xs text-muted-foreground">(تلقائي)</span>
+              </Label>
+              <div className="mt-1 truncate rounded-md border bg-muted/40 px-3 py-2 font-mono text-xs text-muted-foreground" dir="ltr" title={image.filename ?? undefined}>
+                {image.filename ?? "—"}
               </div>
             </div>
 

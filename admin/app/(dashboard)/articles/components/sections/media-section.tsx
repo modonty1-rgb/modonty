@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useArticleForm } from '../article-form-context';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -9,8 +9,9 @@ import { Button } from '@/components/ui/button';
 import { MediaPickerDialog } from '@/components/shared/media-picker-dialog';
 import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
 import { ThumbnailImageView } from '@/components/shared/thumbnail-image-view';
-import { Image as ImageIcon, Loader2, ImagePlus, Music, Library, ArrowRight, AlertCircle } from 'lucide-react';
+import { Image as ImageIcon, Loader2, ImagePlus, Music, Library, ArrowRight, AlertCircle, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { ImageSeoStrip } from '../image-seo-strip';
 
 function SectionHeader({
   icon: Icon,
@@ -77,38 +78,39 @@ export function MediaSection() {
 
   const goToBasic = () => goToStep(1);
 
-  useEffect(() => {
-    const fetchMedia = async () => {
-      if (!formData.featuredImageId || !formData.clientId) {
+  const fetchMedia = useCallback(async () => {
+    if (!formData.featuredImageId || !formData.clientId) {
+      setFeaturedMedia(null);
+      return;
+    }
+    setLoadingMedia(true);
+    try {
+      const media = await getMediaById(formData.featuredImageId, formData.clientId);
+      if (media) {
+        setFeaturedMedia({
+          id: media.id,
+          url: media.url,
+          filename: media.filename,
+          altText: media.altText,
+          width: media.width,
+          height: media.height,
+          cloudinaryPublicId: media.cloudinaryPublicId,
+          cloudinaryVersion: media.cloudinaryVersion,
+        });
+      } else {
         setFeaturedMedia(null);
-        return;
       }
-      setLoadingMedia(true);
-      try {
-        const media = await getMediaById(formData.featuredImageId, formData.clientId);
-        if (media) {
-          setFeaturedMedia({
-            id: media.id,
-            url: media.url,
-            filename: media.filename,
-            altText: media.altText,
-            width: media.width,
-            height: media.height,
-            cloudinaryPublicId: media.cloudinaryPublicId,
-            cloudinaryVersion: media.cloudinaryVersion,
-          });
-        } else {
-          setFeaturedMedia(null);
-        }
-      } catch (error) {
-        console.error('Error fetching featured media:', error);
-        setFeaturedMedia(null);
-      } finally {
-        setLoadingMedia(false);
-      }
-    };
-    fetchMedia();
+    } catch (error) {
+      console.error('Error fetching featured media:', error);
+      setFeaturedMedia(null);
+    } finally {
+      setLoadingMedia(false);
+    }
   }, [formData.featuredImageId, formData.clientId]);
+
+  useEffect(() => {
+    fetchMedia();
+  }, [fetchMedia]);
 
   const handleSelectMedia = (media: {
     url: string;
@@ -134,6 +136,8 @@ export function MediaSection() {
   return (
     <Card>
       <CardContent className="space-y-8 pt-6">
+        {/* Cover (left) + its SEO (right) sit side by side, stretched to equal height. */}
+        <div className="grid gap-6 md:grid-cols-2">
         {/* ─────────────────────────────────────────────
             Section 1 — صورة الغلاف
             ───────────────────────────────────────────── */}
@@ -151,21 +155,26 @@ export function MediaSection() {
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           ) : featuredMedia ? (
-            <ThumbnailImageView
-              imageUrl={featuredMedia.url}
-              cloudinaryPublicId={featuredMedia.cloudinaryPublicId}
-              cloudinaryVersion={featuredMedia.cloudinaryVersion}
-              altText={featuredMedia.altText || undefined}
-              filename={featuredMedia.filename}
-              width={featuredMedia.width || undefined}
-              height={featuredMedia.height || undefined}
-              onRemove={handleRemoveMedia}
-              onChange={handleChangeMedia}
-              aspectRatio="video"
-              thumbnailSize="lg"
-              fullWidth={true}
-              buttonSize="default"
-            />
+            <div className="space-y-2">
+              <ThumbnailImageView
+                imageUrl={featuredMedia.url}
+                cloudinaryPublicId={featuredMedia.cloudinaryPublicId}
+                cloudinaryVersion={featuredMedia.cloudinaryVersion}
+                altText={featuredMedia.altText || undefined}
+                filename={featuredMedia.filename}
+                width={featuredMedia.width || undefined}
+                height={featuredMedia.height || undefined}
+                onRemove={handleRemoveMedia}
+                onChange={handleChangeMedia}
+                aspectRatio="video"
+                thumbnailSize="lg"
+                fullWidth={true}
+                buttonSize="default"
+                showAltText={false}
+                showDimensions={false}
+                showFilename={false}
+              />
+            </div>
           ) : (
             <button
               type="button"
@@ -189,10 +198,23 @@ export function MediaSection() {
           />
         </section>
 
+        {/* Right column — cover SEO (score + writer-fixable gaps + read-only breakdown). */}
+        {formData.clientId && featuredMedia && (
+          <section className="flex flex-col gap-4">
+            <SectionHeader
+              icon={Search}
+              title="سيو صورة الغلاف"
+              description="درجة سيو الصورة وما ينقصها — عدّل النص البديل والوصف من هنا"
+            />
+            <ImageSeoStrip mediaId={featuredMedia.id} showBreakdown onChange={fetchMedia} />
+          </section>
+        )}
+        </div>
+
         <div className="border-t" />
 
         {/* ─────────────────────────────────────────────
-            Section 2 — النسخة الصوتية
+            Section 2 — النسخة الصوتية (full-width, own card)
             ───────────────────────────────────────────── */}
         <section className="space-y-4">
           <SectionHeader
