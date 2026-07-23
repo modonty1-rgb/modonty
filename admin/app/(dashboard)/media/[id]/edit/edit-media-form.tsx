@@ -12,10 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Upload, X, Save } from "lucide-react";
-import { updateMedia, renameCloudinaryAsset, deleteCloudinaryAsset } from "../../actions/media-actions";
+import { updateMedia, deleteCloudinaryAsset } from "../../actions/media-actions";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 import NextImage from "next/image";
@@ -82,11 +81,10 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
   // The role is fixed once uploaded — it dictates the locked crop ratio + size.
   const typeSpec = getMediaSpec(media.type);
 
+  // Alt / title / description are NOT edited here — they belong to the writer-owned
+  // "SEO Images" section (/seo-images). This form owns file management + rights only.
   const [formData, setFormData] = useState({
     type: media.type || ("GENERAL" as MediaType),
-    altText: media.altText || "",
-    title: media.title || "",
-    description: media.description || "",
     credit: media.credit || "مدونتي",
     license: media.license || "All Rights Reserved",
     creator: media.creator || "",
@@ -183,7 +181,7 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
         }
 
         const clientId = media.client?.id || "default";
-        const seoFileName = generateSEOFileName(formData.altText.trim() || "", formData.title.trim() || "", newFile.name, undefined);
+        const seoFileName = generateSEOFileName(media.altText?.trim() || "", media.title?.trim() || "", newFile.name, undefined);
         const folderPath = `clients/${clientId}`;
         const publicId = generateCloudinaryPublicId(seoFileName, folderPath);
 
@@ -239,44 +237,6 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
         }
       }
 
-      if (!newFile) {
-        const originalAltText = media.altText || "";
-        const originalTitle = media.title || "";
-        const altTextChanged = formData.altText.trim() !== originalAltText;
-        const titleChanged = formData.title.trim() !== originalTitle;
-
-        if ((altTextChanged || titleChanged) && media.cloudinaryPublicId) {
-          const clientId = media.client?.id || "default";
-          const oldPublicIdParts = media.cloudinaryPublicId.split("/");
-          const oldFileName = oldPublicIdParts[oldPublicIdParts.length - 1];
-          const oldSuffixMatch = oldFileName.match(/-([a-z0-9]{8,})$/);
-          const existingSuffix = oldSuffixMatch ? oldSuffixMatch[1] : null;
-
-          let seoFileName = generateSEOFileName(formData.altText.trim() || "", formData.title.trim() || "", media.filename, undefined, false);
-
-          if (existingSuffix) {
-            seoFileName = `${seoFileName}-${existingSuffix}`;
-          } else {
-            seoFileName = generateSEOFileName(formData.altText.trim() || "", formData.title.trim() || "", media.filename, undefined, true);
-          }
-
-          const folderPath = `clients/${clientId}`;
-          const newPublicId = generateCloudinaryPublicId(seoFileName, folderPath);
-
-          if (newPublicId !== media.cloudinaryPublicId) {
-            const resourceType = media.mimeType.startsWith("image/") ? "image" : "video";
-            const renameResult = await renameCloudinaryAsset(media.cloudinaryPublicId, newPublicId, resourceType);
-
-            if (renameResult.success && renameResult.newPublicId) {
-              newCloudinaryPublicId = renameResult.newPublicId;
-              newCloudinaryUrl = renameResult.newUrl || media.url;
-            } else {
-              toast({ title: messages.error.upload_failed, description: renameResult.error || "تعذّرت إعادة تسمية الملف في Cloudinary.", variant: "destructive" });
-            }
-          }
-        }
-      }
-
       const resolvedScope: MediaScope =
         formData.clientId === "modonty" ? "PLATFORM" :
         formData.clientId === "none" ? "GENERAL" : "CLIENT";
@@ -285,9 +245,6 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
       const result = await updateMedia(media.id, {
         scope: resolvedScope,
         type: formData.type,
-        altText: formData.altText.trim(),
-        title: formData.title.trim() || undefined,
-        description: formData.description.trim() || undefined,
         credit: formData.credit.trim() || undefined,
         creator: formData.creator.trim() || undefined,
         license: formData.license || undefined,
@@ -401,45 +358,11 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
                   </p>
                 </div>
 
-                {/* Alt Text */}
-                <div className="space-y-2">
-                  <Label htmlFor="altText">
-                    Alt Text <span className="text-destructive">*</span>
-                  </Label>
-                  <Textarea
-                    id="altText"
-                    placeholder="Describe the image content..."
-                    value={formData.altText}
-                    onChange={(e) => setFormData({ ...formData, altText: e.target.value })}
-                    rows={3}
-                    required
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Helps search engines and visitors understand the image.
-                  </p>
-                </div>
-
-                {/* Title */}
-                <div className="space-y-2">
-                  <Label htmlFor="title">Title</Label>
-                  <Input
-                    id="title"
-                    placeholder="Image title (optional)"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  />
-                </div>
-
-                {/* Description */}
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Detailed description (optional)"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    rows={2}
-                  />
+                {/* Alt text, title & description moved to the writer-owned SEO Images section. */}
+                <div className="rounded-md border border-dashed bg-muted/30 px-3 py-2.5 text-xs text-muted-foreground">
+                  Alt text, title &amp; description are edited in{" "}
+                  <span className="font-semibold text-foreground">SEO Images</span> — owned by the
+                  content writer, not here.
                 </div>
 
                 {/* Credit */}
@@ -529,7 +452,7 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
                         {previewUrl ? (
                           <NextImage
                             src={previewUrl}
-                            alt={formData.altText || media.filename}
+                            alt={media.altText || media.filename}
                             width={400}
                             height={224}
                             className="w-full h-auto max-h-56 object-contain"
@@ -539,7 +462,7 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
                         ) : (
                           <NextImage
                             src={media.url}
-                            alt={formData.altText || media.filename}
+                            alt={media.altText || media.filename}
                             width={400}
                             height={400}
                             priority
@@ -576,7 +499,7 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
 
                   {/* Save */}
                   <div className="space-y-2 pt-2 border-t">
-                    <Button type="submit" className="w-full gap-1.5" disabled={isSaving || !formData.altText.trim()}>
+                    <Button type="submit" className="w-full gap-1.5" disabled={isSaving}>
                       <Save className="h-4 w-4" />
                       {isSaving ? "Saving..." : "Save Changes"}
                     </Button>

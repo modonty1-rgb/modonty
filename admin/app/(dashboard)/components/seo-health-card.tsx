@@ -102,7 +102,7 @@ export function SeoHealthCard({
 
       {/* Why not 100% — one scrolling line: content levers (amber) then system alarms (red). */}
       {(contentChecks.length > 0 || systemChecks.length > 0) && (
-        <div className="mt-3 flex items-center gap-2 overflow-x-auto border-t pt-3">
+        <div className="mt-3 flex items-center gap-2 overflow-x-auto border-t pb-2 pt-3">
           <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
             Blocking 100%
           </span>
