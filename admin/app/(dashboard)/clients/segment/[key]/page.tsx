@@ -55,6 +55,13 @@ export default async function ClientSegmentPage({ params }: { params: Promise<{ 
     ].filter((v): v is string => typeof v === "string"),
   }));
 
+  // Score-based segments keep only their side of 100 — same split as the dashboard count.
+  const shown: SegmentClient[] = segment.scoreFilter
+    ? clients.filter((c) =>
+        segment.scoreFilter === "perfect" ? c.seoScore >= 100 : c.seoScore < 100,
+      )
+    : clients;
+
   return (
     <div className="mx-auto max-w-[1200px] space-y-6">
       <div className="flex items-start justify-between gap-4">
@@ -72,7 +79,7 @@ export default async function ClientSegmentPage({ params }: { params: Promise<{ 
 
       <Card>
         <CardContent className="pt-4">
-          <SegmentTable clients={clients} />
+          <SegmentTable clients={shown} />
         </CardContent>
       </Card>
     </div>

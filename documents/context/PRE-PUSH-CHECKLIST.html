@@ -84,7 +84,7 @@
     <ul class="chk" data-key="p3">
       <li><input type="checkbox" id="c1" checked><label for="c1"><code>backup.sh</code> — <b style="color:var(--green)">✅ تمت</b> (dev · ٩٠ collection · 17M). أمان الإنتاج = نسخ Flex اليومية + نسخ-لا-نقل.</label></li>
       <li><input type="checkbox" id="c2" checked><label for="c2">الإصدار — <b style="color:var(--green)">✅ رُفع</b>: admin <code>0.93.0</code> · modonty <code>1.76.0</code> · console <code>0.21.0</code>. (changelog يُسجّل بعد النشر.)</label></li>
-      <li><input type="checkbox" id="c3"><label for="c3"><b style="color:var(--amber)">⏸️ وقفة:</b> commit + <b>إذن دفع صريح من خالد</b> + <code>git push</code>.</label></li>
+      <li><input type="checkbox" id="c3" checked><label for="c3">commit + push — <b style="color:var(--green)">✅ تم</b> (<code>118e367</code>، بلا الريلز). فرسيل يبني الآن.</label></li>
     </ul>
   </div>
 
@@ -92,10 +92,10 @@
   <div class="card critical">
     <h2><span class="phase">Phase 4</span> — تطبيق الطاقم على الإنتاج (بالترتيب)</h2>
     <ul class="chk" data-key="p4">
-      <li><input type="checkbox" id="d1"><label for="d1">طبّق schema على DB الإنتاج → تُخلق <code>staff</code> (فاضية). الدخول لسه شغّال عبر fallback.</label></li>
-      <li><input type="checkbox" id="d2"><label for="d2"><b>شغّل الترحيل (نسخ لا نقل)</b> → الثمانية يُنسخون لـ <code>staff</code> بنفس <code>_id</code>. <b style="color:var(--amber)">لا تحذفهم من <code>users</code>.</b></label></li>
-      <li><input type="checkbox" id="d3"><label for="d3">تحقق: دخول أدمن حقيقي من <code>staff</code> + الأدوار + إشعارات <code>staffId</code> + السجلات.</label></li>
-      <li><input type="checkbox" id="d4"><label for="d4">دوّر <code>AUTH_SECRET</code> على Vercel.</label></li>
+      <li><input type="checkbox" id="d1" checked><label for="d1"><b style="color:var(--green)">✅ deploy READY (v0.93.0)</b> + <b>fallback الدخول محقّق حيّ</b>: sign-out → sign-in (staff فاضية → users) → Dashboard. صفر قفل. الكرت يبيّن <b>10 pending</b>.</label></li>
+      <li><input type="checkbox" id="d2" checked><label for="d2"><b style="color:var(--green)">✅ الترحيل تم</b>: <b>10</b> أدمن نُسخوا لـ <code>staff</code> بنفس <code>_id</code> · <code>users</code> يبقون 10 (نسخ لا نقل) · complete.</label></li>
+      <li><input type="checkbox" id="d3" checked><label for="d3"><b style="color:var(--green)">✅ محقّق حيّ</b>: sign-out → sign-in → Dashboard = الدخول يشتغل من <code>staff</code> · الأدوار تعمل (وصلنا كل الأقسام) · collection <code>staff</code> أُنشئ (82).</label></li>
+      <li><input type="checkbox" id="d4" checked><label for="d4"><b style="color:var(--green)">✅ تم</b>: <code>AUTH_SECRET</code> دُوّر على Vercel (PATCH v9) + <b>redeploy production</b> لالتقاط المفتاح الجديد. <b>الكل يُطرد ويعيد الدخول</b> (يعمل من staff، محقّق).</label></li>
       <li><input type="checkbox" id="d5"><label for="d5"><b>بعد التأكد من الدخول من staff فقط:</b> احذف نسخ <code>users</code> القديمة + شِل الـ fallback (دفعة تالية).</label></li>
     </ul>
   </div>
@@ -104,11 +104,11 @@
   <div class="card">
     <h2><span class="phase">Phase 5</span> — بعد النشر (تحقق شامل)</h2>
     <ul class="chk" data-key="p5">
-      <li><input type="checkbox" id="e1"><label for="e1">دخول الأدمن يعمل على الإنتاج (عبر staff).</label></li>
-      <li><input type="checkbox" id="e2"><label for="e2"><code>/client-galleries</code> + <code>/media/maintenance</code> يفتحان بلا خطأ.</label></li>
-      <li><input type="checkbox" id="e3"><label for="e3">تست حي (PROD): زر «حوّل لـ WebP» + المعرض (إضافة/حذف صورة).</label></li>
-      <li><input type="checkbox" id="e4"><label for="e4">متغيرات Vercel سليمة — <code>DATABASE_URL</code> يبقى prod.</label></li>
-      <li><input type="checkbox" id="e5"><label for="e5"><code>ignoreCommand</code>: التطبيقات غير المتأثرة <code>CANCELED</code>.</label></li>
+      <li><input type="checkbox" id="e1" checked><label for="e1"><b style="color:var(--green)">✅ محقّق حيّ بعد التدوير</b>: sign-in → Dashboard كامل (الدخول من <code>staff</code> بالمفتاح الجديد · شعار السايدبار ظاهر).</label></li>
+      <li><input type="checkbox" id="e2" checked><label for="e2"><b style="color:var(--green)">✅ يفتحان سليم</b>: <code>/client-galleries</code> (المعارض تعرض · فرسان التعافي 24 صورة) + <code>/media/maintenance</code> (Optimize images 91 · أزرار «حوّل لـ WebP») · صفر console errors.</label></li>
+      <li><input type="checkbox" id="e3" checked><label for="e3"><b style="color:var(--green)">✅ محقّق حيّ (PROD)</b>: المعرض (كيمازون) رفع صورة → ظهرت → حذف بتأكيد → 0 · «حوّل لـ WebP» (فرسان التعافي) <b>2.6MB PNG → 301KB WEBP (−88%)</b> مع تحديث المرجع.</label></li>
+      <li><input type="checkbox" id="e4" checked><label for="e4"><b style="color:var(--green)">✅ محقّق سلوكياً</b>: التطبيق على DB الإنتاج 100% (28 عميل حقيقي · الترحيل ثبت 10 أدمن · المعارض تعدّل أصول prod حيّة). <code>DATABASE_URL</code> من <code>.env.shared</code> = prod.</label></li>
+      <li><input type="checkbox" id="e5" checked><label for="e5"><b style="color:var(--green)">✅ يشتغل</b>: push‏ <code>118e367</code> لمس <code>dataLayer/</code> (سكيما Staff) فبنى الثلاثة (صحيح — السكيما مشتركة). الدليل: console كان <code>CANCELED</code> على <code>7e250c3</code> لمّا ما تأثّر.</label></li>
     </ul>
   </div>
 

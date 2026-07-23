@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { getDashboardAlerts } from "./actions/dashboard-actions";
 import { DashboardAlertsBanner } from "./components/dashboard-alerts-banner";
+import { PlatformSeoOverall } from "./components/sections/platform-seo-overall";
 import { TodayStrip } from "./components/sections/today-strip";
 import { VisitorActionsBreakdown } from "./components/sections/visitor-actions-breakdown";
 import { ArticlesPipeline } from "./components/sections/articles-pipeline";
@@ -25,6 +26,11 @@ export default async function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-[1280px] space-y-7">
+      {/* 0 · The one platform number — Modonty's overall SEO, pinned at the very top */}
+      <Suspense fallback={<Skeleton className="h-20 w-full rounded-2xl" />}>
+        <PlatformSeoOverall />
+      </Suspense>
+
       {/* 1 · The ranked answer to "what needs you today" (includes the page header) */}
       <Suspense
         fallback={

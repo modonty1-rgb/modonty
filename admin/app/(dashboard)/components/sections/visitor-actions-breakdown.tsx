@@ -3,7 +3,7 @@ import { Activity, Calendar, HelpCircle, Mail, MessageSquare, type LucideIcon } 
 import { Card, CardContent } from "@/components/ui/card";
 
 import { visitorActionsSummary } from "@/lib/dashboard/cached";
-import { IBOX, type Tier } from "../dashboard-ui";
+import { IBOX, SummaryChip, type Tier } from "../dashboard-ui";
 import { CollapsibleSection } from "../collapsible-section";
 
 /**
@@ -100,6 +100,19 @@ export async function VisitorActionsBreakdown() {
             <span className="text-muted-foreground/40"> · </span>
             <span className="font-bold text-emerald-600 dark:text-emerald-400">■ Database</span> what we
             actually have
+          </>
+        }
+        storageKey="dashVisitorOpen"
+        summary={
+          <>
+            <SummaryChip
+              icon={Calendar}
+              value={bookings.db}
+              tier={bookings.attempts === 0 && bookings.pageViews > 0 ? "hot" : "plain"}
+            />
+            <SummaryChip icon={Mail} value={messages.newCount} tier={messages.newCount > 0 ? "hot" : "plain"} />
+            <SummaryChip icon={MessageSquare} value={comments.pending} tier={comments.pending > 0 ? "hot" : "plain"} />
+            <SummaryChip icon={HelpCircle} value={questions.unanswered} tier={questions.unanswered > 0 ? "warm" : "plain"} />
           </>
         }
         right={

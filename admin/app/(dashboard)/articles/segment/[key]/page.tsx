@@ -55,7 +55,7 @@ export default async function ArticleSegmentPage({ params }: { params: Promise<{
   });
 
   // Dates cross the server/client boundary as ISO strings — a Date instance would not.
-  const articles: SegmentArticle[] = rows.map((a) => ({
+  const scored: SegmentArticle[] = rows.map((a) => ({
     id: a.id,
     title: a.title,
     slug: a.slug,
@@ -68,6 +68,13 @@ export default async function ArticleSegmentPage({ params }: { params: Promise<{
     publishedAt: a.datePublished?.toISOString() ?? null,
     updatedAt: a.dateModified.toISOString(),
   }));
+
+  // Score-based segments keep only their side of 100 — same split as the dashboard count.
+  const articles: SegmentArticle[] = segment.scoreFilter
+    ? scored.filter((a) =>
+        segment.scoreFilter === "perfect" ? a.seoScore >= 100 : a.seoScore < 100,
+      )
+    : scored;
 
   return (
     <div className="mx-auto max-w-[1200px] space-y-6">

@@ -55,12 +55,18 @@ export type SegmentKey =
   | "no-address"
   | "no-social"
   | "no-description"
+  | "seo-imperfect"
+  | "seo-perfect"
   | "unreachable";
 
 interface Segment {
   title: string;
   description: string;
   where: Prisma.ClientWhereInput;
+  // SEO score is COMPUTED (round((meta+jsonLd)/2)), not a Prisma column, so it can't
+  // live in `where`. When set, the segment page keeps only clients on this side of 100
+  // AFTER scoring — the exact split the dashboard count uses, so list === number.
+  scoreFilter?: "perfect" | "imperfect";
 }
 
 const live = { subscriptionStatus: SubscriptionStatus.ACTIVE };
@@ -340,6 +346,22 @@ export async function getSegment(key: string): Promise<Segment | null> {
       title: "No description",
       description: "No Organization description — their JSON-LD says who they are and nothing about them.",
       where: {},
+    },
+    // SEO health of EVERY client, any status (Khalid 2026-07-23: a client is a client —
+    // the only question is whether it has an SEO problem). where:{} = same all-client scope
+    // as the dashboard count; the page filters by the computed score, so list === number.
+    "seo-imperfect": {
+      title: "Clients with SEO problems",
+      description:
+        "Any client that isn't a perfect 100 on the shared SEO rubric (meta + JSON-LD). Open each to see which checks are missing — most are the client's own data (logo, description, contact).",
+      where: {},
+      scoreFilter: "imperfect",
+    },
+    "seo-perfect": {
+      title: "Clients with perfect SEO",
+      description: "Any client that passes every check on the shared SEO rubric — nothing to fix.",
+      where: {},
+      scoreFilter: "perfect",
     },
     // The Today strip's business number: NONE plus the missing-field ones — every
     // client a visitor has no way to reach. Resolved to an id list below.

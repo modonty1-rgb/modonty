@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Mail, MailCheck, MailX, ShieldAlert, UserPlus } from "lucide-react";
 
 import { subscriberCounts } from "@/lib/dashboard/cached";
-import { CARD_GRID, TierCard } from "../dashboard-ui";
+import { CARD_GRID, SummaryChip, TierCard } from "../dashboard-ui";
 import { CollapsibleSection } from "../collapsible-section";
 
 /**
@@ -19,6 +19,15 @@ export async function SubscribersPipeline() {
       iconNode={<Mail className="h-4 w-4 text-muted-foreground" />}
       title="Subscribers"
       subtitle="newsletter audience"
+      storageKey="dashSubscribersOpen"
+      summary={
+        <>
+          <SummaryChip icon={MailCheck} value={active} tier={active > 0 ? "ok" : "plain"} />
+          <SummaryChip icon={UserPlus} value={newLast30} tier="plain" />
+          <SummaryChip icon={ShieldAlert} value={noConsent} tier={noConsent > 0 ? "warm" : "ok"} />
+          <SummaryChip icon={MailX} value={unsubscribed} tier="plain" />
+        </>
+      }
       right={
         <Link
           href="/subscribers"

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { AlertTriangle, Database, Image as ImageIcon } from "lucide-react";
 
 import { getMediaCounts } from "../../actions/media-counts";
-import { CARD_GRID, Ghost, TierCard, ZChip } from "../dashboard-ui";
+import { CARD_GRID, Ghost, SummaryChip, TierCard, ZChip } from "../dashboard-ui";
 import { CollapsibleSection } from "../collapsible-section";
 
 /**
@@ -19,6 +19,15 @@ export async function MediaLibrary() {
       iconNode={<ImageIcon className="h-4 w-4 text-muted-foreground" />}
       title="Media"
       subtitle="usage & search"
+      storageKey="dashMediaOpen"
+      summary={
+        <>
+          <SummaryChip icon={AlertTriangle} value={failingSeo} tier={failingSeo > 0 ? "warm" : "ok"} />
+          <SummaryChip icon={ImageIcon} value={noAlt} tier={noAlt > 0 ? "warm" : "ok"} />
+          <SummaryChip icon={Database} value={unused} tier="plain" />
+          {noDimensions > 0 && <SummaryChip icon={ImageIcon} value={noDimensions} tier="warm" />}
+        </>
+      }
         right={
           <Link href="/media" className="flex items-baseline gap-2 text-xs text-muted-foreground hover:underline">
             <span

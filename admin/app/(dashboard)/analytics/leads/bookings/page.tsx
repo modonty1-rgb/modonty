@@ -4,15 +4,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getBookingsReport } from "../../actions/get-bookings-report";
 import { FAIL_REASON_LABEL } from "@/lib/analytics/book-funnel";
 
-// Bookings report — built from the approved mockup
-// (documents/mockups/admin-visitor-actions-v1.html, Khalid 2026-07-13).
-// Answers three questions the flat leads table could not: which client is getting
-// the bookings, which surface actually converts, and who is a guest vs a member.
+// Bookings & leads — rebuilt decision-first (Khalid 2026-07-23: «تديني حاجة أعرف
+// أتخذ عليها قرار، مش صفحة فيها حشو»). The page answers ONE question: who needs
+// contact now, and which clients are leaking (opens, zero bookings). Everything
+// else (funnel, sources, reconciliation) is diagnostics — folded away, not deleted.
 
 const SOURCE_LABEL: Record<string, string> = {
-  article_dock: "sticky bar inside an article",
+  article_dock: "sticky bar in an article",
   article_card: "article card",
-  client_page: "client profile page",
+  client_page: "client page",
   client_list: "clients listing",
 };
 
@@ -32,50 +32,7 @@ function StatusBadge({ status }: { status: string }) {
   return <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${cls}`}>{status}</span>;
 }
 
-function FunnelStep({
-  label,
-  value,
-  source,
-  good,
-}: {
-  label: string;
-  value: number;
-  source: string;
-  good?: boolean;
-}) {
-  return (
-    <div className="rounded-lg border p-3">
-      <p className="text-[10px] font-bold uppercase text-muted-foreground">
-        {source}
-      </p>
-      <p
-        className={`text-2xl font-bold tabular-nums ${good ? "text-emerald-600 dark:text-emerald-400" : ""}`}
-      >
-        {value}
-      </p>
-      <p className="text-[11px] text-muted-foreground">{label}</p>
-    </div>
-  );
-}
-
-/** The number that fell through the crack between two steps. Zero is good news. */
-function FunnelGap({ value, note }: { value: number; note: string }) {
-  const lost = value > 0;
-  return (
-    <div className="flex flex-col items-center justify-center px-1 text-center">
-      <span className="text-lg text-muted-foreground">↓</span>
-      <p
-        className={`text-lg font-bold tabular-nums ${lost ? "text-red-600 dark:text-red-400" : "text-muted-foreground"}`}
-      >
-        {lost ? `−${value}` : "0"}
-      </p>
-      <p className="text-[10px] leading-tight text-muted-foreground">{note}</p>
-    </div>
-  );
-}
-
 function Bar({ value, max }: { value: number; max: number }) {
-  // A zero draws nothing — a stub bar would read as "a little", and zero is the finding.
   if (value === 0 || max === 0) return null;
   const pct = Math.max(4, Math.round((value / max) * 100));
   return <span className="block h-1.5 rounded-full bg-primary" style={{ width: `${pct}%` }} aria-hidden="true" />;
@@ -84,274 +41,125 @@ function Bar({ value, max }: { value: number; max: number }) {
 export default async function BookingsReportPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; client?: string }>;
+  searchParams: Promise<{ status?: string; client?: string; channel?: string }>;
 }) {
-  const { status, client } = await searchParams;
-  const { rows: allRows, kpi, byClient, bySource, unaccountedOpens, funnel } = await getBookingsReport();
+  const { status, client, channel } = await searchParams;
+  const { rows: allRows, byClient, bySource, unaccountedOpens, funnel } = await getBookingsReport();
 
-  const rows = allRows.filter((r) => {
+  const isWhatsApp = channel === "whatsapp";
+  const scoped = channel ? allRows.filter((r) => r.channel === channel) : allRows;
+  const rows = scoped.filter((r) => {
     if (status && r.status !== status) return false;
     if (client && r.clientName !== client) return false;
     return true;
   });
 
-  const maxClient = byClient[0]?.total ?? 0;
-  const maxSource = bySource[0]?.count ?? 0;
+  const nNew = scoped.filter((r) => r.status === "new").length;
+  const nContacted = scoped.filter((r) => r.status === "contacted").length;
+  const nDone = scoped.filter((r) => r.status === "done").length;
+
+  // Leaking clients — a FORM journey (book page opened, nothing booked). WhatsApp has
+  // no page funnel, so this concept does not apply there.
+  const leaks = isWhatsApp
+    ? []
+    : byClient.filter((c) => (c.opened ?? 0) > 0 && c.total === 0).sort((a, b) => (b.opened ?? 0) - (a.opened ?? 0));
+  const maxLeak = leaks[0]?.opened ?? 0;
+
+  // Merge-preserving query builder: change one facet, keep the rest. Pass `undefined` to drop one.
+  const q = (next: { status?: string; client?: string; channel?: string }) => {
+    const merged = { status, client, channel, ...next };
+    const p = new URLSearchParams();
+    if (merged.status) p.set("status", merged.status);
+    if (merged.client) p.set("client", merged.client);
+    if (merged.channel) p.set("channel", merged.channel);
+    const s = p.toString();
+    return `/analytics/leads/bookings${s ? `?${s}` : ""}`;
+  };
 
   const tab = (active: boolean) =>
     `rounded-md border px-3 py-1 text-xs transition ${
       active ? "border-foreground bg-foreground font-semibold text-background" : "border-input hover:bg-muted"
     }`;
 
-  const q = (next: { status?: string; client?: string }) => {
-    const p = new URLSearchParams();
-    if (next.status) p.set("status", next.status);
-    if (next.client) p.set("client", next.client);
-    const s = p.toString();
-    return `/analytics/leads/bookings${s ? `?${s}` : ""}`;
-  };
-
   return (
-    <div className="mx-auto max-w-[1200px] space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="mx-auto max-w-[1000px] space-y-5">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold leading-tight">Bookings report</h1>
-          <p className="mt-1 text-muted-foreground">
-            Last 90 days · from our database — every row is a real person you can call
+          <h1 className="text-2xl font-semibold leading-tight">Bookings &amp; leads</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Last 90 days · who to contact now and which clients are leaking
           </p>
         </div>
-        <Link href="/" className="rounded-md border border-input px-3 py-1.5 text-sm hover:bg-muted">
+        <Link href="/" className="shrink-0 rounded-md border border-input px-3 py-1.5 text-sm hover:bg-muted">
           ← Back to dashboard
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
-        <Card className="border-t-4 border-t-red-500">
+      {/* The decision — two numbers, not five. */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Card className="border-s-4 border-s-red-500">
           <CardContent className="pt-4">
-            <p className="text-xs text-muted-foreground">New — needs contact</p>
-            <p className="text-2xl font-bold tabular-nums text-red-600 dark:text-red-400">{kpi.newCount}</p>
-            <p className="text-[11px] text-muted-foreground">nobody has called them yet</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4">
-            <p className="text-xs text-muted-foreground">Contacted</p>
-            <p className="text-2xl font-bold tabular-nums">{kpi.contacted}</p>
-            <p className="text-[11px] text-muted-foreground">in progress</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4">
-            <p className="text-xs text-muted-foreground">Done</p>
-            <p className="text-2xl font-bold tabular-nums">{kpi.done}</p>
-            <p className="text-[11px] text-muted-foreground">closed</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4">
-            <p className="text-xs text-muted-foreground">Guest vs member</p>
-            <p className="text-2xl font-bold tabular-nums">
-              {kpi.guest} <span className="text-base font-normal text-muted-foreground">/ {kpi.member}</span>
-            </p>
-            <p className="text-[11px] text-muted-foreground">booked without an account / signed in</p>
-          </CardContent>
-        </Card>
-        <Card className={kpi.pageOpens > 0 && kpi.total === 0 ? "border-t-4 border-t-red-500" : ""}>
-          <CardContent className="pt-4">
-            <p className="text-xs text-muted-foreground">Book page opened</p>
-            <p className="text-2xl font-bold tabular-nums">{kpi.pageOpens}</p>
+            <p className="text-xs text-muted-foreground">Needs contact</p>
+            <p className="text-3xl font-bold tabular-nums text-red-600 dark:text-red-400">{nNew}</p>
             <p className="text-[11px] text-muted-foreground">
-              GA4 ·{" "}
-              {kpi.pageOpens > 0
-                ? `${Math.round((kpi.total / kpi.pageOpens) * 100)}% ended in a booking`
-                : "no data"}
+              {isWhatsApp
+                ? "new WhatsApp leads — the chat went to the client to follow up"
+                : "new bookings nobody has called yet"}
             </p>
           </CardContent>
         </Card>
-      </div>
 
-      {/* The funnel. Two gaps, two different problems — never collapse them into one. */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">The funnel — where people fall out</CardTitle>
-          <p className="text-xs text-muted-foreground">
-            opened the page → pressed submit → a row reached our database
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 md:grid-cols-5">
-            <FunnelStep label="Opened the page" value={funnel.opened} source="GA4" />
-            <FunnelGap
-              value={funnel.opened - funnel.attempts}
-              note="opened but never pressed submit"
-            />
-            <FunnelStep label="Pressed submit" value={funnel.attempts} source="GA4" />
-            <FunnelGap value={funnel.attempts - funnel.booked} note="pressed but never saved" />
-            <FunnelStep label="Booking saved" value={funnel.booked} source="our DB" good />
-          </div>
-
-          {funnel.attempts === 0 && funnel.opened > 0 && (
-            <p className="mt-4 rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs">
-              No <code className="rounded bg-muted px-1">booking_attempt</code> events yet. The event ships
-              with the pending modonty push — until it is live, the middle column stays at 0 and only the
-              outer two numbers are real.
-            </p>
-          )}
-
-          {funnel.failed.length > 0 && (
-            <div className="mt-4">
-              <p className="mb-2 text-xs font-semibold">Why the attempts died</p>
-              <table className="w-full text-sm">
-                <tbody>
-                  {funnel.failed.map((f) => (
-                    <tr key={f.reason} className="border-b last:border-0">
-                      <td className="py-2 pe-3">
-                        {FAIL_REASON_LABEL[f.reason] ?? f.reason}
-                        <code className="ms-2 rounded bg-muted px-1.5 py-0.5 text-[11px]">{f.reason}</code>
-                      </td>
-                      <td className="py-2 text-end font-bold tabular-nums text-red-600 dark:text-red-400">
-                        {f.count}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">By client — opened vs booked</CardTitle>
-            <p className="text-xs text-muted-foreground">
-              opens come from GA4, bookings from our DB — the gap is money walking away
-            </p>
-          </CardHeader>
-          <CardContent>
-            {byClient.length === 0 ? (
-              <p className="py-6 text-center text-sm text-muted-foreground">
-                No bookings and no book-page opens in the last 90 days
+        {isWhatsApp ? (
+          <Card className="border-s-4 border-s-[#25d366]">
+            <CardContent className="pt-4">
+              <p className="text-xs text-muted-foreground">WhatsApp leads (90d)</p>
+              <p className="text-3xl font-bold tabular-nums text-[#1a7f4b] dark:text-[#3ddc84]">{scoped.length}</p>
+              <p className="text-[11px] text-muted-foreground">anonymous chats handed to clients</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className={`border-s-4 ${leaks.length ? "border-s-amber-500" : "border-s-emerald-500"}`}>
+            <CardContent className="pt-4">
+              <p className="text-xs text-muted-foreground">Leaking clients</p>
+              <p
+                className={`text-3xl font-bold tabular-nums ${
+                  leaks.length ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"
+                }`}
+              >
+                {leaks.length}
               </p>
-            ) : (
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b text-xs text-muted-foreground">
-                    <th className="py-2 pe-3 text-start font-medium">Client</th>
-                    <th className="py-2 pe-3 text-start font-medium">Opened</th>
-                    <th className="py-2 pe-3 text-start font-medium">Booked</th>
-                    <th className="py-2 pe-3 text-start font-medium">New</th>
-                    <th className="py-2 text-start font-medium">Rate</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {byClient.map((c) => {
-                    // A client with opens and nothing booked is the whole point of this table.
-                    const leaking = (c.opened ?? 0) > 0 && c.total === 0;
-                    const rate =
-                      c.opened && c.opened > 0 ? `${Math.round((c.total / c.opened) * 100)}%` : "—";
-                    return (
-                      <tr key={c.name} className="border-b last:border-0">
-                        <td className="py-2 pe-3 font-semibold">
-                          <Link href={q({ client: c.name })} className="hover:underline">
-                            {c.name}
-                          </Link>
-                        </td>
-                        <td className="py-2 pe-3 tabular-nums">
-                          {c.opened === null ? <span className="text-muted-foreground">—</span> : c.opened}
-                        </td>
-                        <td
-                          className={`py-2 pe-3 font-bold tabular-nums ${leaking ? "text-red-600 dark:text-red-400" : ""}`}
-                        >
-                          {c.total}
-                        </td>
-                        <td className="py-2 pe-3">
-                          {c.newCount > 0 ? (
-                            <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-[11px] font-semibold text-red-700 dark:text-red-400">
-                              {c.newCount}
-                            </span>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </td>
-                        <td className="py-2">
-                          {leaking ? (
-                            <span className="font-semibold text-red-600 dark:text-red-400">0% — leak</span>
-                          ) : (
-                            <span className="tabular-nums text-muted-foreground">{rate}</span>
-                          )}
-                          <Bar value={c.total} max={maxClient} />
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">By source — where they clicked</CardTitle>
-            <p className="text-xs text-muted-foreground">tells you which surface actually converts</p>
-          </CardHeader>
-          <CardContent>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b text-xs text-muted-foreground">
-                  <th className="py-2 pe-3 text-start font-medium">Surface</th>
-                  <th className="py-2 pe-3 text-start font-medium">Bookings</th>
-                  <th className="w-[35%] py-2 text-start font-medium"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {bySource.map((s) => (
-                  <tr key={s.source} className="border-b last:border-0">
-                    <td className="py-2 pe-3">
-                      <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{s.source}</code>
-                      <div className="text-[11px] text-muted-foreground">{SOURCE_LABEL[s.source] ?? "—"}</div>
-                    </td>
-                    <td className="py-2 pe-3 font-bold tabular-nums">{s.count}</td>
-                    <td className="py-2">
-                      <Bar value={s.count} max={maxSource} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </CardContent>
-        </Card>
+              <p className="text-[11px] text-muted-foreground">book page opened, zero bookings — money walking away</p>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
-      {unaccountedOpens.length > 0 && (
+      {/* Leaking clients — the single most fixable loss. Only when there is one. */}
+      {!isWhatsApp && leaks.length > 0 && (
         <Card className="border-amber-500/40">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">
-              Book-page views not tied to a live client ·{" "}
-              {unaccountedOpens.reduce((a, b) => a + b.views, 0)} views
-            </CardTitle>
+            <CardTitle className="text-base">Leaking clients — fix these first</CardTitle>
             <p className="text-xs text-muted-foreground">
-              GA4 counted these but the slug is not a client we have. Renamed, deleted, or a stale URL —
-              listed here so the totals reconcile instead of vanishing.
+              real visits to their book page, nothing booked — usually a broken or missing contact button
             </p>
           </CardHeader>
           <CardContent>
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b text-xs text-muted-foreground">
-                  <th className="py-2 pe-3 text-start font-medium">Path</th>
-                  <th className="py-2 text-start font-medium">Views</th>
+                  <th className="py-2 pe-3 text-start font-medium">Client</th>
+                  <th className="py-2 pe-3 text-start font-medium">Opened</th>
+                  <th className="w-[40%] py-2 text-start font-medium"></th>
                 </tr>
               </thead>
               <tbody>
-                {unaccountedOpens.map((u) => (
-                  <tr key={u.path} className="border-b last:border-0">
-                    <td className="py-2 pe-3">
-                      <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{u.path}</code>
+                {leaks.map((c) => (
+                  <tr key={c.name} className="border-b last:border-0">
+                    <td className="py-2 pe-3 font-semibold">{c.name}</td>
+                    <td className="py-2 pe-3 font-bold tabular-nums text-amber-600 dark:text-amber-400">{c.opened}</td>
+                    <td className="py-2">
+                      <Bar value={c.opened ?? 0} max={maxLeak} />
                     </td>
-                    <td className="py-2 font-bold tabular-nums">{u.views}</td>
                   </tr>
                 ))}
               </tbody>
@@ -360,24 +168,32 @@ export default async function BookingsReportPage({
         </Card>
       )}
 
+      {/* The leads — the act-now list. Defaults to everything; New tab is the queue. */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">All bookings — newest first</CardTitle>
+          <CardTitle className="text-base">
+            {isWhatsApp ? "WhatsApp leads — which clients got them" : "Leads"}
+          </CardTitle>
+          {isWhatsApp && (
+            <p className="text-xs text-muted-foreground">
+              anonymous — the chat is the contact, so there is no name or phone. This is who each client received.
+            </p>
+          )}
           <div className="flex flex-wrap gap-1.5 pt-2">
-            <Link href={q({ client })} className={tab(!status)}>
-              All {allRows.length}
+            <Link href={q({ status: undefined })} className={tab(!status)}>
+              All {scoped.length}
             </Link>
-            <Link href={q({ status: "new", client })} className={tab(status === "new")}>
-              New {kpi.newCount}
+            <Link href={q({ status: "new" })} className={tab(status === "new")}>
+              New {nNew}
             </Link>
-            <Link href={q({ status: "contacted", client })} className={tab(status === "contacted")}>
-              Contacted {kpi.contacted}
+            <Link href={q({ status: "contacted" })} className={tab(status === "contacted")}>
+              Contacted {nContacted}
             </Link>
-            <Link href={q({ status: "done", client })} className={tab(status === "done")}>
-              Done {kpi.done}
+            <Link href={q({ status: "done" })} className={tab(status === "done")}>
+              Done {nDone}
             </Link>
             {client && (
-              <Link href={q({ status })} className={tab(true)}>
+              <Link href={q({ client: undefined })} className={tab(true)}>
                 Client: {client} ✕
               </Link>
             )}
@@ -385,57 +201,54 @@ export default async function BookingsReportPage({
         </CardHeader>
         <CardContent>
           {rows.length === 0 ? (
-            <p className="py-10 text-center text-sm text-muted-foreground">No bookings match this filter</p>
+            <p className="py-10 text-center text-sm text-muted-foreground">No leads match this filter</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b text-xs text-muted-foreground">
-                    <th className="py-2 pe-3 text-start font-medium">Name</th>
-                    <th className="py-2 pe-3 text-start font-medium">Contact</th>
+                    <th className="py-2 pe-3 text-start font-medium">Lead</th>
                     <th className="py-2 pe-3 text-start font-medium">Client</th>
-                    <th className="py-2 pe-3 text-start font-medium">From</th>
-                    <th className="py-2 pe-3 text-start font-medium">Preferred</th>
-                    <th className="py-2 pe-3 text-start font-medium">Visitor</th>
-                    <th className="py-2 pe-3 text-start font-medium">Status</th>
-                    <th className="py-2 text-start font-medium">When</th>
+                    <th className="py-2 pe-3 text-start font-medium">Contact</th>
+                    <th className="py-2 pe-3 text-start font-medium">Source</th>
+                    <th className="py-2 pe-3 text-start font-medium">When</th>
+                    <th className="py-2 text-start font-medium">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {rows.map((r) => (
                     <tr key={r.id} className="border-b align-top last:border-0">
-                      <td className="py-2 pe-3 font-semibold">{r.name}</td>
-                      <td className="py-2 pe-3">
-                        <div dir="ltr" className="tabular-nums">
-                          {r.phone}
-                        </div>
-                        {r.email && <div className="text-xs text-muted-foreground">{r.email}</div>}
-                      </td>
-                      <td className="py-2 pe-3">{r.clientName}</td>
-                      <td className="max-w-[240px] py-2 pe-3">
-                        {r.articleTitle && <div className="truncate text-xs text-muted-foreground">📄 {r.articleTitle}</div>}
-                        <code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r.source}</code>
-                        {r.message && <div className="line-clamp-2 pt-1 text-xs">{r.message}</div>}
-                      </td>
-                      <td className="whitespace-nowrap py-2 pe-3 text-xs tabular-nums">
-                        {r.preferredAt ? fmt(r.preferredAt) : "—"}
-                      </td>
-                      <td className="py-2 pe-3">
-                        {r.isMember ? (
-                          <span className="rounded-full bg-blue-500/15 px-2 py-0.5 text-[11px] font-semibold text-blue-700 dark:text-blue-400">
-                            Member
-                          </span>
-                        ) : (
-                          <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">
-                            Guest
+                      <td className="py-2 pe-3 font-semibold">
+                        {r.name ?? (
+                          <span className="font-normal text-muted-foreground">
+                            {r.channel === "whatsapp" ? "WhatsApp lead" : "—"}
                           </span>
                         )}
                       </td>
+                      <td className="py-2 pe-3">{r.clientName}</td>
                       <td className="py-2 pe-3">
-                        <StatusBadge status={r.status} />
+                        {r.phone ? (
+                          <div dir="ltr" className="tabular-nums">
+                            {r.phone}
+                          </div>
+                        ) : r.channel === "whatsapp" ? (
+                          <span className="rounded-full bg-[#25d366]/15 px-2 py-0.5 text-[11px] font-semibold text-[#1a7f4b] dark:text-[#3ddc84]">
+                            via WhatsApp
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                        {r.email && <div className="text-xs text-muted-foreground">{r.email}</div>}
                       </td>
-                      <td className="whitespace-nowrap py-2 text-xs tabular-nums text-muted-foreground">
+                      <td className="py-2 pe-3">
+                        <code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r.source}</code>
+                        <div className="text-[11px] text-muted-foreground">{SOURCE_LABEL[r.source] ?? "—"}</div>
+                      </td>
+                      <td className="whitespace-nowrap py-2 pe-3 text-xs tabular-nums text-muted-foreground">
                         {fmt(r.createdAt)}
+                      </td>
+                      <td className="py-2">
+                        <StatusBadge status={r.status} />
                       </td>
                     </tr>
                   ))}
@@ -445,6 +258,101 @@ export default async function BookingsReportPage({
           )}
         </CardContent>
       </Card>
+
+      {/* Diagnostics — folded away. The funnel is a FORM journey, so it stays hidden for WhatsApp. */}
+      {!isWhatsApp && (
+        <details className="group rounded-xl border bg-card">
+          <summary className="flex cursor-pointer items-center justify-between px-4 py-3 text-sm font-semibold">
+            More analysis — funnel, sources &amp; reconciliation
+            <span className="text-xs font-normal text-muted-foreground group-open:hidden">show</span>
+            <span className="hidden text-xs font-normal text-muted-foreground group-open:inline">hide</span>
+          </summary>
+
+          <div className="space-y-5 border-t p-4">
+            {/* Funnel */}
+            <div>
+              <p className="text-sm font-semibold">The funnel — where people fall out</p>
+              <p className="mb-3 text-xs text-muted-foreground">opened the page → pressed submit → saved</p>
+              <div className="grid grid-cols-3 gap-3 text-center">
+                <div className="rounded-lg border p-3">
+                  <p className="text-2xl font-bold tabular-nums">{funnel.opened}</p>
+                  <p className="text-[11px] text-muted-foreground">opened · GA4</p>
+                </div>
+                <div className="rounded-lg border p-3">
+                  <p className="text-2xl font-bold tabular-nums">{funnel.attempts}</p>
+                  <p className="text-[11px] text-muted-foreground">pressed submit · GA4</p>
+                </div>
+                <div className="rounded-lg border p-3">
+                  <p className="text-2xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
+                    {funnel.booked}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">saved · our DB</p>
+                </div>
+              </div>
+              {funnel.attempts === 0 && funnel.opened > 0 && (
+                <p className="mt-3 rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-[11px]">
+                  No <code className="rounded bg-muted px-1">booking_attempt</code> events yet (ships with the pending
+                  modonty push) — until then the middle number stays 0.
+                </p>
+              )}
+              {funnel.failed.length > 0 && (
+                <table className="mt-3 w-full text-sm">
+                  <tbody>
+                    {funnel.failed.map((f) => (
+                      <tr key={f.reason} className="border-b last:border-0">
+                        <td className="py-1.5 pe-3">{FAIL_REASON_LABEL[f.reason] ?? f.reason}</td>
+                        <td className="py-1.5 text-end font-bold tabular-nums text-red-600 dark:text-red-400">
+                          {f.count}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+
+            {/* By source */}
+            <div>
+              <p className="mb-2 text-sm font-semibold">By source — which surface converts</p>
+              <table className="w-full text-sm">
+                <tbody>
+                  {bySource.map((s) => (
+                    <tr key={s.source} className="border-b last:border-0">
+                      <td className="py-1.5 pe-3">
+                        <code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{s.source}</code>
+                        <span className="ms-2 text-[11px] text-muted-foreground">{SOURCE_LABEL[s.source] ?? "—"}</span>
+                      </td>
+                      <td className="py-1.5 text-end font-bold tabular-nums">{s.count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Unaccounted opens */}
+            {unaccountedOpens.length > 0 && (
+              <div>
+                <p className="mb-2 text-sm font-semibold">
+                  Book-page views not tied to a live client ·{" "}
+                  {unaccountedOpens.reduce((a, b) => a + b.views, 0)} views
+                </p>
+                <table className="w-full text-sm">
+                  <tbody>
+                    {unaccountedOpens.map((u) => (
+                      <tr key={u.path} className="border-b last:border-0">
+                        <td className="py-1.5 pe-3">
+                          <code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{u.path}</code>
+                        </td>
+                        <td className="py-1.5 text-end font-bold tabular-nums">{u.views}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </details>
+      )}
     </div>
   );
 }

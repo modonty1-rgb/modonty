@@ -25,7 +25,8 @@
 - [x] **فك ترميز المسار في `/system-errors`:** `decodeURIComponent` آمن → `/clients/دكتور-محمد.../book` بدل `%D8%AF...` (مع `dir="ltr"`).
 - [x] **وسم التطبيق في السجل:** كل خطأ يوسم `modonty:`/`admin:`/`console:` (الثلاثة) + شارة تطبيق ملوّنة في العرض + حارس إنتاج على الأدمن أيضاً → السجل **إنتاج صافي وموسوم**.
 - [x] **إشعار Telegram لكل خطأ:** endpoint اللوق يرسل لـ `sendAdminTelegram` (بوت `@Modonty_admin_bot` · chat `TELEGRAM_ADMIN_CHAT_ID`) — نقطة واحدة تغطّي الثلاثة. متحقّق حيّ: البوت شغّال + رسالة بالشكل الحقيقي وصلت خالد. admin `0.93.1`.
-- [ ] **بعد النشر:** افتح `www.modonty.com/users/login?error=OAuthCallbackError` → الرسالة تبان + صفّ في `/system-errors` فوراً + إشعار Telegram · المسار عربي واضح · اضغط **Clear All** للصفوف القديمة الغامضة · احذف صفوف التست · تأكّد `login_start` في GA4 Realtime.
+- [x] **نُشر ومُحقّق حيّ (2026-07-22):** push `3c4bd95` → الثلاثة READY. `www.modonty.com/users/login?error=OAuthCallbackError` → الرسالة العربية تبان + صفّ في `/system-errors` فوراً موسوم 🟢modonty · `auth-oauth` · `GET /users/login`. اكتُشف أن الـ«200 خطأ» القديمة كانت **صفحة كاش مجمّدة** (أكّد أن إصلاح revalidate حقيقي). Clear All → السجل نظيف.
+- [ ] **تأكيدات نهائية بيد خالد:** وصول إشعار Telegram · `login_start` في GA4 Realtime عند ضغط حقيقي · **الدليل الأقوى لإصلاح OAuth = عميل مصري يعيد المحاولة ويدخل**.
 
 ## 🔮 مستقبلي — فصل معرض العميل (GALLERY) في راوت مستقل (2026-07-21)
 

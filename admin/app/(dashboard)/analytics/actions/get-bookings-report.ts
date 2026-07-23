@@ -26,6 +26,7 @@ export interface BookingRow {
   clientName: string;
   articleTitle: string | null;
   source: string;
+  channel: string; // "form" | "whatsapp"
   preferredAt: string | null;
   message: string | null;
   isMember: boolean;
@@ -67,6 +68,7 @@ export async function getBookingsReport(): Promise<BookingsReport> {
       email: true,
       phone: true,
       source: true,
+      channel: true,
       message: true,
       status: true,
       userId: true,
@@ -87,6 +89,7 @@ export async function getBookingsReport(): Promise<BookingsReport> {
     clientName: b.client?.name ?? "—",
     articleTitle: b.article?.title ?? null,
     source: b.source,
+    channel: b.channel,
     preferredAt: b.preferredAt ? b.preferredAt.toISOString() : null,
     message: b.message,
     isMember: b.userId !== null,

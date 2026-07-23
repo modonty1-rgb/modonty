@@ -1,7 +1,7 @@
 import { Building2, FolderTree, Tag, User, type LucideIcon } from "lucide-react";
 
 import { getReferenceSeoCounts, type ReferenceGroup } from "../../actions/reference-seo-counts";
-import { CARD_GRID, TierCard } from "../dashboard-ui";
+import { CARD_GRID, SummaryChip, TierCard } from "../dashboard-ui";
 import { CollapsibleSection } from "../collapsible-section";
 
 /**
@@ -27,6 +27,10 @@ export async function ReferenceData() {
       iconNode={<FolderTree className="h-4 w-4 text-muted-foreground" />}
       title="Categories & tags"
       subtitle="+ industries & authors — indexed listing pages"
+      storageKey="dashReferenceOpen"
+      summary={groups.map((g) => (
+        <SummaryChip key={g.key} icon={ICON[g.key]} value={g.total} tier={g.failing > 0 ? "warm" : "ok"} />
+      ))}
       right={
         <p className="text-xs text-muted-foreground">
           <span

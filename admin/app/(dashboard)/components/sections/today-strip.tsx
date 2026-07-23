@@ -19,7 +19,8 @@ import {
   articleStatusCounts,
 } from "@/lib/dashboard/cached";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
-import { IBOX, type Tier } from "../dashboard-ui";
+import { IBOX, SummaryChip, type Tier } from "../dashboard-ui";
+import { CollapsibleSection } from "../collapsible-section";
 
 /**
  * The page's answer to its own title (contract: admin-dashboard-triage-v2-ui.html).
@@ -139,7 +140,7 @@ export async function TodayStrip() {
           </>
         ),
         ctx: "the click fires but no lead is saved — every WhatsApp lead is invisible in the console",
-        href: "/analytics/leads/bookings",
+        href: "/analytics/leads/bookings?channel=whatsapp",
         go: "investigate",
       }
     : waQuiet
@@ -154,7 +155,7 @@ export async function TodayStrip() {
             </>
           ),
           ctx: "nobody tapped the WhatsApp button in 90 days — the channel is quiet",
-          href: "/analytics/leads/bookings",
+          href: "/analytics/leads/bookings?channel=whatsapp",
           go: "view",
         }
       : {
@@ -168,7 +169,7 @@ export async function TodayStrip() {
             </>
           ),
           ctx: `${wa.clicks} tap${wa.clicks === 1 ? "" : "s"} → ${wa.db} lead${wa.db === 1 ? "" : "s"} landed`,
-          href: "/analytics/leads/bookings",
+          href: "/analytics/leads/bookings?channel=whatsapp",
           go: "see leads",
         };
   // 3 · Unreachable clients — NONE plus the missing-field ones.
@@ -351,22 +352,27 @@ export async function TodayStrip() {
         </div>
       </div>
 
-      {/* The ranked strip. */}
-      <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b px-4 py-2.5">
-          <span className="flex items-center gap-2 text-[13px] font-extrabold">
-            <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
-            Today — start here
-          </span>
-          <span className="text-[10.5px] text-muted-foreground">
+      {/* The ranked strip — a collapsible card: the header shows an icon+counter summary of
+          the whole day; opening it reveals the full ranked rows. Same reusable component as
+          every section below (card variant). */}
+      <CollapsibleSection
+        card
+        storageKey="todayStripOpen"
+        iconNode={<AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />}
+        title="Today — start here"
+        subtitle={
+          <>
             ranked by cost
             <span className="mx-1.5 inline-block h-1.5 w-1.5 rounded-full bg-red-500" />
             money / client
             <span className="mx-1.5 inline-block h-1.5 w-1.5 rounded-full bg-amber-500" />
             this week
-          </span>
-        </div>
-
+          </>
+        }
+        summary={items.map((item, i) => (
+          <SummaryChip key={i} icon={item.icon} value={item.num} tier={item.tier} brand={item.brand} />
+        ))}
+      >
         {alarms === 0 && (
           <p className="border-b px-4 py-3 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
             ✓ Nothing is costing you today.
@@ -404,7 +410,7 @@ export async function TodayStrip() {
               </Link>
             );
           })}
-      </div>
+      </CollapsibleSection>
     </div>
   );
 }
