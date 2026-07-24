@@ -23,9 +23,18 @@ interface ClientFormProps {
   clientId?: string;
   /** Active countries for the addressCountry picker (admin-owned field). */
   countries?: Array<{ code: string; nameAr: string; nameEn: string }>;
+  /** Active CTA buttons from Settings → Dropdown Lists — the picker in the CTA section. */
+  ctaPresets?: Array<{ id: string; labelAr: string; mode: "FORM" | "LINK"; defaultUrl: string | null }>;
 }
 
-export function ClientForm({ initialData, industries = [], clients = [], clientId, countries = [] }: ClientFormProps) {
+export function ClientForm({
+  initialData,
+  industries = [],
+  clients = [],
+  clientId,
+  countries = [],
+  ctaPresets = [],
+}: ClientFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const { collapsed } = useSidebar();
   const [logoModalOpen, setLogoModalOpen] = useState(false);
@@ -176,6 +185,7 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                 industries={industries}
                 clients={clients}
                 countries={countries}
+                ctaPresets={ctaPresets}
                 clientId={clientId}
                 seoScore={unifiedSeoScore}
                 seoChecks={seoChecks}

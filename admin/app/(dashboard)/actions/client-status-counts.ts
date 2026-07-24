@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { SubscriptionStatus, PaymentStatus, ClientCtaMode, ArticleStatus } from "@prisma/client";
+import { SubscriptionStatus, ClientCtaMode, ArticleStatus } from "@prisma/client";
 
 import { getClientIdsMissingCtaMode, getClientImageGaps, getClientDataGaps } from "../clients/segment/segments";
 
@@ -126,7 +126,22 @@ export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
       db.client.count({ where: { subscriptionStatus: SubscriptionStatus.PENDING } }),
       db.client.count({ where: { subscriptionStatus: SubscriptionStatus.EXPIRED } }),
       db.client.count({ where: { subscriptionStatus: SubscriptionStatus.CANCELLED } }),
-      db.client.count({ where: { paymentStatus: PaymentStatus.OVERDUE } }),
+      // Clients carrying at least one unpaid invoice. This used to count
+      // `paymentStatus === OVERDUE`, but nothing ever writes OVERDUE to that field —
+      // «تحديد مدفوعة» only ever writes PAID — so the dashboard printed a reassuring 0
+      // beside three unpaid invoices worth 43,164 EGP. The invoices are the truth
+      // (same fix already applied to the Accounts page — Khalid 2026-07-24).
+      db.invoice
+        .findMany({
+          // `archivedAt: null` would match nothing on Mongo for invoices written before
+          // the field existed — see NOT_ARCHIVED in the account billing helper.
+          where: {
+            NOT: { paymentStatus: "PAID" },
+            OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
+          },
+          select: { clientId: true },
+        })
+        .then((rows) => new Set(rows.map((r) => r.clientId)).size),
       db.client.count({
         where: { ...live, subscriptionEndDate: { gte: new Date(), lte: inAWeek } },
       }),

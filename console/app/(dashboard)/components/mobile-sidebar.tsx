@@ -22,6 +22,7 @@ import {
   Quote,
   Star,
   Activity,
+  Receipt,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
 import { Button } from "@/components/ui/button";
@@ -196,6 +197,12 @@ export function MobileSidebar({
             href="/dashboard/site-health"
             icon={Activity}
             label={ar.nav.siteHealth}
+            isCollapsed={false}
+          />
+          <SidebarNavItem
+            href="/dashboard/invoices"
+            icon={Receipt}
+            label={ar.nav.invoices}
             isCollapsed={false}
           />
         </nav>

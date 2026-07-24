@@ -11,6 +11,10 @@ export interface DashboardStats {
     paymentStatus: string;
     startDate: Date | null;
     endDate: Date | null;
+    /** Open invoices — counted from the ledger, never from the stale client flag. */
+    unpaidCount: number;
+    unpaidAmount: number;
+    unpaidCurrency: string | null;
   };
   content: {
     monthlyPublished: number;
@@ -302,6 +306,18 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
   const conversionCount = conversions[0];
   const conversionRate = views30d > 0 ? (conversionCount / views30d) * 100 : 0;
 
+  // What the client actually owes — read from their invoices, not the stored flag on
+  // the client row (nothing keeps that flag in sync; it says PAID with invoices open).
+  const openInvoices = await db.invoice.findMany({
+    // Mongo: `archivedAt: null` does not match rows where the field is absent.
+    where: {
+      clientId,
+      NOT: { paymentStatus: "PAID" },
+      OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
+    },
+    select: { amount: true, currency: true },
+  });
+
   return {
     subscription: {
       tier: client.subscriptionTier,
@@ -312,6 +328,9 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
       paymentStatus: client.paymentStatus,
       startDate: client.subscriptionStartDate,
       endDate: client.subscriptionEndDate,
+      unpaidCount: openInvoices.length,
+      unpaidAmount: openInvoices.reduce((s, i) => s + i.amount, 0),
+      unpaidCurrency: openInvoices[0]?.currency ?? null,
     },
     content: {
       monthlyPublished,

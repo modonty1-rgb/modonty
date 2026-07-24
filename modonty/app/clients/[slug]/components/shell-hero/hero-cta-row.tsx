@@ -16,7 +16,10 @@ interface HeroCtaRowProps {
   clientId: string;
   clientName: string;
   clientSlug: string;
-  clientUrl: string | null;
+  /** The admin-chosen destination (ctaUrl) — NOT the client's website. */
+  linkUrl: string | null;
+  /** The admin-chosen wording; falls back to the mode's default when unset. */
+  ctaLabel: string | null;
   ctaMode: "FORM" | "LINK" | "NONE";
   user: { name: string | null; email: string | null } | null;
   followers: number;
@@ -24,17 +27,27 @@ interface HeroCtaRowProps {
   socialLinks: SocialLink[];
 }
 
-/** Focal CTA bar: book / follow / share + social links. Interactive client island. */
+/**
+ * Focal CTA bar: book / follow / share + social links. Interactive client island.
+ *
+ * Reads the SAME three fields every other surface reads (ctaMode / ctaLabel / ctaUrl).
+ * It used to hardcode «احجز الآن» and point at `client.url`, so a client set to
+ * «راسلنا واتساب» showed the wrong words and sent the visitor to their website
+ * instead of WhatsApp — while the bottom bar, the sheet and the article dock all
+ * had it right (found in the live test, 2026-07-24).
+ */
 export function HeroCtaRow({
   clientId,
   clientName,
   clientSlug,
-  clientUrl,
+  linkUrl,
+  ctaLabel,
   ctaMode,
   followers,
   initialIsFollowing,
   socialLinks,
 }: HeroCtaRowProps) {
+  const label = ctaLabel?.trim() || (ctaMode === "FORM" ? "احجز الآن" : "تسوّق الآن");
   return (
     <div className="flex flex-wrap items-center gap-2.5">
       {/* Booking/link CTA + follow + share are DESKTOP-only here — on mobile they
@@ -44,14 +57,14 @@ export function HeroCtaRow({
         {/* Primary CTA — احجز الآن */}
         {ctaMode === "FORM" && (
           <div className="min-w-[170px] flex-1">
-            <BookingCtaLink clientSlug={clientSlug} source="client_page" />
+            <BookingCtaLink clientSlug={clientSlug} source="client_page" label={ctaLabel} />
           </div>
         )}
 
-        {ctaMode === "LINK" && clientUrl && (
+        {ctaMode === "LINK" && linkUrl && (
           <CtaTrackedLink
-            href={clientUrl}
-            label="احجز الآن"
+            href={linkUrl}
+            label={label}
             type="BUTTON"
             clientId={clientId}
             target="_blank"
@@ -59,7 +72,7 @@ export function HeroCtaRow({
             className="inline-flex min-w-[170px] flex-1 items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 text-sm font-bold text-primary-foreground shadow-md transition-opacity hover:opacity-90"
           >
             <IconWebsite className="h-4 w-4" />
-            احجز الآن
+            {label}
           </CtaTrackedLink>
         )}
 

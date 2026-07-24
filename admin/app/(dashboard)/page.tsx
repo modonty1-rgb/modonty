@@ -8,6 +8,7 @@ import { TodayStrip } from "./components/sections/today-strip";
 import { VisitorActionsBreakdown } from "./components/sections/visitor-actions-breakdown";
 import { ArticlesPipeline } from "./components/sections/articles-pipeline";
 import { ClientsPipeline } from "./components/sections/clients-pipeline";
+import { MembersPipeline } from "./components/sections/members-pipeline";
 import { SubscribersPipeline } from "./components/sections/subscribers-pipeline";
 import { MediaLibrary } from "./components/sections/media-library";
 import { ReferenceData } from "./components/sections/reference-data";
@@ -61,7 +62,12 @@ export default async function DashboardPage() {
         <ClientsPipeline />
       </Suspense>
 
-      {/* 5 · The newsletter audience clients are building */}
+      {/* 5 · The people who registered on Modonty (Google / email + password) */}
+      <Suspense fallback={<Skeleton className="h-40 w-full" />}>
+        <MembersPipeline />
+      </Suspense>
+
+      {/* 6 · The newsletter audience clients are building */}
       <Suspense fallback={<Skeleton className="h-40 w-full" />}>
         <SubscribersPipeline />
       </Suspense>

@@ -87,6 +87,7 @@ export function mapFormDataToClientData(data: ClientFormData) {
 
     // Primary CTA («احجز الآن») — admin-controlled
     ctaMode: data.ctaMode ?? "NONE",
+    ctaPresetId: data.ctaPresetId || null,
     ctaLabel: data.ctaLabel || null,
     ctaUrl: data.ctaUrl || null,
 

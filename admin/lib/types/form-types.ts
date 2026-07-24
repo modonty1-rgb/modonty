@@ -243,6 +243,8 @@ export interface ClientFormData {
 
   // Primary CTA («احجز الآن» / «تسوّق الآن») — admin-controlled per client.
   ctaMode?: ClientCtaMode | null;
+  /** Which button from Settings → Dropdown Lists. Identity; the wording is ctaLabel. */
+  ctaPresetId?: string | null;
   ctaLabel?: string | null;
   ctaUrl?: string | null;
 }

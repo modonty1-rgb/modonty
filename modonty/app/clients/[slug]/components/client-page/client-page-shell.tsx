@@ -251,6 +251,8 @@ export function ClientPageShell({
             pageState={pageState}
             featured={!!client.isFeatured}
             ctaMode={client.ctaMode}
+            ctaLabel={client.ctaLabel ?? null}
+            ctaUrl={client.ctaUrl ?? null}
             user={user}
             initialIsFollowing={initialIsFollowing}
           />

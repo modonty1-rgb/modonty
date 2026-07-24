@@ -42,6 +42,9 @@ export interface ClientHeroV2Props {
   pageState: HeroPageState;
   featured: boolean;
   ctaMode: HeroCtaMode;
+  /** Admin-chosen wording + destination — the same fields the bottom bar reads. */
+  ctaLabel?: string | null;
+  ctaUrl?: string | null;
   user: { name: string | null; email: string | null } | null;
   initialIsFollowing?: boolean;
   /** GA4 digital-impact total — drives the «موثّق من Google» box; 0 hides it. */
@@ -61,6 +64,8 @@ export function ClientHeroV2({
   pageState,
   featured,
   ctaMode,
+  ctaLabel = null,
+  ctaUrl = null,
   user,
   initialIsFollowing = false,
   digitalImpact = 0,
@@ -169,7 +174,8 @@ export function ClientHeroV2({
                   clientId={client.id}
                   clientName={client.name}
                   clientSlug={client.slug}
-                  clientUrl={client.url ?? null}
+                  linkUrl={ctaUrl}
+                  ctaLabel={ctaLabel}
                   ctaMode={ctaMode}
                   user={user}
                   followers={stats.followers}

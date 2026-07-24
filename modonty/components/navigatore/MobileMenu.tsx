@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "@/components/link";
+import { useSession } from "@/components/providers/SessionContext";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -67,6 +70,14 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
   const pathname = usePathname();
   const close = () => onOpenChange(false);
 
+  // The menu had no account section at all, so on a phone a returning reader had no
+  // way to sign in anywhere on screen. Mounted-guard because the page is cached and
+  // the session only resolves on the client (same pattern as UserMenu/FeedTopBanner).
+  const { data: session } = useSession();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isLoggedOut = mounted && !session?.user;
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-[300px] sm:w-[320px] p-0 [&>button:last-child]:hidden">
@@ -85,6 +96,32 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
         </SheetHeader>
 
         <div className="overflow-y-auto py-3 px-3 space-y-0.5">
+
+          {/* Account — first, because signing in is what a returning reader opened this for */}
+          {isLoggedOut && (
+            <>
+              <p className="px-3 pt-3 pb-1.5 text-[11px] font-semibold text-muted-foreground/70 tracking-wide">
+                حسابك
+              </p>
+              <div className="flex flex-col gap-2 px-3 pb-1">
+                <Button asChild className="h-11 w-full rounded-xl text-sm font-semibold">
+                  <Link href="/users/register" onClick={close}>
+                    اشترك مجاناً
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="h-11 w-full rounded-xl text-sm font-medium"
+                >
+                  <Link href="/users/login" onClick={close}>
+                    دخول
+                  </Link>
+                </Button>
+              </div>
+              <div className="my-2 mx-3 border-t border-border/40" />
+            </>
+          )}
 
           {/* Browse Section */}
           <p className="px-3 pt-3 pb-1.5 text-[11px] font-semibold text-muted-foreground/70 tracking-wide">

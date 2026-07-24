@@ -33,6 +33,8 @@ interface ClientEditWorkspaceProps {
   industries: Array<{ id: string; name: string }>;
   clients: Array<{ id: string; name: string; slug: string }>;
   countries: Array<{ code: string; nameAr: string; nameEn: string }>;
+  /** Active CTA buttons from Settings → Dropdown Lists — feeds the picker in CtaSection. */
+  ctaPresets: Array<{ id: string; labelAr: string; mode: "FORM" | "LINK"; defaultUrl: string | null }>;
   clientId?: string;
   seoScore: number;
   seoChecks: SeoCheck[];
@@ -118,6 +120,7 @@ export function ClientEditWorkspace({
   industries,
   clients,
   countries,
+  ctaPresets,
   clientId,
   seoScore,
   seoChecks,
@@ -469,7 +472,7 @@ export function ClientEditWorkspace({
               <YmylSection form={form} />
             </div>
             <div className="rounded-2xl border bg-card p-5">
-              <CtaSection form={form} />
+              <CtaSection form={form} ctaPresets={ctaPresets} />
             </div>
             <div className="rounded-2xl border bg-card p-5">
               <BusinessBriefSection form={form} showHeader={false} isEditMode />

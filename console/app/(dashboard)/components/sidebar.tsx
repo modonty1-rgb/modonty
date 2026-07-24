@@ -23,6 +23,7 @@ import {
   Quote,
   Star,
   Activity,
+  Receipt,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
 import { Button } from "@/components/ui/button";
@@ -231,6 +232,12 @@ export function Sidebar({
           href="/dashboard/site-health"
           icon={Activity}
           label={ar.nav.siteHealth}
+          isCollapsed={isCollapsed}
+        />
+        <SidebarNavItem
+          href="/dashboard/invoices"
+          icon={Receipt}
+          label={ar.nav.invoices}
           isCollapsed={isCollapsed}
         />
       </nav>

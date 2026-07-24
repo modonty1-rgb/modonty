@@ -202,6 +202,8 @@ export const clientFormSchema = z
     // Primary CTA («احجز الآن» / «تسوّق الآن») — admin-controlled per client.
     // NONE = no button anywhere · FORM = booking sheet · LINK = external link.
     ctaMode: z.nativeEnum(ClientCtaMode).optional().default(ClientCtaMode.NONE),
+    // Which button from the shared list — identity. The wording lives in ctaLabel.
+    ctaPresetId: z.string().optional().nullable().or(z.literal("")),
     ctaLabel: z.string().max(40, "Button label must be 40 characters or less").optional().nullable().or(z.literal("")),
     ctaUrl: z.string().max(500, "Link must be less than 500 characters").optional().nullable().or(z.literal("")),
 

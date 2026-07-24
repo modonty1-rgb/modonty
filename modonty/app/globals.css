@@ -71,7 +71,10 @@
     
     /* Primary - Lighter for dark mode visibility */
     --primary: 240 100% 65%;           /* Lighter blue */
-    --primary-foreground: 245 87% 19%; /* Navy text on blue */
+    /* Was navy (245 87% 19%) on this blue = 3.2:1 — under the 4.5:1 AA floor, on the
+       most-clicked button of the site. White measures 5.5:1 and matches light mode,
+       so the primary button now reads the same way in both themes. */
+    --primary-foreground: 0 0% 100%;   /* White text on blue — 5.5:1 (AA) */
     
     /* Secondary - Lighter navy */
     --secondary: 245 50% 25%;          /* Lighter navy */

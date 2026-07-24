@@ -4,6 +4,7 @@ import { ar } from "@/lib/ar";
 import { db } from "@/lib/db";
 import { DashboardLayoutClient } from "./components/dashboard-layout-client";
 import { ImpersonationBanner } from "./components/impersonation-banner";
+import { AccountNotice } from "./dashboard/components/account-notice";
 import { getPendingArticlesCount } from "./dashboard/articles/helpers/article-queries";
 import { getPendingCommentsCount } from "./dashboard/comments/helpers/comment-queries";
 import { getPendingQuestionsCount } from "./dashboard/questions/helpers/question-queries";
@@ -41,7 +42,24 @@ export default async function DashboardLayout({
     await Promise.all([
       db.client.findUnique({
         where: { id: clientId },
-        select: { name: true, logoMedia: { select: { url: true } }, isYmyl: true },
+        select: {
+          name: true,
+          logoMedia: { select: { url: true } },
+          isYmyl: true,
+          // Feeds the account notice — it lives in the layout so it follows the client
+          // to every page, not just the dashboard home (Khalid 2026-07-24).
+          subscriptionEndDate: true,
+          invoices: {
+            // `archivedAt: null` matches nothing on Mongo for rows written before the
+            // field existed — it must be paired with `isSet: false` or the notice goes
+            // blank for every client with legacy invoices.
+            where: {
+              NOT: { paymentStatus: "PAID" },
+              OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
+            },
+            select: { amount: true, currency: true },
+          },
+        },
       }),
       getPendingArticlesCount(clientId),
       getPendingCommentsCount(clientId),
@@ -61,11 +79,20 @@ export default async function DashboardLayout({
   // Read the client name LIVE from the DB (same source as the dashboard greeting) so the
   // sidebar header + impersonation banner never show a stale name baked into the JWT at login.
   const clientName = client?.name ?? ar.common.clientFallback;
+  const openInvoices = client?.invoices ?? [];
 
   return (
     <>
       {impersonated && <ImpersonationBanner clientName={clientName} />}
       <DashboardLayoutClient
+      accountNotice={
+        <AccountNotice
+          endDate={client?.subscriptionEndDate ?? null}
+          unpaidCount={openInvoices.length}
+          unpaidAmount={openInvoices.reduce((s, i) => s + i.amount, 0)}
+          unpaidCurrency={openInvoices[0]?.currency ?? null}
+        />
+      }
       clientName={clientName}
       clientLogoUrl={clientLogoUrl}
       pendingArticlesCount={pendingArticlesCount}

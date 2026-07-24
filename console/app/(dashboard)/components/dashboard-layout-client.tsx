@@ -22,6 +22,8 @@ interface DashboardLayoutClientProps {
   pendingClientCommentsCount: number;
   pendingClientReviewsCount: number;
   isYmyl: boolean;
+  /** Account state notice — rendered above every page, or nothing when all is settled. */
+  accountNotice?: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -40,6 +42,7 @@ export function DashboardLayoutClient({
   pendingClientCommentsCount,
   pendingClientReviewsCount,
   isYmyl,
+  accountNotice,
   children,
 }: DashboardLayoutClientProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -91,6 +94,7 @@ export function DashboardLayoutClient({
           pendingSupportCount={pendingSupportCount}
         />
         <main className="container mx-auto w-full max-w-[1128px] px-4 py-8">
+          {accountNotice && <div className="mb-6">{accountNotice}</div>}
           {children}
         </main>
       </div>

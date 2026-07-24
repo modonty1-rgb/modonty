@@ -4,6 +4,12 @@ import { ReferenceDataClient } from "./components/reference-data-client";
 export const dynamic = "force-dynamic";
 
 export default async function ReferenceDataPage() {
-  const { countries, authorities } = await getReferenceData();
-  return <ReferenceDataClient initialCountries={countries} initialAuthorities={authorities} />;
+  const { countries, authorities, ctaPresets } = await getReferenceData();
+  return (
+    <ReferenceDataClient
+      initialCountries={countries}
+      initialAuthorities={authorities}
+      initialCtaPresets={ctaPresets}
+    />
+  );
 }

@@ -5,9 +5,14 @@ import { z } from "zod";
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { YmylCategory } from "@prisma/client";
+import { YmylCategory, ClientCtaMode } from "@prisma/client";
+
+import { normalizeArabicLabel } from "../lib/normalize-arabic-label";
 
 const PATH = "/settings/reference-data";
+
+/** A preset can only carry a real behaviour — «no button» is not something you pick. */
+export type CtaPresetMode = Extract<ClientCtaMode, "FORM" | "LINK">;
 
 // ── DTOs (serializable shapes returned to the client) ───────────────────────
 export interface CountryDTO {
@@ -29,6 +34,16 @@ export interface AuthorityDTO {
   isActive: boolean;
   sortOrder: number;
 }
+
+export interface CtaPresetDTO {
+  id: string;
+  labelAr: string;
+  mode: CtaPresetMode;
+  defaultUrl: string | null;
+  isActive: boolean;
+  sortOrder: number;
+}
+
 
 // ── Validation ──────────────────────────────────────────────────────────────
 const codeUpper = z
@@ -58,8 +73,33 @@ const authoritySchema = z.object({
   sortOrder: z.number().int().optional(),
 });
 
+/**
+ * Where a LINK button may send a visitor. Kept deliberately narrow: anything else
+ * either does nothing in a browser or is a typo that would silently ship a dead
+ * button onto a paying client's page.
+ */
+const DESTINATION = /^(https?:\/\/|tel:|mailto:)/i;
+
+const ctaPresetSchema = z
+  .object({
+    id: z.string().optional(),
+    labelAr: z.string().trim().min(1).max(40),
+    mode: z.enum(["FORM", "LINK"]),
+    defaultUrl: z.string().trim().max(500).optional().nullable(),
+    isActive: z.boolean().default(true),
+    sortOrder: z.number().int().optional(),
+  })
+  // A booking form is internal — a destination on it would never be read, so it is
+  // dropped rather than stored as a lie. A LINK with a bad destination is rejected.
+  .transform((v) => (v.mode === "FORM" ? { ...v, defaultUrl: null } : v))
+  .refine((v) => !v.defaultUrl || DESTINATION.test(v.defaultUrl), {
+    message: "Destination must start with https:// , tel: or mailto:",
+    path: ["defaultUrl"],
+  });
+
 export type CountryInput = z.input<typeof countrySchema>;
 export type AuthorityInput = z.input<typeof authoritySchema>;
+export type CtaPresetInput = z.input<typeof ctaPresetSchema>;
 
 const COUNTRY_SELECT = {
   id: true,
@@ -81,12 +121,34 @@ const AUTHORITY_SELECT = {
   sortOrder: true,
 } as const;
 
+const CTA_PRESET_SELECT = {
+  id: true,
+  labelAr: true,
+  mode: true,
+  defaultUrl: true,
+  isActive: true,
+  sortOrder: true,
+} as const;
+
+/** A NONE row can only exist if someone wrote it by hand — never trust it into the UI. */
+function toCtaPresetDTO(r: {
+  id: string;
+  labelAr: string;
+  mode: ClientCtaMode;
+  defaultUrl: string | null;
+  isActive: boolean;
+  sortOrder: number;
+}): CtaPresetDTO {
+  return { ...r, mode: r.mode === "LINK" ? "LINK" : "FORM" };
+}
+
 // ── Read ────────────────────────────────────────────────────────────────────
 export async function getReferenceData(): Promise<{
   countries: CountryDTO[];
   authorities: AuthorityDTO[];
+  ctaPresets: CtaPresetDTO[];
 }> {
-  const [countries, authorities] = await Promise.all([
+  const [countries, authorities, ctaPresets] = await Promise.all([
     db.country.findMany({
       orderBy: [{ sortOrder: "asc" }, { nameEn: "asc" }],
       select: COUNTRY_SELECT,
@@ -95,8 +157,22 @@ export async function getReferenceData(): Promise<{
       orderBy: [{ category: "asc" }, { countryCode: "asc" }, { sortOrder: "asc" }, { code: "asc" }],
       select: AUTHORITY_SELECT,
     }),
+    db.ctaPreset.findMany({
+      orderBy: [{ sortOrder: "asc" }, { labelAr: "asc" }],
+      select: CTA_PRESET_SELECT,
+    }),
   ]);
-  return { countries, authorities };
+  return { countries, authorities, ctaPresets: ctaPresets.map(toCtaPresetDTO) };
+}
+
+/** Active presets only, for the CTA picker on the client form. */
+export async function getActiveCtaPresets(): Promise<CtaPresetDTO[]> {
+  const rows = await db.ctaPreset.findMany({
+    where: { isActive: true },
+    orderBy: [{ sortOrder: "asc" }, { labelAr: "asc" }],
+    select: CTA_PRESET_SELECT,
+  });
+  return rows.map(toCtaPresetDTO);
 }
 
 /** Active countries only, for the client country picker (create/edit forms). */
@@ -214,6 +290,72 @@ export async function setAuthorityActive(
   }
 }
 
+// ── CTA presets ──────────────────────────────────────────────────────────────
+export async function saveCtaPreset(
+  input: CtaPresetInput,
+): Promise<{ success: boolean; error?: string; preset?: CtaPresetDTO }> {
+  const session = await auth();
+  if (!session) return { success: false, error: "Unauthorized" };
+
+  const parsed = ctaPresetSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Please check the fields." };
+  }
+
+  const { id, ...data } = parsed.data;
+  const labelKey = normalizeArabicLabel(data.labelAr);
+
+  // Enforced here as well as by the index: the index only exists once the schema is
+  // pushed, and a duplicate must never depend on a constraint that may not be in place
+  // on this database yet. The clashing label is read back so the message can NAME it —
+  // being told «تسوّق الآن» already exists is the only way to understand why «تسوق الآن»
+  // was refused when the two look the same on screen.
+  const clash = await db.ctaPreset.findFirst({
+    where: { labelKey, ...(id ? { NOT: { id } } : {}) },
+    select: { labelAr: true },
+  });
+  if (clash) {
+    return { success: false, error: `A button with this text already exists: «${clash.labelAr}»` };
+  }
+
+  try {
+    const preset = id
+      ? await db.ctaPreset.update({ where: { id }, data: { ...data, labelKey }, select: CTA_PRESET_SELECT })
+      : await db.ctaPreset.create({ data: { ...data, labelKey }, select: CTA_PRESET_SELECT });
+    revalidatePath(PATH);
+    return { success: true, preset: toCtaPresetDTO(preset) };
+  } catch {
+    return { success: false, error: "Could not save the button." };
+  }
+}
+
+export async function deleteCtaPreset(id: string): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session) return { success: false, error: "Unauthorized" };
+  try {
+    await db.ctaPreset.delete({ where: { id } });
+    revalidatePath(PATH);
+    return { success: true };
+  } catch {
+    return { success: false, error: "Could not delete the button." };
+  }
+}
+
+export async function setCtaPresetActive(
+  id: string,
+  isActive: boolean,
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session) return { success: false, error: "Unauthorized" };
+  try {
+    await db.ctaPreset.update({ where: { id }, data: { isActive } });
+    revalidatePath(PATH);
+    return { success: true };
+  } catch {
+    return { success: false, error: "Could not update the button." };
+  }
+}
+
 // ── One-time defaults (seed via admin UI — no standalone scripts) ────────────
 const DEFAULT_COUNTRIES: Omit<CountryDTO, "id">[] = [
   { code: "SA", nameAr: "السعودية", nameEn: "Saudi Arabia", isActive: true, sortOrder: 1 },
@@ -243,31 +385,55 @@ const DEFAULT_AUTHORITIES: Omit<AuthorityDTO, "id">[] = [
   { countryCode: "AE", category: "financial", code: "CBUAE", nameAr: "مصرف الإمارات المركزي", nameEn: "Central Bank of the UAE", isActive: true, sortOrder: 2 },
 ];
 
-/** Insert the standard countries + authorities. Skips rows that already exist
- *  (idempotent), so it's safe to click more than once. Admin-triggered only. */
+/**
+ * The buttons every client library starts with. FORM is the only internal one —
+ * everything else is a LINK whose destination the admin fills per client, which is
+ * why the WhatsApp and phone entries ship without a default: a shared number would
+ * quietly send one client's visitors to another client.
+ */
+const DEFAULT_CTA_PRESETS: Omit<CtaPresetDTO, "id">[] = [
+  { labelAr: "احجز الآن", mode: "FORM", defaultUrl: null, isActive: true, sortOrder: 1 },
+  { labelAr: "تسوّق الآن", mode: "LINK", defaultUrl: null, isActive: true, sortOrder: 2 },
+  { labelAr: "راسلنا واتساب", mode: "LINK", defaultUrl: null, isActive: true, sortOrder: 3 },
+  { labelAr: "اتصل الآن", mode: "LINK", defaultUrl: null, isActive: true, sortOrder: 4 },
+  { labelAr: "تصفّح", mode: "LINK", defaultUrl: null, isActive: true, sortOrder: 5 },
+];
+
+/** Insert the standard countries + authorities + CTA buttons. Skips rows that already
+ *  exist (idempotent), so it's safe to click more than once. Admin-triggered only. */
 export async function seedReferenceDefaults(): Promise<{ success: boolean; error?: string; added?: number }> {
   const session = await auth();
   if (!session) return { success: false, error: "Unauthorized" };
   try {
-    const [existingCountries, existingAuthorities] = await Promise.all([
+    const [existingCountries, existingAuthorities, existingPresets] = await Promise.all([
       db.country.findMany({ select: { code: true } }),
       db.licensingAuthority.findMany({ select: { countryCode: true, category: true, code: true } }),
+      db.ctaPreset.findMany({ select: { labelKey: true } }),
     ]);
     const haveCountry = new Set(existingCountries.map((c) => c.code));
     const haveAuthority = new Set(
       existingAuthorities.map((a) => `${a.countryCode}|${a.category}|${a.code}`),
     );
+    const havePreset = new Set(existingPresets.map((p) => p.labelKey));
 
     const countriesToAdd = DEFAULT_COUNTRIES.filter((c) => !haveCountry.has(c.code));
     const authoritiesToAdd = DEFAULT_AUTHORITIES.filter(
       (a) => !haveAuthority.has(`${a.countryCode}|${a.category}|${a.code}`),
     );
+    const presetsToAdd = DEFAULT_CTA_PRESETS.map((p) => ({
+      ...p,
+      labelKey: normalizeArabicLabel(p.labelAr),
+    })).filter((p) => !havePreset.has(p.labelKey));
 
     if (countriesToAdd.length) await db.country.createMany({ data: countriesToAdd });
     if (authoritiesToAdd.length) await db.licensingAuthority.createMany({ data: authoritiesToAdd });
+    if (presetsToAdd.length) await db.ctaPreset.createMany({ data: presetsToAdd });
 
     revalidatePath(PATH);
-    return { success: true, added: countriesToAdd.length + authoritiesToAdd.length };
+    return {
+      success: true,
+      added: countriesToAdd.length + authoritiesToAdd.length + presetsToAdd.length,
+    };
   } catch {
     return { success: false, error: "Could not load the default data." };
   }

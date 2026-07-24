@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { createInvoiceAction } from "../actions/create-invoice";
 import { markInvoicePaidAction } from "../actions/mark-paid";
 import { sendInvoiceAction } from "../actions/send-invoice";
+import { archiveInvoiceAction } from "../actions/archive-invoice";
 
 export type Currency = "SAR" | "EGP";
 
@@ -30,6 +31,9 @@ export interface LedgerInvoice {
   currency: Currency;
   status: "PAID" | "DUE";
   emailSent: boolean;
+  /** Voided — kept in the ledger for accounting, but owes nothing and blocks nothing. */
+  isArchived: boolean;
+  archivedReason: string | null;
 }
 
 interface Props {
@@ -39,6 +43,10 @@ interface Props {
   planLabel: string; // "الانطلاقة · سنوي"
   currency: Currency;
   defaultAmount: number | null; // reference price for the current tier+period
+  /** First published article — billing only starts once the client's content is live. */
+  firstPublishedAt: string | null; // yyyy-mm-dd
+  /** Where the subscription currently runs to; a renewal continues from here. */
+  currentEnd: string | null; // yyyy-mm-dd
 }
 
 function money(amount: number, currency: Currency) {
@@ -52,7 +60,21 @@ function todayInput(): string {
   return new Date(d.getTime() - off * 60_000).toISOString().slice(0, 10);
 }
 
-export function AccountLedger({ clientId, invoices, planLabel, currency, defaultAmount }: Props) {
+export function AccountLedger({
+  clientId,
+  invoices,
+  planLabel,
+  currency,
+  defaultAmount,
+  firstPublishedAt,
+  currentEnd,
+}: Props) {
+  // One outstanding invoice at a time — we do not sell on credit. Mirrors the server
+  // guard so the button explains itself instead of failing after the click. `findLast`
+  // because the rows arrive newest-first and the server names the OLDEST outstanding one;
+  // the two must name the same invoice or the message sends the admin to the wrong row.
+  const blocking = invoices.findLast((i) => i.status === "DUE" && !i.isArchived) ?? null;
+
   return (
     <div className="rounded-lg border bg-card">
       <div className="flex items-center justify-between gap-3 border-b px-4 py-3">
@@ -67,8 +89,18 @@ export function AccountLedger({ clientId, invoices, planLabel, currency, default
           planLabel={planLabel}
           currency={currency}
           defaultAmount={defaultAmount}
+          firstPublishedAt={firstPublishedAt}
+          currentEnd={currentEnd}
+          blockingNumber={blocking?.number ?? null}
         />
       </div>
+
+      {blocking && (
+        <p className="border-b bg-amber-500/[0.07] px-4 py-2 text-[12px] text-amber-700 dark:text-amber-400">
+          <b className="font-semibold">فاتورة {blocking.number} غير مسدّدة.</b> ما نصدر فاتورة
+          جديدة قبل إقفالها — حدّدها مدفوعة، أو أرشفها لو أُصدرت بالغلط.
+        </p>
+      )}
 
       {invoices.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-2 px-4 py-12 text-center">
@@ -102,26 +134,41 @@ export function AccountLedger({ clientId, invoices, planLabel, currency, default
 
 function InvoiceRow({ invoice }: { invoice: LedgerInvoice }) {
   const paid = invoice.status === "PAID";
+  const archived = invoice.isArchived;
+
+  // An archived invoice is history, not work: it keeps its place in the ledger and loses
+  // every action. Struck through so the eye skips it while auditing.
   return (
-    <tr className={paid ? "" : "bg-amber-500/[0.06]"}>
+    <tr className={archived ? "opacity-55" : paid ? "" : "bg-amber-500/[0.06]"}>
       <td className="tabular-nums text-muted-foreground">{invoice.issuedAtLabel}</td>
-      <td className="font-medium tabular-nums">{invoice.number}</td>
-      <td className="text-muted-foreground">{invoice.description}</td>
-      <td className="text-center tabular-nums font-semibold">{money(invoice.amount, invoice.currency)}</td>
+      <td className={`font-medium tabular-nums ${archived ? "line-through" : ""}`}>{invoice.number}</td>
+      <td className="text-muted-foreground">
+        {invoice.description}
+        {archived && invoice.archivedReason && (
+          <span className="block text-[11px] text-muted-foreground/80">سبب الأرشفة: {invoice.archivedReason}</span>
+        )}
+      </td>
+      <td className={`text-center tabular-nums font-semibold ${archived ? "line-through" : ""}`}>
+        {money(invoice.amount, invoice.currency)}
+      </td>
       <td className="text-center">
         <span
           className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${
-            paid
-              ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-              : "bg-amber-500/20 text-amber-600 dark:text-amber-400"
+            archived
+              ? "bg-muted text-muted-foreground"
+              : paid
+                ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                : "bg-amber-500/20 text-amber-600 dark:text-amber-400"
           }`}
         >
-          {paid ? "مدفوعة" : "مستحقّة"}
+          {archived ? "مؤرشفة" : paid ? "مدفوعة" : "مستحقّة"}
         </span>
       </td>
       <td className="text-end">
         <div className="inline-flex items-center gap-3 justify-end">
-          {paid ? (
+          {archived ? (
+            <span className="text-[12px] text-muted-foreground">—</span>
+          ) : paid ? (
             <>
               <span className="text-[12px] text-emerald-600 dark:text-emerald-400 font-semibold">✓ تم السداد</span>
               {!invoice.emailSent && <SendButton invoiceId={invoice.id} />}
@@ -129,6 +176,7 @@ function InvoiceRow({ invoice }: { invoice: LedgerInvoice }) {
           ) : (
             <>
               <SendButton invoiceId={invoice.id} />
+              <ArchiveDialog invoiceId={invoice.id} number={invoice.number} />
               <MarkPaidDialog invoiceId={invoice.id} number={invoice.number} />
             </>
           )}
@@ -139,46 +187,95 @@ function InvoiceRow({ invoice }: { invoice: LedgerInvoice }) {
 }
 
 // ── Issue invoice ─────────────────────────────────────────────────────
+const MONTH_OPTIONS = [1, 2, 3, 6, 12, 18] as const;
+
+/**
+ * Mirrors the server's addMonths so the preview cannot disagree with what gets saved.
+ * All arithmetic is in UTC: parsing `2027-04-24` as local time and then formatting the
+ * result with `toISOString()` shifted the preview a day back east of Greenwich (it showed
+ * 2028-04-23 for a date the server stored as 2028-04-24).
+ */
+function addMonthsISO(fromISO: string, months: number): string {
+  const [y, m, d] = fromISO.split("-").map(Number);
+  const out = new Date(Date.UTC(y, m - 1 + months, d));
+  if (out.getUTCDate() < d) out.setUTCDate(0); // overflowed → last day of the intended month
+  return out.toISOString().slice(0, 10);
+}
+
 function IssueInvoiceDialog({
   clientId,
   planLabel,
   currency,
   defaultAmount,
+  firstPublishedAt,
+  currentEnd,
+  blockingNumber,
 }: {
   clientId: string;
   planLabel: string;
   currency: Currency;
   defaultAmount: number | null;
+  firstPublishedAt: string | null;
+  currentEnd: string | null;
+  /** Outstanding invoice that must be settled or archived first — null when free to issue. */
+  blockingNumber: string | null;
 }) {
   const { toast } = useToast();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [amount, setAmount] = useState(defaultAmount ? String(defaultAmount) : "");
-  const [endDate, setEndDate] = useState("");
+  const [months, setMonths] = useState<number>(12);
+  const [confirmNotActivated, setConfirmNotActivated] = useState(false);
+
+  const today = todayInput();
+  // Same order the server uses: the current end (past or future — a renewal continues
+  // from it) → first published article → today.
+  const anchor = currentEnd ?? firstPublishedAt ?? today;
+  const previewEnd = addMonthsISO(anchor, months);
+  const notActivated = !firstPublishedAt;
 
   const value = Number(amount) || 0;
-  const canSubmit = value > 0 && !!endDate;
+  const canSubmit = value > 0 && months > 0 && (!notActivated || confirmNotActivated);
 
   function submit() {
     if (!canSubmit) return;
     startTransition(async () => {
-      const res = await createInvoiceAction({ clientId, amount: value, subscriptionEnd: endDate });
+      const res = await createInvoiceAction({
+        clientId,
+        amount: value,
+        months,
+        confirmNotActivated,
+      });
       if (res.ok) {
-        toast({ title: `تم إصدار الفاتورة ${res.number}`, description: "مستحقّة — أرسلها ثم حدّدها مدفوعة عند السداد." });
+        toast({
+          title: `تم إصدار الفاتورة ${res.number}`,
+          description: `الاشتراك يمتدّ حتى ${res.subscriptionEnd} — مستحقّة، أرسلها ثم حدّدها مدفوعة عند السداد.`,
+        });
         setOpen(false);
         setAmount(defaultAmount ? String(defaultAmount) : "");
-        setEndDate("");
+        setMonths(12);
+        setConfirmNotActivated(false);
         router.refresh();
       } else {
-        toast({ title: "فشل الإصدار", description: res.error, variant: "destructive" });
+        toast({
+          title: "فشل الإصدار",
+          description: res.error === "NOT_ACTIVATED" ? "أكّد الإصدار قبل بدء الاشتراك." : res.error,
+          variant: "destructive",
+        });
       }
     });
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <Button size="sm" className="gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white" onClick={() => setOpen(true)}>
+      <Button
+        size="sm"
+        className="gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white"
+        onClick={() => setOpen(true)}
+        disabled={!!blockingNumber}
+        title={blockingNumber ? `فاتورة ${blockingNumber} غير مسدّدة` : undefined}
+      >
         + إصدار فاتورة
       </Button>
       <DialogContent dir="rtl" className="sm:max-w-md">
@@ -208,16 +305,52 @@ function IssueInvoiceDialog({
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="issue-end">تاريخ الانتهاء</Label>
-              <input
-                id="issue-end"
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+              <Label htmlFor="issue-months">المدة</Label>
+              <select
+                id="issue-months"
+                value={months}
+                onChange={(e) => setMonths(Number(e.target.value))}
                 className="h-10 w-full rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring/40"
-              />
+              >
+                {MONTH_OPTIONS.map((m) => (
+                  <option key={m} value={m}>
+                    {m === 1 ? "شهر" : m === 2 ? "شهران" : m <= 10 ? `${m} أشهر` : `${m} شهراً`}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
+
+          {/* The end date is shown, never typed — a hand-entered date is how the wrong
+              renewal day gets into the record. */}
+          <div className="rounded-md border bg-muted/30 px-3 py-2.5 text-[12px]">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-muted-foreground">الاشتراك يمتدّ حتى</span>
+              <span className="font-bold tabular-nums text-foreground">{previewEnd}</span>
+            </div>
+            <p className="pt-1 text-[11px] text-muted-foreground">
+              {currentEnd
+                ? `تجديد — يُحتسب من نهاية الاشتراك ${currentEnd < today ? "المنتهية" : "الحالية"} (${currentEnd})`
+                : firstPublishedAt
+                  ? `يُحتسب من تاريخ أول مقال منشور (${firstPublishedAt})`
+                  : "يُحتسب من اليوم"}
+            </p>
+          </div>
+
+          {notActivated && (
+            <label className="flex cursor-pointer items-start gap-2.5 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2.5">
+              <input
+                type="checkbox"
+                checked={confirmNotActivated}
+                onChange={(e) => setConfirmNotActivated(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 accent-amber-600"
+              />
+              <span className="text-[12px] leading-relaxed text-amber-700 dark:text-amber-400">
+                <span className="font-semibold">لم يُنشر أي مقال لهذا العميل بعد.</span> الاشتراك يبدأ
+                مع نشر أول مقال — الإصدار الآن يحتسب المدة من اليوم. أكّد إن كنت تقصد ذلك.
+              </span>
+            </label>
+          )}
 
           <p className="text-[12px] text-muted-foreground">
             للباقة الحالية: <span className="font-semibold text-foreground">{planLabel}</span>
@@ -298,6 +431,79 @@ function MarkPaidDialog({ invoiceId, number }: { invoiceId: string; number: stri
           >
             {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
             تأكيد السداد
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ── Archive (void) ────────────────────────────────────────────────────
+/**
+ * The single escape from «فاتورة واحدة مستحقّة في المرة». Archiving voids an invoice
+ * issued in error without deleting it — the accounting record stays whole — and pulls
+ * its period back out of the subscription end date.
+ */
+function ArchiveDialog({ invoiceId, number }: { invoiceId: string; number: string }) {
+  const { toast } = useToast();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [reason, setReason] = useState("");
+
+  function confirm() {
+    if (!reason.trim()) return;
+    startTransition(async () => {
+      const res = await archiveInvoiceAction({ invoiceId, reason: reason.trim() });
+      if (res.ok) {
+        toast({
+          title: "أُرشفت الفاتورة",
+          description: "خرجت من المستحقات، وتاريخ الاشتراك أُعيد حسابه بدونها.",
+        });
+        setOpen(false);
+        setReason("");
+        router.refresh();
+      } else {
+        toast({ title: "فشل", description: res.error, variant: "destructive" });
+      }
+    });
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="text-[12px] text-muted-foreground hover:text-destructive"
+      >
+        أرشفة
+      </button>
+      <DialogContent dir="rtl" className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="text-sm">أرشفة الفاتورة — {number}</DialogTitle>
+        </DialogHeader>
+        <p className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2.5 text-[12px] leading-relaxed text-amber-700 dark:text-amber-400">
+          الفاتورة ما تُحذف — تبقى في السجل للحسابات، لكنها تخرج من المستحقات، ومدّتها تُسحب من
+          تاريخ نهاية الاشتراك. تُستخدم للفاتورة الصادرة بالخطأ فقط.
+        </p>
+        <div className="space-y-1.5">
+          <Label htmlFor="archive-reason">سبب الأرشفة</Label>
+          <input
+            id="archive-reason"
+            type="text"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="مثال: أُصدرت بمبلغ خاطئ"
+            className="h-10 w-full rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring/40"
+          />
+        </div>
+        <DialogFooter className="gap-2 sm:gap-2">
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
+            إلغاء
+          </Button>
+          <Button onClick={confirm} disabled={!reason.trim() || isPending} variant="destructive" className="gap-1.5">
+            {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+            تأكيد الأرشفة
           </Button>
         </DialogFooter>
       </DialogContent>

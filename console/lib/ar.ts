@@ -73,6 +73,7 @@ export const ar = {
     leads: "العملاء المحتملون",
     profile: "بيانات نشاطك",
     settings: "الإعدادات",
+    invoices: "الفواتير",
     support: "الدعم",
     bookings: "الحجوزات",
     signOut: "تسجيل الخروج",

@@ -65,6 +65,7 @@ import {
   UserPlus,
   BadgeCheck,
   Globe,
+  ListChecks,
   Wallet,
   PauseCircle,
   ClipboardList,
@@ -252,6 +253,7 @@ const menuGroups: MenuGroup[] = [
     defaultOpen: false,
     items: [
       { icon: Users, label: "Admins", href: "/users" },
+      { icon: ListChecks, label: "Dropdown Lists", href: "/settings/reference-data" },
       { icon: Download, label: "Export Data", href: "/export-data" },
       { icon: Database, label: "Database", href: "/database" },
       { icon: Wrench, label: "Maintenance", href: "/maintenance" },

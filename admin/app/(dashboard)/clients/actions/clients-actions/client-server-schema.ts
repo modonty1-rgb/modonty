@@ -107,6 +107,7 @@ export const clientServerSchema = z.object({
 
   // Primary CTA («احجز الآن») — admin-controlled
   ctaMode: z.enum(["NONE", "FORM", "LINK"]).optional().nullable(),
+  ctaPresetId: z.string().optional().nullable(),
   ctaLabel: z.string().max(40).optional().nullable(),
   ctaUrl: z.string().max(500).optional().nullable(),
 }).passthrough(); // Allow extra fields from form that aren't listed here

@@ -5,6 +5,7 @@ import { SubscriptionStatus, PaymentStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { NOT_ARCHIVED, recomputeSubscriptionEnd } from "../helpers/billing";
 
 export interface MarkPaidInput {
   invoiceId: string;
@@ -17,9 +18,10 @@ interface MarkPaidResult {
 }
 
 /**
- * Settle an invoice. This is the ONLY write-point for `Client.subscriptionEndDate`:
- * after marking paid, the client's end date is recomputed as the latest end date
- * across ALL paid invoices (so out-of-order settlement stays correct).
+ * Settle an invoice, then recompute the client's end date through the one shared formula
+ * (`recomputeSubscriptionEnd`). It used to compute its own — furthest end across PAID
+ * invoices only — which meant settling an older invoice while newer ones were still due
+ * pulled the subscription BACKWARDS. Paying must never shorten a subscription.
  */
 export async function markInvoicePaidAction(input: MarkPaidInput): Promise<MarkPaidResult> {
   const session = await auth();
@@ -33,10 +35,11 @@ export async function markInvoicePaidAction(input: MarkPaidInput): Promise<MarkP
 
   const invoice = await db.invoice.findUnique({
     where: { id: input.invoiceId },
-    select: { id: true, clientId: true, paymentStatus: true },
+    select: { id: true, clientId: true, paymentStatus: true, archivedAt: true },
   });
   if (!invoice) return { ok: false, error: "الفاتورة غير موجودة" };
   if (invoice.paymentStatus === "PAID") return { ok: false, error: "الفاتورة مدفوعة بالفعل" };
+  if (invoice.archivedAt) return { ok: false, error: "الفاتورة مؤرشفة — لا يمكن تحديدها مدفوعة" };
 
   try {
     await db.invoice.update({
@@ -44,28 +47,27 @@ export async function markInvoicePaidAction(input: MarkPaidInput): Promise<MarkP
       data: { paymentStatus: "PAID", paidAt, paidByUserId: session.user.id ?? null },
     });
 
-    // subscriptionEndDate = latest end date across ALL paid invoices.
-    const paidInvoices = await db.invoice.findMany({
-      where: { clientId: invoice.clientId, paymentStatus: "PAID" },
-      select: { subscriptionEnd: true },
+    await recomputeSubscriptionEnd(invoice.clientId);
+
+    // Only claim the client is settled when nothing is actually outstanding. The
+    // issuance guard should make a second unpaid invoice impossible, but this field is
+    // read by legacy counters and must not lie if one ever slips through.
+    const stillOutstanding = await db.invoice.count({
+      where: { clientId: invoice.clientId, paymentStatus: { not: "PAID" }, ...NOT_ARCHIVED },
     });
-    const latestEnd = paidInvoices
-      .map((i) => i.subscriptionEnd)
-      .filter((d): d is Date => d instanceof Date)
-      .reduce<Date | null>((max, d) => (max === null || d.getTime() > max.getTime() ? d : max), null);
 
     await db.client.update({
       where: { id: invoice.clientId },
       data: {
-        ...(latestEnd ? { subscriptionEndDate: latestEnd } : {}),
         subscriptionStatus: SubscriptionStatus.ACTIVE,
-        paymentStatus: PaymentStatus.PAID,
+        ...(stillOutstanding === 0 ? { paymentStatus: PaymentStatus.PAID } : {}),
       },
     });
 
     revalidatePath(`/clients/${invoice.clientId}/account`);
     revalidatePath(`/clients/${invoice.clientId}`);
     revalidatePath("/clients/accounts");
+    revalidatePath("/"); // the dashboard's renewal + unpaid counters read these
     return { ok: true };
   } catch (e) {
     console.error("[markInvoicePaid] failed:", e);

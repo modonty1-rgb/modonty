@@ -4,17 +4,40 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { findBlockingUnpaidInvoice, recomputeSubscriptionEnd } from "../helpers/billing";
 
 export interface CreateInvoiceInput {
   clientId: string;
   amount: number;
-  subscriptionEnd: string; // yyyy-mm-dd — admin-entered end date
+  /** Billed duration. The end date is derived from it — never typed by hand. */
+  months: number;
+  /** Required only when the client has no published article yet (see resolveAnchor). */
+  confirmNotActivated?: boolean;
 }
 
 interface CreateInvoiceResult {
   ok: boolean;
   number?: string;
+  /** yyyy-mm-dd the subscription now runs to — echoed back so the UI can show it. */
+  subscriptionEnd?: string;
   error?: string;
+}
+
+const ALLOWED_MONTHS = [1, 2, 3, 6, 12, 18] as const;
+
+/**
+ * Add whole months, clamping the day so 31 Jan + 1 month lands on 28/29 Feb, not 3 Mar.
+ *
+ * Deliberately in UTC. Local-time arithmetic makes the result depend on where the code
+ * runs — the same renewal computed a day apart on a dev machine east of Greenwich and on
+ * Vercel (UTC) — and the client preview does the same maths, so both must agree.
+ */
+function addMonths(from: Date, months: number): Date {
+  const out = new Date(
+    Date.UTC(from.getUTCFullYear(), from.getUTCMonth() + months, from.getUTCDate())
+  );
+  if (out.getUTCDate() < from.getUTCDate()) out.setUTCDate(0);
+  return out;
 }
 
 // Egypt → EGP, everything else (default Saudi) → SAR.
@@ -34,11 +57,19 @@ async function nextInvoiceNumber(year: number): Promise<string> {
 }
 
 /**
- * Issue a renewal invoice — born «مستحقّة» (DUE).
- * Does NOT extend the subscription and does NOT email the client; both happen
- * later («تحديد مدفوعة» extends + «إرسال» emails). Plan/period/currency are
- * derived server-side from the client's current subscription — the form only
- * sends the amount and the end date.
+ * Issue a renewal invoice — born «مستحقّة» (DUE), but the subscription window moves
+ * NOW: `Client.subscriptionEndDate` is rewritten to the furthest end across all of the
+ * client's invoices (Khalid 2026-07-24: «تاريخ انتهاء الفاتورة هو الذي يعدّل تاريخ
+ * الانتهاء في ملف العميل»). Before this, the date only moved on «تحديد مدفوعة», so 21
+ * of 26 active clients carried no end date at all — and a date filter cannot match a
+ * missing field, which left the renewal watch blind to 81% of the book.
+ *
+ * The end date is COMPUTED from `months`, never typed: it is anchored to the current
+ * end (a renewal continues where the last period stopped), else to the first published
+ * article — the subscription starts when the client's content goes live, not when the
+ * record was created — else to today.
+ *
+ * Emailing still happens separately («إرسال»).
  */
 export async function createInvoiceAction(input: CreateInvoiceInput): Promise<CreateInvoiceResult> {
   const session = await auth();
@@ -46,10 +77,9 @@ export async function createInvoiceAction(input: CreateInvoiceInput): Promise<Cr
 
   if (!input.clientId) return { ok: false, error: "العميل مطلوب" };
   if (!input.amount || input.amount <= 0) return { ok: false, error: "المبلغ غير صحيح" };
-  if (!input.subscriptionEnd) return { ok: false, error: "تاريخ الانتهاء مطلوب" };
-
-  const subEnd = new Date(input.subscriptionEnd);
-  if (isNaN(subEnd.getTime())) return { ok: false, error: "تاريخ الانتهاء غير صحيح" };
+  if (!ALLOWED_MONTHS.includes(input.months as (typeof ALLOWED_MONTHS)[number])) {
+    return { ok: false, error: "المدة غير صحيحة" };
+  }
 
   const client = await db.client.findUnique({
     where: { id: input.clientId },
@@ -58,9 +88,43 @@ export async function createInvoiceAction(input: CreateInvoiceInput): Promise<Cr
       subscriptionTier: true,
       subscriptionTierConfig: { select: { name: true } },
       addressCountry: true,
+      subscriptionEndDate: true,
     },
   });
   if (!client) return { ok: false, error: "العميل غير موجود" };
+
+  // We do not sell on credit: one outstanding invoice at a time. Clearing it means
+  // settling it or archiving it — there is no bypass.
+  const blocking = await findBlockingUnpaidInvoice(client.id);
+  if (blocking) {
+    return {
+      ok: false,
+      error: `فيه فاتورة غير مسدّدة (${blocking}) — حدّدها مدفوعة أو أرشفها قبل إصدار فاتورة جديدة.`,
+    };
+  }
+
+  // Billing starts when the client's first article goes live — that is what they are
+  // paying for. No article yet means the clock has not started, so the admin has to
+  // say out loud that they mean to bill anyway.
+  const firstPublished = await db.article.findFirst({
+    where: { clientId: client.id, status: "PUBLISHED", datePublished: { not: null } },
+    orderBy: { datePublished: "asc" },
+    select: { datePublished: true },
+  });
+
+  if (!firstPublished?.datePublished && !input.confirmNotActivated) {
+    return { ok: false, error: "NOT_ACTIVATED" };
+  }
+
+  const now = new Date();
+  // A renewal continues from where the last period stopped — even if it stopped in the
+  // past. Anchoring an expired client to its first article instead would reach back a
+  // year and hand them a period SHORTER than they paid for (caught live: end 11 Jul 2026,
+  // 12 months quoted 2027-06-10 — 45 days missing). First article is the anchor only for
+  // a client that has never had an end date at all.
+  const anchor =
+    client.subscriptionEndDate ?? firstPublished?.datePublished ?? now;
+  const subEnd = addMonths(anchor, input.months);
 
   // Billing period follows the client's most-recent invoice (default annual).
   const latest = await db.invoice.findFirst({
@@ -70,7 +134,6 @@ export async function createInvoiceAction(input: CreateInvoiceInput): Promise<Cr
   });
 
   try {
-    const now = new Date();
     const number = await nextInvoiceNumber(now.getFullYear());
 
     await db.invoice.create({
@@ -90,8 +153,13 @@ export async function createInvoiceAction(input: CreateInvoiceInput): Promise<Cr
       select: { id: true },
     });
 
+    const latestEnd = await recomputeSubscriptionEnd(client.id);
+
     revalidatePath(`/clients/${client.id}/account`);
-    return { ok: true, number };
+    revalidatePath(`/clients/${client.id}`);
+    revalidatePath("/clients/accounts");
+    revalidatePath("/"); // the dashboard's renewal counters read this date
+    return { ok: true, number, subscriptionEnd: (latestEnd ?? subEnd).toISOString().slice(0, 10) };
   } catch (e) {
     console.error("[createInvoice] failed:", e);
     return { ok: false, error: e instanceof Error ? e.message : "فشل إصدار الفاتورة" };

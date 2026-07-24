@@ -7,6 +7,7 @@ import {
   ArrowLeft,
   Landmark,
   Globe2,
+  MousePointerClick,
   Plus,
   Pencil,
   Trash2,
@@ -14,6 +15,7 @@ import {
   Sparkles,
   AlertCircle,
   X,
+  ListChecks,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -61,9 +63,14 @@ import {
   saveAuthority,
   deleteAuthority,
   setAuthorityActive,
+  saveCtaPreset,
+  deleteCtaPreset,
+  setCtaPresetActive,
   seedReferenceDefaults,
   type CountryDTO,
   type AuthorityDTO,
+  type CtaPresetDTO,
+  type CtaPresetMode,
 } from "../actions/reference-data-actions";
 
 type Category = AuthorityDTO["category"];
@@ -125,13 +132,16 @@ function RowActions({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => 
 export function ReferenceDataClient({
   initialCountries,
   initialAuthorities,
+  initialCtaPresets,
 }: {
   initialCountries: CountryDTO[];
   initialAuthorities: AuthorityDTO[];
+  initialCtaPresets: CtaPresetDTO[];
 }) {
   const router = useRouter();
   const [countries, setCountries] = useState<CountryDTO[]>(initialCountries);
   const [authorities, setAuthorities] = useState<AuthorityDTO[]>(initialAuthorities);
+  const [ctaPresets, setCtaPresets] = useState<CtaPresetDTO[]>(initialCtaPresets);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -139,6 +149,7 @@ export function ReferenceDataClient({
   // error-revert). Optimistic local edits are confirmed by the fresh props.
   useEffect(() => setCountries(initialCountries), [initialCountries]);
   useEffect(() => setAuthorities(initialAuthorities), [initialAuthorities]);
+  useEffect(() => setCtaPresets(initialCtaPresets), [initialCtaPresets]);
 
   const fail = (msg?: string) => setError(msg ?? "Something went wrong.");
 
@@ -222,6 +233,47 @@ export function ReferenceDataClient({
     });
   };
 
+  // ── CTA preset handlers ──
+  // Returns the message instead of raising it page-level: a save started INSIDE the
+  // dialog must report inside the dialog, or the banner lands behind the overlay and
+  // the person filling the form is told nothing (caught in live test 2026-07-24).
+  const saveCtaRow = async (row: {
+    id?: string;
+    labelAr: string;
+    mode: CtaPresetMode;
+    defaultUrl: string | null;
+    isActive: boolean;
+  }): Promise<{ ok: boolean; error?: string }> => {
+    const res = await saveCtaPreset(row);
+    if (!res.success || !res.preset) {
+      return { ok: false, error: res.error ?? "Could not save the button." };
+    }
+    const saved = res.preset;
+    setCtaPresets((prev) =>
+      prev.some((p) => p.id === saved.id)
+        ? prev.map((p) => (p.id === saved.id ? saved : p))
+        : [...prev, saved],
+    );
+    setError(null);
+    return { ok: true };
+  };
+  const deleteCtaRow = (id: string) =>
+    startTransition(async () => {
+      const res = await deleteCtaPreset(id);
+      if (!res.success) return fail(res.error);
+      setCtaPresets((prev) => prev.filter((p) => p.id !== id));
+    });
+  const toggleCtaRow = (id: string, current: boolean) => {
+    setCtaPresets((prev) => prev.map((p) => (p.id === id ? { ...p, isActive: !current } : p)));
+    startTransition(async () => {
+      const res = await setCtaPresetActive(id, !current);
+      if (!res.success) {
+        fail(res.error);
+        router.refresh();
+      }
+    });
+  };
+
   const seed = () =>
     startTransition(async () => {
       const res = await seedReferenceDefaults();
@@ -229,7 +281,7 @@ export function ReferenceDataClient({
       router.refresh();
     });
 
-  const isEmpty = countries.length === 0 && authorities.length === 0;
+  const isEmpty = countries.length === 0 && authorities.length === 0 && ctaPresets.length === 0;
 
   return (
     <div className="max-w-[1080px] mx-auto pb-8">
@@ -242,11 +294,11 @@ export function ReferenceDataClient({
           <ArrowLeft className="h-3 w-3" />
           Back to Settings
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight">Reference Data</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Dropdown Lists</h1>
         <p className="text-sm text-muted-foreground max-w-2xl">
-          Foundational lookups managed once here and reused across the platform. Countries drive the
-          client country picker; licensing authorities power YMYL verification (medical, legal,
-          financial).
+          The lists the rest of the platform picks from — edit them once here, everywhere updates.
+          CTA buttons are what a visitor clicks on a client page; countries drive the client country
+          picker; authorities power YMYL verification (medical, legal, financial).
         </p>
       </div>
 
@@ -262,11 +314,11 @@ export function ReferenceDataClient({
 
       {isEmpty ? (
         <div className="rounded-xl border border-dashed bg-muted/20 px-6 py-12 text-center">
-          <Landmark className="mx-auto h-8 w-8 text-muted-foreground/50" />
-          <h3 className="mt-3 text-sm font-semibold">No reference data yet</h3>
+          <ListChecks className="mx-auto h-8 w-8 text-muted-foreground/50" />
+          <h3 className="mt-3 text-sm font-semibold">No lists yet</h3>
           <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
-            Load the standard countries (Saudi Arabia, Egypt, UAE) and their licensing authorities to
-            get started. You can edit everything afterwards.
+            Load the standard CTA buttons, countries (Saudi Arabia, Egypt, UAE) and their licensing
+            authorities to get started. You can edit everything afterwards.
           </p>
           <Button onClick={seed} disabled={pending} className="mt-4 gap-1.5">
             <Sparkles className="h-4 w-4" />
@@ -274,8 +326,12 @@ export function ReferenceDataClient({
           </Button>
         </div>
       ) : (
-        <Tabs defaultValue="authorities">
+        <Tabs defaultValue="cta">
           <TabsList>
+            <TabsTrigger value="cta" className="gap-1.5">
+              <MousePointerClick className="h-3.5 w-3.5" />
+              CTA Buttons
+            </TabsTrigger>
             <TabsTrigger value="authorities" className="gap-1.5">
               <Landmark className="h-3.5 w-3.5" />
               Licensing Authorities
@@ -285,6 +341,17 @@ export function ReferenceDataClient({
               Countries
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="cta" className="mt-4">
+            <CtaPresetsPanel
+              presets={ctaPresets}
+              onSave={saveCtaRow}
+              onDelete={deleteCtaRow}
+              onToggle={toggleCtaRow}
+              onSeed={seed}
+              busy={pending}
+            />
+          </TabsContent>
 
           <TabsContent value="authorities" className="mt-4">
             <AuthoritiesPanel
@@ -310,6 +377,300 @@ export function ReferenceDataClient({
         </Tabs>
       )}
     </div>
+  );
+}
+
+// ── CTA buttons panel ───────────────────────────────────────────────────────
+type CtaRow = {
+  id?: string;
+  labelAr: string;
+  mode: CtaPresetMode;
+  defaultUrl: string | null;
+  isActive: boolean;
+};
+
+/** The two behaviours live in code — this only names which one a preset carries. */
+const MODE_LABELS: Record<CtaPresetMode, string> = {
+  FORM: "Booking form",
+  LINK: "External link",
+};
+
+function ModeBadge({ mode }: { mode: CtaPresetMode }) {
+  const form = mode === "FORM";
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold ${
+        form
+          ? "border-primary/40 bg-primary/10 text-primary"
+          : "border-violet-500/40 bg-violet-500/10 text-violet-700 dark:text-violet-400"
+      }`}
+    >
+      {MODE_LABELS[mode]}
+    </span>
+  );
+}
+
+function CtaPresetsPanel({
+  presets,
+  onSave,
+  onDelete,
+  onToggle,
+  onSeed,
+  busy,
+}: {
+  presets: CtaPresetDTO[];
+  onSave: (row: CtaRow) => Promise<{ ok: boolean; error?: string }>;
+  onDelete: (id: string) => void;
+  onToggle: (id: string, current: boolean) => void;
+  onSeed: () => void;
+  busy: boolean;
+}) {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editing, setEditing] = useState<CtaPresetDTO | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  return (
+    <div className="space-y-3">
+      {/* What this list actually controls — the admin picking a button needs to know
+          that FORM keeps the lead and LINK gives it away. */}
+      <div className="rounded-lg border bg-muted/30 px-3.5 py-2.5 text-xs text-muted-foreground">
+        These are the buttons a client page can show. <strong>Booking form</strong> opens our own
+        sheet — the lead lands in your database. <strong>External link</strong> sends the visitor away
+        (store, WhatsApp, phone) — you see the click, never the lead. The destination is set per
+        client on their edit page.
+      </div>
+
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-muted-foreground">{presets.length} buttons</span>
+        {/* The page-level seed only shows when EVERY list is empty, so a database that
+            already has countries would leave this tab with no way to load its defaults. */}
+        {presets.length === 0 && (
+          <Button onClick={onSeed} disabled={busy} size="sm" variant="outline" className="ms-auto gap-1.5">
+            <Sparkles className="h-4 w-4" />
+            {busy ? "Loading…" : "Load default buttons"}
+          </Button>
+        )}
+        <Button
+          onClick={() => {
+            setEditing(null);
+            setDialogOpen(true);
+          }}
+          size="sm"
+          className={presets.length === 0 ? "gap-1.5" : "ms-auto gap-1.5"}
+        >
+          <Plus className="h-4 w-4" />
+          Add button
+        </Button>
+      </div>
+
+      <div className="rounded-xl border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[220px]">Button text</TableHead>
+              <TableHead className="w-[150px]">Behaviour</TableHead>
+              <TableHead>Default destination</TableHead>
+              <TableHead className="w-[110px]">Status</TableHead>
+              <TableHead className="w-[90px] text-end">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {presets.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="h-24 text-center text-sm text-muted-foreground">
+                  No buttons yet — add one, or load the defaults.
+                </TableCell>
+              </TableRow>
+            ) : (
+              presets.map((p) => (
+                <TableRow key={p.id}>
+                  <TableCell className="text-sm font-semibold" dir="rtl">
+                    {p.labelAr}
+                  </TableCell>
+                  <TableCell>
+                    <ModeBadge mode={p.mode} />
+                  </TableCell>
+                  <TableCell className="text-xs text-muted-foreground">
+                    {p.mode === "FORM" ? (
+                      <span className="italic">internal — no link</span>
+                    ) : (
+                      p.defaultUrl || <span className="italic">set per client</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <StatusToggle
+                      active={p.isActive}
+                      disabled={busy}
+                      onToggle={() => onToggle(p.id, p.isActive)}
+                    />
+                  </TableCell>
+                  <TableCell className="text-end">
+                    <RowActions
+                      onEdit={() => {
+                        setEditing(p);
+                        setDialogOpen(true);
+                      }}
+                      onDelete={() => setDeleteId(p.id)}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <CtaPresetDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        editing={editing}
+        onSave={onSave}
+      />
+
+      <AlertDialog open={deleteId !== null} onOpenChange={(o) => !o && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this button?</AlertDialogTitle>
+            <AlertDialogDescription>
+              It disappears from the picker on the client edit page. Clients already using it keep
+              their current button — their saved text and link are untouched.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700"
+              onClick={() => {
+                if (deleteId) onDelete(deleteId);
+                setDeleteId(null);
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
+
+function CtaPresetDialog({
+  open,
+  onOpenChange,
+  editing,
+  onSave,
+}: {
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+  editing: CtaPresetDTO | null;
+  onSave: (row: CtaRow) => Promise<{ ok: boolean; error?: string }>;
+}) {
+  const [labelAr, setLabelAr] = useState("");
+  const [mode, setMode] = useState<CtaPresetMode>("LINK");
+  const [defaultUrl, setDefaultUrl] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const [syncKey, setSyncKey] = useState("");
+  const wantKey = `${open}-${editing?.id ?? "new"}`;
+  if (open && wantKey !== syncKey) {
+    setSyncKey(wantKey);
+    setLabelAr(editing?.labelAr ?? "");
+    setMode(editing?.mode ?? "LINK");
+    setDefaultUrl(editing?.defaultUrl ?? "");
+    setSaveError(null);
+  }
+
+  const urlOk = mode === "FORM" || !defaultUrl.trim() || /^(https?:\/\/|tel:|mailto:)/i.test(defaultUrl.trim());
+  const valid = labelAr.trim().length > 0 && urlOk;
+
+  const submit = async () => {
+    if (!valid) return;
+    setSaving(true);
+    setSaveError(null);
+    const res = await onSave({
+      id: editing?.id,
+      labelAr: labelAr.trim(),
+      mode,
+      defaultUrl: mode === "FORM" ? null : defaultUrl.trim() || null,
+      // A button you are creating is a button you intend to use — it starts on. Turning
+      // one off later is a separate, deliberate act, done from the toggle in the table.
+      isActive: editing?.isActive ?? true,
+    });
+    setSaving(false);
+    if (res.ok) onOpenChange(false);
+    else setSaveError(res.error ?? "Could not save the button.");
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      {/* Capped + scrollable: the window is often short (laptop screen), and a dialog
+          whose buttons fall off the bottom is a dialog you cannot submit. */}
+      <DialogContent className="sm:max-w-[440px] max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{editing ? "Edit button" : "Add button"}</DialogTitle>
+        </DialogHeader>
+
+        <div className="grid gap-3 py-1">
+          {saveError && (
+            <div className="flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-700 dark:text-red-400">
+              <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+              <span>{saveError}</span>
+            </div>
+          )}
+
+          <div className="space-y-1.5">
+            <Label>Button text — must be unique</Label>
+            <Input
+              value={labelAr}
+              onChange={(e) => setLabelAr(e.target.value)}
+              placeholder="احجز الآن"
+              maxLength={40}
+              dir="rtl"
+              className="text-base font-semibold"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Behaviour</Label>
+            <Select value={mode} onValueChange={(v) => setMode(v as CtaPresetMode)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="FORM">Booking form — lead is ours</SelectItem>
+                <SelectItem value="LINK">External link — click only</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {mode === "LINK" && (
+            <div className="space-y-1.5">
+              <Label>Destination — optional, can be set per client</Label>
+              <Input
+                value={defaultUrl}
+                onChange={(e) => setDefaultUrl(e.target.value)}
+                placeholder="https://… · tel:+966… · mailto:…"
+                maxLength={500}
+              />
+              {!urlOk && (
+                <p className="text-[11px] text-red-600">Must start with https:// , tel: or mailto:</p>
+              )}
+            </div>
+          )}
+
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
+            Cancel
+          </Button>
+          <Button onClick={submit} disabled={!valid || saving}>
+            {saving ? "Saving…" : editing ? "Save changes" : "Add button"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

@@ -511,8 +511,13 @@ model Client {
 
   // ============ Primary CTA («احجز الآن») — admin-controlled ============
   ctaMode  ClientCtaMode @default(NONE) // NONE | FORM | LINK
-  ctaLabel String?                      // override default button text (احجز الآن / تسوّق الآن)
+  ctaLabel String?                      // the text actually rendered — the client's own wording, or the picked button's
   ctaUrl   String?                      // mode=LINK only (https / wa.me / tel:)
+  // Which button from Settings → Dropdown Lists this client is on. Kept so the picker still
+  // shows the chosen button after the admin rewords it for this client: the WORDING lives in
+  // ctaLabel, the IDENTITY lives here. Deliberately not a relation — deleting a button must
+  // never touch a client, whose resolved mode/label/url keep working untouched.
+  ctaPresetId String? @db.ObjectId
 
   // Content-responsibility acknowledgement (acceptance proof; editable text lives on Settings)
   disclaimerAcceptedAt       DateTime?
@@ -2779,6 +2784,12 @@ model Invoice {
   emailSentAt       DateTime?
   paidAt            DateTime? // settlement date entered by admin at «تحديد مدفوعة»
   paidByUserId      String?          @db.ObjectId
+  // Voiding an invoice, never deleting it — the ledger has to stay whole for accounting.
+  // Only an UNPAID invoice can be archived; it then leaves every unpaid total, stops
+  // blocking the next issuance, and its period stops counting toward the client's end date.
+  archivedAt        DateTime?
+  archivedReason    String?
+  archivedByUserId  String?          @db.ObjectId
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
 
@@ -2972,6 +2983,38 @@ model LicensingAuthority {
   @@unique([countryCode, category, code])
   @@index([countryCode, category])
   @@map("licensing_authorities")
+}
+
+// Named CTA presets the admin adds WITHOUT a code change (Khalid 2026-07-24).
+// A preset is not a new behaviour — picking one fills the three fields that already
+// exist on Client (ctaMode / ctaLabel / ctaUrl), so every surface that renders a CTA
+// and every segment that counts one keeps working untouched. The two real behaviours
+// stay in code and cannot be added from a screen:
+//   FORM → internal booking sheet — the lead lands in OUR database
+//   LINK → tracked external anchor (https · wa.me · tel:) — we only see the click
+// «Unlimited CTAs» therefore means unlimited label + behaviour + destination combos,
+// which already covers booking, store, WhatsApp and phone.
+// The button text IS the identity here (Khalid 2026-07-24: «أنت بتتكلم مع إنسان»).
+// There is deliberately no admin-facing slug — the machine identifier is `id`, and the
+// human identifier is what the visitor reads. Uniqueness is enforced on `labelKey`, the
+// NORMALISED text: Arabic makes «تسوق» and «تسوّق» two different strings that render
+// almost identically, so comparing the raw text would guard nothing. `labelAr` keeps
+// exactly what was typed — the normalisation exists only to answer «is this the same
+// button?».
+model CtaPreset {
+  id         String        @id @default(auto()) @map("_id") @db.ObjectId
+  labelAr    String // the Arabic text the visitor actually reads on the button
+  labelKey   String        @unique // derived from labelAr: no diacritics, unified alef/yaa, collapsed spaces
+  mode       ClientCtaMode // FORM | LINK — NONE is «no button», never a preset
+  defaultUrl String? // LINK only: prefilled destination (https · wa.me · tel:)
+  isActive   Boolean       @default(true)
+  sortOrder  Int           @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+  @@map("cta_presets")
 }
 
 // ============================================

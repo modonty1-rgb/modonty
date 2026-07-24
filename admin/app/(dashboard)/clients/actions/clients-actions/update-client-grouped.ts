@@ -704,7 +704,7 @@ export async function updateCtaFields(
   try {
     const client = await db.client.findUnique({
       where: { id: clientId },
-      select: { ctaMode: true, ctaLabel: true, ctaUrl: true },
+      select: { ctaMode: true, ctaPresetId: true, ctaLabel: true, ctaUrl: true },
     });
 
     if (!client) {
@@ -714,7 +714,11 @@ export async function updateCtaFields(
     const mode = (data.ctaMode as "NONE" | "FORM" | "LINK" | undefined) ?? "NONE";
     const newData: Record<string, unknown> = {
       ctaMode: mode,
-      // NONE → no label; FORM/LINK → keep the override if provided
+      // NONE → not on any button; FORM/LINK → which button from the shared list
+      ctaPresetId: mode === "NONE" ? null : (data.ctaPresetId || null),
+      // The RESOLVED text: the form sends the client's own wording, or the picked
+      // button's text when there is no override. Storing the final string keeps
+      // modonty reading one field — it never has to know the list exists.
       ctaLabel: mode === "NONE" ? null : (data.ctaLabel || null),
       // Only LINK carries a destination
       ctaUrl: mode === "LINK" ? (data.ctaUrl || null) : null,

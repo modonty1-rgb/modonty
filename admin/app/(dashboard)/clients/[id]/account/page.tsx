@@ -94,7 +94,10 @@ export default async function ClientAccountPage({ params }: PageProps) {
   }
 
   // Accounting bottom line (derived from invoices — no stored aggregate).
-  const due = invoices.filter((i) => i.paymentStatus !== "PAID").reduce((s, i) => s + i.amount, 0);
+  // Archived invoices are void: they stay in the ledger for the record but owe nothing.
+  const due = invoices
+    .filter((i) => i.paymentStatus !== "PAID" && !i.archivedAt)
+    .reduce((s, i) => s + i.amount, 0);
   const paid = invoices.filter((i) => i.paymentStatus === "PAID").reduce((s, i) => s + i.amount, 0);
   const hasPaid = invoices.some((i) => i.paymentStatus === "PAID");
 
@@ -112,6 +115,8 @@ export default async function ClientAccountPage({ params }: PageProps) {
     currency: inv.currency === "EGP" ? "EGP" : "SAR",
     status: inv.paymentStatus === "PAID" ? "PAID" : "DUE",
     emailSent: !!inv.emailSentAt,
+    isArchived: !!inv.archivedAt,
+    archivedReason: inv.archivedReason ?? null,
   }));
 
   return (
@@ -124,78 +129,87 @@ export default async function ClientAccountPage({ params }: PageProps) {
         كل الحسابات
       </Link>
 
-      {/* ── HEADER — identity + the accounting bottom line ── */}
-      <div className="rounded-lg border bg-card p-5">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="min-w-0">
-            <h1 className="text-xl font-bold">{client.name}</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">{client.email}</p>
-          </div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[12px] px-3 py-1 rounded-full bg-muted font-semibold">
-              {client.subscriptionStatus}
-            </span>
-            <span
-              className={`text-[12px] px-3 py-1 rounded-full font-semibold ${
-                derivedPaid
-                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
-                  : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
-              }`}
-            >
-              {derivedPaid ? `مدفوعة · حتى ${fmtDate(end)}` : "مستحقّة"}
-            </span>
-          </div>
+      {/* ── HEADER — identity + status, one compact line ── */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-lg font-bold leading-tight">{client.name}</h1>
+          <p className="text-xs text-muted-foreground">{client.email}</p>
         </div>
+        <div className="flex items-center gap-2">
+          <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold">
+            {client.subscriptionStatus}
+          </span>
+          <span
+            className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+              derivedPaid
+                ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
+            }`}
+          >
+            {derivedPaid ? `مدفوعة · حتى ${fmtDate(end)}` : "مستحقّة"}
+          </span>
+        </div>
+      </div>
 
-        {/* The three numbers this page exists to answer */}
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-px rounded-md overflow-hidden border bg-border">
-          <div className="bg-card px-4 py-4">
-            <p className="text-[11px] text-muted-foreground">المستحق الآن</p>
-            <p className="text-2xl font-extrabold tabular-nums mt-1 text-amber-600 dark:text-amber-400">
-              {money(due, currency)}
-            </p>
-          </div>
-          <div className="bg-card px-4 py-4">
-            <p className="text-[11px] text-muted-foreground">إجمالي المدفوع</p>
-            <p className="text-2xl font-extrabold tabular-nums mt-1 text-emerald-600 dark:text-emerald-400">
-              {money(paid, currency)}
-            </p>
-          </div>
-          <div className="bg-card px-4 py-4">
-            <p className="text-[11px] text-muted-foreground">نهاية الاشتراك</p>
-            <p className="text-2xl font-extrabold tabular-nums mt-1">{fmtDate(end)}</p>
-            {left !== null && (
-              <p className={`text-[11px] mt-0.5 ${expired ? "text-red-500" : "text-emerald-600/80 dark:text-emerald-400/80"}`}>
-                {expired ? "انتهى" : `${left} يوم متبقّي`}
+      {/* Two columns: the account's facts on the side, the ledger — the actual work —
+          taking the width. Stacked full-width bands left 469px of the page empty while
+          six one-word facts were spread across 1280px (Khalid 2026-07-24). */}
+      <div className="grid gap-4 lg:grid-cols-[300px_minmax(0,1fr)]">
+        <aside className="space-y-3">
+          {/* The three numbers this page exists to answer */}
+          <div className="divide-y rounded-lg border bg-card">
+            <div className="px-3.5 py-2.5">
+              <p className="text-[11px] text-muted-foreground">المستحق الآن</p>
+              <p className="mt-0.5 text-xl font-extrabold tabular-nums text-amber-600 dark:text-amber-400">
+                {money(due, currency)}
               </p>
-            )}
+            </div>
+            <div className="px-3.5 py-2.5">
+              <p className="text-[11px] text-muted-foreground">إجمالي المدفوع</p>
+              <p className="mt-0.5 text-xl font-extrabold tabular-nums text-emerald-600 dark:text-emerald-400">
+                {money(paid, currency)}
+              </p>
+            </div>
+            <div className="px-3.5 py-2.5">
+              <p className="text-[11px] text-muted-foreground">نهاية الاشتراك</p>
+              <p className="mt-0.5 text-xl font-extrabold tabular-nums">{fmtDate(end)}</p>
+              {left !== null && (
+                <p
+                  className={`text-[11px] ${expired ? "text-red-500" : "text-emerald-600/80 dark:text-emerald-400/80"}`}
+                >
+                  {expired ? "انتهى" : `${left} يوم متبقّي`}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* ── FACTS — read-only DB facts (secondary) ── */}
-      <div className="rounded-lg border bg-card p-4">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-px rounded-md overflow-hidden border bg-border">
-          <Fact label="الباقة" value={currentTierName} accent="violet" />
-          <Fact label="الفترة" value={periodLabel} accent="violet" />
-          <Fact label="التفعيل · أول مقال" value={fmtDate(firstPublished?.datePublished ?? null)} accent="amber" />
-          <Fact label="تاريخ التسجيل" value={fmtDate(client.createdAt)} />
-          <Fact label="العملة" value={currency} />
-          <Fact label="الدولة" value={localizeCountry(client.addressCountry, currency)} />
-        </div>
-        <p className="mt-2 text-[11px] text-muted-foreground">
-          عرض فقط — الباقة والفترة تُعدَّلان من <b className="text-foreground">صفحة العميل الأساسية</b>.
-        </p>
-      </div>
+          {/* Read-only DB facts — two per row instead of six across the screen */}
+          <div className="rounded-lg border bg-card p-2.5">
+            <div className="grid grid-cols-2 gap-px overflow-hidden rounded-md border bg-border">
+              <Fact label="الباقة" value={currentTierName} accent="violet" />
+              <Fact label="الفترة" value={periodLabel} accent="violet" />
+              <Fact label="أول مقال" value={fmtDate(firstPublished?.datePublished ?? null)} accent="amber" />
+              <Fact label="التسجيل" value={fmtDate(client.createdAt)} />
+              <Fact label="العملة" value={currency} />
+              <Fact label="الدولة" value={localizeCountry(client.addressCountry, currency)} />
+            </div>
+            <p className="mt-2 text-[11px] leading-snug text-muted-foreground">
+              عرض فقط — تُعدَّل من <b className="text-foreground">صفحة العميل</b>.
+            </p>
+          </div>
+        </aside>
 
-      {/* ── LEDGER — the invoices ── */}
-      <AccountLedger
-        clientId={client.id}
-        invoices={ledger}
-        planLabel={`${currentTierName} · ${periodLabel}`}
-        currency={currency}
-        defaultAmount={defaultAmount}
-      />
+        {/* ── LEDGER — the invoices ── */}
+        <AccountLedger
+          clientId={client.id}
+          invoices={ledger}
+          firstPublishedAt={firstPublished?.datePublished?.toISOString().slice(0, 10) ?? null}
+          currentEnd={client.subscriptionEndDate?.toISOString().slice(0, 10) ?? null}
+          planLabel={`${currentTierName} · ${periodLabel}`}
+          currency={currency}
+          defaultAmount={defaultAmount}
+        />
+      </div>
     </div>
   );
 }

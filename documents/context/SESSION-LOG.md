@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-07-23
+# Session Context — Last Updated: 2026-07-24 (21:55)
 
 > ⚙️ **ملف نشط = آخر أسبوع فقط** (يتوزّع أسبوعياً لتوفير الـ token عند القراءة).
 > الأرشيف الكامل بالأشهر:
@@ -28,6 +28,159 @@
 
 ### 🔮 مستقبلي
 - [ ] نقل تخزين معارض العملاء إلى Bunny (Cloudinary مكلف) — آمن بمعمارية Media ID. المصدر: `documents/tasks/TODO.md`.
+
+---
+
+## Session: 2026-07-24 21:55 — قفل مسار الفوترة (٣ أخطاء مالية) + بانر الكونسول + صفحة فواتير العميل · جاهز للدفع
+
+### 🎯 أين توقفت + أول خطوة عند الاستئناف
+- **آخر مهمة:** تجهيز الدفع. تم: حذف ملفات مؤقتة · رفع النسخ · باكب (dev) · هذا السجل. **المتبقّي: `git add` بقائمة صريحة ثم عرضها على خالد قبل أي commit.**
+- **أول خطوة:** `git add` للملفات المذكورة في «Git» أدناه — **بلا `git add -A`** (الريلز WIP يجب أن يبقى خارج الدفع).
+
+### ✅ أُنجز هذه الجلسة
+- **🔴 ٣ أخطاء مالية أُصلحت قبل الدفع** (تفاصيلها الكاملة بالأدلة في `documents/tasks/TODO.md` قسم «قفل مسار الفوترة»):
+  1. **السداد كان يسحب الاشتراك للخلف** — معادلتان متعارضتان (الإصدار يحسب من كل الفواتير، السداد من المدفوعة فقط). دُمجتا في `recomputeSubscriptionEnd` واحدة.
+  2. **فخّ مونجو `archivedAt: null` = صفر صفوف** — محا `subscriptionEndDate` فعلياً في أول تشغيل حي. قياس: `eqNull=0` مقابل `isSet:false=8`. أُصلح في ٦ نقاط قراءة.
+  3. **فرق يوم بين معاينة التاريخ والمحفوظ** — حساب الأشهر صار UTC في الخادم والواجهة.
+- **🔒 قفل «ما نبيع بالآجل»:** لا تُصدَر فاتورة والعميل عليه مستحقّة (خادم + واجهة).
+- **🗄️ الأرشفة:** `archivedAt/archivedReason/archivedByUserId` — بديل الحذف، المخرج الوحيد من القفل، تسحب مدّتها من تاريخ النهاية.
+- **الكونسول:** بانر الحساب انتقل إلى الـ layout (يتبع العميل لكل صفحة، بلا زر إغلاق) + **صفحة فواتير جديدة** `/dashboard/invoices` + رابط «الفواتير» في السايدبار (ديسكتوب + جوال).
+- **تسمية:** عمود `Activation/not activated` صار **First article / no article yet** والكرت «بلا مقال منشور» (كان يُقرأ كأن الحساب معطّل — ملاحظة خالد).
+- **tsc:** admin · console · modonty = **صفر أخطاء**. **Build:** لم يُشغَّل. **تست حي:** ١٠ حالات في الأدمن + ٤ حالات بانر بالكونسول + العدّادات — كلها بلقطات في `.playwright-mcp/`.
+
+### 📝 قرارات (مع السبب)
+- **قفل الإصدار كامل بلا تجاوز** (خالد: «بقفلها كاملة») → أي checkbox تجاوز يفتح نفس الباب الذي نسدّه؛ البديل المشروع الوحيد = الأرشفة.
+- **الأرشفة لا الحذف** → الدفتر يبقى كاملاً للحسابات.
+- **الفاتورة المؤرشفة تختفي من كونسول العميل وتبقى في الأدمن مشطوبة** → العميل لا يرى فاتورة أُلغيت؛ المحاسبة ترى كل شيء.
+- **البانر بلا زر إغلاق** (خالد) → «تذكير على طول طالما ما سدّد».
+
+### 🚧 معلّق / محجوب
+- **بيانات تست على `modonty_dev`:** فاتورة `MOD-2026-00011` (3,999 مدفوعة على «هابي سمايل») — رفض خالد أمر التنظيف، تُترك.
+- **بعد الدفع للإنتاج:** ضغطة **«تحميل الأزرار الافتراضية»** في Dropdown Lists (بدونها القائمة تطلع فاضية للأدمن؛ العملاء الحاليون غير متأثرين).
+- **الباكب يحمي dev لا الإنتاج:** `scripts/backup.sh` يقرأ `.env.shared` = `modonty_dev`. يحتاج قراراً لاحقاً.
+- **لم يُقرَّر:** هل تدخل `documents/gsc/` و`documents/design/` في الدفع.
+
+### 📂 ملفات رئيسية
+- `admin/app/(dashboard)/clients/[id]/account/helpers/billing.ts` — **جديد**: المعادلة الموحّدة + قفل الإصدار + `NOT_ARCHIVED`.
+- `admin/app/(dashboard)/clients/[id]/account/actions/archive-invoice.ts` — **جديد**.
+- `.../actions/create-invoice.ts` · `.../actions/mark-paid.ts` — يستدعيان المعادلة الموحّدة؛ حساب UTC؛ القفل.
+- `.../components/account-ledger.tsx` — مودال الأرشفة · شارة مؤرشفة · زر إصدار معطّل + شريط الشرح.
+- `admin/app/(dashboard)/clients/accounts/{page,components/accounts-table}.tsx` — استبعاد المؤرشفة + تسمية «First article».
+- `admin/app/(dashboard)/actions/client-status-counts.ts` — استبعاد المؤرشفة من عدّاد الداشبورد.
+- `console/app/(dashboard)/layout.tsx` + `components/dashboard-layout-client.tsx` — البانر في الـ layout.
+- `console/app/(dashboard)/dashboard/invoices/**` — **جديد** (صفحة + استعلام).
+- `console/app/(dashboard)/components/{sidebar,mobile-sidebar}.tsx` + `console/lib/ar.ts` — رابط الفواتير.
+- `dataLayer/prisma/schema/schema.prisma` — حقول الأرشفة على `Invoice`.
+
+### 🔁 Git / نشر
+- **الفرع:** main · **آخر commit:** `ad5ec2b` · **مدفوع:** لا — التغييرات كلها غير مدفوعة.
+- **النسخ:** admin **1.0.0** · console **0.22.0** · modonty **1.80.0**.
+- **⛔ يُستثنى من الدفع:** `modonty/app/reels/` · `documents/reels/` · `documents/modonty-v3-handoff/` (ريلز WIP).
+- **لا يحتاج** `prisma db push` ولا سكربت ترحيل: الحقول اختيارية على مونجو، وكل الفلاتر تعالج غياب الحقل.
+
+### 🚀 استئناف في ٣٠ ثانية
+1. `git status --porcelain` — تأكّد أن الريلز ما زال خارج المرحلة.
+2. `git add` بالقائمة الصريحة → اعرضها على خالد → commit → **انتظر إذنه للـ push**.
+3. بعد الدفع: افتح أدمن الإنتاج → Dropdown Lists → «تحميل الأزرار الافتراضية».
+
+---
+
+## Session: 2026-07-24 — أزرار CTA كقائمة تُدار (Dropdown Lists) + Playwright ديناميكي · لم يُدفع
+
+### 🎯 أين توقفت + أول خطوة عند الاستئناف
+- **🔴 أول شي بعد الـ restart:** خالد يعيد تشغيل Claude Code لتحميل إعداد Playwright الجديد. **تحقّق أولاً:** افتح أي صفحة واقرأ `page.viewportSize()` + `window.innerWidth/Height` — لازم تطابق نافذة Edge الحقيقية (لا 1280×800 ثابتة).
+- **ثم:** المرحلة **٣/٥** من خطة الـ CTA — ربط الـ presets بنموذج العميل (`cta-section.tsx` يقرأ من DB بدل الخيارات الثابتة). المرحلتان ٤ (إصلاح الهيرو) و٥ (تحقّق) بعدها.
+- **سيرفر dev admin على :3000** (مات مع آخر `taskkill` — أعد `pnpm dev:admin`).
+
+### ✅ المنجَز (كله dev، غير مدفوع، مُختبَر حيّاً)
+- **م١/٥ — موديل `CtaPreset`** في `schema.prisma`: `labelAr` + `labelKey` (`@unique`) + `mode` + `defaultUrl?` + `hint?` + `isActive` + `sortOrder`. **بلا لمس حقول `Client` الثلاثة** (`ctaMode`/`ctaLabel`/`ctaUrl`) → الأسطح السبعة والسيغمنتات تشتغل بلا تعديل.
+- **م٢/٥ — صفحة الإدارة:** تبويب ثالث **CTA Buttons** (أول وافتراضي) داخل صفحة `/settings/reference-data`، وأُعيدت تسميتها **«Dropdown Lists»** (عنوان + sidebar). CRUD كامل + تفعيل + seed افتراضي (٥ أزرار) + شرح للأدمن أن FORM يحتفظ بالـ lead و LINK يعطيه بره.
+- **تغيير جوهري بأمر خالد — الهوية = نص الزر:** حُذف حقل `key` التقني نهائياً (الأدمن ما يشوفه). المعرّف الداخلي = `id` التلقائي، والظاهر = **نص الزر العربي**. التفرّد على `labelKey` = **نص مطبَّع** ([normalize-arabic-label.ts](admin/app/(dashboard)/settings/reference-data/lib/normalize-arabic-label.ts)): حذف تشكيل/تطويل + توحيد `أإآٱ→ا` و`ى→ي` و`ة→ه` + دمج مسافات. **دليل حيّ:** `تسوق الآن` رُفضت برسالة تسمّي المتعارض «تسوّق الآن».
+- **رابط Reference Data/Dropdown Lists أُضيف للـ sidebar** (كان موجوداً بلا رابط) — مجموعة System، أيقونة `ListChecks`.
+- **Playwright ديناميكي حسب الشاشة:** خالد على ٣ شاشات ويراجع من نافذة Playwright نفسها. أُنشئ [playwright-mcp.config.json](playwright-mcp.config.json) بـ `contextOptions.viewport: null` و`.mcp.json` صار `--config` (**حُذف `--viewport-size`**). سند رسمي من Playwright عبر Context7. تحقّق: السيرفر يقلع بالإعداد الجديد ورد `initialize` نظيف.
+
+### 📝 قرارات (بالسبب)
+- **presets تعبّي الحقول الموجودة، لا تستبدلها:** البديل (`ctaPresetId` + قراءة بالعلاقة) يلمس ~٣٥ ملفاً ويكسر سيغمنتات «العملاء غير القابلين للوصول» في شريط اليوم → **مرفوض**.
+- **«CTA غير محدود» = presets غير محدودة فوق سلوكين** (`FORM`/`LINK`) — يغطي حجز/متجر/واتساب/اتصال/تصفّح. سلوك ثالث حقيقي = كود جديد.
+- **واتساب واتصال بلا وجهة افتراضية عمداً:** رقم مشترك يرسل زوار عميل إلى عميل آخر.
+- **الاسم «Dropdown Lists»** (اختيار خالد من ٣ مقترحات) بدل «Reference Data» التقني.
+
+### 🐛 أخطاء اكتُشفت وأُصلحت أثناء التنفيذ
+- **`"use server"` لا يسمح إلا بتصدير دوال async** → `normalizeArabicLabel` سبّبت خطأ بناء 500؛ نُقلت لملف `lib/` مستقل.
+- **زر «Load default buttons» كان مخفياً** لو الدول موجودة (شرط `isEmpty` للثلاث قوائم) → أُضيف داخل تبويب الـ CTA.
+- **رسالة الخطأ كانت خلف الـ dialog** → صارت داخله (الشخص اللي يملأ النموذج كان ما يشوف سبب الرفض).
+
+### 🚧 معلّق / مفتوح
+- **`prisma db push` لم يُشغَّل** → فهرس `labelKey @unique` + `@@index` غير موجودين في القاعدة. الحماية تعمل عبر حارس صريح في الأكشن. يُنفَّذ وقت النشر بإذن خالد.
+- **نفس مشكلة «الخطأ خلف الـ dialog» موجودة أصلاً** في نموذجَي الدول والجهات (كود قديم، لم يُلمس).
+- **الأزرار الجديدة كلها `sortOrder = 0`** (لا حقل ترتيب في النموذج) — تُرتَّب بالاسم.
+- **الـ breadcrumb يقول «Reference-data»** لأن المسار لم يتغيّر — خالد لم يحسم تغييره لـ `/settings/lists`.
+- **`documents/tasks/TODO.md`:** بنود «المهتمون» المفتوحة + تسمية كرت Subscribers + ملاحظة UI (عرض فقرة الهنت).
+
+### 📂 ملفات لُمست
+- `dataLayer/prisma/schema/schema.prisma` — موديل `CtaPreset`.
+- `admin/.../settings/reference-data/actions/reference-data-actions.ts` — CRUD الـ presets + تفرّد مطبَّع + seed.
+- `admin/.../settings/reference-data/lib/normalize-arabic-label.ts` — **جديد**.
+- `admin/.../settings/reference-data/components/reference-data-client.tsx` — تبويب CTA + panel + dialog + إعادة التسمية.
+- `admin/.../settings/reference-data/page.tsx` — تمرير `initialCtaPresets`.
+- `admin/components/admin/sidebar.tsx` — «Dropdown Lists» + أيقونة `ListChecks`.
+- `playwright-mcp.config.json` — **جديد** · `.mcp.json` — `--config` بدل `--viewport-size`.
+- `memory/project_playwright_settings.md` — قاعدة المقاس الديناميكي + السند الرسمي.
+
+### 🔁 Git / deploy
+- **الفرع:** main · **غير مدفوع:** نعم (كل ما سبق + شغل الجلسة السابقة) · **آخر commit:** `97f2c2f` · **Vercel:** لا شيء.
+- **القاعدة المستخدمة:** `modonty_dev` (تحقّقت من `.env.shared` — صفر مساس بالإنتاج). **ملاحظة:** `dataLayer/.env` يشير الآن لـ `modonty_dev` كذلك، خلافاً لذاكرة قديمة تقول PROD.
+
+### 🚀 استئناف في ٣٠ ثانية
+1. بعد الـ restart: افتح صفحة بـ Playwright واقرأ الـ viewport — لازم يطابق النافذة الحقيقية.
+2. `pnpm dev:admin` ثم افتح `/settings/reference-data` → تبويب CTA Buttons (٥ أزرار).
+3. ابدأ م٣: `admin/.../clients/components/form-sections/cta-section.tsx` — استبدل الخيارات الثابتة بـ `getActiveCtaPresets()`.
+
+---
+
+## Session: 2026-07-23 (تكملة-٢) — قسم Members بالداشبورد + معماريّة «المهتمون» + Reference Data بالـ sidebar · لم يُدفع
+
+### 🎯 أين توقفت + أول خطوة عند الاستئناف
+- **آخر شي:** شغل داشبورد + نقاش معماري (بلا push، بلا tsc — دِف عادي). خالد طالع مشوار ويرجع.
+- **🔴 أول خطوة عند الاستئناف (خالد حدّدها):** تاسك **CTA كقائمة قابلة للإدارة** — بند «▶️ ابدأ هنا» في `documents/tasks/TODO.md`. قرار مطلوب قبله: هل الـ preset يحدد النمط (FORM/LINK) أو الليبل فقط؟ ودمج بصفحة Reference Data أو صفحة مستقلة؟
+- **متبقّي:** بقية تاسكات الداشبورد (تسمية كرت Subscribers + بنود «المهتمون»).
+
+### ✅ المنجَز هذه الجلسة (كله dev، غير مدفوع)
+- **قسم Members جديد بالداشبورد (admin):** نسخة نمط `SubscribersPipeline` — يعرض Google مقابل Email+password + تأكيد رابط التحقق. ملفات: `actions/member-counts.ts` (جديد) + `lib/dashboard/cached.ts` (`memberCounts`) + `components/sections/members-pipeline.tsx` (جديد) + `page.tsx`.
+- **🐛 إصلاح عدّ Members:** كان Google=0 (المجموع ٣٥ ≠ ١٢). السبب: MongoDB — مستخدم Google بلا حقل `password`/`emailVerified` (غائب لا null)، وفلتر Prisma `{ field: null }` ما يلقّط الغائب. الحل: العدّ على `{ not: null }` فقط + اشتقاق الباقي بالطرح (مطابق `members-actions.ts`). صار Google=23 · Email=12 · Awaiting=12. (بدليل من الصورة الحيّة اللي أرسلها خالد.)
+- **إشارات الاهتمام داخل قسم Subscribers:** رقمان (اهتمام المقالات=`ArticleFavorite` · اهتمام العملاء=`ClientLike`) + **هنت عربي واضح** يشرح إنها أساس الاشتراك القادم. (كرت مستقل أُنشئ ثم حُذف ودُمج داخل Subscribers بطلب خالد.)
+- **Reference Data بالـ sidebar:** الصفحة `/settings/reference-data` (الدول + الوزارات/الجهات) كانت موجودة بلا رابط → أُضيف في مجموعة System (أيقونة Landmark). ملف: `admin/components/admin/sidebar.tsx`.
+- **tsc:** لم يُشغّل (قاعدة: لا تحقّق حتى الأمر). **build/live test:** لم يُجرَ.
+
+### 📝 قرارات (بالسبب)
+- **«المهتمون» بدل نظام Subscriber منفصل:** لا موديل Interest/Subscriber جديد. إشارة الاهتمام موجودة أصلاً (`ArticleFavorite`+`ArticleLike` للمقال · `ClientLike`/Follow للعميل). المفقود = الموافقة الصريحة → تُضاف كتشيك بوكس على `User.notificationPreferences`. الاستهداف بالموضوع يُشتق من `articleId` (category/industry/tags). **لماذا:** يوحّد المنظومة بلا ترحيل، ويستفيد من بيانات موجودة.
+- **الموافقة inline لحظة التسجيل، default=false (غير مؤشّرة):** رفضتُ default=true لأنها موافقة **باطلة** — GDPR Recital 32 + Planet49 + PDPL السعودي + قانون مصر 151/2020 + ضرر sender reputation. خالد وافق على unchecked.
+- **دمج «تابعني» + «اشترك في النشرة» في زر واحد «تابعني»:** Follow (`clientLike`) يتطلب دخول → كل متابِع عضو له إيميل. النشرة = متابِع + موافقة. **البدائل المرفوضة:** إبقاء الزرّين (تكرار) · موديل جديد (بلا داعٍ).
+- **حذف «اشترك في النشرة» من المقال والعميل:** بشرط نقل كرت «المشتركون» في كونسول العميل ليقرأ من `ClientLike + consent`.
+- **CTA:** hard-coded حالياً (enum `ClientCtaMode`: NONE/FORM/LINK + `ctaLabel` نص حر). خالد يبي قائمة presets قابلة للإدارة → أُضيفت كتاسك «ابدأ هنا».
+
+### 🚧 معلّق / مفتوح (في TODO)
+- الموديلات الثلاثة القديمة (`NewsSubscriber`/`Subscriber`/`JbrseoSubscriber`) — قرار التوحيد/الترحيل لم يُقفل.
+- كرت داشبورد «Subscribers» مسمّى غلط «newsletter audience» بينما يعرض `db.subscriber` (لكل عميل) → يحتاج فصل/تسمية.
+- واجهة إطلاق الحملة بالأدمن — مستقبلي.
+
+### 📂 ملفات لُمست
+- `admin/app/(dashboard)/actions/member-counts.ts` — جديد (عدّ الأعضاء بالطرح الآمن).
+- `admin/lib/dashboard/cached.ts` — أُضيف `memberCounts`.
+- `admin/app/(dashboard)/components/sections/members-pipeline.tsx` — جديد.
+- `admin/app/(dashboard)/components/sections/subscribers-pipeline.tsx` — إشارات الاهتمام + هنت عربي.
+- `admin/app/(dashboard)/page.tsx` — أُضيف `<MembersPipeline>`.
+- `admin/components/admin/sidebar.tsx` — رابط Reference Data + استيراد Landmark.
+- `documents/tasks/TODO.md` — أقسام: «ابدأ هنا CTA» + «المهتمون» + «باقي تاسكات الداشبورد» + منجز إصلاح Members.
+- محذوف: `components/sections/interest-signals.tsx` (دُمج داخل Subscribers).
+
+### 🔁 Git / deploy
+- **الفرع:** main · **تغييرات غير مدفوعة:** نعم (كل الملفات فوق) · **آخر commit:** `97f2c2f` · **مدفوع:** لا · **Vercel:** لا شيء.
+
+### 🚀 استئناف في ٣٠ ثانية
+1. افتح `documents/tasks/TODO.md` → بند **«▶️ ابدأ هنا — CTA كقائمة قابلة للإدارة»**.
+2. اقفل القرار: preset يحدد النمط ولا الليبل فقط؟ + صفحة مستقلة ولا ضمن Reference Data؟
+3. ابدأ الموديل `CtaPreset` بنمط Reference Data (kill node → `prisma:generate` أول).
 
 ---
 
@@ -563,57 +716,3 @@
 ### ⚠️ ملاحظة dev
 - صُفّر باسورد جبر سيو على modonty_dev لـ`JabrTest2026!` (صار مطابقاً للذاكرة)، وعنده إنجاز تجريبي واحد بصورة.
 
----
-
-## Session: 2026-07-16 — سجل «مَن فعل ماذا» (AuditLog) — المرحلة الأولى
-
-### 🎯 أين توقفت
-- **دُفعت** admin v0.88.0. **الخطوة التالية:** المرحلة الثانية — صفحة `/audit-log` لعرض السجل (مؤجلة بقرار خالد: «نثبّت الـ15 أولاً، بعدين نفكر في تقارير الأدمين»).
-
-### 🧩 الحاجة
-أكثر من موظفة تعمل على الأدمن وأكثر من كاتب محتوى — وكل العمليات كانت **مجهولة الفاعل**. لو انحذف مقال بالغلط، ما في طريقة تعرف مين.
-
-### 🔴 رفضٌ مبدئي (وخالد وافق فوراً)
-طلبه الأصلي: «userId + username + **password**». **رفضت تسجيل كلمة المرور**: مشفّرة بـ bcrypt (لا نقدر نقرأها) · تسجيلها = تسليم كل الحسابات لمن يفتح الجدول · مخالفة PDPL · **ولا تضيف شيئاً للتتبّع** — `userId` يجيب «مين؟» كاملاً. **البديل الذي اقترحه خالد نفسه وهو الصحيح: `userId` + `email`.**
-
-### ✅ ما بُني (المرحلة الأولى)
-- **`AuditLog`** في السكيما + 3 فهارس (بالوقت · بالشخص · بالكيان). **الهوية تُخزَّن مرتين عمداً:** `userId` (المفتاح الحقيقي، لا يتغير) + `userEmail`/`userName`/`userRole` (**لقطة وقت الفعل** — تبقى بعد حذف الحساب؛ سجل يجب أن يصمد بعد صاحبه).
-- **`admin/lib/audit/log-action.ts`** — دالة واحدة بثلاث قواعد: (١) لا تُفشل العملية أبداً (تبتلع أخطاءها) · (٢) تقرأ الجلسة بنفسها فلا يقدر أي مستدعٍ أن يسجّل باسم غيره · (٣) صفر كلمات مرور.
-- **16 استدعاء في 16 ملفاً:** حذف (مقال · عميل · فئة · وسم) · نشر وسير عمل (transition · gated · schedule · reset) · إنشاء/تعديل (مقال · عميل) · مستخدمون (3) · إعدادات · صيانة · cascade.
-
-### 🧠 نقاط دقيقة انتُبه لها
-- **الحذف يلتقط الاسم قبل الحذف** — وإلا لا يبقى ما يُسمّى به («حُذف 6a53…» لا يفيد أحداً).
-- **الصيانة والـcascade: سطر واحد للعملية كلها** لا 11 سطراً — وإلا يُدفن السجل.
-- **فخ الحقل الناقص:** `reset-status` و`set-scheduled-date` ما كانا ينتقيان `title` → أُضيف.
-- **`user.update` يسجّل `passwordChanged: true`** كحقيقة (شخص أعاد تعيين كلمة مرور أدمن = يُسأل عنه لاحقاً) — **بلا أي أثر لكلمة المرور نفسها**.
-
-### 🧪 التست الحي (dev) — 3 عمليات من 3 ملفات، كلها نجحت
-| العملية | الاختبار | النتيجة |
-|---|---|---|
-| `article.update` | حفظ مقال من الفورم | ✅ سُجّل بالعنوان + النسخة |
-| `tag.delete` | إنشاء وسم ثم حذفه بالديالوج | ✅ سُجّل — **والاسم مُلتقَط قبل زواله** |
-| `client.update` | حفظ عميل | ✅ سُجّل باسم العيادة |
-
-كل سطر يحمل: userId + email + name + **role=ADMIN** + الكيان + الوقت. **وفحص صريح: صفر أثر لـ`password`/`$2a$`/`hash`.**
-
-**لم يُختبر حياً (بصراحة):** publish/transition (كل الأزرار معطّلة — بوابة السيو ترفض المقالات الحالية) · `database.maintenance` (⛔ ممنوع Run-All على dev) · الحذف للمقال/العميل/الفئة · المستخدمون · settings/cascade (ثقيلة). **الآلية مؤكَّدة، والباقي نفس السطر + tsc يضمن أنواعه.**
-
-### ⚠️ عملية دقيقة عند الدفع — فصل السكيما
-`schema.prisma` كان فيه **277 سطراً معدّلاً**: ~47 لي (AuditLog) و**230 للدفعة الثانية المؤجلة (نظام الريلز كاملاً: 7 نماذج + 4 enums)**. **بُنيت نسخة = HEAD + AuditLog فقط** ورُصدت وحدها، ثم أُعيد ملف العمل كاملاً — فالريلز ما زالت محلية سليمة ولم تُدفع. (تحقق: المرصود يحوي `model AuditLog` فقط · ملف العمل ما زال يحوي `model Reel`.)
-
-### 🔁 حالة Git والنشر
-- **الكوميت:** `43c42f1` · **مدفوع** ✅ (`785466f..43c42f1`) · admin **v0.88.0** · **21 ملفاً**
-- changelog في LOCAL + PROD ✅ (id `6a58bd36…` / `6a58bd3b…`) · نسخة احتياطية ✅ · tsc صفر ×3 ✅
-- **⏳ Vercel وقت التجميد:** admin = **BUILDING** · modonty + console = **QUEUED** (كلها على sha `43c42f1`). **لم يُتحقق من اكتمال النشر بعد** — تحقق منه عند العودة قبل أي حكم.
-- **غير مدفوع عمداً (محلي وسليم):** الدفعة الثانية — Bunny · geo tracking · **نظام الريلز في السكيما (7 نماذج + 4 enums)** · سكربتات `.mjs`. تنتظر تدوير مفتاح Bunny. **متحقق بعد الدفع:** الريلز **صفر** في الكوميت · **موجودة** في ملف العمل · `AuditLog` **مدفوع**.
-
-### 🚀 استئناف في 30 ثانية
-1. **تحقق أن النشر اكتمل** (كان BUILDING/QUEUED وقت التجميد): `curl -H "Authorization: Bearer $VERCEL_TOKEN" "https://api.vercel.com/v6/deployments?limit=4"` — انتظر READY على sha `43c42f1`.
-2. **ثم أكّد أن السجل يعمل على الإنتاج:** نفّذ عملية بسيطة من أدمن الإنتاج (مثلاً حفظ مقال) واقرأ `audit_logs` من قاعدة الإنتاج. **السجل يبدأ فاضياً ويمتلئ من لحظة النشر — ما قبله ضائع بطبيعته.**
-3. **المرحلة الثانية:** صفحة `/audit-log` (جدول + فلاتر: مين · إيش · متى + بحث) في مجموعة System بالسايدبار. **قرار معلّق لخالد:** مين يفتحها — الأدمن فقط أم كل الموظفات؟ (توصيتي: الأدمن فقط.)
-4. قرارات مؤجلة أخرى: مدة الاحتفاظ بالسجل · كرت «آخر ٥ عمليات حساسة» بالداشبورد · تبويب تاريخ لكل مقال/عميل.
-
-### 🧹 ضجيج محلي غير مرصود (احذفه متى شئت)
-- ملف تحقق مؤقت: `admin/_tmp-verify.mjs` (**احذفه — لا صلاحية حذف عندي**)
-- لقطات Playwright بجذر المستودع: `tags-list.yml` · `articles-full.yml` · `articles-list.yml` · `current-page.yml` · `edit-after-fix.yml` · `save-btn.yml`
-- صور تست: `scripts/instagram-test-output.jpg` · `scripts/test-canvas.jpg` · `scripts/test-mask.jpg`

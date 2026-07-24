@@ -205,6 +205,8 @@ async function ClientHeroBlock({ params }: ClientPageProps) {
         // Client model has no featured flag — matches the shell's runtime value.
         featured={false}
         ctaMode={client.ctaMode}
+        ctaLabel={client.ctaLabel}
+        ctaUrl={client.ctaUrl}
         user={null}
         initialIsFollowing={false}
         digitalImpact={digitalImpact}

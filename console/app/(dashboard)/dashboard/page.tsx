@@ -103,6 +103,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
+      {/* The account notice lives in the dashboard LAYOUT — it follows the client to
+          every page, so it must not be repeated here. */}
+
       {/* ─── HEADER + month summary ──────────────────────────── */}
       <header>
         <h1 className="text-2xl font-semibold leading-tight text-foreground">

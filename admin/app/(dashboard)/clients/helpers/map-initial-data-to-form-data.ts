@@ -57,6 +57,7 @@ export function mapInitialDataToFormData(
     ymylData: null,
     // Primary CTA defaults
     ctaMode: "NONE",
+    ctaPresetId: "",
     ctaLabel: "",
     ctaUrl: "",
     // Google Business Profile + Local SEO
@@ -161,6 +162,7 @@ export function mapInitialDataToFormData(
 
     // Primary CTA («احجز الآن») — admin-controlled
     ctaMode: (initialData as { ctaMode?: "NONE" | "FORM" | "LINK" | null }).ctaMode ?? "NONE",
+    ctaPresetId: (initialData as { ctaPresetId?: string | null }).ctaPresetId ?? "",
     ctaLabel: (initialData as { ctaLabel?: string | null }).ctaLabel ?? "",
     ctaUrl: (initialData as { ctaUrl?: string | null }).ctaUrl ?? "",
 
