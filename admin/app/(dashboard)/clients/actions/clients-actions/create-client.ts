@@ -146,6 +146,7 @@ export async function createClient(data: ClientFormData) {
       "subscriptionStatus",
       "paymentStatus",
       "isFeatured",
+      "isInternal",
       "gbpProfileUrl",
       "gbpPlaceId",
       "gbpAccountId",

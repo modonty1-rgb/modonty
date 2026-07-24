@@ -16,6 +16,7 @@ import {
   FileClock,
   AlertTriangle,
   CalendarClock,
+  CalendarX,
 } from "lucide-react";
 
 import {
@@ -125,7 +126,7 @@ function BillingCell({ billing }: { billing: string | null }) {
  * the card and the rows the table shows, so a card can never advertise a count the
  * table then contradicts. Clicking the active card returns to «الكل».
  */
-export type KpiKey = "total" | "active" | "inactive" | "notActivated" | "unpaid" | "expiring";
+export type KpiKey = "total" | "active" | "inactive" | "notActivated" | "unpaid" | "expired" | "expiring";
 
 const kpiTests = (expiringWindow: number): Record<KpiKey, (r: AccountRow) => boolean> => ({
   total: () => true,
@@ -133,9 +134,11 @@ const kpiTests = (expiringWindow: number): Record<KpiKey, (r: AccountRow) => boo
   inactive: (r) => r.accountStatus !== "ACTIVE",
   notActivated: (r) => r.activationTs === null,
   unpaid: (r) => r.unpaidCount > 0,
-  // Already-expired counts too: a lapsed account is the most urgent renewal there is,
-  // and leaving it out of every card is how it stays invisible.
-  expiring: (r) => r.daysLeft !== null && r.daysLeft <= expiringWindow,
+  // Split so the two states read separately (matches the dashboard cards, Khalid
+  // 2026-07-24): «منتهي» already lapsed (date in the past), «قرب الانتهاء» still has
+  // 0–N days left. Disjoint by the sign of daysLeft.
+  expired: (r) => r.daysLeft !== null && r.daysLeft < 0,
+  expiring: (r) => r.daysLeft !== null && r.daysLeft >= 0 && r.daysLeft <= expiringWindow,
 });
 
 /**
@@ -149,6 +152,7 @@ const KPI_META: { key: KpiKey; label: string; tone: string; ring: string; row: s
   { key: "inactive", label: "غير نشط", tone: "bg-slate-500/15 text-slate-600 dark:text-slate-400", ring: "ring-slate-500", row: "border-s-slate-500 bg-slate-500/[0.06]" },
   { key: "notActivated", label: "بلا مقال منشور", tone: "bg-amber-500/15 text-amber-600 dark:text-amber-400", ring: "ring-amber-500", row: "border-s-amber-500 bg-amber-500/[0.06]" },
   { key: "unpaid", label: "عليه مستحقات", tone: "bg-red-500/15 text-red-600 dark:text-red-400", ring: "ring-red-500", row: "border-s-red-500 bg-red-500/[0.07]" },
+  { key: "expired", label: "منتهي", tone: "bg-rose-500/15 text-rose-600 dark:text-rose-400", ring: "ring-rose-500", row: "border-s-rose-500 bg-rose-500/[0.07]" },
   { key: "expiring", label: "قرب الانتهاء · ٧ أيام", tone: "bg-violet-500/15 text-violet-600 dark:text-violet-400", ring: "ring-violet-500", row: "border-s-violet-500 bg-violet-500/[0.06]" },
 ];
 
@@ -161,7 +165,8 @@ const ROW_TINT = Object.fromEntries(KPI_META.map((m) => [m.key, m.row])) as Reco
  */
 function rowState(r: AccountRow, expiringWindow: number): KpiKey | null {
   if (r.unpaidCount > 0) return "unpaid";
-  if (r.daysLeft !== null && r.daysLeft <= expiringWindow) return "expiring"; // includes expired
+  if (r.daysLeft !== null && r.daysLeft < 0) return "expired";
+  if (r.daysLeft !== null && r.daysLeft <= expiringWindow) return "expiring";
   if (r.activationTs === null) return "notActivated";
   if (r.accountStatus !== "ACTIVE") return "inactive";
   return null;
@@ -173,6 +178,7 @@ const KPI_ICONS: Record<KpiKey, React.ComponentType<{ className?: string }>> = {
   inactive: PauseCircle,
   notActivated: FileClock,
   unpaid: AlertTriangle,
+  expired: CalendarX,
   expiring: CalendarClock,
 };
 
@@ -273,6 +279,7 @@ export function AccountsTable({ rows }: { rows: AccountRow[] }) {
       // or the row stops adding up. How many invoices and how much money is owed lives
       // in the red banner and in the row itself, where the detail belongs.
       unpaid: rows.filter((r) => TESTS.unpaid(r)).length,
+      expired: rows.filter((r) => TESTS.expired(r)).length,
       expiring: rows.filter((r) => TESTS.expiring(r)).length,
     }),
     [rows, TESTS],

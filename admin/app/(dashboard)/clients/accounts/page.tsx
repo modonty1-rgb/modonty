@@ -1,6 +1,7 @@
 import { Wallet } from "lucide-react";
 
 import { db } from "@/lib/db";
+import { NOT_INTERNAL } from "../segment/segments";
 
 import { AccountsTable } from "./components/accounts-table";
 import type { AccountRow } from "./components/accounts-table";
@@ -21,10 +22,13 @@ function daysLeft(end: Date | null): number | null {
 }
 
 async function getAccounts(): Promise<AccountRow[]> {
-  // Every account, no filter. PENDING used to be excluded, which made «إجمالي الحسابات»
+  // Every billable account. PENDING used to be excluded, which made «إجمالي الحسابات»
   // silently mean «كل شيء ما عدا المعلّق» — so the total equalled the active count and a
-  // waiting client was invisible on the page that exists to manage accounts.
+  // waiting client was invisible on the page that exists to manage accounts. Platform /
+  // demo accounts (isInternal) ARE excluded here: they are free by nature and don't
+  // belong in the billing hub at all.
   const clients = await db.client.findMany({
+    where: NOT_INTERNAL,
     select: {
       id: true,
       name: true,

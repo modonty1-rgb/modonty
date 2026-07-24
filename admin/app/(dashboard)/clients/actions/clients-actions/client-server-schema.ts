@@ -70,6 +70,7 @@ export const clientServerSchema = z.object({
   // Optional boolean fields
   competitiveMentionsAllowed: z.boolean().optional().nullable(),
   isFeatured: z.boolean().optional().nullable(), // featured/premium partner spotlight
+  isInternal: z.boolean().optional().nullable(), // platform/demo account — excluded from billing
 
   // Optional array fields
   sameAs: z.array(z.string()).optional(),

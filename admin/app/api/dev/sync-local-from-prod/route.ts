@@ -12,10 +12,33 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 export const maxDuration = 300; // 5 min
 
+// High-volume event/tracking collections skipped during the local sync — they are
+// pure raw-event firehoses (a row per visit/click) that GA4 already owns as the source
+// of truth, or that only exist as a footer fallback. Copying them dominated the sync
+// time (13,827 docs → ~21 min) for zero dev value: local admin/dashboard work reads GA4,
+// not these. They're recreated EMPTY locally (indexes kept) so any code that queries
+// them still returns 0 rather than erroring. Full retention/deletion decision lives in
+// the schema-review task (documents/tasks/TODO.md).
+const SKIP_COLLECTIONS = new Set<string>([
+  "page_views",          // GA4 fallback only — footer reads GA4 first
+  "article_views",       // GA4 screenPageViews covers this
+  "client_views",        // GA4 covers this
+  "analytics",           // raw per-visit; GA4 is the thermometer
+  "engagement_duration", // raw time-on-page events
+  "article_link_clicks", // raw outbound-click events
+  "cta_clicks",          // raw CTA-click events (GA4 has cta_click)
+  "shares",              // raw share events
+  "conversions",         // raw conversion events (GA4 covers funnel)
+  "campaign_tracking",   // raw UTM events
+  "lead_scoring",        // derived from events — recomputable, not source data
+  "email_events",        // raw Resend webhook log
+]);
+
 interface SseEvent {
   type:
     | "start"
     | "collection_start"
+    | "collection_skipped"
     | "doc_progress"
     | "collection_done"
     | "collection_failed"
@@ -23,6 +46,22 @@ interface SseEvent {
     | "complete"
     | "fatal";
   [key: string]: unknown;
+}
+
+// Recreate PROD indexes locally (minus the auto _id index). MongoDB rejects null for
+// unique/sparse — only bool or undefined — so those are set only when explicitly true.
+function buildIndexSpecs(prodIndexes: { name?: string; key: Record<string, number>; unique?: boolean; sparse?: boolean; expireAfterSeconds?: number | null }[]): IndexDescription[] {
+  return prodIndexes
+    .filter((idx) => idx.name !== "_id_")
+    .map((idx) => {
+      const spec: IndexDescription = { key: idx.key, name: idx.name, background: true };
+      if (idx.unique === true) spec.unique = true;
+      if (idx.sparse === true) spec.sparse = true;
+      if (idx.expireAfterSeconds !== undefined && idx.expireAfterSeconds !== null) {
+        spec.expireAfterSeconds = idx.expireAfterSeconds;
+      }
+      return spec;
+    });
 }
 
 export async function POST(_req: NextRequest) {
@@ -112,6 +151,7 @@ export async function POST(_req: NextRequest) {
 
         let totalDocs = 0;
         let successCount = 0;
+        let skippedCount = 0;
         let failedCount = 0;
         const startTime = Date.now();
 
@@ -140,42 +180,45 @@ export async function POST(_req: NextRequest) {
               .listIndexes()
               .toArray();
 
-            // 3. Stream documents from PROD → insert to LOCAL one by one
-            const cursor = prodDb.collection(collName).find({});
             const localCol = localDb.collection(collName);
 
+            // Skipped collections: recreate empty (indexes only), copy no data.
             let docCount = 0;
-            for await (const doc of cursor) {
-              await localCol.insertOne(doc);
-              docCount++;
-
-              // Progress every 100 docs (avoid spamming SSE)
-              if (docCount % 100 === 0) {
-                send({
-                  type: "doc_progress",
-                  collection: collName,
-                  docs: docCount,
-                });
+            if (SKIP_COLLECTIONS.has(collName)) {
+              const indexesToCreate = buildIndexSpecs(prodIndexes);
+              if (indexesToCreate.length > 0) {
+                await localCol.createIndexes(indexesToCreate);
               }
+              skippedCount++;
+              send({
+                type: "collection_skipped",
+                name: collName,
+                indexes: indexesToCreate.length,
+              });
+              continue;
             }
 
+            // 3. Stream documents from PROD → insert to LOCAL in batches of 500.
+            // Batched insertMany (unordered) is far faster than one insertOne per doc,
+            // which was the real bottleneck on large collections.
+            const cursor = prodDb.collection(collName).find({});
+            const BATCH = 500;
+            let batch: unknown[] = [];
+            const flush = async () => {
+              if (batch.length === 0) return;
+              await localCol.insertMany(batch as never[], { ordered: false });
+              docCount += batch.length;
+              batch = [];
+              send({ type: "doc_progress", collection: collName, docs: docCount });
+            };
+            for await (const doc of cursor) {
+              batch.push(doc);
+              if (batch.length >= BATCH) await flush();
+            }
+            await flush();
+
             // 4. Recreate indexes (skip the auto _id index)
-            // MongoDB rejects null for unique/sparse — only bool or undefined.
-            const indexesToCreate = prodIndexes
-              .filter((idx) => idx.name !== "_id_")
-              .map((idx) => {
-                const spec: IndexDescription = {
-                  key: idx.key,
-                  name: idx.name,
-                  background: true,
-                };
-                if (idx.unique === true) spec.unique = true;
-                if (idx.sparse === true) spec.sparse = true;
-                if (idx.expireAfterSeconds !== undefined && idx.expireAfterSeconds !== null) {
-                  spec.expireAfterSeconds = idx.expireAfterSeconds;
-                }
-                return spec;
-              });
+            const indexesToCreate = buildIndexSpecs(prodIndexes);
 
             if (indexesToCreate.length > 0) {
               await localCol.createIndexes(indexesToCreate);
@@ -204,6 +247,7 @@ export async function POST(_req: NextRequest) {
           type: "complete",
           collections: collections.length,
           successCount,
+          skippedCount,
           failedCount,
           totalDocs,
           durationMs: Date.now() - startTime,

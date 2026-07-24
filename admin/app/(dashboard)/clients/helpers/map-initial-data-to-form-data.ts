@@ -28,6 +28,7 @@ export function mapInitialDataToFormData(
     subscriptionStatus: "PENDING",
     paymentStatus: "PENDING",
     isFeatured: false,
+    isInternal: false,
     // Ensure all string fields have empty string defaults
     description: "",
     contactType: "",
@@ -175,5 +176,6 @@ export function mapInitialDataToFormData(
     subscriptionStatus: initialData.subscriptionStatus || "PENDING",
     paymentStatus: initialData.paymentStatus || "PENDING",
     isFeatured: (initialData as { isFeatured?: boolean }).isFeatured ?? false,
+    isInternal: (initialData as { isInternal?: boolean }).isInternal ?? false,
   };
 }

@@ -193,6 +193,7 @@ export interface ClientFormData {
   subscriptionStatus?: SubscriptionStatus;
   paymentStatus?: PaymentStatus;
   isFeatured?: boolean; // featured/premium partner spotlight (admin toggle)
+  isInternal?: boolean; // platform/demo account — excluded from billing (admin toggle)
 
   // GBP
   gbpProfileUrl?: string | null;

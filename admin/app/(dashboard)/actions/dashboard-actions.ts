@@ -3,6 +3,8 @@
 import { db } from "@/lib/db";
 import { subDays, addDays, startOfDay, startOfMonth, endOfMonth, format, parse, startOfWeek } from "date-fns";
 
+import { NOT_INTERNAL } from "../clients/segment/segments";
+
 export async function getDashboardStats() {
   try {
     const now = new Date();
@@ -190,6 +192,7 @@ export async function getDashboardAlerts() {
             lte: sevenDaysFromNow,
             not: null,
           },
+          ...NOT_INTERNAL, // platform/demo accounts never appear in a renewal alert
         },
         select: {
           id: true,
@@ -213,7 +216,7 @@ export async function getDashboardAlerts() {
         })
         .then((rows) =>
           db.client.findMany({
-            where: { id: { in: [...new Set(rows.map((r) => r.clientId))] } },
+            where: { AND: [{ id: { in: [...new Set(rows.map((r) => r.clientId))] } }, NOT_INTERNAL] },
             select: { id: true, name: true, paymentStatus: true },
             take: 10,
           })

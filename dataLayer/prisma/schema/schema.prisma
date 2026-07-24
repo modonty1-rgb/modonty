@@ -473,6 +473,12 @@ model Client {
   articlesPerMonth      Int? // Calculated from tier (can be overridden manually)
   subscriptionStatus    SubscriptionStatus @default(PENDING)
   paymentStatus         PaymentStatus      @default(PENDING)
+  // Platform's own / demo accounts (مدونتي, جبر, بسيطة…). Free by nature — excluded from
+  // every billing, renewal and money counter so they never appear as "expired" or
+  // "unpaid". Admin-controlled via a checkbox on the client edit form. OPTIONAL on
+  // purpose: legacy docs predate the field, so `isSet` (Mongo) must stay available to
+  // tell "not internal" (absent/false) from the handful marked true.
+  isInternal            Boolean?           @default(false)
 
   // Presentation — featured "premium" partner spotlight. Manual admin toggle
   // (suggested for active annual subscribers). Drives the «شركاء مميّزون» section,

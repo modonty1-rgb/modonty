@@ -179,7 +179,7 @@ export const clientFormSections: FormSectionConfig[] = [
     // subscriptionStatus/paymentStatus owned by Activate/Suspend only.
     // isFeatured («شريك مميّز») routes here so updateSettingsFields() persists it
     // (the toggle UI is rendered in the Subscription section; grouping is by field name).
-    fields: ["isFeatured"],
+    fields: ["isFeatured", "isInternal"],
     required: [],
     priority: "secondary",
     availableInCreate: false,

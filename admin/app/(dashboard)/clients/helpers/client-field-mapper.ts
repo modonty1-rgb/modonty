@@ -115,5 +115,7 @@ export function mapFormDataToClientData(data: ClientFormData) {
 
     // Featured/premium partner spotlight (admin toggle)
     isFeatured: data.isFeatured ?? false,
+    // Platform/demo account — excluded from billing (admin toggle)
+    isInternal: data.isInternal ?? false,
   };
 }

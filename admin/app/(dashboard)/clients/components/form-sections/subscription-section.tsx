@@ -29,6 +29,7 @@ export function SubscriptionSection({
   const { watch, setValue, formState: { errors } } = form;
   const subscriptionTier = watch("subscriptionTier");
   const isFeatured = watch("isFeatured");
+  const isInternal = watch("isInternal");
 
   return (
     <div className="space-y-3">
@@ -66,6 +67,21 @@ export function SubscriptionSection({
           <div className="text-[13px] font-semibold">⭐ شريك مميّز</div>
           <div className="text-[11px] text-muted-foreground mt-0.5">
             يظهر في «الشركاء المميّزون» وبشارة على الموقع · فعّلها للمشتركين سنويًا
+          </div>
+        </div>
+      </label>
+
+      {/* Internal / platform account — free by nature, excluded from every billing view */}
+      <label className="flex items-start gap-2.5 cursor-pointer">
+        <Checkbox
+          checked={isInternal ?? false}
+          className="mt-0.5"
+          onCheckedChange={(c) => setValue("isInternal", c === true, { shouldDirty: true })}
+        />
+        <div>
+          <div className="text-[13px] font-semibold">🏛️ حساب داخلي (مجاني)</div>
+          <div className="text-[11px] text-muted-foreground mt-0.5">
+            حسابات المنصة أو التجريبية (مدوّنتي، جبر…) · يُستثنى من المحاسبة والتجديد والمستحقات
           </div>
         </div>
       </label>

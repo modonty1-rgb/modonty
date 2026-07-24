@@ -136,7 +136,7 @@ export async function ClientsPipeline() {
     { value: needsYou.expired, label: "Subscription expired", note: "still live, no longer paying", href: "/clients/segment/expired", tier: "hot", icon: CalendarX },
     { value: needsYou.expiringSoon, label: "Expiring this week", note: "call them before it lapses", href: "/clients/segment/expiring-soon", tier: "hot", icon: Calendar },
     { value: needsYou.pending, label: "Waiting to be activated", note: "signed up, not switched on yet", href: "/clients/segment/pending", tier: "hot", icon: User },
-    { value: data.noEndDate, label: "Renewal date missing", note: "active, but no end date — the expiry watch cannot see them", href: "/clients/segment/no-end-date", tier: "hot", icon: CalendarX },
+    { value: data.noEndDate, label: "Renewal date missing", note: "content is live, but no renewal date — invoice never issued", href: "/clients/segment/no-end-date", tier: "hot", icon: CalendarX },
   ];
 
   // CTA modes partition every client, so these ARE a budget: form + link + none + unset = total.

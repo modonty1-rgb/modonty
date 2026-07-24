@@ -139,6 +139,7 @@ export function ClientEditWorkspace({
   const email = watch("email");
   const password = watch("password");
   const isFeatured = watch("isFeatured");
+  const isInternal = watch("isInternal");
   const phone = watch("phone");
   const contactType = watch("contactType");
   const url = watch("url");
@@ -252,6 +253,21 @@ export function ClientEditWorkspace({
                 <div className="text-sm font-semibold">⭐ شريك مميّز (Featured)</div>
                 <div className="text-[11.5px] text-muted-foreground mt-0.5">
                   يظهر في قسم «الشركاء المميّزون» وبشارة مميّزة على الموقع · فعّلها للمشتركين سنويًا
+                </div>
+              </div>
+            </label>
+
+            {/* Internal / platform account — free by nature, excluded from every billing view */}
+            <label className="mt-3 flex items-start gap-3 cursor-pointer rounded-xl border border-slate-500/30 bg-slate-500/[0.06] p-3.5">
+              <Checkbox
+                checked={isInternal ?? false}
+                className="mt-0.5"
+                onCheckedChange={(c) => setValue("isInternal", c === true, { shouldDirty: true })}
+              />
+              <div>
+                <div className="text-sm font-semibold">🏛️ حساب داخلي (مجاني)</div>
+                <div className="text-[11.5px] text-muted-foreground mt-0.5">
+                  حسابات المنصة أو التجريبية (مدوّنتي، جبر…) · يُستثنى من المحاسبة والتجديد والمستحقات
                 </div>
               </div>
             </label>

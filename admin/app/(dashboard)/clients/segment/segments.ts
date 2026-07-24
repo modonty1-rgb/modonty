@@ -85,9 +85,27 @@ interface Segment {
  */
 const MONEY_ACTION: SegmentAction = { label: "Statement", path: "account" };
 const SEO_ACTION: SegmentAction = { label: "Fix SEO", path: "seo" };
+// The contact button and the logo/hero/share images are all set on the client edit
+// workspace, so these gaps send the admin straight there with a label that says what
+// to fix — not the blind «Edit» that started this (Khalid 2026-07-24).
+const CTA_ACTION: SegmentAction = { label: "Fix CTA", path: "edit" };
+const IMAGE_ACTION: SegmentAction = { label: "Add image", path: "edit" };
 
 const live = { subscriptionStatus: SubscriptionStatus.ACTIVE };
 const inAWeek = () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+/**
+ * «Not a platform/demo account» — the money views must never show مدونتي/جبر/بسيطة as
+ * expired or unpaid (they are free by nature). The field is optional and legacy docs
+ * lack it, so — like every other Mongo optional — `{ isInternal: false }` alone matches
+ * NOTHING (absent ≠ false) and `{ not: true }` matches NOTHING either. The three-way OR
+ * is the only form that catches false + null + absent. Verified: returns all 28 before
+ * anyone is marked, 23 after the 5 internals are flagged. Spread into a `where` only when
+ * it has no other top-level OR; otherwise AND-wrap it.
+ */
+export const NOT_INTERNAL: Prisma.ClientWhereInput = {
+  OR: [{ isInternal: false }, { isInternal: null }, { isInternal: { isSet: false } }],
+};
 
 /**
  * Active clients whose subscription ends within the current calendar month — the
@@ -128,8 +146,13 @@ export type DataGapKey = "no-end-date" | "no-address" | "no-social" | "no-descri
  * subscriptionEndDate at all — a date filter can never match an absent field, so renewal
  * monitoring was blind to 81% of the book and said everything was fine).
  *
- *   end-date    → subscriptionEndDate on an ACTIVE client. Without it, `expiring-soon`
- *                 cannot see them: the silence means "unknown", never "safe".
+ *   end-date    → subscriptionEndDate on an ACTIVE client THAT HAS A PUBLISHED ARTICLE.
+ *                 The subscription clock starts at the first published article, so a
+ *                 client with none simply has not started yet — that is normal, not a
+ *                 gap. Only a client whose content is LIVE but whose renewal date is
+ *                 missing is a real admin failure (invoice never issued / data not
+ *                 filled). Mixing the two made the card blame us for clients who are
+ *                 correctly waiting to be switched on (Khalid 2026-07-24).
  *   address     → addressCity (the one address field the LocalBusiness/PostalAddress
  *                 node cannot be built without).
  *   social      → sameAs[] — what ties the client to their real-world profiles in the
@@ -140,17 +163,28 @@ export type DataGapKey = "no-end-date" | "no-address" | "no-social" | "no-descri
  * field that was never written, which is exactly the trap Prisma filters walk into.
  */
 export async function getClientDataGaps(): Promise<Record<DataGapKey, string[]>> {
-  const rows = await db.client.findMany({
-    select: {
-      id: true,
-      subscriptionStatus: true,
-      subscriptionEndDate: true,
-      addressCity: true,
-      sameAs: true,
-      description: true,
-    },
-    take: 500,
-  });
+  const [rows, publishedGroups] = await Promise.all([
+    db.client.findMany({
+      select: {
+        id: true,
+        subscriptionStatus: true,
+        subscriptionEndDate: true,
+        isInternal: true,
+        addressCity: true,
+        sameAs: true,
+        description: true,
+      },
+      take: 500,
+    }),
+    // Clients whose subscription clock has actually started (≥1 published article).
+    db.article.groupBy({
+      by: ["clientId"],
+      where: { status: ArticleStatus.PUBLISHED, datePublished: { not: null } },
+      _count: { _all: true },
+    }),
+  ]);
+
+  const hasPublished = new Set(publishedGroups.map((g) => g.clientId));
 
   const gaps: Record<DataGapKey, string[]> = {
     "no-end-date": [],
@@ -160,8 +194,15 @@ export async function getClientDataGaps(): Promise<Record<DataGapKey, string[]>>
   };
 
   for (const r of rows) {
-    // Renewal blindness only matters for the clients we are actually billing.
-    if (r.subscriptionStatus === SubscriptionStatus.ACTIVE && !r.subscriptionEndDate) {
+    // A missing renewal date is only a PROBLEM once the client's content is live —
+    // before the first published article the subscription hasn't started, so no date is
+    // expected. This is the real admin failure: article published, but no invoice/date.
+    if (
+      r.subscriptionStatus === SubscriptionStatus.ACTIVE &&
+      !r.subscriptionEndDate &&
+      hasPublished.has(r.id) &&
+      r.isInternal !== true // platform/demo accounts are free — no renewal date expected
+    ) {
       gaps["no-end-date"].push(r.id);
     }
     if (!r.addressCity?.trim()) gaps["no-address"].push(r.id);
@@ -232,26 +273,30 @@ export async function getSegment(key: string): Promise<Segment | null> {
     },
     expired: {
       title: "Subscription expired",
-      description: "Still live on the site, no longer paying.",
-      where: { subscriptionStatus: SubscriptionStatus.EXPIRED },
+      description: "Still live on the site, but the paid period ended — a renewal is overdue.",
+      // By DATE, not the status flag: nobody flips ACTIVE→EXPIRED, so the flag stays
+      // ACTIVE while the end date slips into the past. `not: null` is REQUIRED — on Mongo
+      // `{ lt: now }` also matches an ABSENT date, which would drag in the no-date clients
+      // (verified: 13 vs the real 3). Disjoint from «expiring this week» (gte: now).
+      where: { ...live, subscriptionEndDate: { lt: new Date(), not: null }, ...NOT_INTERNAL },
       action: MONEY_ACTION,
     },
     "expiring-soon": {
       title: "Expiring this week",
       description: "Call them before it lapses.",
-      where: { ...live, subscriptionEndDate: { gte: new Date(), lte: inAWeek() } },
+      where: { ...live, subscriptionEndDate: { gte: new Date(), lte: inAWeek() }, ...NOT_INTERNAL },
       action: MONEY_ACTION,
     },
     "expiring-month": {
       title: "Expiring this month",
       description: "Subscription ends this month — renew before it lapses (money).",
-      where: expiringThisMonthWhere(),
+      where: { AND: [expiringThisMonthWhere(), NOT_INTERNAL] },
       action: MONEY_ACTION,
     },
     pending: {
       title: "Waiting to be activated",
       description: "Signed up, not switched on yet.",
-      where: { subscriptionStatus: SubscriptionStatus.PENDING },
+      where: { subscriptionStatus: SubscriptionStatus.PENDING, ...NOT_INTERNAL },
       action: MONEY_ACTION,
     },
     form: {
@@ -269,6 +314,7 @@ export async function getSegment(key: string): Promise<Segment | null> {
       title: "No button at all",
       description: "The visitor has no way to reach them.",
       where: { ctaMode: ClientCtaMode.NONE },
+      action: CTA_ACTION,
     },
     unset: {
       title: "CTA never set",
@@ -276,6 +322,7 @@ export async function getSegment(key: string): Promise<Segment | null> {
         "Their record has no ctaMode field — it predates the field, and a schema push does not backfill. On the site they behave as if they had no button.",
       // Resolved below via raw MongoDB: no Prisma filter can match an absent field.
       where: {},
+      action: CTA_ACTION,
     },
     active: { title: "Active", description: "Paying and live.", where: live },
     ymyl: {
@@ -291,7 +338,7 @@ export async function getSegment(key: string): Promise<Segment | null> {
     cancelled: {
       title: "Cancelled",
       description: "They left us.",
-      where: { subscriptionStatus: SubscriptionStatus.CANCELLED },
+      where: { subscriptionStatus: SubscriptionStatus.CANCELLED, ...NOT_INTERNAL },
       action: MONEY_ACTION,
     },
     "no-articles": {
@@ -330,29 +377,33 @@ export async function getSegment(key: string): Promise<Segment | null> {
       description:
         "No logo on their record. It is what their page shows as the brand mark, and what Organization JSON-LD hands Google for the knowledge panel.",
       where: {},
+      action: IMAGE_ACTION,
     },
     "no-hero": {
       title: "No hero image",
       description: "The banner at the top of their client page is empty.",
       where: {},
+      action: IMAGE_ACTION,
     },
     "no-og": {
       title: "No share image",
       description:
         "Their published metadata carries no og:image, so every link to them — WhatsApp, X, LinkedIn — previews blank. Worth 25 points of their SEO score.",
       where: {},
+      action: IMAGE_ACTION,
     },
     "no-image": {
       title: "No image at all",
       description:
         "No logo, no hero, no share image. Their page is text on white and their links preview blank. Start here.",
       where: {},
+      action: IMAGE_ACTION,
     },
     // Record gaps — resolved to id lists below (see getClientDataGaps).
     "no-end-date": {
       title: "Renewal date missing",
       description:
-        "Active clients with no subscription end date on their record. A date filter cannot match an absent field, so these clients can NEVER appear in «Expiring this week» — the renewal watch is blind to them. Fill the date and they start being watched.",
+        "Clients whose content is LIVE (at least one published article) but who have no subscription end date — the invoice was never issued or the date was never filled. They can never show in «Expiring this week», so the renewal watch is blind to them. Clients with no published article are excluded: their subscription simply hasn't started.",
       where: {},
       action: MONEY_ACTION, // the end date lives on the account statement, not the profile form
     },
@@ -400,6 +451,7 @@ export async function getSegment(key: string): Promise<Segment | null> {
       description:
         "No working contact button: ctaMode is NONE, or the field is missing entirely. A visitor who wants them has no way in — this is the conversion leak.",
       where: {},
+      action: CTA_ACTION,
     },
   };
 
@@ -423,7 +475,12 @@ export async function getSegment(key: string): Promise<Segment | null> {
       select: { clientId: true },
       take: 500,
     });
-    return { ...segment, where: { id: { in: [...new Set(rows.map((r) => r.clientId))] } } };
+    // AND NOT_INTERNAL so a platform/demo account with an unpaid demo invoice never
+    // shows as owing money.
+    return {
+      ...segment,
+      where: { AND: [{ id: { in: [...new Set(rows.map((r) => r.clientId))] } }, NOT_INTERNAL] },
+    };
   }
 
   if (key === "no-logo" || key === "no-hero" || key === "no-og" || key === "no-image") {

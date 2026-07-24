@@ -22,9 +22,26 @@ import { useToast } from "@/hooks/use-toast";
 
 type Phase = "idle" | "confirm" | "running" | "done" | "error";
 
+// Kept in sync with SKIP_COLLECTIONS in the sync route. Shown to the user so they know
+// exactly which heavy event/fallback tables are copied EMPTY (indexes only) to save time.
+const EXCLUDED_TABLES = [
+  "page_views",
+  "article_views",
+  "client_views",
+  "analytics",
+  "engagement_duration",
+  "article_link_clicks",
+  "cta_clicks",
+  "shares",
+  "conversions",
+  "campaign_tracking",
+  "lead_scoring",
+  "email_events",
+];
+
 interface CollectionState {
   name: string;
-  status: "pending" | "running" | "done" | "failed";
+  status: "pending" | "running" | "done" | "skipped" | "failed";
   docs?: number;
   error?: string;
 }
@@ -37,6 +54,7 @@ interface ProgressState {
   collections: CollectionState[];
   totalDocs: number;
   successCount: number;
+  skippedCount: number;
   failedCount: number;
   durationMs?: number;
   fatalError?: string;
@@ -50,6 +68,7 @@ const INITIAL_PROGRESS: ProgressState = {
   collections: [],
   totalDocs: 0,
   successCount: 0,
+  skippedCount: 0,
   failedCount: 0,
 };
 
@@ -160,6 +179,15 @@ export function SyncLocalButton() {
           break;
         }
 
+        case "collection_skipped":
+          next.skippedCount += 1;
+          next.collections = next.collections.map((c) =>
+            c.name === event.name
+              ? { ...c, status: "skipped" }
+              : c
+          );
+          break;
+
         case "collection_failed":
           next.failedCount += 1;
           next.collections = next.collections.map((c) =>
@@ -239,6 +267,29 @@ export function SyncLocalButton() {
                 </span>
               </DialogDescription>
             </DialogHeader>
+
+            {/* Excluded tables — copied empty (indexes only) to save sync time */}
+            <div className="rounded-md border border-slate-500/25 bg-slate-500/[0.06] p-3">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                <Database className="h-3.5 w-3.5" />
+                جداول مُستثناة ({EXCLUDED_TABLES.length}) — تُنسخ فارغة لتوفير الوقت
+              </div>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                جداول أحداث ضخمة (صف لكل زيارة/ضغطة) مصدرها الحقيقي GA4 أو مجرد احتياطي —
+                نسخها كان يلتهم وقت المزامنة بلا فائدة للتطوير المحلي. تُنشأ فارغة (مع الفهارس)
+                فالاستعلام عليها يرجّع صفراً بلا خطأ.
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1">
+                {EXCLUDED_TABLES.map((t) => (
+                  <code
+                    key={t}
+                    className="rounded bg-slate-500/10 px-1.5 py-0.5 text-[10px] font-mono text-slate-600 dark:text-slate-400"
+                  >
+                    {t}
+                  </code>
+                ))}
+              </div>
+            </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setOpen(false)}>
                 إلغاء
@@ -305,12 +356,18 @@ export function SyncLocalButton() {
                 )}
 
                 {/* Summary */}
-                <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                <div className="grid grid-cols-4 gap-2 text-center text-xs">
                   <div className="bg-emerald-500/10 rounded-md p-2">
                     <div className="text-emerald-600 dark:text-emerald-400 text-lg font-bold">
                       {progress.successCount}
                     </div>
                     <div className="text-muted-foreground">نجح</div>
+                  </div>
+                  <div className="bg-slate-500/10 rounded-md p-2">
+                    <div className="text-slate-600 dark:text-slate-400 text-lg font-bold">
+                      {progress.skippedCount}
+                    </div>
+                    <div className="text-muted-foreground">تُخطّي</div>
                   </div>
                   <div className="bg-red-500/10 rounded-md p-2">
                     <div className="text-red-600 dark:text-red-400 text-lg font-bold">
@@ -350,6 +407,11 @@ export function SyncLocalButton() {
                               </span>
                               <CheckCircle2 className="h-3 w-3 text-emerald-500" />
                             </>
+                          )}
+                          {c.status === "skipped" && (
+                            <span className="text-[10px] font-medium text-slate-500">
+                              مُستثنى (فارغ)
+                            </span>
                           )}
                           {c.status === "failed" && (
                             <>
