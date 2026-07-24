@@ -132,7 +132,7 @@ export async function ClientsPipeline() {
   const renewalBlind = data.noEndDate;
 
   const money: Item[] = [
-    { value: needsYou.overdue, label: "Payment overdue", note: "they owe you money", href: "/clients/segment/overdue", tier: "hot", icon: Banknote },
+    { value: needsYou.overdue, label: "Unpaid invoices", note: "they owe you money", href: "/clients/segment/overdue", tier: "hot", icon: Banknote },
     { value: needsYou.expired, label: "Subscription expired", note: "still live, no longer paying", href: "/clients/segment/expired", tier: "hot", icon: CalendarX },
     { value: needsYou.expiringSoon, label: "Expiring this week", note: "call them before it lapses", href: "/clients/segment/expiring-soon", tier: "hot", icon: Calendar },
     { value: needsYou.pending, label: "Waiting to be activated", note: "signed up, not switched on yet", href: "/clients/segment/pending", tier: "hot", icon: User },

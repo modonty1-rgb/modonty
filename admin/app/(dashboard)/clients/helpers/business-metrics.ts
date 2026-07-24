@@ -59,19 +59,3 @@ export function isExpiringSoon(
   }
   return daysRemaining > 0 && daysRemaining <= days;
 }
-
-export function getClientStatus(client: ClientWithRelations): {
-  subscription: SubscriptionStatus;
-  payment: PaymentStatus;
-  isActive: boolean;
-  isPaid: boolean;
-  isOverdue: boolean;
-} {
-  return {
-    subscription: client.subscriptionStatus,
-    payment: client.paymentStatus,
-    isActive: client.subscriptionStatus === SubscriptionStatus.ACTIVE,
-    isPaid: client.paymentStatus === PaymentStatus.PAID,
-    isOverdue: client.paymentStatus === PaymentStatus.OVERDUE,
-  };
-}

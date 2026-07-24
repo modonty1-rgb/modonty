@@ -58,7 +58,19 @@ function fmt(iso: string | null): string {
   return iso ? iso.slice(0, 10) : "—";
 }
 
-export function SegmentTable({ clients }: { clients: SegmentClient[] }) {
+/** Where each row's button lands + its label — decided per-segment in segments.ts. */
+export interface SegmentRowAction {
+  label: string;
+  path: "account" | "edit" | "seo" | "technical";
+}
+
+export function SegmentTable({
+  clients,
+  action,
+}: {
+  clients: SegmentClient[];
+  action: SegmentRowAction;
+}) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("name");
   const [asc, setAsc] = useState(true);
@@ -227,10 +239,10 @@ export function SegmentTable({ clients }: { clients: SegmentClient[] }) {
                     </TableCell>
                     <TableCell className="whitespace-nowrap py-2 text-end">
                       <Link
-                        href={`/clients/${c.id}/edit`}
+                        href={`/clients/${c.id}/${action.path}`}
                         className="font-semibold text-primary hover:underline"
                       >
-                        Edit
+                        {action.label}
                       </Link>
                     </TableCell>
                   </TableRow>

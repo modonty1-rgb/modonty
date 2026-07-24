@@ -1,6 +1,5 @@
 import {
   SubscriptionStatus,
-  PaymentStatus,
   ClientCtaMode,
   ArticleStatus,
   type Prisma,
@@ -59,6 +58,9 @@ export type SegmentKey =
   | "seo-perfect"
   | "unreachable";
 
+/** Where a row's action button lands — the page where THIS segment's problem is fixed. */
+export type SegmentAction = { label: string; path: "account" | "edit" | "seo" | "technical" };
+
 interface Segment {
   title: string;
   description: string;
@@ -67,7 +69,22 @@ interface Segment {
   // live in `where`. When set, the segment page keeps only clients on this side of 100
   // AFTER scoring — the exact split the dashboard count uses, so list === number.
   scoreFilter?: "perfect" | "imperfect";
+  /** Defaults to «Open · edit». Set it wherever the fix lives somewhere else. */
+  action?: SegmentAction;
 }
+
+/**
+ * A segment answers «who has this problem»; its action has to answer «where do I fix it».
+ * Sending every row to the generic edit form made the money segments a dead end — you
+ * landed on a profile form with no invoice in sight (Khalid 2026-07-24). So each family
+ * points at its own repair bench:
+ *
+ *   money (unpaid · expired · expiring · pending) → the account statement
+ *   reach + content + data gaps                    → the client edit form
+ *   SEO score + description                        → the SEO workspace
+ */
+const MONEY_ACTION: SegmentAction = { label: "Statement", path: "account" };
+const SEO_ACTION: SegmentAction = { label: "Fix SEO", path: "seo" };
 
 const live = { subscriptionStatus: SubscriptionStatus.ACTIVE };
 const inAWeek = () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
@@ -206,29 +223,36 @@ export async function getClientImageGaps(): Promise<Record<ImageGapKey, string[]
 export async function getSegment(key: string): Promise<Segment | null> {
   const segments: Record<SegmentKey, Segment> = {
     overdue: {
-      title: "Payment overdue",
-      description: "They owe you money.",
-      where: { paymentStatus: PaymentStatus.OVERDUE },
+      title: "Unpaid invoices",
+      description: "They have at least one invoice still outstanding.",
+      // Resolved from the invoices below — `Client.paymentStatus` is never written
+      // OVERDUE by anything, so this page listed nothing while the card counted two.
+      where: {},
+      action: MONEY_ACTION,
     },
     expired: {
       title: "Subscription expired",
       description: "Still live on the site, no longer paying.",
       where: { subscriptionStatus: SubscriptionStatus.EXPIRED },
+      action: MONEY_ACTION,
     },
     "expiring-soon": {
       title: "Expiring this week",
       description: "Call them before it lapses.",
       where: { ...live, subscriptionEndDate: { gte: new Date(), lte: inAWeek() } },
+      action: MONEY_ACTION,
     },
     "expiring-month": {
       title: "Expiring this month",
       description: "Subscription ends this month — renew before it lapses (money).",
       where: expiringThisMonthWhere(),
+      action: MONEY_ACTION,
     },
     pending: {
       title: "Waiting to be activated",
       description: "Signed up, not switched on yet.",
       where: { subscriptionStatus: SubscriptionStatus.PENDING },
+      action: MONEY_ACTION,
     },
     form: {
       title: "Booking form",
@@ -268,6 +292,7 @@ export async function getSegment(key: string): Promise<Segment | null> {
       title: "Cancelled",
       description: "They left us.",
       where: { subscriptionStatus: SubscriptionStatus.CANCELLED },
+      action: MONEY_ACTION,
     },
     "no-articles": {
       title: "No articles at all",
@@ -329,23 +354,27 @@ export async function getSegment(key: string): Promise<Segment | null> {
       description:
         "Active clients with no subscription end date on their record. A date filter cannot match an absent field, so these clients can NEVER appear in «Expiring this week» — the renewal watch is blind to them. Fill the date and they start being watched.",
       where: {},
+      action: MONEY_ACTION, // the end date lives on the account statement, not the profile form
     },
     "no-address": {
       title: "No address",
       description:
         "No city on their record. Their JSON-LD cannot carry a PostalAddress, so Google gets no location for them — and local search is where their customers are.",
       where: {},
+      action: SEO_ACTION,
     },
     "no-social": {
       title: "No social links",
       description:
         "Empty sameAs. Nothing ties their page to their real profiles, so the knowledge graph never connects the two.",
       where: {},
+      action: SEO_ACTION,
     },
     "no-description": {
       title: "No description",
       description: "No Organization description — their JSON-LD says who they are and nothing about them.",
       where: {},
+      action: SEO_ACTION,
     },
     // SEO health of EVERY client, any status (Khalid 2026-07-23: a client is a client —
     // the only question is whether it has an SEO problem). where:{} = same all-client scope
@@ -356,6 +385,7 @@ export async function getSegment(key: string): Promise<Segment | null> {
         "Any client that isn't a perfect 100 on the shared SEO rubric (meta + JSON-LD). Open each to see which checks are missing — most are the client's own data (logo, description, contact).",
       where: {},
       scoreFilter: "imperfect",
+      action: SEO_ACTION,
     },
     "seo-perfect": {
       title: "Clients with perfect SEO",
@@ -379,6 +409,21 @@ export async function getSegment(key: string): Promise<Segment | null> {
   if (key === "unset") {
     const ids = await getClientIdsMissingCtaMode();
     return { ...segment, where: { id: { in: ids } } };
+  }
+
+  // Same rule as the dashboard counter and the Accounts page: the invoices are the
+  // truth. Archived invoices are void, and `archivedAt: null` alone matches nothing on
+  // Mongo for rows written before that field existed — both forms have to be asked for.
+  if (key === "overdue") {
+    const rows = await db.invoice.findMany({
+      where: {
+        NOT: { paymentStatus: "PAID" },
+        OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
+      },
+      select: { clientId: true },
+      take: 500,
+    });
+    return { ...segment, where: { id: { in: [...new Set(rows.map((r) => r.clientId))] } } };
   }
 
   if (key === "no-logo" || key === "no-hero" || key === "no-og" || key === "no-image") {

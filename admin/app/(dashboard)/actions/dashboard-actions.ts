@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { subDays, addDays, startOfDay, endOfDay, startOfMonth, endOfMonth, format, parse, startOfWeek } from "date-fns";
+import { subDays, addDays, startOfDay, startOfMonth, endOfMonth, format, parse, startOfWeek } from "date-fns";
 
 export async function getDashboardStats() {
   try {
@@ -169,105 +169,6 @@ export async function getStatusBreakdown() {
   }
 }
 
-export async function getSubscriptionHealth() {
-  try {
-    const now = new Date();
-    const sevenDaysFromNow = addDays(now, 7);
-    const oneDayFromNow = addDays(now, 1);
-    const threeDaysFromNow = addDays(now, 3);
-
-    const [
-      activeSubscriptions,
-      expiredSubscriptions,
-      cancelledSubscriptions,
-      pendingSubscriptions,
-      expiringIn7Days,
-      expiringIn3Days,
-      expiringIn1Day,
-      paidPayments,
-      pendingPayments,
-      overduePayments,
-      tierDistribution,
-    ] = await Promise.all([
-      db.client.count({ where: { subscriptionStatus: "ACTIVE" } }),
-      db.client.count({ where: { subscriptionStatus: "EXPIRED" } }),
-      db.client.count({ where: { subscriptionStatus: "CANCELLED" } }),
-      db.client.count({ where: { subscriptionStatus: "PENDING" } }),
-      db.client.count({
-        where: {
-          subscriptionStatus: "ACTIVE",
-          subscriptionEndDate: {
-            gte: startOfDay(now),
-            lte: sevenDaysFromNow,
-            not: null,
-          },
-        },
-      }),
-      db.client.count({
-        where: {
-          subscriptionStatus: "ACTIVE",
-          subscriptionEndDate: {
-            gte: startOfDay(now),
-            lte: threeDaysFromNow,
-            not: null,
-          },
-        },
-      }),
-      db.client.count({
-        where: {
-          subscriptionStatus: "ACTIVE",
-          subscriptionEndDate: {
-            gte: startOfDay(now),
-            lte: oneDayFromNow,
-            not: null,
-          },
-        },
-      }),
-      db.client.count({ where: { paymentStatus: "PAID" } }),
-      db.client.count({ where: { paymentStatus: "PENDING" } }),
-      db.client.count({ where: { paymentStatus: "OVERDUE" } }),
-      db.client.groupBy({
-        by: ["subscriptionTier"],
-        _count: {
-          _all: true,
-        },
-      }),
-    ]);
-
-    return {
-      subscriptions: {
-        active: activeSubscriptions,
-        expired: expiredSubscriptions,
-        cancelled: cancelledSubscriptions,
-        pending: pendingSubscriptions,
-      },
-      expiring: {
-        in7Days: expiringIn7Days,
-        in3Days: expiringIn3Days,
-        in1Day: expiringIn1Day,
-      },
-      payments: {
-        paid: paidPayments,
-        pending: pendingPayments,
-        overdue: overduePayments,
-      },
-      tierDistribution: tierDistribution
-        .filter((t) => t.subscriptionTier !== null)
-        .map((t) => ({
-          tier: t.subscriptionTier,
-          count: t._count._all,
-        })),
-    };
-  } catch (error) {
-    console.error("Error fetching subscription health:", error);
-    return {
-      subscriptions: { active: 0, expired: 0, cancelled: 0, pending: 0 },
-      expiring: { in7Days: 0, in3Days: 0, in1Day: 0 },
-      payments: { paid: 0, pending: 0, overdue: 0 },
-      tierDistribution: [],
-    };
-  }
-}
 
 export async function getDashboardAlerts() {
   try {
@@ -298,15 +199,25 @@ export async function getDashboardAlerts() {
         orderBy: { subscriptionEndDate: "asc" },
         take: 10,
       }),
-      db.client.findMany({
-        where: { paymentStatus: "OVERDUE" },
-        select: {
-          id: true,
-          name: true,
-          paymentStatus: true,
-        },
-        take: 10,
-      }),
+      // Clients carrying an outstanding invoice. `Client.paymentStatus` is never written
+      // OVERDUE by any code path, so filtering on it listed nobody — the invoices are the
+      // truth (same rule as the counter, the Accounts page and the segment).
+      db.invoice
+        .findMany({
+          where: {
+            NOT: { paymentStatus: "PAID" },
+            OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
+          },
+          select: { clientId: true },
+          take: 500,
+        })
+        .then((rows) =>
+          db.client.findMany({
+            where: { id: { in: [...new Set(rows.map((r) => r.clientId))] } },
+            select: { id: true, name: true, paymentStatus: true },
+            take: 10,
+          })
+        ),
       db.client.findMany({
         where: { subscriptionStatus: "EXPIRED" },
         select: {
@@ -388,301 +299,8 @@ export async function getDashboardAlerts() {
   }
 }
 
-export async function getMonthlyDeliveryStats() {
-  try {
-    const now = new Date();
-    const startOfCurrentMonth = startOfMonth(now);
 
-    const activeClients = await db.client.findMany({
-      where: {
-        subscriptionStatus: "ACTIVE",
-        articlesPerMonth: { not: null },
-      },
-      select: {
-        id: true,
-        name: true,
-        articlesPerMonth: true,
-      },
-    });
 
-    const endOfCurrentMonth = endOfMonth(now);
-
-    const deliveryStats = await Promise.all(
-      activeClients.map(async (client) => {
-        const [publishedThisMonth, scheduledThisMonth] = await Promise.all([
-          db.article.count({
-            where: {
-              clientId: client.id,
-              status: "PUBLISHED",
-              datePublished: {
-                gte: startOfCurrentMonth,
-                lte: endOfCurrentMonth,
-                not: null,
-              },
-            },
-          }),
-          db.article.count({
-            where: {
-              clientId: client.id,
-              status: "SCHEDULED",
-              scheduledAt: {
-                gte: startOfCurrentMonth,
-                lte: endOfCurrentMonth,
-                not: null,
-              },
-            },
-          }),
-        ]);
-
-        const articlesThisMonth = publishedThisMonth + scheduledThisMonth;
-
-        return {
-          clientId: client.id,
-          clientName: client.name,
-          articlesPerMonth: client.articlesPerMonth || 0,
-          articlesDelivered: articlesThisMonth,
-          remaining: Math.max(0, (client.articlesPerMonth || 0) - articlesThisMonth),
-          isAtLimit: (client.articlesPerMonth || 0) <= articlesThisMonth,
-        };
-      })
-    );
-
-    const totalDelivered = deliveryStats.reduce(
-      (sum, stat) => sum + stat.articlesDelivered,
-      0
-    );
-    const totalLimit = deliveryStats.reduce(
-      (sum, stat) => sum + stat.articlesPerMonth,
-      0
-    );
-    const clientsAtLimit = deliveryStats.filter((stat) => stat.isAtLimit).length;
-
-    return {
-      stats: deliveryStats.sort((a, b) => b.articlesDelivered - a.articlesDelivered),
-      summary: {
-        totalDelivered,
-        totalLimit,
-        clientsAtLimit,
-        totalClients: deliveryStats.length,
-      },
-    };
-  } catch (error) {
-    console.error("Error fetching monthly delivery stats:", error);
-    return {
-      stats: [],
-      summary: {
-        totalDelivered: 0,
-        totalLimit: 0,
-        clientsAtLimit: 0,
-        totalClients: 0,
-      },
-    };
-  }
-}
-
-export async function getClientHealth() {
-  try {
-    const now = new Date();
-    const sevenDaysFromNow = addDays(now, 7);
-    const thirtyDaysAgo = startOfDay(subDays(now, 30));
-    const sixtyDaysAgo = startOfDay(subDays(now, 60));
-
-    const [
-      activeClients,
-      clientsNeedingAttention,
-      topClientsByArticles,
-      clientsLastMonth,
-      clientsLastPeriod,
-    ] = await Promise.all([
-      db.client.count({ where: { subscriptionStatus: "ACTIVE" } }),
-      db.client.findMany({
-        where: {
-          OR: [
-            {
-              subscriptionStatus: "ACTIVE",
-              subscriptionEndDate: {
-                lte: sevenDaysFromNow,
-                not: null,
-              },
-            },
-            { paymentStatus: "OVERDUE" },
-            { subscriptionStatus: "EXPIRED" },
-          ],
-        },
-        select: {
-          id: true,
-          name: true,
-          subscriptionStatus: true,
-          paymentStatus: true,
-          subscriptionEndDate: true,
-        },
-        take: 10,
-      }),
-      db.client.findMany({
-        select: {
-          id: true,
-          name: true,
-          _count: { select: { articles: true } },
-        },
-        take: 50,
-      }),
-      db.client.count({
-        where: { createdAt: { gte: thirtyDaysAgo } },
-      }),
-      db.client.count({
-        where: {
-          createdAt: {
-            gte: sixtyDaysAgo,
-            lt: thirtyDaysAgo,
-          },
-        },
-      }),
-    ]);
-
-    const calculateTrend = (current: number, previous: number) => {
-      if (previous === 0) return current > 0 ? 100 : 0;
-      return ((current - previous) / previous) * 100;
-    };
-
-    const sortedTopClients = topClientsByArticles
-      .sort((a, b) => b._count.articles - a._count.articles)
-      .slice(0, 5)
-      .map((client) => ({
-        id: client.id,
-        name: client.name,
-        articleCount: client._count.articles,
-      }));
-
-    return {
-      activeClients,
-      clientsNeedingAttention,
-      topClientsByArticles: sortedTopClients,
-      growthTrend: calculateTrend(clientsLastMonth, clientsLastPeriod),
-    };
-  } catch (error) {
-    console.error("Error fetching client health:", error);
-    return {
-      activeClients: 0,
-      clientsNeedingAttention: [],
-      topClientsByArticles: [],
-      growthTrend: 0,
-    };
-  }
-}
-
-// TODO: ENHANCEMENT NEEDED - Recent Activity Accuracy
-// Currently, "subscription_updated" and "payment_updated" activities are inferred from
-// clients with recent `updatedAt` timestamps, which may include updates for other reasons.
-// Enhancement: Track actual subscription/payment status changes by:
-// 1. Adding an ActivityLog model to track specific events, OR
-// 2. Comparing previous vs current status values, OR
-// 3. Using dedicated timestamp fields (e.g., subscriptionUpdatedAt, paymentUpdatedAt)
-// This will ensure only actual subscription/payment changes appear in the activity feed.
-//
-// TODO: RECHECK NEEDED - Recent Activity Data Validation
-// Verify that all activity data shown is accurate and reflects actual system events.
-// Recheck the logic for determining what appears in the activity feed to ensure
-// it matches user expectations and business requirements.
-export async function getRecentActivity() {
-  try {
-    const [
-      recentArticles,
-      recentClients,
-      recentSubscriptions,
-      recentPayments,
-    ] = await Promise.all([
-      db.article.findMany({
-        where: { status: "PUBLISHED" },
-        orderBy: { datePublished: "desc" },
-        take: 5,
-        select: {
-          id: true,
-          title: true,
-          datePublished: true,
-          client: { select: { name: true } },
-        },
-      }),
-      db.client.findMany({
-        orderBy: { createdAt: "desc" },
-        take: 5,
-        select: {
-          id: true,
-          name: true,
-          createdAt: true,
-        },
-      }),
-      db.client.findMany({
-        where: {
-          OR: [
-            { subscriptionStatus: "ACTIVE" },
-            { subscriptionStatus: "EXPIRED" },
-          ],
-        },
-        orderBy: { updatedAt: "desc" },
-        take: 5,
-        select: {
-          id: true,
-          name: true,
-          subscriptionStatus: true,
-          subscriptionEndDate: true,
-          updatedAt: true,
-        },
-      }),
-      db.client.findMany({
-        where: {
-          paymentStatus: { in: ["PAID", "OVERDUE"] },
-        },
-        orderBy: { updatedAt: "desc" },
-        take: 5,
-        select: {
-          id: true,
-          name: true,
-          paymentStatus: true,
-          updatedAt: true,
-        },
-      }),
-    ]);
-
-    const activities = [
-      ...recentArticles.map((article) => ({
-        type: "article_published" as const,
-        id: article.id,
-        title: article.title,
-        clientName: article.client.name,
-        timestamp: article.datePublished || new Date(),
-        link: `/articles/${article.id}`,
-      })),
-      ...recentClients.map((client) => ({
-        type: "client_created" as const,
-        id: client.id,
-        title: client.name,
-        timestamp: client.createdAt,
-        link: `/clients/${client.id}`,
-      })),
-      ...recentSubscriptions.map((client) => ({
-        type: "subscription_updated" as const,
-        id: client.id,
-        title: client.name,
-        status: client.subscriptionStatus,
-        timestamp: client.updatedAt,
-        link: `/clients/${client.id}`,
-      })),
-      ...recentPayments.map((client) => ({
-        type: "payment_updated" as const,
-        id: client.id,
-        title: client.name,
-        status: client.paymentStatus,
-        timestamp: client.updatedAt,
-        link: `/clients/${client.id}`,
-      })),
-    ];
-
-    return activities.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 10);
-  } catch (error) {
-    console.error("Error fetching recent activity:", error);
-    return [];
-  }
-}
 
 export async function getArticlesTrendData() {
   try {
