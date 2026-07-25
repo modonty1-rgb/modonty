@@ -11,6 +11,7 @@ import { ArticlesPipeline } from "./components/sections/articles-pipeline";
 import { ClientsPipeline } from "./components/sections/clients-pipeline";
 import { MembersPipeline } from "./components/sections/members-pipeline";
 import { SubscribersPipeline } from "./components/sections/subscribers-pipeline";
+import { NewsletterPipeline } from "./components/sections/newsletter-pipeline";
 import { MediaLibrary } from "./components/sections/media-library";
 import { ReferenceData } from "./components/sections/reference-data";
 
@@ -82,10 +83,16 @@ export default async function DashboardPage() {
         </Suspense>
       </section>
 
-      {/* 6 · The newsletter audience clients are building */}
+      {/* 6 · Subscribers — per-client audience + Modonty's own newsletter (distinct sources) */}
       <section id="sec-subscribers" className="scroll-mt-24">
         <Suspense fallback={<Skeleton className="h-40 w-full" />}>
           <SubscribersPipeline />
+        </Suspense>
+      </section>
+
+      <section id="sec-newsletter" className="scroll-mt-24">
+        <Suspense fallback={<Skeleton className="h-40 w-full" />}>
+          <NewsletterPipeline />
         </Suspense>
       </section>
 
