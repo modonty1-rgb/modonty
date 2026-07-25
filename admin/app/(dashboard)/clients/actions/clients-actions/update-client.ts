@@ -9,6 +9,7 @@ import { mapFormDataToClientData } from "../../helpers/client-field-mapper";
 import { clientServerSchema } from "./client-server-schema";
 import { groupFieldsByTab } from "../../helpers/group-fields-by-tab";
 import {
+  updateSubscriptionFields,
   updateRequiredFields,
   updateBusinessFields,
   updateContactFields,
@@ -89,6 +90,7 @@ export async function updateClient(id: string, data: ClientFormData) {
     // see "old value → null" and persist the clear.
     const results = await Promise.all([
       updateRequiredFields(id, groupedData.required),
+      updateSubscriptionFields(id, groupedData.subscription),
       updateBusinessFields(id, groupedData.business),
       updateContactFields(id, groupedData.contact),
       updateAddressFields(id, groupedData.address),

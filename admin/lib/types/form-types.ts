@@ -171,6 +171,7 @@ export interface ClientFormData {
   description?: string | null;
   businessBrief?: string;
   industryId?: string | null;
+  salesRepId?: string | null;
   targetAudience?: string;
   contentPriorities?: string[];
   foundingDate?: Date | null;
@@ -194,6 +195,11 @@ export interface ClientFormData {
   paymentStatus?: PaymentStatus;
   isFeatured?: boolean; // featured/premium partner spotlight (admin toggle)
   isInternal?: boolean; // platform/demo account — excluded from billing (admin toggle)
+  billingCycle?: "monthly" | "annual"; // client-owned billing period (drives invoice period)
+
+  // Opening balance (CREATE only) — the founding payment, persisted on Client.openingBalance.
+  // Auto-filled from tier × billingCycle but editable; mandatory for a billable client.
+  openingBalance?: number | null;
 
   // GBP
   gbpProfileUrl?: string | null;

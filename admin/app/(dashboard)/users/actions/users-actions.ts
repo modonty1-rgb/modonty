@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
+import { StaffRole } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
 
@@ -20,17 +21,44 @@ function optimizeAvatarUrl(url: string | undefined | null): string | null {
 export async function getUsers() {
   try {
     const users = await db.staff.findMany({
-      where: { role: "ADMIN" },
       select: {
         id: true,
         name: true,
         email: true,
         image: true,
+        role: true,
+        isActive: true,
         createdAt: true,
       },
       orderBy: { createdAt: "desc" },
     });
-    return users;
+
+    // Per-staff audit-log activity count — one grouped query, mapped onto each row.
+    const grouped = await db.auditLog.groupBy({
+      by: ["userId"],
+      where: { userId: { in: users.map((u) => u.id) } },
+      _count: { _all: true },
+    });
+    const countByUser = new Map(grouped.map((g) => [g.userId, g._count._all]));
+
+    return users.map((u) => ({ ...u, logCount: countByUser.get(u.id) ?? 0 }));
+  } catch {
+    return [];
+  }
+}
+
+/** Active sales reps — for the "Sales rep" dropdown on the client create/edit forms. */
+export async function getSalesReps(): Promise<Array<{ id: string; name: string }>> {
+  try {
+    const reps = await db.staff.findMany({
+      where: {
+        role: "SALES",
+        OR: [{ isActive: true }, { isActive: null }, { isActive: { isSet: false } }],
+      },
+      select: { id: true, name: true, email: true },
+      orderBy: { name: "asc" },
+    });
+    return reps.map((r) => ({ id: r.id, name: r.name || r.email || "Sales rep" }));
   } catch {
     return [];
   }
@@ -45,6 +73,8 @@ export async function getUserById(id: string) {
         name: true,
         email: true,
         image: true,
+        role: true,
+        isActive: true,
         createdAt: true,
       },
     });
@@ -58,6 +88,8 @@ export async function createUser(data: {
   email?: string;
   password?: string;
   image?: string;
+  role?: StaffRole;
+  isActive?: boolean;
 }) {
   try {
     const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
@@ -70,13 +102,15 @@ export async function createUser(data: {
       return { success: false, error: "This email is already registered" };
     }
 
+    const role: StaffRole = data.role ?? "ADMIN";
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const created = await db.staff.create({
       data: {
         name: data.name,
         email: data.email,
         password: hashedPassword,
-        role: "ADMIN",
+        role,
+        isActive: data.isActive ?? true,
         image: optimizeAvatarUrl(data.image),
       },
     });
@@ -87,7 +121,7 @@ export async function createUser(data: {
       entity: "Staff",
       entityId: created.id,
       summary: `${data.name} (${data.email})`,
-      metadata: { role: "ADMIN" },
+      metadata: { role },
     });
 
     revalidatePath("/users");
@@ -104,6 +138,8 @@ export async function updateUser(
     email?: string;
     password?: string;
     image?: string;
+    role?: StaffRole;
+    isActive?: boolean;
   }
 ) {
   try {
@@ -120,11 +156,16 @@ export async function updateUser(
       email?: string;
       image?: string | null;
       password?: string;
+      role?: StaffRole;
+      isActive?: boolean;
     } = {
       name: data.name,
       email: data.email,
       image: optimizeAvatarUrl(data.image),
     };
+
+    if (data.role) updateData.role = data.role;
+    if (data.isActive !== undefined) updateData.isActive = data.isActive;
 
     if (data.password) {
       updateData.password = await bcrypt.hash(data.password, 10);

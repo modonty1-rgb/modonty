@@ -41,6 +41,7 @@ export function mapFormDataToClientData(data: ClientFormData) {
     // Business Information
     businessBrief: data.businessBrief || null,
     industryId: data.industryId || null,
+    salesRepId: data.salesRepId || null,
     targetAudience: data.targetAudience || null,
     contentPriorities: data.contentPriorities || [],
     foundingDate: data.foundingDate || null,
@@ -117,5 +118,6 @@ export function mapFormDataToClientData(data: ClientFormData) {
     isFeatured: data.isFeatured ?? false,
     // Platform/demo account — excluded from billing (admin toggle)
     isInternal: data.isInternal ?? false,
+    billingCycle: data.billingCycle ?? "annual",
   };
 }

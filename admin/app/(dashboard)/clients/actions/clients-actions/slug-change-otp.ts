@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { slugify } from "@/lib/utils";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { logAction } from "@/lib/audit/log-action";
 import { generateClientSEO } from "./generate-client-seo";
 import { randomInt } from "crypto";
 
@@ -131,6 +132,12 @@ export async function verifyAndChangeSlug(
 
   // Regenerate JSON-LD + metadata (contains embedded slug)
   await generateClientSEO(clientId);
+
+  await logAction("client.slugChange", {
+    entity: "Client",
+    entityId: clientId,
+    summary: `${newNameTrimmed} (${oldSlug} → ${newSlug})`,
+  });
 
   // Revalidate old + new paths
   revalidatePath(`/clients/${oldSlug}`);

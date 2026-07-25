@@ -46,6 +46,34 @@ export type AuditAction =
   | "user.update"
   | "user.delete"
   | "settings.update"
+  // 💰 Money — the ledger. Every one of these moves what a client owes or has paid.
+  | "invoice.create"
+  | "invoice.paid"
+  | "invoice.archive"
+  | "invoice.send"
+  // 🟠 Client lifecycle + assets (each changes what a client shows or whether they're live)
+  | "client.activate"
+  | "client.suspend"
+  | "client.seo"
+  | "client.logo"
+  | "client.hero"
+  | "client.verification"
+  | "client.slugChange"
+  // 🖼️ Media (images)
+  | "media.create"
+  | "media.update"
+  | "media.seo"
+  // 📚 Reference content — each carries its own SEO/JSON-LD, so edits matter
+  | "category.create"
+  | "category.update"
+  | "tag.create"
+  | "tag.update"
+  | "author.create"
+  | "author.update"
+  | "author.delete"
+  | "industry.create"
+  | "industry.update"
+  | "industry.delete"
   // 🟡 Touches everything at once
   | "database.maintenance"
   | "seo.cascade";
@@ -59,6 +87,9 @@ export type AuditEntity =
   | "ContactMessage"
   | "User"
   | "Staff"
+  | "Invoice"
+  | "Author"
+  | "Industry"
   | "Settings"
   | "Database"
   | "Seo";

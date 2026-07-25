@@ -37,6 +37,7 @@ export const authConfig = {
                 name: staffRow.name,
                 password: staffRow.password,
                 role: staffRow.role as string,
+                isActive: staffRow.isActive,
               }
             : null;
 
@@ -72,13 +73,17 @@ export const authConfig = {
             return null;
           }
 
-          // ADMIN-ONLY GATE: this panel is staff-only. Registered visitors
-          // (role EDITOR) and the dead CLIENT value must never get an admin
-          // session, even with a valid password. Fail closed on any non-ADMIN.
-          if (user.role !== "ADMIN") {
-            console.error("[Auth] Login rejected: not an admin —", user.role);
+          // Employment gate: a staff member who has left (isActive === false) keeps
+          // their record + history but can no longer sign in. Absent/null = active.
+          if (user.isActive === false) {
+            console.error("[Auth] Login rejected: account is inactive —", email);
             return null;
           }
+
+          // The panel authenticates against `staff` only, so any successful login
+          // is a real team member. Access is by employment status (above), not role —
+          // roles (Admin/Editor/Creative/Social/Sales) classify the work, they don't
+          // gate the door. Granular per-role permissions are a separate feature.
 
           console.log("[Auth] Login successful for:", email);
           // Only return minimal user data to avoid ERR_RESPONSE_HEADERS_TOO_BIG

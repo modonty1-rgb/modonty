@@ -4,11 +4,11 @@ import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import NextImage from "next/image";
 import { Link2, RefreshCw, Pencil, ImageIcon } from "lucide-react";
+import { SubscriptionTier } from "@prisma/client";
 
 import { FormInput, FormField, FormSelect, FormNativeSelect, FormTextarea } from "@/components/admin/form-field";
 import { SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   ORGANIZATION_TYPES,
   type OrganizationType,
@@ -20,6 +20,7 @@ import { SocialProfilesInput } from "../social-profiles-input";
 import { SlugChangeDialog } from "../slug-change-dialog";
 import { YmylSection } from "../form-sections/ymyl-section";
 import { CtaSection } from "../form-sections/cta-section";
+import { SubscriptionSection } from "../form-sections/subscription-section";
 import { BusinessBriefSection } from "../form-sections/business-brief-section";
 import { EditLeftPanel } from "./edit-left-panel";
 
@@ -31,10 +32,13 @@ interface ClientEditWorkspaceProps {
   form: UseFormReturn<ClientFormSchemaType>;
   initialData?: Partial<ClientWithRelations>;
   industries: Array<{ id: string; name: string }>;
+  salesReps?: Array<{ id: string; name: string }>;
   clients: Array<{ id: string; name: string; slug: string }>;
   countries: Array<{ code: string; nameAr: string; nameEn: string }>;
   /** Active CTA buttons from Settings → Dropdown Lists — feeds the picker in CtaSection. */
   ctaPresets: Array<{ id: string; labelAr: string; mode: "FORM" | "LINK"; defaultUrl: string | null }>;
+  /** Named subscription tiers — feeds the tier selector (subscription is client-owned). */
+  tierConfigs?: Array<{ id: string; tier: SubscriptionTier; name: string; articlesPerMonth: number; price: number; isPopular: boolean; pricing?: unknown }>;
   clientId?: string;
   seoScore: number;
   seoChecks: SeoCheck[];
@@ -48,13 +52,24 @@ interface ClientEditWorkspaceProps {
 
 const ZONES = [
   { id: "z-account", label: "Account & Access" },
+  { id: "z-financial", label: "القسم المالي" },
   { id: "z-contact", label: "Contact & Classification" },
   { id: "z-media", label: "Verification" },
   { id: "z-seo", label: "SEO" },
   { id: "z-advanced", label: "Advanced" },
 ] as const;
 
-function ZoneHeader({ index, title, hint, id }: { index: number; title: string; hint: string; id: string }) {
+function ZoneHeader({
+  index,
+  title,
+  hint,
+  id,
+}: {
+  index: number;
+  title: string;
+  hint: string;
+  id: string;
+}) {
   return (
     <div id={id} className="flex items-center gap-3 mb-4 scroll-mt-4">
       <span className="h-7 w-7 grid place-items-center rounded-lg bg-primary/10 text-primary text-sm font-bold tabular-nums">
@@ -118,9 +133,11 @@ export function ClientEditWorkspace({
   form,
   initialData,
   industries,
+  salesReps = [],
   clients,
   countries,
   ctaPresets,
+  tierConfigs = [],
   clientId,
   seoScore,
   seoChecks,
@@ -138,8 +155,6 @@ export function ClientEditWorkspace({
   const slug = watch("slug");
   const email = watch("email");
   const password = watch("password");
-  const isFeatured = watch("isFeatured");
-  const isInternal = watch("isInternal");
   const phone = watch("phone");
   const contactType = watch("contactType");
   const url = watch("url");
@@ -173,8 +188,6 @@ export function ClientEditWorkspace({
         countryName={countryName}
         isVerified={Boolean(currentVerificationUrl)}
         articleCount={(initialData as { _count?: { articles?: number } } | undefined)?._count?.articles ?? 0}
-        seoScore={seoScore}
-        seoChecks={seoChecks}
         subscriptionLabel={subscriptionLabel}
         subscriptionStatus={(initialData as { subscriptionStatus?: string | null } | undefined)?.subscriptionStatus}
         clientId={clientId}
@@ -242,36 +255,6 @@ export function ClientEditWorkspace({
               />
             </div>
 
-            {/* Featured/premium spotlight — manual toggle (suggest ON for annual subscribers) */}
-            <label className="mt-4 flex items-start gap-3 cursor-pointer rounded-xl border border-amber-500/30 bg-amber-500/[0.06] p-3.5">
-              <Checkbox
-                checked={isFeatured ?? false}
-                className="mt-0.5"
-                onCheckedChange={(c) => setValue("isFeatured", c === true, { shouldDirty: true })}
-              />
-              <div>
-                <div className="text-sm font-semibold">⭐ شريك مميّز (Featured)</div>
-                <div className="text-[11.5px] text-muted-foreground mt-0.5">
-                  يظهر في قسم «الشركاء المميّزون» وبشارة مميّزة على الموقع · فعّلها للمشتركين سنويًا
-                </div>
-              </div>
-            </label>
-
-            {/* Internal / platform account — free by nature, excluded from every billing view */}
-            <label className="mt-3 flex items-start gap-3 cursor-pointer rounded-xl border border-slate-500/30 bg-slate-500/[0.06] p-3.5">
-              <Checkbox
-                checked={isInternal ?? false}
-                className="mt-0.5"
-                onCheckedChange={(c) => setValue("isInternal", c === true, { shouldDirty: true })}
-              />
-              <div>
-                <div className="text-sm font-semibold">🏛️ حساب داخلي (مجاني)</div>
-                <div className="text-[11.5px] text-muted-foreground mt-0.5">
-                  حسابات المنصة أو التجريبية (مدوّنتي، جبر…) · يُستثنى من المحاسبة والتجديد والمستحقات
-                </div>
-              </div>
-            </label>
-
             {clientId && (
               <SlugChangeDialog
                 clientId={clientId}
@@ -287,10 +270,26 @@ export function ClientEditWorkspace({
           </div>
         </section>
 
-        {/* ── ZONE 2 · CONTACT & CLASSIFICATION ────────────────── */}
+        {/* ── ZONE 2 · القسم المالي ────────────────────────────── */}
+        {/* Subscription is client-owned (Khalid 2026-07-25: whoever set up the client owns
+           the tier, not the invoice flow). Its own zone, mirroring the create form's money
+           section — sales rep, tier cards, internal/free card, billing cycle + currency. */}
         <section>
           <ZoneHeader
             index={2}
+            id="z-financial"
+            title="القسم المالي"
+            hint="الباقة · المندوب · دورة الفوترة والعملة — التواريخ تُضبط عند الفوترة"
+          />
+          <div className="rounded-2xl border bg-card p-5">
+            <SubscriptionSection form={form} isEditMode tierConfigs={tierConfigs} addressCountry={addressCountry} salesReps={salesReps} />
+          </div>
+        </section>
+
+        {/* ── ZONE 2 · CONTACT & CLASSIFICATION ────────────────── */}
+        <section>
+          <ZoneHeader
+            index={3}
             id="z-contact"
             title="Contact & Classification"
             hint="Admin-set · some fields shared with the console"
@@ -404,7 +403,7 @@ export function ClientEditWorkspace({
         {/* ── ZONE 3 · MEDIA & VERIFICATION ────────────────────── */}
         <section>
           <ZoneHeader
-            index={3}
+            index={4}
             id="z-media"
             title="Verification"
             hint="«مودونتي توثّق» — السجل/الترخيص، يظهر في صفحة العميل (الشعار والغلاف على المعاينة ←)"
@@ -424,7 +423,7 @@ export function ClientEditWorkspace({
         {/* ── ZONE 4 · SEO ─────────────────────────────────────── */}
         <section>
           <ZoneHeader
-            index={4}
+            index={5}
             id="z-seo"
             title="SEO"
             hint="Keywords · Google profile · parent org — title & description live in SEO Client"
@@ -482,7 +481,7 @@ export function ClientEditWorkspace({
 
         {/* ── ZONE 5 · ADVANCED ────────────────────────────────── */}
         <section>
-          <ZoneHeader index={5} id="z-advanced" title="Advanced" hint="YMYL (conditional) · CTA · Newsletter" />
+          <ZoneHeader index={6} id="z-advanced" title="Advanced" hint="YMYL (conditional) · CTA · Newsletter" />
           <div className="space-y-5">
             <div className="rounded-2xl border bg-card p-5">
               <YmylSection form={form} />

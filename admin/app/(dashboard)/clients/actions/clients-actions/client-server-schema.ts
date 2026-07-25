@@ -71,6 +71,7 @@ export const clientServerSchema = z.object({
   competitiveMentionsAllowed: z.boolean().optional().nullable(),
   isFeatured: z.boolean().optional().nullable(), // featured/premium partner spotlight
   isInternal: z.boolean().optional().nullable(), // platform/demo account — excluded from billing
+  billingCycle: z.enum(["monthly", "annual"]).optional().nullable(), // client-owned billing period
 
   // Optional array fields
   sameAs: z.array(z.string()).optional(),
@@ -82,6 +83,7 @@ export const clientServerSchema = z.object({
 
   // Optional relation IDs
   industryId: z.string().optional().nullable(),
+  salesRepId: z.string().optional().nullable(),
   parentOrganizationId: z.string().optional().nullable(),
   subscriptionTierConfigId: z.string().optional().nullable(),
   logoMediaId: z.string().optional().nullable(),

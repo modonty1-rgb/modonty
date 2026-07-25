@@ -17,12 +17,15 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { db } from "@/lib/db";
 import { clientSeoQuality, clientStatusCounts } from "@/lib/dashboard/cached";
+import { NOT_INTERNAL } from "@/app/(dashboard)/clients/segment/segments";
 import { GoogleIcon } from "@/components/admin/icons/google-icon";
 import { GroupLabel, SummaryChip, type Tier } from "../dashboard-ui";
 import { CollapsibleSection } from "../collapsible-section";
 import { SeoHealthCard } from "../seo-health-card";
 import { BudgetRow, PipelineRow } from "../pipeline-row";
+import { SalesRepsSummary, type SalesRepsSummaryData } from "./sales-reps-summary";
 
 /**
  * Clients — the same ROW language as Articles (Khalid 2026-07-23: «نحول كله نفس فكرة
@@ -114,11 +117,45 @@ function RowGroup({
   );
 }
 
+// Who brought which client, and who has no rep yet. groupBy on the optional salesRepId
+// buckets absent/null together → the "no rep" count in one query.
+async function getSalesRepBreakdown(): Promise<SalesRepsSummaryData> {
+  const grouped = await db.client.groupBy({
+    by: ["salesRepId"],
+    where: NOT_INTERNAL,
+    _count: { _all: true },
+  });
+
+  const repIds = grouped.map((g) => g.salesRepId).filter((x): x is string => Boolean(x));
+  const staff = repIds.length
+    ? await db.staff.findMany({ where: { id: { in: repIds } }, select: { id: true, name: true, email: true } })
+    : [];
+  const nameById = new Map(staff.map((s) => [s.id, s.name || s.email || "مندوب"]));
+
+  const reps = grouped
+    .filter((g) => g.salesRepId)
+    .map((g) => ({ name: nameById.get(g.salesRepId as string) ?? "مندوب", count: g._count._all }))
+    .sort((a, b) => b.count - a.count);
+
+  const unassignedCount = grouped.find((g) => !g.salesRepId)?._count._all ?? 0;
+  const unassigned = unassignedCount
+    ? await db.client.findMany({
+        where: { AND: [NOT_INTERNAL, { OR: [{ salesRepId: null }, { salesRepId: { isSet: false } }] }] },
+        select: { id: true, name: true },
+        orderBy: { createdAt: "desc" },
+        take: 100,
+      })
+    : [];
+
+  return { reps, unassignedCount, unassigned };
+}
+
 export async function ClientsPipeline() {
   const [
     { total, needsYou, portfolio, contact, content, images, data, statusUnaccounted },
     seoQuality,
-  ] = await Promise.all([clientStatusCounts(), clientSeoQuality()]);
+    salesReps,
+  ] = await Promise.all([clientStatusCounts(), clientSeoQuality(), getSalesRepBreakdown()]);
 
   const seoTotal = seoQuality.perfect + seoQuality.below;
   // Health = the AVERAGE client score (Khalid 2026-07-23), not "how many are perfect".
@@ -347,6 +384,8 @@ export async function ClientsPipeline() {
         items={imageItems}
         emptyGood
       />
+
+      <SalesRepsSummary {...salesReps} />
     </CollapsibleSection>
   );
 }

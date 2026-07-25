@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 import { canDeleteMedia } from "./can-delete-media";
 import { deleteCloudinaryAsset } from "./delete-cloudinary-asset";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 
 export async function deleteMedia(id: string, clientId?: string) {
   try {
@@ -62,6 +63,14 @@ export async function deleteMedia(id: string, clientId?: string) {
 
     // Delete from database
     await db.media.delete({ where });
+
+    await logAction("media.delete", {
+      entity: "Media",
+      entityId: media.id,
+      summary: media.cloudinaryPublicId ?? media.id,
+      metadata: media.clientId ? { clientId: media.clientId } : null,
+    });
+
     revalidatePath("/media");
     return { success: true };
   } catch (error) {

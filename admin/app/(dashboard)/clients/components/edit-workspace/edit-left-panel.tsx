@@ -3,9 +3,6 @@
 import Link from "next/link";
 import NextImage from "next/image";
 import { ShieldCheck, ArrowLeft, Pencil } from "lucide-react";
-import { GoogleIcon } from "@/components/admin/icons/google-icon";
-
-import type { SeoCheck } from "@modonty/database/lib/seo/client/types";
 
 interface EditLeftPanelProps {
   name: string;
@@ -15,8 +12,6 @@ interface EditLeftPanelProps {
   countryName?: string | null;
   isVerified: boolean;
   articleCount: number;
-  seoScore: number;
-  seoChecks: SeoCheck[];
   subscriptionLabel: string;
   subscriptionStatus?: string | null;
   clientId?: string;
@@ -25,14 +20,6 @@ interface EditLeftPanelProps {
   onOpenHero: () => void;
   /** Anchor zones rendered on the right, for the jump-nav. */
   zones: Array<{ id: string; label: string }>;
-}
-
-// Ring stroke color follows the same thresholds as the header SEO chip
-// (single source of truth): emerald ≥ 80, amber ≥ 50, red below.
-function ringTone(score: number) {
-  if (score >= 80) return { stroke: "#10b981", text: "text-emerald-500" };
-  if (score >= 50) return { stroke: "#f59e0b", text: "text-amber-500" };
-  return { stroke: "#ef4444", text: "text-red-500" };
 }
 
 function statusTone(status?: string | null) {
@@ -55,8 +42,6 @@ export function EditLeftPanel({
   countryName,
   isVerified,
   articleCount,
-  seoScore,
-  seoChecks,
   subscriptionLabel,
   subscriptionStatus,
   clientId,
@@ -64,8 +49,6 @@ export function EditLeftPanel({
   onOpenHero,
   zones,
 }: EditLeftPanelProps) {
-  const tone = ringTone(seoScore);
-  const pendingChecks = seoChecks.filter((c) => c.status !== "good");
   const metaLine = [industryName, countryName].filter(Boolean).join(" · ");
 
   return (
@@ -134,54 +117,6 @@ export function EditLeftPanel({
             <p className="text-[10px] text-muted-foreground">مقال منشور</p>
           </div>
         </div>
-      </div>
-
-      {/* SEO readiness — glance only. The full checklist lives in the guide (/technical). */}
-      <div className="rounded-2xl border bg-card p-4">
-        <div className="flex items-center gap-4">
-          <div className="relative h-16 w-16 shrink-0">
-            <svg className="h-16 w-16 -rotate-90" viewBox="0 0 36 36">
-              <circle cx="18" cy="18" r="15.9" fill="none" stroke="currentColor" className="text-muted" strokeWidth="3.2" />
-              <circle
-                cx="18"
-                cy="18"
-                r="15.9"
-                fill="none"
-                stroke={tone.stroke}
-                strokeWidth="3.2"
-                strokeLinecap="round"
-                strokeDasharray={`${seoScore} ${100 - seoScore}`}
-              />
-            </svg>
-            <div className="absolute inset-0 grid place-items-center">
-              <span className={`text-base font-bold tabular-nums ${tone.text}`}>
-                {seoScore}
-                <span className="text-[9px]">%</span>
-              </span>
-            </div>
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="flex items-center gap-1.5 text-sm font-bold">
-              <GoogleIcon className="h-4 w-4" /> جاهزية SEO
-            </p>
-            {pendingChecks.length > 0 ? (
-              <p className="text-[11px] text-amber-600 dark:text-amber-400 mt-0.5 font-medium">
-                {pendingChecks.length} بند يحتاج عناية
-              </p>
-            ) : (
-              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-0.5 font-medium">مكتمل — لا نواقص</p>
-            )}
-          </div>
-        </div>
-        {clientId && (
-          <Link
-            href={`/clients/${clientId}/technical`}
-            className="mt-3 flex items-center justify-between rounded-lg border bg-muted/30 px-3 py-2 text-xs font-semibold text-primary hover:bg-muted/60 transition-colors"
-          >
-            <span>افتح دليل السيو — وين الخلل وكيف تصلحه</span>
-            <ArrowLeft className="h-3.5 w-3.5 rtl:rotate-180" />
-          </Link>
-        )}
       </div>
 
       {/* Subscription — read-only; owned by the invoice workflow (Accounts) */}

@@ -19,9 +19,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ArrowRight, Loader2, Save, Trash2, Eye, EyeOff, UserPlus, ImageOff, Camera } from "lucide-react";
+import { ArrowRight, Loader2, Save, Trash2, Eye, EyeOff, UserPlus, ImageOff, Camera, Activity, Clock, CalendarDays, ScrollText, ShieldCheck } from "lucide-react";
+import { format, formatDistanceToNow } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import type { StaffRole } from "@prisma/client";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { createUser, updateUser, deleteUser } from "../actions/users-actions";
+import { STAFF_ROLES, roleMeta } from "../lib/roles";
 
 interface UserFormProps {
   initialData?: {
@@ -29,6 +34,15 @@ interface UserFormProps {
     name: string | null;
     email: string | null;
     image: string | null;
+    role?: string;
+    isActive?: boolean | null;
+    createdAt?: Date;
+  };
+  /** Edit mode only — the account's activity snapshot for the sidebar. */
+  activity?: {
+    total: number;
+    last7: number;
+    lastActiveAt: Date | null;
   };
   userId?: string;
 }
@@ -46,7 +60,7 @@ function getPasswordStrength(password: string): { label: string; color: string; 
   return { label: "Strong", color: "bg-green-500", width: "100%" };
 }
 
-export function UserForm({ initialData, userId }: UserFormProps) {
+export function UserForm({ initialData, activity, userId }: UserFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -63,6 +77,8 @@ export function UserForm({ initialData, userId }: UserFormProps) {
     email: initialData?.email || "",
     password: "",
     image: initialData?.image || "",
+    role: (initialData?.role as StaffRole) || ("ADMIN" as StaffRole),
+    isActive: initialData?.isActive !== false, // absent/null/true = active
   });
 
   const passwordStrength = useMemo(() => getPasswordStrength(formData.password), [formData.password]);
@@ -99,12 +115,16 @@ export function UserForm({ initialData, userId }: UserFormProps) {
           email: formData.email,
           password: formData.password || undefined,
           image: imageValue,
+          role: formData.role,
+          isActive: formData.isActive,
         })
       : await createUser({
           name: formData.name,
           email: formData.email,
           password: formData.password,
           image: imageValue || undefined,
+          role: formData.role,
+          isActive: formData.isActive,
         });
 
     if (result.success) {
@@ -157,11 +177,30 @@ export function UserForm({ initialData, userId }: UserFormProps) {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-semibold leading-tight">
-              {isEditMode ? "Edit Admin" : "Add New Admin"}
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-semibold leading-tight">
+                {isEditMode ? "Edit Staff" : "Add New Staff"}
+              </h1>
+              {isEditMode && (
+                <Badge className={cn("border-transparent", roleMeta(formData.role).badge)}>
+                  {roleMeta(formData.role).label}
+                </Badge>
+              )}
+              {isEditMode && (
+                <Badge
+                  className={cn(
+                    "border-transparent",
+                    formData.isActive
+                      ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300"
+                      : "bg-red-500/15 text-red-600 dark:text-red-300"
+                  )}
+                >
+                  {formData.isActive ? "Active" : "Inactive"}
+                </Badge>
+              )}
+            </div>
             <p className="text-muted-foreground text-sm mt-0.5">
-              {isEditMode ? "Update account details" : "Create a new admin account for the dashboard"}
+              {isEditMode ? "Update account details" : "Create a new staff account for the dashboard"}
             </p>
           </div>
         </div>
@@ -176,9 +215,9 @@ export function UserForm({ initialData, userId }: UserFormProps) {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Remove this admin?</DialogTitle>
+                  <DialogTitle>Remove this staff member?</DialogTitle>
                   <DialogDescription>
-                    {formData.name ? `"${formData.name}" will be permanently removed from the system.` : "This admin will be permanently removed."}{" "}
+                    {formData.name ? `"${formData.name}" will be permanently removed from the system.` : "This staff member will be permanently removed."}{" "}
                     This cannot be undone.
                   </DialogDescription>
                 </DialogHeader>
@@ -212,63 +251,61 @@ export function UserForm({ initialData, userId }: UserFormProps) {
         </div>
       )}
 
-      <div className="max-w-2xl">
-        <Card>
-          <CardContent className="pt-8">
-            {/* Avatar — centered hero element */}
-            <div className="flex flex-col items-center mb-8">
-              <div className="relative group">
-                <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-border bg-muted flex items-center justify-center">
-                  {hasValidImage ? (
-                    <Image
-                      src={formData.image}
-                      alt={formData.name || "Admin"}
-                      width={112}
-                      height={112}
-                      className="w-full h-full object-cover"
-                      sizes="112px"
-                      onError={() => setImgError(true)}
-                    />
-                  ) : formData.image && imgError ? (
-                    <ImageOff className="h-10 w-10 text-destructive/40" />
-                  ) : (
-                    <span className="text-3xl font-semibold text-muted-foreground/60">{initials}</span>
-                  )}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* ── Left: Profile + Security ─────────────────────────────── */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Profile</CardTitle>
+              <CardDescription>Name, email and the role this person plays on the team.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              {/* Avatar */}
+              <div className="flex items-center gap-4">
+                <div className="relative shrink-0">
+                  <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-border bg-muted flex items-center justify-center">
+                    {hasValidImage ? (
+                      <Image
+                        src={formData.image}
+                        alt={formData.name || "Staff"}
+                        width={80}
+                        height={80}
+                        className="w-full h-full object-cover"
+                        sizes="80px"
+                        onError={() => setImgError(true)}
+                      />
+                    ) : formData.image && imgError ? (
+                      <ImageOff className="h-8 w-8 text-destructive/40" />
+                    ) : (
+                      <span className="text-2xl font-semibold text-muted-foreground/60">{initials}</span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (formData.image) handleClearImage();
+                      else setShowImageInput(true);
+                    }}
+                    className="absolute bottom-0 end-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors"
+                  >
+                    {formData.image ? <Trash2 className="h-3.5 w-3.5" /> : <Camera className="h-3.5 w-3.5" />}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (formData.image) handleClearImage();
-                    else setShowImageInput(true);
-                  }}
-                  className="absolute bottom-0 end-0 w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors"
-                >
-                  {formData.image ? (
-                    <Trash2 className="h-4 w-4" />
-                  ) : (
-                    <Camera className="h-4 w-4" />
-                  )}
-                </button>
+                {(showImageInput || formData.image) && (
+                  <div className="flex-1">
+                    <Input
+                      value={formData.image}
+                      onChange={(e) => handleImageChange(e.target.value)}
+                      placeholder="Paste image link..."
+                      className={imgError ? "border-destructive" : ""}
+                    />
+                    {imgError && (
+                      <p className="text-xs text-destructive mt-1">This link doesn&apos;t seem to be a valid image</p>
+                    )}
+                  </div>
+                )}
               </div>
 
-              {/* Image URL input — shows on camera click */}
-              {(showImageInput || formData.image) && (
-                <div className="mt-4 w-full max-w-sm">
-                  <Input
-                    value={formData.image}
-                    onChange={(e) => handleImageChange(e.target.value)}
-                    placeholder="Paste image link..."
-                    className={imgError ? "border-destructive" : ""}
-                  />
-                  {imgError && (
-                    <p className="text-xs text-destructive mt-1">This link doesn&apos;t seem to be a valid image</p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Form Fields */}
-            <div className="space-y-5">
               <FormInput
                 label="Full Name"
                 name="name"
@@ -289,8 +326,40 @@ export function UserForm({ initialData, userId }: UserFormProps) {
                 autoComplete="new-email"
               />
 
-              {/* Password */}
-              <div className="space-y-2">
+              {/* Role */}
+              <div className="space-y-1.5">
+                <Label htmlFor="role">
+                  Role <span className="text-destructive">*</span>
+                </Label>
+                <select
+                  id="role"
+                  value={formData.role}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value as StaffRole })}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {STAFF_ROLES.map((r) => (
+                    <option key={r.value} value={r.value}>
+                      {r.label} — {r.description}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-muted-foreground">{roleMeta(formData.role).description}</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+                <CardTitle>Security</CardTitle>
+              </div>
+              <CardDescription>
+                {isEditMode ? "Leave empty to keep the current password." : "Set the initial password — the staff member can change it later."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2 max-w-md">
                 <div className="relative">
                   <FormInput
                     label={isEditMode ? "New Password" : "Password"}
@@ -300,7 +369,6 @@ export function UserForm({ initialData, userId }: UserFormProps) {
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     placeholder={isEditMode ? "Leave empty to keep current" : "Min 6 characters"}
                     required={!isEditMode}
-                    hint={isEditMode ? "Only fill this to change the password" : undefined}
                     autoComplete="new-password"
                   />
                   <button
@@ -326,9 +394,106 @@ export function UserForm({ initialData, userId }: UserFormProps) {
                   </div>
                 )}
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* ── Right: Status · Account · Activity ───────────────────── */}
+        <div className="space-y-6">
+          {/* Employment status — controls whether they can sign in */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Employment status</CardTitle>
+              <CardDescription>
+                Inactive staff keep their record &amp; history but can no longer sign in.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="inline-flex rounded-lg border bg-muted/40 p-0.5 text-sm font-semibold">
+                {([{ v: true, l: "Active" }, { v: false, l: "Inactive" }] as const).map((o) => (
+                  <button
+                    key={o.l}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, isActive: o.v })}
+                    className={cn(
+                      "rounded-md px-4 py-1.5 transition-colors",
+                      formData.isActive === o.v
+                        ? o.v
+                          ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300"
+                          : "bg-red-500/15 text-red-600 dark:text-red-300"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    {o.l}
+                  </button>
+                ))}
+              </div>
+              {!formData.isActive && (
+                <p className="mt-3 text-xs text-red-600 dark:text-red-400">
+                  This person will be signed out and blocked from the system on save.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          {isEditMode && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Account</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <CalendarDays className="h-4 w-4 shrink-0" />
+                  <span>Member since</span>
+                  <span className="ms-auto font-medium text-foreground" suppressHydrationWarning>
+                    {initialData?.createdAt ? format(new Date(initialData.createdAt), "PP") : "—"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Clock className="h-4 w-4 shrink-0" />
+                  <span>Last active</span>
+                  <span className="ms-auto font-medium text-foreground" suppressHydrationWarning>
+                    {activity?.lastActiveAt
+                      ? formatDistanceToNow(new Date(activity.lastActiveAt), { addSuffix: true })
+                      : "No activity"}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {isEditMode && activity && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Activity className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle>Activity</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-lg border bg-muted/30 p-3">
+                    <p className="text-2xl font-semibold tabular-nums leading-none">{activity.total.toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Total actions</p>
+                  </div>
+                  <div className="rounded-lg border bg-muted/30 p-3">
+                    <p className="text-2xl font-semibold tabular-nums leading-none">{activity.last7.toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Last 7 days</p>
+                  </div>
+                </div>
+                {initialData?.id && (
+                  <Link
+                    href={`/users/${initialData.id}/log`}
+                    className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+                  >
+                    <ScrollText className="h-4 w-4" />
+                    View full activity
+                  </Link>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
     </form>
   );

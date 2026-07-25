@@ -19,6 +19,7 @@ import { createInvoiceAction } from "../actions/create-invoice";
 import { markInvoicePaidAction } from "../actions/mark-paid";
 import { sendInvoiceAction } from "../actions/send-invoice";
 import { archiveInvoiceAction } from "../actions/archive-invoice";
+import { convertOpeningBalanceAction } from "../actions/convert-opening-balance";
 
 export type Currency = "SAR" | "EGP";
 
@@ -47,6 +48,10 @@ interface Props {
   firstPublishedAt: string | null; // yyyy-mm-dd
   /** Where the subscription currently runs to; a renewal continues from here. */
   currentEnd: string | null; // yyyy-mm-dd
+  /** Founding payment stored on the client; drives the «Auto Button» that documents it. */
+  openingBalance: number | null;
+  /** True once a fromOpeningBalance invoice exists — the button then disappears. */
+  openingBalanceConverted: boolean;
 }
 
 function money(amount: number, currency: Currency) {
@@ -68,6 +73,8 @@ export function AccountLedger({
   defaultAmount,
   firstPublishedAt,
   currentEnd,
+  openingBalance,
+  openingBalanceConverted,
 }: Props) {
   // One outstanding invoice at a time — we do not sell on credit. Mirrors the server
   // guard so the button explains itself instead of failing after the click. `findLast`
@@ -102,6 +109,15 @@ export function AccountLedger({
         </p>
       )}
 
+      {openingBalance && openingBalance > 0 && !openingBalanceConverted && (
+        <OpeningBalanceBanner
+          clientId={clientId}
+          amount={openingBalance}
+          currency={currency}
+          hasArticle={!!firstPublishedAt}
+        />
+      )}
+
       {invoices.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-2 px-4 py-12 text-center">
           <p className="text-sm font-medium">لا توجد فواتير بعد</p>
@@ -128,6 +144,63 @@ export function AccountLedger({
           </table>
         </div>
       )}
+    </div>
+  );
+}
+
+// ── Opening balance → first invoice (the «Auto Button») ───────────────
+// The founding payment already sits on the client (and already counts in the sales report).
+// This one click documents it as the first PAID invoice — but only once the client's first
+// article is live, because billing starts when content goes live.
+function OpeningBalanceBanner({
+  clientId,
+  amount,
+  currency,
+  hasArticle,
+}: {
+  clientId: string;
+  amount: number;
+  currency: Currency;
+  hasArticle: boolean;
+}) {
+  const { toast } = useToast();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  function convert() {
+    if (!hasArticle) return;
+    startTransition(async () => {
+      const res = await convertOpeningBalanceAction(clientId);
+      if (res.ok) {
+        toast({
+          title: `تم تجهيز الفاتورة ${res.number}`,
+          description: "الفاتورة الأولى تمثّل الرصيد الافتتاحي — مدفوعة ومسجّلة.",
+        });
+        router.refresh();
+      } else {
+        toast({ title: "تعذّر التجهيز", description: res.error, variant: "destructive" });
+      }
+    });
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-3 border-b bg-sky-500/[0.07] px-4 py-2.5">
+      <div className="min-w-0 flex-1 text-[12px] text-sky-800 dark:text-sky-300">
+        <b className="font-semibold">رصيد افتتاحي {money(amount, currency)}</b> — دفعة التأسيس
+        مسجّلة كمبيعة. {hasArticle
+          ? "جهّز الفاتورة الأولى اللي تمثّلها بضغطة."
+          : "تبدأ الفوترة مع أول مقال منشور — الزر يشتغل بعدها."}
+      </div>
+      <Button
+        size="sm"
+        className="gap-1.5 bg-sky-600 hover:bg-sky-500 text-white shrink-0"
+        onClick={convert}
+        disabled={!hasArticle || isPending}
+        title={hasArticle ? undefined : "لا يوجد مقال منشور بعد"}
+      >
+        {isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+        تجهيز الفاتورة من الرصيد
+      </Button>
     </div>
   );
 }

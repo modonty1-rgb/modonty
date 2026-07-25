@@ -5,6 +5,7 @@ import { SubscriptionStatus, PaymentStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 import { NOT_ARCHIVED, recomputeSubscriptionEnd } from "../helpers/billing";
 
 export interface MarkPaidInput {
@@ -35,7 +36,14 @@ export async function markInvoicePaidAction(input: MarkPaidInput): Promise<MarkP
 
   const invoice = await db.invoice.findUnique({
     where: { id: input.invoiceId },
-    select: { id: true, clientId: true, paymentStatus: true, archivedAt: true },
+    select: {
+      id: true,
+      clientId: true,
+      number: true,
+      paymentStatus: true,
+      archivedAt: true,
+      client: { select: { name: true } },
+    },
   });
   if (!invoice) return { ok: false, error: "الفاتورة غير موجودة" };
   if (invoice.paymentStatus === "PAID") return { ok: false, error: "الفاتورة مدفوعة بالفعل" };
@@ -62,6 +70,13 @@ export async function markInvoicePaidAction(input: MarkPaidInput): Promise<MarkP
         subscriptionStatus: SubscriptionStatus.ACTIVE,
         ...(stillOutstanding === 0 ? { paymentStatus: PaymentStatus.PAID } : {}),
       },
+    });
+
+    await logAction("invoice.paid", {
+      entity: "Invoice",
+      entityId: invoice.id,
+      summary: `${invoice.number} · ${invoice.client.name ?? invoice.clientId}`,
+      metadata: { paidDate: input.paidDate },
     });
 
     revalidatePath(`/clients/${invoice.clientId}/account`);

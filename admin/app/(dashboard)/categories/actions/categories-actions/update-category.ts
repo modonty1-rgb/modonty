@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 import { categoryServerSchema } from "./category-server-schema";
 
 export async function updateCategory(
@@ -70,6 +71,13 @@ export async function updateCategory(
       where: isObjectId ? { id } : { slug: id },
       data: updateData,
     });
+
+    await logAction("category.update", {
+      entity: "Category",
+      entityId: category.id,
+      summary: category.name,
+    });
+
     revalidatePath("/categories");
     await revalidateModontyTag("categories");
     try { const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator"); await generateAndSaveCategorySeo(category.id); } catch (e) { console.error("Category SEO gen failed:", e); }

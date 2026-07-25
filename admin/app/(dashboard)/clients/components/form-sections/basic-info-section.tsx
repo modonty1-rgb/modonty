@@ -16,6 +16,7 @@ import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 interface BasicInfoSectionProps {
   form: UseFormReturn<ClientFormSchemaType>;
   industries?: Array<{ id: string; name: string }>;
+  salesReps?: Array<{ id: string; name: string }>;
   isEditMode?: boolean;
   siteUrl?: string | null;
   clientId?: string;
@@ -25,6 +26,7 @@ interface BasicInfoSectionProps {
 export function BasicInfoSection({
   form,
   industries = [],
+  salesReps = [],
   isEditMode = false,
   siteUrl = null,
   clientId,
@@ -39,6 +41,7 @@ export function BasicInfoSection({
   const legalName = watch("legalName");
   const foundingDate = watch("foundingDate");
   const industryId = watch("industryId");
+  const salesRepId = watch("salesRepId");
   const url = watch("url");
   const phone = watch("phone");
   const contactType = watch("contactType");
@@ -214,6 +217,24 @@ export function BasicInfoSection({
           {industries.map((ind) => (
             <SelectItem key={ind.id} value={ind.id}>
               {ind.name}
+            </SelectItem>
+          ))}
+        </FormSelect>
+        <FormSelect
+          label="Sales rep"
+          name="salesRepId"
+          value={salesRepId || undefined}
+          onValueChange={(value) =>
+            form.setValue("salesRepId", value && value !== "none" ? value : null, { shouldValidate: true })
+          }
+          error={errors.salesRepId?.message}
+          placeholder="Select sales rep"
+          hint="The rep who brought & manages this client. Shown on the account & invoices."
+        >
+          <SelectItem value="none">— None —</SelectItem>
+          {salesReps.map((rep) => (
+            <SelectItem key={rep.id} value={rep.id}>
+              {rep.name}
             </SelectItem>
           ))}
         </FormSelect>

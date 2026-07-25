@@ -176,6 +176,59 @@ export async function updateRequiredFields(
 }
 
 /**
+ * Updates the Subscription group — tier + billing cycle. Both are client-owned (Khalid
+ * 2026-07-25: whoever set up the client owns the plan, not the invoice flow). Changing
+ * the tier recomputes the article quota + tier-config link. Writes DIRECTLY (not through
+ * buildGroupUpdateData): tierConfigId + articlesPerMonth are derived, not form fields, so
+ * the group-field filter would drop them. Previously nothing persisted the subscription
+ * group at all — the tier was silently read-only on edit.
+ */
+export async function updateSubscriptionFields(
+  clientId: string,
+  data: Partial<ClientFormData>
+): Promise<GroupUpdateResult> {
+  try {
+    const client = await db.client.findUnique({
+      where: { id: clientId },
+      select: {
+        subscriptionTier: true,
+        subscriptionTierConfigId: true,
+        articlesPerMonth: true,
+        billingCycle: true,
+      },
+    });
+    if (!client) {
+      return { success: false, error: "Client not found", groupName: "subscription" };
+    }
+
+    const update: Record<string, unknown> = {};
+
+    if (data.subscriptionTier && data.subscriptionTier !== client.subscriptionTier) {
+      update.subscriptionTier = data.subscriptionTier;
+      const tierConfig = await getTierConfigByTier(data.subscriptionTier as SubscriptionTier);
+      if (tierConfig) {
+        update.subscriptionTierConfigId = tierConfig.id;
+        update.articlesPerMonth = tierConfig.articlesPerMonth;
+      }
+    }
+
+    if (data.billingCycle && data.billingCycle !== client.billingCycle) {
+      update.billingCycle = data.billingCycle;
+    }
+
+    if (Object.keys(update).length === 0) {
+      return { success: true, groupName: "subscription", fieldsUpdated: 0 };
+    }
+
+    await db.client.update({ where: { id: clientId }, data: update });
+    return { success: true, groupName: "subscription", fieldsUpdated: Object.keys(update).length };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to update subscription";
+    return { success: false, error: message, groupName: "subscription" };
+  }
+}
+
+/**
  * Updates Settings fields group (subscription/payment status and similar toggles)
  */
 export async function updateSettingsFields(
@@ -235,6 +288,7 @@ export async function updateBusinessFields(
       select: {
         legalName: true,
         industryId: true,
+        salesRepId: true,
         contentPriorities: true,
         foundingDate: true,
         organizationType: true,
@@ -249,6 +303,7 @@ export async function updateBusinessFields(
     const newData: Record<string, unknown> = {
       legalName: data.legalName ?? null,
       industryId: data.industryId ?? null,
+      salesRepId: data.salesRepId ?? null,
       contentPriorities: data.contentPriorities ?? [],
       foundingDate: normalizeDate(data.foundingDate),
       organizationType: data.organizationType ?? null,

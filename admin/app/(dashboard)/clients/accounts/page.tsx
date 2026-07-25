@@ -2,6 +2,7 @@ import { Wallet } from "lucide-react";
 
 import { db } from "@/lib/db";
 import { NOT_INTERNAL } from "../segment/segments";
+import { getStaffScope, salesClientWhere } from "../helpers/sales-scope";
 
 import { AccountsTable } from "./components/accounts-table";
 import type { AccountRow } from "./components/accounts-table";
@@ -27,8 +28,10 @@ async function getAccounts(): Promise<AccountRow[]> {
   // waiting client was invisible on the page that exists to manage accounts. Platform /
   // demo accounts (isInternal) ARE excluded here: they are free by nature and don't
   // belong in the billing hub at all.
+  // A sales rep only sees the accounts they brought; every other role sees all.
+  const scope = await getStaffScope();
   const clients = await db.client.findMany({
-    where: NOT_INTERNAL,
+    where: { ...NOT_INTERNAL, ...salesClientWhere(scope) },
     select: {
       id: true,
       name: true,

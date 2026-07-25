@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 import { sendEmailWithRetry } from "@/lib/email/resend-client";
 import { invoiceEmail } from "@/lib/email/templates/invoice";
 
@@ -65,6 +66,12 @@ export async function sendInvoiceAction(invoiceId: string): Promise<SendInvoiceR
     });
 
     await db.invoice.update({ where: { id: invoice.id }, data: { emailSentAt: new Date() } });
+
+    await logAction("invoice.send", {
+      entity: "Invoice",
+      entityId: invoice.id,
+      summary: `${invoice.number} · ${invoice.client.name ?? invoice.clientId}`,
+    });
 
     revalidatePath(`/clients/${invoice.clientId}/account`);
     return { ok: true };

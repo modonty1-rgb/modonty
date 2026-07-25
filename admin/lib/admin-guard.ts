@@ -2,10 +2,15 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 /**
- * Authoritative ADMIN gate. The session JWT does NOT carry the role, so we read
- * it fresh from the DB — this reflects role changes immediately and, critically,
- * locks out any already-issued session of a non-admin (their 30-day token stays
- * valid until it expires; this gate rejects them on their next request).
+ * Authoritative access gate for the panel. Checked fresh from the DB (not the JWT)
+ * so a change takes effect on the next request — a deactivated staff member holding
+ * a still-valid token is rejected at once.
+ *
+ * Access is by EMPLOYMENT STATUS, not role: any active staff member (Admin, Editor,
+ * Creative, Social, QC, Sales) can open the panel. Per-role PERMISSIONS — who can see
+ * or do what inside — are a separate layer not built yet; until then every role has the
+ * same access (Sales is the one exception already scoped: it only sees its own clients
+ * on the accounts surface, see clients/helpers/sales-scope.ts).
  */
 type AdminGate =
   | { status: "ok"; userId: string }
@@ -17,11 +22,11 @@ export async function checkAdmin(): Promise<AdminGate> {
   const userId = (session?.user as { id?: string } | undefined)?.id;
   if (!userId) return { status: "unauthenticated" };
 
-  // Authoritative role from `staff` — the admin panel's only identity table.
+  // Authoritative employment status from `staff`. Inactive = no access, any role = access.
   const staffRow = await db.staff
-    .findUnique({ where: { id: userId }, select: { role: true } })
+    .findUnique({ where: { id: userId }, select: { isActive: true } })
     .catch(() => null);
-  if (staffRow?.role !== "ADMIN") return { status: "forbidden" };
+  if (!staffRow || staffRow.isActive === false) return { status: "forbidden" };
 
   return { status: "ok", userId };
 }

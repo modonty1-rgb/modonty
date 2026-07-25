@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { logAction } from "@/lib/audit/log-action";
 import { sendClientWelcome } from "./clients-actions/send-client-welcome";
 
 interface ActivateResult {
@@ -19,7 +20,7 @@ export async function activateClientAction(clientId: string): Promise<ActivateRe
   try {
     const client = await db.client.findUnique({
       where: { id: clientId },
-      select: { id: true, subscriptionStatus: true },
+      select: { id: true, name: true, subscriptionStatus: true },
     });
     if (!client) return { ok: false, error: "العميل غير موجود" };
     if (client.subscriptionStatus === "ACTIVE") {
@@ -48,6 +49,12 @@ export async function activateClientAction(clientId: string): Promise<ActivateRe
     } catch {
       // swallow — activation already persisted; email is best-effort
     }
+
+    await logAction("client.activate", {
+      entity: "Client",
+      entityId: clientId,
+      summary: client.name ?? clientId,
+    });
 
     revalidatePath("/clients");
     await revalidateModontyTag("clients");

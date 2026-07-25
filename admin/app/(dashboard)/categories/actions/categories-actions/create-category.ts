@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 import { categoryServerSchema } from "./category-server-schema";
 
 export async function createCategory(data: {
@@ -47,6 +48,12 @@ export async function createCategory(data: {
         cloudinaryPublicId: data.cloudinaryPublicId,
       },
     });
+    await logAction("category.create", {
+      entity: "Category",
+      entityId: category.id,
+      summary: category.name,
+    });
+
     revalidatePath("/categories");
     await revalidateModontyTag("categories");
     try {

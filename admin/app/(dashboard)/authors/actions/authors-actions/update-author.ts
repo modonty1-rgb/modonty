@@ -9,6 +9,7 @@ import { batchRegenerateJsonLd } from "@/lib/seo";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 
 const updateAuthorSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -188,6 +189,12 @@ export async function updateAuthor(
     } catch {
       // Don't fail the author update if cascade fails
     }
+
+    await logAction("author.update", {
+      entity: "Author",
+      entityId: id,
+      summary: author.name,
+    });
 
     revalidatePath("/authors");
     revalidatePath("/articles");

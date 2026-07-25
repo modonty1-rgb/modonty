@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 import { findBlockingUnpaidInvoice, recomputeSubscriptionEnd } from "../helpers/billing";
 
 export interface CreateInvoiceInput {
@@ -85,10 +86,12 @@ export async function createInvoiceAction(input: CreateInvoiceInput): Promise<Cr
     where: { id: input.clientId },
     select: {
       id: true,
+      name: true,
       subscriptionTier: true,
       subscriptionTierConfig: { select: { name: true } },
       addressCountry: true,
       subscriptionEndDate: true,
+      billingCycle: true,
     },
   });
   if (!client) return { ok: false, error: "العميل غير موجود" };
@@ -126,23 +129,20 @@ export async function createInvoiceAction(input: CreateInvoiceInput): Promise<Cr
     client.subscriptionEndDate ?? firstPublished?.datePublished ?? now;
   const subEnd = addMonths(anchor, input.months);
 
-  // Billing period follows the client's most-recent invoice (default annual).
-  const latest = await db.invoice.findFirst({
-    where: { clientId: client.id },
-    orderBy: { issuedAt: "desc" },
-    select: { period: true },
-  });
+  // Billing period is client-owned — read it off the client, not the last invoice
+  // (Khalid 2026-07-25: the tier + cycle are set on the client edit page).
+  const period = client.billingCycle === "monthly" ? "monthly" : "annual";
 
   try {
     const number = await nextInvoiceNumber(now.getFullYear());
 
-    await db.invoice.create({
+    const created = await db.invoice.create({
       data: {
         number,
         clientId: client.id,
         tier: client.subscriptionTier,
         tierName: client.subscriptionTierConfig?.name ?? client.subscriptionTier,
-        period: latest?.period ?? "annual",
+        period,
         currency: currencyForCountry(client.addressCountry),
         amount: input.amount,
         paymentStatus: "DUE", // born due — settled later via «تحديد مدفوعة»
@@ -154,6 +154,18 @@ export async function createInvoiceAction(input: CreateInvoiceInput): Promise<Cr
     });
 
     const latestEnd = await recomputeSubscriptionEnd(client.id);
+
+    await logAction("invoice.create", {
+      entity: "Invoice",
+      entityId: created.id,
+      summary: `${number} · ${client.name ?? client.id}`,
+      metadata: {
+        amount: input.amount,
+        currency: currencyForCountry(client.addressCountry),
+        months: input.months,
+        period,
+      },
+    });
 
     revalidatePath(`/clients/${client.id}/account`);
     revalidatePath(`/clients/${client.id}`);

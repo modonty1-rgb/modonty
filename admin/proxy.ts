@@ -23,26 +23,27 @@ export default auth(async (req) => {
   );
   const userId = (req.auth?.user as { id?: string } | undefined)?.id;
 
-  // Public auth pages: a signed-in admin → dashboard; everyone else → allow.
+  // Public auth pages: a signed-in ACTIVE staff member → dashboard; everyone else → allow.
   if (isPublic) {
     if (userId) {
       const me = await db.staff
-        .findUnique({ where: { id: userId }, select: { role: true } })
+        .findUnique({ where: { id: userId }, select: { isActive: true } })
         .catch(() => null);
-      if (me?.role === "ADMIN") return NextResponse.redirect(new URL("/", req.nextUrl));
+      if (me && me.isActive !== false) return NextResponse.redirect(new URL("/", req.nextUrl));
     }
     return NextResponse.next();
   }
 
-  // Protected: must be authenticated AND role === ADMIN in the DB (authoritative).
+  // Protected: must be an authenticated, ACTIVE staff member (authoritative from the DB,
+  // so someone deactivated while still holding a valid token is blocked at once). Role
+  // does not gate access — employment status does.
   if (!userId) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
-  // Authoritative role from `staff` — the admin panel's only identity table.
   const staffRow = await db.staff
-    .findUnique({ where: { id: userId }, select: { role: true } })
+    .findUnique({ where: { id: userId }, select: { isActive: true } })
     .catch(() => null);
-  if (staffRow?.role !== "ADMIN") {
+  if (!staffRow || staffRow.isActive === false) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 

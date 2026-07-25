@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 import { industryServerSchema } from "./industry-server-schema";
 
 export async function updateIndustry(
@@ -61,6 +62,13 @@ export async function updateIndustry(
     }
 
     const industry = await db.industry.update({ where: { id }, data: updateData });
+
+    await logAction("industry.update", {
+      entity: "Industry",
+      entityId: industry.id,
+      summary: industry.name,
+    });
+
     revalidatePath("/industries");
     await revalidateModontyTag("industries");
     try { const { generateAndSaveIndustrySeo } = await import("@/lib/seo/industry-seo-generator"); await generateAndSaveIndustrySeo(industry.id); } catch (e) { console.error("Industry SEO gen failed:", e); }

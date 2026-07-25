@@ -127,6 +127,7 @@ export const clientFormSchema = z
     // Business Information — client-owned (filled from console profile), not required at admin create
     businessBrief: consoleOwnedText,
     industryId: z.string().min(1, "Industry is required"),
+    salesRepId: z.string().nullable().optional(),
     targetAudience: consoleOwnedText,
     contentPriorities: stringArraySchema,
     foundingDate: dateSchema,
@@ -217,6 +218,13 @@ export const clientFormSchema = z
     paymentStatus: paymentStatusSchema,
     isFeatured: z.boolean().optional().default(false),
     isInternal: z.boolean().optional().default(false),
+    billingCycle: z.enum(["monthly", "annual"]).optional().default("annual"),
+
+    // Opening balance (CREATE only) — the founding payment («تأسيسه معناه دفع»). Persisted
+    // on Client.openingBalance and counted as revenue immediately (paid date = createdAt;
+    // months come from billingCycle). No invoice at founding. Base schema keeps it optional;
+    // clientCreateFormSchema makes it mandatory for a billable (non-internal) client.
+    openingBalance: z.number().nonnegative().optional().nullable(),
   })
   .superRefine((data, ctx) => {
     // LINK mode needs a destination; FORM/NONE don't.
@@ -239,6 +247,26 @@ export const clientFormSchema = z
   });
 
 export type ClientFormSchemaType = z.infer<typeof clientFormSchema>;
+
+// CREATE-only: a sales rep is mandatory — every new client must be attributed to who
+// brought them (Khalid 2026-07-25: «القسم المالي كله إجباري»). The shared clientFormSchema
+// keeps salesRepId optional on purpose so EDIT of the existing rep-less clients isn't blocked.
+export const clientCreateFormSchema = clientFormSchema.superRefine((data, ctx) => {
+  if (!data.salesRepId || !data.salesRepId.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["salesRepId"],
+      message: "اختر مندوب المبيعات",
+    });
+  }
+
+  // A billable client (not internal) pays at founding → the opening balance is mandatory.
+  // Internal/free accounts carry no balance, so they're exempt (Khalid 2026-07-25:
+  // «الحقل إلزامي» للمدفوع، «داخلي/مجاني بلا رصيد»).
+  if (!data.isInternal && (!data.openingBalance || data.openingBalance <= 0)) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["openingBalance"], message: "أدخل الرصيد الافتتاحي (المبلغ المدفوع)" });
+  }
+});
 
 // ============================================
 // SEO SUB-FORM SCHEMA (the /clients/[id]/seo page)

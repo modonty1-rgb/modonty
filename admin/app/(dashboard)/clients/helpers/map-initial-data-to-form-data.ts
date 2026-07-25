@@ -23,12 +23,14 @@ export function mapInitialDataToFormData(
     targetAudience: "",
     sameAs: [],
     contentPriorities: [],
+    salesRepId: null,
     keywords: [],
     knowsLanguage: [],
     subscriptionStatus: "PENDING",
     paymentStatus: "PENDING",
     isFeatured: false,
     isInternal: false,
+    billingCycle: "annual",
     // Ensure all string fields have empty string defaults
     description: "",
     contactType: "",
@@ -108,6 +110,7 @@ export function mapInitialDataToFormData(
     // Business Information
     businessBrief: initialData.businessBrief || "",
     industryId: initialData.industryId || initialData.industry?.id || null,
+    salesRepId: (initialData as { salesRepId?: string | null }).salesRepId || null,
     targetAudience: initialData.targetAudience || "",
     contentPriorities: initialData.contentPriorities || [],
     foundingDate: initialData.foundingDate || null,
@@ -177,5 +180,6 @@ export function mapInitialDataToFormData(
     paymentStatus: initialData.paymentStatus || "PENDING",
     isFeatured: (initialData as { isFeatured?: boolean }).isFeatured ?? false,
     isInternal: (initialData as { isInternal?: boolean }).isInternal ?? false,
+    billingCycle: ((initialData as { billingCycle?: "monthly" | "annual" }).billingCycle ?? "annual"),
   };
 }

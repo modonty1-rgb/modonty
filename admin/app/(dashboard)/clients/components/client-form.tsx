@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, AlertTriangle, X } from "lucide-react";
 import { useSidebar } from "@/components/contexts/sidebar-context";
 import { ClientLogoModal } from "./client-logo-modal";
@@ -12,6 +13,7 @@ import { BasicInfoSection } from "./form-sections/basic-info-section";
 import { SubscriptionSection } from "./form-sections/subscription-section";
 import { ClientEditWorkspace } from "./edit-workspace/client-edit-workspace";
 import { OpenClientConsoleButton } from "./edit-workspace/open-client-console-button";
+import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import type { ClientWithRelations } from "@/lib/types";
 import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
 import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
@@ -19,6 +21,7 @@ import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
 interface ClientFormProps {
   initialData?: Partial<ClientWithRelations>;
   industries?: Array<{ id: string; name: string }>;
+  salesReps?: Array<{ id: string; name: string }>;
   clients?: Array<{ id: string; name: string; slug: string }>;
   clientId?: string;
   /** Active countries for the addressCountry picker (admin-owned field). */
@@ -30,6 +33,7 @@ interface ClientFormProps {
 export function ClientForm({
   initialData,
   industries = [],
+  salesReps = [],
   clients = [],
   clientId,
   countries = [],
@@ -173,8 +177,8 @@ export function ClientForm({
                   </span>
                 </div>
               )}
-              <BasicInfoSection form={form} industries={industries} countries={countries} />
-              <SubscriptionSection form={form} isEditMode={false} tierConfigs={tierConfigs} />
+              <BasicInfoSection form={form} industries={industries} salesReps={salesReps} countries={countries} />
+              <SubscriptionSection form={form} isEditMode={false} tierConfigs={tierConfigs} addressCountry={watchedValues.addressCountry} />
             </div>
           ) : (
             /* EDIT MODE — logical-zone workspace (left live panel + 5 zones) */
@@ -183,9 +187,11 @@ export function ClientForm({
                 form={form}
                 initialData={initialData}
                 industries={industries}
+                salesReps={salesReps}
                 clients={clients}
                 countries={countries}
                 ctaPresets={ctaPresets}
+                tierConfigs={tierConfigs}
                 clientId={clientId}
                 seoScore={unifiedSeoScore}
                 seoChecks={seoChecks}
@@ -248,6 +254,26 @@ export function ClientForm({
               )}
             </span>
             <div className="flex items-center gap-2">
+              {/* Compact toggles — moved here from the form to save space (Khalid 2026-07-25).
+                 No description; the icon + short label carry it. */}
+              {isEditMode && (
+                <>
+                  <label
+                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/[0.06] px-2.5 py-1.5"
+                    title="شريك مميّز — يظهر في «الشركاء المميّزون» وبشارة على الموقع"
+                  >
+                    <Checkbox
+                      checked={watchedValues.isFeatured ?? false}
+                      onCheckedChange={(c) => form.setValue("isFeatured", c === true, { shouldDirty: true })}
+                    />
+                    <span className="text-xs font-semibold whitespace-nowrap">⭐ مميّز</span>
+                  </label>
+                </>
+              )}
+              {/* SEO score — the ONE standard chip, clickable → the guide (/technical) */}
+              {isEditMode && clientId && (
+                <SeoScoreBadge score={unifiedSeoScore} size="md" href={`/clients/${clientId}/technical`} />
+              )}
               {isEditMode && clientId && <OpenClientConsoleButton clientId={clientId} />}
               {isEditMode && isDirty && (
                 <Button

@@ -23,6 +23,11 @@ enum UserRole {
 // public readers (User) so a reader can never gain admin access by a role flip.
 enum StaffRole {
   ADMIN
+  EDITOR
+  CREATIVE
+  SOCIAL
+  QC
+  SALES
 }
 
 enum ArticleStatus {
@@ -249,10 +254,15 @@ model Staff {
 
   role StaffRole @default(ADMIN)
 
+  // Employment status. Absent/null = active (never backfilled); only explicit false
+  // means "left" — the record + their history stay, but they can no longer sign in.
+  isActive Boolean? @default(true)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   notifications Notification[] @relation("StaffNotifications")
+  salesClients  Client[]       @relation("StaffSalesClients")
 
   @@index([role])
   @@map("staff")
@@ -404,6 +414,11 @@ model Client {
   businessBrief     String? // Business description for content writers
   industryId        String?   @db.ObjectId // Industry/category
   industry          Industry? @relation(fields: [industryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Sales — the rep (Staff with role SALES) who brought & manages this client.
+  salesRepId        String?   @db.ObjectId
+  salesRep          Staff?    @relation("StaffSalesClients", fields: [salesRepId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
   targetAudience    String? // Target audience description
   contentPriorities String[] // Key topics/priorities
 
@@ -471,8 +486,20 @@ model Client {
   subscriptionStartDate DateTime?
   subscriptionEndDate   DateTime?
   articlesPerMonth      Int? // Calculated from tier (can be overridden manually)
+  // Billing cycle — client-owned (set on the client edit page, not per-invoice). New
+  // invoices read it instead of copying the previous invoice's period. Optional so
+  // legacy docs (which lack it) keep working; defaults to annual on read.
+  billingCycle          String?            @default("annual") // "monthly" | "annual"
   subscriptionStatus    SubscriptionStatus @default(PENDING)
   paymentStatus         PaymentStatus      @default(PENDING)
+  // Opening balance — the founding payment («تأسيسه معناه دفع»). Cash received the day
+  // the client is created (paid date = createdAt), recognized as revenue immediately.
+  // NO invoice is issued at founding; the sales report counts this amount directly. When
+  // the client's first article goes live, an admin generates the first invoice from this
+  // balance (flagged Invoice.fromOpeningBalance) — that invoice is a document, not extra
+  // revenue, so the report excludes it to avoid double-counting. Absent for internal/free
+  // accounts and legacy clients.
+  openingBalance        Float?
   // Platform's own / demo accounts (مدونتي, جبر, بسيطة…). Free by nature — excluded from
   // every billing, renewal and money counter so they never appear as "expired" or
   // "unpaid". Admin-controlled via a checkbox on the client edit form. OPTIONAL on
@@ -2796,6 +2823,11 @@ model Invoice {
   archivedAt        DateTime?
   archivedReason    String?
   archivedByUserId  String?          @db.ObjectId
+  // Marks the invoice that embodies the client's opening balance (see Client.openingBalance).
+  // The founding payment is already counted in the sales report as the opening balance, so
+  // an invoice generated from it MUST be excluded from report revenue — it is a document,
+  // not new money. Default false = a normal renewal invoice that DOES count.
+  fromOpeningBalance Boolean         @default(false)
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
 

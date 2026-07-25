@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { MediaType, MediaScope } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { logAction } from "@/lib/audit/log-action";
 
 interface CreateMediaData {
   filename: string;
@@ -141,6 +142,13 @@ export async function createMedia(data: CreateMediaData) {
         cloudinarySignature: data.cloudinarySignature,
       },
     });
+    await logAction("media.create", {
+      entity: "Media",
+      entityId: media.id,
+      summary: media.filename,
+      metadata: data.clientId ? { clientId: data.clientId } : null,
+    });
+
     revalidatePath("/media");
     // Media feeds modonty's public surfaces (partner slider · client page · article
     // client card) → invalidate its caches so a new image shows without waiting for cacheLife.

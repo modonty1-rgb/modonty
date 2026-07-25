@@ -157,6 +157,7 @@ export async function createTag(data: {
     if (existing) return { success: false, error: "This slug is already in use. Try a different one." };
 
     const tag = await db.tag.create({ data });
+    await logAction("tag.create", { entity: "Tag", entityId: tag.id, summary: tag.name });
     revalidatePath("/tags");
     await revalidateModontyTag("tags");
     try { const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator"); await generateAndSaveTagSeo(tag.id); } catch (e) { console.error("Tag SEO gen failed:", e); }
@@ -224,6 +225,7 @@ export async function updateTag(
     }
 
     const tag = await db.tag.update({ where: { id }, data: updateData });
+    await logAction("tag.update", { entity: "Tag", entityId: tag.id, summary: tag.name });
     revalidatePath("/tags");
     await revalidateModontyTag("tags");
     try { const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator"); await generateAndSaveTagSeo(tag.id); } catch (e) { console.error("Tag SEO gen failed:", e); }

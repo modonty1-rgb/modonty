@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { logAction } from "@/lib/audit/log-action";
 import { generateClientSEO } from "./generate-client-seo";
 
 /**
@@ -36,18 +37,27 @@ export async function saveClientSeo(
   }
   const { clientId, seoTitle, seoDescription } = parsed.data;
 
+  let clientName: string | null = null;
   try {
     // Partial update — only the two writer-owned fields.
-    await db.client.update({
+    const updated = await db.client.update({
       where: { id: clientId },
       data: {
         seoTitle: seoTitle?.trim() || null,
         seoDescription: seoDescription?.trim() || null,
       },
+      select: { name: true },
     });
+    clientName = updated.name;
   } catch {
     return { success: false, error: "تعذّر حفظ بيانات السيو — حاول مرة أخرى." };
   }
+
+  await logAction("client.seo", {
+    entity: "Client",
+    entityId: clientId,
+    summary: clientName ?? clientId,
+  });
 
   // Regenerate JSON-LD + metaTags from DB through the shared bundle (single path).
   const gen = await generateClientSEO(clientId);

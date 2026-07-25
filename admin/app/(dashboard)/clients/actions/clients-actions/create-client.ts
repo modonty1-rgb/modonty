@@ -88,6 +88,14 @@ export async function createClient(data: ClientFormData) {
       subscriptionTierConfigId: subscriptionTierConfigId,
       articlesPerMonth: articlesPerMonth,
     };
+
+    // Opening balance — the founding payment («تأسيسه معناه دفع»). Recorded as revenue
+    // immediately (paid date = the createdAt we're about to set). No invoice at founding;
+    // the first invoice is generated later from this balance on the account page. Internal
+    // accounts are free, so they carry no balance.
+    if (!data.isInternal && typeof data.openingBalance === "number" && data.openingBalance > 0) {
+      clientData.openingBalance = data.openingBalance;
+    }
     
     if (mappedData.subscriptionTier) {
       clientData.subscriptionTier = mappedData.subscriptionTier;
@@ -145,8 +153,10 @@ export async function createClient(data: ClientFormData) {
       "articlesPerMonth",
       "subscriptionStatus",
       "paymentStatus",
+      "openingBalance",
       "isFeatured",
       "isInternal",
+      "billingCycle",
       "gbpProfileUrl",
       "gbpPlaceId",
       "gbpAccountId",
@@ -209,6 +219,14 @@ export async function createClient(data: ClientFormData) {
       if (!industry) return { success: false, error: "Selected industry not found" };
       cleanData.industry = { connect: { id: industry.id } };
     }
+    if (clientData.salesRepId) {
+      const rep = await db.staff.findUnique({
+        where: { id: clientData.salesRepId as string },
+        select: { id: true },
+      });
+      if (!rep) return { success: false, error: "Selected sales rep not found" };
+      cleanData.salesRep = { connect: { id: rep.id } };
+    }
     if (clientData.parentOrganizationId) {
       const parentOrg = await db.client.findUnique({
         where: { id: clientData.parentOrganizationId as string },
@@ -223,10 +241,11 @@ export async function createClient(data: ClientFormData) {
     });
 
     let warning: string | undefined;
+
     try {
       await generateClientSEO(client.id);
     } catch {
-      warning = "Client saved successfully, but SEO data generation failed. You can update it later.";
+      warning = warning ?? "Client saved successfully, but SEO data generation failed. You can update it later.";
     }
 
     await logAction("client.create", {

@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 import { industryServerSchema } from "./industry-server-schema";
 
 export async function createIndustry(data: {
@@ -29,6 +30,13 @@ export async function createIndustry(data: {
     if (existing) return { success: false, error: "This slug is already in use. Try a different one." };
 
     const industry = await db.industry.create({ data });
+
+    await logAction("industry.create", {
+      entity: "Industry",
+      entityId: industry.id,
+      summary: industry.name,
+    });
+
     revalidatePath("/industries");
     await revalidateModontyTag("industries");
     try { const { generateAndSaveIndustrySeo } = await import("@/lib/seo/industry-seo-generator"); await generateAndSaveIndustrySeo(industry.id); } catch (e) { console.error("Industry SEO gen failed:", e); }

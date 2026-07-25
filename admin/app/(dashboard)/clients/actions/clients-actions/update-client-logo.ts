@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { logAction } from "@/lib/audit/log-action";
 import { generateClientSEO } from "./generate-client-seo";
 
 const schema = z.object({ logoMediaId: z.string().nullable() });
@@ -23,7 +24,7 @@ export async function updateClientLogo(
 
     const clientExists = await db.client.findUnique({
       where: { id: clientId },
-      select: { id: true },
+      select: { id: true, name: true },
     });
     if (!clientExists) return { success: false, error: "Client not found" };
 
@@ -33,6 +34,12 @@ export async function updateClientLogo(
     });
 
     await generateClientSEO(clientId);
+
+    await logAction("client.logo", {
+      entity: "Client",
+      entityId: clientId,
+      summary: clientExists.name ?? clientId,
+    });
 
     revalidatePath("/clients");
     revalidatePath(`/clients/${clientId}`);

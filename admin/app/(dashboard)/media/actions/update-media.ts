@@ -6,6 +6,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { MediaType, MediaScope } from "@prisma/client";
 import { generateAndSaveJsonLd } from "@/lib/seo";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 
 interface UpdateMediaData {
   scope?: MediaScope;
@@ -96,6 +97,12 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
         // Don't fail the update if metadata regeneration fails
       }
     }
+
+    await logAction("media.update", {
+      entity: "Media",
+      entityId: media.id,
+      summary: media.filename,
+    });
 
     revalidatePath("/media");
     revalidatePath("/articles");

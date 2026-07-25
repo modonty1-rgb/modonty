@@ -9,6 +9,7 @@ import { auth } from "@/lib/auth";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { generateClientSEO } from "@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo";
 import { generateAndSaveJsonLd } from "@/lib/seo";
+import { logAction } from "@/lib/audit/log-action";
 import { renameCloudinaryAsset } from "./rename-cloudinary-asset";
 
 /**
@@ -106,6 +107,7 @@ export async function saveImageSeo(
 
   let affectedClientIds: string[] = [];
   let affectedArticleIds: string[] = [];
+  let imageName: string | null = null;
   try {
     const media = await db.media.update({
       where: { id: mediaId },
@@ -116,6 +118,7 @@ export async function saveImageSeo(
         ...renameData,
       },
       select: {
+        filename: true,
         type: true,
         clientId: true,
         logoClients: { select: { id: true } },
@@ -124,6 +127,7 @@ export async function saveImageSeo(
         articleGallery: { select: { articleId: true } },
       },
     });
+    imageName = media.filename;
     const ids = new Set<string>();
     media.logoClients.forEach((c) => ids.add(c.id));
     media.heroImageClients.forEach((c) => ids.add(c.id));
@@ -147,6 +151,12 @@ export async function saveImageSeo(
   for (const aid of affectedArticleIds) {
     await generateAndSaveJsonLd(aid).catch(() => null);
   }
+
+  await logAction("media.seo", {
+    entity: "Media",
+    entityId: mediaId,
+    summary: imageName ?? mediaId,
+  });
 
   revalidatePath("/seo-images");
   if (affectedClientIds.length > 0) await revalidateModontyTag("clients");

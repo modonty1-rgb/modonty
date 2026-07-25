@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Users } from "lucide-react";
 
 import { db } from "@/lib/db";
 import { getActiveTierConfigs } from "../../../subscription-tiers/actions/tier-actions";
 import { resolvePricing } from "../../../subscription-tiers/lib/pricing";
+import { getStaffScope, isClientOutOfScope } from "../../helpers/sales-scope";
 
 import { AccountLedger } from "./components/account-ledger";
 import type { LedgerInvoice, Currency } from "./components/account-ledger";
@@ -62,6 +63,9 @@ export default async function ClientAccountPage({ params }: PageProps) {
         subscriptionEndDate: true,
         addressCountry: true,
         createdAt: true,
+        openingBalance: true,
+        salesRepId: true,
+        salesRep: { select: { name: true, email: true } },
       },
     }),
     getActiveTierConfigs(),
@@ -76,6 +80,37 @@ export default async function ClientAccountPage({ params }: PageProps) {
 
   if (!client) {
     notFound();
+  }
+
+  // A sales rep can only open the accounts they brought. Instead of a jarring 404, show a
+  // calm explanation naming the rep this client belongs to (Khalid 2026-07-25: «ما تفجع المندوب»).
+  const scope = await getStaffScope();
+  if (isClientOutOfScope(scope, client.salesRepId)) {
+    const repName = client.salesRep?.name || client.salesRep?.email || null;
+    return (
+      <div className="max-w-lg mx-auto px-6 py-16 text-center" dir="rtl">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
+          <Users className="h-7 w-7 text-muted-foreground" />
+        </div>
+        <h1 className="text-xl font-bold">هذا الحساب ليس ضمن عملائك</h1>
+        <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+          العميل <b className="text-foreground">«{client.name}»</b>{" "}
+          {repName ? (
+            <>مسجّل باسم المندوب <b className="text-foreground">{repName}</b>.</>
+          ) : (
+            <>غير مُسنَد لك.</>
+          )}{" "}
+          تقدر تدير عملاءك أنت فقط — لأي استفسار عن هذا الحساب تواصل مع المندوب المسؤول أو الإدارة.
+        </p>
+        <Link
+          href="/clients/accounts"
+          className="mt-6 inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+        >
+          <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+          رجوع لحساباتي
+        </Link>
+      </div>
+    );
   }
 
   const currency = currencyForCountry(client.addressCountry);
@@ -93,13 +128,25 @@ export default async function ClientAccountPage({ params }: PageProps) {
     defaultAmount = currentPeriod === "monthly" ? bucket.mo : Math.round(bucket.yr * 12);
   }
 
-  // Accounting bottom line (derived from invoices — no stored aggregate).
+  // Opening balance → the founding payment. It shows the «Auto Button» that documents it as
+  // the first invoice, but only while it hasn't been converted yet (a fromOpeningBalance
+  // invoice = already done). Compute this first — the collected total below depends on it.
+  const openingBalanceConverted = invoices.some((i) => i.fromOpeningBalance);
+  const openingBalance = client.openingBalance ?? 0;
+  // Before conversion the founding cash lives only on the client; after conversion it lives
+  // in the PAID fromOpeningBalance invoice. Count it exactly once so «إجمالي المدفوع» is the
+  // real collected figure and doesn't jump when the balance is turned into its invoice.
+  const collectedOpening = !openingBalanceConverted ? openingBalance : 0;
+
+  // Accounting bottom line (derived from invoices + the unconverted opening balance).
   // Archived invoices are void: they stay in the ledger for the record but owe nothing.
   const due = invoices
     .filter((i) => i.paymentStatus !== "PAID" && !i.archivedAt)
     .reduce((s, i) => s + i.amount, 0);
-  const paid = invoices.filter((i) => i.paymentStatus === "PAID").reduce((s, i) => s + i.amount, 0);
-  const hasPaid = invoices.some((i) => i.paymentStatus === "PAID");
+  const paid =
+    invoices.filter((i) => i.paymentStatus === "PAID").reduce((s, i) => s + i.amount, 0) +
+    collectedOpening;
+  const hasPaid = paid > 0;
 
   const end = client.subscriptionEndDate;
   const left = daysLeft(end);
@@ -169,6 +216,12 @@ export default async function ClientAccountPage({ params }: PageProps) {
               <p className="mt-0.5 text-xl font-extrabold tabular-nums text-emerald-600 dark:text-emerald-400">
                 {money(paid, currency)}
               </p>
+              {openingBalance > 0 && (
+                <p className="text-[11px] text-muted-foreground">
+                  منها رصيد افتتاحي {money(openingBalance, currency)}
+                  {openingBalanceConverted ? " · محوّل لفاتورة" : " · بانتظار أول مقال"}
+                </p>
+              )}
             </div>
             <div className="px-3.5 py-2.5">
               <p className="text-[11px] text-muted-foreground">نهاية الاشتراك</p>
@@ -185,6 +238,12 @@ export default async function ClientAccountPage({ params }: PageProps) {
 
           {/* Read-only DB facts — two per row instead of six across the screen */}
           <div className="rounded-lg border bg-card p-2.5">
+            <div className="mb-2.5 flex items-center gap-2 rounded-md border border-emerald-500/20 bg-emerald-500/[0.06] px-3 py-2">
+              <span className="text-[11px] text-muted-foreground">المندوب</span>
+              <span className="ms-auto text-sm font-semibold">
+                {client.salesRep?.name || client.salesRep?.email || "— بدون —"}
+              </span>
+            </div>
             <div className="grid grid-cols-2 gap-px overflow-hidden rounded-md border bg-border">
               <Fact label="الباقة" value={currentTierName} accent="violet" />
               <Fact label="الفترة" value={periodLabel} accent="violet" />
@@ -208,6 +267,8 @@ export default async function ClientAccountPage({ params }: PageProps) {
           planLabel={`${currentTierName} · ${periodLabel}`}
           currency={currency}
           defaultAmount={defaultAmount}
+          openingBalance={client.openingBalance ?? null}
+          openingBalanceConverted={openingBalanceConverted}
         />
       </div>
     </div>

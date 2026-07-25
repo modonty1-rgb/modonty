@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { deleteOldImage } from "../../../actions/delete-image";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 
 export async function deleteIndustry(id: string) {
   try {
@@ -25,6 +26,13 @@ export async function deleteIndustry(id: string) {
     await deleteOldImage("industries", id);
 
     await db.industry.delete({ where: { id } });
+
+    await logAction("industry.delete", {
+      entity: "Industry",
+      entityId: id,
+      summary: industry?.name ?? id,
+    });
+
     revalidatePath("/industries");
     await revalidateModontyTag("industries");
     try { const { regenerateIndustriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateIndustriesListingCache(); } catch (e) { console.error("Industries listing cache failed:", e); }

@@ -80,6 +80,7 @@ export const clientFormSections: FormSectionConfig[] = [
     fields: [
       "subscriptionTier",
       "subscriptionTierConfigId",
+      "billingCycle",
     ],
     required: ["subscriptionTier"],
     priority: "primary",
@@ -91,7 +92,7 @@ export const clientFormSections: FormSectionConfig[] = [
     title: "Content priorities",
     description: "SEO keyword priorities (audience/strategy moved to client intake)",
     icon: "Building2",
-    fields: ["contentPriorities", "industryId"],
+    fields: ["contentPriorities", "industryId", "salesRepId"],
     required: [],
     priority: "secondary",
     availableInCreate: true,

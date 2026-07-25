@@ -15,10 +15,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useClientForm } from "../../helpers/hooks/use-client-form";
+import { clientCreateFormSchema } from "../../helpers/client-form-schema";
 import { sendClientWelcome } from "../../actions/clients-actions";
 import { DEFAULT_CLIENT_PASSWORD } from "@/lib/default-client-password";
 import { YMYL_CATEGORIES, type YmylCategory } from "@modonty/database/lib/seo/ymyl-config";
 import { LEGAL_FORMS, type LegalForm } from "@modonty/database/lib/constants/client-classification";
+import { resolvePricing } from "../../../subscription-tiers/lib/pricing";
 
 interface CreatedClient {
   id: string;
@@ -30,17 +32,19 @@ interface CreateClientFormProps {
   industries?: Array<{ id: string; name: string }>;
   siteUrl?: string | null;
   countries?: Array<{ code: string; nameAr: string; nameEn: string }>;
+  salesReps?: Array<{ id: string; name: string }>;
 }
 
 // Self-contained CREATE UI. Backend is shared via useClientForm (createClient).
 // Editing has its own UI (ClientForm) — changes here never affect it.
-export function CreateClientForm({ industries = [], siteUrl = null, countries = [] }: CreateClientFormProps) {
+export function CreateClientForm({ industries = [], siteUrl = null, countries = [], salesReps = [] }: CreateClientFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [created, setCreated] = useState<CreatedClient | null>(null);
   const [sending, setSending] = useState(false);
 
   const { form, handleSubmit, loading, error, tierConfigs } = useClientForm({
+    schema: clientCreateFormSchema,
     onCreated: (client) => setCreated(client),
   });
   const { watch, setValue, register, formState: { errors } } = form;
@@ -79,6 +83,25 @@ export function CreateClientForm({ industries = [], siteUrl = null, countries = 
 
   // Tiers shown ascending by price (مجاني → الأعلى) for natural scanning.
   const sortedTiers = [...tierConfigs].sort((a, b) => a.price - b.price);
+
+  // Currency follows the client's country (Egypt → EGP, everything else → SAR), the same
+  // rule the Accounts/invoice pages use. Shown read-only here so the money section is complete.
+  const currency: "EGP" | "SAR" = /^eg/i.test(v.addressCountry ?? "") ? "EGP" : "SAR";
+  const billingCycle = v.billingCycle ?? "annual";
+
+  // Auto-fill the opening balance = unit price (country + cycle aware) × the cycle's months
+  // (annual → 12, monthly → 1). Admin can override for a client who paid a different amount.
+  // Internal accounts are free, so they carry no balance.
+  useEffect(() => {
+    if (v.isInternal) return;
+    const cfg = tierConfigs.find((c) => c.tier === v.subscriptionTier);
+    if (!cfg) return;
+    const bucket = currency === "EGP" ? resolvePricing(cfg.name, cfg.pricing).EG : resolvePricing(cfg.name, cfg.pricing).SA;
+    const unit = billingCycle === "monthly" ? bucket.mo : bucket.yr;
+    const months = billingCycle === "monthly" ? 1 : 12;
+    setValue("openingBalance", unit * months, { shouldValidate: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [v.subscriptionTier, v.billingCycle, v.addressCountry, v.isInternal, tierConfigs]);
 
   return (
     <>
@@ -138,46 +161,137 @@ export function CreateClientForm({ industries = [], siteUrl = null, countries = 
       </Card>
 
 
-      {/* 4. Subscription */}
-      <Card icon={<CreditCard />} tone="green" title="الاشتراك" desc="اختر الباقة — التواريخ تُضبط عند الفوترة">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      {/* 4. Financial — plan, billing cycle, currency, featured. Dates + payment status are
+          set later by the invoice/activation workflow, not at creation. */}
+      <Card
+        icon={<CreditCard />}
+        tone="green"
+        title="القسم المالي"
+        desc="الباقة، الفوترة، والعملة — التواريخ تُضبط عند الفوترة"
+        headerRight={
+          <div className="flex items-center gap-2">
+            <Label className="text-xs font-bold whitespace-nowrap">
+              المندوب<span className="text-destructive ms-0.5">*</span>
+            </Label>
+            <Select value={v.salesRepId || undefined} onValueChange={(val) => setValue("salesRepId", val || null, { shouldValidate: true })}>
+              <SelectTrigger className={`h-9 w-[190px] ${errors.salesRepId ? "border-destructive ring-1 ring-destructive/40" : ""}`}>
+                <SelectValue placeholder="اختر المندوب…" />
+              </SelectTrigger>
+              <SelectContent>
+                {salesReps.map((rep) => <SelectItem key={rep.id} value={rep.id}>{rep.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        }
+      >
+        <p className="text-xs font-semibold text-muted-foreground mb-2">الباقة</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {sortedTiers.map((cfg) => {
             const selected = v.subscriptionTier === cfg.tier;
+            // Price follows the client's country + billing cycle (same source as the
+            // Accounts page): EG bucket for Egypt, SA otherwise; monthly vs annual rate.
+            const bucket = currency === "EGP" ? resolvePricing(cfg.name, cfg.pricing).EG : resolvePricing(cfg.name, cfg.pricing).SA;
+            const amount = billingCycle === "monthly" ? bucket.mo : bucket.yr;
             return (
               <button
                 key={cfg.tier}
                 type="button"
                 onClick={() => setValue("subscriptionTier", cfg.tier, { shouldValidate: true })}
-                className={`relative rounded-xl border p-4 text-center transition-all ${
+                className={`flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-start transition-all ${
                   selected ? "border-primary bg-primary/[0.07] ring-2 ring-primary/20" : "border-input hover:border-primary/40"
                 }`}
               >
-                {selected && (
-                  <span className="absolute top-2 end-2 h-5 w-5 rounded-full bg-primary text-primary-foreground grid place-items-center text-[11px]">✓</span>
-                )}
-                <div className="text-sm font-bold">{cfg.name}</div>
-                <div className="text-xl font-extrabold mt-1.5">
-                  {cfg.price > 0 ? cfg.price.toLocaleString() : "0"}
-                  <span className="text-[11px] font-medium text-muted-foreground"> ريال</span>
+                <div className="min-w-0">
+                  <div className="text-[13px] font-bold truncate">{cfg.name}</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    {cfg.articlesPerMonth > 0 ? `${cfg.articlesPerMonth} مقالات/شهر` : "تجربة"}
+                  </div>
                 </div>
-                <div className="text-[10.5px] text-muted-foreground mt-1">
-                  {cfg.articlesPerMonth > 0 ? `${cfg.articlesPerMonth} مقالات/شهر` : "تجربة"}
+                <div className="shrink-0 text-end text-sm font-extrabold tabular-nums">
+                  {amount > 0 ? amount.toLocaleString() : "0"}
+                  <span className="text-[10px] font-medium text-muted-foreground"> {currency === "EGP" ? "جنيه" : "ريال"}</span>
+                  <div className="text-[9px] font-normal text-muted-foreground">/شهر</div>
                 </div>
               </button>
             );
           })}
+
+          {/* Fourth card — internal/platform account (free, excluded from all billing).
+              Independent toggle (isInternal), not a subscription tier. */}
+          <button
+            type="button"
+            onClick={() => setValue("isInternal", !v.isInternal, { shouldDirty: true })}
+            className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-start transition-all ${
+              v.isInternal ? "border-primary bg-primary/[0.07] ring-2 ring-primary/20" : "border-dashed border-input hover:border-primary/40"
+            }`}
+          >
+            <span className="text-[13px] font-bold truncate">🏛️ حساب داخلي</span>
+            <span className="ms-auto shrink-0 text-[10px] font-medium text-muted-foreground">مجاني</span>
+          </button>
         </div>
         {errors.subscriptionTier && <p className="text-xs text-destructive mt-2">{errors.subscriptionTier.message}</p>}
 
-        {/* Featured/premium spotlight — manual toggle (suggest ON for annual subscribers) */}
-        <label className="mt-4 flex items-start gap-3 cursor-pointer border-t pt-4">
-          <Checkbox checked={v.isFeatured ?? false} className="mt-0.5"
-            onCheckedChange={(c) => setValue("isFeatured", c === true, { shouldDirty: true })} />
-          <div>
-            <div className="text-sm font-semibold">⭐ شريك مميّز</div>
-            <div className="text-xs text-muted-foreground mt-0.5">يظهر في قسم «الشركاء المميّزون» وبشارة مميّزة على الموقع · فعّلها للمشتركين سنويًا</div>
+        {/* Billing cycle + currency — the money inputs at creation (rep is in the header). */}
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
+          <Field label="دورة الفوترة">
+            <div className="grid grid-cols-2 gap-2">
+              {([["annual", "سنوي"], ["monthly", "شهري"]] as const).map(([val, label]) => {
+                const on = billingCycle === val;
+                return (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => setValue("billingCycle", val, { shouldDirty: true })}
+                    className={`rounded-lg border py-2.5 text-sm font-semibold transition ${
+                      on ? "border-primary bg-primary/[0.07] ring-2 ring-primary/20" : "border-input hover:border-primary/40"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+            <Help>السنوي يمنح مكافأة الشهور الإضافية</Help>
+          </Field>
+          <Field label="العملة">
+            <div className="flex h-[42px] items-center rounded-lg border border-input bg-muted/30 px-3">
+              <span className="text-sm font-semibold">
+                {currency === "EGP" ? "جنيه مصري (EGP)" : "ريال سعودي (SAR)"}
+              </span>
+            </div>
+            <Help>تتبع دولة العميل تلقائياً</Help>
+          </Field>
+        </div>
+
+        {/* Opening balance — the founding payment («تأسيسه معناه دفع»). Recorded as revenue
+            immediately (paid date = today's creation). NO invoice now; the first invoice is
+            generated later from the account page once the client's first article is live.
+            Hidden for internal (free) accounts; mandatory for a billable client. */}
+        {!v.isInternal && (
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
+            <Field label="الرصيد الافتتاحي (المبلغ المدفوع)" required error={errors.openingBalance?.message}>
+              <div className="relative">
+                <Input
+                  type="number"
+                  min={0}
+                  value={v.openingBalance ?? ""}
+                  onChange={(e) => setValue("openingBalance", e.target.value === "" ? null : Number(e.target.value), { shouldValidate: true })}
+                  className="pe-14"
+                  placeholder="0"
+                />
+                <span className="absolute inset-y-0 end-3 flex items-center text-xs font-medium text-muted-foreground">
+                  {currency === "EGP" ? "جنيه" : "ريال"}
+                </span>
+              </div>
+              <Help>يتعبّى تلقائياً حسب الباقة والدورة — عدّله لو دفع مبلغ مختلف</Help>
+            </Field>
+            <div className="flex items-end">
+              <p className="text-xs text-muted-foreground leading-relaxed pb-2">
+                يُسجَّل كرصيد افتتاحي بتاريخ اليوم ويدخل تقرير المبيعات فوراً. الفاتورة تُصدَر لاحقاً من صفحة الحساب عند نشر أول مقال.
+              </p>
+            </div>
           </div>
-        </label>
+        )}
       </Card>
 
       {/* 5. YMYL classification */}
@@ -273,9 +387,9 @@ const TONE: Record<string, string> = {
   violet: "bg-violet-500/12 text-violet-600 dark:text-violet-400",
 };
 
-function Card({ icon, tone, title, desc, pill, highlight, children }: {
+function Card({ icon, tone, title, desc, pill, headerRight, highlight, children }: {
   icon: React.ReactNode; tone: keyof typeof TONE | string; title: string; desc: string;
-  pill?: string; highlight?: boolean; children: React.ReactNode;
+  pill?: string; headerRight?: React.ReactNode; highlight?: boolean; children: React.ReactNode;
 }) {
   return (
     <section className={`rounded-xl border bg-card overflow-hidden ${highlight ? "border-primary/30 bg-primary/[0.03]" : ""}`}>
@@ -285,11 +399,13 @@ function Card({ icon, tone, title, desc, pill, highlight, children }: {
           <div className="text-sm font-bold">{title}</div>
           <div className="text-[11.5px] text-muted-foreground truncate">{desc}</div>
         </div>
-        {pill && (
+        {headerRight ? (
+          <div className="ms-auto shrink-0">{headerRight}</div>
+        ) : pill ? (
           <span className="ms-auto font-mono text-[11px] px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 truncate max-w-[280px]">
             {pill}
           </span>
-        )}
+        ) : null}
       </div>
       <div className="p-4">{children}</div>
     </section>

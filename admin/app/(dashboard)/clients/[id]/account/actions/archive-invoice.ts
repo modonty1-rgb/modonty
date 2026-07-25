@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 import { recomputeSubscriptionEnd } from "../helpers/billing";
 
 export interface ArchiveInvoiceInput {
@@ -36,7 +37,14 @@ export async function archiveInvoiceAction(input: ArchiveInvoiceInput): Promise<
 
   const invoice = await db.invoice.findUnique({
     where: { id: input.invoiceId },
-    select: { id: true, clientId: true, paymentStatus: true, archivedAt: true },
+    select: {
+      id: true,
+      clientId: true,
+      number: true,
+      paymentStatus: true,
+      archivedAt: true,
+      client: { select: { name: true } },
+    },
   });
   if (!invoice) return { ok: false, error: "الفاتورة غير موجودة" };
   if (invoice.archivedAt) return { ok: false, error: "الفاتورة مؤرشفة بالفعل" };
@@ -55,6 +63,13 @@ export async function archiveInvoiceAction(input: ArchiveInvoiceInput): Promise<
     });
 
     await recomputeSubscriptionEnd(invoice.clientId);
+
+    await logAction("invoice.archive", {
+      entity: "Invoice",
+      entityId: invoice.id,
+      summary: `${invoice.number} · ${invoice.client.name ?? invoice.clientId}`,
+      metadata: { reason },
+    });
 
     revalidatePath(`/clients/${invoice.clientId}/account`);
     revalidatePath(`/clients/${invoice.clientId}`);

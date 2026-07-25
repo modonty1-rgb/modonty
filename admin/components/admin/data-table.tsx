@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Search, ArrowUpDown, ArrowUp, ArrowDown, Stethoscope } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface Column<T> {
+export interface Column<T> {
   key: keyof T | string;
   header: string | React.ReactNode;
   render?: (item: T) => React.ReactNode;
@@ -137,7 +137,8 @@ export function DataTable<T extends { id: string }>({
         </div>
       )}
 
-      <div className="border rounded-lg bg-card">
+      {/* Standard row density for every admin table: 10px cell padding, 40px header. */}
+      <div className="border rounded-lg bg-card [&_th]:!h-10 [&_td]:!py-2.5">
         <Table>
           <TableHeader>
             <TableRow>

@@ -13,7 +13,7 @@ import { messages } from "@/lib/messages";
 import { slugify } from "@/lib/utils";
 import { updateClient, createClient } from "../../actions/clients-actions";
 import { SubscriptionTier } from "@prisma/client";
-import { getActiveTierConfigs } from "@/app/(dashboard)/subscription-tiers/actions/tier-actions";
+import { getSellableTierConfigs } from "@/app/(dashboard)/subscription-tiers/actions/tier-actions";
 
 // Friendly labels for the "can't save" toast so it names the blocking fields
 // in human terms instead of raw schema keys.
@@ -23,6 +23,8 @@ const FIELD_LABELS: Record<string, string> = {
   email: "Email",
   phone: "Phone",
   industryId: "Industry",
+  salesRepId: "Sales Rep",
+  openingBalance: "الرصيد الافتتاحي",
   subscriptionTier: "Subscription Tier",
   businessBrief: "Business Brief",
   logoMediaId: "Logo",
@@ -76,6 +78,9 @@ export function useClientForm({ initialData, clientId, onCreated, schema }: UseC
     articlesPerMonth: number;
     price: number;
     isPopular: boolean;
+    // Multi-currency pricing JSON ({ SA:{mo,yr}, EG:{mo,yr} }) — drives the country-aware
+    // price shown on the create form. resolvePricing() validates/falls back on it.
+    pricing?: unknown;
   }>>([]);
 
   const isEditMode = Boolean(clientId);
@@ -93,7 +98,7 @@ export function useClientForm({ initialData, clientId, onCreated, schema }: UseC
   useEffect(() => {
     async function loadTierConfigs() {
       try {
-        const configs = await getActiveTierConfigs();
+        const configs = await getSellableTierConfigs();
         setTierConfigs(configs);
       } catch (error) {
         console.error("Failed to load tier configs:", error);
@@ -212,6 +217,9 @@ export function useClientForm({ initialData, clientId, onCreated, schema }: UseC
         isYmyl: data.isYmyl ?? false,
         ymylCategory: data.ymylCategory ?? null,
         ymylData: data.ymylData ?? null,
+        // Opening balance (create only) — create-client persists it on Client.openingBalance;
+        // updateClient ignores it via its field whitelist.
+        openingBalance: (data as { openingBalance?: number | null }).openingBalance ?? null,
       } as ClientFormData;
 
       const result = clientId

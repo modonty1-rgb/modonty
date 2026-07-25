@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { sendEmail } from "@/lib/email/resend-client";
+import { logAction } from "@/lib/audit/log-action";
 
 const escapeHtml = (s: string): string =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -217,7 +218,20 @@ export async function sendContactReply(id: string, replyBody: string, viaEmail: 
 export async function deleteContactMessage(id: string) {
   const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   try {
+    // Read before it's gone — afterwards there's no subject/name left to log.
+    const doomed = await db.contactMessage.findUnique({
+      where: { id },
+      select: { name: true, subject: true },
+    });
+
     await db.contactMessage.delete({ where: { id } });
+
+    await logAction("contactMessage.delete", {
+      entity: "ContactMessage",
+      entityId: id,
+      summary: doomed ? `${doomed.name} — ${doomed.subject}` : null,
+    });
+
     revalidatePath("/contact-messages");
     return { success: true };
   } catch (error) {

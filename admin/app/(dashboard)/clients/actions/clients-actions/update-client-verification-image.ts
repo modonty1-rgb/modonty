@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { logAction } from "@/lib/audit/log-action";
 
 // Verification image ("التوثيق") — a Cloudinary image of the client's official
 // registration/license. Admin-controlled (Modonty verifies; the client does not
@@ -28,13 +29,19 @@ export async function updateClientVerificationImage(
 
     const clientExists = await db.client.findUnique({
       where: { id: clientId },
-      select: { id: true },
+      select: { id: true, name: true },
     });
     if (!clientExists) return { success: false, error: "Client not found" };
 
     await db.client.update({
       where: { id: clientId },
       data: { verificationImageUrl: parsed.data.verificationImageUrl },
+    });
+
+    await logAction("client.verification", {
+      entity: "Client",
+      entityId: clientId,
+      summary: clientExists.name ?? clientId,
     });
 
     revalidatePath("/clients");
