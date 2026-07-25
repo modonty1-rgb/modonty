@@ -114,7 +114,7 @@ export function ClientReviewForm({ slug, isLoggedIn }: ClientReviewFormProps) {
               className="mt-2"
               onClick={() => router.push(registerHref)}
             >
-              اشترك مجاناً
+              سجّل مجاناً
             </Button>
           )}
         </div>

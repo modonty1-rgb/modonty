@@ -51,7 +51,7 @@ export function ArticleSidebarEngagement({
                 href={`/users/register`}
                 className="font-semibold text-accent underline-offset-4 hover:underline"
               >
-                اشترك مجاناً
+                سجّل مجاناً
               </Link>
             </p>
           )}

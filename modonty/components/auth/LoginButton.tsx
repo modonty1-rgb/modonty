@@ -44,7 +44,7 @@ export function LoginButton() {
           <Link href="/users/login">دخول</Link>
         </Button>
         <Button asChild size="sm" className="h-9 rounded-lg px-3.5 text-sm font-semibold shadow-sm">
-          <Link href="/users/register">اشترك مجاناً</Link>
+          <Link href="/users/register">سجّل مجاناً</Link>
         </Button>
       </div>
     </>

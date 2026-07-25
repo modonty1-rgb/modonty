@@ -93,7 +93,7 @@ export function RegisterForm() {
         <CardHeader>
           <CardTitle className="text-2xl text-center">انضم لمجتمع مدوّنتي</CardTitle>
           <CardDescription className="text-center">
-            اشترك مجاناً وتابع جديد تخصصك
+            سجّل مجاناً وتابع جديد تخصصك
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

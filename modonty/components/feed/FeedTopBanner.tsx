@@ -31,11 +31,11 @@ export function FeedTopBanner({ platformTagline, platformDescription, socialLink
       <div className="rounded-lg border border-border border-t-2 border-t-accent bg-muted/30 px-4 py-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <p className="text-sm font-bold text-foreground">اشترك مجاناً في مدوّنتي</p>
+            <p className="text-sm font-bold text-foreground">سجّل مجاناً في مدوّنتي</p>
             <p className="mt-0.5 text-xs text-muted-foreground">{PERKS}</p>
           </div>
           <Button asChild size="sm" className="h-10 w-full px-4 text-sm font-semibold sm:h-9 sm:w-auto sm:shrink-0">
-            <Link href="/users/register">اشترك مجاناً</Link>
+            <Link href="/users/register">سجّل مجاناً</Link>
           </Button>
         </div>
       </div>

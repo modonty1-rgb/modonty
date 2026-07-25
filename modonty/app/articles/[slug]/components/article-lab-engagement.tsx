@@ -84,7 +84,7 @@ export function ArticleLabEngagementStrip({ likes, userLiked, userFavorited, cli
     <div className="flex flex-col gap-1.5">
       {!isLoggedIn && (
         <p className="px-1 text-[11px] leading-relaxed text-muted-foreground">
-          <a href={registerHref} className="font-semibold text-primary underline-offset-4 hover:underline">اشترك مجاناً</a>
+          <a href={registerHref} className="font-semibold text-primary underline-offset-4 hover:underline">سجّل مجاناً</a>
           {" للإعجاب أو حفظ المقال"}
         </p>
       )}

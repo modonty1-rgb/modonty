@@ -88,7 +88,7 @@ export function CommentFormDialog({ articleId, articleSlug, userId, clientId, tr
               سجّل مجاناً لإضافة تعليق والتفاعل.
             </p>
             <Button asChild variant="default" className="w-full">
-              <Link href="/users/register">اشترك مجاناً</Link>
+              <Link href="/users/register">سجّل مجاناً</Link>
             </Button>
           </div>
         )}

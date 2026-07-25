@@ -143,7 +143,7 @@ export function AskClientDialog({
               سجّل مجاناً لطرح سؤالك على الشركة.
             </p>
             <Button asChild variant="default" className="w-full">
-              <Link href="/users/register">اشترك مجاناً</Link>
+              <Link href="/users/register">سجّل مجاناً</Link>
             </Button>
           </div>
         ) : (

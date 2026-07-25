@@ -104,7 +104,7 @@ export function ClientFaqQuestionForm({ slug }: ClientFaqQuestionFormProps) {
           <p>{error}</p>
           {needsLogin && (
             <Button asChild size="sm" className="mt-2">
-              <Link href={registerHref}>اشترك مجاناً</Link>
+              <Link href={registerHref}>سجّل مجاناً</Link>
             </Button>
           )}
         </div>

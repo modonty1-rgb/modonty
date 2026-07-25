@@ -106,7 +106,7 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
               <div className="flex flex-col gap-2 px-3 pb-1">
                 <Button asChild className="h-11 w-full rounded-xl text-sm font-semibold">
                   <Link href="/users/register" onClick={close}>
-                    اشترك مجاناً
+                    سجّل مجاناً
                   </Link>
                 </Button>
                 <Button

@@ -208,7 +208,7 @@ export function ArticleInteractionButtons({
           href={registerHref}
           className="text-primary underline-offset-4 hover:underline"
         >
-          اشترك مجاناً
+          سجّل مجاناً
         </Link>
         {" للإعجاب أو حفظ المقال"}
       </p>
@@ -252,7 +252,7 @@ export function ArticleInteractionButtons({
         onClick={handleFavorite}
         disabled={loading === "favorite"}
         className={btnClass}
-        aria-label={loading === "favorite" ? "جاري التحديث..." : isLoggedIn ? "حفظ" : "اشترك مجاناً للحفظ"}
+        aria-label={loading === "favorite" ? "جاري التحديث..." : isLoggedIn ? "حفظ" : "سجّل مجاناً للحفظ"}
       >
         {loading === "favorite" ? (
           <IconLoading className={`${iconClass} animate-spin`} />

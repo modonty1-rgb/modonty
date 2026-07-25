@@ -58,7 +58,7 @@ export function ClientCommentForm({ clientSlug }: ClientCommentFormProps) {
             onClick={() => router.push(registerHref)}
             className="text-primary underline"
           >
-            اشترك مجاناً
+            سجّل مجاناً
           </button>{" "}
           لإضافة تعليق.
         </p>
