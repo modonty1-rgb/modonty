@@ -13,6 +13,7 @@ import { generateClientSEO } from "./generate-client-seo";
 import { logAction } from "@/lib/audit/log-action";
 import { clientServerSchema } from "./client-server-schema";
 import { normalizeOrganizationType } from "@modonty/database/lib/constants/client-classification";
+import { normalizePhone } from "@modonty/database/lib/phone";
 import { DEFAULT_CLIENT_PASSWORD } from "@/lib/default-client-password";
 import bcrypt from "bcryptjs";
 
@@ -190,6 +191,13 @@ export async function createClient(data: ClientFormData) {
       cleanData.organizationType = normalizeOrganizationType(
         cleanData.organizationType as string | null | undefined
       );
+    }
+
+    // Store the phone in canonical E.164 (Saudi/Egypt) so WhatsApp links are correct; keep
+    // the raw value if it can't be normalized (it surfaces in the dashboard «Errors to fix»).
+    if (typeof cleanData.phone === "string" && cleanData.phone.trim()) {
+      const e164 = normalizePhone(cleanData.phone);
+      if (e164) cleanData.phone = e164;
     }
 
     // Bootstrap intake JSON with businessBrief so the unified strategy bundle is non-empty from creation.

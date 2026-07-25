@@ -12,6 +12,7 @@ import { ClientsPipeline } from "./components/sections/clients-pipeline";
 import { MembersPipeline } from "./components/sections/members-pipeline";
 import { SubscribersPipeline } from "./components/sections/subscribers-pipeline";
 import { NewsletterPipeline } from "./components/sections/newsletter-pipeline";
+import { ErrorsToFix } from "./components/sections/errors-to-fix";
 import { MediaLibrary } from "./components/sections/media-library";
 import { ReferenceData } from "./components/sections/reference-data";
 
@@ -54,6 +55,13 @@ export default async function DashboardPage() {
 
       {/* Urgent cross-source alerts — renders nothing when all is clear */}
       <DashboardAlertsBanner alerts={alerts} />
+
+      {/* Data problems needing a human — reusable «Errors to fix» aggregator */}
+      <section id="sec-errors-to-fix" className="scroll-mt-24">
+        <Suspense fallback={<Skeleton className="h-24 w-full" />}>
+          <ErrorsToFix />
+        </Suspense>
+      </section>
 
       {/* 2 · What visitors did to us */}
       <section id="sec-visitors" className="scroll-mt-24">

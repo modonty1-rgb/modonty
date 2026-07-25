@@ -6,6 +6,7 @@ import { messages } from "@/lib/messages";
 import { auth } from "@/lib/auth";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import { validateYmylData } from "@/lib/seo/ymyl-helpers";
+import { normalizePhone } from "@modonty/database/lib/phone";
 import { regenerateClientSeo } from "./regenerate-client-seo";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { normalizeLegalForm, normalizeOrganizationType } from "@modonty/database/lib/constants/client-classification";
@@ -88,7 +89,11 @@ export async function updateProfile(clientId: string, data: ProfileUpdate) {
     if (data.slogan !== undefined) u.slogan = str(data.slogan);
     if (data.description !== undefined) u.description = str(data.description);
     if (data.email !== undefined && data.email !== null) u.email = data.email.trim();
-    if (data.phone !== undefined) u.phone = str(data.phone);
+    if (data.phone !== undefined) {
+      // Canonical E.164 (Saudi/Egypt) for correct WhatsApp links; keep raw if un-normalizable.
+      const raw = str(data.phone);
+      u.phone = raw ? normalizePhone(raw) ?? raw : "";
+    }
     if (data.contactType !== undefined) u.contactType = str(data.contactType);
     if (data.addressStreet !== undefined) u.addressStreet = str(data.addressStreet);
     if (data.addressCity !== undefined) u.addressCity = str(data.addressCity);

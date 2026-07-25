@@ -7,6 +7,7 @@ import { getTierConfigByTier } from "@/app/(dashboard)/subscription-tiers/action
 import { SubscriptionTier } from "@prisma/client";
 import { validateAndNormalizeUrls } from "./validate-and-normalize-urls";
 import { normalizeOrganizationType } from "@modonty/database/lib/constants/client-classification";
+import { normalizePhone } from "@modonty/database/lib/phone";
 import bcrypt from "bcryptjs";
 
 export interface GroupUpdateResult {
@@ -352,9 +353,14 @@ export async function updateContactFields(
     // Normalize sameAs URLs if provided
     const normalizedSameAs = data.sameAs ? validateAndNormalizeUrls(data.sameAs) : [];
 
+    // Canonical E.164 phone (Saudi/Egypt) for correct WhatsApp links; keep raw if it can't be
+    // normalized (it surfaces in the dashboard «Errors to fix»).
+    const rawPhone = data.phone?.trim() || null;
+    const phone = rawPhone ? normalizePhone(rawPhone) ?? rawPhone : null;
+
     const newData: Record<string, unknown> = {
       url: data.url ?? null,
-      phone: data.phone ?? null,
+      phone,
       contactType: data.contactType ?? null,
       sameAs: normalizedSameAs,
     };

@@ -1,13 +1,17 @@
+import { normalizePhone } from "@modonty/database/lib/phone";
+
 /**
- * Saudi-aware WhatsApp number normalizer (lifted from client-contact so the hero
- * CTA, sidebar quick-contact, floating FAB, and mobile dock all share one rule).
- * 05xxxxxxxx → 9665xxxxxxxx · bare 9-digit → 966-prefixed · already-966 → as-is.
+ * WhatsApp number for `wa.me` — one rule for the hero CTA, sidebar quick-contact,
+ * floating FAB, and mobile dock. Delegates to the shared Saudi+Egypt normalizer.
  */
 export function getWhatsAppNumber(phone: string): string {
-  const digits = phone.replace(/\D/g, "");
-  if (digits.startsWith("0")) return "966" + digits.slice(1);
-  if (!digits.startsWith("966") && digits.length <= 9) return "966" + digits;
-  return digits;
+  // One canonical normalizer (Saudi + Egypt) — fixes the old Saudi-only guess that mangled
+  // Egyptian local numbers (`01…` → `966…`). wa.me needs the digits without the leading `+`.
+  const e164 = normalizePhone(phone);
+  if (e164) return e164.replace(/^\+/, "");
+  // Un-normalizable (two numbers / landline): best-effort so the link isn't empty — these
+  // clients are surfaced in the admin «Errors to fix» card for a manual correction.
+  return phone.replace(/\D/g, "");
 }
 
 /** Full wa.me link, optionally with a pre-filled message. */
