@@ -11,13 +11,6 @@
 - [ ] **كرت مستقل «Modonty Newsletter»** (`NewsSubscriber`) بجانب كرت «Client Subscribers» بالداشبورد. (تسمية الكرت الحالي أُصلحت 2026-07-25.)
 - [ ] **navbar — لفظ «اشترك مجاناً» ملتبس** (نشرة أم حساب؟). البديل: «سجّل مجاناً»/«أنشئ حساب» (`LoginButton.tsx:47` + `FeedTopBanner.tsx`). + فحص تباين «دخول» a11y. **يتبع قرار العضوية.**
 - [ ] **🐛 عدم تزامن `Media.filename` مع `cloudinaryPublicId`:** العرض يعتمد مقطع الـ publicId لا الـ filename.
-- [ ] **٥ · تنظيف الشواهد** (الملفات لسه موجودة — الأمر جاهز):
-  ```
-  cd c:/Users/w2nad/Desktop/dreamToApp/MODONTY
-  rm "admin/app/(dashboard)/analytics/components/analytics-page-client.tsx" "admin/app/(dashboard)/analytics/components/analytics-charts.tsx" "admin/app/(dashboard)/analytics/components/views-chart.tsx" "admin/app/(dashboard)/analytics/components/traffic-sources-chart.tsx" "admin/app/(dashboard)/analytics/components/top-articles-chart.tsx" "admin/app/(dashboard)/analytics/components/export-button.tsx" "admin/app/(dashboard)/analytics/actions/get-views-trend-data.ts" "admin/app/(dashboard)/analytics/actions/get-full-activity.ts" "admin/app/(dashboard)/components/date-range-selector.tsx" "admin/app/(dashboard)/components/sections/db-section.tsx" "modonty/components/tracked-cta-link.tsx"
-  rm -rf modonty/.next-stale-*
-  ```
-- [ ] **`get-full-activity.ts`** غير مستخدمة بعد GA4 — قرار خالد: مرجع/fallback أم حذف؟
 
 ## ⚡ بيد خالد — نقرات يدوية (منها 🔴 حرج أمني)
 - [ ] **🔴 تدوير كلمة مرور `modonty-admin`** (Atlas → Database Access). مكشوفة حرفياً في ١١ ملفاً على GitHub (`git grep -l "2053712713" HEAD`)، صلاحية كتابة كاملة. بعد التدوير: نقل الرابط لمتغير بيئة. **أخطر بند بالملف.**
