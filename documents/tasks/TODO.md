@@ -6,7 +6,11 @@
 >
 > **ما ليس TODO يبقى بمكانه:** ملفات القرارات (documents/reels/ · documents/content-team/) · المراجع والمواصفات (ARABIC-SLUG-DECISION، CLIENT-PAGE-BUILD-SPEC، ARTICLE-SEO-PERFECT-AUDIT قالب المراجعة، YMYL-FLOW-DISCUSSION…) · سجل ملاحظات التست الحي `documents/tasks/CLAUDE.md` · الموكبات HTML · SESSION-LOG.
 
-**Last Updated: 2026-07-24**
+**Last Updated: 2026-07-25**
+
+## ✅ Done 2026-07-25 — الرصيد الافتتاحي + تقرير المبيعات أساس نقدي (مدفوع `fd6a953`)
+- `Client.openingBalance` + `Invoice.fromOpeningBalance` · Auto Button يحوّل الرصيد لأول فاتورة عند نشر أول مقال · التقرير أساس نقدي (رصيد + فواتير مدفوعة بـ paidAt، يستثني fromOpeningBalance) · كرت «منتهي» · جدول DataTable بفرز/بحث/pagination + نوع الاشتراك · فحص حي كامل (هجرة 13 عميل + زر حي + إعادة حساب مستقلة: 4,788 SAR / 43,282 EGP ثابت، صفر تكرار). admin 1.3.0.
+- **متبقّي:** قرار keep/revert لهجرة الـ13 على dev المحلية · Phase 6 backfill أرصدة القدامى على الإنتاج (مبالغ يدوية) · قيم Business Info للإنتاج.
 
 ## 🗄️ مراجعة سكيما شاملة + سياسة تكلفة مونجو (تاسك كبير — طلب خالد 2026-07-24)
 

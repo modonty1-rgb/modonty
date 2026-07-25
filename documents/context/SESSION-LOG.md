@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-07-25 (12:35)
+# Session Context — Last Updated: 2026-07-25 (18:40)
 
 > ⚙️ **ملف نشط = آخر أسبوع فقط** (يتوزّع أسبوعياً لتوفير الـ token عند القراءة).
 > الأرشيف الكامل بالأشهر:
@@ -28,6 +28,50 @@
 
 ### 🔮 مستقبلي
 - [ ] نقل تخزين معارض العملاء إلى Bunny (Cloudinary مكلف) — آمن بمعمارية Media ID. المصدر: `documents/tasks/TODO.md`.
+
+---
+
+## Session: 2026-07-25 18:40 — الرصيد الافتتاحي + تقرير المبيعات أساس نقدي (دُفِع ✅ `fd6a953`)
+
+### 🎯 أين توقفت
+- الميزة اكتملت، فُحصت حيّاً 100%، **ودُفِعت على الإنتاج** (`main`: `1d9854d..fd6a953`). Vercel ينشر تلقائياً.
+- **الفعل القادم عند الاستئناف:** قرار خالد على **هجرة الـ13 عميل** المحلية (إبقاء/تراجع، الـ backup في ذاكرتي مو في ملف بعد التنظيف) + متابعة Phase 6 (backfill أرصدة القدامى على الإنتاج).
+
+### ✅ أُنجز (tsc نظيف admin/modonty/console · تست حي كامل · backup · version admin 1.3.0)
+- **سكيما:** `Client.openingBalance` (Float?) + `Invoice.fromOpeningBalance` (Boolean default false). قُتل node ثم `prisma:generate`. مونجو schemaless فالحقول تظهر عند الكتابة، والـ default يُطبَّق عند القراءة للصفوف القديمة.
+- **النموذج المحاسبي (حُسم مع خالد):** دفعة التأسيس = **رصيد افتتاحي** على العميل (تاريخ الدفع = createdAt، الشهور من billingCycle) — تدخل التقرير فوراً بلا فاتورة. عند نشر أول مقال، **Auto Button** في صفحة الحساب يولّد أول فاتورة `PAID` مُعلّمة `fromOpeningBalance` (مربوطة بتاريخ أول مقال)، وهي **مستند لا إيراد جديد** فالتقرير يستثنيها. صفر تكرار.
+- **التأسيس** (`create-client-form.tsx` + `create-client.ts`): حقل واحد «الرصيد الافتتاحي» (إلزامي للمدفوع، يتعبّى تلقائياً من الباقة×الدورة، يختفي للحساب الداخلي). شِيلت الفاتورة الافتتاحية القديمة (`issueOpeningInvoice`) من `create-invoice.ts`.
+- **Auto Button** (`convert-opening-balance.ts` جديد + بانر في `account-ledger.tsx`): يشتغل فقط لو فيه مقال منشور؛ idempotent (يرفض التكرار عبر علم `fromOpeningBalance`)؛ يستدعي `recomputeSubscriptionEnd` فيغذّي `client.subscriptionEndDate` وكل العدّادات.
+- **تقرير المبيعات — أساس نقدي** (`get-sales-report.ts`): المحصّل = أرصدة افتتاحية (بتاريخ createdAt) + فواتير مدفوعة (بـ`paidAt`)، **يستثني `fromOpeningBalance`**، المستحق منفصل، التوزيع الشهري بالتحصيل الفعلي.
+- **واجهة التقرير** (`sales-report-view.tsx` + `invoices-table.tsx` جديد): شريط KPIs مضغوط ببادجات — لون ثابت لكل عملة (SAR أخضر · EGP أزرق) عبر كروت الشهور والجداول؛ **كرت «منتهي»** (اشتراكات تجاوزت الانتهاء = تعريف segment expired، عدّاد أحمر)؛ **شِيل كرت المناديب** (منطقة فلوس)؛ جدول الفواتير صار **DataTable** (فرز/بحث/pagination) + عمود النوع (شهري/سنوي) + شارة «رصيد افتتاحي»؛ العنوان صار «فواتير · {الفترة}» يتبع الـ toggle.
+
+### 🧪 التست الحي الكامل (فلوس — مصيبة لو غلط)
+- أنشأت مندوب SALES + عميل تست (رصيد 4788 SAR) عبر الواجهة. الرصيد حُفظ، ظهر في العمود الجانبي + التقرير (محصّل/شهر/باقة/مندوب).
+- **هجرة 13 فاتورة → أرصدة افتتاحية + علم** على dev (سكربت مؤقت، مع backup): فخّ التكرار اتفعّل عمداً (كل عميل عنده رصيد + فاتورة مدفوعة) — **الإجمالي ثبت 4,788 SAR / 43,282 EGP** (ما تضاعف). أُكِّد بإعادة حساب مستقلة من DB (PASS).
+- **ضغط Auto Button حقيقي**: ولّد `MOD-2026-00014` (4788 مدفوعة، نهاية 20 Jul 2027 = أول مقال +12)، والتقرير بقي ثابت. المدفوع في الحساب = مرة واحدة.
+
+### 📝 قرارات
+- **الرصيد لا يُصفّر بعد التحويل** → التقرير يقرأ الرصيد دائماً ويستثني الفاتورة المُعلّمة؛ العلم وحده يمنع التكرار.
+- **كارت overdue = «منتهي»** (اشتراكات لازم تجدّد) بجانب «المستحق» (المبلغ) — بطلب خالد (الاثنين).
+- **الألوان ثابتة بالعملة** (SAR أخضر/EGP أزرق) عبر كل الكروت والجداول.
+
+### 📂 أبرز الملفات
+- جديد: `clients/[id]/account/actions/convert-opening-balance.ts` · `clients/sales-report/{page,actions/get-sales-report,components/sales-report-view,components/invoices-table}` · `sales-scope.ts` · `audit-log/*` · `users/lib/roles.ts`.
+- عُدّل: `schema.prisma` · `create-client.ts` · `create-invoice.ts` (حذف issueOpeningInvoice) · `account/page.tsx` · `account-ledger.tsx` · `create-client-form.tsx` · `client-form-schema.ts` · `use-client-form.ts` · `form-types.ts`.
+
+### 🔁 حالة git/النشر
+- الفرع: `main`. الكوميت: `fd6a953`. **مدفوع ✅**. Vercel: نشر تلقائي جارٍ.
+- **مُستثنى (WIP):** `documents/reels/` · `modonty/app/reels/` · `modonty-v3-handoff/` (الريلز لسه ما خلص) + سكربتاتي المؤقتة + config محلي.
+
+### 🚧 معلّق
+- **هجرة الـ13 عميل** على dev محلية فقط (ما اندفعت) — قرار keep/revert لخالد.
+- **Phase 6:** backfill أرصدة العملاء القدامى على الإنتاج (تحتاج مبالغ فعلية = إدخال يدوي/Run-All بمراجعة) + قيم Business Info للإنتاج.
+- المعلّقات الثابتة (شروط/خصوصية على الإنتاج) تبقى.
+
+### 🚀 استئناف في 30 ثانية
+1. `git log --oneline -3` (تأكيد `fd6a953` مدفوع).
+2. افتح `/clients/sales-report` على الأدمن.
+3. القرار: هجرة dev keep/revert؟ ثم Phase 6 backfill.
 
 ---
 

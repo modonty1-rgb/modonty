@@ -144,7 +144,7 @@ export default async function ClientAccountPage({ params }: PageProps) {
     .filter((i) => i.paymentStatus !== "PAID" && !i.archivedAt)
     .reduce((s, i) => s + i.amount, 0);
   const paid =
-    invoices.filter((i) => i.paymentStatus === "PAID").reduce((s, i) => s + i.amount, 0) +
+    invoices.filter((i) => i.paymentStatus === "PAID" && !i.archivedAt).reduce((s, i) => s + i.amount, 0) +
     collectedOpening;
   const hasPaid = paid > 0;
 
