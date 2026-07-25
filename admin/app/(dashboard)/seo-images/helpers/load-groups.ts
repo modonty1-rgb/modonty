@@ -172,7 +172,14 @@ export function buildSeoImageRow(m: SeoImageMediaRow, defaults: ModontyImageDefa
     height: m.height,
     fileSize: m.fileSize,
     mimeType: m.mimeType,
-    filename: m.filename,
+    // Display the EFFECTIVE filename — the public_id's last segment (what Cloudinary actually
+    // serves), the SAME source the SEO score grades (dataLayer/lib/seo/media/seo-score.ts).
+    // The stored `filename` can be a stale upload hash; the public_id is the source of truth
+    // after any rename, so display and score never diverge.
+    filename: (() => {
+      const pid = m.cloudinaryPublicId?.trim();
+      return pid ? pid.split("/").pop() || pid : m.filename;
+    })(),
     usedIn: usedInLabel(m),
     ownerLabel: clientOwned ? (ctx.clientName ?? "العميل") : (defaults.ownerName ?? "مدوّنتي"),
     autoName: attr.name ?? null,
