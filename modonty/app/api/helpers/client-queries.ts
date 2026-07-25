@@ -408,9 +408,11 @@ export interface ClientHeroSlide {
   logo: string | null;
 }
 
-// Active partners that have a CLIENT_MINI (1.91:1) image — feeds the CSS-only
-// sidebar slider. EXCLUSIVELY Client Mini (NO hero fallback): a partner without a
-// Client Mini does NOT appear here. limit omitted ⇒ ALL such partners (no cap).
+// FEATURED («premium») partners only that have a CLIENT_MINI (1.91:1) image — feeds the
+// CSS-only sidebar slider. `isFeatured` is the admin's manual «premium spotlight» toggle
+// that the Client model documents as driving this slider (+ the «شركاء مميّزون» section).
+// EXCLUSIVELY Client Mini (NO hero fallback): a partner without a Client Mini does NOT
+// appear here. limit omitted ⇒ ALL such featured partners (no cap).
 export async function getClientHeroSlides(limit?: number): Promise<ClientHeroSlide[]> {
   "use cache";
   cacheTag("clients");
@@ -419,6 +421,7 @@ export async function getClientHeroSlides(limit?: number): Promise<ClientHeroSli
   const clients = await db.client.findMany({
     where: {
       subscriptionStatus: SubscriptionStatus.ACTIVE,
+      isFeatured: true,
       media: { some: { type: "CLIENT_MINI" } },
     },
     select: {
