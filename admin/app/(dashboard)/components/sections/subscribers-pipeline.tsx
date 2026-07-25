@@ -19,8 +19,8 @@ export async function SubscribersPipeline() {
   return (
     <CollapsibleSection
       iconNode={<Mail className="h-4 w-4 text-muted-foreground" />}
-      title="Subscribers"
-      subtitle="newsletter audience"
+      title="Client Subscribers"
+      subtitle="مشتركو العملاء (لكل عميل)"
       storageKey="dashSubscribersOpen"
       summary={
         <>
@@ -85,7 +85,7 @@ export async function SubscribersPipeline() {
         <p className="mb-1 text-[12px] font-bold text-foreground">
           💡 إشارات الاهتمام — أساس الاشتراك القادم
         </p>
-        <p className="mb-3 text-[11px] leading-relaxed text-muted-foreground">
+        <p className="mb-3 max-w-[65ch] text-[11px] leading-relaxed text-muted-foreground">
           خطة قادمة: نشيل زر «اشترك في النشرة» من المقال والعميل. بدله الاهتمام يُلتقط تلقائياً —
           <span className="font-semibold text-foreground"> حفظ المقال (favorite) = مهتم بالمقال</span>،
           و<span className="font-semibold text-foreground">«تابعني» للعميل = مهتم بالعميل</span>.

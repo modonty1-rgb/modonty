@@ -635,8 +635,9 @@ model Client {
   @@map("clients")
 }
 
-/// Booking / lead requests from the «احجز الآن» CTA (FORM submits) + warm-lead «تسوّق الآن» clicks (LINK).
-/// Login is required, so name/email are snapshotted from the session; phone is collected by the form.
+/// Booking / lead requests from the «احجز الآن» / «اترك رقمك» CTA. Two channels (see `channel`):
+/// FORM (phone callback, login required → name/email snapshotted from session) or WhatsApp
+/// (tracked click, anonymous). `source` = the surface it came from (article_dock/card/client_page/list).
 model BookingRequest {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   clientId    String   @db.ObjectId

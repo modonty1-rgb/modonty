@@ -7,16 +7,16 @@ import { getLeadsDetail, type LeadRow } from "../actions/get-leads-detail";
 // Numbers = GA4 SOT on the overview page; THIS page is the operational follow-up list (our DB).
 
 const TYPE_BADGE: Record<string, { label: string; cls: string }> = {
-  BOOKING: { label: "Booking", cls: "bg-emerald-100 text-emerald-800" },
-  MESSAGE: { label: "Message", cls: "bg-blue-100 text-blue-800" },
-  QUESTION: { label: "Question", cls: "bg-violet-100 text-violet-800" },
-  COMMENT: { label: "Comment", cls: "bg-amber-100 text-amber-800" },
+  BOOKING: { label: "Booking", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400" },
+  MESSAGE: { label: "Message", cls: "bg-blue-500/15 text-blue-700 dark:text-blue-400" },
+  QUESTION: { label: "Question", cls: "bg-violet-500/15 text-violet-700 dark:text-violet-400" },
+  COMMENT: { label: "Comment", cls: "bg-amber-500/15 text-amber-700 dark:text-amber-400" },
 };
 
 function StatusBadge({ status }: { status: string }) {
   const isNew = status === "new" || status === "PENDING";
   return (
-    <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${isNew ? "bg-red-100 text-red-700" : "bg-muted text-muted-foreground"}`}>
+    <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${isNew ? "bg-red-500/15 text-red-700 dark:text-red-400" : "bg-muted text-muted-foreground"}`}>
       {status}
     </span>
   );

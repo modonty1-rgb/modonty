@@ -54,5 +54,16 @@ export function sanitizeHtmlContent(html: string): string {
     return stripDisallowedAttributes(match);
   });
 
+  // Strip inline text/background colors — the theme owns color (dark-mode readability).
+  // TipTap stores e.g. style="color: rgb(0,0,0)"; other style declarations are kept.
+  clean = clean.replace(/style\s*=\s*"([^"]*)"/gi, (_m, css: string) => {
+    const kept = css
+      .split(";")
+      .map((d) => d.trim())
+      .filter((d) => d && !/^(?:color|background-color|background)\s*:/i.test(d))
+      .join("; ");
+    return kept ? `style="${kept}"` : "";
+  });
+
   return clean;
 }
