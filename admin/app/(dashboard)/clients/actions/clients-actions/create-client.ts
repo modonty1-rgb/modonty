@@ -235,6 +235,14 @@ export async function createClient(data: ClientFormData) {
       if (!rep) return { success: false, error: "Selected sales rep not found" };
       cleanData.salesRep = { connect: { id: rep.id } };
     }
+    if (clientData.editorId) {
+      const editor = await db.staff.findUnique({
+        where: { id: clientData.editorId as string },
+        select: { id: true },
+      });
+      if (!editor) return { success: false, error: "Selected editor not found" };
+      cleanData.editor = { connect: { id: editor.id } };
+    }
     if (clientData.parentOrganizationId) {
       const parentOrg = await db.client.findUnique({
         where: { id: clientData.parentOrganizationId as string },

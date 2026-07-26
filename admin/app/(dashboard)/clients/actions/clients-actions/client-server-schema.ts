@@ -84,6 +84,7 @@ export const clientServerSchema = z.object({
   // Optional relation IDs
   industryId: z.string().optional().nullable(),
   salesRepId: z.string().optional().nullable(),
+  editorId: z.string().optional().nullable(),
   parentOrganizationId: z.string().optional().nullable(),
   subscriptionTierConfigId: z.string().optional().nullable(),
   logoMediaId: z.string().optional().nullable(),

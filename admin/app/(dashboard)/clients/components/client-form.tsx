@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, AlertTriangle, X } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2, AlertTriangle, X, PenLine } from "lucide-react";
 import { useSidebar } from "@/components/contexts/sidebar-context";
 import { ClientLogoModal } from "./client-logo-modal";
 import { ClientHeroModal } from "./client-hero-modal";
@@ -22,6 +23,7 @@ interface ClientFormProps {
   initialData?: Partial<ClientWithRelations>;
   industries?: Array<{ id: string; name: string }>;
   salesReps?: Array<{ id: string; name: string }>;
+  editors?: Array<{ id: string; name: string }>;
   clients?: Array<{ id: string; name: string; slug: string }>;
   clientId?: string;
   /** Active countries for the addressCountry picker (admin-owned field). */
@@ -34,6 +36,7 @@ export function ClientForm({
   initialData,
   industries = [],
   salesReps = [],
+  editors = [],
   clients = [],
   clientId,
   countries = [],
@@ -177,7 +180,7 @@ export function ClientForm({
                   </span>
                 </div>
               )}
-              <BasicInfoSection form={form} industries={industries} salesReps={salesReps} countries={countries} />
+              <BasicInfoSection form={form} industries={industries} salesReps={salesReps} editors={editors} countries={countries} />
               <SubscriptionSection form={form} isEditMode={false} tierConfigs={tierConfigs} addressCountry={watchedValues.addressCountry} />
             </div>
           ) : (
@@ -254,6 +257,31 @@ export function ClientForm({
               )}
             </span>
             <div className="flex items-center gap-2">
+              {/* Editor picker — the content writer responsible for this client's articles.
+                 Prominent in the always-visible footer (Khalid 2026-07-26): info only,
+                 shown in the articles list — never the schema author. */}
+              {isEditMode && (
+                <div className="flex items-center gap-1.5 rounded-lg border border-primary/25 bg-primary/[0.05] ps-2.5 pe-1 py-1">
+                  <PenLine className="h-3.5 w-3.5 text-primary" />
+                  <span className="text-xs font-semibold whitespace-nowrap">الكاتب</span>
+                  <Select
+                    value={watchedValues.editorId || undefined}
+                    onValueChange={(val) =>
+                      form.setValue("editorId", val && val !== "none" ? val : null, { shouldDirty: true, shouldValidate: true })
+                    }
+                  >
+                    <SelectTrigger className="h-8 w-[180px]">
+                      <SelectValue placeholder="اختر الكاتب…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">— بلا كاتب —</SelectItem>
+                      {editors.map((ed) => (
+                        <SelectItem key={ed.id} value={ed.id}>{ed.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               {/* Compact toggles — moved here from the form to save space (Khalid 2026-07-25).
                  No description; the icon + short label carry it. */}
               {isEditMode && (

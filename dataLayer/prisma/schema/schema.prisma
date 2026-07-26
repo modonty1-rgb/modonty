@@ -263,6 +263,7 @@ model Staff {
 
   notifications Notification[] @relation("StaffNotifications")
   salesClients  Client[]       @relation("StaffSalesClients")
+  editorClients Client[]       @relation("StaffEditorClients")
 
   @@index([role])
   @@map("staff")
@@ -418,6 +419,11 @@ model Client {
   // Sales — the rep (Staff with role SALES) who brought & manages this client.
   salesRepId        String?   @db.ObjectId
   salesRep          Staff?    @relation("StaffSalesClients", fields: [salesRepId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Editor — the content writer (Staff with role EDITOR) responsible for this
+  // client's articles. Informational only: the schema.org author stays Modonty.
+  editorId          String?   @db.ObjectId
+  editor            Staff?    @relation("StaffEditorClients", fields: [editorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   targetAudience    String? // Target audience description
   contentPriorities String[] // Key topics/priorities

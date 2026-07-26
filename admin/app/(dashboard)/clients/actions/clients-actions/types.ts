@@ -72,6 +72,10 @@ export type ClientForList = {
     width: number | null;
     height: number | null;
   } | null;
+  editor: {
+    id: string;
+    name: string | null;
+  } | null;
   subscriptionTierConfig: {
     price: number;
     articlesPerMonth: number;

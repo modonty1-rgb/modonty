@@ -13,6 +13,7 @@ import {
   ArrowUp,
   ArrowDown,
   Pencil,
+  PenLine,
 } from "lucide-react";
 import { GoogleIcon } from "@/components/admin/icons/google-icon";
 import { cn } from "@/lib/utils";
@@ -323,7 +324,7 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
     <div className="space-y-4">
       <div className="border rounded-lg bg-card">
         <Table className="table-fixed w-full">
-          <colgroup>{/* Name */}<col className="w-[260px]" />{/* Status */}<col className="w-[110px]" />{/* Received */}<col className="w-[90px]" />{/* Published */}<col className="w-[96px]" />{/* Awaiting */}<col className="w-[96px]" />{/* This month */}<col className="w-[96px]" />{/* SEO */}<col className="w-[70px]" />{/* Actions */}<col className="w-[80px]" /></colgroup>
+          <colgroup>{/* Name */}<col className="w-[240px]" />{/* Editor */}<col className="w-[130px]" />{/* Status */}<col className="w-[100px]" />{/* Received */}<col className="w-[86px]" />{/* Published */}<col className="w-[92px]" />{/* Awaiting */}<col className="w-[92px]" />{/* This month */}<col className="w-[92px]" />{/* SEO */}<col className="w-[66px]" />{/* Actions */}<col className="w-[76px]" /></colgroup>
           <TableHeader>
             <TableRow>
               <TableHead
@@ -333,6 +334,12 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
                 <div className="flex items-center">
                   Name
                   {getSortIcon("name")}
+                </div>
+              </TableHead>
+              <TableHead>
+                <div className="flex items-center gap-1 text-xs font-semibold">
+                  <PenLine className="h-3.5 w-3.5 text-muted-foreground" />
+                  Editor
                 </div>
               </TableHead>
               <TableHead className="text-center">Status</TableHead>
@@ -385,7 +392,7 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
           <TableBody>
             {paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-sm font-medium">No clients found</p>
                     <p className="text-xs">Try adjusting your search or filters</p>
@@ -441,6 +448,19 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
                           )}
                         </div>
                       </div>
+                    </TableCell>
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      {client.editor?.name ? (
+                        <Link
+                          href={`/users/${client.editor.id}`}
+                          className="inline-flex items-center gap-1 text-xs text-foreground/80 hover:text-primary"
+                        >
+                          <PenLine className="h-3 w-3 text-muted-foreground" />
+                          <span className="truncate">{client.editor.name}</span>
+                        </Link>
+                      ) : (
+                        <span className="text-xs text-muted-foreground/40">—</span>
+                      )}
                     </TableCell>
                     <TableCell className="text-center">{getStatusBadge()}</TableCell>
                     <TableCell className="text-center px-1">

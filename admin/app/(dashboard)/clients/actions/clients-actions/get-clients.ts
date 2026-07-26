@@ -155,6 +155,12 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
             height: true,
           },
         },
+        editor: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         subscriptionTierConfig: {
           select: {
             price: true,

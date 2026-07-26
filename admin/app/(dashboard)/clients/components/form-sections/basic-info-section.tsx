@@ -17,6 +17,7 @@ interface BasicInfoSectionProps {
   form: UseFormReturn<ClientFormSchemaType>;
   industries?: Array<{ id: string; name: string }>;
   salesReps?: Array<{ id: string; name: string }>;
+  editors?: Array<{ id: string; name: string }>;
   isEditMode?: boolean;
   siteUrl?: string | null;
   clientId?: string;
@@ -27,6 +28,7 @@ export function BasicInfoSection({
   form,
   industries = [],
   salesReps = [],
+  editors = [],
   isEditMode = false,
   siteUrl = null,
   clientId,
@@ -42,6 +44,7 @@ export function BasicInfoSection({
   const foundingDate = watch("foundingDate");
   const industryId = watch("industryId");
   const salesRepId = watch("salesRepId");
+  const editorId = watch("editorId");
   const url = watch("url");
   const phone = watch("phone");
   const contactType = watch("contactType");
@@ -235,6 +238,24 @@ export function BasicInfoSection({
           {salesReps.map((rep) => (
             <SelectItem key={rep.id} value={rep.id}>
               {rep.name}
+            </SelectItem>
+          ))}
+        </FormSelect>
+        <FormSelect
+          label="Editor"
+          name="editorId"
+          value={editorId || undefined}
+          onValueChange={(value) =>
+            form.setValue("editorId", value && value !== "none" ? value : null, { shouldValidate: true })
+          }
+          error={errors.editorId?.message}
+          placeholder="Select editor"
+          hint="The content writer responsible for this client's articles (info only — shown in the articles list)."
+        >
+          <SelectItem value="none">— None —</SelectItem>
+          {editors.map((ed) => (
+            <SelectItem key={ed.id} value={ed.id}>
+              {ed.name}
             </SelectItem>
           ))}
         </FormSelect>

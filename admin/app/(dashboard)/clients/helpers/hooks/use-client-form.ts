@@ -24,6 +24,7 @@ const FIELD_LABELS: Record<string, string> = {
   phone: "Phone",
   industryId: "Industry",
   salesRepId: "Sales Rep",
+  editorId: "Editor",
   openingBalance: "الرصيد الافتتاحي",
   subscriptionTier: "Subscription Tier",
   businessBrief: "Business Brief",

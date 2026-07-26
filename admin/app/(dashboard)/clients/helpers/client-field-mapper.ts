@@ -42,6 +42,7 @@ export function mapFormDataToClientData(data: ClientFormData) {
     businessBrief: data.businessBrief || null,
     industryId: data.industryId || null,
     salesRepId: data.salesRepId || null,
+    editorId: data.editorId || null,
     targetAudience: data.targetAudience || null,
     contentPriorities: data.contentPriorities || [],
     foundingDate: data.foundingDate || null,

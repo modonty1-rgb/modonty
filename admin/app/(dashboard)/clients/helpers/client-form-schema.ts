@@ -128,6 +128,7 @@ export const clientFormSchema = z
     businessBrief: consoleOwnedText,
     industryId: z.string().min(1, "Industry is required"),
     salesRepId: z.string().nullable().optional(),
+    editorId: z.string().nullable().optional(),
     targetAudience: consoleOwnedText,
     contentPriorities: stringArraySchema,
     foundingDate: dateSchema,

@@ -31,7 +31,7 @@ export interface Article {
     width?: number | null;
     height?: number | null;
   } | null;
-  client: { id: string; name: string; logoMedia?: { url: string; altText?: string | null } | null } | null;
+  client: { id: string; name: string; logoMedia?: { url: string; altText?: string | null } | null; editor?: { id: string; name: string | null } | null } | null;
   category: { id: string; name: string } | null;
   author: { id: string; name: string } | null;
   tags?: { tag: { id: string; name: string } }[];

@@ -107,7 +107,7 @@ export async function getArticles(filters?: ArticleFilters) {
           createdAt: true,
           datePublished: true,
           scheduledAt: true,
-          client: { select: { id: true, name: true, logoMedia: { select: { url: true, altText: true } } } },
+          client: { select: { id: true, name: true, logoMedia: { select: { url: true, altText: true } }, editor: { select: { id: true, name: true } } } },
           category: { select: { id: true, name: true } },
           // Fields the SHARED dataLayer SEO scorer reads. All five must be here: it scores
           // the STORED, published page, and a missing field is indistinguishable from an

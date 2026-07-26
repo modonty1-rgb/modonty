@@ -7,47 +7,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { ArticleStatus } from "@prisma/client";
 import { getStatusLabel } from "../helpers/status-utils";
-import { cn } from "@/lib/utils";
 import { ArticlesFilters } from "./articles-filters";
-
-/** A status tab split into two segments: label | count, divided by a splitter.
- *  When active the count segment inverts colour so it never blends into the fill. */
-function CountTab({
-  label,
-  count,
-  active,
-  onClick,
-}: {
-  label: string;
-  count: number;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "inline-flex items-center overflow-hidden rounded-full border text-xs font-medium transition-colors",
-        active ? "border-primary" : "border-border hover:bg-accent",
-      )}
-    >
-      <span className={cn("px-2.5 py-1", active ? "bg-primary text-primary-foreground" : "text-foreground")}>
-        {label}
-      </span>
-      <span
-        className={cn(
-          "border-s px-2 py-1 font-bold tabular-nums",
-          active
-            ? "border-primary-foreground/30 bg-primary-foreground text-primary"
-            : "border-border bg-muted text-muted-foreground",
-        )}
-      >
-        {count}
-      </span>
-    </button>
-  );
-}
+import { CountTab } from "@/components/admin/count-tab";
 
 interface ArticlesHeaderWrapperProps {
   children: ReactNode;

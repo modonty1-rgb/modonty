@@ -172,6 +172,7 @@ export interface ClientFormData {
   businessBrief?: string;
   industryId?: string | null;
   salesRepId?: string | null;
+  editorId?: string | null;
   targetAudience?: string;
   contentPriorities?: string[];
   foundingDate?: Date | null;

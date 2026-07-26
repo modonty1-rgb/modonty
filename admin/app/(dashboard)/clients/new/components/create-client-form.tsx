@@ -33,11 +33,12 @@ interface CreateClientFormProps {
   siteUrl?: string | null;
   countries?: Array<{ code: string; nameAr: string; nameEn: string }>;
   salesReps?: Array<{ id: string; name: string }>;
+  editors?: Array<{ id: string; name: string }>;
 }
 
 // Self-contained CREATE UI. Backend is shared via useClientForm (createClient).
 // Editing has its own UI (ClientForm) — changes here never affect it.
-export function CreateClientForm({ industries = [], siteUrl = null, countries = [], salesReps = [] }: CreateClientFormProps) {
+export function CreateClientForm({ industries = [], siteUrl = null, countries = [], salesReps = [], editors = [] }: CreateClientFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [created, setCreated] = useState<CreatedClient | null>(null);
@@ -156,6 +157,15 @@ export function CreateClientForm({ industries = [], siteUrl = null, countries = 
                 {LEGAL_FORMS.map((o) => <SelectItem key={o.value} value={o.value}>{o.ar} — {o.value}</SelectItem>)}
               </SelectContent>
             </Select>
+          </Field>
+          <Field label="الكاتب" optional error={errors.editorId?.message}>
+            <Select value={v.editorId || undefined} onValueChange={(val) => setValue("editorId", val || null, { shouldValidate: true })}>
+              <SelectTrigger className="w-full"><SelectValue placeholder="اختر الكاتب…" /></SelectTrigger>
+              <SelectContent>
+                {editors.map((ed) => <SelectItem key={ed.id} value={ed.id}>{ed.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Help>الكاتب المسؤول عن مقالات هذا العميل — يظهر في قائمة المقالات</Help>
           </Field>
         </div>
       </Card>

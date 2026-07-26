@@ -64,6 +64,23 @@ export async function getSalesReps(): Promise<Array<{ id: string; name: string }
   }
 }
 
+/** Active editors — for the "Editor" dropdown on the client create/edit forms. */
+export async function getEditors(): Promise<Array<{ id: string; name: string }>> {
+  try {
+    const editors = await db.staff.findMany({
+      where: {
+        role: "EDITOR",
+        OR: [{ isActive: true }, { isActive: null }, { isActive: { isSet: false } }],
+      },
+      select: { id: true, name: true, email: true },
+      orderBy: { name: "asc" },
+    });
+    return editors.map((e) => ({ id: e.id, name: e.name || e.email || "Editor" }));
+  } catch {
+    return [];
+  }
+}
+
 export async function getUserById(id: string) {
   try {
     return await db.staff.findUnique({
