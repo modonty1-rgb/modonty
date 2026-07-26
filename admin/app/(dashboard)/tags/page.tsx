@@ -1,8 +1,7 @@
-import { getTags, getTagsStats, TagFilters } from "./actions/tags-actions";
+import { getTags, TagFilters } from "./actions/tags-actions";
 import { TagsPageClient } from "./components/tags-page-client";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Hash, FileText } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { RevalidateAllSEOButton } from "./components/revalidate-all-seo-button";
 
@@ -26,27 +25,16 @@ export default async function TagsPage({
     maxArticleCount: params.maxArticleCount ? parseInt(params.maxArticleCount) : undefined,
   };
 
-  const [tags, stats] = await Promise.all([getTags(filters), getTagsStats()]);
-  const missingSeo = tags.filter((t: any) => !t.jsonLdLastGenerated).length;
+  const tags = await getTags(filters);
+  const missingSeo = tags.filter((t) => !t.jsonLdLastGenerated).length;
 
   return (
     <div className="max-w-[1200px] mx-auto">
+      {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-        <div className="flex flex-wrap items-center gap-4">
-          <div>
-            <h1 className="text-xl font-semibold">Tags</h1>
-            <p className="text-xs text-muted-foreground mt-0.5">Manage all tags in the system</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="gap-1.5 font-normal">
-              <Hash className="h-3 w-3 text-primary" />
-              {stats.total} total
-            </Badge>
-            <Badge variant="secondary" className="gap-1.5 font-normal">
-              <FileText className="h-3 w-3 text-emerald-500" />
-              {stats.withArticles} with articles
-            </Badge>
-          </div>
+        <div>
+          <h1 className="text-xl font-semibold">Tags</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">Manage all tags in the system</p>
         </div>
         <div className="flex items-center gap-2">
           <RevalidateAllSEOButton />
@@ -58,6 +46,8 @@ export default async function TagsPage({
           </Link>
         </div>
       </div>
+
+      {/* Content — KPI cards (filters) + table */}
       <TagsPageClient tags={tags} missingSeoCount={missingSeo} />
     </div>
   );

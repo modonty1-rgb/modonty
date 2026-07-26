@@ -2,11 +2,16 @@
 
 import { useRouter } from "next/navigation";
 
+import { AlertTriangle } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { DataTable, type Column } from "@/components/admin/data-table";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { GoogleIcon } from "@/components/admin/icons/google-icon";
 import { CategoryRowActions } from "./category-row-actions";
+
+// A slug segment of exactly "test" flags an item accidentally created during development.
+const isTestSlug = (slug: string) => slug.toLowerCase().split("-").includes("test");
 
 interface Category {
   id: string;
@@ -30,7 +35,16 @@ export function CategoryTable({ categories }: { categories: Category[] }) {
       key: "name",
       header: "Name",
       sortFn: (a, b) => a.name.localeCompare(b.name),
-      render: (c) => <span className="text-sm font-medium">{c.name}</span>,
+      render: (c) => (
+        <span className="flex items-center gap-1.5">
+          <span className="text-sm font-medium">{c.name}</span>
+          {isTestSlug(c.slug) && (
+            <span title={`Slug «${c.slug}» — likely a dev artifact, review`} className="inline-flex">
+              <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-amber-500" aria-label="Test slug" />
+            </span>
+          )}
+        </span>
+      ),
     },
     {
       key: "parent",

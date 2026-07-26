@@ -62,6 +62,10 @@ export async function getTags(filters?: TagFilters) {
         createdAt: true,
         jsonLdLastGenerated: true,
         _count: { select: { articles: true } },
+        // Read by the shared reference scorer (stripped before returning to the client).
+        nextjsMetadata: true,
+        jsonLdStructuredData: true,
+        jsonLdValidationReport: true,
       },
       orderBy: { name: "asc" },
     });
@@ -81,7 +85,19 @@ export async function getTags(filters?: TagFilters) {
       });
     }
 
-    return filteredTags;
+    // Compute the SEO score from the shared reference scorer, then strip the heavy
+    // metadata so only the number reaches the client table.
+    return filteredTags.map(
+      ({ nextjsMetadata, jsonLdStructuredData, jsonLdValidationReport, ...rest }) => ({
+        ...rest,
+        seoScore: computeReferenceSeoScore({
+          name: rest.name,
+          nextjsMetadata,
+          jsonLdStructuredData,
+          jsonLdValidationReport: (jsonLdValidationReport ?? null) as JsonLdValidationReport | null,
+        }).score,
+      }),
+    );
   } catch (error) {
     console.error("Error fetching tags:", error);
     return [];
@@ -287,75 +303,6 @@ export async function deleteTag(id: string) {
   }
 }
 
-export async function getTagsStats() {
-  try {
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-    const [total, withArticles, withoutArticles, createdThisMonth, allTags] =
-      await Promise.all([
-        db.tag.count(),
-        db.tag.count({
-          where: {
-            articles: {
-              some: {},
-            },
-          },
-        }),
-        db.tag.count({
-          where: {
-            articles: {
-              none: {},
-            },
-          },
-        }),
-        db.tag.count({
-          where: {
-            createdAt: { gte: startOfMonth },
-          },
-        }),
-        // Score from the shared reference scorer (reads the STORED metadata + JSON-LD).
-        db.tag.findMany({
-          select: {
-            name: true,
-            nextjsMetadata: true,
-            jsonLdStructuredData: true,
-            jsonLdValidationReport: true,
-          },
-        }),
-      ]);
-
-    let averageSEO = 0;
-    if (allTags.length > 0) {
-      const scores = allTags.map((tag) =>
-        computeReferenceSeoScore({
-          name: tag.name,
-          nextjsMetadata: tag.nextjsMetadata,
-          jsonLdStructuredData: tag.jsonLdStructuredData,
-          jsonLdValidationReport: (tag.jsonLdValidationReport ?? null) as JsonLdValidationReport | null,
-        }).score,
-      );
-      averageSEO = Math.round(
-        scores.reduce((sum, score) => sum + score, 0) / scores.length
-      );
-    }
-
-    return {
-      total,
-      withArticles,
-      withoutArticles,
-      createdThisMonth,
-      averageSEO,
-    };
-  } catch (error) {
-    console.error("Error fetching tags stats:", error);
-    return {
-      total: 0,
-      withArticles: 0,
-      withoutArticles: 0,
-      createdThisMonth: 0,
-      averageSEO: 0,
-    };
-  }
-}
+// getTagsStats removed — the list KPIs are computed client-side from the reference score
+// (entity-standard #4: the card is the filter, one definition drives count + rows).
 
