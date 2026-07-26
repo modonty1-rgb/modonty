@@ -65,7 +65,7 @@ export function useAuthorForm({ initialData, authorId, onSuccess, siteUrl }: Use
     credentials: initialData?.credentials?.join("\n") || "",
     expertiseAreas: initialData?.expertiseAreas?.join(", ") || "",
     memberOf: initialData?.memberOf?.join(", ") || "",
-    verificationStatus: initialData?.verificationStatus || false,
+    verificationStatus: initialData?.verificationStatus ?? true,
     seoTitle: initialData?.seoTitle || "",
     seoDescription: initialData?.seoDescription || "",
     canonicalUrl: initialData?.canonicalUrl || `${siteUrl}/authors/${initialData?.slug || MODONTY_AUTHOR_SLUG}`,

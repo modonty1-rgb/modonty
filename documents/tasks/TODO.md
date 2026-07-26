@@ -4,7 +4,7 @@
 > **ما ليس TODO يبقى بمكانه:** `documents/reels/` · `documents/content-team/` · المراجع · `documents/tasks/CLAUDE.md` · SESSION-LOG.
 > **الأرقام مرجعية ثابتة** بيني وبين خالد — البند المنجز يُحذف والباقي يبقى برقمه (بلا إعادة ترقيم).
 
-**Last Updated: 2026-07-26**
+**Last Updated: 2026-07-26** (+ بند 43: استثمار indexing.ts)
 
 ---
 
@@ -38,6 +38,7 @@
 - [ ] **40.** تدقيق الكود الميت — يدوي، «شك واحد = احتفظ».
 - [ ] **41.** بنود Client Edit / Impersonation المعلقة (git: `CLIENT-EDIT-IMPERSONATION-PENDING.md`).
 - [ ] **42.** تحقق المشاريع القديمة الكبيرة — CLIENT-PAGE-FULLSITE · CLIENTS-TODO · STORY-PAGE · SUBSCRIBER-TO-CLIENT-CONVERSION (git history).
+- [ ] **43.** استثمار `admin/lib/gsc/indexing.ts` (كود يتيم — لا نحذفه). **ما هو:** غلاف Google Indexing API v3 (`requestIndexing` URL_UPDATED · `notifyDeleted` URL_DELETED + نسخ batch + `getRemovalMetadata`). مناديه انحُذفوا سابقاً لأن الـ API الرسمي مقصور على `JobPosting` + `BroadcastEvent` فقط (لا صفحات عامة) — مؤكَّد من مصادر Google. **كيف نستفيد منه مستقبلاً (يا تيم):** (أ) لو أضفنا نوع محتوى **وظائف/فعاليات** لأي عميل → نربطه فوراً لفهرسة فورية شرعية. (ب) `getRemovalMetadata` (read-only، كوتا منفصلة) يصلح كـ«هل أرسلنا هذا الـ URL للحذف؟» فحص تدقيقي بلا استهلاك كوتا الكتابة. (ج) قالب جاهز (JWT + scope + batch concurrency) لأي Google API كتابة قادم. **قبل أي تفعيل:** تأكيد أن نوع المحتوى ضمن ما يسمح به الـ API (وإلا يُفلتر بصمت).
 
 ---
 

@@ -74,7 +74,7 @@ export async function updateAuthor(
       sameAs: d.sameAs || [],
       credentials: d.credentials || [],
       expertiseAreas: d.expertiseAreas || [],
-      verificationStatus: d.verificationStatus || false,
+      verificationStatus: d.verificationStatus ?? true,
       memberOf: d.memberOf || [],
       seoTitle: d.seoTitle,
       seoDescription: d.seoDescription,

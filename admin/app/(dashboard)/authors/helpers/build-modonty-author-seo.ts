@@ -31,8 +31,14 @@ export function buildModontyAuthorSeo(a: ModontyAuthorSeoSource, settings: AllSe
   const ogLocale = settings.defaultOgLocale || "ar_SA";
   const twitterCard = settings.defaultTwitterCard || "summary_large_image";
   const metaRobots = settings.defaultMetaRobots || "index, follow";
-  const title = a.seoTitle || `${a.name} — ${siteName}`;
-  const description = a.seoDescription || a.bio || "";
+  // The Organization entity NAME — single source: siteName (Settings). The brand name is fixed,
+  // so the author record's name is only a fallback for old data.
+  const orgName = siteName || a.name;
+  const title = a.seoTitle || orgName;
+  // The Organization entity description — single source: brandDescription (Settings), the SAME
+  // text the site #organization / knowledge-graph node uses. Falls back to bio for old records.
+  const entityDescription = settings.brandDescription || a.bio || undefined;
+  const description = a.seoDescription || entityDescription || "";
 
   // sameAs = the org's verified profiles. Settings social (the brand's 11 official
   // channels) is authoritative; union with anything set on the author record. De-duped.
@@ -84,15 +90,18 @@ export function buildModontyAuthorSeo(a: ModontyAuthorSeoSource, settings: AllSe
 
   const orgEmail = settings.orgContactEmail || a.email || undefined;
   const orgLogo = settings.logoUrl || settings.orgLogoUrl || undefined;
+  // OG/social image: brand-only for the Modonty org (single source) — the brand OG image,
+  // else the logo. The org has no per-author photo; visual identity lives in the brand.
+  const ogImage = settings.ogImageUrl || orgLogo || undefined;
 
   const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": `${siteUrl}/#organization`,
-    name: a.name,
+    name: orgName,
     url: siteUrl,
     ...(orgLogo && { logo: { "@type": "ImageObject", url: orgLogo } }),
-    ...(a.bio && { description: a.bio }),
+    ...(entityDescription && { description: entityDescription }),
     ...(orgEmail && { email: orgEmail }),
     ...(contactPoint && { contactPoint }),
     ...(address && { address }),
@@ -102,7 +111,7 @@ export function buildModontyAuthorSeo(a: ModontyAuthorSeoSource, settings: AllSe
 
   const metadata: Record<string, unknown> = {
     title,
-    description: a.seoDescription || a.bio || `Articles by ${a.name}`,
+    description: a.seoDescription || entityDescription || `Articles by ${orgName}`,
     robots: metaRobots,
     alternates: {
       canonical: `${siteUrl}/authors/${a.slug}`,
@@ -115,8 +124,8 @@ export function buildModontyAuthorSeo(a: ModontyAuthorSeoSource, settings: AllSe
       url: `${siteUrl}/authors/${a.slug}`,
       siteName,
       locale: ogLocale,
-      ...(a.image && {
-        images: [{ url: a.image, width: settings.defaultOgImageWidth || 1200, height: settings.defaultOgImageHeight || 630 }],
+      ...(ogImage && {
+        images: [{ url: ogImage, width: settings.defaultOgImageWidth || 1200, height: settings.defaultOgImageHeight || 630 }],
       }),
     },
     twitter: {
@@ -125,7 +134,7 @@ export function buildModontyAuthorSeo(a: ModontyAuthorSeoSource, settings: AllSe
       description,
       ...(settings.twitterSite && { site: settings.twitterSite }),
       ...(settings.twitterCreator && { creator: settings.twitterCreator }),
-      ...(a.image && { images: [a.image] }),
+      ...(ogImage && { images: [ogImage] }),
     },
   };
 
