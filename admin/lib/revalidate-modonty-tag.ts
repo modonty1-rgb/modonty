@@ -14,7 +14,7 @@ async function getModontyBaseUrl(baseUrl?: string | null): Promise<string | null
 }
 
 export async function revalidateModontyTag(
-  tag: "articles" | "settings" | "categories" | "clients" | "tags" | "industries" | "faqs",
+  tag: "articles" | "settings" | "categories" | "clients" | "tags" | "industries" | "faqs" | "authors",
   baseUrl?: string | null
 ): Promise<void> {
   try {

@@ -47,6 +47,7 @@ const SCORE_SELECT = {
   priceRange: true,
   gbpPlaceId: true,
   organizationType: true,
+  isYmyl: true,
   industry: { select: { name: true } },
 } as const;
 
@@ -66,7 +67,7 @@ export default async function SeoClientPage() {
         industryName: c.industry?.name ?? null,
         businessBrief: c.businessBrief ?? c.description ?? null,
         addressCity: c.addressCity ?? null,
-        isYmyl: (c as { organizationType?: string | null }).organizationType ?? null,
+        isYmyl: Boolean((c as { isYmyl?: boolean | null }).isYmyl),
       };
     })
     // Worst first — the client who needs a writer's attention leads the list.

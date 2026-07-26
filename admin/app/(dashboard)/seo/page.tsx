@@ -2,6 +2,7 @@ import { getJsonLdIntegrityStats } from "./actions/jsonld-integrity";
 import { getCanonicalUrlSanitizerStats } from "./actions/canonical-url-sanitizer";
 import { getSitemapFreshnessStats } from "./actions/sitemap-freshness";
 import { getArticlesSeoHealth } from "./actions/articles-seo-actions";
+import { getModontyAuthorSeoHealth } from "./actions/author-seo-repair";
 import { SeoPageShell } from "./components/seo-page-shell";
 
 export const metadata = {
@@ -9,17 +10,19 @@ export const metadata = {
 };
 
 export default async function SeoPage() {
-  const [jsonLd, canonical, sitemap, articles] = await Promise.all([
+  const [jsonLd, canonical, sitemap, articles, authorHealth] = await Promise.all([
     getJsonLdIntegrityStats(),
     getCanonicalUrlSanitizerStats(),
     getSitemapFreshnessStats(),
     getArticlesSeoHealth(),
+    getModontyAuthorSeoHealth(),
   ]);
 
   const attentionCount =
     (jsonLd.staleCount > 0 ? 1 : 0) +
     (canonical.staleCount > 0 ? 1 : 0) +
-    (sitemap.configured && sitemap.staleCount > 0 ? 1 : 0);
+    (sitemap.configured && sitemap.staleCount > 0 ? 1 : 0) +
+    (authorHealth.stale ? 1 : 0);
 
   return (
     <SeoPageShell

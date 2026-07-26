@@ -10,6 +10,7 @@ import {
   runSeoStepCanonical,
   runSeoStepSitemap,
   runSeoStepHreflang,
+  runSeoStepAuthor,
   revalidateSeoPage,
   type SeoMaintenanceStepResult,
 } from "../actions/run-seo-maintenance";
@@ -47,6 +48,12 @@ const STEPS: StepDef[] = [
     label: "hreflang Locales Sync",
     description: "Ensure Settings.defaultAlternateLanguages has all GCC + Egypt + generic + x-default locales (idempotent — adds missing only)",
     runner: runSeoStepHreflang,
+  },
+  {
+    key: "author",
+    label: "Author Identity (Modonty = Organization)",
+    description: "Rebuild the Modonty author's stored JSON-LD as the Organization entity (shared @id with the site + every article) — repairs the legacy Person shape",
+    runner: runSeoStepAuthor,
   },
 ];
 
@@ -114,11 +121,11 @@ export function SeoAutoMaintenance({ attentionCount }: { attentionCount: number 
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-sm font-semibold">⚡ Quick Maintenance</p>
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-600 dark:text-blue-300 font-medium">
-              ~5s · runs 4 fixes
+              ~5s · runs 5 fixes
             </span>
           </div>
           <p className="text-xs text-muted-foreground">
-            Fast housekeeping: regenerates stale JSON-LD, fixes canonical URLs, refreshes sitemap, syncs hreflang locales.
+            Fast housekeeping: regenerates stale JSON-LD, fixes canonical URLs, refreshes sitemap, syncs hreflang locales, repairs the Modonty author identity.
           </p>
           <p className="text-[11px] text-muted-foreground/80">
             <span className="font-medium">Use when:</span> daily/weekly check, or after small content edits.

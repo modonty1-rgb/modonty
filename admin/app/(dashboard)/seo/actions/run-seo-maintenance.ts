@@ -5,6 +5,7 @@ import { regenerateAllStaleJsonLd } from "./jsonld-integrity";
 import { regenerateAllStaleCanonicalUrls } from "./canonical-url-sanitizer";
 import { refreshAllSitemaps } from "./sitemap-freshness";
 import { syncHreflangLocales } from "./hreflang-sync";
+import { regenerateModontyAuthorSeo } from "./author-seo-repair";
 
 export interface SeoMaintenanceStepResult {
   key: string;
@@ -75,6 +76,21 @@ export async function runSeoStepHreflang(): Promise<SeoMaintenanceStepResult> {
     };
   } catch (e) {
     return fail("hreflang", "hreflang Locales Synced", e);
+  }
+}
+
+export async function runSeoStepAuthor(): Promise<SeoMaintenanceStepResult> {
+  try {
+    const r = await regenerateModontyAuthorSeo();
+    return {
+      key: "author",
+      label: "Author Identity (Modonty = Organization)",
+      ok: r.ok,
+      count: r.changed ? 1 : 0,
+      detail: r.ok ? (r.changed ? "Person → Organization" : "already Organization") : r.detail,
+    };
+  } catch (e) {
+    return fail("author", "Author Identity", e);
   }
 }
 

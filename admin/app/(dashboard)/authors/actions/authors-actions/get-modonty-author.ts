@@ -11,11 +11,14 @@ export async function getModontyAuthor() {
       create: {
         name: "Modonty",
         slug: MODONTY_AUTHOR_SLUG,
-        url: "https://modonty.com",
-        bio: "Modonty is a leading content platform providing high-quality articles and insights.",
-        seoTitle: "Modonty - Author Profile",
-        seoDescription: "Learn more about Modonty, the author behind all content on Modonty.com",
-        canonicalUrl: "https://modonty.com",
+        url: "https://www.modonty.com",
+        // Publisher-framed, Arabic (the org — not a person). Shown on the public author page
+        // + as the Organization description in JSON-LD. Editable in the admin.
+        bio: "مدوّنتي منصّة سعودية لصناعة المحتوى والنشر الرقمي، تبني للعلامات حضوراً رقمياً موثوقاً عبر صفحات ومقالات محسّنة لمحرّكات البحث.",
+        seoTitle: "مدوّنتي — منصّة المحتوى والنشر الرقمي",
+        seoDescription:
+          "مدوّنتي منصّة سعودية متخصّصة في صناعة المحتوى والنشر الرقمي، تبني حضوراً رقمياً موثوقاً للعلامات عبر مقالات وصفحات محسّنة لمحرّكات البحث.",
+        canonicalUrl: "https://www.modonty.com/authors/modonty",
         verificationStatus: true,
       },
       include: {

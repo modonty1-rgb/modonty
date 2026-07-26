@@ -26,7 +26,7 @@ export interface SeoClientRow {
   industryName: string | null;
   businessBrief: string | null;
   addressCity: string | null;
-  isYmyl: string | null;
+  isYmyl: boolean;
 }
 
 type SortKey = "score" | "name";

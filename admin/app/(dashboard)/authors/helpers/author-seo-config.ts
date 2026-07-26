@@ -31,13 +31,6 @@ const validateAuthorImage: SEOFieldValidator = (value) => {
   return { status: "error", message: "Profile image is required — shown on articles and Google", score: 0 };
 };
 
-const validateJobTitle: SEOFieldValidator = (value) => {
-  if (value && typeof value === "string" && value.trim().length > 0) {
-    return { status: "good", message: "Job title is set", score: 10 };
-  }
-  return { status: "warning", message: "Add a job title (e.g., Content Platform)", score: 0 };
-};
-
 const validateAuthorSocial: SEOFieldValidator = (value, data) => {
   const hasLinkedIn = data.linkedIn && typeof data.linkedIn === "string" && data.linkedIn.trim().length > 0;
   const hasTwitter = data.twitter && typeof data.twitter === "string" && data.twitter.trim().length > 0;
@@ -52,30 +45,22 @@ const validateAuthorSocial: SEOFieldValidator = (value, data) => {
   return { status: "warning", message: "Add social profiles (LinkedIn, X, Facebook)", score: 0 };
 };
 
-function generatePersonStructuredData(data: Record<string, unknown>): Record<string, unknown> {
+// Modonty is the platform-brand Organization author (not a Person). This preview mirrors
+// the stored JSON-LD built in update-author.ts: an Organization with name / url / logo /
+// description / sameAs. Person-only props (givenName, jobTitle, worksFor) do not apply.
+function generateModontyOrgStructuredData(data: Record<string, unknown>): Record<string, unknown> {
   const structuredData: Record<string, unknown> = {
     "@context": "https://schema.org",
-    "@type": "Person",
+    "@type": "Organization",
     name: (data.name as string) || "",
   };
 
-  if (data.firstName) structuredData.givenName = data.firstName as string;
-  if (data.lastName) structuredData.familyName = data.lastName as string;
-  if (data.bio) structuredData.description = data.bio as string;
   if (data.canonicalUrl) structuredData.url = data.canonicalUrl as string;
   else if (data.url) structuredData.url = data.url as string;
-  if (data.image) structuredData.image = data.image as string;
+  if (data.image) structuredData.logo = { "@type": "ImageObject", url: data.image as string };
+  if (data.bio) structuredData.description = data.bio as string;
   if (data.email) structuredData.email = data.email as string;
-  if (data.jobTitle) structuredData.jobTitle = data.jobTitle as string;
-  if (Array.isArray(data.expertiseAreas) && data.expertiseAreas.length > 0) {
-    structuredData.knowsAbout = data.expertiseAreas;
-  }
-  if (Array.isArray(data.memberOf) && data.memberOf.length > 0) {
-    structuredData.memberOf = data.memberOf.map((org: string) => ({
-      "@type": "Organization",
-      name: org,
-    }));
-  }
+
   const socialProfiles: string[] = [];
   if (data.linkedIn) socialProfiles.push(data.linkedIn as string);
   if (data.twitter) socialProfiles.push(data.twitter as string);
@@ -87,16 +72,15 @@ function generatePersonStructuredData(data: Record<string, unknown>): Record<str
 }
 
 export const createAuthorSEOConfig = (settings?: SEOSettings): SEODoctorConfig => ({
-  entityType: "Person",
+  entityType: "Organization",
   maxScore: 100,
-  generateStructuredData: generatePersonStructuredData,
+  generateStructuredData: generateModontyOrgStructuredData,
   fields: [
     { name: "name", label: "Author Name", validator: validateAuthorName },
     { name: "slug", label: "Slug", validator: validateSlug },
     { name: "bio", label: "Bio", validator: validateAuthorBio },
-    { name: "image", label: "Profile Image", validator: validateAuthorImage },
+    { name: "image", label: "Logo", validator: validateAuthorImage },
     { name: "imageAlt", label: "Image Alt Text", validator: validateImageAlt },
-    { name: "jobTitle", label: "Job Title", validator: validateJobTitle },
     { name: "linkedIn", label: "Social Profiles", validator: validateAuthorSocial },
     { name: "seoTitle", label: "SEO Title", validator: createValidateSEOTitle(settings) },
     { name: "seoDescription", label: "SEO Description", validator: createValidateSEODescription(settings) },

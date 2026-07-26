@@ -16,6 +16,10 @@ export const BRAND_AR = "مدونتي";
 // Latin name — used in JSON-LD Organization/WebSite name, og:site_name, email "from".
 export const BRAND_EN = "Modonty";
 
+// The one platform-brand author. Its /authors/[slug] page + article author node render as
+// the Modonty Organization (not a Person). Locked to this slug in admin (update-author).
+export const MODONTY_AUTHOR_SLUG = "modonty";
+
 // Canonical site URL (www-consistent, no trailing slash). Env wins; constant is the fallback.
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com").replace(/\/+$/, "");
 

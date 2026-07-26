@@ -5,4 +5,3 @@ export { getIndustryClients } from "./get-industry-clients";
 export { createIndustry } from "./create-industry";
 export { updateIndustry } from "./update-industry";
 export { deleteIndustry } from "./delete-industry";
-export { getIndustriesStats } from "./get-industries-stats";

@@ -3,7 +3,6 @@ import { CategoriesPageClient } from "./components/categories-page-client";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { RevalidateAllSEOButton } from "./components/revalidate-all-seo-button";
 
 export default async function CategoriesPage() {
   const categories = await getCategories();
@@ -18,7 +17,6 @@ export default async function CategoriesPage() {
           <p className="text-xs text-muted-foreground mt-0.5">Manage all categories in the system</p>
         </div>
         <div className="flex items-center gap-2">
-          <RevalidateAllSEOButton />
           <Link href="/categories/new">
             <Button size="sm" className="gap-1.5">
               <Plus className="h-4 w-4" />

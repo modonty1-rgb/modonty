@@ -2,6 +2,8 @@
 
 import { db } from "@/lib/db";
 import { Prisma } from "@prisma/client";
+import { computeReferenceSeoScore } from "@modonty/database/lib/seo/reference/seo-score";
+import type { JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
 import type { IndustryFilters } from "./types";
 
 export async function getIndustries(filters?: IndustryFilters) {
@@ -46,6 +48,10 @@ export async function getIndustries(filters?: IndustryFilters) {
         createdAt: true,
         jsonLdLastGenerated: true,
         _count: { select: { clients: true } },
+        // Read by the shared reference scorer (stripped before returning to the client).
+        nextjsMetadata: true,
+        jsonLdStructuredData: true,
+        jsonLdValidationReport: true,
       },
       orderBy: { name: "asc" },
     });
@@ -65,7 +71,19 @@ export async function getIndustries(filters?: IndustryFilters) {
       });
     }
 
-    return filteredIndustries;
+    // Compute the SEO score from the shared reference scorer, then strip the heavy
+    // metadata so only the number reaches the client table.
+    return filteredIndustries.map(
+      ({ nextjsMetadata, jsonLdStructuredData, jsonLdValidationReport, ...rest }) => ({
+        ...rest,
+        seoScore: computeReferenceSeoScore({
+          name: rest.name,
+          nextjsMetadata,
+          jsonLdStructuredData,
+          jsonLdValidationReport: (jsonLdValidationReport ?? null) as JsonLdValidationReport | null,
+        }).score,
+      }),
+    );
   } catch (error) {
     console.error("Error fetching industries:", error);
     return [];

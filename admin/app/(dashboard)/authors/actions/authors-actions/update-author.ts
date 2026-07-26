@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { MODONTY_AUTHOR_SLUG } from "@/lib/constants/modonty-author";
 import { getModontyAuthor } from "./get-modonty-author";
+import { buildModontyAuthorSeo } from "../../helpers/build-modonty-author-seo";
 import { batchRegenerateJsonLd } from "@/lib/seo";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
@@ -91,81 +92,9 @@ export async function updateAuthor(
       data: updateData,
     });
 
-    // Cache author SEO data — read ALL settings for Organization data
+    // Cache author SEO data — one shared builder (used by the /seo maintenance step too).
     const settings = await getAllSettings();
-    const siteUrl = settings.siteUrl || "https://www.modonty.com";
-    const authorUrl = d.canonicalUrl || d.url || `${siteUrl}/authors/${d.slug}`;
-
-    // Build social profiles array
-    const sameAs: string[] = [
-      ...(d.linkedIn ? [d.linkedIn] : []),
-      ...(d.twitter ? [d.twitter] : []),
-      ...(d.facebook ? [d.facebook] : []),
-      ...(d.sameAs || []),
-    ];
-
-    // Build rich Person JSON-LD with Organization from settings
-    const jsonLd: Record<string, unknown> = {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      name: d.name,
-      url: authorUrl,
-      ...(author.image && { image: author.image }),
-      ...(d.bio && { description: d.bio }),
-      ...(d.jobTitle && { jobTitle: d.jobTitle }),
-      ...(d.email && { email: d.email }),
-      ...(sameAs.length > 0 && { sameAs }),
-      ...(d.expertiseAreas && d.expertiseAreas.length > 0 && { knowsAbout: d.expertiseAreas }),
-      ...(d.credentials && d.credentials.length > 0 && { hasCredential: d.credentials }),
-      ...(d.memberOf && d.memberOf.length > 0 && {
-        memberOf: d.memberOf.map((org) => ({ "@type": "Organization", name: org })),
-      }),
-    };
-
-    // Add worksFor Organization from settings
-    if (settings.siteName) {
-      jsonLd.worksFor = {
-        "@type": "Organization",
-        name: settings.siteName,
-        ...(siteUrl && { url: siteUrl }),
-        ...(settings.logoUrl && { logo: settings.logoUrl }),
-        ...(settings.brandDescription && { description: settings.brandDescription }),
-      };
-    }
-
-    // Build metadata using ALL settings defaults
-    const siteName = settings.siteName || "مدونتي";
-    const inLanguage = settings.inLanguage || "ar";
-    const ogLocale = settings.defaultOgLocale || "ar_SA";
-    const twitterCard = settings.defaultTwitterCard || "summary_large_image";
-    const metaRobots = settings.defaultMetaRobots || "index, follow";
-
-    const metadata: Record<string, unknown> = {
-      title: d.seoTitle || `${d.name} — ${siteName}`,
-      description: d.seoDescription || d.bio || `Articles by ${d.name}`,
-      robots: metaRobots,
-      alternates: {
-        canonical: `${siteUrl}/authors/${d.slug}`,
-        languages: { [inLanguage]: `${siteUrl}/authors/${d.slug}` },
-      },
-      openGraph: {
-        title: d.seoTitle || `${d.name} — ${siteName}`,
-        description: d.seoDescription || d.bio || "",
-        type: "profile",
-        url: `${siteUrl}/authors/${d.slug}`,
-        siteName,
-        locale: ogLocale,
-        ...(author.image && { images: [{ url: author.image, width: settings.defaultOgImageWidth || 1200, height: settings.defaultOgImageHeight || 630 }] }),
-      },
-      twitter: {
-        card: twitterCard,
-        title: d.seoTitle || `${d.name} — ${siteName}`,
-        description: d.seoDescription || d.bio || "",
-        ...(settings.twitterSite && { site: settings.twitterSite }),
-        ...(settings.twitterCreator && { creator: settings.twitterCreator }),
-        ...(author.image && { images: [author.image] }),
-      },
-    };
+    const { jsonLd, metadata } = buildModontyAuthorSeo(author, settings);
 
     await db.author.update({
       where: { id },
@@ -198,6 +127,7 @@ export async function updateAuthor(
 
     revalidatePath("/authors");
     revalidatePath("/articles");
+    await revalidateModontyTag("authors");
     await revalidateModontyTag("articles");
 
     return { success: true, author };

@@ -179,7 +179,6 @@ const menuGroups: MenuGroup[] = [
         items: [
           { icon: Folder, label: "Categories", href: "/categories" },
           { icon: Tag, label: "Tags", href: "/tags" },
-          { icon: UserPen, label: "Authors", href: "/authors" },
           { icon: Factory, label: "Industries", href: "/industries" },
           { icon: ClipboardList, label: "Intake Questions", href: "/intake" },
         ],
@@ -235,6 +234,7 @@ const menuGroups: MenuGroup[] = [
           { icon: Flame, label: "Trending", href: "/settings/trending" },
         ],
       },
+      { icon: UserPen, label: "Authors", href: "/authors" },
       // Visible homepage content (not SEO) — future home for landing/hero options.
       { icon: PanelTop, label: "Homepage Banner", href: "/settings/banner" },
     ],
@@ -260,6 +260,7 @@ const menuGroups: MenuGroup[] = [
       { icon: Download, label: "Export Data", href: "/export-data" },
       { icon: Database, label: "Database", href: "/database" },
       { icon: Wrench, label: "Maintenance", href: "/maintenance" },
+      { icon: Globe, label: "SEO Maintenance", href: "/seo" },
       { icon: MailOpen, label: "Email Templates", href: "/emails" },
       { icon: ScrollText, label: "Audit Log", href: "/audit-log" },
       { icon: Bug, label: "Error Logs", href: "/system-errors" },
