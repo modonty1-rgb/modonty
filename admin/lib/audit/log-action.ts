@@ -30,6 +30,10 @@ export type AuditAction =
   | "client.delete"
   | "category.delete"
   | "tag.delete"
+  // 🔴 Merge/reassign — moves all links to another entity, then empties the source
+  | "tag.merge"
+  | "category.merge"
+  | "industry.merge"
   | "media.delete"
   | "contactMessage.delete"
   // 🔴 Goes public / decides responsibility

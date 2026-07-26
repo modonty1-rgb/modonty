@@ -1020,6 +1020,21 @@ model Industry {
   @@map("industries")
 }
 
+/// Permanent (308) redirects served by proxy.ts for merged/renamed entity slugs.
+/// section = matcher segment (articles|categories|tags|industries|clients).
+/// One redirect per (section, fromSlug); target is another live slug in the same section.
+/// Google treats 308 ≡ 301 (Search Central) → passes link equity to the successor.
+model Redirect {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  section   String
+  fromSlug  String
+  toSlug    String
+  createdAt DateTime @default(now())
+
+  @@unique([section, fromSlug])
+  @@map("redirects")
+}
+
 model Article {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 

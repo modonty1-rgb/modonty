@@ -49,6 +49,8 @@ export function TagView({ tag }: TagViewProps) {
   const [basicOpen, setBasicOpen] = useState(true);
   const [seoOpen, setSeoOpen] = useState(true);
 
+  // Total = every linked article (matches the tags-list badge + gates delete/merge).
+  const totalArticlesCount = tag.articles.length;
   const publishedArticlesCount = tag.articles.filter(
     (at) => at.article.status === ArticleStatus.PUBLISHED
   ).length;
@@ -118,8 +120,9 @@ export function TagView({ tag }: TagViewProps) {
                   href={`/articles?tagId=${tag.id}`}
                   className="text-sm text-primary hover:underline font-medium"
                 >
-                  {publishedArticlesCount} {publishedArticlesCount === 1 ? "article" : "articles"}
+                  {totalArticlesCount} {totalArticlesCount === 1 ? "article" : "articles"}
                 </Link>
+                <span className="ms-2 text-xs text-muted-foreground">({publishedArticlesCount} published)</span>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Created</p>

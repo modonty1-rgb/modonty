@@ -4,16 +4,22 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { messages } from "@/lib/messages";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Edit, Trash2, Eye } from "lucide-react";
+import { Edit, Trash2, Eye, GitMerge } from "lucide-react";
 import { deleteIndustry } from "../actions/industries-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 
-export function IndustryRowActions({ industryId }: { industryId: string }) {
+import { IndustryMergeDialog, type IndustryLite } from "./industry-merge-dialog";
+
+export function IndustryRowActions({ industry, candidates }: { industry: IndustryLite; candidates: IndustryLite[] }) {
+  const industryId = industry.id;
+  // An industry with linked clients can't be deleted — merge it into another first.
+  const hasClients = industry.count > 0;
   const router = useRouter();
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [mergeOpen, setMergeOpen] = useState(false);
 
   const handleDelete = async () => {
     setDeleteDialogOpen(false);
@@ -31,8 +37,35 @@ export function IndustryRowActions({ industryId }: { industryId: string }) {
       <div className="flex items-center gap-1">
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => router.push(`/industries/${industryId}`)} aria-label="View"><Eye className="h-4 w-4" /></Button>
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => router.push(`/industries/${industryId}/edit`)} aria-label="Edit"><Edit className="h-4 w-4" /></Button>
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => setDeleteDialogOpen(true)} disabled={isDeleting} aria-label="Delete"><Trash2 className="h-4 w-4" /></Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 border border-violet-500/30 bg-violet-500/10 text-violet-600 hover:bg-violet-500 hover:text-white dark:text-violet-400"
+          onClick={() => setMergeOpen(true)}
+          aria-label="Merge"
+          title="Merge into another industry"
+        >
+          <GitMerge className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-destructive hover:text-destructive disabled:opacity-40"
+          onClick={() => setDeleteDialogOpen(true)}
+          disabled={isDeleting || hasClients}
+          aria-label="Delete"
+          title={hasClients ? "Merge into another industry first — still has clients" : "Delete"}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
       </div>
+      <IndustryMergeDialog
+        source={industry}
+        candidates={candidates}
+        open={mergeOpen}
+        onOpenChange={setMergeOpen}
+        onMerged={() => router.refresh()}
+      />
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

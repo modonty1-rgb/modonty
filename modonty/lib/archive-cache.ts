@@ -103,7 +103,64 @@ export async function isLiveSlug(section: LiveSection, slug: string): Promise<bo
   return caches[section].has(slug);
 }
 
-/** Force-clear all in-memory slug caches. Call after publish/unpublish mutations if needed. */
+/**
+ * In-memory map of permanent (308) redirects: `${section}\n${fromSlug}` → toSlug.
+ *
+ * Same design rules as the live-slug caches above (module-scoped, 5-minute TTL,
+ * dedup concurrent refreshes, NO next/cache — Arabic slugs break its tag header).
+ *
+ * Records are written by the admin merge action; modonty only reads them, so a
+ * fresh redirect becomes effective within one TTL window (same eventual-consistency
+ * lag as isLiveSlug after an admin mutation).
+ *
+ * Fail-CLOSED here (opposite of isLiveSlug): on DB error return an empty map so the
+ * caller finds no redirect and falls through to the existing live/410 logic. We must
+ * never invent a redirect that isn't in the DB.
+ */
+const redirectKey = (section: string, fromSlug: string) => `${section}\n${fromSlug}`;
+
+let redirectCache: Map<string, string> | null = null;
+let redirectCachedAt = 0;
+let redirectInFlight: Promise<Map<string, string>> | null = null;
+
+async function loadRedirects(): Promise<Map<string, string>> {
+  const rows = await db.redirect.findMany({ select: { section: true, fromSlug: true, toSlug: true } });
+  return new Map(rows.map((r) => [redirectKey(r.section, r.fromSlug), r.toSlug]));
+}
+
+/** Target slug for a permanent redirect from (section, fromSlug), or null when none exists. */
+export async function lookupRedirect(section: LiveSection, fromSlug: string): Promise<string | null> {
+  const now = Date.now();
+  const stale = !redirectCache || now - redirectCachedAt > CACHE_TTL_MS;
+
+  if (stale) {
+    if (!redirectInFlight) {
+      redirectInFlight = loadRedirects()
+        .then((map) => {
+          redirectCache = map;
+          redirectCachedAt = Date.now();
+          return map;
+        })
+        .finally(() => {
+          redirectInFlight = null;
+        });
+    }
+    try {
+      const map = await redirectInFlight;
+      return map.get(redirectKey(section, fromSlug)) ?? null;
+    } catch {
+      // On DB failure, invent no redirect — fall through to the live/410 path.
+      return null;
+    }
+  }
+
+  return redirectCache!.get(redirectKey(section, fromSlug)) ?? null;
+}
+
+/** Force-clear all in-memory slug + redirect caches. Call after publish/unpublish/merge mutations if needed. */
 export function clearSlugCaches(): void {
   for (const cache of Object.values(caches)) cache.clear();
+  redirectCache = null;
+  redirectCachedAt = 0;
+  redirectInFlight = null;
 }

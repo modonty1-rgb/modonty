@@ -28,6 +28,9 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", { year: "numeric", month:
 export function TagTable({ tags }: { tags: Tag[] }) {
   const router = useRouter();
 
+  // Lightweight list every row's merge dialog uses as its target candidates.
+  const candidates = tags.map((t) => ({ id: t.id, name: t.name, slug: t.slug, count: t._count.articles }));
+
   const columns: Column<Tag>[] = [
     {
       key: "name",
@@ -48,14 +51,17 @@ export function TagTable({ tags }: { tags: Tag[] }) {
       key: "articles",
       header: "Articles",
       sortFn: (a, b) => a._count.articles - b._count.articles,
-      render: (t) => (
-        <Badge
-          variant={t._count.articles > 0 ? "default" : "secondary"}
-          className={`text-xs tabular-nums ${t._count.articles === 0 ? "opacity-50" : ""}`}
-        >
-          {t._count.articles}
-        </Badge>
-      ),
+      render: (t) =>
+        t._count.articles === 0 ? (
+          // Empty tag — amber (entity standard: "no articles yet") + ready to delete.
+          <Badge className="border-amber-500/30 bg-amber-500/15 text-xs tabular-nums text-amber-600 hover:bg-amber-500/15 dark:text-amber-400">
+            0 · Empty
+          </Badge>
+        ) : (
+          <Badge variant="default" className="text-xs tabular-nums">
+            {t._count.articles}
+          </Badge>
+        ),
     },
     {
       key: "seo",
@@ -83,7 +89,7 @@ export function TagTable({ tags }: { tags: Tag[] }) {
       sortable: false,
       render: (t) => (
         <span onClick={(e) => e.stopPropagation()}>
-          <TagRowActions tagId={t.id} />
+          <TagRowActions tag={{ id: t.id, name: t.name, slug: t.slug, count: t._count.articles }} candidates={candidates} />
         </span>
       ),
     },

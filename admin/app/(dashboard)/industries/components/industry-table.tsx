@@ -28,6 +28,9 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", { year: "numeric", month:
 export function IndustryTable({ industries }: { industries: Industry[] }) {
   const router = useRouter();
 
+  // Lightweight list every row's merge dialog uses as its target candidates.
+  const candidates = industries.map((i) => ({ id: i.id, name: i.name, slug: i.slug, count: i._count.clients }));
+
   const columns: Column<Industry>[] = [
     {
       key: "name",
@@ -48,14 +51,17 @@ export function IndustryTable({ industries }: { industries: Industry[] }) {
       key: "clients",
       header: "Clients",
       sortFn: (a, b) => a._count.clients - b._count.clients,
-      render: (i) => (
-        <Badge
-          variant={i._count.clients > 0 ? "default" : "secondary"}
-          className={`text-xs tabular-nums ${i._count.clients === 0 ? "opacity-50" : ""}`}
-        >
-          {i._count.clients}
-        </Badge>
-      ),
+      render: (i) =>
+        i._count.clients === 0 ? (
+          // Empty industry — amber (entity standard: "no clients yet") + ready to delete.
+          <Badge className="border-amber-500/30 bg-amber-500/15 text-xs tabular-nums text-amber-600 hover:bg-amber-500/15 dark:text-amber-400">
+            0 · Empty
+          </Badge>
+        ) : (
+          <Badge variant="default" className="text-xs tabular-nums">
+            {i._count.clients}
+          </Badge>
+        ),
     },
     {
       key: "seo",
@@ -83,7 +89,10 @@ export function IndustryTable({ industries }: { industries: Industry[] }) {
       sortable: false,
       render: (i) => (
         <span onClick={(e) => e.stopPropagation()}>
-          <IndustryRowActions industryId={i.id} />
+          <IndustryRowActions
+            industry={{ id: i.id, name: i.name, slug: i.slug, count: i._count.clients }}
+            candidates={candidates}
+          />
         </span>
       ),
     },

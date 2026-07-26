@@ -19,7 +19,7 @@ interface Category {
   slug: string;
   createdAt: Date;
   parent: { name: string } | null;
-  _count: { articles: number };
+  _count: { articles: number; children: number };
   seoScore: number;
 }
 
@@ -29,6 +29,9 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", { year: "numeric", month:
 // with the SEO column showing SeoScoreBadge from the reference scorer (#2).
 export function CategoryTable({ categories }: { categories: Category[] }) {
   const router = useRouter();
+
+  // Lightweight list every row's merge dialog uses as its target candidates.
+  const candidates = categories.map((c) => ({ id: c.id, name: c.name, slug: c.slug, count: c._count.articles }));
 
   const columns: Column<Category>[] = [
     {
@@ -61,14 +64,17 @@ export function CategoryTable({ categories }: { categories: Category[] }) {
       key: "articles",
       header: "Articles",
       sortFn: (a, b) => a._count.articles - b._count.articles,
-      render: (c) => (
-        <Badge
-          variant={c._count.articles > 0 ? "default" : "secondary"}
-          className={`text-xs tabular-nums ${c._count.articles === 0 ? "opacity-50" : ""}`}
-        >
-          {c._count.articles}
-        </Badge>
-      ),
+      render: (c) =>
+        c._count.articles === 0 ? (
+          // Empty category — amber (entity standard: "no articles yet") + ready to delete.
+          <Badge className="border-amber-500/30 bg-amber-500/15 text-xs tabular-nums text-amber-600 hover:bg-amber-500/15 dark:text-amber-400">
+            0 · Empty
+          </Badge>
+        ) : (
+          <Badge variant="default" className="text-xs tabular-nums">
+            {c._count.articles}
+          </Badge>
+        ),
     },
     {
       key: "seo",
@@ -96,7 +102,11 @@ export function CategoryTable({ categories }: { categories: Category[] }) {
       sortable: false,
       render: (c) => (
         <span onClick={(e) => e.stopPropagation()}>
-          <CategoryRowActions categoryId={c.id} />
+          <CategoryRowActions
+            category={{ id: c.id, name: c.name, slug: c.slug, count: c._count.articles }}
+            candidates={candidates}
+            childCount={c._count.children}
+          />
         </span>
       ),
     },

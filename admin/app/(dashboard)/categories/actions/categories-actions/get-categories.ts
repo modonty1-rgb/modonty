@@ -64,7 +64,7 @@ export async function getCategories(filters?: CategoryFilters) {
         createdAt: true,
         jsonLdLastGenerated: true,
         parent: { select: { name: true } },
-        _count: { select: { articles: true } },
+        _count: { select: { articles: true, children: true } },
         // Read by the shared reference scorer (stripped before returning to the client).
         nextjsMetadata: true,
         jsonLdStructuredData: true,

@@ -13,20 +13,28 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Edit, Trash2, Eye } from "lucide-react";
+import { Edit, Trash2, Eye, GitMerge } from "lucide-react";
 import { deleteCategory } from "../actions/categories-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 
+import { CategoryMergeDialog, type CategoryLite } from "./category-merge-dialog";
+
 interface CategoryRowActionsProps {
-  categoryId: string;
+  category: CategoryLite;
+  candidates: CategoryLite[];
+  childCount: number;
 }
 
-export function CategoryRowActions({ categoryId }: CategoryRowActionsProps) {
+export function CategoryRowActions({ category, candidates, childCount }: CategoryRowActionsProps) {
+  const categoryId = category.id;
+  // A category with linked articles or subcategories can't be deleted — merge it first.
+  const canDelete = category.count === 0 && childCount === 0;
   const router = useRouter();
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [mergeOpen, setMergeOpen] = useState(false);
 
   const handleEdit = () => {
     router.push(`/categories/${categoryId}/edit`);
@@ -90,14 +98,33 @@ export function CategoryRowActions({ categoryId }: CategoryRowActionsProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-destructive hover:text-destructive"
+          className="h-8 w-8 border border-violet-500/30 bg-violet-500/10 text-violet-600 hover:bg-violet-500 hover:text-white dark:text-violet-400"
+          onClick={() => setMergeOpen(true)}
+          aria-label="Merge"
+          title="Merge into another category"
+        >
+          <GitMerge className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-destructive hover:text-destructive disabled:opacity-40"
           onClick={() => setDeleteDialogOpen(true)}
-          disabled={isDeleting}
+          disabled={isDeleting || !canDelete}
           aria-label="Delete"
+          title={canDelete ? "Delete" : "Merge into another category first — still has articles or subcategories"}
         >
           <Trash2 className="h-4 w-4" />
         </Button>
       </div>
+
+      <CategoryMergeDialog
+        source={category}
+        candidates={candidates}
+        open={mergeOpen}
+        onOpenChange={setMergeOpen}
+        onMerged={() => router.refresh()}
+      />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>

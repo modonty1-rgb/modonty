@@ -15,7 +15,7 @@ interface Category {
   slug: string;
   createdAt: Date;
   parent: { name: string } | null;
-  _count: { articles: number };
+  _count: { articles: number; children: number };
   seoScore: number;
   jsonLdLastGenerated?: Date | null;
   [key: string]: unknown;
