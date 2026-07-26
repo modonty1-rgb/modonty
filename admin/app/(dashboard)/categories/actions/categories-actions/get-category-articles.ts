@@ -18,8 +18,11 @@ export async function getCategoryArticles(categoryId: string) {
       actualCategoryId = category.id;
     }
 
+    // Fetch ALL of this category's articles — the detail table must match the header
+    // count (no silent 50-row cap). Pass the true total as the limit.
+    const total = await db.article.count({ where: { categoryId: actualCategoryId } });
     const { getArticles } = await import("@/app/(dashboard)/articles/actions/articles-actions");
-    return await getArticles({ categoryId: actualCategoryId });
+    return await getArticles({ categoryId: actualCategoryId, limit: total });
   } catch (error) {
     console.error("Error fetching category articles:", error);
     return [];

@@ -2,6 +2,8 @@
 
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus } from "@prisma/client";
+import { computeReferenceSeoScore } from "@modonty/database/lib/seo/reference/seo-score";
+import type { JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
 
 export interface CategoryFilters {
   createdFrom?: Date;
@@ -63,6 +65,10 @@ export async function getCategories(filters?: CategoryFilters) {
         jsonLdLastGenerated: true,
         parent: { select: { name: true } },
         _count: { select: { articles: true } },
+        // Read by the shared reference scorer (stripped before returning to the client).
+        nextjsMetadata: true,
+        jsonLdStructuredData: true,
+        jsonLdValidationReport: true,
       },
       orderBy: { name: "asc" },
     });
@@ -82,7 +88,19 @@ export async function getCategories(filters?: CategoryFilters) {
       });
     }
 
-    return filteredCategories;
+    // Compute the SEO score from the shared reference scorer, then strip the heavy
+    // metadata so only the number reaches the client table.
+    return filteredCategories.map(
+      ({ nextjsMetadata, jsonLdStructuredData, jsonLdValidationReport, ...rest }) => ({
+        ...rest,
+        seoScore: computeReferenceSeoScore({
+          name: rest.name,
+          nextjsMetadata,
+          jsonLdStructuredData,
+          jsonLdValidationReport: (jsonLdValidationReport ?? null) as JsonLdValidationReport | null,
+        }).score,
+      }),
+    );
   } catch (error) {
     console.error("Error fetching categories:", error);
     return [];

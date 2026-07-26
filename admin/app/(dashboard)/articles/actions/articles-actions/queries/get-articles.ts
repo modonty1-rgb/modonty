@@ -14,6 +14,9 @@ export interface ArticleFilters {
   createdTo?: Date;
   publishedFrom?: Date;
   publishedTo?: Date;
+  /** Row cap. Defaults to 50 (the main /articles list). An entity-scoped view
+   *  (e.g. one category) passes its own total so the table count never lies. */
+  limit?: number;
 }
 
 export async function getArticles(filters?: ArticleFilters) {
@@ -130,7 +133,7 @@ export async function getArticles(filters?: ArticleFilters) {
           faqs: { select: { id: true } },            // only count needed
         },
         orderBy: { createdAt: "desc" },
-        take: 50, // TODO: A75 — add full server-side pagination (skip/take + total count) for large datasets
+        take: filters?.limit ?? 50, // default 50 (main list); entity views pass their true total. TODO: A75 — real server-side pagination
       }),
       getAllSettings(),
     ]);

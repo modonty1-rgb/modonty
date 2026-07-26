@@ -2,8 +2,8 @@
 
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
-import { calculateSEOScore } from "@/helpers/utils/seo-score-calculator";
-import { authorSEOConfig } from "../../helpers/author-seo-config";
+import { computeReferenceSeoScore } from "@modonty/database/lib/seo/reference/seo-score";
+import type { JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
 import { getModontyAuthor } from "./get-modonty-author";
 
 export async function getAuthorsStats() {
@@ -28,7 +28,12 @@ export async function getAuthorsStats() {
       }),
     ]);
 
-    const scoreResult = calculateSEOScore(modontyAuthor, authorSEOConfig);
+    const scoreResult = computeReferenceSeoScore({
+      name: modontyAuthor.name,
+      nextjsMetadata: modontyAuthor.nextjsMetadata,
+      jsonLdStructuredData: modontyAuthor.jsonLdStructuredData,
+      jsonLdValidationReport: (modontyAuthor.jsonLdValidationReport ?? null) as JsonLdValidationReport | null,
+    });
 
     const socialProfilesCount = [
       modontyAuthor.linkedIn,
@@ -41,7 +46,7 @@ export async function getAuthorsStats() {
       totalArticles: modontyAuthor._count.articles,
       publishedArticles: publishedArticleCount,
       draftArticles: draftArticleCount,
-      averageSEO: scoreResult.percentage,
+      averageSEO: scoreResult.score,
       socialProfilesCount,
     };
   } catch (error) {

@@ -48,6 +48,17 @@ export function sanitizeHtml(dirty: string): string {
     return stripDisallowedAttributes(match);
   });
 
+  // Strip inline text/background colors — the theme owns color (dark-mode readability).
+  // Cleans legacy stored content at render time; other style declarations are kept.
+  clean = clean.replace(/style\s*=\s*"([^"]*)"/gi, (_m, css: string) => {
+    const kept = css
+      .split(";")
+      .map((d) => d.trim())
+      .filter((d) => d && !/^(?:color|background-color|background)\s*:/i.test(d))
+      .join("; ");
+    return kept ? `style="${kept}"` : "";
+  });
+
   // Responsive tables: wrap each <table> in a horizontally-scrollable box so a wide
   // editor table scrolls WITHIN itself on mobile instead of breaking the whole page
   // layout (responsive-table best practice). Runs last so the injected wrapper isn't

@@ -8,8 +8,8 @@ import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
 import { tagServerSchema } from "./tag-server-schema";
 import { Prisma, ArticleStatus } from "@prisma/client";
-import { calculateSEOScore } from "@/helpers/utils/seo-score-calculator";
-import { tagSEOConfig } from "../helpers/tag-seo-config";
+import { computeReferenceSeoScore } from "@modonty/database/lib/seo/reference/seo-score";
+import type { JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
 
 export interface TagFilters {
   createdFrom?: Date;
@@ -314,25 +314,27 @@ export async function getTagsStats() {
             createdAt: { gte: startOfMonth },
           },
         }),
+        // Score from the shared reference scorer (reads the STORED metadata + JSON-LD).
         db.tag.findMany({
           select: {
-            id: true,
             name: true,
-            slug: true,
-            description: true,
-            seoTitle: true,
-            seoDescription: true,
-            canonicalUrl: true,
+            nextjsMetadata: true,
+            jsonLdStructuredData: true,
+            jsonLdValidationReport: true,
           },
         }),
       ]);
 
     let averageSEO = 0;
     if (allTags.length > 0) {
-      const scores = allTags.map((tag) => {
-        const scoreResult = calculateSEOScore(tag, tagSEOConfig);
-        return scoreResult.percentage;
-      });
+      const scores = allTags.map((tag) =>
+        computeReferenceSeoScore({
+          name: tag.name,
+          nextjsMetadata: tag.nextjsMetadata,
+          jsonLdStructuredData: tag.jsonLdStructuredData,
+          jsonLdValidationReport: (tag.jsonLdValidationReport ?? null) as JsonLdValidationReport | null,
+        }).score,
+      );
       averageSEO = Math.round(
         scores.reduce((sum, score) => sum + score, 0) / scores.length
       );

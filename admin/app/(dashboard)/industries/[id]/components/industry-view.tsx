@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,8 +15,9 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { format } from "date-fns";
-import { SEOHealthGauge } from "@/components/shared/seo-doctor/seo-health-gauge";
-import { industrySEOConfig } from "../../helpers/industry-seo-config";
+import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
+import { computeReferenceSeoScore } from "@modonty/database/lib/seo/reference/seo-score";
+import type { JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
 
 interface Industry {
   id: string;
@@ -27,6 +28,9 @@ interface Industry {
   seoDescription: string | null;
   socialImage: string | null;
   socialImageAlt: string | null;
+  nextjsMetadata: unknown;
+  jsonLdStructuredData: string | null;
+  jsonLdValidationReport: unknown;
   createdAt: Date;
   updatedAt: Date;
   _count: {
@@ -42,6 +46,18 @@ export function IndustryView({ industry }: IndustryViewProps) {
   const [basicOpen, setBasicOpen] = useState(true);
   const [seoOpen, setSeoOpen] = useState(true);
 
+  // Shared reference scorer — one source of truth (reads stored metadata + JSON-LD).
+  const seoScore = useMemo(
+    () =>
+      computeReferenceSeoScore({
+        name: industry.name,
+        nextjsMetadata: industry.nextjsMetadata,
+        jsonLdStructuredData: industry.jsonLdStructuredData,
+        jsonLdValidationReport: (industry.jsonLdValidationReport ?? null) as JsonLdValidationReport | null,
+      }).score,
+    [industry],
+  );
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -49,7 +65,7 @@ export function IndustryView({ industry }: IndustryViewProps) {
           <h1 className="text-2xl font-semibold">{industry.name}</h1>
         </div>
         <div className="flex items-center gap-4">
-          <SEOHealthGauge data={industry} config={industrySEOConfig} size="md" />
+          <SeoScoreBadge score={seoScore} size="lg" href={`/industries/${industry.id}/technical`} />
           <div className="flex gap-2">
             <Button variant="outline" asChild>
               <Link href="/industries">Back</Link>

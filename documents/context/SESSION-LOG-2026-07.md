@@ -3,6 +3,113 @@
 > السجل الدائم لجلسات يوليو 2026 الأقدم من النافذة النشطة. الملف النشط `SESSION-LOG.md` يحمل آخر أسبوع فقط.
 > تدوير أسبوعي: كل جلسة تتجاوز ٧ أيام تُنقَل هنا (نقل، لا نسخ — بلا تداخل).
 
+## Session: 2026-07-18 22:00 — توحيد سيو العميل + تنظيف هيدر المقالات (admin v0.90.0 — مدفوع ✅)
+
+### 🎯 أين توقفت
+- **مُنجز ومدفوع:** admin **v0.90.0** (commit `89cf023`, main، `fae147e..89cf023`). Vercel يبني admin تلقائياً (الباقي CANCELED عبر ignoreCommand). tsc admin صفر أخطاء.
+- **الخطوة التالية عند العودة:** قرار إغلاق «وصول عميل التست لـ100%» — محجوب بثغرة **منتج** مش كود: حقلا `sameAs` (روابط سوشيال) و`addressCountry` **ما لهما مدخل في واجهة الكونسول** إطلاقاً. القرار المعلّق: (أ) default «السعودية» للدولة في مولّد SEO العميل، أو (ب) بناء حقلي sameAs+country في الكونسول للوصول 100%. جبر سيو حالياً 93% على modonty_dev.
+
+### ✅ ما أُنجز هذه الجلسة (سيو العميل + هيدر المقالات — مدفوع v0.90.0)
+- **مصدر واحد لرقم سيو العميل:** `computeClientSeoScore`/`computeClientEntitySeo` (dataLayer `.../seo/client/seo-score`) عبر `clientToSeoInput` (`.../from-client`). نفس الرقم في: client-table · clients/[id] · client-seo-form · صفحة /technical · شارة الكونسول. **شِيل السكورر القديم المنافس** (`createClientSEOGroupScores`+`createClientSEOGroupAnalysis`+`SEODoctor`) من /seo — كان يطلّع نِسب Meta/JSON-LD مختلفة (38/41/56) تلخبط.
+- **إصلاح الحفظ الصامت في /seo:** كان يتحقق من `clientFormSchema` الكامل (يتطلب Industry اللي جبر ما عنده) بلا عرض أخطاء → زر ميت صامت. الحل: `clientSeoFormSchema` (passthrough يتحقق من حقول SEO فقط) + بانر `invalidFields`. الملفات: `client-form-schema.ts` · `use-client-form.ts` (prop `schema?: ZodTypeAny`) · `client-seo-form.tsx`.
+- **UX حقل priceRange:** أوصاف («$ — اقتصادي» … «$$$$ — فاخر») + تلميح عربي (مؤشر أسعار عام زي خرائط قوقل، مو سعر منتج) + خيار «بدون تحديد»→null. القيمة المخزّنة تبقى `$`..`$$$$` لـschema.org.
+- **شعار قوقل بدل «SEO» نصّاً** في هيدر عمود النتيجة: `article-table.tsx` + `article-segment-table.tsx` (widened SortHead label→ReactNode) — عبر `admin/components/admin/icons/google-icon.tsx`.
+- **تنظيف هيدر المقالات:** حذف الشارات المكررة (total/published/drafts) + شارة «81% SEO» المضلِّلة (المتوسط يخفي المقالات الضعيفة) + نافذة Details المكررة كاملة → تنظيف السلسلة الميتة (`articles-stats.tsx` + `get-articles-stats.ts` + export + `statsSlot`). **إصلاح عدد العنوان:** كان `articles.length` (مسقوف `take:50`) → صار `totalCount` (مجموع statusCounts = ٧٦، نفس مصدر تبويب All). **حذف زر SEO Health** + الكود الميت (`articleCount`/`description` props + `getStatusDescription` + imports Button/Link/HeartPulse). **ترتيب UI/UX نهائي:** سطر واحد «العنوان + البحث (يملأ الفراغ الميت) + Filters» · التبويبات ملاصقة للجدول.
+- **حالة tsc:** admin صفر أخطاء (بوابة قبل الدفع). modonty/console: لم تُفحص (تغييراتهما غير مدفوعة).
+- **حالة البيلد:** لم يُشغَّل build محلياً؛ Vercel يبني admin بعد الدفع.
+- **حالة التست الحي:** صفر أخطاء كونسول على /articles و/clients/[id]/seo (Playwright).
+
+### 📝 قرارات (بأسبابها)
+- **دفع admin task فقط** (articles + clients + google-icon + package + changelog + TODO) → لأن شجرة العمل فيها شغل تانٍ غير مكتمل/غير متعلّق (Reels+geo في schema، console gallery، modonty analytics، سكربتات audit). دفعها معاً = خطر كسر بيلد + خلط. رُفض `git add -A`.
+- **استبعاد schema.prisma** → تغييراته (enum INTERNAL + models Reel* + حقول Analytics geo country/region/city + default source DIRECT) من فيتشرات أخرى؛ كود admin task ما يستعملها (تأكّدت بـgrep على الملفات المرحّلة = صفر إشارات) فبيلد Vercel آمن ضد schema المدفوع القديم.
+- **العدد من `totalCount` لا `articles.length`** → مصدر واحد يطابق تبويب All دايماً؛ `articles.length` مسقوف بـ`take:50` (TODO A75: pagination كاملة لسه).
+- **حذف شارة/نافذة متوسط SEO** → «81%» يطمئن الأدمن كذباً بينما ممكن مقالات ميتة وراه؛ الرقم الحقيقي لكل مقال في الجدول.
+
+### 🚧 معلّق / محجوب
+- **وصول العميل 100%** — blocker: `sameAs` + `addressCountry` بلا مدخل في الكونسول (ثغرة منتج). القرار (default السعودية vs بناء حقول) لخالد.
+- **شغل غير مدفوع في شجرة العمل** (تركته عمداً): schema.prisma · console gallery (gallery-actions/manager) · modonty analytics (view routes/booking/trackers/events-registry) · سكربتات dataLayer/*.mjs · ملفات md/yml مؤقتة بالجذر · `.claude/settings*` · skills-lock.json · documents/{content-plan,content-team,contract,issues,mockups}. لم تُفحص ولا تُدفع.
+
+### 📂 ملفات لُمست (المدفوعة v0.90.0)
+- `admin/app/(dashboard)/articles/`: article-table.tsx · articles-header-wrapper.tsx · page.tsx · segment/[key]/components/article-segment-table.tsx · actions/articles-actions/index.ts · **حُذف** components/articles-stats.tsx + queries/get-articles-stats.ts
+- `admin/app/(dashboard)/clients/`: client-seo-form.tsx · client-table.tsx · client-header.tsx · client-tabs.tsx · [id]/page.tsx · [id]/technical/{page,loading}.tsx (جديد) · clients-header(-wrapper).tsx · clients-page-client.tsx · clients-tabs.tsx · edit-workspace/edit-left-panel.tsx · helpers/client-form-schema.ts · helpers/hooks/use-client-form.ts · actions/clients-actions/{get-clients,types}.ts · segment/segments.ts · page.tsx
+- `admin/components/admin/icons/google-icon.tsx` (جديد) · `admin/package.json` (0.90.0) · `admin/scripts/add-changelog.ts` · `documents/tasks/TODO.md`
+
+### 🔁 حالة Git / النشر
+- الفرع: main · آخر commit: `89cf023` admin v0.90.0 · مدفوع: **نعم** (`fae147e..89cf023`).
+- تغييرات غير مُلتزمة: **نعم** (كل «الشغل غير المدفوع» أعلاه لا يزال في شجرة العمل).
+- Backup: تمّ قبل الدفع (89 collection · 17M · modonty_dev). Changelog v0.90.0: LOCAL `6a5bc39c...92b` + PROD `...92c`.
+- Vercel: admin READY (بعد البناء)، الباقي CANCELED عبر ignoreCommand.
+
+### 🚀 استئناف في 30 ثانية
+1. `git status` — تذكّر «الشغل غير المدفوع» موجود؛ لا تدفعه بلا مراجعة.
+2. افتح `admin/app/(dashboard)/clients/components/client-seo-form.tsx` (منطق العميل) — أو الكونسول لبناء حقلي sameAs+country.
+3. القرار الأول: وصول العميل 100% — default «السعودية» في مولّد SEO العميل، أم بناء حقول الكونسول؟
+
+---
+
+## Session: 2026-07-18 — توحيد مقياس سيو المقال + دليل /technical (مدفوع) ⟵ التالي: نفس الشي للعميل
+
+### 🎯 أين توقفت
+- **مُنجز ومدفوع:** admin **v0.89.0** (commit `fae147e`, main). النشر التلقائي على Vercel. tsc صفر أخطاء على الثلاثة.
+- **الخطوة التالية (طلب خالد الصريح):** كرّر **نفس معالجة سيو المقال بالضبط لكن على العميل (Client)** — «القلب الثاني». العميل عنده مقياس سيو + صفحة خاصة، فنوحّد مقياسه من مصدر واحد + نبني له دليل `/technical` مطابق.
+- خالد سوّى **restart للجهاز** بعد هذا. الأدمن كان شغّال 3000، الكونسول أُوقف.
+
+### ✅ ما أُنجز هذه الجلسة (سيو المقال — مدفوع)
+- **مصدر واحد:** كل رقم سيو مقال من `computeArticleSeoScore` (dataLayer). المحوّل: `admin/lib/seo/article-seo-score.ts` (فيه `getArticleSeoScore` · `getArticleSeoScoreDetail` · `getArticleEntitySeo` · `ARTICLE_SEO_SELECT`).
+- **بوابة نشر واحدة:** `admin/lib/seo/assert-article-publishable.ts` (جديد، `MIN_SEO_SCORE=60`) — تولّد JSON-LD/metadata ثم تقيس الحقيقي ثم تبوّب. مربوطة في `transition-article.ts` (SCHEDULED→PUBLISHED فقط). شِيل الفحص المزيّف (`analyzeArticleSEO`) من create/update — بقي `analyzeArticleSEO` فقط كـ«دليل تعبئة» في الفورم.
+- **`/technical` أُعيد بناؤها** (`admin/app/(dashboard)/articles/[id]/technical/page.tsx`): حلقة درجة + META/JSON-LD منفصلين + تقسيم نواقص «✍️ الكاتب» (بارزة) vs «🤖 النظام» (JSON-LD ظاهر، الباقي مطوي) + أخطاء JSON-LD مترجمة عربي + عارض META/JSON-LD خام. الموكب: `documents/mockups/article-technical-guide-v1.html`.
+- **`/seo` + get-articles-stats** → المقياس الحقيقي. **رأس/شريط الفورم** نُظّف (SEO badge = رابط لـ/technical، شِيل معاينة + «محفوظ»).
+- **تست حي كامل (dev, modonty_dev):** تطابق ٤ أسطح=66؛ الدورة الكاملة على مقال جبر `6a536dda`: 62→(صورة)66→(موافقة عميل SCHEDULED→نشر=**البوابة**)95→(تقصير عنوان SEO)**100**. المنع <60 مربوط ومفعّل بالكود (صعب حيّاً لأن فحص الجودة 21 يمنعه قبلها).
+
+### 📌 مفاتيح للمهمة التالية (سيو العميل)
+- **مقياس العميل موجود أصلاً:** `dataLayer/lib/seo/client/` (meta-score + jsonld-score + types). سكورر المقال بُني «شقيقاً» له بنفس عقد `SeoScore/EntitySeoScore/SeoCheck`.
+- كرّر الأنماط: محوّل admin `client-seo-score.ts` (شوف `client-jsonld-storage.ts` الموجود) · دليل `/clients/[id]/technical` (أو ما يعادله) طبق نفس تصميم دليل المقال · وحّد أي عرض درجة سيو عميل على المقياس الحقيقي · نفس تقسيم الكاتب/النظام.
+- ابدأ بجرد: وين تُعرض درجة سيو العميل حالياً + هل فيه مقياس مزيّف مثل `analyzeArticleSEO`؟
+
+### 🔁 Git
+- Branch `main`. آخر commit `fae147e` (مدفوع). شجرة العمل فيها تغييرات قديمة غير متعلّقة (console/modonty/dataLayer scripts) + ملفات مؤقتة غير متتبّعة (`admin/_tmp-verify.mjs`, `admin/_seo-breakdown.mts`, `*.md` في الجذر) — تُحذف يدوياً (rm محجوب بالصلاحيات).
+
+### 🚀 استئناف في ٣٠ ثانية
+1. شغّل الأدمن: `cd admin && pnpm dev` (3000).
+2. افتح `dataLayer/lib/seo/client/` + `admin/lib/seo/article-seo-score.ts` (النمط المرجعي).
+3. القرار الأول: جرد أسطح عرض سيو العميل + اكتشاف المقياس المزيّف (لو فيه) → خطة مطابقة لمعالجة المقال.
+
+---
+
+## Session: 2026-07-18 — إنجازات العميل: بطاقات القصة (صورة Bunny + فقرة)
+
+### 🎯 أين توقفت
+- **دُفعت ومُتحقّقة إنتاجاً** — console v0.19.0 + modonty v1.73.0 (commit `ca91dec`). كل النشر READY. الميزة شغّالة؛ أول عميل يضيف إنجازاً بصورة = التأكيد الحي النهائي (الدائرة اختُبرت كاملة محلياً).
+- **الخطوة التالية المحتملة:** تنظيف بيانات التست على dev (إنجاز جبر سيو) — اختياري.
+
+### 🧩 الحاجة
+قسم «إنجازاتنا بالأرقام» كان رقم + عنوان فقط، وUI سيّئ. الطلب: استبدال الأيقونة بصورة + فقرة تحكي القصة. المعتمد: البديل «ب» (بطاقات قصة)، الصورة على **Bunny مو Cloudinary**، الرفع من **الكونسول**.
+
+### ✅ ما بُني (٥ مراحل)
+1. **السكيما** — `type ClientAchievement`: شِيلت `icon`، أُضيف `image String?` + `description String?`.
+2. **مسار الرفع** — عُمّم `console/api/upload-bunny/route.ts` ليقبل مجلّد قائمة بيضاء (`gallery|achievements`) → `clients/{id}/achievements/{ts}-{rand}.webp` (منطقة reels).
+3. **محرر الكونسول** — `page-content-editor` + `-actions`: منتقي صورة (ضغط WebP → رفع) + فقرة بعدّاد + سقوف (label 52 / desc 250) + **تنظيف الصورة اليتيمة عند الاستبدال/الحذف** (diff قبل الكتابة).
+4. **عرض modonty** — `client-results-section` بطاقات قصة (صورة 16:10 object-cover + رقم + عنوان + فقرة)، تتدرّج لشريحة رقم بلا صورة. + مضيف Bunny في next.config (الاثنين).
+5. **تست حي كامل** — دخول كونسول → رفع فعلي على Bunny (200/webp) → حفظ (DB) → عرض على modonty. كله نجح.
+
+### 🔑 قرار مهم: نطاق الدفع
+- **الإنجازات فقط** دُفعت (مستقلّة + مختبَرة). **المعرض استُبعد** لأن `gallery-actions.ts` يستخدم `db.reel` (نموذج Reel المؤجل) — شحنه يجرّ باتش Reels غير المختبَر. المعرض + Reels + geo + .mjs **بقيت محلياً**.
+- **السكيما قُسمت** (git plumbing: hash-object + update-index): رُحّل ClientAchievement فقط، بلا أي نموذج Reel، والملف العامل (فيه Reels) ما اتلمس.
+
+### 🔐 مفاتيح Bunny على Vercel
+- كانت **صفر** على Vercel (متحقّق، مُستنفَد). أُضيفت **٤ Shared** (`BUNNY_REELS_STORAGE_ZONE_NAME/_PASSWORD/_PULL_ZONE_HOSTNAME` + `BUNNY_STORAGE_HOSTNAME`) مربوطة بـ modonty+admin+console، prod/preview/dev. الكونسول يستخدم منطقة `reels` فقط.
+
+### 🧪 تحقق الإنتاج
+- 3 نشرات READY. `console.modonty.com/api/upload-bunny` (POST بلا auth) → **401** (حيّ + محمي + موديول Bunny حُمّل بلا انهيار).
+
+### 📂 ملفات دُفعت (12)
+`dataLayer/lib/bunny.ts` (جديد) · `console/api/upload-bunny/route.ts` (جديد) · console page-content (editor+actions) · console/modonty next.config · modonty (results-section + shell) · schema.prisma (ClientAchievement فقط) · console+modonty package.json · admin/scripts/add-changelog.ts.
+
+### ⚠️ ملاحظة dev
+- صُفّر باسورد جبر سيو على modonty_dev لـ`JabrTest2026!` (صار مطابقاً للذاكرة)، وعنده إنجاز تجريبي واحد بصورة.
+
+---
+
 ## Session: 2026-07-16 — سجل «مَن فعل ماذا» (AuditLog) — المرحلة الأولى
 
 ### 🎯 أين توقفت

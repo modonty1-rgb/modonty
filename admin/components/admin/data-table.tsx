@@ -137,9 +137,17 @@ export function DataTable<T extends { id: string }>({
         </div>
       )}
 
-      {/* Standard row density for every admin table: 10px cell padding, 40px header. */}
-      <div className="border rounded-lg bg-card [&_th]:!h-10 [&_td]:!py-2.5">
-        <Table>
+      {/* Standard admin-table look (entity-standard #3, mirrors the accounts table):
+          LOCKED row height 40px header / 44px body row · muted small headers · column dividers · zebra rows.
+          Row height is fixed here ONCE — never override per table. */}
+      <div className="border rounded-lg bg-card overflow-x-auto [&_th]:!h-10 [&_td]:!py-0 [&_th]:text-[11px] [&_th]:font-semibold [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-muted-foreground">
+        <Table
+          className={cn(
+            "whitespace-nowrap text-[13px]",
+            "[&_th]:border-e [&_td]:border-e [&_th:last-child]:border-e-0 [&_td:last-child]:border-e-0",
+            "[&_th]:border-border/50 [&_td]:border-border/50",
+          )}
+        >
           <TableHeader>
             <TableRow>
               {columns.map((column) => (
@@ -160,7 +168,7 @@ export function DataTable<T extends { id: string }>({
               ))}
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="[&>tr:nth-child(even)]:bg-muted/20">
             {paginatedData.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={columns.length} className="text-center text-muted-foreground">
@@ -172,7 +180,7 @@ export function DataTable<T extends { id: string }>({
                 <TableRow
                   key={item.id}
                   onClick={() => onRowClick?.(item)}
-                  className={onRowClick ? "cursor-pointer" : ""}
+                  className={cn("h-10", onRowClick && "cursor-pointer")}
                 >
                   {columns.map((column) => (
                     <TableCell key={String(column.key)}>

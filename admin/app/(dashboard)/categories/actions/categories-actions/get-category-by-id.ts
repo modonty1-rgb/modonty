@@ -24,6 +24,7 @@ export async function getCategoryById(id: string) {
         nextjsMetadata: true,
         nextjsMetadataLastGenerated: true,
         jsonLdStructuredData: true,
+        jsonLdValidationReport: true,
         jsonLdLastGenerated: true,
         parent: { select: { id: true, name: true } },
         children: true,

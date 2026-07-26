@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { calculateSEOScore } from "@/helpers/utils/seo-score-calculator";
-import { industrySEOConfig } from "../../helpers/industry-seo-config";
+import { computeReferenceSeoScore } from "@modonty/database/lib/seo/reference/seo-score";
+import type { JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
 
 export async function getIndustriesStats() {
   try {
@@ -30,15 +30,13 @@ export async function getIndustriesStats() {
           createdAt: { gte: startOfMonth },
         },
       }),
+      // Score from the shared reference scorer (reads the STORED metadata + JSON-LD).
       db.industry.findMany({
         select: {
-          id: true,
           name: true,
-          slug: true,
-          description: true,
-          seoTitle: true,
-          seoDescription: true,
-          canonicalUrl: true,
+          nextjsMetadata: true,
+          jsonLdStructuredData: true,
+          jsonLdValidationReport: true,
         },
         take: 500,
       }),
@@ -46,10 +44,14 @@ export async function getIndustriesStats() {
 
     let averageSEO = 0;
     if (allIndustries.length > 0) {
-      const scores = allIndustries.map((industry) => {
-        const scoreResult = calculateSEOScore(industry, industrySEOConfig);
-        return scoreResult.percentage;
-      });
+      const scores = allIndustries.map((industry) =>
+        computeReferenceSeoScore({
+          name: industry.name,
+          nextjsMetadata: industry.nextjsMetadata,
+          jsonLdStructuredData: industry.jsonLdStructuredData,
+          jsonLdValidationReport: (industry.jsonLdValidationReport ?? null) as JsonLdValidationReport | null,
+        }).score,
+      );
       averageSEO = Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
     }
 

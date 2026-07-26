@@ -176,7 +176,12 @@ export async function generateNextjsMetadata(
       );
     }
   }
-  const fullTitle = `${effectiveTitle} - ${siteName}`;
+  // Avoid double-branding: seoTitle already ends with " | {client}" (generateSEOTitle),
+  // so only append the site name when the title isn't already branded with it.
+  const alreadyBranded = [` | ${siteName}`, ` - ${siteName}`].some((suffix) =>
+    effectiveTitle.endsWith(suffix)
+  );
+  const fullTitle = alreadyBranded ? effectiveTitle : `${effectiveTitle} - ${siteName}`;
 
   // Featured image
   const ogImage =
