@@ -5,7 +5,10 @@ import { unstable_cache } from "next/cache";
 import { db } from "@/lib/db";
 import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
 import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
-import type { SeoCheckTally } from "@/app/(dashboard)/components/seo-health-card";
+import type { SeoCheckTally, SeoCheckItem } from "@/app/(dashboard)/components/seo-health-card";
+
+// Cap the drill-down list per check so a broad failure can't bloat the cached payload.
+const MAX_ITEMS_PER_CHECK = 60;
 
 /**
  * SEO health of EVERY client (Khalid 2026-07-23: same idea as the article side — a
@@ -61,6 +64,10 @@ export const getClientSeoQuality = unstable_cache(
     let below = 0;
     let sumScore = 0;
     const failing = new Map<string, number>();
+    // Same single pass: collect the failing clients per check for the chip drill-down.
+    const failingItems = new Map<string, SeoCheckItem[]>();
+    // The scorer's own fix hint per check — which fields solve it (single source of truth).
+    const hintByKey = new Map<string, string>();
     for (const r of rows) {
       const { score, checks } = computeClientSeoScore(
         clientToSeoInput(r as unknown as Record<string, unknown>),
@@ -69,7 +76,15 @@ export const getClientSeoQuality = unstable_cache(
       if (score >= 100) perfect += 1;
       else below += 1;
       for (const c of checks) {
-        if (c.earned < c.max) failing.set(c.key, (failing.get(c.key) ?? 0) + 1);
+        if (c.earned < c.max) {
+          failing.set(c.key, (failing.get(c.key) ?? 0) + 1);
+          if (c.hint && !hintByKey.has(c.key)) hintByKey.set(c.key, c.hint);
+          const list = failingItems.get(c.key) ?? [];
+          if (list.length < MAX_ITEMS_PER_CHECK) {
+            list.push({ id: r.id, name: r.name || "بدون اسم", href: `/clients/${r.id}/edit` });
+            failingItems.set(c.key, list);
+          }
+        }
       }
     }
     const avgScore = rows.length > 0 ? Math.round(sumScore / rows.length) : 0;
@@ -81,6 +96,8 @@ export const getClientSeoQuality = unstable_cache(
           label: meta?.label ?? key,
           bucket: meta?.bucket ?? "system",
           failing: n,
+          desc: hintByKey.get(key),
+          items: (failingItems.get(key) ?? []).sort((a, b) => a.name.localeCompare(b.name)),
         } satisfies SeoCheckTally;
       })
       .sort((a, b) => b.failing - a.failing);

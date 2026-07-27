@@ -3,6 +3,7 @@ import { PenLine, Settings, type LucideIcon } from "lucide-react";
 import { GoogleIcon } from "@/components/admin/icons/google-icon";
 import type { Tier } from "./dashboard-ui";
 import { NUM, RAIL } from "./pipeline-row";
+import { SeoCheckChip } from "./seo-check-chip";
 
 /**
  * The dashboard's SEO-health indicator, shared by Articles and Clients so the two
@@ -16,6 +17,13 @@ import { NUM, RAIL } from "./pipeline-row";
  * card never grows tall.
  */
 
+export interface SeoCheckItem {
+  id: string;
+  name: string;
+  /** Where clicking the name goes — the entity's edit page (built by the caller). */
+  href: string;
+}
+
 export interface SeoCheckTally {
   key: string;
   label: string;
@@ -23,6 +31,12 @@ export interface SeoCheckTally {
   bucket: "content" | "system";
   /** How many entities this check keeps below 100. */
   failing: number;
+  /** The scorer's own fix hint (Arabic) — which fields solve this check. Single source
+   *  of truth: lifted straight from the rubric, shown atop the chip's popover. */
+  desc?: string;
+  /** The failing entities (id · name · edit href). When present, the chip becomes a
+   *  clickable popover listing them; when absent, the chip is a plain count. */
+  items?: SeoCheckItem[];
 }
 
 export function SeoHealthCard({
@@ -100,40 +114,31 @@ export function SeoHealthCard({
         </div>
       )}
 
-      {/* Why not 100% — one scrolling line: content levers (amber) then system alarms (red). */}
+      {/* Why not 100% — content levers (amber) on their own line, system/JSON-LD alarms (red) on a second line. */}
       {(contentChecks.length > 0 || systemChecks.length > 0) && (
-        <div className="mt-3 flex items-center gap-2 overflow-x-auto border-t pb-2 pt-3">
-          <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            Blocking 100%
-          </span>
+        <div className="mt-3 border-t pt-3">
           {contentChecks.length > 0 && (
-            <ContentIcon className="h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
-          )}
-          {contentChecks.map((c) => (
-            <span
-              key={c.key}
-              className="inline-flex shrink-0 items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[11px]"
-            >
-              <span className="font-extrabold tabular-nums text-amber-600 dark:text-amber-400">
-                {c.failing}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Blocking 100%
               </span>
-              <span className="text-muted-foreground">{c.label}</span>
-            </span>
-          ))}
+              <ContentIcon className="h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
+              {contentChecks.map((c) => (
+                <SeoCheckChip key={c.key} check={c} tone="content" />
+              ))}
+            </div>
+          )}
           {systemChecks.length > 0 && (
-            <Settings className="h-3.5 w-3.5 shrink-0 text-red-600 dark:text-red-400" />
-          )}
-          {systemChecks.map((c) => (
-            <span
-              key={c.key}
-              className="inline-flex shrink-0 items-center gap-1 rounded-full border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-[11px]"
-            >
-              <span className="font-extrabold tabular-nums text-red-600 dark:text-red-400">
-                {c.failing}
+            <div className="mt-1.5 flex items-center gap-2 overflow-x-auto pb-1">
+              <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                JSON-LD
               </span>
-              <span className="text-muted-foreground">{c.label}</span>
-            </span>
-          ))}
+              <Settings className="h-3.5 w-3.5 shrink-0 text-red-600 dark:text-red-400" />
+              {systemChecks.map((c) => (
+                <SeoCheckChip key={c.key} check={c} tone="system" />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
