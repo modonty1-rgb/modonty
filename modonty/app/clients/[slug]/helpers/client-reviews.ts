@@ -40,7 +40,11 @@ export async function getClientReviews(
   });
   if (!client) return { reviews: [], averageRating: 0, reviewCount: 0 };
 
-  const [reviews, agg] = await Promise.all([
+  // Select authorId (scalar, always present) instead of the author relation:
+  // a deleted user leaves an orphaned authorId, and Prisma throws on a required
+  // relation that resolves to null — one orphan would crash the whole page/build.
+  // We resolve authors separately and tolerate the missing ones (author: null).
+  const [rawReviews, agg] = await Promise.all([
     db.clientReview.findMany({
       where: { clientId: client.id, status: CommentStatus.APPROVED },
       select: {
@@ -48,7 +52,7 @@ export async function getClientReviews(
         rating: true,
         comment: true,
         createdAt: true,
-        author: { select: { id: true, name: true, image: true } },
+        authorId: true,
       },
       orderBy: { createdAt: "desc" },
       take: limit,
@@ -59,6 +63,23 @@ export async function getClientReviews(
       _count: true,
     }),
   ]);
+
+  const authorIds = [...new Set(rawReviews.map((r) => r.authorId))];
+  const authors = authorIds.length
+    ? await db.user.findMany({
+        where: { id: { in: authorIds } },
+        select: { id: true, name: true, image: true },
+      })
+    : [];
+  const authorById = new Map(authors.map((a) => [a.id, a]));
+
+  const reviews: ClientReviewItem[] = rawReviews.map((r) => ({
+    id: r.id,
+    rating: r.rating,
+    comment: r.comment,
+    createdAt: r.createdAt,
+    author: authorById.get(r.authorId) ?? null,
+  }));
 
   return {
     reviews,
