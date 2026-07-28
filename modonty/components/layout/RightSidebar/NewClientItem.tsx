@@ -23,7 +23,7 @@ export function NewClientItem({ clientName, clientSlug, clientLogo, industry, ar
   const logoSrc = stripCloudinaryTransforms(clientLogo);
 
   return (
-    <PartnerRow slug={clientSlug}>
+    <PartnerRow>
       {/* Primary action — visit the partner profile */}
       <Link href={`/clients/${clientSlug}`} className="flex flex-1 min-w-0 items-start gap-3 py-1 px-1">
         <div

@@ -1,7 +1,6 @@
 import { ChatSheetContainer } from "@/components/chatbot/ChatSheetContainer";
 import { TopNavDesktop } from "./TopNavDesktop";
 import { LogoNav } from "@/components/navigatore/LogoNav";
-import { TopNavMobileLinks } from "./TopNavMobileLinks";
 import { MobileMenuClient } from "./MobileMenuClient";
 import { UserMenu } from "@/components/auth/UserMenu";
 interface TopNavProps {
@@ -19,10 +18,9 @@ export function TopNav({ favoritesCount, notificationCount }: TopNavProps) {
         تخطى إلى المحتوى الرئيسي
       </a>
       <div className="container mx-auto max-w-[1128px]">
-        {/* Mobile: Logo(=home) | nav icons | actions + burger. Chat → floating bubble. */}
-        <div className="flex md:hidden h-14 items-center gap-1.5 px-3">
+        {/* Mobile: Logo(=home) | actions + burger. Search moved to bottom bar + ⋮ menu. Chat → floating bubble. */}
+        <div className="flex md:hidden h-14 items-center justify-between gap-1.5 px-3">
           <LogoNav />
-          <TopNavMobileLinks />
           <div className="flex shrink-0 items-center gap-0.5">
             <div className="relative">
               <UserMenu />
