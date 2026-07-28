@@ -4,7 +4,7 @@ import { PostCardHeader } from "./PostCardHeader";
 import { PostCardBody } from "./PostCardBody";
 import { PostCardFooter } from "./PostCardFooter";
 import { PostCardHeroImage } from "./PostCardHeroImage";
-import { ArticleHeroWarm } from "./ArticleHeroWarm";
+import { ArticleHeroWarm } from "@/components/media/hero-warm";
 
 export function PostCard({ className, index, isLcp, hideClient, featured, ...rest }: PostCardProps) {
   const effectiveIsLcp = isLcp ?? (index === 0);

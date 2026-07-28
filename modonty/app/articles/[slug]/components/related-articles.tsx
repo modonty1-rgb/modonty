@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { ArticleSectionCollapsible } from "./article-section-collapsible";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { ArticleHeroWarm } from "@/components/media/hero-warm";
 import { RelativeTime } from "@/components/date/RelativeTime";
 import {
   IconLike,
@@ -53,6 +54,7 @@ export function RelatedArticles({ articleId, clientId, relatedArticles }: Relate
           clientId={clientId}
           className="h-full block"
         >
+          <ArticleHeroWarm href={`/articles/${article.slug}`} imageUrl={article.featuredImage?.url ?? null} />
           <Card className="hover:shadow-md transition-shadow cursor-pointer h-full flex flex-row overflow-hidden">
             <div className="flex-[0_0_80%] flex flex-col min-w-0 min-h-[7.5rem] p-4 text-right justify-between">
               <div>

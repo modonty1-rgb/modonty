@@ -53,9 +53,13 @@ interface ArticleHeroWarmProps {
 }
 
 /**
- * Invisible warm-up for a feed article card. Touches no navigation/link logic:
- * on viewport it prefetches the route; on hover it warms the detail hero image.
- * If anything fails, the worst case is "no warm-up" — never a broken link.
+ * Invisible warm-up for any card that links to an ARTICLE detail page. Touches no
+ * navigation/link logic: on viewport it prefetches the route; on hover it warms the
+ * detail hero image at its exact cache key. If anything fails, the worst case is
+ * "no warm-up" — never a broken link.
+ *
+ * Drop it as a direct child of the element that should act as the hover target
+ * (the card container or its wrapping link) — it observes/hovers its parentElement.
  */
 export function ArticleHeroWarm({ href, imageUrl }: ArticleHeroWarmProps) {
   const router = useRouter();
@@ -63,7 +67,9 @@ export function ArticleHeroWarm({ href, imageUrl }: ArticleHeroWarmProps) {
 
   useEffect(() => {
     if (prefersNoWarm()) return;
-    const card = anchorRef.current?.closest("article");
+    // Hover/observe target = the element that contains this warmer (the card or its
+    // wrapping link). Drop <ArticleHeroWarm> as a direct child of that element.
+    const card = anchorRef.current?.parentElement;
     if (!card) return;
 
     let timer: ReturnType<typeof setTimeout> | null = null;
