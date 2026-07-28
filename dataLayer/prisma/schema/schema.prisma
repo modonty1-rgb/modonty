@@ -1278,6 +1278,10 @@ model Media {
   cloudinaryVersion   String? // Cloudinary version
   cloudinarySignature String? // Cloudinary signature
 
+  // Bunny Migration (ADDITIVE — dual-read). Does NOT touch `url`.
+  // Production keeps reading `url` (Cloudinary) until the controlled switch (Epic 3.5).
+  bunnyUrl String? // Bunny CDN URL — populated by Dual-Write (new uploads) + migration script (old assets)
+
   // Client association (REQUIRED after migration)
   // Temporarily optional to allow querying existing media without clientId
   clientId String? @db.ObjectId

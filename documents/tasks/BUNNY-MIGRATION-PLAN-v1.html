@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>خطة الترحيل: Cloudinary → Bunny.net</title>
+<style>
+  :root{
+    --bg:#0d1117; --card:#161b22; --card2:#1c2230; --border:#2b3444;
+    --text:#e6edf3; --muted:#9aa7b6; --accent:#a371f7; --accent2:#7c5cff;
+    --ok:#3fb950; --warn:#e3b341; --bad:#f85149; --info:#58a6ff;
+    --code:#1f6feb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#0b0f16,#0d1117);color:var(--text);
+    font-family:'Tajawal','Segoe UI',system-ui,sans-serif;line-height:1.75;padding:0 0 80px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  header.top{padding:44px 20px 30px;text-align:center;border-bottom:1px solid var(--border);
+    background:radial-gradient(1200px 300px at 50% -50%,rgba(163,113,247,.18),transparent)}
+  header.top h1{margin:0 0 8px;font-size:30px;font-weight:800}
+  header.top h1 .from{color:var(--warn)} header.top h1 .to{color:var(--ok)}
+  .sub{color:var(--muted);font-size:15px}
+  .badges{margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .badge{font-size:12px;padding:4px 12px;border-radius:999px;border:1px solid var(--border);background:var(--card)}
+  .badge.v{border-color:rgba(63,185,80,.4);color:#7ee787;background:rgba(63,185,80,.1)}
+  .badge.no{border-color:rgba(248,81,73,.4);color:#ff9c95;background:rgba(248,81,73,.1)}
+  section{margin-top:34px}
+  h2{font-size:22px;font-weight:800;margin:0 0 6px;display:flex;align-items:center;gap:10px}
+  h2 .n{width:30px;height:30px;flex:0 0 30px;border-radius:8px;background:var(--accent2);color:#fff;
+    display:grid;place-items:center;font-size:15px;font-weight:800}
+  .lead{color:var(--muted);margin:0 0 16px;font-size:14.5px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:14px}
+  table{width:100%;border-collapse:collapse;font-size:14px;overflow:hidden;border-radius:12px}
+  th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--border);vertical-align:top}
+  th{background:var(--card2);font-weight:700;color:#cdd6e0}
+  tr:last-child td{border-bottom:none}
+  td.mono,code{font-family:'Consolas',monospace;direction:ltr;unicode-bidi:isolate}
+  code{background:#0b1220;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:12.5px;color:#9ecbff}
+  .tag{font-size:11px;padding:2px 8px;border-radius:6px;font-weight:700;white-space:nowrap}
+  .tag.ok{background:rgba(63,185,80,.15);color:#7ee787} .tag.warn{background:rgba(227,179,65,.15);color:#e3b341}
+  .tag.bad{background:rgba(248,81,73,.15);color:#ff9c95} .tag.info{background:rgba(88,166,255,.15);color:#79c0ff}
+  ul{margin:8px 0;padding-inline-start:22px} li{margin:4px 0}
+  .phase{border-inline-start:3px solid var(--accent2);padding:6px 16px 6px;margin-bottom:12px;background:var(--card);border-radius:0 12px 12px 0;border:1px solid var(--border);border-inline-start-width:3px}
+  .phase h3{margin:6px 0;font-size:16px}
+  .phase .row{display:grid;grid-template-columns:110px 1fr;gap:6px;font-size:13.5px;margin:3px 0}
+  .phase .row b{color:var(--muted);font-weight:700}
+  .gate{color:#ff9c95;font-weight:700}
+  .decision{background:linear-gradient(180deg,rgba(163,113,247,.08),transparent);border:1px solid rgba(163,113,247,.35);border-radius:14px;padding:16px 20px;margin-bottom:14px}
+  .decision h3{margin:0 0 6px;font-size:16px;color:#d2b8ff}
+  .opt{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin:6px 0;font-size:13.5px}
+  .opt b{color:#fff}
+  .rec{border-color:rgba(63,185,80,.45)} .rec::before{content:"موصى ✓ ";color:#7ee787;font-weight:800;font-size:12px}
+  .risk{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:720px){.risk{grid-template-columns:1fr}.phase .row{grid-template-columns:1fr}}
+  .callout{border-radius:12px;padding:12px 16px;font-size:14px;margin:12px 0}
+  .callout.warn{background:rgba(227,179,65,.08);border:1px solid rgba(227,179,65,.35)}
+  .callout.ok{background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.35)}
+  .callout.bad{background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.35)}
+  .src{font-size:12px;color:var(--muted)} .src a{color:#79c0ff}
+  footer{margin-top:40px;border-top:1px solid var(--border);padding-top:18px;font-size:12.5px;color:var(--muted)}
+  .kpi{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0}
+  .kpi div{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 16px;min-width:150px}
+  .kpi .num{font-size:22px;font-weight:800} .kpi .lbl{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>خطة الترحيل: <span class="from">Cloudinary</span> ← <span class="to">Bunny.net</span></h1>
+  <div class="sub">مستند قرار — كل التحويلات والأسعار مُتحقّقة من مصادر Bunny الرسمية · صفر تخمين</div>
+  <div class="badges">
+    <span class="badge v">✓ متحقّق من docs.bunny.net</span>
+    <span class="badge v">✓ Bunny مُدمج جزئياً بالفعل</span>
+    <span class="badge no">قياس الأداء = تجربة حيّة (المرحلة 0)</span>
+    <span class="badge">v5 · 2026-07-28 · 23 ثغرة + حيلة تسخين الصور (مدروسة من NextFaster)</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- 1 -->
+<section>
+  <div class="callout bad" style="border-width:2px;font-size:15px;margin-top:24px">
+    <b>🔴 القاعدة الحاكمة #1 — عزل البيانات (الأهم):</b> الفرع يعزل <b>الكود</b>، لا <b>البيانات</b>. القاعدة + أصول Cloudinary <b>مشتركة مع الإنتاج</b> — أي كتابة عليها تضرب الإنتاج مهما كان الفرع. لذلك:
+    <ul>
+      <li><b>الترحيل إضافي بحت:</b> نكتب في حقل جديد <code>bunnyUrl</code> فقط — <b>لا نلمس <code>url</code> الحي ولا كاش الـ SEO أثناء الاختبار.</b> الإنتاج يظل يقرأ Cloudinary بلا أي تأثير.</li>
+      <li><b>«التبديل»</b> (الكود يقرأ Bunny + إعادة توليد SEO) = خطوة أخيرة واحدة متحكَّم بها + باكب.</li>
+      <li>كل سكربت: <b>اطبع <code>DATABASE_URL</code> وأكّد أنها ليست إنتاج قبل التشغيل</b> · dev/نسخة فقط · <b>صفر حذف من Cloudinary</b> أثناء الاختبار.</li>
+    </ul>
+  </div>
+  <div class="callout bad" style="border-width:2px;font-size:15px">
+    <b>🔒 القاعدة الحاكمة #2 — لا نلمس <code>main</code>:</b> كل العمل على فرع مستقل (<code>feat/bunny-storage-migration</code>). الـ merge آخر مرحلة فقط، بشرط: أداء أفضل + صفر صورة مكسورة + JSON-LD/OG على Bunny + صفر مشاكل.
+  </div>
+  <h2><span class="n">١</span> الهدف والمبدأ الذهبي</h2>
+  <p class="lead">نقل تخزين كل الصور من Cloudinary إلى Bunny.net، بأداء لا يقل — ويُفضَّل أحسن — وبصفر مخاطرة على الإنتاج (نحن في طور الإنشاء).</p>
+  <div class="card">
+    <b>المبدأ الذهبي — قراءة مزدوجة (Dual-Read):</b> كل صورة رابطها مخزّن في قاعدتنا. نبني طبقة موحّدة تقرأ <b>مصدر الصورة من host الرابط</b> (cloudinary أو bunny) وتبني التحويل الصحيح لكلٍّ. النتيجة: <b>القديم يبقى شغّالاً والجديد يعمل بالتوازي</b> — لا لحظة كسر واحدة.
+    <ul>
+      <li>العمل كله على <b>branch مستقل</b> — الإنتاج الحالي لا يُمَس.</li>
+      <li>تحقّق حي في <b>modonty + admin</b> + قياس أداء بأرقام قبل أي merge.</li>
+      <li>الأصول القديمة على Cloudinary <b>لا تُحذف</b> إلا بعد فترة أمان وتأكيد نهائي.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 1.5 -->
+<section>
+  <h2><span class="n">★</span> البنية المعتمدة (مُصحَّحة v4) — التوحيد على التخزين، لا على جدول واحد</h2>
+  <div class="callout bad"><b>🔴 تصحيح معماري (بعد قراءة نموذج <code>Reel</code>):</b> الفيديو <b>ليس أصلاً رفيعاً</b> — نموذج <code>Reel</code> كيان محتوى كامل (workflow ٦ حالات · transcript · slug صفحة مشاهدة · counters · ربط بمقال · مراجع Bunny Stream)، مبني صحيحاً بالفعل. <b>دمجه في جدول Media = anti-pattern يدمّره.</b> الصح:
+    <ul>
+      <li><b>Media</b> = أصول رفيعة: <b>صورة + صوت</b> فقط (ملفات على Bunny Storage).</li>
+      <li><b>Reel</b> = يبقى نموذجه الخاص (فيديو-كمحتوى، Bunny Stream).</li>
+      <li><b>التوحيد الحقيقي = على التخزين (Bunny):</b> صورة/صوت → Storage · فيديو → Stream. كله Bunny، والسجلّات ليست جدولاً واحداً.</li>
+    </ul>
+  </div>
+  <p class="lead"><b>Media</b> = صف واحد لكل أصل (صورة/صوت) بحقل <code>kind</code>، والمحتوى يشير بالـ ID. الصوت <b>greenfield</b> (لا رفع حالياً = بناء جديد، صفر خطر كسر).</p>
+  <div class="card" style="direction:ltr;font-family:Consolas,monospace;font-size:13px;background:#0b1220;white-space:pre;overflow:auto">Media {                          // صورة + صوت فقط
+  id
+  kind: IMAGE | AUDIO            // لا VIDEO
+  scope, clientId?
+  altText, caption, title, description, license   // SEO (موجودة)
+  mimeType, fileSize, createdAt
+
+  bunnyUrl?      // إضافي — يُملأ بالترحيل. url الحي يظل Cloudinary حتى «التبديل»
+  url            // رابط الملف على Bunny Storage — محايد
+  width, height  // image (موجودة)
+  durationSec?   // audio
+}
+Article.audioMediaId → Media     (بناء جديد — بدل audioUrl النص)
+Client.logoMediaId / heroImageMediaId → Media  (موجودة)
+
+Reel {  }  // يبقى نموذجه الخاص — فيديو على Bunny Stream (لا يُدمج)
+  bunnyVideoId · playbackUrl · mp4Url · thumbnailUrl · transcript · workflow · slug · counters</div>
+
+  <div class="callout warn"><b>الفيديو ≠ الصورة/الصوت (متحقّق من docs.bunny.net):</b> الفيديو على <b>Bunny Stream</b> (منتج منفصل). بعد الرفع تحصل على <code>guid</code> + <code>libraryId</code> فقط، وكل روابط التسليم <b>تُشتَق</b>:
+    <ul>
+      <li>HLS: <code>https://{zone}.b-cdn.net/{guid}/playlist.m3u8</code></li>
+      <li>MP4: <code>.../{guid}/play_1080p.mp4</code></li>
+      <li>Embed: <code>https://iframe.mediadelivery.net/embed/{libraryId}/{guid}</code></li>
+      <li>Thumbnail: <code>.../{guid}/thumbnail.jpg</code></li>
+    </ul>
+    فالفيديو لا نخزّن له <code>url</code> ملف — نخزّن المعرّف ونشتق الباقي في دالة. <b>ريلز مودونتي أصلاً كذا</b> (<code>Reel.bunnyVideoId</code>). ولأن الفيديو أصلاً على Stream = <b>لا Cloudinary فيه، فلا يُرحَّل</b> — فقط يندمج في Media الموحّد.
+  </div>
+  <div class="callout ok"><b>الأثر على الترحيل:</b> الصور + الصوت فقط يُرحَّلون Cloudinary → Bunny Storage (نمط <code>url</code> + <code>cloudinaryBackupUrl</code>). القراءة لا تتغيّر لأن الحقل <code>url</code> محايد أصلاً. الفيديو يُدمَج معمارياً بلا ترحيل تخزين.</div>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2><span class="n">٢</span> الواقع الحالي (مجرَّد من الكود — بدليل)</h2>
+  <div class="card" style="padding:0;overflow:auto">
+    <table>
+      <tr><th>العنصر</th><th>الحالة</th><th>الدليل (ملف)</th></tr>
+      <tr><td>عميل Bunny مشترك</td><td><span class="tag ok">موجود وشغّال</span> upload/delete/url · 3 zones (reels·clients·assets)</td><td class="mono">dataLayer/lib/bunny.ts</td></tr>
+      <tr><td>Bunny مُستخدم فعلاً</td><td><span class="tag ok">نعم</span> المعارض + محتوى الصفحات + رفع</td><td class="mono">console/app/api/upload-bunny · admin client-galleries</td></tr>
+      <tr><td>المكتبة الرئيسية (صور المقالات)</td><td><span class="tag warn">Cloudinary</span> نموذج Media</td><td class="mono">schema Media · admin/media/actions/*</td></tr>
+      <tr><td>شعار/هيرو/OG العميل + الصناعات/التصنيفات/الوسوم</td><td><span class="tag warn">Cloudinary</span> حقل url + cloudinaryPublicId</td><td class="mono">schema (6 نماذج) · create/update actions</td></tr>
+      <tr><td>الرفع</td><td>الصور <b>تُحسَّن وقت الرفع</b> (crop للنسبة + WebP + مقاس هدف) → Cloudinary أساساً <b>تخزين + CDN</b></td><td class="mono">admin/lib/media/media-specs.ts</td></tr>
+      <tr><td><b>⚠️ تحويلات حيّة وقت العرض</b></td><td><span class="tag bad">مهم</span> modonty يحقن <code>f_auto,q_auto,c_fill,g_auto,w_1200</code></td><td class="mono">modonty/components/media/OptimizedImage.tsx · fullOptmizeImage.tsx · categories/helpers</td></tr>
+      <tr><td>صورة JSON-LD (SEO)</td><td><span class="tag bad">حسّاس</span> تُبنى بتحويلات <code>c_fill,ar_,g_auto,w_,f_auto,q_auto</code></td><td class="mono">admin/lib/seo/knowledge-graph-generator.ts</td></tr>
+      <tr><td>الأفتار</td><td>تحويل <code>g_face</code> (تعرّف وجه)</td><td class="mono">admin/app/(dashboard)/users/actions/users-actions.ts</td></tr>
+    </table>
+  </div>
+  <div class="callout ok"><b>الخلاصة المصحّحة (بعد قراءة <code>next.config.ts</code> + <code>OptimizedImage.tsx</code>):</b> المُحسّن الحقيقي هو <b>next/image (Vercel <code>/_next/image</code>)</b> — الإعداد فيه <code>formats:[avif,webp]</code> + <code>deviceSizes</code> + <code>qualities</code> + <b>لا loader مخصّص</b>. ودالة <code>optimizeCloudinaryUrl</code> <b>تتجاهل أي رابط غير Cloudinary</b> → روابط Bunny تمرّ كما هي إلى next/image ويحسّنها Vercel (ولهذا ريلز Bunny شغّالة أصلاً). <b>النتيجة: لا نحتاج Bunny Optimizer — Bunny = تخزين + CDN فقط.</b></div>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2><span class="n">٣</span> Bunny Optimizer — <span style="color:var(--warn)">مرجع فقط (لسنا بحاجته الآن)</span></h2>
+  <div class="callout ok"><b>قرار محسوم:</b> لا نحتاج Bunny Optimizer لترحيل التخزين — <code>next/image</code> يقوم بالتصغير والفورمات. الجدول أدناه <b>مرجعي</b> فقط، ويصير ذا قيمة لو قرّرنا <b>لاحقاً</b> نقل التحسين خارج Vercel (قرار منفصل).</div>
+  <div class="card" style="padding:0;overflow:auto">
+    <table>
+      <tr><th>الحاجة</th><th>باراميتر Bunny (متحقّق)</th><th>ملاحظة</th></tr>
+      <tr><td>تصغير العرض/الارتفاع</td><td class="mono">?width=500 · ?height=300</td><td>يحافظ على النسبة؛ لو الاثنان، الأصغر يفوز</td></tr>
+      <tr><td>قص لنسبة</td><td class="mono">?aspect_ratio=16:9</td><td>مركز افتراضياً</td></tr>
+      <tr><td>قص بموضع</td><td class="mono">?crop=800,600&crop_gravity=north</td><td>center/north/south/east/west + الأركان</td></tr>
+      <tr><td><b>تعرّف الوجه</b></td><td class="mono">?face_crop=600,600</td><td><span class="tag ok">مدعوم رسمياً</span> — يعوّض <code>g_face</code></td></tr>
+      <tr><td>الجودة</td><td class="mono">?quality=75</td><td>0–100، افتراضي 85 أو Smart Image Optimization لكل جهاز</td></tr>
+      <tr><td>الفورمات</td><td class="mono">?format=webp|avif|jpeg|png|gif</td><td>AVIF مدعوم</td></tr>
+      <tr><td><b>فورمات تلقائي</b></td><td>يُفعَّل من إعدادات Optimizer</td><td>يخدم WebP/AVIF حسب المتصفح بلا باراميتر — يعوّض <code>f_auto</code></td></tr>
+      <tr><td>حِدّة/تنعيم/ألوان</td><td class="mono">?sharpen=true · blur · brightness · contrast · saturation · gamma · hue · sepia</td><td>—</td></tr>
+    </table>
+  </div>
+
+  <div class="kpi">
+    <div><div class="num" style="color:#7ee787">$0</div><div class="lbl">Optimizer — <b>لا نحتاجه</b> (next/image يكفي)</div></div>
+    <div><div class="num" style="color:#79c0ff">$0.01<span style="font-size:13px">/GB</span></div><div class="lbl">تخزين Standard (HDD) — منطقة واحدة</div></div>
+    <div><div class="num" style="color:#79c0ff">$0.02<span style="font-size:13px">/GB</span></div><div class="lbl">تخزين Edge (SSD) — لكل منطقة</div></div>
+  </div>
+  <div class="callout warn"><b>تكلفة تحسين Vercel تبقى كما هي:</b> نحن أصلاً ندفعها لأن <code>next/image</code> هو من يُحسّن — نقل التخزين لـ Bunny لا يزيدها ولا ينقصها. تقليلها = قرار مستقبلي منفصل (نقل التحسين لـ Bunny Optimizer + custom loader).</div>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2><span class="n">٤</span> مصفوفة التحويل Cloudinary → Bunny (متحقّقة)</h2>
+  <div class="card" style="padding:0;overflow:auto">
+    <table>
+      <tr><th>Cloudinary (الحالي)</th><th>Bunny (البديل)</th><th>الحكم</th></tr>
+      <tr><td class="mono">f_auto</td><td>فورمات تلقائي من الإعدادات</td><td><span class="tag ok">مطابق</span></td></tr>
+      <tr><td class="mono">q_auto</td><td class="mono">quality=NN</td><td><span class="tag warn">نثبّت قيمة (≈82) أو Smart Image Optimization</span></td></tr>
+      <tr><td class="mono">c_fill + w_/h_</td><td class="mono">width + height + aspect_ratio</td><td><span class="tag ok">مطابق</span></td></tr>
+      <tr><td class="mono">g_auto</td><td class="mono">crop_gravity=center</td><td><span class="tag warn">تقريبي — يكفي للمحتوى</span></td></tr>
+      <tr><td class="mono">g_face (الأفتار)</td><td class="mono">face_crop</td><td><span class="tag bad">face_crop يحتاج Optimizer</span> — وبما أننا لا نفعّله: <b>قص مركزي للأفتار</b> (أثر مهمل — أفتار أدمن)</td></tr>
+      <tr><td class="mono">ar_16:9</td><td class="mono">aspect_ratio=16:9</td><td><span class="tag ok">مطابق</span></td></tr>
+      <tr><td class="mono">d_article-placeholder-default</td><td>لا مقابل مباشر</td><td><span class="tag bad">يُعالَج في الكود (fallback)</span></td></tr>
+    </table>
+  </div>
+  <div class="callout warn"><b>الفجوة الوحيدة الحقيقية:</b> الصورة الافتراضية عند غياب الأصل. الحل نظيف وآمن: طبقة العرض تُرجِع صورة placeholder محلية عند غياب الرابط — لا نعتمد على معالج التخزين لذلك (وهو الأصح أصلاً).</div>
+</section>
+
+<!-- ★ حيلة تسخين الصور -->
+<section>
+  <h2><span class="n">★</span> حيلة السرعة — تسخين الصور المسبق (Image Prefetch) · مدروسة من NextFaster</h2>
+  <p class="lead">دراسة كاملة لمقاربة مشروع NextFaster في تسريع الصور، بهدف تطبيقها على مدوّنتي <b>بشكل أفضل مما طبّقوها</b>. مستقلة تماماً عن التخزين — تشتغل مع Cloudinary الآن ومع Bunny بعد الترحيل بلا فرق.</p>
+
+  <div class="callout ok"><b>ما الحيلة؟</b> تسخّن <b>الصورة الرئيسية للصفحة الجاية قبل الضغط عليها</b> — فتُفتح الصفحة وصورتها ظاهرة فوراً بلا وميض تحميل. المصدر: مشروع <b>NextFaster</b> (متجر Next.js شهير بأداء عالٍ على مليون صورة/مليون زيارة).</div>
+
+  <div class="callout warn"><b>🔑 التمييز الجوهري (لا تُنسَ):</b> الحيلة تحسّن <b>سرعة التنقّل بين الصفحات</b>، <b>لا</b> سرعة أول فتحة للموقع. أول فتحة تتحسّن بأشياء أخرى (جودة منخفضة متعمّدة · أول صور eager · أبعاد صحيحة · avif). الحيلة تلمع في مسار: قائمة → مقال → مقال.</div>
+
+  <h3 style="margin:22px 0 8px;font-size:17px">التشريح التقني — كيف NextFaster يطبّقها (٥ مكوّنات، بدليل من الكود)</h3>
+  <div class="card" style="padding:0;overflow:auto">
+    <table>
+      <tr><th>#</th><th>المكوّن</th><th>الملف</th><th>الدور</th></tr>
+      <tr><td>1</td><td><b>Link مخصص</b></td><td class="mono">components/ui/link.tsx</td><td><code>IntersectionObserver</code> (viewport) + <code>onMouseEnter</code> (hover) + <code>onMouseDown</code> (navigation مبكرة).</td></tr>
+      <tr><td>2</td><td><b>endpoint قائمة الصور</b></td><td class="mono">/api/prefetch-images/[...rest]</td><td><code>force-static</code> · يجيب <b>HTML الصفحة الهدف</b> على السيرفر · يـ parse بـ <code>linkedom</code> · يطلّع <code>main img</code> (srcset·sizes·src·alt·loading) · JSON + <code>Cache-Control 1h</code>.</td></tr>
+      <tr><td>3</td><td><b>مسخّن البايتات</b></td><td class="mono">prefetchImage()</td><td><code>new Image()</code> · <code>decoding=async</code> · <code>fetchPriority=low</code> · <b>ترتيب حرج: sizes → srcset → src</b> (وإلا يحمّل المتصفح صورة خطأ من srcset).</td></tr>
+      <tr><td>4</td><td><b>منع التكرار</b></td><td class="mono">seen Set + imageCache Map</td><td>لا يسخّن نفس الصورة مرتين · لا يجيب قائمة نفس الرابط مرتين.</td></tr>
+      <tr><td>5</td><td><b>حساب حتمي</b></td><td class="mono">getImageProps()</td><td>يحسب <code>srcset/sizes</code> بنفس <b>مفتاح كاش الرِندَر بالضبط</b> — أساس التسخين المطابق (بلا تخمين).</td></tr>
+    </table>
+  </div>
+
+  <h3 style="margin:22px 0 8px;font-size:17px">الـ flow خطوة بخطوة</h3>
+  <div class="phase">
+    <div class="row"><b>1 · viewport</b><span>الرابط يدخل الشاشة (<code>threshold 0.1</code>) → بعد <b>300ms</b>: <code>router.prefetch(route)</code> + جلب <b>قائمة</b> صور الهدف (JSON رخيص) وتخزينها في <code>imageCache</code>. <b>لا تسخين بايتات بعد.</b></span></div>
+    <div class="row"><b>2 · hover</b><span><code>onMouseEnter</code> → <code>router.prefetch</code> مجدداً + <b>تسخين البايتات فعلياً</b> عبر <code>prefetchImage()</code> لكل صورة في القائمة (نية أقوى).</span></div>
+    <div class="row"><b>3 · mousedown</b><span><code>preventDefault</code> + <code>router.push</code> → الملاحة تبدأ <b>قبل</b> رفع الإصبع (mouseup/click).</span></div>
+    <div class="row"><b>4 · click</b><span>الصفحة تفتح وصورها <b>محمّلة مسبقاً في كاش المتصفح</b> → ظهور فوري بلا وميض.</span></div>
+    <div class="row"><b>لماذا مرحلتين؟</b><span>viewport يبني القائمة الرخيصة (JSON مكاش)، وhover يسخّن البايتات الثقيلة (إشارة نية أقوى) → <b>لا هدر باندويث</b> على كل رابط ظاهر.</span></div>
+  </div>
+
+  <h3 style="margin:22px 0 8px;font-size:17px">كيف نطبّقها <span style="color:var(--ok)">أحسن منهم</span> — تحسينات Senior على واقع كودنا</h3>
+  <div class="card" style="padding:0;overflow:auto">
+    <table>
+      <tr><th>#</th><th>تطبيقهم (نقطة ضعف)</th><th>تطبيقنا الأفضل</th></tr>
+      <tr><td>1</td><td><b>endpoint يجيب HTML كامل + parse</b> — استدعاء وظيفة لكل صفحة هدف + اعتماد هشّ على parse الـ DOM.</td><td><span class="tag ok">أنظف</span> نعرف صورة المقال من قاعدتنا (<code>featuredImage.url</code> + <code>width/height</code>) → endpoint خفيف يرجّع الروابط من DB مباشرة (أو نمرّرها مع بيانات البطاقة). بلا جلب HTML، بلا parse.</td></tr>
+      <tr><td>2</td><td><b>يسخّن كل <code>main img</code></b> — يهدر باندويث على صور تحت الطية.</td><td>نسخّن <b>الـ LCP فقط</b> (الصورة الرئيسية للمقال) — تحكّم دقيق.</td></tr>
+      <tr><td>3</td><td><b>يتجاهل الشبكات البطيئة</b> — يسخّن على 2G وData Saver.</td><td><span class="tag ok">مهم</span> نحترم <code>navigator.connection.saveData</code> + <code>effectiveType</code> (2g/slow-2g) → نتخطّى التسخين.</td></tr>
+      <tr><td>4</td><td colspan="2"><b style="color:#ff9c95">⚠️ أخطر نقطة — مطابقة مفتاح الكاش بالضبط:</b> صورة التسخين لازم تطابق الرِندَر حرفياً (<code>/_next/image?url&amp;w&amp;q</code>) وإلا <b>تحميل مزدوج</b> والحيلة تنقلب ضرراً. عندنا <code>OptimizedImage.clampQuality</code> يقرّب الجودة لأقرب قيمة من <code>[25,50,75,100]</code> (مثلاً 65 → 75) → التسخين لازم يمرّر <b>نفس</b> quality/sizes عبر <code>getImageProps</code>. نتحقق: طلب واحد فقط لكل صورة في تبويب Network.</td></tr>
+      <tr><td>5</td><td>—</td><td>نحافظ على ترتيب <b>sizes → srcset → src</b> (شرط تقني لا يتغيّر).</td></tr>
+      <tr><td>6</td><td>—</td><td>سقف التسخين: أول N روابط · أو <b>hover-only على الموبايل</b> (اللمس ≠ hover).</td></tr>
+      <tr><td>7</td><td>—</td><td><code>fetchPriority=low</code> + <code>decoding=async</code> — لا نزاحم موارد الصفحة الحالية.</td></tr>
+      <tr><td>8</td><td><b>نرفض:</b> <code>typescript.ignoreBuildErrors:true</code> (ينشرون بأخطاء TS) + خطف الملاحة <code>onMouseDown preventDefault</code> (يكسر فتح تبويب جديد/إمكانية الوصول).</td><td><span class="tag warn">انتقائي</span> نبقى <code>strict</code> · نبدأ <b>بدون</b> خطف الملاحة ونقيس أولاً؛ نضيفه فقط لو أثبت القياس قيمته.</td></tr>
+    </table>
+  </div>
+
+  <h3 style="margin:22px 0 8px;font-size:17px">واقع مدوّنتي (بدليل من الكود)</h3>
+  <div class="card">
+    <ul>
+      <li><b><code>@/components/link</code> حالياً wrapper بسيط بـ <code>prefetch={false}</code></b> → حتى prefetch الـ route <b>معطّل الآن</b>. الحيلة تحتاج بناء Link مخصص كامل.</li>
+      <li><b><code>components/feed/ArticleCard.tsx</code> نصّية بلا صورة</b> → هدف التسخين = الصورة الرئيسية <b>داخل صفحة المقال</b> (الـ LCP)، لا صورة بطاقة.</li>
+      <li><b><code>Media</code> فيه <code>width/height</code></b> (schema سطر 1252-1253) → أبعاد حتمية متاحة عندنا (ميزة على NextFaster الذي يستخرجها من HTML).</li>
+      <li><b><code>next.config</code>:</b> <code>formats: [avif, webp]</code> · <code>qualities: [25,50,75,100]</code> · <code>deviceSizes</code> مضبوطة → أساس جاهز، والحيلة تُبنى فوقه.</li>
+    </ul>
+  </div>
+
+  <div class="callout ok"><b>مستقلة عن Bunny تماماً:</b> تشتغل الآن مع Cloudinary وبعد الترحيل مع Bunny بلا فرق. <b>نقدر نطبّقها ونقيسها اليوم</b> بلا انتظار الترحيل — مكسب مستقل بذاته. القياس النهائي (LCP التنقّل قبل/بعد) = بوابة إلزامية.</div>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2><span class="n" style="background:var(--bad)">⚑</span> النقد الذاتي — ثغرات لازم تُعالَج قبل أي كود</h2>
+  <p class="lead">مراجعة عدائية للخطة نفسها (بلا مجاملة). جوهر البنية سليم، لكن هذه الثغرات حقيقية والخطة أدناه تعالجها.</p>
+
+  <div class="card">
+    <b style="color:#ff9c95">🔴 ثغرات كبيرة</b>
+    <table style="margin-top:8px">
+      <tr><th>#</th><th>الثغرة</th><th>الأثر / العلاج</th></tr>
+      <tr><td>1</td><td><b>كاش الـ SEO يحمل روابط Cloudinary محفورة</b> — <code>jsonLdStructuredData</code> + <code>nextjsMetadata</code> مخزّنة في القاعدة (مقال·عميل·تصنيف·صناعة) وفيها روابط الصور القديمة. تبديل <code>url</code>/<code>socialImage</code> لا يحدّثها.</td><td><span class="tag bad">الأخطر</span> بعد الترحيل JSON-LD/OG يظلّان يشيران لـ Cloudinary. <b>العلاج: مرحلة إعادة توليد SEO لكل كيان متأثّر</b> (زي دمج الوسوم). بدونها = روابط سيو ميتة عند الإطفاء.</td></tr>
+      <tr><td>2</td><td><b>«Optimizer غير مطلوب» ناقص</b> — صحيح لصور next/image فقط. صور OG/الكراولر + أي <code>&lt;img&gt;</code> خام + صورة JSON-LD لا تمرّ عبره وتعتمد تحويلات Cloudinary محفورة.</td><td><span class="tag warn">تدقيق</span> إمّا نرفع OG بمقاس نهائي 1200×630 مسبقاً (يشيل الحاجة)، أو نحتاج Optimizer لها. <b>يجب فحص: هل OG مُسبقة المقاس؟ وهل يوجد <code>&lt;img&gt;</code> خام؟</b></td></tr>
+      <tr><td>3</td><td><b>تناقض داخلي في face_crop</b> — <code>face_crop</code> ميزة Optimizer، والخطة تلغي Optimizer.</td><td><span class="tag ok">مُصحّح</span> الأفتار = قص مركزي عادي (أثر مهمل). حُدّث في الجدول أعلاه.</td></tr>
+      <tr><td>4</td><td><b>«أرخص/أسرع» لم يُثبَت بأرقام</b> — أُثبت أن التخزين رخيص فقط.</td><td><span class="tag warn">أرقام ناقصة</span> باندويدث Bunny متحقّق (من $0.002/GB ✓)، لكن <b>فاتورة Cloudinary الحالية</b> و<b>تكلفة صور Vercel</b> (تبقى مع next/image وقد تفوق ثمن Optimizer) — غائبتان. قرار «بلا Optimizer» قد يطلع أغلى حتى نجيب رقم Vercel.</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <b style="color:#e3b341">🟠 ثغرات تشغيلية</b>
+    <table style="margin-top:8px">
+      <tr><th>#</th><th>الثغرة</th><th>العلاج</th></tr>
+      <tr><td>5</td><td><b>remotePatterns</b> — modonty يسمح فقط بـ <code>modonty-reels-media.b-cdn.net</code>. زونات clients/assets غير مضافة → صور Bunny عليها محجوبة من next/image.</td><td>بلوكر للمرحلة 0/1 (الاختبار)، لا المرحلة 4. <b>يُضاف مبكراً.</b></td></tr>
+      <tr><td>6</td><td><b>لا فاحص شامل «كل الصور 200»</b> — التحقّق اليدوي لا يغطّي صوراً مبعثرة عبر عشرات الكيانات.</td><td>سكربت يفحص كل <code>Media.url</code> + <code>socialImage</code> → 200 (بوابة merge).</td></tr>
+      <tr><td>7</td><td><b>حجم الترحيل غير مُقاس</b> (عدد صفوف/GB).</td><td>عدّ فعلي في المرحلة 0 → يحسم «تدريجي مقابل دفعة».</td></tr>
+      <tr><td>8</td><td><b>بيت صور المقالات غير محدّد</b> — لا زون واضح ضمن reels/clients/assets.</td><td>يُحسم في المرحلة 0 (assets أو زون جديد).</td></tr>
+      <tr><td>9</td><td><b>الرجوع ناقص</b> — لو أعدنا توليد SEO (ثغرة 1)، الرجوع لازم يعيد التوليد أيضاً، لا مجرد استرجاع <code>url</code>.</td><td>سكربت الرجوع يشمل إعادة توليد SEO.</td></tr>
+      <tr><td>10</td><td><b>تكلفة Bunny Stream</b> (تشفير/بث) للفيديو الجديد غير مُتحقّقة.</td><td>تُتحقَّق قبل onboarding الفيديو.</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <b style="color:#ff9c95">🔬 ثغرات إضافية — من فحص الكود العميق (v3)</b>
+    <table style="margin-top:8px">
+      <tr><th>#</th><th>الثغرة (بدليل من الكود)</th><th>العلاج</th></tr>
+      <tr><td>11</td><td><b>التقاط الأبعاد على Bunny</b> — الأبعاد/الفورمات تأتي من <b>رد رفع Cloudinary</b> (<code>use-upload-zone.ts:291</code>). Bunny Storage يرجّع <code>url+bytes</code> فقط (<code>upload-bunny/route.ts</code> — مؤكّد). و<code>next/image</code> يحتاج width/height للأدوار ثابتة النسبة.</td><td><span class="tag bad">رفع جديد</span> نحسب الأبعاد <b>عميل-side</b> من الملف المقصوص (المحرّر يعرفها) أو server-side (<code>sharp</code>) قبل <code>createMedia</code>.</td></tr>
+      <tr><td>12</td><td><b>ماسح أيتام Cloudinary لغم</b> — <code>sweepCloudinaryOrphans</code> (<code>cloudinary-orphans.ts:194</code> <code>uploader.destroy</code>) يحذف أصول Cloudinary غير المرجعية. <b>بعد الترحيل القاعدة تشير لـ Bunny → كل أصول Cloudinary تصير أيتام → يحذف نسخ الرجوع.</b></td><td><span class="tag bad">حرج</span> <b>يُعطَّل الماسح طوال الترحيل + نافذة الأمان.</b> (الحساب مشترك — بالتعليق نفسه.)</td></tr>
+      <tr><td>13</td><td><b><code>deleteMedia</code> لا يعرف Bunny</b> — يحذف عبر <code>cloudinaryPublicId</code> فقط (<code>delete-media.ts:47</code>). أصول Bunny بلا publicId → الحذف يترك <b>يتيماً على Bunny</b>.</td><td>تحديث الحذف ليدعو <code>deleteBunnyUrl</code> لروابط Bunny.</td></tr>
+      <tr><td>14</td><td><b>remotePatterns — admin بلا أي host بَني</b> (<code>*.cloudinary.com</code> فقط). console/modonty فيهما reels فقط.</td><td>الثلاثة تحتاج زونات Bunny (clients+assets). بلوكر اختبار لكل تطبيق — مبكراً.</td></tr>
+      <tr><td>15</td><td><b>الترحيل لازم يجيب الأصل</b> — الـ <code>url</code> المخزَّن يحمل <code>f_auto,q_auto,w_auto</code> محفورة (<code>image-seo.ts</code>). نسخ الرابط المحوّل = نسخ derivative لا الأصل.</td><td>السكربت يجيب الأصل من Cloudinary (عبر publicId/تجريد التحويل) ويرفعه لـ Bunny.</td></tr>
+      <tr><td>16</td><td><b>تراجع JSON-LD متعدد النِّسب</b> — <code>buildAspectUrl</code> يولّد 1:1·4:3·16:9 لنتائج Google الغنية (توصية). Bunny بلا Optimizer → النسبة المخزّنة فقط.</td><td><span class="tag warn">سيو طفيف</span> نبني النِّسب وقت الرفع (أصول متعددة) أو نقبل نسبة واحدة (مقبول عند Google).</td></tr>
+      <tr><td>17</td><td><b>الصورة الافتراضية تُفقد</b> — <code>d_article-placeholder-default</code> (Cloudinary) بلا مقابل في Bunny → صورة مكسورة تظهر فارغة.</td><td>fallback في الكود (<code>onError</code>/placeholder محلي).</td></tr>
+      <tr><td>18</td><td><b>نمط الرفع يختلف</b> — Cloudinary رفع مباشر من المتصفح (unsigned preset، <code>use-cloudinary-upload.ts</code>). Bunny مُوكَّل عبر السيرفر (حد Vercel ~4.5MB) + الفيديو TUS resumable.</td><td>تغيير معماري في الرفع + مراعاة الحد. الفيديو مسار TUS منفصل.</td></tr>
+      <tr><td>19</td><td><b>🔴 الفيديو لا يُدمَج في Media</b> — <code>Reel</code> كيان محتوى غنيّ (workflow·transcript·slug·counters)، دمجه anti-pattern.</td><td><span class="tag ok">مُصحَّح أعلاه</span> Media = صورة+صوت · Reel يبقى · التوحيد على التخزين فقط.</td></tr>
+      <tr><td>20</td><td><b>الصوت greenfield</b> — <code>audioUrl</code> حقل نص يُلصَق، لا رفع.</td><td>توحيده = بناء جديد (Media kind=AUDIO)، لا ترحيل. صفر خطر كسر.</td></tr>
+      <tr><td>21</td><td><b>thumbnails الأدمن من publicId</b> — <code>thumbnail-image-view.tsx:129</code> يبني رابط Cloudinary من <code>cloudinaryPublicId</code> لا <code>url</code>.</td><td>تحديث لدعم Bunny (via <code>url</code> + next/image).</td></tr>
+      <tr><td>22</td><td><b>قرّاء الرابط server-side</b> — <code>image-sitemap</code> + OG + JSON-LD تقرأ الرابط من القاعدة. عند «التبديل» لو ما قرأت الحقل الجديد → sitemap يشير Cloudinary والصفحة Bunny = تضارب.</td><td>تُحصر وتُحدَّث عند التبديل (SEO regen موجود · sitemap + OG صريحة).</td></tr>
+      <tr><td>23</td><td><b><code>kind</code> يتشعّب في واجهة المكتبة</b> — مبنية للصور (thumbnail/نسبة/picker) → صفوف AUDIO تكسر الافتراضات.</td><td>تفريع الواجهة حسب <code>kind</code>.</td></tr>
+    </table>
+    <div class="callout ok" style="margin-top:10px"><b>خبر جيد (مؤكّد بالكود):</b> دوال إعادة توليد SEO موجودة وجاهزة (<code>regenerateArticleJsonLd</code> · <code>regenerateClientJsonLd</code> · <code>generateAndSave{Category,Industry,Tag}Seo</code> · <code>regenerateNextjsMetadata</code>) → «التبديل» (الثغرة 1) يُنفَّذ بأدوات قائمة، لا بناء من صفر. ومواقع التحويل الحيّة كلها <b>تتجاهل روابط Bunny بأمان</b> (تُرجعها كما هي) → صور الصفحة لا تنكسر.</div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">٥</span> الخطة بالمراحل — بوّابات أمان بين كل مرحلة</h2>
+
+  <div class="phase">
+    <h3>المرحلة 0 — قياس + أساس بيانات (بلا كود إنتاج) <span class="tag warn">تعالج 4·5·7·8·10</span></h3>
+    <div class="row"><b>الهدف</b><span>نثبت أن Bunny ≥ Cloudinary أداءً وتكلفةً، ونعرف الحجم قبل أي التزام.</span></div>
+    <div class="row"><b>الأداء</b><span>رفع 3 صور عيّنة إلى Bunny + إضافة host الزون لـ <code>remotePatterns</code> (بلوكر) · عرض عبر <code>next/image</code> · قياس LCP + أول بايت + حجم مُقدَّم، Bunny مقابل Cloudinary.</span></div>
+    <div class="row"><b>التكلفة</b><span>3 أرقام: فاتورة Cloudinary الحالية · <b>تكلفة تحسين صور Vercel الحالية</b> (تحسم هل Optimizer أرخص فعلاً) · تسعير Bunny Stream (للفيديو).</span></div>
+    <div class="row"><b>الحجم</b><span>عدّ صفوف Media + إجمالي GB → يحسم «تدريجي مقابل دفعة» + بيت زون صور المقالات.</span></div>
+    <div class="row"><b class="gate">بوابة</b><span class="gate">لو Bunny ليس أفضل/مساوٍ أداءً وتكلفةً → نتوقف. لا نكمل.</span></div>
+  </div>
+
+  <div class="phase">
+    <h3>المرحلة 1 — تدقيق طبقة التحويل + مسارات OG/الخام <span class="tag warn">تعالج 2</span></h3>
+    <div class="row"><b>الهدف</b><span>ضمان أن روابط Bunny تمرّ نظيفة، وأن OG لا تنكسر.</span></div>
+    <div class="row"><b>العمل</b><span><code>optimizeCloudinaryUrl</code> يتجاهل روابط Bunny أصلاً — لا تغيير. <b>لكن نفحص:</b> (أ) هل صور OG/<code>socialImage</code> مُسبقة المقاس 1200×630 أم تعتمد تحويل محفور؟ (ب) هل يوجد <code>&lt;img&gt;</code> خام يحقن transform Cloudinary؟ · نتأكد أن <code>knowledge-graph-generator</code> يتعامل مع host غير Cloudinary بأمان.</span></div>
+    <div class="row"><b>التحقّق</b><span>روابط Bunny تخرج كما هي؛ OG صحيح لصورة Bunny.</span></div>
+    <div class="row"><b class="gate">بوابة</b><span class="gate">tsc صفر + JSON-LD/OG صحيح لصورتَي Bunny وCloudinary.</span></div>
+  </div>
+
+  <div class="phase">
+    <h3>المرحلة 2 — الرفع الجديد → Bunny</h3>
+    <div class="row"><b>الهدف</b><span>كل رفع جديد للمكتبة الرئيسية يذهب Bunny.</span></div>
+    <div class="row"><b>العمل</b><span>توجيه رفع Media (نفس نمط <code>upload-bunny</code> الموجود) + تخزين رابط Bunny. القديم يبقى Cloudinary.</span></div>
+    <div class="row"><b>التحقّق</b><span>الدائرة: admin رفع → عرض modonty → JSON-LD → OG صحيحة.</span></div>
+    <div class="row"><b class="gate">بوابة</b><span class="gate">صورة مرفوعة حديثاً تظهر صحيحة في الثلاثة (admin/modonty/JSON-LD).</span></div>
+  </div>
+
+  <div class="phase">
+    <h3>المرحلة 3 — ترحيل <b>إضافي بحت</b> (لا يمسّ الإنتاج) <span class="tag ok">آمن على أي قاعدة</span></h3>
+    <div class="row"><b>العمل</b><span>سكربت: ينسخ الأصل → Bunny · يكتب الرابط في حقل <code>bunnyUrl</code> الجديد <b>فقط</b> · دفعات + تقرير. <b>لا يلمس <code>url</code> الحي · لا يعيد توليد SEO · لا يحذف من Cloudinary.</b></span></div>
+    <div class="row"><b>لماذا آمن</b><span>كتابة إضافية على حقل يتجاهله الإنتاج → الإنتاج يظل يقرأ <code>url</code> (Cloudinary) بلا أي تأثير، حتى لو رُكِّب على القاعدة المشتركة.</span></div>
+    <div class="row"><b>قبل التشغيل</b><span><b>اطبع <code>DATABASE_URL</code> وأكّد أنها ليست إنتاج</b> · <b>عطّل ماسح أيتام Cloudinary</b> (ثغرة 12) · idempotent · يجيب <b>الأصل</b> من Cloudinary لا المحوّل (ثغرة 15) · يحسب الأبعاد (ثغرة 11).</span></div>
+    <div class="row"><b class="gate">بوابة</b><span class="gate"><code>bunnyUrl</code> مملوء لكل الصفوف · كل روابط Bunny تُرجع 200.</span></div>
+  </div>
+
+  <div class="phase" style="border-inline-start-color:var(--bad)">
+    <h3>المرحلة 3.5 — «التبديل» المتحكَّم به (الخطوة الوحيدة التي تمسّ الإنتاج) <span class="tag bad">تعالج 1·9</span></h3>
+    <div class="row"><b>الشرط</b><span>لا تبدأ إلا بعد نجاح كل الاختبار على الفرع + الكود المنشور يقرأ <code>bunnyUrl</code>.</span></div>
+    <div class="row"><b>العمل</b><span>(1) <b>باكب DB أولاً.</b> (2) الكود يقرأ <code>bunnyUrl ?? url</code>. (3) <b>إعادة توليد SEO</b> لكل كيان متأثّر (<code>jsonLdStructuredData</code> + <code>nextjsMetadata</code>) لتشير لـ Bunny — وإلا تبقى Cloudinary في الكاش.</span></div>
+    <div class="row"><b>الرجوع</b><span>فوري: الكود يرجع لقراءة <code>url</code> + إعادة توليد SEO. <code>bunnyUrl</code> يبقى، لا نخسر شيئاً.</span></div>
+    <div class="row"><b class="gate">بوابة</b><span class="gate">لا حذف Cloudinary · JSON-LD/OG على Bunny · فاحص 200 يمرّ 100%.</span></div>
+  </div>
+
+  <div class="phase">
+    <h3>المرحلة 4 — تحقّق شامل + <b>merge إلى main (آخر خطوة)</b></h3>
+    <div class="row"><b>العمل</b><span>تتبّع الدائرة كاملة · قياس أداء نهائي · <code>remotePatterns</code> للثلاثة · <b>فاحص شامل «كل الصور 200»</b> يمرّ على كل <code>Media.url</code> + <code>socialImage</code> (تعالج 6).</span></div>
+    <div class="row"><b class="gate">بوابة الـ merge</b><span class="gate">الأربعة معاً: (1) أداء أفضل مُثبَت · (2) فاحص 200 يمرّ 100% (صفر صورة مكسورة) · (3) JSON-LD/OG على Bunny · (4) صفر console errors. أي واحدة تفشل → يبقى على الفرع.</span></div>
+  </div>
+
+  <div class="phase" style="border-inline-start-color:var(--info)">
+    <h3>مرحلة مستقلة (يمكن الآن) — حيلة تسخين الصور + قياس <span class="tag info">لا تعتمد على Bunny</span></h3>
+    <div class="row"><b>الهدف</b><span>تنقّل فوري بين صفحات المقالات/الشركاء — الصورة الرئيسية جاهزة قبل الضغط.</span></div>
+    <div class="row"><b>العمل</b><span>بناء <code>Link</code> مخصص (<code>IntersectionObserver</code> + hover) · تسخين <b>الـ LCP فقط</b> عبر <code>getImageProps</code> بنفس quality/sizes الرِندَر · احترام <code>saveData/effectiveType</code> · ترتيب sizes→srcset→src · <code>fetchPriority=low</code>.</span></div>
+    <div class="row"><b>بدون</b><span>بدون <code>/api/prefetch-images</code> (نجيب صورة المقال من DB) · بدون خطف <code>mousedown</code> في النسخة الأولى.</span></div>
+    <div class="row"><b>التحقّق</b><span>قياس LCP المُحسّ للتنقّل قبل/بعد · <b>صفر تحميل مزدوج</b> (فحص طلبات <code>/_next/image</code> في Network — طلب واحد لكل صورة).</span></div>
+    <div class="row"><b class="gate">بوابة</b><span class="gate">LCP التنقّل أفضل بأرقام + صفر تحميل مزدوج + صفر console errors. وإلا لا نبقيها.</span></div>
+  </div>
+
+  <div class="phase" style="border-inline-start-color:var(--muted);opacity:.85">
+    <h3>المرحلة 5 (لاحقاً) — إيقاف Cloudinary</h3>
+    <div class="row"><b>العمل</b><span>بعد فترة أمان: حذف أصول Cloudinary + تنظيف الكود + إزالة مفاتيح Cloudinary.</span></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2><span class="n">٦</span> المخاطر والضوابط</h2>
+  <div class="risk">
+    <div class="card"><b>🔴 كسر عرض الصور</b><br><span class="src">الضابط:</span> Dual-Read — القديم يبقى Cloudinary، لا استبدال روابط دفعة واحدة.</div>
+    <div class="card"><b>🔴 كسر صورة JSON-LD/OG (SEO)</b><br><span class="src">الضابط:</span> الطبقة الموحّدة تُختبر على knowledge-graph بايت-بايت قبل أي رفع بَني.</div>
+    <div class="card"><b>🟠 Optimizer غير مفعّل → أداء أسوأ</b><br><span class="src">الضابط:</span> بوابة المرحلة 0 — نتأكد من التفعيل ونقيس قبل أي شي.</div>
+    <div class="card"><b>🟠 فقدان أصل أثناء الترحيل</b><br><span class="src">الضابط:</span> نسخ لا نقل · الاحتفاظ بـ cloudinaryPublicId · لا حذف حتى فترة الأمان.</div>
+    <div class="card"><b>🟡 جودة/قص مختلف عن Cloudinary</b><br><span class="src">الضابط:</span> مقارنة بصرية عيّنة + تثبيت quality وgravity.</div>
+    <div class="card"><b>🟡 remotePatterns تمنع next/image</b><br><span class="src">الضابط:</span> إضافة host بَني للثلاثة في المرحلة 4 قبل merge.</div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2><span class="n">٧</span> القرارات المطلوبة منك</h2>
+
+  <div class="decision">
+    <h3>قرار 1 — الأفتار (النطاق الوحيد المتأثر بتعرّف الوجه)</h3>
+    <div class="src">الوحيد الذي يستخدم <code>g_face</code> هو أفتار المستخدم في الأدمن (<code>users-actions.ts</code>). <code>next/image</code> لا يقصّ على الوجه.</div>
+    <div class="opt rec"><b>قص مركزي عادي للأفتار</b> — بسيط، الأثر مهمل (أفتار أدمن صغير فقط).</div>
+    <div class="opt"><b>نبقي الأفتار على Cloudinary</b> — لو أردت الحفاظ على تمركز الوجه بالضبط.</div>
+  </div>
+
+  <div class="decision">
+    <h3>قرار 2 — استراتيجية الترحيل</h3>
+    <div class="opt rec"><b>تدريجي</b> — الجديد Bunny + القديم Cloudinary يتعايشان، ثم نرحّل القديم على دفعات. أقل مخاطرة.</div>
+    <div class="opt"><b>دفعة واحدة</b> — نرحّل كل الأصول فوراً بعد نجاح المرحلة 2. أسرع، مخاطرة أعلى.</div>
+  </div>
+
+  <div class="decision">
+    <h3>قرار 3 — الـ Zones</h3>
+    <div class="opt rec"><b>نعيد استخدام الموجود</b> (assets للمنصة · clients لأصول العملاء) — بنية جاهزة ومُختبرة.</div>
+    <div class="opt"><b>zone جديد للمكتبة الرئيسية</b> — فصل أوضح، لكن إعداد إضافي وتكلفة Optimizer إضافية ($9.5/zone).</div>
+  </div>
+
+  <div class="decision" style="opacity:.75">
+    <h3>قرار 4 — الجودة والفورمات <span class="tag ok">محسوم تلقائياً</span></h3>
+    <div class="src">لا قرار مطلوب: <code>next/image</code> يتكفّل بالفورمات (AVIF/WebP) والجودة والمقاس — نفس ما يجري الآن للريلز على Bunny.</div>
+  </div>
+</section>
+
+<footer>
+  <b>المصادر الرسمية (متحقّق منها):</b><br>
+  · <a href="https://docs.bunny.net/optimizer/dynamic-images/overview">Bunny Optimizer — Dynamic Images Overview</a><br>
+  · <a href="https://docs.bunny.net/docs/cropping">Cropping (crop · crop_gravity · face_crop)</a><br>
+  · <a href="https://docs.bunny.net/optimizer/dynamic-images/quality-and-format">Quality &amp; Format (webp · avif · jpeg · png · gif)</a><br>
+  · <a href="https://bunny.net/optimizer/">Bunny Optimizer — التسعير $9.5/شهر لكل موقع</a><br>
+  · <a href="https://docs.bunny.net/docs/stream-getting-started">Bunny Stream — رفع الفيديو (guid+libraryId) · HLS/MP4/embed/thumbnail مُشتقّة</a><br>
+  · Storage pricing: Standard $0.01/GB · Edge $0.02/GB (Bunny docs — storage/pricing)<br>
+  · Context7: <code>/bunnyway/documentation</code> (High reputation)<br><br>
+  <b>مُتحقّق داخلياً:</b> <code>dataLayer/lib/bunny.ts</code> (عميل مشترك شغّال) · بصمة Cloudinary عبر admin/modonty/console/dataLayer.<br>
+  · <a href="https://bunny.net/pricing/cdn/">Bunny CDN bandwidth — من $0.002/GB</a> · <a href="https://bunny.net/pricing/stream/">Bunny Stream pricing</a><br>
+  <span class="src">v4 — 2026-07-27 · بلا تخمين · 23 ثغرة بدليل ملف/سطر + تصحيح معماري (الفيديو يبقى في Reel، لا يُدمَج في Media) · القرارات تُحسم قبل أي كود.</span>
+</footer>
+
+</div>
+</body>
+</html>
