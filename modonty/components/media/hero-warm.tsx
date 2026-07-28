@@ -19,6 +19,13 @@ const HERO_QUALITY = 100;
 // Session-wide dedupe: warm each distinct srcset at most once.
 const warmed = new Set<string>();
 
+// Mobile has no hover, so the image warm must fire on VIEWPORT to help the
+// majority (touch) users. Cap the automatic viewport warms per page to protect
+// mobile data — beyond the cap, desktop still warms on hover. Resets per route.
+const VIEWPORT_WARM_CAP = 6;
+let vpWarms = 0;
+let vpPath = "";
+
 function prefersNoWarm(): boolean {
   const c = (navigator as unknown as { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
   if (!c) return false;
@@ -75,6 +82,7 @@ export function ArticleHeroWarm({ href, imageUrl }: ArticleHeroWarmProps) {
     let timer: ReturnType<typeof setTimeout> | null = null;
     let bound = false;
 
+    // Desktop hover: warm anything the user points at (uncapped, deduped).
     const onEnter = () => {
       router.prefetch(href);
       if (imageUrl) warmHero(imageUrl);
@@ -84,7 +92,18 @@ export function ArticleHeroWarm({ href, imageUrl }: ArticleHeroWarmProps) {
       ([entry]) => {
         if (entry.isIntersecting) {
           timer = setTimeout(() => {
-            router.prefetch(href);
+            // Per-page cap reset (SPA nav keeps module state alive).
+            if (vpPath !== window.location.pathname) {
+              vpPath = window.location.pathname;
+              vpWarms = 0;
+            }
+            // Viewport warm (works on mobile — no hover needed), capped for data.
+            if (vpWarms < VIEWPORT_WARM_CAP) {
+              router.prefetch(href);
+              if (imageUrl) warmHero(imageUrl);
+              vpWarms += 1;
+            }
+            // Still let desktop hover warm cards beyond the cap.
             if (!bound) {
               card.addEventListener("mouseenter", onEnter, { once: true });
               bound = true;
