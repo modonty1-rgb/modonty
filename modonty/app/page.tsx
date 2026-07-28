@@ -3,45 +3,12 @@ import { Suspense } from "react";
 import { cacheLife, cacheTag } from "next/cache";
 import { FeedContainer } from "@/components/feed/FeedContainer";
 import { HomeBottomBar } from "@/components/feed/HomeBottomBar/HomeBottomBar";
-import { getArticles } from "@/app/api/helpers/article-queries";
-import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
-import type { ArticleResponse, FeedPost } from "@/lib/types";
+import { getHomeFeedArticles } from "@/app/api/helpers/article-queries";
 import { getHomePageSeo } from "@/lib/seo/home-page-seo";
 import { jsonLdHtmlFromString } from "@/lib/seo";
 import { getFeedBannerSettings } from "@/lib/settings/get-feed-banner-settings";
 import { getPlatformSocialLinks } from "@/lib/settings/get-platform-social-links";
-import { SITE_URL, BRAND_AR, BRAND_EN } from "@/lib/brand";
-
-function mapArticle(article: ArticleResponse): FeedPost {
-  return {
-    id: article.id,
-    title: article.title,
-    content: article.excerpt || "",
-    excerpt: article.excerpt ?? undefined,
-    image: article.image,
-    slug: article.slug,
-    publishedAt: new Date(article.publishedAt),
-    clientName: article.client.name,
-    clientSlug: article.client.slug,
-    clientId: article.client.id,
-    clientLogo: article.client.logo,
-    readingTimeMinutes: article.readingTimeMinutes,
-    hasAudio: article.hasAudio,
-    author: {
-      id: article.author.id,
-      name: article.author.name || BRAND_EN,
-      title: "",
-      company: article.client.name,
-      avatar: article.author.image || "",
-    },
-    likes: article.interactions.likes,
-    dislikes: article.interactions.dislikes,
-    comments: article.interactions.comments,
-    favorites: article.interactions.favorites,
-    views: article.interactions.views,
-    status: "published" as const,
-  };
-}
+import { SITE_URL, BRAND_AR } from "@/lib/brand";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getHomePageSeo();
@@ -77,14 +44,12 @@ export default async function HomePage() {
   cacheLife("minutes");
   cacheTag("homepage", "articles", "settings");
 
-  const [{ jsonLd }, { articles }, feedBanner, socialLinks] = await Promise.all([
+  const [{ jsonLd }, posts, feedBanner, socialLinks] = await Promise.all([
     getHomePageSeo(),
-    getArticles({ page: 1, limit: FEED_PAGE_SIZE }),
+    getHomeFeedArticles(),
     getFeedBannerSettings(),
     getPlatformSocialLinks(),
   ]);
-
-  const posts: FeedPost[] = articles.map(mapArticle);
 
   return (
     <>

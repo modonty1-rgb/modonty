@@ -7,8 +7,9 @@ import { cache } from 'react';
 import { cacheTag, cacheLife } from 'next/cache';
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus } from "@prisma/client";
-import type { ArticleResponse, ArticleFilters, InteractionCounts } from "@/lib/types";
+import type { ArticleResponse, ArticleFilters, InteractionCounts, FeedPost } from "@/lib/types";
 import { calculateTrendingScore, getTrendingTimeRange } from "@/lib/trending";
+import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
 
 type ArticleWithRelations = Prisma.ArticleGetPayload<{
   include: {
@@ -237,6 +238,85 @@ async function getArticlesCached(filters: ArticleFilters = {}) {
 export const getArticles = cache(async (filters: ArticleFilters = {}) => {
   return getArticlesCached(filters);
 });
+
+// ── Homepage initial feed — leaner than the shared feed select ──────────────
+// The feed card (PostCard) never renders author, dislikes, wordCount or industry.
+// This dedicated query drops the author (User) join + those scalar/relation fields
+// for the LCP-critical first render. Search/news/load-more keep the fuller select.
+const homeFeedSelect = {
+  id: true,
+  title: true,
+  slug: true,
+  excerpt: true,
+  datePublished: true,
+  createdAt: true,
+  featured: true,
+  readingTimeMinutes: true,
+  client: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      logoMedia: { select: { url: true } },
+    },
+  },
+  category: { select: { id: true, name: true, slug: true } },
+  featuredImage: { select: { url: true, altText: true } },
+  audioUrl: true,
+  likesCount: true,
+  commentsCount: true,
+  favoritesCount: true,
+  viewsCount: true,
+} satisfies Prisma.ArticleSelect;
+
+type HomeFeedPayload = Prisma.ArticleGetPayload<{ select: typeof homeFeedSelect }>;
+
+function mapHomeFeedArticle(a: HomeFeedPayload): FeedPost {
+  return {
+    id: a.id,
+    title: a.title,
+    content: a.excerpt || "",
+    excerpt: a.excerpt ?? undefined,
+    image: a.featuredImage?.url,
+    slug: a.slug,
+    publishedAt: a.datePublished || a.createdAt,
+    clientName: a.client.name,
+    clientSlug: a.client.slug,
+    clientId: a.client.id,
+    clientLogo: a.client.logoMedia?.url ?? undefined,
+    readingTimeMinutes: a.readingTimeMinutes ?? undefined,
+    hasAudio: !!a.audioUrl,
+    likes: a.likesCount || 0,
+    comments: a.commentsCount || 0,
+    favorites: a.favoritesCount || 0,
+    views: a.viewsCount || 0,
+    status: "published",
+  };
+}
+
+async function getHomeFeedArticlesCached(): Promise<FeedPost[]> {
+  "use cache";
+  cacheTag("articles");
+  cacheLife("hours"); // safe: admin revalidateTag("articles") fires on every publish/update/delete
+
+  const articles = await db.article.findMany({
+    where: {
+      status: ArticleStatus.PUBLISHED,
+      OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
+    },
+    select: homeFeedSelect,
+    orderBy: [
+      { featured: "desc" as const },
+      { datePublished: "desc" as const },
+      { id: "desc" as const },
+    ],
+    take: FEED_PAGE_SIZE,
+  });
+
+  return articles.map(mapHomeFeedArticle);
+}
+
+export const getHomeFeedArticles = cache(() => getHomeFeedArticlesCached());
 
 export const getArticleBySlug = cache(async (slug: string) => {
   const article = await db.article.findFirst({
