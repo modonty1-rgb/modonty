@@ -59,8 +59,10 @@ export function PostCardHeroImage({
         fill
         className="object-cover transition-transform duration-300 group-hover:scale-105"
         sizes={lcp ? LCP_SIZES : DEFAULT_SIZES}
-        loading={lcp ? "eager" : "lazy"}
-        fetchPriority={lcp ? "high" : "auto"}
+        // Next 16 official: `preload` inserts <link rel=preload> in <head> so the LCP
+        // image is discovered + fetched early (kills the ~1.2s load-delay). Docs say
+        // avoid combining preload with loading/fetchPriority — so preload alone for LCP.
+        {...(lcp ? { preload: true } : { loading: "lazy" as const })}
         quality={75}
         decoding="async"
       />
