@@ -4,6 +4,7 @@ import { PostCardHeader } from "./PostCardHeader";
 import { PostCardBody } from "./PostCardBody";
 import { PostCardFooter } from "./PostCardFooter";
 import { PostCardHeroImage } from "./PostCardHeroImage";
+import { ArticleHeroWarm } from "./ArticleHeroWarm";
 
 export function PostCard({ className, index, isLcp, hideClient, featured, ...rest }: PostCardProps) {
   const effectiveIsLcp = isLcp ?? (index === 0);
@@ -18,6 +19,8 @@ export function PostCard({ className, index, isLcp, hideClient, featured, ...res
         className
       )}
     >
+      {/* Speed trick: warm the article detail hero on viewport/hover (no nav change). */}
+      <ArticleHeroWarm href={`/articles/${rest.post.slug}`} imageUrl={rest.post.image ?? null} />
       <PostCardHeroImage
         post={rest.post}
         isLcp={effectiveIsLcp}
