@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ChevronLeftIcon, MapPinIcon, StarIcon } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { WhatsAppLeadLink } from "@/components/whatsapp-icon-link";
+import { ClientHeroWarm } from "@/components/media/hero-warm";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 
 interface ClientCardProps {
@@ -44,6 +45,7 @@ export function ClientCard({
     "relative z-10 flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#25D366]/10 border border-[#25D366]/20 px-3 py-2 text-xs font-bold text-[#25D366] hover:bg-[#25D366]/20 transition-colors";
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border bg-card shadow-sm hover:shadow-md transition-shadow">
+      <ClientHeroWarm href={`/clients/${slug}`} imageUrl={heroUrl ?? null} />
       {/* Overlay link — covers entire card for profile navigation */}
       <Link href={`/clients/${slug}`} className="absolute inset-0 z-0" aria-label={name} />
 

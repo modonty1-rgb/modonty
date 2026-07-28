@@ -5,16 +5,35 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 import { optimizeCloudinaryUrl } from "@/components/media/OptimizedImage";
+import { stripCloudinaryTransforms } from "@/lib/image-utils";
 
-// Warm-up the ARTICLE DETAIL hero before navigation, so it renders from cache.
-// These MUST mirror ArticleFeaturedImage (the detail page hero) exactly, or the
-// cache key differs and the warm-up does nothing / double-loads:
-//   src = optimizeCloudinaryUrl(url, /*forLcp*/ true)  (bakes w_1200)
-//   quality = 100 (OptimizedImage: quality 'auto' + preload → 100)
-//   sizes   = the hero's sizes prop
-//   fill    = true
-const HERO_SIZES = "(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 900px";
-const HERO_QUALITY = 100;
+// Warm-up the DETAIL-page hero before navigation, so it renders from cache.
+// Each descriptor MUST mirror the detail hero's <Image> EXACTLY (src transform +
+// quality + sizes + fill), or the /_next/image?url&w&q key differs and the warm-up
+// does nothing / double-loads.
+type WarmKind = "article" | "client";
+
+interface HeroDescriptor {
+  /** Same src transform the detail hero applies before next/image. */
+  toSrc: (rawUrl: string) => string;
+  quality: number;
+  sizes: string;
+}
+
+const DESCRIPTORS: Record<WarmKind, HeroDescriptor> = {
+  // ArticleFeaturedImage: OptimizedImage preload → optimizeCloudinaryUrl(url,true) + quality 100.
+  article: {
+    toSrc: (u) => optimizeCloudinaryUrl(u, true),
+    quality: 100,
+    sizes: "(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 900px",
+  },
+  // client-hero-v2: next/image (default quality 75) + stripCloudinaryTransforms.
+  client: {
+    toSrc: (u) => stripCloudinaryTransforms(u) ?? u,
+    quality: 75,
+    sizes: "(max-width: 1128px) 100vw, 1096px",
+  },
+};
 
 // Session-wide dedupe: warm each distinct srcset at most once.
 const warmed = new Set<string>();
@@ -32,13 +51,14 @@ function prefersNoWarm(): boolean {
   return Boolean(c.saveData) || /(^|-)2g$/.test(c.effectiveType ?? "");
 }
 
-function warmHero(rawUrl: string) {
+function warmHero(rawUrl: string, kind: WarmKind) {
+  const d = DESCRIPTORS[kind];
   const { props } = getImageProps({
-    src: optimizeCloudinaryUrl(rawUrl, true),
+    src: d.toSrc(rawUrl),
     alt: "",
     fill: true,
-    quality: HERO_QUALITY,
-    sizes: HERO_SIZES,
+    quality: d.quality,
+    sizes: d.sizes,
   });
   const key = props.srcSet ?? props.src ?? "";
   if (!key || warmed.has(key)) return;
@@ -53,29 +73,27 @@ function warmHero(rawUrl: string) {
   if (props.src) img.src = props.src;
 }
 
-interface ArticleHeroWarmProps {
+interface HeroWarmProps {
   href: string;
-  /** Raw featured-image URL (same value the detail page renders). */
+  /** Raw hero/featured-image URL (same value the detail page renders). */
   imageUrl: string | null;
 }
 
 /**
- * Invisible warm-up for any card that links to an ARTICLE detail page. Touches no
- * navigation/link logic: on viewport it prefetches the route; on hover it warms the
- * detail hero image at its exact cache key. If anything fails, the worst case is
- * "no warm-up" — never a broken link.
+ * Invisible warm-up for a card linking to a detail page. Touches no navigation/link
+ * logic: warms on VIEWPORT (works on mobile — no hover, capped for data) and, on
+ * desktop, additionally on hover for cards beyond the cap. If anything fails, the
+ * worst case is "no warm-up" — never a broken link.
  *
- * Drop it as a direct child of the element that should act as the hover target
- * (the card container or its wrapping link) — it observes/hovers its parentElement.
+ * Drop it as a direct child of the element that should act as the hover/viewport
+ * target (the card container or its wrapping link) — it uses its parentElement.
  */
-export function ArticleHeroWarm({ href, imageUrl }: ArticleHeroWarmProps) {
+function HeroWarm({ href, imageUrl, kind }: HeroWarmProps & { kind: WarmKind }) {
   const router = useRouter();
   const anchorRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     if (prefersNoWarm()) return;
-    // Hover/observe target = the element that contains this warmer (the card or its
-    // wrapping link). Drop <ArticleHeroWarm> as a direct child of that element.
     const card = anchorRef.current?.parentElement;
     if (!card) return;
 
@@ -85,7 +103,7 @@ export function ArticleHeroWarm({ href, imageUrl }: ArticleHeroWarmProps) {
     // Desktop hover: warm anything the user points at (uncapped, deduped).
     const onEnter = () => {
       router.prefetch(href);
-      if (imageUrl) warmHero(imageUrl);
+      if (imageUrl) warmHero(imageUrl, kind);
     };
 
     const io = new IntersectionObserver(
@@ -100,7 +118,7 @@ export function ArticleHeroWarm({ href, imageUrl }: ArticleHeroWarmProps) {
             // Viewport warm (works on mobile — no hover needed), capped for data.
             if (vpWarms < VIEWPORT_WARM_CAP) {
               router.prefetch(href);
-              if (imageUrl) warmHero(imageUrl);
+              if (imageUrl) warmHero(imageUrl, kind);
               vpWarms += 1;
             }
             // Still let desktop hover warm cards beyond the cap.
@@ -124,7 +142,17 @@ export function ArticleHeroWarm({ href, imageUrl }: ArticleHeroWarmProps) {
       if (timer) clearTimeout(timer);
       card.removeEventListener("mouseenter", onEnter);
     };
-  }, [href, imageUrl, router]);
+  }, [href, imageUrl, kind, router]);
 
   return <span ref={anchorRef} hidden aria-hidden />;
+}
+
+/** Warm the ARTICLE detail hero from a card linking to /articles/[slug]. */
+export function ArticleHeroWarm(props: HeroWarmProps) {
+  return <HeroWarm {...props} kind="article" />;
+}
+
+/** Warm the CLIENT page hero from a card linking to /clients/[slug]. */
+export function ClientHeroWarm(props: HeroWarmProps) {
+  return <HeroWarm {...props} kind="client" />;
 }
