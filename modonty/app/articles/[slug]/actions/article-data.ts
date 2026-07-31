@@ -1,5 +1,6 @@
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { ArticleStatus, CommentStatus } from "@prisma/client";
 
 export async function getArticleSlugsForStaticParams() {
@@ -121,12 +122,12 @@ export async function getArticleBySlug(slug: string, userId?: string) {
           slug: true,
           description: true,
           newsletterCtaText: true,
-          logoMedia: { select: { url: true } },
-          heroImageMedia: { select: { url: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true } },
+          heroImageMedia: { select: { url: true, bunnyUrl: true } },
           // Client Mini (1.91:1) — preferred over the 6:1 hero for the card image.
           media: {
             where: { type: "CLIENT_MINI" },
-            select: { url: true },
+            select: { url: true, bunnyUrl: true },
             orderBy: { createdAt: "desc" },
             take: 1,
           },
@@ -159,6 +160,7 @@ export async function getArticleBySlug(slug: string, userId?: string) {
       featuredImage: {
         select: {
           url: true,
+          bunnyUrl: true,
           altText: true,
           width: true,
           height: true,
@@ -189,6 +191,7 @@ export async function getArticleBySlug(slug: string, userId?: string) {
             select: {
               id: true,
               url: true,
+              bunnyUrl: true,
               altText: true,
               caption: true,
               width: true,
@@ -214,6 +217,7 @@ export async function getArticleBySlug(slug: string, userId?: string) {
               featuredImage: {
                 select: {
                   url: true,
+                  bunnyUrl: true,
                   altText: true,
                 },
               },
@@ -287,12 +291,12 @@ async function getArticleContentBySlug(slug: string) {
     include: {
       client: {
         include: {
-          logoMedia: { select: { url: true } },
-          heroImageMedia: { select: { url: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true } },
+          heroImageMedia: { select: { url: true, bunnyUrl: true } },
           // Client Mini (1.91:1) — preferred over the 6:1 hero for the card image.
           media: {
             where: { type: "CLIENT_MINI" },
-            select: { url: true },
+            select: { url: true, bunnyUrl: true },
             orderBy: { createdAt: "desc" },
             take: 1,
           },
@@ -317,7 +321,7 @@ async function getArticleContentBySlug(slug: string) {
       },
       category: { select: { id: true, name: true, slug: true } },
       featuredImage: {
-        select: { url: true, altText: true, width: true, height: true },
+        select: { url: true, bunnyUrl: true, altText: true, width: true, height: true },
       },
       tags: {
         include: {
@@ -330,6 +334,7 @@ async function getArticleContentBySlug(slug: string) {
             select: {
               id: true,
               url: true,
+              bunnyUrl: true,
               altText: true,
               caption: true,
               width: true,
@@ -350,7 +355,7 @@ async function getArticleContentBySlug(slug: string) {
               excerpt: true,
               datePublished: true,
               createdAt: true,
-              featuredImage: { select: { url: true, altText: true } },
+              featuredImage: { select: { url: true, bunnyUrl: true, altText: true } },
               client: { select: { name: true, slug: true } },
               likesCount: true,
               dislikesCount: true,
@@ -479,6 +484,7 @@ export async function getRelatedArticlesByAuthor(authorId: string, currentArticl
       featuredImage: {
         select: {
           url: true,
+          bunnyUrl: true,
           altText: true,
         },
       },
@@ -532,6 +538,7 @@ export async function getRelatedArticlesByClient(clientId: string, currentArticl
       featuredImage: {
         select: {
           url: true,
+          bunnyUrl: true,
           altText: true,
         },
       },
@@ -575,6 +582,7 @@ const relatedArticleSelect = {
   featuredImage: {
     select: {
       url: true,
+      bunnyUrl: true,
       altText: true,
     },
   },
@@ -608,7 +616,7 @@ type RelatedArticleItem = {
   excerpt: string | null;
   datePublished: Date | null;
   createdAt: Date;
-  featuredImage?: { url: string; altText: string | null } | null;
+  featuredImage?: { url: string; bunnyUrl: string | null; altText: string | null } | null;
   client: { name: string; slug: string };
   category?: { name: string; slug: string } | null;
   likesCount: number;

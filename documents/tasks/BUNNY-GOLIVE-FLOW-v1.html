@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flow النشر — Cloudinary ← Bunny</title>
+<style>
+  :root{--bg:#0b0f14;--card:#141b23;--line:#28343f;--tx:#e6edf3;--mut:#8b9bab;
+        --ok:#3fb950;--bad:#f85149;--warn:#d29922;--vio:#a371f7}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);font-family:"Tajawal","Segoe UI",system-ui,sans-serif;
+       line-height:1.7;font-size:15px}
+  .wrap{max-width:840px;margin:0 auto;padding:26px 18px 70px}
+  h1{font-size:23px;margin:0 0 4px}
+  .sub{color:var(--mut);font-size:13px}
+  h2{font-size:17px;margin:30px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+
+  .bar{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
+       border-radius:10px;padding:11px 14px;margin:16px 0 6px}
+  .bar .track{flex:1;height:8px;background:#0d141c;border-radius:99px;overflow:hidden}
+  .bar .fill{height:100%;background:var(--ok);width:0;transition:width .25s}
+  .bar .cnt{color:var(--mut);font-size:13px;white-space:nowrap}
+
+  .t{display:flex;gap:11px;align-items:flex-start;background:var(--card);border:1px solid var(--line);
+     border-radius:10px;padding:12px 14px;margin-bottom:9px}
+  .t.done{opacity:.5;border-inline-start:3px solid var(--ok)}
+  .t.now{border-inline-start:3px solid var(--vio)}
+  .t input{margin-top:5px;width:17px;height:17px;accent-color:var(--ok);cursor:pointer;flex:0 0 auto}
+  .t .body{flex:1;min-width:0}
+  .t .hd{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:3px}
+  .t .id{font:700 11px ui-monospace,monospace;background:#0e1620;border:1px solid var(--line);
+         padding:2px 7px;border-radius:5px;color:#a5d6ff}
+  .t .ttl{font-weight:700}
+  .t.done .ttl{text-decoration:line-through}
+  .t p{margin:2px 0 0;color:var(--mut);font-size:13.5px}
+  .tag{font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--mut)}
+  .tag.now{border-color:#3d2a5c;background:#1a1224;color:#cbaaff}
+  .tag.ok{border-color:#1f4b2a;background:#0f2417;color:#8ce09a}
+  .tag.bad{border-color:#5c2b2b;background:#2a1416;color:#ffb4ae}
+  .gate{color:var(--ok);font-size:12.5px;margin-top:4px;display:block}
+
+  code{background:#0d141c;border:1px solid var(--line);padding:1px 5px;border-radius:4px;
+       font:12.5px ui-monospace,monospace;color:#a5d6ff;direction:ltr;display:inline-block}
+  .box{background:var(--card);border:1px solid var(--line);border-inline-start:3px solid var(--bad);
+       border-radius:9px;padding:11px 14px;margin:9px 0}
+  .box.ok{border-inline-start-color:var(--ok)}
+  .box.warn{border-inline-start-color:var(--warn)}
+  .box b{display:block;margin-bottom:2px}
+  .box p{margin:0;color:var(--mut);font-size:13.5px}
+  .d{background:#161022;border:1px solid #3a2a58;border-radius:9px;padding:11px 14px;margin:9px 0}
+  .d.closed{background:#0f2417;border-color:#1f4b2a}
+  .d .q{font-weight:700;color:#cbaaff;margin-bottom:5px}
+  .d.closed .q{color:#8ce09a}
+  .d div{font-size:14px;padding:3px 0}
+  .k{font:700 11px ui-monospace,monospace;background:#0e1620;border:1px solid var(--line);
+     padding:1px 7px;border-radius:5px;color:#cbaaff}
+  .rec{color:var(--ok);font-weight:700;font-size:12px}
+  .tabs{display:flex;gap:6px;margin:18px 0 14px;border-bottom:1px solid var(--line)}
+  .tabs button{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--mut);
+               padding:8px 18px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit}
+  .tabs button.on{color:var(--tx);border-bottom-color:var(--vio)}
+  .pane{display:none}.pane.on{display:block}
+  footer{margin-top:32px;padding-top:14px;border-top:1px solid var(--line);color:var(--mut);font-size:12.5px}
+  button.reset{background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:7px;
+               padding:5px 11px;font-size:12px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>Flow النشر — إيقاف Cloudinary</h1>
+<div class="sub">المرجع الحيّ للمسار · التاسكات تُقفل هنا · 2026-07-31</div>
+
+<div class="bar">
+  <span class="cnt" id="pct">0%</span>
+  <div class="track"><div class="fill" id="fill"></div></div>
+  <span class="cnt" id="cnt">0 / 0</span>
+  <button class="reset" id="reset">تصفير</button>
+</div>
+
+
+<div class="tabs">
+  <button data-t="open" class="on">⏳ الباقي</button>
+  <button data-t="done">✅ المنجز والمرجع</button>
+</div>
+<div class="pane on" id="pane-open">
+<h2>التاسكات الباقية — مرتّبة بأولوية التنفيذ (2026-07-31)</h2>
+<div class="t"><input type="checkbox" id="T3"><div class="body">
+  <div class="hd"><span class="id">T3</span><span class="tag now">أولوية ١</span><span class="ttl">تأمين</span></div>
+  <p>commit الـ٢٤٣ ملف على الفرع بلا push · جرد Bunny الكامل · تنظيف الملفات المؤقتة.</p>
+  <span class="gate">بوابة: <code>git status</code> نظيف · الجرد محفوظ</span></div></div>
+<div class="t"><input type="checkbox" id="T2b"><div class="body">
+  <div class="hd"><span class="id">T2b</span><span class="tag now">أولوية ٢</span><span class="ttl">تحويل القديم ← الجديد — بند مستقل يخصّ مدوّنتي</span><span class="tag bad">صفر خسارة</span></div>
+  <p>زرّ idempotent في route الترحيل يقرأ كل الصور القائمة (نصوص الكيانات الستّة + اليتيمة + الهوية + القصّة) ويحوّلها صفوف <code>Media</code> مملوكة لمدوّنتي بعلاقات. يُجرَّب على التست أولاً، ثم <b>يُعاد على بيانات الإنتاج الحقيقية بعد الـSync</b> ضمن <code>T5</code> — نفس الزرّ، بيانات حقيقية.</p>
+  <p style="color:#ffb4ae"><b>🔒 قاعدة صفر خسارة (قرار خالد):</b> التحويل <b>إضافي فقط</b> — لا يحذف ولا يعدّل أي حقل نصّي قائم ولا أي ملف. القديم يبقى كما هو حتى يثبت الجديد بجولتي تحقّق مستقلّتين.</p>
+  <p><b>القائمة التفصيلية (نُقلت من خطة الـcore عند إقفالها 2026-07-31 — بالقياس المحدَّث):</b></p>
+  <p>☐ اليتيمة (<code>clientId=null</code>) → <code>coreClientId</code> — القياس: <b>٩</b> (كان ١٠؛ الفارق يُتحقّق عند التشغيل)<br>
+  ☐ روابط الكيانات المعبّأة (<b>٤ وسوم + ١٤ تصنيف + ٧ صناعات</b> — منها ١ بعلاقة لكلٍّ؛ المؤلفان حُذفا والطاقم أُلغي): إيجاد/إنشاء صفّ <code>Media</code> بالرابط نفسه مملوكاً لمدوّنتي + تعبئة العلاقة (زرّ، لا سكربت)<br>
+  ☐ روابط <code>Settings</code> الستّة (على ملفات <code>platform/</code>) → صفوف Media مملوكة<br>
+  ☐ صور القصّة ~١٧ (<code>story/_constants.ts</code>) → صفوف Media + fallback للثابت<br>
+  ☐ أصول <code>brand-assets.ts</code> الأربعة → صفوف Media، والقراءة: قاعدة أولاً ← الثابت fallback<br>
+  ☐ <b>التحقق الختامي:</b> صفر صورة منصّة بلا صفّ Media مملوك لمدوّنتي</p>
+  <span class="gate">بوابة: كل صورة قديمة لها صفّ Media بعلاقة · الحقول القديمة سليمة بايت-ببايت · التشغيل الثاني = صفر تغيير (idempotent مثبت)</span></div></div>
+<div class="t"><input type="checkbox" id="T4"><div class="body">
+  <div class="hd"><span class="id">T4</span><span class="tag now">أولوية ٣</span><span class="ttl">تست السرعة — Bunny مقابل Cloudinary</span></div>
+  <p>نفس الصورة على المنصّتين · TTFB p50/p75/p95 + الحجم + كاش الحافّة · ٤٠ صورة × ٣ جولات.</p>
+  <span class="gate">بوابة: Bunny ≤ Cloudinary عند p75</span></div></div>
+<div class="t"><input type="checkbox" id="T5"><div class="body">
+  <div class="hd"><span class="id">T5</span><span class="tag now">أولوية ٤</span><span class="ttl">تصفير Bunny + بروفة على نسخة الإنتاج</span></div>
+  <p>تصفير · Sync إنتاج ← محلي · ترحيل من الصفر لـ<b>٤٤٢ صورة حقيقية</b> · مسح كامل + تست متصفّح. <b>هنا تظهر أي روابط ميتة قبل النشر لا بعده.</b></p>
+  <p style="color:#ffb4ae">📌 بعد الـSync يُعاد على بيانات الإنتاج: <b>حذف المؤلفَين البشريَّين</b> (قرار Singleton 2026-07-31 — بتحقّق <code>articles=0</code> قبل الحذف، نفّذناه على التست: deleted 2 · remaining Modonty) + بند الملكية <code>T2b</code>. وصورتاهما اليتيمتان على زون <code>assets</code> تسقطان مع تنظيفه.</p>
+  <span class="gate">بوابة: صفر Cloudinary · صفر صورة مكسورة · صفر خطأ متصفّح</span></div></div>
+<div class="t"><input type="checkbox" id="T6"><div class="body">
+  <div class="hd"><span class="id">T6</span><span class="tag now">أولوية ٥</span><span class="ttl">النشر — merge</span></div>
+  <p><code>tsc</code> + <code>build</code> على الثلاثة · رفع إصدار · merge ← push. <b>لا يغيّر صورة واحدة</b> — بيانات الإنتاج لم تُرحَّل بعد فالـfallback يخدم Cloudinary كما اليوم.</p>
+  <span class="gate">بوابة: الموقع الحيّ يعمل كما كان · التراجع = revert بدقائق</span></div></div>
+<div class="t"><input type="checkbox" id="T7"><div class="body">
+  <div class="hd"><span class="id">T7</span><span class="tag now">أولوية ٦</span><span class="ttl">ترحيل صور الإنتاج — بلا سيو</span></div>
+  <p>باكب طازج · النطاقات الأربعة الأولى فقط. <b>لا إعادة توليد سيو إطلاقاً.</b></p>
+  <span class="gate">بوابة: صفر صورة مكسورة على الإنتاج</span></div></div>
+<div class="t"><input type="checkbox" id="T8"><div class="body">
+  <div class="hd"><span class="id">T8</span><span class="tag now">أولوية ٧</span><span class="ttl">السيو</span></div>
+  <p>باكب مخصّص لحقول السيو أولاً · ثم نطاقات إعادة التوليد. + إصلاح الصفحات الستّ التي تُرندَر بصفر JSON-LD.</p>
+  <span class="gate">بوابة: JSON-LD حيّ صحيح · صفر Cloudinary</span></div></div>
+<div class="t"><input type="checkbox" id="T9"><div class="body">
+  <div class="hd"><span class="id">T9</span><span class="tag now">أولوية ٨</span><span class="ttl">الإطفاء — جروب Cloudinary الكامل</span><span class="tag bad">بلا رجعة</span></div>
+  <p><b>كل ما يخص Cloudinary في مكان واحد (جرد الكود الكامل 2026-07-31 — <code>CODE-IMAGE-AUDIT-2026-07-31.html</code>):</b></p>
+  <p>💥 <b>قاعدة التنفيذ (خالد 2026-07-31): الإطفاء لا يترك فشلاً صامتاً</b> — أي مسار يلمس Cloudinary بعد T9 يرمي خطأ صريحاً (نمط الـtripwire المطبَّق في <code>uploadToCloudinaryRETIRED</code>): لو بقي أي استخدام مخفي، ينكشف بـcrash واضح لا بصورة مكسورة بصمت.</p>
+  <p>🗑️ <b>كود ميت بصفر مستدعين:</b> <code>admin/actions/upload-image.ts</code> + <code>delete-image.ts</code> + <code>helpers/prepare-image-data.ts</code> · <code>users/actions/upload-avatar.ts</code> · <code>components/shared/cloudinary-image-input.tsx</code> · <code>use-cloudinary-upload.retired.ts</code> · <code>uploadImageBufferToCloudinary</code> في <code>image-validation.ts</code> · <code>console/…/cloudinary-license-upload.tsx</code> (tripwire) · <code>uploadToCloudinaryRETIRED</code> في <code>client-gallery-grid.tsx</code>.</p>
+  <p>📦 <b>تبعيات:</b> <code>next-cloudinary</code> (admin + modonty — صفر استيراد أصلاً) · <code>cloudinary</code> SDK (admin — يسقط مع كرت الأيتام).</p>
+  <p>🔁 <b>fallbacks قراءة تُشال:</b> فحوصات <code>res.cloudinary.com</code> في مودونتي (<code>image-utils</code> · <code>OptimizedImage</code> · <code>fullOptmizeImage</code> · <code>image-aspect-ratios</code> · <code>seo/index</code> · ~١٥ مكوّن عرض) + بُناة publicId في الأدمن (<code>media-picker-dialog</code> · <code>media-grid</code> · <code>thumbnail-image-view</code> · <code>cloudinary-utils</code> · <code>knowledge-graph-generator</code> · <code>image-seo</code>).</p>
+  <p>🧰 <b>أدوات الإرث (تُشال بعد نجاح الإطفاء):</b> <code>cloudinary-orphans</code> · <code>delete/rename-cloudinary-asset</code> · <code>cloudinary-delete/usage</code> · <code>optimize-images-section</code> · <code>fix-broken-media</code>.</p>
+  <p>⚙️ <b>إعدادات وبيئة وسكيما:</b> مفاتيح <code>NEXT_PUBLIC_CLOUDINARY_*</code> (كود + Vercel) · <code>remotePatterns</code> في الـ٣ <code>next.config</code> · <code>dns-prefetch res.cloudinary.com</code> في <code>modonty/layout:78</code> · حقلا <code>cloudinaryPublicId/Version</code> + تعليقات السكيما · تنظيف <code>Staff.image</code> النصّي + data-URI الزائر + ترحيل <code>User.avatar</code> ×٢ قبله.</p>
+  <p>🏷️ <b>نصوص قديمة مضلّلة:</b> عناوين «(Cloudinary)» في <code>defaults-form</code> · تعليق <code>gallery-actions:43</code> بالكونسول · رسائل <code>messages/en+ar</code>.</p>
+  <span class="gate">بوابة: فترة أمان + جولتان مستقلّتان بصفر Cloudinary على الإنتاج</span>
+</div></div>
+</div>
+<div class="pane" id="pane-done">
+<h2>المنجز</h2>
+<div class="t done"><input type="checkbox" id="T1" checked><div class="body">
+  <div class="hd"><span class="id">T1</span><span class="ttl">عزل الترحيل في route مخصص — <b>مؤقّت</b></span><span class="tag ok">✅ تمّ 2026-07-31</span><span class="tag bad">يُحذف بعد الانتهاء</span></div>
+  <p>نقل كل ما يخصّ Cloudinary ← Bunny خارج <code>/database</code> إلى route مستقل. الأداة تصير مركّزة ومنها ننطلق.</p>
+  <p style="color:#ffb4ae"><b>قيد التصميم (قرار خالد):</b> يُستخدم <b>مرّة واحدة</b> ثم يُحذف. لذلك يجب أن يكون <b>مجلّداً واحداً مكتفياً بذاته</b> — الصفحة والمكوّنات والأكشنز كلها بداخله، <b>صفر ملف يخرج منه</b> و<b>صفر صفحة أخرى تستورد منه</b>. حذف المجلّد + سطر واحد في القائمة الجانبية = الميزة اختفت بلا بقايا ولا كسر.</p>
+  <span class="gate">✅ <b>الدليل:</b> <code>/bunny-migration</code> ← 200 · صفر خطأ متصفّح · ١٢ نطاقاً تظهر · أزرار Run/Rescan/Select تعمل · <code>/database</code> ← 200 · صفر خطأ · <b>كرت الترحيل اختفى منها</b> وStaff Migration والصيانة سليمان · <code>tsc</code> صفر · <b>صفر مستورد خارجي</b> (سطر القائمة الجانبية فقط).</span><br><span class="gate">📁 <b>للحذف لاحقاً:</b> مجلّد <code>admin/app/(dashboard)/bunny-migration/</code> + سطر واحد في <code>components/admin/sidebar.tsx</code>. لا شيء غيرهما.</span>
+</div></div>
+
+<div class="t done"><input type="checkbox" id="T2" checked><div class="body">
+  <div class="hd"><span class="id">T2</span><span class="ttl">مدوّنتي core — كل الهوية داخل Media Library</span><span class="tag now">الآن</span><span class="tag bad">جذر المشكلة</span></div>
+  <p>كل أصل تملكه المنصّة يصير صفّ <code>Media</code> حقيقياً. بعدها كل أداة تراه تلقائياً، ويصير التصفير الكامل آمناً لأن لكل ملف صفّاً يعيد بناءه.</p>
+  <span class="gate">بوابة: صفر أصل منصّة مكتوب في الكود · جرد Bunny = جرد <code>Media</code></span><br><span class="gate">📄 الخطة التفصيلية: <code>MODONTY-CORE-PLAN-v1.html</code> (٦ مراحل · ٣٤ بنداً · القرارات الثلاثة مُقفلة)</span>
+</div></div>
+
+<h2>الخطورات — ٤</h2>
+
+<div class="box">
+  <b>🔴 ١ · هوية مدوّنتي بره جدول <code>Media</code></b>
+  <p>الشعار · الأيقونة · الووردمارك · الأفاتار · صورة OG · صور القوائم — مكتوبة في الكود و<code>Settings</code>، مالهاش صفوف. <b>كل الأدوات عمياء عنها</b>: الترحيل · الاسترجاع · التصفير. هذا سبب الأخطاء الأربعة التي ظهرت 2026-07-31. <b>يُحلّ في <code>T2</code>.</b></p>
+</div>
+
+<div class="box">
+  <b>🔴 ٢ · بلا merge لا يصل Bunny للإنتاج</b>
+  <p><code>main</code> فيها <b>صفر</b> ذكر لـ<code>bunnyUrl</code>. الإنتاج: <b>٤٤٤ صفّ media · صفر منها مُرحَّل · ٤٤٢ على Cloudinary</b>. ترحيل بيانات الإنتاج قبل الـmerge يملأ حقلاً لا يقرأه أحد.</p>
+</div>
+
+<div class="box">
+  <b>🔴 ٣ · السيو بلا شبكة أمان</b>
+  <p>الصور محميّة بـ<code>bunnyUrl ?? url</code>. أمّا <code>jsonLdStructuredData</code> فنصّ مخبوز — إعادة التوليد <b>تكتب فوق القديم</b>. خطأ واحد = سيو ضائع وقد يكون جوجل فهرسه.</p>
+</div>
+
+<div class="box warn">
+  <b>🟡 ٤ · ٢٤٣ ملف غير محفوظ في git</b>
+  <p>شغل ثلاثة أيام على القرص فقط. لا يحتاج قراراً.</p>
+</div>
+
+<h2>القرارات</h2>
+
+<div class="d closed"><div class="q">✅ ١ · عزل الترحيل في route — <b>مقفول: الآن، قبل أي شيء</b></div>
+<div style="color:var(--mut)">قرار خالد 2026-07-31. كان رأيي التأجيل لتفادي ريفاكتور قبل عملية حرجة — <b>القرار قراره</b>.</div></div>
+
+<div class="d closed"><div class="q">✅ ٢ · تصفير Bunny — <b>مقفول: نعم، بعد <code>T2</code></b></div>
+<div style="color:var(--mut)">بعد دخول الهوية في <code>Media</code> يصير التصفير الكامل <b>آمناً</b> لأن لكل ملف صفّاً يعيد بناءه. قبلها كان يفقد الهوية بلا استرداد.</div></div>
+
+<div class="d"><div class="q">٣ · معيار نجاح تست السرعة</div>
+<div><span class="k">أ</span> Bunny ≤ Cloudinary عند p75، والحجم ليس أكبر. <span class="rec">توصيتي</span></div>
+<div><span class="k">ب</span> أشدّ: أسرع بـ١٠٪+.</div>
+<div><span class="k">ج</span> أرخى: فرق أقلّ من ٢٠٪ مقبول.</div></div>
+
+<div class="d"><div class="q">٤ · الـmerge</div>
+<div><span class="k">أ</span> نعم، بعد <code>T4</code> و<code>T5</code>. <span class="rec">توصيتي</span></div>
+<div><span class="k">ب</span> مؤجَّل ⇒ الشغل يبقى على الفرع ولا يصل الإنتاج.</div></div>
+
+
+</div>
+<script>
+document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tabs button').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  document.getElementById('pane-' + b.dataset.t).classList.add('on');
+}));
+</script>
+<footer>المرجع الحيّ للـflow · مرافق: <code>BUNNY-GOLIVE-PRD-v1.html</code> · <code>TODO.md</code></footer>
+
+</div>
+<script>
+(function(){
+  var KEY='bunny-flow-v1';
+  var boxes=[].slice.call(document.querySelectorAll('.t input'));
+  var saved={}; try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function paint(b){ b.closest('.t').classList.toggle('done', b.checked); }
+  function upd(){
+    var d=boxes.filter(function(b){return b.checked}).length, t=boxes.length;
+    var p=t?Math.round(d*100/t):0;
+    document.getElementById('pct').textContent=p+'%';
+    document.getElementById('fill').style.width=p+'%';
+    document.getElementById('cnt').textContent=d+' / '+t;
+  }
+  boxes.forEach(function(b){
+    if(saved[b.id]) b.checked=true; paint(b);
+    b.addEventListener('change',function(){
+      paint(b);
+      var o={}; boxes.forEach(function(x){ if(x.checked) o[x.id]=1; });
+      localStorage.setItem(KEY,JSON.stringify(o)); upd();
+    });
+  });
+  upd();
+  document.getElementById('reset').addEventListener('click',function(){
+    if(!confirm('تصفير التقدّم؟')) return;
+    localStorage.removeItem(KEY);
+    boxes.forEach(function(b){ b.checked=false; paint(b); }); upd();
+  });
+})();
+</script>
+</body>
+</html>

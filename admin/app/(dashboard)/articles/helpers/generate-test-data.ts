@@ -7,7 +7,7 @@ interface GenerateTestDataOptions {
   categories: Array<{ id: string; name: string }>;
   authors: Array<{ id: string; name: string }>;
   tags: Array<{ id: string; name: string }>;
-  media?: Array<{ id: string; clientId: string; url: string; altText?: string | null }>;
+  media?: Array<{ id: string; clientId: string; url: string; bunnyUrl: string | null; altText?: string | null }>;
   articles?: Array<{ id: string; title: string }>;
 }
 

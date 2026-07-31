@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ExternalLink, Pencil, ShieldCheck, ShieldX, AlertTriangle, CheckCircle2, XCircle, Sparkles } from "lucide-react";
@@ -85,14 +86,14 @@ export default async function QualityCheckPage({ params }: PageProps) {
       nextjsMetadata: true,
       nextjsMetadataLastGenerated: true,
       featuredImageId: true,
-      featuredImage: { select: { url: true, altText: true, width: true, height: true } },
+      featuredImage: { select: { url: true, bunnyUrl: true, altText: true, width: true, height: true } },
       author: { select: { name: true } },
       client: {
         select: {
           id: true,
           name: true,
           slug: true,
-          logoMedia: { select: { url: true, width: true, height: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true, width: true, height: true } },
           isYmyl: true,
           ymylCategory: true,
           ymylData: true,
@@ -144,7 +145,8 @@ export default async function QualityCheckPage({ params }: PageProps) {
           name: article.client.name,
           logoMedia: article.client.logoMedia
             ? {
-                url: article.client.logoMedia.url,
+                url: mediaSrc(article.client.logoMedia) ?? article.client.logoMedia.url,
+                bunnyUrl: null,
                 width: article.client.logoMedia.width,
                 height: article.client.logoMedia.height,
               }

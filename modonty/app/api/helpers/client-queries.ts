@@ -4,6 +4,7 @@
  */
 
 import { cacheTag, cacheLife } from "next/cache";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import type { ClientResponse } from "@/lib/types";
@@ -12,12 +13,12 @@ type ClientWithArticles = Prisma.ClientGetPayload<{
   include: {
     logoMedia: {
       select: {
-        url: true;
+        url: true, bunnyUrl: true;
       };
     };
     heroImageMedia: {
       select: {
-        url: true;
+        url: true, bunnyUrl: true;
       };
     };
     articles: {
@@ -31,7 +32,7 @@ type ClientWithArticles = Prisma.ClientGetPayload<{
         };
         featuredImage: {
           select: {
-            url: true;
+            url: true, bunnyUrl: true;
             altText: true;
           };
         };
@@ -59,12 +60,12 @@ export async function getClientsWithCounts(): Promise<ClientResponse[]> {
     include: {
       logoMedia: {
         select: {
-          url: true,
+          url: true, bunnyUrl: true,
         },
       },
       heroImageMedia: {
         select: {
-          url: true,
+          url: true, bunnyUrl: true,
         },
       },
       industry: {
@@ -121,8 +122,8 @@ export async function getClientsWithCounts(): Promise<ClientResponse[]> {
       description: client.description || client.seoDescription || undefined,
       industry: client.industry || undefined,
       url: client.url || undefined,
-      logo: client.logoMedia?.url || undefined,
-      ogImage: client.heroImageMedia?.url || undefined,
+      logo: mediaSrc(client.logoMedia) || undefined,
+      ogImage: mediaSrc(client.heroImageMedia) || undefined,
       email: client.email || undefined,
       phone: client.phone || undefined,
       seoTitle: client.seoTitle || undefined,
@@ -192,8 +193,8 @@ export async function getClientsSearch(
       ],
     },
     include: {
-      logoMedia: { select: { url: true } },
-      heroImageMedia: { select: { url: true } },
+      logoMedia: { select: { url: true, bunnyUrl: true } },
+      heroImageMedia: { select: { url: true, bunnyUrl: true } },
       industry: { select: { id: true, name: true, slug: true } },
       _count: {
         select: {
@@ -238,8 +239,8 @@ export async function getClientsSearch(
       description: client.description || client.seoDescription || undefined,
       industry: client.industry || undefined,
       url: client.url || undefined,
-      logo: client.logoMedia?.url || undefined,
-      ogImage: client.heroImageMedia?.url || undefined,
+      logo: mediaSrc(client.logoMedia) || undefined,
+      ogImage: mediaSrc(client.heroImageMedia) || undefined,
       email: client.email || undefined,
       phone: client.phone || undefined,
       seoTitle: client.seoTitle || undefined,
@@ -280,12 +281,12 @@ export async function getClientBySlug(slug: string) {
     include: {
       logoMedia: {
         select: {
-          url: true,
+          url: true, bunnyUrl: true,
         },
       },
       heroImageMedia: {
         select: {
-          url: true,
+          url: true, bunnyUrl: true,
         },
       },
       articles: {
@@ -306,7 +307,7 @@ export async function getClientBySlug(slug: string) {
           },
           featuredImage: {
             select: {
-              url: true,
+              url: true, bunnyUrl: true,
               altText: true,
             },
           },
@@ -338,8 +339,8 @@ export async function getClientBySlug(slug: string) {
     slug: client.slug,
     legalName: client.legalName || undefined,
     url: client.url || undefined,
-    logo: client.logoMedia?.url || undefined,
-    ogImage: client.heroImageMedia?.url || undefined,
+    logo: mediaSrc(client.logoMedia) || undefined,
+    ogImage: mediaSrc(client.heroImageMedia) || undefined,
     email: client.email || undefined,
     phone: client.phone || undefined,
     seoTitle: client.seoTitle || undefined,
@@ -369,7 +370,7 @@ export async function getClientsForSidebar(limit = 20): Promise<SidebarClient[]>
       id: true,
       name: true,
       slug: true,
-      logoMedia: { select: { url: true } },
+      logoMedia: { select: { url: true, bunnyUrl: true } },
       industry:  { select: { name: true } },
       // Published, non-future article count — matches the feed filter exactly so the
       // badge number == what the filtered feed shows.
@@ -395,7 +396,7 @@ export async function getClientsForSidebar(limit = 20): Promise<SidebarClient[]>
     id:       c.id,
     name:     c.name,
     slug:     c.slug,
-    logo:     c.logoMedia?.url || undefined,
+    logo:     mediaSrc(c.logoMedia) || undefined,
     industry: c.industry?.name || undefined,
     articleCount: c._count?.articles ?? 0,
   }));
@@ -427,12 +428,12 @@ export async function getClientHeroSlides(limit?: number): Promise<ClientHeroSli
     select: {
       name: true,
       slug: true,
-      logoMedia: { select: { url: true } },
+      logoMedia: { select: { url: true, bunnyUrl: true } },
       // The Client Mini (1.91:1) fills the 1200/630 slide box exactly — this is the
       // ONLY image the slider shows (no 6:1 hero, which would be cropped).
       media: {
         where: { type: "CLIENT_MINI" },
-        select: { url: true },
+        select: { url: true, bunnyUrl: true },
         orderBy: { createdAt: "desc" },
         take: 1,
       },
@@ -445,8 +446,8 @@ export async function getClientHeroSlides(limit?: number): Promise<ClientHeroSli
     .map(c => ({
       slug: c.slug,
       name: c.name,
-      heroImage: c.media[0]?.url ?? "",
-      logo: c.logoMedia?.url ?? null,
+      heroImage: mediaSrc(c.media[0]) ?? "",
+      logo: mediaSrc(c.logoMedia) ?? null,
     }))
     .filter(c => Boolean(c.heroImage));
 }

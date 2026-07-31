@@ -15,6 +15,7 @@ import type { Prisma } from "@prisma/client";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { ensureSettingsId } from "@/lib/settings/settings-singleton";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 function getSiteUrl(settings: Record<string, unknown>): string {
   // Caller fetches settings via getAllSettings() (DB-backed). Hardcoded fallback only as safety net.
@@ -258,14 +259,14 @@ export async function regenerateClientsListingCache(): Promise<{ success: boolea
     const ogImageAlt = (s.altImage as string) || undefined;
 
     const clients = await db.client.findMany({
-      select: { name: true, slug: true, description: true, logoMedia: { select: { url: true } } },
+      select: { name: true, slug: true, description: true, logoMedia: { select: { url: true, bunnyUrl: true } } },
       orderBy: { name: "asc" },
     });
 
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "العملاء",
       ogImage, ogImageAlt,
-      items: clients.map((c, i) => ({ name: c.name, url: `${siteUrl}/clients/${c.slug}`, position: i + 1, description: c.description || undefined, image: c.logoMedia?.url || undefined })),
+      items: clients.map((c, i) => ({ name: c.name, url: `${siteUrl}/clients/${c.slug}`, position: i + 1, description: c.description || undefined, image: mediaSrc(c.logoMedia) || undefined })),
     };
 
     await updateSettingsPageCache("clientsPageMetaTags", "clientsPageJsonLdStructuredData", "clientsPageJsonLdLastGenerated", "clientsPageJsonLdValidationReport", buildListingMetadata(config), buildListingJsonLd(config));
@@ -291,7 +292,7 @@ export async function regenerateArticlesListingCache(): Promise<{ success: boole
 
     const articles = await db.article.findMany({
       where: { status: "PUBLISHED" },
-      select: { title: true, slug: true, excerpt: true, client: { select: { slug: true } }, featuredImage: { select: { url: true } } },
+      select: { title: true, slug: true, excerpt: true, client: { select: { slug: true } }, featuredImage: { select: { url: true, bunnyUrl: true } } },
       orderBy: { datePublished: "desc" },
       take: 50,
     });
@@ -302,7 +303,7 @@ export async function regenerateArticlesListingCache(): Promise<{ success: boole
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "المقالات",
       ogImage, ogImageAlt,
-      items: articles.map((a, i) => ({ name: a.title, url: `${siteUrl}/clients/${a.client.slug}/articles/${a.slug}`, position: i + 1, description: a.excerpt || undefined, image: a.featuredImage?.url || undefined })),
+      items: articles.map((a, i) => ({ name: a.title, url: `${siteUrl}/clients/${a.client.slug}/articles/${a.slug}`, position: i + 1, description: a.excerpt || undefined, image: mediaSrc(a.featuredImage) || undefined })),
     };
 
     await updateSettingsPageCache("articlesPageMetaTags", "articlesPageJsonLdStructuredData", "articlesPageJsonLdLastGenerated", "articlesPageJsonLdValidationReport", buildListingMetadata(config), buildListingJsonLd(config));
@@ -379,7 +380,7 @@ export async function regenerateTrendingPageCache(): Promise<{ success: boolean;
     const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000);
     const topArticles = await db.article.findMany({
       where: { status: "PUBLISHED", datePublished: { gte: thirtyDaysAgo } },
-      select: { title: true, slug: true, excerpt: true, client: { select: { slug: true } }, featuredImage: { select: { url: true } } },
+      select: { title: true, slug: true, excerpt: true, client: { select: { slug: true } }, featuredImage: { select: { url: true, bunnyUrl: true } } },
       orderBy: { datePublished: "desc" },
       take: 20,
     });
@@ -390,7 +391,7 @@ export async function regenerateTrendingPageCache(): Promise<{ success: boolean;
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "الرائج",
       ogImage, ogImageAlt,
-      items: topArticles.map((a, i) => ({ name: a.title, url: `${siteUrl}/clients/${a.client.slug}/articles/${a.slug}`, position: i + 1, description: a.excerpt || undefined, image: a.featuredImage?.url || undefined })),
+      items: topArticles.map((a, i) => ({ name: a.title, url: `${siteUrl}/clients/${a.client.slug}/articles/${a.slug}`, position: i + 1, description: a.excerpt || undefined, image: mediaSrc(a.featuredImage) || undefined })),
     };
 
     await updateSettingsPageCache("trendingPageMetaTags", "trendingPageJsonLdStructuredData", "trendingPageJsonLdLastGenerated", "trendingPageJsonLdValidationReport", buildListingMetadata(config), buildListingJsonLd(config));

@@ -1,5 +1,6 @@
 import type { SEOFieldValidator } from "@/components/shared/seo-doctor";
 import type { MediaRelation } from "./media-relation";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 export function generateArticleStructuredData(data: Record<string, unknown>): Record<string, unknown> {
   const getDateString = (dateValue: unknown): string | undefined => {
@@ -35,10 +36,11 @@ export function generateArticleStructuredData(data: Record<string, unknown>): Re
     structuredData.description = (data.excerpt || data.description) as string;
   }
   const featuredImage = data.featuredImage as MediaRelation;
-  if (featuredImage?.url) {
+  const featuredImageSrc = mediaSrc(featuredImage);
+  if (featuredImage && featuredImageSrc) {
     structuredData.image = {
       "@type": "ImageObject",
-      url: featuredImage.url,
+      url: featuredImageSrc,
       ...(featuredImage.width && { width: featuredImage.width }),
       ...(featuredImage.height && { height: featuredImage.height }),
       ...(featuredImage.altText && { name: featuredImage.altText }),

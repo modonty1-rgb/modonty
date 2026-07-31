@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Image from "next/image";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconSaved } from "@/lib/icons";
@@ -71,7 +72,7 @@ export default async function FavoritesPage() {
                             {article.featuredImage && (
                               <div className="relative w-24 h-24 flex-shrink-0 rounded overflow-hidden bg-muted">
                                 <Image
-                                  src={article.featuredImage.url}
+                                  src={mediaSrc(article.featuredImage) ?? article.featuredImage.url}
                                   alt={article.featuredImage.altText || article.title}
                                   fill
                                   className="object-cover"

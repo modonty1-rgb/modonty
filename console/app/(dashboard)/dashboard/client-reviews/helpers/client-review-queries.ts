@@ -55,7 +55,10 @@ export async function getClientReviewStats(
 export async function getClientReviews(
   clientId: string
 ): Promise<ClientReviewWithDetails[]> {
-  return db.clientReview.findMany({
+  // Scalar `reviewerId`, never the `reviewer` relation: MongoDB has no referential
+  // integrity, so a deleted user leaves an orphaned id and joining a REQUIRED relation
+  // throws instead of returning null — taking the whole page down over one stale row.
+  const rows = await db.clientReview.findMany({
     where: { clientId },
     select: {
       id: true,
@@ -64,9 +67,23 @@ export async function getClientReviews(
       status: true,
       createdAt: true,
       updatedAt: true,
-      author: { select: { id: true, name: true, email: true } },
+      reviewerId: true,
     },
     orderBy: { createdAt: "desc" },
     take: 200,
   });
+
+  const ids = [...new Set(rows.map((r) => r.reviewerId))];
+  const reviewers = ids.length
+    ? await db.user.findMany({
+        where: { id: { in: ids } },
+        select: { id: true, name: true, email: true },
+      })
+    : [];
+  const byId = new Map(reviewers.map((u) => [u.id, u]));
+
+  return rows.map(({ reviewerId, ...rest }) => ({
+    ...rest,
+    author: byId.get(reviewerId) ?? null,
+  }));
 }

@@ -10,5 +10,6 @@ export const categoryServerSchema = z.object({
   canonicalUrl: z.string().max(500).optional().nullable(),
   socialImage: z.string().optional().nullable(),
   socialImageAlt: z.string().max(300).optional().nullable(),
+  socialImageMediaId: z.string().optional().nullable(),
   cloudinaryPublicId: z.string().optional().nullable(),
 });

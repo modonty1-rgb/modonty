@@ -1,6 +1,7 @@
 import { Client } from "@prisma/client";
 import { safeOrganizationType, resolveOrganizationType, isLocalFamilyType } from "./organization-schema-types";
 import { YMYL_CATEGORIES, isYmylCategory } from "./ymyl-config";
+import { mediaSrc } from "../media-src";
 import {
   buildImageObject,
   resolveImageAttribution,
@@ -43,6 +44,7 @@ function deriveClientType(client: {
 interface ClientWithMedia extends Omit<Client, "contentPriorities"> {
   logoMedia?: {
     url: string;
+    bunnyUrl: string | null;
     width: number | null;
     height: number | null;
     altText: string | null;
@@ -51,6 +53,7 @@ interface ClientWithMedia extends Omit<Client, "contentPriorities"> {
   } | null;
   heroImageMedia?: {
     url: string;
+    bunnyUrl: string | null;
     width: number | null;
     height: number | null;
     altText: string | null;
@@ -220,8 +223,9 @@ export function generateCompleteOrganizationJsonLd(
   }
 
   // Logo as ImageObject with validation (minimum 112x112 per Google guidelines)
-  if (client.logoMedia?.url) {
-    const logoUrl = ensureAbsoluteUrl(client.logoMedia.url, siteUrl) || client.logoMedia.url;
+  const logoSrc = mediaSrc(client.logoMedia);
+  if (logoSrc && client.logoMedia) {
+    const logoUrl = ensureAbsoluteUrl(logoSrc, siteUrl) || logoSrc;
     const logoWidth = client.logoMedia.width && client.logoMedia.width >= 112 ? client.logoMedia.width : 112;
     const logoHeight = client.logoMedia.height && client.logoMedia.height >= 112 ? client.logoMedia.height : 112;
     
@@ -736,8 +740,9 @@ export function generateCompleteOrganizationJsonLd(
   // Logo is NOT suitable as primaryImageOfPage — it's a brand mark, not page content
   // This property is optional per Schema.org — omit if no hero image exists
   const ogImg = client.heroImageMedia;
-  if (ogImg?.url) {
-    const u = ensureAbsoluteUrl(ogImg.url, siteUrl) || ogImg.url;
+  const ogImgSrc = mediaSrc(ogImg);
+  if (ogImg && ogImgSrc) {
+    const u = ensureAbsoluteUrl(ogImgSrc, siteUrl) || ogImgSrc;
     const heroAttr = resolveImageAttribution(
       {
         mediaType: "HERO",

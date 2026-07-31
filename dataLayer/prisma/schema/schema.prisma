@@ -592,7 +592,7 @@ model Client {
 
   // ============ Client Page (mini-site presentation) ============
   introVideoUrl        String?             // VideoObject — intro/promo video (Cloudinary/YouTube)
-  verificationImageUrl String?             // صورة التوثيق (سجل/ترخيص) — Cloudinary, displayed on page (admin-controlled)
+  verificationImageUrl String?             // صورة التوثيق (سجل/ترخيص) — from the client's media library (Bunny), displayed on page (admin-controlled)
   services             ClientServiceItem[] // OfferCatalog
   teamMembers          ClientTeamMember[]  // employee: Person[]
   achievements         ClientAchievement[] // stats counters
@@ -877,6 +877,9 @@ model Author {
   bio      String?
   image    String? // Profile image
   imageAlt String? // Alt text for profile image (accessibility + SEO)
+  // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
+  imageMediaId String? @db.ObjectId
+  imageMedia   Media?  @relation("AuthorImageMedia", fields: [imageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   url      String? // Author page URL
   email    String? // Schema.org email - Contact email (optional, privacy-sensitive)
 
@@ -902,6 +905,9 @@ model Author {
   seoDescription String?
   socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
   socialImageAlt String? // Alt text
+  // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
+  socialImageMediaId String? @db.ObjectId
+  socialImageMedia   Media?  @relation("AuthorSocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cloudinaryPublicId String? // Cloudinary public_id for direct deletion
   canonicalUrl   String?
 
@@ -938,6 +944,9 @@ model Category {
   seoDescription String?
   socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
   socialImageAlt String? // Alt text
+  // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
+  socialImageMediaId String? @db.ObjectId
+  socialImageMedia   Media?  @relation("CategorySocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cloudinaryPublicId String? // Cloudinary public_id for direct deletion
   canonicalUrl   String?
 
@@ -971,6 +980,9 @@ model Tag {
   seoDescription String?
   socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
   socialImageAlt String? // Alt text
+  // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
+  socialImageMediaId String? @db.ObjectId
+  socialImageMedia   Media?  @relation("TagSocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cloudinaryPublicId String? // Cloudinary public_id for direct deletion
   canonicalUrl   String?
 
@@ -1001,6 +1013,9 @@ model Industry {
   seoDescription String?
   socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
   socialImageAlt String? // Alt text
+  // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
+  socialImageMediaId String? @db.ObjectId
+  socialImageMedia   Media?  @relation("IndustrySocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cloudinaryPublicId String? // Cloudinary public_id for direct deletion
   canonicalUrl   String?
 
@@ -1143,7 +1158,6 @@ model Article {
   // Relationships
   tags        ArticleTag[]
   versions    ArticleVersion[]
-  socialPosts SocialPost[]
   analytics   Analytics[]
   relatedFrom RelatedArticle[] @relation("ArticleRelatedFrom")
   relatedTo   RelatedArticle[] @relation("ArticleRelatedTo")
@@ -1297,6 +1311,14 @@ model Media {
   // Primary client media roles (centralized; many clients can share same media)
   logoClients      Client[] @relation("ClientLogoMedia")
   heroImageClients Client[] @relation("ClientHeroImageMedia")
+  // Modonty Core (T2): back-relations for the six platform entities
+  authorImages        Author[]   @relation("AuthorImageMedia")
+  authorSocialImages  Author[]   @relation("AuthorSocialImageMedia")
+  categorySocialImages Category[] @relation("CategorySocialImageMedia")
+  tagSocialImages     Tag[]      @relation("TagSocialImageMedia")
+  industrySocialImages Industry[] @relation("IndustrySocialImageMedia")
+  modontyHeroImages   Modonty[]  @relation("ModontyHeroImageMedia")
+  modontySocialImages Modonty[]  @relation("ModontySocialImageMedia")
 
   // Relationships
   featuredArticles Article[]      @relation("ArticleFeaturedImage")
@@ -1748,12 +1770,22 @@ model ClientComment {
 /// Customer review of a CLIENT's service — stars + text, one per visitor per client.
 /// Separate from ClientComment (discussion): rating is required, @@unique enforces
 /// one review per author, feeds AggregateRating + Review[] JSON-LD on the client page.
+/// A visitor's review OF a client. `reviewer` is a `User` (a signed-in visitor) — it is NOT
+/// the `Author` model, which is the person who writes articles. The field used to be called
+/// `author`, which read as if a Client had an Author relation; it never did (renamed
+/// 2026-07-30). `@map("authorId")` keeps the stored MongoDB field name, so this rename is
+/// code-only: no document changes, nothing to migrate, zero production impact.
+///
+/// NOTE on `onDelete: Cascade` — MongoDB has no referential actions; Prisma emulates them
+/// "on a best-effort basis" and only for deletes issued through Prisma Client. A user removed
+/// any other way leaves an orphaned reviewerId, so every READ must tolerate a missing
+/// reviewer instead of joining the required relation (see client-reviews.ts).
 model ClientReview {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  clientId String @db.ObjectId
-  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  authorId String @db.ObjectId
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  clientId   String @db.ObjectId
+  client     Client @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  reviewerId String @map("authorId") @db.ObjectId
+  reviewer   User   @relation(fields: [reviewerId], references: [id], onDelete: Cascade)
 
   rating  Int    // 1–5 (required)
   comment String // review text
@@ -1763,7 +1795,7 @@ model ClientReview {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([clientId, authorId]) // one review per visitor per client
+  @@unique([clientId, reviewerId]) // one review per visitor per client (DB fields unchanged)
   @@index([clientId, status])
   @@map("client_reviews")
 }
@@ -2308,13 +2340,13 @@ model Settings {
   orgGeoLatitude      Float?
   orgGeoLongitude     Float?
   orgSearchUrlTemplate String?
-  orgLogoUrl          String?
 
   // Media Settings (Cloudinary URLs)
   logoUrl     String? // Wide wordmark logo — desktop navbar
   logoIconUrl String? // Small icon/mark logo — mobile navbar (falls back to logoUrl if empty)
   ogImageUrl  String?
   altImage    String?  // Default alt text for logo/OG image when none set
+  certificateImageUrl String? // CR certificate shown on /trust — picked from the Modonty library; static /public file stays as fallback
 
   // Modonty app defaults (fallback when page has no SEO title/description)
   modontySeoTitle       String?
@@ -2408,6 +2440,11 @@ model Settings {
   industriesPageImage    String?
   industriesPageImageAlt String?
 
+  // Modonty Core (T2, 2026-07-31): the Client row that IS the platform itself.
+  // One key answers "is this Modonty?" everywhere — media ownership, picker scoping,
+  // partner-list exclusion, featured article cards. Set from /settings/system, never a script.
+  coreClientId String? @db.ObjectId
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2431,6 +2468,9 @@ model Modonty {
   // Hero Image (for page display)
   heroImage                String? // Cloudinary URL
   heroImageAlt             String? // Alt text
+  // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
+  heroImageMediaId String? @db.ObjectId
+  heroImageMedia   Media?  @relation("ModontyHeroImageMedia", fields: [heroImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   heroImageCloudinaryPublicId String? // Cloudinary public_id for direct deletion
   
   // ============================================
@@ -2445,6 +2485,9 @@ model Modonty {
   // Social Images (Category/Tag/Industry pattern)
   socialImage        String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
   socialImageAlt     String? // Alt text
+  // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
+  socialImageMediaId String? @db.ObjectId
+  socialImageMedia   Media?  @relation("ModontySocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cloudinaryPublicId String? // Cloudinary public_id for direct deletion
   
   // Open Graph (Article pattern)
@@ -2997,37 +3040,14 @@ model Country {
   @@map("countries")
 }
 
-enum SocialPlatform {
-  FACEBOOK
-  INSTAGRAM
-  TWITTER
-}
-
-enum SocialPostStatus {
-  PUBLISHED
-  FAILED
-  SKIPPED
-}
-
-/// Auto-published social media post — created whenever an article goes PUBLISHED.
-model SocialPost {
-  id        String             @id @default(auto()) @map("_id") @db.ObjectId
-  articleId String             @db.ObjectId
-  article   Article            @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  platform  SocialPlatform
-  status    SocialPostStatus
-  platformPostId String?       // e.g. "916057361588601_122128608771169772"
-  caption       String?
-  imageUrl      String?
-  imagePublicId String?        // Cloudinary public_id for permanent image reference
-  errorMessage  String?        // populated when status=FAILED
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
-
-  @@index([articleId])
-  @@index([platform, status])
-  @@map("social_posts")
-}
+// REMOVED 2026-07-30 (Khalid): the whole social-publishing feature is gone — the
+// /social admin pages, `lib/social/{meta,twitter}.ts`, and the auto-post on first
+// publish. `SocialPost` + `SocialPlatform` + `SocialPostStatus` were only ever used
+// by that code, so the model went with it.
+//
+// The `social_posts` MongoDB collection is NOT dropped — Prisma simply stops
+// mapping it. Old rows stay readable via mongosh if the history is ever needed;
+// drop the collection manually (after a backup) once it is confirmed unwanted.
 
 /// A licensing/regulatory body a YMYL client picks during verification.
 /// Linked to a country by ISO `countryCode` (no relation — resolved in queries).

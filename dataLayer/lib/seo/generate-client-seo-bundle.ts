@@ -11,6 +11,7 @@
 
 import type { PrismaClient } from "@prisma/client";
 import { generateCompleteOrganizationJsonLd } from "./generate-organization-jsonld";
+import { mediaSrc } from "../media-src";
 import { resolveOrganizationType } from "./organization-schema-types";
 import { YMYL_CATEGORIES, isYmylCategory } from "./ymyl-config";
 
@@ -149,8 +150,8 @@ const CLIENT_SEO_SELECT = {
   gbpProfileUrl: true,
   gbpPlaceId: true,
   parentOrganizationId: true,
-  logoMedia: { select: { url: true, altText: true, width: true, height: true, description: true, createdAt: true } },
-  heroImageMedia: { select: { url: true, altText: true, width: true, height: true, description: true, createdAt: true } },
+  logoMedia: { select: { url: true, bunnyUrl: true, altText: true, width: true, height: true, description: true, createdAt: true } },
+  heroImageMedia: { select: { url: true, bunnyUrl: true, altText: true, width: true, height: true, description: true, createdAt: true } },
   industry: { select: { id: true, name: true } },
   parentOrganization: { select: { id: true, name: true, url: true, slug: true } },
 } as const;
@@ -249,7 +250,7 @@ export async function generateClientSeoBundle(
       locale: ogLocale,
     },
     twitter: {
-      card: client.heroImageMedia?.url ? "summary_large_image" : twitterCard,
+      card: mediaSrc(client.heroImageMedia) ? "summary_large_image" : twitterCard,
       title,
       description,
       ...(twitterSite && { site: twitterSite }),
@@ -317,10 +318,11 @@ export async function generateClientSeoBundle(
       alt: alt || defaultAlt,
     };
   };
-  if (client.heroImageMedia?.url) {
+  const heroSrc = mediaSrc(client.heroImageMedia);
+  if (client.heroImageMedia && heroSrc) {
     metaTags.openGraph.images = [
       makeOgImage(
-        client.heroImageMedia.url,
+        heroSrc,
         client.heroImageMedia.altText || defaultAlt,
         client.heroImageMedia.width,
         client.heroImageMedia.height
@@ -338,9 +340,15 @@ export async function generateClientSeoBundle(
   // Reviews (ClientReview, APPROVED) → AggregateRating + Review[].
   // Gallery (Media type=GALLERY) → Organization.image[].
   const [approvedReviews, reviewAgg, galleryMedia] = await Promise.all([
+    // Select the scalar `reviewerId`, never the `reviewer` relation. MongoDB has no
+    // referential integrity — Prisma only emulates `onDelete: Cascade` for its own deletes —
+    // so a user removed any other way leaves an orphaned id, and joining a REQUIRED relation
+    // then throws "Field reviewer is required to return data, got null". That killed SEO
+    // generation for 11 clients over 2 orphan rows (2026-07-30). Names are resolved below
+    // and a missing one simply falls back to "زائر".
     db.clientReview.findMany({
       where: { clientId, status: "APPROVED" },
-      select: { rating: true, comment: true, createdAt: true, author: { select: { name: true } } },
+      select: { rating: true, comment: true, createdAt: true, reviewerId: true },
       orderBy: { createdAt: "desc" },
       take: 20,
     }),
@@ -351,11 +359,27 @@ export async function generateClientSeoBundle(
     }),
     db.media.findMany({
       where: { clientId, type: "GALLERY" },
-      select: { url: true, altText: true, width: true, height: true, description: true, createdAt: true },
+      // `bunnyUrl` MUST be selected — without it `mediaSrc()` silently falls back to the
+      // Cloudinary `url` forever, and `tsc` never complains. This one select kept 10 clients
+      // emitting Cloudinary in Organization.image[] after every regeneration (2026-07-30).
+      select: { url: true, bunnyUrl: true, altText: true, width: true, height: true, description: true, createdAt: true },
       orderBy: { createdAt: "desc" },
       take: 30,
     }),
   ]);
+  // Resolve reviewer names separately — orphaned ids just resolve to undefined.
+  const reviewerIds = [...new Set(approvedReviews.map((r) => r.reviewerId))];
+  const reviewerById = new Map(
+    reviewerIds.length
+      ? (
+          await db.user.findMany({
+            where: { id: { in: reviewerIds } },
+            select: { id: true, name: true },
+          })
+        ).map((u) => [u.id, u.name])
+      : [],
+  );
+
   const reviewOptions =
     reviewAgg._count > 0
       ? {
@@ -364,7 +388,7 @@ export async function generateClientSeoBundle(
             reviewCount: reviewAgg._count,
           },
           reviews: approvedReviews.map((r) => ({
-            author: r.author?.name ?? "زائر",
+            author: reviewerById.get(r.reviewerId) ?? "زائر",
             rating: r.rating,
             body: r.comment,
             datePublished: r.createdAt.toISOString().slice(0, 10),
@@ -372,7 +396,7 @@ export async function generateClientSeoBundle(
         }
       : {};
   const galleryImages = galleryMedia.map((m) => ({
-    url: m.url,
+    url: mediaSrc(m) ?? m.url,
     altText: m.altText,
     width: m.width,
     height: m.height,

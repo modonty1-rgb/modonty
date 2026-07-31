@@ -142,6 +142,7 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
         logoMedia: {
           select: {
             url: true,
+            bunnyUrl: true,
             altText: true,
             width: true,
             height: true,
@@ -150,6 +151,7 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
         heroImageMedia: {
           select: {
             url: true,
+            bunnyUrl: true,
             altText: true,
             width: true,
             height: true,

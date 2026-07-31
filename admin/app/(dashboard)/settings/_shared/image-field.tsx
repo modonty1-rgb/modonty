@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import NextImage from "next/image";
+import { Library } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { MediaPickerDialog } from "@/components/shared/media-picker-dialog";
 import { Field } from "./field";
 
 interface Props {
@@ -11,10 +14,15 @@ interface Props {
   onChange: (v: string) => void;
   hint?: string;
   aspect: "square" | "og" | "wide";
+  /** Modonty Core (T2 p4-settings): when set, a picker button opens the core client's
+   *  own media library (lockClient) and writes the picked Bunny URL into the field.
+   *  The manual URL input stays as fallback — zero-loss, same string persistence. */
+  coreClientId?: string | null;
 }
 
-export function ImageField({ label, value, onChange, hint, aspect }: Props) {
+export function ImageField({ label, value, onChange, hint, aspect, coreClientId }: Props) {
   const [imgError, setImgError] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const hasUrl = value.trim().length > 0;
   const previewWrapper =
     aspect === "og"
@@ -49,13 +57,38 @@ export function ImageField({ label, value, onChange, hint, aspect }: Props) {
             </span>
           )}
         </div>
+        {coreClientId && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-full gap-1.5 text-xs"
+            onClick={() => setPickerOpen(true)}
+          >
+            <Library className="h-3.5 w-3.5" />
+            {hasUrl ? "Change from Modonty Library" : "Pick from Modonty Library"}
+          </Button>
+        )}
         <Input
           value={value}
           onChange={(e) => { setImgError(false); onChange(e.target.value); }}
-          placeholder="https://res.cloudinary.com/..."
+          placeholder="https://modonty-asset.b-cdn.net/..."
           className="text-xs"
         />
       </div>
+      {coreClientId && (
+        <MediaPickerDialog
+          open={pickerOpen}
+          onOpenChange={setPickerOpen}
+          clientId={coreClientId}
+          lockClient
+          onSelect={(media) => {
+            setImgError(false);
+            onChange(media.url);
+            setPickerOpen(false);
+          }}
+        />
+      )}
     </Field>
   );
 }

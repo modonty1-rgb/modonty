@@ -1,8 +1,8 @@
 import Image from "next/image";
+import { BRAND_WORDMARK_URL } from "@modonty/database/lib/brand-assets";
 import { ar } from "@/lib/ar";
 
-const DEFAULT_SRC =
-  "https://res.cloudinary.com/dfegnpgwx/image/upload/v1768724691/final-01_fdnhom.svg";
+const DEFAULT_SRC = BRAND_WORDMARK_URL;
 
 interface ModontyLogoProps {
   alt?: string;

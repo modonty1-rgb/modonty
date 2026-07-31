@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Save, Crop, Check, Pencil } from "lucide-react";
+import { Save, Crop, Check, Pencil, Crown, Users } from "lucide-react";
 
 import { getMediaSpec, requiresCrop, type MediaSpec } from "@/lib/media/media-specs";
 import { formatBytes } from "@modonty/database/lib/utils";
@@ -94,6 +94,8 @@ export function UploadZone(props: UploadZoneProps) {
   const {
     clientId,
     setClientId,
+    ownerMode,
+    handleOwnerModeChange,
     mediaType,
     clients,
     files,
@@ -105,7 +107,6 @@ export function UploadZone(props: UploadZoneProps) {
     isUploading,
     isDisabled,
     handleMediaTypeChange,
-    handleChangeClient,
     handleChangeRole,
     handleDragOver,
     handleDragLeave,
@@ -133,14 +134,6 @@ export function UploadZone(props: UploadZoneProps) {
   const activeFile = files.find(isActive) ?? null;
   const hasSaved = files.some((f) => f.status === "saved");
 
-  const selectedClient = clients.find((c) => c.id === clientId);
-  const clientLabel =
-    clientId === "none"
-      ? "General — all clients"
-      : clientId === "modonty"
-        ? "Modonty — Platform"
-        : selectedClient?.name ?? "Client";
-
   return (
     <div className="mx-auto max-w-5xl space-y-5">
       {/* Full-screen crop editor */}
@@ -156,37 +149,64 @@ export function UploadZone(props: UploadZoneProps) {
       )}
 
       {/* Summary rail — completed steps collapse here so the form stays minimal */}
-      {(clientId || mediaType) && !hasSaved && (
+      {mediaType && spec && !hasSaved && (
         <div className="flex flex-wrap items-center gap-2">
-          {clientId && (
-            <SummaryChip
-              label="Client"
-              value={clientLabel}
-              onChange={handleChangeClient}
-              disabled={isUploading}
-            />
-          )}
-          {mediaType && spec && (
-            <SummaryChip
-              label="Role"
-              value={`${spec.label} · ${spec.width ? `${spec.width}×${spec.height}` : "Free"} · ${spec.ratioLabel}`}
-              onChange={handleChangeRole}
-              disabled={isUploading}
-            />
-          )}
+          <SummaryChip
+            label="Role"
+            value={`${spec.label} · ${spec.width ? `${spec.width}×${spec.height}` : "Free"} · ${spec.ratioLabel}`}
+            onChange={handleChangeRole}
+            disabled={isUploading}
+          />
         </div>
       )}
 
-      {/* STEP 1 — Client (only until one is chosen) */}
-      {!clientId && (
+      {/* STEP 1 — Owner toggle [Modonty | Client] (Modonty Core T2, always visible) */}
+      {!hasSaved && (
         <section className="space-y-3">
-          <StepHeader n={1} title="Choose client" hint="Who this media belongs to" />
-          <ClientSelector
-            clients={clients}
-            clientId={clientId}
-            onClientChange={setClientId}
-            isLoading={isLoadingClients}
-          />
+          <StepHeader n={1} title="Who owns this media?" hint="Client is the default — flip to Modonty for platform images (tags, categories, pages)" />
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="inline-flex rounded-lg border bg-muted/40 p-1">
+              <button
+                type="button"
+                disabled={isUploading}
+                onClick={() => handleOwnerModeChange("client")}
+                className={`inline-flex items-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                  ownerMode === "client"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Users className="h-3.5 w-3.5" />
+                Client
+              </button>
+              <button
+                type="button"
+                disabled={isUploading || !props.coreClientId}
+                onClick={() => handleOwnerModeChange("modonty")}
+                className={`inline-flex items-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                  ownerMode === "modonty"
+                    ? "bg-violet-600 text-white shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Crown className="h-3.5 w-3.5" />
+                Modonty
+              </button>
+            </div>
+            {ownerMode === "modonty" && props.coreClientId && (
+              <span className="text-xs text-muted-foreground">
+                Goes to Modonty&apos;s own library — used for tags, categories, platform pages.
+              </span>
+            )}
+          </div>
+          {ownerMode === "client" && (
+            <ClientSelector
+              clients={clients}
+              clientId={clientId}
+              onClientChange={setClientId}
+              isLoading={isLoadingClients}
+            />
+          )}
         </section>
       )}
 

@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { Suspense } from "react";
 import { notFound, unstable_rethrow } from "next/navigation";
 
@@ -179,9 +180,9 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const title = (articleForGeneration.seoTitle || articleForGeneration.title)?.slice(0, 51);
     const description = articleForGeneration.seoDescription || articleForGeneration.excerpt || "";
     const image =
-      articleForGeneration.featuredImage?.url ||
-      articleForGeneration.client.heroImageMedia?.url ||
-      articleForGeneration.client.logoMedia?.url ||
+      mediaSrc(articleForGeneration.featuredImage) ||
+      mediaSrc(articleForGeneration.client.heroImageMedia) ||
+      mediaSrc(articleForGeneration.client.logoMedia) ||
       undefined;
     const imageAlt =
       articleForGeneration.featuredImage?.altText || title || undefined;
@@ -280,7 +281,10 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
     // derived
     const galleryImages = (article.gallery ?? [])
       .map((g) => ({
-        url: g.media?.url ?? "",
+        // The select carries `bunnyUrl` and the component calls mediaSrc — but this mapping
+        // sat between them reading `.url`, so the Bunny copy was dropped before it ever got
+        // there and every article body kept rendering Cloudinary (found 2026-07-30).
+        url: mediaSrc(g.media) ?? g.media?.url ?? "",
         alt: g.media?.altText || article.title,
         caption: g.media?.caption || g.media?.altText || null,
       }))
@@ -300,7 +304,10 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       title: string;
       slug: string;
       excerpt: string | null;
-      featuredImage?: { url: string; altText: string | null } | null;
+      // `bunnyUrl` MUST stay on this type. Narrowing it away silently strips the Bunny copy
+      // before `mediaSrc()` ever sees it — the component still calls mediaSrc, gets undefined,
+      // and falls back to Cloudinary. tsc is happy either way (2026-07-30).
+      featuredImage?: { url: string; bunnyUrl: string | null; altText: string | null } | null;
       client?: { name: string } | null;
     };
     const seenReadMore = new Set<string>([article.id]);
@@ -309,7 +316,10 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       title: string;
       slug: string;
       excerpt: string | null;
-      featuredImage?: { url: string; altText: string | null } | null;
+      // `bunnyUrl` MUST stay on this type. Narrowing it away silently strips the Bunny copy
+      // before `mediaSrc()` ever sees it — the component still calls mediaSrc, gets undefined,
+      // and falls back to Cloudinary. tsc is happy either way (2026-07-30).
+      featuredImage?: { url: string; bunnyUrl: string | null; altText: string | null } | null;
       clientName?: string | null;
     }[] = [];
     const collectReadMore = (arr: RelatedLike[] | undefined, fallbackClient?: string | null) => {
@@ -618,7 +628,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 clientId={article.clientId}
                 articleId={article.id}
                 clientName={article.client.name}
-                clientLogoUrl={article.client.logoMedia?.url ?? null}
+                clientLogoUrl={mediaSrc(article.client.logoMedia)}
                 clientPhone={article.client.phone ?? null}
                 cta={{
                   mode: article.client.ctaMode,

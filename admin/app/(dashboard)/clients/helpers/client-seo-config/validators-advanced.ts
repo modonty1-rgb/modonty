@@ -4,6 +4,7 @@
 import type { SEOFieldValidator } from "@/components/shared/seo-doctor";
 import type { MediaRelation } from "./media-relation";
 import { getFieldMapping } from "../client-field-mapping";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 // ============================================================================
 // MEDIA VALIDATORS
@@ -17,7 +18,7 @@ export const validateLogo: SEOFieldValidator = (value, data) => {
   const missingScore = scoreConfig?.missing || 0;
 
   const logoMedia = data.logoMedia as MediaRelation;
-  const logoUrl = (logoMedia?.url as string) || value || "";
+  const logoUrl = mediaSrc(logoMedia) || value || "";
   if (logoUrl && typeof logoUrl === "string" && logoUrl.trim().length > 0) {
     const logoUrlLower = logoUrl.toLowerCase();
     const isValidFormat = /\.(png|svg|jpg|jpeg|webp)$/i.test(logoUrlLower);
@@ -91,7 +92,7 @@ export const validateLogoAlt: SEOFieldValidator = (value, data) => {
 
 export const validateOGImageForClient: SEOFieldValidator = (value, data) => {
   const heroImageMedia = data.heroImageMedia as MediaRelation;
-  const ogImageUrl = (heroImageMedia?.url as string) || (value as string) || "";
+  const ogImageUrl = mediaSrc(heroImageMedia) || (value as string) || "";
   if (ogImageUrl && typeof ogImageUrl === "string" && ogImageUrl.trim().length > 0) {
     return {
       status: "good",

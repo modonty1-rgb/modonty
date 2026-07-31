@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import { IconCheck } from "@/lib/icons";
 import { stripCloudinaryTransforms } from "@/lib/image-utils";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 import { getInitials, getTagline, getSocialPlatform } from "../hero/utils";
 import { HeroChips } from "./hero-chips";
@@ -16,8 +17,8 @@ interface ClientHeroV2Client {
   id: string;
   name: string;
   slug: string;
-  logoMedia?: { url: string } | null;
-  heroImageMedia?: { url: string; width?: number | null; height?: number | null } | null;
+  logoMedia?: { url: string; bunnyUrl: string | null } | null;
+  heroImageMedia?: { url: string; bunnyUrl: string | null; width?: number | null; height?: number | null } | null;
   industry?: { name: string } | null;
   addressCity?: string | null;
   addressRegion?: string | null;
@@ -81,7 +82,7 @@ export function ClientHeroV2({
     );
 
   const hero = client.heroImageMedia;
-  const heroSrc = hero?.url ?? null;
+  const heroSrc = mediaSrc(hero);
   // The cover shows the FULL partner image (no white card overlap, no crop). Box height
   // follows the image's own aspect ratio so object-cover fills it exactly — a wide 6:1
   // banner stays a banner, a tall upload is clamped by max-h (only then object-cover trims).
@@ -132,7 +133,7 @@ export function ClientHeroV2({
                 <div className="relative h-[70px] w-[70px] overflow-hidden rounded-[14px] border border-border bg-card shadow-[0_6px_16px_rgba(0,0,0,0.12)] ring-4 ring-white">
                   {client.logoMedia?.url ? (
                     <Image
-                      src={stripCloudinaryTransforms(client.logoMedia.url) ?? client.logoMedia.url}
+                      src={stripCloudinaryTransforms(mediaSrc(client.logoMedia) ?? client.logoMedia.url) ?? mediaSrc(client.logoMedia) ?? client.logoMedia.url}
                       alt={client.name}
                       fill
                       className="object-contain p-1.5"

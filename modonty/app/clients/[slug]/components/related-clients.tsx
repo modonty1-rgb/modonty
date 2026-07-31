@@ -1,3 +1,4 @@
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
@@ -11,7 +12,7 @@ interface RelatedClient {
   name: string;
   slug: string;
   legalName?: string | null;
-  logoMedia?: { url: string } | null;
+  logoMedia?: { url: string; bunnyUrl: string | null } | null;
   _count: {
     articles: number;
   };
@@ -52,7 +53,7 @@ export function RelatedClients({ clients, clientId }: RelatedClientsProps) {
               >
                 <div className="flex items-center gap-2.5 py-2 px-2.5 rounded-lg border border-border hover:border-primary/50 hover:bg-accent/50 transition-all duration-300">
                   <Avatar className={cn("h-9 w-9 flex-shrink-0", BRAND_AVATAR_RADIUS)}>
-                    <AvatarImage src={client.logoMedia?.url || undefined} alt={client.name} />
+                    <AvatarImage src={mediaSrc(client.logoMedia) ?? undefined} alt={client.name} />
                     <AvatarFallback className={cn("text-xs font-medium bg-primary text-primary-foreground", BRAND_AVATAR_RADIUS)}>{initials}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0 flex items-center gap-2">

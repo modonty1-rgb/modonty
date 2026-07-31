@@ -40,7 +40,7 @@ export async function getClientReviews(
   });
   if (!client) return { reviews: [], averageRating: 0, reviewCount: 0 };
 
-  // Select authorId (scalar, always present) instead of the author relation:
+  // Select reviewerId (scalar, always present) instead of the reviewer relation:
   // a deleted user leaves an orphaned authorId, and Prisma throws on a required
   // relation that resolves to null — one orphan would crash the whole page/build.
   // We resolve authors separately and tolerate the missing ones (author: null).
@@ -52,7 +52,7 @@ export async function getClientReviews(
         rating: true,
         comment: true,
         createdAt: true,
-        authorId: true,
+        reviewerId: true,
       },
       orderBy: { createdAt: "desc" },
       take: limit,
@@ -64,7 +64,7 @@ export async function getClientReviews(
     }),
   ]);
 
-  const authorIds = [...new Set(rawReviews.map((r) => r.authorId))];
+  const authorIds = [...new Set(rawReviews.map((r) => r.reviewerId))];
   const authors = authorIds.length
     ? await db.user.findMany({
         where: { id: { in: authorIds } },
@@ -78,7 +78,7 @@ export async function getClientReviews(
     rating: r.rating,
     comment: r.comment,
     createdAt: r.createdAt,
-    author: authorById.get(r.authorId) ?? null,
+    author: authorById.get(r.reviewerId) ?? null,
   }));
 
   return {

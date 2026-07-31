@@ -7,6 +7,7 @@ import { MediaType, MediaScope } from "@prisma/client";
 import { generateAndSaveJsonLd } from "@/lib/seo";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
+import { buildBunnyMediaPath, moveBunnyMedia, bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/database/lib/bunny";
 
 interface UpdateMediaData {
   scope?: MediaScope;
@@ -28,6 +29,7 @@ interface UpdateMediaData {
   cloudinaryVersion?: string;
   cloudinarySignature?: string;
   url?: string;
+  bunnyUrl?: string; // Bunny-primary: replace-file flow must sync this with url
   filename?: string;
   mimeType?: string;
   width?: number;
@@ -40,6 +42,63 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
   try {
     const session = await auth();
     if (!session) return { success: false, error: "Unauthorized" };
+
+    // Changing the media type or its client moves the Bunny file to its new
+    // /{type}/{clientSlug}/ folder (P2 critical note). Best-effort — a Bunny
+    // failure must NOT block the admin edit; bunnyUrl then keeps its old path.
+    let movedBunnyUrl: string | undefined;
+    if (data.type !== undefined || data.clientId !== undefined) {
+      const current = await db.media.findUnique({
+        where: { id },
+        select: {
+          type: true,
+          scope: true,
+          clientId: true,
+          bunnyUrl: true,
+          filename: true,
+          cloudinaryPublicId: true,
+        },
+      });
+      const typeChanged = data.type !== undefined && data.type !== current?.type;
+      const clientChanged = data.clientId !== undefined && data.clientId !== current?.clientId;
+      if (current?.bunnyUrl && (typeChanged || clientChanged)) {
+        try {
+          const newClientId = data.clientId !== undefined ? data.clientId : current.clientId;
+          let newSlug: string | null = null;
+          if (newClientId) {
+            const client = await db.client.findUnique({
+              where: { id: newClientId },
+              select: { slug: true },
+            });
+            newSlug = client?.slug ?? null;
+          }
+          const newPath = buildBunnyMediaPath({
+            type: data.type ?? current.type,
+            scope: data.scope ?? current.scope,
+            clientSlug: newSlug,
+            filename: current.filename,
+            publicId: current.cloudinaryPublicId,
+          });
+          const moved = await moveBunnyMedia("clients", current.bunnyUrl, newPath);
+          movedBunnyUrl = moved.url;
+
+          // Article images carry 3 pre-generated aspect crops next to the base —
+          // move them too, else the JSON-LD crop URLs 404 at the new folder.
+          if ((data.type ?? current.type) === "POST") {
+            for (const suffix of Object.values(BUNNY_ASPECT_SUFFIX)) {
+              await moveBunnyMedia(
+                "clients",
+                bunnyAspectUrl(current.bunnyUrl, suffix),
+                bunnyAspectUrl(newPath, suffix)
+              );
+            }
+          }
+        } catch {
+          // Swallow — the metadata edit proceeds; a later repair reconciles the path.
+        }
+      }
+    }
+
     const media = await db.media.update({
       where: { id },
       data: {
@@ -62,12 +121,14 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
         cloudinaryVersion: data.cloudinaryVersion,
         cloudinarySignature: data.cloudinarySignature,
         ...(data.url !== undefined ? { url: data.url } : {}),
+        ...(data.bunnyUrl !== undefined ? { bunnyUrl: data.bunnyUrl } : {}),
         ...(data.filename !== undefined ? { filename: data.filename } : {}),
         ...(data.mimeType !== undefined ? { mimeType: data.mimeType } : {}),
         ...(data.width !== undefined ? { width: data.width } : {}),
         ...(data.height !== undefined ? { height: data.height } : {}),
         ...(data.fileSize !== undefined ? { fileSize: data.fileSize } : {}),
         ...(data.encodingFormat !== undefined ? { encodingFormat: data.encodingFormat } : {}),
+        ...(movedBunnyUrl !== undefined ? { bunnyUrl: movedBunnyUrl } : {}),
       },
     });
 

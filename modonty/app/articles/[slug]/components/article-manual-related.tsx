@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { ArticleSectionCollapsible } from "./article-section-collapsible";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { ArticleHeroWarm } from "@/components/media/hero-warm";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { RelativeTime } from "@/components/date/RelativeTime";
 import {
   IconLike,
@@ -25,6 +26,7 @@ interface ArticleManualRelatedProps {
       createdAt: Date;
       featuredImage: {
         url: string;
+        bunnyUrl: string | null;
         altText: string | null;
       } | null;
       client: {
@@ -61,7 +63,7 @@ export function ArticleManualRelated({ articleId, clientId, relatedArticles }: A
           clientId={clientId}
           className="h-full block"
         >
-          <ArticleHeroWarm href={`/articles/${related.slug}`} imageUrl={related.featuredImage?.url ?? null} />
+          <ArticleHeroWarm href={`/articles/${related.slug}`} imageUrl={mediaSrc(related.featuredImage)} />
           <Card className="hover:shadow-md transition-shadow cursor-pointer h-full flex flex-row overflow-hidden">
             <div className="flex-[0_0_80%] flex flex-col min-w-0 min-h-[7.5rem] p-4 text-right justify-between">
               <div>
@@ -105,7 +107,7 @@ export function ArticleManualRelated({ articleId, clientId, relatedArticles }: A
             {related.featuredImage ? (
               <div className="flex-[0_0_20%] aspect-square relative overflow-hidden bg-muted">
                 <OptimizedImage
-                  src={related.featuredImage.url}
+                  src={mediaSrc(related.featuredImage) ?? related.featuredImage.url}
                   alt={related.featuredImage.altText || related.title}
                   fill
                   className="object-cover"

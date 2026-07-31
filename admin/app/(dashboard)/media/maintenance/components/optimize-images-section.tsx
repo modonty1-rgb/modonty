@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { formatBytes } from "@modonty/database/lib/utils";
 import { compressToWebP } from "@/lib/compress-image";
 import { saveOptimizedImage } from "../../actions/optimize-image";
+import { uploadImageToBunny } from "../../actions/upload-image-to-bunny";
 import type { OptimizableImage } from "../helpers/optimizable";
 
 function fmt(mime: string): string {
@@ -18,10 +19,11 @@ function fmt(mime: string): string {
   return sub.toUpperCase();
 }
 
-// Fetch → compress (browser Canvas) → re-upload to Cloudinary → return stored fields.
+// Bunny-primary (2026-07-29): fetch → compress (browser Canvas) → upload the optimized
+// WebP to Bunny (same type/client folder as the original) → return stored fields.
 async function reencodeToWebP(image: OptimizableImage) {
   const resp = await fetch(image.url, { mode: "cors" });
-  if (!resp.ok) throw new Error("تعذّر جلب الصورة من Cloudinary");
+  if (!resp.ok) throw new Error("تعذّر جلب الصورة الأصلية");
   const blob = await resp.blob();
   const source = new File([blob], image.filename || "image", { type: blob.type || image.mimeType });
 
@@ -31,29 +33,43 @@ async function reencodeToWebP(image: OptimizableImage) {
   const height = bmp.height;
   bmp.close();
 
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-  if (!cloudName || !uploadPreset) throw new Error("إعدادات Cloudinary غير مضبوطة");
+  const webpName = (image.filename || "image").replace(/\.[^.]+$/, "") + ".webp";
+  const formData = new FormData();
+  formData.append("file", new File([webp], webpName, { type: "image/webp" }));
+  formData.append("filename", webpName);
+  if (image.type) formData.append("type", image.type);
+  formData.append("scope", image.scope || "GENERAL");
+  if (image.clientId) formData.append("clientId", image.clientId);
 
-  const form = new FormData();
-  form.append("file", webp);
-  form.append("upload_preset", uploadPreset);
-
-  const up = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-    method: "POST",
-    body: form,
-  });
-  if (!up.ok) throw new Error("فشل رفع النسخة المحسّنة");
-  const r = await up.json();
+  const up = await uploadImageToBunny(formData);
+  if (!up.success || !up.url) throw new Error(up.error || "فشل رفع النسخة المحسّنة إلى Bunny");
 
   return {
-    url: (r.secure_url || r.url) as string,
-    publicId: (r.public_id as string) ?? null,
+    url: up.url,
+    publicId: null as string | null,
     mimeType: "image/webp",
-    fileSize: (r.bytes as number) ?? webp.size,
+    fileSize: webp.size,
     width,
     height,
   };
+}
+
+/**
+ * ⛔ RETIRED (2026-07-29, tripwire rule) — the old re-upload-to-Cloudinary step, kept as
+ * text only. Never call: throws so a hidden Cloudinary path can't fail silently.
+ */
+export async function reencodeToCloudinaryRETIRED(): Promise<never> {
+  throw new Error("RETIRED: Cloudinary re-upload is disabled — the optimizer now uploads to Bunny.");
+  /* Original implementation (text, for reference):
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+  const form = new FormData();
+  form.append("file", webp);
+  form.append("upload_preset", uploadPreset);
+  const up = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: "POST", body: form });
+  const r = await up.json();
+  return { url: r.secure_url || r.url, publicId: r.public_id ?? null, ... };
+  */
 }
 
 export function OptimizeImagesSection({ images }: { images: OptimizableImage[] }) {

@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+
+import { BRAND_ICON_URL } from "@modonty/database/lib/brand-assets";
 import { cn } from "@/lib/utils";
 import {
   Collapsible,
@@ -45,6 +47,7 @@ import {
   CreditCard,
   Download,
   Database,
+  CloudUpload,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -202,7 +205,6 @@ const menuGroups: MenuGroup[] = [
     items: [
       { icon: GoogleSearchConsoleIcon, label: "Search Console", href: "/search-console" },
       { icon: Globe, label: "Bing Webmaster", href: "/bing-webmaster" },
-      { icon: Share2, label: "Social Media", href: "/social/facebook" },
     ],
   },
   {
@@ -259,6 +261,9 @@ const menuGroups: MenuGroup[] = [
       { icon: ListChecks, label: "Dropdown Lists", href: "/settings/reference-data" },
       { icon: Download, label: "Export Data", href: "/export-data" },
       { icon: Database, label: "Database", href: "/database" },
+      // TEMPORARY — one-time Cloudinary → Bunny migration. Delete this line together with
+      // `app/(dashboard)/bunny-migration/` once every asset is on Bunny and verified.
+      { icon: CloudUpload, label: "Bunny Migration", href: "/bunny-migration" },
       { icon: Wrench, label: "Maintenance", href: "/maintenance" },
       { icon: Globe, label: "SEO Maintenance", href: "/seo" },
       { icon: MailOpen, label: "Email Templates", href: "/emails" },
@@ -463,7 +468,7 @@ export function Sidebar({ articleStatusCounts }: { articleStatusCounts?: Article
         <Link href="/" title="Modonty — Dashboard" className="flex items-center gap-2 min-w-0">
           <div className="h-8 w-8 rounded-md overflow-hidden flex items-center justify-center bg-background border border-border shrink-0">
             <Image
-              src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1768807772/modontyIcon_svukux.svg"
+              src={BRAND_ICON_URL}
               alt="Modonty"
               width={32}
               height={32}

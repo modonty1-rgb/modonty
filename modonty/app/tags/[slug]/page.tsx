@@ -5,6 +5,7 @@ import { cacheTag, cacheLife } from "next/cache";
 import { ArticleStatus, CommentStatus, SubscriptionStatus } from "@prisma/client";
 import { HashIcon } from "lucide-react";
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 import { generateMetadataFromSEO, jsonLdHtmlFromString } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
@@ -97,8 +98,8 @@ export default async function TagPage({ params }: TagPageProps) {
           id: true,
           name: true,
           slug: true,
-          logoMedia: { select: { url: true } },
-          heroImageMedia: { select: { url: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true } },
+          heroImageMedia: { select: { url: true, bunnyUrl: true } },
           phone: true,
           addressCity: true,
           slogan: true,
@@ -194,8 +195,8 @@ export default async function TagPage({ params }: TagPageProps) {
                   id={c.id}
                   name={c.name}
                   slug={c.slug}
-                  logoUrl={c.logoMedia?.url}
-                  heroUrl={c.heroImageMedia?.url}
+                  logoUrl={mediaSrc(c.logoMedia) ?? undefined}
+                  heroUrl={mediaSrc(c.heroImageMedia) ?? undefined}
                   slogan={c.slogan}
                   addressCity={c.addressCity}
                   averageRating={ratingMap.get(c.id) ?? 0}

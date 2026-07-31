@@ -1,3 +1,4 @@
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { db } from "@/lib/db";
 
 export interface ProfileBooking {
@@ -31,7 +32,7 @@ export async function getProfileBookings(
       preferredAt: true,
       createdAt: true,
       client: {
-        select: { name: true, slug: true, logoMedia: { select: { url: true } } },
+        select: { name: true, slug: true, logoMedia: { select: { url: true, bunnyUrl: true } } },
       },
       article: { select: { title: true, slug: true } },
     },
@@ -49,7 +50,7 @@ export async function getProfileBookings(
     client: {
       name: r.client.name,
       slug: r.client.slug,
-      logo: r.client.logoMedia?.url ?? null,
+      logo: mediaSrc(r.client.logoMedia),
     },
     article: r.article,
   }));

@@ -10,6 +10,8 @@ import { regenerateClientSeo } from "../../profile/actions/regenerate-client-seo
 export interface GalleryImage {
   id: string;
   url: string;
+  /** Required key (value may be null) — declaring it optional silently erased the Bunny copy. */
+  bunnyUrl: string | null;
   altText: string | null;
   width: number | null;
   height: number | null;
@@ -66,7 +68,7 @@ export async function addGalleryImage(input: AddGalleryInput): Promise<AddResult
         scope: "CLIENT",
         type: "GALLERY",
       },
-      select: { id: true, url: true, altText: true, width: true, height: true },
+      select: { id: true, url: true, bunnyUrl: true, altText: true, width: true, height: true },
     });
 
     // Unified flow (locked 2026-07-06): same file also becomes an image-reel,

@@ -16,6 +16,7 @@ export async function createIndustry(data: {
   canonicalUrl?: string;
   socialImage?: string;
   socialImageAlt?: string;
+  socialImageMediaId?: string;
   cloudinaryPublicId?: string;
 }) {
   try {

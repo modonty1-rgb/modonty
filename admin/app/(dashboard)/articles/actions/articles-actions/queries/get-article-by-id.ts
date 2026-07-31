@@ -28,6 +28,7 @@ export async function getArticleById(id: string) {
               select: {
                 id: true,
                 url: true,
+                bunnyUrl: true,
               },
             },
           },
@@ -43,6 +44,7 @@ export async function getArticleById(id: string) {
           select: {
             id: true,
             url: true,
+            bunnyUrl: true,
             altText: true,
             width: true,
             height: true,
@@ -59,6 +61,7 @@ export async function getArticleById(id: string) {
               select: {
                 id: true,
                 url: true,
+                bunnyUrl: true,
                 altText: true,
                 width: true,
                 height: true,

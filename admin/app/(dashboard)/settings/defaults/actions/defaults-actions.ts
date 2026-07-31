@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import type { MediaType } from "@prisma/client";
 
 // The 3 platform default roles. Each is a single PLATFORM-scope media with no client.
@@ -28,13 +29,14 @@ export interface PlatformDefaults {
 export async function getPlatformDefaults(): Promise<PlatformDefaults> {
   const rows = await db.media.findMany({
     where: { scope: "PLATFORM", clientId: null, type: { in: ["LOGO", "POST", "HERO"] } },
-    select: { type: true, url: true },
+    select: { type: true, url: true, bunnyUrl: true },
   });
 
   const result: PlatformDefaults = { LOGO: null, POST: null, HERO: null };
   for (const r of rows) {
     if (r.type === "LOGO" || r.type === "POST" || r.type === "HERO") {
-      result[r.type] = r.url;
+      // Prefer the Bunny copy — these platform defaults render on the clients list.
+      result[r.type] = mediaSrc(r);
     }
   }
   return result;

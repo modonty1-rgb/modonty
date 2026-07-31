@@ -5,6 +5,7 @@
 
 import { cache } from 'react';
 import { cacheTag, cacheLife } from 'next/cache';
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus } from "@prisma/client";
 import type { ArticleResponse, ArticleFilters, InteractionCounts, FeedPost } from "@/lib/types";
@@ -20,7 +21,7 @@ type ArticleWithRelations = Prisma.ArticleGetPayload<{
         slug: true;
         logoMedia: {
           select: {
-            url: true;
+            url: true, bunnyUrl: true;
           };
         };
         industry: {
@@ -48,7 +49,7 @@ type ArticleWithRelations = Prisma.ArticleGetPayload<{
     };
     featuredImage: {
       select: {
-        url: true;
+        url: true, bunnyUrl: true;
         altText: true;
       };
     };
@@ -72,7 +73,7 @@ const feedArticleSelect = {
       name: true,
       slug: true,
       logoMedia: {
-        select: { url: true },
+        select: { url: true, bunnyUrl: true },
       },
       industry: {
         select: { name: true },
@@ -95,7 +96,7 @@ const feedArticleSelect = {
   },
   featuredImage: {
     select: {
-      url: true,
+      url: true, bunnyUrl: true,
       altText: true,
     },
   },
@@ -115,7 +116,7 @@ function mapFeedArticleToResponse(article: FeedArticlePayload): ArticleResponse 
     title: article.title,
     slug: article.slug,
     excerpt: article.excerpt || undefined,
-    image: article.featuredImage?.url,
+    image: mediaSrc(article.featuredImage) ?? undefined,
     publishedAt: (article.datePublished || article.createdAt).toISOString(),
     author: {
       id: article.author.id,
@@ -126,7 +127,7 @@ function mapFeedArticleToResponse(article: FeedArticlePayload): ArticleResponse 
       id: article.client.id,
       name: article.client.name,
       slug: article.client.slug,
-      logo: article.client.logoMedia?.url || undefined,
+      logo: mediaSrc(article.client.logoMedia) || undefined,
       industry: article.client.industry?.name || undefined,
     },
     category: article.category
@@ -138,7 +139,8 @@ function mapFeedArticleToResponse(article: FeedArticlePayload): ArticleResponse 
       : undefined,
     featuredImage: article.featuredImage
       ? {
-          url: article.featuredImage.url,
+          url: mediaSrc(article.featuredImage) ?? article.featuredImage.url,
+          bunnyUrl: null, // resolved into url above
           altText: article.featuredImage.altText || undefined,
         }
       : undefined,
@@ -257,11 +259,11 @@ const homeFeedSelect = {
       id: true,
       name: true,
       slug: true,
-      logoMedia: { select: { url: true } },
+      logoMedia: { select: { url: true, bunnyUrl: true } },
     },
   },
   category: { select: { id: true, name: true, slug: true } },
-  featuredImage: { select: { url: true, altText: true } },
+  featuredImage: { select: { url: true, bunnyUrl: true, altText: true } },
   audioUrl: true,
   likesCount: true,
   commentsCount: true,
@@ -277,13 +279,13 @@ function mapHomeFeedArticle(a: HomeFeedPayload): FeedPost {
     title: a.title,
     content: a.excerpt || "",
     excerpt: a.excerpt ?? undefined,
-    image: a.featuredImage?.url,
+    image: mediaSrc(a.featuredImage) ?? undefined,
     slug: a.slug,
     publishedAt: a.datePublished || a.createdAt,
     clientName: a.client.name,
     clientSlug: a.client.slug,
     clientId: a.client.id,
-    clientLogo: a.client.logoMedia?.url ?? undefined,
+    clientLogo: mediaSrc(a.client.logoMedia) ?? undefined,
     readingTimeMinutes: a.readingTimeMinutes ?? undefined,
     hasAudio: !!a.audioUrl,
     likes: a.likesCount || 0,
@@ -336,7 +338,7 @@ export const getArticleBySlug = cache(async (slug: string) => {
           slug: true,
           logoMedia: {
             select: {
-              url: true,
+              url: true, bunnyUrl: true,
             },
           },
           industry: {
@@ -362,7 +364,7 @@ export const getArticleBySlug = cache(async (slug: string) => {
       },
       featuredImage: {
         select: {
-          url: true,
+          url: true, bunnyUrl: true,
           altText: true,
         },
       },
@@ -469,7 +471,7 @@ function mapArticleToResponse(article: ArticleWithRelations): ArticleResponse {
     slug: article.slug,
     excerpt: article.excerpt || undefined,
     content: article.content || undefined,
-    image: article.featuredImage?.url,
+    image: mediaSrc(article.featuredImage) ?? undefined,
     publishedAt: (article.datePublished || article.createdAt).toISOString(),
     author: {
       id: article.author.id,
@@ -482,7 +484,7 @@ function mapArticleToResponse(article: ArticleWithRelations): ArticleResponse {
       id: article.client.id,
       name: article.client.name,
       slug: article.client.slug,
-      logo: article.client.logoMedia?.url || undefined,
+      logo: mediaSrc(article.client.logoMedia) || undefined,
       industry: article.client.industry?.name || undefined,
     },
     category: article.category
@@ -494,7 +496,8 @@ function mapArticleToResponse(article: ArticleWithRelations): ArticleResponse {
       : undefined,
     featuredImage: article.featuredImage
       ? {
-          url: article.featuredImage.url,
+          url: mediaSrc(article.featuredImage) ?? article.featuredImage.url,
+          bunnyUrl: null, // resolved into url above
           altText: article.featuredImage.altText || undefined,
         }
       : undefined,

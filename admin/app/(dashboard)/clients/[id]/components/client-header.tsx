@@ -11,6 +11,7 @@ import { DeleteClientButton } from "./delete-client-button";
 import { ClientLogoModal } from "../../components/client-logo-modal";
 import { ClientHeroModal } from "../../components/client-hero-modal";
 import { YMYL_CATEGORIES, type YmylCategory } from "@modonty/database/lib/seo/ymyl-config";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface ClientHeaderProps {
   client: {
@@ -18,8 +19,8 @@ interface ClientHeaderProps {
     name: string;
     slug: string;
     url: string | null;
-    logoMedia: { id?: string; url: string; altText: string | null } | null;
-    heroImageMedia: { id?: string; url: string; altText: string | null } | null;
+    logoMedia: { id?: string; url: string; bunnyUrl: string | null; altText: string | null } | null;
+    heroImageMedia: { id?: string; url: string; bunnyUrl: string | null; altText: string | null } | null;
     subscriptionStatus: string;
     isYmyl: boolean;
     ymylCategory: string | null;
@@ -48,7 +49,7 @@ export function ClientHeader({ client, publicBaseUrl, seoScore }: ClientHeaderPr
       <div className="relative h-28 sm:h-32 bg-gradient-to-l from-primary/15 via-primary/5 to-violet-500/15">
         {client.heroImageMedia?.url && (
           <Image
-            src={client.heroImageMedia.url}
+            src={mediaSrc(client.heroImageMedia) ?? ""}
             alt={client.heroImageMedia.altText || `${client.name} cover`}
             fill
             className="object-cover"
@@ -79,7 +80,7 @@ export function ClientHeader({ client, publicBaseUrl, seoScore }: ClientHeaderPr
           >
             {client.logoMedia?.url ? (
               <Image
-                src={client.logoMedia.url}
+                src={mediaSrc(client.logoMedia) ?? ""}
                 alt={client.logoMedia.altText || client.name}
                 width={80}
                 height={80}
@@ -157,14 +158,14 @@ export function ClientHeader({ client, publicBaseUrl, seoScore }: ClientHeaderPr
         open={logoOpen}
         onOpenChange={setLogoOpen}
         clientId={client.id}
-        initialLogoUrl={client.logoMedia?.url}
+        initialLogoUrl={mediaSrc(client.logoMedia)}
         initialLogoMediaId={client.logoMedia?.id ?? null}
       />
       <ClientHeroModal
         open={heroOpen}
         onOpenChange={setHeroOpen}
         clientId={client.id}
-        initialHeroUrl={client.heroImageMedia?.url}
+        initialHeroUrl={mediaSrc(client.heroImageMedia)}
         initialHeroMediaId={client.heroImageMedia?.id ?? null}
       />
     </div>

@@ -121,7 +121,7 @@ export async function generateAndSaveJsonLd(
           siteName: settings.siteName,
           siteUrl: settings.siteUrl,
           brandDescription: settings.brandDescription,
-          logoUrl: settings.logoUrl || settings.orgLogoUrl,
+          logoUrl: settings.logoUrl,
           facebookUrl: settings.facebookUrl,
           twitterUrl: settings.twitterUrl,
           linkedInUrl: settings.linkedInUrl,

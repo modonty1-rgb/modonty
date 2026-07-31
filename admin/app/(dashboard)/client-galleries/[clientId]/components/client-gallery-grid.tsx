@@ -22,6 +22,7 @@ import {
   addClientGalleryImage,
   deleteClientGalleryImage,
 } from "../../actions/gallery-mutations";
+import { uploadImageToBunny } from "@/app/(dashboard)/media/actions/upload-image-to-bunny";
 import type { GalleryImageRow } from "../../helpers/load-galleries";
 
 interface Props {
@@ -30,33 +31,46 @@ interface Props {
   images: GalleryImageRow[];
 }
 
-// Uploads one file to Cloudinary (unsigned preset — same pattern as the media upload zone),
-// returns the stored-image fields. Throws on any failure.
-async function uploadToCloudinary(file: File, clientId: string) {
+// Bunny-primary (2026-07-29): uploads one gallery file through the shared Bunny server
+// action (type=GALLERY → gallery/{clientSlug}/ on the clients zone). Throws on failure.
+async function uploadGalleryToBunny(file: File, clientId: string) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("filename", file.name);
+  formData.append("type", "GALLERY");
+  formData.append("scope", "CLIENT");
+  formData.append("clientId", clientId);
+
+  const result = await uploadImageToBunny(formData);
+  if (!result.success || !result.url) throw new Error(result.error || "فشل رفع الصورة إلى Bunny");
+  return {
+    url: result.url,
+    publicId: null as string | null,
+    filename: file.name,
+    mimeType: file.type || "image/webp",
+    width: result.width ?? null,
+    height: result.height ?? null,
+    fileSize: file.size ?? null,
+  };
+}
+
+/**
+ * ⛔ RETIRED (2026-07-29, tripwire rule) — the old direct-to-Cloudinary gallery upload,
+ * kept as text only. Never call: throws so a hidden Cloudinary path can't fail silently.
+ */
+export async function uploadToCloudinaryRETIRED(): Promise<never> {
+  throw new Error("RETIRED: Cloudinary gallery upload is disabled — gallery uploads now go to Bunny.");
+  /* Original implementation (text, for reference):
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-  if (!cloudName || !uploadPreset) throw new Error("إعدادات Cloudinary غير مضبوطة");
-
   const form = new FormData();
   form.append("file", file);
   form.append("upload_preset", uploadPreset);
   form.append("asset_folder", `clients/${clientId}`);
-
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-    method: "POST",
-    body: form,
-  });
-  if (!res.ok) throw new Error("فشل رفع الصورة إلى Cloudinary");
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: "POST", body: form });
   const r = await res.json();
-  return {
-    url: (r.secure_url || r.url) as string,
-    publicId: (r.public_id as string) ?? null,
-    filename: file.name,
-    mimeType: file.type || (r.format ? `image/${r.format}` : "image/webp"),
-    width: (r.width as number) ?? null,
-    height: (r.height as number) ?? null,
-    fileSize: (r.bytes as number) ?? file.size ?? null,
-  };
+  return { url: r.secure_url || r.url, publicId: r.public_id ?? null, ... };
+  */
 }
 
 /** "image/webp" → "WEBP", "image/jpeg" → "JPG", … */
@@ -82,7 +96,7 @@ export function ClientGalleryGrid({ clientId, clientName, images }: Props) {
     let ok = 0;
     for (const file of files) {
       try {
-        const uploaded = await uploadToCloudinary(file, clientId);
+        const uploaded = await uploadGalleryToBunny(file, clientId);
         const res = await addClientGalleryImage(clientId, uploaded);
         if (res.success) ok += 1;
         else toast({ title: "تعذّر الحفظ", description: res.error, variant: "destructive" });

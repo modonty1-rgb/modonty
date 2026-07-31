@@ -2,6 +2,8 @@
 
 import { CheckCircle2, AlertCircle, Building2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { mediaSrc } from '@modonty/database/lib/media-src';
+
 import type { Client, Media } from '@prisma/client';
 
 interface ClientLogoPreviewProps {
@@ -24,7 +26,7 @@ const iconSizes = {
 export function ClientLogoPreview({ client, size = 'md' }: ClientLogoPreviewProps) {
   if (!client) return null;
 
-  const hasLogo = !!client.logoMedia?.url;
+  const logoSrc = mediaSrc(client.logoMedia);
   const initials = client.name
     .split(' ')
     .map((word) => word.charAt(0))
@@ -36,9 +38,7 @@ export function ClientLogoPreview({ client, size = 'md' }: ClientLogoPreviewProp
     <div className="flex items-center gap-3">
       {/* Avatar/Logo */}
       <Avatar className={sizeClasses[size]}>
-        {hasLogo && client.logoMedia ? (
-          <AvatarImage src={client.logoMedia.url} alt={client.name} />
-        ) : null}
+        {logoSrc ? <AvatarImage src={logoSrc} alt={client.name} /> : null}
         <AvatarFallback className="bg-primary/10 text-primary">
           {initials || <Building2 className={iconSizes[size]} />}
         </AvatarFallback>
@@ -48,7 +48,7 @@ export function ClientLogoPreview({ client, size = 'md' }: ClientLogoPreviewProp
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium truncate">{client.name}</p>
         <div className="flex items-center gap-1.5 mt-0.5">
-          {hasLogo ? (
+          {logoSrc ? (
             <>
               <CheckCircle2 className="h-3 w-3 text-green-600 dark:text-green-400" />
               <span className="text-xs text-muted-foreground">Logo ready</span>

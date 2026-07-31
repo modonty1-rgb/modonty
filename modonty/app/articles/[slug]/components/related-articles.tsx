@@ -3,6 +3,7 @@ import { ArticleSectionCollapsible } from "./article-section-collapsible";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { ArticleHeroWarm } from "@/components/media/hero-warm";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { RelativeTime } from "@/components/date/RelativeTime";
 import {
   IconLike,
@@ -18,7 +19,7 @@ interface RelatedArticle {
   excerpt: string | null;
   datePublished: Date | null;
   createdAt: Date;
-  featuredImage?: { url: string; altText: string | null } | null;
+  featuredImage?: { url: string; bunnyUrl: string | null; altText: string | null } | null;
   client: { name: string; slug: string };
   likesCount: number;
   dislikesCount: number;
@@ -54,7 +55,7 @@ export function RelatedArticles({ articleId, clientId, relatedArticles }: Relate
           clientId={clientId}
           className="h-full block"
         >
-          <ArticleHeroWarm href={`/articles/${article.slug}`} imageUrl={article.featuredImage?.url ?? null} />
+          <ArticleHeroWarm href={`/articles/${article.slug}`} imageUrl={mediaSrc(article.featuredImage)} />
           <Card className="hover:shadow-md transition-shadow cursor-pointer h-full flex flex-row overflow-hidden">
             <div className="flex-[0_0_80%] flex flex-col min-w-0 min-h-[7.5rem] p-4 text-right justify-between">
               <div>
@@ -94,7 +95,7 @@ export function RelatedArticles({ articleId, clientId, relatedArticles }: Relate
             {article.featuredImage ? (
               <div className="flex-[0_0_20%] aspect-square relative overflow-hidden bg-muted">
                 <OptimizedImage
-                  src={article.featuredImage.url}
+                  src={mediaSrc(article.featuredImage) ?? article.featuredImage.url}
                   alt={article.featuredImage.altText || article.title}
                   fill
                   className="object-cover"

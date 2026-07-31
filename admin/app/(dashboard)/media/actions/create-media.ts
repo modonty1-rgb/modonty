@@ -33,6 +33,7 @@ interface CreateMediaData {
   cloudinaryPublicId?: string;
   cloudinaryVersion?: string;
   cloudinarySignature?: string;
+  bunnyUrl?: string | null; // Dual-Write mirror (P2-2) — production keeps reading `url`
 }
 
 function validateMimeType(mimeType: string): boolean {
@@ -140,6 +141,7 @@ export async function createMedia(data: CreateMediaData) {
         cloudinaryPublicId: data.cloudinaryPublicId,
         cloudinaryVersion: data.cloudinaryVersion,
         cloudinarySignature: data.cloudinarySignature,
+        bunnyUrl: data.bunnyUrl ?? undefined,
       },
     });
     await logAction("media.create", {

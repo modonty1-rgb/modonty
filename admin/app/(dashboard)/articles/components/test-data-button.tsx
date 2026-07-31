@@ -42,13 +42,14 @@ export function TestDataButton() {
       }
       
       // Generate and fill test data - filter out media with null clientId
-      const validMedia: Array<{ id: string; clientId: string; url: string; altText?: string | null }> = [];
+      const validMedia: Array<{ id: string; clientId: string; url: string; bunnyUrl: string | null; altText?: string | null }> = [];
       for (const m of sources.media || []) {
         if (m.clientId !== null && typeof m.clientId === 'string') {
           validMedia.push({
             id: m.id,
             clientId: m.clientId as string,
             url: m.url,
+            bunnyUrl: null,
             altText: m.altText ?? null,
           });
         }

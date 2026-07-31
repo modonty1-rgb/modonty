@@ -1,4 +1,5 @@
 import NextImage from "next/image";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { IconClients, IconVerified, IconChevronLeft } from "@/lib/icons";
@@ -9,7 +10,7 @@ interface ArticleLabMobileIdentityProps {
     name: string;
     slug: string;
     addressCity?: string | null;
-    logoMedia?: { url: string } | null;
+    logoMedia?: { url: string; bunnyUrl: string | null } | null;
   };
   articleId: string;
 }
@@ -17,7 +18,7 @@ interface ArticleLabMobileIdentityProps {
 // Mobile-only: compact, tappable client identity right under the title (instant trust).
 // The client is the cornerstone deliverable — it must show inline, never hidden in a sheet.
 export function ArticleLabMobileIdentity({ client, articleId }: ArticleLabMobileIdentityProps) {
-  const logoUrl = client.logoMedia?.url ?? null;
+  const logoUrl = mediaSrc(client.logoMedia);
 
   return (
     <CtaTrackedLink

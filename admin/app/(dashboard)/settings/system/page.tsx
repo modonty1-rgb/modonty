@@ -3,6 +3,7 @@ import { getAllSettings } from "../actions/settings-actions";
 import { SettingsPageHeader } from "../_shared/page-header";
 import { SystemForm } from "./components/system-form";
 import { SeedDevButton } from "./components/seed-dev-button";
+import { CoreClientCard } from "./components/core-client-card";
 
 export const maxDuration = 800;
 
@@ -25,6 +26,9 @@ export default async function SystemSettingsPage() {
             <SeedDevButton />
           </div>
         )}
+      </div>
+      <div className="mb-4">
+        <CoreClientCard />
       </div>
       <Suspense fallback={<div className="py-12 text-center text-sm text-muted-foreground">Loading...</div>}>
         <SystemForm initialSettings={settings} />

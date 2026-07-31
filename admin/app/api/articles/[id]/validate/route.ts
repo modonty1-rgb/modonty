@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { mediaSrc } from '@modonty/database/lib/media-src';
 
 /**
  * POST /api/articles/[id]/validate
@@ -47,7 +48,7 @@ export async function POST(
     const desc = article.seoDescription || "";
     const canonical = article.canonicalUrl || "";
     const ogTitle = article.seoTitle || article.title;
-    const imgUrl = article.featuredImage?.url || "";
+    const imgUrl = mediaSrc(article.featuredImage) || "";
 
     const html = `<!DOCTYPE html><html lang="ar" dir="rtl">
 <head>

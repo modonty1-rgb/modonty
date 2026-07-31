@@ -8,9 +8,9 @@ import {
   getBingPageStats,
   getBingRankAndTrafficStats,
   aggregateBingTraffic,
+  aggregateBingStats,
   parseBingDate,
-  type BingQueryStat,
-  type BingPageStat,
+  type BingAggregatedStat,
 } from "@/lib/bing-webmaster/client";
 
 import { SubmitIndexNowCard } from "./components/submit-indexnow-card";
@@ -41,6 +41,17 @@ function formatPercent(n: number): string {
   return `${(n * 100).toFixed(2)}%`;
 }
 
+/** Strip the origin off a Bing page URL and decode it. A stray `%` in the path makes
+ *  decodeURIComponent throw URIError — fall back to the raw path instead of crashing. */
+function safeDecodePath(url: string): string {
+  const path = url.replace(/^https?:\/\/[^/]+/, "");
+  try {
+    return decodeURIComponent(path);
+  } catch {
+    return path;
+  }
+}
+
 export default async function BingWebmasterPage() {
   const [queries, pages, traffic] = await Promise.all([
     safeBingCall(getBingQueryStats),
@@ -51,14 +62,15 @@ export default async function BingWebmasterPage() {
   const totals = traffic.data ? aggregateBingTraffic(traffic.data) : null;
   const anyError = !queries.ok || !pages.ok || !traffic.ok;
 
-  const topQueries: BingQueryStat[] = (queries.data ?? [])
-    .slice()
-    .sort((a, b) => (b.Impressions ?? 0) - (a.Impressions ?? 0))
+  // Bing returns one row PER DAY per query/URL, and GetPageStats puts the page URL in
+  // `Query` (both endpoints share the QueryStats DTO). Aggregate first, then rank —
+  // ranking raw rows repeated the same URL/query once per day. See client.ts.
+  const topQueries: BingAggregatedStat[] = aggregateBingStats(queries.data ?? [])
+    .sort((a, b) => b.Impressions - a.Impressions)
     .slice(0, 10);
 
-  const topPages: BingPageStat[] = (pages.data ?? [])
-    .slice()
-    .sort((a, b) => (b.Impressions ?? 0) - (a.Impressions ?? 0))
+  const topPages: BingAggregatedStat[] = aggregateBingStats(pages.data ?? [])
+    .sort((a, b) => b.Impressions - a.Impressions)
     .slice(0, 10);
 
   return (
@@ -168,11 +180,11 @@ export default async function BingWebmasterPage() {
               </thead>
               <tbody>
                 {topQueries.map((q, i) => (
-                  <tr key={q.Query + i} className="border-b last:border-b-0">
+                  <tr key={q.key} className="border-b last:border-b-0">
                     <td className="py-2 text-muted-foreground">{i + 1}</td>
-                    <td className="py-2 font-medium" dir="rtl">{q.Query}</td>
-                    <td className="py-2 text-right">{formatNumber(q.Clicks ?? 0)}</td>
-                    <td className="py-2 text-right">{formatNumber(q.Impressions ?? 0)}</td>
+                    <td className="py-2 font-medium" dir="rtl">{q.key}</td>
+                    <td className="py-2 text-right">{formatNumber(q.Clicks)}</td>
+                    <td className="py-2 text-right">{formatNumber(q.Impressions)}</td>
                     <td className="py-2 text-right text-muted-foreground">
                       {q.AvgImpressionPosition?.toFixed(1) ?? "—"}
                     </td>
@@ -211,21 +223,21 @@ export default async function BingWebmasterPage() {
               </thead>
               <tbody>
                 {topPages.map((p, i) => (
-                  <tr key={p.Page + i} className="border-b last:border-b-0">
+                  <tr key={p.key} className="border-b last:border-b-0">
                     <td className="py-2 text-muted-foreground">{i + 1}</td>
                     <td className="py-2">
                       <a
-                        href={p.Page}
+                        href={p.key}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="hover:underline text-blue-700 line-clamp-1 max-w-md inline-block"
-                        title={p.Page}
+                        title={p.key}
                       >
-                        {decodeURIComponent(p.Page.replace(/^https?:\/\/[^/]+/, ""))}
+                        {safeDecodePath(p.key)}
                       </a>
                     </td>
-                    <td className="py-2 text-right">{formatNumber(p.Clicks ?? 0)}</td>
-                    <td className="py-2 text-right">{formatNumber(p.Impressions ?? 0)}</td>
+                    <td className="py-2 text-right">{formatNumber(p.Clicks)}</td>
+                    <td className="py-2 text-right">{formatNumber(p.Impressions)}</td>
                   </tr>
                 ))}
               </tbody>

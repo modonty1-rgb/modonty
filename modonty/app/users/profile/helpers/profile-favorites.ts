@@ -1,3 +1,4 @@
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 
@@ -7,7 +8,7 @@ export interface FavoritedArticle {
   slug: string;
   excerpt: string | null;
   datePublished: Date | null;
-  featuredImage: { url: string; altText: string | null } | null;
+  featuredImage: { url: string; bunnyUrl: string | null; altText: string | null } | null;
   client: { id: string; name: string; slug: string; logo: string | null };
   author: { id: string; name: string; slug: string };
   category: { id: string; name: string; slug: string } | null;
@@ -37,13 +38,13 @@ export async function getProfileFavorites(
           excerpt: true,
           datePublished: true,
           status: true,
-          featuredImage: { select: { url: true, altText: true } },
+          featuredImage: { select: { url: true, bunnyUrl: true, altText: true } },
           client: {
             select: {
               id: true,
               name: true,
               slug: true,
-              logoMedia: { select: { url: true } },
+              logoMedia: { select: { url: true, bunnyUrl: true } },
             },
           },
           author: { select: { id: true, name: true, slug: true } },
@@ -64,13 +65,13 @@ export async function getProfileFavorites(
       excerpt: fav.article.excerpt,
       datePublished: fav.article.datePublished,
       featuredImage: fav.article.featuredImage
-        ? { url: fav.article.featuredImage.url, altText: fav.article.featuredImage.altText }
+        ? { url: mediaSrc(fav.article.featuredImage) ?? fav.article.featuredImage.url, bunnyUrl: null, altText: fav.article.featuredImage.altText }
         : null,
       client: {
         id: fav.article.client.id,
         name: fav.article.client.name,
         slug: fav.article.client.slug,
-        logo: fav.article.client.logoMedia?.url ?? null,
+        logo: mediaSrc(fav.article.client.logoMedia),
       },
       author: {
         id: fav.article.author.id,

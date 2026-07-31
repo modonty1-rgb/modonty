@@ -1,9 +1,16 @@
 import { z } from "zod";
 
+// `z.string().url()` alone ACCEPTS `data:` URIs (verified on zod 3.24.2) — that is how a
+// whole base64 image used to land inside User.image. Avatars must be a real hosted URL.
+const hostedImageUrl = z
+  .string()
+  .url("يجب أن يكون رابط صحيح")
+  .refine((v) => /^https?:\/\//i.test(v), "الصورة لازم تكون مرفوعة على الاستضافة، مش ملفاً مضمّناً");
+
 export const profileSchema = z.object({
   name: z.string().min(2, "الاسم يجب أن يكون على الأقل حرفين").max(100, "الاسم طويل جداً"),
   bio: z.string().max(500, "السيرة الذاتية يجب أن تكون أقل من 500 حرف").optional(),
-  image: z.string().url("يجب أن يكون رابط صحيح").optional().nullable(),
+  image: hostedImageUrl.optional().nullable(),
 });
 
 export const passwordSchema = z.object({

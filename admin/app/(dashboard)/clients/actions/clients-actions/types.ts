@@ -62,12 +62,14 @@ export type ClientForList = {
   slogan: string | null;
   logoMedia: {
     url: string;
+    bunnyUrl: string | null;
     altText: string | null;
     width: number | null;
     height: number | null;
   } | null;
   heroImageMedia: {
     url: string;
+    bunnyUrl: string | null;
     altText: string | null;
     width: number | null;
     height: number | null;

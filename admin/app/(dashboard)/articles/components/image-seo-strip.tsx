@@ -135,7 +135,7 @@ export function ImageSeoStrip({
             ))}
           </div>
         ) : (
-          <span className="flex-1 text-[12px] text-muted-foreground">
+          <span className="min-w-[9rem] flex-1 text-[12px] leading-snug text-muted-foreground">
             سيو الصورة مكتمل — لا نواقص يكتبها الكاتب
           </span>
         )}

@@ -6,10 +6,11 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { logAction } from "@/lib/audit/log-action";
 
-// Verification image ("التوثيق") — a Cloudinary image of the client's official
-// registration/license. Admin-controlled (Modonty verifies; the client does not
-// verify itself — trust anchor). Stored as a plain URL string, displayed on the
-// public client page. NOT part of JSON-LD, so no SEO regeneration is needed.
+// Verification image ("التوثيق") — the client's official registration/license,
+// picked from the client's own media library (Bunny). Admin-controlled (Modonty
+// verifies; the client does not verify itself — trust anchor). Stored as a plain
+// URL string, displayed on the public client page. NOT part of JSON-LD, so no
+// SEO regeneration is needed.
 const schema = z.object({
   verificationImageUrl: z.string().url("رابط صورة غير صالح").nullable(),
 });

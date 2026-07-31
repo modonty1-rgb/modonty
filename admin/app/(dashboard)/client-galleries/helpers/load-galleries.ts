@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 // Data for the Client Galleries route (client-page GALLERY images, type=GALLERY · scope=CLIENT).
 // These live here now instead of the general /media library.
@@ -14,7 +15,7 @@ export interface GalleryClientRow {
 export async function getClientsWithGalleryCounts(): Promise<GalleryClientRow[]> {
   const [clients, counts] = await Promise.all([
     db.client.findMany({
-      select: { id: true, name: true, logoMedia: { select: { url: true } } },
+      select: { id: true, name: true, logoMedia: { select: { url: true, bunnyUrl: true } } },
     }),
     db.media.groupBy({
       by: ["clientId"],
@@ -29,7 +30,7 @@ export async function getClientsWithGalleryCounts(): Promise<GalleryClientRow[]>
     .map((c) => ({
       id: c.id,
       name: c.name,
-      logoUrl: c.logoMedia?.url ?? null,
+      logoUrl: mediaSrc(c.logoMedia),
       count: countMap.get(c.id) ?? 0,
     }))
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "ar"));
@@ -66,6 +67,7 @@ export async function getClientGallery(clientId: string): Promise<ClientGalleryD
     select: {
       id: true,
       url: true,
+      bunnyUrl: true,
       altText: true,
       width: true,
       height: true,
@@ -78,6 +80,12 @@ export async function getClientGallery(clientId: string): Promise<ClientGalleryD
 
   return {
     client,
-    images: images.map((m) => ({ ...m, createdAt: m.createdAt.toISOString() })),
+    // `url` here is the DISPLAY source — prefer the Bunny copy. Without this the admin
+    // gallery grid kept rendering the raw Cloudinary url for already-mirrored rows.
+    images: images.map(({ bunnyUrl, ...m }) => ({
+      ...m,
+      url: mediaSrc({ bunnyUrl, url: m.url }) ?? m.url,
+      createdAt: m.createdAt.toISOString(),
+    })),
   };
 }

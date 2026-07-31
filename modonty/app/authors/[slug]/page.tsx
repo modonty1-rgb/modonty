@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import NextImage from "next/image";
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { ArticleStatus } from "@prisma/client";
 import Link from "@/components/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
@@ -82,7 +83,7 @@ async function getAuthorArticles(authorId: string) {
       excerpt: true,
       datePublished: true,
       featuredImage: {
-        select: { url: true, altText: true },
+        select: { url: true, bunnyUrl: true, altText: true },
       },
     },
     orderBy: { datePublished: "desc" },
@@ -341,7 +342,7 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
                     {article.featuredImage && (
                       <div className="relative aspect-video bg-muted">
                         <NextImage
-                          src={article.featuredImage.url}
+                          src={mediaSrc(article.featuredImage) ?? article.featuredImage.url}
                           alt={article.featuredImage.altText || article.title}
                           fill
                           className="object-cover"

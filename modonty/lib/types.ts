@@ -47,6 +47,7 @@ export interface ArticleResponse {
   };
   featuredImage?: {
     url: string;
+    bunnyUrl: string | null;
     altText?: string;
   };
   interactions: InteractionCounts;

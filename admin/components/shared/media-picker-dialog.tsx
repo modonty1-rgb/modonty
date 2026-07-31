@@ -25,8 +25,9 @@ import NextImage from "next/image";
 import { Loader2, Search, Upload, RefreshCw } from "lucide-react";
 import { getMedia, type MediaFilters } from "@/app/(dashboard)/media/actions/media-actions";
 import Link from "next/link";
-import { MediaType, MediaScope } from "@prisma/client";
+import { MediaType } from "@prisma/client";
 import { getMediaTypeLabel, getMediaTypeBadgeVariant } from "@/app/(dashboard)/media/helpers/media-utils";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface Media {
   id: string;
@@ -41,6 +42,7 @@ interface Media {
   description: string | null;
   type: MediaType;
   createdAt: Date;
+  bunnyUrl: string | null;
   cloudinaryPublicId?: string | null;
   cloudinaryVersion?: string | null;
 }
@@ -49,46 +51,45 @@ interface MediaPickerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   clientId: string | null;
-  onSelect: (media: { url: string; altText: string | null; mediaId: string; width?: number | null; height?: number | null }) => void;
-  defaultScope?: MediaScope | "client";
+  onSelect: (media: { url: string; bunnyUrl: string | null; altText: string | null; mediaId: string; width?: number | null; height?: number | null }) => void;
+  /** Modonty Core (T2): hard-lock the picker to this client's own library — no General
+   *  fallback. Used by platform entity forms (Tag/Category/…). */
+  lockClient?: boolean;
 }
 
+// PLATFORM source mode removed (T2 decision 1, 2026-07-31): platform images live in
+// the Modonty core client's own library — one source, real ownership, no magic scope.
 export function MediaPickerDialog({
   open,
   onOpenChange,
   clientId,
   onSelect,
-  defaultScope,
+  lockClient = false,
 }: MediaPickerDialogProps) {
   const router = useRouter();
   const [media, setMedia] = useState<Media[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<MediaType | "all">("all");
-  const [scopeFilter, setScopeFilter] = useState<MediaScope | "client">(defaultScope ?? "client");
 
   useEffect(() => {
-    const isPlatformMode = scopeFilter === "PLATFORM" || defaultScope === "PLATFORM";
-    if (open && (clientId || isPlatformMode)) {
+    if (open && clientId) {
       loadMedia();
     }
-  }, [open, clientId, typeFilter, scopeFilter]);
+  }, [open, clientId, typeFilter]);
 
   const loadMedia = async () => {
-    const isPlatformMode = scopeFilter === "PLATFORM" || defaultScope === "PLATFORM";
-    if (!clientId && !isPlatformMode) return;
+    if (!clientId) return;
 
     setLoading(true);
     try {
-      const filters: MediaFilters =
-        scopeFilter === "PLATFORM"
-          ? { scope: "PLATFORM", mimeType: "image", type: typeFilter !== "all" ? typeFilter : undefined }
-          : {
-              clientId: clientId ?? undefined,
-              includeGeneral: scopeFilter === "client" || scopeFilter === "GENERAL",
-              mimeType: "image",
-              type: typeFilter !== "all" ? typeFilter : undefined,
-            };
+      const filters: MediaFilters = {
+        clientId,
+        includeGeneral: !lockClient,
+        mimeType: "image",
+        type: typeFilter !== "all" ? typeFilter : undefined,
+        ...(lockClient ? { perPage: 100 } : {}),
+      };
       const result = await getMedia(filters);
       setMedia(result.items as Media[]);
     } catch (error) {
@@ -101,7 +102,8 @@ export function MediaPickerDialog({
 
   const handleSelect = (item: Media) => {
     onSelect({
-      url: item.url,
+      url: mediaSrc(item) ?? item.url,
+      bunnyUrl: null, // already resolved into url
       altText: item.altText,
       mediaId: item.id,
       width: item.width,
@@ -119,6 +121,12 @@ export function MediaPickerDialog({
     : media;
 
   const getImageUrl = (item: Media): string => {
+    // Bunny FIRST (bunnyUrl ?? url) — otherwise the picker rebuilds a Cloudinary URL from
+    // the publicId even for rows that already have a Bunny copy.
+    const src = mediaSrc(item);
+    if (src) return src;
+
+    // Legacy fallback ONLY when neither bunnyUrl nor url exists.
     if (item.cloudinaryPublicId) {
       const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dfegnpgwx";
       const version = item.cloudinaryVersion || "";
@@ -141,8 +149,7 @@ export function MediaPickerDialog({
     return item.url;
   };
 
-  const isPlatformMode = scopeFilter === "PLATFORM" || defaultScope === "PLATFORM";
-  if (!clientId && !isPlatformMode) {
+  if (!clientId) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-4xl max-h-[80vh]">
@@ -180,20 +187,6 @@ export function MediaPickerDialog({
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9 h-9"
               />
-            </div>
-            <div className="w-[150px] shrink-0">
-              <Select
-                value={scopeFilter}
-                onValueChange={(value) => setScopeFilter(value as MediaScope | "client")}
-              >
-                <SelectTrigger className="h-9 w-full">
-                  <SelectValue placeholder="Source" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="client">Client + General</SelectItem>
-                  <SelectItem value="PLATFORM">Modonty Platform</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
             <div className="w-[130px] shrink-0">
               <Select

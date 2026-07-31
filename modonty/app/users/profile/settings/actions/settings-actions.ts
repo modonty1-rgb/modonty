@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
+import { profileSchema } from "../helpers/schemas/settings-schemas";
 import type {
   ProfileFormData,
   PasswordFormData,
@@ -19,12 +20,19 @@ export async function updateProfile(userId: string, data: ProfileFormData) {
       return { success: false, error: "Unauthorized" };
     }
 
+    // Server-side validation is the real gate — the client schema is UX only. This is what
+    // stops a base64 `data:` avatar from being written into the document.
+    const parsed = profileSchema.safeParse(data);
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.issues[0]?.message ?? "بيانات غير صالحة" };
+    }
+
     await db.user.update({
       where: { id: userId },
       data: {
-        name: data.name,
-        image: data.image || null,
-        bio: data.bio || null,
+        name: parsed.data.name,
+        image: parsed.data.image || null,
+        bio: parsed.data.bio || null,
       },
     });
 

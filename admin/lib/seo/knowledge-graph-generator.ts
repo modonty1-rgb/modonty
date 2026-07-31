@@ -30,6 +30,8 @@ import {
   resolveImageAttribution,
   type ModontyImageDefaults,
 } from "@modonty/database/lib/seo/media/build-image-object";
+import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl } from "@modonty/database/lib/bunny";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 /**
  * Build Cloudinary URL for a specific aspect ratio (1:1, 4:3, 16:9).
@@ -37,6 +39,10 @@ import {
  * Falls back to original URL when not Cloudinary.
  */
 function buildAspectUrl(url: string, aspectRatio: "1:1" | "4:3" | "16:9", width = 1200): string {
+  // Bunny stores pre-generated crops next to the base image (Bunny has no on-the-fly crop).
+  if (url && url.includes(".b-cdn.net")) {
+    return bunnyAspectUrl(url, BUNNY_ASPECT_SUFFIX[aspectRatio]);
+  }
   if (!url || !url.includes("res.cloudinary.com") || !url.includes("/upload/")) {
     return url;
   }
@@ -411,7 +417,7 @@ function buildImageArray(
 
   // Hero image (featuredImage) — emit 3 aspect ratios per Google Article rich results spec
   if (article.featuredImage) {
-    const sourceUrl = article.featuredImage.url;
+    const sourceUrl = mediaSrc(article.featuredImage) ?? article.featuredImage.url;
     const attr = resolveImageAttribution(
       {
         mediaType: "POST",
@@ -445,8 +451,8 @@ function buildImageArray(
   } else {
     // Fallback: client hero image -> client logo -> site default (same chain as metadata-generator)
     const fallbackUrl =
-      article.client.heroImageMedia?.url ||
-      article.client.logoMedia?.url ||
+      mediaSrc(article.client.heroImageMedia) ||
+      mediaSrc(article.client.logoMedia) ||
       `${siteUrl}/og-image.jpg`;
     const attr = resolveImageAttribution({ mediaType: "POST", articleTitle }, imageLicensing);
     const shared = { name: attr.name, licensing: attr.licensing };
@@ -486,7 +492,11 @@ function buildImageArray(
         images.push(
           buildImageObject({
             id: `${articleUrl}#image-${index + 2}`,
-            url: item.media.url,
+            // Gallery media MUST resolve through mediaSrc like every other image. Reading
+            // `.url` here made regeneration a no-op: the row carries `bunnyUrl`, but this
+            // line never looked at it, so 96 articles kept emitting Cloudinary in JSON-LD
+            // no matter how many times the SEO was rebuilt (found 2026-07-30).
+            url: mediaSrc(item.media) ?? item.media.url,
             width: item.media.width,
             height: item.media.height,
             name: attr.name,
@@ -529,7 +539,7 @@ function generateOrganizationNode(
   if (client.logoMedia) {
     node.logo = {
       "@type": "ImageObject",
-      url: client.logoMedia.url,
+      url: mediaSrc(client.logoMedia) ?? client.logoMedia.url,
       ...(client.logoMedia.width && { width: client.logoMedia.width }),
       ...(client.logoMedia.height && { height: client.logoMedia.height }),
     };

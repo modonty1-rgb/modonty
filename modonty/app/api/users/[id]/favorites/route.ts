@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { auth } from "@/lib/auth";
 import { ArticleStatus } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
@@ -75,7 +76,7 @@ export async function GET(
             status: true,
             featuredImage: {
               select: {
-                url: true,
+                url: true, bunnyUrl: true,
                 altText: true,
               },
             },
@@ -86,7 +87,7 @@ export async function GET(
                 slug: true,
                 logoMedia: {
                   select: {
-                    url: true,
+                    url: true, bunnyUrl: true,
                   },
                 },
               },
@@ -124,7 +125,7 @@ export async function GET(
         datePublished: fav.article.datePublished,
         featuredImage: fav.article.featuredImage
           ? {
-              url: fav.article.featuredImage.url,
+              url: mediaSrc(fav.article.featuredImage) ?? fav.article.featuredImage.url,
               altText: fav.article.featuredImage.altText,
             }
           : null,
@@ -132,7 +133,7 @@ export async function GET(
           id: fav.article.client.id,
           name: fav.article.client.name,
           slug: fav.article.client.slug,
-          logo: fav.article.client.logoMedia?.url || null,
+          logo: mediaSrc(fav.article.client.logoMedia),
         },
         author: {
           id: fav.article.author.id,

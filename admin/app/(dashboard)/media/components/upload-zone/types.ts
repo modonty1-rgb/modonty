@@ -21,6 +21,8 @@ export interface UploadFile {
 export interface UploadZoneProps {
   onUploadComplete?: () => void;
   initialClientId?: string | null;
+  /** Modonty Core (T2): the Client row that IS the platform. Default upload target. */
+  coreClientId?: string | null;
 }
 
 export interface Client {

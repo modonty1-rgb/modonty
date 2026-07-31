@@ -23,6 +23,18 @@ const nextConfig: NextConfig = {
         hostname: "modonty-reels-media.b-cdn.net",
         pathname: "/**",
       },
+      // Bunny CDN — clients pull zone (client logos now serve from Bunny via bunnyUrl)
+      {
+        protocol: "https",
+        hostname: "modonty-clients.b-cdn.net",
+        pathname: "/**",
+      },
+      // Bunny CDN — platform assets pull zone (OG/logos)
+      {
+        protocol: "https",
+        hostname: "modonty-asset.b-cdn.net",
+        pathname: "/**",
+      },
     ],
   },
 };

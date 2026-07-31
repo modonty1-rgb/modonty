@@ -1,5 +1,6 @@
 import Link from "@/components/link";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { IconLike, IconComment, IconSaved, IconClock, IconViews, IconForward } from "@/lib/icons";
 import { optimizeCloudinaryImage, generateBlurDataURL } from "../../helpers/category-utils";
 import { formatReadingTime, formatPublishDate, formatEngagementCount } from "../helpers/article-utils";
@@ -11,8 +12,8 @@ interface CategoryArticleListItemProps {
 }
 
 export function CategoryArticleListItem({ article, preload = false }: CategoryArticleListItemProps) {
-  const optimizedImageUrl = article.featuredImage?.url
-    ? optimizeCloudinaryImage(article.featuredImage.url, {
+  const optimizedImageUrl = mediaSrc(article.featuredImage)
+    ? optimizeCloudinaryImage(mediaSrc(article.featuredImage) ?? article.featuredImage!.url, {
         width: 256,
         height: 256,
         quality: 'auto',

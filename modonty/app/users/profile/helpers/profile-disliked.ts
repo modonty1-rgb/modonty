@@ -1,3 +1,4 @@
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { db } from "@/lib/db";
 
 export type DislikedItemType = "client" | "article" | "comment";
@@ -49,7 +50,7 @@ export async function getProfileDisliked(
             name: true,
             slug: true,
             description: true,
-            logoMedia: { select: { url: true, altText: true } },
+            logoMedia: { select: { url: true, bunnyUrl: true, altText: true } },
           },
         },
       },
@@ -64,7 +65,7 @@ export async function getProfileDisliked(
             title: true,
             slug: true,
             excerpt: true,
-            featuredImage: { select: { url: true, altText: true } },
+            featuredImage: { select: { url: true, bunnyUrl: true, altText: true } },
             client: { select: { name: true, slug: true } },
           },
         },
@@ -104,7 +105,7 @@ export async function getProfileDisliked(
       name: dislike.client.name,
       slug: dislike.client.slug,
       description: dislike.client.description,
-      image: dislike.client.logoMedia?.url,
+      image: mediaSrc(dislike.client.logoMedia) ?? undefined,
       imageAlt: dislike.client.logoMedia?.altText,
     },
   }));
@@ -118,7 +119,7 @@ export async function getProfileDisliked(
       title: dislike.article.title,
       slug: dislike.article.slug,
       excerpt: dislike.article.excerpt,
-      image: dislike.article.featuredImage?.url,
+      image: mediaSrc(dislike.article.featuredImage) ?? undefined,
       imageAlt: dislike.article.featuredImage?.altText,
       client: dislike.article.client,
     },

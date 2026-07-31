@@ -42,7 +42,6 @@ export function ClientSelector({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">General — no client (visible to all)</SelectItem>
-                <SelectItem value="modonty">Modonty — Platform Assets</SelectItem>
                 {clients.map((client) => (
                   <SelectItem key={client.id} value={client.id}>
                     {client.name}

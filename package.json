@@ -30,6 +30,11 @@
   },
   "dependencies": {
     "@google/genai": "^2.10.0",
-    "sharp": "^0.35.3"
+    "sharp": "0.34.5"
+  },
+  "pnpm": {
+    "overrides": {
+      "sharp": "0.34.5"
+    }
   }
 }

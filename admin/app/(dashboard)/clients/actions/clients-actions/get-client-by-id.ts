@@ -11,6 +11,7 @@ export async function getClientById(id: string) {
           select: {
             id: true,
             url: true,
+            bunnyUrl: true,
             altText: true,
             width: true,
             height: true,
@@ -20,6 +21,7 @@ export async function getClientById(id: string) {
           select: {
             id: true,
             url: true,
+            bunnyUrl: true,
             altText: true,
             width: true,
             height: true,

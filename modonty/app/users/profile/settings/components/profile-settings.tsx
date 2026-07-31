@@ -19,6 +19,7 @@ export function ProfileSettings() {
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const {
     register,
@@ -67,16 +68,41 @@ export function ProfileSettings() {
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Upload to Bunny through our own route, then keep only the returned URL.
+  // (It used to base64 the file into the `image` field — the whole picture ended up
+  // inside the user document in the database.)
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        setImagePreview(result);
-        setValue("image", result);
-      };
-      reader.readAsDataURL(file);
+    e.target.value = "";
+    if (!file) return;
+
+    setError(null);
+    setSuccess(null);
+    setIsUploading(true);
+
+    const localPreview = URL.createObjectURL(file);
+    setImagePreview(localPreview);
+
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const res = await fetch("/api/users/avatar", { method: "POST", body });
+      const json = (await res.json()) as { success: boolean; url?: string; error?: string };
+
+      if (!res.ok || !json.success || !json.url) {
+        setError(json.error || "فشل رفع الصورة");
+        setImagePreview(imageUrl || null);
+        return;
+      }
+
+      setValue("image", json.url, { shouldValidate: true });
+      setImagePreview(json.url);
+    } catch {
+      setError("خطأ في الشبكة أثناء رفع الصورة");
+      setImagePreview(imageUrl || null);
+    } finally {
+      URL.revokeObjectURL(localPreview);
+      setIsUploading(false);
     }
   };
 
@@ -99,10 +125,14 @@ export function ProfileSettings() {
             </Avatar>
             <div className="flex flex-col items-center gap-2">
               <Label htmlFor="image-upload" className="cursor-pointer">
-                <Button type="button" variant="outline" size="sm" asChild>
+                <Button type="button" variant="outline" size="sm" disabled={isUploading} asChild>
                   <span>
-                    <IconUpload className="h-4 w-4 mr-2" />
-                    تغيير الصورة
+                    {isUploading ? (
+                      <IconLoading className="h-4 w-4 me-2 animate-spin" />
+                    ) : (
+                      <IconUpload className="h-4 w-4 me-2" />
+                    )}
+                    {isUploading ? "جاري الرفع..." : "تغيير الصورة"}
                   </span>
                 </Button>
               </Label>
@@ -111,6 +141,7 @@ export function ProfileSettings() {
                 type="file"
                 accept="image/*"
                 className="hidden"
+                disabled={isUploading}
                 onChange={handleImageChange}
               />
               {errors.image && (

@@ -1,5 +1,6 @@
 import { type ReactElement } from "react";
 import { IconLinkedin, IconTwitter, IconFacebook } from "@/lib/icons";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 export function getSocialPlatform(url: string): { name: string; icon: ReactElement } | null {
   const lowerUrl = url.toLowerCase();
@@ -10,10 +11,10 @@ export function getSocialPlatform(url: string): { name: string; icon: ReactEleme
 }
 
 export function getCoverImage(client: {
-  heroImageMedia?: { url: string } | null;
+  heroImageMedia?: { url: string; bunnyUrl: string | null } | null;
 }): string | undefined {
   // Only use dedicated cover image — logo is not suitable for 6:1 banner ratio
-  return client.heroImageMedia?.url;
+  return mediaSrc(client.heroImageMedia) ?? undefined;
 }
 
 export function getInitials(name: string): string {

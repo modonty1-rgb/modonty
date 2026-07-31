@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getCoreClientId } from "@modonty/database/lib/core-client";
 import { getCategoryById, getCategories } from "../../actions/categories-actions";
 import { CategoryForm } from "../../components/category-form";
 import { DeleteCategoryButton } from "../components/delete-category-button";
@@ -7,7 +8,11 @@ import { SeoCachePreview } from "@/components/shared/seo-cache-preview";
 
 export default async function EditCategoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [category, categories] = await Promise.all([getCategoryById(id), getCategories()]);
+  const [category, categories, coreClientId] = await Promise.all([
+    getCategoryById(id),
+    getCategories(),
+    getCoreClientId(),
+  ]);
 
   if (!category) {
     redirect("/categories");
@@ -34,6 +39,7 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
         initialData={category as any}
         categories={categories}
         categoryId={id}
+        coreClientId={coreClientId}
       />
     </div>
   );

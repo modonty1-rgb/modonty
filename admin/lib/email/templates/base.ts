@@ -1,3 +1,5 @@
+import { BRAND_LOGO_URL } from "@modonty/database/lib/brand-assets";
+
 const NAVY = "#0E065A";
 const BLUE = "#3030FF";
 const TEAL = "#00D8D8";
@@ -21,7 +23,7 @@ export function baseTemplate(content: string, previewText = ""): string {
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:8px;overflow:hidden;border:1px solid ${BORDER};">
           <tr>
             <td style="background-color:#ffffff;padding:28px 32px;text-align:center;border-bottom:3px solid ${NAVY};">
-              <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1769683590/modontyLogo_ftf4yf.png" alt="مودونتي" width="160" height="auto" style="display:inline-block;max-height:56px;object-fit:contain;" />
+              <img src="${BRAND_LOGO_URL}" alt="مدونتي" width="160" height="auto" style="display:inline-block;max-height:56px;object-fit:contain;" />
             </td>
           </tr>
           <tr>

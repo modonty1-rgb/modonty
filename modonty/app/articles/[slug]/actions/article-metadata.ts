@@ -22,8 +22,8 @@ export async function getArticleForMetadata(slug: string) {
       client: {
         select: {
           name: true,
-          logoMedia: { select: { url: true } },
-          heroImageMedia: { select: { url: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true } },
+          heroImageMedia: { select: { url: true, bunnyUrl: true } },
         },
       },
       author: { select: { name: true } },
@@ -35,7 +35,7 @@ export async function getArticleForMetadata(slug: string) {
       },
       featuredImage: {
         select: {
-          url: true,
+          url: true, bunnyUrl: true,
           altText: true,
           width: true,
           height: true,

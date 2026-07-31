@@ -51,6 +51,8 @@ export async function addClientGalleryImage(
         height: input.height ?? null,
         encodingFormat: input.mimeType ?? null,
         contentUrl: url,
+        // Bunny-primary uploads: keep bunnyUrl in sync when the url is already a Bunny url.
+        bunnyUrl: isBunnyUrl("clients", url) ? url : null,
         cloudinaryPublicId: input.publicId ?? null,
         altText: (input.altText ?? "").trim() || null,
         clientId,

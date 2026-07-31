@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 export interface ClientGalleryImage {
   id: string;
   url: string;
+  bunnyUrl: string | null;
   altText: string | null;
   width: number | null;
   height: number | null;
@@ -20,7 +21,7 @@ export async function getClientGallery(clientSlug: string): Promise<ClientGaller
   cacheLife("minutes");
   const images = await db.media.findMany({
     where: { client: { slug: clientSlug }, type: "GALLERY" },
-    select: { id: true, url: true, altText: true, width: true, height: true },
+    select: { id: true, url: true, bunnyUrl: true, altText: true, width: true, height: true },
     orderBy: { createdAt: "desc" },
     take: 24,
   });

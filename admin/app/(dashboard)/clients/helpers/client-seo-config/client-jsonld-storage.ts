@@ -158,6 +158,7 @@ export async function fetchClientForJsonLd(
       logoMedia: {
         select: {
           url: true,
+          bunnyUrl: true,
           altText: true,
           width: true,
           height: true,
@@ -166,6 +167,7 @@ export async function fetchClientForJsonLd(
       heroImageMedia: {
         select: {
           url: true,
+          bunnyUrl: true,
           altText: true,
           width: true,
           height: true,

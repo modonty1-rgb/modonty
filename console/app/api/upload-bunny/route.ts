@@ -12,14 +12,14 @@ const MB = 1024 * 1024;
 const IMAGE_LIMIT = 4 * MB;
 
 // Whitelisted upload folders — the browser must NOT choose an arbitrary path.
-const FOLDERS = ["gallery", "achievements"] as const;
+const FOLDERS = ["gallery", "achievements", "licenses"] as const;
 type Folder = (typeof FOLDERS)[number];
 
 /**
  * Server-side proxy upload to Bunny (reels zone) — the browser never sees the
  * storage password. Files live in the reels zone by locked decision
  * (unified source). The optional `folder` field selects a whitelisted subfolder
- * (gallery | achievements); it defaults to gallery for backward compatibility.
+ * (gallery | achievements | licenses); it defaults to gallery for backward compatibility.
  */
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {

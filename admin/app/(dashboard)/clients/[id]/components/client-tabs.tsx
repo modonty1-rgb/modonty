@@ -30,10 +30,12 @@ type ClientTabsProps = {
     url: string | null;
     logoMedia: {
       url: string;
+      bunnyUrl: string | null;
       altText: string | null;
     } | null;
     heroImageMedia: {
       url: string;
+      bunnyUrl: string | null;
       altText: string | null;
     } | null;
     email: string;

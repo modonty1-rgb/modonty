@@ -5,10 +5,12 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 
 import { IconClose, IconChevronLeft, IconChevronRight } from "@/lib/icons";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 export interface ClientGalleryImage {
   id: string;
   url: string;
+  bunnyUrl: string | null;
   altText: string | null;
   width: number | null;
   height: number | null;
@@ -135,7 +137,14 @@ export function GalleryLightboxOverlay({ images, index, onIndexChange, onClose }
         onTouchEnd={onTouchEnd}
         className="relative h-[88vh] w-[94vw] sm:w-[88vw]"
       >
-        <Image src={image.url} alt={image.altText || ""} fill priority sizes="94vw" className="object-contain" />
+        <Image
+          src={mediaSrc(image) ?? image.url}
+          alt={image.altText || ""}
+          fill
+          priority
+          sizes="94vw"
+          className="object-contain"
+        />
       </div>
 
       {image.altText?.trim() && (

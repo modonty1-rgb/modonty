@@ -1,5 +1,6 @@
 import type { SEOFieldValidator } from "@/components/shared/seo-doctor";
 import type { MediaRelation } from "./media-relation";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 export function generateOrganizationStructuredData(
   data: Record<string, unknown>,
@@ -18,10 +19,11 @@ export function generateOrganizationStructuredData(
 
   // Logo as ImageObject with dimensions
   const logoMedia = data.logoMedia as MediaRelation;
-  if (logoMedia?.url) {
+  const logoSrc = mediaSrc(logoMedia);
+  if (logoMedia && logoSrc) {
     structuredData.logo = {
       "@type": "ImageObject",
-      url: logoMedia.url as string,
+      url: logoSrc,
       ...(logoMedia.width && { width: logoMedia.width }),
       ...(logoMedia.height && { height: logoMedia.height }),
     };

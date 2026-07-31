@@ -3,7 +3,8 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { ImageUploadData } from "@/components/shared/deferred-image-upload";
-import { generateSEOFileName, isValidCloudinaryPublicId, optimizeCloudinaryUrl } from "@/lib/utils/image-seo";
+import { generateSEOFileName } from "@/lib/utils/image-seo";
+import { uploadToBunny } from "@modonty/database/lib/bunny";
 
 type EntityTableName = "categories" | "tags" | "industries" | "authors";
 
@@ -24,27 +25,19 @@ interface UploadImageParams {
   initialId?: string;
 }
 
+// Bunny-primary (2026-07-29): entity social images go to the platform assets zone
+// under social/{table}/. No Cloudinary — the retired path is kept below as text.
 export async function uploadImage(
   params: UploadImageParams
 ): Promise<{ success: boolean; result?: ImageUploadResult; error?: string }> {
   const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
-  const { imageData, tableName, urlFieldName, altFieldName, slug, name, recordId, initialId } = params;
+  const { imageData, tableName, urlFieldName, altFieldName, recordId, initialId } = params;
 
   if (!imageData?.file) {
     return { success: true };
   }
 
   try {
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-
-    if (!cloudName || !uploadPreset) {
-      return {
-        success: false,
-        error: "Cloudinary configuration missing. Please check your environment variables.",
-      };
-    }
-
     const altText = imageData.altText;
     if (!altText || altText.trim().length === 0) {
       return {
@@ -52,59 +45,22 @@ export async function uploadImage(
         error: "Alt text is required for SEO and accessibility.",
       };
     }
-
-    // Generate SEO-friendly filename (root level - no folder in public_id)
-    const seoFileName = generateSEOFileName(altText, "", imageData.file.name, undefined, true);
-    const publicId = seoFileName; // Root level - no folder path
-
-    // Asset folder for Media Library organization only (doesn't affect URL)
-    const assetFolder = tableName;
-
-    if (!isValidCloudinaryPublicId(publicId)) {
-      return {
-        success: false,
-        error: "Generated filename is invalid. Please check your alt text.",
-      };
+    if (!imageData.file.type.startsWith("image/")) {
+      return { success: false, error: "Only images are allowed." };
     }
 
-    const formData = new FormData();
-    formData.append("file", imageData.file);
-    formData.append("upload_preset", uploadPreset);
-    formData.append("public_id", publicId); // Root level filename
-    formData.append("asset_folder", assetFolder); // Media Library organization
+    // SEO-friendly basename + the REAL extension (extension must survive so the
+    // CDN serves the correct content-type — lesson from the media-library fix).
+    const seoBase = generateSEOFileName(altText, "", imageData.file.name, undefined, true);
+    const ext = (imageData.file.name.match(/\.[a-z0-9]+$/i)?.[0] || ".webp").toLowerCase();
+    const remotePath = `social/${tableName}/${seoBase}${ext}`;
 
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.error?.message || `Upload failed with status ${response.status}`;
-      return {
-        success: false,
-        error: errorMessage,
-      };
-    }
-
-    const result = await response.json();
-    const cloudinaryUrl = result.secure_url || result.url;
-    const cloudinaryPublicId = result.public_id;
-
-    const optimizedUrl = optimizeCloudinaryUrl(
-      cloudinaryUrl,
-      cloudinaryPublicId,
-      result.format,
-      "image"
-    );
+    const buffer = Buffer.from(await imageData.file.arrayBuffer());
+    const { url: bunnyImageUrl } = await uploadToBunny("assets", buffer, remotePath, imageData.file.type);
 
     const updateData: Record<string, string> = {
-      [urlFieldName]: optimizedUrl,
+      [urlFieldName]: bunnyImageUrl,
       [altFieldName]: altText.trim(),
-      cloudinaryPublicId: cloudinaryPublicId,
     };
 
     if (recordId || initialId) {
@@ -147,9 +103,8 @@ export async function uploadImage(
     return {
       success: true,
       result: {
-        socialImageUrl: optimizedUrl,
+        socialImageUrl: bunnyImageUrl,
         socialImageAlt: altText,
-        cloudinaryPublicId: cloudinaryPublicId,
       },
     };
   } catch (error) {
@@ -159,4 +114,30 @@ export async function uploadImage(
       error: error instanceof Error ? error.message : "An unexpected error occurred",
     };
   }
+}
+
+/**
+ * ⛔ RETIRED (2026-07-29, tripwire rule) — the old Cloudinary entity-image upload,
+ * kept as text only. Never call: throws so a hidden Cloudinary path can't fail
+ * silently. Final disposal of all Cloudinary code = last migration phase.
+ */
+export async function uploadImageCloudinaryRETIRED(): Promise<never> {
+  throw new Error("RETIRED: Cloudinary entity-image upload is disabled — uploadImage now uses Bunny.");
+  /* Original implementation (text, for reference):
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+  const seoFileName = generateSEOFileName(altText, "", imageData.file.name, undefined, true);
+  const publicId = seoFileName; // Root level - no folder path
+  const assetFolder = tableName;
+  if (!isValidCloudinaryPublicId(publicId)) return error;
+  const formData = new FormData();
+  formData.append("file", imageData.file);
+  formData.append("upload_preset", uploadPreset);
+  formData.append("public_id", publicId);
+  formData.append("asset_folder", assetFolder);
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: "POST", body: formData });
+  const result = await response.json();
+  const optimizedUrl = optimizeCloudinaryUrl(result.secure_url || result.url, result.public_id, result.format, "image");
+  updateData = { [urlFieldName]: optimizedUrl, [altFieldName]: altText.trim(), cloudinaryPublicId: result.public_id };
+  */
 }

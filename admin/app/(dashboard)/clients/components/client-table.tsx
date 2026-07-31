@@ -24,6 +24,7 @@ import type { ClientForList } from "../actions/clients-actions/types";
 import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { ClientAvatar } from "./client-avatar";
 
 type ListValidationError = { message?: string } | string;
@@ -429,7 +430,7 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
                     <TableCell>
                       <div className="flex items-center gap-2.5">
                         <ClientAvatar
-                          url={client.logoMedia?.url}
+                          url={mediaSrc(client.logoMedia)}
                           fallbackUrl={defaultLogoUrl}
                           name={client.name}
                         />

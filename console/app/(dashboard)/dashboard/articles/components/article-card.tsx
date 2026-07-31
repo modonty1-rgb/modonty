@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import Link from "next/link";
 import { toast } from "sonner";
 import { ar } from "@/lib/ar";
@@ -113,7 +114,7 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
               className="relative aspect-video w-full shrink-0 overflow-hidden rounded-lg bg-muted sm:h-32 sm:w-48 sm:aspect-auto"
             >
               <Image
-                src={article.featuredImage.url}
+                src={mediaSrc(article.featuredImage) ?? article.featuredImage.url}
                 alt={article.featuredImage.altText || article.title}
                 fill
                 className="object-cover transition-transform hover:scale-105"

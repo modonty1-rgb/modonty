@@ -14,17 +14,16 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Upload, X, Save } from "lucide-react";
-import { updateMedia, deleteCloudinaryAsset } from "../../actions/media-actions";
+import { updateMedia } from "../../actions/media-actions";
+import { uploadImageToBunny } from "../../actions/upload-image-to-bunny";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 import NextImage from "next/image";
-import { generateSEOFileName, generateCloudinaryPublicId, isValidCloudinaryPublicId, optimizeCloudinaryUrl } from "@/lib/utils/image-seo";
 import { MediaType, MediaScope } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { formatBytes } from "@modonty/database/lib/utils";
 import { getMediaSpec, requiresCrop } from "@/lib/media/media-specs";
 import { validateFile } from "../../components/upload-zone/utils/file-validation";
-import { getCloudinaryErrorMessage } from "../../components/upload-zone/utils/error-handler";
 import { ImageEditorModal } from "../../components/upload-zone/components/image-editor-modal";
 
 interface Media {
@@ -159,10 +158,8 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
     setIsSaving(true);
 
     try {
-      let newCloudinaryPublicId = media.cloudinaryPublicId || undefined;
-      let newCloudinaryUrl = media.url;
-      let newCloudinaryVersion = undefined;
-      let newCloudinarySignature = undefined;
+      let newUrl = media.url;
+      let newBunnyUrl: string | undefined = undefined;
       let newFilename = media.filename;
       let newMimeType = media.mimeType;
       let newWidth = media.width;
@@ -170,23 +167,15 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
       let newFileSize = undefined;
       let newEncodingFormat = undefined;
 
+      const resolvedScope: MediaScope =
+        formData.clientId === "modonty" ? "PLATFORM" :
+        formData.clientId === "none" ? "GENERAL" : "CLIENT";
+      const resolvedClientId = (formData.clientId === "none" || formData.clientId === "modonty") ? null : formData.clientId;
+
       if (newFile) {
-        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-        const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-
-        if (!cloudName || !uploadPreset) {
-          toast({ title: messages.error.upload_failed, description: messages.descriptions.cloudinary_missing, variant: "destructive" });
-          setIsSaving(false);
-          return;
-        }
-
-        const clientId = media.client?.id || "default";
-        const seoFileName = generateSEOFileName(media.altText?.trim() || "", media.title?.trim() || "", newFile.name, undefined);
-        const folderPath = `clients/${clientId}`;
-        const publicId = generateCloudinaryPublicId(seoFileName, folderPath);
-
-        if (!isValidCloudinaryPublicId(publicId)) {
-          toast({ title: messages.error.upload_failed, description: messages.descriptions.invalid_filename, variant: "destructive" });
+        // Bunny-primary (2026-07-29): replacement files upload straight to Bunny.
+        if (!newFile.type.startsWith("image/")) {
+          toast({ title: messages.error.upload_failed, description: "استبدال الفيديو غير مدعوم هنا — الفيديو عبر مسار الريلز.", variant: "destructive" });
           setIsSaving(false);
           return;
         }
@@ -194,53 +183,36 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
         try {
           const uploadFormData = new FormData();
           uploadFormData.append("file", newFile);
-          uploadFormData.append("upload_preset", uploadPreset);
-          uploadFormData.append("public_id", publicId);
-          uploadFormData.append("asset_folder", folderPath);
+          uploadFormData.append("filename", newFile.name);
+          uploadFormData.append("type", formData.type);
+          uploadFormData.append("scope", resolvedScope);
+          if (resolvedClientId) uploadFormData.append("clientId", resolvedClientId);
 
-          const resourceType = newFile.type.startsWith("image/") ? "image" : "video";
-          const uploadResponse = await fetch(
-            `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
-            { method: "POST", body: uploadFormData }
-          );
-
-          if (!uploadResponse.ok) {
-            const errorMessage = await getCloudinaryErrorMessage(uploadResponse);
-            toast({ title: messages.error.upload_failed, description: errorMessage, variant: "destructive" });
+          const uploadResult = await uploadImageToBunny(uploadFormData);
+          if (!uploadResult.success || !uploadResult.url) {
+            toast({ title: messages.error.upload_failed, description: uploadResult.error || "تعذّر رفع الملف إلى Bunny", variant: "destructive" });
             setIsSaving(false);
             return;
           }
 
-          const uploadResult = await uploadResponse.json();
-          const cloudinaryUrl = uploadResult.secure_url || uploadResult.url;
-          const cloudinaryPublicId = uploadResult.public_id;
-
-          newCloudinaryPublicId = cloudinaryPublicId;
-          newCloudinaryUrl = optimizeCloudinaryUrl(cloudinaryUrl, cloudinaryPublicId, uploadResult.format, resourceType);
-          newCloudinaryVersion = uploadResult.version?.toString();
-          newCloudinarySignature = uploadResult.signature;
+          newUrl = uploadResult.url;
+          newBunnyUrl = uploadResult.url; // keep bunnyUrl in sync — else a stale bunnyUrl shows the OLD image
           newFilename = newFile.name;
           newMimeType = newFile.type;
           newWidth = uploadResult.width || null;
           newHeight = uploadResult.height || null;
-          newFileSize = uploadResult.bytes || newFile.size;
+          newFileSize = newFile.size;
           newEncodingFormat = uploadResult.format || undefined;
 
-          if (media.cloudinaryPublicId) {
-            const oldResourceType = media.mimeType.startsWith("image/") ? "image" : "video";
-            await deleteCloudinaryAsset(media.cloudinaryPublicId, oldResourceType);
-          }
+          // NOTE (tripwire phase): the old flow deleted the previous Cloudinary asset here.
+          // Deletion is intentionally STOPPED — Cloudinary stays untouched until the final
+          // retirement phase (prod fallback may still serve the old asset).
         } catch (error) {
           toast({ title: messages.error.upload_failed, description: error instanceof Error ? error.message : "تعذّر رفع الملف", variant: "destructive" });
           setIsSaving(false);
           return;
         }
       }
-
-      const resolvedScope: MediaScope =
-        formData.clientId === "modonty" ? "PLATFORM" :
-        formData.clientId === "none" ? "GENERAL" : "CLIENT";
-      const resolvedClientId = (formData.clientId === "none" || formData.clientId === "modonty") ? null : formData.clientId;
 
       const result = await updateMedia(media.id, {
         scope: resolvedScope,
@@ -249,10 +221,8 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
         creator: formData.creator.trim() || undefined,
         license: formData.license || undefined,
         clientId: resolvedClientId,
-        cloudinaryPublicId: newCloudinaryPublicId,
-        cloudinaryVersion: newCloudinaryVersion,
-        cloudinarySignature: newCloudinarySignature,
-        ...(newCloudinaryUrl !== media.url ? { url: newCloudinaryUrl } : {}),
+        ...(newUrl !== media.url ? { url: newUrl } : {}),
+        ...(newBunnyUrl !== undefined ? { bunnyUrl: newBunnyUrl } : {}),
         ...(newFilename !== media.filename ? { filename: newFilename } : {}),
         ...(newMimeType !== media.mimeType ? { mimeType: newMimeType } : {}),
         ...(newWidth !== media.width ? { width: newWidth ?? undefined } : {}),

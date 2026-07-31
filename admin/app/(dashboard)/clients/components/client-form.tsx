@@ -17,6 +17,7 @@ import { OpenClientConsoleButton } from "./edit-workspace/open-client-console-bu
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import type { ClientWithRelations } from "@/lib/types";
 import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
 
 interface ClientFormProps {
@@ -48,22 +49,22 @@ export function ClientForm({
   const [heroModalOpen, setHeroModalOpen] = useState(false);
   const [verificationModalOpen, setVerificationModalOpen] = useState(false);
   const [currentLogoUrl, setCurrentLogoUrl] = useState<string | null>(
-    (initialData?.logoMedia as { url?: string } | null)?.url ?? null
+    mediaSrc(initialData?.logoMedia) ?? null
   );
   const [currentHeroUrl, setCurrentHeroUrl] = useState<string | null>(
-    (initialData?.heroImageMedia as { url?: string } | null)?.url ?? null
+    mediaSrc(initialData?.heroImageMedia) ?? null
   );
   const [currentVerificationUrl, setCurrentVerificationUrl] = useState<string | null>(
     (initialData as { verificationImageUrl?: string | null })?.verificationImageUrl ?? null
   );
 
   useEffect(() => {
-    setCurrentLogoUrl((initialData?.logoMedia as { url?: string } | null)?.url ?? null);
-  }, [(initialData?.logoMedia as { url?: string } | null)?.url]);
+    setCurrentLogoUrl(mediaSrc(initialData?.logoMedia) ?? null);
+  }, [mediaSrc(initialData?.logoMedia)]);
 
   useEffect(() => {
-    setCurrentHeroUrl((initialData?.heroImageMedia as { url?: string } | null)?.url ?? null);
-  }, [(initialData?.heroImageMedia as { url?: string } | null)?.url]);
+    setCurrentHeroUrl(mediaSrc(initialData?.heroImageMedia) ?? null);
+  }, [mediaSrc(initialData?.heroImageMedia)]);
 
   useEffect(() => {
     setCurrentVerificationUrl((initialData as { verificationImageUrl?: string | null })?.verificationImageUrl ?? null);

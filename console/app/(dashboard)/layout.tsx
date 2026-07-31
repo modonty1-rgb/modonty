@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { ar } from "@/lib/ar";
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { DashboardLayoutClient } from "./components/dashboard-layout-client";
 import { ImpersonationBanner } from "./components/impersonation-banner";
 import { AccountNotice } from "./dashboard/components/account-notice";
@@ -44,7 +45,7 @@ export default async function DashboardLayout({
         where: { id: clientId },
         select: {
           name: true,
-          logoMedia: { select: { url: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true } },
           isYmyl: true,
           // Feeds the account notice — it lives in the layout so it follows the client
           // to every page, not just the dashboard home (Khalid 2026-07-24).
@@ -74,7 +75,7 @@ export default async function DashboardLayout({
       getPendingClientReviewsCount(clientId),
     ]);
   const pendingFaqsCount = faqStats.pending;
-  const clientLogoUrl = client?.logoMedia?.url ?? null;
+  const clientLogoUrl = mediaSrc(client?.logoMedia);
   const isYmyl = client?.isYmyl ?? false;
   // Read the client name LIVE from the DB (same source as the dashboard greeting) so the
   // sidebar header + impersonation banner never show a stale name baked into the JWT at login.

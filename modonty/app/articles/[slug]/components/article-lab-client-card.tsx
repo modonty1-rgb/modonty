@@ -1,4 +1,5 @@
 import NextImage from "next/image";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import type { ComponentType, SVGProps } from "react";
 
 import { OptimizedImage } from "@/components/media/OptimizedImage";
@@ -51,10 +52,10 @@ interface ArticleLabClientCardProps {
     phone?: string | null;
     sameAs?: string[];
     addressCity?: string | null;
-    logoMedia?: { url: string } | null;
-    heroImageMedia?: { url: string } | null;
+    logoMedia?: { url: string; bunnyUrl: string | null } | null;
+    heroImageMedia?: { url: string; bunnyUrl: string | null } | null;
     /** Client Mini (1.91:1) media — preferred over the 6:1 hero for the card image. */
-    media?: { url: string }[] | null;
+    media?: { url: string; bunnyUrl: string | null }[] | null;
   };
   askClientProps?: {
     articleId: string;
@@ -88,9 +89,9 @@ const railBtn =
   "inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-muted/40 text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors";
 
 export function ArticleLabClientCard({ client, askClientProps, cta }: ArticleLabClientCardProps) {
-  const logoUrl = client.logoMedia?.url ?? null;
+  const logoUrl = mediaSrc(client.logoMedia);
   // Client Mini (1.91:1) fills the 1200/630 card box exactly → preferred over the 6:1 hero.
-  const heroUrl = client.media?.[0]?.url ?? client.heroImageMedia?.url ?? null;
+  const heroUrl = mediaSrc(client.media?.[0]) ?? mediaSrc(client.heroImageMedia);
   const hasPhone = !!client.phone?.trim();
   // brief falls back across the fields admins actually fill (DRY, data-agnostic)
   const brief = client.description?.trim() || client.businessBrief?.trim() || client.slogan?.trim() || "";

@@ -8,6 +8,7 @@ export type ArticleWithRelations = Prisma.ArticleGetPayload<{
           select: {
             id: true;
             url: true;
+            bunnyUrl: true;
           };
         };
       };
@@ -19,6 +20,7 @@ export type ArticleWithRelations = Prisma.ArticleGetPayload<{
       select: {
         id: true;
         url: true;
+        bunnyUrl: true;
         altText: true;
         width: true;
         height: true;
@@ -50,6 +52,7 @@ export type ClientWithRelations = Prisma.ClientGetPayload<{
       select: {
         id: true;
         url: true;
+        bunnyUrl: true;
         altText: true;
         width: true;
         height: true;
@@ -59,6 +62,7 @@ export type ClientWithRelations = Prisma.ClientGetPayload<{
       select: {
         id: true;
         url: true;
+        bunnyUrl: true;
         altText: true;
         width: true;
         height: true;

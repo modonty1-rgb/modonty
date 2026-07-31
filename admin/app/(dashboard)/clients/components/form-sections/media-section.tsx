@@ -8,6 +8,7 @@ import type { ClientWithRelations } from "@/lib/types";
 import { updateMedia } from "../../../media/actions/media-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useMediaPreview } from "../../helpers/hooks/use-media-preview";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface MediaSectionProps {
   form: UseFormReturn<ClientFormSchemaType>;
@@ -81,7 +82,7 @@ export function MediaSection({
       <div className="space-y-2">
         <MediaPicker
           clientId={clientId || initialData?.id || null}
-          value={logoMedia?.url || (initialData as any)?.logoMedia?.url || ""}
+          value={logoMedia?.url || mediaSrc((initialData as any)?.logoMedia) || ""}
           altText={logoMedia?.altText || (initialData as any)?.logoMedia?.altText || ""}
           mediaId={logoMediaId || undefined}
           showUrlField={false}
@@ -106,7 +107,7 @@ export function MediaSection({
       <div className="space-y-2">
         <MediaPicker
           clientId={clientId || initialData?.id || null}
-          value={heroImageMedia?.url || (initialData as any)?.heroImageMedia?.url || ""}
+          value={heroImageMedia?.url || mediaSrc((initialData as any)?.heroImageMedia) || ""}
           altText={heroImageMedia?.altText || (initialData as any)?.heroImageMedia?.altText || ""}
           mediaId={heroImageMediaId || undefined}
           showUrlField={false}

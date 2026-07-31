@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { computeMediaSeoScore } from "@modonty/database/lib/seo/media/seo-score";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 /**
  * The media library, by the two questions an admin actually has (Khalid 2026-07-13:
@@ -62,6 +63,7 @@ interface RawMedia {
   id: string;
   filename: string;
   url: string;
+  bunnyUrl: string | null;
   altText: string | null;
   title: string | null;
   description: string | null;
@@ -89,6 +91,7 @@ async function readLibrary(): Promise<RawMedia[]> {
       id: true,
       filename: true,
       url: true,
+      bunnyUrl: true,
       altText: true,
       title: true,
       description: true,
@@ -175,7 +178,7 @@ export async function getMediaRows(key: MediaSegmentKey): Promise<MediaRow[]> {
   return matches.map((m) => ({
     id: m.id,
     filename: m.filename,
-    url: m.url,
+    url: mediaSrc(m) ?? m.url,
     altText: m.altText,
     width: m.width,
     height: m.height,

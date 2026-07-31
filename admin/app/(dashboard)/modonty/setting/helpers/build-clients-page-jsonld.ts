@@ -4,6 +4,7 @@
  */
 
 import type { SettingsForHomeJsonLd } from "./build-home-jsonld-from-settings";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): string | undefined {
   if (!url?.trim()) return undefined;
@@ -37,8 +38,8 @@ export interface ClientForClientsPageJsonLd {
   seoDescription?: string | null;
   url?: string | null;
   canonicalUrl?: string | null;
-  logoMedia?: { url?: string | null } | null;
-  heroImageMedia?: { url?: string | null } | null;
+  logoMedia?: { url?: string | null; bunnyUrl: string | null } | null;
+  heroImageMedia?: { url?: string | null; bunnyUrl: string | null } | null;
   sameAs?: string[];
   email?: string | null;
   phone?: string | null;
@@ -174,8 +175,10 @@ function clientToOrganization(
   const profileUrl = `${siteUrl}/clients/${client.slug}`;
   const url = client.canonicalUrl?.trim() || client.url?.trim() || profileUrl;
   const absUrl = ensureAbsoluteUrl(url, siteUrl) || profileUrl;
-  const absLogo = client.logoMedia?.url ? ensureAbsoluteUrl(client.logoMedia.url, siteUrl) : undefined;
-  const absImage = client.heroImageMedia?.url ? ensureAbsoluteUrl(client.heroImageMedia.url, siteUrl) : undefined;
+  const logoSrc = mediaSrc(client.logoMedia);
+  const absLogo = logoSrc ? ensureAbsoluteUrl(logoSrc, siteUrl) : undefined;
+  const heroSrc = mediaSrc(client.heroImageMedia);
+  const absImage = heroSrc ? ensureAbsoluteUrl(heroSrc, siteUrl) : undefined;
 
   const orgType = client.organizationType?.trim() || "Organization";
 

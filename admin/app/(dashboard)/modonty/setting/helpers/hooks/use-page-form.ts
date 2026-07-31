@@ -62,6 +62,8 @@ export interface PageInitialData {
   heroImage?: string | null;
   heroImageAlt?: string | null;
   heroImageCloudinaryPublicId?: string | null;
+  heroImageMediaId?: string | null;
+  socialImageMediaId?: string | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
   metaRobots?: string | null;
@@ -120,6 +122,8 @@ function buildFormData(slug: string, initialData: PageInitialData | undefined, s
     heroImage: initialData?.heroImage || undefined,
     heroImageAlt: initialData?.heroImageAlt || undefined,
     heroImageCloudinaryPublicId: initialData?.heroImageCloudinaryPublicId || undefined,
+    heroImageMediaId: initialData?.heroImageMediaId || undefined,
+    socialImageMediaId: initialData?.socialImageMediaId || undefined,
     seoTitle: initialData?.seoTitle || undefined,
     seoDescription: initialData?.seoDescription || undefined,
     metaRobots: (initialData?.metaRobots as PageFormData["metaRobots"]) ?? (settingsDefaults.defaultMetaRobots as PageFormData["metaRobots"]),

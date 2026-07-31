@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 export async function GET(
   req: NextRequest,
@@ -26,7 +27,7 @@ export async function GET(
               description: true,
               logoMedia: {
                 select: {
-                  url: true,
+                  url: true, bunnyUrl: true,
                   altText: true,
                 },
               },
@@ -46,7 +47,7 @@ export async function GET(
               excerpt: true,
               featuredImage: {
                 select: {
-                  url: true,
+                  url: true, bunnyUrl: true,
                   altText: true,
                 },
               },
@@ -75,7 +76,7 @@ export async function GET(
         name: like.client.name,
         slug: like.client.slug,
         description: like.client.description,
-        image: like.client.logoMedia?.url,
+        image: mediaSrc(like.client.logoMedia) ?? undefined,
         imageAlt: like.client.logoMedia?.altText,
       },
     }));
@@ -89,7 +90,7 @@ export async function GET(
         title: like.article.title,
         slug: like.article.slug,
         excerpt: like.article.excerpt,
-        image: like.article.featuredImage?.url,
+        image: mediaSrc(like.article.featuredImage) ?? undefined,
         imageAlt: like.article.featuredImage?.altText,
         client: like.article.client,
       },

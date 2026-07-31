@@ -7,6 +7,9 @@ import type { NextConfig } from "next";
 loadDotenv({ path: path.resolve(process.cwd(), "../.env.shared") });
 
 const nextConfig: NextConfig = {
+  // sharp is a native module (aspect-crop generation) — must be required at runtime,
+  // not bundled, or its win32/native binding fails to load in the server runtime.
+  serverExternalPackages: ["sharp"],
   redirects: async () => [
     { source: "/seo-overview", destination: "/seo", permanent: true },
     { source: "/seo-overview/:path*", destination: "/seo", permanent: true },
@@ -39,6 +42,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "*.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.b-cdn.net",
       },
       {
         protocol: "https",

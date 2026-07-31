@@ -49,7 +49,6 @@ interface SiteOrgData {
   orgGeoLatitude: number | null;
   orgGeoLongitude: number | null;
   orgSearchUrlTemplate: string | null;
-  orgLogoUrl: string | null;
 }
 
 function readSiteOrgFromEnv(): SiteOrgData {
@@ -77,7 +76,6 @@ function readSiteOrgFromEnv(): SiteOrgData {
     orgGeoLatitude: lat != null && lat !== "" ? Number(lat) : null,
     orgGeoLongitude: lng != null && lng !== "" ? Number(lng) : null,
     orgSearchUrlTemplate: process.env.NEXT_PUBLIC_ORG_SEARCH_URL_TEMPLATE?.trim() || null,
-    orgLogoUrl: process.env.NEXT_PUBLIC_ORG_LOGO_URL?.trim() || null,
   };
 }
 

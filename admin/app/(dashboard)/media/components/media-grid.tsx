@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { computeMediaSeoScore } from "@modonty/database/lib/seo/media/seo-score";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { MediaType } from "@prisma/client";
 import { getMediaTypeLabel } from "../helpers/media-utils";
@@ -35,6 +36,7 @@ interface Media {
   description: string | null;
   type: MediaType;
   createdAt: Date;
+  bunnyUrl: string | null;
   cloudinaryPublicId?: string | null;
   cloudinaryVersion?: string | null;
   isUsed?: boolean;
@@ -42,7 +44,7 @@ interface Media {
     id: string;
     name: string;
     slug: string;
-    logoMedia?: { url: string } | null;
+    logoMedia?: { url: string; bunnyUrl: string | null } | null;
   };
 }
 
@@ -74,6 +76,7 @@ export function MediaGrid({
     try {
       const h = new URL(url).hostname;
       return (
+        h.endsWith(".b-cdn.net") || // Bunny — primary storage
         h === "images.unsplash.com" ||
         h.endsWith(".unsplash.com") ||
         h.endsWith(".cloudinary.com") ||
@@ -104,7 +107,13 @@ export function MediaGrid({
   };
 
   const getImageUrl = (item: Media): string => {
-    // If we have cloudinaryPublicId, construct the URL from it (more reliable)
+    // Bunny FIRST — mediaSrc() is the shared resolver (bunnyUrl ?? url). Without this the
+    // grid rebuilt a Cloudinary URL from cloudinaryPublicId even for rows that already had
+    // a Bunny copy, so the admin kept staring at Cloudinary after the migration.
+    const src = mediaSrc(item);
+    if (src) return src;
+
+    // Legacy fallback ONLY when neither bunnyUrl nor url exists: rebuild from the publicId.
     if (item.cloudinaryPublicId) {
       const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dfegnpgwx";
       const resourceType = item.mimeType.startsWith("image/") ? "image" : "video";
@@ -142,7 +151,7 @@ export function MediaGrid({
   const groupedMedia = media.reduce<Record<string, { name: string; logoUrl: string | null; items: Media[] }>>((acc, item) => {
     const key = item.client?.id || "unknown";
     if (!acc[key]) {
-      acc[key] = { name: item.client?.name || "General", logoUrl: item.client?.logoMedia?.url || null, items: [] };
+      acc[key] = { name: item.client?.name || "General", logoUrl: mediaSrc(item.client?.logoMedia) || null, items: [] };
     }
     acc[key].items.push(item);
     return acc;
@@ -258,8 +267,8 @@ export function MediaGrid({
               {c.ok ? <Check className="h-4 w-4 text-emerald-500" /> : <AlertTriangle className="h-4 w-4 text-red-500" />}
             </div>
             <div className="relative w-10 h-10 rounded overflow-hidden bg-muted shrink-0">
-              {isImage(item.mimeType) && isHostAllowed(item.url) ? (
-                <NextImage src={item.url} alt={item.altText || item.filename} fill className="object-cover" sizes="40px" />
+              {isImage(item.mimeType) && isHostAllowed(getImageUrl(item)) ? (
+                <NextImage src={getImageUrl(item)} alt={item.altText || item.filename} fill className="object-cover" sizes="40px" />
               ) : isImage(item.mimeType) ? (
                 <div className="flex h-full items-center justify-center"><ImageOff className="h-4 w-4 text-muted-foreground" /></div>
               ) : (
@@ -330,7 +339,7 @@ export function MediaGrid({
     : "(max-width: 639px) 50vw, (max-width: 1023px) 33vw, (max-width: 1279px) 25vw, 20vw";
 
   const renderCard = (item: Media, index: number) => {
-    const showImage = isImage(item.mimeType) && isHostAllowed(item.url);
+    const showImage = isImage(item.mimeType) && isHostAllowed(getImageUrl(item));
     // Automatic spec audit — pure, from the row. Drives the colour + badge.
     const compliance = checkMediaCompliance(item);
     return (
@@ -345,7 +354,7 @@ export function MediaGrid({
         <div className="relative aspect-[4/3] overflow-hidden bg-muted/30">
           {showImage ? (
             <NextImage
-              src={item.url}
+              src={getImageUrl(item)}
               alt={item.altText || item.filename}
               fill
               priority={index < 10}

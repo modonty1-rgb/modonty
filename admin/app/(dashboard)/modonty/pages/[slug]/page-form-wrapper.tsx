@@ -10,9 +10,11 @@ interface PageFormWrapperProps {
   pageDescription: string;
   pageData: Record<string, unknown> | null;
   settingsDefaults: ComponentProps<typeof PageForm>["settingsDefaults"];
+  /** Modonty Core (T2): platform images come from the core client's own library. */
+  coreClientId: string | null;
 }
 
-export function PageFormWrapper({ slug, pageLabel, pageDescription, pageData, settingsDefaults }: PageFormWrapperProps) {
+export function PageFormWrapper({ slug, pageLabel, pageDescription, pageData, settingsDefaults, coreClientId }: PageFormWrapperProps) {
   const router = useRouter();
 
   const rawOgLocaleAlternate = (pageData?.metaTags as Record<string, unknown> | undefined)?.ogLocaleAlternate ?? pageData?.ogLocaleAlternate;
@@ -30,6 +32,7 @@ export function PageFormWrapper({ slug, pageLabel, pageDescription, pageData, se
       initialData={initialData}
       onRegenerated={() => router.refresh()}
       settingsDefaults={settingsDefaults}
+      coreClientId={coreClientId}
     />
   );
 }

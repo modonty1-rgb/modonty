@@ -2,12 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ImageUploadData } from "@/components/shared/deferred-image-upload";
 import { AuthorWithRelations } from "@/lib/types";
 import { updateAuthor } from "../../actions/authors-actions";
-import { deleteOldImage as deleteOldImageAction } from "../../../actions/delete-image";
-import { uploadImage } from "../../../actions/upload-image";
-import { prepareImageData } from "../../../helpers/prepare-image-data";
 import { MODONTY_AUTHOR_SLUG, MODONTY_AUTHOR_NAME } from "@/lib/constants/modonty-author";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
@@ -47,8 +43,6 @@ export function useAuthorForm({ initialData, authorId, onSuccess, siteUrl }: Use
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imageUploadData, setImageUploadData] = useState<ImageUploadData | null>(null);
-  const [imageRemoved, setImageRemoved] = useState(false);
 
   const [formData, setFormData] = useState<AuthorFormDataState>({
     name: initialData?.name || MODONTY_AUTHOR_NAME,
@@ -83,36 +77,8 @@ export function useAuthorForm({ initialData, authorId, onSuccess, siteUrl }: Use
       return;
     }
 
-    if (authorId && initialData?.id && (imageUploadData?.file || imageRemoved)) {
-      await deleteOldImageAction("authors", initialData.id);
-    }
-
-    const uploadResult = await uploadImage({
-      imageData: imageUploadData,
-      tableName: "authors",
-      urlFieldName: "image",
-      altFieldName: "imageAlt",
-      slug: formData.slug,
-      name: formData.name,
-      recordId: authorId,
-      initialId: initialData?.id,
-    });
-
-    if (!uploadResult.success) {
-      setError(uploadResult.error || "Failed to upload image");
-      toast({ title: messages.error.server_error, description: uploadResult.error || "تعذّر رفع الصورة", variant: "destructive" });
-      setLoading(false);
-      return;
-    }
-
-    const { finalSocialImage: finalImage, finalSocialImageAlt: finalImageAlt, finalCloudinaryPublicId } =
-      prepareImageData(
-        !!authorId,
-        imageRemoved,
-        !!imageUploadData?.file,
-        uploadResult.result
-      );
-
+    // Author policy: the Modonty author's visuals come from Settings (see
+    // build-modonty-author-seo) — this form never touches image fields.
     const submitData: AuthorFormData = {
       ...formData,
       email: formData.email || undefined,
@@ -130,15 +96,11 @@ export function useAuthorForm({ initialData, authorId, onSuccess, siteUrl }: Use
         formData.twitter,
         formData.facebook,
       ].filter(Boolean) as string[],
-      imageAlt: formData.imageAlt || undefined,
+      image: undefined,
+      imageAlt: undefined,
     };
 
-    const result = await updateAuthor(authorId, {
-      ...submitData,
-      ...(finalImage !== undefined ? { image: finalImage } : {}),
-      ...(finalImageAlt !== undefined ? { imageAlt: finalImageAlt } : {}),
-      ...(finalCloudinaryPublicId !== undefined ? { cloudinaryPublicId: finalCloudinaryPublicId } : {}),
-    });
+    const result = await updateAuthor(authorId, submitData);
 
     if (result.success) {
       toast({
@@ -176,10 +138,6 @@ export function useAuthorForm({ initialData, authorId, onSuccess, siteUrl }: Use
     formData,
     loading,
     error,
-    imageUploadData,
-    imageRemoved,
-    setImageUploadData,
-    setImageRemoved,
     updateField,
     updateSEOField,
     handleSubmit,

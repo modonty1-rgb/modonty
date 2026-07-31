@@ -1,3 +1,4 @@
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { db } from "@/lib/db";
 
 export type LikedItemType = "client" | "article" | "comment";
@@ -40,7 +41,7 @@ export async function getProfileLiked(
             name: true,
             slug: true,
             description: true,
-            logoMedia: { select: { url: true, altText: true } },
+            logoMedia: { select: { url: true, bunnyUrl: true, altText: true } },
           },
         },
       },
@@ -55,7 +56,7 @@ export async function getProfileLiked(
             title: true,
             slug: true,
             excerpt: true,
-            featuredImage: { select: { url: true, altText: true } },
+            featuredImage: { select: { url: true, bunnyUrl: true, altText: true } },
             client: { select: { name: true, slug: true } },
           },
         },
@@ -73,7 +74,7 @@ export async function getProfileLiked(
       name: like.client.name,
       slug: like.client.slug,
       description: like.client.description,
-      image: like.client.logoMedia?.url,
+      image: mediaSrc(like.client.logoMedia) ?? undefined,
       imageAlt: like.client.logoMedia?.altText,
     },
   }));
@@ -87,7 +88,7 @@ export async function getProfileLiked(
       title: like.article.title,
       slug: like.article.slug,
       excerpt: like.article.excerpt,
-      image: like.article.featuredImage?.url,
+      image: mediaSrc(like.article.featuredImage) ?? undefined,
       imageAlt: like.article.featuredImage?.altText,
       client: like.article.client,
     },

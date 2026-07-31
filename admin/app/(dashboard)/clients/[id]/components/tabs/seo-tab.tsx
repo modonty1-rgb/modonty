@@ -21,6 +21,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface SEOTabProps {
   client: any;
@@ -249,7 +250,7 @@ export function SEOTab({ client }: SEOTabProps) {
           <CardContent>
             <div className="space-y-3">
               <Image
-                src={client.heroImageMedia.url}
+                src={mediaSrc(client.heroImageMedia) ?? ""}
                 alt={client.heroImageMedia.altText || "OG image"}
                 width={160}
                 height={160}
@@ -257,12 +258,12 @@ export function SEOTab({ client }: SEOTabProps) {
                 sizes="160px"
               />
               <a
-                href={client.heroImageMedia.url}
+                href={mediaSrc(client.heroImageMedia) ?? ""}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-primary hover:underline block break-all"
               >
-                {client.heroImageMedia.url}
+                {mediaSrc(client.heroImageMedia) ?? ""}
               </a>
               {client.heroImageMedia.altText && (
                 <p className="text-xs text-muted-foreground">Alt: {client.heroImageMedia.altText}</p>
@@ -312,7 +313,7 @@ export function SEOTab({ client }: SEOTabProps) {
                     <p className="text-sm text-muted-foreground mb-2">Twitter Image</p>
                     <div className="space-y-3">
                       <Image
-                        src={client.heroImageMedia.url}
+                        src={mediaSrc(client.heroImageMedia) ?? ""}
                         alt={client.heroImageMedia.altText || "Twitter image"}
                         width={160}
                         height={160}
@@ -320,12 +321,12 @@ export function SEOTab({ client }: SEOTabProps) {
                         sizes="160px"
                       />
                       <a
-                        href={client.heroImageMedia.url}
+                        href={mediaSrc(client.heroImageMedia) ?? ""}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary hover:underline block break-all"
                       >
-                        {client.heroImageMedia.url}
+                        {mediaSrc(client.heroImageMedia) ?? ""}
                       </a>
                       {client.heroImageMedia.altText && (
                         <p className="text-xs text-muted-foreground">Alt: {client.heroImageMedia.altText}</p>

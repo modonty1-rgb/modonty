@@ -1,3 +1,4 @@
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { db } from "@/lib/db";
 import { cacheTag, cacheLife } from "next/cache";
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
@@ -103,7 +104,7 @@ export const getTagsEnhanced = unstable_cache(
             article: {
               select: {
                 client: {
-                  select: { id: true, name: true, slug: true, logoMedia: { select: { url: true } } },
+                  select: { id: true, name: true, slug: true, logoMedia: { select: { url: true, bunnyUrl: true } } },
                 },
               },
             },
@@ -131,7 +132,7 @@ export const getTagsEnhanced = unstable_cache(
           existing.push({
             id: clientId,
             name: row.article.client.name,
-            logoUrl: row.article.client.logoMedia?.url,
+            logoUrl: mediaSrc(row.article.client.logoMedia) ?? undefined,
           });
         }
 

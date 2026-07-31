@@ -110,10 +110,12 @@ function sanitizeJsonLd(json: object): string {
 export default async function TrustPage() {
   let ogImageUrl: string | null = null;
   let whatsappHref: string | null = null;
+  let certificateSrc: string = LEGAL.certificateImage;
   try {
     const [media, wa] = await Promise.all([getBrandMedia(), getWhatsappContactUrl()]);
     ogImageUrl = media.ogImageUrl;
     whatsappHref = wa;
+    if (media.certificateImageUrl) certificateSrc = media.certificateImageUrl;
   } catch (error) {
     console.error("Trust page settings fetch failed:", error);
   }
@@ -209,13 +211,13 @@ export default async function TrustPage() {
               <div className="grid gap-6 md:grid-cols-2">
                 <figure className="m-0">
                   <a
-                    href={LEGAL.certificateImage}
+                    href={certificateSrc}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block"
                   >
                     <NextImage
-                      src={LEGAL.certificateImage}
+                      src={certificateSrc}
                       alt="شهادة السجل التجاري — شركة جبر الجنوبية للمقاولات، الرقم الموحّد 7036024383، وزارة التجارة"
                       width={2573}
                       height={1818}

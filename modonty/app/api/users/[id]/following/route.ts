@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { auth } from "@/lib/auth";
 import type { ApiResponse } from "@/lib/types";
 
@@ -58,7 +59,7 @@ export async function GET(
             description: true,
             logoMedia: {
               select: {
-                url: true,
+                url: true, bunnyUrl: true,
               },
             },
             industry: {
@@ -87,7 +88,7 @@ export async function GET(
       name: follow.client.name,
       slug: follow.client.slug,
       description: follow.client.description,
-      logo: follow.client.logoMedia?.url || null,
+      logo: mediaSrc(follow.client.logoMedia),
       articleCount: follow.client._count.articles,
       followedAt: follow.createdAt,
       industry: follow.client.industry,

@@ -1,5 +1,6 @@
 import Link from "@/components/link";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { IconLike, IconComment, IconSaved, IconClock, IconViews } from "@/lib/icons";
@@ -13,8 +14,8 @@ interface CategoryArticleCardProps {
 }
 
 export function CategoryArticleCard({ article, preload = false }: CategoryArticleCardProps) {
-  const optimizedImageUrl = article.featuredImage?.url
-    ? optimizeCloudinaryImage(article.featuredImage.url, {
+  const optimizedImageUrl = mediaSrc(article.featuredImage)
+    ? optimizeCloudinaryImage(mediaSrc(article.featuredImage) ?? article.featuredImage!.url, {
         width: 600,
         height: 338,
         quality: 'auto',

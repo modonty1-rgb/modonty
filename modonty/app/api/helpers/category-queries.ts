@@ -3,6 +3,7 @@
  * Used by API routes and Server Components
  */
 
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { unstable_cache, cacheTag, cacheLife } from "next/cache";
@@ -31,7 +32,7 @@ type CategoryWithArticles = Prisma.CategoryGetPayload<{
         };
         featuredImage: {
           select: {
-            url: true;
+            url: true, bunnyUrl: true;
             altText: true;
           };
         };
@@ -58,7 +59,7 @@ type ArticleWithClientLogo = Prisma.ArticleGetPayload<{
       include: {
         logoMedia: {
           select: {
-            url: true;
+            url: true, bunnyUrl: true;
           };
         };
       };
@@ -72,7 +73,7 @@ type ArticleWithClientLogo = Prisma.ArticleGetPayload<{
     };
     featuredImage: {
       select: {
-        url: true;
+        url: true, bunnyUrl: true;
         altText: true;
       };
     };
@@ -149,7 +150,7 @@ export async function getCategoryBySlug(slug: string) {
           },
           featuredImage: {
             select: {
-              url: true,
+              url: true, bunnyUrl: true,
               altText: true,
             },
           },
@@ -343,7 +344,7 @@ export const getCategoriesEnhanced = unstable_cache(
                 id: true,
                 name: true,
                 slug: true,
-                logoMedia: { select: { url: true } },
+                logoMedia: { select: { url: true, bunnyUrl: true } },
               },
             },
           },
@@ -374,7 +375,7 @@ export const getCategoriesEnhanced = unstable_cache(
           existing.push({
             id: clientId,
             name: row.client.name,
-            logoUrl: row.client.logoMedia?.url,
+            logoUrl: mediaSrc(row.client.logoMedia) ?? undefined,
           });
         }
 
@@ -499,7 +500,7 @@ export const getCategoryArticlesEnhanced = unstable_cache(
           include: {
             logoMedia: {
               select: {
-                url: true,
+                url: true, bunnyUrl: true,
               },
             },
           },
@@ -513,7 +514,7 @@ export const getCategoryArticlesEnhanced = unstable_cache(
         },
         featuredImage: {
           select: {
-            url: true,
+            url: true, bunnyUrl: true,
             altText: true,
           },
         },
@@ -527,7 +528,7 @@ export const getCategoryArticlesEnhanced = unstable_cache(
       title: article.title,
       slug: article.slug,
       excerpt: article.excerpt || undefined,
-      image: article.featuredImage?.url,
+      image: mediaSrc(article.featuredImage) ?? undefined,
       publishedAt: article.datePublished?.toISOString() || new Date().toISOString(),
       author: {
         id: article.author.id,
@@ -538,7 +539,7 @@ export const getCategoryArticlesEnhanced = unstable_cache(
         id: article.client.id,
         name: article.client.name,
         slug: article.client.slug,
-        logo: article.client.logoMedia?.url || undefined,
+        logo: mediaSrc(article.client.logoMedia) || undefined,
       },
       category: article.category ? {
         id: article.category.id,
@@ -546,7 +547,8 @@ export const getCategoryArticlesEnhanced = unstable_cache(
         slug: article.category.slug,
       } : undefined,
       featuredImage: article.featuredImage ? {
-        url: article.featuredImage.url,
+        url: mediaSrc(article.featuredImage) ?? article.featuredImage.url,
+        bunnyUrl: null, // resolved into url above
         altText: article.featuredImage.altText || undefined,
       } : undefined,
       interactions: {

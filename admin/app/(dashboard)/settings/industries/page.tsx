@@ -1,12 +1,13 @@
 import { Suspense } from "react";
 import { getAllSettings } from "../actions/settings-actions";
+import { getCoreClientId } from "@modonty/database/lib/core-client";
 import { SettingsPageHeader } from "../_shared/page-header";
 import { ListingPageForm } from "../_shared/listing-page-form";
 
 export const maxDuration = 800;
 
 export default async function IndustriesSettingsPage() {
-  const settings = await getAllSettings();
+  const [settings, coreClientId] = await Promise.all([getAllSettings(), getCoreClientId()]);
   return (
     <div className="max-w-[1200px] mx-auto">
       <SettingsPageHeader
@@ -15,7 +16,7 @@ export default async function IndustriesSettingsPage() {
         arabicDescription="إعدادات صفحة القطاعات — الـ SEO والوصف اللي يظهر في نتائج البحث."
       />
       <Suspense fallback={<div className="py-12 text-center text-sm text-muted-foreground">Loading...</div>}>
-        <ListingPageForm pageKey="industries" pageName="Industries" initialSettings={settings} />
+        <ListingPageForm pageKey="industries" pageName="Industries" initialSettings={settings} coreClientId={coreClientId} />
       </Suspense>
     </div>
   );
