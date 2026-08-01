@@ -87,7 +87,9 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
     credit: media.credit || "مدونتي",
     license: media.license || "All Rights Reserved",
     creator: media.creator || "",
-    clientId: media.scope === "PLATFORM" ? "modonty" : media.client?.id || "none",
+    // PLATFORM scope removed (T2 decision 1) — legacy PLATFORM rows display as
+    // General; saving one converts it (T2b later assigns real core ownership).
+    clientId: media.client?.id || "none",
   });
 
   useEffect(() => {
@@ -167,10 +169,8 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
       let newFileSize = undefined;
       let newEncodingFormat = undefined;
 
-      const resolvedScope: MediaScope =
-        formData.clientId === "modonty" ? "PLATFORM" :
-        formData.clientId === "none" ? "GENERAL" : "CLIENT";
-      const resolvedClientId = (formData.clientId === "none" || formData.clientId === "modonty") ? null : formData.clientId;
+      const resolvedScope: MediaScope = formData.clientId === "none" ? "GENERAL" : "CLIENT";
+      const resolvedClientId = formData.clientId === "none" ? null : formData.clientId;
 
       if (newFile) {
         // Bunny-primary (2026-07-29): replacement files upload straight to Bunny.
@@ -315,7 +315,6 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">General (no client)</SelectItem>
-                      <SelectItem value="modonty">Modonty — Platform Assets</SelectItem>
                       {clients.map((client) => (
                         <SelectItem key={client.id} value={client.id}>
                           {client.name}

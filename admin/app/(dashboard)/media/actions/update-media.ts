@@ -43,6 +43,11 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
     const session = await auth();
     if (!session) return { success: false, error: "Unauthorized" };
 
+    // Snapshot the resolved URL before the edit — entities store mediaSrc (bunnyUrl ?? url),
+    // so a change here must propagate to their dual-field strings (syncEntityImageUrls).
+    const prev = await db.media.findUnique({ where: { id }, select: { url: true, bunnyUrl: true } });
+    const prevSrc = prev?.bunnyUrl ?? prev?.url ?? null;
+
     // Changing the media type or its client moves the Bunny file to its new
     // /{type}/{clientSlug}/ folder (P2 critical note). Best-effort — a Bunny
     // failure must NOT block the admin edit; bunnyUrl then keeps its old path.
@@ -132,6 +137,19 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
       },
     });
 
+    // URL changed (replace-file or Bunny move) → rewrite every referencing entity's
+    // dual-field string + regenerate its baked SEO, else JSON-LD serves a dead link.
+    const newSrc = media.bunnyUrl ?? media.url ?? null;
+    let entitySync: Awaited<ReturnType<typeof import("@/lib/media/sync-entity-image-urls").syncEntityImageUrls>> | null = null;
+    if (newSrc && newSrc !== prevSrc) {
+      try {
+        const { syncEntityImageUrls } = await import("@/lib/media/sync-entity-image-urls");
+        entitySync = await syncEntityImageUrls(id, newSrc, prevSrc);
+      } catch {
+        // Best-effort — the media edit itself must not fail on sync errors.
+      }
+    }
+
     // Regenerate JSON-LD for all articles using this media
     const relatedArticles = await db.article.findMany({
       where: {
@@ -174,6 +192,12 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
     // (partner slider · client page · article client card) → invalidate its caches.
     await revalidateModontyTag("clients");
     await revalidateModontyTag("articles");
+    if (entitySync) {
+      if (entitySync.tags) await revalidateModontyTag("tags");
+      if (entitySync.categories) await revalidateModontyTag("categories");
+      if (entitySync.industries || entitySync.settings) await revalidateModontyTag("industries");
+      if (entitySync.pages || entitySync.settings) await revalidateModontyTag("settings");
+    }
     return { success: true, media };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update media";

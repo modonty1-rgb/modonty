@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getCoreClientId } from "@modonty/database/lib/core-client";
 import { SettingsPageHeader } from "../_shared/page-header";
 import { getPlatformDefaults } from "./actions/defaults-actions";
 import { DefaultsForm } from "./components/defaults-form";
@@ -6,7 +7,7 @@ import { DefaultsForm } from "./components/defaults-form";
 export const dynamic = "force-dynamic";
 
 export default async function DefaultsSettingsPage() {
-  const defaults = await getPlatformDefaults();
+  const [defaults, coreClientId] = await Promise.all([getPlatformDefaults(), getCoreClientId()]);
   return (
     <div className="max-w-[1200px] mx-auto">
       <SettingsPageHeader
@@ -15,7 +16,7 @@ export default async function DefaultsSettingsPage() {
         arabicDescription="الصور الافتراضية للنظام — تظهر تلقائياً لما العميل أو المقال ما عنده صورة (أو صورته مكسورة). تُدار من هنا فقط ولا تظهر في مكتبة الوسائط."
       />
       <Suspense fallback={<div className="py-12 text-center text-sm text-muted-foreground">Loading...</div>}>
-        <DefaultsForm initial={defaults} />
+        <DefaultsForm initial={defaults} coreClientId={coreClientId} />
       </Suspense>
     </div>
   );

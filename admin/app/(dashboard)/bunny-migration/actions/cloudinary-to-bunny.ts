@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-guard";
-import { uploadToBunny } from "@modonty/database/lib/bunny";
+import { uploadToBunny, bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/database/lib/bunny";
 
 /**
  * ONE-TIME migration: retire Cloudinary from every stored field.
@@ -133,16 +133,34 @@ function basenameOf(url: string): string {
   return decodeURIComponent(clean.slice(clean.lastIndexOf("/") + 1)).toLowerCase();
 }
 
+/**
+ * Cloudinary's random public-id suffix (`img-x7yj8jux6` → `x7yj8jux6`). Legacy mangled
+ * filenames keep this token, so it identifies the same asset across renamed variants
+ * (found 2026-08-01: an article body held a dead variant of an image whose Media card —
+ * and Bunny copy — exist under the current name). Mixed letters+digits ≥8 chars only,
+ * so plain words and dates never qualify and a false match is practically impossible.
+ */
+function suffixTokenOf(url: string): string | null {
+  const noExt = basenameOf(url).replace(/\.[a-z0-9]+$/i, "");
+  const token = noExt.slice(noExt.lastIndexOf("-") + 1);
+  return /^(?=.*[a-z])(?=.*\d)[a-z0-9]{8,}$/i.test(token) ? token : null;
+}
+
 async function buildResolver() {
   const media = await db.media.findMany({ select: { url: true, bunnyUrl: true } });
   const exact = new Map<string, string>();
   const loose = new Map<string, string>();
   const byName = new Map<string, string>();
+  // Random-suffix fallback: `null` marks a token seen on two different assets — ambiguous,
+  // never resolved through this map.
+  const bySuffix = new Map<string, string | null>();
   for (const m of media) {
     if (!m.bunnyUrl || !m.url) continue;
     exact.set(m.url, m.bunnyUrl);
     loose.set(normalize(m.url), m.bunnyUrl);
     byName.set(basenameOf(m.url), m.bunnyUrl);
+    const token = suffixTokenOf(m.url);
+    if (token) bySuffix.set(token, bySuffix.has(token) && bySuffix.get(token) !== m.bunnyUrl ? null : m.bunnyUrl);
   }
 
   // Platform assets (logo, OG image, listing headers) were moved to Bunny by hand — they are
@@ -160,8 +178,12 @@ async function buildResolver() {
   }
 
   return {
-    resolve: (u: string) =>
-      exact.get(u) ?? loose.get(normalize(u)) ?? byName.get(basenameOf(u)) ?? null,
+    resolve: (u: string) => {
+      const direct = exact.get(u) ?? loose.get(normalize(u)) ?? byName.get(basenameOf(u));
+      if (direct) return direct;
+      const token = suffixTokenOf(u);
+      return (token && bySuffix.get(token)) || null;
+    },
     mediaWithoutBunny: media.filter((m) => !m.bunnyUrl).length,
   };
 }
@@ -237,6 +259,50 @@ export async function getMigrationStats(): Promise<MigrationStats> {
   };
 }
 
+// ── featured-image crops (JSON-LD) ───────────────────────────────────────────
+
+const CLIENTS_STORAGE_HOST = process.env.BUNNY_STORAGE_HOSTNAME || "storage.bunnycdn.com";
+const ASPECT_SUFFIXES = Object.values(BUNNY_ASPECT_SUFFIX);
+
+/** Walk the clients storage zone once → every file path. Storage API, never the CDN. */
+async function listClientsZoneFiles(): Promise<Set<string>> {
+  const zone = process.env.BUNNY_STORAGE_ZONE_NAME;
+  const key = process.env.BUNNY_STORAGE_PASSWORD;
+  if (!zone || !key) throw new Error("Bunny clients zone env missing");
+  const files = new Set<string>();
+  const queue: string[] = [""];
+  let visited = 0;
+  while (queue.length && visited < 5000) {
+    const dir = queue.shift() as string;
+    visited++;
+    const res = await fetch(`https://${CLIENTS_STORAGE_HOST}/${zone}/${dir}`, {
+      headers: { AccessKey: key, Accept: "application/json" },
+      cache: "no-store",
+    });
+    if (!res.ok) continue;
+    const entries = (await res.json()) as Array<{ ObjectName: string; IsDirectory: boolean }>;
+    for (const e of entries) {
+      const full = `${dir}${e.ObjectName}`;
+      if (e.IsDirectory) queue.push(`${full}/`);
+      else files.add(full);
+    }
+  }
+  return files;
+}
+
+/** Storage path (decoded, no leading slash) from a Bunny CDN url — null for foreign hosts. */
+function clientsZonePathOf(url: string | null): string | null {
+  if (!url) return null;
+  try {
+    const u = new URL(url);
+    const cdnHost = (process.env.BUNNY_PULL_ZONE_HOSTNAME || "modonty-clients.b-cdn.net").replace(/^https?:\/\//, "");
+    if (u.host !== cdnHost) return null;
+    return decodeURIComponent(u.pathname.replace(/^\//, ""));
+  } catch {
+    return null;
+  }
+}
+
 // ── scope listing ────────────────────────────────────────────────────────────
 
 export interface ScopeTargets {
@@ -264,6 +330,49 @@ export async function listScope(scope: MigrationScope): Promise<ScopeTargets> {
         ).map((m) => m.id),
       };
 
+    case "featuredCrops": {
+      // JSON-LD derives __16x9/__4x3/__1x1 urls from EVERY article's featured image, but the
+      // uploader pre-generates crops for POST-type media only — a GENERAL-type card used as a
+      // featured image left 3 dead crop links per article (found 2026-08-01: 42 images / 168
+      // dead links). Coverage here is decided by USAGE (referenced as featuredImageId), never
+      // by card type, and only media whose crops are actually absent from storage are listed.
+      //
+      // Articles WITHOUT a featured image get the SAME trio from the generator's fallback
+      // chain (client hero image → client logo → site default), so those fallback media need
+      // crops just as much — 10 client images / 30 dead links slipped through until this was
+      // added (found 2026-08-01, second clean loop).
+      const articles = await db.article.findMany({ select: { featuredImageId: true, clientId: true } });
+      const targetIds = new Set(articles.map((a) => a.featuredImageId).filter(Boolean) as string[]);
+      const fallbackClientIds = [...new Set(articles.filter((a) => !a.featuredImageId).map((a) => a.clientId))];
+      if (fallbackClientIds.length) {
+        const clients = await db.client.findMany({
+          where: { id: { in: fallbackClientIds } },
+          select: {
+            heroImageMedia: { select: { id: true, url: true, bunnyUrl: true } },
+            logoMedia: { select: { id: true, url: true, bunnyUrl: true } },
+          },
+        });
+        for (const c of clients) {
+          // Same precedence as the generator: hero wins whenever it resolves to any url.
+          const m = [c.heroImageMedia, c.logoMedia].find((x) => x && (x.bunnyUrl ?? x.url));
+          if (m) targetIds.add(m.id);
+        }
+      }
+      if (!targetIds.size) return { scope, ids: [] };
+      const rows = await db.media.findMany({
+        where: { id: { in: [...targetIds] }, bunnyUrl: { not: null } },
+        select: { id: true, bunnyUrl: true },
+      });
+      const files = await listClientsZoneFiles();
+      const ids: string[] = [];
+      for (const r of rows) {
+        const base = clientsZonePathOf(r.bunnyUrl);
+        if (!base) continue;
+        if (ASPECT_SUFFIXES.some((s) => !files.has(bunnyAspectUrl(base, s)))) ids.push(r.id);
+      }
+      return { scope, ids };
+    }
+
     case "danglingLinks": {
       // Join rows pointing at a parent that no longer exists. MongoDB enforces nothing and
       // Prisma only emulates onDelete for its own deletes, so these survive and then make
@@ -271,7 +380,16 @@ export async function listScope(scope: MigrationScope): Promise<ScopeTargets> {
       // page down. The row itself is meaningless without its parent: delete it.
       const tagIds = new Set((await db.tag.findMany({ select: { id: true } })).map((t) => t.id));
       const links = await db.articleTag.findMany({ select: { id: true, tagId: true } });
-      return { scope, ids: links.filter((l) => !tagIds.has(l.tagId)).map((l) => l.id) };
+      const ids = links.filter((l) => !tagIds.has(l.tagId)).map((l) => `tag:${l.id}`);
+      // Articles whose featuredImageId points at a Media card that no longer exists (covers
+      // deleted upstream — hit 2026-08-01 on two articles after a prod sync). The generator
+      // then falls back to legacy Cloudinary transform urls, poisoning the JSON-LD. Fix:
+      // point them at the designated platform default post image (crops already on Bunny);
+      // a real cover uploaded later regenerates its SEO on save as usual.
+      const mediaIds = new Set((await db.media.findMany({ select: { id: true } })).map((m) => m.id));
+      const arts = await db.article.findMany({ select: { id: true, featuredImageId: true } });
+      for (const a of arts) if (a.featuredImageId && !mediaIds.has(a.featuredImageId)) ids.push(`art:${a.id}`);
+      return { scope, ids };
     }
 
     case "orphans": {
@@ -373,7 +491,7 @@ export async function runScopeBatch(
     case "media": {
       // Reuse the existing media migration — same uploader the Media library button uses.
       const { migrateMediaBatch } = await import("@/app/(dashboard)/media/actions/migrate-media-to-bunny");
-      const r = await migrateMediaBatch(ids.length);
+      const r = await migrateMediaBatch(ids.length, ids);
       if ("error" in r) {
         failed = ids.length;
         note(r.error);
@@ -385,10 +503,55 @@ export async function runScopeBatch(
       break;
     }
 
+    case "featuredCrops": {
+      const { generateAspectCrops } = await import(
+        "@/app/(dashboard)/media/actions/generate-aspect-crops"
+      );
+      const zone = process.env.BUNNY_STORAGE_ZONE_NAME;
+      const key = process.env.BUNNY_STORAGE_PASSWORD;
+      const rows = await db.media.findMany({
+        where: { id: { in: ids } },
+        select: { id: true, bunnyUrl: true, filename: true },
+      });
+      for (const row of rows) {
+        try {
+          const base = clientsZonePathOf(row.bunnyUrl);
+          if (!base) throw new Error("bunnyUrl outside clients zone");
+          // Read the original from STORAGE (never the CDN — its cache can serve deleted files).
+          const res = await fetch(`https://${CLIENTS_STORAGE_HOST}/${zone}/${base}`, {
+            headers: { AccessKey: key as string },
+            cache: "no-store",
+          });
+          if (!res.ok) throw new Error(`source read failed (${res.status})`);
+          const buf = Buffer.from(await res.arrayBuffer());
+          const crops = await generateAspectCrops(buf);
+          await Promise.all(
+            crops.map((c) => uploadToBunny("clients", c.buffer, bunnyAspectUrl(base, c.suffix), "image/webp"))
+          );
+          done++;
+        } catch (e) {
+          failed++;
+          note(`${row.filename}: ${e instanceof Error ? e.message.split("\n")[0] : String(e)}`);
+        }
+      }
+      break;
+    }
+
     case "danglingLinks": {
+      let defaultPost: { id: string } | null = null;
       for (const id of ids) {
         try {
-          await db.articleTag.delete({ where: { id } });
+          if (id.startsWith("art:")) {
+            // Dangling featured cover → assign the platform default post image (see listScope).
+            defaultPost ??= await db.media.findFirst({
+              where: { filename: "platform-default-post" },
+              select: { id: true },
+            });
+            if (!defaultPost) throw new Error("platform-default-post card not found");
+            await db.article.update({ where: { id: id.slice(4) }, data: { featuredImageId: defaultPost.id } });
+          } else {
+            await db.articleTag.delete({ where: { id: id.replace(/^tag:/, "") } });
+          }
           done++;
         } catch (e) {
           failed++;

@@ -79,46 +79,23 @@
 
 
 <div class="tabs">
-  <button data-t="open" class="on">⏳ الباقي</button>
-  <button data-t="done">✅ المنجز والمرجع</button>
+  <button data-t="open" class="on">⏳ To Do</button>
+  <button data-t="done">✅ Done</button>
+  <button data-t="brief">📖 Brief</button>
 </div>
 <div class="pane on" id="pane-open">
 <h2>التاسكات الباقية — مرتّبة بأولوية التنفيذ (2026-07-31)</h2>
-<div class="t"><input type="checkbox" id="T3"><div class="body">
-  <div class="hd"><span class="id">T3</span><span class="tag now">أولوية ١</span><span class="ttl">تأمين</span></div>
-  <p>commit الـ٢٤٣ ملف على الفرع بلا push · جرد Bunny الكامل · تنظيف الملفات المؤقتة.</p>
-  <span class="gate">بوابة: <code>git status</code> نظيف · الجرد محفوظ</span></div></div>
-<div class="t"><input type="checkbox" id="T2b"><div class="body">
-  <div class="hd"><span class="id">T2b</span><span class="tag now">أولوية ٢</span><span class="ttl">تحويل القديم ← الجديد — بند مستقل يخصّ مدوّنتي</span><span class="tag bad">صفر خسارة</span></div>
-  <p>زرّ idempotent في route الترحيل يقرأ كل الصور القائمة (نصوص الكيانات الستّة + اليتيمة + الهوية + القصّة) ويحوّلها صفوف <code>Media</code> مملوكة لمدوّنتي بعلاقات. يُجرَّب على التست أولاً، ثم <b>يُعاد على بيانات الإنتاج الحقيقية بعد الـSync</b> ضمن <code>T5</code> — نفس الزرّ، بيانات حقيقية.</p>
-  <p style="color:#ffb4ae"><b>🔒 قاعدة صفر خسارة (قرار خالد):</b> التحويل <b>إضافي فقط</b> — لا يحذف ولا يعدّل أي حقل نصّي قائم ولا أي ملف. القديم يبقى كما هو حتى يثبت الجديد بجولتي تحقّق مستقلّتين.</p>
-  <p><b>القائمة التفصيلية (نُقلت من خطة الـcore عند إقفالها 2026-07-31 — بالقياس المحدَّث):</b></p>
-  <p>☐ اليتيمة (<code>clientId=null</code>) → <code>coreClientId</code> — القياس: <b>٩</b> (كان ١٠؛ الفارق يُتحقّق عند التشغيل)<br>
-  ☐ روابط الكيانات المعبّأة (<b>٤ وسوم + ١٤ تصنيف + ٧ صناعات</b> — منها ١ بعلاقة لكلٍّ؛ المؤلفان حُذفا والطاقم أُلغي): إيجاد/إنشاء صفّ <code>Media</code> بالرابط نفسه مملوكاً لمدوّنتي + تعبئة العلاقة (زرّ، لا سكربت)<br>
-  ☐ روابط <code>Settings</code> الستّة (على ملفات <code>platform/</code>) → صفوف Media مملوكة<br>
-  ☐ صور القصّة ~١٧ (<code>story/_constants.ts</code>) → صفوف Media + fallback للثابت<br>
-  ☐ أصول <code>brand-assets.ts</code> الأربعة → صفوف Media، والقراءة: قاعدة أولاً ← الثابت fallback<br>
-  ☐ <b>التحقق الختامي:</b> صفر صورة منصّة بلا صفّ Media مملوك لمدوّنتي</p>
-  <span class="gate">بوابة: كل صورة قديمة لها صفّ Media بعلاقة · الحقول القديمة سليمة بايت-ببايت · التشغيل الثاني = صفر تغيير (idempotent مثبت)</span></div></div>
-<div class="t"><input type="checkbox" id="T4"><div class="body">
-  <div class="hd"><span class="id">T4</span><span class="tag now">أولوية ٣</span><span class="ttl">تست السرعة — Bunny مقابل Cloudinary</span></div>
-  <p>نفس الصورة على المنصّتين · TTFB p50/p75/p95 + الحجم + كاش الحافّة · ٤٠ صورة × ٣ جولات.</p>
-  <span class="gate">بوابة: Bunny ≤ Cloudinary عند p75</span></div></div>
-<div class="t"><input type="checkbox" id="T5"><div class="body">
-  <div class="hd"><span class="id">T5</span><span class="tag now">أولوية ٤</span><span class="ttl">تصفير Bunny + بروفة على نسخة الإنتاج</span></div>
-  <p>تصفير · Sync إنتاج ← محلي · ترحيل من الصفر لـ<b>٤٤٢ صورة حقيقية</b> · مسح كامل + تست متصفّح. <b>هنا تظهر أي روابط ميتة قبل النشر لا بعده.</b></p>
-  <p style="color:#ffb4ae">📌 بعد الـSync يُعاد على بيانات الإنتاج: <b>حذف المؤلفَين البشريَّين</b> (قرار Singleton 2026-07-31 — بتحقّق <code>articles=0</code> قبل الحذف، نفّذناه على التست: deleted 2 · remaining Modonty) + بند الملكية <code>T2b</code>. وصورتاهما اليتيمتان على زون <code>assets</code> تسقطان مع تنظيفه.</p>
-  <span class="gate">بوابة: صفر Cloudinary · صفر صورة مكسورة · صفر خطأ متصفّح</span></div></div>
 <div class="t"><input type="checkbox" id="T6"><div class="body">
-  <div class="hd"><span class="id">T6</span><span class="tag now">أولوية ٥</span><span class="ttl">النشر — merge</span></div>
-  <p><code>tsc</code> + <code>build</code> على الثلاثة · رفع إصدار · merge ← push. <b>لا يغيّر صورة واحدة</b> — بيانات الإنتاج لم تُرحَّل بعد فالـfallback يخدم Cloudinary كما اليوم.</p>
-  <span class="gate">بوابة: الموقع الحيّ يعمل كما كان · التراجع = revert بدقائق</span></div></div>
+  <div class="hd"><span class="id">T6</span><span class="tag now">أولوية ٥</span><span class="ttl">الدفع على فرع version-2 + التست الحي على preview</span></div>
+  <p>باكب Atlas (تنزيل آخر لقطة) · <code>tsc</code> صفر أخطاء · رفع إصدار · commit بقائمة صريحة (استثناء reels/settings.local/.mcp.json) · push على <b>فرع version-2 فقط</b> ← Vercel ينشر على رابط الـpreview الثابت · <b>تست حي كامل على الـpreview</b>. <b>صفر مساس بـmain.</b></p>
+  <span class="gate">بوابة: الـpreview يعمل سليماً — صور وسيو وصفر أخطاء</span></div></div>
 <div class="t"><input type="checkbox" id="T7"><div class="body">
   <div class="hd"><span class="id">T7</span><span class="tag now">أولوية ٦</span><span class="ttl">ترحيل صور الإنتاج — بلا سيو</span></div>
   <p>باكب طازج · النطاقات الأربعة الأولى فقط. <b>لا إعادة توليد سيو إطلاقاً.</b></p>
   <span class="gate">بوابة: صفر صورة مكسورة على الإنتاج</span></div></div>
 <div class="t"><input type="checkbox" id="T8"><div class="body">
   <div class="hd"><span class="id">T8</span><span class="tag now">أولوية ٧</span><span class="ttl">السيو</span></div>
+  <p style="color:#ffb4ae">🔒 <b>شرط خالد الصريح (2026-08-01): لا إعادة توليد JSON-LD على الإنتاج إطلاقاً حتى نتأكد 100% أن الصور تُخدم سليمة على اللايف من المزوّدَين (Cloudinary القديم بالـfallback + Bunny الجديد)</b> — التحقق أولاً، السيو آخراً.</p>
   <p>باكب مخصّص لحقول السيو أولاً · ثم نطاقات إعادة التوليد. + إصلاح الصفحات الستّ التي تُرندَر بصفر JSON-LD.</p>
   <span class="gate">بوابة: JSON-LD حيّ صحيح · صفر Cloudinary</span></div></div>
 <div class="t"><input type="checkbox" id="T9"><div class="body">
@@ -133,9 +110,42 @@
   <p>🏷️ <b>نصوص قديمة مضلّلة:</b> عناوين «(Cloudinary)» في <code>defaults-form</code> · تعليق <code>gallery-actions:43</code> بالكونسول · رسائل <code>messages/en+ar</code>.</p>
   <span class="gate">بوابة: فترة أمان + جولتان مستقلّتان بصفر Cloudinary على الإنتاج</span>
 </div></div>
+<div class="t"><input type="checkbox" id="T6b"><div class="body">
+  <div class="hd"><span class="id">T6b</span><span class="tag now">آخر مرحلة</span><span class="ttl">الـmerge إلى main — بقرار خالد فقط</span><span class="tag bad">بوابة الإنتاج</span></div>
+  <p><b>لا يُنفَّذ إلا بعد نجاح تست الـpreview 100% وبأمر صريح</b> (قرار خالد 2026-08-01: الـmerge لوحده آخر حاجة وترتيبه آخر القائمة). merge ← push لـ<code>main</code> ← Vercel ينشر الإنتاج. <b>لا يغيّر صورة واحدة على اللايف</b> — بيانات الإنتاج لم تُرحَّل بعد فالـfallback يخدم Cloudinary كما اليوم. <b>بعده تُفتح</b> بنود اللايف اليدوية (بند 66) ثم T7/T8/T9 (كلها تحتاج الكود منشوراً على الإنتاج).</p>
+  <span class="gate">بوابة: الموقع الحيّ يعمل كما كان · التراجع = revert بدقائق</span></div></div>
 </div>
 <div class="pane" id="pane-done">
 <h2>المنجز</h2>
+<div class="t done"><input type="checkbox" id="T5" checked><div class="body">
+  <div class="hd"><span class="id">T5</span><span class="ttl">تصفير Bunny + بروفة على نسخة الإنتاج</span><span class="tag ok">✅ تمّت 2026-08-01</span></div>
+  <p style="color:#8ce09a;font-size:12.5px">✅ <b>البروفة نُفّذت كاملة ضمن retest اليوم</b> (خطة خالد دمجتها في T2b): تصفير 972 ← Sync إنتاج طازج 85/85 ← ترحيل من الصفر 441/444 (الـ3 الميتة حُلّت بالافتراضية) ← T2b تمليك.</p>
+  <p style="color:#8ce09a;font-size:12.5px">✅ <b>جولة التفتيش المتصفحية (ليلاً — 10 صفحات على :3001):</b> الرئيسية (74 صورة) · مقالان · مقال «التقويم الهجري» (الافتراضية تظهر من Bunny) · صفحتا عميل + عميل مدوّنتي الكور · قوائم العملاء (70 صورة) والتصنيفات والوسوم (66) والرائج والقطاعات — <b>صفر صورة مكسورة · صفر رابط Cloudinary في الصفحات وفي JSON-LD الحي</b>. أخطاء الكونسول الوحيدة = JWTSessionError المعروفة (كوكي dev قديم — OBS-118، لا علاقة بالترحيل).</p>
+  <p style="font-size:12.5px">📌 إعادة البنود اليدوية على بيانات الإنتاج الحقيقية (حذف المؤلفَين + الأغلفة الميتة + صورة الوسم + ogImageUrl + coreClientId + T2b) = <b>بند 66 في TODO.md</b> — تُنفَّذ بعد النشر.</p>
+  <span class="gate">✅ البوابة تحققت: صفر Cloudinary · صفر صورة مكسورة · صفر خطأ متصفّح متعلق بالترحيل</span></div></div>
+<div class="t done"><input type="checkbox" id="T4" checked><div class="body">
+  <div class="hd"><span class="id">T4</span><span class="ttl">تست السرعة — Bunny مقابل Cloudinary</span><span class="tag ok">✅ الجولة الأولى تمّت 2026-08-01</span></div>
+  <p style="color:#8ce09a;font-size:12.5px">⏱️ <b>240 طلباً (٤٠ صورة × ٣ جولات × المزوّدين) · صفر فشل · الأحجام متطابقة:</b> Cloudinary أسرع عند p75 (TTFB دافئ 76ms مقابل Bunny 125ms · بارد 430ms) — الفرق <b>صغير، غير محسوس للزائر</b>. السبب المرجّح: كاش Bunny كان مصفّراً من أمس (HIT ارتفع 20%←84% خلال الجولات نفسها).</p>
+  <p style="font-size:12.5px">📌 <b>المتابعة خارج هذا الملف:</b> إعادة الفحص كاملاً يوم <b>2026-08-05</b> = <b>بند 67 في TODO.md</b> (قرار خالد) — وقرار Brief #3 (معيار النجاح) يُقفل بعدها.</p>
+</div></div>
+<div class="t done"><input type="checkbox" id="T2b" checked><div class="body">
+  <div class="hd"><span class="id">T2b</span><span class="ttl">تشغيل زرّ التمليك على التست + التحقق</span><span class="tag ok">✅ تمّ 2026-08-01</span><span class="tag bad">صفر خسارة</span></div>
+  <p><b>الفعل (خطة خالد المرحلية 2026-08-01 — دمجت بروفة T5 هنا، بلا باكب):</b> <b>مرحلة ١</b> اللوكال = نسخة الإنتاج · <b>مرحلة ٢</b> تفعيل الكور · <b>مرحلة ٣</b> التمليك — كلها داخل <code>/bunny-migration</code>.</p>
+  <p style="color:#8ce09a;font-size:12.5px">✅ <b>مرحلة ١ (مساءً):</b> Sync 85/85 (4,291 وثيقة · 0 فشل) ← تصفير zone clients 972/972 (تحقق = 0 · assets محمي) ← تاسك ١: 441/444 + 52 قصّة ← تاسك ٢: اليتيمة 33→0 ← تاسك ٣: الخام 74→0 ← تاسك ٤: سيو 205/205. الفشل الوحيد = 3 صفوف أصلها محذوف من حساب Cloudinary نفسه (مكسورة على الإنتاج الحي أيضاً) — <b>حُلّت بقرار خالد:</b> فك الربط + حذف الصفوف + فولباك الافتراضية بُني ووُصّل (تست حي ✓). <b>البوابة: الوسائط 467/467 كلها Bunny · dirty=0.</b></p>
+  <p style="color:#8ce09a;font-size:12.5px">✅ <b>مرحلة ٢:</b> <code>coreClientId</code> ضُبط على عميل «مدوّنتي» من <code>/settings/system</code> بالواجهة.</p>
+  <p style="color:#8ce09a;font-size:12.5px">✅ <b>مرحلة ٣ (ليلاً — بأمر LINK من خالد):</b> القراران حُسما يدوياً قبل التنفيذ (صورة وسم «خدمات طبية» من فورم الوسم + <code>Settings.ogImageUrl</code> من /settings/modonty — كلاهما من مكتبة مدوّنتي، البروفة أكدت صفر قرارات) ← التنفيذ: <b>تملُّك 10 · ربط 35 · إنشاء 21 · تخطٍّ 6</b> ← <b>إثبات idempotent: بروفة ثانية = «سيُنفَّذ: 0 · منجز: 63»</b> ← عدّ الملفات: البطاقات 467→488 (+21 صفاً جديداً) كلها بنسخة Bunny 100% · إعادة فحص كرت الترحيل = <b>نظيف</b>. (زر «معاينة» أُعيدت تسميته: «بروفة بلا تنفيذ — شوف إيش اللي بيتعدل قبل ما توقّع».)</p>
+  <p style="font-size:12.5px">🐞 <b>عرَض جانبي انحل أثناء التست (قاعدة خالد الذهبية: لا تجاهل لمشاكل التست):</b> 404 على كل المسارات الفرعية <code>/tags/[id]/edit·technical</code> — السبب <code>.next</code> تالف من قتل السيرفرات غير النظيف · الحل: حذف <code>.next</code> + إعادة تشغيل.</p>
+  <p style="font-size:12.5px">لاحقاً: الإعادة على الإنتاج بنفس المراحل حرفياً (موثّقة في كرت <code>T5</code> + بند 66 في TODO.md) · قلب قراءة المولّدات علاقة-أولاً (اختياري بعد الثبوت).</p>
+  <span class="gate">✅ البوابة تحققت: كل صورة منصّة لها صفّ Media مملوك لمدوّنتي · الحقول النصّية القديمة بلا مساس · التشغيل الثاني = صفر تغيير</span></div></div>
+<div class="t done"><input type="checkbox" id="T2b1" checked><div class="body">
+  <div class="hd"><span class="id">T2b-1</span><span class="ttl">بناء زرّ «Link core media»</span><span class="tag ok">✅ تمّ 2026-08-01</span></div>
+  <p style="color:#8ce09a;font-size:12.5px">✅ <b>T2b-1 اكتمل (2026-08-01):</b> الزرّ مبني في <code>/bunny-migration</code> (<code>link-core-media.ts</code> + كرت) — <b>Preview قراءة-فقط يعرض الخطة بنداً بنداً</b>، وRun محروس بكتابة LINK (لن يُشغَّل إلا بأمر خالد = T2b-2). <b>أرقام الـPreview الحية:</b> سيُنفَّذ ٥٦ · منجز ٦ · <b>قرار واحد لخالد:</b> وسم «خدمات طبية» صورته مملوكة لعميل «متجر باقتك» (<code>stc-fawujffh7.webp</code>) — الزرّ لا يلمسه أبداً؛ الحل عند التشغيل: اختيار صورة من مكتبة مدوّنتي من فورم الوسم. <b>ولغز اليتيمة انحل:</b> الـ٩ = يتيمتان حقيقيتان + ٧ صفوف PLATFORM (clientId فاضٍ فيها أيضاً) — الجرد القديم عدّهم سلة واحدة.</p>
+  <p style="color:#8ce09a;font-size:12.5px">✅ <b>منجز مرتبط (2026-08-01):</b> مزامنة تعديل الوسائط (<code>sync-entity-image-urls.ts</code> في <code>updateMedia</code> — مثبتة بدورة اتجاهين) · إغلاق آخر منفذ PLATFORM (<code>edit-media-form</code> — صفر خيار PLATFORM بكل الواجهات).</p>
+</div></div>
+<div class="t done"><input type="checkbox" id="T3" checked><div class="body">
+  <div class="hd"><span class="id">T3</span><span class="tag now">أولوية ١</span><span class="ttl">تأمين</span><span class="tag ok">✅ تمّ 2026-07-31</span></div>
+  <p>commit الـ٢٤٣ ملف على الفرع بلا push · جرد Bunny الكامل · تنظيف الملفات المؤقتة.</p>
+  <span class="gate">بوابة: <code>git status</code> نظيف · الجرد محفوظ</span></div></div>
 <div class="t done"><input type="checkbox" id="T1" checked><div class="body">
   <div class="hd"><span class="id">T1</span><span class="ttl">عزل الترحيل في route مخصص — <b>مؤقّت</b></span><span class="tag ok">✅ تمّ 2026-07-31</span><span class="tag bad">يُحذف بعد الانتهاء</span></div>
   <p>نقل كل ما يخصّ Cloudinary ← Bunny خارج <code>/database</code> إلى route مستقل. الأداة تصير مركّزة ومنها ننطلق.</p>
@@ -149,6 +159,9 @@
   <span class="gate">بوابة: صفر أصل منصّة مكتوب في الكود · جرد Bunny = جرد <code>Media</code></span><br><span class="gate">📄 الخطة التفصيلية: <code>MODONTY-CORE-PLAN-v1.html</code> (٦ مراحل · ٣٤ بنداً · القرارات الثلاثة مُقفلة)</span>
 </div></div>
 
+</div>
+<div class="pane" id="pane-brief">
+<div class="box ok"><b>📖 القاعدة:</b> هذا التبويب هو عقيدة الخطة — الخطورات التي نتحاشاها والقرارات المقفلة التي نمشي عليها. البنود في To Do، والأدلة في Done.</div>
 <h2>الخطورات — ٤</h2>
 
 <div class="box">
@@ -187,6 +200,7 @@
 <div class="d"><div class="q">٤ · الـmerge</div>
 <div><span class="k">أ</span> نعم، بعد <code>T4</code> و<code>T5</code>. <span class="rec">توصيتي</span></div>
 <div><span class="k">ب</span> مؤجَّل ⇒ الشغل يبقى على الفرع ولا يصل الإنتاج.</div></div>
+
 
 
 </div>

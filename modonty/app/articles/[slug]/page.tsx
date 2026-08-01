@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { mediaSrc } from "@modonty/database/lib/media-src";
+import { getPlatformDefaultImages } from "@modonty/database/lib/platform-defaults";
 import { Suspense } from "react";
 import { notFound, unstable_rethrow } from "next/navigation";
 
@@ -273,6 +274,15 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       userId ? getPendingFaqsForCurrentUser(articleRaw.id) : Promise.resolve([]),
     ]);
 
+    // No featured image → platform default (admin /settings/defaults). Fetched only when
+    // actually missing — the common path pays nothing.
+    const defaultImages = article.featuredImage ? null : await getPlatformDefaultImages();
+    const featuredImage =
+      article.featuredImage ??
+      (defaultImages?.post
+        ? { url: defaultImages.post, bunnyUrl: defaultImages.post, altText: article.title }
+        : null);
+
     const userBox = session?.user
       ? { name: session.user.name ?? null, email: session.user.email ?? null }
       : null;
@@ -497,8 +507,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   <ArticleLabMobileIdentity client={article.client} articleId={article.id} />
                 )}
 
-                {article.featuredImage && (
-                  <ArticleFeaturedImage image={article.featuredImage} title={article.title}>
+                {featuredImage && (
+                  <ArticleFeaturedImage image={featuredImage} title={article.title}>
                     {article.client && (
                       <ArticleFeaturedImageNewsletter
                         clientId={article.clientId}

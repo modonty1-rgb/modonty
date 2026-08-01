@@ -37,12 +37,18 @@ export interface BunnyMigrationResult {
  * (skips rows that already have bunnyUrl), best-effort per row (one failure never stops
  * the batch), and run in small batches to stay well under the shared Cloudinary bandwidth.
  */
-export async function migrateMediaBatch(limit = 10): Promise<BunnyMigrationResult | { error: string }> {
+export async function migrateMediaBatch(
+  limit = 10,
+  ids?: string[],
+): Promise<BunnyMigrationResult | { error: string }> {
   const session = await auth();
   if (!session) return { error: "Unauthorized" };
 
+  // When explicit ids are given, process EXACTLY those rows. Without this, every batch
+  // re-fetched the first-N pending rows (createdAt asc) — dead files stuck at the head of
+  // the queue got retried in every batch while the tail was never reached (bug 2026-08-01).
   const rows = await db.media.findMany({
-    where: PENDING_WHERE,
+    where: ids?.length ? { AND: [{ id: { in: ids } }, PENDING_WHERE] } : PENDING_WHERE,
     select: {
       id: true,
       url: true,

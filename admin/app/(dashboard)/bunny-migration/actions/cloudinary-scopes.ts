@@ -9,6 +9,7 @@
 
 export type MigrationScope =
   | "media"
+  | "featuredCrops"
   | "danglingLinks"
   | "orphans"
   | "raw"
@@ -32,6 +33,7 @@ export type MigrationScope =
  */
 export const SCOPE_ORDER: MigrationScope[] = [
   "media",
+  "featuredCrops",
   "danglingLinks",
   "orphans",
   "raw",
@@ -46,16 +48,17 @@ export const SCOPE_ORDER: MigrationScope[] = [
 ];
 
 export const SCOPE_LABEL: Record<MigrationScope, string> = {
-  media: "Migrate Media rows to Bunny",
-  danglingLinks: "Delete dangling link rows",
-  orphans: "Re-host orphan URLs",
-  raw: "Swap raw fields",
-  articles: "Regenerate articles",
-  clients: "Regenerate clients",
-  categories: "Regenerate categories",
-  tags: "Regenerate tags",
-  industries: "Regenerate industries",
-  authors: "Regenerate authors",
-  modontyPages: "Regenerate Modonty pages",
-  listings: "Regenerate listing pages",
+  media: "ترحيل صفوف الوسائط إلى Bunny",
+  featuredCrops: "توليد قصّات صور المقالات الناقصة (JSON-LD)",
+  danglingLinks: "حذف الروابط المعلّقة (صفوف بلا ملف)",
+  orphans: "إعادة رفع الروابط اليتيمة",
+  raw: "تبديل الحقول النصّية الخام",
+  articles: "إعادة توليد المقالات",
+  clients: "إعادة توليد العملاء",
+  categories: "إعادة توليد التصنيفات",
+  tags: "إعادة توليد الوسوم",
+  industries: "إعادة توليد الصناعات",
+  authors: "إعادة توليد المؤلفين",
+  modontyPages: "إعادة توليد صفحات مدوّنتي",
+  listings: "إعادة توليد صفحات القوائم",
 };

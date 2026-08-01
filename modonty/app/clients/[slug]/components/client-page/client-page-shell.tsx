@@ -113,6 +113,8 @@ export interface ClientPageShellProps {
    * never swap from a skeleton (kills above-the-fold CLS). Defaults to true.
    */
   renderHero?: boolean;
+  /** Platform fallbacks (admin /settings/defaults) — forwarded to the hero. */
+  defaultImages?: { logo: string | null; hero: string | null } | null;
 }
 
 /**
@@ -134,6 +136,7 @@ export function ClientPageShell({
   initialIsFollowing,
   initialIsFavorited,
   renderHero = true,
+  defaultImages = null,
 }: ClientPageShellProps) {
   const articleCount = client.articles.length;
 
@@ -256,6 +259,7 @@ export function ClientPageShell({
             ctaUrl={client.ctaUrl ?? null}
             user={user}
             initialIsFollowing={initialIsFollowing}
+            defaultImages={defaultImages}
           />
         </div>
       )}

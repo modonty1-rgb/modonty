@@ -97,6 +97,8 @@ export interface ZoneInventory {
   zone: MigrationZone;
   files: number;
   megabytes: number;
+  /** assets zone only: files under `migrated/` (re-hosted orphans) — NOT platform identity. */
+  migrated?: number;
 }
 
 /** Live file count per Bunny zone. On-demand: walks the whole tree. */
@@ -108,7 +110,12 @@ export async function getBunnyInventory(): Promise<{ zones: ZoneInventory[] } | 
   for (const zone of ["clients", "assets"] as const) {
     try {
       const { files, bytes } = await walkZone(zoneCfg(zone));
-      zones.push({ zone, files: files.length, megabytes: Math.round((bytes / 1048576) * 10) / 10 });
+      zones.push({
+        zone,
+        files: files.length,
+        megabytes: Math.round((bytes / 1048576) * 10) / 10,
+        ...(zone === "assets" ? { migrated: files.filter((f) => f.startsWith("migrated/")).length } : {}),
+      });
     } catch (e) {
       zones.push({ zone, files: -1, megabytes: -1 });
       void e;
@@ -117,8 +124,16 @@ export async function getBunnyInventory(): Promise<{ zones: ZoneInventory[] } | 
   return { zones };
 }
 
-/** Live asset count on Cloudinary, restricted to Modonty's own prefixes. */
-export async function getCloudinaryCount(): Promise<{ assets: number } | { error: string }> {
+/**
+ * Live asset count on Cloudinary, restricted to Modonty's own files:
+ * - `folders`: files inside Modonty's folders (listed from Cloudinary).
+ * - `rootReferenced`: DISTINCT root-level files (no folder — pre-folders-era uploads) that
+ *   media cards actually reference. Attributed via the DB because the account root is
+ *   shared with other projects and cannot be attributed by listing alone.
+ */
+export async function getCloudinaryCount(): Promise<
+  { folders: number; rootReferenced: number; assets: number } | { error: string }
+> {
   const gate = await requireAdmin();
   if ("error" in gate) return { error: gate.error };
 
@@ -127,7 +142,7 @@ export async function getCloudinaryCount(): Promise<{ assets: number } | { error
   try {
     const mod = await import("cloudinary");
     const cloudinary = (mod as unknown as { v2: CloudinaryApi }).v2;
-    let total = 0;
+    let folders = 0;
     for (const prefix of PREFIXES) {
       let cursor: string | undefined;
       do {
@@ -137,11 +152,21 @@ export async function getCloudinaryCount(): Promise<{ assets: number } | { error
           max_results: 500,
           next_cursor: cursor,
         });
-        total += res.resources?.length ?? 0;
+        folders += res.resources?.length ?? 0;
         cursor = res.next_cursor;
       } while (cursor);
     }
-    return { assets: total };
+
+    const rows = await db.media.findMany({ select: { url: true } });
+    const rootIds = new Set<string>();
+    for (const r of rows) {
+      const u = String(r.url ?? "");
+      if (!u.includes("res.cloudinary.com")) continue;
+      const m = u.match(/\/upload\/(?:[^/]*[,_][^/]*\/)?(?:v\d+\/)?(.+)$/);
+      if (m && !m[1].includes("/")) rootIds.add(m[1].replace(/\.[a-z]+$/i, ""));
+    }
+
+    return { folders, rootReferenced: rootIds.size, assets: folders + rootIds.size };
   } catch (e) {
     return { error: e instanceof Error ? e.message.split("\n")[0] : String(e) };
   }
@@ -166,6 +191,53 @@ interface CloudinaryApi {
  *     rows — today they are hardcoded in `brand-assets.ts` and `Settings`, so nothing could
  *     rebuild them (this is exactly what task T2 fixes).
  */
+/**
+ * Batched wipe step — deletes up to `batch` files per call so the client can loop
+ * and render LIVE progress instead of waiting minutes on one blind call (Khalid's
+ * UX requirement 2026-08-01). Same triple guard as the full wipe.
+ */
+export async function wipeBunnyZoneStep(
+  zone: MigrationZone,
+  confirm: string,
+  batch = 60,
+): Promise<{ deleted: number; failed: number; remaining: number; total: number; errors: string[] } | { error: string }> {
+  const gate = await requireAdmin();
+  if ("error" in gate) return { error: gate.error };
+  if (confirm !== zone) return { error: `Confirmation mismatch — type "${zone}" exactly.` };
+  if (zone === "assets") return { error: "Refused: the `assets` zone holds the platform's identity (see wipeBunnyZone)." };
+
+  const cfg = zoneCfg(zone);
+  const { files } = await walkZone(cfg);
+  const total = files.length;
+  const slice = files.slice(0, batch);
+
+  let deleted = 0;
+  let failed = 0;
+  const errors: string[] = [];
+  // Parallel groups of 10 — fast without hammering the storage API.
+  for (let i = 0; i < slice.length; i += 10) {
+    await Promise.all(
+      slice.slice(i, i + 10).map(async (path) => {
+        try {
+          const res = await fetch(`https://${STORAGE_HOST}/${cfg.name}/${path}`, {
+            method: "DELETE",
+            headers: { AccessKey: cfg.key },
+          });
+          if (res.ok || res.status === 404) deleted++;
+          else {
+            failed++;
+            if (errors.length < 5) errors.push(`${path}: ${res.status}`);
+          }
+        } catch (e) {
+          failed++;
+          if (errors.length < 5) errors.push(`${path}: ${e instanceof Error ? e.message : String(e)}`);
+        }
+      })
+    );
+  }
+  return { deleted, failed, remaining: total - deleted, total, errors };
+}
+
 export async function wipeBunnyZone(
   zone: MigrationZone,
   confirm: string,

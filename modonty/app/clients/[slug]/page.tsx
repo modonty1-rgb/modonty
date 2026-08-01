@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { mediaSrc } from "@modonty/database/lib/media-src";
+import { getPlatformDefaultImages } from "@modonty/database/lib/platform-defaults";
 import { SubscriptionStatus, ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
@@ -177,6 +178,10 @@ async function ClientHeroBlock({ params }: ClientPageProps) {
 
   if (pageState === "not-ready") return null;
 
+  // Platform fallbacks — fetched only when the client actually lacks a logo or hero.
+  const needsDefaults = !client.logoMedia?.url || !client.heroImageMedia;
+  const defaultImages = needsDefaults ? await getPlatformDefaultImages() : null;
+
   return (
     <div id="overview">
       <ClientHeroV2
@@ -211,6 +216,7 @@ async function ClientHeroBlock({ params }: ClientPageProps) {
         user={null}
         initialIsFollowing={false}
         digitalImpact={digitalImpact}
+        defaultImages={defaultImages && { logo: defaultImages.logo, hero: defaultImages.hero }}
       />
     </div>
   );
