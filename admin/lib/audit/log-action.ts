@@ -80,7 +80,9 @@ export type AuditAction =
   | "industry.delete"
   // 🟡 Touches everything at once
   | "database.maintenance"
-  | "seo.cascade";
+  | "seo.cascade"
+  // A canonical decides which URL Google indexes — every rewrite keeps its before/after.
+  | "seo.canonicalSanitize";
 
 export type AuditEntity =
   | "Article"

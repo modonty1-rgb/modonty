@@ -262,7 +262,11 @@ export function generateStructuredData(data: {
  * NO SearchAction — Google deprecated the sitelinks searchbox (Nov 2024), so adding it
  * has zero rich-result value. sameAs = the platform's verified social profiles.
  */
-export function generateSiteIdentityStructuredData(options?: { sameAs?: string[] }): object {
+export function generateSiteIdentityStructuredData(options?: {
+  sameAs?: string[];
+  imageLicenseUrl?: string | null;
+  imageAcquireLicensePageUrl?: string | null;
+}): object {
   const orgId = `${SITE_URL}/#organization`;
   const siteId = `${SITE_URL}/#website`;
   const sameAs = (options?.sameAs || []).filter(
@@ -277,7 +281,20 @@ export function generateSiteIdentityStructuredData(options?: { sameAs?: string[]
         name: BRAND_EN,
         alternateName: BRAND_AR,
         url: SITE_URL,
-        logo: { "@type": "ImageObject", url: LOGO_URL },
+        logo: {
+          "@type": "ImageObject",
+          url: LOGO_URL,
+          // Same copyright policy every other Modonty-produced image carries. The
+          // creator/creditText/copyrightNotice trio is what keeps Google's image-metadata
+          // check clean — a licence without a copyright line is flagged.
+          creator: { "@type": "Organization", name: BRAND_AR, url: SITE_URL },
+          creditText: BRAND_AR,
+          copyrightNotice: `© ${new Date().getFullYear()} ${BRAND_AR}`,
+          ...(options?.imageLicenseUrl?.trim() && { license: options.imageLicenseUrl.trim() }),
+          ...(options?.imageAcquireLicensePageUrl?.trim() && {
+            acquireLicensePage: options.imageAcquireLicensePageUrl.trim(),
+          }),
+        },
         ...(sameAs.length > 0 && { sameAs }),
       },
       {

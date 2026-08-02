@@ -2363,8 +2363,6 @@ model Settings {
   tagsSeoDescription    String?
   industriesSeoTitle    String?
   industriesSeoDescription String?
-  articlesSeoTitle      String?
-  articlesSeoDescription String?
 
   // Cached site-level JSON-LD (optional; same pattern as Client/Modonty)
   jsonLdStructuredData   String?   @db.String // Cached @graph JSON string
@@ -2405,10 +2403,6 @@ model Settings {
   industriesPageJsonLdValidationReport Json?
 
   // Articles list page meta + JSON-LD
-  articlesPageMetaTags              Json?
-  articlesPageJsonLdStructuredData  String?   @db.String
-  articlesPageJsonLdLastGenerated   DateTime?
-  articlesPageJsonLdValidationReport Json?
 
   // FAQ page meta + JSON-LD
   faqPageMetaTags              Json?

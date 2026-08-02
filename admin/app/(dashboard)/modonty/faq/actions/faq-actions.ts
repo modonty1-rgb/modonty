@@ -4,14 +4,14 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
-import { previewPageSeo, savePageSeo } from "@/app/(dashboard)/modonty/setting/actions/generate-home-and-list-page-seo";
+import { regenerateFaqPageCache } from "@/lib/seo/listing-page-seo-generator";
 
 async function regenerateFaqSeoCache() {
   try {
-    const preview = await previewPageSeo("faq");
-    if (preview.success && preview.data) {
-      await savePageSeo("faq", preview.data);
-    }
+    // Goes through the listing generator so the stored meta is a real Next.js Metadata shape.
+    // The old direct savePageSeo() call wrote a flat custom shape, and modonty casts that column
+    // straight to Metadata — so the FAQ page silently lost its canonical and twitter image.
+    await regenerateFaqPageCache();
   } catch {
     // Non-blocking — FAQ save should succeed even if SEO cache fails
   }

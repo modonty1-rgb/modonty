@@ -18,7 +18,7 @@ import {
  * OnlineStore, … — and every card on the platform picks it up, because this runs INSIDE
  * the card builder, not in one of its callers.
  */
-function deriveClientType(client: {
+export function deriveClientType(client: {
   isYmyl?: boolean | null;
   ymylCategory?: string | null;
   ymylData?: unknown;
@@ -422,6 +422,12 @@ export function generateCompleteOrganizationJsonLd(
   const placeId = client.gbpPlaceId?.trim();
 
   if (isLocalBusiness) {
+    // Google reads `telephone` off the LocalBusiness node itself — the copy inside
+    // contactPoint does not count toward the rich-result card.
+    if (client.phone) {
+      organizationNode.telephone = client.phone;
+    }
+
     // GeoCoordinates when lat/long exist
     if (lat != null && lng != null && !Number.isNaN(lat) && !Number.isNaN(lng)) {
       organizationNode.geo = { "@type": "GeoCoordinates", latitude: lat, longitude: lng };
@@ -448,10 +454,9 @@ export function generateCompleteOrganizationJsonLd(
       } catch { /* Invalid JSON — skip */ }
     }
 
-    // Price range (Google recommends for LocalBusiness)
-    if (client.priceRange) {
-      organizationNode.priceRange = client.priceRange;
-    }
+    // Price range (Google recommends for LocalBusiness). "$$" is the neutral mid-range
+    // marker when the client hasn't set one — an empty field costs a rich-result warning.
+    organizationNode.priceRange = client.priceRange || "$$";
 
     // hasMap — schema.org/hasMap (Place/LocalBusiness). A Google Business Profile
     // Place ID is the most precise link to the exact listing, so prefer it; fall
@@ -660,6 +665,36 @@ export function generateCompleteOrganizationJsonLd(
       .filter((n) => n !== null);
     if (galleryNodes.length > 0) {
       organizationNode.image = galleryNodes;
+    }
+  }
+
+  // Google expects a top-level `image` on the Organization/LocalBusiness node — `logo`
+  // alone does not satisfy it. Clients without a gallery fall back to the hero image
+  // (real page content), then the logo, so the node never ships imageless.
+  if (!organizationNode.image) {
+    const fallbackMedia = client.heroImageMedia ?? client.logoMedia;
+    const fallbackSrc = mediaSrc(fallbackMedia);
+    if (fallbackMedia && fallbackSrc) {
+      const u = ensureAbsoluteUrl(fallbackSrc, siteUrl) || fallbackSrc;
+      const fallbackAttr = resolveImageAttribution(
+        {
+          mediaType: client.heroImageMedia ? "HERO" : "LOGO",
+          clientName: client.name,
+          clientUrl: absoluteClientPageUrl,
+          altText: fallbackMedia.altText,
+          dateCreated: fallbackMedia.createdAt,
+        },
+        imageLicensing,
+      );
+      organizationNode.image = buildImageObject({
+        url: u,
+        width: fallbackMedia.width,
+        height: fallbackMedia.height,
+        name: fallbackAttr.name,
+        caption: fallbackMedia.altText,
+        description: fallbackMedia.description,
+        licensing: fallbackAttr.licensing,
+      });
     }
   }
 

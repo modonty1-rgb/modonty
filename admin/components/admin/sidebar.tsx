@@ -229,7 +229,6 @@ const menuGroups: MenuGroup[] = [
         subMenu: "Master Pages",
         items: [
           { icon: Building2, label: "Homepage", href: "/settings/modonty" },
-          { icon: Newspaper, label: "Articles", href: "/settings/articles" },
           { icon: Briefcase, label: "Clients", href: "/settings/clients" },
           { icon: Folder, label: "Categories", href: "/settings/categories" },
           { icon: Tag, label: "Tags", href: "/settings/tags" },

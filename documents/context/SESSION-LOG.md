@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-08-01
+# Session Context — Last Updated: 2026-08-02
 
 > ⚙️ **ملف نشط = آخر أسبوع فقط** (يتوزّع أسبوعياً لتوفير الـ token عند القراءة).
 > الأرشيف الكامل بالأشهر:
@@ -33,6 +33,106 @@
 
 ### 🔮 مستقبلي
 - [ ] نقل تخزين معارض العملاء إلى Bunny (Cloudinary مكلف) — آمن بمعمارية Media ID. المصدر: `documents/tasks/TODO.md`.
+
+---
+
+## Session: 2026-08-02 14:50 — 🎯 سيو صفحات مودونتي: مصدر واحد مدقّق + إزالة صفحة وهمية + تنظيف كامل للكود الميت
+
+### 🎯 أين وقفت
+- آخر مهمة: الطقس الكامل قبل الدفع اكتمل (سقف المقالات رجع `null` · admin 1.9.0 · modonty 1.84.1 · tsc ×3 صفر · changelog مكتوب **غير مُشغَّل**) — **٦٣ ملفاً جاهزة، ننتظر كلمة خالد للـpush**.
+- الفعل التالي عند الاستئناف: `git add` بقائمة صريحة ← كوميت ← push على `version-2` ← `pnpm tsx admin/scripts/add-changelog.ts` ← **تست حيّ بأداة Google Rich Results على رابط الـpreview** (٥ عيّنات من كل نوع: مقالات · وسوم · تصنيفات · عملاء · صفحات القوائم) — قرار خالد: «عصفوران بحجر» (الدفع يخدم التست).
+
+### ✅ أُنجز هذه الجلسة
+- **مصدر واحد للسيو:** صفحات القوائم السبع (الرئيسية · العملاء · التصنيفات · الوسوم · القطاعات · الرائج · الأسئلة الشائعة) صارت تُبنى من `previewPageSeo` وحده بثلاثة مدقّقات. كان هناك **مولّدان** يكتبان نفس أعمدة `Settings` والأخير يكسب.
+- **باغ حيّ أُصلح:** صفحة الأسئلة الشائعة كانت تفقد `canonical` وصورة تويتر لأن ميتاها تُحفظ بشكل مسطّح غير متوافق مع `Metadata` (مودونتي تصبّ العمود بلا محوّل). مُرّرت على `regenerateFaqPageCache` الجديد.
+- **بطاقة الأسئلة الشائعة** كانت الوحيدة غير المدقّقة (بلا `@graph`) → لُفّت بشكل أخواتها (Organization + WebSite + FAQPage).
+- **بُناة غنية جديدة** للوسوم والقطاعات (`build-taxonomy-page-jsonld.ts`) — كانتا على البانِي النحيف بلا تدقيق.
+- **تقرير تحقّق مزيّف أُزيل:** `{ valid: true }` كان مكتوباً بالإيد ولا يفحصه شيء.
+- **🔴 اكتشاف:** كنّا نولّد سيو لصفحة `/articles` **غير موجودة** — 404 مقصود موثّق في `next.config.ts` (أي قاعدة تطابق `/articles` تُفسد سلاگ المقالات العربية على Vercel وتحوّلها للرئيسية = soft-404 عرّض ١٧+ مقالاً لخطر الشطب). كانت تُبنى مع كل إنشاء/تعديل/حذف مقال + كل cascade، بـcanonical يشير لـ404. **أُزيلت** — والرئيسية هي صفحة المقالات (`numberOfItems: 81`)، فوجود الاثنتين = تنافس داخلي يقسّم إشارات قوقل ويُضعف أهم صفحة.
+- **تنظيف: ٢٢ ملفاً** حُذفت بعد إثبات صفر استهلاك (سلسلة `article-seo-config` ١٦ ملفاً · `seo-overview-actions.ts` · `savePageSeo` + `generateHomeAndListPageSeo` · `settings/articles`) + **٦ أعمدة سكيما** يتيمة وبياناتها (`$unset` بعد باكب: **١٤٣ ← ١٣٧** حقلاً، الفرق ٦ بالضبط، صفر ضرر جانبي).
+- **حالة tsc:** أدمن صفر · مودونتي صفر · كونسول صفر. **Build:** لم يُشغَّل. **تست حيّ:** cascade كامل **١٩٨/١٩٨** · تحقق DOM **٧/٧** على مودونتي (canonical + @graph + Organization + WebSite + عقدة الصفحة) · `/articles` يرجّع 404 كما صُمّم.
+
+### 📝 قرارات ومنطقها
+- الميتا تُبنى في `listing-page-seo-generator` حصراً، والجيسون يُفوَّض لـ`previewPageSeo` → لأن مودونتي تصبّ عمود الميتا مباشرة كـ`Metadata` بلا محوّل، فأي شكل آخر يُسقط `canonical` وصورة تويتر بصمت.
+- **عدم** بناء صفحة `/articles` بدل إصلاح مولّدها → المسار 404 بقرار سابق مبني على حادثة حقيقية، والرئيسية تؤدي دورها.
+- **غلطتان اعترفتُ بهما:** ادّعيتُ أن `create-organization-seo-config.ts` و`structured-data.ts` كود ميت — **كلاهما حيّ**. بحثي طابق المسار الكامل بينما الاستيراد نسبي (`./structured-data`). حُذف الثاني ثم أُرجع بـ`git checkout` بعد أن أمسكه `tsc`. **الدرس:** الجريب الناقص يعطي «صفر مستهلكين» كاذبة — يُفحص بمسار الاستيراد لا بالاسم.
+
+### 🚧 معلّق / محجوب
+- **الدفع نفسه** — ينتظر كلمة خالد الصريحة.
+- بيانات الأعمدة الستة على **الإنتاج** ما زالت موجودة (حُذفت من التست فقط) — تُنظَّف ضمن `T8`.
+- `T8`: الصفحات الستّ بصفر JSON-LD حُدِّدت بالاسم بمسح حيّ — `/help` · `/news` · `/legal` · `/subscribe` · `/search` · `/analytics`. يُحسم أولاً أيّها يستحق سكيما (`/search` و`/analytics` صفحات أدوات).
+- **تناقض ترتيب في الفلو:** `T6b` معروض آخر القائمة لكن نصّه يقول T7/T8/T9 تحتاج الكود منشوراً على الإنتاج — أي أنه **قبلها** عملياً. ينتظر تأكيد خالد.
+
+### 📂 ملفات لمستُها (الرئيسية)
+- `admin/lib/seo/listing-page-seo-generator.ts` — الكاتب الوحيد لأعمدة الصفحات؛ البانِي النحيف حُذف.
+- `admin/app/(dashboard)/modonty/setting/actions/generate-home-and-list-page-seo.ts` — مصدر الجيسون الوحيد؛ `savePageSeo` + `generateHomeAndListPageSeo` أُزيلا.
+- `admin/app/(dashboard)/modonty/setting/helpers/build-taxonomy-page-jsonld.ts` — **جديد** (وسوم + قطاعات).
+- `admin/app/(dashboard)/modonty/setting/helpers/build-faq-page-jsonld.ts` — صار `@graph`.
+- `admin/app/(dashboard)/seo/components/seo-fix-sequence.tsx` — **جديد** (يمنع Full Rebuild قبل انتهاء الإصلاحات القياسية).
+- `dataLayer/prisma/schema/schema.prisma` — ٦ حقول `articles*` أُزيلت.
+- `documents/tasks/BUNNY-GOLIVE-FLOW-v1.html` — T8 صار قابلاً للتنفيذ + عدّاد «باقي N».
+
+### 🔁 الحالة في Git
+- الفرع: `version-2` · آخر كوميت `28b2ae9` · **٦٣ ملفاً غير ملتزم** · غير مدفوع · `main` لم يُلمس.
+- نسخة احتياطية: `backups/backup-2026-08-02_14-43` (٩١ مجموعة · ٣٠ ميجا) — أُخذت **قبل** حذف الأعمدة.
+- مستبعد من الكوميت: `modonty/app/reels/` · `documents/reels/` · `.claude/` · `.mcp.json` · `playwright-mcp.config.json`.
+
+### 🚀 الاستئناف في ٣٠ ثانية
+1. `git status --short` — تأكد من الـ٦٣ ملفاً.
+2. كوميت بقائمة صريحة (بالاستبعادات أعلاه) ← push على `version-2`.
+3. `pnpm tsx admin/scripts/add-changelog.ts` ← تست Google Rich Results على الـpreview.
+
+---
+
+## Session: 2026-08-02 00:15 — ✅ JSON-LD: إصلاح المُراجع (Person) + زرّ Cascade صار Checkbox+Cancel + تحقق Google لأربع مراحل (Categories·Tags·Industries·Clients)
+
+### 🎯 أين توقفت
+- **آخر مهمة:** المنهجية المتّفق عليها مع خالد: **مرحلة مرحلة** — خالد يشغّل المرحلة من `/seo` (check + Start Selected) ثم يقول «خلص»، وأنا أسحب صفحاتها من الـ preview وأفحص الـ JSON-LD بالدليل الخام + أجهّز له كود اللصق في Google Rich Results ليختبره بنفسه.
+- **آخر شيء ظهر:** فحص Google لصفحة عميل (mbc-clinic) = **1 valid item** لكن مع **ملاحظتين غير حرجتين** على صورة اللوقو: `Missing field 'license' (optional)` و`Missing field 'acquireLicensePage' (optional)`. بدأت تتبّع السبب (المُولّد يقرأ `imageLicenseUrl`/`imageAcquireLicensePageUrl` من Settings — انظر «معلّق» أدناه) ثم انتهت الجلسة.
+- **الخطوة التالية عند الاستئناف:** (١) قرار حقلَي الترخيص (تعبئة الحقلين في `/settings` أم تركهما — اختياريان عند Google). (٢) تشغيل **Articles + Listings** (آخر مرحلتين) بنفس الطريقة ثم فحصهما.
+
+### ✅ Done this session (كله بدليل خام)
+1. **إصلاح المُراجع اليمّي = `Person`** في `admin/lib/seo/build-ymyl-jsonld.ts`: `Physician`/`Attorney` نوعان تحت `LocalBusiness` في schema.org، فكان Google يطالب *شخصاً* بـ telephone/priceRange/address. + التخصص انتقل من `medicalSpecialty` (ليست خاصية Person) إلى `knowsAbout`. النتيجة على المقال: **صفر ملاحظات نهائياً**.
+2. **زرّ Full Cascade أُعيد بناؤه** (`admin/app/(dashboard)/seo/components/cascade-status-panel.tsx`) بأمر خالد: **٦ checkboxes** (Categories·Tags·Industries·Clients·Articles·Listings) + زر يتحوّل «Start Selected (N)» + **زر Cancel** يوقف بعد الدفعة الجارية (`cancelRef`) + حالة `cancelled` في الشارة. المراحل غير المختارة تُتخطّى ولا تُحتسب في النسبة.
+3. **Categories ✅** — الـ14 صفحة من الـ preview: parse سليم · صفر Cloudinary · كل الصور `*.b-cdn.net`. فحص Google: **1 valid item (Breadcrumbs) · صفر أخطاء/تحذيرات**.
+4. **Tags ✅** — الـ23 وسم: نفس النتيجة النظيفة. لوحظ أن الوسوم بلا صورة تأخذ **اللوقو الافتراضي من المكتبة** (`logo/_platform/platform-default-logo`) — الفولباك الجديد شغّال.
+5. **Industries ✅** — الـ7 صناعات: نفس النتيجة النظيفة (1 valid item · صفر ملاحظات).
+6. **Clients ✅ (٢٩ عميل)** — التفريق YMYL/عادي مؤكَّد بالجدول الخام: Dentist/MedicalClinic/Hospital/Optician = `telephone` + `priceRange` + صورة ✔️ · العاديون (كيما زون، جبر سيو، dream-to-app…) = `Organization` نظيف **بدون** telephone/priceRange (Google لا يطالب بها خارج عائلة LocalBusiness) · `DiagnosticLab` كذلك خارج العائلة = سليم. صفر Cloudinary · كل الصور Bunny.
+
+### 📝 قرارات (بأسبابها)
+- **المُراجع دائماً `Person`** → لأن أنواع المهن في schema.org تحت LocalBusiness وتجرّ متطلبات محل تجاري على شخص. البديل (تعبئة telephone/address للمراجع) مرفوض: بيانات كاذبة عن شخص.
+- **Cascade بالاختيار بدل «الكل»** (أمر خالد) → المرحلة الواحدة تُشغَّل وتُفحص فوراً؛ توفير وقت هائل مقابل تشغيل ٣-٥ دقائق كامل لكل تجربة.
+- **الفحص يتم على الـ preview + لصق يدوي في Rich Results** → أتمتة Google بـ Playwright كانت تحرق وقتاً (زر TEST CODE داخل `div[jsaction]`)؛ خالد يلصق ويصوّر النتيجة أسرع بكثير.
+
+### 🚧 معلّق / محجوز
+- **ملاحظتا الترخيص على صور العملاء** (`license` + `acquireLicensePage`, اختياريتان) — المصدر: `dataLayer/lib/seo/media/build-image-object.ts` يقرأهما من إعدادات: `settings.imageLicenseUrl` / `settings.imageAcquireLicensePageUrl`. لو انملت الحقلان في `/settings` تختفي الملاحظتان لكل الصور. **قرار خالد مطلوب.**
+- **٣ عملاء بلا أي صورة/لوقو في قاعدة البيانات** (دكتور سمير شوقي · مركز فريق الإغاثة العربي · دكتورة سارة طارق) → عقدة المنظمة بلا `image`. **حلّها بيانات لا كود**: رفع لوقو من الأدمن.
+- **Articles (118) + Listings (1)** — لم تُشغَّل بعد في هذه الجولة (الكاسكيد السابق وصل ~55/118 قبل ما يقتله الـHMR وقت تعديل الملف). التوليد **idempotent** فإعادة التشغيل آمنة.
+- `admin/lib/seo/structured-data.ts:118` — استعمال خام لـ `safeOrganizationType(client.organizationType)` (نفس صنف الخلل القديم) **لم يُصلَح بعد**.
+
+### 📂 ملفات لُمست
+- `admin/lib/seo/build-ymyl-jsonld.ts` — المُراجع صار Person + التخصص عبر knowsAbout.
+- `admin/app/(dashboard)/seo/components/cascade-status-panel.tsx` — checkboxes + Start Selected + Cancel + حالة cancelled.
+- `admin/lib/seo/knowledge-graph-generator.ts` · `dataLayer/lib/seo/generate-organization-jsonld.ts` — إصلاحات المولّدين (MedicalClinic + telephone + priceRange افتراضي + fallback الصورة).
+- `documents/tasks/TODO.md` · `documents/tasks/BUNNY-GOLIVE-FLOW-v1.html` — توثيق بند 68 والنتائج.
+
+### 🔁 حالة Git / النشر
+- الفرع: `version-2` · آخر كوميت: `28b2ae9` (ترحيل Bunny على التست: T2b + الافتراضيات).
+- **تعديلات غير مدفوعة:** الملفات الأربعة أعلاه + ملفات التوثيق. **ممنوع الدمج/الدفع إلى main إلا بأمر خالد الصريح.**
+- التوليد كله على **قاعدة التست (`modonty_dev`)** — الإنتاج لم يُمسّ (حارس T8 قائم: صفر regenerate على الإنتاج قبل تأكيد الـCDN حياً 100%).
+- tsc: **لم يُشغَّل** بعد تعديلات هذه الجلسة (قاعدة: قبل الدفع فقط). Build: لم يُشغَّل.
+
+### ➕ تكملة الجلسة (فجر 2026-08-02) — الإعدادات + إصلاح ترخيص صور المقالات
+- **مراجعة الافتراضيات كلها مقابل مصادرها الرسمية** (بطلب خالد «شاك فيها من أول») — النتيجة: ٣ مشاكل حقيقية + ٦ قيم ميتة. طُبِّق **Apply Defaults** فتغيّرت **٧ قيم**: حقول ترخيص الصور الثلاثة · `orgAddressCountry` عربي ← `SA` · رابط البحث آبكس ← www · **رخصة المحتوى** من `CC BY 4.0` ← رابط سياسة مدوّنتي (السياسة المنشورة تمنع الاستخدام التجاري وتدريب الذكاء الاصطناعي — كان تناقضاً صريحاً) · **`defaultNotranslate`** من true ← **false** (كان يمنع Google من عرض ترجمة الموقع كله، ويناقض قاعدة CLAUDE.md).
+- **درس محوري:** السيو مخبوز في قاعدة البيانات — أي تغيير في الإعدادات **يحتاج إعادة توليد ثانية** ليظهر. العملاء وُلِّدوا مرتين لهذا السبب، والثانية أثبتت `license`+`acquireLicensePage` حيّاً على اللوقو والغلاف.
+- **سقف تست مؤقت:** `ARTICLES_TEST_LIMIT = 10` في `cascade-status-panel.tsx` + شارة صفراء (أمر خالد — ١١٨ مقالاً تستهلك وقتاً). **يُرفع إلى `null` لاحقاً.**
+- **إصلاح ترخيص صور المقالات (أمر خالد «أي حاجة تخص السيو ما تتأجل»):** الفحص كشف ١/٥ صور مرخّصة فقط — عُقد المنظمة تُبنى بمسار منفصل. أُصلح في ٣ مواضع: `generateOrganizationNode` (يستقبل `imageLicensing` ويبني عبر `resolveImageAttribution`+`buildImageObject`) · `generatePlatformAuthorNode` (لوقو مدوّنتي) · `generateSiteIdentityStructuredData` في مدوّنتي + helper جديد `getPlatformImageLicensing()`. **النتيجة الحيّة ١/٥ ← ٤/٥**؛ الخامسة (هوية الموقع) تُرندَر حيّة في مدوّنتي فتحتاج نشر preview للتأكيد. **tsc على التطبيقين = صفر أخطاء ✅.**
+- **🏆 فحص Google النهائي على صفحة العميل:** **٤ أنواع valid · صفر أخطاء · صفر تحذيرات** (Breadcrumbs 1 · **Image Metadata 3** · Local businesses 1 · Organization 1). **الأهم:** نوع `Image Metadata` **ظهر لأول مرة** بفضل حقلَي الترخيص ← صور مدوّنتي صارت مؤهّلة لشارة **Licensable** في بحث صور Google. يعني الإصلاح لم يُزل تحذيرين فقط، بل **أضاف قناة ظهور جديدة**.
+
+### 🚀 استئناف في 30 ثانية
+1. الأدمن على **بورت 3000** → `localhost:3000/seo`.
+2. **الخطوة الأولى: دفع فرع `version-2`** (بإذن خالد الصريح) ليلتقط الـ preview تعديل مدوّنتي، ثم تأكيد ٥/٥ على مقال.
+3. بعدها: رفع `ARTICLES_TEST_LIMIT` إلى `null` وتشغيل Articles + Listings كاملة.
 
 ---
 
@@ -779,113 +879,3 @@
 1. `cd modonty && pnpm dev` (بورت 3000) — أو الإنتاج.
 2. للإنتاج: نسخة احتياطية → `prisma db push` (redirects) → دمج تجريبي حي بكيانين.
 3. أو محلياً: تست أب/ابن التصنيف (أنشئ تصنيفاً فرعياً تحت مصدر وادمج).
-
----
-
-## Session: 2026-07-26 (مساءً-٢) — توحيد المؤلف = منظمة (Organization) + industries + YMYL + خطوة /seo (مدفوع ✅ `11ba323` · admin 1.5.0 · modonty 1.81.0)
-
-### 🎯 أين توقفت
-- **آخر مهمة:** توحيد المؤلف (مدوّنتي) ككيان `Organization` واحد — **مكتمل ومدفوع**. خالد **مش مقتنع بصفحة الـAuthor** ويبي نكمّل فيها لما يرجع (بعد restart للجهاز — صار ثقيل).
-- **الخطوة التالية عند العودة:** (١) نقاش/تعديل صفحة الـAuthor حسب اعتراض خالد (غير محدّد بعد — يبيّنه). (٢) موضوع `admin/lib/gsc/indexing.ts` (طلب نقاش). (٣) اختياري: محاذاة عقدة `#organization` في صفحة المقال + نواقص E-E-A-T (foundingDate/knowsAbout).
-
-### ✅ أُنجز هذه الجلسة (كله مدفوع `11ba323`)
-- **توحيد المؤلف = Organization (الجذر):** كان مدوّنتي `Organization` على المقالات لكن `Person` على صفحته وفي الأدمن (تعارض هوية E-E-A-T). أُصلح: JSON-LD المخزّن صار `Organization` بـ`@id = ${siteUrl}/#organization` (نفس كيان الموقع + author المقال → كيان واحد موثوق). أُكّد رسمياً عبر Context7 (Google: author يصح Organization). الأفراد مستقبلاً يظلّون `Person`.
-- **بانِ مشترك DRY** `admin/.../authors/helpers/build-modonty-author-seo.ts` — مصدر واحد لـ JSON-LD + metadata، يستخدمه حفظ الفورم **و** خطوة /seo (يمنع الـdrift). يسحب من الإعدادات: `sameAs`(11 قناة) · `contactPoint` · `address` · `areaServed` · `logo`(logoUrl→orgLogoUrl).
-- **خطوة صيانة /seo** «Author Identity» — `admin/.../seo/actions/author-seo-repair.ts` + `runSeoStepAuthor` + بطاقة في `seo-auto-maintenance.tsx` + عدّاد التنبيه. تفعّل تاق `authors` طرف-لطرف (`revalidate-modonty-tag.ts` + `modonty/app/api/revalidate/tag/route.ts`).
-- **صفحة `/authors/modonty` العامة = بروفايل ناشر** (Track B): شعار بدل أفاتار · شارة موثّق · صفّ القنوات الرسمية (من `getPlatformSocialLinks`) · «أحدث ما نشرته مدوّنتي». تتفرّع: org→publisher، فرد→person.
-- **محرّر الأدمن = محرّر ناشر**: ٤ أقسام (Identity · Presence & Contact · Trust · Search/SEO) + قسم **Business Data** read-only يعرض بيانات المنظمة كاملة من الإعدادات (وصف/إيميل/هاتف/ساعات/عنوان جدة + 11 قناة). شِيلت حقول الشخص (Job Title/Expertise/Organizations/Credentials). الهيدر: شعار حقيقي + «Publisher · Organization» + «N channels» (من الإعدادات مو سجل المؤلف).
-- **SEO المؤلف عربي:** حدّثت الصف الحالي (title/desc/bio) لعربي بإطار ناشر — **موثّق بإعادة تحميل من القاعدة**. + بذرة `getModontyAuthor` صارت عربية.
-- **industries LIST** على معيار الكيانات (مثل category/tag): `get-industries` + seoScore · `industry-table`→DataTable+SeoScoreBadge+تحذير test-slug · `industries-page-client`→كروت KPI فلاتر · حذف `getIndustriesStats`.
-- **YMYL fix** على `/clients/seo`: الشارة كانت مربوطة بـ`organizationType` بدل `isYmyl` الحقيقي → أُصلحت (`page.tsx` + `seo-client-list.tsx`).
-- **شِيل «Revalidate All»** (مضلّل، يكرّر batch-generate) من category/tag/industry + حذف ملفاته الثلاثة.
-- **السايدبار:** «SEO Maintenance»→`/seo` تحت System · «Authors» نُقلت من Content Setup إلى قسم Modonty.
-- **حالة tsc:** admin + modonty = صفر أخطاء (بوابة الدفع). Build: لم يُشغّل. تست حي: تمّ (schema=Organization موثّق على `/authors/modonty`، الأدمن موثّق بالدليل).
-
-### 📝 قرارات (مع السبب)
-- **مدوّنتي = Organization فقط الآن، الأفراد لاحقاً:** قرار خالد. الأنسب: نوحّد الآن، ولو جاء كتّاب أفراد نتفرّع (Person صحيح لشخص، Organization للبراند).
-- **بيانات المنظمة الغنية مصدرها الإعدادات (مصدر واحد)، مو حقول جديدة على سجل المؤلف** — نفس فلسفة منع الـdrift.
-- **الشعار «M» كان غلطي (تخمين):** تأكد لاحقاً أنه محمّل فعلاً (svg 150×150) — كانت لقطة قبل التحميل. خالد نبّه: صفحة الـAuthor **ممنوع فيها تخمين**.
-
-### 🚧 معلّق / مطلوب من خالد
-- **تفعيل توحيد المؤلف على الإنتاج (بعد نشر Vercel):** `admin.modonty.com/seo` → Run All SEO Fixes (خطوة Author) **أو** افتح المؤلف واحفظ → يقلب المخزّن لـ`Organization` → تحقّق `modonty.com/authors/modonty` → **GSC Request Indexing** للصفحة.
-- **صفحة الـAuthor:** خالد غير مقتنع — ينتظر تفصيله.
-- **الإحداثيات (geo) عمداً مو في سكيما Organization** (للـGBP فقط).
-
-### 📂 ملفات لمست (كلها مدفوعة `11ba323` — 30 ملف)
-- admin authors: `get-modonty-author.ts` `update-author.ts` `author-form.tsx` `author-seo-config.ts` `page.tsx` + جديد `helpers/build-modonty-author-seo.ts`
-- admin seo: جديد `actions/author-seo-repair.ts` · `run-seo-maintenance.ts` · `seo-auto-maintenance.tsx` · `page.tsx`
-- admin industries: `get-industries.ts` `index.ts` `industries-page-client.tsx` `industry-table.tsx` `page.tsx` (حذف `get-industries-stats.ts` + `revalidate-all-seo-button.tsx`)
-- admin: `clients/seo/{page.tsx,components/seo-client-list.tsx}` (YMYL) · `categories/page.tsx` + حذف زره · `tags/page.tsx` + حذف زره · `components/admin/sidebar.tsx` · `lib/revalidate-modonty-tag.ts` · `package.json`
-- modonty: `app/authors/[slug]/page.tsx` · `app/api/revalidate/tag/route.ts` · `lib/brand.ts` (+`MODONTY_AUTHOR_SLUG`) · `package.json`
-
-### 🔁 Git / deploy
-- فرع: `main` · Last commit: `11ba323` — "author: unify Modonty as one Organization publisher…" · مدفوع: **نعم** (`70feebc..11ba323`) · Vercel: ينشر تلقائياً · باك أب: **لا** (push> urgent).
-
-### 🚀 استئناف في 30 ثانية
-1. `taskkill //F //IM node.exe` ثم `cd admin && pnpm dev` (منفذ 3000؛ الأدمن هو الـ default هذه الجلسة). المؤلف: `localhost:3000/authors`.
-2. اسمع اعتراض خالد على صفحة الـAuthor (public `/authors/modonty` أو محرّر الأدمن؟) قبل أي تعديل — **صفر تخمين على هذي الصفحة**.
-3. بعدها: افتح `admin/lib/gsc/indexing.ts` للنقاش.
-
----
-
-## Session: 2026-07-26 (مساءً) — معيار كيانات الأدمن + توحيد سكورر السيو + توحيد category بالكامل (مدفوع ✅ admin 1.4.0 · modonty 1.80.1)
-
-### 🎯 أين توقفت
-- **آخر مهمة:** توحيد category على المعايير — اكتمل. **الخطوة التالية:** تكرار **معايير القائمة** (KPI فلاتر + عمود SeoScoreBadge في DataTable) على **tags · authors · industries** (السكورر مهاجَر عندهم أصلاً؛ يبقى القائمة).
-- **استئناف:** افتح skill `admin-entity-standard` (المعايير الخمسة) + كرّر نمط قائمة category على tags أول.
-
-### ✅ أُنجز
-- **🧠 skill جديد `admin-entity-standard`** (`.claude/skills/`): ٥ معايير مقفلة بمصادر كود + skeletons — #1 توجل `CountTab` · #2 `SeoScoreBadge` (Google G، بلا كلمة طبقة، clickable→technical) · #3 جدول `DataTable` (زيبرا+فواصل+رؤوس muted+**ارتفاع صف 40px مقفل best-practice: Material −3/Carbon md/Ant small**) · #4 كرت KPI = فلتر · #5 صفحة technical (جيج+طريق+ملكية writer/system+META/JSON-LD خام).
-- **🥇 توحيد سكورر السيو:** category/tag/author/industry هُوجرت من SEO-doctor القديم (يفحص حقول يدوية → إنذار كانونيكال كاذب) إلى **`computeReferenceSeoScore`** (dataLayer، يقرأ الميتاداتا+JSON-LD الفعليين — نفس عائلة article/client). **الكانونيكال الكاذب انحل جذرياً** (تحقيق إنتاج: كل الصفحات تُخرج canonical صحيح www single-encoded؛ الحقل اليدوي فاضي عمداً).
-- **category كامل:** قائمة (DataTable+KPI فلاتر+عمود SEO+slug محذوف) · تفصيل (badge موحّد+عدّاد 58 مو 50+جدول=ArticleTable) · technical (`ReferenceSeoTechnical` مشترك).
-- **`DataTable` المشترك طُوّر** (زيبرا/فواصل/40px) → كل جداول الأدمن تحسّنت تلقائياً.
-- **modonty:** «اشترك مجاناً»→«سجّل مجاناً» (12 ملف، مدفوع سابقاً b72fad3) · `sanitize-html` يشيل ألوان inline وقت الرندر · `metadata-generator` حارس البراند المزدوج.
-- **كود ميت محذوف:** `category-seo-config` · `tag-seo-config` · `industry-seo-config` · `get-categories-stats` (author-seo-config يبقى — الفورم يستخدمه).
-- **tsc: admin 0 · modonty 0.** Live: category (list/detail/technical) 0 console errors.
-
-### 🔁 Git
-- admin 1.3.1→**1.4.0** · modonty 1.80.0→**1.80.1**. مدفوع (push> عاجل، بلا backup بأمر خالد).
-- reels + temp (`_mig-*`, `.tmp-vs`) + `.claude/settings.local`/`.mcp.json` **مستثناة** (مسارات محدّدة، لا `-A`).
-
-### 🚀 استئناف في 30 ثانية
-1. skill `admin-entity-standard` = المرجع.
-2. tags: كرّر قائمة category (getTags→seoScore per row · tag-table→DataTable+SeoScoreBadge · KPI في صفحة القائمة).
-3. tag/industry detail+technical: الكود مكتمل (يطابق category)، يبقى click-through حيّ.
-
----
-
-## Session: 2026-07-26 — تنظيف TODO بند-بند (بالرقم) + إصلاحات مودونتي · مدفوع
-
-### 🎯 أين توقفت
-- **آخر مهمة:** المرور على بنود `documents/tasks/TODO.md` واحد-واحد بالرقم المرجعي (خالد يعطي رقم → أفحص الكود → fix/remove). أنجزنا ١–٩ (قسم «متوسط» كله). المتبقّي: **🔴 كبير ١٠–١٧** + **🟢 باك لوق ١٨–٤٢**.
-- **الخطوة التالية عند الرجوع:** خالد يعطي الرقم التالي (البداية المنطقية: البند ١٠ مراجعة السكيما، أو أي رقم يختاره).
-- **قاعدة جديدة مهمة:** الأرقام في TODO **مرجعية ثابتة** بيني وبين خالد — البند المنجز يُحذف، الباقي يبقى برقمه، **بلا إعادة ترقيم**.
-
-### ✅ أُنجز هذه الجلسة
-- **TODO مرقّم ١–٤٢** + مكوميت محلياً (`todo: number items for easy reference`).
-- **البند ١** — توحيد لفظ زر التسجيل: «اشترك مجاناً» → «سجّل مجاناً» في ١٢ ملف مودونتي (LoginButton + FeedTopBanner + ١٠ نماذج تفاعل/تعليق/تسجيل + MobileMenu)؛ الريلز مستُبعدة. مكوميت محلياً (`modonty: unify register CTA wording`).
-- **البند ٢** — حُذف (تعبئة ٢٠ عميلاً — قرار خالد).
-- **البند ٣** — حُذف: «المتأخّر» يُحسب من نهاية الاشتراك (`segments.ts`/`get-sales-report.ts`)، لا حاجة لحقل `dueDate`.
-- **البند ٤** — حُذف: حارس CTA البرمجي (`reference-data-actions.ts:313` findFirst على labelKey) مكتوب عمداً ليغطّي بلا اعتماد على فهرس الـ DB → دفع الفهرس غير ضروري.
-- **البند ٥** — إصلاح البراند المزدوج في `<title>`: أضفت حارس `alreadyBranded` في `admin/lib/seo/metadata-generator.ts` (كان `seoTitle` أصلاً «العنوان | العميل» ثم يضاف العميل ثانية). **متبقّي إنتاج:** Regenerate بعد النشر.
-- **البند ٦** — حُذف: ربط CTA للـ١٣ عميلاً يدوي عبر `cta-section.tsx` الموجود، مو كود.
-- **البند ٧** — حُذف: خطر rename على dev مغطّى بميموري `project_runall_cloudinary_dev_hazard`.
-- **البند ٨** — نقلت شِيل ألوان inline لـ`modonty/lib/sanitize-html.ts` (كان فقط في الأدمن) → المحتوى القديم يتنظّف **وقت الرندر**، بلا كتابة على الـ DB. حُذف البند.
-- **البند ٩ (🔴)** — حُذف بعد **تحقيق قراءة-فقط على الإنتاج**: «صفر حجز» **غلط** — فيه **٧ حجوزات** (٥ واتساب + ٢ نموذج). نظرية «disclaimer يحجب» ميتة (النموذج يرسل `disclaimerAccepted:true` ثابت، والسيرفر يتحقق للـYMYL فقط). واتساب هو المسار الفعلي.
-- **تدوير SESSION-LOG:** بلوكات 2026-07-18 (٣) نُقلت لأرشيف يوليو. النشط 21→18، الأرشيف 15→18، صفر فقدان.
-
-### 🔁 حالة Git / النشر
-- Branch: `main`. آخر كوميت: `b72fad3` (CTA wording).
-- **تعديلات غير مكوميتة:** `admin/lib/seo/metadata-generator.ts` (حارس البراند) + `modonty/lib/sanitize-html.ts` (شِيل ألوان) + `documents/tasks/TODO.md`. **لم تُدفع** (خالد: لا push حتى يقول).
-- ملفات temp قديمة untracked في `admin/` (`_mig-*.cjs/json`, `dataLayer/.tmp-vs.mjs`) — بقايا سابقة، ليست من هذه الجلسة.
-
-### 📂 ملفات مسّت
-- `modonty/components/auth/LoginButton.tsx` · `modonty/components/feed/FeedTopBanner.tsx` · `modonty/components/navigatore/MobileMenu.tsx` + ٩ نماذج مقال/عميل/تسجيل — نص الزر.
-- `admin/lib/seo/metadata-generator.ts` — حارس `alreadyBranded`.
-- `modonty/lib/sanitize-html.ts` — تمريرة شِيل `color/background-color`.
-- `documents/tasks/TODO.md` — حذف ١–٩ + قسم «متوسط» + تحديث قاعدة الترقيم الثابت.
-
-### 🚀 استئناف في 30 ثانية
-1. افتح `documents/tasks/TODO.md` — البنود المتبقّية ١٠–٤٢ بأرقامها الثابتة.
-2. خالد يعطي رقماً → افحص الكود أول (fix/check/remove حسب قوله).
-3. قبل أي push: tsc صفر أخطاء + إذن خالد صريح.

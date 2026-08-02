@@ -1,272 +1,27 @@
 /**
- * Client JSON-LD Storage System
+ * Client JSON-LD — READ ONLY.
  *
- * Handles:
- * - Generating and saving JSON-LD for clients to database
- * - Cache invalidation and regeneration
- * - Validation with Adobe, Ajv, and business rules
- * - Performance tracking
+ * Writing a client's JSON-LD has exactly one entry point: `generateClientSEO`, which runs
+ * the shared dataLayer bundle (`generateClientSeoBundle`) so admin, console and the cascade
+ * all produce byte-identical cards.
+ *
+ * This file used to hold a second writer — `generateAndSaveClientJsonLd` /
+ * `regenerateClientJsonLd` — fed by its own hand-written `select`. That select had drifted:
+ * no `openingHoursSpecification`, no `priceRange`, and it never passed the Settings image
+ * licensing through, so the generator fell back to "no licence block". A client rebuilt by
+ * that path silently lost its opening hours, its price range (which Google requires for the
+ * LocalBusiness family) and its Licensable image metadata — and the UI said "SEO updated".
+ *
+ * The cascade had already been moved off it (see cascade-step-actions.ts) after it was
+ * caught wiping hours and price range on dev. The Update button on the client's SEO tab was
+ * still wired to it until 2026-08-02; both writer and action are gone now, so there is no
+ * way left to reach the poorer path.
  */
 
 import { db } from "@/lib/db";
-import type { Prisma } from "@prisma/client";
-import { loadSiteUrl } from "@/lib/seo/site-url";
-import { generateCompleteOrganizationJsonLd } from "@/lib/seo/generate-complete-organization-jsonld";
-import {
-  validateClientJsonLdComplete,
-} from "./client-jsonld-validator";
-import { normalizeJsonLd } from "@/lib/seo/jsonld-processor";
-import type { JsonLdGraph } from "@/lib/seo/knowledge-graph-generator";
 import type { ValidationReport } from "@/lib/seo/jsonld-validator";
 
-// Result of JSON-LD generation
-export interface ClientJsonLdGenerationResult {
-  success: boolean;
-  jsonLd?: object;
-  jsonLdString?: string;
-  validationReport?: ValidationReport;
-  error?: string;
-}
-
-/**
- * Type for client with all relations needed for JSON-LD generation
- */
-export interface ClientWithFullRelations {
-  id: string;
-  name: string;
-  slug: string;
-  legalName: string | null;
-  alternateName: string | null;
-  url: string | null;
-  email: string;
-  phone: string | null;
-  seoTitle: string | null;
-  seoDescription: string | null;
-  description: string | null;
-  businessBrief: string | null;
-  targetAudience: string | null;
-  contentPriorities: string[];
-  keywords: string[];
-  knowsLanguage: string[];
-  contactType: string | null;
-  addressStreet: string | null;
-  addressCity: string | null;
-  addressCountry: string | null;
-  addressPostalCode: string | null;
-  addressRegion: string | null;
-  addressNeighborhood: string | null;
-  addressBuildingNumber: string | null;
-  addressAdditionalNumber: string | null;
-  addressLatitude: number | null;
-  addressLongitude: number | null;
-  sameAs: string[];
-  canonicalUrl: string | null;
-  foundingDate: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-  commercialRegistrationNumber: string | null;
-  vatID: string | null;
-  taxID: string | null;
-  legalForm: string | null;
-  businessActivityCode: string | null;
-  isicV4: string | null;
-  numberOfEmployees: string | null;
-  slogan: string | null;
-  organizationType: string | null;
-  parentOrganizationId: string | null;
-  logoMedia?: {
-    url: string;
-    altText: string | null;
-    width: number | null;
-    height: number | null;
-  } | null;
-  heroImageMedia?: {
-    url: string;
-    altText: string | null;
-    width: number | null;
-    height: number | null;
-  } | null;
-  industry?: {
-    id: string;
-    name: string;
-  } | null;
-  parentOrganization?: {
-    id: string;
-    name: string;
-    url: string | null;
-    slug: string | null;
-  } | null;
-}
-
-/**
- * Fetch client with all relations needed for JSON-LD generation
- */
-export async function fetchClientForJsonLd(
-  clientId: string
-): Promise<ClientWithFullRelations | null> {
-  return db.client.findUnique({
-    where: { id: clientId },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      legalName: true,
-      alternateName: true,
-      url: true,
-      email: true,
-      phone: true,
-      seoTitle: true,
-      seoDescription: true,
-      description: true,
-      businessBrief: true,
-      targetAudience: true,
-      contentPriorities: true,
-      keywords: true,
-      knowsLanguage: true,
-      contactType: true,
-      addressStreet: true,
-      addressCity: true,
-      addressCountry: true,
-      addressPostalCode: true,
-      addressRegion: true,
-      addressNeighborhood: true,
-      addressBuildingNumber: true,
-      addressAdditionalNumber: true,
-      addressLatitude: true,
-      addressLongitude: true,
-      sameAs: true,
-      canonicalUrl: true,
-      foundingDate: true,
-      createdAt: true,
-      updatedAt: true,
-      commercialRegistrationNumber: true,
-      vatID: true,
-      taxID: true,
-      legalForm: true,
-      businessActivityCode: true,
-      isicV4: true,
-      numberOfEmployees: true,
-      slogan: true,
-      organizationType: true,
-      // The card builder derives the client's real @type from these (a clinic stored as
-      // "Corporation" becomes Dentist). Omit them and the derivation silently returns
-      // null — the missing-field trap — and the cascade rewrites the generic type.
-      isYmyl: true,
-      ymylCategory: true,
-      ymylData: true,
-      parentOrganizationId: true,
-      logoMedia: {
-        select: {
-          url: true,
-          bunnyUrl: true,
-          altText: true,
-          width: true,
-          height: true,
-        },
-      },
-      heroImageMedia: {
-        select: {
-          url: true,
-          bunnyUrl: true,
-          altText: true,
-          width: true,
-          height: true,
-        },
-      },
-      industry: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-      parentOrganization: {
-        select: {
-          id: true,
-          name: true,
-          url: true,
-          slug: true,
-        },
-      },
-    },
-  });
-}
-
-/**
- * Generate and save JSON-LD for a client
- */
-export async function generateAndSaveClientJsonLd(
-  clientId: string
-): Promise<ClientJsonLdGenerationResult> {
-  try {
-    // Fetch client with all relations
-    const client = await fetchClientForJsonLd(clientId);
-
-    if (!client) {
-      return {
-        success: false,
-        error: "Client not found",
-      };
-    }
-
-    const siteUrl = await loadSiteUrl();
-    const clientPageUrl = client.canonicalUrl || `${siteUrl}/clients/${client.slug}`;
-
-    // Generate knowledge graph
-    const knowledgeGraph = generateCompleteOrganizationJsonLd(client as any, clientPageUrl, { siteUrl });
-
-    // Normalize JSON-LD structure (ensures consistency)
-    const normalizedGraph = await normalizeJsonLd(knowledgeGraph);
-
-    // Validate (Adobe + Ajv + business rules)
-    const validationReport = await validateClientJsonLdComplete(normalizedGraph, {
-      requireLogo: true, // Require logo for Organization rich results
-      requireAddress: false, // Address optional but validated if present
-      requireContactPoint: false, // ContactPoint optional but validated if present
-      minNameLength: 2,
-      maxNameLength: 100,
-    });
-
-    // Stringify normalized graph for storage
-    const jsonLdString = JSON.stringify(normalizedGraph, null, 2);
-
-    // Save to database
-    await db.client.update({
-      where: { id: clientId },
-      data: {
-        jsonLdStructuredData: jsonLdString,
-        jsonLdLastGenerated: new Date(),
-        jsonLdValidationReport: JSON.parse(
-          JSON.stringify(validationReport)
-        ) as Prisma.InputJsonValue,
-      },
-    });
-
-    return {
-      success: true,
-      jsonLd: knowledgeGraph,
-      jsonLdString,
-      validationReport,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : String(error),
-    };
-  }
-}
-
-/**
- * Regenerate JSON-LD for a client (alias for generateAndSaveClientJsonLd)
- */
-export async function regenerateClientJsonLd(
-  clientId: string
-): Promise<ClientJsonLdGenerationResult> {
-  return generateAndSaveClientJsonLd(clientId);
-}
-
-/**
- * Get cached JSON-LD from database
- */
+/** Read the stored card + its validation report. */
 export async function getCachedClientJsonLd(
   clientId: string
 ): Promise<{ jsonLd: object | null; validationReport: ValidationReport | null }> {
@@ -297,9 +52,7 @@ export async function getCachedClientJsonLd(
   };
 }
 
-/**
- * Check if JSON-LD needs regeneration
- */
+/** True when the client changed after its card was last built. */
 export async function needsClientRegeneration(clientId: string): Promise<boolean> {
   const client = await db.client.findUnique({
     where: { id: clientId },
@@ -309,14 +62,8 @@ export async function needsClientRegeneration(clientId: string): Promise<boolean
     },
   });
 
-  if (!client) {
-    return false;
-  }
-
-  // Needs regeneration if never generated or client modified after last generation
-  if (!client.jsonLdLastGenerated) {
-    return true;
-  }
+  if (!client) return false;
+  if (!client.jsonLdLastGenerated) return true;
 
   return client.updatedAt > client.jsonLdLastGenerated;
 }

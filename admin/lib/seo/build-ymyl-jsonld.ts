@@ -44,18 +44,13 @@ export interface YmylArticleContext {
 }
 
 /**
- * Map category → schema.org Person sub-type for the reviewer.
- * Medical reviewers → Physician, Legal → Attorney, Financial → Person.
+ * Reviewer is ALWAYS a Person. Physician/Attorney are LocalBusiness subtypes in
+ * schema.org, so typing a human reviewer with them makes Google's LocalBusiness
+ * validation demand telephone/priceRange/address on a person. Google's article
+ * guidance expects reviewedBy to be Person or Organization.
  */
-function reviewerSchemaType(category: YmylCategory): string {
-  switch (category) {
-    case "medical":
-      return "Physician";
-    case "legal":
-      return "Attorney";
-    case "financial":
-      return "Person"; // schema.org has no FinancialAdvisor type — use Person + jobTitle
-  }
+function reviewerSchemaType(_category: YmylCategory): string {
+  return "Person";
 }
 
 /** Build the @graph nodes for a YMYL client + optional reviewer + page context. */
@@ -136,11 +131,15 @@ export function buildYmylJsonLdGraph(input: {
         name,
       }));
     }
-    // medicalSpecialty on reviewer when category is medical
-    if (client.ymylCategory === "medical" && typeof data.specialty === "string") {
+    // medicalSpecialty is not a Person property — carry the specialty via knowsAbout
+    if (
+      client.ymylCategory === "medical" &&
+      typeof data.specialty === "string" &&
+      !reviewerNode.knowsAbout
+    ) {
       const specialtyField = cfg.fields.find((f) => f.type === "specialty");
       const match = specialtyField?.specialties?.find((s) => s.value === data.specialty);
-      if (match) reviewerNode.medicalSpecialty = match.label.en;
+      if (match) reviewerNode.knowsAbout = [match.label.en];
     }
     graph.push(reviewerNode);
   }

@@ -307,7 +307,6 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     revalidatePath(`/articles/${article.id}`);
     revalidatePath(`/articles/${article.slug}`);
     await revalidateModontyTag("articles");
-    try { const { regenerateArticlesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateArticlesListingCache(); } catch (error) { console.error("Failed to regenerate articles listing cache:", error); }
 
     // Re-fetch userVersion + updatedAt after SEO generation
     // (SEO ops bump updatedAt but NOT userVersion — keep userVersion fresh from this action)

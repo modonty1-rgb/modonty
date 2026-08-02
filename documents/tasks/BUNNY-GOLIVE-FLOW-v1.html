@@ -74,6 +74,7 @@
   <span class="cnt" id="pct">0%</span>
   <div class="track"><div class="fill" id="fill"></div></div>
   <span class="cnt" id="cnt">0 / 0</span>
+  <span class="cnt" id="left" title="التاسكات الباقية">—</span>
   <button class="reset" id="reset">تصفير</button>
 </div>
 
@@ -85,10 +86,6 @@
 </div>
 <div class="pane on" id="pane-open">
 <h2>التاسكات الباقية — مرتّبة بأولوية التنفيذ (2026-07-31)</h2>
-<div class="t"><input type="checkbox" id="T6"><div class="body">
-  <div class="hd"><span class="id">T6</span><span class="tag now">أولوية ٥</span><span class="ttl">الدفع على فرع version-2 + التست الحي على preview</span></div>
-  <p>باكب Atlas (تنزيل آخر لقطة) · <code>tsc</code> صفر أخطاء · رفع إصدار · commit بقائمة صريحة (استثناء reels/settings.local/.mcp.json) · push على <b>فرع version-2 فقط</b> ← Vercel ينشر على رابط الـpreview الثابت · <b>تست حي كامل على الـpreview</b>. <b>صفر مساس بـmain.</b></p>
-  <span class="gate">بوابة: الـpreview يعمل سليماً — صور وسيو وصفر أخطاء</span></div></div>
 <div class="t"><input type="checkbox" id="T7"><div class="body">
   <div class="hd"><span class="id">T7</span><span class="tag now">أولوية ٦</span><span class="ttl">ترحيل صور الإنتاج — بلا سيو</span></div>
   <p>باكب طازج · النطاقات الأربعة الأولى فقط. <b>لا إعادة توليد سيو إطلاقاً.</b></p>
@@ -97,6 +94,8 @@
   <div class="hd"><span class="id">T8</span><span class="tag now">أولوية ٧</span><span class="ttl">السيو</span></div>
   <p style="color:#ffb4ae">🔒 <b>شرط خالد الصريح (2026-08-01): لا إعادة توليد JSON-LD على الإنتاج إطلاقاً حتى نتأكد 100% أن الصور تُخدم سليمة على اللايف من المزوّدَين (Cloudinary القديم بالـfallback + Bunny الجديد)</b> — التحقق أولاً، السيو آخراً.</p>
   <p>باكب مخصّص لحقول السيو أولاً · ثم نطاقات إعادة التوليد. + إصلاح الصفحات الستّ التي تُرندَر بصفر JSON-LD.</p>
+  <p>🎯 <b>الصفحات الستّ حُدِّدت بالاسم (مسح حيّ 2026-08-02):</b> <code>/help</code> · <code>/news</code> · <code>/legal</code> · <code>/subscribe</code> · <code>/search</code> · <code>/analytics</code> — وكلها ترجع 200 بصفر بلوك JSON-LD. <b>يُحسم أولاً:</b> أيّها يستحق سكيما فعلاً (<code>/search</code> و<code>/analytics</code> صفحات أدوات، Google لا يحتاج سكيما لها) وأيّها يحتاج <code>WebPage/CollectionPage</code>.</p>
+  <p>✅ <b>مُنجَز مسبقاً يخفّف هذا الكرت (2026-08-02):</b> سيو صفحات القوائم السبع (الرئيسية · العملاء · التصنيفات · الوسوم · القطاعات · الرائج · الأسئلة الشائعة) صار <b>مصدراً واحداً مدقّقاً</b> — مولّد واحد + ٣ مدقّقات، وميتا بشكل Next صحيح، ومُتحقَّق منه على DOM الحيّ ٧/٧. أُزيل مولّد وهمي لصفحة <code>/articles</code> غير الموجودة (404 مقصود) وأعمدته الستّة من السكيما والقاعدة. <b>ينطبق على التست فقط — الإنتاج ينتظر هذا الكرت.</b></p>
   <span class="gate">بوابة: JSON-LD حيّ صحيح · صفر Cloudinary</span></div></div>
 <div class="t"><input type="checkbox" id="T9"><div class="body">
   <div class="hd"><span class="id">T9</span><span class="tag now">أولوية ٨</span><span class="ttl">الإطفاء — جروب Cloudinary الكامل</span><span class="tag bad">بلا رجعة</span></div>
@@ -117,6 +116,12 @@
 </div>
 <div class="pane" id="pane-done">
 <h2>المنجز</h2>
+<div class="t done"><input type="checkbox" id="T6" checked><div class="body">
+  <div class="hd"><span class="id">T6</span><span class="ttl">الدفع على فرع version-2 + التست الحي على preview</span><span class="tag ok">✅ تمّت 2026-08-01 ليلاً</span></div>
+  <p style="color:#8ce09a;font-size:12.5px">✅ باكب Atlas منزّل (<code>backups/atlas-snapshot-2026-08-01.tgz</code> 36MB، لقطة 09:26، مفحوص) · tsc صفر أخطاء ×3 · build إنتاجي ناجح ×3 · admin 1.8.0 · modonty 1.84.0 · كوميت <code>28b2ae9</code> (30 ملفاً بقائمة صريحة) · push على version-2 فقط — main ما انلمس.</p>
+  <p style="color:#8ce09a;font-size:12.5px">✅ <b>تست الـpreview (8 صفحات):</b> الرئيسية 74 صورة · مقالان (JSON-LD الحي يحمل Bunny) · «التقويم الهجري» بالافتراضية · قائمة العملاء 70 · صفحة عميل · التصنيفات 24 · الوسوم 66 · الرائج — <b>صفر صورة مكسورة · صفر Cloudinary</b>. <b>ثبت بالدليل: الـpreview يقرأ قاعدة التست المرحّلة</b> (مقال الهجري يعرض الافتراضية الموجودة بالتست فقط) — فهو يعرض الشكل النهائي الكامل. ⏱️ ملاحظة: بطء تحميل أولي للصور = كاش Bunny البارد (بند 67) + كاش تحسين الصور الخاص برابط الـpreview (بارد أول زيارة).</p>
+  <p style="color:#8ce09a;font-size:12.5px">✅ <b>فحص Google Rich Results على مقال من الـpreview:</b> 5 أنواع كلها صالحة (Articles ✓ · Breadcrumbs ✓ · LocalBusiness ×2 ✓ · Organization ×2 ✓ · Paywalled ✓) — والشعار داخل الـJSON-LD رابط Bunny (<code>modonty-clients.b-cdn.net</code>) وقبلته Google. الملاحظات (priceRange/telephone/image) عولجت فوراً بأمر خالد 2026-08-01: أُصلح المولّدان (<code>generate-organization-jsonld.ts</code> + <code>knowledge-graph-generator.ts</code>) — النوع يُحسم MedicalClinic في الاثنين + telephone top-level + priceRange افتراضي "$" + image fallback من الشعار — وأعيد التوليد على التست وأعيد الفحص: عقدة العيادة نظيفة 0 ملاحظات ثم أُغلقت ملاحظات المُراجعة أيضاً: نوع المُراجع اليمّي صار <code>Person</code> بدل Physician/Attorney (نوعا LocalBusiness في schema.org) والتخصص انتقل لـ<code>knowsAbout</code> — إعادة الفحص الثالثة: <b>صفر ملاحظات على المقال كله</b> (الأنواع الخمسة ✓ ونودات الـHTML متطابقة قبل/بعد ما عدا نوع المُراجع). تحذير «Crawl failed» سببه <code>X-Robots-Tag: noindex</code> اللي يضيفها Vercel على روابط الـpreview — لا يمس الإنتاج.</p>
+  <span class="gate">✅ البوابة تحققت: الـpreview يعمل سليماً — صور وسيو وصفر أخطاء</span></div></div>
 <div class="t done"><input type="checkbox" id="T5" checked><div class="body">
   <div class="hd"><span class="id">T5</span><span class="ttl">تصفير Bunny + بروفة على نسخة الإنتاج</span><span class="tag ok">✅ تمّت 2026-08-01</span></div>
   <p style="color:#8ce09a;font-size:12.5px">✅ <b>البروفة نُفّذت كاملة ضمن retest اليوم</b> (خطة خالد دمجتها في T2b): تصفير 972 ← Sync إنتاج طازج 85/85 ← ترحيل من الصفر 441/444 (الـ3 الميتة حُلّت بالافتراضية) ← T2b تمليك.</p>
@@ -227,6 +232,10 @@ document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click
     document.getElementById('pct').textContent=p+'%';
     document.getElementById('fill').style.width=p+'%';
     document.getElementById('cnt').textContent=d+' / '+t;
+    // What Khalid actually tracks is what is LEFT, not what is done.
+    var left=t-d, el=document.getElementById('left');
+    el.textContent = left===0 ? '✅ خلصت كلها' : ('باقي ' + left);
+    el.style.color = left===0 ? '#34d399' : '#fbbf24';
   }
   boxes.forEach(function(b){
     if(saved[b.id]) b.checked=true; paint(b);

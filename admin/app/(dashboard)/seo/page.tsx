@@ -1,8 +1,8 @@
 import { getJsonLdIntegrityStats } from "./actions/jsonld-integrity";
 import { getCanonicalUrlSanitizerStats } from "./actions/canonical-url-sanitizer";
 import { getSitemapFreshnessStats } from "./actions/sitemap-freshness";
-import { getArticlesSeoHealth } from "./actions/articles-seo-actions";
 import { getModontyAuthorSeoHealth } from "./actions/author-seo-repair";
+import { articleSeoQuality } from "@/lib/dashboard/cached";
 import { SeoPageShell } from "./components/seo-page-shell";
 
 export const metadata = {
@@ -10,11 +10,13 @@ export const metadata = {
 };
 
 export default async function SeoPage() {
-  const [jsonLd, canonical, sitemap, articles, authorHealth] = await Promise.all([
+  const [jsonLd, canonical, sitemap, articleSeo, authorHealth] = await Promise.all([
     getJsonLdIntegrityStats(),
     getCanonicalUrlSanitizerStats(),
     getSitemapFreshnessStats(),
-    getArticlesSeoHealth(),
+    // The same count the dashboard shows — this page links to the existing segment list
+    // rather than rendering a third table of the same articles.
+    articleSeoQuality(),
     getModontyAuthorSeoHealth(),
   ]);
 
@@ -33,7 +35,8 @@ export default async function SeoPage() {
       sitemapsConfigured={sitemap.configured}
       sitemapsStale={sitemap.staleCount}
       attentionCount={attentionCount}
-      articles={articles}
+      articlesBelowPerfect={articleSeo.below}
+      articlesPerfect={articleSeo.perfect}
     />
   );
 }

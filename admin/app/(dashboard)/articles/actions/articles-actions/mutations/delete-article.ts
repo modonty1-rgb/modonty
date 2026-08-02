@@ -40,7 +40,6 @@ export async function deleteArticle(id: string) {
     revalidatePath("/articles");
     revalidateTag("article-status-counts", "max");
     await revalidateModontyTag("articles");
-    try { const { regenerateArticlesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateArticlesListingCache(); } catch (error) { console.error("Failed to regenerate articles listing cache:", error); }
     return { success: true };
   } catch (error) {
     console.error("Error deleting article:", error);

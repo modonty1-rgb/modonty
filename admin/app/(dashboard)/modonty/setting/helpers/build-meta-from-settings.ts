@@ -170,7 +170,14 @@ export function buildMetaFromSettings(
   return built;
 }
 
-export type PageTypeForMeta = "home" | "clients" | "categories" | "trending" | "faq";
+export type PageTypeForMeta =
+  | "home"
+  | "clients"
+  | "categories"
+  | "trending"
+  | "faq"
+  | "tags"
+  | "industries";
 
 const LIST_PAGE_FALLBACKS: Record<
   Exclude<PageTypeForMeta, "home">,
@@ -196,6 +203,16 @@ const LIST_PAGE_FALLBACKS: Record<
     description: "إجابات على الأسئلة الأكثر شيوعاً حول مدونتي - كل ما تحتاج معرفته",
     path: "/help/faq",
   },
+  tags: {
+    title: "الوسوم",
+    description: "تصفح المقالات حسب الوسم - كل الوسوم المتاحة على مدوّنتي",
+    path: "/tags",
+  },
+  industries: {
+    title: "القطاعات",
+    description: "استكشف الشركات والمحتوى حسب القطاع - كل القطاعات المتاحة",
+    path: "/industries",
+  },
 };
 
 export function buildMetaFromSettingsForPageType(
@@ -206,17 +223,22 @@ export function buildMetaFromSettingsForPageType(
     return buildMetaFromSettings(settings);
   }
   const fallback = LIST_PAGE_FALLBACKS[pageType];
+  const s = settings as Record<string, unknown>;
   const titleMap = {
     clients: settings.clientsSeoTitle,
     categories: settings.categoriesSeoTitle,
     trending: settings.trendingSeoTitle,
-    faq: (settings as Record<string, unknown>).faqSeoTitle as string | null | undefined,
+    faq: s.faqSeoTitle as string | null | undefined,
+    tags: s.tagsSeoTitle as string | null | undefined,
+    industries: s.industriesSeoTitle as string | null | undefined,
   } as const;
   const descMap = {
     clients: settings.clientsSeoDescription,
     categories: settings.categoriesSeoDescription,
     trending: settings.trendingSeoDescription,
-    faq: (settings as Record<string, unknown>).faqSeoDescription as string | null | undefined,
+    faq: s.faqSeoDescription as string | null | undefined,
+    tags: s.tagsSeoDescription as string | null | undefined,
+    industries: s.industriesSeoDescription as string | null | undefined,
   } as const;
   const title = titleMap[pageType]?.trim() || fallback.title;
   const description = descMap[pageType]?.trim() || fallback.description;

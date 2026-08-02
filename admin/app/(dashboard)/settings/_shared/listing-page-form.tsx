@@ -15,7 +15,7 @@ import { ImageField } from "./image-field";
 import { formatTimeAgo } from "./format-time-ago";
 import { SEO_HINTS } from "./seo-hints";
 
-type ListingKey = "categories" | "tags" | "industries" | "articles" | "trending" | "clients";
+type ListingKey = "categories" | "tags" | "industries" | "trending" | "clients";
 
 interface Props {
   pageKey: ListingKey;
@@ -86,13 +86,9 @@ const KEY_MAP: Record<ListingKey, {
     imageKey: "industriesPageImage",
     imageAltKey: "industriesPageImageAlt",
   },
-  articles: {
-    titleKey: "articlesSeoTitle",
-    descKey: "articlesSeoDescription",
-    cacheDateKey: "articlesPageJsonLdLastGenerated",
-    regenerator: "regenerateArticlesListingCache",
-    fieldList: ["articlesSeoTitle", "articlesSeoDescription"],
-  },
+  // No `articles` entry: modonty has no /articles listing route and must not have one —
+  // next.config.ts keeps that path a clean 404 because a `/articles` rule corrupted Arabic
+  // article slugs and put 17+ live articles at de-indexing risk. Page removed 2026-08-02.
   trending: {
     titleKey: "trendingSeoTitle",
     descKey: "trendingSeoDescription",

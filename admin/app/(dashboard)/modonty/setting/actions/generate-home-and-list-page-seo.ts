@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
-import { getAllSettings, getSameAsFromSettings, updateAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
+import { getAllSettings, getSameAsFromSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { getArticleDefaultsFromSettings } from "@/app/(dashboard)/settings/helpers/get-article-defaults-from-settings";
 import { buildMetaFromSettingsForPageType, type SettingsForMeta } from "../helpers/build-meta-from-settings";
 import {
@@ -20,11 +20,23 @@ import {
   type CategoryForCategoriesPageJsonLd,
 } from "../helpers/build-categories-page-jsonld";
 import { buildTrendingPageJsonLd } from "../helpers/build-trending-page-jsonld";
+import {
+  buildTaxonomyPageJsonLd,
+  type TaxonomyItemForJsonLd,
+  type TaxonomyPageType,
+} from "../helpers/build-taxonomy-page-jsonld";
 import { buildFaqPageJsonLd, type FaqForJsonLd } from "../helpers/build-faq-page-jsonld";
 import { validateHomeOrListPageJsonLd } from "../helpers/modonty-jsonld-validator";
 
-export type PageKey = "home" | "clients" | "categories" | "trending" | "faq";
-export type GeneratePageType = PageKey | "all";
+/** The seven modonty pages that actually exist. `/articles` is deliberately a 404 — see next.config.ts. */
+export type PageKey =
+  | "home"
+  | "clients"
+  | "categories"
+  | "trending"
+  | "faq"
+  | "tags"
+  | "industries";
 
 // Preview result (no DB save)
 export interface PreviewSeoData {
@@ -41,10 +53,39 @@ export interface PreviewSeoResult {
   data?: PreviewSeoData;
 }
 
-// Save result
-export interface SaveSeoResult {
-  success: boolean;
-  error?: string;
+
+/** Tag and Industry share the same SEO shape, so one select feeds both taxonomy pages. */
+const TAXONOMY_SELECT = {
+  id: true,
+  name: true,
+  slug: true,
+  description: true,
+  seoTitle: true,
+  seoDescription: true,
+  socialImage: true,
+  socialImageAlt: true,
+  canonicalUrl: true,
+  updatedAt: true,
+} as const;
+
+/** Run the three validators and shape the preview result — same contract as the inline branches. */
+async function finalizePreview(meta: unknown, jsonLdObj: object): Promise<PreviewSeoResult> {
+  const report = await validateHomeOrListPageJsonLd(jsonLdObj);
+  const valid =
+    report.adobe.valid &&
+    report.ajv.valid &&
+    report.jsonldJs.valid &&
+    report.custom.errors.length === 0;
+  const errors = [
+    ...report.adobe.errors.map((e) => e.message),
+    ...report.ajv.errors,
+    ...report.jsonldJs.errors,
+    ...report.custom.errors,
+  ].filter(Boolean);
+  return {
+    success: true,
+    data: { metaTags: meta, jsonLd: JSON.stringify(jsonLdObj), report, valid, errors },
+  };
 }
 
 /**
@@ -409,34 +450,9 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         upvoteCount: f.upvoteCount,
         lastReviewed: f.lastReviewed,
       }));
-      const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
-      const jsonLdObj = buildFaqPageJsonLd(siteUrl, faqsForJsonLd);
-      const report = await validateHomeOrListPageJsonLd(jsonLdObj);
-      const valid =
-        report.adobe.valid &&
-        report.ajv.valid &&
-        report.jsonldJs.valid &&
-        report.custom.errors.length === 0;
-      const errors = [
-        ...report.adobe.errors.map((e) => e.message),
-        ...report.ajv.errors,
-        ...report.jsonldJs.errors,
-        ...report.custom.errors,
-      ].filter(Boolean);
-      return {
-        success: true,
-        data: {
-          metaTags: meta,
-          jsonLd: JSON.stringify(jsonLdObj),
-          report,
-          valid,
-          errors,
-        },
-      };
-    } else {
-      const jsonLdObj = buildListPageJsonLdFromSettings(
-        settingsWithSameAs as Parameters<typeof buildListPageJsonLdFromSettings>[0],
-        page as ListPageType
+      const jsonLdObj = buildFaqPageJsonLd(
+        settingsWithSameAs as Parameters<typeof buildFaqPageJsonLd>[0],
+        faqsForJsonLd
       );
       const report = await validateHomeOrListPageJsonLd(jsonLdObj);
       const valid =
@@ -460,6 +476,42 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
           errors,
         },
       };
+    } else if (page === "tags" || page === "industries") {
+      const [rows, total] = await Promise.all([
+        page === "tags"
+          ? db.tag.findMany({ orderBy: { name: "asc" }, take: 20, select: TAXONOMY_SELECT })
+          : db.industry.findMany({ orderBy: { name: "asc" }, take: 20, select: TAXONOMY_SELECT }),
+        page === "tags" ? db.tag.count() : db.industry.count(),
+      ]);
+      const maxUpdatedAt = rows.reduce<Date | null>(
+        (acc, r) => (!acc || r.updatedAt > acc ? r.updatedAt : acc),
+        null
+      );
+      const items: TaxonomyItemForJsonLd[] = rows.map((r) => ({
+        name: r.name,
+        slug: r.slug,
+        description: r.description,
+        seoDescription: r.seoDescription,
+        seoTitle: r.seoTitle,
+        socialImage: r.socialImage,
+        socialImageAlt: r.socialImageAlt,
+        canonicalUrl: r.canonicalUrl,
+        id: r.id,
+      }));
+      const jsonLdObj = buildTaxonomyPageJsonLd(
+        settingsWithSameAs as Parameters<typeof buildTaxonomyPageJsonLd>[0],
+        page as TaxonomyPageType,
+        items,
+        total,
+        maxUpdatedAt ?? new Date()
+      );
+      return finalizePreview(meta, jsonLdObj);
+    } else {
+      const jsonLdObj = buildListPageJsonLdFromSettings(
+        settingsWithSameAs as Parameters<typeof buildListPageJsonLdFromSettings>[0],
+        page as ListPageType
+      );
+      return finalizePreview(meta, jsonLdObj);
     }
   } catch (e) {
     const message = e instanceof Error ? e.message : "Preview failed";
@@ -468,77 +520,13 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
 }
 
 /**
- * Save preview data to DB for a single page
+ * `savePageSeo` and the legacy `generateHomeAndListPageSeo` used to sit here. Both removed
+ * 2026-08-02 — they had no live caller, and they wrote `data.metaTags` straight into the
+ * Settings meta columns. That value is a flat custom object (`canonical`, `hreflang`,
+ * `twitter.image`), while modonty casts those columns to a Next.js `Metadata` with no adapter,
+ * so Next silently dropped the canonical and the twitter image on any page written through them.
+ *
+ * Meta is now built exclusively by `buildListingMetadata` in
+ * `admin/lib/seo/listing-page-seo-generator.ts` — the single writer of those columns.
+ * `previewPageSeo` above remains the single JSON-LD source and never writes.
  */
-export async function savePageSeo(
-  page: PageKey,
-  data: PreviewSeoData
-): Promise<SaveSeoResult> {
-  try {
-    const updates: Record<string, unknown> = {};
-
-    if (page === "home") {
-      updates.homeMetaTags = data.metaTags;
-      updates.jsonLdStructuredData = data.jsonLd;
-      updates.jsonLdLastGenerated = new Date();
-      updates.jsonLdValidationReport = data.report;
-    } else {
-      updates[`${page}PageMetaTags`] = data.metaTags;
-      updates[`${page}PageJsonLdStructuredData`] = data.jsonLd;
-      updates[`${page}PageJsonLdLastGenerated`] = new Date();
-      updates[`${page}PageJsonLdValidationReport`] = data.report;
-    }
-
-    const result = await updateAllSettings(updates);
-    if (!result.success) {
-      return { success: false, error: result.error };
-    }
-    return { success: true };
-  } catch (e) {
-    const message = e instanceof Error ? e.message : "Save failed";
-    return { success: false, error: message };
-  }
-}
-
-// Legacy function for backward compatibility
-export interface GenerateHomeAndListPageSeoResult {
-  success: boolean;
-  error?: string;
-  generated?: GeneratePageType[];
-  validation?: Record<string, { valid: boolean; errors?: string[] }>;
-}
-
-export async function generateHomeAndListPageSeo(
-  pageType: GeneratePageType
-): Promise<GenerateHomeAndListPageSeoResult> {
-  try {
-    const toRun: PageKey[] =
-      pageType === "all"
-        ? ["home", "clients", "categories", "trending"]
-        : [pageType as PageKey];
-
-    const validation: Record<string, { valid: boolean; errors?: string[] }> = {};
-
-    for (const page of toRun) {
-      const previewResult = await previewPageSeo(page);
-      if (!previewResult.success || !previewResult.data) {
-        return { success: false, error: previewResult.error, generated: [], validation };
-      }
-
-      validation[page] = {
-        valid: previewResult.data.valid,
-        errors: previewResult.data.errors,
-      };
-
-      const saveResult = await savePageSeo(page, previewResult.data);
-      if (!saveResult.success) {
-        return { success: false, error: saveResult.error, generated: [], validation };
-      }
-    }
-
-    return { success: true, generated: toRun, validation };
-  } catch (e) {
-    const message = e instanceof Error ? e.message : "Generate failed";
-    return { success: false, error: message };
-  }
-}

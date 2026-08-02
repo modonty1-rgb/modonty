@@ -18,6 +18,10 @@ export interface SettingsForHomeJsonLd {
   categoriesSeoDescription?: string | null;
   trendingSeoTitle?: string | null;
   trendingSeoDescription?: string | null;
+  tagsSeoTitle?: string | null;
+  tagsSeoDescription?: string | null;
+  industriesSeoTitle?: string | null;
+  industriesSeoDescription?: string | null;
   logoUrl?: string | null;
   ogImageUrl?: string | null;
   orgContactType?: string | null;

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { generateClientSEO } from "../../../actions/clients-actions";
-import { getClientJsonLd, regenerateClientJsonLdAction } from "../../../actions/clients-actions/jsonld-actions";
+import { getClientJsonLd } from "../../../actions/clients-actions/jsonld-actions";
 import { validateClientJsonLdComplete } from "../../../helpers/client-seo-config/client-jsonld-validator";
 import type { ValidationReport } from "@/lib/seo/jsonld-validator";
 import {
@@ -36,7 +36,6 @@ export function SEOTab({ client }: SEOTabProps) {
   const [jsonLd, setJsonLd] = useState<object | null>(null);
   const [validationReport, setValidationReport] = useState<ValidationReport | null>(null);
   const [isValidating, setIsValidating] = useState(false);
-  const [isRegenerating, setIsRegenerating] = useState(false);
 
   // Load stored JSON-LD and validation report
   useEffect(() => {
@@ -100,34 +99,6 @@ export function SEOTab({ client }: SEOTabProps) {
       });
     } finally {
       setIsValidating(false);
-    }
-  };
-
-  const handleRegenerate = async () => {
-    setIsRegenerating(true);
-    try {
-      const result = await regenerateClientJsonLdAction(client.id);
-      if (result.success) {
-        toast({
-          title: messages.success.updated,
-          description: "SEO updated",
-        });
-        router.refresh();
-      } else {
-        toast({
-          title: "Error",
-          description: result.error || "Failed to update SEO data",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: messages.error.server_error,
-        description: messages.descriptions.save_error,
-        variant: "destructive",
-      });
-    } finally {
-      setIsRegenerating(false);
     }
   };
 
@@ -514,12 +485,17 @@ export function SEOTab({ client }: SEOTabProps) {
                             </>
                           )}
                         </Button>
+                        {/* Same action as "Generate SEO" above — both go through the shared
+                            dataLayer bundle. This button used to call a second, older path
+                            with its own hand-written select that omitted openingHours,
+                            priceRange and the image licence, so pressing it downgraded the
+                            client's card without saying so. */}
                         <Button
                           size="sm"
-                          onClick={handleRegenerate}
-                          disabled={isRegenerating}
+                          onClick={handleGenerateSEO}
+                          disabled={isGenerating}
                         >
-                          {isRegenerating ? (
+                          {isGenerating ? (
                             <>
                               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                               Updating...

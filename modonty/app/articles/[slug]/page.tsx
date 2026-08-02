@@ -7,7 +7,7 @@ import { notFound, unstable_rethrow } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { sanitizeHtml } from "@/lib/sanitize-html";
 import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
-import { getPlatformSocialLinks } from "@/lib/settings/get-platform-social-links";
+import { getPlatformSocialLinks, getPlatformImageLicensing } from "@/lib/settings/get-platform-social-links";
 import {
   generateMetadataFromSEO,
   generateBreadcrumbStructuredData,
@@ -239,10 +239,11 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
   const slug = decodeURIComponent(rawSlug);
 
   try {
-    const [session, articleDefaults, platformSocialLinks] = await Promise.all([
+    const [session, articleDefaults, platformSocialLinks, platformImageLicensing] = await Promise.all([
       auth(),
       getArticleDefaultsFromSettings(),
       getPlatformSocialLinks(),
+      getPlatformImageLicensing(),
     ]);
     const userId = session?.user?.id;
 
@@ -376,6 +377,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
     // nodes (client publisher + /authors/... author).
     const siteIdentityJsonLd = generateSiteIdentityStructuredData({
       sameAs: platformSocialLinks.map((l) => l.href),
+      imageLicenseUrl: platformImageLicensing.imageLicenseUrl,
+      imageAcquireLicensePageUrl: platformImageLicensing.imageAcquireLicensePageUrl,
     });
 
     return (

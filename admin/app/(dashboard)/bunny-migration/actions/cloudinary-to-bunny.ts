@@ -51,8 +51,6 @@ const GENERATED_FIELDS = new Set([
   "tagsPageJsonLdStructuredData",
   "industriesPageMetaTags",
   "industriesPageJsonLdStructuredData",
-  "articlesPageMetaTags",
-  "articlesPageJsonLdStructuredData",
   "trendingPageMetaTags",
   "trendingPageJsonLdStructuredData",
 ]);

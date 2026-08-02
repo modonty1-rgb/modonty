@@ -1,10 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, Wand2, CheckCircle2, XCircle, Circle, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Loader2, CheckCircle2, XCircle, Circle, FileText } from "lucide-react";
 import {
   runSeoStepJsonLd,
   runSeoStepCanonical,
@@ -20,41 +27,15 @@ type Status = "idle" | "pending" | "running" | "done" | "failed";
 interface StepDef {
   key: string;
   label: string;
-  description: string;
   runner: () => Promise<SeoMaintenanceStepResult>;
 }
 
 const STEPS: StepDef[] = [
-  {
-    key: "jsonld",
-    label: "JSON-LD Regeneration",
-    description: "Articles with stale hosts in cached JSON-LD",
-    runner: runSeoStepJsonLd,
-  },
-  {
-    key: "canonical",
-    label: "Canonical URLs (7 tables)",
-    description: "Stale canonical hosts across Article + Client + Category + Tag + Industry + Author + Modonty",
-    runner: runSeoStepCanonical,
-  },
-  {
-    key: "sitemap",
-    label: "Sitemap Refresh (GSC)",
-    description: "Resubmit stale sitemaps to Google Search Console",
-    runner: runSeoStepSitemap,
-  },
-  {
-    key: "hreflang",
-    label: "hreflang Locales Sync",
-    description: "Ensure Settings.defaultAlternateLanguages has all GCC + Egypt + generic + x-default locales (idempotent — adds missing only)",
-    runner: runSeoStepHreflang,
-  },
-  {
-    key: "author",
-    label: "Author Identity (Modonty = Organization)",
-    description: "Rebuild the Modonty author's stored JSON-LD as the Organization entity (shared @id with the site + every article) — repairs the legacy Person shape",
-    runner: runSeoStepAuthor,
-  },
+  { key: "jsonld", label: "JSON-LD hosts", runner: runSeoStepJsonLd },
+  { key: "canonical", label: "Canonical URLs (7 tables)", runner: runSeoStepCanonical },
+  { key: "sitemap", label: "Sitemaps → Search Console", runner: runSeoStepSitemap },
+  { key: "hreflang", label: "hreflang locales", runner: runSeoStepHreflang },
+  { key: "author", label: "Author identity", runner: runSeoStepAuthor },
 ];
 
 interface StepState {
@@ -66,135 +47,138 @@ const idleState: Record<string, StepState> = Object.fromEntries(
   STEPS.map((s) => [s.key, { status: "idle" as Status }]),
 );
 
-export function SeoAutoMaintenance({ attentionCount }: { attentionCount: number }) {
+/**
+ * Standard fixes — no button, by design.
+ *
+ * Every step self-skips when there is nothing to do (no stale host found, canonical already
+ * correct, sitemap submitted less than 24h ago, hreflang complete, author already an
+ * Organization), so running them costs nothing when the site is healthy. Making them a
+ * button meant they only ran when somebody remembered to press it; this page is opened
+ * maybe once a fortnight, so the fixes now run on open and this card is the report.
+ *
+ * No session guard either: with no manual trigger, a refresh has to be the retry when a
+ * step fails on a network blip.
+ *
+ * Deliberately NOT covered here: settings changes. These five repair drift in stored
+ * values; regenerating SEO against new settings is Full Rebuild's job.
+ */
+export function SeoAutoMaintenance({
+  attentionCount,
+  onRunningChange,
+}: {
+  attentionCount: number;
+  /** Lets the parent hold Full Rebuild back until the canonical repair has landed. */
+  onRunningChange?: (running: boolean) => void;
+}) {
   const router = useRouter();
-  const [running, setRunning] = useState(false);
-  const [started, setStarted] = useState(false);
   const [steps, setSteps] = useState<Record<string, StepState>>(idleState);
-  const [finished, setFinished] = useState(false);
+  const [running, setRunning] = useState(true);
   const [elapsedMs, setElapsedMs] = useState<number | null>(null);
+  const [reportOpen, setReportOpen] = useState(false);
 
-  const hasWork = attentionCount > 0;
+  const startedRef = useRef(false);
+  useEffect(() => {
+    // Mount-only. A link prefetch renders the server component but never mounts this
+    // effect, so hovering the sidebar entry does not trigger a run.
+    if (startedRef.current) return;
+    startedRef.current = true;
 
-  const runAll = async () => {
-    setRunning(true);
-    setStarted(true);
-    setFinished(false);
-    setElapsedMs(null);
-    setSteps(Object.fromEntries(STEPS.map((s) => [s.key, { status: "pending" as Status }])));
-    const startedAt = Date.now();
+    void (async () => {
+      setSteps(Object.fromEntries(STEPS.map((s) => [s.key, { status: "pending" as Status }])));
+      const startedAt = Date.now();
 
-    for (const step of STEPS) {
-      setSteps((prev) => ({ ...prev, [step.key]: { status: "running" } }));
-      const result = await step.runner();
-      setSteps((prev) => ({
-        ...prev,
-        [step.key]: { status: result.ok ? "done" : "failed", result },
-      }));
-    }
+      for (const step of STEPS) {
+        setSteps((prev) => ({ ...prev, [step.key]: { status: "running" } }));
+        const result = await step.runner();
+        setSteps((prev) => ({
+          ...prev,
+          [step.key]: { status: result.ok ? "done" : "failed", result },
+        }));
+      }
 
-    setElapsedMs(Date.now() - startedAt);
-    setFinished(true);
-    setRunning(false);
-    await revalidateSeoPage();
-    router.refresh();
-  };
+      setElapsedMs(Date.now() - startedAt);
+      setRunning(false);
+      await revalidateSeoPage();
+      router.refresh();
+    })();
+  }, [router]);
 
-  const reset = () => {
-    setSteps(idleState);
-    setStarted(false);
-    setFinished(false);
-    setElapsedMs(null);
-  };
+  useEffect(() => {
+    onRunningChange?.(running);
+  }, [running, onRunningChange]);
 
   const completedCount = STEPS.filter(
     (s) => steps[s.key].status === "done" || steps[s.key].status === "failed",
   ).length;
-  const overallPercent = Math.round((completedCount / STEPS.length) * 100);
   const totalFixed = Object.values(steps).reduce((sum, s) => sum + (s.result?.count ?? 0), 0);
   const failedCount = Object.values(steps).filter((s) => s.status === "failed").length;
 
+  // While it works the strip has to be visible — after that it collapses to one line, because
+  // the outcome only matters for the few seconds you read it.
+  const tone = failedCount > 0 ? "error" : totalFixed > 0 ? "fixed" : "clean";
+
   return (
-    <div className="rounded-lg border bg-card overflow-hidden">
-      <div className="p-4 flex items-center justify-between gap-3 flex-wrap border-b">
-        <div className="space-y-1 flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-sm font-semibold">⚡ Quick Maintenance</p>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-600 dark:text-blue-300 font-medium">
-              ~5s · runs 5 fixes
-            </span>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Fast housekeeping: regenerates stale JSON-LD, fixes canonical URLs, refreshes sitemap, syncs hreflang locales, repairs the Modonty author identity.
-          </p>
-          <p className="text-[11px] text-muted-foreground/80">
-            <span className="font-medium">Use when:</span> daily/weekly check, or after small content edits.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {started && !running && (
-            <Button size="sm" variant="ghost" onClick={reset} className="gap-2">
-              <RotateCcw className="h-4 w-4" /> Reset
-            </Button>
-          )}
-          <Button
-            size="sm"
-            onClick={runAll}
-            disabled={running}
-            className="gap-2"
-            variant={hasWork || started ? "default" : "outline"}
-          >
-            {running ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" /> Running…
-              </>
-            ) : finished ? (
-              <>
-                <Wand2 className="h-4 w-4" /> Run Again
-              </>
-            ) : (
-              <>
-                <Wand2 className="h-4 w-4" /> Run All SEO Fixes
-              </>
-            )}
-            {hasWork && !started && (
-              <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold leading-none bg-primary-foreground/20 text-primary-foreground">
-                {attentionCount}
+    <>
+      <div className="rounded-lg border bg-card px-3 py-2 flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-2 min-w-0 text-xs">
+          {running ? (
+            <>
+              <Loader2 className="h-3.5 w-3.5 text-primary animate-spin shrink-0" />
+              <span className="font-medium text-primary">Standard fixes — checking…</span>
+              <span className="text-muted-foreground tabular-nums">
+                {completedCount}/{STEPS.length}
               </span>
-            )}
-          </Button>
+            </>
+          ) : tone === "error" ? (
+            <>
+              <XCircle className="h-3.5 w-3.5 text-destructive shrink-0" />
+              <span className="font-medium text-destructive">
+                Standard fixes — {failedCount} error{failedCount === 1 ? "" : "s"}
+              </span>
+              <span className="text-muted-foreground">refresh to retry</span>
+            </>
+          ) : (
+            <>
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+              <span className="font-medium text-emerald-600 dark:text-emerald-400">
+                {tone === "clean" ? "Standard fixes — all clean" : `Standard fixes — ${totalFixed} fixed`}
+              </span>
+              {elapsedMs !== null && (
+                <span className="text-muted-foreground tabular-nums">
+                  {(elapsedMs / 1000).toFixed(1)}s
+                </span>
+              )}
+            </>
+          )}
         </div>
+
+        {!running && (
+          <Button size="sm" variant="ghost" onClick={() => setReportOpen(true)} className="h-7 gap-1.5 text-xs shrink-0">
+            <FileText className="h-3.5 w-3.5" /> Report
+          </Button>
+        )}
       </div>
 
-      {started && (
-        <div className="p-4 space-y-3 bg-muted/20">
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-medium">
-                {running ? (
-                  <span className="flex items-center gap-1.5 text-primary">
-                    <Loader2 className="h-3 w-3 animate-spin" /> In progress
-                  </span>
-                ) : failedCount === 0 ? (
-                  <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-                    <CheckCircle2 className="h-3 w-3" /> Complete — {totalFixed} fixed
-                    {elapsedMs !== null ? ` in ${(elapsedMs / 1000).toFixed(1)}s` : ""}
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1.5 text-destructive">
-                    <XCircle className="h-3 w-3" /> Finished with {failedCount} error
-                    {failedCount === 1 ? "" : "s"}
-                  </span>
-                )}
-              </span>
-              <span className="font-semibold tabular-nums text-muted-foreground">
-                {completedCount} / {STEPS.length}
-              </span>
-            </div>
-            <Progress value={overallPercent} className="h-2" />
-          </div>
+      <Dialog open={reportOpen} onOpenChange={setReportOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base">
+              🔗 Standard Fixes
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              Ran automatically when this page opened. Repairs wrong hosts in cached JSON-LD,
+              corrects canonical URLs across 7 tables, resubmits sitemaps older than 24h to
+              Search Console, completes the hreflang locale list, and keeps the Modonty author
+              an Organization.
+            </DialogDescription>
+          </DialogHeader>
 
-          <ul className="space-y-2.5 pt-1">
+          <p className="text-[11px] text-amber-600 dark:text-amber-400 -mt-1">
+            Does <span className="font-semibold">not</span> pick up settings changes — run Full
+            Rebuild for that.
+          </p>
+
+          <ul className="space-y-2.5">
             {STEPS.map((step) => {
               const state = steps[step.key];
               return (
@@ -209,14 +193,7 @@ export function SeoAutoMaintenance({ attentionCount }: { attentionCount: number 
                     </span>
                   </div>
                   <Progress
-                    value={
-                      state.status === "done" || state.status === "failed"
-                        ? 100
-                        : state.status === "running"
-                          ? undefined
-                          : 0
-                    }
-                    indeterminate={state.status === "running"}
+                    value={state.status === "done" || state.status === "failed" ? 100 : 0}
                     className="h-1"
                     tone={state.status === "failed" ? "destructive" : "default"}
                   />
@@ -224,9 +201,16 @@ export function SeoAutoMaintenance({ attentionCount }: { attentionCount: number 
               );
             })}
           </ul>
-        </div>
-      )}
-    </div>
+
+          <p className="text-[11px] text-muted-foreground border-t pt-3">
+            {attentionCount > 0
+              ? `${attentionCount} area${attentionCount === 1 ? " was" : "s were"} flagged when the page opened.`
+              : "Nothing was flagged when the page opened."}{" "}
+            Every canonical rewrite is recorded in the Audit Log with its previous value.
+          </p>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
@@ -240,7 +224,7 @@ function StatusIcon({ status }: { status: Status }) {
 function StatusLabel({ state }: { state: StepState }) {
   if (state.status === "idle" || state.status === "pending")
     return <span className="text-muted-foreground/60">waiting</span>;
-  if (state.status === "running") return <span className="text-primary">running…</span>;
+  if (state.status === "running") return <span className="text-primary">checking…</span>;
   if (state.status === "failed")
     return <span className="text-destructive">{state.result?.detail ?? "failed"}</span>;
   const count = state.result?.count ?? 0;

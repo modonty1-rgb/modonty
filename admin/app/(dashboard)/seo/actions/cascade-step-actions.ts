@@ -40,6 +40,30 @@ export async function getCascadeEntities(): Promise<{
   };
 }
 
+/**
+ * Real totals for every phase, fetched once before a run starts so the panel shows
+ * "0/14" instead of a meaningless "0/?" while a phase waits its turn.
+ */
+export async function getCascadeCounts(): Promise<{
+  categories: number;
+  tags: number;
+  industries: number;
+  clients: number;
+  articles: number;
+}> {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
+  const [categories, tags, industries, clients, articles] = await Promise.all([
+    db.category.count(),
+    db.tag.count(),
+    db.industry.count(),
+    db.client.count(),
+    db.article.count(),
+  ]);
+  return { categories, tags, industries, clients, articles };
+}
+
 export async function regenerateOneArticleCascade(
   articleId: string
 ): Promise<{ success: boolean; error?: string }> {
@@ -138,6 +162,8 @@ export async function regenerateBulkIndustriesCascade(): Promise<{
 
 export async function regenerateListingsCascade(): Promise<{
   success: boolean;
+  successful: number;
+  total: number;
 }> {
   const session = await auth();
   if (!session) throw new Error("Unauthorized");
@@ -145,10 +171,15 @@ export async function regenerateListingsCascade(): Promise<{
     const { regenerateAllListingCaches } = await import(
       "@/lib/seo/listing-page-seo-generator"
     );
-    await regenerateAllListingCaches();
-    return { success: true };
+    // One call rebuilds every listing page (home, categories, tags, industries,
+    // clients, trending, faq) — report them individually so the panel shows real
+    // progress instead of a meaningless 1/1.
+    const { results } = await regenerateAllListingCaches();
+    const entries = Object.values(results);
+    const successful = entries.filter(Boolean).length;
+    return { success: successful === entries.length, successful, total: entries.length };
   } catch {
-    return { success: false };
+    return { success: false, successful: 0, total: 0 };
   }
 }
 
