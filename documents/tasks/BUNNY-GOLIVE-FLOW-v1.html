@@ -86,6 +86,12 @@
 </div>
 <div class="pane on" id="pane-open">
 <h2>التاسكات الباقية — مرتّبة بأولوية التنفيذ (2026-07-31)</h2>
+<div class="t"><input type="checkbox" id="T6b"><div class="body">
+  <div class="hd"><span class="id">T6b</span><span class="tag now">أولوية ٥ — التالي</span><span class="ttl">الـmerge إلى main — بقرار خالد فقط</span><span class="tag bad">بوابة الإنتاج</span></div>
+  <p style="color:#cbaaff">⚠️ <b>تصحيح ترتيب (2026-08-02):</b> كان هذا الكرت معروضاً <b>آخر</b> القائمة بوصف «آخر مرحلة» — وهذا مضلّل. نصّه بنفسه يقول إن T7/T8/T9 <b>تحتاج الكود منشوراً على الإنتاج</b>، فهي مستحيلة قبله. قرار خالد 2026-08-01 («الـmerge آخر حاجة») كان يقصد أنه آخر ما يُنفَّذ <b>من مسار التطوير</b> — لا أنه بعد تاسكات الإنتاج. نُقل ليتصدّر القائمة.</p>
+  <p><b>لا يُنفَّذ إلا بعد نجاح تست الـpreview 100% وبأمر خالد الصريح.</b> merge ← push لـ<code>main</code> ← Vercel ينشر الإنتاج. <b>لا يغيّر صورة واحدة على اللايف</b> — بيانات الإنتاج لم تُرحَّل بعد فالـfallback يخدم Cloudinary كما اليوم؛ اللي يُنشر هو <b>الكود فقط</b>. <b>بعده تُفتح</b> بنود اللايف اليدوية (بند 66) ثم T7 ← T8 ← T9.</p>
+  <p style="color:#8ce09a">✅ <b>البوابة تحققت 2026-08-02:</b> الـpreview ٧/٧ صفحات (canonical + @graph + Organization + WebSite) · فحص Google Rich Results على ١١ عيّنة = صفر خطأ حرج وصفر عنصر غير صالح · <code>tsc</code> ×٣ صفر · آخر كوميت <code>e973d1b</code> مدفوع على <code>version-2</code>. <b>المتبقّي: أمر خالد فقط.</b></p>
+  <span class="gate">بوابة: الموقع الحيّ يعمل كما كان · التراجع = revert بدقائق</span></div></div>
 <div class="t"><input type="checkbox" id="T7"><div class="body">
   <div class="hd"><span class="id">T7</span><span class="tag now">أولوية ٦</span><span class="ttl">ترحيل صور الإنتاج — بلا سيو</span></div>
   <p>باكب طازج · النطاقات الأربعة الأولى فقط. <b>لا إعادة توليد سيو إطلاقاً.</b></p>
@@ -109,10 +115,6 @@
   <p>🏷️ <b>نصوص قديمة مضلّلة:</b> عناوين «(Cloudinary)» في <code>defaults-form</code> · تعليق <code>gallery-actions:43</code> بالكونسول · رسائل <code>messages/en+ar</code>.</p>
   <span class="gate">بوابة: فترة أمان + جولتان مستقلّتان بصفر Cloudinary على الإنتاج</span>
 </div></div>
-<div class="t"><input type="checkbox" id="T6b"><div class="body">
-  <div class="hd"><span class="id">T6b</span><span class="tag now">آخر مرحلة</span><span class="ttl">الـmerge إلى main — بقرار خالد فقط</span><span class="tag bad">بوابة الإنتاج</span></div>
-  <p><b>لا يُنفَّذ إلا بعد نجاح تست الـpreview 100% وبأمر صريح</b> (قرار خالد 2026-08-01: الـmerge لوحده آخر حاجة وترتيبه آخر القائمة). merge ← push لـ<code>main</code> ← Vercel ينشر الإنتاج. <b>لا يغيّر صورة واحدة على اللايف</b> — بيانات الإنتاج لم تُرحَّل بعد فالـfallback يخدم Cloudinary كما اليوم. <b>بعده تُفتح</b> بنود اللايف اليدوية (بند 66) ثم T7/T8/T9 (كلها تحتاج الكود منشوراً على الإنتاج).</p>
-  <span class="gate">بوابة: الموقع الحيّ يعمل كما كان · التراجع = revert بدقائق</span></div></div>
 </div>
 <div class="pane" id="pane-done">
 <h2>المنجز</h2>
