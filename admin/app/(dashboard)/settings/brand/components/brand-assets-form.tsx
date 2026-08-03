@@ -16,13 +16,15 @@ import { StatusBadge } from "../../_shared/status-badge";
 
 interface Props {
   initialSettings: AllSettings;
+  /** Modonty Core (T2): platform images come from the core client's own library. */
+  coreClientId: string | null;
 }
 
 // Brand identity used site-wide: the organization description (Knowledge Panel +
 // publisher line under every article/author page) + site logo + mobile icon + alt
 // text. Moved out of the Modonty Homepage form into its own settings area.
 // Saves ONLY these fields.
-const BRAND_FIELDS = ["brandDescription", "logoUrl", "logoIconUrl", "altImage"] as const satisfies readonly (keyof AllSettings)[];
+const BRAND_FIELDS = ["brandDescription", "logoUrl", "logoIconUrl", "altImage", "certificateImageUrl"] as const satisfies readonly (keyof AllSettings)[];
 
 // Small grouping sub-header — same visual as the Modonty Homepage form.
 function GroupHeader({ icon, title, note, tone }: { icon: string; title: string; note?: string; tone: string }) {
@@ -37,7 +39,7 @@ function GroupHeader({ icon, title, note, tone }: { icon: string; title: string;
 
 const norm = (v: unknown) => (v === undefined || v === null ? "" : v);
 
-export function BrandAssetsForm({ initialSettings }: Props) {
+export function BrandAssetsForm({ initialSettings, coreClientId }: Props) {
   const { toast } = useToast();
   const [settings, setSettings] = useState<AllSettings>(initialSettings);
   // Snapshot of what's persisted — dirty = fields differ from this.
@@ -121,6 +123,7 @@ export function BrandAssetsForm({ initialSettings }: Props) {
             onChange={(v) => set("logoUrl", v)}
             hint="Wide wordmark (≈351×85) — desktop navbar. Also your Organization logo in Google."
             aspect="wide"
+            coreClientId={coreClientId}
           />
           <ImageField
             label="Logo (Mobile Icon)"
@@ -128,6 +131,7 @@ export function BrandAssetsForm({ initialSettings }: Props) {
             onChange={(v) => set("logoIconUrl", v)}
             hint="Small square mark for the mobile navbar. Falls back to the desktop logo if empty."
             aspect="square"
+            coreClientId={coreClientId}
           />
         </div>
         <Field
@@ -143,6 +147,24 @@ export function BrandAssetsForm({ initialSettings }: Props) {
             maxLength={125}
           />
         </Field>
+        </div>
+
+        {/* Official documents — CR certificate shown on modonty.com/trust */}
+        <div className="space-y-3 border-t border-border pt-4">
+          <GroupHeader
+            icon="📜"
+            title="Official documents"
+            note="CR certificate — shown on the /trust page"
+            tone="bg-blue-500/15 text-blue-600"
+          />
+          <ImageField
+            label="Commercial Registration Certificate"
+            value={settings.certificateImageUrl ?? ""}
+            onChange={(v) => set("certificateImageUrl", v)}
+            hint="The official MC certificate image. Leave empty to keep the built-in file."
+            aspect="og"
+            coreClientId={coreClientId}
+          />
         </div>
 
         {/* Save footer — bleeds to the Section card edges. */}

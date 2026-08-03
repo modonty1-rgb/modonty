@@ -30,6 +30,7 @@ interface BasicInfoTabProps {
     slogan: string | null;
     logoMedia: {
       url: string;
+      bunnyUrl: string | null;
       altText: string | null;
     } | null;
     businessBrief: string | null;

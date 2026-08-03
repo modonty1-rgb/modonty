@@ -3,7 +3,6 @@ import { getCollectionSizes } from "./actions/collection-sizes";
 import { getBackupInfo } from "./actions/backup-info";
 import { getAtlasReport } from "@/lib/atlas/atlas-client";
 import { DatabasePageShell } from "./components/database-page-shell";
-import { StaffMigrationCard } from "./components/staff-migration-card";
 
 export default async function DatabasePage() {
   const [health, collectionSizes, backup, atlas] = await Promise.all([
@@ -17,7 +16,6 @@ export default async function DatabasePage() {
 
   return (
     <div className="space-y-6">
-      <StaffMigrationCard />
       <DatabasePageShell
         health={health}
         collectionSizes={collectionSizes}

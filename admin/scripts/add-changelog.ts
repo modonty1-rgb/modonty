@@ -12,14 +12,14 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.91.0 (admin)",
-    title: "Client Accounts rebuilt as a clean billing statement",
+    version: "1.9.0 (admin) · 1.84.1 (modonty)",
+    title: "One source of truth for every modonty page's SEO",
     items: [
-      { type: "improve" as const, text: "Each client now has a proper account page (Clients → Accounts → Statement): the top shows the three numbers that matter — what's owed now, total paid, and when the subscription ends — followed by read-only facts and the invoices ledger." },
-      { type: "improve" as const, text: "Issuing an invoice is now just the amount + the end date (the plan, period and currency come from the client). It's created as «due» and does not touch the subscription until it's actually paid." },
-      { type: "improve" as const, text: "«Mark paid» is the single action that extends the subscription: the client's end date always follows the latest paid invoice — automatic, no manual editing." },
-      { type: "improve" as const, text: "Payment status is derived, not stored: an invoice reads paid until its end date passes, then becomes due again — so a renewal is always visible when it's actually needed." },
-      { type: "improve" as const, text: "Accounts now live under Clients (overview at Clients → Accounts, per-client statement on the client), and the dashboard «expiring soon» alert stays in sync the moment an invoice is settled." },
+      { type: "improve" as const, text: "All seven modonty pages (Home, Clients, Categories, Tags, Industries, Trending, FAQ) now build their Google card from a single generator that runs three independent validators. Previously two different generators wrote the same pages and whichever ran last won — so the same page could look different depending on what you had just saved." },
+      { type: "fix" as const, text: "The FAQ page was silently losing its official link (canonical) and its share image every time it regenerated, because it was saved in a shape the site could not read. Fixed and verified on the live page." },
+      { type: "fix" as const, text: "Tags, Industries and the Clients/Categories/Trending pages were shipping a thin card with only a name and a link, and were storing a «valid» stamp that nothing had actually checked. They now carry the full card — publisher details, per-item data — and a real validation report." },
+      { type: "fix" as const, text: "The system was building and storing SEO for an /articles page that does not exist on modonty (that path is deliberately a 404). It rebuilt it on every article create, edit and delete. Removed — the Home page is the articles page, and two pages listing the same articles would have split their ranking signals." },
+      { type: "improve" as const, text: "Cleanup: 22 unused files removed after proving nothing references them, plus six leftover database fields belonging to the phantom page. Zero type errors across admin, modonty and console." },
     ],
   },
 ];

@@ -6,6 +6,8 @@ import { Image as ImageIcon } from "lucide-react";
 import { Article } from "../helpers/article-view-types";
 import { CopyableId } from "./shared/copyable-id";
 
+import { mediaSrc } from "@modonty/database/lib/media-src";
+
 interface ArticleViewGalleryProps {
   article: Article;
   sectionRef?: (el: HTMLElement | null) => void;
@@ -28,7 +30,7 @@ export function ArticleViewGallery({ article, sectionRef }: ArticleViewGalleryPr
             item.media ? (
               <div key={item.id} className="relative aspect-square overflow-hidden rounded-lg border bg-muted/30 group cursor-pointer">
                 <Image
-                  src={item.media.url}
+                  src={mediaSrc(item.media) ?? item.media.url}
                   alt={item.media.altText || ""}
                   fill
                   className="object-cover transition-transform group-hover:scale-105"

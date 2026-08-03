@@ -89,7 +89,7 @@ export function buildModontyAuthorSeo(a: ModontyAuthorSeoSource, settings: AllSe
       : undefined;
 
   const orgEmail = settings.orgContactEmail || a.email || undefined;
-  const orgLogo = settings.logoUrl || settings.orgLogoUrl || undefined;
+  const orgLogo = settings.logoUrl || undefined;
   // OG/social image: brand-only for the Modonty org (single source) — the brand OG image,
   // else the logo. The org has no per-author photo; visual identity lives in the brand.
   const ogImage = settings.ogImageUrl || orgLogo || undefined;

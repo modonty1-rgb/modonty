@@ -1,10 +1,13 @@
 import Image from "next/image";
+
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { SectionCard } from "./section-card";
 import { GalleryInteractive } from "./gallery-interactive";
 
 export interface ClientGalleryImage {
   id: string;
   url: string;
+  bunnyUrl: string | null;
   altText: string | null;
   width: number | null;
   height: number | null;
@@ -36,7 +39,7 @@ export function ClientGallerySection({ images }: Props) {
               className="group relative aspect-square cursor-zoom-in overflow-hidden rounded-md bg-muted outline-none ring-primary transition focus-visible:ring-2"
             >
               <Image
-                src={img.url}
+                src={mediaSrc(img) ?? img.url}
                 alt={img.altText || ""}
                 fill
                 loading="lazy"

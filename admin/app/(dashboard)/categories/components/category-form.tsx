@@ -15,9 +15,11 @@ interface CategoryFormProps {
   initialData?: Partial<CategoryWithRelations>;
   categories: Array<{ id: string; name: string }>;
   categoryId?: string;
+  /** Modonty Core (T2): platform images come from the core client's own library. */
+  coreClientId: string | null;
 }
 
-export function CategoryForm({ initialData, categories, categoryId }: CategoryFormProps) {
+export function CategoryForm({ initialData, categories, categoryId, coreClientId }: CategoryFormProps) {
   const router = useRouter();
   const {
     formData,
@@ -144,15 +146,19 @@ export function CategoryForm({ initialData, categories, categoryId }: CategoryFo
                 label="Social Image"
                 imageUrl={formData.socialImage}
                 altText={formData.socialImageAlt}
-                onImageChange={(url, alt) => {
+                onImageChange={(url, alt, mediaId) => {
                   updateImageField("socialImage", url);
                   updateImageField("socialImageAlt", alt);
+                  updateImageField("socialImageMediaId", mediaId ?? "");
                 }}
                 onRemove={() => {
                   updateImageField("socialImage", "");
                   updateImageField("socialImageAlt", "");
+                  updateImageField("socialImageMediaId", "");
                 }}
-                scope="PLATFORM"
+                clientId={coreClientId}
+                lockClient
+                mediaId={formData.socialImageMediaId || null}
               />
             </CardContent>
           </Card>

@@ -4,8 +4,8 @@ export interface ClientHeroClient {
   slug: string;
   legalName?: string | null;
   slogan?: string | null;
-  logoMedia?: { url: string } | null;
-  heroImageMedia?: { url: string } | null;
+  logoMedia?: { url: string; bunnyUrl: string | null } | null;
+  heroImageMedia?: { url: string; bunnyUrl: string | null } | null;
   url?: string | null;
   sameAs: string[];
   foundingDate?: Date | null;

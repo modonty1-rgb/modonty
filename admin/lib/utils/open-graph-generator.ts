@@ -16,7 +16,7 @@ export interface OpenGraphImageMeta {
  */
 export function generateOpenGraphImageMeta(media: Media): OpenGraphImageMeta {
   const meta: OpenGraphImageMeta = {
-    "og:image": media.url,
+    "og:image": (media.bunnyUrl ?? media.url),
     "og:image:alt": media.altText || media.title || media.filename,
   };
 
@@ -34,10 +34,10 @@ export function generateOpenGraphImageMeta(media: Media): OpenGraphImageMeta {
   }
 
   // Secure URL (use HTTPS if available)
-  if (media.url && (media.url.startsWith("https://") || media.url.startsWith("http://"))) {
-    meta["og:image:secure_url"] = media.url.replace("http://", "https://");
-  } else if (media.url) {
-    meta["og:image:secure_url"] = media.url;
+  if ((media.bunnyUrl ?? media.url) && ((media.bunnyUrl ?? media.url).startsWith("https://") || (media.bunnyUrl ?? media.url).startsWith("http://"))) {
+    meta["og:image:secure_url"] = (media.bunnyUrl ?? media.url).replace("http://", "https://");
+  } else if ((media.bunnyUrl ?? media.url)) {
+    meta["og:image:secure_url"] = (media.bunnyUrl ?? media.url);
   }
 
   return meta;

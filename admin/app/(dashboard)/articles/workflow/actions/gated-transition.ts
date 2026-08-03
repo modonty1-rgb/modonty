@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { auth } from "@/lib/auth";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
@@ -86,7 +87,7 @@ export async function gatedTransitionAction(
         client: {
           select: {
             name: true,
-            logoMedia: { select: { url: true, width: true, height: true } },
+            logoMedia: { select: { url: true, bunnyUrl: true, width: true, height: true } },
             // YMYL gate inputs
             isYmyl: true,
             ymylCategory: true,
@@ -139,7 +140,8 @@ export async function gatedTransitionAction(
             name: article.client.name,
             logoMedia: article.client.logoMedia
               ? {
-                  url: article.client.logoMedia.url,
+                  url: mediaSrc(article.client.logoMedia) ?? article.client.logoMedia.url,
+                  bunnyUrl: null,
                   width: article.client.logoMedia.width,
                   height: article.client.logoMedia.height,
                 }

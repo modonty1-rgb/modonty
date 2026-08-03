@@ -68,7 +68,7 @@ const TECHNICAL_DEFAULTS: RuleRow[] = [
   { label: "Sitemap Frequency", key: "defaultSitemapChangeFreq", source: "Google", url: "https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap" },
   { label: "Article Sitemap Priority", key: "articleDefaultSitemapPriority", source: "Google", url: "https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap" },
   { label: "Article Sitemap Freq", key: "articleDefaultSitemapChangeFreq", source: "Google", url: "https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap" },
-  { label: "License", key: "defaultLicense", source: "CC", url: "https://creativecommons.org/licenses/by/4.0/" },
+  { label: "License", key: "defaultLicense", source: "Modonty policy", url: "https://www.modonty.com/legal/copyright-policy" },
   { label: "Free Access", key: "defaultIsAccessibleForFree", source: "Schema.org", url: "https://schema.org/isAccessibleForFree" },
   { label: "Default Pathname", key: "defaultPathname", source: "Next.js", url: "https://nextjs.org/docs/app/api-reference/functions/generate-metadata" },
   { label: "Truncation Suffix", key: "defaultTruncationSuffix", source: "UX", url: null },

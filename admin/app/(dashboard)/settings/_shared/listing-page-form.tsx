@@ -15,12 +15,14 @@ import { ImageField } from "./image-field";
 import { formatTimeAgo } from "./format-time-ago";
 import { SEO_HINTS } from "./seo-hints";
 
-type ListingKey = "categories" | "tags" | "industries" | "articles" | "trending" | "clients";
+type ListingKey = "categories" | "tags" | "industries" | "trending" | "clients";
 
 interface Props {
   pageKey: ListingKey;
   pageName: string;
   initialSettings: AllSettings;
+  /** Modonty Core (T2): platform images come from the core client's own library. */
+  coreClientId?: string | null;
   /** Optional sections rendered above the SEO section (e.g. Hero B2B for clients). */
   beforeSeo?: React.ReactNode;
   /** Optional setter exposed to beforeSeo via render-prop pattern. */
@@ -84,13 +86,9 @@ const KEY_MAP: Record<ListingKey, {
     imageKey: "industriesPageImage",
     imageAltKey: "industriesPageImageAlt",
   },
-  articles: {
-    titleKey: "articlesSeoTitle",
-    descKey: "articlesSeoDescription",
-    cacheDateKey: "articlesPageJsonLdLastGenerated",
-    regenerator: "regenerateArticlesListingCache",
-    fieldList: ["articlesSeoTitle", "articlesSeoDescription"],
-  },
+  // No `articles` entry: modonty has no /articles listing route and must not have one —
+  // next.config.ts keeps that path a clean 404 because a `/articles` rule corrupted Arabic
+  // article slugs and put 17+ live articles at de-indexing risk. Page removed 2026-08-02.
   trending: {
     titleKey: "trendingSeoTitle",
     descKey: "trendingSeoDescription",
@@ -100,7 +98,7 @@ const KEY_MAP: Record<ListingKey, {
   },
 };
 
-export function ListingPageForm({ pageKey, pageName, initialSettings, renderBeforeSeo }: Props) {
+export function ListingPageForm({ pageKey, pageName, initialSettings, coreClientId = null, renderBeforeSeo }: Props) {
   const { toast } = useToast();
   const [settings, setSettings] = useState<AllSettings>(initialSettings);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
@@ -207,8 +205,9 @@ export function ListingPageForm({ pageKey, pageName, initialSettings, renderBefo
               label="Hero / Share Image"
               value={(settings[imageKey] as string | null) ?? ""}
               onChange={(v) => set(imageKey, v as AllSettings[typeof imageKey])}
-              hint="1200×630 px — paste a Cloudinary URL. Used as the full-bleed hero background and og:image."
+              hint="1200×630 px — pick from the Modonty library (or paste a Bunny URL). Used as the full-bleed hero background and og:image."
               aspect="og"
+              coreClientId={coreClientId}
             />
             {imageAltKey && (
               <Field label="Image Alt Text" hint="Describe the image for accessibility & SEO.">

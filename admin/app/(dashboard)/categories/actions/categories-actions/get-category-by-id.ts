@@ -18,6 +18,7 @@ export async function getCategoryById(id: string) {
         seoDescription: true,
         socialImage: true,
         socialImageAlt: true,
+        socialImageMediaId: true,
         canonicalUrl: true,
         createdAt: true,
         updatedAt: true,

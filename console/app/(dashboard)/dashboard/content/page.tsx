@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import Image from "next/image";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
@@ -186,7 +187,7 @@ export default async function ContentPage() {
                   <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded-md bg-muted">
                     {a.featuredImage?.url ? (
                       <Image
-                        src={a.featuredImage.url}
+                        src={mediaSrc(a.featuredImage) ?? a.featuredImage.url}
                         alt={a.featuredImage.altText ?? a.title}
                         fill
                         sizes="64px"

@@ -1,4 +1,5 @@
 import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface ArticleImageGalleryProps {
@@ -6,6 +7,7 @@ interface ArticleImageGalleryProps {
     id: string;
     media: {
       url: string;
+      bunnyUrl: string | null;
       altText: string | null;
       caption: string | null;
     };
@@ -23,7 +25,7 @@ export function ArticleImageGallery({ gallery }: ArticleImageGalleryProps) {
           <Card key={galleryItem.id} className="hover:shadow-md transition-shadow overflow-hidden">
             <div className="relative w-full aspect-video overflow-hidden rounded-lg">
               <OptimizedImage
-                src={galleryItem.media.url}
+                src={mediaSrc(galleryItem.media) ?? galleryItem.media.url}
                 alt={galleryItem.media.altText || galleryItem.media.caption || "صورة من معرض المقال"}
                 fill
                 className="object-cover h-full w-full"

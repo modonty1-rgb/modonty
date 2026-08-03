@@ -5,10 +5,12 @@
 
 import { cache } from 'react';
 import { cacheTag, cacheLife } from 'next/cache';
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus } from "@prisma/client";
-import type { ArticleResponse, ArticleFilters, InteractionCounts } from "@/lib/types";
+import type { ArticleResponse, ArticleFilters, InteractionCounts, FeedPost } from "@/lib/types";
 import { calculateTrendingScore, getTrendingTimeRange } from "@/lib/trending";
+import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
 
 type ArticleWithRelations = Prisma.ArticleGetPayload<{
   include: {
@@ -19,7 +21,7 @@ type ArticleWithRelations = Prisma.ArticleGetPayload<{
         slug: true;
         logoMedia: {
           select: {
-            url: true;
+            url: true, bunnyUrl: true;
           };
         };
         industry: {
@@ -47,7 +49,7 @@ type ArticleWithRelations = Prisma.ArticleGetPayload<{
     };
     featuredImage: {
       select: {
-        url: true;
+        url: true, bunnyUrl: true;
         altText: true;
       };
     };
@@ -71,7 +73,7 @@ const feedArticleSelect = {
       name: true,
       slug: true,
       logoMedia: {
-        select: { url: true },
+        select: { url: true, bunnyUrl: true },
       },
       industry: {
         select: { name: true },
@@ -94,7 +96,7 @@ const feedArticleSelect = {
   },
   featuredImage: {
     select: {
-      url: true,
+      url: true, bunnyUrl: true,
       altText: true,
     },
   },
@@ -114,7 +116,7 @@ function mapFeedArticleToResponse(article: FeedArticlePayload): ArticleResponse 
     title: article.title,
     slug: article.slug,
     excerpt: article.excerpt || undefined,
-    image: article.featuredImage?.url,
+    image: mediaSrc(article.featuredImage) ?? undefined,
     publishedAt: (article.datePublished || article.createdAt).toISOString(),
     author: {
       id: article.author.id,
@@ -125,7 +127,7 @@ function mapFeedArticleToResponse(article: FeedArticlePayload): ArticleResponse 
       id: article.client.id,
       name: article.client.name,
       slug: article.client.slug,
-      logo: article.client.logoMedia?.url || undefined,
+      logo: mediaSrc(article.client.logoMedia) || undefined,
       industry: article.client.industry?.name || undefined,
     },
     category: article.category
@@ -137,7 +139,8 @@ function mapFeedArticleToResponse(article: FeedArticlePayload): ArticleResponse 
       : undefined,
     featuredImage: article.featuredImage
       ? {
-          url: article.featuredImage.url,
+          url: mediaSrc(article.featuredImage) ?? article.featuredImage.url,
+          bunnyUrl: null, // resolved into url above
           altText: article.featuredImage.altText || undefined,
         }
       : undefined,
@@ -238,6 +241,85 @@ export const getArticles = cache(async (filters: ArticleFilters = {}) => {
   return getArticlesCached(filters);
 });
 
+// ── Homepage initial feed — leaner than the shared feed select ──────────────
+// The feed card (PostCard) never renders author, dislikes, wordCount or industry.
+// This dedicated query drops the author (User) join + those scalar/relation fields
+// for the LCP-critical first render. Search/news/load-more keep the fuller select.
+const homeFeedSelect = {
+  id: true,
+  title: true,
+  slug: true,
+  excerpt: true,
+  datePublished: true,
+  createdAt: true,
+  featured: true,
+  readingTimeMinutes: true,
+  client: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      logoMedia: { select: { url: true, bunnyUrl: true } },
+    },
+  },
+  category: { select: { id: true, name: true, slug: true } },
+  featuredImage: { select: { url: true, bunnyUrl: true, altText: true } },
+  audioUrl: true,
+  likesCount: true,
+  commentsCount: true,
+  favoritesCount: true,
+  viewsCount: true,
+} satisfies Prisma.ArticleSelect;
+
+type HomeFeedPayload = Prisma.ArticleGetPayload<{ select: typeof homeFeedSelect }>;
+
+function mapHomeFeedArticle(a: HomeFeedPayload): FeedPost {
+  return {
+    id: a.id,
+    title: a.title,
+    content: a.excerpt || "",
+    excerpt: a.excerpt ?? undefined,
+    image: mediaSrc(a.featuredImage) ?? undefined,
+    slug: a.slug,
+    publishedAt: a.datePublished || a.createdAt,
+    clientName: a.client.name,
+    clientSlug: a.client.slug,
+    clientId: a.client.id,
+    clientLogo: mediaSrc(a.client.logoMedia) ?? undefined,
+    readingTimeMinutes: a.readingTimeMinutes ?? undefined,
+    hasAudio: !!a.audioUrl,
+    likes: a.likesCount || 0,
+    comments: a.commentsCount || 0,
+    favorites: a.favoritesCount || 0,
+    views: a.viewsCount || 0,
+    status: "published",
+  };
+}
+
+async function getHomeFeedArticlesCached(): Promise<FeedPost[]> {
+  "use cache";
+  cacheTag("articles");
+  cacheLife("hours"); // safe: admin revalidateTag("articles") fires on every publish/update/delete
+
+  const articles = await db.article.findMany({
+    where: {
+      status: ArticleStatus.PUBLISHED,
+      OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
+    },
+    select: homeFeedSelect,
+    orderBy: [
+      { featured: "desc" as const },
+      { datePublished: "desc" as const },
+      { id: "desc" as const },
+    ],
+    take: FEED_PAGE_SIZE,
+  });
+
+  return articles.map(mapHomeFeedArticle);
+}
+
+export const getHomeFeedArticles = cache(() => getHomeFeedArticlesCached());
+
 export const getArticleBySlug = cache(async (slug: string) => {
   const article = await db.article.findFirst({
     where: {
@@ -256,7 +338,7 @@ export const getArticleBySlug = cache(async (slug: string) => {
           slug: true,
           logoMedia: {
             select: {
-              url: true,
+              url: true, bunnyUrl: true,
             },
           },
           industry: {
@@ -282,7 +364,7 @@ export const getArticleBySlug = cache(async (slug: string) => {
       },
       featuredImage: {
         select: {
-          url: true,
+          url: true, bunnyUrl: true,
           altText: true,
         },
       },
@@ -389,7 +471,7 @@ function mapArticleToResponse(article: ArticleWithRelations): ArticleResponse {
     slug: article.slug,
     excerpt: article.excerpt || undefined,
     content: article.content || undefined,
-    image: article.featuredImage?.url,
+    image: mediaSrc(article.featuredImage) ?? undefined,
     publishedAt: (article.datePublished || article.createdAt).toISOString(),
     author: {
       id: article.author.id,
@@ -402,7 +484,7 @@ function mapArticleToResponse(article: ArticleWithRelations): ArticleResponse {
       id: article.client.id,
       name: article.client.name,
       slug: article.client.slug,
-      logo: article.client.logoMedia?.url || undefined,
+      logo: mediaSrc(article.client.logoMedia) || undefined,
       industry: article.client.industry?.name || undefined,
     },
     category: article.category
@@ -414,7 +496,8 @@ function mapArticleToResponse(article: ArticleWithRelations): ArticleResponse {
       : undefined,
     featuredImage: article.featuredImage
       ? {
-          url: article.featuredImage.url,
+          url: mediaSrc(article.featuredImage) ?? article.featuredImage.url,
+          bunnyUrl: null, // resolved into url above
           altText: article.featuredImage.altText || undefined,
         }
       : undefined,

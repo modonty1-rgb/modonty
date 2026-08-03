@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { getMediaById } from "@/app/(dashboard)/media/actions/get-media-by-id";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface MediaPreview {
   url: string;
@@ -9,7 +10,7 @@ interface MediaPreview {
 interface UseMediaPreviewOptions {
   mediaId: string | null | undefined;
   clientId: string | null | undefined;
-  initialMedia?: { url: string; altText: string | null } | null;
+  initialMedia?: { url: string; bunnyUrl: string | null; altText: string | null } | null;
 }
 
 /** Fetches and caches a media preview by ID, with initial data support. */
@@ -22,9 +23,10 @@ export function useMediaPreview({
   const initialMediaRef = useRef(initialMedia);
 
   useEffect(() => {
-    if (initialMediaRef.current?.url) {
+    const initialSrc = mediaSrc(initialMediaRef.current);
+    if (initialMediaRef.current && initialSrc) {
       setMedia({
-        url: initialMediaRef.current.url,
+        url: initialSrc,
         altText: initialMediaRef.current.altText || null,
       });
     }
@@ -40,7 +42,7 @@ export function useMediaPreview({
       try {
         const result = await getMediaById(mediaId, clientId);
         if (result) {
-          setMedia({ url: result.url, altText: result.altText });
+          setMedia({ url: mediaSrc(result) ?? result.url, altText: result.altText });
         } else {
           setMedia(null);
         }

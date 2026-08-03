@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { CommentStatus } from "@prisma/client";
 import { BuildingIcon } from "lucide-react";
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 import { getIndustryBySlug, getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
 import { jsonLdHtmlFromString } from "@/lib/seo";
@@ -28,6 +29,12 @@ export async function generateMetadata({ params }: IndustryPageProps): Promise<M
   const { slug } = await params;
   const industry = await getIndustryBySlug(decodeURIComponent(slug));
   if (!industry) return { title: "صناعة غير موجودة - مدونتي" };
+  // Serve-the-stored pattern (same as category/tag pages): the admin generator bakes the
+  // full metadata (openGraph images included) — the hand-built object here dropped og:image.
+  if (industry.nextjsMetadata) {
+    const stored = industry.nextjsMetadata as Metadata;
+    if (stored.title) return stored;
+  }
   return {
     title: `${industry.name} - الصناعات | مدونتي`,
     description: industry.description ?? `استعرض شركات قطاع ${industry.name} الموثوقة على مدونتي`,
@@ -125,8 +132,8 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
                 id={client.id}
                 name={client.name}
                 slug={client.slug}
-                logoUrl={client.logoMedia?.url}
-                heroUrl={client.heroImageMedia?.url}
+                logoUrl={mediaSrc(client.logoMedia) ?? undefined}
+                heroUrl={mediaSrc(client.heroImageMedia) ?? undefined}
                 slogan={client.slogan}
                 addressCity={client.addressCity}
                 averageRating={ratingMap.get(client.id) ?? 0}

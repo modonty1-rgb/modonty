@@ -69,13 +69,17 @@ const TECHNICAL_DEFAULTS: Record<string, unknown> = {
   defaultOgImageHeight: 630,
   defaultTwitterCard: "summary_large_image",
   defaultHreflang: "ar-SA",
-  defaultNotranslate: true,
+  // false: Google may offer translated versions — notranslate is reserved for
+  // sensitive/payment pages, not the whole marketing site (Khalid 2026-08-02).
+  defaultNotranslate: false,
   defaultReferrerPolicy: "origin-when-cross-origin",
   defaultSitemapPriority: 0.7,
   defaultSitemapChangeFreq: "weekly",
   articleDefaultSitemapPriority: 0.8,
   articleDefaultSitemapChangeFreq: "daily",
-  defaultLicense: "https://creativecommons.org/licenses/by/4.0/",
+  // Modonty's own policy page — it forbids commercial reuse and AI training without
+  // written permission, so a permissive CC licence would contradict it (Khalid 2026-08-02).
+  defaultLicense: "https://www.modonty.com/legal/copyright-policy",
   defaultIsAccessibleForFree: true,
   defaultPathname: "/",
   defaultTruncationSuffix: "…",

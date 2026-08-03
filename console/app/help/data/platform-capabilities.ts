@@ -3,6 +3,8 @@
  * Shows the FULL value of modonty as a complete platform, not just a CMS.
  */
 
+import { BRAND_CHARACTER_URL } from "@modonty/database/lib/brand-assets";
+
 import type { LucideIcon } from "lucide-react";
 import {
   Palette,
@@ -139,8 +141,7 @@ export const platformCapabilities: Capability[] = [
   {
     emoji: "🤖",
     icon: Bot,
-    image:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/c_scale,w_96,f_auto,q_auto/v1770899986/modontyAvatar_gn8wxj.webp",
+    image: BRAND_CHARACTER_URL,
     title: "مساعد ذكي بصورة شخصية",
     body: "في صفحتك على مودونتي يظهر مساعد ذكي بـ Avatar مميز (الصورة اللي تشوفها هنا) — يجاوب زوارك على أسئلتهم المتعلقة بشركتك ومحتوى مقالاتك. كل سؤال يسأله زائر يتسجّل تلقائياً كـ FAQ تابع للمقال.",
     highlight: "خدمة ٢٤/٧ بصورة ذكية",

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ interface Article {
   } | null;
   featuredImage?: {
     url: string;
+    bunnyUrl: string | null;
     altText?: string | null;
   } | null;
 }
@@ -153,7 +155,7 @@ export function ArticleList({ articles, clientName, clientId }: ArticleListProps
               {article.featuredImage && (
                 <div className="aspect-video w-full overflow-hidden rounded-t-lg relative">
                   <OptimizedImage
-                    src={article.featuredImage.url}
+                    src={mediaSrc(article.featuredImage) ?? article.featuredImage.url}
                     alt={article.featuredImage.altText || article.title}
                     fill
                     className="object-cover transition-transform duration-300 hover:scale-105"

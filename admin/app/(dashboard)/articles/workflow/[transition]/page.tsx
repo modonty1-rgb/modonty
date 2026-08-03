@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Inbox } from "lucide-react";
@@ -62,12 +63,12 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
         select: {
           name: true,
           slug: true,
-          logoMedia: { select: { url: true, width: true, height: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true, width: true, height: true } },
         },
       },
       author: { select: { name: true } },
       featuredImage: {
-        select: { url: true, altText: true, width: true, height: true },
+        select: { url: true, bunnyUrl: true, altText: true, width: true, height: true },
       },
     },
     orderBy: { updatedAt: "desc" },
@@ -117,7 +118,8 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
                 name: a.client.name,
                 logoMedia: a.client.logoMedia
                   ? {
-                      url: a.client.logoMedia.url,
+                      url: mediaSrc(a.client.logoMedia) ?? a.client.logoMedia.url,
+                      bunnyUrl: null,
                       width: a.client.logoMedia.width,
                       height: a.client.logoMedia.height,
                     }
@@ -192,10 +194,10 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
               <div className="flex items-center gap-3">
               {/* Avatar-sized thumbnail */}
               <div className="h-10 w-10 shrink-0 rounded-full overflow-hidden bg-muted ring-1 ring-border/60">
-                {article.featuredImage?.url ? (
+                {mediaSrc(article.featuredImage) ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={article.featuredImage.url}
+                    src={mediaSrc(article.featuredImage) as string}
                     alt=""
                     className="h-full w-full object-cover"
                   />

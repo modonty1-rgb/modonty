@@ -17,6 +17,7 @@ export async function getArticleBySlug(slug: string, clientId?: string) {
               select: {
                 id: true,
                 url: true,
+                bunnyUrl: true,
               },
             },
           },
@@ -32,6 +33,7 @@ export async function getArticleBySlug(slug: string, clientId?: string) {
           select: {
             id: true,
             url: true,
+            bunnyUrl: true,
             altText: true,
             width: true,
             height: true,
@@ -49,6 +51,7 @@ export async function getArticleBySlug(slug: string, clientId?: string) {
               select: {
                 id: true,
                 url: true,
+                bunnyUrl: true,
                 altText: true,
                 width: true,
                 height: true,

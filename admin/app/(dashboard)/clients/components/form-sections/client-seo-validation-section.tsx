@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { messages } from "@/lib/messages";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { useRouter, usePathname } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,8 +57,8 @@ export function ClientSEOValidationSection({
     const slug = (formData.slug as string) || 'client';
     const clientPageUrl = (formData.canonicalUrl as string) || `${siteUrl}/clients/${slug}`;
     const desc = (formData.seoDescription as string) || (formData.description as string) || undefined;
-    const logo = formData.logoMedia as { url?: string; altText?: string; width?: number; height?: number } | null;
-    const ogImg = formData.ogImageMedia as { url?: string; altText?: string; width?: number; height?: number } | null;
+    const logo = formData.logoMedia as { url?: string; bunnyUrl: string | null; altText?: string; width?: number; height?: number } | null;
+    const ogImg = formData.ogImageMedia as { url?: string; bunnyUrl: string | null; altText?: string; width?: number; height?: number } | null;
     const parent = formData.parentOrganization as { name?: string; url?: string; slug?: string } | null;
     const lat = formData.addressLatitude as number | null | undefined;
     const lng = formData.addressLongitude as number | null | undefined;
@@ -101,7 +102,7 @@ export function ClientSEOValidationSection({
     if (logo?.url) {
       orgNode.logo = {
         '@type': 'ImageObject',
-        url: toAbs(logo.url),
+        url: toAbs(mediaSrc(logo) ?? ""),
         ...(logo.width ? { width: logo.width >= 112 ? logo.width : 112 } : {}),
         ...(logo.height ? { height: logo.height >= 112 ? logo.height : 112 } : {}),
       };
@@ -140,7 +141,7 @@ export function ClientSEOValidationSection({
       description: desc,
     };
     if (ogImg?.url) {
-      const u = toAbs(ogImg.url);
+      const u = toAbs(mediaSrc(ogImg) ?? "");
       webPageNode.primaryImageOfPage = {
         '@type': 'ImageObject',
         url: u,
@@ -150,7 +151,7 @@ export function ClientSEOValidationSection({
         ...(ogImg.altText && { caption: ogImg.altText }),
       };
     } else if (logo?.url) {
-      const u = toAbs(logo.url);
+      const u = toAbs(mediaSrc(logo) ?? "");
       webPageNode.primaryImageOfPage = {
         '@type': 'ImageObject',
         url: u,
@@ -202,12 +203,12 @@ export function ClientSEOValidationSection({
       locale: 'ar_SA',
     };
 
-    const ogImg = formData.ogImageMedia as { url?: string; altText?: string; width?: number; height?: number } | null;
-    const logo = formData.logoMedia as { url?: string; altText?: string; width?: number; height?: number } | null;
+    const ogImg = formData.ogImageMedia as { url?: string; bunnyUrl: string | null; altText?: string; width?: number; height?: number } | null;
+    const logo = formData.logoMedia as { url?: string; bunnyUrl: string | null; altText?: string; width?: number; height?: number } | null;
     if (ogImg?.url) {
-      og.images = [makeOgImg(toAbsolute(ogImg.url), (ogImg.altText as string) || defaultAlt, ogImg.width, ogImg.height)];
+      og.images = [makeOgImg(toAbsolute(mediaSrc(ogImg) ?? ""), (ogImg.altText as string) || defaultAlt, ogImg.width, ogImg.height)];
     } else if (logo?.url) {
-      og.images = [makeOgImg(toAbsolute(logo.url), (logo.altText as string) || defaultAlt, logo.width, logo.height)];
+      og.images = [makeOgImg(toAbsolute(mediaSrc(logo) ?? ""), (logo.altText as string) || defaultAlt, logo.width, logo.height)];
     }
 
     const knowsLang = formData.knowsLanguage as string[] | undefined;
@@ -216,7 +217,7 @@ export function ClientSEOValidationSection({
       if (hasEn) og.localeAlternate = ['en_US'];
     }
 
-    const twImg = formData.twitterImageMedia as { url?: string; altText?: string } | null;
+    const twImg = formData.twitterImageMedia as { url?: string; bunnyUrl: string | null; altText?: string } | null;
     const ogImageUrl = og.images?.[0]?.secure_url || og.images?.[0]?.url;
     const ogImageAlt = og.images?.[0]?.alt;
     const hasAnyImage = !!(twImg?.url || ogImageUrl);
@@ -236,7 +237,7 @@ export function ClientSEOValidationSection({
       description: (formData.twitterDescription as string) || description || '',
     };
     if (twImg?.url) {
-      twitter.image = toAbsolute(twImg.url);
+      twitter.image = toAbsolute(mediaSrc(twImg) ?? "");
       twitter.imageAlt = (twImg.altText as string) || defaultAlt;
     } else if (card === 'summary_large_image' && ogImageUrl) {
       twitter.image = ogImageUrl;
@@ -253,9 +254,9 @@ export function ClientSEOValidationSection({
 
   const criticalNotes = useMemo(() => {
     const notes: string[] = [];
-    const ogImg = formData.ogImageMedia as { url?: string } | null;
-    const logo = formData.logoMedia as { url?: string } | null;
-    const twImg = formData.twitterImageMedia as { url?: string } | null;
+    const ogImg = formData.ogImageMedia as { url?: string; bunnyUrl: string | null } | null;
+    const logo = formData.logoMedia as { url?: string; bunnyUrl: string | null } | null;
+    const twImg = formData.twitterImageMedia as { url?: string; bunnyUrl: string | null } | null;
     const twSite = formData.twitterSite as string | undefined;
     const hasOg = !!ogImg?.url;
     const hasLogo = !!logo?.url;
@@ -284,7 +285,7 @@ export function ClientSEOValidationSection({
   const jsonLdCriticalNotes = useMemo(() => {
     const notes: string[] = [];
     notes.push('Note: Preview is minimal. Full JSON-LD (WebSite, full Organization, ContactPoint, companyRegistration, etc.) is generated on save.');
-    const logo = formData.logoMedia as { url?: string } | null;
+    const logo = formData.logoMedia as { url?: string; bunnyUrl: string | null } | null;
     if (!logo?.url) {
       notes.push('Critical: No logo. Required for Organization rich results; add in Media.');
     }

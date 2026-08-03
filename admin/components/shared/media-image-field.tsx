@@ -6,16 +6,21 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { X, ImageIcon, Library } from "lucide-react";
 import { MediaPickerDialog } from "@/components/shared/media-picker-dialog";
-import type { MediaScope } from "@prisma/client";
+import { ImageSeoStrip } from "@/app/(dashboard)/articles/components/image-seo-strip";
 
 interface MediaImageFieldProps {
   label?: string;
   imageUrl: string;
   altText: string;
-  onImageChange: (url: string, alt: string) => void;
+  /** mediaId is the Media row of the picked image — save it as the relation (dual-field). */
+  onImageChange: (url: string, alt: string, mediaId?: string) => void;
   onRemove: () => void;
-  scope?: MediaScope | "client";
   clientId?: string | null;
+  /** Modonty Core (T2): lock the picker to clientId's own library (no scope switch). */
+  lockClient?: boolean;
+  /** When set, the standard image-SEO strip (score + gaps + edit dialog — same as the
+   *  article editor) renders under the preview. Pass the saved relation id. */
+  mediaId?: string | null;
 }
 
 export function MediaImageField({
@@ -24,8 +29,9 @@ export function MediaImageField({
   altText,
   onImageChange,
   onRemove,
-  scope = "PLATFORM",
   clientId = null,
+  lockClient = false,
+  mediaId = null,
 }: MediaImageFieldProps) {
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -58,6 +64,14 @@ export function MediaImageField({
           {altText && (
             <p className="text-[10px] text-muted-foreground truncate">{altText}</p>
           )}
+          {mediaId && (
+            <ImageSeoStrip
+              mediaId={mediaId}
+              onChange={(url) => {
+                if (url) onImageChange(url, altText, mediaId);
+              }}
+            />
+          )}
           <Button
             type="button"
             variant="outline"
@@ -84,9 +98,9 @@ export function MediaImageField({
         open={pickerOpen}
         onOpenChange={setPickerOpen}
         clientId={clientId}
-        defaultScope={scope}
+        lockClient={lockClient}
         onSelect={(media) => {
-          onImageChange(media.url, media.altText || "");
+          onImageChange(media.url, media.altText || "", media.mediaId);
           setPickerOpen(false);
         }}
       />

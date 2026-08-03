@@ -4,11 +4,10 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import type { MediaType } from "@prisma/client";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
-import { optimizeCloudinaryUrl } from "@/lib/utils/image-seo";
 import { requiresCrop } from "@/lib/media/media-specs";
 import { createMedia, getClients } from "../../../actions/media-actions";
 import { validateFile } from "../utils/file-validation";
-import { useCloudinaryUpload } from "./use-cloudinary-upload";
+import { useBunnyUpload } from "./use-bunny-upload";
 import type { UploadFile, Client, SEOFormData, UploadZoneProps } from "../types";
 
 interface EditorState {
@@ -16,8 +15,14 @@ interface EditorState {
   fileName: string;
 }
 
-export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneProps) {
+export function useUploadZone({ onUploadComplete, initialClientId, coreClientId }: UploadZoneProps) {
   const { toast } = useToast();
+  // Modonty Core (T2): owner toggle [Client | Modonty]. Default is Client — that's the
+  // frequent path (Khalid 2026-07-31). Entity forms link here with clientId=core, which
+  // opens directly on Modonty mode.
+  const [ownerMode, setOwnerMode] = useState<"modonty" | "client">(() =>
+    initialClientId && initialClientId === coreClientId ? "modonty" : "client"
+  );
   const [clientId, setClientId] = useState<string>(initialClientId || "");
   const [mediaType, setMediaType] = useState<MediaType | "">("");
   const [clients, setClients] = useState<Client[]>([]);
@@ -37,11 +42,10 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
     description: "",
   });
 
-  // Cloudinary upload hook
-  const { uploadToCloudinary } = useCloudinaryUpload({
-    clients,
+  // Bunny-primary upload hook (Cloudinary retired — storage-control for reels growth)
+  const { uploadToBunny } = useBunnyUpload({
     clientId,
-    seoForm,
+    mediaType,
     setFiles,
   });
 
@@ -200,6 +204,17 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
     setClientId("");
   }, [resetFlowFiles]);
 
+  // Owner toggle [Modonty | Client] — Modonty locks clientId to the core client;
+  // Client clears it so the selector appears. Either way any picked file is dropped.
+  const handleOwnerModeChange = useCallback(
+    (mode: "modonty" | "client") => {
+      setOwnerMode(mode);
+      resetFlowFiles();
+      setClientId(mode === "modonty" ? (coreClientId ?? "") : "");
+    },
+    [resetFlowFiles, coreClientId]
+  );
+
   const handleChangeRole = useCallback(() => {
     resetFlowFiles();
     setMediaType("");
@@ -287,10 +302,9 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
   };
 
   const saveMediaToDatabase = async (uploadFile: UploadFile) => {
-    const originalUrl = uploadFile.uploadResult!.url;
+    const bunnyImageUrl = uploadFile.uploadResult!.url; // Bunny CDN url — now the primary `url`
     const fileWidth = uploadFile.uploadResult!.width || 0;
     const fileHeight = uploadFile.uploadResult!.height || 0;
-    const fileFormat = uploadFile.uploadResult!.format || "";
 
     try {
       setFiles((prev) =>
@@ -299,35 +313,23 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
         )
       );
 
-      const cloudinaryPublicId = uploadFile.uploadResult?.public_id;
-      const cloudinaryVersion = uploadFile.uploadResult?.version;
-      const cloudinarySignature = uploadFile.uploadResult?.signature;
-
-      const resourceType = uploadFile.file.type.startsWith("image/") ? "image" : "video";
-      const optimizedUrl = optimizeCloudinaryUrl(
-        originalUrl,
-        cloudinaryPublicId || "",
-        fileFormat,
-        resourceType
-      );
-
       const resolvedClientId = (clientId === "none" || clientId === "modonty") ? null : clientId;
       const resolvedScope = clientId === "modonty" ? "PLATFORM" : clientId === "none" ? "GENERAL" : "CLIENT";
+      const resolvedType = (mediaType || undefined) as MediaType | undefined;
 
+      // Bunny-primary: `url` and `bunnyUrl` both point at Bunny. No Cloudinary anymore.
       const mediaResult = await createMedia({
         filename: uploadFile.file.name,
-        url: optimizedUrl,
+        url: bunnyImageUrl,
+        bunnyUrl: bunnyImageUrl,
         mimeType: uploadFile.file.type,
         clientId: resolvedClientId,
         scope: resolvedScope as import("@prisma/client").MediaScope,
-        type: (mediaType || undefined) as MediaType | undefined,
+        type: resolvedType,
         fileSize: uploadFile.file.size,
         width: fileWidth,
         height: fileHeight,
         encodingFormat: uploadFile.file.type || undefined,
-        cloudinaryPublicId,
-        cloudinaryVersion,
-        cloudinarySignature,
         altText: seoForm.altText.trim(),
         title: seoForm.title.trim() || undefined,
         description: seoForm.description.trim() || undefined,
@@ -415,7 +417,7 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
           );
           toast({
             title: "Upload Required",
-            description: "Please wait for the file to upload to Cloudinary before saving.",
+            description: "Please wait for the file to upload to Bunny before saving.",
             variant: "default",
           });
           return;
@@ -431,13 +433,13 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
       }
 
       if (!uploadFile.uploadResult) {
-        await uploadToCloudinary(uploadFile.file, uploadFile.id);
+        await uploadToBunny(uploadFile.file, uploadFile.id);
         const completedFile = await waitForUploadCompletion(uploadFile.id);
         if (!completedFile?.uploadResult) {
           setSavingFileId(null);
           toast({
             title: "Upload Failed",
-            description: "Failed to upload file to Cloudinary. Please try again.",
+            description: "Failed to upload file to Bunny. Please try again.",
             variant: "destructive",
           });
           return;
@@ -476,6 +478,8 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
     // State
     clientId,
     setClientId,
+    ownerMode,
+    handleOwnerModeChange,
     mediaType,
     clients,
     files,

@@ -5,6 +5,8 @@ import { m } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 
+import { storyPartnerImage } from "./_constants";
+
 interface Partner {
   name: string;
   logoUrl: string;
@@ -15,29 +17,29 @@ const PARTNERS: Partner[] = [
   {
     name: "مجموعة جبر الجنوبية للمقاولات",
     logoUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1774290421/%D8%AC%D8%A8%D8%B1_%D8%A7%D9%84%D8%B9%D9%82%D8%A7%D8%B1%D9%8A%D8%A9_logo_mn4ma1.png",
+      storyPartnerImage("jabr-realestate.png"),
     href: "http://www.jabrco.com/",
   },
   {
     name: "شركة كيما زون",
     logoUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1774290721/kima-zon_wcgjxy.jpg",
+      storyPartnerImage("kima-zon.jpg"),
     href: "https://www.kimazone.net/",
   },
   {
     name: "الساحة للتكنولوجيا",
     logoUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1776941289/WhatsApp_Image_2026-04-22_at_3.45.28_PM_yr02hw.jpg",
+      storyPartnerImage("alsaha-tech.jpg"),
   },
   {
     name: "Trust Technology",
     logoUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1776941134/WhatsApp_Image_2026-04-22_at_3.45.13_PM_hwzvjf.jpg",
+      storyPartnerImage("trust-technology.jpg"),
   },
   {
     name: "DreamToApp",
     logoUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1774290641/dream_To_App2-01_kwzar5.png",
+      storyPartnerImage("dream-to-app.png"),
   },
 ];
 

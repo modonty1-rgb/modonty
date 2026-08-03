@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import NextImage from "next/image";
 import { ClientCtaMode } from "@prisma/client";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 import Link from "@/components/link";
 import { IconChevronRight, IconCheck, IconClients } from "@/lib/icons";
@@ -53,7 +54,7 @@ export default async function ClientBookingPage({
       slug: true,
       ctaMode: true,
       phone: true, // WhatsApp number (E.164) — powers the primary CTA
-      logoMedia: { select: { url: true, altText: true } },
+      logoMedia: { select: { url: true, bunnyUrl: true, altText: true } },
     },
   });
 
@@ -71,8 +72,9 @@ export default async function ClientBookingPage({
   const h = await headers();
   const defaultCountry = h.get("x-vercel-ip-country");
 
-  const logoSrc = client.logoMedia?.url
-    ? stripCloudinaryTransforms(client.logoMedia.url) ?? client.logoMedia.url
+  const logoResolved = mediaSrc(client.logoMedia);
+  const logoSrc = logoResolved
+    ? stripCloudinaryTransforms(logoResolved) ?? logoResolved
     : null;
 
   return (

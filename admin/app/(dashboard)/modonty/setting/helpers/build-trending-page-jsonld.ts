@@ -6,6 +6,7 @@
 import type { SettingsForHomeJsonLd } from "./build-home-jsonld-from-settings";
 import type { ArticleForHomeJsonLd } from "./build-home-jsonld-from-settings";
 import { buildSiteOrgAndWebSite } from "./build-clients-page-jsonld";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): string | undefined {
   if (!url?.trim()) return undefined;
@@ -21,9 +22,9 @@ function articleToListItem(article: ArticleForHomeJsonLd, siteUrl: string, index
   const articleUrl = `${siteUrl}/articles/${article.slug}`;
   const clientUrl = `${siteUrl}/clients/${article.client.slug}`;
   const authorUrl = article.author.slug ? `${siteUrl}/authors/${article.author.slug}` : undefined;
-  const imageUrl = article.featuredImage?.url?.trim();
+  const imageUrl = mediaSrc(article.featuredImage)?.trim();
   const absImage = imageUrl ? ensureAbsoluteUrl(imageUrl, siteUrl) : undefined;
-  const clientLogo = article.client.logoMedia?.url?.trim();
+  const clientLogo = mediaSrc(article.client.logoMedia)?.trim();
   const absClientLogo = clientLogo ? ensureAbsoluteUrl(clientLogo, siteUrl) : undefined;
 
   const articleNode: Record<string, unknown> = {

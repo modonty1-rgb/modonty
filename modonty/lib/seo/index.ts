@@ -3,6 +3,7 @@ import { safeOrganizationType } from "@modonty/database/lib/seo/organization-sch
 import { buildArticleImageObjects } from "./image-aspect-ratios";
 import { BRAND_AR, BRAND_EN, SITE_URL, LOGO_URL } from "@/lib/brand";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 export { buildAlternates } from "./build-alternates";
 
@@ -261,7 +262,11 @@ export function generateStructuredData(data: {
  * NO SearchAction — Google deprecated the sitelinks searchbox (Nov 2024), so adding it
  * has zero rich-result value. sameAs = the platform's verified social profiles.
  */
-export function generateSiteIdentityStructuredData(options?: { sameAs?: string[] }): object {
+export function generateSiteIdentityStructuredData(options?: {
+  sameAs?: string[];
+  imageLicenseUrl?: string | null;
+  imageAcquireLicensePageUrl?: string | null;
+}): object {
   const orgId = `${SITE_URL}/#organization`;
   const siteId = `${SITE_URL}/#website`;
   const sameAs = (options?.sameAs || []).filter(
@@ -276,7 +281,20 @@ export function generateSiteIdentityStructuredData(options?: { sameAs?: string[]
         name: BRAND_EN,
         alternateName: BRAND_AR,
         url: SITE_URL,
-        logo: { "@type": "ImageObject", url: LOGO_URL },
+        logo: {
+          "@type": "ImageObject",
+          url: LOGO_URL,
+          // Same copyright policy every other Modonty-produced image carries. The
+          // creator/creditText/copyrightNotice trio is what keeps Google's image-metadata
+          // check clean — a licence without a copyright line is flagged.
+          creator: { "@type": "Organization", name: BRAND_AR, url: SITE_URL },
+          creditText: BRAND_AR,
+          copyrightNotice: `© ${new Date().getFullYear()} ${BRAND_AR}`,
+          ...(options?.imageLicenseUrl?.trim() && { license: options.imageLicenseUrl.trim() }),
+          ...(options?.imageAcquireLicensePageUrl?.trim() && {
+            acquireLicensePage: options.imageAcquireLicensePageUrl.trim(),
+          }),
+        },
         ...(sameAs.length > 0 && { sameAs }),
       },
       {
@@ -320,8 +338,8 @@ export function generateArticleStructuredData(article: any) {
     description: article.seoDescription || article.excerpt || "",
     // Google Article rich results: 3 aspect ratios (1:1, 4:3, 16:9) as ImageObject[]
     // with explicit width/height (richer than bare URLs → better Google Images + AI).
-    image: article.featuredImage?.url
-      ? buildArticleImageObjects(article.featuredImage.url, 1200, {
+    image: mediaSrc(article.featuredImage)
+      ? buildArticleImageObjects(mediaSrc(article.featuredImage) ?? article.featuredImage!.url, 1200, {
           width: article.featuredImage.width,
           height: article.featuredImage.height,
         })
@@ -345,8 +363,8 @@ export function generateArticleStructuredData(article: any) {
       "@type": "Organization",
       name: article.client.name,
       // Logo as ImageObject — data carries it at client.logoMedia.url (fallback to legacy client.logo)
-      ...((article.client.logoMedia?.url || article.client.logo) && {
-        logo: { "@type": "ImageObject", url: article.client.logoMedia?.url || article.client.logo },
+      ...((mediaSrc(article.client.logoMedia) || article.client.logo) && {
+        logo: { "@type": "ImageObject", url: mediaSrc(article.client.logoMedia) || article.client.logo },
       }),
       ...(article.client.url && { url: article.client.url }),
     },
@@ -467,10 +485,10 @@ export function generateOrganizationStructuredData(client: any) {
     ...(client.url && { url: client.url }),
     ...(client.slogan && { slogan: client.slogan }),
     ...(client.logo && { logo: { "@type": "ImageObject", url: client.logo } }),
-    ...(client.logoMedia?.url && {
+    ...(mediaSrc(client.logoMedia) && {
       logo: {
         "@type": "ImageObject",
-        url: client.logoMedia.url,
+        url: mediaSrc(client.logoMedia) ?? client.logoMedia.url,
         ...(client.logoMedia.width && { width: client.logoMedia.width }),
         ...(client.logoMedia.height && { height: client.logoMedia.height }),
       },

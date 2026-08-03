@@ -12,6 +12,8 @@ export interface GalleryItem {
   media: {
     id: string;
     url: string;
+    /** Required so no consumer can narrow the Bunny copy away — see media-src.ts. */
+    bunnyUrl: string | null;
     altText?: string | null;
     width?: number | null;
     height?: number | null;
@@ -79,6 +81,7 @@ export async function addImageToGallery(
           select: {
             id: true,
             url: true,
+            bunnyUrl: true,
             altText: true,
             width: true,
             height: true,
@@ -253,6 +256,7 @@ export async function updateGalleryItem(
           select: {
             id: true,
             url: true,
+            bunnyUrl: true,
             altText: true,
             width: true,
             height: true,
@@ -312,6 +316,7 @@ export async function getArticleGallery(
           select: {
             id: true,
             url: true,
+            bunnyUrl: true,
             altText: true,
             width: true,
             height: true,

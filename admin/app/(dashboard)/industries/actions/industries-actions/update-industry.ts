@@ -18,6 +18,7 @@ export async function updateIndustry(
     canonicalUrl?: string;
     socialImage?: string | null;
     socialImageAlt?: string | null;
+    socialImageMediaId?: string | null;
     cloudinaryPublicId?: string | null;
   },
 ) {
@@ -41,6 +42,7 @@ export async function updateIndustry(
       canonicalUrl?: string | null;
       socialImage?: string | null;
       socialImageAlt?: string | null;
+      socialImageMediaId?: string | null;
       cloudinaryPublicId?: string | null;
     } = {
       name: data.name,
@@ -57,6 +59,9 @@ export async function updateIndustry(
     if (data.socialImageAlt !== undefined) {
       updateData.socialImageAlt = data.socialImageAlt;
     }
+    if (data.socialImageMediaId !== undefined) {
+      updateData.socialImageMediaId = data.socialImageMediaId;
+    }
     if (data.cloudinaryPublicId !== undefined) {
       updateData.cloudinaryPublicId = data.cloudinaryPublicId;
     }
@@ -70,9 +75,11 @@ export async function updateIndustry(
     });
 
     revalidatePath("/industries");
-    await revalidateModontyTag("industries");
+    // Regenerate the stored SEO BEFORE revalidating modonty — otherwise the page rebuilds
+    // with the stale cached metadata (og:image lags one save behind; caught live 2026-07-31).
     try { const { generateAndSaveIndustrySeo } = await import("@/lib/seo/industry-seo-generator"); await generateAndSaveIndustrySeo(industry.id); } catch (e) { console.error("Industry SEO gen failed:", e); }
     try { const { regenerateIndustriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateIndustriesListingCache(); } catch (e) { console.error("Industries listing cache failed:", e); }
+    await revalidateModontyTag("industries");
 
     // Cascade: regenerate SEO for all clients in this industry
     try {

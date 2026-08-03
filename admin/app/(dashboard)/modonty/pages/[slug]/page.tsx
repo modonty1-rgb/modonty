@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import { PAGE_CONFIGS } from "../../setting/helpers/page-config";
 import { getPage } from "../../setting/actions/page-actions";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
+import { getCoreClientId } from "@modonty/database/lib/core-client";
 import { PageFormWrapper } from "./page-form-wrapper";
 
 export default async function ModontyPageEditPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -14,7 +15,11 @@ export default async function ModontyPageEditPage({ params }: { params: Promise<
     redirect("/modonty/pages/about");
   }
 
-  const [pageResult, settings] = await Promise.all([getPage(slug), getAllSettings()]);
+  const [pageResult, settings, coreClientId] = await Promise.all([
+    getPage(slug),
+    getAllSettings(),
+    getCoreClientId(),
+  ]);
 
   const settingsDefaults = {
     siteUrl: settings.siteUrl ?? "https://modonty.com",
@@ -40,6 +45,7 @@ export default async function ModontyPageEditPage({ params }: { params: Promise<
           pageDescription={`${config.description} — ${config.modontyPath}`}
           pageData={pageResult.success ? pageResult.page : null}
           settingsDefaults={settingsDefaults}
+          coreClientId={coreClientId}
         />
       </Suspense>
     </div>

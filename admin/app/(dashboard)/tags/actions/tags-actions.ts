@@ -159,6 +159,7 @@ export async function createTag(data: {
   canonicalUrl?: string;
   socialImage?: string;
   socialImageAlt?: string;
+  socialImageMediaId?: string;
   cloudinaryPublicId?: string;
 }) {
   try {
@@ -196,6 +197,7 @@ export async function updateTag(
     canonicalUrl?: string;
     socialImage?: string | null;
     socialImageAlt?: string | null;
+    socialImageMediaId?: string | null;
     cloudinaryPublicId?: string | null;
   }
 ) {
@@ -219,6 +221,7 @@ export async function updateTag(
       canonicalUrl?: string | null;
       socialImage?: string | null;
       socialImageAlt?: string | null;
+      socialImageMediaId?: string | null;
       cloudinaryPublicId?: string | null;
     } = {
       name: data.name,
@@ -236,6 +239,9 @@ export async function updateTag(
     if (data.socialImageAlt !== undefined) {
       updateData.socialImageAlt = data.socialImageAlt;
     }
+    if (data.socialImageMediaId !== undefined) {
+      updateData.socialImageMediaId = data.socialImageMediaId;
+    }
     if (data.cloudinaryPublicId !== undefined) {
       updateData.cloudinaryPublicId = data.cloudinaryPublicId;
     }
@@ -243,9 +249,11 @@ export async function updateTag(
     const tag = await db.tag.update({ where: { id }, data: updateData });
     await logAction("tag.update", { entity: "Tag", entityId: tag.id, summary: tag.name });
     revalidatePath("/tags");
-    await revalidateModontyTag("tags");
+    // Regenerate the stored SEO BEFORE revalidating modonty — otherwise the page rebuilds
+    // with the stale cached metadata (og:image lags one save behind; caught live 2026-07-31).
     try { const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator"); await generateAndSaveTagSeo(tag.id); } catch (e) { console.error("Tag SEO gen failed:", e); }
     try { const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateTagsListingCache(); } catch (e) { console.error("Tags listing cache failed:", e); }
+    await revalidateModontyTag("tags");
     return { success: true, tag };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update tag";

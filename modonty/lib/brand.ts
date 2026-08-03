@@ -10,6 +10,8 @@
  * DB Settings table; this file is for the FIXED identity facts only.
  */
 
+import { BRAND_LOGO_URL, BRAND_CHARACTER_URL } from "@modonty/database/lib/brand-assets";
+
 // Display name — Arabic UI. Official spelling = «مدونتي» (from «مدوّنة»), NOT «مودونتي» (wrong transliteration).
 export const BRAND_AR = "مدونتي";
 
@@ -24,12 +26,11 @@ export const MODONTY_AUTHOR_SLUG = "modonty";
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com").replace(/\/+$/, "");
 
 // Brand logo (square PNG) — used in nav, email, JSON-LD logo.
-export const LOGO_URL =
-  "https://res.cloudinary.com/dfegnpgwx/image/upload/v1769683590/modontyLogo_ftf4yf.png";
-
 // Brand character/avatar (used in feed fallback + some OG contexts).
-export const CHARACTER_URL =
-  "https://res.cloudinary.com/dfegnpgwx/image/upload/v1770899986/modontyAvatar_gn8wxj.webp";
+// Both live on Bunny and are defined ONCE in dataLayer so the admin and console email
+// templates read the same value instead of re-hardcoding it (2026-07-30).
+export const LOGO_URL = BRAND_LOGO_URL;
+export const CHARACTER_URL = BRAND_CHARACTER_URL;
 
 // NOTE: the OG/share image is NOT a static constant — it lives in Settings (admin-managed,
 // single source of truth). Read it via `getBrandMedia()` (lib/settings/get-brand-media.ts).

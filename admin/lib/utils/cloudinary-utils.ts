@@ -77,6 +77,8 @@ export function getOptimizedImageUrl(
   media: Media,
   options: CloudinaryTransformOptions = {}
 ): string {
+  // Bunny dual-read: prefer the migrated Bunny copy (storage-only, no on-the-fly transforms).
+  if (media.bunnyUrl) return media.bunnyUrl;
   if (!media.cloudinaryPublicId) {
     // Fallback to regular URL if no Cloudinary public ID
     return media.url;
@@ -95,6 +97,7 @@ export function generateResponsiveSrcset(
   media: Media,
   widths: number[] = [320, 640, 768, 1024, 1280, 1920]
 ): string {
+  if (media.bunnyUrl) return media.bunnyUrl;
   if (!media.cloudinaryPublicId) {
     return "";
   }
@@ -119,6 +122,7 @@ export function generateResponsiveSrcset(
  * @returns Thumbnail URL
  */
 export function getThumbnailUrl(media: Media, size: number = 200): string {
+  if (media.bunnyUrl) return media.bunnyUrl;
   if (!media.cloudinaryPublicId) {
     return media.thumbnailUrl || media.url;
   }

@@ -1,3 +1,4 @@
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { ClientHeroV2 } from "../shell-hero/client-hero-v2";
 import { ClientSectionNav } from "../nav/client-section-nav";
 import { ClientSectionMenu } from "../nav/client-section-menu";
@@ -28,7 +29,7 @@ interface ShellArticle {
   id: string;
   slug: string;
   title: string;
-  featuredImage?: { url: string } | null;
+  featuredImage?: { url: string; bunnyUrl: string | null } | null;
   category?: { name: string } | null;
   datePublished?: Date | null;
   readingTimeMinutes?: number | null;
@@ -39,8 +40,8 @@ export interface ShellClient {
   id: string;
   name: string;
   slug: string;
-  logoMedia?: { url: string } | null;
-  heroImageMedia?: { url: string; width?: number | null; height?: number | null } | null;
+  logoMedia?: { url: string; bunnyUrl: string | null } | null;
+  heroImageMedia?: { url: string; bunnyUrl: string | null; width?: number | null; height?: number | null } | null;
   industry?: { name: string } | null;
   addressCity?: string | null;
   addressRegion?: string | null;
@@ -90,7 +91,7 @@ interface RelatedClientItem {
   id: string;
   name: string;
   slug: string;
-  logoMedia?: { url: string } | null;
+  logoMedia?: { url: string; bunnyUrl: string | null } | null;
   _count: { articles: number };
 }
 
@@ -100,7 +101,7 @@ export interface ClientPageShellProps {
   pageState: ClientPageState; // "strong" | "sparse" (not-ready handled in page.tsx)
   reviews: ClientReviewsData;
   faqs: { id: string; question: string; answer: string }[];
-  gallery: { id: string; url: string; altText: string | null; width: number | null; height: number | null }[];
+  gallery: { id: string; url: string; bunnyUrl: string | null; altText: string | null; width: number | null; height: number | null }[];
   discussions: DiscussionComment[];
   relatedClients: RelatedClientItem[];
   user: { name: string | null; email: string | null } | null;
@@ -112,6 +113,8 @@ export interface ClientPageShellProps {
    * never swap from a skeleton (kills above-the-fold CLS). Defaults to true.
    */
   renderHero?: boolean;
+  /** Platform fallbacks (admin /settings/defaults) — forwarded to the hero. */
+  defaultImages?: { logo: string | null; hero: string | null } | null;
 }
 
 /**
@@ -133,6 +136,7 @@ export function ClientPageShell({
   initialIsFollowing,
   initialIsFavorited,
   renderHero = true,
+  defaultImages = null,
 }: ClientPageShellProps) {
   const articleCount = client.articles.length;
 
@@ -141,7 +145,7 @@ export function ClientPageShell({
     id: a.id,
     slug: a.slug,
     title: a.title,
-    image: a.featuredImage?.url ?? null,
+    image: mediaSrc(a.featuredImage),
     category: a.category?.name ?? null,
     datePublished: a.datePublished ?? null,
     readingTime: a.readingTimeMinutes ?? null,
@@ -255,6 +259,7 @@ export function ClientPageShell({
             ctaUrl={client.ctaUrl ?? null}
             user={user}
             initialIsFollowing={initialIsFollowing}
+            defaultImages={defaultImages}
           />
         </div>
       )}
@@ -361,7 +366,7 @@ export function ClientPageShell({
         clientId={client.id}
         clientName={client.name}
         clientSlug={client.slug}
-        clientLogoUrl={client.logoMedia?.url ?? null}
+        clientLogoUrl={mediaSrc(client.logoMedia)}
         ctaMode={client.ctaMode}
         linkUrl={client.ctaUrl ?? null}
         ctaLabel={client.ctaLabel ?? null}

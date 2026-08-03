@@ -1,14 +1,15 @@
 import { getCategories } from "../actions/categories-actions";
+import { getCoreClientId } from "@modonty/database/lib/core-client";
 import { PageHeader } from "@/components/shared/page-header";
 import { CategoryForm } from "../components/category-form";
 
 export default async function NewCategoryPage() {
-  const categories = await getCategories();
+  const [categories, coreClientId] = await Promise.all([getCategories(), getCoreClientId()]);
 
   return (
     <div className="max-w-[1200px] mx-auto">
       <PageHeader title="Create Category" description="Add a new category to the system" />
-      <CategoryForm categories={categories} />
+      <CategoryForm categories={categories} coreClientId={coreClientId} />
     </div>
   );
 }

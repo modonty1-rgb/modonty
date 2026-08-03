@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import { IconCheck } from "@/lib/icons";
 import { stripCloudinaryTransforms } from "@/lib/image-utils";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 import { getInitials, getTagline, getSocialPlatform } from "../hero/utils";
 import { HeroChips } from "./hero-chips";
@@ -16,8 +17,8 @@ interface ClientHeroV2Client {
   id: string;
   name: string;
   slug: string;
-  logoMedia?: { url: string } | null;
-  heroImageMedia?: { url: string; width?: number | null; height?: number | null } | null;
+  logoMedia?: { url: string; bunnyUrl: string | null } | null;
+  heroImageMedia?: { url: string; bunnyUrl: string | null; width?: number | null; height?: number | null } | null;
   industry?: { name: string } | null;
   addressCity?: string | null;
   addressRegion?: string | null;
@@ -49,6 +50,9 @@ export interface ClientHeroV2Props {
   initialIsFollowing?: boolean;
   /** GA4 digital-impact total — drives the «موثّق من Google» box; 0 hides it. */
   digitalImpact?: number;
+  /** Platform fallbacks (admin /settings/defaults): no logo → `logo`, no hero → `hero`.
+   *  The gradient/initials remain the last resort when a default itself is unset. */
+  defaultImages?: { logo: string | null; hero: string | null } | null;
 }
 
 // Teal radial glow + diagonal stripes — gradient-fallback cover when no image is set.
@@ -69,6 +73,7 @@ export function ClientHeroV2({
   user,
   initialIsFollowing = false,
   digitalImpact = 0,
+  defaultImages = null,
 }: ClientHeroV2Props) {
   const initials = getInitials(client.name);
   const tagline = getTagline(client);
@@ -81,11 +86,16 @@ export function ClientHeroV2({
     );
 
   const hero = client.heroImageMedia;
-  const heroSrc = hero?.url ?? null;
+  const heroSrc = mediaSrc(hero) ?? defaultImages?.hero ?? null;
   // The cover shows the FULL partner image (no white card overlap, no crop). Box height
   // follows the image's own aspect ratio so object-cover fills it exactly — a wide 6:1
   // banner stays a banner, a tall upload is clamped by max-h (only then object-cover trims).
   const heroAr = hero?.width && hero?.height ? hero.width / hero.height : 2.4;
+  const logoSrc = client.logoMedia?.url
+    ? (stripCloudinaryTransforms(mediaSrc(client.logoMedia) ?? client.logoMedia.url) ??
+      mediaSrc(client.logoMedia) ??
+      client.logoMedia.url)
+    : (defaultImages?.logo ?? null);
 
   return (
     <section className="w-full">
@@ -130,9 +140,9 @@ export function ClientHeroV2({
                   so the partner's own logo colors stay intact). */}
               <div className="relative flex-shrink-0">
                 <div className="relative h-[70px] w-[70px] overflow-hidden rounded-[14px] border border-border bg-card shadow-[0_6px_16px_rgba(0,0,0,0.12)] ring-4 ring-white">
-                  {client.logoMedia?.url ? (
+                  {logoSrc ? (
                     <Image
-                      src={stripCloudinaryTransforms(client.logoMedia.url) ?? client.logoMedia.url}
+                      src={logoSrc}
                       alt={client.name}
                       fill
                       className="object-contain p-1.5"

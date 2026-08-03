@@ -1,11 +1,13 @@
 import { Metadata } from "next";
+import { mediaSrc } from "@modonty/database/lib/media-src";
+import { getPlatformDefaultImages } from "@modonty/database/lib/platform-defaults";
 import { Suspense } from "react";
 import { notFound, unstable_rethrow } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { sanitizeHtml } from "@/lib/sanitize-html";
 import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
-import { getPlatformSocialLinks } from "@/lib/settings/get-platform-social-links";
+import { getPlatformSocialLinks, getPlatformImageLicensing } from "@/lib/settings/get-platform-social-links";
 import {
   generateMetadataFromSEO,
   generateBreadcrumbStructuredData,
@@ -179,9 +181,9 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const title = (articleForGeneration.seoTitle || articleForGeneration.title)?.slice(0, 51);
     const description = articleForGeneration.seoDescription || articleForGeneration.excerpt || "";
     const image =
-      articleForGeneration.featuredImage?.url ||
-      articleForGeneration.client.heroImageMedia?.url ||
-      articleForGeneration.client.logoMedia?.url ||
+      mediaSrc(articleForGeneration.featuredImage) ||
+      mediaSrc(articleForGeneration.client.heroImageMedia) ||
+      mediaSrc(articleForGeneration.client.logoMedia) ||
       undefined;
     const imageAlt =
       articleForGeneration.featuredImage?.altText || title || undefined;
@@ -237,10 +239,11 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
   const slug = decodeURIComponent(rawSlug);
 
   try {
-    const [session, articleDefaults, platformSocialLinks] = await Promise.all([
+    const [session, articleDefaults, platformSocialLinks, platformImageLicensing] = await Promise.all([
       auth(),
       getArticleDefaultsFromSettings(),
       getPlatformSocialLinks(),
+      getPlatformImageLicensing(),
     ]);
     const userId = session?.user?.id;
 
@@ -272,6 +275,15 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       userId ? getPendingFaqsForCurrentUser(articleRaw.id) : Promise.resolve([]),
     ]);
 
+    // No featured image → platform default (admin /settings/defaults). Fetched only when
+    // actually missing — the common path pays nothing.
+    const defaultImages = article.featuredImage ? null : await getPlatformDefaultImages();
+    const featuredImage =
+      article.featuredImage ??
+      (defaultImages?.post
+        ? { url: defaultImages.post, bunnyUrl: defaultImages.post, altText: article.title }
+        : null);
+
     const userBox = session?.user
       ? { name: session.user.name ?? null, email: session.user.email ?? null }
       : null;
@@ -280,7 +292,10 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
     // derived
     const galleryImages = (article.gallery ?? [])
       .map((g) => ({
-        url: g.media?.url ?? "",
+        // The select carries `bunnyUrl` and the component calls mediaSrc — but this mapping
+        // sat between them reading `.url`, so the Bunny copy was dropped before it ever got
+        // there and every article body kept rendering Cloudinary (found 2026-07-30).
+        url: mediaSrc(g.media) ?? g.media?.url ?? "",
         alt: g.media?.altText || article.title,
         caption: g.media?.caption || g.media?.altText || null,
       }))
@@ -300,7 +315,10 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       title: string;
       slug: string;
       excerpt: string | null;
-      featuredImage?: { url: string; altText: string | null } | null;
+      // `bunnyUrl` MUST stay on this type. Narrowing it away silently strips the Bunny copy
+      // before `mediaSrc()` ever sees it — the component still calls mediaSrc, gets undefined,
+      // and falls back to Cloudinary. tsc is happy either way (2026-07-30).
+      featuredImage?: { url: string; bunnyUrl: string | null; altText: string | null } | null;
       client?: { name: string } | null;
     };
     const seenReadMore = new Set<string>([article.id]);
@@ -309,7 +327,10 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       title: string;
       slug: string;
       excerpt: string | null;
-      featuredImage?: { url: string; altText: string | null } | null;
+      // `bunnyUrl` MUST stay on this type. Narrowing it away silently strips the Bunny copy
+      // before `mediaSrc()` ever sees it — the component still calls mediaSrc, gets undefined,
+      // and falls back to Cloudinary. tsc is happy either way (2026-07-30).
+      featuredImage?: { url: string; bunnyUrl: string | null; altText: string | null } | null;
       clientName?: string | null;
     }[] = [];
     const collectReadMore = (arr: RelatedLike[] | undefined, fallbackClient?: string | null) => {
@@ -356,6 +377,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
     // nodes (client publisher + /authors/... author).
     const siteIdentityJsonLd = generateSiteIdentityStructuredData({
       sameAs: platformSocialLinks.map((l) => l.href),
+      imageLicenseUrl: platformImageLicensing.imageLicenseUrl,
+      imageAcquireLicensePageUrl: platformImageLicensing.imageAcquireLicensePageUrl,
     });
 
     return (
@@ -487,8 +510,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   <ArticleLabMobileIdentity client={article.client} articleId={article.id} />
                 )}
 
-                {article.featuredImage && (
-                  <ArticleFeaturedImage image={article.featuredImage} title={article.title}>
+                {featuredImage && (
+                  <ArticleFeaturedImage image={featuredImage} title={article.title}>
                     {article.client && (
                       <ArticleFeaturedImageNewsletter
                         clientId={article.clientId}
@@ -618,7 +641,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 clientId={article.clientId}
                 articleId={article.id}
                 clientName={article.client.name}
-                clientLogoUrl={article.client.logoMedia?.url ?? null}
+                clientLogoUrl={mediaSrc(article.client.logoMedia)}
                 clientPhone={article.client.phone ?? null}
                 cta={{
                   mode: article.client.ctaMode,

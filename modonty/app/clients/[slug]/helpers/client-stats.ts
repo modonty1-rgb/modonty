@@ -39,7 +39,7 @@ export async function getRelatedClients(clientId: string, industryId?: string | 
       include: {
         logoMedia: {
           select: {
-            url: true,
+            url: true, bunnyUrl: true,
           },
         },
         _count: {

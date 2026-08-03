@@ -61,7 +61,7 @@ export function AuthorForm({ initialData, authorId, onSuccess, settings, siteUrl
     siteUrl,
   });
 
-  const logoUrl = settings?.logoUrl || settings?.orgLogoUrl || undefined;
+  const logoUrl = settings?.logoUrl || undefined;
   const ogImageUrl = settings?.ogImageUrl || logoUrl || undefined;
   const addressLine = settings
     ? [settings.orgStreetAddress, settings.orgAddressLocality, settings.orgAddressRegion, settings.orgPostalCode, settings.orgAddressCountry]

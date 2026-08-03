@@ -31,7 +31,7 @@ import { YMYL_CATEGORIES, type YmylCategory } from "@modonty/database/lib/seo/ym
 import { validateYmylData } from "@/lib/seo/ymyl-helpers";
 
 import { updateYmylData } from "../actions/profile-actions";
-import { CloudinaryLicenseUpload } from "./cloudinary-license-upload";
+import { LicenseUpload } from "./license-upload";
 
 interface YmylSectionProps {
   isYmyl: boolean;
@@ -244,7 +244,7 @@ export function YmylSection({
                       {field.label.ar}
                       {field.required && <span className="text-destructive ms-1">*</span>}
                     </Label>
-                    <CloudinaryLicenseUpload
+                    <LicenseUpload
                       value={typeof value === "string" ? value : ""}
                       onChange={(url) => updateField(field.key, url)}
                     />

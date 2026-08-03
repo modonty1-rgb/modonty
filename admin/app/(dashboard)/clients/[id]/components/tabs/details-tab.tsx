@@ -28,6 +28,7 @@ import {
   type Platform,
 } from "../../../helpers/url-validation";
 import { getTierDisplayName } from "../../../helpers/client-display-utils";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface DetailsTabProps {
   client: any;
@@ -88,7 +89,7 @@ export function DetailsTab({ client }: DetailsTabProps) {
                   <p className="text-sm text-muted-foreground mb-2">Logo</p>
                   <div className="flex items-center gap-4">
                     <Image
-                      src={client.logoMedia.url}
+                      src={mediaSrc(client.logoMedia) ?? ""}
                       alt={client.logoMedia.altText || `${client.name} logo`}
                       width={96}
                       height={96}
@@ -354,7 +355,7 @@ export function DetailsTab({ client }: DetailsTabProps) {
                   <p className="text-sm text-muted-foreground mb-2">OG Image</p>
                   <div className="space-y-2">
                     <Image
-                      src={client.heroImageMedia.url}
+                      src={mediaSrc(client.heroImageMedia) ?? ""}
                       alt={client.heroImageMedia.altText || `${client.name} OG image`}
                       width={128}
                       height={128}
@@ -362,12 +363,12 @@ export function DetailsTab({ client }: DetailsTabProps) {
                       sizes="128px"
                     />
                     <a
-                      href={client.heroImageMedia.url}
+                      href={mediaSrc(client.heroImageMedia) ?? ""}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-primary hover:underline block"
                     >
-                      {client.heroImageMedia.url}
+                      {mediaSrc(client.heroImageMedia) ?? ""}
                     </a>
                     {client.heroImageMedia.altText && (
                       <p className="text-xs text-muted-foreground">Alt: {client.heroImageMedia.altText}</p>
@@ -455,12 +456,12 @@ export function DetailsTab({ client }: DetailsTabProps) {
                       <div>
                         <p className="text-sm text-muted-foreground mb-1">Twitter Image</p>
                         <a
-                          href={client.heroImageMedia.url}
+                          href={mediaSrc(client.heroImageMedia) ?? ""}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-sm text-primary hover:underline"
                         >
-                          {client.heroImageMedia.url}
+                          {mediaSrc(client.heroImageMedia) ?? ""}
                         </a>
                         {client.heroImageMedia.altText && (
                           <p className="text-xs text-muted-foreground mt-1">Alt: {client.heroImageMedia.altText}</p>

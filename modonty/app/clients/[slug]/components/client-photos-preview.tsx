@@ -3,20 +3,21 @@ import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { IconImage } from "@/lib/icons";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface ClientPhotosPreviewProps {
   articles: {
     id: string;
     slug: string;
     title?: string;
-    featuredImage?: { url: string; altText?: string | null } | null;
+    featuredImage?: { url: string; bunnyUrl: string | null; altText?: string | null } | null;
   }[];
   clientId?: string;
   showEmptyState?: boolean;
 }
 
 export function ClientPhotosPreview({ articles, clientId, showEmptyState = false }: ClientPhotosPreviewProps) {
-  const photoArticles = articles.filter((article) => article.featuredImage?.url).slice(0, 6);
+  const photoArticles = articles.filter((article) => mediaSrc(article.featuredImage)).slice(0, 6);
 
   if (photoArticles.length === 0) {
     if (!showEmptyState) {
@@ -56,7 +57,7 @@ export function ClientPhotosPreview({ articles, clientId, showEmptyState = false
               aria-label={article.title ?? "مقال"}
             >
               <OptimizedImage
-                src={article.featuredImage!.url}
+                src={mediaSrc(article.featuredImage) ?? article.featuredImage!.url}
                 alt={article.featuredImage?.altText || article.title || "مقال"}
                 fill
                 className="object-cover transition-transform duration-200 hover:scale-105"

@@ -55,6 +55,9 @@ export async function saveOptimizedImage(
       data: {
         url,
         contentUrl: url,
+        // Bunny-primary: the optimizer now uploads to Bunny — sync bunnyUrl with the new
+        // url, else a stale bunnyUrl would keep serving the OLD image via mediaSrc().
+        ...(url.includes(".b-cdn.net/") ? { bunnyUrl: url } : {}),
         mimeType: input.mimeType || "image/webp",
         encodingFormat: input.mimeType || "image/webp",
         fileSize: input.fileSize ?? undefined,

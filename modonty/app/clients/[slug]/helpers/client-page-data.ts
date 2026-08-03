@@ -22,12 +22,12 @@ async function getClientContentBySlug(decodedSlug: string) {
     include: {
         logoMedia: {
           select: {
-            url: true,
+            url: true, bunnyUrl: true,
           },
         },
         heroImageMedia: {
           select: {
-            url: true,
+            url: true, bunnyUrl: true,
             width: true,
             height: true,
           },
@@ -51,7 +51,7 @@ async function getClientContentBySlug(decodedSlug: string) {
             },
             featuredImage: {
               select: {
-                url: true,
+                url: true, bunnyUrl: true,
                 altText: true,
               },
             },

@@ -9,6 +9,7 @@ import { ImageIcon, Search, X } from "lucide-react";
 import { MediaWithStats } from "../helpers/media-queries";
 import { ar } from "@/lib/ar";
 import { formatBytes } from "@modonty/database/lib/utils";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface MediaGalleryProps {
   clientId: string;
@@ -181,7 +182,7 @@ export function MediaGallery({ media }: MediaGalleryProps) {
                     style={{ aspectRatio: ratio }}
                   >
                     <Image
-                      src={item.url}
+                      src={mediaSrc(item) ?? item.url}
                       alt={item.altText || item.filename}
                       fill
                       className="object-cover transition-transform group-hover:scale-105"
@@ -236,10 +237,10 @@ export function MediaGallery({ media }: MediaGalleryProps) {
 
             {/* Image */}
             <div className="relative flex flex-1 items-center justify-center bg-muted p-4 md:min-h-[400px]">
-              {openMedia.url && (
+              {mediaSrc(openMedia) && (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img
-                  src={openMedia.url}
+                  src={mediaSrc(openMedia) ?? openMedia.url}
                   alt={openMedia.altText || openMedia.filename}
                   className="max-h-[60vh] max-w-full object-contain md:max-h-[80vh]"
                 />

@@ -17,6 +17,7 @@ export async function createCategory(data: {
   canonicalUrl?: string;
   socialImage?: string;
   socialImageAlt?: string;
+  socialImageMediaId?: string;
   cloudinaryPublicId?: string;
 }) {
   try {
@@ -45,6 +46,7 @@ export async function createCategory(data: {
         canonicalUrl: data.canonicalUrl,
         socialImage: data.socialImage,
         socialImageAlt: data.socialImageAlt,
+        socialImageMediaId: data.socialImageMediaId || null,
         cloudinaryPublicId: data.cloudinaryPublicId,
       },
     });

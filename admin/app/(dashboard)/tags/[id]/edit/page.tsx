@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getCoreClientId } from "@modonty/database/lib/core-client";
 import { getTagById } from "../../actions/tags-actions";
 import { TagForm } from "../../components/tag-form";
 import { DeleteTagButton } from "../components/delete-tag-button";
@@ -7,7 +8,7 @@ import { SeoCachePreview } from "@/components/shared/seo-cache-preview";
 
 export default async function EditTagPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const tag = await getTagById(id);
+  const [tag, coreClientId] = await Promise.all([getTagById(id), getCoreClientId()]);
 
   if (!tag) {
     redirect("/tags");
@@ -30,7 +31,7 @@ export default async function EditTagPage({ params }: { params: Promise<{ id: st
         metaTags={tag.nextjsMetadata}
         lastGenerated={tag.jsonLdLastGenerated}
       />
-      <TagForm initialData={tag} tagId={id} />
+      <TagForm initialData={tag} tagId={id} coreClientId={coreClientId} />
     </div>
   );
 }

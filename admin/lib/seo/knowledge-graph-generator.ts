@@ -13,7 +13,8 @@
  */
 
 import { SITE_NAME } from "@/lib/constants/site-name";
-import { safeOrganizationType } from "@modonty/database/lib/seo/organization-schema-types";
+import { safeOrganizationType, resolveOrganizationType, isLocalFamilyType } from "@modonty/database/lib/seo/organization-schema-types";
+import { deriveClientType } from "@modonty/database/lib/seo/generate-organization-jsonld";
 import {
   Article,
   Client,
@@ -30,6 +31,8 @@ import {
   resolveImageAttribution,
   type ModontyImageDefaults,
 } from "@modonty/database/lib/seo/media/build-image-object";
+import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl } from "@modonty/database/lib/bunny";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 /**
  * Build Cloudinary URL for a specific aspect ratio (1:1, 4:3, 16:9).
@@ -37,6 +40,10 @@ import {
  * Falls back to original URL when not Cloudinary.
  */
 function buildAspectUrl(url: string, aspectRatio: "1:1" | "4:3" | "16:9", width = 1200): string {
+  // Bunny stores pre-generated crops next to the base image (Bunny has no on-the-fly crop).
+  if (url && url.includes(".b-cdn.net")) {
+    return bunnyAspectUrl(url, BUNNY_ASPECT_SUFFIX[aspectRatio]);
+  }
   if (!url || !url.includes("res.cloudinary.com") || !url.includes("/upload/")) {
     return url;
   }
@@ -181,7 +188,7 @@ export function generateArticleKnowledgeGraph(
   graph.push(generateArticleNode(article, articleUrl, ids, siteUrl, imageLicensing));
 
   // 3. Organization (Publisher/Client)
-  graph.push(generateOrganizationNode(article.client, ids.publisher, siteUrl));
+  graph.push(generateOrganizationNode(article.client, ids.publisher, siteUrl, imageLicensing));
 
   // 4. Author — Organization (platform brand) or Person (human author)
   if (isPlatformAuthor) {
@@ -411,7 +418,7 @@ function buildImageArray(
 
   // Hero image (featuredImage) — emit 3 aspect ratios per Google Article rich results spec
   if (article.featuredImage) {
-    const sourceUrl = article.featuredImage.url;
+    const sourceUrl = mediaSrc(article.featuredImage) ?? article.featuredImage.url;
     const attr = resolveImageAttribution(
       {
         mediaType: "POST",
@@ -445,8 +452,8 @@ function buildImageArray(
   } else {
     // Fallback: client hero image -> client logo -> site default (same chain as metadata-generator)
     const fallbackUrl =
-      article.client.heroImageMedia?.url ||
-      article.client.logoMedia?.url ||
+      mediaSrc(article.client.heroImageMedia) ||
+      mediaSrc(article.client.logoMedia) ||
       `${siteUrl}/og-image.jpg`;
     const attr = resolveImageAttribution({ mediaType: "POST", articleTitle }, imageLicensing);
     const shared = { name: attr.name, licensing: attr.licensing };
@@ -486,7 +493,11 @@ function buildImageArray(
         images.push(
           buildImageObject({
             id: `${articleUrl}#image-${index + 2}`,
-            url: item.media.url,
+            // Gallery media MUST resolve through mediaSrc like every other image. Reading
+            // `.url` here made regeneration a no-op: the row carries `bunnyUrl`, but this
+            // line never looked at it, so 96 articles kept emitting Cloudinary in JSON-LD
+            // no matter how many times the SEO was rebuilt (found 2026-07-30).
+            url: mediaSrc(item.media) ?? item.media.url,
             width: item.media.width,
             height: item.media.height,
             name: attr.name,
@@ -510,10 +521,17 @@ function generateOrganizationNode(
     parentOrganization?: { name: string; id?: string; url?: string } | null;
   },
   id: string,
-  siteUrl: string
+  siteUrl: string,
+  imageLicensing: ModontyImageDefaults = {}
 ): JsonLdNode {
+  // Same effective-type resolution as the client-page card: the most specific valid
+  // type wins (a clinic stored as "LocalBusiness" must ship as MedicalClinic here too,
+  // or the article and client pages emit the SAME @id with two different @types).
+  const effectiveType = resolveOrganizationType(client.organizationType, deriveClientType(client));
+  const isLocalFamily = isLocalFamilyType(safeOrganizationType(effectiveType));
+
   const node: JsonLdNode = {
-    "@type": safeOrganizationType(client.organizationType),
+    "@type": safeOrganizationType(effectiveType),
     "@id": id,
     name: client.name,
     ...(client.legalName && { legalName: client.legalName }),
@@ -525,14 +543,42 @@ function generateOrganizationNode(
     ...(Array.isArray(client.knowsLanguage) && client.knowsLanguage.length > 0 && { knowsLanguage: client.knowsLanguage }),
   };
 
-  // Logo (required for Article rich results)
+  if (isLocalFamily) {
+    // Google reads `telephone` / `priceRange` off the LocalBusiness node itself —
+    // the telephone copy inside contactPoint doesn't count toward the rich-result card,
+    // and "$$" is the neutral marker when the client hasn't set a price range.
+    if (client.phone) {
+      node.telephone = client.phone;
+    }
+    node.priceRange = client.priceRange || "$$";
+  }
+
+  // Logo (required for Article rich results) — same licensing block the client page emits,
+  // so an image doesn't lose its licence just because it appears inside an article.
   if (client.logoMedia) {
-    node.logo = {
-      "@type": "ImageObject",
-      url: client.logoMedia.url,
+    const logoUrl = mediaSrc(client.logoMedia) ?? client.logoMedia.url;
+    const attr = resolveImageAttribution(
+      {
+        mediaType: "LOGO",
+        clientName: client.name,
+        clientUrl: client.url ?? undefined,
+        // Feeds copyrightNotice — Google flags an image node that carries a licence but
+        // no copyright line as a non-critical issue.
+        dateCreated: client.logoMedia.createdAt ?? undefined,
+      },
+      imageLicensing
+    );
+    const logoNode = buildImageObject({
+      url: logoUrl,
+      name: attr.name,
+      licensing: attr.licensing,
       ...(client.logoMedia.width && { width: client.logoMedia.width }),
       ...(client.logoMedia.height && { height: client.logoMedia.height }),
-    };
+    });
+    node.logo = logoNode;
+    // Google expects a top-level `image` too — `logo` alone leaves a "missing image"
+    // warning on the LocalBusiness card. The logo is the only visual this node carries.
+    node.image = logoNode;
   }
 
   // Saudi Arabia & Gulf Identifiers
@@ -696,10 +742,23 @@ function generatePlatformAuthorNode(
     url: brandUrl,
     ...(brandDescription && { description: brandDescription }),
     ...(brandLogo && {
-      logo: {
-        "@type": "ImageObject",
+      // Modonty's own logo — licensed under the platform's copyright policy like every
+      // other Modonty-produced image.
+      logo: buildImageObject({
         url: brandLogo,
-      },
+        name: brandName,
+        licensing: {
+          creator: branding?.imageOwnerName
+            ? { type: "Organization", name: branding.imageOwnerName, url: brandUrl }
+            : null,
+          creditText: branding?.imageOwnerName ?? null,
+          copyrightNotice: branding?.imageOwnerName
+            ? `© ${new Date().getFullYear()} ${branding.imageOwnerName}`
+            : null,
+          license: branding?.imageLicenseUrl?.trim() || null,
+          acquireLicensePage: branding?.imageAcquireLicensePageUrl?.trim() || null,
+        },
+      }),
     }),
     ...(sameAs.length > 0 && { sameAs }),
   };

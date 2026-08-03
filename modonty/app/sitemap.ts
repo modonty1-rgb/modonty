@@ -1,6 +1,7 @@
 // Build trigger: 2026-05-27 v0.63.4 cache rebuild
 import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { SITE_URL } from "@/lib/brand";
 
@@ -23,7 +24,7 @@ type SitemapArticle = {
   slug: string;
   datePublished: Date | null;
   dateModified: Date | null;
-  featuredImage: { url: string } | null;
+  featuredImage: { url: string; bunnyUrl: string | null } | null;
 };
 
 type EntityWithUpdatedAt = { slug: string; updatedAt: Date };
@@ -56,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         slug: true,
         datePublished: true,
         dateModified: true,
-        featuredImage: { select: { url: true } },
+        featuredImage: { select: { url: true, bunnyUrl: true } },
       },
       orderBy: { datePublished: "desc" },
     }),
@@ -71,7 +72,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const articleUrls: MetadataRoute.Sitemap = (articles as SitemapArticle[]).map((article) => ({
     url: new URL(`/articles/${article.slug}`, baseUrl).href,
     lastModified: article.dateModified || article.datePublished || undefined,
-    ...(article.featuredImage?.url && { images: [article.featuredImage.url] }),
+    ...(mediaSrc(article.featuredImage) && { images: [mediaSrc(article.featuredImage) ?? article.featuredImage!.url] }),
   }));
 
   const categoryUrls: MetadataRoute.Sitemap = (categories as EntityWithUpdatedAt[]).map((c) => ({

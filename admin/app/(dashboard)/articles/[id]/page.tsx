@@ -32,6 +32,7 @@ import { ArticleViewRelatedFrom } from "./components/article-view-related-from";
 import { sanitizeHtmlContent } from "@/lib/sanitize-html";
 import { PreviewToc } from "./components/article-toc";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 export default async function ArticleViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -135,7 +136,7 @@ export default async function ArticleViewPage({ params }: { params: Promise<{ id
               {a.featuredImage?.url && (
                 <div className="aspect-video overflow-hidden rounded-lg mb-6 relative bg-muted">
                   <Image
-                    src={a.featuredImage.url}
+                    src={mediaSrc(a.featuredImage) ?? ""}
                     alt={a.featuredImage.altText || a.title}
                     fill
                     className="object-contain"

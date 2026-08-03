@@ -15,6 +15,7 @@ export interface GalleryFormItem {
   media?: {
     id: string;
     url: string;
+    bunnyUrl: string | null;
     altText?: string | null;
     width?: number | null;
     height?: number | null;

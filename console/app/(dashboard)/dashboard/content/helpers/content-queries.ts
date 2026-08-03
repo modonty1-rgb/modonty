@@ -56,7 +56,7 @@ export async function getContentOverview(clientId: string) {
         slug: true,
         datePublished: true,
         category: { select: { name: true } },
-        featuredImage: { select: { url: true, altText: true } },
+        featuredImage: { select: { url: true, bunnyUrl: true, altText: true } },
       },
       orderBy: { datePublished: "desc" },
       take: 5,

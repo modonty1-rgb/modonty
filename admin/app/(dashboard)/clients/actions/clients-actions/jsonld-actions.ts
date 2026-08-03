@@ -1,43 +1,21 @@
 "use server";
 
-import { getCachedClientJsonLd, regenerateClientJsonLd } from "../../helpers/client-seo-config/client-jsonld-storage";
+import { getCachedClientJsonLd } from "../../helpers/client-seo-config/client-jsonld-storage";
 import type { ValidationReport } from "@/lib/seo/jsonld-validator";
-import { revalidatePath } from "next/cache";
 
 /**
- * Get client JSON-LD and validation report
+ * Read-only. Writing a client's JSON-LD has exactly one entry point —
+ * `generateClientSEO`, which goes through the shared dataLayer bundle.
+ *
+ * There used to be a `regenerateClientJsonLdAction` here too, wired to the Update button on
+ * the client's SEO tab. It ran a separate generator fed by its own hand-written `select`
+ * that omitted `openingHoursSpecification`, `priceRange` and the image-licensing defaults —
+ * so pressing Update silently stripped the client's opening hours, its price range and its
+ * Licensable image metadata, and reported success. Removed 2026-08-02.
  */
 export async function getClientJsonLd(clientId: string): Promise<{
   jsonLd: object | null;
   validationReport: ValidationReport | null;
 }> {
   return getCachedClientJsonLd(clientId);
-}
-
-/**
- * Regenerate client JSON-LD and validation report
- */
-export async function regenerateClientJsonLdAction(clientId: string): Promise<{
-  success: boolean;
-  error?: string;
-}> {
-  try {
-    const result = await regenerateClientJsonLd(clientId);
-    
-    if (result.success) {
-      revalidatePath(`/clients/${clientId}`);
-      revalidatePath("/clients");
-      return { success: true };
-    }
-    
-    return {
-      success: false,
-      error: result.error || "Failed to regenerate JSON-LD",
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Failed to regenerate JSON-LD",
-    };
-  }
 }

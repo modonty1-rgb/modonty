@@ -14,9 +14,11 @@ import { Save, ArrowLeft } from "lucide-react";
 interface TagFormProps {
   initialData?: Partial<Tag>;
   tagId?: string;
+  /** Modonty Core (T2): platform images come from the core client's own library. */
+  coreClientId: string | null;
 }
 
-export function TagForm({ initialData, tagId }: TagFormProps) {
+export function TagForm({ initialData, tagId, coreClientId }: TagFormProps) {
   const router = useRouter();
   const {
     formData,
@@ -126,15 +128,19 @@ export function TagForm({ initialData, tagId }: TagFormProps) {
                 label="Social Image"
                 imageUrl={formData.socialImage}
                 altText={formData.socialImageAlt}
-                onImageChange={(url, alt) => {
+                onImageChange={(url, alt, mediaId) => {
                   updateImageField("socialImage", url);
                   updateImageField("socialImageAlt", alt);
+                  updateImageField("socialImageMediaId", mediaId ?? "");
                 }}
                 onRemove={() => {
                   updateImageField("socialImage", "");
                   updateImageField("socialImageAlt", "");
+                  updateImageField("socialImageMediaId", "");
                 }}
-                scope="PLATFORM"
+                clientId={coreClientId}
+                lockClient
+                mediaId={formData.socialImageMediaId || null}
               />
             </CardContent>
           </Card>

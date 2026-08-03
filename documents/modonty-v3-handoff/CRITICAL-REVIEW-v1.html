@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ar-SA" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مراجعة انتقادية — حزمة إعادة تصميم مدونتي v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b1020; --surface:#141a2e; --surface2:#1b2338; --line:#2a3350;
+    --ink:#eef2fb; --muted:#9aa6c4; --primary:#6d6dff; --primary2:#9a9aff;
+    --red:#ff5d6c; --amber:#ffb020; --green:#35d07f; --blue:#4aa8ff;
+    --redbg:#2a1620; --amberbg:#2a2113; --greenbg:#12281d; --bluebg:#122334;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Tajawal,system-ui,sans-serif;line-height:1.85;font-size:16px}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 18px 80px}
+  a{color:var(--primary2)}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86em;background:#0006;border:1px solid var(--line);border-radius:5px;padding:1px 5px;direction:ltr;display:inline-block}
+  h1,h2,h3,h4{line-height:1.4;margin:0}
+  header.top{background:linear-gradient(135deg,#161d38,#0b1020);border-bottom:1px solid var(--line);padding:34px 0 26px;margin-bottom:24px}
+  header.top .wrap{padding-bottom:0}
+  .kicker{color:var(--primary2);font-weight:800;font-size:13px;letter-spacing:.5px;margin-bottom:8px}
+  header.top h1{font-size:29px;font-weight:800}
+  header.top p{color:var(--muted);font-size:14.5px;margin:10px 0 0}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .pill{font-size:12.5px;background:var(--surface2);border:1px solid var(--line);border-radius:99px;padding:4px 12px;color:var(--muted)}
+
+  section{margin-top:34px}
+  h2.sec{font-size:22px;font-weight:800;padding-bottom:8px;border-bottom:2px solid var(--line);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+  h2.sec .num{background:var(--primary);color:#fff;width:30px;height:30px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+
+  .lead{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;font-size:16.5px}
+  .lead b{color:var(--ink)}
+  .verdict{border-inline-start:5px solid var(--amber);background:var(--amberbg)}
+
+  table{width:100%;border-collapse:collapse;font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{padding:10px 12px;text-align:start;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--surface2);font-size:12.5px;color:var(--muted);font-weight:700}
+  td .sc{font-weight:800}
+  tr:last-child td{border-bottom:0}
+
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 4px}
+  .tag{font-size:12px;font-weight:800;border-radius:99px;padding:3px 11px}
+  .t-red{background:var(--redbg);color:var(--red);border:1px solid #5b2733}
+  .t-amber{background:var(--amberbg);color:var(--amber);border:1px solid #5c471a}
+  .t-green{background:var(--greenbg);color:var(--green);border:1px solid #1f5138}
+  .t-blue{background:var(--bluebg);color:var(--blue);border:1px solid #244a6b}
+
+  .finding{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:14px}
+  .finding.red{border-inline-start:5px solid var(--red)}
+  .finding.amber{border-inline-start:5px solid var(--amber)}
+  .finding.blue{border-inline-start:5px solid var(--blue)}
+  .finding h3{font-size:17.5px;font-weight:800;margin-bottom:4px;display:flex;gap:9px;align-items:baseline;flex-wrap:wrap}
+  .finding .id{color:var(--muted);font-weight:800;font-size:14px}
+  .finding .body{color:#d5ddf0;font-size:15px;margin-top:8px}
+  .finding .why{color:var(--muted);font-size:14px;margin-top:8px}
+  .finding .fix{margin-top:11px;background:#0d1830;border:1px dashed var(--line);border-radius:10px;padding:10px 13px;font-size:14.5px}
+  .finding .fix b{color:var(--green)}
+  .finding .src{margin-top:8px;font-size:12.5px;color:var(--muted)}
+  .finding .src b{color:var(--primary2)}
+
+  .file{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0;margin-bottom:14px;overflow:hidden}
+  .file .fh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 18px;background:var(--surface2);border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .file .fh h3{font-size:16px;font-weight:800;font-family:ui-monospace,monospace;direction:ltr}
+  .file .fh .role{color:var(--muted);font-size:13px;font-weight:500;font-family:Tajawal}
+  .file .fb{padding:14px 18px}
+  .file ul{margin:6px 0 0;padding-inline-start:20px}
+  .file li{margin-bottom:6px;font-size:14.5px}
+  .file .lbl{font-size:12.5px;font-weight:800;letter-spacing:.3px;margin:10px 0 2px;display:block}
+  .lbl.good{color:var(--green)} .lbl.bad{color:var(--red)} .lbl.fix{color:var(--blue)}
+  .file li b{color:var(--ink)}
+
+  .srcgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+  .srcgrid div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-size:13px;color:var(--muted)}
+  .srcgrid b{color:var(--ink);display:block;font-size:14px;margin-bottom:2px}
+
+  ol.prio{counter-reset:p;list-style:none;padding:0}
+  ol.prio li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 16px 13px 16px;margin-bottom:10px;position:relative;padding-inline-start:52px}
+  ol.prio li:before{counter-increment:p;content:counter(p);position:absolute;inset-inline-start:14px;top:13px;width:26px;height:26px;background:var(--primary);color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+  ol.prio b{color:var(--ink)}
+  .note{font-size:13px;color:var(--muted);background:var(--bluebg);border:1px solid #244a6b;border-radius:10px;padding:11px 14px;margin-top:14px}
+  footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;text-align:center}
+  .disc{color:var(--amber)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">مراجعة انتقادية عكسية · بدون تعديل كود</div>
+    <h1>حزمة إعادة تصميم مدونتي v3 — قراءة نقدية صريحة</h1>
+    <p>الهدف: كسر التصميم قبل ما يُبنى. لكل ملف: ما يستحق البقاء + أين يناقض نفسه أو أفضل الممارسات + الإصلاح المحدد. الأساس: أحدث مصادر UI/UX ومعايير أكبر الشركات.</p>
+    <div class="meta-row">
+      <span class="pill">النطاق: ١٥ ملف (٣ نظام تصميم + ١١ شاشة + tailwind config)</span>
+      <span class="pill">التاريخ: ٢٢ يوليو ٢٠٢٦</span>
+      <span class="pill">موثّق بـ Context7: Next.js · Tailwind</span>
+      <span class="pill">المراجع: NN/g · WCAG 2.2 · Material 3 · Apple HIG · Refactoring UI · Google Search Central · W3C i18n</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ==================== EXECUTIVE VERDICT ==================== -->
+<section>
+  <h2 class="sec"><span class="num">١</span> الحكم التنفيذي (صريح)</h2>
+  <div class="lead verdict">
+    <p style="margin:0 0 10px"><b>الحزمة قوية كتفكير، وخطيرة إذا بُنيت حرفيًا.</b> منهجية «تدقيق ← إصلاح» ناضجة، والبنية الدلالية (semantic) وRTL منضبطان بشكل نادر في السوق العربي. لكن المراجعة العكسية تكشف ثلاث فئات مشاكل:</p>
+    <p style="margin:0 0 10px">١) <b>مخاطر استراتيجية</b> دُسّت داخل «إعادة تصميم»: مساعد ذكاء اصطناعي يجاوب أسئلة طبية/قانونية (عملاء YMYL)، ونظام «لقطات» فيديو كامل ببنية تحتية مكلفة، وقرار «الداكن افتراضيًا» لمنتج قراءة — كلها قرارات منتج تحتاج تحقّقًا منفصلًا، لا أن تُعتمد ضمنيًا في حزمة واجهة.</p>
+    <p style="margin:0 0 10px">٢) <b>الموكب يناقض نظام التصميم نفسه.</b> نظام v3 يمنع الإيموجي كأيقونات ويطلب «عربي فقط» و«طبقة عائمة واحدة» و«هيدر 56px» — والشاشات المرجعية تكسر كل هذه القواعد. وبما أن قاعدتك الذهبية «الموكب = عقد ملزم»، فبناء هذه الشاشات كما هي = شحن العيوب نفسها التي يمنعها النظام.</p>
+    <p style="margin:0"><b>الخلاصة:</b> اعتمد <b>نظام التوكنز والبنية</b> (ممتاز)، لكن لا تعتمد الشاشات كعقد قبل جولة تصحيح ذاتي + فصل قرارات المنتج الثلاثة الكبيرة عن مسار الواجهة.</p>
+  </div>
+</section>
+
+<!-- ==================== SCORECARD ==================== -->
+<section>
+  <h2 class="sec"><span class="num">٢</span> بطاقة الدرجات (لكل بُعد)</h2>
+  <table>
+    <tr><th>البُعد</th><th>الدرجة</th><th>السبب المختصر</th></tr>
+    <tr><td>معمارية المعلومات (IA) والتدفق</td><td class="sc" style="color:var(--green)">٨٫٥/١٠</td><td>قمع «صناعة ← قطاع ← عميل ← مقال» ذكي؛ الاشتراك عند لحظة الحاجة صحيح؛ لكن تبويب «مدونتي» يزاحم وجهات المستخدم.</td></tr>
+    <tr><td>البنية الدلالية وRTL والوصولية البنيوية</td><td class="sc" style="color:var(--green)">٨/١٠</td><td>HTML سليم، skip-link، `ms/me` منطقية (أكّدها Tailwind)؛ لكن التباين والـ focus states غير مُثبتة.</td></tr>
+    <tr><td>اتساق نظام التصميم مع الموكب</td><td class="sc" style="color:var(--amber)">٥/١٠</td><td>الموكب يكسر قواعد النظام الصريحة (إيموجي، هيدر 56px، طبقة واحدة، عربي فقط).</td></tr>
+    <tr><td>هرمية بصرية وتحكم بالانتباه</td><td class="sc" style="color:var(--amber)">٥٫٥/١٠</td><td>تكرار CTA على صفحة المقال + إفراط في استخدام تمييز `--featured` = تخفيف المعنى.</td></tr>
+    <tr><td>الأداء (مقابل ميزانيتهم المعلنة)</td><td class="sc" style="color:var(--amber)">٦/١٠</td><td>صف اللقطات فوق الطية يزاحم LCP؛ إشارة لـ `priority` المهجورة في Next.js؛ ادعاءات بلا قياس.</td></tr>
+    <tr><td>سلامة قرارات المنتج (AI/Reels/Dark)</td><td class="sc" style="color:var(--red)">٤/١٠</td><td>ثلاثة رهانات كبيرة معتمدة بلا تحقّق، وأخطرها AI على محتوى YMYL.</td></tr>
+    <tr><td>جاهزية التنفيذ (تطابق مع المبني فعلًا)</td><td class="sc" style="color:var(--amber)">٦/١٠</td><td>نظام دخول «رمز بلا كلمة مرور» يخالف المبني (باسورد + Google) بلا إشارة.</td></tr>
+    <tr><td style="font-weight:800">التقييم العام للحزمة</td><td class="sc" style="color:var(--amber);font-size:16px">٦٫٥/١٠</td><td style="font-weight:700">أساس ممتاز يحتاج انضباطًا قبل أن يصير عقدًا ملزمًا.</td></tr>
+  </table>
+</section>
+
+<!-- ==================== CROSS-CUTTING ==================== -->
+<section>
+  <h2 class="sec"><span class="num">٣</span> مشاكل عابرة للملفات (الأهم)</h2>
+  <div class="legend">
+    <span class="tag t-red">حرجة — أوقفها قبل البناء</span>
+    <span class="tag t-amber">متوسطة — أصلحها في الموكب</span>
+    <span class="tag t-blue">تحقّق/قرار — ناقشها</span>
+  </div>
+
+  <!-- C1 -->
+  <div class="finding red">
+    <h3><span class="id">C1</span> مساعد «اسأل ✦» يجاوب أسئلة طبية وقانونية — قنبلة ثقة وقانونية <span class="tag t-red">حرجة</span></h3>
+    <div class="body">المساعد الذكي مُروّج في كل شاشة (كبسولة الهيدر، بطاقة البحث، الحالة الفارغة، الشيت) ويَعِد بأنه «يجيبك من مقالات وعملاء المنصة — مع المصادر دائمًا». الأمثلة المعروضة نفسها: «ما أفضل علاج للانزلاق الغضروفي بدون جراحة؟». ومدونتي فيها عملاء طب ومحاماة (YMYL). ودليل التنفيذ يقول إن الـ RAG «لم يُبنَ بعد».</div>
+    <div class="why">مساعد يولّد نصائح صحية/قانونية = مسؤولية مباشرة + خطر هلوسة على أحسّ محتوى عند Google (E-E-A-T / YMYL). «مع المصادر» لا يكفي — النموذج قد يلخّص خطأً أو يخلط مصدرين.</div>
+    <div class="fix"><b>الإصلاح:</b> لا تُطلق واجهة تَعِد بإجابات قبل مواصفة حراسة صارمة: retrieval-only (استخراج لا توليد رأي)، رفض صريح لأي طلب تشخيص/جرعة/استشارة قانونية، إخلاء مسؤولية ظاهر، الاقتباس والربط فقط بدون «رأي». وقلّل ترويجه من ٤ مواضع إلى واحد حتى ينضج.</div>
+    <div class="src"><b>المصدر:</b> Google Search Central (YMYL / E-E-A-T) · أبحاث موثوقية النماذج التوليدية.</div>
+  </div>
+
+  <!-- C2 -->
+  <div class="finding blue">
+    <h3><span class="id">C2</span> «لقطات» (Bunny Stream) رهان منتج كامل مدسوس في حزمة واجهة <span class="tag t-blue">قرار</span></h3>
+    <div class="body">اللقطات ليست شاشة — إنها نظام: بنية فيديو (Bunny Stream/CDN)، رفع من الكونسول، مراجعة إدارية، ٥ أحداث GA4، ضغط ومعالجة 9:16. ومع ذلك تُعرض كـ«قرار معتمد» داخل إعادة تصميم، ومبرَّرها الأساسي «upsell للباقات الأعلى».</div>
+    <div class="why">هذا أكبر بند تكلفة وصيانة (وموارد بشرية للمراجعة) في الحزمة، بلا دليل طلب. ربطه بخط أساس التصميم يجعل «إطلاق v3» رهينة مشروع فيديو ضخم.</div>
+    <div class="fix"><b>الإصلاح:</b> افصل «لقطات» كمبادرة مستقلة بـ business case ومقياس نجاح قبل/بعد. أطلق الواجهة الجديدة بدونها، وأضف نقاط الدخول (الدائرة/التبويب) خلف flag عند جاهزية العميل الأول.</div>
+    <div class="src"><b>المصدر:</b> مبدأ نطاق واحد لكل إصدار (تجنّب حزم عملاق) · قاعدتك «مراحل متتابعة».</div>
+  </div>
+
+  <!-- C3 -->
+  <div class="finding blue">
+    <h3><span class="id">C3</span> «الداكن افتراضيًا» لمنتج قراءة طويلة وسيو — قرار تحت التبرير <span class="tag t-blue">قرار</span></h3>
+    <div class="body">النظام يفرض الوضع الداكن كهوية افتراضية، ويسمح بالفاتح عبر التبديل + `prefers-color-scheme`. لكن «الداكن هو الافتراضي» يتجاوز تفضيل نظام المستخدم.</div>
+    <div class="why">جوهر المنتج = قراءة مقالات طويلة. أغلب منصات القراءة الكبرى (Medium، مقالات LinkedIn، الصحف) افتراضها فاتح — الداكن يرفع مشاكل الهالة (halation) للنص الطويل ويقلّل راحة القراءة المستدامة لكثير من المستخدمين. Tailwind نفسه يبني على `prefers-color-scheme` أولًا (أكّده Context7).</div>
+    <div class="fix"><b>الإصلاح:</b> اجعل `prefers-color-scheme` هو الحَكَم الأول، والهوية الداكنة «مقترحة» لا «مفروضة». اختبر A/B على وقت القراءة ومعدل الإكمال قبل ترسيم الداكن افتراضيًا. لو بقيت على الداكن: ارفع تباين نص المتن فوق الحد الأدنى AA بهامش.</div>
+    <div class="src"><b>المصدر:</b> Tailwind Docs (dark mode = prefers-color-scheme) عبر Context7 · NN/g (Dark Mode legibility) · WCAG 1.4.3.</div>
+  </div>
+
+  <!-- C4 -->
+  <div class="finding red">
+    <h3><span class="id">C4</span> الموكب يكسر قواعد نظام التصميم الصريحة = عقد ملغّم <span class="tag t-red">حرجة</span></h3>
+    <div class="body">نظام v3 يمنع صراحةً (قاعدة ٦ + Known Bug ١٧) الإيموجي كأيقونات، ويطلب «عربي فقط بلا إنجليزية»، و«طبقة عائمة واحدة»، و«هيدر 56px». والشاشات تكسرها كلها:
+      <ul style="margin:8px 0 0;color:#d5ddf0">
+        <li>إيموجي كأيقونات أقسام: <code>⚡ أهم النقاط</code> (المقال)، <code>🔥 الأكثر قراءة</code> (العميل)، <code>🔥 شائع · 🕘 · 📄 · 🏢 · 🏷️ · 🔍</code> (البحث)، <code>🔖 🎬 💬 📡</code> (الحالات).</li>
+        <li>أسماء إنجليزية داخل «عربي فقط»: <code>Pain Core Clinic</code>، <code>MBC</code>، <code>Google ✓</code>.</li>
+        <li>هيدر: النظام يقول 56px، وكل ملف يستخدم <code>h-16</code> (64px) مع تعليق مكتوب «56px».</li>
+        <li>«طبقة عائمة واحدة»: صفحة العميل فيها هيدر لاصق + شريط أقسام لاصق (z-20) + شريط سفلي (z-30).</li>
+      </ul>
+    </div>
+    <div class="why">«الموكب = عقد ملزم» قاعدتك الذهبية. لو بُني حرفيًا يشحن العيوب التي صُمّم النظام لمنعها، ويورّث التناقض للكود.</div>
+    <div class="fix"><b>الإصلاح:</b> جولة تصحيح ذاتي على الشاشات قبل اعتمادها: استبدل كل إيموجي بأيقونة SVG من نفس العائلة، غلّف أسماء البراند اللاتينية بـ <code>&lt;bdi&gt;</code> واعتبرها استثناء Tier-3 موثّقًا، وحّد الهيدر على قيمة واحدة، وأعد صياغة قاعدة «طبقة واحدة» لتسمح بشريط أقسام لاصق (نمط شائع) أو احذفه.</div>
+    <div class="src"><b>المصدر:</b> قاعدتك <code>feedback_mockup_is_the_contract</code> · قاعدة v3 §3.6 و§7.</div>
+  </div>
+
+  <!-- C5 -->
+  <div class="finding amber">
+    <h3><span class="id">C5</span> ازدحام CTA على صفحة المقال — إرهاق قرار <span class="tag t-amber">متوسطة</span></h3>
+    <div class="body">صفحة المقال الواحدة فيها: بطاقة العميل أعلى (اسأل + واتساب + اتصال = ٣ أفعال)، ثم صندوق تحويل داخلي (اطلب عرض سعر + واتساب)، ثم شريط سفلي ثابت يكرّر «اطلب عرض سعر» + ٤ أيقونات تفاعل. الفعل الأساسي نفسه يظهر <b>مرتين</b>، وواتساب <b>ثلاث مرات</b>.</div>
+    <div class="why">مبدأ «فعل أساسي واحد واضح لكل شاشة». التكرار يشتّت ويُضعف قوة الـ CTA بدل أن يقوّيها.</div>
+    <div class="fix"><b>الإصلاح:</b> فعل أساسي واحد ثابت (الشريط السفلي)، وبطاقة العميل أعلى تكتفي بإجراء واحد ثانوي، واحذف صندوق التحويل الداخلي المكرّر أو حوّله لتذكير خفيف. واتساب حاضر مرة واحدة بارزة.</div>
+    <div class="src"><b>المصدر:</b> Refactoring UI (هرمية الفعل) · Baymard (CTA على الموبايل).</div>
+  </div>
+
+  <!-- C6 -->
+  <div class="finding amber">
+    <h3><span class="id">C6</span> تمييز `--featured` (الإنديجو) مستهلَك في كل مكان = بلا معنى <span class="tag t-amber">متوسطة</span></h3>
+    <div class="body">خلفية/حدّ `--featured` نفسها تُستخدم لـ: بلوك «من مدونتي» الرسمي، وكروت الشركاء المدفوعة، وصندوق «انضم كعميل»، وهيرو الصناعة، وبطاقة العميل في المقال، وبطاقة تسجيل الضيف، وصفحة 404.</div>
+    <div class="why">«لو كل شيء مميّز، لا شيء مميّز». التمييز البصري يفقد وظيفته حين يصير خلفية عامة.</div>
+    <div class="fix"><b>الإصلاح:</b> احجز `--featured` لمعنى واحد (محتوى مدونتي الرسمي فقط). استخدم مستويات سطح محايدة (`surface`/`surface2`) للبقية، ونبرة واحدة حادة للـ CTA.</div>
+    <div class="src"><b>المصدر:</b> Refactoring UI (لون واحد مميّز، بحذر).</div>
+  </div>
+
+  <!-- C7 -->
+  <div class="finding amber">
+    <h3><span class="id">C7</span> تناقض أداء: صف اللقطات فوق الطية يزاحم LCP + إشارة لـ API مهجور <span class="tag t-amber">متوسطة</span></h3>
+    <div class="body">النظام يقول «اللقطات lazy ولا تدخل حساب LCP للرئيسية» — لكن صف دوائر اللقطات يقع <b>فوق الطية</b> في الرئيسية (بعد chips الصناعات مباشرة، قبل الفيد)، مع معاينات WebP متحركة. وهذا يدفع الـ LCP الحقيقي (أول صورة مقال) للأسفل ويضيف كلفة شبكة فوق الطية. كما أن النظام يشير لـ `next/image priority` وهو <b>مهجور الآن</b> لصالح `preload` في Next.js.</div>
+    <div class="why">فوق-الطية + وسائط متحركة = خطر مباشر على LCP<2.5s وعلى ميزانيتهم المعلنة نفسها.</div>
+    <div class="fix"><b>الإصلاح:</b> إمّا انزل بصف اللقطات تحت أول شاشة، أو اجعله معاينات ثابتة خفيفة جدًا (poster فقط، بلا animated preview فوق الطية). استخدم <code>preload</code> بدل <code>priority</code> لأول صورة، وحمّل صف اللقطات بـ <code>loading="lazy"</code>.</div>
+    <div class="src"><b>المصدر:</b> Next.js Docs (preload يحل محل priority؛ LCP فوق حدود Suspense) عبر Context7 · web.dev CWV.</div>
+  </div>
+
+  <!-- C8 -->
+  <div class="finding amber">
+    <h3><span class="id">C8</span> الوصولية مُدّعاة لا مُقاسة (تباين + focus) <span class="tag t-amber">متوسطة</span></h3>
+    <div class="body">النظام يفرض AA (4.5:1)، لكن لا شيء مُقاس: نص `--muted` بإضاءة 70% على أسطح داكنة عند 12–13px، ونص فوق تدرّجات اللقطات بلا ضمان طبقة تعتيم، ونص أبيض على `--primary` #6D6DFF. وفي CSS المخصص (اللقطات/البحث) أزرار <code>border:0;background:transparent</code> بلا أي حالة focus مرئية = فجوة لوحة مفاتيح.</div>
+    <div class="why">قاعدتك «دليل قبل الحكم» تنطبق هنا: ادعاء AA ليس دليلًا. النص فوق الصور والفيديو أخطر بند تباين.</div>
+    <div class="fix"><b>الإصلاح:</b> مرّر كل تركيبة لون على فاحص تباين، أضِف <code>:focus-visible</code> ring واضح لكل عنصر تفاعلي، واضمن طبقة scrim خلف أي نص فوق وسائط.</div>
+    <div class="src"><b>المصدر:</b> WCAG 2.2 (1.4.3 تباين · 2.4.7 focus · 1.4.11 non-text) · قاعدتك <code>feedback_audit_confidence_levels</code>.</div>
+  </div>
+
+  <!-- C9 -->
+  <div class="finding blue">
+    <h3><span class="id">C9</span> «الأرقام المشرقية في كل مكان» قاعدة مطلقة تحت الشك <span class="tag t-blue">قرار</span></h3>
+    <div class="body">النظام يفرض ٠١٢٣ لكل الأرقام. لكن أبحاث i18n وسلوك المستخدم السعودي الفعلي يظهران راحة عالية مع الأرقام اللاتينية، وأحيانًا قراءة أسرع لها في السياقات الرقمية (أسعار، أرقام هواتف، عدّادات). التقرير يعامل القرار كمحسوم.</div>
+    <div class="why">فرض ٠١٢٣ على أرقام الهواتف والروابط والإصدارات يخلق كسور bidi ويضرّ المسح البصري — وهي ذاتها المشكلة التي يحاربها التقرير.</div>
+    <div class="fix"><b>الإصلاح:</b> لاتينية إلزامية للهواتف/الروابط/المعرّفات/الإصدارات؛ والباقي (تواريخ/عدّادات) قرار قابل للاختبار لا للفرض. وحّد عبر <code>Intl.NumberFormat</code> ودع الاختبار يحسم.</div>
+    <div class="src"><b>المصدر:</b> W3C Internationalization (Arabic numerals/bidi) · <code>&lt;bdi&gt;</code>.</div>
+  </div>
+
+  <!-- C10 -->
+  <div class="finding blue">
+    <h3><span class="id">C10</span> عدم تطابق مع المبني: دخول «رمز بلا كلمة مرور» ≠ (باسورد + Google) <span class="tag t-blue">قرار</span></h3>
+    <div class="body">شيت الدخول يقول «بدون كلمة مرور — رمز يوصلك على بريدك». لكن نظام مدونتي المبني فعلًا = كلمة مرور + Google (تحقّقناه في الكود هذه الجلسة). ودليل التنفيذ يسرد إصلاحات باك-إند لكن لا يذكر «تحويل نظام الدخول».</div>
+    <div class="why">هذا تغيير باك-إند كبير مُخبّأ في موكب واجهة — لو بُني حرفيًا يخالف نظام المصادقة القائم.</div>
+    <div class="fix"><b>الإصلاح:</b> إمّا صحّح الموكب ليطابق (كلمة مرور + Google + «نسيت كلمة المرور»)، أو ارفع «الانتقال لدخول بلا كلمة مرور (magic link/OTP)» كقرار منتج مستقل موثّق.</div>
+    <div class="src"><b>المصدر:</b> مراجعة كود مدونتي (auth.config) هذه الجلسة.</div>
+  </div>
+
+  <!-- C11 -->
+  <div class="finding amber">
+    <h3><span class="id">C11</span> «عرض المزيد» كتنقّل <code>?page=N</code> — يقفز لأعلى ويفقد المكان <span class="tag t-amber">متوسطة</span></h3>
+    <div class="body">النظام يفرض «عرض المزيد كرابط <code>?page=N</code> — ممنوع infinite scroll». الرابط جيد للزحف/السيو، لكن التنقّل الكامل يعيد تحميل الصفحة ويقفز لأعلاها ويفقد موضع القارئ.</div>
+    <div class="why">توصية NN/g هي زر «عرض المزيد» يُلحق العناصر (append) مع تحديث الـ URL — لا تنقّل صلب يكسر التدفق.</div>
+    <div class="fix"><b>الإصلاح:</b> <code>&lt;a href="?page=2"&gt;</code> حقيقي لمحرّكات البحث، مع تحسين تدريجي (JS) يجلب ويُلحق ويحدّث الـ history بلا قفزة — أفضل ما في العالمين.</div>
+    <div class="src"><b>المصدر:</b> NN/g (Infinite Scroll vs. Load More vs. Pagination).</div>
+  </div>
+
+  <!-- C12 -->
+  <div class="finding amber">
+    <h3><span class="id">C12</span> أرقام الأثر الرقمي مثبّتة نصًّا (٩٥٬١٨٦…) — خطر مصداقية <span class="tag t-amber">متوسطة</span></h3>
+    <div class="body">«٩٥٬١٨٦ نشاط · ١٨٬٨١١ زيارة · ٢٨ شريكًا» تظهر كأرقام دقيقة ثابتة في أكثر من شاشة. النظام يقول «أرقام حقيقية»، لكن الموكب لا يضمن ربطها الحي.</div>
+    <div class="why">قاعدتك <code>feedback_no_fake_numbers_in_pitch</code> + مرحلة التأسيس: رقم دقيق قديم/ثابت يضرّ الثقة أكثر مما يبنيها.</div>
+    <div class="fix"><b>الإصلاح:</b> اربطها حيًّا بمصدر واحد (GA4/DB) أو اعرض نطاقًا/أزلها. لا رقم دقيق بلا مصدر حي.</div>
+    <div class="src"><b>المصدر:</b> قاعدتك <code>feedback_no_fake_numbers_in_pitch</code> · <code>project_ga4_sot_thermometer</code>.</div>
+  </div>
+
+  <!-- C13 -->
+  <div class="finding blue">
+    <h3><span class="id">C13</span> تبويب «مدونتي ⭐» + شارة نقطة حمراء دائمة — مزاحمة وتضخيم <span class="tag t-blue">قرار</span></h3>
+    <div class="body">أحد ٥ مواضع الشريط السفلي الثمينة مخصّص لمحتوى المنصة نفسها — التي لها أصلًا بلوك Featured في الرئيسية + دائرة في اللقطات + رابط فوتر + رابط «عن مدونتي». وعليها نقطة حمراء دائمة «محتوى جديد».</div>
+    <div class="why">مبدأ Material 3: الشريط السفلي لأهم <b>وجهات المستخدم</b> لا لترويج المنصة. والنقطة الحمراء الدائمة = إلحاح مُصطنع (قريب من الـ dark pattern) وإرهاق إشعارات.</div>
+    <div class="fix"><b>الإصلاح:</b> أعِد تقييم الوجهات الخمس بمقياس «وجهة مستخدم متكررة» — غالبًا: الرئيسية · العملاء · لقطات · بحث · حسابي. ادفع «مدونتي» للبلوك Featured والفوتر. النقطة الحمراء تظهر فعلًا عند جديد لا دائمًا.</div>
+    <div class="src"><b>المصدر:</b> Material 3 (Navigation bar 3–5 وجهات) · NN/g (Deceptive Patterns / notification badging).</div>
+  </div>
+</section>
+
+<!-- ==================== PER-FILE ==================== -->
+<section>
+  <h2 class="sec"><span class="num">٤</span> مراجعة كل ملف</h2>
+
+  <!-- DESIGN_SYSTEM_V3 -->
+  <div class="file">
+    <div class="fh"><h3>DESIGN_SYSTEM_V3.md</h3><span class="role">مصدر الحقيقة — التوكنز والقواعد</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>توكنز نظيفة، شبكة 8px، طبقات z-index مُعرّفة، ميزانية أداء رقمية (LCP/CLS/INP).</li><li>قواعد موبايل غير قابلة للتفاوض (44px، ≥12px، بلا تمرير أفقي) — انضباط ممتاز.</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li><b>يفرض مطلقات تحت الشك:</b> الداكن افتراضيًا (C3)، الأرقام المشرقية للكل (C9) — تُقدَّم كمحسومة بلا تحقّق.</li><li><b>قاعدة «طبقة عائمة واحدة» يكسرها تصميمه نفسه</b> (شريط الأقسام اللاصق + الشريط السفلي).</li><li><b>يشير لـ <code>next/image priority</code> المهجور</b> — حدّثه لـ <code>preload</code>.</li><li>يخلط «قرارات منتج» (لقطات، AI، ملكية المحتوى) مع «نظام تصميم» — يجب فصلها.</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>افصل «قرارات معتمدة» (منتج) عن «توكنز/قواعد» (تصميم). حوّل المطلقات المتنازعة إلى «افتراضات قابلة للاختبار».</li></ul>
+    </div>
+  </div>
+
+  <!-- IMPLEMENTATION_GUIDE -->
+  <div class="file">
+    <div class="fh"><h3>IMPLEMENTATION_GUIDE.md</h3><span class="role">دليل التنفيذ + خريطة المسارات</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>خريطة ملف ← مسار واضحة، ترتيب مراحل منطقي، «حافظ على JSON-LD الحالي» صحيح تمامًا.</li><li>يفصل إصلاحات الباك-إند المستقلة (رقم واتساب، تكرار الصناعة، H1 مكرر).</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li><b>لا يذكر تحويل نظام الدخول</b> رغم أن الموكب يقترح «رمز بلا كلمة مرور» (C10).</li><li>يعامل «لقطات» و«AI RAG» كخطوة تنفيذ عادية، وهي مشاريع منتج بمخاطر (C1، C2).</li><li>رقم واتساب <code>wa.me/9665480309150556311022</code> (٢٢ خانة) بند بيانات حقيقي — جيد أنه مذكور، لكنه يكشف غياب تحقّق مصدر بيانات في التوليد.</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>أضِف قسم «قرارات منتج معلّقة» منفصلًا، وميّز ما هو «كسوة بالثيم» عمّا هو «نظام جديد».</li></ul>
+    </div>
+  </div>
+
+  <!-- STITCH_PROMPTS -->
+  <div class="file">
+    <div class="fh"><h3>STITCH_PROMPTS.md</h3><span class="role">برومبتات Google Stitch</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>منهجية ممتازة: «شاشة واحدة لكل برومبت»، برومبت دراسة أولًا، تثبيت الثيم قبل التوليد، Annotate للتصحيح.</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li><b>برومبت الرئيسية يناقض نظام v3:</b> يطلب زر «اشترك مجاناً» في الهيدر — بينما النظام يمنع الاشتراك الدائم ويعتمد «لحظة الحاجة». تناقض داخلي بين ملفين في نفس الحزمة.</li><li>يطلب Stitch إخراج «إنجليزي صفر» لكن الأمثلة تحوي <code>Google</code>/أسماء لاتينية — سيولّد Stitch نفس التناقض.</li><li>الاعتماد على أداة توليدية يورّث «AI slop» ما لم تُضبط بصرامة — الحزمة نفسها تُظهر ذلك (إيموجي، تمييز مفرط).</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>وحّد برومبت الهيدر مع قاعدة «لا اشتراك دائم». أضِف سطرًا صريحًا: «بدّل كل إيموجي بأيقونة خطية، وغلّف أسماء البراند بـ bdi».</li></ul>
+    </div>
+  </div>
+
+  <!-- tailwind.config -->
+  <div class="file">
+    <div class="fh"><h3>tailwind.config.js</h3><span class="role">توكنز جاهزة للنسخ</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>ألوان HSL نظيفة، <code>rounded-card/chip</code>، عائلة Tajawal — تعيينات دقيقة.</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li><code>content:['./modonty-home.html']</code> — نطاق ملف واحد فقط (مقصود للبروتوتايب، لكنه لن يعمل كما هو في المشروع).</li><li>لا يعرّف <code>darkMode</code> استراتيجية بينما القرار «داكن افتراضي» — يحتاج <code>darkMode:'class'</code> مع منطق `prefers-color-scheme` (C3).</li><li>الموكب يستخدم <code>h-13</code> و<code>h-16</code> (هيدر) — <code>h-13</code> ليست ضمن مقياس Tailwind الافتراضي، تحتاج تعريفًا أو تصحيحًا.</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>عرّف <code>darkMode</code> + أي قيم spacing مخصّصة قبل النقل، ووسّع <code>content</code> لمسارات المشروع الفعلية.</li></ul>
+    </div>
+  </div>
+
+  <!-- home -->
+  <div class="file">
+    <div class="fh"><h3>modonty-home.html</h3><span class="role">الرئيسية (الشاشة الأم)</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>بنية أنظف من الحالي: skip-link، هيدر كبسولة بحث/اسأل، شريط سفلي M3، دراور منظّم، فوتر in-flow.</li><li>«عرض المزيد» بدل infinite scroll، والاشتراك عند لحظة الحاجة — قرارات صحيحة.</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li>صف اللقطات فوق الطية يزاحم LCP (C7).</li><li>هيدر <code>h-16</code> مقابل «56px» المكتوب (C4). تبويب «مدونتي» + نقطة حمراء دائمة (C13).</li><li>«موثّق ✓» يظهر مرة كأيقونة SVG ومرة كنص عادي بين البطاقات — عدم اتساق للشارة الأهم في المنصة.</li><li>أرقام الأثر مثبّتة (C12).</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>وحّد شارة التوثيق كمكوّن واحد، انزل باللقطات تحت الطية، اربط الأرقام حيًّا.</li></ul>
+    </div>
+  </div>
+
+  <!-- home-desktop -->
+  <div class="file">
+    <div class="fh"><h3>modonty-home-desktop.html</h3><span class="role">الرئيسية ديسكتوب (٣ أعمدة)</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>تخطيط ٣ أعمدة (٢٥٥ / مرن / ٣٠٠) مع rail لاصق، عمود قراءة مركزي محدود — بنية قراءة سليمة.</li><li>تعليق أداء داخلي صريح على الصور (16:9، srcset، lazy) — وعي جيد.</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li>مكتوب بـ CSS خام مستقل بينما بقية الحزمة Tailwind — ازدواج مصدر يصعّب الاتساق عند التحويل.</li><li>يعيد ظهور «الصناعات + الوسوم» في rail بينما الموبايل يخفيها في البرغر — انفصام IA بين المقاسين.</li><li>يستخدم عناوين <code>h2</code> لعناوين البطاقات مع <code>h1</code> مخفي — راجع تسلسل العناوين للسيو.</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>اشتقّ الديسكتوب من نفس مكوّنات الموبايل (لا CSS مستقل)، ووحّد شجرة العناوين.</li></ul>
+    </div>
+  </div>
+
+  <!-- clients -->
+  <div class="file">
+    <div class="fh"><h3>modonty-clients.html</h3><span class="role">مركز الاستكشاف</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>دمج «شركاء مميزون + chips الصناعات + الشبكة» في مركز واحد — IA ذكي.</li><li>تمرير أفقي يدوي (لا carousel تلقائي) + ترقيم <code>?page=2</code> للسيو.</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li><b>أسماء عملاء إنجليزية</b> (<code>Pain Core Clinic</code>) في واجهة «عربي فقط» (C4).</li><li>كروت الشركاء المدفوعة تستخدم `--featured` نفسه لبلوك مدونتي الرسمي — خلط «مدفوع» بـ«رسمي» (C6).</li><li>«موثّق ✓» نص عادي هنا — نفس عدم اتساق الشارة.</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>ميّز «مدفوع» بصريًا عن «رسمي»، عرّب/غلّف الأسماء، ووحّد شارة التوثيق.</li></ul>
+    </div>
+  </div>
+
+  <!-- industry -->
+  <div class="file">
+    <div class="fh"><h3>modonty-industry.html</h3><span class="role">صفحة القطاع (المزيج الذكي)</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>«المزيج الذكي» (أبرز ٣ شركاء ← أحدث ٤ مقالات ← البقية ← CTA) يخدم القارئ والمشتري معًا — تدفّق ممتاز.</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li>«أبرز الشركاء» و«بقية الشركاء» و«شركاء مشابهون» أنماط بطاقات مختلفة لنفس الكيان — تعدّد تمثيلات يربك.</li><li>زر «عرض المزيد من المقالات والشركاء» يخلط نوعين في زر واحد — غموض وجهة.</li><li>الهيرو عدّاداته أرقام مشرقية، لكن أعداد المقالات في الشبكة قد تنكسر bidi مع الوحدات.</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>وحّد بطاقة العميل لنمطين كحدّ أقصى (كبير/مضغوط)، وافصل «المزيد» لمقالات وشركاء.</li></ul>
+    </div>
+  </div>
+
+  <!-- client-profile -->
+  <div class="file">
+    <div class="fh"><h3>modonty-client-profile.html</h3><span class="role">صفحة العميل</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>هيرو/تبويبات/شريط سفلي contextual واحد، الرقم الضريبي خلف «موثّق ضريبيًا ✓» — معالجة ناضجة.</li><li>حقول ظاهرة (اسأل/تقييم) — يعالج نقد «الدعوة بلا وسيلة».</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li>إيموجي <code>🔥 الأكثر قراءة</code> يخالف قاعدتهم (C4).</li><li><b>طبقتان لاصقتان</b> (هيدر + شريط أقسام) + شريط سفلي — يكسر «طبقة واحدة» (C4).</li><li><b>ثلاثة نماذج على صفحة واحدة</b> (اسأل سؤال + أضف تقييم + اشترك بالنشرة) — إرهاق إدخال.</li><li><code>Google ✓</code> لاتيني داخل الهيرو.</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>ادمج/أجّل النماذج (النشرة تكفي مرة في الفوتر)، استبدل الإيموجي، وأعد النظر في الطبقة اللاصقة الثانية.</li></ul>
+    </div>
+  </div>
+
+  <!-- article -->
+  <div class="file">
+    <div class="fh"><h3>modonty-article.html</h3><span class="role">صفحة المقال</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>متن 16px/1.9، <code>&lt;bdi&gt;</code> للاتيني، ٣ مقالات ذات صلة فقط، حقل تعليق ظاهر، «حافظ على JSON-LD» — كل نقاط التدقيق عولجت.</li><li>قاعدة «CTA العميل فوق CTA المنصة» مطبّقة بوضوح.</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li><b>ازدحام CTA</b>: «اطلب عرض سعر» مرتين + واتساب ٣ مرات (C5).</li><li>إيموجي <code>⚡ أهم النقاط</code> يخالف قاعدتهم (C4).</li><li>سطر ميتا فيه ٤ عناصر (تاريخ/قراءة/كلمات/مشاهدات) — «المشاهدات» قيمتها للقارئ محل شك وتزيد خطر الكسر.</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>فعل أساسي واحد، احذف تكرار CTA الداخلي، استبدل ⚡، وأزِل عدّاد المشاهدات من الميتا العامة.</li></ul>
+    </div>
+  </div>
+
+  <!-- reels -->
+  <div class="file">
+    <div class="fh"><h3>modonty-reels.html</h3><span class="role">عارض اللقطات (تفاعلي)</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>بروتوتايب سلوكي حقيقي: مؤقّتات، snap، ٣ أنماط وسائط (فيديو/صورة/ألبوم)، أرقام مشرقية — مرجع سلوك ممتاز.</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li>الميزة نفسها رهان منتج غير مُتحقّق (C2).</li><li>CSS خام مستقل تمامًا — لن يُعاد استخدامه كمكوّن؛ خطر أن يُنسخ كما هو.</li><li>أزرار <code>.iconbtn/.railbtn</code> بلا <code>:focus-visible</code> — فجوة لوحة مفاتيح (C8). نص فوق تدرّجات بلا scrim مضمون.</li><li>لا مسار وصولية للفيديو (تعليق/نص بديل للحركة، احترام <code>prefers-reduced-motion</code> لحركة Ken Burns).</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>لو مضى قدمًا: أعِد بناءه كمكوّن، أضِف focus/scrim/reduced-motion، وربط CTA واحد واضح.</li></ul>
+    </div>
+  </div>
+
+  <!-- search -->
+  <div class="file">
+    <div class="fh"><h3>modonty-search.html</h3><span class="role">بحث حي + شيت «اسأل ✦»</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>بحث حي بنطاقات + تجميع نتائج + حالة فارغة مصمّمة + شيت M3 بحركة سلسة — تجربة بحث ناضجة.</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li><b>ترويج AI في ٤ مواضع لميزة غير مبنيّة</b> تجاوب أسئلة YMYL (C1) — أخطر بند في الحزمة.</li><li>إيموجي في كل عناوين الأقسام (🔥🕘📄🏢🏷️🔍) — أوضح خرق لقاعدتهم (C4).</li><li>فقاعة «أهلًا 👋» ودّية، لكن نبرة المساعد على محتوى طبي تحتاج انضباطًا لا ودًّا.</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>قلّل ترويج AI لموضع واحد خلف حراسة، واستبدل كل إيموجي الأقسام بأيقونات.</li></ul>
+    </div>
+  </div>
+
+  <!-- account -->
+  <div class="file">
+    <div class="fh"><h3>modonty-account.html</h3><span class="role">حساب القارئ + شيت الدخول</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>حالتا ضيف/عضو واضحتان، شيت دخول موحّد (هو نفسه شيت لحظة الحاجة) — قرار صحيح.</li><li>تبديل ثيم حي، توست، إعدادات مجمّعة.</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li><b>دخول «رمز بلا كلمة مرور» يخالف المبني</b> (باسورد + Google) — C10.</li><li>حالة العضو تثبّت بيانات المالك الحقيقية (<code>modonty1@gmail.com</code>) — بيانات شخصية في موكب.</li><li><code>h-13</code> صنف غير قياسي (خطأ تنفيذ محتمل).</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>طابق نظام الدخول الفعلي أو ارفعه كقرار، أزِل البيانات الشخصية، صحّح <code>h-13</code>.</li></ul>
+    </div>
+  </div>
+
+  <!-- states -->
+  <div class="file">
+    <div class="fh"><h3>modonty-states.html</h3><span class="role">مرجع الحالات (سكيلتون/فراغ/404/توست)</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>ملف ناضج نادر: هياكل تطابق التخطيط النهائي (صفر CLS)، حالات فراغ بفعل واحد واضح، توست نجاح/خطأ — مرجع قوي.</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li>حالات الفراغ تستخدم إيموجي كبيرة (🔖🎬💬📡) كأيقونات فنية — يخالف قاعدتهم (C4)، ويكسر الاتساق عبر الأجهزة.</li><li>«صفر CLS» ادعاء بنيوي جيد لكنه غير مقاس فعليًا.</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>استبدل إيموجي الحالات بأيقونات/رسوم خطية من عائلة الموقع.</li></ul>
+    </div>
+  </div>
+
+  <!-- mobile-ux-report -->
+  <div class="file">
+    <div class="fh"><h3>modonty-mobile-ux-report.html</h3><span class="role">التدقيق الذاتي للموقع الحالي (١٨ مشكلة)</span></div>
+    <div class="fb">
+      <span class="lbl good">يستحق البقاء</span>
+      <ul><li>تدقيق منظّم (حرج/متوسط/بسيط) بمواقع وإصلاحات وخطة أسابيع — وهو الأساس الذي بُني عليه v3. منهجية سليمة.</li><li>يعترف بنقاط قوة الحالي (بلا مجاملة) — توازن جيد.</li></ul>
+      <span class="lbl bad">نقد عكسي</span>
+      <ul><li><b>يعترف صراحةً</b> أن الفحص جرى على «نسخة محلية» و«لم تُقيَّم السرعة الفعلية ولا التتبع الحي» — فالدرجات (7/10…) heuristic لا مقيسة. جيد أنه صادق، لكن لا يُبنى عليه كدليل أداء.</li><li>يقدّم «الأرقام المشرقية» كإجماع بينما هي قرار قابل للنقاش (C9).</li></ul>
+      <span class="lbl fix">إصلاح</span>
+      <ul><li>أكمله بقياس حقيقي: Lighthouse/CWV من Search Console + جولة جهاز حقيقي — قبل ترسيم أي حكم أداء.</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PRIORITIES ==================== -->
+<section>
+  <h2 class="sec"><span class="num">٥</span> ماذا أقفل قبل بناء أي كود</h2>
+  <ol class="prio">
+    <li><b>افصل قرارات المنتج الثلاثة (AI · لقطات · داكن-افتراضي) عن مسار الواجهة</b> — كل واحد business case + مقياس نجاح، ولا يعيق إطلاق v3.</li>
+    <li><b>ضع مواصفة حراسة لمساعد الـ AI قبل أي ترويج له</b> — retrieval-only، رفض التشخيص/الاستشارة، إخلاء مسؤولية، اقتباس وربط فقط (خصوصًا YMYL).</li>
+    <li><b>جولة تصحيح ذاتي على الشاشات لتطابق نظامها</b> — احذف كل إيموجي كأيقونة، وحّد الهيدر، وحّد شارة التوثيق، غلّف الأسماء اللاتينية بـ bdi.</li>
+    <li><b>احسم فعلًا أساسيًا واحدًا لكل شاشة</b> — عالج ازدحام CTA في المقال، وقلّص استخدام `--featured` لمعنى واحد.</li>
+    <li><b>طابق نظام الدخول مع المبني</b> أو ارفع «بلا كلمة مرور» كقرار موثّق.</li>
+    <li><b>اقِس، لا تدّعِ</b> — تباين AA فعلي + Lighthouse/CWV حقيقي + focus-visible لكل تفاعل، قبل ترسيم أي «AA/LCP».</li>
+    <li><b>اربط أرقام الأثر حيًّا</b> (GA4/DB) أو أزِلها — لا رقم دقيق ثابت.</li>
+  </ol>
+  <div class="note">ملاحظة منهجية (بنفس معيارك): هذه المراجعة قراءة كود/تصميم ثابتة (static)، لم تُشغّل الشاشات على جهاز حقيقي ولم تُقَس CWV. أحكام «الهرمية/الازدحام/الاتساق» موثّقة من الملفات مباشرة؛ وأحكام «الأداء/التباين» تبقى فرضيات تحتاج قياسًا حيًّا قبل الاعتماد.</div>
+</section>
+
+<!-- ==================== SOURCES ==================== -->
+<section>
+  <h2 class="sec"><span class="num">٦</span> المصادر المعتمدة</h2>
+  <div class="srcgrid">
+    <div><b>Nielsen Norman Group</b> Infinite Scroll vs Load More · Deceptive Patterns · Mobile UX · Dark Mode legibility</div>
+    <div><b>WCAG 2.2 (W3C)</b> 1.4.3 تباين · 2.4.7/2.5.5 focus وحجم الهدف · 1.4.11 non-text contrast</div>
+    <div><b>Material Design 3</b> Navigation bar (3–5 وجهات) · Bottom sheets · Badging</div>
+    <div><b>Apple Human Interface Guidelines</b> هدف لمس 44pt</div>
+    <div><b>Refactoring UI</b> (Wathan & Schoger) هرمية بصرية · لون مميّز واحد بحذر</div>
+    <div><b>Google Search Central</b> Intrusive Interstitials · E-E-A-T / YMYL · Core Web Vitals</div>
+    <div><b>Next.js Docs</b> (عبر Context7) preload يحل محل priority للـ LCP · LCP فوق حدود Suspense</div>
+    <div><b>Tailwind CSS Docs</b> (عبر Context7) dark mode = prefers-color-scheme · logical properties ms/me</div>
+    <div><b>W3C Internationalization</b> Arabic numerals / bidi · <code>&lt;bdi&gt;</code></div>
+    <div><b>Baymard Institute</b> CTA والنماذج على الموبايل</div>
+    <div><b>web.dev</b> Core Web Vitals (LCP/CLS/INP)</div>
+    <div><b>قواعد مدونتي الداخلية</b> feedback_mockup_is_the_contract · feedback_no_fake_numbers · feedback_audit_confidence_levels · modonty-uiux</div>
+  </div>
+</section>
+
+<footer>
+  مراجعة انتقادية عكسية — حزمة مدونتي v3 · أُعدّت بواسطة Claude (Opus 4.8) · قراءة ثابتة بلا تعديل كود · ٢٢ يوليو ٢٠٢٦<br>
+  <span class="disc">هذا تقرير رأي هندسي مبني على الملفات والمصادر أعلاه — القرار النهائي لك.</span>
+</footer>
+
+</div>
+</body>
+</html>

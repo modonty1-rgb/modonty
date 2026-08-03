@@ -15,6 +15,8 @@ interface IndustryFormData {
   canonicalUrl: string;
   socialImage: string;
   socialImageAlt: string;
+  // Modonty Core (T2): Media relation id — saved next to the raw string (dual-field).
+  socialImageMediaId: string;
 }
 
 interface UseIndustryFormParams {
@@ -36,6 +38,7 @@ export function useIndustryForm({ initialData, industryId }: UseIndustryFormPara
     canonicalUrl: initialData?.canonicalUrl || "",
     socialImage: initialData?.socialImage || "",
     socialImageAlt: initialData?.socialImageAlt || "",
+    socialImageMediaId: initialData?.socialImageMediaId || "",
   });
 
   const isEditMode = !!industryId;
@@ -61,6 +64,7 @@ export function useIndustryForm({ initialData, industryId }: UseIndustryFormPara
       canonicalUrl: formData.canonicalUrl || undefined,
       socialImage: formData.socialImage || null,
       socialImageAlt: formData.socialImageAlt || null,
+      socialImageMediaId: formData.socialImageMediaId || null,
     };
 
     const result = industryId
@@ -69,6 +73,7 @@ export function useIndustryForm({ initialData, industryId }: UseIndustryFormPara
           ...payload,
           socialImage: payload.socialImage ?? undefined,
           socialImageAlt: payload.socialImageAlt ?? undefined,
+          socialImageMediaId: payload.socialImageMediaId ?? undefined,
         });
 
     if (result.success) {
@@ -88,7 +93,10 @@ export function useIndustryForm({ initialData, industryId }: UseIndustryFormPara
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const updateImageField = (field: "socialImage" | "socialImageAlt", value: string) => {
+  const updateImageField = (
+    field: "socialImage" | "socialImageAlt" | "socialImageMediaId",
+    value: string
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 

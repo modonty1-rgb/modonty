@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<!--
+  Modonty v3 — Homepage prototype (mobile-first 390px)
+  Source of truth: DESIGN_SYSTEM_V3.md
+  Structure map (each section is a future React component):
+    <SiteHeader>        64px: logo | capsule[search → /search | divider | ✦ اسأل → AI chat sheet] | burger.
+       NO subscribe CTA in header — signup happens at moment-of-need only:
+       tapping save/follow/comment or reading 2nd article → bottom sheet → /users/login
+       (Google intrusive-interstitial penalty + NN/g: never gate first visit)
+    <IndustryChips>     horizontal scroll pills
+    <ReelsRow>          "لقطات" — client circles, Modonty LAST + only-when-new
+    <FeaturedModonty>   compact official-publisher block (1 thumb + 2 text rows)
+    <ArticleFeed>       client article cards (the product — 85%+ of surface)
+    <StatsStrip>        digital impact numbers
+    <SiteFooter>        in-flow footer
+    <BottomNav>         M3 navigation bar 80dp, 5 destinations: الرئيسية·العملاء·مدونتي⭐·لقطات·حسابي (حسابي = SUBSCRIBER account: المحفوظات, المتابَعون, النشرة, الإشعارات, المزايا, الرائجة, settings. Client console = console.modonty.com — footer link «بوابة العملاء» only)
+  Rules enforced here: RTL, Arabic-only UI, Arabic-Indic numerals,
+  44px touch targets, labels >= 13px, ONE fixed layer (BottomNav) besides header.
+-->
+<html lang="ar-SA" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>حسابي | مدونتي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+
+<style>
+*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:Tajawal,system-ui,sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width:640px){.container{max-width:640px}}@media (min-width:768px){.container{max-width:768px}}@media (min-width:1024px){.container{max-width:1024px}}@media (min-width:1280px){.container{max-width:1280px}}@media (min-width:1536px){.container{max-width:1536px}}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}.visible{visibility:visible}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.inset-x-0{left:0;right:0}.bottom-0{bottom:0}.end-0{inset-inline-end:0}.end-2{inset-inline-end:.5rem}.end-2\.5{inset-inline-end:.625rem}.left-1{left:.25rem}.start-1{inset-inline-start:.25rem}.start-6{inset-inline-start:1.5rem}.top-0{top:0}.top-1{top:.25rem}.top-16{top:4rem}.z-20{z-index:20}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.mx-4{margin-left:1rem;margin-right:1rem}.mx-auto{margin-left:auto;margin-right:auto}.my-4{margin-top:1rem;margin-bottom:1rem}.my-5{margin-top:1.25rem;margin-bottom:1.25rem}.my-6{margin-top:1.5rem;margin-bottom:1.5rem}.-me-1{margin-inline-end:-.25rem}.-mt-7{margin-top:-1.75rem}.-mt-8{margin-top:-2rem}.mb-1{margin-bottom:.25rem}.mb-1\.5{margin-bottom:.375rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.ms-auto{margin-inline-start:auto}.mt-0{margin-top:0}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.mt-6{margin-top:1.5rem}.line-clamp-1{-webkit-line-clamp:1}.line-clamp-1,.line-clamp-2{overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical}.line-clamp-2{-webkit-line-clamp:2}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.aspect-video{aspect-ratio:16/9}.h-1{height:.25rem}.h-1\.5{height:.375rem}.h-10{height:2.5rem}.h-11{height:2.75rem}.h-12{height:3rem}.h-14{height:3.5rem}.h-16{height:4rem}.h-2{height:.5rem}.h-20{height:5rem}.h-3{height:.75rem}.h-3\.5{height:.875rem}.h-32{height:8rem}.h-36{height:9rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-\[170px\]{height:170px}.h-\[68px\]{height:68px}.h-\[72px\]{height:72px}.h-full{height:100%}.h-px{height:1px}.min-h-11{min-height:2.75rem}.w-1{width:.25rem}.w-1\/3{width:33.333333%}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-12{width:3rem}.w-14{width:3.5rem}.w-16{width:4rem}.w-2{width:.5rem}.w-20{width:5rem}.w-3{width:.75rem}.w-3\.5{width:.875rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-7{width:1.75rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-\[110px\]{width:110px}.w-\[200px\]{width:200px}.w-\[240px\]{width:240px}.w-\[300px\]{width:300px}.w-\[68px\]{width:68px}.w-\[72px\]{width:72px}.w-full{width:100%}.w-px{width:1px}.min-w-0{min-width:0}.max-w-\[85vw\]{max-width:85vw}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.translate-x-\[-100\%\]{--tw-translate-x:-100%}.translate-x-\[-100\%\],.translate-y-full{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-y-full{--tw-translate-y:100%}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.list-disc{list-style-type:disc}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-0{gap:0}.gap-0\.5{gap:.125rem}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-x-3{-moz-column-gap:.75rem;column-gap:.75rem}.gap-x-5{-moz-column-gap:1.25rem;column-gap:1.25rem}.gap-y-1{row-gap:.25rem}.space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem*var(--tw-space-y-reverse))}.space-y-1\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.375rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.375rem*var(--tw-space-y-reverse))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem*var(--tw-space-y-reverse))}.divide-y>:not([hidden])~:not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px*(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px*var(--tw-divide-y-reverse))}.divide-line>:not([hidden])~:not([hidden]){--tw-divide-opacity:1;border-color:hsl(222 25% 22%/var(--tw-divide-opacity,1))}.justify-self-center{justify-self:center}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-card{border-radius:8px}.rounded-chip{border-radius:20px}.rounded-full{border-radius:9999px}.rounded-e-full{border-start-end-radius:9999px;border-end-end-radius:9999px}.rounded-t-2xl{border-top-left-radius:1rem;border-top-right-radius:1rem}.border{border-width:1px}.border-2{border-width:2px}.border-4{border-width:4px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-s{border-inline-start-width:1px}.border-t{border-top-width:1px}.border-bg{--tw-border-opacity:1;border-color:hsl(222 47% 7%/var(--tw-border-opacity,1))}.border-line{--tw-border-opacity:1;border-color:hsl(222 25% 22%/var(--tw-border-opacity,1))}.border-primary{--tw-border-opacity:1;border-color:hsl(240 100% 65%/var(--tw-border-opacity,1))}.border-primary\/20{border-color:rgba(77,77,255,.2)}.border-primary\/40{border-color:rgba(77,77,255,.4)}.border-primary\/50{border-color:rgba(77,77,255,.5)}.border-whatsapp{--tw-border-opacity:1;border-color:hsl(142 70% 45%/var(--tw-border-opacity,1))}.border-whatsapp\/40{border-color:rgba(34,195,93,.4)}.bg-bg{--tw-bg-opacity:1;background-color:hsl(222 47% 7%/var(--tw-bg-opacity,1))}.bg-bg\/90{background-color:rgba(9,14,26,.9)}.bg-bg\/95{background-color:rgba(9,14,26,.95)}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0/var(--tw-bg-opacity,1))}.bg-black\/50{background-color:rgba(0,0,0,.5)}.bg-black\/55{background-color:rgba(0,0,0,.55)}.bg-featured{--tw-bg-opacity:1;background-color:hsl(240 60% 16%/var(--tw-bg-opacity,1))}.bg-line{--tw-bg-opacity:1;background-color:hsl(222 25% 22%/var(--tw-bg-opacity,1))}.bg-primary{--tw-bg-opacity:1;background-color:hsl(240 100% 65%/var(--tw-bg-opacity,1))}.bg-primary\/25{background-color:rgba(77,77,255,.25)}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68/var(--tw-bg-opacity,1))}.bg-surface{--tw-bg-opacity:1;background-color:hsl(222 40% 11%/var(--tw-bg-opacity,1))}.bg-surface\/95{background-color:rgba(17,24,39,.95)}.bg-surface2{--tw-bg-opacity:1;background-color:hsl(222 36% 15%/var(--tw-bg-opacity,1))}.bg-whatsapp{--tw-bg-opacity:1;background-color:hsl(142 70% 45%/var(--tw-bg-opacity,1))}.bg-whatsapp\/15{background-color:rgba(34,195,93,.15)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.bg-gradient-to-tr{background-image:linear-gradient(to top right,var(--tw-gradient-stops))}.from-amber-400{--tw-gradient-from:#fbbf24 var(--tw-gradient-from-position);--tw-gradient-to:rgba(251,191,36,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.from-primary{--tw-gradient-from:#4d4dff var(--tw-gradient-from-position);--tw-gradient-to:rgba(77,77,255,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.to-primary{--tw-gradient-to:#4d4dff var(--tw-gradient-to-position)}.to-primary2{--tw-gradient-to:#7a7aff var(--tw-gradient-to-position)}.p-2{padding:.5rem}.p-3{padding:.75rem}.p-3\.5{padding:.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-\[2\.5px\]{padding:2.5px}.px-1{padding-left:.25rem;padding-right:.25rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0{padding-top:0;padding-bottom:0}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pb-2{padding-bottom:.5rem}.pb-3{padding-bottom:.75rem}.pb-4{padding-bottom:1rem}.pb-\[80px\]{padding-bottom:80px}.pb-\[88px\]{padding-bottom:88px}.pb-\[92px\]{padding-bottom:92px}.ps-3{padding-inline-start:.75rem}.ps-5{padding-inline-start:1.25rem}.pt-1{padding-top:.25rem}.pt-2{padding-top:.5rem}.pt-3{padding-top:.75rem}.pt-4{padding-top:1rem}.pt-5{padding-top:1.25rem}.pt-6{padding-top:1.5rem}.text-center{text-align:center}.text-\[11\.5px\]{font-size:11.5px}.text-\[12px\]{font-size:12px}.text-\[13\.5px\]{font-size:13.5px}.text-\[13px\]{font-size:13px}.text-\[14px\]{font-size:14px}.text-\[15px\]{font-size:15px}.text-\[16px\]{font-size:16px}.text-\[17px\]{font-size:17px}.text-\[18px\]{font-size:18px}.text-\[20px\]{font-size:20px}.text-\[22px\]{font-size:22px}.text-\[24px\]{font-size:24px}.text-lg{font-size:1.125rem}.text-lg,.text-xl{line-height:1.75rem}.text-xl{font-size:1.25rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-normal{font-weight:400}.leading-\[1\.5\]{line-height:1.5}.leading-\[1\.9\]{line-height:1.9}.leading-relaxed{line-height:1.625}.leading-snug{line-height:1.375}.tracking-tight{letter-spacing:-.025em}.text-\[\#1a1f36\]{--tw-text-opacity:1;color:rgb(26 31 54/var(--tw-text-opacity,1))}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36/var(--tw-text-opacity,1))}.text-ink{--tw-text-opacity:1;color:hsl(210 40% 98%/var(--tw-text-opacity,1))}.text-muted{--tw-text-opacity:1;color:hsl(215 20% 70%/var(--tw-text-opacity,1))}.text-primary2{--tw-text-opacity:1;color:hsl(240 100% 74%/var(--tw-text-opacity,1))}.text-whatsapp{--tw-text-opacity:1;color:hsl(142 70% 45%/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.shadow-lg{--tw-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-primary{--tw-shadow-color:#4d4dff;--tw-shadow:var(--tw-shadow-colored)}.ring{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.invert{--tw-invert:invert(100%)}.filter,.invert{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-200{transition-duration:.2s}.duration-300{transition-duration:.3s}.placeholder\:text-muted::-moz-placeholder{--tw-text-opacity:1;color:hsl(215 20% 70%/var(--tw-text-opacity,1))}.placeholder\:text-muted::placeholder{--tw-text-opacity:1;color:hsl(215 20% 70%/var(--tw-text-opacity,1))}.rtl\:translate-x-\[100\%\]:where([dir=rtl],[dir=rtl] *){--tw-translate-x:100%;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}
+  html{background:hsl(222 47% 7%)}
+  body{font-family:Tajawal,system-ui,sans-serif}
+  .no-scrollbar::-webkit-scrollbar{display:none}
+  .no-scrollbar{scrollbar-width:none}
+  .ico{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .ph{background:linear-gradient(135deg,hsl(222 40% 16%),hsl(240 50% 22%))}
+  #nav-drawer{transform:translateX(-100%)}
+  [dir=rtl] #nav-drawer{transform:translateX(100%)}
+
+</style>
+</head>
+<body class="bg-bg text-ink text-[16px] leading-[1.9] pb-[92px]"><!-- pb = BottomNav height + safe area -->
+
+<a href="#main" class="sr-only">تخطى إلى المحتوى الرئيسي</a>
+
+<!-- ============ <SiteHeader> : sticky, 56px, hamburger de-emphasized (secondary links only) ============ -->
+<header class="sticky top-0 z-40 h-16 bg-bg/90 backdrop-blur border-b border-line flex items-center gap-2 px-3">
+  <div class="flex items-center gap-1.5 shrink-0">
+    <span class="text-xl font-extrabold tracking-tight">مدونتي</span>
+    <span class="w-2 h-2 rounded-full bg-primary inline-block"></span>
+  </div>
+  <!-- Search capsule: TWO separate targets in one pill.
+       Right zone → /search (search page). Left zone ✦ → opens AI chat SHEET (suggested questions + conversation), like live site.
+       Divider between them; each target ≥44px. -->
+  <div class="flex-1 h-11 rounded-chip bg-surface border border-line flex items-center min-w-0 overflow-hidden">
+    <a href="/search" role="search" class="flex-1 h-full flex items-center gap-2 px-3 text-muted min-w-0">
+      <svg class="ico w-5 h-5 shrink-0" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <span class="text-[13px] truncate">ابحث في مدونتي...</span>
+    </a>
+    <span class="w-px h-6 bg-line shrink-0" aria-hidden="true"></span>
+    <button aria-label="مساعد مدونتي الذكي" data-opens="ai-chat-sheet" class="h-full px-3 flex items-center gap-1 text-primary2 shrink-0">
+      <svg class="ico w-5 h-5" viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.9 2.3 2.3.9-2.3.9L19 21.4l-.9-2.3-2.3-.9 2.3-.9z"/></svg>
+      <span class="text-[13px] font-bold">اسأل</span>
+    </button>
+  </div>
+  <!-- burger: الرائجة، الصناعات، المزايا، عن مدونتي، الموثوقية، المساعدة، القانونية، بوابة العملاء + ALL footer links + social — burger is the daily access, footer kept compact for convention/SEO -->
+  <button aria-label="القائمة" id="burger-btn" aria-controls="nav-drawer" aria-expanded="false" class="w-11 h-11 -me-1 flex items-center justify-center text-muted shrink-0">
+    <svg class="ico w-6 h-6" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+</header>
+
+<main id="main">
+<h1 class="sr-only">حسابي — مدونتي</h1>
+
+<!-- ============ GUEST STATE (default) ============ -->
+<div id="guest">
+  <section class="mx-4 mt-5 rounded-card bg-featured border border-primary/40 p-5 text-center">
+    <div class="w-16 h-16 rounded-full bg-surface2 border border-line mx-auto mb-3 flex items-center justify-center">
+      <svg class="ico w-8 h-8 text-muted" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+    </div>
+    <h2 class="text-[18px] font-extrabold mb-1">سجّل مجانًا في مدونتي</h2>
+    <p class="text-[13.5px] text-muted mb-4">احفظ المقالات، تابع عملاءك المفضلين، واستقبل نشرة تخصصك</p>
+    <button onclick="openLogin()" class="w-full h-12 rounded-chip bg-primary text-white text-[15px] font-bold">تسجيل الدخول / حساب جديد</button>
+  </section>
+
+  <section class="px-4 pt-5">
+    <h2 class="text-[15px] font-bold mb-2 text-muted">ماذا تستفيد من الحساب؟</h2>
+    <div class="bg-surface border border-line rounded-card divide-y divide-line">
+      <div class="flex items-center gap-3 px-4 h-13 py-3"><svg class="ico w-5 h-5 text-primary2 shrink-0" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg><span class="text-[14px]">حفظ المقالات والرجوع لها من أي جهاز</span></div>
+      <div class="flex items-center gap-3 px-4 h-13 py-3"><svg class="ico w-5 h-5 text-primary2 shrink-0" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="text-[14px]">متابعة العملاء والقطاعات التي تهمك</span></div>
+      <div class="flex items-center gap-3 px-4 h-13 py-3"><svg class="ico w-5 h-5 text-primary2 shrink-0" viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg><span class="text-[14px]">نشرة أسبوعية حسب تخصصك</span></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ LOGGED-IN STATE ============ -->
+<div id="member" class="hidden">
+  <section class="px-4 pt-5 flex items-center gap-3">
+    <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-primary to-primary2 flex items-center justify-center text-[22px] font-extrabold text-white shrink-0">خ</div>
+    <div class="flex-1 min-w-0">
+      <h2 class="text-[18px] font-extrabold">خالد</h2>
+      <p class="text-[13px] text-muted truncate">modonty1@gmail.com</p>
+    </div>
+    <button onclick="logout()" class="h-11 px-3 rounded-chip border border-line text-[13px] text-muted shrink-0">خروج</button>
+  </section>
+
+  <section class="px-4 pt-5">
+    <div class="grid grid-cols-2 gap-3">
+      <a href="#" class="bg-surface border border-line rounded-card p-4 text-center">
+        <div class="text-[20px] font-extrabold text-primary2">١٢</div>
+        <div class="text-[13px] text-muted">مقالًا محفوظًا</div>
+      </a>
+      <a href="#" class="bg-surface border border-line rounded-card p-4 text-center">
+        <div class="text-[20px] font-extrabold text-primary2">٥</div>
+        <div class="text-[13px] text-muted">أتابعهم</div>
+      </a>
+    </div>
+  </section>
+
+  <section class="px-4 pt-4">
+    <h2 class="text-[15px] font-bold mb-2 text-muted">آخر محفوظاتك</h2>
+    <a href="#" class="flex gap-3 items-center bg-surface border border-line rounded-card p-3 mb-2">
+      <div class="ph w-12 h-12 rounded-card shrink-0"></div>
+      <div class="min-w-0"><p class="text-[14px] font-bold line-clamp-1">علاج الانزلاق الغضروفي بدون جراحة</p><p class="text-[12px] text-muted">عيادة MBC</p></div>
+    </a>
+    <a href="#" class="flex gap-3 items-center bg-surface border border-line rounded-card p-3">
+      <div class="ph w-12 h-12 rounded-card shrink-0"></div>
+      <div class="min-w-0"><p class="text-[14px] font-bold line-clamp-1">اكتشف الأخطاء التي تمنع وصول سيرتك الذاتية</p><p class="text-[12px] text-muted">بسيطة</p></div>
+    </a>
+  </section>
+</div>
+
+<!-- ============ SETTINGS (both states) ============ -->
+<section class="px-4 pt-5 pb-2">
+  <h2 class="text-[15px] font-bold mb-2 text-muted">الإعدادات</h2>
+  <div class="bg-surface border border-line rounded-card divide-y divide-line">
+    <button onclick="toggleTheme()" class="w-full flex items-center justify-between px-4 h-13 py-3">
+      <span class="flex items-center gap-3"><svg class="ico w-5 h-5 text-muted" viewBox="0 0 24 24"><path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/></svg><span class="text-[14px]">المظهر</span></span>
+      <span id="themeLabel" class="text-[13px] text-primary2">داكن</span>
+    </button>
+    <div class="flex items-center justify-between px-4 h-13 py-3">
+      <span class="flex items-center gap-3"><svg class="ico w-5 h-5 text-muted" viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg><span class="text-[14px]">النشرة البريدية</span></span>
+      <button id="nlToggle" onclick="toggleNl(event)" class="w-12 h-7 rounded-full bg-primary relative transition-colors"><span class="absolute top-1 start-6 w-5 h-5 rounded-full bg-white transition-all"></span></button>
+    </div>
+    <a href="/features" class="flex items-center gap-3 px-4 h-13 py-3 text-[14px]"><svg class="ico w-5 h-5 text-muted" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.6.7-5 4.5 1.4 6.5L12 16.7 6.1 20l1.4-6.5-5-4.5 6.6-.7z"/></svg>مزايا مدونتي</a>
+    <a href="/trending" class="flex items-center gap-3 px-4 h-13 py-3 text-[14px]"><svg class="ico w-5 h-5 text-muted" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>المقالات الرائجة</a>
+    <a href="https://console.modonty.com" class="flex items-center gap-3 px-4 h-13 py-3 text-[14px] text-primary2"><svg class="ico w-5 h-5" viewBox="0 0 24 24"><path d="M3 21V7l9-4 9 4v14"/><path d="M9 21v-6h6v6"/></svg>بوابة العملاء ↗</a>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ <LoginSheet> : unified login/signup (also the moment-of-need sheet) ============ -->
+<div id="lscrim" onclick="closeLogin()" class="fixed inset-0 z-40 bg-black/55 hidden"></div>
+<div id="lsheet" role="dialog" aria-label="تسجيل الدخول" class="fixed inset-x-0 bottom-0 z-50 bg-surface border-t border-line rounded-t-2xl p-5 translate-y-full transition-transform duration-300" style="padding-bottom:calc(20px + env(safe-area-inset-bottom))">
+  <div class="w-11 h-1.5 rounded-full bg-line mx-auto mb-4"></div>
+  <h2 class="text-[18px] font-extrabold mb-1 text-center">أهلًا بك في مدونتي</h2>
+  <p class="text-[13.5px] text-muted text-center mb-4">حساب واحد للدخول والتسجيل — بدون كلمة مرور، رمز يوصلك على بريدك</p>
+  <input type="email" placeholder="بريدك الإلكتروني" class="w-full h-13 py-3 rounded-card bg-bg border border-line px-4 text-[15px] mb-3 placeholder:text-muted text-ink" style="height:52px">
+  <button onclick="fakeLogin()" class="w-full h-13 rounded-chip bg-primary text-white text-[15px] font-bold mb-3" style="height:52px">متابعة</button>
+  <div class="flex items-center gap-3 mb-3"><span class="flex-1 h-px bg-line"></span><span class="text-[12px] text-muted">أو</span><span class="flex-1 h-px bg-line"></span></div>
+  <button onclick="fakeLogin()" class="w-full h-13 rounded-chip bg-white text-[#1a1f36] text-[15px] font-bold flex items-center justify-center gap-2" style="height:52px">
+    <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.1 29.4 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.7l6.2 5.2C41 35.2 44 30 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>
+    المتابعة بحساب Google
+  </button>
+  <p class="text-[11.5px] text-muted text-center mt-3">بالمتابعة أنت توافق على <a href="/terms" class="text-primary2">الشروط</a> و<a href="/legal/privacy-policy" class="text-primary2">سياسة الخصوصية</a></p>
+</div>
+
+<script>
+function openLogin(){ document.getElementById('lscrim').classList.remove('hidden');
+  document.getElementById('lsheet').style.transform='translateY(0)'; }
+function closeLogin(){ document.getElementById('lscrim').classList.add('hidden');
+  document.getElementById('lsheet').style.transform=''; }
+function fakeLogin(){ closeLogin();
+  document.getElementById('guest').classList.add('hidden');
+  document.getElementById('member').classList.remove('hidden'); }
+function logout(){ document.getElementById('member').classList.add('hidden');
+  document.getElementById('guest').classList.remove('hidden'); }
+function toggleNl(e){ const b=e.currentTarget, on=b.classList.toggle('bg-primary');
+  b.classList.toggle('bg-line', !on);
+  const k=b.querySelector('span'); k.classList.toggle('start-6', on); k.classList.toggle('start-1', !on); }
+/* light-mode demo: swaps CSS variables live */
+let dark=true;
+function toggleTheme(){
+  dark=!dark;
+  const r=document.documentElement.style;
+  if(!dark){
+    r.setProperty('--tw-bg-op','1');
+    document.body.style.setProperty('filter','invert(0)');
+    setVars({bg:'#f3f2ef',surface:'#ffffff',surface2:'#f5f4f1',line:'#e0e0de',ink:'#111318',muted:'#5a6178'});
+    document.getElementById('themeLabel').textContent='فاتح';
+  } else {
+    setVars({bg:'hsl(222 47% 7%)',surface:'hsl(222 40% 11%)',surface2:'hsl(222 36% 15%)',line:'hsl(222 25% 22%)',ink:'hsl(210 40% 98%)',muted:'hsl(215 20% 70%)'});
+    document.getElementById('themeLabel').textContent='داكن';
+  }
+}
+function setVars(v){
+  // remap tailwind color classes by patching a style tag
+  let s=document.getElementById('theme-override');
+  if(!s){ s=document.createElement('style'); s.id='theme-override'; document.head.appendChild(s); }
+  s.textContent=`
+    html{background:${v.bg} !important}
+    .bg-bg{background-color:${v.bg} !important}
+    .bg-surface{background-color:${v.surface} !important}
+    .bg-surface2{background-color:${v.surface2} !important}
+    .bg-surface\\/95{background-color:${v.surface}f2 !important}
+    .border-line,.divide-line>:not([hidden])~:not([hidden]){border-color:${v.line} !important}
+    .text-ink{color:${v.ink} !important}
+    body{color:${v.ink} !important}
+    .text-muted{color:${v.muted} !important}
+  `;
+}
+</script>
+
+<!-- ============ <BottomNav> : M3 navigation bar spec — 80dp, 5 equal destinations,
+     active indicator pill 56x32 (secondary container), icons 24dp, labels 13px (V3 min > M3 12sp).
+     No FAB-in-bar (not in M3 spec). Modonty tab: star icon + M3 small dot badge when fresh content. ============ -->
+<nav aria-label="التنقل الرئيسي" class="fixed bottom-0 inset-x-0 z-30 h-20 bg-surface/95 backdrop-blur border-t border-line grid grid-cols-5 items-center" style="padding-bottom:env(safe-area-inset-bottom)">
+  <a href="/" class="flex flex-col items-center justify-center gap-1 h-full text-muted">
+    <span class="w-14 h-8 flex items-center justify-center">
+      <svg class="ico w-6 h-6" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2z"/></svg>
+    </span>
+    <span class="text-[13px]">الرئيسية</span>
+  </a>
+  <a href="/clients" class="flex flex-col items-center justify-center gap-1 h-full text-muted">
+    <span class="w-14 h-8 flex items-center justify-center">
+      <svg class="ico w-6 h-6" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M21 21v-2a4 4 0 0 0-3-3.9"/><path d="M15 3.1a4 4 0 0 1 0 7.8"/></svg>
+    </span>
+    <span class="text-[13px]">العملاء</span>
+  </a>
+  <a href="/modonty" class="flex flex-col items-center justify-center gap-1 h-full text-muted">
+    <span class="w-14 h-8 flex items-center justify-center relative">
+      <svg class="ico w-6 h-6 text-amber-400" viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><path d="M12 2l2.9 6.3 6.6.7-5 4.5 1.4 6.5L12 16.7 6.1 20l1.4-6.5-5-4.5 6.6-.7z"/></svg>
+      <span class="absolute top-0 end-2.5 w-2 h-2 rounded-full bg-red-500" aria-label="محتوى جديد"></span>
+    </span>
+    <span class="text-[13px] font-medium">مدونتي</span>
+  </a>
+  <a href="/reels" class="flex flex-col items-center justify-center gap-1 h-full text-muted">
+    <span class="w-14 h-8 flex items-center justify-center">
+      <svg class="ico w-6 h-6" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M10 9l5 3-5 3z"/></svg>
+    </span>
+    <span class="text-[13px]">لقطات</span>
+  </a>
+  <a href="/account" aria-current="page" class="flex flex-col items-center justify-center gap-1 h-full">
+    <span class="w-14 h-8 rounded-full bg-primary/25 flex items-center justify-center">
+      <svg class="ico w-6 h-6 text-primary2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+    </span>
+    <span class="text-[13px] font-bold text-primary2">حسابي</span>
+  </a>
+</nav>
+
+
+<!-- ============ <NavDrawer> : M3 modal navigation drawer (start edge / right in RTL) — opened by burger ============ -->
+<div id="drawer-scrim" class="fixed inset-0 z-40 bg-black/50 hidden" aria-hidden="true"></div>
+<aside id="nav-drawer" role="dialog" aria-label="القائمة الرئيسية" class="fixed top-0 bottom-0 end-0 w-[300px] max-w-[85vw] z-50 bg-surface border-s border-line translate-x-[-100%] rtl:translate-x-[100%] transition-transform duration-200 overflow-y-auto hidden">
+  <div class="flex items-center justify-between p-4 border-b border-line">
+    <div class="flex items-center gap-1.5">
+      <span class="text-lg font-extrabold">مدونتي</span>
+      <span class="w-2 h-2 rounded-full bg-primary inline-block"></span>
+    </div>
+    <button id="drawer-close" aria-label="إغلاق" class="w-11 h-11 flex items-center justify-center text-muted">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+
+  <nav class="p-2" aria-label="تصفح">
+    <a href="/trending" class="flex items-center gap-3 h-12 px-3 rounded-card text-ink">
+      <svg class="ico w-5 h-5 text-muted" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+      <span class="text-[15px]">الرائجة</span>
+    </a>
+    <a href="/industries" class="flex items-center gap-3 h-12 px-3 rounded-card text-ink">
+      <svg class="ico w-5 h-5 text-muted" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      <span class="text-[15px]">الصناعات</span>
+    </a>
+    <a href="/features" class="flex items-center gap-3 h-12 px-3 rounded-card text-ink">
+      <svg class="ico w-5 h-5 text-muted" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.6.7-5 4.5 1.4 6.5L12 16.7 6.1 20l1.4-6.5-5-4.5 6.6-.7z"/></svg>
+      <span class="text-[15px]">المزايا</span>
+    </a>
+  </nav>
+
+  <div class="border-t border-line mx-4"></div>
+  <nav class="p-2" aria-label="عن المنصة">
+    <a href="/about" class="flex items-center h-12 px-3 rounded-card text-[15px] text-ink">عن مدونتي</a>
+    <a href="/trust" class="flex items-center h-12 px-3 rounded-card text-[15px] text-ink">الموثوقية</a>
+    <a href="/help" class="flex items-center h-12 px-3 rounded-card text-[15px] text-ink">المساعدة</a>
+    <a href="https://console.modonty.com" class="flex items-center justify-between h-12 px-3 rounded-card text-[15px] text-primary2">بوابة العملاء
+      <svg class="ico w-4 h-4" viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg>
+    </a>
+  </nav>
+
+  <div class="border-t border-line mx-4"></div>
+  <nav class="p-2" aria-label="قانوني">
+    <a href="/terms" class="flex items-center h-11 px-3 rounded-card text-[14px] text-muted">الشروط والأحكام</a>
+    <a href="/legal/privacy-policy" class="flex items-center h-11 px-3 rounded-card text-[14px] text-muted">سياسة الخصوصية</a>
+    <a href="/legal/user-agreement" class="flex items-center h-11 px-3 rounded-card text-[14px] text-muted">اتفاقية المستخدم</a>
+    <a href="/legal/copyright-policy" class="flex items-center h-11 px-3 rounded-card text-[14px] text-muted">سياسة حقوق النشر</a>
+  </nav>
+
+  <div class="p-4 border-t border-line mt-2">
+    <div class="flex gap-2" aria-label="تابعنا">
+      <a href="#" aria-label="تيك توك" class="w-11 h-11 rounded-full bg-bg border border-line flex items-center justify-center text-muted"><svg class="ico w-5 h-5" viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><path d="M16.6 3c.4 2.1 1.8 3.5 3.9 3.8v3c-1.5 0-2.9-.5-3.9-1.3v6.4c0 3.6-2.6 6.1-6 6.1-3.2 0-5.8-2.4-5.8-5.7 0-3.2 2.5-5.8 5.9-5.7v3.1c-1.6-.2-2.9 1-2.9 2.6 0 1.5 1.2 2.7 2.8 2.7 1.7 0 3-1.3 3-3.2V3z"/></svg></a>
+      <a href="#" aria-label="إنستغرام" class="w-11 h-11 rounded-full bg-bg border border-line flex items-center justify-center text-muted"><svg class="ico w-5 h-5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" style="fill:currentColor"/></svg></a>
+      <a href="#" aria-label="إكس" class="w-11 h-11 rounded-full bg-bg border border-line flex items-center justify-center text-muted"><svg class="ico w-5 h-5" viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><path d="M4 3h4.6l4.2 5.9L17.9 3H21l-6.7 7.9L21.4 21h-4.6l-4.6-6.5L6.4 21H3.2l7.2-8.5z"/></svg></a>
+      <a href="#" aria-label="لينكد إن" class="w-11 h-11 rounded-full bg-bg border border-line flex items-center justify-center text-muted"><svg class="ico w-5 h-5" viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><path d="M5 3.5A1.8 1.8 0 1 1 5 7a1.8 1.8 0 0 1 0-3.5zM3.6 8.6h2.9V20.5H3.6zM9 8.6h2.8v1.6c.6-1 1.8-1.9 3.6-1.9 2.7 0 4.4 1.7 4.4 5v7.2h-2.9v-6.7c0-1.8-.7-2.9-2.2-2.9-1.5 0-2.4 1-2.4 2.9v6.7H9z"/></svg></a>
+      <a href="#" aria-label="فيسبوك" class="w-11 h-11 rounded-full bg-bg border border-line flex items-center justify-center text-muted"><svg class="ico w-5 h-5" viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><path d="M13.5 21v-7h2.4l.4-3h-2.8V9.1c0-.9.3-1.5 1.6-1.5h1.3V4.9c-.2 0-1-.1-1.9-.1-2.4 0-4 1.4-4 4V11H8.1v3h2.4v7z"/></svg></a>
+    </div>
+    <p class="text-[12px] text-muted mt-4">© ٢٠٢٦ مدونتي، جميع الحقوق محفوظة</p>
+  </div>
+</aside>
+
+<script>
+(function(){
+  var btn = document.getElementById('burger-btn'),
+      drawer = document.getElementById('nav-drawer'),
+      scrim = document.getElementById('drawer-scrim'),
+      close = document.getElementById('drawer-close');
+  function open(){ drawer.classList.remove('hidden'); scrim.classList.remove('hidden');
+    requestAnimationFrame(function(){ drawer.style.transform='translateX(0)'; });
+    btn.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; }
+  function shut(){ drawer.style.transform=''; scrim.classList.add('hidden');
+    setTimeout(function(){ drawer.classList.add('hidden'); },200);
+    btn.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+  btn.addEventListener('click', open);
+  close.addEventListener('click', shut);
+  scrim.addEventListener('click', shut);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') shut(); });
+})();
+</script>
+
+</body>
+</html>

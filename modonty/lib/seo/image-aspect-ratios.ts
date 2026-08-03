@@ -14,15 +14,25 @@
  * @see https://developers.google.com/search/docs/appearance/structured-data/article
  */
 
+import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl } from "@modonty/database/lib/bunny";
+
 const ASPECT_RATIOS = ["1:1", "4:3", "16:9"] as const;
 
 export type AspectRatio = (typeof ASPECT_RATIOS)[number];
+
+/** Bunny stores pre-generated crops next to the base image (no on-the-fly crop like Cloudinary). */
+function isBunnyImage(url: string): boolean {
+  return url.includes(".b-cdn.net");
+}
 
 /**
  * Build a single Cloudinary transformation URL for a specific aspect ratio.
  * Returns the original URL if not Cloudinary.
  */
 export function buildAspectRatioUrl(url: string, aspectRatio: AspectRatio, width = 1200): string {
+  if (url && isBunnyImage(url)) {
+    return bunnyAspectUrl(url, BUNNY_ASPECT_SUFFIX[aspectRatio]);
+  }
   if (!url || !url.includes("res.cloudinary.com") || !url.includes("/upload/")) {
     return url;
   }
@@ -42,6 +52,9 @@ export function buildAspectRatioUrl(url: string, aspectRatio: AspectRatio, width
  */
 export function buildAspectRatiosArray(url: string | null | undefined, width = 1200): string[] {
   if (!url) return [];
+  if (isBunnyImage(url)) {
+    return ASPECT_RATIOS.map((ar) => bunnyAspectUrl(url, BUNNY_ASPECT_SUFFIX[ar]));
+  }
   if (!url.includes("res.cloudinary.com") || !url.includes("/upload/")) {
     return [url];
   }
@@ -74,6 +87,17 @@ export function buildArticleImageObjects(
   fallbackDims?: { width?: number | null; height?: number | null },
 ): ArticleImageObject[] {
   if (!url) return [];
+  if (isBunnyImage(url)) {
+    return ASPECT_RATIOS.map((ar) => {
+      const dims = RATIO_DIMS[ar];
+      return {
+        "@type": "ImageObject" as const,
+        url: bunnyAspectUrl(url, BUNNY_ASPECT_SUFFIX[ar]),
+        width,
+        height: Math.round((width * dims.h) / dims.w),
+      };
+    });
+  }
   if (!url.includes("res.cloudinary.com") || !url.includes("/upload/")) {
     const w = fallbackDims?.width ?? undefined;
     const h = fallbackDims?.height ?? undefined;

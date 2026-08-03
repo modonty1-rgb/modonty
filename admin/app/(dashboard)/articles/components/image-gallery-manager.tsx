@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 import type { GalleryFormItem } from "@/lib/types/form-types";
 import { ImageSeoStrip } from "./image-seo-strip";
 
+import { mediaSrc } from "@modonty/database/lib/media-src";
+
 interface ImageGalleryManagerProps {
   clientId: string | null;
   gallery: GalleryFormItem[];
@@ -30,6 +32,7 @@ export function ImageGalleryManager({
 
   const handleAddImage = (media: {
     url: string;
+    bunnyUrl: string | null;
     altText: string | null;
     mediaId: string;
     width?: number | null;
@@ -51,6 +54,7 @@ export function ImageGalleryManager({
       media: {
         id: media.mediaId,
         url: media.url,
+        bunnyUrl: media.bunnyUrl ?? null,
         altText: media.altText || null,
         width: media.width || null,
         height: media.height || null,
@@ -152,7 +156,7 @@ export function ImageGalleryManager({
                 <div className="group relative aspect-video overflow-hidden rounded-md border bg-muted">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={item.media.url}
+                    src={mediaSrc(item.media) ?? item.media.url}
                     alt={item.altText || item.media.altText || ""}
                     className="absolute inset-0 h-full w-full object-cover transition-transform group-hover:scale-105"
                     loading="lazy"

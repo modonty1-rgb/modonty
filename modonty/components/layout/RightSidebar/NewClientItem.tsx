@@ -1,7 +1,9 @@
+import Image from "next/image";
+
 import Link from "@/components/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { IconFilter } from "@/lib/icons";
+import { stripCloudinaryTransforms } from "@/lib/image-utils";
 import { cn } from "@/lib/utils";
 import { PartnerRow } from "./PartnerRow";
 
@@ -14,22 +16,37 @@ interface NewClientItemProps {
 }
 
 export function NewClientItem({ clientName, clientSlug, clientLogo, industry, articleCount = 0 }: NewClientItemProps) {
+  // next/image (not Radix Avatar): Radix probes every logo via `new Image()` on hydration,
+  // which ignores loading="lazy" + display:none — so all sidebar logos fetched full-size on
+  // mobile (hidden lg:block) and competed with the LCP. next/image is truly lazy (respects the
+  // hidden container) and serves a 28px AVIF. Strip baked-in w_auto so Next resizes cleanly.
+  const logoSrc = stripCloudinaryTransforms(clientLogo);
+
   return (
-    <PartnerRow slug={clientSlug}>
+    <PartnerRow>
       {/* Primary action — visit the partner profile */}
       <Link href={`/clients/${clientSlug}`} className="flex flex-1 min-w-0 items-start gap-3 py-1 px-1">
-        <Avatar className={cn("h-7 w-7 shrink-0 overflow-hidden mt-0.5", BRAND_AVATAR_RADIUS)}>
-          <AvatarImage
-            src={clientLogo}
-            alt={clientName}
-            className="object-cover"
-            loading="lazy"
-            decoding="async"
-          />
-          <AvatarFallback className={cn("text-[10px] font-medium bg-primary text-primary-foreground", BRAND_AVATAR_RADIUS)}>
-            {clientName?.slice(0, 1) ?? "?"}
-          </AvatarFallback>
-        </Avatar>
+        <div
+          className={cn(
+            "relative h-7 w-7 shrink-0 overflow-hidden mt-0.5 flex items-center justify-center bg-primary text-primary-foreground",
+            BRAND_AVATAR_RADIUS
+          )}
+        >
+          {logoSrc ? (
+            <Image
+              src={logoSrc}
+              alt={clientName}
+              width={28}
+              height={28}
+              sizes="28px"
+              quality={75}
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <span className="text-[10px] font-medium">{clientName?.slice(0, 1) ?? "?"}</span>
+          )}
+        </div>
         <div className="flex-1 min-w-0">
           <p className="text-xs font-medium text-foreground break-words">{clientName}</p>
           {industry && (

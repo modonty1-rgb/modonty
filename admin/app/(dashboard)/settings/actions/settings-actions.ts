@@ -49,6 +49,7 @@ export interface MediaSettings {
   logoIconUrl: string | null;
   ogImageUrl: string | null;
   altImage: string | null;
+  certificateImageUrl: string | null;
 }
 
 export interface ModontySettings {
@@ -64,8 +65,6 @@ export interface ModontySettings {
   tagsSeoDescription: string | null;
   industriesSeoTitle: string | null;
   industriesSeoDescription: string | null;
-  articlesSeoTitle: string | null;
-  articlesSeoDescription: string | null;
   b2bLabel: string | null;
   b2bHeadline: string | null;
   b2bBullet1: string | null;
@@ -112,10 +111,6 @@ export interface SettingsGeneratedSeo {
   industriesPageJsonLdStructuredData: string | null;
   industriesPageJsonLdLastGenerated: Date | null;
   industriesPageJsonLdValidationReport: Record<string, unknown> | null;
-  articlesPageMetaTags: Record<string, unknown> | null;
-  articlesPageJsonLdStructuredData: string | null;
-  articlesPageJsonLdLastGenerated: Date | null;
-  articlesPageJsonLdValidationReport: Record<string, unknown> | null;
 }
 
 export interface SiteOrgSettings {
@@ -169,7 +164,6 @@ export interface SiteOrgSettings {
   orgGeoLatitude: number | null;
   orgGeoLongitude: number | null;
   orgSearchUrlTemplate: string | null;
-  orgLogoUrl: string | null;
 }
 
 export interface ListingPageImages {
@@ -267,11 +261,11 @@ const DEFAULT_SETTINGS: AllSettings = {
   orgGeoLatitude: null,
   orgGeoLongitude: null,
   orgSearchUrlTemplate: null,
-  orgLogoUrl: null,
   logoUrl: null,
   logoIconUrl: null,
   ogImageUrl: null,
   altImage: null,
+  certificateImageUrl: null,
   modontySeoTitle: null,
   modontySeoDescription: null,
   clientsSeoTitle: null,
@@ -284,8 +278,6 @@ const DEFAULT_SETTINGS: AllSettings = {
   tagsSeoDescription: null,
   industriesSeoTitle: null,
   industriesSeoDescription: null,
-  articlesSeoTitle: null,
-  articlesSeoDescription: null,
   jsonLdStructuredData: null,
   jsonLdLastGenerated: null,
   jsonLdValidationReport: null,
@@ -310,10 +302,6 @@ const DEFAULT_SETTINGS: AllSettings = {
   industriesPageJsonLdStructuredData: null,
   industriesPageJsonLdLastGenerated: null,
   industriesPageJsonLdValidationReport: null,
-  articlesPageMetaTags: null,
-  articlesPageJsonLdStructuredData: null,
-  articlesPageJsonLdLastGenerated: null,
-  articlesPageJsonLdValidationReport: null,
   b2bLabel: null,
   b2bHeadline: null,
   b2bBullet1: null,
@@ -461,11 +449,11 @@ export async function getAllSettings(): Promise<AllSettings> {
         orgGeoLatitude: newSettings.orgGeoLatitude,
         orgGeoLongitude: newSettings.orgGeoLongitude,
         orgSearchUrlTemplate: newSettings.orgSearchUrlTemplate,
-        orgLogoUrl: newSettings.orgLogoUrl,
         logoUrl: newSettings.logoUrl,
         logoIconUrl: newSettings.logoIconUrl,
         ogImageUrl: newSettings.ogImageUrl,
         altImage: newSettings.altImage,
+        certificateImageUrl: newSettings.certificateImageUrl,
         modontySeoTitle: newSettings.modontySeoTitle,
         modontySeoDescription: newSettings.modontySeoDescription,
         clientsSeoTitle: (newSettings as Record<string, unknown>).clientsSeoTitle as string | null,
@@ -478,8 +466,6 @@ export async function getAllSettings(): Promise<AllSettings> {
         tagsSeoDescription: (newSettings as Record<string, unknown>).tagsSeoDescription as string | null,
         industriesSeoTitle: (newSettings as Record<string, unknown>).industriesSeoTitle as string | null,
         industriesSeoDescription: (newSettings as Record<string, unknown>).industriesSeoDescription as string | null,
-        articlesSeoTitle: (newSettings as Record<string, unknown>).articlesSeoTitle as string | null,
-        articlesSeoDescription: (newSettings as Record<string, unknown>).articlesSeoDescription as string | null,
         b2bLabel: newSettings.b2bLabel,
         b2bHeadline: newSettings.b2bHeadline,
         b2bBullet1: newSettings.b2bBullet1,
@@ -519,10 +505,6 @@ export async function getAllSettings(): Promise<AllSettings> {
         industriesPageJsonLdStructuredData: ((newSettings as Record<string, unknown>).industriesPageJsonLdStructuredData ?? null) as string | null,
         industriesPageJsonLdLastGenerated: ((newSettings as Record<string, unknown>).industriesPageJsonLdLastGenerated ?? null) as Date | null,
         industriesPageJsonLdValidationReport: ((newSettings as Record<string, unknown>).industriesPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
-        articlesPageMetaTags: ((newSettings as Record<string, unknown>).articlesPageMetaTags ?? null) as Record<string, unknown> | null,
-        articlesPageJsonLdStructuredData: ((newSettings as Record<string, unknown>).articlesPageJsonLdStructuredData ?? null) as string | null,
-        articlesPageJsonLdLastGenerated: ((newSettings as Record<string, unknown>).articlesPageJsonLdLastGenerated ?? null) as Date | null,
-        articlesPageJsonLdValidationReport: ((newSettings as Record<string, unknown>).articlesPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
       };
     }
 
@@ -602,11 +584,11 @@ export async function getAllSettings(): Promise<AllSettings> {
       orgGeoLatitude: settings.orgGeoLatitude,
       orgGeoLongitude: settings.orgGeoLongitude,
       orgSearchUrlTemplate: settings.orgSearchUrlTemplate,
-      orgLogoUrl: settings.orgLogoUrl,
       logoUrl: settings.logoUrl,
       logoIconUrl: settings.logoIconUrl,
       ogImageUrl: settings.ogImageUrl,
       altImage: settings.altImage,
+      certificateImageUrl: settings.certificateImageUrl,
       modontySeoTitle: settings.modontySeoTitle,
       modontySeoDescription: settings.modontySeoDescription,
       clientsSeoTitle: (settings as Record<string, unknown>).clientsSeoTitle as string | null ?? null,
@@ -619,8 +601,6 @@ export async function getAllSettings(): Promise<AllSettings> {
       tagsSeoDescription: (settings as Record<string, unknown>).tagsSeoDescription as string | null ?? null,
       industriesSeoTitle: (settings as Record<string, unknown>).industriesSeoTitle as string | null ?? null,
       industriesSeoDescription: (settings as Record<string, unknown>).industriesSeoDescription as string | null ?? null,
-      articlesSeoTitle: (settings as Record<string, unknown>).articlesSeoTitle as string | null ?? null,
-      articlesSeoDescription: (settings as Record<string, unknown>).articlesSeoDescription as string | null ?? null,
       b2bLabel: settings.b2bLabel,
       b2bHeadline: settings.b2bHeadline,
       b2bBullet1: settings.b2bBullet1,
@@ -660,10 +640,6 @@ export async function getAllSettings(): Promise<AllSettings> {
       industriesPageJsonLdStructuredData: ((settings as Record<string, unknown>).industriesPageJsonLdStructuredData ?? null) as string | null,
       industriesPageJsonLdLastGenerated: ((settings as Record<string, unknown>).industriesPageJsonLdLastGenerated ?? null) as Date | null,
       industriesPageJsonLdValidationReport: ((settings as Record<string, unknown>).industriesPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
-      articlesPageMetaTags: ((settings as Record<string, unknown>).articlesPageMetaTags ?? null) as Record<string, unknown> | null,
-      articlesPageJsonLdStructuredData: ((settings as Record<string, unknown>).articlesPageJsonLdStructuredData ?? null) as string | null,
-      articlesPageJsonLdLastGenerated: ((settings as Record<string, unknown>).articlesPageJsonLdLastGenerated ?? null) as Date | null,
-      articlesPageJsonLdValidationReport: ((settings as Record<string, unknown>).articlesPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
     };
   } catch (error) {
     console.error("Error fetching settings:", error);
@@ -787,7 +763,6 @@ export async function saveOrganizationSettings(data: Partial<Omit<SiteOrgSetting
         orgGeoLatitude: data.orgGeoLatitude,
         orgGeoLongitude: data.orgGeoLongitude,
         orgSearchUrlTemplate: data.orgSearchUrlTemplate,
-        orgLogoUrl: data.orgLogoUrl,
       },
     });
     revalidatePath("/settings");
@@ -859,7 +834,6 @@ export async function saveMediaSettings(data: Partial<MediaSettings>): Promise<{
       data: {
         logoUrl: data.logoUrl,
         logoIconUrl: data.logoIconUrl,
-        orgLogoUrl: data.logoUrl, // always in sync — no separate org logo
         ogImageUrl: data.ogImageUrl,
         altImage: data.altImage,
       },
@@ -892,8 +866,6 @@ export async function saveModontySettings(data: Partial<ModontySettings>): Promi
         tagsSeoDescription: data.tagsSeoDescription,
         industriesSeoTitle: data.industriesSeoTitle,
         industriesSeoDescription: data.industriesSeoDescription,
-        articlesSeoTitle: data.articlesSeoTitle,
-        articlesSeoDescription: data.articlesSeoDescription,
         b2bLabel: data.b2bLabel,
         b2bHeadline: data.b2bHeadline,
         b2bBullet1: data.b2bBullet1,
@@ -1005,7 +977,6 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           orgGeoLatitude: data.orgGeoLatitude,
           orgGeoLongitude: data.orgGeoLongitude,
           orgSearchUrlTemplate: data.orgSearchUrlTemplate,
-          orgLogoUrl: data.orgLogoUrl,
         },
       });
       settings = await db.settings.update({
@@ -1015,6 +986,7 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           logoIconUrl: data.logoIconUrl,
           ogImageUrl: data.ogImageUrl,
           altImage: data.altImage,
+          certificateImageUrl: data.certificateImageUrl,
           modontySeoTitle: data.modontySeoTitle,
           modontySeoDescription: data.modontySeoDescription,
           clientsSeoTitle: data.clientsSeoTitle,
@@ -1053,8 +1025,6 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           tagsSeoDescription: data.tagsSeoDescription,
           industriesSeoTitle: data.industriesSeoTitle,
           industriesSeoDescription: data.industriesSeoDescription,
-          articlesSeoTitle: data.articlesSeoTitle,
-          articlesSeoDescription: data.articlesSeoDescription,
           b2bLabel: data.b2bLabel,
           b2bHeadline: data.b2bHeadline,
           b2bBullet1: data.b2bBullet1,
@@ -1072,10 +1042,6 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           industriesPageJsonLdStructuredData: data.industriesPageJsonLdStructuredData,
           industriesPageJsonLdLastGenerated: data.industriesPageJsonLdLastGenerated,
           industriesPageJsonLdValidationReport: data.industriesPageJsonLdValidationReport as Prisma.InputJsonValue | undefined,
-          articlesPageMetaTags: data.articlesPageMetaTags as Prisma.InputJsonValue | undefined,
-          articlesPageJsonLdStructuredData: data.articlesPageJsonLdStructuredData,
-          articlesPageJsonLdLastGenerated: data.articlesPageJsonLdLastGenerated,
-          articlesPageJsonLdValidationReport: data.articlesPageJsonLdValidationReport as Prisma.InputJsonValue | undefined,
           categoriesPageImage: data.categoriesPageImage,
           categoriesPageImageAlt: data.categoriesPageImageAlt,
           tagsPageImage: data.tagsPageImage,
@@ -1168,7 +1134,6 @@ function siteOrgFromEnv(): Partial<SiteOrgSettings> {
     orgGeoLatitude: lat != null && lat !== "" ? Number(lat) : null,
     orgGeoLongitude: lng != null && lng !== "" ? Number(lng) : null,
     orgSearchUrlTemplate: process.env.NEXT_PUBLIC_ORG_SEARCH_URL_TEMPLATE?.trim() || null,
-    orgLogoUrl: process.env.NEXT_PUBLIC_ORG_LOGO_URL?.trim() || null,
   };
 }
 

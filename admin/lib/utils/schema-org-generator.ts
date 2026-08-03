@@ -9,13 +9,13 @@ export function generateImageObjectSchema(media: Media): object {
   const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "ImageObject",
-    contentUrl: media.url,
+    contentUrl: (media.bunnyUrl ?? media.url),
     encodingFormat: media.encodingFormat || media.mimeType,
   };
 
   // Basic properties
-  if (media.url) {
-    schema.url = media.url;
+  if ((media.bunnyUrl ?? media.url)) {
+    schema.url = (media.bunnyUrl ?? media.url);
   }
   if (media.contentUrl) {
     schema.contentUrl = media.contentUrl;

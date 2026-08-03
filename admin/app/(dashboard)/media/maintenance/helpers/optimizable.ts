@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 // Best-practice ceiling for a web image. Anything heavier — or any non-WebP format —
 // is flagged for the maintenance optimizer. WebP masters average ~130KB in this library.
@@ -6,13 +7,18 @@ export const OVERSIZE_BYTES = 300 * 1024;
 
 export interface OptimizableImage {
   id: string;
+  /** Display source — Bunny when the row already has a copy there (see `mediaSrc`). */
   url: string;
+  /** Original stored url, kept so the optimizer can still identify the source asset. */
+  originalUrl: string;
   filename: string;
   mimeType: string;
   fileSize: number | null;
   width: number | null;
   height: number | null;
   type: string | null;
+  scope: string | null;
+  clientId: string | null;
   clientName: string | null;
   /** Why it's flagged. */
   reasons: string[];
@@ -38,12 +44,15 @@ export async function getOptimizableImages(): Promise<OptimizableImage[]> {
     select: {
       id: true,
       url: true,
+      bunnyUrl: true,
       filename: true,
       mimeType: true,
       fileSize: true,
       width: true,
       height: true,
       type: true,
+      scope: true,
+      clientId: true,
       client: { select: { name: true } },
     },
     take: 500,
@@ -55,13 +64,18 @@ export async function getOptimizableImages(): Promise<OptimizableImage[]> {
     if ((m.fileSize ?? 0) > OVERSIZE_BYTES) reasons.push("أكبر من الحد");
     return {
       id: m.id,
-      url: m.url,
+      // Prefer the Bunny copy for display — the maintenance list used to render the raw
+      // Cloudinary url even for rows already mirrored to Bunny.
+      url: mediaSrc(m) ?? m.url,
+      originalUrl: m.url,
       filename: m.filename,
       mimeType: m.mimeType,
       fileSize: m.fileSize,
       width: m.width,
       height: m.height,
       type: m.type,
+      scope: m.scope,
+      clientId: m.clientId,
       clientName: m.client?.name ?? null,
       reasons,
     };

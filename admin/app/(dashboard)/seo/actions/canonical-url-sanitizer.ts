@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { logAction } from "@/lib/audit/log-action";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { PAGE_CONFIGS } from "@/app/(dashboard)/modonty/setting/helpers/page-config";
 
@@ -22,6 +23,29 @@ import { PAGE_CONFIGS } from "@/app/(dashboard)/modonty/setting/helpers/page-con
  *   - Auto-Maintenance "Canonical URLs" step on /database (Run-All)
  */
 
+/**
+ * What a stored canonical needs — never "overwrite it with the self-referential URL",
+ * which is what this file used to do to EVERY value that differed.
+ *
+ * Google's canonical spec (developers.google.com/search/docs/crawling-indexing/
+ * consolidate-duplicate-urls) is explicit that the primary use of rel=canonical is a
+ * duplicate page pointing at a DIFFERENT page, and that a self-referential canonical is
+ * recommended, not required. So a canonical whose path is not this page's path can be a
+ * deliberate decision — and rewriting it silently re-indexes content we chose to fold.
+ * The only thing this sanitizer owns is the ORIGIN (scheme + host + port).
+ */
+export type CanonicalFix =
+  /** Origin and path both correct — nothing to write. */
+  | "ok"
+  /** Same site wearing the wrong origin (apex vs www, http, a dev host). Swap origin, keep path. */
+  | "rehost"
+  /** Stored as a bare path ("/articles/x"). Resolve against the right origin, keep path. */
+  | "resolve"
+  /** Path points at nothing that exists here (renamed slug, deleted page). Fall back to self. */
+  | "reset"
+  /** Points at another site — cross-domain canonicals are legal and deliberate. Never touched. */
+  | "external";
+
 export interface CanonicalSample {
   id: string;
   slug: string;
@@ -29,6 +53,8 @@ export interface CanonicalSample {
   entity: EntityType;
   before: string;
   after: string;
+  fix: CanonicalFix;
+  reason?: string;
 }
 
 export type EntityType =
@@ -49,14 +75,6 @@ export interface CanonicalSanitizerStats {
   sample: CanonicalSample[];
   perEntity: Record<EntityType, { total: number; stale: number }>;
 }
-
-const BAD_HOST_PATTERNS = [
-  "http://localhost",
-  "https://localhost",
-  "127.0.0.1",
-  "0.0.0.0",
-  ".vercel.app",
-];
 
 interface EntityConfig {
   type: EntityType;
@@ -85,25 +103,85 @@ function buildExpectedCanonical(path: string, baseUrl: string): string {
   return new URL(path, baseUrl).href;
 }
 
-function detectStaleCanonical(
+/** Hosts that only ever exist by accident — a dev machine or a preview deploy leaking into the DB. */
+function isDevHost(host: string): boolean {
+  const hostname = host.split(":")[0];
+  return (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname === "0.0.0.0" ||
+    hostname.endsWith(".vercel.app")
+  );
+}
+
+/** www.modonty.com and modonty.com are the same site — compare on the apex. */
+function apexOf(host: string): string {
+  return host.split(":")[0].replace(/^www\./, "");
+}
+
+interface CanonicalPlan {
+  fix: CanonicalFix;
+  /** The value to write. Null whenever nothing should be written. */
+  after: string | null;
+  reason?: string;
+}
+
+/**
+ * Decide what (if anything) a stored canonical needs.
+ *
+ * `knownPaths` is every canonical path this site legitimately serves, so a canonical that
+ * points at ANOTHER of our pages is recognised as an intentional duplicate-consolidation
+ * and left alone — while one pointing at a path that no longer exists (renamed slug,
+ * deleted page) is correctly reset. Without that set the two are indistinguishable.
+ */
+function planCanonicalFix(
   stored: string,
-  expected: string,
-  expectedSiteUrl: string,
-): { stale: boolean; badHost?: string } {
-  if (stored !== expected) {
-    for (const pattern of BAD_HOST_PATTERNS) {
-      if (stored.includes(pattern)) return { stale: true, badHost: pattern };
+  expectedSelf: string,
+  base: URL,
+  knownPaths: ReadonlySet<string>,
+): CanonicalPlan {
+  let url: URL;
+  try {
+    url = new URL(stored);
+  } catch {
+    // Not absolute. A bare "/articles/x" still carries real intent — keep the path and
+    // only supply the origin it was missing.
+    if (stored.startsWith("/")) {
+      try {
+        return { fix: "resolve", after: new URL(stored, base).href, reason: "relative" };
+      } catch {
+        // fall through to reset
+      }
     }
-    try {
-      const expectedHost = new URL(expectedSiteUrl).host;
-      const storedHost = new URL(stored).host;
-      if (storedHost !== expectedHost) return { stale: true, badHost: storedHost };
-    } catch {
-      return { stale: true, badHost: "malformed" };
-    }
-    return { stale: true };
+    return { fix: "reset", after: expectedSelf, reason: "malformed" };
   }
-  return { stale: false };
+
+  const sameSite = isDevHost(url.host) || apexOf(url.host) === apexOf(base.host);
+  if (!sameSite) {
+    // Cross-domain canonical (syndicated content pointing at the original publisher).
+    // Google supports these; overwriting one would be us deleting somebody's decision.
+    return { fix: "external", after: null, reason: url.host };
+  }
+
+  const selfPath = new URL(expectedSelf).pathname;
+  const targetPath = url.pathname;
+  const pointsSomewhereReal = targetPath === selfPath || knownPaths.has(targetPath);
+
+  if (!pointsSomewhereReal) {
+    // Nothing on this site answers that path — a slug rename or a deleted page left the
+    // canonical pointing into the void, which is worse than no canonical at all.
+    return { fix: "reset", after: expectedSelf, reason: `dead path ${targetPath}` };
+  }
+
+  if (url.origin === base.origin) return { fix: "ok", after: null };
+
+  // Right page, wrong coat. Rebuild from base.origin rather than mutating url.host —
+  // the host setter keeps a stale port (":3000") when the new value carries none.
+  return {
+    fix: "rehost",
+    after: `${base.origin}${url.pathname}${url.search}${url.hash}`,
+    reason: url.host,
+  };
 }
 
 interface EntityRow {
@@ -152,6 +230,58 @@ async function fetchAllEntities(): Promise<Record<EntityType, EntityRow[]>> {
   };
 }
 
+interface PlannedChange {
+  entity: EntityType;
+  row: EntityRow;
+  plan: CanonicalPlan;
+}
+
+/**
+ * One pass over every entity: collect the paths this site really serves, then plan each
+ * stored canonical against them. The stats card and the fixer both read from here, so the
+ * number the admin is shown and the rows the fixer writes can never disagree.
+ */
+async function planAllCanonicals(base: URL): Promise<{
+  all: Record<EntityType, EntityRow[]>;
+  changes: PlannedChange[];
+  withCanonical: number;
+  total: number;
+}> {
+  const all = await fetchAllEntities();
+
+  const knownPaths = new Set<string>();
+  for (const entityType of Object.keys(all) as EntityType[]) {
+    for (const row of all[entityType]) {
+      knownPaths.add(new URL(ENTITIES[entityType].buildPath(row.slug), base).pathname);
+    }
+  }
+
+  const changes: PlannedChange[] = [];
+  let withCanonical = 0;
+  let total = 0;
+
+  for (const entityType of Object.keys(all) as EntityType[]) {
+    const rows = all[entityType];
+    total += rows.length;
+
+    for (const row of rows) {
+      if (!row.canonicalUrl) continue;
+      withCanonical++;
+
+      const expectedSelf = buildExpectedCanonical(
+        ENTITIES[entityType].buildPath(row.slug),
+        base.href,
+      );
+      const plan = planCanonicalFix(row.canonicalUrl, expectedSelf, base, knownPaths);
+      if (plan.after !== null && plan.after !== row.canonicalUrl) {
+        changes.push({ entity: entityType, row, plan });
+      }
+    }
+  }
+
+  return { all, changes, withCanonical, total };
+}
+
 export async function getCanonicalUrlSanitizerStats(): Promise<CanonicalSanitizerStats> {
   const settings = await getAllSettings();
   const expectedSiteUrl = settings?.siteUrl ?? process.env.NEXT_PUBLIC_SITE_URL ?? null;
@@ -178,48 +308,52 @@ export async function getCanonicalUrlSanitizerStats(): Promise<CanonicalSanitize
     };
   }
 
-  const all = await fetchAllEntities();
-  const stale: CanonicalSample[] = [];
-  const badHosts = new Set<string>();
+  let base: URL;
+  try {
+    base = new URL(expectedSiteUrl);
+  } catch {
+    // A malformed Settings.siteUrl must not become the yardstick every canonical is
+    // measured against — report nothing rather than rewrite everything against garbage.
+    return {
+      total: 0,
+      withCanonical: 0,
+      staleCount: 0,
+      expectedBase: null,
+      detectedBadHosts: [],
+      sample: [],
+      perEntity: emptyPerEntity,
+    };
+  }
+
+  const { all, changes, withCanonical, total } = await planAllCanonicals(base);
+
   const perEntity = emptyPerEntity;
-  let total = 0;
-  let withCanonical = 0;
-
   for (const entityType of Object.keys(all) as EntityType[]) {
-    const rows = all[entityType];
-    const cfg = ENTITIES[entityType];
-    perEntity[entityType].total = rows.length;
-    total += rows.length;
+    perEntity[entityType].total = all[entityType].length;
+  }
+  for (const change of changes) perEntity[change.entity].stale++;
 
-    for (const row of rows) {
-      if (!row.canonicalUrl) continue;
-      withCanonical++;
-
-      const expected = buildExpectedCanonical(cfg.buildPath(row.slug), expectedSiteUrl);
-      const check = detectStaleCanonical(row.canonicalUrl, expected, expectedSiteUrl);
-
-      if (check.stale) {
-        if (check.badHost) badHosts.add(check.badHost);
-        perEntity[entityType].stale++;
-        stale.push({
-          id: row.id,
-          slug: row.slug,
-          title: row.title,
-          entity: entityType,
-          before: row.canonicalUrl,
-          after: expected,
-        });
-      }
-    }
+  const badHosts = new Set<string>();
+  for (const change of changes) {
+    if (change.plan.reason) badHosts.add(change.plan.reason);
   }
 
   return {
     total,
     withCanonical,
-    staleCount: stale.length,
+    staleCount: changes.length,
     expectedBase: expectedSiteUrl,
     detectedBadHosts: Array.from(badHosts).slice(0, 5),
-    sample: stale.slice(0, 10),
+    sample: changes.slice(0, 10).map((c) => ({
+      id: c.row.id,
+      slug: c.row.slug,
+      title: c.row.title,
+      entity: c.entity,
+      before: c.row.canonicalUrl ?? "",
+      after: c.plan.after ?? "",
+      fix: c.plan.fix,
+      reason: c.plan.reason,
+    })),
     perEntity,
   };
 }
@@ -241,61 +375,81 @@ export async function regenerateAllStaleCanonicalUrls(): Promise<{
     modonty: { attempted: 0, successful: 0, failed: 0 },
   };
 
-  if (stats.staleCount === 0 || !stats.expectedBase) {
+  if (!stats.expectedBase) {
     return { attempted: 0, successful: 0, failed: 0, perEntity: emptyPerEntity };
   }
 
-  const baseUrl = stats.expectedBase;
-  const all = await fetchAllEntities();
+  let base: URL;
+  try {
+    base = new URL(stats.expectedBase);
+  } catch {
+    return { attempted: 0, successful: 0, failed: 0, perEntity: emptyPerEntity };
+  }
+
+  // Re-plan rather than trust the stats snapshot — a row can change between the two calls,
+  // and writing a stale plan is exactly the class of bug this file is being fixed for.
+  const { changes } = await planAllCanonicals(base);
+  if (changes.length === 0) {
+    return { attempted: 0, successful: 0, failed: 0, perEntity: emptyPerEntity };
+  }
+
   let successful = 0;
   let failed = 0;
   let attempted = 0;
+  const applied: Array<{ entity: EntityType; id: string; fix: CanonicalFix; before: string; after: string }> = [];
 
-  for (const entityType of Object.keys(all) as EntityType[]) {
-    const rows = all[entityType];
-    const cfg = ENTITIES[entityType];
+  for (const { entity, row, plan } of changes) {
+    const after = plan.after;
+    if (after === null) continue;
 
-    for (const row of rows) {
-      if (!row.canonicalUrl) continue;
-      const expected = buildExpectedCanonical(cfg.buildPath(row.slug), baseUrl);
-      if (row.canonicalUrl === expected) continue;
-
-      attempted++;
-      emptyPerEntity[entityType].attempted++;
-      try {
-        // Type narrowing — Prisma delegate per entity
-        switch (entityType) {
-          case "article":
-            await db.article.update({ where: { id: row.id }, data: { canonicalUrl: expected } });
-            break;
-          case "client":
-            await db.client.update({ where: { id: row.id }, data: { canonicalUrl: expected } });
-            break;
-          case "category":
-            await db.category.update({ where: { id: row.id }, data: { canonicalUrl: expected } });
-            break;
-          case "tag":
-            await db.tag.update({ where: { id: row.id }, data: { canonicalUrl: expected } });
-            break;
-          case "industry":
-            await db.industry.update({ where: { id: row.id }, data: { canonicalUrl: expected } });
-            break;
-          case "author":
-            await db.author.update({ where: { id: row.id }, data: { canonicalUrl: expected } });
-            break;
-          case "modonty":
-            await db.modonty.update({ where: { id: row.id }, data: { canonicalUrl: expected } });
-            break;
-        }
-        successful++;
-        emptyPerEntity[entityType].successful++;
-      } catch {
-        failed++;
-        emptyPerEntity[entityType].failed++;
+    attempted++;
+    emptyPerEntity[entity].attempted++;
+    try {
+      // Type narrowing — Prisma delegate per entity
+      switch (entity) {
+        case "article":
+          await db.article.update({ where: { id: row.id }, data: { canonicalUrl: after } });
+          break;
+        case "client":
+          await db.client.update({ where: { id: row.id }, data: { canonicalUrl: after } });
+          break;
+        case "category":
+          await db.category.update({ where: { id: row.id }, data: { canonicalUrl: after } });
+          break;
+        case "tag":
+          await db.tag.update({ where: { id: row.id }, data: { canonicalUrl: after } });
+          break;
+        case "industry":
+          await db.industry.update({ where: { id: row.id }, data: { canonicalUrl: after } });
+          break;
+        case "author":
+          await db.author.update({ where: { id: row.id }, data: { canonicalUrl: after } });
+          break;
+        case "modonty":
+          await db.modonty.update({ where: { id: row.id }, data: { canonicalUrl: after } });
+          break;
       }
+      successful++;
+      emptyPerEntity[entity].successful++;
+      applied.push({ entity, id: row.id, fix: plan.fix, before: row.canonicalUrl ?? "", after });
+    } catch {
+      failed++;
+      emptyPerEntity[entity].failed++;
     }
   }
 
+  // A canonical decides which URL Google indexes. Rewriting one without a record of the
+  // previous value leaves nothing to restore from if a rule here ever turns out wrong —
+  // which is precisely how the old "overwrite everything" behaviour went unnoticed.
+  if (applied.length > 0) {
+    await logAction("seo.canonicalSanitize", {
+      entity: "Seo",
+      summary: `تصحيح ${applied.length} رابطاً رسمياً (canonical)`,
+      metadata: { base: base.origin, changes: applied.slice(0, 50), truncated: applied.length > 50 },
+    });
+  }
+
   revalidatePath("/database");
+  revalidatePath("/seo");
   return { attempted, successful, failed, perEntity: emptyPerEntity };
 }

@@ -3,6 +3,8 @@
  * Output: Organization, WebSite, CollectionPage, ItemList (up to 20 Articles).
  */
 
+import { mediaSrc } from "@modonty/database/lib/media-src";
+
 export interface SettingsForHomeJsonLd {
   siteUrl?: string | null;
   siteName?: string | null;
@@ -16,6 +18,10 @@ export interface SettingsForHomeJsonLd {
   categoriesSeoDescription?: string | null;
   trendingSeoTitle?: string | null;
   trendingSeoDescription?: string | null;
+  tagsSeoTitle?: string | null;
+  tagsSeoDescription?: string | null;
+  industriesSeoTitle?: string | null;
+  industriesSeoDescription?: string | null;
   logoUrl?: string | null;
   ogImageUrl?: string | null;
   orgContactType?: string | null;
@@ -44,8 +50,8 @@ export interface ArticleForHomeJsonLd {
   dateModified?: Date | string | null;
   wordCount?: number | null;
   inLanguage?: string | null;
-  featuredImage?: { url?: string | null } | null;
-  client: { name: string; slug: string; logoMedia?: { url?: string | null } | null };
+  featuredImage?: { url?: string | null; bunnyUrl: string | null } | null;
+  client: { name: string; slug: string; logoMedia?: { url?: string | null; bunnyUrl: string | null } | null };
   author: { name: string; slug?: string | null };
   category?: { name: string; slug?: string } | null;
   tags?: { name: string }[];
@@ -208,9 +214,9 @@ export function buildHomeJsonLdFromSettings(
     const articleUrl = `${siteUrl}/articles/${article.slug}`;
     const clientUrl = `${siteUrl}/clients/${article.client.slug}`;
     const authorUrl = article.author.slug ? `${siteUrl}/authors/${article.author.slug}` : undefined;
-    const imageUrl = article.featuredImage?.url?.trim();
+    const imageUrl = mediaSrc(article.featuredImage)?.trim();
     const absImage = imageUrl ? ensureAbsoluteUrl(imageUrl, siteUrl) : undefined;
-    const clientLogo = article.client.logoMedia?.url?.trim();
+    const clientLogo = mediaSrc(article.client.logoMedia)?.trim();
     const absClientLogo = clientLogo ? ensureAbsoluteUrl(clientLogo, siteUrl) : undefined;
 
     const articleNode: Record<string, unknown> = {

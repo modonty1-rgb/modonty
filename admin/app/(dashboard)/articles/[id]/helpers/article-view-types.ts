@@ -24,14 +24,21 @@ export interface Article {
   contentDepth?: string | null;
   inLanguage?: string;
   license?: string | null;
+  /**
+   * `url`/`bunnyUrl` are BOTH optional here on purpose: the articles LIST query fetches
+   * only `{ id, altText }` — it renders no image, so it must not be forced to carry them.
+   * Any consumer that actually renders the image resolves through `mediaSrc`, which needs
+   * both keys present; those call sites use the fuller shapes instead of this view type.
+   */
   featuredImage?: {
     id: string;
     url?: string;
+    bunnyUrl?: string | null;
     altText: string | null;
     width?: number | null;
     height?: number | null;
   } | null;
-  client: { id: string; name: string; logoMedia?: { url: string; altText?: string | null } | null; editor?: { id: string; name: string | null } | null } | null;
+  client: { id: string; name: string; logoMedia?: { url: string; bunnyUrl: string | null; altText?: string | null } | null; editor?: { id: string; name: string | null } | null } | null;
   category: { id: string; name: string } | null;
   author: { id: string; name: string } | null;
   tags?: { tag: { id: string; name: string } }[];
@@ -41,6 +48,7 @@ export interface Article {
     media: {
       id: string;
       url: string;
+      bunnyUrl: string | null;
       altText: string | null;
     } | null;
   }[];

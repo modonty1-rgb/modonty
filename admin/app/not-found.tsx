@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Home, HelpCircle, LayoutDashboard } from "lucide-react";
+
+import { BRAND_ICON_URL } from "@modonty/database/lib/brand-assets";
+import { Button } from "@/components/ui/button";
 
 export default function AdminNotFound() {
   return (
@@ -13,7 +15,7 @@ export default function AdminNotFound() {
             <Link href="/" className="flex items-center gap-2">
               <div className="h-10 w-10 rounded-md overflow-hidden flex items-center justify-center bg-background border border-border">
                 <Image
-                  src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1768807772/modontyIcon_svukux.svg"
+                  src={BRAND_ICON_URL}
                   alt="Modonty Admin"
                   width={40}
                   height={40}

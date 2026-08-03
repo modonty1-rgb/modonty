@@ -1,9 +1,16 @@
 import type { ReactNode } from "react";
+
+import { mediaSrc } from "@modonty/database/lib/media-src";
+
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 
 interface ArticleFeaturedImageProps {
+  /** `bunnyUrl` is part of the contract: omitting it silently pins every article hero —
+   *  the LCP image — to Cloudinary, while OG/JSON-LD (which do call mediaSrc) say Bunny.
+   *  Found 2026-07-30: sitemap and OG agreed, the rendered hero did not. */
   image: {
     url: string;
+    bunnyUrl: string | null;
     altText: string | null;
   };
   title: string;
@@ -14,7 +21,7 @@ export function ArticleFeaturedImage({ image, title, children }: ArticleFeatured
   return (
     <div className="relative w-full aspect-video overflow-hidden rounded-lg mb-6">
       <OptimizedImage
-        src={image.url}
+        src={mediaSrc(image) ?? image.url}
         alt={image.altText || title}
         fill
         className="object-cover"

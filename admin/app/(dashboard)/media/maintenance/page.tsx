@@ -10,13 +10,15 @@ import { UnusedMediaList } from "../components/unused-media-list";
 import { FixBrokenMediaButton } from "../components/fix-broken-media-button";
 import { getOptimizableImages } from "./helpers/optimizable";
 import { OptimizeImagesSection } from "./components/optimize-images-section";
+import { getBunnyMigrationStats } from "../actions/migrate-media-to-bunny";
+import { BunnyMigrationSection } from "./components/bunny-migration-section";
 
 // Housekeeping tools moved off the library browse surface (2026-07-21): unused-files
 // review + broken-image scan. Both are maintenance actions, not part of browsing.
 export default async function MediaMaintenancePage() {
   const UNUSED_WHERE = { AND: [{ scope: { not: "PLATFORM" as const } }, MEDIA_UNUSED_WHERE] };
 
-  const [unusedItems, unusedCount, unusedSize, optimizable] = await Promise.all([
+  const [unusedItems, unusedCount, unusedSize, optimizable, bunnyStats] = await Promise.all([
     db.media.findMany({
       where: UNUSED_WHERE,
       orderBy: { createdAt: "desc" },
@@ -25,6 +27,7 @@ export default async function MediaMaintenancePage() {
         id: true,
         filename: true,
         url: true,
+        bunnyUrl: true,
         mimeType: true,
         fileSize: true,
         createdAt: true,
@@ -35,6 +38,7 @@ export default async function MediaMaintenancePage() {
     db.media.count({ where: UNUSED_WHERE }),
     db.media.aggregate({ where: UNUSED_WHERE, _sum: { fileSize: true } }),
     getOptimizableImages(),
+    getBunnyMigrationStats(),
   ]);
 
   const totalUnusedBytes = unusedSize._sum.fileSize ?? 0;
@@ -137,6 +141,18 @@ export default async function MediaMaintenancePage() {
             ✓ لا توجد ملفات غير مستخدمة — المكتبة نظيفة.
           </div>
         )}
+      </section>
+
+      {/* Tool 4 — Bunny migration: copy every image to Bunny (adds bunnyUrl, never touches url) */}
+      <section className="space-y-2">
+        <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+          Bunny migration{bunnyStats.pending > 0 ? ` (${bunnyStats.pending})` : ""}
+        </h2>
+        <p className="text-xs text-muted-foreground">
+          ينسخ كل صورة إلى Bunny ويضيف رابط Bunny فقط — لا يلمس رابط Cloudinary الحي. صور المقالات
+          تأخذ الـ3 قصّات للسيو معها. يعمل على دفعات صغيرة، يتخطّى المُرحّل، ويكمل لو فشلت صورة.
+        </p>
+        <BunnyMigrationSection stats={bunnyStats} />
       </section>
     </div>
   );

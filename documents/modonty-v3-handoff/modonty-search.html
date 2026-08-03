@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<!--
+  <SearchPage> + <AskSheet> — INTERACTIVE DEMO
+  Entry: header capsule on every page (search zone → this page · «اسأل ✦» zone → opens the sheet directly).
+  Working here: live filtering as you type, recent searches, trending chips,
+  AI bottom sheet with suggested questions + simulated streamed answer + source cards.
+  Production: search = server endpoint /api/search (articles + clients + industries),
+  AI = RAG over platform content, answers ALWAYS with source links to articles/clients.
+  GA4: search / ai_ask / ai_answer_source_click.
+-->
+<html lang="ar-SA" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>البحث — مدونتي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:hsl(222 47% 7%);--surface:hsl(222 40% 11%);--surface2:hsl(222 36% 15%);
+    --line:hsl(222 25% 22%);--ink:hsl(210 40% 98%);--muted:hsl(215 20% 70%);
+    --primary:hsl(240 100% 65%);--primary2:hsl(240 100% 74%);--featured:hsl(240 60% 16%);--wa:hsl(142 70% 45%)
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:var(--bg)}
+  body{font-family:Tajawal,system-ui,sans-serif;color:var(--ink);font-size:16px;line-height:1.9}
+  .no-sb::-webkit-scrollbar{display:none}.no-sb{scrollbar-width:none}
+  .ico{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .chip{min-height:44px;padding:10px 16px;border-radius:14px;background:var(--surface);border:1px solid var(--line);color:var(--ink);font-size:14px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;text-decoration:none;line-height:1.5}
+  .qrow .chip{flex:0 0 auto;max-width:230px;white-space:normal;text-align:start;background:var(--surface2);border-color:hsl(240 50% 35%);color:var(--primary2);font-weight:700}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:8px}
+  h2{font-size:15px;font-weight:700;margin-bottom:10px}
+  /* header */
+  .shead{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:10px 12px}
+  .sinput{flex:1;height:46px;border-radius:20px;background:var(--surface);border:1.5px solid var(--primary);color:var(--ink);padding:0 42px 0 14px;font-size:15px;font-family:inherit;outline:none}
+  .sinput::placeholder{color:var(--muted)}
+  .swrap{position:relative;flex:1;display:flex}
+  .swrap .mag{position:absolute;inset-inline-start:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+  .iconbtn{width:44px;height:44px;border:0;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer}
+  /* ask card */
+  .askcard{margin:16px;padding:16px;border-radius:12px;background:linear-gradient(135deg,var(--featured),hsl(255 55% 22%));border:1px solid hsl(240 80% 45%);cursor:pointer}
+  /* sheet */
+  #scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:45;opacity:0;pointer-events:none;transition:opacity .25s}
+  #sheet{position:fixed;inset-inline:0;bottom:0;z-index:50;background:var(--surface);border-radius:16px 16px 0 0;border-top:1px solid var(--line);transform:translateY(105%);transition:transform .3s cubic-bezier(.3,.8,.3,1);max-height:88dvh;display:flex;flex-direction:column}
+  body.sheet-open #scrim{opacity:1;pointer-events:auto}
+  body.sheet-open #sheet{transform:translateY(0)}
+  .handle{width:44px;height:5px;border-radius:99px;background:var(--line);margin:10px auto 4px}
+  .msgs{flex:1;overflow-y:auto;padding:8px 16px 16px;display:flex;flex-direction:column;gap:10px}
+  .bub{max-width:85%;padding:10px 14px;border-radius:14px;font-size:14.5px}
+  .bub.user{align-self:flex-start;background:var(--primary);color:#fff;border-end-start-radius:4px}
+  .bub.ai{align-self:flex-end;background:var(--surface2);border:1px solid var(--line);border-end-end-radius:4px}
+  .src{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-top:8px;text-decoration:none;color:var(--ink);font-size:13px}
+  .typing i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--muted);margin-inline-end:3px;animation:tp 1s infinite}
+  .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+  @keyframes tp{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+  .qrow{display:flex;gap:8px;overflow-x:auto;padding:4px 16px 12px}
+  .ask-input{display:flex;gap:8px;padding:10px 16px;border-top:1px solid var(--line);padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+  .ask-input input{flex:1;height:46px;border-radius:20px;background:var(--bg);border:1px solid var(--line);color:var(--ink);padding:0 14px;font-size:14.5px;font-family:inherit;outline:none;min-width:0}
+  .send{width:46px;height:46px;border-radius:50%;border:0;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+  .hidden{display:none !important}
+  .res-item{display:flex;gap:12px;align-items:center;padding:12px;margin:0 16px 10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink)}
+  .rsec{padding:14px 16px 6px;font-size:14px;font-weight:800;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .tbadge{font-size:11.5px;font-weight:700;border-radius:99px;padding:2px 8px}
+  .tbadge.a{background:hsl(240 60% 25%);color:var(--primary2)}
+  .tbadge.c{background:hsl(142 40% 18%);color:hsl(142 60% 60%)}
+  .tbadge.i{background:hsl(35 60% 20%);color:hsl(35 90% 60%)}
+  .thumb{width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg,hsl(222 40% 16%),hsl(240 50% 22%));flex-shrink:0}
+  .thumb.round{border-radius:50%}
+  mark{background:hsl(240 100% 65% / .35);color:var(--primary2);border-radius:3px;padding:0 2px}
+</style>
+</head>
+<body>
+
+<!-- ============ <SearchHeader> ============ -->
+<header class="shead">
+  <a href="/" aria-label="رجوع" class="iconbtn"><svg class="ico" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+  <div class="swrap">
+    <input id="q" class="sinput" type="search" placeholder="ابحث عن مقال، عميل، أو صناعة..." autocomplete="off">
+    <svg class="ico mag w-5 h-5" style="width:20px;height:20px" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+  </div>
+  <button id="clear" class="iconbtn hidden" aria-label="مسح"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+</header>
+
+<!-- ============ <ScopeTabs> : نطاق البحث (from live page) — filters live results ============ -->
+<nav aria-label="نطاق البحث" id="scope" style="display:flex;gap:8px;padding:12px 16px 4px;overflow-x:auto" class="no-sb">
+  <button data-scope="all" class="chip on" style="background:var(--primary);color:#fff;border:0">الكل</button>
+  <button data-scope="مقال" class="chip">المقالات</button>
+  <button data-scope="عميل" class="chip">العملاء</button>
+  <button data-scope="صناعة" class="chip">الصناعات</button>
+</nav>
+
+<!-- ============ <AskEntry> : opens the AI sheet ============ -->
+<div id="discover">
+  <button class="askcard" style="display:block;width:calc(100% - 32px);text-align:start" onclick="openSheet()">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:26px">✦</span>
+      <div>
+        <div style="font-size:17px;font-weight:800">اسأل مدونتي — مساعدك الذكي</div>
+        <div style="font-size:13px;color:var(--muted)">اسأل بلغتك وأجاوبك من مقالات وعملاء المنصة — مع المصادر</div>
+      </div>
+    </div>
+  </button>
+
+  <section style="padding:0 16px 8px">
+    <h2>🔥 شائع الآن</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="chip trend">علاج الانزلاق الغضروفي</button>
+      <button class="chip trend">دكتور أسنان</button>
+      <button class="chip trend">شركات مقاولات الرياض</button>
+      <button class="chip trend">تحسين محركات البحث</button>
+    </div>
+  </section>
+
+  <section style="padding:16px 16px 8px">
+    <h2>🕘 بحثت عنها سابقًا</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="chip trend">علاج الادمان</button>
+      <button class="chip trend">عيادة MBC</button>
+    </div>
+  </section>
+</div>
+
+<!-- ============ <Results> : live-filtered demo dataset ============ -->
+<div id="results" class="hidden">
+  <p id="rcount" style="padding:12px 16px 4px;font-size:13px;color:var(--muted)"></p>
+  <div id="rlist"></div>
+  <div id="rempty" class="hidden" style="text-align:center;padding:40px 24px">
+    <div style="font-size:40px;margin-bottom:8px">🔍</div>
+    <p style="font-weight:700">لا نتائج لهذا البحث</p>
+    <p style="font-size:13.5px;color:var(--muted);margin:6px 0 14px">جرّب كلمات أخرى — أو اسأل المساعد وسيجيبك من كل محتوى المنصة</p>
+    <button class="chip" style="background:var(--primary);color:#fff;border:0" onclick="openSheet()">✦ اسأل مدونتي</button>
+  </div>
+</div>
+
+<!-- ============ <AskSheet> : M3 bottom sheet ============ -->
+<div id="scrim" onclick="closeSheet()"></div>
+<div id="sheet" role="dialog" aria-label="اسأل مدونتي">
+  <div class="handle"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 16px 8px">
+    <div style="font-size:16px;font-weight:800">✦ اسأل مدونتي</div>
+    <button class="iconbtn" aria-label="إغلاق" onclick="closeSheet()"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="qrow no-sb" id="sugg">
+    <button class="chip q">ما أفضل علاج للانزلاق الغضروفي بدون جراحة؟</button>
+    <button class="chip q">أبغى شركة مقاولات موثوقة في الرياض</button>
+    <button class="chip q">كيف أزيد عملاء عيادتي من جوجل؟</button>
+  </div>
+  <div class="msgs no-sb" id="msgs">
+    <div class="bub ai">أهلًا 👋 أنا مساعد مدونتي — اسألني عن أي موضوع وسأجيبك من مقالات وعملاء المنصة، مع المصادر دائمًا.</div>
+  </div>
+  <form class="ask-input" id="askform">
+    <input id="askq" placeholder="اكتب سؤالك..." autocomplete="off">
+    <button class="send" aria-label="إرسال"><svg class="ico" viewBox="0 0 24 24"><path d="M4 12h13M12 5l7 7-7 7"/></svg></button>
+  </form>
+</div>
+
+<script>
+/* ---------- demo dataset ---------- */
+const DATA = [
+  {t:'مقال', title:'علاج الانزلاق الغضروفي بدون جراحة: دليلك الشامل', sub:'عيادة MBC — ١١ دقيقة', round:false},
+  {t:'مقال', title:'شركة جبر الجنوبية للمقاولات: شريكك في مشاريع النفط والغاز', sub:'جبر الجنوبية — ٦ دقائق', round:false},
+  {t:'مقال', title:'دكتور أسنان في مصر | د. ياسر زغلول استشاري علاج وزراعة الأسنان', sub:'د. ياسر زغلول — ٧ دقائق', round:false},
+  {t:'مقال', title:'تعرف على أهم خدمات شركات التسويق الإلكتروني', sub:'شركة جبر سيو — ٨ دقائق', round:false},
+  {t:'عميل', title:'عيادة MBC — د. رحاب منصور', sub:'الرعاية الصحية · الجيزة · موثّق ✓', round:true},
+  {t:'عميل', title:'شركة جبر الجنوبية للمقاولات', sub:'المقاولات · جدة · موثّق ✓', round:true},
+  {t:'عميل', title:'دكتور ياسر زغلول', sub:'الرعاية الصحية · القاهرة · موثّق ✓', round:true},
+  {t:'صناعة', title:'الرعاية الصحية', sub:'٨ شركاء · ٢٤ مقالًا', round:false},
+  {t:'صناعة', title:'المقاولات', sub:'٥ شركاء · ١٢ مقالًا', round:false},
+];
+const q = document.getElementById('q'), clearB = document.getElementById('clear');
+let SCOPE = 'all';
+document.querySelectorAll('#scope .chip').forEach(b=>b.addEventListener('click',()=>{
+  SCOPE = b.dataset.scope;
+  document.querySelectorAll('#scope .chip').forEach(x=>{ x.style.background=''; x.style.color=''; x.style.border=''; });
+  b.style.background='var(--primary)'; b.style.color='#fff'; b.style.border='0';
+  doSearch();
+}));
+const disc = document.getElementById('discover'), res = document.getElementById('results');
+const rlist = document.getElementById('rlist'), rcount = document.getElementById('rcount'), rempty = document.getElementById('rempty');
+const AR = n => String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+
+function render(list, term){
+  const esc = term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const hl = s => s.replace(new RegExp('('+esc+')','g'),'<mark>$1</mark>');
+  const groups = [['مقال','📄 مقالات','a'],['عميل','🏢 عملاء موثقون','c'],['صناعة','🏷️ صناعات','i']];
+  let html = '';
+  for(const [t, label, cls] of groups){
+    const items = list.filter(d=>d.t===t);
+    if(!items.length) continue;
+    html += `<div class="rsec">${label} <span style="font-weight:400">(${AR(items.length)})</span></div>`;
+    html += items.map(d=>`<a href="#" class="res-item"><span class="thumb ${d.round?'round':''}"></span>
+      <span style="min-width:0;flex:1"><span style="display:block;font-size:14.5px;font-weight:700;line-height:1.6">${hl(d.title)}</span>
+      <span style="display:block;font-size:12.5px;color:var(--muted);margin-top:2px">${d.sub}</span></span>
+      <span class="tbadge ${cls}">${t}</span></a>`).join('');
+  }
+  rlist.innerHTML = html;
+}
+function doSearch(){
+  const term = q.value.trim();
+  clearB.classList.toggle('hidden', !term);
+  if(!term){ disc.classList.remove('hidden'); res.classList.add('hidden'); return; }
+  const hits = DATA.filter(d=>(d.title+d.sub).includes(term) && (SCOPE==='all' || d.t===SCOPE));
+  disc.classList.add('hidden'); res.classList.remove('hidden');
+  rempty.classList.toggle('hidden', hits.length>0);
+  rcount.textContent = hits.length? AR(hits.length)+' نتيجة': '';
+  render(hits, term);
+}
+q.addEventListener('input', doSearch);
+clearB.addEventListener('click', ()=>{ q.value=''; doSearch(); q.focus(); });
+document.querySelectorAll('.trend').forEach(c=>c.addEventListener('click',()=>{ q.value=c.textContent.trim(); doSearch(); }));
+
+/* ---------- AI sheet ---------- */
+const msgs = document.getElementById('msgs');
+function openSheet(){ document.body.classList.add('sheet-open'); }
+function closeSheet(){ document.body.classList.remove('sheet-open'); }
+function addBub(cls, html){ const d=document.createElement('div'); d.className='bub '+cls; d.innerHTML=html; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+
+const CANNED = {
+  'انزلاق': {
+    text:'حسب مقال عيادة MBC، أغلب حالات الانزلاق الغضروفي تُعالج <b>بدون جراحة</b> عبر الحقن الموجّه والعلاج التداخلي، والجراحة آخر الحلول لحالات محددة. د. رحاب منصور تشرح خطة العلاج كاملة في المقال.',
+    srcs:[['📄','علاج الانزلاق الغضروفي بدون جراحة — عيادة MBC'],['🏥','صفحة عيادة MBC — احجز استشارة']]
+  },
+  'مقاولات': {
+    text:'أقوى شريك مقاولات موثّق على المنصة في الرياض هو <b>شركة جبر الجنوبية</b> — متخصصة بمشاريع النفط والغاز والبنية التحتية بمعايير HSE. تقدر تطلب عرض سعر مباشرة من صفحتها.',
+    srcs:[['🏗️','صفحة شركة جبر الجنوبية — اطلب عرض سعر'],['📄','مقال: شريكك في مشاريع النفط والغاز']]
+  },
+  'default': {
+    text:'سؤال ممتاز! بناءً على محتوى المنصة، أنصحك تبدأ بالمحتوى المتخصص الموثق بمصادر — هذا ملخص سريع، والتفاصيل الكاملة في المصادر التالية:',
+    srcs:[['📄','مقال ذو صلة من مدونتي'],['🏢','عميل موثّق متخصص في المجال']]
+  }
+};
+function answer(question){
+  addBub('user', question);
+  const t = addBub('ai typing','<span class="typing"><i></i><i></i><i></i></span>');
+  setTimeout(()=>{
+    const key = question.includes('انزلاق')?'انزلاق': (question.includes('مقاولات')?'مقاولات':'default');
+    const c = CANNED[key];
+    t.classList.remove('typing');
+    t.innerHTML = c.text + c.srcs.map(s=>`<a href="#" class="src"><span>${s[0]}</span><span>${s[1]}</span></a>`).join('');
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 1400);
+}
+document.querySelectorAll('.q').forEach(c=>c.addEventListener('click',()=>answer(c.textContent.trim())));
+document.getElementById('askform').addEventListener('submit',e=>{
+  e.preventDefault();
+  const v=document.getElementById('askq').value.trim();
+  if(v){ answer(v); document.getElementById('askq').value=''; }
+});
+</script>
+</body>
+</html>

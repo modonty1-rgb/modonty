@@ -19,6 +19,7 @@ import { AlertCircle, AlertTriangle, Link2, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { ClientLogoModal } from '@/app/(dashboard)/clients/components/client-logo-modal';
 import { cn, slugify } from '@/lib/utils';
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 export function BasicSection() {
   const { formData, updateField, errors, clients, categories, tags, authors, mode, articleId } = useArticleForm();
@@ -29,7 +30,7 @@ export function BasicSection() {
   const isSlugLocked = mode === 'edit' && !slugUnlocked;
 
   const selectedClient = clients.find((c) => c.id === formData.clientId);
-  const hasPublisherLogo = !!selectedClient?.logoMedia?.url;
+  const hasPublisherLogo = !!mediaSrc(selectedClient?.logoMedia);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_272px] gap-5 items-start">
@@ -247,7 +248,7 @@ export function BasicSection() {
                   open={logoModalOpen}
                   onOpenChange={setLogoModalOpen}
                   clientId={selectedClient.id}
-                  initialLogoUrl={selectedClient.logoMedia?.url ?? null}
+                  initialLogoUrl={mediaSrc(selectedClient.logoMedia) ?? null}
                   initialLogoMediaId={selectedClient.logoMediaId ?? null}
                 />
               </div>

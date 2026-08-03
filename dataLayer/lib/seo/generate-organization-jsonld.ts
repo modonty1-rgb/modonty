@@ -1,6 +1,7 @@
 import { Client } from "@prisma/client";
 import { safeOrganizationType, resolveOrganizationType, isLocalFamilyType } from "./organization-schema-types";
 import { YMYL_CATEGORIES, isYmylCategory } from "./ymyl-config";
+import { mediaSrc } from "../media-src";
 import {
   buildImageObject,
   resolveImageAttribution,
@@ -17,7 +18,7 @@ import {
  * OnlineStore, … — and every card on the platform picks it up, because this runs INSIDE
  * the card builder, not in one of its callers.
  */
-function deriveClientType(client: {
+export function deriveClientType(client: {
   isYmyl?: boolean | null;
   ymylCategory?: string | null;
   ymylData?: unknown;
@@ -43,6 +44,7 @@ function deriveClientType(client: {
 interface ClientWithMedia extends Omit<Client, "contentPriorities"> {
   logoMedia?: {
     url: string;
+    bunnyUrl: string | null;
     width: number | null;
     height: number | null;
     altText: string | null;
@@ -51,6 +53,7 @@ interface ClientWithMedia extends Omit<Client, "contentPriorities"> {
   } | null;
   heroImageMedia?: {
     url: string;
+    bunnyUrl: string | null;
     width: number | null;
     height: number | null;
     altText: string | null;
@@ -220,8 +223,9 @@ export function generateCompleteOrganizationJsonLd(
   }
 
   // Logo as ImageObject with validation (minimum 112x112 per Google guidelines)
-  if (client.logoMedia?.url) {
-    const logoUrl = ensureAbsoluteUrl(client.logoMedia.url, siteUrl) || client.logoMedia.url;
+  const logoSrc = mediaSrc(client.logoMedia);
+  if (logoSrc && client.logoMedia) {
+    const logoUrl = ensureAbsoluteUrl(logoSrc, siteUrl) || logoSrc;
     const logoWidth = client.logoMedia.width && client.logoMedia.width >= 112 ? client.logoMedia.width : 112;
     const logoHeight = client.logoMedia.height && client.logoMedia.height >= 112 ? client.logoMedia.height : 112;
     
@@ -418,6 +422,12 @@ export function generateCompleteOrganizationJsonLd(
   const placeId = client.gbpPlaceId?.trim();
 
   if (isLocalBusiness) {
+    // Google reads `telephone` off the LocalBusiness node itself — the copy inside
+    // contactPoint does not count toward the rich-result card.
+    if (client.phone) {
+      organizationNode.telephone = client.phone;
+    }
+
     // GeoCoordinates when lat/long exist
     if (lat != null && lng != null && !Number.isNaN(lat) && !Number.isNaN(lng)) {
       organizationNode.geo = { "@type": "GeoCoordinates", latitude: lat, longitude: lng };
@@ -444,10 +454,9 @@ export function generateCompleteOrganizationJsonLd(
       } catch { /* Invalid JSON — skip */ }
     }
 
-    // Price range (Google recommends for LocalBusiness)
-    if (client.priceRange) {
-      organizationNode.priceRange = client.priceRange;
-    }
+    // Price range (Google recommends for LocalBusiness). "$$" is the neutral mid-range
+    // marker when the client hasn't set one — an empty field costs a rich-result warning.
+    organizationNode.priceRange = client.priceRange || "$$";
 
     // hasMap — schema.org/hasMap (Place/LocalBusiness). A Google Business Profile
     // Place ID is the most precise link to the exact listing, so prefer it; fall
@@ -659,6 +668,36 @@ export function generateCompleteOrganizationJsonLd(
     }
   }
 
+  // Google expects a top-level `image` on the Organization/LocalBusiness node — `logo`
+  // alone does not satisfy it. Clients without a gallery fall back to the hero image
+  // (real page content), then the logo, so the node never ships imageless.
+  if (!organizationNode.image) {
+    const fallbackMedia = client.heroImageMedia ?? client.logoMedia;
+    const fallbackSrc = mediaSrc(fallbackMedia);
+    if (fallbackMedia && fallbackSrc) {
+      const u = ensureAbsoluteUrl(fallbackSrc, siteUrl) || fallbackSrc;
+      const fallbackAttr = resolveImageAttribution(
+        {
+          mediaType: client.heroImageMedia ? "HERO" : "LOGO",
+          clientName: client.name,
+          clientUrl: absoluteClientPageUrl,
+          altText: fallbackMedia.altText,
+          dateCreated: fallbackMedia.createdAt,
+        },
+        imageLicensing,
+      );
+      organizationNode.image = buildImageObject({
+        url: u,
+        width: fallbackMedia.width,
+        height: fallbackMedia.height,
+        name: fallbackAttr.name,
+        caption: fallbackMedia.altText,
+        description: fallbackMedia.description,
+        licensing: fallbackAttr.licensing,
+      });
+    }
+  }
+
   // NOTE: introVideoUrl → VideoObject is intentionally NOT emitted yet — a valid
   // VideoObject needs name + description + thumbnailUrl + uploadDate to avoid a
   // Google "missing field" warning. Revisit once that metadata is captured.
@@ -736,8 +775,9 @@ export function generateCompleteOrganizationJsonLd(
   // Logo is NOT suitable as primaryImageOfPage — it's a brand mark, not page content
   // This property is optional per Schema.org — omit if no hero image exists
   const ogImg = client.heroImageMedia;
-  if (ogImg?.url) {
-    const u = ensureAbsoluteUrl(ogImg.url, siteUrl) || ogImg.url;
+  const ogImgSrc = mediaSrc(ogImg);
+  if (ogImg && ogImgSrc) {
+    const u = ensureAbsoluteUrl(ogImgSrc, siteUrl) || ogImgSrc;
     const heroAttr = resolveImageAttribution(
       {
         mediaType: "HERO",

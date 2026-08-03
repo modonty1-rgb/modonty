@@ -42,6 +42,7 @@ type ArticleClient = {
   logoMediaId?: string | null;
   logoMedia?: {
     url: string;
+    bunnyUrl: string | null;
     width?: number | null;
     height?: number | null;
   } | null;

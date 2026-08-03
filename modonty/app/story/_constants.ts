@@ -1,13 +1,24 @@
 /**
  * Shared constants for /story page components.
  */
+import { BRAND_WORDMARK_URL } from "@modonty/database/lib/brand-assets";
+
 import { BRAND_AR, LEGAL } from "@/lib/brand";
 
-// Brand logo — used by spotlight widgets + page.tsx OG_IMAGE
-export const MODONTY_LOGO_URL =
-  "https://res.cloudinary.com/dfegnpgwx/image/upload/v1768724691/final-01_fdnhom.svg";
+/**
+ * Brand logo — spotlight widgets + page.tsx OG_IMAGE.
+ * Was a hardcoded Cloudinary SVG; verified byte-identical (sha 0057be46…, 5728 B) to the
+ * shared wordmark already on Bunny, so it reuses that constant instead of a second copy.
+ */
+export const MODONTY_LOGO_URL = BRAND_WORDMARK_URL;
 
 export const STORY_OG_IMAGE = MODONTY_LOGO_URL;
+
+/** Bunny assets zone, `brand/story/` — team + partner photos for this page only. */
+const STORY_ASSETS = "https://modonty-asset.b-cdn.net/brand/story";
+
+export const storyTeamImage = (file: string) => `${STORY_ASSETS}/team/${file}`;
+export const storyPartnerImage = (file: string) => `${STORY_ASSETS}/partners/${file}`;
 
 /**
  * Legal entity facts for the Trust Strip + JSON-LD Organization schema.

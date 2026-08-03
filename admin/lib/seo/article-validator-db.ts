@@ -42,6 +42,7 @@ export interface DbArticleInput {
     name: string | null;
     logoMedia: {
       url: string | null;
+      bunnyUrl: string | null;
       width: number | null;
       height: number | null;
     } | null;

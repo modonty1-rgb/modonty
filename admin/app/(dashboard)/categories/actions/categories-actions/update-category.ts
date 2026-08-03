@@ -19,6 +19,7 @@ export async function updateCategory(
     canonicalUrl?: string;
     socialImage?: string | null;
     socialImageAlt?: string | null;
+    socialImageMediaId?: string | null;
     cloudinaryPublicId?: string | null;
   },
 ) {
@@ -52,6 +53,7 @@ export async function updateCategory(
       canonicalUrl?: string | null;
       socialImage?: string | null;
       socialImageAlt?: string | null;
+      socialImageMediaId?: string | null;
       cloudinaryPublicId?: string | null;
     } = {
       name: data.name,
@@ -65,6 +67,7 @@ export async function updateCategory(
 
     if (data.socialImage !== undefined) updateData.socialImage = data.socialImage;
     if (data.socialImageAlt !== undefined) updateData.socialImageAlt = data.socialImageAlt;
+    if (data.socialImageMediaId !== undefined) updateData.socialImageMediaId = data.socialImageMediaId;
     if (data.cloudinaryPublicId !== undefined) updateData.cloudinaryPublicId = data.cloudinaryPublicId;
 
     const category = await db.category.update({
@@ -79,9 +82,11 @@ export async function updateCategory(
     });
 
     revalidatePath("/categories");
-    await revalidateModontyTag("categories");
+    // Regenerate the stored SEO BEFORE revalidating modonty — otherwise the page rebuilds
+    // with the stale cached metadata (og:image lags one save behind; caught live 2026-07-31).
     try { const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator"); await generateAndSaveCategorySeo(category.id); } catch (e) { console.error("Category SEO gen failed:", e); }
     try { const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateCategoriesListingCache(); } catch (e) { console.error("Categories listing cache failed:", e); }
+    await revalidateModontyTag("categories");
 
     // Cascade: regenerate JSON-LD for all articles in this category
     try {

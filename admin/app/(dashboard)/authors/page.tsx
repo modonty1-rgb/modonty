@@ -38,7 +38,7 @@ export default async function AuthorsPage() {
         <div className="flex items-center gap-3">
           <Avatar className="h-11 w-11 rounded-lg ring-2 ring-primary/20">
             <AvatarImage
-              src={settings.logoUrl ?? settings.orgLogoUrl ?? author.image ?? undefined}
+              src={settings.logoUrl ?? author.image ?? undefined}
               alt={author.name}
               className="object-contain p-1"
             />

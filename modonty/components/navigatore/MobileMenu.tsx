@@ -23,6 +23,8 @@ import {
   IconCategories,
   IconSaved,
   IconChevronLeft,
+  IconTrending,
+  IconSearch,
 } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { navLinksConfig } from "@/components/navigatore/nav-links-config";
@@ -127,6 +129,20 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
           <p className="px-3 pt-3 pb-1.5 text-[11px] font-semibold text-muted-foreground/70 tracking-wide">
             تصفح
           </p>
+          <SheetLink
+            href="/search"
+            icon={IconSearch}
+            label="بحث"
+            isActive={pathname === "/search" || pathname.startsWith("/search/")}
+            onClick={close}
+          />
+          <SheetLink
+            href="/trending"
+            icon={IconTrending}
+            label="الرائجة"
+            isActive={pathname === "/trending" || pathname.startsWith("/trending/")}
+            onClick={close}
+          />
           <SheetLink
             href="/categories"
             icon={IconCategories}

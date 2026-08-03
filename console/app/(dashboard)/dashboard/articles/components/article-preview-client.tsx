@@ -17,6 +17,7 @@ import { approveArticle, requestChanges } from "../actions/article-actions";
 import { FeedbackForm } from "./feedback-form";
 import type { ArticleWithAllData } from "../helpers/article-queries";
 import Image from "next/image";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { ar } from "@/lib/ar";
 
 interface ArticlePreviewClientProps {
@@ -312,7 +313,7 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
               <CardContent className="pt-0">
                 <div className="relative aspect-video w-full max-w-2xl rounded-lg overflow-hidden bg-muted">
                   <Image
-                    src={article.featuredImage.url}
+                    src={mediaSrc(article.featuredImage) ?? article.featuredImage.url}
                     alt={article.featuredImage.altText || article.title}
                     fill
                     className="object-cover"
@@ -350,7 +351,7 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
                       className="relative aspect-video rounded-lg overflow-hidden bg-muted"
                     >
                       <Image
-                        src={item.media.url}
+                        src={mediaSrc(item.media) ?? item.media.url}
                         alt={item.altText || item.media.altText || a.galleryImage}
                         fill
                         className="object-cover"

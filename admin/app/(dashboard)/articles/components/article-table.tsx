@@ -14,6 +14,7 @@ import { getArticleSeoScore } from "@/lib/seo/article-seo-score";
 import { GoogleIcon } from "@/components/admin/icons/google-icon";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import type { Article as ArticleViewType } from "../[id]/helpers/article-view-types";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 type Article = ArticleViewType & {
   views: number;
@@ -86,10 +87,10 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
             if (a.client?.id) router.push(`/clients/${a.client.id}`);
           }}
         >
-          {a.client?.logoMedia?.url ? (
+          {mediaSrc(a.client?.logoMedia) ? (
             <Image
-              src={a.client.logoMedia.url}
-              alt={a.client.logoMedia.altText || a.client.name}
+              src={mediaSrc(a.client?.logoMedia)!}
+              alt={a.client?.logoMedia?.altText || a.client?.name || ""}
               width={32}
               height={32}
               className="object-contain w-full h-full"

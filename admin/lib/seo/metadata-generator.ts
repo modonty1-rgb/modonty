@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import type { Article, Client, Author, Category, Media } from "@prisma/client";
 import { SITE_NAME } from "@/lib/constants/site-name";
 import { loadSiteUrl } from "./site-url";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 // Type for article with relations needed for metadata generation
 export interface ArticleWithMetadataRelations {
@@ -48,8 +49,8 @@ export interface ArticleWithMetadataRelations {
   client: Client & {
     name: string;
     slug?: string | null;
-    heroImageMedia?: { url: string } | null;
-    logoMedia?: { url: string } | null;
+    heroImageMedia?: { url: string; bunnyUrl: string | null } | null;
+    logoMedia?: { url: string; bunnyUrl: string | null } | null;
   };
   author: Author & {
     name: string;
@@ -185,9 +186,9 @@ export async function generateNextjsMetadata(
 
   // Featured image
   const ogImage =
-    article.featuredImage?.url ||
-    article.client.heroImageMedia?.url ||
-    article.client.logoMedia?.url ||
+    mediaSrc(article.featuredImage) ||
+    mediaSrc(article.client.heroImageMedia) ||
+    mediaSrc(article.client.logoMedia) ||
     `${siteUrl}/og-image.jpg`;
 
   // Open Graph metadata — OG title/description use article seoTitle/seoDescription (SOT)

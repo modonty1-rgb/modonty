@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { computeMediaSeoScore, type MediaSeoCheck } from "@modonty/database/lib/seo/media/seo-score";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import {
   resolveImageAttribution,
   type MediaTypeName,
@@ -60,6 +61,7 @@ export interface SeoImageGroup {
 export const MEDIA_SELECT = {
   id: true,
   url: true,
+  bunnyUrl: true,
   type: true,
   altText: true,
   description: true,
@@ -96,6 +98,7 @@ type MediaRow = {
 export type SeoImageMediaRow = MediaRow & {
   id: string;
   url: string;
+  bunnyUrl: string | null;
   description: string | null;
   width: number | null;
   height: number | null;
@@ -163,7 +166,7 @@ export function buildSeoImageRow(m: SeoImageMediaRow, defaults: ModontyImageDefa
   const clientOwned = m.type === "LOGO" || m.type === "GALLERY";
   return {
     id: m.id,
-    url: m.url,
+    url: mediaSrc(m) ?? m.url,
     type: m.type,
     score,
     altText: m.altText,

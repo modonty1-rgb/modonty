@@ -1,13 +1,18 @@
 "use server";
 
 /**
- * Listing Page SEO Generator
+ * Listing Page SEO Generator — the ONLY writer of the Settings page-SEO columns.
  *
- * Generates CollectionPage + ItemList JSON-LD for listing pages.
- * Stores results in Settings model (single source of truth).
+ * Two things are generated per page and both land in Settings:
  *
- * Called when: items are created, updated, or deleted in that entity.
- * Pages: articles, categories, tags, industries, clients
+ * 1. **Meta** — always built here by `buildListingMetadata`, because modonty casts the stored
+ *    column straight to a Next.js `Metadata` (see modonty/lib/seo/*-page-seo.ts, no adapter).
+ *    Any other shape silently drops `canonical` and the twitter image.
+ * 2. **JSON-LD** — delegated to `previewPageSeo` (modonty/setting) for ALL seven pages that
+ *    exist: home, clients, categories, tags, industries, trending, faq. One generator, three
+ *    validators, full Organization + per-item detail. No page has a second opinion.
+ *
+ * Called when: items are created, updated, or deleted in that entity, and by the SEO cascade.
  */
 
 import { db } from "@/lib/db";
@@ -15,6 +20,7 @@ import type { Prisma } from "@prisma/client";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { ensureSettingsId } from "@/lib/settings/settings-singleton";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import type { PageKey } from "@/app/(dashboard)/modonty/setting/actions/generate-home-and-list-page-seo";
 
 function getSiteUrl(settings: Record<string, unknown>): string {
   // Caller fetches settings via getAllSettings() (DB-backed). Hardcoded fallback only as safety net.
@@ -25,7 +31,7 @@ function getSiteName(settings: Record<string, unknown>): string {
   return (settings?.siteName as string) || "Modonty";
 }
 
-// ─── Generic builder ───
+// ─── Meta builder ───
 
 interface ListingPageConfig {
   pageUrl: string;
@@ -33,10 +39,10 @@ interface ListingPageConfig {
   description: string;
   siteName: string;
   siteUrl: string;
+  /** Kept for the JSON-LD breadcrumb built on the modonty/setting side; unused by the meta shape. */
   breadcrumbName: string;
   ogImage?: string;
   ogImageAlt?: string;
-  items: Array<{ name: string; url: string; position: number; description?: string; image?: string }>;
 }
 
 function buildListingMetadata(config: ListingPageConfig) {
@@ -65,43 +71,30 @@ function buildListingMetadata(config: ListingPageConfig) {
   };
 }
 
-function buildListingJsonLd(config: ListingPageConfig) {
-  return {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "CollectionPage",
-        "@id": config.pageUrl,
-        name: config.title,
-        description: config.description,
-        url: config.pageUrl,
-        inLanguage: "ar",
-        isPartOf: { "@type": "WebSite", "@id": `${config.siteUrl}/#website`, name: config.siteName, url: config.siteUrl },
-      },
-      {
-        "@type": "ItemList",
-        "@id": `${config.pageUrl}#itemlist`,
-        name: config.title,
-        numberOfItems: config.items.length,
-        itemListElement: config.items.map(item => ({
-          "@type": "ListItem",
-          position: item.position,
-          name: item.name,
-          url: item.url,
-          ...(item.description && { description: item.description }),
-          ...(item.image && { image: item.image }),
-        })),
-      },
-      {
-        "@type": "BreadcrumbList",
-        "@id": `${config.pageUrl}#breadcrumb`,
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "الرئيسية", item: config.siteUrl },
-          { "@type": "ListItem", position: 2, name: config.breadcrumbName, item: config.pageUrl },
-        ],
-      },
-    ],
-  };
+// ─── JSON-LD source ───
+
+/** A serialized card plus the validation report that actually describes it. */
+interface PageJsonLd {
+  json: string;
+  report: Prisma.InputJsonValue;
+}
+
+/**
+ * Every modonty listing page now goes through `previewPageSeo` — one generator, three validators,
+ * no second opinion. The thin CollectionPage builder that used to serve tags/industries/articles
+ * (and hardcoded `valid: true` into the report) is gone.
+ *
+ * Dynamic import keeps this module cheap to load from the many entity actions that import it.
+ */
+async function richJsonLdFor(page: PageKey): Promise<PageJsonLd> {
+  const { previewPageSeo } = await import(
+    "@/app/(dashboard)/modonty/setting/actions/generate-home-and-list-page-seo"
+  );
+  const preview = await previewPageSeo(page);
+  if (!preview.success || !preview.data) {
+    throw new Error(preview.error || `${page} JSON-LD generation failed`);
+  }
+  return { json: preview.data.jsonLd, report: preview.data.report as Prisma.InputJsonValue };
 }
 
 // ─── Settings updater ───
@@ -112,7 +105,7 @@ async function updateSettingsPageCache(
   lastGeneratedField: string,
   validationField: string,
   metadata: object,
-  jsonLd: object,
+  jsonLd: PageJsonLd,
 ) {
   const id = await ensureSettingsId();
 
@@ -120,9 +113,9 @@ async function updateSettingsPageCache(
     where: { id },
     data: {
       [metaTagsField]: JSON.parse(JSON.stringify(metadata)) as Prisma.InputJsonValue,
-      [jsonLdField]: JSON.stringify(jsonLd),
+      [jsonLdField]: jsonLd.json,
       [lastGeneratedField]: new Date(),
-      [validationField]: { valid: true, generatedAt: new Date().toISOString(), itemCount: (jsonLd as { "@graph": Array<{ numberOfItems?: number }> })["@graph"]?.find(g => g.numberOfItems !== undefined)?.numberOfItems || 0 } as Prisma.InputJsonValue,
+      [validationField]: jsonLd.report,
     },
   });
 
@@ -150,18 +143,12 @@ export async function regenerateCategoriesListingCache(): Promise<{ success: boo
     const ogImage = (s.categoriesPageImage as string) || (s.ogImageUrl as string) || undefined;
     const ogImageAlt = (s.categoriesPageImageAlt as string) || (s.altImage as string) || undefined;
 
-    const categories = await db.category.findMany({
-      select: { name: true, slug: true, description: true, socialImage: true },
-      orderBy: { name: "asc" },
-    });
-
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "التصنيفات",
       ogImage, ogImageAlt,
-      items: categories.map((c, i) => ({ name: c.name, url: `${siteUrl}/categories/${c.slug}`, position: i + 1, description: c.description || undefined, image: c.socialImage || undefined })),
     };
 
-    await updateSettingsPageCache("categoriesPageMetaTags", "categoriesPageJsonLdStructuredData", "categoriesPageJsonLdLastGenerated", "categoriesPageJsonLdValidationReport", buildListingMetadata(config), buildListingJsonLd(config));
+    await updateSettingsPageCache("categoriesPageMetaTags", "categoriesPageJsonLdStructuredData", "categoriesPageJsonLdLastGenerated", "categoriesPageJsonLdValidationReport", buildListingMetadata(config), await richJsonLdFor("categories"));
     return { success: true };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : String(error) };
@@ -186,18 +173,12 @@ export async function regenerateTagsListingCache(): Promise<{ success: boolean; 
     const ogImage = (s.tagsPageImage as string) || (s.ogImageUrl as string) || undefined;
     const ogImageAlt = (s.tagsPageImageAlt as string) || (s.altImage as string) || undefined;
 
-    const tags = await db.tag.findMany({
-      select: { name: true, slug: true, description: true },
-      orderBy: { name: "asc" },
-    });
-
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "التاجات",
       ogImage, ogImageAlt,
-      items: tags.map((t, i) => ({ name: t.name, url: `${siteUrl}/tags/${t.slug}`, position: i + 1, description: t.description || undefined })),
     };
 
-    await updateSettingsPageCache("tagsPageMetaTags", "tagsPageJsonLdStructuredData", "tagsPageJsonLdLastGenerated", "tagsPageJsonLdValidationReport", buildListingMetadata(config), buildListingJsonLd(config));
+    await updateSettingsPageCache("tagsPageMetaTags", "tagsPageJsonLdStructuredData", "tagsPageJsonLdLastGenerated", "tagsPageJsonLdValidationReport", buildListingMetadata(config), await richJsonLdFor("tags"));
     return { success: true };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : String(error) };
@@ -222,18 +203,12 @@ export async function regenerateIndustriesListingCache(): Promise<{ success: boo
     const ogImage = (s.industriesPageImage as string) || (s.ogImageUrl as string) || undefined;
     const ogImageAlt = (s.industriesPageImageAlt as string) || (s.altImage as string) || undefined;
 
-    const industries = await db.industry.findMany({
-      select: { name: true, slug: true, description: true },
-      orderBy: { name: "asc" },
-    });
-
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "القطاعات",
       ogImage, ogImageAlt,
-      items: industries.map((ind, i) => ({ name: ind.name, url: `${siteUrl}/industries/${ind.slug}`, position: i + 1, description: ind.description || undefined })),
     };
 
-    await updateSettingsPageCache("industriesPageMetaTags", "industriesPageJsonLdStructuredData", "industriesPageJsonLdLastGenerated", "industriesPageJsonLdValidationReport", buildListingMetadata(config), buildListingJsonLd(config));
+    await updateSettingsPageCache("industriesPageMetaTags", "industriesPageJsonLdStructuredData", "industriesPageJsonLdLastGenerated", "industriesPageJsonLdValidationReport", buildListingMetadata(config), await richJsonLdFor("industries"));
     return { success: true };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : String(error) };
@@ -257,18 +232,12 @@ export async function regenerateClientsListingCache(): Promise<{ success: boolea
     const ogImage = (s.ogImageUrl as string) || undefined;
     const ogImageAlt = (s.altImage as string) || undefined;
 
-    const clients = await db.client.findMany({
-      select: { name: true, slug: true, description: true, logoMedia: { select: { url: true } } },
-      orderBy: { name: "asc" },
-    });
-
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "العملاء",
       ogImage, ogImageAlt,
-      items: clients.map((c, i) => ({ name: c.name, url: `${siteUrl}/clients/${c.slug}`, position: i + 1, description: c.description || undefined, image: c.logoMedia?.url || undefined })),
     };
 
-    await updateSettingsPageCache("clientsPageMetaTags", "clientsPageJsonLdStructuredData", "clientsPageJsonLdLastGenerated", "clientsPageJsonLdValidationReport", buildListingMetadata(config), buildListingJsonLd(config));
+    await updateSettingsPageCache("clientsPageMetaTags", "clientsPageJsonLdStructuredData", "clientsPageJsonLdLastGenerated", "clientsPageJsonLdValidationReport", buildListingMetadata(config), await richJsonLdFor("clients"));
     return { success: true };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : String(error) };
@@ -276,41 +245,17 @@ export async function regenerateClientsListingCache(): Promise<{ success: boolea
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// PAGE: ARTICLES LISTING
+// PAGE: ARTICLES LISTING — deliberately absent
+//
+// There is no /articles listing route on modonty and there must not be one: next.config.ts
+// documents that Vercel's URL normalizer corrupts Arabic article slugs, so any rule matching
+// `/articles` redirected real article URLs to the homepage and Google read the chain as a
+// soft 404 (17+ articles at de-indexing risk). The path is left to 404 cleanly on purpose.
+//
+// So this file used to regenerate SEO for a page that does not exist — on every article
+// create/update/delete plus every cascade — and stored a canonical pointing at that 404.
+// Removed 2026-08-02. The Settings columns (articlesPage*) are stale leftovers nothing reads.
 // ═══════════════════════════════════════════════════════════════════
-
-export async function regenerateArticlesListingCache(): Promise<{ success: boolean; error?: string }> {
-  try {
-    const settings = await getAllSettings();
-    const s = settings as unknown as Record<string, unknown>;
-    const siteUrl = getSiteUrl(s);
-    const siteName = getSiteName(s);
-    const title = (s.articlesSeoTitle as string) || "المقالات";
-    const description = (s.articlesSeoDescription as string) || "تصفح جميع المقالات";
-    const pageUrl = `${siteUrl}/articles`;
-
-    const articles = await db.article.findMany({
-      where: { status: "PUBLISHED" },
-      select: { title: true, slug: true, excerpt: true, client: { select: { slug: true } }, featuredImage: { select: { url: true } } },
-      orderBy: { datePublished: "desc" },
-      take: 50,
-    });
-
-    const ogImage = (s.ogImageUrl as string) || undefined;
-    const ogImageAlt = (s.altImage as string) || undefined;
-
-    const config: ListingPageConfig = {
-      pageUrl, title, description, siteName, siteUrl, breadcrumbName: "المقالات",
-      ogImage, ogImageAlt,
-      items: articles.map((a, i) => ({ name: a.title, url: `${siteUrl}/clients/${a.client.slug}/articles/${a.slug}`, position: i + 1, description: a.excerpt || undefined, image: a.featuredImage?.url || undefined })),
-    };
-
-    await updateSettingsPageCache("articlesPageMetaTags", "articlesPageJsonLdStructuredData", "articlesPageJsonLdLastGenerated", "articlesPageJsonLdValidationReport", buildListingMetadata(config), buildListingJsonLd(config));
-    return { success: true };
-  } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : String(error) };
-  }
-}
 
 // ═══════════════════════════════════════════════════════════════════
 // PAGE: HOME (أهم صفحة — meta here + JSON-LD delegated to the rich validated home builder)
@@ -335,23 +280,19 @@ export async function regenerateHomePageCache(): Promise<{ success: boolean; err
     if (ogImageUrl) twMeta.images = [ogImageUrl];
     const metadata = { title, description, robots: "index, follow", alternates: { canonical: siteUrl }, openGraph: ogMeta, twitter: twMeta };
 
-    // JSON-LD — SINGLE SOURCE OF TRUTH: reuse the rich, validated home builder
-    // (Organization + WebSite + CollectionPage + ItemList of latest articles).
-    // sameAs (incl. WhatsApp/Telegram channels) flows in via getSameAsFromSettings inside previewPageSeo.
-    const { previewPageSeo } = await import("@/app/(dashboard)/modonty/setting/actions/generate-home-and-list-page-seo");
-    const preview = await previewPageSeo("home");
-    if (!preview.success || !preview.data) {
-      return { success: false, error: preview.error || "Home JSON-LD generation failed" };
-    }
+    // JSON-LD from the rich, validated home builder (Organization + WebSite + CollectionPage +
+    // ItemList of latest articles). sameAs (incl. WhatsApp/Telegram) flows in via getSameAsFromSettings.
+    const jsonLd = await richJsonLdFor("home");
 
+    // Home keeps its own update because its columns are unprefixed (jsonLdStructuredData, not homePage…).
     const id = await ensureSettingsId();
     await db.settings.update({
       where: { id },
       data: {
         homeMetaTags: JSON.parse(JSON.stringify(metadata)) as Prisma.InputJsonValue,
-        jsonLdStructuredData: preview.data.jsonLd,
+        jsonLdStructuredData: jsonLd.json,
         jsonLdLastGenerated: new Date(),
-        jsonLdValidationReport: preview.data.report as Prisma.InputJsonValue,
+        jsonLdValidationReport: jsonLd.report,
       },
     });
     await revalidateModontyTag("settings");
@@ -375,25 +316,42 @@ export async function regenerateTrendingPageCache(): Promise<{ success: boolean;
     const description = (s.trendingSeoDescription as string) || "المقالات الأكثر قراءة ومشاركة";
     const pageUrl = `${siteUrl}/trending`;
 
-    // Top articles by views in last 30 days
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000);
-    const topArticles = await db.article.findMany({
-      where: { status: "PUBLISHED", datePublished: { gte: thirtyDaysAgo } },
-      select: { title: true, slug: true, excerpt: true, client: { select: { slug: true } }, featuredImage: { select: { url: true } } },
-      orderBy: { datePublished: "desc" },
-      take: 20,
-    });
-
     const ogImage = (s.ogImageUrl as string) || undefined;
     const ogImageAlt = (s.altImage as string) || undefined;
 
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "الرائج",
       ogImage, ogImageAlt,
-      items: topArticles.map((a, i) => ({ name: a.title, url: `${siteUrl}/clients/${a.client.slug}/articles/${a.slug}`, position: i + 1, description: a.excerpt || undefined, image: a.featuredImage?.url || undefined })),
     };
 
-    await updateSettingsPageCache("trendingPageMetaTags", "trendingPageJsonLdStructuredData", "trendingPageJsonLdLastGenerated", "trendingPageJsonLdValidationReport", buildListingMetadata(config), buildListingJsonLd(config));
+    await updateSettingsPageCache("trendingPageMetaTags", "trendingPageJsonLdStructuredData", "trendingPageJsonLdLastGenerated", "trendingPageJsonLdValidationReport", buildListingMetadata(config), await richJsonLdFor("trending"));
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PAGE: FAQ
+// ═══════════════════════════════════════════════════════════════════
+
+export async function regenerateFaqPageCache(): Promise<{ success: boolean; error?: string }> {
+  try {
+    const settings = await getAllSettings();
+    const s = settings as unknown as Record<string, unknown>;
+    const siteUrl = getSiteUrl(s);
+    const siteName = getSiteName(s);
+    const title = (s.faqSeoTitle as string) || "الأسئلة الشائعة";
+    const description = (s.faqSeoDescription as string) || "إجابات على الأسئلة الأكثر شيوعاً حول مدونتي";
+    const pageUrl = `${siteUrl}/help/faq`;
+
+    const config: ListingPageConfig = {
+      pageUrl, title, description, siteName, siteUrl, breadcrumbName: "الأسئلة الشائعة",
+      ogImage: (s.ogImageUrl as string) || undefined,
+      ogImageAlt: (s.altImage as string) || undefined,
+    };
+
+    await updateSettingsPageCache("faqPageMetaTags", "faqPageJsonLdStructuredData", "faqPageJsonLdLastGenerated", "faqPageJsonLdValidationReport", buildListingMetadata(config), await richJsonLdFor("faq"));
     return { success: true };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : String(error) };
@@ -412,8 +370,8 @@ export async function regenerateAllListingCaches(): Promise<{ results: Record<st
     { name: "tags", fn: regenerateTagsListingCache },
     { name: "industries", fn: regenerateIndustriesListingCache },
     { name: "clients", fn: regenerateClientsListingCache },
-    { name: "articles", fn: regenerateArticlesListingCache },
     { name: "trending", fn: regenerateTrendingPageCache },
+    { name: "faq", fn: regenerateFaqPageCache },
   ];
 
   for (const page of pages) {

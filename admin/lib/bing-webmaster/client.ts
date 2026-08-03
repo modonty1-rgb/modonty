@@ -42,20 +42,68 @@ async function bingGet<T>(endpoint: string): Promise<T> {
   return json.d;
 }
 
+// Verified against the live API 2026-07-30 (149 page rows / 271 query rows):
+//   • BOTH endpoints return `__type: "QueryStats:#…"` — GetPageStats reuses the
+//     QueryStats DTO, so the PAGE URL arrives in `Query`, and `Page` never exists.
+//     Reading `.Page` threw "Cannot read properties of undefined (reading 'replace')".
+//   • Rows are PER-DAY, not totals (149 rows → 57 distinct URLs; one URL appeared
+//     10 times). Sorting raw rows ranks single days, so a top-10 table repeated the
+//     same URL. Always aggregate through `aggregateBingStats` before ranking.
+//   • `AvgClickPosition: -1` is Bing's "no clicks" sentinel, not a position.
 export interface BingQueryStat {
-  Query: string;
+  Query?: string | null;
+  Page?: string | null;
+  Date?: string;
   Clicks: number;
   Impressions: number;
   AvgClickPosition?: number;
   AvgImpressionPosition?: number;
 }
 
-export interface BingPageStat {
-  Page: string;
+/** Same wire shape as BingQueryStat — GetPageStats returns QueryStats objects. */
+export type BingPageStat = BingQueryStat;
+
+/** One row per distinct query/URL, summed across every day Bing reported. */
+export interface BingAggregatedStat {
+  key: string;
   Clicks: number;
   Impressions: number;
-  AvgClickPosition?: number;
-  AvgImpressionPosition?: number;
+  /** Impression-weighted mean position, or null when Bing reported none. */
+  AvgImpressionPosition: number | null;
+}
+
+/**
+ * Collapse Bing's per-day rows into one row per query/URL. `keyOf` picks the label
+ * field: GetPageStats and GetQueryStats both carry it in `Query`, so default to that
+ * and fall back to `Page` in case Bing ever normalizes the DTO.
+ */
+export function aggregateBingStats(
+  rows: BingQueryStat[],
+  keyOf: (r: BingQueryStat) => string | null | undefined = (r) => r.Query ?? r.Page,
+): BingAggregatedStat[] {
+  const byKey = new Map<string, { clicks: number; impressions: number; posWeighted: number; posWeight: number }>();
+
+  for (const r of rows) {
+    const key = keyOf(r)?.trim();
+    if (!key) continue; // no label = nothing to show
+    const acc = byKey.get(key) ?? { clicks: 0, impressions: 0, posWeighted: 0, posWeight: 0 };
+    const impressions = r.Impressions ?? 0;
+    acc.clicks += r.Clicks ?? 0;
+    acc.impressions += impressions;
+    const pos = r.AvgImpressionPosition ?? 0;
+    if (pos > 0 && impressions > 0) {
+      acc.posWeighted += pos * impressions;
+      acc.posWeight += impressions;
+    }
+    byKey.set(key, acc);
+  }
+
+  return [...byKey.entries()].map(([key, a]) => ({
+    key,
+    Clicks: a.clicks,
+    Impressions: a.impressions,
+    AvgImpressionPosition: a.posWeight > 0 ? a.posWeighted / a.posWeight : null,
+  }));
 }
 
 export interface BingRankAndTraffic {

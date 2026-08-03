@@ -74,11 +74,11 @@ export async function postClientReviewAction(
   // resets it to PENDING for re-moderation.
   await db.clientReview.upsert({
     where: {
-      clientId_authorId: { clientId: client.id, authorId: session.user.id },
+      clientId_reviewerId: { clientId: client.id, reviewerId: session.user.id },
     },
     create: {
       clientId: client.id,
-      authorId: session.user.id,
+      reviewerId: session.user.id,
       rating,
       comment,
       status: CommentStatus.PENDING,

@@ -47,6 +47,7 @@ export interface ArticleResponse {
   };
   featuredImage?: {
     url: string;
+    bunnyUrl: string | null;
     altText?: string;
   };
   interactions: InteractionCounts;
@@ -77,7 +78,8 @@ export interface FeedPost {
   clientLogo?: string;
   readingTimeMinutes?: number;
   hasAudio?: boolean;
-  author: {
+  /** Optional: feed cards don't render the author (homepage feed omits it to avoid a User join). Search still provides it. */
+  author?: {
     id: string;
     name: string;
     title: string;
@@ -85,7 +87,8 @@ export interface FeedPost {
     avatar: string;
   };
   likes: number;
-  dislikes: number;
+  /** Optional: cards never render dislikes; homepage feed omits it. */
+  dislikes?: number;
   comments: number;
   favorites: number;
   views: number;

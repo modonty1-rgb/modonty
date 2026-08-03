@@ -6,13 +6,15 @@ import { m } from "framer-motion";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 
+import { storyTeamImage } from "./_constants";
+
 type Dept = "leadership" | "content" | "creative" | "ops" | "outreach";
 
 interface Member {
   name: string;
   role: string;
   bio: string;
-  cloudinaryUrl?: string;
+  imageUrl?: string;
   initials?: string;
   dept: Dept;
 }
@@ -22,31 +24,31 @@ const TEAM: Member[] = [
     name: "م. محمد حسني جبر",
     role: "المدير العام",
     bio: "صاحب الرؤية الاستراتيجية، يضمن تكامل كل الإدارات.",
-    cloudinaryUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1775982689/abo_salman_ylqvmd.jpg",
+    imageUrl:
+      storyTeamImage("abo-salman.jpg"),
     dept: "leadership",
   },
   {
     name: "م. خالد علي",
     role: "المدير التنفيذي",
     bio: "قائد العمليات اليومية وتحويل الخطط لواقع ملموس.",
-    cloudinaryUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1774351813/khalid_ctesgk.jpg",
+    imageUrl:
+      storyTeamImage("khalid.jpg"),
     dept: "leadership",
   },
   {
     name: "د. محمد شلبي",
     role: "أخصائي تحسين محركات البحث",
     bio: "يضمن تصدّر المواقع نتائج البحث الأولى لزيادة الانتشار.",
-    cloudinaryUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1774210371/muhammedshlpy_rnhwf0.jpg",
+    imageUrl:
+      storyTeamImage("muhammed-shlpy.jpg"),
     dept: "content",
   },
   {
     name: "أ. مايا أحمد",
     role: "كاتبة محتوى وأخصائية SEO",
     bio: "تكتب محتوى عربياً قوياً مُحسَّناً لمحركات البحث ويتحدّث بصوت العميل.",
-    cloudinaryUrl:
+    imageUrl:
       "https://api.dicebear.com/9.x/micah/png?seed=maya&earringsProbability=100&facialHairProbability=0&baseColor=f9c9b6&backgroundColor=10b981,059669&size=256&radius=50",
     dept: "content",
   },
@@ -54,72 +56,72 @@ const TEAM: Member[] = [
     name: "أ. روان عطيتو",
     role: "استراتيجي محتوى",
     bio: "تخطّط وتبتكر محتوى إبداعي يربط الجمهور بالعلامة التجارية.",
-    cloudinaryUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1774210371/rawan_mutjax.jpg",
+    imageUrl:
+      storyTeamImage("rawan.jpg"),
     dept: "content",
   },
   {
     name: "أ. مصطفى محمد",
     role: "قائد فريق التصميم",
     bio: "يقود المصممين لتقديم هوية بصرية احترافية تعزّز الثقة.",
-    cloudinaryUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1774210371/mustafa_u9fyw2.jpg",
+    imageUrl:
+      storyTeamImage("mustafa.jpg"),
     dept: "creative",
   },
   {
     name: "أ. أحمد عثمان",
     role: "قائد فريق المونتاج",
     bio: "يصنع محتوى مرئياً يروي قصة العلامة التجارية بأسلوب مبهر.",
-    cloudinaryUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1774210371/ahmed_vbyk9p.png",
+    imageUrl:
+      storyTeamImage("ahmed.png"),
     dept: "creative",
   },
   {
     name: "م. محمد سليمان",
     role: "مدير المشروعات",
     bio: "يخطّط ويدير الموارد لتسليم المشاريع بدقة وكفاءة عالية.",
-    cloudinaryUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1775982692/mohamed_soliman_ztofex.jpg",
+    imageUrl:
+      storyTeamImage("mohamed-soliman.jpg"),
     dept: "ops",
   },
   {
     name: "م. عمر حسني",
     role: "مدير حسابات العملاء",
     bio: "حلقة الوصل مع العملاء، يبني علاقات مستدامة ويضمن رضاهم.",
-    cloudinaryUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1775982688/omar_hosney_y1y29k.jpg",
+    imageUrl:
+      storyTeamImage("omar-hosney.jpg"),
     dept: "ops",
   },
   {
     name: "م. أحمد طارق",
     role: "الموارد البشرية",
     bio: "يستقطب الكفاءات ويطوّر بيئة العمل لضمان إنتاجية الفريق.",
-    cloudinaryUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1775982694/ahmed_tarek_h8xe6x.jpg",
+    imageUrl:
+      storyTeamImage("ahmed-tarek.jpg"),
     dept: "ops",
   },
   {
     name: "ميديا باير سمية محمد",
     role: "مسؤول الحملات الإعلانية",
     bio: "تدير الحملات الإعلانية لأفضل وصول وأعلى عائد على الاستثمار.",
-    cloudinaryUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1775982696/somaya_as3oub.jpg",
+    imageUrl:
+      storyTeamImage("somaya.jpg"),
     dept: "outreach",
   },
   {
     name: "أ. أحمد فرج",
     role: "مدير المبيعات",
     bio: "يقود الخطط البيعية ويصنع الفرص التجارية لتحقيق النمو.",
-    cloudinaryUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1775982687/ahmed_farag_fplbvi.jpg",
+    imageUrl:
+      storyTeamImage("ahmed-farag.jpg"),
     dept: "outreach",
   },
   {
     name: "أ. بلال يوسف",
     role: "خدمة العملاء",
     bio: "الواجهة المباشرة للمنصة، يقدّم الدعم السريع لتجربة مثالية.",
-    cloudinaryUrl:
-      "https://res.cloudinary.com/dfegnpgwx/image/upload/v1775982687/belal_youssef_peprz0.jpg",
+    imageUrl:
+      storyTeamImage("belal-youssef.jpg"),
     dept: "outreach",
   },
 ];
@@ -263,9 +265,9 @@ function TeamCarouselImpl() {
                         <div
                           className={`relative w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden ring-4 ${style.ring} shadow-2xl ${style.glow} bg-muted`}
                         >
-                          {member.cloudinaryUrl ? (
+                          {member.imageUrl ? (
                             <OptimizedImage
-                              src={member.cloudinaryUrl}
+                              src={member.imageUrl}
                               alt={`صورة ${member.name} — فريق مدونتي`}
                               fill
                               sizes="(max-width: 768px) 112px, 128px"

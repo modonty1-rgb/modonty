@@ -100,7 +100,7 @@ export async function getMedia(filters?: MediaFilters) {
               id: true,
               name: true,
               slug: true,
-              logoMedia: { select: { url: true } },
+              logoMedia: { select: { url: true, bunnyUrl: true } },
             },
           },
           _count: {

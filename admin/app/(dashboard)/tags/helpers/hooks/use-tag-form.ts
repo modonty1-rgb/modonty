@@ -15,6 +15,8 @@ interface TagFormData {
   canonicalUrl: string;
   socialImage: string;
   socialImageAlt: string;
+  // Modonty Core (T2): Media relation id — saved next to the raw string (dual-field).
+  socialImageMediaId: string;
 }
 
 interface UseTagFormParams {
@@ -36,6 +38,7 @@ export function useTagForm({ initialData, tagId }: UseTagFormParams) {
     canonicalUrl: initialData?.canonicalUrl || "",
     socialImage: initialData?.socialImage || "",
     socialImageAlt: initialData?.socialImageAlt || "",
+    socialImageMediaId: initialData?.socialImageMediaId || "",
   });
 
   const isEditMode = !!tagId;
@@ -61,6 +64,7 @@ export function useTagForm({ initialData, tagId }: UseTagFormParams) {
       canonicalUrl: formData.canonicalUrl || undefined,
       socialImage: formData.socialImage || null,
       socialImageAlt: formData.socialImageAlt || null,
+      socialImageMediaId: formData.socialImageMediaId || null,
     };
 
     const result = tagId
@@ -69,6 +73,7 @@ export function useTagForm({ initialData, tagId }: UseTagFormParams) {
           ...payload,
           socialImage: payload.socialImage ?? undefined,
           socialImageAlt: payload.socialImageAlt ?? undefined,
+          socialImageMediaId: payload.socialImageMediaId ?? undefined,
         });
 
     if (result.success) {
@@ -88,7 +93,10 @@ export function useTagForm({ initialData, tagId }: UseTagFormParams) {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const updateImageField = (field: "socialImage" | "socialImageAlt", value: string) => {
+  const updateImageField = (
+    field: "socialImage" | "socialImageAlt" | "socialImageMediaId",
+    value: string
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 

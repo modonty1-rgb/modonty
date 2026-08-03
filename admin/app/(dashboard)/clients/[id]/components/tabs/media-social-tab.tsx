@@ -30,6 +30,7 @@ import {
   type Platform,
 } from "../../../helpers/url-validation";
 import type { MediaType } from "@prisma/client";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface MediaSocialTabProps {
   client: any;
@@ -110,7 +111,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                   <p className="text-sm text-muted-foreground mb-2">Logo</p>
                   <div className="flex items-center gap-4">
                     <NextImage
-                      src={client.logoMedia.url}
+                      src={mediaSrc(client.logoMedia) ?? ""}
                       alt={client.logoMedia.altText || "Logo"}
                       width={96}
                       height={96}
@@ -119,12 +120,12 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                     />
                     <div className="flex-1 min-w-0">
                       <a
-                        href={client.logoMedia.url}
+                        href={mediaSrc(client.logoMedia) ?? ""}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary hover:underline block break-all"
                       >
-                        {client.logoMedia.url}
+                        {mediaSrc(client.logoMedia) ?? ""}
                       </a>
                       {client.logoMedia.altText && (
                         <p className="text-xs text-muted-foreground mt-1">Alt: {client.logoMedia.altText}</p>
@@ -138,7 +139,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                   <p className="text-sm text-muted-foreground mb-2">OG Image</p>
                   <div className="flex items-center gap-4">
                     <NextImage
-                      src={client.heroImageMedia.url}
+                      src={mediaSrc(client.heroImageMedia) ?? ""}
                       alt={client.heroImageMedia.altText || "OG image"}
                       width={96}
                       height={96}
@@ -147,12 +148,12 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                     />
                     <div className="flex-1 min-w-0">
                       <a
-                        href={client.heroImageMedia.url}
+                        href={mediaSrc(client.heroImageMedia) ?? ""}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary hover:underline block break-all"
                       >
-                        {client.heroImageMedia.url}
+                        {mediaSrc(client.heroImageMedia) ?? ""}
                       </a>
                       {client.heroImageMedia.altText && (
                         <p className="text-xs text-muted-foreground mt-1">Alt: {client.heroImageMedia.altText}</p>
@@ -166,7 +167,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                   <p className="text-sm text-muted-foreground mb-2">Twitter Image</p>
                   <div className="flex items-center gap-4">
                     <NextImage
-                      src={client.heroImageMedia.url}
+                      src={mediaSrc(client.heroImageMedia) ?? ""}
                       alt={client.heroImageMedia.altText || "Twitter image"}
                       width={96}
                       height={96}
@@ -175,12 +176,12 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                     />
                     <div className="flex-1 min-w-0">
                       <a
-                        href={client.heroImageMedia.url}
+                        href={mediaSrc(client.heroImageMedia) ?? ""}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary hover:underline block break-all"
                       >
-                        {client.heroImageMedia.url}
+                        {mediaSrc(client.heroImageMedia) ?? ""}
                       </a>
                       {client.heroImageMedia.altText && (
                         <p className="text-xs text-muted-foreground mt-1">Alt: {client.heroImageMedia.altText}</p>

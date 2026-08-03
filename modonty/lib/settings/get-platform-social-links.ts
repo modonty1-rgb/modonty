@@ -51,3 +51,24 @@ export async function getPlatformSocialLinks(): Promise<SocialLink[]> {
     }))
     .filter(item => !!item.href);
 }
+
+export type PlatformImageLicensing = {
+  imageLicenseUrl: string | null;
+  imageAcquireLicensePageUrl: string | null;
+};
+
+/** The copyright-policy URLs every Modonty-produced image node carries. */
+export async function getPlatformImageLicensing(): Promise<PlatformImageLicensing> {
+  cacheTag("settings");
+  cacheLife("hours");
+
+  const settings = await db.settings.findUnique({
+    where: SETTINGS_SINGLETON_WHERE,
+    select: { imageLicenseUrl: true, imageAcquireLicensePageUrl: true },
+  });
+
+  return {
+    imageLicenseUrl: settings?.imageLicenseUrl ?? null,
+    imageAcquireLicensePageUrl: settings?.imageAcquireLicensePageUrl ?? null,
+  };
+}

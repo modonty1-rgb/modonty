@@ -16,6 +16,8 @@ import NextImage from "next/image";
 import { Loader2 } from "lucide-react";
 import type { GalleryItem } from "../actions/gallery-actions";
 
+import { mediaSrc } from "@modonty/database/lib/media-src";
+
 interface GalleryItemEditDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -83,7 +85,7 @@ export function GalleryItemEditDialog({
             <Label>معاينة الصورة</Label>
             <div className="relative aspect-video rounded-lg overflow-hidden border bg-muted">
               <NextImage
-                src={item.media.url}
+                src={mediaSrc(item.media) ?? item.media.url}
                 alt={altText || item.media.altText || "Gallery image"}
                 fill
                 className="object-contain"

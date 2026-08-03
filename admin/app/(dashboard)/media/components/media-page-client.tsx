@@ -35,6 +35,7 @@ interface Media {
   description: string | null;
   type: MediaType;
   createdAt: Date;
+  bunnyUrl: string | null;
   cloudinaryPublicId?: string | null;
   cloudinaryVersion?: string | null;
   isUsed?: boolean;

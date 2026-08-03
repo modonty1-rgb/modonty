@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { Info } from "lucide-react";
+
+
 import { GalleryManager } from "./components/gallery-manager";
 
 export const dynamic = "force-dynamic";
@@ -11,9 +13,11 @@ export default async function GalleryPage() {
   const clientId = (session as { clientId?: string })?.clientId;
   if (!clientId) redirect("/");
 
+  // Both keys travel to the client untouched; GalleryManager resolves through `mediaSrc`.
+  // Resolving here instead would drop `bunnyUrl`, which `GalleryImage` now requires.
   const media = await db.media.findMany({
     where: { clientId, type: "GALLERY" },
-    select: { id: true, url: true, altText: true, width: true, height: true },
+    select: { id: true, url: true, bunnyUrl: true, altText: true, width: true, height: true },
     orderBy: { createdAt: "desc" },
     take: 60,
   });

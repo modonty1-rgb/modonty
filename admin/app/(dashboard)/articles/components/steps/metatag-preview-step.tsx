@@ -19,6 +19,7 @@ import { messages } from '@/lib/messages';
 import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
 import { generateBreadcrumbStructuredData } from '@/lib/seo';
 import { openInspect } from '@/app/(dashboard)/inspect/helpers/open-inspect';
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface FeaturedMedia {
   url: string;
@@ -342,7 +343,7 @@ export function MetaTagPreviewStep() {
     if (selectedClient?.logoMedia?.url) {
       organizationNode.logo = {
         '@type': 'ImageObject',
-        url: selectedClient.logoMedia.url,
+        url: mediaSrc(selectedClient.logoMedia) ?? "",
         ...(selectedClient.logoMedia.width && { width: selectedClient.logoMedia.width }),
         ...(selectedClient.logoMedia.height && { height: selectedClient.logoMedia.height }),
       };

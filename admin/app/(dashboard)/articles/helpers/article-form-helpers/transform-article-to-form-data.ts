@@ -1,3 +1,5 @@
+import { mediaSrc } from "@modonty/database/lib/media-src";
+
 import { ArticleFormData, FAQItem, GalleryFormItem } from "@/lib/types/form-types";
 import { getArticleById } from "../../actions/articles-actions";
 import { normalizeArticleCanonicalForForm } from "../seo-generation";
@@ -67,6 +69,7 @@ export function transformArticleToFormData(article: ArticleFromDb): Partial<Arti
           media: {
             id: string;
             url: string;
+            bunnyUrl: string | null;
             altText: string | null;
             width: number | null;
             height: number | null;
@@ -80,7 +83,10 @@ export function transformArticleToFormData(article: ArticleFromDb): Partial<Arti
           media: item.media
             ? {
                 id: item.media.id,
-                url: item.media.url,
+                url: mediaSrc(item.media) ?? item.media.url,
+                // Already resolved into `url` above — carrying it again would be redundant,
+                // but the field must be present so nothing downstream can silently narrow it.
+                bunnyUrl: null,
                 altText: item.media.altText || null,
                 width: item.media.width || null,
                 height: item.media.height || null,

@@ -109,6 +109,11 @@ export function ThumbnailImageView({
   const getThumbnailUrl = (): string => {
     if (thumbnailUrl) return thumbnailUrl;
 
+    // If the caller already resolved a non-Cloudinary source (Bunny), use it as-is. The
+    // publicId branch below only exists to build a Cloudinary thumbnail transform — running
+    // it on a row that has a Bunny copy would drag the admin back to Cloudinary.
+    if (imageUrl && !imageUrl.includes('res.cloudinary.com')) return imageUrl;
+
     if (cloudinaryPublicId) {
       const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dfegnpgwx';
       const format = filename?.split('.').pop() || 'png';

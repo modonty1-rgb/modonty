@@ -79,6 +79,7 @@ export interface ArticleWithAllData {
   featuredImage: {
     id: string;
     url: string;
+    bunnyUrl: string | null;
     altText: string | null;
     width: number | null;
     height: number | null;
@@ -93,6 +94,7 @@ export interface ArticleWithAllData {
     media: {
       id: string;
       url: string;
+      bunnyUrl: string | null;
       altText: string | null;
       width: number | null;
       height: number | null;
@@ -201,6 +203,7 @@ export async function getPendingArticles(clientId: string): Promise<ArticleWithA
         select: {
           id: true,
           url: true,
+          bunnyUrl: true,
           altText: true,
           width: true,
           height: true,
@@ -214,6 +217,7 @@ export async function getPendingArticles(clientId: string): Promise<ArticleWithA
             select: {
               id: true,
               url: true,
+              bunnyUrl: true,
               altText: true,
               width: true,
               height: true,
@@ -344,6 +348,7 @@ export async function getPublishedArticles(clientId: string): Promise<ArticleWit
         select: {
           id: true,
           url: true,
+          bunnyUrl: true,
           altText: true,
           width: true,
           height: true,
@@ -357,6 +362,7 @@ export async function getPublishedArticles(clientId: string): Promise<ArticleWit
             select: {
               id: true,
               url: true,
+              bunnyUrl: true,
               altText: true,
               width: true,
               height: true,
@@ -486,6 +492,7 @@ export async function getAllArticles(clientId: string): Promise<ArticleWithAllDa
         select: {
           id: true,
           url: true,
+          bunnyUrl: true,
           altText: true,
           width: true,
           height: true,
@@ -499,6 +506,7 @@ export async function getAllArticles(clientId: string): Promise<ArticleWithAllDa
             select: {
               id: true,
               url: true,
+              bunnyUrl: true,
               altText: true,
               width: true,
               height: true,
@@ -632,6 +640,7 @@ export async function getArticleForApproval(
         select: {
           id: true,
           url: true,
+          bunnyUrl: true,
           altText: true,
           width: true,
           height: true,
@@ -645,6 +654,7 @@ export async function getArticleForApproval(
             select: {
               id: true,
               url: true,
+              bunnyUrl: true,
               altText: true,
               width: true,
               height: true,

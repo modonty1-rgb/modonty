@@ -31,7 +31,6 @@ const NON_NAVIGABLE_PATHS = new Set([
   "/campaigns",                      // page is /campaigns/leads
   "/modonty",                        // pages are /modonty/faq + /modonty/pages/[slug]
   "/modonty/pages",                  // page is /modonty/pages/[slug]
-  "/social",                         // pages are /social/facebook + /social/instagram
 ]);
 
 export interface EntityRouteConfig {

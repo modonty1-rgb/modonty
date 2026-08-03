@@ -33,6 +33,7 @@ import { SEOHealthGauge } from "@/components/shared/seo-doctor/seo-health-gauge"
 import { organizationSEOConfig } from "../../helpers/client-seo-config";
 import { DeleteClientButton } from "./delete-client-button";
 import { getTierDisplayName } from "../../helpers/client-display-utils";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface Client {
   id: string;
@@ -42,12 +43,14 @@ interface Client {
   url: string | null;
   logoMedia: {
     url: string;
+    bunnyUrl: string | null;
     altText: string | null;
     width: number | null;
     height: number | null;
   } | null;
   heroImageMedia: {
     url: string;
+    bunnyUrl: string | null;
     altText: string | null;
     width: number | null;
     height: number | null;
@@ -112,7 +115,7 @@ export function ClientView({ client }: ClientViewProps) {
         <div className="flex items-center gap-4">
           {client.logoMedia?.url && (
             <Image
-              src={client.logoMedia.url}
+              src={mediaSrc(client.logoMedia) ?? ""}
               alt={client.logoMedia.altText || client.name}
               width={64}
               height={64}
@@ -184,7 +187,7 @@ export function ClientView({ client }: ClientViewProps) {
                   <p className="text-sm text-muted-foreground mb-2">Logo URL</p>
                   <div className="flex items-center gap-4">
                     <Image
-                      src={client.logoMedia.url}
+                      src={mediaSrc(client.logoMedia) ?? ""}
                       alt={client.logoMedia.altText || `${client.name} logo`}
                       width={96}
                       height={96}
@@ -465,7 +468,7 @@ export function ClientView({ client }: ClientViewProps) {
                   <p className="text-sm text-muted-foreground mb-2">Hero Image URL</p>
                   <div className="space-y-2">
                     <Image
-                      src={client.heroImageMedia.url}
+                      src={mediaSrc(client.heroImageMedia) ?? ""}
                       alt={client.heroImageMedia.altText || `${client.name} hero image`}
                       width={128}
                       height={128}
@@ -473,12 +476,12 @@ export function ClientView({ client }: ClientViewProps) {
                       sizes="128px"
                     />
                     <a
-                      href={client.heroImageMedia.url}
+                      href={mediaSrc(client.heroImageMedia) ?? ""}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-primary hover:underline block"
                     >
-                      {client.heroImageMedia.url}
+                      {mediaSrc(client.heroImageMedia) ?? ""}
                     </a>
                     {client.heroImageMedia.altText && (
                       <p className="text-xs text-muted-foreground">Alt: {client.heroImageMedia.altText}</p>

@@ -11,6 +11,8 @@ export interface BrandMedia {
   logoIconUrl: string | null;
   /** Default alt text for logo / OG image. */
   altImage: string | null;
+  /** CR certificate for /trust — null falls back to the built-in /public file. */
+  certificateImageUrl: string | null;
   /** X/Twitter site @handle (without @) — twitter:site. null when unset. */
   twitterSite: string | null;
   /** X/Twitter creator @handle (without @) — twitter:creator. null when unset. */
@@ -35,6 +37,7 @@ export async function getBrandMedia(): Promise<BrandMedia> {
       logoUrl: true,
       logoIconUrl: true,
       altImage: true,
+      certificateImageUrl: true,
       twitterSite: true,
       twitterCreator: true,
     },
@@ -45,6 +48,7 @@ export async function getBrandMedia(): Promise<BrandMedia> {
     logoUrl: settings?.logoUrl?.trim() || null,
     logoIconUrl: settings?.logoIconUrl?.trim() || null,
     altImage: settings?.altImage?.trim() || null,
+    certificateImageUrl: settings?.certificateImageUrl?.trim() || null,
     twitterSite: settings?.twitterSite?.trim() || null,
     twitterCreator: settings?.twitterCreator?.trim() || null,
   };

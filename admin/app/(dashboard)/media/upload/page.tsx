@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getCoreClientId } from "@modonty/database/lib/core-client";
 import { UploadZone } from "../components/upload-zone";
 
 interface UploadMediaPageProps {
@@ -8,7 +9,7 @@ interface UploadMediaPageProps {
 }
 
 export default async function UploadMediaPage({ searchParams }: UploadMediaPageProps) {
-  const params = await searchParams;
+  const [params, coreClientId] = await Promise.all([searchParams, getCoreClientId()]);
   const clientId = params.clientId || null;
 
   return (
@@ -33,7 +34,7 @@ export default async function UploadMediaPage({ searchParams }: UploadMediaPageP
           </Button>
         </Link>
       </div>
-      <UploadZone initialClientId={clientId} />
+      <UploadZone initialClientId={clientId} coreClientId={coreClientId} />
     </div>
   );
 }

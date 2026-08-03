@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Inbox, Wrench } from "lucide-react";
 import { ArticleStatus } from "@prisma/client";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 import { getStatusLabel, getStatusVariant } from "../../helpers/status-utils";
 import { getRollbackTargets } from "../lib/rollback-targets";
@@ -23,7 +24,7 @@ export default async function StatusMaintenancePage() {
       updatedAt: true,
       client: { select: { name: true } },
       author: { select: { name: true } },
-      featuredImage: { select: { url: true } },
+      featuredImage: { select: { url: true, bunnyUrl: true } },
     },
     orderBy: { updatedAt: "desc" },
     take: 100,
@@ -75,6 +76,7 @@ export default async function StatusMaintenancePage() {
         <Card className="divide-y overflow-hidden">
           {articles.map((article) => {
             const targets = getRollbackTargets(article.status);
+            const thumbSrc = mediaSrc(article.featuredImage);
             return (
               <div
                 key={article.id}
@@ -82,9 +84,9 @@ export default async function StatusMaintenancePage() {
               >
                 {/* Thumbnail */}
                 <div className="h-10 w-10 shrink-0 rounded-full overflow-hidden bg-muted ring-1 ring-border/60">
-                  {article.featuredImage?.url ? (
+                  {thumbSrc ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={article.featuredImage.url} alt="" className="h-full w-full object-cover" />
+                    <img src={thumbSrc} alt="" className="h-full w-full object-cover" />
                   ) : null}
                 </div>
 

@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { compressToWebP } from "@/lib/compress-image";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import {
   addGalleryImage,
   updateGalleryImageAlt,
@@ -211,7 +212,7 @@ function GalleryCard({
     <div className="flex flex-col gap-2 rounded-lg border border-border bg-card p-2">
       <div className="relative w-full overflow-hidden rounded-md bg-muted" style={{ aspectRatio: ratio }}>
         <Image
-          src={image.url}
+          src={mediaSrc(image) ?? image.url}
           alt={image.altText || "صورة المعرض"}
           fill
           className="object-cover"

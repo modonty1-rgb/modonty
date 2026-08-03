@@ -3,6 +3,7 @@
  * Used by API routes and Server Components
  */
 
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { db } from "@/lib/db";
 import { SubscriptionStatus } from "@prisma/client";
 import { unstable_cache } from "next/cache";
@@ -66,7 +67,7 @@ export const getIndustriesEnhanced = unstable_cache(
           select: {
             id: true,
             name: true,
-            logoMedia: { select: { url: true } },
+            logoMedia: { select: { url: true, bunnyUrl: true } },
           },
         },
       },
@@ -86,7 +87,7 @@ export const getIndustriesEnhanced = unstable_cache(
         clientPreviews: industry.clients.map((client) => ({
           id: client.id,
           name: client.name,
-          logoUrl: client.logoMedia?.url,
+          logoUrl: mediaSrc(client.logoMedia) ?? undefined,
         })),
       }));
 
@@ -132,6 +133,7 @@ export async function getIndustryBySlug(slug: string) {
       socialImage: true,
       socialImageAlt: true,
       jsonLdStructuredData: true,
+      nextjsMetadata: true,
       clients: {
         where: { subscriptionStatus: SubscriptionStatus.ACTIVE },
         orderBy: { name: "asc" },
@@ -139,8 +141,8 @@ export async function getIndustryBySlug(slug: string) {
           id: true,
           name: true,
           slug: true,
-          logoMedia: { select: { url: true } },
-          heroImageMedia: { select: { url: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true } },
+          heroImageMedia: { select: { url: true, bunnyUrl: true } },
           phone: true,
           addressCity: true,
           description: true,

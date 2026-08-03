@@ -1,3 +1,4 @@
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { db } from "@/lib/db";
 
 export interface FollowedClient {
@@ -32,7 +33,7 @@ export async function getProfileFollowing(
           name: true,
           slug: true,
           description: true,
-          logoMedia: { select: { url: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true } },
           industry: { select: { id: true, name: true, slug: true } },
           _count: { select: { articles: true } },
         },
@@ -47,7 +48,7 @@ export async function getProfileFollowing(
     name: follow.client.name,
     slug: follow.client.slug,
     description: follow.client.description,
-    logo: follow.client.logoMedia?.url ?? null,
+    logo: mediaSrc(follow.client.logoMedia),
     articleCount: follow.client._count.articles,
     followedAt: follow.createdAt,
     industry: follow.client.industry,

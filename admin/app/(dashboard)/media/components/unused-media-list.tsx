@@ -20,11 +20,13 @@ import { Trash2, ImageOff, ExternalLink, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { deleteMedia } from "../actions/media-actions";
 import { formatBytes } from "@modonty/database/lib/utils";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface UnusedItem {
   id: string;
   filename: string;
   url: string;
+  bunnyUrl: string | null;
   mimeType: string;
   fileSize: number | null;
   createdAt: Date;
@@ -32,8 +34,10 @@ interface UnusedItem {
   client: { name: string } | null;
 }
 
+// Must stay in sync with next.config.ts → images.remotePatterns. Bunny first: it is the
+// primary storage, and leaving it out silently hid every migrated thumbnail.
 const ALLOWED_HOST_RE =
-  /(^|\.)((images\.unsplash\.com)|(.*\.unsplash\.com)|(.*\.cloudinary\.com)|(.*\.amazonaws\.com)|(.*\.googleapis\.com))$/;
+  /(^|\.)((.*\.b-cdn\.net)|(images\.unsplash\.com)|(.*\.unsplash\.com)|(.*\.cloudinary\.com)|(.*\.amazonaws\.com)|(.*\.googleapis\.com))$/;
 
 function isHostAllowed(url: string): boolean {
   try {
@@ -74,8 +78,8 @@ export function UnusedMediaList({ items }: { items: UnusedItem[] }) {
         {items.map((item) => (
           <li key={item.id} className="flex items-center gap-3 px-4 py-3">
             <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
-              {item.mimeType.startsWith("image/") && isHostAllowed(item.url) ? (
-                <NextImage src={item.url} alt={item.filename} fill className="object-cover" sizes="48px" />
+              {item.mimeType.startsWith("image/") && isHostAllowed(mediaSrc(item) ?? "") ? (
+                <NextImage src={mediaSrc(item)!} alt={item.filename} fill className="object-cover" sizes="48px" />
               ) : (
                 <div className="flex h-full items-center justify-center">
                   <ImageOff className="h-4 w-4 text-muted-foreground" />

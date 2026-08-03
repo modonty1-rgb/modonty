@@ -12,11 +12,12 @@
  */
 import { ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface ArticleImagesRow {
   slug: string;
-  featuredImage: { url: string } | null;
-  gallery: Array<{ media: { url: string } | null }>;
+  featuredImage: { url: string; bunnyUrl: string | null } | null;
+  gallery: Array<{ media: { url: string; bunnyUrl: string | null } | null }>;
   content: string | null;
 }
 
@@ -61,9 +62,9 @@ export async function GET() {
     },
     select: {
       slug: true,
-      featuredImage: { select: { url: true } },
+      featuredImage: { select: { url: true, bunnyUrl: true } },
       // Gallery images never reached this sitemap until 2026-07-14 (GEO audit, ن١٥).
-      gallery: { select: { media: { select: { url: true } } } },
+      gallery: { select: { media: { select: { url: true, bunnyUrl: true } } } },
       content: true,
     },
   });
@@ -71,8 +72,8 @@ export async function GET() {
   const entries = (articles as ArticleImagesRow[])
     .map((a) => {
       const images = uniqueAbsolute([
-        a.featuredImage?.url,
-        ...a.gallery.map((g) => g.media?.url),
+        mediaSrc(a.featuredImage),
+        ...a.gallery.map((g) => mediaSrc(g.media)),
         ...extractImagesFromHtml(a.content),
       ]);
       if (images.length === 0) return null;

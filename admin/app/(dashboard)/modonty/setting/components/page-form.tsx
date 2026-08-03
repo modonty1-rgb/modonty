@@ -35,9 +35,11 @@ interface PageFormProps {
   onRegenerated?: () => void;
   settingsDefaults: SettingsDefaults;
   initialData?: PageInitialData;
+  /** Modonty Core (T2): platform images come from the core client's own library. */
+  coreClientId: string | null;
 }
 
-export function PageForm({ slug, pageLabel, pageDescription, initialData, onRegenerated, settingsDefaults }: PageFormProps) {
+export function PageForm({ slug, pageLabel, pageDescription, initialData, onRegenerated, settingsDefaults, coreClientId }: PageFormProps) {
   const {
     formData,
     loading,
@@ -297,12 +299,15 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
                 label="Hero & Social Image"
                 imageUrl={formData.heroImage || ""}
                 altText={formData.heroImageAlt || ""}
-                onImageChange={(url, alt) => {
+                onImageChange={(url, alt, mediaId) => {
                   updateField("heroImage", url);
                   updateField("socialImage", url);
                   updateField("ogImage", url);
                   updateField("heroImageAlt", alt);
                   updateField("socialImageAlt", alt);
+                  // One image drives hero + social — both relations point at the same Media row.
+                  updateField("heroImageMediaId", mediaId ?? "");
+                  updateField("socialImageMediaId", mediaId ?? "");
                 }}
                 onRemove={() => {
                   updateField("heroImage", "");
@@ -310,8 +315,12 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
                   updateField("socialImage", "");
                   updateField("socialImageAlt", "");
                   updateField("ogImage", "");
+                  updateField("heroImageMediaId", "");
+                  updateField("socialImageMediaId", "");
                 }}
-                scope="PLATFORM"
+                clientId={coreClientId}
+                lockClient
+                mediaId={formData.heroImageMediaId || null}
               />
               <p className="text-xs text-muted-foreground mt-2">
                 Used as hero image and shared on social media

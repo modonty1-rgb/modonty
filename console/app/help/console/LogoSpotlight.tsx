@@ -4,8 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useMemo } from "react";
 
-const LOGO_URL =
-  "https://res.cloudinary.com/dfegnpgwx/image/upload/v1768724691/final-01_fdnhom.svg";
+import { BRAND_WORDMARK_URL } from "@modonty/database/lib/brand-assets";
+
+const LOGO_URL = BRAND_WORDMARK_URL;
 
 interface Props {
   activeWord?: string;

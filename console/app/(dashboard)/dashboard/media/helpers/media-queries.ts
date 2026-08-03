@@ -10,6 +10,8 @@ export interface MediaWithStats {
   id: string;
   filename: string;
   url: string;
+  /** Required key (value may be null) — omitting it narrowed the Bunny copy away. */
+  bunnyUrl: string | null;
   mimeType: string;
   fileSize: number | null;
   width: number | null;

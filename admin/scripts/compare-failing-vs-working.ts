@@ -34,7 +34,7 @@ async function inspect(label: string, slug: string) {
       author: { select: { id: true, slug: true } },
       category: { select: { id: true, slug: true } },
       client: { select: { id: true, slug: true, name: true } },
-      featuredImage: { select: { id: true, url: true } },
+      featuredImage: { select: { id: true, url: true, bunnyUrl: true } },
     },
   });
   console.log(`\n━━━━ ${label}: "${slug}" ━━━━`);

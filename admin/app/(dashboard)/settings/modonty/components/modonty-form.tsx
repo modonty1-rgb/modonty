@@ -18,6 +18,8 @@ import { SEO_HINTS } from "../../_shared/seo-hints";
 
 interface Props {
   initialSettings: AllSettings;
+  /** Modonty Core (T2): platform images come from the core client's own library. */
+  coreClientId: string | null;
 }
 
 // Small grouping sub-header used inside the SEO tab to chunk fields by purpose.
@@ -42,7 +44,7 @@ const F = {
 
 const norm = (v: unknown) => (v === undefined || v === null ? "" : v);
 
-export function ModontyForm({ initialSettings }: Props) {
+export function ModontyForm({ initialSettings, coreClientId }: Props) {
   const { toast } = useToast();
   const [settings, setSettings] = useState<AllSettings>(initialSettings);
   // Snapshot of what's persisted — per-tab dirty = fields differ from this.
@@ -158,6 +160,7 @@ export function ModontyForm({ initialSettings }: Props) {
                   onChange={(v) => set("ogImageUrl", v)}
                   hint="1200×630 px — the Open Graph image shown when the page is shared on social media."
                   aspect="og"
+                  coreClientId={coreClientId}
                 />
               </div>
             </div>

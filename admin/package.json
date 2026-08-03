@@ -1,6 +1,6 @@
 {
   "name": "@modonty/admin",
-  "version": "1.7.0",
+  "version": "1.9.0",
   "private": true,
   "prisma": {
     "schema": "../dataLayer/prisma/schema/schema.prisma"
@@ -100,7 +100,7 @@
     "recharts": "^3.6.0",
     "replicate": "^1.4.0",
     "resend": "^4.0.0",
-    "sharp": "^0.35.3",
+    "sharp": "0.34.5",
     "styled-components": "^6.4.2",
     "svix": "^1.95.1",
     "tailwind-merge": "^3.4.0",
