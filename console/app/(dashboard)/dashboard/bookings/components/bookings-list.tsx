@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { ar } from "@/lib/ar";
+import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -92,6 +93,7 @@ export function BookingsList({ bookings }: Props) {
   const s = ar.bookings;
   const [filter, setFilter] = useState<FilterKey>("all");
   const [channel, setChannel] = useState<ChannelKey>("all");
+  const { confirmThen, confirmDialog } = useConfirm();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState<BookingWithDetails | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -159,14 +161,6 @@ export function BookingsList({ bookings }: Props) {
     });
   }
 
-  function confirmThen(message: string, onConfirm: () => void) {
-    toast(message, {
-      duration: 8000,
-      action: { label: s.confirm, onClick: onConfirm },
-      cancel: { label: s.cancel, onClick: () => {} },
-    });
-  }
-
   function handleStatusChange(id: string, status: BookingStatus) {
     setActionId(id);
     startTransition(async () => {
@@ -193,7 +187,7 @@ export function BookingsList({ bookings }: Props) {
         } else toast.error(res.error || s.deleteFailed);
         setActionId(null);
       });
-    });
+    }, "احذف الحجز");
   }
 
   function handleBulkStatus(status: BookingStatus) {
@@ -219,7 +213,7 @@ export function BookingsList({ bookings }: Props) {
           setSelected(new Set());
         } else toast.error(res.error || s.deleteFailed);
       });
-    });
+    }, "احذف المحدَّد");
   }
 
   return (
@@ -318,6 +312,7 @@ export function BookingsList({ bookings }: Props) {
       </Card>
 
       <BookingDetailSheet booking={open} onClose={() => setOpen(null)} />
+      {confirmDialog}
     </>
   );
 }

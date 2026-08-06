@@ -139,6 +139,12 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
         ymylData: true,
         alternateName: true,
         slogan: true,
+        // Legacy intro-video link (أ٦). Both are needed, not just the url: the badge must
+        // disappear the moment the client's own video lands, and that is signalled by
+        // `introVideoMediaId` being set — reading only the url would keep flagging a row
+        // that is already migrated if the clear ever failed.
+        introVideoUrl: true,
+        introVideoMediaId: true,
         logoMedia: {
           select: {
             url: true,

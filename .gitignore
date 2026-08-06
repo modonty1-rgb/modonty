@@ -60,8 +60,6 @@ backups/
 # Misc
 *.pem
 
-# Added by code-review-graph
-.code-review-graph/
 
 # Playwright MCP snapshots
 .playwright-mcp/

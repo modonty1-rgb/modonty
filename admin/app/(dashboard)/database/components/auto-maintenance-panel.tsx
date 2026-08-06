@@ -15,6 +15,9 @@ import {
   runStepOrganizationType,
   runStepCanonical,
   runStepHreflang,
+  runStepMediaReelsBackfill,
+  runStepBlurBackfill,
+  runStepOrphanRows,
   runStepSoftDeletedComments,
   runStepIntakeSeed,
   revalidateDatabasePage,
@@ -41,6 +44,9 @@ const STEPS: StepDef[] = [
   { key: "organizationType", label: "Organization Types", description: "Clients with non-canonical organizationType values", runner: runStepOrganizationType },
   { key: "canonical", label: "Canonical URLs", description: "Wrong-host or double-encoded canonical URLs across articles, clients, categories, tags, industries, authors", runner: runStepCanonical },
   { key: "hreflang", label: "Article hreflang", description: "Articles whose stored metadata carries no hreflang — the live page adds it, the SEO score does not see it, so every one of them is under-scored by 10 points until this runs", runner: runStepHreflang },
+  { key: "mediaReelsBackfill", label: "Media Reels Fields", description: "Media rows written before the reels merge carry no `inGallery` key and no counters. An absent key matches NO filter in MongoDB — every client gallery renders empty, and every counter increment is silently lost, until this runs. Idempotent.", runner: runStepMediaReelsBackfill },
+  { key: "blurBackfill", label: "Image Blur Placeholders", description: "Images already on Bunny that carry no `blurDataURL`. The migration builds one from the buffer it downloads, but the generator returns null instead of throwing — a corrupt or exotic file migrates without a placeholder, and the migration never revisits a row that already has `bunnyUrl`. So the gap is permanent and silent until this runs. Batches of 50, one download each, idempotent.", runner: runStepBlurBackfill },
+  { key: "orphanRows", label: "Orphan Rows (broken required relations)", description: "A row whose REQUIRED relation points at something deleted. Prisma refuses the whole query — not the bad row — so one dangling ArticleTag took the entire articles page away from a single client while everyone else was fine. Scans every required relation in the schema (read from Prisma's datamodel, so new ones are covered automatically). REPORT ONLY — deleting is a separate, reviewed action. Run this after every prod↔local sync: an import re-creates orphans silently.", runner: runStepOrphanRows },
   // ⛔ "Cloudinary Orphans" removed 2026-06-01 — blind mass-delete destroyed PROD assets when
   // run against dev. Disabled at source (sweepCloudinaryOrphans) + dropped from Run-All.
   // Redesign as review-before-delete (MASTER-TODO).

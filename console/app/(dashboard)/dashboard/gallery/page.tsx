@@ -15,12 +15,45 @@ export default async function GalleryPage() {
 
   // Both keys travel to the client untouched; GalleryManager resolves through `mediaSrc`.
   // Resolving here instead would drop `bunnyUrl`, which `GalleryImage` now requires.
+  //
+  // One query, and the reel state comes with it: the reel IS this row (2026-08-05). What
+  // used to sit under here — a second query hunting the legacy reels by image URL because
+  // they predated the link field — has nothing left to hunt.
   const media = await db.media.findMany({
-    where: { clientId, type: "GALLERY" },
-    select: { id: true, url: true, bunnyUrl: true, altText: true, width: true, height: true },
+    where: {
+      clientId,
+      type: "GALLERY",
+      // Depends on the backfill step having run (media-reels-backfill.ts). Rows written
+      // before the merge have no `inGallery` key at all, and NO filter matches an absent
+      // key — `true`, `NOT: { false }` and `{ not: false }` were each measured returning
+      // 0 of 16 on modonty_dev. There is no query-level way around it; the field has to
+      // be written onto the rows first.
+      inGallery: true,
+    },
+    select: {
+      id: true,
+      url: true,
+      bunnyUrl: true,
+      altText: true,
+      width: true,
+      height: true,
+      inReels: true,
+      reelStatus: true,
+    },
     orderBy: { createdAt: "desc" },
     take: 60,
   });
+
+  const images = media.map((m) => ({
+    id: m.id,
+    url: m.url,
+    bunnyUrl: m.bunnyUrl,
+    altText: m.altText,
+    width: m.width,
+    height: m.height,
+    inReels: m.inReels,
+    reelStatus: m.reelStatus,
+  }));
 
   return (
     <div className="space-y-6">
@@ -38,7 +71,7 @@ export default async function GalleryPage() {
         </div>
       </header>
 
-      <GalleryManager initial={media} />
+      <GalleryManager initial={images} />
     </div>
   );
 }

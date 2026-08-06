@@ -40,6 +40,11 @@ const FRAMEWORK_SIGNATURES: RegExp[] = [
   /fallback to client rendering/i,
   /the tree doesn'?t match/i,
   /the render was aborted/i,
+  // Browser auto-translation re-parents text nodes behind React's back, so React's own
+  // DOM removal throws. Not ours to fix and not fixable in app code (React #11538) — kept
+  // in the log, but classified framework so it never pings Telegram. Deliberately matched
+  // on the full DOM-exception wording so a real app error mentioning a node can't hit it.
+  /failed to execute '(removechild|insertbefore)' on 'node'/i,
 ];
 
 /** framework = Next/React internals we can't fix in app code · app = ours to fix. */

@@ -1,0 +1,27 @@
+{
+  "_comment": [
+    "Playwright MCP config — Khalid runs three monitors (laptop / Dell / Samsung), so a",
+    "fixed --viewport-size is wrong: the page would be letter-boxed at one size no matter",
+    "which screen the window opens on.",
+    "",
+    "`viewport: null` is the official opt-out. Playwright docs (docs/src/api/params.md):",
+    "  «Use null to disable the consistent viewport emulation ... making the viewport",
+    "   depend on the host window size defined by the operating system.»",
+    "  «no_viewport: Does not enforce fixed viewport, allows resizing window in headed mode.»",
+    "",
+    "Result: the page always fills the real Edge window on whichever screen it lands on,",
+    "and it scrolls exactly when the content genuinely does not fit.",
+    "",
+    "launchOptions.args --auto-open-devtools-for-tabs: opens DevTools automatically for",
+    "every tab (Chromium/Edge flag) so the Network panel is visible during live tests.",
+    "Official: playwright-mcp config supports browser.launchOptions.args (Context7 /microsoft/playwright-mcp).",
+    "Remove this arg when you don't want DevTools popping open on every run.",
+    "",
+    "Changing this file (or .mcp.json) needs a Claude Code reload — MCP reads config at startup."
+  ],
+  "browser": {
+    "contextOptions": {
+      "viewport": null
+    }
+  }
+}

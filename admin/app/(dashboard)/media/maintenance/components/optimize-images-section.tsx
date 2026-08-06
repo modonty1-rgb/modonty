@@ -51,6 +51,9 @@ async function reencodeToWebP(image: OptimizableImage) {
     fileSize: webp.size,
     width,
     height,
+    // The file changed, so the old placeholder now describes an image that no longer exists.
+    // The uploader already built a fresh one from the re-encoded buffer — carry it through.
+    blurDataURL: up.blurDataURL ?? null,
   };
 }
 

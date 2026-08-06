@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { ar } from "@/lib/ar";
+import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import {
   Card,
   CardContent,
@@ -66,6 +67,7 @@ export function TelegramCard({
   const [prefs, setPrefs] = useState<TelegramEventPreferences>(
     initialPrefs ?? {}
   );
+  const { confirmThen, confirmDialog } = useConfirm();
   const [isPending, startTransition] = useTransition();
   const [savingPrefs, setSavingPrefs] = useState(false);
 
@@ -82,24 +84,17 @@ export function TelegramCard({
   }
 
   function handleDisconnect() {
-    toast(t.disconnectConfirm, {
-      duration: 8000,
-      action: {
-        label: t.disconnect,
-        onClick: () => {
-          startTransition(async () => {
-            const res = await disconnectTelegramAction();
-            if (res.success) {
-              toast.success(t.disconnected);
-              setPairingCode(null);
-            } else {
-              toast.error(res.error || t.testFailed);
-            }
-          });
-        },
-      },
-      cancel: { label: ar.comments.cancel ?? "إلغاء", onClick: () => {} },
-    });
+    confirmThen(t.disconnectConfirm, () => {
+      startTransition(async () => {
+        const res = await disconnectTelegramAction();
+        if (res.success) {
+          toast.success(t.disconnected);
+          setPairingCode(null);
+        } else {
+          toast.error(res.error || t.testFailed);
+        }
+      });
+    }, "افصل الحساب");
   }
 
   function handleTest() {
@@ -183,6 +178,7 @@ export function TelegramCard({
           saving={savingPrefs}
         />
       </CardContent>
+      {confirmDialog}
     </Card>
   );
 }

@@ -7,7 +7,7 @@ import { SessionProviderWrapper } from "@/components/providers/SessionProviderWr
 import { GTMContainer } from "@/components/gtm/GTMContainer";
 import { WebVitals } from "@/components/gtm/WebVitals";
 import { PageViewTracker } from "@/components/analytics/PageViewTracker";
-import { ContentsquareScript } from "@/components/hotjar/HotjarScript";
+import { ClarityScript } from "@/components/analytics/clarity-script";
 import { Footer } from "@/components/layout/Footer";
 import { TopNavWithFavorites } from "@/components/navigatore/TopNavWithFavorites";
 import { ChatFloatingButton } from "@/components/chatbot/ChatFloatingButton";
@@ -75,9 +75,8 @@ export default function RootLayout({
        <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-        <link rel="dns-prefetch" href="https://t.contentsquare.net" />
+        <link rel="dns-prefetch" href="https://www.clarity.ms" />
         <link rel="dns-prefetch" href="https://connect.facebook.net" />
          
       </head>
@@ -92,7 +91,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <PageViewTracker />
         </Suspense>
-        <ContentsquareScript />
+        <ClarityScript />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

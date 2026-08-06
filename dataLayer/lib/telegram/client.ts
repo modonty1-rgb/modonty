@@ -98,6 +98,54 @@ export async function sendAdminTelegram(text: string): Promise<SendMessageResult
 }
 
 /**
+ * Send to the CONTENT TEAM group — the writers and designers who work from the briefs.
+ *
+ * A SEPARATE BOT on purpose (@jbr_alerts_bot), not the one behind `TELEGRAM_BOT_TOKEN`
+ * (@Modonty_admin_bot, whose chat carries system error alerts). The two were confused
+ * once already: `JBRSEO/content/.env` holds the admin bot's token under a content-app
+ * name, so "it is configured" is not evidence that it is configured CORRECTLY.
+ *
+ * There is deliberately NO fallback to the admin chat. A note to a writer that quietly
+ * lands in the on-call error feed is worse than one that fails: the sender believes it
+ * arrived, the writer never sees it, and nobody finds out. Missing config returns an
+ * error the UI shows and the notification row records.
+ */
+export async function sendContentTeamTelegram(text: string): Promise<SendMessageResult> {
+  const token = process.env.CONTENT_TEAM_BOT_TOKEN ?? null;
+  const chatId = process.env.CONTENT_TEAM_CHAT_ID ?? null;
+  if (!token || !chatId) {
+    return {
+      success: false,
+      error: "قناة فريق المحتوى غير مضبوطة — ضبط CONTENT_TEAM_BOT_TOKEN و CONTENT_TEAM_CHAT_ID",
+    };
+  }
+
+  try {
+    const res = await fetch(`${TG_API}/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text,
+        parse_mode: "HTML",
+        link_preview_options: { is_disabled: true },
+      }),
+    });
+
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      return { success: false, error: `Telegram ${res.status}: ${body.slice(0, 200)}` };
+    }
+    return { success: true };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Unknown Telegram error",
+    };
+  }
+}
+
+/**
  * Escape user-supplied text before injecting into HTML-mode messages.
  * Telegram's HTML parser requires &amp; &lt; &gt; on user content.
  */

@@ -28,7 +28,7 @@ export interface SEOCheckItem {
  * Single responsibility: Represents score for one category
  */
 export interface ArticleSEOCategory {
-  score: number;
+  /** وزن الفئة في الدرجة الكلّية — يُستعمل في analyze-article-seo.ts */
   maxScore: number;
   percentage: number;
   passed: number;

@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { uploadImageBufferToBunny } from "./bunny-mirror-core";
 import { readImageMeta } from "./generate-aspect-crops";
+import { generateBlurDataUrl } from "./generate-blur";
 
 import type { MediaType, MediaScope } from "@prisma/client";
 
@@ -20,6 +21,8 @@ export interface BunnyUploadResult {
   width?: number;
   height?: number;
   format?: string;
+  /** Blur placeholder (base64 data url). `null` when sharp couldn't build one — never fatal. */
+  blurDataURL?: string | null;
   error?: string;
 }
 
@@ -61,7 +64,8 @@ export async function uploadImageToBunny(formData: FormData): Promise<BunnyUploa
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const meta = await readImageMeta(buffer);
+    // Both read the same in-memory buffer — no extra download, no extra Bunny call.
+    const [meta, blurDataURL] = await Promise.all([readImageMeta(buffer), generateBlurDataUrl(buffer)]);
 
     const { bunnyUrl } = await uploadImageBufferToBunny({
       buffer,
@@ -72,7 +76,14 @@ export async function uploadImageToBunny(formData: FormData): Promise<BunnyUploa
       clientSlug,
     });
 
-    return { success: true, url: bunnyUrl, width: meta.width, height: meta.height, format: meta.format };
+    return {
+      success: true,
+      url: bunnyUrl,
+      width: meta.width,
+      height: meta.height,
+      format: meta.format,
+      blurDataURL,
+    };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to upload to Bunny";
     return { success: false, error: message };

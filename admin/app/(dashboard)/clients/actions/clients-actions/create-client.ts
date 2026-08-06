@@ -156,6 +156,7 @@ export async function createClient(data: ClientFormData) {
       "paymentStatus",
       "openingBalance",
       "isFeatured",
+      "showSchedule",
       "isInternal",
       "billingCycle",
       "gbpProfileUrl",

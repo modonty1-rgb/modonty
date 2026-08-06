@@ -27,6 +27,8 @@ export interface OptimizedImageInput {
   fileSize: number | null;
   width: number | null;
   height: number | null;
+  /** Fresh placeholder for the re-encoded file — the old one describes a dead image. */
+  blurDataURL?: string | null;
 }
 
 type Result = { success: true } | { success: false; error: string };
@@ -45,10 +47,9 @@ export async function saveOptimizedImage(
   try {
     const existing = await db.media.findUnique({
       where: { id: mediaId },
-      select: { id: true, url: true, clientId: true, cloudinaryPublicId: true },
+      select: { id: true, clientId: true, cloudinaryPublicId: true },
     });
     if (!existing) return { success: false, error: "الصورة غير موجودة" };
-    const oldUrl = existing.url;
 
     await db.media.update({
       where: { id: mediaId },
@@ -63,6 +64,10 @@ export async function saveOptimizedImage(
         fileSize: input.fileSize ?? undefined,
         width: input.width ?? undefined,
         height: input.height ?? undefined,
+        // Same reason as bunnyUrl above: a stale placeholder would flash the OLD image's
+        // colours behind the new one. `undefined` when the uploader couldn't build it, so
+        // we keep the previous value rather than blanking a working placeholder.
+        blurDataURL: input.blurDataURL ?? undefined,
         cloudinaryPublicId: input.publicId ?? undefined,
       },
     });
@@ -92,12 +97,9 @@ export async function saveOptimizedImage(
       await generateClientSEO(existing.clientId).catch(() => {});
     }
 
-    // 3. Reels that copied this image's URL → point them at the new WebP.
-    if (oldUrl) {
-      await db.reel
-        .updateMany({ where: { imageUrl: oldUrl }, data: { imageUrl: url, thumbnailUrl: url } })
-        .catch(() => {});
-    }
+    // A third step used to live here: reels had copied this image's URL into their own
+    // row, so optimizing the image left them pointing at a deleted file. The reel IS this
+    // row now (2026-08-05), so the URL it shows is the one we just wrote. Nothing to sync.
 
     // Now that nothing references the old URL, delete the old Cloudinary asset — no dead,
     // billed storage. Best-effort: the DB is already correct; a failed delete just leaves

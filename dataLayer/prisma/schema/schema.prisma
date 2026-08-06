@@ -224,11 +224,9 @@ model User {
   notifications        Notification[]
   ownedClients         Client[]         @relation("ClientOwner")
   bookingRequests      BookingRequest[]
-  reelComments         ReelComment[]
-  reelCommentLikes     ReelCommentLike[]
-  reelCommentDislikes  ReelCommentDislike[]
-  reelLikes            ReelLike[]
-  reelFavorites        ReelFavorite[]
+  mediaComments        MediaComment[]
+  mediaReactions       MediaReaction[]
+  commentReactions     CommentReaction[]
 
   @@index([role])
   @@map("users")
@@ -518,6 +516,20 @@ model Client {
   // the badge, the hero slider, and priority ordering on the public site.
   isFeatured            Boolean            @default(false)
 
+  /// Does the client see the «مجدولة» tab in their console articles page — the queue of
+  /// articles our team has scheduled but not published yet?
+  ///
+  /// Defaults to TRUE because that tab has been live for every client since it was built;
+  /// starting at false would silently take away something they already see. The switch is
+  /// therefore a way to HIDE it from a particular client (a nervous one who reads an
+  /// unpublished date as a promise), not a way to unlock it.
+  ///
+  /// Read only to decide whether to render the tab — never used in a `where` filter. That
+  /// matters: existing documents predate the field, so the key is simply ABSENT in Mongo,
+  /// and an absent key matches neither `true` nor `false` in a query. Reading it back
+  /// returns the default, which is exactly what those clients should get.
+  showSchedule          Boolean            @default(true)
+
   // Metadata
   foundingDate DateTime?
   createdAt    DateTime  @default(now())
@@ -591,7 +603,23 @@ model Client {
   ymylData      Json?   // shape varies per ymylCategory — see ymyl-config.ts
 
   // ============ Client Page (mini-site presentation) ============
-  introVideoUrl        String?             // VideoObject — intro/promo video (Cloudinary/YouTube)
+  //
+  // The intro video, twice over — on purpose, for as long as the migration takes.
+  //
+  // `introVideoUrl` is what five clients have today: a bare link to YouTube, Facebook or
+  // Google Drive, on somebody ELSE's channel. Google credits that video to the host, the
+  // client cannot edit or delete it, and two of the five links do not even play. It stays
+  // readable so nobody's page goes dark mid-migration, and it is cleared the moment its
+  // replacement lands.
+  //
+  // `introVideoMedia` is where it goes: our own file on Bunny, carrying the title,
+  // description, cover and duration that a valid VideoObject needs — which is why the
+  // schema.org output for this video has been switched off until now.
+  introVideoUrl        String? // legacy external link — read-only, cleared on upload
+  introVideoMediaId    String? @db.ObjectId
+  // NoAction on both, exactly like logoMedia/heroImageMedia above: Client→Media→Client is
+  // a referential cycle, and Prisma refuses any other action on it.
+  introVideoMedia      Media?  @relation("ClientIntroVideoMedia", fields: [introVideoMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   verificationImageUrl String?             // صورة التوثيق (سجل/ترخيص) — from the client's media library (Bunny), displayed on page (admin-controlled)
   services             ClientServiceItem[] // OfferCatalog
   teamMembers          ClientTeamMember[]  // employee: Person[]
@@ -622,7 +650,6 @@ model Client {
   contactMessages  ContactMessage[]
   notifications    Notification[]
   bookingRequests  BookingRequest[]
-  reels            Reel[]
 
   // SEO Intake relations
   seoIntakes     SeoIntake[]
@@ -631,6 +658,9 @@ model Client {
 
   // Campaign sales lead (from teaser CTA)
   campaignInterest CampaignInterest?
+
+  // Notes the operations manager pushed to the content team's Telegram about this client.
+  clientNotifications ClientNotification[]
 
   // Billing
   invoices Invoice[]
@@ -1163,7 +1193,9 @@ model Article {
   relatedTo   RelatedArticle[] @relation("ArticleRelatedTo")
   faqs        ArticleFAQ[]
   gallery     ArticleMedia[] // Image gallery for article
-  reels       Reel[] // Optional article↔reel link (reels are independent by design)
+  // Reels that PROMOTE this article — a third, distinct meaning next to
+  // `featuredImage` (the article's cover) and `gallery` (images inside it).
+  reelMedia   Media[]        @relation("MediaReelArticle")
 
   // Interaction relations
   comments    Comment[]
@@ -1296,6 +1328,14 @@ model Media {
   // Production keeps reading `url` (Cloudinary) until the controlled switch (Epic 3.5).
   bunnyUrl String? // Bunny CDN URL — populated by Dual-Write (new uploads) + migration script (old assets)
 
+  // Blur placeholder for next/image `placeholder="blur"` — a base64 data URL of a 10px WebP.
+  // Next.js requires a DATA URL, never a remote link: it embeds the value as `href` inside an
+  // inline SVG served through `background-image`, and browsers block external loads from there
+  // (verified in next@16.2.9 `get-img-props.js:508` + `image-blur-svg.js`). ~110-130 chars each.
+  // Generated with sharp at every write path — Bunny's optimizer is OFF on all pull zones.
+  // Do NOT pre-blur it: Next applies `feGaussianBlur stdDeviation='20'` itself.
+  blurDataURL String?
+
   // Client association (REQUIRED after migration)
   // Temporarily optional to allow querying existing media without clientId
   clientId String? @db.ObjectId
@@ -1311,6 +1351,7 @@ model Media {
   // Primary client media roles (centralized; many clients can share same media)
   logoClients      Client[] @relation("ClientLogoMedia")
   heroImageClients Client[] @relation("ClientHeroImageMedia")
+  introVideoClients Client[] @relation("ClientIntroVideoMedia")
   // Modonty Core (T2): back-relations for the six platform entities
   authorImages        Author[]   @relation("AuthorImageMedia")
   authorSocialImages  Author[]   @relation("AuthorSocialImageMedia")
@@ -1320,9 +1361,57 @@ model Media {
   modontyHeroImages   Modonty[]  @relation("ModontyHeroImageMedia")
   modontySocialImages Modonty[]  @relation("ModontySocialImageMedia")
 
+  // ── Reels (merged 2026-08-05 — the `Reel` table is gone) ─────────────────
+  //
+  // TWO INDEPENDENT SWITCHES, not one state. An image can sit in the client's
+  // gallery AND run as a reel at the same time; it can also be pulled out of the
+  // gallery and stay a reel. Neither switch implies the other.
+  //
+  // `inGallery` defaults to true, but a default does NOT reach rows that already
+  // exist — in MongoDB the key is simply ABSENT, and an absent key matches neither
+  // `true` nor `null`. Existing rows are filled explicitly in the backfill step;
+  // until then no gallery query may read this field, or every gallery renders empty.
+  inGallery Boolean @default(true)
+  inReels   Boolean @default(false)
+
+  // Reel workflow — null on every file that never entered the reels flow.
+  reelStatus          ReelStatus?
+  reelUploadedBy      ReelUploader?
+  reelRejectionReason String?
+  // Standalone watch page. Uniqueness is checked IN CODE: a database unique index
+  // would reject the second file that simply has no slug at all.
+  reelSlug            String?
+  reelApprovedAt      DateTime?
+  reelPublishedAt     DateTime? // feed = newest first
+  reelRevealedAt      DateTime? // hidden-batch launch — null = still hidden
+
+  /// The article this reel promotes. A third meaning, distinct from
+  /// `featuredArticles` (this file is the article's cover) and `articleGallery`
+  /// (this file sits inside the article) — which is why it needs its own field.
+  reelArticleId String?  @db.ObjectId
+  reelArticle   Article? @relation("MediaReelArticle", fields: [reelArticleId], references: [id], onDelete: SetNull)
+
+  // Video reels (Bunny Stream) — full public URLs, modonty holds zero Bunny secrets.
+  // Images need none of these: `url` and `thumbnailUrl` above already carry them.
+  bunnyVideoId String? // Bunny Stream video GUID
+  playbackUrl  String? // HLS playlist
+  mp4Url       String? // Google requires a fetchable file (no token auth)
+  durationSec  Int? // ≤ 90s locked limit
+
+  transcript       String?
+  transcriptStatus ReelTranscriptStatus?
+
+  // Cached counters — TikTok-style rail: like / comment / favorite, no dislike.
+  viewsCount     Int @default(0)
+  likesCount     Int @default(0)
+  commentsCount  Int @default(0)
+  favoritesCount Int @default(0)
+
   // Relationships
   featuredArticles Article[]      @relation("ArticleFeaturedImage")
   articleGallery   ArticleMedia[] // Gallery appearances in articles
+  comments         MediaComment[]
+  reactions        MediaReaction[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1333,6 +1422,12 @@ model Media {
   @@index([scope])
   @@index([clientId, scope])
   @@index([filename])
+  // Reels — the three that came over from the old table, plus the gallery switch.
+  // Without them the feed and the approval queue scan the whole media collection.
+  @@index([clientId, reelStatus])
+  @@index([reelStatus, reelPublishedAt])
+  @@index([reelArticleId])
+  @@index([clientId, inGallery])
   @@map("media")
 }
 
@@ -3096,15 +3191,74 @@ model CtaPreset {
 }
 
 // ============================================
-// REELS (locked decisions 2026-07-04: independent of articles · unified
-// image+video model · client uploads need admin approval · hidden-batch launch)
-// Video lives on Bunny Stream, image reels on Cloudinary. Full public URLs are
-// stored here — modonty holds ZERO Bunny secrets (locked decision).
+// REELS — merged into Media (locked 2026-08-05)
+//
+// The `Reel` table is gone. A media file IS the reel: the row that holds the image
+// or the video carries the reel state itself. What this removes is the copy — two
+// rows holding the same URL, kept in sync by hand in two admin actions, where every
+// bug in this feature came from.
+//
+// `Media.type` keeps its old meaning (the file's ROLE) and is NOT touched: 15 queries
+// read it and 6 write it. Reel membership rides on top as its own switch instead.
+//
+// There is no `ReelType` any more — image vs video is already in `mimeType`.
+// Study: documents/reels/REELS-ARCHITECTURE-STUDY-v1.html
 // ============================================
 
-enum ReelType {
-  VIDEO
-  IMAGE
+/// How loud a note to the content team is allowed to be.
+///
+/// Three levels, deliberately — not two, not five. Two cannot separate "read this" from
+/// "work is blocked"; five or more collapse in practice into "urgent" and "ignored",
+/// because every sender believes their own note is urgent. Three forces a real choice.
+enum NotificationPriority {
+  NORMAL /// للعلم — نفّذها لما توصلها
+  IMPORTANT /// تحتاج تحرّكاً هذا الأسبوع
+  URGENT /// شغل واقف — اليوم
+}
+
+
+/// A note the operations manager sent to the content team's Telegram about one client.
+///
+/// The row is the record, the Telegram message is just its delivery. Which is why
+/// `delivered` and `error` are stored: a log that says "sent" while Telegram was down is
+/// worse than no log at all — somebody would rely on it.
+///
+/// Identity is stored twice on purpose, exactly like [AuditLog]: `sentById` is the key
+/// that never changes, and the name/email are a SNAPSHOT of who that person was at that
+/// moment — so the history still answers "who told us?" after they leave and their staff
+/// record is gone.
+model ClientNotification {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  message  String
+  priority NotificationPriority @default(NORMAL)
+
+  /// Who the note is FOR. EMPTY means everyone in the content group.
+  ///
+  /// One Telegram group holds the whole team, so the only thing that tells a person a note
+  /// is theirs is seeing their name on it. Ids are kept for filtering later; names are
+  /// SNAPSHOTTED for the same reason `sentByName` is — a note has to keep saying who it was
+  /// addressed to after that person leaves and their staff row is gone.
+  recipientIds   String[] @db.ObjectId
+  recipientNames String[]
+
+  // Who sent it — the signed-in staff member, never a value the browser supplies.
+  sentById    String  @db.ObjectId
+  sentByName  String
+  sentByEmail String
+
+  // Outcome of the actual Telegram call.
+  delivered Boolean
+  error     String?
+
+  createdAt DateTime @default(now())
+
+  @@index([clientId, createdAt])
+  @@index([createdAt])
+  @@map("client_notifications")
 }
 
 enum ReelStatus {
@@ -3125,87 +3279,35 @@ enum ReelTranscriptStatus {
   PENDING // auto transcription runs after approval (Arabic — language pinned manually)
   DONE
   FAILED
-  SKIPPED // IMAGE reels / transcription not applicable
+  SKIPPED // images / transcription not applicable
 }
 
-model Reel {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  clientId String @db.ObjectId
-  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
-
-  // Google requires a standalone watch page per video → unique slug
-  slug String @unique
-
-  // Optional article link (locked: reels are independent; this keeps the extension cheap)
-  articleId String?  @db.ObjectId
-  article   Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
-
-  type ReelType
-
-  // VIDEO files (Bunny Stream) — full URLs, no secrets
-  bunnyVideoId String? // Bunny Stream video GUID
-  playbackUrl  String? // HLS playlist URL
-  mp4Url       String? // MP4 fallback — Google requires a fetchable file (no token auth)
-  thumbnailUrl String? // VideoObject.thumbnailUrl (required by Google)
-  // IMAGE reels (Cloudinary)
-  imageUrl String?
-
-  durationSec Int? // ≤ 90s locked limit — null for IMAGE
-  fileSize    Int? // bytes
-  width       Int?
-  height      Int?
-
-  // VideoObject.name + description — required by Google, missing = schema warning
-  title       String
-  description String
-
-  // Auto transcript after approval
-  transcript       String?
-  transcriptStatus ReelTranscriptStatus @default(PENDING)
-
-  // Workflow (6 states) — client uploads gated by admin approval
-  status          ReelStatus   @default(DRAFT)
-  uploadedBy      ReelUploader
-  rejectionReason String?
-  approvedAt      DateTime?
-  publishedAt     DateTime? // feed = newest first
-  revealedAt      DateTime? // hidden-batch launch — null = still hidden
-
-  // Cached counters (Article pattern) — TikTok-style rail: like/comment/favorite, no dislike (locked 2026-07-06)
-  viewsCount     Int @default(0)
-  likesCount     Int @default(0)
-  commentsCount  Int @default(0)
-  favoritesCount Int @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  comments  ReelComment[]
-  likes     ReelLike[]
-  favorites ReelFavorite[]
-
-  @@index([clientId, status])
-  @@index([status, publishedAt])
-  @@index([articleId])
-  @@map("reels")
+/// Reaction kinds on a media file. One row per (file, actor, kind).
+///
+/// `FAVORITE` needs a signed-in user, `LIKE` allows an anonymous visitor. The old
+/// two-table split expressed that rule in the database; one table with a nullable
+/// `userId` cannot — so the guard moved into the server action that writes the row.
+enum MediaReactionKind {
+  LIKE
+  FAVORITE
 }
 
-// Reel comments — same system as article comments (locked decision),
-// mirroring the ClientComment pattern (nesting + moderation + likes).
-model ReelComment {
+/// Comments on a media file — same shape as article comments (nesting + moderation).
+model MediaComment {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
   content String
 
-  reelId String @db.ObjectId
-  reel   Reel   @relation(fields: [reelId], references: [id], onDelete: Cascade)
+  mediaId String @db.ObjectId
+  media   Media  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
 
   authorId String? @db.ObjectId
   author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
   parentId String?       @db.ObjectId
-  parent   ReelComment?  @relation("ReelCommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  replies  ReelComment[] @relation("ReelCommentReplies")
+  parent   MediaComment? @relation("MediaCommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  replies MediaComment[] @relation("MediaCommentReplies")
 
   status   CommentStatus @default(PENDING)
   isEdited Boolean       @default(false)
@@ -3214,26 +3316,59 @@ model ReelComment {
   updatedAt DateTime  @updatedAt
   editedAt  DateTime?
 
-  likes    ReelCommentLike[]
-  dislikes ReelCommentDislike[]
+  reactions CommentReaction[]
 
-  @@index([reelId, createdAt])
+  @@index([mediaId, createdAt])
   @@index([authorId])
   @@index([parentId])
   @@index([status])
-  @@map("reel_comments")
+  @@map("media_comments")
 }
 
-model ReelCommentLike {
+/// A visitor's like or favorite ON THE FILE.
+///
+/// Two uniqueness rules, not one: a signed-in visitor is identified by `userId`, an
+/// anonymous one by `sessionId`. Drop either and the same person can react without
+/// limit through the other path.
+model MediaReaction {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  commentId String      @db.ObjectId
-  comment   ReelComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  mediaId String @db.ObjectId
+  media   Media  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  kind MediaReactionKind
 
   userId String? @db.ObjectId
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  sessionId String? // For anonymous users
+  sessionId String? // anonymous visitors
+
+  createdAt DateTime @default(now())
+
+  @@unique([mediaId, kind, userId])
+  @@unique([mediaId, kind, sessionId])
+  @@index([mediaId, kind])
+  @@index([userId])
+  @@map("media_reactions")
+}
+
+/// A like or dislike ON A COMMENT — a separate table on purpose.
+///
+/// It cannot live inside `MediaReaction`: that row points at a file, this one points
+/// at a comment. Merging them would force a row that references two different things
+/// with one of the two columns always empty.
+model CommentReaction {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  commentId String       @db.ObjectId
+  comment   MediaComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  isLike Boolean // true = like · false = dislike
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // anonymous visitors
 
   createdAt DateTime @default(now())
 
@@ -3241,62 +3376,50 @@ model ReelCommentLike {
   @@unique([commentId, sessionId])
   @@index([commentId])
   @@index([userId])
-  @@map("reel_comment_likes")
+  @@map("comment_reactions")
 }
 
-model ReelCommentDislike {
+/// One row per backup attempt — success or failure.
+///
+/// Exists because both earlier backup paths failed silently: the manual script copied
+/// modonty_dev while everyone read it as production, and the scheduled .bat never ran
+/// once (zero output folders on disk, undetected for months). A backup system without
+/// a record of its own runs cannot tell you it has stopped.
+///
+/// `dbName` is stored and displayed deliberately — it is the single field that would
+/// have exposed the original trap at a glance.
+/// Decisions: documents/tasks/BACKUP-STRATEGY-v1.html (ق5)
+model BackupRun {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  commentId String      @db.ObjectId
-  comment   ReelComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  source BackupSource // who produced it — the daily cron, Khalid's machine, or Atlas
+  dbName String // "modonty" | "modonty_dev" — shown in the UI, never inferred
+  status BackupStatus @default(RUNNING)
 
-  userId String? @db.ObjectId
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collections Int? // collections written
+  documents   Int? // total documents across all collections
+  sizeBytes   Int? // compressed size actually stored
+  bunnyPath   String? // folder on the private zone, e.g. daily/2026-08-04
 
-  sessionId String? // For anonymous users
+  errorText String? // failing collection + message when status = FAILED
 
-  createdAt DateTime @default(now())
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+  durationMs Int?
 
-  @@unique([commentId, userId])
-  @@unique([commentId, sessionId])
-  @@index([commentId])
-  @@index([userId])
-  @@map("reel_comment_dislikes")
+  @@index([status, startedAt])
+  @@index([source, startedAt])
+  @@map("backup_runs")
 }
 
-model ReelLike {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  reelId String @db.ObjectId
-  reel   Reel   @relation(fields: [reelId], references: [id], onDelete: Cascade)
-
-  userId String? @db.ObjectId // Optional - allow anonymous likes (ArticleLike pattern)
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  sessionId String? // Browser session ID for anonymous likes
-
-  createdAt DateTime @default(now())
-
-  @@unique([reelId, userId])
-  @@unique([reelId, sessionId])
-  @@index([reelId])
-  @@index([userId])
-  @@map("reel_likes")
+enum BackupSource {
+  VERCEL_CRON // daily, the guaranteed layer
+  LOCAL_DUMP // mongodump on Khalid's machine — opportunistic, BSON format
+  RESTORE_TEST // monthly restore drill, not a backup itself
 }
 
-model ReelFavorite {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  reelId String @db.ObjectId
-  reel   Reel   @relation(fields: [reelId], references: [id], onDelete: Cascade)
-
-  userId String @db.ObjectId // Required - favorites need user account (ArticleFavorite pattern)
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@unique([reelId, userId])
-  @@index([reelId])
-  @@index([userId])
-  @@map("reel_favorites")
+enum BackupStatus {
+  RUNNING
+  SUCCESS
+  FAILED
 }

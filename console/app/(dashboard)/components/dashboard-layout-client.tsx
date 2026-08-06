@@ -21,7 +21,12 @@ interface DashboardLayoutClientProps {
   pendingPageFaqsCount: number;
   pendingClientCommentsCount: number;
   pendingClientReviewsCount: number;
+  galleryCount: number;
+  reelsCount: number;
+  videosCount: number;
   isYmyl: boolean;
+  ymylComplete: boolean;
+  publicPageUrl: string | null;
   /** Account state notice — rendered above every page, or nothing when all is settled. */
   accountNotice?: React.ReactNode;
   children: React.ReactNode;
@@ -41,7 +46,12 @@ export function DashboardLayoutClient({
   pendingPageFaqsCount,
   pendingClientCommentsCount,
   pendingClientReviewsCount,
+  galleryCount,
+  reelsCount,
+  videosCount,
   isYmyl,
+  ymylComplete,
+  publicPageUrl,
   accountNotice,
   children,
 }: DashboardLayoutClientProps) {
@@ -62,7 +72,12 @@ export function DashboardLayoutClient({
         pendingPageFaqsCount={pendingPageFaqsCount}
         pendingClientCommentsCount={pendingClientCommentsCount}
         pendingClientReviewsCount={pendingClientReviewsCount}
+        galleryCount={galleryCount}
+        reelsCount={reelsCount}
+        videosCount={videosCount}
         isYmyl={isYmyl}
+        ymylComplete={ymylComplete}
+        publicPageUrl={publicPageUrl}
         isCollapsed={isSidebarCollapsed}
         onCollapsedChange={setIsSidebarCollapsed}
       />
@@ -77,7 +92,12 @@ export function DashboardLayoutClient({
         pendingPageFaqsCount={pendingPageFaqsCount}
         pendingClientCommentsCount={pendingClientCommentsCount}
         pendingClientReviewsCount={pendingClientReviewsCount}
+        galleryCount={galleryCount}
+        reelsCount={reelsCount}
+        videosCount={videosCount}
         isYmyl={isYmyl}
+        ymylComplete={ymylComplete}
+        publicPageUrl={publicPageUrl}
         isOpen={isMobileOpen}
         onOpenChange={setIsMobileOpen}
       />

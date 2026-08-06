@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { ar } from "@/lib/ar";
+import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -67,6 +68,7 @@ function formatDateTime(d: Date | string | null | undefined): string {
 export function SubscribersTable({ subscribers }: Props) {
   const s = ar.subscribers;
   const [filter, setFilter] = useState<FilterKey>("all");
+  const { confirmThen, confirmDialog } = useConfirm();
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [openSubscriber, setOpenSubscriber] = useState<SubscriberWithDetails | null>(null);
@@ -127,13 +129,6 @@ export function SubscribersTable({ subscribers }: Props) {
   }
 
   // ─── Confirm helper using sonner ─────────────────────────────────
-  function confirmThen(message: string, onConfirm: () => void) {
-    toast(message, {
-      duration: 8000,
-      action: { label: s.confirmYes, onClick: onConfirm },
-      cancel: { label: s.cancel, onClick: () => {} },
-    });
-  }
 
   // ─── Single-row actions ──────────────────────────────────────────
   function handleUnsubscribe(id: string) {
@@ -143,7 +138,7 @@ export function SubscribersTable({ subscribers }: Props) {
         if (res.success) toast.success(s.unsubscribed_toast);
         else toast.error(res.error || s.unsubscribeFailed);
       });
-    });
+    }, "ألغِ الاشتراك");
   }
 
   function handleResubscribe(id: string) {
@@ -167,7 +162,7 @@ export function SubscribersTable({ subscribers }: Props) {
           });
         } else toast.error(res.error || s.deleteFailed);
       });
-    });
+    }, "احذف المشترك");
   }
 
   // ─── Bulk actions ────────────────────────────────────────────────
@@ -197,7 +192,7 @@ export function SubscribersTable({ subscribers }: Props) {
           clearSelection();
         } else toast.error(res.error || s.bulkFailed);
       });
-    });
+    }, "احذف المحدَّد");
   }
 
   // ─── Export ──────────────────────────────────────────────────────
@@ -440,6 +435,7 @@ export function SubscribersTable({ subscribers }: Props) {
         }}
         isPending={isPending}
       />
+      {confirmDialog}
     </>
   );
 }

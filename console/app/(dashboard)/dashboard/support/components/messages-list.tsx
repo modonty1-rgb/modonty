@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { ar } from "@/lib/ar";
+import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -87,6 +88,7 @@ function statusMeta(status: string) {
 export function MessagesList({ messages }: Props) {
   const s = ar.support;
   const [filter, setFilter] = useState<FilterKey>("all");
+  const { confirmThen, confirmDialog } = useConfirm();
   const [query, setQuery] = useState("");
   const [openMessage, setOpenMessage] = useState<ContactMessageWithDetails | null>(
     null
@@ -144,14 +146,6 @@ export function MessagesList({ messages }: Props) {
     });
   }
 
-  function confirmThen(message: string, onConfirm: () => void) {
-    toast(message, {
-      duration: 8000,
-      action: { label: s.markReplied, onClick: onConfirm },
-      cancel: { label: s.clearSelection, onClick: () => {} },
-    });
-  }
-
   function handleStatusChange(id: string, status: ContactStatus) {
     setActionId(id);
     startTransition(async () => {
@@ -178,7 +172,7 @@ export function MessagesList({ messages }: Props) {
         } else toast.error(res.error || s.deleteFailed);
         setActionId(null);
       });
-    });
+    }, "احذف الرسالة");
   }
 
   function handleBulkStatus(status: ContactStatus) {
@@ -204,7 +198,7 @@ export function MessagesList({ messages }: Props) {
           setSelected(new Set());
         } else toast.error(res.error || s.deleteFailed);
       });
-    });
+    }, "احذف المحدَّد");
   }
 
   return (
@@ -367,6 +361,7 @@ export function MessagesList({ messages }: Props) {
         onClose={() => setOpenMessage(null)}
         onSent={() => setOpenMessage(null)}
       />
+      {confirmDialog}
     </>
   );
 }

@@ -26,12 +26,14 @@ interface ClientDeliveryMetricsProps {
   };
   articlesThisMonth: number;
   totalArticles: number;
+  publishedArticles: number;
 }
 
 export function ClientDeliveryMetrics({
   client,
   articlesThisMonth,
   totalArticles,
+  publishedArticles,
 }: ClientDeliveryMetricsProps) {
   const promisedArticles =
     client.articlesPerMonth ?? client.subscriptionTierConfig?.articlesPerMonth ?? 0;
@@ -62,10 +64,10 @@ export function ClientDeliveryMetrics({
             description={isBehind ? "Behind schedule" : "On track"}
           />
           <AnalticCard
-            title="Total Articles"
+            title="Articles"
             value={totalArticles}
             icon={Package}
-            description="All time"
+            description={`${publishedArticles} published · ${totalArticles - publishedArticles} in pipeline`}
           />
           <AnalticCard
             title="Monthly Target"

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { checkAdmin } from "@/lib/admin-guard";
 import { Sidebar } from "@/components/admin/sidebar";
 import { Header } from "@/components/admin/header";
+import { DbBadge } from "@/components/admin/db-badge";
 import { SidebarProvider } from "@/components/contexts/sidebar-context";
 import { NotAuthorized } from "./components/not-authorized";
 import { getArticleStatusCounts } from "./actions/article-status-counts";
@@ -40,7 +41,12 @@ export default async function DashboardLayout({
       <div className="flex h-screen bg-background">
         <Sidebar articleStatusCounts={articleStatusCounts} />
         <div className="flex-1 flex flex-col overflow-hidden">
-          <Header />
+          {/* The sync tool writes only to the test database, so its button follows the
+              database this instance is on — read here on the server, never in the bundle. */}
+          <Header
+            dbBadge={<DbBadge />}
+            canSyncLocal={(process.env.DATABASE_URL ?? "").includes("modonty_dev")}
+          />
           <main className="flex-1 overflow-y-auto scrollbar-thin p-4 sm:p-6">{children}</main>
         </div>
       </div>

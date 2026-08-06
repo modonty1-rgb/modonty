@@ -2,6 +2,7 @@ import "server-only";
 
 import { buildBunnyMediaPath, bunnyAspectUrl, uploadToBunny } from "@modonty/database/lib/bunny";
 import { generateAspectCrops } from "./generate-aspect-crops";
+import { generateBlurDataUrl } from "./generate-blur";
 
 import type { MediaType, MediaScope } from "@prisma/client";
 
@@ -58,21 +59,31 @@ export async function uploadImageBufferToBunny(
  * Fetch a remote (Cloudinary) image → upload to Bunny. Used by the migration + legacy
  * dual-write. Delegates the actual Bunny write to `uploadImageBufferToBunny`.
  */
-export async function mirrorImageToBunny(input: MirrorImageInput): Promise<{ bunnyUrl: string }> {
+export async function mirrorImageToBunny(
+  input: MirrorImageInput
+): Promise<{ bunnyUrl: string; blurDataURL: string | null }> {
   const res = await fetch(input.sourceUrl);
   if (!res.ok) throw new Error(`source fetch failed (${res.status})`);
   const contentType = res.headers.get("content-type") ?? undefined;
   const buffer = Buffer.from(await res.arrayBuffer());
 
-  return uploadImageBufferToBunny({
-    buffer,
-    contentType,
-    filename: input.filename,
-    type: input.type,
-    scope: input.scope,
-    clientSlug: input.clientSlug,
-    publicId: input.cloudinaryPublicId,
-  });
+  // The migration already holds the full image in memory here, so building the blur
+  // placeholder now costs one resize and ZERO extra downloads. Doing it later would mean
+  // re-fetching every migrated asset. Returns null for video (sharp can't read it) — fine.
+  const [uploaded, blurDataURL] = await Promise.all([
+    uploadImageBufferToBunny({
+      buffer,
+      contentType,
+      filename: input.filename,
+      type: input.type,
+      scope: input.scope,
+      clientSlug: input.clientSlug,
+      publicId: input.cloudinaryPublicId,
+    }),
+    generateBlurDataUrl(buffer),
+  ]);
+
+  return { bunnyUrl: uploaded.bunnyUrl, blurDataURL };
 }
 
 export type { MediaType, MediaScope };

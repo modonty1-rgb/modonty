@@ -22,10 +22,10 @@ interface MirrorToBunnyInput {
  */
 export async function mirrorMediaToBunny(
   input: MirrorToBunnyInput
-): Promise<{ bunnyUrl: string | null }> {
+): Promise<{ bunnyUrl: string | null; blurDataURL: string | null }> {
   try {
     const session = await auth();
-    if (!session) return { bunnyUrl: null };
+    if (!session) return { bunnyUrl: null, blurDataURL: null };
 
     let clientSlug: string | null = null;
     if (input.clientId) {
@@ -36,7 +36,7 @@ export async function mirrorMediaToBunny(
       clientSlug = client?.slug ?? null;
     }
 
-    const { bunnyUrl } = await mirrorImageToBunny({
+    const { bunnyUrl, blurDataURL } = await mirrorImageToBunny({
       sourceUrl: input.sourceUrl,
       filename: input.filename,
       type: input.type,
@@ -44,8 +44,8 @@ export async function mirrorMediaToBunny(
       clientSlug,
       cloudinaryPublicId: input.cloudinaryPublicId,
     });
-    return { bunnyUrl };
+    return { bunnyUrl, blurDataURL };
   } catch {
-    return { bunnyUrl: null };
+    return { bunnyUrl: null, blurDataURL: null };
   }
 }

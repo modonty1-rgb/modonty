@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<title>معمارية الريلز — ملف البناء</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#0f172a;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--brand:#7c3aed;
+    --brand-soft:#f5f3ff;--red:#dc2626;--red-soft:#fef2f2;--amber:#d97706;--amber-soft:#fffbeb;
+    --green:#059669;--green-soft:#ecfdf5;--slate:#f8fafc}
+  body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--ink);
+    line-height:1.85;padding:26px 16px 80px}
+  .wrap{max-width:860px;margin:0 auto}
+  header{margin-bottom:22px;color:#fff}
+  h1{font-size:29px;font-weight:800;margin-bottom:8px}
+  .lede{color:#94a3b8;font-size:16px}
+  .lede b{color:#e2e8f0}
+  .stamp{margin-top:10px;color:#64748b;font-size:12.5px}
+  .card{background:#fff;border-radius:14px;padding:22px 24px;margin-bottom:16px;
+    box-shadow:0 8px 24px -12px rgba(0,0,0,.4)}
+  .card h2{font-size:20px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+  .card h3{font-size:16px;font-weight:800;margin:18px 0 8px}
+  .card p{color:#334155;font-size:15.5px;margin-bottom:11px}
+  .n{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:24px;
+    padding:0 8px;border-radius:7px;background:var(--brand-soft);border:1px solid #ddd6fe;
+    color:var(--brand);font-size:12.5px;font-weight:800;font-family:ui-monospace,monospace;flex:0 0 auto}
+  .row{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:0}
+  .row-b{font-size:15.5px;color:#334155;min-width:0}
+  .row-b b{color:#0f172a}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14.5px}
+  th,td{text-align:start;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--slate);font-weight:700;font-size:13.5px;color:#475569}
+  code{font-family:ui-monospace,monospace;font-size:13px;background:#f1f5f9;border:1px solid #e2e8f0;
+    border-radius:5px;padding:1px 6px}
+  pre{background:#0f172a;color:#e2e8f0;padding:14px 16px;border-radius:9px;overflow-x:auto;
+    font-family:ui-monospace,monospace;font-size:13px;line-height:1.8;margin:12px 0;direction:ltr;text-align:left}
+  .ok{border-inline-start:4px solid var(--green);background:var(--green-soft);padding:13px 16px;
+    border-radius:0 9px 9px 0;color:#065f46;font-size:15px;margin:12px 0}
+  .warn{border-inline-start:4px solid var(--red);background:var(--red-soft);padding:13px 16px;
+    border-radius:0 9px 9px 0;color:#7f1d1d;font-size:15px;margin:12px 0}
+  .amber{border-inline-start:4px solid var(--amber);background:var(--amber-soft);padding:13px 16px;
+    border-radius:0 9px 9px 0;color:#78350f;font-size:15px;margin:12px 0}
+  .verdict{background:linear-gradient(180deg,#ecfdf5,#fff);border:2px solid var(--green);
+    border-radius:14px;padding:24px;margin-bottom:18px}
+  .verdict .tag{display:inline-block;background:var(--green);color:#fff;font-size:12.5px;
+    font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px}
+  .verdict h2{font-size:23px;color:#065f46;margin-bottom:10px}
+  .verdict p{color:#065f46;font-size:16px}
+  footer{margin-top:30px;color:#64748b;font-size:13px;text-align:center}
+  @media(max-width:640px){h1{font-size:23px}.card{padding:17px}body{padding:18px 12px 60px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>معمارية الريلز — ملف البناء</h1>
+  <p class="lede">
+    القرار انتهى، والنقاش اللي أوصلنا له انشال من هنا. هذا اللي نبني عليه: الشكل، الحقول،
+    الشروط، والمراحل.<br>
+    <b>صفر كود قبل ما تقول «اعتمدت».</b>
+  </p>
+  <p class="stamp">آخر تعديل: <span id="stamp">—</span></p>
+</header>
+
+<!-- ===== DECISION ===== -->
+<div class="verdict">
+  <span class="tag">القرار</span>
+  <h2>كل شيء في الوسائط — جدول الريلز يُحذف</h2>
+  <p>
+    الملف يُرفع مرّة ويعيش في صفّ واحد، والصفّ نفسه يحمل حالته في الريلز.
+    رفع واحد · صفّ واحد · مصدر واحد للحقيقة.
+  </p>
+</div>
+
+<!-- ===== 1. MEDIA FIELDS ===== -->
+<div class="card">
+  <h2>١ · جدول الوسائط — الحقول</h2>
+
+  <h3>موجودة أصلاً، لا نضيفها</h3>
+  <p>
+    <code>url</code> · <code>bunnyUrl</code> · <code>width</code> · <code>height</code> ·
+    <code>fileSize</code> · <code>mimeType</code> · <code>thumbnailUrl</code> ·
+    <code>title</code> · <code>description</code> · <code>altText</code> ·
+    <code>type</code> · <code>scope</code> · <code>clientId</code>.
+  </p>
+
+  <div class="amber">
+    <b><code>type</code> يبقى كما هو ولا يُلمس.</b> هو الدور الأساسي (شعار · صورة مقال · غلاف ·
+    معرض…) ويقرأ به <b>١٥ استعلاماً</b> ويكتبه <b>٦ مواضع</b> (مفحوصة بالكود 2026-08-04 —
+    الرقم السابق «١٤» كان تقديراً). وممنوع نضيف «ريل» للأدوار: الصورة تقدر
+    تكون في المعرض <b>وفي الريلز</b> بنفس الوقت، والحقل يحمل دوراً واحداً فقط. الحلّ علامة
+    <code>inReels</code> فوقه.
+  </div>
+
+  <h3>تُضاف</h3>
+  <table>
+    <tr><th>الحقل</th><th>النوع</th><th>وظيفته</th></tr>
+    <tr><td><code>inReels</code></td><td>Boolean, default false</td><td>هل هذا الملف منشور في الريلز؟</td></tr>
+    <tr><td><code>inGallery</code></td><td>Boolean, default true</td><td>هل يظهر في معرض الصور؟ إطفاؤه يشيله من المعرض ويبقى ريلاً</td></tr>
+    <tr><td><code>reelStatus</code></td><td>enum?</td><td>مسوّدة · بانتظار الاعتماد · معتمد · منشور · مرفوض · مؤرشف</td></tr>
+    <tr><td><code>reelRejectionReason</code></td><td>String?</td><td>سبب الرفض يظهر للعميل</td></tr>
+    <tr><td><code>reelSlug</code></td><td>String? + فهرس عادي</td><td>رابط الصفحة المفهرسة (شرط ٤ أدناه)</td></tr>
+    <tr><td><code>uploadedBy</code></td><td>enum ADMIN | CLIENT</td><td>مين رفعه</td></tr>
+    <tr><td><code>approvedAt</code> · <code>publishedAt</code></td><td>DateTime?</td><td>تواريخ الاعتماد والنشر</td></tr>
+    <tr><td><code>revealedAt</code></td><td>DateTime?</td><td>إطلاق الدفعة المخفية — فاضي = لسه مخفي (موجود في الجدول الحالي، كان ناقصاً من الحصر)</td></tr>
+    <tr><td><code>reelArticleId</code></td><td>ObjectId? + علاقة SetNull</td><td>المقال اللي يروّج له الريل — <b>حقل جديد إلزامي</b>، اقرأ الملاحظة تحت جدول العلاقات</td></tr>
+    <tr><td><code>bunnyVideoId</code> · <code>playbackUrl</code> · <code>mp4Url</code> · <code>durationSec</code></td><td>String? / Int?</td><td>حقول الفيديو — غائبة تماماً في وثائق الصور فلا تكلّف شيئاً</td></tr>
+    <tr><td><code>transcript</code> · <code>transcriptStatus</code></td><td>String? / enum?</td><td>النصّ المكتوب للفيديو</td></tr>
+    <tr><td><code>viewsCount</code> · <code>likesCount</code> · <code>commentsCount</code> · <code>favoritesCount</code></td><td>Int, default 0</td><td>عدّادات التفاعل (شرط ٣ أدناه)</td></tr>
+  </table>
+
+  <h3>حقول في جدول الريلز لا تُنقل — ولماذا</h3>
+  <table>
+    <tr><th>الحقل الحالي</th><th>مصيره</th></tr>
+    <tr><td><code>type</code> (VIDEO | IMAGE)</td><td>يُشتقّ من <code>mimeType</code> (يبدأ بـvideo أو image) — لا داعي لحقل ثانٍ يقول نفس الشيء ويقدر يتناقض معه</td></tr>
+    <tr><td><code>imageUrl</code></td><td>هو <code>url</code> نفسه — كان نسخة منه</td></tr>
+    <tr><td><code>slug</code></td><td>يصير <code>reelSlug</code> بفهرس عادي (شرط ٤)</td></tr>
+    <tr><td><code>sourceMediaId</code></td><td>يختفي — كان الجسر بين الصفّين، وما عاد فيه صفّان</td></tr>
+  </table>
+
+  <h3>فهارس لازمة على الوسائط</h3>
+  <p>
+    الجدول الحالي فيه ثلاثة فهارس للريلز، ولازم تنتقل معدّلة وإلا استعلام الفيد يمسح المجموعة كلها:
+    <code>[clientId, reelStatus]</code> · <code>[reelStatus, publishedAt]</code> ·
+    <code>[reelArticleId]</code> · <code>[clientId, inGallery]</code>.
+    الموجود اليوم <code>[clientId, type]</code> ما يغطّي ولا واحد منها.
+  </p>
+
+  <div class="ok">
+    <b>مفتاحان مستقلان لا واحد (خالد 2026-08-04):</b> الصورة تقدر تكون في المعرض <b>وفي الريلز</b>
+    بنفس الوقت، وتقدر تنشال من المعرض وتبقى ريلاً منشوراً. فكل مفتاح يشتغل لحاله:
+    <code>inGallery</code> يحكم المعرض، <code>inReels</code> يحكم الريلز.
+  </div>
+
+  <div class="warn">
+    <b>فخّان في <code>inGallery</code> — الافتراضي وحده ما يكفي:</b>
+    <br><b>①</b> الافتراضي <code>true</code> ما ينزل على الصفوف القائمة — مونجو ما يضيف الحقل بأثر
+    رجعي، والاستعلام <code>{inGallery: true}</code> ما يطابق حقلاً غائباً. بلا تعبئة صريحة
+    (مرحلة ٢) المعرض يطلع فاضي عند كل العملاء.
+    <br><b>②</b> الافتراضي <code>true</code> يشمل الشعارات وصور المقالات كمان. فاستعلام المعرض
+    يفضل مقيّداً بـ<code>type: GALLERY</code> <b>مع</b> العلامة — لو اتّكلنا على العلامة وحدها،
+    الشعار يظهر في معرض العميل.
+  </div>
+</div>
+
+<!-- ===== 2. INTERACTION TABLES ===== -->
+<div class="card">
+  <h2>٢ · ثلاثة جداول للتفاعل</h2>
+  <p>
+    ستة جداول تصير ثلاثة. وثلاثة لا واحد: التعليق له ردود ومراجعة، وله إعجاب
+    <b>على التعليق نفسه</b> لا على الملف — فجدول واحد يجبرنا على صفّ يشير لشيئين.
+  </p>
+
+  <div class="row"><span class="n">MediaComment</span><span class="row-b">
+    تعليق على الملف. يشير لـ <code>media</code> (حذف متتالٍ) · كاتب اختياري ·
+    <code>parent</code> للردود · حالة مراجعة.
+  </span></div>
+
+  <div class="row"><span class="n">MediaReaction</span><span class="row-b">
+    إعجاب أو حفظ <b>على الملف</b>. يشير لـ <code>media</code> (حذف متتالٍ) · مستخدم أو جلسة ·
+    <code>kind</code> بقيمتين: إعجاب · حفظ.
+    <br><b>تفرّدان لا واحد:</b> (الملف + المستخدم + النوع) و(الملف + الجلسة + النوع) — الجدول
+    الحالي فيه الاثنان، وواحد منهما يخلّي الزائر المجهول يعجب بالملف عدد ما يبي.
+  </span></div>
+
+  <div class="row"><span class="n">CommentReaction</span><span class="row-b">
+    إعجاب أو عدم إعجاب <b>على التعليق</b>. يشير لـ <code>MediaComment</code> (حذف متتالٍ) ·
+    مستخدم أو جلسة · <code>kind</code> بقيمتين. نفس التفرّدين أعلاه على التعليق.
+  </span></div>
+
+  <div class="amber">
+    <b>قاعدة تسقط من القاعدة وتنتقل للكود:</b> اليوم الإعجاب يقبل زائراً مجهولاً
+    (<code>userId</code> اختياري) والحفظ <b>يشترط حساباً</b> (<code>userId</code> إلزامي) —
+    لأنهما جدولان. بعد الدمج في جدول واحد بـ<code>kind</code>، القاعدة ما تقدر تشترط الحساب
+    على نوع دون نوع. <b>المطلوب:</b> الشرط يُفحص في الكود قبل الحفظ.
+  </div>
+</div>
+
+<!-- ===== 3. RELATIONS ===== -->
+<div class="card">
+  <h2>٣ · العلاقات</h2>
+  <table>
+    <tr><th>العلاقة</th><th>الحالة</th></tr>
+    <tr><td>الوسائط ← العميل</td><td>موجودة، حذف متتالٍ، تبقى كما هي</td></tr>
+    <tr><td>الوسائط ← المقالات والأدوار (شعار · غلاف · معرض · صور اجتماعية…)</td><td>موجودة كلها، لا تُلمس</td></tr>
+    <tr><td>الوسائط ← <code>MediaComment[]</code></td><td>🆕 جديدة</td></tr>
+    <tr><td>الوسائط ← <code>MediaReaction[]</code></td><td>🆕 جديدة</td></tr>
+    <tr><td>الوسائط ← المقال (<code>reelArticleId</code>)</td><td>🆕 جديدة — اقرأ التصحيح تحت</td></tr>
+    <tr><td>الوسائط ← الريل (<code>ReelSourceMedia</code>)</td><td>❌ تُحذف مع الجدول</td></tr>
+  </table>
+
+  <div class="warn">
+    <b>تصحيح لكلامي: قلت «ربط المقال ما يحتاج حقلاً جديداً» — وهذا غلط.</b>
+    علاقات الوسائط بالمقالات الموجودة اليوم معناها مختلف تماماً: <code>featuredArticles</code>
+    تعني «هذي صورة غلاف المقال»، و<code>articleGallery</code> تعني «هذي صورة داخل معرض المقال».
+    وجدول الريلز فيه <code>articleId</code> معناه ثالث: «هذا الريل يروّج لهذا المقال» — وممكن
+    يشير لمقال ما تظهر فيه الصورة أصلاً. <b>فلازم حقل مستقل <code>reelArticleId</code></b>
+    بحذف <code>SetNull</code> زي الحالي، وإلا انكسر الربط أو انخلط بغيره.
+  </div>
+</div>
+
+<!-- ===== 4. WHAT GETS DELETED ===== -->
+<div class="card">
+  <h2>٤ · ما يُحذف</h2>
+  <p>جدول الريلز و<b>خمسة</b> جداول تابعة له:</p>
+  <p>
+    <code>Reel</code> · <code>ReelComment</code> · <code>ReelCommentLike</code> ·
+    <code>ReelCommentDislike</code> · <code>ReelLike</code> · <code>ReelFavorite</code>.
+  </p>
+  <div class="ok">
+    <b>الخسارة: ٥٥ صفّاً لم يخترها أحد — صفر منشور، صفر تعليق، صفر إعجاب.</b>
+    الصور نفسها في المعرض ما تنمسّ. ما فيه ترحيل بيانات ولا مخاطرة، الجدول يموت وخلاص.
+  </div>
+</div>
+
+<!-- ===== 5. CONDITIONS ===== -->
+<div class="card">
+  <h2>٥ · خمسة شروط إلزامية</h2>
+  <p>هذه ثمن الدمج، مكتوبة هنا عشان لا تُنسى وقت البناء.</p>
+
+  <div class="row"><span class="n">١</span><span class="row-b">
+    <b>حارس الحذف.</b> بعد الدمج الصفّ واحد: من يحذف صورة من المكتبة يمحو معها منشوراً حيّاً
+    وكل تعليقاته. <b>المطلوب:</b> منع الحذف النهائي لأي ملف منشور أو عليه تفاعل — يُؤرشف فقط.
+    حارس واحد في دالّة الحذف، وهو أهم شرط في الصفحة.
+  </span></div>
+
+  <div class="row"><span class="n">٢</span><span class="row-b">
+    <b>قيد نوع الملف في منتقيات الصور.</b> المنتقيات تسحب بالدور ولا تسأل عن نوع الملف، فأول
+    فيديو ريلز راح يطلع كخيار في «اختر صورة الغلاف». <b>المطلوب:</b> دالّة مساعدة واحدة تقيّد
+    الاستعلام بالصور (<code>mimeType</code> يبدأ بـ image)، تُستدعى في الخمسة عشر موضعاً —
+    ومعها مكتبة الوسائط في الأدمن، لأنها ما تقيّد بالدور أصلاً.
+  </span></div>
+
+  <div class="row"><span class="n">٥</span><span class="row-b">
+    <b>العنوان والوصف كانا إلزاميين في القاعدة — وبعد الدمج ما عادا.</b> جدول الريلز يفرضهما
+    (<code>title String</code> بلا علامة استفهام) لأن قوقل يشترطهما في بيانات الفيديو، بينما
+    هما اختياريان في الوسائط ولا نقدر نخليهما إلزاميين وإلا انكسر كل شعار وصورة مقال.
+    <b>المطلوب:</b> النشر في الريلز يُرفض بلا عنوان ووصف — فحص في الكود عند الاعتماد، لا عند الرفع.
+  </span></div>
+
+  <div class="row"><span class="n">٣</span><span class="row-b">
+    <b>تعبئة الحقول الجديدة.</b> الحقل الجديد على مجموعة فيها آلاف الصفوف ما ينعبّي بأثر رجعي:
+    الزيادة على عدّاد غائب تفشل بصمت، والحقل المنطقي الغائب ما يطابق <code>true</code> ولا
+    <code>false</code>. <b>المطلوب:</b> خطوة تعبئة تسبق أول استخدام — العدّادات الأربعة بصفر،
+    و<code>inGallery: true</code> لكل صور المعرض القائمة.
+  </span></div>
+
+  <div class="row"><span class="n">٤</span><span class="row-b">
+    <b>تفرّد الرابط في الكود.</b> الفهرس الفريد على حقل غائب في مونجو له سلوك يحتاج تأكيداً،
+    وقاعدتنا أصلاً: التفرّد يُفحص قبل الحفظ لا بانتظار خطأ القاعدة.
+    <b>المطلوب:</b> فهرس عادي + فحص في الكود.
+  </span></div>
+</div>
+
+<!-- ===== 5B. CODE TOUCH POINTS ===== -->
+<div class="card">
+  <h2>٦ · مواضع الكود اللي تتغيّر</h2>
+  <p>محصورة من الكود لا من الذاكرة (2026-08-04) — ثمانية ملفات تمسّ جدول الريلز:</p>
+
+  <table>
+    <tr><th>الملف</th><th>يسوّي إيش اليوم</th><th>بعد الدمج</th></tr>
+    <tr>
+      <td>admin · <code>client-galleries/…/gallery-mutations.ts</code></td>
+      <td>حذف صورة المعرض يحذف الريلات المطابقة بالرابط</td>
+      <td>ينشال — وهذي بالضبط حالة حارس الحذف (شرط ١)</td>
+    </tr>
+    <tr>
+      <td>admin · <code>media/actions/optimize-image.ts</code></td>
+      <td>بعد تحسين الصورة يزامن الرابط المنسوخ داخل الريلات</td>
+      <td>ينشال — ما عاد فيه نسخة تتزامن</td>
+    </tr>
+    <tr>
+      <td>console · <code>gallery/actions/gallery-actions.ts</code></td>
+      <td>ينشئ ويحدّث ويحذف صفّ ريل مع كل تأشير</td>
+      <td>يصير تبديل <code>inReels</code> على نفس الصفّ</td>
+    </tr>
+    <tr>
+      <td>console · <code>gallery/page.tsx</code></td>
+      <td>يطابق الريلات القديمة بالرابط لأن الحقل غائب عندها</td>
+      <td>ينشال بالكامل — الالتفاف كان بسبب الصفّين</td>
+    </tr>
+    <tr>
+      <td>console · <code>reels/actions/reels-actions.ts</code> + <code>reels/page.tsx</code></td>
+      <td>قسم الريلز يقرأ ويكتب في جدول الريلز</td>
+      <td>يقرأ ويكتب في الوسائط</td>
+    </tr>
+    <tr>
+      <td>modonty · <code>app/reels/helpers/reels-feed.ts</code> + <code>actions/reel-interactions.ts</code></td>
+      <td>الفيد العام والتفاعلات (شغل تحت التطوير)</td>
+      <td>مرحلة ثانية — خارج هذه الدفعة</td>
+    </tr>
+  </table>
+
+  <div class="ok">
+    <b>موضعان منها ينحذفان ولا يُعاد كتابتهما</b> — كلاهما كان يزامن رابطاً منسوخاً بين صفّين.
+    وهذا أوضح دليل عملي على أن الازدواج هو المشكلة، مو الحلّ.
+  </div>
+</div>
+
+<!-- ===== 6. BUILD PHASES ===== -->
+<div class="card">
+  <h2>٧ · مراحل البناء</h2>
+
+  <div class="row"><span class="n">م١</span><span class="row-b">
+    <b>السكيما.</b> إيقاف السيرفرات → حذف الستة جداول → إضافة حقول الوسائط والجداول الثلاثة →
+    <code>pnpm prisma:generate</code> → تشغيل السيرفرات. طقس إلزامي بحرفه.
+  </span></div>
+
+  <div class="row"><span class="n">م٢</span><span class="row-b">
+    <b>التعبئة والحرّاس.</b> تعبئة العدّادات و<code>inGallery</code> (شرط ٣) · حارس الحذف (شرط ١) ·
+    دالّة قيد نوع الملف وتوصيلها في المواضع الأربعة عشر (شرط ٢).
+  </span></div>
+
+  <div class="row"><span class="n">م٣</span><span class="row-b">
+    <b>الكونسول.</b> علامة الريلز في المعرض تقرأ من <code>inReels</code> مباشرة (ينشال معها
+    التفاف الروابط القديم) · قسم الريلز يُعاد توصيله على الوسائط.
+  </span></div>
+
+  <div class="row"><span class="n">م٤</span><span class="row-b">
+    <b>الأدمن.</b> شاشة الاعتماد: بانتظارك · اعتماد · رفض مع سبب · نشر · أرشفة.
+  </span></div>
+
+  <div class="row"><span class="n">م٥</span><span class="row-b">
+    <b>رفع الفيديو.</b> من المتصفح إلى Bunny مباشرة بمفتاح قصير العمر — بلا مرور على سيرفرنا.
+  </span></div>
+
+  <div class="amber">
+    <b>مودونتي مرحلة ثانية.</b> الفيد العام خارج هذا الملف — الشغل هنا كونسول وأدمن فقط.
+  </div>
+</div>
+
+<footer>معمارية الريلز · مُدَوَّنَتِي · 2026-08-04</footer>
+</div>
+
+<script>
+(function () {
+  var s = document.getElementById('stamp');
+  if (s) {
+    s.textContent = new Date(document.lastModified).toLocaleString('en-GB', {
+      day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false,
+    });
+  }
+})();
+</script>
+</body>
+</html>

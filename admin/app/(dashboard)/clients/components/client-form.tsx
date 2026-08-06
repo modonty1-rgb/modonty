@@ -297,6 +297,19 @@ export function ClientForm({
                     />
                     <span className="text-xs font-semibold whitespace-nowrap">⭐ مميّز</span>
                   </label>
+                  {/* On for everyone today. Unticking it hides the «مجدولة» tab from this
+                      client's articles page — for the client who reads an unpublished
+                      date as a promise we have not made yet. */}
+                  <label
+                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-violet-500/30 bg-violet-500/[0.06] px-2.5 py-1.5"
+                    title="يشوف العميل تبويب «مجدولة» في مقالاته — قائمة اللي جدولناه وما نُشر بعد"
+                  >
+                    <Checkbox
+                      checked={watchedValues.showSchedule ?? true}
+                      onCheckedChange={(c) => form.setValue("showSchedule", c === true, { shouldDirty: true })}
+                    />
+                    <span className="text-xs font-semibold whitespace-nowrap">🗓️ يشوف المجدول</span>
+                  </label>
                 </>
               )}
               {/* SEO score — the ONE standard chip, clickable → the guide (/technical) */}

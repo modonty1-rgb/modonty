@@ -60,6 +60,9 @@ export type ClientForList = {
   ymylData: unknown;
   alternateName: string | null;
   slogan: string | null;
+  /** Legacy external intro-video link — see helpers/intro-video-link.ts (أ٦). */
+  introVideoUrl: string | null;
+  introVideoMediaId: string | null;
   logoMedia: {
     url: string;
     bunnyUrl: string | null;

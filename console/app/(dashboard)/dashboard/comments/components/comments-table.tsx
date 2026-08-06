@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { ar } from "@/lib/ar";
+import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,7 @@ import {
   UserCircle2,
   CornerDownLeft,
 } from "lucide-react";
-import type { CommentWithDetails } from "../helpers/comment-queries";
+import type { CommentKind, CommentWithDetails } from "../helpers/comment-queries";
 import { CommentStatus } from "@prisma/client";
 import {
   approveComment,
@@ -39,6 +40,7 @@ import {
   restoreCommentAction,
   bulkApproveComments,
   bulkRejectComments,
+  type BulkRef,
 } from "../actions/comment-actions";
 
 interface Props {
@@ -46,6 +48,8 @@ interface Props {
 }
 
 type FilterKey = "all" | CommentStatus;
+/** Second axis of filtering — status says how far along, this says where it came from. */
+type SourceKey = "all" | CommentKind;
 
 function formatDateTime(d: Date | string | null | undefined): string {
   if (!d) return "—";
@@ -87,6 +91,8 @@ function statusMeta(status: CommentStatus) {
 export function CommentsTable({ comments }: Props) {
   const c = ar.comments;
   const [filter, setFilter] = useState<FilterKey>("all");
+  const [source, setSource] = useState<SourceKey>("all");
+  const { confirmThen, confirmDialog } = useConfirm();
   const [query, setQuery] = useState("");
   const [openComment, setOpenComment] = useState<CommentWithDetails | null>(
     null
@@ -98,6 +104,7 @@ export function CommentsTable({ comments }: Props) {
   const filtered = useMemo(() => {
     let result = comments;
     if (filter !== "all") result = result.filter((co) => co.status === filter);
+    if (source !== "all") result = result.filter((co) => co.kind === source);
     if (query.trim()) {
       const q = query.trim().toLowerCase();
       result = result.filter(
@@ -105,11 +112,11 @@ export function CommentsTable({ comments }: Props) {
           co.content.toLowerCase().includes(q) ||
           (co.author?.name ?? "").toLowerCase().includes(q) ||
           (co.author?.email ?? "").toLowerCase().includes(q) ||
-          co.article.title.toLowerCase().includes(q)
+          co.source.title.toLowerCase().includes(q)
       );
     }
     return result;
-  }, [comments, filter, query]);
+  }, [comments, filter, source, query]);
 
   const counts = useMemo(
     () => ({
@@ -117,6 +124,8 @@ export function CommentsTable({ comments }: Props) {
       PENDING: comments.filter((x) => x.status === "PENDING").length,
       APPROVED: comments.filter((x) => x.status === "APPROVED").length,
       REJECTED: comments.filter((x) => x.status === "REJECTED").length,
+      article: comments.filter((x) => x.kind === "article").length,
+      reel: comments.filter((x) => x.kind === "reel").length,
     }),
     [comments]
   );
@@ -143,18 +152,20 @@ export function CommentsTable({ comments }: Props) {
     });
   }
 
-  function confirmThen(message: string, onConfirm: () => void) {
-    toast(message, {
-      duration: 8000,
-      action: { label: c.confirmYes, onClick: onConfirm },
-      cancel: { label: c.cancel, onClick: () => {} },
-    });
+  /** Which table a row belongs to — the server action needs it to know where to write. */
+  function kindOf(id: string): CommentKind {
+    return comments.find((x) => x.id === id)?.kind ?? "article";
+  }
+
+  /** Selected ids carry no kind, so it is looked up here before the batch goes out. */
+  function selectedRefs(): BulkRef[] {
+    return Array.from(selected).map((id) => ({ kind: kindOf(id), id }));
   }
 
   function handleApprove(id: string) {
     setActionId(id);
     startTransition(async () => {
-      const res = await approveComment(id);
+      const res = await approveComment(kindOf(id), id);
       if (res.success) toast.success(c.approved_toast);
       else toast.error(res.error || c.approveFailed);
       setActionId(null);
@@ -164,7 +175,7 @@ export function CommentsTable({ comments }: Props) {
   function handleReject(id: string) {
     setActionId(id);
     startTransition(async () => {
-      const res = await rejectComment(id);
+      const res = await rejectComment(kindOf(id), id);
       if (res.success) toast.success(c.rejected_toast);
       else toast.error(res.error || c.rejectFailed);
       setActionId(null);
@@ -175,7 +186,7 @@ export function CommentsTable({ comments }: Props) {
     confirmThen(c.confirmDeleteOne, () => {
       setActionId(id);
       startTransition(async () => {
-        const res = await deleteComment(id);
+        const res = await deleteComment(kindOf(id), id);
         if (res.success) {
           toast.success(c.deleted_toast);
           setSelected((prev) => {
@@ -186,13 +197,13 @@ export function CommentsTable({ comments }: Props) {
         } else toast.error(res.error || c.deleteFailed);
         setActionId(null);
       });
-    });
+    }, "احذف التعليق");
   }
 
   function handleRestore(id: string) {
     setActionId(id);
     startTransition(async () => {
-      const res = await restoreCommentAction(id);
+      const res = await restoreCommentAction(kindOf(id), id);
       if (res.success) toast.success(c.restored_toast);
       else toast.error(res.error || c.deleteFailed);
       setActionId(null);
@@ -200,9 +211,9 @@ export function CommentsTable({ comments }: Props) {
   }
 
   function handleBulkApprove() {
-    const ids = Array.from(selected);
+    const refs = selectedRefs();
     startTransition(async () => {
-      const res = await bulkApproveComments(ids);
+      const res = await bulkApproveComments(refs);
       if (res.success) {
         toast.success(c.bulkApproved_toast.replace("{n}", String(res.count)));
         setSelected(new Set());
@@ -211,9 +222,9 @@ export function CommentsTable({ comments }: Props) {
   }
 
   function handleBulkReject() {
-    const ids = Array.from(selected);
+    const refs = selectedRefs();
     startTransition(async () => {
-      const res = await bulkRejectComments(ids);
+      const res = await bulkRejectComments(refs);
       if (res.success) {
         toast.success(c.bulkRejected_toast.replace("{n}", String(res.count)));
         setSelected(new Set());
@@ -264,6 +275,24 @@ export function CommentsTable({ comments }: Props) {
                 count={counts.REJECTED}
                 tone="red"
               />
+              {/* Where it came from — only worth showing once reels actually have any. */}
+              {counts.reel > 0 && (
+                <>
+                  <span className="mx-1 h-5 w-px bg-border" aria-hidden />
+                  <FilterPill
+                    active={source === "article"}
+                    onClick={() => setSource(source === "article" ? "all" : "article")}
+                    label="المقالات"
+                    count={counts.article}
+                  />
+                  <FilterPill
+                    active={source === "reel"}
+                    onClick={() => setSource(source === "reel" ? "all" : "reel")}
+                    label="الريلز"
+                    count={counts.reel}
+                  />
+                </>
+              )}
             </div>
           </div>
 
@@ -357,6 +386,7 @@ export function CommentsTable({ comments }: Props) {
         comment={openComment}
         onClose={() => setOpenComment(null)}
       />
+      {confirmDialog}
     </>
   );
 }
@@ -478,12 +508,12 @@ function CommentRow({
             )}
           </div>
 
-          {/* Article link */}
+          {/* Where it was written — an article or a reel, one merged queue (ق10) */}
           <Link
-            href={`/dashboard/articles/${comment.article.id}`}
+            href={comment.source.href}
             className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
           >
-            {c.fromArticle}: {comment.article.title}
+            {comment.kind === "reel" ? "من ريل" : c.fromArticle}: {comment.source.title}
             <ExternalLink className="h-3 w-3" />
           </Link>
 
@@ -711,11 +741,11 @@ function CommentDetailSheet({
             )}
           </Section>
 
-          {/* Article */}
-          <Section title={c.fromArticle}>
+          {/* Article or reel */}
+          <Section title={comment.kind === "reel" ? "من ريل" : c.fromArticle}>
             <Button asChild size="sm" variant="outline" className="gap-2">
-              <Link href={`/dashboard/articles/${comment.article.id}`}>
-                {comment.article.title}
+              <Link href={comment.source.href}>
+                {comment.source.title}
                 <ExternalLink className="h-3 w-3" />
               </Link>
             </Button>

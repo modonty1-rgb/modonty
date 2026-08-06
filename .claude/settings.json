@@ -32,14 +32,10 @@
       "Bash(curl -s -o /dev/null -w \"modonty: %{http_code}\\\\n\" http://localhost:3000)",
       "Bash(curl -s -o /dev/null -w \"admin: %{http_code}\\\\n\" http://localhost:3002)",
       "Bash(tasklist /FI \"IMAGENAME eq node.exe\" /FO TABLE)",
-      "Bash(where code-review-graph *)",
       "Bash(pip3 show *)",
-      "Bash(python -m pip show code-review-graph)",
       "Bash(pip uninstall *)",
-      "Bash(python -m pip uninstall code-review-graph -y)",
       "Bash(where python3 *)",
       "Read(//c/Users/w2nad/AppData/Local/Programs/**)",
-      "Bash(\"/c/Users/w2nad/AppData/Roaming/Python/Python313/Scripts/code-review-graph.exe\" --version)",
       "Read(//c/Users/w2nad/AppData/Roaming/Python/Python313//**)",
       "Read(//c/Python313//**)",
       "Read(//c/Users/w2nad/**)",
@@ -48,7 +44,6 @@
       "Bash(py -3 -m pip --version)",
       "Read(//c/Windows/**)",
       "Read(//c/Program Files/Python313/**)",
-      "Bash(\"/c/Users/w2nad/AppData/Local/Microsoft/WindowsApps/python.exe\" -m pip show code-review-graph)",
       "Bash(curl -s http://localhost:3000/ -o /dev/null -w \"%{http_code}\")",
       "Bash(cmd /c \"set DATABASE_URL\")",
       "Bash(pnpm changelog:reset:local)",
@@ -250,8 +245,6 @@
       "WebFetch(domain:transparency.meta.com)",
       "WebFetch(domain:values.snap.com)",
       "WebFetch(domain:www.facebook.com)",
-      "mcp__code-review-graph__get_minimal_context_tool",
-      "mcp__code-review-graph__detect_changes_tool",
       "Read(//c/Users/w2nad/Desktop/dreamToApp/MODONTY/**)",
       "Read(//c/Users/w2nad/Desktop/dreamToApp/MODONTY/=== Console Permissions /**)",
       "WebFetch(domain:modonty.jbrtechno.com)",
@@ -363,7 +356,79 @@
       "Bash(\"deleted\")",
       "Bash(taskkill //F //PID 13824)",
       "Bash(node -e \"for\\(const p of ['.claude/settings.json','.claude/settings.local.json']\\){try{const j=JSON.parse\\(require\\('fs'\\).readFileSync\\(p,'utf8'\\)\\);console.log\\('=== '+p+' ==='\\);console.log\\('deny:',JSON.stringify\\(\\(j.permissions&&j.permissions.deny\\)||[],null,1\\)\\);console.log\\('defaultMode:',j.permissions&&j.permissions.defaultMode\\);}catch\\(e\\){console.log\\(p,'ERR',e.message\\)}}\")",
-      "Bash(node -e \"const fs=require\\('fs'\\);const files=['modonty/app/articles/[slug]/components/booking-dialog.tsx','modonty/app/articles/[slug]/components/booking-form-lazy.tsx','admin/app/\\(dashboard\\)/subscription-tiers/components/tier-cards.tsx','admin/app/\\(dashboard\\)/subscription-tiers/components/tier-kpi-strip.tsx','admin/app/\\(dashboard\\)/subscription-tiers/actions/sync-pricing.ts','admin/app/\\(dashboard\\)/subscription-tiers/components/sync-pricing-button.tsx','admin/verify-jbrseo-plan.mjs'];for\\(const f of files\\){try{fs.unlinkSync\\(f\\);console.log\\('deleted:',f\\)}catch\\(e\\){console.log\\('skip:',f,e.code\\)}}\")"
+      "Bash(node -e \"const fs=require\\('fs'\\);const files=['modonty/app/articles/[slug]/components/booking-dialog.tsx','modonty/app/articles/[slug]/components/booking-form-lazy.tsx','admin/app/\\(dashboard\\)/subscription-tiers/components/tier-cards.tsx','admin/app/\\(dashboard\\)/subscription-tiers/components/tier-kpi-strip.tsx','admin/app/\\(dashboard\\)/subscription-tiers/actions/sync-pricing.ts','admin/app/\\(dashboard\\)/subscription-tiers/components/sync-pricing-button.tsx','admin/verify-jbrseo-plan.mjs'];for\\(const f of files\\){try{fs.unlinkSync\\(f\\);console.log\\('deleted:',f\\)}catch\\(e\\){console.log\\('skip:',f,e.code\\)}}\")",
+      "Bash(powershell -NoProfile -Command \"if \\(Test-Path 'bunny-live-test-article-published.png'\\) { Move-Item -Force 'bunny-live-test-article-published.png' '.playwright-mcp\\\\bunny-live-test-article-published.png'; 'moved' } else { 'already in place' }\")",
+      "Bash(node -e \"console.log\\(JSON.stringify\\(require\\('./dataLayer/package.json'\\).exports,null,2\\)\\)\")",
+      "Bash(powershell -NoProfile -Command \"Get-ChildItem -Path 'admin\\\\scripts\\\\tmp-*.ts' | Remove-Item -Force; 'deleted'\")",
+      "Bash(powershell -NoProfile -Command \"Remove-Item -LiteralPath 'C:\\\\Users\\\\w2nad\\\\Desktop\\\\dreamToApp\\\\MODONTY\\\\.playwright-mcp\\\\avatar-test.png' -Force -ErrorAction SilentlyContinue; 'png cleaned'\")",
+      "Bash(grep -rnoE \"https://[a-zA-Z0-9.-]+\\\\.[a-z]{2,}/[^\\\\\"'\\\\` ]*\\\\.\\(png|jpe?g|webp|svg|gif|avif\\)\" --include=\"*.ts\" --include=\"*.tsx\" console)",
+      "Bash(grep -rnoE \"https://[^\\\\\"'\\\\` \\)]+\\\\.\\(png|jpe?g|webp|svg|gif|avif\\)\" --include=\"*.ts\" --include=\"*.tsx\" .)",
+      "Bash(powershell -NoProfile -Command \"Get-ChildItem -Path 'admin\\\\scripts\\\\tmp-*.ts' -ErrorAction SilentlyContinue | Remove-Item -Force; 'cleaned'\")",
+      "Bash(powershell -NoProfile -Command \"Get-NetTCPConnection -LocalPort 3000,3002 -State Listen -ErrorAction SilentlyContinue | Select-Object LocalPort,OwningProcess | Format-Table -AutoSize\")",
+      "Bash(powershell -NoProfile -Command \"taskkill /F /T /PID 20824\")",
+      "Bash(perl -0pi -e 's/\\(logoMedia: \\\\{\\\\s*\\\\n\\\\s*select: \\\\{\\\\s*\\\\n\\\\s*url: true,\\)/$1\\\\n            bunnyUrl: true,/g; s/\\(heroImageMedia: \\\\{\\\\s*\\\\n\\\\s*select: \\\\{\\\\s*\\\\n\\\\s*url: true,\\)/$1\\\\n            bunnyUrl: true,/g' \"admin/app/\\(dashboard\\)/clients/actions/clients-actions/get-clients.ts\")",
+      "Bash(perl -0pi -e 's/\\\\{isImage\\\\\\(item\\\\.mimeType\\\\\\) && isHostAllowed\\\\\\(item\\\\.url\\\\\\) \\\\? \\\\\\(\\\\n\\(\\\\s*\\)<NextImage src=\\\\{item\\\\.url\\\\}/\\\\{isImage\\(item.mimeType\\) \\\\&\\\\& isHostAllowed\\(getImageUrl\\(item\\)\\) ? \\(\\\\n$1<NextImage src={getImageUrl\\(item\\)}/' \"admin/app/\\(dashboard\\)/media/components/media-grid.tsx\")",
+      "Bash(sed -i '342s/isHostAllowed\\(item.url\\)/isHostAllowed\\(getImageUrl\\(item\\)\\)/' \"admin/app/\\(dashboard\\)/media/components/media-grid.tsx\")",
+      "Bash(sed -i '357s/src={item.url}/src={getImageUrl\\(item\\)}/' \"admin/app/\\(dashboard\\)/media/components/media-grid.tsx\")",
+      "Bash(grep -rn \"cloudinary.com\\\\\"\\\\|cloudinary\\\\\\\\\\\\\\\\.com\" --include=\"*.tsx\" --include=\"*.ts\" admin/app admin/components admin/lib)",
+      "Bash(powershell -NoProfile -Command \"Remove-Item -Force admin/scripts/tmp-broken-media.ts, admin/scripts/tmp-check-media-page.ts, admin/scripts/tmp-check-maintenance-rows.ts -ErrorAction SilentlyContinue\")",
+      "Bash(node /c/tmp/scan-selects.mjs)",
+      "Bash(perl -i -pe 's/^\\(\\\\s*\\)url: true;$/$1url: true;\\\\n$1bunnyUrl: true;/ if $. == 10 || $. == 21 || $. == 52 || $. == 61' admin/lib/types/prisma-types.ts)",
+      "Bash(perl -0pi -e 's/\\(heroImageMedia: \\\\{\\\\n\\\\s*select: \\\\{\\\\n\\\\s*url: true,\\\\n\\)/$1              bunnyUrl: true,\\\\n/; s/\\(logoMedia: \\\\{\\\\n\\\\s*select: \\\\{\\\\n\\\\s*url: true,\\\\n\\)/$1              bunnyUrl: true,\\\\n/; s/\\(featuredImage: \\\\{\\\\n\\\\s*select: \\\\{\\\\n\\\\s*url: true,\\\\n\\)/$1          bunnyUrl: true,\\\\n/' admin/lib/seo/metadata-storage.ts)",
+      "Bash(perl -0pi -e 's/\\(\\(?:logoMedia|heroImageMedia\\): \\\\{\\\\n\\\\s*select: \\\\{\\\\n\\)\\(\\\\s*\\)url: true,\\\\n/$1$2url: true,\\\\n$2bunnyUrl: true,\\\\n/g' \"admin/app/\\(dashboard\\)/clients/helpers/client-seo-config/client-jsonld-storage.ts\")",
+      "Bash(grep -viE \"typeof |trim\\\\\\(\\\\\\)\\\\.length|^\\\\S+:[0-9]+: *\\(if \\\\\\(|const has|const can\\)|&& *$|\\\\?\\\\.url *&&|\\\\?\\\\.url;? *$|\\\\?\\\\.url\\\\\\)\")",
+      "Bash(perl -0pi -e ' *)",
+      "Bash(perl -0pi -e 's/import \\\\{ buildSiteOrgAndWebSite \\\\} from \"\\\\.\\\\/build-clients-page-jsonld\";/import { buildSiteOrgAndWebSite } from \".\\\\/build-clients-page-jsonld\";\\\\nimport { mediaSrc } from \"\\\\@modonty\\\\/database\\\\/lib\\\\/media-src\";/' \"admin/app/\\(dashboard\\)/modonty/setting/helpers/build-trending-page-jsonld.ts\")",
+      "Bash(perl -0pi -e 's/const imgUrl = article\\\\.featuredImage\\\\?\\\\.url \\\\|\\\\| \"\";/const imgUrl = mediaSrc\\(article.featuredImage\\) || \"\";/' \"admin/app/api/articles/[id]/validate/route.ts\")",
+      "Bash(perl -0pi -e 's/\\\\{mediaSrc\\\\\\(client\\\\.logoMedia\\\\\\) \\\\? \\\\\\(/{client.logoMedia?.url ? \\(/' \"admin/app/\\(dashboard\\)/clients/[id]/components/client-header.tsx\")",
+      "Bash(perl -0pi -e 's/  const featuredImageSrc = mediaSrc\\\\\\(featuredImage\\\\\\);\\\\r?\\\\n  if \\\\\\(featuredImageSrc\\\\\\) \\\\{/  const featuredImageSrc = mediaSrc\\(featuredImage\\);\\\\n  if \\(featuredImage \\\\&\\\\& featuredImageSrc\\) {/' \"admin/app/\\(dashboard\\)/articles/helpers/article-seo-config/generate-article-structured-data.ts\")",
+      "Bash(perl -0pi -e 's/  const logoSrc = mediaSrc\\\\\\(logoMedia\\\\\\);\\\\r?\\\\n  if \\\\\\(logoSrc\\\\\\) \\\\{/  const logoSrc = mediaSrc\\(logoMedia\\);\\\\n  if \\(logoMedia \\\\&\\\\& logoSrc\\) {/' \"admin/app/\\(dashboard\\)/clients/helpers/client-seo-config/generate-organization-structured-data.ts\")",
+      "Bash(perl -0pi -e 's/  const heroSrc = mediaSrc\\\\\\(client\\\\.heroImageMedia\\\\\\);\\\\r?\\\\n  if \\\\\\(heroSrc\\\\\\) \\\\{/  const heroSrc = mediaSrc\\(client.heroImageMedia\\);\\\\n  if \\(client.heroImageMedia \\\\&\\\\& heroSrc\\) {/' dataLayer/lib/seo/generate-client-seo-bundle.ts)",
+      "Bash(grep -viE \"typeof |trim\\\\\\(\\\\\\)\\\\.length|^\\\\S+:[0-9]+: *\\(if \\\\\\(|const has|const can\\)|&& *$|\\\\?\\\\.url *&&|\\\\?\\\\.url;? *$|\\\\?\\\\.url\\\\\\)|\\\\?\\\\.url \\\\?|mediaSrc\\\\\\(\")",
+      "Bash(perl -0pi -e 's/\\(featuredImage: \\\\{\\\\s*\\\\r?\\\\n?\\\\s*select: \\\\{\\\\s*\\\\r?\\\\n?\\)\\(\\\\s*\\)url: true,/$1$2url: true,\\\\n$2bunnyUrl: true,/' admin/scripts/compare-failing-vs-working.ts)",
+      "Bash(perl -0pi -e 's/featuredImage: \\\\{ select: \\\\{ id: true, url: true \\\\} \\\\},/featuredImage: { select: { id: true, url: true, bunnyUrl: true } },/' admin/scripts/compare-failing-vs-working.ts)",
+      "Bash(perl -0pi -e 's/import \\\\{ useMediaPreview \\\\} from \"\\\\.\\\\.\\\\/\\\\.\\\\.\\\\/helpers\\\\/hooks\\\\/use-media-preview\";/import { useMediaPreview } from \"..\\\\/..\\\\/helpers\\\\/hooks\\\\/use-media-preview\";\\\\nimport { mediaSrc } from \"\\\\@modonty\\\\/database\\\\/lib\\\\/media-src\";/' \"admin/app/\\(dashboard\\)/clients/components/form-sections/media-section.tsx\")",
+      "Bash(curl -s -o /dev/null -w \"3000=%{http_code}\\\\n\" http://localhost:3000/articles)",
+      "Bash(curl -s -o /dev/null -w \"3001=%{http_code}\\\\n\" http://localhost:3001/articles)",
+      "Bash(curl -s -o /dev/null http://localhost:3000/)",
+      "Bash(curl -s -o /dev/null http://localhost:3001/)",
+      "Bash(curl -s -o /dev/null -w \"3000=%{http_code} \" http://localhost:3000/)",
+      "Bash(curl -s -o /dev/null -w \"3001=%{http_code}\\\\n\" http://localhost:3001/)",
+      "Bash(perl -0pi -e 's/      id: true,\\\\r?\\\\n      filename: true,\\\\r?\\\\n      url: true,/      id: true,\\\\n      filename: true,\\\\n      url: true,\\\\n      bunnyUrl: true,/' \"admin/app/\\(dashboard\\)/actions/media-counts.ts\")",
+      "Bash(perl -0pi -e 's/    url: m\\\\.url,\\\\r?\\\\n    altText: m\\\\.altText,\\\\r?\\\\n    width: m\\\\.width,/    url: mediaSrc\\(m\\) ?? m.url,\\\\n    altText: m.altText,\\\\n    width: m.width,/' \"admin/app/\\(dashboard\\)/actions/media-counts.ts\")",
+      "Bash(perl -0pi -e 's/export const MEDIA_SELECT = \\\\{\\\\r?\\\\n  id: true,\\\\r?\\\\n  url: true,/export const MEDIA_SELECT = {\\\\n  id: true,\\\\n  url: true,\\\\n  bunnyUrl: true,/' \"admin/app/\\(dashboard\\)/seo-images/helpers/load-groups.ts\")",
+      "Bash(perl -0pi -e 's/    id: m\\\\.id,\\\\r?\\\\n    url: m\\\\.url,\\\\r?\\\\n    type: m\\\\.type,/    id: m.id,\\\\n    url: mediaSrc\\(m\\) ?? m.url,\\\\n    type: m.type,/' \"admin/app/\\(dashboard\\)/seo-images/helpers/load-groups.ts\")",
+      "Bash(grep -iA12 \"error\\\\|⨯\")",
+      "Bash(powershell -NoProfile -Command \"Remove-Item -LiteralPath 'C:\\\\tmp\\\\scan-selects.mjs' -Force -ErrorAction SilentlyContinue; Write-Output 'done'\")",
+      "Bash(awk '/^model Category/,/^}/' dataLayer/prisma/schema/schema.prisma)",
+      "Bash(node .tmp-b2.mjs)",
+      "Bash(powershell -NoProfile -Command \"Remove-Item -LiteralPath '.tmp-b2.mjs' -Force -ErrorAction SilentlyContinue\")",
+      "Bash(node .tmp-after.mjs)",
+      "Bash(node .tmp-where.mjs)",
+      "Bash(node .tmp-when.mjs)",
+      "Bash(node .tmp-rest.mjs)",
+      "Bash(grep -v \"//\")",
+      "Bash(node .tmp-cascade.mjs)",
+      "Bash(node .tmp-orphans.mjs)",
+      "Bash(awk '/^datasource/,/^}/' dataLayer/prisma/schema/schema.prisma)",
+      "Bash(awk '/^model ClientReview/,/^}/' dataLayer/prisma/schema/schema.prisma)",
+      "Bash(node .tmp-verify.mjs)",
+      "Bash(node scan-direct-media.mjs)",
+      "Bash(node .tmp-media2.mjs)",
+      "Bash(powershell -NoProfile -Command \"Get-ChildItem -Path 'dataLayer' -Filter '.tmp-*' | Remove-Item -Force\")",
+      "Bash(node .tmp-audit2.mjs)",
+      "Bash(node check-b3.mjs 20)",
+      "Bash(node scan-mapping.mjs)",
+      "Bash(node .tmp-one.mjs)",
+      "Bash(node .tmp-one2.mjs)",
+      "Bash(node sweep-modonty.mjs 999)",
+      "Bash(sed -n '/^─/,$p' sweep-final.txt)",
+      "Bash(node fix-types.mjs c:/Users/w2nad/Desktop/dreamToApp/MODONTY/modonty app/articles/[slug]/components/article-image-gallery.tsx app/articles/[slug]/components/article-lab-client-card.tsx app/articles/[slug]/components/article-lab-mobile-identity.tsx app/articles/[slug]/components/article-lab-read-more.tsx app/articles/[slug]/components/article-manual-related.tsx app/articles/[slug]/components/more-from-author.tsx app/articles/[slug]/components/more-from-client.tsx app/articles/[slug]/components/sidebar/article-client-card.tsx app/categories/[slug]/components/category-article-card.tsx app/categories/[slug]/components/category-article-list-item.tsx app/clients/[slug]/components/article-list.tsx app/clients/[slug]/components/client-page/client-page-shell.tsx app/clients/[slug]/components/client-photos-preview.tsx app/clients/[slug]/components/hero/hero-avatar.tsx app/clients/[slug]/components/hero/utils.tsx app/clients/[slug]/components/related-clients.tsx app/clients/[slug]/components/shell-hero/client-hero-v2.tsx app/users/profile/favorites/page.tsx)",
+      "Bash(powershell -NoProfile -Command \"Remove-Item -LiteralPath 'modonty/.next' -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item -LiteralPath 'admin/.next' -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item -LiteralPath 'console/.next' -Recurse -Force -ErrorAction SilentlyContinue; Write-Output 'كاش .next نُظّف للثلاثة'\")",
+      "Bash(powershell -NoProfile -Command \"Get-Process node -ErrorAction SilentlyContinue | Measure-Object | Select-Object -ExpandProperty Count; Test-Path 'C:/Users/w2nad/AppData/Local/Temp/claude/c--Users-w2nad-Desktop-dreamToApp-MODONTY/04bc7bb7-c0ef-48a3-97eb-41f063a3cccf/scratchpad/sweep-modonty.mjs'; Test-Path 'c:/Users/w2nad/Desktop/dreamToApp/MODONTY/modonty/.next'\")",
+      "Bash(powershell -NoProfile -Command \"\\(Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue | Measure-Object\\).Count\")",
+      "Bash(powershell -NoProfile -Command \"node -e \\\\\"for\\(const p of ['.claude/settings.json','.claude/settings.local.json','C:/Users/w2nad/.claude/settings.json']\\){try{const j=JSON.parse\\(require\\('fs'\\).readFileSync\\(p,'utf8'\\)\\);const q=j.permissions||{};console.log\\('=== '+p\\);console.log\\(' defaultMode:',q.defaultMode\\);console.log\\(' allow:',\\(q.allow||[]\\).length\\);console.log\\(' deny:',JSON.stringify\\(q.deny||[]\\)\\);console.log\\(' ask:',JSON.stringify\\(q.ask||[]\\)\\);}catch\\(e\\){console.log\\(p,'ERR',e.message\\)}}\\\\\"\")",
+      "Edit(~/.claude/skills/humanizer/**)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [
@@ -372,33 +437,9 @@
       "C:\\Users\\w2nad\\Desktop\\dreamToApp\\remotion-studio\\src",
       "C:\\Users\\w2nad\\.claude",
       "C:\\Users\\w2nad\\Desktop\\dreamToApp\\Claude-cowroker",
-      "c:\\Users\\w2nad\\Desktop\\dreamToApp\\MODONTY\\admin\\app\\(dashboard)\\inbox\\[articleId]"
+      "c:\\Users\\w2nad\\Desktop\\dreamToApp\\MODONTY\\admin\\app\\(dashboard)\\inbox\\[articleId]",
+      "C:\\Users\\w2nad\\.claude\\hooks"
     ]
   },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write|Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "code-review-graph update --skip-flows",
-            "timeout": 30
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "code-review-graph status",
-            "timeout": 10
-          }
-        ]
-      }
-    ]
-  }
+  "hooks": {}
 }

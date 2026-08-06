@@ -1,5 +1,7 @@
 import "server-only";
 
+import { batchHeadCheck } from "./head-check";
+
 export type CheckSeverity = "critical" | "high" | "medium";
 
 export interface ValidationCheck {
@@ -584,53 +586,6 @@ function absoluteUrl(href: string, base: string): string {
   } catch {
     return href;
   }
-}
-
-interface HeadResult {
-  url: string;
-  ok: boolean;
-  status: number;
-}
-
-async function batchHeadCheck(urls: string[], concurrency = 5, timeoutMs = 5000): Promise<HeadResult[]> {
-  const results: HeadResult[] = [];
-  let cursor = 0;
-  async function worker() {
-    while (cursor < urls.length) {
-      const i = cursor++;
-      const url = urls[i];
-      try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), timeoutMs);
-        const res = await fetch(url, {
-          method: "HEAD",
-          cache: "no-store",
-          signal: controller.signal,
-          redirect: "follow",
-        });
-        clearTimeout(timer);
-        results[i] = { url, ok: res.ok, status: res.status };
-      } catch {
-        // Try GET fallback (some servers reject HEAD)
-        try {
-          const controller2 = new AbortController();
-          const timer2 = setTimeout(() => controller2.abort(), timeoutMs);
-          const res2 = await fetch(url, {
-            method: "GET",
-            cache: "no-store",
-            signal: controller2.signal,
-            redirect: "follow",
-          });
-          clearTimeout(timer2);
-          results[i] = { url, ok: res2.ok, status: res2.status };
-        } catch {
-          results[i] = { url, ok: false, status: 0 };
-        }
-      }
-    }
-  }
-  await Promise.all(Array.from({ length: Math.min(concurrency, urls.length) }, worker));
-  return results;
 }
 
 export async function validateArticles(

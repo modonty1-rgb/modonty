@@ -21,6 +21,14 @@ import {
   X,
 } from "lucide-react";
 import { compressToWebP } from "@/lib/compress-image";
+import { VideoUpload } from "@/components/media/video-upload";
+import {
+  createIntroVideoTicket,
+  finalizeIntroVideo,
+  getIntroVideoEncodingState,
+  removeIntroVideo,
+  updateIntroVideoDetails,
+} from "../actions/intro-video-actions";
 import {
   updatePageContent,
   type ServiceInput,
@@ -35,7 +43,16 @@ interface Props {
     teamMembers: TeamMemberInput[];
     achievements: AchievementInput[];
     credentials: CredentialInput[];
+    /** Legacy external link — read-only now, shown only so the client knows to replace it. */
     introVideoUrl: string | null;
+    /** The video we host. Null until the client uploads one. */
+    introVideo: {
+      mp4Url: string | null;
+      thumbnailUrl: string | null;
+      durationSec: number | null;
+      title: string | null;
+      description: string | null;
+    } | null;
   };
 }
 
@@ -44,17 +61,17 @@ export function PageContentEditor({ initial }: Props) {
   const [team, setTeam] = useState<TeamMemberInput[]>(initial.teamMembers);
   const [achievements, setAchievements] = useState<AchievementInput[]>(initial.achievements);
   const [credentials, setCredentials] = useState<CredentialInput[]>(initial.credentials);
-  const [introVideoUrl, setIntroVideoUrl] = useState<string>(initial.introVideoUrl ?? "");
   const [pending, startTransition] = useTransition();
 
   function save() {
     startTransition(async () => {
+      // The intro video is no longer part of this form — it uploads and saves on its own,
+      // because a file transfer cannot wait behind a "save all" button.
       const res = await updatePageContent({
         services,
         teamMembers: team,
         achievements,
         credentials,
-        introVideoUrl: introVideoUrl || null,
       });
       if (res.success) toast.success("تم حفظ محتوى صفحتك");
       else toast.error(res.error || "فشل الحفظ");
@@ -143,15 +160,13 @@ export function PageContentEditor({ initial }: Props) {
         <AddButton label="أضف اعتماداً" onClick={() => setCredentials([...credentials, { name: "", authority: "", year: "", url: "" }])} />
       </Section>
 
-      {/* Intro video */}
-      <Section icon={Video} title="فيديو التعريف" hint="رابط فيديو تعريفي (YouTube / Vimeo / MP4) — يظهر في صفحتك وفي بيانات Google (VideoObject).">
-        <Input
-          placeholder="https://youtube.com/watch?v=..."
-          value={introVideoUrl}
-          onChange={(e) => setIntroVideoUrl(e.target.value)}
-          dir="ltr"
-          className="text-start"
-        />
+      {/* Intro video — uploaded to us now, not linked from someone else's channel */}
+      <Section
+        icon={Video}
+        title="فيديو التعريف"
+        hint="مقطع يعرّف بنشاطك — يظهر في صفحتك وفي بيانات Google (VideoObject)."
+      >
+        <IntroVideoSection video={initial.introVideo} legacyUrl={initial.introVideoUrl} />
       </Section>
 
       {/* Sticky save */}
@@ -161,6 +176,167 @@ export function PageContentEditor({ initial }: Props) {
           حفظ محتوى الصفحة
         </Button>
       </div>
+    </div>
+  );
+}
+
+/**
+ * The intro video, in whichever of its three states the client is in:
+ * hosted by us · still on an external link · neither.
+ *
+ * The external link is shown but not editable. It was never the client's to manage — it
+ * lives on a channel they do not own — and the only useful action is to replace it, so
+ * that is the only action offered.
+ */
+function IntroVideoSection({
+  video,
+  legacyUrl,
+}: {
+  video: {
+    mp4Url: string | null;
+    thumbnailUrl: string | null;
+    durationSec: number | null;
+    title: string | null;
+    description: string | null;
+  } | null;
+  legacyUrl: string | null;
+}) {
+  const [removing, setRemoving] = useState(false);
+
+  async function remove() {
+    setRemoving(true);
+    const res = await removeIntroVideo();
+    if (res.success) {
+      toast.success("شِلنا الفيديو");
+      window.location.reload();
+    } else {
+      toast.error(res.error);
+      setRemoving(false);
+    }
+  }
+
+  if (video?.mp4Url) {
+    return (
+      <div className="space-y-3">
+        <div className="relative max-w-md overflow-hidden rounded-lg bg-black">
+          <video
+            src={video.mp4Url}
+            poster={video.thumbnailUrl ?? undefined}
+            controls
+            playsInline
+            preload="metadata"
+            className="aspect-video w-full"
+          />
+        </div>
+
+        <IntroVideoDetails title={video.title} description={video.description} />
+
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-muted-foreground">
+            {video.durationSec ? `${video.durationSec} ثانية` : ""} · مستضاف عند مُدَوَّنَتِي
+          </span>
+          <Button variant="outline" size="sm" onClick={remove} disabled={removing} className="gap-1.5">
+            <Trash2 className="h-3.5 w-3.5" />
+            {removing ? "نشيله…" : "شيل الفيديو"}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {legacyUrl && (
+        // The client did not put this link here and cannot manage it. Say what it means
+        // in plain terms — no jargon about hosting or structured data.
+        <div className="rounded-lg border border-amber-300 bg-amber-50 p-3">
+          <p className="text-xs font-semibold text-amber-900">فيديوك محفوظ عند موقع ثاني</p>
+          <p className="mt-1 text-[11px] leading-relaxed text-amber-800">
+            الفيديو اللي في صفحتك الحين مرفوع على قناة مو قناتك، وما تقدر تعدّله ولا تشيله،
+            وقوقل يحسبه لصاحب القناة مو لك. ارفعه هنا وبيصير ملكك بالكامل — والقديم يشتغل
+            لين ترفع البديل.
+          </p>
+          <p dir="ltr" className="mt-2 break-all text-start text-[10px] text-amber-700">
+            {legacyUrl}
+          </p>
+        </div>
+      )}
+
+      <VideoUpload
+        createTicket={createIntroVideoTicket}
+        finalize={finalizeIntroVideo}
+        getEncodingState={getIntroVideoEncodingState}
+        maxDurationSec={300}
+        labels={{
+          idle: legacyUrl ? "ارفع الفيديو عندنا" : "ارفع فيديو التعريف",
+          hint: "MP4 أو MOV أو WebM · لين ٥ دقائق",
+          done: "جاهز — الفيديو صار في صفحتك",
+        }}
+        onDone={() => window.location.reload()}
+      />
+    </div>
+  );
+}
+
+/**
+ * The two fields Google needs on the video. Not optional in effect: without a title the
+ * VideoObject is skipped entirely, so an untitled video is a video that counts for
+ * nothing in search — which is the whole reason we moved it off YouTube.
+ */
+function IntroVideoDetails({
+  title,
+  description,
+}: {
+  title: string | null;
+  description: string | null;
+}) {
+  const [draft, setDraft] = useState({ title: title ?? "", description: description ?? "" });
+  const [saved, setSaved] = useState(draft);
+  const [pending, startTransition] = useTransition();
+
+  const dirty = draft.title !== saved.title || draft.description !== saved.description;
+  const missing = [!draft.title.trim() && "العنوان", !draft.description.trim() && "الوصف"].filter(
+    Boolean
+  ) as string[];
+
+  function save() {
+    startTransition(async () => {
+      const res = await updateIntroVideoDetails(draft.title, draft.description);
+      if (res.success) {
+        setSaved(draft);
+        toast.success("تم الحفظ");
+      } else {
+        toast.error(res.error);
+      }
+    });
+  }
+
+  return (
+    <div className="max-w-md space-y-2">
+      <Input
+        value={draft.title}
+        onChange={(e) => setDraft({ ...draft, title: e.target.value })}
+        placeholder="عنوان الفيديو — يظهر في نتائج البحث"
+        maxLength={100}
+      />
+      <Textarea
+        value={draft.description}
+        onChange={(e) => setDraft({ ...draft, description: e.target.value })}
+        placeholder="وصف قصير — إيش يشوف الزائر في المقطع؟"
+        className="min-h-[60px] resize-none"
+        maxLength={500}
+      />
+      {missing.length > 0 && (
+        <p className="rounded bg-amber-50 px-2 py-1 text-[11px] leading-tight text-amber-800">
+          ناقص: {missing.join(" · ")} — بدونهما الفيديو ما يظهر في نتائج بحث قوقل.
+        </p>
+      )}
+      {dirty && (
+        <Button size="sm" onClick={save} disabled={pending} className="gap-1.5">
+          <Save className="h-3.5 w-3.5" />
+          {pending ? "نحفظ…" : "احفظ بيانات الفيديو"}
+        </Button>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 {
   "name": "@modonty/console",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "private": true,
   "prisma": {
     "schema": "../dataLayer/prisma/schema/schema.prisma"
@@ -39,9 +39,11 @@
     "react-dom": "^19.2.4",
     "recharts": "^2.15.0",
     "resend": "^4.0.0",
+    "sharp": "0.34.5",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "tus-js-client": "^4.3.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

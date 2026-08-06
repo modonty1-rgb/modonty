@@ -8,12 +8,19 @@ interface ClientsPageClientProps {
   clients: ClientForList[];
   defaultLogoUrl?: string | null;
   statusFilter?: StatusFilterKey;
+  externalVideoOnly?: boolean;
 }
 
-export function ClientsPageClient({ clients, defaultLogoUrl, statusFilter }: ClientsPageClientProps) {
+export function ClientsPageClient({ clients, defaultLogoUrl, statusFilter, externalVideoOnly }: ClientsPageClientProps) {
   const { search } = useSearchContext();
 
   return (
-    <ClientTable clients={clients} search={search} defaultLogoUrl={defaultLogoUrl} statusFilter={statusFilter} />
+    <ClientTable
+      clients={clients}
+      search={search}
+      defaultLogoUrl={defaultLogoUrl}
+      statusFilter={statusFilter}
+      externalVideoOnly={externalVideoOnly}
+    />
   );
 }

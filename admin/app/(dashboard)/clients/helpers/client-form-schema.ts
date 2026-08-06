@@ -218,6 +218,9 @@ export const clientFormSchema = z
     subscriptionStatus: subscriptionStatusSchema,
     paymentStatus: paymentStatusSchema,
     isFeatured: z.boolean().optional().default(false),
+    // Defaults to true — the tab is already visible to every client, so an unset value
+    // must mean "keep showing it", never "hide it".
+    showSchedule: z.boolean().optional().default(true),
     isInternal: z.boolean().optional().default(false),
     billingCycle: z.enum(["monthly", "annual"]).optional().default("annual"),
 

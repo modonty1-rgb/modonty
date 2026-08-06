@@ -51,6 +51,7 @@ async function uploadGalleryToBunny(file: File, clientId: string) {
     width: result.width ?? null,
     height: result.height ?? null,
     fileSize: file.size ?? null,
+    blurDataURL: result.blurDataURL ?? null,
   };
 }
 

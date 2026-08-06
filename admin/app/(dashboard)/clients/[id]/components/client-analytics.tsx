@@ -54,6 +54,7 @@ interface ClientAnalyticsProps {
   };
   articlesThisMonth: number;
   totalArticles: number;
+  publishedArticles: number;
 }
 
 function formatNumber(num: number): string {
@@ -62,7 +63,7 @@ function formatNumber(num: number): string {
   return num.toString();
 }
 
-export function ClientAnalytics({ analytics, clientId, client, articlesThisMonth, totalArticles }: ClientAnalyticsProps) {
+export function ClientAnalytics({ analytics, clientId, client, articlesThisMonth, totalArticles, publishedArticles }: ClientAnalyticsProps) {
   const engagementScore = Math.round(
     (Math.min(analytics.avgTimeOnPage / 120, 1) * 50 + Math.min(analytics.avgScrollDepth / 100, 1) * 50)
   );
@@ -157,10 +158,10 @@ export function ClientAnalytics({ analytics, clientId, client, articlesThisMonth
                 description={isBehind ? "Behind schedule" : "On track"}
               />
               <AnalticCard
-                title="Total Articles"
+                title="Articles"
                 value={totalArticles}
                 icon={Package}
-                description="All time"
+                description={`${publishedArticles} published · ${totalArticles - publishedArticles} in pipeline`}
               />
               <AnalticCard
                 title="Monthly Target"

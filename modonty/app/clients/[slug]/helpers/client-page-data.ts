@@ -32,6 +32,15 @@ async function getClientContentBySlug(decodedSlug: string) {
             height: true,
           },
         },
+        // The intro video we host. `include` pulls the client's own columns but never a
+        // relation — without this line the About section has no video to play, no matter
+        // what the client uploaded.
+        introVideoMedia: {
+          select: {
+            mp4Url: true,
+            thumbnailUrl: true,
+          },
+        },
         industry: {
           select: {
             name: true,

@@ -48,7 +48,27 @@ export async function getArticleComments(
     orderBy: { createdAt: "desc" },
     take: 100,
   });
-  return comments as CommentWithDetails[];
+
+  // One article's comments — always article-kind, mapped into the shared shape the
+  // moderation table speaks now that it also carries reel comments.
+  return comments.map((co) => ({
+    id: co.id,
+    kind: "article" as const,
+    content: co.content,
+    status: co.status,
+    isEdited: co.isEdited,
+    createdAt: co.createdAt,
+    updatedAt: co.updatedAt,
+    editedAt: co.editedAt,
+    author: co.author,
+    source: {
+      id: co.article.id,
+      title: co.article.title,
+      href: `/dashboard/articles/${co.article.id}`,
+    },
+    parent: co.parent,
+    _count: co._count,
+  }));
 }
 
 export async function getArticleQuestions(

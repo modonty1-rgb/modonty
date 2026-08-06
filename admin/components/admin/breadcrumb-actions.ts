@@ -13,6 +13,9 @@ function normalizeEntityType(type: string): string {
   const pluralToSingular: Record<string, string> = {
     articles: 'article',
     clients: 'client',
+    // /briefs/[clientId] — the id IS a client id, so the crumb resolves to the client's
+    // name instead of showing a raw ObjectId.
+    briefs: 'client',
     categories: 'category',
     tags: 'tag',
     industries: 'industry',

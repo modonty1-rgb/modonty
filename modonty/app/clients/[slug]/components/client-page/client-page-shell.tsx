@@ -63,6 +63,7 @@ export interface ShellClient {
   achievements: { value: string; label: string; image?: string | null; description?: string | null }[];
   credentials: { name: string; authority?: string | null; year?: string | null; url?: string | null }[];
   introVideoUrl?: string | null;
+  introVideoMedia?: { mp4Url: string | null; thumbnailUrl: string | null } | null;
   verificationImageUrl?: string | null;
   description?: string | null;
   seoDescription?: string | null;
@@ -187,6 +188,7 @@ export function ClientPageShell({
   const hasAbout = !!(
     client.description?.trim() ||
     client.seoDescription?.trim() ||
+    client.introVideoMedia?.mp4Url ||
     client.introVideoUrl ||
     client.credentials.length > 0 ||
     hasLegal
@@ -289,7 +291,10 @@ export function ClientPageShell({
             <ClientGallerySection images={gallery} />
             <ClientTeamSection teamMembers={client.teamMembers} />
             <ClientAboutSection
-              videoUrl={client.introVideoUrl}
+              // Ours first, the legacy external link only while one still exists — a
+              // client mid-migration keeps a working video either way.
+              videoUrl={client.introVideoMedia?.mp4Url ?? client.introVideoUrl}
+              videoPoster={client.introVideoMedia?.thumbnailUrl ?? null}
               aboutText={client.description || client.seoDescription}
               credentials={client.credentials.map((c) => ({
                 name: c.name,

@@ -322,6 +322,7 @@ export function useUploadZone({ onUploadComplete, initialClientId, coreClientId 
         filename: uploadFile.file.name,
         url: bunnyImageUrl,
         bunnyUrl: bunnyImageUrl,
+        blurDataURL: uploadFile.uploadResult!.blurDataURL ?? null,
         mimeType: uploadFile.file.type,
         clientId: resolvedClientId,
         scope: resolvedScope as import("@prisma/client").MediaScope,

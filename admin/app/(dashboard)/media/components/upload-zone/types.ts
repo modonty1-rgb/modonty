@@ -15,6 +15,8 @@ export interface UploadFile {
     height: number;
     format: string;
     signature?: string;
+    /** Blur placeholder built by the uploader from the same buffer — stored on Media. */
+    blurDataURL?: string | null;
   };
 }
 

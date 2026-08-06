@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-guard";
 import { uploadToBunny, bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/database/lib/bunny";
+import { generateBlurDataUrl } from "@/app/(dashboard)/media/actions/generate-blur";
 
 /**
  * ONE-TIME migration: retire Cloudinary from every stored field.
@@ -449,7 +450,7 @@ export interface BatchResult {
 }
 
 /** Fetch a Cloudinary asset and re-upload it to Bunny under `migrated/`. */
-async function rehostOrphan(url: string): Promise<string | null> {
+async function rehostOrphan(url: string): Promise<{ bunnyUrl: string; blurDataURL: string | null } | null> {
   const res = await fetch(url);
   if (!res.ok) return null;
   const buf = Buffer.from(await res.arrayBuffer());
@@ -457,7 +458,10 @@ async function rehostOrphan(url: string): Promise<string | null> {
   const stamp = url.replace(/\W+/g, "").slice(-24);
   const path = `migrated/${stamp}-${buf.length}.${ext}`;
   const { url: bunnyUrl } = await uploadToBunny("assets", buf, path, MIME[ext] ?? "image/jpeg");
-  return bunnyUrl;
+  // The buffer is already here — build the blur placeholder now rather than re-downloading
+  // every re-hosted orphan later during the backfill.
+  const blurDataURL = await generateBlurDataUrl(buf);
+  return { bunnyUrl, blurDataURL };
 }
 
 /** Orphan re-hosts are recorded here so the raw pass can resolve them. */
@@ -562,12 +566,13 @@ export async function runScopeBatch(
     case "orphans": {
       for (const url of ids) {
         try {
-          const hosted = await rehostOrphan(url);
-          if (!hosted) {
+          const rehosted = await rehostOrphan(url);
+          if (!rehosted) {
             failed++;
             note(`fetch failed: ${url.slice(0, 60)}…`);
             continue;
           }
+          const { bunnyUrl: hosted, blurDataURL } = rehosted;
           // Park the mapping on a Media row so the raw pass can find it.
           //
           // `updateMany` alone was a no-op BY CONSTRUCTION: an orphan is *defined* as a URL
@@ -575,13 +580,17 @@ export async function runScopeBatch(
           // copy was thrown away, and the raw pass still found nothing to swap while both
           // scopes reported "ok" (traced 2026-07-31 on a staff avatar). When nothing matches,
           // create the row so the mapping actually survives to the raw pass.
-          const parked = await db.media.updateMany({ where: { url }, data: { bunnyUrl: hosted } });
+          const parked = await db.media.updateMany({
+            where: { url },
+            data: { bunnyUrl: hosted, ...(blurDataURL ? { blurDataURL } : {}) },
+          });
           if (parked.count === 0) {
             const filename = decodeURIComponent(url.split("?")[0].split("/").pop() ?? "orphan");
             await db.media.create({
               data: {
                 url,
                 bunnyUrl: hosted,
+                blurDataURL,
                 filename,
                 mimeType: MIME[extensionOf(url)] ?? "image/jpeg",
                 type: "GENERAL",

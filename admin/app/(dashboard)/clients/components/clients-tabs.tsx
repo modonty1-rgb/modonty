@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, CheckCircle2 } from "lucide-react";
+import { Loader2, CheckCircle2, Video } from "lucide-react";
 import { SubscriptionStatus } from "@prisma/client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,7 +15,7 @@ import { SubscribersTable } from "../../subscription-tiers/components/subscriber
 import { ClientsPageClient } from "./clients-page-client";
 import { TierDistribution } from "../../subscription-tiers/components/tier-distribution";
 import type { ClientForList } from "../actions/clients-actions/types";
-import type { StatusFilterKey } from "./client-table";
+import { hasExternalIntroVideo, type StatusFilterKey } from "./client-table";
 import type { JbrseoSubscriberRow, WelcomeEmailStatus } from "../../subscription-tiers/helpers/jbrseo-queries";
 import { syncJbrseoSubscribersAction } from "../../subscription-tiers/actions/sync-subscribers";
 
@@ -93,6 +93,7 @@ export function ClientsTabs({
   const { toast } = useToast();
   const [tab, setTab] = useState("clients");
   const [statusFilter, setStatusFilter] = useState<StatusFilterKey>("ALL");
+  const [externalVideoOnly, setExternalVideoOnly] = useState(false);
   const [isFiltering, startFilter] = useTransition();
   const [autoSyncState, setAutoSyncState] = useState<"idle" | "running" | "done" | "failed">("idle");
   const [syncSummary, setSyncSummary] = useState<{ total: number; created: number; updated: number; durationMs: number } | null>(null);
@@ -111,6 +112,13 @@ export function ClientsTabs({
     for (const c of clients) counts[c.subscriptionStatus] += 1;
     return counts;
   }, [clients]);
+
+  // أ٦ — how many clients still run on someone else's hosted video. The pill hides
+  // itself at zero, so it disappears for good once the last one migrates.
+  const externalVideoCount = useMemo(
+    () => clients.filter(hasExternalIntroVideo).length,
+    [clients],
+  );
 
   const handleStatusFilter = (key: StatusFilterKey) => {
     startFilter(() => setStatusFilter(key));
@@ -177,6 +185,25 @@ export function ClientsTabs({
                 onClick={() => handleStatusFilter(s.key)}
               />
             ))}
+            {/* Operational follow-up list — separate from subscription status, so it
+                toggles on top of whichever status tab is selected. */}
+            {externalVideoCount > 0 && (
+              <button
+                type="button"
+                onClick={() => startFilter(() => setExternalVideoOnly((v) => !v))}
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
+                  externalVideoOnly
+                    ? "border-amber-500 bg-amber-500 text-white"
+                    : "border-amber-500/40 text-amber-600 hover:bg-amber-500/10 dark:text-amber-400",
+                )}
+                title="عملاء فيديو التعريف عندهم رابط خارجي على قناة ما يملكونها"
+              >
+                <Video className="h-3.5 w-3.5" aria-hidden="true" />
+                فيديو خارجي
+                <span className="font-bold tabular-nums">{externalVideoCount}</span>
+              </button>
+            )}
           </div>
         )}
 
@@ -221,7 +248,12 @@ export function ClientsTabs({
             </div>
           )}
           <div className={isFiltering ? "pointer-events-none opacity-50 transition-opacity" : "transition-opacity"}>
-            <ClientsPageClient clients={clients} defaultLogoUrl={defaultLogoUrl} statusFilter={statusFilter} />
+            <ClientsPageClient
+              clients={clients}
+              defaultLogoUrl={defaultLogoUrl}
+              statusFilter={statusFilter}
+              externalVideoOnly={externalVideoOnly}
+            />
           </div>
         </div>
       </TabsContent>

@@ -6,6 +6,17 @@ import { revalidatePath } from "next/cache";
 import { CommentStatus } from "@prisma/client";
 import { messages } from "@/lib/messages";
 
+import type { CommentKind } from "../helpers/comment-queries";
+
+/**
+ * Moderation for both comment tables (ق10, 2026-08-05).
+ *
+ * Article comments and reel comments live in different tables but are reviewed on one
+ * screen, so every action here takes the `kind` and routes itself. The two share one
+ * rule: the cached counter on the parent row tracks APPROVED comments only, so it moves
+ * exactly when a comment crosses that line — in either direction.
+ */
+
 type Result = { success: true } | { success: false; error: string };
 type BulkResult =
   | { success: true; count: number }
@@ -16,199 +27,132 @@ async function getClientId(): Promise<string | null> {
   return (session as { clientId?: string })?.clientId ?? null;
 }
 
-async function ensureOwnedComment(commentId: string, clientId: string) {
-  return db.comment.findFirst({
-    where: { id: commentId, article: { clientId } },
-    select: { id: true, status: true, articleId: true },
+interface OwnedComment {
+  status: CommentStatus;
+  /** Article id or media id — whichever row carries the cached counter. */
+  parentId: string;
+}
+
+async function findOwned(
+  kind: CommentKind,
+  commentId: string,
+  clientId: string
+): Promise<OwnedComment | null> {
+  if (kind === "article") {
+    const row = await db.comment.findFirst({
+      where: { id: commentId, article: { clientId } },
+      select: { status: true, articleId: true },
+    });
+    return row ? { status: row.status, parentId: row.articleId } : null;
+  }
+
+  const row = await db.mediaComment.findFirst({
+    where: { id: commentId, media: { clientId, inReels: true } },
+    select: { status: true, mediaId: true },
   });
+  return row ? { status: row.status, parentId: row.mediaId } : null;
 }
 
-export async function approveComment(commentId: string): Promise<Result> {
-  const clientId = await getClientId();
-  if (!clientId) return { success: false, error: messages.error.unauthorized };
-
-  try {
-    const owned = await ensureOwnedComment(commentId, clientId);
-    if (!owned) return { success: false, error: messages.error.notFound };
-
-    const wasNotApproved = owned.status !== CommentStatus.APPROVED;
-    await db.comment.update({
-      where: { id: commentId },
-      data: { status: CommentStatus.APPROVED },
-    });
-
-    if (wasNotApproved) {
-      await db.article.update({
-        where: { id: owned.articleId },
-        data: { commentsCount: { increment: 1 } },
-        select: { id: true },
-      });
-    }
-    revalidatePath("/dashboard/comments");
-    return { success: true };
-  } catch {
-    return { success: false, error: messages.error.serverError };
+/** Move the parent's cached counter by `delta`, on whichever table owns the comment. */
+async function bumpCounter(kind: CommentKind, parentId: string, delta: number) {
+  const data = { commentsCount: delta > 0 ? { increment: delta } : { decrement: -delta } };
+  if (kind === "article") {
+    await db.article.update({ where: { id: parentId }, data, select: { id: true } });
+  } else {
+    await db.media.update({ where: { id: parentId }, data, select: { id: true } });
   }
 }
 
-export async function rejectComment(commentId: string): Promise<Result> {
+async function setStatus(
+  kind: CommentKind,
+  commentId: string,
+  next: CommentStatus
+): Promise<Result> {
   const clientId = await getClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   try {
-    const owned = await ensureOwnedComment(commentId, clientId);
+    const owned = await findOwned(kind, commentId, clientId);
     if (!owned) return { success: false, error: messages.error.notFound };
+
+    if (kind === "article") {
+      await db.comment.update({ where: { id: commentId }, data: { status: next } });
+    } else {
+      await db.mediaComment.update({ where: { id: commentId }, data: { status: next } });
+    }
 
     const wasApproved = owned.status === CommentStatus.APPROVED;
-    await db.comment.update({
-      where: { id: commentId },
-      data: { status: CommentStatus.REJECTED },
-    });
-
-    if (wasApproved) {
-      await db.article.update({
-        where: { id: owned.articleId },
-        data: { commentsCount: { decrement: 1 } },
-        select: { id: true },
-      });
+    const isApproved = next === CommentStatus.APPROVED;
+    if (wasApproved !== isApproved) {
+      await bumpCounter(kind, owned.parentId, isApproved ? 1 : -1);
     }
+
     revalidatePath("/dashboard/comments");
+    if (kind === "reel") revalidatePath("/dashboard/reels");
     return { success: true };
   } catch {
     return { success: false, error: messages.error.serverError };
   }
 }
 
-export async function deleteComment(commentId: string): Promise<Result> {
-  const clientId = await getClientId();
-  if (!clientId) return { success: false, error: messages.error.unauthorized };
+export async function approveComment(kind: CommentKind, commentId: string): Promise<Result> {
+  return setStatus(kind, commentId, CommentStatus.APPROVED);
+}
 
-  try {
-    const owned = await ensureOwnedComment(commentId, clientId);
-    if (!owned) return { success: false, error: messages.error.notFound };
+export async function rejectComment(kind: CommentKind, commentId: string): Promise<Result> {
+  return setStatus(kind, commentId, CommentStatus.REJECTED);
+}
 
-    const wasApproved = owned.status === CommentStatus.APPROVED;
-    await db.comment.update({
-      where: { id: commentId },
-      data: { status: CommentStatus.DELETED },
-    });
-
-    if (wasApproved) {
-      await db.article.update({
-        where: { id: owned.articleId },
-        data: { commentsCount: { decrement: 1 } },
-        select: { id: true },
-      });
-    }
-    revalidatePath("/dashboard/comments");
-    return { success: true };
-  } catch {
-    return { success: false, error: messages.error.serverError };
-  }
+export async function deleteComment(kind: CommentKind, commentId: string): Promise<Result> {
+  return setStatus(kind, commentId, CommentStatus.DELETED);
 }
 
 /** Restore a REJECTED or DELETED comment back to PENDING for re-review. */
-export async function restoreCommentAction(commentId: string): Promise<Result> {
-  const clientId = await getClientId();
-  if (!clientId) return { success: false, error: messages.error.unauthorized };
-
-  try {
-    const owned = await ensureOwnedComment(commentId, clientId);
-    if (!owned) return { success: false, error: messages.error.notFound };
-
-    await db.comment.update({
-      where: { id: commentId },
-      data: { status: CommentStatus.PENDING },
-    });
-    revalidatePath("/dashboard/comments");
-    return { success: true };
-  } catch {
-    return { success: false, error: messages.error.serverError };
-  }
+export async function restoreCommentAction(
+  kind: CommentKind,
+  commentId: string
+): Promise<Result> {
+  return setStatus(kind, commentId, CommentStatus.PENDING);
 }
 
 // ─── Bulk actions ────────────────────────────────────────────────────
 
-export async function bulkApproveComments(ids: string[]): Promise<BulkResult> {
+/**
+ * A selection can hold both kinds at once, so each is addressed as `kind:id` and the
+ * batch is split before it touches either table.
+ */
+export interface BulkRef {
+  kind: CommentKind;
+  id: string;
+}
+
+async function bulkSetStatus(
+  refs: BulkRef[],
+  next: CommentStatus
+): Promise<BulkResult> {
   const clientId = await getClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
-  if (ids.length === 0) return { success: true, count: 0 };
+  if (refs.length === 0) return { success: true, count: 0 };
 
   try {
-    const toApprove = await db.comment.findMany({
-      where: {
-        id: { in: ids },
-        article: { clientId },
-        status: { not: CommentStatus.APPROVED },
-      },
-      select: { articleId: true },
-    });
-
-    const result = await db.comment.updateMany({
-      where: { id: { in: ids }, article: { clientId } },
-      data: { status: CommentStatus.APPROVED },
-    });
-
-    const countsByArticle = toApprove.reduce<Record<string, number>>((acc, c) => {
-      acc[c.articleId] = (acc[c.articleId] ?? 0) + 1;
-      return acc;
-    }, {});
-
-    await Promise.all(
-      Object.entries(countsByArticle).map(([articleId, count]) =>
-        db.article.update({
-          where: { id: articleId },
-          data: { commentsCount: { increment: count } },
-          select: { id: true },
-        })
-      )
+    // One row at a time on purpose: the counter has to move per parent, and `updateMany`
+    // cannot tell which comments actually crossed the APPROVED line.
+    const outcomes = await Promise.all(
+      refs.map((ref) => setStatus(ref.kind, ref.id, next))
     );
+    const count = outcomes.filter((o) => o.success).length;
 
     revalidatePath("/dashboard/comments");
-    return { success: true, count: result.count };
+    return { success: true, count };
   } catch {
     return { success: false, error: messages.error.serverError };
   }
 }
 
-export async function bulkRejectComments(ids: string[]): Promise<BulkResult> {
-  const clientId = await getClientId();
-  if (!clientId) return { success: false, error: messages.error.unauthorized };
-  if (ids.length === 0) return { success: true, count: 0 };
+export async function bulkApproveComments(refs: BulkRef[]): Promise<BulkResult> {
+  return bulkSetStatus(refs, CommentStatus.APPROVED);
+}
 
-  try {
-    const toReject = await db.comment.findMany({
-      where: {
-        id: { in: ids },
-        article: { clientId },
-        status: CommentStatus.APPROVED,
-      },
-      select: { articleId: true },
-    });
-
-    const result = await db.comment.updateMany({
-      where: { id: { in: ids }, article: { clientId } },
-      data: { status: CommentStatus.REJECTED },
-    });
-
-    const countsByArticle = toReject.reduce<Record<string, number>>((acc, c) => {
-      acc[c.articleId] = (acc[c.articleId] ?? 0) + 1;
-      return acc;
-    }, {});
-
-    await Promise.all(
-      Object.entries(countsByArticle).map(([articleId, count]) =>
-        db.article.update({
-          where: { id: articleId },
-          data: { commentsCount: { decrement: count } },
-          select: { id: true },
-        })
-      )
-    );
-
-    revalidatePath("/dashboard/comments");
-    return { success: true, count: result.count };
-  } catch {
-    return { success: false, error: messages.error.serverError };
-  }
+export async function bulkRejectComments(refs: BulkRef[]): Promise<BulkResult> {
+  return bulkSetStatus(refs, CommentStatus.REJECTED);
 }

@@ -1,146 +1,130 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
-import { Upload, X, Loader2, ImagePlus, Trash2 } from "lucide-react";
+import { ImagePlus } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { compressToWebP } from "@/lib/compress-image";
+import { cn } from "@/lib/utils";
 import { mediaSrc } from "@modonty/database/lib/media-src";
+import { MediaUploadZone } from "@modonty/database/components/media-upload-zone";
+import { ConfirmDeleteButton } from "@modonty/database/components/confirm-delete-button";
 import {
   addGalleryImage,
   updateGalleryImageAlt,
   deleteGalleryImage,
+  setImageInReels,
   type GalleryImage,
 } from "../actions/gallery-actions";
 
+/** Gallery row plus the state of its reel, if the client chose to have one. */
+type GalleryItem = GalleryImage & { inReels: boolean; reelStatus: string | null };
+
 interface Props {
-  initial: GalleryImage[];
+  initial: GalleryItem[];
 }
+
+/**
+ * Reels play full-screen and vertical, so 9:16 is what fills the frame without cropping.
+ *
+ * Worth stating plainly: Google imposes NO aspect ratio here. Its only thumbnail rules are
+ * "Minimum 60x30 pixels, larger preferred", reachable by Googlebot, and served from a
+ * stable URL (Search Central · video thumbnail guidelines, checked 2026-08-04). The 9:16
+ * target is OUR screen's requirement, not an external standard — and the tooltip says so
+ * rather than dressing a product choice up as a rule.
+ */
+const REELS_RATIO = 9 / 16;
+const REELS_IDEAL = "1080 × 1920";
+
+/** How this exact image will behave in the reels frame — read from its stored size. */
+function reelFit(width: number | null, height: number | null): string {
+  if (!width || !height) return `الأفضل مقاس طولي ${REELS_IDEAL} — ما نعرف مقاس صورتك.`;
+  const ratio = width / height;
+  const pretty = `${width}×${height}`;
+  if (Math.abs(ratio - REELS_RATIO) < 0.06) {
+    return `مقاس صورتك ${pretty} — طولية ومناسبة تماماً للريلز ✅`;
+  }
+  // Square first: 1254×1254 is neither landscape nor portrait, and calling it "portrait"
+  // (the first version did) is a plain lie to a client reading his own image.
+  if (Math.abs(ratio - 1) < 0.03) {
+    return `مقاس صورتك ${pretty} — مربّعة، وراح ينقص كثير من فوق وتحت. الأفضل طولية ${REELS_IDEAL}.`;
+  }
+  if (ratio > 1) {
+    return `مقاس صورتك ${pretty} — عرضية، وراح تنقص أطرافها في الريلز. الأفضل طولية ${REELS_IDEAL}.`;
+  }
+  if (ratio > REELS_RATIO) {
+    return `مقاس صورتك ${pretty} — طولية بس مو بما يكفي، راح ينقص شوي من فوق وتحت. الأفضل ${REELS_IDEAL}.`;
+  }
+  return `مقاس صورتك ${pretty} — أطول من إطار الريلز، راح ينقص من الجانبين. الأفضل ${REELS_IDEAL}.`;
+}
+
+/** What the client sees under the tick — his words, not our workflow names. */
+const REEL_STATE_LABEL: Record<string, string> = {
+  PENDING_APPROVAL: "بانتظار موافقة مُدَوَّنَتِي",
+  APPROVED: "معتمدة",
+  PUBLISHED: "ظاهرة في الريلز",
+  REJECTED: "مرفوضة",
+  DRAFT: "بانتظار موافقة مُدَوَّنَتِي",
+};
 
 const MAX_BYTES = 20 * 1024 * 1024;
 
 export function GalleryManager({ initial }: Props) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [images, setImages] = useState<GalleryImage[]>(initial);
-  const [uploading, setUploading] = useState(false);
-  // Locked decision أ (2026-07-07): default ON — the image also becomes a pending reel.
-  const [publishAsReel, setPublishAsReel] = useState(true);
+  const [images, setImages] = useState<GalleryItem[]>(initial);
+  // The upload-time toggle is gone (Khalid 2026-08-04). Reels are now chosen per image,
+  // after upload, from the tick on each card — so nothing becomes a reel by accident.
+  const publishAsReel = false;
 
-  async function uploadOne(file: File): Promise<boolean> {
-    if (!file.type.startsWith("image/")) {
-      toast.error(`«${file.name}» مش صورة — تم تجاهلها`);
-      return false;
-    }
-    if (file.size > MAX_BYTES) {
-      toast.error(`«${file.name}» حجمها كبير — الحد 20 ميجا`);
-      return false;
-    }
-
-    let compressed: File;
-    let width: number | null = null;
-    let height: number | null = null;
+  /** Read back the compressed file's real pixel size — the reels tooltip needs it. */
+  async function readSize(file: File): Promise<{ width: number | null; height: number | null }> {
     try {
-      compressed = await compressToWebP(file);
-      const bitmap = await createImageBitmap(compressed);
-      width = bitmap.width;
-      height = bitmap.height;
+      const bitmap = await createImageBitmap(file);
+      const size = { width: bitmap.width, height: bitmap.height };
       bitmap.close();
+      return size;
     } catch {
-      toast.error(`فشل ضغط «${file.name}»`);
-      return false;
+      return { width: null, height: null };
     }
-
-    // Upload through OUR server route — the Bunny password never reaches the browser.
-    const fd = new FormData();
-    fd.append("file", compressed);
-    const res = await fetch("/api/upload-bunny", { method: "POST", body: fd });
-    const json = await res.json().catch(() => null);
-    if (!res.ok || !json?.url) {
-      toast.error(json?.error || `فشل رفع «${file.name}»`);
-      return false;
-    }
-
-    const saved = await addGalleryImage({
-      url: json.url,
-      filename: file.name,
-      mimeType: "image/webp",
-      width,
-      height,
-      fileSize: compressed.size,
-      publishAsReel,
-    });
-    if (!saved.success) {
-      toast.error(saved.error || "فشل حفظ الصورة");
-      return false;
-    }
-    setImages((prev) => [saved.image, ...prev]);
-    return true;
-  }
-
-  async function handleFiles(files: FileList) {
-    setUploading(true);
-    let ok = 0;
-    // Sequential — keeps SEO regen + DB writes orderly and avoids hammering Cloudinary.
-    for (const file of Array.from(files)) {
-      try {
-        if (await uploadOne(file)) ok++;
-      } catch {
-        toast.error(`خطأ في الشبكة أثناء رفع «${file.name}»`);
-      }
-    }
-    setUploading(false);
-    if (ok > 0) toast.success(ok === 1 ? "تم رفع الصورة" : `تم رفع ${ok} صور`);
   }
 
   return (
     <div className="space-y-5">
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        multiple
-        className="hidden"
-        onChange={(e) => {
-          if (e.target.files && e.target.files.length) handleFiles(e.target.files);
-          e.target.value = "";
+      {/* Upload zone — shared component: real byte-level progress per file + retry. */}
+      <MediaUploadZone
+        endpoint="/api/upload-bunny"
+        maxBytes={MAX_BYTES}
+        transform={compressToWebP}
+        labels={{
+          idle: "ارفع صور المعرض",
+          hint: "JPG / PNG / WebP — تُضغط تلقائياً بصيغة WebP · حتى 20 ميجا",
+        }}
+        onUploaded={async ({ response, file, original }) => {
+          const res = response as { url?: string; blurDataURL?: string | null } | null;
+          const url = res?.url;
+          if (!url) return { ok: false, error: "ما وصلنا رابط الصورة" };
+          const { width, height } = await readSize(file);
+          const saved = await addGalleryImage({
+            url,
+            filename: original.name,
+            mimeType: "image/webp",
+            width,
+            height,
+            fileSize: file.size,
+            // Built server-side in /api/upload-bunny from the same buffer it uploaded.
+            blurDataURL: res?.blurDataURL ?? null,
+            publishAsReel,
+          });
+          if (!saved.success) return { ok: false, error: saved.error || "فشل حفظ الصورة" };
+          setImages((prev) => [saved.image, ...prev]);
+          return { ok: true };
+        }}
+        onSettled={(ok) => {
+          if (ok > 0) toast.success(ok === 1 ? "تم رفع الصورة" : `تم رفع ${ok} صور`);
         }}
       />
-
-      {/* Upload zone */}
-      <button
-        type="button"
-        onClick={() => inputRef.current?.click()}
-        disabled={uploading}
-        className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border p-8 text-muted-foreground transition-colors hover:border-primary/50 hover:bg-muted/30 disabled:opacity-50"
-      >
-        {uploading ? (
-          <Loader2 className="h-7 w-7 animate-spin text-primary" />
-        ) : (
-          <ImagePlus className="h-7 w-7" />
-        )}
-        <span className="text-sm font-medium text-foreground">
-          {uploading ? "جاري الرفع..." : "ارفع صور المعرض"}
-        </span>
-        <span className="text-[11px]">JPG / PNG / WebP — تُضغط تلقائياً بصيغة WebP · حتى 20 ميجا</span>
-      </button>
-
-      {/* Locked decision أ: default ON, client can opt out per upload batch */}
-      <label className="flex w-fit cursor-pointer items-center gap-2 text-sm">
-        <input
-          type="checkbox"
-          checked={publishAsReel}
-          onChange={(e) => setPublishAsReel(e.target.checked)}
-          className="size-4 accent-primary"
-        />
-        <span>
-          تظهر في <b>الريلز</b> كمان — بعد اعتماد مُدَوَّنَتِي
-          <span className="ms-1 text-xs text-muted-foreground">(لو ما تبغى، شيل العلامة قبل الرفع)</span>
-        </span>
-      </label>
 
       {/* Grid */}
       {images.length === 0 ? (
@@ -153,7 +137,10 @@ export function GalleryManager({ initial }: Props) {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        // Masonry: CSS multi-column, so every card keeps its own height instead of being
+        // padded to the tallest in its row — the gallery holds squares, portraits and
+        // landscapes side by side and a fixed grid left big gaps under the short ones.
+        <div className="columns-2 gap-4 md:columns-3 lg:columns-4">
           {images.map((img) => (
             <GalleryCard
               key={img.id}
@@ -161,6 +148,11 @@ export function GalleryManager({ initial }: Props) {
               onDeleted={() => setImages((prev) => prev.filter((x) => x.id !== img.id))}
               onAltSaved={(alt) =>
                 setImages((prev) => prev.map((x) => (x.id === img.id ? { ...x, altText: alt } : x)))
+              }
+              onReelChanged={(inReels, status) =>
+                setImages((prev) =>
+                  prev.map((x) => (x.id === img.id ? { ...x, inReels, reelStatus: status } : x))
+                )
               }
             />
           ))}
@@ -174,13 +166,33 @@ function GalleryCard({
   image,
   onDeleted,
   onAltSaved,
+  onReelChanged,
 }: {
-  image: GalleryImage;
+  image: GalleryItem;
   onDeleted: () => void;
   onAltSaved: (alt: string | null) => void;
+  onReelChanged: (inReels: boolean, status: string | null) => void;
 }) {
   const [alt, setAlt] = useState(image.altText ?? "");
   const [pending, startTransition] = useTransition();
+  const [reelPending, startReel] = useTransition();
+  // Its own field now — the tick used to be inferred from the status, which meant an
+  // ARCHIVED reel and one that never existed were indistinguishable.
+  const inReels = image.inReels;
+
+  function toggleReel(next: boolean) {
+    startReel(async () => {
+      const res = await setImageInReels(image.id, next);
+      if (res.success) {
+        // Turning it off archives a reel visitors have seen and clears the rest — the
+        // server decides which; showing PENDING here would lie about an approved one.
+        onReelChanged(next, next ? "PENDING_APPROVAL" : null);
+        toast.success(next ? "أضفناها للريلز — بانتظار موافقة مُدَوَّنَتِي" : "شِلناها من الريلز");
+      } else {
+        toast.error(res.error || "ما قدرنا نغيّرها");
+      }
+    });
+  }
   const ratio = image.width && image.height ? `${image.width}/${image.height}` : "4/3";
 
   function saveAlt() {
@@ -196,20 +208,27 @@ function GalleryCard({
     });
   }
 
-  function remove() {
-    startTransition(async () => {
-      const res = await deleteGalleryImage(image.id);
-      if (res.success) {
-        onDeleted();
-        toast.success("تم حذف الصورة");
-      } else {
-        toast.error(res.error || "فشل الحذف");
-      }
-    });
+  // Awaited, not wrapped in a transition: the confirm card keeps its spinner until the
+  // server answers, and only then closes — a transition would return instantly and the
+  // card would vanish while the delete is still in flight.
+  async function remove() {
+    const res = await deleteGalleryImage(image.id);
+    if (res.success) {
+      onDeleted();
+      toast.success("تم حذف الصورة");
+    } else {
+      toast.error(res.error || "فشل الحذف");
+    }
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-border bg-card p-2">
+    <div
+      className={cn(
+        // break-inside-avoid keeps a card from being split across two masonry columns.
+        "mb-4 flex break-inside-avoid flex-col gap-2 rounded-lg border bg-card p-2 transition-colors",
+        inReels ? "border-emerald-500 ring-1 ring-emerald-500/30" : "border-border"
+      )}
+    >
       <div className="relative w-full overflow-hidden rounded-md bg-muted" style={{ aspectRatio: ratio }}>
         <Image
           src={mediaSrc(image) ?? image.url}
@@ -218,17 +237,18 @@ function GalleryCard({
           className="object-cover"
           sizes="(max-width: 768px) 50vw, 25vw"
         />
-        <Button
-          type="button"
-          size="icon"
-          variant="secondary"
-          onClick={remove}
+        <ConfirmDeleteButton
+          onConfirm={remove}
           disabled={pending}
-          aria-label="حذف الصورة"
-          className="absolute end-1.5 top-1.5 h-7 w-7 bg-background/90 text-destructive shadow-sm backdrop-blur hover:bg-destructive/10"
-        >
-          {pending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-        </Button>
+          previewUrl={mediaSrc(image) ?? image.url}
+          className="absolute end-1.5 top-1.5"
+          labels={{
+            trigger: "احذف الصورة",
+            description: inReels
+              ? "الصورة تروح من المعرض ومن الريلز، وما تقدر ترجّعها."
+              : "الصورة تروح من معرض صفحتك، وما تقدر ترجّعها.",
+          }}
+        />
       </div>
       <Input
         value={alt}
@@ -238,6 +258,50 @@ function GalleryCard({
         className="h-8 text-xs"
         maxLength={200}
       />
+
+      {/* One tick per image, off unless the client asks for it, changeable any time.
+          The tooltip is CSS-only on purpose — a whole tooltip library for one hint would
+          be a dependency the console does not otherwise need. */}
+      <div className="group/reel relative">
+        <label
+          className={cn(
+            "flex cursor-pointer items-start gap-2 rounded-md px-2 py-1.5 transition-colors",
+            inReels ? "bg-emerald-500/10" : "bg-muted/40"
+          )}
+        >
+          <input
+            type="checkbox"
+            checked={inReels}
+            disabled={reelPending}
+            onChange={(e) => toggleReel(e.target.checked)}
+            className="mt-0.5 size-4 shrink-0 accent-emerald-600"
+          />
+          <span className="min-w-0 text-[11px] leading-tight">
+            <span className="font-medium">تظهر في الريلز</span>
+            {reelPending ? (
+              <span className="ms-1 text-muted-foreground">لحظة…</span>
+            ) : (
+              image.reelStatus &&
+              image.reelStatus !== "ARCHIVED" && (
+                <span className="block text-muted-foreground">
+                  {REEL_STATE_LABEL[image.reelStatus] ?? image.reelStatus}
+                </span>
+              )
+            )}
+          </span>
+        </label>
+
+        <div
+          role="tooltip"
+          className="pointer-events-none absolute bottom-full z-30 mb-1.5 w-60 -translate-y-1 rounded-lg bg-slate-900 px-3 py-2 text-[11px] leading-relaxed text-slate-100 opacity-0 shadow-xl transition-all duration-150 group-hover/reel:translate-y-0 group-hover/reel:opacity-100 end-0"
+        >
+          <p className="font-semibold text-white">الريلز شاشة كاملة طولية</p>
+          <p className="mt-1 text-slate-300">{reelFit(image.width, image.height)}</p>
+          <p className="mt-1.5 border-t border-white/15 pt-1.5 text-slate-400">
+            الصورة تظهر للزوّار بعد موافقة مُدَوَّنَتِي — تقدر تشيل العلامة أي وقت.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

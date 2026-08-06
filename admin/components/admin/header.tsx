@@ -20,7 +20,13 @@ import { HeaderFeedbackButton } from "./header-feedback-button";
 import { SyncLocalButton } from "./sync-local-button";
 import pkg from "@/package.json";
 
-export function Header() {
+export function Header({
+  dbBadge,
+  canSyncLocal = false,
+}: {
+  dbBadge?: React.ReactNode;
+  canSyncLocal?: boolean;
+}) {
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -43,8 +49,11 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* DEV-only — sync local DB from PROD */}
-          <SyncLocalButton />
+          {/* Which database this instance is on — rendered on the server, never guessed */}
+          {dbBadge}
+
+          {/* Test-database only — sync local DB from PROD */}
+          <SyncLocalButton enabled={canSyncLocal} />
 
           {/* Beta feedback note button */}
           <HeaderFeedbackButton />

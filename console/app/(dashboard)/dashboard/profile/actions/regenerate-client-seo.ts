@@ -5,6 +5,7 @@ import type { Prisma } from "@prisma/client";
 
 import { generateClientSeoBundle } from "@modonty/database/lib/seo/generate-client-seo-bundle";
 import { db } from "@/lib/db";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 /**
  * Regenerate the client's cached SEO (Next.js metadata + JSON-LD @graph) and persist
@@ -37,6 +38,22 @@ export async function regenerateClientSeo(
     // Revalidate the public client page + the profile dashboard
     revalidatePath(`/clients/${client.slug}`);
     revalidatePath("/dashboard/profile");
+
+    // ...and that only clears the CONSOLE's own cache. modonty is a separate deployment
+    // that serves the client page from its own tag cache, so without this it keeps
+    // handing visitors the pre-save version until the cache ages out on its own.
+    //
+    // It lives HERE, not in each caller, deliberately: four write paths (page content,
+    // gallery, page FAQ, reviews) regenerated the bundle and never made this call, and
+    // every one of them shipped looking correct. A caller that cannot forget is the fix.
+    //
+    // Best-effort and deliberately outside the return value — the regeneration itself
+    // succeeded, and a cache endpoint that is down must not report it as a failure.
+    try {
+      await revalidateModontyTag("clients");
+    } catch {
+      // swallow — never let a cache bust undo a successful regeneration
+    }
 
     return { success: true };
   } catch (error) {

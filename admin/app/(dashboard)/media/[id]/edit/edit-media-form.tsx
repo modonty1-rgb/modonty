@@ -162,6 +162,7 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
     try {
       let newUrl = media.url;
       let newBunnyUrl: string | undefined = undefined;
+      let newBlurDataURL: string | null | undefined = undefined;
       let newFilename = media.filename;
       let newMimeType = media.mimeType;
       let newWidth = media.width;
@@ -203,6 +204,8 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
           newHeight = uploadResult.height || null;
           newFileSize = newFile.size;
           newEncodingFormat = uploadResult.format || undefined;
+          // Replacing the file makes the stored placeholder describe an image that's gone.
+          newBlurDataURL = uploadResult.blurDataURL ?? null;
 
           // NOTE (tripwire phase): the old flow deleted the previous Cloudinary asset here.
           // Deletion is intentionally STOPPED — Cloudinary stays untouched until the final
@@ -223,6 +226,7 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
         clientId: resolvedClientId,
         ...(newUrl !== media.url ? { url: newUrl } : {}),
         ...(newBunnyUrl !== undefined ? { bunnyUrl: newBunnyUrl } : {}),
+        ...(newBlurDataURL !== undefined ? { blurDataURL: newBlurDataURL } : {}),
         ...(newFilename !== media.filename ? { filename: newFilename } : {}),
         ...(newMimeType !== media.mimeType ? { mimeType: newMimeType } : {}),
         ...(newWidth !== media.width ? { width: newWidth ?? undefined } : {}),

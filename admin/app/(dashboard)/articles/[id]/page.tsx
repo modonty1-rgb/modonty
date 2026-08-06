@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getArticleById, getArticleEngagementCounts } from "../actions/articles-actions";
+import { loadArticleOrProblem, getArticleEngagementCounts } from "../actions/articles-actions";
 import { getAllSettings } from "../../settings/actions/settings-actions";
 import { getArticleDefaultsFromSettings } from "../../settings/helpers/get-article-defaults-from-settings";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +22,7 @@ import {
   FolderOpen,
 } from "lucide-react";
 import { ArchiveArticleButton } from "./components/archive-article-button";
+import { ArticleLoadError } from "./components/article-load-error";
 import { ArticleStatus } from "@prisma/client";
 import { getStatusLabel, getStatusVariant } from "../helpers/status-utils";
 import { ArticleSEOScoreBadge } from "./components/article-seo-score-badge";
@@ -36,11 +37,19 @@ import { mediaSrc } from "@modonty/database/lib/media-src";
 
 export default async function ArticleViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [article, settings, counts] = await Promise.all([getArticleById(id), getAllSettings(), getArticleEngagementCounts(id)]);
+  const [loaded, settings, counts] = await Promise.all([loadArticleOrProblem(id), getAllSettings(), getArticleEngagementCounts(id)]);
 
-  if (!article) {
-    redirect("/articles");
+  // A missing article still bounces — there is nothing to say about an id that was never
+  // there. A BROKEN one is reported instead: it used to redirect too, which is why a
+  // dangling tag looked to the editor like the article had simply vanished.
+  if (!loaded.ok) {
+    if (!loaded.problem) {
+      redirect("/articles");
+    }
+    return <ArticleLoadError articleId={id} problem={loaded.problem} />;
   }
+
+  const article = loaded.article;
 
   const articleDefaults = getArticleDefaultsFromSettings(settings);
   const a = { ...article, ...articleDefaults };

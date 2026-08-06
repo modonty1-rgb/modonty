@@ -3,6 +3,242 @@
 > السجل الدائم لجلسات يوليو 2026 الأقدم من النافذة النشطة. الملف النشط `SESSION-LOG.md` يحمل آخر أسبوع فقط.
 > تدوير أسبوعي: كل جلسة تتجاوز ٧ أيام تُنقَل هنا (نقل، لا نسخ — بلا تداخل).
 
+## Session: 2026-07-29 (تكملة) — تنفيذ تبديل قراءة Bunny: طبقة القراءة الحيّة كاملة + مولّدات الأدمن + الكونسول (٣ تطبيقات tsc نظيف · preview/local فقط)
+
+### 🎯 أين توقفت + أول خطوة عند الاستئناف
+- **مُنجز (كود، غير مدفوع):** طبقة قراءة صور مدوّنتي الحيّة **مبدّلة بالكامل** (~٥٥ ملف) + مولّدات سيو الأدمن (A1) + الكونسول (C1) + util الأدمن. **modonty·admin·console = tsc صفر أخطاء.** دليل حي: الرئيسية 45/59 Bunny · صفحة المقال 11/18.
+- **أول خطوة عند العودة (بالترتيب):** (1) **ذيل A2** — تبويبات صفحة العميل بالأدمن اللي توصل `client.logoMedia.url` مباشرة (~٨ ملفات: client-view · client-header · tabs/{details,seo,media-social,gallery} · media-grid · thumbnail-image-view) → لفّها بـ `mediaSrc`. (2) **تشغيلات:** regenerate السيو (يفعّل A1 المخبوز) · إعادة ترحيل صفوف `bunnyUrl=null` · **الرفع الجديد → Bunny (الأهم — يوقف نمو Cloudinary)**. (3) S1 (نوع S) · V1 (تحقّق نهائي).
+
+### ✅ ما أُنجز هذه الجلسة (كله tsc نظيف · preview/local)
+- **INV-0:** أداة `mediaSrc(m)=m?.bunnyUrl ?? m?.url ?? null` في `dataLayer/lib/media-src.ts` (pure، **بلا server-only** عشان الكمبوننتات client) — تُستورد `@modonty/database/lib/media-src`.
+- **INV-M1..M6 (مدوّنتي، ~٥٥ ملف):** كل مُحلّلات الاستعلام (client/article/category/tag/industry/reels-feed) · بروفايل المستخدم (5 helpers) + راوتات `api/users/[id]/*` (4) · صفحة المقال (`article-data.ts`+`article-metadata.ts`+`page.tsx`) + ٨ مكوّنات (related/more-from/lab-cards/gallery/sidebar) · صفحة العميل (page+book+3 helpers+hero-v2+hero-avatar+utils+related-clients+client-page-shell+article-list+client-photos-preview) · صفحات القوائم الأربع (categories/tags/industries/authors + كروت التصنيف) · `lib/seo/index.ts` (JSON-LD الحي) · `sitemap.ts` + `image-sitemap.xml`.
+- **INV-A1 (الأدمن، 5 مولّدات):** `structured-data.ts` · `metadata-generator.ts` · `listing-page-seo-generator.ts` · `schema-org-generator.ts` · `open-graph-generator.ts` (knowledge-graph فيه فرع Bunny من Epic 2). + **أصلحت خطأ tsc سابق:** `migrate-media-to-bunny.ts` شِلت `as const` (كان يجعل الـ where readonly).
+- **INV-C1 (الكونسول):** `(dashboard)/layout.tsx` · `dashboard/content/page.tsx` · `articles/components/{article-card,article-preview-client}.tsx` + مُحلّلاتها (`article-queries.ts`+`content-queries.ts`). ⚠️ درس: `replace_all` بـ `          url: true,` (10 مسافات) طابق **داخل** سطر 14-مسافة فأضاف `bunnyUrl` مرتين → استخدمت أنماط محدّدة/دي-دَب.
+- **A2 جزئي (أعلى رافعة):** `admin/lib/utils/cloudinary-utils.ts` — short-circuit `if (media.bunnyUrl) return media.bunnyUrl;` في `getOptimizedImageUrl`+`getThumbnailUrl`+`generateResponsiveSrcset` → أي عرض أدمن يستخدمها صار Bunny.
+- **PRD:** علّمت INV-0·M1·M2·M3·M4·M5·M6·A1·C1 (٩/١٢) + أضفت قسم **«🔜 المتبقّي» أعلى الملف** + صناديق اكتشافات/دروس.
+
+### 📝 قرارات + دروس (مهمة للاستئناف)
+- **النمط الذهبي:** `mediaSrc(x)` **دائماً** — يشتغل حتى لو نوع المُستدعي `{url}` ضيّق (تمرير هيكلي + الحقل موجود وقت التشغيل من الـ`select`). النمط المباشر `x.bunnyUrl ?? x.url` **يفشل بـ tsc** على الأنواع الضيّقة (client-hero-v2). لكل `select` علاقة Media: **أضِف `bunnyUrl: true`**.
+- **مواقع الإرجاع:** تريد `string|undefined` → `mediaSrc(x) ?? undefined` · تريد `string|null` → `mediaSrc(x)` مباشرة · الحارس الذي يضيّق النوع → `...(client.logoMedia && {` (مش `mediaSrc(...) &&`).
+- **🔴 تصحيح كبير:** «صور جسم المقال محفورة في `content`» **تبيّن خاطئاً بالدليل الحي** — كانت **مصغّرات كروت «ذات صلة»** (selects ثانوية متعدّدة الأسطر في `article-data.ts` بلا `bunnyUrl`) — أُصلحت. **ما فيه صور Cloudinary محفورة في محتوى المقال.**
+- **الصور الباقية على Cloudinary = بيانات لا كود:** صفوف Media `bunnyUrl=null` (غير مُرحّلة، fallback صح) + حقول نوع S. `optimizeCloudinaryImage` (سطر 119 category-utils) تتخطّى غير-Cloudinary → آمنة على Bunny.
+- **🥇 هدف الترحيل الحقيقي (خالد):** **تحكّم بالتخزين لنمو الريلز** (فيديو+صور بحجم غير معروف)، **مو التكلفة**. الريلز أصلاً على Bunny (zone مستقل). تبديل الكود = تكلفة ثابتة مرة واحدة لا تكبر مع عدد الصور. **الأهم القادم = الرفع الجديد → Bunny** (يوقف نمو Cloudinary، يمنع الفخّ).
+
+### 🚧 المتبقّي
+- **A2 ذيل** (تبويبات الأدمن direct `.url`) · **S1** (نوع S: socialImage/إعدادات/`lib/brand.ts` LOGO_URL/Author.image — تحتاج **رفع أصول لـ Bunny + تحديث النصوص + regenerate**، مو تبديل قراءة) · **V1** (تحقّق Playwright نهائي «كل الصور 200»).
+- **تشغيلات:** regenerate السيو · إعادة ترحيل `bunnyUrl=null` · الرفع الجديد→Bunny · P3-5 (ترحيل إنتاج) · Epic 3.5 (التبديل الحي على prod) · Epic 4 (إيقاف Cloudinary).
+
+### 🔁 Git
+- Branch: `version-2` · **لا commit ولا push** هذه الجلسة (كله كود غير مدفوع + PRD/context) · dev server مدوّنتي:3000 على `modonty_dev`. صفر مساس main [[project_bunny_branch_isolation_golden]].
+
+### 🚀 استئناف في ٣٠ ثانية
+1. افتح `file:///C:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/tasks/BUNNY-MIGRATION-PRD-v1.html` → قسم «🔜 المتبقّي».
+2. ذيل A2: لفّ تبويبات صفحة العميل بالأدمن بـ `mediaSrc` (النمط ثابت) + `bunnyUrl: true` في select العميل.
+3. ثم التشغيلات (regenerate · re-migrate · new-uploads→Bunny). النمط كامل موثّق في صناديق PRD.
+
+---
+
+## Session: 2026-07-29 — جرد نقاط قراءة الصور (قلب تبديل Bunny) — checklist كامل للتطبيقات الثلاثة · لا كود بعد
+
+### 🎯 أين توقفت + أول خطوة عند الاستئناف
+- **آخر شي:** بنيت **جرد كامل** لكل مكان يعرض صورة في مدوّنتي+admin+console كـ checklist داخل `documents/tasks/BUNNY-MIGRATION-PRD-v1.html` (قسم جديد **«◎ جرد نقاط القراءة»** `data-epic="INV"`، قبل Epic 3.5). خالد قال: **«نكمل بكرة»** — الجرد جاهز للمراجعة، **لم يُبدأ أي كود تبديل**.
+- **أول خطوة عند العودة:** خالد يراجع الجرد في الـ HTML. لو ابروف → نبدأ بـ **INV-0**: بناء المُحلّل المشترك `mediaSrc(m) = m?.bunnyUrl ?? m?.url ?? null` في `dataLayer/lib/bunny.ts` + إضافة `bunnyUrl: true` لكل select لعلاقة Media. **ممنوع لمس كود قبل ابروف خالد.**
+
+### ✅ ما أُنجز هذه الجلسة (توثيق + جرد فقط · صفر كود)
+- **علّمت المنجز في الـ PRD:** P1-3 · كل Epic 2 (P2-1..5) · P3-1..P3-4 (الترحيل + تحقّق dev). تُركت P3-5 (تشغيل الإنتاج معلّق).
+- **دليل حي قاطع (Playwright على preview):** كل الصور تُقرأ من **Cloudinary فقط** — الرئيسية ٥٩/٥٩ · مقال ١٨/١٨ · JSON-LD ١١/١١ كلها `res.cloudinary.com` · **صفر `b-cdn.net`**. Bunny الآن **نسخة محفوظة جنب فقط** (`bunnyUrl`)، صفر قراءة. `bunnyUrl` غير مذكور نهائياً في كود قراءة مدوّنتي (تحقّق grep).
+- **بنيت الجرد (١٢ بند):** INV-0 (أداة مشتركة) · مدوّنتي M1-M6 (~٤٠ ملف، لازم تبديل) · admin A1 (مولّدات السيو، حرِج) + A2 (عرض داخلي، تحقّق) · console C1 (داخلي) · S1 (حقول خام) · V1 (تحقّق Playwright).
+
+### 📝 قرارات + اكتشافات معمارية (مهم جداً — قلب التاسك)
+- **الصور نوعان:** **[M]** مربوطة بجدول Media (لها `bunnyUrl`، تُحلّ من `media.url`) → التبديل `bunnyUrl ?? url`. **[S]** رابط Cloudinary نصّي مباشر (socialImage · إعدادات · Author.image · User.image) → **بلا `bunnyUrl`، لا يبدّلها الفليب** — تُعالَج بإعادة توليد السيو (P35-3) أو تبقى Cloudinary.
+- **🔴 اكتشاف حاسم:** مدوّنتي تقرأ من **طبقتين** — (1) حل حي في الاستعلامات/الكمبوننت · (2) **سيو مخبوز** (`jsonLdStructuredData`+`nextjsMetadata`) يُولَّد في **الأدمن** ويُخزَّن في القاعدة. **فمولّدات السيو في الأدمن جزء من التبديل** (INV-A1)، مو مجرد عرض داخلي.
+- **نمط التبديل الأمثل:** المعظم في مدوّنتي يصل `X.logoMedia?.url` / `X.featuredImage?.url` مباشرة (مو كله عبر طبقة استعلام) → الحل = `mediaSrc()` مشترك + `bunnyUrl: true` بكل select، ثم استبدال كل `?.url` بـ `mediaSrc(...)`.
+- **admin/console عرض داخلي = Cloudinary يكفي** (تحقّق فقط، لا تبديل) — الهدف أن العام (مدوّنتي) يقرأ Bunny.
+
+### 🚧 معلّق / محجوب
+- **INV كامل (التبديل)** — لم يُبدأ؛ ينتظر ابروف خالد على الجرد ثم تنفيذ بند-بند.
+- **P3-5 تشغيل الترحيل على الإنتاج** — إضافي بحت (`bunnyUrl` فقط)، بإذن خالد، دفعات خارج ذروة مصر.
+- **Epic 3.5 التبديل** = أول خطوة تمسّ الإنتاج. **Epic 4** إيقاف Cloudinary = آخر شي.
+- كل العمل على `version-2` (preview فقط) — صفر مساس main [[project_bunny_branch_isolation_golden]].
+
+### 📂 ملفات لُمست
+- `documents/tasks/BUNNY-MIGRATION-PRD-v1.html` — علّمت ١٠ بنود منجزة + أضفت قسم «◎ جرد نقاط القراءة» (١٢ checkbox، `data-epic="INV"`).
+
+### 🔁 Git
+- Branch: `version-2` · لا commit هذه الجلسة (توثيق فقط) · لا push.
+
+### 🚀 استئناف في ٣٠ ثانية
+1. افتح `file:///C:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/tasks/BUNNY-MIGRATION-PRD-v1.html` → قسم «◎ جرد نقاط القراءة».
+2. خالد يابروف الجرد.
+3. ابدأ INV-0: `mediaSrc()` في `dataLayer/lib/bunny.ts` + `bunnyUrl: true` بكل select. ثم M1 (مُحلّلات الاستعلام).
+
+---
+
+## Session: 2026-07-28 (تكملة) — صفر client-JS زائد على الجوال الأولي + تنظيف ملاحة الجوال (مدفوع ✅ `d1a41dc` · modonty 1.83.0 · preview فقط)
+
+### 🎯 أين توقفت
+- **مُنجز ومدفوع** لـ `version-2` (`d1a41dc`) — preview فقط، صفر مساس main. الـ preview الجديد حيّ.
+- **الخطوة التالية عند العودة:** الحكم النهائي للأداء ينتظر **CrUX الميداني** (يتجمّع لما preview يصير v2 ويجيه ترافيك). اختياري: حذف dead code `TopNavMobileLinks.tsx` · دمج version-2→main (آخر مرحلة فقط، بعد رضا خالد).
+
+### ✅ ما أُنجز هذه الجلسة (تكملة)
+- **الشريطان الجانبيان desktop-only → 100% server (صفر JS على الجوال، كل الروابط SSR للسيو):**
+  - `DiscoveryCard` (الفئات/الصناعات/الوسوم): تبويبات CSS radio + next/image.
+  - `NewClientsCard` (الشركاء): فلتر الصناعة CSS radio + ترتيب الشركاء CSS `order` vars + `PartnerRow` صار server.
+- **الـ 3 sheets السفلية (اكتشف/الشركاء/المزايا) → lazy عند أول فتح** (نمط Next.js «load on demand»): `DiscoverSheetContent` + `PartnersSheetContent` (جديدان) + `MazayaSheet` dynamic. الشِل خفيف.
+- **تنظيف ملاحة الجوال:** الـ nav العلوي = بحث فقط (شِلنا الشركاء/الرائجة) · الرائجة+البحث → قائمة الـ dots (⋮) · البحث → الشريط السفلي كمان (4 عناصر: بحث/اكتشف/الشركاء/المزايا).
+- **الدليل القاطع (bundle scan على build جديد):** صفر مكوّن عميل desktop-only في التحميل الأولي للـ homepage. الـ22 المتبقية = runtime Next.js (7) + ضرورية فعلاً (providers/trackers/ملاحة/شات[الثقيل lazy]/أغلفة feed[الثقيل lazy]).
+- **tsc modonty:** صفر أخطاء · **build:** نجح ✅ · **تست حي:** desktop (فلتر 20/2 + ترتيب أبجدي + 28 رابط SSR) + mobile (sheets lazy تنزل عند الضغط، nav نظيف) + صفر أخطاء كونسول.
+- **PageSpeed (preview، 3 تمريرات):** TBT نزل لـ **120ms** في 2/3 (كان 280–430) = مؤشّر تقليل client-JS. LCP لسه مختبري متغيّر (4.0↔6.8s، غير قابل للترقيم). Score 73–75.
+
+### 📝 قرارات (بالسبب)
+- **CSS-only بدل client** للشرائط: mobile-first indexing يفرض بقاء الروابط SSR (قوقل يقرأ نسخة الموبايل) → ممنوع `dynamic(ssr:false)` يشيل SSR. الحل = server component + CSS radio/order.
+- **lazy-on-open للـ sheets** = نمط Next.js الرسمي (`{mounted && <Dynamic/>}`)، مثبّت أصلاً في `MobileMenuClient`.
+- **تنازلات ثانوية صُرِّح بها:** أُسقط «ترتيب الصناعات» (chip reorder) + إبراز الشريك النشط (`PartnerRow`) — كلاهما desktop-only وثانوي.
+
+### 🚧 معلّق / محجوب
+- **`TopNavMobileLinks.tsx` = dead code** (شِلته من `TopNav`، غير مستخدم) — لم يُحذف (قاعدة: لا حذف بلا طلب). خالد يقرّر.
+- **الحكم النهائي للأداء** محجوب على CrUX الميداني (No Data حالياً) [[project_ga4_sot_thermometer]] · [[project_preview_psi_lab_variance]].
+- **دمج version-2 → main** = آخر مرحلة فقط، بإذن خالد الصريح [[project_bunny_branch_isolation_golden]].
+
+### 📂 ملفات مُعدّلة (مدفوعة `d1a41dc`)
+- جديد: `feed/HomeBottomBar/DiscoverSheetContent.tsx` · `PartnersSheetContent.tsx`
+- server: `layout/LeftSidebar/DiscoveryCard.tsx` · `layout/RightSidebar/{NewClientsCard,PartnerRow,NewClientItem}.tsx`
+- lazy: `feed/HomeBottomBar/HomeBottomBarShell.tsx`
+- ملاحة: `navigatore/{TopNav,MobileMenu,TopNavMobileLinks}.tsx`
+- `package.json` 1.82.9→1.83.0
+
+### 🔁 Git / deploy
+- **Branch:** `version-2` (تتبّع origin) — صفر مساس main.
+- **آخر commit مدفوع:** `d1a41dc` (+ سابقه `b63694d` نفس الجلسة: lean feed query + sidebar logos next/image).
+- **preview alias الثابت:** `https://modonty-modonty-git-version-2-modonty-72c2a2ca.vercel.app` [[project_version2_preview_url]].
+- **مستبعد دائماً:** `modonty/app/reels/`.
+
+### 🚀 كيف تُستأنف في 30 ثانية
+1. `git status` على `version-2`. القياس على preview alias الثابت (PSI بارد + bundle scan حتمي، لا LCP مختبري واحد). `.env.shared` DB = `modonty_dev` (آمن للبناء).
+2. bundle scan: `npx next experimental-analyze` ثم سكربت المطابقة (client-reference-manifest × firstLoadChunkPaths) — أعِد كتابته لو ضاع.
+3. القرار: حذف `TopNavMobileLinks.tsx`؟ · متى ندمج version-2→main؟
+
+---
+
+## Session: 2026-07-28 — أداء الصفحة الرئيسية (LCP/bundle) على فرع `version-2` (preview فقط)
+
+### 🎯 أين توقفت
+- **آخر مهمة:** تشخيص لماذا الشريط السفلي للجوال (`HomeBottomBar`) لا يظهر في متصفح خالد. **⚠️ نقلته مؤقتاً** (`bottom-0` → `top-40`) في `HomeBottomBarShell.tsx:172` عشان خالد يشوفه في اللقطة. **يجب إرجاعه لـ `bottom-0` عند خالد يقول «رجّعه» — قبل أي push.**
+- **السبب الجذري المكتشف:** الشريط `dynamic(ssr:false)` → غير موجود في HTML الأولي، يظهر فقط بعد ترطيب الجافاسكربت. على جهاز/اتصال بطيء يتأخّر أو يغيب. الشريط = **الملاحة الأساسية على الجوال** لكنه يعتمد كلياً على JS. ضعف حقيقي (قرار: نخليه SSR للأزرار + sheet lazy؟ معلّق).
+- **الخطوة التالية:** (1) إرجاع الشريط لـ bottom-0 عند طلب خالد. (2) قرار NewClientsCard (أدناه).
+
+### ✅ ما أُنجز هذه الجلسة
+- **الرافعة #4 (نظافة الباك-إند):** استعلام homepage عجاف `getHomeFeedArticles()` في `app/api/helpers/article-queries.ts` — يسقط join المؤلف (User) + join الصناعة + `wordCount` + `dislikesCount` (البطاقة ما ترندرها). `FeedPost.author`/`dislikes` صارا اختياريين في `lib/types.ts`. `page.tsx` يستخدم الاستعلام العجاف مباشرة.
+- **الرافعة #1 (منافسة الصور):** شعارات الشركاء في `RightSidebar/NewClientItem.tsx` من Radix `Avatar` → `next/image`. السبب: Radix يعمل probe عبر `new Image()` عند الترطيب → يجلب 23 شعار full-size على الموبايل رغم `hidden lg:block`. بعد الإصلاح: **تحميل بارد موبايل (PSI) = صفر شعار شريط** (متحقّق).
+- **الطرف الثالث (895KB):** مؤكّد `lazyOnload` (GTM + Contentsquare) — لا يمسّ LCP.
+- **الخطوط:** أصلاً مثالية (next/font، swap، subset، preload) — لا تُلمس.
+- **DiscoveryCard (LeftSidebar) → server component كامل:** تبويبات CSS (radio + `:checked`، صفر JS) + `next/image` بدل Radix Avatar + scroll أصلي. **خرج من bundle العميل** (مؤكّد من client-reference-manifest). وفّر 11KB uncompressed (757→746). كل روابط الاكتشاف تبقى SSR (سيو محفوظ، mobile-first). **تنازل:** أُسقط إبراز الفئة النشطة (كان يحتاج useSearchParams غير متاح تحت `use cache`).
+- **tsc modonty:** صفر أخطاء. **build:** نجح ✅.
+- **تست حي:** ديسكتوب (تبويبات DiscoveryCard تبدّل، 42 رابط، صفر أخطاء كونسول) + موبايل (رندر سليم، sheet الشركاء يفتح ويشتغل) على localhost + preview.
+
+### 📝 قرارات (بالسبب)
+- **القياس على preview فقط، لا الإنتاج** (أمر خالد: preview = الإصدار الثاني). alias ثابت للفرع: `modonty-modonty-git-version-2-modonty-72c2a2ca.vercel.app`.
+- **PSI المختبري غير موثوق للترقيم:** LCP قفز 3.9↔6.0s عبر 3 تمريرات. الدليل الحتمي = قياس الشبكة/الكود، لا LCP المختبري. CrUX الميداني «No Data». → `memory/project_preview_psi_lab_variance`.
+- **الإشارة الثابتة الوحيدة = TBT 280–430ms** (367KB JS حرج) = هدف الرافعة #2.
+- **لا نحذف روابط الشرائط الجانبية من SSR** (mobile-first indexing؛ قوقل يقرأ نسخة الموبايل) → التحويل لازم يبقّي الروابط server-rendered.
+- **رُفض حذف أزرار الترتيب** من NewClientsCard — تبيّن بالاختبار الحي أنها مستخدمة على الجوال (في الـ sheet).
+
+### 🚧 معلّق / محجوب
+- **قرار NewClientsCard (بطاقة الشركاء، RightSidebar):** لسه client، كودها + Radix المشترك (ScrollArea/dropdown) يُشحن على الموبايل الأولي بلا فايدة (الجوال يستخدم sheet منفصل `HomeBottomBarShell`). التحويل لـ server يحتاج **إبقاء الفلتر + الترتيب للكمبيوتر** عبر CSS كامل (فلتر radio + ترتيب order vars) — معقّد، مخاطرة أعلى. الكسب الأكبر (~15KB مضغوط) مقفول خلفه لأنه يشارك Radix مع DiscoveryCard. **قرار خالد مطلوب:** (أ) تحويل كامل CSS، (ب) نكتفي بـ DiscoveryCard.
+- **ظهور الشريط السفلي (ssr:false):** ضعف — الملاحة الأساسية للجوال تعتمد على JS. اقتراح: SSR للأزرار الـ3 + sheet lazy. معلّق.
+- **تثبيت/نشر:** DiscoveryCard جاهز لكن 11KB وحده صغير — يُفضّل يُدفع مع NewClientsCard (لو تم) أو منفصل بقرار خالد.
+
+### 📂 ملفات مُعدّلة (غير مدفوعة على version-2)
+- `modonty/components/layout/LeftSidebar/DiscoveryCard.tsx` — أُعيد بناؤه server component (تبويبات CSS + next/image). **جاهز.**
+- `modonty/components/feed/HomeBottomBar/HomeBottomBarShell.tsx` — **تغيير مؤقت فقط** (`bottom-0`→`top-40`، سطر 172). **يجب إرجاعه.**
+
+### 🔁 Git / deploy
+- **Branch:** `version-2` (تتبّع `origin/version-2`) — صفر مساس بـ main (قاعدة ذهبية).
+- **آخر commit مدفوع:** `b63694d` — «perf(modonty): lean homepage feed query + sidebar logos via next/image» (modonty 1.82.9). دُفع لـ version-2، Vercel بنى preview.
+- **غير مدفوع:** DiscoveryCard (جاهز) + HomeBottomBarShell (تغيير مؤقت — يُرجَّع أولاً).
+- **مستبعد دائماً:** `modonty/app/reels/`.
+
+### 🚀 كيف تُستأنف في 30 ثانية
+1. `git status` — تأكّد على `version-2`. أرجِع HomeBottomBarShell لـ `bottom-0` (شِيل التغيير المؤقت `top-40`).
+2. افتح `modonty/components/layout/RightSidebar/NewClientsCard.tsx` — قرار التحويل (أ CSS كامل / ب نكتفي بـ DiscoveryCard).
+3. القياس دائماً على preview alias الثابت، PSI بارد + قياس شبكة حتمي (لا LCP مختبري واحد). `.env.shared` DATABASE_URL = `modonty_dev` (آمن للبناء).
+
+---
+
+## Session: 2026-07-27 (تكملة) — drill-down لشريط صحة العملاء بالداشبورد (مدفوع ✅ `8bedb8f` · admin 1.7.0)
+
+### 🎯 أين وقفت
+- **مدفوع.** آخر تاسك: chips لوحة صحة العملاء صارت قابلة للنقر + push + us.
+- **الخطوة التالية:** تعميم نفس الـ drill-down على شريط **المقالات** (نفس المكوّن المشترك `SeoHealthCard`، حالياً chips المقالات عدّاد عادي بلا نقر) — لو خالد طلب.
+
+### ✅ أُنجز هذه الجلسة
+- **شريط «Blocking 100%» في قسم Clients بالداشبورد صار تفاعلياً:** كل chip يفتح **Popover** فيه: (1) **وصف الحقول المطلوبة** لحلّ الفحص — مرفوع من `hint` سكورر العميل نفسه (`computeClientSeoScore`)، صفر تخمين؛ (2) **قائمة العملاء المتأثّرين**، كل اسم رابط `/clients/[id]/edit`.
+- **الملفات (4):** `components/seo-check-chip.tsx` (جديد، client + Popover) · `components/seo-health-card.tsx` (استبدل `<span>` بالـ chip + فصل chips الـ **JSON-LD/system** في سطر مستقل تحت سطر المحتوى) · `actions/client-seo-quality.ts` (يجمع `items[]` + `desc` داخل نفس اللوب — بلا استعلام إضافي، سقف 60/فحص) · نوع `SeoCheckTally` (+`items?`, +`desc?`).
+- **تست حي:** نقر «Local SEO» → صندوق بالوصف «أضف الإحداثيات وساعات العمل ونطاق السعر وPlace ID» + قائمة العملاء → نقر «Dream to App» → `/clients/6a0e116a…/edit` ✅. JSON-LD chips في سطرهم المستقل + الـ Popover شغّال عليهم.
+- **TSC admin:** صفر أخطاء.
+
+### 📝 قرارات
+- **الوصف من السكورر لا من قائمة يدوية** (`c.hint` per key) — مصدر واحد، ما يتعارض مع منطق الدرجات، صفر تكرار.
+- **`SeoCheckTally.items` اختياري** — قسم المقالات ما يمرّرها فتبقى chipsه عدّاداً عادياً (بلا كسر). التعميم للمقالات لاحقاً.
+
+### 🚧 معلّق
+- نفس معلّق الجلسة السابقة: `prisma db push` على الإنتاج لمجموعة `redirects` (بند ثابت أدناه) — مستقل عن هذه الدفعة.
+
+### 📂 ملفات مسّت
+- admin: `app/(dashboard)/components/seo-check-chip.tsx` (جديد) · `app/(dashboard)/components/seo-health-card.tsx` · `app/(dashboard)/actions/client-seo-quality.ts` · `package.json`.
+
+### 🔁 Git / نشر
+- Branch: main · Pushed: نعم `8bedb8f` (بلا backup — push>) · Vercel: نشر admin تلقائي · admin 1.7.0 (admin فقط — لا modonty ولا سكيما).
+
+### 🚀 استئناف في 30 ثانية
+1. `cd admin && pnpm dev` (بورت 3000) → `/` → مرّر لقسم Clients → اضغط أي chip بشريط صحة السيو.
+2. للتعميم على المقالات: عبّئ `items` + `desc` في `article-seo-quality.ts` (نفس نمط `client-seo-quality.ts`).
+
+---
+
+## Session: 2026-07-27 — دمج/نقل الكيانات الثلاثة (Tag·Category·Industry) + آلية 308 (مدفوع ✅ `b7b7da5` · admin 1.6.0 · modonty 1.82.0)
+
+### 🎯 أين وقفت
+- **الميزة كاملة ومدفوعة.** آخر تاسك: دمج Industry + تست حي 100% + push + us.
+- **الخطوة التالية عند الاستئناف:** (1) `prisma db push` على الإنتاج لمجموعة `redirects` + الفهرس (نسخة احتياطية أولاً) ثم دمج تجريبي حي على الإنتاج بكيانين. (2) تست أب/ابن التصنيف محلياً (إعادة ربط الأبناء لم تُختبر حياً).
+
+### ✅ أُنجز هذه الجلسة
+- **الكيانات الثلاثة كاملة (دمج/نقل → 308 → حذف المصدر):**
+  - **Tag→Tag** (`merge-tag-actions.ts`): transaction dedup على `@@unique[articleId,tagId]` + نقل + 308 + audit؛ يعيد توليد سيو كل مقال (`articleSection`/keywords).
+  - **Category→Category** (`merge-category-actions.ts`): بلا dedup (categoryId مفرد) + **إعادة ربط الأبناء** (`parentId`) + حجب الدمج في حفيد (منع دورات) + 308.
+  - **Industry→Industry** (`merge-industry-actions.ts`): ينقل **العملاء** (`Client.industryId`) + يعيد توليد سيو كل عميل عبر `generateClientSeoBundle` المشترك (knowsAbout) + 308. **صفر تشعّب لمقالات العميل** (Organization node للمقال ما يحمل الصناعة — مؤكَّد من `knowledge-graph-generator.ts`).
+- **UI موحّد للثلاثة:** ديالوج عمودين + dropdown يفتح أسفل الحقل (بلا scroller في جسم الديالوج) + معاينة أثر بأرقام حقيقية + بوابة كتابة اسم المصدر + progress عنصراً عنصراً + شاشة اكتمال. زر GitMerge بنفسجي · قفل الحذف ما دام فيه روابط (مقالات/أبناء/عملاء) · بادج amber «0 · Empty».
+- **آلية 308 في modonty (خطوة 1):** موديل `Redirect{section,fromSlug,toSlug,@@unique}` · `lookupRedirect` (كاش fail-closed) في `archive-cache.ts` · سطر في `proxy.ts` (بعد isLive قبل 410) → `NextResponse.redirect(url, 308)`. متحقّق من 4 مصادر رسمية.
+- **إصلاح عدّاد الوسم:** كان التضارب (قائمة 5 مقابل تفاصيل 4) لأن `tag-view.tsx` يعدّ المنشور فقط؛ وُحِّد لـ`totalArticlesCount` (كل الروابط) + «(N published)» ثانوي. (التصنيف/الصناعة نظيفان أصلاً.)
+- **TSC:** admin 0 · modonty 0. **Build:** لم يُشغّل (tsc فقط). **تست حي:** ناجح 100% لكل كيان (تتبّع مقال/عميل محدّد قبل/بعد من المحرّر نفسه، مو من العدّاد).
+
+### 📝 قرارات (مع السبب)
+- **الأبناء في دمج التصنيف → إعادة ربط تلقائي بالوجهة** (اختيار خالد) بدل الحجب — عشان المصدر يصير فارغاً وقابلاً للحذف تماماً. الأبناء لا يحتاجون إعادة توليد سيو (breadcrumb التصنيف مسطّح، لا يحمل اسم الأب — مؤكَّد).
+- **حجب دمج تصنيف في أحد أحفاده** — يمنع دورة هرمية عند إعادة ربط الأبناء.
+- **إعادة استخدام `regenerateArticleSeoForMerge`** (عامة) للوسم والتصنيف؛ الصناعة تستخدم `generateClientSeoBundle` (مختلفة لأن المرتبط عميل).
+- **التتبّع للتحقّق = المحرّر نفسه** (حقل الوسم/التصنيف/الصناعة على العنصر) مو عدّاد الكيان (العدّادات تختلف بتعريفها عبر الصفحات).
+
+### 🚧 معلّق / محجوب
+- `prisma db push` على الإنتاج (blocker: يحتاج backup + إذن صريح؛ push> تخطّى الـ backup).
+- تست أب/ابن التصنيف حياً (لا مصدر تجريبي عنده أبناء).
+
+### 📂 ملفات مسّت
+- admin: `lib/redirect/record-redirect.ts` · `lib/audit/log-action.ts` · `tags/actions/merge-tag-actions.ts` + `tags/components/{tag-merge-dialog,tag-row-actions,tag-table}.tsx` + `tags/[id]/components/tag-view.tsx` · `categories/actions/merge-category-actions.ts` + `categories/actions/categories-actions/get-categories.ts` + `categories/components/{category-merge-dialog,category-row-actions,category-table,categories-page-client}.tsx` · `industries/actions/merge-industry-actions.ts` + `industries/components/{industry-merge-dialog,industry-row-actions,industry-table}.tsx`.
+- modonty: `proxy.ts` · `lib/archive-cache.ts`.
+- schema: `dataLayer/prisma/schema/schema.prisma` (موديل Redirect).
+- docs: `documents/tasks/TODO.md` + `documents/tasks/merge-dialog-mockup-v1.html`.
+
+### 🔁 Git / نشر
+- Branch: main · Pushed: نعم `b7b7da5` (بلا backup — push>) · Vercel: نشر تلقائي admin+modonty.
+- نسخ: admin 1.6.0 · modonty 1.82.0.
+
+### 🚀 استئناف في 30 ثانية
+1. `cd modonty && pnpm dev` (بورت 3000) — أو الإنتاج.
+2. للإنتاج: نسخة احتياطية → `prisma db push` (redirects) → دمج تجريبي حي بكيانين.
+3. أو محلياً: تست أب/ابن التصنيف (أنشئ تصنيفاً فرعياً تحت مصدر وادمج).
+
+---
+
 ## Session: 2026-07-26 (مساءً-٢) — توحيد المؤلف = منظمة (Organization) + industries + YMYL + خطوة /seo (مدفوع ✅ `11ba323` · admin 1.5.0 · modonty 1.81.0)
 
 ### 🎯 أين توقفت

@@ -1,15 +1,16 @@
-import { ShieldCheck, AlertTriangle } from "lucide-react";
+import { ShieldCheck, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { YmylCategory } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ar } from "@/lib/ar";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
+import { PublicPageLink } from "@/app/(dashboard)/components/public-page-link";
 import { ProfileForm } from "./components/profile-form";
 import { SeoReadinessCard } from "./components/seo-readiness-card";
 import { DisclaimerAcceptance } from "./components/disclaimer-acceptance";
 import { ProfileCompletenessButton } from "./components/profile-completeness-button";
-import { ProfileUrlBar } from "./components/profile-url-bar";
 import { YmylSection } from "./components/ymyl-section";
+import { isYmylClientComplete } from "@/lib/seo/ymyl-helpers";
 
 export const dynamic = "force-dynamic";
 
@@ -127,7 +128,8 @@ export default async function ProfilePage() {
   if (!client) return null;
 
   // YMYL licensing authorities for this client's country + category (admin Reference Data).
-  // Only fetched for YMYL clients; drives the verification section rendered below.
+  // Only fetched for YMYL clients; drives BOTH the dropdown below and the completeness
+  // verdict — one list, so the form can never accept what the badge rejects.
   const authorities =
     client.isYmyl && client.addressCountry && client.ymylCategory
       ? await db.licensingAuthority.findMany({
@@ -140,6 +142,20 @@ export default async function ProfilePage() {
           select: { code: true, nameAr: true },
         })
       : [];
+
+  // Every YMYL signal on this page follows one truth: are the required fields filled?
+  // They used to be hardcoded to the alarming state, so a client who had finished the
+  // form still saw a red pill and a "you must complete this" banner, and wrote in to
+  // say the system was broken (2026-08-04).
+  const ymylComplete = isYmylClientComplete(
+    {
+      isYmyl: client.isYmyl,
+      ymylCategory: client.ymylCategory,
+      ymylData: client.ymylData ?? null,
+      addressCountry: client.addressCountry,
+    },
+    authorities.map((a) => a.code)
+  );
 
   // Client's live page URL on modonty.com — canonicalUrl wins, else derive from slug.
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
@@ -181,19 +197,28 @@ export default async function ProfilePage() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            {client.isYmyl && (
-              <span
-                className="relative inline-flex items-center rounded-full border border-destructive/30 bg-destructive/10 px-3 py-1.5 text-xs font-bold text-destructive"
-                title="مجال حسّاس (YMYL) — يتطلب توثيقاً مهنياً"
-              >
-                {/* pulsing dot — blinks on/off */}
-                <span className="absolute -top-1 -left-1 flex h-2.5 w-2.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
-                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-destructive" />
+            {client.isYmyl &&
+              (ymylComplete ? (
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-400"
+                  title="توثيقك المهني مكتمل — مقالاتك جاهزة للنشر"
+                >
+                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                  YMYL
                 </span>
-                YMYL
-              </span>
-            )}
+              ) : (
+                <span
+                  className="relative inline-flex items-center rounded-full border border-destructive/30 bg-destructive/10 px-3 py-1.5 text-xs font-bold text-destructive"
+                  title="مجال حسّاس (YMYL) — يتطلب توثيقاً مهنياً"
+                >
+                  {/* pulsing dot — blinks on/off */}
+                  <span className="absolute -top-1 -left-1 flex h-2.5 w-2.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
+                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-destructive" />
+                  </span>
+                  YMYL
+                </span>
+              ))}
             <ProfileCompletenessButton
               score={completenessPct}
               filled={completenessFilled}
@@ -209,30 +234,50 @@ export default async function ProfilePage() {
             />
           </div>
         </div>
-        <ProfileUrlBar url={pageUrl} />
+        <PublicPageLink url={pageUrl} variant="bar" />
       </header>
 
       {/* Professional verification — only for YMYL clients (gate before publishing). */}
       {client.isYmyl && (
         <div className="space-y-4">
-          <div className="flex items-start gap-4 rounded-xl border border-amber-300 bg-amber-50 p-5 shadow-sm">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
-              <ShieldCheck className="h-6 w-6" />
-            </div>
-            <div className="flex-1 min-w-0 space-y-1.5">
-              <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-amber-900">
-                  هذا التوثيق مطلوب قبل نشر مقالاتك الطبية / القانونية / المالية
-                </h2>
-                <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
+          {ymylComplete ? (
+            <div className="flex items-start gap-4 rounded-xl border border-emerald-300 bg-emerald-50 p-5 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-500/10">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400">
+                <ShieldCheck className="h-6 w-6" />
               </div>
-              <p className="text-sm leading-relaxed text-amber-800">
-                مجالك يتطلب إثبات مصداقيتك المهنية لمحركات البحث قبل أن ننشر محتواك. أكمل
-                الحقول بالأسفل الآن — كلما كانت بياناتك أوضح، زادت ثقة محركات البحث في
-                مقالاتك وارتفع ترتيبها.
-              </p>
+              <div className="flex-1 min-w-0 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-base font-bold text-emerald-900 dark:text-emerald-300">
+                    توثيقك المهني مكتمل — مقالاتك جاهزة للنشر
+                  </h2>
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <p className="text-sm leading-relaxed text-emerald-800 dark:text-emerald-300/90">
+                  استلمنا كل ما نحتاجه لإثبات مصداقيتك أمام محركات البحث. تقدر تعدّل
+                  بياناتك بالأسفل في أي وقت لو تغيّر ترخيصك أو تخصصك.
+                </p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex items-start gap-4 rounded-xl border border-amber-300 bg-amber-50 p-5 shadow-sm">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+                <ShieldCheck className="h-6 w-6" />
+              </div>
+              <div className="flex-1 min-w-0 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-base font-bold text-amber-900">
+                    هذا التوثيق مطلوب قبل نشر مقالاتك الطبية / القانونية / المالية
+                  </h2>
+                  <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
+                </div>
+                <p className="text-sm leading-relaxed text-amber-800">
+                  مجالك يتطلب إثبات مصداقيتك المهنية لمحركات البحث قبل أن ننشر محتواك. أكمل
+                  الحقول بالأسفل الآن — كلما كانت بياناتك أوضح، زادت ثقة محركات البحث في
+                  مقالاتك وارتفع ترتيبها.
+                </p>
+              </div>
+            </div>
+          )}
           <YmylSection
             isYmyl={client.isYmyl}
             ymylCategory={client.ymylCategory}

@@ -28,6 +28,8 @@ const routeLabels: Record<string, string> = {
   "/dashboard/client-reviews": ar.nav.clientReviews,
   "/dashboard/page-content": ar.nav.pageContent,
   "/dashboard/gallery": ar.nav.gallery,
+  "/dashboard/reels": ar.nav.reels,
+  "/dashboard/videos": ar.nav.videos,
   "/dashboard/page-faq": ar.nav.pageFaq,
   "/dashboard/site-health": ar.nav.siteHealth,
   "/dashboard/questions": ar.nav.questions,
@@ -187,8 +189,25 @@ export function DashboardHeader({
               <BookOpen className="h-4 w-4" />
             </Button>
           </Link>
-          <Link href="/dashboard/settings" title={ar.nav.settings} className="hidden sm:inline-block">
-            <Button type="button" variant="ghost" size="icon" className="h-10 w-10">
+          {/* Settings stays in the header on phones as well: it is the icon clients look
+              for by muscle memory from the desktop, and hiding it below 640px is what made
+              them report "the settings are gone on mobile" (Khalid 2026-08-04). The
+              dashboard and guide icons stay desktop-only — both are one tap away in the
+              burger menu, and five icons is the most this row fits at 390px. */}
+          <Link
+            href="/dashboard/settings"
+            title={ar.nav.settings}
+            className="inline-flex"
+          >
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "h-10 w-10",
+                pathname === "/dashboard/settings" && "bg-primary/10 text-primary"
+              )}
+            >
               <Settings className="h-4 w-4" />
             </Button>
           </Link>

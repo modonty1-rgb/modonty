@@ -8,6 +8,8 @@ import {
   Newspaper,
   PenLine,
   Images,
+  Film,
+  Video,
   ImagePlus,
   LayoutTemplate,
   Megaphone,
@@ -23,8 +25,12 @@ import {
   Star,
   Activity,
   Receipt,
+  LayoutDashboard,
+  Settings,
+  BookOpen,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
+import { PublicPageLink } from "./public-page-link";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -44,7 +50,12 @@ interface MobileSidebarProps {
   pendingPageFaqsCount: number;
   pendingClientCommentsCount: number;
   pendingClientReviewsCount: number;
+  galleryCount: number;
+  reelsCount: number;
+  videosCount: number;
   isYmyl: boolean;
+  ymylComplete: boolean;
+  publicPageUrl: string | null;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -60,7 +71,12 @@ export function MobileSidebar({
   pendingPageFaqsCount,
   pendingClientCommentsCount,
   pendingClientReviewsCount,
+  galleryCount,
+  reelsCount,
+  videosCount,
   isYmyl,
+  ymylComplete,
+  publicPageUrl,
   isOpen,
   onOpenChange,
 }: MobileSidebarProps) {
@@ -91,13 +107,19 @@ export function MobileSidebar({
           </SheetTitle>
         </SheetHeader>
 
+        {/* Same row as the desktop rail — the public link must be one tap away on phones
+            too, since that is where clients actually copy it from. */}
+        <div className="border-b border-border px-3 py-2.5">
+          <PublicPageLink url={publicPageUrl} variant="sidebar" />
+        </div>
+
         <nav className="flex-1 space-y-1 overflow-y-auto p-3">
           <SidebarNavItem
             href="/dashboard/profile"
             icon={Building2}
             label={ar.nav.profile}
             badgeLabel={isYmyl ? "YMYL" : undefined}
-            badgeVariant={isYmyl ? "danger" : undefined}
+            badgeVariant={isYmyl ? (ymylComplete ? "success" : "danger") : undefined}
             isCollapsed={false}
           />
           <SidebarNavItem
@@ -116,6 +138,21 @@ export function MobileSidebar({
             href="/dashboard/gallery"
             icon={ImagePlus}
             label={ar.nav.gallery}
+            badge={galleryCount}
+            isCollapsed={false}
+          />
+          <SidebarNavItem
+            href="/dashboard/reels"
+            icon={Film}
+            label={ar.nav.reels}
+            badge={reelsCount}
+            isCollapsed={false}
+          />
+          <SidebarNavItem
+            href="/dashboard/videos"
+            icon={Video}
+            label={ar.nav.videos}
+            badge={videosCount}
             isCollapsed={false}
           />
           <SidebarNavItem
@@ -206,6 +243,30 @@ export function MobileSidebar({
             isCollapsed={false}
           />
         </nav>
+
+        {/* Settings, the guide and the dashboard link live in the top header, which hides
+            them below 640px (`hidden sm:inline-block`). Without these rows a phone user
+            could not reach Settings at all — a client reported exactly that. */}
+        <div className="space-y-1 border-t border-border p-3">
+          <SidebarNavItem
+            href="/dashboard"
+            icon={LayoutDashboard}
+            label={ar.nav.dashboard}
+            isCollapsed={false}
+          />
+          <SidebarNavItem
+            href="/dashboard/settings"
+            icon={Settings}
+            label={ar.nav.settings}
+            isCollapsed={false}
+          />
+          <SidebarNavItem
+            href="/help"
+            icon={BookOpen}
+            label="دليل الاستخدام"
+            isCollapsed={false}
+          />
+        </div>
 
         <div className="border-t border-border p-3">
           <Button

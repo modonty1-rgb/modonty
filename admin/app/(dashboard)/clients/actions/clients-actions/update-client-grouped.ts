@@ -244,6 +244,7 @@ export async function updateSettingsFields(
         paymentStatus: true,
         isFeatured: true,
         isInternal: true,
+        showSchedule: true,
       },
     });
 
@@ -256,6 +257,7 @@ export async function updateSettingsFields(
       paymentStatus: data.paymentStatus ?? client.paymentStatus,
       isFeatured: data.isFeatured ?? client.isFeatured,
       isInternal: data.isInternal ?? client.isInternal,
+      showSchedule: data.showSchedule ?? client.showSchedule,
     };
 
     const updateData = buildGroupUpdateData("settings", client as Record<string, unknown>, newData);

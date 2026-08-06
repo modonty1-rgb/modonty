@@ -8,9 +8,12 @@ import { createTTLIndex, getIndexHealth, ensurePerfIndexes } from "./index-healt
 import { sanitizeAllLegalForms, sanitizeAllOrganizationTypes } from "./legalform-sanitizer";
 import { sanitizeAllCanonicals } from "./canonical-sanitizer";
 import { backfillArticleHreflang } from "./hreflang-backfill";
+import { backfillMediaReelsFields } from "./media-reels-backfill";
+import { backfillBlurPlaceholders } from "./blur-backfill";
 import { sweepCloudinaryOrphans } from "./cloudinary-orphans";
 import { hardDeleteOldSoftDeletedComments } from "./soft-deleted-comments";
 import { seedIntakeForm } from "./seed-intake";
+import { scanOrphans } from "./orphan-scan";
 
 export interface MaintenanceStepResult {
   key: string;
@@ -141,6 +144,72 @@ export async function runStepHreflang(): Promise<MaintenanceStepResult> {
     };
   } catch (e) {
     return fail("hreflang", "Article hreflang Backfilled", e);
+  }
+}
+
+export async function runStepMediaReelsBackfill(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await backfillMediaReelsFields();
+    return ok(
+      "mediaReelsBackfill",
+      "Media Reels Fields Backfilled",
+      r.galleryFilled,
+      r.countersFilled > 0 ? `${r.countersFilled} counters` : undefined,
+    );
+  } catch (e) {
+    return fail("mediaReelsBackfill", "Media Reels Fields Backfilled", e);
+  }
+}
+
+/**
+ * Reports dangling required relations. Deliberately does NOT delete.
+ *
+ * A found orphan is a page that is already down for whoever owns that row — one
+ * dangling ArticleTag took the whole articles page away from جبر سيو. But an orphan can
+ * also be a target that simply was not imported yet, and from here the two are
+ * indistinguishable. So this raises the flag; a person decides what to remove.
+ *
+ * `ok: false` when anything is found — this is a fault to act on, not a tidy-up count.
+ */
+export async function runStepBlurBackfill(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await backfillBlurPlaceholders();
+    return {
+      key: "blurBackfill",
+      label: "Image Blur Placeholders",
+      ok: r.failed === 0,
+      count: r.filled,
+      detail: r.failed > 0 ? `${r.failed} unreadable` : undefined,
+    };
+  } catch (e) {
+    return fail("blurBackfill", "Image Blur Placeholders", e);
+  }
+}
+
+export async function runStepOrphanRows(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await scanOrphans();
+    const worst = r.findings
+      .slice(0, 3)
+      .map((f) => `${f.key} (${f.count})`)
+      .join(" · ");
+    const detail = [
+      `${r.relationsScanned} required relations scanned`,
+      worst || undefined,
+      r.failed.length > 0 ? `${r.failed.length} scans errored` : undefined,
+    ]
+      .filter(Boolean)
+      .join(" — ");
+
+    return {
+      key: "orphanRows",
+      label: "Orphan Rows (broken required relations)",
+      ok: r.totalOrphans === 0 && r.failed.length === 0,
+      count: r.totalOrphans,
+      detail,
+    };
+  } catch (e) {
+    return fail("orphanRows", "Orphan Rows (broken required relations)", e);
   }
 }
 

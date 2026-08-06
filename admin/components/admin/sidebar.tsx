@@ -25,6 +25,7 @@ import {
   FileClock,
   FileX,
   RotateCcw,
+  Stethoscope,
   CheckCircle2,
   Folder,
   Tag,
@@ -60,6 +61,7 @@ import {
   Newspaper,
   Images,
   GalleryThumbnails,
+  Clapperboard,
   Search,
   PanelTop,
   MessageSquare,
@@ -156,6 +158,10 @@ const menuGroups: MenuGroup[] = [
     items: [
       { icon: FileText, label: "All Articles", href: "/articles", exact: true },
       { icon: FilePlus, label: "New Article", href: "/articles/new" },
+      // Sits with the writing tools, not under Clients: the audience is the content team,
+      // and a writer looking for "who am I writing for" should not have to open the
+      // clients admin to find it.
+      { icon: BookOpen, label: "Content Briefs", href: "/briefs" },
       {
         subMenu: "Production Line",
         icon: Factory,
@@ -171,6 +177,10 @@ const menuGroups: MenuGroup[] = [
         subMenu: "Maintenance & SEO",
         icon: Wrench,
         items: [
+          // Under Articles, not the database page — the audience is the content team
+          // (Khalid 2026-08-04): a writer will never open a DB screen to find out that
+          // their cover image died.
+          { icon: Stethoscope, label: "Article Health", href: "/articles/health" },
           { icon: RotateCcw, label: "Status Maintenance", href: "/articles/workflow/maintenance" },
           { icon: Wrench, label: "Technical Review", href: "/articles/technical" },
           { icon: Search, label: "SEO Client", href: "/clients/seo" },
@@ -196,6 +206,7 @@ const menuGroups: MenuGroup[] = [
     items: [
       { icon: Images, label: "Media Library", href: "/media" },
       { icon: GalleryThumbnails, label: "Client Galleries", href: "/client-galleries" },
+      { icon: Clapperboard, label: "Reels Approval", href: "/reels" },
       { icon: Wrench, label: "Maintenance", href: "/media/maintenance" },
     ],
   },
@@ -206,6 +217,9 @@ const menuGroups: MenuGroup[] = [
     items: [
       { icon: GoogleSearchConsoleIcon, label: "Search Console", href: "/search-console" },
       { icon: Globe, label: "Bing Webmaster", href: "/bing-webmaster" },
+      // Lives here, not under System: it is an SEO tool, and burying it beside DB/export
+      // utilities meant opening a collapsed group to reach a page used every SEO round.
+      { icon: Globe, label: "SEO Maintenance", href: "/seo" },
     ],
   },
   {
@@ -267,7 +281,6 @@ const menuGroups: MenuGroup[] = [
       { icon: CloudUpload, label: "Bunny Migration", href: "/bunny-migration" },
       { icon: Images, label: "Default Images", href: "/settings/defaults" },
       { icon: Wrench, label: "Maintenance", href: "/maintenance" },
-      { icon: Globe, label: "SEO Maintenance", href: "/seo" },
       { icon: MailOpen, label: "Email Templates", href: "/emails" },
       { icon: ScrollText, label: "Audit Log", href: "/audit-log" },
       { icon: Bug, label: "Error Logs", href: "/system-errors" },

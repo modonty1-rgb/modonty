@@ -26,7 +26,6 @@ export function analyzeArticleSEO(
 
     if (isEssentiallyEmpty) {
       const emptyCategory: ArticleSEOCategory = {
-        score: 0,
         maxScore: 0,
         percentage: 0,
         passed: 0,
@@ -77,7 +76,6 @@ export function analyzeArticleSEO(
     console.error("Error analyzing article SEO:", error);
 
     const emptyCategory: ArticleSEOCategory = {
-      score: 0,
       maxScore: 0,
       percentage: 0,
       passed: 0,

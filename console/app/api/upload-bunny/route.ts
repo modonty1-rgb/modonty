@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { uploadToBunny } from "@modonty/database/lib/bunny";
 import { auth } from "@/lib/auth";
+import { generateBlurDataUrl } from "@/lib/media/generate-blur";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -12,7 +13,7 @@ const MB = 1024 * 1024;
 const IMAGE_LIMIT = 4 * MB;
 
 // Whitelisted upload folders — the browser must NOT choose an arbitrary path.
-const FOLDERS = ["gallery", "achievements", "licenses"] as const;
+const FOLDERS = ["gallery", "achievements", "licenses", "reels"] as const;
 type Folder = (typeof FOLDERS)[number];
 
 /**
@@ -51,9 +52,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const remotePath = `clients/${clientId}/${folder}/${unique}.${ext}`;
 
     const buf = Buffer.from(await file.arrayBuffer());
-    const { url } = await uploadToBunny("reels", buf, remotePath, file.type);
+    // The buffer is already in memory for the Bunny write, so the blur placeholder costs
+    // one resize and zero extra downloads. Built here (server-side) rather than in the
+    // browser so the stored value can't be forged by the client.
+    const [{ url }, blurDataURL] = await Promise.all([
+      uploadToBunny("reels", buf, remotePath, file.type),
+      generateBlurDataUrl(buf),
+    ]);
 
-    return NextResponse.json({ url, bytes: file.size });
+    return NextResponse.json({ url, bytes: file.size, blurDataURL });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Upload failed";
     return NextResponse.json({ error: msg }, { status: 500 });

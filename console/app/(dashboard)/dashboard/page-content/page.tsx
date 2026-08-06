@@ -19,6 +19,15 @@ export default async function PageContentPage() {
       achievements: true,
       credentials: true,
       introVideoUrl: true,
+      introVideoMedia: {
+        select: {
+          mp4Url: true,
+          thumbnailUrl: true,
+          durationSec: true,
+          title: true,
+          description: true,
+        },
+      },
     },
   });
 
@@ -48,6 +57,7 @@ export default async function PageContentPage() {
           achievements: client?.achievements ?? [],
           credentials: client?.credentials ?? [],
           introVideoUrl: client?.introVideoUrl ?? null,
+          introVideo: client?.introVideoMedia ?? null,
         }}
       />
     </div>

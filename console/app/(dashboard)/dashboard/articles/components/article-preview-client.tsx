@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Check, MessageSquare, ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
 import { approveArticle, requestChanges } from "../actions/article-actions";
 import { FeedbackForm } from "./feedback-form";
+import { ApproveConfirmDialog } from "./approve-confirm-dialog";
 import type { ArticleWithAllData } from "../helpers/article-queries";
 import Image from "next/image";
 import { mediaSrc } from "@modonty/database/lib/media-src";
@@ -29,6 +30,7 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [confirmApprove, setConfirmApprove] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(["basic", "content"])
   );
@@ -63,13 +65,7 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
     }
   };
 
-  const handleApprove = () => {
-    toast(a.approveConfirm, {
-      duration: 8000,
-      action: { label: a.confirmYes ?? "نعم، وافق", onClick: runApprove },
-      cancel: { label: a.cancel ?? "إلغاء", onClick: () => {} },
-    });
-  };
+  const handleApprove = () => setConfirmApprove(true);
 
   const handleRequestChanges = async (feedback: string) => {
     setLoading(true);
@@ -588,6 +584,14 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
           onCancel={() => setShowFeedback(false)}
         />
       )}
+
+      <ApproveConfirmDialog
+        open={confirmApprove}
+        onOpenChange={setConfirmApprove}
+        onConfirm={runApprove}
+        pending={loading}
+        articleTitle={article.title}
+      />
     </>
   );
 }

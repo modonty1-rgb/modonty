@@ -58,6 +58,13 @@ interface ProgressState {
   failedCount: number;
   durationMs?: number;
   fatalError?: string;
+  /** Post-copy integrity check — a copy that reads fine is not the same as a copy that is correct. */
+  verifying?: boolean;
+  relationsScanned?: number;
+  totalOrphans?: number;
+  orphanFindings?: { key: string; count: number; where: string; sampleIds: string[] }[];
+  /** False when a collection failed or the copy left orphans — do not test against it. */
+  usable?: boolean;
 }
 
 const INITIAL_PROGRESS: ProgressState = {
@@ -72,9 +79,12 @@ const INITIAL_PROGRESS: ProgressState = {
   failedCount: 0,
 };
 
-export function SyncLocalButton() {
-  // Inlined at build — completely removed from production bundle
-  if (process.env.NODE_ENV === "production") return null;
+export function SyncLocalButton({ enabled }: { enabled: boolean }) {
+  // Visibility follows the DATABASE the instance is on, not the bundle it was built with.
+  // The migration rehearsal runs a production build against the local test database, and a
+  // NODE_ENV check hid this button exactly when it was needed. The route itself refuses any
+  // database other than modonty_dev, so this is presentation, not protection.
+  if (!enabled) return null;
 
   const [open, setOpen] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -167,6 +177,17 @@ export function SyncLocalButton() {
           next.currentDocs = event.docs as number;
           break;
 
+        case "verifying":
+          next.verifying = true;
+          break;
+
+        case "verified":
+          next.verifying = false;
+          next.relationsScanned = event.relationsScanned as number;
+          next.totalOrphans = event.totalOrphans as number;
+          next.orphanFindings = event.findings as ProgressState["orphanFindings"];
+          break;
+
         case "collection_done": {
           const docs = event.docs as number;
           next.totalDocs += docs;
@@ -199,6 +220,7 @@ export function SyncLocalButton() {
 
         case "complete":
           next.durationMs = event.durationMs as number;
+          next.usable = event.usable as boolean;
           break;
 
         case "fatal":
@@ -210,11 +232,31 @@ export function SyncLocalButton() {
     });
 
     if (event.type === "complete") {
-      setPhase("done");
-      toast({
-        title: "تمت المزامنة",
-        description: `${event.successCount} جدول · ${event.totalDocs} وثيقة (${((event.durationMs as number) / 1000).toFixed(1)}s)`,
-      });
+      // A copy that finished is not automatically a copy you can use. Saying "تمت" over a
+      // database with broken rows is what sends someone hunting a bug that came from here.
+      const orphans = (event.totalOrphans as number) ?? 0;
+      const failed = (event.failedCount as number) ?? 0;
+      const seconds = ((event.durationMs as number) / 1000).toFixed(1);
+      setPhase(event.usable ? "done" : "error");
+
+      if (event.usable) {
+        toast({
+          title: "تمت المزامنة — النسخة سليمة",
+          description: `${event.successCount} جدول · ${event.totalDocs} وثيقة · صفر صفوف مكسورة (${seconds}s)`,
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "المزامنة خلصت — لكن النسخة فيها خلل",
+          description:
+            [
+              failed > 0 ? `${failed} جدول ما انتسخ` : null,
+              orphans > 0 ? `${orphans} صفّاً مكسوراً (يشير لشي غير موجود)` : null,
+            ]
+              .filter(Boolean)
+              .join(" · ") + " — راجع التفاصيل تحت قبل ما تختبر عليها.",
+        });
+      }
     }
 
     if (event.type === "fatal") {
@@ -310,9 +352,9 @@ export function SyncLocalButton() {
                 {phase === "error" && (
                   <XCircle className="h-5 w-5 text-red-500" />
                 )}
-                {phase === "running" && "جارٍ المزامنة..."}
-                {phase === "done" && "اكتملت المزامنة"}
-                {phase === "error" && "فشلت المزامنة"}
+                {phase === "running" && (progress.verifying ? "نفحص سلامة النسخة..." : "جارٍ المزامنة...")}
+                {phase === "done" && "اكتملت المزامنة — النسخة سليمة"}
+                {phase === "error" && (progress.usable === false ? "النسخة فيها خلل" : "فشلت المزامنة")}
               </DialogTitle>
             </DialogHeader>
 
@@ -322,6 +364,42 @@ export function SyncLocalButton() {
               </div>
             ) : (
               <div className="space-y-3">
+                {/* Integrity result — the part that decides whether this copy is usable */}
+                {progress.totalOrphans !== undefined && (
+                  <div
+                    className={`rounded-md border p-3 text-sm ${
+                      progress.totalOrphans === 0
+                        ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                        : "border-amber-500/40 bg-amber-500/10 text-amber-800 dark:text-amber-200"
+                    }`}
+                  >
+                    {progress.totalOrphans === 0 ? (
+                      <p className="font-medium">
+                        ✅ فحص السلامة: {progress.relationsScanned} علاقة إجبارية — صفر صفوف مكسورة.
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        <p className="font-medium">
+                          ⚠️ {progress.totalOrphans} صفّاً يشير لشي غير موجود — أي صفحة تقرأه بتقع.
+                        </p>
+                        <ul className="space-y-1 text-xs">
+                          {progress.orphanFindings?.map((f) => (
+                            <li key={f.key} dir="ltr" className="text-start font-mono">
+                              {f.where} — {f.count}
+                              {f.sampleIds.length > 0 && (
+                                <span className="opacity-70"> · {f.sampleIds.slice(0, 3).join(", ")}</span>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="text-xs opacity-90">
+                          نظّفها من صفحة الصيانة (خطوة Orphan Rows) قبل ما تختبر على هذه النسخة.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Progress bar */}
                 <div className="space-y-1">
                   <div className="text-muted-foreground flex items-center justify-between text-xs">

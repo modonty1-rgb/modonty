@@ -19,11 +19,16 @@ export function ModontyLogo({
 }: ModontyLogoProps) {
   return (
     <div className={wrapperClassName}>
+      {/* أكبر عنصر فوق الطيّة في صفحة الدخول — يُحمَّل فوراً بدل ما يؤجّله المتصفّح.
+          مش `priority`: مهجورة في Next.js 16. ومش `preload`: التوثيق يحذّر منها حين
+          يوجد أكثر من مرشّح LCP، والشعار يُرندَر مرّتين (جوّال + مكتب). */}
       <Image
         src={DEFAULT_SRC}
         alt={alt}
         fill
         sizes={sizes}
+        loading="eager"
+        fetchPriority="high"
         className={className}
       />
     </div>

@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { ar } from "@/lib/ar";
+import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -98,6 +99,7 @@ function sourceMeta(source: string | null) {
 export function FaqsTable({ faqs }: Props) {
   const f = ar.faqs;
   const [filter, setFilter] = useState<FilterKey>("all");
+  const { confirmThen, confirmDialog } = useConfirm();
   const [query, setQuery] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editAnswer, setEditAnswer] = useState("");
@@ -161,14 +163,6 @@ export function FaqsTable({ faqs }: Props) {
   function cancelEdit() {
     setEditingId(null);
     setEditAnswer("");
-  }
-
-  function confirmThen(message: string, onConfirm: () => void) {
-    toast(message, {
-      duration: 8000,
-      action: { label: f.confirmYes, onClick: onConfirm },
-      cancel: { label: f.cancel, onClick: () => {} },
-    });
   }
 
   function handleApprove(faqId: string) {
@@ -257,7 +251,7 @@ export function FaqsTable({ faqs }: Props) {
           } else toast.error(res.error || f.bulkFailed);
         });
       }
-    );
+    , "انشر المحدَّد");
   }
 
   function handleBulkReject() {
@@ -270,7 +264,7 @@ export function FaqsTable({ faqs }: Props) {
           setSelected(new Set());
         } else toast.error(res.error || f.bulkFailed);
       });
-    });
+    }, "ارفض المحدَّد");
   }
 
   return (
@@ -414,6 +408,7 @@ export function FaqsTable({ faqs }: Props) {
         item={openFaq}
         onClose={() => setOpenFaq(null)}
       />
+      {confirmDialog}
     </>
   );
 }

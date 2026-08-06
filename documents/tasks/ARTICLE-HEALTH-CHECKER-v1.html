@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فاحص صحّة المقالات — ملف العمل v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0f172a; --card:#ffffff; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
+    --brand:#7c3aed; --brand-soft:#f5f3ff;
+    --red:#dc2626; --red-soft:#fef2f2;
+    --amber:#d97706; --amber-soft:#fffbeb;
+    --green:#059669; --green-soft:#ecfdf5;
+    --slate-soft:#f8fafc;
+  }
+  body{
+    font-family:'Tajawal',system-ui,'Segoe UI',sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.75;
+    padding:28px 16px 80px;
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+
+  /* ---------- header ---------- */
+  header{margin-bottom:22px;color:#fff}
+  .kicker{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,.22);
+    border:1px solid rgba(167,139,250,.45);color:#ddd6fe;font-size:13px;font-weight:700;
+    padding:5px 12px;border-radius:999px;margin-bottom:12px}
+  h1{font-size:30px;font-weight:800;letter-spacing:-.4px;margin-bottom:8px}
+  .lede{color:#94a3b8;font-size:16px;max-width:78ch}
+  .lede b{color:#e2e8f0}
+  .meta{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+    color:#cbd5e1;font-size:12.5px;font-weight:500;padding:4px 11px;border-radius:8px}
+  .chip b{color:#fff;font-weight:700}
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:6px;margin:22px 0 16px;flex-wrap:wrap}
+  .tab{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#cbd5e1;
+    font-family:inherit;font-size:14.5px;font-weight:700;padding:9px 18px;border-radius:10px;
+    cursor:pointer;transition:.15s}
+  .tab:hover{background:rgba(255,255,255,.12);color:#fff}
+  .tab[aria-selected="true"]{background:#fff;color:var(--ink);border-color:#fff}
+  .tab .n{display:inline-block;background:rgba(0,0,0,.12);border-radius:6px;
+    padding:0 7px;margin-inline-start:7px;font-size:12.5px}
+  .tab[aria-selected="false"] .n{background:rgba(255,255,255,.14)}
+  .panel[hidden]{display:none}
+
+  /* ---------- cards ---------- */
+  .card{background:var(--card);border-radius:14px;padding:20px 22px;margin-bottom:14px;
+    box-shadow:0 1px 3px rgba(0,0,0,.18),0 8px 24px -12px rgba(0,0,0,.35)}
+  .sec-title{color:#fff;font-size:17px;font-weight:800;margin:26px 0 12px;
+    display:flex;align-items:center;gap:10px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title span.count{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);
+    color:#cbd5e1;font-size:12.5px;font-weight:600;padding:2px 9px;border-radius:7px}
+  .sec-note{color:#94a3b8;font-size:14px;margin:-6px 0 12px}
+
+  /* ---------- task ---------- */
+  .task{display:flex;gap:14px;align-items:flex-start;padding:15px 0;border-bottom:1px solid var(--line)}
+  .task:last-child{border-bottom:0;padding-bottom:0}
+  .task:first-child{padding-top:0}
+  .task input[type=checkbox]{appearance:none;flex:0 0 auto;width:21px;height:21px;margin-top:3px;
+    border:2px solid #cbd5e1;border-radius:6px;cursor:pointer;position:relative;transition:.15s}
+  .task input[type=checkbox]:hover{border-color:var(--brand)}
+  .task input[type=checkbox]:checked{background:var(--green);border-color:var(--green)}
+  .task input[type=checkbox]:checked::after{content:"✓";position:absolute;inset:0;color:#fff;
+    font-size:14px;font-weight:800;display:grid;place-items:center}
+  .task-body{flex:1;min-width:0}
+  .task.done .t-title{text-decoration:line-through;color:var(--muted)}
+  .t-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:4px}
+  .tid{font-family:ui-monospace,'Cascadia Code',monospace;font-size:12px;font-weight:700;
+    color:var(--brand);background:var(--brand-soft);padding:2px 8px;border-radius:6px}
+  .t-title{font-weight:700;font-size:15.5px}
+  .t-desc{color:#475569;font-size:14.5px}
+  .t-desc code, code{font-family:ui-monospace,'Cascadia Code',monospace;font-size:13px;
+    background:#f1f5f9;border:1px solid #e2e8f0;border-radius:5px;padding:1px 6px;color:#334155}
+  .t-meta{margin-top:7px;display:flex;flex-wrap:wrap;gap:7px}
+  .sev{font-size:12px;font-weight:700;padding:2px 9px;border-radius:6px;border:1px solid}
+  .sev.red{color:var(--red);background:var(--red-soft);border-color:#fecaca}
+  .sev.amber{color:var(--amber);background:var(--amber-soft);border-color:#fde68a}
+  .sev.green{color:var(--green);background:var(--green-soft);border-color:#a7f3d0}
+  .tag{font-size:12px;font-weight:600;padding:2px 9px;border-radius:6px;
+    background:var(--slate-soft);border:1px solid var(--line);color:#475569}
+  .tag.new{background:var(--brand-soft);border-color:#ddd6fe;color:var(--brand)}
+
+  /* ---------- decision ---------- */
+  .decision{border:2px solid #fde68a;background:var(--amber-soft);border-radius:12px;
+    padding:16px 18px;margin-bottom:12px}
+  .decision h3{font-size:15.5px;font-weight:800;margin-bottom:4px;display:flex;gap:9px;align-items:center}
+  .decision .q{color:#78350f;font-size:14.5px;margin-bottom:11px}
+  .opts{display:grid;gap:8px}
+  .opt{display:flex;gap:11px;align-items:flex-start;background:#fff;border:1px solid #fde68a;
+    border-radius:9px;padding:11px 13px;cursor:pointer;transition:.15s}
+  .opt:hover{border-color:var(--amber)}
+  .opt input{appearance:none;flex:0 0 auto;width:18px;height:18px;margin-top:3px;border:2px solid #cbd5e1;
+    border-radius:50%;cursor:pointer;position:relative}
+  .opt input:checked{border-color:var(--green)}
+  .opt input:checked::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--green)}
+  .opt-t{font-weight:700;font-size:14.5px}
+  .opt-d{color:#64748b;font-size:13.5px;margin-top:2px}
+  .rec{font-size:11.5px;font-weight:700;color:var(--green);background:var(--green-soft);
+    border:1px solid #a7f3d0;border-radius:5px;padding:1px 7px;margin-inline-start:7px}
+
+  /* ---------- locked decision ---------- */
+  .locked{border:2px solid #a7f3d0;background:var(--green-soft);border-radius:12px;
+    padding:16px 18px;margin-bottom:12px}
+  .locked h3{font-size:15.5px;font-weight:800;margin-bottom:6px;display:flex;gap:9px;
+    align-items:center;flex-wrap:wrap;color:#065f46}
+  .lock-tag{font-size:11.5px;font-weight:700;color:#065f46;background:#fff;
+    border:1px solid #a7f3d0;border-radius:5px;padding:1px 8px}
+  .locked .q{color:#065f46;font-size:15px;margin-bottom:9px}
+  .locked .why{color:#334155;font-size:14px;margin-bottom:7px}
+  .locked .why:last-child{margin-bottom:0}
+
+  /* ---------- brief ---------- */
+  .card h2{font-size:19px;font-weight:800;margin-bottom:10px}
+  .card h3{font-size:15.5px;font-weight:800;margin:18px 0 7px;color:#1e293b}
+  .card p{color:#334155;font-size:15px;margin-bottom:10px}
+  .card ul{margin:0 0 12px;padding-inline-start:20px;color:#334155;font-size:15px}
+  .card li{margin-bottom:6px}
+  table{width:100%;border-collapse:collapse;margin:10px 0 14px;font-size:14.5px}
+  th,td{text-align:start;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--slate-soft);font-weight:700;font-size:13.5px;color:#475569}
+  tr:last-child td{border-bottom:0}
+  .quote{border-inline-start:4px solid var(--brand);background:var(--brand-soft);
+    padding:12px 15px;border-radius:0 9px 9px 0;color:#4c1d95;font-size:14.5px;margin:12px 0}
+  .warn{border-inline-start:4px solid var(--red);background:var(--red-soft);
+    padding:12px 15px;border-radius:0 9px 9px 0;color:#7f1d1d;font-size:14.5px;margin:12px 0}
+  .ok{border-inline-start:4px solid var(--green);background:var(--green-soft);
+    padding:12px 15px;border-radius:0 9px 9px 0;color:#065f46;font-size:14.5px;margin:12px 0}
+  pre{background:#0f172a;color:#e2e8f0;padding:13px 15px;border-radius:9px;overflow-x:auto;
+    font-family:ui-monospace,'Cascadia Code',monospace;font-size:13px;line-height:1.7;margin:10px 0}
+
+  .owner-note{background:rgba(124,58,237,.16);border:1px solid rgba(167,139,250,.4);
+    color:#e9d5ff;border-radius:11px;padding:13px 16px;font-size:14.5px;margin-bottom:18px}
+  .owner-note b{color:#fff}
+  .copybar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+  .btn{font-family:inherit;font-size:14px;font-weight:700;padding:9px 16px;border-radius:9px;
+    border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#e2e8f0;
+    cursor:pointer;transition:.15s}
+  .btn:hover{background:rgba(255,255,255,.16);color:#fff}
+  .btn.primary{background:#fff;color:var(--ink);border-color:#fff}
+  .btn.primary:hover{background:#f1f5f9}
+  .copy-hint{color:#94a3b8;font-size:13.5px}
+
+  .status{background:#fff;border-radius:14px;padding:6px 20px;margin-bottom:14px;
+    box-shadow:0 1px 3px rgba(0,0,0,.18),0 8px 24px -12px rgba(0,0,0,.35)}
+  .s-row{display:flex;gap:12px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--line);
+    font-size:14.5px;color:#334155}
+  .s-row:last-child{border-bottom:0}
+  .s-row a{color:var(--brand);font-weight:700;text-decoration:none}
+  .s-row a:hover{text-decoration:underline}
+  .s-badge{flex:0 0 auto;font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:7px;border:1px solid;white-space:nowrap}
+  .s-badge.ok{color:var(--green);background:var(--green-soft);border-color:#a7f3d0}
+  .s-badge.next{color:var(--brand);background:var(--brand-soft);border-color:#ddd6fe}
+  .s-badge.wait{color:var(--amber);background:var(--amber-soft);border-color:#fde68a}
+
+  .empty{text-align:center;padding:46px 20px;color:var(--muted)}
+  .empty .big{font-size:40px;margin-bottom:10px}
+  .empty p{font-size:15px}
+
+  footer{margin-top:34px;color:#64748b;font-size:13px;text-align:center}
+  @media(max-width:640px){h1{font-size:24px}.card{padding:16px}body{padding:18px 12px 60px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">🩺 أداة صيانة · حاجب لمرحلة الترحيل</div>
+  <h1>فاحص صحّة المقالات</h1>
+  <p class="lede">
+    يكشف ما <b>يتعفّن بعد النشر</b> — الصور التي ماتت، الروابط التي انكسرت، السيو الذي انحرف —
+    قبل أن يكتشفه الزائر أو محرّك البحث. البوابة الحالية تفحص قاعدة البيانات وقت الكتابة؛
+    هذه الأداة تفحص <b>الواقع</b> بعدها.
+  </p>
+  <div class="meta">
+    <span class="chip">الحالة: <b>القراران مقفولان · جاهز للبناء</b></span>
+    <span class="chip">النطاق: <b>كل الحالات — 127 مقالاً</b></span>
+    <span class="chip">مرجع: <b>بند 82</b></span>
+    <span class="chip">مطلوب <b>قبل ترحيل الإنتاج (T7)</b></span>
+    <span class="chip">المنجز: <b><span id="done-n">0</span>/<span id="all-n">0</span></b></span>
+    <span class="chip">أُنشئ: <b>2026-08-04</b></span>
+  </div>
+</header>
+
+<div class="tabs" role="tablist">
+  <button class="tab" role="tab" aria-selected="true"  data-p="todo">قيد التنفيذ <span class="n" id="c-todo">0</span></button>
+  <button class="tab" role="tab" aria-selected="false" data-p="done">المنجز <span class="n" id="c-done">0</span></button>
+  <button class="tab" role="tab" aria-selected="false" data-p="brief">الخلاصة</button>
+</div>
+
+<!-- ==================== TO DO ==================== -->
+<section class="panel" id="p-todo">
+
+  <div class="copybar">
+    <button class="btn primary" id="copy-state" type="button">📋 انسخ حالة الملف</button>
+    <button class="btn" id="reset-state" type="button">تصفير</button>
+    <span class="copy-hint">انسخ والصقه لي — ما أقدر أقرأ متصفّحك.</span>
+  </div>
+
+  <div class="owner-note">
+    <b>👤 هذا القسم وحده يخصّك.</b> الأقسام تحتها (المعايير · المراحل · الحراسات) هي <b>قائمة تنفيذي أنا</b> —
+    مكتوبة لتراها وتعترض على أي بند، لا لتجيب عليها. أؤشّرها بنفسي أثناء البناء.
+    <br><b>💾 إجاباتك تُحفظ تلقائياً</b> في هذا المتصفّح — تقدر تقفل الصفحة وترجع.
+  </div>
+
+  <div class="sec-title">① أين وصلنا <span class="count">لقطة الحالة</span></div>
+
+  <div class="status">
+    <div class="s-row">
+      <span class="s-badge ok">✅ مقفول</span>
+      <span><b>القراران</b> — النطاق: كل الحالات (١٢٧ مقالاً) · المكان: تحت «المقالات» في الشريط الجانبي.
+      <a href="#" data-goto="done">التفاصيل والأدلة في تبويب المنجز ←</a></span>
+    </div>
+    <div class="s-row">
+      <span class="s-badge ok">✅ معتمد</span>
+      <span><b>المعايير الثمانية</b> كلها بلا استثناء — خالد أشّر عليها 2026-08-04.</span>
+    </div>
+    <div class="s-row">
+      <span class="s-badge ok">✅ مبنيّ</span>
+      <span><b>المراحل الست كلها + المعايير الثمانية</b> — الأداة تعمل تحت «المقالات ← الصيانة والسيو ← Article Health».</span>
+    </div>
+    <div class="s-row">
+      <span class="s-badge ok">✅ شُغِّل حيّاً</span>
+      <span><b>١٢٧ مقالاً · ٧٠٧ طلباً · دقيقتان</b> — و<b>وجد الغلافين الميتين وحده</b>.
+      <a href="#" data-goto="done">النتيجة الكاملة في تبويب المنجز ←</a></span>
+    </div>
+    <div class="s-row">
+      <span class="s-badge wait">⏸️ متبقٍّ</span>
+      <span>ذاكرة المقارنة بين التشغيلات («جديد منذ آخر فحص») — تحتاج جدولاً في القاعدة، فتنتظر إذنك.</span>
+    </div>
+  </div>
+
+  <div class="sec-title">② المعايير الثمانية <span class="count">قلب الأداة</span></div>
+  <p class="sec-note">كل معيار مهمّة مستقلّة — تُبنى وتُختبر وتُؤشَّر وحدها. الترتيب حسب الأثر على الزائر.</p>
+
+  <div class="card">
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">ف1</span><span class="t-title">الصورة البارزة تفتح فعلاً</span></div>
+        <div class="t-desc">طلب <code>HEAD</code> على الرابط النهائي بعد <code>mediaSrc</code> — لا على ما هو مخزَّن في القاعدة. البوابة الحالية تتحقّق أن الصورة <b>مضبوطة</b>، لا أنها <b>تفتح</b>؛ وهذي هي الفتحة التي مرّ منها الغلافان الميّتان.</div>
+        <div class="t-meta"><span class="sev red">🔴 حرج</span><span class="tag new">غير مغطّى اليوم</span><span class="tag">الزائر يرى صورة مكسورة</span></div>
+      </div>
+    </div>
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">ف2</span><span class="t-title">القصّات الثلاث تفتح</span></div>
+        <div class="t-desc"><code>HEAD</code> على <code>__16x9</code> و<code>__4x3</code> و<code>__1x1</code>. الأصل قد يكون حيّاً بينما إحدى القصّات ناقصة — وهي التي تظهر في بطاقة قوقل وفي المشاركة.</div>
+        <div class="t-meta"><span class="sev red">🔴 حرج</span><span class="tag new">غير مغطّى اليوم</span><span class="tag">بطاقة البحث والمشاركة تنكسر</span></div>
+      </div>
+    </div>
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">ف3</span><span class="t-title">الرابط العام يرجّع 200 <span class="tag">حسّاس للحالة</span></span></div>
+        <div class="t-desc"><code>HEAD</code> على <code>/articles/{slug}</code>. مقال حالته «منشور» في القاعدة وصفحته ساقطة = أسوأ حالة ممكنة، ولا شيء اليوم يكشفها.<br><b>التوقّع حسب الحالة (ق1):</b> منشور → <code>200</code> · مؤرشف → <code>410</code> · بقيّة الحالات <b>تُتخطّى</b> (لا صفحة حيّة لها بعد، وفحصها يولّد ٤٢ عطلاً وهمياً).</div>
+        <div class="t-meta"><span class="sev red">🔴 حرج</span><span class="tag new">غير مغطّى اليوم</span><span class="tag">صفحة منشورة وميتة</span></div>
+      </div>
+    </div>
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">ف4</span><span class="t-title">صور المتن تفتح</span></div>
+        <div class="t-desc">استخراج <code>&lt;img src&gt;</code> من المحتوى ثم <code>HEAD</code> على عيّنة منها. الفحص الحالي يتأكّد من وجود النص البديل فقط، لا من أن الملف موجود.</div>
+        <div class="t-meta"><span class="sev amber">🟠 عالٍ</span><span class="tag new">غير مغطّى اليوم</span><span class="tag">فجوات داخل المقال</span></div>
+      </div>
+    </div>
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">ف5</span><span class="t-title">شعار الناشر يفتح</span></div>
+        <div class="t-desc"><code>HEAD</code> على شعار العميل الذي تبثّه عقدة <code>Organization</code>. شعار ميت = بيانات منظّمة ناقصة على كل مقالات ذلك العميل دفعة واحدة.</div>
+        <div class="t-meta"><span class="sev amber">🟠 عالٍ</span><span class="tag new">غير مغطّى اليوم</span><span class="tag">يضرب كل مقالات العميل معاً</span></div>
+      </div>
+    </div>
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">ف6</span><span class="t-title">بقايا Cloudinary</span></div>
+        <div class="t-desc">بحث نصّي في حقول المقال وفي السيو المخزَّن عن أي إشارة للحساب الذي ننسحب منه. موجود جزئياً في أدوات متفرّقة، لكن ما أحد يشغّله على كل المقالات مرّة واحدة.</div>
+        <div class="t-meta"><span class="sev amber">🟠 عالٍ</span><span class="tag">اعتماد على حساب ننسحب منه</span></div>
+      </div>
+    </div>
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">ف7</span><span class="t-title">السيو المخبوز مطابق للحيّ</span></div>
+        <div class="t-desc">إعادة توليد البيانات المنظّمة ومقارنتها بالمخزَّن. الانحراف يعني أن قوقل يقرأ نسخة قديمة — وهذا يحصل بصمت بعد أي تعديل على الإعدادات.</div>
+        <div class="t-meta"><span class="sev amber">🟠 عالٍ</span><span class="tag">قوقل يقرأ بيانات قديمة</span></div>
+      </div>
+    </div>
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">ف8</span><span class="t-title">الروابط الخارجية تفتح</span></div>
+        <div class="t-desc"><code>HEAD</code> بمهلة قصيرة على عيّنة من الروابط الخارجية. الأقل أولوية: مواقع الغير تسقط وترجع بلا سبب، فالنتيجة تُعرض كتنبيه لا كعطل.</div>
+        <div class="t-meta"><span class="sev green">🟢 منخفض</span><span class="tag">روابط ميتة تضرّ الثقة</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">③ مراحل البناء <span class="count">بعد قفل القرارين</span></div>
+  <p class="sec-note">كل مرحلة مسؤولية واحدة ونتيجة يمكن التحقّق منها — ولا تبدأ مرحلة قبل أن تُثبت سابقتها.</p>
+
+  <div class="card">
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">م1</span><span class="t-title">تجهيز أداة الطلبات المشتركة</span></div>
+        <div class="t-desc">تصدير <code>batchHeadCheck</code> الموجودة أصلاً في <code>admin/lib/seo/article-validator.ts:595</code> (تزامن ٥ · مهلة ٥ث · تراجع إلى <code>GET</code> عند رفض <code>HEAD</code>) وإضافة كاش داخل التشغيلة للروابط المكرّرة. <b>لا نكتب طبقة شبكة جديدة.</b></div>
+        <div class="t-meta"><span class="tag">إعادة استخدام</span><span class="tag">التحقّق: نفس الدالة تُستدعى من مكانين بلا تكرار</span></div>
+      </div>
+    </div>
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">م2</span><span class="t-title">مُجمِّع الفحص (الخادم)</span></div>
+        <div class="t-desc">إجراء خادم يمرّ على المقالات دفعات (٥ كبقية مهام الصيانة)، يجمع نتائج المعايير، ويرجّع صفوفاً موحّدة: «مقال · المعيار · الرابط المكسور · الخطورة». مع تحقّق صلاحية ومهلة قصوى.</div>
+        <div class="t-meta"><span class="tag">التحقّق: تشغيلة على ٥ مقالات ترجع صفوفاً صحيحة</span></div>
+      </div>
+    </div>
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">م3</span><span class="t-title">تنفيذ فحوص الروابط الحيّة (ف1·ف2·ف3·ف4·ف5)</span></div>
+        <div class="t-desc">جوهر الأداة — الخمسة التي لا يغطّيها شيء اليوم. تُبنى معاً لأنها تتشارك نفس الطبقة ونفس الكاش.</div>
+        <div class="t-meta"><span class="tag">التحقّق: كسر صورة عمداً على اللوكال ورؤيتها في التقرير</span></div>
+      </div>
+    </div>
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">م4</span><span class="t-title">تنفيذ فحصَي المحتوى (ف6·ف7)</span></div>
+        <div class="t-desc">بقايا Cloudinary + انحراف السيو المخبوز. لا طلبات شبكة — قراءة ومقارنة فقط، فهي أرخص مرحلة.</div>
+        <div class="t-meta"><span class="tag">التحقّق: مقال معروف بانحراف يظهر، ونظيف لا يظهر</span></div>
+      </div>
+    </div>
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">م5</span><span class="t-title">فحص الروابط الخارجية (ف8)</span></div>
+        <div class="t-desc">آخر ما يُبنى، ويُعرض كتنبيه لا كعطل. قابل للتأجيل بلا أثر على قيمة الأداة.</div>
+        <div class="t-meta"><span class="tag">اختياري</span></div>
+      </div>
+    </div>
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">م6</span><span class="t-title">الواجهة تحت «المقالات» + الذاكرة</span></div>
+        <div class="t-desc">مدخل جديد في الشريط الجانبي ضمن مجموعة المقالات (ق2): شريط تقدّم · زرّ إيقاف · جدول النتائج مجمَّعاً <b>حسب المقال</b> لا حسب نوع الفحص — فالكاتب يفكّر بمقاله لا بمعاييرنا — مع رابط تحرير مباشر لكل صف وزرّ نسخ. وحفظ نتيجة كل تشغيلة ليقارنها التالي ويقول <b>«جديد منذ آخر فحص»</b> — بدونها تصير الأداة قائمة تُقرأ مرّة وتُنسى.</div>
+        <div class="t-meta"><span class="tag">التحقّق: تشغيلتان متتاليتان، الثانية تميّز الجديد</span><span class="tag">شارة العدد على مدخل الشريط الجانبي</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">④ حراسات لا تُكسر</div>
+  <div class="card">
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">ح1</span><span class="t-title">قراءة فقط — لا إصلاح تلقائي</span></div>
+        <div class="t-desc">الأداة تكشف ولا تصلح. استبدال صورة قرار هوية يخصّك، وحذف رابط قرار محتوى. أي إصلاح يبقى بزرّ منفصل وبمراجعة بشرية.</div>
+      </div>
+    </div>
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">ح2</span><span class="t-title">سقف تزامن ١٠ وكاش للمكرّر</span></div>
+        <div class="t-desc">القصّات الثلاث تشترك في الأصل، وعملاء كثر يتشاركون الشعار — بلا كاش نضاعف الطلبات على شبكة التوزيع بلا فائدة.</div>
+      </div>
+    </div>
+    <div class="task">
+      <input type="checkbox">
+      <div class="task-body">
+        <div class="t-head"><span class="tid">ح3</span><span class="t-title">لا تشغيل على الإنتاج إلا بإذنك</span></div>
+        <div class="t-desc">البناء والاختبار على اللوكال. أول تشغيلة على الإنتاج بأمر صريح منك، وخارج ذروة مصر.</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ==================== DONE ==================== -->
+<section class="panel" id="p-done" hidden>
+
+  <div class="sec-title">القرارات المقفولة <span class="count">٢</span></div>
+  <p class="sec-note">تنتقل هنا بدليلها الخام — لا تُشطب فقط.</p>
+
+  <div class="card">
+    <h2>✅ ق1 — أي المقالات نفحص؟</h2>
+    <div class="ok"><b>القرار (خالد 2026-08-04):</b> كل الحالات — ١٢٧ مقالاً، لا المنشور وحده.</div>
+    <h3>الدليل الخام — التوزيع الفعلي من قاعدة اللوكال</h3>
+    <pre>articles by status:
+   PUBLISHED            85
+   SCHEDULED            14
+   AWAITING_APPROVAL    11
+   WRITING               9
+   DRAFT                 7
+   ARCHIVED              1
+   TOTAL               127
+
+with featured image: 110
+clients (publisher logos, deduped): 30</pre>
+    <h3>تصحيح رقم قدّمته خطأً</h3>
+    <p>
+      قلتُ «المنشور = ١٢٧» وهذا <b>غلط</b> — ١٢٧ هو الإجمالي، والمنشور <b>85</b>.
+      فالفارق بين الخيارين <b>+49%</b> لا الضِعف الذي حذّرتُ منه، واختيار «كل الحالات» أرخص مما صوّرته.
+    </p>
+    <h3>القيمة المضافة</h3>
+    <p>اكتشاف الغلاف الميت وهو <b>مسودّة</b> أفضل من اكتشافه بعد النشر — نُصلحه قبل أن يراه أحد بدل أن نلاحقه.</p>
+    <h3>ضبط لازم ترتّب عليه</h3>
+    <p>
+      <b>ف3</b> صار <b>حسّاساً للحالة</b>: منشور → <code>200</code> · مؤرشف → <code>410</code> ·
+      وبقيّة الحالات <b>تُتخطّى</b> — بدون هذا الضبط يطلع <b>٤٢ عطلاً وهمياً</b> لصفحات لم تُنشر بعد.
+      بقيّة المعايير السبعة تعمل على كل الحالات بلا استثناء.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>✅ ق2 — أين تعيش الأداة؟</h2>
+    <div class="ok"><b>القرار (خالد 2026-08-04):</b> تحت «المقالات» في الشريط الجانبي — لا في صفحة قاعدة البيانات.</div>
+    <h3>السبب بكلماته</h3>
+    <div class="quote">«تكون الصيانة هذه تحت الـ articles عشان الـ content يعرفوا مشاكلهم.»</div>
+    <p>
+      الجمهور هنا <b>فريق المحتوى</b> لا مسؤول الصيانة — والكاتب لن يفتح صفحة قاعدة بيانات ليكتشف أن غلافه مات.
+      وضعها في مساره اليومي يجعل الاكتشاف تلقائياً.
+    </p>
+    <h3>لماذا لا تخالف قاعدة Run-All</h3>
+    <p>
+      تلك القاعدة تحكم <b>صيانة قاعدة البيانات</b> (تنظيف · ترحيل · أيتام). وهذي أداة <b>تحرير محتوى</b>
+      تُقرأ وتُعالَج يدوياً، لا مهمّة صيانة دورية. الاختلاف في <b>الجمهور</b>، لا في التصنيف التقني.
+    </p>
+    <h3>أثره على التنفيذ</h3>
+    <p>
+      جدول النتائج يُجمَّع <b>حسب المقال</b> لا حسب نوع الفحص — الكاتب يفكّر بمقاله لا بمعاييرنا —
+      مع رابط تحرير مباشر لكل صف، وشارة عدد على مدخل الشريط الجانبي.
+    </p>
+  </div>
+
+  <div class="sec-title">🎯 أول تشغيلة حيّة <span class="count">2026-08-04</span></div>
+
+  <div class="card">
+    <h2>الأداة وجدت الغلافين الميتين بنفسها</h2>
+    <div class="ok">
+      <b>هذا كان الاختبار الحقيقي.</b> الغلافان اللذان بقيا منشورَين أسابيع بلا أن يصرخ شيء —
+      واللذان اكتُشفا <b>بالصدفة</b> أثناء الترحيل — ظهرا في أول تشغيلة، بلا أن أخبرها أحد بهما.
+    </div>
+    <h3>النتيجة النهائية بعد تشديد التحقّق</h3>
+    <pre>127/127 مقالاً · 958 طلباً
+
+🔴 حرج    2   ← الغلافان الميتان، مؤكَّدان 404
+🟠 عالٍ   2   ← بقايا الحساب القديم على نفس المقالين
+🟢 منخفض  0</pre>
+    <div class="warn">
+      <b>التشغيلة الأولى أعطت ١٦ ملاحظة روابط — كلها كانت خاطئة</b> وأُلغيت.
+      التفصيل في القسم التالي «ثلاثة بلاغات كاذبة».
+    </div>
+    <h3>الحرجان — وهما بالضبط ما توقّعناه</h3>
+    <table>
+      <tr><th>المقال</th><th>الحالة</th><th>الملاحظة</th></tr>
+      <tr>
+        <td><b>التقويم الهجري</b></td><td>منشور</td>
+        <td>الصورة البارزة لا تفتح (<code>404</code>) + ما زالت على الحساب القديم</td>
+      </tr>
+      <tr>
+        <td><b>كأس العالم 2026 كرة القدم</b></td><td>منشور</td>
+        <td>الصورة البارزة لا تفتح (<code>404</code>) + ما زالت على الحساب القديم</td>
+      </tr>
+    </table>
+    <p>الرابطان المكسوران يشيران إلى الحساب القديم للصور — وهذا يفسّر لماذا لم يمسّهما ترحيل Bunny.</p>
+    <h3>ما لم يظهر — وهذه أيضاً نتيجة</h3>
+    <p>
+      صفر ملاحظة على: القصّات · صفحات المقالات · صور المتن · شعارات الناشرين · انحراف بيانات قوقل.
+      يعني ١٢٥ مقالاً من ١٢٧ سليمة تماماً من ناحية الوسائط.
+    </p>
+    <p><b>لقطة الشاشة:</b> <code>.playwright-mcp/article-health-first-run.png</code></p>
+  </div>
+
+  <div class="card">
+    <h2>📚 مقارنة المعايير بالتوثيق الرسمي (2026-08-04)</h2>
+    <p>
+      بأمر خالد: «ارجع للمصادر الرسمية وقارن اللي عملته». قورن كل معيار من العشرة بتوثيق
+      Google Search Central. <b>ثمانية صحّت، واثنان كانا مخالفَين للتوثيق وأُصلحا.</b>
+    </p>
+
+    <h3>❌ مخالفة ١ — رمز 5xx كان يُحسب «ميتاً»</h3>
+    <div class="quote">"5xx codes prompt Google's crawlers to <b>temporarily</b> slow down with crawling."</div>
+    <p>
+      التوثيق يصنّف الـ5xx <b>عطلاً مؤقّتاً</b>، وكودي كان يحكم عليه بالموت.
+      موقع عنده انقطاع ساعة واحدة كان سيظهر في التقرير كصفحة انشالت.
+      <b>الإصلاح:</b> 404 و410 فقط تعني «غير موجود» — كما ينصّ التوثيق حرفياً — و5xx لا يُبلَّغ عنه إطلاقاً.
+    </p>
+
+    <h3>❌ مخالفة ٢ — اشتراط رمز 410 بعينه للمقال المؤرشف</h3>
+    <div class="quote">"All <code>4xx</code> errors, except <code>429</code>, are treated the same: Google crawlers inform the next processing system that the content doesn't exist."</div>
+    <p>
+      كنتُ أشترط 410 بالضبط، فمقال مؤرشف يردّ 404 — وهو سلوك سليم تماماً — كان يُبلَّغ عنه <b>كخطر</b>.
+      410 تفضيل داخلي عندنا لا مطلب من قوقل، والتفضيل لا يُقدَّم كعطل.
+      <b>الإصلاح:</b> المؤرشف يُسأل «هل اختفى؟» وأي 4xx يكفي. العطل الحقيقي الوحيد: مؤرشف <b>ما زال يفتح</b>.
+    </p>
+
+    <h3>✅ ما تأكّد صحّته</h3>
+    <table>
+      <tr><th>المعيار</th><th>النصّ الرسمي</th></tr>
+      <tr><td>الصورة الرئيسية</td><td>"Image URLs must be crawlable and indexable."</td></tr>
+      <tr>
+        <td>النسخ الثلاث</td>
+        <td>"…with these aspect ratios: <b>16x9, 4x3, and 1x1</b>" — <b>مطابقة حرفياً</b> لما نولّده</td>
+      </tr>
+      <tr><td>معلومات قوقل قديمة</td><td>"Images must represent the marked up content."</td></tr>
+      <tr><td>شعار الشركة</td><td>"The image URL must be crawlable and indexable… 112x112px, at minimum."</td></tr>
+      <tr><td>روابط لصفحاتنا</td><td>"Every page you care about should have a link from at least one other page on your site."</td></tr>
+    </table>
+
+    <h3>🔍 ثلاثة معايير بلا سند خارجي — مذكورة بصراحة</h3>
+    <ul>
+      <li><b>صور الحساب القديم</b> — قاعدة داخلية بحتة (قرار الانسحاب)، ولا يُدّعى لها مصدر.</li>
+      <li><b>المصادر</b> — قوقل لم ينصّ على أن المصدر الميت يضرّ؛ الدرجة اجتهاد تحريري.</li>
+      <li><b>روابط لمواقع ثانية</b> — لا نصّ رسمي بأن الربط بصفحة معطّلة يضرّ الصفحة الرابطة، ولهذا درجتها «بسيط» وليست أعلى.</li>
+    </ul>
+
+    <h3>الأثر على الواجهة</h3>
+    <p>
+      كل معيار في النافذة صار يعرض <b>النصّ الرسمي الذي يستند إليه ومصدره</b>، والمعايير الثلاثة
+      بلا سند تقول ذلك صراحةً — فلا أحد مضطرّ لتصديق التقرير على كلمته.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>🚨 ثلاثة بلاغات كاذبة — كُشفت وأُصلحت</h2>
+    <div class="warn">
+      <b>قاعدة خالد (2026-08-04):</b> «التقرير هذا ممكن الموظف يتخصم عليه · ممكن الكاتب يتفصل —
+      تأكد من كل معلومة في التقرير.» كل ما تحت هذا السطر نتيجة مباشرة لتلك القاعدة.
+    </div>
+
+    <h3>① نتيجة غير قابلة للتكرار</h3>
+    <p>
+      تشغيلتان على <b>نفس البيانات</b> أعطتا <b>١٦</b> ثم <b>٢</b> ملاحظة روابط. أي أن الأداة كانت
+      تلتقط أعطالاً عابرة وتقدّمها كحقيقة. الإصلاح: <b>ثلاث محاولات</b> بتباعد زمني قبل أي حكم ·
+      المهلة من ٥ إلى ١٢ ثانية · هوية متصفّح حقيقية في الطلب.
+    </p>
+
+    <h3>② رابط سليم عُرض كمشكلة — <code>vision2030.gov.sa</code></h3>
+    <p>
+      ظهر بـ<code>403</code> تحت «تعذّر التحقّق»، وخالد فتحه فاشتغل. الموقع محمي بجدار يفحص بصمة
+      المتصفّح الكاملة ويردّ <b>403 للروبوت و200 للإنسان</b>.
+    </p>
+    <p><b>القرار:</b> بند «تعذّر التحقّق» <b>أُلغي بالكامل</b>. ما لا يثبت لا يُذكر إطلاقاً —
+      وجوده في التقرير وحده يجعل الرابط السليم يبدو عطلاً.</p>
+    <p><b>وحارس ثانٍ للروابط التي لا نملكها:</b> إذا رجّعت صفحةٌ خطأً، تُسأل <b>الصفحة الرئيسية للموقع</b>
+      أيضاً. لو رفضنا الموقع نفسه → الجدار هو المتكلّم لا الصفحة → سكوت. لا يُبلَّغ إلا لو الموقع يعمل
+      والصفحة وحدها ميتة.</p>
+
+    <h3>③ ملفّ LinkedIn حيّ صُنّف ميتاً — <code>999</code></h3>
+    <p>
+      رمز <code>999</code> اختراع من LinkedIn لصدّ الفحص الآلي، وليس رمزاً قياسياً. وكودي كان يقول
+      «أي رمز ≥ 500 = خادم معطّل» — و999 أكبر من 500، فأدان صفحة حيّة.
+    </p>
+    <p><b>الإصلاح:</b> نطاق الخطأ محدود بـ<code>500–599</code> فقط، و<code>999</code> أُضيف صراحةً
+      لقائمة «جدار يرفض الفحص». أي رمز خارج النطاقات القياسية = جدار، لا موت.</p>
+
+    <h3>④ «Modonty» عُرض كاسم الكاتب</h3>
+    <p>
+      سحبتُ <code>Article.author</code> وسمّيته «الكاتب» — وهذه العلاقة هي <b>توقيع schema.org</b>
+      ومثبَّتة عمداً على «مُدَوَّنَتِي» في كل مقال (منصوص عليه في تعليق السكيما). فصار التقرير يقول
+      إن مدوّنتي كتبت مقال العميل.
+    </p>
+    <p>
+      <b>الحقيقة من السكيما:</b> المقال <b>لا يحمل حقل كاتب بشري إطلاقاً</b>. أقرب حقل حقيقي هو
+      <code>Client.editor → Staff</code> = «الموظّف المسؤول عن مقالات هذا العميل».
+    </p>
+    <p><b>الإصلاح:</b> الشارة صارت «<b>المحرّر: فلان</b>» من ذلك الحقل، ولا تظهر إطلاقاً إن لم يكن
+      محدَّداً — <b>فراغ أصدق من اسم خاطئ</b> في تقرير كهذا.</p>
+
+    <h3>القاعدة التي يلتزمها الملف الآن</h3>
+    <div class="ok">
+      لا يُبلَّغ عن شيء إلا إذا ردّ الخادم صراحةً بأنه <b>غير موجود</b> —
+      <b>ثلاث مرات</b> — و<b>موقعه يعمل</b>. وما عدا ذلك: صمت.
+    </div>
+    <h3>التحقّق بعد الإصلاح</h3>
+    <pre>vision2030 · mayoclinic · cureus · linkedin  →  اختفت كلها
+"المحرّر: Modonty"                          →  اختفت
+الباقي: مقالان فقط، كلاهما 404 مؤكَّد وتقدر تفتحه بنفسك</pre>
+  </div>
+
+  <div class="sec-title">المنجَز من البناء <span class="count">٦ من ٦</span></div>
+
+  <div class="card">
+    <h2>✅ م1 — طبقة الطلبات المشتركة</h2>
+    <p>
+      <code>batchHeadCheck</code> كانت دالّة <b>خاصة</b> داخل <code>article-validator.ts</code>.
+      نقلتها كما هي إلى ملف مستقلّ وربطت الفاحص القديم به — فصار في المشروع <b>تطبيق واحد</b> لا اثنان.
+    </p>
+    <h3>الملف</h3>
+    <pre>admin/lib/seo/head-check.ts        (جديد)
+admin/lib/seo/article-validator.ts (حُذفت منه النسخة المكرّرة + استيراد الجديد)</pre>
+    <h3>الإضافة التي احتاجها الفحص</h3>
+    <p>
+      <code>createHeadChecker()</code> — كاش عمره <b>تشغيلة واحدة</b>. القصّات الثلاث تتفرّع من أصل واحد،
+      وثلاثون مقالاً يتشاركون شعار ناشر واحد؛ بلا كاش نضاعف الطلبات بلا فائدة. وجعلته <b>لكل تشغيلة</b> لا
+      كاشاً عاماً عمداً — العام يسرّب أحكاماً قديمة بين التشغيلات وبين الطلبات على خادم دافئ.
+    </p>
+    <p>الطلبات المتزامنة لنفس الرابط تتشارك وعداً واحداً، فلا يخرج طلبان لنفس الملف داخل الدفعة.</p>
+  </div>
+
+  <div class="card">
+    <h2>✅ م3 — محرّك الفحص (ف1 → ف5)</h2>
+    <h3>الملف</h3>
+    <pre>admin/lib/health/article-health.ts  (جديد)</pre>
+    <h3>قرارات دقّة اتُّخذت أثناء الكتابة</h3>
+    <table>
+      <tr><th>الحالة</th><th>القرار</th><th>لماذا</th></tr>
+      <tr>
+        <td>مقال بلا صورة بارزة</td>
+        <td>يُتخطّى بصمت</td>
+        <td>«لا توجد صورة» مسؤولية بوابة النشر — تكرارها هنا ضجيج</td>
+      </tr>
+      <tr>
+        <td>صورة على Cloudinary</td>
+        <td>لا تُفحص قصّاتها</td>
+        <td>القصّات ملفات مُولَّدة على Bunny فقط؛ Cloudinary يقصّ لحظياً — فاشتقاق <code>__16x9</code> له يخترع رابطاً لم يوجد قط</td>
+      </tr>
+      <tr>
+        <td>مسودّة / مجدولة</td>
+        <td>ف3 يُتخطّى</td>
+        <td>لا صفحة حيّة لها بعد — فحصها يولّد ٤٢ عطلاً وهمياً</td>
+      </tr>
+      <tr>
+        <td>مقال مؤرشف</td>
+        <td>يُتوقَّع <code>410</code> لا 404</td>
+        <td><code>proxy.ts</code> يخدم 410 حقيقياً للروابط المتقاعدة</td>
+      </tr>
+      <tr>
+        <td>صور <code>data:</code> في المتن</td>
+        <td>تُتخطّى</td>
+        <td>تحمل بايتاتها معها — ما فيه شي يُطلَب</td>
+      </tr>
+      <tr>
+        <td>مقال فيه ٥٠ صورة</td>
+        <td>عيّنة ١٠</td>
+        <td>مقال واحد ثقيل يجب ألّا يعطّل التشغيلة كلها</td>
+      </tr>
+    </table>
+    <p>كل روابط المقال تُجمَع أولاً ثم تُطلَب <b>دفعة واحدة</b> — عشان الكاش يشتغل على مستوى المقال لا الفحص المفرد.</p>
+  </div>
+
+  <div class="card">
+    <h2>✅ م2 — إجراء الدفعات</h2>
+    <h3>الملف</h3>
+    <pre>admin/app/(dashboard)/articles/health/actions/run-health-check.ts  (جديد)</pre>
+    <h3>لماذا الدفعة ٢٠ لا ٥</h3>
+    <p>
+      بقيّة مهام الصيانة تمشي ٥، لكن <b>الكاش يعيش داخل نداء واحد</b>. دفعة أكبر تعني أن شعار الناشر
+      المشترك بين عشرين مقالاً يُطلَب <b>مرّة</b> لا أربعاً. الترتيب ثابت بـ<code>id</code> فلا تتداخل الدفعات
+      ولا يسقط صفّ في المنتصف.
+    </p>
+    <h3>الحراسات المطبَّقة</h3>
+    <ul>
+      <li>تحقّق صلاحية أولاً — لا تشغيل بلا جلسة.</li>
+      <li>سقف الدفعة ٥٠ وسقف التزامن ١٠ — لا يمكن للمستدعي أن يطلب دفعة تُسقط الخادم.</li>
+      <li>يرجّع <code>requests</code> = الطلبات الفعلية بعد الكاش، لا المتوقّعة — رقم صادق للتقدّم.</li>
+      <li><b>قراءة فقط</b> — ولا عملية كتابة واحدة في المسار كلّه.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>✅ م4 · م5 — فحوص المحتوى والروابط الخارجية</h2>
+    <h3>ف6 — بقايا الحساب القديم: قرار دقّة مهم</h3>
+    <p>
+      عمود <code>url</code> في جدول الوسائط <b>يحتفظ بالقيمة القديمة عمداً</b> (حقل مزدوج، صفر فقدان).
+      فلو بحثتُ في المخزَّن لأبلغتُ عن <b>كل</b> صورة مُرحَّلة كأنها مشكلة.
+      الصح: أفحص <b>الرابط المُقدَّم للزائر فعلاً</b> — فالصف الذي له نسخة على Bunny نظيف مهما بقي في القاعدة.
+      لهذا خرج الرقم <b>2</b> لا 400.
+    </p>
+    <h3>ف7 — انحراف بيانات قوقل</h3>
+    <p>
+      لم أُعِد توليد السيو للمقارنة (مكلف ويكرّر فحصاً موجوداً في بوابة النشر). بدلاً منه أستخرج
+      روابط الصور من البيانات المخزَّنة وأقارنها بالصورة الحالية <b>باسم الملف المجرَّد</b> —
+      بلا امتداد وبلا لاحقة القصّة، وإلا لأنذر كل مقال زوراً لمجرّد اختلاف <code>__16x9</code> عن الأصل.
+    </p>
+    <h3>ف8 — الروابط الخارجية</h3>
+    <p>مصنّفة <b>منخفضة</b> دائماً: موقع الغير يسقط ويرجع، فالحكم النهائي بشري.</p>
+  </div>
+
+  <div class="card">
+    <h2>✅ م6 — الشاشة</h2>
+    <h3>الملفات</h3>
+    <pre>admin/app/(dashboard)/articles/health/page.tsx                    (جديد)
+admin/app/(dashboard)/articles/health/components/health-runner.tsx (جديد)
+admin/components/admin/sidebar.tsx        (مدخل جديد تحت المقالات)
+admin/lib/health/article-health-types.ts  (جديد — انظر أدناه)</pre>
+    <h3>عطل حقيقي ظهر في أول تشغيل وأُصلح</h3>
+    <p>
+      البناء سقط: <code>'server-only' cannot be imported from a Client Component</code>.
+      السبب أن الشاشة استوردت المسمّيات من المحرّك، والمحرّك يسحب عميل Bunny — فانجرّ كود خادم إلى المتصفّح.
+      الحل: فصل الأنواع والمسمّيات في ملف محايد تستورده الشاشة، ويبقى المحرّك خادماً خالصاً.
+    </p>
+    <h3>زرّ «معايير الفحص»</h3>
+    <p>
+      نافذة تشرح المعايير العشرة مرتّبةً حسب الخطورة — لكل معيار <b>ماذا يقيس</b> و<b>ماذا يعني سقوطه</b>،
+      ومعنى كل درجة (حرج · عالٍ · منخفض). لا شيء غير ذلك: أضفتُ في نسخة أولى قسمَين عن شروط التسجيل
+      وحدود الأداة لم يطلبهما خالد، فحُذفا («لا تضيف حاجة من راسك» — 2026-08-04).
+    </p>
+    <p>
+      <b>مصدر واحد:</b> النافذة والمحرّك يقرآن نفس الثابت <code>HEALTH_CHECK_INFO</code> — فتغيير درجة
+      معيار ينقل الملاحظة وشرحها معاً، ويستحيل أن يشرح التقرير قاعدةً غير التي حكم بها.
+    </p>
+
+    <h3>قرار عرض</h3>
+    <p>
+      النتائج مجمَّعة <b>حسب المقال</b> لا حسب نوع الفحص — الكاتب يفكّر بمقاله لا بمعاييرنا —
+      مع زرّ تحرير لكل مقال، ورابط «افتح» لكل ملاحظة يفتح الملف المكسور نفسه، وزرّ نسخ التقرير كاملاً.
+      والترتيب: الأخطر أولاً.
+    </p>
+  </div>
+
+
+</section>
+
+<!-- ==================== BRIEF ==================== -->
+<section class="panel" id="p-brief" hidden>
+
+  <div class="card">
+    <h2>لماذا هذه الأداة أصلاً</h2>
+    <p>
+      غلافا «التقويم الهجري» و«كأس العالم 2026» كانا يرجّعان <b>404</b> والمقالان <b>منشوران</b>.
+      بقيا كذلك أسابيع ولم يصرخ شيء: لا الأدمن، ولا صفحة السيو، ولا سجل الأخطاء.
+      اكتُشفا <b>بالصدفة</b> — لأن مهمّة الترحيل حاولت تنزيل الملف ففشلت.
+    </p>
+    <div class="warn">
+      <b>القاعدة المستخلصة:</b> لا نعتمد على مهمّة عابرة لتكشف عطلاً دائماً.
+      أي صورة تموت غداً ستمرّ بنفس الصمت تماماً.
+    </div>
+    <p>
+      ولهذا هي <b>حاجب لمرحلة الترحيل</b>: ننقل مئات الصور إلى مضيف جديد، ونحتاج طريقة نتحقّق بها
+      أن شيئاً لم ينكسر — لا أن ننتظر عميلاً يشتكي.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>الفتحة بالضبط — ما الذي لا يُفحص اليوم</h2>
+    <p>قرأتُ البوابة الحالية قبل اقتراح أي معيار. <code>admin/lib/seo/article-validator-db.ts</code> فيها <b>٢٢ فحصاً</b> تشتغل قبل النشر، وكلها فحوص <b>قاعدة بيانات</b>:</p>
+    <ul>
+      <li>الحالة والرابط اللطيف · المؤلف والناشر · التواريخ</li>
+      <li>الصورة البارزة <b>مضبوطة</b> · مقاسها ≥ ٥٠ ألف بكسل · لها نص بديل</li>
+      <li>صور المتن لها نص بديل · نصوص الروابط وصفية</li>
+      <li>البيانات المنظّمة مخزّنة وصحيحة وحديثة · الرابط المعياري · ذاكرة الميتاداتا</li>
+    </ul>
+    <div class="quote">
+      ولا <b>طلب شبكة واحد</b> في الاثنتين والعشرين. تسأل «هل فيه صورة؟» ولا تسأل أبداً «هل تفتح؟».
+    </div>
+    <p>
+      فالفرق بين الأداتين واضح ولا تداخل بينهما:
+      <b>البوابة تمنع النشر الناقص</b> — و<b>الفاحص يكشف التعفّن بعد النشر</b>.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>ما نعيد استخدامه بدل كتابته</h2>
+    <table>
+      <tr><th>الموجود</th><th>مكانه</th><th>كيف نستفيد</th></tr>
+      <tr>
+        <td><code>batchHeadCheck</code></td>
+        <td><code>admin/lib/seo/article-validator.ts:595</code></td>
+        <td>طبقة الطلبات جاهزة (تزامن ٥ · مهلة ٥ث · تراجع إلى <code>GET</code>) — نصدّرها فقط</td>
+      </tr>
+      <tr>
+        <td><code>mediaSrc</code></td>
+        <td><code>dataLayer/lib/media-src.ts</code></td>
+        <td>يعطي الرابط <b>النهائي</b> الذي يراه الزائر — الفحص يجب أن يكون عليه لا على الخام</td>
+      </tr>
+      <tr>
+        <td>نمط الدفعات في Run-All</td>
+        <td>صفحة <code>/database</code></td>
+        <td>شريط التقدّم وزرّ الإيقاف وحجم الدفعة ٥ — نفس الطقس المعتاد</td>
+      </tr>
+      <tr>
+        <td><code>fix-broken-media.ts</code></td>
+        <td><code>admin/app/(dashboard)/media/actions/</code></td>
+        <td>يفحص صورة مفردة في مكتبة الوسائط — منفصل عن المقالات، نتركه كما هو</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>الكلفة والزمن</h2>
+    <p>على المنشور فقط (١٢٧ مقالاً) الحساب التقريبي:</p>
+    <pre>الصورة البارزة        127 طلباً
+القصّات الثلاث        381 طلباً  (تُخفَّض بالكاش — نفس الأصل)
+صور المتن (عيّنة 5)   ~400 طلب
+شعار الناشر           30 طلباً   (بالكاش: عميل واحد = طلب واحد)
+الرابط العام          127 طلباً
+─────────────────────────────
+الإجمالي              ~700 طلب  ≈ دقيقتان عند تزامن 10</pre>
+    <div class="ok">
+      كلها طلبات <code>HEAD</code> على مضيفنا وشبكة التوزيع — بلا تكلفة خارجية وبلا حصص واجهات برمجية.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>قواعد هذا الملف</h2>
+    <ul>
+      <li>ثلاثة تبويبات: <b>قيد التنفيذ</b> (المفتوح افتراضياً) · <b>المنجز</b> · <b>الخلاصة</b>.</li>
+      <li>البند المنجز ينتقل للمنجز <b>بدليله الخام</b> — لا يُشطب فقط.</li>
+      <li>يُحدَّث تلقائياً بعد كل بند بلا طلب: التأشير + العدّاد + الدليل + التاريخ. البند غير المؤشَّر = غير منتهٍ.</li>
+      <li>مرجع البند في قائمة المهام: <b>82</b> · التفاصيل التقنية في <code>documents/tasks/TECH-NOTES.md</code>.</li>
+    </ul>
+  </div>
+
+</section>
+
+<footer>فاحص صحّة المقالات · نسخة 1 · مُدَوَّنَتِي · 2026-08-04 — حاجب لمرحلة ترحيل الإنتاج</footer>
+</div>
+
+<script>
+(function () {
+  // Tabs
+  var tabs = document.querySelectorAll('.tab');
+  function show(name) {
+    tabs.forEach(function (x) { x.setAttribute('aria-selected', String(x.dataset.p === name)); });
+    document.querySelectorAll('.panel').forEach(function (p) { p.hidden = true; });
+    document.getElementById('p-' + name).hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { show(t.dataset.p); });
+  });
+  // In-page links that jump to another tab (status block → Done).
+  document.querySelectorAll('[data-goto]').forEach(function (a) {
+    a.addEventListener('click', function (e) { e.preventDefault(); show(a.dataset.goto); });
+  });
+
+  // Counters — a task is "done" only when its box is checked.
+  var boxes = document.querySelectorAll('.task input[type=checkbox]');
+  function refresh() {
+    var done = 0;
+    boxes.forEach(function (b) {
+      b.closest('.task').classList.toggle('done', b.checked);
+      if (b.checked) done++;
+    });
+    document.getElementById('done-n').textContent = done;
+    document.getElementById('all-n').textContent = boxes.length;
+    document.getElementById('c-todo').textContent = boxes.length - done;
+    document.getElementById('c-done').textContent = done;
+  }
+
+  // ---- Persistence -------------------------------------------------------
+  // The first version stored nothing, so Khalid's answers lived only in the DOM
+  // and vanished on reload — a decision file whose answers evaporate is useless
+  // (2026-08-04). Keyed by task id / radio name so edits to prose never shift state.
+  var KEY = 'modonty.article-health-checker.v1';
+  function idOf(el) {
+    if (el.type === 'radio') return 'r:' + el.name + ':' + Array.prototype.indexOf.call(
+      document.querySelectorAll('input[name="' + el.name + '"]'), el);
+    var tid = el.closest('.task').querySelector('.tid');
+    return 't:' + (tid ? tid.textContent.trim() : '?');
+  }
+  var inputs = document.querySelectorAll('.task input[type=checkbox], .opt input[type=radio]');
+  function save() {
+    var state = {};
+    inputs.forEach(function (el) { if (el.checked) state[idOf(el)] = true; });
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  function load() {
+    var state = {};
+    try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+    inputs.forEach(function (el) { if (state[idOf(el)]) el.checked = true; });
+  }
+  inputs.forEach(function (el) {
+    el.addEventListener('change', function () { save(); refresh(); });
+  });
+  load();
+  refresh();
+
+  // ---- Copy state --------------------------------------------------------
+  // The bridge back to me: I cannot read his browser, so he copies and pastes.
+  var btn = document.getElementById('copy-state');
+  if (btn) {
+    btn.addEventListener('click', function () {
+      var lines = ['حالة ملف فاحص صحّة المقالات:', ''];
+      document.querySelectorAll('.decision').forEach(function (d) {
+        var q = d.querySelector('h3').textContent.trim();
+        var picked = null;
+        d.querySelectorAll('.opt').forEach(function (o) {
+          if (o.querySelector('input').checked) picked = o.querySelector('.opt-t').textContent.trim();
+        });
+        lines.push('• ' + q + ' → ' + (picked || '(بلا إجابة)'));
+      });
+      lines.push('');
+      var checked = [];
+      boxes.forEach(function (b) {
+        if (b.checked) {
+          var t = b.closest('.task');
+          checked.push(t.querySelector('.tid').textContent.trim() + ' ' +
+                       t.querySelector('.t-title').textContent.trim());
+        }
+      });
+      lines.push(checked.length ? 'مؤشَّر (' + checked.length + '): ' + checked.join(' · ')
+                                : 'ما في بند مؤشَّر.');
+      var txt = lines.join('\n');
+      navigator.clipboard.writeText(txt).then(function () {
+        btn.textContent = '✓ انتُسخ — الصقه لكلود';
+        setTimeout(function () { btn.textContent = '📋 انسخ حالة الملف'; }, 2200);
+      }, function () {
+        window.prompt('انسخ النص التالي:', txt);
+      });
+    });
+  }
+
+  var reset = document.getElementById('reset-state');
+  if (reset) {
+    reset.addEventListener('click', function () {
+      if (!window.confirm('تصفير كل الإجابات والتأشيرات؟')) return;
+      try { localStorage.removeItem(KEY); } catch (e) {}
+      inputs.forEach(function (el) { el.checked = false; });
+      refresh();
+    });
+  }
+})();
+</script>
+</body>
+</html>

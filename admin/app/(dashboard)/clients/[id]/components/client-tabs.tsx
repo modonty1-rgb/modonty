@@ -246,6 +246,9 @@ export function ClientTabs({
 
   // KPI mini-badges (moved off the big cards to reclaim vertical space) — sit on the tab row.
   const totalArticles = client._count.articles;
+  // "Total Articles" counts every status, so 8 here can sit next to 3 live on modonty and
+  // read like a bug. Publishing the split kills the doubt — derived from the rows we already have.
+  const publishedArticles = articles.filter((a) => a.status === "PUBLISHED").length;
   const industryName = client.industry?.name ?? "—";
   const memberSince = new Intl.DateTimeFormat("ar-SA", { year: "numeric", month: "long" }).format(
     new Date(client.createdAt),
@@ -525,6 +528,7 @@ export function ClientTabs({
           client={client}
           articlesThisMonth={articlesThisMonth}
           totalArticles={articles.length}
+          publishedArticles={publishedArticles}
         />
         <ClientArticles
           articles={articles.map((a) => ({ ...a, status: a.status as ArticleStatus }))}

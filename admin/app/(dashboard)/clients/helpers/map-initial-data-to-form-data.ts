@@ -31,6 +31,8 @@ export function mapInitialDataToFormData(
     paymentStatus: "PENDING",
     isFeatured: false,
     isInternal: false,
+    // On by default — a new client sees the schedule like everyone else.
+    showSchedule: true,
     billingCycle: "annual",
     // Ensure all string fields have empty string defaults
     description: "",
@@ -181,6 +183,9 @@ export function mapInitialDataToFormData(
     subscriptionStatus: initialData.subscriptionStatus || "PENDING",
     paymentStatus: initialData.paymentStatus || "PENDING",
     isFeatured: (initialData as { isFeatured?: boolean }).isFeatured ?? false,
+    // `?? true` matters: a client saved before this field existed has it undefined, and
+    // reading that as false would tick the box off on a tab they can currently see.
+    showSchedule: (initialData as { showSchedule?: boolean }).showSchedule ?? true,
     isInternal: (initialData as { isInternal?: boolean }).isInternal ?? false,
     billingCycle: ((initialData as { billingCycle?: "monthly" | "annual" }).billingCycle ?? "annual"),
   };

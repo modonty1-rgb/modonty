@@ -43,7 +43,6 @@ export interface PageContentInput {
   teamMembers: TeamMemberInput[];
   achievements: AchievementInput[];
   credentials: CredentialInput[];
-  introVideoUrl: string | null;
 }
 
 async function getClientId(): Promise<string | null> {
@@ -78,7 +77,6 @@ export async function updatePageContent(data: PageContentInput): Promise<Result>
   const credentials = (data.credentials ?? [])
     .map((c) => ({ name: (c.name ?? "").trim(), authority: clean(c.authority), year: clean(c.year), url: clean(c.url) }))
     .filter((c) => c.name.length > 0);
-  const introVideoUrl = clean(data.introVideoUrl);
 
   // Read current achievement images BEFORE the write, to delete the ones dropped.
   const existing = await db.client.findUnique({
@@ -97,7 +95,6 @@ export async function updatePageContent(data: PageContentInput): Promise<Result>
         teamMembers: { set: teamMembers },
         achievements: { set: achievements },
         credentials: { set: credentials },
-        introVideoUrl,
       },
     });
 

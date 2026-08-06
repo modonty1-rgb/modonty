@@ -8,6 +8,8 @@ import {
   Newspaper,
   PenLine,
   Images,
+  Film,
+  Video,
   ImagePlus,
   LayoutTemplate,
   Megaphone,
@@ -26,6 +28,7 @@ import {
   Receipt,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
+import { PublicPageLink } from "./public-page-link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +43,12 @@ interface SidebarProps {
   pendingPageFaqsCount: number;
   pendingClientCommentsCount: number;
   pendingClientReviewsCount: number;
+  galleryCount: number;
+  reelsCount: number;
+  videosCount: number;
   isYmyl: boolean;
+  ymylComplete: boolean;
+  publicPageUrl: string | null;
   isCollapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
 }
@@ -56,7 +64,12 @@ export function Sidebar({
   pendingPageFaqsCount,
   pendingClientCommentsCount,
   pendingClientReviewsCount,
+  galleryCount,
+  reelsCount,
+  videosCount,
   isYmyl,
+  ymylComplete,
+  publicPageUrl,
   isCollapsed: isCollapsedProp,
   onCollapsedChange,
 }: SidebarProps) {
@@ -126,13 +139,19 @@ export function Sidebar({
         </Button>
       </div>
 
+      {/* Identity, not navigation — it sits with the client's name and stays put while
+          the nav below scrolls. */}
+      <div className={cn("border-b border-border", isCollapsed ? "px-2 py-2" : "px-2 py-2.5")}>
+        <PublicPageLink url={publicPageUrl} variant="sidebar" isCollapsed={isCollapsed} />
+      </div>
+
       <nav className="flex-1 space-y-0.5 overflow-y-auto p-2">
         <SidebarNavItem
           href="/dashboard/profile"
           icon={Building2}
           label={ar.nav.profile}
           badgeLabel={isYmyl ? "YMYL" : undefined}
-          badgeVariant={isYmyl ? "danger" : undefined}
+          badgeVariant={isYmyl ? (ymylComplete ? "success" : "danger") : undefined}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
@@ -147,10 +166,29 @@ export function Sidebar({
           label={ar.nav.pageContent}
           isCollapsed={isCollapsed}
         />
+        {/* The three media sections all carry a plain item count — a section that holds
+            something must never read zero (Khalid 2026-08-05). */}
         <SidebarNavItem
           href="/dashboard/gallery"
           icon={ImagePlus}
           label={ar.nav.gallery}
+          badge={galleryCount}
+          isCollapsed={isCollapsed}
+        />
+        {/* Its own section, right after the gallery it feeds from (Khalid 2026-08-04).
+            Split in two (ق8): the two uploads have nothing in common. */}
+        <SidebarNavItem
+          href="/dashboard/reels"
+          icon={Film}
+          label={ar.nav.reels}
+          badge={reelsCount}
+          isCollapsed={isCollapsed}
+        />
+        <SidebarNavItem
+          href="/dashboard/videos"
+          icon={Video}
+          label={ar.nav.videos}
+          badge={videosCount}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem

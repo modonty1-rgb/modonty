@@ -22,6 +22,8 @@ export interface AddGalleryInput {
   height?: number | null;
   fileSize?: number | null;
   altText?: string | null;
+  /** Blur placeholder from the uploader — see `media/actions/generate-blur.ts`. */
+  blurDataURL?: string | null;
 }
 
 type Result = { success: true } | { success: false; error: string };
@@ -53,6 +55,7 @@ export async function addClientGalleryImage(
         contentUrl: url,
         // Bunny-primary uploads: keep bunnyUrl in sync when the url is already a Bunny url.
         bunnyUrl: isBunnyUrl("clients", url) ? url : null,
+        blurDataURL: input.blurDataURL ?? null,
         cloudinaryPublicId: input.publicId ?? null,
         altText: (input.altText ?? "").trim() || null,
         clientId,
@@ -80,15 +83,36 @@ export async function deleteClientGalleryImage(mediaId: string): Promise<Result>
   try {
     const media = await db.media.findFirst({
       where: { id: mediaId, type: "GALLERY" },
-      select: { id: true, url: true, clientId: true },
+      select: {
+        id: true,
+        url: true,
+        clientId: true,
+        inReels: true,
+        reelStatus: true,
+        commentsCount: true,
+        likesCount: true,
+      },
     });
     if (!media) return { success: false, error: "الصورة غير موجودة" };
 
-    // Same-file reels go with the image (source is gone). Bunny-hosted files are deleted
-    // immediately; legacy Cloudinary files stay for the orphans maintenance (as in console).
-    if (media.clientId) {
-      await db.reel.deleteMany({ where: { clientId: media.clientId, imageUrl: media.url } }).catch(() => {});
+    // DELETE GUARD (2026-08-05). This row is both the gallery image and the reel now, so
+    // deleting it would take a live reel — and the visitor comments and likes hanging off
+    // it — with no warning. A published or engaged reel leaves the gallery instead of the
+    // database: `inGallery` off, everything else untouched.
+    const isLiveReel = media.inReels && media.reelStatus === "PUBLISHED";
+    const hasEngagement = media.commentsCount > 0 || media.likesCount > 0;
+    if (isLiveReel || hasEngagement) {
+      await db.media.update({ where: { id: mediaId }, data: { inGallery: false } });
+      if (media.clientId) {
+        await generateClientSEO(media.clientId).catch(() => {});
+        await revalidateModontyTag("clients").catch(() => {});
+        revalidatePath(`/client-galleries/${media.clientId}`);
+      }
+      return { success: true };
     }
+
+    // Nothing depends on it — a real delete. Bunny-hosted files go immediately; legacy
+    // Cloudinary files stay for the orphans maintenance (as in console).
     if (isBunnyUrl("reels", media.url)) {
       await deleteBunnyUrl("reels", media.url).catch(() => {});
     }

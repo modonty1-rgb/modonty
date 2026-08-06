@@ -70,6 +70,7 @@ export const clientServerSchema = z.object({
   // Optional boolean fields
   competitiveMentionsAllowed: z.boolean().optional().nullable(),
   isFeatured: z.boolean().optional().nullable(), // featured/premium partner spotlight
+  showSchedule: z.boolean().optional().nullable(), // client sees the «مجدولة» tab
   isInternal: z.boolean().optional().nullable(), // platform/demo account — excluded from billing
   billingCycle: z.enum(["monthly", "annual"]).optional().nullable(), // client-owned billing period
 

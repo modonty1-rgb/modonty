@@ -158,10 +158,13 @@ export function IntakeBrief({ form, intake, intakeUpdatedAt, isYmyl }: IntakeBri
 
 // ─── one question row: label + formatted answer ───────────────────────────────
 function Row({ question, value }: { question: BriefQuestion; value: unknown }) {
+  // Stacked, not side-by-side: most answers here are paragraphs the client wrote, and a
+  // fixed label column squeezed them into a narrow strip with dead space beneath the
+  // label. Label on top, answer across the full width — it reads like a brief now.
   return (
-    <div className="flex items-start gap-3 py-2.5 border-b border-dashed last:border-0">
-      <span className="text-[11.5px] text-muted-foreground min-w-[120px] pt-0.5">{question.label}</span>
-      <div className="flex-1 text-[13px] font-medium break-words">
+    <div className="space-y-1 py-2.5 border-b border-dashed last:border-0">
+      <span className="block text-[11.5px] text-muted-foreground">{question.label}</span>
+      <div className="text-[13px] font-medium break-words">
         <Answer question={question} value={value} />
       </div>
     </div>

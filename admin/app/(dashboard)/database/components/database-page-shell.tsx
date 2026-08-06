@@ -5,6 +5,8 @@ import { DataTablesGroup } from "./data-tables-group";
 import { BackupRestoreCard } from "./backup-restore-card";
 import type { CollectionSize } from "../actions/collection-sizes";
 import type { BackupInfo } from "../actions/backup-info";
+import type { BackupRunsReport } from "../actions/backup-runs";
+import { BackupRunsPanel } from "./backup-runs-panel";
 import type { AtlasReport } from "@/lib/atlas/atlas-client";
 
 interface TableInfo {
@@ -26,11 +28,12 @@ interface Props {
   health: DatabaseHealth;
   collectionSizes: CollectionSize[];
   backup: BackupInfo;
+  backupRuns: BackupRunsReport;
   atlas: AtlasReport | null;
   isLocal: boolean;
 }
 
-export function DatabasePageShell({ health, collectionSizes, backup, atlas, isLocal }: Props) {
+export function DatabasePageShell({ health, collectionSizes, backup, backupRuns, atlas, isLocal }: Props) {
   const checkedAt = new Date(health.lastChecked);
   return (
     <div className="max-w-[1200px] mx-auto space-y-4">
@@ -51,6 +54,8 @@ export function DatabasePageShell({ health, collectionSizes, backup, atlas, isLo
       <StorageBreakdown collectionSizes={collectionSizes} />
 
       <DataTablesGroup tables={health.tables} />
+
+      <BackupRunsPanel report={backupRuns} />
 
       <BackupRestoreCard isLocal={isLocal} />
     </div>

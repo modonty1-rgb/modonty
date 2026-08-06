@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LucideIcon } from "lucide-react";
+import { Check, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SidebarNavItemProps {
@@ -11,7 +11,12 @@ interface SidebarNavItemProps {
   label: string;
   badge?: number;
   badgeLabel?: string;
-  badgeVariant?: "default" | "danger";
+  /**
+   * `danger` pulses — it means "you still owe us something". `success` is the resolved
+   * state and must stay quiet: a badge that keeps alarming after the client has done
+   * the work reads as a broken system, and clients wrote in saying exactly that.
+   */
+  badgeVariant?: "default" | "danger" | "success";
   isCollapsed?: boolean;
 }
 
@@ -47,10 +52,12 @@ export function SidebarNavItem({
           {badgeLabel && (
             <span
               className={cn(
-                "relative px-1.5 py-0.5 text-[10px] font-bold rounded border",
+                "relative inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-bold rounded border",
                 badgeVariant === "danger"
                   ? "bg-destructive/10 text-destructive border-destructive/30"
-                  : "bg-primary/10 text-primary border-primary/20"
+                  : badgeVariant === "success"
+                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                    : "bg-primary/10 text-primary border-primary/20"
               )}
             >
               {badgeVariant === "danger" && (
@@ -59,6 +66,7 @@ export function SidebarNavItem({
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-destructive" />
                 </span>
               )}
+              {badgeVariant === "success" && <Check className="h-2.5 w-2.5 shrink-0" />}
               {badgeLabel}
             </span>
           )}
@@ -71,7 +79,11 @@ export function SidebarNavItem({
                   : "bg-muted text-muted-foreground"
               )}
             >
-              {badge > 9 ? "9+" : badge}
+              {/* The real number, not "9+" (Khalid 2026-08-05). A client with 16 gallery
+                  images was being told "9+", which reads as a limit rather than a count.
+                  The pill grows with the digits; only four-figure counts are capped, and
+                  at that point the exact number stops being what anyone is reading. */}
+              {badge > 999 ? "999+" : badge}
             </span>
           )}
         </>
@@ -80,7 +92,11 @@ export function SidebarNavItem({
         <span
           className={cn(
             "absolute top-1 end-1 h-2 w-2 rounded-full",
-            badgeVariant === "danger" ? "bg-destructive animate-pulse" : "bg-primary/80"
+            badgeVariant === "danger"
+              ? "bg-destructive animate-pulse"
+              : badgeVariant === "success"
+                ? "bg-emerald-500"
+                : "bg-primary/80"
           )}
           title={badgeLabel}
         />

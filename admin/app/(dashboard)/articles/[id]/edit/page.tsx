@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { getArticleById, getClients, getCategories, getAuthors, createArticle } from "../../actions/articles-actions";
+import { loadArticleOrProblem, getClients, getCategories, getAuthors, createArticle } from "../../actions/articles-actions";
+import { ArticleLoadError } from "../components/article-load-error";
 import { getTags } from "../../../tags/actions/tags-actions";
 import { getAllSettings } from "../../../settings/actions/settings-actions";
 import { getArticleDefaultsFromSettings } from "../../../settings/helpers/get-article-defaults-from-settings";
@@ -14,8 +15,8 @@ import { transformArticleToFormData } from "../../helpers/article-form-helpers";
 export default async function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const [article, clients, categories, authors, tags, settings, siteUrl, seoRow] = await Promise.all([
-    getArticleById(id),
+  const [loaded, clients, categories, authors, tags, settings, siteUrl, seoRow] = await Promise.all([
+    loadArticleOrProblem(id),
     getClients(),
     getCategories(),
     getAuthors(),
@@ -28,9 +29,16 @@ export default async function EditArticlePage({ params }: { params: Promise<{ id
     db.article.findUnique({ where: { id }, select: ARTICLE_SEO_SELECT }),
   ]);
 
-  if (!article) {
-    redirect("/articles");
+  // Same rule as the view page: absent → bounce, broken → say so. Editing was the worse
+  // of the two, since the writer arrives here intending to fix the article.
+  if (!loaded.ok) {
+    if (!loaded.problem) {
+      redirect("/articles");
+    }
+    return <ArticleLoadError articleId={id} problem={loaded.problem} />;
   }
+
+  const article = loaded.article;
 
   const realSeoScore = seoRow ? getArticleSeoScore(seoRow) : 0;
 

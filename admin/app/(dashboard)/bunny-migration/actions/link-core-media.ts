@@ -14,6 +14,7 @@
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-guard";
 import { getCoreClientId } from "@modonty/database/lib/core-client";
+import { generateBlurDataUrlFromUrl } from "@/app/(dashboard)/media/actions/generate-blur";
 import {
   BRAND_LOGO_URL,
   BRAND_CHARACTER_URL,
@@ -121,6 +122,8 @@ async function ensureCoreRow(url: string, coreId: string, apply: boolean): Promi
         filename: filenameFromUrl(url),
         url,
         bunnyUrl: url.includes(".b-cdn.net/") ? url : null,
+        // Row created from a bare url (no buffer in hand) — fetch once to build the blur.
+        blurDataURL: await generateBlurDataUrlFromUrl(url),
         contentUrl: url,
         mimeType: mimeFromUrl(url),
         scope: "CLIENT",

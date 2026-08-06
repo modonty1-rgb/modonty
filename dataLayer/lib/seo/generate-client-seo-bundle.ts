@@ -141,6 +141,19 @@ const CLIENT_SEO_SELECT = {
   teamMembers: true,
   credentials: true,
   introVideoUrl: true,
+  // The video we host — carries the name/description/thumbnail/duration that a valid
+  // VideoObject needs, which the bare link never had.
+  introVideoMedia: {
+    select: {
+      title: true,
+      description: true,
+      mp4Url: true,
+      playbackUrl: true,
+      thumbnailUrl: true,
+      durationSec: true,
+      createdAt: true,
+    },
+  },
   organizationType: true,
   isYmyl: true,
   ymylCategory: true,

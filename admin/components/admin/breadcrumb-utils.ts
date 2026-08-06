@@ -42,6 +42,7 @@ export interface EntityRouteConfig {
 
 const routeLabels: Record<string, string> = {
   articles: 'Articles',
+  briefs: 'Content Briefs',
   clients: 'Clients',
   categories: 'Categories',
   industries: 'Industries',

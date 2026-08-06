@@ -125,7 +125,7 @@ export function CategoryView({ category }: CategoryViewProps) {
                 </div>
               )}
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Total Articles</p>
+                <p className="text-sm text-muted-foreground mb-1">Articles (all statuses)</p>
                 <Link
                   href={`/articles?categoryId=${category.id}`}
                   className="text-sm text-primary hover:underline font-medium"

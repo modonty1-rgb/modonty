@@ -3,7 +3,26 @@
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { messages } from "@/lib/messages";
+
+import { notifyArticleDecision } from "./notify-article-decision";
+
+// What the Telegram notice needs, fetched with the article rather than in a second round
+// trip: the client's name (the sender) and their assigned editor (the recipient).
+const DECISION_CONTEXT = {
+  client: {
+    select: {
+      name: true,
+      editor: { select: { name: true, email: true } },
+    },
+  },
+} as const;
+
+/** Editor display name, falling back to the email so an unnamed staff row is still useful. */
+function editorNameOf(client: { editor: { name: string | null; email: string | null } | null }) {
+  return client.editor?.name?.trim() || client.editor?.email || null;
+}
 
 // TODO: Add compliance check (forbidden keywords/claims) before publishing.
 // Console app cannot import admin's @/lib/seo/pre-publish-audit.
@@ -16,6 +35,7 @@ export async function approveArticle(articleId: string, clientId: string) {
         clientId,
         status: ArticleStatus.AWAITING_APPROVAL,
       },
+      include: DECISION_CONTEXT,
     });
 
     if (!article) {
@@ -51,6 +71,19 @@ export async function approveArticle(articleId: string, clientId: string) {
 
     // TODO: add revalidateModontyTag to console app when needed
 
+    // Registered synchronously, INSIDE the request — a bare unawaited promise here would
+    // be killed when the response closes and the editor would never hear about it
+    // (the exact failure OBS-216 traced on the GA4 events).
+    after(async () => {
+      await notifyArticleDecision({
+        kind: "approved",
+        articleId,
+        articleTitle: article.title,
+        clientName: article.client.name,
+        editorName: editorNameOf(article.client),
+      });
+    });
+
     revalidatePath("/dashboard/articles");
     revalidatePath("/dashboard/content");
     revalidatePath("/dashboard");
@@ -73,6 +106,7 @@ export async function requestChanges(
         clientId,
         status: ArticleStatus.AWAITING_APPROVAL,
       },
+      include: DECISION_CONTEXT,
     });
 
     if (!article) {
@@ -96,6 +130,19 @@ export async function requestChanges(
         status: ArticleStatus.NEEDS_REVISION,
         revisionNotes: feedback.trim(),
       },
+    });
+
+    after(async () => {
+      await notifyArticleDecision({
+        kind: "changes",
+        articleId,
+        articleTitle: article.title,
+        clientName: article.client.name,
+        editorName: editorNameOf(article.client),
+        // The client's own words — an editor acts on these, so they travel with the
+        // notice instead of forcing a trip into the dashboard to find out what to fix.
+        feedback: feedback.trim(),
+      });
     });
 
     revalidatePath("/dashboard/articles");

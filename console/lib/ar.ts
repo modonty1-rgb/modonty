@@ -4,6 +4,12 @@
  */
 
 export const ar = {
+  confirm: {
+    title: "تأكيد",
+    confirm: "تأكيد",
+    cancel: "إلغاء",
+  },
+
   common: {
     clientFallback: "العميل",
   },
@@ -67,6 +73,8 @@ export const ar = {
     clientReviews: "تقييمات نشاطك",
     pageContent: "محتوى صفحتك",
     gallery: "معرض الصور",
+    reels: "الريلز",
+    videos: "الفيديوهات",
     pageFaq: "أسئلة صفحتك",
     siteHealth: "صحة موقعك",
     subscribers: "مشتركو النشرة",
@@ -320,7 +328,8 @@ export const ar = {
 
   media: {
     mediaLibrary: "الصور والملفات",
-    viewMediaAssets: "كل الصور والشعارات الخاصة بنشاطك",
+    viewMediaAssets:
+      "الملفات اللي جهّزتها لك مُدَوَّنَتِي — أغلفة المقالات وشعارك وصور صفحتك. صور معرضك وريلزك لها صفحاتها.",
     totalMedia: "إجمالي الوسائط",
     totalMediaLabel: "إجمالي الوسائط:",
     totalSize: "الحجم الإجمالي",

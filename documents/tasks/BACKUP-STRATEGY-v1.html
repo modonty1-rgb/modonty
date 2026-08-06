@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>استراتيجية النسخ الاحتياطي — ملف قرار</title>
+<style>
+  :root{--bg:#0b0f14;--card:#141b23;--line:#28343f;--tx:#e6edf3;--mut:#8b9bab;
+        --ok:#3fb950;--bad:#f85149;--warn:#d29922;--vio:#a371f7}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);font-family:"Tajawal","Segoe UI",system-ui,sans-serif;
+       line-height:1.75;font-size:15px}
+  .wrap{max-width:860px;margin:0 auto;padding:26px 18px 70px}
+  h1{font-size:23px;margin:0 0 4px}
+  .sub{color:var(--mut);font-size:13px}
+  h2{font-size:17px;margin:28px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+  h3{font-size:15px;margin:18px 0 6px}
+  code{background:#0d141c;border:1px solid var(--line);padding:1px 5px;border-radius:4px;
+       font:12.5px ui-monospace,monospace;color:#a5d6ff;direction:ltr;display:inline-block}
+  .bar{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
+       border-radius:10px;padding:11px 14px;margin:16px 0 6px}
+  .bar .track{flex:1;height:8px;background:#0d141c;border-radius:99px;overflow:hidden}
+  .bar .fill{height:100%;background:var(--ok);width:0;transition:width .25s}
+  .bar .cnt{color:var(--mut);font-size:13px;white-space:nowrap}
+  .tabs{display:flex;gap:6px;margin:18px 0 14px;border-bottom:1px solid var(--line)}
+  .tabs button{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--mut);
+               padding:8px 18px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit}
+  .tabs button.on{color:var(--tx);border-bottom-color:var(--vio)}
+  .pane{display:none}.pane.on{display:block}
+  .d{background:#161022;border:1px solid #3a2a58;border-radius:9px;padding:12px 14px;margin:10px 0}
+  .d .q{font-weight:700;color:#cbaaff;margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .d .k{font:700 11px ui-monospace,monospace;background:#0e1620;border:1px solid var(--line);
+        padding:2px 7px;border-radius:5px;color:#cbaaff}
+  .d .opt{font-size:14px;padding:4px 0;border-top:1px dashed #2a2140}
+  .d .opt:first-of-type{border-top:none}
+  .rec{color:var(--ok);font-weight:700;font-size:12px;margin-inline-start:4px}
+  .box{background:var(--card);border:1px solid var(--line);border-inline-start:3px solid var(--bad);
+       border-radius:9px;padding:12px 14px;margin:10px 0}
+  .box.ok{border-inline-start-color:var(--ok)}
+  .box.warn{border-inline-start-color:var(--warn)}
+  .box.vio{border-inline-start-color:var(--vio)}
+  .box b{display:block;margin-bottom:3px}
+  .box p{margin:0;color:var(--mut);font-size:13.5px}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:start}
+  th{background:#0e1620;color:var(--mut);font-weight:700}
+  .chk{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid var(--line);
+       border-radius:9px;padding:10px 13px;margin-bottom:8px}
+  .chk input{margin-top:5px;width:17px;height:17px;accent-color:var(--ok);cursor:pointer;flex:0 0 auto}
+  .chk .body{flex:1;min-width:0}
+  .chk .ttl{font-weight:700}
+  .chk p{margin:2px 0 0;color:var(--mut);font-size:13.5px}
+  footer{margin-top:32px;padding-top:14px;border-top:1px solid var(--line);color:var(--mut);font-size:12.5px}
+  button.reset{background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:7px;
+               padding:5px 11px;font-size:12px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>استراتيجية النسخ الاحتياطي — ملف قرار</h1>
+<div class="sub">أُنشئ 2026-08-04 · القرارات تُقفل واحداً واحداً · <b style="color:#ffb26b">لا يُكتب سطر كود قبل «done»</b><br><b style="color:#8ce09a">مقفول: ق1 ✅ زون خاص بلا Pull Zone وبلا تشفير · ق2 ✅ Vercel Cron يومي · ق10 ✅ رسالة تيليجرام بعد كل نسخة · ق5 ✅ سجلّ <code>BackupRun</code> وتواريخه في <code>/database</code> · ق6 ✅ الإنذار على الغياب · ق3 ✅ · ق4 ✅ · ق7 ✅ · ق8 ✅ · ق9 ✅ — <b>القرارات العشرة كلها مقفولة. جاهز للتنفيذ.</b></b></div>
+
+<div class="bar">
+  <span class="cnt" id="pct">0%</span>
+  <div class="track"><div class="fill" id="fill"></div></div>
+  <span class="cnt" id="cnt">0 / 0</span>
+  <button class="reset" id="reset">تصفير</button>
+</div>
+
+<div class="tabs">
+  <button data-t="dec" class="on">🔓 القرارات</button>
+  <button data-t="risk">⚠️ ما اكتشفناه</button>
+  <button data-t="brief">📖 الخلاصة</button>
+</div>
+
+<!-- ══════════ القرارات ══════════ -->
+<div class="pane on" id="pane-dec">
+
+<div class="box vio">
+  <b>🔴 اقرأ هذا قبل أي قرار — أخطر نقطة في الملف كلّه</b>
+  <p>نسخة قاعدة البيانات تحوي <b>بيانات عملائك كاملة</b>: أسماء · إيميلات · هواتف · عناوين · كلمات مرور مُجزّأة · رسائل. وزون Bunny العادي <b>يُخدَم عبر رابط عام</b> — من يخمّن المسار يحمّل قاعدتك كلها. أي قرار هنا لا يعالج هذه النقطة = تسريب بانتظار الحدوث.</p>
+</div>
+
+<div class="d" style="background:#0f2417;border-color:#1f4b2a"><div class="q" style="color:#8ce09a"><span class="k" style="color:#8ce09a">ق1</span> ✅ <b>مقفول 2026-08-04</b> — أين تُخزَّن النسخة على Bunny؟</div>
+  <div class="opt"><b style="color:#8ce09a">القرار: (أ) زون تخزين بلا Pull Zone · بلا تشفير.</b></div>
+  <div class="opt" style="color:var(--mut)"><b>ب)</b> ~~زون موجود + مسار عشوائي~~ — «أمان بالغموض»، يكفي تسريب رابط واحد.</div>
+  <div class="opt" style="color:var(--mut)"><b>ج)</b> ~~تشفير الملف~~ — <b>رُفض بقرار خالد:</b> «ما نحتاج تشفير عشان لا نعقّد المواضيع وإحنا لسه في البداية». مقايضة مقبولة: مفتاح ضائع = نسخة ضائعة، والزون الخاص يكفي في هذه المرحلة.</div>
+  <div class="box" style="margin-top:8px"><b>تصحيح مفهوم — سُجّل عمداً</b>
+  <p>قال خالد: «ما حد عنده access غيري أنا». <b>الخطر ليس مَن يملك الحساب</b> — الزون العام لا يحتاج access أصلاً؛ رابطه مفتوح للإنترنت كلّه، ومن يخمّنه أو يجده في سجلّ أو مشاركة شاشة يحمّل القاعدة كاملة بلا كلمة مرور. الحماية ليست في «مَن يملك المفتاح» بل في <b>ألّا يوجد رابط عام من الأساس</b> — وهذا ما يحقّقه الخيار (أ) بصفر تعقيد إضافي.</p></div>
+  <div class="box warn" style="margin-top:8px"><b>⚠️ خطوة يدوية مطلوبة من خالد قبل التنفيذ</b>
+  <p>الزونات الثلاثة الحالية (<code>clients</code> · <code>assets</code> · <code>reels</code>) <b>كلها لها Pull Zone</b> — فلا يصلح أيّ منها. المطلوب: إنشاء زون تخزين جديد من لوحة Bunny باسم مثل <code>modonty-backups</code>، <b>بلا تفعيل Pull Zone</b>، ثم إضافة مفتاحه إلى <code>.env.shared</code> باسم <code>BUNNY_BACKUP_STORAGE_ZONE_NAME</code> + <code>BUNNY_BACKUP_STORAGE_PASSWORD</code>.</p></div>
+</div>
+
+<div class="d" style="background:#0f2417;border-color:#1f4b2a"><div class="q" style="color:#8ce09a"><span class="k" style="color:#8ce09a">ق2</span> ✅ <b>مقفول 2026-08-04</b> — من ينفّذ النسخ؟</div>
+  <div class="opt"><b style="color:#8ce09a">القرار: (أ) + (ب) معاً.</b> <b>(أ) الأساس:</b> Vercel Cron يومياً يقرأ المجموعات ويرفعها لـBunny — لا يعتمد على جهاز خالد ويعمل ولو كان مطفأً.</div>
+  <div class="opt"><b style="color:#8ce09a">(ب) أُضيفت أيضاً بطلب خالد — طبقة أمان زائدة، لا بديل.</b> مهمّة مجدولة على جهازه بـ<code>mongodump</code> ثم رفع لنفس الزون تحت مسار منفصل <code>local/</code>.</div>
+  <div class="box ok" style="margin-top:8px"><b>لماذا (ب) ليست تكراراً — القيمة في التنوّع لا في العدد</b>
+  <p><code>mongodump</code> ينتج <b>BSON</b> بالصيغة الأصلية ويُستعاد بـ<code>mongorestore</code>؛ والـCron ينتج <b>JSON</b> بمُصدّر من كتابتنا. <b>لو كان في مُصدّرنا باق، تبقى نسخة BSON سليمة</b> — وهذا ما لا يوفّره تكرار نفس الآلية. بنيتان مختلفتان (Vercel مقابل جهاز محلي) وصيغتان مختلفتان.</p></div>
+  <div class="box warn" style="margin-top:8px"><b>⚠️ شرط ملزم — تُحسب طبقة انتهازية لا مضمونة</b>
+  <p>الجهاز مطفأ = لا نسخة، بلا إنذار. لذلك: <b>١)</b> نجاح (ب) <b>لا يُسكت</b> إنذار الغياب — الإنذار مربوط بالـCron وحده (ق6). <b>٢)</b> تكتب صفّ <code>BackupRun</code> بـ<code>source: "local"</code> فتظهر في <code>/database</code> مميّزة عن اليومية. <b>٣)</b> تعتمد على إصلاح <code>backup.sh</code> أولاً (ق9) — بحالته اليوم ينسخ قاعدة التست.</p></div>
+  <div class="opt" style="color:var(--mut)"><b>ج)</b> ~~تنزيل لقطات Atlas آلياً~~ — أُوقف فحصه عند حقل «العنقود الذي يُستعاد فيه»؛ تمريره خطر استعادة فوق الإنتاج. <b>والخيار (أ) يُغني عنه.</b></div>
+</div>
+
+<div class="d" style="background:#0f2417;border-color:#1f4b2a"><div class="q" style="color:#8ce09a"><span class="k" style="color:#8ce09a">ق10</span> ✅ <b>مقفول 2026-08-04 — طلب خالد</b> — رسالة تيليجرام بعد كل نسخة</div>
+  <div class="opt"><b style="color:#8ce09a">القرار: نعم — رسالة على تيليجرام بعد كل تشغيل، ناجحاً كان أو فاشلاً.</b> السبب بكلام خالد: «عشان أطمن وأتأكد».</div>
+  <div class="opt"><b>محتوى رسالة النجاح — بيانات لا تهنئة:</b><br>
+  ✅ <b>نسخة احتياطية</b><br>
+  🗄️ القاعدة: <code>modonty</code> ← <b>مطلوب صراحةً</b><br>
+  📦 ٨٦ مجموعة · ٥٬١٨٨ وثيقة<br>
+  💾 ٤١٫٢ ميجا · ⏱️ ٥٤ ثانية<br>
+  📁 <code>modonty-backups/daily/2026-08-04.json.gz</code><br>
+  🕐 الوقت بتوقيت الرياض</div>
+  <div class="opt"><b>محتوى رسالة الفشل — شكل مختلف تماماً:</b><br>
+  🔴🔴 <b>فشل النسخ الاحتياطي</b> + اسم المجموعة التي سقطت + نصّ الخطأ + «آخر نسخة ناجحة: قبل X ساعة».</div>
+  <div class="box warn" style="margin-top:8px"><b>مقايضة أُعلنت لا أُخفيت</b>
+  <p>الرسالة اليومية الناجحة يعتاد عليها الذهن ويتجاهلها بعد أسبوعين (alert fatigue). عولجناها بأمرين: <b>١)</b> الرسالة تحمل أرقاماً تتغيّر (عدد الوثائق والحجم) فتُقرأ فعلاً · <b>٢)</b> الفشل بشكل بصري مختلف كلياً.<br>
+  <b>وفائدتها الأكبر:</b> لو <b>لم</b> تصلك الرسالة يوماً، تعرف بنفسك أن شيئاً توقّف — فتصير أنت طبقة كشف الغياب البشرية، فوق كرت الأدمن الآلي (ق6).</p></div>
+  <div class="opt" style="color:var(--mut);font-size:13px">البنية جاهزة: قناة الأدمن في <code>lib/telegram.ts</code> تعمل أصلاً — لا نظام جديد. <b>ممنوع</b> وضع أي مفتاح أو رابط موقّع في نصّ الرسالة (المسار وحده غير كافٍ للوصول لأن الزون خاص).</div>
+</div>
+
+<div class="d" style="background:#0f2417;border-color:#1f4b2a"><div class="q" style="color:#8ce09a"><span class="k" style="color:#8ce09a">ق3</span> ✅ <b>مقفول 2026-08-04</b> — صيغة الأرشيف</div>
+  <div class="opt"><b style="color:#8ce09a">القرار: (أ) ملف <code>.json.gz</code> لكل مجموعة.</b></div>
+  <div class="opt" style="color:var(--mut)"><b>ب)</b> ~~أرشيف واحد للقاعدة كلها~~ — أبسط، لكن ٤١ ميجا تُجمَّع في ذاكرة دالّة واحدة، وأي انقطاع يُفقد الكل.</div>
+  <div class="opt"><b>لماذا (أ):</b> <b>١)</b> المعالجة مجموعة-مجموعة فلا تُخنق الذاكرة ولا مهلة التنفيذ · <b>٢)</b> استعادة انتقائية — تسترجع <code>articles</code> وحدها بلا لمس الباقي · <b>٣)</b> فشل مجموعة واحدة لا يُسقط النسخة كلها، ويُسجَّل باسمها في <code>errorText</code>.</div>
+  <div class="opt"><b>البنية على الزون:</b> <code>daily/2026-08-04/articles.json.gz</code> · <code>…/clients.json.gz</code> … + ملف <code>_manifest.json</code> في نفس المجلد يحوي: اسم القاعدة · قائمة المجموعات وعدد وثائق كل واحدة · الحجم · وقت البدء والانتهاء. <b>المانيفست هو ما يُقرأ للتحقق بلا تنزيل كل شيء.</b></div>
+  <div class="box warn" style="margin-top:8px"><b>⚠️ قيد حقيقي — يُعلن لا يُخفى</b>
+  <p>لا يوجد <code>mongodump</code> في رنتايم Vercel، فصيغة الطبقة الثانية <b>JSON لا BSON</b>. يعني: <b>الاستعادة تحتاج سكربتنا نحن، لا <code>mongorestore</code></b>. وهذا بالضبط ما يجعل ق7 (الاستعادة التجريبية) غير قابل للتنازل — سكربت استعادة لم يُجرَّب هو نصف نسخة.<br>
+  ونقطة ثانية: JSON لا يحفظ أنواع BSON كما هي (<code>ObjectId</code> · <code>Date</code> · <code>Decimal128</code>) إلا بصيغة Extended JSON — <b>سنستخدم Extended JSON صراحةً</b> وإلا فسدت المعرّفات والتواريخ عند الاستعادة. <b>وطبقة (ب) بـ<code>mongodump</code> تبقى شبكة الأمان لهذا الخطر بالذات.</b></p></div>
+</div>
+
+<div class="d" style="background:#0f2417;border-color:#1f4b2a"><div class="q" style="color:#8ce09a"><span class="k" style="color:#8ce09a">ق4</span> ✅ <b>مقفول 2026-08-04</b> — مدّة الاحتفاظ على Bunny</div>
+  <div class="opt"><b style="color:#8ce09a">القرار: (أ) ٧ يومية + ٤ أسبوعية + ١٢ شهرية = ٢٣ نسخة.</b></div>
+  <div class="opt"><b>الأساس:</b> نمط <b>Grandfather-Father-Son</b> — المعيار الصناعي المعتمد للنسخ الدوري. المنطق: الأخطاء الحديثة تُكتشف بسرعة فتكفيها اليوميات؛ أمّا الفساد الصامت (حقل يُمحى تدريجياً، ترحيل خاطئ) فلا يُكتشف إلا بعد أسابيع — وعندها لا تنفع إلا نسخة قديمة.</div>
+  <div class="opt"><b>التطبيق:</b> نسخة اليوم تُنسخ إلى <code>weekly/</code> كل أحد، وإلى <code>monthly/</code> أول كل شهر. التنظيف يحذف ما تجاوز الحدّ في كل مجلد على حدة.</div>
+  <div class="opt"><b>التكلفة:</b> ٤١ ميجا × ٢٣ ≈ <b>٩٤٤ ميجا</b> — أقل من جيجا. تخزين Bunny يقارب سنتاً واحداً للجيجا شهرياً. <b>مهملة.</b></div>
+</div>
+
+<div class="d" style="background:#0f2417;border-color:#1f4b2a"><div class="q" style="color:#8ce09a"><span class="k" style="color:#8ce09a">ق5</span> ✅ <b>مقفول 2026-08-04 — طلب خالد</b> — جدول <code>BackupRun</code> + عرض التواريخ في لوحة التحكم</div>
+  <div class="opt"><b style="color:#8ce09a">القرار: نعم — سجلّ دائم لكل تشغيل، وتواريخه ظاهرة في الأدمن.</b> بكلام خالد: «يجب أن تكون تواريخ النسخ الاحتياطي واضحة في قاعدة البيانات على لوحة التحكم».</div>
+  <div class="opt"><b>الحقول:</b> <code>source</code> (vercel/local/atlas) · <code>dbName</code> · <code>collections</code> · <code>docs</code> · <code>sizeBytes</code> · <code>bunnyPath</code> · <code>status</code> · <code>errorText</code> · <code>startedAt</code> · <code>finishedAt</code> · <code>durationMs</code></div>
+  <div class="opt"><b>مكان العرض:</b> صفحة <code>/database</code> — التزاماً بقاعدة المشروع «كل صيانة جديدة تكون Step داخل <code>/database</code>، لا كرت منفصل».</div>
+  <div class="opt"><b>ما يُعرض:</b> آخر ١٠ تشغيلات — التاريخ والوقت · <b>اسم القاعدة</b> · عدد المجموعات والوثائق · الحجم · المدّة · الحالة. مع سطر بارز أعلى الكرت: «<b>آخر نسخة ناجحة: قبل ٦ ساعات — <code>modonty</code></b>».</div>
+  <p style="color:var(--mut);font-size:13px;margin-top:6px"><b>أصرّ على <code>dbName</code> ظاهراً لا مخزّناً فقط:</b> هو الحقل الذي كان سيكشف فخّ أمس (السكربت ينسخ التست ونظنّه الإنتاج).</p>
+</div>
+
+<div class="d" style="background:#0f2417;border-color:#1f4b2a"><div class="q" style="color:#8ce09a"><span class="k" style="color:#8ce09a">ق6</span> ✅ <b>مقفول 2026-08-04</b> — التنبيه على ماذا؟</div>
+  <div class="opt"><b style="color:#8ce09a">القرار: (أ) التنبيه على الغياب</b> — أصفر بعد ٢٤ ساعة · <b>أحمر بعد ٤٨</b> · عبر جرس الإشعارات الموجود + لون الكرت في <code>/database</code>.</div>
+  <div class="opt" style="color:var(--mut)"><b>ب)</b> ~~إشعار داخل الأدمن عند كل نجاح~~ — ضجيج يومي يُدرَّب الذهن على تجاهله. <b>وتيليجرام (ق10) يغطّي جانب الاطمئنان أصلاً.</b></div>
+  <p style="color:var(--mut);font-size:13px;margin-top:6px"><b>التقسيم النهائي:</b> تيليجرام = نبضة يومية تطمئن · كرت <code>/database</code> والجرس = إنذار حين <b>تنقطع</b> النبضة. طبقتان متكاملتان لا متكرّرتان.</p>
+</div>
+
+<div class="d" style="background:#0f2417;border-color:#1f4b2a"><div class="q" style="color:#8ce09a"><span class="k" style="color:#8ce09a">ق7</span> ✅ <b>مقفول 2026-08-04</b> — 🔴 الاستعادة التجريبية</div>
+  <div class="opt"><b style="color:#8ce09a">القرار: (أ) استعادة تجريبية شهرية على <code>modonty_dev</code> بزرّ في <code>/database</code>، ونتيجتها مسجّلة.</b></div>
+  <div class="opt"><b>الأساس:</b> قاعدة صناعية راسخة — <b>«النسخة التي لم تُجرَّب استعادتها ليست نسخة»</b>. وهي عندنا آكد من غيرنا لأن ق3 أثبت أن الاستعادة تحتاج <b>سكربتاً من كتابتنا</b> لا <code>mongorestore</code> — وسكربت لم يُشغَّل قطّ لا يُوثق به.</div>
+  <div class="opt"><b>ما يفعله الزرّ:</b> ينزّل أحدث نسخة من الزون ← يستعيدها في قاعدة مؤقّتة <code>modonty_restore_test</code> (<b>لا يمسّ <code>modonty_dev</code> نفسها</b>) ← يقارن عدد الوثائق بكل مجموعة مقابل المانيفست ← يفحص أن <code>ObjectId</code> و<code>Date</code> عادت أنواعاً صحيحة لا نصوصاً ← يسجّل النتيجة ← يُسقط القاعدة المؤقّتة.</div>
+  <div class="opt"><b>التذكير:</b> لو مضى ٤٠ يوماً بلا استعادة تجريبية ناجحة، يظهر تنبيه أصفر في نفس الكرت — بنفس منطق ق6 (الإنذار على الغياب).</div>
+  <div class="box" style="margin-top:8px"><b>الحالة اليوم — لماذا هذا البند غير قابل للتنازل</b><p>مجلّد <code>PROD-2026-08-03_23-11</code> على قرصك <b>لم يُستعَد قطّ</b>. لا نعرف إن كان صالحاً. أي خطة بلا هذا البند تكرّر وهم الأمان بشكل أفخم.</p></div>
+</div>
+
+<div class="d" style="background:#0f2417;border-color:#1f4b2a"><div class="q" style="color:#8ce09a"><span class="k" style="color:#8ce09a">ق8</span> ✅ <b>مقفول 2026-08-04</b> — حماية مسار الـCron</div>
+  <div class="opt"><b style="color:#8ce09a">القرار: (أ) <code>CRON_SECRET</code> إلزامي — غير قابل للتفاوض.</b></div>
+  <div class="opt"><b>الأساس:</b> هذا هو النمط الرسمي الذي توثّقه Vercel نفسها لمسارات الـCron. المسار عام على الإنترنت بطبيعته؛ بلا سرّ يشغّله أي أحد يعرف الرابط، فيستنزف الحصّة ويقرأ القاعدة كاملة.</div>
+  <div class="opt"><b>التنفيذ:</b> المسار يقارن ترويسة <code>Authorization: Bearer &lt;CRON_SECRET&gt;</code> ويرجّع <code>401</code> عند أي اختلاف. <b>ومقارنة زمنية ثابتة</b> (<code>timingSafeEqual</code>) لا <code>===</code>، حتى لا يُستنتج السرّ حرفاً حرفاً من فروق التوقيت.</div>
+  <div class="opt"><b>إضافة:</b> قفل تزامن — لو تشغيل سابق ما زال يعمل، الثاني يرجّع فوراً بلا تنفيذ. يمنع تراكم نسخ متوازية.</div>
+</div>
+
+<div class="d" style="background:#0f2417;border-color:#1f4b2a"><div class="q" style="color:#8ce09a"><span class="k" style="color:#8ce09a">ق9</span> ✅ <b>مقفول 2026-08-04</b> — مصير السكربتين المكسورين</div>
+  <div class="opt"><b style="color:#8ce09a">القرار: <code>backup.sh</code> يُصلَح ويبقى · <code>backup-auto.bat</code> يُحذف.</b></div>
+  <div class="opt"><b>إصلاح <code>backup.sh</code> — خمسة تغييرات:</b> <b>١)</b> وسيط إلزامي <code>prod|dev</code>، وبلا وسيط <b>يفشل</b> برسالة واضحة لا يفترض شيئاً · <b>٢)</b> يطبع <b>اسم القاعدة المحسوم</b> في أول سطر دائماً · <b>٣)</b> بادئة المجلد <code>PROD-</code>/<code>DEV-</code> · <b>٤)</b> احتفاظ منفصل لكل هدف حتى لا تطرد نسخُ التست نسخَ الإنتاج · <b>٥)</b> يكتب صفّ <code>BackupRun</code> بـ<code>source: "local"</code>.</div>
+  <div class="opt"><b>حذف <code>backup-auto.bat</code>:</b> يقرأ <code>DATABASE_URL</code> من <code>admin/.env</code> وهو غير موجود فيه أصلاً (انتقل إلى <code>.env.shared</code> في ترحيل 2026-04-30). <b>الدليل: صفر مجلّد <code>backups/auto-*</code> على القرص منذ إنشائه.</b> إبقاء ملف يوهم بحماية غير موجودة أسوأ من عدمه — والمهمّة المجدولة في «مجدولات ويندوز» تُحذف معه.</div>
+  <div class="box warn" style="margin-top:8px"><b>ترتيب ملزم</b><p><code>backup.sh</code> يُصلَح <b>قبل</b> جدولة الطبقة الثالثة (ق2-ب) — جدولةُ سكربتٍ يستهدف قاعدة التست تصنع الوهم نفسه بوتيرة يومية.</p></div>
+</div>
+
+</div>
+
+<!-- ══════════ ما اكتشفناه ══════════ -->
+<div class="pane" id="pane-risk">
+<h2>ما اكتشفناه فعلياً — 2026-08-03/04</h2>
+
+<div class="box"><b>🔴 ١ · <code>scripts/backup.sh</code> ينسخ قاعدة التست لا الإنتاج</b>
+<p>يقرأ <code>DATABASE_URL</code> من <code>.env.shared</code> = <code>modonty_dev</code>. ولا يطبع اسم القاعدة في مخرجاته إطلاقاً — فكل نسخة أخذتها بالسكربت كانت للتست وأنت تظنّها للإنتاج. <b>الدليل:</b> نسخة ١٤:٤٣ يوم ٠٨-٠٢.</p></div>
+
+<div class="box"><b>🔴 ٢ · النسخ اليومي التلقائي لم يعمل ولا مرّة</b>
+<p><code>scripts/backup-auto.bat</code> يقرأ <code>DATABASE_URL</code> من <code>admin/.env</code> — الملف موجود لكن <b>بلا هذا المتغيّر</b> (انتقل إلى <code>.env.shared</code> في ترحيل 2026-04-30 ولم يُحدَّث الـbat). <b>الدليل الحاسم: صفر مجلّد <code>backups/auto-*</code> على القرص.</b> المهمّة المجدولة تعمل وتفشل بصمت.</p></div>
+
+<div class="box warn"><b>🟡 ٣ · Atlas — ما ثبت وما لم يثبت</b>
+<p><b>ثبت:</b> الباقة <b>Flex</b> · النسخ مفعّل · <b>٨ لقطات يومية</b> أحدثها <code>6a705e8f</code> (٠٨-٠٣ ٠٩:٢٦) · وجهة <code>restoreJobs</code> موجودة وترجّع 200.<br>
+<b>لم يثبت:</b> هل التنزيل مدعوم. <b>أوقفتُ الفحص عمداً</b> عند حقل <code>targetDeploymentItemName</code> = «العنقود الذي يُستعاد فيه» — تمريره باسم عنقود الإنتاج احتمال استعادة فوق البيانات الحيّة. لا أُجري ذلك بلا توثيق رسمي.<br>
+<b>ثبت أيضاً:</b> اللقطة الفورية ترجع <code>405</code> — غير مدعومة على Flex.</p></div>
+
+<div class="box ok"><b>✅ ٤ · ما هو سليم فعلاً</b>
+<p>نسخة <code>backups/PROD-2026-08-03_23-11</code> — ٨٦ مجموعة · ٤١ ميجا · قاعدة <code>modonty</code> الإنتاجية · <b>محقَّقة بالمحتوى</b> عبر <code>bsondump</code> (١٢٧ مقالاً · ٣٠ عميلاً · ٥١٠ وسائط · ٤١ مستخدماً). <b>لكنها لم تُستعَد للتحقّق من صلاحيتها.</b></p></div>
+
+<h2>لماذا نبني هذا أصلاً</h2>
+<table>
+<tr><th>الطبقة</th><th>الحالة اليوم</th><th>الثغرة</th></tr>
+<tr><td>لقطات Atlas</td><td>✅ تعمل</td><td>٨ أيام فقط · التنزيل غير مؤكّد · مربوطة بالحساب</td></tr>
+<tr><td>سكربت يدوي</td><td>🔴 يستهدف التست</td><td>يوهم بالأمان</td></tr>
+<tr><td>نسخ مجدول</td><td>🔴 لم يعمل قطّ</td><td>فشل صامت تام</td></tr>
+<tr><td>نسخة خارج Atlas</td><td>❌ غير موجودة</td><td>كل البيض في سلّة واحدة</td></tr>
+<tr><td>رؤية / تنبيه</td><td>❌ غير موجودة</td><td>لا نعرف حين تتوقّف</td></tr>
+</table>
+</div>
+
+<!-- ══════════ الخلاصة ══════════ -->
+<div class="pane" id="pane-brief">
+<h2>الخلاصة — الشكل النهائي المقترح</h2>
+
+<div class="box ok"><b>ثلاث طبقات بثلاثة منطق مختلفة</b>
+<p><b>١)</b> <b>Atlas</b> — يومي · ٨ أيام · استعادة فورية داخل المنصّة (موجود ويعمل، لا نلمسه).<br>
+<b>٢)</b> <b>Vercel Cron → Bunny</b> — يومي · احتفاظ طويل · <b>مستقلّ تماماً عن Atlas</b> (نبنيه).<br>
+<b>٣)</b> <b>نسخة يدوية على قرصك</b> — عند المعالم الكبيرة فقط (قبل دمج/ترحيل)، بسكربت مُصلَح يطبع اسم القاعدة.</p></div>
+
+<h3>المبادئ الأربعة التي يقوم عليها التصميم</h3>
+<div class="chk"><input type="checkbox" id="p1"><div class="body"><span class="ttl">١ · التنبيه على الغياب لا على النجاح</span><p>الفشل الصامت هو ما ضربنا مرّتين. النظام يصرخ حين لا تصل نسخة.</p></div></div>
+<div class="chk"><input type="checkbox" id="p2"><div class="body"><span class="ttl">٢ · اسم القاعدة معروض دائماً</span><p>في الكرت وفي السجلّ وفي مخرجات أي سكربت. الفخّ الذي وقعنا فيه أمس.</p></div></div>
+<div class="chk"><input type="checkbox" id="p3"><div class="body"><span class="ttl">٣ · النسخة ليست نسخة حتى تُستعاد</span><p>استعادة تجريبية دورية على قاعدة التست، ونتيجتها مسجّلة.</p></div></div>
+<div class="chk"><input type="checkbox" id="p4"><div class="body"><span class="ttl">٤ · بيانات العملاء لا تُوضع خلف رابط عام</span><p>زون خاص بلا Pull Zone، والتشفير قرار ق1.</p></div></div>
+
+<h3>ما لن نفعله</h3>
+<p style="color:var(--mut)">لن نلمس <code>restoreJobs</code> على Atlas بلا توثيق رسمي يؤكّد أن <code>deliveryType: download</code> لا يستعيد فوق العنقود. الخطر أكبر من العائد، و<b>الطبقة الثانية تُغني عنه أصلاً</b>.</p>
+
+<h3>الترتيب المقترح للتنفيذ</h3>
+<table>
+<tr><th>#</th><th>الخطوة</th><th>يحجب؟</th></tr>
+<tr><td>١</td><td>إصلاح <code>backup.sh</code> (هدف صريح + طباعة اسم القاعدة) + حذف الـbat الميت</td><td>لا — مستقلّ، ينفَّذ فوراً</td></tr>
+<tr><td>٢</td><td>جدول <code>BackupRun</code> + كرت الأدمن + التنبيه</td><td>يحتاج ق5 · ق6</td></tr>
+<tr><td>٣</td><td>مسار الـCron + الرفع لـBunny</td><td>يحتاج ق1 · ق2 · ق3 · ق8</td></tr>
+<tr><td>٤</td><td>زرّ الاستعادة التجريبية</td><td>يحتاج ق7</td></tr>
+</table>
+</div>
+
+<footer>
+ملف قرار — لا يُكتب كود قبل قفل القرارات المعنيّة. المرجع التقني المرافق: <code>documents/tasks/TECH-NOTES.md</code> (بند 80).
+</footer>
+
+<script>
+  var tabs = document.querySelectorAll('.tabs button');
+  tabs.forEach(function(b){
+    b.onclick = function(){
+      tabs.forEach(function(x){ x.classList.remove('on'); });
+      document.querySelectorAll('.pane').forEach(function(p){ p.classList.remove('on'); });
+      b.classList.add('on');
+      document.getElementById('pane-' + b.dataset.t).classList.add('on');
+    };
+  });
+  var boxes = document.querySelectorAll('.chk input');
+  function save(){
+    var s = {};
+    boxes.forEach(function(c){ s[c.id] = c.checked; });
+    try { localStorage.setItem('backup-strategy-v1', JSON.stringify(s)); } catch(e){}
+    render();
+  }
+  function render(){
+    var done = 0;
+    boxes.forEach(function(c){ if (c.checked) done++; });
+    var total = boxes.length;
+    var pctVal = total ? Math.round(done / total * 100) : 0;
+    document.getElementById('pct').textContent = pctVal + '%';
+    document.getElementById('fill').style.width = pctVal + '%';
+    document.getElementById('cnt').textContent = done + ' / ' + total;
+  }
+  try {
+    var saved = JSON.parse(localStorage.getItem('backup-strategy-v1') || '{}');
+    boxes.forEach(function(c){ if (saved[c.id]) c.checked = true; });
+  } catch(e){}
+  boxes.forEach(function(c){ c.onchange = save; });
+  document.getElementById('reset').onclick = function(){
+    boxes.forEach(function(c){ c.checked = false; });
+    save();
+  };
+  render();
+</script>
+
+</div></body>
+</html>

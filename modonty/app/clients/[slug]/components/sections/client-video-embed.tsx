@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 import { IconPlay } from "@/lib/icons";
 
 interface ClientVideoEmbedProps {
   url: string;
+  /** Bunny's cover for a video we host. External links have none. */
+  poster?: string | null;
   label?: string;
 }
 
@@ -36,7 +39,7 @@ function resolveEmbed(url: string): EmbedKind {
  * <video> element is mounted on click, so zero third-party JS loads until the
  * visitor opts in (performance-first per modonty.com rule #1).
  */
-export function ClientVideoEmbed({ url, label }: ClientVideoEmbedProps) {
+export function ClientVideoEmbed({ url, poster, label }: ClientVideoEmbedProps) {
   const [active, setActive] = useState(false);
   const embed = resolveEmbed(url);
 
@@ -47,6 +50,7 @@ export function ClientVideoEmbed({ url, label }: ClientVideoEmbedProps) {
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
           <video
             src={embed.src}
+            poster={poster ?? undefined}
             controls
             autoPlay
             playsInline
@@ -82,7 +86,18 @@ export function ClientVideoEmbed({ url, label }: ClientVideoEmbedProps) {
       aria-label={label ?? "تشغيل الفيديو التعريفي"}
       className="group relative mb-4 grid aspect-video w-full place-items-center overflow-hidden rounded-md bg-gradient-to-br from-primary to-accent"
     >
-      <span className="grid h-14 w-14 place-items-center rounded-full bg-white/95 text-primary shadow-[0_10px_26px_-8px_rgba(0,0,0,0.4)] transition-transform group-hover:scale-110">
+      {/* The real first frame when we host the video. Still zero third-party JS — an
+          image, not a player. External links keep the gradient: they have no cover. */}
+      {poster && (
+        <Image
+          src={poster}
+          alt=""
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover"
+        />
+      )}
+      <span className="relative grid h-14 w-14 place-items-center rounded-full bg-white/95 text-primary shadow-[0_10px_26px_-8px_rgba(0,0,0,0.4)] transition-transform group-hover:scale-110">
         <IconPlay className="h-6 w-6 ms-0.5 fill-current" />
       </span>
       {label && (

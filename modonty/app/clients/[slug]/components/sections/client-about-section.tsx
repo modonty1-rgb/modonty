@@ -21,6 +21,8 @@ interface AboutLegal {
 
 interface ClientAboutSectionProps {
   videoUrl?: string | null;
+  /** Bunny cover — only our own videos have one; an external link never did. */
+  videoPoster?: string | null;
   aboutText?: string | null;
   credentials: AboutCredential[];
   legal: AboutLegal;
@@ -48,6 +50,7 @@ function LegalRow({ icon, label, value }: { icon: string; label: string; value: 
  */
 export function ClientAboutSection({
   videoUrl,
+  videoPoster,
   aboutText,
   credentials,
   legal,
@@ -80,7 +83,7 @@ export function ClientAboutSection({
 
   return (
     <SectionCard id="about" icon="🏢" title="عن الشركة">
-      {hasVideo && <ClientVideoEmbed url={videoUrl!} label="▶ فيديو تعريفي" />}
+      {hasVideo && <ClientVideoEmbed url={videoUrl!} poster={videoPoster ?? null} label="▶ فيديو تعريفي" />}
 
       {hasText && (
         <p className="text-[13px] leading-[1.8] text-foreground">{aboutText}</p>

@@ -1,15 +1,17 @@
 import { getDatabaseHealth } from "./actions/database-health";
 import { getCollectionSizes } from "./actions/collection-sizes";
 import { getBackupInfo } from "./actions/backup-info";
+import { getBackupRuns } from "./actions/backup-runs";
 import { getAtlasReport } from "@/lib/atlas/atlas-client";
 import { DatabasePageShell } from "./components/database-page-shell";
 
 export default async function DatabasePage() {
-  const [health, collectionSizes, backup, atlas] = await Promise.all([
+  const [health, collectionSizes, backup, atlas, backupRuns] = await Promise.all([
     getDatabaseHealth(),
     getCollectionSizes(),
     getBackupInfo(),
     getAtlasReport(),
+    getBackupRuns(),
   ]);
 
   const isLocal = process.env.NODE_ENV !== "production";
@@ -17,6 +19,7 @@ export default async function DatabasePage() {
   return (
     <div className="space-y-6">
       <DatabasePageShell
+        backupRuns={backupRuns}
         health={health}
         collectionSizes={collectionSizes}
         backup={backup}

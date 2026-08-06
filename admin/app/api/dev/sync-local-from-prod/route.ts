@@ -3,6 +3,7 @@ import dnsPromises from "node:dns/promises";
 import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { MongoClient, IndexDescription } from "mongodb";
+import { listRequiredRelations, scanOrphans } from "@/app/(dashboard)/database/actions/orphan-scan";
 
 // Hardcoded PROD URL (read-only source)
 const PROD_DATABASE_URL =
@@ -43,9 +44,27 @@ interface SseEvent {
     | "collection_done"
     | "collection_failed"
     | "indexes_rebuilding"
+    | "verifying"
+    | "verified"
     | "complete"
     | "fatal";
   [key: string]: unknown;
+}
+
+/**
+ * Guard the skip list against schema drift.
+ *
+ * A skipped collection is recreated EMPTY. That is harmless only while nothing with a
+ * REQUIRED relation points into it — the moment someone adds one, every synced row on
+ * that side lands here orphaned, and the page that reads it dies for the whole table,
+ * not just the bad row. Checked at run time because the schema changes far more often
+ * than this file does.
+ */
+async function findSkipListConflicts(): Promise<string[]> {
+  const { relations } = await listRequiredRelations();
+  return relations
+    .filter((r) => SKIP_COLLECTIONS.has(r.targetCollection))
+    .map((r) => `${r.key} → ${r.targetCollection}`);
 }
 
 // Recreate PROD indexes locally (minus the auto _id index). MongoDB rejects null for
@@ -65,14 +84,14 @@ function buildIndexSpecs(prodIndexes: { name?: string; key: Record<string, numbe
 }
 
 export async function POST(_req: NextRequest) {
-  // Block in production runtime — defense in depth
-  if (process.env.NODE_ENV === "production") {
-    return Response.json(
-      { error: "Disabled in production runtime" },
-      { status: 403 }
-    );
-  }
-
+  // The gate that actually protects anything is the DATABASE_URL check below: this route
+  // only ever writes to `modonty_dev`, and the deployed admin points at `modonty`, so it
+  // is refused there no matter who calls it.
+  //
+  // A NODE_ENV check used to sit here as well, but it blocked the one case we need — the
+  // migration rehearsal runs against a production BUILD on this machine (`next start`,
+  // which sets NODE_ENV=production) while still talking to the local test database. That
+  // check was measuring the bundle, not the database, and the database is what matters.
   const session = await auth();
   if (!session?.user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -141,6 +160,20 @@ export async function POST(_req: NextRequest) {
             !c.name.startsWith("_") &&
             c.type !== "view"
         );
+
+        // Checked before a single byte moves: if the schema has grown a required relation
+        // into a collection we recreate empty, this copy would manufacture orphans on
+        // purpose. Better to refuse than to hand over a database that crashes on read.
+        const skipConflicts = await findSkipListConflicts();
+        if (skipConflicts.length > 0) {
+          send({
+            type: "fatal",
+            error:
+              `Skip list is unsafe — ${skipConflicts.length} required relation(s) point into a collection this sync empties: ` +
+              `${skipConflicts.join(", ")}. Remove those collections from SKIP_COLLECTIONS or the copy will create orphans.`,
+          });
+          return;
+        }
 
         send({
           type: "start",
@@ -243,6 +276,40 @@ export async function POST(_req: NextRequest) {
           }
         }
 
+        // The copy is not the finish line. Collections are copied one after another over
+        // several minutes, each dropped before it is refilled — so a row can land here
+        // pointing at a parent that was never copied, or that was deleted in PROD while
+        // the copy was still running. Prisma then refuses the ENTIRE query that touches
+        // it, and a page dies for one client while everyone else is fine. That is not a
+        // theory: a scan of this database found two reviews pointing at a user who does
+        // not exist here, and Prisma throws `Inconsistent query result` on them today.
+        //
+        // So the sync verifies its own result. Finding this now costs seconds; finding it
+        // when a page falls over costs an afternoon of looking in the wrong place.
+        send({ type: "verifying" });
+        const scan = await scanOrphans().catch((e) => ({
+          relationsScanned: 0,
+          failed: [{ key: "scan", error: e instanceof Error ? e.message : String(e) }],
+          totalOrphans: 0,
+          findings: [],
+        }));
+
+        send({
+          type: "verified",
+          relationsScanned: scan.relationsScanned,
+          totalOrphans: scan.totalOrphans,
+          scanFailed: scan.failed.length,
+          findings: scan.findings.slice(0, 10).map((f) => ({
+            key: f.key,
+            count: f.count,
+            where: `${f.collection}.${f.foreignKey} → ${f.targetCollection}`,
+            sampleIds: f.sampleIds,
+          })),
+        });
+
+        // "Complete" has to mean "you can trust this copy". A failed collection leaves a
+        // hole; orphans leave rows that crash on read. Either one makes the local database
+        // a misleading place to test against, so neither is allowed to pass as success.
         send({
           type: "complete",
           collections: collections.length,
@@ -250,6 +317,8 @@ export async function POST(_req: NextRequest) {
           skippedCount,
           failedCount,
           totalDocs,
+          totalOrphans: scan.totalOrphans,
+          usable: failedCount === 0 && scan.totalOrphans === 0,
           durationMs: Date.now() - startTime,
         });
       } catch (error) {

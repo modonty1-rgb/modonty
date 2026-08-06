@@ -10,6 +10,7 @@ import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
 import { logAction } from "@/lib/audit/log-action";
 import type { ValidationResult } from "@/lib/seo/article-validator";
 import { regenerateJsonLd, needsRegeneration } from "@/lib/seo/jsonld-storage";
+import { getYmylAuthorityCodes } from "@modonty/database/lib/seo/ymyl-authorities";
 import { checkYmylPublishGate } from "@/lib/seo/ymyl-helpers";
 
 export interface GatedTransitionResult {
@@ -172,6 +173,12 @@ export async function gatedTransitionAction(
         content: article.content ?? "",
         reviewedById: article.reviewedById ?? null,
       },
+      // Same live authority list the console dropdown offers, so the gate can never block
+      // a client over an authority the system itself told them to pick.
+      authorityCodes: await getYmylAuthorityCodes(
+        article.client?.addressCountry ?? null,
+        article.client?.ymylCategory ?? null
+      ),
     });
     if (!ymylGate.canPublish) {
       return {

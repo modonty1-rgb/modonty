@@ -1,6 +1,6 @@
 {
   "name": "@modonty/database",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "main": "./index.ts",
   "types": "./index.ts",
@@ -16,10 +16,30 @@
   },
   "dependencies": {
     "@prisma/client": "^6.19.1",
+    "bson": "^6.10.4",
     "mongodb": "^6.0.0"
   },
+  "peerDependencies": {
+    "lucide-react": ">=0.5.0",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "peerDependenciesMeta": {
+    "lucide-react": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@types/react": "^19",
+    "lucide-react": "^0.562.0",
     "prisma": "^6.19.1",
+    "react": "^19.2.4",
     "tsx": "^4.7.0",
     "typescript": "^5"
   }

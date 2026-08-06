@@ -14,6 +14,7 @@ import {
   ArrowDown,
   Pencil,
   PenLine,
+  Video,
 } from "lucide-react";
 import { GoogleIcon } from "@/components/admin/icons/google-icon";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,7 @@ import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
 import { mediaSrc } from "@modonty/database/lib/media-src";
 import { ClientAvatar } from "./client-avatar";
+import { readIntroVideoLink } from "../helpers/intro-video-link";
 
 type ListValidationError = { message?: string } | string;
 
@@ -56,6 +58,16 @@ interface ClientTableProps {
   // Status filter is owned by the parent (ClientsTabs) so its toggle pills can sit
   // on the same row as the top tabs. The table just applies it.
   statusFilter?: StatusFilterKey;
+  /** أ٦ — narrow to the clients still on a legacy external intro-video link. */
+  externalVideoOnly?: boolean;
+}
+
+/** True while the client still depends on someone else's hosted video. */
+export function hasExternalIntroVideo(client: {
+  introVideoUrl: string | null;
+  introVideoMediaId: string | null;
+}): boolean {
+  return !client.introVideoMediaId && !!client.introVideoUrl?.trim();
 }
 
 type SortDirection = "asc" | "desc" | null;
@@ -189,7 +201,7 @@ function getCriticalItems(client: ClientForList): string[] {
   return items;
 }
 
-export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, statusFilter = "ALL" }: ClientTableProps) {
+export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, statusFilter = "ALL", externalVideoOnly = false }: ClientTableProps) {
   const router = useRouter();
   const [search, setSearch] = useState(externalSearch || "");
   const [currentPage, setCurrentPage] = useState(1);
@@ -205,10 +217,10 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
     }
   }, [externalSearch]);
 
-  // Reset to page 1 whenever the parent-owned status filter changes.
+  // Reset to page 1 whenever a parent-owned filter changes.
   useEffect(() => {
     setCurrentPage(1);
-  }, [statusFilter]);
+  }, [statusFilter, externalVideoOnly]);
 
   const filteredData = useMemo(() => {
     const searchTerm = search.toLowerCase();
@@ -219,7 +231,8 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
         (client.email && client.email.toLowerCase().includes(searchTerm)) ||
         (client.phone && client.phone.toLowerCase().includes(searchTerm));
       const matchesStatus = statusFilter === "ALL" || client.subscriptionStatus === statusFilter;
-      return matchesSearch && matchesStatus;
+      const matchesVideo = !externalVideoOnly || hasExternalIntroVideo(client);
+      return matchesSearch && matchesStatus && matchesVideo;
     });
 
     if (sortKey && sortDirection) {
@@ -271,7 +284,7 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
     }
 
     return result;
-  }, [clients, search, statusFilter, sortKey, sortDirection]);
+  }, [clients, search, statusFilter, externalVideoOnly, sortKey, sortDirection]);
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -405,6 +418,10 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
                 const computed = clientComputedMap.get(client.id);
                 const delivery = computed?.delivery ?? { delivered: 0, promised: 0 };
                 const seoScore = computed?.seoScore ?? 0;
+                // Only while the client still has no video of their own (أ٦).
+                const introVideo = hasExternalIntroVideo(client)
+                  ? readIntroVideoLink(client.introVideoUrl)
+                  : null;
 
                 // Status = subscription state only. Payment (Paid/Overdue) lives in the
                 // billing views — it's noise for content prep.
@@ -435,13 +452,40 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
                           name={client.name}
                         />
                         <div className="flex flex-col gap-0.5 min-w-0">
-                          <Link
-                            href={`/clients/${client.id}`}
-                            className="font-medium text-sm truncate"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {client.name}
-                          </Link>
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <Link
+                              href={`/clients/${client.id}`}
+                              className="font-medium text-sm truncate"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {client.name}
+                            </Link>
+                            {introVideo && (
+                              // Red when the link cannot play at all (a share page, not a
+                              // file) — that is a call today, not a routine follow-up.
+                              <span
+                                className={cn(
+                                  "inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium",
+                                  introVideo.isUnusable
+                                    ? "bg-red-500/15 text-red-600 dark:text-red-400"
+                                    : "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+                                )}
+                                title={
+                                  (introVideo.isUnusable
+                                    ? "الرابط ما يشتغل كفيديو — صفحة مشاركة لا ملف. "
+                                    : "الفيديو على قناة ما يملكها العميل. ") +
+                                  (introVideo.linkCount > 1
+                                    ? `${introVideo.linkCount} روابط في نفس الحقل — لازم أحد يختار واحداً. `
+                                    : "") +
+                                  introVideo.links.join("  ·  ")
+                                }
+                              >
+                                <Video className="h-2.5 w-2.5" aria-hidden="true" />
+                                {introVideo.label}
+                                {introVideo.linkCount > 1 && ` ×${introVideo.linkCount}`}
+                              </span>
+                            )}
+                          </div>
                           {client.email && (
                             <span className="text-xs text-muted-foreground block truncate max-w-[150px]">
                               {client.email}

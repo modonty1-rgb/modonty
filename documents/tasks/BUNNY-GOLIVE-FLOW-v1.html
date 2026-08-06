@@ -68,7 +68,7 @@
 <body><div class="wrap">
 
 <h1>Flow النشر — إيقاف Cloudinary</h1>
-<div class="sub">المرجع الحيّ للمسار · التاسكات تُقفل هنا · 2026-07-31</div>
+<div class="sub">المرجع الحيّ للمسار · التاسكات تُقفل هنا · <b style="color:#8ce09a">آخر تحديث 2026-08-03 ٢٣:٣٣ — بوابة T6b كلها خضراء، تنتظر أمر الدفع</b></div>
 
 <div class="bar">
   <span class="cnt" id="pct">0%</span>
@@ -85,17 +85,43 @@
   <button data-t="brief">📖 Brief</button>
 </div>
 <div class="pane on" id="pane-open">
-<h2>التاسكات الباقية — مرتّبة بأولوية التنفيذ (2026-07-31)</h2>
+<h2>التاسكات الباقية — مرتّبة بأولوية التنفيذ (محدَّث 2026-08-03)</h2>
 <div class="t"><input type="checkbox" id="T6b"><div class="body">
   <div class="hd"><span class="id">T6b</span><span class="tag now">أولوية ٥ — التالي</span><span class="ttl">الـmerge إلى main — بقرار خالد فقط</span><span class="tag bad">بوابة الإنتاج</span></div>
   <p style="color:#cbaaff">⚠️ <b>تصحيح ترتيب (2026-08-02):</b> كان هذا الكرت معروضاً <b>آخر</b> القائمة بوصف «آخر مرحلة» — وهذا مضلّل. نصّه بنفسه يقول إن T7/T8/T9 <b>تحتاج الكود منشوراً على الإنتاج</b>، فهي مستحيلة قبله. قرار خالد 2026-08-01 («الـmerge آخر حاجة») كان يقصد أنه آخر ما يُنفَّذ <b>من مسار التطوير</b> — لا أنه بعد تاسكات الإنتاج. نُقل ليتصدّر القائمة.</p>
   <p><b>لا يُنفَّذ إلا بعد نجاح تست الـpreview 100% وبأمر خالد الصريح.</b> merge ← push لـ<code>main</code> ← Vercel ينشر الإنتاج. <b>لا يغيّر صورة واحدة على اللايف</b> — بيانات الإنتاج لم تُرحَّل بعد فالـfallback يخدم Cloudinary كما اليوم؛ اللي يُنشر هو <b>الكود فقط</b>. <b>بعده تُفتح</b> بنود اللايف اليدوية (بند 66) ثم T7 ← T8 ← T9.</p>
-  <p style="color:#8ce09a">✅ <b>البوابة تحققت 2026-08-02:</b> الـpreview ٧/٧ صفحات (canonical + @graph + Organization + WebSite) · فحص Google Rich Results على ١١ عيّنة = صفر خطأ حرج وصفر عنصر غير صالح · <code>tsc</code> ×٣ صفر · آخر كوميت <code>e973d1b</code> مدفوع على <code>version-2</code>. <b>المتبقّي: أمر خالد فقط.</b></p>
+  <p style="color:#8ce09a">✅ <b>البوابة تحققت 2026-08-02:</b> الـpreview ٧/٧ صفحات (canonical + @graph + Organization + WebSite) · فحص Google Rich Results على ١١ عيّنة = صفر خطأ حرج وصفر عنصر غير صالح · <code>tsc</code> ×٣ صفر · آخر كوميت <code>e973d1b</code> مدفوع على <code>version-2</code>.</p>
+  <p style="color:#8ce09a">🔄 <b>جارٍ التنفيذ 2026-08-03 (بعد التاسعة، الفريق خارج النظام — بتعميد خالد خطوة بخطوة):</b><br>
+  ① <b>نسخة إنتاج على القرص</b> ✅ <code>backups/PROD-2026-08-03_23-11</code> — ٨٦ مجموعة · ٤١ ميجا · قاعدة <code>modonty</code> (لا <code>modonty_dev</code>) · محقَّقة بالمحتوى (١٢٧ مقالاً · ٣٠ عميلاً · ٥١٠ وسائط). <span style="color:#ffb26b">⚠️ اكتُشف أن <code>scripts/backup.sh</code> يقرأ قاعدة التست لا الإنتاج — نُفّذ النسخ بتوجيه صريح.</span><br>
+  ② <b>دفع ٤ ملفات وثائق</b> ✅ كوميت <code>aff180d</code> على <code>version-2</code> — صفر كود.<br>
+  ③ <b>الدمج المحلي على <code>main</code></b> ✅ كوميت <code>fe7375f</code> — ٣٧٦ ملفاً · +١٨٬٧٠٤/−٧٬٦٧٦ · <b>شجرة الدمج مطابقة لـ<code>version-2</code> حرفياً (صفر انحراف)</b>.<br>
+  ④ <b>الفحص التجميعي</b> ✅ — <code>tsc</code> ×٣ صفر أخطاء · <b>البناء الإنتاجي ٣/٣ نجح</b> (modonty ✅ · admin ✅ · console ✅ — كلها <code>exit 0</code>). يعني نفس ما ستشغّله Vercel مرّ على الجهاز قبل أن يراه أحد.<br>
+  <b>الأصل <code>origin/main</code> لم يُلمس</b> — ما زال <code>e3dbfba</code>. <b>البوابة كلها خضراء؛ المتبقّي أمر خالد على <code>git push origin main</code> فقط.</b></p>
+  <p style="color:#ffb26b">🔀 <b>تعارضان متوقَّعان حُلّا بدليل:</b> <code>main</code> كان فيه كوميت منفرد <code>e3dbfba</code> (إصلاح تعليق يتيم). التعارض في <code>client-reviews.ts</code> و<code>modonty/package.json</code> — حُسم لجانب <code>version-2</code> لأن: (١) نفس الإصلاح موجود على الفرعين والفرق أسماء حقول فقط · (٢) السكيما تحمل <code>reviewerId String @map("authorId")</code> فـ<b>عمود قاعدة البيانات لم يتغيّر إطلاقاً — صفر ترحيل</b> · (٣) جانب <code>main</code> لا يمرّ على <code>tsc</code> أصلاً.</p>
+  <p style="color:#8ce09a">🎬 <b>بروفة كاملة على بيانات الإنتاج — 2026-08-03/04 ليلاً (على اللوكال، بكود <code>main</code> المدموج):</b> Sync إنتاج←لوكال ٨٦/٨٦ · تصفير Bunny ١٠٠٢/١٠٠٢ (زون assets المحمي بقي ٢٥) · <b>ت١</b> ٥٠٧ نجح/٣ فشل + ٥٢ قصّة · <b>ت٢</b> ٢٥ يتيمة · <b>ت٣</b> ٨٣/٨٣ حقلاً خاماً · <b>ت٤</b> ٢١٦ كياناً (١٢٧ مقال · ٣٠ عميل · ١٤ تصنيف · ٢٣ وسم · ٨ صناعة · ١ مؤلف · ٦ صفحات مدوّنتي · ٧ صفحات قوائم) · <b>التمليك T2b</b> ٧٠ منجزة. <b>النتيجة: ٥٣٢/٥٣٥ على Bunny (٩٩٫٤٪) · الحقول الخام ٨٨←٠ · اليتيمة ٣٩←٠ · السيو المولَّد ٤١٠←٤.</b> <b>إثبات idempotent:</b> بروفة ثانية = «سيُنفَّذ 0 · منجز 70».</p>
+  <p style="color:#ffb26b">⚠️ <b>ثلاثة بنود يدوية اكتشفتها البروفة — إلزامية قبل تشغيل T7/T8 على الإنتاج:</b><br>
+  <b>①</b> <code>coreClientId</code> <b>غير مضبوط في بيانات الإنتاج</b> — التمليك يرفض العمل بدونه. الحل: <code>/settings/system</code> ← «مدونتي» ← Save (ضغطة واحدة، وتحقّقنا أنها تثبت بعد إعادة التحميل).<br>
+  <b>②</b> صورة وسم <b>«خدمات طبية»</b> تشير إلى <code>modonty-clients.b-cdn.net/general/dream-to-app/…</code> — أي داخل مجلّد عميل آخر، فالكرت يرفض تمليكها تلقائياً. قرار هوية لخالد (لم أختر نيابةً عنه).<br>
+  <b>③</b> <code>Settings.ogImageUrl</code> — نفس النوع من القرار.<br>
+  البندان ②③ <b>لا يحجبان التنفيذ</b> — الكرت يتخطّاهما ويكمل الباقي.<br><b style="color:#8ce09a">✅ حُسما على اللوكال (بأمر خالد: «إحنا في مرحلة تست، اختار أي صور»):</b> وسم «خدمات طبية» ← <code>general/مدونتي/img-3odggnptm.webp</code> (١٤٠٠×٧٨٨) · <code>Settings.ogImageUrl</code> ← <code>brand/modonty-logo.png</code>. <b>البروفة بعدها: «سيُنفَّذ 0 · منجز 72 · صفر قرارات»</b> — الدائرة أُغلقت كاملة والمعالج مثبَت. <b>على الإنتاج تبقى صور الهوية اختيار خالد.</b></p>
+  <p style="color:#cbaaff">🐞 <b>الثلاثة الفاشلة مُفسَّرة:</b> <code>source fetch failed (404)</code> — ملفاتها محذوفة أصلاً من Cloudinary (<code>a3622ec6…</code> · <code>49aa2c11…</code> · <code>a2a106f2…</code>). <b>نفس العدد ونفس السبب في بروفة 08-01</b> (٤٤١/٤٤٤). أثرها الوحيد: تظهر مكسورة في منتقي الوسائط بالأدمن.</p>
+  <p><b>طبقات التراجع الستّ:</b> نسخة إنتاج على القرص · ٨ لقطات Atlas يومية · فرع <code>main-backup-2026-08-02</code> على GitHub (<code>git push origin main-backup-2026-08-02:main --force</code>) · Vercel Instant Rollback · <code>git revert</code> · <code>git reset --hard origin/main</code> محلياً.</p>
   <span class="gate">بوابة: الموقع الحيّ يعمل كما كان · التراجع = revert بدقائق</span></div></div>
 <div class="t"><input type="checkbox" id="T7"><div class="body">
   <div class="hd"><span class="id">T7</span><span class="tag now">أولوية ٦</span><span class="ttl">ترحيل صور الإنتاج — بلا سيو</span></div>
   <p>باكب طازج · النطاقات الأربعة الأولى فقط. <b>لا إعادة توليد سيو إطلاقاً.</b></p>
   <span class="gate">بوابة: صفر صورة مكسورة على الإنتاج</span></div></div>
+<div class="t"><input type="checkbox" id="T7b"><div class="body">
+  <div class="hd"><span class="id">T7b</span><span class="tag now">أولوية ٦ب</span><span class="ttl">تنظيف الصفوف المكسورة على الإنتاج</span><span class="tag bad">صفحة عميل واقعة الآن</span></div>
+  <p><b>مؤجَّل إلى هنا بأمر خالد 2026-08-05</b> — لمسة إنتاج، فتنضمّ لجولة بني بدل ما تتفرّق لوحدها. تُنفَّذ مع باكب T7 نفسه.</p>
+  <p><b>ما هي:</b> صفّ تشترط السكيما وجود أبٍ له، والأب محذوف. Prisma يرفض إرجاع الصفّ ويرمي <code>Inconsistent query result</code> — فيسقط <b>الاستعلام كلّه</b> لا الصفّ وحده، وتقع الصفحة عند ذلك العميل بينما الباقون بخير.</p>
+  <p>🔬 <b>مُثبَت بمزامنة كاملة 2026-08-05:</b> قاعدة التطوير مُسحت وأُعيد بناؤها من الإنتاج (٩٠ مجموعة · ٥٬٨١٥ وثيقة · صفر فشل) — والفحص التلقائي طلّع ٣ صفوف رجعت معها. يعني <b>مصدرها الإنتاج نفسه</b>، لا اللوكال:</p>
+  <pre>client_reviews.authorId → users   2 · 6a27d3bc94ccef7e560d98a3 · 6a27e57bd22fd167b7eb9a6b
+article_tags.tagId     → tags    1 · 6a672133cbc8dedf1d48bffe</pre>
+  <p>⚠️ المعرّف الأخير هو <b>حرفياً</b> صفّ «جبر سيو» الموثّق في <code>TECH-NOTES</code> بند ٨٧ — أي أن صفحة مقالات ذاك العميل <b>ما زالت واقعة على الإنتاج اليوم</b>.</p>
+  <p>🧰 <b>الأداة جاهزة:</b> خطوة «Orphan Rows» في <code>/maintenance</code> تفحص الـ٤٩ علاقة الإجبارية كلها وتعرض المعرّفات (قراءة فقط)، والحذف إجراء منفصل <code>deleteOrphansForRelation(key)</code> يُنادى باسم العلاقة صراحةً. <b>لم يُشغَّل على الإنتاج إطلاقاً.</b></p>
+  <p>🛡️ <b>ليش الحذف بمراجعة بشرية:</b> نسخة أولى من الفحص أعطت ٣ بدل ٢ لأن اسم الحقل في Prisma غير اسمه في القاعدة (<code>reviewerId @map("authorId")</code>). فاحصٌ يعطي إنذاراً كاذباً يقود لحذف صفوف سليمة — لذلك لا حذف بالجملة بلا نظر.</p>
+  <span class="gate">بوابة: باكب أولاً · فحص يعرض المعرّفات · حذف بعلاقة واحدة في المرّة · إعادة الفحص = صفر</span></div></div>
 <div class="t"><input type="checkbox" id="T8"><div class="body">
   <div class="hd"><span class="id">T8</span><span class="tag now">أولوية ٧</span><span class="ttl">السيو</span></div>
   <p style="color:#ffb4ae">🔒 <b>شرط خالد الصريح (2026-08-01): لا إعادة توليد JSON-LD على الإنتاج إطلاقاً حتى نتأكد 100% أن الصور تُخدم سليمة على اللايف من المزوّدَين (Cloudinary القديم بالـfallback + Bunny الجديد)</b> — التحقق أولاً، السيو آخراً.</p>

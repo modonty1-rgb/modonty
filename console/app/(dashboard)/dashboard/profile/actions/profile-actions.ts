@@ -6,9 +6,9 @@ import { messages } from "@/lib/messages";
 import { auth } from "@/lib/auth";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import { validateYmylData } from "@/lib/seo/ymyl-helpers";
+import { getYmylAuthorityCodes } from "@modonty/database/lib/seo/ymyl-authorities";
 import { normalizePhone } from "@modonty/database/lib/phone";
 import { regenerateClientSeo } from "./regenerate-client-seo";
-import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { normalizeLegalForm, normalizeOrganizationType } from "@modonty/database/lib/constants/client-classification";
 
 function str(v: string | undefined | null) {
@@ -215,15 +215,8 @@ export async function updateProfile(clientId: string, data: ProfileUpdate) {
       // swallow — save already succeeded; SEO regen is best-effort
     }
 
-    // Close the cross-app circle: bust modonty.com's PUBLIC cache so the freshly
-    // regenerated client JSON-LD/meta goes live. The console's revalidatePath only
-    // touches the console runtime — the separate public modonty deployment caches
-    // by tag and won't refresh without this call (same as admin's updateClient).
-    try {
-      await revalidateModontyTag("clients");
-    } catch {
-      // swallow — best-effort cross-app cache bust, never fail the save
-    }
+    // The cross-app cache bust that used to live here now runs inside
+    // regenerateClientSeo, so every write path gets it instead of just this one.
 
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/profile");
@@ -267,8 +260,12 @@ export async function updateYmylData(
       return { success: false, error: "هذا الحساب غير مصنّف YMYL — راجع مودونتي لتفعيل التوثيق" };
     }
 
+    // Validate the authority against the SAME live Reference Data list the dropdown was
+    // built from — the hardcoded matrix is a subset, so it used to reject values the
+    // client had just been offered (Khalid 2026-08-04).
     const validation = validateYmylData(client.ymylCategory, data, {
       country: client.addressCountry,
+      authorityCodes: await getYmylAuthorityCodes(client.addressCountry, client.ymylCategory),
     });
 
     // Allow partial saves (progressive disclosure) — only block on hard format errors,

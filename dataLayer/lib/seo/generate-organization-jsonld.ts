@@ -42,6 +42,20 @@ export function deriveClientType(client: {
 }
 
 interface ClientWithMedia extends Omit<Client, "contentPriorities"> {
+  /**
+   * The intro video, once it is ours. A bare `introVideoUrl` never carried the four
+   * fields Google requires, which is why no VideoObject was emitted for years — this
+   * relation carries them.
+   */
+  introVideoMedia?: {
+    title: string | null;
+    description: string | null;
+    mp4Url: string | null;
+    playbackUrl: string | null;
+    thumbnailUrl: string | null;
+    durationSec: number | null;
+    createdAt: Date | string;
+  } | null;
   logoMedia?: {
     url: string;
     bunnyUrl: string | null;
@@ -698,9 +712,43 @@ export function generateCompleteOrganizationJsonLd(
     }
   }
 
-  // NOTE: introVideoUrl → VideoObject is intentionally NOT emitted yet — a valid
-  // VideoObject needs name + description + thumbnailUrl + uploadDate to avoid a
-  // Google "missing field" warning. Revisit once that metadata is captured.
+  // The intro video, now that it is hosted by us and carries its own metadata.
+  //
+  // This was switched off for as long as the field was a bare link: Google requires
+  // `name`, `thumbnailUrl` and `uploadDate` on a VideoObject, and a URL string has none
+  // of them. `contentUrl` is the plain MP4 — Google's documented most effective way to
+  // fetch a video — which is why MP4 Fallback is on and the media zone has no token auth.
+  //
+  // Still guarded: a video that is present but missing a title or a cover is skipped
+  // rather than emitted incomplete. A "missing field" warning is worse than no node.
+  const introVideo = client.introVideoMedia;
+  if (introVideo?.mp4Url && introVideo.title?.trim() && introVideo.thumbnailUrl) {
+    const uploadDate =
+      introVideo.createdAt instanceof Date
+        ? introVideo.createdAt.toISOString()
+        : new Date(introVideo.createdAt).toISOString();
+
+    const videoNode: JsonLdNode = {
+      "@type": "VideoObject",
+      "@id": `${clientPageUrl}#intro-video`,
+      name: introVideo.title.trim(),
+      thumbnailUrl: introVideo.thumbnailUrl,
+      uploadDate,
+      contentUrl: introVideo.mp4Url,
+      embedUrl: clientPageUrl,
+    };
+    if (introVideo.description?.trim()) {
+      videoNode.description = introVideo.description.trim();
+    }
+    // ISO 8601 duration — "PT1M30S". Google reads no other format.
+    if (introVideo.durationSec && introVideo.durationSec > 0) {
+      const mins = Math.floor(introVideo.durationSec / 60);
+      const secs = introVideo.durationSec % 60;
+      videoNode.duration = `PT${mins > 0 ? `${mins}M` : ""}${secs}S`;
+    }
+    graph.push(videoNode);
+    organizationNode.subjectOf = { "@id": `${clientPageUrl}#intro-video` };
+  }
 
   // Customer reviews of this organization (ClientReview, APPROVED). Hosted on
   // Modonty (third-party platform, not the client's own site) → eligible for the

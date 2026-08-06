@@ -24,6 +24,7 @@ interface OverviewTabProps {
   };
   articlesThisMonth: number;
   totalArticles: number;
+  publishedArticles: number;
   analytics: {
     totalViews: number;
     uniqueSessions: number;
@@ -43,6 +44,7 @@ export function OverviewTab({
   client,
   articlesThisMonth,
   totalArticles,
+  publishedArticles,
   analytics,
 }: OverviewTabProps) {
   const engagementScore = Math.round(
@@ -94,6 +96,7 @@ export function OverviewTab({
         client={client}
         articlesThisMonth={articlesThisMonth}
         totalArticles={totalArticles}
+        publishedArticles={publishedArticles}
       />
 
       <Card className="border-muted bg-muted/30">

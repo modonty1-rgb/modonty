@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { ar } from "@/lib/ar";
+import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -83,6 +84,7 @@ function sourceLabel(source: string | null): string {
 export function QuestionsTable({ questions }: Props) {
   const q = ar.questions;
   const [filter, setFilter] = useState<FilterKey>("all");
+  const { confirmThen, confirmDialog } = useConfirm();
   const [query, setQuery] = useState("");
   const [openItem, setOpenItem] = useState<VisitorQuestionWithDetails | null>(
     null
@@ -118,14 +120,6 @@ export function QuestionsTable({ questions }: Props) {
     [questions]
   );
 
-  function confirmThen(message: string, onConfirm: () => void) {
-    toast(message, {
-      duration: 8000,
-      action: { label: q.confirmYes, onClick: onConfirm },
-      cancel: { label: q.cancel, onClick: () => {} },
-    });
-  }
-
   function handleReply(faqId: string) {
     const text = replyDraft[faqId]?.trim();
     if (!text) {
@@ -158,7 +152,7 @@ export function QuestionsTable({ questions }: Props) {
         else toast.error(res.error || q.rejectFailed);
         setActionId(null);
       });
-    });
+    }, "ارفض السؤال");
   }
 
   function handleRestore(faqId: string) {
@@ -250,6 +244,7 @@ export function QuestionsTable({ questions }: Props) {
         item={openItem}
         onClose={() => setOpenItem(null)}
       />
+      {confirmDialog}
     </>
   );
 }

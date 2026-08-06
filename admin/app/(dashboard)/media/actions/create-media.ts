@@ -34,6 +34,9 @@ interface CreateMediaData {
   cloudinaryVersion?: string;
   cloudinarySignature?: string;
   bunnyUrl?: string | null; // Dual-Write mirror (P2-2) — production keeps reading `url`
+  // Blur placeholder — produced by the uploader from the same buffer it already holds.
+  // Absent for video (no placeholder concept) and for callers that only know a url.
+  blurDataURL?: string | null;
 }
 
 function validateMimeType(mimeType: string): boolean {
@@ -142,6 +145,7 @@ export async function createMedia(data: CreateMediaData) {
         cloudinaryVersion: data.cloudinaryVersion,
         cloudinarySignature: data.cloudinarySignature,
         bunnyUrl: data.bunnyUrl ?? undefined,
+        blurDataURL: data.blurDataURL ?? undefined,
       },
     });
     await logAction("media.create", {

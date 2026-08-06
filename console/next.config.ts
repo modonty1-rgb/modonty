@@ -35,6 +35,12 @@ const nextConfig: NextConfig = {
         hostname: "modonty-asset.b-cdn.net",
         pathname: "/**",
       },
+      // Bunny Stream — video thumbnails (the library's own pull zone, not a storage zone)
+      {
+        protocol: "https",
+        hostname: "vz-a26f5478-719.b-cdn.net",
+        pathname: "/**",
+      },
     ],
   },
 };

@@ -27,6 +27,22 @@ export interface MediaWithStats {
   usageRefs: MediaUsageRef[];
 }
 
+/**
+ * What this screen is NOT: the client's gallery, and not their reels either.
+ *
+ * Khalid (2026-08-05): "الـtab هذي المفروض ما تعرض الصور تبعت الـgallery — المنطقة هذي
+ * تخص الحاجات اللي بتجي من الـadmin." Those two have owners of their own now (معرض الصور ·
+ * الريلز · الفيديوهات), and showing the same file in two places means the client deletes
+ * it here and wonders why their page changed.
+ *
+ * What is left is exactly what this screen is for: files that reached the client from
+ * Modonty's side — article covers, the logo, the hero image, anything the admin attached.
+ *
+ * Both exclusions are written as `NOT` on the positive value on purpose. In MongoDB an
+ * absent key matches neither the value nor its negation, and rows written before these
+ * fields existed have no key at all — `NOT` keeps them visible, which is the safe way to
+ * be wrong. The reverse test would hide a client's whole library.
+ */
 export async function getClientMedia(
   clientId: string,
   type?: MediaType
@@ -34,7 +50,7 @@ export async function getClientMedia(
   const media = await db.media.findMany({
     where: {
       clientId,
-      ...(type && { type }),
+      ...(type ? { type } : { NOT: [{ type: MediaType.GALLERY }, { inReels: true }] }),
     },
     orderBy: {
       createdAt: "desc",

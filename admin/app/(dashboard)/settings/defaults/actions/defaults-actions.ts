@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { mediaSrc } from "@modonty/database/lib/media-src";
+import { generateBlurDataUrlFromUrl } from "@/app/(dashboard)/media/actions/generate-blur";
 import type { MediaType } from "@prisma/client";
 
 // The 3 platform default roles. Each is a single PLATFORM-scope media with no client.
@@ -71,12 +72,18 @@ export async function savePlatformDefault(
       // Clear the default
       if (existing) await db.media.delete({ where: { id: existing.id } });
     } else if (existing) {
-      await db.media.update({ where: { id: existing.id }, data: { url: trimmed } });
+      // The url points at a different picture now — rebuild the placeholder with it.
+      const blurDataURL = await generateBlurDataUrlFromUrl(trimmed);
+      await db.media.update({
+        where: { id: existing.id },
+        data: { url: trimmed, ...(blurDataURL ? { blurDataURL } : {}) },
+      });
     } else {
       await db.media.create({
         data: {
           filename: `platform-default-${role.toLowerCase()}`,
           url: trimmed,
+          blurDataURL: await generateBlurDataUrlFromUrl(trimmed),
           mimeType: "image/png",
           clientId: null,
           scope: "PLATFORM",

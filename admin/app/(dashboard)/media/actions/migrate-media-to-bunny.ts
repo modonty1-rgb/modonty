@@ -73,7 +73,7 @@ export async function migrateMediaBatch(
 
   for (const row of rows) {
     try {
-      const { bunnyUrl } = await mirrorImageToBunny({
+      const { bunnyUrl, blurDataURL } = await mirrorImageToBunny({
         sourceUrl: row.url,
         filename: row.filename,
         type: row.type,
@@ -81,7 +81,13 @@ export async function migrateMediaBatch(
         clientSlug: row.clientId ? slugById.get(row.clientId) ?? null : null,
         cloudinaryPublicId: row.cloudinaryPublicId,
       });
-      await db.media.update({ where: { id: row.id }, data: { bunnyUrl } });
+      // The mirror built the placeholder from the buffer it downloaded anyway, so the
+      // migration doubles as the backfill — every migrated row lands with its blur.
+      // `undefined` (not null) when it couldn't be built, so a retry never blanks a good one.
+      await db.media.update({
+        where: { id: row.id },
+        data: { bunnyUrl, blurDataURL: blurDataURL ?? undefined },
+      });
       result.migrated++;
     } catch (e) {
       result.failed++;

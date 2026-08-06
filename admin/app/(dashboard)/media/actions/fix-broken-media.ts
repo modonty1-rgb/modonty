@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { generateBlurDataUrlFromUrl } from "./generate-blur";
 
 export interface FixBrokenMediaResult {
   ok: boolean;
@@ -88,7 +89,13 @@ export async function fixBrokenMedia(): Promise<FixBrokenMediaResult> {
           skipped++;
           continue;
         }
-        await db.media.update({ where: { id: m.id }, data: { url: replacement } });
+        // The row now points at a completely different picture, so the old placeholder is a
+        // lie — it would flash the dead image's colours. Rebuild from the replacement.
+        const blurDataURL = await generateBlurDataUrlFromUrl(replacement);
+        await db.media.update({
+          where: { id: m.id },
+          data: { url: replacement, ...(blurDataURL ? { blurDataURL } : {}) },
+        });
         fixed++;
         details.push({ filename: m.filename, type: m.type, reason: `replaced with ${role} default` });
       }

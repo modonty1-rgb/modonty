@@ -76,6 +76,7 @@ export function useBunnyUpload({ clientId, mediaType, setFiles }: UseBunnyUpload
                   height: result.height || 0,
                   format: result.format || "",
                   signature: "",
+                  blurDataURL: result.blurDataURL ?? null,
                 },
               }
             : f

@@ -30,6 +30,7 @@ interface UpdateMediaData {
   cloudinarySignature?: string;
   url?: string;
   bunnyUrl?: string; // Bunny-primary: replace-file flow must sync this with url
+  blurDataURL?: string | null; // replace-file flow: the old placeholder describes a dead image
   filename?: string;
   mimeType?: string;
   width?: number;
@@ -127,6 +128,7 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
         cloudinarySignature: data.cloudinarySignature,
         ...(data.url !== undefined ? { url: data.url } : {}),
         ...(data.bunnyUrl !== undefined ? { bunnyUrl: data.bunnyUrl } : {}),
+        ...(data.blurDataURL !== undefined ? { blurDataURL: data.blurDataURL } : {}),
         ...(data.filename !== undefined ? { filename: data.filename } : {}),
         ...(data.mimeType !== undefined ? { mimeType: data.mimeType } : {}),
         ...(data.width !== undefined ? { width: data.width } : {}),

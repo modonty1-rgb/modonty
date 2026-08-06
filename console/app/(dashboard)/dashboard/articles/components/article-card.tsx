@@ -13,6 +13,7 @@ import { approveArticle, requestChanges } from "../actions/article-actions";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FeedbackForm } from "./feedback-form";
+import { ApproveConfirmDialog } from "./approve-confirm-dialog";
 
 interface ArticleCardProps {
   article: ArticleWithAllData;
@@ -33,6 +34,7 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [confirmApprove, setConfirmApprove] = useState(false);
   const isPending = article.status === "AWAITING_APPROVAL";
   const isScheduled = article.status === "SCHEDULED";
   const isPublished = article.status === "PUBLISHED";
@@ -65,6 +67,7 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
     try {
       const result = await approveArticle(article.id, article.client.id);
       if (result.success) {
+        setConfirmApprove(false);
         toast.success(ar.articles.approveSuccess ?? "تمت الموافقة — المحرر سيقوم بالنشر قريباً");
         router.refresh();
       } else {
@@ -77,13 +80,7 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
     }
   };
 
-  const handleApprove = () => {
-    toast(ar.articles.approveConfirm, {
-      duration: 8000,
-      action: { label: ar.articles.confirmYes ?? "نعم، وافق", onClick: runApprove },
-      cancel: { label: ar.articles.cancel ?? "إلغاء", onClick: () => {} },
-    });
-  };
+  const handleApprove = () => setConfirmApprove(true);
 
   const handleRequestChanges = async (feedback: string) => {
     setLoading(true);
@@ -309,6 +306,14 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
           onCancel={() => setShowFeedback(false)}
         />
       )}
+
+      <ApproveConfirmDialog
+        open={confirmApprove}
+        onOpenChange={setConfirmApprove}
+        onConfirm={runApprove}
+        pending={loading}
+        articleTitle={article.title}
+      />
     </>
   );
 }

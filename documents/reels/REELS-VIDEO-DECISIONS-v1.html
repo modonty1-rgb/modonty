@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فيديو الريلز — ملف القرارات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#0f172a;--card:#fff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;
+    --brand:#7c3aed;--brand-soft:#f5f3ff;--red:#dc2626;--red-soft:#fef2f2;
+    --amber:#d97706;--amber-soft:#fffbeb;--green:#059669;--green-soft:#ecfdf5;--slate-soft:#f8fafc}
+  body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--ink);
+    line-height:1.75;padding:28px 16px 80px}
+  .wrap{max-width:980px;margin:0 auto}
+  header{margin-bottom:20px;color:#fff}
+  .kicker{display:inline-flex;gap:8px;background:rgba(124,58,237,.22);border:1px solid rgba(167,139,250,.45);
+    color:#ddd6fe;font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;margin-bottom:12px}
+  h1{font-size:29px;font-weight:800;margin-bottom:8px}
+  .lede{color:#94a3b8;font-size:16px;max-width:76ch}
+  .lede b{color:#e2e8f0}
+  .meta{margin-top:13px;display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:#cbd5e1;
+    font-size:12.5px;padding:4px 11px;border-radius:8px}
+  .chip b{color:#fff}
+  .tabs{display:flex;gap:6px;margin:20px 0 16px;flex-wrap:wrap}
+  .tab{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#cbd5e1;
+    font-family:inherit;font-size:14.5px;font-weight:700;padding:9px 18px;border-radius:10px;cursor:pointer}
+  .tab:hover{background:rgba(255,255,255,.12);color:#fff}
+  .tab[aria-selected="true"]{background:#fff;color:var(--ink);border-color:#fff}
+  .tab .n{display:inline-block;background:rgba(255,255,255,.14);border-radius:6px;padding:0 7px;
+    margin-inline-start:7px;font-size:12.5px}
+  .tab[aria-selected="true"] .n{background:rgba(0,0,0,.12)}
+  .panel[hidden]{display:none}
+  .copybar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+  .btn{font-family:inherit;font-size:14px;font-weight:700;padding:9px 16px;border-radius:9px;
+    border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#e2e8f0;cursor:pointer}
+  .btn:hover{background:rgba(255,255,255,.16);color:#fff}
+  .btn.primary{background:#fff;color:var(--ink);border-color:#fff}
+  .hint{color:#94a3b8;font-size:13.5px}
+  .card{background:var(--card);border-radius:14px;padding:20px 22px;margin-bottom:14px;
+    box-shadow:0 1px 3px rgba(0,0,0,.18),0 8px 24px -12px rgba(0,0,0,.35)}
+  .sec{color:#fff;font-size:17px;font-weight:800;margin:24px 0 12px;display:flex;gap:10px;align-items:center}
+  .sec:first-child{margin-top:0}
+  .sec .count{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:#cbd5e1;
+    font-size:12.5px;font-weight:600;padding:2px 9px;border-radius:7px}
+  .q{border:2px solid #fde68a;background:var(--amber-soft);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+  .q h3{font-size:16px;font-weight:800;margin-bottom:6px;display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+  .qid{font-family:ui-monospace,monospace;font-size:12px;background:#fff;border:1px solid #fde68a;
+    border-radius:6px;padding:1px 8px;color:#92400e}
+  .qtext{color:#78350f;font-size:15px;margin-bottom:11px}
+  .opts{display:grid;gap:8px}
+  .opt{display:flex;gap:11px;align-items:flex-start;background:#fff;border:1px solid #fde68a;
+    border-radius:9px;padding:11px 13px;cursor:pointer}
+  .opt:hover{border-color:var(--amber)}
+  .opt input{appearance:none;flex:0 0 auto;width:18px;height:18px;margin-top:3px;border:2px solid #cbd5e1;
+    border-radius:50%;cursor:pointer;position:relative}
+  .opt input:checked{border-color:var(--green)}
+  .opt input:checked::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--green)}
+  .ot{font-weight:700;font-size:14.5px}
+  .od{color:#64748b;font-size:13.5px;margin-top:2px}
+  .rec{font-size:11.5px;font-weight:700;color:var(--green);background:var(--green-soft);
+    border:1px solid #a7f3d0;border-radius:5px;padding:1px 7px;margin-inline-start:7px}
+  .bad{font-size:11.5px;font-weight:700;color:var(--red);background:var(--red-soft);
+    border:1px solid #fecaca;border-radius:5px;padding:1px 7px;margin-inline-start:7px}
+  .note{margin-top:10px}
+  .note label{display:block;font-size:12.5px;font-weight:700;color:#78350f;margin-bottom:4px}
+  .note textarea{width:100%;font-family:inherit;font-size:14px;padding:9px 11px;border:1px solid #fde68a;
+    border-radius:8px;resize:vertical;min-height:52px;background:#fff}
+  .card h2{font-size:19px;font-weight:800;margin-bottom:10px}
+  .card h3{font-size:15.5px;font-weight:800;margin:16px 0 6px}
+  .card p{color:#334155;font-size:15px;margin-bottom:10px}
+  .card ul{margin:0 0 12px;padding-inline-start:20px;color:#334155;font-size:15px}
+  .card li{margin-bottom:6px}
+  code{font-family:ui-monospace,monospace;font-size:13px;background:#f1f5f9;border:1px solid #e2e8f0;
+    border-radius:5px;padding:1px 6px;color:#334155;direction:ltr;display:inline-block}
+  pre{background:#0f172a;color:#e2e8f0;padding:12px 14px;border-radius:9px;overflow-x:auto;direction:ltr;
+    text-align:left;font-family:ui-monospace,monospace;font-size:13px;line-height:1.7;margin:10px 0}
+  table{width:100%;border-collapse:collapse;margin:10px 0 14px;font-size:14.5px}
+  th,td{text-align:start;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--slate-soft);font-weight:700;font-size:13.5px;color:#475569}
+  .warn{border-inline-start:4px solid var(--red);background:var(--red-soft);padding:12px 15px;
+    border-radius:0 9px 9px 0;color:#7f1d1d;font-size:14.5px;margin:12px 0}
+  .ok{border-inline-start:4px solid var(--green);background:var(--green-soft);padding:12px 15px;
+    border-radius:0 9px 9px 0;color:#065f46;font-size:14.5px;margin:12px 0}
+  .quote{border-inline-start:4px solid var(--brand);background:var(--brand-soft);padding:12px 15px;
+    border-radius:0 9px 9px 0;color:#4c1d95;font-size:14.5px;margin:12px 0}
+  .src{font-size:13px;color:var(--muted);margin-top:6px}
+  .src a{color:var(--brand)}
+  footer{margin-top:32px;color:#64748b;font-size:13px;text-align:center}
+  @media(max-width:640px){h1{font-size:23px}.card{padding:16px}body{padding:18px 12px 60px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">🎥 كل القرارات مقفولة · جاهز للبناء</div>
+  <h1>الفيديو في الريلز — نقرّر قبل ما نبني</h1>
+  <p class="lede">
+    الصور خلصت واختُبرت. الفيديو وقف عند حاجز حقيقي: مقطع ٩٠ ثانية يزن ١٠–٥٠ ميجا،
+    <b>ويتجاوز حدّ الطلب على Vercel وسقف الدالة ٦٠ ثانية</b> — يعني مسار الرفع الحالي ما ينفع له.
+    درست الموضوع من التوثيق الرسمي، وطلعت بالقرارات اللي قدّامك.
+  </p>
+  <div class="meta">
+    <span class="chip">مقفولة: <b>٩</b></span>
+    <span class="chip">مفتوحة: <b>٠</b></span>
+    <span class="chip">مؤجّلة: <b>٢</b></span>
+    <span class="chip">الحالة: <b>مكتمل — جاهز للبناء</b></span>
+    <span class="chip">مرجع: <b>بند 83 · م٥</b></span>
+    <span class="chip">أُنشئ: <b>2026-08-05</b></span>
+  </div>
+</header>
+
+<div class="tabs" role="tablist">
+  <button class="tab" role="tab" aria-selected="true"  data-p="todo">القرارات <span class="n" id="c-open">0</span></button>
+  <button class="tab" role="tab" aria-selected="false" data-p="later">مؤجّل <span class="n">2</span></button>
+  <button class="tab" role="tab" aria-selected="false" data-p="study">الدراسة</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="traps">الفخاخ <span class="n">4</span></button>
+</div>
+
+<!-- ============ القرارات ============ -->
+<section class="panel" id="p-todo">
+
+  <div class="copybar">
+    <button class="btn primary" id="copy">📋 انسخ قراراتي</button>
+    <button class="btn" id="reset">تصفير</button>
+    <span class="hint">جاوب براحتك — اختياراتك تتحفظ لو سكّرت الصفحة. وبعدين انسخ والصق لكلود.</span>
+  </div>
+
+  <div class="ok" style="margin-bottom:16px">
+    <b>✅ ق1 مقفول — Bunny Stream.</b> خالد (2026-08-05): «بني يعني ما فيه خلاص. شغلنا كله على بني.»
+    ولا نقاش في مورّد آخر. التفاصيل والأرقام في تبويب <b>الدراسة</b>، والسكيما أصلاً مبنية عليه
+    (<code>bunnyVideoId</code> · <code>playbackUrl</code> · <code>mp4Url</code> · <code>durationSec</code>).
+  </div>
+
+  <div class="ok" style="margin-bottom:16px">
+    <b>✅ ق2 مقفول — رفع مباشر ببروتوكول tus + توقيع مؤقّت.</b> خالد (2026-08-05): «شوف البروتوكول المناسب واعتمدوه.»
+    الملف يروح من المتصفح لبني مباشرة فما يمرّ على Vercel أصلاً، والتوقيع يُحسب على سيرفرنا فما يوصل المفتاح للمتصفح.
+    التفاصيل التقنية في تبويب <b>الدراسة</b>.
+  </div>
+
+  <div class="ok" style="margin-bottom:16px">
+    <b>✅ ق7 مقفول — أي جهاز، مع فحص آلي واعتماد إلزامي.</b> خالد (2026-08-05): «شوف الـbest practice، طبّق الـbest practice.»
+    والدليل حسمها ضدّ منع الجوال — التفصيل في تبويب <b>الدراسة</b>.
+  </div>
+
+  <div class="card">
+    <h2>✅ الجولة الأولى — قرارات البنية التحتية</h2>
+    <table>
+      <tr><th>#</th><th>القرار</th><th>الأثر التنفيذي</th></tr>
+      <tr><td>ق1</td><td>بني هو المورّد</td><td>صار قاعدة دائمة، ما يُعاد فتحه</td></tr>
+      <tr><td>ق2</td><td>رفع مباشر tus بتوقيع مؤقّت</td><td>ينهي حاجز حجم Vercel</td></tr>
+      <tr><td>ق5</td><td>480p + 720p + 1080p</td><td><b>يُضبط في لوحة بني قبل أول رفعة</b></td></tr>
+      <tr><td>ق6</td><td>العميل يرفع ومُدَوَّنَتِي تعتمد</td><td><b>شاشة الاعتماد (م٤) صارت شرط إطلاق</b></td></tr>
+      <tr><td>ق7</td><td>أي جهاز + فحص آلي</td><td>الفحص يمنع غير المطابق قبل الرفع</td></tr>
+    </table>
+    <h3>الباقي قبل أول سطر كود — إجراء منك</h3>
+    <ul>
+      <li>أنشئ <b>Video Library</b> في لوحة بني، وفعّل <b>MP4 Fallback</b> والجودات الثلاث <b>من أول لحظة</b>.</li>
+      <li>اترك منطقة الفيديو <b>بلا Token Authentication</b> — وإلا قوقل ما يجلب الملف ولا يُفهرس.</li>
+      <li>أعطني: معرّف المكتبة · المفتاح · نطاق منطقة السحب.</li>
+    </ul>
+    <div class="quote">وقراران مؤجّلان لجلسة مودونتي: <b>المشغّل</b> و<b>صفحة المشاهدة لكل ريل</b> — بشرط نخزّن من أول رفعة <code>mp4Url</code> و<code>playbackUrl</code> و<code>thumbnailUrl</code> و<code>durationSec</code> و<code>reelSlug</code> عشان تلك الجلسة تبني واجهة بس، بلا ترحيل بيانات.</div>
+  </div>
+
+  <div class="sec">الجولة الثانية — واجهة الكونسول <span class="count">٤ مقفولة</span></div>
+
+  <div class="ok" style="margin-bottom:16px">
+    <b>✅ ق8 مقفول — مساران في الشريط الجانبي: «الريلز» و«الفيديوهات».</b>
+    خالد (2026-08-05): «في الـsidebar يجب أن يكون هناك route للريلز وroute للفيديوهات، وذلك لتحسين تجربة المستخدم للعميل.»
+    <br><b>وتصحيح مني:</b> اعترضت قبل شوي على الفصل — واعتراضي كان في غير محلّه لأني فهمت السؤال عن مودونتي.
+    حجّتي الأولى (ثبات الرابط لقوقل) تخصّ <b>صفحة المشاهدة على مودونتي</b>، وما لها علاقة بتنقّل الكونسول.
+    والباقي يؤيّدك: تجربة الرفع مختلفة فعلاً (ضغط سريع مقابل رفع مستأنف + انتظار ترميز + غلاف + نصّ مكتوب).
+    <br><b>الطبقتان ما تتعارضان:</b> كونسول = مساران · مودونتي = مسار واحد ثابت <code>/reels/[reelSlug]</code>.
+    والفصل ما يحتاج تغيير قاعدة: كلا الصفحتين تقرأ <code>media</code> بشرط <code>inReels: true</code> وتفصل بـ<code>mimeType</code>.
+  </div>
+
+  <div class="ok" style="margin-bottom:16px">
+    <b>✅ ق9 مقفول — ٣ حقول من العميل، ومُدَوَّنَتِي تصحّح عند الاعتماد.</b> خالد (2026-08-05): «اعتمد الـbest practice.»
+    <br>العميل يكتب: <b>العنوان</b> · <b>الوصف</b> · <b>الغلاف</b> للفيديو (وللصورة: <b>الوصف البديل</b> بدل الغلاف).
+    وسبعة حقول تتولّد تلقائياً بلا تدخّل أحد. ومُدَوَّنَتِي تراجع وتصحّح عند الاعتماد.
+    <br><b>وحارسان إلزاميان:</b> زرّ الاعتماد <b>معطّل</b> لو العنوان أو الوصف ناقص، <b>ولو العنوان مكرّر مع ريل ثانٍ</b> —
+    لأن قوقل يشترط اسماً فريداً لكل فيديو، والتكرار اليوم هو السلوك الافتراضي لا الاستثناء.
+    <br><b>وبند تنفيذي انكشف أثناء الدراسة:</b> ريل الصورة المرفوع مباشرةً <b>ما له حقل وصف بديل أصلاً</b> — يُضاف ضمن نفس اللوحة.
+    التفصيل الكامل تحت.
+  </div>
+
+  <div class="q" style="border-color:#e2e8f0;background:var(--slate-soft)">
+    <h3><span class="qid">ق9</span> المرجع — إيش يطلبه قوقل ومين يكتب إيش</h3>
+
+    <div class="card" style="margin-top:12px">
+      <h3 style="margin-top:0">أ. إيش يطلبه قوقل بالضبط</h3>
+      <p><b>وأول شي لازم يُقال:</b> ريل الصورة وريل الفيديو <b>كيانان مختلفان عند قوقل</b> — الفيديو له
+        <code>VideoObject</code> وخريطة فيديو، والصورة الثابتة ما تنطبق عليها ولا وحدة منهما.</p>
+
+      <h3>ريل الفيديو — <code>VideoObject</code></h3>
+      <table>
+        <tr><th>الحقل</th><th>الحالة</th><th>الشرط</th></tr>
+        <tr><td><code>name</code></td><td><b>إلزامي</b></td><td>عنوان <b>فريد لكل فيديو</b> على الموقع</td></tr>
+        <tr><td><code>thumbnailUrl</code></td><td><b>إلزامي</b></td><td>صورة غلاف برابط ثابت</td></tr>
+        <tr><td><code>uploadDate</code></td><td><b>إلزامي</b></td><td>ISO 8601 <b>مع المنطقة الزمنية</b></td></tr>
+        <tr><td><code>contentUrl</code></td><td>موصى — الأهم</td><td>«الطريقة الأنجع ليجلب قوقل الفيديو»</td></tr>
+        <tr><td><code>description</code></td><td>موصى</td><td>وصف <b>فريد</b> لكل فيديو</td></tr>
+        <tr><td><code>duration</code></td><td>موصى</td><td>ISO 8601 مثل <code>PT1M30S</code></td></tr>
+        <tr><td><code>embedUrl</code></td><td>موصى</td><td>رابط المشغّل</td></tr>
+        <tr><td><code>interactionStatistic</code></td><td>موصى</td><td>عدد المشاهدات</td></tr>
+      </table>
+
+      <h3>وخريطة الفيديو</h3>
+      <p><b>إلزامي:</b> <code>thumbnail_loc</code> · <code>title</code> · <code>description</code> (بحدّ ٢٠٤٨ حرفاً) ·
+        و<code>content_loc</code> أو <code>player_loc</code> (واحد منهما على الأقل، وقوقل يفضّل الأول).
+        <b>واختياري مفيد:</b> <code>duration</code> (١ إلى ٢٨٨٠٠ ثانية — مقاطعنا داخل المدى)، <code>publication_date</code>، <code>view_count</code>، <code>tag</code> (٣٢ كحدّ أقصى).</p>
+
+      <h3>ريل الصورة — قواعد مختلفة تماماً</h3>
+      <ul>
+        <li><b>الوصف البديل (alt)</b> هو الأساس — قوقل يستخدمه لفهم الصورة، وكنصّ رابط لو كانت رابطاً.</li>
+        <li>الصورة توضع <b>قرب نصّ ذي صلة</b>، وقوقل يستخرج الموضوع من محتوى الصفحة والتعليق والعنوان.</li>
+        <li><b>جودة الصورة تؤثّر مباشرةً</b> — الواضحة تجذب نقرات أكثر في نتائج الصور.</li>
+        <li>خريطة صور + بيانات <code>ImageObject</code> تفتح نتائج غنيّة بشارة.</li>
+      </ul>
+      <div class="warn"><b>فجوة في الكود:</b> الصورة الجاية من المعرض عندها حقل وصف بديل، أما <b>المرفوعة مباشرةً للريلز فما لها حقل alt أصلاً</b> — وهذا يعني ريل صورة بلا أهم إشارة سيو عنده.</div>
+      <div class="src">المصادر: <a href="https://developers.google.com/search/docs/appearance/structured-data/video">VideoObject</a> · <a href="https://developers.google.com/search/docs/crawling-indexing/sitemaps/video-sitemaps">خرائط الفيديو</a> · <a href="https://developers.google.com/search/docs/appearance/google-images">سيو الصور</a></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">ب. مين يكتب إيش — التقسيم المقترح</h3>
+
+      <h3>🧑 العميل يكتب ٣ فقط</h3>
+      <table>
+        <tr><th>الحقل</th><th>ليش هو تحديداً</th></tr>
+        <tr><td><b>العنوان</b></td><td>إلزامي عند قوقل ولازم يكون فريداً — والعميل أدرى بمحتوى مقطعه</td></tr>
+        <tr><td><b>الوصف</b></td><td>يظهر في نتيجة البحث وفي صفحة المشاهدة، ولازم يكون فريداً</td></tr>
+        <tr><td><b>الغلاف</b> (فيديو)</td><td>أول ما يشوفه الزائر — واللقطة التلقائية أحياناً من إطار سيّئ</td></tr>
+      </table>
+      <p style="color:#64748b;font-size:14px">ولريل الصورة: <b>الوصف البديل</b> بدل الغلاف (وهو ناقص اليوم للمرفوعة مباشرةً).</p>
+
+      <h3>⚙️ تلقائي بلا تدخّل أحد</h3>
+      <table>
+        <tr><th>الحقل</th><th>من وين</th></tr>
+        <tr><td><code>uploadDate</code></td><td>تاريخ الاعتماد أو النشر</td></tr>
+        <tr><td><code>duration</code></td><td><code>durationSec</code> المقروء من الملف</td></tr>
+        <tr><td><code>contentUrl</code></td><td><code>mp4Url</code> من بني</td></tr>
+        <tr><td><code>embedUrl</code></td><td>رابط صفحة المشاهدة</td></tr>
+        <tr><td><code>thumbnailUrl</code></td><td>غلاف بني (أو اختيار العميل)</td></tr>
+        <tr><td><code>interactionStatistic</code></td><td><code>viewsCount</code></td></tr>
+        <tr><td>الرابط (<code>reelSlug</code>)</td><td>يُولَّد ويثبت — ما يتغيّر بعدها</td></tr>
+      </table>
+
+      <h3>🛡️ مُدَوَّنَتِي عند الاعتماد</h3>
+      <ul>
+        <li>تراجع العنوان والوصف وتصحّحهما — <b>محطّة السيو الأخيرة</b>.</li>
+        <li>تُمنع من الاعتماد لو العنوان أو الوصف ناقص، أو <b>لو العنوان مكرّر مع ريل ثانٍ</b>.</li>
+      </ul>
+      <div class="quote"><b>ليش الفحص الآلي للتكرار ضروري:</b> قوقل يشترط اسماً فريداً لكل فيديو، والعناوين اليوم تتولّد من اسم الملف أو من اسم العميل — فالتكرار مو احتمالاً، هو <b>السلوك الافتراضي</b>.</div>
+    </div>
+  </div>
+
+  <div class="ok" style="margin-bottom:16px">
+    <b>✅ ق10 مقفول — عدّادات على البطاقة + صفحة تعليقات موحّدة + لا نشر تلقائي.</b>
+    خالد (2026-08-05): «اعتمد الـbest practice بعد الدراسة الصحيحة حسب المصادر الرسمية.» والتفصيل والأدلّة تحت.
+  </div>
+
+  <div class="card">
+    <h2>ق10 — القرار وأدلّته</h2>
+
+    <h3>① لا نشر تلقائي — الاعتماد اليدوي توصية رسمية</h3>
+    <div class="quote">قوقل حرفياً: <b>«الموافقة اليدوية أو المراجعة لبعض تفاعلات المستخدمين تقلّل السبام في منصّتك بشكل كبير»</b>،
+      لأنها تمنع المُسيء من نشر محتواه فوراً — <b>«والمراجعة وسيلة فعّالة جداً في مكافحة السبام»</b>.</div>
+    <p>وحالة <code>MediaComment</code> الافتراضية <code>PENDING</code> أصلاً — يعني القاعدة مبنية على هذا المنطق من البداية.</p>
+
+    <p style="color:#64748b;font-size:14px"><b>و«مين يوافق؟»</b> انفصل كقرار مستقلّ — <b>ق11</b> تحت.</p>
+
+    <h3>② روابط التعليقات — <code>rel="ugc"</code> إلزامي</h3>
+    <p>توصية قوقل الصريحة: <b>أضف <code>nofollow</code> أو <code>ugc</code> لكل رابط في محتوى غير موثوق</b>، لأن المُسيء دافعه ترك رابط لموقعه.
+      والقيمة الموصى بها للتعليقات تحديداً هي <code>ugc</code>، ويصحّ الجمع <code>rel="nofollow ugc"</code> للتوافق.</p>
+
+    <h3>③ الشكل في الكونسول</h3>
+    <ul>
+      <li><b>عدّادات على كل بطاقة ريل</b> — مشاهدات · إعجابات · تعليقات · مفضّلة. والعدّادات <b>مخزّنة أصلاً</b> على الوسائط، فالعرض استعلام واحد.</li>
+      <li><b>تعليقات الريلز تنضم لصفحة التعليقات الموجودة</b> بمصفّاة «ريلز»، بدل صفحة ثانية.
+        السبب: العميل يراجع التعليقات في مكان واحد — تفريقها على صفحتين يعني تعليقاً منسيّاً بلا ردّ.</li>
+    </ul>
+
+    <div class="ok"><b>وما يحتاج بناء قاعدة:</b> <code>MediaComment</code> فيها الحالة والردود، و<code>MediaReaction</code> فيها تفرّد لكل مستخدم وزائر،
+      والعدّادات الأربعة على <code>Media</code>. الناقص الواجهة والاستعلامات فقط.</div>
+    <div class="src">المصادر: <a href="https://developers.google.com/search/docs/monitor-debug/prevent-abuse">قوقل — منع السبام من المستخدمين</a> · <a href="https://developers.google.com/search/docs/crawling-indexing/qualify-outbound-links">قوقل — توصيف الروابط الخارجية</a> · <a href="https://developers.google.com/search/docs/essentials/spam-policies">سياسات السبام</a></div>
+  </div>
+
+  <div class="ok" style="margin-bottom:16px">
+    <b>✅ ق11 مقفول — العميل يوافق، والمتفاعل لازم يكون مسجّلاً في مُدَوَّنَتِي.</b>
+    خالد (2026-08-05): «العميل هو اللي يوافق، مع ملاحظة أن الشخص اللي يكتب التعليق أو يعمل favorite أو like
+    على الريل — صورة كان أو فيديو — <b>يجب أن يكون مسجّلاً في مُدَوَّنَتِي</b>. مو أي زائر.»
+    <br><b>وحُسم اللبس:</b> المقصود <b>حساب مستخدم على مُدَوَّنَتِي</b> (جدول <code>User</code>) — أي شخص سجّل في المنصّة.
+    <b>ولا علاقة له بالاشتراك في نشرة العميل</b> (<code>Subscriber</code>) نهائياً. خالد (2026-08-05): «ما هو مشترك في النشرة، لا، ما له علاقة بموضوع النشرة نهائي.»
+  </div>
+
+  <div class="card">
+    <h2>ق11 — القرار وأثره على الكود</h2>
+
+    <h3>① الموافقة عند العميل</h3>
+    <p>نفس نمط تعليقات المقالات اليوم — العميل يراجعها من الكونسول. والمقالات سطح أهمّ سيوياً من الريلز،
+      فلو ائتمنّاه على الأثقل فالأخفّ من باب أولى. وتبقى لمُدَوَّنَتِي صلاحية <b>حذف أي تعليق من الأدمن</b> فوق قراره،
+      لأن التعليق يظهر على صفحة داخل <b>modonty.com</b> والسمعة سمعة نطاقنا.</p>
+
+    <h3>② التفاعل للمسجّلين فقط — والباب المجهول يُقفل</h3>
+    <table>
+      <tr><th>الفعل</th><th>يحتاج تسجيلاً؟</th></tr>
+      <tr><td>مشاهدة الريل</td><td>❌ مفتوح للجميع — وإلا انهارت أرقام المشاهدات</td></tr>
+      <tr><td>إعجاب</td><td>✅ مسجّل</td></tr>
+      <tr><td>مفضّلة</td><td>✅ مسجّل</td></tr>
+      <tr><td>تعليق</td><td>✅ مسجّل</td></tr>
+    </table>
+    <div class="warn">
+      <b>باب مفتوح لازم نقفله.</b>
+      <br>لما بنينا القاعدة، خلّيناها <b>تسمح لأي زائر — حتى لو ما سجّل دخول — إنه يعجب أو يعلّق</b>.
+      وعشان نعرف نفرّق بينهم وهم بلا حسابات، كنا نحفظ «أثر متصفّحه» بدل اسمه.
+      <br><br>قرارك يقول: <b>المسجّل فقط</b>. فالمطلوب نقفل هذا الباب في الكود —
+      أي إعجاب أو تعليق يجي من شخص غير مسجّل دخول <b>يُرفض</b>.
+      <br><br><b>والخبر الطيب:</b> ما يحتاج أي تعديل على القاعدة. الخانة اللي كانت للمجهول تبقى مكانها بلا استخدام —
+      يعني لو تغيّر الرأي يوماً، الباب يُفتح بسطر واحد.
+    </div>
+
+    <h3>③ الثمن والمكسب — بصراحة</h3>
+    <ul>
+      <li><b>الثمن:</b> احتكاك. أرقام التفاعل بتنزل — ناس كثير تعجب بضغطة ولا تسجّل.</li>
+      <li><b>المكسب الأول:</b> السبام ينهار عملياً — المُسيء يحتاج حساباً لكل محاولة، والعميل يراجع أقل.</li>
+      <li><b>المكسب الأكبر:</b> الإعجاب المجهول <b>رقم</b>، والإعجاب من مسجّل <b>عميل محتمل باسم وبريد</b>.
+        وهذا يحوّل الريلز من عدّاد إعجابات إلى قناة تعرّف على مهتمّين فعليين.</li>
+    </ul>
+    <div class="quote">وهذا متّسق مع طبيعة المنتج: الريلز <b>تسليم مدفوع لعميل أعمال</b>، لا محتوى جمهور — فجودة التفاعل أهم من حجمه.</div>
+  </div>
+</section>
+
+<!-- ============ الدراسة ============ -->
+<section class="panel" id="p-study" hidden>
+
+  <div class="card">
+    <h2>١. بني — التكلفة</h2>
+    <div class="quote">
+      <b>قرار مقفول:</b> بني هو مورّد الوسائط الوحيد عندنا — صوراً وفيديو وتخزيناً.
+      ما فيه مقارنة بمورّد آخر، والدراسة كلها تبدأ من «كيف نسوّيها في بني».
+    </div>
+    <table>
+      <tr><th>البند</th><th>التكلفة</th></tr>
+      <tr><td>الترميز (تحويل المقطع لجودات)</td><td><b>مجاناً</b></td></tr>
+      <tr><td>المشغّل الجاهز</td><td><b>مجاناً</b></td></tr>
+      <tr><td>التخزين</td><td>‏$0.01 / جيجا</td></tr>
+      <tr><td>التوصيل</td><td>‏$0.005 / جيجا</td></tr>
+    </table>
+    <p><b>حساب واقعي:</b> مئة مقطع ٩٠ ثانية بجودة 720p ≈ ١٠ جيجا = <b>‏$0.1 شهرياً</b> تخزيناً. التكلفة عملياً مهملة.</p>
+    <div class="src">المصدر: <a href="https://bunny.net/stream/">bunny.net/stream</a></div>
+  </div>
+
+  <div class="card">
+    <h2>٢. كيف يُكسر حاجز الحجم؟</h2>
+    <p>المشكلة: الرفع اليوم يمرّ على سيرفرنا (<code>/api/upload-bunny</code>)، وVercel يحدّ جسم الطلب وسقف الدالة ٦٠ ثانية. فيديو ٩٠ ثانية يتجاوز الاثنين.</p>
+    <p>الحل الرسمي من بني: <b>الملف يروح من المتصفح لبني مباشرة</b>، وسيرفرنا يعطي المتصفح <b>تصريحاً مؤقّتاً</b> فقط:</p>
+    <pre>الوجهة:  https://video.bunnycdn.com/tusupload
+التوقيع: SHA256(libraryId + apiKey + expire + videoId)
+الهيدرز: AuthorizationSignature · AuthorizationExpire · LibraryId · VideoId</pre>
+    <ul>
+      <li>التوقيع يُحسب <b>على سيرفرنا</b> — مفتاح بني ما يوصل المتصفح إطلاقاً.</li>
+      <li>بروتوكول ‏tus = <b>رفع قابل للاستئناف</b>: الجوال لو انقطع نته يكمّل من مكانه لا من الصفر.</li>
+      <li>المكتبة الموصى بها رسمياً <code>tus-js-client</code>.</li>
+    </ul>
+    <div class="ok">وهذا <b>يركّب على الكمبوننت المشترك اللي بنيناه اليوم بلا إعادة كتابة</b> — شريط التقدّم اللي عملناه يتغذّى من حدث التقدّم نفسه.</div>
+    <div class="src">المصدر: <a href="https://docs.bunny.net/stream/tus-resumable-uploads">توثيق بني — TUS</a></div>
+  </div>
+
+  <div class="card">
+    <h2>٣. ليش بلا مكتبة مشغّل؟</h2>
+    <p>مقاطعنا قصيرة وعمودية ومقفولة على ٩٠ ثانية. البثّ المتكيّف (HLS) حُلٌّ لمشكلة ما عندنا: الفيلم الطويل على شبكة متذبذبة.</p>
+    <table>
+      <tr><th>الخيار</th><th>جافاسكربت</th><th>الحكم</th></tr>
+      <tr><td><code>&lt;video&gt;</code> + MP4</td><td><b>صفر</b></td><td>✅ الموصى به</td></tr>
+      <tr><td>iframe بني</td><td>إطار كامل لكل بطاقة</td><td>❌ قاتل في فيد متمرّر</td></tr>
+      <tr><td>Vidstack / Video.js / Plyr</td><td>المكتبة + <code>hls.js</code></td><td>🔸 نؤجّلها</td></tr>
+    </table>
+    <p>وبني يعطي ملفاً مباشراً عبر خاصية <b>MP4 Fallback</b> بالشكل:</p>
+    <pre>https://{pull_zone}.b-cdn.net/{videoId}/play_720p.mp4</pre>
+    <div class="src">المصدر: <a href="https://docs.bunny.net/stream/mp4-downloads">توثيق بني — MP4 Fallback</a></div>
+  </div>
+
+  <div class="card">
+    <h2>٤. شروط قوقل لفهرسة الفيديو</h2>
+    <p>ثلاثة شروط تمسّ معمارنا مباشرة:</p>
+    <ul>
+      <li><b>صفحة مشاهدة مستقلة</b> — «الفيديو هو الغرض الأساسي للصفحة»، بعنوان ووصف فريدين، وتُفهرس هي أولاً. الفيد المتمرّر وحده لا يكفي.</li>
+      <li><b>روابط ثابتة</b> للملف وللصورة المصغّرة — قوقل يحذّر حرفياً من شبكات التوصيل ذات الروابط سريعة الانتهاء.</li>
+      <li><b>الفيديو يظهر في HTML المُرندَر</b> — ممنوع نعتمد على ضغطة أو سحبة عشان يتحمّل.</li>
+    </ul>
+    <h3>حقول <code>VideoObject</code></h3>
+    <table>
+      <tr><th>إلزامي</th><th>موصى</th></tr>
+      <tr>
+        <td><code>name</code> · <code>thumbnailUrl</code> · <code>uploadDate</code></td>
+        <td><code>contentUrl</code> (الأهم) · <code>duration</code> · <code>description</code> · <code>embedUrl</code></td>
+      </tr>
+    </table>
+    <p>زائد <b>خريطة موقع للفيديو</b> بنفس الروابط.</p>
+    <div class="src">المصادر: <a href="https://developers.google.com/search/docs/appearance/video">Google — Video SEO</a> · <a href="https://developers.google.com/search/docs/appearance/structured-data/video">VideoObject</a></div>
+  </div>
+
+  <div class="card">
+    <h2>٥. الجودة — ليش ثلاث نسخ (ق5 المقفول)</h2>
+    <p><b>توصيتي الأولى كانت «720p فقط» وبنيتها على التكلفة — ورجعت عنها بعد المصادر.</b> التكلفة طلعت مو حجّة:</p>
+    <ul>
+      <li><b>المعيار العالمي للمقطع العمودي = 1080×1920</b> بترميز H.264 في MP4 — نفس الملف يصلح لكل المنصات القصيرة، و9:16 صار الغالبية الساحقة من مشاهدة الجوال.</li>
+      <li><b>الترميز في بني مجاني</b> والتخزين ‏$0.01/جيجا: مئة مقطع بثلاث جودات <b>أقل من ربع دولار شهرياً</b>.</li>
+      <li><b>الممارسة المعتمدة تنصح بمستوى منخفض للاحتياط</b> (‏360–480p) عشان المشاهد على شبكة ضعيفة يشوف شيئاً بدل ما ينتظر.</li>
+      <li><b>والأقوى:</b> السلّم المخزَّن الآن يخلّي جلسة مودونتي تبني الواجهة فقط. لو خزّنّا جودة وحدة، نضطر <b>نعيد ترميز كل المقاطع</b> يوم نبي بثّاً متكيّفاً.</li>
+    </ul>
+    <div class="warn"><b>وملاحظة أمانة على ق3 المؤجّل:</b> Mux (شركة بنية تحتية للفيديو) تقول صراحةً إن التحميل التدريجي (MP4 واحد) <b>ما فيه احتياط</b> لما تضعف الشبكة، وتعتبر البثّ المتكيّف هو الأصل. رأيي إن المقطع ≤ ٩٠ ثانية يخفّف الأثر — لكنه نقاش جلسة مودونتي، والسلّم يخلّي البابين مفتوحين.</div>
+    <div class="src">المصادر: <a href="https://docs.bunny.net/stream/mp4-downloads">بني — MP4 Fallback</a> · <a href="https://sproutsocial.com/insights/social-media-video-specs-guide/">مواصفات فيديو المنصات</a> · <a href="https://www.mux.com/articles/adaptive-bitrate-streaming-guide">Mux — دليل البثّ المتكيّف</a></div>
+    <p style="margin-bottom:0;color:#64748b;font-size:13.5px"><b>حدّ الدليل:</b> صفحة خيارات الترميز في بني ما فتحت (404/403)، فالجودات المتاحة بالضبط تتأكّد من لوحة بني وقت إنشاء المكتبة. المؤكّد من التوثيق: السقف 1080p، وما فيه ترقية.</p>
+  </div>
+
+  <div class="card">
+    <h2>٦. الجهاز — ليش ما نمنع الجوال (ق7 المقفول)</h2>
+    <p>الهاجس كان مشروعاً: «ما أبي العميل يصوّر وهو ماشي في الشارع ويرفع.» لكن المصادر تقول إن العلاج بالجهاز خطأ في الوسيلة، لا في الهدف:</p>
+
+    <h3>① المعيار الرسمي للويب يمنع هذي الطريقة صراحةً</h3>
+    <div class="warn">MDN حرفياً: «<b>لا تستخدم أبداً رمز نظام التشغيل لتحديد إن كان المتصفح على جوال أو لوحي أو سطح مكتب</b>»، وتصف تحليل بصمة المتصفح بأنه «صعب التنفيذ بموثوقية، ومصدر أخطاء متكرّر». والتوصية: افحص <b>القدرات</b> لا الجهاز.</div>
+    <p>وعملياً: «وضع سطح المكتب» في متصفح الجوال يتجاوز المنع بضغطة، وiPad يُبلّغ عن نفسه كسطح مكتب — فالقاعدة تفشل من الطرفين.</p>
+
+    <h3>② المنصات المشابهة ما تمنع</h3>
+    <p>Wix (منصّة مواقع لأصحاب الأعمال الصغيرة، أقرب نظير لنا) توثّق صراحةً رفع صور وفيديو المنتج <b>من معرض الجوال أثناء التنقّل</b>. وما لقيت منصّة أعمال تمنع الرفع من الجوال.</p>
+
+    <h3>③ البروتوكول اللي اعتمدناه في ق2 وُجد للجوال أصلاً</h3>
+    <p>‏tus تبنّته Cloudflare وVimeo وGitHub <b>تحديداً لأن شبكات الجوال غير موثوقة</b> — انقطاع في نفق، تبديل بين أبراج، بطارية تنتهي. نعتمد بروتوكولاً سببه الجوال ثم نمنع الجوال؟ تناقض.</p>
+
+    <h3>④ والفحص الآلي هو الأداة الصحيحة</h3>
+    <p>المتصفح يقرأ خصائص المقطع <b>قبل رفع أي بايت</b>: ننشئ عنصر فيديو من الملف المحلي وننتظر حدث <code>loadedmetadata</code>، فتصير <code>duration</code> و<code>videoWidth</code> و<code>videoHeight</code> معروفة. يعني نرفض المقطع الأفقي أو القصير أو منخفض الدقّة <b>فوراً وبرسالة واضحة</b>، بلا ما يكلّف رفعاً ولا يوصل لطابور اعتمادك.</p>
+
+    <div class="ok"><b>الخلاصة المطبَّقة:</b> الحارس على <b>المحتوى</b> لا على <b>الجهاز</b> — فحص آلي قبل الإرسال (طولي · ≥ 720×1280 · ٥–٩٠ ثانية) + معاينة في إطار ٩:١٦ + شاشة اعتمادك. وهي أدقّ من منع جهاز لأنها تفحص اللي يهمّنا فعلاً.</div>
+    <div class="quote"><b>وحجّة الإغراق باقية وصحيحة</b> (رفع كثير بضغطات سريعة) — تُحلّ بحصّة شهرية للريلز حسب الباقة، وهي أدقّ من منع جهاز.</div>
+    <div class="src">المصادر: <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Browser_detection_using_the_user_agent">MDN — كشف المتصفح</a> · <a href="https://support.wix.com/en/article/wix-stores-adding-images-gifs-and-videos-to-a-product-in-the-wix-app">Wix — الرفع من الجوال</a> · <a href="https://tus.io/">tus.io</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/Events/loadedmetadata">MDN — loadedmetadata</a></div>
+  </div>
+
+  <div class="card">
+    <h2>٧. الجاهز عندنا فعلاً</h2>
+    <p>السكيما مهيّأة من جلسة سابقة — ما نبدأ من صفر:</p>
+    <pre>bunnyVideoId  String?   // معرّف المقطع في بني
+playbackUrl   String?   // قائمة HLS
+mp4Url        String?   // ملف قابل للجلب (قوقل)
+durationSec   Int?      // ≤ 90s
+transcript    String?   // النصّ المكتوب
+reelSlug      String?   // صفحة المشاهدة</pre>
+    <p>والحقول موجودة على جدول <code>media</code> نفسه بعد دمج جدول الريلز اليوم.</p>
+  </div>
+
+</section>
+
+<!-- ============ الفخاخ ============ -->
+<section class="panel" id="p-traps" hidden>
+
+  <div class="card">
+    <h2>فخاخ لازم تُعرف قبل أول رفعة</h2>
+
+    <h3>🔴 ١. خاصية MP4 تُفعَّل <u>قبل</u> الرفع لا بعده</h3>
+    <p>المقاطع المرفوعة قبل تفعيلها <b>ما يتولّد لها ملف MP4 نهائياً</b>. لو نسيناها نضطر نعيد رفع كل شي.</p>
+    <div class="warn">إجراء مطلوب منك عند إنشاء المكتبة في بني: فعّل <b>MP4 Fallback</b> من تبويب الترميز من أول لحظة.</div>
+
+    <h3>🔴 ٢. حماية الرابط بمفتاح تقتل الفهرسة</h3>
+    <p>قوقل لازم يجلب الملف بنفسه. لو فعّلنا <b>Token Authentication</b> على منطقة الفيديو، قوقل ما يوصله والفيديو ما ينفهرس.</p>
+    <div class="warn">القرار: منطقة الفيديو <b>مفتوحة</b> (مع حماية الاستضافة من نطاقات أخرى إن لزم)، لا محميّة بمفتاح.</div>
+
+    <h3>🟠 ٣. سقف الملف المباشر 1080p — وما فيه ترقية</h3>
+    <p>أي جودة أعلى من 1080p ترجع خطأ ٤٠٤. ومقطع أصله 480p ما يتولّد منه 720p — بني ما يرقّي.</p>
+
+    <h3>🟠 ٤. مكتبة الفيديو منفصلة عن مناطق الصور</h3>
+    <p>Bunny Stream منتج مستقل بمفاتيحه ونطاقه (<code>video.bunnycdn.com</code> ومنطقة سحب خاصة). مو نفس منطقة تخزين الصور اللي نستخدمها.</p>
+    <div class="quote">يعني: تحتاج تنشئ <b>Video Library</b> جديدة من لوحة بني وتعطيني معرّفها ومفتاحها ونطاقها.</div>
+  </div>
+
+</section>
+
+
+<!-- ============ المؤجّل ============ -->
+<section class="panel" id="p-later" hidden>
+
+  <div class="card">
+    <h2>مؤجّل لجلسة مودونتي</h2>
+    <p><b>خالد (2026-08-05):</b> «مودونتي — اللي هو الزائر النهائي — محتاج لها session كامل لأن فيه refactor كثير. مو وقته الآن. خلينا نركّز في الرفع والمعاينة من جهة الكونسول والأدمن.»</p>
+    <div class="ok"><b>الفصل صحيح تقنياً:</b> الرفع والمعاينة الداخلية ما يعتمدان على قرار المشغّل. معاينة الأدمن والكونسول تستخدم <code>&lt;video&gt;</code> عادياً على ملف MP4 — ما فيها قرار.</div>
+    <div class="warn"><b>شرط واحد عشان التأجيل ما يكلّفنا إعادة عمل:</b> من أول رفعة نخزّن <code>mp4Url</code> و<code>playbackUrl</code> و<code>thumbnailUrl</code> و<code>durationSec</code> و<code>reelSlug</code>. لو خزّنّاها من البداية، جلسة مودونتي تبني الواجهة فقط بلا ما تلمس البيانات.</div>
+  </div>
+
+  <div class="sec">القراران المؤجّلان</div>
+  <div class="sec">كيف نشغّل <span class="count">قرار واحد</span></div>
+
+  <div class="q">
+    <h3><span class="qid">ق3</span> المشغّل — إيش يشغّل الفيديو عند الزائر؟</h3>
+    <div class="qtext">
+      قاعدتنا: <b>الأداء #١ على مودونتي</b>. وقوقل نفسه يقول إن الملف المباشر
+      (<code>contentUrl</code>) هو «الطريقة الأنجع ليجلب الفيديو» — أفضل من المشغّل.
+    </div>
+    <div class="opts">
+      <div class="opt"><span>
+        <span class="ot">‏<code>&lt;video&gt;</code> أصلي + ملف MP4 من بني <span class="rec">ميلي</span></span>
+        <span class="od"><b>صفر جافاسكربت.</b> مقاطعنا ≤ ٩٠ ثانية — ما تحتاج بثّاً متكيّفاً. وتعطي قوقل الملف اللي يبغاه مباشرة.</span>
+      </span></div>
+      <div class="opt"><span>
+        <span class="ot">إطار بني الجاهز (iframe)</span>
+        <span class="od">أسهل شي وفيه إحصاءات مشاهدة جاهزة. لكن في فيد متمرّر = إطار كامل لكل بطاقة = ثقل قاتل.</span>
+      </span></div>
+      <div class="opt"><span>
+        <span class="ot">مكتبة مشغّل (Vidstack / Video.js / Plyr)</span>
+        <span class="od">تحكّم كامل وشكل موحّد، لكنها تجرّ <code>hls.js</code> معها. مبالغة الحين — نضيفها لو دخلنا فيديو طويل.</span>
+      </span></div>
+    </div>
+      </div>
+
+  <div class="sec">الظهور في قوقل <span class="count">قرار واحد · الأخطر</span></div>
+
+  <div class="q">
+    <h3><span class="qid">ق4</span> صفحة مشاهدة مستقلة لكل ريل — تنزل متى؟</h3>
+    <div class="qtext">
+      اكتشاف الدراسة الأهم: <b>الفيد المتمرّر وحده لا يُفهرس في قوقل أبداً.</b>
+      قوقل يشترط صفحة يكون الفيديو <b>غرضها الأساسي</b>، بعنوان ووصف فريدين، وتُفهرس هي أولاً.
+      وحقل <code>reelSlug</code> موجود في السكيما من قبل — يعني المسار كان متوقَّعاً.
+    </div>
+    <div class="opts">
+      <div class="opt"><span>
+        <span class="ot">تنزل مع هذي الدفعة <span class="rec">ميلي</span></span>
+        <span class="od">بدونها الريلز مجهود بلا عائد بحثي. والهدف #١ عندنا الظهور في قوقل — فالصفحة مو إضافة، هي الغاية.</span>
+      </span></div>
+      <div class="opt"><span>
+        <span class="ot">مرحلة تالية</span>
+        <span class="od">ننزّل الفيد الحين ونضيف صفحة المشاهدة بعدين. مقبول لو تبغى تشوف الشكل أولاً — بس الفهرسة تتأجّل معها.</span>
+      </span></div>
+      <div class="opt"><span>
+        <span class="ot">ما نبيها — الريلز للزوّار داخل الموقع بس</span>
+        <span class="od">قرار مشروع لو نبي الريلز ميزة تفاعل لا قناة بحث. بس نقولها صريحة: <b>صفر ظهور في قوقل</b>.</span>
+      </span></div>
+    </div>
+      </div>
+
+</section>
+
+<footer>ملف قرارات · مُدَوَّنَتِي · 2026-08-05</footer>
+</div>
+
+<script>
+(function () {
+  var GROUPS = [];
+
+  var tabs = document.querySelectorAll('.tab');
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () {
+      tabs.forEach(function (x) { x.setAttribute('aria-selected', String(x === t)); });
+      document.querySelectorAll('.panel').forEach(function (p) { p.hidden = true; });
+      document.getElementById('p-' + t.dataset.p).hidden = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // Persist answers — the file exists so Khalid can close it and come back without
+  // re-reading a chat log.
+  var KEY = 'modonty.reels-video-decisions.v1';
+  var radios = document.querySelectorAll('.opt input[type=radio]');
+  var notes = document.querySelectorAll('textarea[data-note]');
+
+  function idOf(el) {
+    var group = document.querySelectorAll('input[name="' + el.name + '"]');
+    return el.name + ':' + Array.prototype.indexOf.call(group, el);
+  }
+  function save() {
+    var s = { picks: {}, notes: {} };
+    radios.forEach(function (r) { if (r.checked) s.picks[idOf(r)] = true; });
+    notes.forEach(function (n) { if (n.value.trim()) s.notes[n.dataset.note] = n.value; });
+    try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {}
+  }
+  function load() {
+    var s = {};
+    try { s = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+    radios.forEach(function (r) { if (s.picks && s.picks[idOf(r)]) r.checked = true; });
+    notes.forEach(function (n) { if (s.notes && s.notes[n.dataset.note]) n.value = s.notes[n.dataset.note]; });
+  }
+  function refresh() {
+    var n = GROUPS.filter(function (g) {
+      return document.querySelector('input[name="' + g + '"]:checked');
+    }).length;
+    document.getElementById('answered').textContent = n;
+    document.getElementById('c-open').textContent = GROUPS.length - n;
+  }
+  radios.forEach(function (r) { r.addEventListener('change', function () { save(); refresh(); }); });
+  notes.forEach(function (n) { n.addEventListener('input', save); });
+  load(); refresh();
+
+  document.getElementById('copy').addEventListener('click', function () {
+    var out = ['قرارات فيديو الريلز:', ''];
+    document.querySelectorAll('.q').forEach(function (q) {
+      var title = q.querySelector('h3').textContent.replace(/\s+/g, ' ').trim();
+      var picked = null;
+      q.querySelectorAll('.opt').forEach(function (o) {
+        if (o.querySelector('input').checked) {
+          picked = o.querySelector('.ot').textContent.replace(/\s+/g, ' ').replace(/\s*(موصى|لا يُنصح)\s*$/, '').trim();
+        }
+      });
+      out.push('• ' + title + ' → ' + (picked || '(بلا إجابة)'));
+      var note = q.querySelector('textarea');
+      if (note && note.value.trim()) out.push('    ملاحظة: ' + note.value.trim());
+    });
+    var txt = out.join('\n');
+    var btn = this;
+    navigator.clipboard.writeText(txt).then(function () {
+      var old = btn.textContent;
+      btn.textContent = '✓ انتسخ';
+      setTimeout(function () { btn.textContent = old; }, 1600);
+    });
+  });
+
+  document.getElementById('reset').addEventListener('click', function () {
+    radios.forEach(function (r) { r.checked = false; });
+    notes.forEach(function (n) { n.value = ''; });
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    refresh();
+  });
+})();
+</script>
+</body>
+</html>

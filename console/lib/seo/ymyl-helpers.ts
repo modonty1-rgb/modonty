@@ -125,16 +125,27 @@ export function validateYmylData(
   return { valid, errors, complete: valid };
 }
 
-/** Quick predicate: is this client fully YMYL-ready (category set + required fields present)? */
-export function isYmylClientComplete(client: {
-  isYmyl: boolean;
-  ymylCategory: string | null;
-  ymylData: unknown;
-  addressCountry?: string | null;
-}): boolean {
+/**
+ * Quick predicate: is this client fully YMYL-ready (category set + required fields present)?
+ *
+ * `authorityCodes` MUST be the live Reference Data list (`getYmylAuthorityCodes`) wherever
+ * one can be fetched. Omitting it falls back to the hardcoded matrix, which is a strict
+ * subset — a client who picked an admin-added authority would then read as incomplete
+ * forever even though the dropdown offered that exact value (Khalid 2026-08-04).
+ */
+export function isYmylClientComplete(
+  client: {
+    isYmyl: boolean;
+    ymylCategory: string | null;
+    ymylData: unknown;
+    addressCountry?: string | null;
+  },
+  authorityCodes?: string[]
+): boolean {
   if (!client.isYmyl) return true; // non-YMYL is trivially "complete"
   return validateYmylData(client.ymylCategory, client.ymylData, {
     country: client.addressCountry ?? null,
+    authorityCodes,
   }).complete;
 }
 
@@ -180,8 +191,10 @@ export function checkYmylPublishGate(input: {
     content: string;
     reviewedById: string | null;
   };
+  /** Live Reference Data authority codes — see isYmylClientComplete. */
+  authorityCodes?: string[];
 }): PublishGateResult {
-  const { client, article } = input;
+  const { client, article, authorityCodes } = input;
   const blockers: string[] = [];
   const warnings: string[] = [];
 
@@ -189,7 +202,7 @@ export function checkYmylPublishGate(input: {
     return { canPublish: true, blockers, warnings };
   }
 
-  if (!isYmylClientComplete(client)) {
+  if (!isYmylClientComplete(client, authorityCodes)) {
     blockers.push("بيانات YMYL للعميل غير مكتملة — أكمل التوثيق قبل النشر");
   }
 
