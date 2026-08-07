@@ -10,6 +10,7 @@ import { sanitizeAllCanonicals } from "./canonical-sanitizer";
 import { backfillArticleHreflang } from "./hreflang-backfill";
 import { backfillMediaReelsFields } from "./media-reels-backfill";
 import { backfillBlurPlaceholders } from "./blur-backfill";
+import { backfillMediaDimensions } from "./dimensions-backfill";
 import { sweepCloudinaryOrphans } from "./cloudinary-orphans";
 import { hardDeleteOldSoftDeletedComments } from "./soft-deleted-comments";
 import { seedIntakeForm } from "./seed-intake";
@@ -183,6 +184,21 @@ export async function runStepBlurBackfill(): Promise<MaintenanceStepResult> {
     };
   } catch (e) {
     return fail("blurBackfill", "Image Blur Placeholders", e);
+  }
+}
+
+export async function runStepDimensionsBackfill(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await backfillMediaDimensions();
+    return {
+      key: "dimensionsBackfill",
+      label: "Image Dimensions (layout-shift guard)",
+      ok: r.failed === 0,
+      count: r.filled,
+      detail: r.failed > 0 ? `${r.failed} unreadable` : undefined,
+    };
+  } catch (e) {
+    return fail("dimensionsBackfill", "Image Dimensions (layout-shift guard)", e);
   }
 }
 

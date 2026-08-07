@@ -1118,14 +1118,19 @@ const TASKS = [
  d:"<b>مبني ومتحقَّق:</b> <code>modonty/app/reels/</code> صفحة + خلاصة تفلتر <code>inReels:true</code> و<code>reelStatus:\"PUBLISHED\"</code> وعميلاً غير فاضٍ (<code>reels-feed.ts:42</code>)، وتبويب ريلز لكل عميل في <code>clients/[slug]/reels</code>، ومكوّنات تفاعل كاملة.<br><b>ملاحظة:</b> الصفحة عليها <code>robots:{index:false}</code> بتعليق «خارج الفهرسة حتى إطلاق الريلز» — فتح الفهرسة قرار إطلاق، بند مستقلّ <code>83c</code>.",
  ref:"بند ٨٣ · ١٤"},
 
-{id:"IMGDIM", b:"mediaimg", app:["admin","dataLayer"], tab:"open", sev:"high", who:"c",
- t:"<b>29</b> صفّاً على الإنتاج بلا أبعاد — لا ٣ كما كان مكتوباً",
- d:"<b>⚠ صُحِّح ٨ أغسطس — الرقم القديم (٣) كان ناقصاً، والسبب فخّ مونجو المسجَّل.</b><br><br>" +
-   "<b>القياس (عدّ للقراءة فقط على قاعدة الإنتاج، ٨ أغسطس):</b>" +
-   "<pre style='font-size:12px;margin:4px 0'>platform-default-post   undefined × undefined   blur ✅  bunny ✅\nplatform-default-hero   undefined × undefined   blur ✅  bunny ✅\nplatform-default-logo   undefined × undefined   blur ✅  bunny ✅\n\nكل الوسائط بلا أبعاد: 29/592</pre>" +
-   "<b>الخطأ الذي كدتُ أقع فيه:</b> استعلامي الأول كان <code>OR: [{width: null}, {height: null}]</code> فأرجع <b>صفر</b> — بينما البطاقات الثلاث أمامي فارغة. السبب أنّ الحقل <b>غائب</b> لا <code>null</code>، ومونجو لا يطابق الغائب بـ<code>null</code>. بعد إضافة <code>isSet:false</code> ظهر الرقم الحقيقي: <b>٢٩</b>.<br><br>" +
-   "<b>لماذا يهمّ:</b> <code>width</code>/<code>height</code> هما ما يحجز المساحة قبل وصول الصورة. بدونهما تقفز الصفحة عند التحميل (<code>layout shift</code>) — والقفز عامل ترتيب في Google.<br><br>" +
-   "<b>الشغل:</b> قراءة أبعاد الملفات الـ٢٩ من بني وكتابتها في الصفوف — خطوة داخل Run-All لا سكربت منفصل.",
+{id:"IMGDIM", b:"mediaimg", app:["admin","dataLayer"], tab:"open", sev:"high", who:"k", date:"٨ أغسطس",
+ t:"أبعاد الصور — <b>الكود جاهز ومُختبَر · ينتظر ضغطتك على الإنتاج</b>",
+ d:"<b>✅ الشقّ البرمجي اكتمل ٨ أغسطس. ⏳ والتنفيذ على الإنتاج لك — أنا أراقب وأبلّغ.</b><br><br>" +
+   "<b>ما بُني:</b> خطوة <code>Image Dimensions</code> داخل Run-All (<code>/maintenance</code>) — تقرأ مقاس كل ملفّ من بني بـsharp وتكتبه في الصفّ.<br>" +
+   "<code>admin/app/(dashboard)/database/actions/dimensions-backfill.ts</code> · مسجَّلة في <code>run-all-maintenance.ts</code> و<code>auto-maintenance-panel.tsx</code>.<br><br>" +
+   "<b>الدليل — تشغيل حقيقي على <code>modonty_dev</code>، لا وعد:</b>" +
+   "<pre style='font-size:12px;margin:4px 0'>التشغيل ١ : Image Dimensions   21 fixed\nالتشغيل ٢ : Image Dimensions   clean     ← لا تكرّر عملها\nالقاعدة بعدها: dev 11/587 باقية — كلّها bunnyUrl فارغ</pre>" +
+   "<b>الـ١١ الباقية ليست فشلاً:</b> ملفّاتها غير موجودة على بني (صور تست قديمة)، فلا شيء يُقاس منه. الخطوة تتخطّاها بوعي بدل أن تدور عليها بلا نهاية، وتعدّها <code>unreadable</code> في التفصيل.<br><br>" +
+   "<b>وفرقٌ جوهري بين القاعدتين — قِيس ٨ أغسطس:</b>" +
+   "<pre style='font-size:12px;margin:4px 0'>dev     : الصور الافتراضية الثلاث بلا bunnyUrl  → تُتخطّى\nالإنتاج : الثلاث لها bunnyUrl ✅              → تُصلَح\nالإنتاج : 29/592 كلّها مؤهّلة (bunnyUrl موجود)</pre>" +
+   "أي أنّ <b>الصور الافتراضية — الأكثر ظهوراً لأنها تُعرَض لكل عميل لم يرفع صورته — لا تُصلَح إلا على الإنتاج</b>. التجربة المحلية تثبت الكود، لا الرقم.<br><br>" +
+   "<b>خطواتك:</b> ادفع الفرع → افتح <code>admin.modonty.com/maintenance</code> → اضغط <code>Run All</code> → المتوقَّع <b><code>29 fixed</code></b>، وضغطة ثانية تعطي <code>clean</code>.<br><br>" +
+   "<b>وفخّ مونجو الذي بُنيت حوله:</b> عدّي الأول بـ<code>OR: [{width: null}, {height: null}]</code> أرجع <b>صفر</b> بينما البطاقات الثلاث فارغة أمامي — الحقل <b>غائب</b> لا <code>null</code>. كل مُحدِّد في الملفّ يقرن الفحص بـ<code>isSet: false</code>.",
  ref:"٧ أغسطس"},
 
 {id:"BNOPT", b:"bunny", app:["modonty"], tab:"open", sev:"high", who:"k",
