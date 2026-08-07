@@ -146,6 +146,8 @@ type ClientTabsProps = {
     id: string;
     filename: string;
     url: string;
+    /** REQUIRED key (value may be null) — keeps the Bunny copy from being dropped in transit. */
+    bunnyUrl: string | null;
     mimeType: string;
     fileSize: number | null;
     width: number | null;

@@ -34,28 +34,16 @@ import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface MediaSocialTabProps {
   client: any;
-  media: Array<{
-    id: string;
-    filename: string;
-    url: string;
-    mimeType: string;
-    fileSize: number | null;
-    width: number | null;
-    height: number | null;
-    altText: string | null;
-    title: string | null;
-    description: string | null;
-    type: MediaType;
-    createdAt: Date;
-    cloudinaryPublicId?: string | null;
-    cloudinaryVersion?: string | null;
-  }>;
+  /** Same shape the component renders — one source of truth, so `bunnyUrl` can't be dropped here. */
+  media: Media[];
 }
 
 type Media = {
   id: string;
   filename: string;
   url: string;
+  /** REQUIRED key (value may be null) — forces every caller to pass the Bunny copy. */
+  bunnyUrl: string | null;
   mimeType: string;
   fileSize: number | null;
   width: number | null;
@@ -326,7 +314,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                         <div className="relative aspect-square bg-muted">
                           {isImage(item.mimeType) ? (
                             <NextImage
-                              src={item.url}
+                              src={mediaSrc(item) ?? ""}
                               alt={item.altText || item.filename}
                               fill
                               className="object-cover"
@@ -373,7 +361,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                             <div className="relative w-16 h-16 bg-muted rounded overflow-hidden flex-shrink-0">
                               {isImage(item.mimeType) ? (
                                 <NextImage
-                                  src={item.url}
+                                  src={mediaSrc(item) ?? ""}
                                   alt={item.altText || item.filename}
                                   fill
                                   className="object-cover"
@@ -448,7 +436,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                 <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden">
                   {isImage(selectedMedia.mimeType) ? (
                     <NextImage
-                      src={selectedMedia.url}
+                      src={mediaSrc(selectedMedia) ?? ""}
                       alt={selectedMedia.altText || selectedMedia.filename}
                       fill
                       className="object-contain"
@@ -507,7 +495,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                     </Link>
                   </Button>
                   <Button variant="outline" asChild>
-                    <a href={selectedMedia.url} target="_blank" rel="noopener noreferrer">
+                    <a href={mediaSrc(selectedMedia) ?? ""} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Open Original
                     </a>

@@ -107,6 +107,16 @@ export async function generateAndSaveJsonLd(
       };
     }
 
+    // No featured image → substitute the platform POST default (admin /settings/defaults,
+    // looked up by its STABLE filename — survives T2b ownership changes). Without this the
+    // baked Article JSON-LD ships with no `image`, which fails Google Article rich results.
+    if (!article.featuredImage) {
+      const defaultPost = await db.media.findFirst({
+        where: { filename: "platform-default-post" },
+      });
+      if (defaultPost) article.featuredImage = defaultPost;
+    }
+
     // Merge article with Settings defaults (12 SOT fields)
     const settings = await getAllSettings();
     const articleDefaults = getArticleDefaultsFromSettings(settings);

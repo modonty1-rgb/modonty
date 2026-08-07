@@ -20,7 +20,8 @@ import { db } from "@/lib/db";
  * Each check mirrors the visibility rule of its page:
  *   - articles   → status PUBLISHED (only state that serves a 200)
  *   - clients    → subscriptionStatus ACTIVE (client page 404s otherwise)
- *   - categories/tags/industries → any existing row renders
+ *   - categories/tags/industries/authors → any existing row renders
+ *     (author page notFound()s only when the row is missing — app/authors/[slug]/page.tsx:154)
  *
  * Tracked Next.js limitations:
  *   - https://github.com/vercel/next.js/discussions/26758 (Arabic chars in [slug])
@@ -85,6 +86,7 @@ const caches = {
   categories: createSlugCache(async () => toSlugSet(await db.category.findMany({ select: { slug: true } }))),
   tags: createSlugCache(async () => toSlugSet(await db.tag.findMany({ select: { slug: true } }))),
   industries: createSlugCache(async () => toSlugSet(await db.industry.findMany({ select: { slug: true } }))),
+  authors: createSlugCache(async () => toSlugSet(await db.author.findMany({ select: { slug: true } }))),
   clients: createSlugCache(async () =>
     toSlugSet(
       await db.client.findMany({ where: { subscriptionStatus: "ACTIVE" }, select: { slug: true } }),

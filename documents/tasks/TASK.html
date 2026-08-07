@@ -151,6 +151,17 @@
   .fstep .meta{display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:7px}
   .fstep.now{border-color:var(--red); background:color-mix(in srgb, var(--red) 7%, var(--surface))}
   .fstep.gate{border-style:dashed; background:transparent}
+  /* الخطوة المنجزة: خلفية خضراء كاملة (طلب خالد ٧ أغسطس) — تبقى بمكانها في المسار */
+  .fstep.done{
+    border-color:var(--green);
+    border-inline-start:3px solid var(--green);
+    background:color-mix(in srgb, var(--green) 16%, var(--surface))
+  }
+  .fstep.done .fn{background:var(--green); color:#fff; border-color:var(--green)}
+  .fstep.done .fd{display:none}
+  .fstep.done .ft{opacity:.85}
+  .fstep.gate.done{border-style:solid}
+  .fstep.gate.done .fn{font-size:12px}
   .fstep .fn{
     flex:0 0 auto; width:23px; height:23px; border-radius:7px; display:grid; place-items:center;
     font-size:11.5px; font-weight:800; font-family:ui-monospace,Consolas,monospace;
@@ -194,6 +205,9 @@
   .body{flex:1; min-width:0}
   .t{font-weight:650; font-size:14.5px; margin:0 0 3px}
   .d{color:var(--muted); font-size:13.5px; margin:0; line-height:1.75}
+  /* بنود جبر سيو للقراءة والقرار لا للتوثيق — خطّ أكبر وأوضح (خالد ٧ أغسطس) */
+  .card.jbr .d{font-size:16px; line-height:2.1; color:var(--fg)}
+  .card.jbr .t{font-size:17px}
   .meta{display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:8px}
   .tag{align-self:flex-start; flex:0 0 auto; height:fit-content; white-space:nowrap; line-height:1.7; font-size:11.5px; padding:2px 8px; border-radius:6px; background:var(--surface2); color:var(--muted); border:1px solid var(--line)}
   .tag.k{background:color-mix(in srgb,var(--amber) 18%,transparent); color:var(--amber); border-color:transparent}
@@ -390,6 +404,8 @@ const BOARDS = [
   {k:"done",     n:"Done",         c:"var(--green)",  s:"كل ما خلص — من كل البوردات في مكان واحد، الأحدث أولاً."},
   {k:"mediaimg", n:"مكوّن الصور",   c:"var(--cyan)",   s:"⏸ مؤجَّل كلّه لبعد ترحيل الإنتاج (قرار خالد ٦ أغسطس). مكوّن صور واحد في dataLayer بدل ١٠١ نداءً متفرّقاً، يُنفَّذ قسماً قسماً — والجرد جاهز في البطاقات."},
   {k:"method",   n:"📐 منهجية القياس", c:"var(--amber)", s:"مرجع لا مهامّ — الطريقة المعتمدة لقياس الأداء، مكتوبة خطوةً خطوة بأوامرها. البطاقات هنا لا تُنجَز ولا تُقفَل؛ تُتَّبع. الرقم بجانب الاسم = عدد الإجراءات الموثّقة."},
+  {k:"data",     n:"🔴 مشاكل البيانات", c:"var(--red)", s:"بيانات معطوبة على الإنتاج تحتاج قراراً بشرياً — صور مفقودة · صفوف يتيمة · روابط ميتة. لا تُحذف إلا بمراجعة المحتوى. البورد مرصود دائماً."},
+  {k:"bunny",    n:"🐰 بني",           c:"var(--violet)", s:"المرجع الأساسي لكل ما يخص بني (طلب خالد ٧ أغسطس): الزونات وبنيتها · المفاتيح وأماكنها · صفحة الترحيل · القرارات والفخاخ. بطاقات مرجعية تُحدَّث مع كل تغيير، لا تُقفَل."},
 ];
 
 /* ══════════════════════════════════════════════════════════════
@@ -414,11 +430,14 @@ const FLOW = [
   {id:"BK1"},
   {id:"BK2"},
 
-  {n:"⏸", kind:"gate", t:"بوّابة الدفع — ما فوقها كله لازم يكون منجزاً",
-   d:"طقوس الدفع: <code>tsc</code> صفر أخطاء على التطبيقات المتغيّرة · رفع رقم النسخة · commit بمسارات محدّدة (لا <code>git add -A</code>).<br><b>لو ما فوقها فاضٍ، فالبوّابة مفتوحة.</b>"},
+  {n:"✓", kind:"gate", done:true, t:"بوّابة الدفع — اجتيزت ٧ أغسطس ٢٠٢٦",
+   d:"الطقوس اكتملت: <code>tsc</code> صفر أخطاء على الثلاثة · النسخ ارتفعت · commit بمسارات محدّدة <code>78e6a27</code>."},
 
-  {n:"🚀", kind:"gate", t:"push ← انتظر اكتمال النشر",
-   d:"كل اللي تحت يُنفَّذ على الإنتاج بعد ما ينزل الكود."},
+  {n:"✓", kind:"gate", done:true, t:"الدفعة تمّت واكتمل النشر — ٧ أغسطس ٢٠٢٦",
+   d:"<b>متحقَّق:</b> push <code>e3dbfba ← 78e6a27</code> (١٨ كوميت · ٢٦٣ ملفاً · النسخ: admin 1.10.0 · modonty 1.85.0 · console 0.23.0 · dataLayer 0.2.0).<br>" +
+     "النشر حيّ على الثلاثة بدليل مسارات جديدة: modonty <code>/reels</code>=200 · admin <code>/api/cron/backup</code>=401 · console <code>/api/log-client-error</code>=405.<br>" +
+     "الاحتياطيان قبل الدفع: mongodump ٤٧ م.ب (BK2) + لقطة Atlas ٦ أغسطس (BK1).<br>" +
+     "كل اللي تحت يُنفَّذ على الإنتاج الآن."},
 
   {id:"G16", app:["admin"], kind:"now"},
   {id:"45"},
@@ -432,7 +451,7 @@ const FLOW = [
   {id:"16g"},
   {id:"80"},
 
-  {n:"🐇", kind:"gate", t:"من هنا يبدأ ترحيل بني — أكبر شغل عندنا",
+  {n:"🐇", kind:"gate", t:"من هنا يبدأ ترحيل بني — أكبر شغل عندنا (المرجع الكامل في بورد «🐰 بني»)",
    d:"خطوتا «مدونتي كعميل المنصّة» و«تصليحات البيانات» فوق شرط للبداية. الفرع <code>version-2</code> · preview فقط · صفر مساس بـ<code>main</code> حتى آخر خطوة."},
 
   // متحقَّق: إعادة ترتيب فقط — كل المعرّفات بنود قائمة في TASKS أعلاه، صفر بنود جديدة.
@@ -454,6 +473,15 @@ const FLOW = [
   {id:"69"},
   {id:"T8"},
   {id:"65"},
+  // SEO1 قبل T9 — متحقَّق بجرد ختامي: صفّان فقط في القاعدة كلّها يحملان رابط Cloudinary
+  // في السيو المخبوز (articles ×1 · clients ×1)، كلاهما HTTP 200 اليوم و404 بعد الإطفاء.
+  {id:"SEO1"},
+  // CACHE1 قبل T9 — متحقَّق بكنس حيّ على ٥٨ صفحة (جولة ١: ٧٠٩ صورة Cloudinary من كاش STALE،
+  // جولة ٢: صفر) + توثيق Vercel الرسمي «each new deployment uses its own distinct ISR cache».
+  {id:"CACHE1"},
+  // AUTH1 بعد CACHE1 لا قبله — متحقَّق بقياس حيّ: /authors/<غير موجود> يرجع 200 soft-404
+  // بينما /articles و/tags يرجعان 410. الإصلاح (proxy.ts + archive-cache.ts) ينتظر النشر.
+  {id:"AUTH1"},
   {id:"T9"},
   {id:"T6b"},
 ];
@@ -504,12 +532,12 @@ const TASKS = [
    "<b>تصحيح منهجي متحقَّق من التوثيق المثبَّت</b> (<code>modonty/node_modules/next/dist/docs/01-app/02-guides/upgrading/version-16.md:1000</code>، النسخة <code>next@16.2.9</code>): Next ١٦ حذفت عمودَي <code>size</code> و<code>First Load JS</code> من مخرجات <code>next build</code> «لأننا وجدناها غير دقيقة في المعماريات المعتمدة على سيرفر كومبوننتس». البديل الرسمي <code>next experimental-analyze</code> (موثّق في <code>01-app/03-api-reference/06-cli/next.md:225</code> و<code>01-app/02-guides/package-bundling.md</code>) — وقد شُغِّل. والقياس أعلاه تمّ من الملفات المبنيّة في <code>modonty/.next/static</code> مباشرة بضغط brotli، رقمٌ لا تقدير.",
  ref:"بند ١٦"},
 
-{id:"16g", b:"deploy", app:["modonty"], tab:"open", sev:"high", who:"c",
+{id:"16g", b:"deploy", app:["modonty"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
  t:"قياس LCP الحقيقي بعد الدفع — PageSpeed على الرابط الحي",
- d:"<b>لا يُقاس قبل الدفع.</b> على الجهاز المحلّي القاعدةُ محليّة والملفات على القرص وما فيه شبكة ولا CDN — فرقم LCP يطلع عشوائياً أعلى أو أقل من الحقيقة، ولا يُبنى عليه قرار.<br>" +
-   "<b>متحقَّق من التوثيق المثبَّت</b> (<code>modonty/node_modules/next/dist/docs/01-app/02-guides/upgrading/version-16.md:1002</code>): «الطريقة الأنجع لقياس أداء المسار الفعلي هي أدوات مثل Chrome Lighthouse أو تحليلات Vercel، لأنها تركّز على مؤشّرات الويب الأساسية وأحجام الموارد المحمَّلة».<br>" +
-   "<b>ينفَّذ:</b> بعد اكتمال النشر · على <code>modonty.com</code> · جوّال ثم سطح مكتب · الأعمدة الثلاثة LCP وCLS وINP.<br>" +
-   "<b>تنبيه من الذاكرة</b> (<code>project_preview_psi_lab_variance</code>): قياس PSI المختبري على روابط المعاينة متغيّر جداً — يُعتمد الرابط الحي لا المعاينة.",
+ d:"<b>متحقَّق — قياس PSI API مباشر على النشر الجديد</b> (المفتاح من <code>admin/.env.local</code>، تشغيلة مختبرية واحدة — الفروق المعتادة ±٥-١٠ نقاط):<br>" +
+   "الرئيسية جوّال: <b>٧٠/100 · LCP ٥.١ث ⚠️ · CLS صفر · TBT 430ms</b><br>" +
+   "الرئيسية مكتب: ٩٩/100 · LCP ٠.٧ث · المقال جوّال: ٨١/100 · LCP ٣.٧ث · المقال مكتب: ٧٦/100 · TBT 430ms<br>" +
+   "<b>الخلاصة:</b> CLS صفر في كل القياسات. نقطة الضعف الوحيدة LCP الجوّال (الهدف ≤٢.٥ث) — علاجها في بورد «مكوّن الصور» المؤجَّل (BL2/BL9: الضبابة والأولوية للزائر)، فالرقم هذا هو الأساس المرجعي قبل ذلك الشغل.",
  ref:"شقّ ثانٍ من ١٦f"},
 
 {id:"CL3", b:"deploy", app:["modonty"], tab:"done", sev:"ok", who:"c", date:"٦ أغسطس ٢٠٢٦",
@@ -527,19 +555,19 @@ const TASKS = [
  d:"<b>نُفِّذت ومتحقَّقة:</b> <code>bash scripts/backup.sh prod</code> — السكربت طبع اسم القاعدة <code>modonty</code> قبل القراءة، والنسخة في <code>backups/PROD-2026-08-07_02-27</code>: <b>٩٠ مجموعة · ٤٧ ميجابايت · ١٨١ ملفاً</b> على القرص.<br>هذه سدّت فجوة الساعات بين لقطة Atlas اليومية ولحظة الدفع.",
  ref:"طبقة الأمان ٢"},
 
-{id:"G16", b:"deploy", app:["admin"], tab:"open", sev:"critical", who:"k",
- t:"فوراً بعد اكتمال النشر: تعبئة <code>inGallery</code>",
- d:"صفحة القاعدة ← <b>Media Reels Fields</b>. idempotent.<br>قبلها <b>معرض كل عميل فاضٍ للزوّار</b> — ٥٥٥ صفّاً ينقصها المفتاح.<br><b>ملاحظة:</b> تنفيذها على الإنتاج يميت فخّ الـSync — الـSync ينسخ إنتاج←تطوير فقط (متحقَّق: <code>api/dev/sync-local-from-prod/route.ts</code>)، فمتى صار الإنتاج معبّأً صار كل Sync ينقل القيم الصحيحة.",
+{id:"G16", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"تعبئة <code>inGallery</code> على الإنتاج — Run-All",
+ d:"<b>متحقَّق — نُفِّذت عبر واجهة الأدمن الحية</b> (<code>admin.modonty.com/maintenance</code> ← Run All، بمشاهدة خالد المباشرة): <b>Media Reels Fields = ٥٦٧ صفاً + ٥٦٧ عدّاداً</b> (كان التقدير ٥٥٥ — الصفوف زادت منذ كتابة البند). معارض العملاء صارت مرئية للزوّار.<br><b>مكافآت من نفس التشغيلة (منقولة من نصّ النتائج المعروض):</b> فهارس TTL الثلاثة الناقصة أُنشئت · ٥٩ نسخة مقال قديمة نُظِّفت · ١٤/١٤ خطوة اكتملت.<br><b>وفخّ الـSync مات:</b> الإنتاج معبّأ الآن، فكل Sync قادم ينقل القيم الصحيحة للتطوير (متحقَّق: <code>api/dev/sync-local-from-prod/route.ts</code> — الإنتاج مصدر قراءة فقط).",
  ref:"بند ٨٣ · ٦ أغسطس"},
 
-{id:"45", b:"deploy", app:["dataLayer"], tab:"open", sev:"critical", who:"k",
+{id:"45", b:"deploy", app:["dataLayer"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
  t:"<code>prisma db push</code> على الإنتاج",
- d:"⚠️ <b>افحص تكرار <code>redirects</code> قبلها</b> — الفهرس الفريد يفشل لو في صفّان متضاربان.<br>الدفعة تحمل سكيما كاملة لا <code>redirects</code> وحدها (حُذف <code>Reel</code>+٥ جداول · أُضيف ٥ جداول). الخطوة تجيب <b>الفهارس</b> — المجموعات مونجو ينشئها وحده.<br>أُثبت على التطوير: الدفع ما حذف ولا مجموعة.",
+ d:"<b>نُفِّذت ومتحقَّقة:</b> فحص تكرار <code>redirects</code> أولاً على المفتاح الحقيقي <code>section+fromSlug</code> — صفر تعارض في ١٥ صفاً (الفحص الأول كان على حقل غلط <code>fromPath</code> وصُحِّح من السكيما). ثم الدفع بموافقة خالد: <b>Done in 18.48s</b>.<br><b>التحقّق بعدها:</b> المجموعات ٩٠←٩٥ (<code>media_comments</code> · <code>media_reactions</code> · <code>comment_reactions</code> · <code>backup_runs</code> كلها ✅) · فهرس <code>redirects_section_fromSlug_key</code> انبنى · المقالات ١٣٩ = صفر حذف.<br>ملاحظة تشغيلية: SRV على ويندوز احتاج <code>dns.setServers(['8.8.8.8'])</code> — نفس حلّ <code>sync-local-from-prod</code>.",
  ref:"بند ٤٥"},
 
-{id:"81", b:"deploy", app:["admin"], tab:"open", sev:"critical", who:"k",
+{id:"81", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
  t:"ضبط <code>coreClientId</code> على الإنتاج",
- d:"<code>/settings/system</code> ← «Modonty Core Client» ← «مدونتي» ← Save.<br>بدونه ترحيل الصور يقف.",
+ d:"<b>متحقَّق — نُفِّذت عبر واجهة الأدمن الحية بمشاهدة خالد:</b> <code>admin.modonty.com/settings/system</code> ← Modonty Core Client كان «not set» ← اختيار «مدونتي» من قائمة ٣٠ عميلاً ← Save.<br><b>إثبات الثبات:</b> إعادة تحميل الصفحة كاملة والقيمة باقية «مدونتي».<br>ترحيل الصور صار مفتوح الطريق.",
  ref:"بند ٨١"},
 
 {id:"F1", b:"deploy", app:["modonty"], tab:"done", sev:"ok", who:"k", date:"٦ أغسطس ٢٠٢٦",
@@ -547,88 +575,269 @@ const TASKS = [
  d:"<b>الفريق رفع غلافاً جديداً لكل مقال. متحقَّق على الإنتاج الحي:</b> الصفحتان <code>200</code> · الغلافان <code>200</code> · عبر مُحسِّن Next <code>200</code> · <code>og:image</code> صحيح · JSON-LD فيه <code>ImageObject</code> بثلاث نِسَب (16:9 · 4:3 · 1:1) والثلاثة تفتح · صفر أثر للصورة الافتراضية على المقالين.",
  ref:"بند ٨١"},
 
-{id:"F2", b:"deploy", app:["admin"], tab:"open", sev:"critical", who:"k",
- t:"صورة وسم «خدمات طبية» في مجلّد عميل آخر",
- d:"الوسم <code>6a659ecf0f73b21788d9742b</code> يخدم صورته من مجلّد عميل ثانٍ. اختر صورة جديدة تخصّ الوسم.<br>ينتظر اختيارك. شرط لترحيل بني.",
+{id:"F2", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"صورة وسم «خدمات طبية» — الفرضية سقطت بعد النشر",
+ d:"<b>متحقَّق على الإنتاج الحي:</b> نموذج تعديل الوسم <code>6a659ecf0f73b21788d9742b</code> يعرض Social Image = «Default article image» (لا صورة خاصة)، وصفحة الوسم الحية تخدم <code>og:image</code> = صورة المنصّة الافتراضية <code>og-image_ueprdl.png</code> — <b>لا صورة من مجلّد عميل آخر</b>. فولباك الافتراضيات في الكود المنشور حلّ المشكلة.<br>شرط الترحيل (لا مرجع لملكية غلط) متحقّق. <b>اختياري لاحقاً:</b> إعطاء الوسم صورة خاصة به من المكتبة — تحسين جمالي لا شرط.",
  ref:"بند ٨١"},
 
-{id:"F3", b:"deploy", app:["admin","modonty"], tab:"open", sev:"critical", who:"k",
- t:"<code>ogImageUrl</code> فاضٍ في إعدادات مودونتي",
- d:"<code>/settings/modonty</code> ← الحقل فاضٍ ← اختر صورة المنصّة.<br>ينتظر اختيارك. شرط لترحيل بني.",
+{id:"F3", b:"deploy", app:["admin","modonty"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"<code>ogImageUrl</code> في إعدادات مودونتي — الفرضية سقطت، الحقل معبّأ",
+ d:"<b>متحقَّق على الإنتاج الحي بعد النشر:</b> واجهة <code>/settings/modonty</code> تعرض Share Image = <code>og-image_ueprdl.png</code> بحالة «All changes synced»، ووسم الصفحة الحية <code>&lt;meta property=\"og:image\"&gt;</code> يخدمها فعلاً بأبعاد <b>١٢٠٠×٦٣٠</b>.<br>الرابط حالياً على Cloudinary — ينتقل لبني تلقائياً ضمن T7 (الترحيل) + T8 (إعادة التوليد) كبقية الصور. شرط الترحيل (حقل غير فاضٍ) متحقّق.",
  ref:"بند ٨١"},
 
-{id:"66", b:"deploy", app:["admin"], tab:"open", sev:"high", who:"c",
- t:"إثبات أن ترحيل T2b idempotent",
- d:"شغّل T2b مرتين على التست وتأكّد أن الثانية ما تغيّر شيئاً. بدونه إعادة التشغيل على الإنتاج مخاطرة.",
+{id:"66", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"إثبات أن ترحيل T2b idempotent — بصمة SHA256 متطابقة",
+ d:"<b>متحقَّق بالتشغيل المزدوج على التطوير</b> (<code>modonty_dev</code>، عبر واجهة <code>/bunny-migration</code>):<br>" +
+   "<b>اكتشاف أولاً:</b> آخر Sync كان محا شغل T2b السابق كله (البروفة أظهرت ٩٦ معلّقاً / صفر منجز) ومحا <code>coreClientId</code> — أُعيد ضبطه على التطوير قبل البدء.<br>" +
+   "<b>التنفيذ الأول:</b> ٩٦ إجراءً — اليتيمة ٣←٠ · PLATFORM ١٠←٠ · الصفوف ٥٦١←٥٨٧ (متحقَّق بعدّادات القاعدة).<br>" +
+   "<b>التنفيذ الثاني:</b> البروفة قبله «سيُنفَّذ: 0 · منجز: 83» ثم نُفِّذ فعلياً — كل الأقسام «سيُنفَّذ 0».<br>" +
+   "<b>البرهان:</b> لقطة كاملة لكل ما يلمسه T2b (media ملكيةً وروابط + علاقات الكيانات + الإعدادات) — بصمة SHA256 بعد الأول = بعد الثاني حرفياً: <code>28c6d8ad38f24f93…</code> — <b>صفر بايت تغيّر</b>. إعادة التشغيل على الإنتاج آمنة.<br>" +
+   "قراران لخالد ظهرا في الخطة ويُتخطّيان بالتصميم (لا يُلمسان): Tag «خدمات طبية» + Settings.ogImageUrl — صورتاهما مملوكتان لعميل آخر.",
  ref:"بند ٦٦ — بعد نزع المكرّر"},
 
-{id:"80", b:"deploy", app:["admin"], tab:"open", sev:"high", who:"c",
- t:"الليلة التالية: تحقّق النسخ الاحتياطي",
- d:"تصلك رسالة تيليجرام باسم القاعدة والأرقام. ثم فعّل الاستعادة التجريبية الشهرية.",
+{id:"80", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"تحقّق النسخ الاحتياطي على الإنتاج",
+ d:"<b>متحقَّق بتشغيل يدوي للمسار المنشور</b> <code>/api/cron/backup</code> بمفتاح Bearer: HTTP 200 · قاعدة <code>modonty</code> · ٨٣ مجموعة · ٦٠٢٢ مستنداً · ٥.٢ م.ب · ٤١ ثانية · المجلد <code>daily/modonty/2026-08-07</code>.<br><b>ورسالة تيليجرام وصلت خالد</b> («بوصلة الرسالة») — الدائرة مقفولة، والمفتاح المحلي مطابق لڤيرسل.<br>الجدولة اليومية: <code>0 1 * * *</code> (متحقَّق من <code>admin/vercel.json</code>).<br><b>متبقٍّ لاحقاً (غير حاجز):</b> تفعيل الاستعادة التجريبية الشهرية.",
  ref:"بند ٨٠"},
 
 /* ═════ ترحيل بني ═════ */
-{id:"T7", b:"deploy", app:["admin"], tab:"open", sev:"critical", who:"k",
+{id:"T7", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
  t:"ترحيل صور الإنتاج إلى بني",
- d:"دفعات خارج ذروة مصر. إضافي فقط — يكتب <code>bunnyUrl</code> ولا يحذف شيئاً من Cloudinary.",
- ref:"P3-5"},
-
-{id:"T8", b:"deploy", app:["modonty"], tab:"open", sev:"critical", who:"k",
+ d:"<b>متحقَّق بعدّادات القاعدة الحية:</b> ٥٩١ صورة عندها نسخة بني من ٥٩٥ بطاقة · <b>الضبابة مولَّدة في ٥٩١/٥٩١</b> · روابط Cloudinary الأصلية باقية ٥٣٧ (صفر فقدان — الترحيل إضافي).<br>" +
+   "قبله: تصفير زون clients (١١٢٦ ← صفر، مقروء من <code>storage.bunnycdn.com</code>) بعد حفظ ١٩ ملفاً محلياً في <code>backups/bunny-clients-keep/</code>.<br>" +
+   "<b>الأربعة المتبقّية</b> صورها محذوفة من Cloudinary أصلاً (404) — مرصودة في بورد «🔴 مشاكل البيانات» بند <code>DATA1</code>.",
+ ref:"تاسك ① و②"},
+{id:"T8", b:"deploy", app:["modonty"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
  t:"إعادة توليد السيو على الإنتاج",
- d:"<b>محروس:</b> ممنوع التوليد قبل تأكيد أن كل الصور وصلت بني في الخطوة السابقة.",
- ref:"P3-5"},
+ d:"<b>متحقَّق بفحص المحتوى نفسه لا بتاريخ التحديث:</b> مقالات ١٣٩/١٣٩ · عملاء ٣٠/٣٠ · تصنيفات ١٥/١٥ · وسوم ٢٣/٢٣ · صناعات ٨/٨ · صفحات مدونتي ٦/٦ · القوائم ✅.<br>" +
+   "<b>الحارس استُوفي:</b> الترخيص عُبِّئ قبل التوليد (بند ٦٩) والصور وصلت بني (T7).<br>" +
+   "<b>عقبة ظهرت وحُلَّت:</b> التشغيلة الأولى وقفت عند الوسوم ٤/٢٣ (سقف وقت السيرفر) — والإعادة أكملت لأن التوليد idempotent.<br>" +
+   "<b>ملاحظة منهجية:</b> القياس بتاريخ التحديث يكذب — العنصر المولَّد سليماً لا يتغيّر تاريخه. الفحص الصحيح على المحتوى.<br>" +
+   "المتبقّي: مقال وعميل واحد يحملان رابطاً ميتاً — بند <code>DATA1</code>.",
+ ref:"بند T8"},
+{id:"SEO1", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"صفّان في السيو المخبوز كانا يحملان رابط Cloudinary — حُلَّا بإعادة توليد شاملة",
+ d:"<b>متحقَّق بجرد ختامي على قاعدة الإنتاج (٧ أغسطس)، والسبب الجذري أُثبت بمطابقة نسخة احتياطية والكود معاً (التفاصيل أسفل).</b> بعد تنظيف <code>SETT1</code>، بقي موضعان فقط في كل قاعدة الإنتاج:<br>" +
+   "<pre style='font-size:12px;margin:4px 0'>articles.jsonLdStructuredData   1 صفّ\nclients.jsonLdStructuredData    1 صفّ\nmedia.url                     533 صفّاً  ← مقصود (الأصل محفوظ كنسخة رجوع)</pre>" +
+
+   "<b>مَن هما — متحقَّق:</b><br>" +
+   "· مقال «كأس العالم 2026 كرة القدم» (PUBLISHED) · آخر توليد <b>٧ أغسطس ١١:٤٦</b> · العقدة <code>#image-2</code> · الرابط <code>…/v1782114108/clients/6a0d…/2026-owq4d07gw.webp</code><br>" +
+   "· عميل «مؤسسة فرسان التعافي» (ACTIVE) · آخر توليد <b>٧ أغسطس ١١:٥٤</b> · عقدة <code>ImageObject</code> · الرابط <code>…/v1783020875/aigspd2kvix3hbjr2kt9.png</code><br><br>" +
+
+   "<b>كلاهما حيّ الآن — <code>HTTP 200</code> — لكنه يصير 404 لحظة <code>T9</code>.</b><br><br>" +
+
+   "<b>ما استبعدناه بالفحص:</b><br>" +
+   "· <b>ليس في حقول الوثيقة:</b> مسحٌ متكرّر على كل حقول الوثيقتين (عدا السيو المخبوز) ← <b>صفر</b> ذكر لـCloudinary.<br>" +
+   "· <b>ليس صفّ وسائط ناقصاً:</b> بحث بالاسم في مكتبة الوسائط ← <b>صفر تطابق</b> للملفّين.<br>" +
+   "· <b>وليس صفوفاً بلا بني:</b> الغلاف وشعار العميل وصورة الهيرو كلها <code>bunnyUrl ✅</code>، و<code>media</code> كلّها (٥٩١) عندها نسخة بني.<br><br>" +
+
+   "<b>⚠️ لم أصل إلى السبب الجذري بعد — لا أخمّنه.</b> الفرضية الأقرب: مسار في مولّد السيو يقرأ <code>media.url</code> الخام بدل <code>mediaSrc()</code> لنوع عقدة معيّن. تعارضها أنّ المولّدات المفحوصة تستعمل المُحلِّل (<code>knowledge-graph-generator.ts:421,500,559</code> · <code>schema-org-generator.ts:12</code>).<br><br>" +
+
+   "<b>✅ السبب الجذري — متحقَّق قطعياً بمطابقة النسخة الاحتياطية:</b> الرابطان هما بعينهما الصفّان اليتيمان المحذوفان اليوم في بند <code>DATA1</code>. المطابقة من <code>backups/ghost-media-deleted-2026-08-07.json</code>:<br>" +
+   "<pre style='font-size:11px;margin:4px 0'>a2a106f2-…webp  url: …/v1782114108/clients/6a0d5ed14fb855…  bunnyUrl: null\nIMG_1722        url: …/v1783020875/aigspd2kvix3hbjr2kt9.png  bunnyUrl: null</pre>" +
+   "<b>اسم الملف يختلف عن آخر الرابط</b> — ولهذا لم يتطابقا في البحث الأول. و<code>bunnyUrl</code> كان <code>null</code> ← <code>mediaSrc()</code> رجع <code>null</code> ← المولّد سقط للبديل <code>item.media.url</code> = Cloudinary.<br><br>" +
+
+   "<b>فلا ثغرة في المولّد — متحقَّق من الكود:</b> <code>admin/lib/seo/knowledge-graph-generator.ts:494</code> يستعمل <code>mediaSrc(item.media) ?? item.media.url</code>، ومعه تعليق يوثّق إصلاح هذا الخلل نفسه في ٣٠ يوليو. السيو كان <b>قديماً</b> فقط: خُبز والصفوف اليتيمة قائمة.<br><br>" +
+
+   "<b>ما نُفِّذ:</b> «Full Rebuild (Cascade)» من <code>admin.modonty.com/seo</code>. الأداة الوحيدة المتاحة — فُحصت ٥ صفحات في الأدمن ولا يوجد زر تجديد لكيان واحد.<br>" +
+   "<b>الشروط قبل التشغيل (البوّابة تفرضها والزر مقفول حتى تُستوفى):</b> CANONICAL URLS = <b>Clean, all 7 tables correct</b> · SITEMAPS = <b>Fresh</b> · Standard fixes = <b>all clean (6.1s)</b>. لولا هذه البوّابة لخُبز كانونيكال خاطئ في كل مقال.<br>" +
+   "<pre style='font-size:12px;margin:4px 0'>Complete · 100% · 222 of 222 entities · 13m 45s\nCATEGORIES 15/15 · TAGS 23/23 · INDUSTRIES 8/8\nCLIENTS 30/30 · ARTICLES 139/139 · LISTINGS 7/7</pre>" +
+
+   "<b>الجرد النهائي على القاعدة كلّها بعدها:</b><br>" +
+   "<pre style='font-size:11px;margin:4px 0'>articles.jsonLdStructuredData    ✅ 0     clients.jsonLdStructuredData  ✅ 0\narticles.socialImage             ✅ 0     clients.socialImage           ✅ 0\ncategories/tags/industries       ✅ 0     modonty_pages.jsonLd…         ✅ 0\nauthors.image / socialImage      ✅ 0     users.image / avatar          ✅ 0\nsettings (كل الحقول)             ✅ 0\n──────────────────────────────────────────────────────────\nmedia.url على Cloudinary: 533  (مقصود — الأصل نسخة رجوع)\nmedia بلا bunnyUrl:        0</pre>" +
+   "<b>✅ صفر رابط Cloudinary مُقدَّم من القاعدة.</b>",
+ ref:"٧ أغسطس"},
+
+{id:"CACHE1", b:"deploy", app:["modonty"], tab:"open", sev:"critical", who:"k",
+ t:"نشر جديد قبل إطفاء Cloudinary مباشرة — الحاجز الحقيقي أمام T9",
+ d:"<b>ما اكتُشف (٧ أغسطس، فحص حيّ على الإنتاج):</b> كاش Vercel كان ما زال يقدّم <b>HTML مولَّداً قبل الترحيل</b> على صفحات كثيرة. الزيارة الأولى ترجع النسخة القديمة (ترويسة <code>x-vercel-cache: STALE</code>) وتشغّل التحديث، والزيارة التالية ترجع بني ١٠٠٪.<br><br>" +
+
+   "<b>الدليل — كنس على ٥٨ صفحة، جولتان متتاليتان:</b><br>" +
+   "· الجولة ١: ٢٤٣ صورة معروضة · منها <b>٧٠٩ من Cloudinary</b><br>" +
+   "· الجولة ٢ (بعد أن حدّثت الجولةُ الأولى الكاش): ٢٢١ صورة · منها <b>صفر</b><br>" +
+   "القياس على الصور المعروضة فعلاً (<code>&lt;img src&gt;</code> · <code>srcset</code> · <code>og:image</code> · <code>preload as=image</code>) لا على حقول الـprops — حقل <code>url</code> يسافر في حمولة RSC لكنّ <code>dataLayer/lib/media-src.ts:31</code> يختار <code>bunnyUrl</code>.<br><br>" +
+
+   "<b>الخطر على T9:</b> أي صفحة ما زالت ماسكة HTML قديماً لحظة الإطفاء ← صورها تنكسر للزائر حتى تتحدّث.<br><br>" +
+
+   "<b>الحلّ — موثَّق رسمياً من Vercel:</b> «<i>each new deployment uses its own distinct ISR cache</i>» و«<i>each Vercel deployment has a distinct cache key</i>» (<code>vercel.com/docs/incremental-static-regeneration</code> + <code>/docs/caching/cdn-cache/purge</code>، متحقَّق عبر Context7 ٧ أغسطس). فالنشر الجديد <b>يبدأ بكاش خاص به</b> ولا يرث شيئاً من القديم.<br><br>" +
+
+   "<b>الترتيب الملزم:</b> ننهي كل بنود الكود ← <b>نشر جديد</b> ← نتأكّد أنّ عيّنة صفحات ترجع صفر Cloudinary ← <b>ثم</b> <code>T9</code>.<br>" +
+   "<b>ملاحظة:</b> «تنظيف الكاش يدوياً» من لوحة Vercel خيار بديل، لكنه <b>يمسح كذلك صور Image Optimization</b> المحفوظة بين النشرات (نصّ التوثيق نفسه) — فالنشر الجديد أنظف.",
+ ref:"٧ أغسطس"},
+
+{id:"AUTH1", b:"deploy", app:["admin","modonty"], tab:"open", sev:"high", who:"k",
+ t:"⏳ بعد الدفعة: حذف الكاتبَين — كاتب واحد «مدونتي» فقط",
+ d:"<b>قرار خالد (٧ أغسطس):</b> نظام الكتّاب يصير <b>كاتباً واحداً</b> هو «مدونتي». يُحذف <code>ahmed-alshehri</code> و<code>noura-alqahtani</code>.<br><br>" +
+
+   "<b>الحذف آمن على البيانات — متحقَّق بعدّ مباشر على قاعدة الإنتاج (٧ أغسطس):</b><br>" +
+   "<code>ahmed-alshehri</code> → مقالات بكل الحالات: <b>٠</b> · <code>noura-alqahtani</code> → <b>٠</b> · <code>modonty</code> → ١٣٩.<br>" +
+   "فلا صفوف يتيمة (ومونجو لا يطبّق Cascade — راجع <code>project_mongo_cascade_is_a_lie</code>).<br><br>" +
+
+   "<b>🔴 لكن كان فيه حاجز سيو — كُشف بقياس حيّ لا بافتراض:</b><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>200 noindex /authors/does-not-exist-xyz-123   ← soft 404 ❌\n410 noindex /articles/does-not-exist-xyz-123  ← ✅\n410 noindex /tags/does-not-exist-xyz-123      ← ✅</pre>" +
+   "السبب: <code>modonty/proxy.ts</code> كان يغطّي <code>articles · categories · tags · industries · clients</code> ولا يغطّي <code>authors</code>. فرابط الكاتب المحذوف يرجع <b>200</b> بصفحة فاضية = «soft 404»، وغوغل يبقيه في الفهرس ويهدر عليه زحفاً.<br><br>" +
+
+   "<b>✅ أُصلح في الكود (٧ أغسطس، ينتظر الدفع):</b><br>" +
+   "· <code>modonty/lib/archive-cache.ts</code> — كاش <code>authors</code> جديد (قاعدة الظهور: أي صفّ موجود يُرسم — <code>app/authors/[slug]/page.tsx:154</code> يستدعي <code>notFound()</code> عند غياب الصفّ فقط).<br>" +
+   "· <code>modonty/proxy.ts</code> — أُضيف <code>/authors/:slug</code> للمصفوفة.<br>" +
+   "· <code>pnpm tsc --noEmit</code> على modonty ← <b>صفر أخطاء</b>.<br><br>" +
+
+   "<b>⏳ الترتيب مُلزم — ولهذا البند مؤجَّل:</b> الإصلاح محلّي ولم يُنشر بعد. فالحذف <b>قبل</b> الدفعة يترك الرابطين يرجعان 200 حتى النشر — وهو بالضبط ما نتجنّبه. لذا: <b>الدفعة (<code>CACHE1</code>) أولاً ← ثم الحذف من الأدمن</b>، فيرجع الرابط <b>410</b> من أول لحظة.<br><br>" +
+
+   "<b>خطوات التنفيذ بعد الدفعة:</b> ① احذف الكاتبَين من <code>/authors</code> في الأدمن ② تأكّد أنّ <code>/authors/ahmed-alshehri</code> و<code>/authors/noura-alqahtani</code> يرجعان <b>410</b> ③ تأكّد أنّهما اختفيا من <code>sitemap.xml</code>.",
+ ref:"٧ أغسطس"},
 
 {id:"T9", b:"deploy", app:["admin","modonty"], tab:"open", sev:"critical", who:"k",
  t:"إطفاء Cloudinary",
- d:"آخر نقطة رجوع. أي صورة ما وصلت بني تنكسر لحظة الإطفاء.",
+ d:"آخر نقطة رجوع. أي صورة ما وصلت بني تنكسر لحظة الإطفاء.<br><b>شرط مسبق:</b> بند <code>CACHE1</code> — نشر جديد يضمن أنّ كل صفحة تُقدَّم من كاش ما بعد الترحيل.",
  ref:"P3-5"},
 
-{id:"T6b", b:"deploy", tab:"open", sev:"critical", who:"k",
- t:"دمج <code>version-2</code> في <code>main</code>",
- d:"آخر شي، وبأمرك أنت.",
- ref:"P3-5"},
-
-/* Epic INV — ٩ من ١٢ اكتملت (طبقة القراءة الحيّة كاملة والتطبيقات الثلاثة نظيفة).
-   الباقي مفصولٌ تاسكاً تاسكاً تحت. */
+{id:"T6b", b:"deploy", tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"دمج version-2 في main",
+ d:"<b>متحقَّق بأمر git:</b> <code>git branch --merged main</code> يُدرج <code>version-2</code> ← مدموج · و<code>git rev-list --left-right --count origin/main...main</code> = <code>0 0</code> ← main والريموت متطابقان.<br>" +
+   "تمّ ضمن دفعة <code>78e6a27</code> (٧ أغسطس) — الفرع كان مدموجاً محلياً قبلها ثم دُفع معها.",
+ ref:"بند T6b"},
 {id:"16", b:"deploy", app:["admin"], tab:"done", sev:"critical", who:"c", date:"٦ أغسطس",
  t:"رفع معرض العميل من المتصفّح ما زال يروح Cloudinary",
  d:"<b>منجز — متحقَّق من الكود ٦ أغسطس:</b> <code>client-gallery-grid.tsx:99</code> يستدعي <code>uploadGalleryToBunny</code> عبر السيرفر أكشن المشترك، و<code>gallery-mutations.ts:55</code> يكتب <code>bunnyUrl</code>. المسار القديم بقي نصّاً باسم <code>uploadToCloudinaryRETIRED</code> ويرمي خطأ عمداً حتى ما ينفّذ أحدٌ مساراً مخفيّاً.<br>التعليق الذي بُني عليه البند كان وصفاً قديماً في <code>gallery-mutations.ts</code> لم يُحدَّث بعد التحويل.",
  ref:"بند ١٦"},
 
-{id:"B8", b:"deploy", app:["admin"], tab:"open", sev:"high", who:"c",
+{id:"B8", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
  t:"إعادة ترحيل الصفوف بـ<code>bunnyUrl=null</code>",
- d:"صفوف فاتها الترحيل في التشغيلة الأولى.",
- ref:"BUNNY-GOLIVE-FLOW"},
-
-{id:"B1", b:"deploy", app:["admin"], tab:"open", sev:"high", who:"c",
+ d:"<b>متحقَّق:</b> الروابط اليتيمة ٥٩ ← <b>صفر</b> (لوحة الترحيل) · البطاقات ٥٦٩ ← ٥٩٥ (٢٦ صفاً جديداً من اليتيمة) · بلا نسخة بني: ٤ فقط.<br>" +
+   "<b>والأربعة ليست فشلاً:</b> ملفاتها محذوفة من Cloudinary (404 لكل واحدة) — لا شيء لترحيله. مرصودة في <code>DATA1</code>.",
+ ref:"تاسك ②"},
+{id:"B1", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
  t:"ذيل A2 — تبويبات الأدمن",
- d:"~٨ ملفات باقية من التبديل.",
+ d:"<b>الأصل:</b> <code>INV-A2</code> «عرض داخلي في الأدمن» (<code>BUNNY-MIGRATION-PRD-v1.html:228</code>) — بقي ذيل يقرأ حقل <code>url</code> الخام بدل المُحلِّل <code>mediaSrc</code>.<br><br>" +
+
+   "<b>الجرد الكامل:</b> بحث على كل مواضع <code>src={…url}</code> في <code>admin/app/</code> ← ٩ مواضع. فُحص كل واحد على مصدر بياناته:<br><br>" +
+
+   "<b>■ سليمة أصلاً — المُحمِّل يحلّها قبل العرض (٥):</b><br>" +
+   "<code>load-brief-detail.ts:228</code> · <code>load-groups.ts:169</code> · <code>media-counts.ts:181</code> · <code>load-galleries.ts:87</code> · <code>optimizable.ts:69</code> — كلها تكتب <code>url: mediaSrc(m) ?? m.url</code>، فالحقل الواصل للواجهة <b>هو رابط بني</b>. لا تعديل.<br><br>" +
+
+   "<b>■ تسريبات حقيقية أُصلحت (٣ ملفات):</b><br>" +
+   "· <code>clients/[id]/components/tabs/media-social-tab.tsx</code> — ٤ مواضع (شبكة · قائمة · نافذة المعاينة · زر «Open Original») كانت تقرأ <code>item.url</code> رغم أنّ بقيّة الملف تستخدم <code>mediaSrc</code>. أُضيف <code>bunnyUrl</code> للنوع، ووُحِّد نوع الـprops مع <code>Media</code> (كان مكرّراً وناقصاً).<br>" +
+   "· <code>clients/[id]/components/client-tabs.tsx</code> — نوع <code>media</code> كان يُسقط <code>bunnyUrl</code> في الطريق. أُضيف.<br>" +
+   "· <code>articles/components/sections/seo-section.tsx</code> — <code>getMediaById</code> يرجع الصفّ كاملاً (<code>include</code> لا <code>select</code>)، لكن الكود يضيّقه إلى <code>{url, altText}</code> فيضيع <code>bunnyUrl</code>. صار الحلّ داخل الـeffect.<br>" +
+   "· <code>media/[id]/edit/edit-media-form.tsx</code> — معاينة المحرّر كانت تعرض أصل Cloudinary بدل ما يقدّمه الموقع فعلاً.<br><br>" +
+
+   "<b>لماذا أمسك النظامُ الخطأَ:</b> <code>bunnyUrl</code> مفتاح <b>مطلوب</b> في <code>MediaSrcInput</code> (<code>dataLayer/lib/media-src.ts:25</code>) — فإسقاطه يصير خطأ ترجمة عند موضع الاستدعاء لا تسريباً صامتاً. وهذا ما حصل: أول <code>tsc</code> أعطى ٤ أخطاء أشارت للنوع الناقص بالضبط.<br><br>" +
+
+   "<b>التحقّق:</b> <code>pnpm tsc --noEmit</code> على admin ← <b>صفر أخطاء</b>.<br><br>" +
+
+   "<b>مرصود للحذف (يحتاج إذنك):</b> <code>clients/[id]/components/tabs/gallery-tab.tsx</code> — ٢٩٩ سطراً <b>لا يستوردها أي ملف</b> (متحقَّق ببحث على <code>admin/</code> كلّه ← صفر تطابق لـ<code>gallery-tab</code>). فيها ٣ مواضع <code>url</code> خام لم تُلمس — ترحيل كود ميت هدر.",
  ref:"BUNNY-GOLIVE-FLOW"},
 
-{id:"B6", b:"deploy", tab:"open", sev:"normal", who:"c",
- t:"مهمّة S1 من Epic INV",
- d:"التفاصيل في <code>BUNNY-GOLIVE-FLOW-v1.html</code> قسم «المتبقّي».",
+{id:"B6", b:"deploy", tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"مهمّة S1 من Epic INV — الحقول النصّية الخام",
+ d:"<b>ما هي:</b> حقول تخزّن رابط الصورة <b>نصّاً مباشراً</b> لا عبر علاقة بمكتبة الوسائط — فلا يمسّها الترحيل ولا التبديل. مواضعها في السكيما: <code>dataLayer/prisma/schema/schema.prisma:936</code> (Author) · <code>:975</code> (Category) · <code>:1011</code> (Tag) · <code>:1044</code> (Industry) · <code>:2440-2442</code> (Settings) · <code>:175,183</code> (User). القرار قُفل ٢٩ يوليو (خيار «ب»: تُعاد كلها من بني) — <code>BUNNY-MIGRATION-PRD-v1.html:235-237</code>.<br><br>" +
+
+   "<b>متحقَّق باستعلام مباشر على قاعدة الإنتاج <code>modonty</code> (٧ أغسطس، قراءة فقط — عدّ لكل حقل مع تصنيف المضيف):</b><br>" +
+   "· <code>categories.socialImage</code> ١٥/١٥ · <code>tags.socialImage</code> ٢٣/٢٣ · <code>industries.socialImage</code> ٨/٨ ← <b>٤٦ كلها بني ✅</b><br>" +
+   "· <code>articles</code> · <code>clients</code> · <code>authors</code> · <code>modonty_pages</code> — الحقل <b>فارغ تماماً</b> (لا شيء لترحيله)<br>" +
+   "· <code>settings</code>: <code>logoUrl</code> · <code>logoIconUrl</code> · <code>ogImageUrl</code> · <code>tagsPageImage</code> · <code>industriesPageImage</code> · <code>categoriesPageImage</code> ← <b>الستّة بني ✅</b><br>" +
+   "· <code>authors.image</code> ٢ معبّأ ← <b>كلاهما بني ✅</b><br>" +
+   "· <code>users.image</code> ٣٠ ← <code>lh3.googleusercontent.com</code> (أفاتار الدخول بغوغل — <b>خارجي بطبيعته، ليس تخزيننا</b>)<br><br>" +
+
+   "<b>الحصيلة: صفر أصل من أصولنا باقٍ على Cloudinary في الحقول الخام.</b><br><br>" +
+
+   "<b>ثلاث بقايا — كلّ واحدة تخصّ بنداً آخر:</b><br>" +
+   "① <code>users.avatar</code> صفّان على <code>res.cloudinary.com/<b>demo</b>/…</code> — <b>متحقَّق:</b> المسار حساب Cloudinary العام التجريبي لا حسابنا (<code>dfegnpgwx</code>). الصفّان بذور تجريبية: <code>client@modonty.com</code> و<code>editor@modonty.com</code> ← بند <code>54b</code>.<br>" +
+   "② المؤلف <code>Modonty</code> بلا صورة (٢ من ٣ مؤلفين معبّأون) ← بند <code>54</code>.<br>" +
+   "③ 🆕 <b>متحقَّق:</b> مستخدم واحد صورته مخزَّنة <code>data:image/jpeg;base64,…</code> داخل الصفّ نفسه — تشتغل، لكنها تُضخّم الوثيقة وتُنقل في كل استعلام. رُصدت للمتابعة، ليست حاجزاً.",
  ref:"BUNNY-GOLIVE-FLOW"},
 
-{id:"B10", b:"deploy", tab:"open", sev:"normal", who:"c",
- t:"مهمّة V1 من Epic INV",
- d:"التفاصيل في <code>BUNNY-GOLIVE-FLOW-v1.html</code> قسم «المتبقّي».",
+{id:"B10", b:"deploy", tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"مهمّة V1 من Epic INV — بوّابة التحقّق الحيّ بـPlaywright",
+ d:"<b>البوّابة كما نصّها المستند</b> (<code>BUNNY-MIGRATION-PRD-v1.html:240-241</code>): «كل <code>&lt;img&gt;</code> + كل رابط JSON-LD يطلع <code>b-cdn.net</code> · صفر <code>res.cloudinary.com</code> · صفر صورة مكسورة · صفر console error».<br><br>" +
+
+   "<b>متحقَّق بمتصفّح حقيقي (Edge headed، ٧ أغسطس) — لا بقراءة HTML خام.</b> الفرق مهمّ: المتصفّح يفكّ <code>/_next/image?url=</code>، ويرصد الصور المرسومة من جافاسكربت، ويكشف الصورة المكسورة بـ<code>naturalWidth === 0</code>.<br><br>" +
+
+   "<b>النتائج — ٨ أنواع صفحات:</b><br>" +
+   "<table style='width:100%;font-size:13px;border-collapse:collapse'>" +
+   "<tr><th align='right'>الصفحة</th><th>صور</th><th>المضيف</th><th>مكسورة</th><th>JSON-LD</th></tr>" +
+   "<tr><td>الرئيسية <code>/</code></td><td>٨٢</td><td>بني ١٠٠٪</td><td>٠</td><td>٤٢ بني · ٠ Cloudinary</td></tr>" +
+   "<tr><td><code>/articles/[slug]</code></td><td>٢٥</td><td>بني ١٠٠٪</td><td>٠</td><td>١٥ بني · ٠</td></tr>" +
+   "<tr><td><code>/clients/[slug]</code></td><td>١٥</td><td>بني ١٠٠٪</td><td>٠</td><td>١٢ بني · ٠</td></tr>" +
+   "<tr><td><code>/categories/[slug]</code></td><td>٧</td><td>بني ١٠٠٪</td><td>٠</td><td>١ بني · ٠</td></tr>" +
+   "<tr><td><code>/tags/[slug]</code></td><td>١١</td><td>بني ١٠٠٪</td><td>٠</td><td>١ بني · ٠</td></tr>" +
+   "<tr><td><code>/industries/[slug]</code></td><td>٧</td><td>بني ١٠٠٪</td><td>٠</td><td>١ بني · ٠</td></tr>" +
+   "<tr><td><code>/authors/[slug]</code></td><td>٥</td><td>بني ١٠٠٪</td><td>٠</td><td>١ بني · ٠</td></tr>" +
+   "<tr><td><code>/reels</code></td><td>٤</td><td>بني ١٠٠٪</td><td>٠</td><td>—</td></tr>" +
+   "</table>" +
+   "<b>الإجمالي: ١٥٦ صورة · المضيفان <code>modonty-clients.b-cdn.net</code> و<code>modonty-asset.b-cdn.net</code> فقط · صفر مكسورة · صفر Cloudinary في أي JSON-LD.</b><br><br>" +
+
+   "<b>ملاحظة تفسّر تناقضاً سابقاً:</b> صفحة عميل واحدة كانت تُظهر ٤ ذكرٍ لـ<code>res.cloudinary.com</code> في HTML الخام، وفي المتصفّح <b>صفر صورة</b> منها. السبب: حقل <code>url</code> يسافر داخل حمولة RSC كخاصيّة، بينما <code>mediaSrc</code> يختار <code>bunnyUrl</code> عند الرسم (<code>dataLayer/lib/media-src.ts:31</code>). <b>عدّ النصّ يكذب — العدّ الصحيح على الصور المرسومة.</b><br><br>" +
+
+   "<b>console:</b> صفر خطأ من كود مودونتي. الأخطاء الظاهرة كلها من سكربت خارجي واحد — Microsoft Clarity (<code>clarity.ms/tag/xwq5tz4deb</code>) يرمي <code>TypeError: a[c] is not a function</code> <b>في كل صفحة</b>. لا يمسّ الصور ولا الترحيل — <b>مرصود للمتابعة</b>.<br><br>" +
+
+   "<b>لم يُغطَّ:</b> <code>/users/profile/*</code> (يحتاج تسجيل دخول) — الصور فيه أفاتار غوغل الخارجي كما في جرد <code>B6</code>، فليس مساراً لأصولنا.",
  ref:"BUNNY-GOLIVE-FLOW"},
 
-{id:"B3", b:"deploy", app:["admin"], tab:"open", sev:"high", who:"c",
- t:"هل فيه مسار رفع يكتب على Cloudinary بعد الترحيل؟ — <b>ما ينفحص على الإنتاج</b>",
- d:"السؤال ما زال مفتوحاً: هل الترحيل ما شمل مقالات مدونتي، ولّا فيه مسار رفع لسّه يكتب على Cloudinary؟<br><b>⚠️ لا تستدلّ بالإنتاج:</b> <code>origin/main</code> واقف على كوميت <code>e3dbfba</code> (٢٨ يوليو) — <b>كود ما قبل بني</b>، وشغل الترحيل كلّه محلي (١٧ كوميت غير مدفوعة). فأي رفعة جديدة على الإنتاج تنزل على Cloudinary <b>بحكم الكود، لا بحكم عطل</b> — مثل غلافَي «التقويم الهجري» و«كأس العالم» اللي رفعهما الفريق ٦ أغسطس.<br><b>الفحص الصحيح:</b> ارفع صورة على preview فرع <code>version-2</code> وشوف وين تنزل.",
- ref:"٦ أغسطس"},
+{id:"B3", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"الرفع بعد النشر يكتب على بني — مُثبَت + اكتشاف وإصلاح عطل مفاتيح Vercel",
+ d:"<b>متحقَّق خطوةً خطوة:</b><br>" +
+   "<b>الاكتشاف (بدأه تست خالد على Dream to App):</b> الرفع كان يفشل بصمت على الإنتاج كله — «Bunny env missing for zone clients» (قُرئ من جسم ردّ الـserver action عبر الشبكة، والرسالة مصدرها <code>dataLayer/lib/bunny.ts:43</code>). السبب: <b>١٣ مفتاح BUNNY_* ما وصلوا Vercel قط</b> — الفحص المرقّم الكامل عبر <code>GET /v1/env</code> و<code>/v9/projects/{id}/env</code> أظهر: المشتركة ٤ مفاتيح فقط، admin مفاتيح BACKUP فقط، console صفر.<br>" +
+   "<b>الإصلاح:</b> أُضيفت الـ١٣ عبر <code>POST /v1/env</code> بصيغة <code>{target, type, projectId, evs:[…]}</code> (متحقَّقة من OpenAPI الرسمي <code>openapi.vercel.sh</code> + رسائل الخطأ) · production+preview · مربوطة admin+console · ثم إعادة نشر المشروعين حتى READY.<br>" +
+   "<b>الإثبات النهائي:</b> رفعة حيّة عبر واجهة الأدمن نجحت — الصفّ في القاعدة: <code>url=bunnyUrl=modonty-clients.b-cdn.net/general/dream-to-app/b3-real-test.jpg</code> · 800×600 · <b>والضبابة اتولّدت تلقائياً</b> (١١٩ حرفاً webp من <code>generate-blur.ts</code>). <b>صفر كتابة على Cloudinary</b> — جواب البند الأصلي.",
+ ref:"٦-٧ أغسطس"},
 
-{id:"54", b:"deploy", app:["admin"], tab:"open", sev:"normal", who:"c",
- t:"تعبئة <code>Author.image</code> و<code>socialImage</code> للمؤلفين",
- d:"العلاقتان موجودتان في السكيما وفاضيتان. ما عاد يحجب الترحيل.<br><code>T2b</code> غطّى الوسوم والتصنيفات والصناعات وصفحات المنصّة (متحقَّق من <code>link-core-media.ts</code>).",
+{id:"54", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"صورة الكاتب «مدونتي»",
+ d:"<b>تغيّر النطاق (قرار خالد ٧ أغسطس):</b> كاتب واحد فقط «مدونتي»؛ حذف الآخرَين في بند <code>AUTH1</code>.<br><br>" +
+
+   "<b>ما كان — متحقَّق بعدّ مباشر على قاعدة الإنتاج:</b><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>Modonty           منشورة: 94   image: \"\" (فارغ) ❌\nم. أحمد الشهري    منشورة: 0    image: بني (HTTP 200)\nأ. نورة القحطاني   منشورة: 0    image: بني (HTTP 200)</pre>" +
+   "الكاتبان اللذان لهما صور لم يكتبا شيئاً، والذي كتب كل شيء بلا صورة. الأثر: دائرة فيها حرف «M» بدل الأفاتار في كل مقال.<br><br>" +
+
+   "<b>⚠️ تصحيح لحكم خاطئ صدر أثناء العمل:</b> قلتُ إنّ السيو ناقص وإنّ بطاقة <code>Person</code> تخرج بلا صورة. <b>غلط.</b> فحص السيو المخبوز أظهر أنّ الكاتب يُولَّد كـ<code>Organization</code> لا <code>Person</code>، ومعه <code>logo</code> كامل على بني:<br>" +
+   "<pre style='font-size:11px;margin:4px 0'>Article.author → {\"@id\": \".../authors/modonty#organization\"}\n\"@type\": \"Organization\"\n\"logo\": { \"contentUrl\": \"modonty-asset.b-cdn.net/migrated/590modontyLogo_….png\", … }</pre>" +
+   "وعقد <code>Person</code> الـ٥١ التي عددتُها هي <b>المراجعون الطبيّون</b> لا الكاتب. فالنقص كان <b>شكلياً فقط</b>، ولم يحتج إعادة توليد أي مقال.<br><br>" +
+
+   "<b>عقبة في الطريق:</b> الأدمن <b>لا يملك حقلاً</b> لصورة الكاتب — الصفحة تقول صراحةً «visuals … come from Settings»، و<code>admin/app/(dashboard)/authors/page.tsx:41</code> يعرض <code>settings.logoUrl ?? author.image</code> عرضاً فقط بلا كتابة، ولا يوجد مسار <code>[id]/edit</code>. فتعذّر التنفيذ من الواجهة ← بند <code>ADM-AUTH-IMG</code>.<br><br>" +
+
+   "<b>ما نُفِّذ:</b> كُتبت القيمة في القاعدة مباشرةً — <b>قيمة واحدة تصلح كل المستهلكين</b> (بطاقة الكاتب في المقال · صفحة الكاتب · أفاتار الفيد · بطاقات التصنيفات)، بدل ملاحقة ~٢٠ موضعاً يقرأ <code>author.image</code>.<br>" +
+   "<pre style='font-size:12px;margin:4px 0'>الأفاتار HTTP: 200 | image/webp   ← فُحص قبل الكتابة\nقبل: {\"image\":\"\",\"imageAlt\":null}\nبعد : {\"image\":\"…/brand/modonty-avatar.webp\",\"imageAlt\":\"شعار مدوّنتي\"}</pre>" +
+   "المصدر: <code>dataLayer/lib/brand-assets.ts:18</code> (<code>BRAND_CHARACTER_URL</code>).<br><br>" +
+
+   "<b>التحقّق الحيّ بعد التحديث (Playwright، الإنتاج):</b><br>" +
+   "· صفحة مقال: <code>stillFallbackM: 0</code> (كانت ٢) · الأفاتار يُرسم في موضعين <code>broken: false</code> · ٢٦ صورة · <b>صفر مكسورة</b><br>" +
+   "· صفحة <code>/authors/modonty</code>: ٣٤ ذكراً لـ<code>modonty-avatar.webp</code> بعد تحديث الكاش<br><br>" +
+
+   "<b>حقول تُركت عمداً:</b> <code>imageMediaId</code> و<code>socialImageMediaId</code> — <b>متحقَّق:</b> صفر تطابق لـ<code>imageMedia</code>/<code>socialImageMedia</code> في <code>modonty/</code> كلّه. لا أحد يقرؤها؛ تعبئتها شغل دفتري بلا أثر.",
  ref:"بند ٥٤"},
 
-{id:"54b", b:"deploy", app:["dataLayer"], tab:"open", sev:"normal", who:"c",
- t:"<code>User.avatar</code> بلا علاقة في السكيما",
- d:"الحقل موجود لكن ما له علاقة بـ<code>Media</code> أصلاً — يحتاج قرار سكيما قبل التعبئة.",
+{id:"54b", b:"deploy", app:["dataLayer"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"<code>User.avatar</code> — لا يحتاج علاقة سكيما، احتاج تنظيفاً",
+ d:"<b>السؤال الأصلي:</b> هل نضيف علاقة <code>Media</code> للحقل قبل تعبئته؟<br>" +
+   "<b>الجواب بعد الفحص: لا.</b> <b>متحقَّق:</b> الحقل له قارئ واحد فقط في المشروع كلّه — <code>modonty/auth.config.ts:53</code> و<code>:118</code>، وفي الموضعين كبديل احتياطي: <code>user.image || user.avatar</code>. لا يُرفع منه شيء ولا يُعرض في أي صفحة. فالعلاقة ستكون بنية بلا مستهلك.<br><br>" +
+
+   "<b>ما وُجد فعلاً — صفّان تجريبيان بروابط ميتة:</b><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>خالد العميل  client@modonty.com  CLIENT  image: فارغ  avatar HTTP 404\nسارة المحررة editor@modonty.com  EDITOR  image: فارغ  avatar HTTP 404</pre>" +
+   "أُنشئا ٣ أبريل (بذور) · صفر تعليق · بريد غير موثَّق · والرابطان على حساب Cloudinary <b>التجريبي العام</b> (<code>/demo/</code>) لا حسابنا. وبما أنّ <code>image</code> فارغ، كان الفولباك يُسلّم رابطاً ميتاً كصورة الجلسة.<br><br>" +
+
+   "<b>ما نُفِّذ:</b><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>تطابق: 2 | عُدِّل: 2\nبعد: صفوف بأفاتار معبّأ: 0 | منها Cloudinary: 0</pre>" +
+   "كُتب <code>null</code> صريحاً لا <code>$unset</code> — لأنّ الحقل الغائب لا يطابقه استعلام <code>avatar: null</code> في مونجو (<code>project_mongo_null_vs_absent_trap</code>)، والقارئ يعامل الاثنين سواء.<br><br>" +
+
+   "<b>مكسب جانبي أثناء الجرد:</b> كُشفت ٤ مفاتيح يتيمة في وثيقة الإعدادات (<code>articlesPage*</code>) تحمل ٥٠ رابط Cloudinary — نُظِّفت، تفاصيلها في بند <code>SETT1</code>.",
  ref:"بند ٥٤"},
+
+{id:"SETT1", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"مفاتيح <code>articlesPage*</code> اليتيمة في الإعدادات — ٢٨ ألف حرف سيو ميت",
+ d:"<b>كيف انكشفت:</b> جرد ختامي على كل حقول القاعدة النصّية بحثاً عن <code>res.cloudinary.com</code> ← موضع واحد باقٍ: <code>settings.articlesPageJsonLdStructuredData</code> يحمل <b>٥٠ رابطاً</b>، بينما كل حقول السيو المخبوزة الأخرى نظيفة تماماً:<br>" +
+   "<pre style='font-size:11px;margin:4px 0'>jsonLdStructuredData              Cloudinary=0  bunny=42\nclientsPageJsonLd…                Cloudinary=0  bunny=36\ncategoriesPageJsonLd…             Cloudinary=0  bunny=17\ntrendingPageJsonLd…               Cloudinary=0  bunny=42\ntagsPageJsonLd…                   Cloudinary=0  bunny=22\nindustriesPageJsonLd…             Cloudinary=0  bunny=10\nfaqPageJsonLd…                    Cloudinary=0  bunny=1\narticlesPageJsonLd…               Cloudinary=50 bunny=0   ← الشاذّ</pre>" +
+
+   "<b>ثلاثة أدلّة أنّها ميتة:</b><br>" +
+   "① <code>admin/lib/seo/listing-page-seo-generator.ts:257</code> يحمل التعليق حرفياً: «Removed 2026-08-02. The Settings columns (articlesPage*) are stale leftovers nothing reads».<br>" +
+   "② <b>متحقَّق:</b> صفر تعريف لـ<code>articlesPage</code> في <code>dataLayer/prisma/schema/schema.prisma</code> — مفاتيح خارج السكيما أصلاً.<br>" +
+   "③ <code>https://www.modonty.com/articles</code> ← <b>HTTP 404</b>؛ الصفحة حُذفت في الكوميت <code>e973d1b</code> («remove phantom /articles page»).<br><br>" +
+
+   "<b>ما نُفِّذ:</b> نسخة احتياطية في <code>backups/settings-articlesPage-orphans-2026-08-07.json</code> ثم <code>$unset</code> للمفاتيح الأربعة:<br>" +
+   "<pre style='font-size:12px;margin:4px 0'>articlesPageMetaTags                    966 حرفاً\narticlesPageJsonLdStructuredData      27128 حرفاً\narticlesPageJsonLdLastGenerated          26 حرفاً\narticlesPageJsonLdValidationReport       70 حرفاً\n─────────────────────────────────────────────────\nالإجمالي 28190 · عُدِّل: 1 · المتبقّي: 0</pre>" +
+   "<b>بعدها:</b> حقول الإعدادات التي تذكر Cloudinary = <b>صفر</b>.",
+ ref:"٧ أغسطس"},
 
 /* B5 «نقل معارض العملاء إلى بني» — حُذف ٦ أغسطس: مكرَّر بالكامل.
    نطاق <code>media</code> في <code>cloudinary-scopes.ts</code> يختار كل صفّ وسائط
@@ -637,9 +846,9 @@ const TASKS = [
 
 
 /* ═════ عيوب ═════ */
-{id:"G2", b:"deploy", app:["admin","modonty"], tab:"open", sev:"critical", who:"c",
- t:"حذف الصفوف اليتيمة الثلاثة على الإنتاج",
- d:"<code>ClientReview.reviewer</code> ×٢ و<code>ArticleTag.tag</code> ×١ — الأخير <b>يمنع فتح مقال جبر سيو</b> <code>6a60a5dd8aab9fc935de6835</code> للزائر الآن.<br>فاحص Run-All يبلّغ ولا يحذف عمداً، فالحذف إجراء مستقلّ بموافقتك.",
+{id:"G2", b:"deploy", app:["admin","modonty"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"حذف الصفّ اليتيم الأخير على الإنتاج — <code>ArticleTag.tag</code> ×١",
+ d:"<b>متحقَّق — نُفِّذ بإذن خالد الصريح</b> («اعمل script وعندك الصلاحية إنك تحذف. بس بعد كده قفل الصلاحية»): فُتح حارس <code>prod-db-write</code> مؤقتاً، وسكربت الحذف اشترط العدد = ١ بالضبط وإلا يقف.<br><b>التنفيذ:</b> الصفّ <code>6a672133cbc8dedf1d48bffe</code> (مقال جبر سيو ← وسم محذوف <code>69e3d7f2</code>) — <code>deleteOne</code> بالمعرّف · الفحص البعدي: <b>صفر يتامى</b> في ٢٤١ صفاً · مقال جبر سيو يفتح الآن (200).<br><b>الصلاحية أُغلقت فوراً</b> — الحارس رجع لنصّه الأصلي (متحقَّق بقراءة الملف) وسكربت الحذف حُذف من القرص.<br>ملاحظة: صفّا <code>ClientReview.reviewer</code> من التقرير القديم كانا قد اختفيا قبل هذه الخطوة.",
  ref:"بند ٨٦"},
 
 {id:"87", b:"bugs", app:["admin"], tab:"open", sev:"critical", who:"c",
@@ -658,14 +867,24 @@ const TASKS = [
  d:"<b>متحقَّق:</b> صفر <code>duration: 8000</code> باقٍ في الكونسول · صفر <code>confirm()</code>/<code>alert()</code> أصلية في المسارات المحوَّلة.<br>مكوّن مشترك <code>app/(dashboard)/components/use-confirm.tsx</code> بدّل ٦ نسخ مكرّرة من <code>confirmThen</code> + نمط inline في تيليجرام — ١٢ موضع تأكيد في ٧ ملفات.<br><b>UX:</b> كل زرّ يسمّي فعله (احذف الحجز · ارفض المحدَّد · انشر المحدَّد · ألغِ الاشتراك · افصل الحساب) والإلغاء «إلغاء» في كل الشاشات. المخرج الوحيد زرّان — لا مؤقّت ولا نقرة خارجية ولا Escape ولا X.<br><b>تست حيّ على <code>modonty_dev</code>:</b> الأسئلة الشائعة ← حوار بأزرار «إلغاء» و«ارفض المحدَّد» ✅ · <code>tsc</code> صفر أخطاء.<br><b>ما اختُبر حيّاً:</b> الحجوزات والتعليقات والمشتركون والدعم وتيليجرام — جداولها فاضية على التطوير وتيليجرام غير مربوط. الكود واحد مشترك ومتحقَّق نوعياً.",
  ref:"بند ٤٧"},
 
-{id:"65", b:"deploy", app:["modonty"], tab:"open", sev:"high", who:"c",
+{id:"65", b:"deploy", app:["modonty"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
  t:"إزالة بارام <code>d_article-placeholder-default</code> من مكوّني الصور",
- d:"<b>تحويلة Cloudinary مخبوزة في الكود</b> — <code>OptimizedImage.tsx:55</code> و<code>fullOptmizeImage.tsx:293</code>. لحظة إطفاء Cloudinary (<code>T9</code>) أي صورة تمرّ بالمسار ده تنكسر.<br><b>شرط قبل T9.</b>",
+ d:"<b>ما كان:</b> بارام <code>d_</code> (الصورة الافتراضية في Cloudinary) مخبوز في سلسلة التحويلات داخل ملفّين — <code>modonty/components/media/OptimizedImage.tsx</code> و<code>modonty/components/media/fullOptmizeImage.tsx</code>، في فرعي <code>forLcp</code> والعادي.<br><br>" +
+
+   "<b>لماذا كان يجب أن يُزال:</b> الأصل <code>article-placeholder-default</code> <b>غير موجود على Cloudinary أصلاً</b> — متحقَّق ومسجَّل سابقاً في <code>SESSION-LOG-archive-until-2026-06-01.md:397</code> («that param asset doesn't exist (404)»). فالبارام كان يضيف حِملاً ميتاً لكل رابط، ويخفي كسر الصورة خلف فولباك لا يعمل.<br><br>" +
+
+   "<b>ما صار:</b> صار التحويل <code>f_auto,q_auto,c_fill,g_auto</code> (+<code>w_1200</code> لصور LCP) بلا <code>d_</code>. سطران في كل ملف صارا سطراً واحداً.<br><br>" +
+
+   "<b>التحقّق:</b> بحث نصّي على مجلّد <code>modonty/</code> كلّه ← <b>صفر تطابق</b> لـ<code>d_article-placeholder-default</code>.<br><br>" +
+
+   "<b>ملاحظة على الخطورة:</b> البند كان موصوفاً «شرط قبل T9». التحقّق الحيّ (٧ أغسطس) أظهر أنّ الدالتين تُرجعان الرابط كما هو لو لم يكن Cloudinary (<code>OptimizedImage.tsx:44</code>)، وكل الصور المعروضة على الإنتاج صارت بني — فالبند <b>تنظيف كود ميت</b> لا حاجز إطلاق. الحاجز الفعلي قبل <code>T9</code> هو <b>نشر جديد يُبطل كاش Vercel</b> (بند منفصل).",
  ref:"بند ٦٥"},
 
-{id:"65c", b:"deploy", app:["modonty"], tab:"open", sev:"high", who:"c",
- t:"فولباك الصورة الافتراضية داخل مولّدات السيو",
- d:"<b>متحقَّق: مولّد السيو ما يعرف الافتراضية</b> — صفر إشارة لـ<code>platform-defaults</code> في <code>modonty/lib/seo/index.ts</code>. فمقال بلا صورة يخرج بـ<code>og:image</code> فاضٍ.<br><b>شرط قبل إعادة توليد السيو</b> — التوليد يخبز النتيجة في القاعدة، فلو ما اتصلّح قبله نخبز الفراغ.",
+{id:"65c", b:"deploy", app:["modonty","admin","dataLayer"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"فولباك الصورة الافتراضية داخل مولّدات السيو — + إصلاح عطل T2b في مستعلم الافتراضيات",
+ d:"<b>اكتشاف أثناء البند:</b> T2b كسر مستعلم الافتراضيات نفسه — <code>getPlatformDefaultImages</code> كان يبحث بـ<code>scope:PLATFORM + clientId:null</code> وT2b ملّك الصفوف الثلاثة للعميل الجوهري (متحقَّق على التطوير: الاستعلام القديم = صفر والصفوف قائمة). <b>الإصلاح:</b> البحث بالاسم الثابت <code>platform-default-*</code> في <code>dataLayer/lib/platform-defaults.ts</code> + موضعَي <code>defaults-actions.ts</code> — الاسم يصمد أمام تغيّر الملكية.<br>" +
+   "<b>البند الأصلي:</b> مقال بلا صورة كان يُخبز JSON-LD بلا <code>image</code> (شرط النتائج الغنية). الإصلاح في نقطتين: الخبز — <code>admin/lib/seo/jsonld-storage.ts</code> يعوّض بـ<code>platform-default-post</code> قبل التوليد · والحي — <code>articles/[slug]/page.tsx</code> يمرّر البديل المحسوب أصلاً للمولّد. (وسم <code>og:image</code> كان له فولباك قائم عبر <code>Settings.ogImageUrl</code> — <code>modonty/lib/seo/index.ts:133</code>.)<br>" +
+   "<b>الإثبات الحي على التطوير:</b> المقال <code>69d76605</code> (<code>featuredImageId: null</code>) بعد إعادة التوليد — المخبوز فيه <code>image</code> برابط الافتراضية بقصّة 16:9 عرض ١٢٠٠. tsc صفر على admin وmodonty.",
  ref:"بند ٦٥"},
 
 {id:"65b", b:"backlog", app:["modonty"], tab:"open", sev:"normal", who:"k",
@@ -719,9 +938,23 @@ const TASKS = [
  ref:"بند ٢٣"},
 
 /* ═════ سيو وأداء ═════ */
-{id:"67", b:"deploy", app:["modonty"], tab:"open", sev:"high", who:"c",
- t:"إعادة تست السرعة T4 — كانت مجدولة ٥ أغسطس",
- d:"الجولة الأولى أظهرت Cloudinary أسرع عند p75 (٧٦ms مقابل ١٢٥ms دافئ) وكاش بني كان مصفّراً. بعد أربعة أيام يدفى. السكربت جاهز: <code>scratchpad/t4-speed-test.mjs</code>. <b>القرار مرهون بالنتيجة — وتجاوز موعده.</b>",
+{id:"67", b:"deploy", app:["modonty"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"إعادة تست السرعة T4 — بني أسرع، والقرار حُسم",
+ d:"<b>متحقَّق بقياس حيّ (٧ أغسطس) بالسكربت المسجَّل نفسه <code>scratchpad/t4-speed-test.mjs</code> — قراءة فقط، والناتج الخام محفوظ في <code>t4-results.json</code>.</b><br><br>" +
+
+   "<b>لماذا أُعيد:</b> الجولة الأولى (٣ أغسطس) أظهرت Cloudinary أسرع عند p75 — لكنّ كاش بني كان <b>مصفّراً</b> وقتها، فالمقارنة لم تكن عادلة. عُلِّق القرار حتى يدفأ الكاش.<br><br>" +
+
+   "<b>المنهج:</b> <b>الصورة نفسها</b> تُجلب من المزوّدَين · ٣ جولات · <b>عكس الترتيب في كل جولة</b> منعاً لتحيّز الإحماء · TTFB = زمن وصول الترويسات. العيّنة: ١٥ صورة تحمل رابطَي Cloudinary وبني معاً ← ٤٥ طلباً لكل مزوّد.<br><br>" +
+
+   "<b>الناتج الخام:</b><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>--- rounds 2+3 (warm) — المقارنة العادلة ---\nbunny       ok 30/30 · TTFB p50  26ms · p75  33ms · p95  48ms · edge-cache HIT 100%\ncloudinary  ok 30/30 · TTFB p50  40ms · p75  55ms · p95 113ms · edge-cache HIT   0%\n\n--- round 1 (cold) ---\nbunny       p75 177ms · HIT 27%\ncloudinary  p75 445ms · HIT  0%\n\n--- ALL 3 rounds ---\nbunny       p75 111ms · total p75 790ms · HIT 76%\ncloudinary  p75 330ms · total p75 897ms · HIT  0%</pre>" +
+
+   "<b>القراءة:</b> بني أسرع <b>٤٠٪ عند p75</b> (٣٣ مقابل ٥٥ms) و<b>٢٫٤× عند p95</b> (٤٨ مقابل ١١٣ms) — والفجوة تتّسع عند الطلبات البطيئة، وهي التي يشعر بها الزائر. وحتى في الجولة الباردة صار بني أسرع (١٧٧ مقابل ٤٤٥ms).<br><br>" +
+
+   "<b>السبب — مقروء من الترويسات لا مستنتَجاً:</b> <code>edge-cache HIT</code> عند بني <b>١٠٠٪</b> بعد الإحماء، وعند Cloudinary <b>٠٪</b> في كل الجولات. فالفرضية التي عُلِّق القرار من أجلها ثبتت حرفياً.<br><br>" +
+
+   "<b>القرار: بني هو الأسرع — لا مانع سرعة أمام <code>T9</code>.</b><br>" +
+   "<b>حدود القياس (للأمانة):</b> القياس من جهاز خالد لا من حافة Vercel، فالأرقام <b>نسبية لا مطلقة</b>. لكن المزوّدَين قيسا في اللحظة نفسها وبالشبكة نفسها وبترتيب متبادل — فالمقارنة بينهما صالحة.",
  ref:"بند ٦٧"},
 
 {id:"76", b:"seo", app:["modonty"], tab:"open", sev:"high", who:"c",
@@ -734,16 +967,20 @@ const TASKS = [
  d:"<b>الزائر سليم</b> — بطل مقال مودونتي فيه <code>loading=&quot;eager&quot;</code> و<code>fetchPriority=&quot;high&quot;</code>، وهو <b>عين ما يوصي به توثيق Next.js</b> (متحقَّق عبر Context7).<br>المصدر أدمن فقط: <code>articles/[id]/page.tsx:147</code> بلا تهيئة.<br><b>⚠️ لا تستخدم <code>priority</code></b> — مهجورة في Next.js 16. طبّق نفس نمط مودونتي: <code>loading=&quot;eager&quot;</code> + <code>fetchPriority=&quot;high&quot;</code>.",
  ref:"بند G11"},
 
-{id:"68", b:"deploy", app:["modonty"], tab:"open", sev:"normal", who:"c",
- t:"إعادة توليد السيو الشاملة — المرحلتان الأخيرتان",
- d:"الأربع الأولى اكتملت بفحص Google: تصنيفات ١٤/١٤ · وسوم ٢٣/٢٣ · صناعات ٧/٧ · عملاء ٢٩/٢٩ — صفر ملاحظات. المتبقّي: Articles (١١٨) + Listings. <b>درس:</b> أي تعديل على الإعدادات يستوجب إعادة توليد ثانية — السيو مخبوز في القاعدة. <b>على التست فقط</b> — الإنتاج محكوم بحارس T8.",
+{id:"68", b:"deploy", app:["modonty"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"إعادة توليد السيو الشاملة على التست — اكتملت كل المراحل",
+ d:"<b>متحقَّق بعدّادات <code>jsonLdLastGenerated</code> بعد التشغيلة</b> (التاسك ٤ في <code>/bunny-migration</code> على <code>modonty_dev</code>): مقالات <b>١٣٤/١٣٤</b> · عملاء ٣٠/٣٠ · تصنيفات ١٥/١٥ · وسوم ٢٣/٢٣ · صناعات ٨/٨ · صفحات مدونتي ٦/٦ · القوائم (settings) متجدّدة · المؤلف المعنيّ ١/١ (الاثنان الآخران بلا سيو مخبوز منذ أبريل بالتصميم — مؤلف JSON-LD هو «مدونتي» المنصّة).<br>" +
+   "<b>عالق واحد وسببه انحلّ:</b> مقال <code>6a60a5dd</code> فشل توليده لأن يتيمة <code>ArticleTag</code> (نسخة Sync من الإنتاج قبل تنظيفه) تُسقط استعلام Prisma — حُذفت على التطوير وأعيد توليده (<code>10:15</code>).<br>" +
+   "<b>والتوليد شمل إصلاح 65c:</b> المقالات بلا صورة اتخبزت بصورة الافتراضية.<br>الإنتاج يبقى محكوماً بحارس T8.",
  ref:"بند ٦٨"},
 
-{id:"69", b:"deploy", app:["modonty"], tab:"open", sev:"normal", who:"k",
- t:"ترخيص الصور على الإنتاج — يُتحقّق قبل T8",
- d:"الإصلاح نُفِّذ واختُبر على التست بنتيجة نظيفة من Google، وظهر نوع <code>Image Metadata</code> لأول مرة = صور مدوّنتي صارت مؤهّلة لشارة Licensable في بحث الصور. <b>نفس الحقول غالباً فاضية على الإنتاج.</b> وثلاثة عملاء بلا أي شعار في القاعدة.",
+{id:"69", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"ترخيص الصور على الإنتاج",
+ d:"<b>كان حاجزاً فعلياً:</b> الحقول الثلاثة فاضية على الإنتاج، والتوليد يخبزها في JSON-LD (<code>admin/lib/seo/jsonld-storage.ts:143</code>) — فلو ولّدنا قبلها لخبزنا ٤٣٧ عنصراً بترخيص فاضٍ.<br>" +
+   "<b>الحلّ:</b> زر «Apply Defaults» في <code>/settings/system</code> — كتب <code>imageOwnerName=\"مدوّنتي\"</code> و<code>imageLicenseUrl</code> و<code>imageAcquireLicensePageUrl</code> = صفحة سياسة حقوق النشر (القيم من <code>seed-technical-defaults.ts:54-56</code>).<br>" +
+   "<b>لُقطة قبل/بعد:</b> ٧ حقول تغيّرت — الثلاثة المقصودة + ٣ تصحيحات جيدة (<code>orgAddressCountry</code> صار <code>SA</code> بمعيار ISO · <code>orgSearchUrlTemplate</code> صار <code>www</code> · <code>defaultLicense</code> صار سياستنا) + <code>defaultNotranslate</code> صار <code>false</code> (قرار خالد: يخصّ صفحة دفع جبر سيو لا مودونتي).<br>" +
+   "<b>الإثبات:</b> ١٣٩/١٣٩ مقالاً مخبوز فيه <code>acquireLicensePage</code>.",
  ref:"بند ٦٩"},
-
 {id:"77", b:"seo", app:["dataLayer"], tab:"open", sev:"normal", who:"c",
  t:"فحص خارجي مستقل لكل السكيما",
  d:"أداة Google تفحص ٣ أنواع فقط من أصل ١٢ في صفحاتنا. نشغّل أداة schema.org الرسمية على عيّنات من كل نوع لنقفل الباب نهائياً.",
@@ -778,10 +1015,133 @@ const TASKS = [
  d:"<b>مبني ومتحقَّق:</b> <code>modonty/app/reels/</code> صفحة + خلاصة تفلتر <code>inReels:true</code> و<code>reelStatus:\"PUBLISHED\"</code> وعميلاً غير فاضٍ (<code>reels-feed.ts:42</code>)، وتبويب ريلز لكل عميل في <code>clients/[slug]/reels</code>، ومكوّنات تفاعل كاملة.<br><b>ملاحظة:</b> الصفحة عليها <code>robots:{index:false}</code> بتعليق «خارج الفهرسة حتى إطلاق الريلز» — فتح الفهرسة قرار إطلاق، بند مستقلّ <code>83c</code>.",
  ref:"بند ٨٣ · ١٤"},
 
+{id:"ADM-AUTH-IMG", b:"projects", app:["admin"], tab:"open", sev:"normal", who:"c",
+ t:"الأدمن بلا حقل لصورة الكاتب — اضطررنا لكتابتها في القاعدة",
+ d:"<b>كُشف أثناء بند ٥٤ (٧ أغسطس):</b> أردنا ضبط أفاتار الكاتب «مدونتي» من الواجهة، فتبيّن أنّ الواجهة لا تسمح.<br><br>" +
+   "<b>متحقَّق:</b> صفحة <code>/authors</code> في الأدمن تعرض نصّاً صريحاً: «Only the search snippet is editable here — name, description, visuals and contact all come from Settings». والكود يؤكّده: <code>admin/app/(dashboard)/authors/page.tsx:41</code> يستخدم <code>settings.logoUrl ?? author.image</code> <b>للعرض فقط</b>، ولا يكتب شيئاً. ومجلّد <code>app/(dashboard)/authors/</code> فيه <code>page.tsx</code> بلا مسار <code>[id]/edit</code>.<br><br>" +
+   "<b>الأثر:</b> أي تعديل على صورة الكاتب يحتاج كتابة مباشرة في القاعدة — لا يقدر عليه فريق المحتوى.<br><br>" +
+   "<b>المقترح:</b> إمّا حقل صورة في صفحة الكاتب يستخدم منتقي الوسائط نفسه المستعمل في العملاء، أو — أبسط وأوفق للمعمار المعلَن — أن تقرأ مدونتي أفاتار البراند فولباكاً حين يكون <code>author.image</code> فارغاً، فيختفي الحقل من دورة التحرير أصلاً.<br><br>" +
+   "<b>ليس عاجلاً:</b> القيمة مضبوطة الآن، والنظام كاتب واحد.",
+ ref:"٧ أغسطس"},
+
 {id:"83c", b:"projects", app:["modonty"], tab:"open", sev:"normal", who:"k",
  t:"قرار: فتح فهرسة صفحة الريلز",
  d:"<code>modonty/app/reels/page.tsx</code> فيها <code>robots:{index:false, follow:false}</code> عمداً حتى الإطلاق. رفعها سطر واحد — بس القرار قرارك.",
  ref:"بند ٨٣"},
+
+{id:"DATA1", b:"data", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"تنظيف الصور الشبح من الإنتاج — ٤ صفوف + رابط يتيم",
+ d:"<b>ما كان:</b> ٤ صفوف في مكتبة الوسائط ملفّاتها محذوفة من Cloudinary — <b>متحقَّق</b> بفحص <code>HEAD</code> حيّ على كل رابط: أربعتها ترجع <b>404</b>، وأربعتها بلا <code>bunnyUrl</code>. فما كان في شيء لترحيله.<br>" +
+   "<code>a2a106f2-…webp</code> · <code>a3622ec6-…webp</code> · <code>49aa2c11-…webp</code> · <code>IMG_1722</code><br><br>" +
+
+   "<b>المراجع قبل الحذف — متحقَّق صفّاً صفّاً:</b> ثلاثة منها بصفر مرجع في كل مكان (غلاف · شعار · هيرو · معرض · متن). والرابع (<code>a2a106f2</code>) كان له صفّ واحد في <code>article_media</code> يعود لمقال «كأس العالم 2026».<br><br>" +
+
+   "<b>لماذا حُذف الرابط أولاً:</b> حذف صفّ الوسائط وحده كان يترك الرابط يتيماً في <code>article_media</code>، ومونجو لا يطبّق Cascade — والصفّ اليتيم يُسقط استعلام المقال كلّه (راجع <code>project_mongo_cascade_is_a_lie</code>). فالترتيب: رابط ← ثم الصفوف.<br><br>" +
+
+   "<b>ما جرى (٧ أغسطس):</b> ① نسخة احتياطية كاملة للصفوف قبل الحذف في <code>backups/ghost-media-deleted-2026-08-07.json</code> ② حُذف صفّ واحد من <code>article_media</code> ③ حُذفت الصفوف الأربعة من <code>media</code>.<br><br>" +
+
+   "<b>التحقّق بعد الحذف — أرقام حيّة من قاعدة الإنتاج:</b><br>" +
+   "· روابط <code>article_media</code>: ١٤٤ · <b>اليتيمة: صفر</b><br>" +
+   "· مراجع يتيمة في الأغلفة/الشعارات/الهيرو/المعارض: <b>صفر في الأربعة</b><br>" +
+   "· مكتبة الوسائط: <b>٥٩١ صفاً · بلا نسخة بني: صفر</b> (كانت ٤) ← الترحيل صار مكتملاً ١٠٠٪<br>" +
+   "· الرابط الميت في سيو المقال ومتنه: <b>صفر مرة في كليهما</b>",
+ ref:"٧ أغسطس"},
+
+{id:"DATA2", b:"data", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"مقال «كأس العالم 2026» — تعديل طارق وصل، والباقي نُظِّف",
+ d:"<b>ما تحقّقنا منه على قاعدة الإنتاج (٧ أغسطس):</b><br><br>" +
+
+   "<b>■ الغلاف — طارق عدّله ✅</b><br>" +
+   "<code>Hreo.webp</code> · رُفع ٦ أغسطس · <code>bunnyUrl</code> معبّأ · آخر تعديل للمقال ٧ أغسطس ١١:٤٦.<br><br>" +
+
+   "<b>■ متن المقال — نظيف ✅</b><br>" +
+   "<b>متحقَّق بالبحث في المحتوى نفسه:</b> الرابط الميت <code>a2a106f2</code> صفر مرة في <code>content</code> وصفر مرة في <code>jsonLdStructuredData</code>. فحفظ طارق أخرجه من المتن، والكونسول جدّد السيو عند الحفظ (<code>project_console_must_regenerate_seo</code>).<br><br>" +
+
+   "<b>■ ما بقي فعلاً:</b> صفّ رابط قديم في <code>article_media</code> ما انحذف مع التعديل، وصفّ الوسائط الميت. كلاهما حُذف ضمن <code>DATA1</code>.<br><br>" +
+
+   "<b>تصحيح لقراءة سابقة:</b> قلتُ إنّ صورة المتن ما زالت مكسورة للزائر — الأدقّ أنّ المكسور كان <b>صفّ الربط في القاعدة</b>، لا الصورة المعروضة في النص. المقال المنشور سليم للزائر.<br><br>" +
+
+   "<b>لا مطلوب من طارق في هذا المقال.</b> أي صور شبح جديدة تُرصد في هذا البورد.",
+ ref:"٧ أغسطس"},
+
+{id:"JBR1", b:"projects", col:"jbr", app:["admin"], tab:"open", sev:"high", who:"k",
+ t:"الفكرة — مقالات جبر سيو تُكتب من أدمن مودونتي",
+ d:"طارق يكتب مقال جبر سيو في <b>أدمن مودونتي</b> — نفس المحرّر اللي نستخدمه اليوم، بس من تبويب اسمه «جبر سيو».<br><br>" +
+   "المقال ينحفظ في <b>مكان مستقل</b> عن مقالات مودونتي، وموقع جبر سيو يعرضه بشكله الخاص.<br><br>" +
+   "<b>النتيجة:</b> لوحة تحكّم واحدة · صفر شغل مكرّر · وكل مقال على موقع واحد بس.<br><br>" +
+   "<b>الخبر الحلو:</b> جبر سيو <b>أصلاً</b> شغّال على نفس قاعدة بيانات مودونتي (متحقَّق من <code>jbrseo.com/.env:5</code>)، وعنده طريقة جاهزة يقرأ بها بيانات مودونتي (<code>prisma/schema.prisma:220</code>). فما نحتاج نركّب شيئاً جديداً — نضيف مكاناً للمقالات وخلاص.",
+ ref:"٧ أغسطس"},
+
+{id:"JBR2", b:"projects", col:"jbr", app:["admin"], tab:"open", sev:"ok", who:"c",
+ t:"✅ الرابط — مسار واحد مشترك",
+ d:"<code>jbrseo.com/articles</code> تحت <code>app/(site)/</code> · مقالات واحدة للبلدين.",
+ ref:"٧ أغسطس"},
+
+{id:"JBR3", b:"projects", col:"jbr", app:["admin"], tab:"open", sev:"ok", who:"c",
+ t:"✅ بلا تصنيفات — قائمة واحدة + صفحة ركيزة",
+ d:"<b>قرار خالد:</b> قائمة واحدة، بلا تصنيفات.<br><br>" +
+   "<b>البديل الأقوى سيوياً — صفحة الركيزة (Pillar):</b> مقال كبير «الدليل الكامل للسيو» فيه فقرة مختصرة عن كل موضوع + رابط لمقال مفصّل. المقالات الفرعية ترجع تربط له.<br><br>" +
+   "لماذا لا التصنيف: صفحة التصنيف قائمة روابط فاضية — Google ما يرتّبها. الركيزة صفحة محتوى تجاوب سؤال الباحث فتترتّب هي والمقالات معها.<br><br>" +
+   "<b>بلا بناء إضافي:</b> الركيزة <b>مقال عادي</b> — أطول وفيه روابط داخلية. صفر نوع جديد في القاعدة.<br><br>" +
+   "<b>التشغيل:</b> كل مقال جديد لطارق ← فقرة + رابط في الركيزة. التحديث المستمر يرفع ترتيبها.<br><br>" +
+   "<b>الأهم من هذا كله:</b> الترتيب يبدأ من اختيار الكلمة قبل الكتابة — «كم تكلفة السيو في السعودية» تجلب مشترياً جاهزاً، بينما «شركة سيو الرياض» منافستها شرسة.",
+ ref:"٧ أغسطس"},
+
+{id:"JBR5", b:"projects", col:"jbr", app:["admin"], tab:"open", sev:"ok", who:"c",
+ t:"✅ بلا كاش — قراءة حية",
+ d:"كل زيارة تقرأ من القاعدة مباشرة · التعديل يظهر فوراً · صفر إعادة توليد أو إبطال كاش.",
+ ref:"٧ أغسطس"},
+
+{id:"JBR8", b:"projects", col:"jbr", app:["admin","dataLayer"], tab:"open", sev:"high", who:"c",
+ t:"✅ المعمار — مَن يكتب ومَن يقرأ · ولا API بينهما",
+ d:"<b>القاعدة واحدة للطرفين</b> (متحقَّق: <code>jbrseo.com/.env:5</code> يشير إلى قاعدة <code>modonty</code> نفسها).<br><br>" +
+   "<b>الأدمن يكتب · جبر سيو يقرأ · بلا وسيط:</b> جبر سيو يسأل القاعدة مباشرة — <b>قفزة واحدة</b>. لو كان بينهما API لصارت قفزتين (جبر ← الأدمن ← القاعدة). <b>فالمباشر أسرع.</b><br><br>" +
+   "<b>النمط مُثبَت شغّالاً اليوم:</b> شعارات العملاء في قسم الثقة على جبر سيو تُقرأ بهذي الطريقة نفسها (<code>jbrseo.com/prisma/schema.prisma:220</code> + <code>lib/modontyDb.ts</code>).<br><br>" +
+   "<b>السكيما في مستودعين — ولا مفرّ:</b> <code>dataLayer</code> حزمة داخل مستودع مودونتي (<code>workspace:*</code>) تستهلكها التطبيقات الثلاثة، وجبر سيو <b>مستودع منفصل</b> فما يقدر يستوردها. فالنموذج يُكتب مرتين:<br>" +
+   "· <code>dataLayer/prisma/schema/</code> — كامل الحقول · <b>الأدمن يكتب منه</b> (بدونه لا حفظ إطلاقاً)<br>" +
+   "· <code>jbrseo.com/prisma/schema.prisma</code> — الحقول المعروضة فقط · <b>جبر سيو يقرأ منه</b><br>" +
+   "ويلتقيان عند <code>@@map(\"jbrseo_articles\")</code> — مجموعة واحدة في القاعدة.<br><br>" +
+   "<b>البديل المرفوض:</b> نشر <code>@modonty/database</code> كحزمة npm خاصة يحلّ التكرار — لكنه يضيف سجلّ حزم وإصدارات ونشراً لأجل ~٨ حقول. يُعاد النظر لو كبر المشترك.<br><br>" +
+   "<b>⚠️ قاعدة صيانة:</b> النموذجان مرآة — أي تغيير حقل يُطبَّق في المكانين. يُكتب تعليق صريح فوق كليهما.<br><br>" +
+   "<b>الأداء:</b> صفر تأخير متوقّع — السيرفران على نفس عنقود القاعدة، والاستعلام مفهرس. قرار «بلا كاش» (JBR5) يعني كل زيارة تسأل القاعدة: ممتاز لصفحات قليلة، ويُراجَع لو كبر المرور.",
+ ref:"٧ أغسطس"},
+
+{id:"JBR6", b:"projects", col:"jbr", app:["dataLayer"], tab:"open", sev:"high", who:"c",
+ t:"✅ السكيما — جدول مستقلّ <code>jbrseo_articles</code>",
+ d:"<b>القرار:</b> جدول واحد مستقلّ، لا حقل تمييز داخل جدول مقالات مودونتي.<br><br>" +
+   "<b>ليش مستقلّ:</b> صفر اختلاط في المحرّر والقوائم وخرائط الموقع · وأي استعلام ينسى الفلتر في حلّ «حقل التمييز» يسرّب مقالات بين الموقعين.<br><br>" +
+   "<b>الحقول:</b> <code>title · slug · content · excerpt · imageMediaId · status · publishedAt · seoTitle · seoDescription · isPillar</code><br>" +
+   "بلا تصنيفات ولا وسوم ولا صناعات (قرار JBR3) · بلا سيو مخبوز (قرار JBR5 — القراءة حية).<br><br>" +
+   "<b>الصور:</b> <code>imageMediaId</code> يشير لنفس مكتبة الوسائط — فتمرّ على بني بالمسار القائم بلا شيء جديد.<br><br>" +
+   "<b>مكانه:</b> <code>dataLayer/prisma/schema/</code> ← يقرأه جبر سيو بنمط <code>@@map</code> الجاهز عنده (<code>jbrseo.com/prisma/schema.prisma:220</code> نموذج حيّ).",
+ ref:"٧ أغسطس"},
+
+{id:"JBR7", b:"projects", col:"jbr", app:["admin"], tab:"open", sev:"high", who:"c",
+ t:"✅ المؤلف «مدونتي» — عصفوران بحجر",
+ d:"<b>فكرة خالد ٧ أغسطس:</b> كل مقال على جبر سيو مؤلفه <b>مدونتي</b> مع رابط لها — فيصير رابطاً خلفياً طبيعياً من نطاق ذي صلة، ويرفع سلطة مودونتي بلا شراء روابط.<br><br>" +
+   "<b>شروط سيوية ليشتغل:</b> رابط عادي بلا <code>nofollow</code> (تحريري حقيقي) · واحد لكل مقال لا مكرّر في الصفحة · ونصّ الرابط طبيعي («مدونتي») لا محشوّ بكلمات مفتاحية.<br><br>" +
+   "<b>وفي JSON-LD:</b> <code>author</code> = Organization باسم مدونتي و<code>url</code> لموقعها — نفس نمط مقالات مودونتي.",
+ ref:"٧ أغسطس"},
+
+{id:"JBR4", b:"projects", col:"jbr", app:["admin"], tab:"open", sev:"normal", who:"k",
+ t:"⏸ مؤجَّل — واجهة المقالات على موقع جبر سيو",
+ d:"<b>قرار خالد ٧ أغسطس:</b> يُؤجَّل حتى تنتهي المهامّ الرئيسية (ترحيل بني ثم بقية خط السير) — لأنه واجهة واحدة تُبنى على موقع جبر سيو نفسه، لا شغل متفرّق.<br><br>" +
+   "<b>لما نصله:</b> نموذج HTML للمراجعة أولاً (الموكاب عقد ملزم) — صفحة القائمة · صفحة المقال · مدخل الزائر · نهاية المقال.",
+ ref:"٧ أغسطس"},
+
+{id:"BKPRUNE", b:"projects", app:["admin","dataLayer"], tab:"open", sev:"normal", who:"c",
+ t:"تقليم النسخ الاحتياطية مكتوب لكنه لا يُستدعى — الملفات تتراكم",
+ d:"<b>متحقَّق بقراءة الكود:</b> سياسة الاحتفاظ جدّ-أب-ابن معرَّفة في <code>dataLayer/lib/backup.ts:135</code> (<code>RETENTION = {daily:7, weekly:4, monthly:12}</code>) والدالة <code>foldersToPrune()</code> موجودة و<code>deleteBunnyFolder()</code> كذلك (سطر ١١٩) — لكن <b>صفر استدعاء لأيٍّ منهما في مسار الكرون</b> <code>admin/app/api/cron/backup/route.ts</code>.<br>" +
+   "<b>الأثر الحالي:</b> زون <code>modonty-backups</code> فيه ١٦ م.ب / ٢٤٦ ملفاً (مسح ٧ أغسطس) — غير مؤذٍ اليوم، لكنه ينمو يومياً بلا سقف.<br>" +
+   "<b>الإصلاح:</b> استدعاء التقليم في نهاية الكرون بعد نجاح الرفع (لا قبله)، مع تسجيل ما حُذف في رسالة تيليجرام — والحذف يقتصر على مجلدات <code>daily/</code> الزائدة عن العدد.",
+ ref:"٧ أغسطس"},
+
+{id:"BNMAP", b:"projects", app:["admin"], tab:"open", sev:"normal", who:"c",
+ t:"صفحة «خريطة بني» في الأدمن — عرض حي لبنية التخزين",
+ d:"<b>الفكرة (خالد ٧ أغسطس):</b> ما وثّقناه الليلة في بورد «🐰 بني» يصير <b>صفحة حيّة داخل الأدمن</b> بدل مسح يدوي كل مرة — شجرة الزونات ومجلداتها وأعدادها وأحجامها، تُقرأ لحظياً من بني.<br>" +
+   "<b>الأساس جاهز ومتحقَّق:</b> أعمدة القراءة موجودة — <code>dataLayer/lib/bunny.ts:23 zoneConfig()</code> يحلّ الزونات الثلاثة، ومفاتيح القراءة فقط (<code>*_READONLY_PASSWORD</code>) مفعَّلة في <code>.env.shared</code>، و<code>admin/app/(dashboard)/bunny-migration/actions/storage-inventory.ts</code> فيه عدّ حي يُبنى عليه. والمسح الذي أنتج بورد «بني» تمّ بنفس هذه الأدوات (١١٢٦ + ٧٨ + ٨٠ + ٢٤٦ ملفاً).<br>" +
+   "<b>⏸ ينتظر خالد:</b> «بعدين أوريك كيف نسويها» — التصميم والشكل بيده قبل أي كود.",
+ ref:"٧ أغسطس"},
 
 {id:"83b", b:"projects", tab:"open", sev:"high", who:"k",
  t:"رفع فيديو الريل من المتصفّح مباشرةً لبني",
@@ -1239,13 +1599,79 @@ const TASKS = [
    "<b>الفائدة:</b> حين تُظهر الأداة أرضيةً ثقيلة، هذه القراءة تفرّق بين «ثقل مبرَّر بإطار العمل» و«ثقل نضيفه نحن». الأولى تُقبَل والثانية تُعالَج.",
  ref:"طُبِّق في 16f"},
 
+/* ══════════════════════════════════════════════════════════════
+   🐰 بني — المرجع الأساسي (طلب خالد ٧ أغسطس ٢٠٢٦).
+   كل بطاقة حقيقة متحقَّقة بمسح حي أو مرجع كود — تُحدَّث مع كل تغيير.
+   ══════════════════════════════════════════════════════════════ */
+
+{id:"BN0", b:"bunny", tab:"ref", sev:"high", who:"c",
+ t:"الزونات الأربعة — الخريطة الكاملة",
+ d:"<b>متحقَّق بمسح حي شامل ٧ أغسطس ٢٠٢٦</b> (مفاتيح القراءة، كل زون للنهاية):<br>" +
+   "<b>■ clients</b> · <code>modonty-clients.b-cdn.net</code> · <b>١١٢٦ ملفاً · ٢٢٢ م.ب</b> — صور العملاء كلها (مقالات · معارض · شعارات · أغلفة).<br>" +
+   "<b>■ assets</b> · <code>modonty-asset.b-cdn.net</code> · ٧٨ ملفاً · ٢٦ م.ب — هوية المنصّة. <b>محمي: ممنوع أي حذف جماعي عليه.</b><br>" +
+   "<b>■ reels</b> · <code>modonty-reels-media.b-cdn.net</code> · ٨٠ ملفاً · ١٣ م.ب — وسائط الريلز (+ فيديو عبر Bunny Stream مكتبة مستقلة).<br>" +
+   "<b>■ backups</b> · <code>modonty-backups</code> · ٢٤٦ ملفاً · ١٦ م.ب — <b>خاص بلا CDN إطلاقاً</b>، يستقبل النسخ الليلي.",
+ ref:"مسح ٧ أغسطس"},
+
+{id:"BN1", b:"bunny", tab:"ref", sev:"high", who:"c",
+ t:"بنية المجلدات داخل كل زون",
+ d:"<b>clients:</b> <code>{النوع}/{سلاگ العميل}/ملف</code> — الأنواع: <code>post/</code> ٦٠٨ (٢٣ عميلاً) · <code>general/</code> ٣٢١ · <code>gallery/</code> ١٣٣ (أكبرها فرسان التعافي ٣٩ م.ب) · <code>hero/</code> ٤٤ · <code>logo/</code> ١٩ · <code>client-mini/</code> ١. ملكية المنصّة تحت <code>_platform/</code> والعام تحت <code>_general/</code>. بقايا تست فاضية: <code>bunny-test · geo-check · provision-check · _movedel-* · _p2-5-verify · _s6-verify</code>.<br>" +
+   "<b>assets:</b> <code>migrated/</code> ٥٣ (يتيمة التاسك ٢) · <code>brand/</code> ٢١ ومنها <code>story/</code> ١٧ · <code>platform/</code> ٣ · <code>avatars/users/</code> ١.<br>" +
+   "<b>reels:</b> <code>clients/{معرّف العميل}/</code> — ١٢ عميلاً (رفعات الكونسول قبل دفعة ٧ أغسطس — الفحص المرجعي: ٥٦ منها لا يشير لها معرض ولا مقال).<br>" +
+   "<b>backups:</b> <code>daily/modonty/</code> ١٦٠ (الليلي التلقائي) · <code>local/{تاريخ}/</code> ٨٦.<br>" +
+   "البنية المقفولة موثّقة في الكود: <code>dataLayer/lib/bunny.ts</code> (تعليق «locked structure, Khalid 2026-07-28»).",
+ ref:"مسح ٧ أغسطس · bunny.ts"},
+
+{id:"BN2", b:"bunny", tab:"ref", sev:"high", who:"c",
+ t:"المفاتيح — أين تعيش ومَن يقرأها",
+ d:"<b>المصدر المحلي:</b> <code>.env.shared</code> أسطر ٢٦٨-٣٠٣ — لكل زون: <code>ZONE_NAME · PASSWORD · READONLY_PASSWORD · PULL_ZONE_HOSTNAME</code> + <code>BUNNY_API_KEY</code> (حساب) + ثلاثي Stream.<br>" +
+   "<b>على Vercel (متحقَّق ٧ أغسطس):</b> ١٣ مفتاحاً أُضيفوا للمشتركة مربوطين admin+console (production+preview) بعد اكتشاف غيابهم الكامل — كان الرفع يفشل بصمت على الإنتاج. مفاتيح BACKUP كانت موجودة قبلها على admin وحده (لذلك النسخ الليلي اشتغل).<br>" +
+   "<b>مَن يحوّل المفاتيح لزونات:</b> <code>dataLayer/lib/bunny.ts:23 zoneConfig()</code> — الأسماء الرمزية <code>clients | assets | reels</code>.<br>" +
+   "<b>قاعدة:</b> أي مفتاح جديد يُضاف في ثلاثة أماكن: <code>.env.shared</code> + Vercel المشتركة + ربط المشاريع — وإلا فخّ الانجراف يتكرّر.",
+ ref:"B3 · ٧ أغسطس"},
+
+{id:"BN3", b:"bunny", tab:"ref", sev:"high", who:"c",
+ t:"صفحة الترحيل <code>/bunny-migration</code> — الأداة المركزية",
+ d:"<b>الترتيب المكتوب في رأسها:</b> Sync ← التصفير ← التاسكات ١-٤ ← التمليك (T2b).<br>" +
+   "<b>التاسكات:</b> ① نقل الصور المسجّلة (يكتب <code>bunnyUrl</code> + قصّات JSON-LD) ② الروابط اليتيمة (إعادة رفع) ③ تبديل الحقول النصّية الخام ④ إعادة توليد السيو المخبوز (٨ أنواع).<br>" +
+   "<b>T2b (التمليك):</b> بروفة بلا كتابة + تنفيذ بكلمة LINK — <b>idempotent مُثبَت بالبصمة</b> <code>28c6d8ad…</code> (بند 66).<br>" +
+   "<b>أزرار الخطر فيها:</b> «احذف كل الملفات» (تصفير clients — يتطلب كتابة <code>clients</code>) و«نفّذ» التمليك (يتطلب <code>LINK</code>).<br>" +
+   "الأكواد: <code>admin/app/(dashboard)/bunny-migration/actions/</code> — <code>cloudinary-to-bunny.ts</code> (التاسكات) · <code>link-core-media.ts</code> (T2b) · <code>storage-inventory.ts</code> (العدّ الحي).",
+ ref:"بنود 66 · 68"},
+
+{id:"BN6", b:"bunny", tab:"ref", sev:"critical", who:"c",
+ t:"🔴 الجاري الآن — تصفير زون clients ثم الترحيل على الإنتاج",
+ d:"<b>القاعدة الحاكمة (خالد ٧ أغسطس):</b> «أنا دوري التنفيذ وأنت دورك المراقبة» — على الإنتاج <b>خالد يضغط الأزرار بنفسه</b> وكلود يوجّه خطوةً خطوة ويراقب ويبلّغ. سارية حتى نهاية ترحيل الإنتاج.<br>" +
+   "<b>الحمايات المأخوذة قبل البدء (متحقَّقة):</b> <code>mongodump</code> طازج <code>PROD-2026-08-07_13-39</code> (٩٥ مجموعة · ٤٦ م.ب) · لقطة Atlas اليوم ٠٩:٢٥ UTC · ١٩ ملفاً من زون clients محفوظة محلياً في <code>backups/bunny-clients-keep/</code> بمسارها الأصلي · <b>Cloudinary لا يُلمس إطلاقاً</b> (الترحيل إضافي).<br>" +
+   "<b>التصفير:</b> انطلق من واجهة الأدمن ١٠:٤٠ — العدّاد الحي على التخزين: ١١٢٦ ← ٥٤٧ ملفاً وقت الكتابة.<br>" +
+   "<b>الخطوة التالية بعد الصفر — على الإنتاج لا التطوير:</b> <code>admin.modonty.com/bunny-migration</code> ← التاسك ١ «نقل الصور المسجّلة» (٥٥٠ صفاً: تنزيل من Cloudinary ← رفع لبني ← كتابة <code>bunnyUrl</code> + الضبابة + قصّات JSON-LD). مؤشّر النجاح: «صفوف بلا نسخة بني» ٥٥٠ ← صفر. ثم التاسك ٢ (٥٦ يتيماً) ← ٣ (١١٩ حقلاً خاماً) ← ٤ (السيو).<br>" +
+   "<b>ملاحظة قياسها متحقَّق:</b> السيرفر المحلي موصول بـ<code>modonty_dev</code> (<code>.env.shared</code> سطر ١٩ مفعَّل) — فالترحيل الإنتاجي يُشغَّل من الأدمن الحيّ لا من الجهاز.",
+ ref:"جلسة ٧ أغسطس"},
+
+{id:"BN4", b:"bunny", tab:"ref", sev:"critical", who:"c",
+ t:"قرار التصفير — الحالة الراهنة ٧ أغسطس",
+ d:"<b>الفحص المرجعي على الإنتاج</b> (٥٨ صفّ media روابطها بني): <b>٥٧ لا يشير لها أي معرض ولا مقال</b> (تست — أكّده خالد: «أمس أول مرة نرفع») · <b>١ فقط حقيقية</b>: صورة مقال <b>مسودة</b> «لماذا نهتم باضطرابات الفولات…» رفعها الفريق صباح ٧ أغسطس على زون clients.<br>" +
+   "<b>الخطة المتفق على عرضها:</b> ① حفظ نسخة محلية من صورة المسودة ② زر التصفير من الواجهة (clients فقط — assets محمي) ③ إرجاعها لنفس مسارها حرفياً فيبقى رابطها في القاعدة شغّالاً ④ إطلاق الترحيل الكامل على نظافة.<br>" +
+   "<b>سبب التصفير:</b> الزون فيه ١١٢٦ ملفاً من تشغيلات سابقة والقاعدة تعرف ١٨ فقط (<code>bunnyUrl</code>) — الكنس يعيد التطابق واحداً-لواحد.<br>" +
+   "<b>⚠️ تنبيه دائم:</b> من دفعة ٧ أغسطس، رفعات الإنتاج (أدمن+كونسول) تنزل على زون clients — كل يوم يمرّ بعد اليوم يزيد الملفات الحقيقية فيه، فقرار التصفير يُعاد فحصه قبل كل تنفيذ ولا يُبنى على هذا المسح القديم.",
+ ref:"محادثة ٧ أغسطس"},
+
+{id:"BN5", b:"bunny", tab:"ref", sev:"normal", who:"c",
+ t:"فخاخ مجرَّبة — لا تُعاد",
+ d:"<b>CDN يخبّي المحذوف:</b> بعد أي حذف تحقّق على <code>storage.bunnycdn.com</code> مباشرة لا على رابط الـCDN — الكاش يقدّم المحذوف فترة (ذاكرة <code>project_bunny_cdn_cache_delete_gotcha</code>).<br>" +
+   "<b>Optimizer معطَّل على الزونات الخمسة</b> (<code>OptimizerEnabled: false</code> متحقَّق سابقاً) — بارامترات مثل <code>?width=10</code> تُتجاهَل؛ التصغير يتم عندنا بـsharp قبل الرفع.<br>" +
+   "<b>الحذف الجماعي الأعمى سابقة كارثية:</b> «Cloudinary Orphans» حُذف من Run-All بعدما دمّر أصول إنتاج (تعليق <code>auto-maintenance-panel.tsx:50</code>) — أي كنس يكون واعياً بالمراجع.<br>" +
+   "<b>بني مورّد الوسائط الوحيد</b> — قرار مقفول (ذاكرة <code>project_bunny_is_the_only_media_vendor</code>).",
+ ref:"ذاكرة المشروع"},
+
 ];
 
 /* ══════════════ العرض ══════════════ */
 const COLS = [
-  {k:"k",    n:"دورك أنت",  s:"واقفة عليك — قرار، أو صورة تختارها، أو شي تعمله بيدك. كلود ما يقدر يبدأ فيها."},
-  {k:"c",    n:"دوري أنا",   s:"جاهزة وأقدر أبدأ فيها الآن — قل «بند رقم كذا» وأشتغل."},
-  {k:"idea", n:"أفكار",      s:"ما تقرّرت بعد. تنتقل لعمود منها يوم تقول نبدأ."},
+  {k:"k",     n:"دورك أنت",  s:"واقفة عليك — قرار، أو صورة تختارها، أو شي تعمله بيدك. كلود ما يقدر يبدأ فيها."},
+  {k:"c",     n:"دوري أنا",   s:"جاهزة وأقدر أبدأ فيها الآن — قل «بند رقم كذا» وأشتغل."},
+  {k:"jbr",   n:"جبر سيو",    s:"قناة البيع لمودونتي — مقالاتها تُكتب من أدمن مودونتي بمصدر حقيقة واحد. الخطة والقرارات المعلّقة هنا."},
+  {k:"idea",  n:"أفكار",      s:"ما تقرّرت بعد. تنتقل لعمود منها يوم تقول نبدأ."},
 ];
 const WHO = {k:{c:"k",l:"خالد"}, c:{c:"c",l:"كلود"}, t:{c:"t",l:"الفريق"}};
 const LS = "modonty-task-boards-v1";
@@ -1341,33 +1767,39 @@ function renderFlow(){
   const done = new Set(TASKS.filter(t => t.tab === 'done').map(t => t.id));
   const byId = id => TASKS.find(t => t.id === id) || {};
 
-  /* الخطوة المنجزة تختفي من خط السير — مكانها بورد «Done».
-     المتبقّي يُعاد ترقيمه من ١ عشان يبقى قدامك المسار الفعلي بلا فجوات. */
-  const left = FLOW.filter(s => !(s.id && done.has(s.id)));
-  const steps = left.filter(s => s.kind !== 'gate').length;
+  /* المفتوح أولاً والمنجز الأخضر كله تحت (طلب خالد ٧ أغسطس) —
+     «أبغى أشوف اللي ما خلص يكون قدامي». المتبقّي وحده يحمل الأرقام ١..N. */
+  const isDoneStep = s => (s.kind === 'gate' ? !!s.done : done.has(s.id));
+  const openFlow = FLOW.filter(s => !isDoneStep(s));
+  const doneFlow = FLOW.filter(isDoneStep);
+  const ordered = openFlow.concat(doneFlow);
+  const remaining = openFlow.filter(s => s.kind !== 'gate').length;
   const ar = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
-
-  if (!steps){
-    el.className = 'on';
-    el.innerHTML = '<p class="flowhd">خط سير النشر — خلص كله ✅</p>';
-    return;
-  }
 
   let i = 0;
   el.className = 'on';
   el.innerHTML =
-    `<p class="flowhd">المتبقّي ${ar(steps)} خطوات</p>` +
+    `<p class="flowhd">${remaining ? `المتبقّي ${ar(remaining)} خطوات` : 'خط سير النشر — خلص كله ✅'}</p>` +
     '<div class="fsteps">' +
-    left.map(s => {
-      if (s.kind === 'gate') return `<div class="fstep gate">
+    ordered.map((s, idx) => {
+      const sep = doneFlow.length && idx === openFlow.length
+        ? `<p class="flowhd" style="margin-top:14px">✅ المنجز — ${ar(doneFlow.filter(x => x.kind !== 'gate').length)} خطوات وبوّابتان</p>` : '';
+      return sep + renderOne(s);
+    }).join('') +
+    '</div>' +
+    `<p class="fwarn"><b>الفخّ المتكرّر:</b> ${FLOW_WARN}</p>`;
+
+  function renderOne(s){
+      if (s.kind === 'gate') return `<div class="fstep gate${s.done ? ' done' : ''}">
         <span class="fn">${s.n}</span>
         <div class="fb"><p class="ft">${s.t}</p>${s.d ? `<p class="fd">${s.d}</p>` : ''}</div>
       </div>`;
 
       const t = byId(s.id);
+      const isDone = done.has(s.id);
       const w = WHO[t.who] || {c:'', l:''};
-      return `<div class="fstep${s.kind === 'now' ? ' now' : ''} sev-${esc(t.sev || 'normal')}">
-        <span class="fn">${ar(++i)}</span>
+      return `<div class="fstep${s.kind === 'now' && !isDone ? ' now' : ''}${isDone ? ' done' : ` sev-${esc(t.sev || 'normal')}`}">
+        <span class="fn">${isDone ? '✓' : ar(++i)}</span>
         <div class="fb">
           <p class="ft">${t.t || ''}</p>
           ${t.d ? `<p class="fd">${t.d}</p>` : ''}
@@ -1375,13 +1807,12 @@ function renderFlow(){
             <span class="tag ${w.c}">${w.l}</span>
             ${appTags(t)}
             ${t.ref ? `<span class="tag ref">${esc(t.ref)}</span>` : ''}
+            ${isDone && t.date ? `<span class="tag ref">✅ ${esc(t.date)}</span>` : ''}
           </div>
         </div>
         <span class="fid">${esc(s.id)}</span>
       </div>`;
-    }).join('') +
-    '</div>' +
-    `<p class="fwarn"><b>الفخّ المتكرّر:</b> ${FLOW_WARN}</p>`;
+  }
 }
 
 function render(){
@@ -1429,7 +1860,8 @@ function render(){
 
   /* العمود يُشتقّ من «الدور على مين» — سؤال واحد بدل سؤالين متطابقين.
      الفكرة تبقى عموداً مستقلاً لأنها ما تقرّرت بعد فما لها دور. */
-  const colOf = t => t.tab === 'idea' ? 'idea' : t.who;
+  /* عمود «جبر سيو» يجمع بنوده بوسم `col` صريح — مستقلّ عن صاحب البند (خالد ٧ أغسطس). */
+  const colOf = t => t.col ? t.col : (t.tab === 'idea' ? 'idea' : t.who);
 
   const inBoard = TASKS.filter(t => t.b === board && t.tab !== 'done');
   const counts = {};
@@ -1454,7 +1886,7 @@ function render(){
   if (term) rows = rows.filter(t => (t.id+' '+t.t+' '+t.d+' '+t.ref).toLowerCase().includes(term));
 
   /* بلا شارة «ينتظر فلان» — العمود نفسه يقولها. */
-  $('list').innerHTML = rows.length ? rows.map(t => `<div class="card ${t.sev}">
+  $('list').innerHTML = rows.length ? rows.map(t => `<div class="card ${t.sev}${t.col === 'jbr' ? ' jbr' : ''}">
       ${numBtn(t.id)}
       <div class="body">
         <p class="t">${t.t}</p>

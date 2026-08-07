@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Info, Globe, ImageIcon } from 'lucide-react';
 import { useMemo, useState, useEffect } from 'react';
 import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
+import { mediaSrc } from '@modonty/database/lib/media-src';
 
 interface FeaturedMedia {
   url: string;
@@ -28,7 +29,8 @@ export function SEOSection() {
       try {
         const media = await getMediaById(formData.featuredImageId, formData.clientId);
         if (media) {
-          setFeaturedMedia({ url: media.url, altText: media.altText });
+          // Resolve here, not at render — narrowing to `media.url` dropped the Bunny copy.
+          setFeaturedMedia({ url: mediaSrc(media) ?? media.url, altText: media.altText });
         }
       } catch {
         setFeaturedMedia(null);

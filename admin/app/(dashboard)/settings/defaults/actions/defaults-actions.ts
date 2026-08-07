@@ -25,19 +25,23 @@ export interface PlatformDefaults {
 
 /**
  * Returns the current default image URL for each role (null if not set yet).
- * Source of truth = PLATFORM-scope media with clientId null, keyed by type.
+ * Lookup key = the STABLE filename `platform-default-<role>` — NOT scope/clientId:
+ * T2b claims these rows for the core client (scope→CLIENT, clientId→core), which
+ * silently emptied the old `scope: PLATFORM + clientId: null` query (verified on dev
+ * 2026-08-07 after T2b: old query = 0 rows while the three rows still exist).
  */
 export async function getPlatformDefaults(): Promise<PlatformDefaults> {
   const rows = await db.media.findMany({
-    where: { scope: "PLATFORM", clientId: null, type: { in: ["LOGO", "POST", "HERO"] } },
-    select: { type: true, url: true, bunnyUrl: true },
+    where: { filename: { in: ["platform-default-logo", "platform-default-post", "platform-default-hero"] } },
+    select: { filename: true, url: true, bunnyUrl: true },
   });
 
   const result: PlatformDefaults = { LOGO: null, POST: null, HERO: null };
   for (const r of rows) {
-    if (r.type === "LOGO" || r.type === "POST" || r.type === "HERO") {
+    const role = r.filename.replace("platform-default-", "").toUpperCase();
+    if (role === "LOGO" || role === "POST" || role === "HERO") {
       // Prefer the Bunny copy — these platform defaults render on the clients list.
-      result[r.type] = mediaSrc(r);
+      result[role] = mediaSrc(r);
     }
   }
   return result;
@@ -63,8 +67,9 @@ export async function savePlatformDefault(
   const type = role as MediaType;
 
   try {
+    // Lookup by stable filename — survives T2b ownership changes (see getPlatformDefaults).
     const existing = await db.media.findFirst({
-      where: { scope: "PLATFORM", clientId: null, type },
+      where: { filename: `platform-default-${role.toLowerCase()}` },
       select: { id: true },
     });
 

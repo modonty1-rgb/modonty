@@ -51,9 +51,7 @@ export function optimizeCloudinaryUrl(url: string, forLcp?: boolean): string {
     const beforeUpload = url.substring(0, uploadIndex + 8);
     const afterUpload = url.substring(uploadIndex + 8);
     const baseTransforms = 'f_auto,q_auto,c_fill,g_auto';
-    const transforms = forLcp
-      ? `${baseTransforms},w_1200,d_article-placeholder-default`
-      : `${baseTransforms},d_article-placeholder-default`;
+    const transforms = forLcp ? `${baseTransforms},w_1200` : baseTransforms;
     return `${beforeUpload}${transforms}/${afterUpload}`;
   } catch {
     return url;

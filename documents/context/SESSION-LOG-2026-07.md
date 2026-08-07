@@ -2068,3 +2068,128 @@
 2. اختبر FB + IG posting على مقال حقيقي في prod
 3. حدّث bio link في Instagram يدوياً
 
+
+## Session: 2026-07-30 16:10 (تكملة) — إقفال البند 51: صنفا خلل جديدان في Bunny + تست حيّ ٧٤ راوتاً + إصلاح صفحة Bing (فرع `version-2` · local فقط · **لم يُدفع**)
+
+### 🎯 أين توقفت
+- **آخر تاسك جارٍ:** لا شيء. كل شغل هذه الجلسة **مكتمل ومُتحقَّق حيّاً**، ولا خطوة نصف منجزة.
+- **أول إجراء ملموس عند الاستئناف:** ابدأ البند **49** (مراجعة نشر السوشال — آخر تاسك بأمر خالد، وهو **آخر بقعة Cloudinary في الأدمن كلّه**). افتح `admin/app/(dashboard)/social/facebook/_actions.ts:86` وأضف `bunnyUrl: true` للـ select، ثم مرّر `generateInstagramDefaultImage(article.featuredImage.url)` على `mediaSrc()`. المواقع الخمسة كلّها: `social/facebook/page.tsx:31,75` · `social/facebook/[articleId]/page.tsx:26` · `social/facebook/_actions.ts:86,272`.
+
+### ✅ ما أُنجز هذه الجلسة
+1. **البند 51 مقفول.** `/articles/workflow/maintenance` من ٢٥ صورة Cloudinary → **٠ Cloudinary / ٢٦ Bunny**.
+2. **مسح منهجي بسكربت** (يمشي على الأقواس ويصطاد أي `select` لعلاقة وسائط بلا `bunnyUrl`): رصد **٣١ موقعاً**، عولج **٢٦**، والباقي ٥ في السوشال (البند 49). السكربت كان مؤقّتاً في `C:\tmp` و**حُذف** بعد الاستعمال.
+3. **البند 52 (جديد): صفحة Bing Webmaster** — ٣ أخطاء عولجت (التفاصيل الكاملة في `TODO.md` البند 52).
+4. `C-ADM` في `BUNNY-GOLIVE-PRD-v1.html` أُقفل بوسم «تست حيّ ✓»، و`TODO.md` حُدّث (51 ✅ · 52 ✅ · 49 اغتنى بمواقعه الخمسة).
+- **حالة tsc:** ✅ **صفر أخطاء على الثلاثة** (admin · modonty · console) — آخر تشغيل بعد آخر تعديل.
+- **حالة build:** ❌ لم تُشغَّل (`pnpm build` مؤجّلة لما قبل الدفع).
+- **حالة التست الحيّ:** ✅ **ناجح.** ٧٤ راوت أدمن على `localhost:3000` · ٣٨٠ صورة `<img>` مرندرة · ٣٠٧ Bunny · **٧٣ Cloudinary كلّها على `/social/facebook` وحده**؛ كل راوت آخر = صفر. زائد `/clients/[id]/edit` على ٣ عملاء (٢ Cloudinary → ٠) وصفحة Bing (جدولان × ١٠ صفوف بصفر تكرار، وصفر `TypeError` في لوق السيرفر).
+
+### 📝 قرارات ودروس (الأهم في هذه الجلسة)
+- **صنف خلل ١ — السقوط الصامت:** نداء `mediaSrc()` على `select` ناقص `bunnyUrl` يرجّع Cloudinary **دائماً وبصمت**. `tsc` نظيف، الكود «يبدو» مصحَّحاً، والمخرَج غلط. أخطر ما وُجد لأنه ضرب مولّدات السيو **المخزّن**: `knowledge-graph-generator` · `metadata-storage` · `generate-client-seo-bundle` · `generate-organization-jsonld` · `client-jsonld-storage` · `listing-page-seo-generator` · بناة JSON-LD للرئيسية/الرائج/العملاء. **القاعدة: الإصلاح نصفان — العرض يمرّ على `mediaSrc()` **و** الـ select فيه `bunnyUrl`. نصف واحد = لا شيء.**
+- **صنف خلل ٢ — الإخفاء بالكاست:** `client-form.tsx` كان يكتب `as { url?: string }` فيمحي `bunnyUrl` من النوع → `/clients/[id]/edit` ترندر شعاراً وغلافاً من Cloudinary (٢ لكل عميل، تأكّد على ٣ عملاء). **`tsc` لا يشتكي — الكاست نفسه هو الغلط.** ابحث عن `as { url` عند أي جرد قادم.
+- **التضييق (narrowing) يكسر عند تبديل الشرط:** استبدال `x?.url` بـ `mediaSrc(x)` في شرط JSX يفقد تضييق TypeScript فتنفجر أسطر تالية بـ «possibly null». **الشرط يبقى `x?.url`** (صفّ الوسائط عنده `url` دائماً، و`bunnyUrl` إضافة فقط) **والقيمة تمرّ على `mediaSrc()`.**
+- **درس Bing — «الإصلاح» الأول كان سيخفي الخطأ:** أول حلّ كتبته كان يفلتر الصفوف بلا `Page` فيوقف الانهيار — لكنه كان **يرمي كل الـ١٤٩ صفّاً** ويعرض «No page data yet» وهذا **كذب**. لولا ضرب الـ API الحيّ لتأكّدت أنه «تمام». **القاعدة: لمّا يختفي شيء بعد إصلاح، تحقّق ليش اختفى قبل ما تسمّيه إصلاحاً.**
+
+### 🧪 المنهجية المعتمدة للقياس (لا تُعَد اكتشافها)
+عدّ نصوص `res.cloudinary.com` في الـ HTML الخام **إنذار كاذب** — حقل `url` يسكن حِمل RSC كبيانات بالتصميم (ما نلمسه، نضيف `bunnyUrl` فقط). القياس الصحيح: `DOMParser` ← قراءة `<img src>` ← فكّ `/_next/image?url=` رجوعاً للأصل.
+
+### 🚧 معلّق / محجوز
+- **البند 49 — مراجعة نشر السوشال.** المعوّق: `sharp ERR_DLOPEN_FAILED` داخل سيرفر Next بينما `require("sharp")` ينجح في node عادي (بعد مسح `.next` و٣ إعادات تشغيل). خالد قرّر إنه **آخر تاسك** («فيه مشاكل من البداية»)، فلا يُبدأ قبل ما يخلص الباقي.
+- **البند 50 — كرت الترحيل المستقل** (Cloudinary ← Bunny بزرّ واحد). **ما يدخل Run-All** بأمر خالد. يحتاج: قابلية إعادة تشغيل آمنة + وضع «فحص فقط».
+- **البند 47 — تأكيد الموافقة في الكونسول** (إشعار ٨ ثوانٍ ← AlertDialog).
+- **C1/C2 — صفحات مدوّنتي** (الخلاصة · صفحة العميل · التصنيفات · الوسوم · الصناعات · المؤلّفون · الريلز · البروفايل) لم تُفحص حيّاً بعد بمنهجية `<img>` المرندرة.
+- **تنظيف قبل الدفع (إلزامي):** `admin/_mig-apply.cjs` · `admin/_mig-backup.json` · `admin/_mig-baseline.cjs` · `dataLayer/.tmp-vs.mjs` · `CLAUDE.md.backup-2026-07-21`.
+
+### 📂 ملفات مسّتها هذه الجلسة
+- `dataLayer/lib/seo/generate-client-seo-bundle.ts` — `bunnyUrl` في الـ select + الهيرو عبر `mediaSrc`
+- `dataLayer/lib/seo/generate-organization-jsonld.ts` — `bunnyUrl` في النوع + الشعار/الهيرو عبر `mediaSrc`
+- `admin/lib/seo/knowledge-graph-generator.ts` — صورة المقال + سلسلة الاحتياط + شعار العميل عبر `mediaSrc`
+- `admin/lib/seo/metadata-storage.ts` · `admin/lib/seo/metadata-generator.ts` — `bunnyUrl` في الـ select والنوع
+- `admin/lib/types/prisma-types.ts` — `bunnyUrl` في أنواع `ArticleWithRelations`/`ClientWithRelations` (٤ مواضع)
+- `admin/lib/bing-webmaster/client.ts` — `aggregateBingStats` + توحيد `BingPageStat` مع `BingQueryStat` + توثيق شكل السلك الحقيقي
+- `admin/app/(dashboard)/bing-webmaster/page.tsx` — تجميع قبل الترتيب + `safeDecodePath`
+- `admin/app/(dashboard)/modonty/setting/helpers/build-{home-jsonld-from-settings,trending-page-jsonld,clients-page-jsonld}.ts` — `mediaSrc` + `bunnyUrl` في الأنواع
+- `admin/app/(dashboard)/clients/helpers/client-seo-config/{client-jsonld-storage,generate-organization-structured-data,validators-advanced,media-relation}.ts`
+- `admin/app/(dashboard)/articles/helpers/article-seo-config/{generate-article-structured-data,media-relation}.ts`
+- `admin/app/(dashboard)/articles/actions/articles-actions/queries/get-article-by-{id,slug}.ts` · `.../mutations/update-article.ts` — الـ select + حِمل السوشال عبر `mediaSrc`
+- `admin/app/(dashboard)/articles/actions/gallery-actions.ts` · `admin/app/(dashboard)/clients/actions/clients-actions/get-client-by-id.ts`
+- `admin/app/(dashboard)/actions/media-counts.ts` · `admin/app/(dashboard)/seo-images/helpers/load-groups.ts`
+- `admin/app/(dashboard)/articles/workflow/{[transition]/page.tsx,quality-check/[articleId]/page.tsx,maintenance/page.tsx,actions/gated-transition.ts}`
+- `admin/app/(dashboard)/clients/components/client-form.tsx` — **حذف الكاست `as { url?: string }`** الذي كان يمحي `bunnyUrl`
+- `admin/app/(dashboard)/clients/[id]/components/{client-header,client-view}.tsx` · `.../tabs/{details,media-social,seo}-tab.tsx`
+- `admin/app/(dashboard)/clients/components/form-sections/{media-section,client-seo-validation-section}.tsx` · `admin/app/(dashboard)/clients/helpers/hooks/use-media-preview.ts`
+- `admin/app/(dashboard)/articles/components/{sections/basic-section,steps/metatag-preview-step}.tsx` · `admin/app/(dashboard)/articles/[id]/page.tsx`
+- `admin/app/(dashboard)/media/components/media-grid.tsx` · `admin/components/shared/media-picker-dialog.tsx`
+- `admin/app/api/articles/[id]/validate/route.ts` · `admin/scripts/compare-failing-vs-working.ts`
+- `modonty/app/articles/[slug]/actions/article-data.ts` · `modonty/app/articles/[slug]/components/related-articles.tsx`
+- `documents/tasks/TODO.md` · `documents/tasks/BUNNY-GOLIVE-PRD-v1.html` · `documents/context/SESSION-LOG.md`
+
+### 🔁 حالة git / النشر
+- **الفرع:** `version-2`
+- **تغييرات غير مثبَّتة:** ✅ نعم — ١٨٥ مدخلاً في `git status` (معدّلة + غير متتبَّعة). **لا يوجد commit لأي شغل Bunny بعد.**
+- **آخر commit:** `d1a41dc` — `perf(modonty): zero unnecessary client JS on mobile initial + cleaner mobile nav`
+- **مدفوع:** ❌ **لا.** صفر مساس بـ `main` أو الإنتاج. الدفع يحتاج **إذناً صريحاً جديداً** (القاعدة الذهبية للعزل).
+- **Vercel:** لا نشر من هذه الجلسة.
+- **⚠️ عند الدفع:** ممنوع `git add -A` — الريلز شغل ناقص (`modonty/app/reels/` · `documents/reels/` · `modonty-v3-handoff/`) ويُستثنى، وكذلك `settings.local.json` و`.mcp.json`.
+
+### 🚀 كيف تستأنف في ٣٠ ثانية
+1. `cd admin && npm run dev` (بورت 3000؛ سيرفر واحد فقط — قاعدة الجهاز).
+2. افتح `admin/app/(dashboard)/social/facebook/_actions.ts:86` — أضف `bunnyUrl: true` للـ select ومرّر `generateInstagramDefaultImage` على `mediaSrc()`.
+3. **القرار الأول:** هل نلاحق بلوكر `sharp ERR_DLOPEN_FAILED` أولاً (يمنع «Preview Default Image») أم نصلح تسريب Cloudinary الخمسة أولاً ونؤجّل sharp؟ — التوصية: **صلّح التسريب أولاً** (مستقل عن sharp ويقفل آخر بقعة Cloudinary في الأدمن)، ثم لاحق sharp منفصلاً.
+
+---
+
+## Session: 2026-07-30 — إقفال الكونسول والأدمن من Cloudinary + دورة المقال الحيّة كاملة + تست حيّ للأدمن (فرع `version-2` · local/preview فقط · لم يُدفع)
+
+### 🎯 أين توقفت + أول خطوة عند الاستئناف
+- **آخر عمل:** مسح حيّ شامل للأدمن على `localhost:3000` — فحصت **٦٠+ راوت** بقراءة الـ HTML المرندر وفكّ ترميز `/_next/image?url=` لكل `<img>`.
+- **النتيجة:** كل الراوتات صفر Cloudinary **ما عدا اثنين مكتشفَين للتوّ**:
+  - `/social/facebook` → **٧٣ صورة** ما زالت Cloudinary (تخص بند ٤٩ = مراجعة السوشال، آخر تاسك بأمر خالد).
+  - `/articles/workflow/maintenance` → **٢٥ صورة** Cloudinary (لم يُصلَح بعد — **هذه أول خطوة عند الاستئناف**).
+- **أول خطوة عند الاستئناف:** افتح صفحة `admin/app/(dashboard)/articles/workflow/maintenance/page.tsx` + مكوّناتها → أضف `bunnyUrl: true` للـ select ومرّر العرض عبر `mediaSrc()` (نفس النمط المكرّر ٨ مرات هذه الجلسة)، ثم أعد الفحص الحيّ للراوت.
+- **باقٍ لم يُفحص بعد:** ~٢٠ راوت ثابت (`/settings/disclaimer` · `/settings/industries` · `/settings/jbr-seo` · `/settings/reference-data` · `/settings/social` · `/settings/system` · `/settings/tags` · `/settings/telegram` · `/settings/trending` · `/social/instagram` · `/subscribers` · `/subscription-tiers` · `/system-errors` · `/tags/new` · `/users/new` · صفحات `segment/*`) — أُوقِف الفحص عند طلب الـ restart.
+
+### ✅ أُنجز هذه الجلسة
+- **دورة المقال الحيّة كاملة على `modonty_dev`:** رفع صورة داخل المحتوى (`bunny:1 / cloudinary:0`) → بوابة الجودة **21/21** → DRAFT → AWAITING_APPROVAL (أدمن) → موافقة العميل (كونسول) → SCHEDULED → Publish Now → **PUBLISHED** → تحقّق على مدوّنتي: كل طلبات الصور 200 وصفر أخطاء console.
+- **الكونسول مُقفَل 100%** (رفع + قراءة): رخصة YMYL صارت `LicenseUpload` → `/api/upload-bunny` · الشعارات الثلاثة تقرأ من `dataLayer/lib/brand-assets.ts`.
+- **صورة الزائر في مدوّنتي:** كانت تُخزَّن **base64 داخل قاعدة البيانات** → صارت ترفع على Bunny عبر `modonty/app/api/users/avatar/route.ts` + قفل Zod يرفض `data:` URI.
+- **شعار المنصّة (النصفان):** ثوابت الكود + **٦ حقول خام في جدول `Settings`** (`logoUrl` · `logoIconUrl` · `ogImageUrl` · `categoriesPageImage` · `tagsPageImage` · `industriesPageImage`) — نقلها أنزل صفحة المقال من **٥٦ إشارة Cloudinary إلى ١**.
+- **٨ مسارات عرض في الأدمن** حُوِّلت لـ `mediaSrc()` + إضافة `bunnyUrl` للـ select + إضافة `.b-cdn.net` لقوائم المضيفين المسموحة (كان غيابها **يُخفي صور Bunny بصمت**).
+- **الملفات الوثائقية:** `BUNNY-MIGRATION-PRD-v1.html` **أُقفِل** (60/60 + بانر أرشيف) · `BUNNY-GOLIVE-PRD-v1.html` صار **الملف الحيّ الوحيد** (٢٧ بند، ٦ مشطوبة) · `TODO.md` بنود 47/48✅/49/50.
+
+### 📝 قرارات (بالسبب)
+- **كرت الترحيل مستقل، ليس داخل Run-All** (تصحيح خالد) → لأننا نضغطه **مرة واحدة**؛ سؤال الفرز: «هل سنضغطه الشهر القادم؟» لا → كرت مستقل. سُجّل في `memory/project_auto_maintenance_rule` كاستثناء ٢.
+- **قاعدة صفر-Cloudinary = قاعدة كود فقط، لا طوارئ** (توضيح خالد: «حأقفل Account» كانت مبالغة) → الحساب يبقى مفتوحاً، الانسحاب هادئ على أيام. خُفِّضت لهجة الملفات الثلاثة.
+- **الكود القديم لـ Cloudinary لا يُحذف** → يُحوَّل لـ «فخّ» (`*RETIRED` يرمي استثناء) ليكشف أي مسار خفيّ في الـ local، لا في الإنتاج. مقابل ذلك: أي **مُدقّق يفرض** Cloudinary (مثل `validateHeroImageUrl`) يُزال لأنه يمنع Bunny.
+- **قياس «صفر Cloudinary» يكون على `<img>` المرندرة، لا على نص الـ HTML الخام** → لأن `url` (رابط Cloudinary) يبقى في حمولة الـ RSC كبيانات عمداً (لا نلمسه أبداً، نضيف `bunnyUrl` فقط). الخلط بين القياسين يعطي إنذاراً كاذباً.
+
+### 🚧 معلّق / محجوب
+- **بند 50** — كرت الترحيل المستقل لمرّة واحدة (٦ حقول Settings + روابط Cloudinary المخبوزة داخل `content` HTML لـ٣ مقالات + regenerate للسيو المخزّن لـ١١٢ مقال). يجب أن يكون **idempotent** + وضع «فحص فقط» قبل التنفيذ.
+- **بند 49** — مراجعة نشر فيسبوك/إنستغرام كاملة (**آخر تاسك** بأمر خالد). الكود حُوِّل لـBunny و tsc نظيف لكن **لم يُختبر حيّاً**، ومحجوب بـ`sharp ERR_DLOPEN_FAILED` داخل Next رغم نجاح `node -e "require('sharp')"` — لم يُرقَّع عمداً. + الاكتشاف الجديد: ٧٣ صورة Cloudinary على `/social/facebook`.
+- **بند 47** — استبدال تأكيد الموافقة في الكونسول (toast ٨ ثوانٍ) بـ AlertDialog.
+- **C1/C2** — بقية صفحات مدوّنتي (الفيد · صفحة العميل · التصنيفات · الوسوم · الصناعات · الكُتّاب · الريلز · البروفايل).
+
+### 📂 ملفات لُمست (أهمّها)
+- `dataLayer/lib/brand-assets.ts` — **جديد**: مصدر وحيد لصور المنصّة الأربع على Bunny (بلا `server-only` ليعمل في كل مكان).
+- `modonty/app/api/users/avatar/route.ts` — **جديد**: رفع صورة الزائر لـ Bunny (بلا `export const runtime` — يتعارض مع `cacheComponents`).
+- `console/.../profile/components/license-upload.tsx` — **جديد** بديل رفع الرخصة.
+- `admin/lib/utils/sharp-loader.ts` — **جديد**: محمّل sharp مشترك بـ`createRequire`.
+- `admin/.../media/components/media-grid.tsx` · `admin/components/shared/media-picker-dialog.tsx` · `thumbnail-image-view.tsx` · `unused-media-list.tsx` · `client-table.tsx` · `article-table.tsx` · `client-logo-preview.tsx` — كلها تمرّ الآن عبر `mediaSrc()` + `.b-cdn.net` مسموح.
+- `admin/.../maintenance/helpers/optimizable.ts` · `maintenance/page.tsx` · `client-galleries/helpers/load-galleries.ts` · `clients/actions/.../get-clients.ts` · `settings/defaults/actions/defaults-actions.ts` — أُضيف `bunnyUrl: true` للـ selects (+ sed شامل غطّى ١٠ مواضع `logoMedia`).
+- `documents/tasks/BUNNY-GOLIVE-PRD-v1.html` · `BUNNY-MIGRATION-PRD-v1.html` (مقفل) · `documents/tasks/TODO.md`.
+
+### 🔁 Git / نشر
+- Branch: **`version-2`** — آخر commit `d1a41dc` (أداء مدوّنتي). **لا commit هذه الجلسة.**
+- تعديلات غير مدفوعة: **نعم، ~151 مسار** (كل شغل Bunny أعلاه + ملفات جديدة untracked).
+- Vercel: لا شيء نُشر · **صفر مساس بـ `main`** (القاعدة الذهبية للعزل).
+- **حُذفت سكربتات مؤقتة** أنشأتها هذه الجلسة: `admin/scripts/tmp-broken-media.ts` · `tmp-check-media-page.ts` · `tmp-check-maintenance-rows.ts`. **باقٍ للتنظيف قبل الدفع:** `admin/_mig-apply.cjs` · `_mig-backup.json` · `_mig-baseline.cjs` · `dataLayer/.tmp-vs.mjs` · `CLAUDE.md.backup-2026-07-21`.
+
+### 🔢 أرقام تحقّق (دليل، لا تخمين)
+- `modonty_dev`: **426** صف ميديا · **424** رابطها Cloudinary · **422** لها نسخة Bunny · **٢ بلا نسخة** · **٣** مقالات فيها روابط مخبوزة في المحتوى · **١١٢** مقالاً فيها Cloudinary داخل السيو المخزّن.
+- «صورتان مكسورتان» في `/media` من التمريرة السابقة = **إنذار كاذب**: فحص HEAD لأحدث ٤٠ صورة أعطى **0 فشل**، والفحص الحيّ أعطى `broken: 0` (العدّاد القديم كان يحسب صوراً ما زالت تُحمّل).
+- `/modonty/setting` يرجع 404 = **سلوك صحيح**، المجلد فيه `actions/components/helpers` فقط بلا `page.tsx` (الراوت الحقيقي `/modonty/pages/[slug]`). كان خطأً في قائمة راوتاتي أنا.
+
+### 🚀 استئناف في 30 ثانية
+1. `cd admin && npm run dev` (يأخذ 3000 إن كانت مدوّنتي مطفأة — انتبه للمنفذ).
+2. افتح `admin/app/(dashboard)/articles/workflow/maintenance/` → أصلح ٢٥ صورة Cloudinary بنمط `mediaSrc` + `bunnyUrl` في الـ select.
+3. أكمل فحص الـ~٢٠ راوت المتبقّية (القائمة في «أين توقفت»)، ثم اشطب `C-ADM` في `documents/tasks/BUNNY-GOLIVE-PRD-v1.html`.

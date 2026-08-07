@@ -12,14 +12,15 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.9.0 (admin) · 1.84.1 (modonty)",
-    title: "One source of truth for every modonty page's SEO",
+    version: "1.10.1 (admin) · 1.86.0 (modonty) · 0.2.1 (dataLayer)",
+    title: "Bunny is now the only place images come from",
     items: [
-      { type: "improve" as const, text: "All seven modonty pages (Home, Clients, Categories, Tags, Industries, Trending, FAQ) now build their Google card from a single generator that runs three independent validators. Previously two different generators wrote the same pages and whichever ran last won — so the same page could look different depending on what you had just saved." },
-      { type: "fix" as const, text: "The FAQ page was silently losing its official link (canonical) and its share image every time it regenerated, because it was saved in a shape the site could not read. Fixed and verified on the live page." },
-      { type: "fix" as const, text: "Tags, Industries and the Clients/Categories/Trending pages were shipping a thin card with only a name and a link, and were storing a «valid» stamp that nothing had actually checked. They now carry the full card — publisher details, per-item data — and a real validation report." },
-      { type: "fix" as const, text: "The system was building and storing SEO for an /articles page that does not exist on modonty (that path is deliberately a 404). It rebuilt it on every article create, edit and delete. Removed — the Home page is the articles page, and two pages listing the same articles would have split their ranking signals." },
-      { type: "improve" as const, text: "Cleanup: 22 unused files removed after proving nothing references them, plus six leftover database fields belonging to the phantom page. Zero type errors across admin, modonty and console." },
+      { type: "fix" as const, text: "A deleted author's page used to answer «page found» with an empty body — the one thing Google reads as a broken page worth keeping in its index. Every other section (articles, tags, categories, industries, clients) already answered «gone» properly; authors was the only gap. Now it does too." },
+      { type: "fix" as const, text: "Four screens inside the admin still loaded pictures from the old image host: the client's media tab, the article's search-preview card, and the image editor. They were reading the old address even though every picture already had a new one. Nothing a visitor sees, but they would have gone blank the day we switch the old host off." },
+      { type: "fix" as const, text: "Removed a leftover instruction attached to every image address that pointed at a placeholder file which no longer exists — dead weight on every request." },
+      { type: "improve" as const, text: "The author «مدونتي» finally has a picture. Ninety-four published articles were showing an empty circle where the author's face goes." },
+      { type: "improve" as const, text: "Cleaned out stale data on the live site: four image records whose files had been deleted long ago, two test accounts pointing at dead avatars, and 28,000 characters of search data belonging to a page that was removed weeks ago." },
+      { type: "improve" as const, text: "Measured on the live site: 156 pictures across eight page types, every one served from the new host, none broken. Speed test on identical images — the new host is 40% faster at the typical request and 2.4× faster at the slow tail." },
     ],
   },
 ];

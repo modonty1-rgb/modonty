@@ -22,6 +22,7 @@ import NextImage from "next/image";
 import { MediaType, MediaScope } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { formatBytes } from "@modonty/database/lib/utils";
+import { mediaSrc } from "@modonty/database/lib/media-src";
 import { getMediaSpec, requiresCrop } from "@/lib/media/media-specs";
 import { validateFile } from "../../components/upload-zone/utils/file-validation";
 import { ImageEditorModal } from "../../components/upload-zone/components/image-editor-modal";
@@ -30,6 +31,8 @@ interface Media {
   id: string;
   filename: string;
   url: string;
+  /** REQUIRED key (value may be null) — the preview must show what the site actually serves. */
+  bunnyUrl: string | null;
   mimeType: string;
   width: number | null;
   height: number | null;
@@ -434,7 +437,7 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
                           />
                         ) : (
                           <NextImage
-                            src={media.url}
+                            src={mediaSrc(media) ?? media.url}
                             alt={media.altText || media.filename}
                             width={400}
                             height={400}

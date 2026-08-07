@@ -9,7 +9,10 @@ import { isLiveSection, isLiveSlug, lookupRedirect } from "@/lib/archive-cache";
  *   merged/renamed slug  → **308 Permanent Redirect** to the successor slug
  *   gone / never existed → **410 Gone**
  *
- * Sections (see matcher): articles, categories, tags, industries, clients.
+ * Sections (see matcher): articles, categories, tags, industries, clients, authors.
+ *
+ * `authors` joined 2026-08-07: a deleted author's URL was measured returning HTTP 200
+ * with an empty noindex page (soft 404) while every other section already returned 410.
  *
  * Per Google Search Central: 4xx tells the indexing pipeline the content doesn't
  * exist → the URL is removed from the index; 308 (treated as ≡ 301) moves the URL
@@ -30,6 +33,7 @@ export const config = {
     "/tags/:slug",
     "/industries/:slug",
     "/clients/:slug",
+    "/authors/:slug",
   ],
 };
 

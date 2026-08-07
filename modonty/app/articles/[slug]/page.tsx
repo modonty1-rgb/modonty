@@ -365,7 +365,14 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
     // Live fallback JSON-LD (pulls current author + image data from this render's
     // article object). Data fetchers above are cached, so this is fast.
-    const jsonLdGraph: object = generateArticleStructuredData(article);
+    // No featured image → substitute the platform POST default (already resolved above as
+    // `featuredImage`) so Article JSON-LD never ships without `image` — Google Article
+    // rich results require it. The default is admin-enforced 1200×630 (/settings/defaults).
+    const jsonLdGraph: object = generateArticleStructuredData(
+      article.featuredImage || !featuredImage
+        ? article
+        : { ...article, featuredImage: { ...featuredImage, width: 1200, height: 630 } }
+    );
     const breadcrumbJsonLd = generateBreadcrumbStructuredData([
       { name: "الرئيسية", url: "/" },
       { name: "الشركاء", url: "/clients" },

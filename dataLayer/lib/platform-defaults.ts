@@ -6,10 +6,15 @@ import { mediaSrc } from "./media-src";
 /**
  * Platform default images (managed in admin → /settings/defaults).
  *
- * Source of truth = the three PLATFORM-scope Media rows with `clientId: null`, keyed by
- * type (LOGO / POST / HERO). Renderers fall back to these when an entity has no image:
- * client with no logo → LOGO, article with no featured image → POST, client page with
- * no hero → HERO (Khalid 2026-08-01). Each value is the Bunny copy via `mediaSrc`.
+ * Renderers fall back to these when an entity has no image: client with no logo → LOGO,
+ * article with no featured image → POST, client page with no hero → HERO (Khalid 2026-08-01).
+ * Each value is the Bunny copy via `mediaSrc`.
+ *
+ * Lookup key = the STABLE filename (`platform-default-*`, set in admin defaults-actions),
+ * NOT scope/clientId. The old `scope: PLATFORM + clientId: null` filter broke the moment
+ * T2b claimed these rows for the core client (scope→CLIENT, clientId→core) — verified on
+ * dev 2026-08-07: the old query returned 0 after T2b while the rows still exist under
+ * their filenames. Filename survives ownership changes; ownership doesn't.
  */
 export interface PlatformDefaultImages {
   logo: string | null;
@@ -17,17 +22,22 @@ export interface PlatformDefaultImages {
   hero: string | null;
 }
 
+const DEFAULT_FILENAMES = {
+  "platform-default-logo": "logo",
+  "platform-default-post": "post",
+  "platform-default-hero": "hero",
+} as const;
+
 export async function getPlatformDefaultImages(): Promise<PlatformDefaultImages> {
   const rows = await db.media.findMany({
-    where: { scope: "PLATFORM", clientId: null, type: { in: ["LOGO", "POST", "HERO"] } },
-    select: { type: true, url: true, bunnyUrl: true },
+    where: { filename: { in: Object.keys(DEFAULT_FILENAMES) } },
+    select: { filename: true, url: true, bunnyUrl: true },
   });
 
   const result: PlatformDefaultImages = { logo: null, post: null, hero: null };
   for (const r of rows) {
-    if (r.type === "LOGO") result.logo = mediaSrc(r);
-    else if (r.type === "POST") result.post = mediaSrc(r);
-    else if (r.type === "HERO") result.hero = mediaSrc(r);
+    const key = DEFAULT_FILENAMES[r.filename as keyof typeof DEFAULT_FILENAMES];
+    if (key) result[key] = mediaSrc(r);
   }
   return result;
 }

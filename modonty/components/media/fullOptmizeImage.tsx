@@ -289,9 +289,7 @@ export function optimizeCloudinaryUrl(
     const baseTransforms = 'f_auto,q_auto,c_fill,g_auto';
     
     // Preload / LCP images get larger initial size
-    const transforms = isHighPriority
-      ? `${baseTransforms},w_1200,d_article-placeholder-default`
-      : `${baseTransforms},d_article-placeholder-default`;
+    const transforms = isHighPriority ? `${baseTransforms},w_1200` : baseTransforms;
 
     return `${beforeUpload}${transforms}/${afterUpload}`;
     
