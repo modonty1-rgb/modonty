@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { m } from "framer-motion";
 import { ExternalLink } from "lucide-react";
-import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 
 import { storyPartnerImage } from "./_constants";
 
@@ -79,7 +79,7 @@ function PartnersShowcaseImpl() {
               >
                 <div className="relative w-full h-full">
                   <OptimizedImage
-                    src={partner.logoUrl}
+                    media={asMedia(partner.logoUrl)}
                     alt={`شعار ${partner.name} — شريك مدونتي`}
                     fill
                     sizes="(max-width: 768px) 50vw, 33vw"

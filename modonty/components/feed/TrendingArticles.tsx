@@ -1,5 +1,5 @@
 import Link from "@/components/link";
-import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { ArticleHeroWarm } from "@/components/media/hero-warm";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -73,7 +73,7 @@ export function TrendingArticles({ articles, showTitle = true }: TrendingArticle
                 {article.image ? (
                   <>
                     <OptimizedImage
-                      src={article.image}
+                      media={asMedia(article.image, article.title)}
                       alt={article.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"

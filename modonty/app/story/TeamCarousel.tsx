@@ -4,7 +4,7 @@ import { memo, useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { m } from "framer-motion";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
-import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 
 import { storyTeamImage } from "./_constants";
 
@@ -267,7 +267,7 @@ function TeamCarouselImpl() {
                         >
                           {member.imageUrl ? (
                             <OptimizedImage
-                              src={member.imageUrl}
+                              media={asMedia(member.imageUrl)}
                               alt={`صورة ${member.name} — فريق مدونتي`}
                               fill
                               sizes="(max-width: 768px) 112px, 128px"

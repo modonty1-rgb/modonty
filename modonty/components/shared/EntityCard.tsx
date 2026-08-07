@@ -1,8 +1,7 @@
 import Link from "@/components/link";
-import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { EntityPlaceholder } from "@/components/shared/EntityPlaceholder";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { optimizeCloudinaryImage } from "@/app/categories/helpers/category-utils";
 import { IconArticle, IconIndustry } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import type { EntityType } from "@/lib/entity-utils";
@@ -49,17 +48,18 @@ export function EntityCard({
   const showTrending = type !== "industry" && recentArticleCount > 0;
   const overflowCount = clientCount > 3 ? clientCount - 3 : 0;
 
-  const optimizedImageUrl = imageUrl
-    ? optimizeCloudinaryImage(imageUrl, { width: 600, height: 375, quality: "auto", format: "auto" })
-    : null;
+  // A bare url prop (tag/category/industry social image), not a Media relation → `asMedia`.
+  // `optimizeCloudinaryImage` was removed: it only rewrites Cloudinary urls and every entity
+  // image is on Bunny (verified 2026-08-07, 46/46), so it was a pass-through.
+  const entityImage = imageUrl?.trim() || null;
 
   return (
     <Link href={`${BASE_PATH[type]}/${slug}`} className="block h-full">
       <div className="group h-full overflow-hidden rounded-2xl bg-card shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
         <div className="relative overflow-hidden rounded-t-2xl" style={{ aspectRatio: "16/10" }}>
-          {optimizedImageUrl ? (
+          {entityImage ? (
             <OptimizedImage
-              src={optimizedImageUrl}
+              media={asMedia(entityImage, imageAlt)}
               alt={imageAlt || name}
               fill
               preload={preload}

@@ -1,5 +1,4 @@
-import Image from "next/image";
-import { optimizeCloudinaryUrl } from "@/components/media/OptimizedImage";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { IconArticle, IconVolume2 } from "@/lib/icons";
 import type { PostCardProps } from "./PostCard.types";
 
@@ -29,11 +28,12 @@ export function PostCardHeroImage({
       <div className="relative w-full aspect-video overflow-hidden bg-gradient-to-br from-muted/80 to-muted/40 flex flex-col items-center justify-center gap-2">
         {audioBadge}
         {post.clientLogo ? (
-          <Image
-            src={optimizeCloudinaryUrl(post.clientLogo, false)}
+          <OptimizedImage
+            media={asMedia(post.clientLogo, post.clientName)}
             alt={post.clientName}
             width={64}
             height={64}
+            sizes="64px"
             className="object-contain opacity-60"
           />
         ) : (
@@ -48,13 +48,15 @@ export function PostCardHeroImage({
     );
   }
 
-  const optimizedSrc = optimizeCloudinaryUrl(post.image, lcp);
-
   return (
     <div className={`relative w-full overflow-hidden ${featured ? "aspect-[16/7]" : "aspect-video"}`}>
       {audioBadge}
-      <Image
-        src={optimizedSrc}
+      <OptimizedImage
+        // `post.image` is a resolved url on the feed payload, not a Media relation → asMedia.
+        // The old `optimizeCloudinaryUrl(post.image, lcp)` wrapper is gone: it rewrites
+        // Cloudinary urls only, and every served feed image is on Bunny (verified
+        // 2026-08-07: 95/95 article covers, 27/27 client logos → zero Cloudinary).
+        media={asMedia(post.image, post.title)}
         alt={post.title || "صورة المقال"}
         fill
         className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -63,7 +65,6 @@ export function PostCardHeroImage({
         // image is discovered + fetched early (kills the ~1.2s load-delay). Docs say
         // avoid combining preload with loading/fetchPriority — so preload alone for LCP.
         {...(lcp ? { preload: true } : { loading: "lazy" as const })}
-        quality={75}
         decoding="async"
       />
       <div

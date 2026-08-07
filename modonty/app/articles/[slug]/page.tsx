@@ -297,15 +297,16 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
     // derived
     const galleryImages = (article.gallery ?? [])
+      .filter((g) => g.media && mediaSrc(g.media))
       .map((g) => ({
-        // The select carries `bunnyUrl` and the component calls mediaSrc — but this mapping
-        // sat between them reading `.url`, so the Bunny copy was dropped before it ever got
-        // there and every article body kept rendering Cloudinary (found 2026-07-30).
-        url: mediaSrc(g.media) ?? g.media?.url ?? "",
+        // The media ROW goes through untouched. Two separate bugs lived in this mapping:
+        // it read `.url` and dropped the Bunny copy (2026-07-30), then it resolved to a
+        // string and dropped the stored blur (2026-08-07). Neither is possible now — the
+        // component receives the row and resolves both itself.
+        media: g.media!,
         alt: g.media?.altText || article.title,
         caption: g.media?.caption || g.media?.altText || null,
-      }))
-      .filter((g) => g.url);
+      }));
     const allTags = (article.tags ?? []).map((t) => t.tag).filter(Boolean);
     const visibleTags = allTags.slice(0, 5);
     const extraTags = Math.max(0, allTags.length - visibleTags.length);

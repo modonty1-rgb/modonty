@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { OptimizedImage, type ImageMedia } from "@modonty/database/components/optimized-image";
 
 import { Card } from "@/components/ui/card";
 import { IconImage } from "@/lib/icons";
 
 interface GalleryImage {
-  url: string;
+  /** The media ROW, not a resolved url — the component resolves src + blur itself.
+   *  This used to be `url: string` produced by `mediaSrc()` in page.tsx, which threw
+   *  the stored placeholder away before the component could ever see it. */
+  media: ImageMedia;
   alt: string;
   caption?: string | null;
 }
@@ -49,7 +52,7 @@ export function ArticleLabGallery({ images, fallbackText, clientName }: ArticleL
       <div className="p-3">
         {/* large in-card preview (no lightbox) */}
         <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
-          <OptimizedImage src={images[active].url} alt={images[active].alt} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 280px" />
+          <OptimizedImage media={images[active].media} alt={images[active].alt} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 280px" />
         </div>
 
         {images[active].caption && (
@@ -60,7 +63,7 @@ export function ArticleLabGallery({ images, fallbackText, clientName }: ArticleL
           <div className="mt-2 flex flex-wrap gap-1.5">
             {images.map((img, i) => (
               <button
-                key={img.url + i}
+                key={(img.media.bunnyUrl ?? img.media.url ?? "") + i}
                 type="button"
                 onClick={() => setActive(i)}
                 aria-label={`صورة ${i + 1}`}
@@ -69,7 +72,7 @@ export function ArticleLabGallery({ images, fallbackText, clientName }: ArticleL
                   i === active ? "opacity-100 ring-2 ring-primary" : "opacity-60 hover:opacity-90"
                 }`}
               >
-                <OptimizedImage src={img.url} alt={img.alt} fill className="object-cover" sizes="56px" />
+                <OptimizedImage media={img.media} alt={img.alt} fill className="object-cover" sizes="56px" />
               </button>
             ))}
           </div>

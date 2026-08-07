@@ -1,6 +1,6 @@
 import { FileText } from "lucide-react";
 import Link from "@/components/link";
-import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +8,6 @@ import { IconTrending } from "@/lib/icons";
 import {
   generateCategoryGradient,
   getCategoryIcon,
-  optimizeCloudinaryImage,
 } from "../helpers/category-utils";
 import type { CategoryResponse } from "@/lib/types";
 
@@ -25,14 +24,12 @@ export function EnhancedCategoryCard({ category, preload = false }: EnhancedCate
   const clientCount = category.clientCount ?? 0;
   const overflowCount = clientCount > 3 ? clientCount - 3 : 0;
 
-  const optimizedImageUrl = category.socialImage
-    ? optimizeCloudinaryImage(category.socialImage, {
-        width: 600,
-        height: 338,
-        quality: "auto",
-        format: "auto",
-      })
-    : null;
+  // `socialImage` is a bare url on the Category row, not a Media relation — so it goes
+  // through `asMedia` (no stored blur to carry). The old `optimizeCloudinaryImage` wrapper
+  // was dropped: it rewrites Cloudinary urls only, and all 46 entity images are on Bunny
+  // (verified 2026-08-07: categories 15/15, tags 23/23, industries 8/8 → zero Cloudinary),
+  // so it had become a pass-through that only obscured what the code actually did.
+  const socialImage = category.socialImage?.trim() || null;
 
   const GradientFallback = () => (
     <div className={`relative aspect-video w-full overflow-hidden rounded-t-lg bg-gradient-to-br ${gradient}`}>
@@ -45,10 +42,10 @@ export function EnhancedCategoryCard({ category, preload = false }: EnhancedCate
   return (
     <Link href={`/categories/${category.slug}`}>
       <Card className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02] cursor-pointer h-full">
-        {optimizedImageUrl ? (
+        {socialImage ? (
           <div className="relative aspect-video w-full overflow-hidden rounded-t-lg bg-muted">
             <OptimizedImage
-              src={optimizedImageUrl}
+              media={asMedia(socialImage, category.socialImageAlt)}
               alt={category.socialImageAlt || category.name}
               fill
               preload={preload}

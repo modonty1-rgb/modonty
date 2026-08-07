@@ -1,8 +1,7 @@
-import NextImage from "next/image";
 import { mediaSrc } from "@modonty/database/lib/media-src";
 import type { ComponentType, SVGProps } from "react";
 
-import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { OptimizedImage } from "@modonty/database/components/optimized-image";
 import { Card } from "@/components/ui/card";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
@@ -89,9 +88,11 @@ const railBtn =
   "inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-muted/40 text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors";
 
 export function ArticleLabClientCard({ client, askClientProps, cta }: ArticleLabClientCardProps) {
-  const logoUrl = mediaSrc(client.logoMedia);
+  // Pass the media ROW, not a resolved url — the shared component resolves src AND the
+  // stored blur itself. Resolving here threw the placeholder away before it was ever seen.
+  const logoMedia = client.logoMedia ?? null;
   // Client Mini (1.91:1) fills the 1200/630 card box exactly → preferred over the 6:1 hero.
-  const heroUrl = mediaSrc(client.media?.[0]) ?? mediaSrc(client.heroImageMedia);
+  const heroMedia = (mediaSrc(client.media?.[0]) ? client.media?.[0] : null) ?? client.heroImageMedia ?? null;
   const hasPhone = !!client.phone?.trim();
   // brief falls back across the fields admins actually fill (DRY, data-agnostic)
   const brief = client.description?.trim() || client.businessBrief?.trim() || client.slogan?.trim() || "";
@@ -105,25 +106,25 @@ export function ArticleLabClientCard({ client, askClientProps, cta }: ArticleLab
       {/* media — aspect locked to the canonical hero spec (1200×630) so the image
           shows in full, consistent with the sidebar partner slider. */}
       <div className="relative flex aspect-[1200/630] w-full shrink-0 items-center justify-center overflow-hidden bg-muted">
-        {heroUrl && (
+        {heroMedia && (
           <>
             <div className="absolute inset-0">
-              <OptimizedImage src={heroUrl} alt={client.name} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 280px" />
+              <OptimizedImage media={heroMedia} alt={client.name} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 280px" />
             </div>
             <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-1/3 bg-gradient-to-t from-black/40 to-transparent" />
           </>
         )}
-        {logoUrl ? (
-          heroUrl ? (
+        {logoMedia ? (
+          heroMedia ? (
             <div className={`absolute bottom-3 left-3 z-10 flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden ${BRAND_AVATAR_RADIUS} bg-background shadow-lg ring-2 ring-background`}>
-              <NextImage src={logoUrl} alt={client.name} width={56} height={56} className="object-contain p-1.5" sizes="56px" />
+              <OptimizedImage media={logoMedia} alt={client.name} width={56} height={56} className="object-contain p-1.5" sizes="56px" />
             </div>
           ) : (
             <div className={`relative z-10 h-20 w-20 shrink-0 overflow-hidden ${BRAND_AVATAR_RADIUS} bg-background shadow-sm ring-2 ring-border`}>
-              <NextImage src={logoUrl} alt={client.name} fill className="object-contain p-3" sizes="80px" />
+              <OptimizedImage media={logoMedia} alt={client.name} fill className="object-contain p-3" sizes="80px" />
             </div>
           )
-        ) : !heroUrl ? (
+        ) : !heroMedia ? (
           <IconClients className="relative z-10 h-12 w-12 text-muted-foreground" />
         ) : null}
       </div>
