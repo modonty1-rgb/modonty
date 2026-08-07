@@ -28,6 +28,11 @@ import Link from "next/link";
 import { MediaType } from "@prisma/client";
 import { getMediaTypeLabel, getMediaTypeBadgeVariant } from "@/app/(dashboard)/media/helpers/media-utils";
 import { mediaSrc } from "@modonty/database/lib/media-src";
+import { justifyRows, tileAspectRatio, shouldContainTile } from "@modonty/database/lib/justify-rows";
+
+/** DialogContent is `max-w-4xl` (896px) minus padding. Only decides tiles-per-row —
+ *  the widths come back as percentages, so the row fills its parent at any size. */
+const PICKER_WIDTH = 848;
 
 interface Media {
   id: string;
@@ -250,36 +255,77 @@ export function MediaPickerDialog({
             </div>
           ) : (
             <>
-              <div className="flex-1 overflow-y-auto -mx-2 px-2">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 pb-2">
+              <div className="flex-1 overflow-y-auto -mx-2 px-2 pb-2">
+                {/* Justified rows (sm+) — the project gallery standard. A square box would
+                    crop the majority of this library: 165 landscape · 39 portrait · 10
+                    square · 6 at 6:1, measured 2026-08-07. */}
+                <div className="hidden sm:block">
+                  {justifyRows(filteredMedia, PICKER_WIDTH).map((row, rowIndex) => (
+                    <div key={rowIndex} className="flex gap-3 mb-3">
+                      {row.items.map(({ tile, grow }) => (
+                        <Card
+                          key={tile.id}
+                          // Full rows: flex-grow by ratio so the browser fills the width
+                          // exactly after the gaps. Last row: fixed at the target height,
+                          // never stretched — a lone trailing image blown up reads as a bug.
+                          style={
+                            row.isLast
+                              ? { flex: "0 0 auto", width: `${row.height * grow}px` }
+                              : { flexGrow: grow, flexBasis: 0, minWidth: 0 }
+                          }
+                          className="cursor-pointer hover:shadow-md transition-all border hover:border-primary/50 overflow-hidden"
+                          onClick={() => handleSelect(tile)}
+                          title={tile.filename}
+                        >
+                          <CardContent className="p-0">
+                            <div
+                              style={{ aspectRatio: tileAspectRatio(tile) }}
+                              className="relative overflow-hidden bg-muted"
+                            >
+                              <NextImage
+                                src={getImageUrl(tile)}
+                                alt={tile.altText || tile.filename}
+                                fill
+                                className={shouldContainTile(tile) ? "object-contain" : "object-cover"}
+                                unoptimized
+                              />
+                            </div>
+                            <p className="px-2 py-1.5 text-[11px] leading-tight truncate text-muted-foreground">
+                              {tile.filename}
+                            </p>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Under 640px justified rows go too fine-grained — two fixed columns. */}
+                <div className="grid grid-cols-2 gap-3 sm:hidden">
                   {filteredMedia.map((item) => (
                     <Card
                       key={item.id}
-                      className="cursor-pointer hover:shadow-md transition-all border hover:border-primary/50"
+                      className="cursor-pointer hover:shadow-md transition-all border hover:border-primary/50 overflow-hidden"
                       onClick={() => handleSelect(item)}
                     >
                       <CardContent className="p-0">
-                        <div className="aspect-square relative overflow-hidden rounded-t-lg bg-muted">
+                        <div
+                          style={{ aspectRatio: tileAspectRatio(item) }}
+                          className="relative overflow-hidden bg-muted"
+                        >
                           <NextImage
                             src={getImageUrl(item)}
                             alt={item.altText || item.filename}
                             fill
-                            className="object-cover"
+                            className={shouldContainTile(item) ? "object-contain" : "object-cover"}
                             unoptimized
                           />
                         </div>
-                        <div className="p-3 space-y-2">
-                          <p className="text-sm font-medium line-clamp-2 leading-tight">{item.filename}</p>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <Badge variant={getMediaTypeBadgeVariant(item.type)} className="text-xs font-normal">
-                              {getMediaTypeLabel(item.type)}
-                            </Badge>
-                            {item.width && item.height && (
-                              <Badge variant="secondary" className="text-xs font-normal">
-                                {item.width} × {item.height}
-                              </Badge>
-                            )}
-                          </div>
+                        <div className="p-2 space-y-1.5">
+                          <p className="text-xs font-medium line-clamp-2 leading-tight">{item.filename}</p>
+                          <Badge variant={getMediaTypeBadgeVariant(item.type)} className="text-[10px] font-normal">
+                            {getMediaTypeLabel(item.type)}
+                          </Badge>
                         </div>
                       </CardContent>
                     </Card>
