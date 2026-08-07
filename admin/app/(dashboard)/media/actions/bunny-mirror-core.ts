@@ -35,9 +35,10 @@ export interface UploadImageBufferInput {
 export async function uploadImageBufferToBunny(
   input: UploadImageBufferInput
 ): Promise<{ bunnyUrl: string }> {
-  // Content hash, not a random token: the SAME bytes always produce the SAME key, so
-  // re-running the migration overwrites its own object instead of piling up a new one —
-  // while two DIFFERENT images can never share a key again (the 2026-08-07 collision).
+  // A CONTENT hash, deliberately not a random token: identical bytes always produce the
+  // same key, so re-running the migration overwrites its own object instead of piling up a
+  // new copy each pass — while two DIFFERENT images can never share a key again. That
+  // sharing is exactly what destroyed 18 production images on 2026-08-07.
   const contentKey = createHash("sha256").update(input.buffer).digest("hex").slice(0, 10);
 
   const remotePath = buildBunnyMediaPath({

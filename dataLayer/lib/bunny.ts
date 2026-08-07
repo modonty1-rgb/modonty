@@ -98,26 +98,29 @@ export function bunnyAspectUrl(baseUrlOrPath: string, suffix: string): string {
 /**
  * Build the Bunny remote path for a media file — used by dual-write, migration, and move.
  *
- * ── Why `uniqueKey` is REQUIRED (2026-08-07) ────────────────────────────────────────────
+ * ── Why `uniqueKey` is REQUIRED (data-loss fix, 2026-08-07) ─────────────────────────────
  * This used to sanitise the basename with `[^A-Za-z0-9._-]` and fall back to the literal
- * string `"file"` when nothing survived. Every Arabic filename survives that filter as
- * NOTHING — so every Arabic-named image for the same client+type landed on ONE key
- * (`post/<client>/file.webp`) and silently overwrote the previous one, together with its
- * three `__1x1/__4x3/__16x9` crops. Measured on production the same day: 7 shared keys,
- * 25 rows, 18 of them displaying an image that is not theirs, 2 returning 404.
+ * string `"file"` when nothing survived. An Arabic filename survives that filter as
+ * NOTHING — so every Arabic-named image for one client+type landed on ONE key
+ * (`post/<client>/file.webp`) and silently OVERWROTE the previous one, together with its
+ * three `__1x1/__4x3/__16x9` crops that the Article JSON-LD points at.
  *
- * Two separate defects lived in that one line:
- *   1. Arabic was stripped — needlessly. The OWNER folder already carries the Arabic client
- *      slug and serves fine (`post/دكتور-أحمد-شيخ-العرب/webp-hyk9knwda.webp` → HTTP 200),
- *      so Bunny was never the constraint; the filter was.
- *   2. The name was not guaranteed unique. Two files called `banner.jpg` under one client
- *      collide exactly the same way — Arabic only made the collision happen every time
- *      instead of occasionally.
+ * Measured on production the same day: 7 shared keys · 25 rows · 18 of them serving an
+ * image that is not theirs · 2 serving 404. It reached readers, not just the admin UI.
+ *
+ * Two independent defects lived in that one line:
+ *   1. Arabic was stripped needlessly. The OWNER folder already carries the Arabic client
+ *      slug and serves fine — `post/دكتور-أحمد-شيخ-العرب/webp-hyk9knwda.webp` → HTTP 200 —
+ *      so Bunny was never the constraint; our filter was.
+ *   2. The name was not guaranteed unique. Two files called `banner.jpg` under the same
+ *      client collide identically; Arabic only made the collision certain every time
+ *      rather than occasional.
  *
  * Requiring `uniqueKey` turns "did you make this unique?" into a compile error at the call
- * site, which is the only place that knows. Callers must pass something stable per image
- * (a content hash on upload, the existing basename on a move) — never a random token, or
- * re-running the migration would write a new object every pass instead of overwriting.
+ * site — the only place that knows. Pass something STABLE per image (a content hash on
+ * upload, the existing suffix on a move). Never a random token: the migration is expected
+ * to be re-runnable, and randomness would write a fresh object on every pass instead of
+ * overwriting its own.
  */
 export function buildBunnyMediaPath(opts: {
   type?: string | null;
@@ -125,7 +128,7 @@ export function buildBunnyMediaPath(opts: {
   clientSlug?: string | null;
   filename: string;
   publicId?: string | null;
-  /** REQUIRED. Stable per image — see the note above. Empty string is rejected. */
+  /** REQUIRED. Stable per image — see the note above. Empty is rejected, not defaulted. */
   uniqueKey: string;
 }): string {
   const typeFolder = MEDIA_TYPE_FOLDER[opts.type ?? "GENERAL"] ?? "general";
@@ -140,13 +143,15 @@ export function buildBunnyMediaPath(opts: {
     ? opts.publicId.split("/").pop() || opts.publicId
     : opts.filename.replace(/\.[^.]+$/, "");
 
-  // Keep Arabic (and every other script). Strip ONLY what breaks a URL path: separators,
-  // query/fragment delimiters, percent, and whitespace. Everything else is safe once the
-  // url is percent-encoded, exactly as the Arabic owner folder already is.
+  // Keep Arabic (and every other script) — it is a real SEO signal in the filename and the
+  // Arabic owner folder already proves the CDN serves it. Strip ONLY what breaks a URL
+  // path: separators, query/fragment delimiters, and whitespace. Cap the length so a long
+  // article title cannot push the object key past what the storage API accepts.
   const base =
     rawBase
       .trim()
       .replace(/[\\/?#%&+:*"'<>|\s]+/g, "-")
+      .replace(/-{2,}/g, "-")
       .replace(/^[-.]+|[-.]+$/g, "")
       .slice(0, 80) || "media";
 
