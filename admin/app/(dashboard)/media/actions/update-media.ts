@@ -78,12 +78,22 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
             });
             newSlug = client?.slug ?? null;
           }
+          // A move changes the FOLDER, never the file's identity — so reuse the unique
+          // suffix the object already carries rather than minting a new one. Objects
+          // written before the 2026-08-07 fix have no suffix; fall back to the media id,
+          // which is stable and unique per row.
+          const currentStem = decodeURIComponent(
+            current.bunnyUrl.split("?")[0].split("/").pop() ?? ""
+          ).replace(/\.[^.]+$/, "");
+          const existingKey = currentStem.match(/-([A-Za-z0-9]{6,})$/)?.[1];
+
           const newPath = buildBunnyMediaPath({
             type: data.type ?? current.type,
             scope: data.scope ?? current.scope,
             clientSlug: newSlug,
             filename: current.filename,
             publicId: current.cloudinaryPublicId,
+            uniqueKey: existingKey ?? id,
           });
           const moved = await moveBunnyMedia("clients", current.bunnyUrl, newPath);
           movedBunnyUrl = moved.url;

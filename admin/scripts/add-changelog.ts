@@ -12,12 +12,13 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.10.2 (admin) · 1.87.0 (modonty)",
-    title: "Article images fade in instead of popping in",
+    version: "1.10.3 (admin) · 0.2.2 (dataLayer)",
+    title: "Images with Arabic names no longer overwrite each other",
     items: [
-      { type: "improve" as const, text: "Every picture we upload has had a tiny blurred preview stored with it — 591 out of 591 — but nothing ever asked for it, so article covers appeared out of nowhere once loaded. The cover now shows that blurred preview instantly and sharpens into the real photo. It does not slow the real image down." },
-      { type: "fix" as const, text: "The last fallback in the image chain pointed at a file that does not exist. If an article had no cover AND its company had neither a banner nor a logo, we were handing Google a dead link. No article is in that state today — but the trap was set for the next one. It now falls back to the platform share image, then the brand logo." },
-      { type: "fix" as const, text: "The article's search-preview card inside the admin was showing a broken thumbnail for the same reason, and was reading the old image address instead of the new one." },
+      { type: "fix" as const, text: "When a picture was saved to our storage, its filename was stripped down to English letters and numbers only — so a fully Arabic name was erased and the picture was simply called \"file\". Every Arabic-named picture belonging to the same company then landed on the exact same slot and quietly replaced the one before it. Filenames now keep their Arabic, and every picture gets its own unique fingerprint, so two pictures can never share a slot again." },
+      { type: "fix" as const, text: "The three extra crops Google asks us to publish for each article picture were saved beside it under the same name, so they were overwritten too — meaning some articles were handing Google crops that belonged to a different picture entirely." },
+      { type: "improve" as const, text: "Moving a picture between companies now keeps the picture's own identity instead of inventing a new name for it." },
+      { type: "improve" as const, text: "A safety rule was added in code: any future upload path that forgets to make the filename unique will refuse to build, instead of silently overwriting a customer's image." },
     ],
   },
 ];
