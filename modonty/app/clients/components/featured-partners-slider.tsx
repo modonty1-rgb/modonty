@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "@/components/link";
 
 import { IconCheck, IconChevronRight, IconChevronLeft } from "@/lib/icons";
@@ -142,7 +142,7 @@ function PartnerSlide({ partner, priority }: { partner: FeaturedPartner; priorit
       className="relative block aspect-[6/1] min-h-[170px] w-full flex-[0_0_100%] overflow-hidden"
     >
       {cover ? (
-        <Image src={cover} alt="" fill priority={priority} sizes="100vw" className="object-cover" />
+        <OptimizedImage media={asMedia(cover)} alt="" fill {...(priority ? { preload: true } : {})} sizes="100vw" className="object-cover" />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-foreground to-[#1c1a8a]" />
       )}
@@ -164,7 +164,7 @@ function PartnerSlide({ partner, priority }: { partner: FeaturedPartner; priorit
         <div className="mx-auto flex max-w-[1128px] items-end gap-3.5 px-4 pb-4 sm:pb-5">
           <div className="relative grid h-14 w-14 flex-shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/70 bg-white shadow-lg sm:h-16 sm:w-16">
             {logo ? (
-              <Image src={logo} alt={partner.name} fill className="object-contain p-1.5" sizes="64px" />
+              <OptimizedImage media={asMedia(logo, partner.name)} alt={partner.name} fill className="object-contain p-1.5" sizes="64px" />
             ) : (
               <span className="text-xl font-black text-primary">{partner.name.slice(0, 2)}</span>
             )}

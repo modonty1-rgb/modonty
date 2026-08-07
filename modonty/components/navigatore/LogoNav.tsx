@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "next/link";
 
 import { getOptimizedLogoUrl } from "@/lib/image-utils";
@@ -23,8 +23,8 @@ export async function LogoNav({ className }: LogoNavProps) {
       aria-label={`${BRAND_AR} - الصفحة الرئيسية`}
     >
       {logoUrl ? (
-        <Image
-          src={getOptimizedLogoUrl(logoUrl)}
+        <OptimizedImage
+          media={asMedia(getOptimizedLogoUrl(logoUrl), BRAND_AR)}
           alt={BRAND_AR}
           width={351}
           height={85}

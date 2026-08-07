@@ -511,11 +511,15 @@ const IMGFLOW = [
   {id:"MI2a"},
   {id:"MI2b"},
   {id:"MI2d"},
+  {id:"ARTDEAD"},
+  {id:"ARTPREV"},
   {id:"MI2e"},
+  {id:"CLIDEAD"},
   {id:"MI2f"},
   {id:"MI2g"},
   {id:"MI2h"},
   {id:"MI2i"},
+  {id:"BL2C"},
 
   {id:"BL9"},
   // IMGDIM — متحقَّق باستعلام الإنتاج: الافتراضيات الثلاث width/height = undefined،
@@ -1115,20 +1119,13 @@ const TASKS = [
  ref:"بند ٨٣ · ١٤"},
 
 {id:"IMGDIM", b:"mediaimg", app:["admin","dataLayer"], tab:"open", sev:"high", who:"c",
- t:"الصور الافتراضية الثلاث بلا أبعاد — خطر layout shift حقيقي",
- d:"<b>متحقَّق باستعلام على قاعدة الإنتاج (٧ أغسطس):</b><br>" +
-   "<pre style='font-size:12px;margin:4px 0'>platform-default-logo   bunny ✅  HTTP 200  |  undefined x undefined\nplatform-default-post   bunny ✅  HTTP 200  |  undefined x undefined\nplatform-default-hero   bunny ✅  HTTP 200  |  undefined x undefined</pre>" +
-   "الملفات حيّة على بني، لكن حقلَي <code>width</code> و<code>height</code> فارغان في صفوفها.<br><br>" +
-
-   "<b>لماذا هذا خطر — من التوثيق المثبَّت</b> (<code>next/dist/docs/01-app/03-api-reference/02-components/image.md:102</code>):<br>" +
-   "«<i>width and height … used to infer the correct aspect ratio used by browsers to <b>reserve space</b> for the image and <b>avoid layout shift</b></i>».<br>" +
-   "فالصورة بلا أبعاد لا تحجز مساحتها، والصفحة تقفز عند تحميلها — وهو ما تقيسه غوغل باسم CLS.<br><br>" +
-
-   "<b>ومعها ينكسر حارسنا:</b> <code>OptimizedImage.tsx:95-103</code> يرمي خطأ في التطوير لأي صورة بلا <code>fill</code> وبلا أبعاد — فالصورة الافتراضية تُسقط الصفحة في التطوير أو تمرّ بلا حجز في الإنتاج، حسب موضع استعمالها.<br><br>" +
-
-   "<b>الأثر اليوم محدود:</b> تُستعمل فقط حين لا يملك المقال ولا عميله أي صورة — صفر حالة الآن (متحقَّق: مقال منشور واحد بلا غلاف، وعميله له هيرو). لكنها الحلقة الأخيرة في سلسلة الاحتياط، فأول حالة تصلها ترث القفزة.<br><br>" +
-
-   "<b>الحلّ:</b> قراءة الأبعاد الحقيقية من الملفات الثلاثة على بني وكتابتها في صفوفها — وإضافة الأبعاد إلى ما يُرجعه <code>getPlatformDefaultImages()</code> (<code>dataLayer/lib/platform-defaults.ts</code>) بدل الرابط وحده، حتى يصل الحجز إلى كل مستهلك.",
+ t:"<b>29</b> صفّاً على الإنتاج بلا أبعاد — لا ٣ كما كان مكتوباً",
+ d:"<b>⚠ صُحِّح ٨ أغسطس — الرقم القديم (٣) كان ناقصاً، والسبب فخّ مونجو المسجَّل.</b><br><br>" +
+   "<b>القياس (عدّ للقراءة فقط على قاعدة الإنتاج، ٨ أغسطس):</b>" +
+   "<pre style='font-size:12px;margin:4px 0'>platform-default-post   undefined × undefined   blur ✅  bunny ✅\nplatform-default-hero   undefined × undefined   blur ✅  bunny ✅\nplatform-default-logo   undefined × undefined   blur ✅  bunny ✅\n\nكل الوسائط بلا أبعاد: 29/592</pre>" +
+   "<b>الخطأ الذي كدتُ أقع فيه:</b> استعلامي الأول كان <code>OR: [{width: null}, {height: null}]</code> فأرجع <b>صفر</b> — بينما البطاقات الثلاث أمامي فارغة. السبب أنّ الحقل <b>غائب</b> لا <code>null</code>، ومونجو لا يطابق الغائب بـ<code>null</code>. بعد إضافة <code>isSet:false</code> ظهر الرقم الحقيقي: <b>٢٩</b>.<br><br>" +
+   "<b>لماذا يهمّ:</b> <code>width</code>/<code>height</code> هما ما يحجز المساحة قبل وصول الصورة. بدونهما تقفز الصفحة عند التحميل (<code>layout shift</code>) — والقفز عامل ترتيب في Google.<br><br>" +
+   "<b>الشغل:</b> قراءة أبعاد الملفات الـ٢٩ من بني وكتابتها في الصفوف — خطوة داخل Run-All لا سكربت منفصل.",
  ref:"٧ أغسطس"},
 
 {id:"BNOPT", b:"bunny", app:["modonty"], tab:"open", sev:"high", who:"k",
@@ -1413,9 +1410,16 @@ const TASKS = [
  d:"<b>منجز ومتحقَّق بتست حيّ ٦ أغسطس.</b> خطوة جديدة <b>Image Blur Placeholders</b> في <code>run-all-maintenance.ts</code> (<code>runStepBlurBackfill</code>) تعتمد على <code>database/actions/blur-backfill.ts</code> — دفعات ٥٠، وتستثني الفيديو.<br><b>ليش لزمت رغم أن الترحيل يولّدها:</b> <code>generateBlurDataUrl</code> يرجّع <code>null</code> بدل أن يرمي، فملفٌ تالف أو صيغةٌ غريبة تُرحَّل بـ<code>bunnyUrl</code> وبلا ضبابة — والترحيل يستثني كل صفّ عنده <code>bunnyUrl</code>، فلا يمرّ عليه ثانية أبداً. <b>ثغرة دائمة وصامتة</b> ما كنّا لنكتشفها إلا من زائر يشوف مربّعاً فاضياً.<br><b>الدليل:</b> مسحتُ عمداً ضبابة ثلاثة صفوف مُرحَّلة (محاكاة الفشل)، فصارت الثغرة ٣. شغّلتُ Run-All من <code>/maintenance</code> فعادت <b>٣ من ٣</b> والثغرة رجعت صفراً — وبنفس المقاسات بالضبط (<code>10x5</code> · <code>10x2</code> · <code>10x2</code>)، أي أن المولّد حتميّ لا عشوائي.<br>القاعدة المعمول بها: أي صيانة جديدة تدخل Run-All لا سكربتاً منفصلاً.",
  ref:"بند ٦٥b"},
 
-{id:"BL9", b:"projects", app:["modonty"], tab:"open", sev:"high", who:"c",
- t:"تمرير الضبابة في مكوّني الصور",
- d:"<b>متحقَّق ٦ أغسطس:</b> <code>OptimizedImage.tsx:124</code> و<code>fullOptmizeImage.tsx:459</code> يمرّران <code>placeholder</code> و<code>blurDataURL</code> لـ<code>next/image</code> <b>أصلاً</b> — الخاصّيتان موجودتان في الواجهة ولا أحد يعبّيهما.<br>الشغل هنا: توصيل القيمة من طبقة البيانات، والافتراضي <code>placeholder=\"blur\"</code> حين تتوفّر. <b>ينفَّذ بعد <code>BL2</code></b> — المترجم يدلّ على الـ٥١ ملفاً.",
+{id:"BL9", b:"projects", app:["modonty","dataLayer"], tab:"done", sev:"high", who:"c", date:"٨ أغسطس",
+ t:"تمرير الضبابة في مكوّني الصور — <b>اكتمل تحت اسم آخر</b>",
+ d:"<b>✅ أُقفل ٨ أغسطس بعد مراجعة كاملة — لم يُنفَّذ كما كُتب، بل تجاوزته البنية.</b><br><br>" +
+   "<b>البند كان يطلب:</b> «وصّل القيمة من طبقة البيانات لـ<code>OptimizedImage.tsx:124</code> و<code>fullOptmizeImage.tsx:459</code>».<br><br>" +
+   "<b>ما حصل فعلاً — بأربعة أدلّة:</b><br>" +
+   "① <b>الملفّان اللذان يسمّيهما محذوفان</b> — ماتا في <code>MI3</code> (٦١٣ سطراً)، وحلّ محلّهما مكوّن واحد مشترك في <code>dataLayer</code>.<br>" +
+   "② <b>الضبابة تُشتقّ تلقائياً</b> — <code>optimized-image.tsx:145-147</code>: يقرأها من الصفّ ويفعّل <code>placeholder=\"blur\"</code> وحده. لا أحد يعبّيها يدوياً، وهذا أقوى من المطلوب.<br>" +
+   "③ <b>«التوصيل من طبقة البيانات» = <code>BL2</code></b> — جعل <code>blurDataURL</code> مفتاحاً <b>إلزامياً</b>، فصار إسقاطه خطأ تصريف لا سهواً صامتاً.<br>" +
+   "④ <b>التغطية على الإنتاج ٥٩٢/٥٩٢ (١٠٠٪)</b> — قياس ٨ أغسطس.<br><br>" +
+   "<b>الدرس:</b> بندٌ يسمّي ملفات بعينها يصير قديماً حين تتغيّر البنية. المراجعة الدورية تلزم، وإلا بقي معلّقاً وهو منجَز.",
  ref:"بند ٦٥b"},
 
 {id:"BL10", b:"projects", app:["modonty"], tab:"open", sev:"normal", who:"c",
@@ -1433,7 +1437,7 @@ const TASKS = [
    "<b>قرار خالد ٦ أغسطس، حرفياً:</b> «الـapplication شغال live… إذا في أي خطورة ومنت واثق، فلا تخلينا نغامر».<br><br><b>ليش الانتظار — سببان من الكود لا من الحذر وحده:</b><br>① <code>OptimizedImage.tsx:44</code> يفحص <code>url.includes('res.cloudinary.com')</code>، و<code>:55</code> يحقن <code>d_article-placeholder-default</code>. طول ما الإنتاج يقرأ روابط Cloudinary فهذا المنطق حيّ ولازم يبقى — فبناء المكوّن الآن يعني حمل كودٍ نعرف أنه سيموت، وبند <code>65</code> (حذف البارام) لا يُنفَّذ قبل الترحيل.<br>② الترحيل ناقص ودفعة النشر معلّقة. تغييرٌ في ٧٠ ملفاً فوقهما يجعل أي تراجع مجهول المصدر.<br><br><b>ما لم أتحقّق منه بعد — وهو أكبر مجهول:</b> هل مكوّن في <code>dataLayer</code> يقدر يستورد <code>next/image</code> أصلاً. المكوّنات الثلاثة هناك كلها <code>\"use client\"</code> ولا واحد منها يستورد من <code>next/*</code>، و<code>next</code> ليست تبعية في <code>dataLayer/package.json</code>. <b>يُثبَت أول خطوة عند الاستئناف.</b><br><br><b>المخاطر التي يحرسها هذا التأجيل:</b> ١٦ ملفاً فيها <code>priority</code> (صورة الـLCP في كل مقال — خطأ تمرير واحد = تراجع سيو على الموقع كله) · ٤٧ استخدام <code>fill</code> (تمرير خاطئ يُسقط الارتفاع لصفر <b>بصمت</b>، والمترجم لا يمسكه) · و٥٠ سيرفر كومبونت تنقلب عميلة لو نزل المكوّن بـ<code>\"use client\"</code>.<br><br><b>أثر جانبي مقصود:</b> بندا <code>BL2</code> و<code>BL9</code> (عرض الضبابة للزائر) يمشيان مع الأقسام لا قبلها — لأنهما يمسّان نفس الملفات. <b>فالضبابة اليوم: مخزّنة وجاهزة ✅ · معروضة للزائر بعد الترحيل.</b><br><br><b>عند الاستئناف — الترتيب:</b> <code>MI-RISK</code> (تُدرَس المخاطر أولاً) ← <code>MI1</code> (نقل وإثبات) ← <code>MI2a</code> (ملفان، قياس LCP قبل/بعد) ← بقيّة الأقسام واحداً واحداً ← <code>MI3</code> الحذف ← <code>MI4</code> التست الشامل.",
  ref:"مكوّن الصور"},
 
-{id:"MI-RISK", b:"mediaimg", app:["modonty","dataLayer"], tab:"open", sev:"critical", who:"c",
+{id:"MI-RISK", b:"mediaimg", app:["modonty","dataLayer"], tab:"ref", sev:"critical", who:"c",
  t:"سجلّ المخاطر — يُدرَس بنداً بنداً قبل أول سطر كود",
  d:"<h4 style='margin:0 0 6px'>🔴 أربعة آثار مقيسة للتوحيد — أُضيفت ٧ أغسطس</h4>" +
    "<b>سؤال خالد كان: «هل فيه side effect؟» — والجواب مقيس لا مُخمَّن.</b><br><br>" +
@@ -1462,7 +1466,7 @@ const TASKS = [
    "<b>بطلب خالد ٦ أغسطس:</b> كل مخافةٍ ذُكرت في النقاش تُسجَّل هنا صراحةً ولكلٍّ اختبارُ إثباتها. <b>لا يبدأ <code>MI1</code> قبل إغلاق كل سطر.</b> الأرقام أدناه <b>متحقَّقة ٦ أغسطس</b> بعدٍّ فعلي على المستودع (المصادر في <code>MI0</code>).<div class=\"cklist\"><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-1-nextimage-in-datalayer\"><code>١ · هل يستورد مكوّن في dataLayer من next/image أصلاً؟</code><span class=\"ckm\">مجهول تام</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-2-server-boundary\"><code>٢ · هل يبقى سيرفر كومبونت بعد النقل؟ (٥٠ ملفاً تنقلب لو لا)</code><span class=\"ckm\">حرج</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-3-lcp-priority\"><code>٣ · قياس LCP قبل/بعد على صفحة مقال — ١٦ ملفاً فيها priority</code><span class=\"ckm\">سيو</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-4-fill-collapse\"><code>٤ · ٤٧ استخدام fill — تمرير خاطئ يُسقط الارتفاع لصفر بصمت</code><span class=\"ckm\">صامت</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-5-peer-next\"><code>٥ · next كـpeerDependency في dataLayer — أثرها على البناء</code><span class=\"ckm\">بناء</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-6-cloudinary-dead\"><code>٦ · حذف optimizeCloudinaryUrl — بعد بند 65 لا قبله</code><span class=\"ckm\">تسلسل</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-7-bundle-size\"><code>٧ · حجم باندل الزائر قبل/بعد — الأداء #١ على مودونتي</code><span class=\"ckm\">أداء</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-8-raw-img\"><code>٨ · قرار الوسم الخام: team-avatar متعمَّد — يُبقى أم يُسمح المضيف؟</code><span class=\"ckm\">قرار</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-9-blast-radius\"><code>٩ · قسم واحد لكل دفعة — لا دمج قسمين قبل تست السابق</code><span class=\"ckm\">انضباط</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-10-rollback\"><code>١٠ · خطة تراجع: كل قسم كوميت مستقلّ يُرجَع وحده</code><span class=\"ckm\">تراجع</span></label></div><br><b>كيف يُغلَق كلٌّ منها:</b> ①②⑤ بملفٍ تجريبي واحد في dataLayer قبل أي هجرة — أرخص إثبات وأخطر مجهول · ③⑦ بقياس Lighthouse قبل/بعد على نفس الصفحة · ④ بلقطة بصرية لكل قسم · ⑥⑧ قراران لا اختباران · ⑨⑩ انضباط تنفيذ.<br><b>سند الخطر ②:</b> مكوّنات <code>dataLayer/components</code> الثلاثة كلها <code>\"use client\"</code> ولا واحد يستورد من <code>next/*</code> — متحقَّق.",
  ref:"مكوّن الصور"},
 
-{id:"MI0", b:"mediaimg", app:["modonty","dataLayer"], tab:"open", sev:"high", who:"c",
+{id:"MI0", b:"mediaimg", app:["modonty","dataLayer"], tab:"ref", sev:"high", who:"c",
  t:"مرجع — عقد مكوّن الصور + جرد الاحتياجات",
  d:"<h4 style='margin:0 0 6px'>عقد الكومبوننت — معتمد ٧ أغسطس</h4>" +
    "<b>كل بند وجنبه مصدره: «نصّ» = مكتوب حرفياً في توثيق <code>next@16.2.9</code> المثبَّت · «اجتهاد» = قرار هندسي لا نصّ فيه.</b><br><br>" +
@@ -1514,14 +1518,18 @@ const TASKS = [
 /* بند MI2 العام حُذف ٦ أغسطس — البطاقات MI2a…MI2i تغطّيه ملفاً ملفاً، وإبقاؤه
    يعني عدّاداً كاذباً وبنداً لا يُقفل أبداً. الترتيب المقصود: MI2a ثم MI2b ثم البقية. */
 
-{id:"MI2a", b:"mediaimg", app:["modonty"], tab:"open", sev:"high", who:"c",
+{id:"MI2a", b:"mediaimg", app:["modonty"], tab:"done", sev:"normal", who:"c", date:"٧ أغسطس",
  t:"الخليط — يستوردان الاثنين في ملف واحد — 2 ملفاً",
- d:"<b>أوضح خطأ في المستودع</b> — نفس الملف يرسم صوراً بطريقتين. يُنفَّذ أولاً.<div class=\"cklist\"><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/articles/[slug]/components/article-lab-client-card.tsx\"><code>app/articles/[slug]/components/article-lab-client-card.tsx</code><span class=\"ckm\">سيرفر·3×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/feed/postcard/PostCardHeroImage.tsx\"><code>components/feed/postcard/PostCardHeroImage.tsx</code><span class=\"ckm\">سيرفر·2×</span></label></div>",
+ d:"<b>✅ أُغلق ضمن <code>MI2c</code> (٧ أغسطس)</b> — <code>article-lab-client-card.tsx</code> و<code>PostCardHeroImage.tsx</code> حُوِّلا هناك، فلم يبقَ فيهما استيراد مزدوج.<br><br>" +
+   "<b>الدليل:</b> صفر <code>next/image</code> في مودونتي كلّها بعد <code>MI2i</code>، عدا <code>hero-warm.tsx</code> (<code>getImageProps</code>، خارج النطاق).",
  ref:"مكوّن الصور"},
 
-{id:"MI2b", b:"mediaimg", app:["modonty"], tab:"open", sev:"high", who:"c",
- t:"الوسم الخام <code>&lt;img&gt;</code> — 2 ملفاً",
- d:"<b>خارج <code>next/image</code> تماماً</b> — بلا تحسين ولا ضبابة. <code>team-avatar</code> متعمَّد (التعليق فيه يوثّق أن مضيفاً غير مُصرَّح به يسقّط الصفحة)، فالقرار فيه: نُبقيه أم نضيف المضيف للسماح.<br><b>ملاحظة على القياس:</b> جردي الأول قال «صفر وسم خام» لأن بحثي كان <code>&lt;img </code> بمسافة، والوسوم متعدّدة الأسطر فاتته.<div class=\"cklist\"><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/components/sections/team-avatar.tsx\"><code>app/clients/[slug]/components/sections/team-avatar.tsx</code><span class=\"ckm\">متعمَّد — مضيف غير مُصرَّح به يسقّط next/image</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/trust/page.tsx\"><code>app/trust/page.tsx</code><span class=\"ckm\">شهادة قانونية — يُراجَع</span></label></div>",
+{id:"MI2b", b:"mediaimg", app:["modonty"], tab:"done", sev:"normal", who:"c", date:"٨ أغسطس",
+ t:"الوسم الخام <code>&lt;img&gt;</code> — 2 ملفاً ← <b>كلاهما استثناء صحيح، لا يُحوَّل</b>",
+ d:"<b>✅ حُسِم ٨ أغسطس بعد الفحص: لا تحويل، والسبب هندسي لا كسل.</b><br><br>" +
+   "① <code>team-avatar.tsx</code> — صورة عضو الفريق يرفعها <b>العميل من أي مضيف</b>. و<code>next/image</code> <b>يُسقط الصفحة</b> على مضيف غير مُدرَج في <code>remotePatterns</code>. الوسم الخام + <code>onError</code> يتراجع إلى الحرف الأول. تحويله يعني كسر صفحة العميل عند أول رابط خارجي.<br>" +
+   "② <code>trust/page.tsx:172</code> — <code>/modonty-mark.svg</code>، ملفّ SVG محلّي. و<code>next/image</code> لا يحسّن SVG إلا بتفعيل <code>dangerouslyAllowSVG</code>، فالتحويل يزيد المخاطرة بلا مكسب.<br><br>" +
+   "<b>كلاهما يحمل <code>eslint-disable @next/next/no-img-element</code> — أي أنّ القرار كان واعياً منذ كُتِب.</b>",
  ref:"مكوّن الصور"},
 
 {id:"MI2c", b:"mediaimg", app:["modonty"], tab:"done", sev:"normal", who:"c", date:"٧ أغسطس",
@@ -1536,34 +1544,89 @@ const TASKS = [
    "<b>ومات معها:</b> <code>optimizeCloudinaryImage</code> و<code>generateBlurDataURL</code> (٤٥ سطراً من <code>category-utils.ts</code>) — والأولى كانت <b>لا تفعل شيئاً أصلاً</b>: ٤٦ صورة كيان على الإنتاج، صفر منها Cloudinary.<div class=\"cklist\"><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/categories/[slug]/components/category-article-card.tsx\"><code>app/categories/[slug]/components/category-article-card.tsx</code><span class=\"ckm\">سيرفر·3×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/categories/[slug]/components/category-article-list-item.tsx\"><code>app/categories/[slug]/components/category-article-list-item.tsx</code><span class=\"ckm\">سيرفر·3×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/articles/[slug]/components/article-lab-gallery.tsx\"><code>app/articles/[slug]/components/article-lab-gallery.tsx</code><span class=\"ckm\">عميل·2×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/news/components/news-article-list.tsx\"><code>app/news/components/news-article-list.tsx</code><span class=\"ckm\">سيرفر·2×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/articles/[slug]/components/article-featured-image.tsx\"><code>app/articles/[slug]/components/article-featured-image.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/articles/[slug]/components/article-image-gallery.tsx\"><code>app/articles/[slug]/components/article-image-gallery.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/articles/[slug]/components/article-lab-read-more.tsx\"><code>app/articles/[slug]/components/article-lab-read-more.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/articles/[slug]/components/article-manual-related.tsx\"><code>app/articles/[slug]/components/article-manual-related.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/articles/[slug]/components/more-from-author.tsx\"><code>app/articles/[slug]/components/more-from-author.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/articles/[slug]/components/more-from-client.tsx\"><code>app/articles/[slug]/components/more-from-client.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/articles/[slug]/components/related-articles.tsx\"><code>app/articles/[slug]/components/related-articles.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/categories/[slug]/components/category-detail-hero.tsx\"><code>app/categories/[slug]/components/category-detail-hero.tsx</code><span class=\"ckm\">سيرفر·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/categories/components/enhanced-category-card.tsx\"><code>app/categories/components/enhanced-category-card.tsx</code><span class=\"ckm\">سيرفر·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/components/article-list.tsx\"><code>app/clients/[slug]/components/article-list.tsx</code><span class=\"ckm\">عميل·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/components/client-photos-preview.tsx\"><code>app/clients/[slug]/components/client-photos-preview.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/components/hero/hero-cover.tsx\"><code>app/clients/[slug]/components/hero/hero-cover.tsx</code><span class=\"ckm\">سيرفر·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/components/sections/client-articles-section.tsx\"><code>app/clients/[slug]/components/sections/client-articles-section.tsx</code><span class=\"ckm\">سيرفر·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/reels/page.tsx\"><code>app/clients/[slug]/reels/page.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/story/PartnersShowcase.tsx\"><code>app/story/PartnersShowcase.tsx</code><span class=\"ckm\">عميل·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/story/TeamCarousel.tsx\"><code>app/story/TeamCarousel.tsx</code><span class=\"ckm\">عميل·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/feed/TrendingArticles.tsx\"><code>components/feed/TrendingArticles.tsx</code><span class=\"ckm\">سيرفر·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/shared/EntityCard.tsx\"><code>components/shared/EntityCard.tsx</code><span class=\"ckm\">سيرفر·1×</span></label></div>",
  ref:"مكوّن الصور"},
 
-{id:"MI2d", b:"mediaimg", app:["modonty"], tab:"open", sev:"normal", who:"c",
- t:"next/image — المقال — 5 ملفاً",
- d:"5 ملفاً · 3 مكوّن عميل · 2 يستدعي <code>mediaSrc</code> يدوياً.<div class=\"cklist\"><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/articles/design-preview/page.tsx\"><code>app/articles/design-preview/page.tsx</code><span class=\"ckm\">عميل·7×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/articles/[slug]/components/sidebar/article-client-card.tsx\"><code>app/articles/[slug]/components/sidebar/article-client-card.tsx</code><span class=\"ckm\">سيرفر·3×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/articles/[slug]/components/article-lab-bottom-dock.tsx\"><code>app/articles/[slug]/components/article-lab-bottom-dock.tsx</code><span class=\"ckm\">عميل·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/articles/[slug]/components/article-lab-mobile-identity.tsx\"><code>app/articles/[slug]/components/article-lab-mobile-identity.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/articles/[slug]/components/article-mobile-engagement-bar.tsx\"><code>app/articles/[slug]/components/article-mobile-engagement-bar.tsx</code><span class=\"ckm\">عميل·1×</span></label></div>",
+{id:"MI2d", b:"mediaimg", app:["modonty"], tab:"done", sev:"normal", who:"c", date:"٨ أغسطس",
+ t:"next/image — المقال — 5 ملفات ← <b>٢ حيّة · ٢ ميتة · ١ خارج النطاق</b>",
+ d:"<b>✅ مُقفَل ٨ أغسطس — صفر <code>next/image</code> في <code>app/articles/[slug]/</code>.</b><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>الـ٥ الأصلية:\n  حيّة، حُوِّلت واختُبرت : 2\n  ميتة (حُوِّلت هدراً)  : 2\n  خارج النطاق بالتصميم : 1</pre>" +
+   "<b>الحيّان:</b> <code>article-lab-bottom-dock.tsx</code> و<code>article-lab-mobile-identity.tsx</code> — كلاهما يصله الشعار <b>نصّاً</b> من <code>page.tsx:658</code> عبر <code>mediaSrc()</code>، فأخذا <code>asMedia()</code>. وهذا <b>صواب لا تنازل</b>: الضبابة على شعار ٤٤ بكسل غير مرئية أصلاً، ونفس ما استقرّ عليه <code>PostCardHeroImage</code> في <code>MI2c</code>.<br><br>" +
+   "<b>وعطلٌ حقيقي انكشف بالتحويل:</b> <code>article-mobile-engagement-bar.tsx:89</code> كان <code>&lt;Image&gt;</code> <b>بلا <code>sizes</code> إطلاقاً</b>. المكوّن المشترك يجعل ذلك خطأ تصريف (القاعدة ٣) بدل افتراض <code>100vw</code> صامت.<br><br>" +
+   "<b>الدليل الحيّ (٨ أغسطس، <code>tsc</code> صفر):</b>" +
+   "<pre style='font-size:12px;margin:4px 0'>جوال 390px  : 27 صورة · 0 مكسورة · 0 بلا sizes · 27/27 q=75 · 2 preload\nسطح 1280px  : 21 صورة · 0 مكسورة · 0 بلا sizes · 21/21 q=75\nالكونسول    : 5 أخطاء، كلّها JWTSessionError (كوكي جلسة قديم) · صفر خطأ صورة</pre>" +
+   "<b>⚠ وأخطأتُ هنا مرّتين — الاعتراف جزء من البند:</b> حوّلتُ ملفَّين ميتَين قبل أن أُكمل الجرد، تماماً كما حصل في الدفعة الأولى من <code>MI2c</code>. السبب أنّ جردي <b>توقّف عند المستهلك المباشر</b> بدل أن يصل إلى مسار.<br><br>" +
+   "<b>القاعدة المشدَّدة (تصحيح لقاعدة <code>MI2c</code>):</b> الجرد يتتبّع السلسلة <b>حتى ملفّ مسار</b> (<code>page.tsx</code>/<code>layout.tsx</code>)، و<b>إعادة التصدير في ملفّ براميل ليست استهلاكاً</b> — <code>index.ts</code> و<code>client-lazy.tsx</code> يُعيدان تصدير مكوّنات لا يستوردها أحد، فتبدو حيّة لـ<code>grep</code> وهي ميتة.",
  ref:"مكوّن الصور"},
 
-{id:"MI2e", b:"mediaimg", app:["modonty"], tab:"open", sev:"normal", who:"c",
- t:"next/image — صفحة العميل — 12 ملفاً",
- d:"12 ملفاً · 4 مكوّن عميل · 5 يستدعي <code>mediaSrc</code> يدوياً.<div class=\"cklist\"><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/components/shell-hero/client-hero-v2.tsx\"><code>app/clients/[slug]/components/shell-hero/client-hero-v2.tsx</code><span class=\"ckm\">سيرفر·2×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/components/client-card.tsx\"><code>app/clients/components/client-card.tsx</code><span class=\"ckm\">سيرفر·2×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/components/featured-partners-slider.tsx\"><code>app/clients/components/featured-partners-slider.tsx</code><span class=\"ckm\">عميل·2×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/book/page.tsx\"><code>app/clients/[slug]/book/page.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/components/client-bottom-bar.tsx\"><code>app/clients/[slug]/components/client-bottom-bar.tsx</code><span class=\"ckm\">عميل·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/components/client-verified-credentials.tsx\"><code>app/clients/[slug]/components/client-verified-credentials.tsx</code><span class=\"ckm\">سيرفر·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/components/hero/hero-avatar.tsx\"><code>app/clients/[slug]/components/hero/hero-avatar.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/components/sections/client-gallery-section.tsx\"><code>app/clients/[slug]/components/sections/client-gallery-section.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/components/sections/client-results-section.tsx\"><code>app/clients/[slug]/components/sections/client-results-section.tsx</code><span class=\"ckm\">سيرفر·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/components/sections/client-video-embed.tsx\"><code>app/clients/[slug]/components/sections/client-video-embed.tsx</code><span class=\"ckm\">عميل·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/[slug]/components/sections/gallery-lightbox-overlay.tsx\"><code>app/clients/[slug]/components/sections/gallery-lightbox-overlay.tsx</code><span class=\"ckm\">عميل·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/clients/components/featured-client-card.tsx\"><code>app/clients/components/featured-client-card.tsx</code><span class=\"ckm\">سيرفر·1×</span></label></div>",
+{id:"ARTDEAD", b:"mediaimg", app:["modonty"], tab:"done", sev:"high", who:"c", date:"٨ أغسطس",
+ t:"حذف 6 ملفات ميتة في المقال — <b>748 سطراً</b>",
+ d:"<b>✅ حُذفت ٨ أغسطس بإذن خالد الصريح: «No dead code… تأكد مليون في المية إنه مش مستخدم عشان ما يكون فيه أي crash».</b><br><br>" +
+   "<b>جذران، كلٌّ يجرّ فروعه:</b><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>article-mobile-layout.tsx            91   ← جذر، صفر مستورد\n  article-mobile-engagement-bar.tsx  177\n  article-mobile-sidebar-sheet.tsx   203\n  sidebar/article-client-card.tsx    132\narticle-sidebar-engagement.tsx        95   ← جذر، صفر مستورد\n  article-engagement-metrics.tsx      50\n─────────────────────────────────────────\n                                     748 سطراً</pre>" +
+   "<b>كيف تأكّدتُ «مليون في المية» — أربع طبقات:</b><br>" +
+   "① <code>grep -rnw</code> على كل اسم عبر <b>التطبيقات الأربعة</b> (لا مودونتي وحدها) وبكل الامتدادات — كل ذكر إمّا تعريف، أو إعادة تصدير في براميل، أو استيراد من داخل الشجرة الميتة نفسها.<br>" +
+   "② بحث عن <code>import *</code> و<code>export *</code> قد يسحبها ضمناً — <b>صفر</b> في مجلّد المقال.<br>" +
+   "③ بحث نصّي عن <b>مسار</b> كل ملف (الاستيراد الديناميكي يُخفي الاسم) — صفر إشارة خارجية.<br>" +
+   "④ <b>الحَكَم الميكانيكي:</b> <code>tsc</code> صفر + <b>بناء إنتاج كامل ناجح</b> — <code>259/259</code> صفحة · صفر <code>Module not found</code> · صفر <code>Failed to compile</code>.<br><br>" +
+   "<b>والتست الحيّ بعد الحذف مطابق لما قبله:</b> ٢٧ صورة · صفر مكسورة · صفر بلا <code>sizes</code> · ٢٧/٢٧ <code>q=75</code> · ٢ preload · صفر <code>error boundary</code>. أخطاء الكونسول ٥ وكلّها <code>JWTSessionError</code> (كوكي جلسة قديم).<br><br>" +
+   "<b>ونُظِّف معها:</b> ٩ سطور إعادة تصدير في <code>components/index.ts</code> و<code>sidebar/index.ts</code> و<code>client-lazy.tsx</code>.<br><br>" +
+   "<b>الخدعة التي كشفها هذا البند:</b> <code>client-lazy.tsx</code> كان يلفّ الجذرَين بـ<code>dynamic()</code> — وهذا يجعلهما يبدوان حيَّين تماماً لأي قراءة سريعة، بل ويحمل تعليق أداء عن <code>CLS 0.083</code>. لكن <code>page.tsx</code> يستورد ٤ أسماء من أصل ٧، وليسا منها.",
  ref:"مكوّن الصور"},
 
-{id:"MI2f", b:"mediaimg", app:["modonty"], tab:"open", sev:"normal", who:"c",
- t:"next/image — الخلاصة والأشرطة — 10 ملفاً",
- d:"10 ملفاً · 1 مكوّن عميل · 0 يستدعي <code>mediaSrc</code> يدوياً.<div class=\"cklist\"><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/media/fullOptmizeImage.tsx\"><code>components/media/fullOptmizeImage.tsx</code><span class=\"ckm\">سيرفر·5×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/layout/RightSidebar/HeroSlider.tsx\"><code>components/layout/RightSidebar/HeroSlider.tsx</code><span class=\"ckm\">سيرفر·2×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/shared/client-card.tsx\"><code>components/shared/client-card.tsx</code><span class=\"ckm\">سيرفر·2×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/feed/postcard/PostCardAvatar.tsx\"><code>components/feed/postcard/PostCardAvatar.tsx</code><span class=\"ckm\">سيرفر·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/layout/LeftSidebar/DiscoveryCard.tsx\"><code>components/layout/LeftSidebar/DiscoveryCard.tsx</code><span class=\"ckm\">سيرفر·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/layout/RightSidebar/NewClientItem.tsx\"><code>components/layout/RightSidebar/NewClientItem.tsx</code><span class=\"ckm\">سيرفر·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/media/hero-warm.tsx\"><code>components/media/hero-warm.tsx</code><span class=\"ckm\">عميل·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/media/OptimizedImage.tsx\"><code>components/media/OptimizedImage.tsx</code><span class=\"ckm\">سيرفر·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/navigatore/LogoNav.tsx\"><code>components/navigatore/LogoNav.tsx</code><span class=\"ckm\">سيرفر·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/shared/ListingHero.tsx\"><code>components/shared/ListingHero.tsx</code><span class=\"ckm\">سيرفر·1×</span></label></div>",
+{id:"ARTPREV", b:"mediaimg", app:["modonty"], tab:"done", sev:"normal", who:"c", date:"٨ أغسطس",
+ t:"حذف صفحة <code>articles/design-preview</code> — <b>1071 سطراً</b>",
+ d:"<b>✅ حُذفت ٨ أغسطس — كانت تُبنى في كل نشرة ولا يفتحها أحد.</b><br><br>" +
+   "<b>الدليل أنّها ميتة:</b> <code>https://www.modonty.com/articles/design-preview</code> يرجع <b>HTTP 410</b>، ونفس الشيء محلّياً — البروكسي يعاملها كسلَگ مقال مؤرشف قبل أن يصل التوجيه إلى المسار الثابت. فالحذف <b>لا يغيّر شيئاً للزائر</b>؛ يشيل صفحة كانت مبنيّة ومقفلة.<br><br>" +
+   "<b>الإثبات العددي:</b> البناء نزل من <code>260/260</code> إلى <code>259/259</code> صفحة — صفحة واحدة بالضبط، هي هي.<br><br>" +
+   "<b>ونُظِّف معها:</b> نمط <code>images.unsplash.com</code> من <code>next.config.ts</code> — كانت هذه الصفحة مستهلكه الوحيد (تعليق الإعدادات نفسه يقول «design-preview only»)، وصفر استخدام لـUnsplash في الكود بعدها.<br><br>" +
+   "<b>ولم تُحوَّل إلى المكوّن المشترك عمداً:</b> ترويستها نصّت «مستقل كلياً — zero imports من كود المشروع»، فتحويلها كان سيكسر عقدها بنفسه.",
  ref:"مكوّن الصور"},
 
-{id:"MI2g", b:"mediaimg", app:["modonty"], tab:"open", sev:"normal", who:"c",
- t:"next/image — القصة والمساعد والريلز — 8 ملفاً",
- d:"8 ملفاً · 8 مكوّن عميل · 0 يستدعي <code>mediaSrc</code> يدوياً.<div class=\"cklist\"><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/reels/components/reels-feed-client.tsx\"><code>app/reels/components/reels-feed-client.tsx</code><span class=\"ckm\">عميل·3×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/story/SalesPitchPage.tsx\"><code>app/story/SalesPitchPage.tsx</code><span class=\"ckm\">عميل·3×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/story/Vision2030Spotlight.tsx\"><code>app/story/Vision2030Spotlight.tsx</code><span class=\"ckm\">عميل·2×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/chatbot/ArticleChatbotContent.tsx\"><code>components/chatbot/ArticleChatbotContent.tsx</code><span class=\"ckm\">عميل·2×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/story/LogoSpotlight.tsx\"><code>app/story/LogoSpotlight.tsx</code><span class=\"ckm\">عميل·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/chatbot/ChatFloatingButton.tsx\"><code>components/chatbot/ChatFloatingButton.tsx</code><span class=\"ckm\">عميل·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/chatbot/ChatSheet.tsx\"><code>components/chatbot/ChatSheet.tsx</code><span class=\"ckm\">عميل·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"components/chatbot/ChatTriggerButton.tsx\"><code>components/chatbot/ChatTriggerButton.tsx</code><span class=\"ckm\">عميل·1×</span></label></div>",
+{id:"MI2e", b:"mediaimg", app:["modonty"], tab:"done", sev:"normal", who:"c", date:"٨ أغسطس",
+ t:"next/image — صفحة العميل — 12 ملفاً ← <b>٩ حيّة · ٢ ميتة · ١ محذوف سلفاً</b>",
+ d:"<b>✅ مُقفَل ٨ أغسطس — صفر <code>next/image</code> في <code>app/clients/</code>.</b><br><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>الـ12 المكتوبة:\n  حيّة، حُوِّلت      : 9\n  ميتة (حُذفت)      : 2\n  محذوف في MI2c سلفاً: 1  (hero-avatar.tsx)</pre>" +
+   "<b>مكسبان حقيقيان لا مجرّد تبديل استيراد:</b><br>" +
+   "① <code>client-hero-v2.tsx</code> و<code>client-gallery-section.tsx</code> و<code>gallery-lightbox-overlay.tsx</code> كانت <b>تسطّح الصفّ بـ<code>mediaSrc()</code></b> فتقتل الضبابة قبل أن يراها المكوّن — نفس عطل <code>client-page-shell</code> في <code>MI2c</code>. صارت تمرّر الصفّ، <b>وتصحيحٌ لصياغة كتبتُها أولاً:</b> قلتُ «فربح الغلاف والمعرض ضبابتهما» كأنّه مشاهَد، ولم يكن — التست المحلّي أظهر <b>صفر ضبابة</b> على كل الصفحات. والسبب <b>بيانات dev لا الكود</b>: قياس ٨ أغسطس (عدّ للقراءة فقط، صفر كتابة) — <code>modonty_dev</code> ٤٩/٥٨٧ صفّاً لها ضبابة (٨٪) بينما <b>الإنتاج ٥٩٢/٥٩٢ (١٠٠٪)</b>. فالمسار سليم، والضبابة تُرسم على الإنتاج حيثما حملها الصفّ.<br>" +
+   "② <code>priority</code> صار <code>preload</code> في الغلاف والعارض — القاعدة ٤ من عقد المكوّن.<br><br>" +
+   "<b>وقرار مبنيّ على قياس، لا على ظنّ:</b> أسقطتُ <code>stripCloudinaryTransforms</code> من مسار الغلاف والشعار فقط. الدالّة نفسها <code>if (!url.includes('res.cloudinary.com')) return url</code> — تمريرٌ بلا أثر على بني. والقياس الحيّ ٨ أغسطس: <b>١٬٦٠٠+ صورة على <code>modonty.com/clients</code> و<code>/</code>، كلّها <code>b-cdn.net</code>، صفر Cloudinary</b>. وأبقيتُها حيث لا يصل إلا نصّ (<code>client-card</code> · <code>featured-partners-slider</code> · <code>book/page</code> · <code>client-bottom-bar</code>) لأنّ إسقاطها هناك تغييرٌ خارج نطاق البند.<br><br>" +
+   "<b>الحَكَم:</b> <code>tsc</code> صفر · بناء إنتاج كامل <code>259/259</code> صفحة · صفر <code>Module not found</code>.",
  ref:"مكوّن الصور"},
 
-{id:"MI2h", b:"mediaimg", app:["modonty"], tab:"open", sev:"normal", who:"c",
- t:"next/image — حساب الزائر — 5 ملفاً",
- d:"5 ملفاً · 0 مكوّن عميل · 1 يستدعي <code>mediaSrc</code> يدوياً.<div class=\"cklist\"><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/users/profile/disliked/page.tsx\"><code>app/users/profile/disliked/page.tsx</code><span class=\"ckm\">سيرفر·3×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/users/profile/liked/page.tsx\"><code>app/users/profile/liked/page.tsx</code><span class=\"ckm\">سيرفر·2×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/users/profile/bookings/page.tsx\"><code>app/users/profile/bookings/page.tsx</code><span class=\"ckm\">سيرفر·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/users/profile/favorites/page.tsx\"><code>app/users/profile/favorites/page.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/users/profile/following/page.tsx\"><code>app/users/profile/following/page.tsx</code><span class=\"ckm\">سيرفر·1×</span></label></div>",
+{id:"CLIDEAD", b:"mediaimg", app:["modonty"], tab:"done", sev:"high", who:"c", date:"٨ أغسطس",
+ t:"حذف 10 ملفات ميتة في صفحة العميل — <b>867 سطراً</b>",
+ d:"<b>✅ حُذفت ٨ أغسطس تحت قاعدة خالد الدائمة: «No dead code — ولكن تأكد مليون في المية إنه مش مستخدم».</b><br><br>" +
+   "<b>انكشفت أثناء جرد <code>MI2e</code>. جذران:</b><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>client-page/index.ts             4   ← براميل، صفر مستورد\n  client-page-left.tsx         136\n  client-page-feed.tsx          86\n  client-page-right.tsx         59\n  client-page/types.ts          56\n  client-verified-credentials  98\n  client-about.tsx              36\n  client-contact.tsx           194\nfeatured-clients.tsx            71   ← صفر ذكر في المستودع كلّه\n  featured-client-card.tsx     127\n────────────────────────────────────\n                               867 سطراً</pre>" +
+   "<b>الفخّ هنا أخبث من فخّ <code>ARTDEAD</code>:</b> مجلّد <code>client-page/</code> يضمّ <b>الحيّ والميت معاً</b> — <code>client-page-shell.tsx</code> حيّ (يناديه <code>page.tsx:348</code>) بينما جيرانه الخمسة موتى. فحذف المجلّد كاملاً كان سيكسر صفحة العميل، وإبقاؤه كاملاً كان سيُبقي ٨٦٧ سطراً ميتاً.<br><br>" +
+   "<b>والتحقّق الرباعي:</b> ① <code>grep -rnw</code> على كل اسم عبر التطبيقات الأربعة — كل ذكر داخل الشجرة الميتة نفسها · ② صفر <code>import *</code>/<code>export *</code> في <code>app/clients</code> · ③ بحث بالمسار لكل ملف · ④ <b>بناء إنتاج كامل ناجح</b> — <code>259/259</code> · صفر <code>Module not found</code>.<br><br>" +
+   "<b>وبقي حيّاً بعد الفرز:</b> <code>ClientNewsletterCard</code> (يناديه <code>client-page-shell:359</code>) — لولا الفرز الدقيق لسقط معهم.",
  ref:"مكوّن الصور"},
 
-{id:"MI2i", b:"mediaimg", app:["modonty"], tab:"open", sev:"normal", who:"c",
- t:"next/image — القوائم والصفحات الثابتة — 6 ملفاً",
- d:"6 ملفاً · 0 مكوّن عميل · 4 يستدعي <code>mediaSrc</code> يدوياً.<div class=\"cklist\"><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/authors/[slug]/page.tsx\"><code>app/authors/[slug]/page.tsx</code><span class=\"ckm\">سيرفر·2×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/trust/page.tsx\"><code>app/trust/page.tsx</code><span class=\"ckm\">سيرفر·2×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/about/page.tsx\"><code>app/about/page.tsx</code><span class=\"ckm\">سيرفر·1×</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/categories/[slug]/page.tsx\"><code>app/categories/[slug]/page.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/industries/[slug]/page.tsx\"><code>app/industries/[slug]/page.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"app/tags/[slug]/page.tsx\"><code>app/tags/[slug]/page.tsx</code><span class=\"ckm\">سيرفر·1×·mediaSrc</span></label></div>",
+{id:"MI2f", b:"mediaimg", app:["modonty"], tab:"done", sev:"normal", who:"c", date:"٨ أغسطس",
+ t:"next/image — الخلاصة والأشرطة — 10 ملفات ← <b>٧ حُوِّلت · ٢ محذوفة سلفاً · ١ خارج النطاق</b>",
+ d:"<b>✅ مُقفَل ٨ أغسطس.</b> الثمانية الباقية <b>كلّها حيّة</b> — كل سلسلة تصل إلى مسار، صفر كود ميت في هذه الدفعة.<br><br>" +
+   "<b>خارج النطاق بحكم التصميم:</b> <code>hero-warm.tsx</code> يستعمل <code>getImageProps</code> لا <code>&lt;Image&gt;</code> — أداة <b>تسخين</b> تبني مفتاح <code>/_next/image?url&amp;w&amp;q</code> مسبقاً، لا مكوّن رسم. والمكوّن المشترك لا يعرض <code>getImageProps</code> أصلاً.<br>" +
+   "<b>محذوفان في <code>MI3</code>:</b> <code>OptimizedImage.tsx</code> و<code>fullOptmizeImage.tsx</code>.<br><br>" +
+   "<b>وعطلٌ رابع انكشف:</b> شعار <code>components/shared/client-card.tsx</code> كان <code>&lt;Image&gt;</code> <b>بلا <code>sizes</code> إطلاقاً</b>.",
+ ref:"مكوّن الصور"},
+
+{id:"MI2g", b:"mediaimg", app:["modonty"], tab:"done", sev:"normal", who:"c", date:"٨ أغسطس",
+ t:"next/image — القصة والمساعد والريلز — 8 ملفات",
+ d:"<b>✅ مُقفَل ٨ أغسطس — الثمانية كلّها حيّة وتصل إلى مسارات</b> (<code>reels/page</code> · <code>story/page</code> · <code>layout.tsx</code> · <code>TopNav</code>).<br><br>" +
+   "<b>وعطلٌ خامس انكشف:</b> <code>ArticleChatbotContent.tsx:377</code> كان بلا <code>sizes</code>.<br>" +
+   "<b>وثلاثة أعطال في <code>SalesPitchPage.tsx</code></b> — صور شعار رؤية ٢٠٣٠ ومدوّنتي، ثلاثتها <b>بلا <code>sizes</code></b>، كشفها <code>tsc</code> عند التحويل لأنّ القاعدة ٣ تجعلها إلزامية. اشتُقّت من مقاسات الرسم الفعلية في <code>className</code>.",
+ ref:"مكوّن الصور"},
+
+{id:"MI2h", b:"mediaimg", app:["modonty"], tab:"done", sev:"normal", who:"c", date:"٨ أغسطس",
+ t:"next/image — حساب الزائر — 5 ملفات",
+ d:"<b>✅ مُقفَل ٨ أغسطس — كلّها <code>page.tsx</code>، أي مسارات بذاتها، فلا حاجة لجرد سلسلة.</b><br><br>" +
+   "<code>favorites/page.tsx</code> كان يسطّح الصفّ بـ<code>mediaSrc()</code> فيقتل الضبابة — صار يمرّر الصفّ.",
+ ref:"مكوّن الصور"},
+
+{id:"MI2i", b:"mediaimg", app:["modonty"], tab:"done", sev:"normal", who:"c", date:"٨ أغسطس",
+ t:"next/image — القوائم والصفحات الثابتة — 6 ملفات",
+ d:"<b>✅ مُقفَل ٨ أغسطس.</b> <code>authors/[slug]/page.tsx</code> كان يسطّح صفّ صورة المقال — صار يمرّره.<br><br>" +
+   "<b>وعطلٌ سادس:</b> شعار المؤلّف في <code>authors/[slug]/page.tsx:243</code> كان بلا <code>sizes</code>.<br>" +
+   "<b>وأربعة مواضع</b> كانت لا تزال على <code>priority</code> — صارت <code>preload</code> وفق القاعدة ٤ (التوثيق يحذّر من الجمع بين <code>preload</code> و<code>loading</code>/<code>fetchPriority</code>).",
  ref:"مكوّن الصور"},
 
 {id:"MI3", b:"mediaimg", app:["modonty"], tab:"done", sev:"normal", who:"c", date:"٧ أغسطس",
@@ -1575,12 +1638,21 @@ const TASKS = [
    "<b>الحَكَم:</b> بناء إنتاج كامل بعد الحذف — <code>260/260</code> صفحة، صفر <code>Module not found</code>.",
  ref:"مكوّن الصور"},
 
-{id:"MI4", b:"mediaimg", app:["modonty"], tab:"open", sev:"high", who:"c",
- t:"تست حيّ كامل على مودونتي المحلّي بعد الاستبدال",
- d:"<b>البوّابة تبقى مفتوحة حتى تنزل <code>MI2a</code> و<code>MI2b</code> و<code>MI2d</code>…<code>MI2i</code></b> — الاستبدال لم يكتمل بعد (٤٦ ملفاً تنادي <code>next/image</code> مباشرةً).<br><br>" +
-   "<b>لكن جولة كاملة جرت ٧ أغسطس بعد <code>MI2c</code> و<code>MI3</code>، ونتيجتها:</b><br>" +
-   "<pre style='font-size:12px;margin:4px 0'>المسارات      : 16 ثابتاً + 7 ديناميكية = 23 × HTTP 200\nالرئيسية      : 84 صورة · 0 مكسورة · كلها q=75 · 2 preload\nالرائجة       : 5  صور  · 0 مكسورة · صفر q=100\nصفحة العميل   : 20 صورة · 0 مكسورة · الغلاف يُرسم\nالمقال        : 26 صورة · 0 مكسورة · ضبابة مُخدَّمة من السيرفر\nالجوال 390px  : 0 تمرير أفقي · 0 صورة تتجاوز ضعف حجمها\nالكونسول      : JWTSessionError فقط (عطل جلسة قديم)\nالبناء        : 260/260 صفحة · صفر خطأ</pre>" +
-   "<b>ثغرتان في التغطية أعترف بهما:</b> <code>TeamCarousel</code> و<code>PartnersShowcase</code> لم أرَهما يرسمان صوراً — <code>/story</code> عرضٌ بشرائح ومكوّناهما مشروطان بالشريحة الحالية (<code>SalesPitchPage.tsx:859</code> و<code>:863</code>)، وأزرار القائمة لا تبدّل الشريحة. فاكتفيتُ باختبار A/B أثبت أنّ سلوك الصفحة <b>لم يتغيّر</b> بتعديلي. و<b>عطل الأزرار هذا سابق لشغل الصور ويستحقّ بنداً مستقلاً</b>.",
+{id:"MI4", b:"mediaimg", app:["modonty"], tab:"done", sev:"high", who:"c", date:"٨ أغسطس",
+ t:"تست حيّ كامل على مودونتي بعد الاستبدال",
+ d:"<b>✅ البوّابة أُغلقت ٨ أغسطس — سلسلة <code>MI2</code> اكتملت كلّها.</b><br><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>tsc مودونتي : صفر ✅\ntsc أدمن    : صفر ✅\ntsc كونسول  : صفر ✅  (بعد إغلاق ذيل BL2)\nالبناء      : 259/259 صفحة · صفر Module not found</pre>" +
+   "<b>ما بقي من <code>next/image</code> في مودونتي:</b> ملفّ واحد — <code>hero-warm.tsx</code> بـ<code>getImageProps</code> (تسخين لا رسم). و<code>&lt;img&gt;</code> خام في موضعين، كلاهما استثناء موثَّق في <code>MI2b</code>.<br><br>" +
+   "<b>وستّة أعطال حقيقية كشفها العقد أثناء التحويل</b> — كلّها <code>sizes</code> مفقودة تماماً، كان المتصفّح يفترض معها <code>100vw</code> صامتاً: شريط تفاعل المقال · شعار <code>shared/client-card</code> · مساعد المقال · ثلاث صور في <code>SalesPitchPage</code> · شعار المؤلّف.<br><br>" +
+   "<b>وثغرتا التغطية باقيتان:</b> <code>TeamCarousel</code> و<code>PartnersShowcase</code> لم أرَهما يرسمان — <code>/story</code> عرضٌ بشرائح ومكوّناهما مشروطان بالشريحة الحالية، وأزرار القائمة لا تبدّلها. <b>وعطل الأزرار سابق لشغل الصور ويستحقّ بنداً مستقلاً.</b>",
+ ref:"مكوّن الصور"},
+
+{id:"BL2C", b:"mediaimg", app:["console"], tab:"done", sev:"high", who:"c", date:"٨ أغسطس",
+ t:"ذيل <code>BL2</code> في الكونسول — 11 خطأ تصريف كان مفتوحاً بلا أن ينتبه أحد",
+ d:"<b>✅ أُغلق ٨ أغسطس. انكشف عند تشغيل <code>tsc</code> على التطبيقات الثلاثة في نهاية سلسلة <code>MI2</code>.</b><br><br>" +
+   "<b>القصة:</b> <code>BL2</code> جعل <code>blurDataURL</code> <b>مفتاحاً إلزامياً</b> في <code>MediaSrcInput</code> — أداة جرد متعمَّدة: أي موضع يُسقط المفتاح يصير خطأ تصريف. أُغلق حينها لمودونتي والأدمن، <b>وبقي الكونسول</b>.<br><br>" +
+   "<b>ما أُصلح:</b> ١٣ <code>select</code> برِيزما + ٥ تعريفات نوع + <b>٣ محوِّلات كانت تجلب الضبابة ثم تُسقطها</b> (<code>gallery/page.tsx</code> · <code>reel-queries.ts</code> · <code>reels-manager.tsx</code>) — وهذه بالضبط الحالة التي صُمّم العقد لكشفها.<br><br>" +
+   "<b>الحَكَم:</b> <code>tsc</code> صفر على مودونتي والأدمن والكونسول معاً.",
  ref:"مكوّن الصور"},
 
 {id:"MI9", b:"mediaimg", app:["admin","console"], tab:"open", sev:"normal", who:"k",
@@ -1956,9 +2028,11 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
 const allBoards = () => BOARDS.concat(store.custom.map(n => ({k:"x:"+n, n, c:"var(--muted)", s:"بورد أنشأته أنت — محفوظ في متصفّحك فقط."})));
 const visBoards = () => allBoards().filter(b => !store.closed.includes(b.k));
+/* العدّاد = الشغل الباقي فقط (خالد ٨ أغسطس: «العدادات تهمّني في الحاجات التي لم أنتهِ منها»).
+   بطاقات `ref` شرحٌ وقرارات تُقرأ ولا تُنفَّذ — تبقى ظاهرة على اللوحة وخارج الرقم. */
 const openCount = k => k === "done"
   ? TASKS.filter(t => t.tab === "done").length
-  : TASKS.filter(t => t.b === k && t.tab !== "done").length;
+  : TASKS.filter(t => t.b === k && t.tab !== "done" && t.tab !== "ref").length;
 const APP_N = {admin:"admin", modonty:"modonty", console:"console", dataLayer:"dataLayer"};
 /* تاجات التطبيق — يعرف البند يخصّ أي كود بلا ما تفتح الملفات */
 const appTags = t => (t.app || []).map(a =>

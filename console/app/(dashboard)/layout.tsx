@@ -48,7 +48,7 @@ export default async function DashboardLayout({
         where: { id: clientId },
         select: {
           name: true,
-          logoMedia: { select: { url: true, bunnyUrl: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
           isYmyl: true,
           // The YMYL badge is only alarming while data is actually missing — these three
           // decide that. Without them the badge stayed red forever and clients reported

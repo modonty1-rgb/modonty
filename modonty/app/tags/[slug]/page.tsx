@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { notFound } from "next/navigation";
 import { cacheTag, cacheLife } from "next/cache";
 import { ArticleStatus, CommentStatus, SubscriptionStatus } from "@prisma/client";
@@ -147,11 +147,11 @@ export default async function TagPage({ params }: TagPageProps) {
         {tag.socialImage ? (
           <section className="relative border-b overflow-hidden">
             <div className="relative w-full max-w-[1200px] mx-auto aspect-[1200/630]">
-              <Image
-                src={tag.socialImage}
+              <OptimizedImage
+                media={asMedia(tag.socialImage, tag.socialImageAlt ?? tag.name)}
                 alt={tag.socialImageAlt ?? tag.name}
                 fill
-                priority
+                preload
                 className="object-cover"
                 sizes="(max-width: 1200px) 100vw, 1200px"
               />

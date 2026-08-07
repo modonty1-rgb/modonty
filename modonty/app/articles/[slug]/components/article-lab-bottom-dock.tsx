@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { BookingForm } from "@/app/articles/[slug]/components/booking-form";
@@ -168,7 +168,9 @@ export function ArticleLabBottomDock({
             )}
           >
             {clientLogoUrl ? (
-              <NextImage src={clientLogoUrl} alt={clientName} width={44} height={44} className="size-full object-contain p-1" sizes="44px" />
+              // A 44px logo arrives here already flattened to a url by page.tsx — asMedia is
+              // right, not a compromise: a blur placeholder is invisible at this size.
+              <OptimizedImage media={asMedia(clientLogoUrl, clientName)} alt={clientName} width={44} height={44} className="size-full object-contain p-1" sizes="44px" />
             ) : (
               <IconClients className="size-5 text-primary" />
             )}

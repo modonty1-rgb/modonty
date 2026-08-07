@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { OptimizedImage } from "@modonty/database/components/optimized-image";
 
 import { mediaSrc } from "@modonty/database/lib/media-src";
 import { SectionCard } from "./section-card";
@@ -39,8 +39,8 @@ export function ClientGallerySection({ images }: Props) {
               aria-label={img.altText?.trim() || `تكبير الصورة ${i + 1}`}
               className="group relative aspect-square cursor-zoom-in overflow-hidden rounded-md bg-muted outline-none ring-primary transition focus-visible:ring-2"
             >
-              <Image
-                src={mediaSrc(img) ?? img.url}
+              <OptimizedImage
+                media={img}
                 alt={img.altText || ""}
                 fill
                 loading="lazy"

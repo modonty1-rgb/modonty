@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconCalendar, IconClients } from "@/lib/icons";
@@ -72,8 +72,8 @@ export default async function ProfileBookingsPage() {
                           <div className="flex gap-4">
                             <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-muted ring-1 ring-border">
                               {booking.client.logo ? (
-                                <Image
-                                  src={booking.client.logo}
+                                <OptimizedImage
+                                  media={asMedia(booking.client.logo, booking.client.name)}
                                   alt={booking.client.name}
                                   fill
                                   className="object-contain p-1"

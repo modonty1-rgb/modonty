@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { notFound } from "next/navigation";
 import { CommentStatus } from "@prisma/client";
 import { BuildingIcon } from "lucide-react";
@@ -84,11 +84,11 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
       {industry.socialImage ? (
         <section className="relative border-b overflow-hidden">
           <div className="relative w-full max-w-[1200px] mx-auto aspect-[1200/630]">
-            <Image
-              src={industry.socialImage}
+            <OptimizedImage
+              media={asMedia(industry.socialImage, industry.socialImageAlt ?? industry.name)}
               alt={industry.socialImageAlt ?? industry.name}
               fill
-              priority
+              preload
               className="object-cover"
               sizes="(max-width: 1200px) 100vw, 1200px"
             />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 
 import { IconPlay } from "@/lib/icons";
 
@@ -89,8 +89,8 @@ export function ClientVideoEmbed({ url, poster, label }: ClientVideoEmbedProps) 
       {/* The real first frame when we host the video. Still zero third-party JS — an
           image, not a player. External links keep the gradient: they have no cover. */}
       {poster && (
-        <Image
-          src={poster}
+        <OptimizedImage
+          media={asMedia(poster)}
           alt=""
           fill
           sizes="(max-width: 768px) 100vw, 50vw"

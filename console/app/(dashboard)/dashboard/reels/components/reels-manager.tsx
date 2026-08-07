@@ -175,7 +175,7 @@ export function ReelCard({ reel, onRemoved }: { reel: ClientReel; onRemoved: () 
   });
   const [saved, setSaved] = useState(details);
   const [pending, startTransition] = useTransition();
-  const src = mediaSrc({ url: reel.thumbnailUrl ?? reel.url, bunnyUrl: reel.bunnyUrl });
+  const src = mediaSrc({ url: reel.thumbnailUrl ?? reel.url, bunnyUrl: reel.bunnyUrl, blurDataURL: reel.blurDataURL });
   const state = STATUS[reel.status ?? ""] ?? {
     label: reel.status ?? "—",
     cls: "bg-muted text-foreground ring-border",

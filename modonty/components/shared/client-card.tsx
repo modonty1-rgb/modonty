@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "next/link";
 import { ChevronLeftIcon, MapPinIcon, StarIcon } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
@@ -52,11 +52,11 @@ export function ClientCard({
       {/* Cover 6:1 */}
       <div className="relative w-full aspect-[6/1] overflow-hidden bg-gradient-to-br from-primary/10 to-primary/5 flex-shrink-0">
         {heroUrl && (
-          <Image
-            src={heroUrl}
+          <OptimizedImage
+            media={asMedia(heroUrl, name)}
             alt={name}
             fill
-            priority={priority}
+            {...(priority ? { preload: true } : {})}
             className="object-cover"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
@@ -69,11 +69,14 @@ export function ClientCard({
         <div className="flex items-center gap-3">
           <div className="shrink-0 w-[42px] h-[42px] rounded-xl border border-border/50 bg-muted overflow-hidden">
             {logoUrl ? (
-              <Image
-                src={logoUrl}
+              <OptimizedImage
+                media={asMedia(logoUrl, `شعار ${name}`)}
                 alt={`شعار ${name}`}
                 width={42}
                 height={42}
+                // Was missing entirely before the swap — the shared component turns that
+                // into a compile error instead of a silent 100vw assumption.
+                sizes="42px"
                 className="object-contain w-full h-full p-1"
               />
             ) : (

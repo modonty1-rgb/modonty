@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 import { getOptimizedCharacterUrl } from "@/lib/image-utils";
@@ -38,8 +38,8 @@ export const ChatTriggerButton = forwardRef<HTMLButtonElement, ChatTriggerButton
             size
           )}
         >
-          <Image
-            src={getOptimizedCharacterUrl(96)}
+          <OptimizedImage
+            media={asMedia(getOptimizedCharacterUrl(96))}
             alt=""
             fill
             className="object-cover"

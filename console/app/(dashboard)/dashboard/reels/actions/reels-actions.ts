@@ -30,6 +30,7 @@ export interface ClientReel {
   isVideo: boolean;
   url: string;
   bunnyUrl: string | null;
+  blurDataURL: string | null;
   thumbnailUrl: string | null;
   /** Videos only — the plain MP4 the card plays, and the file Google fetches. */
   mp4Url: string | null;

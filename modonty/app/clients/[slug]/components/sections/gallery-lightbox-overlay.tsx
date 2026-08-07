@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import Image from "next/image";
+import { OptimizedImage } from "@modonty/database/components/optimized-image";
 
 import { IconClose, IconChevronLeft, IconChevronRight } from "@/lib/icons";
 import { mediaSrc } from "@modonty/database/lib/media-src";
@@ -138,11 +138,11 @@ export function GalleryLightboxOverlay({ images, index, onIndexChange, onClose }
         onTouchEnd={onTouchEnd}
         className="relative h-[88vh] w-[94vw] sm:w-[88vw]"
       >
-        <Image
-          src={mediaSrc(image) ?? image.url}
+        <OptimizedImage
+          media={image}
           alt={image.altText || ""}
           fill
-          priority
+          preload
           sizes="94vw"
           className="object-contain"
         />

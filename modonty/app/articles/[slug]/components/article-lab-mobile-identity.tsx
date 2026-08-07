@@ -1,4 +1,4 @@
-import NextImage from "next/image";
+import { OptimizedImage } from "@modonty/database/components/optimized-image";
 import { mediaSrc } from "@modonty/database/lib/media-src";
 
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
@@ -18,7 +18,8 @@ interface ArticleLabMobileIdentityProps {
 // Mobile-only: compact, tappable client identity right under the title (instant trust).
 // The client is the cornerstone deliverable — it must show inline, never hidden in a sheet.
 export function ArticleLabMobileIdentity({ client, articleId }: ArticleLabMobileIdentityProps) {
-  const logoUrl = mediaSrc(client.logoMedia);
+  // Keep the ROW so OptimizedImage can read the stored blur off it.
+  const logoMedia = mediaSrc(client.logoMedia) ? client.logoMedia : null;
 
   return (
     <CtaTrackedLink
@@ -30,8 +31,8 @@ export function ArticleLabMobileIdentity({ client, articleId }: ArticleLabMobile
       className="mt-3 flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 p-2.5 lg:hidden"
     >
       <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-background ring-1 ring-border">
-        {logoUrl ? (
-          <NextImage src={logoUrl} alt={client.name} width={44} height={44} className="object-contain p-1" sizes="44px" />
+        {logoMedia ? (
+          <OptimizedImage media={logoMedia} alt={client.name} width={44} height={44} className="object-contain p-1" sizes="44px" />
         ) : (
           <IconClients className="h-5 w-5 text-muted-foreground" />
         )}

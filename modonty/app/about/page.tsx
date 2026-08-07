@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "@/components/link";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { generateStructuredData, buildAlternates } from "@/lib/seo";
@@ -160,13 +160,13 @@ async function AboutContent() {
         />
         {heroImage && (
           <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-lg">
-            <NextImage
-              src={heroImage}
+            <OptimizedImage
+              media={asMedia(heroImage)}
               alt={heroImageAlt || "من نحن - مدونتي"}
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 800px"
-              priority
+              preload
             />
           </div>
         )}

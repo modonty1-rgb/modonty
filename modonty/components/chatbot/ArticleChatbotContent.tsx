@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { IconSend, IconAi, IconArticle } from "@/lib/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { getOptimizedCharacterUrl, getOptimizedThumbnailUrl } from "@/lib/image-utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -339,7 +339,7 @@ export function ArticleChatbotContent({
                         <div className="flex items-start gap-3">
                           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg overflow-hidden bg-muted">
                             {thumbUrl ? (
-                              <Image src={thumbUrl} alt={t.socialImageAlt ?? t.categoryName} width={36} height={36} sizes="36px" className="h-full w-full object-cover" />
+                              <OptimizedImage media={asMedia(thumbUrl, t.socialImageAlt ?? t.categoryName)} alt={t.socialImageAlt ?? t.categoryName} width={36} height={36} sizes="36px" className="h-full w-full object-cover" />
                             ) : (
                               <Icon className="h-4 w-4 text-primary" />
                             )}
@@ -374,11 +374,13 @@ export function ArticleChatbotContent({
                   <p className="text-sm text-foreground font-medium">يبدو أن سؤالك في موضوع:</p>
                   <div className="flex items-center gap-2 rounded-lg bg-background/80 border border-primary/20 px-3 py-2">
                     {m.categorySuggestion.socialImage ? (
-                      <Image
-                        src={getOptimizedThumbnailUrl(m.categorySuggestion.socialImage, 40) ?? ""}
+                      <OptimizedImage
+                        media={asMedia(getOptimizedThumbnailUrl(m.categorySuggestion.socialImage, 40) ?? "", m.categorySuggestion.socialImageAlt ?? m.categorySuggestion.name)}
                         alt={m.categorySuggestion.socialImageAlt ?? m.categorySuggestion.name}
                         width={24}
                         height={24}
+                        // كانت مفقودة قبل التحويل
+                        sizes="24px"
                         className="rounded-md object-cover"
                       />
                     ) : (

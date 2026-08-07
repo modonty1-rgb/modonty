@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "@/components/link";
 import { Card } from "@/components/ui/card";
 import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
@@ -102,8 +102,8 @@ function SliderShell({ slides, n, css }: { slides: ClientHeroSlide[]; n: number;
             {/* Hero fills the card (same treatment as the article client card) with a
                 slow cinematic breathe. Cropped to fill → the logo badge below keeps the
                 partner identity even when the banner's own logo is outside the crop. */}
-            <Image
-              src={s.heroImage}
+            <OptimizedImage
+              media={asMedia(s.heroImage, s.name)}
               alt={s.name}
               fill
               sizes="300px"
@@ -125,8 +125,8 @@ function SliderShell({ slides, n, css }: { slides: ClientHeroSlide[]; n: number;
                 aria-hidden
               >
                 {s.logo ? (
-                  <Image
-                    src={s.logo}
+                  <OptimizedImage
+                    media={asMedia(s.logo)}
                     alt=""
                     width={44}
                     height={44}

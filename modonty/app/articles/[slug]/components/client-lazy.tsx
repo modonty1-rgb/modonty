@@ -22,13 +22,6 @@ export const ArticleBodyLinkTracker = dynamic(
   { ssr: false }
 );
 
-// SSR enabled: this component renders a sticky-top mobile bar that adds ~70px of layout
-// height. With ssr:false the bar mounted post-hydration and pushed content down → CLS 0.083.
-// Server-rendering it reserves the space in initial HTML → CLS stays near 0.
-export const ArticleMobileLayout = dynamic(
-  () => import("./article-mobile-layout").then((m) => ({ default: m.ArticleMobileLayout })),
-);
-
 export const NewsletterCTA = dynamic(
   () => import("./sidebar/newsletter-cta").then((m) => ({ default: m.NewsletterCTA })),
   { ssr: false }
@@ -38,14 +31,6 @@ export const ArticleFeaturedImageNewsletter = dynamic(
   () =>
     import("./article-featured-image-newsletter").then((m) => ({
       default: m.ArticleFeaturedImageNewsletter,
-    })),
-  { ssr: false }
-);
-
-export const ArticleSidebarEngagement = dynamic(
-  () =>
-    import("./sidebar/article-sidebar-engagement").then((m) => ({
-      default: m.ArticleSidebarEngagement,
     })),
   { ssr: false }
 );

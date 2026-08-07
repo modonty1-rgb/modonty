@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { usePathname } from "next/navigation";
 
 import { getOptimizedCharacterUrl } from "@/lib/image-utils";
@@ -32,8 +32,8 @@ export function ChatFloatingButton() {
       )}
     >
       <span className="relative block h-14 w-14 overflow-hidden rounded-full shadow-lg transition-transform duration-200 group-hover:scale-105 group-active:scale-95">
-        <Image
-          src={getOptimizedCharacterUrl(112)}
+        <OptimizedImage
+          media={asMedia(getOptimizedCharacterUrl(112))}
           alt=""
           fill
           className="object-cover"

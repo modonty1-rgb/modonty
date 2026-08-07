@@ -7,7 +7,7 @@ import { useSession } from "@/components/providers/SessionContext";
 import { signIn } from "next-auth/react";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useChatSheetStore } from "@/components/chatbot/chat-sheet-store";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { IconAi, IconLogin, IconMessage, IconHistory } from "@/lib/icons";
 import { getOptimizedCharacterUrl } from "@/lib/image-utils";
 import { getCategoryIcon } from "@/app/categories/helpers/category-utils";
@@ -135,8 +135,8 @@ export function ChatSheet() {
         >
           <div className="flex min-h-[56px] flex-row items-center gap-3 px-4 py-3 pr-12">
             <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg ring-1 ring-border/50 shadow-sm">
-              <Image
-                src={getOptimizedCharacterUrl(64)}
+              <OptimizedImage
+                media={asMedia(getOptimizedCharacterUrl(64))}
                 alt="مدونتي الذكية"
                 fill
                 className="object-cover"

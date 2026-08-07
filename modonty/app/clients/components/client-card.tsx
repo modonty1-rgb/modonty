@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "@/components/link";
 
 import { highlightQuery } from "@/lib/highlight-query";
@@ -56,7 +56,7 @@ export function ClientCard(props: ClientCardProps) {
         {/* Banner — partner cover image, or a brand gradient fallback */}
         <div className="relative h-[92px] overflow-hidden bg-gradient-to-br from-foreground to-primary">
           {cover && (
-            <Image src={cover} alt="" fill sizes="(max-width: 768px) 100vw, 380px" className="object-cover" />
+            <OptimizedImage media={asMedia(cover)} alt="" fill sizes="(max-width: 768px) 100vw, 380px" className="object-cover" />
           )}
           {props.isFeatured && (
             <span className="absolute top-2.5 start-2.5 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2.5 py-0.5 text-[10.5px] font-black text-amber-950 shadow-sm">
@@ -74,7 +74,7 @@ export function ClientCard(props: ClientCardProps) {
         <div className="absolute top-[62px] end-4 z-[2] h-[58px] w-[58px]">
           <div className="relative h-full w-full overflow-hidden rounded-xl">
             {logo ? (
-              <Image src={logo} alt={props.name} fill className="object-contain" sizes="58px" />
+              <OptimizedImage media={asMedia(logo, props.name)} alt={props.name} fill className="object-contain" sizes="58px" />
             ) : (
               <span className="grid h-full w-full place-items-center text-lg font-black text-primary">{initials}</span>
             )}

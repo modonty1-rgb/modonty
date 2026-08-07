@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { ClientCtaMode } from "@prisma/client";
 import { mediaSrc } from "@modonty/database/lib/media-src";
 
@@ -98,8 +98,8 @@ export default async function ClientBookingPage({
               )}
             >
               {logoSrc ? (
-                <NextImage
-                  src={logoSrc}
+                <OptimizedImage
+                  media={asMedia(logoSrc, client.logoMedia?.altText || client.name)}
                   alt={client.logoMedia?.altText || client.name}
                   width={80}
                   height={80}

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 
 import Link from "@/components/link";
 import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
@@ -33,8 +33,8 @@ export function NewClientItem({ clientName, clientSlug, clientLogo, industry, ar
           )}
         >
           {logoSrc ? (
-            <Image
-              src={logoSrc}
+            <OptimizedImage
+              media={asMedia(logoSrc, clientName)}
               alt={clientName}
               width={28}
               height={28}

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 
 import { SectionCard } from "./section-card";
 
@@ -34,8 +34,8 @@ export function ClientResultsSection({ achievements }: Props) {
             <div key={i} className="flex flex-col overflow-hidden rounded-xl border bg-card">
               {image && (
                 <div className="relative aspect-[16/10] w-full bg-muted">
-                  <Image
-                    src={image}
+                  <OptimizedImage
+                    media={asMedia(image, a.label)}
                     alt={a.label}
                     fill
                     className="object-cover"

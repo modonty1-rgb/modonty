@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "next/link";
 
 import { loadMoreReels } from "../actions/load-more";
@@ -57,22 +57,22 @@ export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn }: Ree
           <article className="relative aspect-[9/16] h-full max-h-[94dvh] overflow-hidden rounded-2xl bg-black shadow-2xl">
             {reel.imageUrl && (
               <>
-                <Image
-                  src={reel.imageUrl}
+                <OptimizedImage
+                  media={asMedia(reel.imageUrl)}
                   alt=""
                   aria-hidden
                   fill
                   sizes="(max-width: 768px) 100vw, 420px"
                   className="scale-125 object-cover opacity-50 blur-2xl"
-                  priority={i === 0}
+                  {...(i === 0 ? { preload: true } : {})}
                 />
-                <Image
-                  src={reel.imageUrl}
+                <OptimizedImage
+                  media={asMedia(reel.imageUrl, reel.title)}
                   alt={reel.title}
                   fill
                   sizes="(max-width: 768px) 100vw, 420px"
                   className="object-contain"
-                  priority={i === 0}
+                  {...(i === 0 ? { preload: true } : {})}
                 />
               </>
             )}
@@ -94,7 +94,7 @@ export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn }: Ree
               >
                 <span className="relative block size-7 overflow-hidden rounded-full bg-white">
                   {reel.clientLogoUrl && (
-                    <Image src={reel.clientLogoUrl} alt="" fill sizes="28px" className="object-contain" />
+                    <OptimizedImage media={asMedia(reel.clientLogoUrl)} alt="" fill sizes="28px" className="object-contain" />
                   )}
                 </span>
                 <span className="text-sm font-bold text-white">{reel.clientName}</span>

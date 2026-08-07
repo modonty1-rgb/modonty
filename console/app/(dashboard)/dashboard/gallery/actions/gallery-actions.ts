@@ -14,6 +14,7 @@ export interface GalleryImage {
   url: string;
   /** Required key (value may be null) — declaring it optional silently erased the Bunny copy. */
   bunnyUrl: string | null;
+  blurDataURL: string | null;
   altText: string | null;
   width: number | null;
   height: number | null;
@@ -101,7 +102,7 @@ export async function addGalleryImage(input: AddGalleryInput): Promise<AddResult
         inGallery: true,
         inReels: false,
       },
-      select: { id: true, url: true, bunnyUrl: true, altText: true, width: true, height: true },
+      select: { id: true, url: true, bunnyUrl: true, blurDataURL: true, altText: true, width: true, height: true },
     });
 
     // Reel membership is OPT-IN per image (Khalid 2026-08-04) and now just a flag on the

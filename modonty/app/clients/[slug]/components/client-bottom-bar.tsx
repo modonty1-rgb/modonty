@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useSession } from "@/components/providers/SessionContext";
@@ -150,7 +150,7 @@ export function ClientBottomBar({
       <span className="relative inline-block">
         <span className={cn("grid size-14 place-items-center overflow-hidden bg-background shadow-lg shadow-primary/30 outline outline-[3px] outline-background ring-2 ring-primary/60 transition-transform group-active:scale-95", BRAND_AVATAR_RADIUS)}>
           {logoSrc ? (
-            <NextImage src={logoSrc} alt={clientName} width={56} height={56} className="size-full object-contain p-1.5" sizes="56px" />
+            <OptimizedImage media={asMedia(logoSrc, clientName)} alt={clientName} width={56} height={56} className="size-full object-contain p-1.5" sizes="56px" />
           ) : (
             <IconClients className="size-7 text-primary" />
           )}

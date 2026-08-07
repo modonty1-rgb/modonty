@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 
 import Link from "@/components/link";
 import { Card, CardContent } from "@/components/ui/card";
@@ -44,8 +44,8 @@ function DiscoveryIcon({ src, alt, fallback }: { src?: string | null; alt: strin
   return (
     <span className="flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-muted text-[9px] font-medium text-muted-foreground">
       {optimized ? (
-        <Image
-          src={optimized}
+        <OptimizedImage
+          media={asMedia(optimized, alt)}
           alt={alt}
           width={20}
           height={20}

@@ -80,6 +80,7 @@ export interface ArticleWithAllData {
     id: string;
     url: string;
     bunnyUrl: string | null;
+    blurDataURL: string | null;
     altText: string | null;
     width: number | null;
     height: number | null;
@@ -95,6 +96,7 @@ export interface ArticleWithAllData {
       id: string;
       url: string;
       bunnyUrl: string | null;
+      blurDataURL: string | null;
       altText: string | null;
       width: number | null;
       height: number | null;
@@ -204,6 +206,7 @@ export async function getPendingArticles(clientId: string): Promise<ArticleWithA
           id: true,
           url: true,
           bunnyUrl: true,
+          blurDataURL: true,
           altText: true,
           width: true,
           height: true,
@@ -218,6 +221,7 @@ export async function getPendingArticles(clientId: string): Promise<ArticleWithA
               id: true,
               url: true,
               bunnyUrl: true,
+              blurDataURL: true,
               altText: true,
               width: true,
               height: true,
@@ -349,6 +353,7 @@ export async function getPublishedArticles(clientId: string): Promise<ArticleWit
           id: true,
           url: true,
           bunnyUrl: true,
+          blurDataURL: true,
           altText: true,
           width: true,
           height: true,
@@ -363,6 +368,7 @@ export async function getPublishedArticles(clientId: string): Promise<ArticleWit
               id: true,
               url: true,
               bunnyUrl: true,
+              blurDataURL: true,
               altText: true,
               width: true,
               height: true,
@@ -493,6 +499,7 @@ export async function getAllArticles(clientId: string): Promise<ArticleWithAllDa
           id: true,
           url: true,
           bunnyUrl: true,
+          blurDataURL: true,
           altText: true,
           width: true,
           height: true,
@@ -507,6 +514,7 @@ export async function getAllArticles(clientId: string): Promise<ArticleWithAllDa
               id: true,
               url: true,
               bunnyUrl: true,
+              blurDataURL: true,
               altText: true,
               width: true,
               height: true,
@@ -641,6 +649,7 @@ export async function getArticleForApproval(
           id: true,
           url: true,
           bunnyUrl: true,
+          blurDataURL: true,
           altText: true,
           width: true,
           height: true,
@@ -655,6 +664,7 @@ export async function getArticleForApproval(
               id: true,
               url: true,
               bunnyUrl: true,
+              blurDataURL: true,
               altText: true,
               width: true,
               height: true,

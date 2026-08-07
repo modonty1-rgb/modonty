@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconUsers, IconClients } from "@/lib/icons";
@@ -61,8 +61,8 @@ export default async function FollowingPage() {
                           <Link href={`/clients/${client.slug}`} className="flex-shrink-0">
                             {client.logo ? (
                               <div className="relative w-16 h-16 rounded overflow-hidden bg-muted">
-                                <Image
-                                  src={client.logo}
+                                <OptimizedImage
+                                  media={asMedia(client.logo, client.name)}
                                   alt={client.name}
                                   fill
                                   className="object-cover"

@@ -1,5 +1,5 @@
 import Link from "@/components/link";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { getOptimizedThumbnailUrl } from "@/lib/image-utils";
 
@@ -40,8 +40,8 @@ export function PostCardAvatar({
     >
       <div className={`h-10 w-10 ${BRAND_AVATAR_RADIUS} bg-muted overflow-hidden flex items-center justify-center text-xs font-semibold text-foreground`}>
         {optimizedLogo ? (
-          <Image
-            src={optimizedLogo}
+          <OptimizedImage
+            media={asMedia(optimizedLogo, clientName)}
             alt={clientName}
             width={40}
             height={40}

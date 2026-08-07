@@ -31,7 +31,7 @@ function WhatsAppIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { LogoSpotlight } from "./LogoSpotlight";
 import { Vision2030Spotlight } from "./Vision2030Spotlight";
 import { TeamCarousel } from "./TeamCarousel";
@@ -537,11 +537,12 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                     aria-label="اسمع: نساهم في رؤية المملكة ٢٠٣٠"
                     title="اضغط للاستماع: مدونتي ٢٠٣٠ — لبنة في الرؤية"
                   >
-                    <Image
-                      src="/vision-2030-logo.png"
+                    <OptimizedImage
+                      media={asMedia("/vision-2030-logo.png")}
                       alt=""
                       width={26}
                       height={18}
+                      sizes="26px"
                       className="object-contain"
                       unoptimized
                     />
@@ -1408,11 +1409,12 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                                 style={{ fontSize: 0 }}
                                 aria-label="رؤية ٢٠٣٠ × مدوني"
                               >
-                                <Image
-                                  src="/vision-2030-logo.png"
+                                <OptimizedImage
+                                  media={asMedia("/vision-2030-logo.png")}
                                   alt="رؤية ٢٠٣٠"
                                   width={88}
                                   height={56}
+                                  sizes="(max-width: 768px) 60px, (max-width: 1024px) 78px, 92px"
                                   className="object-contain w-[60px] md:w-[78px] lg:w-[92px] h-auto"
                                   unoptimized
                                 />
@@ -1423,11 +1425,12 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                                 >
                                   ×
                                 </span>
-                                <Image
-                                  src={MODONTY_LOGO_URL}
+                                <OptimizedImage
+                                  media={asMedia(MODONTY_LOGO_URL)}
                                   alt="مدوني"
                                   width={56}
                                   height={56}
+                                  sizes="(max-width: 768px) 50px, (max-width: 1024px) 64px, 76px"
                                   className="object-contain w-[50px] md:w-[64px] lg:w-[76px] h-auto"
                                   unoptimized
                                 />

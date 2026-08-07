@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 
 import Link from "@/components/link";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
@@ -155,11 +155,11 @@ export default async function TrustPage() {
           <Card className="overflow-hidden">
             <div className="relative h-44 w-full overflow-hidden bg-[#0e065a] sm:h-56">
               {ogImageUrl ? (
-                <NextImage
-                  src={ogImageUrl}
+                <OptimizedImage
+                  media={asMedia(ogImageUrl)}
                   alt=""
                   fill
-                  priority
+                  preload
                   sizes="(max-width: 896px) 100vw, 896px"
                   className="object-cover object-center"
                 />
@@ -216,13 +216,13 @@ export default async function TrustPage() {
                     rel="noopener noreferrer"
                     className="block"
                   >
-                    <NextImage
-                      src={certificateSrc}
+                    <OptimizedImage
+                      media={asMedia(certificateSrc)}
                       alt="شهادة السجل التجاري — شركة جبر الجنوبية للمقاولات، الرقم الموحّد 7036024383، وزارة التجارة"
                       width={2573}
                       height={1818}
                       sizes="(max-width: 768px) 100vw, 520px"
-                      priority
+                      preload
                       className="h-auto w-full rounded-lg border border-border"
                     />
                   </a>

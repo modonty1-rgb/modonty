@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import Image from "next/image";
+import { OptimizedImage } from "@modonty/database/components/optimized-image";
 import { mediaSrc } from "@modonty/database/lib/media-src";
 import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -71,8 +71,8 @@ export default async function FavoritesPage() {
                           <div className="flex gap-4">
                             {article.featuredImage && (
                               <div className="relative w-24 h-24 flex-shrink-0 rounded overflow-hidden bg-muted">
-                                <Image
-                                  src={mediaSrc(article.featuredImage) ?? article.featuredImage.url}
+                                <OptimizedImage
+                                  media={article.featuredImage}
                                   alt={article.featuredImage.altText || article.title}
                                   fill
                                   className="object-cover"

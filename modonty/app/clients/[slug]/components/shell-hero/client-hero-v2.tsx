@@ -1,7 +1,6 @@
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 
 import { IconCheck } from "@/lib/icons";
-import { stripCloudinaryTransforms } from "@/lib/image-utils";
 import { mediaSrc } from "@modonty/database/lib/media-src";
 
 import { getInitials, getTagline, getSocialPlatform } from "../hero/utils";
@@ -86,16 +85,18 @@ export function ClientHeroV2({
     );
 
   const hero = client.heroImageMedia;
-  const heroSrc = mediaSrc(hero) ?? defaultImages?.hero ?? null;
   // The cover shows the FULL partner image (no white card overlap, no crop). Box height
   // follows the image's own aspect ratio so object-cover fills it exactly — a wide 6:1
   // banner stays a banner, a tall upload is clamped by max-h (only then object-cover trims).
   const heroAr = hero?.width && hero?.height ? hero.width / hero.height : 2.4;
-  const logoSrc = client.logoMedia?.url
-    ? (stripCloudinaryTransforms(mediaSrc(client.logoMedia) ?? client.logoMedia.url) ??
-      mediaSrc(client.logoMedia) ??
-      client.logoMedia.url)
-    : (defaultImages?.logo ?? null);
+  // Prefer the ROW so the stored blur reaches OptimizedImage. Only the platform-default
+  // fallback is a bare url, and that one has no blur to lose.
+  const heroMedia = mediaSrc(hero) ? hero! : defaultImages?.hero ? asMedia(defaultImages.hero, `غلاف ${client.name}`) : null;
+  const logoMedia = mediaSrc(client.logoMedia)
+    ? client.logoMedia!
+    : defaultImages?.logo
+      ? asMedia(defaultImages.logo, client.name)
+      : null;
 
   return (
     <section className="w-full">
@@ -104,20 +105,21 @@ export function ClientHeroV2({
           {/* COVER — full partner image, no overlap */}
           <div
             className={
-              heroSrc
+              heroMedia
                 ? "relative w-full overflow-hidden bg-gradient-to-br from-foreground via-[#2422b8] to-primary aspect-[var(--hero-ar)] max-h-[300px] sm:max-h-[220px]"
                 : "relative h-[140px] w-full overflow-hidden bg-gradient-to-br from-foreground via-[#2422b8] to-primary"
             }
-            style={heroSrc ? ({ "--hero-ar": heroAr } as React.CSSProperties) : undefined}
+            style={heroMedia ? ({ "--hero-ar": heroAr } as React.CSSProperties) : undefined}
           >
-            {heroSrc ? (
-              <Image
-                // Strip baked-in Cloudinary transforms (w_auto) so next/image sizes it
-                // properly — else Next fetches a tiny source and the cover is blurry.
-                src={stripCloudinaryTransforms(heroSrc) ?? heroSrc}
+            {heroMedia ? (
+              <OptimizedImage
+                // No stripCloudinaryTransforms here: the row resolves to Bunny, and the helper
+                // is a pass-through on any non-Cloudinary url (verified 2026-08-08 — 1,600+
+                // images across production /clients and /, all on b-cdn.net, zero Cloudinary).
+                media={heroMedia}
                 alt={`غلاف ${client.name}`}
                 fill
-                priority
+                preload
                 sizes="(max-width: 1128px) 100vw, 1096px"
                 className="object-cover"
               />
@@ -140,9 +142,9 @@ export function ClientHeroV2({
                   so the partner's own logo colors stay intact). */}
               <div className="relative flex-shrink-0">
                 <div className="relative h-[70px] w-[70px] overflow-hidden rounded-[14px] border border-border bg-card shadow-[0_6px_16px_rgba(0,0,0,0.12)] ring-4 ring-white">
-                  {logoSrc ? (
-                    <Image
-                      src={logoSrc}
+                  {logoMedia ? (
+                    <OptimizedImage
+                      media={logoMedia}
                       alt={client.name}
                       fill
                       className="object-contain p-1.5"

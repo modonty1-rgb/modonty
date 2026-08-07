@@ -1,7 +1,7 @@
 "use client";
 
 import { m, AnimatePresence } from "framer-motion";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { memo, useMemo } from "react";
 import { MODONTY_LOGO_URL } from "./_constants";
 import { splitIntoPhrases } from "./_utils/phrases";
@@ -75,12 +75,12 @@ function Vision2030SpotlightImpl({
                 }}
                 transition={{ duration: 0.6 }}
               >
-                <Image
-                  src="/vision-2030-logo.png"
+                <OptimizedImage
+                  media={asMedia("/vision-2030-logo.png")}
                   alt="رؤية المملكة 2030"
                   fill
                   sizes="(max-width: 768px) 112px, 128px"
-                  priority
+                  preload
                   className="object-contain"
                 />
               </m.div>
@@ -141,12 +141,12 @@ function Vision2030SpotlightImpl({
             transition={{ duration: 0.7, ease: "easeInOut" }}
           >
             <div className="relative w-24 h-24 md:w-28 md:h-28">
-              <Image
-                src={MODONTY_LOGO_URL}
+              <OptimizedImage
+                media={asMedia(MODONTY_LOGO_URL)}
                 alt="مُدَوَّنَتِي"
                 fill
                 sizes="(max-width: 768px) 96px, 112px"
-                priority
+                preload
                 className="object-contain"
                 style={{ transform: "scale(1.65)" }}
               />

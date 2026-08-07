@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 
 export type ListingHeroAccent = "teal" | "blue";
 
@@ -47,11 +47,11 @@ export function ListingHero({
     <div className="relative overflow-hidden border-b bg-zinc-950">
       {imageUrl ? (
         <>
-          <Image
-            src={imageUrl}
+          <OptimizedImage
+            media={asMedia(imageUrl, imageAlt || title)}
             alt={imageAlt || title}
             fill
-            priority
+            preload
             sizes="100vw"
             className="object-cover object-[50%_88%]"
           />

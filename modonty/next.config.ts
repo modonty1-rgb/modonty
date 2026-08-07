@@ -42,12 +42,6 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/**",
       },
-      // design-preview only — Unsplash placeholder images
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-        pathname: "/**",
-      },
       // illustrated avatars (team carousel privacy fallback)
       {
         protocol: "https",

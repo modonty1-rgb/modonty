@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -96,8 +96,8 @@ function ClientLikeCard({ item }: { item: LikedItem }) {
         <CardContent className="p-4">
           <div className="flex items-start gap-4">
             {item.item.image ? (
-              <Image
-                src={item.item.image}
+              <OptimizedImage
+                media={asMedia(item.item.image)}
                 alt={item.item.imageAlt || item.item.name || ""}
                 width={64}
                 height={64}
@@ -142,8 +142,8 @@ function ArticleLikeCard({ item }: { item: LikedItem }) {
         <CardContent className="p-4">
           <div className="flex items-start gap-4">
             {item.item.image ? (
-              <Image
-                src={item.item.image}
+              <OptimizedImage
+                media={asMedia(item.item.image)}
                 alt={item.item.imageAlt || item.item.title || ""}
                 width={64}
                 height={64}

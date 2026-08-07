@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/database/lib/media-src";
@@ -240,13 +240,16 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
           >
             <div className="flex flex-col items-center gap-4 px-6 py-10 text-center">
               <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-background shadow-sm ring-1 ring-border">
-                <NextImage
-                  src={LOGO_URL}
+                <OptimizedImage
+                  media={asMedia(LOGO_URL)}
                   alt={author.imageAlt || author.name}
                   width={72}
                   height={72}
+                  // Was missing entirely before the swap — the shared component turns that
+                  // into a compile error instead of a silent 100vw assumption.
+                  sizes="72px"
                   className="object-contain"
-                  priority
+                  preload
                 />
               </div>
 
@@ -341,8 +344,8 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
                   <Card className="overflow-hidden hover:shadow-md transition-shadow h-full">
                     {article.featuredImage && (
                       <div className="relative aspect-video bg-muted">
-                        <NextImage
-                          src={mediaSrc(article.featuredImage) ?? article.featuredImage.url}
+                        <OptimizedImage
+                          media={article.featuredImage}
                           alt={article.featuredImage.altText || article.title}
                           fill
                           className="object-cover"
