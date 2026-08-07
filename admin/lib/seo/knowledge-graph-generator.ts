@@ -33,6 +33,7 @@ import {
 } from "@modonty/database/lib/seo/media/build-image-object";
 import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl } from "@modonty/database/lib/bunny";
 import { mediaSrc } from "@modonty/database/lib/media-src";
+import { BRAND_LOGO_URL } from "@modonty/database/lib/brand-assets";
 
 /**
  * Build Cloudinary URL for a specific aspect ratio (1:1, 4:3, 16:9).
@@ -87,6 +88,13 @@ export interface PlatformBranding {
   imageOwnerName?: string | null;
   imageLicenseUrl?: string | null;
   imageAcquireLicensePageUrl?: string | null;
+  /**
+   * Platform share image (Settings.ogImageUrl) — last resort when an article has no
+   * featured image AND its client has neither hero nor logo. The old last resort was
+   * `${siteUrl}/og-image.jpg`, a file that does not exist (measured 404 on 2026-08-07),
+   * so that branch baked a dead url into the article's Google card.
+   */
+  ogImageUrl?: string | null;
 }
 
 // Author slugs that should be treated as the platform brand (Organization, not Person).
@@ -156,6 +164,9 @@ export function generateArticleKnowledgeGraph(
     acquireLicensePageUrl: branding?.imageAcquireLicensePageUrl ?? null,
   };
 
+  // Last-resort article image. Never `${siteUrl}/og-image.jpg` — that file 404s.
+  const platformFallbackImage = branding?.ogImageUrl?.trim() || BRAND_LOGO_URL;
+
   // Single source: canonical URL = mainEntityOfPage = Article url (Schema.org + Google best practice)
   const raw = article.canonicalUrl || article.mainEntityOfPage;
   const articleUrl = raw
@@ -185,7 +196,9 @@ export function generateArticleKnowledgeGraph(
   graph.push(generateWebPageNode(article, articleUrl, ids, siteUrl));
 
   // 2. Article (main content)
-  graph.push(generateArticleNode(article, articleUrl, ids, siteUrl, imageLicensing));
+  graph.push(
+    generateArticleNode(article, articleUrl, ids, siteUrl, imageLicensing, platformFallbackImage),
+  );
 
   // 3. Organization (Publisher/Client)
   graph.push(generateOrganizationNode(article.client, ids.publisher, siteUrl, imageLicensing));
@@ -308,7 +321,8 @@ function generateArticleNode(
   articleUrl: string,
   ids: Record<string, string>,
   siteUrl: string,
-  imageLicensing: ModontyImageDefaults = {}
+  imageLicensing: ModontyImageDefaults = {},
+  platformFallbackImage: string = BRAND_LOGO_URL
 ): JsonLdNode {
   const node: JsonLdNode = {
     "@type": "Article",
@@ -356,7 +370,7 @@ function generateArticleNode(
   }
 
   // Add images (hero + gallery)
-  const images = buildImageArray(article, articleUrl, siteUrl, imageLicensing);
+  const images = buildImageArray(article, articleUrl, siteUrl, imageLicensing, platformFallbackImage);
   if (images.length > 0) {
     node.image = images.length === 1 ? images[0] : images;
   }
@@ -410,6 +424,7 @@ function buildImageArray(
   articleUrl: string,
   siteUrl: string = "https://www.modonty.com",
   imageLicensing: ModontyImageDefaults = {},
+  platformFallbackImage: string = BRAND_LOGO_URL,
 ): JsonLdNode[] {
   // Article images are Modonty-PRODUCED (POST): name = article title, credit/license from
   // Settings via resolveImageAttribution. One builder — same shape as client + admin preview.
@@ -450,11 +465,15 @@ function buildImageArray(
       images.push(buildImageObject({ ...shared, id: `${articleUrl}#primary-image-1x1`, url: url1x1, width: 1200, height: 1200 }));
     }
   } else {
-    // Fallback: client hero image -> client logo -> site default (same chain as metadata-generator)
+    // Fallback: client hero image -> client logo -> platform share image (same chain as
+    // metadata-generator). The last link used to be `${siteUrl}/og-image.jpg` — a file that
+    // does not exist (measured HTTP 404 on 2026-08-07), so this branch baked a dead url into
+    // the article's Google card. It now falls back to Settings.ogImageUrl, and to the brand
+    // logo constant when even that is empty — both live on Bunny.
     const fallbackUrl =
       mediaSrc(article.client.heroImageMedia) ||
       mediaSrc(article.client.logoMedia) ||
-      `${siteUrl}/og-image.jpg`;
+      platformFallbackImage;
     const attr = resolveImageAttribution({ mediaType: "POST", articleTitle }, imageLicensing);
     const shared = { name: attr.name, licensing: attr.licensing };
 

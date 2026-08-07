@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { SITE_NAME } from "@/lib/constants/site-name";
+import { BRAND_LOGO_URL } from "@modonty/database/lib/brand-assets";
 
 export interface SEOData {
   title?: string;
@@ -60,7 +61,9 @@ export function generateMetadataFromSEO(data: SEOData, options?: SEOOptions): Me
   } else {
     canonicalUrl = `${siteUrl}${url}`;
   }
-  const ogImage = image || `${siteUrl}/og-image.jpg`;
+  // Never `${siteUrl}/og-image.jpg` — that file does not exist (measured HTTP 404 on
+  // 2026-08-07). The brand logo is a real asset on Bunny.
+  const ogImage = image || BRAND_LOGO_URL;
 
   const openGraph: NonNullable<Metadata["openGraph"]> = {
     title: fullTitle,

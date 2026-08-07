@@ -164,6 +164,9 @@ export async function getArticleBySlug(slug: string, userId?: string) {
           altText: true,
           width: true,
           height: true,
+          // Every upload stores a ~110-byte inline blur (591/591 rows on 2026-08-07),
+          // but nothing selected it, so the hero popped in with no placeholder.
+          blurDataURL: true,
         },
       },
       tags: {
@@ -321,7 +324,7 @@ async function getArticleContentBySlug(slug: string) {
       },
       category: { select: { id: true, name: true, slug: true } },
       featuredImage: {
-        select: { url: true, bunnyUrl: true, altText: true, width: true, height: true },
+        select: { url: true, bunnyUrl: true, altText: true, width: true, height: true, blurDataURL: true },
       },
       tags: {
         include: {

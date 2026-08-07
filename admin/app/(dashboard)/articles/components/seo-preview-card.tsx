@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SITE_NAME } from "@/lib/constants/site-name";
+import { BRAND_LOGO_URL } from "@modonty/database/lib/brand-assets";
 
 interface SEOPreviewCardProps {
   title: string;
@@ -23,7 +24,8 @@ export function SEOPreviewCard({
   const displayTitle = title || "عنوان المقال";
   const displayDescription = description || "وصف المقال...";
   const displayUrl = url || "modonty.com/articles/...";
-  const displayImage = image || "/og-image.jpg";
+  // `/og-image.jpg` does not exist (404) — the preview showed a broken thumbnail.
+  const displayImage = image || BRAND_LOGO_URL;
 
   return (
     <Card>

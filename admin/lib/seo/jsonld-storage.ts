@@ -143,6 +143,8 @@ export async function generateAndSaveJsonLd(
           imageOwnerName: settings.imageOwnerName,
           imageLicenseUrl: settings.imageLicenseUrl,
           imageAcquireLicensePageUrl: settings.imageAcquireLicensePageUrl,
+          // Last-resort article image when neither the article nor its client has one.
+          ogImageUrl: settings.ogImageUrl,
         }
       : null;
 

@@ -648,9 +648,13 @@ const TASKS = [
    "<b>✅ صفر رابط Cloudinary مُقدَّم من القاعدة.</b>",
  ref:"٧ أغسطس"},
 
-{id:"CACHE1", b:"deploy", app:["modonty"], tab:"open", sev:"critical", who:"k",
- t:"نشر جديد قبل إطفاء Cloudinary مباشرة — الحاجز الحقيقي أمام T9",
- d:"<b>ما اكتُشف (٧ أغسطس، فحص حيّ على الإنتاج):</b> كاش Vercel كان ما زال يقدّم <b>HTML مولَّداً قبل الترحيل</b> على صفحات كثيرة. الزيارة الأولى ترجع النسخة القديمة (ترويسة <code>x-vercel-cache: STALE</code>) وتشغّل التحديث، والزيارة التالية ترجع بني ١٠٠٪.<br><br>" +
+{id:"CACHE1", b:"deploy", app:["modonty"], tab:"done", sev:"ok", who:"k", date:"٧ أغسطس ٢٠٢٦",
+ t:"نشر جديد قبل إطفاء Cloudinary — تمّ",
+ d:"<b>✅ نُفِّذ ٧ أغسطس — متحقَّق بقياس حيّ بعد النشر:</b> الدفعة <code>78e6a27..eff8d2e</code> · ١٩ ملفاً · النسخ admin <code>1.10.1</code> · modonty <code>1.86.0</code> · dataLayer <code>0.2.1</code>. النشر اكتمل على الثلاثة (<code>modonty=READY · console=READY · admin=READY</code> على <code>eff8d2e</code>).<br>" +
+   "<b>القياس بعد النشر:</b> الرئيسية <code>cloud=0 bunny=1553</code> · <code>/clients</code> <code>0/463</code> · <code>/reels</code> <code>0/86</code> · <code>/authors/modonty</code> <code>0/318</code>. صفر رابط Cloudinary — الكاش الجديد بدأ نظيفاً كما ينصّ توثيق Vercel.<br>" +
+   "<b>ومعه اجتازت بوّابة ٤١٠ للكتّاب:</b> <code>/authors/&lt;غير موجود&gt;</code> ← <b>410</b> (كان 200)، والكاتبان القائمان ← 200 (لا حجب زائد)، وبقيّة الأقسام ← 410 كما كانت.<br><br>" +
+   "<b>الأصل الذي استدعى البند:</b><br>" +
+   "<b>ما اكتُشف (٧ أغسطس، فحص حيّ على الإنتاج):</b> كاش Vercel كان ما زال يقدّم <b>HTML مولَّداً قبل الترحيل</b> على صفحات كثيرة. الزيارة الأولى ترجع النسخة القديمة (ترويسة <code>x-vercel-cache: STALE</code>) وتشغّل التحديث، والزيارة التالية ترجع بني ١٠٠٪.<br><br>" +
 
    "<b>الدليل — كنس على ٥٨ صفحة، جولتان متتاليتان:</b><br>" +
    "· الجولة ١: ٢٤٣ صورة معروضة · منها <b>٧٠٩ من Cloudinary</b><br>" +
@@ -665,9 +669,17 @@ const TASKS = [
    "<b>ملاحظة:</b> «تنظيف الكاش يدوياً» من لوحة Vercel خيار بديل، لكنه <b>يمسح كذلك صور Image Optimization</b> المحفوظة بين النشرات (نصّ التوثيق نفسه) — فالنشر الجديد أنظف.",
  ref:"٧ أغسطس"},
 
-{id:"AUTH1", b:"deploy", app:["admin","modonty"], tab:"open", sev:"high", who:"k",
- t:"⏳ بعد الدفعة: حذف الكاتبَين — كاتب واحد «مدونتي» فقط",
- d:"<b>قرار خالد (٧ أغسطس):</b> نظام الكتّاب يصير <b>كاتباً واحداً</b> هو «مدونتي». يُحذف <code>ahmed-alshehri</code> و<code>noura-alqahtani</code>.<br><br>" +
+{id:"AUTH1", b:"deploy", app:["admin","modonty"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"حذف الكاتبَين — كاتب واحد «مدونتي» فقط",
+ d:"<b>✅ نُفِّذ ٧ أغسطس بعد الدفعة <code>eff8d2e</code> — متحقَّق بقياس حيّ:</b><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>بوّابة الأمان قبل الحذف:\n  ahmed-alshehri    مقالات (كل الحالات): 0\n  noura-alqahtani   مقالات (كل الحالات): 0\n\nحُذف: 2 · الكتّاب المتبقّون: 1 (Modonty)\nمقالات يتيمة بعد الحذف: 0</pre>" +
+   "نسخة احتياطية قبل الحذف: <code>backups/authors-deleted-2026-08-07.json</code>.<br><br>" +
+   "<b>التحقّق على الموقع الحيّ (بعد انقضاء كاش السلاجات ٥ دقائق):</b><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>/authors/ahmed-alshehri   → 410 ✅\n/authors/noura-alqahtani  → 410 ✅\n/authors/modonty          → 200 ✅\n\nخريطة الموقع: روابط الكتّاب = 1 (modonty، 200)\nإجمالي روابط الخريطة: 189  (كانت 191)</pre>" +
+   "<b>لا صفحة ميتة ولا رابط يتيم — غوغل يستقبل «410 Gone» صريحاً فيسقط الرابطين من الفهرس بدل أن يُبقيهما.</b><br><br>" +
+   "<b>ملاحظة تنفيذية:</b> الحذف تمّ بسكربت لا من الأدمن — صفحة <code>/authors</code> في الأدمن تعرض الكاتب المفرد «مدونتي» فقط ولا تُدرج غيره ولا تملك زرّ حذف (نقص واجهة مرصود في بند <code>ADM-AUTH-IMG</code>).<br><br>" +
+   "<b>الخلفية الأصلية:</b><br>" +
+   "<b>قرار خالد (٧ أغسطس):</b> نظام الكتّاب يصير <b>كاتباً واحداً</b> هو «مدونتي». يُحذف <code>ahmed-alshehri</code> و<code>noura-alqahtani</code>.<br><br>" +
 
    "<b>الحذف آمن على البيانات — متحقَّق بعدّ مباشر على قاعدة الإنتاج (٧ أغسطس):</b><br>" +
    "<code>ahmed-alshehri</code> → مقالات بكل الحالات: <b>٠</b> · <code>noura-alqahtani</code> → <b>٠</b> · <code>modonty</code> → ١٣٩.<br>" +
@@ -685,6 +697,30 @@ const TASKS = [
    "<b>⏳ الترتيب مُلزم — ولهذا البند مؤجَّل:</b> الإصلاح محلّي ولم يُنشر بعد. فالحذف <b>قبل</b> الدفعة يترك الرابطين يرجعان 200 حتى النشر — وهو بالضبط ما نتجنّبه. لذا: <b>الدفعة (<code>CACHE1</code>) أولاً ← ثم الحذف من الأدمن</b>، فيرجع الرابط <b>410</b> من أول لحظة.<br><br>" +
 
    "<b>خطوات التنفيذ بعد الدفعة:</b> ① احذف الكاتبَين من <code>/authors</code> في الأدمن ② تأكّد أنّ <code>/authors/ahmed-alshehri</code> و<code>/authors/noura-alqahtani</code> يرجعان <b>410</b> ③ تأكّد أنّهما اختفيا من <code>sitemap.xml</code>.",
+ ref:"٧ أغسطس"},
+
+{id:"IMG-FB", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"آخر حلقة في سلسلة صورة الاحتياط كانت ملفاً غير موجود",
+ d:"<b>كيف انكشفت:</b> سؤال خالد «هل الصورة الاحتياطية شغّالة؟» بعد إزالة بارام Cloudinary في بند ٦٥ — فالبارام كان <b>هو</b> آلية الاحتياط القديمة.<br><br>" +
+
+   "<b>السلسلة المعمول بها:</b> غلاف المقال ← هيرو العميل ← شعار العميل ← <b>صورة الموقع الافتراضية</b>.<br>" +
+   "<b>متحقَّق بقياس حيّ:</b> <code>https://www.modonty.com/og-image.jpg</code> ← <b>HTTP 404</b> (<code>content-type: text/html</code> — أي صفحة خطأ لا صورة).<br>" +
+   "فالحلقة الأخيرة كانت تخبز <b>رابطاً ميتاً</b> في بطاقة غوغل ووسم <code>og:image</code>.<br><br>" +
+
+   "<b>الأثر الفعلي اليوم: صفر.</b> يتطلّب تحقّق ثلاثة شروط معاً — مقال بلا غلاف <b>و</b>عميله بلا هيرو <b>و</b>بلا شعار. متحقَّق: مقال منشور واحد بلا غلاف، وعميله له هيرو ← أخذ هيرو العميل بثلاث نسب (16:9 · 4:3 · 1:1) كلها على بني. فالفخّ كان منصوباً للمقال القادم لا أكثر.<br><br>" +
+
+   "<b>الإصلاح — خمسة مواضع:</b><br>" +
+   "· <code>admin/lib/seo/knowledge-graph-generator.ts</code> — أُضيف <code>ogImageUrl</code> إلى <code>PlatformBranding</code> ومُرِّر عبر <code>generateArticleNode</code> ← <code>buildImageArray</code>. الحلقة الأخيرة صارت <code>Settings.ogImageUrl</code> ثم <code>BRAND_LOGO_URL</code> ثابتاً.<br>" +
+   "· <code>admin/lib/seo/metadata-generator.ts</code> · <code>seo-metadata.ts</code> — نفس الاستبدال لوسم <code>og:image</code>.<br>" +
+   "· <code>admin/lib/seo/jsonld-storage.ts</code> — يمرّر <code>settings.ogImageUrl</code> ضمن <code>branding</code>.<br>" +
+   "· معاينتا الأدمن <code>metatag-preview-step.tsx</code> و<code>seo-preview-card.tsx</code> — كانتا تعرضان صورة مكسورة للمحرّر. <b>ومعها تسريب من صنف B1:</b> الأولى كانت تضيّق الصفّ إلى <code>media.url</code> فتُسقط <code>bunnyUrl</code> ← صارت <code>mediaSrc(media)</code>.<br><br>" +
+
+   "<b>لماذا <code>BRAND_LOGO_URL</code> ثابتاً في النهاية:</b> المولّدات لا تملك وصولاً للإعدادات في كل مسار، والثابت في <code>dataLayer/lib/brand-assets.ts:15</code> يعيش على بني ويرجع <b>200</b> — فلا يمكن أن تنتهي السلسلة إلى رابط ميت مهما كانت الحالة.<br><br>" +
+
+   "<b>التحقّق:</b> <code>pnpm tsc --noEmit</code> على admin وmodonty ← <b>صفر أخطاء</b> · وبحث نصّي: صفر استعمال حيّ لـ<code>og-image.jpg</code> (بقي ذكر واحد كمثال اسم ملف في <code>media-guidelines.tsx:112</code> — نصّ إرشادي لا رابط).<br><br>" +
+
+   "<b>لا يحتاج إعادة توليد:</b> صفر مقال كان يمرّ بهذا الفرع.<br>" +
+   "<b>ثغرتان أصغر مرصودتان:</b> الصور الافتراضية الثلاث بلا <code>width/height</code> في القاعدة · ولا فولباك بصري (<code>onError</code>) لو انكسر رابط بني وقت العرض — حالياً صفر صورة مكسورة.",
  ref:"٧ أغسطس"},
 
 {id:"T9", b:"deploy", app:["admin","modonty"], tab:"open", sev:"critical", who:"k",
@@ -1014,6 +1050,24 @@ const TASKS = [
  t:"عرض الريلز المعتمدة للزائر على مودونتي",
  d:"<b>مبني ومتحقَّق:</b> <code>modonty/app/reels/</code> صفحة + خلاصة تفلتر <code>inReels:true</code> و<code>reelStatus:\"PUBLISHED\"</code> وعميلاً غير فاضٍ (<code>reels-feed.ts:42</code>)، وتبويب ريلز لكل عميل في <code>clients/[slug]/reels</code>، ومكوّنات تفاعل كاملة.<br><b>ملاحظة:</b> الصفحة عليها <code>robots:{index:false}</code> بتعليق «خارج الفهرسة حتى إطلاق الريلز» — فتح الفهرسة قرار إطلاق، بند مستقلّ <code>83c</code>.",
  ref:"بند ٨٣ · ١٤"},
+
+{id:"BNOPT", b:"bunny", app:["modonty"], tab:"open", sev:"high", who:"k",
+ t:"نقل تحسين الصور من محسّن Vercel إلى محسّن بني — توفير مباشر",
+ d:"<b>الوضع الحالي — متحقَّق بقياس حيّ على صفحة مقال (٧ أغسطس):</b><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>تمرّ عبر محسّن Vercel (/_next/image):  309\nمباشرة من بني:                          1\nالجودة: q=75 · q=100\nالعروض: 16 32 48 64 96 128 256 384 640 750 …</pre>" +
+   "يعني بني يقدّم <b>الأصل فقط</b>، ومحسّن Vercel هو الذي يقصّ المقاسات ويحوّل إلى WebP — <b>وتحويلات الصور مفوترة على Vercel</b>.<br><br>" +
+
+   "<b>الفكرة:</b> بني عنده محسّن خاص به (بارامترات عرض/جودة على الرابط نفسه) — أقرب للأصل وبلا فاتورة تحويلات. والبنية جاهزة جزئياً: <code>dataLayer/lib/bunny.ts</code> فيه <code>BUNNY_ASPECT_SUFFIX</code> و<code>bunnyAspectUrl</code> ويُستعملان في مولّد السيو.<br><br>" +
+
+   "<b>⚠️ لا يُنفَّذ قبل تحقّق كامل — ثلاث بوّابات:</b><br>" +
+   "① <b>تأكيد أنّ Bunny Optimizer مفعَّل على الزونات</b> ومقروء من لوحة بني لا مفترضاً.<br>" +
+   "② <b>قياس السعر قبل/بعد</b> من فاتورة Vercel الفعلية (تحويلات الصور) مقابل سعر Optimizer عند بني.<br>" +
+   "③ <b>قياس السرعة</b> بنفس منهج بند ٦٧ — الصورة نفسها، جولات متعدّدة، ترتيب متبادل.<br><br>" +
+
+   "<b>خطر يجب حسابه:</b> تجاوز <code>next/image</code> يعني فقدان <code>srcset</code> التلقائي وحساب المقاسات — فإما نولّد <code>srcset</code> يدوياً بروابط بني، أو نبقي <code>next/image</code> مع <code>loader</code> مخصّص يوجّه لبني. الثاني أسلم ويحفظ سلوك Next.<br><br>" +
+   "<b>مرجع المهارة:</b> اختصار <code>img&gt;</code> يحمّل مهارة <code>image-speed</code> بمبدأ مفتاح الكاش والتقنيات الثلاث.<br>" +
+   "<b>ليس عاجلاً ولا يحجب <code>T9</code>.</b>",
+ ref:"٧ أغسطس"},
 
 {id:"ADM-AUTH-IMG", b:"projects", app:["admin"], tab:"open", sev:"normal", who:"c",
  t:"الأدمن بلا حقل لصورة الكاتب — اضطررنا لكتابتها في القاعدة",

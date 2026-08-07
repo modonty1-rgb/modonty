@@ -281,7 +281,13 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
     const featuredImage =
       article.featuredImage ??
       (defaultImages?.post
-        ? { url: defaultImages.post, bunnyUrl: defaultImages.post, altText: article.title }
+        ? {
+            url: defaultImages.post,
+            bunnyUrl: defaultImages.post,
+            altText: article.title,
+            // The resolver returns a url only, so there is no stored blur for this branch.
+            blurDataURL: null,
+          }
         : null);
 
     const userBox = session?.user

@@ -12,6 +12,10 @@ interface ArticleFeaturedImageProps {
     url: string;
     bunnyUrl: string | null;
     altText: string | null;
+    /** REQUIRED key (value may be null) — same discipline as `bunnyUrl` above: making it
+     *  optional let every caller drop the stored blur silently, which is exactly how the
+     *  hero shipped with no placeholder while 591/591 media rows had one. */
+    blurDataURL: string | null;
   };
   title: string;
   children?: ReactNode;
@@ -29,6 +33,10 @@ export function ArticleFeaturedImage({ image, title, children }: ArticleFeatured
         loading="eager"
         fetchPriority="high"
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 900px"
+        // Blur is a CSS background under the img — it paints instantly and does not delay
+        // the real image, so LCP is unaffected while the empty box disappears.
+        placeholder={image.blurDataURL ? "blur" : undefined}
+        blurDataURL={image.blurDataURL ?? undefined}
       />
       {children}
     </div>

@@ -12,15 +12,12 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.10.1 (admin) · 1.86.0 (modonty) · 0.2.1 (dataLayer)",
-    title: "Bunny is now the only place images come from",
+    version: "1.10.2 (admin) · 1.87.0 (modonty)",
+    title: "Article images fade in instead of popping in",
     items: [
-      { type: "fix" as const, text: "A deleted author's page used to answer «page found» with an empty body — the one thing Google reads as a broken page worth keeping in its index. Every other section (articles, tags, categories, industries, clients) already answered «gone» properly; authors was the only gap. Now it does too." },
-      { type: "fix" as const, text: "Four screens inside the admin still loaded pictures from the old image host: the client's media tab, the article's search-preview card, and the image editor. They were reading the old address even though every picture already had a new one. Nothing a visitor sees, but they would have gone blank the day we switch the old host off." },
-      { type: "fix" as const, text: "Removed a leftover instruction attached to every image address that pointed at a placeholder file which no longer exists — dead weight on every request." },
-      { type: "improve" as const, text: "The author «مدونتي» finally has a picture. Ninety-four published articles were showing an empty circle where the author's face goes." },
-      { type: "improve" as const, text: "Cleaned out stale data on the live site: four image records whose files had been deleted long ago, two test accounts pointing at dead avatars, and 28,000 characters of search data belonging to a page that was removed weeks ago." },
-      { type: "improve" as const, text: "Measured on the live site: 156 pictures across eight page types, every one served from the new host, none broken. Speed test on identical images — the new host is 40% faster at the typical request and 2.4× faster at the slow tail." },
+      { type: "improve" as const, text: "Every picture we upload has had a tiny blurred preview stored with it — 591 out of 591 — but nothing ever asked for it, so article covers appeared out of nowhere once loaded. The cover now shows that blurred preview instantly and sharpens into the real photo. It does not slow the real image down." },
+      { type: "fix" as const, text: "The last fallback in the image chain pointed at a file that does not exist. If an article had no cover AND its company had neither a banner nor a logo, we were handing Google a dead link. No article is in that state today — but the trap was set for the next one. It now falls back to the platform share image, then the brand logo." },
+      { type: "fix" as const, text: "The article's search-preview card inside the admin was showing a broken thumbnail for the same reason, and was reading the old image address instead of the new one." },
     ],
   },
 ];

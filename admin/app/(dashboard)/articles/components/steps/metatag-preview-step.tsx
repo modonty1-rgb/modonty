@@ -20,6 +20,7 @@ import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
 import { generateBreadcrumbStructuredData } from '@/lib/seo';
 import { openInspect } from '@/app/(dashboard)/inspect/helpers/open-inspect';
 import { mediaSrc } from "@modonty/database/lib/media-src";
+import { BRAND_LOGO_URL } from "@modonty/database/lib/brand-assets";
 
 interface FeaturedMedia {
   url: string;
@@ -45,7 +46,8 @@ export function MetaTagPreviewStep() {
         const media = await getMediaById(formData.featuredImageId, formData.clientId);
         if (media) {
           setFeaturedMedia({
-            url: media.url,
+            // Resolve here — narrowing to `media.url` drops the Bunny copy (same leak class as B1).
+            url: mediaSrc(media) ?? media.url,
             altText: media.altText,
             width: media.width,
             height: media.height,
@@ -152,7 +154,8 @@ export function MetaTagPreviewStep() {
   const nextjsMetadataObject = useMemo(() => {
     const siteName = selectedClient?.name || SITE_NAME;
     const fullTitle = `${effectiveTitle} - ${siteName}`;
-    const ogImage = featuredMedia?.url || `${siteUrl}/og-image.jpg`;
+    // Mirrors metadata-generator: never `${siteUrl}/og-image.jpg` — that file 404s.
+    const ogImage = featuredMedia?.url || BRAND_LOGO_URL;
 
     const openGraphData: Record<string, unknown> = {
       title: fullTitle,

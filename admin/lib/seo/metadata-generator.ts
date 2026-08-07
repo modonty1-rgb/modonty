@@ -10,6 +10,7 @@ import type { Article, Client, Author, Category, Media } from "@prisma/client";
 import { SITE_NAME } from "@/lib/constants/site-name";
 import { loadSiteUrl } from "./site-url";
 import { mediaSrc } from "@modonty/database/lib/media-src";
+import { BRAND_LOGO_URL } from "@modonty/database/lib/brand-assets";
 
 // Type for article with relations needed for metadata generation
 export interface ArticleWithMetadataRelations {
@@ -184,12 +185,14 @@ export async function generateNextjsMetadata(
   );
   const fullTitle = alreadyBranded ? effectiveTitle : `${effectiveTitle} - ${siteName}`;
 
-  // Featured image
+  // Featured image. Last link was `${siteUrl}/og-image.jpg` — a file that does not exist
+  // (measured HTTP 404 on 2026-08-07), so an article with no image whose client had neither
+  // hero nor logo shipped a dead og:image. The brand logo is a real asset on Bunny.
   const ogImage =
     mediaSrc(article.featuredImage) ||
     mediaSrc(article.client.heroImageMedia) ||
     mediaSrc(article.client.logoMedia) ||
-    `${siteUrl}/og-image.jpg`;
+    BRAND_LOGO_URL;
 
   // Open Graph metadata — OG title/description use article seoTitle/seoDescription (SOT)
   // datePublished is the single source of truth for published time
