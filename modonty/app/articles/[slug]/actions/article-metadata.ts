@@ -35,7 +35,7 @@ export async function getArticleForMetadata(slug: string) {
       },
       featuredImage: {
         select: {
-          url: true, bunnyUrl: true,
+          url: true, bunnyUrl: true, blurDataURL: true,
           altText: true,
           width: true,
           height: true,

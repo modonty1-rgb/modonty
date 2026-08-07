@@ -160,13 +160,13 @@ export async function getArticleBySlug(slug: string, userId?: string) {
       featuredImage: {
         select: {
           url: true,
+          // Every upload stores a ~110-byte inline blur (591/591 rows on 2026-08-07),
+          // but nothing selected it, so the hero popped in with no placeholder.
           bunnyUrl: true,
+          blurDataURL: true,
           altText: true,
           width: true,
           height: true,
-          // Every upload stores a ~110-byte inline blur (591/591 rows on 2026-08-07),
-          // but nothing selected it, so the hero popped in with no placeholder.
-          blurDataURL: true,
         },
       },
       tags: {
@@ -194,7 +194,7 @@ export async function getArticleBySlug(slug: string, userId?: string) {
             select: {
               id: true,
               url: true,
-              bunnyUrl: true,
+              bunnyUrl: true, blurDataURL: true,
               altText: true,
               caption: true,
               width: true,
@@ -220,7 +220,7 @@ export async function getArticleBySlug(slug: string, userId?: string) {
               featuredImage: {
                 select: {
                   url: true,
-                  bunnyUrl: true,
+                  bunnyUrl: true, blurDataURL: true,
                   altText: true,
                 },
               },
@@ -337,7 +337,7 @@ async function getArticleContentBySlug(slug: string) {
             select: {
               id: true,
               url: true,
-              bunnyUrl: true,
+              bunnyUrl: true, blurDataURL: true,
               altText: true,
               caption: true,
               width: true,
@@ -358,7 +358,7 @@ async function getArticleContentBySlug(slug: string) {
               excerpt: true,
               datePublished: true,
               createdAt: true,
-              featuredImage: { select: { url: true, bunnyUrl: true, altText: true } },
+              featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true } },
               client: { select: { name: true, slug: true } },
               likesCount: true,
               dislikesCount: true,
@@ -487,7 +487,7 @@ export async function getRelatedArticlesByAuthor(authorId: string, currentArticl
       featuredImage: {
         select: {
           url: true,
-          bunnyUrl: true,
+          bunnyUrl: true, blurDataURL: true,
           altText: true,
         },
       },
@@ -541,7 +541,7 @@ export async function getRelatedArticlesByClient(clientId: string, currentArticl
       featuredImage: {
         select: {
           url: true,
-          bunnyUrl: true,
+          bunnyUrl: true, blurDataURL: true,
           altText: true,
         },
       },
@@ -585,7 +585,7 @@ const relatedArticleSelect = {
   featuredImage: {
     select: {
       url: true,
-      bunnyUrl: true,
+      bunnyUrl: true, blurDataURL: true,
       altText: true,
     },
   },

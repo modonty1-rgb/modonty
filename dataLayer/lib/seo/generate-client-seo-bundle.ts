@@ -163,7 +163,7 @@ const CLIENT_SEO_SELECT = {
   gbpProfileUrl: true,
   gbpPlaceId: true,
   parentOrganizationId: true,
-  logoMedia: { select: { url: true, bunnyUrl: true, altText: true, width: true, height: true, description: true, createdAt: true } },
+  logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true, width: true, height: true, description: true, createdAt: true } },
   heroImageMedia: { select: { url: true, bunnyUrl: true, altText: true, width: true, height: true, description: true, createdAt: true } },
   industry: { select: { id: true, name: true } },
   parentOrganization: { select: { id: true, name: true, url: true, slug: true } },
@@ -375,7 +375,7 @@ export async function generateClientSeoBundle(
       // `bunnyUrl` MUST be selected — without it `mediaSrc()` silently falls back to the
       // Cloudinary `url` forever, and `tsc` never complains. This one select kept 10 clients
       // emitting Cloudinary in Organization.image[] after every regeneration (2026-07-30).
-      select: { url: true, bunnyUrl: true, altText: true, width: true, height: true, description: true, createdAt: true },
+      select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true, width: true, height: true, description: true, createdAt: true },
       orderBy: { createdAt: "desc" },
       take: 30,
     }),

@@ -518,6 +518,9 @@ const IMGFLOW = [
   {id:"MI2i"},
 
   {id:"BL9"},
+  // IMGDIM — متحقَّق باستعلام الإنتاج: الافتراضيات الثلاث width/height = undefined،
+  // والتوثيق المثبَّت image.md:102 يجعلهما شرط حجز المساحة ومنع الـlayout shift.
+  {id:"IMGDIM"},
   {id:"MI3"},
   {id:"MI4"},
 
@@ -1111,6 +1114,23 @@ const TASKS = [
  d:"<b>مبني ومتحقَّق:</b> <code>modonty/app/reels/</code> صفحة + خلاصة تفلتر <code>inReels:true</code> و<code>reelStatus:\"PUBLISHED\"</code> وعميلاً غير فاضٍ (<code>reels-feed.ts:42</code>)، وتبويب ريلز لكل عميل في <code>clients/[slug]/reels</code>، ومكوّنات تفاعل كاملة.<br><b>ملاحظة:</b> الصفحة عليها <code>robots:{index:false}</code> بتعليق «خارج الفهرسة حتى إطلاق الريلز» — فتح الفهرسة قرار إطلاق، بند مستقلّ <code>83c</code>.",
  ref:"بند ٨٣ · ١٤"},
 
+{id:"IMGDIM", b:"mediaimg", app:["admin","dataLayer"], tab:"open", sev:"high", who:"c",
+ t:"الصور الافتراضية الثلاث بلا أبعاد — خطر layout shift حقيقي",
+ d:"<b>متحقَّق باستعلام على قاعدة الإنتاج (٧ أغسطس):</b><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>platform-default-logo   bunny ✅  HTTP 200  |  undefined x undefined\nplatform-default-post   bunny ✅  HTTP 200  |  undefined x undefined\nplatform-default-hero   bunny ✅  HTTP 200  |  undefined x undefined</pre>" +
+   "الملفات حيّة على بني، لكن حقلَي <code>width</code> و<code>height</code> فارغان في صفوفها.<br><br>" +
+
+   "<b>لماذا هذا خطر — من التوثيق المثبَّت</b> (<code>next/dist/docs/01-app/03-api-reference/02-components/image.md:102</code>):<br>" +
+   "«<i>width and height … used to infer the correct aspect ratio used by browsers to <b>reserve space</b> for the image and <b>avoid layout shift</b></i>».<br>" +
+   "فالصورة بلا أبعاد لا تحجز مساحتها، والصفحة تقفز عند تحميلها — وهو ما تقيسه غوغل باسم CLS.<br><br>" +
+
+   "<b>ومعها ينكسر حارسنا:</b> <code>OptimizedImage.tsx:95-103</code> يرمي خطأ في التطوير لأي صورة بلا <code>fill</code> وبلا أبعاد — فالصورة الافتراضية تُسقط الصفحة في التطوير أو تمرّ بلا حجز في الإنتاج، حسب موضع استعمالها.<br><br>" +
+
+   "<b>الأثر اليوم محدود:</b> تُستعمل فقط حين لا يملك المقال ولا عميله أي صورة — صفر حالة الآن (متحقَّق: مقال منشور واحد بلا غلاف، وعميله له هيرو). لكنها الحلقة الأخيرة في سلسلة الاحتياط، فأول حالة تصلها ترث القفزة.<br><br>" +
+
+   "<b>الحلّ:</b> قراءة الأبعاد الحقيقية من الملفات الثلاثة على بني وكتابتها في صفوفها — وإضافة الأبعاد إلى ما يُرجعه <code>getPlatformDefaultImages()</code> (<code>dataLayer/lib/platform-defaults.ts</code>) بدل الرابط وحده، حتى يصل الحجز إلى كل مستهلك.",
+ ref:"٧ أغسطس"},
+
 {id:"BNOPT", b:"bunny", app:["modonty"], tab:"open", sev:"high", who:"k",
  t:"نقل تحسين الصور من محسّن Vercel إلى محسّن بني — توفير مباشر",
  d:"<b>الوضع الحالي — متحقَّق بقياس حيّ على صفحة مقال (٧ أغسطس):</b><br>" +
@@ -1124,7 +1144,10 @@ const TASKS = [
    "② <b>قياس السعر قبل/بعد</b> من فاتورة Vercel الفعلية (تحويلات الصور) مقابل سعر Optimizer عند بني.<br>" +
    "③ <b>قياس السرعة</b> بنفس منهج بند ٦٧ — الصورة نفسها، جولات متعدّدة، ترتيب متبادل.<br><br>" +
 
-   "<b>خطر يجب حسابه:</b> تجاوز <code>next/image</code> يعني فقدان <code>srcset</code> التلقائي وحساب المقاسات — فإما نولّد <code>srcset</code> يدوياً بروابط بني، أو نبقي <code>next/image</code> مع <code>loader</code> مخصّص يوجّه لبني. الثاني أسلم ويحفظ سلوك Next.<br><br>" +
+   "<b>✅ المسار التقني — صُحِّح ٧ أغسطس بعد الرجوع للتوثيق:</b> كان مكتوباً «<code>loader</code> مخصّص». <b>والصحيح <code>loaderFile</code> في <code>next.config.ts</code>.</b><br>" +
+   "<code>image.md:197</code>: «you can use the <b>loaderFile</b> configuration … to configure <b>every instance</b> of <code>next/image</code> in your application, <b>without passing a prop</b>».<br>" +
+   "<b>ولماذا لا يصلح حقن <code>loader</code>:</b> مثال التوثيق نفسه يبدأ بـ<code>'use client'</code> — الدالة لا تعبر حدّ السيرفر، فحقنها كخاصيّة يحوّل <b>كل مستهلك</b> إلى مكوّن عميل ويضخّم الباندل. أمّا <code>loaderFile</code> فملف واحد يعمّ كل الصور بلا لمس أي كومبوننت.<br><br>" +
+   "<b>خطر باقٍ يُحسب:</b> الـ<code>loader</code> يستقبل <code>src</code> و<code>width</code> و<code>quality</code> فقط — فبناء رابط بني يجب أن يعتمد عليها وحدها، وأي منطق يحتاج أكثر من ذلك لا مكان له هنا.<br><br>" +
    "<b>مرجع المهارة:</b> اختصار <code>img&gt;</code> يحمّل مهارة <code>image-speed</code> بمبدأ مفتاح الكاش والتقنيات الثلاث.<br>" +
    "<b>ليس عاجلاً ولا يحجب <code>T9</code>.</b>",
  ref:"٧ أغسطس"},
@@ -1340,9 +1363,16 @@ const TASKS = [
  d:"<b>منجز ومتحقَّق بتست حيّ ٦ أغسطس.</b> الحقل مضاف على نموذج <code>Media</code> مع تعليق يوثّق لماذا نصّ base64 لا رابط. قُتلت السيرفرات ثم <code>pnpm prisma:generate</code> نجح (Prisma 6.19.2).<br><b>الدليل:</b> رفعتُ صورة من <code>/media/upload</code> على قاعدة <code>modonty_dev</code>، والصفّ الناتج يحمل <code>blurDataURL</code> بطول ١٤٣ حرفاً يبدأ بـ<code>data:image/webp;base64,UklGR</code> (UklGR = بصمة ويب-بي).<br>تبقّى تعبئة الصفوف القديمة — بند <code>BL8</code>.",
  ref:"بند ٦٥b"},
 
-{id:"BL2", b:"projects", app:["dataLayer"], tab:"open", sev:"high", who:"c",
- t:"<code>MediaSrcInput</code>: <code>blurDataURL</code> مفتاحاً إلزامياً",
- d:"<b>متحقَّق ٦ أغسطس:</b> <code>media-src.ts:23</code> يفرض <code>bunnyUrl: string | null</code> إلزامياً بنفس المنطق. نضيف <code>blurDataURL: string | null</code> جنبه.<br><b>الأثر المقصود:</b> كل <code>select</code> ناقص يصير خطأ ترجمة عند نقطة النداء — وهذي هي أداة الجرد. <b>ينفَّذ بعد <code>BL1</code>.</b>",
+{id:"BL2", b:"mediaimg", app:["dataLayer"], tab:"open", sev:"high", who:"c",
+ t:"<code>MediaSrcInput</code>: <code>blurDataURL</code> مفتاحاً إلزامياً — ومعه تقرير الجرد",
+ d:"<b>✅ الحقل أُضيف ٧ أغسطس</b> (<code>dataLayer/lib/media-src.ts:33</code>)، و<code>tsc</code> أخرج الجرد كما كان مقصوداً:<br>" +
+   "<pre style='font-size:12px;margin:4px 0'>modonty:  99 خطأ · 47 ملفاً\nadmin:    83 خطأ · 41 ملفاً\nconsole:   0 خطأ ·  0 ملفاً</pre>" +
+   "<b>📄 التقرير الكامل بكل سطر ومساره ورقمه:</b><br><code>documents/tasks/reports/BL2-blur-inventory-2026-08-07.md</code><br>" +
+   "<b>وهو الكاشف المعتمد</b> — لا تُراجَع المواضع بالعين، بل يُغلَق التقرير سطراً سطراً حتى يصير <code>tsc</code> صفراً. أي موضع لا يظهر فيه، لا وجود له.<br><br>" +
+   "<b>أكثر الملفات إصابةً — مودونتي:</b> <code>api/helpers/client-queries.ts</code> ٩ · <code>api/helpers/article-queries.ts</code> ٨ · <code>articles/[slug]/page.tsx</code> ٥ · <code>clients/[slug]/page.tsx</code> ٤ · <code>api/helpers/category-queries.ts</code> ٤.<br>" +
+   "<b>الأدمن:</b> <code>clients/components/client-form.tsx</code> ٦ · <code>client-seo-validation-section.tsx</code> ٦ · <code>clients/[id]/components/client-view.tsx</code> ٥.<br><br>" +
+   "<b>ملاحظة نطاق:</b> الأدمن خارج ريفاكتور المكوّن (<code>MI9</code> مؤجَّل)، لكن أخطاءه الـ٨٣ تُغلَق هنا وإلا لا يبني.<br><br>" +
+   "<b>الخلفية:</b> <code>media-src.ts:23</code> يفرض <code>bunnyUrl: string | null</code> إلزامياً بنفس المنطق. نضيف <code>blurDataURL: string | null</code> جنبه.<br><b>الأثر المقصود:</b> كل <code>select</code> ناقص يصير خطأ ترجمة عند نقطة النداء — وهذي هي أداة الجرد. <b>ينفَّذ بعد <code>BL1</code>.</b>",
  ref:"بند ٦٥b"},
 
 {id:"BL3", b:"projects", app:["admin"], tab:"done", sev:"high", who:"c", date:"٦ أغسطس",
@@ -1397,17 +1427,80 @@ const TASKS = [
 
 {id:"MI-RISK", b:"mediaimg", app:["modonty","dataLayer"], tab:"open", sev:"critical", who:"c",
  t:"سجلّ المخاطر — يُدرَس بنداً بنداً قبل أول سطر كود",
- d:"<b>بطلب خالد ٦ أغسطس:</b> كل مخافةٍ ذُكرت في النقاش تُسجَّل هنا صراحةً ولكلٍّ اختبارُ إثباتها. <b>لا يبدأ <code>MI1</code> قبل إغلاق كل سطر.</b> الأرقام أدناه <b>متحقَّقة ٦ أغسطس</b> بعدٍّ فعلي على المستودع (المصادر في <code>MI0</code>).<div class=\"cklist\"><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-1-nextimage-in-datalayer\"><code>١ · هل يستورد مكوّن في dataLayer من next/image أصلاً؟</code><span class=\"ckm\">مجهول تام</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-2-server-boundary\"><code>٢ · هل يبقى سيرفر كومبونت بعد النقل؟ (٥٠ ملفاً تنقلب لو لا)</code><span class=\"ckm\">حرج</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-3-lcp-priority\"><code>٣ · قياس LCP قبل/بعد على صفحة مقال — ١٦ ملفاً فيها priority</code><span class=\"ckm\">سيو</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-4-fill-collapse\"><code>٤ · ٤٧ استخدام fill — تمرير خاطئ يُسقط الارتفاع لصفر بصمت</code><span class=\"ckm\">صامت</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-5-peer-next\"><code>٥ · next كـpeerDependency في dataLayer — أثرها على البناء</code><span class=\"ckm\">بناء</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-6-cloudinary-dead\"><code>٦ · حذف optimizeCloudinaryUrl — بعد بند 65 لا قبله</code><span class=\"ckm\">تسلسل</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-7-bundle-size\"><code>٧ · حجم باندل الزائر قبل/بعد — الأداء #١ على مودونتي</code><span class=\"ckm\">أداء</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-8-raw-img\"><code>٨ · قرار الوسم الخام: team-avatar متعمَّد — يُبقى أم يُسمح المضيف؟</code><span class=\"ckm\">قرار</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-9-blast-radius\"><code>٩ · قسم واحد لكل دفعة — لا دمج قسمين قبل تست السابق</code><span class=\"ckm\">انضباط</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-10-rollback\"><code>١٠ · خطة تراجع: كل قسم كوميت مستقلّ يُرجَع وحده</code><span class=\"ckm\">تراجع</span></label></div><br><b>كيف يُغلَق كلٌّ منها:</b> ①②⑤ بملفٍ تجريبي واحد في dataLayer قبل أي هجرة — أرخص إثبات وأخطر مجهول · ③⑦ بقياس Lighthouse قبل/بعد على نفس الصفحة · ④ بلقطة بصرية لكل قسم · ⑥⑧ قراران لا اختباران · ⑨⑩ انضباط تنفيذ.<br><b>سند الخطر ②:</b> مكوّنات <code>dataLayer/components</code> الثلاثة كلها <code>\"use client\"</code> ولا واحد يستورد من <code>next/*</code> — متحقَّق.",
+ d:"<h4 style='margin:0 0 6px'>🔴 أربعة آثار مقيسة للتوحيد — أُضيفت ٧ أغسطس</h4>" +
+   "<b>سؤال خالد كان: «هل فيه side effect؟» — والجواب مقيس لا مُخمَّن.</b><br><br>" +
+
+   "<b>■ ١. الجودة تقفز من 75 إلى 100 عند التوحيد</b><br>" +
+   "كومبوننتنا يرفعها تلقائياً مع <code>preload</code> (<code>OptimizedImage.tsx:87-92</code>). فملفٌ يستعمل اليوم <code>priority</code> بجودة 75 يصير ملفه <b>أثقل</b> بعد التوحيد. والتوثيق يقول إنّ الرفع «increase the file size without improving appearance».<br>" +
+   "<b>الاختبار:</b> بعد كل قسم، قِس <code>q=</code> في HTML الصفحة — لا تُقبل قيمة غير 75 إلّا بقرار مكتوب.<br><br>" +
+
+   "<b>■ ٢. <code>fill</code> بلا <code>sizes</code> يتغيّر ملفه المنزَّل</b><br>" +
+   "الكومبوننت يحقن <code>sizes</code> عامة حين <code>fill</code> بلا تصريح (<code>OptimizedImage.tsx:106</code>) ← يتغيّر <code>srcset</code> ← ينزّل المتصفّح ملفاً مختلفاً. تحسّنٌ غالباً، لكنه <b>تغيّر سلوك</b> لا يُمرَّر بلا قياس.<br>" +
+   "<b>الاختبار:</b> قارن <code>rendered</code> مقابل <code>w=</code> في <code>currentSrc</code> قبل/بعد.<br><br>" +
+
+   "<b>■ ٣. ثمانية ملفات على <code>priority</code> المهجورة</b><br>" +
+   "<b>متحقَّق:</b> <code>priority</code> مهجورة في Next 16 لصالح <code>preload</code> (<code>image.md</code> Version History <code>v16.0.0</code>). المواضع: <code>about/page.tsx</code> · <code>authors/[slug]/page.tsx</code> · <code>shared/client-card.tsx</code> · <code>clients/[slug]/components/nav/client-section-menu.tsx</code> · <code>client-page-shell.tsx</code> · <code>client-hero-v2.tsx</code> · <code>featured-partners-slider.tsx</code> · <code>gallery-lightbox-overlay.tsx</code>.<br>" +
+   "<b>الاختبار:</b> بعد التوحيد ← صفر تطابق لـ<code>priority=</code> في <code>modonty/</code>.<br><br>" +
+
+   "<b>■ ٤. أربعون ملفاً يستعمل <code>&lt;Image&gt;</code> — والحارس قد يوقف الصفحة</b><br>" +
+   "<code>OptimizedImage.tsx:95-103</code> يرمي خطأ في التطوير لأي صورة بلا <code>fill</code> وبلا أبعاد. فأي ملف من الأربعين ينقصه ذلك <b>يُسقط الصفحة</b> لحظة تحويله.<br>" +
+   "<b>الاختبار:</b> قبل تحويل كل قسم، افحص أن كل صورة فيه إمّا <code>fill</code> وإمّا <code>width</code>+<code>height</code>.<br><br>" +
+
+   "<b>■ ما لن يتغيّر — متحقَّق:</b> حدود السيرفر/العميل (<code>OptimizedImage.tsx:1</code> بلا <code>'use client'</code> ← صفر زيادة باندل) · الـlayout والـCLS (التوحيد لا يمسّ <code>width</code>/<code>height</code>/<code>fill</code>).<br><br>" +
+
+   "<b>■ تصحيح قياس:</b> ادّعيتُ «هدر ٩٦× على الجوال» — <b>غلط</b>. الأداة قرأت <code>img.src</code> للصور الكسولة، وهو الرابط الاحتياطي الأكبر الذي يضعه Next ولم يُنزَّل. القياس الصحيح على المُحمَّل فعلاً (٣٩٠ بكسل): <b>١٨ صورة، واحدة فقط تتجاوز 2×</b>. والـ<code>presets</code> اعتُمدت للانضباط لا للإنقاذ (قرار خالد).<br><br>" +
+
+   "<hr style='border:0;border-top:1px solid var(--line);margin:10px 0'>" +
+   "<b>بطلب خالد ٦ أغسطس:</b> كل مخافةٍ ذُكرت في النقاش تُسجَّل هنا صراحةً ولكلٍّ اختبارُ إثباتها. <b>لا يبدأ <code>MI1</code> قبل إغلاق كل سطر.</b> الأرقام أدناه <b>متحقَّقة ٦ أغسطس</b> بعدٍّ فعلي على المستودع (المصادر في <code>MI0</code>).<div class=\"cklist\"><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-1-nextimage-in-datalayer\"><code>١ · هل يستورد مكوّن في dataLayer من next/image أصلاً؟</code><span class=\"ckm\">مجهول تام</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-2-server-boundary\"><code>٢ · هل يبقى سيرفر كومبونت بعد النقل؟ (٥٠ ملفاً تنقلب لو لا)</code><span class=\"ckm\">حرج</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-3-lcp-priority\"><code>٣ · قياس LCP قبل/بعد على صفحة مقال — ١٦ ملفاً فيها priority</code><span class=\"ckm\">سيو</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-4-fill-collapse\"><code>٤ · ٤٧ استخدام fill — تمرير خاطئ يُسقط الارتفاع لصفر بصمت</code><span class=\"ckm\">صامت</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-5-peer-next\"><code>٥ · next كـpeerDependency في dataLayer — أثرها على البناء</code><span class=\"ckm\">بناء</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-6-cloudinary-dead\"><code>٦ · حذف optimizeCloudinaryUrl — بعد بند 65 لا قبله</code><span class=\"ckm\">تسلسل</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-7-bundle-size\"><code>٧ · حجم باندل الزائر قبل/بعد — الأداء #١ على مودونتي</code><span class=\"ckm\">أداء</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-8-raw-img\"><code>٨ · قرار الوسم الخام: team-avatar متعمَّد — يُبقى أم يُسمح المضيف؟</code><span class=\"ckm\">قرار</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-9-blast-radius\"><code>٩ · قسم واحد لكل دفعة — لا دمج قسمين قبل تست السابق</code><span class=\"ckm\">انضباط</span></label><label class=\"ck\"><input type=\"checkbox\" data-ck=\"risk-10-rollback\"><code>١٠ · خطة تراجع: كل قسم كوميت مستقلّ يُرجَع وحده</code><span class=\"ckm\">تراجع</span></label></div><br><b>كيف يُغلَق كلٌّ منها:</b> ①②⑤ بملفٍ تجريبي واحد في dataLayer قبل أي هجرة — أرخص إثبات وأخطر مجهول · ③⑦ بقياس Lighthouse قبل/بعد على نفس الصفحة · ④ بلقطة بصرية لكل قسم · ⑥⑧ قراران لا اختباران · ⑨⑩ انضباط تنفيذ.<br><b>سند الخطر ②:</b> مكوّنات <code>dataLayer/components</code> الثلاثة كلها <code>\"use client\"</code> ولا واحد يستورد من <code>next/*</code> — متحقَّق.",
  ref:"مكوّن الصور"},
 
 {id:"MI0", b:"mediaimg", app:["modonty","dataLayer"], tab:"open", sev:"high", who:"c",
- t:"مرجع — جرد احتياجات مكوّن الصور الموحّد",
- d:"<b>ليش نبنيه</b> (قرار خالد ٦ أغسطس): تنظيم الكود قبل ريفاكتور شامل، وبوّابة واحدة للسياسات القادمة مع الريلز والقصص — <b>لا</b> لمنع التسرّب، ذاك حارسه بند <code>BL2</code>.<br><br><b>الجرد — متحقَّق ٦ أغسطس بعدّ فعلي على المستودع:</b><br>① <b>التشتّت:</b> مودونتي ٤٨ ملفاً تستورد <code>next/image</code> مباشرة · ٢٤ تستخدم <code>OptimizedImage</code> · ٣ تخلط الاثنين. و<code>fullOptmizeImage.tsx</code> <b>صفر مستهلك — كود ميّت</b> (سُجّل تحت بند <code>40</code>).<br>② <b>الحدّ العميل:</b> ١٦ مكوّن عميل مقابل <b>٣٢ سيرفر</b> ← المكوّن <b>لازم يكون سيرفر</b>، وإلا كرّرنا فخّ <code>65b</code>.<br>③ <b><code>onError</code> غير مستعمل على أي صورة</b> — المطابقات كانت أيقونات باسم <code>IconError</code>. فلا يوجد ما يجبرنا على مكوّن عميل. <b>هذي النقطة هي التي تجعل الخطة ممكنة أصلاً.</b><br>④ <b>الخصائص المطلوبة بالعدّ:</b> <code>sizes</code> ٥٤ · <code>fill</code> ٤٧ · <code>width/height</code> ٢٦ · <code>priority</code> ١٦ · <code>style</code> ٦ · <code>loading</code> ٥ · <code>quality</code> ٤ · <code>fetchPriority</code> ٤ · <code>unoptimized</code> ٣ · <code>placeholder</code> ٢.<br>⑤ <b>المصدر:</b> ٣٠ ملفاً عبر <code>mediaSrc</code> · <b>صفر رابط خارجي مكتوب يدوياً</b> — كل الصور من القاعدة، فالمكوّن يقدر يستقبل صفّ الوسائط كاملاً.<br>⑥ <b>واجهة <code>OptimizedImage</code> الحالية مكتملة فعلاً</b> (١٨ خاصية فيها <code>preload</code> و<code>fetchPriority</code> و<code>loader</code> و<code>overrideSrc</code> و<code>itemProp</code>) — نبني عليها لا نخترع غيرها.<br>⑦ <b>ما يجب استبعاده:</b> <code>optimizeCloudinaryUrl</code> بالكامل — يحقن <code>d_article-placeholder-default</code> وهو بند <code>65</code> المفتوح لحذفه. المكوّن الجديد يُبنى على بني من أول يوم.<br>⑧ <b>قصّات بني</b> (<code>bunnyAspectUrl</code> · <code>__16x9</code>) تُستعمل في <code>lib/seo/image-aspect-ratios.ts</code> للجيسون-إل-دي لا للعرض — فالمكوّن لا يلمسها.<br>⑨ <b>الحزمة:</b> <code>@modonty/database</code> تصدّر مصدر TS مباشرة (<code>main: ./index.ts</code>)، والكونسول يستورد منها اليوم بلا <code>transpilePackages</code> — فالمسار مثبت. لكن <code>next</code> ليست تبعية فيها ← تُضاف <code>peerDependency</code> صريحة.<br><br><b>═══ تدقيق التغطية — ٦ أغسطس ═══</b><br>الجرد الأول مسح <code>app/</code> و<code>components/</code> فقط وامتداد <code>.tsx</code> وحده، فأُعيد المسح على <b>٦٩٥ ملفاً — المستودع كله وكل الامتدادات</b>:<br>• <b>ملفات تستورد <code>next/image</code> أو <code>OptimizedImage</code> وفاتت الجرد: صفر.</b><br>• وسم <code>&lt;img&gt;</code> خام غير مسجَّل: واحد — <code>lib/email/templates/base.ts</code>، وهو <b>قالب بريد</b>؛ الإيميل لا يعرف <code>next/image</code> فالوسم الخام هو الصحيح فيه. استثناء مشروع لا نقص.<br>• <code>background-image</code> في ٥ ملفات — <b>فُحصت واحداً واحداً وكلها تدرّجات لونية لا صور</b> (نقاط زخرفية · توهّج شعاعي · خطوط مائلة)، صفر <code>url()</code> يشير لملف.<br><b>النتيجة: ٧٠ ملفاً هي كل ما يعرض صورة حقيقية في مودونتي، وكلها ممثَّلة في البطاقات <code>MI2a</code>…<code>MI2i</code> (٧٢ صندوقاً — <code>trust/page.tsx</code> في بطاقتين لأنه يجمع الطريقتين).</b><br><br><b>خطآن في القياس صُحّحا:</b> ① العدّ الأول أعطى «صفر صورة» لسبعة ملفات لأنها تستورد باسم <code>NextImage</code> لا <code>Image</code> — المجموع الحقيقي <b>١٠٧ نداء صورة</b>. ② قلتُ «صفر وسم خام» لأن البحث كان <code>&lt;img </code> بمسافة والوسوم متعدّدة الأسطر فاتته — الحقيقة اثنان مرسومان فعلاً.",
+ t:"مرجع — عقد مكوّن الصور + جرد الاحتياجات",
+ d:"<h4 style='margin:0 0 6px'>عقد الكومبوننت — معتمد ٧ أغسطس</h4>" +
+   "<b>كل بند وجنبه مصدره: «نصّ» = مكتوب حرفياً في توثيق <code>next@16.2.9</code> المثبَّت · «اجتهاد» = قرار هندسي لا نصّ فيه.</b><br><br>" +
+
+   "<table style='width:100%;font-size:13px;border-collapse:collapse'>" +
+   "<tr><th align='right'>القاعدة</th><th>المصدر</th><th align='right'>الدليل</th></tr>" +
+   "<tr><td><code>quality</code> افتراضه <b>75</b> لا 100</td><td><b>نصّ</b></td><td>«Default quality is 75» + «high quality value will <b>increase the file size without improving appearance</b>»</td></tr>" +
+   "<tr><td><code>preload</code> وحده، بلا <code>eager</code>+<code>high</code> معه</td><td><b>نصّ</b></td><td>«When not to use it: when <code>loading</code> is used · when <code>fetchPriority</code> is used»</td></tr>" +
+   "<tr><td><code>sizes</code> مطلوبة لا مخمَّنة</td><td><b>نصّ</b></td><td>«sizes should be used when the image is using fill» + «If sizes is missing… unnecessarily large images»</td></tr>" +
+   "<tr><td>محسّن بني عبر <code>loaderFile</code> لا حقن <code>loader</code></td><td><b>نصّ</b></td><td><code>image.md:197</code> «configure <b>every instance</b> … <b>without passing a prop</b>» — ولأنّ مثال <code>loader</code> يبدأ بـ<code>'use client'</code>، فحقنه كخاصيّة يحوّل كل مستهلك إلى مكوّن عميل</td></tr>" +
+   "<tr><td>صفر سياسة خفيّة — <code>preload</code> لا يغيّر الجودة ولا التحميل</td><td>اجتهاد</td><td>الكومبوننت لا يقرّر بالنيابة بصمت؛ كل خاصيّة قرار مستقلّ يخصّ الموضع</td></tr>" +
+   "<tr><td>الضبابة تلقائية من الكائن</td><td>اجتهاد</td><td>ليست سياسة بل بيانات مشتقّة — <code>blurDataURL</code> موجود في ٥٩١/٥٩١ صفّاً</td></tr>" +
+   "<tr><td>يستقبل <b>كائن الوسائط</b> لا نصّاً</td><td>اجتهاد</td><td>مصدر واحد يحلّ <code>src</code>+الضبابة+<code>alt</code>+الأبعاد بدل أربع خصائص متفرّقة</td></tr>" +
+   "</table><br>" +
+
+   "<b>الأثر المباشر للبند الأول:</b> كل صورة LCP اليوم تُقدَّم بـ<code>q=100</code> (مقيس في HTML الإنتاج). بعد العقد تصير <b>75</b> ← ملفات أخفّ ← LCP أسرع. أي أنّ الوضع الحالي <b>يبطّئ الصفحة ونحن نظنّه يسرّعها</b>.<br><br>" +
+
+   "<b>⚠️ قاعدة كتابة مُلزِمة لهذه البطاقة:</b> أي قاعدة تُضاف لاحقاً تُذكر مع مصدرها — نصّ أم اجتهاد. لا تُخلَط الاثنتان.<br><br>" +
+
+   "<hr style='border:0;border-top:1px solid var(--line);margin:10px 0'>" +
+   "<h4 style='margin:0 0 6px'>الجرد الأصلي</h4>" +
+   "<b>ليش نبنيه</b> (قرار خالد ٦ أغسطس): تنظيم الكود قبل ريفاكتور شامل، وبوّابة واحدة للسياسات القادمة معالريلز والقصص — <b>لا</b> لمنع التسرّب، ذاك حارسه بند <code>BL2</code>.<br><br><b>الجرد — متحقَّق ٦ أغسطس بعدّ فعلي على المستودع:</b><br>① <b>التشتّت:</b> مودونتي ٤٨ ملفاً تستورد <code>next/image</code> مباشرة · ٢٤ تستخدم <code>OptimizedImage</code> · ٣ تخلط الاثنين. و<code>fullOptmizeImage.tsx</code> <b>صفر مستهلك — كود ميّت</b> (سُجّل تحت بند <code>40</code>).<br>② <b>الحدّ العميل:</b> ١٦ مكوّن عميل مقابل <b>٣٢ سيرفر</b> ← المكوّن <b>لازم يكون سيرفر</b>، وإلا كرّرنا فخّ <code>65b</code>.<br>③ <b><code>onError</code> غير مستعمل على أي صورة</b> — المطابقات كانت أيقونات باسم <code>IconError</code>. فلا يوجد ما يجبرنا على مكوّن عميل. <b>هذي النقطة هي التي تجعل الخطة ممكنة أصلاً.</b><br>④ <b>الخصائص المطلوبة بالعدّ:</b> <code>sizes</code> ٥٤ · <code>fill</code> ٤٧ · <code>width/height</code> ٢٦ · <code>priority</code> ١٦ · <code>style</code> ٦ · <code>loading</code> ٥ · <code>quality</code> ٤ · <code>fetchPriority</code> ٤ · <code>unoptimized</code> ٣ · <code>placeholder</code> ٢.<br>⑤ <b>المصدر:</b> ٣٠ ملفاً عبر <code>mediaSrc</code> · <b>صفر رابط خارجي مكتوب يدوياً</b> — كل الصور من القاعدة، فالمكوّن يقدر يستقبل صفّ الوسائط كاملاً.<br>⑥ <b>واجهة <code>OptimizedImage</code> الحالية مكتملة فعلاً</b> (١٨ خاصية فيها <code>preload</code> و<code>fetchPriority</code> و<code>loader</code> و<code>overrideSrc</code> و<code>itemProp</code>) — نبني عليها لا نخترع غيرها.<br>⑦ <b>ما يجب استبعاده:</b> <code>optimizeCloudinaryUrl</code> بالكامل — يحقن <code>d_article-placeholder-default</code> وهو بند <code>65</code> المفتوح لحذفه. المكوّن الجديد يُبنى على بني من أول يوم.<br>⑧ <b>قصّات بني</b> (<code>bunnyAspectUrl</code> · <code>__16x9</code>) تُستعمل في <code>lib/seo/image-aspect-ratios.ts</code> للجيسون-إل-دي لا للعرض — فالمكوّن لا يلمسها.<br>⑨ <b>الحزمة:</b> <code>@modonty/database</code> تصدّر مصدر TS مباشرة (<code>main: ./index.ts</code>)، والكونسول يستورد منها اليوم بلا <code>transpilePackages</code> — فالمسار مثبت. لكن <code>next</code> ليست تبعية فيها ← تُضاف <code>peerDependency</code> صريحة.<br><br><b>═══ تدقيق التغطية — ٦ أغسطس ═══</b><br>الجرد الأول مسح <code>app/</code> و<code>components/</code> فقط وامتداد <code>.tsx</code> وحده، فأُعيد المسح على <b>٦٩٥ ملفاً — المستودع كله وكل الامتدادات</b>:<br>• <b>ملفات تستورد <code>next/image</code> أو <code>OptimizedImage</code> وفاتت الجرد: صفر.</b><br>• وسم <code>&lt;img&gt;</code> خام غير مسجَّل: واحد — <code>lib/email/templates/base.ts</code>، وهو <b>قالب بريد</b>؛ الإيميل لا يعرف <code>next/image</code> فالوسم الخام هو الصحيح فيه. استثناء مشروع لا نقص.<br>• <code>background-image</code> في ٥ ملفات — <b>فُحصت واحداً واحداً وكلها تدرّجات لونية لا صور</b> (نقاط زخرفية · توهّج شعاعي · خطوط مائلة)، صفر <code>url()</code> يشير لملف.<br><b>النتيجة: ٧٠ ملفاً هي كل ما يعرض صورة حقيقية في مودونتي، وكلها ممثَّلة في البطاقات <code>MI2a</code>…<code>MI2i</code> (٧٢ صندوقاً — <code>trust/page.tsx</code> في بطاقتين لأنه يجمع الطريقتين).</b><br><br><b>خطآن في القياس صُحّحا:</b> ① العدّ الأول أعطى «صفر صورة» لسبعة ملفات لأنها تستورد باسم <code>NextImage</code> لا <code>Image</code> — المجموع الحقيقي <b>١٠٧ نداء صورة</b>. ② قلتُ «صفر وسم خام» لأن البحث كان <code>&lt;img </code> بمسافة والوسوم متعدّدة الأسطر فاتته — الحقيقة اثنان مرسومان فعلاً.",
  ref:"مكوّن الصور"},
 
-{id:"MI1", b:"mediaimg", app:["dataLayer"], tab:"open", sev:"high", who:"c",
- t:"نقل <code>OptimizedImage</code> إلى dataLayer وتنظيفه — <b>لا بناء جديد</b>",
- d:"<b>تصحيح ٦ أغسطس:</b> كان مكتوباً «بناء <code>media-image.tsx</code>» — صياغة قديمة كُتبت قبل قرار خالد بإعادة استخدام الموجود. <b>القرار: ننقل <code>OptimizedImage</code> نفسه</b> من <code>modonty/components/media/OptimizedImage.tsx</code> إلى <code>dataLayer/components/optimized-image.tsx</code>.<br><b>ولماذا يحتفظ باسمه:</b> <b>متحقَّق ٦ أغسطس</b> — ٢٢ ملفاً تستخدمه اليوم (بطاقة <code>MI2c</code>)، فبقاء الاسم يجعل هجرتهم <b>سطر استيراد واحد</b> لا أكثر.<br><br><b>يُحذف عند النقل:</b> <code>optimizeCloudinaryUrl</code> — <b>متحقَّق</b> في <code>OptimizedImage.tsx:43</code>: يعيد كتابة روابط Cloudinary ويحقن <code>d_article-placeholder-default</code> (بند <code>65</code> مفتوح لحذفه). الوجهة بني.<br><b>يُضاف:</b> استقبال صفّ الوسائط فيحلّ <code>mediaSrc</code> و<code>blurDataURL</code> داخلياً — <b>متحقَّق:</b> ٢٥ ملفاً يستدعون <code>mediaSrc</code> يدوياً اليوم.<br><b>يبقى كما هو:</b> الواجهة الحالية الموثَّقة في <code>MI0⑥</code> (<code>OptimizedImage.tsx:15-41</code>) — <code>fill</code>/<code>width</code>/<code>sizes</code>/<code>preload</code>/<code>fetchPriority</code>/<code>quality</code>/<code>itemProp</code>/<code>unoptimized</code>.<br><b>قيود مُلزِمة:</b> بلا <code>\"use client\"</code> (<code>MI0②③</code>) · <code>next</code> كـ<code>peerDependency</code> في <code>dataLayer/package.json</code> — <b>متحقَّق</b> أنها غير مذكورة فيه اليوم.",
+{id:"MI1", b:"mediaimg", app:["dataLayer"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
+ t:"نقل <code>OptimizedImage</code> إلى dataLayer بالعقد المعتمد",
+ d:"<b>✅ نُفِّذ ٧ أغسطس — أثره على الموقع صفر:</b> ملف جديد لا يستورده أحد بعد. <b>الدليل:</b> أخطاء <code>tsc</code> في مودونتي <b>٩٩ قبل و٩٩ بعد</b> — أي أنّ الملف الجديد لم يضف خطأً واحداً، وصفر خطأ يذكره باسمه.<br><br>" +
+
+   "<b>المسار:</b> <code>dataLayer/components/optimized-image.tsx</code> · يُستورد <code>@modonty/database/components/optimized-image</code> (نفس عرف الـ١٠٣ استيراداً لـ<code>lib/media-src</code>).<br><br>" +
+
+   "<b>قرار المكان (خالد ٧ أغسطس):</b> «الكومبوننت المستعمل في أكثر من مكان يكون مشتركاً» — <code>feedback_shared_code_in_datalayer</code>. وسُجِّل الأثر صراحةً: <code>dataLayer</code> كان فيه <b>صفر استيراد من next</b>، فأُضيفت <code>next: ^16.2.0</code> إلى <code>peerDependencies</code> بدل أن تُحلّ صدفةً من مجلّد التطبيق.<br><br>" +
+
+   "<b>ما طُبِّق من العقد (تفصيله في <code>MI0</code>):</b><br>" +
+   "· <code>quality</code> افتراضه <b>75</b> — سقط الرفع التلقائي إلى 100<br>" +
+   "· <code>preload</code> وحده — سقط اشتقاق <code>eager</code>+<code>high</code> منه<br>" +
+   "· <code>sizes</code> <b>إلزامية</b> — <code>SizePreset</code> أو نصّ صريح، بلا حقن صامت<br>" +
+   "· الضبابة تلقائية من الصفّ، و<code>placeholder=\"empty\"</code> للخروج منها<br>" +
+   "· يستقبل <b>كائن الوسائط</b>، ومعه <code>asMedia(url)</code> للروابط المجرّدة (ثوابت البراند)<br>" +
+   "· <b>حُذفت</b> دالة تحويل Cloudinary — كانت ميتة بعد الترحيل<br>" +
+   "· <b>لا</b> خاصيّة <code>loader</code> — محسّن بني عبر <code>loaderFile</code> (<code>BNOPT</code>)<br>" +
+   "· <b>بلا</b> <code>'use client'</code> عمداً — لئلّا يُسحب كل مستهلك وشجرته إلى باندل العميل<br><br>" +
+
+   "<b>الـpresets الخمسة</b> (<code>SIZE_PRESETS</code>): <code>full</code> · <code>hero</code> · <code>card</code> · <code>thumb</code> · <code>avatar</code> — <b>نصوصها تطابق ما تعلنه الصفحات اليوم</b>، فتحويل أي موضع تبديلُ تسميةٍ لا تغييرُ تخطيط.<br><br>" +
+
+   "<b>الخلفية الأصلية:</b><br>" +
+   "<b>تصحيح ٦ أغسطس:</b> كان مكتوباً «بناء <code>media-image.tsx</code>» — صياغة قديمة كُتبت قبل قرار خالد بإعادة استخدام الموجود. <b>القرار: ننقل <code>OptimizedImage</code> نفسه</b> من <code>modonty/components/media/OptimizedImage.tsx</code> إلى <code>dataLayer/components/optimized-image.tsx</code>.<br><b>ولماذا يحتفظ باسمه:</b> <b>متحقَّق ٦ أغسطس</b> — ٢٢ ملفاً تستخدمه اليوم (بطاقة <code>MI2c</code>)، فبقاء الاسم يجعل هجرتهم <b>سطر استيراد واحد</b> لا أكثر.<br><br><b>يُحذف عند النقل:</b> <code>optimizeCloudinaryUrl</code> — <b>متحقَّق</b> في <code>OptimizedImage.tsx:43</code>: يعيد كتابة روابط Cloudinary ويحقن <code>d_article-placeholder-default</code> (بند <code>65</code> مفتوح لحذفه). الوجهة بني.<br><b>يُضاف:</b> استقبال صفّ الوسائط فيحلّ <code>mediaSrc</code> و<code>blurDataURL</code> داخلياً — <b>متحقَّق:</b> ٢٥ ملفاً يستدعون <code>mediaSrc</code> يدوياً اليوم.<br><b>يبقى كما هو:</b> الواجهة الحالية الموثَّقة في <code>MI0⑥</code> (<code>OptimizedImage.tsx:15-41</code>) — <code>fill</code>/<code>width</code>/<code>sizes</code>/<code>preload</code>/<code>fetchPriority</code>/<code>quality</code>/<code>itemProp</code>/<code>unoptimized</code>.<br><b>قيود مُلزِمة:</b> بلا <code>\"use client\"</code> (<code>MI0②③</code>) · <code>next</code> كـ<code>peerDependency</code> في <code>dataLayer/package.json</code> — <b>متحقَّق</b> أنها غير مذكورة فيه اليوم.",
  ref:"مكوّن الصور"},
 
 /* بند MI2 العام حُذف ٦ أغسطس — البطاقات MI2a…MI2i تغطّيه ملفاً ملفاً، وإبقاؤه

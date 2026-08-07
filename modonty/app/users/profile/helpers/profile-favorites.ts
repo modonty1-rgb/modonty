@@ -38,7 +38,7 @@ export async function getProfileFavorites(
           excerpt: true,
           datePublished: true,
           status: true,
-          featuredImage: { select: { url: true, bunnyUrl: true, altText: true } },
+          featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true } },
           client: {
             select: {
               id: true,

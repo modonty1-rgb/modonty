@@ -26,7 +26,7 @@ export async function GET(
               description: true,
               logoMedia: {
                 select: {
-                  url: true, bunnyUrl: true,
+                  url: true, bunnyUrl: true, blurDataURL: true,
                   altText: true,
                 },
               },
@@ -46,7 +46,7 @@ export async function GET(
               excerpt: true,
               featuredImage: {
                 select: {
-                  url: true, bunnyUrl: true,
+                  url: true, bunnyUrl: true, blurDataURL: true,
                   altText: true,
                 },
               },

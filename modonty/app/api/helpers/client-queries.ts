@@ -60,7 +60,7 @@ export async function getClientsWithCounts(): Promise<ClientResponse[]> {
     include: {
       logoMedia: {
         select: {
-          url: true, bunnyUrl: true,
+          url: true, bunnyUrl: true, blurDataURL: true,
         },
       },
       heroImageMedia: {
@@ -281,7 +281,7 @@ export async function getClientBySlug(slug: string) {
     include: {
       logoMedia: {
         select: {
-          url: true, bunnyUrl: true,
+          url: true, bunnyUrl: true, blurDataURL: true,
         },
       },
       heroImageMedia: {
@@ -307,7 +307,7 @@ export async function getClientBySlug(slug: string) {
           },
           featuredImage: {
             select: {
-              url: true, bunnyUrl: true,
+              url: true, bunnyUrl: true, blurDataURL: true,
               altText: true,
             },
           },

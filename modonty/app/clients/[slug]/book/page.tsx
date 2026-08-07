@@ -54,7 +54,7 @@ export default async function ClientBookingPage({
       slug: true,
       ctaMode: true,
       phone: true, // WhatsApp number (E.164) — powers the primary CTA
-      logoMedia: { select: { url: true, bunnyUrl: true, altText: true } },
+      logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true } },
     },
   });
 

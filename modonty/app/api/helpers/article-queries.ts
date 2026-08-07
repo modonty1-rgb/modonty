@@ -96,7 +96,7 @@ const feedArticleSelect = {
   },
   featuredImage: {
     select: {
-      url: true, bunnyUrl: true,
+      url: true, bunnyUrl: true, blurDataURL: true,
       altText: true,
     },
   },
@@ -263,7 +263,7 @@ const homeFeedSelect = {
     },
   },
   category: { select: { id: true, name: true, slug: true } },
-  featuredImage: { select: { url: true, bunnyUrl: true, altText: true } },
+  featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true } },
   audioUrl: true,
   likesCount: true,
   commentsCount: true,
@@ -338,7 +338,7 @@ export const getArticleBySlug = cache(async (slug: string) => {
           slug: true,
           logoMedia: {
             select: {
-              url: true, bunnyUrl: true,
+              url: true, bunnyUrl: true, blurDataURL: true,
             },
           },
           industry: {
@@ -364,7 +364,7 @@ export const getArticleBySlug = cache(async (slug: string) => {
       },
       featuredImage: {
         select: {
-          url: true, bunnyUrl: true,
+          url: true, bunnyUrl: true, blurDataURL: true,
           altText: true,
         },
       },

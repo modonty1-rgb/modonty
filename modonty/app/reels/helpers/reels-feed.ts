@@ -52,7 +52,7 @@ export async function getReelsFeedPage(cursor?: string | null): Promise<ReelFeed
       title: true,
       description: true,
       url: true,
-      bunnyUrl: true,
+      bunnyUrl: true, blurDataURL: true,
       width: true,
       height: true,
       likesCount: true,

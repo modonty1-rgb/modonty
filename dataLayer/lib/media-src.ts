@@ -23,6 +23,16 @@ export interface MediaSrcInput {
   url?: string | null;
   /** REQUIRED key (value may be null). See the note above — optional here hid real bugs. */
   bunnyUrl: string | null;
+  /**
+   * REQUIRED key (value may be null) — same reasoning as `bunnyUrl`, one class of bug later.
+   *
+   * Every upload stores a ~110-byte inline blur and every row has one (591/591 measured
+   * 2026-08-07), yet no query selected it and no caller passed it, so images popped in with
+   * no placeholder for months. The field was invisible precisely because nothing forced it
+   * to be named. Requiring the key turns each omission into a compile error at the call
+   * site — which is the inventory tool for the migration, not just a guard.
+   */
+  blurDataURL: string | null;
 }
 
 /** Resolve a Media-like object to its best image url (Bunny → Cloudinary), or null. */

@@ -83,7 +83,7 @@ async function getAuthorArticles(authorId: string) {
       excerpt: true,
       datePublished: true,
       featuredImage: {
-        select: { url: true, bunnyUrl: true, altText: true },
+        select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true },
       },
     },
     orderBy: { datePublished: "desc" },

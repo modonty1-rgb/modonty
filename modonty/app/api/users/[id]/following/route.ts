@@ -59,7 +59,7 @@ export async function GET(
             description: true,
             logoMedia: {
               select: {
-                url: true, bunnyUrl: true,
+                url: true, bunnyUrl: true, blurDataURL: true,
               },
             },
             industry: {
