@@ -7,6 +7,11 @@ import { Article } from "../helpers/article-view-types";
 import { CopyableId } from "./shared/copyable-id";
 
 import { mediaSrc } from "@modonty/database/lib/media-src";
+import { justifyRows, tileAspectRatio, shouldContainTile } from "@modonty/database/lib/justify-rows";
+
+/** Card content width at the widest breakpoint. Only decides tiles-per-row — flex-grow
+ *  fills the actual width exactly. See the `gallery-justified-rows` standard. */
+const GALLERY_WIDTH = 760;
 
 interface ArticleViewGalleryProps {
   article: Article;
@@ -25,17 +30,31 @@ export function ArticleViewGallery({ article, sectionRef }: ArticleViewGalleryPr
         </div>
       </CardHeader>
       <CardContent dir="rtl">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {article.gallery.map((item) =>
-            item.media ? (
-              <div key={item.id} className="relative aspect-square overflow-hidden rounded-lg border bg-muted/30 group cursor-pointer">
+        {justifyRows(
+          article.gallery.filter((g) => g.media).map((g) => ({ ...g, ...g.media! })),
+          GALLERY_WIDTH,
+        ).map((row, rowIndex) => (
+          <div key={rowIndex} className="flex gap-3 mb-3">
+            {row.items.map(({ tile: item, grow }) =>
+              item.media ? (
+              <div
+                key={item.id}
+                style={
+                  row.isLast
+                    ? { flex: "0 0 auto", width: `${row.height * grow}px` }
+                    : { flexGrow: grow, flexBasis: 0, minWidth: 0 }
+                }
+                className="relative overflow-hidden rounded-lg border bg-muted/30 group cursor-pointer"
+              >
+                <div style={{ aspectRatio: tileAspectRatio(item) }} className="relative">
                 <Image
                   src={mediaSrc(item.media) ?? item.media.url}
                   alt={item.media.altText || ""}
                   fill
-                  className="object-cover transition-transform group-hover:scale-105"
+                  className={`${shouldContainTile(item) ? "object-contain" : "object-cover"} transition-transform group-hover:scale-105`}
                   sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                 />
+                </div>
                 {item.media.altText && (
                   <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2 text-white text-xs text-right" dir="rtl">
                     <div className="flex items-center justify-between gap-2">
@@ -50,9 +69,10 @@ export function ArticleViewGallery({ article, sectionRef }: ArticleViewGalleryPr
                   </div>
                 )}
               </div>
-            ) : null
-          )}
-        </div>
+              ) : null,
+            )}
+          </div>
+        ))}
       </CardContent>
     </Card>
   );

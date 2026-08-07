@@ -51,6 +51,11 @@ export interface Article {
       bunnyUrl: string | null;
       blurDataURL: string | null;
       altText: string | null;
+      /** Selected by the query all along — the type just never declared them, so the
+       *  justified gallery had nothing to compute with and fell back to 4:3 for every
+       *  tile. See `get-article-by-id.ts:128`. */
+      width: number | null;
+      height: number | null;
     } | null;
   }[];
   relatedTo?: {

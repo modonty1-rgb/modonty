@@ -16,6 +16,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { MediaType } from "@prisma/client";
+import { justifyRows, tileAspectRatio, shouldContainTile } from "@modonty/database/lib/justify-rows";
+
+/** Tab content width at the widest breakpoint — only decides tiles-per-row.
+ *  `flex-grow` fills the real width exactly. See the `gallery-justified-rows` standard. */
+const GALLERY_TAB_WIDTH = 880;
 
 interface Media {
   id: string;
@@ -103,22 +108,29 @@ export function GalleryTab({ media }: GalleryTabProps) {
         </div>
 
         {viewMode === "grid" ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {media.map((item) => {
+          <div>
+            {justifyRows(media, GALLERY_TAB_WIDTH).map((row, rowIndex) => (
+            <div key={rowIndex} className="flex gap-4 mb-4">
+            {row.items.map(({ tile: item, grow }) => {
               const MediaIcon = getMediaIcon(item.mimeType);
               return (
                 <Card
                   key={item.id}
+                  style={
+                    row.isLast
+                      ? { flex: "0 0 auto", width: `${row.height * grow}px` }
+                      : { flexGrow: grow, flexBasis: 0, minWidth: 0 }
+                  }
                   className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
                   onClick={() => setSelectedMedia(item)}
                 >
-                  <div className="relative aspect-square bg-muted">
+                  <div style={{ aspectRatio: tileAspectRatio(item) }} className="relative bg-muted">
                     {isImage(item.mimeType) ? (
                       <NextImage
                         src={item.url}
                         alt={item.altText || item.filename}
                         fill
-                        className="object-cover"
+                        className={shouldContainTile(item) ? "object-contain" : "object-cover"}
                         sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                       />
                     ) : (
@@ -146,6 +158,8 @@ export function GalleryTab({ media }: GalleryTabProps) {
                 </Card>
               );
             })}
+            </div>
+            ))}
           </div>
         ) : (
           <div className="space-y-2">

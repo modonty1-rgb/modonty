@@ -18,6 +18,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { formatBytes } from "@modonty/database/lib/utils";
+import { justifyRows, tileAspectRatio, shouldContainTile } from "@modonty/database/lib/justify-rows";
+
+/** Page content width at the widest breakpoint — only decides tiles-per-row.
+ *  `flex-grow` fills the real width exactly. See the `gallery-justified-rows` standard. */
+const GRID_WIDTH = 900;
 import {
   addClientGalleryImage,
   deleteClientGalleryImage,
@@ -167,13 +172,13 @@ export function ClientGalleryGrid({ clientId, clientName, images }: Props) {
           🖼️ لا توجد صور في معرض هذا العميل بعد. اضغط «إضافة صور» لبدء المعرض.
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-          {/* add tile */}
+        <div>
+          {/* add tile — kept square on its own row: it is a control, not a picture. */}
           <button
             type="button"
             disabled={busy}
             onClick={() => fileInputRef.current?.click()}
-            className="grid aspect-square place-items-center rounded-xl border-2 border-dashed text-muted-foreground transition hover:border-primary/50 hover:text-primary disabled:opacity-50"
+            className="mb-3 grid h-[110px] w-full place-items-center rounded-xl border-2 border-dashed text-muted-foreground transition hover:border-primary/50 hover:text-primary disabled:opacity-50"
           >
             <div className="flex flex-col items-center gap-1">
               {busy ? <Loader2 className="h-6 w-6 animate-spin" /> : <ImagePlus className="h-6 w-6" />}
@@ -181,8 +186,19 @@ export function ClientGalleryGrid({ clientId, clientName, images }: Props) {
             </div>
           </button>
 
-          {images.map((img) => (
-            <div key={img.id} className="group relative overflow-hidden rounded-xl border bg-card">
+          {/* Justified rows — the project gallery standard. */}
+          {justifyRows(images, GRID_WIDTH).map((row, rowIndex) => (
+          <div key={rowIndex} className="flex gap-3 mb-3">
+          {row.items.map(({ tile: img, grow }) => (
+            <div
+              key={img.id}
+              style={
+                row.isLast
+                  ? { flex: "0 0 auto", width: `${row.height * grow}px` }
+                  : { flexGrow: grow, flexBasis: 0, minWidth: 0 }
+              }
+              className="group relative overflow-hidden rounded-xl border bg-card"
+            >
               <button
                 type="button"
                 onClick={() => setPendingDelete(img)}
@@ -192,9 +208,14 @@ export function ClientGalleryGrid({ clientId, clientName, images }: Props) {
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
-              <div className="aspect-square overflow-hidden bg-muted/40">
+              <div style={{ aspectRatio: tileAspectRatio(img) }} className="overflow-hidden bg-muted/40">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.url} alt={img.altText ?? ""} className="h-full w-full object-cover" loading="lazy" />
+                <img
+                  src={img.url}
+                  alt={img.altText ?? ""}
+                  className={`h-full w-full ${shouldContainTile(img) ? "object-contain" : "object-cover"}`}
+                  loading="lazy"
+                />
               </div>
               <div className="flex items-center justify-between gap-1.5 px-2.5 py-1.5 text-[10.5px] text-muted-foreground">
                 <span className="truncate" title={img.filename}>{img.filename}</span>
@@ -204,6 +225,8 @@ export function ClientGalleryGrid({ clientId, clientName, images }: Props) {
                 </span>
               </div>
             </div>
+          ))}
+          </div>
           ))}
         </div>
       )}
