@@ -146,7 +146,7 @@ function suffixTokenOf(url: string): string | null {
 }
 
 async function buildResolver() {
-  const media = await db.media.findMany({ select: { url: true, bunnyUrl: true } });
+  const media = await db.media.findMany({ select: { url: true, bunnyUrl: true, blurDataURL: true } });
   const exact = new Map<string, string>();
   const loose = new Map<string, string>();
   const byName = new Map<string, string>();
@@ -347,8 +347,8 @@ export async function listScope(scope: MigrationScope): Promise<ScopeTargets> {
         const clients = await db.client.findMany({
           where: { id: { in: fallbackClientIds } },
           select: {
-            heroImageMedia: { select: { id: true, url: true, bunnyUrl: true } },
-            logoMedia: { select: { id: true, url: true, bunnyUrl: true } },
+            heroImageMedia: { select: { id: true, url: true, bunnyUrl: true, blurDataURL: true } },
+            logoMedia: { select: { id: true, url: true, bunnyUrl: true, blurDataURL: true } },
           },
         });
         for (const c of clients) {
@@ -360,7 +360,7 @@ export async function listScope(scope: MigrationScope): Promise<ScopeTargets> {
       if (!targetIds.size) return { scope, ids: [] };
       const rows = await db.media.findMany({
         where: { id: { in: [...targetIds] }, bunnyUrl: { not: null } },
-        select: { id: true, bunnyUrl: true },
+        select: { id: true, bunnyUrl: true, blurDataURL: true },
       });
       const files = await listClientsZoneFiles();
       const ids: string[] = [];
@@ -468,7 +468,7 @@ async function rehostOrphan(url: string): Promise<{ bunnyUrl: string; blurDataUR
 async function orphanMap(): Promise<Map<string, string>> {
   const rows = await db.media.findMany({
     where: { bunnyUrl: { not: null } },
-    select: { url: true, bunnyUrl: true },
+    select: { url: true, bunnyUrl: true, blurDataURL: true },
   });
   const m = new Map<string, string>();
   for (const r of rows) if (r.url && r.bunnyUrl) m.set(r.url, r.bunnyUrl);

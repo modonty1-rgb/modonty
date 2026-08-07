@@ -78,7 +78,7 @@ export async function getMediaCounts(): Promise<ProviderCounts | { error: string
   const gate = await requireAdmin();
   if ("error" in gate) return { error: gate.error };
 
-  const rows = await db.media.findMany({ select: { url: true, bunnyUrl: true } });
+  const rows = await db.media.findMany({ select: { url: true, bunnyUrl: true, blurDataURL: true } });
   let onCloud = 0;
   let onBunny = 0;
   for (const r of rows) {

@@ -17,8 +17,8 @@ interface ClientHeroV2Client {
   id: string;
   name: string;
   slug: string;
-  logoMedia?: { url: string; bunnyUrl: string | null } | null;
-  heroImageMedia?: { url: string; bunnyUrl: string | null; width?: number | null; height?: number | null } | null;
+  logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
+  heroImageMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; width?: number | null; height?: number | null } | null;
   industry?: { name: string } | null;
   addressCity?: string | null;
   addressRegion?: string | null;

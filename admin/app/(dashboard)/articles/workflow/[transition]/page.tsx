@@ -68,7 +68,7 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
       },
       author: { select: { name: true } },
       featuredImage: {
-        select: { url: true, bunnyUrl: true, altText: true, width: true, height: true },
+        select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true, width: true, height: true },
       },
     },
     orderBy: { updatedAt: "desc" },
@@ -120,6 +120,7 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
                   ? {
                       url: mediaSrc(a.client.logoMedia) ?? a.client.logoMedia.url,
                       bunnyUrl: null,
+                      blurDataURL: a.client.logoMedia.blurDataURL,
                       width: a.client.logoMedia.width,
                       height: a.client.logoMedia.height,
                     }

@@ -24,7 +24,7 @@ export default async function StatusMaintenancePage() {
       updatedAt: true,
       client: { select: { name: true } },
       author: { select: { name: true } },
-      featuredImage: { select: { url: true, bunnyUrl: true } },
+      featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
     },
     orderBy: { updatedAt: "desc" },
     take: 100,

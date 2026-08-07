@@ -43,6 +43,7 @@ interface Media {
   type: MediaType;
   createdAt: Date;
   bunnyUrl: string | null;
+  blurDataURL: string | null;
   cloudinaryPublicId?: string | null;
   cloudinaryVersion?: string | null;
 }
@@ -51,7 +52,7 @@ interface MediaPickerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   clientId: string | null;
-  onSelect: (media: { url: string; bunnyUrl: string | null; altText: string | null; mediaId: string; width?: number | null; height?: number | null }) => void;
+  onSelect: (media: { url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null; mediaId: string; width?: number | null; height?: number | null }) => void;
   /** Modonty Core (T2): hard-lock the picker to this client's own library — no General
    *  fallback. Used by platform entity forms (Tag/Category/…). */
   lockClient?: boolean;
@@ -104,6 +105,7 @@ export function MediaPickerDialog({
     onSelect({
       url: mediaSrc(item) ?? item.url,
       bunnyUrl: null, // already resolved into url
+      blurDataURL: item.blurDataURL,
       altText: item.altText,
       mediaId: item.id,
       width: item.width,

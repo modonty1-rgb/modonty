@@ -104,7 +104,7 @@ export const getTagsEnhanced = unstable_cache(
             article: {
               select: {
                 client: {
-                  select: { id: true, name: true, slug: true, logoMedia: { select: { url: true, bunnyUrl: true } } },
+                  select: { id: true, name: true, slug: true, logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } } },
                 },
               },
             },

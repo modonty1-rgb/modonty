@@ -324,7 +324,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       // `bunnyUrl` MUST stay on this type. Narrowing it away silently strips the Bunny copy
       // before `mediaSrc()` ever sees it — the component still calls mediaSrc, gets undefined,
       // and falls back to Cloudinary. tsc is happy either way (2026-07-30).
-      featuredImage?: { url: string; bunnyUrl: string | null; altText: string | null } | null;
+      featuredImage?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null } | null;
       client?: { name: string } | null;
     };
     const seenReadMore = new Set<string>([article.id]);
@@ -336,7 +336,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       // `bunnyUrl` MUST stay on this type. Narrowing it away silently strips the Bunny copy
       // before `mediaSrc()` ever sees it — the component still calls mediaSrc, gets undefined,
       // and falls back to Cloudinary. tsc is happy either way (2026-07-30).
-      featuredImage?: { url: string; bunnyUrl: string | null; altText: string | null } | null;
+      featuredImage?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null } | null;
       clientName?: string | null;
     }[] = [];
     const collectReadMore = (arr: RelatedLike[] | undefined, fallbackClient?: string | null) => {

@@ -21,7 +21,7 @@ interface MediaPickerProps {
   clientId: string | null;
   value?: string;
   altText?: string;
-  onSelect: (media: { url: string; bunnyUrl: string | null; altText: string | null; mediaId: string; width?: number | null; height?: number | null }) => void;
+  onSelect: (media: { url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null; mediaId: string; width?: number | null; height?: number | null }) => void;
   onClear?: () => void;
   onAltTextUpdate?: (altText: string) => Promise<void>;
   label?: string;
@@ -77,7 +77,7 @@ export function MediaPicker({
     }
   };
 
-  const handleSelect = (media: { url: string; bunnyUrl: string | null; altText: string | null; mediaId: string; width?: number | null; height?: number | null }) => {
+  const handleSelect = (media: { url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null; mediaId: string; width?: number | null; height?: number | null }) => {
     setSelectedMediaId(media.mediaId);
     onSelect(media);
   };
@@ -87,7 +87,7 @@ export function MediaPicker({
     if (onClear) {
       onClear();
     } else {
-      onSelect({ url: "", bunnyUrl: null, altText: null, mediaId: "", width: null, height: null });
+      onSelect({ url: "", bunnyUrl: null, blurDataURL: null, altText: null, mediaId: "", width: null, height: null });
     }
   };
 

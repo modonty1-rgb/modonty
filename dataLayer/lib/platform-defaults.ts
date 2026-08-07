@@ -31,7 +31,7 @@ const DEFAULT_FILENAMES = {
 export async function getPlatformDefaultImages(): Promise<PlatformDefaultImages> {
   const rows = await db.media.findMany({
     where: { filename: { in: Object.keys(DEFAULT_FILENAMES) } },
-    select: { filename: true, url: true, bunnyUrl: true },
+    select: { filename: true, url: true, bunnyUrl: true, blurDataURL: true },
   });
 
   const result: PlatformDefaultImages = { logo: null, post: null, hero: null };

@@ -37,6 +37,7 @@ interface Media {
   type: MediaType;
   createdAt: Date;
   bunnyUrl: string | null;
+  blurDataURL: string | null;
   cloudinaryPublicId?: string | null;
   cloudinaryVersion?: string | null;
   isUsed?: boolean;
@@ -44,7 +45,7 @@ interface Media {
     id: string;
     name: string;
     slug: string;
-    logoMedia?: { url: string; bunnyUrl: string | null } | null;
+    logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
   };
 }
 

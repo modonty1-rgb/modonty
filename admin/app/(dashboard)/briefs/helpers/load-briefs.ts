@@ -62,7 +62,7 @@ export async function getBriefRows(): Promise<BriefRow[]> {
         intake: true,
         intakeUpdatedAt: true,
         articlesPerMonth: true,
-        logoMedia: { select: { url: true, bunnyUrl: true } },
+        logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
         industry: { select: { name: true } },
         // Quota only — the tier's PRICE is never selected here on purpose.
         subscriptionTierConfig: { select: { articlesPerMonth: true } },

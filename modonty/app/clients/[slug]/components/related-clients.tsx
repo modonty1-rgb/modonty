@@ -12,7 +12,7 @@ interface RelatedClient {
   name: string;
   slug: string;
   legalName?: string | null;
-  logoMedia?: { url: string; bunnyUrl: string | null } | null;
+  logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
   _count: {
     articles: number;
   };

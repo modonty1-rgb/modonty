@@ -66,6 +66,7 @@ export type ClientForList = {
   logoMedia: {
     url: string;
     bunnyUrl: string | null;
+    blurDataURL: string | null;
     altText: string | null;
     width: number | null;
     height: number | null;
@@ -73,6 +74,7 @@ export type ClientForList = {
   heroImageMedia: {
     url: string;
     bunnyUrl: string | null;
+    blurDataURL: string | null;
     altText: string | null;
     width: number | null;
     height: number | null;

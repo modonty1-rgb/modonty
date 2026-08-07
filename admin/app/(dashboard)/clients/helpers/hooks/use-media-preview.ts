@@ -10,7 +10,7 @@ interface MediaPreview {
 interface UseMediaPreviewOptions {
   mediaId: string | null | undefined;
   clientId: string | null | undefined;
-  initialMedia?: { url: string; bunnyUrl: string | null; altText: string | null } | null;
+  initialMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null } | null;
 }
 
 /** Fetches and caches a media preview by ID, with initial data support. */

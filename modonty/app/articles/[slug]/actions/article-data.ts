@@ -122,12 +122,12 @@ export async function getArticleBySlug(slug: string, userId?: string) {
           slug: true,
           description: true,
           newsletterCtaText: true,
-          logoMedia: { select: { url: true, bunnyUrl: true } },
-          heroImageMedia: { select: { url: true, bunnyUrl: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
+          heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
           // Client Mini (1.91:1) — preferred over the 6:1 hero for the card image.
           media: {
             where: { type: "CLIENT_MINI" },
-            select: { url: true, bunnyUrl: true },
+            select: { url: true, bunnyUrl: true, blurDataURL: true },
             orderBy: { createdAt: "desc" },
             take: 1,
           },
@@ -294,12 +294,12 @@ async function getArticleContentBySlug(slug: string) {
     include: {
       client: {
         include: {
-          logoMedia: { select: { url: true, bunnyUrl: true } },
-          heroImageMedia: { select: { url: true, bunnyUrl: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
+          heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
           // Client Mini (1.91:1) — preferred over the 6:1 hero for the card image.
           media: {
             where: { type: "CLIENT_MINI" },
-            select: { url: true, bunnyUrl: true },
+            select: { url: true, bunnyUrl: true, blurDataURL: true },
             orderBy: { createdAt: "desc" },
             take: 1,
           },
@@ -619,7 +619,7 @@ type RelatedArticleItem = {
   excerpt: string | null;
   datePublished: Date | null;
   createdAt: Date;
-  featuredImage?: { url: string; bunnyUrl: string | null; altText: string | null } | null;
+  featuredImage?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null } | null;
   client: { name: string; slug: string };
   category?: { name: string; slug: string } | null;
   likesCount: number;

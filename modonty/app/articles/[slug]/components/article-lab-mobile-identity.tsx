@@ -10,7 +10,7 @@ interface ArticleLabMobileIdentityProps {
     name: string;
     slug: string;
     addressCity?: string | null;
-    logoMedia?: { url: string; bunnyUrl: string | null } | null;
+    logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
   };
   articleId: string;
 }

@@ -32,7 +32,7 @@ type CategoryWithArticles = Prisma.CategoryGetPayload<{
         };
         featuredImage: {
           select: {
-            url: true, bunnyUrl: true;
+            url: true, bunnyUrl: true, blurDataURL: true;
             altText: true;
           };
         };
@@ -59,7 +59,7 @@ type ArticleWithClientLogo = Prisma.ArticleGetPayload<{
       include: {
         logoMedia: {
           select: {
-            url: true, bunnyUrl: true;
+            url: true, bunnyUrl: true, blurDataURL: true;
           };
         };
       };
@@ -73,7 +73,7 @@ type ArticleWithClientLogo = Prisma.ArticleGetPayload<{
     };
     featuredImage: {
       select: {
-        url: true, bunnyUrl: true;
+        url: true, bunnyUrl: true, blurDataURL: true;
         altText: true;
       };
     };
@@ -344,7 +344,7 @@ export const getCategoriesEnhanced = unstable_cache(
                 id: true,
                 name: true,
                 slug: true,
-                logoMedia: { select: { url: true, bunnyUrl: true } },
+                logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
               },
             },
           },
@@ -549,6 +549,7 @@ export const getCategoryArticlesEnhanced = unstable_cache(
       featuredImage: article.featuredImage ? {
         url: mediaSrc(article.featuredImage) ?? article.featuredImage.url,
         bunnyUrl: null, // resolved into url above
+        blurDataURL: article.featuredImage.blurDataURL,
         altText: article.featuredImage.altText || undefined,
       } : undefined,
       interactions: {

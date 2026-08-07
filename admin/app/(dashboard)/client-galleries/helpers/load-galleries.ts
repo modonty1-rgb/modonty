@@ -15,7 +15,7 @@ export interface GalleryClientRow {
 export async function getClientsWithGalleryCounts(): Promise<GalleryClientRow[]> {
   const [clients, counts] = await Promise.all([
     db.client.findMany({
-      select: { id: true, name: true, logoMedia: { select: { url: true, bunnyUrl: true } } },
+      select: { id: true, name: true, logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } } },
     }),
     db.media.groupBy({
       by: ["clientId"],
@@ -84,7 +84,7 @@ export async function getClientGallery(clientId: string): Promise<ClientGalleryD
     // gallery grid kept rendering the raw Cloudinary url for already-mirrored rows.
     images: images.map(({ bunnyUrl, ...m }) => ({
       ...m,
-      url: mediaSrc({ bunnyUrl, url: m.url }) ?? m.url,
+      url: mediaSrc({ bunnyUrl, url: m.url, blurDataURL: m.blurDataURL }) ?? m.url,
       createdAt: m.createdAt.toISOString(),
     })),
   };

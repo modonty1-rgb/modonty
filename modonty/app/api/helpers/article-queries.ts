@@ -21,7 +21,7 @@ type ArticleWithRelations = Prisma.ArticleGetPayload<{
         slug: true;
         logoMedia: {
           select: {
-            url: true, bunnyUrl: true;
+            url: true, bunnyUrl: true, blurDataURL: true;
           };
         };
         industry: {
@@ -49,7 +49,7 @@ type ArticleWithRelations = Prisma.ArticleGetPayload<{
     };
     featuredImage: {
       select: {
-        url: true, bunnyUrl: true;
+        url: true, bunnyUrl: true, blurDataURL: true;
         altText: true;
       };
     };
@@ -73,7 +73,7 @@ const feedArticleSelect = {
       name: true,
       slug: true,
       logoMedia: {
-        select: { url: true, bunnyUrl: true },
+        select: { url: true, bunnyUrl: true, blurDataURL: true },
       },
       industry: {
         select: { name: true },
@@ -141,6 +141,7 @@ function mapFeedArticleToResponse(article: FeedArticlePayload): ArticleResponse 
       ? {
           url: mediaSrc(article.featuredImage) ?? article.featuredImage.url,
           bunnyUrl: null, // resolved into url above
+          blurDataURL: article.featuredImage.blurDataURL,
           altText: article.featuredImage.altText || undefined,
         }
       : undefined,
@@ -259,7 +260,7 @@ const homeFeedSelect = {
       id: true,
       name: true,
       slug: true,
-      logoMedia: { select: { url: true, bunnyUrl: true } },
+      logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
     },
   },
   category: { select: { id: true, name: true, slug: true } },
@@ -498,6 +499,7 @@ function mapArticleToResponse(article: ArticleWithRelations): ArticleResponse {
       ? {
           url: mediaSrc(article.featuredImage) ?? article.featuredImage.url,
           bunnyUrl: null, // resolved into url above
+          blurDataURL: article.featuredImage.blurDataURL,
           altText: article.featuredImage.altText || undefined,
         }
       : undefined,

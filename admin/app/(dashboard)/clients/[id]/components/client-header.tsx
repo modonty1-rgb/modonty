@@ -19,8 +19,8 @@ interface ClientHeaderProps {
     name: string;
     slug: string;
     url: string | null;
-    logoMedia: { id?: string; url: string; bunnyUrl: string | null; altText: string | null } | null;
-    heroImageMedia: { id?: string; url: string; bunnyUrl: string | null; altText: string | null } | null;
+    logoMedia: { id?: string; url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null } | null;
+    heroImageMedia: { id?: string; url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null } | null;
     subscriptionStatus: string;
     isYmyl: boolean;
     ymylCategory: string | null;

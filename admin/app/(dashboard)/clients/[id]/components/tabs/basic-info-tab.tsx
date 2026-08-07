@@ -31,6 +31,7 @@ interface BasicInfoTabProps {
     logoMedia: {
       url: string;
       bunnyUrl: string | null;
+      blurDataURL: string | null;
       altText: string | null;
     } | null;
     businessBrief: string | null;

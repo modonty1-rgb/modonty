@@ -61,7 +61,7 @@ export async function getReelsFeedPage(cursor?: string | null): Promise<ReelFeed
         select: {
           name: true,
           slug: true,
-          logoMedia: { select: { url: true, bunnyUrl: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
         },
       },
     },

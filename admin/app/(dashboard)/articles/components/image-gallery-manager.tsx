@@ -33,6 +33,7 @@ export function ImageGalleryManager({
   const handleAddImage = (media: {
     url: string;
     bunnyUrl: string | null;
+    blurDataURL: string | null;
     altText: string | null;
     mediaId: string;
     width?: number | null;
@@ -55,6 +56,7 @@ export function ImageGalleryManager({
         id: media.mediaId,
         url: media.url,
         bunnyUrl: media.bunnyUrl ?? null,
+        blurDataURL: media.blurDataURL ?? null,
         altText: media.altText || null,
         width: media.width || null,
         height: media.height || null,

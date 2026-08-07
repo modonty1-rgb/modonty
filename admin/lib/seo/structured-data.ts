@@ -4,12 +4,12 @@ import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface ArticleWithRelations extends Article {
   client: Client & {
-    logoMedia?: { url: string; bunnyUrl: string | null } | null;
+    logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
   };
   author: Author;
   category?: Category | null;
   faqs?: ArticleFAQ[];
-  featuredImage?: { url: string; bunnyUrl: string | null; altText?: string | null } | null;
+  featuredImage?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; altText?: string | null } | null;
 }
 
 /**
@@ -110,7 +110,7 @@ import { OrganizationStructuredData } from "@/lib/types";
 import { safeOrganizationType } from "@modonty/database/lib/seo/organization-schema-types";
 
 export function generateOrganizationStructuredData(client: Client & {
-  logoMedia?: { url: string; bunnyUrl: string | null; width?: number | null; height?: number | null } | null;
+  logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; width?: number | null; height?: number | null } | null;
   parentOrganization?: { name: string; id?: string; url?: string } | null;
 }): OrganizationStructuredData {
   const structuredData: OrganizationStructuredData = {

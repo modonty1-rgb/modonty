@@ -63,7 +63,7 @@ export async function getPendingReels(): Promise<PendingReelRow[]> {
       createdAt: true,
       clientId: true,
       client: {
-        select: { name: true, logoMedia: { select: { url: true, bunnyUrl: true } } },
+        select: { name: true, logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } } },
       },
     },
   });

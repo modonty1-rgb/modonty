@@ -13,12 +13,12 @@ type ClientWithArticles = Prisma.ClientGetPayload<{
   include: {
     logoMedia: {
       select: {
-        url: true, bunnyUrl: true;
+        url: true, bunnyUrl: true, blurDataURL: true;
       };
     };
     heroImageMedia: {
       select: {
-        url: true, bunnyUrl: true;
+        url: true, bunnyUrl: true, blurDataURL: true;
       };
     };
     articles: {
@@ -32,7 +32,7 @@ type ClientWithArticles = Prisma.ClientGetPayload<{
         };
         featuredImage: {
           select: {
-            url: true, bunnyUrl: true;
+            url: true, bunnyUrl: true, blurDataURL: true;
             altText: true;
           };
         };
@@ -65,7 +65,7 @@ export async function getClientsWithCounts(): Promise<ClientResponse[]> {
       },
       heroImageMedia: {
         select: {
-          url: true, bunnyUrl: true,
+          url: true, bunnyUrl: true, blurDataURL: true,
         },
       },
       industry: {
@@ -193,8 +193,8 @@ export async function getClientsSearch(
       ],
     },
     include: {
-      logoMedia: { select: { url: true, bunnyUrl: true } },
-      heroImageMedia: { select: { url: true, bunnyUrl: true } },
+      logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
+      heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
       industry: { select: { id: true, name: true, slug: true } },
       _count: {
         select: {
@@ -286,7 +286,7 @@ export async function getClientBySlug(slug: string) {
       },
       heroImageMedia: {
         select: {
-          url: true, bunnyUrl: true,
+          url: true, bunnyUrl: true, blurDataURL: true,
         },
       },
       articles: {
@@ -370,7 +370,7 @@ export async function getClientsForSidebar(limit = 20): Promise<SidebarClient[]>
       id: true,
       name: true,
       slug: true,
-      logoMedia: { select: { url: true, bunnyUrl: true } },
+      logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
       industry:  { select: { name: true } },
       // Published, non-future article count — matches the feed filter exactly so the
       // badge number == what the filtered feed shows.
@@ -428,12 +428,12 @@ export async function getClientHeroSlides(limit?: number): Promise<ClientHeroSli
     select: {
       name: true,
       slug: true,
-      logoMedia: { select: { url: true, bunnyUrl: true } },
+      logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
       // The Client Mini (1.91:1) fills the 1200/630 slide box exactly — this is the
       // ONLY image the slider shows (no 6:1 hero, which would be cropped).
       media: {
         where: { type: "CLIENT_MINI" },
-        select: { url: true, bunnyUrl: true },
+        select: { url: true, bunnyUrl: true, blurDataURL: true },
         orderBy: { createdAt: "desc" },
         take: 1,
       },

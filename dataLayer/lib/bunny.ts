@@ -95,13 +95,38 @@ export function bunnyAspectUrl(baseUrlOrPath: string, suffix: string): string {
   return `${stem}__${suffix}.webp${query}`;
 }
 
-/** Build the Bunny remote path for a media file — used by dual-write, migration, and move. */
+/**
+ * Build the Bunny remote path for a media file — used by dual-write, migration, and move.
+ *
+ * ── Why `uniqueKey` is REQUIRED (2026-08-07) ────────────────────────────────────────────
+ * This used to sanitise the basename with `[^A-Za-z0-9._-]` and fall back to the literal
+ * string `"file"` when nothing survived. Every Arabic filename survives that filter as
+ * NOTHING — so every Arabic-named image for the same client+type landed on ONE key
+ * (`post/<client>/file.webp`) and silently overwrote the previous one, together with its
+ * three `__1x1/__4x3/__16x9` crops. Measured on production the same day: 7 shared keys,
+ * 25 rows, 18 of them displaying an image that is not theirs, 2 returning 404.
+ *
+ * Two separate defects lived in that one line:
+ *   1. Arabic was stripped — needlessly. The OWNER folder already carries the Arabic client
+ *      slug and serves fine (`post/دكتور-أحمد-شيخ-العرب/webp-hyk9knwda.webp` → HTTP 200),
+ *      so Bunny was never the constraint; the filter was.
+ *   2. The name was not guaranteed unique. Two files called `banner.jpg` under one client
+ *      collide exactly the same way — Arabic only made the collision happen every time
+ *      instead of occasionally.
+ *
+ * Requiring `uniqueKey` turns "did you make this unique?" into a compile error at the call
+ * site, which is the only place that knows. Callers must pass something stable per image
+ * (a content hash on upload, the existing basename on a move) — never a random token, or
+ * re-running the migration would write a new object every pass instead of overwriting.
+ */
 export function buildBunnyMediaPath(opts: {
   type?: string | null;
   scope?: string | null;
   clientSlug?: string | null;
   filename: string;
   publicId?: string | null;
+  /** REQUIRED. Stable per image — see the note above. Empty string is rejected. */
+  uniqueKey: string;
 }): string {
   const typeFolder = MEDIA_TYPE_FOLDER[opts.type ?? "GENERAL"] ?? "general";
   const owner = opts.clientSlug
@@ -110,12 +135,25 @@ export function buildBunnyMediaPath(opts: {
       ? "_platform"
       : "_general";
   const ext = fileExtension(opts.filename);
-  // Cloudinary public_id is globally unique → its last segment is a collision-free basename.
+  // Cloudinary public_id is globally unique → its last segment is already a good basename.
   const rawBase = opts.publicId
     ? opts.publicId.split("/").pop() || opts.publicId
     : opts.filename.replace(/\.[^.]+$/, "");
-  const base = rawBase.trim().replace(/[^A-Za-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "") || "file";
-  return normalizePath(`${typeFolder}/${owner}/${base}${ext}`);
+
+  // Keep Arabic (and every other script). Strip ONLY what breaks a URL path: separators,
+  // query/fragment delimiters, percent, and whitespace. Everything else is safe once the
+  // url is percent-encoded, exactly as the Arabic owner folder already is.
+  const base =
+    rawBase
+      .trim()
+      .replace(/[\\/?#%&+:*"'<>|\s]+/g, "-")
+      .replace(/^[-.]+|[-.]+$/g, "")
+      .slice(0, 80) || "media";
+
+  const key = opts.uniqueKey.trim().replace(/[^A-Za-z0-9]/g, "");
+  if (!key) throw new Error("buildBunnyMediaPath: uniqueKey is required and must not be empty");
+
+  return normalizePath(`${typeFolder}/${owner}/${base}-${key}${ext}`);
 }
 
 export function getBunnyPublicUrl(zone: BunnyZone, path: string): string {

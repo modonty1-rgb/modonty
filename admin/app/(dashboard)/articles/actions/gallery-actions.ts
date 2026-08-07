@@ -14,6 +14,7 @@ export interface GalleryItem {
     url: string;
     /** Required so no consumer can narrow the Bunny copy away — see media-src.ts. */
     bunnyUrl: string | null;
+    blurDataURL: string | null;
     altText?: string | null;
     width?: number | null;
     height?: number | null;

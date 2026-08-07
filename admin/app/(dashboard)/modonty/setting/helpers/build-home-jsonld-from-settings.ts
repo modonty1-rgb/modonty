@@ -50,8 +50,8 @@ export interface ArticleForHomeJsonLd {
   dateModified?: Date | string | null;
   wordCount?: number | null;
   inLanguage?: string | null;
-  featuredImage?: { url?: string | null; bunnyUrl: string | null } | null;
-  client: { name: string; slug: string; logoMedia?: { url?: string | null; bunnyUrl: string | null } | null };
+  featuredImage?: { url?: string | null; bunnyUrl: string | null; blurDataURL: string | null } | null;
+  client: { name: string; slug: string; logoMedia?: { url?: string | null; bunnyUrl: string | null; blurDataURL: string | null } | null };
   author: { name: string; slug?: string | null };
   category?: { name: string; slug?: string } | null;
   tags?: { name: string }[];

@@ -38,9 +38,9 @@ interface ArticleMobileLayoutProps {
       slug: string;
       url?: string | null;
       description?: string | null;
-      logoMedia?: { url: string; bunnyUrl: string | null } | null;
-      heroImageMedia?: { url: string; bunnyUrl: string | null } | null;
-      media?: { url: string; bunnyUrl: string | null }[] | null;
+      logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
+      heroImageMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
+      media?: { url: string; bunnyUrl: string | null; blurDataURL: string | null }[] | null;
     } | null;
     askClientProps?: {
       articleId: string;

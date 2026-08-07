@@ -40,7 +40,7 @@ export const ARTICLE_HEALTH_SELECT = {
   content: true,
   citations: true,
   jsonLdStructuredData: true,
-  featuredImage: { select: { url: true, bunnyUrl: true } },
+  featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
   client: {
     select: {
       id: true,
@@ -50,7 +50,7 @@ export const ARTICLE_HEALTH_SELECT = {
       // (see the comment on Client.editorId), so showing it as "the writer" told Khalid
       // that Modonty wrote his client's article. The staff editor is the real owner.
       editor: { select: { name: true } },
-      logoMedia: { select: { url: true, bunnyUrl: true } },
+      logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
     },
   },
 } as const;
@@ -63,12 +63,12 @@ export interface HealthArticle {
   content: string | null;
   citations: string[];
   jsonLdStructuredData: unknown;
-  featuredImage: { url: string | null; bunnyUrl: string | null } | null;
+  featuredImage: { url: string | null; bunnyUrl: string | null; blurDataURL: string | null } | null;
   client: {
     id: string;
     name: string;
     editor: { name: string | null } | null;
-    logoMedia: { url: string | null; bunnyUrl: string | null } | null;
+    logoMedia: { url: string | null; bunnyUrl: string | null; blurDataURL: string | null } | null;
   } | null;
 }
 

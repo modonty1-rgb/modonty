@@ -5,6 +5,7 @@ export interface ClientGalleryImage {
   id: string;
   url: string;
   bunnyUrl: string | null;
+  blurDataURL: string | null;
   altText: string | null;
   width: number | null;
   height: number | null;

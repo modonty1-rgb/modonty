@@ -59,6 +59,7 @@ interface ClientWithMedia extends Omit<Client, "contentPriorities"> {
   logoMedia?: {
     url: string;
     bunnyUrl: string | null;
+    blurDataURL: string | null;
     width: number | null;
     height: number | null;
     altText: string | null;
@@ -68,6 +69,7 @@ interface ClientWithMedia extends Omit<Client, "contentPriorities"> {
   heroImageMedia?: {
     url: string;
     bunnyUrl: string | null;
+    blurDataURL: string | null;
     width: number | null;
     height: number | null;
     altText: string | null;

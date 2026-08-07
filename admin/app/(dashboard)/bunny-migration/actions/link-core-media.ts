@@ -165,7 +165,7 @@ export async function linkCoreMedia(mode: "preview" | "apply"): Promise<LinkCore
     // ① Orphan Media rows (clientId null, not PLATFORM) → claim for core.
     const orphans = await db.media.findMany({
       where: { clientId: null, scope: { not: "PLATFORM" } },
-      select: { id: true, filename: true, url: true, bunnyUrl: true },
+      select: { id: true, filename: true, url: true, bunnyUrl: true, blurDataURL: true },
     });
     const orphanItems: PlanItem[] = [];
     for (const o of orphans) {
@@ -178,7 +178,7 @@ export async function linkCoreMedia(mode: "preview" | "apply"): Promise<LinkCore
     // ② Legacy PLATFORM-scope rows → real core ownership.
     const platformRows = await db.media.findMany({
       where: { scope: "PLATFORM" },
-      select: { id: true, filename: true, url: true, bunnyUrl: true },
+      select: { id: true, filename: true, url: true, bunnyUrl: true, blurDataURL: true },
     });
     const platformItems: PlanItem[] = [];
     for (const r of platformRows) {

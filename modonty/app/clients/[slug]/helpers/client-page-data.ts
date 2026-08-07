@@ -27,7 +27,7 @@ async function getClientContentBySlug(decodedSlug: string) {
         },
         heroImageMedia: {
           select: {
-            url: true, bunnyUrl: true,
+            url: true, bunnyUrl: true, blurDataURL: true,
             width: true,
             height: true,
           },

@@ -11,7 +11,7 @@ export function getSocialPlatform(url: string): { name: string; icon: ReactEleme
 }
 
 export function getCoverImage(client: {
-  heroImageMedia?: { url: string; bunnyUrl: string | null } | null;
+  heroImageMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
 }): string | undefined {
   // Only use dedicated cover image — logo is not suitable for 6:1 banner ratio
   return mediaSrc(client.heroImageMedia) ?? undefined;

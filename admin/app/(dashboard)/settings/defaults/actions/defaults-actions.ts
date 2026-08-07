@@ -33,7 +33,7 @@ export interface PlatformDefaults {
 export async function getPlatformDefaults(): Promise<PlatformDefaults> {
   const rows = await db.media.findMany({
     where: { filename: { in: ["platform-default-logo", "platform-default-post", "platform-default-hero"] } },
-    select: { filename: true, url: true, bunnyUrl: true },
+    select: { filename: true, url: true, bunnyUrl: true, blurDataURL: true },
   });
 
   const result: PlatformDefaults = { LOGO: null, POST: null, HERO: null };

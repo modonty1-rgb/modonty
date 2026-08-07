@@ -33,6 +33,7 @@ interface Media {
   url: string;
   /** REQUIRED key (value may be null) — the preview must show what the site actually serves. */
   bunnyUrl: string | null;
+  blurDataURL: string | null;
   mimeType: string;
   width: number | null;
   height: number | null;

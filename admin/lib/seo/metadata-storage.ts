@@ -42,7 +42,7 @@ export async function fetchArticleForMetadata(
           logoMedia: {
             select: {
               url: true,
-              bunnyUrl: true,
+              bunnyUrl: true, blurDataURL: true,
             },
           },
         },

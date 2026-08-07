@@ -19,10 +19,10 @@ interface ArticleClientCardProps {
     slug: string;
     url?: string | null;
     description?: string | null;
-    logoMedia?: { url: string; bunnyUrl: string | null } | null;
-    heroImageMedia?: { url: string; bunnyUrl: string | null } | null;
+    logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
+    heroImageMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
     /** Client Mini (1.91:1) media — preferred over the 6:1 hero for the card image. */
-    media?: { url: string; bunnyUrl: string | null }[] | null;
+    media?: { url: string; bunnyUrl: string | null; blurDataURL: string | null }[] | null;
   };
   /** When provided, Ask Client block is rendered inside the card */
   askClientProps?: {

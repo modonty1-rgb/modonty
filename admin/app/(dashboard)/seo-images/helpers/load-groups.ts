@@ -99,6 +99,7 @@ export type SeoImageMediaRow = MediaRow & {
   id: string;
   url: string;
   bunnyUrl: string | null;
+  blurDataURL: string | null;
   description: string | null;
   width: number | null;
   height: number | null;

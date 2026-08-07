@@ -4,8 +4,7 @@ import { getClientPageData } from "../helpers/client-page-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
-import { OptimizedImage } from "@/components/media/OptimizedImage";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { OptimizedImage } from "@modonty/database/components/optimized-image";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { IconPlay } from "@/lib/icons";
 
@@ -58,7 +57,7 @@ export default async function ClientReelsPage({ params }: ClientReelsPageProps) 
               {article.featuredImage && (
                 <>
                   <OptimizedImage
-                    src={mediaSrc(article.featuredImage) ?? article.featuredImage.url}
+                    media={article.featuredImage}
                     alt={article.featuredImage.altText || article.title}
                     fill
                     className="object-cover"

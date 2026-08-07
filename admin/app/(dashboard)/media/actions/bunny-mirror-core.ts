@@ -1,5 +1,7 @@
 import "server-only";
 
+import { createHash } from "node:crypto";
+
 import { buildBunnyMediaPath, bunnyAspectUrl, uploadToBunny } from "@modonty/database/lib/bunny";
 import { generateAspectCrops } from "./generate-aspect-crops";
 import { generateBlurDataUrl } from "./generate-blur";
@@ -33,12 +35,18 @@ export interface UploadImageBufferInput {
 export async function uploadImageBufferToBunny(
   input: UploadImageBufferInput
 ): Promise<{ bunnyUrl: string }> {
+  // Content hash, not a random token: the SAME bytes always produce the SAME key, so
+  // re-running the migration overwrites its own object instead of piling up a new one —
+  // while two DIFFERENT images can never share a key again (the 2026-08-07 collision).
+  const contentKey = createHash("sha256").update(input.buffer).digest("hex").slice(0, 10);
+
   const remotePath = buildBunnyMediaPath({
     type: input.type,
     scope: input.scope,
     clientSlug: input.clientSlug,
     filename: input.filename,
     publicId: input.publicId,
+    uniqueKey: contentKey,
   });
 
   const { url } = await uploadToBunny("clients", input.buffer, remotePath, input.contentType);

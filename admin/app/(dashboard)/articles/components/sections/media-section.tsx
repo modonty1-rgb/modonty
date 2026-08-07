@@ -115,6 +115,7 @@ export function MediaSection() {
   const handleSelectMedia = (media: {
     url: string;
     bunnyUrl: string | null;
+    blurDataURL: string | null;
     altText: string | null;
     mediaId: string;
     width?: number | null;

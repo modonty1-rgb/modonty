@@ -1,14 +1,9 @@
 export { ArticleHeader } from "./article-header";
 export { ArticleTags } from "./article-tags";
 export { ArticleFeaturedImage } from "./article-featured-image";
-export { ArticleImageGallery } from "./article-image-gallery";
 export { ArticleFaq } from "./faq/article-faq";
-export { ArticleManualRelated } from "./article-manual-related";
 export { ArticleFooter } from "./article-footer";
 export { ArticleComments } from "./comments/article-comments";
-export { MoreFromAuthor } from "./more-from-author";
-export { MoreFromClient } from "./more-from-client";
-export { RelatedArticles } from "./related-articles";
 export { ArticleShareButtons } from "./article-share-buttons";
 export { ArticleInteractionButtons } from "./article-interaction-buttons";
 export { ReadingProgressBar } from "./client-only-reading-progress";

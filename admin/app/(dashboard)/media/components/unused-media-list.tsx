@@ -27,6 +27,7 @@ interface UnusedItem {
   filename: string;
   url: string;
   bunnyUrl: string | null;
+  blurDataURL: string | null;
   mimeType: string;
   fileSize: number | null;
   createdAt: Date;

@@ -143,6 +143,7 @@ export async function gatedTransitionAction(
               ? {
                   url: mediaSrc(article.client.logoMedia) ?? article.client.logoMedia.url,
                   bunnyUrl: null,
+                  blurDataURL: article.client.logoMedia.blurDataURL,
                   width: article.client.logoMedia.width,
                   height: article.client.logoMedia.height,
                 }

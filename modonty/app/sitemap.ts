@@ -24,7 +24,7 @@ type SitemapArticle = {
   slug: string;
   datePublished: Date | null;
   dateModified: Date | null;
-  featuredImage: { url: string; bunnyUrl: string | null } | null;
+  featuredImage: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
 };
 
 type EntityWithUpdatedAt = { slug: string; updatedAt: Date };
@@ -57,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         slug: true,
         datePublished: true,
         dateModified: true,
-        featuredImage: { select: { url: true, bunnyUrl: true } },
+        featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
       },
       orderBy: { datePublished: "desc" },
     }),

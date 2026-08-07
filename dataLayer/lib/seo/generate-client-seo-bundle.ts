@@ -164,7 +164,7 @@ const CLIENT_SEO_SELECT = {
   gbpPlaceId: true,
   parentOrganizationId: true,
   logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true, width: true, height: true, description: true, createdAt: true } },
-  heroImageMedia: { select: { url: true, bunnyUrl: true, altText: true, width: true, height: true, description: true, createdAt: true } },
+  heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true, width: true, height: true, description: true, createdAt: true } },
   industry: { select: { id: true, name: true } },
   parentOrganization: { select: { id: true, name: true, url: true, slug: true } },
 } as const;

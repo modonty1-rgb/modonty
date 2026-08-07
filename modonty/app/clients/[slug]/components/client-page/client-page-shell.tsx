@@ -29,7 +29,7 @@ interface ShellArticle {
   id: string;
   slug: string;
   title: string;
-  featuredImage?: { url: string; bunnyUrl: string | null } | null;
+  featuredImage?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
   category?: { name: string } | null;
   datePublished?: Date | null;
   readingTimeMinutes?: number | null;
@@ -40,8 +40,8 @@ export interface ShellClient {
   id: string;
   name: string;
   slug: string;
-  logoMedia?: { url: string; bunnyUrl: string | null } | null;
-  heroImageMedia?: { url: string; bunnyUrl: string | null; width?: number | null; height?: number | null } | null;
+  logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
+  heroImageMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; width?: number | null; height?: number | null } | null;
   industry?: { name: string } | null;
   addressCity?: string | null;
   addressRegion?: string | null;
@@ -92,7 +92,7 @@ interface RelatedClientItem {
   id: string;
   name: string;
   slug: string;
-  logoMedia?: { url: string; bunnyUrl: string | null } | null;
+  logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
   _count: { articles: number };
 }
 
@@ -102,7 +102,7 @@ export interface ClientPageShellProps {
   pageState: ClientPageState; // "strong" | "sparse" (not-ready handled in page.tsx)
   reviews: ClientReviewsData;
   faqs: { id: string; question: string; answer: string }[];
-  gallery: { id: string; url: string; bunnyUrl: string | null; altText: string | null; width: number | null; height: number | null }[];
+  gallery: { id: string; url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null; width: number | null; height: number | null }[];
   discussions: DiscussionComment[];
   relatedClients: RelatedClientItem[];
   user: { name: string | null; email: string | null } | null;
@@ -146,7 +146,8 @@ export function ClientPageShell({
     id: a.id,
     slug: a.slug,
     title: a.title,
-    image: mediaSrc(a.featuredImage),
+    // Pass the media ROW through — resolving it to a url here dropped the stored blur.
+    image: a.featuredImage ?? null,
     category: a.category?.name ?? null,
     datePublished: a.datePublished ?? null,
     readingTime: a.readingTimeMinutes ?? null,

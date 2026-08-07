@@ -48,6 +48,9 @@ export interface ArticleResponse {
   featuredImage?: {
     url: string;
     bunnyUrl: string | null;
+    /** Carried through so cards can render the stored placeholder — dropping it here
+     *  silently disabled blur on every feed and listing card. */
+    blurDataURL: string | null;
     altText?: string;
   };
   interactions: InteractionCounts;

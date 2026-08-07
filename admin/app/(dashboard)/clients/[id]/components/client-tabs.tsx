@@ -31,11 +31,13 @@ type ClientTabsProps = {
     logoMedia: {
       url: string;
       bunnyUrl: string | null;
+      blurDataURL: string | null;
       altText: string | null;
     } | null;
     heroImageMedia: {
       url: string;
       bunnyUrl: string | null;
+      blurDataURL: string | null;
       altText: string | null;
     } | null;
     email: string;
@@ -148,6 +150,7 @@ type ClientTabsProps = {
     url: string;
     /** REQUIRED key (value may be null) — keeps the Bunny copy from being dropped in transit. */
     bunnyUrl: string | null;
+    blurDataURL: string | null;
     mimeType: string;
     fileSize: number | null;
     width: number | null;

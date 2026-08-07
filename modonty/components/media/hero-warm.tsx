@@ -4,7 +4,6 @@ import { getImageProps } from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
-import { optimizeCloudinaryUrl } from "@/components/media/OptimizedImage";
 import { stripCloudinaryTransforms } from "@/lib/image-utils";
 
 // Warm-up the DETAIL-page hero before navigation, so it renders from cache.
@@ -21,10 +20,17 @@ interface HeroDescriptor {
 }
 
 const DESCRIPTORS: Record<WarmKind, HeroDescriptor> = {
-  // ArticleFeaturedImage: OptimizedImage preload → optimizeCloudinaryUrl(url,true) + quality 100.
+  // ArticleFeaturedImage now renders the SHARED OptimizedImage: it passes `mediaSrc(media)`
+  // through untouched (no Cloudinary rewrite) and takes the Next default quality 75.
+  //
+  // This descriptor used to say `optimizeCloudinaryUrl(u, true)` + quality 100, matching the
+  // OLD local component. After the hero moved (MI1, 566631b) that stopped being true, and the
+  // mismatch is invisible to tsc — measured live 2026-08-07: hero rendered `q=75` while the
+  // warm-up built `q=100`, so every warm MISSED its own key and cost a second download.
+  // Keep these three fields in lockstep with `article-featured-image.tsx` + the `hero` preset.
   article: {
-    toSrc: (u) => optimizeCloudinaryUrl(u, true),
-    quality: 100,
+    toSrc: (u) => u,
+    quality: 75,
     sizes: "(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 900px",
   },
   // client-hero-v2: next/image (default quality 75) + stripCloudinaryTransforms.

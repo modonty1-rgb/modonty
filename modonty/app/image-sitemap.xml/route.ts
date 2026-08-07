@@ -16,8 +16,8 @@ import { mediaSrc } from "@modonty/database/lib/media-src";
 
 interface ArticleImagesRow {
   slug: string;
-  featuredImage: { url: string; bunnyUrl: string | null } | null;
-  gallery: Array<{ media: { url: string; bunnyUrl: string | null } | null }>;
+  featuredImage: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
+  gallery: Array<{ media: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null }>;
   content: string | null;
 }
 
@@ -62,9 +62,9 @@ export async function GET() {
     },
     select: {
       slug: true,
-      featuredImage: { select: { url: true, bunnyUrl: true } },
+      featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
       // Gallery images never reached this sitemap until 2026-07-14 (GEO audit, ن١٥).
-      gallery: { select: { media: { select: { url: true, bunnyUrl: true } } } },
+      gallery: { select: { media: { select: { url: true, bunnyUrl: true, blurDataURL: true } } } },
       content: true,
     },
   });

@@ -43,6 +43,7 @@ export interface DbArticleInput {
     logoMedia: {
       url: string | null;
       bunnyUrl: string | null;
+      blurDataURL: string | null;
       width: number | null;
       height: number | null;
     } | null;

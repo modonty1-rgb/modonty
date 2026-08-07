@@ -32,7 +32,7 @@ export async function getProfileBookings(
       preferredAt: true,
       createdAt: true,
       client: {
-        select: { name: true, slug: true, logoMedia: { select: { url: true, bunnyUrl: true } } },
+        select: { name: true, slug: true, logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } } },
       },
       article: { select: { title: true, slug: true } },
     },

@@ -22,8 +22,8 @@ export async function getArticleForMetadata(slug: string) {
       client: {
         select: {
           name: true,
-          logoMedia: { select: { url: true, bunnyUrl: true } },
-          heroImageMedia: { select: { url: true, bunnyUrl: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
+          heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
         },
       },
       author: { select: { name: true } },

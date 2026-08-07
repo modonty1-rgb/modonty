@@ -44,6 +44,7 @@ type Media = {
   url: string;
   /** REQUIRED key (value may be null) — forces every caller to pass the Bunny copy. */
   bunnyUrl: string | null;
+  blurDataURL: string | null;
   mimeType: string;
   fileSize: number | null;
   width: number | null;

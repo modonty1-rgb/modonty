@@ -1,4 +1,5 @@
-import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { OptimizedImage, type ImageMedia } from "@modonty/database/components/optimized-image";
+
 import { SectionCard } from "@/app/clients/[slug]/components/sections/section-card";
 import { cn } from "@/lib/utils";
 
@@ -6,7 +7,10 @@ interface ArticleRow {
   id: string;
   slug: string;
   title: string;
-  image: string | null;
+  /** The media ROW, not a resolved url — the component resolves src + blur itself.
+   *  It used to be `string` (a `mediaSrc()` result), which threw the stored blur away
+   *  before the component could ever see it. */
+  image: ImageMedia | null;
   category: string | null;
   datePublished: Date | null;
   readingTime: number | null;
@@ -113,7 +117,7 @@ export function ClientArticlesSection({
                 <div className="relative h-[70px] w-[100px] shrink-0 overflow-hidden rounded-lg">
                   {post.image ? (
                     <OptimizedImage
-                      src={post.image}
+                      media={post.image}
                       alt={post.title}
                       fill
                       sizes="100px"

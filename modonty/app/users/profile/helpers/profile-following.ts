@@ -33,7 +33,7 @@ export async function getProfileFollowing(
           name: true,
           slug: true,
           description: true,
-          logoMedia: { select: { url: true, bunnyUrl: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
           industry: { select: { id: true, name: true, slug: true } },
           _count: { select: { articles: true } },
         },

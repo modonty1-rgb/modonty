@@ -61,8 +61,8 @@ async function getClientForMetadata(decodedSlug: string) {
       email: true,
       addressCity: true,
       achievements: true,
-      logoMedia: { select: { url: true, bunnyUrl: true } },
-      heroImageMedia: { select: { url: true, bunnyUrl: true } },
+      logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
+      heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
       _count: { select: { articles: { where: { status: ArticleStatus.PUBLISHED } } } },
     },
   });

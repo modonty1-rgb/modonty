@@ -43,6 +43,7 @@ type ArticleClient = {
   logoMedia?: {
     url: string;
     bunnyUrl: string | null;
+    blurDataURL: string | null;
     width?: number | null;
     height?: number | null;
   } | null;

@@ -36,7 +36,7 @@ export interface ClientPageClient {
     title?: string;
     // `bunnyUrl` is required (value may be null) — omitting it narrows the Bunny copy away
     // before `mediaSrc()` can see it. No consumer renders this today; the key keeps it that way.
-    featuredImage?: { url: string; bunnyUrl: string | null; altText?: string | null } | null;
+    featuredImage?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; altText?: string | null } | null;
   }>;
 }
 
@@ -51,6 +51,6 @@ export interface ClientPageRelatedClient {
   name: string;
   slug: string;
   legalName?: string | null;
-  logoMedia?: { url: string; bunnyUrl: string | null } | null;
+  logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
   _count: { articles: number };
 }

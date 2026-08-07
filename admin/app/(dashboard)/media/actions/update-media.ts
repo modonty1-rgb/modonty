@@ -46,7 +46,7 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
 
     // Snapshot the resolved URL before the edit — entities store mediaSrc (bunnyUrl ?? url),
     // so a change here must propagate to their dual-field strings (syncEntityImageUrls).
-    const prev = await db.media.findUnique({ where: { id }, select: { url: true, bunnyUrl: true } });
+    const prev = await db.media.findUnique({ where: { id }, select: { url: true, bunnyUrl: true, blurDataURL: true } });
     const prevSrc = prev?.bunnyUrl ?? prev?.url ?? null;
 
     // Changing the media type or its client moves the Bunny file to its new
@@ -78,12 +78,22 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
             });
             newSlug = client?.slug ?? null;
           }
+          // A move must NOT re-invent the basename — reuse the unique suffix the object
+          // already carries, so the file keeps its identity and only the folder changes.
+          // Objects written before 2026-08-07 have no suffix; fall back to the media id,
+          // which is stable and unique per row.
+          const currentStem = decodeURIComponent(
+            current.bunnyUrl.split("?")[0].split("/").pop() ?? ""
+          ).replace(/\.[^.]+$/, "");
+          const existingKey = currentStem.match(/-([A-Za-z0-9]{6,})$/)?.[1];
+
           const newPath = buildBunnyMediaPath({
             type: data.type ?? current.type,
             scope: data.scope ?? current.scope,
             clientSlug: newSlug,
             filename: current.filename,
             publicId: current.cloudinaryPublicId,
+            uniqueKey: existingKey ?? id,
           });
           const moved = await moveBunnyMedia("clients", current.bunnyUrl, newPath);
           movedBunnyUrl = moved.url;

@@ -38,8 +38,8 @@ export interface ClientForClientsPageJsonLd {
   seoDescription?: string | null;
   url?: string | null;
   canonicalUrl?: string | null;
-  logoMedia?: { url?: string | null; bunnyUrl: string | null } | null;
-  heroImageMedia?: { url?: string | null; bunnyUrl: string | null } | null;
+  logoMedia?: { url?: string | null; bunnyUrl: string | null; blurDataURL: string | null } | null;
+  heroImageMedia?: { url?: string | null; bunnyUrl: string | null; blurDataURL: string | null } | null;
   sameAs?: string[];
   email?: string | null;
   phone?: string | null;

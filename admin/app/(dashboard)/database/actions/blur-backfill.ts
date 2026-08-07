@@ -66,7 +66,7 @@ export interface BlurBackfillResult {
 export async function backfillBlurPlaceholders(limit = 50): Promise<BlurBackfillResult> {
   const rows = await db.media.findMany({
     where: { AND: [IS_IMAGE, HAS_SOURCE, NO_BLUR] },
-    select: { id: true, filename: true, bunnyUrl: true },
+    select: { id: true, filename: true, bunnyUrl: true, blurDataURL: true },
     take: Math.min(Math.max(limit, 1), 200),
   });
 

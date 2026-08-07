@@ -44,6 +44,7 @@ interface Client {
   logoMedia: {
     url: string;
     bunnyUrl: string | null;
+    blurDataURL: string | null;
     altText: string | null;
     width: number | null;
     height: number | null;
@@ -51,6 +52,7 @@ interface Client {
   heroImageMedia: {
     url: string;
     bunnyUrl: string | null;
+    blurDataURL: string | null;
     altText: string | null;
     width: number | null;
     height: number | null;

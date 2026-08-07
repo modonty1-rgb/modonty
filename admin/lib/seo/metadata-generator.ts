@@ -50,8 +50,8 @@ export interface ArticleWithMetadataRelations {
   client: Client & {
     name: string;
     slug?: string | null;
-    heroImageMedia?: { url: string; bunnyUrl: string | null } | null;
-    logoMedia?: { url: string; bunnyUrl: string | null } | null;
+    heroImageMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
+    logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
   };
   author: Author & {
     name: string;

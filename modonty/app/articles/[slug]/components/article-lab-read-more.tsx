@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
-import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { OptimizedImage } from "@modonty/database/components/optimized-image";
 import { ArticleHeroWarm } from "@/components/media/hero-warm";
 import { mediaSrc } from "@modonty/database/lib/media-src";
 
@@ -9,7 +9,7 @@ interface ReadMoreItem {
   title: string;
   slug: string;
   excerpt: string | null;
-  featuredImage?: { url: string; bunnyUrl: string | null; altText: string | null } | null;
+  featuredImage?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null } | null;
   clientName?: string | null;
 }
 
@@ -45,7 +45,7 @@ export function ArticleLabReadMore({ articleId, clientId, items }: ArticleLabRea
               <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-muted">
                 {a.featuredImage ? (
                   <OptimizedImage
-                    src={mediaSrc(a.featuredImage) ?? a.featuredImage.url}
+                    media={a.featuredImage}
                     alt={a.featuredImage.altText || a.title}
                     fill
                     className="object-cover"

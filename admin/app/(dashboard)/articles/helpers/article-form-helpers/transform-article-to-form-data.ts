@@ -70,6 +70,7 @@ export function transformArticleToFormData(article: ArticleFromDb): Partial<Arti
             id: string;
             url: string;
             bunnyUrl: string | null;
+            blurDataURL: string | null;
             altText: string | null;
             width: number | null;
             height: number | null;
@@ -87,6 +88,7 @@ export function transformArticleToFormData(article: ArticleFromDb): Partial<Arti
                 // Already resolved into `url` above — carrying it again would be redundant,
                 // but the field must be present so nothing downstream can silently narrow it.
                 bunnyUrl: null,
+                blurDataURL: item.media.blurDataURL,
                 altText: item.media.altText || null,
                 width: item.media.width || null,
                 height: item.media.height || null,

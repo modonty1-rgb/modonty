@@ -57,8 +57,8 @@ export function ClientSEOValidationSection({
     const slug = (formData.slug as string) || 'client';
     const clientPageUrl = (formData.canonicalUrl as string) || `${siteUrl}/clients/${slug}`;
     const desc = (formData.seoDescription as string) || (formData.description as string) || undefined;
-    const logo = formData.logoMedia as { url?: string; bunnyUrl: string | null; altText?: string; width?: number; height?: number } | null;
-    const ogImg = formData.ogImageMedia as { url?: string; bunnyUrl: string | null; altText?: string; width?: number; height?: number } | null;
+    const logo = formData.logoMedia as { url?: string; bunnyUrl: string | null; blurDataURL: string | null; altText?: string; width?: number; height?: number } | null;
+    const ogImg = formData.ogImageMedia as { url?: string; bunnyUrl: string | null; blurDataURL: string | null; altText?: string; width?: number; height?: number } | null;
     const parent = formData.parentOrganization as { name?: string; url?: string; slug?: string } | null;
     const lat = formData.addressLatitude as number | null | undefined;
     const lng = formData.addressLongitude as number | null | undefined;
@@ -203,8 +203,8 @@ export function ClientSEOValidationSection({
       locale: 'ar_SA',
     };
 
-    const ogImg = formData.ogImageMedia as { url?: string; bunnyUrl: string | null; altText?: string; width?: number; height?: number } | null;
-    const logo = formData.logoMedia as { url?: string; bunnyUrl: string | null; altText?: string; width?: number; height?: number } | null;
+    const ogImg = formData.ogImageMedia as { url?: string; bunnyUrl: string | null; blurDataURL: string | null; altText?: string; width?: number; height?: number } | null;
+    const logo = formData.logoMedia as { url?: string; bunnyUrl: string | null; blurDataURL: string | null; altText?: string; width?: number; height?: number } | null;
     if (ogImg?.url) {
       og.images = [makeOgImg(toAbsolute(mediaSrc(ogImg) ?? ""), (ogImg.altText as string) || defaultAlt, ogImg.width, ogImg.height)];
     } else if (logo?.url) {
@@ -217,7 +217,7 @@ export function ClientSEOValidationSection({
       if (hasEn) og.localeAlternate = ['en_US'];
     }
 
-    const twImg = formData.twitterImageMedia as { url?: string; bunnyUrl: string | null; altText?: string } | null;
+    const twImg = formData.twitterImageMedia as { url?: string; bunnyUrl: string | null; blurDataURL: string | null; altText?: string } | null;
     const ogImageUrl = og.images?.[0]?.secure_url || og.images?.[0]?.url;
     const ogImageAlt = og.images?.[0]?.alt;
     const hasAnyImage = !!(twImg?.url || ogImageUrl);
@@ -254,9 +254,9 @@ export function ClientSEOValidationSection({
 
   const criticalNotes = useMemo(() => {
     const notes: string[] = [];
-    const ogImg = formData.ogImageMedia as { url?: string; bunnyUrl: string | null } | null;
-    const logo = formData.logoMedia as { url?: string; bunnyUrl: string | null } | null;
-    const twImg = formData.twitterImageMedia as { url?: string; bunnyUrl: string | null } | null;
+    const ogImg = formData.ogImageMedia as { url?: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
+    const logo = formData.logoMedia as { url?: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
+    const twImg = formData.twitterImageMedia as { url?: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
     const twSite = formData.twitterSite as string | undefined;
     const hasOg = !!ogImg?.url;
     const hasLogo = !!logo?.url;
@@ -285,7 +285,7 @@ export function ClientSEOValidationSection({
   const jsonLdCriticalNotes = useMemo(() => {
     const notes: string[] = [];
     notes.push('Note: Preview is minimal. Full JSON-LD (WebSite, full Organization, ContactPoint, companyRegistration, etc.) is generated on save.');
-    const logo = formData.logoMedia as { url?: string; bunnyUrl: string | null } | null;
+    const logo = formData.logoMedia as { url?: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
     if (!logo?.url) {
       notes.push('Critical: No logo. Required for Organization rich results; add in Media.');
     }

@@ -64,6 +64,7 @@ interface RawMedia {
   filename: string;
   url: string;
   bunnyUrl: string | null;
+  blurDataURL: string | null;
   altText: string | null;
   title: string | null;
   description: string | null;
