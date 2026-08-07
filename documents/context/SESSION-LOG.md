@@ -29,12 +29,148 @@
 - **فصل الطاقم:** نُشر (`118e367`) + رُحّل (10 أدمن→staff بنفس `_id`) + دُوّر `AUTH_SECRET` + تحقّق دخول staff حيّ.
 - **معرض العميل + محسّن WebP:** نُشر + اختُبر حيّ على الإنتاج (كيمازون معرض إضافة/حذف · فرسان التعافي WebP −88%).
 
-### 🐇 ترحيل Bunny — نشِط على فرع `version-2` (preview فقط · صفر مساس main)
-- [ ] **التبديل (Epic INV) — طبقة القراءة الحيّة اكتملت (2026-07-29):** ٩/١٢ (INV-0·M1..M6·A1·C1) · ٣ تطبيقات tsc نظيف · الرئيسية 45/59 Bunny. **المتبقّي:** ذيل A2 (تبويبات الأدمن ~٨ ملفات) · S1 (نوع S، يحتاج رفع أصول+regenerate) · V1 · **تشغيلات: regenerate السيو + إعادة ترحيل `bunnyUrl=null` + الرفع الجديد→Bunny (الأهم)**. النمط الكامل + الدروس في `BUNNY-MIGRATION-PRD-v1.html` (قسم «🔜 المتبقّي»). المصدر: [[project_bunny_branch_isolation_golden]].
-- [ ] **P3-5 تشغيل الترحيل على الإنتاج** — إضافي (`bunnyUrl` فقط)، بإذن خالد، دفعات خارج ذروة مصر.
+### ✅ خرجت من المعلّقات (أُنجزت 2026-08-07) — 🐇 ترحيل Bunny اكتمل على الإنتاج
+- **Epic INV كامل:** ذيل A2 (`B1`) · S1 (`B6`) · V1 (`B10`) — الثلاثة أُقفلت بقياس حيّ. و**P3-5 تشغيل الترحيل على الإنتاج** تمّ.
+- **الحصيلة المقيسة:** مكتبة الوسائط **٥٩١ صفاً · بلا `bunnyUrl`: صفر** · الموقع الحيّ **١٥٦ صورة على ٨ أنواع صفحات كلها `b-cdn.net`، صفر مكسورة** · القاعدة: **صفر رابط Cloudinary في أي حقل يُقدَّم**.
+- **خط سير النشر: ٣٩/٣٩.** التفاصيل في بلوك جلسة 2026-08-07 وبورد «خط سير النشر» في TASK.html.
+- **`T9` (إطفاء Cloudinary) مؤجَّل عمداً لا معلَّق** — الحساب مجاني، و٥٣٣ رابط أصل يبقون شبكة رجوع بلا تكلفة. يُراجَع ≈ نوفمبر ٢٠٢٦.
+- **معارض العملاء على Bunny** — أُنجزت ضمن الترحيل (نطاق `cloudinary-scopes.ts` يشمل `GALLERY`؛ البند القديم `B5` حُذف كمكرَّر).
+
+### 🖼️ ريفاكتور مكوّن الصور — نشِط على فرع `image-component` (محلي · صفر مساس main)
+- [ ] **`MI2c` وما بعده — ٢٤ ملفاً من ٢٥ باقية.** الفرع **لا يترجم**: ٧٦ خطأ `TS2345` في مودونتي. خريطة الشغل: `documents/tasks/reports/BL2-blur-inventory-2026-08-07.md`. البورد: «مكوّن الصور» في TASK.html (خط سير، ١٩ بنداً).
+- [ ] **`IMGDIM`** — الصور الافتراضية الثلاث `width/height = undefined` في القاعدة ← خطر CLS حين تُستعمل.
+- [ ] **`BNOPT`** — محسّن بني عبر `images.loaderFile`. محجوب بثلاث بوّابات: تأكيد التفعيل · قياس السعر من فاتورة Vercel · قياس السرعة بمنهج بند `67`.
 
 ### 🔮 مستقبلي
-- [ ] نقل تخزين معارض العملاء إلى Bunny (Cloudinary مكلف) — آمن بمعمارية Media ID. المصدر: `documents/tasks/TODO.md`.
+- [ ] **`MI9`** — مدّ مكوّن الصور الموحّد للأدمن والكونسول (مؤجَّل بقرار خالد).
+- [ ] **`ADM-AUTH-IMG`** — الأدمن بلا حقل لصورة الكاتب؛ اضطررنا لكتابتها بسكربت.
+
+---
+
+## Session: 2026-08-07 (نهار كامل) — 🐰 إقفال ترحيل بني على الإنتاج (٣٩/٣٩) + دفعتان + بدء ريفاكتور مكوّن الصور على فرع `image-component`
+
+### 🎯 وين وقفت
+- **آخر شغل جارٍ:** `MI2c` — تحويل ٢٥ ملفاً من `OptimizedImage` القديم (مودونتي) إلى المشترك الجديد (dataLayer). **مُحوَّل: ١ من ٢٥.**
+- **الحالة الدقيقة:** الفرع **لا يترجم** — `pnpm tsc --noEmit` على مودونتي = **٧٦ خطأ** (كانت ٩٩). كلها `TS2345`: مواضع تمرّر كائن وسائط لكن شكلها الوسيط يُسقط `blurDataURL`.
+- **أوّل أمر عند الاستئناف:**
+  ```bash
+  cd c:/Users/w2nad/Desktop/dreamToApp/MODONTY && git checkout image-component
+  cd modonty && pnpm tsc --noEmit 2>&1 | grep -E 'error TS' | sed -E 's/\([0-9]+,[0-9]+\): error TS.*//' | sort | uniq -c | sort -rn
+  ```
+  ثم افتح أكثر ملف إصابةً وأغلق أخطاءه، وكرّر. **التقرير المرجعي:** `documents/tasks/reports/BL2-blur-inventory-2026-08-07.md`.
+- **⛔ ممنوع التست الحيّ قبل `tsc` = صفر** — الصفحة لا تُبنى أصلاً وفيها أخطاء، فلا شيء يُختبر.
+
+---
+
+### ✅ المنجز في هذه الجلسة
+
+#### أ) خط سير النشر — **٣٩ من ٣٩ ✅ (كان ٨ متبقّية)**
+
+| البند | ما تمّ | الدليل الخام |
+|---|---|---|
+| `DATA1` | حذف ٤ صور شبح + رابط يتيم من الإنتاج | نسخة احتياطية `backups/ghost-media-deleted-2026-08-07.json` · `article_media` ١٤٤ يتيمة **صفر** · مكتبة الوسائط **٥٩١ صفاً · بلا bunnyUrl: صفر** |
+| `DATA2` | تحقّق تعديل طارق على مقال كأس العالم | الغلاف `Hreo.webp` رُفع ٦ أغسطس على بني ✅ · الرابط الميت **صفر مرة** في المتن والسيو |
+| `65` | إزالة `d_article-placeholder-default` | `OptimizedImage.tsx` + `fullOptmizeImage.tsx` · بحث على `modonty/` ← **صفر تطابق** |
+| `B1` | ذيل A2 — تبويبات الأدمن | فُحصت ٩ مواضع: **٥ سليمة** (المُحمِّل يحلّها) · **٤ تسريبات أُصلحت** (`media-social-tab` ×٤ · `client-tabs` · `seo-section` · `edit-media-form`) |
+| `B6` | مهمّة S1 — الحقول النصّية الخام | `socialImage` تصنيفات ١٥/١٥ · وسوم ٢٣/٢٣ · صناعات ٨/٨ **كلها بني** · settings ٦ حقول بني · `users.image` ٣٠ = أفاتار غوغل خارجي |
+| `B10` | مهمّة V1 — بوّابة Playwright | ٨ أنواع صفحات · **١٥٦ صورة** · كلها `b-cdn.net` · **صفر مكسورة** · صفر Cloudinary في أي JSON-LD |
+| `54` | صورة الكاتب «مدونتي» | كان ٩٤ مقالاً منشوراً بأفاتار «M» · بعد الكتابة: `stillFallbackM: 0` · الأفاتار يُرسم ×٢ · ٢٦ صورة صفر مكسورة |
+| `54b` | تفضية أفاتار حسابَي البذور | رابطاهما كانا **HTTP 404** على حساب Cloudinary التجريبي · `تطابق: 2 \| عُدِّل: 2` |
+| `SETT1` | حذف مفاتيح `articlesPage*` اليتيمة | ٤ مفاتيح · **٢٨٬١٩٠ حرفاً** · ٥٠ رابط Cloudinary · نسخة في `backups/settings-articlesPage-orphans-2026-08-07.json` |
+| `SEO1` | صفّان في السيو المخبوز يحملان Cloudinary | **السبب الجذري:** هما الصفّان اليتيمان المحذوفان (`a2a106f2` · `IMG_1722`) و`bunnyUrl=null` أسقط `mediaSrc` للبديل. **لا ثغرة في المولّد.** حُلَّا بـFull Rebuild: `222 of 222 entities · 13m 45s` |
+| `67` | إعادة تست السرعة T4 | **بني أسرع:** warm p75 **٣٣ms مقابل ٥٥ms** · p95 **٤٨ مقابل ١١٣** · edge-cache HIT **١٠٠٪ مقابل ٠٪** |
+| `IMG-FB` | آخر حلقة في سلسلة الاحتياط كانت ملفاً مفقوداً | `https://www.modonty.com/og-image.jpg` ← **HTTP 404**. أُصلح في ٥ مواضع |
+| `CACHE1` | النشر ينظّف الكاش | بعد النشر: الرئيسية `cloud=0 bunny=1553` · `/clients` `0/463` · `/reels` `0/86` |
+| `AUTH1` | حذف الكاتبَين | `ahmed-alshehri` و`noura-alqahtani` صفر مقال · بعد الحذف **410** لكليهما · الخريطة ١٨٩ رابطاً (كانت ١٩١) |
+| `T9` | إطفاء Cloudinary | **مؤجَّل عمداً** — الحساب مجاني، و٥٣٣ رابط أصل يبقون شبكة أمان بلا تكلفة |
+
+#### ب) دفعتان على الإنتاج
+1. **`78e6a27..eff8d2e`** — admin `1.10.1` · modonty `1.86.0` · dataLayer `0.2.1` · ١٩ ملفاً
+   - بوّابة **410 للكتّاب**: `/authors/<غير موجود>` كان **200 soft-404**، صار **410**
+   - إصلاح ٤ تسريبات صور في الأدمن · إزالة بارام Cloudinary الميت
+2. **`eff8d2e..507454c`** — admin `1.10.2` · modonty `1.87.0` · ١٣ ملفاً
+   - **الضبابة على غلاف المقال** — مثبتة في HTML الإنتاج: `blur data: 2 · background-image: 1 · cache=PRERENDER`
+   - سلسلة احتياط الصور ما عادت تنتهي بـ404
+
+نسختان احتياطيتان للقاعدة: `PROD-2026-08-07_18-05` (٩٥ مجموعة · ٤٦MB) ومثلها قبل الدفعة الثانية. Changelog كُتب للدفعتين على LOCAL+PROD.
+
+#### ج) لوحة TASK — إعادة تصميم
+- **بورد «مكوّن الصور» صار خط سير** مثل النشر (نفس المُصيِّر، تسلسل خاص به). `renderFlow` صار يخدم بوردين عبر خريطة `FLOWS`.
+- بنود جديدة: `CACHE1` · `AUTH1` · `SEO1` · `SETT1` · `IMG-FB` · `IMGDIM` · `BNOPT` · `ADM-AUTH-IMG` · `DATA2`
+- `MI0` صار يحمل **عقد الكومبوننت** بسبعة بنود، كل بند موسوم **«نصّ»** (توثيق Next الرسمي) أو **«اجتهاد»**.
+- `MI-RISK` صار يحمل **الآثار الأربعة المقيسة** للتوحيد.
+
+---
+
+### 📝 القرارات وأسبابها
+
+1. **`T9` مؤجَّل عمداً لا معلَّق** — الحساب مجاني، فالإطفاء يخسّرنا ٥٣٣ رابط أصل (نسخة رجوع) مقابل صفر توفير. يُراجَع بعد ٣ أشهر. **مرفوض:** نقله لبورد الصور — يعطي «خلص كله» كاذباً ويؤخّره بلا داعٍ.
+2. **الكومبوننت في `dataLayer`** (قرار خالد) — قاعدته: «المستعمل في أكثر من مكان يكون مشتركاً». وسُجِّل الأثر: `dataLayer` كان فيه **صفر استيراد من next**، فأُضيفت `next: ^16.2.0` لـ`peerDependencies`. **مرفوض:** إبقاؤه في مودونتي.
+3. **`quality` افتراضه ٧٥ لا ١٠٠** — نصّ التوثيق: «high quality value will increase the file size without improving appearance». الكومبوننت القديم يرفعها تلقائياً مع `preload` — أي يبطّئ LCP وهو يظنّ أنّه يسرّعه.
+4. **محسّن بني عبر `loaderFile` لا حقن `loader`** — مثال التوثيق للـ`loader` يبدأ بـ`'use client'`، فحقنه كخاصيّة يحوّل كل مستهلك لمكوّن عميل. و`image.md:197`: «configure **every instance** … **without passing a prop**».
+5. **`sizes` إلزامية عبر presets** (قرار خالد: «فيها control») — رغم أنّ القياس أظهر أنّ المكسب انضباط لا إنقاذ.
+6. **الفرع المنفصل** — كل شغل الصور على `image-component`، و`main` يبقى نظيفاً والإنتاج عليه.
+
+---
+
+### 🚧 معلّق / محجوب
+
+- **`MI2c` وما بعده** — ٢٤ ملفاً باقية. غير محجوب، فقط طويل.
+- **`IMGDIM`** — الصور الافتراضية الثلاث `width/height = undefined` في القاعدة ← خطر CLS حقيقي حين تُستعمل. الحلّ: قراءة الأبعاد من بني وكتابتها + إرجاعها من `getPlatformDefaultImages()`.
+- **`ADM-AUTH-IMG`** — الأدمن بلا حقل لصورة الكاتب (اضطررنا لكتابتها بسكربت).
+- **`BNOPT`** — محسّن بني. محجوب بثلاث بوّابات: تأكيد تفعيله على الزونات · قياس السعر من فاتورة Vercel · قياس السرعة بمنهج `67`.
+- **`65b`** — فولباك الصورة المكسورة وقت العرض (`onError`). لا يوجد اليوم؛ صفر صورة مكسورة فلا شيء يُلتقط.
+
+---
+
+### 📂 ملفات لُمست (الفرع `image-component`، كوميت `566631b`)
+
+- `dataLayer/components/optimized-image.tsx` — **جديد**. الكومبوننت المشترك بالعقد كاملاً.
+- `dataLayer/lib/media-src.ts` — `blurDataURL` صار **مفتاحاً إلزامياً** (أداة الجرد).
+- `dataLayer/package.json` — `next: ^16.2.0` في `peerDependencies` + `pnpm install` ربطها فعلاً.
+- **٤٠ ملفاً · ٧٧ موضع `select`** في مودونتي/الأدمن/dataLayer — أُضيف `blurDataURL: true`.
+- `modonty/app/articles/[slug]/components/article-featured-image.tsx` — **مُحوَّل** (إثبات النمط).
+- `documents/tasks/reports/BL2-blur-inventory-2026-08-07.md` — **جديد**، ٣٠٤ أسطر، تقرير الجرد الكامل.
+- `documents/tasks/TASK.html` — إعادة تصميم بورد الصور + البنود الجديدة.
+
+**على `main` (مدفوع):** ١٩ + ١٣ ملفاً في الدفعتين — تفصيلها في رسالتَي الكوميت `eff8d2e` و`507454c`.
+
+---
+
+### 🔁 حالة git
+
+```
+main:             7ff60cc   (متطابق مع origin/main · الإنتاج عليه)
+الفرع الحالي:      image-component
+آخر كوميت فيه:     566631b  wip(images): shared OptimizedImage in dataLayer
+الحالة:            لا يترجم — 76 خطأ TS2345 في مودونتي
+غير مرحَّل:        .claude/settings.local.json · .mcp.json (مستبعدان دائماً)
+```
+
+**الإنتاج:** admin `1.10.2` · modonty `1.87.0` · console `0.23.0` · dataLayer `0.2.1` — الثلاثة `READY` على `507454c`.
+
+---
+
+### ⚠️ ثلاثة أحكام خاطئة أطلقتها وصحّحتها — تُقرأ قبل الاستئناف
+
+1. **«٧١١ رابط Cloudinary يُقدَّم للزوّار»** → كان كاش Vercel قديماً يتحدّث ذاتياً. الجولة الثانية: **صفر**.
+2. **«٩٤ مقالاً بلا صورة في السيو»** → الكاتب يُولَّد `Organization` ومعه `logo` كامل. النقص كان **شكلياً فقط**.
+3. **«هدر ٩٦× على الجوال»** → أداة قياسي قرأت `img.src` للصور الكسولة، وهو الرابط الاحتياطي الأكبر **ولم يُنزَّل**. القياس الصحيح (٣٩٠ بكسل، ١٨ صورة محمَّلة): **واحدة فقط تتجاوز 2×**.
+
+**الدرس المسجَّل:** الخطر ليس في المعمارية بل في الحكم قبل القياس. كل رقم يُذكر معه ناتجه الخام، وكل قاعدة يُذكر معها مصدرها — نصّ أم اجتهاد.
+
+---
+
+### 🚀 الاستئناف في ٣٠ ثانية
+
+1. `git checkout image-component`
+2. `cd modonty && pnpm tsc --noEmit` — توقّع **٧٦** خطأ
+3. افتح `documents/tasks/reports/BL2-blur-inventory-2026-08-07.md` — خريطة الشغل
+4. أغلق الأخطاء ملفاً ملفاً (الأكثر إصابةً أولاً: `api/helpers/client-queries.ts` ٨ · `article-queries.ts` ٥ · `category-queries.ts` ٤)
+5. لمّا يصير `tsc` صفراً → شغّل مودونتي محلياً → **التست الحيّ** (`MI4`): كل الصفحات · كل الصور تُحمَّل · صفر خطأ كونسول · قارن `q=` و`w=` قبل/بعد
+6. ثم دمج في `main` بطقوس الدفع المعتادة
+
+**قاعدة التنبيه الصوتي المحدَّثة:** انتهاء تاسك (نغمة صاعدة) · انتظار قرار أو ضغطة (نغمة مزدوجة) — `feedback_sound_alert_on_task_done_and_on_blocking`.
 
 ---
 
@@ -700,200 +836,3 @@
 3. بعده: «احذف كل الملفات» (اكتب clients) ← الترحيل («تحديد الكل» ← «شغّل المحدد») ← البوابة ← `/settings/system` (coreClientId) ← «معاينة» ← LINK ← «نفّذ» ×٢.
 
 ---
-
-## Session: 2026-07-31 23:55 — 🏁 T2 مدوّنتي core أُقفل 100% + جرد كود شامل + إعادة تنظيم الملفات المرجعية
-
-### 🎯 Where I stopped
-- Last task in progress: T2 أُقفل بالكامل (21/21) — واقفون على عتبة **T3 (تأمين)** في BUNNY-GOLIVE-FLOW.
-- Next concrete action when resuming: **T3** — commit كل الشغل على فرع `version-2` **بلا push** (بقائمة صريحة، ممنوع `git add -A`) + تنظيف المؤقتات (`modonty/app/bunny-test/` + `dataLayer/.tmp-*.mjs` ×٤ + `admin/_mig-*` + `CLAUDE.md.backup-2026-07-21`) + جرد Bunny — بوابته: git status نظيف.
-
-### ✅ Done this session
-- **المرحلة ٤ اكتملت (وبها T2 كله):** p4-settings — زرّ مكتبة مدوّنتي على حقول الإعدادات الستّة عبر ترقية واحدة في `admin/app/(dashboard)/settings/_shared/image-field.tsx` + تمرير `getCoreClientId()` من ٥ صفحات (brand/modonty/tags/categories/industries)؛ دورة وسوم كاملة: القاعدة `tagsPageImage` + المخزّن + HTML الخام (hero+og:image بـcurl). p4-platform-mode — وضع PLATFORM حُذف من `admin/components/shared/media-picker-dialog.tsx` (select المصدر + كل الفروع) + خاصية scope من `media-image-field.tsx`؛ تست حي: صفر خيار مصدر، ٢٤ صورة core. p4-verify ✓ بدورات اليوم.
-- **شهادة السجل صارت خاصية (طلب خالد):** حقل `Settings.certificateImageUrl` جديد (سكيما بالطقس الكامل) + مجموعة «Official documents» بزرّ المكتبة في `/settings/brand` + `modonty/app/trust/page.tsx` يقرأه عبر `get-brand-media.ts` مع fallback للملف الثابت — دورة مثبتة بالاتجاهين (اختيار←يظهر، مسح←الثابت يرجع). باقي رفع الشهادة الحقيقية (خالد).
-- **`Settings.orgLogoUrl` حُذف نهائياً بأمر خالد** (احتياطي ميّت — الدليل: الموقع الحيّ يرندر الشعار من `logoUrl`): السكيما + ٨ مواضع في `settings-actions.ts` + ٤ fallbacks (authors page/form · build-modonty-author-seo · jsonld-storage) + seed script — صفر مراجع، الصفحات الثلاث تعمل.
-- **جرد كود شامل (تقرير بلا تعديل):** `documents/tasks/CODE-IMAGE-AUDIT-2026-07-31.html` — ١٣٢ ملفاً صُنّفت كلها: **صفر مسار رفع نشط لـCloudinary** بالتطبيقات الثلاثة، صفر hardcoded إلا ٣ روابط bunny-test؛ مكتشف جديد: ٤ سكربتات `dataLayer/.tmp-*.mjs`؛ `next-cloudinary` صفر استيراد.
-- **إعادة تنظيم مرجعية (قرارات خالد):** `MODONTY-CORE-PLAN-v1.html` **مُقفل** (صفر بند مفتوح — العدّاد 21/21) — قائمة الملكية الستّة نُقلت نصاً بالقياس المحدَّث (يتيمة **٩** · ٤ وسوم+١٤ تصنيف+٧ صناعات؛ المؤلفان والطاقم سقطا) إلى **T2b** والجروب الكامل إلى **T9** في `BUNNY-GOLIVE-FLOW-v1.html`؛ بنود العرض الأربعة («مدوّنتي ليس شريكاً») → ملف جديد `documents/tasks/MODONTY-UIUX-REFACTOR-v1.html`؛ الـflow صار **تابين** (⏳ الباقي بأولوية T3←T2b←T4←T5←T6←T7←T8←T9 مع بادجات · ✅ المنجز والمرجع) وT2 مؤشَّر فيه.
-- **تحقّق p5-sitemap:** `/clients/مدونتي` موجودة في sitemap.xml + سطر ١٠٠ من llms.txt (curl).
-- **مراجعة الريلز (سؤال خالد):** فلو الكونسول الحقيقي سليم — رفع المعرض ينشئ صفّ Media مملوكاً (`clientId` من الجلسة) + صفّ Reel بانتظار الموافقة (`gallery-actions.ts:55`)؛ الـ١٤ الحالية dry-run بلا صفوف Media (بيانات تست تبقى).
-- **`verificationImageUrl` روجع:** دائرته سليمة على المعيار (MediaPicker على مكتبة العميل)؛ تعليقا «Cloudinary» القديمان صُحّحا (سكيما + أكشن، بالطقس).
-- TSC: لم يُشغَّل (قاعدة خالد — قبل push فقط). تست حي بالمتصفح: settings/brand + settings/tags + /trust + /tags + الـpicker كلها ✓.
-
-### 📝 Decisions taken (خالد 2026-07-31)
-- **TODO.md = المفتوح فقط** — البند المنجز يُحذف؛ توثيق المنجز في ملفات الـPRD (سطر TODO الرئيسي أُعيد بناؤه مفتوحاً فقط + الذاكرة حُدّثت).
-- **الإطفاء لا يترك فشلاً صامتاً** — أي لمسة Cloudinary بعد T9 = crash صريح (نمط tripwire؛ القاعدة موثّقة في T9).
-- altImage يتعبّأ مع مرحلة المحتوى (الكود مؤكَّد موصولاً fallback في ٨ مواضع توليد).
-- أي UI/UX لمودونتي → ملف الـrefactor الجديد فقط.
-- علاج بطء الجلسات الطويلة: `us>` + chat جديد عند كل معلم.
-
-### 🚧 Pending / blocked
-- القائمة المفتوحة الكاملة = سطر ٧ في `documents/tasks/TODO.md` (D5 ← T2b ← E2/T9 · PERF · UIUX refactor · تنظيف ما قبل الدفع · ملاحظة dev: revalidate الإعدادات يستهدف الإنتاج فاللوكال يحتاج ضربة تاغ يدوية).
-- قرارات محتوى عند خالد: رفع الشهادة الحقيقية · صور الصفحات الخمس الباقية · نص altImage.
-
-### 📂 Files touched (الرئيسية)
-- `admin/app/(dashboard)/settings/_shared/image-field.tsx` — زرّ مكتبة مدوّنتي (يخدم الحقول الستّة)
-- صفحات وفورمات settings الخمس (brand/modonty/tags/categories/industries) — تمرير coreClientId
-- `admin/components/shared/media-picker-dialog.tsx` + `media-image-field.tsx` — حذف وضع PLATFORM
-- `dataLayer/prisma/schema/schema.prisma` — +`certificateImageUrl` · −`orgLogoUrl` · تعليقات صُحّحت (الطقس ×٣ مرات هذه الجلسة)
-- `admin/app/(dashboard)/settings/actions/settings-actions.ts` — الحقل الجديد ٥ مواضع + حذف orgLogoUrl ٨ مواضع
-- `modonty/lib/settings/get-brand-media.ts` + `modonty/app/trust/page.tsx` — قراءة الشهادة + fallback
-- `admin/app/(dashboard)/clients/actions/clients-actions/update-client-verification-image.ts` — تعليق صُحّح
-- documents/tasks: `CODE-IMAGE-AUDIT-2026-07-31.html` (جديد) · `MODONTY-UIUX-REFACTOR-v1.html` (جديد) · `MODONTY-CORE-PLAN-v1.html` (مقفل 21/21) · `BUNNY-GOLIVE-FLOW-v1.html` (تابان + أولويات + T2b/T9 موسّعان + T2 ✓) · `TODO.md` (مفتوح فقط)
-
-### 🔁 Git / deploy state
-- Branch: `version-2` · Uncommitted: ~٣٠١ ملف (كل شغل الأيام الأخيرة — الـcommit نفسه هو T3)
-- Last commit: `d1a41dc` perf(modonty) · Pushed: لا · **ممنوع push/merge بلا إذن صريح — دمج main ملغى بقرار خالد**
-- السيرفران يعملان: أدمن :3000 · مودونتي :3001 · القاعدة `modonty_dev` (تحقّقنا صوتياً عند كل سكربت)
-- ⚠️ `dataLayer/.env` يشاور `modonty_dev` الآن (الذاكرة القديمة قالت إنتاج — صُحّحت؛ اطبع الـURL المحسوم كل مرة)
-
-### 🚀 How to resume in 30 seconds
-1. افتح `documents/tasks/BUNNY-GOLIVE-FLOW-v1.html` تاب «⏳ الباقي» — **T3 أولوية ١**.
-2. نفّذ T3: احذف المؤقتات (bunny-test · .tmp-*.mjs · _mig-* · CLAUDE.md.backup) ← commit بقائمة صريحة (بلا push، بلا add -A، استبعاد reels/settings.local.json/.mcp.json) ← جرد Bunny.
-3. البوابة: `git status` نظيف — بعدها T2b (بناء زرّ «Link core media» حسب قائمته الستّة في الكرت).
-
----
-
-## Session: 2026-07-31 (مساءً) — 🏁 ترحيل Bunny اكتمل: صفر Cloudinary بدليل مزدوج + إصلاح عطل رفع الصور
-
-### 🎯 أين توقّفت
-- **ترحيل Bunny انتهى على مدوّنتي.** لا يوجد عمل مفتوح في هذا المسار.
-- الخطوة التالية عند الاستئناف: **`E2`** — إزالة كود Cloudinary الميت + مفاتيح البيئة. بعدها مجموعة النشر `D1→D4`.
-
-### ✅ الرقم النهائي (دليل مزدوج مستقل)
-```
-المسح الحيّ:  174 ok / 0 failed · rendered <img> 2602 · bunny 2602 · cloudinary 0
-              JSON-LD: bunny 1246 · cloudinary 0
-القاعدة:      صفر Cloudinary عبر ٩ حقول سيو × ٦ كيانات
-الكود:        صفر عبر ٢١٩١ ملفاً في التطبيقات الثلاثة (٤ أصناف خلل)
-```
-٣ راوتات ترجع 404 وليست متعلّقة ببني: `/privacy` (خطأ في قائمة الماسح — الصحيح `/legal/privacy-policy`) · `/articles` و`/authors` (بلا صفحة فهرس بالتصميم).
-
-### ✅ أُنجز
-- **🐞 عطل حقيقي كُشف وأُصلح — رفع الصور في الأدمن كان مكسوراً تماماً على ويندوز.**
-  - العرض: أي رفع من `/media/upload` يفشل **صامتاً** (لا تنبيه · لا حفظ)، والـaction يرجع في ~100ms.
-  - السبب الجذري: `next@16.2.9` يجلب `sharp 0.34.5` كـ`optionalDependency`، والمشروع كان يطلب `^0.35.3`. الاثنان يشحنان `libvips-42.dll` **بنفس الاسم وإصدارين مختلفين** (8.17 مقابل 8.18.3) → ويندوز يحمّل اسم الـDLL مرّة واحدة لكل عملية → `ERR_DLOPEN_FAILED` (خطأ ويندوز 127).
-  - الإصلاح: `pnpm.overrides.sharp = "0.34.5"` في الجذر + تثبيت `admin/package.json` على نفس النسخة.
-  - التحقّق: بقيت نسخة واحدة في المخزن · الرفع صار 2061ms (رفع حقيقي) · `createMedia` كتب `bunnyUrl`.
-  - **الإنتاج لم يكن متأثراً** — لينكس يحمّل `.so` بمسار كامل وsoname مُصدَّر؛ التصادم ويندوزي بحت.
-- **غلافا المقالين استُبدلا** (الأصل محذوف من Cloudinary — HTTP 404 فتعذّر ترحيله):
-  - «التقويم الهجري» → `post/مدونتي/cover-hijri-calendar.webp` — HTTP 200
-  - «كأس العالم 2026» → `post/مدونتي/cover-world-cup-2026.webp` — HTTP 200
-  - 1920×1080 · نص بديل ووصف سيو للاثنين · **كله من واجهة الأدمن، صفر سكربتات على القاعدة**.
-- **إعادة توليد ٦ نطاقات** من زرّ `/database` (مقالات ٩٢ · عملاء · تصنيفات · وسوم · صناعات · صفحات القوائم) + **حفظ المؤلف `modonty`** من `/authors` (لا يوجد نطاق `authors` في الأداة — فُتح كبند).
-- **إصلاحات كود إضافية:** `client-hero-v2.tsx` (سطر واحد أزال Cloudinary من ٢٣ صفحة عميل) · `gallery-lightbox-overlay.tsx` · نوعا الكونسول `GalleryImage` و`MediaWithStats` (تضييق يمحو `bunnyUrl`) · `client-page/types.ts` (فخّ خامد).
-- **الـPRD محدَّث:** `C1` · `C2` · `E3` وُسمت منجزة مع صف دليل خام داخل كل بطاقة. العدّاد **15/27**. في `C2` كُتبت **حدود الدليل** صراحةً.
-- `tsc` صفر أخطاء على التطبيقات الثلاثة.
-
-### 🔴 تصحيح ذاتي (يُقرأ قبل أي ادّعاء مستقبلي)
-أبلغتُ خالد **مرّتين** بأن Cloudinary «صفر» بينما الرقم الحقيقي وقتها كان **٢٠ صورة + ١٣ سيو عبر ١١ مساراً** — قرأتُ سطر ملخّص المسح غلط ونقلته دون تدقيق. صُحِّح فوراً بالأرقام الخام. **الدرس: انسخ سطر الملخّص حرفياً قبل تحويله لجملة.** كذلك تسبّبتُ في إرباك بتكرار «الأدمن والكونسول لم يُمسحا حيّاً» بينما كنتُ أتصفّح الأدمن أمامه — الصياغة كانت مبهمة لا كاذبة.
-
-### 📝 قرارات
-- توحيد `sharp` على **نسخة Next** (0.34.5) لا رفع Next لنسختنا — أقل مساس بمُحسِّن صور Next؛ استخدامنا (`metadata`·`resize`·`webp`·`toBuffer`) متطابق في الإصدارين.
-- إعادة التوليد من زرّ `/database` لا بسكربت — التزاماً بقاعدة «لا سكربتات DB منفصلة».
-- تُرك `console.error` تشخيصي في `upload-image-to-bunny.ts` — الصمت التام هو ما أضاع ٢٠ دقيقة.
-
-### 🚧 معلّق
-- **`E2`** إزالة كود Cloudinary الميت + مفاتيح env (البند الوحيد المتبقّي في مسار بني).
-- **النشر `D1→D4`:** باكب · بوابة رفع · merge لـmain + دفع + تحقّق حيّ · خطة تراجع.
-- **`PERF-0→4` + `C3`:** مشروع أداء منفصل لا علاقة له ببني.
-- **ثغرة في أداة الترحيل:** البطاقة **ترصد** `author.jsonLdStructuredData` لكن **لا يوجد نطاق `authors`** يصلحه — يستحق إضافة نطاق.
-- **عيب UI:** فشل الرفع لا يُظهر أي تنبيه (`waitForUploadCompletion` يبتلع الخطأ).
-- صفّا `Media` القديمان (Cloudinary 404) صارا يتيمين — يزولان بمُنظِّف اليتيمة.
-- **الأدمن والكونسول لم تُمسح صفحاتهما بصرياً** — الدليل عليهما كود + قاعدة (كافٍ منطقياً، ليس مسحاً بصرياً).
-- **تنظيف إلزامي قبل الدفع:** `admin/_mig-apply.cjs` · `admin/_mig-backup.json` · `admin/_mig-baseline.cjs` · `CLAUDE.md.backup-2026-07-21`.
-
-### 📂 ملفات
-- `package.json` (جذر) + `admin/package.json` + `pnpm-lock.yaml` — تثبيت sharp 0.34.5.
-- `admin/app/(dashboard)/media/actions/upload-image-to-bunny.ts` — `console.error` تشخيصي.
-- `modonty/app/clients/[slug]/components/shell-hero/client-hero-v2.tsx` · `sections/gallery-lightbox-overlay.tsx` · `client-page/types.ts`.
-- `console/app/(dashboard)/dashboard/gallery/{actions/gallery-actions.ts,components/gallery-manager.tsx,page.tsx}` · `dashboard/media/{components/media-gallery.tsx,helpers/media-queries.ts}`.
-- `documents/tasks/BUNNY-GOLIVE-PRD-v1.html` — `C1`·`C2`·`E3` + شريط الحالة (15/27).
-- `documents/tasks/TODO.md` — بندان ٥٩ و٦٠ (منجزان).
-- `~/.claude/hooks/auto-approve.mjs` + `~/.claude/settings.json` — إذن تلقائي كامل عدا الحذف (كل المشاريع).
-
-### 🔁 git
-- فرع `version-2` · آخر commit `d1a41dc` · **لم يُدفع** · صفر مساس بـ`main` · ~٢٤٤ ملفاً معدّلاً.
-
-### 🚀 الاستئناف في ٣٠ ثانية
-1. `cd admin && pnpm dev` (3000 أو 3001 حسب المتاح)
-2. افتح `documents/tasks/BUNNY-GOLIVE-PRD-v1.html` → بند **`E2`**.
-3. القرار الأول: نبدأ `E2` أم نقفز لمجموعة النشر `D1→D4`؟
-
----
-
-## Session: 2026-07-31 (تكملة بعد الـrestart) — إذن تلقائي كامل عدا الحذف + المسح الحيّ النهائي
-
-### 🎯 أين توقّفت
-- المسح الحيّ النهائي لمدوّنتي (١٧٤ راوتاً) على جهاز مرتاح بعد الـrestart.
-- الخطوة التالية عند الاستئناف: قراءة `scratchpad/sweep-final.txt` وتحديث `C1`/`C2` في `BUNNY-GOLIVE-PRD-v1.html`.
-
-### ✅ أُنجز في هذه التكملة
-- **الجهاز تعافى:** الرئيسية رجعت **200** (كانت 500 من انهيار Turbopack البيئي `0xc0000142` قبل الـrestart) → المسح صار صالحاً.
-- **إذن تلقائي كامل عدا الحذف** (طلب خالد: «ماني قادر أروح على الحمام» من كثرة أسئلة الإذن):
-  - سكربت `~/.claude/hooks/auto-approve.mjs` + نسخة في `MODONTY/.claude/hooks/`.
-  - مسجَّل عالمياً في `~/.claude/settings.json` تحت `hooks.PreToolUse` بـ `matcher: "*"` → **كل المشاريع**.
-  - يرجّع `allow` للكل، و`ask` فقط للحذف · `git push` · إعادة كتابة تاريخ git · سكيما/مسح قاعدة البيانات · `curl -X DELETE|PUT` · حذف Vercel/GitHub · `mkfs`/`dd`.
-  - اختُبر على ٧ أوامر — قرار صحيح ١٠٠٪.
-  - **يحتاج reload لـ Claude Code** ليسري (الـhooks تُقرأ عند بدء الجلسة). لم يُعمل reload بعد — أُجّل حتى ينتهي المسح لئلا نفقد سيرفر Turbopack الدافئ.
-  - سبب اللجوء للـhook: `defaultMode: bypassPermissions` موجود في الإعدادات الثلاثة ومع ذلك الجلسة تسأل، وقوائم `allow` تجاوزت ١٥٠٠ سطراً بلا فائدة.
-
-### 📝 قرارات
-- الـhook بدل توسيع `allow` → أي صيغة أمر جديدة كانت تسأل من جديد؛ الـhook يقرر بالنمط لا بالنص الحرفي.
-- قائمة `deny` العالمية تُركت كما هي (شبكة أمان). الحذف على ويندوز يمرّ عبر `Remove-Item` وهو ليس في `deny` → يصل للـhook ويسأل خالد.
-
-### 📂 ملفات
-- `~/.claude/hooks/auto-approve.mjs` — السكربت (جديد).
-- `~/.claude/settings.json` — تسجيل `hooks.PreToolUse` (جديد؛ كان `hooks` فارغاً).
-- `MODONTY/.claude/hooks/auto-approve.mjs` — نسخة مرجعية داخل المستودع.
-- `memory/feedback_full_permissions_except_delete.md` + مؤشّر في `MEMORY.md`.
-
-### 🔁 git
-- فرع `version-2` · آخر commit `d1a41dc` · **لم يُدفع** · صفر مساس بـ `main`.
-
----
-
-## Session: 2026-07-31 — منع تسريب Bunny من الجذر: `bunnyUrl` إجباري → ٩٢ موضعاً كُشف وأُصلح (فرع `version-2` · local فقط · **لم يُدفع**)
-
-### 🎯 أين توقّفت
-- **آخر مهمة:** جعل `bunnyUrl` **إجبارياً** في `MediaSrcInput` — حوّل كل تسريب صامت إلى خطأ ترجمة. **٩٢ موضعاً كُشف، كلها أُصلحت.**
-- **الخطوة التالية عند العودة (بعد restart الجهاز):**
-  1. `cd modonty && pnpm dev`
-  2. شغّل المسح: `node "<scratchpad>/sweep-modonty.mjs" 999`
-  3. **المتوقّع: صفر Cloudinary.** المسح السابق **لاغٍ** — كل الصفحات رجعت 500 بسبب انهيار Turbopack البيئي (`0xc0000142` على `globals.css`)، **لا علاقة له بالكود** و`tsc` نظيف.
-
-### ✅ أُنجز هذه الجلسة
-- **كرت الترحيل المستقل** في `/database`: ١٠ نطاقات بترتيب مفروض في الكود · شريط تقدّم بنسبة حقيقية · **زر Cancel** يسري عند حدّ الدفعة والمنجَز يُحفظ. **النتيجة: ٣٧٦ ← ٦ صفّاً** على `modonty_dev`، والحقول الخام **صفر**.
-- **إعادة تسمية `ClientReview.author` → `reviewer`** بـ`@map("authorId")` — **صفر أثر على البيانات**، أُثبت بقراءة خام من مونجو (الوثيقة ما زالت تحمل `authorId` ولا تعرف `reviewerId`).
-- **`B3`** اتساق sitemap الصور + OG مع المرندَر: **١٥/١٥ متسقة**.
-- **`bunnyUrl` إجباري** → كشف وإصلاح **٩٢**: مدوّنتي ٣٥ · الأدمن ٥٢ · الكونسول ٥.
-- **`tsc`: صفر أخطاء على التطبيقات الثلاثة** (مُتحقَّق مرّتين).
-- **`pnpm build`:** لم يُشغَّل. **المسح الحيّ النهائي:** معلّق على إعادة تشغيل الجهاز.
-
-### 📝 قرارات مع سببها
-- **`bunnyUrl` إجباري لا اختياري** → الاختياري يجعل `{ url: string }` وسيطاً صالحاً، فيمرّ كل تسريب صامتاً و`tsc` مرتاح. الإجباري ينقل الخطأ لموقع النداء حيث المعلومة فعلاً. **البديل المرفوض:** ملاحقة كل موقع يدوياً — يعالج الحاضر ولا يمنع التكرار.
-- **حذف ميزة السوشال بالكامل** بدل إصلاحها (قرار خالد) → أسقط بلوكر `sharp` وشقّ الصور بضربة واحدة.
-- **المتصفّح يقود دفعات الترحيل** بدل server action واحد → الأخير ذرّي من جهة المتصفّح: لا نسبة ولا إيقاف ممكنان داخله.
-
-### 🚧 معلّق
-- **المسح الحيّ النهائي لمدوّنتي** — يحتاج جهازاً مرتاحاً.
-- **إعادة فحص حيّ للأدمن والكونسول** — لم يُعادا بعد تغييرات اليوم.
-- **٦ حقول Cloudinary باقية** — سببها **صورتان محذوفتان من Cloudinary (HTTP 404)**، لا أصل يُنسخ؛ تُحلّان برفع غلاف جديد من الأدمن (يذهب لـ Bunny مباشرة).
-- **`E2`** إزالة الكود الميت + مفاتيح env، ثم الدفع.
-
-### 📂 أبرز الملفات
-- `dataLayer/lib/media-src.ts` — `bunnyUrl` صار إجبارياً + توثيق السبب.
-- `dataLayer/prisma/schema/schema.prisma` — `ClientReview.reviewer` + توثيق أن `onDelete: Cascade` وعد بلا ضامن على مونجو.
-- `admin/app/(dashboard)/database/actions/cloudinary-to-bunny.ts` + `cloudinary-scopes.ts` + `components/cloudinary-migration-card.tsx`.
-- `admin/components/admin/task-progress.tsx` — شريط تقدّم مشترك لأي مهمة طويلة.
-- `modonty/app/articles/[slug]/components/article-featured-image.tsx` — كانت تثبّت صورة الـLCP على Cloudinary.
-- `modonty/app/clients/[slug]/components/sections/client-gallery-section.tsx` — `src={img.url}` بلا `mediaSrc`.
-
-### 🔁 حالة git
-- الفرع `version-2` · آخر commit `d1a41dc` · **٢٣٢ ملفاً معدّلاً غير مثبَّت** · **غير مدفوع** · صفر مساس بـ `main`.
-- **`.next` محذوف للتطبيقات الثلاثة** — يُعاد بناؤه عند أول `pnpm dev`.
-- **تنظيف إلزامي قبل الدفع:** `admin/_mig-apply.cjs` · `admin/_mig-backup.json` · `admin/_mig-baseline.cjs` · `dataLayer/.tmp-vs.mjs` · `CLAUDE.md.backup-2026-07-21`. وممنوع `git add -A` (الريلز شغل ناقص ومستثنى).
-
-### 🚀 استئناف في ٣٠ ثانية
-1. `cd modonty && pnpm dev`
-2. شغّل `sweep-modonty.mjs 999` من مجلّد scratchpad
-3. لو النتيجة صفر → أقفل `C1`/`C2` في `BUNNY-GOLIVE-PRD-v1.html` وانتقل لـ`E2`
-
