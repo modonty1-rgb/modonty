@@ -44,7 +44,7 @@ export async function getOptimizableImages(): Promise<OptimizableImage[]> {
     select: {
       id: true,
       url: true,
-      bunnyUrl: true,
+      bunnyUrl: true, blurDataURL: true,
       filename: true,
       mimeType: true,
       fileSize: true,

@@ -32,7 +32,7 @@ export async function deleteMedia(id: string, clientId?: string) {
       select: {
         id: true,
         cloudinaryPublicId: true,
-        bunnyUrl: true,
+        bunnyUrl: true, blurDataURL: true,
         type: true,
         mimeType: true,
         clientId: true,

@@ -81,7 +81,7 @@ export async function addImageToGallery(
           select: {
             id: true,
             url: true,
-            bunnyUrl: true,
+            bunnyUrl: true, blurDataURL: true,
             altText: true,
             width: true,
             height: true,
@@ -256,7 +256,7 @@ export async function updateGalleryItem(
           select: {
             id: true,
             url: true,
-            bunnyUrl: true,
+            bunnyUrl: true, blurDataURL: true,
             altText: true,
             width: true,
             height: true,
@@ -316,7 +316,7 @@ export async function getArticleGallery(
           select: {
             id: true,
             url: true,
-            bunnyUrl: true,
+            bunnyUrl: true, blurDataURL: true,
             altText: true,
             width: true,
             height: true,

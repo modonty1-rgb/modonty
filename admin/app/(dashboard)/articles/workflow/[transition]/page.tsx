@@ -63,7 +63,7 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
         select: {
           name: true,
           slug: true,
-          logoMedia: { select: { url: true, bunnyUrl: true, width: true, height: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, width: true, height: true } },
         },
       },
       author: { select: { name: true } },

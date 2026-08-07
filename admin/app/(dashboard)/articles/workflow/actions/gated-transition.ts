@@ -88,7 +88,7 @@ export async function gatedTransitionAction(
         client: {
           select: {
             name: true,
-            logoMedia: { select: { url: true, bunnyUrl: true, width: true, height: true } },
+            logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, width: true, height: true } },
             // YMYL gate inputs
             isYmyl: true,
             ymylCategory: true,

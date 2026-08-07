@@ -86,14 +86,14 @@ export default async function QualityCheckPage({ params }: PageProps) {
       nextjsMetadata: true,
       nextjsMetadataLastGenerated: true,
       featuredImageId: true,
-      featuredImage: { select: { url: true, bunnyUrl: true, altText: true, width: true, height: true } },
+      featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true, width: true, height: true } },
       author: { select: { name: true } },
       client: {
         select: {
           id: true,
           name: true,
           slug: true,
-          logoMedia: { select: { url: true, bunnyUrl: true, width: true, height: true } },
+          logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, width: true, height: true } },
           isYmyl: true,
           ymylCategory: true,
           ymylData: true,

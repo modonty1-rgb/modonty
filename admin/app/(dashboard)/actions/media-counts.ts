@@ -91,7 +91,7 @@ async function readLibrary(): Promise<RawMedia[]> {
       id: true,
       filename: true,
       url: true,
-      bunnyUrl: true,
+      bunnyUrl: true, blurDataURL: true,
       altText: true,
       title: true,
       description: true,

@@ -158,7 +158,7 @@ export async function getBriefDetail(clientId: string): Promise<BriefDetail | nu
       select: {
         id: true,
         url: true,
-        bunnyUrl: true,
+        bunnyUrl: true, blurDataURL: true,
         altText: true,
         filename: true,
         width: true,

@@ -14,7 +14,7 @@ export async function getClientMedia(clientId: string) {
         filename: true,
         url: true,
         // Callers render these — without bunnyUrl `mediaSrc()` silently serves Cloudinary.
-        bunnyUrl: true,
+        bunnyUrl: true, blurDataURL: true,
         mimeType: true,
         fileSize: true,
         width: true,

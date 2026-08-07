@@ -36,7 +36,7 @@ export async function fetchArticleForMetadata(
           heroImageMedia: {
             select: {
               url: true,
-              bunnyUrl: true,
+              bunnyUrl: true, blurDataURL: true,
             },
           },
           logoMedia: {
@@ -61,7 +61,7 @@ export async function fetchArticleForMetadata(
       featuredImage: {
         select: {
           url: true,
-          bunnyUrl: true,
+          bunnyUrl: true, blurDataURL: true,
           altText: true,
           width: true,
           height: true,

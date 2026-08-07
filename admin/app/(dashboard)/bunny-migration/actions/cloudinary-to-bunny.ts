@@ -513,7 +513,7 @@ export async function runScopeBatch(
       const key = process.env.BUNNY_STORAGE_PASSWORD;
       const rows = await db.media.findMany({
         where: { id: { in: ids } },
-        select: { id: true, bunnyUrl: true, filename: true },
+        select: { id: true, bunnyUrl: true, blurDataURL: true, filename: true },
       });
       for (const row of rows) {
         try {

@@ -48,7 +48,7 @@ export async function getPendingReels(): Promise<PendingReelRow[]> {
     select: {
       id: true,
       url: true,
-      bunnyUrl: true,
+      bunnyUrl: true, blurDataURL: true,
       thumbnailUrl: true,
       mp4Url: true,
       mimeType: true,

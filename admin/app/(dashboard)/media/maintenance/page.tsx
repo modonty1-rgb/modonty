@@ -27,7 +27,7 @@ export default async function MediaMaintenancePage() {
         id: true,
         filename: true,
         url: true,
-        bunnyUrl: true,
+        bunnyUrl: true, blurDataURL: true,
         mimeType: true,
         fileSize: true,
         createdAt: true,

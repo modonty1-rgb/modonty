@@ -61,7 +61,7 @@ export interface SeoImageGroup {
 export const MEDIA_SELECT = {
   id: true,
   url: true,
-  bunnyUrl: true,
+  bunnyUrl: true, blurDataURL: true,
   type: true,
   altText: true,
   description: true,

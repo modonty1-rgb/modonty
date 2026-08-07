@@ -90,7 +90,7 @@ function findArticle(id: string) {
               select: {
                 id: true,
                 url: true,
-                bunnyUrl: true,
+                bunnyUrl: true, blurDataURL: true,
               },
             },
           },
@@ -106,7 +106,7 @@ function findArticle(id: string) {
           select: {
             id: true,
             url: true,
-            bunnyUrl: true,
+            bunnyUrl: true, blurDataURL: true,
             altText: true,
             width: true,
             height: true,
@@ -123,7 +123,7 @@ function findArticle(id: string) {
               select: {
                 id: true,
                 url: true,
-                bunnyUrl: true,
+                bunnyUrl: true, blurDataURL: true,
                 altText: true,
                 width: true,
                 height: true,

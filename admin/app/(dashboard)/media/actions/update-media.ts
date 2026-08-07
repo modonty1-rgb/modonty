@@ -60,7 +60,7 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
           type: true,
           scope: true,
           clientId: true,
-          bunnyUrl: true,
+          bunnyUrl: true, blurDataURL: true,
           filename: true,
           cloudinaryPublicId: true,
         },
