@@ -121,7 +121,7 @@ export function OptimizeImagesSection({ images }: { images: OptimizableImage[] }
           const busy = busyId === img.id;
           return (
             <li key={img.id} className="flex items-center gap-3 px-4 py-3">
-              <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
+              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
                 <OptimizedImage fill media={asMedia(img.url, "")} alt="" sizes="96px" className="h-full w-full object-cover" loading="lazy" />
               </div>
 

@@ -118,7 +118,7 @@ export function ReelsApprovalList({ reels }: { reels: PendingReelRow[] }) {
           <div key={reel.id} className="flex gap-4 rounded-xl border bg-card p-4">
             {/* Preview — a reel is portrait; the video plays right here so the admin
                 reviews the actual clip, not a thumbnail of it. */}
-            <div className="w-[150px] shrink-0 overflow-hidden rounded-lg bg-muted">
+            <div className="relative aspect-[9/16] w-[150px] shrink-0 overflow-hidden rounded-lg bg-muted">
               {reel.isVideo && reel.mp4Url ? (
                 <video
                   src={reel.mp4Url}
@@ -127,15 +127,15 @@ export function ReelsApprovalList({ reels }: { reels: PendingReelRow[] }) {
                   muted
                   playsInline
                   preload="metadata"
-                  className="aspect-[9/16] h-auto w-full object-cover"
+                  className="h-full w-full object-cover"
                 />
               ) : reel.previewUrl ? (
                 <OptimizedImage
                   fill media={asMedia(reel.previewUrl, reel.altText ?? "")} alt={reel.altText ?? ""} sizes="(max-width: 768px) 50vw, 240px"
-                  className="aspect-[9/16] w-full object-cover"
+                  className="object-cover"
                 />
               ) : (
-                <div className="grid aspect-[9/16] w-full place-items-center">
+                <div className="grid h-full w-full place-items-center">
                   <ImageIcon className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
                 </div>
               )}
@@ -146,7 +146,7 @@ export function ReelsApprovalList({ reels }: { reels: PendingReelRow[] }) {
               <div className="flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs font-medium">
                   {reel.clientLogoUrl ? (
-                    <OptimizedImage fill media={asMedia(reel.clientLogoUrl, "")} alt="" sizes="(max-width: 768px) 50vw, 240px" className="h-4 w-4 rounded-full object-cover" />
+                    <OptimizedImage width={16} height={16} media={asMedia(reel.clientLogoUrl, "")} alt="" sizes="16px" className="h-4 w-4 rounded-full object-cover" />
                   ) : (
                     <Building2 className="h-3.5 w-3.5" aria-hidden="true" />
                   )}

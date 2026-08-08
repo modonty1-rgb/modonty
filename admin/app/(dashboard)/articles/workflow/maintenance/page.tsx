@@ -84,7 +84,7 @@ export default async function StatusMaintenancePage() {
                 className="flex items-center gap-3 p-4 hover:bg-accent/30 transition-colors"
               >
                 {/* Thumbnail */}
-                <div className="h-10 w-10 shrink-0 rounded-full overflow-hidden bg-muted ring-1 ring-border/60">
+                <div className="relative h-10 w-10 shrink-0 rounded-full overflow-hidden bg-muted ring-1 ring-border/60">
                   {thumbSrc ? (
                     <OptimizedImage fill media={asMedia(thumbSrc, "")} alt="" sizes="64px" className="h-full w-full object-cover" />
                   ) : null}

@@ -134,14 +134,14 @@ export function AuthorForm({ initialData, authorId, onSuccess, settings, siteUrl
           </p>
 
           <div className="grid grid-cols-2 gap-2">
-            <div className="flex aspect-video items-center justify-center overflow-hidden rounded-md border bg-background p-2">
+            <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-md border bg-background p-2">
               {logoUrl ? (
                 <OptimizedImage fill media={asMedia(logoUrl, "Logo")} alt="Logo" sizes="(max-width: 768px) 100vw, 240px" className="max-h-full max-w-full object-contain" />
               ) : (
                 <span className="text-[10px] italic text-muted-foreground/50">no logo</span>
               )}
             </div>
-            <div className="flex aspect-video items-center justify-center overflow-hidden rounded-md border bg-background">
+            <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-md border bg-background">
               {ogImageUrl ? (
                 <OptimizedImage fill media={asMedia(ogImageUrl, "OG image")} alt="OG image" sizes="(max-width: 768px) 100vw, 240px" className="h-full w-full object-cover" />
               ) : (

@@ -1,4 +1,5 @@
 import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { tileAspectRatio, shouldContainTile } from "@modonty/database/lib/justify-rows";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -313,12 +314,11 @@ export default async function BriefDetailPage({
                 className="group mb-3 block break-inside-avoid overflow-hidden rounded-lg border bg-muted/30 transition-colors hover:border-primary/40"
                 title={img.altText || img.filename}
               >
-                <div className="relative overflow-hidden bg-muted">
+                <div className="relative overflow-hidden bg-muted" style={{ aspectRatio: tileAspectRatio(img) }}>
                   <OptimizedImage
                     fill media={asMedia(img.url, img.altText ?? "")} alt={img.altText ?? ""} sizes="(max-width: 768px) 100vw, 320px"
                     loading="lazy"
-                    // h-auto is the whole point: the height follows the image, never the box.
-                    className="block h-auto w-full"
+                    className={`block ${shouldContainTile(img) ? "object-contain" : "object-cover"}`}
                   />
                   <span className="absolute start-1.5 top-1.5 rounded bg-black/60 px-1.5 py-0.5 text-[9.5px] font-medium text-white backdrop-blur">
                     {img.role}

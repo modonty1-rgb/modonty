@@ -136,7 +136,7 @@ export function ClientImagesGrid({ name, isModonty, avgScore, images }: Props) {
               onClick={() => setOpenId(img.id)}
               className="rounded-xl border bg-card text-start transition hover:ring-2 hover:ring-primary/40"
             >
-              <div className="grid aspect-video place-items-center overflow-hidden rounded-t-xl bg-muted/40">
+              <div className="relative grid aspect-video place-items-center overflow-hidden rounded-t-xl bg-muted/40">
                 <OptimizedImage fill media={asMedia(img.url, img.altText ?? "")} alt={img.altText ?? ""} sizes="(max-width: 768px) 50vw, 220px" className="h-full w-full object-cover" loading="lazy" />
               </div>
               <div className="flex items-center justify-between gap-2 px-2.5 py-2">

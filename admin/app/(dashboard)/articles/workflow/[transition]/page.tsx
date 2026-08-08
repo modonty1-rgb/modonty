@@ -195,7 +195,7 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
               )}
               <div className="flex items-center gap-3">
               {/* Avatar-sized thumbnail */}
-              <div className="h-10 w-10 shrink-0 rounded-full overflow-hidden bg-muted ring-1 ring-border/60">
+              <div className="relative h-10 w-10 shrink-0 rounded-full overflow-hidden bg-muted ring-1 ring-border/60">
                 {mediaSrc(article.featuredImage) ? (
                   <OptimizedImage
                     fill media={asMedia(mediaSrc(article.featuredImage) as string, "")} alt="" sizes="64px"

@@ -68,7 +68,7 @@ export function GalleriesClientsTable({ clients }: { clients: GalleryClientRow[]
                 <TableRow key={c.id}>
                   <TableCell>
                     <div className="flex items-center gap-2.5">
-                      <div className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-lg bg-muted">
+                      <div className="relative grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-lg bg-muted">
                         {c.logoUrl ? (
                           <OptimizedImage fill media={asMedia(c.logoUrl, "")} alt="" sizes="32px" className="h-full w-full object-cover" />
                         ) : (
