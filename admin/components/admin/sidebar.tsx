@@ -83,6 +83,7 @@ import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
 import { Button } from "@/components/ui/button";
 import type { ArticleStatusCounts } from "@/app/(dashboard)/actions/article-status-counts";
+import pkg from "@/package.json";
 
 // Maps a workflow href → the ArticleStatus whose count should appear as a badge.
 // From AWAITING_APPROVAL the admin can only request revision; advancing to SCHEDULED
@@ -492,8 +493,13 @@ export function Sidebar({ articleStatusCounts }: { articleStatusCounts?: Article
             />
           </div>
           {!collapsed && (
-            <span className="text-base font-semibold text-foreground whitespace-nowrap">
-              Modonty
+            <span className="flex items-baseline gap-1.5 min-w-0">
+              <span className="text-base font-semibold text-foreground whitespace-nowrap">
+                Modonty
+              </span>
+              <span className="text-[11px] font-medium text-muted-foreground tabular-nums whitespace-nowrap">
+                v{pkg.version}
+              </span>
             </span>
           )}
         </Link>
