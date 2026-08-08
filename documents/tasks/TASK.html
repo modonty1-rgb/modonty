@@ -1677,23 +1677,27 @@ const TASKS = [
    "<b>حصيلة الشغل:</b> ٢٠٠ ملف كود · <code>+1225 / −5425</code> · <b>صافي −4200 سطراً</b>. حُذف ٣٧ ملفاً (٤٨٢٣ سطراً ميتاً)، وأُضيفت ٣ (٤٥٥ سطراً) — منها <code>optimized-image.tsx</code> بـ١٧٢ سطراً محلّ نسختين مجموعهما ٦١٣.",
  ref:"مكوّن الصور"},
 
-{id:"QUALCFG", b:"mediaimg", app:["admin","console"], tab:"open", sev:"normal", who:"c",
- t:"الأدمن والكونسول لا يعلنان <code>images.qualities</code> — فخّ صامت يسبق <code>MI9</code>",
- d:"<b>انكشف في مراجعة العقد ٨ أغسطس.</b><br><br>" +
-   "<pre style='font-size:12px;margin:4px 0'>المكوّن  : QUALITIES = [25, 50, 75, 100]\nمودونتي  : qualities: [25, 50, 75, 100]  ✅ متطابق\nالأدمن   : غير محدَّد               ⚠\nالكونسول : غير محدَّد               ⚠</pre>" +
-   "<b>ماذا يحدث فعلاً — من التوثيق المثبَّت</b> (<code>version-16.md:790</code> و<code>:817</code>): افتراض Next 16 صار <code>[75]</code> فقط، و«If you specify a quality prop not included in the array, the quality will be <b>coerced to the closest value</b>». أي أنّ <code>quality={50}</code> في الأدمن <b>يُقهَر إلى 75 بصمت</b> — لا خطأ، لا تحذير.<br><br>" +
-   "<b>لماذا هو خامل اليوم:</b> الأدمن ملفٌ واحد على المكوّن والكونسول صفر، وكلاهما على الافتراضي 75. فلا أثر الآن.<br><br>" +
-   "<b>لماذا يجب أن يُغلق قبل <code>MI9</code>:</b> لحظة يمرّر أول ملفّ هناك جودةً غير 75، سيراها في الكود ولن يراها في المتصفّح. الإصلاح سطر واحد في <code>next.config.ts</code> لكلٍّ منهما.",
+{id:"QUALCFG", b:"mediaimg", app:["admin","console"], tab:"done", sev:"normal", who:"c", date:"٨ أغسطس",
+ t:"<code>images.qualities</code> أُعلن في الأدمن والكونسول — الفخّ الصامت أُغلق",
+ d:"<b>✅ أُصلح ٨ أغسطس. سطر واحد لكلٍّ منهما، والثلاثة صارت متطابقة.</b><br><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>المكوّن  : QUALITIES = [25, 50, 75, 100]\nمودونتي  : [25, 50, 75, 100]  ✅\nالأدمن   : [25, 50, 75, 100]  ✅ (كان غير محدَّد)\nالكونسول : [25, 50, 75, 100]  ✅ (كان غير محدَّد)</pre>" +
+   "<b>الخطر الذي أُزيل — بنصّ التوثيق</b> (<code>version-16.md:790</code> و<code>:817</code>): افتراض Next 16 صار <code>[75]</code>، و«a quality prop not included in the array … will be <b>coerced to the closest value</b>». أي أنّ <code>quality={50}</code> في الأدمن كان <b>يُقهَر إلى 75 بصمت</b> — لا خطأ ولا تحذير، فترى قيمةً في الكود لا تراها في المتصفّح.<br><br>" +
+   "<b>ولماذا كان يجب أن يسبق <code>MI9</code>:</b> الأدمن ملفٌ واحد على المكوّن والكونسول صفر — فالفخّ كان خاملاً. لحظة يبدأ <code>MI9</code> يمرّر جودةً غير 75، كان سيصمت. الآن لا.<br><br>" +
+   "<b>وتُرك تعليق في الملفَّين</b> يربط القائمة بـ<code>QUALITIES</code> في المكوّن، كي لا تنفصلا لاحقاً.",
  ref:"مكوّن الصور"},
 
-{id:"PRELOADX", b:"seo", app:["modonty"], tab:"open", sev:"normal", who:"c",
- t:"صفحات فيها أكثر من <code>preload</code> واحد — التوثيق يحذّر منه",
- d:"<b>انكشف في مراجعة عقد الصور ٨ أغسطس. ⚠ ليس ارتداداً من شغل الصور — أُثبت بمقارنة <code>main</code>.</b><br><br>" +
-   "<b>نصّ التوثيق</b> (<code>image.md:285</code>، «When not to use it»): «When you have <b>multiple images</b> that could be considered the LCP element <b>depending on the viewport</b>».<br><br>" +
-   "<pre style='font-size:12px;margin:4px 0'>InfiniteEntityGrid.tsx:104   preload={i < 4}   ← أربع صور\ntrust/page.tsx               162 + 225        ← والثانية تحت الطيّة\nVision2030Spotlight.tsx      83 + 149</pre>" +
-   "<b>لماذا ليس ارتداداً:</b> <code>InfiniteEntityGrid</code> كان <code>preload={i&lt;4}</code> <b>على <code>main</code> نفسه</b>. والموضعان الآخران كانا <code>priority</code>، و<code>priority</code> مهجورة <b>لصالح</b> <code>preload</code> بنفس السلوك — فإعادة التسمية لم تغيّر شيئاً في المتصفّح.<br><br>" +
-   "<b>لماذا لم أُصلحه فوراً:</b> تقليل التحميل المسبق قرار أداء يُقاس قبل وبعد، لا تعديل أعمى في آخر جلسة طويلة. يُفتح ببند مستقلّ ومعه قياس LCP.<br><br>" +
-   "<b>الأولوية:</b> شبكة الكيانات أولاً (أربع روابط تتزاحم)، ثم شهادة <code>trust</code> (تحت الطيّة، فلا معنى لتحميلها مسبقاً).",
+{id:"PRELOADX", b:"seo", app:["modonty"], tab:"done", sev:"normal", who:"c", date:"٨ أغسطس",
+ t:"تعدّد <code>preload</code> في الصفحة — <b>من 5 صور إلى 2</b>",
+ d:"<b>✅ أُصلح ٨ أغسطس بنصّ التوثيق، وقِيس قبل وبعد.</b><br><br>" +
+   "<b>النصّ</b> (<code>image.md:283-289</code> في <code>next@16.2.9</code> المثبَّت): «When not to use it: when you have <b>multiple images that could be considered the LCP element depending on the viewport</b> … In most cases, you should use <code>loading=\"eager\"</code> or <code>fetchPriority=\"high\"</code> instead of preload.»<br><br>" +
+   "<b>شبكة الكيانات كانت الحالة حرفياً:</b> عمود واحد على الجوال، أربعة على سطح المكتب — فأيّ بطاقة هي LCP يتغيّر بالمقاس. وكانت <code>preload={i&lt;4}</code>.<br><br>" +
+   "<b>ما صار:</b> <code>preload</code> للبطاقة الأولى وحدها، و<code>loading=\"eager\"</code> لبقيّة الصفّ — تبدأ التحميل فوراً وتتوقّف عن التزاحم في <code>&lt;head&gt;</code>.<br>" +
+   "وشهادة <code>trust</code> صارت <code>lazy</code> — التوثيق يشترط «above the fold» وهي أسفل الصفحة بكثير.<br>" +
+   "وشعارا <code>Vision2030Spotlight</code> صارا <code>eager</code> — شعار ١١٢ بكسل ليس عنصر LCP، وشريحته قد لا تُرسم أصلاً.<br><br>" +
+   "<b>القياس الحيّ — من جانب الصور نفسها</b> (صورة بلا سمة <code>loading</code> = سلكت مسار preload):" +
+   "<pre style='font-size:12px;margin:4px 0'>الصفحة        مسار preload   eager\n/categories         2           5\n/industries         2           5\n/tags               2           5\n/trust              2           2\nكان: 5 (الغلاف + 4 بطاقات)</pre>" +
+   "<b>وملاحظة صدق:</b> عدّ روابط <code>&lt;link rel=preload&gt;</code> يعطي <b>٣</b> في ثلاث صفحات (٢ منّا + شعار النافبار بـ<code>fetchPriority=\"high\"</code>) و<b>٥</b> في <code>/categories</code>. وجانب الصور في <code>/categories</code> مطابق للبقيّة (٢)، فالزيادتان أثرُ خادم تطوير طويل العمر لا الكود — <b>لم أتحقّق منها على الإنتاج بعد</b>.<br><br>" +
+   "<b>ولم يكن ارتداداً:</b> <code>InfiniteEntityGrid</code> كان <code>preload={i&lt;4}</code> على <code>main</code> نفسه — أُثبت بالمقارنة.",
  ref:"سيو وأداء"},
 
 {id:"MI9", b:"mediaimg", app:["admin","console"], tab:"open", sev:"normal", who:"k",

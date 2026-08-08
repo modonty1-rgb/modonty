@@ -101,7 +101,10 @@ export function InfiniteEntityGrid({
     <>
       <div className={`grid grid-cols-1 gap-4 ${COLUMN_CLASS[columns]}`}>
         {items.map((item, i) => (
-          <EntityCard key={item.slug} {...item} preload={i < 4} />
+          // One preload for the single first card; the rest of the first row loads eagerly.
+          // Four `<link rel=preload>` entries competing was the documented anti-pattern —
+          // see the note on `EntityCardProps.preload`.
+          <EntityCard key={item.slug} {...item} preload={i === 0} eager={i > 0 && i < 4} />
         ))}
       </div>
 

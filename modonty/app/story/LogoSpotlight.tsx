@@ -72,6 +72,7 @@ function LogoSpotlightImpl({
             alt="مُدَوَّنَتِي"
             fill
             sizes="(max-width: 768px) 100vw, 800px"
+            // The one hero of this slide — keeps its preload.
             preload
             className="object-contain"
             style={{ transform: "scale(1.65)" }}

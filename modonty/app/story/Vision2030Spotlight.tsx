@@ -80,7 +80,9 @@ function Vision2030SpotlightImpl({
                   alt="رؤية المملكة 2030"
                   fill
                   sizes="(max-width: 768px) 112px, 128px"
-                  preload
+                  // A 112px logo is never the LCP element, and this slide may not even render
+                  // (deck is gated on the current slide) — eager, not a preload link in <head>.
+                  loading="eager"
                   className="object-contain"
                 />
               </m.div>
@@ -146,7 +148,7 @@ function Vision2030SpotlightImpl({
                 alt="مُدَوَّنَتِي"
                 fill
                 sizes="(max-width: 768px) 96px, 112px"
-                preload
+                loading="eager"
                 className="object-contain"
                 style={{ transform: "scale(1.65)" }}
               />

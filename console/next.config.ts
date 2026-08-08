@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Next 16 default is [75] only; any other value is silently coerced to the nearest
+    // allowed one. Must mirror QUALITIES in dataLayer/components/optimized-image.tsx,
+    // or a quality set in code never reaches the browser (bug QUALCFG, 8 Aug 2026).
+    qualities: [25, 50, 75, 100],
     remotePatterns: [
       {
         protocol: "https",

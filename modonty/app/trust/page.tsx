@@ -222,7 +222,10 @@ export default async function TrustPage() {
                       width={2573}
                       height={1818}
                       sizes="(max-width: 768px) 100vw, 520px"
-                      preload
+                      // No preload: the docs list "above the fold, typically the hero image"
+                      // as the condition (image.md:279-281), and this certificate sits far
+                      // below it. The banner above already holds the page's one preload.
+                      loading="lazy"
                       className="h-auto w-full rounded-lg border border-border"
                     />
                   </a>

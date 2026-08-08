@@ -24,7 +24,19 @@ export interface EntityCardProps {
   clientCount: number;
   /** Computed and real (GA4 + DB engagement) — hidden from the card 2026-07-04 until organic traffic makes it a meaningful number. Kept on the type so callers/data layer don't need touching when it's re-enabled. */
   digitalImpact?: number;
+  /**
+   * Above-the-fold loading. `next@16.2.9` docs, `image.md:283-289`:
+   *   "When not to use it: when you have multiple images that could be considered the
+   *    LCP element depending on the viewport … In most cases, you should use
+   *    loading='eager' or fetchPriority='high' instead of preload."
+   *
+   * A grid is exactly that case — 1 column on a phone, 4 on a desktop, so which card is
+   * the LCP changes with the viewport. So: `preload` for the single first card only, and
+   * `loading="eager"` for the rest of the first row. They still start loading immediately;
+   * they just stop competing as four `<link rel=preload>` entries in `<head>`.
+   */
   preload?: boolean;
+  eager?: boolean;
 }
 
 const BASE_PATH: Record<EntityType, string> = {
@@ -44,6 +56,7 @@ export function EntityCard({
   clientPreviews,
   clientCount,
   preload = false,
+  eager = false,
 }: EntityCardProps) {
   const showTrending = type !== "industry" && recentArticleCount > 0;
   const overflowCount = clientCount > 3 ? clientCount - 3 : 0;
@@ -62,7 +75,11 @@ export function EntityCard({
               media={asMedia(entityImage, imageAlt)}
               alt={imageAlt || name}
               fill
-              preload={preload}
+              {...(preload
+                ? { preload: true }
+                : eager
+                  ? { loading: "eager" as const }
+                  : {})}
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             />
