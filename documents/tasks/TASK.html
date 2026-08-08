@@ -1668,6 +1668,34 @@ const TASKS = [
    "<b>الحَكَم:</b> <code>tsc</code> صفر على مودونتي والأدمن والكونسول معاً.",
  ref:"مكوّن الصور"},
 
+{id:"MI0-AUDIT", b:"mediaimg", app:["modonty","dataLayer"], tab:"done", sev:"high", who:"c", date:"٨ أغسطس",
+ t:"مراجعة عقد المكوّن — <b>القواعد السبع مطبَّقة، تحقُّق ميكانيكي</b>",
+ d:"<b>✅ راجعتُ العقد بنداً بنداً ٨ أغسطس، بالكود والتوثيق المثبَّت لا بالذاكرة.</b><br><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>1 صفر سياسة خفيّة   ✅ preload/loading/fetchPriority تُمرَّر كما هي\n2 الجودة 75 لا 100   ✅ 0 استدعاء يفرض 100\n3 sizes إلزامية      ✅ sizes: (بلا ?) في الواجهة\n4 preload وحده       ✅ 0 استدعاء يجمعه مع loading/fetchPriority\n5 الضبابة تلقائية    ✅ 0 استدعاء يمرّرها يدوياً\n6 لا loader prop     ✅ ذِكرها تعليقٌ يشرح، لا خاصّية\n7 يأخذ الصفّ         ✅ 0 استدعاء يمرّر src=\n+ لا use client      ✅ فالمستهلك يبقى سيرفر</pre>" +
+   "<b>وتحقّقتُ من ادّعاء «نصّ» في القاعدة ٤ من مصدره:</b> توثيق <code>next@16.2.9</code> المثبَّت، <code>image.md:293</code> — «Starting with Next.js 16, the <code>priority</code> property has been <b>deprecated in favor of</b> <code>preload</code>». فتحويلي <code>priority</code> ← <code>preload</code> هو مسار الترحيل الرسمي، لا اجتهاد.<br><br>" +
+   "<b>الجرد النهائي بالبحث (مودونتي كاملة):</b> استيراد <code>next/image</code> واحد (<code>hero-warm</code>، <code>getImageProps</code> للتسخين) · <code>&lt;Image&gt;</code> في JSX <b>صفر</b> · <code>&lt;img&gt;</code> خام موضعان باستثناء موثَّق · <b>٥٠ ملفاً على المكوّن المشترك</b>.<br><br>" +
+   "<b>حصيلة الشغل:</b> ٢٠٠ ملف كود · <code>+1225 / −5425</code> · <b>صافي −4200 سطراً</b>. حُذف ٣٧ ملفاً (٤٨٢٣ سطراً ميتاً)، وأُضيفت ٣ (٤٥٥ سطراً) — منها <code>optimized-image.tsx</code> بـ١٧٢ سطراً محلّ نسختين مجموعهما ٦١٣.",
+ ref:"مكوّن الصور"},
+
+{id:"QUALCFG", b:"mediaimg", app:["admin","console"], tab:"open", sev:"normal", who:"c",
+ t:"الأدمن والكونسول لا يعلنان <code>images.qualities</code> — فخّ صامت يسبق <code>MI9</code>",
+ d:"<b>انكشف في مراجعة العقد ٨ أغسطس.</b><br><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>المكوّن  : QUALITIES = [25, 50, 75, 100]\nمودونتي  : qualities: [25, 50, 75, 100]  ✅ متطابق\nالأدمن   : غير محدَّد               ⚠\nالكونسول : غير محدَّد               ⚠</pre>" +
+   "<b>ماذا يحدث فعلاً — من التوثيق المثبَّت</b> (<code>version-16.md:790</code> و<code>:817</code>): افتراض Next 16 صار <code>[75]</code> فقط، و«If you specify a quality prop not included in the array, the quality will be <b>coerced to the closest value</b>». أي أنّ <code>quality={50}</code> في الأدمن <b>يُقهَر إلى 75 بصمت</b> — لا خطأ، لا تحذير.<br><br>" +
+   "<b>لماذا هو خامل اليوم:</b> الأدمن ملفٌ واحد على المكوّن والكونسول صفر، وكلاهما على الافتراضي 75. فلا أثر الآن.<br><br>" +
+   "<b>لماذا يجب أن يُغلق قبل <code>MI9</code>:</b> لحظة يمرّر أول ملفّ هناك جودةً غير 75، سيراها في الكود ولن يراها في المتصفّح. الإصلاح سطر واحد في <code>next.config.ts</code> لكلٍّ منهما.",
+ ref:"مكوّن الصور"},
+
+{id:"PRELOADX", b:"seo", app:["modonty"], tab:"open", sev:"normal", who:"c",
+ t:"صفحات فيها أكثر من <code>preload</code> واحد — التوثيق يحذّر منه",
+ d:"<b>انكشف في مراجعة عقد الصور ٨ أغسطس. ⚠ ليس ارتداداً من شغل الصور — أُثبت بمقارنة <code>main</code>.</b><br><br>" +
+   "<b>نصّ التوثيق</b> (<code>image.md:285</code>، «When not to use it»): «When you have <b>multiple images</b> that could be considered the LCP element <b>depending on the viewport</b>».<br><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>InfiniteEntityGrid.tsx:104   preload={i < 4}   ← أربع صور\ntrust/page.tsx               162 + 225        ← والثانية تحت الطيّة\nVision2030Spotlight.tsx      83 + 149</pre>" +
+   "<b>لماذا ليس ارتداداً:</b> <code>InfiniteEntityGrid</code> كان <code>preload={i&lt;4}</code> <b>على <code>main</code> نفسه</b>. والموضعان الآخران كانا <code>priority</code>، و<code>priority</code> مهجورة <b>لصالح</b> <code>preload</code> بنفس السلوك — فإعادة التسمية لم تغيّر شيئاً في المتصفّح.<br><br>" +
+   "<b>لماذا لم أُصلحه فوراً:</b> تقليل التحميل المسبق قرار أداء يُقاس قبل وبعد، لا تعديل أعمى في آخر جلسة طويلة. يُفتح ببند مستقلّ ومعه قياس LCP.<br><br>" +
+   "<b>الأولوية:</b> شبكة الكيانات أولاً (أربع روابط تتزاحم)، ثم شهادة <code>trust</code> (تحت الطيّة، فلا معنى لتحميلها مسبقاً).",
+ ref:"سيو وأداء"},
+
 {id:"MI9", b:"mediaimg", app:["admin","console"], tab:"open", sev:"normal", who:"k",
  t:"مؤجَّل — مدّ المكوّن الموحّد للأدمن والكونسول",
  d:"<b>مؤجَّل بقرار خالد ٦ أغسطس:</b> مودونتي أولاً وتطبيق واحد فقط، والباقي يوماً آخر.<br><b>النطاق — متحقَّق بعدّ فعلي ٦ أغسطس:</b> الأدمن ٣٦ ملفاً تستورد <code>next/image</code> + <b>١٣ وسم <code>&lt;img&gt;</code> خام</b> + <b>أربعة أغلفة صور خاصة به</b> (<code>thumbnail-image-view</code> · <code>media-image-field</code> · <code>cloudinary-image-input</code> · <code>deferred-image-upload</code>). الكونسول ١٧ ملفاً + وسم خام واحد.<br>الإجمالي عبر التطبيقات الثلاثة: <b>١٠١ ملف · ١٤ وسماً خاماً · صفر مكوّن مشترك بينها</b> — وهذا هو الرقم الذي بُني عليه قرار التوحيد.<br><b>الشرط:</b> لا يبدأ قبل نزول ترحيل بني وحذف بارام <code>d_article-placeholder-default</code> (بند <code>65</code>).",
