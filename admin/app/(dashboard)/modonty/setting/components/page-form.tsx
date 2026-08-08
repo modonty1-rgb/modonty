@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -122,7 +122,7 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
                 <div className="rounded-lg border bg-white dark:bg-background overflow-hidden shadow-sm max-w-lg mx-auto">
                   {previewImage ? (
                     <div className="aspect-[1.91/1] bg-muted relative">
-                      <Image src={previewImage} alt="" fill className="object-cover" sizes="(max-width: 768px) 100vw, 600px" />
+                      <OptimizedImage media={asMedia(previewImage, "")} alt="" fill className="object-cover" sizes="(max-width: 768px) 100vw, 600px" />
                     </div>
                   ) : (
                     <div className="aspect-[1.91/1] bg-muted flex items-center justify-center">
@@ -151,7 +151,7 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
                 <div className="rounded-2xl border bg-white dark:bg-background overflow-hidden shadow-sm max-w-lg mx-auto">
                   {previewImage ? (
                     <div className="aspect-[2/1] bg-muted relative">
-                      <Image src={previewImage} alt="" fill className="object-cover" sizes="(max-width: 768px) 100vw, 600px" />
+                      <OptimizedImage media={asMedia(previewImage, "")} alt="" fill className="object-cover" sizes="(max-width: 768px) 100vw, 600px" />
                     </div>
                   ) : (
                     <div className="aspect-[2/1] bg-muted flex items-center justify-center">

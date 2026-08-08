@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { Library, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -45,9 +45,10 @@ export function ImageField({ label, value, onChange, hint, aspect, coreClientId 
       <div className="space-y-2">
         <div className={`${previewWrapper} shrink-0 rounded-md border bg-muted/30 overflow-hidden flex items-center justify-center p-1`}>
           {hasUrl && !imgError ? (
-            <NextImage
-              src={value}
-              alt={label}
+            <OptimizedImage
+              media={asMedia(value, label)} alt={label}
+              // كانت مفقودة قبل التحويل — المكوّن يجعلها خطأ تصريف
+              sizes="(max-width: 768px) 100vw, 400px"
               width={imgSize.width}
               height={imgSize.height}
               className="object-contain w-full h-full"

@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { Upload } from "lucide-react";
 
 interface FilePreviewProps {
@@ -59,9 +59,8 @@ export function FilePreview({
         />
         {isImage && previewUrl ? (
           <div className="relative w-full h-full flex items-center justify-center">
-            <Image
-              src={previewUrl}
-              alt="Selected image"
+            <OptimizedImage
+              media={asMedia(previewUrl, "Selected image")} alt="Selected image"
               width={800}
               height={320}
               className="max-w-full h-auto max-h-80 mx-auto rounded"

@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "next/link";
 import { Eye, ExternalLink, Image as ImageIcon, Video, File } from "lucide-react";
 import {
@@ -99,9 +99,8 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Logo</p>
                   <div className="flex items-center gap-4">
-                    <NextImage
-                      src={mediaSrc(client.logoMedia) ?? ""}
-                      alt={client.logoMedia.altText || "Logo"}
+                    <OptimizedImage
+                      media={asMedia(mediaSrc(client.logoMedia) ?? "", client.logoMedia.altText || "Logo")} alt={client.logoMedia.altText || "Logo"}
                       width={96}
                       height={96}
                       className="h-24 w-24 rounded object-contain border bg-muted"
@@ -127,9 +126,8 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">OG Image</p>
                   <div className="flex items-center gap-4">
-                    <NextImage
-                      src={mediaSrc(client.heroImageMedia) ?? ""}
-                      alt={client.heroImageMedia.altText || "OG image"}
+                    <OptimizedImage
+                      media={asMedia(mediaSrc(client.heroImageMedia) ?? "", client.heroImageMedia.altText || "OG image")} alt={client.heroImageMedia.altText || "OG image"}
                       width={96}
                       height={96}
                       className="h-24 w-24 rounded object-contain border bg-muted"
@@ -155,9 +153,8 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Twitter Image</p>
                   <div className="flex items-center gap-4">
-                    <NextImage
-                      src={mediaSrc(client.heroImageMedia) ?? ""}
-                      alt={client.heroImageMedia.altText || "Twitter image"}
+                    <OptimizedImage
+                      media={asMedia(mediaSrc(client.heroImageMedia) ?? "", client.heroImageMedia.altText || "Twitter image")} alt={client.heroImageMedia.altText || "Twitter image"}
                       width={96}
                       height={96}
                       className="h-24 w-24 rounded object-contain border bg-muted"
@@ -314,9 +311,8 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                       >
                         <div className="relative aspect-square bg-muted">
                           {isImage(item.mimeType) ? (
-                            <NextImage
-                              src={mediaSrc(item) ?? ""}
-                              alt={item.altText || item.filename}
+                            <OptimizedImage
+                              media={asMedia(mediaSrc(item) ?? "", item.altText || item.filename)} alt={item.altText || item.filename}
                               fill
                               className="object-cover"
                               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
@@ -361,9 +357,8 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                           <div className="flex items-center gap-4">
                             <div className="relative w-16 h-16 bg-muted rounded overflow-hidden flex-shrink-0">
                               {isImage(item.mimeType) ? (
-                                <NextImage
-                                  src={mediaSrc(item) ?? ""}
-                                  alt={item.altText || item.filename}
+                                <OptimizedImage
+                                  media={asMedia(mediaSrc(item) ?? "", item.altText || item.filename)} alt={item.altText || item.filename}
                                   fill
                                   className="object-cover"
                                   sizes="64px"
@@ -436,9 +431,8 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
               <div className="space-y-4">
                 <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden">
                   {isImage(selectedMedia.mimeType) ? (
-                    <NextImage
-                      src={mediaSrc(selectedMedia) ?? ""}
-                      alt={selectedMedia.altText || selectedMedia.filename}
+                    <OptimizedImage
+                      media={asMedia(mediaSrc(selectedMedia) ?? "", selectedMedia.altText || selectedMedia.filename)} alt={selectedMedia.altText || selectedMedia.filename}
                       fill
                       className="object-contain"
                       sizes="100vw"

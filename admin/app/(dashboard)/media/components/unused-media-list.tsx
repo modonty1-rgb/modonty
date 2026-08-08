@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { useRouter } from "next/navigation";
 
 import {
@@ -80,7 +80,7 @@ export function UnusedMediaList({ items }: { items: UnusedItem[] }) {
           <li key={item.id} className="flex items-center gap-3 px-4 py-3">
             <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
               {item.mimeType.startsWith("image/") && isHostAllowed(mediaSrc(item) ?? "") ? (
-                <NextImage src={mediaSrc(item)!} alt={item.filename} fill className="object-cover" sizes="48px" />
+                <OptimizedImage media={asMedia(mediaSrc(item)!, item.filename)} alt={item.filename} fill className="object-cover" sizes="48px" />
               ) : (
                 <div className="flex h-full items-center justify-center">
                   <ImageOff className="h-4 w-4 text-muted-foreground" />

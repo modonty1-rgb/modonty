@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { useState } from "react";
 
 interface Props {
@@ -25,9 +25,8 @@ export function ClientAvatar({ url, fallbackUrl, name }: Props) {
   return (
     <div className="relative h-8 w-8 shrink-0 rounded-full overflow-hidden bg-muted border border-border">
       {src ? (
-        <Image
-          src={src}
-          alt={name}
+        <OptimizedImage
+          media={asMedia(src, name)} alt={name}
           fill
           className="object-cover"
           sizes="32px"

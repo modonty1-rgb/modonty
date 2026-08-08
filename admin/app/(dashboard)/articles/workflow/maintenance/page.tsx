@@ -1,3 +1,4 @@
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { Card } from "@/components/ui/card";
@@ -85,8 +86,7 @@ export default async function StatusMaintenancePage() {
                 {/* Thumbnail */}
                 <div className="h-10 w-10 shrink-0 rounded-full overflow-hidden bg-muted ring-1 ring-border/60">
                   {thumbSrc ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={thumbSrc} alt="" className="h-full w-full object-cover" />
+                    <OptimizedImage fill media={asMedia(thumbSrc, "")} alt="" sizes="64px" className="h-full w-full object-cover" />
                   ) : null}
                 </div>
 

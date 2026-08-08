@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronRight, Plus, Trash2, Loader2, ImagePlus } from "lucide-react";
 
+import { OptimizedImage } from "@modonty/database/components/optimized-image";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -208,13 +209,14 @@ export function ClientGalleryGrid({ clientId, clientName, images }: Props) {
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
-              <div style={{ aspectRatio: tileAspectRatio(img) }} className="overflow-hidden bg-muted/40">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={img.url}
+              <div style={{ aspectRatio: tileAspectRatio(img) }} className="relative overflow-hidden bg-muted/40">
+                <OptimizedImage
+                  media={{ url: img.url, bunnyUrl: null, blurDataURL: img.blurDataURL, altText: img.altText }}
                   alt={img.altText ?? ""}
+                  fill
+                  // الصفوف مضبوطة: البلاطة تتراوح تقريباً بين ٢٠٠ و٤٥٠ بكسل داخل عرض ٩٠٠
+                  sizes="(max-width: 768px) 50vw, 450px"
                   className={`h-full w-full ${shouldContainTile(img) ? "object-contain" : "object-cover"}`}
-                  loading="lazy"
                 />
               </div>
               <div className="flex items-center justify-between gap-1.5 px-2.5 py-1.5 text-[10.5px] text-muted-foreground">

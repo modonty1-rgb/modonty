@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
@@ -88,9 +88,10 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
           }}
         >
           {mediaSrc(a.client?.logoMedia) ? (
-            <Image
-              src={mediaSrc(a.client?.logoMedia)!}
-              alt={a.client?.logoMedia?.altText || a.client?.name || ""}
+            <OptimizedImage
+              media={asMedia(mediaSrc(a.client?.logoMedia)!, a.client?.logoMedia?.altText || a.client?.name || "")} alt={a.client?.logoMedia?.altText || a.client?.name || ""}
+              // كانت مفقودة قبل التحويل — المكوّن يجعلها خطأ تصريف
+              sizes="32px"
               width={32}
               height={32}
               className="object-contain w-full h-full"

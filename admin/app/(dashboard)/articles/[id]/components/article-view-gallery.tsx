@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Image as ImageIcon } from "lucide-react";
 import { Article } from "../helpers/article-view-types";
@@ -47,9 +47,8 @@ export function ArticleViewGallery({ article, sectionRef }: ArticleViewGalleryPr
                 className="relative overflow-hidden rounded-lg border bg-muted/30 group cursor-pointer"
               >
                 <div style={{ aspectRatio: tileAspectRatio(item) }} className="relative">
-                <Image
-                  src={mediaSrc(item.media) ?? item.media.url}
-                  alt={item.media.altText || ""}
+                <OptimizedImage
+                  media={asMedia(mediaSrc(item.media) ?? item.media.url, item.media.altText || "")} alt={item.media.altText || ""}
                   fill
                   className={`${shouldContainTile(item) ? "object-contain" : "object-cover"} transition-transform group-hover:scale-105`}
                   sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"

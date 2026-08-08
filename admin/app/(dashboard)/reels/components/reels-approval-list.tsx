@@ -1,5 +1,6 @@
 "use client";
 
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -129,10 +130,8 @@ export function ReelsApprovalList({ reels }: { reels: PendingReelRow[] }) {
                   className="aspect-[9/16] h-auto w-full object-cover"
                 />
               ) : reel.previewUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={reel.previewUrl}
-                  alt={reel.altText ?? ""}
+                <OptimizedImage
+                  fill media={asMedia(reel.previewUrl, reel.altText ?? "")} alt={reel.altText ?? ""} sizes="(max-width: 768px) 50vw, 240px"
                   className="aspect-[9/16] w-full object-cover"
                 />
               ) : (
@@ -147,8 +146,7 @@ export function ReelsApprovalList({ reels }: { reels: PendingReelRow[] }) {
               <div className="flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs font-medium">
                   {reel.clientLogoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={reel.clientLogoUrl} alt="" className="h-4 w-4 rounded-full object-cover" />
+                    <OptimizedImage fill media={asMedia(reel.clientLogoUrl, "")} alt="" sizes="(max-width: 768px) 50vw, 240px" className="h-4 w-4 rounded-full object-cover" />
                   ) : (
                     <Building2 className="h-3.5 w-3.5" aria-hidden="true" />
                   )}

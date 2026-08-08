@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -48,13 +48,13 @@ export function ClientHeader({ client, publicBaseUrl, seoScore }: ClientHeaderPr
       {/* Cover (hero image) — click to change */}
       <div className="relative h-28 sm:h-32 bg-gradient-to-l from-primary/15 via-primary/5 to-violet-500/15">
         {client.heroImageMedia?.url && (
-          <Image
-            src={mediaSrc(client.heroImageMedia) ?? ""}
+          <OptimizedImage
+            media={client.heroImageMedia}
             alt={client.heroImageMedia.altText || `${client.name} cover`}
             fill
             className="object-cover"
             sizes="(max-width: 1100px) 100vw, 1100px"
-            priority
+            preload
           />
         )}
         <button
@@ -79,9 +79,8 @@ export function ClientHeader({ client, publicBaseUrl, seoScore }: ClientHeaderPr
             aria-label="Change logo"
           >
             {client.logoMedia?.url ? (
-              <Image
-                src={mediaSrc(client.logoMedia) ?? ""}
-                alt={client.logoMedia.altText || client.name}
+              <OptimizedImage
+                media={asMedia(mediaSrc(client.logoMedia) ?? "", client.logoMedia.altText || client.name)} alt={client.logoMedia.altText || client.name}
                 width={80}
                 height={80}
                 className="h-full w-full object-contain"

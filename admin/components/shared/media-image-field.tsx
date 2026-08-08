@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { X, ImageIcon, Library } from "lucide-react";
@@ -42,9 +42,8 @@ export function MediaImageField({
       {imageUrl ? (
         <div className="space-y-2">
           <div className="relative border rounded-lg overflow-hidden bg-muted/30 aspect-video group">
-            <Image
-              src={imageUrl}
-              alt={altText || label}
+            <OptimizedImage
+              media={asMedia(imageUrl, altText || label)} alt={altText || label}
               fill
               className="object-contain"
               sizes="(max-width: 768px) 100vw, 400px"

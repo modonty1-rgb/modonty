@@ -1,5 +1,6 @@
 "use client";
 
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Wand2, Loader2, CheckCircle2 } from "lucide-react";
@@ -121,8 +122,7 @@ export function OptimizeImagesSection({ images }: { images: OptimizableImage[] }
           return (
             <li key={img.id} className="flex items-center gap-3 px-4 py-3">
               <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.url} alt="" className="h-full w-full object-cover" loading="lazy" />
+                <OptimizedImage fill media={asMedia(img.url, "")} alt="" sizes="96px" className="h-full w-full object-cover" loading="lazy" />
               </div>
 
               <div className="min-w-0 flex-1">

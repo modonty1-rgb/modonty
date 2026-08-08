@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { useArticleForm } from '../article-form-context';
 import { SITE_NAME } from '@/lib/constants/site-name';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -91,7 +91,7 @@ export function SEOSection() {
                 </h4>
                 <div className="border rounded-lg overflow-hidden relative aspect-video">
                   {featuredMedia?.url ? (
-                    <Image src={featuredMedia.url} alt={effectiveTitle} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
+                    <OptimizedImage media={asMedia(featuredMedia.url, effectiveTitle)} alt={effectiveTitle} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
                   ) : (
                     <div className="w-full aspect-video bg-muted/50 flex items-center justify-center">
                       <ImageIcon className="h-8 w-8 text-muted-foreground" />

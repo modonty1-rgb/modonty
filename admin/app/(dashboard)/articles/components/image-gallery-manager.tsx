@@ -1,5 +1,6 @@
 "use client";
 
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -156,10 +157,8 @@ export function ImageGalleryManager({
               >
                 {/* Image */}
                 <div className="group relative aspect-video overflow-hidden rounded-md border bg-muted">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={mediaSrc(item.media) ?? item.media.url}
-                    alt={item.altText || item.media.altText || ""}
+                  <OptimizedImage
+                    fill media={asMedia(mediaSrc(item.media) ?? item.media.url, item.altText || item.media.altText || "")} alt={item.altText || item.media.altText || ""} sizes="(max-width: 768px) 50vw, 200px"
                     className="absolute inset-0 h-full w-full object-cover transition-transform group-hover:scale-105"
                     loading="lazy"
                   />

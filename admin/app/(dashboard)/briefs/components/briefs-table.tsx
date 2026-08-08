@@ -1,5 +1,6 @@
 "use client";
 
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Building2, ChevronLeft, ChevronRight, Search } from "lucide-react";
@@ -99,8 +100,7 @@ export function BriefsTable({ rows }: { rows: BriefRow[] }) {
                     <div className="flex items-center gap-2.5">
                       <div className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-lg bg-muted">
                         {r.logoUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={r.logoUrl} alt="" className="h-full w-full object-cover" />
+                          <OptimizedImage fill media={asMedia(r.logoUrl, "")} alt="" sizes="32px" className="h-full w-full object-cover" />
                         ) : (
                           <Building2 className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                         )}

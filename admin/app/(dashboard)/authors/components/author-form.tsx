@@ -1,5 +1,6 @@
 "use client";
 
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { useRouter } from "next/navigation";
 
 import { Save, Check, Lock } from "lucide-react";
@@ -135,16 +136,14 @@ export function AuthorForm({ initialData, authorId, onSuccess, settings, siteUrl
           <div className="grid grid-cols-2 gap-2">
             <div className="flex aspect-video items-center justify-center overflow-hidden rounded-md border bg-background p-2">
               {logoUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={logoUrl} alt="Logo" className="max-h-full max-w-full object-contain" />
+                <OptimizedImage fill media={asMedia(logoUrl, "Logo")} alt="Logo" sizes="(max-width: 768px) 100vw, 240px" className="max-h-full max-w-full object-contain" />
               ) : (
                 <span className="text-[10px] italic text-muted-foreground/50">no logo</span>
               )}
             </div>
             <div className="flex aspect-video items-center justify-center overflow-hidden rounded-md border bg-background">
               {ogImageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={ogImageUrl} alt="OG image" className="h-full w-full object-cover" />
+                <OptimizedImage fill media={asMedia(ogImageUrl, "OG image")} alt="OG image" sizes="(max-width: 768px) 100vw, 240px" className="h-full w-full object-cover" />
               ) : (
                 <span className="text-[10px] italic text-muted-foreground/50">no OG image</span>
               )}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -227,9 +227,10 @@ export function ListingPageForm({ pageKey, pageName, initialSettings, coreClient
             {settings.ogImageUrl ? (
               <div className="flex items-center gap-4">
                 <div className="aspect-[1200/630] w-32 shrink-0 rounded-md border bg-muted/30 overflow-hidden">
-                  <NextImage
-                    src={settings.ogImageUrl}
-                    alt={settings.altImage ?? ""}
+                  <OptimizedImage
+                    media={asMedia(settings.ogImageUrl, settings.altImage ?? "")} alt={settings.altImage ?? ""}
+                    // كانت مفقودة قبل التحويل — المكوّن يجعلها خطأ تصريف
+                    sizes="128px"
                     width={128}
                     height={67}
                     className="object-cover w-full h-full"

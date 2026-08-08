@@ -1,3 +1,4 @@
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -313,10 +314,8 @@ export default async function BriefDetailPage({
                 title={img.altText || img.filename}
               >
                 <div className="relative overflow-hidden bg-muted">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={img.url}
-                    alt={img.altText ?? ""}
+                  <OptimizedImage
+                    fill media={asMedia(img.url, img.altText ?? "")} alt={img.altText ?? ""} sizes="(max-width: 768px) 100vw, 320px"
                     loading="lazy"
                     // h-auto is the whole point: the height follows the image, never the box.
                     className="block h-auto w-full"

@@ -354,6 +354,7 @@ export default async function BrandGuidelinesPage() {
 
           {/* Full logo display */}
           <div className="rounded-xl bg-background border border-emerald-500/30 shadow-sm p-8 mb-5 flex items-center justify-center min-h-[180px]">
+            {/* <img> خام بقصد: المصدر .svg، وnext/image لا يحسّن SVG إلا بتفعيل dangerouslyAllowSVG — مخاطرة بلا مقابل. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/brand-assets/logo-dark.svg"

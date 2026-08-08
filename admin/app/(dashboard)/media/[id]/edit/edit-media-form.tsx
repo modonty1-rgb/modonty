@@ -18,7 +18,7 @@ import { updateMedia } from "../../actions/media-actions";
 import { uploadImageToBunny } from "../../actions/upload-image-to-bunny";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { MediaType, MediaScope } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { formatBytes } from "@modonty/database/lib/utils";
@@ -427,9 +427,8 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
                       </div>
                       <div className="rounded-lg overflow-hidden bg-muted/50 border">
                         {previewUrl ? (
-                          <NextImage
-                            src={previewUrl}
-                            alt={media.altText || media.filename}
+                          <OptimizedImage
+                            media={asMedia(previewUrl, media.altText || media.filename)} alt={media.altText || media.filename}
                             width={400}
                             height={224}
                             className="w-full h-auto max-h-56 object-contain"
@@ -437,12 +436,13 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
                             unoptimized
                           />
                         ) : (
-                          <NextImage
-                            src={mediaSrc(media) ?? media.url}
-                            alt={media.altText || media.filename}
+                          <OptimizedImage
+                            media={asMedia(mediaSrc(media) ?? media.url, media.altText || media.filename)} alt={media.altText || media.filename}
+                            // كانت مفقودة قبل التحويل — المكوّن يجعلها خطأ تصريف
+                            sizes="(max-width: 768px) 100vw, 400px"
                             width={400}
                             height={400}
-                            priority
+                            preload
                             className="w-full h-auto max-h-56 object-contain"
                             unoptimized
                           />

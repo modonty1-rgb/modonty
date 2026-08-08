@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -222,9 +222,8 @@ export function DeferredImageUpload({
         {previewUrl ? (
           <div className="space-y-4">
             <div className="relative border rounded-lg overflow-hidden group aspect-video">
-              <Image
-                src={previewUrl}
-                alt={altText || "Preview"}
+              <OptimizedImage
+                media={asMedia(previewUrl, altText || "Preview")} alt={altText || "Preview"}
                 fill
                 className="object-contain"
                 sizes="(max-width: 768px) 100vw, 600px"

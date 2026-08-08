@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { Link2, RefreshCw, Pencil, ImageIcon } from "lucide-react";
 import { SubscriptionTier } from "@prisma/client";
 
@@ -108,7 +108,7 @@ function MediaTile({
         } overflow-hidden shrink-0 bg-background`}
       >
         {imageUrl ? (
-          <NextImage src={imageUrl} alt={label} fill className="object-contain p-1" sizes={wide ? "128px" : "80px"} />
+          <OptimizedImage media={asMedia(imageUrl, label)} alt={label} fill className="object-contain p-1" sizes={wide ? "128px" : "80px"} />
         ) : (
           <div className="flex items-center justify-center h-full">
             <ImageIcon className="h-8 w-8 text-amber-500/50" />

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { ShieldCheck, ArrowLeft, Pencil } from "lucide-react";
 
 interface EditLeftPanelProps {
@@ -65,7 +65,7 @@ export function EditLeftPanel({
           aria-label={heroUrl ? "تغيير صورة الغلاف" : "إضافة صورة الغلاف"}
         >
           {heroUrl ? (
-            <NextImage src={heroUrl} alt="cover" fill className="object-cover" sizes="340px" />
+            <OptimizedImage media={asMedia(heroUrl, "cover")} alt="cover" fill className="object-cover" sizes="340px" />
           ) : (
             <span className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-background" />
           )}
@@ -91,7 +91,15 @@ export function EditLeftPanel({
             >
               <span className="absolute inset-0 grid place-items-center overflow-hidden rounded-xl border-2 border-background bg-muted shadow-sm">
                 {logoUrl ? (
-                  <NextImage src={logoUrl} alt={name} width={56} height={56} className="object-contain p-1" />
+                  <OptimizedImage
+                    media={asMedia(logoUrl, name)}
+                    alt={name}
+                    width={56}
+                    height={56}
+                    // كانت مفقودة قبل التحويل — المكوّن يجعلها خطأ تصريف
+                    sizes="56px"
+                    className="object-contain p-1"
+                  />
                 ) : (
                   <span className="text-[9px] text-muted-foreground">شعار</span>
                 )}

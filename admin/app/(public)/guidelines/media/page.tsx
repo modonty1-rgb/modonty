@@ -477,6 +477,7 @@ export default function MediaGuidelinesPage() {
               {/* Light variant */}
               <div className="rounded-lg border border-border bg-card overflow-hidden">
                 <div className="bg-white border-b border-border p-6 flex items-center justify-center min-h-[100px]">
+                  {/* <img> خام بقصد: المصدر .svg، وnext/image لا يحسّن SVG إلا بتفعيل dangerouslyAllowSVG — مخاطرة بلا مقابل. */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/brand-assets/logo-light.svg" alt="Modonty Logo (light bg)" className="max-h-10 w-auto" />
                 </div>

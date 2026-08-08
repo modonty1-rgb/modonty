@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { ImageIcon, X, Upload, Pencil } from "lucide-react";
 import { MediaPickerDialog } from "./media-picker-dialog";
 
@@ -146,9 +146,10 @@ export function MediaPicker({
             <div className={`${imageHeight} relative bg-muted flex items-center justify-center`}>
               {isValidUrl && imageUrl ? (
                 <>
-                  <NextImage
-                    src={imageUrl}
-                    alt={altText || "Selected media"}
+                  <OptimizedImage
+                    media={asMedia(imageUrl, altText || "Selected media")} alt={altText || "Selected media"}
+                    // كانت مفقودة قبل التحويل — المكوّن يجعلها خطأ تصريف
+                    sizes="(max-width: 768px) 100vw, 400px"
                     fill
                     className="object-scale-down p-2"
                     onError={(e) => {

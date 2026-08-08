@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import NextImage from 'next/image';
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { Maximize2, Trash2, Image as ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -169,9 +169,8 @@ export function ThumbnailImageView({
           >
             {getThumbnailUrl() ? (
               <>
-                <NextImage
-                  src={getThumbnailUrl()}
-                  alt={altText || filename || 'Image thumbnail'}
+                <OptimizedImage
+                  media={asMedia(getThumbnailUrl(), altText || filename || 'Image thumbnail')} alt={altText || filename || 'Image thumbnail'}
                   fill
                   className="object-contain transition-all duration-500 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -259,14 +258,13 @@ export function ThumbnailImageView({
           <div className="px-6 py-6 overflow-auto">
             <div className="relative w-full max-h-[75vh] min-h-[400px] overflow-hidden rounded-xl bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center shadow-inner">
               {imageUrl ? (
-                <NextImage
-                  src={imageUrl}
-                  alt={altText || filename || 'Full image'}
+                <OptimizedImage
+                  media={asMedia(imageUrl, altText || filename || 'Full image')} alt={altText || filename || 'Full image'}
                   width={width || 1200}
                   height={height || 800}
                   className="object-contain max-w-full max-h-[75vh] rounded-lg shadow-2xl"
                   sizes="100vw"
-                  priority
+                  preload
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center">

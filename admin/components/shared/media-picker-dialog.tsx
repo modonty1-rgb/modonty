@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { Loader2, Search, Upload, RefreshCw } from "lucide-react";
 import { getMedia, type MediaFilters } from "@/app/(dashboard)/media/actions/media-actions";
 import Link from "next/link";
@@ -282,10 +282,11 @@ export function MediaPickerDialog({
                               style={{ aspectRatio: tileAspectRatio(tile) }}
                               className="relative overflow-hidden bg-muted"
                             >
-                              <NextImage
-                                src={getImageUrl(tile)}
-                                alt={tile.altText || tile.filename}
+                              <OptimizedImage
+                                media={asMedia(getImageUrl(tile), tile.altText || tile.filename)} alt={tile.altText || tile.filename}
                                 fill
+                                // كانت مفقودة قبل التحويل — المكوّن يجعلها خطأ تصريف
+                                sizes="(max-width: 640px) 50vw, 220px"
                                 className={shouldContainTile(tile) ? "object-contain" : "object-cover"}
                                 unoptimized
                               />
@@ -313,10 +314,11 @@ export function MediaPickerDialog({
                           style={{ aspectRatio: tileAspectRatio(item) }}
                           className="relative overflow-hidden bg-muted"
                         >
-                          <NextImage
-                            src={getImageUrl(item)}
-                            alt={item.altText || item.filename}
+                          <OptimizedImage
+                            media={asMedia(getImageUrl(item), item.altText || item.filename)} alt={item.altText || item.filename}
                             fill
+                            // كانت مفقودة قبل التحويل — المكوّن يجعلها خطأ تصريف
+                            sizes="(max-width: 640px) 50vw, 220px"
                             className={shouldContainTile(item) ? "object-contain" : "object-cover"}
                             unoptimized
                           />

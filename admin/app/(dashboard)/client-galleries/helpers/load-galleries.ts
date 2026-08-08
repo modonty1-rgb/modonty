@@ -39,6 +39,8 @@ export async function getClientsWithGalleryCounts(): Promise<GalleryClientRow[]>
 export interface GalleryImageRow {
   id: string;
   url: string;
+  /** يصل للشبكة ليصير ضبابة التحميل — كان مُنتقى من القاعدة ومحذوفاً من النوع. */
+  blurDataURL: string | null;
   altText: string | null;
   width: number | null;
   height: number | null;

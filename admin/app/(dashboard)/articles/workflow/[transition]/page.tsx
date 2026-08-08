@@ -1,3 +1,4 @@
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/db";
@@ -196,10 +197,8 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
               {/* Avatar-sized thumbnail */}
               <div className="h-10 w-10 shrink-0 rounded-full overflow-hidden bg-muted ring-1 ring-border/60">
                 {mediaSrc(article.featuredImage) ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={mediaSrc(article.featuredImage) as string}
-                    alt=""
+                  <OptimizedImage
+                    fill media={asMedia(mediaSrc(article.featuredImage) as string, "")} alt="" sizes="64px"
                     className="h-full w-full object-cover"
                   />
                 ) : null}

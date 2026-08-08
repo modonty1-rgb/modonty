@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { messages } from "@/lib/messages";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { format } from "date-fns";
-import NextImage from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { useRouter } from "next/navigation";
 import { Edit, Trash2, Info, Copy, ChevronDown, ImageOff, Check, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -167,7 +167,7 @@ export function MediaGrid({
           <div className="flex flex-col md:flex-row">
             {isImage(infoMedia.mimeType) && isHostAllowed(getImageUrl(infoMedia)) && (
               <div className="relative w-full md:w-1/2 aspect-square md:aspect-auto md:min-h-[360px] bg-black/90 flex items-center justify-center">
-                <NextImage src={getImageUrl(infoMedia)} alt={infoMedia.altText || infoMedia.filename} fill className="object-contain p-4" sizes="400px" />
+                <OptimizedImage media={asMedia(getImageUrl(infoMedia), infoMedia.altText || infoMedia.filename)} alt={infoMedia.altText || infoMedia.filename} fill className="object-contain p-4" sizes="400px" />
               </div>
             )}
             <div className="flex-1 p-5 space-y-5 overflow-y-auto max-h-[80vh]">
@@ -269,7 +269,7 @@ export function MediaGrid({
             </div>
             <div className="relative w-10 h-10 rounded overflow-hidden bg-muted shrink-0">
               {isImage(item.mimeType) && isHostAllowed(getImageUrl(item)) ? (
-                <NextImage src={getImageUrl(item)} alt={item.altText || item.filename} fill className="object-cover" sizes="40px" />
+                <OptimizedImage media={asMedia(getImageUrl(item), item.altText || item.filename)} alt={item.altText || item.filename} fill className="object-cover" sizes="40px" />
               ) : isImage(item.mimeType) ? (
                 <div className="flex h-full items-center justify-center"><ImageOff className="h-4 w-4 text-muted-foreground" /></div>
               ) : (
@@ -354,11 +354,10 @@ export function MediaGrid({
       >
         <div className="relative aspect-[4/3] overflow-hidden bg-muted/30">
           {showImage ? (
-            <NextImage
-              src={getImageUrl(item)}
-              alt={item.altText || item.filename}
+            <OptimizedImage
+              media={asMedia(getImageUrl(item), item.altText || item.filename)} alt={item.altText || item.filename}
               fill
-              priority={index < 10}
+              {...(index < 10 ? { preload: true } : {})}
               className="object-contain p-2"
               sizes={cardSizes}
             />
@@ -472,7 +471,7 @@ function GroupAvatar({ name, logoUrl }: { name: string; logoUrl: string | null }
   if (logoUrl) {
     return (
       <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-muted">
-        <NextImage src={logoUrl} alt={name} fill className="object-contain p-0.5" sizes="32px" />
+        <OptimizedImage media={asMedia(logoUrl, name)} alt={name} fill className="object-contain p-0.5" sizes="32px" />
       </div>
     );
   }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -158,9 +158,8 @@ export function IndustryView({ industry }: IndustryViewProps) {
                   <p className="text-sm text-muted-foreground mb-2">Social Image</p>
                   <div className="space-y-2">
                     <div className="relative border rounded-lg overflow-hidden max-w-md aspect-video">
-                      <Image
-                        src={industry.socialImage}
-                        alt={industry.socialImageAlt || "Social image"}
+                      <OptimizedImage
+                        media={asMedia(industry.socialImage, industry.socialImageAlt || "Social image")} alt={industry.socialImageAlt || "Social image"}
                         fill
                         className="object-contain"
                         sizes="(max-width: 768px) 100vw, 448px"

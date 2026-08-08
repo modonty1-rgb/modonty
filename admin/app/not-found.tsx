@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { Home, HelpCircle, LayoutDashboard } from "lucide-react";
 
 import { BRAND_ICON_URL } from "@modonty/database/lib/brand-assets";
@@ -14,9 +14,10 @@ export default function AdminNotFound() {
           <div className="flex justify-center mb-8">
             <Link href="/" className="flex items-center gap-2">
               <div className="h-10 w-10 rounded-md overflow-hidden flex items-center justify-center bg-background border border-border">
-                <Image
-                  src={BRAND_ICON_URL}
-                  alt="Modonty Admin"
+                <OptimizedImage
+                  media={asMedia(BRAND_ICON_URL, "Modonty Admin")} alt="Modonty Admin"
+                  // كانت مفقودة قبل التحويل — المكوّن يجعلها خطأ تصريف
+                  sizes="40px"
                   width={40}
                   height={40}
                   className="h-full w-full object-contain p-1"

@@ -1,5 +1,6 @@
 "use client";
 
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Search, ChevronLeft, ChevronRight, Images, Building2 } from "lucide-react";
@@ -136,8 +137,7 @@ export function ClientImagesGrid({ name, isModonty, avgScore, images }: Props) {
               className="rounded-xl border bg-card text-start transition hover:ring-2 hover:ring-primary/40"
             >
               <div className="grid aspect-video place-items-center overflow-hidden rounded-t-xl bg-muted/40">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.url} alt={img.altText ?? ""} className="h-full w-full object-cover" loading="lazy" />
+                <OptimizedImage fill media={asMedia(img.url, img.altText ?? "")} alt={img.altText ?? ""} sizes="(max-width: 768px) 50vw, 220px" className="h-full w-full object-cover" loading="lazy" />
               </div>
               <div className="flex items-center justify-between gap-2 px-2.5 py-2">
                 <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-bold uppercase text-muted-foreground">

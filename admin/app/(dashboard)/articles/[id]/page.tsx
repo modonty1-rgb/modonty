@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { format } from "date-fns";
 import {
   ArrowRight,
@@ -144,9 +144,8 @@ export default async function ArticleViewPage({ params }: { params: Promise<{ id
               {/* Featured Image */}
               {a.featuredImage?.url && (
                 <div className="aspect-video overflow-hidden rounded-lg mb-6 relative bg-muted">
-                  <Image
-                    src={mediaSrc(a.featuredImage) ?? ""}
-                    alt={a.featuredImage.altText || a.title}
+                  <OptimizedImage
+                    media={asMedia(mediaSrc(a.featuredImage) ?? "", a.featuredImage.altText || a.title)} alt={a.featuredImage.altText || a.title}
                     fill
                     className="object-contain"
                     sizes="(max-width: 768px) 100vw, 800px"

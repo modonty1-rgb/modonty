@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { usePathname } from "next/navigation";
 
 import { BRAND_ICON_URL } from "@modonty/database/lib/brand-assets";
@@ -482,9 +482,10 @@ export function Sidebar({ articleStatusCounts }: { articleStatusCounts?: Article
       >
         <Link href="/" title="Modonty — Dashboard" className="flex items-center gap-2 min-w-0">
           <div className="h-8 w-8 rounded-md overflow-hidden flex items-center justify-center bg-background border border-border shrink-0">
-            <Image
-              src={BRAND_ICON_URL}
-              alt="Modonty"
+            <OptimizedImage
+              media={asMedia(BRAND_ICON_URL, "Modonty")} alt="Modonty"
+              // كانت مفقودة قبل التحويل — المكوّن يجعلها خطأ تصريف
+              sizes="32px"
               width={32}
               height={32}
               className="h-full w-full object-contain p-1"

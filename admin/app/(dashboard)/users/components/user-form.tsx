@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { messages } from "@/lib/messages";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -265,9 +265,8 @@ export function UserForm({ initialData, activity, userId }: UserFormProps) {
                 <div className="relative shrink-0">
                   <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-border bg-muted flex items-center justify-center">
                     {hasValidImage ? (
-                      <Image
-                        src={formData.image}
-                        alt={formData.name || "Staff"}
+                      <OptimizedImage
+                        media={asMedia(formData.image, formData.name || "Staff")} alt={formData.name || "Staff"}
                         width={80}
                         height={80}
                         className="w-full h-full object-cover"

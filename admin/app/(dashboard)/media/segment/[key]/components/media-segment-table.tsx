@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "next/link";
 import { ArrowUpDown, Search } from "lucide-react";
 
@@ -125,9 +125,8 @@ export function MediaSegmentTable({ rows }: { rows: MediaRow[] }) {
                 <TableRow key={r.id} className="text-xs odd:bg-muted/40">
                   <TableCell className="py-1.5">
                     <div className="relative h-9 w-9 overflow-hidden rounded border bg-muted">
-                      <Image
-                        src={r.url}
-                        alt={r.altText ?? ""}
+                      <OptimizedImage
+                        media={asMedia(r.url, r.altText ?? "")} alt={r.altText ?? ""}
                         fill
                         sizes="36px"
                         className="object-cover"

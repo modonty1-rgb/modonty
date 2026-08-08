@@ -128,6 +128,7 @@ export default function AboutModontyPage() {
       <Card className="border-primary/30 bg-gradient-to-br from-primary/[0.06] via-background to-background">
         <CardContent className="p-8">
           <div className="rounded-xl bg-background border border-primary/30 shadow-md p-6 mb-6 flex items-center justify-center min-h-[140px]">
+            {/* <img> خام بقصد: المصدر .svg، وnext/image لا يحسّن SVG إلا بتفعيل dangerouslyAllowSVG — مخاطرة بلا مقابل. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/brand-assets/logo-dark.svg"
