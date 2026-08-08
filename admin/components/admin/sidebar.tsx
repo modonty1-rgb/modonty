@@ -256,6 +256,17 @@ const menuGroups: MenuGroup[] = [
       { icon: PanelTop, label: "Homepage Banner", href: "/settings/banner" },
     ],
   },
+  // قسم مستقلّ لا بند تحت Modonty: جبر سيو منتج منفصل بقاعدة محتوى خاصّة به،
+  // ودمجه في مجموعة مودونتي يخلط منتجين (قرار JBR10 — العزل).
+  {
+    title: "جبر سيو",
+    icon: Megaphone,
+    defaultOpen: false,
+    items: [
+      { icon: FileText, label: "إدارة المحتوى", href: "/jbr-seo/content" },
+      // بند «المقالات» يُضاف مع بناء صفحته (JT2) — لا يُدرَج رابط قبل وجهته.
+    ],
+  },
   {
     title: "Audience",
     icon: Users2,

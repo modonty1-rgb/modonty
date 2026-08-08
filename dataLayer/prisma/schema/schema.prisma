@@ -3423,3 +3423,37 @@ enum BackupStatus {
   SUCCESS
   FAILED
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// جبر سيو — إدارة المحتوى
+//
+// الجدولان أنشأهما موقع jbrseo.com وهما موجودان في هذه القاعدة نفسها
+// (متحقَّق ٨ أغسطس: jbrseo.com/.env.local:1 و dataLayer/.env:4 كلاهما
+// يشير إلى modonty_dev على العنقود ذاته). ما يلي وصفٌ لهما لا إنشاء —
+// الـ@@map يشير إلى المجموعتين القائمتين، فالأدمن يحرّر نفس الصفوف
+// التي يحرّرها أدمن جبر سيو. صفر ترحيل · صفر نسخ · صفر اتصال ثانٍ.
+//
+// ⚠️ النموذجان مرآة لـ jbrseo.com/prisma/schema.prisma — أي تغيير حقل
+//    يُطبَّق في المكانين (نفس قاعدة الصيانة في قرار JBR8).
+//
+// ⛔ خارج النطاق عمداً: Plan و PriceSectionMeta — الأسعار تبقى بيد خالد
+//    من أدمن جبر سيو، ولا يحرّرها طارق (قرار JBR11).
+// ═══════════════════════════════════════════════════════════════════
+
+model JbrSiteSettings {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  gtmId          String   @default("")
+  whatsappNumber String   @default("")
+  updatedAt      DateTime @default(now())
+
+  @@map("SiteSettings")
+}
+
+model JbrLandingSection {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  section   String   @unique
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("LandingSection")
+}

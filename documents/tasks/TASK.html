@@ -1212,42 +1212,47 @@ const TASKS = [
    "<b>لا مطلوب من طارق في هذا المقال.</b> أي صور شبح جديدة تُرصد في هذا البورد.",
  ref:"٧ أغسطس"},
 
-{id:"JC1", b:"jbr", app:["dataLayer"], tab:"open", sev:"high", who:"c", ref:"١٠ دقائق",
- t:"١ · النماذج — <code>SiteSettings</code> و<code>LandingSection</code> في dataLayer",
+{id:"JC1", b:"jbr", app:["dataLayer"], tab:"done", sev:"high", who:"c", date:"٨ أغسطس", ref:"أُنجز",
+ t:"✅ ١ · النماذج — <code>SiteSettings</code> و<code>LandingSection</code> في dataLayer",
  d:"<b>المصدر:</b> <code>jbrseo.com/prisma/schema.prisma:10</code> (SiteSettings) و<code>:86</code> (LandingSection) — تُنسخ كما هي بنفس <code>@@map</code> فتشير للمجموعات القائمة.<br>" +
    "<b>بلا <code>Plan</code> ولا <code>PriceSectionMeta</code></b> — خارج النطاق (JBR11).<br>" +
    "<b>⚠️ الترتيب إلزامي:</b> اقتل node ← <code>pnpm prisma:generate</code> ← أعد التشغيل.<br>" +
-   "<b>الدليل:</b> قراءة صفّ حقيقي من <code>modonty_dev</code> عبر عميل مودونتي — يثبت أنّ الجدول نفسه لا نسخة جديدة.",
+   "<b>الدليل:</b> قراءة صفّ حقيقي من <code>modonty_dev</code> عبر عميل مودونتي — يثبت أنّ الجدول نفسه لا نسخة جديدة." +
+   "<br><b>الدليل الخام:</b> عميل مودونتي قرأ بيانات جبر سيو الحقيقية — <code>SiteSettings id=69dd08ee…f702 · whatsapp=966541018020</code> و<b>١٨ قسماً</b> في <code>LandingSection</code> (hero · pricing · faq · about · terms …). نفس الصفوف، صفر ترحيل.",
  },
 
-{id:"JC2", b:"jbr", app:["admin"], tab:"open", sev:"high", who:"c", ref:"٢٥ دقيقة",
+{id:"JC2", b:"jbr", app:["admin"], tab:"done", sev:"high", who:"c", date:"٨ أغسطس", ref:"أُنجز",
  t:"٢ · نسخ صفحة إدارة المحتوى — منقّاة من الأسعار",
  d:"<b>المصدر:</b> أربعة ملفات في <code>jbrseo.com/app/admin/(dashboard)/review/</code> — <code>page.tsx</code> (٢١ك) · <code>ReviewClient.tsx</code> · <code>EditFieldButton.tsx</code> · <code>EditArrayButton.tsx</code>.<br>" +
    "<b>الوجهة:</b> <code>admin/app/(dashboard)/jbr-seo/content/</code>.<br>" +
    "<b>التنقية:</b> يُحذف استيراد <code>getAllPlansIncludingHidden</code> وكل مجموعة تعرض بيانات الباقات — الواجهة تبقى كما هي في كل ما عداها.<br>" +
-   "<b>الدليل:</b> <code>tsc</code> صفر أخطاء · صفر ذكر لـ<code>Plan</code> في الملفات المنسوخة.",
+   "<b>الدليل:</b> <code>tsc</code> صفر أخطاء · صفر ذكر لـ<code>Plan</code> في الملفات المنسوخة." +
+   "<br><b>الدليل:</b> نُسخت ١٠ ملفات (٤ واجهة + ٤ مكتبة + أكشنزان). مجموعة «الباقات» أُسقطت كاملةً — <code>grep</code> على الصفحة يرجع <b>صفر</b> ذكر لـ<code>plans/Plan</code>. وفي التست الحيّ: الصفحة عرضت <b>٢٢٢ عنصر محتوى</b>، وفحص النصّ المعروض لم يجد إلا عبارة تسويقية واحدة فيها كلمة «سعر» («٦٠ شركة فقط هتشترك بسعر التأسيس») — لا حقل باقة واحداً قابلاً للتعديل.",
  },
 
-{id:"JC3", b:"jbr", app:["admin"], tab:"open", sev:"high", who:"c", ref:"١٥ دقيقة",
+{id:"JC3", b:"jbr", app:["admin"], tab:"done", sev:"high", who:"c", date:"٨ أغسطس", ref:"أُنجز",
  t:"٣ · الأكشنز — الحفظ في نفس الجداول",
  d:"<b>المصدر:</b> <code>jbrseo.com/app/actions/content-sections.ts</code> + دوال القراءة من <code>landing.ts</code>.<br>" +
    "<b>يُستبعد:</b> الفرع الذي يكتب في <code>prisma.plan</code> (<code>content-sections.ts:141</code>).<br>" +
    "<b>يُضاف بمعايير الأدمن:</b> <code>auth()</code> قبل كل كتابة · <code>revalidatePath</code> بعدها — الأصل في جبر سيو قد لا يحملهما.<br>" +
-   "<b>الدليل:</b> حفظ حقل واحد ثم قراءته من القاعدة يرجع القيمة الجديدة.",
+   "<b>الدليل:</b> حفظ حقل واحد ثم قراءته من القاعدة يرجع القيمة الجديدة." +
+   "<br><b>الدليل:</b> <code>tsc</code> صفر أخطاء. الحفظ اختُبر حيّاً: عُدِّل <code>hero.h1Line1</code> من الواجهة ثم قُرئ من القاعدة مباشرةً → <code>«عميلك يبحث عنك في قوقل الحين — تست ١٢٣»</code> · <code>updatedAt=2026-08-08T12:16:25.942Z</code>. ثم أُعيدت القيمة الأصلية وتُحقِّق منها. <br><b>تعديلان على الأصل:</b> <code>auth()</code> بدل <code>isAdmin()</code> · وفرع الأسعار صار رفضاً صريحاً («الباقات والأسعار تُعدَّل من أدمن جبر سيو») كحاجز أخير خلف الواجهة.",
  },
 
-{id:"JC4", b:"jbr", app:["admin"], tab:"open", sev:"normal", who:"c", ref:"١٠ دقائق",
+{id:"JC4", b:"jbr", app:["admin"], tab:"done", sev:"normal", who:"c", date:"٨ أغسطس", ref:"أُنجز",
  t:"٤ · القائمة الجانبية — قسم «جبر سيو» ببندين",
  d:"<b>الملف:</b> <code>admin/components/admin/sidebar.tsx</code> — مجموعة مستقلّة باسم «جبر سيو» (لا تحت Modonty).<br>" +
    "<b>بندان:</b> إدارة المحتوى ← <code>/jbr-seo/content</code> · المقالات ← <code>/jbr-seo/articles</code>.<br>" +
-   "<b>الدليل:</b> القسم يظهر · الرابطان يفتحان · الحالة النشطة تعمل.",
+   "<b>الدليل:</b> القسم يظهر · الرابطان يفتحان · الحالة النشطة تعمل." +
+   "<br><b>الدليل:</b> القسم ظهر في القائمة الجانبية باسم «جبر سيو» ورابطه يفتح الصفحة. <b>بند «المقالات» لم يُدرَج بعد</b> — لا يوضع رابط قبل وجهته؛ يُضاف مع JT2.",
  },
 
-{id:"JC5", b:"jbr", app:["admin"], tab:"open", sev:"high", who:"c", ref:"١٥ دقيقة",
+{id:"JC5", b:"jbr", app:["admin"], tab:"done", sev:"high", who:"c", date:"٨ أغسطس", ref:"أُنجز",
  t:"٥ · تست حيّ — إدارة المحتوى",
  d:"<b>القاعدة:</b> <code>modonty_dev</code> حصراً — يُطبع الرابط قبل التشغيل.<br>" +
    "<b>المسار:</b> افتح الصفحة ← عدّل نصّاً ← احفظ ← تحقّق من الصفّ في القاعدة ← أعد التحميل وتأكّد أنّ القيمة ثبتت ← <b>تأكّد أنّ الأسعار غير ظاهرة إطلاقاً</b>.<br>" +
-   "<b>الدليل:</b> لقطات في <code>.playwright-mcp/</code> + ناتج استعلام القاعدة + صفر خطأ كونسول.",
+   "<b>الدليل:</b> لقطات في <code>.playwright-mcp/</code> + ناتج استعلام القاعدة + صفر خطأ كونسول." +
+   "<br><b>الدليل:</b> <code>modonty_dev</code> (متحقَّق قبل التشغيل) · صفر خطأ كونسول · لقطة <code>.playwright-mcp/jbr-content-page.png</code> · دورة كاملة: فتح → تعديل → حفظ → قراءة من القاعدة → إرجاع. <br><b>وتحقّق الانتشار E2E:</b> شُغِّل موقع جبر سيو على 3005، عُدِّل النصّ من أدمن مودونتي إلى «تست انتشار E2E ٩٩٩» ← <b>ظهر على <code>/sa</code> فوراً</b> (وثبت بعد ٦٥ ثانية) ← ثم أُعيدت القيمة الأصلية و<code>grep</code> على الموقع رجع <b>صفر أثر</b> للتست.<br><b>مفاجأة سارّة:</b> التأخير المتوقَّع في JBR12 لم يظهر على خادم التطوير — الكاش يُبطَل أسرع من ٦٠ ثانية. <b>على الإنتاج قد يختلف</b> (ISR حقيقي)، وقرار قبول الدقيقة يبقى ساري المفعول احتياطاً.",
  },
 
 {id:"JT1", b:"jbr", app:["dataLayer"], tab:"open", sev:"high", who:"c", ref:"١٠ دقائق",
