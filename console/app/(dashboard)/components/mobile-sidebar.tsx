@@ -1,5 +1,6 @@
 "use client";
 
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -93,8 +94,14 @@ export function MobileSidebar({
           <SheetTitle className="flex items-start gap-2 text-start">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-primary/10 text-primary shadow-sm">
               {clientLogoUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={clientLogoUrl} alt={clientName} className="h-full w-full object-cover" />
+                <OptimizedImage
+                  media={asMedia(clientLogoUrl, clientName)}
+                  alt={clientName}
+                  width={36}
+                  height={36}
+                  sizes="36px"
+                  className="h-full w-full object-cover"
+                />
               ) : (
                 <span className="text-sm font-semibold">
                   {clientName.charAt(0).toUpperCase()}

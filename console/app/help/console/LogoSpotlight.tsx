@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { useMemo } from "react";
 
 import { BRAND_WORDMARK_URL } from "@modonty/database/lib/brand-assets";
@@ -109,12 +109,12 @@ export function LogoSpotlight({
             ease: "easeInOut",
           }}
         >
-          <Image
-            src={LOGO_URL}
+          <OptimizedImage
+            media={asMedia(LOGO_URL, "مُدَوَّنَتِي")}
             alt="مُدَوَّنَتِي"
             fill
             sizes="(max-width: 768px) 100vw, 800px"
-            priority
+            preload
             className="object-contain"
             style={{ transform: "scale(1.65)" }}
           />

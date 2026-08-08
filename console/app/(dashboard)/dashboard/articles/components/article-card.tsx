@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage } from "@modonty/database/components/optimized-image";
 import { mediaSrc } from "@modonty/database/lib/media-src";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -110,8 +110,8 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
               href={`/dashboard/articles/${article.id}/preview`}
               className="relative aspect-video w-full shrink-0 overflow-hidden rounded-lg bg-muted sm:h-32 sm:w-48 sm:aspect-auto"
             >
-              <Image
-                src={mediaSrc(article.featuredImage) ?? article.featuredImage.url}
+              <OptimizedImage
+                media={article.featuredImage}
                 alt={article.featuredImage.altText || article.title}
                 fill
                 className="object-cover transition-transform hover:scale-105"

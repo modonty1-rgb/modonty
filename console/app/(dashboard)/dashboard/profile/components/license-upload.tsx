@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { toast } from "sonner";
 import { Upload, X, Loader2, ImageIcon } from "lucide-react";
 
@@ -82,8 +82,8 @@ export function LicenseUpload({ value, onChange }: LicenseUploadProps) {
       {value ? (
         <div className="overflow-hidden rounded-lg border bg-muted/30">
           <div className="relative aspect-video w-full">
-            <Image
-              src={value}
+            <OptimizedImage
+              media={asMedia(value, "صورة الترخيص")}
               alt="صورة الترخيص"
               fill
               className="object-contain"

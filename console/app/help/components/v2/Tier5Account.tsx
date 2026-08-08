@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { motion } from "framer-motion";
 import { tier5AccountSettings } from "../../data/guide-v2";
 
@@ -33,11 +33,12 @@ export function Tier5Account({ onImageClick }: Props) {
         onClick={() => onImageClick("/help/12-settings.png", "صفحة الإعدادات")}
         className="group relative block w-full mb-6 rounded-xl overflow-hidden border border-border bg-muted/30 cursor-zoom-in"
       >
-        <Image
-          src="/help/12-settings.png"
+        <OptimizedImage
+          media={asMedia("/help/12-settings.png", "صفحة الإعدادات")}
           alt="صفحة الإعدادات"
           width={1366}
           height={768}
+          sizes="100vw"
           className="w-full h-auto block"
         />
       </button>

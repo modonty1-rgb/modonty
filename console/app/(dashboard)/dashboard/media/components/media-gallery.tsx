@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Image from "next/image";
+import { OptimizedImage } from "@modonty/database/components/optimized-image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -181,8 +181,8 @@ export function MediaGallery({ media }: MediaGalleryProps) {
                     className="relative w-full overflow-hidden rounded-md bg-muted"
                     style={{ aspectRatio: ratio }}
                   >
-                    <Image
-                      src={mediaSrc(item) ?? item.url}
+                    <OptimizedImage
+                      media={item}
                       alt={item.altText || item.filename}
                       fill
                       className="object-cover transition-transform group-hover:scale-105"
@@ -238,11 +238,15 @@ export function MediaGallery({ media }: MediaGalleryProps) {
             {/* Image */}
             <div className="relative flex flex-1 items-center justify-center bg-muted p-4 md:min-h-[400px]">
               {mediaSrc(openMedia) && (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  src={mediaSrc(openMedia) ?? openMedia.url}
+                <OptimizedImage
+                  media={openMedia}
                   alt={openMedia.altText || openMedia.filename}
-                  className="max-h-[60vh] max-w-full object-contain md:max-h-[80vh]"
+                  // Intrinsic size from the row, capped by CSS — the lightbox shows the
+                  // whole file, so `fill` (which needs a sized parent) is the wrong tool.
+                  width={openMedia.width ?? 1200}
+                  height={openMedia.height ?? 900}
+                  sizes="(max-width: 768px) 100vw, 80vw"
+                  className="h-auto max-h-[60vh] w-auto max-w-full object-contain md:max-h-[80vh]"
                 />
               )}
             </div>

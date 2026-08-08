@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { motion } from "framer-motion";
 import { ArrowLeft, Lightbulb } from "lucide-react";
 import type { EngagementCard as EngagementCardData } from "../../data/guide-v2";
@@ -41,11 +41,12 @@ export function EngagementCard({ card, index, onImageClick }: Props) {
             onClick={() => onImageClick(card.before.image, card.title + " — في موقعك")}
             className="group relative rounded-lg overflow-hidden border border-border bg-muted/30 cursor-zoom-in"
           >
-            <Image
-              src={card.before.image}
+            <OptimizedImage
+              media={asMedia(card.before.image, card.title)}
               alt={card.title}
               width={800}
               height={500}
+              sizes="(max-width: 768px) 100vw, 800px"
               className="w-full h-auto block max-h-64 object-cover object-top"
             />
           </button>
@@ -78,11 +79,12 @@ export function EngagementCard({ card, index, onImageClick }: Props) {
             onClick={() => onImageClick(card.after.image, card.title + " — في الكونسول")}
             className="group relative rounded-lg overflow-hidden border border-border bg-muted/30 cursor-zoom-in"
           >
-            <Image
-              src={card.after.image}
+            <OptimizedImage
+              media={asMedia(card.after.image, card.title + " in console")}
               alt={card.title + " in console"}
               width={800}
               height={500}
+              sizes="(max-width: 768px) 100vw, 800px"
               className="w-full h-auto block max-h-64 object-cover object-top"
             />
           </button>

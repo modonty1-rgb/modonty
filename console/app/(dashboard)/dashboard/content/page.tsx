@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import Image from "next/image";
+import { OptimizedImage } from "@modonty/database/components/optimized-image";
 import { mediaSrc } from "@modonty/database/lib/media-src";
 import Link from "next/link";
 import { db } from "@/lib/db";
@@ -186,8 +186,8 @@ export default async function ContentPage() {
                 <li key={a.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
                   <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded-md bg-muted">
                     {a.featuredImage?.url ? (
-                      <Image
-                        src={mediaSrc(a.featuredImage) ?? a.featuredImage.url}
+                      <OptimizedImage
+                        media={a.featuredImage}
                         alt={a.featuredImage.altText ?? a.title}
                         fill
                         sizes="64px"

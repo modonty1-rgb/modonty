@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { toast } from "sonner";
 import { Film, ImageIcon, Eye, Heart, MessageCircle, Star } from "lucide-react";
 
@@ -260,7 +260,7 @@ export function ReelCard({ reel, onRemoved }: { reel: ClientReel; onRemoved: () 
             className="h-full w-full object-cover"
           />
         ) : src ? (
-          <Image src={src} alt={reel.title ?? ""} fill className="object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
+          <OptimizedImage media={asMedia(src, reel.title ?? "")} alt={reel.title ?? ""} fill className="object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
         ) : (
           <div className="flex h-full items-center justify-center text-muted-foreground">
             <ImageIcon className="h-8 w-8" />

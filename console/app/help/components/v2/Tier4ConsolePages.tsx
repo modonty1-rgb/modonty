@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { motion } from "framer-motion";
 import { ZoomIn } from "lucide-react";
 import { tier4ConsoleGroups } from "../../data/guide-v2";
@@ -49,8 +49,8 @@ export function Tier4ConsolePages({ onImageClick }: Props) {
                   className="group bg-gradient-to-br from-background to-muted/20 border border-border rounded-xl overflow-hidden text-start hover:border-primary/40 hover:shadow-md transition-all"
                 >
                   <div className="relative aspect-video bg-muted/30 overflow-hidden">
-                    <Image
-                      src={page.image}
+                    <OptimizedImage
+                      media={asMedia(page.image, page.title)}
                       alt={page.title}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

@@ -78,6 +78,11 @@ export function PublicPageLink({
           className
         )}
       >
+        {/* Raw <img> on purpose: BRAND_ICON_URL is an .svg, and next/image does not
+            optimize SVG unless `dangerouslyAllowSVG` is turned on — so routing it through
+            the optimizer adds risk for zero gain. Same documented exception as
+            modonty/app/trust/page.tsx. */}
+
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={BRAND_ICON_URL}
@@ -112,6 +117,11 @@ export function PublicPageLink({
           isSidebar ? "h-9 w-9" : "h-10 w-10"
         )}
       >
+        {/* Raw <img> on purpose: BRAND_ICON_URL is an .svg, and next/image does not
+            optimize SVG unless `dangerouslyAllowSVG` is turned on — so routing it through
+            the optimizer adds risk for zero gain. Same documented exception as
+            modonty/app/trust/page.tsx. */}
+
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={BRAND_ICON_URL}

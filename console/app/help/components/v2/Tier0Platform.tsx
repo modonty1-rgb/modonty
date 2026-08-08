@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { platformCapabilities, engagementStats } from "../../data/platform-capabilities";
@@ -69,8 +69,8 @@ export function Tier0Platform() {
             <div className="flex items-start gap-3 mb-2">
               {cap.image ? (
                 <div className="relative w-14 h-14 shrink-0 rounded-full bg-muted/40 overflow-hidden ring-2 ring-primary/10">
-                  <Image
-                    src={cap.image}
+                  <OptimizedImage
+                    media={asMedia(cap.image, cap.title)}
                     alt={cap.title}
                     fill
                     sizes="56px"
@@ -103,15 +103,17 @@ export function Tier0Platform() {
             {cap.brandLogos && cap.brandLogos.length > 0 && (
               <div className="flex flex-wrap items-center gap-2.5 mt-4 pt-3 border-t border-border">
                 {cap.brandLogos.map((logo) => (
-                  <Image
-                    key={logo.name}
-                    src={logo.url}
+                  // `title` ليست في عقد المكوّن — تعيش على الحاوية، فالتلميح سلوك DOM لا صورة.
+                  <span key={logo.name} title={logo.name} className="inline-flex">
+                  <OptimizedImage
+                    media={asMedia(logo.url, logo.name)}
                     alt={logo.name}
-                    title={logo.name}
                     width={28}
                     height={28}
+                    sizes="28px"
                     className="object-contain"
                   />
+                  </span>
                 ))}
               </div>
             )}

@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { motion } from "framer-motion";
 import { Star, ExternalLink, Settings2 } from "lucide-react";
 import { tier2ClientPageBlocks } from "../../data/guide-v2";
@@ -43,11 +43,12 @@ export function Tier2ClientPage({ onImageClick }: Tier2ClientPageProps) {
         whileHover={{ scale: 1.005 }}
         className="group relative block w-full mb-8 rounded-xl overflow-hidden border border-border bg-muted/30 cursor-zoom-in shadow-lg"
       >
-        <Image
-          src="/help/engagement/07-client-page-full.png?v=2"
+        <OptimizedImage
+          media={asMedia("/help/engagement/07-client-page-full.png?v=2", "صفحة العميل على مودونتي — كاملة")}
           alt="صفحة العميل على مودونتي — كاملة"
           width={1366}
           height={2401}
+          sizes="100vw"
           unoptimized
           className="w-full h-auto block"
         />

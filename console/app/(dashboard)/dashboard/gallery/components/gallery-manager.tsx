@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Image from "next/image";
+import { OptimizedImage } from "@modonty/database/components/optimized-image";
 import { toast } from "sonner";
 import { ImagePlus } from "lucide-react";
 
@@ -230,8 +230,8 @@ function GalleryCard({
       )}
     >
       <div className="relative w-full overflow-hidden rounded-md bg-muted" style={{ aspectRatio: ratio }}>
-        <Image
-          src={mediaSrc(image) ?? image.url}
+        <OptimizedImage
+          media={image}
           alt={image.altText || "صورة المعرض"}
           fill
           className="object-cover"

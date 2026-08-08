@@ -1,5 +1,6 @@
 "use client";
 
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
@@ -106,10 +107,12 @@ export function Sidebar({
           >
             <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-primary/10 text-primary shadow-sm">
               {clientLogoUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={clientLogoUrl}
+                <OptimizedImage
+                  media={asMedia(clientLogoUrl, clientName)}
                   alt={clientName}
+                  width={36}
+                  height={36}
+                  sizes="36px"
                   className="h-full w-full object-cover"
                 />
               ) : (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "next/link";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
@@ -215,11 +215,12 @@ export function ConsoleTourClient() {
 
                 {/* Screenshot with sequential-numbered, priority-colored dots */}
                 <div className="relative bg-muted/20">
-                  <Image
-                    src={stop.image}
+                  <OptimizedImage
+                    media={asMedia(stop.image, stop.pageLabel)}
                     alt={stop.pageLabel}
                     width={1366}
                     height={768}
+                    sizes="100vw"
                     className="w-full h-auto block"
                     unoptimized
                   />

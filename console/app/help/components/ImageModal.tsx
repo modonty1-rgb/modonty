@@ -55,6 +55,10 @@ export function ImageModal({ src, alt, hotspots, onClose }: ImageModalProps) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative">
+              {/* Raw <img> on purpose: this modal receives only a `src` string — no width/height
+                  anywhere in the call chain — and it sizes itself to the file capped by the
+                  viewport. next/image needs intrinsic dimensions or a sized parent; it has
+                  neither. Convert once the help screenshots carry stored dimensions. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={src}

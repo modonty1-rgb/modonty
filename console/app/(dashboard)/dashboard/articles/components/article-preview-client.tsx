@@ -17,7 +17,7 @@ import { approveArticle, requestChanges } from "../actions/article-actions";
 import { FeedbackForm } from "./feedback-form";
 import { ApproveConfirmDialog } from "./approve-confirm-dialog";
 import type { ArticleWithAllData } from "../helpers/article-queries";
-import Image from "next/image";
+import { OptimizedImage } from "@modonty/database/components/optimized-image";
 import { mediaSrc } from "@modonty/database/lib/media-src";
 import { ar } from "@/lib/ar";
 
@@ -308,8 +308,8 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
             {expandedSections.has("featured-image") && (
               <CardContent className="pt-0">
                 <div className="relative aspect-video w-full max-w-2xl rounded-lg overflow-hidden bg-muted">
-                  <Image
-                    src={mediaSrc(article.featuredImage) ?? article.featuredImage.url}
+                  <OptimizedImage
+                    media={article.featuredImage}
                     alt={article.featuredImage.altText || article.title}
                     fill
                     className="object-cover"
@@ -346,10 +346,13 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
                       key={item.id}
                       className="relative aspect-video rounded-lg overflow-hidden bg-muted"
                     >
-                      <Image
-                        src={mediaSrc(item.media) ?? item.media.url}
+                      <OptimizedImage
+                        media={item.media}
                         alt={item.altText || item.media.altText || a.galleryImage}
                         fill
+                        // Was missing entirely before the swap — the shared component turns
+                        // that into a compile error instead of a silent 100vw assumption.
+                        sizes="(max-width: 768px) 33vw, 220px"
                         className="object-cover"
                       />
                     </div>

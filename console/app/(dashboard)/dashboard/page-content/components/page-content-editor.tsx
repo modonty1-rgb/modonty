@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import Image from "next/image";
+import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -491,7 +491,13 @@ function AchievementRow({
       <div className="flex flex-col gap-2 sm:flex-row">
         {image ? (
           <div className="relative w-full overflow-hidden rounded-md border bg-muted sm:w-40" style={{ aspectRatio: "16/10" }}>
-            <Image src={image} alt={achievement.label || "صورة الإنجاز"} fill className="object-cover" sizes="160px" />
+            <OptimizedImage
+              media={asMedia(image, achievement.label || "صورة الإنجاز")}
+              alt={achievement.label || "صورة الإنجاز"}
+              fill
+              className="object-cover"
+              sizes="160px"
+            />
             <Button
               type="button"
               size="sm"

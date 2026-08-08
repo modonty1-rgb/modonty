@@ -1700,9 +1700,18 @@ const TASKS = [
    "<b>ولم يكن ارتداداً:</b> <code>InfiniteEntityGrid</code> كان <code>preload={i&lt;4}</code> على <code>main</code> نفسه — أُثبت بالمقارنة.",
  ref:"سيو وأداء"},
 
-{id:"MI9", b:"mediaimg", app:["admin","console"], tab:"open", sev:"normal", who:"k",
- t:"مؤجَّل — مدّ المكوّن الموحّد للأدمن والكونسول",
- d:"<b>مؤجَّل بقرار خالد ٦ أغسطس:</b> مودونتي أولاً وتطبيق واحد فقط، والباقي يوماً آخر.<br><b>النطاق — متحقَّق بعدّ فعلي ٦ أغسطس:</b> الأدمن ٣٦ ملفاً تستورد <code>next/image</code> + <b>١٣ وسم <code>&lt;img&gt;</code> خام</b> + <b>أربعة أغلفة صور خاصة به</b> (<code>thumbnail-image-view</code> · <code>media-image-field</code> · <code>cloudinary-image-input</code> · <code>deferred-image-upload</code>). الكونسول ١٧ ملفاً + وسم خام واحد.<br>الإجمالي عبر التطبيقات الثلاثة: <b>١٠١ ملف · ١٤ وسماً خاماً · صفر مكوّن مشترك بينها</b> — وهذا هو الرقم الذي بُني عليه قرار التوحيد.<br><b>الشرط:</b> لا يبدأ قبل نزول ترحيل بني وحذف بارام <code>d_article-placeholder-default</code> (بند <code>65</code>).",
+{id:"MI9", b:"mediaimg", app:["admin","console"], tab:"open", sev:"normal", who:"c", date:"٨ أغسطس",
+ t:"مدّ المكوّن للأدمن والكونسول — <b>الكونسول اكتمل · الأدمن مؤجَّل</b>",
+ d:"<b>✅ الكونسول مُقفَل ٨ أغسطس — صفر <code>next/image</code> فيه.</b> ⏳ والأدمن مؤجَّل بقرارك.<br><br>" +
+   "<pre style='font-size:12px;margin:4px 0'>الكونسول:\n  حُوِّل            : 16 ملفاً · 24 موضعاً\n  حُذف كوداً ميتاً  :  1 ملف  · 93 سطراً\n  استثناءات موثَّقة :  3 مواضع &lt;img&gt; خام\nالأدمن: 36 + 15 وسماً خاماً — لم يُبدأ</pre>" +
+   "<b>كودٌ ميت انكشف بالجرد:</b> <code>branding-media-section.tsx</code> (٩٣ سطراً، وأثقل ملف في القائمة بستّ صور) — <b>صفر ذكر في المستودع كلّه</b>. حُذف بدل أن يُحوَّل.<br><br>" +
+   "<b>وعطلٌ سابع من نوع <code>sizes</code> المفقودة:</b> معرض المقال في معاينة العميل (<code>article-preview-client.tsx:349</code>) كان بلا <code>sizes</code> إطلاقاً.<br><br>" +
+   "<b>وثلاثة استثناءات وُثِّقت في مكانها بسبب هندسي:</b><br>" +
+   "· <code>public-page-link.tsx</code> (موضعان) — <code>BRAND_ICON_URL</code> ملفّ <code>.svg</code>، و<code>next/image</code> لا يحسّنه إلا بتفعيل <code>dangerouslyAllowSVG</code>. نفس استثناء <code>trust</code> في مودونتي.<br>" +
+   "· <code>ImageModal.tsx</code> — يستقبل <code>src</code> نصّاً فقط، بلا أبعاد في سلسلة الاستدعاء كلّها، ويقيس نفسه على الملفّ محدوداً بالشاشة. المكوّن يحتاج أبعاداً أو حاوية مقاسة، ولا يملك أيّاً منهما. يُحوَّل حين تحمل لقطات المساعدة أبعادها.<br><br>" +
+   "<b>وخطآن كشفهما المُصرِّف عند التحويل:</b> <code>priority</code> باقية في <code>LogoSpotlight</code> (مهجورة في Next 16)، و<code>title</code> مُمرَّرة للمكوّن وهي ليست في عقده — نُقلت إلى الحاوية لأنّ التلميح سلوك DOM لا خاصّية صورة.<br><br>" +
+   "<b>الحَكَم:</b> <code>tsc</code> صفر على التطبيقات الثلاثة · <b>بناء إنتاج كامل للكونسول ناجح</b> — <code>10/10</code> صفحات · صفر <code>Module not found</code>.<br><br>" +
+   "<b>⚠ ونفس فخّ بيرل تكرّر وأُصلح:</b> <code>@modonty</code> فُسِّر كمصفوفة ففُرِّغ في <b>١٦ ملفاً</b>، ونصّ JSX تسرّب لرأس ملفَّين. كُشف بالمُصرِّف وأُصلح كاملاً. <b>القاعدة تشدّدت: لا تمرير نصّ فيه <code>@</code> أو <code>|</code> داخل <code>perl -e</code> باقتباس مزدوج.</b>",
  ref:"مكوّن الصور"},
 
 
