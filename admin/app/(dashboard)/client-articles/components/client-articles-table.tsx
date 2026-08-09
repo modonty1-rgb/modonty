@@ -8,11 +8,8 @@ function formatDate(value: Date | null): string {
   return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(value);
 }
 
-/** Key state in one word — the thing that decides whether their site can read at all. */
-function KeyBadge({ row }: { row: ClientSiteRow }) {
-  if (!row.hasKey) {
-    return <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-amber-600">No key yet</span>;
-  }
+/** Delivery state in one word — the thing that decides whether their site reads at all. */
+function DeliveryBadge({ row }: { row: ClientSiteRow }) {
   if (row.keySuspended) {
     return <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-destructive">Suspended</span>;
   }
@@ -38,7 +35,7 @@ export function ClientArticlesTable({ rows }: { rows: ClientSiteRow[] }) {
           <tr>
             <th className="px-3 py-2 text-start font-medium">Client</th>
             <th className="px-3 py-2 text-start font-medium">Articles address</th>
-            <th className="px-3 py-2 text-start font-medium">Key</th>
+            <th className="px-3 py-2 text-start font-medium">Delivery</th>
             <th className="px-3 py-2 text-start font-medium">Articles</th>
             <th className="px-3 py-2 text-start font-medium">Live</th>
             {/* The column that exposes an integration that broke in silence. */}
@@ -59,7 +56,7 @@ export function ClientArticlesTable({ rows }: { rows: ClientSiteRow[] }) {
                 </code>
               </td>
               <td className="px-3 py-2 whitespace-nowrap text-xs">
-                <KeyBadge row={row} />
+                <DeliveryBadge row={row} />
               </td>
               <td className="px-3 py-2 whitespace-nowrap tabular-nums">{row.totalArticles}</td>
               <td className="px-3 py-2 whitespace-nowrap tabular-nums">

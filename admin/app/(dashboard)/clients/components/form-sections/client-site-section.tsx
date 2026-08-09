@@ -9,37 +9,34 @@
  *   1. The articles address on their site. Every canonical URL, og:url and internal
  *      link of that client's articles is baked from it, so it is mandatory before
  *      the permission can be switched on — and changing it later rebakes them all.
- *   2. A read-only key their website sends on every call. It is minted by an explicit
- *      button that appears on two conditions (Khalid 2026-08-08): publishing ticked
- *      AND the domain check answered 200 — a key pointed at a typo is worthless. Once
- *      it exists the block is READ-ONLY: no regenerate, no revoke.
+ *   2. The address their website pulls from. It carries this client's id and nothing
+ *      secret, because everything it returns is already printed on their public pages
+ *      (Khalid 2026-08-09) — so there is no key to mint, install, or rotate, and no
+ *      client has to involve a developer to paste a credential.
  *
- * The «Suspend service» tick is the one control that acts on the key, and it does
- * not destroy it — the client's website keeps the same key in its env var and
- * starts working again the moment the tick comes off.
+ * The «Suspend service» tick is the one control that stops delivery, and it does not
+ * invalidate the address — the client's website keeps the same URL and starts working
+ * again the moment the tick comes off.
  */
 
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { Globe, Copy, Check, X, Minus, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Globe, Copy, Check, X, Minus, Loader2 } from "lucide-react";
 
 import { FormInput } from "@/components/admin/form-field";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { probeArticlesBaseUrl, type ProbeResult } from "../../actions/clients-actions/probe-articles-base-url";
-import { createClientApiKey } from "../../actions/clients-actions/create-client-api-key";
 
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 
 export interface ClientSiteKeyInfo {
-  apiKey: string | null;
-  apiKeyCreatedAt: Date | string | null;
   apiKeyLastUsedAt: Date | string | null;
 }
 
 interface ClientSiteSectionProps {
   form: UseFormReturn<ClientFormSchemaType>;
-  /** Server-owned key data. Absent on the create screen — the key does not exist yet. */
+  /** Server-owned pull stats. Absent on the create screen — nothing has pulled yet. */
   keyInfo?: ClientSiteKeyInfo | null;
   clientId?: string;
 }
@@ -167,23 +164,6 @@ export function ClientSiteSection({ form, keyInfo, clientId }: ClientSiteSection
   const [probing, setProbing] = useState(false);
   /** Set when the check rewrote the address itself (www) — announced, never silent. */
   const [corrected, setCorrected] = useState<string | null>(null);
-  const [revealed, setRevealed] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [creatingKey, setCreatingKey] = useState(false);
-  const [keyError, setKeyError] = useState<string | null>(null);
-  const [mintedKey, setMintedKey] = useState<{ apiKey: string; apiKeyCreatedAt?: Date } | null>(null);
-
-  // The key button appears on exactly two conditions (Khalid 2026-08-08): publishing
-  // is ticked, AND the check passed.
-  //
-  // "Passed" now means the ARTICLES PAGE itself answered 200 at this exact address,
-  // with no redirect. The earlier rule only asked the domain, and on jbrseo.com that
-  // let a 307-to-homepage read as a working articles page — the client got a key for a
-  // page that did not exist. The client builds that page before we hand over a key.
-  //
-  // The result is cleared whenever the address is edited, so a pass from a previous
-  // domain can never unlock the button for a new one.
-  const canCreateKey = canPublish && probe?.ok === true;
 
   const runProbe = async () => {
     setProbing(true);
@@ -220,31 +200,10 @@ export function ClientSiteSection({ form, keyInfo, clientId }: ClientSiteSection
     setProbing(false);
   };
 
-  // One source of truth for "does this client have a key": what the server sent with
-  // the page, or what the button just minted — so the key appears the instant it is
-  // created, without a reload.
-  const activeKey = mintedKey?.apiKey ?? keyInfo?.apiKey ?? null;
-  const activeCreatedAt = mintedKey?.apiKeyCreatedAt ?? keyInfo?.apiKeyCreatedAt ?? null;
-
-  const createKey = async () => {
-    if (!clientId) return;
-    setCreatingKey(true);
-    setKeyError(null);
-    const result = await createClientApiKey(clientId, articlesBaseUrl);
-    if (result.success && result.apiKey) {
-      setMintedKey({ apiKey: result.apiKey, apiKeyCreatedAt: result.apiKeyCreatedAt });
-    } else {
-      setKeyError(result.error ?? "Failed to create the key");
-    }
-    setCreatingKey(false);
-  };
-
-  const copyKey = async () => {
-    if (!activeKey) return;
-    await navigator.clipboard.writeText(activeKey);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  // The client's own pull address. It exists the moment the client row does — there is
+  // nothing to generate and nothing to wait for. On the create screen there is no id
+  // yet, so the block says so instead of printing a broken URL.
+  const pullBase = clientId ? `${ARTICLES_API_BASE}/sites/${clientId}` : null;
 
   return (
     <div className="space-y-4">
@@ -273,7 +232,7 @@ export function ClientSiteSection({ form, keyInfo, clientId }: ClientSiteSection
         <span className="space-y-0.5">
           <span className="block text-sm font-medium">Publish to the client&apos;s own website</span>
           <span className="block text-xs text-muted-foreground">
-            Check the domain below, then the button to create their key appears.
+            Check the domain below, then hand them the pull address.
           </span>
         </span>
       </label>
@@ -369,70 +328,36 @@ export function ClientSiteSection({ form, keyInfo, clientId }: ClientSiteSection
       {canPublish && (
         <div className="space-y-3 rounded-lg border bg-card p-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Read key</span>
-            {activeKey ? (
+            <span className="text-sm font-medium">Pull address</span>
+            {pullBase ? (
               <span className={suspended ? "text-xs font-medium text-destructive" : "text-xs font-medium text-emerald-600"}>
                 {suspended ? "Suspended" : "Active"}
               </span>
             ) : null}
           </div>
 
-          {activeKey ? (
+          {pullBase ? (
             <>
-              <div className="flex items-center gap-2">
-                <code className="flex-1 truncate rounded bg-muted px-2 py-1.5 font-mono text-xs">
-                  {revealed ? activeKey : `${activeKey.slice(0, 8)}${"•".repeat(16)}${activeKey.slice(-4)}`}
-                </code>
-                <Button type="button" variant="ghost" size="sm" onClick={() => setRevealed((v) => !v)} aria-label={revealed ? "Hide key" : "Show key"}>
-                  {revealed ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                </Button>
-                <Button type="button" variant="ghost" size="sm" onClick={copyKey} aria-label="Copy key">
-                  {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
-                </Button>
-              </div>
-              {/* The key alone is not deliverable. What the client's developer needs is
-                  the address, the header, and one command they can paste to see real
-                  data — so this block is the whole handover, copyable line by line. */}
+              {/* The whole handover, copyable line by line: two addresses and one command
+                  their developer can paste to see real data. Nothing secret is printed
+                  here, so this block can be read aloud over the phone. */}
               <div className="space-y-2 rounded-md border bg-muted/30 p-2.5">
-                <CopyRow label="List endpoint" value={`${ARTICLES_API_BASE}/articles`} />
-                <CopyRow label="Single article" value={`${ARTICLES_API_BASE}/articles/{slug}`} />
-                <CopyRow label="Auth header" value={`Authorization: Bearer ${activeKey}`} />
-                <CopyRow
-                  label="Test it now"
-                  value={`curl -H "Authorization: Bearer ${activeKey}" ${ARTICLES_API_BASE}/articles`}
-                  mono
-                />
+                <CopyRow label="List endpoint" value={`${pullBase}/articles`} />
+                <CopyRow label="Single article" value={`${pullBase}/articles/{slug}`} />
+                <CopyRow label="Test it now" value={`curl ${pullBase}/articles`} mono />
+                {/* The client's entire obligation, in one copyable line. */}
+                <CopyRow label="Their robots.txt line" value={`Sitemap: ${pullBase}/sitemap.xml`} mono />
               </div>
 
-              <dl className="grid grid-cols-2 gap-2 text-xs">
-                <div>
-                  <dt className="text-muted-foreground">Created</dt>
-                  <dd className="font-medium">{formatMoment(activeCreatedAt)}</dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">Last used by their site</dt>
-                  <dd className="font-medium">{formatMoment(keyInfo?.apiKeyLastUsedAt ?? null)}</dd>
-                </div>
+              <dl className="text-xs">
+                <dt className="text-muted-foreground">Last pulled by their site</dt>
+                <dd className="font-medium">{formatMoment(keyInfo?.apiKeyLastUsedAt ?? null)}</dd>
               </dl>
             </>
           ) : (
-            <div className="space-y-2">
-              <Button
-                type="button"
-                size="sm"
-                disabled={creatingKey || !canCreateKey || !clientId}
-                onClick={createKey}
-              >
-                {creatingKey && <Loader2 className="me-2 h-3.5 w-3.5 animate-spin" />}
-                Create API key
-              </Button>
-              <p className="text-xs text-muted-foreground">
-                {canCreateKey
-                  ? "Saves the key, the permission and the address at once — no need for the main Save."
-                  : "Run the domain check first. The button unlocks once it passes."}
-              </p>
-              {keyError && <p className="text-xs text-destructive">{keyError}</p>}
-            </div>
+            <p className="text-xs text-muted-foreground">
+              Save the client first — the address is built from their id.
+            </p>
           )}
 
           <label className="flex cursor-pointer items-start gap-2.5 border-t pt-3">
@@ -444,7 +369,7 @@ export function ClientSiteSection({ form, keyInfo, clientId }: ClientSiteSection
             <span className="space-y-0.5">
               <span className="block text-sm font-medium">Suspend service</span>
               <span className="block text-xs text-muted-foreground">
-                Their site stops receiving articles. The key survives — unticking this resumes it.
+                Their site stops receiving articles. The address survives — unticking this resumes it.
               </span>
             </span>
           </label>

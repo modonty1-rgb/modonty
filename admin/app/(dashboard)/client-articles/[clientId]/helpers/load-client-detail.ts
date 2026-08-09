@@ -18,7 +18,6 @@ export interface ClientSiteDetail {
   id: string;
   name: string;
   articlesBaseUrl: string;
-  hasKey: boolean;
   keySuspended: boolean;
   apiKeyLastUsedAt: Date | null;
   articles: ClientSiteArticleRow[];
@@ -43,7 +42,6 @@ export async function getClientSiteDetail(clientId: string): Promise<ClientSiteD
       id: true,
       name: true,
       articlesBaseUrl: true,
-      apiKey: true,
       apiKeySuspended: true,
       apiKeyLastUsedAt: true,
     },
@@ -72,7 +70,6 @@ export async function getClientSiteDetail(clientId: string): Promise<ClientSiteD
     id: client.id,
     name: client.name,
     articlesBaseUrl: client.articlesBaseUrl ?? "",
-    hasKey: Boolean(client.apiKey),
     keySuspended: client.apiKeySuspended,
     apiKeyLastUsedAt: client.apiKeyLastUsedAt,
     canMarkMain: articles.length >= MIN_ARTICLES_FOR_MAIN,

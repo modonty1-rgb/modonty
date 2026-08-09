@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { Card } from "@/components/ui/card";
 
 import { loadSiteArticles } from "./helpers/load-site-articles";
-import { ApiKeyPanel } from "./components/api-key-panel";
+import { PullAddressPanel } from "./components/pull-address-panel";
 import { SiteSeoCheck } from "./components/site-seo-check";
 
 export const dynamic = "force-dynamic";
@@ -35,10 +35,10 @@ export default async function SiteArticlesPage() {
         </p>
       </div>
 
-      <ApiKeyPanel
+      <PullAddressPanel
+        clientId={clientId}
         articlesBaseUrl={data.articlesBaseUrl}
-        hasKey={data.hasKey}
-        keySuspended={data.keySuspended}
+        suspended={data.keySuspended}
         lastFetchedAt={data.lastFetchedAt ? formatMoment(data.lastFetchedAt) : null}
       />
 

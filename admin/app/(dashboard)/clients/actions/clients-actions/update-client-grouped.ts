@@ -811,11 +811,11 @@ export async function updateCtaFields(
 }
 
 /**
- * Client Site Publishing — permission, articles address, and the read key.
+ * Client Site Publishing — permission, articles address, and delivery state.
  *
- * Writes DIRECTLY instead of going through buildGroupUpdateData because two of the
- * fields it persists (`apiKey`, `apiKeyCreatedAt`) are server-generated and are not
- * form fields, so the group-field filter would drop them.
+ * Writes DIRECTLY instead of going through buildGroupUpdateData because the address is
+ * rewritten server-side (the check normalises it, and a failed check clears it), so the
+ * value persisted here is not the value the form submitted.
  *
  * Three rules live here, not in the UI, because the UI is not the last line:
  *   1. The permission cannot be on without an articles address — a canonical URL

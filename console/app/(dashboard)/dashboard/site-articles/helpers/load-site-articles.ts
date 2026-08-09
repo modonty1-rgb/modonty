@@ -20,7 +20,6 @@ export interface SiteArticleRow {
 export interface SiteArticlesData {
   enabled: boolean;
   articlesBaseUrl: string | null;
-  hasKey: boolean;
   keySuspended: boolean;
   /** Null until their website pulls for the first time — the tell that the link works. */
   lastFetchedAt: Date | null;
@@ -33,7 +32,6 @@ export async function loadSiteArticles(clientId: string): Promise<SiteArticlesDa
     select: {
       canPublishToOwnSite: true,
       articlesBaseUrl: true,
-      apiKey: true,
       apiKeySuspended: true,
       apiKeyLastUsedAt: true,
     },
@@ -43,7 +41,6 @@ export async function loadSiteArticles(clientId: string): Promise<SiteArticlesDa
     return {
       enabled: false,
       articlesBaseUrl: null,
-      hasKey: false,
       keySuspended: false,
       lastFetchedAt: null,
       articles: [],
@@ -72,7 +69,6 @@ export async function loadSiteArticles(clientId: string): Promise<SiteArticlesDa
   return {
     enabled: true,
     articlesBaseUrl: client.articlesBaseUrl,
-    hasKey: Boolean(client.apiKey),
     keySuspended: client.apiKeySuspended,
     lastFetchedAt: client.apiKeyLastUsedAt,
     articles: rows.map((r) => ({

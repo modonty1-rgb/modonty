@@ -191,9 +191,8 @@ export const clientFormSections: FormSectionConfig[] = [
     title: "Client Site Publishing",
     description: "Deliver this client's articles to their own website instead of modonty.com",
     icon: "Globe",
-    // apiKey / apiKeyCreatedAt / apiKeyLastUsedAt are NOT listed: they are written by
-    // the server (the key is generated the moment the permission is switched on) and
-    // must never travel from the form.
+    // apiKeyLastUsedAt is NOT listed: it is stamped by the endpoint when the client's
+    // site pulls, and must never travel from the form.
     fields: ["canPublishToOwnSite", "articlesBaseUrl", "apiKeySuspended"],
     required: [],
     priority: "secondary",

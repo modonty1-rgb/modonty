@@ -1415,17 +1415,20 @@ const TASKS = [
  },
 
 {id:"S9", b:"ca", side:"client", app:["console"], tab:"open", sev:"high", who:"c", ref:"✅ مقرَّر ٨ أغسطس",
- t:"✅ ٩ · قوقل يزور موقع العميل — الخريطة على نطاقه",
- d:"<b>المشكلة:</b> اكتشاف المقال يحتاج خريطة موقع، والخريطة و<code>robots.txt</code> على نطاق العميل لا نطاقنا.<br><br>" +
-   "<b>✅ القرار: الخريطة تُستضاف على نطاق العميل، لا على نطاقنا.</b><br>" +
-   "· مسار صغير في موقعه يخرّج <code>&lt;نطاقه&gt;/articles-sitemap.xml</code> — <b>يستعمل نفس النداء</b> الذي يسحب به قائمة المقالات، بمخرج XML بدل HTML. نسلّمه الملفّ جاهزاً كما نسلّم صفحة المقال.<br>" +
-   "· سطر في <code>robots.txt</code> عنده: <code>Sitemap: https://&lt;نطاقه&gt;/articles-sitemap.xml</code>.<br><br>" +
-   "<b>ليش لا نستضيفها نحن — والسبب حاسم:</b> وثيقة قوقل «Build and submit a sitemap» توثّق الاستضافة المشتركة («Upload all sitemaps to a single site you have control over… robots.txt references the sitemap for that individual site»)، <b>لكن نفس الوثيقة تقول</b> «a sitemap affects only descendants of the parent directory» وأنّ القيد يُرفع عبر Search Console. فالمسار المشترك <b>يحتاج تفسيراً</b>، والخريطة على نطاقه <b>لا تحتاج أياً</b> — هي الحالة القياسية بلا التباس.<br>" +
-   "<b>وكلفته صفر تقريباً:</b> مبرمجه يسحب المقالات أصلاً لصفحة القائمة.<br>" +
-   "<b>وكلفتنا صفر:</b> لا مولّد خرائط ولا استضافة لكل عميل ولا مزامنة تحديث.<br><br>" +
-   "<b>لماذا <code>robots.txt</code> لا يُستضاف عندنا بأي حال:</b> قوقل يقرأه من جذر النطاق حصراً، فملفّ على نطاقنا لا يحكم موقعه.<br><br>" +
-   "<b>دورنا: الفحص لا الاستضافة.</b> نقرأ <code>robots.txt</code> وخريطته آلياً وننبّه لو غاب السطر أو حُظر مسار المقالات. الأدوات مبنيّة — <b>متحقَّق ٨ أغسطس:</b> <code>console/lib/health/robots.ts:9</code> (<code>checkRobots</code>) و<code>console/lib/health/sitemap.ts:14</code> (<code>checkSitemap</code>) يفحصان أي نطاق.<br><br>" +
-   "<b>شبكة أمان لو تأخّر مبرمجه:</b> صفحة قائمة المقالات عنده تربط لكل مقال ومرتبطة من قائمته — فقوقل يكتشفها بالزحف. أبطأ ولا تضيع.<br><br>" +
+ t:"✅ ٩ · قوقل يزور موقع العميل — الخريطة عندنا، وسطر واحد عنده",
+ d:"<b>المشكلة:</b> اكتشاف المقال يحتاج خريطة موقع، و<code>robots.txt</code> على نطاق العميل لا نطاقنا.<br><br>" +
+   "<b>🔄 القرار انقلب ٩ أغسطس — والسبب نصّ رسمي كنّا قرأناه ناقصاً.</b> البطاقة كانت تقول «لا نستضيف خريطته»، والصحيح أن قوقل يوثّق الاستضافة المركزية صراحةً:<br>" +
+   "· «unless you submit your sitemap through Search Console, a sitemap affects only descendants of the parent directory»<br>" +
+   "· <b>«adding a line like <code>Sitemap: https://example.com/my_sitemap.xml</code> anywhere in robots.txt also eliminates the parent directory constraint»</b><br>" +
+   "· «For multiple websites, you can host sitemaps centrally in one location… then reference each site's sitemap in its own robots.txt»<br>" +
+   "المصدر: <code>developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap</code>. فالقيد يُرفع بسطر <code>Sitemap:</code>، ولا يحتاج Search Console ولا تفسيراً.<br><br>" +
+   "<b>✅ التصميم المعتمد — يشتغل مع كل عميل:</b><br>" +
+   "· <b>نحن نستضيف:</b> <code>api.modonty.com/v1/sites/&lt;معرّف العميل&gt;/sitemap.xml</code> — يقرأ من القاعدة لحظياً، فيه صفحة القائمة والمقالات، <code>lastmod</code> من <code>updatedAt</code> الحقيقي، والمقال الرئيسي ٠٫٩ وبقيته ٠٫٧.<br>" +
+   "· <b>العميل يلصق سطراً واحداً</b> في <code>robots.txt</code> عنده: <code>Sitemap: &lt;عنوانه&gt;</code>. هذا كل نصيبه — لا ملفّ يبنيه ولا مزامنة ولا تحديث عند كل مقال.<br>" +
+   "· <b>لا نكرّر:</b> مقالات العميل تخرج من خريطة موقعه إن كانت فيها — مصدر واحد لكل رابط. طُبِّق على جبر سيو: خريطته رجعت لصفحاته الثماني.<br><br>" +
+   "<b>لماذا <code>robots.txt</code> لا يُستضاف عندنا بأي حال:</b> قوقل يقرأه من جذر النطاق حصراً، فملفّ على نطاقنا لا يحكم موقعه. السطر يُكتب عنده، والخريطة تُستضاف عندنا.<br><br>" +
+   "<b>ودورنا يبقى الفحص أيضاً:</b> نقرأ <code>robots.txt</code> وخريطته وننبّه لو غاب السطر أو حُظر مسار المقالات — <code>console/lib/health/robots.ts:9</code> و<code>console/lib/health/sitemap.ts:14</code>.<br><br>" +
+   "<b>شبكة أمان لو تأخّر مبرمجه عن السطر:</b> صفحة قائمة المقالات عنده تربط لكل مقال ومرتبطة من قائمته — فقوقل يكتشفها بالزحف. أبطأ ولا تضيع.<br><br>" +
    "<b>وسؤال القياس مؤجَّل عمداً</b> — إثبات نجاح الخدمة للعميل يحتاج صلاحية على أدوات قوقل عنده؛ يُبحث بعد نجاح أوّل عميل لا قبله.",
  },
 
@@ -1458,7 +1461,7 @@ const TASKS = [
    "<b>رأيي:</b> ما نُشر يبقى — لأنّ قتل روابط مفهرسة عقوبة على العميل لا علينا، وتحوّل انتهاء الاشتراك إلى ضرر يتكلّم عنه. والأفضل عملياً أن يخزّن العميل نسخة عنده أصلاً (مشهد ٨)، فيصير البقاء تلقائياً.",
  },
 
-{id:"CA1", b:"ca", app:["dataLayer"], tab:"open", sev:"high", who:"c", ref:"٢٠ دقيقة",
+{id:"CA1", b:"ca", app:["dataLayer"], tab:"done", sev:"high", who:"c", ref:"٢٠ دقيقة",
  t:"✅ ١ · الأساس في القاعدة — الحالة والوجهة وحقول العميل",
  d:"<b>ثلاث إضافات، ولا واحدة منها يقرأها مودونتي:</b><br>" +
    "· <b>قيمة</b> في <code>ArticleStatus</code>: <code>PUBLISHED_ON_CLIENT_SITE</code> (اليوم ٧ قيم — <code>schema.prisma:33-41</code>، <b>متحقَّق ٨ أغسطس</b>). تحكم <b>العزل</b>.<br>" +
@@ -1486,7 +1489,7 @@ const TASKS = [
    "<b>🔻 مُرحَّل إلى <code>٨.٧</code> عمداً:</b> الفهرسان الجديدان يحتاجان <code>prisma db push</code>، و<code>dataLayer/.env</code> يشير إلى <b>قاعدة الإنتاج</b>. يُنفَّذ ضمن <code>٨.٧</code> مع النسخة الاحتياطية. <b>الحقول نفسها لا تحتاج دفعاً</b> (مونجو بلا سكيما)، لكن كلّها جديدة على مجموعة فيها بيانات ← تعبئة إلزامية (<code>$set</code> حيث غائب) قبل اعتبار أي عدّاد أو فلتر عليها شغّالاً.",
  },
 
-{id:"CA2", b:"ca", app:["admin"], tab:"open", sev:"high", who:"c", ref:"٣٠ دقيقة",
+{id:"CA2", b:"ca", app:["admin"], tab:"done", sev:"high", who:"c", ref:"٣٠ دقيقة",
  t:"✅ ٢ · حقول العميل في الأدمن — الإذن والرابط والمفتاح",
  d:"<b>يغطّي المشاهد ١ · ٢ · ٣.</b> قسمان في نموذج العميل، نمط <code>admin/…/clients/components/form-sections/</code> (<b>متحقَّق ٨ أغسطس:</b> ١٤ قسماً · <code>section-wrapper.tsx</code> غلافها).<br><br>" +
    "<b>قسم الإذن والرابط:</b> <code>canPublishToOwnSite</code> + <code>articlesBaseUrl</code>. حاجزان: لا يُفتح الإذن والرابط فارغ · ولا يُفرَّغ الرابط والإذن مفتوح. وعند الحفظ نُنادي <b>أصل النطاق</b> (<code>new URL(...).origin</code>) ونعرض ما رجع — فحص طباعة لا بوّابة.<br><br>" +
@@ -1536,8 +1539,8 @@ const TASKS = [
    "<b>⛓️ ٢.٥ تنتظر المرحلة ٤ عمداً:</b> إعادة التوليد تحتاج <b>دالّة الخبز</b> التي تُبنى في <code>٤.١</code>. الكاتب يرجّع اليوم <code>baseUrlChangedFrom</code> عند التغيّر الفعلي فقط — فالخطّاف جاهز وينتظر ما يُنادى.",
  },
 
-{id:"CA3", b:"ca", app:["admin"], tab:"open", sev:"high", who:"c", ref:"٣٠ دقيقة",
- t:"٣ · قسم «مقالات العملاء» في شريط الأدمن",
+{id:"CA3", b:"ca", app:["admin"], tab:"done", sev:"high", who:"c", ref:"٣٠ دقيقة",
+ t:"✅ ٣ · قسم «مقالات العملاء» في شريط الأدمن",
  d:"<b>يغطّي المشهدين ٥ · ٧.</b> قسم مستقلّ بجدوله — <b>القسم هو الوجهة</b>، فلا شيك ولا سؤال يُنسى.<br><br>" +
    "<b>الجدول:</b> العميل · العنوان · الحالة · تاريخ النشر · <b>آخر مرّة سحبه موقعه</b> (الأخير يكشف عميلاً انكسر ربطه بصمت).<br>" +
    "<b>قائمة العملاء محصورة</b> بمن عنده <code>canPublishToOwnSite</code> مفتوح <b>و</b><code>articlesBaseUrl</code> معبّأ.<br>" +
@@ -1572,8 +1575,8 @@ const TASKS = [
    "<b>وانكشف بالطيّ خللٌ قديم:</b> زون «Advanced» كان يخبّي ثلاثة أشياء غير مترابطة، فلمّا طُوي اختفى «زرّ الإجراء» و«نصّ النشرة» — سؤال خالد: «فين وديت الـprimary button؟ والاشتراك في النشرة؟». <b>الحلّ:</b> فُصلت زونات مسمّاة: <b>٦ YMYL · ٧ Primary Button · ٨ Newsletter · ٩ Client Site &amp; API</b>. <b>القاعدة المستخلَصة:</b> اسمٌ مبهم فوق قسم قابل للطيّ = مكانٌ تضيع فيه الإعدادات.",
  },
 
-{id:"CA3b", b:"ca", app:["admin"], tab:"open", sev:"high", who:"c", ref:"٤٥ دقيقة",
- t:"٤ · الخبز بنطاق العميل",
+{id:"CA3b", b:"ca", app:["admin"], tab:"done", sev:"high", who:"c", ref:"٤٥ دقيقة",
+ t:"✅ ٤ · الخبز بنطاق العميل",
  d:"<b>يغطّي المشهدين ٦ · ٧.</b> <b>متحقَّق ٨ أغسطس:</b> <code>create-article.ts:94-97</code> يخبز <code>canonicalUrl</code> عند <b>كل حفظ</b> من <code>loadSiteUrl()</code> — نطاق مودونتي. للمقال ذي الوجهة الخارجية يُبنى من <code>client.articlesBaseUrl</code>.<br><br>" +
    "<b>ما يُخبز بنطاق العميل:</b> <code>canonicalUrl</code> · <code>mainEntityOfPage</code> · البطاقة المهيكلة · <code>og:url</code> · <b>وكل رابط بين مقالاته</b>.<br>" +
    "<b>يُطبَّق على مساري الإنشاء والتعديل معاً</b> — قاعدة المشروع.<br><br>" +
@@ -1588,8 +1591,8 @@ const TASKS = [
    "<b>٤.٥</b> حاجز: وجهة العميل بلا <code>articlesBaseUrl</code> تُرفض عند الحفظ. <b>دليل:</b> رسالة رفض واضحة.",
  },
 
-{id:"CA4", b:"ca", side:"console", app:["console"], tab:"open", sev:"high", who:"c", ref:"٤٥ دقيقة",
- t:"٥ · عنوان القراءة في كونسول — العقد مع مواقع العملاء",
+{id:"CA4", b:"ca", side:"console", app:["console"], tab:"done", sev:"high", who:"c", ref:"٤٥ دقيقة",
+ t:"✅ ٥ · عنوان القراءة في كونسول — العقد مع مواقع العملاء",
  d:"<b>المساران:</b> <code>GET /api/v1/articles</code> — قائمة بمؤشّر على <code>updatedAt</code> · <code>GET /api/v1/articles/{slug}</code>.<br><br>" +
    "<b>المصادقة:</b> <code>Authorization: Bearer</code> — و<b>المفتاح هو من يحدّد العميل</b>، لا معرّف في الرابط. فما يقدر عميل يقرأ مقالات غيره ولو زوّر الطلب.<br>" +
    "<b>قراءة فقط:</b> صفر كتابة وصفر حذف عبر هذا المسار.<br>" +
@@ -1605,15 +1608,81 @@ const TASKS = [
    "<b>٥.٥</b> <code>ETag</code> + <code>If-None-Match</code> + حدّ معدّل لكل مفتاح. <b>دليل:</b> النداء الثاني ٣٠٤ · وتجاوز الحدّ ٤٢٩.",
  },
 
+{id:"CAIMG", b:"ca", app:["admin"], tab:"open", sev:"high", who:"c", ref:"٩ أغسطس · معلَّق على الترحيل",
+ t:"🖼️ صور العملاء تخرج بروابط Cloudinary — حتى يكتمل ترحيل بني",
+ d:"<b>مقيس ٩ أغسطس أثناء تجربة حمولة جبر سيو:</b> حقل الصورة في الردّ رجع <code>res.cloudinary.com</code> لا <code>b-cdn.net</code>.<br><br>" +
+   "<b>ليست علّة في كود مقالات العملاء</b> — ثلاثة أدلة:<br>" +
+   "· شاشة الترحيل: <b>٥٨٧</b> بطاقة وسائط · <b>٣٩</b> عندها نسخة بني · <b>٥٤٨</b> بلا نسخة.<br>" +
+   "· مكتبة صور جبر سيو نفسها: ٤٠ صورة معروضة، <b>صفر</b> منها على <code>b-cdn.net</code> — فما فيه صورة بني نختارها له أصلاً.<br>" +
+   "· <code>dataLayer/lib/media-src.ts</code> قراءة مزدوجة بالتصميم: «prefer <code>bunnyUrl</code>, fall back to the original Cloudinary <code>url</code>». الصفّ بلا <code>bunnyUrl</code> ⇒ يسقط على Cloudinary تلقائياً.<br><br>" +
+   "<b>الأثر:</b> موقع العميل يطبع صورة من Cloudinary. تعمل، لكنها تخالف قرار «بني هو مورّد الوسائط الوحيد».<br><br>" +
+   "<b>القرار ٩ أغسطس:</b> <b>لا يُشغَّل الترحيل كأثر جانبي لتجربة مقالات العملاء</b> — هو شغل مستقل يكتب على تخزين بني ويغيّر روابط ٥٤٨ صورة، وخالد أوقفه صراحةً. يبقى بنداً قائماً بذاته.<br><br>" +
+   "<b>ما يلزم لإغلاقه:</b> ترحيل صور جبر سيو ثم إعادة نداء العنوان والتأكد أن <code>image.url</code> صار على <code>b-cdn.net</code>. <b>صفر تعديل في كود مقالات العملاء</b> — الحمولة تمرّر ما في الصفّ كما هو.",
+},
+{id:"CAK", b:"ca", app:["admin","console"], tab:"done", sev:"high", who:"c", ref:"٩ أغسطس · مبنيّ ومقيس",
+ t:"🔓 أُلغي المفتاح — العنوان نفسه يقول مين العميل",
+ d:"<b>قرار خالد ٩ أغسطس:</b> «هذي مو مفاتيح بنك» + «أبغى أكسب الوقت والبساطة». المحتوى منشور أصلاً على صفحة عامة، فالمفتاح كان يحرس شيئاً مكشوفاً ويكلّف كل عميل اعتمادية يركّبها.<br><br>" +
+   "<b>الشكل الجديد:</b> <code dir=ltr>api.modonty.com/v1/sites/&lt;معرّف العميل&gt;/articles</code> — بلا مفتاح، بلا ترويسة، بلا إعدادات على موقع العميل.<br><br>" +
+   "<b>ليش المعرّف لا السلَق:</b> <code>slug-change-otp.ts</code> يثبت أن سلَق العميل يتغيّر — ولو تغيّر، موقع العميل يفضى بهدوء بلا خطأ. المعرّف لا يتغيّر.<br><br>" +
+   "<b>ما زال قائماً:</b> الإيقاف من الأدمن · تاريخ آخر سحب · الكاش و<code>ETag</code> · حدّ ١٢٠/دقيقة · فلترة الحالة.<br><br>" +
+   "<b>ما تنازلنا عنه صراحةً:</b> من يعرف معرّف عميل يقدر يقرأ مقالاته المنشورة — وهي معروضة على موقعه العام أصلاً.<br><br>" +
+   "<b>قياس حيّ على <code>modonty_dev</code> (٩ فحوص، كلها بناتج خام):</b><br>" +
+   "· معرّف جبر سيو ⇐ <b>200</b> · «شركة جبر سيو» · عدد ١ · <code>client-site-jsonld-test-2</code><br>" +
+   "· عميل النشر عنده مطفي ⇐ <b>403</b> <code>Publishing is not enabled</code><br>" +
+   "· معرّف معدوم ⇐ <b>404</b> · معرّف مشوّه ⇐ <b>404</b> (لا يصل للسائق)<br>" +
+   "· مقال بالسلَق ⇐ <b>200</b> · البطاقة المهيكلة ٧١٣١ حرفاً · سلَق غريب ⇐ <b>404</b><br>" +
+   "· <code>ETag</code> ثم طلب مشروط ⇐ <b>304</b><br>" +
+   "· بعد الإيقاف ⇐ <b>403</b> · بعد الإرجاع ⇐ <b>200</b><br><br>" +
+   "<b>TSC:</b> admin صفر · console صفر · jbrseo صفر.<br><br>" +
+   "<b>حُذف:</b> <code>authenticate-client.ts</code> · <code>create-client-api-key.ts</code> · <code>helpers/api-key.ts</code> · لوحة المفتاح في الكونسول · زرّ «جرّب العنوان» (صار رابطاً يُفتح في المتصفّح).",
+},
+{id:"CAJ", b:"ca", app:["console"], tab:"open", sev:"high", who:"k", ref:"٩ أغسطس · محجوب على قرار خالد",
+ t:"🌐 صفحتا المقالات نزلتا على جبر سيو — والقائمة تطلع فاضية",
+ d:"<b>المنجَز ودُفع على <code>main</code> (<code>a54dd8c</code>):</b> صفحة القائمة وصفحة المقال <b>على الجذر</b> (<code>/articles</code>) لا تحت الدولة، تخدم كل الدول. أُضيف <code>&quot;articles&quot;</code> للمقاطع المحجوزة في <code>lib/country-config.ts</code> — بدونها كان البروكسي يحوّلها إلى <code>/sa</code>.<br><br>" +
+   "<b>قياس حيّ خام (٩ أغسطس):</b><br>" +
+   "· <code>www.jbrseo.com/articles</code> ⇐ <b>200</b> · التحويل توقّف ✅ · لكن النصّ المعروض «ما نزلت مقالات بعد» والسلَق غائب.<br>" +
+   "· <code>www.jbrseo.com/articles/&lt;سلَق&gt;</code> ⇐ <b>500</b>.<br><br>" +
+   "<b>سبب الفراغ (مؤكَّد):</b> مفاتيح السحب الثلاثة — <code>MODONTY_API_BASE</code> · <code>MODONTY_API_KEY</code> · <code>MODONTY_PREVIEW_BYPASS</code> — موجودة في <code>.env.local</code> على الجهاز فقط. الموقع الحيّ لا يعرف من أين يسحب، فيرجع قائمة فارغة (بالتصميم: العنوان المقطوع لا يُسقط الصفحة).<br><br>" +
+   "<b>سبب الـ500 (تشخيص غير مثبت):</b> يُرجَّح <code>notFound()</code> في المسار الديناميكي بلا حدّ <code>not-found</code> مطابق. <b>لم يُقرأ سجلّ النشرة بعد</b> — لا حكم قبل السجلّ الخام.<br><br>" +
+   "<b>✅ انفكّ الحجز:</b> بدل رفع المفاتيح، أُلغي المفتاح كلّه — انظر بطاقة <code>CAK</code>. موقع جبر سيو ما عاد يحتاج ولا متغيّر.<br><br>" +
+   "<b>⚠️ يبقى قبل ما تشتغل الصفحة الحيّة:</b> المعرّف المكتوب في <code>lib/modonty-articles.ts</code> هو معرّف جبر سيو في قاعدة <b>dev</b>؛ الإنتاج له معرّف آخر يُبدَّل عند الدمج.<br><br>" +
+   "<b>⚠️ فخّ مشروعَي Vercel:</b> الحيّ اسمه <code>jbrseo</code>. المشروع <code>jbrseo.com</code> (بالنقطة) <b>ميت</b> — غير مربوط وكل بناءاته ERROR منذ ٣ أغسطس.<br><br>" +
+   "<b>ثغرة سيو مفتوحة على صفحة القائمة:</b> عندها عنوان ووصف ورابط أساسي فقط — <b>بلا <code>openGraph</code> وبلا بطاقة <code>ItemList</code></b>. صفحة المقال مكتملة (رابط مخبوز · <code>robots</code> من الحمولة · البطاقة المهيكلة تُطبع حرفياً).",
+},
+{id:"CAP", b:"ca", app:["admin","console"], tab:"ref", sev:"high", who:"c", ref:"٩ أغسطس",
+ t:"📋 المعاينة — الروابط والمفاتيح وما بقي قبل الدمج",
+ d:"<b>الفرع <code>client-articles</code> · الكوميت <code>deb8452</code>. الملف الكامل: <code>documents/tasks/CLIENT-ARTICLES-PREVIEW.md</code>.</b><br><br>" +
+   "<b>روابط المعاينة (تتغيّر مع كل دفعة):</b><br>" +
+   "· الأدمن <code>modonty-admin-ld8cvhktp-modonty-72c2a2ca.vercel.app</code><br>" +
+   "· الكونسول <code>modonty-console-nmdyr41dc-modonty-72c2a2ca.vercel.app</code><br>" +
+   "· مودونتي <code>modonty-modonty-fx1y27zxa-modonty-72c2a2ca.vercel.app</code><br><br>" +
+   "<b>🔒 القاعدة — متحقَّق بقياس:</b> المعاينات الثلاث على <code>modonty_dev</code>، والإنتاج لم يُلمَس. أُضيف <code>DATABASE_URL</code> بهدف <b>preview وحده</b> للأدمن والكونسول (مودونتي كان مضبوطاً أصلاً). <b>الدليل القاطع:</b> نداء عنوان المعاينة رجّع <code>count=1</code> والمقال <code>client-site-jsonld-test-2</code> — وهو موجود في قاعدة التطوير وحدها.<br><br>" +
+   "<b>🔑 الحماية:</b> كل المعاينات خلف تسجيل دخول Vercel (<code>ssoProtection: all_except_custom_domains</code>). طارق يفتحها بحسابه، لكن <b>موقع العميل ما يقدر يسحب منها</b> — يوصله صفحة دخول. فأُنشئ مفتاح تجاوز للأتمتة: <code>c6CyLBo1tun2qz7usqjW2kw9FxeG3Ig4</code> يُمرَّر في ترويسة <code>x-vercel-protection-bypass</code>. <b>للمعاينة فقط، ويُحذف بعد الدمج.</b><br><br>" +
+   "<b>🔗 عنوان الاختبار الآن (المعاينة):</b> <code>https://modonty-console-nmdyr41dc-modonty-72c2a2ca.vercel.app/v1/articles</code> · مفتاح جبر سيو <code>mdk_GBa2hnrE2ogpgmI3OOXSsd4vXqwGlanrhTpXTEeRAUI</code>. <b>أمر جاهز:</b> <code>curl -H &quot;Authorization: Bearer &lt;المفتاح&gt;&quot; -H &quot;x-vercel-protection-bypass: &lt;مفتاح التجاوز&gt;&quot; &lt;رابط المعاينة&gt;/v1/articles</code> — <b>مقيس ٩ أغسطس:</b> رجّع <code>200</code> و<code>count=1</code>.<br><br>" +
+   "<b>🌐 <code>api.modonty.com</code>:</b> أُضيف لمشروع الكونسول وتحقّق (<code>verified: true</code> · <code>misconfigured: false</code>). سجلّا Namecheap: <code>TXT _vercel = vc-domain-verify=api.modonty.com,da573e7105c7eb863fcc</code> و<code>CNAME api = cname.vercel-dns.com.</code> — <b>يخدم الإنتاج</b>، فلا يرد على كود الفرع قبل الدمج. وتحويل <code>/v1/*</code> ← <code>/api/v1/*</code> مضاف في <code>console/next.config.ts</code> ومختبَر محلياً (الاثنان ٢٠٠).<br><br>" +
+   "<b>🔓 الاعتماديات:</b> الأدمن <code>modonty@modonty.com</code> · كونسول جبر <code>support@jbrseo.com</code> / <code>JbrSeo2026!</code>. <b>فخّ محلي:</b> الأدمن والكونسول على <code>localhost</code> يتقاسمان كوكي الجلسة — الدخول على واحد يُخرجك من الثاني (لا ينطبق على المعاينة).<br><br>" +
+   "<b>⚠️ ما بقي قبل الدمج:</b><br>" +
+   "· موافقة طارق بعد تجربة الرحلة كاملة.<br>" +
+   "· <code>prisma db push</code> للفهرسين <code>[clientId,status,updatedAt]</code> و<code>[apiKey]</code> — غير موجودين.<br>" +
+   "· تشغيل خطوة <b>Client-Site Flag</b> في Run-All على الإنتاج (شُغّلت على dev: ١٣٤ مقالاً).<br>" +
+   "· بند ٣٫٣: منتقي الروابط الداخلية بُني ولم يُختبَر حيّاً بمقالين منشورين.<br>" +
+   "· بعد الدمج: نقل عنوان السحب عند جبر سيو من المعاينة إلى <code>api.modonty.com/v1</code>، وحذف مفتاح التجاوز.<br><br>" +
+   "<b>🧭 ملاحظات ظهرت في التجربة — لا تُنسى:</b><br>" +
+   "· <code>www.modonty.com/articles</code> يرجّع <code>404</code> بينما <code>/articles/&lt;سلَق&gt;</code> يرجّع <code>200</code> — ما عندنا صفحة قائمة أصلاً. لذلك صار فحص العنوان يرسب على <b>التحويل</b> لا على رمز الحالة.<br>" +
+   "· موقع جبر سيو فيه بادئة دولة <code>/sa</code>، والجذر <code>/articles</code> يحوّل إليها. العنوان المعتمد <code>https://www.jbrseo.com/sa/articles</code>؛ ولو نقلوه للجذر يتغيّر مرة واحدة وتُعاد الروابط تلقائياً (بند ٢٫٥).<br>" +
+   "· مصحّح الروابط الأساسية في الصيانة كان سيرجّع رابط مقال العميل إلى مودونتي — استُثني.<br>" +
+   "· الترجيع من «منشور على موقع العميل» إلى مسودّة يُبطل البطاقة المخزَّنة، فيلزم <b>إعادة حفظ</b> قبل إرساله للموافقة ثانيةً — والبوّابة تقولها صراحةً.<br>" +
+   "· حقل جديد على مجموعة قائمة في مونجو: الفلترة عليه ترجّع صفراً <b>بلا خطأ</b> حتى تُعبّأ. أفرغ جدول المقالات بالكامل حتى شُغّلت التعبئة.",
+},
 {id:"CA5", b:"ca", side:"client", app:["console"], tab:"open", sev:"high", who:"c", ref:"٤٥ دقيقة",
- t:"٧ · جبر سيو أوّل زبون — يسحب ويعرض ويفهرس",
+ t:"٧ · جبر سيو يسحب من المعاينة — تجربة طارق",
  d:"<b>جبر سيو عميل عادي</b> إذنه مفتوح و<code>articlesBaseUrl</code> نطاقه — و<b>بلا سطر واحد خاصّ به في أي مكان</b>. هذا هو الاختبار الحقيقي: لو احتاج استثناءً، فالتصميم غلط.<br><br>" +
    "<b>ما يُبنى في موقعه — ستّة بنود، هي نفسها ما نسلّمه لأي عميل (<code>CREQ</code>):</b><br>" +
    "· صفحة قائمة وصفحة مقال تحت <code>app/(site)/articles/</code>.<br>" +
    "· <b>عرض من السيرفر</b> لا حقن بالمتصفّح.<br>" +
    "· يطبع الحمولة كما وصلته، بلا تعديل.<br>" +
    "· خيار الكاش: <code>fetch(url, { next: { revalidate: 3600 } })</code> — ساعة. <b>متحقَّق من مصدر Next.js:</b> <code>patch-fetch.ts</code> — «the caching decision is driven by the <code>revalidate</code> value, not the upstream Cache-Control header»، فترويستنا لا تكفي.<br>" +
-   "· مسار الخريطة على نطاقه + سطر <code>Sitemap:</code> في <code>robots.txt</code> (المشهد ٩).<br>" +
+   "· خريطة مقالاته مستضافة عندنا + سطر <code>Sitemap:</code> واحد في <code>robots.txt</code> عنده (المشهد ٩ — انقلب ٩ أغسطس).<br>" +
    "· المفتاح في متغيّر بيئة.<br><br>" +
    "<b>⚠️ مضيف بني في <code>next.config.ts</code></b> — إعداده الحالي يسمح بثلاثة مضيفين فقط (<code>res.cloudinary.com · api.dicebear.com · api.qrserver.com</code>، السطر ٧٦-٨٢)، فصور المقالات تنكسر بدونه.<br><br>" +
    "<b>وهي أوّل قياس حقيقي</b> لسلسلة: نشر ← ساعة ← ظهور ← فهرسة.<br><br>" +
@@ -1621,12 +1690,12 @@ const TASKS = [
    "<b>٦.١</b> إعداد: مفتاح جبر في متغيّر بيئة + إضافة مضيف بني إلى <code>next.config.ts</code> (اليوم ثلاثة مضيفين فقط، السطر ٧٦-٨٢). <b>دليل:</b> نداء الخدمة ينجح من الموقع، وصورة بني تُحمَّل.<br>" +
    "<b>٦.٢</b> <code>app/(site)/articles/page.tsx</code> — القائمة، سحب من السيرفر بـ<code>{ next: { revalidate: 3600 } }</code>. <b>دليل:</b> الصفحة تعرض مقالات جبر · وعرض المصدر يظهر النصّ (لا حقن بالمتصفّح).<br>" +
    "<b>٦.٣</b> <code>app/(site)/articles/[slug]/page.tsx</code> — المقال، يطبع البطاقة وبيانات الوصف كما وصلته. <b>دليل:</b> الرابط الأساسي بنطاق جبر ويشير لنفسه · البطاقة مؤلفها مودونتي وناشرها جبر · صفر خطأ كونسول.<br>" +
-   "<b>٦.٤</b> إضافة المقالات إلى <code>app/sitemap.ts</code> القائم. <b>دليل:</b> <code>/sitemap.xml</code> يحتوي روابط المقالات.<br>" +
+   "<b>٦.٤</b> <b>تغيّر ٩ أغسطس (المشهد ٩ انقلب):</b> المقالات <b>لا</b> تدخل <code>app/sitemap.ts</code> عنده — نستضيف خريطتها ويضيف سطر <code>Sitemap:</code> واحداً. <b>دليل:</b> <code>robots.txt</code> عنده فيه السطران، وخريطته فيها صفحاته فقط.<br>" +
    "<b>٦.٥</b> قياس دورة التأخير. <b>دليل:</b> عدّل مقالاً ← الصفحة تعرض القديم فوراً، والجديد بعد انتهاء الساعة.",
  },
 
-{id:"CA6", b:"ca", side:"console", app:["console"], tab:"open", sev:"normal", who:"c", ref:"٢٠ دقيقة",
- t:"٦ · شاشتا الكونسول + خريطة المقالات",
+{id:"CA6", b:"ca", side:"console", app:["console"], tab:"done", sev:"normal", who:"c", ref:"٢٠ دقيقة",
+ t:"✅ ٦ · شاشتا الكونسول + خريطة المقالات",
  d:"<b>يغطّي المشاهد ٣ · ٩ · ١٠.</b> بندان في شريط الكونسول (<code>console/app/(dashboard)/components/sidebar.tsx</code> — <b>متحقَّق ٨ أغسطس</b>)، يظهران بشروطهما.<br><br>" +
    "<b>١ · شاشة المفتاح</b> — تظهر عند: الإذن مفعّل <b>و</b> وجود مقال واحد بحالة <code>PUBLISHED_ON_CLIENT_SITE</code>. عليها: المفتاح مُقنَّعاً + «إظهار» + «نسخ» · تاريخ الإنشاء · آخر استخدام · الحالة. ونصوصها: شكل الردّ بمثال حقيقي · مثال كود جاهز فيه <code>{ next: { revalidate: 3600 } }</code> · حدّ المعدّل · ماذا يفعل لو ضاع المفتاح.<br><br>" +
    "<b>٢ · صفحة «مقالاتك»</b> — المقال + رابطه على موقعه · الحالة (منشور · مُعدَّل) · آخر حدث · «يظهر على موقعك خلال ساعة». قراءة فقط، ولا جرس.<br><br>" +
@@ -1641,7 +1710,7 @@ const TASKS = [
  },
 
 {id:"CA7", b:"ca", app:["admin","console"], tab:"open", sev:"high", who:"c", ref:"٣٠ دقيقة",
- t:"٨ · التحقّق النهائي — دليل خام لكل ادّعاء",
+ t:"٨ · التحقّق النهائي + الدمج — دليل خام لكل ادّعاء",
  d:"<b>على مودونتي (الأهمّ على الإطلاق):</b> مقال بوجهة العميل ← رابطه على مودونتي يرجّع ٤٠٤ · غائب عن الخريطة والتغذية و<code>llms.txt</code> · غائب عن البحث وصفحات التصنيف والوسم والكاتب. ومقال داخلي ← ولا شيء تغيّر عن قبل.<br><br>" +
    "<b>على العنوان:</b> مفتاح صحيح يرجّع مقالات صاحبه · مفتاح عميل آخر يرجّع صفراً · بلا مفتاح ٤٠١ · النداء الثاني ٣٠٤ · الموقوف مرفوض ثم مقبول بعد التشغيل.<br><br>" +
    "<b>على الحمولة:</b> الرابط الأساسي بنطاق العميل يشير لنفسه · البطاقة مؤلفها مودونتي وناشرها العميل · سطر الكاتب <code>&lt;a&gt;</code> · <b>صفر ذكرٍ لـ<code>modonty.com</code> في روابط المتن</b> (عدا سطر الكاتب).<br><br>" +

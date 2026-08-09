@@ -1,34 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Check, KeyRound } from "lucide-react";
+import { Copy, Check, Link2, ExternalLink } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 /**
- * What the client's developer needs, and nothing they could get wrong.
+ * What the client's developer needs, on one screen, with nothing to install.
  *
- * The key itself is NOT shown here. It sits in Modonty's admin and is handed over once,
- * out of band — a credential printed on a page every account manager can open is a
- * credential that leaks. What this panel gives is the part that is safe to publish and
- * tedious to reconstruct: the address, the header shape, the cache setting, and what a
- * response looks like.
+ * There is no key. Everything this address returns is already printed on the client's
+ * own public pages, so a secret would guard nothing while costing them a credential to
+ * install and us one to rotate (Khalid 2026-08-09). The address carries their client id
+ * and that is the whole identity — safe to read aloud over the phone.
  */
-interface ApiKeyPanelProps {
+interface PullAddressPanelProps {
+  clientId: string;
   articlesBaseUrl: string | null;
-  hasKey: boolean;
-  keySuspended: boolean;
+  suspended: boolean;
   lastFetchedAt: string | null;
 }
 
 const API_BASE = process.env.NEXT_PUBLIC_ARTICLES_API_BASE || "https://api.modonty.com/v1";
-
-const SAMPLE_CODE = `const res = await fetch("${API_BASE}/articles", {
-  headers: { Authorization: \`Bearer \${process.env.MODONTY_API_KEY}\` },
-  next: { revalidate: 3600 },
-});
-const { articles } = await res.json();`;
 
 function CopyLine({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   const [copied, setCopied] = useState(false);
@@ -57,24 +50,32 @@ function CopyLine({ label, value, mono }: { label: string; value: string; mono?:
   );
 }
 
-export function ApiKeyPanel({ articlesBaseUrl, hasKey, keySuspended, lastFetchedAt }: ApiKeyPanelProps) {
+export function PullAddressPanel({
+  clientId,
+  articlesBaseUrl,
+  suspended,
+  lastFetchedAt,
+}: PullAddressPanelProps) {
+  const base = `${API_BASE}/sites/${clientId}`;
+
+  const sampleCode = `const res = await fetch("${base}/articles", {
+  next: { revalidate: 3600 },
+});
+const { articles } = await res.json();`;
+
   return (
     <Card className="space-y-4 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="flex items-center gap-2 text-sm font-medium">
-          <KeyRound className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          <Link2 className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           ربط موقعك بمحتوانا
         </span>
         <span
           className={
-            keySuspended
-              ? "text-xs font-medium text-destructive"
-              : hasKey
-                ? "text-xs font-medium text-emerald-600"
-                : "text-xs font-medium text-muted-foreground"
+            suspended ? "text-xs font-medium text-destructive" : "text-xs font-medium text-emerald-600"
           }
         >
-          {keySuspended ? "الخدمة موقوفة" : hasKey ? "الربط فعّال" : "المفتاح ما أُصدر بعد"}
+          {suspended ? "الخدمة موقوفة" : "الربط فعّال"}
         </span>
       </div>
 
@@ -94,17 +95,32 @@ export function ApiKeyPanel({ articlesBaseUrl, hasKey, keySuspended, lastFetched
       </dl>
 
       <div className="space-y-2 rounded-md border bg-muted/30 p-3">
-        <CopyLine label="عنوان القائمة" value={`${API_BASE}/articles`} mono />
-        <CopyLine label="عنوان مقال واحد" value={`${API_BASE}/articles/{slug}`} mono />
-        <CopyLine label="ترويسة المصادقة" value="Authorization: Bearer <مفتاحك>" mono />
-        <CopyLine label="مثال جاهز — كاش ساعة" value={SAMPLE_CODE} mono />
+        <CopyLine label="عنوان القائمة" value={`${base}/articles`} mono />
+        <CopyLine label="عنوان مقال واحد" value={`${base}/articles/{slug}`} mono />
+        <CopyLine label="جرّبه في الطرفية" value={`curl ${base}/articles`} mono />
+        <CopyLine label="مثال جاهز — كاش ساعة" value={sampleCode} mono />
+        {/* The one line the client's side has to carry. Everything else lives here. */}
+        <CopyLine label="سطر واحد في robots.txt عندك" value={`Sitemap: ${base}/sitemap.xml`} mono />
       </div>
 
+      {/* With no header to send, the address is openable in any browser — so the honest
+          "try it" is the address itself, not a button that simulates it. */}
+      <a
+        href={`${base}/articles`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 text-xs font-medium text-violet-700 hover:underline dark:text-violet-300"
+      >
+        افتح العنوان وشوف الردّ
+        <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+      </a>
+
       <ul className="space-y-1 text-[11px] text-muted-foreground">
+        <li>· ما فيه مفتاح ولا إعدادات — انسخ العنوان واستخدمه في موقعك مباشرة.</li>
+        <li>· خريطة مقالاتك نستضيفها نحن وتتجدّد وحدها — تحطّ سطر <code dir="ltr">Sitemap</code> مرة واحدة وخلاص.</li>
         <li>· الردّ يجي جاهزاً للطباعة: العنوان والوصف والمتن والصورة بأبعادها والبطاقة المهيكلة.</li>
         <li>· اطبع البطاقة كما وصلتك داخل وسم <code dir="ltr">script</code> بلا تعديل — هي أساس ظهورك في جوجل.</li>
-        <li>· الحدّ: ١٢٠ طلباً في الدقيقة لكل مفتاح. تجاوزه يرجّع <code dir="ltr">429</code>.</li>
-        <li>· ضاع المفتاح أو تسرّب؟ كلّمنا ونصدر لك غيره — لا تنشره في كود المتصفّح.</li>
+        <li>· الحدّ: ١٢٠ طلباً في الدقيقة. تجاوزه يرجّع <code dir="ltr">429</code>.</li>
       </ul>
     </Card>
   );

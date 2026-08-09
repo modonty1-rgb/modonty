@@ -15,7 +15,6 @@ import { getClientSiteRows } from "./helpers/load-client-articles";
 export default async function ClientArticlesPage() {
   const rows = await getClientSiteRows();
 
-  const withoutKey = rows.filter((r) => !r.hasKey).length;
   const broken = rows.filter((r) => r.neverFetched > 0).length;
 
   return (
@@ -29,7 +28,6 @@ export default async function ClientArticlesPage() {
         </div>
         <div className="flex items-center gap-2 text-[11px]">
           <Pill label="Enabled clients" value={rows.length} tone="muted" />
-          {withoutKey > 0 && <Pill label="No key yet" value={withoutKey} tone="amber" />}
           {broken > 0 && <Pill label="Never fetched" value={broken} tone="amber" />}
         </div>
       </div>

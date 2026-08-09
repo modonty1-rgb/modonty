@@ -534,20 +534,14 @@ export function ClientEditWorkspace({
             index={9}
             id="z-client-site"
             title="Client Site & API"
-            hint="Publish to their own domain · articles address · read key"
+            hint="Publish to their own domain · articles address · pull address"
           />
           <div className="rounded-2xl border bg-card p-5">
             <ClientSiteSection
               form={form}
               clientId={clientId}
               keyInfo={
-                initialData
-                  ? {
-                      apiKey: initialData.apiKey ?? null,
-                      apiKeyCreatedAt: initialData.apiKeyCreatedAt ?? null,
-                      apiKeyLastUsedAt: initialData.apiKeyLastUsedAt ?? null,
-                    }
-                  : null
+                initialData ? { apiKeyLastUsedAt: initialData.apiKeyLastUsedAt ?? null } : null
               }
             />
           </div>

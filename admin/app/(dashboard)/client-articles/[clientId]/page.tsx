@@ -43,14 +43,14 @@ export default async function ClientArticlesDetailPage({
           </code>
         </div>
         <div className="flex items-center gap-2 text-[11px]">
-          {!detail.hasKey ? (
-            <span className="rounded-full bg-amber-500/10 px-2.5 py-1 font-medium text-amber-600">No key yet</span>
-          ) : detail.keySuspended ? (
+          {detail.keySuspended ? (
             <span className="rounded-full bg-destructive/10 px-2.5 py-1 font-medium text-destructive">
-              Key suspended
+              Delivery suspended
             </span>
           ) : (
-            <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 font-medium text-emerald-600">Key active</span>
+            <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 font-medium text-emerald-600">
+              Delivering
+            </span>
           )}
           {/* No «Client settings» button here (Khalid 2026-08-08): the client file is one
               click away in its own section, and a second door to it is visual noise on a

@@ -7,7 +7,6 @@ export interface ClientSiteRow {
   id: string;
   name: string;
   articlesBaseUrl: string;
-  hasKey: boolean;
   keySuspended: boolean;
   apiKeyLastUsedAt: Date | null;
   /** Articles written for their site, whatever the stage. */
@@ -34,7 +33,6 @@ export async function getClientSiteRows(): Promise<ClientSiteRow[]> {
       id: true,
       name: true,
       articlesBaseUrl: true,
-      apiKey: true,
       apiKeySuspended: true,
       apiKeyLastUsedAt: true,
     },
@@ -72,7 +70,6 @@ export async function getClientSiteRows(): Promise<ClientSiteRow[]> {
       id: c.id,
       name: c.name,
       articlesBaseUrl: c.articlesBaseUrl ?? "",
-      hasKey: Boolean(c.apiKey),
       keySuspended: c.apiKeySuspended,
       apiKeyLastUsedAt: c.apiKeyLastUsedAt,
       totalArticles: totalBy.get(c.id) ?? 0,

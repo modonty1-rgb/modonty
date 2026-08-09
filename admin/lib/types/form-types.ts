@@ -207,8 +207,8 @@ export interface ClientFormData {
   billingCycle?: "monthly" | "annual"; // client-owned billing period (drives invoice period)
 
   // Client Site Publishing — articles delivered to the client's own website.
-  // The key fields (apiKey / apiKeyCreatedAt / apiKeyLastUsedAt) are absent by
-  // design: they are server-owned and must never travel from the form.
+  // apiKeyLastUsedAt is absent by design: the endpoint stamps it when their site
+  // pulls, so it is server-owned and must never travel from the form.
   canPublishToOwnSite?: boolean;
   articlesBaseUrl?: string | null;
   apiKeySuspended?: boolean;
