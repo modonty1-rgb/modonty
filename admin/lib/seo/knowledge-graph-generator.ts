@@ -214,7 +214,7 @@ export function generateArticleKnowledgeGraph(
   const graph: JsonLdNode[] = [];
 
   // 1. WebPage (container for the article)
-  graph.push(generateWebPageNode(article, articleUrl, ids, siteUrl));
+  graph.push(generateWebPageNode(article, articleUrl, ids, siteUrl, !pageBase));
 
   // 2. Article (main content)
   graph.push(
@@ -231,8 +231,21 @@ export function generateArticleKnowledgeGraph(
     graph.push(generatePersonNode(article.author, ids.author, siteUrl, article.client.name, ids.publisher));
   }
 
-  // 5. BreadcrumbList
-  graph.push(generateBreadcrumbNode(article, articleUrl, ids.breadcrumb, siteUrl));
+  // 5. BreadcrumbList — modonty-hosted articles only.
+  //
+  // On a client's own site we cannot know what trail their template shows, or whether it
+  // shows one at all, and Google's rule leaves no room to guess: "Don't add structured
+  // data about information that is not visible to the user, even if the information is
+  // accurate." Auditing every client's template forever is not a thing we can promise,
+  // so the honest move is to say nothing. Structured data is optional and its absence
+  // carries no penalty; the trail was never guaranteed to be drawn anyway.
+  //
+  // Measured on jbrseo 2026-08-09: their page shows "المقالات › العنوان" while this node
+  // said "الرئيسية (modonty.com) › العنوان" — two different trails on the very first
+  // client, before any second one existed.
+  if (!pageBase) {
+    graph.push(generateBreadcrumbNode(article, articleUrl, ids.breadcrumb, siteUrl));
+  }
 
   // 5b. FAQPage — only when published FAQs with answers exist (Mariam audit #3 nice-to-have).
   // Filters: status PUBLISHED + non-empty answer. Excludes PENDING reader submissions.
@@ -310,7 +323,9 @@ function generateWebPageNode(
   article: ArticleWithFullRelations,
   articleUrl: string,
   ids: Record<string, string>,
-  siteUrl: string
+  siteUrl: string,
+  /** False for a client's own site, where no BreadcrumbList node is emitted. */
+  hasBreadcrumb: boolean
 ): JsonLdNode {
   return {
     "@type": "WebPage",
@@ -326,7 +341,9 @@ function generateWebPageNode(
       name: SITE_NAME,
       url: siteUrl,
     },
-    breadcrumb: { "@id": ids.breadcrumb },
+    // Dropped together with the node itself — a reference to an @id that is not in the
+    // graph is a dangling pointer, worse than having no breadcrumb at all.
+    ...(hasBreadcrumb && { breadcrumb: { "@id": ids.breadcrumb } }),
     ...(article.datePublished && {
       datePublished: toSaudiISOString(article.datePublished),
     }),
