@@ -22,6 +22,7 @@ import {
   updateSettingsFields,
   updateYmylFields,
   updateCtaFields,
+  updateClientSiteFields,
 } from "./update-client-grouped";
 import { generateClientSEO } from "./generate-client-seo";
 import { logAction } from "@/lib/audit/log-action";
@@ -102,6 +103,7 @@ export async function updateClient(id: string, data: ClientFormData) {
       updateSettingsFields(id, groupedData.settings),
       updateYmylFields(id, groupedData.ymyl ?? {}),
       updateCtaFields(id, groupedData.cta ?? {}),
+      updateClientSiteFields(id, groupedData["client-site"] ?? {}),
     ]);
 
     // Check for failures
@@ -122,6 +124,17 @@ export async function updateClient(id: string, data: ClientFormData) {
     // Partial success: some groups failed but others succeeded
     if (failedGroups.length > 0 && failedGroups.length < results.length) {
       warning = `Partially saved. Failed to update: ${failedGroups.map(g => g.groupName).join(', ')}`;
+    }
+
+    // The articles address moved → the URLs baked into that client's articles are now
+    // wrong, and everything below (JSON-LD, metadata) is built FROM those columns. So
+    // they are rewritten first, and the cascade that follows picks up the new value.
+    // `baseUrlChangedFrom` is present only on a real change, so an ordinary save of any
+    // other section rewrites nothing.
+    const clientSiteResult = results[13] as { baseUrlChangedFrom?: string | null };
+    if ("baseUrlChangedFrom" in clientSiteResult) {
+      const { rebakeClientSiteCanonicals } = await import("./rebake-client-site-canonicals");
+      await rebakeClientSiteCanonicals(id, client?.articlesBaseUrl ?? null).catch(() => {});
     }
 
     // Fetch articles once for cascade

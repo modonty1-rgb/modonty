@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Inbox } from "lucide-react";
 import { loadSiteUrl } from "@/lib/seo/site-url";
-import { buildArticleUrlFromBase } from "@/lib/seo/url-builders";
+import { buildArticleUrlForArticle } from "@/lib/seo/url-builders";
 import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
 import {
   isValidTransitionSlug,
@@ -60,10 +60,12 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
       nextjsMetadata: true,
       nextjsMetadataLastGenerated: true,
       featuredImageId: true,
+      isClientSiteArticle: true,
       client: {
         select: {
           name: true,
           slug: true,
+          articlesBaseUrl: true,
           logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, width: true, height: true } },
         },
       },
@@ -88,7 +90,7 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
           id: a.id,
           slug: a.slug,
           title: a.title,
-          url: buildArticleUrlFromBase(a.slug, siteUrl),
+          url: buildArticleUrlForArticle(a, siteUrl),
           status: a.status,
           content: a.content,
           excerpt: a.excerpt,
@@ -177,7 +179,14 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
           {articles.map((article, idx) => (
             <div
               key={article.id}
-              className="flex flex-col gap-3 p-4 hover:bg-accent/30 transition-colors"
+              /* An article headed to the client's own website is tinted at every stage of
+                 the journey — these lists are where the writer decides what moves next,
+                 and the two kinds must never look alike. */
+              className={`flex flex-col gap-3 p-4 transition-colors ${
+                article.isClientSiteArticle
+                  ? "bg-violet-50/70 hover:bg-violet-100/70 dark:bg-violet-950/30 dark:hover:bg-violet-950/50"
+                  : "hover:bg-accent/30"
+              }`}
             >
               {/* Client revision notes — only shown on the revision-to-draft transition */}
               {transition === "revision-to-draft" && article.revisionNotes && (
@@ -213,6 +222,11 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
                   {article.title}
                 </Link>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+                  {article.isClientSiteArticle && (
+                    <span className="inline-flex items-center gap-1 rounded bg-violet-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet-700 dark:bg-violet-900/60 dark:text-violet-300">
+                      Client site
+                    </span>
+                  )}
                   {article.client?.name && (
                     <span className="truncate">{article.client.name}</span>
                   )}
@@ -261,6 +275,9 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
                   <ScheduledRowActions
                     articleId={article.id}
                     articleTitle={article.title}
+                  clientSiteUrl={
+                    article.isClientSiteArticle ? article.canonicalUrl ?? null : null
+                  }
                     scheduledAt={article.scheduledAt}
                   />
                 ) : (

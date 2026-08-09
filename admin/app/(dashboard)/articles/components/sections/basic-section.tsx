@@ -32,6 +32,22 @@ export function BasicSection() {
   const selectedClient = clients.find((c) => c.id === formData.clientId);
   const hasPublisherLogo = !!mediaSrc(selectedClient?.logoMedia);
 
+  // For a client-site article the picker is narrowed to clients who can actually
+  // receive one — publishing switched on and an articles address filled. The guard is
+  // the list itself, so an article can never be created with a destination we cannot
+  // build a URL for. (createArticle re-checks this server-side; a narrowed list is a
+  // convenience, not the rule.)
+  const selectableClients = formData.isClientSiteArticle
+    ? clients.filter((c) => c.canPublishToOwnSite && (c.articlesBaseUrl ?? "").trim() !== "")
+    : clients;
+
+  // Where this article will live. A client-site article is baked on the client's own
+  // domain, so that — not modonty — is what the writer must see under the slug field.
+  const permalinkBase = formData.isClientSiteArticle
+    ? (selectedClient?.articlesBaseUrl ?? "").replace(/^https?:\/\//, "").replace(/\/+$/, "") ||
+      "— add the client's articles address"
+    : "modonty.com/articles";
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_272px] gap-5 items-start">
 
@@ -101,9 +117,13 @@ export function BasicSection() {
               />
             )}
 
+            {/* The preview must show the address this article will ACTUALLY live at.
+                A client-site article is baked on the client's own domain from its first
+                save, so printing modonty.com here would tell the writer something the
+                database does not agree with. */}
             {formData.slug && (
-              <p className="text-[11px] text-muted-foreground font-mono truncate">
-                modonty.com/articles/<span className="text-foreground">{slugify(formData.slug)}</span>
+              <p className="text-[11px] text-muted-foreground font-mono truncate" dir="ltr">
+                {permalinkBase}/<span className="text-foreground">{slugify(formData.slug)}</span>
               </p>
             )}
             {slugify(formData.slug).length > 50 && (
@@ -214,7 +234,7 @@ export function BasicSection() {
               required
             >
               <option value="">Select a client</option>
-              {clients.map((client) => (
+              {selectableClients.map((client) => (
                 <option key={client.id} value={client.id}>
                   {client.name}
                 </option>

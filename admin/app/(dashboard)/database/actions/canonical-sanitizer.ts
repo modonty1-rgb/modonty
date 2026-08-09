@@ -114,7 +114,13 @@ async function loadRows(kind: EntityKind): Promise<Array<{ id: string; slug: str
     case "client":
       return db.client.findMany({ select });
     case "article":
-      return db.article.findMany({ select });
+      // An article published on a client's own website is SUPPOSED to carry their
+      // domain. This tool's whole definition of "bad" is "not on modonty's host", so
+      // left in scope it would rewrite every one of them back to modonty and regenerate
+      // their JSON-LD to match — silently pointing Google at pages that do not exist.
+      // Caught before its first run (2026-08-08): it had already flagged the first
+      // client-site article as an issue to fix.
+      return db.article.findMany({ where: { NOT: { isClientSiteArticle: true } }, select });
     case "category":
       return db.category.findMany({ select });
     case "tag":

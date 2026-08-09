@@ -24,6 +24,7 @@ export const STAGE_RANK: Record<ArticleStatus, number> = {
   AWAITING_APPROVAL: 3,
   SCHEDULED: 4,
   PUBLISHED: 5,
+  PUBLISHED_ON_CLIENT_SITE: 5, // same stage as PUBLISHED — live, just on another domain
   ARCHIVED: 6,
 };
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
-import { Link2, RefreshCw, Pencil, ImageIcon } from "lucide-react";
+import { Link2, RefreshCw, Pencil, ImageIcon, ChevronDown } from "lucide-react";
 import { SubscriptionTier } from "@prisma/client";
 
 import { FormInput, FormField, FormSelect, FormNativeSelect, FormTextarea } from "@/components/admin/form-field";
@@ -22,6 +22,7 @@ import { YmylSection } from "../form-sections/ymyl-section";
 import { CtaSection } from "../form-sections/cta-section";
 import { SubscriptionSection } from "../form-sections/subscription-section";
 import { BusinessBriefSection } from "../form-sections/business-brief-section";
+import { ClientSiteSection } from "../form-sections/client-site-section";
 import { EditLeftPanel } from "./edit-left-panel";
 
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
@@ -56,9 +57,25 @@ const ZONES = [
   { id: "z-contact", label: "Contact & Classification" },
   { id: "z-media", label: "Verification" },
   { id: "z-seo", label: "SEO" },
-  { id: "z-advanced", label: "Advanced" },
+  // «Advanced» said nothing about what was inside it, and folding it made the CTA and
+  // the newsletter text effectively disappear (Khalid 2026-08-08). Split into three.
+  { id: "z-ymyl", label: "YMYL" },
+  { id: "z-cta", label: "Primary Button" },
+  { id: "z-newsletter", label: "Newsletter" },
+  // Its own zone too: this one decides WHERE the client's articles get published and
+  // carries the key their website authenticates with.
+  { id: "z-client-site", label: "Client Site & API" },
 ] as const;
 
+/**
+ * The zone header doubles as the fold handle (Khalid 2026-08-08: the page got long).
+ *
+ * Built on native <details>/<summary> rather than component state on purpose: the
+ * browser keeps the open/closed state itself, keyboard and screen readers get the
+ * right semantics for free, and — the part that matters here — jumping to #z-… from
+ * the side nav still works, because a closed <details> containing the target is
+ * opened by the browser before it scrolls.
+ */
 function ZoneHeader({
   index,
   title,
@@ -71,13 +88,17 @@ function ZoneHeader({
   id: string;
 }) {
   return (
-    <div id={id} className="flex items-center gap-3 mb-4 scroll-mt-4">
+    <summary
+      id={id}
+      className="flex cursor-pointer list-none items-center gap-3 mb-4 scroll-mt-4 rounded-lg py-1 hover:bg-muted/40 [&::-webkit-details-marker]:hidden"
+    >
+      <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform [details:not([open])_&]:-rotate-90" />
       <span className="h-7 w-7 grid place-items-center rounded-lg bg-primary/10 text-primary text-sm font-bold tabular-nums">
         {index}
       </span>
       <h3 className="text-base font-bold">{title}</h3>
       <span className="text-xs text-muted-foreground">{hint}</span>
-    </div>
+    </summary>
   );
 }
 
@@ -196,7 +217,7 @@ export function ClientEditWorkspace({
 
       <div className="space-y-8 min-w-0">
         {/* ── ZONE 1 · ACCOUNT & ACCESS ───────────────────────── */}
-        <section>
+        <details open className="group border-b pb-4 last:border-b-0">
           <ZoneHeader
             index={1}
             id="z-account"
@@ -268,13 +289,13 @@ export function ClientEditWorkspace({
               />
             )}
           </div>
-        </section>
+        </details>
 
         {/* ── ZONE 2 · القسم المالي ────────────────────────────── */}
         {/* Subscription is client-owned (Khalid 2026-07-25: whoever set up the client owns
            the tier, not the invoice flow). Its own zone, mirroring the create form's money
            section — sales rep, tier cards, internal/free card, billing cycle + currency. */}
-        <section>
+        <details open className="group border-b pb-4 last:border-b-0">
           <ZoneHeader
             index={2}
             id="z-financial"
@@ -284,10 +305,10 @@ export function ClientEditWorkspace({
           <div className="rounded-2xl border bg-card p-5">
             <SubscriptionSection form={form} isEditMode tierConfigs={tierConfigs} addressCountry={addressCountry} salesReps={salesReps} />
           </div>
-        </section>
+        </details>
 
         {/* ── ZONE 2 · CONTACT & CLASSIFICATION ────────────────── */}
-        <section>
+        <details open className="group border-b pb-4 last:border-b-0">
           <ZoneHeader
             index={3}
             id="z-contact"
@@ -398,10 +419,10 @@ export function ClientEditWorkspace({
               error={errors.sameAs?.message}
             />
           </div>
-        </section>
+        </details>
 
         {/* ── ZONE 3 · MEDIA & VERIFICATION ────────────────────── */}
-        <section>
+        <details open className="group border-b pb-4 last:border-b-0">
           <ZoneHeader
             index={4}
             id="z-media"
@@ -418,10 +439,10 @@ export function ClientEditWorkspace({
               wide
             />
           </div>
-        </section>
+        </details>
 
         {/* ── ZONE 4 · SEO ─────────────────────────────────────── */}
-        <section>
+        <details open className="group border-b pb-4 last:border-b-0">
           <ZoneHeader
             index={5}
             id="z-seo"
@@ -477,23 +498,60 @@ export function ClientEditWorkspace({
               />
             </div>
           </div>
-        </section>
+        </details>
 
-        {/* ── ZONE 5 · ADVANCED ────────────────────────────────── */}
-        <section>
-          <ZoneHeader index={6} id="z-advanced" title="Advanced" hint="YMYL (conditional) · CTA · Newsletter" />
-          <div className="space-y-5">
-            <div className="rounded-2xl border bg-card p-5">
-              <YmylSection form={form} />
-            </div>
-            <div className="rounded-2xl border bg-card p-5">
-              <CtaSection form={form} ctaPresets={ctaPresets} />
-            </div>
-            <div className="rounded-2xl border bg-card p-5">
-              <BusinessBriefSection form={form} showHeader={false} isEditMode />
-            </div>
+        {/* ── ZONE 6 · YMYL ────────────────────────────────────── */}
+        {/* Was one «Advanced» zone holding three unrelated things (Khalid 2026-08-08:
+            «فين وديت الـ primary button؟ والاشتراك في النشرة؟»). A vague name over a
+            fold is a place where settings go missing — so each one is now its own
+            named zone with its own line in the side nav. */}
+        <details open className="group border-b pb-4 last:border-b-0">
+          <ZoneHeader index={6} id="z-ymyl" title="YMYL" hint="التحقّق الطبي/القانوني — يظهر للعملاء الحسّاسين" />
+          <div className="rounded-2xl border bg-card p-5">
+            <YmylSection form={form} />
           </div>
-        </section>
+        </details>
+
+        {/* ── ZONE 7 · PRIMARY BUTTON ──────────────────────────── */}
+        <details open className="group border-b pb-4 last:border-b-0">
+          <ZoneHeader index={7} id="z-cta" title="Primary Button" hint="زرّ الإجراء على صفحات العميل — نموذج أو رابط" />
+          <div className="rounded-2xl border bg-card p-5">
+            <CtaSection form={form} ctaPresets={ctaPresets} />
+          </div>
+        </details>
+
+        {/* ── ZONE 8 · NEWSLETTER ──────────────────────────────── */}
+        <details open className="group border-b pb-4 last:border-b-0">
+          <ZoneHeader index={8} id="z-newsletter" title="Newsletter" hint="نصّ دعوة الاشتراك في صندوق النشرة" />
+          <div className="rounded-2xl border bg-card p-5">
+            <BusinessBriefSection form={form} showHeader={false} isEditMode />
+          </div>
+        </details>
+
+        {/* ── ZONE 6 · CLIENT SITE & API ───────────────────────── */}
+        <details open className="group border-b pb-4 last:border-b-0">
+          <ZoneHeader
+            index={9}
+            id="z-client-site"
+            title="Client Site & API"
+            hint="Publish to their own domain · articles address · read key"
+          />
+          <div className="rounded-2xl border bg-card p-5">
+            <ClientSiteSection
+              form={form}
+              clientId={clientId}
+              keyInfo={
+                initialData
+                  ? {
+                      apiKey: initialData.apiKey ?? null,
+                      apiKeyCreatedAt: initialData.apiKeyCreatedAt ?? null,
+                      apiKeyLastUsedAt: initialData.apiKeyLastUsedAt ?? null,
+                    }
+                  : null
+              }
+            />
+          </div>
+        </details>
       </div>
     </div>
   );

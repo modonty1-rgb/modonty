@@ -12,6 +12,8 @@ import {
   trackArticleFavorite,
 } from "@/lib/analytics/events-registry";
 
+import { isPublicArticle } from "./assert-public-article";
+
 type ArticleGA4EventName = "article_like" | "article_dislike" | "article_favorite";
 
 function fireEngagement(
@@ -75,6 +77,12 @@ export async function likeArticle(articleId: string, articleSlug: string) {
 
     const userId = session.user.id;
 
+    // An article that belongs to a client's own website is not ours to collect
+    // interactions for — see assert-public-article.ts.
+    if (!(await isPublicArticle(articleId))) {
+      return { success: false, error: "Article not found" };
+    }
+
     const existing = await db.articleLike.findFirst({
       where: { articleId, userId },
       select: { id: true },
@@ -135,6 +143,12 @@ export async function dislikeArticle(articleId: string, articleSlug: string) {
 
     const userId = session.user.id;
 
+    // An article that belongs to a client's own website is not ours to collect
+    // interactions for — see assert-public-article.ts.
+    if (!(await isPublicArticle(articleId))) {
+      return { success: false, error: "Article not found" };
+    }
+
     const existing = await db.articleDislike.findFirst({
       where: { articleId, userId },
       select: { id: true },
@@ -194,6 +208,12 @@ export async function favoriteArticle(articleId: string, articleSlug: string) {
     }
 
     const userId = session.user.id;
+
+    // An article that belongs to a client's own website is not ours to collect
+    // interactions for — see assert-public-article.ts.
+    if (!(await isPublicArticle(articleId))) {
+      return { success: false, error: "Article not found" };
+    }
 
     const existing = await db.articleFavorite.findFirst({
       where: { articleId, userId },

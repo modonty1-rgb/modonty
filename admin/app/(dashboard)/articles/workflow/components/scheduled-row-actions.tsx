@@ -22,6 +22,8 @@ import { transitionArticleAction } from "../actions/transition-article";
 import { setScheduledDateAction } from "../actions/set-scheduled-date";
 
 interface Props {
+  /** Where this one lands — the copy must not promise modonty for a client's article. */
+  clientSiteUrl?: string | null;
   articleId: string;
   articleTitle: string;
   scheduledAt: Date | null;
@@ -36,7 +38,7 @@ function toLocalDatetimeInput(date: Date): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
-export function ScheduledRowActions({ articleId, articleTitle, scheduledAt }: Props) {
+export function ScheduledRowActions({ articleId, articleTitle, scheduledAt, clientSiteUrl }: Props) {
   const { toast } = useToast();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -130,7 +132,20 @@ export function ScheduledRowActions({ articleId, articleTitle, scheduledAt }: Pr
           <AlertDialogHeader>
             <AlertDialogTitle>نشر المقال الآن؟</AlertDialogTitle>
             <AlertDialogDescription>
-              سيظهر المقال <strong>&quot;{articleTitle}&quot;</strong> للقرّاء على modonty.com فوراً.
+              {clientSiteUrl ? (
+                <>
+                  سيُسلَّم المقال <strong>&quot;{articleTitle}&quot;</strong> لموقع العميل، ويظهر
+                  عندهم على{" "}
+                  <code dir="ltr" className="font-mono text-xs">
+                    {clientSiteUrl}
+                  </code>{" "}
+                  خلال ساعة من سحبه. ولا يظهر على modonty.com إطلاقاً.
+                </>
+              ) : (
+                <>
+                  سيظهر المقال <strong>&quot;{articleTitle}&quot;</strong> للقرّاء على modonty.com فوراً.
+                </>
+              )}{" "}
               لا يمكن التراجع تلقائياً بعد النشر.
             </AlertDialogDescription>
           </AlertDialogHeader>

@@ -126,6 +126,25 @@ export function buildArticleUrlFromBase(slug: string, baseUrl: string): string {
   return `${trimTrailingSlash(baseUrl)}${PATHS.articles}/${slug}`;
 }
 
+/**
+ * The address an article is actually served from.
+ *
+ * For a piece written for a client's own website that is THEIR domain, and their base
+ * already carries its own path — so `/articles` is not appended. Every check that
+ * compares an article against "its own URL" (canonical, og:url, JSON-LD) must be given
+ * this, or it will measure the article against a site it does not live on.
+ */
+export function buildArticleUrlForArticle(
+  article: { slug: string; isClientSiteArticle?: boolean | null; client?: { articlesBaseUrl?: string | null } | null },
+  modontyBaseUrl: string,
+): string {
+  const clientBase = (article.client?.articlesBaseUrl ?? "").trim();
+  if (article.isClientSiteArticle && clientBase) {
+    return `${trimTrailingSlash(clientBase)}/${article.slug}`;
+  }
+  return buildArticleUrlFromBase(article.slug, modontyBaseUrl);
+}
+
 export function buildClientUrlFromBase(slug: string, baseUrl: string): string {
   return `${trimTrailingSlash(baseUrl)}${PATHS.clients}/${slug}`;
 }

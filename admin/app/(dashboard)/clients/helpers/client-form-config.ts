@@ -187,6 +187,23 @@ export const clientFormSections: FormSectionConfig[] = [
     availableInEdit: true,
   },
   {
+    id: "client-site",
+    title: "Client Site Publishing",
+    description: "Deliver this client's articles to their own website instead of modonty.com",
+    icon: "Globe",
+    // apiKey / apiKeyCreatedAt / apiKeyLastUsedAt are NOT listed: they are written by
+    // the server (the key is generated the moment the permission is switched on) and
+    // must never travel from the form.
+    fields: ["canPublishToOwnSite", "articlesBaseUrl", "apiKeySuspended"],
+    required: [],
+    priority: "secondary",
+    // EDIT ONLY (Khalid 2026-08-08): founding a client stays light. Publishing to
+    // their own domain is a later decision — and it needs their articles address,
+    // which rarely exists on the day the account is opened.
+    availableInCreate: false,
+    availableInEdit: true,
+  },
+  {
     id: "ymyl",
     title: "YMYL Verification",
     description: "Your Money Your Life — medical/legal/financial credentials for E-E-A-T",

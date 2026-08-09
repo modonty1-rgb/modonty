@@ -121,5 +121,10 @@ export function mapFormDataToClientData(data: ClientFormData) {
     // Platform/demo account — excluded from billing (admin toggle)
     isInternal: data.isInternal ?? false,
     billingCycle: data.billingCycle ?? "annual",
+
+    // Client-site publishing. The key fields are absent on purpose — the server owns them.
+    canPublishToOwnSite: data.canPublishToOwnSite ?? false,
+    articlesBaseUrl: data.articlesBaseUrl || null,
+    apiKeySuspended: data.apiKeySuspended ?? false,
   };
 }

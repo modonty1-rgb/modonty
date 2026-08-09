@@ -47,6 +47,21 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  /**
+   * The address clients integrate against is `api.modonty.com/v1/...`, never
+   * `console.modonty.com/api/v1/...`.
+   *
+   * That string goes into an env var on THEIR server, so it has to outlive whichever of
+   * our apps happens to serve it — if the endpoint ever moves, the subdomain follows and
+   * not one client edits a line. This rewrite is what makes the public shape real: the
+   * route lives at /api/v1 in this app, and /v1 is the promise we published.
+   */
+  async rewrites() {
+    return [
+      { source: "/v1/:path*", destination: "/api/v1/:path*" },
+    ];
+  },
 };
 
 export default nextConfig;

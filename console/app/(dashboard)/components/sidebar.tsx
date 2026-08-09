@@ -27,6 +27,7 @@ import {
   Star,
   Activity,
   Receipt,
+  Globe,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
 import { PublicPageLink } from "./public-page-link";
@@ -35,6 +36,8 @@ import { cn } from "@/lib/utils";
 
 interface SidebarProps {
   clientName: string;
+  /** Only shown once an article is actually live on their site — no article, no screen. */
+  hasSiteArticles: boolean;
   clientLogoUrl: string | null;
   pendingArticlesCount: number;
   subscribersCount: number;
@@ -56,6 +59,7 @@ interface SidebarProps {
 
 export function Sidebar({
   clientName,
+  hasSiteArticles,
   clientLogoUrl,
   pendingArticlesCount,
   subscribersCount,
@@ -208,6 +212,14 @@ export function Sidebar({
           badge={pendingArticlesCount}
           isCollapsed={isCollapsed}
         />
+        {hasSiteArticles && (
+          <SidebarNavItem
+            href="/dashboard/site-articles"
+            icon={Globe}
+            label={ar.nav.siteArticles}
+            isCollapsed={isCollapsed}
+          />
+        )}
         <SidebarNavItem
           href="/dashboard/content"
           icon={PenLine}

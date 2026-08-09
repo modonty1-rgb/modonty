@@ -21,6 +21,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
 import { articleServerSchema } from "../article-server-schema";
 import { sanitizeHtmlContent } from "@/lib/sanitize-html";
+import { findManualInternalLinks, manualInternalLinksMessage } from "../../../helpers/client-site-links";
 
 function sanitizeText(text: string): string {
   return text
@@ -70,8 +71,28 @@ export async function createArticle(data: ArticleFormData) {
 
     const client = await db.client.findUnique({
       where: { id: data.clientId },
-      select: { name: true, slug: true },
+      select: { name: true, slug: true, canPublishToOwnSite: true, articlesBaseUrl: true },
     });
+
+    // An article destined for the client's own website can only exist for a client we
+    // can actually build URLs for. The «Client Articles» section only lists eligible
+    // clients, but that is a UI convenience — this is the rule.
+    const isClientSiteArticle = data.isClientSiteArticle === true;
+    if (isClientSiteArticle) {
+      if (!client?.canPublishToOwnSite || !(client.articlesBaseUrl ?? "").trim()) {
+        return {
+          success: false,
+          error: "هذا العميل ما عنده إذن النشر على موقعه أو عنوان مقالاته فاضي.",
+        };
+      }
+
+      // A hand-written internal link would either break on their domain or drag their
+      // reader over to ours. Related articles are linked through the relation instead.
+      const manualLinks = findManualInternalLinks(data.content ?? "");
+      if (manualLinks.length > 0) {
+        return { success: false, error: manualInternalLinksMessage(manualLinks) };
+      }
+    }
 
     const category = data.categoryId
       ? await db.category.findUnique({
@@ -91,10 +112,19 @@ export async function createArticle(data: ArticleFormData) {
     const seoDescription =
       data.seoDescription || generateSEODescription(data.excerpt || "");
 
-    const baseUrl = await loadSiteUrl();
+    // WHERE this article will live decides which domain its canonical URL is built
+    // from — and it is decided at CREATE, while the piece is still a draft. A draft
+    // carrying a modonty canonical that gets "fixed" at publish time is exactly the
+    // trap this design avoids: the destination is known from the first save.
+    const baseUrl = isClientSiteArticle
+      ? (client?.articlesBaseUrl as string).replace(/\/+$/, "")
+      : await loadSiteUrl();
+
     // Always regenerate canonical from current slug — never trust input value
     // (prior logic kept user-provided canonicalUrl, allowing stale/wrong URLs)
-    const canonicalUrl = generateCanonicalUrl(data.slug, baseUrl);
+    const canonicalUrl = isClientSiteArticle
+      ? `${baseUrl}/${data.slug}`
+      : generateCanonicalUrl(data.slug, baseUrl);
 
     const breadcrumbPath = generateBreadcrumbPath(
       category?.name,
@@ -131,6 +161,7 @@ export async function createArticle(data: ArticleFormData) {
         status: finalStatus,
         scheduledAt: data.scheduledAt || null,
         featured: data.featured || false,
+        isClientSiteArticle,
         featuredImageId: data.featuredImageId || null,
         datePublished,
         wordCount,

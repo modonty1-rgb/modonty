@@ -43,6 +43,11 @@ export interface ArticleFormData {
   status: ArticleStatus;
   scheduledAt?: Date | null;
   featured?: boolean;
+
+  // DESTINATION — set once, when the article is created from the «Client Articles»
+  // section, and never flipped afterwards. It decides which domain the canonical URL,
+  // og:url and internal links are baked with, from the very first save.
+  isClientSiteArticle?: boolean;
   
   // Schema.org Article - Core Fields
   datePublished?: Date | null;
@@ -200,6 +205,13 @@ export interface ClientFormData {
   showSchedule?: boolean; // client sees the «مجدولة» tab in their console (default on)
   isInternal?: boolean; // platform/demo account — excluded from billing (admin toggle)
   billingCycle?: "monthly" | "annual"; // client-owned billing period (drives invoice period)
+
+  // Client Site Publishing — articles delivered to the client's own website.
+  // The key fields (apiKey / apiKeyCreatedAt / apiKeyLastUsedAt) are absent by
+  // design: they are server-owned and must never travel from the form.
+  canPublishToOwnSite?: boolean;
+  articlesBaseUrl?: string | null;
+  apiKeySuspended?: boolean;
 
   // Opening balance (CREATE only) — the founding payment, persisted on Client.openingBalance.
   // Auto-filled from tier × billingCycle but editable; mandatory for a billable client.

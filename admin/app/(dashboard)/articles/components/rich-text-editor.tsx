@@ -79,6 +79,14 @@ interface RichTextEditorProps {
   placeholder?: string;
   className?: string;
   clientId?: string | null;
+  /**
+   * Set ONLY for an article that lives on the client's own website: the base its URLs
+   * are built from. Its presence turns «Insert Link» from a URL box into a picker of
+   * that client's live articles — a hand-typed address on someone else's domain is a
+   * link we cannot verify, cannot rewrite when the address changes, and that quietly
+   * walks their reader over to us.
+   */
+  clientSiteBaseUrl?: string | null;
   onStatsChange?: (stats: { wordCount: number; characterCount: number }) => void;
 }
 
@@ -88,6 +96,7 @@ export function RichTextEditor({
   placeholder = "ابدأ كتابة المحتوى...",
   className,
   clientId,
+  clientSiteBaseUrl,
   onStatsChange,
 }: RichTextEditorProps) {
   const { toast } = useToast();
@@ -97,8 +106,29 @@ export function RichTextEditor({
   const [linkRel, setLinkRel] = useState<"follow" | "nofollow" | "sponsored">("follow");
   const [linkTarget, setLinkTarget] = useState<"_blank" | "_self">("_blank");
   const linkSelectionRef = useRef<{ from: number; to: number } | null>(null);
+  // The client's live articles, loaded once the picker is first opened.
+  const [clientSiteArticles, setClientSiteArticles] = useState<Array<{ id: string; title: string; slug: string }>>([]);
+  const [loadingClientSiteArticles, setLoadingClientSiteArticles] = useState(false);
   const [youtubeDialogOpen, setYoutubeDialogOpen] = useState(false);
   const [youtubeUrl, setYoutubeUrl] = useState("");
+  useEffect(() => {
+    if (!linkDialogOpen || !clientSiteBaseUrl || !clientId) return;
+    let cancelled = false;
+    setLoadingClientSiteArticles(true);
+    import("../actions/articles-actions")
+      .then(({ getArticlesForSelection }) => getArticlesForSelection({ clientId, clientSiteOnly: true }))
+      .then((rows) => {
+        if (!cancelled) setClientSiteArticles(rows.map((r) => ({ id: r.id, title: r.title, slug: r.slug })));
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setLoadingClientSiteArticles(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [linkDialogOpen, clientSiteBaseUrl, clientId]);
+
   type ToolbarGroup = "text" | "structure" | "media" | "layout";
   const [toolbarGroup, setToolbarGroupState] = useState<ToolbarGroup>("text");
   useEffect(() => {
@@ -648,17 +678,52 @@ export function RichTextEditor({
               <DialogDescription>أدخل رابط URL مع خيارات SEO</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="link-url">رابط URL</Label>
-                <Input
-                  id="link-url"
-                  type="url"
-                  placeholder="https://example.com"
-                  value={linkUrl}
-                  onChange={(e) => setLinkUrl(e.target.value)}
-                  autoFocus
-                />
-              </div>
+              {clientSiteBaseUrl ? (
+                /* On the client's own website the address is ours to build, never theirs
+                   to type: pick the article, we make the URL. Only articles already live
+                   on their site are offered — a draft has no page there yet. */
+                <div className="space-y-2">
+                  <Label htmlFor="link-article">اختر مقالاً من موقع العميل</Label>
+                  <select
+                    id="link-article"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={linkUrl}
+                    onChange={(e) => setLinkUrl(e.target.value)}
+                    autoFocus
+                  >
+                    <option value="">— اختر مقالاً —</option>
+                    {clientSiteArticles.map((a) => (
+                      <option key={a.id} value={`${clientSiteBaseUrl.replace(/\/+$/, "")}/${a.slug}`}>
+                        {a.title}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-[11px] text-muted-foreground">
+                    {loadingClientSiteArticles
+                      ? "جارٍ التحميل…"
+                      : clientSiteArticles.length === 0
+                        ? "ما فيه مقالات منشورة على موقع العميل بعد — الرابط الداخلي يحتاج صفحة موجودة عنده."
+                        : `${clientSiteArticles.length} مقالاً منشوراً على موقعه`}
+                  </p>
+                  {linkUrl && (
+                    <code dir="ltr" className="block truncate rounded bg-muted px-2 py-1 font-mono text-[11px]">
+                      {linkUrl}
+                    </code>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Label htmlFor="link-url">رابط URL</Label>
+                  <Input
+                    id="link-url"
+                    type="url"
+                    placeholder="https://example.com"
+                    value={linkUrl}
+                    onChange={(e) => setLinkUrl(e.target.value)}
+                    autoFocus
+                  />
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">

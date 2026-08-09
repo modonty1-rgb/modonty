@@ -153,7 +153,15 @@ export async function generateAndSaveJsonLd(
       ...articleWithDefaults,
       articleBodyText,
     };
-    const knowledgeGraph = generateArticleKnowledgeGraph(articleWithText, branding);
+    // An article destined for the client's own website is served from THEIR domain, so
+    // the graph is built on it. Every other article passes null and takes the exact path
+    // it always took.
+    const pageBaseUrl =
+      article.isClientSiteArticle && article.client?.articlesBaseUrl
+        ? article.client.articlesBaseUrl
+        : null;
+
+    const knowledgeGraph = generateArticleKnowledgeGraph(articleWithText, branding, pageBaseUrl);
 
     // Normalize JSON-LD structure (ensures consistency)
     const normalizedGraph = await normalizeJsonLd(knowledgeGraph);

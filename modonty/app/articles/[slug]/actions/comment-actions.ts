@@ -13,6 +13,8 @@ import {
   trackCommentDislike,
 } from "@/lib/analytics/events-registry";
 
+import { isPublicArticle } from "./assert-public-article";
+
 function sanitizeComment(content: string): string {
   const trimmed = content.trim();
   return trimmed
@@ -45,6 +47,12 @@ export async function submitComment(
     }
 
     const userId = session.user.id;
+
+    // An article that belongs to a client's own website is not ours to collect
+    // interactions for — see assert-public-article.ts.
+    if (!(await isPublicArticle(articleId))) {
+      return { success: false, error: "Article not found" };
+    }
 
     const validation = validateCommentContent(content);
     if (!validation.valid) {
@@ -149,6 +157,12 @@ export async function submitReply(
     }
 
     const userId = session.user.id;
+
+    // An article that belongs to a client's own website is not ours to collect
+    // interactions for — see assert-public-article.ts.
+    if (!(await isPublicArticle(articleId))) {
+      return { success: false, error: "Article not found" };
+    }
 
     const validation = validateCommentContent(content);
     if (!validation.valid) {

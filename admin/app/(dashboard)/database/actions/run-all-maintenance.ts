@@ -8,6 +8,7 @@ import { createTTLIndex, getIndexHealth, ensurePerfIndexes } from "./index-healt
 import { sanitizeAllLegalForms, sanitizeAllOrganizationTypes } from "./legalform-sanitizer";
 import { sanitizeAllCanonicals } from "./canonical-sanitizer";
 import { backfillArticleHreflang } from "./hreflang-backfill";
+import { backfillClientSiteFlag } from "./client-site-flag-backfill";
 import { backfillMediaReelsFields } from "./media-reels-backfill";
 import { backfillBlurPlaceholders } from "./blur-backfill";
 import { backfillMediaDimensions } from "./dimensions-backfill";
@@ -145,6 +146,20 @@ export async function runStepHreflang(): Promise<MaintenanceStepResult> {
     };
   } catch (e) {
     return fail("hreflang", "Article hreflang Backfilled", e);
+  }
+}
+
+export async function runStepClientSiteFlag(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await backfillClientSiteFlag();
+    return ok(
+      "clientSiteFlag",
+      "Client-Site Flag Backfilled",
+      r.filled,
+      r.missing > 0 ? `${r.missing} articles had no flag` : undefined,
+    );
+  } catch (e) {
+    return fail("clientSiteFlag", "Client-Site Flag Backfilled", e);
   }
 }
 

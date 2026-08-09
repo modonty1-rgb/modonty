@@ -13,8 +13,14 @@ const VALID_TRANSITIONS: Record<ArticleStatus, ArticleStatus[]> = {
   DRAFT: ["WRITING", "AWAITING_APPROVAL"],
   AWAITING_APPROVAL: ["NEEDS_REVISION"],
   NEEDS_REVISION: ["WRITING", "DRAFT"],
-  SCHEDULED: ["PUBLISHED", "DRAFT"],
+  SCHEDULED: ["PUBLISHED", "PUBLISHED_ON_CLIENT_SITE", "DRAFT"],
   PUBLISHED: ["ARCHIVED", "DRAFT"],
+  // Live on the client's OWN site. No ARCHIVED here: archiving would pull the
+  // article off their site without anyone deciding to (see the delete/archive
+  // guards). Which of the two published values a SCHEDULED article may reach is
+  // decided by `isClientSiteArticle`, not by this table — this machine only
+  // knows stages, so the destination check lives in the publish action.
+  PUBLISHED_ON_CLIENT_SITE: ["DRAFT"],
   ARCHIVED: ["DRAFT", "WRITING"],
 };
 

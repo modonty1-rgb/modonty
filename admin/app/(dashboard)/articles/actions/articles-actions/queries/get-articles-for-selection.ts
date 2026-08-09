@@ -9,6 +9,14 @@ export interface ArticleSelectionFilters {
   tagIds?: string[];
   search?: string;
   status?: ArticleStatus[];
+  /** Restrict to one client — a client-site article may only reference its own client. */
+  clientId?: string;
+  /**
+   * Only articles that live on the client's own website, and only the ones already
+   * live there. A draft has no page on their domain yet, so linking to it would point
+   * the reader at a 404 the day the article ships.
+   */
+  clientSiteOnly?: boolean;
 }
 
 export interface ArticleSelectionItem {
@@ -29,9 +37,12 @@ export async function getArticlesForSelection(
   try {
     const where: Prisma.ArticleWhereInput = {
       ...(filters?.excludeArticleId ? { id: { not: filters.excludeArticleId } } : {}),
-      ...(filters?.status && filters.status.length > 0
-        ? { status: { in: filters.status } }
-        : { status: ArticleStatus.PUBLISHED }),
+      ...(filters?.clientId ? { clientId: filters.clientId } : {}),
+      ...(filters?.clientSiteOnly
+        ? { isClientSiteArticle: true, status: ArticleStatus.PUBLISHED_ON_CLIENT_SITE }
+        : filters?.status && filters.status.length > 0
+          ? { status: { in: filters.status } }
+          : { status: ArticleStatus.PUBLISHED, NOT: { isClientSiteArticle: true } }),
       ...(filters?.categoryId ? { categoryId: filters.categoryId } : {}),
       ...(filters?.tagIds && filters.tagIds.length > 0
         ? {

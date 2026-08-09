@@ -151,7 +151,18 @@ function toSaudiISOString(date: Date): string {
  */
 export function generateArticleKnowledgeGraph(
   article: ArticleWithFullRelations,
-  branding?: PlatformBranding | null
+  branding?: PlatformBranding | null,
+  /**
+   * Where the PAGE lives, when that is not modonty.
+   *
+   * An article written for a client's own website is served from their domain, so its
+   * `url`, `@id` and every id derived from them must be that address — otherwise we hand
+   * Google structured data claiming the page is ours while it is served from theirs.
+   *
+   * Omitted (the modonty case) this function behaves exactly as before: nothing branches
+   * on a flag, the value simply is not there.
+   */
+  pageBaseUrl?: string | null
 ): JsonLdGraph {
   // branding.siteUrl SHOULD come from loadSiteUrl() (DB-backed). Hardcoded fallback only as safety net.
   const siteUrl = branding?.siteUrl || "https://www.modonty.com";
@@ -169,9 +180,19 @@ export function generateArticleKnowledgeGraph(
 
   // Single source: canonical URL = mainEntityOfPage = Article url (Schema.org + Google best practice)
   const raw = article.canonicalUrl || article.mainEntityOfPage;
-  const articleUrl = raw
-    ? normalizeUrl(raw, siteUrl, `/articles/${article.slug}`)
-    : `${siteUrl}/articles/${article.slug}`;
+
+  // On a client's own site the stored canonical is already the full address, built from
+  // their articles base at save time — `normalizeUrl` must not be let near it, since its
+  // whole job is to force a URL back onto modonty's host. That rewrite is exactly what
+  // published `www.modonty.com/sa/articles/...` for a page served by jbrseo.com.
+  const pageBase = pageBaseUrl ? pageBaseUrl.replace(/\/+$/, "") : null;
+  const articleUrl = pageBase
+    ? raw && raw.startsWith(pageBase)
+      ? raw
+      : `${pageBase}/${article.slug}`
+    : raw
+      ? normalizeUrl(raw, siteUrl, `/articles/${article.slug}`)
+      : `${siteUrl}/articles/${article.slug}`;
 
   // Detect if author is the platform brand (Modonty) — emit as Organization
   const authorSlug = (article.author.slug || "").toLowerCase();

@@ -159,6 +159,10 @@ const menuGroups: MenuGroup[] = [
     items: [
       { icon: FileText, label: "All Articles", href: "/articles", exact: true },
       { icon: FilePlus, label: "New Article", href: "/articles/new" },
+      // Its own entry, not a filter on «All Articles»: these are published on the
+      // CLIENT's domain and never on modonty. The section IS the destination — an
+      // article created from there is marked for the client's site at birth.
+      { icon: Globe, label: "Client Articles", href: "/client-articles" },
       // Sits with the writing tools, not under Clients: the audience is the content team,
       // and a writer looking for "who am I writing for" should not have to open the
       // clients admin to find it.

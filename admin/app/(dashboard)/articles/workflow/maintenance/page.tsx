@@ -23,6 +23,7 @@ export default async function StatusMaintenancePage() {
       slug: true,
       status: true,
       updatedAt: true,
+      isClientSiteArticle: true,
       client: { select: { name: true } },
       author: { select: { name: true } },
       featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
@@ -81,7 +82,11 @@ export default async function StatusMaintenancePage() {
             return (
               <div
                 key={article.id}
-                className="flex items-center gap-3 p-4 hover:bg-accent/30 transition-colors"
+                className={`flex items-center gap-3 p-4 transition-colors ${
+                  article.isClientSiteArticle
+                    ? "bg-violet-50/70 hover:bg-violet-100/70 dark:bg-violet-950/30 dark:hover:bg-violet-950/50"
+                    : "hover:bg-accent/30"
+                }`}
               >
                 {/* Thumbnail */}
                 <div className="relative h-10 w-10 shrink-0 rounded-full overflow-hidden bg-muted ring-1 ring-border/60">
@@ -102,6 +107,7 @@ export default async function StatusMaintenancePage() {
                     <Badge variant={getStatusVariant(article.status)} className="text-[10px]">
                       {getStatusLabel(article.status)}
                     </Badge>
+                    {article.isClientSiteArticle && <span className="inline-flex shrink-0 items-center rounded bg-violet-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet-700 dark:bg-violet-900/60 dark:text-violet-300">Client site</span>}
                     {article.client?.name && <span className="truncate">{article.client.name}</span>}
                     {article.author?.name && (
                       <>

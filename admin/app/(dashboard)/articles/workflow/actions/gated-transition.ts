@@ -5,7 +5,8 @@ import { mediaSrc } from "@modonty/database/lib/media-src";
 import { auth } from "@/lib/auth";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
-import { buildArticleUrl } from "@/lib/seo/url-builders";
+import { buildArticleUrlForArticle } from "@/lib/seo/url-builders";
+import { loadSiteUrl } from "@/lib/seo/site-url";
 import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
 import { logAction } from "@/lib/audit/log-action";
 import type { ValidationResult } from "@/lib/seo/article-validator";
@@ -83,11 +84,13 @@ export async function gatedTransitionAction(
         nextjsMetadata: true,
         nextjsMetadataLastGenerated: true,
         featuredImageId: true,
+        isClientSiteArticle: true,
         // YMYL reviewer for publish gate
         reviewedById: true,
         client: {
           select: {
             name: true,
+            articlesBaseUrl: true,
             logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, width: true, height: true } },
             // YMYL gate inputs
             isYmyl: true,
@@ -105,7 +108,7 @@ export async function gatedTransitionAction(
     if (!article) return { success: false, error: "Article not found after re-fetch" };
 
     // Step 3 — Run the 28-check validator.
-    const articleUrl = await buildArticleUrl(article.slug);
+    const articleUrl = buildArticleUrlForArticle(article, await loadSiteUrl());
     const validation = validateArticleFromDb({
       id: article.id,
       slug: article.slug,

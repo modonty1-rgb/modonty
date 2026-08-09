@@ -11,6 +11,7 @@ interface DashboardLayoutClientProps {
   clientName: string;
   clientLogoUrl: string | null;
   pendingArticlesCount: number;
+  hasSiteArticles: boolean;
   pendingCommentsCount: number;
   pendingQuestionsCount: number;
   subscribersCount: number;
@@ -36,6 +37,7 @@ export function DashboardLayoutClient({
   clientName,
   clientLogoUrl,
   pendingArticlesCount,
+  hasSiteArticles,
   pendingCommentsCount,
   pendingQuestionsCount,
   subscribersCount,
@@ -65,6 +67,7 @@ export function DashboardLayoutClient({
         clientName={clientName}
         clientLogoUrl={clientLogoUrl}
         pendingArticlesCount={pendingArticlesCount}
+        hasSiteArticles={hasSiteArticles}
         subscribersCount={subscribersCount}
         leadsCount={leadsCount}
         newBookingsCount={newBookingsCount}

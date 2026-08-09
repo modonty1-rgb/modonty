@@ -175,6 +175,8 @@ export async function createClient(data: ClientFormData) {
       "ctaMode",
       "ctaLabel",
       "ctaUrl",
+      // Client Site Publishing is deliberately absent: it is an EDIT-only decision,
+      // so founding a client never touches it and never generates a key.
     ];
     // Strategy fields removed (Plan B): targetAudience, forbiddenKeywords, forbiddenClaims,
     // competitiveMentionsAllowed — these are now client-managed via console intake.

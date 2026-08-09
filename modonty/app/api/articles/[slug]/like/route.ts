@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import type { ApiResponse } from "@/lib/types";
+// Interactions belong to articles published on modonty. An article written for a
+// client's own site lives under a different status and must not collect likes here.
+import { ArticleStatus } from "@prisma/client";
 
 export async function POST(
   request: NextRequest,
@@ -18,7 +21,7 @@ export async function POST(
 
     const { slug } = await params;
     const article = await db.article.findFirst({
-      where: { slug },
+      where: { slug, status: ArticleStatus.PUBLISHED },
       select: { id: true },
     });
 
@@ -92,7 +95,7 @@ export async function DELETE(
 
     const { slug } = await params;
     const article = await db.article.findFirst({
-      where: { slug },
+      where: { slug, status: ArticleStatus.PUBLISHED },
       select: { id: true },
     });
 

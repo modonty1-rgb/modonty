@@ -10,6 +10,8 @@ export interface ArticleWithAllData {
   contentFormat?: string;
   status: ArticleStatus;
   featured: boolean;
+  /** Written for the client's OWN website — it never appears on modonty.com. */
+  isClientSiteArticle: boolean;
   scheduledAt: Date | null;
   datePublished: Date | null;
   dateModified?: Date;
@@ -453,10 +455,21 @@ export async function getPublishedArticles(clientId: string): Promise<ArticleWit
   }) as Promise<ArticleWithAllData[]>;
 }
 
+/**
+ * «كل المقالات» — everything this client has ON MODONTY.
+ *
+ * Articles written for the client's OWN website are deliberately excluded: this list
+ * renders a modonty.com link for every row, which would be the wrong address for
+ * them, and mixing two destinations in one undifferentiated list is how a client
+ * ends up thinking an article is missing. They have their own page («مقالاتك»),
+ * where the link points at their domain and the row shows when their site last
+ * fetched it.
+ */
 export async function getAllArticles(clientId: string): Promise<ArticleWithAllData[]> {
   return db.article.findMany({
     where: {
       clientId,
+      status: { not: ArticleStatus.PUBLISHED_ON_CLIENT_SITE },
     },
     include: {
       client: {

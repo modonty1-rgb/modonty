@@ -44,11 +44,16 @@ export function RelatedArticlesBuilder({
     async function loadArticles() {
       try {
         setLoading(true);
+        // A client-site article may only reference the SAME client's articles that are
+        // already live on their website — anything else resolves to a page that does not
+        // exist on their domain.
+        const clientSite = formData.isClientSiteArticle === true;
         const articles = await getArticlesForSelection({
           excludeArticleId,
-          categoryId: categoryFilter,
-          tagIds: tagFilter.length > 0 ? tagFilter : undefined,
+          categoryId: clientSite ? undefined : categoryFilter,
+          tagIds: !clientSite && tagFilter.length > 0 ? tagFilter : undefined,
           search: searchQuery || undefined,
+          ...(clientSite ? { clientId: formData.clientId, clientSiteOnly: true } : {}),
         });
         setAvailableArticles(articles);
       } catch (error) {
@@ -59,7 +64,7 @@ export function RelatedArticlesBuilder({
     }
     const timeoutId = setTimeout(loadArticles, 300);
     return () => clearTimeout(timeoutId);
-  }, [excludeArticleId, categoryFilter, tagFilter, searchQuery]);
+  }, [excludeArticleId, categoryFilter, tagFilter, searchQuery, formData.isClientSiteArticle, formData.clientId]);
 
   const selectedArticleIds = relatedArticles.map((rel) => rel.relatedId);
 

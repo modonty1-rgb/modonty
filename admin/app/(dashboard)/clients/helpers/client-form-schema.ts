@@ -224,6 +224,19 @@ export const clientFormSchema = z
     isInternal: z.boolean().optional().default(false),
     billingCycle: z.enum(["monthly", "annual"]).optional().default("annual"),
 
+    // Publishing to the client's own website. `articlesBaseUrl` must be an absolute
+    // http(s) URL — every canonical URL of that client's articles is built from it,
+    // so a bare domain or a typo would bake a broken address into published pages.
+    canPublishToOwnSite: z.boolean().optional().default(false),
+    articlesBaseUrl: z
+      .string()
+      .max(500, "Link must be less than 500 characters")
+      .url("Enter a full address including https://")
+      .optional()
+      .nullable()
+      .or(z.literal("")),
+    apiKeySuspended: z.boolean().optional().default(false),
+
     // Opening balance (CREATE only) — the founding payment («تأسيسه معناه دفع»). Persisted
     // on Client.openingBalance and counted as revenue immediately (paid date = createdAt;
     // months come from billingCycle). No invoice at founding. Base schema keeps it optional;
@@ -247,6 +260,17 @@ export const clientFormSchema = z
           message: "Link must start with https://, tel:, or mailto:",
         });
       }
+    }
+
+    // Publishing to the client's own site is meaningless without knowing WHERE.
+    // One rule covers both directions: you cannot switch it on with an empty
+    // address, and you cannot clear the address while it is on.
+    if (data.canPublishToOwnSite && !(data.articlesBaseUrl ?? "").trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["articlesBaseUrl"],
+        message: "Add the articles address on the client's site first",
+      });
     }
   });
 

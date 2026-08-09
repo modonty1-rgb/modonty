@@ -25,6 +25,7 @@ export const getArticleStatusCounts = unstable_cache(
       NEEDS_REVISION: 0,
       SCHEDULED: 0,
       PUBLISHED: 0,
+      PUBLISHED_ON_CLIENT_SITE: 0,
       ARCHIVED: 0,
     };
 

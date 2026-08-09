@@ -30,6 +30,9 @@ const VALID_STATUSES: ArticleStatus[] = [
   ArticleStatus.NEEDS_REVISION,
   ArticleStatus.SCHEDULED,
   ArticleStatus.PUBLISHED,
+  // An article live on the client's own website is still an article we edit — leaving it
+  // out made the editor answer "this row is broken" for a perfectly healthy one.
+  ArticleStatus.PUBLISHED_ON_CLIENT_SITE,
   ArticleStatus.ARCHIVED,
 ];
 

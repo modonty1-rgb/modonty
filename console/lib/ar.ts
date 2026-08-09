@@ -62,6 +62,7 @@ export const ar = {
     dashboard: "لوحة التحكم",
     seo: "معلومات نشاطك",
     articles: "المقالات",
+    siteArticles: "مقالاتك على موقعك",
     content: "نشاط المحتوى",
     media: "الصور والملفات",
     analytics: "الإحصائيات",

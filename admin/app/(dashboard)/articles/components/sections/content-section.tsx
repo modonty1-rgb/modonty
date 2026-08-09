@@ -42,7 +42,7 @@ function SectionHeader({
 }
 
 export function ContentSection() {
-  const { formData, updateField, mode } = useArticleForm();
+  const { formData, updateField, mode, clients } = useArticleForm();
   const [aiDialogOpen, setAiDialogOpen] = useState(false);
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
   const [, setEditorStats] = useState({ wordCount: 0, characterCount: 0 });
@@ -127,6 +127,11 @@ export function ContentSection() {
           onChange={(content) => updateField('content', content)}
           placeholder="Start writing content..."
           clientId={formData.clientId || null}
+          clientSiteBaseUrl={
+            formData.isClientSiteArticle
+              ? clients.find((c) => c.id === formData.clientId)?.articlesBaseUrl ?? null
+              : null
+          }
           onStatsChange={setEditorStats}
         />
       </CardContent>

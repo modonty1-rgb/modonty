@@ -33,6 +33,16 @@ export async function getArticles(filters?: ArticleFilters) {
 
     const where: Prisma.ArticleWhereInput = {};
 
+    // Articles written for a client's own website live in «Client Articles» and nowhere
+    // else — showing them here too is how a writer opens one thinking it is a modonty
+    // piece.
+    //
+    // Written as a NEGATION on purpose. `isClientSiteArticle` was added after every
+    // existing article was written, so the field is ABSENT on those documents, and in
+    // MongoDB `= false` matches an absent field as nothing — the plain equality would
+    // empty this table. `NOT true` keeps them.
+    where.NOT = { isClientSiteArticle: true };
+
     if (filters?.status && validStatuses.includes(filters.status)) {
       where.status = filters.status;
     } else {

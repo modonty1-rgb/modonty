@@ -7,6 +7,7 @@ export const statusLabels: Record<ArticleStatus, string> = {
   NEEDS_REVISION: "Needs Revision",
   SCHEDULED: "Scheduled",
   PUBLISHED: "Published",
+  PUBLISHED_ON_CLIENT_SITE: "Live on Client Site",
   ARCHIVED: "Archived",
 };
 
@@ -17,6 +18,7 @@ export const statusVariants = {
   NEEDS_REVISION: "destructive",
   SCHEDULED: "outline",
   PUBLISHED: "default",
+  PUBLISHED_ON_CLIENT_SITE: "default",
   ARCHIVED: "destructive",
 } as Record<ArticleStatus, "default" | "secondary" | "destructive" | "outline">;
 

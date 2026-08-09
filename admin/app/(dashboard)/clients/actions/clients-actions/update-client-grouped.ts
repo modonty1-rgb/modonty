@@ -6,6 +6,7 @@ import { getFieldsForGroup } from "../../helpers/group-fields-by-tab";
 import { getTierConfigByTier } from "@/app/(dashboard)/subscription-tiers/actions/tier-actions";
 import { SubscriptionTier } from "@prisma/client";
 import { validateAndNormalizeUrls } from "./validate-and-normalize-urls";
+import { probeArticlesBaseUrl } from "./probe-articles-base-url";
 import { normalizeOrganizationType } from "@modonty/database/lib/constants/client-classification";
 import { normalizePhone } from "@modonty/database/lib/phone";
 import bcrypt from "bcryptjs";
@@ -806,5 +807,117 @@ export async function updateCtaFields(
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update CTA fields";
     return { success: false, error: message, groupName: "cta" };
+  }
+}
+
+/**
+ * Client Site Publishing — permission, articles address, and the read key.
+ *
+ * Writes DIRECTLY instead of going through buildGroupUpdateData because two of the
+ * fields it persists (`apiKey`, `apiKeyCreatedAt`) are server-generated and are not
+ * form fields, so the group-field filter would drop them.
+ *
+ * Three rules live here, not in the UI, because the UI is not the last line:
+ *   1. The permission cannot be on without an articles address — a canonical URL
+ *      built from an empty base is a broken address baked into a published page.
+ *   2. Switching the permission ON generates the key, once. It is never regenerated
+ *      and never cleared: a client who is switched off and back on keeps the key
+ *      their website already has in an env var.
+ *   3. `articlesBaseUrl` is reported back when it actually changed, so the caller
+ *      can rebake that client's articles in the background.
+ */
+export async function updateClientSiteFields(
+  clientId: string,
+  data: Partial<ClientFormData>
+): Promise<GroupUpdateResult & { baseUrlChangedFrom?: string | null }> {
+  try {
+    const client = await db.client.findUnique({
+      where: { id: clientId },
+      select: {
+        canPublishToOwnSite: true,
+        articlesBaseUrl: true,
+        apiKeySuspended: true,
+      },
+    });
+
+    if (!client) {
+      return { success: false, error: "Client not found", groupName: "client-site" };
+    }
+
+    // ABSENT ≠ CLEARED. If the caller did not send these fields at all, the client's
+    // current setting stands. Reading a missing field as `false`/`null` would silently
+    // switch publishing off and wipe the address of a client whose articles are LIVE on
+    // their own domain — every canonical URL of theirs breaks at once, from a save that
+    // never meant to touch this section.
+    const canPublish =
+      data.canPublishToOwnSite === undefined ? client.canPublishToOwnSite : data.canPublishToOwnSite;
+    const baseUrl =
+      data.articlesBaseUrl === undefined
+        ? client.articlesBaseUrl
+        : (data.articlesBaseUrl || "").trim() || null;
+    const suspended = data.apiKeySuspended === undefined ? client.apiKeySuspended : data.apiKeySuspended;
+
+    // The address is CHECKED before it is stored — and a failed check DROPS the field
+    // instead of failing the save (Khalid 2026-08-08: "we're online").
+    //
+    // The rest of this form is a live client's real data. Refusing the whole save over
+    // this one field, or writing an address that redirects, are both worse than simply
+    // not storing it: an unproven address becomes a wrong canonical URL baked into every
+    // article they publish, while the name, subscription and contact details the admin
+    // was actually editing have nothing to do with it. So a bad address is left out, the
+    // stored one is untouched, and everything else saves normally. The check row in the
+    // form already shows the admin why it did not take.
+    //
+    // The check only runs when it would change something — an unrelated save must never
+    // fire a request at the client's server.
+    let storedBaseUrl = baseUrl;
+    const baseUrlChanging = baseUrl !== client.articlesBaseUrl;
+    const switchingOn = canPublish && !client.canPublishToOwnSite;
+
+    if (baseUrl && (baseUrlChanging || switchingOn)) {
+      const probe = await probeArticlesBaseUrl(baseUrl);
+      if (!probe.ok) {
+        // Cleared, not kept. An address that fails the check is not an address — leaving
+        // the old one in place is what let a redirecting URL sit there looking approved.
+        storedBaseUrl = null;
+      } else {
+        // Store the spelling that was proven, not the one that was typed.
+        storedBaseUrl = probe.normalizedUrl ?? baseUrl;
+      }
+    }
+
+    // Publishing cannot go on without an address behind it: a canonical URL built from
+    // an empty base is a broken address baked into a published page. Switching it on is
+    // held back, never switched off — a client already live keeps working.
+    const effectiveCanPublish = canPublish && Boolean(storedBaseUrl);
+
+    const updateData: Record<string, unknown> = {};
+
+    if (client.canPublishToOwnSite !== effectiveCanPublish) {
+      updateData.canPublishToOwnSite = effectiveCanPublish;
+    }
+    if (client.articlesBaseUrl !== storedBaseUrl) updateData.articlesBaseUrl = storedBaseUrl;
+    if (client.apiKeySuspended !== suspended) updateData.apiKeySuspended = suspended;
+
+    // The key is NOT created here. It has its own button and its own action
+    // (createClientApiKey) so that minting a credential is something the admin does
+    // on purpose and sees happen — never a side effect of saving the form.
+
+    if (Object.keys(updateData).length === 0) {
+      return { success: true, groupName: "client-site", fieldsUpdated: 0 };
+    }
+
+    await db.client.update({ where: { id: clientId }, data: updateData });
+
+    return {
+      success: true,
+      groupName: "client-site",
+      fieldsUpdated: Object.keys(updateData).length,
+      // Present only on a real change — an unchanged save must trigger zero rebaking.
+      ...("articlesBaseUrl" in updateData ? { baseUrlChangedFrom: client.articlesBaseUrl } : {}),
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to update client site publishing";
+    return { success: false, error: message, groupName: "client-site" };
   }
 }

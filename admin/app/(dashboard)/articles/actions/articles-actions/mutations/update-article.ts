@@ -22,6 +22,7 @@ import { checkCompliance } from "@/lib/seo/pre-publish-audit";
 import { auth } from "@/lib/auth";
 import { articleServerSchema } from "../article-server-schema";
 import { sanitizeHtmlContent } from "@/lib/sanitize-html";
+import { findManualInternalLinks, manualInternalLinksMessage } from "../../../helpers/client-site-links";
 import { isValidTransition } from "../../../helpers/article-status-machine";
 
 function sanitizeText(text: string): string {
@@ -47,7 +48,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
 
     const existingArticle = await db.article.findUnique({
       where: { id: articleId },
-      select: { authorId: true, ogArticlePublishedTime: true, slug: true, clientId: true, datePublished: true, status: true, updatedAt: true, userVersion: true, title: true, content: true, excerpt: true, seoTitle: true, seoDescription: true },
+      select: { authorId: true, ogArticlePublishedTime: true, slug: true, clientId: true, datePublished: true, status: true, updatedAt: true, userVersion: true, title: true, content: true, excerpt: true, seoTitle: true, seoDescription: true, isClientSiteArticle: true, client: { select: { articlesBaseUrl: true } } },
     });
 
     if (!existingArticle) {
@@ -55,6 +56,14 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
         success: false,
         error: "المقال غير موجود",
       };
+    }
+
+    // Same rule as create: a client-site article carries no hand-written internal links.
+    if (existingArticle.isClientSiteArticle) {
+      const manualLinks = findManualInternalLinks(data.content ?? "");
+      if (manualLinks.length > 0) {
+        return { success: false, error: manualInternalLinksMessage(manualLinks) };
+      }
     }
 
     // Optimistic locking: reject only when ANOTHER USER edited via the form (not SEO/cron/system writes).
@@ -149,10 +158,20 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     const seoDescription =
       data.seoDescription || generateSEODescription(data.excerpt || "");
 
-    const baseUrl = await loadSiteUrl();
+    // The destination is read from the ROW, never from the form: it is decided once at
+    // creation and there is no control anywhere that changes it. Reading it from the
+    // payload would make it something a crafted request could flip — and flipping it
+    // rewrites the canonical URL of a page that may already be live on the client's
+    // domain.
+    const clientBaseUrl = (existingArticle.client?.articlesBaseUrl ?? "").replace(/\/+$/, "");
+    const bakeOnClientSite = existingArticle.isClientSiteArticle && clientBaseUrl !== "";
+
+    const baseUrl = bakeOnClientSite ? clientBaseUrl : await loadSiteUrl();
     // Always regenerate canonical from current slug — never trust DB value
     // (prior logic kept stale canonicalUrl when slug changed, breaking JSON-LD @id)
-    const canonicalUrl = generateCanonicalUrl(data.slug, baseUrl);
+    const canonicalUrl = bakeOnClientSite
+      ? `${baseUrl}/${data.slug}`
+      : generateCanonicalUrl(data.slug, baseUrl);
 
     const breadcrumbPath = generateBreadcrumbPath(
       category?.name,

@@ -37,6 +37,11 @@ enum ArticleStatus {
   NEEDS_REVISION
   SCHEDULED
   PUBLISHED
+  // Live on the CLIENT's own website, never on modonty.com. This value is the
+  // isolation wall: every public modonty query filters `status: PUBLISHED`
+  // exactly, so an article carrying this value is invisible to the site, the
+  // sitemap, the feed and llms.txt without a single line of hide-logic.
+  PUBLISHED_ON_CLIENT_SITE
   ARCHIVED
 }
 
@@ -530,6 +535,32 @@ model Client {
   /// returns the default, which is exactly what those clients should get.
   showSchedule          Boolean            @default(true)
 
+  // ============================================
+  // Publishing to the client's own website
+  // ============================================
+
+  /// Is this client allowed to receive articles on their OWN website instead of
+  /// modonty.com? Admin-only switch on the client edit form. Turning it on is
+  /// what auto-generates `apiKey`, and it cannot be turned on while
+  /// `articlesBaseUrl` is empty.
+  canPublishToOwnSite Boolean @default(false)
+
+  /// Where the client's articles live on their own domain, e.g.
+  /// "https://jbrseo.com/articles". Every canonical URL, `mainEntityOfPage`,
+  /// `og:url` and internal link of that client's articles is built from it.
+  /// Changing it triggers a background rebake of all their articles.
+  articlesBaseUrl String?
+
+  /// Read-only API key handed to the client's website. Plaintext on purpose —
+  /// it grants read access to articles that are about to be public anyway, and a
+  /// hash would make «show me my key» impossible. One key per client, no expiry;
+  /// a lost key is replaced by us on request, not self-served.
+  /// Format: "mdk_" + 32 random bytes, base64url.
+  apiKey           String?
+  apiKeyCreatedAt  DateTime?
+  apiKeyLastUsedAt DateTime? // Last successful call — a silent integration shows up here
+  apiKeySuspended  Boolean   @default(false) // Admin kill-switch; the key stays, the service stops
+
   // Metadata
   foundingDate DateTime?
   createdAt    DateTime  @default(now())
@@ -668,6 +699,7 @@ model Client {
   @@index([industryId])
   @@index([userId])
   @@index([createdAt])
+  @@index([apiKey]) // Bearer auth on the client-site read endpoint resolves the owner by key
   @@map("clients")
 }
 
@@ -1114,6 +1146,35 @@ model Article {
   featured      Boolean       @default(false)
   revisionNotes String? // Client's feedback when requesting changes (status=NEEDS_REVISION)
 
+  // ============================================
+  // Client-site articles («مقالات العملاء»)
+  // ============================================
+
+  /// DESTINATION, deliberately separate from `status`. Set once, when the article
+  /// is created from the admin's «مقالات العملاء» section — there is no checkbox
+  /// and no button that moves an article between sections.
+  ///
+  /// It drives BAKING, not visibility: when true, `canonicalUrl`,
+  /// `mainEntityOfPage`, the JSON-LD card, `og:url` and every internal link are
+  /// built from `client.articlesBaseUrl` instead of modonty's domain — from the
+  /// very first save, while the article is still a draft. Visibility is the job
+  /// of `status: PUBLISHED_ON_CLIENT_SITE`.
+  ///
+  /// Never used alone in a public `where` filter: existing documents predate the
+  /// field, so the key is simply ABSENT in Mongo and matches neither true nor
+  /// false. Reading it back returns the default, which is correct for them.
+  isClientSiteArticle Boolean @default(false)
+
+  /// The client's ONE main article — the hub every other article of that client
+  /// links up to. Marked by the editor, and only for a client who already has at
+  /// least four articles (a hub with nothing under it is a thin page).
+  isMainArticle Boolean @default(false)
+
+  /// Last time the client's own website actually fetched this article through
+  /// the console read endpoint. Absent = never fetched. This is what exposes a
+  /// client whose integration broke silently.
+  lastFetchedAt DateTime?
+
   // Schema.org Article - Required fields
   datePublished    DateTime? // ISO 8601
   dateModified     DateTime  @updatedAt
@@ -1213,6 +1274,9 @@ model Article {
 
   @@unique([clientId, slug]) // Slug unique per client
   @@index([clientId, status, datePublished])
+  // Read endpoint for client sites: filter by owner + PUBLISHED_ON_CLIENT_SITE,
+  // page with a cursor on updatedAt.
+  @@index([clientId, status, updatedAt])
   @@index([status, datePublished])
   @@index([categoryId, status, datePublished])
   @@index([authorId, status, datePublished])

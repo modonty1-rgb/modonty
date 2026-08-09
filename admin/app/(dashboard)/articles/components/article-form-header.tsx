@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useArticleForm } from './article-form-context';
+import { ClientSiteBanner } from './client-site-banner';
 import {
   STEP_CONFIGS,
   getStepStatus,
@@ -247,6 +248,9 @@ export function ArticleFormHeader() {
           </div>
         </div>
       </TooltipProvider>
+
+      {/* ── Destination strip — only for an article headed to the client's website ── */}
+      <ClientSiteBanner />
 
       {/* ── Overall progress strip (2 px) ── */}
       <Progress

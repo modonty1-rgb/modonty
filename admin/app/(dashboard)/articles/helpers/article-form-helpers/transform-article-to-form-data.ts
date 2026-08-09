@@ -26,6 +26,9 @@ export function transformArticleToFormData(article: ArticleFromDb): Partial<Arti
 
     // Status & Workflow
     status: article.status,
+    // WHERE it lives — read from the row, never re-decided by the form. Without this the
+    // editor would open a client-site article looking exactly like a modonty one.
+    isClientSiteArticle: article.isClientSiteArticle ?? false,
     scheduledAt: article.scheduledAt || null,
     featured: article.featured || false,
 

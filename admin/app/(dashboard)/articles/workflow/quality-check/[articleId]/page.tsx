@@ -5,7 +5,8 @@ import { mediaSrc } from "@modonty/database/lib/media-src";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ExternalLink, Pencil, ShieldCheck, ShieldX, AlertTriangle, CheckCircle2, XCircle, Sparkles } from "lucide-react";
-import { buildArticleUrl } from "@/lib/seo/url-builders";
+import { buildArticleUrlForArticle } from "@/lib/seo/url-builders";
+import { loadSiteUrl } from "@/lib/seo/site-url";
 import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
 import { needsRegeneration, regenerateJsonLd } from "@/lib/seo/jsonld-storage";
 import { isYmylClientComplete } from "@/lib/seo/ymyl-helpers";
@@ -86,6 +87,7 @@ export default async function QualityCheckPage({ params }: PageProps) {
       nextjsMetadata: true,
       nextjsMetadataLastGenerated: true,
       featuredImageId: true,
+      isClientSiteArticle: true,
       featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true, width: true, height: true } },
       author: { select: { name: true } },
       client: {
@@ -93,6 +95,7 @@ export default async function QualityCheckPage({ params }: PageProps) {
           id: true,
           name: true,
           slug: true,
+          articlesBaseUrl: true,
           logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, width: true, height: true } },
           isYmyl: true,
           ymylCategory: true,
@@ -109,7 +112,7 @@ export default async function QualityCheckPage({ params }: PageProps) {
   const canSendToApproval = article.status === "DRAFT";
 
   // Step 3 — Run the 28-check validator
-  const articleUrl = await buildArticleUrl(article.slug);
+  const articleUrl = buildArticleUrlForArticle(article, await loadSiteUrl());
   const validation = validateArticleFromDb({
     id: article.id,
     slug: article.slug,

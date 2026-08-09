@@ -25,7 +25,7 @@ export interface TransitionResult {
 export async function transitionArticleAction(
   articleId: string,
   expectedFrom: ArticleStatus,
-  toStatus: ArticleStatus
+  requestedStatus: ArticleStatus
 ): Promise<TransitionResult> {
   try {
     const session = await auth();
@@ -43,6 +43,7 @@ export async function transitionArticleAction(
         seoTitle: true,
         seoDescription: true,
         clientId: true,
+        isClientSiteArticle: true,
         featuredImageId: true,
       },
     });
@@ -50,6 +51,17 @@ export async function transitionArticleAction(
     if (!article) {
       return { success: false, error: "Article not found" };
     }
+
+    // WHERE «publish» lands is the ARTICLE's business, not the button's.
+    //
+    // «Scheduled → Published» is one screen for every article and it always asks for
+    // PUBLISHED. For a piece written for a client's own website that value would put it
+    // live on modonty.com — the single leak this whole feature exists to prevent. Read
+    // once, here, so every screen that publishes inherits it and none can forget.
+    const toStatus =
+      requestedStatus === ArticleStatus.PUBLISHED && article.isClientSiteArticle
+        ? ArticleStatus.PUBLISHED_ON_CLIENT_SITE
+        : requestedStatus;
 
     if (article.status !== expectedFrom) {
       return {
@@ -69,7 +81,11 @@ export async function transitionArticleAction(
     }
 
     // Transition-to-PUBLISHED gates — quality checks that must pass before going live.
-    if (toStatus === ArticleStatus.PUBLISHED) {
+    // Both destinations pass through them: an article on the client's domain is held to
+    // the same standard as one on ours, because our name is on it either way.
+    const isGoingLive =
+      toStatus === ArticleStatus.PUBLISHED || toStatus === ArticleStatus.PUBLISHED_ON_CLIENT_SITE;
+    if (isGoingLive) {
       // Single publish gate: generate the live JSON-LD + metadata, then score THAT with the
       // shared scorer (real SEO) — blocks a page whose real SEO fails, not just empty fields.
       const gate = await assertArticlePublishable(articleId);
@@ -121,7 +137,7 @@ export async function transitionArticleAction(
 
     // Publishing sends an article out to the world; every other move decides whose desk it
     // sits on. Both are worth a name — log the move, not just the fact that it moved.
-    await logAction(toStatus === ArticleStatus.PUBLISHED ? "article.publish" : "article.transition", {
+    await logAction(isGoingLive ? "article.publish" : "article.transition", {
       entity: "Article",
       entityId: articleId,
       summary: article.title,
@@ -130,6 +146,9 @@ export async function transitionArticleAction(
 
     // PUBLISHED side effects: regenerate fresh JSON-LD + metadata, then notify search engines.
     // Best-effort: each step is wrapped so failure of one doesn't block the others.
+    // IndexNow is deliberately NOT sent for a client-site article: the URL lives on
+    // their domain, and we are not the verified owner of it — the ping would be rejected
+    // at best and wrong at worst. Their sitemap on their host is what gets it indexed.
     if (toStatus === ArticleStatus.PUBLISHED) {
       // JSON-LD + metadata were already generated (indexable, with publish date) by the
       // publish gate above — no need to regenerate here.

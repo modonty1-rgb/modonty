@@ -102,7 +102,16 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
 
   return (
     <>
-      <Card className="overflow-hidden p-0 shadow-sm transition-shadow hover:shadow-md">
+      {/* An article written for the client's own website is marked wherever they meet
+          it — this is the screen where they approve it, and «where does this get
+          published» is the one thing they must not have to guess. */}
+      <Card
+        className={`overflow-hidden p-0 shadow-sm transition-shadow hover:shadow-md ${
+          article.isClientSiteArticle
+            ? "border-violet-300 bg-violet-50/60 dark:border-violet-800 dark:bg-violet-950/30"
+            : ""
+        }`}
+      >
         <div className="flex flex-col gap-4 p-4 sm:flex-row">
           {/* ─── Side thumbnail ─────────────────────────────────────── */}
           {article.featuredImage ? (
@@ -128,6 +137,11 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
           <div className="flex min-w-0 flex-1 flex-col gap-2">
             {/* Top row: status + category */}
             <div className="flex flex-wrap items-center gap-2">
+              {article.isClientSiteArticle && (
+                <span className="rounded-full bg-violet-100 px-2.5 py-0.5 text-xs font-bold text-violet-700 ring-1 ring-violet-300 dark:bg-violet-900/60 dark:text-violet-200 dark:ring-violet-800">
+                  ينشر على موقعك
+                </span>
+              )}
               <span
                 className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
                   isPending

@@ -5,6 +5,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
+import { hasLeftForClientSite, CLIENT_SITE_LOCK_MESSAGE } from "../../../helpers/client-site-guard";
 
 export async function deleteArticle(id: string) {
   try {
@@ -12,7 +13,22 @@ export async function deleteArticle(id: string) {
 
     // Read the title BEFORE the row is gone — afterwards there is nothing left to name it
     // by, and "deleted article 6a53…" tells the reader nothing.
-    const doomed = await db.article.findUnique({ where: { id }, select: { title: true, status: true } });
+    const doomed = await db.article.findUnique({
+      where: { id },
+      select: {
+        title: true,
+        status: true,
+        isClientSiteArticle: true,
+        lastFetchedAt: true,
+      },
+    });
+
+    if (!doomed) return { success: false, error: "المقال غير موجود" };
+
+    // Live on the client's own domain → not ours to delete.
+    if (hasLeftForClientSite(doomed)) {
+      return { success: false, error: CLIENT_SITE_LOCK_MESSAGE };
+    }
 
     await Promise.all([
       db.articleTag.deleteMany({ where: { articleId: id } }),

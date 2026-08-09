@@ -71,6 +71,11 @@ export const clientServerSchema = z.object({
   competitiveMentionsAllowed: z.boolean().optional().nullable(),
   isFeatured: z.boolean().optional().nullable(), // featured/premium partner spotlight
   showSchedule: z.boolean().optional().nullable(), // client sees the «مجدولة» tab
+  // Publishing to the client's own website. The key itself is never accepted from
+  // the form — it is generated server-side, so it is deliberately absent here.
+  canPublishToOwnSite: z.boolean().optional().nullable(),
+  articlesBaseUrl: z.string().optional().nullable(),
+  apiKeySuspended: z.boolean().optional().nullable(),
   isInternal: z.boolean().optional().nullable(), // platform/demo account — excluded from billing
   billingCycle: z.enum(["monthly", "annual"]).optional().nullable(), // client-owned billing period
 

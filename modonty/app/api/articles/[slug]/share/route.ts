@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { SharePlatform } from "@prisma/client";
+import { SharePlatform, ArticleStatus } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
 import { notifyTelegram } from "@/lib/telegram/notify";
 import { trackArticleShare } from "@/lib/analytics/events-registry";
@@ -30,7 +30,7 @@ export async function POST(
     const { platform } = body;
 
     const article = await db.article.findFirst({
-      where: { slug },
+      where: { slug, status: ArticleStatus.PUBLISHED },
       select: {
         id: true,
         clientId: true,

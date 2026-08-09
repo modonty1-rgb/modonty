@@ -21,6 +21,7 @@ interface TechnicalArticleRow {
   status: ArticleStatus;
   datePublished: Date | null;
   updatedAt: Date;
+  isClientSiteArticle: boolean;
   client: { name: string };
   seoTitle: string | null;
   seoDescription: string | null;
@@ -61,6 +62,7 @@ export default async function TechnicalReviewListPage() {
       status: true,
       datePublished: true,
       updatedAt: true,
+      isClientSiteArticle: true,
       client: { select: { name: true } },
       seoTitle: true,
       seoDescription: true,
@@ -172,7 +174,10 @@ export default async function TechnicalReviewListPage() {
                       </Badge>
                     </div>
                     <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground flex-wrap">
-                      <span>{a.client?.name || "—"}</span>
+                      <span className="inline-flex items-center gap-1.5">
+                        {a.isClientSiteArticle && <span className="inline-flex shrink-0 items-center rounded bg-violet-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet-700 dark:bg-violet-900/60 dark:text-violet-300">Client site</span>}
+                        <span>{a.client?.name || "—"}</span>
+                      </span>
                       <span>·</span>
                       <span>
                         {a.datePublished

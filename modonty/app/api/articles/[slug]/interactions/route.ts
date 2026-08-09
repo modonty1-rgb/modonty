@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getArticleInteractions } from "../../../helpers/interaction-queries";
 import type { ApiResponse, InteractionCounts } from "@/lib/types";
+// Interactions belong to articles published on modonty. An article written for a
+// client's own site lives under a different status and must not collect likes here.
+import { ArticleStatus } from "@prisma/client";
 
 export async function GET(
   request: NextRequest,
@@ -12,7 +15,7 @@ export async function GET(
 
     // Find article by slug to get ID
     const article = await db.article.findFirst({
-      where: { slug },
+      where: { slug, status: ArticleStatus.PUBLISHED },
       select: { id: true },
     });
 

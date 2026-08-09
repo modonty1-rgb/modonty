@@ -31,6 +31,7 @@ export async function exportArticlesToCSV(filters?: ArticleFilters): Promise<str
       ArticleStatus.NEEDS_REVISION,
       ArticleStatus.SCHEDULED,
       ArticleStatus.PUBLISHED,
+      ArticleStatus.PUBLISHED_ON_CLIENT_SITE,
       ArticleStatus.ARCHIVED,
     ];
     

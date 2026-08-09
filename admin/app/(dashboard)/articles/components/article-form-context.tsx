@@ -39,6 +39,10 @@ type ArticleClient = {
   id: string;
   name: string;
   slug?: string;
+  // Client-site publishing: which clients may receive an article on their own domain,
+  // and the base every one of their canonical URLs is built from.
+  canPublishToOwnSite?: boolean;
+  articlesBaseUrl?: string | null;
   logoMediaId?: string | null;
   logoMedia?: {
     url: string;
@@ -153,6 +157,9 @@ const initialFormData: ArticleFormData = {
   status: 'WRITING',
   featured: false,
   scheduledAt: null,
+  // Modonty is the default destination; only the «Client Articles» section flips it,
+  // by seeding initialData.
+  isClientSiteArticle: false,
   
   // Schema.org Article - Core Fields
   datePublished: null,

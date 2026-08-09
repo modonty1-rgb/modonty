@@ -9,6 +9,7 @@ import { DashboardLayoutClient } from "./components/dashboard-layout-client";
 import { ImpersonationBanner } from "./components/impersonation-banner";
 import { AccountNotice } from "./dashboard/components/account-notice";
 import { getPendingArticlesCount } from "./dashboard/articles/helpers/article-queries";
+import { hasSiteArticles } from "./dashboard/site-articles/helpers/load-site-articles";
 import { getPendingCommentsCount } from "./dashboard/comments/helpers/comment-queries";
 import { getPendingQuestionsCount } from "./dashboard/questions/helpers/question-queries";
 import { getSubscribersCount } from "./dashboard/subscribers/helpers/subscriber-queries";
@@ -42,7 +43,7 @@ export default async function DashboardLayout({
   const clientId = (session as { clientId?: string }).clientId!;
   const impersonated = (session as { impersonated?: boolean }).impersonated ?? false;
 
-  const [client, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingPageFaqsCount, pendingClientCommentsCount, pendingClientReviewsCount, mediaCounts] =
+  const [client, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingPageFaqsCount, pendingClientCommentsCount, pendingClientReviewsCount, mediaCounts, clientHasSiteArticles] =
     await Promise.all([
       db.client.findUnique({
         where: { id: clientId },
@@ -87,6 +88,7 @@ export default async function DashboardLayout({
       getPendingClientCommentsCount(clientId),
       getPendingClientReviewsCount(clientId),
       getMediaSectionCounts(clientId),
+      hasSiteArticles(clientId),
     ]);
   const pendingFaqsCount = faqStats.pending;
   const clientLogoUrl = mediaSrc(client?.logoMedia);
@@ -151,6 +153,7 @@ export default async function DashboardLayout({
       isYmyl={isYmyl}
       ymylComplete={ymylComplete}
       publicPageUrl={publicPageUrl}
+      hasSiteArticles={clientHasSiteArticles}
     >
       {children}
     </DashboardLayoutClient>

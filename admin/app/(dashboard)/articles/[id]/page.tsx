@@ -20,6 +20,7 @@ import {
   Search,
   Settings,
   FolderOpen,
+  Globe,
 } from "lucide-react";
 import { ArchiveArticleButton } from "./components/archive-article-button";
 import { ArticleLoadError } from "./components/article-load-error";
@@ -98,6 +99,36 @@ export default async function ArticleViewPage({ params }: { params: Promise<{ id
           </div>
         </div>
       </div>
+
+      {/* ── Destination — only for an article headed to the client's website ──
+          Same statement the editor carries. Without it this screen looks identical to a
+          modonty article, and the writer arrives here first. */}
+      {a.isClientSiteArticle && (
+        <div
+          className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-violet-300/60 bg-violet-50 px-3 py-2 dark:border-violet-800/60 dark:bg-violet-950/40"
+          role="status"
+        >
+          <Globe className="h-3.5 w-3.5 shrink-0 text-violet-600 dark:text-violet-400" />
+          <span className="text-[11px] font-bold uppercase tracking-wider text-violet-700 dark:text-violet-300">
+            Client site
+          </span>
+          <span className="text-violet-400 dark:text-violet-600" aria-hidden="true">·</span>
+          <span className="text-xs font-medium text-violet-900 dark:text-violet-100" dir="auto">
+            {a.client?.name}
+          </span>
+          <span className="text-violet-400 dark:text-violet-600" aria-hidden="true">·</span>
+          <code
+            className="rounded bg-violet-100 px-1.5 py-0.5 font-mono text-[11px] text-violet-800 dark:bg-violet-900/60 dark:text-violet-200"
+            dir="ltr"
+          >
+            {a.canonicalUrl ?? "—"}
+          </code>
+          <span className="text-violet-400 dark:text-violet-600" aria-hidden="true">·</span>
+          <span className="text-[11px] text-violet-700/80 dark:text-violet-300/80">
+            Not published on modonty.com
+          </span>
+        </div>
+      )}
 
       {/* ── Quick Stats ── */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground border rounded-lg p-3 bg-muted/30">
