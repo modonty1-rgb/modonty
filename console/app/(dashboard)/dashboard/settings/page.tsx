@@ -5,11 +5,11 @@ import { ar } from "@/lib/ar";
 import { Info } from "lucide-react";
 import { SettingsForm } from "./components/settings-form";
 import { ChangePasswordForm } from "./components/change-password-form";
-import {
-  SubscriptionCard,
-  type SubscriptionData,
-} from "./components/subscription-card";
+import { SubscriptionCard } from "./components/subscription-card";
+import { PullAddressPanel } from "./components/pull-address-panel";
+import { SiteSeoCheck } from "./components/site-seo-check";
 import { TelegramCard } from "./components/telegram-card";
+import type { SubscriptionData } from "@/lib/subscription";
 import type { NotificationPreferences } from "./actions/settings-actions";
 import type { TelegramEventPreferences } from "@/lib/telegram/events";
 
@@ -33,6 +33,12 @@ export default async function SettingsPage() {
       telegramChatId: true,
       telegramConnectedAt: true,
       telegramEventPreferences: true,
+      // The pull addresses live here now: a developer sets them up once, which is a
+      // settings job, not something the articles list should carry every day.
+      canPublishToOwnSite: true,
+      articlesBaseUrl: true,
+      apiKeySuspended: true,
+      apiKeyLastUsedAt: true,
     },
   });
   if (!client) redirect("/");
@@ -68,6 +74,24 @@ export default async function SettingsPage() {
       </header>
 
       <SubscriptionCard data={subscription} />
+      {client.canPublishToOwnSite && (
+        <>
+          <PullAddressPanel
+            clientId={clientId}
+            articlesBaseUrl={client.articlesBaseUrl}
+            suspended={client.apiKeySuspended}
+            lastFetchedAt={
+              client.apiKeyLastUsedAt
+                ? new Intl.DateTimeFormat("ar-SA", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  }).format(client.apiKeyLastUsedAt)
+                : null
+            }
+          />
+          {client.articlesBaseUrl && <SiteSeoCheck articlesBaseUrl={client.articlesBaseUrl} />}
+        </>
+      )}
       <SettingsForm initial={prefs} />
       <TelegramCard
         isConnected={!!client.telegramChatId}

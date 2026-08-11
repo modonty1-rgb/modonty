@@ -7,11 +7,12 @@ import { MobileSidebar } from "./mobile-sidebar";
 import { FirstTimeWelcome } from "./first-time-welcome";
 import { cn } from "@/lib/utils";
 
+import type { SidebarSubscriptionProps } from "./sidebar-subscription";
+
 interface DashboardLayoutClientProps {
   clientName: string;
   clientLogoUrl: string | null;
   pendingArticlesCount: number;
-  hasSiteArticles: boolean;
   pendingCommentsCount: number;
   pendingQuestionsCount: number;
   subscribersCount: number;
@@ -28,6 +29,8 @@ interface DashboardLayoutClientProps {
   isYmyl: boolean;
   ymylComplete: boolean;
   publicPageUrl: string | null;
+  /** Plan block pinned in the sidebar foot, derived on the server. */
+  subscription: Omit<SidebarSubscriptionProps, "isCollapsed">;
   /** Account state notice — rendered above every page, or nothing when all is settled. */
   accountNotice?: React.ReactNode;
   children: React.ReactNode;
@@ -37,7 +40,6 @@ export function DashboardLayoutClient({
   clientName,
   clientLogoUrl,
   pendingArticlesCount,
-  hasSiteArticles,
   pendingCommentsCount,
   pendingQuestionsCount,
   subscribersCount,
@@ -54,6 +56,7 @@ export function DashboardLayoutClient({
   isYmyl,
   ymylComplete,
   publicPageUrl,
+  subscription,
   accountNotice,
   children,
 }: DashboardLayoutClientProps) {
@@ -67,7 +70,6 @@ export function DashboardLayoutClient({
         clientName={clientName}
         clientLogoUrl={clientLogoUrl}
         pendingArticlesCount={pendingArticlesCount}
-        hasSiteArticles={hasSiteArticles}
         subscribersCount={subscribersCount}
         leadsCount={leadsCount}
         newBookingsCount={newBookingsCount}
@@ -81,6 +83,7 @@ export function DashboardLayoutClient({
         isYmyl={isYmyl}
         ymylComplete={ymylComplete}
         publicPageUrl={publicPageUrl}
+        subscription={subscription}
         isCollapsed={isSidebarCollapsed}
         onCollapsedChange={setIsSidebarCollapsed}
       />
@@ -101,6 +104,7 @@ export function DashboardLayoutClient({
         isYmyl={isYmyl}
         ymylComplete={ymylComplete}
         publicPageUrl={publicPageUrl}
+        subscription={subscription}
         isOpen={isMobileOpen}
         onOpenChange={setIsMobileOpen}
       />

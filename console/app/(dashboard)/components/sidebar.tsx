@@ -5,39 +5,20 @@ import { useState } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { ar } from "@/lib/ar";
-import {
-  Newspaper,
-  PenLine,
-  Images,
-  Film,
-  Video,
-  ImagePlus,
-  LayoutTemplate,
-  Megaphone,
-  Mail,
-  UserPlus,
-  CalendarCheck,
-  ChevronLeft,
-  LogOut,
-  Building2,
-  Sparkles,
-  HelpCircle,
-  MessageCircleQuestion,
-  Quote,
-  Star,
-  Activity,
-  Receipt,
-  Globe,
-} from "lucide-react";
+import { ChevronLeft, LogOut, Settings } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
+import { SidebarGroups } from "./sidebar-groups";
+import { buildNavGroups, buildPinnedNavItems, SITE_HEALTH_ITEM } from "./nav-config";
 import { PublicPageLink } from "./public-page-link";
+import { SidebarSubscription } from "./sidebar-subscription";
+import { SidebarIconLink } from "./sidebar-icon-link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+import type { SidebarSubscriptionProps } from "./sidebar-subscription";
+
 interface SidebarProps {
   clientName: string;
-  /** Only shown once an article is actually live on their site — no article, no screen. */
-  hasSiteArticles: boolean;
   clientLogoUrl: string | null;
   pendingArticlesCount: number;
   subscribersCount: number;
@@ -53,13 +34,13 @@ interface SidebarProps {
   isYmyl: boolean;
   ymylComplete: boolean;
   publicPageUrl: string | null;
+  subscription: Omit<SidebarSubscriptionProps, "isCollapsed">;
   isCollapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
 }
 
 export function Sidebar({
   clientName,
-  hasSiteArticles,
   clientLogoUrl,
   pendingArticlesCount,
   subscribersCount,
@@ -75,11 +56,30 @@ export function Sidebar({
   isYmyl,
   ymylComplete,
   publicPageUrl,
+  subscription,
   isCollapsed: isCollapsedProp,
   onCollapsedChange,
 }: SidebarProps) {
   const [isCollapsedInternal, setIsCollapsedInternal] = useState(false);
   const isCollapsed = onCollapsedChange ? (isCollapsedProp ?? false) : isCollapsedInternal;
+
+  const navCounts = {
+    pendingArticlesCount,
+    subscribersCount,
+    leadsCount,
+    newBookingsCount,
+    pendingFaqsCount,
+    pendingPageFaqsCount,
+    pendingClientCommentsCount,
+    pendingClientReviewsCount,
+    galleryCount,
+    reelsCount,
+    videosCount,
+    isYmyl,
+    ymylComplete,
+  };
+  const pinnedItems = buildPinnedNavItems(navCounts);
+  const navGroups = buildNavGroups(navCounts);
 
   function setCollapsed(value: boolean) {
     if (onCollapsedChange) {
@@ -152,162 +152,50 @@ export function Sidebar({
         <PublicPageLink url={publicPageUrl} variant="sidebar" isCollapsed={isCollapsed} />
       </div>
 
-      <nav className="flex-1 space-y-0.5 overflow-y-auto p-2">
-        <SidebarNavItem
-          href="/dashboard/profile"
-          icon={Building2}
-          label={ar.nav.profile}
-          badgeLabel={isYmyl ? "YMYL" : undefined}
-          badgeVariant={isYmyl ? (ymylComplete ? "success" : "danger") : undefined}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/seo"
-          icon={Sparkles}
-          label={ar.nav.seo}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/page-content"
-          icon={LayoutTemplate}
-          label={ar.nav.pageContent}
-          isCollapsed={isCollapsed}
-        />
-        {/* The three media sections all carry a plain item count — a section that holds
-            something must never read zero (Khalid 2026-08-05). */}
-        <SidebarNavItem
-          href="/dashboard/gallery"
-          icon={ImagePlus}
-          label={ar.nav.gallery}
-          badge={galleryCount}
-          isCollapsed={isCollapsed}
-        />
-        {/* Its own section, right after the gallery it feeds from (Khalid 2026-08-04).
-            Split in two (ق8): the two uploads have nothing in common. */}
-        <SidebarNavItem
-          href="/dashboard/reels"
-          icon={Film}
-          label={ar.nav.reels}
-          badge={reelsCount}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/videos"
-          icon={Video}
-          label={ar.nav.videos}
-          badge={videosCount}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/page-faq"
-          icon={MessageCircleQuestion}
-          label={ar.nav.pageFaq}
-          badge={pendingPageFaqsCount}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/articles"
-          icon={Newspaper}
-          label={ar.nav.articles}
-          badge={pendingArticlesCount}
-          isCollapsed={isCollapsed}
-        />
-        {hasSiteArticles && (
-          <SidebarNavItem
-            href="/dashboard/site-articles"
-            icon={Globe}
-            label={ar.nav.siteArticles}
-            isCollapsed={isCollapsed}
-          />
-        )}
-        <SidebarNavItem
-          href="/dashboard/content"
-          icon={PenLine}
-          label={ar.nav.content}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/media"
-          icon={Images}
-          label={ar.nav.media}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/campaigns"
-          icon={Megaphone}
-          label={ar.nav.campaigns}
-          badgeLabel={ar.campaigns.beta}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/subscribers"
-          icon={Mail}
-          label={ar.nav.subscribers}
-          badge={subscribersCount}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/leads"
-          icon={UserPlus}
-          label={ar.nav.leads}
-          badge={leadsCount}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/bookings"
-          icon={CalendarCheck}
-          label={ar.nav.bookings}
-          badge={newBookingsCount}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/faqs"
-          icon={HelpCircle}
-          label={ar.nav.faqs}
-          badge={pendingFaqsCount}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/client-comments"
-          icon={Quote}
-          label={ar.nav.clientComments}
-          badge={pendingClientCommentsCount}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/client-reviews"
-          icon={Star}
-          label={ar.nav.clientReviews}
-          badge={pendingClientReviewsCount}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/site-health"
-          icon={Activity}
-          label={ar.nav.siteHealth}
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/invoices"
-          icon={Receipt}
-          label={ar.nav.invoices}
-          isCollapsed={isCollapsed}
-        />
+      {/* Above the nav, not below it (Khalid 2026-08-11): anything under a scrolling list
+          can end up past the fold on a short window, and the plan is the one thing that
+          must be readable the moment the menu opens. */}
+      <SidebarSubscription {...subscription} isCollapsed={isCollapsed} />
+
+      <nav className="flex-1 overflow-y-auto p-2">
+        {/* Above the accordion and never inside it — the one screen the client opens daily. */}
+        <div className="mb-2 space-y-0.5 border-b border-border pb-2">
+          {pinnedItems.map((item) => (
+            <SidebarNavItem key={item.href} {...item} isCollapsed={isCollapsed} />
+          ))}
+        </div>
+
+        <SidebarGroups groups={navGroups} isCollapsed={isCollapsed} />
       </nav>
 
-      <div className="border-t border-border p-3">
+      {/* One fixed foot, outside the scrolling list (Khalid 2026-08-11). Settings and the
+          site check are icons only: rarely opened, and two labelled rows were enough to
+          put a scrollbar on the menu. Sign out keeps its word — it is the one action here
+          you must not hit by accident. */}
+      <div
+        className={cn(
+          "flex items-center gap-1 border-t border-border p-2",
+          isCollapsed && "flex-col"
+        )}
+      >
         <Button
           variant="ghost"
           size="sm"
           onClick={() => signOut({ callbackUrl: "/signed-out" })}
           className={cn(
-            "w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10",
-            isCollapsed && "justify-center px-0"
+            "text-destructive hover:bg-destructive/10 hover:text-destructive",
+            isCollapsed ? "w-full justify-center px-0" : "flex-1 justify-start"
           )}
         >
           <LogOut className="h-4 w-4" />
           {!isCollapsed && <span className="ms-2">{ar.nav.signOut}</span>}
         </Button>
+        <SidebarIconLink href="/dashboard/settings" icon={Settings} label={ar.nav.settings} />
+        <SidebarIconLink
+          href={SITE_HEALTH_ITEM.href}
+          icon={SITE_HEALTH_ITEM.icon}
+          label={SITE_HEALTH_ITEM.label}
+        />
       </div>
     </aside>
   );

@@ -18,6 +18,8 @@ interface SidebarNavItemProps {
    */
   badgeVariant?: "default" | "danger" | "success";
   isCollapsed?: boolean;
+  /** Half-width row: smaller type and padding so two fit side by side. */
+  isCompact?: boolean;
 }
 
 export function SidebarNavItem({
@@ -28,6 +30,7 @@ export function SidebarNavItem({
   badgeLabel,
   badgeVariant = "default",
   isCollapsed = false,
+  isCompact = false,
 }: SidebarNavItemProps) {
   const pathname = usePathname();
   const isActive = pathname === href || pathname.startsWith(`${href}/`);
@@ -36,7 +39,8 @@ export function SidebarNavItem({
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+        "flex items-center rounded-md font-medium transition-colors",
+        isCompact ? "gap-2 px-2 py-2 text-xs" : "gap-3 px-3 py-2 text-sm",
         "hover:bg-muted",
         isActive
           ? "bg-primary/10 text-primary"
@@ -45,10 +49,12 @@ export function SidebarNavItem({
       )}
       title={isCollapsed ? label : undefined}
     >
-      <Icon className={cn("h-5 w-5 shrink-0", isActive && "text-primary")} />
+      <Icon
+        className={cn("shrink-0", isCompact ? "h-4 w-4" : "h-5 w-5", isActive && "text-primary")}
+      />
       {!isCollapsed && (
         <>
-          <span className="flex-1">{label}</span>
+          <span className={cn("flex-1", isCompact && "truncate")}>{label}</span>
           {badgeLabel && (
             <span
               className={cn(

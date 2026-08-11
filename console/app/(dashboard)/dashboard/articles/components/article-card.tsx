@@ -38,6 +38,10 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
   const isPending = article.status === "AWAITING_APPROVAL";
   const isScheduled = article.status === "SCHEDULED";
   const isPublished = article.status === "PUBLISHED";
+  // Live on the client's own domain — so the «view» button must point there, never at
+  // `${siteUrl}/articles/...`, which for these articles is an address that does not exist.
+  const isOnClientSite = article.status === "PUBLISHED_ON_CLIENT_SITE";
+  const clientSiteUrl = article.canonicalUrl || article.mainEntityOfPage || null;
 
   // Computed values — derive reading time from word count to avoid stale data
   const readingTime = article.wordCount
@@ -139,24 +143,28 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
             <div className="flex flex-wrap items-center gap-2">
               {article.isClientSiteArticle && (
                 <span className="rounded-full bg-violet-100 px-2.5 py-0.5 text-xs font-bold text-violet-700 ring-1 ring-violet-300 dark:bg-violet-900/60 dark:text-violet-200 dark:ring-violet-800">
-                  ينشر على موقعك
+                  {isOnClientSite ? "منشور على موقعك" : "ينشر على موقعك"}
                 </span>
               )}
-              <span
-                className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  isPending
-                    ? "bg-amber-50 text-amber-700 ring-1 ring-amber-200"
+              {/* Dropped when the violet badge above already says «منشور على موقعك» —
+                  two pills, both reading "published", is noise. */}
+              {!isOnClientSite && (
+                <span
+                  className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    isPending
+                      ? "bg-amber-50 text-amber-700 ring-1 ring-amber-200"
+                      : isScheduled
+                        ? "bg-violet-50 text-violet-700 ring-1 ring-violet-200"
+                        : "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
+                  }`}
+                >
+                  {isPending
+                    ? ar.articles.pendingApprovalStatus
                     : isScheduled
-                      ? "bg-violet-50 text-violet-700 ring-1 ring-violet-200"
-                      : "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
-                }`}
-              >
-                {isPending
-                  ? ar.articles.pendingApprovalStatus
-                  : isScheduled
-                    ? ar.articles.statusScheduled
-                    : ar.articles.published}
-              </span>
+                      ? ar.articles.statusScheduled
+                      : ar.articles.published}
+                </span>
+              )}
               {article.category && (
                 <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                   {article.category.name}
@@ -266,6 +274,24 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
                 </Link>
               )}
               {/* SCHEDULED: no buttons — the violet banner above already shows everything the client needs (date / waiting state). */}
+              {isOnClientSite && (
+                <>
+                  {clientSiteUrl && (
+                    <a href={clientSiteUrl} target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" size="sm">
+                        <ExternalLink className="me-2 h-4 w-4" />
+                        عرض على موقعك
+                      </Button>
+                    </a>
+                  )}
+                  <Link href={`/dashboard/articles/${article.id}/preview`}>
+                    <Button variant="outline" size="sm">
+                      <Eye className="me-2 h-4 w-4" />
+                      {ar.articles.preview}
+                    </Button>
+                  </Link>
+                </>
+              )}
               {isPublished && (
                 <>
                   <a

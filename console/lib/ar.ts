@@ -63,7 +63,7 @@ export const ar = {
     seo: "معلومات نشاطك",
     articles: "المقالات",
     siteArticles: "مقالاتك على موقعك",
-    content: "نشاط المحتوى",
+    siteArticlesEnabledHint: "نشر مقالاتك على موقعك مفعّل",
     media: "الصور والملفات",
     analytics: "الإحصائيات",
     campaigns: "الحملات",
@@ -88,6 +88,11 @@ export const ar = {
     signOut: "تسجيل الخروج",
     expandSidebar: "توسيع القائمة",
     collapseSidebar: "طي القائمة",
+    // Group headings for the sidebar — twenty items in one column read as a wall.
+    groupBusiness: "نشاطك",
+    groupMedia: "الوسائط",
+    groupAudience: "جمهورك",
+    groupAccount: "حسابك",
   },
 
   header: {
@@ -210,6 +215,7 @@ export const ar = {
     noPending: "لا توجد مقالات بانتظار الموافقة. سنخبرك عند وصول مقالة جديدة.",
     noScheduled: "لا توجد مقالات مجدولة. ستظهر هنا بعد موافقتك — جاهزة للنشر من قِبل المحرر.",
     noPublished: "لا توجد مقالات منشورة بعد.",
+    noOnSite: "ما فيه مقال منشور على موقعك بعد. أول ما توافق على مقال وننشره، يظهر هنا.",
     noArticlesYet: "لا توجد مقالات بعد. ستظهر هنا عند إضافتها من فريق مودونتي.",
     scheduledFor: "موعد النشر",
     awaitingPublish: "بانتظار النشر من المحرر",

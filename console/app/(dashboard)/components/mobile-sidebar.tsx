@@ -5,33 +5,14 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { ar } from "@/lib/ar";
-import {
-  Newspaper,
-  PenLine,
-  Images,
-  Film,
-  Video,
-  ImagePlus,
-  LayoutTemplate,
-  Megaphone,
-  Mail,
-  UserPlus,
-  CalendarCheck,
-  LogOut,
-  Building2,
-  Sparkles,
-  HelpCircle,
-  MessageCircleQuestion,
-  Quote,
-  Star,
-  Activity,
-  Receipt,
-  LayoutDashboard,
-  Settings,
-  BookOpen,
-} from "lucide-react";
+import Link from "next/link";
+import { LogOut, Settings } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
+import { SidebarGroups } from "./sidebar-groups";
+import { buildNavGroups, buildPinnedNavItems, SITE_HEALTH_ITEM } from "./nav-config";
 import { PublicPageLink } from "./public-page-link";
+import { SidebarSubscription } from "./sidebar-subscription";
+import { SidebarIconLink } from "./sidebar-icon-link";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -39,6 +20,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+
+import type { SidebarSubscriptionProps } from "./sidebar-subscription";
 
 interface MobileSidebarProps {
   clientName: string;
@@ -57,6 +40,7 @@ interface MobileSidebarProps {
   isYmyl: boolean;
   ymylComplete: boolean;
   publicPageUrl: string | null;
+  subscription: Omit<SidebarSubscriptionProps, "isCollapsed">;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -78,6 +62,7 @@ export function MobileSidebar({
   isYmyl,
   ymylComplete,
   publicPageUrl,
+  subscription,
   isOpen,
   onOpenChange,
 }: MobileSidebarProps) {
@@ -87,11 +72,32 @@ export function MobileSidebar({
     onOpenChange(false);
   }, [pathname, onOpenChange]);
 
+  const navCounts = {
+    pendingArticlesCount,
+    subscribersCount,
+    leadsCount,
+    newBookingsCount,
+    pendingFaqsCount,
+    pendingPageFaqsCount,
+    pendingClientCommentsCount,
+    pendingClientReviewsCount,
+    galleryCount,
+    reelsCount,
+    videosCount,
+    isYmyl,
+    ymylComplete,
+  };
+  const pinnedItems = buildPinnedNavItems(navCounts);
+  const navGroups = buildNavGroups(navCounts);
+
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="flex w-64 flex-col p-0">
         <SheetHeader className="border-b border-border p-4">
-          <SheetTitle className="flex items-start gap-2 text-start">
+          {/* The name is the way back to the dashboard on phones — the header's own
+              dashboard link is `hidden sm:inline-block`, so without this there is none. */}
+          <SheetTitle asChild>
+            <Link href="/dashboard" className="flex items-start gap-2 text-start">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-primary/10 text-primary shadow-sm">
               {clientLogoUrl ? (
                 <OptimizedImage
@@ -108,9 +114,10 @@ export function MobileSidebar({
                 </span>
               )}
             </div>
-            <span className="min-w-0 flex-1 text-sm font-semibold leading-snug text-foreground break-words">
-              {clientName}
-            </span>
+              <span className="min-w-0 flex-1 text-sm font-semibold leading-snug text-foreground break-words">
+                {clientName}
+              </span>
+            </Link>
           </SheetTitle>
         </SheetHeader>
 
@@ -120,171 +127,37 @@ export function MobileSidebar({
           <PublicPageLink url={publicPageUrl} variant="sidebar" />
         </div>
 
-        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-          <SidebarNavItem
-            href="/dashboard/profile"
-            icon={Building2}
-            label={ar.nav.profile}
-            badgeLabel={isYmyl ? "YMYL" : undefined}
-            badgeVariant={isYmyl ? (ymylComplete ? "success" : "danger") : undefined}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/seo"
-            icon={Sparkles}
-            label={ar.nav.seo}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/page-content"
-            icon={LayoutTemplate}
-            label={ar.nav.pageContent}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/gallery"
-            icon={ImagePlus}
-            label={ar.nav.gallery}
-            badge={galleryCount}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/reels"
-            icon={Film}
-            label={ar.nav.reels}
-            badge={reelsCount}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/videos"
-            icon={Video}
-            label={ar.nav.videos}
-            badge={videosCount}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/page-faq"
-            icon={MessageCircleQuestion}
-            label={ar.nav.pageFaq}
-            badge={pendingPageFaqsCount}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/articles"
-            icon={Newspaper}
-            label={ar.nav.articles}
-            badge={pendingArticlesCount}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/content"
-            icon={PenLine}
-            label={ar.nav.content}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/media"
-            icon={Images}
-            label={ar.nav.media}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/campaigns"
-            icon={Megaphone}
-            label={ar.nav.campaigns}
-            badgeLabel={ar.campaigns.beta}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/subscribers"
-            icon={Mail}
-            label={ar.nav.subscribers}
-            badge={subscribersCount}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/leads"
-            icon={UserPlus}
-            label={ar.nav.leads}
-            badge={leadsCount}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/bookings"
-            icon={CalendarCheck}
-            label={ar.nav.bookings}
-            badge={newBookingsCount}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/faqs"
-            icon={HelpCircle}
-            label={ar.nav.faqs}
-            badge={pendingFaqsCount}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/client-comments"
-            icon={Quote}
-            label={ar.nav.clientComments}
-            badge={pendingClientCommentsCount}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/client-reviews"
-            icon={Star}
-            label={ar.nav.clientReviews}
-            badge={pendingClientReviewsCount}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/site-health"
-            icon={Activity}
-            label={ar.nav.siteHealth}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/invoices"
-            icon={Receipt}
-            label={ar.nav.invoices}
-            isCollapsed={false}
-          />
+        {/* Same reason as the desktop rail: never below a scrolling list. */}
+        <SidebarSubscription {...subscription} />
+
+        <nav className="flex-1 overflow-y-auto p-3">
+          <div className="mb-2 space-y-0.5 border-b border-border pb-2">
+            {pinnedItems.map((item) => (
+              <SidebarNavItem key={item.href} {...item} isCollapsed={false} />
+            ))}
+          </div>
+
+          <SidebarGroups groups={navGroups} />
         </nav>
 
-        {/* Settings, the guide and the dashboard link live in the top header, which hides
-            them below 640px (`hidden sm:inline-block`). Without these rows a phone user
-            could not reach Settings at all — a client reported exactly that. */}
-        <div className="space-y-1 border-t border-border p-3">
-          <SidebarNavItem
-            href="/dashboard"
-            icon={LayoutDashboard}
-            label={ar.nav.dashboard}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/settings"
-            icon={Settings}
-            label={ar.nav.settings}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/help"
-            icon={BookOpen}
-            label="دليل الاستخدام"
-            isCollapsed={false}
-          />
-        </div>
-
-        <div className="border-t border-border p-3">
+        {/* Same foot as the desktop rail: icons for the two utilities, a worded button for
+            sign out. The dashboard is one tap away on the client name above. */}
+        <div className="flex items-center gap-1 border-t border-border p-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => signOut({ callbackUrl: "/signed-out" })}
-            className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+            className="flex-1 justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
             <LogOut className="h-4 w-4" />
             <span className="ms-2">{ar.nav.signOut}</span>
           </Button>
+          <SidebarIconLink href="/dashboard/settings" icon={Settings} label={ar.nav.settings} />
+          <SidebarIconLink
+            href={SITE_HEALTH_ITEM.href}
+            icon={SITE_HEALTH_ITEM.icon}
+            label={SITE_HEALTH_ITEM.label}
+          />
         </div>
       </SheetContent>
     </Sheet>

@@ -85,7 +85,6 @@ export async function approveArticle(articleId: string, clientId: string) {
     });
 
     revalidatePath("/dashboard/articles");
-    revalidatePath("/dashboard/content");
     revalidatePath("/dashboard");
 
     return { success: true };

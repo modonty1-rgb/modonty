@@ -5,11 +5,19 @@ import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/database/lib/media-src";
 import { getYmylAuthorityCodes } from "@modonty/database/lib/seo/ymyl-authorities";
 import { isYmylClientComplete } from "@/lib/seo/ymyl-helpers";
+import {
+  statusLabel,
+  paymentLabel,
+  subscriptionProgress,
+  formatSubscriptionDate,
+} from "@/lib/subscription";
 import { DashboardLayoutClient } from "./components/dashboard-layout-client";
 import { ImpersonationBanner } from "./components/impersonation-banner";
 import { AccountNotice } from "./dashboard/components/account-notice";
-import { getPendingArticlesCount } from "./dashboard/articles/helpers/article-queries";
-import { hasSiteArticles } from "./dashboard/site-articles/helpers/load-site-articles";
+import {
+  getPendingArticlesCount,
+  canSeeSiteArticles,
+} from "./dashboard/articles/helpers/article-queries";
 import { getPendingCommentsCount } from "./dashboard/comments/helpers/comment-queries";
 import { getPendingQuestionsCount } from "./dashboard/questions/helpers/question-queries";
 import { getSubscribersCount } from "./dashboard/subscribers/helpers/subscriber-queries";
@@ -43,7 +51,7 @@ export default async function DashboardLayout({
   const clientId = (session as { clientId?: string }).clientId!;
   const impersonated = (session as { impersonated?: boolean }).impersonated ?? false;
 
-  const [client, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingPageFaqsCount, pendingClientCommentsCount, pendingClientReviewsCount, mediaCounts, clientHasSiteArticles] =
+  const [client, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingPageFaqsCount, pendingClientCommentsCount, pendingClientReviewsCount, mediaCounts, clientCanSeeSiteArticles] =
     await Promise.all([
       db.client.findUnique({
         where: { id: clientId },
@@ -64,6 +72,13 @@ export default async function DashboardLayout({
           // Feeds the account notice — it lives in the layout so it follows the client
           // to every page, not just the dashboard home (Khalid 2026-07-24).
           subscriptionEndDate: true,
+          // Feeds the plan block pinned in the sidebar foot — same fields the settings
+          // card reads, so the two can never show a different plan or a different count.
+          subscriptionTier: true,
+          subscriptionStatus: true,
+          paymentStatus: true,
+          subscriptionStartDate: true,
+          subscriptionTierConfig: { select: { name: true } },
           invoices: {
             // `archivedAt: null` matches nothing on Mongo for rows written before the
             // field existed — it must be paired with `isSet: false` or the notice goes
@@ -88,7 +103,7 @@ export default async function DashboardLayout({
       getPendingClientCommentsCount(clientId),
       getPendingClientReviewsCount(clientId),
       getMediaSectionCounts(clientId),
-      hasSiteArticles(clientId),
+      canSeeSiteArticles(clientId),
     ]);
   const pendingFaqsCount = faqStats.pending;
   const clientLogoUrl = mediaSrc(client?.logoMedia);
@@ -122,6 +137,20 @@ export default async function DashboardLayout({
   const clientName = client?.name ?? ar.common.clientFallback;
   const openInvoices = client?.invoices ?? [];
 
+  // Derived on the server: the sidebar is a client component, and computing "days left"
+  // there would let the rendered number depend on the visitor's clock.
+  const subscription = {
+    tierName: client?.subscriptionTierConfig?.name ?? client?.subscriptionTier ?? "—",
+    status: statusLabel(client?.subscriptionStatus ?? null),
+    payment: paymentLabel(client?.paymentStatus ?? null),
+    progress: subscriptionProgress(
+      client?.subscriptionStartDate ?? null,
+      client?.subscriptionEndDate ?? null
+    ),
+    endDate: formatSubscriptionDate(client?.subscriptionEndDate ?? null),
+    siteArticlesEnabled: clientCanSeeSiteArticles,
+  };
+
   return (
     <>
       {impersonated && <ImpersonationBanner clientName={clientName} />}
@@ -153,7 +182,7 @@ export default async function DashboardLayout({
       isYmyl={isYmyl}
       ymylComplete={ymylComplete}
       publicPageUrl={publicPageUrl}
-      hasSiteArticles={clientHasSiteArticles}
+      subscription={subscription}
     >
       {children}
     </DashboardLayoutClient>

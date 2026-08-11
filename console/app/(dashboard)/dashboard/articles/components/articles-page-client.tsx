@@ -7,14 +7,24 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { ArticleCard } from "./article-card";
-import { FileText, CheckCircle, List, CalendarClock } from "lucide-react";
+import { SiteArticlesUpsell } from "./site-articles-upsell";
+import { MonthlyQuotaBar } from "./monthly-quota-bar";
+import { FileText, CheckCircle, List, CalendarClock, Globe } from "lucide-react";
 import type { ArticleWithAllData } from "../helpers/article-queries";
 
 interface ArticlesPageClientProps {
   pendingArticles: ArticleWithAllData[];
   publishedArticles: ArticleWithAllData[];
   allArticles: ArticleWithAllData[];
+  /** Published on the client's OWN website — never on modonty.com. */
+  siteArticles: ArticleWithAllData[];
+  /** The publishing permission — it, not the count, decides whether the tab exists. */
+  canSeeSiteArticles: boolean;
   pendingCount: number;
+  /** Quota strip — «نشاط المحتوى» folded into this page (Khalid 2026-08-11). */
+  monthlyPublished: number;
+  monthlyQuota: number;
+  quotaResetDate: string;
   initialTab: string;
   siteUrl: string;
   /** Admin switch — off hides the «مجدولة» tab from this client entirely. */
@@ -25,7 +35,12 @@ export function ArticlesPageClient({
   pendingArticles,
   publishedArticles,
   allArticles,
+  siteArticles,
+  canSeeSiteArticles,
   pendingCount,
+  monthlyPublished,
+  monthlyQuota,
+  quotaResetDate,
   initialTab,
   siteUrl,
   showSchedule,
@@ -55,17 +70,32 @@ export function ArticlesPageClient({
           },
         ]
       : []),
+    // Every tab carries its own number now that «نشاط المحتوى» is gone — the four stat
+    // cards that page held said nothing the tab strip cannot say in place (Khalid 2026-08-11).
     {
       id: "published",
       label: ar.articles.published,
+      count: publishedArticles.length,
       icon: CheckCircle,
       articles: publishedArticles,
     },
     {
       id: "all",
       label: ar.articles.allArticles,
+      count: allArticles.length,
       icon: List,
       articles: allArticles,
+    },
+    // Its own tab rather than its own screen (Khalid 2026-08-11): the client reads all
+    // their work in one place, and these rows get the same card — image, tags, stats —
+    // instead of the bare title-and-link list they had before. Shown to every client:
+    // without the permission it carries the offer instead of a list.
+    {
+      id: "on-site",
+      label: ar.nav.siteArticles,
+      count: canSeeSiteArticles ? siteArticles.length : 0,
+      icon: Globe,
+      articles: canSeeSiteArticles ? siteArticles : [],
     },
   ];
 
@@ -83,6 +113,12 @@ export function ArticlesPageClient({
           {ar.articles.manageApproveArticles}
         </p>
       </div>
+
+      <MonthlyQuotaBar
+        published={monthlyPublished}
+        quota={monthlyQuota}
+        resetDate={quotaResetDate}
+      />
 
       {/* The four labels do not fit a 390px phone: as a plain flex row they were being
           squeezed until "بانتظار الموافقة" wrapped and the last tab was cut to "ال"
@@ -124,7 +160,9 @@ export function ArticlesPageClient({
       </div>
 
       <div>
-        {activeTabData.articles.length === 0 ? (
+        {activeTab === "on-site" && !canSeeSiteArticles ? (
+          <SiteArticlesUpsell />
+        ) : activeTabData.articles.length === 0 ? (
           <Card className="shadow-sm">
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground">
@@ -134,7 +172,9 @@ export function ArticlesPageClient({
                     ? ar.articles.noScheduled ?? "لا توجد مقالات مجدولة. ستظهر هنا بعد موافقتك."
                     : activeTab === "published"
                       ? ar.articles.noPublished
-                      : ar.articles.noArticlesYet}
+                      : activeTab === "on-site"
+                        ? ar.articles.noOnSite
+                        : ar.articles.noArticlesYet}
               </p>
             </CardContent>
           </Card>
