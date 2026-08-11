@@ -64,6 +64,7 @@ export function ArticleFormHeader() {
     articleId,
     overallProgress,
     realSeoScore,
+    lastAutoSaved,
   } = useArticleForm();
 
   const { toast } = useToast();
@@ -228,6 +229,16 @@ export function ArticleFormHeader() {
                   افتح دليل السيو — وين الخلل وكيف تصلحه
                 </TooltipContent>
               </Tooltip>
+            )}
+
+            {/* The auto-save fires every 30s and clears the dirty flag, which greys the
+                button out. Without this line the writer sees a dead button seconds after
+                formatting something and concludes his work was lost — it was already saved. */}
+            {!isDirty && !isSaving && lastAutoSaved && (
+              <span className="hidden items-center gap-1.5 text-[11px] text-muted-foreground sm:flex">
+                <Check className="h-3 w-3 text-emerald-500" />
+                حُفظ تلقائياً {new Intl.DateTimeFormat('ar-SA', { hour: '2-digit', minute: '2-digit' }).format(lastAutoSaved)}
+              </span>
             )}
 
             {/* Save / Update */}

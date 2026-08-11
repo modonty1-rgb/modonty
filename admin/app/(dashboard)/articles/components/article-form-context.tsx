@@ -16,6 +16,16 @@ import { generateSEOTitle, generateSEODescription, generateCanonicalUrl } from '
 import { SITE_NAME } from '@/lib/constants/site-name';
 import { updateArticle } from '../actions/articles-actions';
 import {
+  applyLinkDecisions,
+  auditContentLinks,
+  probeableHrefs,
+  withDeadLinks,
+  type AuditedLink,
+  type LinkDecision,
+} from '../helpers/internal-link-audit';
+import { checkLinksAction } from '../actions/check-links';
+import { InternalLinkReviewDialog } from './internal-link-review-dialog';
+import {
   FileText,
   Edit,
   Search,
@@ -268,6 +278,10 @@ export function ArticleFormProvider({
   const isDirtyRef = useRef(false); // sync ref — read by link-click interceptor without stale closure
   const [isSaving, setIsSaving] = useState(false);
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
+  /** Internal links the writer has to decide on before the save is allowed through. */
+  const [linksToReview, setLinksToReview] = useState<AuditedLink[]>([]);
+  /** Keeps the interrupted save() call open until the review dialog is answered. */
+  const pendingSaveResolve = useRef<((result: FormSubmitResult) => void) | null>(null);
   const [pendingNavHref, setPendingNavHref] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -330,13 +344,27 @@ export function ArticleFormProvider({
     isDirtyRef.current = true;
   }, []);
 
-  const save = useCallback(async () => {
+  /**
+   * The domain this article will actually be published on — modonty.com normally,
+   * the client's own domain when the article is destined for their website. What
+   * counts as an "internal" link is measured against it.
+   */
+  const publishHostUrl = useCallback(
+    (data: ArticleFormData) => {
+      if (!data.isClientSiteArticle) return siteUrl;
+      const client = clients.find((c) => c.id === data.clientId);
+      return (client?.articlesBaseUrl ?? '').trim() || siteUrl;
+    },
+    [clients, siteUrl],
+  );
+
+  const runSave = useCallback(async (data: ArticleFormData) => {
     setIsSaving(true);
     isSavingRef.current = true;
     try {
       const result = articleId
-        ? await updateArticle(articleId, formData)
-        : await onSubmit(formData);
+        ? await updateArticle(articleId, data)
+        : await onSubmit(data);
       if (result.success) {
         setIsDirty(false);
         isDirtyRef.current = false; // sync immediately — beforeunload reads this ref
@@ -362,7 +390,63 @@ export function ArticleFormProvider({
       setIsSaving(false);
       isSavingRef.current = false;
     }
-  }, [formData, onSubmit, articleId]);
+  }, [onSubmit, articleId]);
+
+  /**
+   * A link that points back at our own site while carrying `nofollow` is never a
+   * decision anyone made — it rides in with pasted text. The save stops here and
+   * the writer resolves it in the dialog; nothing is rewritten behind his back.
+   */
+  const save = useCallback(async (): Promise<FormSubmitResult> => {
+    // On a client-site article our own domain is the backlink target, so a modonty
+    // link carrying `nofollow` has to be surfaced — otherwise the backlink is written
+    // and Google ignores it.
+    const audited = auditContentLinks(
+      formData.content,
+      publishHostUrl(formData),
+      formData.isClientSiteArticle ? siteUrl : null,
+    );
+
+    // Ask each address whether its page is still there. A probe that cannot answer
+    // returns nothing, so a slow network never turns into a false accusation.
+    const { dead } = audited.length
+      ? await checkLinksAction(probeableHrefs(audited)).catch(() => ({ dead: [] as string[] }))
+      : { dead: [] as string[] };
+
+    const needsReview = withDeadLinks(audited, dead).filter((l) => l.issues.length > 0);
+    if (needsReview.length === 0) return runSave(formData);
+
+    // Hand the caller's promise to the dialog: whatever the writer decides there
+    // becomes the answer to this very save call, so the button that started it
+    // still gets its result and does its usual toast + redirect.
+    setLinksToReview(needsReview);
+    return new Promise<FormSubmitResult>((resolve) => {
+      pendingSaveResolve.current = resolve;
+    });
+  }, [formData, publishHostUrl, runSave]);
+
+  const settlePendingSave = useCallback((result: FormSubmitResult) => {
+    pendingSaveResolve.current?.(result);
+    pendingSaveResolve.current = null;
+  }, []);
+
+  const applyLinkReview = useCallback(
+    async (decisions: LinkDecision[]) => {
+      const content = applyLinkDecisions(formData.content, decisions);
+      setLinksToReview([]);
+      updateField('content', content);
+      setErrors({});
+      settlePendingSave(await runSave({ ...formData, content }));
+    },
+    [formData, runSave, settlePendingSave, updateField],
+  );
+
+  const cancelLinkReview = useCallback(() => {
+    setLinksToReview([]);
+    const message = 'الحفظ متوقف — فيه روابط داخلية محتاجة قرارك.';
+    setErrors({ _general: [message] });
+    settlePendingSave({ success: false, error: message });
+  }, [settlePendingSave]);
 
   // Intercept in-app link clicks when dirty → show shadcn AlertDialog instead of native browser dialog.
   // Reads isDirtyRef (sync) so this effect is stable and never re-registers.
@@ -589,6 +673,12 @@ export function ArticleFormProvider({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <InternalLinkReviewDialog
+        open={linksToReview.length > 0}
+        links={linksToReview}
+        onCancel={cancelLinkReview}
+        onApply={applyLinkReview}
+      />
     </>
   );
 }

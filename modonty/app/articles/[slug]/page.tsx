@@ -593,7 +593,11 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
                 <div
                   id="article-content"
-                  className="article-body prose prose-base md:prose-lg mt-6 max-w-none mb-8 text-right [&_h2]:text-right [&_h3]:text-right [&_h4]:text-right [&_li]:text-right"
+                  // Typography ships lists with `list-style: none`, so an ordered list the
+                  // writer created rendered here as plain paragraphs — the reader lost the
+                  // sequence and Google got an <ol> with nothing to show. Markers sit in the
+                  // inline-start padding, hence `ps-*`: in Arabic the number belongs right.
+                  className="article-body prose prose-base md:prose-lg mt-6 max-w-none mb-8 text-right [&_h2]:text-right [&_h3]:text-right [&_h4]:text-right [&_li]:text-right [&_ol]:list-decimal [&_ol]:ps-6 [&_ul]:list-disc [&_ul]:ps-6 [&_li]:my-1"
                   style={{ lineHeight: "1.6", direction: "rtl" }}
                   dangerouslySetInnerHTML={{ __html: safeHtml }}
                 />

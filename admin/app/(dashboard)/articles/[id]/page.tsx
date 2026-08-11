@@ -204,7 +204,11 @@ export default async function ArticleViewPage({ params }: { params: Promise<{ id
                   alignment etc. kept. Deeper content-pipeline cleanup = the pending rewrite. */}
               <div
                 id="article-content"
-                className="prose prose-base md:prose-lg max-w-none mb-8 dark:prose-invert"
+                // The typography plugin ships lists with `list-style: none`, so an ordered
+                // list the writer created showed up here as plain paragraphs — no numbers,
+                // no bullets. Markers live in the inline-start padding, which is why this
+                // is `ps-*` and not `me-*`: in Arabic the number belongs on the right.
+                className="prose prose-base md:prose-lg max-w-none mb-8 dark:prose-invert [&_ol]:list-decimal [&_ol]:ps-6 [&_ul]:list-disc [&_ul]:ps-6 [&_li]:my-1"
                 style={{ lineHeight: '1.6' }}
                 dangerouslySetInnerHTML={{
                   __html: sanitizeHtmlContent(a.content).replace(

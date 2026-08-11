@@ -1219,6 +1219,43 @@ const TASKS = [
    "<b>لا مطلوب من طارق في هذا المقال.</b> أي صور شبح جديدة تُرصد في هذا البورد.",
  ref:"٧ أغسطس"},
 
+{id:"LNKGATE", b:"seo", app:["admin"], tab:"done", sev:"high", who:"c", date:"١١ أغسطس", ref:"أُنجز — تست حيّ",
+ t:"🔗 بوّابة الروابط الداخلية عند الحفظ — اللصق من Word ما عاد يدفن روابطنا بـnofollow",
+ d:"<b>العطل:</b> طارق يكتب في Word ويلصق في المحرّر. إضافة <code>Link</code> في TipTap تلصق على كل رابط ملصوق <code>rel=\"noopener noreferrer nofollow\"</code> و<code>target=\"_blank\"</code> — بما فيها الروابط اللي تودّي لمودونتي نفسها. النتيجة: نقول لقوقل «لا تحسب صفحاتنا» بلا ما يقرّرها أحد.<br>" +
+   "<b>الدليل الخام:</b> ملف طارق <code>صناعة المحتوى وأهميته…docx</code> فيه ٦ روابط (٣ منها <code>modonty.com</code>). بعد اللصق والحفظ، صفحة المقال عرضت الستّة كلها بـ<code>nofollow</code>.<br>" +
+   "<b>القرار (خالد):</b> لا تصحيح تلقائي — بوّابة عند الحفظ. لو فيه رابط داخلي مطعون فيه، تنفتح نافذة ببيانات الرابط (نصّه · وجهته · Follow/Nofollow · التبويب) والكاتب يقرّر، <b>والحفظ يُرفض حتى يقرّر</b>. كل الروابط سليمة ⇐ يمرّ بلا نافذة.<br>" +
+   "<b>البناء:</b> <code>articles/helpers/internal-link-audit.ts</code> (فاحص + تطبيق القرار) · <code>articles/components/internal-link-review-dialog.tsx</code> (النافذة) · <code>article-form-context.tsx</code> (البوّابة داخل <code>save</code>، وتسليم نتيجة الحفظ للزرّ عبر وعد مؤجَّل) · <code>rich-text-editor.tsx:174-186</code> (خاصية <code>data-link-reviewed</code> تنجو من دورة المحرّر).<br>" +
+   "<b>ليش العلامة:</b> بدونها، الكاتب اللي يختار <code>Nofollow</code> عن قصد تلاحقه نفس النافذة في كل حفظ — الفاحص ما يفرّق بين قرار بشري ولصق أعمى.<br>" +
+   "<b>التست الحيّ (modonty_dev):</b> مقال قائم ٣ روابط ⇐ نافذة ⇐ اعتماد Follow ⇐ <code>rel=\"follow\"</code> في القاعدة والخارجية ما اتلمست · مقال جديد رصد المطلق والنسبي وتجاهل جوجل · «رجوع للمقال» يغلق بلا حفظ · <code>Nofollow</code> متعمَّد ما تكرّرت نافذته بعد إعادة الفتح · مقال موقع العميل: <code>jbrseo.com</code> داخلي و<code>modonty.com</code> خارجي.<br>" +
+   "<b>الصندوق الثاني (أُنجز ١١ أغسطس):</b> البوّابة صارت تمسك ثلاث حالات لا واحدة — <code>internal-nofollow</code> · <code>insecure-http</code> (رابط <code>http://</code>) · <code>dead-link</code> (الصفحة ما تفتح، <b>بقياس فعليّ</b> عبر <code>actions/check-links.ts</code>). والنافذة صار فيها <b>حقل العنوان قابل للتعديل</b> + زرّ «حوّله إلى https»، فالكاتب يصلّح الوجهة نفسها لا الوسم فقط.<br>" +
+   "<b>فخّ انكشف بالقياس:</b> <code>support.google.com</code> يردّ <b>404 على HEAD</b> و<b>200 على GET</b> — فالفحص الأول اتّهم رابط جوجل ظلماً. القاعدة صارت: أي ردّ يبدو ميّتاً يُعاد فحصه بـ<code>GET</code> قبل الاتّهام، وفشل الفحص نفسه (مهلة · شبكة) <b>لا يُتّهم به أحد</b>.<br>" +
+   "<b>تست الصندوق الثاني حيّاً:</b> ٤ روابط ملصوقة ⇐ النافذة رصدت ٣ فقط (جوجل خرج بعد الإصلاح) · صُحّح الميّت ورُقّي الـhttp ⇐ في القاعدة: <code>rel=\"follow\"</code> على الداخليين بعنوان صحيح · <code>https://example.com/page</code> · ورابط جوجل ما اتلمس (<code>data-link-reviewed: null</code>).<br>" +
+   "<b>خارج النطاق عمداً:</b> رابط مودونتي داخل مقال العميل — يرفضه <code>findManualInternalLinks</code> في أكشن الحفظ برسالة صريحة، فإظهاره في نافذة «قرّر» يعطي وعداً كاذباً بأنّ القرار بيده.<br>" +
+   "<b>الفحوص:</b> <code>tsc</code> صفر أخطاء · <code>next build</code> نجح (exit 0). <b>ESLint ما اشتغل</b> — <code>next lint</code> مسحوب في Next 16 وما فيه <code>eslint.config.js</code> في الأدمن (بند مستقل).<br>" +
+   "<b>عطل قديم انكشف بالطريق:</b> إشعار فشل الحفظ ما يظهر أصلاً في نموذج المقال (<code>toastViewportText: \"\"</code>) — نفس <code>T41</code>، موجود قبل هذا الشغل.",
+ },
+
+{id:"LNKFREE", b:"ca", app:["admin"], tab:"done", sev:"high", who:"k", date:"١١ أغسطس", ref:"أُنجز — متحقَّق بالكود والتست الحيّ",
+ t:"🔓 مقال العميل: رفعنا المنع عن الروابط — الرابط لمودونتي صار باكلينك لا خطأ",
+ d:"<b>قرار خالد (١١ أغسطس):</b> «خليني أنا أسوي الـinternal link براحتي، لا تقيدني». والسبب التجاري: رابط من موقع جبر سيو إلى مودونتي = <b>باكلينك خارجي لنا من نطاق ثانٍ</b>.<br>" +
+   "<b>ما كان يحصل:</b> <code>findManualInternalLinks</code> يرفض الحفظ كلياً لو المتن فيه رابط نسبي أو رابط مودونتي — وهو ما اشتكى منه طارق بعد اللصق من Word.<br>" +
+   "<b>متحقَّق:</b> <code>grep -c findManualInternalLinks</code> على <code>create-article.ts</code> و<code>update-article.ts</code> ⇐ <b>صفر</b> في الاثنين. الملف <code>helpers/client-site-links.ts</code> باقٍ بلا مستهلك.<br>" +
+   "<b>حالتان جديدتان في الفاحص</b> (متحقَّقتان في <code>helpers/internal-link-audit.ts</code>): <code>backlink-nofollow</code> (سطر ٧٤ للنوع · ١٣٩ للرصد) — رابط لمودونتي داخل مقال العميل يحمل <code>nofollow</code> ⇐ الباكلينك ما يوصل، والاقتراح <code>Follow</code>. و<code>malformed-url</code> (سطر ٧٨ · ١٤١) — بروتوكول مكرّر · مضيف بلا نقطة · مسافة داخل العنوان · بلا بروتوكول.<br>" +
+   "<b>ورفضتُ شرط «www + .com»</b> اللي اقترحه خالد: يرفض <code>kimazone.net</code> و<code>support.google.com</code> و<code>developers.home.google.com</code> و<code>jbrseo.com</code> — وكلها روابط سليمة نستعملها. القاعدة صارت «العنوان مكسور» لا «العنوان غريب»، وأُثبتت بالتشغيل: الأربعة تمرّ نظيفة، والمكسورة الأربعة تُرصد.<br>" +
+   "<b>التست الحيّ (مقال جبر سيو، لصق ملف طارق + عنوان مكسور):</b> النافذة رصدت ٣ من ٤ (جوجل ما اتلمس) · وبعد الاعتماد في القاعدة: رابط مودونتي <code>rel=\"follow noopener noreferrer\"</code> ✅ · الرابط الناقص صُحّح إلى <code>jbrseo.com/articles/…</code> · المكسور صُحّح · و<b>الحفظ عدّى</b> بعدما كان يُرفض.<br>" +
+   "<b>وأيضاً:</b> المكسور ما يُرسل للشبكة — <code>probeableHrefs</code> (سطر ٢٣٥) يستثنيه، فلا نضيف شكوى ثانية على نفس الرابط.",
+ },
+
+{id:"LISTFIX", b:"bugs", app:["admin"], tab:"done", sev:"high", who:"c", date:"١١ أغسطس", ref:"أُنجز — تست حيّ",
+ t:"📝 «القائمة المرقّمة ما تتحفظ» — الحفظ سليم، والمكسور هو ما تراه العين + ترقيم مقلوب في RTL",
+ d:"<b>ما بلّغ عنه خالد:</b> يضغط «قائمة مرقّمة» في المحرّر، ثم يلقى زرّ «تحديث» مقفولاً — فيستنتج أن التنسيق ضاع.<br>" +
+   "<b>القياس يقول غير ذلك:</b> بعد إعادة تحميل كاملة لصفحة المقال من <code>modonty_dev</code>: <code>ol: 1 · ul: 1</code> — التنسيق <b>محفوظ فعلاً</b>.<br>" +
+   "<b>السبب الحقيقي:</b> الحفظ التلقائي كل ٣٠ ثانية (<code>article-form-context.tsx:476</code>) يشتغل بصمت ويصفّر <code>isDirty</code>، فيقفل الزرّ. قياس التسلسل: بعد الضغط مباشرة <code>saveDisabled: false</code> ← وبعد ثوانٍ <code>true</code> بلا لمس شيء. والوقت <code>lastAutoSaved</code> كان موجوداً في السياق (سطر ٤٧٣) و<b>صفر مستهلك له</b> — يعني الحفظ يصير بلا أي أثر مرئي.<br>" +
+   "<b>الإصلاح ١:</b> سطر «✓ حُفظ تلقائياً HH:MM» بجانب الزرّ حين يقفل (<code>article-form-header.tsx</code>). <b>الدليل الحيّ:</b> <code>saveDisabled: true</code> ومعه <code>indicator: \"حُفظ تلقائياً ٠٥:١٣ م\"</code> ظاهر.<br>" +
+   "<b>الإصلاح ٢ (ترقيم مقلوب):</b> القوائم كانت <code>[&_ol]:me-6</code> — هامش نهاية، والعلامة تسكن في <b>حشو البداية</b>، فطلع الرقم على يسار نصّ عربي. صار <code>ps-6</code> (<code>rich-text-editor.tsx:254-258</code>). <b>القياس بعد الإصلاح:</b> <code>direction: rtl · paddingInlineStart: 24px · marginInlineEnd: 0px</code> والنقطة والرقم على اليمين.<br>" +
+   "<b>غير متحقَّق:</b> شكل القوائم على موقع الزائر (modonty.com) — يستخدم <code>prose</code> من Tailwind Typography لا هذي الأصناف، وما شغّلت التطبيق لأفحصه.",
+ },
+
 {id:"JC1", b:"ca", app:["dataLayer"], tab:"done", sev:"high", who:"c", date:"٨ أغسطس", ref:"أُنجز",
  t:"✅ ١ · النماذج — <code>SiteSettings</code> و<code>LandingSection</code> في dataLayer",
  d:"<b>المصدر:</b> <code>jbrseo.com/prisma/schema.prisma:10</code> (SiteSettings) و<code>:86</code> (LandingSection) — تُنسخ كما هي بنفس <code>@@map</code> فتشير للمجموعات القائمة.<br>" +

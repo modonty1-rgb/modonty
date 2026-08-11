@@ -22,7 +22,6 @@ import { checkCompliance } from "@/lib/seo/pre-publish-audit";
 import { auth } from "@/lib/auth";
 import { articleServerSchema } from "../article-server-schema";
 import { sanitizeHtmlContent } from "@/lib/sanitize-html";
-import { findManualInternalLinks, manualInternalLinksMessage } from "../../../helpers/client-site-links";
 import { isValidTransition } from "../../../helpers/article-status-machine";
 
 function sanitizeText(text: string): string {
@@ -58,13 +57,9 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       };
     }
 
-    // Same rule as create: a client-site article carries no hand-written internal links.
-    if (existingArticle.isClientSiteArticle) {
-      const manualLinks = findManualInternalLinks(data.content ?? "");
-      if (manualLinks.length > 0) {
-        return { success: false, error: manualInternalLinksMessage(manualLinks) };
-      }
-    }
+    // Same rule as create: the writer owns his links. A link pointing back at modonty
+    // from the client's site is a backlink, and the pre-save review is where every
+    // link gets decided — no destination is refused here.
 
     // Optimistic locking: reject only when ANOTHER USER edited via the form (not SEO/cron/system writes).
     // Uses userVersion (incremented only by this action) instead of updatedAt (which system ops also bump).

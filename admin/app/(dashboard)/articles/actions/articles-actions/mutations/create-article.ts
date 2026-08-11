@@ -21,7 +21,6 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
 import { articleServerSchema } from "../article-server-schema";
 import { sanitizeHtmlContent } from "@/lib/sanitize-html";
-import { findManualInternalLinks, manualInternalLinksMessage } from "../../../helpers/client-site-links";
 
 function sanitizeText(text: string): string {
   return text
@@ -86,12 +85,9 @@ export async function createArticle(data: ArticleFormData) {
         };
       }
 
-      // A hand-written internal link would either break on their domain or drag their
-      // reader over to ours. Related articles are linked through the relation instead.
-      const manualLinks = findManualInternalLinks(data.content ?? "");
-      if (manualLinks.length > 0) {
-        return { success: false, error: manualInternalLinksMessage(manualLinks) };
-      }
+      // A link from the client's site back to ours is a backlink we want, not an
+      // error to refuse (Khalid 2026-08-11). The writer decides every link himself
+      // in the pre-save review; nothing is rejected on his behalf here.
     }
 
     const category = data.categoryId

@@ -178,6 +178,19 @@ export function RichTextEditor({
                 return { target: attributes.target };
               },
             },
+            // Set by the pre-save link review. Without it a writer who deliberately
+            // picks Nofollow on an internal link gets asked about it again on every
+            // single save — the check cannot otherwise tell his decision apart from
+            // what a Word paste dumps in. Declared here so TipTap keeps the marker
+            // through the editor round-trip instead of stripping it as unknown.
+            'data-link-reviewed': {
+              default: null,
+              parseHTML: element => element.getAttribute('data-link-reviewed'),
+              renderHTML: attributes => {
+                if (!attributes['data-link-reviewed']) return {};
+                return { 'data-link-reviewed': attributes['data-link-reviewed'] };
+              },
+            },
           };
         },
       }).configure({
@@ -238,8 +251,11 @@ export function RichTextEditor({
           "[&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mb-3",
           "[&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mb-2",
           "[&_p]:mb-4 [&_p]:leading-relaxed",
-          "[&_ul]:list-disc [&_ul]:me-6 [&_ul]:mb-4",
-          "[&_ol]:list-decimal [&_ol]:me-6 [&_ol]:mb-4",
+          // The marker sits in the list's inline-start padding. `me-6` pushed the box
+          // away from the end instead, so in Arabic the number landed on the wrong
+          // side of the text. `ps-6` is what actually places it.
+          "[&_ul]:list-disc [&_ul]:ps-6 [&_ul]:mb-4",
+          "[&_ol]:list-decimal [&_ol]:ps-6 [&_ol]:mb-4",
           "[&_blockquote]:border-r-4 [&_blockquote]:border-primary [&_blockquote]:pe-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground",
           "[&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm",
           "[&_a]:text-primary [&_a]:underline",
