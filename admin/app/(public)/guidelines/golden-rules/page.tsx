@@ -245,6 +245,10 @@ export default async function GoldenRulesPage() {
   const launchPrice = launch?.monthly ?? "499";
   const momentumPrice = m?.monthly ?? "1,299";
   const momentumYearly = m?.yearly ?? "15,588";
+  // The monthly article count is a PACKAGE fact that changes with the plan — read it live
+  // like the price instead of typing it into the copy. It used to be the literal "8" inside
+  // the ROI block, so a plan change would leave this page quietly teaching the old number.
+  const momentumArticles = m?.articles ?? 8;
   const leadershipPrice = leadership?.monthly ?? "2,999";
 
   // WordPress comparison math (live)
@@ -273,7 +277,7 @@ export default async function GoldenRulesPage() {
   const savingsText = `${savings.toLocaleString("en-GB")} ريال`;
   const roiPreBlock = `${momentumPrice} ريال (Momentum، عيادة أسنان)
 ↓
-8 مقالات × 12 شهر = 96 مقال
+${momentumArticles} مقالات × 12 شهر = ${Number(momentumArticles) * 12} مقال
 ↓
 46 مريض جديد/سنة
 ↓
@@ -1502,8 +1506,8 @@ ROI = ${roiMultiplier}x`;
                   يرفع SEO لكل العملاء.
                 </p>
                 <p className="text-sm leading-relaxed">
-                  <strong>المعادلة:</strong> 100 عميل × 8 مقالات = <strong>800 مقالة/شهر</strong> =
-                  سلطة Domain لا تُكسر.
+                  <strong>المعادلة:</strong> 100 عميل × {momentumArticles} مقالات ={" "}
+                  <strong>{100 * Number(momentumArticles)} مقالة/شهر</strong> = سلطة Domain لا تُكسر.
                 </p>
               </div>
 
@@ -1559,7 +1563,8 @@ ROI = ${roiMultiplier}x`;
                 <br />
                 <br />
                 <strong>الفرق النفسي:</strong> «اشتراك {momentumPrice} شهرياً للمقالات» = غالي. «اشتراك {momentumPrice}
-                شهرياً لـ Mini-website + 8 مقالات + كل أدوات الـ social proof» = صفقة العمر.
+                شهرياً لـ Mini-website + {momentumArticles} مقالات + كل أدوات الـ social proof» =
+                صفقة العمر.
               </>
             }
             when={

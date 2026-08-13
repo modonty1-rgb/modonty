@@ -77,6 +77,26 @@ export default function MediaGuidelinesPage() {
       description="مرجع سريع لفريق التصميم — المقاسات وأماكن الصور"
     >
 
+      {/* ── Where images actually live (added 2026-08-13 with the Bunny switch) ── */}
+      <Card className="border-primary/25 bg-primary/[0.04]">
+        <CardContent className="p-5 space-y-2">
+          <h2 className="text-sm font-semibold">وش يصير للصورة بعد ما ترفعها</h2>
+          <ul className="space-y-1.5 text-xs text-muted-foreground leading-relaxed">
+            <li>• تُخزَّن على Bunny — وهو مورّد الوسائط الوحيد عندنا.</li>
+            <li>• من صور المقالات تُولَّد ثلاث نسخ بمقاسات مختلفة تلقائياً، وهي اللي تظهر في جوجل وعند المشاركة.</li>
+            <li>• يُبنى بديل ضبابي صغير يظهر ريثما تحمّل الصورة الحقيقية.</li>
+            <li>• اسم الملف يُعاد ضبطه وصفيّاً عند كتابة سيو الصورة — لا تسمّه بيدك.</li>
+          </ul>
+          <p className="text-[11px] text-muted-foreground leading-relaxed">
+            شغلك ينتهي عند رفع المقاس الصحيح من مصدر مرخّص. الباقي تتولّاه المنصّة — التفاصيل في{" "}
+            <Link href="/guidelines/image-seo" className="text-primary underline underline-offset-2">
+              سيو الصور
+            </Link>
+            .
+          </p>
+        </CardContent>
+      </Card>
+
       {/* ── GOLDEN RULE ── */}
       <Collapsible defaultOpen={false}>
         <Card className="border-emerald-500/30 bg-emerald-500/[0.04]">
@@ -91,7 +111,7 @@ export default function MediaGuidelinesPage() {
                     ارفع مرة واحدة — وخلّ الموقع يتولى الباقي
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    الموقع متصل بـ Cloudinary · ضغط + إعادة حجم تلقائي
+                    الصور تُخزَّن على Bunny · القصّ والضغط وبديل blur تتولّاها المنصّة
                   </p>
                 </div>
               </div>

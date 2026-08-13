@@ -13,6 +13,7 @@ import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { useToast } from "@/hooks/use-toast";
 import { saveImageSeo } from "@/app/(dashboard)/media/actions/save-image-seo";
 import { generateImageSeoAi } from "@/app/(dashboard)/media/actions/generate-image-seo-ai";
+import { altToFileBase } from "@modonty/database/lib/seo/media/alt-to-filename";
 import type { MediaCheckStatus } from "@modonty/database/lib/seo/media/seo-score";
 import type { SeoImageRow } from "../helpers/load-groups";
 
@@ -68,6 +69,10 @@ export function ImageSeoDialog({ image, open, onOpenChange, onSaved }: Props) {
     }
   }, [image]);
 
+  // Derived on every keystroke from the same pure function the server uses, so what the writer
+  // reads here is exactly what will land on storage — not an approximation of it.
+  const previewBase = altToFileBase(alt);
+
   if (!image) return null;
 
   async function handleGenerateField(field: "altText" | "description") {
@@ -88,13 +93,13 @@ export function ImageSeoDialog({ image, open, onOpenChange, onSaved }: Props) {
   async function handleSave() {
     if (!image) return;
     setSaving(true);
-    // Filename is automatic: on save the file is synced to the generated SEO name (server
-    // sanitizes + renames only if it actually differs, and skips images embedded in article text).
+    // No file name is sent: the server derives it from the alt text below, with the same
+    // function this dialog previews with. Sending one from here would let two sources of the
+    // name exist, and they would disagree the first time one of them changed.
     const res = await saveImageSeo({
       mediaId: image.id,
       altText: alt.trim() || null,
       description: desc.trim() || null,
-      ...(image.autoName ? { filename: image.autoName } : {}),
     });
     setSaving(false);
     if (res.success) {
@@ -120,7 +125,9 @@ export function ImageSeoDialog({ image, open, onOpenChange, onSaved }: Props) {
         {/* Two panes: read the diagnosis (right, in RTL) then fix it (left). On desktop the
             split is horizontal so nothing overflows vertically; on mobile it stacks and the
             dialog itself scrolls. */}
-        <div className="grid gap-4 md:grid-cols-2">
+        {/* items-start: each pane ends where its content ends. Stretching them to equal height
+            is what put a tall empty box under the shorter one. */}
+        <div className="grid items-start gap-4 md:grid-cols-2">
           {/* Left — read-only info: the diagnosis + the generated name */}
           <div className="space-y-3">
           <div className="rounded-lg border bg-muted/30 p-3">
@@ -128,7 +135,9 @@ export function ImageSeoDialog({ image, open, onOpenChange, onSaved }: Props) {
               <span className="text-xs font-bold">تفصيل النتيجة</span>
               <SeoScoreBadge score={image.score} size="sm" />
             </div>
-            <ul className="max-h-[42vh] space-y-1.5 overflow-y-auto pe-1">
+            {/* No inner scroll box: four criteria never need one, and reserving 42vh for them
+                left a dead strip under the card while the dialog itself already scrolls. */}
+            <ul className="space-y-1.5">
               {image.checks.map((c) => {
                 const Icon = CHECK_ICON[c.status];
                 return (
@@ -149,13 +158,19 @@ export function ImageSeoDialog({ image, open, onOpenChange, onSaved }: Props) {
                 );
               })}
             </ul>
-            <p className="mt-2 border-t pt-2 text-[11px] text-muted-foreground">
-              النص البديل والوصف تعدّلهما هنا. اسم الملف والأبعاد يُدارَان تلقائياً.
+            {/* The CURRENT name belongs with the rest of the current state, not in a box of
+                its own: shown apart and highlighted, it read like the new name and the writer
+                could not tell which of the two the file actually carries. Green is reserved
+                for the name being created, on the right. */}
+            <div className="mt-2 flex items-baseline justify-between gap-2 border-t pt-2 text-[11px]">
+              <span className="text-muted-foreground">اسم الملف الحالي</span>
+              <span className="truncate font-mono text-foreground/80" dir="auto" title={image.filename ?? undefined}>
+                {image.filename ?? "—"}
+              </span>
+            </div>
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              النص البديل والوصف تعدّلهما هنا. الاسم يُشتقّ من النص البديل، والأبعاد تُقرأ تلقائياً.
             </p>
-          </div>
-          <div className="rounded-lg border border-dashed border-green-500/40 bg-green-500/[0.06] p-2.5 text-xs text-green-700 dark:text-green-400">
-            <span className="opacity-80">اسم الصورة: </span>
-            <span className="font-bold" dir="auto">«{image.autoName ?? "—"}»</span>
           </div>
           </div>
 
@@ -219,14 +234,29 @@ export function ImageSeoDialog({ image, open, onOpenChange, onSaved }: Props) {
               </div>
             </div>
 
-            {/* Filename is automatic — read-only. On save the file is renamed to the SEO name. */}
+            {/* The file name is derived from the alt text and shown LIVE while it is typed:
+                the writer must see the name they are creating, not discover it after saving. */}
             <div>
               <Label>
-                اسم الملف <span className="text-xs text-muted-foreground">(تلقائي)</span>
+                اسم الملف الجديد{" "}
+                <span className="text-xs text-muted-foreground">(من النص البديل)</span>
               </Label>
-              <div className="mt-1 truncate rounded-md border bg-muted/40 px-3 py-2 font-mono text-xs text-muted-foreground" dir="ltr" title={image.filename ?? undefined}>
-                {image.filename ?? "—"}
+              <div
+                className={`mt-1 truncate rounded-md border px-3 py-2 font-mono text-xs ${
+                  previewBase
+                    ? "border-green-500/40 bg-green-500/[0.06] font-bold text-green-700 dark:text-green-400"
+                    : "bg-muted/40 text-muted-foreground"
+                }`}
+                dir="auto"
+                title={previewBase ?? undefined}
+              >
+                {previewBase ?? "اكتب النص البديل ليتكوّن الاسم"}
               </div>
+              {previewBase && previewBase !== image.filename ? (
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  يُعاد تسمية الملف بهذا الاسم عند الحفظ.
+                </p>
+              ) : null}
             </div>
 
             <div className="flex justify-end">

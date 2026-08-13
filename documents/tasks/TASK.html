@@ -1169,6 +1169,20 @@ const TASKS = [
    "<b>ليس عاجلاً:</b> القيمة مضبوطة الآن، والنظام كاتب واحد.",
  ref:"٧ أغسطس"},
 
+{id:"IMGRENAME", b:"projects", app:["admin"], tab:"open", sev:"normal", who:"c",
+ t:"إعادة تسمية جماعية لصور بني من نصّها البديل",
+ d:"<b>متحقَّق — الأدوات مبنيّة ومختبَرة حيّاً (١٣ أغسطس):</b><br>" +
+   "• الاشتقاق: <code>dataLayer/lib/seo/media/alt-to-filename.ts</code> — <code>altToFileBase()</code>، السقف <code>MAX_FILE_BASE=125</code> مطابق لـ<code>sanitizeBunnyBase</code> في <code>dataLayer/lib/bunny.ts:102</code>.<br>" +
+   "• الحفظ + قاعدة «مرّة واحدة» + منع تكرار النصّ داخل العميل: <code>admin/app/(dashboard)/media/actions/save-image-seo.ts</code>.<br>" +
+   "• حارس الإنتاج: <code>dataLayer/lib/bunny.ts</code> — <code>devPrefix()</code> و<code>assertWritable()</code>؛ خارج الإنتاج يُكتب في <code>_dev/</code> ويُرفض حذف/نقل أي مسار إنتاج.<br>" +
+   "• الخطّة معروضة في <code>admin/app/(dashboard)/seo-images/helpers/load-groups.ts</code> (الحقل <code>rename</code>) و<code>[clientId]/components/client-images-grid.tsx</code>.<br><br>" +
+   "<b>دليل التست الحيّ:</b> رفعٌ نزل في <code>_dev/post/مدونتي/</code>، ثم إعادة تسمية إلى <code>دليل-اختيار-عيادة-أسنان-موثوقة-في-جدة-44785daafe.webp</code> مع القصّات الثلاث، بنفس البايتات ونفس مفتاح التفرّد، وصفر أثر على مجلّد الإنتاج.<br><br>" +
+   "<b>الناقص:</b> مهمّة تمرّ على الصور القائمة دفعةً واحدة. الأسماء اليوم بصمات بلا معنى (<code>hero-471e57f97d</code>) و<b>ظاهرة للباحث</b> في بطاقة بحث الصور (مُثبَت بلقطة من خالد).<br><br>" +
+   "<b>🔴 لماذا لم تُنفَّذ:</b> قياس حيّ على <code>/seo-images/__modonty__</code> أعطى <b>٣٠٢ من ٣٢٩ «خارج بني»</b> — ٩٢٪ ما زالت على كلاود إيناري، فالمهمّة لن تجد إلا ٢٧ صورة.<br><br>" +
+   "<b>الترتيب:</b> ١) إكمال الترحيل إلى بني · ٢) ثم إعادة التسمية على الجميع.<br><br>" +
+   "<b>بند تحريري منفصل:</b> ٢٣ صورة بلا نصّ بديل — شغل كاتب لا كود.",
+ ref:"١٣ أغسطس"},
+
 {id:"83c", b:"projects", app:["modonty"], tab:"open", sev:"normal", who:"k",
  t:"قرار: فتح فهرسة صفحة الريلز",
  d:"<code>modonty/app/reels/page.tsx</code> فيها <code>robots:{index:false, follow:false}</code> عمداً حتى الإطلاق. رفعها سطر واحد — بس القرار قرارك.",

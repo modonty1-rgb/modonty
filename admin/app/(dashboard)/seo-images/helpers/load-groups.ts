@@ -9,6 +9,8 @@ import {
   type MediaSeoCheck,
 } from "@modonty/database/lib/seo/media/seo-score";
 import { mediaSrc } from "@modonty/database/lib/media-src";
+import { altToFileBase } from "@modonty/database/lib/seo/media/alt-to-filename";
+import { bunnyZoneOfUrl } from "@modonty/database/lib/bunny";
 import {
   resolveImageAttribution,
   type MediaTypeName,
@@ -42,6 +44,17 @@ export interface SeoImageRow {
   autoName: string | null;
   /** Per-criterion breakdown (alt / dimensions / description / filename) — why the score. */
   checks: MediaSeoCheck[];
+  /**
+   * What a rename would do to this image, decided here so the screen the team already works in
+   * doubles as the plan — a second "report" page would be one more thing to keep in step.
+   *
+   *  ready     → will be renamed; `newBase` is the name it will get
+   *  no-alt    → nothing to derive a name from
+   *  same      → already carries that exact name
+   *  duplicate → another image of the same owner has this alt; a human must split them first
+   *  foreign   → not a Bunny object (legacy Cloudinary) — out of scope
+   */
+  rename: { status: "ready" | "no-alt" | "same" | "duplicate" | "foreign"; newBase: string | null };
 }
 
 export interface TypeCount {
@@ -169,6 +182,20 @@ export function buildSeoImageRow(m: SeoImageMediaRow, defaults: ModontyImageDefa
     defaults,
   );
   const clientOwned = m.type === "LOGO" || m.type === "GALLERY";
+  const servedUrl = mediaSrc(m) ?? m.url;
+  const isBunnyServed = (u: string | null) => !!u && bunnyZoneOfUrl(u) !== null;
+  const currentBase = servedImageName({ servedUrl, filename: m.filename });
+  const newBase = altToFileBase(m.altText);
+  // `duplicate` is filled in by the caller, which is the only place that sees all the images
+  // of one owner at once.
+  const rename: SeoImageRow["rename"] = !isBunnyServed(servedUrl)
+    ? { status: "foreign", newBase: null }
+    : !newBase
+      ? { status: "no-alt", newBase: null }
+      : newBase === currentBase
+        ? { status: "same", newBase }
+        : { status: "ready", newBase };
+
   return {
     id: m.id,
     url: mediaSrc(m) ?? m.url,
@@ -187,6 +214,7 @@ export function buildSeoImageRow(m: SeoImageMediaRow, defaults: ModontyImageDefa
     usedIn: usedInLabel(m),
     ownerLabel: clientOwned ? (ctx.clientName ?? "العميل") : (defaults.ownerName ?? "مدوّنتي"),
     autoName: attr.name ?? null,
+    rename,
     checks,
   };
 }
@@ -208,6 +236,22 @@ export async function loadSeoImageGroups(): Promise<SeoImageGroup[]> {
     const existing = groupMap.get(g.key);
     if (existing) existing.images.push(row);
     else groupMap.set(g.key, { key: g.key, name: g.name, isModonty: g.isModonty, images: [row] });
+  }
+
+  // Duplicate alts can only be seen with the whole owner in hand. Marked on EVERY image that
+  // shares a name — not just the later ones — because a human has to look at both and decide
+  // which description belongs to which picture.
+  for (const g of groupMap.values()) {
+    const seen = new Map<string, number>();
+    for (const i of g.images) {
+      if (i.rename.status !== "ready" || !i.rename.newBase) continue;
+      seen.set(i.rename.newBase, (seen.get(i.rename.newBase) ?? 0) + 1);
+    }
+    for (const i of g.images) {
+      if (i.rename.status === "ready" && i.rename.newBase && (seen.get(i.rename.newBase) ?? 0) > 1) {
+        i.rename = { status: "duplicate", newBase: i.rename.newBase };
+      }
+    }
   }
 
   return [...groupMap.values()].map((g) => {

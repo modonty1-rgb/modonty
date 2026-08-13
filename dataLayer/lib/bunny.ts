@@ -95,7 +95,11 @@ export function sanitizeBunnyBase(name: string): string {
       .replace(/[\\/?#%&+:*"'<>|\s]+/g, "-")
       .replace(/-{2,}/g, "-")
       .replace(/^[-.]+|[-.]+$/g, "")
-      .slice(0, 80) || "media"
+      // 125 = the alt-text limit, so a name derived from a full alt is never cut here after the
+      // deriving function already accepted it. MUST stay equal to MAX_FILE_BASE in
+      // seo/media/alt-to-filename.ts: if this one is smaller, the editor is shown a name the
+      // file will not actually carry. Bunny's own documented ceiling is 6,000.
+      .slice(0, 125) || "media"
   );
 }
 
@@ -273,6 +277,50 @@ export function bunnyRenamedPath(currentPath: string, newBase: string, fallbackK
   return normalizePath(`${dir}${sanitizeBunnyBase(newBase)}-${key}${ext}`);
 }
 
+/**
+ * ── Production-media guard ─────────────────────────────────────────────────────────────────
+ *
+ * Development, preview and production all read the SAME Bunny zones — branch isolation
+ * isolates code, never data. So a rename run on the dev database physically moved a file the
+ * live site serves, and deleted the original. Nothing about that was visible until an image
+ * broke in production.
+ *
+ * The guard has two halves:
+ *   • Writes outside production land under `_dev/` — one folder, deletable in a single click.
+ *   • Deletes and moves outside production are allowed ONLY inside `_dev/`. A path belonging
+ *     to production is refused with an error, not skipped silently.
+ *
+ * In production it is a no-op by construction: `devPrefix()` returns the path unchanged and
+ * `assertWritable()` returns immediately. Live behaviour is byte-for-byte what it was.
+ *
+ * Production is recognised ONLY by `VERCEL_ENV === "production"`. Absence of that variable —
+ * a laptop, a script, a CI job — counts as NOT production. The default has to fail toward
+ * safety: guessing "this is probably prod" is how a local run reaches live files.
+ */
+const DEV_PREFIX = "_dev/";
+
+function isProductionMedia(): boolean {
+  return process.env.VERCEL_ENV === "production";
+}
+
+/** Where a write may go. Unchanged in production; forced under `_dev/` everywhere else. */
+function devPrefix(path: string): string {
+  const clean = normalizePath(path);
+  if (isProductionMedia() || clean.startsWith(DEV_PREFIX)) return clean;
+  return `${DEV_PREFIX}${clean}`;
+}
+
+/** Throws when a destructive op outside production targets anything but the dev sandbox. */
+function assertWritable(operation: string, path: string): void {
+  if (isProductionMedia()) return;
+  const clean = normalizePath(path);
+  if (clean.startsWith(DEV_PREFIX)) return;
+  throw new Error(
+    `${operation} refused: "${clean}" is a production object and this is not production. ` +
+      `Outside production only paths under ${DEV_PREFIX} may be deleted or moved.`,
+  );
+}
+
 export function getBunnyPublicUrl(zone: BunnyZone, path: string): string {
   const { cdn } = zoneConfig(zone);
   return `https://${cdn}/${normalizePath(path)}`;
@@ -299,7 +347,9 @@ export async function uploadToBunny(
   contentType?: string,
 ): Promise<{ url: string; path: string }> {
   const cfg = zoneConfig(zone);
-  const path = normalizePath(remotePath);
+  // Outside production every upload lands in the dev sandbox. The returned url is built from
+  // this same path, so the database always records where the object actually is.
+  const path = devPrefix(remotePath);
   const storageUrl = `https://${STORAGE_HOST}/${cfg.zone}/${path}`;
 
   const res = await fetch(storageUrl, {
@@ -322,6 +372,7 @@ export async function uploadToBunny(
 export async function deleteFromBunny(zone: BunnyZone, remotePath: string): Promise<void> {
   const cfg = zoneConfig(zone);
   const path = normalizePath(remotePath);
+  assertWritable("deleteFromBunny", path);
   const storageUrl = `https://${STORAGE_HOST}/${cfg.zone}/${path}`;
 
   const res = await fetch(storageUrl, {
@@ -355,6 +406,9 @@ export async function moveBunnyMedia(
 ): Promise<{ url: string; path: string }> {
   const fromPath = from.startsWith("http") ? extractBunnyPath(zone, from) : normalizePath(from);
   if (!fromPath) throw new Error(`moveBunnyMedia: cannot resolve source path from "${from}"`);
+  // Checked on the SOURCE, before anything is copied: a move ends in a delete, and refusing
+  // only at that last step would leave a stray duplicate behind every failed attempt.
+  assertWritable("moveBunnyMedia", fromPath);
   const to = normalizePath(toPath);
   if (fromPath === to) return { url: getBunnyPublicUrl(zone, to), path: to }; // no-op
 

@@ -173,7 +173,11 @@ export function BasicSection() {
                 SEO Title
                 <span className="text-destructive ms-1">*</span>
               </Label>
-              <CharacterCounter current={(formData.seoTitle || '').length} max={60} />
+              {/* 51, not 60: the saved title gets a brand suffix appended, and the validator
+                  rejects anything longer. The counter said 60, so a writer could fill to 60,
+                  hit save, and only then be told to cut it — the counter must stop them at
+                  the number the save actually accepts. */}
+              <CharacterCounter current={(formData.seoTitle || '').length} max={51} />
             </div>
             <Input
               id="seoTitle"

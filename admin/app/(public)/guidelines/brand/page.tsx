@@ -87,7 +87,10 @@ const coreValues = [
     titleEn: "Reliable",
     titleAr: "الموثوقية",
     meaning: "ثبات + مساءلة + وفاء بالوعود",
-    example: "8 مقالات شهرياً = 8 مقالات تُسلَّم في موعدها — لا تأخير، لا أعذار",
+    // No package number here on purpose: this list is a module-level constant, so it cannot
+    // read the live plan — and a hardcoded count would keep teaching the old one after a
+    // plan change. The value being illustrated is the promise, not the quantity.
+    example: "العدد اللي وعدنا فيه العميل يُسلَّم في موعده — لا تأخير، لا أعذار",
     when: "كل تسليم، كل التزام، كل وعد للعميل",
     color: "emerald",
   },
@@ -290,7 +293,14 @@ const colorMap: Record<string, { border: string; bg: string; text: string; iconB
   rose: { border: "border-rose-500/30", bg: "bg-rose-500/[0.04]", text: "text-rose-500", iconBg: "bg-rose-500/15" },
 };
 
-export default async function BrandGuidelinesPage() {
+/**
+ * The brand half of «مودونتي والبراند».
+ *
+ * Exported WITHOUT the page shell so `/guidelines/about` can render it as a tab: who we are
+ * and how we look/sound are one identity, and splitting them across two routes made the team
+ * read half of it. This route stays alive and redirects there, so old links never break.
+ */
+export async function BrandIdentity() {
   const momentum = await getMomentumPrice("SA");
   const m = momentum?.monthly ?? "1,299";
   const articles = momentum?.articles ?? 8;
@@ -315,10 +325,7 @@ export default async function BrandGuidelinesPage() {
   }));
 
   return (
-    <GuidelineLayout
-      title="البراند — الهوية البصرية والصوت"
-      description="كل قرار تصميمي وكتابي يبدأ من هنا — Purpose/Vision/Mission + قيم + tone + ألوان + خطوط + ممنوعات"
-    >
+    <div className="space-y-6">
       {/* ── Hero — لماذا هذي الصفحة؟ ─────────────────────────────── */}
       <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/[0.06] via-background to-background">
         <CardContent className="p-6">
@@ -895,6 +902,25 @@ export default async function BrandGuidelinesPage() {
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+/**
+ * The old URL still resolves — it renders the brand half on its own, with no redirect.
+ *
+ * A redirect here was wrong: clicking a link and being thrown somewhere else is a jolt, and
+ * it made a merged page feel broken. Nothing links here any more (the hub and the directory
+ * both point at the identity page), so this exists purely so old links and bookmarks land on
+ * real content instead of a 404.
+ */
+export default function BrandGuidelinesPage() {
+  return (
+    <GuidelineLayout
+      title="الهوية والصوت"
+      description="جزء من صفحة «مودونتي والبراند» — الألوان والخطوط والنبرة وممنوعات الشعار"
+    >
+      <BrandIdentity />
     </GuidelineLayout>
   );
 }

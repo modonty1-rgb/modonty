@@ -10,6 +10,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { generateClientSEO } from "@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo";
 import { generateAndSaveJsonLd } from "@/lib/seo";
 import { logAction } from "@/lib/audit/log-action";
+import { altToFileBase } from "@modonty/database/lib/seo/media/alt-to-filename";
 import {
   BUNNY_ASPECT_SUFFIX,
   bunnyAspectUrl,
@@ -48,23 +49,12 @@ const schema = z.object({
   altText: z.string().trim().max(300).nullable().optional(),
   description: z.string().trim().max(600).nullable().optional(),
   title: z.string().trim().max(200).nullable().optional(),
-  /** New descriptive base name (no folder, no extension). Empty/undefined = no rename. */
-  filename: z.string().trim().max(120).optional(),
+  // No `filename` input by design: the name is DERIVED from the alt text on the server. A
+  // client-supplied file name would let the browser decide what lands on storage, and would
+  // let the displayed name and the real one drift apart.
 });
 
 export type SaveImageSeoInput = z.infer<typeof schema>;
-
-/** URL-safe descriptive slug: keep Arabic/Latin/digits/underscore, everything else → hyphen.
- *  Arabic survives on purpose — it is a real SEO signal and Bunny serves it (see bunny.ts). */
-function sanitizeFileBase(name: string): string {
-  return name
-    .trim()
-    .replace(/\.[a-z0-9]+$/i, "") // drop an extension if present
-    .replace(/[^A-Za-z0-9_؀-ۿ]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 100);
-}
 
 /** The object's file name as stored on Bunny, decoded and without its extension. */
 function bunnyStem(url: string): string {
@@ -95,20 +85,55 @@ export async function saveImageSeo(
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
-  const { mediaId, altText, description, title, filename } = parsed.data;
+  const { mediaId, altText, description, title } = parsed.data;
 
-  // ── Automatic filename sync (the Bunny object name → the SEO name) ────────────
+  // ── Alt text must be unique within the client ─────────────────────────────────
+  // Two images sharing one alt is not a crash, it is a wasted signal: Google reads the alt to
+  // tell images apart, and «صورة من المعرض» on nine pictures describes none of them. It also
+  // matters more than it used to — the alt now derives the FILE NAME, so a duplicate alt bakes
+  // a duplicate name into the URL and freezes it there.
+  //
+  // Scoped to the client, not global: two different companies may each legitimately have a
+  // «شعار الشركة», and they live in separate folders. Compared case-insensitively on the
+  // trimmed text, so a stray capital or space is not treated as a different description.
+  const trimmedAlt = altText?.trim() ?? "";
+  if (trimmedAlt) {
+    const owner = await db.media.findUnique({
+      where: { id: mediaId },
+      select: { clientId: true },
+    });
+    const clash = await db.media.findFirst({
+      where: {
+        id: { not: mediaId },
+        clientId: owner?.clientId ?? null,
+        altText: { equals: trimmedAlt, mode: "insensitive" },
+      },
+      select: { filename: true },
+    });
+    if (clash) {
+      return {
+        success: false,
+        error: `نفس النص البديل مستعمل في صورة أخرى («${clash.filename}»). اكتب وصفاً يميّز هذي الصورة عنها.`,
+      };
+    }
+  }
+
+  // ── File name follows the ALT TEXT ────────────────────────────────────────────
+  // The alt is the most accurate description of the image we will ever have, so it names the
+  // file too — one field, no second thing to fill in. Derived HERE from the alt we just
+  // validated, never taken from the client: the browser must not be able to name a file.
+  //
   // Best-effort: never blocks the alt/description save. Skipped when the name already matches,
   // when the row has no Bunny object, when the image is embedded inside article body HTML
   // (renaming would break that inline <img> — the documented exception), or on storage error.
   const renameData: Prisma.MediaUpdateInput = {};
   let prevSrc: string | null = null;
   let newSrc: string | null = null;
-  const newBase = filename ? sanitizeFileBase(filename) : "";
+  const newBase = altToFileBase(trimmedAlt) ?? "";
   if (newBase) {
     const media = await db.media.findUnique({
       where: { id: mediaId },
-      select: { url: true, bunnyUrl: true, filename: true, type: true },
+      select: { url: true, bunnyUrl: true, filename: true, type: true, altText: true },
     });
     // The Bunny link is NOT always in `bunnyUrl`: a client-gallery image uploaded from the
     // console stores it in `url` with `bunnyUrl` still null. Resolve the SERVED url the same
@@ -122,7 +147,18 @@ export async function saveImageSeo(
           ? oldStem.slice(0, -(uniqueKey.length + 1))
           : oldStem;
 
-      if (oldBase && newBase !== oldBase) {
+      // ── Rename ONCE ────────────────────────────────────────────────────────────
+      // If the current name is already the slug of the alt this image had, it was named from
+      // alt before — and it is left alone from now on. Every rename changes the URL, which
+      // costs the image whatever Google had accumulated under the old one; a writer fixing a
+      // word in the alt six months from now must not silently reset the image's history.
+      //
+      // The first naming still happens: a hash or a camera name is not the slug of anything,
+      // so it does not match and the rename proceeds.
+      const alreadyNamedFromAlt =
+        !!oldBase && oldBase === altToFileBase(media.altText);
+
+      if (oldBase && newBase !== oldBase && !alreadyNamedFromAlt) {
         // Match on the FULL stem (name + unique suffix): it is unique per object, so a short
         // or generic descriptive part can never produce a false "it's inline" refusal.
         const inlineUse = await db.article.findFirst({

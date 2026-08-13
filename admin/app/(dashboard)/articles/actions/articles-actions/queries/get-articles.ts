@@ -143,7 +143,14 @@ export async function getArticles(filters?: ArticleFilters) {
           faqs: { select: { id: true } },            // only count needed
         },
         orderBy: { createdAt: "desc" },
-        take: filters?.limit ?? 50, // default 50 (main list); entity views pass their true total. TODO: A75 — real server-side pagination
+        // NO ceiling on the main list — the table's pagination is what divides the library
+        // into pages, so any number here silently becomes the library. At 50 the screen
+        // showed five pages of ten and everything older was not "on a later page", it was
+        // gone: unreachable by paging, by sorting, and by the table's search, which only
+        // ever sees the rows it was given.
+        //
+        // Callers that genuinely want a slice still pass `limit` (entity views do).
+        take: filters?.limit,
       }),
       getAllSettings(),
     ]);

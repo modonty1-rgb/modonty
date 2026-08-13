@@ -47,6 +47,14 @@ export function ClientImagesGrid({ name, isModonty, avgScore, images }: Props) {
     return [...filtered].sort((a, b) => a.score - b.score);
   }, [images, query, typeFilter]);
 
+  // Counted over ALL the owner's images, not the filtered page — this is the plan for the
+  // whole client, and it must not change because someone typed in the search box.
+  const plan = useMemo(() => {
+    const t = { ready: 0, duplicate: 0, "no-alt": 0, same: 0, foreign: 0 };
+    for (const i of images) t[i.rename.status]++;
+    return t;
+  }, [images]);
+
   const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
   const current = Math.min(page, totalPages);
   const pageRows = rows.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
@@ -80,6 +88,26 @@ export function ClientImagesGrid({ name, isModonty, avgScore, images }: Props) {
         <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-bold text-muted-foreground">
           {images.length}
         </span>
+      </div>
+
+      {/* The rename plan for this client, at a glance, before anything is executed. */}
+      <div className="flex flex-wrap items-center gap-2 text-[11px]">
+        <span className="text-muted-foreground">خطة الأسماء:</span>
+        <span className="rounded border border-green-500/40 px-2 py-0.5 font-bold text-green-700 dark:text-green-400">
+          جاهزة {plan.ready}
+        </span>
+        {plan.duplicate > 0 && (
+          <span className="rounded border border-red-500/40 px-2 py-0.5 font-bold text-red-600 dark:text-red-400">
+            مكرّرة {plan.duplicate}
+          </span>
+        )}
+        <span className="rounded border border-amber-500/40 px-2 py-0.5 font-bold text-amber-600 dark:text-amber-500">
+          بلا نص بديل {plan["no-alt"]}
+        </span>
+        <span className="rounded border px-2 py-0.5 text-muted-foreground">مطابقة {plan.same}</span>
+        {plan.foreign > 0 && (
+          <span className="rounded border px-2 py-0.5 text-muted-foreground">خارج بني {plan.foreign}</span>
+        )}
       </div>
 
       {/* Search + type filter toggles on one line (each chip carries its own count) */}
@@ -145,11 +173,25 @@ export function ClientImagesGrid({ name, isModonty, avgScore, images }: Props) {
                 </span>
                 <SeoScoreBadge score={img.score} size="sm" />
               </div>
-              {!img.altText?.trim() && (
-                <div className="px-2.5 pb-2 text-[10px] font-bold text-amber-600 dark:text-amber-500">
-                  بلا نص بديل
-                </div>
-              )}
+              {/* What a rename would do to this image — the plan lives on the screen the team
+                  already works in, so there is no second report to keep in step. */}
+              <div className="px-2.5 pb-2">
+                {img.rename.status === "ready" ? (
+                  <div className="truncate text-[10px] font-bold text-green-700 dark:text-green-400" dir="auto" title={img.rename.newBase ?? undefined}>
+                    ← {img.rename.newBase}
+                  </div>
+                ) : img.rename.status === "duplicate" ? (
+                  <div className="truncate text-[10px] font-bold text-red-600 dark:text-red-400" dir="auto">
+                    نص بديل مكرّر — راجعه
+                  </div>
+                ) : img.rename.status === "no-alt" ? (
+                  <div className="text-[10px] font-bold text-amber-600 dark:text-amber-500">بلا نص بديل</div>
+                ) : img.rename.status === "same" ? (
+                  <div className="text-[10px] text-muted-foreground">الاسم مطابق</div>
+                ) : (
+                  <div className="text-[10px] text-muted-foreground">خارج بني</div>
+                )}
+              </div>
             </button>
           ))}
         </div>
