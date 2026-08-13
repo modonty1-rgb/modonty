@@ -18,17 +18,30 @@
 import type { EntitySeoScore, SeoCheck, SeoScore } from "../client/types";
 import { computeArticleMetaScore, type ArticleMetaInput } from "./meta-score";
 import { computeArticleJsonLdScore, type ArticleJsonLdInput } from "./jsonld-score";
+import { computeArticleLinksScore, type ArticleLinksInput } from "./links-score";
 
 export type { SeoCheck, SeoScore, EntitySeoScore } from "../client/types";
 
-export interface ArticleSeoInput extends ArticleMetaInput, ArticleJsonLdInput {}
+export interface ArticleSeoInput extends ArticleMetaInput, ArticleJsonLdInput, ArticleLinksInput {}
 
-/** Full breakdown: meta + jsonLd + overall, each validity-based. */
+/**
+ * Weighting (2026-08-13). Meta and JSON-LD stay the two heavy halves — they decide whether
+ * the page is eligible for a rich result at all, and a mistake there costs the whole listing.
+ * Internal linking is real but recoverable, so it earns a deliberate MINORITY share: enough
+ * that building the related list visibly moves the number, small enough that it cannot make a
+ * well-linked article with broken metadata look healthy.
+ */
+const W_META = 0.45;
+const W_JSONLD = 0.45;
+const W_LINKS = 0.1;
+
+/** Full breakdown: meta + jsonLd + links + overall, each validity-based. */
 export function computeArticleEntitySeo(article: ArticleSeoInput): EntitySeoScore {
   const meta = computeArticleMetaScore(article);
   const jsonLd = computeArticleJsonLdScore(article);
-  const overall = Math.round((meta.score + jsonLd.score) / 2);
-  return { meta, jsonLd, overall };
+  const links = computeArticleLinksScore(article);
+  const overall = Math.round(meta.score * W_META + jsonLd.score * W_JSONLD + links.score * W_LINKS);
+  return { meta, jsonLd, links, overall };
 }
 
 export interface SeoScoreResult {
@@ -36,8 +49,8 @@ export interface SeoScoreResult {
   checks: SeoCheck[];
 }
 
-/** Overall score + the merged checklist (meta first, then jsonLd). */
+/** Overall score + the merged checklist (meta, then jsonLd, then links). */
 export function computeArticleSeoScore(article: ArticleSeoInput): SeoScoreResult {
-  const { meta, jsonLd, overall } = computeArticleEntitySeo(article);
-  return { score: overall, checks: [...meta.checks, ...jsonLd.checks] };
+  const { meta, jsonLd, links, overall } = computeArticleEntitySeo(article);
+  return { score: overall, checks: [...meta.checks, ...jsonLd.checks, ...(links?.checks ?? [])] };
 }

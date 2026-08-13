@@ -10,7 +10,7 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
 // The article's SEO guide — the lamp that shows what's wrong and how to fix it, driven by the
 // ONE real scorer (computeArticleEntitySeo). Every number here equals the tables and dashboard.
 
-type SideCheck = SeoCheck & { side: "META" | "JSON-LD" };
+type SideCheck = SeoCheck & { side: "META" | "JSON-LD" | "الربط" };
 
 function tone(score: number): "good" | "warn" | "bad" {
   if (score >= 80) return "good";
@@ -46,7 +46,9 @@ const JSONLD_FIELD_TOKENS = ["headline", "image", "datePublished", "author", "da
 
 // Ownership: which gaps are real CONTENT the writer must supply. Everything else the system
 // generates or auto-fills on save/publish — the writer should not be alarmed by those.
-const WRITER_KEYS = new Set(["title", "description", "ogImage", "jsonld.image"]);
+// `links.related` belongs here: the related list is built by hand in the editor, so a gap
+// there is the writer's to close — the system never fills it in on save.
+const WRITER_KEYS = new Set(["title", "description", "ogImage", "jsonld.image", "links.related"]);
 
 // Turn a raw validator message into one plain Arabic line a content writer understands.
 function plainJsonLdError(msg: string): string {
@@ -82,7 +84,7 @@ export default async function ArticleTechnicalPage({ params }: { params: Promise
     redirect("/articles");
   }
 
-  const { meta, jsonLd, overall } = getArticleEntitySeo(row);
+  const { meta, jsonLd, links, overall } = getArticleEntitySeo(row);
 
   const metaJson = prettyJson(row.nextjsMetadata);
   const jsonLdText = prettyJson(row.jsonLdStructuredData);
@@ -98,6 +100,7 @@ export default async function ArticleTechnicalPage({ params }: { params: Promise
   const checks: SideCheck[] = [
     ...meta.checks.map((c) => ({ ...c, side: "META" as const })),
     ...jsonLd.checks.map((c) => ({ ...c, side: "JSON-LD" as const })),
+    ...(links?.checks ?? []).map((c) => ({ ...c, side: "الربط" as const })),
   ];
 
   const rank = (c: SideCheck) => (c.status === "error" ? 0 : 1);
@@ -120,9 +123,15 @@ export default async function ArticleTechnicalPage({ params }: { params: Promise
   const systemFrontGaps = systemGaps.filter((c) => c.key === "jsonld.valid");
   const systemRestGaps = systemGaps.filter((c) => c.key !== "jsonld.valid");
 
-  // Each side is on a 0–100 scale; the overall is their average, so closing a gap of (max−earned)
-  // points in one side lifts the OVERALL by half that. This is exactly "how far to 100%".
-  const gain = (c: SideCheck) => (c.max - c.earned) / 2;
+  // Each side is on its own 0–100 scale and enters the overall at its WEIGHT (META and JSON-LD
+  // 45% each, links 10%), so closing a gap of (max−earned) points lifts the OVERALL by that
+  // much times the side's weight. Divide by a flat 2 here and the promised gain is a lie.
+  const SIDE_WEIGHT: Record<SideCheck["side"], number> = {
+    META: 0.45,
+    "JSON-LD": 0.45,
+    الربط: 0.1,
+  };
+  const gain = (c: SideCheck) => (c.max - c.earned) * SIDE_WEIGHT[c.side];
   const fmtGain = (g: number) => (Number.isInteger(g) ? `${g}` : g.toFixed(1));
 
   const overallTone = tone(overall);
@@ -175,9 +184,10 @@ export default async function ArticleTechnicalPage({ params }: { params: Promise
           </div>
 
           {/* sub scores */}
-          <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
-            <ScoreBar label="META (وسوم البحث)" score={meta.score} />
-            <ScoreBar label="JSON-LD (البيانات المنظّمة)" score={jsonLd.score} />
+          <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3">
+            <ScoreBar label="META (وسوم البحث) · ٤٥٪" score={meta.score} />
+            <ScoreBar label="JSON-LD (البيانات المنظّمة) · ٤٥٪" score={jsonLd.score} />
+            {links ? <ScoreBar label="الربط الداخلي · ١٠٪" score={links.score} /> : null}
           </div>
         </div>
       </div>

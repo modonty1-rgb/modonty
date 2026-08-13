@@ -81,6 +81,25 @@ function fileExtension(filename: string): string {
 export const BUNNY_ASPECT_SUFFIX = { "1:1": "1x1", "4:3": "4x3", "16:9": "16x9" } as const;
 
 /**
+ * Make one path segment safe to live in an object key.
+ *
+ * Keep Arabic (and every other script) — it is a real SEO signal in the filename and the
+ * Arabic owner folder already proves the CDN serves it. Strip ONLY what breaks a URL path:
+ * separators, query/fragment delimiters, and whitespace. Cap the length so a long article
+ * title cannot push the object key past what the storage API accepts.
+ */
+export function sanitizeBunnyBase(name: string): string {
+  return (
+    name
+      .trim()
+      .replace(/[\\/?#%&+:*"'<>|\s]+/g, "-")
+      .replace(/-{2,}/g, "-")
+      .replace(/^[-.]+|[-.]+$/g, "")
+      .slice(0, 80) || "media"
+  );
+}
+
+/**
  * Derive an aspect-crop url/path from a base image: `a/b.jpg` + `16x9` → `a/b__16x9.webp`.
  * Crops are ALWAYS WebP (sharp output) → force the `.webp` extension so the CDN serves the
  * correct `image/webp` content-type regardless of the base image's format. Works on urls or paths.
@@ -143,22 +162,115 @@ export function buildBunnyMediaPath(opts: {
     ? opts.publicId.split("/").pop() || opts.publicId
     : opts.filename.replace(/\.[^.]+$/, "");
 
-  // Keep Arabic (and every other script) — it is a real SEO signal in the filename and the
-  // Arabic owner folder already proves the CDN serves it. Strip ONLY what breaks a URL
-  // path: separators, query/fragment delimiters, and whitespace. Cap the length so a long
-  // article title cannot push the object key past what the storage API accepts.
-  const base =
-    rawBase
-      .trim()
-      .replace(/[\\/?#%&+:*"'<>|\s]+/g, "-")
-      .replace(/-{2,}/g, "-")
-      .replace(/^[-.]+|[-.]+$/g, "")
-      .slice(0, 80) || "media";
+  const base = sanitizeBunnyBase(rawBase);
 
   const key = opts.uniqueKey.trim().replace(/[^A-Za-z0-9]/g, "");
   if (!key) throw new Error("buildBunnyMediaPath: uniqueKey is required and must not be empty");
 
   return normalizePath(`${typeFolder}/${owner}/${base}-${key}${ext}`);
+}
+
+/**
+ * Read back the unique suffix `buildBunnyMediaPath` wrote into an object key.
+ *
+ * A RENAME (SEO filename) and a MOVE (type/client folder) both rewrite the path of a file
+ * that is still the SAME image — so both must reuse the key the object already carries
+ * instead of minting a new one. Minting a fresh key on a rename would leave the old object
+ * orphaned under a key nothing points at, and re-running the operation would pile up copies;
+ * reusing it keeps the operation idempotent, which is the whole point of the 2026-08-07 fix.
+ *
+ * Returns `null` for objects written BEFORE that fix (no suffix at all) — the caller must
+ * then supply its own stable key (the media id is the obvious one). Deliberately not
+ * defaulted here: only the call site knows what is stable for its row.
+ */
+/**
+ * Does this trailing token look like a generated key rather than a real word?
+ *
+ * "6+ alphanumerics" alone is not enough: it swallows ordinary descriptive endings —
+ * `blur-test-upload` reads as base `blur-test` + key `upload`, which then displays and scores
+ * a name the file does not have (caught in live testing 2026-08-13). Every key this codebase
+ * generates mixes digits with letters (a content hash, a Mongo id, the console's base-36
+ * suffix), so require that mix — with an escape hatch for an all-numeric hex hash.
+ */
+function looksLikeUniqueKey(token: string): boolean {
+  if (token.length < 6) return false;
+  const hasDigit = /\d/.test(token);
+  const hasLetter = /[A-Za-z]/.test(token);
+  return (hasDigit && hasLetter) || /^[0-9a-f]{10,}$/i.test(token);
+}
+
+export function extractBunnyUniqueKey(urlOrPath: string): string | null {
+  const main = urlOrPath.split("?")[0] ?? "";
+  const last = main.split("/").pop() ?? "";
+  // Arabic basenames travel the wire percent-encoded; compare on the decoded form.
+  let stem: string;
+  try {
+    stem = decodeURIComponent(last);
+  } catch {
+    stem = last; // malformed escape — fall back to the raw segment rather than throwing
+  }
+  stem = stem.replace(/\.[^.]+$/, "");
+  const token = stem.match(/-([A-Za-z0-9]{6,})$/)?.[1];
+  return token && looksLikeUniqueKey(token) ? token : null;
+}
+
+/**
+ * Which zone actually serves this url.
+ *
+ * A media row is NOT always on the `clients` zone: admin uploads land there, but a client
+ * gallery image uploaded from the console lives on the `reels` zone under a different folder
+ * scheme (`clients/<clientId>/gallery/…`). Code that hardcodes one zone silently no-ops on
+ * the other — `extractBunnyPath` returns null and the operation is skipped without an error.
+ * Resolve the zone from the url instead of assuming it.
+ *
+ * Returns null for a url this deployment does not serve. A zone whose env is missing is
+ * skipped rather than throwing, so one unconfigured zone cannot break the lookup.
+ */
+export function bunnyZoneOfUrl(url: string | null | undefined): BunnyZone | null {
+  if (!url) return null;
+  for (const zone of ["clients", "reels", "assets"] as const) {
+    try {
+      if (isBunnyUrl(zone, url)) return zone;
+    } catch {
+      // zone not configured in this environment — not a match, keep looking
+    }
+  }
+  return null;
+}
+
+/**
+ * A TRUE rename: same folder, same unique suffix, same extension — only the descriptive part
+ * of the file name changes.
+ *
+ * Deliberately NOT `buildBunnyMediaPath`: that one imposes the admin library's
+ * `{type}/{owner}/` convention, so using it to rename a console-uploaded gallery image would
+ * silently RELOCATE the file instead of renaming it. A rename must not move anything.
+ *
+ * `fallbackKey` is used only when the object predates the unique-suffix rule (2026-08-07) and
+ * carries none — pass something stable per row, never a random token.
+ */
+export function bunnyRenamedPath(currentPath: string, newBase: string, fallbackKey: string): string {
+  const main = currentPath.split("?")[0] ?? "";
+  const slash = main.lastIndexOf("/");
+  const dir = slash >= 0 ? main.slice(0, slash + 1) : "";
+  let file = main.slice(slash + 1);
+  try {
+    file = decodeURIComponent(file); // Arabic names travel percent-encoded
+  } catch {
+    // malformed escape — rename the raw segment rather than throwing
+  }
+  const dot = file.lastIndexOf(".");
+  const ext = dot > 0 ? file.slice(dot).toLowerCase() : "";
+  const stem = dot > 0 ? file.slice(0, dot) : file;
+
+  const token = stem.match(/-([A-Za-z0-9]{6,})$/)?.[1];
+  const key =
+    token && looksLikeUniqueKey(token)
+      ? token
+      : fallbackKey.trim().replace(/[^A-Za-z0-9]/g, "");
+  if (!key) throw new Error("bunnyRenamedPath: no unique key on the object and no fallback given");
+
+  return normalizePath(`${dir}${sanitizeBunnyBase(newBase)}-${key}${ext}`);
 }
 
 export function getBunnyPublicUrl(zone: BunnyZone, path: string): string {

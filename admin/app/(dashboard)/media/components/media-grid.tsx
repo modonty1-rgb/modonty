@@ -238,7 +238,7 @@ export function MediaGrid({
                     width: infoMedia.width,
                     height: infoMedia.height,
                     filename: infoMedia.filename,
-                    cloudinaryPublicId: infoMedia.cloudinaryPublicId,
+                    servedUrl: infoMedia.bunnyUrl ?? infoMedia.url,
                     type: infoMedia.type,
                   });
                   return (

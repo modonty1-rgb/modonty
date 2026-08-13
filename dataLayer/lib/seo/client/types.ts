@@ -23,11 +23,16 @@ export interface SeoScore {
   checks: SeoCheck[];
 }
 
-/** A full entity SEO breakdown: two independent validity scores + an overall. */
+/** A full entity SEO breakdown: independent validity scores + an overall. */
 export interface EntitySeoScore {
   meta: SeoScore;
   jsonLd: SeoScore;
-  /** Overall = weighted average (meta + jsonLd) / 2, rounded. */
+  /**
+   * Internal linking. Present for ARTICLES only — a client page has no "related articles"
+   * concept, so its breakdown stays two-dimensional and this stays undefined.
+   */
+  links?: SeoScore;
+  /** Overall — see each scorer for its weighting; absent dimensions are not counted. */
   overall: number;
 }
 

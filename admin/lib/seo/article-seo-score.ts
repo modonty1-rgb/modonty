@@ -30,6 +30,9 @@ export const ARTICLE_SEO_SELECT = {
   dateModified: true,
   authorId: true,
   clientId: true,
+  // OUTGOING related articles only — `relatedFrom` holds the rows where THIS article is the
+  // source. Counting `relatedTo` instead would score an author for other writers' choices.
+  _count: { select: { relatedFrom: true } },
 } as const;
 
 export interface ArticleSeoRow {
@@ -42,11 +45,15 @@ export interface ArticleSeoRow {
   dateModified?: Date | string | null;
   authorId?: string | null;
   clientId?: string | null;
+  /** REQUIRED key (the object may be absent only for rows that genuinely have no relations
+   *  loaded — see the note on ARTICLE_SEO_SELECT: a forgotten count must not read as zero). */
+  _count?: { relatedFrom: number } | null;
 }
 
-/** Full result (score + the checklist) — one mapping, used by both the number and the gate. */
-export function getArticleSeoScoreDetail(article: ArticleSeoRow) {
-  return computeArticleSeoScore({
+/** The ONE row→scorer mapping. Both entry points below go through it, so a field can never
+ *  be passed to the number and forgotten in the breakdown (they would then disagree). */
+function toScorerInput(article: ArticleSeoRow) {
+  return {
     nextjsMetadata: article.nextjsMetadata,
     jsonLdStructuredData: article.jsonLdStructuredData,
     jsonLdValidationReport: (article.jsonLdValidationReport ?? null) as JsonLdValidationReport | null,
@@ -56,7 +63,13 @@ export function getArticleSeoScoreDetail(article: ArticleSeoRow) {
     dateModified: article.dateModified,
     authorId: article.authorId,
     clientId: article.clientId,
-  });
+    relatedCount: article._count?.relatedFrom ?? 0,
+  };
+}
+
+/** Full result (score + the checklist) — one mapping, used by both the number and the gate. */
+export function getArticleSeoScoreDetail(article: ArticleSeoRow) {
+  return computeArticleSeoScore(toScorerInput(article));
 }
 
 export function getArticleSeoScore(article: ArticleSeoRow): number {
@@ -64,20 +77,10 @@ export function getArticleSeoScore(article: ArticleSeoRow): number {
 }
 
 /**
- * Full split breakdown — META and JSON-LD as separate scores, each with its own checks,
- * plus the overall (their average). Same mapping and rubric as the number above; this is
+ * Full split breakdown — META, JSON-LD and LINKS as separate scores, each with its own
+ * checks, plus the weighted overall. Same mapping and rubric as the number above; this is
  * what the article's technical guide renders so "why 66%" is answerable per side.
  */
 export function getArticleEntitySeo(article: ArticleSeoRow) {
-  return computeArticleEntitySeo({
-    nextjsMetadata: article.nextjsMetadata,
-    jsonLdStructuredData: article.jsonLdStructuredData,
-    jsonLdValidationReport: (article.jsonLdValidationReport ?? null) as JsonLdValidationReport | null,
-    title: article.title,
-    featuredImageId: article.featuredImageId,
-    datePublished: article.datePublished,
-    dateModified: article.dateModified,
-    authorId: article.authorId,
-    clientId: article.clientId,
-  });
+  return computeArticleEntitySeo(toScorerInput(article));
 }

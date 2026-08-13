@@ -35,8 +35,18 @@ export interface MediaSeoScore {
 
 export interface MediaSeoInput {
   filename?: string | null;
-  /** The Cloudinary public_id — the name that actually travels into the indexed URL. */
-  cloudinaryPublicId?: string | null;
+  /**
+   * REQUIRED key (value may be null) — the url this image is actually SERVED from, i.e.
+   * `mediaSrc(media)` (`bunnyUrl ?? url`). Its last path segment is the only name Google can
+   * possibly index, whatever host it lives on.
+   *
+   * It is required rather than optional for the same reason `bunnyUrl` is required in
+   * `MediaSrcInput`: while it was absent this scorer graded the Cloudinary public_id, so after
+   * the Bunny switch it awarded a full 15/15 for a descriptive name that lived on a copy nobody
+   * serves, while the visitor got the old one. A silent omission produced a confidently wrong
+   * number — requiring the key turns each omission into a compile error at the call site.
+   */
+  servedUrl: string | null;
   altText?: string | null;
   description?: string | null;
   width?: number | null;
@@ -71,6 +81,46 @@ const GENERIC_FILENAME = /^(img|dsc|photo|image|untitled|screenshot|snap|whatsap
 
 function str(v: unknown): string {
   return typeof v === "string" ? v.trim() : "";
+}
+
+/**
+ * The descriptive name a search engine actually sees for this image.
+ *
+ * Bunny object keys end in `-<uniqueKey>` (a content hash, see `buildBunnyMediaPath`). That
+ * suffix is plumbing, not content, so it is stripped before grading — otherwise ten random
+ * characters would pad every name past the "too short" threshold and hide a bad one.
+ *
+ * The suffix regex is duplicated from `bunny.ts` on purpose: that module is `server-only` and
+ * this scorer runs inside client components too (the media grid). Keep the two in step.
+ *
+ * Exported because the SEO Images screen must DISPLAY exactly the name it grades — a panel
+ * showing one name while scoring another is how the Cloudinary-era bug stayed invisible.
+ */
+export function servedImageName(input: {
+  servedUrl: string | null;
+  filename?: string | null;
+}): string {
+  const servedUrl = str(input.servedUrl);
+  if (servedUrl) {
+    const last = (servedUrl.split("?")[0] ?? "").split("/").pop() ?? "";
+    let decoded: string;
+    try {
+      decoded = decodeURIComponent(last); // Arabic names travel percent-encoded
+    } catch {
+      decoded = last;
+    }
+    const stem = decoded.replace(/\.[^.]+$/, "");
+    const token = stem.match(/-([A-Za-z0-9]{6,})$/)?.[1];
+    // Only a token that MIXES digits and letters (or is a long hex hash) is a generated key.
+    // Plain "6+ alphanumerics" eats real words — `blur-test-upload` would score as `blur-test`.
+    const isKey =
+      !!token &&
+      ((/\d/.test(token) && /[A-Za-z]/.test(token)) || /^[0-9a-f]{10,}$/i.test(token));
+    const base = isKey ? stem.slice(0, -(token!.length + 1)) : stem;
+    if (base) return base;
+  }
+  // No url at all (a broken row) — the stored upload name is all that is left to grade.
+  return str(input.filename);
 }
 
 export function computeMediaSeoScore(input: MediaSeoInput): MediaSeoScore {
@@ -161,11 +211,10 @@ export function computeMediaSeoScore(input: MediaSeoInput): MediaSeoScore {
     checks.push({ key: "description", label: "الوصف", status, hint, earned, max: 20 });
   }
 
-  // ── Filename (15) — the name in the URL Google actually indexes. For a Cloudinary
-  //    asset that is the public_id's last segment, NOT the original upload filename.
+  // ── Filename (15) — the name in the URL Google actually indexes: the last segment of the
+  //    SERVED url, never the stored upload filename (which is often a stale hash).
   {
-    const publicId = str(input.cloudinaryPublicId);
-    const source = publicId ? publicId.split("/").pop() || publicId : str(input.filename);
+    const source = servedImageName(input);
     const name = source.toLowerCase();
     let earned = 0;
     let status: MediaCheckStatus = "error";

@@ -17,6 +17,7 @@ import {
   Megaphone,
   BarChart3,
   Swords,
+  Gauge,
 } from "lucide-react";
 import { ModontyIcon } from "@/components/admin/icons/modonty-icon";
 
@@ -174,6 +175,16 @@ const guidelineSections = [
     color: "text-sky-500",
     borderColor: "border-sky-500/20",
     bgColor: "bg-sky-500/[0.03]",
+  },
+  {
+    id: "seo-score",
+    title: "نتيجة سيو المقال",
+    description: "الرقم جنب كل مقال: ١٣ معياراً بأوزانها · وسوم البحث ٤٥٪ · البيانات المنظّمة ٤٥٪ · الربط الداخلي ١٠٪ — ومين مسؤول عن كل معيار",
+    icon: Gauge,
+    href: "/guidelines/seo-score",
+    color: "text-teal-500",
+    borderColor: "border-teal-500/20",
+    bgColor: "bg-teal-500/[0.03]",
   },
 ];
 

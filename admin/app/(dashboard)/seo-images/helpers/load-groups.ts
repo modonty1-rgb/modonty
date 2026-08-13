@@ -3,7 +3,11 @@ import "server-only";
 import { db } from "@/lib/db";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
-import { computeMediaSeoScore, type MediaSeoCheck } from "@modonty/database/lib/seo/media/seo-score";
+import {
+  computeMediaSeoScore,
+  servedImageName,
+  type MediaSeoCheck,
+} from "@modonty/database/lib/seo/media/seo-score";
 import { mediaSrc } from "@modonty/database/lib/media-src";
 import {
   resolveImageAttribution,
@@ -152,7 +156,7 @@ export async function loadImageDefaults(): Promise<ModontyImageDefaults> {
 export function buildSeoImageRow(m: SeoImageMediaRow, defaults: ModontyImageDefaults): SeoImageRow {
   const { score, checks } = computeMediaSeoScore({
     filename: m.filename,
-    cloudinaryPublicId: m.cloudinaryPublicId,
+    servedUrl: mediaSrc(m) ?? m.url,
     altText: m.altText,
     description: m.description,
     width: m.width,
@@ -176,14 +180,10 @@ export function buildSeoImageRow(m: SeoImageMediaRow, defaults: ModontyImageDefa
     height: m.height,
     fileSize: m.fileSize,
     mimeType: m.mimeType,
-    // Display the EFFECTIVE filename — the public_id's last segment (what Cloudinary actually
-    // serves), the SAME source the SEO score grades (dataLayer/lib/seo/media/seo-score.ts).
-    // The stored `filename` can be a stale upload hash; the public_id is the source of truth
-    // after any rename, so display and score never diverge.
-    filename: (() => {
-      const pid = m.cloudinaryPublicId?.trim();
-      return pid ? pid.split("/").pop() || pid : m.filename;
-    })(),
+    // Display the EFFECTIVE name — the one in the SERVED (Bunny) url, produced by the very
+    // function the scorer grades with, so the panel can never show one name while scoring
+    // another. The stored `filename` can be a stale upload hash.
+    filename: servedImageName({ servedUrl: mediaSrc(m) ?? m.url, filename: m.filename }),
     usedIn: usedInLabel(m),
     ownerLabel: clientOwned ? (ctx.clientName ?? "العميل") : (defaults.ownerName ?? "مدوّنتي"),
     autoName: attr.name ?? null,
