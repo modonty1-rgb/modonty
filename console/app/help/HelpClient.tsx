@@ -25,10 +25,13 @@ export function HelpClient() {
 
   const openImage = (src: string, alt: string) => setModal({ src, alt });
 
+  // pt-28 on the ROOT clears both fixed bars (back bar 44px + tools bar 54px). It is not on
+  // the content wrapper because on phones the table of contents renders in normal flow above
+  // the content, and would otherwise start underneath them.
   return (
-    <div className="min-h-dvh bg-background">
-      {/* Fixed top bar — sales pitch player (browser-tts mode for iteration) */}
-      <div className="fixed top-0 inset-x-0 z-40 backdrop-blur-md bg-background/90 border-b border-border shadow-sm">
+    <div className="min-h-dvh bg-background pt-28">
+      {/* Tools bar — sits under the layout's back bar (h-11), never on top of it */}
+      <div className="fixed top-11 inset-x-0 z-40 backdrop-blur-md bg-background/90 border-b border-border shadow-sm">
         <div className="max-w-[1100px] mx-auto px-4 md:px-6 py-2.5 flex items-center justify-end gap-3">
           <a
             href="https://www.modonty.com/story"
@@ -52,7 +55,7 @@ export function HelpClient() {
 
       <ScrollProgress />
       <TocSidebarV2 />
-      <div className="max-w-[1100px] md:ms-[284px] lg:ms-[304px] mx-auto px-4 md:px-6 py-6 pt-14">
+      <div className="max-w-[1100px] md:ms-[284px] lg:ms-[304px] mx-auto px-4 md:px-6 py-6">
         <main>
           <HeroV2 />
           <Tier0Platform />
