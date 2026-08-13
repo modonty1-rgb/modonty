@@ -1,17 +1,26 @@
 import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import type { SizePreset } from "@modonty/database/components/optimized-image";
 import { IconArticle, IconVolume2 } from "@/lib/icons";
 import type { PostCardProps } from "./PostCard.types";
 
 const LCP_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px";
 const DEFAULT_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
 
+interface PostCardHeroImageProps extends PostCardProps {
+  enableHoverEffect?: boolean;
+  sizes?: SizePreset | (string & {});
+}
+
 export function PostCardHeroImage({
   post,
   index,
   isLcp,
   featured,
-}: PostCardProps) {
+  enableHoverEffect = true,
+  sizes,
+}: PostCardHeroImageProps) {
   const lcp = isLcp ?? (index === 0);
+  const imageSizes = sizes ?? (lcp ? LCP_SIZES : DEFAULT_SIZES);
 
   const audioBadge = post.hasAudio ? (
     <span
@@ -59,8 +68,8 @@ export function PostCardHeroImage({
         media={asMedia(post.image, post.title)}
         alt={post.title || "صورة المقال"}
         fill
-        className="object-cover transition-transform duration-300 group-hover:scale-105"
-        sizes={lcp ? LCP_SIZES : DEFAULT_SIZES}
+        className={enableHoverEffect ? "object-cover transition-transform duration-300 group-hover:scale-105" : "object-cover"}
+        sizes={imageSizes}
         // Next 16 official: `preload` inserts <link rel=preload> in <head> so the LCP
         // image is discovered + fetched early (kills the ~1.2s load-delay). Docs say
         // avoid combining preload with loading/fetchPriority — so preload alone for LCP.

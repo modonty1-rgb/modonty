@@ -3,11 +3,13 @@ import { Suspense } from "react";
 import { cacheLife, cacheTag } from "next/cache";
 import { FeedContainer } from "@/components/feed/FeedContainer";
 import { HomeBottomBar } from "@/components/feed/HomeBottomBar/HomeBottomBar";
-import { getHomeFeedArticles } from "@/app/api/helpers/article-queries";
+import { getCorePublisherArticles, getHomeFeedArticles } from "@/app/api/helpers/article-queries";
+import { getReelsFeedPage } from "@/app/reels/helpers/reels-feed";
+import { getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
+import { getBrandMedia } from "@/lib/settings/get-brand-media";
+import { getClientServiceCards } from "@/app/api/helpers/client-queries";
 import { getHomePageSeo } from "@/lib/seo/home-page-seo";
 import { jsonLdHtmlFromString } from "@/lib/seo";
-import { getFeedBannerSettings } from "@/lib/settings/get-feed-banner-settings";
-import { getPlatformSocialLinks } from "@/lib/settings/get-platform-social-links";
 import { SITE_URL, BRAND_AR } from "@/lib/brand";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -44,11 +46,14 @@ export default async function HomePage() {
   cacheLife("minutes");
   cacheTag("homepage", "articles", "settings");
 
-  const [{ jsonLd }, posts, feedBanner, socialLinks] = await Promise.all([
+  const [{ jsonLd }, posts, corePublisherArticles, brandMedia, industries, reels, clientServices] = await Promise.all([
     getHomePageSeo(),
     getHomeFeedArticles(),
-    getFeedBannerSettings(),
-    getPlatformSocialLinks(),
+    getCorePublisherArticles(),
+    getBrandMedia(),
+    getIndustriesWithCounts(),
+    getReelsFeedPage(),
+    getClientServiceCards(),
   ]);
 
   return (
@@ -60,12 +65,7 @@ export default async function HomePage() {
         />
       )}
       <h1 className="sr-only">مدونتي — منصة المحتوى العربي</h1>
-      <FeedContainer
-        posts={posts}
-        platformTagline={feedBanner.platformTagline}
-        platformDescription={feedBanner.platformDescription}
-        socialLinks={socialLinks}
-      />
+      <FeedContainer posts={posts} corePublisherArticles={corePublisherArticles} brandLogoUrl={brandMedia.logoUrl} industries={industries} reels={reels.items} clientServices={clientServices} />
       {/* Mobile-only action bar (filters + newsletter) — homepage only, lazy client shell */}
       <Suspense fallback={null}>
         <HomeBottomBar />

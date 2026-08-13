@@ -110,6 +110,7 @@ export { Hash             as IconHash          } from 'lucide-react';
 export { Languages        as IconLanguages     } from 'lucide-react';
 export { SearchX          as IconSearchX       } from 'lucide-react';
 export { Calendar         as IconCalendar      } from 'lucide-react';
+export { ShoppingBag      as IconShoppingBag   } from 'lucide-react';
 export { Ellipsis as IconEllipsis } from 'lucide-react'; // أفقي (≠ EllipsisVertical)
 export { Check as IconCheck } from 'lucide-react';
 export { ArrowUp     as IconScrollTop  } from 'lucide-react';

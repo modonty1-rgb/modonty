@@ -16,10 +16,11 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function ClientsPage() {
+export default async function ClientsPage({ searchParams }: { searchParams: Promise<{ service?: string }> }) {
+  const { service } = await searchParams;
   const [{ jsonLd: storedJsonLd }, clients, industries, clientsGA4] = await Promise.all([
     getClientsPageSeo(),
-    getClientsWithCounts(),
+    getClientsWithCounts(service),
     getIndustriesWithCounts(),
     getClientsGA4Stats(),
   ]);

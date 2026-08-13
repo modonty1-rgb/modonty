@@ -11,6 +11,7 @@ import { Prisma, ArticleStatus } from "@prisma/client";
 import type { ArticleResponse, ArticleFilters, InteractionCounts, FeedPost } from "@/lib/types";
 import { calculateTrendingScore, getTrendingTimeRange } from "@/lib/trending";
 import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
+import { getCoreClientId } from "@modonty/database/lib/core-client";
 
 type ArticleWithRelations = Prisma.ArticleGetPayload<{
   include: {
@@ -170,6 +171,7 @@ async function getArticlesCached(filters: ArticleFilters = {}) {
     client,
     featured,
     search,
+    hasAudio,
     status = ArticleStatus.PUBLISHED,
     sortBy = "newest",
   } = filters;
@@ -214,6 +216,7 @@ async function getArticlesCached(filters: ArticleFilters = {}) {
         },
       ],
     }),
+    ...(hasAudio && { audioUrl: { not: null } }),
   };
 
   const [articles, total] = await Promise.all([
@@ -320,6 +323,33 @@ async function getHomeFeedArticlesCached(): Promise<FeedPost[]> {
 }
 
 export const getHomeFeedArticles = cache(() => getHomeFeedArticlesCached());
+
+export const getCorePublisherArticles = cache(async (): Promise<FeedPost[]> => {
+  "use cache";
+  cacheTag("articles", "settings");
+  cacheLife("hours");
+
+  const coreClientId = await getCoreClientId();
+  if (!coreClientId) return [];
+
+  const articles = await db.article.findMany({
+    where: {
+      clientId: coreClientId,
+      status: ArticleStatus.PUBLISHED,
+      featuredImageId: { not: null },
+      OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
+    },
+    select: homeFeedSelect,
+    orderBy: [
+      { featured: "desc" },
+      { datePublished: "desc" },
+      { id: "desc" },
+    ],
+    take: 5,
+  });
+
+  return articles.map(mapHomeFeedArticle);
+});
 
 export const getArticleBySlug = cache(async (slug: string) => {
   const article = await db.article.findFirst({

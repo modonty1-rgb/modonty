@@ -34,7 +34,7 @@ export function LoginButton() {
         </Link>
       </Button>
 
-      <div className="hidden items-center gap-2 sm:flex">
+      <div className="hidden items-center sm:flex">
         <Button
           asChild
           size="sm"
@@ -43,7 +43,7 @@ export function LoginButton() {
         >
           <Link href="/users/login">دخول</Link>
         </Button>
-        <Button asChild size="sm" className="h-9 rounded-lg px-3.5 text-sm font-semibold shadow-sm">
+        <Button asChild size="sm" className="hidden">
           <Link href="/users/register">سجّل مجاناً</Link>
         </Button>
       </div>

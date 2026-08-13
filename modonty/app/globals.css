@@ -158,6 +158,15 @@
     background-color: hsl(var(--muted-foreground));
   }
 
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
   .sr-only {
     position: absolute;
     width: 1px;

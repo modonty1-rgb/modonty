@@ -66,6 +66,7 @@ type Topic = {
 };
 
 interface ArticleChatbotContentProps {
+  initialInput?: string;
   articleSlug: string | null;
   userName?: string | null;
   userImage?: string | null;
@@ -75,6 +76,7 @@ interface ArticleChatbotContentProps {
 }
 
 export function ArticleChatbotContent({
+  initialInput = "",
   articleSlug,
   userName,
   userImage,
@@ -83,7 +85,7 @@ export function ArticleChatbotContent({
   onSelectedCategoryChange,
 }: ArticleChatbotContentProps) {
   const [messages, setMessages] = useState<Msg[]>([]);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(initialInput);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [redirects, setRedirects] = useState<Redirect[] | null>(null);

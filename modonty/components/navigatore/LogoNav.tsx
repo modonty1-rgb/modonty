@@ -9,12 +9,11 @@ interface LogoNavProps {
   className?: string;
 }
 
-// One logo for the whole navbar — the wide wordmark (Settings.logoUrl, single source of truth).
-// Same logo on desktop and mobile; only the size differs (mobile is rendered larger for legibility).
-// If no logo is set, we gracefully show the brand name as text — the admin is alerted to
-// upload the logo via the EssentialSeoDialog in the admin app.
+// The navbar uses the compact logomark. The full wordmark is reserved for surfaces
+// with enough room, such as the publisher sticker in the Home experience.
 export async function LogoNav({ className }: LogoNavProps) {
-  const { logoUrl } = await getBrandMedia();
+  const { logoIconUrl, logoUrl } = await getBrandMedia();
+  const source = logoIconUrl ?? logoUrl;
 
   return (
     <Link
@@ -22,16 +21,16 @@ export async function LogoNav({ className }: LogoNavProps) {
       className="inline-block shrink-0 transition-transform duration-200 hover:scale-[1.03]"
       aria-label={`${BRAND_AR} - الصفحة الرئيسية`}
     >
-      {logoUrl ? (
+      {source ? (
         <OptimizedImage
-          media={asMedia(getOptimizedLogoUrl(logoUrl), BRAND_AR)}
+          media={asMedia(getOptimizedLogoUrl(source), BRAND_AR)}
           alt={BRAND_AR}
-          width={351}
-          height={85}
+          width={96}
+          height={96}
           loading="eager"
           fetchPriority="high"
-          sizes="(max-width: 768px) 150px, 120px"
-          className={`object-contain h-7 w-20 md:h-10 md:w-[120px] ${className ?? ""}`}
+          sizes="40px"
+          className={`h-9 w-9 object-contain md:h-10 md:w-10 ${className ?? ""}`}
         />
       ) : (
         <span className="text-lg font-bold text-primary">{BRAND_AR}</span>

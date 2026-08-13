@@ -1,5 +1,6 @@
 'use client';
 
+import { Fragment, type ReactNode } from "react";
 import { useSearchParams } from 'next/navigation';
 import { PostCard } from '@/components/feed/postcard/PostCard';
 import { InfiniteArticleList } from '@/components/feed/infiniteScroll/InfiniteArticleList';
@@ -8,9 +9,11 @@ import type { FeedPost } from '@/lib/types';
 
 interface CategoryFeedSectionProps {
   serverPosts: FeedPost[];
+  mobileModoSlot?: ReactNode;
+  mobileProfileSlot?: ReactNode;
 }
 
-export function CategoryFeedSection({ serverPosts }: CategoryFeedSectionProps) {
+export function CategoryFeedSection({ serverPosts, mobileModoSlot, mobileProfileSlot }: CategoryFeedSectionProps) {
   const searchParams = useSearchParams();
   const client = searchParams.get('client') ?? undefined;
   const category = searchParams.get('category') ?? undefined;
@@ -43,12 +46,15 @@ export function CategoryFeedSection({ serverPosts }: CategoryFeedSectionProps) {
       {serverPosts.length > 0 && (
         <div className="space-y-4">
           {serverPosts.map((post, index) => (
-            <PostCard
-              key={post.id}
-              post={post}
-              index={index}
-              className="animate-in fade-in duration-300"
-            />
+            <Fragment key={post.id}>
+              <PostCard
+                post={post}
+                index={index}
+                className="animate-in fade-in duration-300"
+              />
+              {index === 0 && mobileModoSlot}
+              {index === 1 && mobileProfileSlot}
+            </Fragment>
           ))}
         </div>
       )}

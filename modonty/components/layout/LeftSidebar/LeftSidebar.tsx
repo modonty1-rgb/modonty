@@ -1,43 +1,26 @@
-import { getCategoriesWithCounts } from "@/app/api/helpers/category-queries";
-import { getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
-import { getTagsWithCounts } from "@/app/api/helpers/tag-queries";
-import { getClientHeroSlides } from "@/app/api/helpers/client-queries";
+import { ModoPrompt } from "@/components/feed/ModoPrompt";
+import { HomeUserProfileCard } from "@/components/feed/HomeUserProfileCard";
+import { ReelsPreviewCard } from "@/components/feed/ReelsPreviewCard";
 import { cn } from "@/lib/utils";
-import { HeroSlider } from "@/components/layout/RightSidebar/HeroSlider";
-import { DiscoveryCard } from "./DiscoveryCard";
+import type { ReelPreviewItem } from "@/components/feed/ReelsPreviewCard";
 
 interface LeftSidebarProps {
   className?: string;
+  reels: ReelPreviewItem[];
 }
 
-export async function LeftSidebar({ className }: LeftSidebarProps) {
-  const [categories, industries, tags, heroSlides] = await Promise.all([
-    getCategoriesWithCounts(),
-    getIndustriesWithCounts(),
-    getTagsWithCounts(),
-    getClientHeroSlides(),
-  ]);
-
-  const totalArticlesAll = categories.reduce((sum, c) => sum + c.articleCount, 0);
-
+// In RTL this is the visually right-hand rail. Discovery belongs to the main rail.
+export function LeftSidebar({ className, reels }: LeftSidebarProps) {
   return (
     <aside
-      aria-label="الشريط الجانبي الأيسر"
-      className={cn(
-        "hidden lg:flex flex-col w-[300px] sticky top-[3.5rem] self-start h-[calc(100dvh-5rem)] overflow-hidden gap-4",
-        className
-      )}
+      aria-label="مساعدة Modo"
+      className={cn("hidden lg:block w-[300px] sticky top-20 self-start", className)}
     >
-      {/* Partner showcase slider (pure-CSS, zero client JS) — server-rendered so it
-          paints instantly on desktop; was previously gated behind the right-sidebar
-          client mount, which delayed its appearance. */}
-      <HeroSlider slides={heroSlides} />
-      <DiscoveryCard
-        categories={categories}
-        totalArticlesAll={totalArticlesAll}
-        industries={industries}
-        tags={tags}
-      />
+      <div className="space-y-4">
+        <HomeUserProfileCard />
+        <ModoPrompt />
+        <ReelsPreviewCard items={reels} layout="sidebar" />
+      </div>
     </aside>
   );
 }

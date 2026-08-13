@@ -10,7 +10,6 @@ import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 import { ClarityScript } from "@/components/analytics/clarity-script";
 import { Footer } from "@/components/layout/Footer";
 import { TopNavWithFavorites } from "@/components/navigatore/TopNavWithFavorites";
-import { ChatFloatingButton } from "@/components/chatbot/ChatFloatingButton";
 import { BRAND_AR, SITE_URL } from "@/lib/brand";
 
 const tajawal = Tajawal({
@@ -106,7 +105,6 @@ export default function RootLayout({
                 </Suspense>
                 <main id="main-content" className="flex-1">{children}</main>
                 <Footer />
-                <ChatFloatingButton />
               </div>
             </SessionProviderWrapper>
           </Suspense>

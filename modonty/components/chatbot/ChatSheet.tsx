@@ -105,6 +105,7 @@ type TabMode = "chat" | "history";
 
 export function ChatSheet() {
   const open = useChatSheetStore((s) => s.open);
+  const draft = useChatSheetStore((s) => s.draft);
   const setOpen = useChatSheetStore((s) => s.setOpen);
   const [tab, setTab] = useState<TabMode>("chat");
   const [selectedCategory, setSelectedCategory] = useState<{ slug: string; name: string } | null>(null);
@@ -209,6 +210,7 @@ export function ChatSheet() {
               <ChatHistoryList />
             ) : (
               <ArticleChatbotContent
+                initialInput={draft}
                 articleSlug={articleSlug}
                 userName={session.user.name ?? session.user.email ?? undefined}
                 userImage={session.user.image ?? undefined}

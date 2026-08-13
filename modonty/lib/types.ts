@@ -228,6 +228,7 @@ export interface ArticleFilters {
   client?: string;
   featured?: boolean;
   search?: string;
+  hasAudio?: boolean;
   status?: "PUBLISHED" | "DRAFT" | "SCHEDULED";
   sortBy?: "newest" | "oldest" | "title";
 }
