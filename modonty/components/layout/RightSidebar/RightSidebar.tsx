@@ -12,7 +12,7 @@ interface RightSidebarProps {
 }
 
 // Partners list — server-rendered directly (the slider moved to the left sidebar).
-// `hidden xl:block` keeps the article rail readable on narrower desktops; the mobile
+// The third column starts at 1240px with a compact center rail; the mobile
 // partner list lives in the bottom-bar sheet instead.
 export function RightSidebar({ articles, brandLogoUrl, clientServices, className }: RightSidebarProps) {
   // Load ALL active partners (safety cap 500) so the industry filter shows EVERY
@@ -21,7 +21,7 @@ export function RightSidebar({ articles, brandLogoUrl, clientServices, className
     <aside
       aria-label="الشريط الجانبي الأيمن"
       className={cn(
-        "hidden h-[calc(100dvh-5rem)] w-[300px] self-start overflow-visible xl:sticky xl:top-20 xl:block",
+        "hidden h-[calc(100dvh-5rem)] w-[300px] shrink-0 self-start overflow-visible min-[1240px]:sticky min-[1240px]:top-20 min-[1240px]:block",
         className
       )}
     >

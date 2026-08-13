@@ -13,9 +13,9 @@ function MobilePostCardContent({ post }: MobilePostCardContentProps) {
   const excerpt = post.excerpt ?? post.content;
 
   return (
-    <div className="flex min-w-0 gap-2.5">
+    <div className="flex min-w-0 gap-2">
       <div className="min-w-0 flex-1">
-        <h3 itemProp="headline" className="line-clamp-3 text-[clamp(0.8125rem,3.35vw,0.9375rem)] font-semibold leading-[clamp(1.125rem,4.6vw,1.375rem)]">
+        <h3 itemProp="headline" className="line-clamp-2 text-[clamp(0.8125rem,3.35vw,0.9375rem)] font-semibold leading-[clamp(1.125rem,4.6vw,1.375rem)]">
           <CtaTrackedLink
             href={`/articles/${post.slug}`}
             label="Feed card – عنوان المقال"
@@ -27,7 +27,7 @@ function MobilePostCardContent({ post }: MobilePostCardContentProps) {
             {post.title}
           </CtaTrackedLink>
         </h3>
-        <p itemProp="description" className="mt-1 line-clamp-2 text-[clamp(0.75rem,3.2vw,0.8125rem)] leading-[clamp(1rem,4vw,1.125rem)] text-muted-foreground">{excerpt}</p>
+        <p itemProp="description" className="mt-1 line-clamp-1 text-[clamp(0.75rem,3.2vw,0.8125rem)] leading-[clamp(1rem,4vw,1.125rem)] text-muted-foreground">{excerpt}</p>
       </div>
       <MobilePostCardImage post={post} />
     </div>
@@ -36,7 +36,7 @@ function MobilePostCardContent({ post }: MobilePostCardContentProps) {
 
 function MobilePostCardImage({ post }: MobilePostCardContentProps) {
   return (
-    <div className="w-[clamp(6.25rem,28vw,7rem)] shrink-0 overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm">
+    <div className="w-[clamp(5.75rem,26vw,6.5rem)] shrink-0 overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm">
       {post.image ? (
         <PostCardHeroImage post={post} enableHoverEffect={false} sizes="thumb" />
       ) : (
@@ -46,8 +46,8 @@ function MobilePostCardImage({ post }: MobilePostCardContentProps) {
           </span>
         </div>
       )}
-      <div itemProp="publisher" itemScope itemType="https://schema.org/Organization" className="flex min-h-9 items-center border-t border-border/70 bg-gradient-to-b from-background to-muted/70 px-2 py-1">
-        <span itemProp="name" className="w-full line-clamp-2 text-center text-[clamp(0.625rem,2.8vw,0.6875rem)] font-bold leading-[clamp(0.875rem,3.5vw,1rem)] text-foreground">
+      <div itemProp="publisher" itemScope itemType="https://schema.org/Organization" className="flex min-h-8 items-center border-t border-border/70 bg-gradient-to-b from-background to-muted/70 px-1.5 py-0.5">
+        <span itemProp="name" className="w-full truncate text-center text-[clamp(0.625rem,2.8vw,0.6875rem)] font-bold leading-4 text-foreground">
           {post.clientName}
         </span>
       </div>
@@ -60,10 +60,10 @@ export function MobilePostCard({ className, featured, post }: PostCardProps) {
     <article
       itemScope
       itemType="https://schema.org/Article"
-      className={cn("relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm sm:hidden", featured && "border-primary/20 shadow-primary/5", className)}
+      className={cn("relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm lg:hidden", featured && "border-primary/20 shadow-primary/5", className)}
     >
       <ArticleHeroWarm href={`/articles/${post.slug}`} imageUrl={post.image ?? null} />
-      <div data-nosnippet className="p-3.5">
+      <div data-nosnippet className="p-3">
         <MobilePostCardContent post={post} />
       </div>
     </article>

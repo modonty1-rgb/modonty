@@ -1,5 +1,6 @@
 import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "@/components/link";
+import { ModontySectionLink } from "@/components/feed/ModontySectionLink";
 import { IconPlay } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
@@ -92,17 +93,17 @@ export function ReelsPreviewCard({ items, layout, className }: ReelsPreviewCardP
         className
       )}
     >
-      <div className="flex items-center justify-between gap-3 px-3 py-3 sm:px-4 sm:pb-3 sm:pt-4">
-        <div className="flex items-center gap-1.5">
-          <IconPlay className="h-4 w-4 text-primary" aria-hidden />
-          <h2 id={`reels-preview-heading-${layout}`} className="text-sm font-bold text-foreground lg:text-base">طلة جديدة</h2>
-          <p className="mt-0.5 hidden text-xs text-muted-foreground lg:block">أفكار سريعة من الشركاء</p>
+      <div className="flex items-center justify-between gap-2 px-3 py-1.5 sm:gap-3 sm:px-4 sm:pb-3 sm:pt-4">
+        <div className="flex min-w-0 items-start gap-1.5">
+          <IconPlay className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+          <div className="min-w-0">
+            <h2 id={`reels-preview-heading-${layout}`} className="whitespace-nowrap text-sm font-bold text-foreground lg:text-base">طلة جديدة</h2>
+            <p className="mt-0.5 hidden whitespace-nowrap text-xs text-muted-foreground lg:block">أفكار سريعة من الشركاء</p>
+          </div>
         </div>
-        <Link href="/reels" className="shrink-0 text-xs font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-          عرض الكل
-        </Link>
+        <ModontySectionLink href="/reels" label="كل الطلات" />
       </div>
-      <div className={cn("flex gap-2 overflow-x-auto px-3 pb-3 scrollbar-none sm:px-4 sm:pb-4", layout === "sidebar" && previews.length === 1 && "justify-center")} dir="rtl">
+      <div className={cn("flex gap-2 overflow-x-auto px-3 pb-2.5 scrollbar-none sm:px-4 sm:pb-4", previews.length === 1 && "justify-center")} dir="rtl">
         {previews.map((item) => (
           <ReelPreviewTile key={item.id} item={item} layout={layout} itemCount={previews.length} />
         ))}

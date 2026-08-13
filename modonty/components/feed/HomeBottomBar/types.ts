@@ -5,3 +5,8 @@ export interface FilterOption {
   logo?: string;
   industry?: string;
 }
+
+export interface ClientServiceAction {
+  id: string;
+  visual: "booking" | "shop";
+}

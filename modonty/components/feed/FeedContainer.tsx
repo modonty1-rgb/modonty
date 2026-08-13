@@ -7,9 +7,8 @@ import { CategoryFeedSection } from "@/components/feed/CategoryFeedSection";
 import { InfiniteFeedSkeleton } from "@/components/feed/infiniteScroll/InfiniteFeedSkeleton";
 import { IndustryCarousel } from "@/components/feed/IndustryCarousel";
 import { ReelsPreviewCard } from "@/components/feed/ReelsPreviewCard";
-import { HomeUserProfileCard } from "@/components/feed/HomeUserProfileCard";
+import { MobileClientTrustCard } from "@/components/feed/MobileClientGateway";
 import { MobileModontyPublisherCard } from "@/components/feed/MobileModontyPublisherCard";
-import { ModoPrompt } from "@/components/feed/ModoPrompt";
 import type { FeedPost } from "@/lib/types";
 import type { ReelPreviewItem } from "@/components/feed/ReelsPreviewCard";
 
@@ -27,12 +26,12 @@ export function FeedContainer({ posts, corePublisherArticles, brandLogoUrl, indu
     <>
       <FeedDeferredUI />
       <h2 className="sr-only">أحدث المقالات والمدونات - مدونتي</h2>
-      <div className="container mx-auto max-w-[1280px] px-4 py-6">
-        <div className="flex flex-col items-start gap-6 lg:flex-row">
+      <div className="container mx-auto max-w-[1280px] px-3 py-3 sm:px-4 sm:py-6">
+        <div className="flex flex-col items-start gap-6 lg:flex-row lg:justify-center min-[1240px]:gap-4 min-[1296px]:gap-6">
           <Suspense fallback={<LeftSidebarSkeleton />}>
             <LeftSidebar reels={reels} />
           </Suspense>
-          <div className="w-full lg:flex-1 lg:max-w-[600px] space-y-4 pb-20 md:pb-0 [&>article:first-of-type]:!mt-0">
+          <div className="mx-auto w-full space-y-3 pb-20 sm:space-y-4 md:max-w-[600px] md:pb-0 lg:mx-0 lg:flex-1 min-[1240px]:max-w-[560px] min-[1296px]:max-w-[600px] [&>article:first-of-type]:!mt-0">
             <IndustryCarousel industries={industries} />
             <div className="lg:hidden">
               <ReelsPreviewCard items={reels} layout="feed" />
@@ -40,16 +39,15 @@ export function FeedContainer({ posts, corePublisherArticles, brandLogoUrl, indu
             <div className="lg:hidden">
               <MobileModontyPublisherCard articles={corePublisherArticles} brandLogoUrl={brandLogoUrl} />
             </div>
-            <section aria-labelledby="articles-feed-heading" className="space-y-4 [&>*:nth-child(2)]:!mt-0">
+            <div className="lg:hidden">
+              <MobileClientTrustCard />
+            </div>
+            <section aria-labelledby="articles-feed-heading" className="space-y-3 sm:space-y-4 [&>*:nth-child(2)]:!mt-0">
               <h2 id="articles-feed-heading" className="sr-only">
                 آخر المقالات
               </h2>
               <Suspense fallback={<InfiniteFeedSkeleton count={3} />}>
-                <CategoryFeedSection
-                  serverPosts={posts}
-                  mobileModoSlot={<div className="lg:hidden"><ModoPrompt /></div>}
-                  mobileProfileSlot={<div className="lg:hidden"><HomeUserProfileCard /></div>}
-                />
+                <CategoryFeedSection serverPosts={posts} />
               </Suspense>
             </section>
           </div>

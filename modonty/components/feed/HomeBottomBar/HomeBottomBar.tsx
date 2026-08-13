@@ -1,20 +1,21 @@
 import { getCategoriesWithCounts } from "@/app/api/helpers/category-queries";
 import { getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
 import { getTagsWithCounts } from "@/app/api/helpers/tag-queries";
-import { getClientsForSidebar } from "@/app/api/helpers/client-queries";
+import { getClientsForSidebar, getClientServiceCards } from "@/app/api/helpers/client-queries";
 import { HomeBottomBarLoader } from "./HomeBottomBarLoader";
 import type { FilterOption } from "./types";
 
 // Server component — homepage-only mobile action bar.
-// Mirrors the desktop sidebars 1:1: Discover (categories/industries/tags) + Partners + Newsletter.
+// Mirrors the desktop discovery controls and supplies the mobile service CTAs.
 // Reuses the same cached queries the sidebars use (zero extra DB cost), then hands minimal
 // data to a lazy client shell.
 export async function HomeBottomBar() {
-  const [categories, industries, tags, clients] = await Promise.all([
+  const [categories, industries, tags, clients, services] = await Promise.all([
     getCategoriesWithCounts(),
     getIndustriesWithCounts(),
     getTagsWithCounts(),
     getClientsForSidebar(500),
+    getClientServiceCards(),
   ]);
 
   const categoryOptions: FilterOption[] = categories
@@ -42,6 +43,7 @@ export async function HomeBottomBar() {
       industries={industryOptions}
       tags={tagOptions}
       partners={partnerOptions}
+      services={services.map(({ id, visual }) => ({ id, visual }))}
     />
   );
 }

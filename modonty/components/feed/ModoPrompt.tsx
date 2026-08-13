@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import { IconArrowRight } from "@/lib/icons";
 import { useChatSheetStore } from "@/components/chatbot/chat-sheet-store";
@@ -8,17 +9,18 @@ import { getOptimizedCharacterUrl } from "@/lib/image-utils";
 
 export function ModoPrompt() {
   const [draft, setDraft] = useState("");
+  const router = useRouter();
 
-  const openModo = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     useChatSheetStore.getState().setDraft(draft.trim());
-    useChatSheetStore.getState().setOpen(true);
+    router.push("/modo");
   };
 
   return (
-    <section aria-labelledby="modo-heading" className="rounded-2xl border border-primary/10 bg-card p-4 shadow-[0_10px_30px_-22px_rgba(14,6,90,0.45)] sm:p-5">
-      <div className="mb-3 flex items-center gap-3">
-        <span className="relative flex h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-primary/15 shadow-sm sm:h-12 sm:w-12">
+    <section aria-labelledby="modo-heading" className="rounded-2xl border border-primary/10 bg-card p-3 shadow-[0_10px_30px_-22px_rgba(14,6,90,0.45)] sm:p-5">
+      <div className="mb-2 flex items-center gap-2.5 sm:mb-3 sm:gap-3">
+        <span className="relative flex size-10 shrink-0 overflow-hidden rounded-xl border border-primary/15 shadow-sm sm:size-12">
           <OptimizedImage media={asMedia(getOptimizedCharacterUrl(96))} alt="" fill className="object-cover" sizes="48px" />
         </span>
         <div>
@@ -26,7 +28,7 @@ export function ModoPrompt() {
           <p className="mt-0.5 text-xs text-muted-foreground">اكتب احتياجك وسأرشدك للمحتوى أو الشريك المناسب.</p>
         </div>
       </div>
-      <form onSubmit={openModo} className="flex items-center gap-2">
+      <form onSubmit={handleSubmit} className="flex items-center gap-2">
         <label className="sr-only" htmlFor="modo-question">ما الذي تبحث عنه؟</label>
         <input
           id="modo-question"
@@ -35,7 +37,7 @@ export function ModoPrompt() {
           placeholder="مثال: أبغى أحجز موعد أسنان..."
           className="h-11 min-w-0 flex-1 rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
         />
-        <button type="submit" className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-primary px-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+        <button type="submit" className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-primary px-3 text-sm font-semibold text-primary-foreground transition-colors sm:hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
           <span className="hidden sm:inline">اسأل</span>
           <IconArrowRight className="h-4 w-4" aria-hidden />
         </button>

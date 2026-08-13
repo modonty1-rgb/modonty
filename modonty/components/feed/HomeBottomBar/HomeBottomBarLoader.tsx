@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { FilterOption } from "./types";
+import type { ClientServiceAction, FilterOption } from "./types";
 
 // Golden rule (modonty): client-side is last resort, and when unavoidable it MUST be lazy.
 // The interactive shell (Sheet/Tabs) is loaded client-only — kept out of the critical path.
@@ -18,6 +18,7 @@ interface HomeBottomBarLoaderProps {
   industries: FilterOption[];
   tags: FilterOption[];
   partners: FilterOption[];
+  services: ClientServiceAction[];
 }
 
 export function HomeBottomBarLoader(props: HomeBottomBarLoaderProps) {

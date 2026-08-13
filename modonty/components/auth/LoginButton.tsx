@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "@/components/link";
-import { IconLogin } from "@/lib/icons";
+import { MobileAccountBenefitsMenu } from "@/components/auth/MobileAccountBenefitsMenu";
 
 // Logged-out header CTA: subscribing is the primary action (→ register), with
 // "دخول" for returning users (→ login). Shown in both the desktop and mobile
@@ -22,17 +22,7 @@ export function LoginButton() {
   // Desktop: the pair, with only the fill separating primary from secondary.
   return (
     <>
-      <Button
-        asChild
-        variant="ghost"
-        size="icon"
-        aria-label="دخول"
-        className="min-h-11 min-w-11 rounded-xl [&_svg]:size-5 sm:hidden"
-      >
-        <Link href="/users/login">
-          <IconLogin aria-hidden="true" />
-        </Link>
-      </Button>
+      <MobileAccountBenefitsMenu />
 
       <div className="hidden items-center sm:flex">
         <Button

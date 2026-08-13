@@ -14,7 +14,7 @@ export function LeftSidebar({ className, reels }: LeftSidebarProps) {
   return (
     <aside
       aria-label="مساعدة Modo"
-      className={cn("hidden lg:block w-[300px] sticky top-20 self-start", className)}
+      className={cn("hidden w-[300px] shrink-0 self-start lg:sticky lg:top-20 lg:block", className)}
     >
       <div className="space-y-4">
         <HomeUserProfileCard />

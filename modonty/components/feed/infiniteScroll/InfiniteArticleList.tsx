@@ -145,7 +145,7 @@ export function InfiniteArticleList({
             className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-primary hover:underline"
           >
             <IconClose className="h-3.5 w-3.5" aria-hidden />
-            عرض الكل
+            كل المقالات
           </Link>
         </div>
       )}

@@ -14,7 +14,7 @@ export function DesktopPostCard({ className, index, isLcp, hideClient, featured,
       itemScope
       itemType="https://schema.org/Article"
       className={cn(
-        "relative group hidden overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md sm:block",
+        "relative group hidden overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md lg:block",
         featured ? "border-primary/20 shadow-primary/5" : "border-border",
         className
       )}
