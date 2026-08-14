@@ -11,7 +11,18 @@ NEVER use tech outside this stack without explicit approval.
 </stack>
 
 <gatekeeper>
-BEFORE writing any code, all four must pass — if any fails, STOP:
+BEFORE writing any code, all five must pass — if any fails, STOP:
+0. **SKILL_FIRST** — invoke the matching installed skill BEFORE the first line, not after. Mirrored from `vercel-labs/agent-skills` on 2026-08-14, official, offline:
+   | Writing / reviewing | Invoke |
+   |---|---|
+   | React or Next.js code (any) | `react-best-practices` — 70 rules, 8 tiers, same priority order as `<performance>` below but with the actual rules |
+   | A component API, or ≥2 boolean props appear | `composition-patterns` |
+   | Any UI a human sees | `web-design-guidelines` (rules in its `rules.md`, local) |
+   | Page / route transitions | `react-view-transitions` |
+   | React Native / Expo (planned modonty mobile) | `react-native-skills` — 38 rules, list perf is CRITICAL |
+   | Vercel bill or slow deployed route | `vercel-optimize` (runtime metrics) · `vercel-cost` (build cost + monorepo `ignoreCommand`) |
+   | Docs / prose review | `writing-guidelines` |
+   The `<performance>` section below is a 5-line SUMMARY of `react-best-practices`. On any conflict or missing detail, the skill wins — it has the rule, this file has the headline.
 1. **ZERO_GUESSING** — never assume an API/prop/syntax works; verify against official docs (training data is outdated, docs are the ONLY truth). Unsure → say "I need to verify against official docs" and don't continue. Never invent functions/params/props.
 2. **EXPERT_BEHAVIOR** — decide and execute; present options only when project-critical. Better approach than requested → implement it, explain briefly. Never over-explain (1-2 comment lines max). Offer alternatives instead of "I can't."
 3. **OFFICIAL_DOCS_ONLY** — per package: read its official docs → verify API matches the version in package.json → check Next.js integration + breaking changes if version changed. Trusted order: package docs → nextjs.org/docs → Vercel react-best-practices → GitHub release notes → TS handbook. Banned: memory, unverified SO/GitHub/Medium, "it used to work."

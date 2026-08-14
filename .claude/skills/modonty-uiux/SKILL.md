@@ -75,11 +75,20 @@ Skip the mockup only for trivial changes (text/color/spacing, single-line tweaks
 ## 5. Verify, then ship
 - Live-test in the browser (Playwright) at the right viewport; screenshots saved under `.playwright-mcp/`.
 - Check both desktop + mobile (RTL intact, no overflow, no horizontal scrollbar).
-- Run the relevant Vercel-style review lenses mentally: Web Design Guidelines (a11y/semantics/perf), React Best Practices (waterfalls, bundle), Composition Patterns (avoid boolean-prop sprawl → compound components).
+- **Don't review from memory — invoke the installed Vercel skills.** They were mirrored into
+  `.claude/skills/` on 2026-08-14 from `vercel-labs/agent-skills` (302 files, official):
+  | Skill | Use it for |
+  |---|---|
+  | `web-design-guidelines` | a11y · semantics · forms · touch targets · perf (rules in its `rules.md`) |
+  | `react-best-practices` | 70 rules, 8 priority tiers — waterfalls, bundle, barrels, caching |
+  | `composition-patterns` | 8 rules — boolean-prop sprawl → compound components |
+  | `react-native-skills` | 38 rules — for the planned React Native build of modonty |
+  | `react-view-transitions` | page/route transitions without a third-party animation lib |
 
 ## 6. Sources (adopted)
 - Claude Cookbook — *Prompting for frontend aesthetics* (Anthropic official)
-- Snyk — *Top Claude Skills for UI/UX Engineers*: Anthropic Frontend Design · Vercel Web Design Guidelines (100+ rules) · Vercel React Best Practices (57 rules) · Vercel Composition Patterns · Bencium UX · AccessLint (WCAG 2.1/2.2)
+- `vercel-labs/agent-skills` — installed locally (see §5), not merely cited
+- Bencium UX · AccessLint (WCAG 2.1/2.2)
 - Dashboard UX research: UXPin · SapientPro · UX Collective (B2B dashboards)
 
 ## Related memory
