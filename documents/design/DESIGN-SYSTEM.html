@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نظام تصميم مدوّنتي — المرجع الوحيد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* هويّة مدوّنتي — منقولة حرفياً من modonty/app/globals.css */
+  --navy:#0B0A5C; --blue:#3030FF; --teal:#00D8D8;
+  --bg:#f3f2ef; --card:#fff; --border:#dbdbdb; --muted:#5b5b5b;
+  --ok:#16a34a; --bad:#dc2626; --warn:#f5a623;
+
+  --t1:rgba(11,10,92,.92); --t2:rgba(11,10,92,.75); --t3:rgba(11,10,92,.6);
+
+  --r-sm:4px; --r-card:8px; --r-pill:999px;
+  --ring:0 0 0 1px var(--border);
+  --float:0 0 1px rgba(0,0,0,.45),0 4px 12px rgba(0,0,0,.3);
+  --ease:cubic-bezier(.34,0,.21,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--t1);
+  font-family:"Tajawal",system-ui,sans-serif; font-size:15px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1128px;margin-inline:auto;padding:24px 16px 96px}
+
+/* ── الترويسة ── */
+.hero{background:var(--navy);color:#fff;border-radius:var(--r-card);padding:32px 28px;margin-bottom:24px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset-block:0;inset-inline-end:-60px;width:280px;
+  background:radial-gradient(circle at 50% 50%,var(--blue) 0%,transparent 62%);opacity:.5}
+.hero h1{font-size:30px;line-height:1.2;font-weight:700;position:relative}
+.hero p{margin-top:8px;color:rgba(255,255,255,.8);font-size:15px;max-width:62ch;position:relative}
+.hero .meta{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;position:relative}
+.chip{background:rgba(255,255,255,.12);border-radius:var(--r-pill);padding:5px 12px;font-size:12px;font-weight:700}
+
+/* ── التنقّل ── */
+nav{position:sticky;top:0;z-index:20;background:rgba(243,242,239,.94);backdrop-filter:blur(8px);
+  margin:0 -16px 24px;padding:10px 16px;border-block-end:1px solid var(--border)}
+nav ul{display:flex;flex-wrap:wrap;gap:6px;list-style:none}
+nav a{display:block;padding:6px 12px;border-radius:var(--r-pill);font-size:13px;font-weight:700;
+  color:var(--t2);text-decoration:none;transition:background .2s var(--ease)}
+nav a:hover{background:#fff;color:var(--blue)}
+
+/* ── الأقسام ── */
+section{background:var(--card);border-radius:var(--r-card);box-shadow:var(--ring);padding:24px;margin-block-end:16px}
+section>h2{font-size:20px;font-weight:700;line-height:1.25;display:flex;align-items:center;gap:10px}
+section>h2 .n{background:var(--blue);color:#fff;width:30px;height:30px;border-radius:var(--r-pill);
+  display:grid;place-items:center;font-size:14px;flex:none}
+.lede{color:var(--t2);margin-block:10px 20px;max-width:74ch}
+h3{font-size:16px;font-weight:700;margin-block:22px 10px}
+p{margin-block-end:10px;max-width:76ch}
+ul.plain{margin:0 0 10px;padding-inline-start:20px;color:var(--t2)}
+ul.plain li{margin-block-end:5px}
+
+/* ── الجداول ── */
+table{width:100%;border-collapse:collapse;margin-block:12px;font-size:14px}
+th,td{text-align:start;padding:9px 10px;border-block-end:1px solid var(--border);vertical-align:top}
+th{font-weight:700;color:var(--t2);font-size:12px;letter-spacing:0;background:#faf9f7}
+tbody tr:last-child td{border-block-end:0}
+code{font-family:ui-monospace,"Cascadia Code",Menlo,monospace;font-size:12.5px;
+  background:#f4f4f7;border-radius:var(--r-sm);padding:2px 6px;color:var(--navy);direction:ltr;display:inline-block}
+
+/* ── كتل الكود ── */
+pre{background:#0d0c2b;color:#e8e8f5;border-radius:var(--r-card);padding:16px 18px;overflow-x:auto;
+  direction:ltr;text-align:left;font-size:12.5px;line-height:1.7;margin-block:12px}
+pre code{background:none;color:inherit;padding:0;font-size:inherit}
+.c{color:#8b8bb0}     /* تعليق */
+.k{color:#8ec7ff}     /* مفتاح */
+.v{color:#a8e6a0}     /* قيمة */
+.x{color:#ff9d9d}     /* خطأ */
+
+/* ── صواب/خطأ ── */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-block:14px}
+@media(max-width:720px){.pair{grid-template-columns:1fr}}
+.box{border-radius:var(--r-card);padding:14px 16px;box-shadow:var(--ring)}
+.box.no{background:#fff5f5;box-shadow:0 0 0 1px #fecaca}
+.box.yes{background:#f2fbf4;box-shadow:0 0 0 1px #bbf7d0}
+.box b{display:flex;align-items:center;gap:6px;font-size:13px;margin-block-end:8px}
+.box.no b{color:var(--bad)} .box.yes b{color:var(--ok)}
+.box pre{margin:0;font-size:12px}
+
+/* ── الشواهد ── */
+.proof{background:#f7f7fb;border-inline-start:3px solid var(--blue);border-radius:0 var(--r-sm) var(--r-sm) 0;
+  padding:12px 14px;margin-block:14px;font-size:13px}
+.proof b{display:block;margin-block-end:6px;font-size:12px;color:var(--blue)}
+.proof pre{background:#fff;color:var(--navy);box-shadow:var(--ring);margin-block:6px 0;font-size:12px}
+.proof pre .c{color:#8a8a9e}
+
+/* ── المعاينة الحيّة ── */
+.demo{background:var(--bg);border-radius:var(--r-card);box-shadow:var(--ring);padding:20px;margin-block:12px}
+.demo-label{font-size:11px;font-weight:700;color:var(--t3);margin-block-end:10px;display:block}
+
+/* عيّنات */
+.sw{display:flex;flex-wrap:wrap;gap:10px;margin-block:12px}
+.sw>div{flex:1 1 150px;border-radius:var(--r-card);overflow:hidden;box-shadow:var(--ring);background:#fff}
+.sw i{display:block;height:60px}
+.sw span{display:block;padding:8px 10px;font-size:11.5px;line-height:1.5;color:var(--t2);direction:ltr;text-align:left}
+.sw span b{display:block;color:var(--navy);font-size:12.5px}
+
+/* أزرار العيّنة */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:32px;padding:0 14px;
+  border:0;background:transparent;color:var(--blue);border-radius:var(--r-pill);cursor:pointer;
+  font-family:inherit;font-size:14px;font-weight:700;box-shadow:inset 0 0 0 1px var(--blue);
+  transition:box-shadow .216s var(--ease),background .216s var(--ease),color .216s var(--ease)}
+.btn:hover{background:rgba(48,48,255,.09);color:var(--navy);box-shadow:inset 0 0 0 2px var(--navy)}
+.btn.solid{background:var(--blue);color:#fff;box-shadow:none}
+.btn.solid:hover{background:var(--navy);box-shadow:none}
+.hit{display:inline-flex;align-items:center;min-height:48px;background:transparent;border:0;padding:0;cursor:pointer}
+
+/* بطاقة العيّنة */
+.card-demo{background:#fff;border-radius:var(--r-card);box-shadow:var(--ring);padding:16px;max-width:340px}
+.card-demo.wrong{box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.card-demo h4{font-size:16px;font-weight:700;line-height:1.25}
+.card-demo p{font-size:14px;color:var(--t3);margin-block:4px 0}
+
+/* شارات */
+.tag{display:inline-block;border-radius:var(--r-pill);padding:3px 10px;font-size:11.5px;font-weight:700}
+.tag.ok{background:#dcfce7;color:#14532d}
+.tag.no{background:#fee2e2;color:#7f1d1d}
+.tag.info{background:#e0e7ff;color:#1e1b4b}
+.tag.warn{background:#fef3c7;color:#78350f}
+
+/* ── المعرض ── */
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:12px}
+.g-item{background:#faf9f7;border-radius:var(--r-card);box-shadow:var(--ring);padding:16px}
+.g-t{display:block;font-size:11px;font-weight:700;color:var(--blue);margin-block-end:12px;
+  padding-block-end:8px;border-block-end:1px solid var(--border)}
+.g-v{font-size:11px;color:var(--t3);margin-block-start:5px;direction:ltr;text-align:left;line-height:1.5}
+.g-item .sw{margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px}
+.g-item .sw>div{flex:none}
+.g-item .sw i{height:44px}
+.mv{transition:transform .216s var(--ease),box-shadow .216s var(--ease)}
+.mv:hover{transform:translateY(-2px);box-shadow:var(--float)}
+
+footer{text-align:center;color:var(--t3);font-size:12.5px;padding-block:28px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>نظام تصميم مدوّنتي</h1>
+  <p>المرجع الوحيد لكل قيمة بصريّة. الهويّة من كودنا، والبنية من قياس حيّ على ثلاثة أسطح مستقلّة — لا من ذوق ولا من لقطة شاشة.</p>
+  <div class="meta">
+    <span class="chip">١٤ أغسطس ٢٠٢٦</span>
+    <span class="chip">يحلّ محلّ ملفّين</span>
+    <span class="chip">٢٬٣٢٤ عنصراً مقيساً</span>
+  </div>
+</header>
+
+<nav><ul>
+  <li><a href="#gallery">المعرض</a></li>
+  <li><a href="#src">المصادر</a></li>
+  <li><a href="#brand">الهويّة</a></li>
+  <li><a href="#shadow">الظلال</a></li>
+  <li><a href="#type">الطباعة</a></li>
+  <li><a href="#radius">القطر</a></li>
+  <li><a href="#space">المسافات</a></li>
+  <li><a href="#layout">التخطيط</a></li>
+  <li><a href="#touch">اللمس</a></li>
+  <li><a href="#text">النصّ</a></li>
+  <li><a href="#check">التحقّق</a></li>
+  <li><a href="#errors">الأخطاء</a></li>
+  <li><a href="#todo">لم يُقَس</a></li>
+</ul></nav>
+
+<!-- ═══ ٠ · المعرض ═══ -->
+<section id="gallery">
+  <h2><span class="n">٠</span> المعرض — كل عنصر في النظام، مرئيّاً</h2>
+  <p class="lede">كل ما في هذا الملف، معروضاً في مكان واحد. القيمة تحت كل عيّنة.</p>
+
+  <div class="g">
+
+    <!-- الألوان -->
+    <div class="g-item" style="grid-column:1/-1">
+      <span class="g-t">الألوان</span>
+      <div class="sw">
+        <div><i style="background:#0B0A5C"></i><span><b>navy</b>#0B0A5C</span></div>
+        <div><i style="background:#3030FF"></i><span><b>blue · primary</b>#3030FF</span></div>
+        <div><i style="background:#00D8D8"></i><span><b>teal · accent</b>#00D8D8</span></div>
+        <div><i style="background:#f3f2ef"></i><span><b>background</b>#f3f2ef</span></div>
+        <div><i style="background:#fff;box-shadow:inset 0 0 0 1px #dbdbdb"></i><span><b>card</b>#ffffff</span></div>
+        <div><i style="background:#dbdbdb"></i><span><b>border</b>#dbdbdb</span></div>
+        <div><i style="background:#16a34a"></i><span><b>success</b>#16a34a</span></div>
+        <div><i style="background:#dc2626"></i><span><b>destructive</b>#dc2626</span></div>
+        <div><i style="background:#f5a623"></i><span><b>star</b>#f5a623</span></div>
+      </div>
+    </div>
+
+    <!-- السلّم الطباعي -->
+    <div class="g-item">
+      <span class="g-t">السلّم الطباعي</span>
+      <div style="font-size:24px;line-height:1.125;font-weight:700">عنوان الصفحة</div>
+      <div class="g-v">title-lg · 24/27 · 700</div>
+      <div style="font-size:20px;line-height:1.25;font-weight:700;margin-block-start:10px">عنوان القسم</div>
+      <div class="g-v">title-md · 20/25 · 700</div>
+      <div style="font-size:16px;line-height:1.25;font-weight:700;margin-block-start:10px">عنوان البطاقة</div>
+      <div class="g-v">title-sm · 16/20 · 700</div>
+      <div style="font-size:14px;line-height:1.25;margin-block-start:10px">نصّ الواجهة الافتراضي</div>
+      <div class="g-v">ui · 14/17.5 · 400</div>
+      <div style="font-size:12px;line-height:1.25;color:var(--t3);margin-block-start:10px">طابع زمنيّ · ميتاداتا</div>
+      <div class="g-v">caption · 12/15 · 400</div>
+    </div>
+
+    <!-- الوزنان -->
+    <div class="g-item">
+      <span class="g-t">الوزنان — لا ثالث لهما</span>
+      <div style="font-weight:400;font-size:16px">وزن ٤٠٠ — الأغلبية الساحقة</div>
+      <div class="g-v">font-normal</div>
+      <div style="font-weight:700;font-size:16px;margin-block-start:12px">وزن ٧٠٠ — عنوان أو تأكيد</div>
+      <div class="g-v">font-bold</div>
+      <div style="margin-block-start:14px;padding-block-start:12px;border-block-start:1px dashed var(--border)">
+        <div style="font-weight:500;font-size:16px;color:var(--bad)">✕ ٥٠٠ — ضعيف للتمييز</div>
+        <div style="font-weight:600;font-size:16px;color:var(--bad)">✕ ٦٠٠ — غير موجود في تجوّال</div>
+        <div style="font-weight:900;font-size:16px;color:var(--bad)">✕ ٩٠٠ — غير محمَّل</div>
+      </div>
+    </div>
+
+    <!-- ارتفاع السطر -->
+    <div class="g-item">
+      <span class="g-t">ارتفاع السطر — نسبتان</span>
+      <div style="font-size:14px;line-height:1.25;background:#faf9f7;padding:10px;border-radius:var(--r-sm)">
+        احجز موعدك اليوم واحصل على استشارة مجانية من فريق متخصّص
+      </div>
+      <div class="g-v">1.25 — واجهة · أزرار · بطاقات</div>
+      <div style="font-size:14px;line-height:1.5;background:#faf9f7;padding:10px;border-radius:var(--r-sm);margin-block-start:10px">
+        احجز موعدك اليوم واحصل على استشارة مجانية من فريق متخصّص
+      </div>
+      <div class="g-v">1.5 — محتوى · فقرات · مقالات</div>
+    </div>
+
+    <!-- درجات النصّ -->
+    <div class="g-item">
+      <span class="g-t">درجات النصّ</span>
+      <div style="font-size:15px;color:var(--t1)">أساسيّ — العناوين والمحتوى</div>
+      <div class="g-v">--text-1 · opacity .9 · النسبة ×4</div>
+      <div style="font-size:15px;color:var(--t2);margin-block-start:10px">ثانويّ — labels الأزرار</div>
+      <div class="g-v">--text-2 · opacity .75 · ×1</div>
+      <div style="font-size:15px;color:var(--t3);margin-block-start:10px">ثالثيّ — الطوابع والميتاداتا</div>
+      <div class="g-v">--text-3 · opacity .6 · ×1</div>
+    </div>
+
+    <!-- نصف القطر -->
+    <div class="g-item">
+      <span class="g-t">نصف القطر — ثلاث فئات</span>
+      <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap">
+        <div style="text-align:center">
+          <div style="width:64px;height:44px;background:#fff;box-shadow:var(--ring);border-radius:8px"></div>
+          <div class="g-v" style="text-align:center">حاوية · 8px</div>
+        </div>
+        <div style="text-align:center">
+          <div style="width:64px;height:32px;background:#fff;box-shadow:inset 0 0 0 1px var(--blue);border-radius:999px"></div>
+          <div class="g-v" style="text-align:center">تحكّم · 999px</div>
+        </div>
+        <div style="text-align:center">
+          <div style="width:40px;height:40px;background:#fff;box-shadow:var(--ring);border-radius:4px"></div>
+          <div class="g-v" style="text-align:center">مصغّرة · 4px</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- الارتفاع -->
+    <div class="g-item">
+      <span class="g-t">الارتفاع — حلقة لا ظلّ</span>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1 1 110px;background:#fff;border-radius:8px;box-shadow:var(--ring);padding:14px;text-align:center;font-size:12.5px">✓ حلقة 1px</div>
+        <div style="flex:1 1 110px;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.12);padding:14px;text-align:center;font-size:12.5px;color:var(--bad)">✕ ظلّ ناعم</div>
+      </div>
+      <div style="margin-block-start:12px;background:#fff;border-radius:8px;box-shadow:var(--float);padding:14px;text-align:center;font-size:12.5px">الظلّ العائم — للقوائم والـtoast فقط</div>
+      <div class="g-v">--shadow-float</div>
+    </div>
+
+    <!-- الأزرار -->
+    <div class="g-item">
+      <span class="g-t">الأزرار</span>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn solid">إجراء أساسيّ</button>
+        <button class="btn">إجراء ثانويّ</button>
+        <button class="btn" style="width:32px;padding:0" aria-label="مثال أيقونة">✦</button>
+      </div>
+      <div class="g-v">مرّر المؤشّر — الحلقة تسمك 1px→2px بلا حركة</div>
+      <div style="margin-block-start:12px;padding-block-start:12px;border-block-start:1px dashed var(--border)">
+        <button class="hit" style="box-shadow:inset 0 0 0 1px rgba(48,48,255,.22);border-radius:8px;padding-inline:4px">
+          <span class="btn" style="pointer-events:none">هدف اللمس</span>
+        </button>
+        <div class="g-v">غلاف 48px · مرئيّ 32px · WCAG 2.5.5</div>
+      </div>
+    </div>
+
+    <!-- البطاقة -->
+    <div class="g-item">
+      <span class="g-t">البطاقة</span>
+      <div style="background:#fff;border-radius:8px;box-shadow:var(--ring);padding:16px">
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="width:40px;height:40px;border-radius:4px;background:linear-gradient(135deg,var(--blue),var(--teal));flex:none"></div>
+          <div style="min-width:0">
+            <div style="font-size:16px;font-weight:700;line-height:1.25">اسم الشريك</div>
+            <div style="font-size:12px;color:var(--t3);line-height:1.25">الرياض · الرعاية الصحية</div>
+          </div>
+        </div>
+        <p style="font-size:14px;line-height:1.5;color:var(--t2);margin-block:10px 12px">نصّ وصفيّ قصير بارتفاع سطر ١٫٥ لأنه محتوى يُقرأ.</p>
+        <button class="btn">احجز موعد</button>
+      </div>
+      <div class="g-v">حاوية 8px · شعار 4px · زرّ 999px · حشو 16px</div>
+    </div>
+
+    <!-- الشارات -->
+    <div class="g-item">
+      <span class="g-t">الشارات</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span class="tag ok">موثّق</span>
+        <span class="tag info">جديد</span>
+        <span class="tag warn">ينتهي قريباً</span>
+        <span class="tag no">متأخّر</span>
+      </div>
+      <div class="g-v">اللون مرتبط بالمعنى — لا للزينة</div>
+    </div>
+
+    <!-- المسافات -->
+    <div class="g-item">
+      <span class="g-t">سلّم المسافات — أساس 4px</span>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:10px"><i style="width:4px;height:14px;background:var(--blue);flex:none"></i><span class="g-v" style="margin:0">4 — أيقونة ونصّ</span></div>
+        <div style="display:flex;align-items:center;gap:10px"><i style="width:8px;height:14px;background:var(--blue);flex:none"></i><span class="g-v" style="margin:0">8 — بين الكروت</span></div>
+        <div style="display:flex;align-items:center;gap:10px"><i style="width:12px;height:14px;background:var(--blue);flex:none"></i><span class="g-v" style="margin:0">12 — حشو رأسيّ</span></div>
+        <div style="display:flex;align-items:center;gap:10px"><i style="width:16px;height:14px;background:var(--blue);flex:none"></i><span class="g-v" style="margin:0">16 — حشو الكرت</span></div>
+        <div style="display:flex;align-items:center;gap:10px"><i style="width:24px;height:14px;background:var(--blue);flex:none"></i><span class="g-v" style="margin:0">24 — فجوة الأعمدة</span></div>
+        <div style="display:flex;align-items:center;gap:10px"><i style="width:32px;height:14px;background:var(--blue);flex:none"></i><span class="g-v" style="margin:0">32 — بين الأقسام</span></div>
+      </div>
+    </div>
+
+    <!-- الحقول -->
+    <div class="g-item">
+      <span class="g-t">الحقول</span>
+      <input placeholder="اسم الشريك" style="width:100%;height:40px;border:0;box-shadow:inset 0 0 0 1px var(--border);border-radius:999px;padding-inline:16px;font-family:inherit;font-size:14px;background:#fff;color:var(--t1)">
+      <div class="g-v">تحكّم → 999px · الحلقة بدل الحدّ</div>
+      <input placeholder="حقل مركَّز" style="width:100%;height:40px;border:0;box-shadow:inset 0 0 0 2px var(--blue);border-radius:999px;padding-inline:16px;font-family:inherit;font-size:14px;background:#fff;color:var(--t1);margin-block-start:10px">
+      <div class="g-v">التركيز يسمك الحلقة — صفر إزاحة</div>
+    </div>
+
+    <!-- الحركة -->
+    <div class="g-item">
+      <span class="g-t">الحركة</span>
+      <div class="mv" style="width:100%;height:44px;border-radius:8px;background:linear-gradient(90deg,var(--blue),var(--teal));display:grid;place-items:center;color:#fff;font-size:13px;font-weight:700">مرّر المؤشّر</div>
+      <div class="g-v">.216s · cubic-bezier(.34,0,.21,1)</div>
+      <div class="g-v" style="color:var(--bad)">صفر <code>transition: all</code></div>
+    </div>
+
+    <!-- RTL -->
+    <div class="g-item">
+      <span class="g-t">الاتجاه</span>
+      <div style="background:#fff;border-radius:8px;box-shadow:var(--ring);padding:12px;display:flex;align-items:center;gap:8px">
+        <span style="width:8px;height:8px;border-radius:999px;background:var(--teal);flex:none"></span>
+        <span style="font-size:13px">يبدأ من اليمين تلقائياً</span>
+        <span style="margin-inline-start:auto;font-size:12px;color:var(--t3)">start ← end</span>
+      </div>
+      <div class="g-v"><code>ps pe ms me start end</code> — صفر <code>left right</code></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ ١ ═══ -->
+<section id="src">
+  <h2><span class="n">١</span> من أين جاءت كل قيمة</h2>
+  <p class="lede">ثلاثة مصادر، ولكلٍّ وزن مختلف عند التعارض. هذا هو ما يجعل الملف مرجعاً لا رأياً.</p>
+
+  <table>
+    <thead><tr><th style="width:34%">المصدر</th><th>ماذا يعطي</th><th style="width:22%">الوزن عند التعارض</th></tr></thead>
+    <tbody>
+      <tr><td><code>modonty/app/globals.css</code></td><td>الهويّة: الألوان · الخط · القطر</td><td><span class="tag ok">الأعلى — هذا ما يعمل فعلاً</span></td></tr>
+      <tr><td>قياس لينكدإن الحيّ</td><td>البنية: الظلال · الأوزان · الشبكة · اللمس</td><td><span class="tag info">يفوز حين لا يخصّ الهويّة</span></td></tr>
+      <tr><td><code>DESIGN_SYSTEM.md</code> القديم</td><td>—</td><td><span class="tag no">مُلغى</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="proof">
+    <b>لماذا أُلغي القديم — سطر واحد يكفي</b>
+<pre><code><span class="c">/* DESIGN_SYSTEM.md:53 — يوثّق هويّة منصّة أخرى */</span>
+<span class="k">--primary</span>: <span class="x">210 90% 40%</span>;   <span class="c">/* #0a66c2 - LinkedIn's signature blue */</span>
+
+<span class="c">/* globals.css:22 — ما يعمل فعلاً */</span>
+<span class="k">--primary</span>: <span class="v">240 100% 59%</span>;  <span class="c">/* #3030FF — أزرق مدوّنتي */</span></code></pre>
+  </div>
+
+  <h3>القياس أُعيد على ثلاثة أسطح لا على صفحة واحدة</h3>
+  <p>صفحة واحدة تُنتج قاعدة هشّة. ما تكرّر في الثلاثة يُعتمد، وما اختلف يُذكر اختلافه صراحةً في هذا الملف.</p>
+  <table>
+    <thead><tr><th>السطح</th><th>العناصر</th><th>الغرض</th></tr></thead>
+    <tbody>
+      <tr><td><code>/feed/</code></td><td>١٬٥٨٨</td><td>المسح الأصلي</td></tr>
+      <tr><td><code>/top-content/</code></td><td>٤٢٤</td><td>تحقّق مستقلّ</td></tr>
+      <tr><td><code>/jobs/</code></td><td>٣١٢</td><td>تحقّق مستقلّ</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══ ٢ ═══ -->
+<section id="brand">
+  <h2><span class="n">٢</span> الهويّة — من كودنا، لا تُستورد</h2>
+  <p class="lede">يُنسخ الهيكل، ولا يُنسخ لون علامة ولا شعار ولا أيقونة. هذه ألواننا نحن.</p>
+
+  <div class="sw">
+    <div><i style="background:#0B0A5C"></i><span><b>--brand-navy</b>#0B0A5C · 245 87% 19%<br>النصّ · الترويسات</span></div>
+    <div><i style="background:#3030FF"></i><span><b>--brand-blue</b>#3030FF · 240 100% 59%<br>primary · الروابط · CTA</span></div>
+    <div><i style="background:#00D8D8"></i><span><b>--brand-teal</b>#00D8D8 · 180 100% 42%<br>accent · الشارات</span></div>
+    <div><i style="background:#f3f2ef"></i><span><b>--background</b>#f3f2ef · 45 8% 95%<br>خلفية الصفحة</span></div>
+    <div><i style="background:#fff;box-shadow:inset 0 0 0 1px #dbdbdb"></i><span><b>--card</b>#ffffff<br>سطح البطاقة</span></div>
+    <div><i style="background:#dbdbdb"></i><span><b>--border</b>#dbdbdb · 0 0% 86%<br>الحلقة · الفواصل</span></div>
+  </div>
+
+  <h3>القاعدة: الصفحة ليست بيضاء</h3>
+  <p>البيج الدافئ خلف الكروت البيضاء هو ما يجعل الكرت <em>يُرى</em>. لو صارت الخلفية بيضاء اختفت حدود الكروت واحتجت ظلالاً لتعويضها — وهنا يبدأ الانحدار.</p>
+
+  <div class="demo">
+    <span class="demo-label">معاينة — بطاقة على الخلفية الصحيحة</span>
+    <div class="card-demo">
+      <h4>عنوان البطاقة</h4>
+      <p>نصّ مساند بدرجة ثالثة. لاحظ أن الفصل عن الخلفية جاء من حلقة ١px فقط.</p>
+    </div>
+  </div>
+
+  <h3>الخط</h3>
+  <table>
+    <thead><tr><th>الخط</th><th>الاستعمال</th><th>الأوزان المحمّلة</th></tr></thead>
+    <tbody>
+      <tr><td>Tajawal</td><td>العربي — الأساس</td><td><code>400 · 500 · 700</code></td></tr>
+      <tr><td>Montserrat</td><td>اللاتيني والأرقام</td><td><code>400 · 500 · 600 · 700</code></td></tr>
+    </tbody>
+  </table>
+  <p>سلسلة واحدة تخدم الاثنين: المتصفّح يختار العربي للحروف العربية واللاتيني لغيرها تلقائياً. <b>لا تكتب <code>:lang(ar)</code> منفصلاً</b> — يكسر النصّ المختلط (اسم شركة إنجليزي داخل جملة عربية).</p>
+</section>
+
+<!-- ═══ ٣ ═══ -->
+<section id="shadow">
+  <h2><span class="n">٣</span> الظلال — أثقل تغيير، وأوضح دليل</h2>
+  <p class="lede">صفر ظلّ داخل تدفّق الصفحة. الفصل يأتي من حلقة ١px. والظلّ محجوز لما يطفو فوق الصفحة.</p>
+
+  <div class="pair">
+    <div class="box no">
+      <b>✕ ما نفعله اليوم</b>
+<pre><code>&lt;Card className=<span class="x">"shadow-sm hover:shadow-md"</span>&gt;</code></pre>
+      <p style="font-size:12.5px;color:var(--t3);margin:8px 0 0">الشكل يصير «قالب مجاني». والظلّ الناعم لا يعطي حدّة الحلقة.</p>
+    </div>
+    <div class="box yes">
+      <b>✓ الصحيح</b>
+<pre><code>&lt;Card className=<span class="v">"ring-1 ring-border"</span>&gt;</code></pre>
+      <p style="font-size:12.5px;color:var(--t3);margin:8px 0 0">حلقة ١px تعطي حدّة ونظافة لا يعطيها الظلّ.</p>
+    </div>
+  </div>
+
+  <div class="demo">
+    <span class="demo-label">معاينة — الفرق بالعين</span>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <div class="card-demo wrong" style="max-width:250px">
+        <h4 style="color:var(--bad)">✕ بظلّ</h4>
+        <p><code>0 2px 8px rgba(0,0,0,.12)</code></p>
+      </div>
+      <div class="card-demo" style="max-width:250px">
+        <h4 style="color:var(--ok)">✓ بحلقة</h4>
+        <p><code>0 0 0 1px #dbdbdb</code></p>
+      </div>
+    </div>
+  </div>
+
+  <h3>الحلقات الثلاث</h3>
+<pre><code><span class="k">--ring-card</span>:   0 0 0 1px hsl(var(--border));            <span class="c">/* الكرت */</span>
+<span class="k">--ring-active</span>: inset 0 0 0 1px hsl(var(--foreground));  <span class="c">/* الحالة النشطة */</span>
+<span class="k">--ring-brand</span>:  inset 0 0 0 1px hsl(var(--primary));     <span class="c">/* الزر الثانوي */</span>
+
+<span class="c">/* الاستثناء الوحيد — ما يطفو فوق الصفحة */</span>
+<span class="k">--shadow-float</span>: 0 0 1px rgba(0,0,0,.45), 0 4px 12px rgba(0,0,0,.6);</code></pre>
+
+  <h3>لماذا حلقة لا <code>border</code>؟</h3>
+  <p><code>box-shadow</code> لا تأخذ مساحة في التخطيط. تغيّر سمكها من ١px إلى ٢px عند التحويم بلا أن ينتفض العنصر ولا يزحف ما حوله.</p>
+  <div class="pair">
+    <div class="box no">
+      <b>✕ يسبّب ارتجاف التخطيط</b>
+<pre><code>.btn       { <span class="x">border</span>: 1px solid var(--blue) }
+.btn:hover { <span class="x">border</span>: 2px solid var(--navy) }</code></pre>
+    </div>
+    <div class="box yes">
+      <b>✓ صفر حركة</b>
+<pre><code>.btn       { <span class="v">box-shadow</span>: inset 0 0 0 1px var(--blue) }
+.btn:hover { <span class="v">box-shadow</span>: inset 0 0 0 2px var(--navy) }</code></pre>
+    </div>
+  </div>
+
+  <div class="proof">
+    <b>الدليل المقيس</b>
+<pre><code>/feed/         1,588 عنصراً → <span class="v">صفر ظلّ حقيقي (blur&gt;0)</span> · 3 حلقات فقط
+/top-content/    424 عنصراً → كل الظلال من نمط  <span class="v">0px 0px 0px 1px</span>
+/jobs/           312 عنصراً → 29 حلقة + <span class="v">ظلّ عائم واحد</span> rgba(0,0,0,.3) 0 4px 12px</code></pre>
+    <b style="margin-block-start:10px">ووضعنا الحالي</b>
+<pre><code>$ grep -rohE "shadow-(sm|md|lg|xl|2xl)" modonty/app modonty/components
+  <span class="x">50 shadow-sm · 42 shadow-md · 25 shadow-lg · 3 shadow-2xl · 1 shadow-xl = 121</span>
+  <span class="c">١٢١ ظلّاً، ولا حلقة واحدة.</span></code></pre>
+  </div>
+</section>
+
+<!-- ═══ ٤ ═══ -->
+<section id="type">
+  <h2><span class="n">٤</span> الطباعة</h2>
+  <p class="lede">وزنان فقط، ونسبتان لارتفاع السطر. التمييز يأتي من الحجم واللون — لا من الوزن.</p>
+
+  <h3>٤.١ الوزن — <code>400</code> و <code>700</code> فقط</h3>
+  <p>لينكدإن يستعمل <code>400/600</code>. ونحن <b>لا نستطيع نسخها حرفياً</b>، والسبب قياسيّ لا ذوقيّ:</p>
+
+  <div class="proof">
+    <b>تجوّال لا يملك الوزن ٦٠٠ أصلاً</b>
+<pre><code>$ curl fonts.googleapis.com/css2?family=Tajawal:wght@600
+  <span class="x">HTTP 400</span>
+
+  المتاح في تجوّال: <span class="v">200 · 300 · 400 · 500 · 700 · 800 · 900</span>
+  المحمَّل عندنا  (layout.tsx:17): <span class="v">400 · 500 · 700</span></code></pre>
+    <b style="margin-block-start:10px">فماذا يحدث الآن؟</b>
+<pre><code>$ grep -rohE "font-(semibold|extrabold|black)" modonty/app modonty/components
+  <span class="x">176 font-semibold</span>   ← وزن 600، غير موجود في تجوّال
+  <span class="x"> 54 font-extrabold</span>  ← 800، غير محمَّل
+  <span class="x"> 33 font-black</span>      ← 900، غير محمَّل
+  <span class="c">٢٦٣ موضعاً تطلب وزناً لا يملكه الخط → المتصفّح يزيّفه، والثِّقَل يختلف بين جهاز وآخر.</span></code></pre>
+  </div>
+
+  <table>
+    <thead><tr><th>المستعمل الآن</th><th>البديل</th><th>لماذا</th></tr></thead>
+    <tbody>
+      <tr><td><code>font-medium</code> · <code>font-semibold</code></td><td><code>font-bold</code></td><td>٥٠٠ ضعيف للتمييز، و٦٠٠ غير موجود</td></tr>
+      <tr><td><code>font-extrabold</code> · <code>font-black</code></td><td><code>font-bold</code></td><td>غير محمَّلة — تزييف</td></tr>
+    </tbody>
+  </table>
+
+  <div class="demo">
+    <span class="demo-label">معاينة — وزنان يكفيان</span>
+    <p style="font-weight:400;font-size:15px;margin:0 0 6px">وزن ٤٠٠ — نصّ عاديّ، وهو الأغلبية الساحقة في أيّ صفحة.</p>
+    <p style="font-weight:700;font-size:15px;margin:0 0 12px">وزن ٧٠٠ — عنوان أو تأكيد، ولا شيء بينهما.</p>
+    <p style="font-weight:400;font-size:20px;margin:0 0 6px;color:var(--t1)">التمييز من <b style="font-weight:700">الحجم</b>…</p>
+    <p style="font-weight:400;font-size:15px;margin:0;color:var(--t3)">…ومن اللون. هذا يكفي لبناء تسلسل هرميّ كامل.</p>
+  </div>
+
+  <h3>٤.٢ ارتفاع السطر — نسبتان لا واحدة</h3>
+  <p>أذكى نقطة في النظام المقيس: <b>نفس الحجم له ارتفاعان بحسب السياق</b>. أغلب الأنظمة تعطي ارتفاعاً واحداً لكل حجم، فتخرج الواجهة فضفاضة أو المحتوى خانقاً.</p>
+<pre><code><span class="k">--lh-tight</span>:   1.25;  <span class="c">/* واجهة: أزرار · labels · عناوين بطاقات · سطر أو سطران */</span>
+<span class="k">--lh-relaxed</span>: 1.5;   <span class="c">/* محتوى: فقرات · نصّ المقال · قراءة متواصلة */</span></code></pre>
+
+  <div class="demo">
+    <span class="demo-label">معاينة — نفس الحجم ١٤px، سياقان</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div style="background:#fff;padding:12px;border-radius:var(--r-card);box-shadow:var(--ring)">
+        <div style="font-size:11px;color:var(--t3);margin-block-end:6px">1.25 — واجهة</div>
+        <div style="font-size:14px;line-height:1.25">حفظ التغييرات ونشر المقال على الموقع مباشرة</div>
+      </div>
+      <div style="background:#fff;padding:12px;border-radius:var(--r-card);box-shadow:var(--ring)">
+        <div style="font-size:11px;color:var(--t3);margin-block-end:6px">1.5 — محتوى</div>
+        <div style="font-size:14px;line-height:1.5">حفظ التغييرات ونشر المقال على الموقع مباشرة</div>
+      </div>
+    </div>
+  </div>
+  <p><b>والعربي يحتاج <code>1.5</code> أكثر من اللاتيني</b> — التشكيل فوق الحرف والنقاط تحت خطّ الأساس. لا تنزل تحتها في نصّ المقال.</p>
+
+  <h3>٤.٣ السلّم</h3>
+  <table>
+    <thead><tr><th>الاسم</th><th>المقاس / السطر</th><th>الوزن</th><th>الاستعمال</th></tr></thead>
+    <tbody>
+      <tr><td>caption</td><td><code>12 / 15</code></td><td>400</td><td>طوابع زمنية · ميتاداتا</td></tr>
+      <tr><td>ui</td><td><code>14 / 17.5</code></td><td>400 · 700</td><td><b>الافتراضي</b> — أزرار · بطاقات صغيرة</td></tr>
+      <tr><td>body</td><td><code>14 / 21</code></td><td>400</td><td>نصّ طويل</td></tr>
+      <tr><td>title-sm</td><td><code>16 / 20</code></td><td>700</td><td>عناوين البطاقات</td></tr>
+      <tr><td>title-md</td><td><code>20 / 25</code></td><td>700</td><td>عناوين الأقسام</td></tr>
+      <tr><td>title-lg</td><td><code>24 / 27</code></td><td>700</td><td>عنوان الصفحة</td></tr>
+    </tbody>
+  </table>
+  <p><code>letter-spacing: normal</code> في كل مكان. أيّ عبث بالتباعد يكسر العربي أوّلاً.</p>
+</section>
+
+<!-- ═══ ٥ ═══ -->
+<section id="radius">
+  <h2><span class="n">٥</span> نصف القطر — ثلاث فئات لا تُخلط</h2>
+  <p class="lede">التباين بين حاوية شبه مربّعة وتحكّم بيضاويّ تماماً هو ما يجعل الزرّ يقول «أنا زرّ».</p>
+
+  <table>
+    <thead><tr><th>الفئة</th><th>القيمة</th><th>الأمثلة</th></tr></thead>
+    <tbody>
+      <tr><td><b>حاوية</b></td><td><code>rounded-lg</code> — 8px</td><td>كرت · قسم · نافذة</td></tr>
+      <tr><td><b>تحكّم</b></td><td><code>rounded-full</code> — 999px</td><td>زر · حقل · شارة · أفاتار</td></tr>
+      <tr><td><b>مصغّرة</b></td><td><code>rounded-sm</code> — 4px</td><td>شعار كيان · thumbnail</td></tr>
+    </tbody>
+  </table>
+
+  <div class="demo">
+    <span class="demo-label">معاينة — الخلط يقتل «قابليّة النقر»</span>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <div style="background:#fff;border-radius:8px;box-shadow:var(--ring);padding:16px">
+        <div style="font-size:11px;color:var(--bad);font-weight:700;margin-block-end:10px">✕ زرّ بقطر الحاوية</div>
+        <button class="btn" style="border-radius:8px">احجز موعد</button>
+        <p style="font-size:12px;color:var(--t3);margin:10px 0 0;max-width:180px">يذوب في الكرت</p>
+      </div>
+      <div style="background:#fff;border-radius:8px;box-shadow:var(--ring);padding:16px">
+        <div style="font-size:11px;color:var(--ok);font-weight:700;margin-block-end:10px">✓ زرّ بيضاويّ</div>
+        <button class="btn">احجز موعد</button>
+        <p style="font-size:12px;color:var(--t3);margin:10px 0 0;max-width:180px">ينفصل ويقول «أنا زرّ»</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="proof">
+    <b>ملاحظة أمانة — الثابت هو القاعدة لا الرقم</b>
+<pre><code>مقياس القطر يختلف بين أسطح لينكدإن نفسها:
+  /feed/         غالبه  <span class="v">999 / 4 / 8</span>
+  /top-content/  غالبه  <span class="v">16px</span>  (×57)
+  /jobs/         غالبه  <span class="v">24px</span>  (×28)
+<span class="c">فالثابت المؤكَّد ليس الرقم، بل فصل الفئات الثلاث.</span></code></pre>
+    <b style="margin-block-start:10px">ووضعنا</b>
+<pre><code>rounded-full 190 · rounded-md 150 · rounded-lg 96 · rounded-xl 85 · rounded-2xl 64
+<span class="c">خمسة مقاسات للحاويات بلا قاعدة → تُوحَّد على lg.</span></code></pre>
+  </div>
+</section>
+
+<!-- ═══ ٦ ═══ -->
+<section id="space">
+  <h2><span class="n">٦</span> المسافات</h2>
+  <p class="lede">الأساس <b>4px</b> لا 8px صارم. السلّم فيه <code>4 · 12 · 20</code> — أي مرونة أكبر بلا فوضى.</p>
+  <table>
+    <thead><tr><th>القيمة</th><th>Tailwind</th><th>الاستعمال الأكثر</th></tr></thead>
+    <tbody>
+      <tr><td><code>4px</code></td><td><code>gap-1</code></td><td>بين أيقونة ونصّ</td></tr>
+      <tr><td><code>8px</code></td><td><code>gap-2</code></td><td>بين كروت الشريط الجانبي</td></tr>
+      <tr><td><code>12px</code></td><td><code>p-3</code></td><td>حشو رأسيّ داخل الكرت</td></tr>
+      <tr><td><code>16px</code></td><td><code>p-4</code></td><td><b>حشو الكرت الأفقي — الأكثر استعمالاً</b></td></tr>
+      <tr><td><code>24px</code></td><td><code>gap-6</code></td><td>فجوة أعمدة الشبكة</td></tr>
+      <tr><td><code>32px</code></td><td><code>gap-8</code></td><td>بين الأقسام الكبرى</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══ ٧ ═══ -->
+<section id="layout">
+  <h2><span class="n">٧</span> التخطيط</h2>
+  <p class="lede">نقطة نتّفق فيها مع القياس أصلاً — <code>1128px</code> مستعملة عندنا ٧٦ مرّة.</p>
+<pre><code><span class="k">max-width</span>: <span class="v">1128px</span>;   <span class="c">/* الحاوية */</span>
+<span class="k">column-gap</span>: <span class="v">24px</span>;
+<span class="k">row-gap</span>: <span class="v">16px</span>;</code></pre>
+
+  <div class="proof">
+    <b>مؤكَّدة في الطرفين</b>
+<pre><code>لينكدإن /jobs/ : max-width: <span class="v">1128px</span>  ×12
+كودنا          : <span class="v">max-w-[1128px]</span>     ×76</code></pre>
+  </div>
+
+  <h3>للعربي — RTL</h3>
+  <div class="pair">
+    <div class="box no">
+      <b>✕ ينكسر عند قلب الاتجاه</b>
+<pre><code>className=<span class="x">"pl-4 mr-2 text-left"</span>
+grid-column: <span class="x">rail-left</span></code></pre>
+    </div>
+    <div class="box yes">
+      <b>✓ يعمل في الاتجاهين</b>
+<pre><code>className=<span class="v">"ps-4 me-2 text-start"</span>
+grid-column: <span class="v">rail-start</span></code></pre>
+    </div>
+  </div>
+  <p>الشبكة تنقلب تلقائياً مع <code>dir="rtl"</code> بلا إعادة تعريف — بشرط ألّا تكون سمّيت مناطقك <code>left</code>/<code>right</code>.</p>
+</section>
+
+<!-- ═══ ٨ ═══ -->
+<section id="touch">
+  <h2><span class="n">٨</span> اللمس — 48px لكل عنصر تفاعليّ</h2>
+  <p class="lede">الشكل المرئيّ 32px، والغلاف الشفّاف 48px. المستخدم يرى زرّاً أنيقاً صغيراً، وإصبعه يصيب مساحة كبيرة.</p>
+
+  <p>زرّ بارتفاع 32px يسقط في معيار <b>WCAG 2.5.5</b> (44×44 حدّاً أدنى). وبدل تكبيره بصرياً وإفساد الكثافة، يُلَفّ في هدف لمس أكبر.</p>
+
+<pre><code>&lt;button className=<span class="v">"flex min-h-[48px] items-center bg-transparent p-0"</span>&gt;
+  &lt;span className=<span class="v">"flex h-8 items-center rounded-full px-3"</span>&gt;احجز&lt;/span&gt;
+&lt;/button&gt;</code></pre>
+
+  <div class="demo">
+    <span class="demo-label">معاينة — الحدّان مرئيّان (الخارجي هدف اللمس)</span>
+    <button class="hit" style="box-shadow:inset 0 0 0 1px rgba(48,48,255,.25);border-radius:8px;padding-inline:4px">
+      <span class="btn" style="pointer-events:none">احجز موعد</span>
+    </button>
+    <p style="font-size:12px;color:var(--t3);margin:10px 0 0">الغلاف 48px · الشكل المرئيّ 32px</p>
+  </div>
+
+  <div class="proof">
+    <b>مؤكَّد حيّاً</b>
+<pre><code>ارتفاعات الأزرار على /jobs/ : 18 · 25 · <span class="v">32</span> · 36 · 41 · <span class="v">48</span> · 58</code></pre>
+  </div>
+</section>
+
+<!-- ═══ ٩ ═══ -->
+<section id="text">
+  <h2><span class="n">٩</span> النصّ — شفافية لا ألوان صريحة</h2>
+  <p class="lede">نفس القيمة تعمل فوق الأبيض والبيج معاً. اللون الصريح ينكسر فوق أحدهما.</p>
+
+  <div class="demo">
+    <span class="demo-label">معاينة — الدرجات الثلاث فوق سطحين</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="background:#fff;padding:14px;border-radius:var(--r-card);box-shadow:var(--ring)">
+        <div style="font-size:11px;color:var(--t3);margin-block-end:8px">فوق الأبيض</div>
+        <p style="color:var(--t1);margin:0 0 4px;font-size:14px">أساسيّ — .9</p>
+        <p style="color:var(--t2);margin:0 0 4px;font-size:14px">ثانويّ — .75</p>
+        <p style="color:var(--t3);margin:0;font-size:14px">ثالثيّ — .6</p>
+      </div>
+      <div style="background:var(--bg);padding:14px;border-radius:var(--r-card);box-shadow:var(--ring)">
+        <div style="font-size:11px;color:var(--t3);margin-block-end:8px">فوق البيج</div>
+        <p style="color:var(--t1);margin:0 0 4px;font-size:14px">أساسيّ — .9</p>
+        <p style="color:var(--t2);margin:0 0 4px;font-size:14px">ثانويّ — .75</p>
+        <p style="color:var(--t3);margin:0;font-size:14px">ثالثيّ — .6</p>
+      </div>
+    </div>
+  </div>
+
+<pre><code><span class="k">--text-1</span>: hsl(var(--foreground) / .9);   <span class="c">/* أساسيّ */</span>
+<span class="k">--text-2</span>: hsl(var(--foreground) / .75);  <span class="c">/* ثانويّ */</span>
+<span class="k">--text-3</span>: hsl(var(--foreground) / .6);   <span class="c">/* ثالثيّ */</span></code></pre>
+
+  <div class="proof">
+    <b>النسبة المقيسة ≈ ٤ : ١ : ١</b>
+<pre><code>rgba(0,0,0,.9)   /feed/ ×985  ·  /top-content/ ×224   ← الأغلبية الساحقة
+rgba(0,0,0,.75)         ×234  ·                 ×67
+rgba(0,0,0,.6)          ×228  ·                 ×84</code></pre>
+  </div>
+  <p><b>لا تجعل الصفحة كلها رمادية «عشان تبان ناعمة»</b> — النتيجة صفحة بلا تسلسل هرميّ. الأغلبية نصّ أساسيّ، والدرجات الأخفّ تُستعمل بحذر.</p>
+  <p>الكحليّ <code>#0B0A5C</code> قرار هويّة نُبقيه — لكن الدرجات الثلاث تُبنى منه بالشفافية، لا بألوان رمادية جديدة.</p>
+</section>
+
+<!-- ═══ ١٠ ═══ -->
+<section id="check">
+  <h2><span class="n">١٠</span> قائمة التحقّق قبل أيّ شاشة</h2>
+  <table>
+    <tbody>
+      <tr><td style="width:34px">☐</td><td>صفر <code>shadow-*</code> داخل التدفّق — <code>ring-1 ring-border</code> بدلها</td></tr>
+      <tr><td>☐</td><td>الظلّ للطبقات العائمة فقط (قائمة منسدلة · toast)</td></tr>
+      <tr><td>☐</td><td>التحويم يغيّر سمك الحلقة لا سمك الحدّ</td></tr>
+      <tr><td>☐</td><td>وزنان: <code>font-normal</code> و<code>font-bold</code> — صفر <code>semibold</code>/<code>extrabold</code>/<code>black</code></td></tr>
+      <tr><td>☐</td><td><code>1.25</code> للواجهة · <code>1.5</code> للمحتوى</td></tr>
+      <tr><td>☐</td><td>حاوية <code>rounded-lg</code> · تحكّم <code>rounded-full</code> · مصغّرة <code>rounded-sm</code></td></tr>
+      <tr><td>☐</td><td>كل تفاعليّ في هدف لمس <code>48px</code></td></tr>
+      <tr><td>☐</td><td><code>ps/pe/ms/me/start/end</code> — صفر <code>left</code>/<code>right</code></td></tr>
+      <tr><td>☐</td><td>الحاوية <code>max-w-[1128px]</code></td></tr>
+      <tr><td>☐</td><td>الألوان من <code>globals.css</code> — صفر لون مكتوب باليد</td></tr>
+      <tr><td>☐</td><td><code>transition</code> على خاصيّة محدّدة، لا <code>all</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══ ١١ ═══ -->
+<section id="errors">
+  <h2><span class="n">١١</span> الأخطاء الخمسة التي تكسر النظام</h2>
+  <table>
+    <thead><tr><th style="width:26%">الخطأ</th><th style="width:30%">الأثر</th><th>الصحيح</th></tr></thead>
+    <tbody>
+      <tr><td><code>shadow-sm</code> على الكرت</td><td>الشكل يصير «قالب مجاني»</td><td><code>ring-1 ring-border</code></td></tr>
+      <tr><td>خلفية الصفحة بيضاء</td><td>الكروت تختفي</td><td><code>bg-background</code> البيج</td></tr>
+      <tr><td><code>rounded-lg</code> على الأزرار</td><td>الزرّ يذوب في الكرت</td><td><code>rounded-full</code></td></tr>
+      <tr><td><code>font-semibold</code></td><td>وزن لا يملكه تجوّال → تزييف</td><td><code>font-bold</code></td></tr>
+      <tr><td><code>border: 1px → 2px</code> عند التحويم</td><td>ارتجاف التخطيط</td><td><code>ring</code> بدل <code>border</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══ ١٢ ═══ -->
+<section id="todo">
+  <h2><span class="n">١٢</span> ما لم يُتحقّق منه بعد</h2>
+  <p class="lede">أمانةً — هذه ادّعاءات في المسح الأصلي لم تُعَد قياستها. استعملها كإرشاد، لا كقاعدة.</p>
+  <ul class="plain">
+    <li>شبكة <b>٢٤ عموداً</b> بعرض مسار <code>17.01px</code> — قِيست على <code>/feed/</code> عند <code>1117px</code> فقط.</li>
+    <li>ارتفاع شريط التنقّل <code>52px</code>.</li>
+    <li>ألوان أيقونات المُنشئ (<code>#44712E</code> · <code>#B24020</code>).</li>
+  </ul>
+</section>
+
+<footer>
+  نظام تصميم مدوّنتي — يحلّ محلّ <code>DESIGN_SYSTEM.md</code> و<code>modonty-linkedin-pattren.md</code> · النسخة النصّية: <code>DESIGN-SYSTEM.md</code>
+</footer>
+
+</div>
+</body>
+</html>

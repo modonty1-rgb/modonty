@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>خطة عمل الأدمن — بعد إقفال الكونسول</title>
+<style>
+  :root{--bg:#0b0f14;--card:#141b23;--line:#28343f;--tx:#e6edf3;--mut:#8b9bab;
+        --ok:#3fb950;--bad:#f85149;--warn:#d29922;--vio:#a371f7}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);font-family:"Tajawal","Segoe UI",system-ui,sans-serif;
+       line-height:1.75;font-size:15px}
+  .wrap{max-width:880px;margin:0 auto;padding:26px 18px 70px}
+  h1{font-size:23px;margin:0 0 4px}
+  .sub{color:var(--mut);font-size:13px}
+  h2{font-size:17px;margin:30px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+  h3{font-size:14.5px;margin:16px 0 6px;color:#cbaaff}
+
+  .bar{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
+       border-radius:10px;padding:11px 14px;margin:16px 0 6px}
+  .bar .track{flex:1;height:8px;background:#0d141c;border-radius:99px;overflow:hidden}
+  .bar .fill{height:100%;background:var(--ok);width:0;transition:width .25s}
+  .bar .cnt{color:var(--mut);font-size:13px;white-space:nowrap}
+
+  .t{display:flex;gap:11px;align-items:flex-start;background:var(--card);border:1px solid var(--line);
+     border-radius:10px;padding:13px 15px;margin-bottom:10px}
+  .t.done{opacity:.5;border-inline-start:3px solid var(--ok)}
+  .t.p1{border-inline-start:3px solid var(--bad)}
+  .t.p2{border-inline-start:3px solid var(--warn)}
+  .t.p3{border-inline-start:3px solid var(--vio)}
+  .t input{margin-top:5px;width:17px;height:17px;accent-color:var(--ok);cursor:pointer;flex:0 0 auto}
+  .t .body{flex:1;min-width:0}
+  .t .hd{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+  .t .id{font:700 11px ui-monospace,monospace;background:#0e1620;border:1px solid var(--line);
+         padding:2px 7px;border-radius:5px;color:#a5d6ff}
+  .t .ttl{font-weight:700}
+  .t.done .ttl{text-decoration:line-through}
+  .t p{margin:3px 0 0;color:var(--mut);font-size:13.5px}
+  .t ul{margin:6px 0 0;padding-inline-start:18px;color:var(--mut);font-size:13.5px}
+  .t li{margin:2px 0}
+  .tag{font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--mut)}
+  .tag.bad{border-color:#5c2b2b;background:#2a1416;color:#ffb4ae}
+  .tag.warn{border-color:#5c4a1f;background:#241d0f;color:#f0cd83}
+  .tag.vio{border-color:#3d2a5c;background:#1a1224;color:#cbaaff}
+  .tag.ok{border-color:#1f4b2a;background:#0f2417;color:#8ce09a}
+  .files{margin-top:7px;font-size:12.5px;color:#6f8296}
+  .files b{color:var(--mut);font-weight:700}
+  .gate{color:var(--ok);font-size:12.5px;margin-top:5px;display:block}
+
+  code{background:#0d141c;border:1px solid var(--line);padding:1px 5px;border-radius:4px;
+       font:12.5px ui-monospace,monospace;color:#a5d6ff;direction:ltr;display:inline-block}
+  pre{background:#0d141c;border:1px solid var(--line);border-radius:8px;padding:11px 13px;overflow-x:auto;
+      direction:ltr;text-align:left;font:12.5px/1.6 ui-monospace,monospace;color:#a5d6ff;margin:8px 0}
+  .box{background:var(--card);border:1px solid var(--line);border-inline-start:3px solid var(--bad);
+       border-radius:9px;padding:12px 15px;margin:10px 0}
+  .box.ok{border-inline-start-color:var(--ok)}
+  .box.warn{border-inline-start-color:var(--warn)}
+  .box.vio{border-inline-start-color:var(--vio)}
+  .box b{display:block;margin-bottom:3px}
+  .box p{margin:0 0 6px;color:var(--mut);font-size:13.5px}
+  .box p:last-child{margin-bottom:0}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:start}
+  th{background:#0e1620;color:var(--mut);font-size:12.5px;font-weight:700}
+  .tabs{display:flex;gap:6px;margin:18px 0 14px;border-bottom:1px solid var(--line)}
+  .tabs button{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--mut);
+               padding:8px 18px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit}
+  .tabs button.on{color:var(--tx);border-bottom-color:var(--vio)}
+  .pane{display:none}.pane.on{display:block}
+  footer{margin-top:32px;padding-top:14px;border-top:1px solid var(--line);color:var(--mut);font-size:12.5px}
+  button.reset{background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:7px;
+               padding:5px 11px;font-size:12px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>خطة عمل الأدمن</h1>
+<div class="sub">بعد إقفال شغل الكونسول · <b style="color:#8ce09a">آخر تحديث 2026-08-05</b> · ٦ بنود مرتّبة بالأولوية</div>
+
+<div class="bar">
+  <span class="cnt" id="pct">0%</span>
+  <div class="track"><div class="fill" id="fill"></div></div>
+  <span class="cnt" id="cnt">0 / 0</span>
+  <span class="cnt" id="left" style="font-weight:700"></span>
+  <button class="reset" id="reset">تصفير</button>
+</div>
+
+<div class="tabs">
+  <button class="on" data-t="todo">قيد التنفيذ</button>
+  <button data-t="done">منجز</button>
+  <button data-t="brief">الخلاصة</button>
+</div>
+
+<!-- ══════════════════════════ قيد التنفيذ ══════════════════════════ -->
+<div class="pane on" id="pane-todo">
+
+<div class="box ok">
+  <b>القائمة فاضية — كل البنود انتقلت لتبويب «منجز»</b>
+  <p>أ١ · أ٢ · أ٣ · أ٤ · أ٥ · أ٦ نُفِّذت ومتحقَّق منها. أ٧ أُقفل بعد الفحص بلا تنفيذ — التفاصيل في «منجز».</p>
+</div>
+
+</div>
+
+<!-- ══════════════════════════ منجز ══════════════════════════ -->
+<div class="pane" id="pane-done">
+
+<h2>أ٧ — كمبوننت الوسائط · فُحص ولم يُنفَّذ 2026-08-05</h2>
+
+<div class="box warn">
+  <b>البند كان بيخرّب لا يصلّح — الكود القديم أقوى من البديل</b>
+  <p>كان مكتوباً «الربط يوحّد السلوك ويشيل نسخة مكرّرة». <b>ما هي نسخة مكرّرة.</b> رفع الأدمن يفرض على كل صورة نسبة قصّ حسب دورها، ويرفض حذف صورة داخل مقال منشور. الكمبوننت المشترك ما فيه واحدة منهما.</p>
+  <table style="margin-top:10px">
+    <tr><th>الفحص</th><th>النتيجة</th></tr>
+    <tr><td>إشارات القصّ في كمبوننت الكونسول</td><td><b>صفر</b></td></tr>
+    <tr><td>إشارات القصّ في رفع الأدمن</td><td><b>٤</b> — <code>requiresCrop</code> · <code>ImageEditorModal</code></td></tr>
+    <tr><td>النسب المفروضة في الأدمن</td><td><code>1:1</code> · <code>16:9</code> · <code>1.91:1</code> · <code>6:1</code> · Free</td></tr>
+    <tr><td>حارس الحذف في الأدمن</td><td>يرفض: «مستعملة في N مقال منشور — شيلها منها أولاً»</td></tr>
+  </table>
+  <p style="margin-top:10px">وكل مسارات الحذف في الأدمن فيها تأكيد أصلاً — ما في ولا زرّ حذف بضغطة واحدة. <b>القرار: يُقفل بلا تنفيذ.</b></p>
+  <div class="files"><b>تتحقّق بنفسك:</b> <code>grep -ci "crop\|aspect\|ratio" dataLayer/components/media-upload-zone.tsx</code> · <code>cat admin/app/(dashboard)/media/actions/can-delete-media.ts</code></div>
+</div>
+
+<h2>أ٦ — علامة الفيديو الخارجي · مقفول 2026-08-05</h2>
+
+<div class="box ok">
+  <b>الشارة تقول <i>أي نوع</i> رابط، لا مجرد «عنده رابط»</b>
+  <p>الخمسة صاروا ظاهرين في قائمة العملاء بشارة على اسم كل واحد، ومعها زرّ تصفية «فيديو خارجي ٥» يعزلهم بضغطة. والشارة تفرّق بين حالتين لأن المكالمة مختلفة: <b>كهرماني</b> = الفيديو على قناة ما يملكها العميل، <b>أحمر</b> = الرابط ما يشتغل كفيديو أصلاً (صفحة مشاركة فيسبوك أو صفحة عرض من جوجل درايف — صفحة لا ملف). ولمس المؤشر يعرض الرابط نفسه جاهزاً للفتح.</p>
+  <p><b>واكتشاف من الفحص:</b> واحد من الخمسة عنده <b>ثلاثة روابط محشورة في نفس الحقل</b> — ما كان مذكوراً في البند. الشارة تعدّها وتقول «×٣» وتشرح في التلميح إن أحداً لازم يختار واحداً منها، بدل ما يكتشفها الموظّف وهو على التلفون.</p>
+  <div class="files"><b>الملفات:</b> جديد <code>clients/helpers/intro-video-link.ts</code> · <code>client-table.tsx</code> · <code>clients-tabs.tsx</code> · <code>clients-page-client.tsx</code> · حقلان في <code>get-clients.ts</code> و<code>types.ts</code></div>
+</div>
+
+<div class="box ok">
+  <b>تنطفئ بنفسها — ما تحتاج تنظيفاً بعدين</b>
+  <p>الشرط ثنائي: تظهر الشارة فقط لو <code>introVideoUrl</code> موجود <b>و</b><code>introVideoMediaId</code> فاضي. ورفع العميل لفيديوه يكتب الاثنين في <b>كتابة واحدة</b> (<code>{ introVideoMediaId: mediaId, introVideoUrl: null }</code>) — فالشارة تختفي لحظة الرفع، وزرّ التصفية نفسه يختفي لمّا يصير العدد صفراً.</p>
+  <p><b>تست حيّ:</b> ٣٠ عميلاً في القاعدة، ٥ منهم بروابط خارجية — الشارات ظهرت على الخمسة بالضبط بألوانها الصحيحة، والتصفية رجّعت ٥ صفوف، والتلميحات عرضت الروابط الحقيقية كاملة.</p>
+  <div class="files"><b>الدليل:</b> <code>.playwright-mcp/clients-external-video-badge.png</code> · <code>clients-external-video-filtered.png</code></div>
+</div>
+
+<h2>أ٥ — شاشة اعتماد الريلز · مقفول 2026-08-05</h2>
+
+<div class="box ok">
+  <b>المخرج اللي كان ناقصاً — شغل يومين كامل كان واقفاً بلا مخرج</b>
+  <p>كل ريل يرفعه العميل ينزل على <code>PENDING_APPROVAL</code>، وما كان في الأدمن ولا شاشة تعتمده. صار في مسار <code>/reels</code> يعرض قائمة الانتظار الأقدم أولاً — معاينة طولية (الفيديو يشتغل داخل البطاقة نفسها لا صورة عنه)، اسم العميل وشعاره، والحقول الثلاثة اللي يملكها العميل مصفوفة قدّام عين المُراجِع.</p>
+  <p>الاعتماد ينشر مباشرة على مودونتي — لا حالة وسيطة، لأن الوعد المكتوب للعميل هو «بعد اعتماد مُدَوَّنَتِي يظهر»، وحالة معلّقة ما يقرأها أحد كانت بتكسر الوعد بصمت. والرفض يشترط سبباً مكتوباً يوصل بطاقة العميل — رفضٌ بلا سبب يرجع لنا رسالة دعم بدل ما يرجع تعديلاً.</p>
+  <div class="files"><b>الملفات:</b> جديد <code>admin/app/(dashboard)/reels/</code> (page · loading · helpers · actions · components) · سطر في <code>sidebar.tsx</code> · تاغ <code>reels</code> في مسار التبطيل</div>
+</div>
+
+<div class="box ok">
+  <b>الحارسان (ق٩) — مُنفَّذان في السيرفر، والزرّ المقفول مجاملة فقط</b>
+  <p><b>حارس ١:</b> عنوان أو وصف فاضي → الاعتماد مقفول. <b>حارس ٢:</b> عنوان مكرّر مع ريل ثاني لنفس العميل → مقفول. الاثنان يُحسبان في الاستعلام (فيظهر سبب القفل على البطاقة) <b>ويُنفَّذان مرة ثانية داخل الإجراء نفسه</b> — لأن تبويبين مفتوحين يقدران يعتمدان نسختين من نفس العنوان لو كان الفحص في الواجهة فقط.</p>
+  <p>وحساب التكرار يشمل <b>قائمة الانتظار نفسها</b>: ريلان معلّقان بنفس العنوان يُعلَّمان الاثنان، وإلا اعتماد الأول يمرّر الثاني.</p>
+</div>
+
+<div class="box ok">
+  <b>تست حيّ كامل — الدائرة الثلاثية مقفولة بالدليل</b>
+  <p>ثلاثة ريلز حقيقية رُفعت من الكونسول بحساب «كيما زون» على قاعدة التطوير: واحد مكتمل، وواحد بلا وصف، وواحد بعنوان مطابق للمنشور.</p>
+  <p><b>النتيجة:</b> المكتمل اعتُمد → صار <code>PUBLISHED</code> بختمَي اعتماد ونشر → <b>ظهر فعلاً في صفحة الريلز على مودونتي</b> بنفس العنوان والوصف اللي كتبهما العميل. والاثنان الآخران انقفلا برسالتين مختلفتين على البطاقة.</p>
+  <p><b>وفحص الالتفاف:</b> عطّلت قفل الواجهة في الكود عمداً وضغطت «اعتماد ونشر» على الاثنين المقفولين — <b>السيرفر رفضهما، والحالة في القاعدة ما تغيّرت</b>. ثم أُعيد القفل. الرفض جُرّب كذلك: السبب المكتوب وصل بطاقة العميل حرفياً.</p>
+  <div class="files"><b>الدليل:</b> <code>.playwright-mcp/reels-approval-guards.png</code> · <code>reels-duplicate-guard.png</code> · <code>modonty-reels-feed-live.png</code> · <code>console-reels-after-decision.png</code> · <code>tsc</code> صفر أخطاء على التطبيقات الثلاثة</div>
+</div>
+
+<h2>أ٤ — صفحة خطأ الكونسول · مقفول 2026-08-05</h2>
+
+<div class="box ok">
+  <b>ثلاث بوابات خطأ عربية بدل شاشة Next الخام</b>
+  <p>كان الكونسول بلا <code>error.tsx</code> — أي عطل يعرض للعميل «This page couldn't load» إنجليزي بلا هوية. صارت ثلاث بوابات: <code>app/error.tsx</code> تمسك سقوط لوحة التحكم نفسها (سيناريو الصفوف اليتيمة بالضبط — التلاتة عشر استعلام تشتغل قبل أي صفحة)، و<code>(dashboard)/error.tsx</code> تمسك سقوط صفحة واحدة والشريط الجانبي يظل شغّالاً، و<code>global-error.tsx</code> للحالة النادرة اللي يسقط فيها الهيكل كله.</p>
+  <p><b>زرّ «حاول مرة ثانية» يعيد جلب البيانات فعلاً</b> — استُعمل <code>unstable_retry</code> الجديد في Next 16.2 بدل <code>reset</code> اللي يعيد الرسم بلا جلب فيقع فوراً من جديد. والشاشة تفرّق بين عطل عندنا («الغلط من عندنا») وانقطاع نت العميل — الرسالتان مختلفتان لأن الأولى غلط لو النت هو اللي فصل.</p>
+  <p><b>رقم العطل</b> يظهر مع زرّ نسخ — نفس الرقم المسجّل في سجل أخطاء الأدمن، فبلاغ العميل يوصلنا للعطل بالضبط.</p>
+  <div class="files"><b>الملفات:</b> جديد <code>console/app/error.tsx</code> · <code>console/app/(dashboard)/error.tsx</code> · <code>console/app/global-error.tsx</code> · <code>console/components/error-view.tsx</code></div>
+</div>
+
+<div class="box ok">
+  <b>وقُفلت الفجوة الثانية: أخطاء المتصفح صارت توصل السجل</b>
+  <p>تبليغ الأخطاء القديم يمسك أخطاء السيرفر فقط — أي كسر يصير داخل متصفح العميل كان يختفي لحظة ما يقفل التبويب. أُضيف مسار <code>api/log-client-error</code> (المفتاح السرّي يظل على السيرفر) وشاشة الخطأ تبلّغ تلقائياً. <b>الفكرة:</b> وجود رقم العطل معناه الخطأ سيرفري ومسجّل أصلاً؛ غيابه معناه متصفّح — فشرط واحد يمنع التكرار. المنفذ محمي: إنتاج فقط · ٥ بلاغات بالدقيقة لكل عنوان · سقف ٤KB · كل الردود ٢٠٠ حتى ما يتراكم خطأ فوق خطأ.</p>
+  <p>ومعها أُضيف عطل الترجمة الآلية (<code>removeChild</code> — حادثة JBRSEO الموثّقة) لقائمة أخطاء الإطار حتى ما يرنّ تيليجرام على عطل مو عطلنا.</p>
+  <div class="files"><b>الملفات:</b> جديد <code>console/app/api/log-client-error/route.ts</code> · <code>dataLayer/lib/system-error/enrich.ts</code></div>
+</div>
+
+<h2>أ٣ — مسار المزامنة · مقفول 2026-08-05</h2>
+
+<div class="box ok">
+  <b>البند تغيّر بعد ما فحصنا بدل ما نفترض</b>
+  <p>كان مكتوباً «وثّق قاعدة: الحذف عبر Prisma حصراً». الجرد أثبت أن الكود <b>ملتزم بها أصلاً</b> — كل نقطة حذف في التطبيقات الثلاثة تمرّ عبر Prisma، صفر حذف خام. فالقاعدة ما كانت تحتاج توثيقاً، والتسريب كان في مكان ثانٍ تماماً.</p>
+  <p><b>المكان الحقيقي:</b> زرّ «Sync Local from PROD». يستعمل سائق مونجو مباشرة — يُسقط المجموعة ثم يحقن ٥٬٨١٥ وثيقة — فلا يمرّ على Prisma ولا على أي قاعدة أمان.</p>
+</div>
+
+<div class="box ok">
+  <b>ثلاثة أعطال أُصلحت في مسار المزامنة</b>
+  <p><b>١ — ينسخ ولا يتحقق.</b> صار الفحص يشتغل تلقائياً على النسخة الجديدة ويعرض الصفوف المكسورة بمعرّفاتها.</p>
+  <p><b>٢ — يعلن النجاح فوق الفشل.</b> «تمت» صارت مشروطة: لو فشلت مجموعة أو طلعت أيتام → إشعار أحمر «النسخة فيها خلل — راجع قبل ما تختبر عليها».</p>
+  <p><b>٣ — قائمة التخطي بلا حارس.</b> ١٢ مجموعة تُنشأ فارغة؛ صار الحارس يفحص السكيما قبل نقل بايت واحد، ولو علاقة إجبارية تشير لواحدة منها يرفض النسخ ويسمّي العلاقة.</p>
+  <div class="files"><b>الملفات:</b> <code>admin/app/api/dev/sync-local-from-prod/route.ts</code> · <code>admin/components/admin/sync-local-button.tsx</code></div>
+</div>
+
+<div class="box ok">
+  <b>تست حيّ كامل — والنتيجة قلبت الفهم</b>
+  <p>شُغّلت المزامنة فعلياً: <b>٩٠ مجموعة · ٧٨ نُسخت · ١٢ مُتخطّاة · صفر فشل · ٥٬٨١٥ وثيقة</b>. الشاشة <b>ما قالت «تمت»</b> — قالت «النسخة فيها خلل» وعرضت ٣ صفوف بمعرّفاتها.</p>
+  <p><b>والاكتشاف:</b> قاعدة التطوير انمسحت وانبنت من الإنتاج للتو، والأيتام رجعت معها. يعني <b>المزامنة ما تصنع الأيتام — تنسخها بأمانة من الإنتاج</b>. المشكلة في الإنتاج نفسه (← أ٨).</p>
+  <div class="files"><b>الدليل:</b> <code>.playwright-mcp/sync-integrity-check.png</code></div>
+</div>
+
+<h2>أ٢ — فحص الصفوف اليتيمة · مقفول 2026-08-05</h2>
+
+<div class="box ok">
+  <b>خطوة جديدة في Run-All تمسح كل علاقة إجبارية في السكيما</b>
+  <p>القائمة تُقرأ من نموذج بيانات Prisma نفسه، مش مكتوبة يدوياً — فأي علاقة إجبارية تُضاف بكرة تدخل الفحص يوم ما تُكتب، بلا ما يتذكّر أحد هذا الملف. اللوحة صارت <b>١٣ خطوة</b> بدل ١٢.</p>
+  <p><b>قراءة فقط.</b> الحذف إجراء منفصل يُستدعى باسم العلاقة صراحةً — وهذا القرار أثبت نفسه في نفس الجلسة (اقرأ الصندوق التالي).</p>
+  <div class="files"><b>الملفات:</b> جديد <code>admin/app/(dashboard)/database/actions/orphan-scan.ts</code> · <code>runStepOrphanRows</code> في <code>run-all-maintenance.ts</code> · سطر في <code>auto-maintenance-panel.tsx</code></div>
+</div>
+
+<div class="box ok">
+  <b>الفحص لقط عطلاً حيّاً ما كان أحد يعرف عنه</b>
+  <p>على قاعدة التطوير: تقييمان في <code>client_reviews</code> يشيران لمستخدم محذوف. والدليل القاطع — Prisma يرمي حرفياً:</p>
+  <pre>Inconsistent query result: Field reviewer is required to return data, got `null` instead.</pre>
+  <p>تحقّقت من كل تقييم على حدة: ٣ تقييمات، اثنان لمستخدم <code>69ce8eb8…</code> المحذوف وواحد لمستخدم موجود. الفحص لقط الاثنين بالضبط — صفر إنذار كاذب، صفر تفويت.</p>
+</div>
+
+<div class="box warn">
+  <b>باق في الفحص نفسه — لقطته قبل ما أعتمده</b>
+  <p>أول تشغيل قال ٣ أيتام. الصحيح اثنان. السبب: اسم الحقل في Prisma ليس اسمه في القاعدة — <code>ClientReview.reviewerId</code> مخزّن باسم <code>authorId</code> عبر <code>@map</code>. كان الفحص يبحث بالاسم الأول، ما يلقاه، فيعدّ الصفّ يتيماً.</p>
+  <p>أُصلح بقراءة اسم العمود الفعلي من <code>dbName</code>. <b>الدرس:</b> فاحصٌ يعطي إنذاراً كاذباً أخطر من فاحصٍ لا يعمل — لأنه يقود لحذف صفوف سليمة. وهذا بالضبط ليش الحذف بمراجعة بشرية.</p>
+</div>
+
+<h2>أ١ — فاحص اليمّي · مقفول 2026-08-05</h2>
+
+<div class="box ok">
+  <b>الأدمن صار صفر أخطاء عند <code>tsc</code></b>
+  <p>المستدعي كان يمرّر <code>authorityCodes</code> وتوقيع الدالة ما يعرفه. أُضيف الخيار للأدمن مع نفس التفضيل الموجود في الكونسول: القائمة الحيّة أولاً، والمصفوفة القديمة احتياطاً.</p>
+  <p><b style="color:#f0cd83">صحّحت توصيتي الأولى:</b> التوحيد الشامل في <code>dataLayer</code> كان غلطاً. الفحص طلّع أن الفرق الثاني بين النسختين <b>متعمّد</b> — الأدمن أسقط شرط المُراجِع وقت النشر عن قصد (العميل يراجع عند الاعتماد)، والكونسول ما زال يشترطه. توحيدهما كان بيغيّر سلوك النشر بلا ما ينتبه أحد.</p>
+  <p><b>الدليل:</b> <code>pnpm tsc --noEmit</code> على الأدمن والكونسول = صفر أخطاء.</p>
+</div>
+
+<div class="box warn">
+  <b>فخّ مكتشَف — كود ميت يحمل قاعدة قديمة</b>
+  <p><code>checkYmylPublishGate</code> في الكونسول <b>ما يستدعيه أحد</b> — النشر كله يمرّ عبر الأدمن. ولأنها ميتة، ظلّت تحمل شرط المُراجِع القديم بلا ما يكتشفه أحد. أول من يربطها بكرة بيرجع السلوك المُلغى وهو يظن أنه يستعمل الدالة الصحيحة. <b>التوصية: تُحذف.</b></p>
+</div>
+
+<h2>شغل الكونسول — مقفول 2026-08-05</h2>
+
+<div class="box ok">
+  <b>تسريب: الكونسول المحلي كان يضرب كاش الإنتاج</b>
+  <p><code>NEXT_PUBLIC_SITE_URL</code> يشير للدومين الحقيقي (ولازم يظل كذا — الروابط القانونية تعتمد عليه)، وكان يُستعمل كوجهة لتبطيل الكاش كمان. فأي حفظ من جهاز مطوّر يسقط كاش الموقع الحيّ.</p>
+  <p>الأدمن عنده حارس لهذا من زمان؛ نسخة الكونسول من الملف ما نقلته. نُقل. <b>الدليل المباشر:</b> بتشغيل السيرفر على منفذ ميت عمداً ظهر <code>Network error … fetch failed</code> مع <code>POST 200</code> — الحارس يُنفَّذ، الوجهة صارت محلية، والحفظ ما يتأثر.</p>
+</div>
+
+<div class="box ok">
+  <b>ست مسارات كتابة كانت تحدّث القاعدة ولا تبلّغ مودونتي</b>
+  <p>محتوى الصفحة · المعرض · أسئلة الصفحة · التقييمات — كلها تعيد توليد البيانات المهيكلة والصفحة العامة تظل قديمة. ضربة التاغ انتقلت <b>داخل <code>regenerateClientSeo</code></b>، فما عاد أي مسار يقدر ينساها.</p>
+</div>
+
+<div class="box ok">
+  <b>م١ (ق٩) — حقول العميل الثلاثة على بطاقة الريل</b>
+  <p>عنوان + وصف + نصّ بديل، مع إقفال مصنعَين كانا يولّدان عناوين مكرّرة (كل ريل عند العميل ياخذ اسم العميل نفسه) — وهو بالضبط ما يرفضه Google لأنه يشترط عنواناً فريداً لكل مقطع.</p>
+</div>
+
+<div class="box ok">
+  <b>م٢ (ق١٠) — العدّادات وتعليقات الريلز</b>
+  <p>عدّادات المشاهدة والتفاعل على البطاقة، وتعليقات الريلز اندمجت مع تعليقات المقالات في صفحة واحدة بمصدر لكل تعليق. والعدّاد في الشريط الجانبي صار يعرض <b>الرقم الفعلي</b> بعد ملاحظة خالد — رقمٌ يحتاج شرحاً هو رقم غلط.</p>
+</div>
+
+<div class="box ok">
+  <b>م٣ (ق٨) — فصل «الريلز» عن «الفيديوهات»</b>
+  <p>ومعها تبويب «الصور والملفات» صار يستثني صور المعرض والريلز — المنطقة تخصّ اللي يجي من الأدمن. النتيجة ٢١ ملفاً نزلت لـ٤.</p>
+</div>
+
+<div class="box ok">
+  <b>م٤ (ق٢+ق٧) — الرفع المباشر على Bunny</b>
+  <p>رفع <code>tus</code> بتوقيع لفيديو واحد (المفتاح ما يغادر السيرفر أبداً)، فحص آلي للمدة والأبعاد في المتصفّح قبل ما ترتفع بايت واحد، واختيار الغلاف. المسار كله متحقَّق منه حيّاً: رفع ٨٣٣ كيلوبايت، ترميز مكتمل، ٢٧ ثانية، ١٠٨٠×١٩٢٠ — والمدة والأبعاد اللي قاسها المتصفّح طابقت اللي سجّله Bunny.</p>
+</div>
+
+<div class="box ok">
+  <b>فيديو التعريف — من روابط اليوتيوب إلى استضافتنا</b>
+  <p>ظلّ في «محتوى صفحتك» لأنه فيديو صفحة العميل لا ريل. الرابط القديم ما ينحذف مقدّماً — يظلّ شغّالاً حتى تكتمل بديلته، وينمسح في نفس الكتابة اللي تربط الجديد، فالصفحة ما تعتم لحظة.</p>
+</div>
+
+<div class="box ok">
+  <b>ثغرتان لقطتهما بنفسي وأقفلتهما</b>
+  <p><b>الأولى:</b> بنيت الرفع بلا عنوان ولا وصف — يعني الحارس بيتخطّى <code>VideoObject</code> كلياً، عكس اللي قلته لخالد. أُضيف <code>updateIntroVideoDetails</code>.</p>
+  <p><b>الثانية:</b> بعد التست الحيّ ما ظهر <code>VideoObject</code>، لأن صفحة العميل تقرأ بيانات مهيكلة <b>مخزّنة</b> لا مولّدة عند كل طلب. أُضيف <code>regenerateClientSeo</code> على مسارات الكتابة الثلاثة كلها.</p>
+</div>
+
+<div class="box ok">
+  <b>مكتبة الفيديو على Bunny</b>
+  <p>كان <code>BlockNoneReferrer</code> مفعّلاً — يرفض أي طلب بلا ترويسة مُحيل، يعني يحجب Googlebot عن جلب الفيديو. أُطفئ وأُعيد التحقق: <code>play_720p.mp4</code> و<code>playlist.m3u8</code> و<code>thumbnail.jpg</code> كلها ٢٠٠ بلا مُحيل.</p>
+</div>
+
+</div>
+
+<!-- ══════════════════════════ الخلاصة ══════════════════════════ -->
+<div class="pane" id="pane-brief">
+
+<h2>الخطة اكتملت</h2>
+<div class="box ok">
+  <b>ستة بنود نُفِّذت · بند أُقفل بالفحص</b>
+  <p>أ١ · أ٢ · أ٣ · أ٤ · أ٥ · أ٦ انتهت ومتحقَّق منها بتست حيّ. وأ٧ أُقفل بلا تنفيذ لأن الفحص أثبت أن تنفيذه يشيل حارسين شغّالين.</p>
+</div>
+
+<h2>الدرسان اللي يستاهلان يُحفظان</h2>
+<div class="box vio">
+  <b>١ · صفّ يتيم واحد يسقط صفحة كاملة</b>
+  <p>مو الصفّ اللي فيه المشكلة يختفي — الاستعلام كلّه يُرفض. فأي علاقة إجبارية في السكيما هي وعدٌ تحفظه Prisma وحدها، ومونجو ما تعرف عنه شي. لذلك الفحص الدوري مو رفاهية: هو الشي الوحيد اللي يخلّي الـ٤٩ وعداً قابلة للتحقق.</p>
+</div>
+
+<div class="box vio">
+  <b>٢ · افحص قبل ما تفترض أين المشكلة</b>
+  <p>البند كان مكتوباً «امنعوا الحذف خارج Prisma». الجرد أثبت أن الكود ملتزم أصلاً، وأن التسريب في زرّ المزامنة. ثم التست الحيّ قلبها مرة ثانية: المزامنة تنسخ الأيتام من الإنتاج، ما تصنعها. <b>افتراضان متتاليان صحّحهما الفحص</b> — ولو نُفِّذ البند كما كُتب، لكان الجهد ذهب لمكان سليم أصلاً والمشكلة باقية.</p>
+</div>
+
+<h2>قرار مقفول</h2>
+<div class="box ok">
+  <b>الـcascade يبقى في السكيما كما هو</b>
+  <p>طُرح شيله لأن «مونجو ما تشتغل عليه». وثائق Prisma الرسمية تقول العكس: «MongoDB doesn't natively support referential actions. Prisma <b>polyfills</b> this functionality» — فهو شغّال فعلاً، وكل عمليات الحذف عندنا تمرّ عبر Prisma.</p>
+  <p>وشيله يعطي عكس المطلوب: الافتراضي للعلاقة الإجبارية هو <code>Restrict</code>، فحذف عميل (١٣ تابعاً) أو مقال (١٢ تابعاً) <b>يُرفض</b> بدل ما ينظّف. <b>القرار: ما نلمس السكيما.</b></p>
+</div>
+
+<h2>سؤال مفتوح لخالد</h2>
+<div class="box warn">
+  <b>تليين العلاقات المقروءة في القوائم — ما نفّذته وما أوصي به الآن</b>
+  <p>تحويل <code>tag Tag</code> إلى <code>tag Tag?</code> (وكذلك <code>media Media?</code>) يخلّي اليتيم يرجع <code>null</code> بدل ما يسقط الصفحة. المقايضة: كل قارئ للوسوم والوسائط يحتاج يتعامل مع <code>null</code>، وهو تغيير سكيما يمسّ التطبيقات الثلاثة. مسجَّل كخيار، ما ينفَّذ إلا بموافقة صريحة.</p>
+</div>
+
+<h2>خارج نطاق الأدمن — مربوط لكن مؤجَّل</h2>
+<div class="box">
+  <b>م٦ (ق١١) — التفاعل المجهول</b>
+  <p>السكيما جاهزة أصلاً: <code>MediaComment.authorId</code> اختياري و<code>MediaReaction.sessionId</code> موجود بقيد فريد. الناقص ربطه في مودونتي، وهو شغل واجهة الزائر لا الأدمن.</p>
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tabs button').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  document.getElementById('pane-' + b.dataset.t).classList.add('on');
+}));
+</script>
+
+<footer>خطة عمل الأدمن · مرافق: <code>TODO.md</code> (بندا ٨٦ و٨٧) · <code>TECH-NOTES.md</code> · <code>documents/HTML/REELS-VIDEO-DECISIONS-v1.html</code></footer>
+
+</div>
+<script>
+(function(){
+  var KEY='admin-plan-v1';
+  var boxes=[].slice.call(document.querySelectorAll('.t input'));
+  var saved={}; try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function paint(b){ b.closest('.t').classList.toggle('done', b.checked); }
+  function upd(){
+    var d=boxes.filter(function(b){return b.checked}).length, t=boxes.length;
+    var p=t?Math.round(d*100/t):0;
+    document.getElementById('pct').textContent=p+'%';
+    document.getElementById('fill').style.width=p+'%';
+    document.getElementById('cnt').textContent=d+' / '+t;
+    var left=t-d, el=document.getElementById('left');
+    el.textContent = left===0 ? '✅ خلصت كلها' : ('باقي ' + left);
+    el.style.color = left===0 ? '#34d399' : '#fbbf24';
+  }
+  boxes.forEach(function(b){
+    if(saved[b.id]) b.checked=true; paint(b);
+    b.addEventListener('change',function(){
+      paint(b);
+      var o={}; boxes.forEach(function(x){ if(x.checked) o[x.id]=1; });
+      localStorage.setItem(KEY,JSON.stringify(o)); upd();
+    });
+  });
+  upd();
+  document.getElementById('reset').addEventListener('click',function(){
+    if(!confirm('تصفير التقدّم؟')) return;
+    localStorage.removeItem(KEY);
+    boxes.forEach(function(b){ b.checked=false; paint(b); }); upd();
+  });
+})();
+</script>
+</body>
+</html>

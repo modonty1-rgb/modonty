@@ -4,9 +4,9 @@
 **تاريخ الاعتماد:** 2026-07-04
 **نطاق العمل:** Industry → Category → Tag (بنفس الترتيب، نفس التنفيذ يتكرر بلا نقاش جديد)
 **المراجع البصرية:**
-- `documents/mockups/entity-page-layout-v1.html` — الـ layout الكامل (Hero + Toolbar + Grid)، 3 تبويبات (Category/Industry/Tag)
-- `documents/mockups/entity-card-pattern-system-v1.html` — تشريح الكرت + قبل/بعد
-- `documents/mockups/categories-card-redesign-v3.html` — الكرت المفرد بتفاصيل الـ footer
+- `documents/HTML/entity-page-layout-v1.html` — الـ layout الكامل (Hero + Toolbar + Grid)، 3 تبويبات (Category/Industry/Tag)
+- `documents/HTML/entity-card-pattern-system-v1.html` — تشريح الكرت + قبل/بعد
+- `documents/HTML/categories-card-redesign-v3.html` — الكرت المفرد بتفاصيل الـ footer
 
 ---
 

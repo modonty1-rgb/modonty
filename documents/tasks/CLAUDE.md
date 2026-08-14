@@ -1989,7 +1989,7 @@ During any live test session:
 - **Phase 1 simplified:** schema field add + prisma generate + delete check script. ~10 minutes work, zero risk.
 
 ### OBS-127 ✅ DONE — Intake mockup v1 → v2: dark backdrop + A3 voice replaced with "Help me write" wizard
-- **Where:** `documents/tasks/intake-mockup-v1.html`
+- **Where:** `documents/HTML/intake-mockup-v1.html`
 - **Changes:**
   - Body bg: `bg-slate-50` → `bg-slate-900` (heavy dark backdrop so white cards POP)
   - Body text inherits `text-slate-800` (dark) → cards readable; section h2's get explicit `text-white` for dark-bg titles; section subtitles bumped from slate-500 → slate-400 for legibility
@@ -2003,7 +2003,7 @@ During any live test session:
 - **Decision rationale (saved as senior call):** voice = 2-3 days eng + 7 technical risks for ONE field. Wizard = 1 day eng + better data quality (4 short answers > 1 paragraph). User agreed.
 
 ### OBS-126 ✅ DONE — Intake Form mockup v1 built (standalone HTML, no main code touched)
-- **Where:** `documents/tasks/intake-mockup-v1.html` (open directly in browser)
+- **Where:** `documents/HTML/intake-mockup-v1.html` (open directly in browser)
 - **What:** Full visual mockup of the new 24+1 intake form per `NEW-INTAKE.md` — RTL Arabic, Tajawal font, mobile-first, Tailwind CDN. Includes the UX easements proposed:
   - **A3** — toggle Text/Voice (60-second recording option)
   - **B3** — 10 pre-made objection pills + "other" textarea (was 3 separate textboxes)
@@ -2016,7 +2016,7 @@ During any live test session:
   - **YMYL** — collapsible conditional section (`<details>`)
   - Sticky submit bar with Save Draft + Submit
 - **No main code touched** — observe-only mode honored. Mockup is pure HTML, single file, open in any browser.
-- **Open command:** `start documents/tasks/intake-mockup-v1.html` (Windows) or double-click in Explorer.
+- **Open command:** `start documents/HTML/intake-mockup-v1.html` (Windows) or double-click in Explorer.
 
 ### OBS-118 🔴 HIGH — Console JWTSessionError on home page (no matching decryption secret)
 - **Where:** `http://localhost:3000/` (console app), Server-side render of `HomePage`.

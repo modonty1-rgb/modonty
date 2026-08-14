@@ -1,0 +1,1099 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="التقرير الرئيسي لنموذج المنتج وتجربة المستخدم لمنصة مدونتي قبل التنفيذ." />
+  <title>التقرير الرئيسي للمنتج وتجربة المستخدم — مدونتي</title>
+  <style>
+    :root {
+      --navy: #0e065a;
+      --blue: #3030ff;
+      --cyan: #00bebe;
+      --cyan-soft: #dffafa;
+      --paper: #f6f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f0f1f7;
+      --ink: #17152f;
+      --muted: #626174;
+      --line: #ddddea;
+      --success: #0b7a57;
+      --warning: #a35200;
+      --shadow: 0 14px 40px rgba(14, 6, 90, .08);
+      --radius: 18px;
+      --reading: 780px;
+    }
+
+    html[data-theme="dark"] {
+      --paper: #090821;
+      --surface: #12112e;
+      --surface-soft: #1a1939;
+      --ink: #f8f8ff;
+      --muted: #b6b4c8;
+      --line: #302e53;
+      --cyan-soft: #073d42;
+      --shadow: 0 18px 50px rgba(0, 0, 0, .3);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Tajawal, "Segoe UI", Tahoma, Arial, sans-serif;
+      font-size: 17px;
+      line-height: 1.85;
+      text-rendering: optimizeLegibility;
+    }
+
+    a { color: var(--blue); text-underline-offset: 4px; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    code { direction: ltr; unicode-bidi: isolate; }
+
+    .reading-progress {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 100;
+      height: 3px;
+      background: transparent;
+    }
+    .reading-progress span { display: block; width: 0; height: 100%; background: var(--cyan); }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 68px;
+      padding: 10px clamp(18px, 4vw, 60px);
+      color: #fff;
+      background: rgba(14, 6, 90, .96);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255, 255, 255, .15);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border: 2px solid rgba(255,255,255,.92);
+      border-radius: 50%;
+      color: var(--navy);
+      background: #fff;
+      font-weight: 900;
+    }
+    .brand-name { font-family: Montserrat, "Segoe UI", sans-serif; font-weight: 800; letter-spacing: -.04em; }
+    .brand small { display: block; color: rgba(255,255,255,.72); line-height: 1.1; }
+    .top-actions { display: flex; gap: 8px; }
+    .icon-btn, .toc-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 42px;
+      padding: 8px 12px;
+      color: #fff;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 10px;
+    }
+    .icon-btn:hover, .toc-toggle:hover { background: rgba(255,255,255,.18); }
+    .toc-toggle { display: none; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(56px, 8vw, 110px) clamp(20px, 6vw, 90px) 72px;
+      color: #fff;
+      background:
+        radial-gradient(circle at 12% 14%, rgba(0,216,216,.24), transparent 26%),
+        linear-gradient(135deg, #0e065a 0%, #17107c 58%, #3030ff 140%);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .14;
+      pointer-events: none;
+      background-image: radial-gradient(circle, #fff 1px, transparent 1px);
+      background-size: 24px 24px;
+      mask-image: linear-gradient(to left, #000, transparent 68%);
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      font-size: 14px;
+    }
+    .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); }
+    .hero h1 { max-width: 880px; margin: 22px 0 12px; font-size: clamp(34px, 5.5vw, 70px); line-height: 1.12; letter-spacing: -.035em; }
+    .hero p { max-width: 820px; margin: 0; color: rgba(255,255,255,.82); font-size: clamp(18px, 2vw, 23px); }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 28px; color: rgba(255,255,255,.72); font-size: 14px; }
+    .hero-meta strong { color: #fff; }
+
+    .quick-decision {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      max-width: 1160px;
+      margin: -38px auto 0;
+      padding: 0 22px;
+    }
+    .quick-card {
+      min-height: 128px;
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--blue);
+      box-shadow: var(--shadow);
+    }
+    .quick-card:first-child { border-top-color: var(--cyan); }
+    .quick-card .number { color: var(--blue); font-family: Montserrat, sans-serif; font-weight: 800; font-size: 13px; }
+    .quick-card strong { display: block; margin: 6px 0; font-size: 18px; line-height: 1.4; }
+    .quick-card span { color: var(--muted); font-size: 14px; line-height: 1.55; }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      max-width: 1160px;
+      margin: 30px auto 0;
+      padding: 0 22px;
+    }
+    .search-box { position: relative; }
+    .search-box input {
+      width: 100%;
+      min-height: 52px;
+      padding: 10px 46px 10px 16px;
+      color: var(--ink);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 4px 18px rgba(14,6,90,.05);
+      outline: none;
+    }
+    .search-box input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(48,48,255,.13); }
+    .search-icon { position: absolute; inset-inline-start: 16px; top: 12px; color: var(--muted); }
+    .search-status { align-self: center; min-width: 125px; color: var(--muted); font-size: 14px; }
+
+    .page-shell {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 34px;
+      max-width: 1160px;
+      margin: 28px auto 80px;
+      padding: 0 22px;
+      align-items: start;
+    }
+    .toc-panel {
+      position: sticky;
+      top: 90px;
+      max-height: calc(100vh - 112px);
+      overflow: auto;
+      padding: 18px 16px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+    .toc-panel h2 { margin: 0 0 12px; font-size: 16px; }
+    .toc-panel nav { display: grid; gap: 3px; }
+    .toc-panel a {
+      display: block;
+      padding: 7px 10px;
+      color: var(--muted);
+      border-inline-start: 2px solid transparent;
+      text-decoration: none;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .toc-panel a:hover { color: var(--ink); background: var(--surface-soft); }
+    .toc-panel a.active { color: var(--blue); border-inline-start-color: var(--cyan); background: var(--surface-soft); font-weight: 700; }
+    .status-note { margin-top: 18px; padding: 12px; color: var(--muted); background: var(--surface-soft); border-inline-start: 3px solid var(--cyan); font-size: 13px; }
+
+    .report { min-width: 0; }
+    .report > h1:first-child, .report > hr:first-of-type { display: none; }
+    .report > p:first-of-type { display: none; }
+    .report-section {
+      margin-bottom: 22px;
+      padding: clamp(24px, 4vw, 44px);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 30px rgba(14,6,90,.04);
+    }
+    .report-section.is-hidden { display: none; }
+    .report-section.decision-section { border-top: 4px solid var(--cyan); }
+    .report h2 { margin: 0 0 24px; color: var(--navy); font-size: clamp(25px, 3vw, 34px); line-height: 1.3; }
+    html[data-theme="dark"] .report h2 { color: #c9c7ff; }
+    .report h3 { margin: 34px 0 12px; font-size: 22px; line-height: 1.4; }
+    .report h4 { margin: 26px 0 10px; font-size: 18px; }
+    .heading-link { margin-inline-start: 8px; opacity: 0; font-size: .55em; text-decoration: none; }
+    h2:hover .heading-link, h3:hover .heading-link { opacity: .6; }
+    .report p { max-width: var(--reading); margin: 0 0 18px; }
+    .report strong { color: var(--ink); }
+    .report ul, .report ol { max-width: var(--reading); margin: 10px 0 24px; padding-inline-start: 26px; }
+    .report li { margin: 6px 0; }
+    .report li::marker { color: var(--blue); font-weight: 700; }
+    .nested-item { margin-inline-start: 20px; }
+    .report code { padding: 2px 6px; color: var(--navy); background: var(--cyan-soft); border-radius: 5px; font-family: Consolas, monospace; font-size: .86em; }
+    html[data-theme="dark"] .report code { color: #d6ffff; }
+    .report blockquote {
+      max-width: var(--reading);
+      margin: 24px 0;
+      padding: 18px 22px;
+      background: var(--cyan-soft);
+      border: 0;
+      border-inline-start: 4px solid var(--cyan);
+    }
+    .report blockquote p { margin: 0 0 6px; }
+    .report blockquote p:last-child { margin-bottom: 0; }
+    .report hr { margin: 38px 0; border: 0; border-top: 1px solid var(--line); }
+
+    .table-wrap { width: 100%; overflow-x: auto; margin: 22px 0 30px; border: 1px solid var(--line); }
+    table { width: 100%; min-width: 640px; border-collapse: collapse; background: var(--surface); font-size: 14px; line-height: 1.6; }
+    th, td { padding: 13px 15px; text-align: start; vertical-align: top; border-bottom: 1px solid var(--line); }
+    th { color: #fff; background: var(--navy); font-weight: 700; }
+    tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) { background: var(--surface-soft); }
+    tbody tr:hover { background: var(--cyan-soft); }
+
+    .flow-diagram { margin: 28px 0; padding: 22px; background: var(--surface-soft); border: 1px solid var(--line); }
+    .flow-diagram figcaption { margin-bottom: 14px; color: var(--muted); font-size: 13px; font-weight: 700; }
+    .flow-rows { display: grid; gap: 9px; }
+    .flow-row { display: grid; grid-template-columns: minmax(0, 1fr) 26px minmax(0, 1fr); align-items: center; gap: 8px; }
+    .flow-node { padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-inline-start: 3px solid var(--blue); font-size: 14px; line-height: 1.45; }
+    .flow-arrow { color: var(--cyan); text-align: center; font-size: 20px; font-weight: 900; }
+    .code-block { overflow: auto; padding: 18px; color: #e8e7ff; background: #111027; direction: ltr; text-align: left; }
+
+    .empty-search { display: none; padding: 50px 24px; text-align: center; background: var(--surface); border: 1px solid var(--line); }
+    .empty-search.show { display: block; }
+    .empty-search strong { display: block; font-size: 22px; }
+
+    .footer { padding: 34px 22px 50px; color: var(--muted); text-align: center; border-top: 1px solid var(--line); font-size: 14px; }
+    .footer strong { color: var(--navy); }
+    html[data-theme="dark"] .footer strong { color: #c9c7ff; }
+
+    @media (max-width: 980px) {
+      .quick-decision { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .page-shell { grid-template-columns: 1fr; }
+      .toc-toggle { display: inline-flex; }
+      .toc-panel {
+        position: fixed;
+        inset: 68px 0 0 auto;
+        z-index: 80;
+        width: min(88vw, 340px);
+        max-height: calc(100vh - 68px);
+        transform: translateX(110%);
+        transition: transform .2s ease;
+        border-radius: 0;
+      }
+      .toc-panel.open { transform: translateX(0); }
+    }
+
+    @media (max-width: 620px) {
+      body { font-size: 16px; line-height: 1.8; }
+      .brand small, .top-actions .button-label { display: none; }
+      .topbar { padding-inline: 14px; }
+      .hero { padding: 48px 18px 66px; }
+      .hero h1 { font-size: 36px; }
+      .quick-decision { grid-template-columns: 1fr; padding-inline: 14px; }
+      .quick-card { min-height: 0; }
+      .toolbar { grid-template-columns: 1fr; padding-inline: 14px; }
+      .search-status { min-height: 20px; }
+      .page-shell { padding-inline: 14px; margin-top: 20px; }
+      .report-section { padding: 24px 18px; margin-bottom: 14px; }
+      .report h2 { font-size: 26px; }
+      .report h3 { font-size: 20px; }
+      .flow-row { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(-90deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+    }
+
+    @media print {
+      :root { --paper: #fff; --surface: #fff; --surface-soft: #f5f5f5; --ink: #000; --muted: #444; --line: #ccc; }
+      .reading-progress, .topbar, .quick-decision, .toolbar, .toc-panel, .footer { display: none !important; }
+      .hero { padding: 25mm 18mm; background: var(--navy) !important; print-color-adjust: exact; }
+      .page-shell { display: block; max-width: none; margin: 0; padding: 0; }
+      .report-section { break-inside: auto; margin: 0; padding: 12mm 15mm; border: 0; border-bottom: 1px solid #ddd; box-shadow: none; }
+      .report h2, .report h3 { break-after: avoid; }
+      table, blockquote, .flow-diagram { break-inside: avoid; }
+      a { color: #000; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+  <header class="topbar">
+    <div class="brand" aria-label="مدونتي">
+      <span class="brand-mark">م</span>
+      <span><span class="brand-name">modonty</span><small>مرجع المنتج وتجربة المستخدم</small></span>
+    </div>
+    <div class="top-actions">
+      <button class="toc-toggle" id="tocToggle" type="button" aria-expanded="false" aria-controls="tocPanel">☰ <span class="button-label">الفهرس</span></button>
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="تبديل وضع القراءة">◐ <span class="button-label">وضع القراءة</span></button>
+      <button class="icon-btn" id="printButton" type="button" aria-label="طباعة التقرير">⌑ <span class="button-label">طباعة</span></button>
+    </div>
+  </header>
+
+  <section class="hero" aria-labelledby="pageTitle">
+    <div class="hero-inner">
+      <span class="eyebrow">المرجع الرئيسي قبل أي تنفيذ</span>
+      <h1 id="pageTitle">التقرير الرئيسي للمنتج وتجربة المستخدم</h1>
+      <p>نسخة عربية مهيأة للمراجعة واتخاذ القرار: ماذا تكون مدونتي، كيف يجد المستخدم قيمته، وكيف نبني الويب والتطبيق من المصدر نفسه.</p>
+      <div class="hero-meta">
+        <span><strong>الإصدار:</strong> 1.0</span>
+        <span><strong>النطاق:</strong> Web + Android + iOS مستقبلًا</span>
+        <span><strong>الحالة:</strong> قرار المالك قبل التنفيذ</span>
+        <span><strong>آخر توليد:</strong> ١٢ أغسطس ٢٠٢٦ في ٣:٣٢ م</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="quick-decision" aria-label="الخلاصة التنفيذية">
+    <article class="quick-card"><span class="number">01</span><strong>القارئ أولًا</strong><span>نعطي المستخدم فائدة قبل طلب الحساب أو النشرة.</span></article>
+    <article class="quick-card"><span class="number">02</span><strong>LinkedIn في السلوك</strong><span>هيكل ثابت وFeed واضح؛ لا نسخ بصري أو شبكة مهنية.</span></article>
+    <article class="quick-card"><span class="number">03</span><strong>هويتان منفصلتان</strong><span>مدونتي ناشر تحريري، والشريك صفحة خبرة وخدمات وتحويل.</span></article>
+    <article class="quick-card"><span class="number">04</span><strong>بناء مرة واحدة</strong><span>عقود API مشتركة للويب وAndroid وiOS دون إعادة بناء.</span></article>
+  </section>
+
+  <section class="toolbar" aria-label="أدوات التقرير">
+    <label class="search-box">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input id="reportSearch" type="search" placeholder="ابحث داخل التقرير: الاشتراك، Modo، API، المقال…" autocomplete="off" />
+    </label>
+    <output class="search-status" id="searchStatus" aria-live="polite">التقرير كامل</output>
+  </section>
+
+  <div class="page-shell">
+    <aside class="toc-panel" id="tocPanel" aria-label="فهرس التقرير">
+      <h2>محتويات التقرير</h2>
+      <nav id="tocNav"></nav>
+      <div class="status-note"><strong>قاعدة العمل:</strong><br />اعتماد القرارات D01–D12 يسبق أي refactor بصري.</div>
+    </aside>
+
+    <main class="report" id="reportContent">
+      <h1 id="modonty-product-ux-master-report">Modonty Product &amp; UX Master Report<a class="heading-link" href="#modonty-product-ux-master-report" aria-label="رابط هذا القسم">#</a></h1>
+<blockquote><p><strong>المرجع الرئيسي قبل أي تنفيذ UI/UX</strong>  </p><p>الإصدار: 1.0 — 12 أغسطس 2026  </p><p>الحالة: <strong>Research baseline + owner decision gate</strong>  </p><p>النطاق: Modonty Public Web، مع عقود مشتركة للـ Android وiOS مستقبلًا  </p><p>التنفيذ: <strong>لم يبدأ</strong>. هذا المستند يسبق أي تعديل بصري أو معماري.</p></blockquote>
+<hr />
+<section class="report-section" data-report-section data-title="0. قرار التقرير في دقيقة واحدة">
+<h2 id="0-قرار-التقرير-في-دقيقة-واحدة">0. قرار التقرير في دقيقة واحدة<a class="heading-link" href="#0-قرار-التقرير-في-دقيقة-واحدة" aria-label="رابط هذا القسم">#</a></h2>
+<p><strong>مدونتي ليست مدونة تقليدية، وليست دليل شركات، وليست شبكة اجتماعية عامة.</strong> هي منصة اكتشاف محتوى عربي تربط القارئ بمعلومة موثوقة ومفيدة، ثم تربطه — عندما يكون ذلك مناسبًا — بالخبير أو النشاط الذي يمكنه مساعدته. تموّل اشتراكات العملاء التجاريين إنتاج المحتوى والتوزيع، بينما يصنع الاستخدام العام الثقة والظهور والتحويلات التي تدعم تجديد العميل.</p>
+<p>التوجه المعتمد المقترح هو:</p>
+<ol><li><strong>LinkedIn-inspired product structure، وليس LinkedIn clone:</strong> هيكل تطبيق ثابت، feed مركزي، مصدر محتوى واضح، متابعة وحفظ، ومساحات سياقية؛ مع هوية مدونتي الخاصة وأهدافها التحريرية والتجارية.</li><li><strong>قارئ أولًا:</strong> الصفحة العامة تمنح فائدة قبل أن تطلب إنشاء حساب أو اشتراكًا بريديًا.</li><li><strong>هويتان لا يجوز خلطهما:</strong></li><li class="nested-item"><strong>مدونتي — الناشر التحريري الأساسي:</strong> محتوى مفيد، تعليمي، رائج، ومتعدد المجالات.</li><li class="nested-item"><strong>الشريك التجاري:</strong> خبرته، نشاطه، خدماته، ومحتواه المتخصص، مع مسار ثقة واتصال أو حجز.</li><li><strong>خمسة مقاصد رئيسية ثابتة عبر Web وMobile:</strong> الرئيسية، استكشف، لقطات، المحفوظات، حسابي. البحث أداة عامة، وModo مساعد موجّه، وليسا وجهتي تنقل متنافستين.</li><li><strong>عضوية مجانية ≠ نشرة بريدية ≠ اشتراك عميل B2B.</strong> لكل مفهوم اسم وفائدة وموافقة مستقلة.</li><li><strong>API-first حقيقي:</strong> Web وAndroid وiOS تستهلك منطق المنتج نفسه وعقودًا مهيأة للإصدارات. الـ Server Actions تبقى غلافًا للويب فقط، وليست مصدر منطق الأعمال.</li><li><strong>مؤشر النجاح ليس page views.</strong> المؤشر الشمالي المقترح هو المستخدم الذي يحصل على قيمة ثم يعود في يوم آخر خلال الأسبوع.</li></ol>
+<p>إذا اعتمد مالك المنتج القرارات الواردة في §18، يصبح هذا المستند هو مرجع التنفيذ ويحل محل المستند التشخيصي الأولي.</p>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="1. كيف أُنجز هذا التقرير وما درجة الثقة؟">
+<h2 id="1-كيف-أنجز-هذا-التقرير-وما-درجة-الثقة">1. كيف أُنجز هذا التقرير وما درجة الثقة؟<a class="heading-link" href="#1-كيف-أنجز-هذا-التقرير-وما-درجة-الثقة" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="11-ترتيب-مصادر-الحقيقة">1.1 ترتيب مصادر الحقيقة<a class="heading-link" href="#11-ترتيب-مصادر-الحقيقة" aria-label="رابط هذا القسم">#</a></h3>
+<p>استخدم التقرير هذا الترتيب عند وجود تعارض:</p>
+<ol><li><strong>Prisma schema والكود الحالي</strong>: ما يستطيع المنتج فعله فعليًا.</li><li><strong>الموقع الحي صفحة بصفحة</strong>: ما يراه المستخدم الآن، لا ما تقوله الوثائق.</li><li><strong>وثائق business model والـ brand الرسمية داخل المشروع.</strong></li><li><strong>مصادر رسمية خارجية</strong>: W3C، Apple، Android، Google، الجهات السعودية والمصرية، وصفحات المساعدة الرسمية للشركات المرجعية.</li><li><strong>الافتراضات التصميمية</strong>: تظل فرضيات حتى تختبر مع مستخدمين سعوديين ومصريين.</li></ol>
+<p>لا تُستخدم أرقام تسويقية داخلية أو ادعاءات منافسين كحقيقة ما لم تؤيدها جهة رسمية أو بيانات المنتج.</p>
+<h3 id="12-ما-تمت-مراجعته">1.2 ما تمت مراجعته<a class="heading-link" href="#12-ما-تمت-مراجعته" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>Business model reference، الـ Golden Rules، Brand Guidelines، وتصميمات V3 السابقة.</li><li>Prisma schema بالكامل فيما يخص المستخدم، العميل، المقال، الصوت، الوسائط والـ reels، الحفظ، المتابعة، النشرات، الإشعارات، Modo، والقياس.</li><li>بنية المشروع الحالية: <strong>56 page routes</strong> و<strong>58 API route handlers</strong> وقت المسح.</li><li>النسخة الحية على desktop وmobile للصفحات الأساسية: Home، عميل مدونتي، عميل تجاري، مقال، reels، search، subscribe، register، clients، industries، trending.</li><li>أنماط رسمية من LinkedIn، Medium، Substack، Google News، Apple HIG، Material، W3C، Google Search، Android Architecture، GA4، والجهات السعودية والمصرية.</li></ul>
+<h3 id="13-ما-لا-نملكه-بعد">1.3 ما لا نملكه بعد<a class="heading-link" href="#13-ما-لا-نملكه-بعد" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>لا توجد في المواد التي راجعتها دراسة usability موثقة تبيّن نسبة الضياع أو أسبابها حسب السوق.</li><li>لا يوجد baseline معتمد لـ D1/D7/D28 retention أو search success أو time-to-value.</li><li>لا توجد مقابلات حديثة تفصل احتياجات القارئ السعودي عن المصري.</li><li>بعض كميات المحتوى والـ reels متغيرة حسب قاعدة البيانات، لذلك لا يجوز تصميم المنتج على رقم ثابت.</li></ul>
+<p>هذه ليست عوائق لكتابة الاتجاه؛ لكنها تمنع تحويل الفرضيات إلى “حقائق مستخدم” قبل الاختبار.</p>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="2. الفهم الكامل لنموذج الأعمال">
+<h2 id="2-الفهم-الكامل-لنموذج-الأعمال">2. الفهم الكامل لنموذج الأعمال<a class="heading-link" href="#2-الفهم-الكامل-لنموذج-الأعمال" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="21-الأطراف-والقيمة-المتبادلة">2.1 الأطراف والقيمة المتبادلة<a class="heading-link" href="#21-الأطراف-والقيمة-المتبادلة" aria-label="رابط هذا القسم">#</a></h3>
+
+        <div class="table-wrap" tabindex="0" role="region" aria-label="جدول قابل للتمرير">
+          <table>
+            <thead><tr><th>الطرف</th><th>ما يريد إنجازه</th><th>ما تقدمه مدونتي</th><th>السلوك الذي يخلق قيمة</th></tr></thead>
+            <tbody><tr><td>القارئ العربي</td><td>الوصول بسرعة إلى معلومة مفيدة وموثوقة أو جهة تساعده، حجز خدمة، أو شراء حقيقي</td><td>محتوى مقروء/مسموع/مرئي، بحث، Modo، حفظ ومتابعة، ومسارات نية للخدمة أو التسوق</td><td>قراءة، استماع، مشاهدة، بحث ناجح، حفظ، متابعة، حجز، شراء/زيارة متجر، عودة</td></tr><tr><td>مدونتي كناشر أساسي</td><td>بناء عادة وثقة وهوية تحريرية</td><td>محتوى واسع مفيد وتعليمي ورائج</td><td>متابعة مدونتي، استكشاف موضوعات، عودة للمنصة</td></tr><tr><td>الشريك/العميل التجاري</td><td>الظهور في Google وبناء ثقة وجذب عميل محتمل أو مشتري</td><td>صفحة نشاط، محتوى متخصص، خدمات، وقدرات فعلية للحجز أو المتجر أو الموقع</td><td>زيارة صفحة الشريك، اتصال، WhatsApp، حجز، زيارة متجر/شراء، متابعة</td></tr><tr><td>Jabr SEO / المبيعات</td><td>بيع وإدارة الاشتراك التجاري</td><td>acquisition، pricing، payment، onboarding</td><td>اشتراك، تفعيل، تجديد، ترقية</td></tr><tr><td>فريق التحرير والإدارة</td><td>إنتاج محتوى موثوق وضبط الجودة</td><td>Admin/Console/workflow</td><td>نشر، مراجعة، تحديث، اعتماد</td></tr></tbody>
+          </table>
+        </div>
+<h3 id="22-حلقة-القيمة">2.2 حلقة القيمة<a class="heading-link" href="#22-حلقة-القيمة" aria-label="رابط هذا القسم">#</a></h3>
+
+    <figure class="flow-diagram" aria-label="مخطط يوضح العلاقات">
+      <figcaption>العلاقات الرئيسية</figcaption>
+      <div class="flow-rows">
+        
+          <div class="flow-row">
+            <span class="flow-node">اشتراك B2B عبر Jabr SEO</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">عميل شريك داخل Modonty</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">عميل شريك داخل Modonty</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">محتوى متخصص + صفحة ثقة وخدمات</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">مدونتي: الناشر التحريري الأساسي</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">محتوى مفيد وتعليمي ورائج</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">محتوى متخصص + صفحة ثقة وخدمات</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">اكتشاف عبر Google وFeed والبحث وModo</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">محتوى مفيد وتعليمي ورائج</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">اكتشاف عبر Google وFeed والبحث وModo</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">اكتشاف عبر Google وFeed والبحث وModo</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">قراءة / استماع / مشاهدة</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">قراءة / استماع / مشاهدة</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">حفظ / متابعة / عودة</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">قراءة / استماع / مشاهدة</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">اتصال / حجز / طلب خدمة عند وجود نية</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">حفظ / متابعة / عودة</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">ثقة وRetention أقوى</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">اتصال / حجز / طلب خدمة عند وجود نية</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">قيمة قابلة للإثبات للشريك</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">ثقة وRetention أقوى</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">قيمة قابلة للإثبات للشريك</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">قيمة قابلة للإثبات للشريك</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">تجديد أو ترقية</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">تجديد أو ترقية</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">محتوى متخصص + صفحة ثقة وخدمات</span>
+          </div>
+      </div>
+    </figure>
+<h3 id="23-الـ-moat-الحقيقي">2.3 الـ moat الحقيقي<a class="heading-link" href="#23-الـ-moat-الحقيقي" aria-label="رابط هذا القسم">#</a></h3>
+<p>القيمة التنافسية ليست “عدد المقالات” وحده. هي <strong>شبكة سلطة محتوى مشتركة</strong>:</p>
+<ul><li>المحتوى التحريري لمدونتي يجذب ويعلّم ويبني عادة.</li><li>محتوى الشركاء يضيف عمقًا وخبرة وسياقًا تجاريًا.</li><li>كلما تحسنت تجربة الاكتشاف والثقة والعودة، زادت قيمة الظهور لكل شريك.</li><li>كلما زادت جودة الشركاء والمحتوى، تحسنت فائدة المنصة للقارئ.</li></ul>
+<p>لكن هذه الحلقة تنهار إذا بدا كل المحتوى إعلانًا، أو إذا ظهرت مدونتي كعميل تجاري عادي، أو إذا طُلِب التسجيل قبل ظهور الفائدة.</p>
+<h3 id="24-حدود-المنتج-العام">2.4 حدود المنتج العام<a class="heading-link" href="#24-حدود-المنتج-العام" aria-label="رابط هذا القسم">#</a></h3>
+<p>الـ public experience يجب ألا يتحول إلى:</p>
+<ul><li>شاشة packages أو dashboard عميل.</li><li>feed إعلاني غير مفسّر.</li><li>دليل شركاء تُدفن فيه المعلومة.</li><li>chatbot عام بلا نطاق أو مصادر.</li><li>شبكة UGC مفتوحة؛ الـ reels الحالية مملوكة للعميل وتمر عبر workflow اعتماد.</li></ul>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="3. تعريف المنتج المقترح">
+<h2 id="3-تعريف-المنتج-المقترح">3. تعريف المنتج المقترح<a class="heading-link" href="#3-تعريف-المنتج-المقترح" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="31-الوعد-الأساسي">3.1 الوعد الأساسي<a class="heading-link" href="#31-الوعد-الأساسي" aria-label="رابط هذا القسم">#</a></h3>
+<blockquote><p><strong>“افهم ما يهمك، واحفظه، وارجع له — واعرف الجهة المناسبة عندما تحتاجها.”</strong></p></blockquote>
+<p>هذا الوعد يجمع المحتوى والاحتفاظ والتحويل من دون أن يجعل القارئ يشعر بأنه دخل إعلانًا.</p>
+<h3 id="32-north-star-product-statement">3.2 North-star product statement<a class="heading-link" href="#32-north-star-product-statement" aria-label="رابط هذا القسم">#</a></h3>
+<p><strong>Modonty is an Arabic-first content discovery and trusted-partner platform, personalized by interests and intent, delivered across reading, listening, and short video.</strong></p>
+<h3 id="33-ما-نأخذه-من-linkedin">3.3 ما نأخذه من LinkedIn<a class="heading-link" href="#33-ما-نأخذه-من-linkedin" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>App shell ثابت يمكن توقعه.</li><li>feed مركزي هو القلب، وليس carousel من أقسام متنافسة.</li><li>هوية المصدر واضحة قبل المحتوى.</li><li>follow/save/profile states مفهومة ومتكررة.</li><li>desktop context rails تصبح modules داخل تدفق mobile بدل أن تختفي.</li><li>نفس المصطلحات والوجهات على كل شاشة.</li></ul>
+<h3 id="34-ما-لا-نأخذه-من-linkedin">3.4 ما لا نأخذه من LinkedIn<a class="heading-link" href="#34-ما-لا-نأخذه-من-linkedin" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>اللون أو الـ visual clone.</li><li>feed قائم على النشر الشخصي أو “التفاعل من أجل التفاعل”.</li><li>كثافة الـ social actions قبل قيمة المحتوى.</li><li>infinite scroll غير قابل للتحكم بوصفه الهدف.</li><li>لغة الشبكة المهنية أو creator economy.</li></ul>
+<p><strong>القاعدة:</strong> LinkedIn هو مرجع للـ information architecture والـ behavior؛ Modonty brand هو مرجع الشكل والصوت.</p>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="4. دليل السوق: السعودية ومصر">
+<h2 id="4-دليل-السوق-السعودية-ومصر">4. دليل السوق: السعودية ومصر<a class="heading-link" href="#4-دليل-السوق-السعودية-ومصر" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="41-ما-تثبته-المصادر-السعودية-الرسمية">4.1 ما تثبته المصادر السعودية الرسمية<a class="heading-link" href="#41-ما-تثبته-المصادر-السعودية-الرسمية" aria-label="رابط هذا القسم">#</a></h3>
+<p>تقرير هيئة الاتصالات والفضاء والتقنية لعام 2024 ذكر أن انتشار الإنترنت بلغ 99% وأن الهاتف المحمول هو الجهاز الأكثر استخدامًا للتصفح بنسبة 99.4%. وأظهرت إحصاءات الهيئة العامة للإحصاء لعام 2025 أن 98.4% يستخدمون الهاتف للوصول للإنترنت، و79.4% يشاهدون الفيديو عبر الإنترنت، و32% يستمعون لمحتوى صوتي، و96.2% يشاركون في شبكات التواصل.</p>
+<p><strong>الاستنتاج المنتجـي:</strong></p>
+<ul><li>mobile-first ليس preference؛ هو شرط أساسي.</li><li>الفيديو القصير مهم، لكن لا يلغي القراءة.</li><li>الصوت فرصة حقيقية وموجود أصلًا في الـ schema؛ يجب إظهاره عندما يوجد <code>audioUrl</code> حقيقي.</li><li>desktop يبقى مهمًا للبحث العميق، قراءة المقالات الطويلة، والمهام التجارية؛ لا نبني “mobile-only”.</li></ul>
+<h3 id="42-ما-تثبته-المصادر-المصرية-الرسمية">4.2 ما تثبته المصادر المصرية الرسمية<a class="heading-link" href="#42-ما-تثبته-المصادر-المصرية-الرسمية" aria-label="رابط هذا القسم">#</a></h3>
+<p>أعلن الجهاز القومي لتنظيم الاتصالات في 2026 نمو استخدام الإنترنت المحمول 12% مقارنة باليوم نفسه من 2025، مع 7.9 مليون مستخدم محمول جديد، ونمو الإنترنت الثابت 36%. كما بنى تقرير الرضا Q2 2025 على عينات ممثلة جغرافيًا وعمريًا ونوعيًا.</p>
+<p><strong>الاستنتاج المنتجـي:</strong> السوق المصري رقمي ومتنامٍ، لكن الأرقام الرسمية التي راجعناها لا تبرر افتراض أن المصري والسعودي يريدان نسخًا مختلفة جذريًا من التنقل. نستخدم IA واحدة، ثم نختبر اللغة، الأولويات، الأداء، وقنوات العودة مع كل سوق بدل بناء stereotypes.</p>
+<h3 id="43-قرار-اللغة">4.3 قرار اللغة<a class="heading-link" href="#43-قرار-اللغة" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>الواجهة: عربية واضحة ومحايدة وقصيرة، قابلة للفهم في السعودية ومصر.</li><li>نبرة العلامة: واثقة، عملية، غير بيروقراطية، وغير متكلفة.</li><li>المحتوى نفسه يستطيع استخدام نبرة محلية حسب الكاتب والسياق.</li><li>لا نستخدم لهجة محلية في عناصر حرجة مثل الموافقة، الخصوصية، الخطأ، أو الحجز.</li><li>الأسماء المختلطة والروابط ومداخل Modo تستخدم <code>dir=&quot;auto&quot;</code>.</li></ul>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="5. تشخيص النسخة الحية">
+<h2 id="5-تشخيص-النسخة-الحية">5. تشخيص النسخة الحية<a class="heading-link" href="#5-تشخيص-النسخة-الحية" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="51-الحكم-العام">5.1 الحكم العام<a class="heading-link" href="#51-الحكم-العام" aria-label="رابط هذا القسم">#</a></h3>
+<p>المشكلة الحالية <strong>ليست نقص features</strong>. أغلب القدرات موجودة: صوت، reels، حفظ، متابعة، إشعارات، حسابات، Modo، ومقاييس تفاعل. المشكلة هي أن هذه القدرات لا تتجمع في mental model واحد يستطيع الزائر توقعه.</p>
+<h3 id="52-المشكلات-حسب-الخطورة">5.2 المشكلات حسب الخطورة<a class="heading-link" href="#52-المشكلات-حسب-الخطورة" aria-label="رابط هذا القسم">#</a></h3>
+
+        <div class="table-wrap" tabindex="0" role="region" aria-label="جدول قابل للتمرير">
+          <table>
+            <thead><tr><th>الأولوية</th><th>المشكلة</th><th>الدليل الحالي</th><th>الأثر المتوقع</th></tr></thead>
+            <tbody><tr><td>P0</td><td>مدونتي تظهر كعميل/شركة عادية</td><td><code>/clients/مدونتي</code> يعرض مراجعات، موقعًا، تواصلًا، ساعات، WhatsApp وشركاء مشابهين</td><td>كسر الهوية وفقدان فهم دور المنصة</td></tr><tr><td>P0</td><td>navigation وdiscovery متنافسان</td><td>Search، Modo، categories، tags، industries، partners، trending، sidebars وbottom nav</td><td>ضياع وانخفاض الثقة في الاختيار</td></tr><tr><td>P0</td><td>“مشترك” تعني ثلاثة أشياء</td><td>حساب مجاني، نشرة بريدية، وعميل B2B</td><td>CTA غير واضح وموافقة غير دقيقة</td></tr><tr><td>P0</td><td>طلب التسجيل يسبق الفائدة</td><td>banner عام قبل أول محتوى على Home</td><td>مقاومة التسجيل وانخفاض العودة</td></tr><tr><td>P0</td><td>APIs موجودة لكنها ليست عقد mobile ثابتًا</td><td>58 route handlers غير versioned، envelopes ورسائل غير موحدة</td><td>إعادة بناء عند Android/iOS</td></tr><tr><td>P1</td><td>mobile فيه طبقات ثابتة متنافسة</td><td>bottom nav + Modo floating + CTA/back-to-top حسب الصفحة</td><td>حجب المحتوى وأخطاء لمس</td></tr><tr><td>P1</td><td>Search وModo ليس لكل منهما وظيفة مفهومة</td><td>search منفصل وchatbot category-scoped ويطلب login</td><td>تردد وفشل وصول للمعلومة</td></tr><tr><td>P1</td><td>المقال يخلط القراءة والتحويل مبكرًا</td><td>actions قبل العنوان وWhatsApp حتى في محتوى مدونتي</td><td>قطع التركيز وشعور تجاري مبكر</td></tr><tr><td>P1</td><td>reels route طريق مسدود عند غياب البيانات</td><td>شاشة سوداء فارغة بلا بدائل اكتشاف قوية</td><td>dead end وفقدان سياق المنصة</td></tr><tr><td>P1</td><td>لا توجد حالة منتج لحفظ تقدم القراءة/الاستماع</td><td>قياس engagement موجود، لكن ليس <code>user progress</code> قابلًا للاستئناف</td><td>فقدان سبب عملي للعودة</td></tr><tr><td>P1</td><td>لا توجد متابعة موضوعات حقيقية</td><td>متابعة عميل موجودة، أما الاهتمامات/الموضوعات فليست SSOT للمستخدم</td><td>personalization ضعيف</td></tr><tr><td>P2</td><td>بعض العناوين وH1 مكررة</td><td>صفحات عميل وعناوين metadata في المسح الحي</td><td>تشويش بصري وSEO</td></tr></tbody>
+          </table>
+        </div>
+<h3 id="53-الصفحة-الرئيسية-الحالية">5.3 الصفحة الرئيسية الحالية<a class="heading-link" href="#53-الصفحة-الرئيسية-الحالية" aria-label="رابط هذا القسم">#</a></h3>
+<p>Desktop يجمع header كثيفًا، three-column layout، banner تسجيل، feed، اكتشاف تصنيفات، industries، tags، وقائمة طويلة من الشركاء. Mobile يقلص العرض لكنه لا يعيد ترتيب الأولويات؛ فيظل banner التسجيل أولًا ثم feed، مع تنقل ثابت وModo عائم.</p>
+<p><strong>الجذر:</strong> الصفحة تجيب عن “ماذا يوجد عندنا؟” بدل “ماذا تستطيع أن تفعل الآن؟”.</p>
+<h3 id="54-صفحة-مدونتي-core-client">5.4 صفحة مدونتي core client<a class="heading-link" href="#54-صفحة-مدونتي-core-client" aria-label="رابط هذا القسم">#</a></h3>
+<p>تستخدم قالب الشركة التجارية نفسه. هذا يتعارض مباشرة مع <code>Settings.coreClientId</code> ومع الوثيقة التي تصف مدونتي كناشر تحريري. وجودها داخل دليل العملاء يعزز الالتباس.</p>
+<p><strong>القرار:</strong> لا نعتمد على الاسم أو الـ slug. نستخدم <code>coreClientId</code> فقط لتحديد الـ core publisher، ونرسم له template مختلفًا، مع استبعاده من partner discovery.</p>
+<h3 id="55-صفحة-الشريك">5.5 صفحة الشريك<a class="heading-link" href="#55-صفحة-الشريك" aria-label="رابط هذا القسم">#</a></h3>
+<p>تحتوي قيمة حقيقية: خدمات، فريق، مقالات، مراجعات، ثقة، تواصل وحجز. لكنها تعرض عناصر كثيرة متساوية في الوزن، وعلى mobile قد تظهر ستة أفعال ثابتة في وقت واحد.</p>
+<p><strong>القرار:</strong> صفحة الشريك صفحة conversion مبنية على intent. فعل أساسي واحد وفعل ثانوي واحد حسب capabilities الحقيقية؛ باقي الأفعال داخل overflow أو سياقها.</p>
+<h3 id="56-صفحة-المقال">5.6 صفحة المقال<a class="heading-link" href="#56-صفحة-المقال" aria-label="رابط هذا القسم">#</a></h3>
+<p>تدعم <code>audioUrl</code> فعليًا وتملك مؤلفًا/مراجعًا/citations/lastReviewed، لكن الترتيب الحالي يمنح reactions والتحويل مكانًا مبكرًا. وعندما يكون الناشر هو مدونتي، لا معنى لتحويل القارئ إلى WhatsApp بوصفه عميلًا تجاريًا.</p>
+<p><strong>القرار:</strong> القراءة/الاستماع والثقة أولًا، التفاعل ثانيًا، والتحويل التجاري فقط إذا كان ذا صلة ومصدر المقال شريكًا تجاريًا.</p>
+<h3 id="57-search-وmodo">5.7 Search وModo<a class="heading-link" href="#57-search-وmodo" aria-label="رابط هذا القسم">#</a></h3>
+<p>Search الحالي يعيد أنواعًا محدودة وempty state عامًا. Modo لديه RAG، history، مصادر web/DB، واقتراح مقالات، لكنه category-scoped ويطلب حسابًا قبل الاستخدام.</p>
+<p><strong>القرار:</strong></p>
+<ul><li>Search = استرجاع مباشر معروف النية.</li><li>Modo = يساعد المستخدم غير المتأكد على صياغة حاجته والوصول لمسار أو محتوى موثوق.</li><li>لا يحل أحدهما محل الآخر.</li><li>يُسمح للضيف بتجربة محدودة من Modo مع rate limit؛ الحساب مطلوب للحفظ، التاريخ، والاستئناف، لا لرؤية أول قيمة.</li></ul>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="6. ماذا تفعل الشركات الكبيرة ولماذا؟">
+<h2 id="6-ماذا-تفعل-الشركات-الكبيرة-ولماذا">6. ماذا تفعل الشركات الكبيرة ولماذا؟<a class="heading-link" href="#6-ماذا-تفعل-الشركات-الكبيرة-ولماذا" aria-label="رابط هذا القسم">#</a></h2>
+
+        <div class="table-wrap" tabindex="0" role="region" aria-label="جدول قابل للتمرير">
+          <table>
+            <thead><tr><th>المرجع الرسمي</th><th>النمط المفيد</th><th>ما نطبقه في مدونتي</th><th>ما نتجنبه</th></tr></thead>
+            <tbody><tr><td>LinkedIn</td><td>feed شخصي، follow، save، explanation/controls</td><td>shell ثابت، source identity، feed modes، hide/not interested مستقبلًا</td><td>نسخ الشكل أو شبكة النشر الشخصي</td></tr><tr><td>Medium</td><td>publications، following، reading list، email preferences</td><td>مدونتي كـ publication، مكتبة محفوظات، تفضيلات بريد واضحة</td><td>خلط العضوية بالنشرة</td></tr><tr><td>Substack</td><td>Home queue، Inbox، Saved، Audio، subscriptions</td><td>مركز عودة للمحفوظات والصوت ومتابعة المصادر</td><td>تحويل المنتج إلى صندوق بريد فقط</td></tr><tr><td>Google News</td><td>For You مقابل Following مع تحكم بالاهتمامات والمصادر</td><td>تبويب “لك” و“أتابعه” وسبب ظهور المحتوى</td><td>personalization غامض بلا تحكم</td></tr><tr><td>Apple HIG + Material</td><td>3–5 وجهات top-level ثابتة؛ tab bar للتنقل لا للأفعال</td><td>خمسة مقاصد ثابتة Web/Mobile</td><td>وضع Modo أو Subscribe كـ tab</td></tr><tr><td>W3C</td><td>تنقل متسق، أكثر من طريقة للعثور، bidi صحيح</td><td>labels ثابتة، search + browse، RTL منطقي</td><td>تغيير معنى/ترتيب الوجهة حسب الصفحة</td></tr><tr><td>Google Search</td><td>تجنب interstitials التي تحجب المحتوى</td><td>CTA inline بعد value moment</td><td>popup تسجيل مبكر أو app-install مزعج</td></tr></tbody>
+          </table>
+        </div>
+<p><strong>الخلاصة:</strong> المنتجات الناجحة لا تعرض كل feature في أول شاشة. هي تثبت “مكان المستخدم”، ثم تقدم خطوة تالية يمكن توقعها، ثم تجعل العودة ذات قيمة من خلال follow/save/history/preferences.</p>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="7. Information Architecture النهائية المقترحة">
+<h2 id="7-information-architecture-النهائية-المقترحة">7. Information Architecture النهائية المقترحة<a class="heading-link" href="#7-information-architecture-النهائية-المقترحة" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="71-الوجهات-الخمس">7.1 الوجهات الخمس<a class="heading-link" href="#71-الوجهات-الخمس" aria-label="رابط هذا القسم">#</a></h3>
+
+        <div class="table-wrap" tabindex="0" role="region" aria-label="جدول قابل للتمرير">
+          <table>
+            <thead><tr><th>الترتيب</th><th>الاسم العام</th><th>وظيفته الوحيدة</th><th>يتضمن</th></tr></thead>
+            <tbody><tr><td>1</td><td><strong>الرئيسية</strong></td><td>ما يهم المستخدم الآن وما يمكن استئنافه</td><td>لك، أتابعه، الأحدث، continue، core spotlight</td></tr><tr><td>2</td><td><strong>استكشف</strong></td><td>الانتقال من نية عامة إلى محتوى أو مجال أو خدمة أو شراء</td><td>Search، موضوعات، مجالات، شركاء، رائج، احجز الآن، تسوق</td></tr><tr><td>3</td><td><strong>لقطات</strong></td><td>تعلم/اكتشاف قصير مرئي مرتبط بسياق</td><td>Reels، transcript، publisher، related article</td></tr><tr><td>4</td><td><strong>المحفوظات</strong></td><td>قيمة محفوظة للعودة</td><td>مقالات، صوت، لقطات، قوائم/لاحقًا</td></tr><tr><td>5</td><td><strong>حسابي</strong></td><td>الهوية والتفضيلات والنشاط</td><td>profile، following، notifications، settings</td></tr></tbody>
+          </table>
+        </div>
+<p>اسم route يبقى <code>/reels</code> لحماية التوافق؛ اسم الواجهة الموصى به <strong>لقطات</strong>. تغييره لاحقًا copy decision وليس تغيير architecture.</p>
+<h3 id="72-الأدوات-العامة-وليست-وجهات">7.2 الأدوات العامة وليست وجهات<a class="heading-link" href="#72-الأدوات-العامة-وليست-وجهات" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li><strong>Search:</strong> متاح من الـ app bar وداخل Explore.</li><li><strong>Notifications:</strong> utility للحساب، لا وجهة رئيسية مستقلة في bottom nav.</li><li><strong>Modo:</strong> composer/assistant داخل Home وExplore والمقال، لا floating layer دائمة على كل شاشة.</li><li><strong>Subscribe/Create account:</strong> conversion، لا navigation.</li></ul>
+<h3 id="73-خريطة-مختصرة">7.3 خريطة مختصرة<a class="heading-link" href="#73-خريطة-مختصرة" aria-label="رابط هذا القسم">#</a></h3>
+
+    <figure class="flow-diagram" aria-label="مخطط يوضح العلاقات">
+      <figcaption>العلاقات الرئيسية</figcaption>
+      <div class="flow-rows">
+        
+          <div class="flow-row">
+            <span class="flow-node">Modonty</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">الرئيسية</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">Modonty</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">استكشف</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">Modonty</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">لقطات</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">Modonty</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">المحفوظات</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">Modonty</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">حسابي</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">استكشف</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">بحث موحد</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">استكشف</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">موضوعات ومجالات</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">استكشف</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">الشركاء</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">استكشف</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">الرائج</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">الرئيسية</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">لك</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">الرئيسية</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">أتابعه</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">الرئيسية</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">الأحدث</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">حسابي</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">الإشعارات</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">حسابي</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">التفضيلات</span>
+          </div>
+      </div>
+    </figure>
+<h3 id="74-desktop-shell">7.4 desktop shell<a class="heading-link" href="#74-desktop-shell" aria-label="رابط هذا القسم">#</a></h3>
+<p>عند <code>xl</code> يمكن استخدام روح LinkedIn بثلاثة أعمدة، بشرط ألا تصبح الأعمدة الثلاثة ثلاثة منتجات:</p>
+<ul><li><strong>العمود المركزي:</strong> feed أو محتوى route، وهو الأكبر دائمًا.</li><li><strong>الـ rail الأقرب لبداية القراءة RTL:</strong> هوية/توجيه: core Modonty، interests، عناصر Explore مختصرة.</li><li><strong>الـ rail الآخر:</strong> continue/saved/relevant partner/trending حسب السياق، من دون إعادة navigation.</li></ul>
+<p>عند أحجام أقل يصبح التخطيط عمودين ثم عمودًا واحدًا. لا يوجد محتوى أساسي متاح على desktop ويختفي على mobile؛ يتحول إلى module داخل التدفق.</p>
+<h3 id="75-mobile-shell">7.5 mobile shell<a class="heading-link" href="#75-mobile-shell" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>App bar بسيط: logo/route title + search utility + account/notification حسب الحالة.</li><li>Bottom navigation واحدة للوجهات الخمس.</li><li>لا يظهر Modo floating button وBack-to-top وsticky CTA فوق bottom nav في الوقت نفسه.</li><li>في صفحات التحويل: sticky bar بفعل أساسي وثانوي فقط.</li><li>في fullscreen reel: back، publisher، mute/captions، وعودة واضحة للسياق؛ لا شاشة سوداء منفصلة عن المنتج.</li></ul>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="8. مخطط الصفحة الرئيسية">
+<h2 id="8-مخطط-الصفحة-الرئيسية">8. مخطط الصفحة الرئيسية<a class="heading-link" href="#8-مخطط-الصفحة-الرئيسية" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="81-ترتيب-القيمة">8.1 ترتيب القيمة<a class="heading-link" href="#81-ترتيب-القيمة" aria-label="رابط هذا القسم">#</a></h3>
+<ol><li><strong>توجيه فوري:</strong> ماذا تقدم مدونتي + سؤال/نية بسيطة.</li><li><strong>Modo composer:</strong> “إيش حاب تعرف اليوم؟” مع أمثلة قصيرة؛ لا حقل يشبه Search دون تفسير.</li><li><strong>Interests optional:</strong> اختيار سريع قابل للتخطي والتعديل، لا onboarding إجباري.</li><li><strong>مدونتي الناشر الأساسي:</strong> module مميز وواضح يظهر على desktop وmobile بالهوية نفسها.</li><li><strong>Feed mode:</strong> لك / أتابعه / الأحدث.</li><li><strong>Feed:</strong> cards متعددة الصيغة بقواعد موحدة.</li><li><strong>Contextual value:</strong> استئناف، محفوظات، أو شريك مرتبط عند الحاجة.</li></ol>
+<p>لا يتصدر التسجيل الصفحة. يظهر إنشاء الحساب عند أول محاولة حفظ/متابعة/استئناف، أو بعد استهلاك مفيد، مع شرح المنفعة.</p>
+<h3 id="82-بطاقة-مدونتي">8.2 بطاقة مدونتي<a class="heading-link" href="#82-بطاقة-مدونتي" aria-label="رابط هذا القسم">#</a></h3>
+<p><strong>Invariant عبر الشاشات:</strong></p>
+<ul><li>الاسم: مدونتي.</li><li>الوصف: “الناشر التحريري للمنصة” وليس اسم شخص أو مؤسس.</li><li>وعد قصير: محتوى عربي مفيد وموثوق عبر مجالات متعددة.</li><li>أفعال: “تابع مدونتي” و“استكشف الجديد”.</li><li>badge واضح: “من مدونتي” أو “تحرير مدونتي”.</li></ul>
+<p>Desktop قد يعرضها كـ compact rail card. Mobile يعرضها كـ horizontal/inline module بعد Modo أو interests. اختلاف الحجم مسموح؛ اختلاف الفكرة أو اختفاؤها غير مسموح.</p>
+<h3 id="83-بطاقة-المحتوى-الموحدة">8.3 بطاقة المحتوى الموحدة<a class="heading-link" href="#83-بطاقة-المحتوى-الموحدة" aria-label="رابط هذا القسم">#</a></h3>
+<p>يجب أن تجيب قبل الضغط عن:</p>
+<ul><li>من المصدر؟ مدونتي أم شريك؟</li><li>ما الصيغة؟ قراءة، استماع متاح، أو لقطة؟</li><li>لماذا يهمني؟ عنوان واضح + excerpt قصير أو سبب ظهور.</li><li>ما الزمن المتوقع؟ reading time أو duration حقيقي فقط.</li><li>ما الإجراء الأقرب؟ فتح، حفظ، مشاركة؛ التعليقات والإعجاب ثانوية.</li></ul>
+<p>لا نعرض badge صوت إذا لم يوجد <code>audioUrl</code>، ولا مدة fabricated، ولا “موثّق” بلا تعريف ودليل.</p>
+<h3 id="84-feed-logic-الأولي">8.4 feed logic الأولي<a class="heading-link" href="#84-feed-logic-الأولي" aria-label="رابط هذا القسم">#</a></h3>
+<p>قبل وجود personalization model كامل:</p>
+<ul><li>الضيف: mix واضح من مدونتي + محتوى شركاء عالي الجودة، مع “الأحدث” و“الرائج” كإشارتين منفصلتين.</li><li>بعد اختيار interests: يزيد وزن الموضوعات المختارة مع إمكانية “لماذا أرى هذا؟”.</li><li>العضو: following + saved/progress + behavior، لكن explicit choices تتقدم على inference.</li><li>كل batch يحتفظ بالتنوع ولا يتحول إلى عشرة عناصر من عميل واحد.</li></ul>
+<p>الخوارزمية نفسها تحتاج ranking spec منفصل قبل التنفيذ؛ الـ UI لا يخترع ranking.</p>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="9. مخطط هويتي Client">
+<h2 id="9-مخطط-هويتي-client">9. مخطط هويتي Client<a class="heading-link" href="#9-مخطط-هويتي-client" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="91-corepublisherpage-لمدونتي">9.1 CorePublisherPage لمدونتي<a class="heading-link" href="#91-corepublisherpage-لمدونتي" aria-label="رابط هذا القسم">#</a></h3>
+<p>يبقى <code>Settings.coreClientId</code> هو SSOT. لا نستخدم string comparison.</p>
+<p><strong>الترتيب:</strong></p>
+<ol><li>هوية الناشر ورسالة التحرير.</li><li>موضوعات مدونتي واختياراتها.</li><li>أحدث/أهم المحتوى حسب الصيغة.</li><li>series أو collections عند توفرها.</li><li>follow + newsletter preference منفصلان.</li><li>معلومات الثقة والسياسة التحريرية.</li></ol>
+<p>لا تظهر: ساعات عمل، موقع متجر، حجز، “شركاء مشابهون”، تقييم نشاط تجاري، أو WhatsApp عام ما لم يوجد use case تحريري موثق.</p>
+<p>الحفاظ على URL الحالي مؤقتًا أفضل من كسر SEO. يمكن لاحقًا تقديم <code>/modonty</code> كعنوان branded مع canonical/redirect مدروس، لكنه ليس شرط refactor الأول.</p>
+<h3 id="92-businessclientpage-للشريك">9.2 BusinessClientPage للشريك<a class="heading-link" href="#92-businessclientpage-للشريك" aria-label="رابط هذا القسم">#</a></h3>
+<p><strong>الترتيب:</strong></p>
+<ol><li>الهوية + المجال + جملة قيمة واحدة.</li><li>trust signals حقيقية وقابلة للتفسير.</li><li>فعل أساسي حسب capability الحقيقية: حجز أو تسوق أو تواصل أو زيارة الموقع.</li><li>الخدمات/الخبرة.</li><li>محتوى الشريك.</li><li>الفريق/الإنجازات/المراجعات إذا وجدت.</li><li>FAQ ومعلومات الاتصال.</li><li>شركاء ذوو صلة في النهاية فقط.</li></ol>
+<p>Mobile sticky CTA: فعل أساسي + ثانوي. Save/share/review داخل menu أو مواضعها الطبيعية.</p>
+<h3 id="93-قدرات-العميل-ومسارات-النية">9.3 قدرات العميل ومسارات النية<a class="heading-link" href="#93-قدرات-العميل-ومسارات-النية" aria-label="رابط هذا القسم">#</a></h3>
+<p>العميل لا يُعرض بوصفه “بطاقة عامة”؛ بل ككيان له capabilities يقرأها الـ UI من البيانات الحقيقية. لا يظهر زر ولا route intent إلا عندما تتوافر القدرة الفعلية والرابط أو إعداد الخدمة الصحيح.</p>
+
+        <div class="table-wrap" tabindex="0" role="region" aria-label="جدول قابل للتمرير">
+          <table>
+            <thead><tr><th>نية الزائر</th><th>من يظهر له</th><th>الفعل الأساسي في البطاقة</th><th>شرط الثقة قبل التحويل</th></tr></thead>
+            <tbody><tr><td><strong>احجز الآن</strong></td><td>العملاء الذين يملكون حجزًا متاحًا</td><td>احجز الآن</td><td>الخدمة، الوقت/آلية الحجز، والبيانات المطلوبة واضحة</td></tr><tr><td><strong>تسوّق</strong></td><td>العملاء الذين يملكون متجرًا أو رابط شراء حقيقيًا</td><td>تسوّق / زيارة المتجر</td><td>اسم المتجر/الوجهة واضح، ولا ندّعي وجود checkout داخل مدونتي ما لم يكن موجودًا</td></tr><tr><td><strong>تواصل مع خبير</strong></td><td>العملاء القابلون للتواصل عبر قناة حقيقية</td><td>تواصل</td><td>channel واضح وسياسة استخدام البيانات واضحة</td></tr><tr><td><strong>زيارة الموقع</strong></td><td>العملاء الذين لديهم موقع موثق في البيانات</td><td>زيارة الموقع</td><td>انتقال خارجي معلن بوضوح</td></tr><tr><td><strong>استكشف حسب المجال</strong></td><td>العملاء والمحتوى ذوو الصلة بالمجال</td><td>استكشف</td><td>لا يُفترض intent تجاري قبل أن يختاره الزائر</td></tr></tbody>
+          </table>
+        </div>
+<p>ترتيب الأولوية لا يُخمن من نوع العميل أو اسمه: <code>booking</code> يتقدم عندما يكون متاحًا وملائمًا للنية، ثم <code>commerce</code>، ثم <code>contact</code>، ثم <code>website</code>. عند تعدد القدرات يظهر فعل واحد رئيسي وفعل ثانوي واحد؛ الباقي داخل قائمة “المزيد”.</p>
+<h3 id="94-ymyl-قبل-التحويل">9.4 YMYL قبل التحويل<a class="heading-link" href="#94-ymyl-قبل-التحويل" aria-label="رابط هذا القسم">#</a></h3>
+<p>العميل في مجال YMYL (مثل الصحة أو المال أو القانون) قد يملك حجزًا أو متجرًا، لكن لا يكفي ذلك لإظهار CTA قوي. قبل التحويل تعرض الصفحة والبطاقة — بحسب البيانات الحقيقية — التخصص أو الترخيص/الاعتماد القابل للتحقق، اسم مقدم الخدمة، آخر مراجعة للمحتوى، الإفصاح المناسب، والتنبيه المعلوماتي عند الحاجة. لا تُنشأ شارة ثقة أو صياغة علاجية/مالية/قانونية من دون دليل في البيانات والمراجعة المختصة.</p>
+<h3 id="95-الإفصاح">9.5 الإفصاح<a class="heading-link" href="#95-الإفصاح" aria-label="رابط هذا القسم">#</a></h3>
+<p>المستخدم يجب أن يعرف أن المحتوى مرتبط بعميل مدفوع دون إضعاف قيمة المقال. الصيغة المقترحة:</p>
+<blockquote><p>“محتوى متخصص بالتعاون مع [اسم الشريك]، خضع لمراجعة مدونتي.”</p></blockquote>
+<p>تُستخدم فقط إذا كانت تعكس workflow الحقيقي. السياسة التحريرية يجب أن تشرح الفصل بين الدفع والادعاءات التحريرية.</p>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="10. مخطط المقال: اقرأ أو استمع">
+<h2 id="10-مخطط-المقال-اقرأ-أو-استمع">10. مخطط المقال: اقرأ أو استمع<a class="heading-link" href="#10-مخطط-المقال-اقرأ-أو-استمع" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="101-ترتيب-الصفحة">10.1 ترتيب الصفحة<a class="heading-link" href="#101-ترتيب-الصفحة" aria-label="رابط هذا القسم">#</a></h3>
+<ol><li>Breadcrumb مختصر.</li><li>source identity + badge core/partner.</li><li>H1 واحد.</li><li>وصف وmetadata: تاريخ، تحديث، reading time، author/reviewer.</li><li>switch “اقرأ / استمع” <strong>فقط</strong> إذا يوجد <code>audioUrl</code>.</li><li>صورة/وسيط رئيسي.</li><li>جدول محتويات اختياري للمقالات الطويلة.</li><li>body بقراءة مريحة.</li><li>citations، reviewer، freshness، والتوضيحات المهمة في السياق.</li><li>save/share/reaction بطريقة غير مقاطعة.</li><li>related content.</li><li>partner CTA فقط إذا كان ذا صلة.</li></ol>
+<h3 id="102-الصوت">10.2 الصوت<a class="heading-link" href="#102-الصوت" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>نفس الـ article id، وليس كيان محتوى منفصلًا يشتت analytics.</li><li>progress قابل للحفظ والاستئناف عبر الأجهزة للعضو.</li><li>speed، seek، elapsed/remaining، transcript/reading fallback.</li><li>لا autoplay.</li><li>إذا فشل الصوت تبقى القراءة متاحة بلا dead end.</li><li>native لاحقًا يستطيع background playback من العقد نفسه.</li></ul>
+<h3 id="103-الثقة-وymyl">10.3 الثقة وYMYL<a class="heading-link" href="#103-الثقة-وymyl" aria-label="رابط هذا القسم">#</a></h3>
+<p>في الصحة والمال والقانون وما شابه:</p>
+<ul><li>اسم الكاتب وصفته.</li><li>المراجع المختص وتاريخ المراجعة عند وجودهما.</li><li>last reviewed/date modified.</li><li>citations مباشرة.</li><li>تنبيه أن المحتوى معلوماتي عندما يلزم.</li><li>لا badge “موثّق من Google” بمعنى endorsement؛ analytics أو الظهور ليسا اعتمادًا من Google.</li></ul>
+<h3 id="104-منع-تحويل-المقال-إلى-إعلان">10.4 منع تحويل المقال إلى إعلان<a class="heading-link" href="#104-منع-تحويل-المقال-إلى-إعلان" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>لا WhatsApp قبل أن يصل القارئ إلى إجابة.</li><li>لا CTA تجاري في core Modonty article إلا use case محدد.</li><li>لا أكثر من CTA أساسي واحد في viewport.</li><li>signup prompt inline بعد save/follow intent أو value moment، لا modal حجب.</li></ul>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="11. Search وModo وExplore">
+<h2 id="11-search-وmodo-وexplore">11. Search وModo وExplore<a class="heading-link" href="#11-search-وmodo-وexplore" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="111-search">11.1 Search<a class="heading-link" href="#111-search" aria-label="رابط هذا القسم">#</a></h3>
+<p>وظيفته: استرجاع شيء يعرف المستخدم أنه يريده.</p>
+<p><strong>النتائج الموحدة:</strong> Articles، Partners، Topics/Categories، Authors، Reels. تعرض النتائج grouped أو blended مع type filters بسيطة. Search suggestions تأتي من بيانات حقيقية، لا نصوص وهمية.</p>
+<p><strong>Empty state مفيد:</strong></p>
+<ul><li>تصحيح/اقتراح query.</li><li>موضوعات رائجة ذات صلة.</li><li>الانتقال إلى Modo بصيغة “ساعدني أصيغ سؤالي”.</li><li>لا صفحة فارغة تقول “ابدأ البحث” فقط.</li></ul>
+<h3 id="112-modo">11.2 Modo<a class="heading-link" href="#112-modo" aria-label="رابط هذا القسم">#</a></h3>
+<p>الاسم المعتمد: <strong>Modo</strong> — أول أربعة أحرف من مدونتي وفق قرار المالك.</p>
+<p>وظيفته: فهم نية غير واضحة، طرح سؤال تضييق واحد عند الحاجة، وإرجاع جواب موثّق + مسارات ومقالات. ليس chat عام ولا بديل SEO.</p>
+<p><strong>قواعد:</strong></p>
+<ul><li>يوضح نطاقه ومصدر الجواب.</li><li>يقدم citations وروابط داخل مدونتي.</li><li>يميز جواب DB عن web source.</li><li>يعرض “لا أعرف/مصادر غير كافية” بوضوح.</li><li>يحفظ history فقط للعضو وبعد موافقة/سياسة واضحة.</li><li>guest preview محدود مع rate limit؛ لا registration wall قبل أول فائدة.</li><li>نقيس outcome: answer، redirect، no sources، out of scope، error.</li></ul>
+<h3 id="113-explore">11.3 Explore<a class="heading-link" href="#113-explore" aria-label="رابط هذا القسم">#</a></h3>
+<p>Explore لا يعرض taxonomy كاملة دفعة واحدة. يبدأ بـ:</p>
+<ol><li>Search.</li><li>نية واضحة: <strong>استكشف محتوى</strong>، <strong>احجز الآن</strong>، <strong>تسوّق</strong>، <strong>تواصل مع خبير</strong>، أو <strong>زيارة موقع</strong>.</li><li>موضوعات مختارة أو اهتمامات المستخدم.</li><li>رائج الآن.</li><li>شركاء حسب المجال/الحاجة والقدرة المختارة.</li><li>categories/industries/tags كآليات تصفية داخل السياق.</li></ol>
+<p>يجب مراجعة taxonomy الحالية لأن وجود categories وindustries وtags متشابهة أمام المستخدم يضاعف الخيارات. يمكن الاحتفاظ بها في data/SEO مع تبسيط presentation إلى “موضوعات” و“مجالات”.</p>
+<h4 id="سلوك-مسارات-الحجز-والتسوق">سلوك مسارات الحجز والتسوق<a class="heading-link" href="#سلوك-مسارات-الحجز-والتسوق" aria-label="رابط هذا القسم">#</a></h4>
+<ul><li><strong>احجز الآن:</strong> يفتح listing مفلترًا مسبقًا للعملاء ذوي capability الحجز؛ يبقى المجال، الموقع، السعر/المدى، والتوقيت فلاتر اختيارية فقط عندما تكون بياناتها حقيقية.</li><li><strong>تسوّق:</strong> يفتح listing مفلترًا للعملاء ذوي متجر أو purchase URL. إذا كان الشراء خارج مدونتي، يقال “زيارة المتجر” ويقاس outbound click؛ لا نسمّيه “شراء” داخل المنصة.</li><li><strong>عند عدم وجود نتائج:</strong> لا dead end. نعرض أقرب بديل: “استكشف الخبراء في هذا المجال”، “اطلب التواصل”، أو محتوى يساعد على اتخاذ القرار.</li><li>لا يعرض الموديل أي عميل خارج capability المختارة لمجرد دفعه أو كونه featured؛ النية التي اختارها المستخدم أعلى من الترويج.</li></ul>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="12. لقطات / Reels">
+<h2 id="12-لقطات-reels">12. لقطات / Reels<a class="heading-link" href="#12-لقطات-reels" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="121-الدور">12.1 الدور<a class="heading-link" href="#121-الدور" aria-label="رابط هذا القسم">#</a></h3>
+<p>الـ reel ليس جزيرة ترفيه. هو مدخل قصير إلى فكرة، ناشر، مقال، أو شريك.</p>
+<h3 id="122-كل-لقطة-تعرض">12.2 كل لقطة تعرض<a class="heading-link" href="#122-كل-لقطة-تعرض" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>publisher/client identity.</li><li>topic.</li><li>caption قصير.</li><li>transcript/captions عند توفرها، مع حالة فشل واضحة.</li><li>duration حقيقي.</li><li>save، follow، share، comments بحسب الحالة.</li><li>“اقرأ التفاصيل” إذا يوجد <code>reelArticleId</code>.</li></ul>
+<h3 id="123-السلوك">12.3 السلوك<a class="heading-link" href="#123-السلوك" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>vertical paging مع play/pause/mute/captions.</li><li>لا autoplay بصوت.</li><li>احترام <code>prefers-reduced-motion</code>.</li><li>حفظ progress/complete analytics.</li><li>بعد عدة لقطات، اقتراح محتوى عميق لا مزيد من scroll فقط.</li></ul>
+<h3 id="124-empty-state">12.4 empty state<a class="heading-link" href="#124-empty-state" aria-label="رابط هذا القسم">#</a></h3>
+<p>إذا لا توجد reels منشورة:</p>
+<ul><li>يبقى app shell والتنقل.</li><li>تظهر مقالات تحتوي فيديو أو محتوى مرئي ذو صلة إن وجد.</li><li>CTA إلى Home/Explore محدد.</li><li>لا شاشة سوداء منفصلة.</li></ul>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="13. العضوية والاشتراك والاحتفاظ">
+<h2 id="13-العضوية-والاشتراك-والاحتفاظ">13. العضوية والاشتراك والاحتفاظ<a class="heading-link" href="#13-العضوية-والاشتراك-والاحتفاظ" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="131-قاموس-إلزامي">13.1 قاموس إلزامي<a class="heading-link" href="#131-قاموس-إلزامي" aria-label="رابط هذا القسم">#</a></h3>
+
+        <div class="table-wrap" tabindex="0" role="region" aria-label="جدول قابل للتمرير">
+          <table>
+            <thead><tr><th>المفهوم</th><th>الاسم العربي</th><th>CTA الصحيح</th><th>لا يُسمى</th></tr></thead>
+            <tbody><tr><td>Anonymous visitor</td><td>زائر / قارئ</td><td>—</td><td>مشترك</td></tr><tr><td>Free account</td><td>عضو مدونتي / حساب مجاني</td><td>أنشئ حسابًا مجانيًا</td><td>اشترك</td></tr><tr><td>In-app source/topic relation</td><td>متابعة</td><td>تابع</td><td>اشترك</td></tr><tr><td>Email newsletter</td><td>مشترك النشرة</td><td>اشترك في النشرة</td><td>عضو</td></tr><tr><td>Paid business</td><td>شريك / عميل مدفوع داخليًا</td><td>انضم كشريك / نمِّ ظهور نشاطك</td><td>مشترك عام</td></tr></tbody>
+          </table>
+        </div>
+<h3 id="132-ماذا-يفتح-الحساب-المجاني">13.2 ماذا يفتح الحساب المجاني؟<a class="heading-link" href="#132-ماذا-يفتح-الحساب-المجاني" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>حفظ عبر الأجهزة.</li><li>متابعة مدونتي والشركاء والموضوعات.</li><li>feed “أتابعه”.</li><li>استئناف القراءة والاستماع.</li><li>history وتفضيلات Modo.</li><li>إشعارات يمكن التحكم بها.</li></ul>
+<p>إذا لم نستطع تقديم هذه القيمة فعليًا، لا نعد بها في التسجيل.</p>
+<h3 id="133-متى-نطلب-الحساب">13.3 متى نطلب الحساب؟<a class="heading-link" href="#133-متى-نطلب-الحساب" aria-label="رابط هذا القسم">#</a></h3>
+<p>بعد intent واضح:</p>
+<ul><li>ضغط حفظ.</li><li>متابعة.</li><li>استئناف على جهاز آخر.</li><li>الاحتفاظ بمحادثة Modo.</li><li>تخصيص دائم.</li></ul>
+<p>الـ prompt يشرح الفائدة المباشرة: “أنشئ حسابًا مجانيًا لتحفظ هذا المقال وتكمله لاحقًا.”</p>
+<h3 id="134-النشرة-البريدية">13.4 النشرة البريدية<a class="heading-link" href="#134-النشرة-البريدية" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>موافقة منفصلة عن الحساب.</li><li>توضح المصدر، نوع المحتوى، والتكرار المتوقع.</li><li>تتيح topics/frequency قدر الإمكان.</li><li>إلغاء سهل ومماثل أو أسهل من الاشتراك، وفق اللائحة التنفيذية السعودية لحماية البيانات الشخصية.</li><li>لا checkbox preselected ولا consent ضمني.</li><li>Newsletter مدونتي تختلف عن تحديثات شريك محدد.</li></ul>
+<h3 id="135-retention-loops">13.5 retention loops<a class="heading-link" href="#135-retention-loops" aria-label="رابط هذا القسم">#</a></h3>
+<ol><li><strong>Save loop:</strong> محتوى مفيد → حفظ → تذكير/مكتبة → عودة.</li><li><strong>Follow loop:</strong> متابعة موضوع/مصدر → feed “أتابعه” → جديد واضح → عودة.</li><li><strong>Progress loop:</strong> بدأ قراءة/استماع → continue card → استكمال.</li><li><strong>Digest loop:</strong> تفضيلات صريحة → digest مفيد بتكرار مختار → deep link.</li><li><strong>Series loop:</strong> محتوى ضمن سلسلة → التالي المنطقي → استكمال وعودة.</li><li><strong>Service loop:</strong> محتوى متخصص → partner trust → سؤال/حجز → متابعة الحالة.</li></ol>
+<p>لا تستخدم الإشعارات كتعويض عن feed ضعيف.</p>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="14. النظام البصري والـ RTL">
+<h2 id="14-النظام-البصري-والـ-rtl">14. النظام البصري والـ RTL<a class="heading-link" href="#14-النظام-البصري-والـ-rtl" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="141-brand-application">14.1 Brand application<a class="heading-link" href="#141-brand-application" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>Dark Navy <code>#0e065a</code>: الهوية والأسطح الرئيسية والـ primary emphasis.</li><li>Royal Blue <code>#3030ff</code>: الأفعال الأساسية والحالة النشطة.</li><li>Cyan <code>#00d8d8</code>: accent محدود، status، أو detail بصري؛ ليس لكل زر.</li><li>Tajawal للعربية وMontserrat للاتينية.</li><li>القيم: sleek، purposeful، bold، reliable؛ لا زخرفة بلا وظيفة.</li></ul>
+<h3 id="142-theme-decision">14.2 Theme decision<a class="heading-link" href="#142-theme-decision" aria-label="رابط هذا القسم">#</a></h3>
+<p><strong>الموصى به:</strong> reading surfaces فاتحة افتراضيًا لصفحات المحتوى، مع dark mode اختياري ومحفوظ. يمكن استعمال navy في shell والـ branded modules. لا نفرض dark full-canvas على المقالات الطويلة أو الـ empty states.</p>
+<p>هذا يحافظ على صورة حديثة شبيهة بتطبيقات المحتوى ويعطي أولوية للقراءة، مع احترام من يفضل dark.</p>
+<h3 id="143-component-behavior">14.3 component behavior<a class="heading-link" href="#143-component-behavior" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>shadcn/ui أولًا، ثم wrappers تحمل Modonty variants؛ لا fork عشوائي للمكونات الأصلية.</li><li>radius وshadow restrained؛ البطاقات ليست bubbles منفصلة لكل سطر.</li><li>44px touch target كهدف عملي للأفعال الرئيسية.</li><li>labels بجانب الأيقونات للأفعال الحرجة.</li><li>skeleton يطابق الشكل النهائي لتقليل CLS.</li><li>empty/error/loading/auth states جزء من spec وليس cleanup لاحقًا.</li></ul>
+<h3 id="144-rtl-non-negotiables">14.4 RTL non-negotiables<a class="heading-link" href="#144-rtl-non-negotiables" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li><code>dir=&quot;rtl&quot;</code> في root الصحيح.</li><li>CSS logical properties وTailwind <code>start/end/ms/me/ps/pe</code>.</li><li><code>dir=&quot;auto&quot;</code> للأسماء، queries، chat، URLs، وأي UGC.</li><li>directional icons تنعكس، أما logos/media controls فلا تُقلب بلا معنى.</li><li>تواريخ وأرقام عبر <code>Intl</code> وبـ locale واضح، لا concatenation يدوي.</li><li>اختبارات نص عربي + English acronym + رقم + URL في كل component نصي رئيسي.</li></ul>
+<h3 id="145-responsive-invariants">14.5 responsive invariants<a class="heading-link" href="#145-responsive-invariants" aria-label="رابط هذا القسم">#</a></h3>
+<p>نختبر على الأقل 360، 390، 430، 768، 1024، 1280، و1440px. ما يتغير هو presentation؛ ما لا يتغير:</p>
+<ul><li>أسماء الوجهات ومعانيها.</li><li>هوية المصدر.</li><li>ترتيب القيمة الأساسي.</li><li>availability للأفعال.</li><li>loading/error/empty semantics.</li></ul>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="15. Architecture: API-first دون إعادة بناء لاحقًا">
+<h2 id="15-architecture-api-first-دون-إعادة-بناء-لاحقا">15. Architecture: API-first دون إعادة بناء لاحقًا<a class="heading-link" href="#15-architecture-api-first-دون-إعادة-بناء-لاحقا" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="151-الواقع-الحالي">15.1 الواقع الحالي<a class="heading-link" href="#151-الواقع-الحالي" aria-label="رابط هذا القسم">#</a></h3>
+<p>وجود 58 API handlers بداية قوية، لكنه لا يساوي mobile-ready contract. المسح أظهر:</p>
+<ul><li>endpoints غير versioned.</li><li>envelopes ورسائل خطأ غير متسقة.</li><li>بعض أسماء قاعدة البيانات لا تطابق معنى المنتج (<code>ClientLike</code> مستخدمة كمتابعة).</li><li>بعض قدرات الويب عبر Server Actions أو route-specific behavior.</li><li>لا read model موحد للـ feed متعدد الصيغ.</li></ul>
+<h3 id="152-المعمارية-المستهدفة">15.2 المعمارية المستهدفة<a class="heading-link" href="#152-المعمارية-المستهدفة" aria-label="رابط هذا القسم">#</a></h3>
+
+    <figure class="flow-diagram" aria-label="مخطط يوضح العلاقات">
+      <figcaption>العلاقات الرئيسية</figcaption>
+      <div class="flow-rows">
+        
+          <div class="flow-row">
+            <span class="flow-node">Next.js Web</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">Versioned Product API /api/v1</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">iOS</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">Versioned Product API /api/v1</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">Android</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">Versioned Product API /api/v1</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">Versioned Product API /api/v1</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">Domain services / use-cases</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">Web Server Actions</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">Domain services / use-cases</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">Domain services / use-cases</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">Shared data layer + read models</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">Shared data layer + read models</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">Prisma / MongoDB</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">Shared data layer + read models</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">Bunny media</span>
+          </div>
+          <div class="flow-row">
+            <span class="flow-node">Shared data layer + read models</span>
+            <span class="flow-arrow" aria-hidden="true">←</span>
+            <span class="flow-node">Trusted external services</span>
+          </div>
+      </div>
+    </figure>
+<p><strong>القاعدة:</strong> Web وAPI يستعملان domain service نفسها. لا يكرر route business logic، ولا يتصل native مباشرة بقاعدة البيانات.</p>
+<h3 id="153-نوع-العقد">15.3 نوع العقد<a class="heading-link" href="#153-نوع-العقد" aria-label="رابط هذا القسم">#</a></h3>
+<p>REST JSON versioned موصى به للحد المشترك بين TypeScript Web وSwift/Kotlin، مع OpenAPI document كمرجع قابل للتوليد والاختبار. يمكن أن يبقى tRPC لسيناريوهات TypeScript داخلية، لكنه ليس عقد Android/iOS الرئيسي.</p>
+<h3 id="154-قواعد-العقد">15.4 قواعد العقد<a class="heading-link" href="#154-قواعد-العقد" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>prefix: <code>/api/v1</code>.</li><li>cursor pagination للـ feed والـ reels، لا offset في تدفقات متغيرة.</li><li>stable IDs مع slug للعرض/SEO.</li><li>resource capabilities من السيرفر: <code>canListen</code>, <code>canBook</code>, <code>canContact</code>, <code>canFollow</code>, <code>canSave</code>.</li><li>envelope نجاح ثابت: <code>data</code>, و<code>meta/links</code> عند الحاجة.</li><li>envelope خطأ ثابت: <code>error.code</code>, <code>error.message</code>, <code>fieldErrors?</code>, <code>requestId</code>.</li><li>machine-readable codes ثابتة، والرسالة localized حسب locale.</li><li>idempotency للـ save/follow/progress والمutations الحساسة.</li><li>auth واضح للضيف/العضو، rate limiting، وعدم كشف secrets.</li><li>ETag/cache semantics للقراءات العامة، وعدم caching بيانات الحساب.</li><li>backward compatibility داخل الإصدار؛ breaking change = إصدار جديد.</li></ul>
+<h3 id="155-العقود-الأساسية-المقترحة">15.5 العقود الأساسية المقترحة<a class="heading-link" href="#155-العقود-الأساسية-المقترحة" aria-label="رابط هذا القسم">#</a></h3>
+
+        <div class="table-wrap" tabindex="0" role="region" aria-label="جدول قابل للتمرير">
+          <table>
+            <thead><tr><th>المجال</th><th>Endpoints منطقية مقترحة</th><th>المستهلكون</th></tr></thead>
+            <tbody><tr><td>Home feed</td><td>`GET /api/v1/feed?mode=for_you</td><td>following</td></tr><tr><td>Explore</td><td><code>GET /api/v1/explore</code></td><td>الجميع</td></tr><tr><td>Intent listings</td><td>`GET /api/v1/discovery/clients?intent=book</td><td>shop</td></tr><tr><td>Search</td><td><code>GET /api/v1/search?q=&amp;types=&amp;cursor=</code></td><td>الجميع</td></tr><tr><td>Article</td><td><code>GET /api/v1/articles/{slug}</code></td><td>الجميع</td></tr><tr><td>Partner/Core</td><td><code>GET /api/v1/publishers/{slug}</code> أو resource discriminated عبر client endpoint؛ يعيد <code>publisherType</code> و<code>capabilities</code></td><td>الجميع</td></tr><tr><td>Reels</td><td><code>GET /api/v1/reels?cursor=</code></td><td>الجميع</td></tr><tr><td>Saved</td><td><code>GET /api/v1/me/saved</code>; <code>PUT/DELETE /api/v1/me/saved/{type}/{id}</code></td><td>عضو</td></tr><tr><td>Follows</td><td><code>GET /api/v1/me/follows</code>; <code>PUT/DELETE /api/v1/me/follows/{type}/{id}</code></td><td>عضو</td></tr><tr><td>Interests</td><td><code>GET/PUT /api/v1/me/interests</code></td><td>عضو</td></tr><tr><td>Progress</td><td><code>PUT /api/v1/me/progress/{type}/{id}</code>; <code>GET /api/v1/me/continue</code></td><td>عضو</td></tr><tr><td>Notifications</td><td><code>GET /api/v1/me/notifications</code>; read/preferences</td><td>عضو</td></tr><tr><td>Newsletter</td><td>create/preferences/unsubscribe endpoints مستقلة</td><td>ضيف/عضو</td></tr><tr><td>Modo</td><td>threads/messages/history + streamed response</td><td>ضيف محدود/عضو</td></tr></tbody>
+          </table>
+        </div>
+<p>هذه عقود product وليست تعليمات لعمل migration الآن. لا تُنشأ حتى يعتمد read models والـ naming.</p>
+<h3 id="156-read-models-المشتركة">15.6 read models المشتركة<a class="heading-link" href="#156-read-models-المشتركة" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li><code>ContentCard</code>: discriminated type (<code>article | audio_article | reel</code>) + publisher + topic + media + metrics + viewer state + reason.</li><li><code>ArticleDetail</code>: body، audio، trust، related، CTA capabilities.</li><li><code>PublisherSummary</code>: <code>publisherType: core | partner</code> يمنع تخمين الهوية في UI.</li><li><code>PartnerDetail</code>: services، trust، YMYL disclosure، وcapabilities (<code>canBook</code>, <code>canShop</code>, <code>canContact</code>, <code>canVisitWebsite</code>) مع URLs/actions الحقيقية.</li><li><code>ViewerState</code>: saved/following/progress/authenticated.</li><li><code>PageState</code>: cursor، empty reason، recoverable error.</li></ul>
+<h3 id="157-فجوات-البيانات">15.7 فجوات البيانات<a class="heading-link" href="#157-فجوات-البيانات" aria-label="رابط هذا القسم">#</a></h3>
+
+        <div class="table-wrap" tabindex="0" role="region" aria-label="جدول قابل للتمرير">
+          <table>
+            <thead><tr><th>القدرة</th><th>الموجود</th><th>الفجوة/القرار</th></tr></thead>
+            <tbody><tr><td>حساب المستخدم</td><td><code>User</code>, Account, Session</td><td>مناسب كبداية</td></tr><tr><td>حفظ مقال</td><td><code>ArticleFavorite</code></td><td>يوحّد خلف Saved API</td></tr><tr><td>حفظ reel</td><td><code>MediaReaction(FAVORITE)</code></td><td>يوحّد خلف العقد نفسه</td></tr><tr><td>متابعة client</td><td><code>ClientLike</code></td><td>لا نغير DB فورًا؛ adapter يسميها follow في domain</td></tr><tr><td>متابعة موضوع</td><td>غير واضحة كحالة مستخدم</td><td>تحتاج model/contract بعد الاعتماد</td></tr><tr><td>الاهتمامات</td><td>لا يوجد SSOT مخصص</td><td>تحتاج user preference model</td></tr><tr><td>progress</td><td>Analytics/EngagementDuration للقياس</td><td>لا تستخدم analytics كحالة منتج؛ نحتاج <code>UserContentProgress</code></td></tr><tr><td>newsletter</td><td><code>Subscriber</code> و<code>NewsSubscriber</code></td><td>توحيد المصطلح وإدارة preferences/unsubscribe</td></tr><tr><td>Modo history</td><td><code>ChatbotMessage</code> category/article scoped</td><td>يحتاج thread + scope موحد للمنتج</td></tr><tr><td>صوت</td><td><code>Article.audioUrl</code></td><td>موجود؛ نضيف progress/capabilities فقط</td></tr><tr><td>reels</td><td>Media workflow + transcript + article link</td><td>موجود وقابل لإعادة الاستخدام</td></tr><tr><td>الحجز/المتجر/الموقع</td><td>booking وبعض روابط العميل موجودة بحسب بيانات العميل</td><td>نعرّف capability adapter موحدًا أولًا؛ لا نفترض shop أو booking من اسم العميل</td></tr></tbody>
+          </table>
+        </div>
+<p>أي تعديل Prisma هو phase مستقل ويحتاج موافقة صريحة، migration plan، backup، وrollback. لا تعديل قاعدة بيانات ضمن UI refactor تلقائيًا.</p>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="16. القياس: كيف نعرف أننا أصلحنا الضياع والاحتفاظ؟">
+<h2 id="16-القياس-كيف-نعرف-أننا-أصلحنا-الضياع-والاحتفاظ">16. القياس: كيف نعرف أننا أصلحنا الضياع والاحتفاظ؟<a class="heading-link" href="#16-القياس-كيف-نعرف-أننا-أصلحنا-الضياع-والاحتفاظ" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="161-المؤشر-الشمالي">16.1 المؤشر الشمالي<a class="heading-link" href="#161-المؤشر-الشمالي" aria-label="رابط هذا القسم">#</a></h3>
+<p><strong>Weekly Returning Value Users (WRVU)</strong> عدد الأشخاص الفريدين الذين حققوا “جلسة ذات قيمة” في يومين مختلفين على الأقل خلال سبعة أيام.</p>
+<p>جلسة القيمة تتحقق بواحد من:</p>
+<ul><li>قراءة أو استماع ≥60% من محتوى.</li><li>إكمال reel ثم فتح المحتوى العميق المرتبط.</li><li>search ناجح: query → result select → engagement مفيد.</li><li>حفظ أو متابعة بعد استهلاك محتوى.</li><li>conversion مؤهل إلى شريك.</li></ul>
+<p>هذا التعريف يجمع “الفائدة” و“العودة”، ويصعب تحسينه بمجرد زيادة impressions.</p>
+<h3 id="162-المقاييس-المساندة">16.2 المقاييس المساندة<a class="heading-link" href="#162-المقاييس-المساندة" aria-label="رابط هذا القسم">#</a></h3>
+
+        <div class="table-wrap" tabindex="0" role="region" aria-label="جدول قابل للتمرير">
+          <table>
+            <thead><tr><th>الهدف</th><th>المقياس</th></tr></thead>
+            <tbody><tr><td>تقليل الضياع</td><td>task success، first-click success، backtracking، search refinements</td></tr><tr><td>تقليل وقت الوصول</td><td>time to first value من landing حتى استهلاك/اختيار مفيد</td></tr><tr><td>نجاح Search</td><td>search success rate، zero-result rate، result CTR، post-click engagement</td></tr><tr><td>نجاح Modo</td><td>answer/redirect/noSources/outOfScope/error + downstream engagement</td></tr><tr><td>Activation</td><td>أول save/follow/progress أو ثاني useful session بعد إنشاء الحساب</td></tr><tr><td>Retention</td><td>D1/D7/D28 وweekly cohorts حسب السوق والجهاز والمصدر</td></tr><tr><td>النشرة</td><td>consented subscribe، verify، open/click، unsubscribe، complaint؛ لا volume فقط</td></tr><tr><td>Partner value</td><td>qualified contact/booking وليس WhatsApp click وحده</td></tr><tr><td>الأداء</td><td>p75 LCP ≤2.5s، INP ≤200ms، CLS ≤0.1</td></tr><tr><td>الجودة</td><td>error rate، empty dead ends، rage clicks، duplicate CTA interactions</td></tr></tbody>
+          </table>
+        </div>
+<h3 id="163-event-contract">16.3 event contract<a class="heading-link" href="#163-event-contract" aria-label="رابط هذا القسم">#</a></h3>
+<p>الكود الحالي يملك registry قويًا للمقالات والعملاء والحجز والتسجيل وWeb Vitals، لكنه يفتقد حلقة الاكتشاف والاحتفاظ.</p>
+<p><strong>نحافظ على التاريخ الحالي ولا نكسره</strong>، ثم نضيف/migrate إلى standard GA4 recommended names عندما يوجد مقابل:</p>
+<ul><li><code>search</code> + <code>search_term</code>.</li><li><code>select_content</code> + type/id/location.</li><li><code>login</code>, <code>sign_up</code>, <code>share</code>, <code>generate_lead</code> وفق GA4 schema.</li><li>custom: <code>feed_impression</code>, <code>interest_selected</code>, <code>follow_target</code>, <code>save_content</code>.</li><li>custom: <code>content_start</code>, <code>content_progress</code>, <code>content_complete</code>.</li><li>custom: <code>audio_start</code>, <code>audio_progress</code>, <code>audio_complete</code>.</li><li>custom: <code>reel_start</code>, <code>reel_complete</code>, <code>reel_to_article</code>.</li><li>custom: <code>modo_query</code> مع outcome/source من دون إرسال السؤال الخام إذا كان قد يحتوي بيانات شخصية.</li><li>custom: <code>signup_prompt_view</code>, <code>signup_prompt_accept</code>, <code>signup_prompt_dismiss</code>.</li><li>custom: <code>continue_content</code>.</li></ul>
+<p>Properties المشتركة: <code>content_type</code>, <code>content_id</code>, <code>publisher_type</code>, <code>publisher_id</code>, <code>topic_id</code>, <code>surface</code>, <code>position</code>, <code>feed_mode</code>, <code>country</code>, <code>device_class</code>, <code>auth_state</code>, و<code>experiment_id</code> عند وجود اختبار.</p>
+<h3 id="164-identity-والخصوصية">16.4 identity والخصوصية<a class="heading-link" href="#164-identity-والخصوصية" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>first-party visitor ID للضيف، وGA4 <code>user_id</code> فقط عند تسجيل الدخول وفق توثيق Google.</li><li>لا نرسل email/phone/query text أو أي PII كـ event parameter.</li><li>user stitching بين Web/App يستخدم user ID داخلي غير مباشر.</li><li>consent/preferences records منفصلة لكل غرض.</li><li>opt-out من التسويق سهل وموثق.</li><li>تقرير المنتج ليس استشارة قانونية؛ privacy/legal review gate إلزامي قبل إطلاق personalization أو حملات جديدة.</li></ul>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="17. خطة البحث والتحقق التي تحمي “One Shot”">
+<h2 id="17-خطة-البحث-والتحقق-التي-تحمي-one-shot">17. خطة البحث والتحقق التي تحمي “One Shot”<a class="heading-link" href="#17-خطة-البحث-والتحقق-التي-تحمي-one-shot" aria-label="رابط هذا القسم">#</a></h2>
+<p>العمل باحتراف “من مرة واحدة” لا يعني تخطي الاختبار؛ يعني اختبار القرارات الرخيصة قبل كتابة architecture مكلفة.</p>
+<h3 id="171-البحث-المطلوب-قبل-تثبيت-الواجهة">17.1 البحث المطلوب قبل تثبيت الواجهة<a class="heading-link" href="#171-البحث-المطلوب-قبل-تثبيت-الواجهة" aria-label="رابط هذا القسم">#</a></h3>
+<ol><li><strong>Analytics baseline:</strong> أربع أسابيع إن أمكن حسب device/country/landing route.</li><li><strong>Support/search review:</strong> أكثر queries، zero results، صفحات exit، وأهم شكاوى.</li><li><strong>Card sort:</strong> 15–30 مشاركًا لتبسيط categories/industries/tags إلى model مفهوم.</li><li><strong>Usability round:</strong> 5–8 سعوديين + 5–8 مصريين في كل جولة، مع توازن mobile/desktop ونية محتوى/خدمة.</li><li><strong>Prototype validation:</strong> Home، Core publisher، Partner، Article، Search/Modo، وSave/Subscribe moment قبل code production.</li></ol>
+<h3 id="172-مهام-الاختبار">17.2 مهام الاختبار<a class="heading-link" href="#172-مهام-الاختبار" aria-label="رابط هذا القسم">#</a></h3>
+<p>بدون توجيه:</p>
+<ol><li>اعثر على محتوى موثوق في موضوع يهمك.</li><li>اعثر على شريك يساعدك في حاجة محددة.</li><li>اشرح الفرق بين “مدونتي” و“الشريك”.</li><li>احفظ مقالًا ثم ارجع إليه.</li><li>استمع بدل القراءة إن كان الصوت متاحًا.</li><li>استخدم Modo عندما لا تعرف ماذا تبحث.</li><li>اشرح فائدة الحساب وفائدة النشرة كلًا على حدة.</li></ol>
+<h3 id="173-gono-go-targets-المقترحة">17.3 Go/No-Go targets المقترحة<a class="heading-link" href="#173-gono-go-targets-المقترحة" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>≥80% إتمام غير مساعد للمهام الأساسية في prototype.</li><li>لا critical navigation failure متكرر لدى أكثر من مشارك.</li><li>≥80% يميزون core publisher عن partner دون شرح.</li><li>≥80% يشرحون الفرق بين الحساب والنشرة.</li><li>first click الصحيح ≥80% لكل مهمة رئيسية.</li><li>WCAG 2.2 AA دون blocker.</li><li>performance budgets في §16.2 على p75 بعد الإطلاق.</li></ul>
+<p>هذه targets إطلاق وليست ادعاءات عن الوضع الحالي. إذا لم تتحقق في prototype، نصلح prototype قبل الكود؛ وهذا هو الذي يمنع إعادة العمل.</p>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="18. سجل القرارات المطلوب اعتماده">
+<h2 id="18-سجل-القرارات-المطلوب-اعتماده">18. سجل القرارات المطلوب اعتماده<a class="heading-link" href="#18-سجل-القرارات-المطلوب-اعتماده" aria-label="رابط هذا القسم">#</a></h2>
+
+        <div class="table-wrap" tabindex="0" role="region" aria-label="جدول قابل للتمرير">
+          <table>
+            <thead><tr><th>ID</th><th>القرار الموصى به</th><th>الحالة</th></tr></thead>
+            <tbody><tr><td>D01</td><td>مدونتي منصة اكتشاف محتوى + trusted partners، وليست blog/directory/social network عامة</td><td>بانتظار اعتماد المالك</td></tr><tr><td>D02</td><td>LinkedIn مرجع structure/behavior فقط؛ Modonty brand مرجع الشكل</td><td>بانتظار اعتماد المالك</td></tr><tr><td>D03</td><td>الوجهات: الرئيسية، استكشف، لقطات، المحفوظات، حسابي</td><td>بانتظار اعتماد المالك</td></tr><tr><td>D04</td><td>مدونتي CorePublisher template مستقل ويُستبعد من partner directory</td><td>بانتظار اعتماد المالك</td></tr><tr><td>D05</td><td>Search للاسترجاع؛ Modo للتوجيه، مع guest preview محدود</td><td>بانتظار اعتماد المالك</td></tr><tr><td>D06</td><td>“عضو/حساب مجاني”، “متابعة”، “مشترك النشرة”، و“شريك” مصطلحات منفصلة</td><td>بانتظار اعتماد المالك</td></tr><tr><td>D07</td><td>التسجيل بعد value/intent، والنشرة بموافقة مستقلة</td><td>بانتظار اعتماد المالك</td></tr><tr><td>D08</td><td>اقرأ/استمع داخل المقال نفسه عند وجود audio حقيقي، مع progress</td><td>بانتظار اعتماد المالك</td></tr><tr><td>D09</td><td>الاسم العام للـ reels هو “لقطات”، مع بقاء route <code>/reels</code></td><td>بانتظار اعتماد المالك</td></tr><tr><td>D10</td><td>REST <code>/api/v1</code> + OpenAPI للحد المشترك، وdomain services مشتركة</td><td>بانتظار اعتماد المالك</td></tr><tr><td>D11</td><td>reading surfaces فاتحة افتراضيًا وdark mode اختياري</td><td>بانتظار اعتماد المالك</td></tr><tr><td>D12</td><td>WRVU هو North Star، مع search/activation/retention/partner guardrails</td><td>بانتظار اعتماد المالك</td></tr><tr><td>D13</td><td>“استكشف” يقود بالنية: محتوى، احجز الآن، تسوق، تواصل، وزيارة موقع؛ تظهر النتائج فقط للعملاء ذوي capability حقيقية</td><td><strong>معتمد من المالك — 12 أغسطس 2026</strong></td></tr><tr><td>D14</td><td>في YMYL تسبق الثقة والإفصاح والتخصص القابل للتحقق أي CTA للحجز أو التسوق</td><td><strong>معتمد من المالك — 12 أغسطس 2026</strong></td></tr></tbody>
+          </table>
+        </div>
+<p><strong>لا يبدأ Home visual refactor قبل اعتماد D01–D12 أو تسجيل تعديل المالك عليها داخل هذا الجدول. D13 وD14 معتمدان.</strong></p>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="19. مراحل التنفيذ بعد الاعتماد">
+<h2 id="19-مراحل-التنفيذ-بعد-الاعتماد">19. مراحل التنفيذ بعد الاعتماد<a class="heading-link" href="#19-مراحل-التنفيذ-بعد-الاعتماد" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="phase-0-contracts-and-evidence">Phase 0 — Contracts and evidence<a class="heading-link" href="#phase-0-contracts-and-evidence" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>تثبيت المصطلحات والـ IA.</li><li>أخذ analytics baseline.</li><li>تعريف read models وOpenAPI draft.</li><li>تعريف events والخصوصية.</li><li>prototype سريع واختبار المهام.</li></ul>
+<p><strong>Gate:</strong> §17 targets الأساسية أو قرار موثق بقبول الاستثناء.</p>
+<h3 id="phase-1-shared-shell-and-primitives">Phase 1 — Shared shell and primitives<a class="heading-link" href="#phase-1-shared-shell-and-primitives" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>Brand tokens + shadcn wrappers.</li><li>navigation موحدة responsive RTL.</li><li>content card/publisher identity/viewer state.</li><li>loading/error/empty/auth patterns.</li></ul>
+<p><strong>Gate:</strong> Story/screen matrix + a11y + RTL mixed-content QA.</p>
+<h3 id="phase-2-home">Phase 2 — Home<a class="heading-link" href="#phase-2-home" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>Modo composer، interests، core publisher module، feed modes/cards.</li><li>desktop rails تتحول modules على mobile.</li><li>events وAPI contract.</li></ul>
+<p><strong>Gate:</strong> usability + no duplicated/competing fixed layer.</p>
+<h3 id="phase-3-core-and-partner-pages">Phase 3 — Core and Partner pages<a class="heading-link" href="#phase-3-core-and-partner-pages" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>CorePublisherPage.</li><li>BusinessClientPage capability-driven.</li><li>Intent-aware client discovery للحجز والتسوق والتواصل وزيارة الموقع.</li><li>YMYL trust gate قبل كل CTA تحويل.</li><li>partner directory يستبعد core.</li></ul>
+<p><strong>Gate:</strong> identity distinction + conversion clarity.</p>
+<h3 id="phase-4-article">Phase 4 — Article<a class="heading-link" href="#phase-4-article" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>read/listen، trust، progress، related، contextual CTA.</li></ul>
+<p><strong>Gate:</strong> content task success + performance + YMYL review.</p>
+<h3 id="phase-5-explore-search-modo-reels">Phase 5 — Explore, Search, Modo, Reels<a class="heading-link" href="#phase-5-explore-search-modo-reels" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>taxonomy presentation، intent discovery للحجز/التسوق، unified search، Modo contract، reel continuity.</li></ul>
+<p><strong>Gate:</strong> search success + no empty dead ends.</p>
+<h3 id="phase-6-account-and-retention">Phase 6 — Account and retention<a class="heading-link" href="#phase-6-account-and-retention" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>Saved، Following، Continue، notifications، preferences، newsletter consent.</li></ul>
+<p><strong>Gate:</strong> activation and retention tracking verified end-to-end.</p>
+<h3 id="phase-7-transfer-readiness">Phase 7 — Transfer readiness<a class="heading-link" href="#phase-7-transfer-readiness" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li>Desktop/mobile web QA لكل route.</li><li>API contract tests.</li><li>Android/iOS consumer review.</li><li>لا mock-only logic ولا fake data.</li><li>handoff/copy checklist إلى المشروع الرئيسي.</li></ul>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="20. Definition of Done لكل route">
+<h2 id="20-definition-of-done-لكل-route">20. Definition of Done لكل route<a class="heading-link" href="#20-definition-of-done-لكل-route" aria-label="رابط هذا القسم">#</a></h2>
+<p>لا تعتبر الصفحة منتهية إلا إذا:</p>
+<ul><li>لها وظيفة واحدة واضحة وH1 واحد.</li><li>المستخدم يعرف أين هو وما الخطوة التالية.</li><li>mobile وdesktop يحافظان على المعنى نفسه.</li><li>كل data state مصمم: loading، empty، error، partial، auth، unavailable.</li><li>لا بيانات أو badges fabricated.</li><li>source identity وformat واضحان.</li><li>keyboard/focus/screen reader/contrast/reduced motion تعمل.</li><li>Arabic/mixed-direction QA ناجح.</li><li>endpoint/version/schema موثق إذا تحتاجها native.</li><li>events والـ properties موثقة ومختبرة.</li><li>p75 performance budget ناجح أو exception موثق.</li><li>لا يغير المشروع الحقيقي ولا الـ DB ولا Git remote دون موافقة صريحة.</li></ul>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="21. المخاطر وكيف نمنعها">
+<h2 id="21-المخاطر-وكيف-نمنعها">21. المخاطر وكيف نمنعها<a class="heading-link" href="#21-المخاطر-وكيف-نمنعها" aria-label="رابط هذا القسم">#</a></h2>
+
+        <div class="table-wrap" tabindex="0" role="region" aria-label="جدول قابل للتمرير">
+          <table>
+            <thead><tr><th>الخطر</th><th>المنع</th></tr></thead>
+            <tbody><tr><td>نسخ LinkedIn بصريًا وفقدان الهوية</td><td>design tokens لمدونتي + benchmark behavior فقط</td></tr><tr><td>تحويل feed إلى إعلانات شركاء</td><td>label + diversity rules + core editorial priority + quality policy</td></tr><tr><td>personalization لا يفهمه المستخدم</td><td>explicit interests + “لماذا أرى هذا؟” + controls</td></tr><tr><td>التسجيل يقلل discovery</td><td>deferred auth بعد intent + guest value</td></tr><tr><td>APIs تُبنى ثانية للتطبيق</td><td>OpenAPI/versioning/domain services قبل route UI</td></tr><tr><td>استخدام Analytics كحالة منتج</td><td>Product progress/follows منفصلة عن analytics firehose</td></tr><tr><td>migration كبيرة أثناء refactor</td><td>adapters أولًا، schema changes في phase مستقلة بموافقة</td></tr><tr><td>mobile layers تحجب المحتوى</td><td>one persistent navigation layer + max 2 sticky actions</td></tr><tr><td>مصطلحات محلية لا يفهمها السوق الآخر</td><td>عربية محايدة + اختبار SA/EG</td></tr><tr><td>ثقة زائفة</td><td>تعريف كل badge ومصدره، لا Google endorsement، وYMYL review</td></tr><tr><td>“One Shot” يتحول إلى big-bang release</td><td>prototype gates قبل code ثم route-by-route verification</td></tr></tbody>
+          </table>
+        </div>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="22. المصادر الرسمية">
+<h2 id="22-المصادر-الرسمية">22. المصادر الرسمية<a class="heading-link" href="#22-المصادر-الرسمية" aria-label="رابط هذا القسم">#</a></h2>
+<h3 id="modonty">Modonty<a class="heading-link" href="#modonty" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li><a href="https://www.modonty.com/" target="_blank" rel="noreferrer">الموقع الحي</a></li><li>Business model: <code>documents/context/BUSINESS-MODEL-REFERENCE.md</code></li><li>Brand: <code>documents/archive/guideline-sources/01-brand/brand-guidelines-from-google-doc.md</code></li><li>Prisma: <code>dataLayer/prisma/schema/schema.prisma</code></li><li>Golden rules: <code>GOLDEN_RULES.md</code></li></ul>
+<h3 id="السعودية-ومصر">السعودية ومصر<a class="heading-link" href="#السعودية-ومصر" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li><a href="https://www.cst.gov.sa/en/media-center/news/N2025051200" target="_blank" rel="noreferrer">CST — Saudi Internet Report 2024</a></li><li><a href="https://www.stats.gov.sa/documents/20117/2435267/ICT%2BAccess%2Band%2BUsage%2B2025-EN.pdf/d91fc7dd-2f2e-ee1a-248c-c8f38102ef01?t=1767603674645" target="_blank" rel="noreferrer">GASTAT — ICT Access and Usage 2025</a></li><li><a href="https://dga.gov.sa/en/regulatory-documents/Digital-government-policies" target="_blank" rel="noreferrer">Saudi DGA — Digital Government Policies</a></li><li><a href="https://dga.gov.sa/en/node/2631" target="_blank" rel="noreferrer">Saudi DGA — كود المنصات</a></li><li><a href="https://dgp.sdaia.gov.sa/wps/portal/pdp/knowledgecenter/details/PDPL2" target="_blank" rel="noreferrer">SDAIA — اللائحة التنفيذية لنظام حماية البيانات الشخصية</a></li><li><a href="https://www.tra.gov.eg/ar/%D8%A7%D9%84%D8%AC%D9%87%D8%A7%D8%B2-%D8%A7%D9%84%D9%82%D9%88%D9%85%D9%8A-%D9%84%D8%AA%D9%86%D8%B8%D9%8A%D9%85-%D8%A7%D9%84%D8%A7%D8%AA%D8%B5%D8%A7%D9%84%D8%A7%D8%AA-%D9%8A%D8%B5%D8%AF%D8%B1-%D9%85-5/" target="_blank" rel="noreferrer">Egypt NTRA — Internet application usage indicators 2026</a></li><li><a href="https://www.tra.gov.eg/en/ntra-issues-the-q2-2025-consumer-satisfaction-survey-report-on-mobile-and-fixed-internet-services-in-the-egyptian-market/" target="_blank" rel="noreferrer">Egypt NTRA — Q2 2025 consumer satisfaction survey</a></li></ul>
+<h3 id="accessibility-rtl-navigation-and-performance">Accessibility, RTL, navigation, and performance<a class="heading-link" href="#accessibility-rtl-navigation-and-performance" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li><a href="https://www.w3.org/WAI/WCAG22/Understanding/consistent-navigation.html" target="_blank" rel="noreferrer">W3C — Consistent Navigation</a></li><li><a href="https://www.w3.org/WAI/people-use-web/tools-techniques/navigation/" target="_blank" rel="noreferrer">W3C — Navigating and Finding</a></li><li><a href="https://www.w3.org/International/tutorials/bidi-xhtml/" target="_blank" rel="noreferrer">W3C — Arabic and bidi markup</a></li><li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Logical_properties_and_values" target="_blank" rel="noreferrer">MDN — CSS Logical Properties</a></li><li><a href="https://developer.apple.com/design/human-interface-guidelines/tab-bars" target="_blank" rel="noreferrer">Apple HIG — Tab bars</a></li><li><a href="https://m2.material.io/design/navigation/understanding-navigation.html" target="_blank" rel="noreferrer">Material — Navigation</a></li><li><a href="https://web.dev/articles/defining-core-web-vitals-thresholds" target="_blank" rel="noreferrer">web.dev — Core Web Vitals thresholds</a></li><li><a href="https://developers.google.com/search/docs/appearance/avoid-intrusive-interstitials" target="_blank" rel="noreferrer">Google Search — Avoid intrusive interstitials</a></li></ul>
+<h3 id="reference-products">Reference products<a class="heading-link" href="#reference-products" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li><a href="https://www.linkedin.com/help/linkedin/answer/a9554004" target="_blank" rel="noreferrer">LinkedIn — Feed recommendations and controls</a></li><li><a href="https://www.linkedin.com/help/linkedin/answer/a523360" target="_blank" rel="noreferrer">LinkedIn — Follow people, companies, and topics</a></li><li><a href="https://www.linkedin.com/help/linkedin/answer/a527126/save-content-in-your-feed?lang=en" target="_blank" rel="noreferrer">LinkedIn — Save content</a></li><li><a href="https://help.medium.com/hc/en-us/articles/225168028-Using-Medium" target="_blank" rel="noreferrer">Medium — Using Medium</a></li><li><a href="https://help.medium.com/hc/en-us/articles/35754720183063-Follow-writers-and-publications" target="_blank" rel="noreferrer">Medium — Follow writers and publications</a></li><li><a href="https://help.medium.com/hc/en-us/articles/115004745947-Adjust-email-preferences" target="_blank" rel="noreferrer">Medium — Email preferences</a></li><li><a href="https://help.medium.com/hc/en-us/articles/115004681607-Getting-started-with-a-Medium-publication" target="_blank" rel="noreferrer">Medium — Publications</a></li><li><a href="https://support.substack.com/hc/en-us/articles/19291693034004-Getting-started-on-the-Substack-app" target="_blank" rel="noreferrer">Substack — Getting started in the app</a></li><li><a href="https://support.google.com/googlenews/answer/9005749?hl=en" target="_blank" rel="noreferrer">Google News — Personalization and following</a></li></ul>
+<h3 id="api-app-architecture-and-analytics">API, app architecture, and analytics<a class="heading-link" href="#api-app-architecture-and-analytics" aria-label="رابط هذا القسم">#</a></h3>
+<ul><li><a href="https://spec.openapis.org/oas/latest.html" target="_blank" rel="noreferrer">OpenAPI Initiative — OpenAPI Specification</a></li><li><a href="https://developer.android.com/topic/architecture" target="_blank" rel="noreferrer">Android — Guide to app architecture</a></li><li><a href="https://developer.android.com/topic/architecture/data-layer" target="_blank" rel="noreferrer">Android — Data layer</a></li><li><a href="https://developers.google.com/analytics/devguides/collection/ga4/reference/recommended-events" target="_blank" rel="noreferrer">GA4 — Recommended events</a></li><li><a href="https://developers.google.com/analytics/devguides/collection/ga4/user-id" target="_blank" rel="noreferrer">GA4 — User ID across sessions/devices/platforms</a></li></ul>
+<hr />
+</section>
+<section class="report-section" data-report-section data-title="23. خاتمة تنفيذية">
+<h2 id="23-خاتمة-تنفيذية">23. خاتمة تنفيذية<a class="heading-link" href="#23-خاتمة-تنفيذية" aria-label="رابط هذا القسم">#</a></h2>
+<p>أفضل refactor لمدونتي ليس “واجهة أجمل” فوق الهيكل الحالي. هو توحيد المنتج حول ثلاث لحظات:</p>
+<ol><li><strong>أصل إلى فائدة من أول زيارة.</strong></li><li><strong>أعرف دائمًا أين أنا ومن صاحب المحتوى.</strong></li><li><strong>لدي سبب واضح للعودة: حفظ، متابعة، استئناف، أو تحديث اخترته.</strong></li></ol>
+<p>عندها فقط يصبح LinkedIn-style مفيدًا: feed منظم لا يضيّع، هوية مصدر لا تختلط، وعلاقات متابعة تحفظ القيمة. ويصبح كل route قابلًا للنقل من الـ mockup إلى المشروع الرئيسي، وكل API قابلة للاستهلاك من الويب والتطبيقات من دون بناء النظام مرتين.</p>
+<p><strong>الخطوة التالية الوحيدة قبل التنفيذ:</strong> اعتماد أو تعديل D01–D12 وتسجيل القرار هنا، ثم بدء Phase 0، وليس البدء بالألوان أو Home مباشرة.</p>
+</section>
+      <div class="empty-search" id="emptySearch"><strong>لا توجد نتيجة مطابقة</strong><span>جرّب كلمة أقصر أو ابحث باسم القسم.</span></div>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <strong>مدونتي</strong> — هذه النسخة مهيأة للمراجعة البشرية، بينما يبقى ملف Markdown المرجع التقني الأساسي.
+  </footer>
+
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const report = document.getElementById("reportContent");
+      const sections = [...document.querySelectorAll("[data-report-section]")];
+      const headings = [...report.querySelectorAll("h2")];
+      const tocNav = document.getElementById("tocNav");
+      const tocPanel = document.getElementById("tocPanel");
+      const tocToggle = document.getElementById("tocToggle");
+      const search = document.getElementById("reportSearch");
+      const searchStatus = document.getElementById("searchStatus");
+      const emptySearch = document.getElementById("emptySearch");
+      const progressBar = document.getElementById("progressBar");
+
+      const savedTheme = localStorage.getItem("modonty-report-theme");
+      if (savedTheme === "dark" || (!savedTheme && matchMedia("(prefers-color-scheme: dark)").matches)) {
+        root.dataset.theme = "dark";
+      }
+
+      document.getElementById("themeToggle").addEventListener("click", () => {
+        const next = root.dataset.theme === "dark" ? "light" : "dark";
+        root.dataset.theme = next;
+        localStorage.setItem("modonty-report-theme", next);
+      });
+      document.getElementById("printButton").addEventListener("click", () => window.print());
+
+      headings.forEach((heading) => {
+        const link = document.createElement("a");
+        link.href = "#" + heading.id;
+        link.textContent = heading.textContent.replace("#", "").trim();
+        link.addEventListener("click", () => {
+          tocPanel.classList.remove("open");
+          tocToggle.setAttribute("aria-expanded", "false");
+        });
+        tocNav.appendChild(link);
+        if (heading.textContent.includes("سجل القرارات")) heading.closest(".report-section")?.classList.add("decision-section");
+      });
+
+      tocToggle.addEventListener("click", () => {
+        const open = tocPanel.classList.toggle("open");
+        tocToggle.setAttribute("aria-expanded", String(open));
+      });
+
+      document.addEventListener("click", (event) => {
+        if (innerWidth <= 980 && tocPanel.classList.contains("open") && !tocPanel.contains(event.target) && !tocToggle.contains(event.target)) {
+          tocPanel.classList.remove("open");
+          tocToggle.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      const tocLinks = [...tocNav.querySelectorAll("a")];
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (!visible) return;
+        tocLinks.forEach((link) => link.classList.toggle("active", link.getAttribute("href") === "#" + visible.target.id));
+      }, { rootMargin: "-15% 0px -75% 0px", threshold: 0 });
+      headings.forEach((heading) => observer.observe(heading));
+
+      search.addEventListener("input", () => {
+        const query = search.value.trim().toLocaleLowerCase("ar");
+        let count = 0;
+        sections.forEach((section) => {
+          const matches = !query || section.textContent.toLocaleLowerCase("ar").includes(query);
+          section.classList.toggle("is-hidden", !matches);
+          if (matches) count += 1;
+        });
+        emptySearch.classList.toggle("show", count === 0);
+        searchStatus.textContent = query ? (count ? count + " قسم مطابق" : "لا توجد نتائج") : "التقرير كامل";
+      });
+
+      const updateProgress = () => {
+        const max = document.documentElement.scrollHeight - innerHeight;
+        const progress = max > 0 ? Math.min(100, Math.max(0, scrollY / max * 100)) : 0;
+        progressBar.style.width = progress + "%";
+      };
+      addEventListener("scroll", updateProgress, { passive: true });
+      addEventListener("resize", updateProgress);
+      updateProgress();
+    })();
+  </script>
+</body>
+</html>

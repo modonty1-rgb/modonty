@@ -248,7 +248,7 @@
 - NEW console/.../profile/actions/regenerate-client-seo.ts · console/.../profile/helpers (seo-score moved out) · console/.../dashboard/verification/page.tsx · console seo-readiness-card.tsx
 - admin: client-seo-form.tsx (readiness uses shared scorer + status checks + GBP fields persist + pending preview gate started) · [id]/page.tsx (shared scorer) · client-table.tsx (shared scorer + badge, removed donut + dead group-scores import) · get-clients.ts (+jsonLdStructuredData) · types.ts · client-form-schema.ts (+gbp/priceRange Zod) · use-client-form.ts (+gbp submitData) · map-initial-data-to-form-data.ts (+gbp) · client-form-config.ts (seo section +gbp) · update-client-grouped.ts (updateSEOFields +gbp) · client-field-mapper.ts (+gbp/priceRange/openingHours) · generate-client-seo.ts (+gbpPlaceId select) · client-hero/logo read-only Business Hours
 - console: profile-form.tsx (+Business Hours editor) · profile-actions.ts (+openingHours +regen call) · profile/page.tsx (+SEO fields select, full client to card) · sidebar.tsx + mobile-sidebar.tsx + dashboard-layout-client.tsx + layout.tsx (isYmyl threaded) · lib/ar.ts (+nav.verification) · login-form.tsx (spinner)
-- docs: documents/tasks/CLIENT-SEO-SCORE-REFACTOR.md (the full rubric + old-vs-new comparison)
+- docs: documents/archive/tasks/CLIENT-SEO-SCORE-REFACTOR.md (the full rubric + old-vs-new comparison)
 - memory: project_console_must_regenerate_seo.md (RESOLVED this session) · project_shared_code_audit_datalayer.md
 
 ### 🚀 Resume in 30 seconds
@@ -686,7 +686,7 @@
 - **Phase 3 (backend):** `admin/lib/email/templates/client-welcome.ts` (plain-HTML, matches base.ts pattern — verified via Resend docs that React-Email vs plain-HTML is spam-irrelevant; deliverability = SPF/DKIM/DMARC + text alt) + `admin/app/(dashboard)/clients/actions/convert-subscriber-to-client.ts` (auth, slug-unique check, tier lookup by name, bcrypt(email) password, status PENDING, welcome email, generateClientSEO, revalidate).
 - **Phase 4 (UI):** `convert-subscriber-dialog.tsx` (slug + read-only summary) + Action column in `subscription-tiers/components/subscribers-table.tsx` (Convert button for non-converted, green "تم التحويل" badge + `/clients/{id}` link for converted). Added `convertedToClientId`/`convertedAt` to `JbrseoSubscriberRow` type.
 - **Phase 5 (activate + slug lock):** `activate-client.ts` (PENDING→ACTIVE) + `activate-client-button.tsx` (AlertDialog) wired into `client-table.tsx` Status cell (shows for PENDING). **Slug lock = NO new code** — admin slug already read-only + OTP-via-Telegram protected; console has no slug field. Khalid confirmed OTP is enough.
-- **TEMP FIX (in activate-client.ts):** activate also sets `paymentStatus: "PAID"` so the status badge reads "Active" (the existing getStatusBadge shows yellow "Pending" for ACTIVE-but-unpaid). Documented in `documents/tasks/CLIENT-WORKFLOW-REVIEW.md` as temporary — proper fix belongs to a future full client-workflow redesign (like the article workflow).
+- **TEMP FIX (in activate-client.ts):** activate also sets `paymentStatus: "PAID"` so the status badge reads "Active" (the existing getStatusBadge shows yellow "Pending" for ACTIVE-but-unpaid). Documented in `documents/archive/tasks/CLIENT-WORKFLOW-REVIEW.md` as temporary — proper fix belongs to a future full client-workflow redesign (like the article workflow).
 - **Dev-only test tool:** `seed-test-subscribers.ts` action + `seed-test-subscribers-button.tsx` (renders only when NODE_ENV !== production, double-guarded in action) — seeds 4 test subscribers (one per plan) in the jbrseo Subscribers tab. Reuses admin UI (respects no-standalone-scripts rule).
 - **LIVE TEST PASSED (Playwright, DEV, localhost:3000):** seeded 4 → converted مجاني → client created with Plan=Basic + quota 0/1 (مجاني→BASIC mapping + articlesPerMonth correct) + welcome email SENT (toast no warning) + green "تم التحويل" badge + `/clients/{id}` link → Activate → button disappeared (status ACTIVE). Email verification = Khalid checks modonty1+free@gmail.com inbox.
 
@@ -728,7 +728,7 @@
 - `admin/app/(dashboard)/settings/defaults/components/defaults-form.tsx` (new)
 - `admin/app/(dashboard)/settings/page.tsx` — "Default Images" card
 - `documents/tasks/SUBSCRIBER-TO-CLIENT-CONVERSION-PLAN.md` — updated (phases done)
-- `documents/tasks/CLIENT-WORKFLOW-REVIEW.md` (new — backlog for client workflow redesign + the paymentStatus temp-fix note)
+- `documents/archive/tasks/CLIENT-WORKFLOW-REVIEW.md` (new — backlog for client workflow redesign + the paymentStatus temp-fix note)
 
 ### 🔁 Git / deploy state
 - Branch: `main`. Last commit: `22a903f` (admin v0.65.3, prior session).
@@ -1146,7 +1146,7 @@
 - audit #3 (18:49) — Score 72/100 (-6 regression). Performance dropped: LCP 5.4s, CLS 0.242. Pillar 6 GEO included this time. ChatGPT/Perplexity did NOT cite modonty for relevant queries (competitors cited instead).
 - PSI verification (19:48) — 3-run median revealed truth: LCP=3.3s (5.4 was outlier), CLS=0.242 (confirmed real regression in 3/3 runs). Mariam attributed CLS to `<footer>` (shift score 0.210, 87% of total).
 
-**Mariam prompt upgraded v3 → v4 in `documents/seo/PROMPT-COPY-PASTE.md`:**
+**Mariam prompt upgraded v3 → v4 in `documents/modonty/seo/PROMPT-COPY-PASTE.md`:**
 - v3 added `<completeness_contract>` (Mariam as execution engineer, not data collector) + strengthened pillar_2 (Request Indexing exhaustively) + hardened pillar_6 GEO with MANDATORY DELIVERABLES + `<closing_checklist_before_report>` (17 checkboxes).
 - v4 removed Vercel Dashboard from her tools (after she 404'd guessing `vercel.com/modonty/modonty-blog/logs`) + added `<tools_NOT_in_your_scope>` section listing Vercel/MongoDB/GitHub/admin panels with explicit alternatives via Handoff.
 
@@ -1180,7 +1180,7 @@
 
 **Other side actions:**
 - IndexNow curl executed (HTTP 200) for 20 under-indexed articles → Bing/Yandex/Brave/Seznam notified.
-- New strategy doc created: `documents/seo/GROWTH-STRATEGY-PARTNER-BACKLINKS.md` (13 sections, 8 open questions for Khalid to study — proposes "Partner Doctor" program for compounding YMYL backlinks).
+- New strategy doc created: `documents/modonty/seo/GROWTH-STRATEGY-PARTNER-BACKLINKS.md` (13 sections, 8 open questions for Khalid to study — proposes "Partner Doctor" program for compounding YMYL backlinks).
 
 **TSC state:**
 - admin app: ✅ zero NEW errors from my changes. 2 pre-existing errors (`use-client-media-modal.ts:30` + `use-client-form.ts:40` — TS2589 deep type instantiation in client hooks, unrelated to publish refactor). Verified after EACH phase via NODE_OPTIONS=--max-old-space-size=8192 pnpm tsc --noEmit.
@@ -1213,11 +1213,11 @@
 ### 📂 Files touched this session
 
 **Created:**
-- `documents/seo/GROWTH-STRATEGY-PARTNER-BACKLINKS.md` — Partner backlinks growth strategy (13 sections, 8 open questions)
+- `documents/modonty/seo/GROWTH-STRATEGY-PARTNER-BACKLINKS.md` — Partner backlinks growth strategy (13 sections, 8 open questions)
 - `C:\Users\w2nad\.claude\projects\.../memory/project_mariam_identity.md` — Mariam memory entry
 
 **Modified:**
-- `documents/seo/PROMPT-COPY-PASTE.md` — Mariam prompt v3 + v4 upgrades (completeness contract, GEO enforcement, closing checklist, Vercel scope removal)
+- `documents/modonty/seo/PROMPT-COPY-PASTE.md` — Mariam prompt v3 + v4 upgrades (completeness contract, GEO enforcement, closing checklist, Vercel scope removal)
 - `admin/vercel.json` — removed `crons` array
 - `admin/app/(dashboard)/articles/components/article-form-store.ts` — removed dead publishArticle method + state
 - `admin/app/(dashboard)/articles/components/sections/meta-section.tsx` — removed status dropdown, added read-only badge
@@ -1268,8 +1268,8 @@
 Built a full system prompt for a Chrome-extension Claude instance to serve as **continuous SEO Specialist** for modonty.com — treated as a permanent employee, not a one-shot tool.
 
 ### 📁 Files created
-- `documents/seo/PROMPT-EXTENSION-SEO-AUDITOR.md` — full design doc (workflow, persona, output format, severity rubric)
-- `documents/seo/PROMPT-COPY-PASTE.md` — clean copy-paste-ready XML-tagged prompt for the Chrome extension Custom Instructions
+- `documents/modonty/seo/PROMPT-EXTENSION-SEO-AUDITOR.md` — full design doc (workflow, persona, output format, severity rubric)
+- `documents/modonty/seo/PROMPT-COPY-PASTE.md` — clean copy-paste-ready XML-tagged prompt for the Chrome extension Custom Instructions
 
 ### 🤖 The agent (persona: "Mariam")
 - 10-year Technical SEO Specialist (Arabic-language Saudi/Egyptian market focus)
@@ -1310,7 +1310,7 @@ Built a full system prompt for a Chrome-extension Claude instance to serve as **
 - Rule: for complex framework/cache/infra bugs → STOP, discuss with Khalid FIRST, never solo-guess
 
 ### 🎯 Where I stopped (end of session)
-- Mariam prompt finalized in `documents/seo/PROMPT-COPY-PASTE.md` — ready for Khalid to paste into Chrome extension
+- Mariam prompt finalized in `documents/modonty/seo/PROMPT-COPY-PASTE.md` — ready for Khalid to paste into Chrome extension
 - Next concrete action when resuming: Khalid pastes prompt + triggers first audit ("audit modonty") → first report appears in Downloads → VS Code Claude reads + acts
 
 ### 🚧 Pending (low priority)
@@ -1319,7 +1319,7 @@ Built a full system prompt for a Chrome-extension Claude instance to serve as **
 - Optional: file Next.js GitHub issue (we have clean reproduction of bug #93142) — though already CLOSED, our evidence could be linked
 
 ### 🚀 How to resume in 30 seconds
-1. Khalid pastes `documents/seo/PROMPT-COPY-PASTE.md` (block between `===` markers) into Chrome extension Custom Instructions
+1. Khalid pastes `documents/modonty/seo/PROMPT-COPY-PASTE.md` (block between `===` markers) into Chrome extension Custom Instructions
 2. Khalid sends: `audit modonty`
 3. Wait for `C:\Users\w2nad\Downloads\modonty-seo-audit-YYYY-MM-DD-HHMM.md` to appear
 4. Khalid pings VS Code Claude: "اقرأ آخر audit وصلح"
@@ -1332,9 +1332,9 @@ Built a full system prompt for a Chrome-extension Claude instance to serve as **
 - `modonty/next.config.ts` — clean (cacheComponents still true)
 - `pnpm-lock.yaml` — updated for canary.17
 - `admin/scripts/add-changelog.ts` — v1.49.0 entry
-- `documents/seo/PROMPT-EXTENSION-SEO-AUDITOR.md` (NEW)
-- `documents/seo/PROMPT-COPY-PASTE.md` (NEW — copy-paste ready)
-- `documents/tasks/ARABIC-SLUG-DECISION.md` (NEW — full decision history)
+- `documents/modonty/seo/PROMPT-EXTENSION-SEO-AUDITOR.md` (NEW)
+- `documents/modonty/seo/PROMPT-COPY-PASTE.md` (NEW — copy-paste ready)
+- `documents/archive/tasks/ARABIC-SLUG-DECISION.md` (NEW — full decision history)
 - `documents/context/SESSION-LOG.md` — this entry
 
 ### 🔁 Git / deploy state
@@ -1380,7 +1380,7 @@ Built a full system prompt for a Chrome-extension Claude instance to serve as **
 - `modonty/lib/archive-cache.ts` — kept the in-memory rewrite (no harm, no benefit)
 - `pnpm-lock.yaml` — updated for canary.17
 - `admin/scripts/add-changelog.ts` — v1.49.0 entry
-- `documents/tasks/ARABIC-SLUG-DECISION.md` — full decision history (NEW)
+- `documents/archive/tasks/ARABIC-SLUG-DECISION.md` — full decision history (NEW)
 - `documents/context/SESSION-LOG.md` — this entry
 
 ### 🧹 Cleanup completed
@@ -1918,7 +1918,7 @@ Code is uncommitted; ships with v0.63.0 push.
 - 22 server files (no-www fallback removal)
 - 7 client components + 6 parent pages (siteUrl prop drilling)
 - `documents/tasks/SITE-URL-SOURCE-OF-TRUTH-TODO.md` (created)
-- `documents/tasks/SITE-URL-LIVE-TEST-MAP.md` (created)
+- `documents/archive/tasks/SITE-URL-LIVE-TEST-MAP.md` (created)
 - `documents/tasks/🚨 CRITICAL-TODO.md` (CRIT-001/002/003)
 
 ### 🔁 Git / deploy state
@@ -2068,7 +2068,7 @@ Code is uncommitted; ships with v0.63.0 push.
 **Push artifacts:**
 - `admin/package.json` — 0.60.0 → 0.61.0
 - `admin/scripts/add-changelog.ts` — v0.61.0 entry
-- `documents/tasks/YMYL-FLOW-DISCUSSION.md` — full architectural thread (454 lines)
+- `documents/archive/tasks/YMYL-FLOW-DISCUSSION.md` — full architectural thread (454 lines)
 - `documents/context/SESSION-LOG.md` — this snapshot (after Vercel token redaction)
 
 ### 🔁 Git / deploy state
@@ -2083,7 +2083,7 @@ Code is uncommitted; ships with v0.63.0 push.
 ### 🚀 How to resume in 30 seconds
 1. Open https://admin.modonty.com/articles/new in browser → confirm v0.61.0 deployed (sidebar version) + try publishing → confirm new error UX (field names + bullets in toast)
 2. Open https://console.modonty.com/dashboard/profile as YMYL client (Kimazone has `info@kimazone.com / Kimazone2026!` set in DEV — on PROD use whatever password is set there) → confirm YMYL section renders
-3. Read top of `documents/tasks/YMYL-FLOW-DISCUSSION.md` § "5. تتبع القرارات" for full architectural history if context needed
+3. Read top of `documents/archive/tasks/YMYL-FLOW-DISCUSSION.md` § "5. تتبع القرارات" for full architectural history if context needed
 4. To debug any new "String must contain at most N character(s)" issue: the toast will now show `fieldName: ...` — fix the named field, no more guessing
 
 ---
@@ -2125,7 +2125,7 @@ Code is uncommitted; ships with v0.63.0 push.
 - **Backend removed:** entries from `client-server-schema.ts` + `ClientFormData` type + `create-client.ts` allowedFields + `client-table.tsx` cell logic
 - **Schema removed:** `Client.ga4PropertyId` + `Client.ga4MeasurementId` columns + regenerate Prisma
 
-**E. Discussion doc `documents/tasks/YMYL-FLOW-DISCUSSION.md`**
+**E. Discussion doc `documents/archive/tasks/YMYL-FLOW-DISCUSSION.md`**
 - Created at session start as the architectural negotiation thread
 - Decisions tracker updated after every iteration (8 superseded decisions documented as struck-through; current architecture wins)
 - Final architecture: 4 new fields (3 on Client + 1 on Article) — no new fields on Industry — single source of truth for category config = code constants in `lib/seo/ymyl-config.ts`
@@ -2177,7 +2177,7 @@ Code is uncommitted; ships with v0.63.0 push.
 - `admin/app/(dashboard)/clients/actions/clients-actions/update-client.ts` — wired updateYmylFields into orchestrator
 
 **Discussion artifact:**
-- `documents/tasks/YMYL-FLOW-DISCUSSION.md` (NEW, full architectural thread + decisions tracker)
+- `documents/archive/tasks/YMYL-FLOW-DISCUSSION.md` (NEW, full architectural thread + decisions tracker)
 
 **Memory:**
 - `~/.claude/projects/c--Users-w2nad-Desktop-dreamToApp-MODONTY/memory/feedback_complete_info_first.md` (NEW) + index entry in `MEMORY.md`
@@ -2194,7 +2194,7 @@ Code is uncommitted; ships with v0.63.0 push.
 
 ### 🚀 How to resume in 30 seconds
 1. `cd admin && pnpm dev` (starts on http://localhost:3000 — modonty/console aren't running)
-2. Read top of `documents/tasks/YMYL-FLOW-DISCUSSION.md` § "5. تتبع القرارات" to see all confirmed architectural decisions
+2. Read top of `documents/archive/tasks/YMYL-FLOW-DISCUSSION.md` § "5. تتبع القرارات" to see all confirmed architectural decisions
 3. Decide whether to:
    - **(A)** Build Phase 4 (Console UI) next — same pattern as admin ymyl-section but with the EDITABLE field grid (text/dropdown/specialty/image renderers that I built then ripped out of admin). Mirror the helpers to `console/lib/seo/` OR import via path alias if possible.
    - **(B)** Build Phase 5 (Article reviewer selector + publish gate + JSON-LD wiring) — backend helpers all exist (`checkYmylPublishGate`, `buildYmylJsonLdGraph`).
@@ -3372,7 +3372,7 @@ Khalid reported the `/database` page was disorganized (4,350px tall, 14+ stacked
 - ✅ Health Summary strip: live counts (5 attention · 4 healthy · 5 groups)
 
 ### Mockup file (kept for reference)
-- `documents/mockups/database-page-redesign.html` — visual reference for the redesign decisions
+- `documents/HTML/database-page-redesign.html` — visual reference for the redesign decisions
 
 ### Open items
 - **NEXT:** Khalid's "push" word triggers commit + push of all current Session 104b+104c+104d changes together
@@ -3957,7 +3957,7 @@ User asked: "What Gemini API tools can we use beyond voice production?"
 7. **Code Execution** — AI runs code sandboxed to compute answers
 8. **Caching** — long context reused without re-paying tokens
 
-### Created `documents/tasks/GEMINI-INTEGRATION-PLAN.html`
+### Created `documents/archive/tasks/GEMINI-INTEGRATION-PLAN.html`
 Professional dark-theme single-page HTML (Tajawal font, RTL):
 - 8 capability cards each with: simple explanation, business use cases, integration steps, code samples, cost/time/ROI
 - Final priority table with recommended start point: Image Auto Alt-Text (lowest risk, fast win)
@@ -3973,7 +3973,7 @@ User questions answered in detail:
 - `modonty/public/vision-2030-logo.png` — force-added (was gitignored)
 - `pnpm-lock.yaml` — regenerated
 - `console/package.json` — synced (0.6.2 → 0.7.0, added 4 deps)
-- `documents/tasks/GEMINI-INTEGRATION-PLAN.html` — created
+- `documents/archive/tasks/GEMINI-INTEGRATION-PLAN.html` — created
 - `documents/tasks/STORY-PAGE-TODO.md` — updated to reflect v1.45.0 shipped + Gemini plan link
 
 ### Pending (for next session)
@@ -5750,7 +5750,7 @@ Three groups of work this session:
 - `frontend-master-SKILL.md` → `.claude/skills/frontend-master.md` (Claude skill location)
 
 **2. Marketing Brief 2026 (deliverable for marketing team)**
-- New `documents/01-business-marketing/MARKETING-BRIEF-2026.html` (16 sections)
+- New `documents/archive/guideline-sources/02-strategy/MARKETING-BRIEF-2026.html` (16 sections)
 - Built on **live PROD DB tier data** (مجاني/الانطلاقة/الزخم/الريادة — 0/499/1299/2999 SAR)
 - Inventory of 28 console features + 22 admin features + modonty 45+ pages from 3 parallel agents
 - 5 Hooks for Reels/Ads + Persona narrative ("أحمد") + Four Powers framework + Honest Numbers credibility section

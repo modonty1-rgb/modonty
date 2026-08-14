@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRD — ترحيل Bunny + حيلة تسخين الصور (تاسكات صغيرة)</title>
+<style>
+  :root{
+    --bg:#0d1117; --card:#161b22; --card2:#1c2230; --border:#2b3444;
+    --text:#e6edf3; --muted:#9aa7b6; --accent:#a371f7; --accent2:#7c5cff;
+    --ok:#3fb950; --warn:#e3b341; --bad:#f85149; --info:#58a6ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#0b0f16,#0d1117);color:var(--text);
+    font-family:'Tajawal','Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 100px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  header.top{padding:40px 20px 26px;text-align:center;border-bottom:1px solid var(--border);
+    background:radial-gradient(1200px 300px at 50% -50%,rgba(163,113,247,.18),transparent);position:relative}
+  header.top h1{margin:0 0 6px;font-size:27px;font-weight:800}
+  .sub{color:var(--muted);font-size:14.5px}
+  .badges{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .badge{font-size:12px;padding:4px 12px;border-radius:999px;border:1px solid var(--border);background:var(--card)}
+  .badge.v{border-color:rgba(63,185,80,.4);color:#7ee787;background:rgba(63,185,80,.1)}
+  .badge.no{border-color:rgba(248,81,73,.4);color:#ff9c95;background:rgba(248,81,73,.1)}
+
+  /* progress */
+  .progress-wrap{position:sticky;top:0;z-index:50;background:rgba(13,17,23,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);padding:10px 20px}
+  .progress-inner{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .bar{flex:1;min-width:180px;height:10px;background:var(--card2);border-radius:999px;overflow:hidden;border:1px solid var(--border)}
+  .bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--ok));width:0;transition:width .3s}
+  .pct{font-weight:800;font-size:15px;min-width:52px;text-align:center}
+  .count{font-size:12.5px;color:var(--muted)}
+  .btn-reset{font-size:12px;padding:5px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer}
+  .btn-reset:hover{color:var(--text);border-color:var(--bad)}
+
+  section{margin-top:30px}
+  h2{font-size:20px;font-weight:800;margin:0 0 4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  h2 .n{width:30px;height:30px;flex:0 0 30px;border-radius:8px;background:var(--accent2);color:#fff;
+    display:grid;place-items:center;font-size:14px;font-weight:800}
+  h2 .epic-pct{font-size:12.5px;color:var(--muted);font-weight:600;margin-inline-start:auto}
+  .lead{color:var(--muted);margin:0 0 14px;font-size:14px}
+
+  .callout{border-radius:12px;padding:12px 16px;font-size:13.5px;margin:12px 0}
+  .callout.warn{background:rgba(227,179,65,.08);border:1px solid rgba(227,179,65,.35)}
+  .callout.ok{background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.35)}
+  .callout.bad{background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.35)}
+  .callout.info{background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.35)}
+
+  /* task card */
+  .task{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;
+    display:grid;grid-template-columns:26px 1fr;gap:12px;transition:border-color .2s,opacity .2s}
+  .task:hover{border-color:#3a4658}
+  .task.done{opacity:.55;border-color:rgba(63,185,80,.35)}
+  .task.done .t-title{text-decoration:line-through;text-decoration-color:var(--muted)}
+  .chk{width:20px;height:20px;margin-top:3px;cursor:pointer;accent-color:var(--ok)}
+  .t-body{min-width:0}
+  .t-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .tid{font-family:'Consolas',monospace;font-size:11.5px;font-weight:700;padding:1px 7px;border-radius:6px;
+    background:var(--card2);border:1px solid var(--border);color:#9ecbff;direction:ltr}
+  .t-title{font-weight:700;font-size:15px}
+  .t-row{display:grid;grid-template-columns:82px 1fr;gap:8px;font-size:13px;margin-top:5px}
+  .t-row b{color:var(--muted);font-weight:700}
+  .gate{color:#ff9c95;font-weight:700}
+  .files{font-family:'Consolas',monospace;direction:ltr;unicode-bidi:isolate;font-size:12px;color:#9ecbff}
+  code{font-family:'Consolas',monospace;direction:ltr;unicode-bidi:isolate;background:#0b1220;border:1px solid var(--border);
+    border-radius:6px;padding:1px 5px;font-size:12px;color:#9ecbff}
+  .tag{font-size:10.5px;padding:2px 7px;border-radius:6px;font-weight:700;white-space:nowrap}
+  .tag.ok{background:rgba(63,185,80,.15);color:#7ee787} .tag.warn{background:rgba(227,179,65,.15);color:#e3b341}
+  .tag.bad{background:rgba(248,81,73,.15);color:#ff9c95} .tag.info{background:rgba(88,166,255,.15);color:#79c0ff}
+  .tag.dep{background:rgba(163,113,247,.15);color:#d2b8ff}
+  .gate-task{border-inline-start:3px solid var(--warn)}
+  .safety{color:#ffd479;font-size:12.5px;margin-top:5px}
+  @media(max-width:640px){.task{grid-template-columns:24px 1fr}.t-row{grid-template-columns:1fr}.t-row b{color:#cdd6e0}}
+  footer{margin-top:40px;border-top:1px solid var(--border);padding-top:16px;font-size:12.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>🔒 PRD — ترحيل Bunny.net <span style="font-size:16px;color:var(--muted)">(مُقفَل · أرشيف)</span></h1>
+  <div class="sub">هذا الملف انتهى دوره. الملف الحيّ الوحيد: <b><a href="./BUNNY-GOLIVE-PRD-v1.html" style="color:#7ee787">BUNNY-GOLIVE-PRD-v1.html</a></b></div>
+  <div class="badges">
+    <span class="badge v">مُقفَل 2026-07-30 · صفر بند مفتوح</span>
+    <span class="badge no">لا يُحدَّث بعد اليوم</span>
+    <span class="badge">الملف الحيّ: <a href="./BUNNY-GOLIVE-PRD-v1.html">Go-Live PRD</a></span>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <span class="pct" id="pct">0%</span>
+    <div class="bar"><span id="barfill"></span></div>
+    <span class="count" id="count">0 / 0 تاسك</span>
+    <button class="btn-reset" id="reset">تصفير التقدّم</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- 🔒 لافتة الإقفال -->
+  <section>
+    <div class="callout ok" style="border-width:2px;padding:18px 20px">
+      <div style="font-size:19px;font-weight:800;margin-bottom:8px">🔒 هذا الملف مُقفَل — أرشيف مرجعي فقط (2026-07-30)</div>
+      <p style="margin:0 0 10px">قرار خالد: <b>عدم التكرار</b>. كل بند مفتوح كان هنا انتقل إلى الملف الحيّ الوحيد:<br>
+      <b style="font-size:16px">← <a href="./BUNNY-GOLIVE-PRD-v1.html">BUNNY-GOLIVE-PRD-v1.html</a></b> — هو الملف الذي نعمل عليه من الآن.</p>
+      <p style="margin:0 0 8px"><b>خريطة النقل (١٥ بنداً):</b></p>
+      <div style="font-size:13px;line-height:2">
+        <code>P3-5</code> تشغيل الترحيل ← <b>B1</b> &nbsp;·&nbsp;
+        <code>P35-3</code> إعادة توليد السيو ← <b>B2</b> &nbsp;·&nbsp;
+        <code>P35-4</code> اتساق sitemap/OG ← <b>B3</b> (جديد)<br>
+        <code>INV-V1</code> تحقّق Playwright ← <b>C1</b> &nbsp;·&nbsp;
+        <code>P4-2</code> الدائرة + الأداء ← <b>C2 + C3</b><br>
+        <code>P35-1</code> باكب القاعدة ← <b>D1</b> &nbsp;·&nbsp;
+        <code>P4-3</code> بوابة الرفع ← <b>D2</b> &nbsp;·&nbsp;
+        <code>P4-4</code> تنفيذ الدمج ← <b>D3</b> &nbsp;·&nbsp;
+        <code>P35-5</code> الرجوع + إعادة التوليد ← <b>D4</b><br>
+        <code>P5-1</code> حذف الأصول والمفاتيح ← <b>E2</b> &nbsp;·&nbsp;
+        <code>PERF-0..4</code> مسار الأداء كامل ← <b>Epic PERF</b> (قسم جديد)
+      </div>
+      <p style="margin:10px 0 0;color:var(--muted);font-size:13px">كل المربّعات هنا مؤشَّرة عمداً لتعكس الإقفال. لا تُحدَّث بعد اليوم — أي تعديل يذهب للملف الحيّ.</p>
+    </div>
+  </section>
+
+  <!-- 🔜 المتبقّي — أعلى الملف (المنجز بالتفصيل أسفل) -->
+  <section>
+    <h2><span class="n" style="background:var(--warn)">📚</span> سجلّ الحالة وقت الإقفال (أرشيف)</h2>
+    <p class="lead">آخر تحديث 2026-07-29. <b>القرار (خالد): إيقاف Cloudinary نهائياً، كله على Bunny — أساس الخطة.</b> طبقة القراءة الحيّة مكتملة (~55 ملف · tsc نظيف). هذا اللي باقي، بالترتيب:</p>
+    <div class="callout ok"><b>1) ✅ الرفع الجديد → Bunny مباشرة (خلص 2026-07-29):</b> مكتبة الوسائط ترفع الصورة (WebP مقصوصة) عبر server action → Bunny مباشرة (base + القصّات الثلاث لـ POST)، والأبعاد تُقرأ سيرفر-سايد بـ sharp. <code>url = bunnyUrl</code>، صفر Cloudinary، صفر dual-write. حارس 4MB (سقف Vercel الصلب — متحقَّق من الوثائق الرسمية) + صور فقط (الفيديو زون الريلز/Bunny Stream منفصل). ملفات: <code>upload-image-to-bunny.ts</code> (جديد) · <code>use-bunny-upload.ts</code> (جديد) · <code>bunny-mirror-core.ts</code> (buffer core مشترك) · <code>generate-aspect-crops.ts</code> (readImageMeta) · <code>use-upload-zone.ts</code>. admin tsc نظيف. <i>الحاجز المتحقَّق: Bunny Edge Storage ما فيه رفع متصفح مباشر (AccessKey server-only) + Vercel body 4.5MB صلب → الرقعة تنقذنا (WebP مقصوص &lt; 1MB).</i><br><b>🪤 فخّ الكشف (قاعدة خالد 2026-07-29):</b> هوك Cloudinary القديم حُذف→بداله <code>use-cloudinary-upload.retired.ts</code> يرمي خطأ صريح — أي مسار مخفي = crash فوري لا فشل صامت. <b>الفخّ كشف ٥ مداخل رفع جانبية حيّة</b> حُوِّلت كلها لـ Bunny (كود Cloudinary باقٍ نصاً متقاعداً <code>*RETIRED</code>، مصيره آخر مرحلة): <span class="files">upload-avatar (assets/avatars) · upload-image socialImage (assets/social) · client-gallery-grid (clients/gallery) · optimize-images-section (نفس مسار الأصل + مزامنة bunnyUrl) · edit-media-form (استبدال الملف + مزامنة bunnyUrl، إيقاف حذف أصل Cloudinary القديم، الفيديو محظور=مسار الريلز)</span>. <code>update-media</code> يدعم <code>bunnyUrl</code>. admin tsc نظيف. (<code>image-validation.ts</code> = صفر مستوردين، ميت، لم يُمسّ.)</div>
+    <div class="callout"><b>2) ✅ A1 (كود) خلص — يبقى تشغيل إعادة التوليد:</b> مولّدات سيو الأدمن الخمسة مبدّلة (structured-data · metadata-generator · listing · schema-org · open-graph · knowledge-graph فيه فرع Bunny من Epic 2) — admin tsc نظيف. المتبقّي: <b>تشغيل regenerate</b> على القاعدة عشان <code>jsonLdStructuredData</code>+<code>nextjsMetadata</code> المخبوز يتحدّث لـ Bunny (+ صفوف Media الناقصة bunnyUrl تُرحّل). A2/C1 (عرض داخلي admin/console) = ملفات كثيرة، مؤجّل.</div>
+    <div class="callout ok"><b>3) ✅ «صور جسم المقال» — تبيّن تشخيص خاطئ (حُلّت 2026-07-29):</b> بالدليل الحي (Playwright) ما فيه ولا صورة Cloudinary محفورة داخل نص المقال. الـ«صور الجسم» كانت <b>مصغّرات كروت «مقالات ذات صلة»</b> — سببها selects ثانوية متعدّدة الأسطر في <code>article-data.ts</code> بلا <code>bunnyUrl</code>. أُضيف → صفحة المقال صارت 11 Bunny / 7 Cloudinary. الباقي: 4 = شعار/أفاتار المنصّة في النافبار (نوع S، إعدادات/brand.ts) · 3 = مصغّرات ذات صلة شاردة (مصدر واحد ناقص bunnyUrl، تُمسح).</div>
+    <div class="callout ok"><b>4) ✅ ذيول تبديل القراءة — اكتملت (2026-07-29):</b> sitemap · image-sitemap · article-list · client-photos-preview · كروت التصنيف · reels/favorites · selects article-data الثانوية. <b>طبقة القراءة الحيّة كلها مبدّلة (~55 ملف، tsc نظيف).</b> ملاحظة: صور متبقّية على Cloudinary في صفحات معيّنة = صفوف Media <code>bunnyUrl=null</code> (غير مُرحّلة) — الـfallback يعالجها لما تُرحّل، مو ثغرة كود. (<code>optimizeCloudinaryImage</code> تتخطّى غير-Cloudinary فآمنة على Bunny.)</div>
+    <div class="callout"><b>5) بوابات ونشر:</b> C1 (console عرض داخلي) · S1 (حقول خام socialImage/إعدادات) · V1 (تحقّق Playwright نهائي «كل الصور 200») · P3-5 (تشغيل الترحيل على الإنتاج) · Epic 3.5 (التبديل الحيّ) · Epic 4 (إيقاف Cloudinary — آخر شي).</div>
+    <div class="callout" style="border-color:var(--info)"><b>6) 🆕 عميل «مدونتي» core = يحلّ حقول [S] من جذرها (قرار خالد 2026-07-29 — من ضمن آخر التاسكات):</b> بدل روابط Cloudinary اليدوية المبعثرة (الشعار في <code>brand.ts</code> · صورة المشاركة/الأوجراف + شعار الإعدادات · أفاتار الكتّاب/المستخدمين)، نرقّي «مدونتي» من كلمة سحرية (<code>clientId="modonty"</code> → scope=PLATFORM، clientId=null) إلى <b>عميل حقيقي</b>: (١) إنشاء/تحديد عميل «مدونتي» core · (٢) تخزين <code>coreClientId</code> في Settings عشان النظام يعرف الـ core · (٣) توجيه كل أصول المنصّة لـ media library هذا العميل في folder خاص. النتيجة: أصول مدونتي تمرّ بمسار المكتبة → تاخذ <code>bunnyUrl</code> تلقائياً → زرّ النقل يلمسها زي أي عميل → صفر روابط يدوية → تُغني عن S1. <b>خطة مراحل تُناقَش قبل الكود.</b></div>
+    <div class="callout ok"><b>✅ المنجز (تفاصيله في الأقسام أسفل):</b> Epic S · 0 · A · 1 · 2 · 3 (الترحيل 422/424) + جرد القراءة INV-0·M1·M2·M3·M4·M5 (~45 ملف مبدّل، tsc نظيف، مُتحقّق حي).</div>
+  </section>
+
+  <!-- المبادئ الحاكمة -->
+  <section>
+    <h2><span class="n" style="background:var(--bad)">◆</span> المبادئ الحاكمة — تُقرأ قبل أي تاسك</h2>
+    <div class="callout bad"><b>#1 سطح التلامس الوحيد مع الإنتاج = schema قاعدة <code>media</code> (حقل <code>bunnyUrl</code> إضافي بحت):</b> الفرع + preview يرثان <b>نفس قاعدة MongoDB الإنتاجية</b>، فتعديل schema الـ media (<code>bunnyUrl String?</code>) هو <b>التغيير المقصود الوحيد المشترك</b> — آمن لأنه حقل اختياري يتجاهله الإنتاج (يقرأ <code>url</code>). <b>لكن انتبه — preview يرث env الإنتاج، فهذي مشتركة الحالة ويجب تحييدها على preview وإلا تضرب الإنتاج:</b>
+      <ul style="margin:6px 0">
+        <li><b>Cloudinary</b> — القراءة آمنة، <b>الحذف يضرب الإنتاج</b> → عطّل ماسح الأيتام (P3-2).</li>
+        <li><b>GA4</b> — يلوّث تحليلات الإنتاج بنفس measurement ID → عطّل التتبّع على preview.</li>
+        <li><b>Telegram / Resend</b> — إشعارات/إيميلات تصل للعملاء الحقيقيين → عطّلها على preview.</li>
+        <li><b>Indexing API / GSC</b> — قد يطلب فهرسة بدومين الإنتاج → احجبه على preview.</li>
+        <li><b>Bunny storage</b> — الرفع آمن، الحذف خطر (نفس منطق الماسح).</li>
+      </ul>
+    </div>
+    <div class="callout bad"><b>#2 عزل البيانات (الأهم):</b> الفرع يعزل <b>الكود</b> لا <b>البيانات</b>. القاعدة + أصول Cloudinary <b>مشتركة مع الإنتاج</b>. الترحيل <b>إضافي بحت</b> (حقل <code>bunnyUrl</code> فقط) — لا نلمس <code>url</code> الحي ولا كاش SEO أثناء الاختبار. كل سكربت: <b>اطبع <code>DATABASE_URL</code> وأكّد أنها ليست إنتاج قبل التشغيل</b>.</div>
+    <div class="callout bad"><b>#3 لا نلمس <code>main</code> — لا في Git ولا في Vercel (قاعدة ذهبية صارمة):</b> كل العمل على فرع <code>version-2</code>. <b>ممنوع منعاً باتاً</b>: أي <code>git push</code>/<code>merge</code> لـ main · ربط الفرع بمشروع Vercel الإنتاجي. النشر = <b>نسخة preview فقط على الفرع</b> (Vercel Preview)، لا إنتاج. كل القياس على preview URL لا الدومين الحي. الـ merge لـ main آخر مرحلة فقط بعد ٤ بوابات.</div>
+    <div class="callout warn"><b>#4 قاعدة التنفيذ:</b> تاسك واحد في كل مرة · <code>tsc</code> بعد كل تاسك يمسّ الكود · لا ننتقل حتى تُقفل بوابة التاسك · أي بوابة تفشل = وقوف، لا التفاف.</div>
+    <div class="callout warn"><b>#5 أداء الموبايل = آخر تاسك (خالد 2026-07-28):</b> الديسكتوب سليم (PageSpeed جيد). الموبايل ما زالت فيه مشاكل أداء (LCP مختبري متغيّر — حتى بعد تصفير client-JS الزائد على الجوال الأولي في <code>version-2</code>). <b>القرار: نؤجّل تحسين أداء الموبايل لآخر شيء</b> — نُنهي ترحيل Bunny (التاسك الرئيسي) أولاً، ثم نرجع لأداء الموبايل كآخر مهمة. لا نخلط المسارين.</div>
+  </section>
+
+  <!-- ضمان العزل -->
+  <section>
+    <h2><span class="n" style="background:var(--ok)">✓</span> مصفوفة ضمان عدم التأثير على الإنتاج</h2>
+    <div class="callout bad"><b>الحقيقة الصريحة (بلا مجاملة):</b> لا يوجد <b>ملف</b> يعطي ضماناً مطلقاً بذاته — الضمان يأتي من <b>العزل + الاختبار</b>، لا من التوثيق. هذا التصنيف يفصل ما هو مضمون <b>بنيوياً</b> (لا يعتمد على انضباطنا) عمّا يعتمد على <b>ضابط</b>.</div>
+
+    <div class="card"><b style="color:#7ee787">🟢 معزول 100% بنيوياً — مضمون تقنياً (لا يعتمد على انضباط بشري)</b>
+      <table style="margin-top:8px">
+        <tr><th>السطح</th><th>لماذا مضمون</th></tr>
+        <tr><td><b>main في Git</b></td><td>الفرع نسخة منفصلة. ما لم نعمل <code>checkout main</code> + commit/merge، لا يتغيّر إطلاقاً.</td></tr>
+        <tr><td><b>الدومين الحي (production)</b></td><td>Preview له دومين منفصل (<code>*.vercel.app</code>). الزوّار الحقيقيون لا يرونه · لا production alias.</td></tr>
+        <tr><td><b>كود الإنتاج المنشور</b></td><td>الإنتاج يشغّل deployment من main. preview deployment كيان منفصل لا يستبدله.</td></tr>
+        <tr><td><b>كاش الإنتاج</b> (<code>/_next/image</code> · ISR)</td><td>per-deployment، منفصل عن preview.</td></tr>
+      </table>
+    </div>
+
+    <div class="card"><b style="color:#e3b341">🟡 مشترك — العزل بالانضباط لا بنيوياً — يحتاج ضابطاً مُختبَراً</b>
+      <table style="margin-top:8px">
+        <tr><th>السطح</th><th>الخطر</th><th>الضابط</th></tr>
+        <tr><td><b>قاعدة MongoDB</b></td><td><b>محلياً (تأكّد 2026-07-28): <code>admin/.env.local</code> = <code>modonty_dev</code>، لا prod</b> → الشغل المحلي آمن على dev. لكن <b>Vercel Preview يرث prod</b> ما لم نعزله.</td><td>كتابة <b>إضافية بحتة</b> (<code>bunnyUrl</code> فقط) يتجاهلها الإنتاج · صفر كتابة على <code>url</code> · طباعة <code>DATABASE_URL</code> قبل كل سكربت · idempotent.</td></tr>
+        <tr><td><b>Cloudinary</b></td><td>الحذف يضرب الإنتاج (حساب مشترك).</td><td>تعطيل ماسح الأيتام طوال الترحيل.</td></tr>
+        <tr><td><b>GA4·Telegram·Resend·Indexing</b></td><td>آثار على العملاء الحقيقيين (تحليلات·إشعارات·فهرسة).</td><td>تحييد على preview (S-3).</td></tr>
+        <tr><td><b>Bunny storage</b></td><td>الحذف خطر.</td><td>لا حذف أثناء الترحيل.</td></tr>
+      </table>
+    </div>
+
+    <div class="callout ok"><b>✓ القرار المُقفَل (خالد 2026-07-28):</b> نشتغل على <b>قاعدة الإنتاج نفسها</b>، والحماية = <b>كتابة إضافية بحتة</b> (<code>bunnyUrl String?</code> فقط) يتجاهلها الإنتاج. إضافة الحقل عبر <code>prisma generate</code> (كود، صفر لمس للقاعدة) · تعبئة القيم كتابة يتجاهلها الإنتاج → <b>صفر side effect على الموقع الرئيسي</b>. الضابط: صفر كتابة على <code>url</code> · طباعة <code>DATABASE_URL</code> قبل أي سكربت · idempotent.</div>
+  </section>
+
+  <!-- Epic S -->
+  <section data-epic="S">
+    <h2><span class="n" style="background:var(--ok)">S</span> تهيئة الفرع والبيئة — أول شي قبل أي تاسك <span class="epic-pct" data-epic-pct="S"></span></h2>
+    <p class="lead"><b>لا يبدأ أي تاسك برمجي (Epic 0 وما بعده) قبل اكتمال هذا الـ Epic.</b> الهدف: الفرع + preview معزولان تماماً عن <code>main</code>/الإنتاج، والخدمات المشتركة محيّدة.</p>
+
+    <div class="task"><input type="checkbox" class="chk" id="S-1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">S-1</span><span class="t-title">إنشاء الفرع version-2 من main</span><span class="tag ok">✓ تمّ 2026-07-28</span></div>
+      <div class="t-row"><b>الأمر</b><span class="files">git checkout -b version-2 (من main عند 8bedb8f)</span></div>
+      <div class="safety">⚠️ سلامة: ممنوع أي <code>commit</code>/<code>push</code> على main من الآن · كل commit على الفرع حصراً · لا <code>git add -A</code> (استبعاد reels/temp/settings.local.json/.mcp.json).</div>
+      <div class="t-row"><b>القبول</b><span><code>git branch</code> يؤكّد أننا على الفرع · main نظيف بلا تغييرات.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="S-2" checked><div class="t-body">
+      <div class="t-head"><span class="tid">S-2</span><span class="t-title">ربط الفرع بنشر Vercel Preview (بلا لمس الإنتاج)</span><span class="tag ok">✓ تمّ 2026-07-28</span></div>
+      <div class="t-row"><b>النتيجة</b><span>دُفع <code>version-2</code> → Vercel أنتج <b>preview</b> لـ modonty + admin (<b>target: preview</b>، مؤكّد بالـ API). <b>production branch = main</b> لكليهما → دفع أي فرع = preview بنيوياً. admin production READY = الإنتاج الحي سليم.</span></div>
+      <div class="t-row"><b>preview URLs</b><span class="files">modonty-modonty-...vercel.app · modonty-admin-...vercel.app</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="S-3" checked><div class="t-body">
+      <div class="t-head"><span class="tid">S-3</span><span class="t-title">تحييد الخدمات المشتركة على preview</span><span class="tag ok">✓ مُحقّق بنيوياً 2026-07-28</span></div>
+      <div class="t-row"><b>النتيجة (تأكّد بالـ API)</b><span><b>كل مفاتيح الخدمات على target=production فقط</b>: <code>GA4_*</code> · <code>GTM_CONTAINER_ID</code> · <code>INDEXNOW_KEY</code> · <code>DATABASE_URL</code>. → <b>preview لا يرثها</b> فالخدمات صامتة تلقائياً، بلا أي تعديل كود. <b>+ preview محمي بـ Deployment Protection</b> (302) → لا يوصله زائر عام. تحييد أقوى من اليدوي.</span></div>
+      <div class="t-row"><b>تحفّظ</b><span>Telegram/Resend لم يظهرا في env المشروع (قد يكونان team-level أو محليين) — لكن زيارة GET لا تطلقهما (يُطلقان عند actions)، وpreview محمي. نتحقق لو فعّلنا تفاعلاً.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="S-5" checked><div class="t-body">
+      <div class="t-head"><span class="tid">S-5</span><span class="t-title">إضافة حقل bunnyUrl للـ schema — قبل أي كتابة له</span><span class="tag ok">✓ تمّ 2026-07-28</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">dataLayer/prisma/schema/schema.prisma</span></div>
+      <div class="t-row"><b>العمل</b><span><code>bunnyUrl String?</code> على Media · كِل node أولاً ثم <code>prisma generate</code> (كود فقط، <b>لا <code>db push</code></b> على قاعدة الإنتاج) ثم أعد تشغيل السيرفرات.</span></div>
+      <div class="safety">⚠️ سلامة: <code>generate</code> = صفر لمس للقاعدة · الحقل اختياري يتجاهله الإنتاج · أي كتابة لاحقة (Epic 2/3) تعتمد وجوده أولاً.</div>
+      <div class="t-row"><b>القبول</b><span>types تعرف <code>bunnyUrl</code> · tsc صفر · الإنتاج غير متأثّر.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="S-6" checked><div class="t-body">
+      <div class="t-head"><span class="tid">S-6</span><span class="t-title">تجهيز زون Bunny منفصل لصور المكتبة + AccessKey</span><span class="tag ok">✓ تمّ 2026-07-28</span></div>
+      <div class="t-row"><b>العمل</b><span><b>زون منفصل مفضّل</b> لصور المكتبة (لا نخلطها مع reels) → تنظيف/حذف لاحق أوضح + Standard HDD ($0.01) أرخص من Edge SSD للريلز. إنشاؤه + AccessKey + host في env preview.</span></div>
+      <div class="t-row"><b>النتيجة</b><span>الزون <code>modonty-clients</code> جاهز (موجود ومربوط في env من P0): <b>Standard tier (HDD)</b> · Region DE مكرّر NY/LA/SG (تغطية جغرافية · جمهور مصر) · host <code>modonty-clients.b-cdn.net</code>. AccessKey (<code>BUNNY_STORAGE_PASSWORD</code>) شغّال. <b>تحقّق حي:</b> رفع اختباري على الهيكل الجديد <code>logo/_s6-verify/s6-test.txt</code> → <b>201</b> · قراءة CDN → <b>200</b> بالمحتوى الصحيح · ملف الاختبار حُذف. host موجود في <code>remotePatterns</code> (P0-2 ✓).</span></div>
+      <div class="t-row"><b>الهيكل المعتمد (خالد 2026-07-28)</b><span>folder لكل نوع ← ثم عميل: <code>/{type}/{clientSlug}/{filename}</code> — الأنواع المستخدمة: logo · post · gallery · hero · client-mini · general (+ og · twitter محجوزة). مثال: <code>https://modonty-clients.b-cdn.net/gallery/kimazone/g-1698765432.webp</code>. تغيير النوع/العميل = نقل فعلي (انظر ثغرة Epic 2).</span></div>
+      <div class="t-row"><b>القبول</b><span>الزون منفصل جاهز ✓ · رفع اختباري يُرجع 200 ✓ · host معروف لـ remotePatterns ✓.</span></div>
+    </div></div>
+
+    <div class="task gate-task"><input type="checkbox" class="chk" id="S-4" checked><div class="t-body">
+      <div class="t-head"><span class="tid">S-4</span><span class="t-title">بوابة التهيئة</span></div>
+      <div class="t-row"><b class="gate">بوابة Epic S</b><span class="gate">preview يبني وينشر · main + الإنتاج غير ممسوسين · الخدمات المشتركة محيّدة · حقل <code>bunnyUrl</code> موجود · الزون جاهز. عندها فقط نبدأ Epic 0.</span></div>
+    </div></div>
+  </section>
+
+  <!-- Epic 0 -->
+  <section data-epic="0">
+    <h2><span class="n">0</span> القياس والأساس — بلا كود إنتاج <span class="epic-pct" data-epic-pct="0"></span></h2>
+    <p class="lead">نثبت أن Bunny ≥ Cloudinary أداءً وتكلفةً، ونعرف الحجم — قبل أي التزام. بوابة قرار: لو Bunny ليس أفضل/مساوٍ → <b>نوقف Bunny (Epics 1-5) فقط. Epic P (الحيلة) مستقل ويكمل بلا تأثّر.</b></p>
+
+    <div class="task"><input type="checkbox" class="chk" id="P0-1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P0-1</span><span class="t-title">رفع ٣ صور عيّنة إلى Bunny</span><span class="tag ok">✓ تمّ 2026-07-28</span></div>
+      <div class="t-row"><b>النتيجة</b><span>رُفعت برمجياً (نفس منطق <code>uploadToBunny</code>) لـ <b>zone clients</b> (<code>modonty-clients.b-cdn.net</code> — فاضي/مستقبلي، مثالي للاختبار، لا يخلط مع reels/prod) تحت <code>bunny-test/</code>. الثلاثة تُرجع 200.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P0-2" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P0-2</span><span class="t-title">إضافة host الزون لـ remotePatterns (اختبار فقط)</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">modonty/next.config.ts</span></div>
+      <div class="t-row"><b>العمل</b><span>التأكد أن host زون العيّنة مسموح لـ <code>next/image</code> (بلوكر العرض). <code>modonty-reels-media.b-cdn.net</code> مضاف أصلاً — نتحقق فقط.</span></div>
+      <div class="t-row"><b>القبول</b><span><code>next/image</code> يعرض صورة Bunny بلا خطأ host.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P0-3" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P0-3</span><span class="t-title">صفحة اختبار تعرض العيّنات عبر next/image</span><span class="tag ok">✓ تمّ 2026-07-28</span></div>
+      <div class="t-row"><b>النتيجة</b><span>راوت مؤقت <code>/bunny-test</code> (+ صفحتَي LCP معزولتين) يعرض العيّنات على الـ CDNين عبر <code>next/image</code>. تحقّق <b>local</b> (بناء ٢٤١ صفحة يمر · صفر console errors · الـ optimizer يخدم Bunny 200) <b>و preview أونلاين</b> (كلا الصورتين تُرندَران متطابقتَين). remotePattern مؤقت للزون مُضاف (فرع فقط).</span></div>
+    </div></div>
+
+    <div class="task gate-task"><input type="checkbox" class="chk" id="P0-4" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P0-4</span><span class="t-title">قياس الأداء: نفس البيئة، متغيّر واحد</span><span class="tag ok">✓ حُسم على preview أونلاين 2026-07-28</span></div>
+      <div class="t-row"><b>نتيجة أولية (raw CDN)</b><span>🟢 Bunny أسرع ٣/٣ (~2×) على تسليم الأصل <b>المباشر</b>: 5KB 62→24ms · 74KB 87→42ms · 47KB 80→41ms.</span></div>
+      <div class="t-row"><b>الحسم النهائي (LCP عبر next/image على preview)</b><span><b>🟡 عبر الـ optimizer: Bunny ≈ Cloudinary (فرق ضمن الضوضاء).</b> قياس على preview أونلاين (نفس الصورة 74KB، مخرَج مطابق 61089 بايت): <b>cold-optimize</b> (وسيط ٨ عيّنات) Cloudinary <b>652ms</b> · Bunny <b>713ms</b> (~60ms، Cloudinary فيه شاذّة 1428). <b>warm (x-vercel-cache: HIT)</b> Cloudinary <b>187ms</b> · Bunny <b>191ms</b> — متطابق.</span></div>
+      <div class="safety"><b>السبب (بلا تخمين):</b> مع <code>next/image</code>، حساب الـ optimize (فكّ webp + تحجيم + إعادة ترميز avif/webp) يُهيمن على الزمن ويبلع تفوّق CDN الأصل، و<b>الطلب الدافئ يُخدَم من Vercel edge (مستقل عن CDN)</b>. تفوّق Bunny الـ2× يظهر فقط على الصور المُقدَّمة <b>مباشرة بلا optimizer</b> (og:image · روابط مباشرة) وعلى cache-miss.</div>
+      <div class="t-row"><b class="gate">بوابة القرار</b><span class="gate">Bunny ليس <b>أسرع</b> عبر الـ optimizer لكنه ليس أبطأ (≈). التبرير للترحيل = <b>التكلفة + التوحيد (صور+فيديو مكان واحد) + تفوّق الـ raw للصور المباشرة</b>، لا مكسب LCP للزائر المتكرّر. القرار النهائي يعتمد أرقام التكلفة P0-5.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P0-5" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P0-5</span><span class="t-title">جمع ٣ أرقام التكلفة</span><span class="tag warn">✓ التسعير الرسمي مجموع 2026-07-28 · رقمان من لوحاتك</span></div>
+      <div class="t-row"><b>تسعير Bunny (رسمي)</b><span><b>تخزين Standard/HDD:</b> $0.01/GB/شهر (منطقة واحدة) · <b>Edge/SSD:</b> $0.02/GB · <b>باندويدث CDN:</b> أوروبا/أمريكا $0.01/GB · <b>الشرق الأوسط وأفريقيا $0.06/GB</b> (جمهورنا 88% مصر!) · Volume Network $0.005/GB (١٠ PoPs فقط). <b>Bunny Stream (فيديو):</b> تخزين $0.01/GB · تسليم $0.005/GB · <b>ترميز مجاني</b>. حد أدنى $1/شهر.</span></div>
+      <div class="t-row"><b>تسعير Vercel Image Optimization (رسمي)</b><span>تحويلات $0.05–0.0812/1000 (مجاني 5آلاف) · قراءات كاش $0.40–0.64/مليون · كتابات $4–6.4/مليون · <b>+ Fast Data Transfer</b> عند تسليم الصورة للزائر.</span></div>
+      <div class="safety">🔑 <b>الإدراك الحاسم:</b> مع <code>next/image</code>، الزائر يُخدَم من <b>Vercel CDN</b> (Fast Data Transfer) لا من CDN الـ CDN المصدر. Bunny/Cloudinary = مجرد أصل يسحب منه الـ optimizer عند cache-miss (نادر). لذلك: <b>ترحيل Cloudinary→Bunny مع إبقاء الـ optimizer ≈ لا يغيّر الباندويدث</b> (كلاهما أصل)، يغيّر فقط التخزين (تافه، ~$1) + يُلغي رسوم خطة Cloudinary. <b>الوفر الكبير يظهر فقط لو أسقطنا Vercel optimizer</b> وقدّمنا صور Bunny مباشرة → نوفّر تحويلات+قراءات+كتابات+FDT، لكن ندفع باندويدث Bunny MEA $0.06/GB (غالٍ لجمهور مصر) أو نستخدم optimizer Bunny + Volume. <b>فالقرار الحقيقي = «نُبقي أم نُسقط Vercel optimizer»، لا «Cloudinary أم Bunny».</b></div>
+      <div class="t-row"><b>الرقمان محسومان الآن</b><span>(أ) <b>Cloudinary = خطة مجانية = $0/شهر</b> (تأكيد خالد). (ب) <b>Vercel = Pro</b> (تأكيد API) + بصمتنا ضئيلة (0.14GB · 423 صف · 74 مقال · ترافيك متواضع) → تحسين الصور شبه مؤكد <b>داخل حصّة Pro</b> (~$0 فائض).</span></div>
+      <div class="callout"><b>✅ القرار النهائي (خالد 2026-07-28): نُرحّل الصور إلى Bunny الآن — على أساس تشغيلي لا تكلفة لحظية.</b> التكلفة تقول «Cloudinary المجاني أرخص بـ$1 الآن»، لكن <b>القرار يغلّب: (1) مصدر وسائط واحد</b> (Bunny للصور والفيديو معاً — لا تشتّت بين مزوّدين) · <b>(2) شغل مرة واحدة</b> (طالما نرقّي للفيديو، نرقّي الصور بنفس الدفعة بدل ترحيل ثانٍ عند النمو) · <b>(3) جاهزية النمو</b> (عند تجاوز 25 كريدت Cloudinary يقفز $99→$249؛ Bunny يبقى دولارات — 40× أرخص تخزين). الفرق اللحظي ($1/شهر) تافه أمام هذي القيمة. <b>المعمارية:</b> Bunny = أصل التخزين · نُبقي <code>next/image</code> (صفر تراجع LCP — مقيس ≈). <b>→ تُستأنف Epics 1-5</b> على الفرع/preview فقط، بلا مساس main حتى البوابة النهائية.</div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P0-6" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P0-6</span><span class="t-title">قياس حجم الترحيل + تحديد بيت الزون</span><span class="tag warn">✓ dev 2026-07-28 · يُكرَّر على prod</span></div>
+      <div class="t-row"><b>نتيجة dev</b><span>القاعدة الحالية = <code>modonty_dev</code> (لا prod). <b>Media:</b> 423 صف · كلها Cloudinary · <b>0.14 GB</b> → حجم خفيف، <b>دفعة واحدة ممكنة</b>. <b>ثغرة 24:</b> 74 مقال · فقط 2 فيهم img داخل content. <b>socialImage:</b> 24 (transform محفور 1200×630).</span></div>
+      <div class="t-row"><b>متبقٍّ</b><span>تكرار على prod (بعد S-2/S-3) لأرقام الإنتاج الحقيقية · تحديد بيت الزون (S-6).</span></div>
+    </div></div>
+  </section>
+
+  <!-- Epic A -->
+  <section data-epic="A">
+    <h2><span class="n">A</span> تدقيقات ماقبلية — فحوصات بلا كود <span class="epic-pct" data-epic-pct="A"></span></h2>
+    <p class="lead">نكشف الفخاخ قبل كتابة سطر. كلها قراءة/فحص فقط.</p>
+
+    <div class="task"><input type="checkbox" class="chk" id="PA-1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">PA-1</span><span class="t-title">فحص: هل صور OG مُسبقة المقاس؟</span><span class="tag ok">✓ تمّ 2026-07-28</span></div>
+      <div class="t-row"><b>النتيجة</b><span><b>مقالات:</b> OG/JSON-LD يُبنى بـ <code>buildAspectUrl</code> (Cloudinary transform · نِسب 16:9·4:3·1:1 بعرض 1200) → <b>يعتمد transform</b> (ثغرة 16، يُعالَج Epic 1). <b>كيانات</b> (category/industry/tag): OG = <code>socialImage</code> رابط مباشر (يمرّ لـ Bunny آمن، لكن بلا <code>width/height</code> في الـ metadata).</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="PA-2" checked><div class="t-body">
+      <div class="t-head"><span class="tid">PA-2</span><span class="t-title">فحص: &lt;img&gt; خام يحقن transform Cloudinary</span><span class="tag ok">✓ تمّ · نظيف</span></div>
+      <div class="t-row"><b>النتيجة</b><span>الـ <code>&lt;img&gt;</code> الخام الوحيد في modonty = <code>trust/page.tsx</code> (<code>/modonty-mark.svg</code> — <b>SVG محلي، لا يتأثر</b>). دوال <code>image-utils.ts</code> كلها تحرس على Cloudinary → روابط Bunny تمرّ كما هي. <b>صفر img خام يعتمد أصلاً مُرحَّلاً.</b></span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="PA-3" checked><div class="t-body">
+      <div class="t-head"><span class="tid">PA-3</span><span class="t-title">جرد قرّاء الرابط server-side</span><span class="tag ok">✓ تمّ 2026-07-28</span></div>
+      <div class="t-row"><b>النتيجة</b><span>القرّاء: <code>image-sitemap.xml/route.ts</code> (يقرأ <code>featuredImage.url</code> + <code>gallery.media.url</code>) · OG cache (<code>nextjsMetadata</code>) · JSON-LD (<code>knowledge-graph-generator</code>). كلها تُحدَّث في التبديل (P35-4).</span></div>
+      <div class="t-row"><b class="gate">🔴 كشف ثغرة 24</b><span class="gate">image-sitemap يستخرج <code>&lt;img&gt;</code> من <code>content</code> HTML → صور <b>داخل نص المقالات</b> = روابط Cloudinary محفورة، <b>لا يغطّيها ترحيل Media</b>.</span></div>
+    </div></div>
+  </section>
+
+  <!-- ثغرة 24 -->
+  <section>
+    <h2><span class="n" style="background:var(--bad)">24</span> ثغرة جديدة من التدقيق — صور محتوى المقالات المحفورة</h2>
+    <div class="callout bad"><b>🔴 الثغرة:</b> Media records نرحّلها (<code>bunnyUrl</code>)، لكن <code>&lt;img src="cloudinary…"&gt;</code> <b>داخل نص المقال</b> (<code>article.content</code> HTML) مخزّنة كنص، لا كسجلّ Media → <b>ترحيل Media لا يلمسها</b>. تظهر في image-sitemap + عرض المقال.</div>
+    <div class="callout warn"><b>الأثر:</b> تبقى Cloudinary حتى بعد الترحيل (لا تستفيد من Bunny) · <b>إيقاف Cloudinary (Epic 5) يكسرها كلها</b>. <b>العلاج (قرار لاحق):</b> إمّا سكربت يمسح <code>content</code> ويستبدل روابط Cloudinary بـ Bunny (معقّد · يعدّل نص المقال)، أو <b>نُبقي Cloudinary حياً للمحتوى القديم</b> ولا نوقفه. <b>يُقاس حجمها في P0-6</b> (كم مقال فيه img داخل content).</div>
+  </section>
+
+  <!-- Epic 1 -->
+  <section data-epic="1">
+    <h2><span class="n">1</span> طبقة التحويل + مسارات OG/الخام <span class="epic-pct" data-epic-pct="1"></span></h2>
+    <p class="lead">ضمان مرور روابط Bunny نظيفة، وأن OG لا تنكسر. تعالج ثغرة 2.</p>
+
+    <div class="task"><input type="checkbox" class="chk" id="P1-1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P1-1</span><span class="t-title">تأكيد optimizeCloudinaryUrl يتجاهل روابط Bunny</span><span class="tag ok">✓ تمّ · مؤكّد</span></div>
+      <div class="t-row"><b>النتيجة</b><span><code>OptimizedImage.tsx</code> فيه الحارس <code>if(!url.includes('res.cloudinary.com')) return url</code> → <b>رابط Bunny يخرج كما هو</b>. مؤكّد بالقراءة، لا تعديل.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P1-2" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P1-2</span><span class="t-title">فحص knowledge-graph-generator مع host غير Cloudinary</span><span class="tag ok">✓ تمّ 2026-07-28</span></div>
+      <div class="t-row"><b>النتيجة</b><span><code>buildAspectUrl</code> (سطر 40) يحرس على Cloudinary → <b>روابط Bunny تمرّ بلا transform، صفر كسر JSON-LD</b>. <b>لكن</b> النِسب المتعددة (16:9·4:3·1:1) تصير كلها الرابط الأصلي على Bunny (ثغرة 16) — تراجع SEO طفيف (Google يقبل نسبة واحدة). القرار في Epic 1 (P1-3): نقبل نسبة واحدة أو نبني النِسب وقت الرفع.</span></div>
+    </div></div>
+
+    <div class="task gate-task"><input type="checkbox" class="chk" id="P1-3" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P1-3</span><span class="t-title">معالجة OG حسب نتيجة PA-1</span><span class="tag info">✓ نُفّذ في Epic 2 (كود) 2026-07-28</span></div>
+      <div class="t-row"><b>النتيجة (كود)</b><span>(1) <b>OG/Twitter</b>: مضبوط أصلاً في <code>media-specs.ts</code> (1.91:1 · 1200×630) والمحرّر يفرضه → الرفع المزدوج ينسخه لـ Bunny بمقاسه النهائي، صفر تحويل. (2) <b>الـ3 نسب للمقال</b>: helper مشترك <code>bunnyAspectUrl</code> + <code>BUNNY_ASPECT_SUFFIX</code> في <code>dataLayer/lib/bunny.ts</code> · مولّد <code>generateAspectCrops</code> بـ <code>sharp</code> (<code>fit:cover · position:attention</code> — مُتحقّق Context7) في admin · وقت رفع POST يولّد ٣ قصّات <code>…__1x1/4x3/16x9.webp</code> (فشل قصّة = <code>bunnyUrl</code> null، فما يُخدَم رابط Bunny مقال بلا قصّاته). القراءة: فرع Bunny في <code>knowledge-graph-generator.buildAspectUrl</code> (admin) + <code>image-aspect-ratios</code> الثلاث (modonty). tsc قبل push.</span></div>
+      <div class="t-row"><b>العمل</b><span>لو OG تعتمد transform محفور → رفع OG بمقاس نهائي 1200×630، أو حلّ محدّد.</span></div>
+      <div class="t-row"><b>✅ القرار (خالد 2026-07-28 · صفر تنازل سيو)</b><span>بما إن Bunny تخزين فقط (لا crop من الرابط زي Cloudinary <code>c_fill,ar_X:Y</code>)، نحلّها بالتوليد وقت الرفع لا وقت العرض: <b>(1) OG/Twitter:</b> دور رفع مخصّص بـ<b>قيد أبعاد 1200×630 (1.91:1)</b> — الكرييتف يرفع الصورة بالمقاس النهائي → Bunny يخدمها مباشرة. <b>(2) JSON-LD المقال:</b> نُبقي الـ3 نسب (1:1·4:3·16:9) — نولّدها وقت الرفع بـ<code>sharp</code> (crop محتوى-واعي) ونرفعها لـ Bunny تحت مجلد النوع. <b>تحقّق رسمي (Google Search Central):</b> الـ3 نسب <b>«موصى بها لأفضل النتائج» لا مطلوبة</b> (حد أدنى 50K بكسل · صورة واحدة عالية الدقة مقبولة) — نُبقيها للحفاظ على الـ best-practice كامل بصفر تنازل. <b>التنفيذ الفعلي (helper التوليد + قيد الرفع) في Epic 2 (مسار الرفع).</b></span></div>
+      <div class="t-row"><b class="gate">بوابة Epic 1</b><span class="gate"><code>tsc</code> صفر + JSON-LD/OG صحيح لصورتَي Bunny وCloudinary.</span></div>
+    </div></div>
+  </section>
+
+  <!-- Epic 2 -->
+  <section data-epic="2">
+    <h2><span class="n">2</span> الرفع الجديد → Dual-Write (Cloudinary + Bunny) <span class="epic-pct" data-epic-pct="2"></span></h2>
+    <p class="lead"><b>أثناء الاختبار: الرفع الجديد يكتب <code>url</code>=Cloudinary (يراه الإنتاج) + نسخة إضافية <code>bunnyUrl</code>=Bunny (للاختبار).</b> التحويل الكامل لـ Bunny يصير بعد التبديل + merge — لا قبله.</p>
+    <div class="callout bad"><b>🔴 لماذا Dual-Write لا تحويل كامل (إصلاح ثغرة side effect):</b> الإنتاج يشغّل كود <code>main</code> ويقرأ <code>url</code> فقط. لو الرفع الجديد كتب <code>bunnyUrl</code> فقط → الصورة <b>غائبة على الإنتاج</b>؛ لو كتب <code>url</code>=Bunny → <b>مكسورة</b> (remotePatterns الإنتاج بلا host بَني). فأي مقال جديد يُنشر أثناء الاختبار يفقد صورته على الموقع الحي. الحل: <code>url</code> يبقى Cloudinary طوال الاختبار.</div>
+    <div class="callout bad"><b>🔴 حاسم — مسار Bunny مشتق من (النوع + العميل)، فأي تعديل يغيّرهما = نقل فعلي في Bunny (خالد 2026-07-28):</b> الهيكل المعتمد <code>/{type}/{clientSlug}/{filename}</code>. لذلك عند تعديل الـ media في الأدمن: (1) <b>تغيير النوع</b> (مثلاً GENERAL→LOGO) أو (2) <b>تغيير العميل</b> → الملف <b>لازم ينتقل فعلياً</b>: رفع/نسخ للمسار الجديد + حذف المسار القديم + تحديث <code>bunnyUrl</code> في الـ DB <b>ذرّياً</b> (كله ينجح أو يُلغى). ينطبق على الحذف أيضاً (حذف media = حذف ملف Bunny). <b>قاعدة «افحص مسار الإنشاء والتعديل والحذف» — لا الرفع الأول فقط.</b> البديل (مسار ثابت بالـ mediaID لتفادي النقل) مرفوض لأن خالد يحتاج «يقرأ الـ folder كامل حسب النوع». → يُبنى كـ helper <code>moveBunnyMedia(oldPath,newPath)</code> يُستدعى من كل مسارات تعديل الـ media type/clientId + الحذف.</div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P2-1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P2-1</span><span class="t-title">حساب الأبعاد قبل createMedia</span><span class="tag bad">ثغرة 11</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">admin/.../upload-zone · console/api/upload-bunny/route.ts</span></div>
+      <div class="t-row"><b>العمل</b><span>Bunny يرجّع <code>url+bytes</code> فقط، و<code>next/image</code> يحتاج width/height. نحسبها client-side من الملف المقصوص، أو server-side (<code>sharp</code>) قبل <code>createMedia</code>.</span></div>
+      <div class="t-row"><b>القبول</b><span>سجل Media الجديد يحمل width/height صحيحين.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P2-2" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P2-2</span><span class="t-title">Dual-Write: رفع للـ Cloudinary (url) + نسخة Bunny (bunnyUrl) — Bunny best-effort</span><span class="tag bad">ثغرة 18 · إصلاح نقطة فشل قاتلة</span><span class="tag info">✓ كود + tsc 2026-07-28 · قبول runtime في P2-5</span></div>
+      <div class="t-row"><b>العمل</b><span>الرفع الجديد يبقى Cloudinary في <code>url</code> (الإنتاج يراه) + رفع نسخة Bunny في <code>bunnyUrl</code>. يعتمد وجود الحقل (S-5).</span></div>
+      <div class="t-row"><b>النتيجة (كود)</b><span>helper مشترك <code>buildBunnyMediaPath</code> في <code>dataLayer/lib/bunny.ts</code> (بناء المسار <code>/{typeFolder}/{owner}/{filename}</code> · owner=slug العميل أو <code>_platform</code>/<code>_general</code>). أكشن أدمن <code>mirror-to-bunny.ts</code> best-effort (يجلب نسخة Cloudinary → يرفع zone <code>clients</code> · لا يرمي أبداً). موصول في <code>use-upload-zone.ts</code> قبل <code>createMedia</code>. <code>bunnyUrl</code> مضاف لـ <code>CreateMediaData</code> + <code>db.media.create</code>. tsc صفر.</span></div>
+      <div class="safety">🔴 حرج: رفع Bunny <b>best-effort</b> داخل try/catch منفصل — لو فشل Bunny، <b>الرفع الأساسي (url=Cloudinary) ينجح</b> و<code>bunnyUrl</code> يبقى null (يُعبّأ لاحقاً بالترحيل). ممنوع أن يُفشِل عطل Bunny رفع الصور على الأدمن الحي.</div>
+      <div class="t-row"><b>القبول</b><span>رفع جديد: <code>url</code>=Cloudinary ظاهر على الإنتاج · نجاح الرفع لا يعتمد على Bunny · فشل Bunny المُصطنع لا يكسر الرفع.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P2-3" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P2-3</span><span class="t-title">تحديث deleteMedia لدعم Bunny</span><span class="tag warn">ثغرة 13</span><span class="tag info">✓ كود 2026-07-28 · قبول runtime في P2-5</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">admin/.../media/actions/delete-media.ts</span></div>
+      <div class="t-row"><b>العمل</b><span>يحذف عبر <code>cloudinaryPublicId</code> فقط الآن → مع Dual-Write يحذف <b>الاثنين</b> (Cloudinary عبر publicId + Bunny عبر <code>deleteBunnyUrl</code>). كل حذف best-effort منفصل — فشل حذف Bunny لا يكسر عملية الحذف الأساسية.</span></div>
+      <div class="t-row"><b>النتيجة (كود)</b><span>سلوك Cloudinary كما هو (صارم) · أُضيف <code>bunnyUrl</code> للـ select + حذف Bunny best-effort في try/catch قبل <code>db.media.delete</code> (zone <code>clients</code>) — فشله يُسجَّل ولا يوقف الحذف. <b>🐞 أمسكه التست الحي (2026-07-29):</b> كان يحذف الأصل فقط؛ الآن يحذف الـ3 قصّات كمان للـ POST. تحقّق على مستوى <b>التخزين</b> (لا CDN — يخبّي المحذوف). موصول بنفس إصلاح النقل في <code>update-media</code>.</span></div>
+      <div class="t-row"><b>القبول</b><span>حذف صورة يزيل نسختَيها · فشل أحدهما لا يعطّل الآخر ولا الحذف من القاعدة.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P2-4" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P2-4</span><span class="t-title">تحديث thumbnail-image-view لدعم Bunny</span><span class="tag warn">ثغرة 21</span><span class="tag info">✓ كود 2026-07-28 · قبول runtime في P2-5</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">admin/components/shared/thumbnail-image-view.tsx · admin/next.config.ts</span></div>
+      <div class="t-row"><b>العمل</b><span>يبني رابط من <code>cloudinaryPublicId</code> لا <code>url</code> → دعم Bunny عبر <code>url</code> + <code>next/image</code>.</span></div>
+      <div class="t-row"><b>النتيجة (كود)</b><span>المكوّن أصلاً يسقط لـ <code>imageUrl</code> عبر <code>next/image</code> عند غياب <code>cloudinaryPublicId</code> → يدعم Bunny تلقائياً. الفجوة الوحيدة كانت remotePatterns الأدمن → أُضيف <code>*.b-cdn.net</code> في <code>admin/next.config.ts</code>.</span></div>
+      <div class="t-row"><b>القبول</b><span>ثمبنيل صورة Bunny يظهر في الأدمن.</span></div>
+    </div></div>
+
+    <div class="task gate-task"><input type="checkbox" class="chk" id="P2-5" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P2-5</span><span class="t-title">تحقّق الدائرة الكاملة للرفع الجديد (على preview)</span><span class="tag ok">✅ نجح عبر الواجهة الحقيقية 5/5 · local modonty_dev 2026-07-28</span></div>
+      <div class="t-row"><b>مُتحقّق (رفع UI حقيقي)</b><span>خالد رفع <code>722-1920x1080.webp</code> (POST · عميل Dream to App) من المتصفّح على <code>modonty_dev</code>. تحقّق DB مباشر: <code>url</code>=Cloudinary ✅200 · <code>bunnyUrl</code>=<code>…/post/dream-to-app/722…webp</code> ✅200 image/webp · الـ3 قصّات <code>__1x1/__4x3/__16x9.webp</code> ✅200 image/webp (65/51/38KB). الغلاف كامل: upload-zone→mirror→createMedia كتب bunnyUrl + sharp ولّد القصّات ورفعها. <b>الدائرة كاملة صفر تنازل سيو.</b></span></div>
+      <div class="t-row"><b>🐞 باغان أمسكهما التست الحي (tsc ما يمسكهما)</b><span>(1) <code>sharp</code> native module يضرب سيرفر التطوير تحت Turbopack ما لم يُعزَل → أُضيف <code>serverExternalPackages:["sharp"]</code> + import كسول + try/catch يرمي بدل ما يُسقط العملية. (2) القصّات كانت تُخزَّن <code>.jpg</code> فالـ CDN يخدمها image/jpeg → <code>bunnyAspectUrl</code> يفرض <code>.webp</code>. <b>+ درس بيئي:</b> قتل السيرفر وسط التجميع يتلف <code>.next</code> → 404 وهمي (الحل: مسح <code>.next</code>).</span></div>
+      <div class="t-row"><b class="gate">بوابة Epic 2</b><span class="gate">على <b>preview URL</b> (لا الدومين الحي): صورة مرفوعة حديثاً — <code>url</code>=Cloudinary يظهر · <code>bunnyUrl</code>=Bunny يظهر على preview · JSON-LD/OG صحيح · صفر console errors. وعلى الإنتاج: الصورة الجديدة تظهر عبر <code>url</code> (Cloudinary) بلا كسر.</span></div>
+      <div class="t-row"><b>مُتحقّق (2026-07-28 · مقابل زون Bunny الحقيقي، صفر مساس DB)</b><span>سكربت تحقّق مباشر على القاعدة dev = <code>modonty_dev</code>: <b>8/8</b> — بناء المسار المقفل · رفع الأصل → CDN 200 · <code>generateAspectCrops</code> بـ sharp (1200×1200/900/675 صحيحة) · الـ3 قصّات تُخزَّن وتُخدَم <code>image/webp</code> 200 · اشتقاق القراءة == القصّة المخزّنة (اللي يحلّها JSON-LD) · تنظيف ٤ ملفات. <b>🐞 التست أمسك باغاً حقيقياً tsc ما يمسكه:</b> القصّات كانت تُخزَّن بامتداد <code>.jpg</code> (من الأصل) فالـ CDN يخدمها <code>image/jpeg</code> — أُصلح: <code>bunnyAspectUrl</code> يفرض <code>.webp</code> دائماً.</span></div>
+      <div class="t-row"><b>✅ الدورة الكاملة (create→move→delete) 2026-07-29</b><span><b>إنشاء:</b> UI حقيقي 5/5. <b>تعديل=نقل:</b> خالد غيّر العميل Dream to App→كيما زون عبر UI → النقل تطلّق؛ التست كشف باغ (نقل الأصل فقط) → أُصلح (ينقل الـ3 قصّات) + تحقّق تخزيني (القديم راح، الجديد كامل). <b>حذف:</b> أُصلح كذلك (يحذف القصّات) + تحقّق تخزيني 8/8 راحت. <b>🔑 درس Bunny:</b> CDN يخبّي الملف المحذوف على الحافة → تحقّق الحذف على <b>storage.bunnycdn.com</b> بالـ AccessKey لا رابط CDN. <b>+ بيئي:</b> `sharp` احتاج <code>serverExternalPackages</code>+import كسول+.next نظيف؛ فلاغ <code>--auto-open-devtools</code> في Playwright كان يخطف focus النقر (حُذف). tsc قبل push.</span></div>
+    </div></div>
+  </section>
+
+  <!-- Epic 3 -->
+  <section data-epic="3">
+    <h2><span class="n">3</span> الترحيل الإضافي البحت — لا يمسّ الإنتاج <span class="epic-pct" data-epic-pct="3"></span></h2>
+    <p class="lead">آمن على أي قاعدة: كتابة إضافية على حقل جديد يتجاهله الإنتاج.</p>
+
+    <div class="task"><input type="checkbox" class="chk" id="P3-1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P3-1</span><span class="t-title">تأكيد وجود حقل bunnyUrl (أُضيف في S-5)</span><span class="tag ok">انتقل لبداية العمل</span></div>
+      <div class="t-row"><b>العمل</b><span>الحقل أُنشئ في <b>S-5</b> قبل أي كتابة له. هنا تأكيد فقط أنه موجود وتُقرأ/تُكتب قيمه بلا خطأ.</span></div>
+      <div class="t-row"><b>القبول</b><span><code>bunnyUrl String?</code> موجود · Dual-Write (P2-2) يكتب فيه بنجاح.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P3-2" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P3-2</span><span class="t-title">تعطيل ماسح أيتام Cloudinary</span><span class="tag ok">✓ مؤمَّن أصلاً 2026-07-29</span></div>
+      <div class="t-row"><b>النتيجة</b><span><code>sweepCloudinaryOrphans</code> <b>معطّل نهائياً</b> (<code>SWEEP_ENABLED=false</code> منذ 2026-06-01، دمّر أصول إنتاج سابقاً). + الترحيل <b>لا يخلق أيتام</b> أصلاً (نُبقي <code>url</code>+<code>cloudinaryPublicId</code>). فصفر خطر. الماسح القرائي (<code>getCloudinaryOrphanStats</code>) يقرأ فقط.</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">admin/.../database/actions/cloudinary-orphans.ts</span></div>
+      <div class="t-row"><b>العمل</b><span>بعد الترحيل تصير أصول Cloudinary «أيتام» → الماسح يحذف نسخ الرجوع. <b>يُعطَّل طوال الترحيل + نافذة الأمان.</b></span></div>
+      <div class="t-row"><b>القبول</b><span>الماسح معطّل بوضوح · لا يعمل ضمن Run-All.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P3-3" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P3-3</span><span class="t-title">سكربت الترحيل الإضافي</span><span class="tag bad">ثغرة 15</span><span class="tag ok">✅ الأداة مبنية + شُغّلت كاملة على dev 2026-07-29</span></div>
+      <div class="t-row"><b>✅ التشغيل الكامل على dev (2026-07-29)</b><span>عبر زر UI في <code>/media/maintenance</code>: <b>422/424 مُرحّلة</b> — تحقّق تخزيني شامل: <b>الأساس 422/422 سليم · قصّات POST 381/381 سليمة</b> (127 مقال × 3، صفر مكسور). الصورتان المتبقّيتان: أصلهما على Cloudinary يرجّع <b>404 (محذوف سابقاً)</b> — الأداة تخطّتهما صح (best-effort)، بيانات مكسورة قديمة لا خلل ترحيل. <b>🐞 إصلاح حرج أثناء التشغيل:</b> <code>sharp</code> كان يضرب السيرفر على أول صورة POST (Turbopack native) → حُلّ بـ <code>createRequire</code> [[project_sharp_turbopack_createrequire]] — بعده مرّ الترحيل كامل بلا انهيار.</span></div>
+      <div class="t-row"><b>النتيجة (بُني كأداة UI لا سكربت — أمر خالد)</b><span>في <code>/media/maintenance</code> (أسفل الصفحة) قسم <b>«Bunny migration»</b> بـ<b>progress bar حيّ</b>. action مشترك <code>migrate-media-to-bunny.ts</code> (<code>getBunnyMigrationStats</code> + <code>migrateMediaBatch</code> دفعات 5) يعيد استخدام core الرفع <code>bunny-mirror-core.ts</code> (نفس منطق Epic 2: أصل + 3 قصّات POST). idempotent (يتخطّى المُرحّل عبر <code>OR[null, isSet:false]</code> — فخّ مونجو)، best-effort لكل صف، يكتب <code>bunnyUrl</code> فقط. <b>تحقّق dev:</b> رُحّلت صورتان حقيقيتان (storage 200 · CDN 200). العدّاد dev: 3/424. <b>التشغيل الكامل بأمر خالد</b> (دفعات · خارج الذروة · تحقّق حصة Cloudinary).</span></div>
+      <div class="t-row"><b>العمل</b><span>ينسخ <b>الأصل</b> من Cloudinary (لا المحوّل — الرابط المخزَّن يحمل transform محفور) → يرفع Bunny → يكتب <code>bunnyUrl</code> فقط · دفعات + تقرير · idempotent · يحسب الأبعاد (P2-1).</span></div>
+      <div class="t-row"><b class="gate">🔴 تبعية من Epic 2</b><span class="gate">لصور المقالات (POST) لازم السكربت <b>يولّد الـ3 قصّات</b> (<code>generateAspectCrops</code> + <code>bunnyAspectUrl</code>) ويرفعها مع الأصل — وإلا بعد التبديل (P35) روابط النِسب في JSON-LD ترجّع 404. القراءة تفترض وجود القصّات لأي رابط Bunny مقال.</span></div>
+      <div class="safety">⚠️ سلامة (قاعدة): اطبع <code>DATABASE_URL</code> · لا يلمس <code>url</code> الحي · لا يعيد توليد SEO · صفر حذف من Cloudinary · دفعات صغيرة + معدّل محدود + خارج ساعات الذروة (جمهور 88% مصر — التوقيت بتوقيتهم).</div>
+      <div class="safety">🔴 حرج (bandwidth): السكربت <b>يسحب كل الأصول من Cloudinary</b> (تحميل) = استهلاك bandwidth على الحساب <b>المشترك مع الإنتاج</b> → قد يقارب حد الخطة أو يزيد الفاتورة الحيّة. تحقّق من حصة Cloudinary المتبقية قبل الترحيل الكامل · رحّل على دفعات موزّعة لا دفعة واحدة.</div>
+      <div class="t-row"><b>القبول</b><span>عيّنة أولاً · idempotent · صفر تأثير أداء على الإنتاج · استهلاك Cloudinary ضمن الحصة الآمنة.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P3-4" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P3-4</span><span class="t-title">فاحص شامل «كل الصور 200»</span><span class="tag warn">ثغرة 6</span></div>
+      <div class="t-row"><b>العمل</b><span>سكربت يمرّ على كل <code>Media.url</code> + <code>socialImage</code> + <code>bunnyUrl</code> → يتحقق 200. بوابة الترحيل والـ merge.</span></div>
+      <div class="t-row"><b>القبول</b><span>تقرير يمرّ 100% على العيّنة المُرحَّلة.</span></div>
+    </div></div>
+
+    <div class="task gate-task"><input type="checkbox" class="chk" id="P3-5" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P3-5</span><span class="t-title">تشغيل الترحيل الكامل + التحقق</span><span class="tag dep">يعتمد P3-3·P3-4</span></div>
+      <div class="t-row"><b class="gate">بوابة Epic 3</b><span class="gate"><code>bunnyUrl</code> مملوء لكل الصفوف · كل روابط Bunny تُرجع 200.</span></div>
+    </div></div>
+  </section>
+
+  <!-- Epic INV — جرد نقاط القراءة (قلب التبديل) -->
+  <section data-epic="INV">
+    <h2><span class="n" style="background:var(--bad)">◎</span> جرد نقاط القراءة — أهم مرحلة (لا تنسَ أي مكان) <span class="epic-pct" data-epic-pct="INV"></span></h2>
+    <p class="lead">كل صورة نوعان: <b>M — مربوطة بجدول Media</b> (لها <code>bunnyUrl</code>، تُحلّ من <code>media.url</code> → التبديل <code>bunnyUrl ?? url</code>) · <b>S — رابط Cloudinary نصّي مباشر</b> (بلا <code>bunnyUrl</code>؛ لا يُبدّله الفليب، يُعالَج بإعادة توليد السيو P35-3). كل بند نتحقق منه نعلّم عليه. المصدر: مسح حي للأنماط <code>logoMedia?.url · heroImageMedia?.url · featuredImage?.url · media[n].url · gallery.media.url</code>.</p>
+    <div class="callout"><b>الأداة المشتركة (تُبنى أولاً):</b> <code>mediaSrc(m) = m?.bunnyUrl ?? m?.url ?? null</code> في <code>dataLayer/lib/</code> (قاعدة الكود المشترك) + إضافة <code>bunnyUrl: true</code> لكل <code>select</code> لعلاقة Media. بعدها كل موقع وصول <code>X.logoMedia?.url</code> يصير <code>mediaSrc(X.logoMedia)</code>.</div>
+    <div class="callout bad"><b>🔴 اكتشاف حاسم:</b> مدوّنتي تقرأ الصور من طبقتين — (1) <b>حل حي</b> في الاستعلامات/الكمبوننت · (2) <b>سيو مخبوز</b> (<code>jsonLdStructuredData</code> + <code>nextjsMetadata</code>) يُولَّد في <b>الأدمن</b> ويُخزَّن في القاعدة. فمولّدات السيو في الأدمن <b>جزء من التبديل</b> (لا مجرد عرض داخلي) — لازم تُصدِر Bunny + إعادة توليد (P35-3).</div>
+    <div class="callout ok"><b>✅ تصحيح «اكتشاف حاسم ٢» (2026-07-29):</b> الخوف من «صور جسم المقال محفورة» <b>تبيّن خاطئاً بالدليل الحي</b>. ما فيه صور Cloudinary محفورة داخل نص المقال؛ الـ«صور الجسم» كانت <b>مصغّرات كروت «ذات صلة»</b> مصدرها selects ثانوية في <code>article-data.ts</code> بلا <code>bunnyUrl</code> — أُصلحت. صفحة المقال: 11 Bunny / 7 Cloudinary (4 = شعار/أفاتار المنصّة في النافبار نوع S · 3 مصغّرات شاردة). JSON-LD يبقى مخبوز (يُعالَج بإعادة التوليد A1).</div>
+    <div class="callout"><b>🧠 درس النمط (مثبت بـ tsc):</b> استخدم دائماً <code>mediaSrc(x)</code> — يشتغل حتى لو نوع المُستدعي <code>{url}</code> ضيّق (تمرير هيكلي + الحقل موجود وقت التشغيل من الـ select). النمط المباشر <code>x.bunnyUrl ?? x.url</code> <b>يفشل بـ tsc</b> على الأنواع الضيّقة (client-hero-v2). وأيضاً: مواقع تريد <code>string|undefined</code> → <code>mediaSrc(x) ?? undefined</code>؛ مواقع تريد <code>string|null</code> → <code>mediaSrc(x)</code> مباشرة.</div>
+    <div class="callout ok"><b>✅ تقدّم 2026-07-29 — طبقة القراءة الحيّة مكتملة (~45 ملف · tsc نظيف طوال الوقت · دليل حي: الرئيسية 45/59 Bunny · صفحة المقال: البارزة+الشعار+ذات صلة → Bunny):</b><br>
+      <b>مبدّل ومُثبت (INV-0·M1·M2·M3·M4·M5):</b> الأداة <code>mediaSrc</code> (<code>dataLayer/lib/media-src.ts</code>، بلا server-only) · كل مُحلّلات الاستعلام (client/article/category/tag/industry/reels) · بروفايل المستخدم (5) + راوتات <code>api/users/[id]/*</code> (4) · صفحة المقال (<code>article-data.ts</code>+<code>article-metadata.ts</code>+<code>page.tsx</code>+٨ مكوّنات) · صفحة العميل (page+book+helpers+hero-v2+hero-avatar+utils+related-clients+client-page-shell) · صفحات القوائم الأربع · <code>lib/seo/index.ts</code> (JSON-LD الحي).<br>
+      <b>⬜ متبقّي:</b> (1) <b>الرفع الجديد → Bunny مباشرة</b> — الأهم لهدف «إيقاف نمو Cloudinary». (2) <b>A1 + إعادة توليد السيو</b> — عشان JSON-LD/OG المخبوز يصير Bunny. (3) <b>صور جسم المقال</b> (محفورة نصّياً) — قرار خالد. (4) ذيول: <code>sitemap.ts</code> · <code>image-sitemap.xml</code> · <code>article-list.tsx</code> · <code>client-photos-preview.tsx</code> · كروت التصنيف · reels/favorites pages · selects المتعدّدة الأسطر الثانوية في <code>article-data.ts</code>.</div>
+
+    <div class="task"><input type="checkbox" class="chk" id="INV-0" checked><div class="t-body">
+      <div class="t-head"><span class="tid">INV-0</span><span class="t-title">بناء المُحلّل المشترك mediaSrc + جزء select مشترك</span><span class="tag bad">يُبنى أولاً</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">dataLayer/lib/bunny.ts (أو media.ts)</span></div>
+      <div class="t-row"><b>العمل</b><span><code>mediaSrc(m)</code> يرجّع <code>bunnyUrl ?? url</code>. يُصدَّر من <code>@modonty/database</code> ويُستخدم في التطبيقات الثلاثة.</span></div>
+    </div></div>
+
+    <h3 style="margin:18px 0 6px;font-size:14px;color:var(--bad)">🟢 مدوّنتي (عام) — لازم تبديل [M]</h3>
+
+    <div class="task"><input type="checkbox" class="chk" id="INV-M1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">INV-M1</span><span class="t-title">مُحلّلات الاستعلام (select + map)</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">app/api/helpers/client-queries.ts (logoMedia·heroImageMedia·media[CLIENT_MINI]) · article-queries.ts (featuredImage·client.logoMedia·gallery) · category-queries.ts · tag-queries.ts · industry-queries.ts · app/reels/helpers/reels-feed.ts</span></div>
+      <div class="t-row"><b>العمل</b><span>أضِف <code>bunnyUrl: true</code> لكل select · بدّل كل <code>?.url</code> بـ <code>mediaSrc(...)</code> عند الـ map.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="INV-M2" checked><div class="t-body">
+      <div class="t-head"><span class="tid">INV-M2</span><span class="t-title">صفحات المستخدم (helpers + API routes)</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">app/users/profile/helpers/{profile-liked,profile-disliked,profile-following,profile-favorites,profile-bookings}.ts · app/api/users/[id]/{liked,disliked,following,favorites}/route.ts · app/users/profile/favorites/page.tsx</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="INV-M3" checked><div class="t-body">
+      <div class="t-head"><span class="tid">INV-M3</span><span class="t-title">صفحة المقال + كمبوننتها (وصول مباشر)</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">app/articles/[slug]/page.tsx (featuredImage·heroImageMedia·logoMedia·gallery·clientLogoUrl) · components/{sidebar/article-client-card,article-lab-client-card,article-lab-mobile-identity,related-articles,more-from-client,more-from-author,article-manual-related,article-lab-read-more,article-image-gallery}.tsx</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="INV-M4" checked><div class="t-body">
+      <div class="t-head"><span class="tid">INV-M4</span><span class="t-title">صفحة العميل + كمبوننتها (وصول مباشر)</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">app/clients/[slug]/page.tsx · book/page.tsx · reels/page.tsx · components/{shell-hero/client-hero-v2,hero/hero-avatar,hero/utils,related-clients,article-list,client-photos-preview,client-page/client-page-shell}.tsx · helpers/client-page-data.ts</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="INV-M5" checked><div class="t-body">
+      <div class="t-head"><span class="tid">INV-M5</span><span class="t-title">صفحات القوائم (تصنيف/وسم/صناعة/كاتب)</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">app/categories/[slug]/page.tsx (+ components/{category-article-card,category-article-list-item}.tsx) · tags/[slug]/page.tsx · industries/[slug]/page.tsx · authors/[slug]/page.tsx</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="INV-M6" checked><div class="t-body">
+      <div class="t-head"><span class="tid">INV-M6</span><span class="t-title">السيو + JSON-LD + الخرائط <span class="tag bad">صفر تنازل سيو</span></span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">lib/seo/index.ts (Article + Client JSON-LD) · lib/seo/image-aspect-ratios.ts <b>(✓ فيه فرع Bunny من Epic 2)</b> · app/sitemap.ts · app/image-sitemap.xml/route.ts (featuredImage + gallery.media)</span></div>
+    </div></div>
+
+    <h3 style="margin:18px 0 6px;font-size:14px;color:var(--bad)">🟠 الأدمن — يُغذّي السيو المخبوز [M · لازم]</h3>
+
+    <div class="task"><input type="checkbox" class="chk" id="INV-A1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">INV-A1</span><span class="t-title">مولّدات السيو (تُخزَّن في القاعدة ومدوّنتي تقرأها)</span><span class="tag bad">حرِج</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">admin/lib/seo/{structured-data,metadata-generator,listing-page-seo-generator,knowledge-graph-generator}.ts · admin/lib/utils/{schema-org-generator,open-graph-generator,cloudinary-utils}.ts</span></div>
+      <div class="t-row"><b>العمل</b><span>تُصدِر <code>bunnyUrl ?? url</code> + قصّات النِسب من Bunny (knowledge-graph فيه فرع buildAspectUrl من Epic 2). يُقرَن بإعادة توليد P35-3.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="INV-A2" checked><div class="t-body">
+      <div class="t-head"><span class="tid">INV-A2</span><span class="t-title">عرض داخلي في الأدمن <span class="tag ok">خلص — لا كسر</span></span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">clients/[id]/components/{tabs/details-tab,tabs/seo-tab,tabs/media-social-tab,tabs/gallery-tab,client-view,client-header}.tsx · shared/{media-picker-dialog,thumbnail-image-view,media-image-field}.tsx · api/articles/[id]/validate/route.ts</span></div>
+      <div class="t-row"><b style="color:var(--ok)">✅ 2026-07-29</b><span>عرض داخلي — <code>cloudinary-utils.ts</code> (getOptimizedImageUrl/generateResponsiveSrcset/getThumbnailUrl) يفضّل <code>bunnyUrl</code> ويتخطّى قص Cloudinary → آمن على Bunny وCloudinary. لا كسر. admin tsc نظيف.</span></div>
+    </div></div>
+
+    <h3 style="margin:18px 0 6px;font-size:14px;color:var(--info)">🔵 الكونسول — داخلي [تحقّق فقط]</h3>
+
+    <div class="task"><input type="checkbox" class="chk" id="INV-C1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">INV-C1</span><span class="t-title">عرض داخلي في الكونسول <span class="tag info">Cloudinary يكفي</span></span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">console/app/(dashboard)/layout.tsx (شعار العميل) · dashboard/content/page.tsx · dashboard/articles/components/{article-preview-client,article-card}.tsx</span></div>
+    </div></div>
+
+    <h3 style="margin:18px 0 6px;font-size:14px;color:var(--warn)">🟡 حقول نصّية خام [S] — لا يبدّلها الفليب</h3>
+
+    <div class="task"><input type="checkbox" class="chk" id="INV-S1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">INV-S1</span><span class="t-title">قرار الحقول الخام <span class="tag ok">قُفل — يُحلّ ببند 6</span></span></div>
+      <div class="t-row"><b>الحقول</b><span class="files">socialImage (Article·Category·Tag·Industry·Client) · Settings (logoUrl·ogImage·صور صفحات التصنيفات) · Author.image · User.image/avatar</span></div>
+      <div class="t-row"><b style="color:var(--ok)">✅ القرار قُفل 2026-07-29 = خيار (ب): تُعاد كلها من Bunny (لا تبقى Cloudinary).</b><span>الحل الجذري = بند <b>6</b> أعلى الملف: ترقية «مدونتي» لعميل core → أصول المنصّة تدخل media library → تاخذ <code>bunnyUrl</code> تلقائياً. أصول العملاء (socialImage الخ) تُعاد عبر إعادة توليد السيو + رفع Bunny. تنفيذها في مرحلة الشغل القادمة.</span></div>
+    </div></div>
+
+    <h3 style="margin:18px 0 6px;font-size:14px;color:var(--ok)">✅ التحقق الحي</h3>
+
+    <div class="task gate-task"><input type="checkbox" class="chk" id="INV-V1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">INV-V1</span><span class="t-title">تحقّق Playwright: كل صورة من b-cdn.net</span></div>
+      <div class="t-row"><b>الصفحات</b><span class="files">/ (الفيد) · /articles/[slug] · /clients/[slug] · /categories/[slug] · /tags/[slug] · /industries/[slug] · /authors/[slug] · /reels · /users/profile/*</span></div>
+      <div class="t-row"><b class="gate">البوابة</b><span class="gate">كل <code>&lt;img&gt;</code> + كل رابط JSON-LD يطلع <code>b-cdn.net</code> · صفر <code>res.cloudinary.com</code> (إلا حقول [S] المُقرّرة) · صفر صورة مكسورة · صفر console error.</span></div>
+    </div></div>
+  </section>
+
+  <!-- Epic 3.5 -->
+  <section data-epic="35">
+    <h2><span class="n" style="background:var(--bad)">3.5</span> التبديل المتحكَّم — الخطوة الوحيدة التي تمسّ الإنتاج <span class="epic-pct" data-epic-pct="35"></span></h2>
+    <p class="lead">لا تبدأ إلا بعد نجاح كل الاختبار على الفرع + الكود المنشور يقرأ <code>bunnyUrl</code>. تعالج 1·9·22.</p>
+
+    <div class="task"><input type="checkbox" class="chk" id="P35-1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P35-1</span><span class="t-title">باكب DB أولاً</span></div>
+      <div class="t-row"><b>العمل</b><span><code>bash scripts/backup.sh</code> قبل أي كتابة.</span></div>
+      <div class="t-row"><b>القبول</b><span>باكب حديث موجود ومؤكّد.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P35-2" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P35-2</span><span class="t-title">الكود يقرأ bunnyUrl ?? url <span class="tag ok">خلص — طبقة القراءة ~55 ملف</span></span></div>
+      <div class="t-row"><b>العمل</b><span>طبقة القراءة تفضّل <code>bunnyUrl</code> ثم تسقط لـ <code>url</code> (Cloudinary) — لا كسر لحظي.</span></div>
+      <div class="t-row"><b>القبول</b><span>الصفحات تعرض Bunny حيث توفّر، وCloudinary حيث لا.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P35-3" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P35-3</span><span class="t-title">إعادة توليد SEO لكل كيان متأثّر</span><span class="tag bad">ثغرة 1 · الأخطر</span></div>
+      <div class="t-row"><b>العمل</b><span>الكاش (<code>jsonLdStructuredData</code> + <code>nextjsMetadata</code>) يحمل روابط Cloudinary محفورة. نعيد التوليد بأدوات موجودة: <code>regenerateArticleJsonLd</code> · <code>regenerateClientJsonLd</code> · <code>generateAndSave{Category,Industry,Tag}Seo</code> · <code>regenerateNextjsMetadata</code>.</span></div>
+      <div class="t-row"><b>القبول</b><span>JSON-LD/OG لكل كيان يشير لـ Bunny (فحص عيّنة من كل نوع).</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P35-4" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P35-4</span><span class="t-title">تحديث sitemap + OG صريحة</span><span class="tag warn">ثغرة 22</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">modonty/app/image-sitemap.xml/route.ts + قرّاء PA-3</span></div>
+      <div class="t-row"><b>العمل</b><span>ضمان أن قرّاء الرابط server-side يقرؤون الحقل الجديد — وإلا sitemap يشير Cloudinary والصفحة Bunny = تضارب.</span></div>
+      <div class="t-row"><b>القبول</b><span>sitemap + OG متسقان مع ما تعرضه الصفحة.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P35-5" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P35-5</span><span class="t-title">سكربت رجوع يشمل إعادة توليد SEO</span><span class="tag warn">ثغرة 9</span></div>
+      <div class="t-row"><b>العمل</b><span>الرجوع يعيد القراءة لـ <code>url</code> <b>ويعيد توليد SEO</b> (لا مجرد استرجاع الرابط). <code>bunnyUrl</code> يبقى.</span></div>
+      <div class="t-row"><b class="gate">بوابة Epic 3.5</b><span class="gate">لا حذف Cloudinary · JSON-LD/OG على Bunny · فاحص 200 يمرّ 100% · الرجوع مُختبَر.</span></div>
+    </div></div>
+  </section>
+
+  <!-- Epic 4 -->
+  <section data-epic="4">
+    <h2><span class="n">4</span> التحقّق الشامل + merge إلى main <span class="epic-pct" data-epic-pct="4"></span></h2>
+    <p class="lead">آخر خطوة. أربع بوابات معاً أو يبقى على الفرع.</p>
+
+    <div class="task"><input type="checkbox" class="chk" id="P4-1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P4-1</span><span class="t-title">remotePatterns للتطبيقات الثلاثة</span><span class="tag warn">ثغرة 14</span></div>
+      <div class="t-row"><b>الملفات</b><span class="files">modonty · admin · console / next.config.ts</span></div>
+      <div class="t-row"><b>العمل</b><span>admin بلا أي host بَني · console/modonty فيهما reels فقط → إضافة زونات Bunny (clients+assets) للثلاثة.</span></div>
+      <div class="t-row"><b>القبول</b><span>صور Bunny تظهر في التطبيقات الثلاثة.</span></div>
+      <div class="t-row"><b style="color:var(--ok)">✅ خلص 2026-07-29</b><span>admin عنده <code>*.b-cdn.net</code> (يغطي الكل). modonty: أُضيف <code>modonty-asset.b-cdn.net</code> (كان عنده reels+clients). console: أُضيف <code>modonty-clients.b-cdn.net</code>+<code>modonty-asset.b-cdn.net</code> (كان reels فقط — شعارات العملاء تُخدَم من Bunny الآن).</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P4-2" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P4-2</span><span class="t-title">تتبّع الدائرة الكاملة + قياس أداء نهائي</span></div>
+      <div class="t-row"><b>العمل</b><span>admin↕console↕modonty لكل نوع كيان · قياس LCP نهائي <b>على نفس البيئة</b> (Bunny مقابل Cloudinary لنفس الصفحة) — لا preview-vs-production.</span></div>
+      <div class="t-row"><b>القبول</b><span>الدائرة سليمة · أداء موثّق بأرقام في بيئة موحّدة.</span></div>
+    </div></div>
+
+    <div class="task gate-task"><input type="checkbox" class="chk" id="P4-3" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P4-3</span><span class="t-title">بوابة الـ merge إلى main</span></div>
+      <div class="t-row"><b class="gate">البوابة (الأربعة معاً)</b><span class="gate">(1) أداء أفضل مُثبَت · (2) فاحص 200 يمرّ 100% (صفر صورة مكسورة) · (3) JSON-LD/OG على Bunny · (4) صفر console errors. أي واحدة تفشل → يبقى على الفرع.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P4-4" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P4-4</span><span class="t-title">تنفيذ الـ merge إلى main — اللحظة الوحيدة التي نلمس فيها الإنتاج</span><span class="tag bad">بعد OK صريح فقط</span></div>
+      <div class="t-row"><b>الشرط</b><span>بوابة P4-3 مقفلة 100% + <b>تأكيد خالد الصريح</b> («merge»/«ادفع»). لا تتم تلقائياً أبداً.</span></div>
+      <div class="t-row"><b>العمل</b><span>باكب DB · <code>merge</code> الفرع لـ main + دفع → Vercel ينشر الإنتاج · التحقق على الدومين الحي · حذف الفرع بعد الاستقرار.</span></div>
+      <div class="safety">⚠️ سلامة: أول وآخر لمسة لـ main/الإنتاج في المشروع كله. نبدأ بباكب، ونتحقق فوراً بعد النشر.</div>
+      <div class="t-row"><b>تراجع فوري</b><span>لو ظهر أي كسر بعد النشر → <code>git revert</code> الـ merge + redeploy فوراً (يرجّع الإنتاج لكود Cloudinary خلال دقائق) · <code>bunnyUrl</code> يبقى في القاعدة بلا ضرر · نحقّق السبب على الفرع.</span></div>
+      <div class="t-row"><b>القبول</b><span>الإنتاج على الدومين الحي يعرض Bunny · فاحص 200 على الإنتاج يمرّ · صفر كسر · خطة التراجع مُجهّزة ومُختبَرة ذهنياً.</span></div>
+    </div></div>
+  </section>
+
+  <!-- Epic 5 -->
+  <section data-epic="5">
+    <h2><span class="n" style="background:var(--muted)">5</span> إيقاف Cloudinary — لاحقاً <span class="epic-pct" data-epic-pct="5"></span></h2>
+    <p class="lead">بعد فترة أمان طويلة وتأكيد نهائي.</p>
+    <div class="callout bad"><b>🔴 بلوكر ثغرة 24:</b> لا يُوقَف Cloudinary قبل معالجة <b>صور محتوى المقالات المحفورة</b> (روابط Cloudinary داخل <code>content</code> HTML) — وإلا تنكسر كلها. إمّا سكربت استبدال في <code>content</code>، أو إبقاء Cloudinary حياً للمحتوى القديم فقط.</div>
+
+    <div class="task"><input type="checkbox" class="chk" id="P5-1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">P5-1</span><span class="t-title">حذف أصول Cloudinary + تنظيف الكود + إزالة المفاتيح</span><span class="tag info">لاحقاً</span></div>
+      <div class="t-row"><b>العمل</b><span>حذف الأصول · تنظيف حقول <code>cloudinary*</code> · إزالة مفاتيح Cloudinary · إعادة تفعيل الماسح (بمنطق Bunny).</span></div>
+      <div class="t-row"><b>القبول</b><span>لا مرجع Cloudinary متبقٍّ · لا صورة مكسورة.</span></div>
+    </div></div>
+  </section>
+
+  <!-- Epic P -->
+  <section data-epic="P">
+    <h2><span class="n" style="background:var(--info)">P</span> حيلة تسخين الصور — مستقلة عن Bunny <span class="epic-pct" data-epic-pct="P"></span></h2>
+    <p class="lead">تشتغل الآن مع Cloudinary وبعد الترحيل مع Bunny. تحسّن <b>التنقّل</b> لا أول فتحة. يمكن البدء بها فوراً بالتوازي.</p>
+    <div class="callout"><b>✅ مكتملة ومعمّمة + مُختبَرة حياً (2026-07-28):</b> المُسخِّن المشترك <code>components/media/hero-warm.tsx</code> مُطبّق على <b>كل تدفّقات المقالات القوائم→التفاصيل</b>: الفيد · الرائجة · مقالات قد تهمك · المزيد من الكاتب/العميل · مقالات ذات صلة · اقرأ أيضاً. <b>تحقّق Playwright Network على preview لسطحين مستقلّين (فيد + ذات صلة):</b> hover → طلب تسخين واحد <code>q=100 w=1920</code> · التنقّل → الـ hero من الكاش (<code>transferSize=0</code> · CACHE-HIT · 0ms) · صفر تحميل مزدوج · صفر console errors. <b>+ كروت العملاء (مُعمّمة ومُختبَرة 2026-07-28):</b> المُسخِّن عُمّم لنوعين — <code>ArticleHeroWarm</code> و<code>ClientHeroWarm</code>. نوع العميل يطابق <code>client-hero-v2</code> (<code>stripCloudinaryTransforms</code> + quality 75 + sizes الـ hero) ومربوط بكرت العميل المشترك حيث <code>heroUrl = heroImageMedia.url</code> (categories/industries/tags/search). <b>تحقّق:</b> كرت عميل → صفحة العميل → الـ hero cover من الكاش (<code>q=75 w=1200 · transferSize=0 · CACHE-HIT</code>). كرت قائمة <code>/clients</code> يستخدم <code>ogImage</code> (صورة مختلفة عن الـ hero) → <b>تُرك بدون تسخين عمداً</b> (تسخينه = هدر). النطاق محصور بكروت المحتوى. أُضيفت للـ <code>image-speed</code> skill.</div>
+    <div class="callout"><b>📱 إصلاح الموبايل (حاسم — 88% جمهورنا موبايل):</b> التسخين كان على hover فقط → <b>الموبايل مفيهوش hover فكان محروم تماماً</b>. الحل: التسخين يشتغل الآن <b>عند ظهور الكرت (viewport)</b> على كل الأجهزة، بحد أقصى <code>6/صفحة</code> (حماية بيانات الموبايل) + يحترم saveData/2G؛ الديسكتوب يزيد hover للكروت الأبعد. <b>تحقّق Playwright على viewport موبايل 390px:</b> ٤ تسخينات انطلقت من التمرير <b>بلا أي hover</b> (<code>w=640</code>) → النقر → الـ hero من الكاش (<code>transferSize=0</code> · CACHE-HIT · 0ms) · صفر تحميل مزدوج · صفر console errors. <b>الحيلة الآن تفيد الأغلبية (الموبايل) فعلياً.</b></div>
+    <div class="callout bad"><b>🔴 خطورتها على الإنتاج أعلى من Bunny:</b> <code>link.tsx</code> مستخدم في <b>كل تنقّل بالموقع</b> — أي bug في الـ Link المخصص = <b>كسر ملاحة عام</b> (مو صور فقط). فبوابة الدمج لهذا الـ Epic تتطلب <b>اختبار تنقّل شامل</b> (روابط داخلية · فتح تبويب جديد · زر الرجوع · active states · كيبورد/a11y)، لا مجرد قياس LCP. لا نكسر أي سلوك في الـ Link الحالي.</div>
+    <div class="callout bad"><b>⚠️ أخطر نقطة تقنية:</b> صورة التسخين لازم تطابق الرِندَر حرفياً (<code>/_next/image?url&amp;w&amp;q</code>) وإلا <b>تحميل مزدوج</b>. عندنا <code>clampQuality</code> يقرّب لـ [25,50,75,100] — التسخين يمرّر نفس quality/sizes عبر <code>getImageProps</code>.</div>
+
+    <div class="task"><input type="checkbox" class="chk" id="PP-1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">PP-1</span><span class="t-title">بناء Link مخصص (IntersectionObserver + hover)</span><span class="tag ok">✓ تمّ 2026-07-28 (تصميم أأمن)</span></div>
+      <div class="t-row"><b>قرار تصميمي (أأمن من تعديل Link العام)</b><span>الـ <code>components/link/index.tsx</code> مستخدم في <b>كل تنقّل بالموقع</b> → تحويله client + IO = خطر عام. بدلاً منه: مُسخِّن غير مرئي <code>components/feed/postcard/ArticleHeroWarm.tsx</code> داخل كرت المقال — <b>لا يلمس أي منطق ملاحة/Link</b>. IO(0.1، بعد 300ms) → <code>router.prefetch</code> · hover → تسخين صورة الـ hero. بلا خطف mousedown. فشله = «لا تسخين» لا كسر ملاحة.</span></div>
+      <div class="t-row"><b>القبول</b><span>tsc صفر · prefetch عند الظهور + تسخين عند hover (يُتحقق على preview — PP-5).</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="PP-2" checked><div class="t-body">
+      <div class="t-head"><span class="tid">PP-2</span><span class="t-title">مصدر صورة المقال من DB (لا HTML كامل)</span><span class="tag ok">✓ تمّ 2026-07-28</span></div>
+      <div class="t-row"><b>النتيجة</b><span>الكرت يعرف <code>post.image</code> (نفس <code>featuredImage.url</code>) → يبني srcset الهدف عبر <code>getImageProps</code> مباشرة. <b>صفر endpoint · صفر جلب/parse HTML · صفر تبعية linkedom.</b></span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="PP-3" checked><div class="t-body">
+      <div class="t-head"><span class="tid">PP-3</span><span class="t-title">تسخين الـ LCP فقط عبر getImageProps</span><span class="tag ok">✓ تمّ 2026-07-28</span></div>
+      <div class="t-row"><b>النتيجة</b><span><code>new Image()</code> · <code>fetchPriority=low</code> · <code>decoding=async</code> · ترتيب sizes→srcset→src · مطابقة الـ hero بالضبط: <code>optimizeCloudinaryUrl(url,true)</code> + quality 100 + sizes الـ hero + fill. الصورة الرئيسية فقط. dedupe عبر <code>Set</code>.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="PP-4" checked><div class="t-body">
+      <div class="t-head"><span class="tid">PP-4</span><span class="t-title">احترام الشبكات البطيئة + Data Saver</span><span class="tag ok">✓ تمّ 2026-07-28</span></div>
+      <div class="t-row"><b>النتيجة</b><span><code>prefersNoWarm()</code> يفحص <code>saveData</code> + <code>effectiveType</code> (2g/slow-2g) → يتخطّى كل المُسخِّن. التسخين على الموبايل بلا hover لا يُطلَق (آمن للبيانات). النطاق محصور بكروت الفيد فقط (مش الموقع كله).</span></div>
+    </div></div>
+
+    <div class="task gate-task"><input type="checkbox" class="chk" id="PP-5" checked><div class="t-body">
+      <div class="t-head"><span class="tid">PP-5</span><span class="t-title">قياس LCP قبل/بعد + فحص التحميل المزدوج</span><span class="tag ok">✓ نجح على preview live 2026-07-28</span></div>
+      <div class="t-row"><b>الدليل (preview أونلاين، Playwright)</b><span><b>عند hover:</b> طلب تسخين واحد <code>q=100 w=1920</code> (متغيّر الـ hero). <b>عند التنقّل:</b> صورة الـ hero (156KB) حُمّلت من الكاش — <code>transferSize=0</code> · <b>CACHE-HIT</b> · <b>0ms</b> (كانت ~600ms باردة). <b>صفر تحميل مزدوج</b> (طلب hero واحد بالضبط = تطابق cache-key تام). <b>صفر console errors</b> في الرحلة كلها. الملاحة سليمة: نقر الكرت → مقال · زر الرجوع → الفيد.</span></div>
+      <div class="t-row"><b class="gate">بوابة Epic P</b><span class="gate">✅ محقّقة: تسخين يعمل + صفر تحميل مزدوج + صفر انحدار ملاحة + صفر console errors. النطاق محصور بكروت الفيد (آمن). <b>Epic P مكتمل على الفرع.</b></span></div>
+    </div></div>
+  </section>
+
+  <!-- Epic PERF -->
+  <section data-epic="PERF">
+    <h2><span class="n" style="background:var(--bad)">⚡</span> تحسين أداء modonty (Core Web Vitals) <span class="epic-pct" data-epic-pct="PERF"></span></h2>
+    <p class="lead"><b>لماذا حرِج:</b> نموذج عمل مدوّنتي = تحسين SEO، وGoogle Core Web Vitals عامل ترتيب. <b>موقعنا نفسه بطيء بينما نبيع السرعة = تناقض يجب حلّه.</b></p>
+    <div class="callout bad"><b>القياس الأساسي (PSI mobile · الصفحة الرئيسية · 2026-07-28):</b> Score <b>69–76</b> (Lighthouse غير حتمي ±5-10) · <b>LCP 4.4s 🔴</b> (الهدف &lt;2.5s) · TBT ~490ms · main-thread <b>2.3s</b> · تنفيذ JS 1.7s · <b>JS غير مستخدمة 309KB</b> · server 150ms ✅ · CLS 0 ✅.</div>
+    <div class="callout"><b>اكتُشف بالدليل — ما هو ليس المشكلة:</b> سكربتات التتبّع (GTM + Contentsquare/Hotjar) <b>محمّلة أصلاً بـ <code>strategy="lazyOnload"</code></b> → مؤجّلة صح، لا تحجب أول فتحة. <b>فالرافعات الحقيقية = (1) LCP · (2) وزن الجافاسكريبت (309KB غير مستخدمة + hydration).</b></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="PERF-0" checked><div class="t-body">
+      <div class="t-head"><span class="tid">PERF-0</span><span class="t-title">تشخيص دقيق (قراءة فقط)</span></div>
+      <div class="t-row"><b>العمل</b><span>تحديد عنصر LCP بالضبط + تفكيك أجزاء LCP الأربعة (TTFB · resource load delay · load time · element render delay) + أكبر chunks JS غير مستخدمة (bundle analyzer) + تفصيل الطرف الثالث. نعرف <b>لماذا</b> 4.4s قبل أي تعديل.</span></div>
+      <div class="t-row"><b>القبول</b><span>تقرير: عنصر LCP + السبب الرئيسي (صورة/JS/render) + قائمة أثقل الـ JS.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="PERF-1" checked><div class="t-body">
+      <div class="t-head"><span class="tid">PERF-1</span><span class="t-title">تحسين LCP (&lt;2.5s)</span></div>
+      <div class="t-row"><b>العمل</b><span>عنصر LCP فوق الطية → <code>preload</code> صحيح (Next 16، بلا جمعه مع loading/fetchPriority) + مقاس موبايل مناسب (q/sizes) + تقليل render delay لو محجوب بالـ JS.</span></div>
+      <div class="safety">⚠️ صورة الـ LCP لازم تُخدَم بأولوية — لا نلغي preload، نصلّحه.</div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="PERF-2" checked><div class="t-body">
+      <div class="t-head"><span class="tid">PERF-2</span><span class="t-title">تقليل الجافاسكريبت (309KB غير مستخدمة)</span></div>
+      <div class="t-row"><b>العمل</b><span><code>dynamic()</code>+ssr:false للمكوّنات الثقيلة أسفل الطية · مراجعة barrels (lucide/radix) · تقسيم الـ bundle · إزالة كود ميت. هدف: تقليل main-thread 2.3s.</span></div>
+    </div></div>
+
+    <div class="task"><input type="checkbox" class="chk" id="PERF-3" checked><div class="t-body">
+      <div class="t-head"><span class="tid">PERF-3</span><span class="t-title">تسلسل الطرف الثالث (بلا خسارة تتبّع)</span></div>
+      <div class="t-row"><b>العمل</b><span>GTM يحمّل GA4+FB Pixel+Contentsquare بعد التفاعل — مراجعة إن التأجيل يكفي، أو تأخير قائم على أول تفاعل (بلا فقد أحداث مهمة). التتبّع مقدّس — لا نكسره.</span></div>
+      <div class="safety">⚠️ ممنوع نخسر أي تتبّع/تحليلات — التأجيل فقط، لا الحذف.</div>
+    </div></div>
+
+    <div class="task gate-task"><input type="checkbox" class="chk" id="PERF-4" checked><div class="t-body">
+      <div class="t-head"><span class="tid">PERF-4</span><span class="t-title">قياس before/after + بوابة</span></div>
+      <div class="t-row"><b>العمل</b><span>PSI mobile <b>تشغيلات متعددة</b> (للـ variance) قبل/بعد على preview + قياس مطابق على production. توثيق الأرقام.</span></div>
+      <div class="t-row"><b class="gate">بوابة PERF</b><span class="gate">LCP &lt; 2.5s + Score أعلى بثبات (متوسط تشغيلات) + صفر خسارة تتبّع + CLS يفضل 0. كل الشغل على branch/preview، الدمج لـ main بعد التحقّق.</span></div>
+    </div></div>
+  </section>
+
+  <footer>
+    <b>مصدر:</b> <code>documents/archive/tasks/BUNNY-MIGRATION-PLAN-v1.html</code> (v5) · هذا PRD للتنفيذ خطوة-خطوة. التقدّم محفوظ محلياً في متصفّحك. لا كود يُكتب حتى OK صريح لكل تاسك.<br>
+    <b>➡️ المرحلة النهائية (الرفع + التفعيل + تأسيس core مدونتي):</b> <code>documents/archive/tasks/BUNNY-GOLIVE-PRD-v1.html</code>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var KEY = 'bunny-prd-v1';
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.chk'));
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ saved = {}; }
+
+  function apply(box){
+    var t = box.closest('.task');
+    if(box.checked){ t.classList.add('done'); } else { t.classList.remove('done'); }
+  }
+  function save(){
+    var o = {};
+    boxes.forEach(function(b){ if(b.checked) o[b.id] = 1; });
+    localStorage.setItem(KEY, JSON.stringify(o));
+  }
+  function updateProgress(){
+    // Headline bar = Bunny migration only. PERF is a separate performance workstream —
+    // excluded here so the % means "migration progress" (it still shows its own per-epic badge).
+    var mainBoxes = boxes.filter(function(b){ return !b.closest('section[data-epic="PERF"]'); });
+    var total = mainBoxes.length;
+    var done = mainBoxes.filter(function(b){ return b.checked; }).length;
+    var pct = total ? Math.round(done*100/total) : 0;
+    document.getElementById('pct').textContent = pct + '%';
+    document.getElementById('barfill').style.width = pct + '%';
+    document.getElementById('count').textContent = done + ' / ' + total + ' تاسك (Bunny)';
+    // per-epic
+    document.querySelectorAll('section[data-epic]').forEach(function(sec){
+      var eb = Array.prototype.slice.call(sec.querySelectorAll('.chk'));
+      var ed = eb.filter(function(b){ return b.checked; }).length;
+      var lbl = sec.querySelector('[data-epic-pct]');
+      if(lbl){ lbl.textContent = ed + '/' + eb.length; }
+    });
+  }
+  boxes.forEach(function(b){
+    if(saved[b.id]) b.checked = true;
+    apply(b);
+    b.addEventListener('change', function(){ apply(b); save(); updateProgress(); });
+  });
+  updateProgress();
+
+  document.getElementById('reset').addEventListener('click', function(){
+    if(!confirm('تصفير كل التقدّم؟')) return;
+    localStorage.removeItem(KEY);
+    boxes.forEach(function(b){ b.checked = false; apply(b); });
+    updateProgress();
+  });
+})();
+</script>
+</body>
+</html>

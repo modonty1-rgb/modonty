@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عصف ذهني — الفيديوهات القصيرة والصور في مدونتي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1a2233; --muted:#5b6577; --line:#e5e8ee;
+    --brand:#0f6fde; --brand-soft:#eaf2fd;
+    --ok:#0f9d58; --ok-soft:#e8f6ee;
+    --warn:#b45309; --warn-soft:#fdf3e3;
+    --danger:#c02626; --danger-soft:#fdecec;
+    --violet:#6d28d9; --violet-soft:#f1ebfd;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--ink);line-height:1.9;font-size:16px;padding:32px 16px 120px}
+  .wrap{max-width:880px;margin:0 auto}
+  code,.ltr{direction:ltr;unicode-bidi:isolate;font-family:Consolas,Menlo,monospace;font-size:.85em;background:#eef1f6;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:#334;white-space:nowrap}
+
+  /* header */
+  .hero{background:linear-gradient(135deg,#0d1b34,#123a6e);color:#fff;border-radius:18px;padding:34px 30px;margin-bottom:26px}
+  .hero .chip{display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:3px 14px;font-size:13px;margin-bottom:14px}
+  .hero h1{font-size:27px;font-weight:800;line-height:1.5}
+  .hero p{color:#c9d8ef;margin-top:10px;font-size:15px}
+  .hero .meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;font-size:13px;color:#9fb8dd}
+
+  /* sections */
+  section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:20px}
+  .sec-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .sec-num{min-width:34px;height:34px;border-radius:10px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font-weight:800;font-size:15px}
+  h2{font-size:20px;font-weight:800}
+  h3{font-size:16px;font-weight:700;margin:18px 0 6px}
+  p{margin-bottom:10px}
+  ul{padding-inline-start:22px;margin-bottom:10px}
+  li{margin-bottom:7px}
+  .muted{color:var(--muted);font-size:14px}
+
+  /* callouts */
+  .note{border-radius:12px;padding:14px 16px;margin:12px 0;font-size:15px;border:1px solid}
+  .note.ok{background:var(--ok-soft);border-color:#bfe6cf}
+  .note.warn{background:var(--warn-soft);border-color:#f3ddb0}
+  .note.danger{background:var(--danger-soft);border-color:#f3c2c2}
+  .note.info{background:var(--brand-soft);border-color:#c8ddf7}
+  .note b{display:block;margin-bottom:4px}
+
+  /* badges */
+  .badge{display:inline-block;border-radius:99px;padding:2px 12px;font-size:12.5px;font-weight:700;vertical-align:middle}
+  .badge.ok{background:var(--ok-soft);color:var(--ok)}
+  .badge.warn{background:var(--warn-soft);color:var(--warn)}
+  .badge.danger{background:var(--danger-soft);color:var(--danger)}
+  .badge.info{background:var(--brand-soft);color:var(--brand)}
+  .badge.violet{background:var(--violet-soft);color:var(--violet)}
+
+  /* tables */
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14.5px}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:right;vertical-align:top}
+  th{background:#f2f5f9;font-weight:700;white-space:nowrap}
+  tr:nth-child(even) td{background:#fafbfd}
+
+  /* phases */
+  .phase{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-bottom:1px dashed var(--line)}
+  .phase:last-child{border-bottom:0}
+  .phase .n{min-width:30px;height:30px;border-radius:50%;background:#123a6e;color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;margin-top:3px}
+  .phase b{display:block}
+
+  /* decisions */
+  .decision{border:2px solid var(--line);border-radius:14px;padding:18px 18px 14px;margin-bottom:16px;transition:border-color .2s}
+  .decision.locked{border-color:var(--ok)}
+  .decision .d-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .decision h3{margin:0;font-size:16.5px}
+  .d-status{font-size:12.5px;font-weight:700;border-radius:99px;padding:2px 12px;background:var(--warn-soft);color:var(--warn)}
+  .decision.locked .d-status{background:var(--ok-soft);color:var(--ok)}
+  .opts{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+  .opt{border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer;background:#fbfcfe;font-size:15px;transition:all .15s}
+  .opt:hover{border-color:var(--brand)}
+  .opt.rec{border-color:#bcd7f7;background:var(--brand-soft)}
+  .opt.selected{border-color:var(--ok);background:var(--ok-soft);font-weight:700}
+  .opt .rec-tag{font-size:12px;color:var(--brand);font-weight:700;margin-inline-start:6px}
+  .opt.selected .check{color:var(--ok);font-weight:800}
+
+  /* summary bar */
+  .sumbar{position:fixed;bottom:0;right:0;left:0;background:#0d1b34;color:#fff;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;box-shadow:0 -6px 18px rgba(13,27,52,.25)}
+  .sumbar .txt{font-size:14px}
+  .sumbar button{font-family:inherit;font-size:14.5px;font-weight:700;border:0;border-radius:10px;padding:9px 20px;cursor:pointer;background:#2eaf64;color:#fff}
+  .sumbar button:hover{background:#279957}
+  .sumbar .count{background:rgba(255,255,255,.15);border-radius:99px;padding:2px 12px;font-size:13px}
+
+  /* glossary */
+  .gloss td:last-child{direction:ltr;text-align:left;font-family:Consolas,Menlo,monospace;font-size:13px}
+
+  details{margin-top:10px}
+  summary{cursor:pointer;font-weight:700;color:var(--brand);font-size:14.5px}
+  details ul{margin-top:8px}
+  details li{direction:ltr;text-align:left;font-family:Consolas,Menlo,monospace;font-size:12.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <div class="hero">
+    <span class="chip">🧠 عصف ذهني — 10 قرارات مقفلة 🔒 · باقي القرار الختامي</span>
+    <h1>إدخال الفيديوهات القصيرة والصور في مدونتي<br>على فكرة تيك توك وإنستقرام</h1>
+    <p>دراسة كاملة مبنية على: فحص الكود الحالي عندنا + الوثائق الرسمية لباني + الوثائق الرسمية لقوقل + معايير الأداء الرسمية. كل معلومة هنا لها مصدر — صفر تخمين.</p>
+    <div class="meta">
+      <span>📅 التاريخ: 2026-07-04</span>
+      <span>📂 المشروع: مدونتي</span>
+      <span>🔬 مصادر رسمية مُراجعة: 74 صفحة وثائق (جولتان)</span>
+    </div>
+  </div>
+
+  <!-- ═══════════ 1. الخلاصة ═══════════ -->
+  <section>
+    <div class="sec-head"><span class="sec-num">1</span><h2>الخلاصة أولاً</h2></div>
+    <p>الفكرة صح وتوقيتها صح. والأهم: هي مو فكرة جديدة على المشروع — <b>عندنا التزام تجاري قائم فيها أصلاً</b>. الريلز مذكورة كتسليمة للباقات الأعلى في عروضنا، وموجود فعلاً تبويب اسمه «الريلز» في صفحة كل عميل على الموقع، بس هو حالياً <b>واجهة وهمية</b>: يعرض صور المقالات بشكل عمودي ويقول للزائر «فيديوهات قصيرة قريباً».</p>
+    <div class="note ok"><b>✅ رأيي المختصر</b>
+      باني يغطي كل الاحتياج التقني، والتكلفة شبه رمزية (تفاصيل الأرقام تحت). القرار الأهم في المشروع كله مو تقني — هو قرار <b>سيو</b>: كل فيديو لازم يكون له صفحة مستقلة خاصة فيه عشان قوقل يفهرسه. لو بنينا على هذا الأساس من اليوم الأول، الفيديو يخدم هدفنا الأول (الظهور في كل نتائج قوقل) بدل ما يكون مجرد ترفيه للزوار.</div>
+  </section>
+
+  <!-- ═══════════ 2. وش عندنا اليوم ═══════════ -->
+  <section>
+    <div class="sec-head"><span class="sec-num">2</span><h2>وش عندنا اليوم في الكود</h2></div>
+    <table>
+      <tr><th>الموجود</th><th>حالته</th></tr>
+      <tr><td>تبويب «الريلز» في صفحة العميل على الموقع</td><td><span class="badge warn">واجهة وهمية</span> يعرض صور المقالات بمقاس عمودي، ومخفي عن قوقل عمداً</td></tr>
+      <tr><td>خانة رابط «فيديو تعريفي» في بيانات العميل</td><td><span class="badge warn">موجودة بلا استخدام</span> ما تظهر في أي صفحة ولا تدخل في بيانات السيو</td></tr>
+      <tr><td>نظام الوسائط المركزي (الصور)</td><td><span class="badge ok">قوي وجاهز</span> نموذج وسائط كامل ببيانات سيو لكل صورة — بس ما يدعم الفيديو حالياً</td></tr>
+      <tr><td>عدّادات التفاعل (إعجاب، مشاهدة، تعليق، مشاركة)</td><td><span class="badge ok">جاهزة</span> مبنية للمقالات، ونفس النمط ينسحب على الريلز</td></tr>
+      <tr><td>دائرة تحديث الكاش بين التطبيقات الثلاثة</td><td><span class="badge ok">جاهزة</span> نضيف لها وسم جديد للريلز وتشتغل</td></tr>
+      <tr><td>مولدات السيو والبيانات المنظمة في طبقة البيانات</td><td><span class="badge ok">جاهزة</span> نفس النمط المستخدم للمقالات والعملاء يتكرر للفيديو</td></tr>
+      <tr><td>أي ربط مع باني أو مشغّل فيديو</td><td><span class="badge danger">غير موجود</span> هذا هو الجديد الحقيقي الوحيد في المشروع</td></tr>
+    </table>
+    <p class="muted">يعني: أغلب البنية التحتية موجودة ومجرّبة. الجديد فعلياً شيئان فقط: مسار رفع وتحويل الفيديو، ومشغّل الفيديو في الواجهة.</p>
+  </section>
+
+  <!-- ═══════════ 3. شرط قوقل ═══════════ -->
+  <section>
+    <div class="sec-head"><span class="sec-num">3</span><h2>شرط قوقل — أهم اكتشاف في الدراسة</h2></div>
+    <p>قوقل ما يفهرس الفيديو إلا بشروط موثّقة في وثائقه الرسمية، وهذي الشروط تحدد شكل المشروع كله:</p>
+    <table>
+      <tr><th>الشرط الرسمي</th><th>معناه عندنا</th></tr>
+      <tr><td><b>صفحة مشاهدة مستقلة</b> لكل فيديو، والفيديو هو المحتوى الرئيسي فيها</td><td>كل ريل له رابط خاص (مثل <code>/reels/xxx</code>). الفيد العمودي وحده ما يكفي للفهرسة</td></tr>
+      <tr><td>قوقل لازم يقدر <b>يسحب ملف الفيديو نفسه</b> والصورة المصغرة</td><td>روابط الفيديو تكون مفتوحة بدون توكن حماية. المحتوى عام أصلاً فما فيه مشكلة</td></tr>
+      <tr><td>بيانات منظمة للفيديو (اسم + وصف + صورة مصغرة + تاريخ نشر + رابط الملف)</td><td>نفس نظام البيانات المنظمة اللي بنيناه للمقالات — نكرر النمط للريلز</td></tr>
+      <tr><td>خريطة موقع خاصة بالفيديو</td><td>مثل خريطة الصور الموجودة عندنا حالياً — نبني نسخة فيديو</td></tr>
+    </table>
+    <div class="note danger"><b>⚠️ نقطة صراحة — بدون مجاملة</b>
+      شريط «الفيديوهات القصيرة» اللي يطلع في نتائج قوقل بالجوال: <b>ما له أي توثيق رسمي</b>، ولا طريقة معلنة للمواقع المستقلة تدخل فيه، وعملياً محتكَر لتيك توك ويوتيوب وإنستقرام. فما أوعدك فيه. الطريق الموثّق الوحيد هو الفهرسة القياسية للفيديو، وهي تدخلنا في: نتائج البحث الرئيسية + وضع الفيديو + بحث الصور + ديسكفر. وهذا بحد ذاته مكسب كبير لهدفنا الأول.</div>
+    <div class="note info"><b>💡 ملاحظة تخدمنا</b>
+      المقاطع الأقصر من 30 ثانية تنفهرس عادي، بس ما تحصل على ميزة «اللحظات الرئيسية» في النتائج. مو مشكلة للريلز.</div>
+  </section>
+
+  <!-- ═══════════ 4. قدرات باني ═══════════ -->
+  <section>
+    <div class="sec-head"><span class="sec-num">4</span><h2>وش يعطينا باني (مؤكد من وثائقهم الرسمية)</h2></div>
+    <table>
+      <tr><th>الميزة</th><th>التفصيل</th></tr>
+      <tr><td>رفع مباشر من المتصفح</td><td>رفع قابل للاستئناف لو انقطع النت، والمفتاح السري يظل عندنا في السيرفر ولا يوصل للمتصفح — يعني نقدر لاحقاً نخلي العميل يرفع بنفسه من الكونسول بأمان كامل</td></tr>
+      <tr><td>تحويل تلقائي مجاني</td><td>يحوّل الفيديو لكل الجودات تلقائياً، ويدعم الفيديو العمودي صراحةً بمقاس 1080×1920</td></tr>
+      <tr><td>صور مصغرة ومعاينات</td><td>تتولد تلقائياً لكل فيديو: صورة مصغرة + معاينة متحركة — جاهزة للفيد وللسيو بدون شغل منا</td></tr>
+      <tr><td>تفريغ صوتي بالعربي 🌟</td><td>يحوّل كلام الفيديو لنص مكتوب (يدعم العربية ضمن 56 لغة) بتكلفة 10 سنت للدقيقة. <b>هذا كنز سيو</b>: نص الفيديو ينزل في صفحة المشاهدة فيصير عندنا محتوى نصي قابل للفهرسة مع كل ريل</td></tr>
+      <tr><td>تحليلات جاهزة</td><td>مشاهدات + مدة مشاهدة + خريطة حرارية توضح وين الناس توقف وتعيد — نعرضها للعميل في الكونسول بدون ما نبني نظام قياس من الصفر</td></tr>
+      <tr><td>إشعار فوري عند جهوزية الفيديو</td><td>باني ينادي سيرفرنا تلقائياً لما يخلص التحويل — يتوافق مع دائرة تحديث الكاش الموجودة عندنا</td></tr>
+    </table>
+    <h3>💰 التكلفة (من صفحة أسعارهم الرسمية)</h3>
+    <table>
+      <tr><th>البند</th><th>السعر</th><th>حسبة واقعية</th></tr>
+      <tr><td>التخزين</td><td>سنت واحد للقيقا شهرياً</td><td>مئة ريل × 15 قيقا إجمالي ≈ <b>15 سنت بالشهر</b></td></tr>
+      <tr><td>التوصيل للمشاهدين</td><td>من نص سنت إلى 6 سنت للقيقا (حسب الشبكة)</td><td>ريل 30 ثانية ≈ 9 ميقا → <b>ألف مشاهدة سعودية بأقل من دولار</b></td></tr>
+      <tr><td>التحويل القياسي</td><td>مجاني</td><td>—</td></tr>
+      <tr><td>التفريغ الصوتي</td><td>10 سنت لكل دقيقة فيديو</td><td>مئة ريل نص دقيقة ≈ <b>5 دولار مرة واحدة</b></td></tr>
+    </table>
+    <div class="note warn"><b>⚠️ تنبيهان مهمان من وثائقهم — نمسكهم قبل أول رفع</b>
+      <b style="display:inline">١)</b> خيار توليد ملفات <code>MP4</code> لازم يتفعّل في إعدادات المكتبة <u>قبل أول رفع</u> — ما يشتغل بأثر رجعي على الفيديوهات المرفوعة قبله، وخطتنا للمشغّل تعتمد عليه.<br>
+      <b style="display:inline">٢)</b> توصيل الشرق الأوسط على شبكتهم القياسية هو الأغلى (6 سنت للقيقا مقابل سنت لأوروبا). فيه شبكة أرخص بكثير (نص سنت) بس نقاط تواجدها أقل — نحتاج نجرب الاثنتين ونقيس السرعة من السعودية قبل ما نعتمد. حتى الخيار الأغلى رخيص عملياً، بس الفرق 12 ضعف يستاهل قياس.</div>
+  </section>
+
+  <!-- ═══════════ 5. المعمارية المقترحة ═══════════ -->
+  <section>
+    <div class="sec-head"><span class="sec-num">5</span><h2>الصورة المقترحة</h2></div>
+
+    <h3>🗄️ نموذج بيانات جديد ومنفصل</h3>
+    <p>الريل يكون كيان جديد في قاعدة البيانات، <b>منفصل عن المقال</b>. السبب: المقال عندنا مثقل بنظام تحقق من عشر مراحل وإصدارات وكاش سيو معقد — والريل كيان خفيف وسريع. نعيد استخدام الجاهز: نموذج الوسائط، عدّادات التفاعل، دائرة الكاش، ومولدات السيو.</p>
+
+    <h3>▶️ المشغّل — قرار أداء محسوم بالأرقام</h3>
+    <p>نشغّل ملفات <code>MP4</code> مباشرة بمشغّل المتصفح الأصلي — يشتغل في كل المتصفحات <b>بصفر جافاسكربت إضافية</b>. البديل (مكتبة البث التكيفي) يكلف 160 كيلوبايت مضغوطة، وهذا وحده ينسف ميزانية أداء الموقع كله، والبث التكيفي ما له قيمة حقيقية لمقاطع 15–60 ثانية حسب التوصيات الرسمية. لو دخلنا مستقبلاً فيديوهات طويلة، نضيفه وقتها للصفحات اللي تحتاجه بس.</p>
+
+    <h3>🖥️ الواجهات الأربع على الموقع</h3>
+    <table>
+      <tr><th>الصفحة</th><th>وظيفتها</th><th>الأداء</th></tr>
+      <tr><td>الرئيسية</td><td>مدخل صغير: شبكة صور مصغرة عمودية توصّل لصفحة الريلز</td><td><span class="badge ok">صفر جافاسكربت</span> مجرد صور وروابط — أداء الرئيسية ما ينلمس إطلاقاً</td></tr>
+      <tr><td>صفحة الريلز <code>/reels</code></td><td>الفيد العمودي بالسحب — مثل تيك توك: تشغيل تلقائي صامت للفيديو الظاهر بس</td><td><span class="badge info">معزولة</span> كل كود الفيد يتحمّل في هالصفحة بس، 3–5 بطاقات محمّلة فقط مهما سحبت</td></tr>
+      <tr><td>صفحة المشاهدة <code>/reels/xxx</code></td><td>فيديو واحد + التفريغ النصي + رابط المقال المرتبط + بيانات السيو المنظمة</td><td><span class="badge violet">صفحة السيو</span> هذي اللي يفهرسها قوقل — قلب المشروع</td></tr>
+      <tr><td>تبويب ريلز العميل</td><td>يصير حقيقي: ريلز العميل الفعلية بدل الواجهة الوهمية الحالية</td><td><span class="badge ok">تحسين مباشر</span> نفس الصفحة الموجودة تتعبى ببيانات حقيقية</td></tr>
+    </table>
+
+    <h3>👆 كيف يشتغل السحب مع «صفحة لكل ريل»؟ <span class="badge info">استيضاح خالد 2026-07-04</span></h3>
+    <p>ما فيه تعارض — هي نفس تجربة تيك توك على الويب بالضبط: تفتح صفحة الريلز وتسحب لفوق بدون أي إعادة تحميل، تجربة واحدة متواصلة. خلف الكواليس: مع كل سحبة، <b>رابط المتصفح يتحدّث تلقائياً</b> لرابط الريل الظاهر (بدون تحميل صفحة جديدة). والعكس صحيح: لو أحد شارك رابط ريل وفتحته مباشرة، تفتح نفس التجربة واقفة على ذاك الفيديو وتكمل سحب طبيعي.</p>
+    <div class="note info"><b>💡 الخلاصة</b>«صفحة لكل ريل» شرط <b>فهرسة ومشاركة</b> (قوقل يشوف كل رابط صفحة مستقلة كاملة ببياناتها) — مو شرط تصفح. التصفح سحب متواصل بلا انقطاع.</div>
+
+    <h3>🎬 موكب المحاكاة — شكل مودونتي بعد الريلز <span class="badge ok">✔ اعتمد مبدئياً — 2026-07-05</span></h3>
+    <div class="note info" style="border-width:2px">
+      <b>🖥️📱 المحاكاة الكاملة (ديسكتوب + موبايل، ٤ شاشات، سحب حي) — معتمدة مبدئياً كاتجاه عام؛ الموكب الملزم النهائي مع الخطة</b>
+      <a href="reels-modonty-simulation-v1.html" style="display:inline-block;background:var(--brand,#0f6fde);background:#0f6fde;color:#fff;font-weight:800;border-radius:10px;padding:9px 22px;text-decoration:none;margin:8px 0 6px">افتح المحاكاة ↗</a><br>
+      <span style="font-size:13px;color:var(--muted)">تشمل: الرئيسية بشريط الريلز (ديسكتوب + موبايل) · فيد الريلز (ديسكتوب بمسرح داكن + موبايل بسحب سناب حقيقي تجربه بنفسك) · شريط عنوان يوضح تغيّر الرابط مع السحب · زر «تمييز الجديد» يحدد الإضافات بالبرتقالي. مبنية على توكنز مودونتي الفعلية من الكود (الألوان · تجوال · 1128px · فيد 600px · هيدر 56px). ملاحظات المطابقة داخل الملف + نقطتان مفتوحتان (تبويب «الريلز» بالهيدر · موضع الشريط) يقفلهما الموكب الملزم النهائي وقت الخطة.</span><br>
+      <code style="font-size:11px">file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/HTML/reels-modonty-simulation-v1.html</code>
+    </div>
+    <div class="note info" style="border-width:2px">
+      <b>📋 ملف المتطلبات والفلو التنفيذي</b>
+      <a href="REELS-REQUIREMENTS-FLOW-v1.html" style="display:inline-block;background:#0f6fde;color:#fff;font-weight:800;border-radius:10px;padding:9px 22px;text-decoration:none;margin:8px 0 6px">افتح المتطلبات والفلو ↗</a><br>
+      <span style="font-size:13px;color:var(--muted)">قائمة تسليم تفاعلية (5 بنود يوفرها خالد: مكتبة باني بإعداداتها الأربعة قبل أول رفع · 4 قيم بيئة · تفعيل التفريغ + تنبيه فوترة · الأرقام التجارية · فيديو تجريبي) + الفلو الصحيح بخمسة مسارات (كونسول · أدمن · صور · زائر · حذف) + جدول حالات الريل. أُضيف 2026-07-05.</span><br>
+      <code style="font-size:11px">file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/HTML/REELS-REQUIREMENTS-FLOW-v1.html</code>
+    </div>
+
+    <h3>📸 وش عن الصور (فكرة إنستقرام)؟ <span class="badge violet">توصية معدّلة بعد نقاش 2026-07-04</span></h3>
+    <p>خالد نبّه على نقطة صحيحة: دائرة الصور موجودة فعلاً (رفع من معرض الكونسول ← اعتماد من الأدمن)، والصور باقية على كلاودينري الشغال حالياً — باني للفيديو فقط. يعني البنية الثقيلة جاهزة، والناقص الحقيقي هو «البوست» نفسه: نص مرافق + بطاقة في الفيد + صفحة خاصة + سيو الصور. وهذا شغل صغير نسبياً.</p>
+    <div class="note ok"><b>✅ التوصية المعدّلة</b>النموذج في قاعدة البيانات يكون <b>موحّداً من اليوم الأول</b>: بوست قصير نوعه «فيديو» أو «صور». الفيديو أولاً في التنفيذ (لأنه التقنية الجديدة الوحيدة)، وبوستات الصور تدخل في <b>المرحلة الثانية مباشرة</b> — مو الرابعة كما كان في التوصية الأولى.</div>
+  </section>
+
+  <!-- ═══════════ 6. الحزم والاعتمادات ═══════════ -->
+  <section>
+    <div class="sec-head"><span class="sec-num">6</span><h2>الحِزَم والاعتمادات — تحقق رسمي <span class="badge violet">أُضيف بعد طلب خالد 2026-07-04</span></h2></div>
+    <p>تحقق كامل عبر كونتكست سفن + وثائق نكست الرسمية + قياس أحجام المكتبات من مصادرها. النتيجة المختصرة: <b>حزمة جديدة واحدة فقط في المشروع كله</b> — وكل الباقي واجهات أصلية مدمجة في المتصفح والمنصة. هذا أقصى أداء وأقصى مرونة في نفس الوقت: ما فيه مكتبة وسيطة تقيّدنا ولا وزن زائد.</p>
+
+    <h3>✅ اللي بننزّله فعلاً</h3>
+    <table>
+      <tr><th>الحزمة</th><th>وين</th><th>الحجم</th><th>ليش</th></tr>
+      <tr><td><code>tus-js-client</code></td><td>الأدمن فقط (فورم الرفع)</td><td>12.5 كيلوبايت مضغوطة</td><td>رفع مستأنف: لو انقطع النت وسط رفع فيديو، يكمل من مكانه. وثائق باني تنصح بها <b>بالاسم حرفياً</b>، وهي الحزمة الرسمية من فريق المعيار نفسه (مليون تنزيل أسبوعياً)</td></tr>
+    </table>
+
+    <h3>🚫 موقع مودونتي العام: صفر حِزَم جديدة</h3>
+    <table>
+      <tr><th>الوظيفة</th><th>البديل الأصلي المدمج</th></tr>
+      <tr><td>تشغيل الفيديو</td><td>وسم الفيديو الأصلي — باني يعطينا روابط <code>MP4</code> مباشرة حتى جودة 1080p (بعد تفعيل الخيار قبل أول رفع)</td></tr>
+      <tr><td>السحب العمودي بالمحاذاة</td><td>خاصية محاذاة التمرير في CSS — بدون أي جافاسكربت</td></tr>
+      <tr><td>تشغيل/إيقاف تلقائي للظاهر</td><td>مراقب التقاطع المدمج بالمتصفح — مراقب واحد للفيد كله</td></tr>
+      <tr><td>تحديث الرابط أثناء السحب</td><td>واجهة سجل المتصفح الأصلية — <b>مدعومة رسمياً في نكست</b> وتتزامن مع خطافات المسار</td></tr>
+      <tr><td>زر المشاركة</td><td>واجهة المشاركة الأصلية بالجوال + بديل «نسخ الرابط» للمتصفحات اللي ما تدعمها</td></tr>
+      <tr><td>الاتصال بباني من السيرفر</td><td>نداءات مباشرة — الطريق الرسمي الوحيد الموثّق عند باني (ما عندهم حزمة رسمية ناضجة للويب؛ فيه وحدة جديدة عمرها أيام نراقبها وما نعتمدها)</td></tr>
+    </table>
+
+    <h3>⏸ مؤجلة و❌ مرفوضة (بالأدلة المقاسة)</h3>
+    <table>
+      <tr><th>الحزمة</th><th>الحكم</th><th>السبب</th></tr>
+      <tr><td><code>hls.js</code></td><td><span class="badge warn">مؤجلة</span></td><td>107–161 كيلوبايت مضغوطة — تنزل فقط لو دخلنا فيديوهات طويلة تحتاج بث تكيفي. الريلز القصيرة ما تحتاجها</td></tr>
+      <tr><td><code>video.js</code></td><td><span class="badge danger">مرفوضة</span></td><td>197 كيلوبايت مضغوطة + ملف تنسيقات — إطار مشغّل كامل يكرر اللي يسويه المتصفح مجاناً</td></tr>
+      <tr><td><code>react-player</code></td><td><span class="badge danger">مرفوضة</span></td><td>حجمها المعلن خادع (قشرة تحميل) — بالنهاية ترندر نفس وسم الفيديو اللي نكتبه بأنفسنا، بس بطبقة وسيطة زائدة</td></tr>
+      <tr><td><code>plyr</code></td><td><span class="badge danger">مرفوضة</span></td><td>31 كيلوبايت لواجهة أزرار أجمل — وفيد الريلز يخفي الأزرار أصلاً، يعني وزن ميت</td></tr>
+      <tr><td><code>@vidstack/react</code></td><td><span class="badge danger">مرفوضة</span></td><td>خطر مخفي: التنزيل العادي يجيب نسخة عمرها سنتين (قناة النشر عالقة) + 108 كيلوبايت</td></tr>
+      <tr><td><code>next-video</code></td><td><span class="badge danger">مرفوضة</span></td><td>ما يدعم باني أصلاً — مبنية لمنصة موكس ومنصات أخرى، ومقاسها 67 كيلوبايت</td></tr>
+    </table>
+
+    <h3>📜 شهادة وثائق نكست الرسمية لنمطنا</h3>
+    <ul>
+      <li>تحديث الرابط بدون إعادة تحميل أثناء السحب: <b>موثّق رسمياً</b> — واجهة سجل المتصفح تتكامل مع موجّه نكست وتتزامن مع خطافات المسار. (وطريقة الموجّه البديلة مرفوضة لأنها تسوي تنقلاً كاملاً).</li>
+      <li>دليل الفيديو الرسمي عند نكست يوصي بالضبط بتركيبتنا: وسم فيديو أصلي + تشغيل تلقائي صامت + تشغيل داخل الصفحة للآيفون + عدم التحميل المسبق. <b>ما فيه مكوّن فيديو رسمي من نكست أصلاً</b>.</li>
+      <li>التحميل الكسول للمكوّنات: التعطيل عن السيرفر لازم يكون داخل مكوّن عميل — نفس النمط المطبق عندنا في الفيد الحالي.</li>
+      <li>البيانات المنظمة: وسم سكربت أصلي مع تعقيم — نفس نمطنا الحالي بالحرف.</li>
+    </ul>
+    <div class="note warn"><b>⚠️ تنبيه خاص بنكست 16 (يمسنا مباشرة)</b>
+      نكست 16 غيّر سلوك التمرير: ما عاد يتجاوز إعداد التمرير الناعم في CSS عند التنقل. لو استخدمنا تمريراً ناعماً في فيد الريلز (شائع مع المحاذاة العمودية)، التنقل بين الصفحات بيسوي تمريراً ناعماً غير مرغوب للأعلى — الحل الموثّق: سمة واحدة على وسم الصفحة الجذر. نقطة تنفيذية محفوظة هنا عشان ما ننساها وقت البناء.</div>
+  </section>
+
+  <!-- ═══════════ 7. المراحل ═══════════ -->
+  <section>
+    <div class="sec-head"><span class="sec-num">7</span><h2>المراحل المقترحة <span class="badge warn">⚠️ سيُعاد رسمها — قرارات 2026-07-04 جمعت أغلب الشغل في المرحلة الأولى</span></h2></div>
+    <div class="phase"><span class="n">1</span><div><b>الأساس</b> إنشاء نموذج الريل في قاعدة البيانات + ربط باني + الرفع من الأدمن + صفحة المشاهدة + سيو الفيديو كامل (بيانات منظمة + خريطة موقع). <span class="muted">من نهاية هالمرحلة: أول فيديو مفهرس في قوقل.</span></div></div>
+    <div class="phase"><span class="n">2</span><div><b>التجربة</b> الفيد العمودي بالسحب + مدخل الرئيسية + تفعيل تبويب ريلز العميل بالبيانات الحقيقية + بوستات الصور (حسب القرار ٣).</div></div>
+    <div class="phase"><span class="n">3</span><div><b>التفاعل والقياس</b> إعجابات ومشاهدات بنفس نمط المقالات + عرض تحليلات باني في الأدمن والكونسول.</div></div>
+    <div class="phase"><span class="n">4</span><div><b>التوسعة</b> رفع العميل بنفسه من الكونسول + ربط الميزة بالباقات (الريلز للباقات الأعلى).</div></div>
+  </section>
+
+  <!-- ═══════════ 7. القرارات ═══════════ -->
+  <section>
+    <div class="sec-head"><span class="sec-num">8</span><h2>القرارات — 10 مقفلة 🔒 وواحد ختامي</h2></div>
+    <table>
+      <tr><th>#</th><th>الموضوع</th><th>✔ المعتمد (كلها بتاريخ 2026-07-04)</th></tr>
+      <tr><td>١</td><td>علاقة الريل بالمقال</td><td>مستقل تماماً — بلا ربط</td></tr>
+      <tr><td>٢</td><td>من يرفع</td><td>الأدمن والكونسول معاً من اليوم الأول</td></tr>
+      <tr><td>٣</td><td>بوستات الصور</td><td>الصور والفيديو معاً من المرحلة الأولى — نموذج موحّد</td></tr>
+      <tr><td>٥</td><td>رفعات العميل</td><td>باعتماد الأدمن قبل النشر</td></tr>
+      <tr><td>٦</td><td>الحصص والحدود</td><td>كاملة من اليوم الأول: 90 ثانية + حصص بالباقات + حد حجم</td></tr>
+      <tr><td>٧</td><td>التفاعلات</td><td>بالتعليقات من اليوم الأول (نظام المقالات)</td></tr>
+      <tr><td>٨</td><td>التفريغ الصوتي</td><td>تلقائي بعد الاعتماد — عربي مضبوط يدوياً</td></tr>
+      <tr><td>٩</td><td>الظهور أثناء البناء</td><td>افتتاح كامل — بناء مخفي وكشف بضغطة واحدة</td></tr>
+      <tr><td>١٠</td><td>ترتيب الفيد</td><td>الأحدث + تنويع الشركاء (لا تتابع لنفس الشريك)</td></tr>
+      <tr><td>١١</td><td>الباقة الأدنى</td><td>مقفلة مع دعوة ترقية</td></tr>
+    </table>
+    <p class="muted">اختياراتك تنحفظ في الصفحة تلقائياً. لما تخلص اضغط زر «انسخ إجاباتي» تحت والصقها لي في الشات.</p>
+    <div class="note info"><b>🗓️ سجل النقاش — 2026-07-04</b>
+      ١) استوضح خالد آلية السحب مع «صفحة لكل ريل» → الجواب في القسم 5: تجربة سحب واحدة متواصلة والرابط يتحدّث تلقائياً، الصفحات للفهرسة والمشاركة.<br>
+      ٢) نبّه خالد إن دائرة الصور (معرض الكونسول ← اعتماد الأدمن) جاهزة → التوصية اتعدّلت: الصور في المرحلة الثانية بدل الرابعة، والنموذج موحّد من اليوم الأول (القرار ٣).<br>
+      ٣) طلب خالد التحقق من كونتكست سفن + وثائق نكست الرسمية وتحديد الحِزَم → أُضيف القسم 6 كاملاً: حزمة جديدة واحدة فقط (رفع مستأنف بالأدمن)، مودونتي صفر حِزَم، 6 مكتبات مشغّلات مرفوضة بالقياس، + تنبيه سلوك التمرير في نكست 16.<br>
+      ٤) قفل خالد ثلاثة قرارات <b>عكس التوصيات</b>: الريل مستقل تماماً · أدمن + كونسول من اليوم الأول · صور + فيديو معاً من المرحلة الأولى. واختار «نناقش أكثر» للاتجاه العام → أُضيف القرار ٥ (بوابة الاعتماد) وعُلّمت المراحل لإعادة الرسم.<br>
+      ٥) قفل خالد القرار ٥: <b>باعتماد الأدمن</b> (وفق التوصية) → ينبني عليه شاشة اعتماد بالأدمن + إشعار للعميل. أُضيف القرار ٦ (الحصص والحدود) كنقطة النقاش الحالية.<br>
+      ٦) قفل خالد القرار ٦: <b>حدود كاملة من اليوم الأول</b> (وفق التوصية) — 90 ثانية + حصص شهرية بالباقات + حد حجم؛ الأرقام وقت الخطة. أُضيف القراران ٧ (التعليقات) و٨ (التفريغ الصوتي).<br>
+      ٧) قفل خالد القرار ٧: <b>بالتعليقات من اليوم الأول</b> (عكس التوصية — نفس نظام المقالات، مع نقطة تحقق لأدوات الإشراف) والقرار ٨: <b>تفريغ تلقائي بعد الاعتماد</b> (وفق التوصية). أُضيف القرار ٩ (ترتيب الإظهار للزوار).<br>
+      ٨) قفل خالد القرار ٩: <b>افتتاح كامل</b> (وفق التوصية — بعد إعادة صياغة السؤال بمثال المحل). أُضيف القراران الأخيران من جعبة العصف: ١٠ (ترتيب الفيد وعدالة الظهور) و١١ (تجربة الباقات الأدنى).<br>
+      ٩) قفل خالد القرار ١٠: <b>الأحدث + تنويع الشركاء</b> (وفق التوصية). القرار ١١ تُرك بلا اختيار — بانتظار توضيح أو تأجيل مقصود.<br>
+      ١٠) قفل خالد القرار ١١: <b>مقفلة مع دعوة ترقية</b> (وفق التوصية) → <b>اكتملت جعبة العصف: 10 قرارات مقفلة</b>. أُضيف جدول ملخص القرارات. الباقي الوحيد: القرار ٤ الختامي.<br>
+      ١١) <b>2026-07-05</b> — طلب خالد موكب محاكاة لشكل مودونتي (ديسكتوب + موبايل) مربوطاً بالملف → بُني على المواصفة الفعلية المستخرجة من الكود وأُضيف رابطه في القسم 5 (موكب المحاكاة v1، ٤ شاشات + سحب حي). نقطتان مفتوحتان للموكب النهائي: تبويب «الريلز» بالهيدر + موضع الشريط.<br>
+      ١٢) <b>اعتمد خالد الموكب مبدئياً</b> (2026-07-05) — اعتماد اتجاه عام، ليس عقد المطابقة الملزم؛ الموكب الملزم النهائي يُبنى ويُقفل مع الخطة التفصيلية، ومعه النقطتان المفتوحتان.<br>
+      ١٣) <b>2026-07-05</b> — أُنشئ مجلد <code>documents/reels/</code> كمرجعية وحيدة لكل ملفات الريلز (بطلب خالد) وانتقل إليه الملفان، ثم أُضيف <b>ملف المتطلبات والفلو</b> (قائمة تسليم من 5 بنود + 5 مسارات عمل + جدول الحالات) — رابطه في القسم 5.<br>
+      ١٤) أكد خالد امتلاكه حساب bunny.net واعتُمد <b>المسار السريع</b> لتجهيز المكتبة: خالد يضيف <code>BUNNY_API_KEY</code> (مفتاح الحساب) في <code>.env.shared</code> بنفسه — وكلود ينشئ مكتبة <code>modonty-reels</code> ويضبط الإعدادات الأربعة ويستخرج قيم البيئة عبر الواجهة الرسمية. حُدّث ملف المتطلبات (البندان ١ و٢).</div>
+
+    <div class="decision locked">
+      <div class="d-head"><h3>القرار ١ — علاقة الريل بالمقال</h3><span class="d-status" style="background:var(--ok-soft);color:var(--ok)">🔒 قرار خالد — 2026-07-04</span></div>
+      <div class="note ok" style="margin:10px 0 4px"><b>✔ المعتمد: مستقل تماماً — بلا أي ربط بالمقالات</b>الريل كيان قائم بذاته يتبع العميل فقط. للسجل: إضافة ربط اختياري بالمقال مستقبلاً تعديل بسيط (حقل اختياري) — القرار سهل التوسعة لو احتجنا.</div>
+    </div>
+
+    <div class="decision locked">
+      <div class="d-head"><h3>القرار ٢ — من يرفع في البداية؟</h3><span class="d-status" style="background:var(--ok-soft);color:var(--ok)">🔒 قرار خالد — 2026-07-04</span></div>
+      <div class="note ok" style="margin:10px 0 4px"><b>✔ المعتمد: الأدمن والكونسول معاً من اليوم الأول</b>يترتب عليه ثلاثة أشياء تدخل المرحلة الأولى: دائرة اعتماد محتوى العميل (القرار ٥ تحت) + ربط الميزة بالباقات + حصص وحدود الرفع.</div>
+    </div>
+
+    <div class="decision locked">
+      <div class="d-head"><h3>القرار ٣ — بوستات الصور</h3><span class="d-status" style="background:var(--ok-soft);color:var(--ok)">🔒 قرار خالد — 2026-07-04</span></div>
+      <div class="note ok" style="margin:10px 0 4px"><b>✔ المعتمد: الصور والفيديو معاً من المرحلة الأولى</b>نموذج موحّد نوعه «فيديو» أو «صور» من اليوم الأول — الصور تبقى على كلاودينري الموجود، والفيديو على باني.</div>
+    </div>
+
+    <div class="decision locked">
+      <div class="d-head"><h3>القرار ٥ — رفعات العميل من الكونسول</h3><span class="d-status" style="background:var(--ok-soft);color:var(--ok)">🔒 قرار خالد — 2026-07-04</span></div>
+      <div class="note ok" style="margin:10px 0 4px"><b>✔ المعتمد: باعتماد الأدمن (وفق التوصية)</b>رفعة العميل توصل بحالة «بانتظار الاعتماد» والأدمن ينشر — نفس دائرة المعرض الحالية ونفس فلسفة «100% قبل النشر». ينبني عليه: شاشة اعتماد في الأدمن + إشعار للعميل بالقبول/الرفض مع السبب.</div>
+    </div>
+
+    <div class="decision locked">
+      <div class="d-head"><h3>القرار ٦ — الحصص والحدود</h3><span class="d-status" style="background:var(--ok-soft);color:var(--ok)">🔒 قرار خالد — 2026-07-04</span></div>
+      <div class="note ok" style="margin:10px 0 4px"><b>✔ المعتمد: حدود كاملة من اليوم الأول (وفق التوصية)</b>مدة قصوى 90 ثانية (مربوطة بقرار المشغّل بدون حِزَم) + حصة شهرية لكل باقة + حد حجم للملف. الأرقام النهائية للحصص والحجم تتحدد وقت الخطة التفصيلية مع جدول الباقات.</div>
+    </div>
+
+    <div class="decision locked">
+      <div class="d-head"><h3>القرار ٧ — التفاعلات والتعليقات</h3><span class="d-status" style="background:var(--ok-soft);color:var(--ok)">🔒 قرار خالد — 2026-07-04</span></div>
+      <div class="note ok" style="margin:10px 0 4px"><b>✔ المعتمد: بالتعليقات من اليوم الأول — بنفس نظام تعليقات المقالات</b>(عكس التوصية — قرار صاحب المشروع). يعني: إعجاب + مشاهدات + مشاركة + تعليقات، كلها بنفس أنماط المقالات الجاهزة. نقطة للخطة: نتحقق من جاهزية أدوات إشراف التعليقات في الأدمن لاستيعاب الريلز، ونحسب عبء الإشراف اليومي ضمن التشغيل.</div>
+    </div>
+
+    <div class="decision locked">
+      <div class="d-head"><h3>القرار ٨ — التفريغ الصوتي</h3><span class="d-status" style="background:var(--ok-soft);color:var(--ok)">🔒 قرار خالد — 2026-07-04</span></div>
+      <div class="note ok" style="margin:10px 0 4px"><b>✔ المعتمد: تلقائي بعد اعتماد الأدمن (وفق التوصية)</b>كل ريل معتمد يتفرّغ نصياً (اللغة عربي تُضبط يدوياً في الطلب — كشف اللغة يقرأ أول 30 ثانية فقط)، والنص ينزل في صفحة المشاهدة كأساس السيو النصي. ما ندفع على المرفوض. تكلفة تقريبية: 15 سنت للريل.</div>
+    </div>
+
+    <div class="decision locked">
+      <div class="d-head"><h3>القرار ٩ — أثناء البناء: وش يشوف الزائر؟</h3><span class="d-status" style="background:var(--ok-soft);color:var(--ok)">🔒 قرار خالد — 2026-07-04</span></div>
+      <div class="note ok" style="margin:10px 0 4px"><b>✔ المعتمد: افتتاح كامل (وفق التوصية)</b>الكود يندفع أول بأول دفعات صغيرة آمنة لكن مخفياً بلا أي رابط ظاهر للزوار؛ بعد اكتمال الفحص الكامل تُضاف الروابط بضغطة واحدة وتظهر الميزة كاملة (فيد + صفحات + تبويب العميل + مدخل الرئيسية).</div>
+    </div>
+
+    <div class="decision locked">
+      <div class="d-head"><h3>القرار ١٠ — ترتيب الفيد وعدالة الظهور</h3><span class="d-status" style="background:var(--ok-soft);color:var(--ok)">🔒 قرار خالد — 2026-07-04</span></div>
+      <div class="note ok" style="margin:10px 0 4px"><b>✔ المعتمد: الأحدث أولاً + تنويع الشركاء (وفق التوصية)</b>ترتيب زمني بالأحدث، مع قاعدة عدالة بسيطة: ما يظهر ريلان متتاليان لنفس الشريك. بدون خوارزمية تفاعل معقدة في الإطلاق الأول.</div>
+    </div>
+
+    <div class="decision locked">
+      <div class="d-head"><h3>القرار ١١ — العميل اللي باقته ما تشمل الريلز</h3><span class="d-status" style="background:var(--ok-soft);color:var(--ok)">🔒 قرار خالد — 2026-07-04</span></div>
+      <div class="note ok" style="margin:10px 0 4px"><b>✔ المعتمد: مقفلة مع دعوة ترقية (وفق التوصية)</b>عميل الباقة الأساسية يشوف قسم الريلز في الكونسول بشارة «للباقات الأعلى» وزر ترقية — شفافية وفرصة مبيعات، بما يتوافق مع قاعدة التسعير: لا خصومات، ترقيات ومكافآت.</div>
+    </div>
+
+    <div class="decision" data-q="الاتجاه العام">
+      <div class="d-head"><h3>القرار ٤ — الاتجاه العام</h3><span class="d-status">بانتظار قرارك</span></div>
+      <p class="muted">إجابة 2026-07-04 كانت «نناقش أكثر» — السؤال يُعاد طرحه بعد انتهاء النقاش.</p>
+      <div class="opts">
+        <div class="opt" data-v="ابروف على الاتجاه — جهز الخطة التفصيلية للمرحلة الأولى"><span class="check">◻</span> <b>ابروف على الاتجاه</b> — جهّز الخطة التفصيلية للمرحلة الأولى</div>
+        <div class="opt" data-v="عندي تعديلات على التصور — بكتبها في الشات"><span class="check">◻</span> <b>عندي تعديلات</b> على التصور — بكتبها لك في الشات</div>
+        <div class="opt" data-v="نناقش أكثر قبل أي خطة"><span class="check">◻</span> <b>نناقش أكثر</b> قبل أي خطة</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ 8. المصطلحات ═══════════ -->
+  <section>
+    <div class="sec-head"><span class="sec-num">9</span><h2>المصطلحات الإنجليزية</h2></div>
+    <table class="gloss">
+      <tr><th>بالعربي في هذا الملف</th><th>الأصل</th></tr>
+      <tr><td>باني / باني ستريم — خدمة استضافة وبث الفيديو</td><td>Bunny.net / Bunny Stream</td></tr>
+      <tr><td>الريلز — الفيديوهات القصيرة العمودية</td><td>Reels</td></tr>
+      <tr><td>الفيد العمودي — التصفح بالسحب لفوق</td><td>Vertical Feed</td></tr>
+      <tr><td>صفحة المشاهدة — صفحة مستقلة لكل فيديو</td><td>Watch Page</td></tr>
+      <tr><td>البيانات المنظمة — وصف المحتوى لقوقل</td><td>VideoObject / JSON-LD</td></tr>
+      <tr><td>خريطة موقع الفيديو</td><td>Video Sitemap</td></tr>
+      <tr><td>التفريغ الصوتي — تحويل الكلام لنص</td><td>Transcribe AI</td></tr>
+      <tr><td>البث التكيفي — تغيير الجودة حسب النت</td><td>HLS / Adaptive Streaming</td></tr>
+      <tr><td>ديسكفر — خلاصة اهتمامات قوقل بالجوال</td><td>Google Discover</td></tr>
+      <tr><td>توكن الحماية — توقيع يمنع فتح الرابط لغير المصرح</td><td>Token Authentication</td></tr>
+      <tr><td>الرفع المستأنف — يكمل الرفع من مكانه بعد انقطاع النت</td><td>tus-js-client / Resumable Upload</td></tr>
+      <tr><td>واجهة سجل المتصفح — تحديث الرابط بدون إعادة تحميل</td><td>History API (replaceState)</td></tr>
+      <tr><td>مراقب التقاطع — يكشف دخول العنصر للشاشة</td><td>IntersectionObserver</td></tr>
+      <tr><td>كونتكست سفن — أداة جلب الوثائق الرسمية المحدثة</td><td>Context7</td></tr>
+    </table>
+    <details>
+      <summary>عرض أهم المصادر الرسمية المُراجعة (12 من 51)</summary>
+      <ul>
+        <li>developers.google.com/search/docs/appearance/structured-data/video</li>
+        <li>developers.google.com/search/docs/crawling-indexing/sitemaps/video-sitemaps</li>
+        <li>developers.google.com/search/blog/2023/12/video-is-the-main-content</li>
+        <li>developers.google.com/search/docs/appearance/google-discover</li>
+        <li>docs.bunny.net/stream/tus-resumable-uploads</li>
+        <li>docs.bunny.net/stream/video-specification</li>
+        <li>docs.bunny.net/stream/transcribing</li>
+        <li>docs.bunny.net/stream/webhooks</li>
+        <li>bunny.net/pricing/stream</li>
+        <li>web.dev/articles/fast-playback-with-preload</li>
+        <li>web.dev/articles/lazy-loading-video</li>
+        <li>github.com/video-dev/hls.js</li>
+      </ul>
+    </details>
+  </section>
+
+</div>
+
+<!-- ═══════════ SUMMARY BAR ═══════════ -->
+<div class="sumbar">
+  <span class="txt">📋 قراراتك: <span class="count" id="count">0 من 4</span></span>
+  <button id="copyBtn">انسخ إجاباتي ✂️</button>
+</div>
+
+<script>
+  const KEY='reels-brainstorm-v1';
+  const saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+  const decisions=document.querySelectorAll('.decision[data-q]');
+
+  function refresh(){
+    let done=0;
+    decisions.forEach(d=>{
+      const q=d.dataset.q;
+      if(saved[q]) done++;
+      d.classList.toggle('locked',!!saved[q]);
+      d.querySelector('.d-status').textContent=saved[q]?'✔ تم الاختيار':'بانتظار قرارك';
+      d.querySelectorAll('.opt').forEach(o=>{
+        const sel=saved[q]===o.dataset.v;
+        o.classList.toggle('selected',sel);
+        o.querySelector('.check').textContent=sel?'✔':'◻';
+      });
+    });
+    document.getElementById('count').textContent=done+' من '+decisions.length;
+  }
+
+  decisions.forEach(d=>{
+    d.querySelectorAll('.opt').forEach(o=>{
+      o.addEventListener('click',()=>{
+        saved[d.dataset.q]=o.dataset.v;
+        localStorage.setItem(KEY,JSON.stringify(saved));
+        refresh();
+      });
+    });
+  });
+
+  document.getElementById('copyBtn').addEventListener('click',()=>{
+    let txt='قراراتي — عصف ذهني الريلز:\n';
+    decisions.forEach((d,i)=>{
+      txt+=(i+1)+'. '+d.dataset.q+': '+(saved[d.dataset.q]||'(ما اخترت)')+'\n';
+    });
+    navigator.clipboard.writeText(txt).then(()=>{
+      const b=document.getElementById('copyBtn');
+      b.textContent='✔ تم النسخ — الصقها في الشات';
+      setTimeout(()=>b.textContent='انسخ إجاباتي ✂️',2500);
+    });
+  });
+
+  refresh();
+</script>
+</body>
+</html>

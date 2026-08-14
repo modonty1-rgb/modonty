@@ -32,7 +32,7 @@
 - Branch: `version-2` · **لا commit ولا push** هذه الجلسة (كله كود غير مدفوع + PRD/context) · dev server مدوّنتي:3000 على `modonty_dev`. صفر مساس main [[project_bunny_branch_isolation_golden]].
 
 ### 🚀 استئناف في ٣٠ ثانية
-1. افتح `file:///C:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/tasks/BUNNY-MIGRATION-PRD-v1.html` → قسم «🔜 المتبقّي».
+1. افتح `file:///C:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/HTML/BUNNY-MIGRATION-PRD-v1.html` → قسم «🔜 المتبقّي».
 2. ذيل A2: لفّ تبويبات صفحة العميل بالأدمن بـ `mediaSrc` (النمط ثابت) + `bunnyUrl: true` في select العميل.
 3. ثم التشغيلات (regenerate · re-migrate · new-uploads→Bunny). النمط كامل موثّق في صناديق PRD.
 
@@ -41,7 +41,7 @@
 ## Session: 2026-07-29 — جرد نقاط قراءة الصور (قلب تبديل Bunny) — checklist كامل للتطبيقات الثلاثة · لا كود بعد
 
 ### 🎯 أين توقفت + أول خطوة عند الاستئناف
-- **آخر شي:** بنيت **جرد كامل** لكل مكان يعرض صورة في مدوّنتي+admin+console كـ checklist داخل `documents/tasks/BUNNY-MIGRATION-PRD-v1.html` (قسم جديد **«◎ جرد نقاط القراءة»** `data-epic="INV"`، قبل Epic 3.5). خالد قال: **«نكمل بكرة»** — الجرد جاهز للمراجعة، **لم يُبدأ أي كود تبديل**.
+- **آخر شي:** بنيت **جرد كامل** لكل مكان يعرض صورة في مدوّنتي+admin+console كـ checklist داخل `documents/HTML/BUNNY-MIGRATION-PRD-v1.html` (قسم جديد **«◎ جرد نقاط القراءة»** `data-epic="INV"`، قبل Epic 3.5). خالد قال: **«نكمل بكرة»** — الجرد جاهز للمراجعة، **لم يُبدأ أي كود تبديل**.
 - **أول خطوة عند العودة:** خالد يراجع الجرد في الـ HTML. لو ابروف → نبدأ بـ **INV-0**: بناء المُحلّل المشترك `mediaSrc(m) = m?.bunnyUrl ?? m?.url ?? null` في `dataLayer/lib/bunny.ts` + إضافة `bunnyUrl: true` لكل select لعلاقة Media. **ممنوع لمس كود قبل ابروف خالد.**
 
 ### ✅ ما أُنجز هذه الجلسة (توثيق + جرد فقط · صفر كود)
@@ -62,13 +62,13 @@
 - كل العمل على `version-2` (preview فقط) — صفر مساس main [[project_bunny_branch_isolation_golden]].
 
 ### 📂 ملفات لُمست
-- `documents/tasks/BUNNY-MIGRATION-PRD-v1.html` — علّمت ١٠ بنود منجزة + أضفت قسم «◎ جرد نقاط القراءة» (١٢ checkbox، `data-epic="INV"`).
+- `documents/HTML/BUNNY-MIGRATION-PRD-v1.html` — علّمت ١٠ بنود منجزة + أضفت قسم «◎ جرد نقاط القراءة» (١٢ checkbox، `data-epic="INV"`).
 
 ### 🔁 Git
 - Branch: `version-2` · لا commit هذه الجلسة (توثيق فقط) · لا push.
 
 ### 🚀 استئناف في ٣٠ ثانية
-1. افتح `file:///C:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/tasks/BUNNY-MIGRATION-PRD-v1.html` → قسم «◎ جرد نقاط القراءة».
+1. افتح `file:///C:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/HTML/BUNNY-MIGRATION-PRD-v1.html` → قسم «◎ جرد نقاط القراءة».
 2. خالد يابروف الجرد.
 3. ابدأ INV-0: `mediaSrc()` في `dataLayer/lib/bunny.ts` + `bunnyUrl: true` بكل select. ثم M1 (مُحلّلات الاستعلام).
 
@@ -226,7 +226,7 @@
 - admin: `lib/redirect/record-redirect.ts` · `lib/audit/log-action.ts` · `tags/actions/merge-tag-actions.ts` + `tags/components/{tag-merge-dialog,tag-row-actions,tag-table}.tsx` + `tags/[id]/components/tag-view.tsx` · `categories/actions/merge-category-actions.ts` + `categories/actions/categories-actions/get-categories.ts` + `categories/components/{category-merge-dialog,category-row-actions,category-table,categories-page-client}.tsx` · `industries/actions/merge-industry-actions.ts` + `industries/components/{industry-merge-dialog,industry-row-actions,industry-table}.tsx`.
 - modonty: `proxy.ts` · `lib/archive-cache.ts`.
 - schema: `dataLayer/prisma/schema/schema.prisma` (موديل Redirect).
-- docs: `documents/tasks/TODO.md` + `documents/tasks/merge-dialog-mockup-v1.html`.
+- docs: `documents/tasks/TODO.md` + `documents/archive/tasks/merge-dialog-mockup-v1.html`.
 
 ### 🔁 Git / نشر
 - Branch: main · Pushed: نعم `b7b7da5` (بلا backup — push>) · Vercel: نشر تلقائي admin+modonty.
@@ -670,7 +670,7 @@
 - **أول خطوة:** المرحلة الجاية = شغل UI/UX على مدونتي عبر Google Stitch (تصاميم = موكب ملزم). لا شي عاجل.
 
 ### ✅ أُنجز هذه الجلسة
-- **مراجعة v3 النقدية العكسية** (بلا تعديل كود): تقرير HTML5 `documents/modonty-v3-handoff/CRITICAL-REVIEW-v1.html` — قرأت الـ15 ملف + وثّقت من Context7 (Next.js: `priority`→`preload`؛ Tailwind: dark = prefers-color-scheme). أخطر النقاط: مساعد AI يجاوب YMYL، الموكب يكسر قواعد نظامه (إيموجي/عربي-فقط/طبقة-واحدة)، لقطات=رهان منتج مدسوس، الداكن-افتراضي لمنتج قراءة، ازدحام CTA. الدرجة 6.5/10 «أساس ممتاز يحتاج انضباط قبل أن يصير عقدًا».
+- **مراجعة v3 النقدية العكسية** (بلا تعديل كود): تقرير HTML5 `documents/HTML/CRITICAL-REVIEW-v1.html` — قرأت الـ15 ملف + وثّقت من Context7 (Next.js: `priority`→`preload`؛ Tailwind: dark = prefers-color-scheme). أخطر النقاط: مساعد AI يجاوب YMYL، الموكب يكسر قواعد نظامه (إيموجي/عربي-فقط/طبقة-واحدة)، لقطات=رهان منتج مدسوس، الداكن-افتراضي لمنتج قراءة، ازدحام CTA. الدرجة 6.5/10 «أساس ممتاز يحتاج انضباط قبل أن يصير عقدًا».
 - **إصلاحا محرّر المقال** (`admin/.../rich-text-editor.tsx`، ملف واحد، مدفوع):
   1. **شريط ثابت** — منطقة المحتوى `max-h-[60vh] overflow-y-auto` فتتمرّر داخليًا والشريط+عدّاد الكلمات فوق دائمًا. (اخترنا هذا بدل sticky لأن الأقسام داخل Accordion فيه `overflow-hidden` يكسر sticky — والحل الداخلي يعمل مع التبويبات والأكورديون معًا.)
   2. **نص الوضع الداكن مقروء** — شِلنا `TextStyle`+`Color` (ما لهما زر بالشريط، بس كانتا تحملان الأسود المبيّت المستورد `color:rgb(0,0,0)` ×130 + رمادي ×2). النص يرث الثيم الآن + المحتوى ينظّف نفسه عند الحفظ. متحقّق حيًّا: `inlineColorCount 0`، لون `rgb(248,250,252)`.
@@ -691,7 +691,7 @@
 ### 🚀 استئناف في 30 ثانية
 1. لا شي عاجل — مدفوع ومنشور.
 2. المرحلة الجاية: مدونتي UI/UX عبر Google Stitch (موكب ملزم + Tajawal/RTL/بندل).
-3. مرجع النقد: `documents/modonty-v3-handoff/CRITICAL-REVIEW-v1.html`.
+3. مرجع النقد: `documents/HTML/CRITICAL-REVIEW-v1.html`.
 
 ---
 
@@ -825,7 +825,7 @@
 - **أول خطوة بعد الـ restart (بالترتيب):** (1) **قفل نطاق الدفع أولاً** — الشجرة (١٣٠) فيها ترحيل فصل الطاقم (schema.prisma) + ريلز + سيو ذكاء + بوابة حراسة + المعرض. **ممنوع دفع الكل دفعة واحدة** (فصل الطاقم يكسر دخول أدمن الإنتاج بلا ترحيل بيانات + تدوير AUTH_SECRET — عملية آخر الليل منفصلة). (2) شغّل سيرفرات dev. (3) tsc معاد (بعد الـ restart) + build. (4) تست حي prod-only. (5) backup + version bump + changelog + push بإذن صريح.
 
 ### ✅ أُنجز هذه الجلسة (بنية سياق فقط · صفر كود تطبيقي)
-1. **قائمة ما قبل الـ Push** — `documents/context/PRE-PUSH-CHECKLIST.html` (RTL، تفاعلي، يحفظ التقدّم بالمتصفح). كشفت أن الشجرة فيها **١٨٠ تغيير غير مدفوع** من جلسات كثيرة متداخلة (مش شغل المعرض فقط): فصل الطاقم (schema) · نظام الريلز · إصلاح سيو شامل (سكربتات لمرة واحدة) · سيو صور بالذكاء · بوابة حراسة الأدمن · خردة تشخيص في الجذر (~١٩ md/yml). التوصية: **لا تدفع الشجرة كاملة** — افصل الدفعات (أ: المعرض بعد حذف الخردة واستثناء schema · ب: فصل الطاقم آخر الليل مع ترحيل البيانات).
+1. **قائمة ما قبل الـ Push** — `documents/HTML/PRE-PUSH-CHECKLIST.html` (RTL، تفاعلي، يحفظ التقدّم بالمتصفح). كشفت أن الشجرة فيها **١٨٠ تغيير غير مدفوع** من جلسات كثيرة متداخلة (مش شغل المعرض فقط): فصل الطاقم (schema) · نظام الريلز · إصلاح سيو شامل (سكربتات لمرة واحدة) · سيو صور بالذكاء · بوابة حراسة الأدمن · خردة تشخيص في الجذر (~١٩ md/yml). التوصية: **لا تدفع الشجرة كاملة** — افصل الدفعات (أ: المعرض بعد حذف الخردة واستثناء schema · ب: فصل الطاقم آخر الليل مع ترحيل البيانات).
 2. **تقسيم `SESSION-LOG.md`** (كان ٤٧٢ك/٣٤٢٣ سطر — استنزاف token): نشط = آخر أسبوع فقط (٩ جلسات ٠٧-١٤→٢١، **٧٩ك**) + أرشيف شهري دائم `SESSION-LOG-2026-07.md` (١٣) و`SESSION-LOG-2026-06.md` (٤٤). تحقّق صفر-فقدان صفر-تكرار: ٩+١٣+٤٤=٦٦=الأصل، كل جلسة في مكان واحد.
 3. **إصلاح انتقادي (بطلب خالد):** أضفت قسم **«🔒 معلّقات ثابتة — لا تُدوَّر»** أعلى النشط — الشغل غير المنجز لا يسقط بالعمر (أكبر سلبية في القص الزمني). كل بند مؤشّر لمصدره (بلا نسخ محتوى → لا split-brain). أزلت تداخل آخر أسبوع بين النشط وأرشيف يوليو.
 4. **قاعدة التدوير الأسبوعي (تلقائية بأمر خالد)** في رأس النشط + `memory/feedback_session_log_weekly_rotation.md`: كلود يدوّر بنفسه كل جلسة (أي جلسة أقدم من ٧ أيام تُنقَل لأرشيف شهرها، بلا طلب)؛ القراءة الافتراضية من النشط؛ التدوير يمسّ بلوكات `## Session:` فقط؛ تحقّق عدّ إلزامي؛ القص عند `---` فقط.
@@ -891,10 +891,10 @@
      - **(ب) نقل الراوتر:** `/seo-client` **انتقل** إلى `/clients/seo` (PowerShell Move-Item). حدّثت: السايدبار (شلت SEO Client من مجموعة Articles → أضفتها لمجموعة **Clients** بأيقونة Search، href=`/clients/seo`) + `save-client-seo.ts` revalidatePath → `/clients/seo` + رابط الرجوع في الصفحة التقنية → `/clients/seo`.
   - **tsc: صفر أخطاء** بعد كل ما سبق (تأكيد exit 0).
   - **✅ مُختبر حيّاً بعد الـ restart (2026-07-21 صباحاً):** `/clients/seo` يعمل (27 عميل، الشارة رابط لـ 27 صفحة تقنية) · `/clients/[id]/seo-technical` يعمل (حلقة 37% + أشرطة META/JSON-LD + الطريق للـ100% + النواقص وسبب النقص + META/JSON-LD الخام) · **صفر أخطاء console** (تحذير siteUrl اختفى أيضاً). **درس مثبت:** نقل مجلد وTurbopack شغّال يسبّب أخطاء HMR مؤقتة — الحل إعادة تشغيل السيرفر (نجح).
-- **مكوّن مشترك جديد `SeoScoreBadge` (2026-07-21، مُختبر حيّاً):** `admin/components/shared/seo-score-badge.tsx` — شعار Google (`GoogleIcon` الموجود) + النسبة، عتبة واحدة **≥90 أخضر · 50–89 برتقالي · <50 أحمر** (قرار خالد)، props: `size(sm/md/lg)` · `showIcon` · `label` · `href`. الترتيب: الشعار أول ثم النسبة. الموك‑اب المعتمد: `documents/tasks/seo-score-badge-mockup.html`. **استُبدل في 10 أماكن:** seo-client-list · seo-images-list · media-grid · media-segment-table · client-table · article-table · clients/segment-table · articles/segment-table · **article-seo-score-badge** (بـ onClick — تمرير لدليل السيو) · **client-header** (كان شريط progress، صار الشارة، رابط لـ /technical). المكوّن يدعم `href` و`onClick`. أُزيلت كل دوال tone/scoreCls المحلية. **تُرك عمداً:** الحلقات الكبيرة (conic-gradient) في الصفحات التقنية + فورم سيو العميل (عنصر مركزي مختلف) · `seo-health-score` (محلّل النموذج القديم، مو السوت). أي جدول جديد يحتاج شارة سيو → `<SeoScoreBadge score={n}/>`. tsc صفر أخطاء · حيّاً: 27 شارة بشعار Google متعدد الألوان + رابط تقني + صفر أخطاء console. (بقي reference-table غير موحّد — كيان مختلف؛ يُوحّد لو طُلب.)
+- **مكوّن مشترك جديد `SeoScoreBadge` (2026-07-21، مُختبر حيّاً):** `admin/components/shared/seo-score-badge.tsx` — شعار Google (`GoogleIcon` الموجود) + النسبة، عتبة واحدة **≥90 أخضر · 50–89 برتقالي · <50 أحمر** (قرار خالد)، props: `size(sm/md/lg)` · `showIcon` · `label` · `href`. الترتيب: الشعار أول ثم النسبة. الموك‑اب المعتمد: `documents/archive/tasks/seo-score-badge-mockup.html`. **استُبدل في 10 أماكن:** seo-client-list · seo-images-list · media-grid · media-segment-table · client-table · article-table · clients/segment-table · articles/segment-table · **article-seo-score-badge** (بـ onClick — تمرير لدليل السيو) · **client-header** (كان شريط progress، صار الشارة، رابط لـ /technical). المكوّن يدعم `href` و`onClick`. أُزيلت كل دوال tone/scoreCls المحلية. **تُرك عمداً:** الحلقات الكبيرة (conic-gradient) في الصفحات التقنية + فورم سيو العميل (عنصر مركزي مختلف) · `seo-health-score` (محلّل النموذج القديم، مو السوت). أي جدول جديد يحتاج شارة سيو → `<SeoScoreBadge score={n}/>`. tsc صفر أخطاء · حيّاً: 27 شارة بشعار Google متعدد الألوان + رابط تقني + صفر أخطاء console. (بقي reference-table غير موحّد — كيان مختلف؛ يُوحّد لو طُلب.)
 - **شارة المقال → صفحة تقنية المقال (2026-07-21، مُختبر حيّاً):** `article-seo-score-badge` صار `href={/articles/[id]/technical}` (بدل onClick التمرير) — نفس نمط العميل (الشارة تفتح دليل السيو الكامل). مُختبر: الشارة على صفحة المقال رابط لـ `/articles/[id]/technical`، والوجهة تفتح «دليل السيو — مراجعة المقال». ⚠️ ظهر **500 عابر** مرّة بسبب `querySrv ECONNREFUSED ...mongodb.net` (انقطاع اتصال MongoDB لحظي — مو bug؛ الطلبات اللاحقة 200). tsc صفر أخطاء.
 - **`/clients/seo` صار جدول shadcn كامل (2026-07-21، مُختبر حيّاً):** `seo-client-list.tsx` أُعيد كتابته من قائمة كروت → **جدول Table** بنمط جداول الأدمن (dense · zebra · RTL) + **بحث** (اسم/مجال/مدينة) + **فرز** (SEO الناقص-أولاً + العميل) + **pagination** (15/صفحة، السابق/التالي) + الزر «افتح»→**«تعديل»** (أيقونة قلم، يفتح الـ Dialog) + الشارة SeoScoreBadge رابط للتقني. مُختبر: 15 صف/صفحة · «صفحة 1 من 2» · بحث «دكتور»→11 من 27 · صفر أخطاء · tsc نظيف.
-- **`/seo-images` صار راوتين منفصلين (2026-07-21، موكب معتمد + tsc صفر أخطاء — لم يُختبر حيّاً بعد):** خالد رفض الغوص على نفس الراوت وطلب تنقّلاً حقيقياً + موكب أولاً (خالفتُ القاعدة أول مرة وصحّحت). الموكب `documents/tasks/seo-images-mockup-v1.html` (شاشتان). البناء: **(١)** `/seo-images` = جدول عملاء (`components/seo-groups-table.tsx`) — نتيجة سيو صور العميل (متوسط) + عددها + كم بلا نص بديل + رابط «عرض الصور». بحث + فرز + ترقيم. «صور مدوّنتي — مقالات وعامة» صف مميّز آخر القائمة (bucket لكل صورة لا تخص عميلاً). **(٢)** `/seo-images/[clientId]` (جديد) = **grid صور العميل بمعاينة** (طبق الأصل) `[clientId]/components/client-images-grid.tsx` + «كل العملاء» للرجوع + بحث + ترقيم (24/صفحة) + الضغط على صورة → نافذة النص البديل/الوصف. **منطق التجميع مشترك** في `helpers/load-groups.ts` (الصفحتان تستدعيانه — صفر تباعد بين المسارين). حُذف `seo-images-list.tsx` القديم (الغوص). `image-seo-dialog` import صار من `../helpers/load-groups`.
+- **`/seo-images` صار راوتين منفصلين (2026-07-21، موكب معتمد + tsc صفر أخطاء — لم يُختبر حيّاً بعد):** خالد رفض الغوص على نفس الراوت وطلب تنقّلاً حقيقياً + موكب أولاً (خالفتُ القاعدة أول مرة وصحّحت). الموكب `documents/archive/tasks/seo-images-mockup-v1.html` (شاشتان). البناء: **(١)** `/seo-images` = جدول عملاء (`components/seo-groups-table.tsx`) — نتيجة سيو صور العميل (متوسط) + عددها + كم بلا نص بديل + رابط «عرض الصور». بحث + فرز + ترقيم. «صور مدوّنتي — مقالات وعامة» صف مميّز آخر القائمة (bucket لكل صورة لا تخص عميلاً). **(٢)** `/seo-images/[clientId]` (جديد) = **grid صور العميل بمعاينة** (طبق الأصل) `[clientId]/components/client-images-grid.tsx` + «كل العملاء» للرجوع + بحث + ترقيم (24/صفحة) + الضغط على صورة → نافذة النص البديل/الوصف. **منطق التجميع مشترك** في `helpers/load-groups.ts` (الصفحتان تستدعيانه — صفر تباعد بين المسارين). حُذف `seo-images-list.tsx` القديم (الغوص). `image-seo-dialog` import صار من `../helpers/load-groups`.
 - **تحسينات `/seo-images` بعد المراجعة الحيّة (2026-07-21، tsc صفر أخطاء):**
   1. **ديالوج الصورة عمود واحد** (`image-seo-dialog.tsx`): شُيل العمود الأيمن (معاينة الصورة + صندوق «مستخدمة في»)؛ بقي النص البديل + الوصف + الاسم التلقائي + الحفظ · `max-w-2xl`→`max-w-lg`.
   2. **الجدول الرئيسي:** شُيل عمود الـ **SEO badge** (كان ملخبطًا — يبدو سيو العميل وهو متوسط الصور). أُضيف عمود **الأنواع** (شارة لكل نوع + عدده، الأكثر أولاً) — يُحسب في `load-groups.ts` (`typeCounts`). عمود **الحالة** صار أيقونة ⚠️ + عدد المشاكل / ✓ «مكتملة». الزر «عرض الصور»→**«تحسين الصور»**.
@@ -946,7 +946,7 @@
 ### 📂 ملفات لُمست (جديد + معدّل)
 - جديد: `dataLayer/lib/seo/media/build-image-object.ts` · `admin/app/(dashboard)/clients/actions/clients-actions/save-client-seo.ts` · `admin/app/(dashboard)/media/actions/save-image-seo.ts` · `admin/app/(dashboard)/seo-client/{page.tsx,components/seo-client-list.tsx,components/client-seo-dialog.tsx}` · `admin/app/(dashboard)/seo-images/{page.tsx,components/seo-images-list.tsx,components/image-seo-dialog.tsx}`
 - معدّل: `dataLayer/lib/seo/generate-organization-jsonld.ts` · `dataLayer/lib/seo/generate-client-seo-bundle.ts` · `dataLayer/lib/seo/media/seo-score.ts` · `dataLayer/prisma/schema/schema.prisma` (Settings +3 حقول) · `admin/lib/seo/knowledge-graph-generator.ts` · `admin/lib/seo/jsonld-storage.ts` · `admin/lib/seo/assert-article-publishable.ts` · `admin/app/(dashboard)/seo/actions/cascade-all-seo.ts` · `admin/app/(dashboard)/industries/actions/industries-actions/update-industry.ts` · `admin/app/(dashboard)/settings/actions/{settings-actions.ts,seed-technical-defaults.ts}` · `admin/app/(dashboard)/settings/system/components/system-form.tsx` · `admin/components/admin/sidebar.tsx`
-- التتبّع: `documents/tasks/SEO-CONTENT-HUB-v1.html` (15/20 أخضر · الباقي هدّام/تست حي).
+- التتبّع: `documents/archive/tasks/SEO-CONTENT-HUB-v1.html` (15/20 أخضر · الباقي هدّام/تست حي).
 
 ### 🔁 Git / deploy
 - الفرع: `main` · تغييرات غير مُلتزمة: **نعم** (كل ما فوق) · **لم يُدفع** · آخر commit: `7e250c3`.
@@ -966,14 +966,14 @@
 - الإجراء التالي عند الاستئناف: **خطوات ما بعد النشر** (على الإنتاج): (١) ⭐ دخول admin.modonty.com ولصق نصّي الشروط + الخصوصية في الـ DB؛ (٢) تحقّق GA4 (`booking_form_start` + `booking_whatsapp_click`) + الجيو من ترافيك حقيقي على Kimazone؛ (٣) اختياري `db push` للفهارس.
 
 ### ✅ أُنجز هذه الجلسة
-- **المرجع الرئيسي:** `documents/tasks/booking-after-v1.html` (١٩/٢٤ + بنود ما بعد النشر). المشكلة الجذرية من GA4: صفر `booking_attempt` = هجر قبل الإرسال → أعدنا التصميم واتساب-أولاً.
+- **المرجع الرئيسي:** `documents/archive/tasks/booking-after-v1.html` (١٩/٢٤ + بنود ما بعد النشر). المشكلة الجذرية من GA4: صفر `booking_attempt` = هجر قبل الإرسال → أعدنا التصميم واتساب-أولاً.
 - **السكيما:** `BookingRequest` + `channel{form,whatsapp}` + name/email/phone اختيارية + `confirmedAt` + `visitorId/sessionId` (dedup) + `country/city` (جيو) + فهرسان. (Prisma يطبّق `@default("form")` على القراءة → لا حاجة backfill للسجلات القديمة — مؤكَّد بالدليل.)
 - **صفحة الحجز (visitor):** هيدر ثقة + زرّ واتساب برسالة منسوبة لمدوّنتي + حقل جوال دولي E.164 (`phone-field.tsx`، منتقي دولة + geo افتراضي) + إفصاح تدريجي + sign-in wrap. حُذف مُنتقي الوقت المهيكل + خانة النشرة.
 - **توحيد كل مداخل واتساب** على `recordWhatsappLead` (ليد مجهول deduped per زائر×عميل×جلسة): FAB + شيت التواصل + لوحة التواصل + كارت المقال + دوك المقال + **كارت القوائم** (categories/tags/industries عبر `WhatsAppLeadLink` + تمرير `id`). أداة عامة `onBeforeNavigate` في `cta-tracked-link.tsx`.
 - **الكونسول (رأس القيمة):** segmented control قنوات (فورم/واتساب) + KPI «تواصل واتساب» + صف ليد واتساب مجهول (شارة + جيو + بلا أزرار جوال/إيميل) + حقل «الموعد المؤكَّد» (`setBookingConfirmedAt`).
 - **أحداث GA4:** `booking_form_start` + `booking_whatsapp_click` في `events-registry.ts` (⚠️ الإرسال production-gated — `ga4-server.ts:77` — لا يرسل من localhost عمداً).
 - **إصلاح bug حي:** رابط `/privacy` كان 404 → حُوّل لـ `/legal/privacy-policy`.
-- **نصّان قانونيان جاهزان للصق:** `documents/legal/terms-content.html` + `privacy-policy-content.html` (PDPL م/19 + نمط الوسيط «not a party» + YMYL؛ القيم الفعلية معبّأة: modonty@modonty.com / جدة-البغدادية-22235).
+- **نصّان قانونيان جاهزان للصق:** `documents/HTML/terms-content.html` + `privacy-policy-content.html` (PDPL م/19 + نمط الوسيط «not a party» + YMYL؛ القيم الفعلية معبّأة: modonty@modonty.com / جدة-البغدادية-22235).
 - **تست حي كامل (dev):** DB + **dedup مثبت** (ضغطتان=صف واحد) + كل المصادر (client_page/article_card/client_list) + **واجهة الكونسول حيّة** عبر «دخول أدمن» impersonation (توكن HMAC موقّع بلا كتابة DB) + **الجيو مثبت** (حقن `x-vercel-ip-*` → صف عرض «Jeddah، SA»). لقطات في `.playwright-mcp/`.
 - **TSC:** modonty · console · admin — صفر ×3 (أُصلح تسرّب nullable-phone في profile-bookings + get-bookings-report + get-leads-detail).
 
@@ -991,7 +991,7 @@
 - **ترتيب:** `modonty/_bk-diag.mjs` (untracked، ما دخل الـ commit) — احذفه: `del modonty\_bk-diag.mjs`. سيرفرا dev (3000 modonty / 3002 console) شغّالان.
 
 ### 📂 ملفات لمست (٣٧ في الـ commit)
-- **جديدة:** `modonty/components/whatsapp-booking-cta.tsx` · `whatsapp-icon-link.tsx` (WhatsAppLeadLink) · `modonty/app/articles/[slug]/components/phone-field.tsx` · `modonty/lib/analytics/geo-headers.ts` · `documents/legal/{terms,privacy-policy}-content.html` · `documents/tasks/booking-after-v1.html`.
+- **جديدة:** `modonty/components/whatsapp-booking-cta.tsx` · `whatsapp-icon-link.tsx` (WhatsAppLeadLink) · `modonty/app/articles/[slug]/components/phone-field.tsx` · `modonty/lib/analytics/geo-headers.ts` · `documents/legal/{terms,privacy-policy}-content.html` · `documents/archive/tasks/booking-after-v1.html`.
 - **معدّلة (أبرزها):** `schema.prisma` (hunk BookingRequest فقط) · modonty booking-actions/booking-form/booking-schema/article page+dock+card/book page/client-contact(+sheet)/whatsapp-fab/cta-tracked-link/shared client-card/categories+tags+industries pages/profile-bookings/events-registry · console bookings (queries/list/page/actions) + ar.ts · admin get-bookings-report + get-leads-detail · TODO.md · 3× package.json (bump).
 
 ### 🔁 Git / deploy
@@ -1001,7 +1001,7 @@
 
 ### 🚀 كيف تستأنف خلال ٣٠ ثانية
 1. تأكّد Vercel READY للثلاثة (deployments API أو الداشبورد).
-2. افتح `documents/legal/terms-content.html` + `privacy-policy-content.html` → انسخ داخل `#db-content` → admin.modonty.com → الصق في سجلّي `modonty` (slug: terms / privacy-policy).
+2. افتح `documents/HTML/terms-content.html` + `privacy-policy-content.html` → انسخ داخل `#db-content` → admin.modonty.com → الصق في سجلّي `modonty` (slug: terms / privacy-policy).
 3. على الإنتاج: زُر عيادة FORM → اضغط واتساب → تحقّق GA4 realtime + صف الكونسول (Kimazone) يعرض جيو حقيقي.
 
 ## Session: 2026-07-19 12:30 — صفحة حساب العميل: كشف فوترة محاسبي (admin v0.91.0 — مدفوع ✅)
@@ -1011,7 +1011,7 @@
 - الإجراء التالي عند الاستئناف (اختياري): (١) بناء **protection** لزر «إرسال» الإيميل ثم تجربته حياً — الشيء الوحيد غير المُختبَر حياً؛ (٢) لا شيء عاجل غيره.
 
 ### ✅ أُنجز هذه الجلسة
-- **الموكب** `documents/tasks/account-detail-mockup-v1.html` أُقفل (v3 dark محاسبي): شيل شريط دورة الفاتورة + النموذج المفتوح + الإيموجي؛ رأس بثلاثة أرقام مهيمنة؛ جدول فواتير؛ نافذتان مبسّطتان (بلا شيبات/جُمل حشو بأمر خالد)؛ قواعد النظام في `<details>`.
+- **الموكب** `documents/archive/tasks/account-detail-mockup-v1.html` أُقفل (v3 dark محاسبي): شيل شريط دورة الفاتورة + النموذج المفتوح + الإيموجي؛ رأس بثلاثة أرقام مهيمنة؛ جدول فواتير؛ نافذتان مبسّطتان (بلا شيبات/جُمل حشو بأمر خالد)؛ قواعد النظام في `<details>`.
 - **السكيما (Invoice):** `paymentMethod` صار اختيارياً + إضافة `paidAt` + `paidByUserId`. kill node → prisma generate.
 - **نموذج الفوترة الجديد (القاعدة المقفولة):** الإصدار = المبلغ + تاريخ الانتهاء فقط (الباقة/الفترة/العملة تُشتق من العميل) → فاتورة **مستحقّة** بلا تمديد. **«تحديد مدفوعة»** (تاريخ السداد) = **بوابة الكتابة الوحيدة** لـ `Client.subscriptionEndDate` = تاريخ **آخر فاتورة مدفوعة** (تلقائي، لا override يدوي). حالة الدفع **مشتقّة** لا مخزّنة: `today > subscriptionEndDate ? مستحقّة : (آخر مدفوعة ? مدفوعة : مستحقّة)`.
 - **الأكشنات الثلاثة:** `create-invoice.ts` (أُعيد كتابته) · `mark-paid.ts` (جديد — يعيد حساب end = max(paid ends)) · `send-invoice.ts` (جديد — إيميل + emailSentAt).
@@ -1106,7 +1106,7 @@
 ### ✅ ما أُنجز هذه الجلسة (سيو المقال — مدفوع)
 - **مصدر واحد:** كل رقم سيو مقال من `computeArticleSeoScore` (dataLayer). المحوّل: `admin/lib/seo/article-seo-score.ts` (فيه `getArticleSeoScore` · `getArticleSeoScoreDetail` · `getArticleEntitySeo` · `ARTICLE_SEO_SELECT`).
 - **بوابة نشر واحدة:** `admin/lib/seo/assert-article-publishable.ts` (جديد، `MIN_SEO_SCORE=60`) — تولّد JSON-LD/metadata ثم تقيس الحقيقي ثم تبوّب. مربوطة في `transition-article.ts` (SCHEDULED→PUBLISHED فقط). شِيل الفحص المزيّف (`analyzeArticleSEO`) من create/update — بقي `analyzeArticleSEO` فقط كـ«دليل تعبئة» في الفورم.
-- **`/technical` أُعيد بناؤها** (`admin/app/(dashboard)/articles/[id]/technical/page.tsx`): حلقة درجة + META/JSON-LD منفصلين + تقسيم نواقص «✍️ الكاتب» (بارزة) vs «🤖 النظام» (JSON-LD ظاهر، الباقي مطوي) + أخطاء JSON-LD مترجمة عربي + عارض META/JSON-LD خام. الموكب: `documents/mockups/article-technical-guide-v1.html`.
+- **`/technical` أُعيد بناؤها** (`admin/app/(dashboard)/articles/[id]/technical/page.tsx`): حلقة درجة + META/JSON-LD منفصلين + تقسيم نواقص «✍️ الكاتب» (بارزة) vs «🤖 النظام» (JSON-LD ظاهر، الباقي مطوي) + أخطاء JSON-LD مترجمة عربي + عارض META/JSON-LD خام. الموكب: `documents/HTML/article-technical-guide-v1.html`.
 - **`/seo` + get-articles-stats** → المقياس الحقيقي. **رأس/شريط الفورم** نُظّف (SEO badge = رابط لـ/technical، شِيل معاينة + «محفوظ»).
 - **تست حي كامل (dev, modonty_dev):** تطابق ٤ أسطح=66؛ الدورة الكاملة على مقال جبر `6a536dda`: 62→(صورة)66→(موافقة عميل SCHEDULED→نشر=**البوابة**)95→(تقصير عنوان SEO)**100**. المنع <60 مربوط ومفعّل بالكود (صعب حيّاً لأن فحص الجودة 21 يمنعه قبلها).
 
@@ -1303,7 +1303,7 @@
 ## Session: 2026-07-13 (مساءً) — 🤖 فحص GEO/AEO المصيري: 4 جولات تدقيق + الانفصام الثلاثي
 
 ### 🎯 Where I stopped
-- **التقرير النهائي**: `documents/seo/GEO-AEO-AUDIT-2026-07-13.html` — 4 جولات (مسح → تدقيق عدائي → اختبار تقارب → تغطية كاملة Ultra بمنظومة workflow). **جولة الإقفال تعمل الآن في الخلفية** (استئناف wf_3e0cb479-797 بعد رفع حد الجلسة 22:00): كاشف نص-التقرير + تحقق أسماء الزواحف الـ37 + مكذّبون مزدوجون لبنود الجولة ٤ الثمانية.
+- **التقرير النهائي**: `documents/HTML/GEO-AEO-AUDIT-2026-07-13.html` — 4 جولات (مسح → تدقيق عدائي → اختبار تقارب → تغطية كاملة Ultra بمنظومة workflow). **جولة الإقفال تعمل الآن في الخلفية** (استئناف wf_3e0cb479-797 بعد رفع حد الجلسة 22:00): كاشف نص-التقرير + تحقق أسماء الزواحف الـ37 + مكذّبون مزدوجون لبنود الجولة ٤ الثمانية.
 - **Next action:** دمج نتائج الإقفال في التقرير → إقفاله رسمياً (بروتوكول الإقفال مكتوب في ملحق المنهجية داخل الملف). خالد أعطى صلاحية كاملة — بلا أسئلة.
 
 ### ✅ أهم النتائج (كلها بتحقق مزدوج كود + إنتاج حي)
@@ -1321,7 +1321,7 @@
 - لا تغييرات كود هذه الجلسة المسائية (الفحص قراءة فقط) — الملفات الجديدة: التقرير + تحديثا TODO/SESSION-LOG. آخر دفعة: `5e89a58` (admin v0.86.0 Dashboard Triage — الثلاثة READY).
 
 ### 🚀 Resume in 30s
-1. افتح التقرير `documents/seo/GEO-AEO-AUDIT-2026-07-13.html` — الملحق آخر الملف يشرح كل شيء.
+1. افتح التقرير `documents/HTML/GEO-AEO-AUDIT-2026-07-13.html` — الملحق آخر الملف يشرح كل شيء.
 2. تحقق من اكتمال جولة الإقفال (workflow) وادمج نتائجها.
 3. TODO بند ١٣/١٣ب — أول تنفيذ: المرحلة صفر.
 
@@ -1334,7 +1334,7 @@
 - **Next action عند الاستئناف:** التحقق من Vercel بعد الدفع (admin READY) ثم بنود TODO ٠/٠أ/٠ب (تدوير كلمة مرور DB، قمع الحجز، GA4 custom dimension).
 
 ### ✅ Done this session (كله متحقق حياً + tsc صفر أخطاء)
-- **Dashboard Triage v2 نُفّذ بالكامل** من الموك المعتمد `documents/mockups/admin-dashboard-triage-v2-ui.html` (خالد: «confirm and make sure 100% all the data and the links work»):
+- **Dashboard Triage v2 نُفّذ بالكامل** من الموك المعتمد `documents/HTML/admin-dashboard-triage-v2-ui.html` (خالد: «confirm and make sure 100% all the data and the links work»):
   - `components/sections/today-strip.tsx` — رأس الصفحة + بيلز النبض + شريط Today المرتب (٥ بنود ديناميكية: القمع الميت 39→0 · 12/27 unreachable · 16 inbox · 11 approvals · 10 zero-articles). يسمّي أكبر متسرب تلقائياً (سمايل تاون 31/0).
   - `lib/dashboard/cached.ts` — React cache() حول الأكشنات الثلاثة المشتركة: الشريط والأقسام من fetch واحد = يستحيل الاختلاف.
   - `components/dashboard-ui.tsx` — اللغة البصرية الموحدة: TierCard (hot/warm/ok/plain) بأيقونة lucide ملوّنة + Ghost cell للأصفار + ZChip + SectionHead + GroupLabel.
@@ -1522,7 +1522,7 @@
 ### 🎯 Where I stopped
 - **فيد الريلز التجريبي شغال حياً على dev** (`localhost:3000/reels` + من الموبايل عبر `192.168.1.3:3000`): ١٤ ريل صوري × ٧ عملاء، سكرول سناب، إعجاب/حفظ/مشاركة، رسالة «اشترك مجاناً» للزائر (→ `/users/register` بعد إصلاح رابط النشرة الغلط).
 - **آخر شيء صار:** خالد اختبر من موبايله — الرسالة تشتغل، الروابط اتصلحت. ما اختبر الإعجاب بجلسة مسجلة بعد.
-- **الإجراء التالي عند الاستئناف:** قفل البنود أ–د في `documents/reels/GALLERY-REELS-DECISIONS-v1.html` («ابروف» بند بند) ← ثم أول شغلة كود: مسار رفع المعرض الجديد بالكونسول أو الهيدر الغامر للفيد (قرار خالد).
+- **الإجراء التالي عند الاستئناف:** قفل البنود أ–د في `documents/HTML/GALLERY-REELS-DECISIONS-v1.html` («ابروف» بند بند) ← ثم أول شغلة كود: مسار رفع المعرض الجديد بالكونسول أو الهيدر الغامر للفيد (قرار خالد).
 
 ### ✅ Done this session
 **١) بنية باني كاملة عبر API بمفتاح الحساب (كله متحقق حياً 201/200):**
@@ -1543,7 +1543,7 @@
 - تحقق: TSC مودونتي صفر ×3 · Playwright: سكرول سناب مثالي (14×viewport) · أزرار متحققة · **⚠️ tsc admin/console لم يُشغَّل بعد تغيير السكيما — إلزامي قبل أي push**.
 
 **٤) جلسة فريق المحتوى (افتُتحت ثم أجّلها خالد):**
-- ملف قرار `documents/content-team/CONTENT-TEAM-BRAINSTORM-v1.html` (نمط الريلز): دراسة رسمية (قوقل يقبل محتوى الذكاء people-first / يمنع scaled abuse / تشديد YMYL) + 11 قراراً.
+- ملف قرار `documents/HTML/CONTENT-TEAM-BRAINSTORM-v1.html` (نمط الريلز): دراسة رسمية (قوقل يقبل محتوى الذكاء people-first / يمنع scaled abuse / تشديد YMYL) + 11 قراراً.
 - **مقفل ٤/١١:** ٨ التعويض الرباعي (أساسي رمزي + لكل مقال معتمد + عمولة عميل نشط + أثر ربع سنوي مقارنة بالتوقع — **مرفوض: مكافأة الوصول الخام**) · ٩ القياس (التزام/قبول أول مراجعة/معتمدة) · ٢ الأدوار جزئياً (محافظ عملاء — التسمية معلقة) · ١١ التوظيف بالدفعات (مقال تجريبي مدفوع لـ٦ → توظيف ٢ الآن → ٥ مع النمو). الواقع المصحح: كاتب واحد + سير ذاتية، السوق سعودي ثم خليجي، الكتّاب من مصر عن بُعد.
 
 ### 📝 Decisions taken (with reasoning)
@@ -1566,7 +1566,7 @@
 - `dataLayer/prisma/schema/schema.prisma` — قسم REELS كامل (4 نماذج + 4 enums + ReelLike/ReelFavorite) + علاقات Client/Article/User.
 - `modonty/next.config.ts` — remotePattern `modonty-reels-media.b-cdn.net` + `allowedDevOrigins`.
 - `modonty/app/reels/{page,loading}.tsx` + `helpers/reels-feed.ts` + `components/reel-actions-rail.tsx` + `actions/reel-interactions.ts` — كلها جديدة.
-**وثائق:** `documents/reels/GALLERY-REELS-DECISIONS-v1.html` (ملف قرار خالد) + `-2026-07-06.md` (النسخة التقنية) · `documents/content-team/CONTENT-TEAM-BRAINSTORM-v1.html` · ذاكرة: `project_reels_decision_file.md` (بنية باني + التعديلات) + `project_content_team_planning.md` + `MEMORY.md`.
+**وثائق:** `documents/HTML/GALLERY-REELS-DECISIONS-v1.html` (ملف قرار خالد) + `-2026-07-06.md` (النسخة التقنية) · `documents/HTML/CONTENT-TEAM-BRAINSTORM-v1.html` · ذاكرة: `project_reels_decision_file.md` (بنية باني + التعديلات) + `project_content_team_planning.md` + `MEMORY.md`.
 **بيئة:** `.env.shared` — ~18 مفتاح BUNNY_* جديدة.
 
 ### 🔁 Git / deploy state
@@ -1576,7 +1576,7 @@
 
 ### 🚀 How to resume in 30 seconds
 1. `pnpm dev:modonty` ← افتح `http://localhost:3000/reels` (الفيد الحي).
-2. افتح `file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/reels/GALLERY-REELS-DECISIONS-v1.html` ← اقفل البنود أ–د.
+2. افتح `file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/HTML/GALLERY-REELS-DECISIONS-v1.html` ← اقفل البنود أ–د.
 3. ذكّر خالد: تدوير مفتاح باني + تست الإعجاب بحسابه ← ثم قرر أول شغلة كود (رفع الكونسول أو الهيدر الغامر).
 
 ---
@@ -1616,9 +1616,9 @@
 - **قديم من جلسات سابقة (بلا تغيير):** hydration صفحة `/changelog` بالإنتاج (React #418) · Social Publishing settings المؤجلة (mockup جاهز) · `modonty/scripts/{diagnose,seed}-featured*.ts` قرار حذف/إبقاء · صور التست على tags/categories/industries dev.
 
 ### 📂 Files touched (كلها untracked — وثائق فقط)
-- `documents/reels/REELS-VIDEO-BRAINSTORM-v1.html` — جديد (انتقل من tasks/) — ملف القرار: دراسة + 10 قرارات + موكب معتمد + روابط الملفات.
-- `documents/reels/reels-modonty-simulation-v1.html` — جديد (انتقل من mockups/) — محاكاة 4 شاشات.
-- `documents/reels/REELS-REQUIREMENTS-FLOW-v1.html` — جديد — قائمة التسليم + 5 فلوهات + الحالات.
+- `documents/HTML/REELS-VIDEO-BRAINSTORM-v1.html` — جديد (انتقل من tasks/) — ملف القرار: دراسة + 10 قرارات + موكب معتمد + روابط الملفات.
+- `documents/HTML/reels-modonty-simulation-v1.html` — جديد (انتقل من mockups/) — محاكاة 4 شاشات.
+- `documents/HTML/REELS-REQUIREMENTS-FLOW-v1.html` — جديد — قائمة التسليم + 5 فلوهات + الحالات.
 - ذاكرة: `~/.claude/projects/.../memory/project_reels_decision_file.md` (جديد+محدث) · `MEMORY.md` (مضغوط + بند الريلز).
 - **صفر تعديل على admin/modonty/console/dataLayer.**
 
@@ -1628,7 +1628,7 @@
 - Vercel: بلا deployments جديدة هذي الجلسة (آخر نشر admin v0.84.0 READY).
 
 ### 🚀 How to resume in 30 seconds
-1. افتح `file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/reels/REELS-VIDEO-BRAINSTORM-v1.html` (ملف القرار — فيه كل شيء).
+1. افتح `file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/HTML/REELS-VIDEO-BRAINSTORM-v1.html` (ملف القرار — فيه كل شيء).
 2. اسأل خالد: «حطيت `BUNNY_API_KEY` في `.env.shared`؟» — لو نعم: نفّذ تجهيز مكتبة باني (الخطوات في Where I stopped، تحقق من docs.bunny.net قبل كل نداء).
 3. لو المكتبة جهزت: اطلب من خالد قفل القرار ٤ («ابروف») ← ابدأ الخطة التفصيلية للمرحلة الأولى.
 
@@ -1656,7 +1656,7 @@
 - **تحقّق:** TSC صفر أخطاء ×3 مرات · **production build نجح (exit 0)** و`/settings/social` في قائمة الـ routes · تست حيّ: dirty tracking + حفظ Pinterest تجريبي على dev + persist بعد reload + استعادة الأصل · كونسول نظيف · JSON-LD sameAs مسار البيانات لم يُلمس · git status: سطح التغيير = 4 ملفات admin + مجلد social فقط (صفر dataLayer/modonty/console).
 - **تحقيق 404 مُغلق:** `/modonty/pages/about` أعطى 404 مؤقتاً أثناء الفحص → تجربة stash/pop أثبتت إنه **أثر `.next` قديم** (البناء الإنتاجي كتب فوق مجلد dev) مش من الكود — بعد إعادة الترجمة نفس الكود يرندر سليم، وكل روابط Info & Legal + Master Pages تعمل بصفر أخطاء كونسول.
 - **ملاحظة بيئة:** بعد أي `pnpm build:admin` محلي، أعد تشغيل dev server — البناء يكتب فوق `.next` وقد يسبّب 404 وهمي على مسارات ديناميكية حتى يُعاد ترجمتها.
-- **Mockups:** `documents/mockups/admin-modonty-ia-FINAL.html` (v4) + `admin-social-publishing-settings-v1.html` (مؤجّل).
+- **Mockups:** `documents/HTML/admin-modonty-ia-FINAL.html` (v4) + `admin-social-publishing-settings-v1.html` (مؤجّل).
 
 ### 📝 Decisions taken (with reasoning)
 - **رفض بطاقة «Integrations status»** — عرض «متصل (env)» بلا قيمة؛ القيمة في إعدادات سلوك (خالد وافق).
@@ -1665,7 +1665,7 @@
 
 ### 🚧 Pending / blocked
 - **hydration error بصفحة `/changelog` على الإنتاج** (React #418، فئة بق التواريخ نفسه — قديم، مش من شغل اليوم) — الإصلاح المرجّح: `suppressHydrationWarning` على عناصر التاريخ في `admin/app/(dashboard)/changelog/changelog-client.tsx`. غير عاجل، دقائق.
-- **مؤجّل باتفاق:** إعدادات سلوك السوشيال (Social Publishing: قالب كابشن/UTM/نشر تلقائي/جدولة/موافقة — الموكاب جاهز: `documents/mockups/admin-social-publishing-settings-v1.html`) + فكرة نقل Email Templates لـ Settings.
+- **مؤجّل باتفاق:** إعدادات سلوك السوشيال (Social Publishing: قالب كابشن/UTM/نشر تلقائي/جدولة/موافقة — الموكاب جاهز: `documents/HTML/admin-social-publishing-settings-v1.html`) + فكرة نقل Email Templates لـ Settings.
 - **معلّقات قديمة (من جلسات سابقة، بلا تغيير):** سكربتا `modonty/scripts/{diagnose,seed}-featured*.ts` غير المتتبَّعين (قرار حذف/إبقاء) · صور dev التجريبية على tags/categories/industries.
 
 ### 📂 Files touched (كلها مدفوعة)
@@ -1932,7 +1932,7 @@
 
 ### 📂 Files touched
 - `documents/context/ENTITY-CARD-SPEC.md` — **أُعيد كتابته بالكامل v2.0** (BRD نهائي، مرجع التنفيذ الوحيد من الآن)
-- `documents/mockups/entity-page-layout-v1.html` — إنشاء + تعديل (أُضيف تبويب Tag كامل)
+- `documents/HTML/entity-page-layout-v1.html` — إنشاء + تعديل (أُضيف تبويب Tag كامل)
 - (من السشن السابق، بدون تغيير: `categories-card-redesign-v1/v2/v3.html`, `entity-card-pattern-system-v1.html`)
 
 ### 🔁 Git / deploy state
@@ -2122,7 +2122,7 @@
 - `admin/app/(dashboard)/media/components/media-grid.tsx` · `admin/components/shared/media-picker-dialog.tsx`
 - `admin/app/api/articles/[id]/validate/route.ts` · `admin/scripts/compare-failing-vs-working.ts`
 - `modonty/app/articles/[slug]/actions/article-data.ts` · `modonty/app/articles/[slug]/components/related-articles.tsx`
-- `documents/tasks/TODO.md` · `documents/tasks/BUNNY-GOLIVE-PRD-v1.html` · `documents/context/SESSION-LOG.md`
+- `documents/tasks/TODO.md` · `documents/archive/tasks/BUNNY-GOLIVE-PRD-v1.html` · `documents/context/SESSION-LOG.md`
 
 ### 🔁 حالة git / النشر
 - **الفرع:** `version-2`
@@ -2176,7 +2176,7 @@
 - `admin/lib/utils/sharp-loader.ts` — **جديد**: محمّل sharp مشترك بـ`createRequire`.
 - `admin/.../media/components/media-grid.tsx` · `admin/components/shared/media-picker-dialog.tsx` · `thumbnail-image-view.tsx` · `unused-media-list.tsx` · `client-table.tsx` · `article-table.tsx` · `client-logo-preview.tsx` — كلها تمرّ الآن عبر `mediaSrc()` + `.b-cdn.net` مسموح.
 - `admin/.../maintenance/helpers/optimizable.ts` · `maintenance/page.tsx` · `client-galleries/helpers/load-galleries.ts` · `clients/actions/.../get-clients.ts` · `settings/defaults/actions/defaults-actions.ts` — أُضيف `bunnyUrl: true` للـ selects (+ sed شامل غطّى ١٠ مواضع `logoMedia`).
-- `documents/tasks/BUNNY-GOLIVE-PRD-v1.html` · `BUNNY-MIGRATION-PRD-v1.html` (مقفل) · `documents/tasks/TODO.md`.
+- `documents/archive/tasks/BUNNY-GOLIVE-PRD-v1.html` · `BUNNY-MIGRATION-PRD-v1.html` (مقفل) · `documents/tasks/TODO.md`.
 
 ### 🔁 Git / نشر
 - Branch: **`version-2`** — آخر commit `d1a41dc` (أداء مدوّنتي). **لا commit هذه الجلسة.**
@@ -2192,7 +2192,7 @@
 ### 🚀 استئناف في 30 ثانية
 1. `cd admin && npm run dev` (يأخذ 3000 إن كانت مدوّنتي مطفأة — انتبه للمنفذ).
 2. افتح `admin/app/(dashboard)/articles/workflow/maintenance/` → أصلح ٢٥ صورة Cloudinary بنمط `mediaSrc` + `bunnyUrl` في الـ select.
-3. أكمل فحص الـ~٢٠ راوت المتبقّية (القائمة في «أين توقفت»)، ثم اشطب `C-ADM` في `documents/tasks/BUNNY-GOLIVE-PRD-v1.html`.
+3. أكمل فحص الـ~٢٠ راوت المتبقّية (القائمة في «أين توقفت»)، ثم اشطب `C-ADM` في `documents/archive/tasks/BUNNY-GOLIVE-PRD-v1.html`.
 
 ## Session: 2026-07-31 23:55 — 🏁 T2 مدوّنتي core أُقفل 100% + جرد كود شامل + إعادة تنظيم الملفات المرجعية
 
@@ -2204,8 +2204,8 @@
 - **المرحلة ٤ اكتملت (وبها T2 كله):** p4-settings — زرّ مكتبة مدوّنتي على حقول الإعدادات الستّة عبر ترقية واحدة في `admin/app/(dashboard)/settings/_shared/image-field.tsx` + تمرير `getCoreClientId()` من ٥ صفحات (brand/modonty/tags/categories/industries)؛ دورة وسوم كاملة: القاعدة `tagsPageImage` + المخزّن + HTML الخام (hero+og:image بـcurl). p4-platform-mode — وضع PLATFORM حُذف من `admin/components/shared/media-picker-dialog.tsx` (select المصدر + كل الفروع) + خاصية scope من `media-image-field.tsx`؛ تست حي: صفر خيار مصدر، ٢٤ صورة core. p4-verify ✓ بدورات اليوم.
 - **شهادة السجل صارت خاصية (طلب خالد):** حقل `Settings.certificateImageUrl` جديد (سكيما بالطقس الكامل) + مجموعة «Official documents» بزرّ المكتبة في `/settings/brand` + `modonty/app/trust/page.tsx` يقرأه عبر `get-brand-media.ts` مع fallback للملف الثابت — دورة مثبتة بالاتجاهين (اختيار←يظهر، مسح←الثابت يرجع). باقي رفع الشهادة الحقيقية (خالد).
 - **`Settings.orgLogoUrl` حُذف نهائياً بأمر خالد** (احتياطي ميّت — الدليل: الموقع الحيّ يرندر الشعار من `logoUrl`): السكيما + ٨ مواضع في `settings-actions.ts` + ٤ fallbacks (authors page/form · build-modonty-author-seo · jsonld-storage) + seed script — صفر مراجع، الصفحات الثلاث تعمل.
-- **جرد كود شامل (تقرير بلا تعديل):** `documents/tasks/CODE-IMAGE-AUDIT-2026-07-31.html` — ١٣٢ ملفاً صُنّفت كلها: **صفر مسار رفع نشط لـCloudinary** بالتطبيقات الثلاثة، صفر hardcoded إلا ٣ روابط bunny-test؛ مكتشف جديد: ٤ سكربتات `dataLayer/.tmp-*.mjs`؛ `next-cloudinary` صفر استيراد.
-- **إعادة تنظيم مرجعية (قرارات خالد):** `MODONTY-CORE-PLAN-v1.html` **مُقفل** (صفر بند مفتوح — العدّاد 21/21) — قائمة الملكية الستّة نُقلت نصاً بالقياس المحدَّث (يتيمة **٩** · ٤ وسوم+١٤ تصنيف+٧ صناعات؛ المؤلفان والطاقم سقطا) إلى **T2b** والجروب الكامل إلى **T9** في `BUNNY-GOLIVE-FLOW-v1.html`؛ بنود العرض الأربعة («مدوّنتي ليس شريكاً») → ملف جديد `documents/tasks/MODONTY-UIUX-REFACTOR-v1.html`؛ الـflow صار **تابين** (⏳ الباقي بأولوية T3←T2b←T4←T5←T6←T7←T8←T9 مع بادجات · ✅ المنجز والمرجع) وT2 مؤشَّر فيه.
+- **جرد كود شامل (تقرير بلا تعديل):** `documents/archive/tasks/CODE-IMAGE-AUDIT-2026-07-31.html` — ١٣٢ ملفاً صُنّفت كلها: **صفر مسار رفع نشط لـCloudinary** بالتطبيقات الثلاثة، صفر hardcoded إلا ٣ روابط bunny-test؛ مكتشف جديد: ٤ سكربتات `dataLayer/.tmp-*.mjs`؛ `next-cloudinary` صفر استيراد.
+- **إعادة تنظيم مرجعية (قرارات خالد):** `MODONTY-CORE-PLAN-v1.html` **مُقفل** (صفر بند مفتوح — العدّاد 21/21) — قائمة الملكية الستّة نُقلت نصاً بالقياس المحدَّث (يتيمة **٩** · ٤ وسوم+١٤ تصنيف+٧ صناعات؛ المؤلفان والطاقم سقطا) إلى **T2b** والجروب الكامل إلى **T9** في `BUNNY-GOLIVE-FLOW-v1.html`؛ بنود العرض الأربعة («مدوّنتي ليس شريكاً») → ملف جديد `documents/HTML/MODONTY-UIUX-REFACTOR-v1.html`؛ الـflow صار **تابين** (⏳ الباقي بأولوية T3←T2b←T4←T5←T6←T7←T8←T9 مع بادجات · ✅ المنجز والمرجع) وT2 مؤشَّر فيه.
 - **تحقّق p5-sitemap:** `/clients/مدونتي` موجودة في sitemap.xml + سطر ١٠٠ من llms.txt (curl).
 - **مراجعة الريلز (سؤال خالد):** فلو الكونسول الحقيقي سليم — رفع المعرض ينشئ صفّ Media مملوكاً (`clientId` من الجلسة) + صفّ Reel بانتظار الموافقة (`gallery-actions.ts:55`)؛ الـ١٤ الحالية dry-run بلا صفوف Media (بيانات تست تبقى).
 - **`verificationImageUrl` روجع:** دائرته سليمة على المعيار (MediaPicker على مكتبة العميل)؛ تعليقا «Cloudinary» القديمان صُحّحا (سكيما + أكشن، بالطقس).
@@ -2239,7 +2239,7 @@
 - ⚠️ `dataLayer/.env` يشاور `modonty_dev` الآن (الذاكرة القديمة قالت إنتاج — صُحّحت؛ اطبع الـURL المحسوم كل مرة)
 
 ### 🚀 How to resume in 30 seconds
-1. افتح `documents/tasks/BUNNY-GOLIVE-FLOW-v1.html` تاب «⏳ الباقي» — **T3 أولوية ١**.
+1. افتح `documents/archive/tasks/BUNNY-GOLIVE-FLOW-v1.html` تاب «⏳ الباقي» — **T3 أولوية ١**.
 2. نفّذ T3: احذف المؤقتات (bunny-test · .tmp-*.mjs · _mig-* · CLAUDE.md.backup) ← commit بقائمة صريحة (بلا push، بلا add -A، استبعاد reels/settings.local.json/.mcp.json) ← جرد Bunny.
 3. البوابة: `git status` نظيف — بعدها T2b (بناء زرّ «Link core media» حسب قائمته الستّة في الكرت).
 
@@ -2299,7 +2299,7 @@
 - `admin/app/(dashboard)/media/actions/upload-image-to-bunny.ts` — `console.error` تشخيصي.
 - `modonty/app/clients/[slug]/components/shell-hero/client-hero-v2.tsx` · `sections/gallery-lightbox-overlay.tsx` · `client-page/types.ts`.
 - `console/app/(dashboard)/dashboard/gallery/{actions/gallery-actions.ts,components/gallery-manager.tsx,page.tsx}` · `dashboard/media/{components/media-gallery.tsx,helpers/media-queries.ts}`.
-- `documents/tasks/BUNNY-GOLIVE-PRD-v1.html` — `C1`·`C2`·`E3` + شريط الحالة (15/27).
+- `documents/archive/tasks/BUNNY-GOLIVE-PRD-v1.html` — `C1`·`C2`·`E3` + شريط الحالة (15/27).
 - `documents/tasks/TODO.md` — بندان ٥٩ و٦٠ (منجزان).
 - `~/.claude/hooks/auto-approve.mjs` + `~/.claude/settings.json` — إذن تلقائي كامل عدا الحذف (كل المشاريع).
 
@@ -2308,7 +2308,7 @@
 
 ### 🚀 الاستئناف في ٣٠ ثانية
 1. `cd admin && pnpm dev` (3000 أو 3001 حسب المتاح)
-2. افتح `documents/tasks/BUNNY-GOLIVE-PRD-v1.html` → بند **`E2`**.
+2. افتح `documents/archive/tasks/BUNNY-GOLIVE-PRD-v1.html` → بند **`E2`**.
 3. القرار الأول: نبدأ `E2` أم نقفز لمجموعة النشر `D1→D4`؟
 
 ---
