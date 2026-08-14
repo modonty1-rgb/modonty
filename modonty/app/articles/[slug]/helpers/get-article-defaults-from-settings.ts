@@ -1,7 +1,7 @@
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
-import { BRAND_AR } from "@/lib/brand";
+import { BRAND_AR } from "@/constants";
 
 export type ArticleDefaultsFromSettings = {
   inLanguage: string;

@@ -1,5 +1,5 @@
 import { baseTemplate, ctaButton, divider, heading, paragraph, warningBox } from "@/lib/email/templates/base";
-import { BRAND_AR } from "@/lib/brand";
+import { BRAND_AR } from "@/constants";
 
 export interface EmailVerificationParams {
   userName: string;

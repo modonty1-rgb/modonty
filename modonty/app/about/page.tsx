@@ -7,7 +7,7 @@ import { generateStructuredData, buildAlternates } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { getAboutPageForMetadata } from "./helpers/about-metadata";
 import { getAboutPageContent } from "./helpers/about-content";
-import { BRAND_AR, SITE_URL } from "@/lib/brand";
+import { BRAND_AR, SITE_URL } from "@/constants";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
     if (!page) {
       return {
-        title: "من نحن - مدونتي",
+        title: "من نحن",
         description: "تعرف على منصة مدونتي - منصة المدونات الاحترافية متعددة العملاء",
       };
     }
@@ -57,7 +57,8 @@ export async function generateMetadata(): Promise<Metadata> {
     if (twitterCreator) twitter.creator = `@${twitterCreator.replace(/^@/, "")}`;
 
     return {
-      title: `${title} - ${siteName}`,
+      // The root layout's template already appends the brand (layout.tsx:35).
+      title,
       description,
       alternates: buildAlternates(canonicalUrl),
       openGraph,
@@ -70,7 +71,7 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   } catch {
     return {
-      title: "من نحن - مدونتي",
+      title: "من نحن",
       description: "تعرف على منصة مدونتي - منصة المدونات الاحترافية متعددة العملاء",
     };
   }
@@ -138,7 +139,9 @@ async function AboutContent() {
   const heroImage = page?.heroImage;
   const heroImageAlt = page?.heroImageAlt || pageTitle;
 
-  const structuredData = generateStructuredData({
+  // Prefer the stored, admin-validated card; build live ONLY when it is absent.
+  const storedJsonLd = page?.jsonLdStructuredData?.trim();
+  const buildFallbackStructuredData = () => generateStructuredData({
     type: "AboutPage",
     name: `${pageTitle} - مدونتي`,
     description: "تعرف على منصة مدونتي",
@@ -149,7 +152,7 @@ async function AboutContent() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: sanitizeJsonLd(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: storedJsonLd ?? sanitizeJsonLd(buildFallbackStructuredData()) }}
       />
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <Breadcrumb

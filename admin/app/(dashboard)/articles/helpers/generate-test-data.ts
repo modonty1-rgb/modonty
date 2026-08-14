@@ -1,6 +1,6 @@
 import type { ArticleFormData } from '@/lib/types/form-types';
 import type { GalleryFormItem } from '@/lib/types/form-types';
-import { SITE_NAME } from '@/lib/constants/site-name';
+import { SITE_NAME_FALLBACK } from '@/lib/constants/site-name';
 
 interface GenerateTestDataOptions {
   clients: Array<{ id: string; name: string }>;
@@ -208,7 +208,7 @@ export function generateTestData(options: GenerateTestDataOptions): Partial<Arti
     ogTitle: testTitle,
     ogDescription: testExcerpt,
     ogType: 'article',
-    ogSiteName: SITE_NAME,
+    ogSiteName: SITE_NAME_FALLBACK,
     ogLocale: 'ar_SA',
     ogArticleSection: category?.name || 'عام',
     

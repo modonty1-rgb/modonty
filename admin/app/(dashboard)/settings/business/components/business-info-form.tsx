@@ -31,10 +31,20 @@ function GroupHeader({ icon, title, note, tone }: { icon: string; title: string;
 // out of the Modonty Homepage form into its own settings area. Saves ONLY these fields.
 const BUSINESS_FIELDS = [
   "orgContactEmail", "orgContactTelephone",
-  "orgStreetAddress", "orgAddressLocality", "orgAddressRegion", "orgPostalCode",
+  "orgStreetAddress", "orgAddressNeighborhood", "orgAddressLocality", "orgAddressRegion", "orgPostalCode",
   "orgAddressCountry", "orgGeoLatitude", "orgGeoLongitude",
   "googleBusinessProfileUrl",
+  // Commercial registration — read by /trust, /story and the Organization JSON-LD.
+  "orgLegalName", "orgCommercialRegistrationNumber", "orgCommercialRegistrationStatus",
+  "orgUnifiedNationalNumber", "orgLegalForm", "orgCapitalAmount", "orgFoundingDate",
 ] as const satisfies readonly (keyof AllSettings)[];
+
+/** `<input type="date">` speaks YYYY-MM-DD; the column is a DateTime. */
+const toDateInput = (v: Date | null): string => {
+  if (!v) return "";
+  const d = v instanceof Date ? v : new Date(v);
+  return Number.isNaN(d.getTime()) ? "" : d.toISOString().slice(0, 10);
+};
 
 const norm = (v: unknown) => (v === undefined || v === null ? "" : v);
 
@@ -98,6 +108,9 @@ export function BusinessInfoForm({ initialSettings }: Props) {
             <Field label="Street">
               <Input value={settings.orgStreetAddress ?? ""} onChange={(e) => set("orgStreetAddress", e.target.value)} />
             </Field>
+            <Field label="Neighborhood" hint="الحيّ — part of the Saudi national address, shown on /trust">
+              <Input value={settings.orgAddressNeighborhood ?? ""} onChange={(e) => set("orgAddressNeighborhood", e.target.value)} placeholder="الروضة" />
+            </Field>
             <Field label="City">
               <Input value={settings.orgAddressLocality ?? ""} onChange={(e) => set("orgAddressLocality", e.target.value)} />
             </Field>
@@ -144,6 +157,39 @@ export function BusinessInfoForm({ initialSettings }: Props) {
               placeholder="https://g.co/kgs/… أو https://maps.google.com/?cid=…"
             />
           </Field>
+        </div>
+
+        {/* Commercial registration — the columns shipped with no screen, so /trust and
+            /story had nothing to show and the Organization JSON-LD carried no legal identity. */}
+        <div className="space-y-3 border-t border-border pt-4">
+          <GroupHeader icon="📜" title="Commercial registration" note="shown on /trust & /story + Organization JSON-LD" tone="bg-sky-500/15 text-sky-600" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="Legal name" hint="Exactly as written on the certificate.">
+              <Input value={settings.orgLegalName ?? ""} onChange={(e) => set("orgLegalName", e.target.value)} placeholder="مؤسسة مدونتي للتجارة" />
+            </Field>
+            <Field label="CR number" hint="رقم السجل التجاري">
+              <Input value={settings.orgCommercialRegistrationNumber ?? ""} onChange={(e) => set("orgCommercialRegistrationNumber", e.target.value)} placeholder="4030xxxxxx" />
+            </Field>
+            <Field label="CR status" hint="As the Ministry of Commerce states it (e.g. نشط).">
+              <Input value={settings.orgCommercialRegistrationStatus ?? ""} onChange={(e) => set("orgCommercialRegistrationStatus", e.target.value)} placeholder="نشط" />
+            </Field>
+            <Field label="Unified national number" hint="الرقم الوطني الموحّد — starts with 700.">
+              <Input value={settings.orgUnifiedNationalNumber ?? ""} onChange={(e) => set("orgUnifiedNationalNumber", e.target.value)} placeholder="7001234567" />
+            </Field>
+            <Field label="Legal form" hint="نوع الكيان">
+              <Input value={settings.orgLegalForm ?? ""} onChange={(e) => set("orgLegalForm", e.target.value)} placeholder="مؤسسة فردية" />
+            </Field>
+            <Field label="Capital" hint="Kept as text — displayed as registered, never calculated with.">
+              <Input value={settings.orgCapitalAmount ?? ""} onChange={(e) => set("orgCapitalAmount", e.target.value)} placeholder="50,000 ريال" />
+            </Field>
+            <Field label="Founding date" hint="تاريخ القيد في السجل">
+              <Input
+                type="date"
+                value={toDateInput(settings.orgFoundingDate)}
+                onChange={(e) => set("orgFoundingDate", e.target.value ? new Date(e.target.value) : null)}
+              />
+            </Field>
+          </div>
         </div>
 
         {/* Save footer — bleeds to the Section card edges. */}

@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BRAND_AR, CONTACT_EMAIL } from "@/lib/brand";
+import { BRAND_AR, CONTACT_EMAIL, SAUDI_BUSINESS_VERIFY_URL } from "@/constants";
+import type { LegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 import { LazyMotion, domAnimation, m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { IconPlay, IconPause, IconSkipBack, IconSkipForward, IconVolume2, IconSpeed, IconReplay, IconStop, IconEmail, IconChevronDown, IconWallet, IconMapPin, IconShieldCheck } from "@/lib/icons";
 
@@ -23,7 +24,7 @@ import { Vision2030Spotlight } from "./Vision2030Spotlight";
 import { TeamCarousel } from "./TeamCarousel";
 import { TestimonialPlayer } from "./TestimonialPlayer";
 import { PartnersShowcase } from "./PartnersShowcase";
-import { LEGAL_ENTITY, MODONTY_LOGO_URL } from "./_constants";
+import { CAPITAL_CURRENCY_LABEL, MODONTY_LOGO_URL } from "./_constants";
 import { stripTashkeel } from "./_utils/arabic";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -82,9 +83,11 @@ function formatTime(t: number): string {
 export interface SalesPitchProps {
   manifestUrl: string;
   audioBase: string;
+  /** Read from Settings by the server page — the trust strip below renders it as-is. */
+  legal: LegalEntityDisplay;
 }
 
-export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
+export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProps) {
   const [manifest, setManifest] = useState<Manifest | null>(null);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -1275,66 +1278,90 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                       {/* Row 1: Brand/DBA + verification cluster (نشط badge + تحقّق link) */}
                       <div className="flex items-center justify-between gap-2">
                         <p className="text-[10px] leading-snug min-w-0 flex-1">
-                          <span className="font-bold text-foreground/95">{LEGAL_ENTITY.brand}</span>
-                          <span className="text-foreground/65"> · تحت مظلة {LEGAL_ENTITY.dba}</span>
+                          <span className="font-bold text-foreground/95">{BRAND_AR}</span>
+                          {legal.legalName && (
+                            <span className="text-foreground/65"> · تحت مظلة {legal.legalName}</span>
+                          )}
                         </p>
                         <div className="inline-flex items-center gap-1.5 shrink-0">
-                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/15 px-1.5 py-0.5 rounded">
-                            <IconShieldCheck className="w-3 h-3" aria-hidden />
-                            نشط
-                          </span>
-                          <a
-                            href={LEGAL_ENTITY.verifyUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[10px] font-bold text-primary hover:underline whitespace-nowrap focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
-                            aria-label={`ابحث بالرقم ${LEGAL_ENTITY.cr} في وزارة التجارة`}
-                          >
-                            تحقّق
-                            <span aria-hidden> ↗</span>
-                          </a>
+                          {legal.crStatus && (
+                            <span
+                              className={
+                                legal.isRegistrationActive
+                                  ? "inline-flex items-center gap-1 text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/15 px-1.5 py-0.5 rounded"
+                                  : "inline-flex items-center gap-1 text-[9px] font-bold text-foreground/60 bg-foreground/10 px-1.5 py-0.5 rounded"
+                              }
+                            >
+                              {/* The shield is a claim of good standing — it goes with the
+                                  status, not with the mere presence of one. */}
+                              {legal.isRegistrationActive && (
+                                <IconShieldCheck className="w-3 h-3" aria-hidden />
+                              )}
+                              {legal.crStatus}
+                            </span>
+                          )}
+                          {legal.cr && (
+                            <a
+                              href={SAUDI_BUSINESS_VERIFY_URL}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[10px] font-bold text-primary hover:underline whitespace-nowrap focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
+                              aria-label={`ابحث بالرقم ${legal.cr} في وزارة التجارة`}
+                            >
+                              تحقّق
+                              <span aria-hidden> ↗</span>
+                            </a>
+                          )}
                         </div>
                       </div>
 
                       {/* Row 2: Credentials strip — wrap-safe, balanced weight, Latin year for numeric consistency */}
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px]">
-                        <span className="inline-flex items-center gap-1">
-                          <span className="text-emerald-500" aria-hidden>
-                            ✓
+                        {legal.cr && (
+                          <span className="inline-flex items-center gap-1">
+                            <span className="text-emerald-500" aria-hidden>
+                              ✓
+                            </span>
+                            <span className="text-foreground/65">سجل</span>
+                            <span
+                              className="font-mono font-bold text-foreground text-[11px] tracking-tight"
+                              dir="ltr"
+                            >
+                              {legal.cr}
+                            </span>
                           </span>
-                          <span className="text-foreground/65">سجل</span>
+                        )}
+                        {legal.capital && (
                           <span
-                            className="font-mono font-bold text-foreground text-[11px] tracking-tight"
-                            dir="ltr"
+                            className="inline-flex items-baseline gap-1"
+                            aria-label={`رأس المال ${legal.capital} ${CAPITAL_CURRENCY_LABEL}`}
                           >
-                            {LEGAL_ENTITY.cr}
+                            <IconWallet className="w-3 h-3 text-amber-600 dark:text-amber-400 self-center" aria-hidden />
+                            <span className="text-foreground/65 text-[9px]" aria-hidden>
+                              رأس المال
+                            </span>
+                            <span
+                              className="font-mono font-bold text-amber-600 dark:text-amber-400 text-[11px] tracking-tight"
+                              dir="ltr"
+                              aria-hidden
+                            >
+                              {legal.capital}
+                            </span>
+                            <span className="font-bold text-amber-600/85 dark:text-amber-400/85 text-[10px]" aria-hidden>
+                              {CAPITAL_CURRENCY_LABEL}
+                            </span>
                           </span>
-                        </span>
-                        <span
-                          className="inline-flex items-baseline gap-1"
-                          aria-label={`رأس المال ثمانية ملايين ${LEGAL_ENTITY.currency}`}
-                        >
-                          <IconWallet className="w-3 h-3 text-amber-600 dark:text-amber-400 self-center" aria-hidden />
-                          <span className="text-foreground/65 text-[9px]" aria-hidden>
-                            رأس المال
+                        )}
+                        {(legal.city || legal.country || legal.foundedYear) && (
+                          <span className="inline-flex items-center gap-1 text-foreground/65">
+                            <IconMapPin className="w-3 h-3" aria-hidden />
+                            <span>
+                              {[legal.city, legal.country, legal.foundedYear]
+                                .filter(Boolean)
+                                .join(" · ")}
+                            </span>
                           </span>
-                          <span
-                            className="font-mono font-bold text-amber-600 dark:text-amber-400 text-[11px] tracking-tight"
-                            dir="ltr"
-                            aria-hidden
-                          >
-                            {LEGAL_ENTITY.capital}
-                          </span>
-                          <span className="font-bold text-amber-600/85 dark:text-amber-400/85 text-[10px]" aria-hidden>
-                            {LEGAL_ENTITY.currency}
-                          </span>
-                        </span>
-                        <span className="inline-flex items-center gap-1 text-foreground/65">
-                          <IconMapPin className="w-3 h-3" aria-hidden />
-                          <span>
-                            {LEGAL_ENTITY.city} · {LEGAL_ENTITY.country} · {LEGAL_ENTITY.foundedYear}
-                          </span>
-                        </span>
+                        )}
                       </div>
                     </section>
 

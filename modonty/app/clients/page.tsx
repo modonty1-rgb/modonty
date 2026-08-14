@@ -2,14 +2,14 @@ import { Metadata } from "next";
 import { getClientsWithCounts } from "@/app/clients/helpers/get-clients-with-counts";
 import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { getClientsPageSeo } from "@/app/clients/helpers/clients-page-seo";
+import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { jsonLdHtmlFromString } from "@/lib/seo";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { ClientsSection } from "./components/clients-section";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { metadata } = await getClientsPageSeo();
+  const { metadata } = await getListingPageSeo("clients");
   return {
     description: "اكتشف أبرز العلامات التجارية والشركات الناشرة على مدونتي — محتوى عربي متخصص وموثوق من مصادر معتمدة في السعودية ومصر والخليج.",
     ...(metadata ?? {}),
@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ClientsPage({ searchParams }: { searchParams: Promise<{ service?: string }> }) {
   const { service } = await searchParams;
   const [{ jsonLd: storedJsonLd }, clients, industries, clientsGA4] = await Promise.all([
-    getClientsPageSeo(),
+    getListingPageSeo("clients"),
     getClientsWithCounts(service),
     getIndustriesWithCounts(),
     getClientsGA4Stats(),

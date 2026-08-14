@@ -50,17 +50,6 @@ export function buildAspectRatioUrl(url: string, aspectRatio: AspectRatio, width
  * Build all 3 Google-recommended aspect ratio variants from one source URL.
  * Returns array of 3 URLs (1:1, 4:3, 16:9). Non-Cloudinary URLs return [url] only.
  */
-export function buildAspectRatiosArray(url: string | null | undefined, width = 1200): string[] {
-  if (!url) return [];
-  if (isBunnyImage(url)) {
-    return ASPECT_RATIOS.map((ar) => bunnyAspectUrl(url, BUNNY_ASPECT_SUFFIX[ar]));
-  }
-  if (!url.includes("res.cloudinary.com") || !url.includes("/upload/")) {
-    return [url];
-  }
-  return ASPECT_RATIOS.map((ar) => buildAspectRatioUrl(url, ar, width));
-}
-
 export interface ArticleImageObject {
   "@type": "ImageObject";
   url: string;

@@ -43,21 +43,40 @@ interface ListingPageConfig {
   breadcrumbName: string;
   ogImage?: string;
   ogImageAlt?: string;
+  /** The whole settings row — the directives below must come from it, never from a literal. */
+  settings: Record<string, unknown>;
+}
+
+/** Modonty serves both markets; a listing page missing either is invisible to half the audience. */
+function buildHreflang(pageUrl: string) {
+  return { "ar-SA": pageUrl, "ar-EG": pageUrl };
 }
 
 function buildListingMetadata(config: ListingPageConfig) {
+  const s = config.settings;
+  // Robots comes from Settings so a change there actually reaches Google. It used to be
+  // the literal "index, follow", which silently ignored defaultMetaRobots.
+  const robots = (s.defaultMetaRobots as string)?.trim() || "index, follow";
+  const twitterSite = (s.twitterSite as string)?.trim() || undefined;
+  const twitterCreator = ((s.twitterCreator as string) || (s.twitterSite as string))?.trim() || undefined;
+  const author = (s.siteAuthor as string)?.trim() || undefined;
+
   return {
     title: config.title,
     description: config.description,
-    robots: "index, follow",
-    alternates: { canonical: config.pageUrl },
+    robots,
+    ...(author && { authors: [{ name: author }] }),
+    alternates: {
+      canonical: config.pageUrl,
+      languages: buildHreflang(config.pageUrl),
+    },
     openGraph: {
       title: config.title,
       description: config.description,
       type: "website",
       url: config.pageUrl,
       siteName: config.siteName,
-      locale: "ar_SA",
+      locale: (s.defaultOgLocale as string)?.trim() || "ar_SA",
       ...(config.ogImage && {
         images: [{ url: config.ogImage, width: 1200, height: 630, alt: config.ogImageAlt || config.title }],
       }),
@@ -66,6 +85,8 @@ function buildListingMetadata(config: ListingPageConfig) {
       card: (config.ogImage ? "summary_large_image" : "summary") as "summary_large_image" | "summary",
       title: config.title,
       description: config.description,
+      ...(twitterSite && { site: twitterSite }),
+      ...(twitterCreator && { creator: twitterCreator }),
       ...(config.ogImage && { images: [config.ogImage] }),
     },
   };
@@ -145,7 +166,7 @@ export async function regenerateCategoriesListingCache(): Promise<{ success: boo
 
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "التصنيفات",
-      ogImage, ogImageAlt,
+      ogImage, ogImageAlt, settings: s,
     };
 
     await updateSettingsPageCache("categoriesPageMetaTags", "categoriesPageJsonLdStructuredData", "categoriesPageJsonLdLastGenerated", "categoriesPageJsonLdValidationReport", buildListingMetadata(config), await richJsonLdFor("categories"));
@@ -175,7 +196,7 @@ export async function regenerateTagsListingCache(): Promise<{ success: boolean; 
 
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "التاجات",
-      ogImage, ogImageAlt,
+      ogImage, ogImageAlt, settings: s,
     };
 
     await updateSettingsPageCache("tagsPageMetaTags", "tagsPageJsonLdStructuredData", "tagsPageJsonLdLastGenerated", "tagsPageJsonLdValidationReport", buildListingMetadata(config), await richJsonLdFor("tags"));
@@ -205,7 +226,7 @@ export async function regenerateIndustriesListingCache(): Promise<{ success: boo
 
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "القطاعات",
-      ogImage, ogImageAlt,
+      ogImage, ogImageAlt, settings: s,
     };
 
     await updateSettingsPageCache("industriesPageMetaTags", "industriesPageJsonLdStructuredData", "industriesPageJsonLdLastGenerated", "industriesPageJsonLdValidationReport", buildListingMetadata(config), await richJsonLdFor("industries"));
@@ -234,7 +255,7 @@ export async function regenerateClientsListingCache(): Promise<{ success: boolea
 
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "العملاء",
-      ogImage, ogImageAlt,
+      ogImage, ogImageAlt, settings: s,
     };
 
     await updateSettingsPageCache("clientsPageMetaTags", "clientsPageJsonLdStructuredData", "clientsPageJsonLdLastGenerated", "clientsPageJsonLdValidationReport", buildListingMetadata(config), await richJsonLdFor("clients"));
@@ -277,8 +298,19 @@ export async function regenerateHomePageCache(): Promise<{ success: boolean; err
     if (ogImageUrl) ogMeta.images = [{ url: ogImageUrl, width: 1200, height: 630, alt: (s.altImage as string) || title }];
     const twMeta: Record<string, unknown> = { card: ogImageUrl ? "summary_large_image" : "summary", title, description };
     if (twitterSite) twMeta.site = twitterSite;
+    const twitterCreator = ((s.twitterCreator as string) || twitterSite)?.trim();
+    if (twitterCreator) twMeta.creator = twitterCreator;
     if (ogImageUrl) twMeta.images = [ogImageUrl];
-    const metadata = { title, description, robots: "index, follow", alternates: { canonical: siteUrl }, openGraph: ogMeta, twitter: twMeta };
+    const author = (s.siteAuthor as string)?.trim();
+    const metadata = {
+      title,
+      description,
+      robots: (s.defaultMetaRobots as string)?.trim() || "index, follow",
+      ...(author && { authors: [{ name: author }] }),
+      alternates: { canonical: siteUrl, languages: buildHreflang(siteUrl) },
+      openGraph: ogMeta,
+      twitter: twMeta,
+    };
 
     // JSON-LD from the rich, validated home builder (Organization + WebSite + CollectionPage +
     // ItemList of latest articles). sameAs (incl. WhatsApp/Telegram) flows in via getSameAsFromSettings.
@@ -321,7 +353,7 @@ export async function regenerateTrendingPageCache(): Promise<{ success: boolean;
 
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "الرائج",
-      ogImage, ogImageAlt,
+      ogImage, ogImageAlt, settings: s,
     };
 
     await updateSettingsPageCache("trendingPageMetaTags", "trendingPageJsonLdStructuredData", "trendingPageJsonLdLastGenerated", "trendingPageJsonLdValidationReport", buildListingMetadata(config), await richJsonLdFor("trending"));
@@ -349,6 +381,7 @@ export async function regenerateFaqPageCache(): Promise<{ success: boolean; erro
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "الأسئلة الشائعة",
       ogImage: (s.ogImageUrl as string) || undefined,
       ogImageAlt: (s.altImage as string) || undefined,
+      settings: s,
     };
 
     await updateSettingsPageCache("faqPageMetaTags", "faqPageJsonLdStructuredData", "faqPageJsonLdLastGenerated", "faqPageJsonLdValidationReport", buildListingMetadata(config), await richJsonLdFor("faq"));

@@ -59,8 +59,12 @@ const TECHNICAL_DEFAULTS: RuleRow[] = [
   { label: "OG Determiner", key: "defaultOgDeterminer", source: "OGP", url: "https://ogp.me/" },
   { label: "Twitter Card Type", key: "defaultTwitterCard", source: "X Docs", url: "https://developer.x.com/en/docs/twitter-for-websites/cards/overview/markup" },
   { label: "OG Image Type", key: "defaultOgImageType", source: "Meta", url: "https://developers.facebook.com/docs/sharing/webmasters/" },
-  { label: "OG Image Width", key: "defaultOgImageWidth", source: "Meta", url: "https://developers.facebook.com/docs/sharing/webmasters/" },
-  { label: "OG Image Height", key: "defaultOgImageHeight", source: "Meta", url: "https://developers.facebook.com/docs/sharing/webmasters/" },
+  // OG Image Width/Height were removed here (SOT5, 2026-08-15). ogp.me defines them as
+  // "the number of pixels wide/high" — a fact about ONE image, and the Next docs show two
+  // images in the same page each carrying its own. One global number can never be more
+  // correct than the image it describes; it can only start disagreeing with it. The share
+  // image is uploaded at 1200×630 (the admin field enforces that aspect) and the pages
+  // declare those pixels directly.
   { label: "Hreflang", key: "defaultHreflang", source: "Google", url: "https://developers.google.com/search/docs/specialty/international/localized-versions" },
   { label: "No Translate", key: "defaultNotranslate", source: "Google", url: "https://developers.google.com/search/docs/crawling-indexing/special-tags" },
   { label: "Referrer Policy", key: "defaultReferrerPolicy", source: "MDN", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy" },

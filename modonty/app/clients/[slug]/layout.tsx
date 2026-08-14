@@ -3,6 +3,7 @@ import dynamicImport from "next/dynamic";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { IconChevronRight } from "@/lib/icons";
 import { getClientPageData } from "./helpers/client-page-data";
 
@@ -34,8 +35,23 @@ export default async function ClientLayout({ children, params }: ClientLayoutPro
 
   const { client } = data;
 
+  // The visible trail above and this machine-readable one are built from ONE array —
+  // Google never infers the path from the rendered nav, and a sub-page opened straight
+  // from search (photos, reviews) has no other way to say where it sits.
+  const breadcrumbTrail = [
+    { name: "الرئيسية", url: "/" },
+    { name: "الشركاء", url: "/clients" },
+    { name: client.name, url: `/clients/${client.slug}` },
+  ];
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLdHtml(generateBreadcrumbStructuredData(breadcrumbTrail)),
+        }}
+      />
       <GTMClientTracker
         clientContext={{
           client_id: client.id,

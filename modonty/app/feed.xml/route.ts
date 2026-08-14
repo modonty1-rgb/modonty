@@ -9,7 +9,7 @@
  */
 import { ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { SITE_URL, BRAND_AR } from "@/lib/brand";
+import { SITE_URL, BRAND_AR } from "@/constants";
 
 function escapeXml(s: string): string {
   return s

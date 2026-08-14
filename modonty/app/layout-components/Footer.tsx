@@ -3,7 +3,7 @@ import Link from "next/link";
 import { FooterCopyright } from "@/app/layout-components/FooterCopyright";
 import { FooterStats } from "@/app/layout-components/FooterStats";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
-import { BRAND_AR } from "@/lib/brand";
+import { BRAND_AR } from "@/constants";
 const linkClass =
   "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors";
 

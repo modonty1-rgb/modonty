@@ -1,7 +1,7 @@
 'use client';
 
 import { useArticleForm } from './article-form-context';
-import { SITE_NAME } from '@/lib/constants/site-name';
+import { SITE_NAME_FALLBACK } from '@/lib/constants/site-name';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -115,7 +115,7 @@ export function ArticleFormPreviewSidebar({ onClose }: ArticleFormPreviewSidebar
                   M
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[11px] font-medium leading-none">{selectedClient?.name || SITE_NAME}</span>
+                  <span className="text-[11px] font-medium leading-none">{selectedClient?.name || SITE_NAME_FALLBACK}</span>
                   <span className="text-[10px] text-zinc-500 leading-none truncate">{displayUrl}</span>
                 </div>
               </div>

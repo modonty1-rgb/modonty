@@ -61,6 +61,8 @@ export interface ModontySettings {
   categoriesSeoDescription: string | null;
   trendingSeoTitle: string | null;
   trendingSeoDescription: string | null;
+  faqSeoTitle: string | null;
+  faqSeoDescription: string | null;
   tagsSeoTitle: string | null;
   tagsSeoDescription: string | null;
   industriesSeoTitle: string | null;
@@ -107,6 +109,10 @@ export interface SettingsGeneratedSeo {
   tagsPageJsonLdStructuredData: string | null;
   tagsPageJsonLdLastGenerated: Date | null;
   tagsPageJsonLdValidationReport: Record<string, unknown> | null;
+  faqPageMetaTags: Record<string, unknown> | null;
+  faqPageJsonLdStructuredData: string | null;
+  faqPageJsonLdLastGenerated: Date | null;
+  faqPageJsonLdValidationReport: Record<string, unknown> | null;
   industriesPageMetaTags: Record<string, unknown> | null;
   industriesPageJsonLdStructuredData: string | null;
   industriesPageJsonLdLastGenerated: Date | null;
@@ -164,6 +170,16 @@ export interface SiteOrgSettings {
   orgGeoLatitude: number | null;
   orgGeoLongitude: number | null;
   orgSearchUrlTemplate: string | null;
+  orgAddressNeighborhood: string | null;
+  // Modonty's own commercial registration — shown on /trust and /story and in the
+  // Organization JSON-LD. The columns existed with no screen to fill them.
+  orgLegalName: string | null;
+  orgCommercialRegistrationNumber: string | null;
+  orgCommercialRegistrationStatus: string | null;
+  orgUnifiedNationalNumber: string | null;
+  orgLegalForm: string | null;
+  orgCapitalAmount: string | null;
+  orgFoundingDate: Date | null;
 }
 
 export interface ListingPageImages {
@@ -261,6 +277,14 @@ const DEFAULT_SETTINGS: AllSettings = {
   orgGeoLatitude: null,
   orgGeoLongitude: null,
   orgSearchUrlTemplate: null,
+  orgAddressNeighborhood: null,
+  orgLegalName: null,
+  orgCommercialRegistrationNumber: null,
+  orgCommercialRegistrationStatus: null,
+  orgUnifiedNationalNumber: null,
+  orgLegalForm: null,
+  orgCapitalAmount: null,
+  orgFoundingDate: null,
   logoUrl: null,
   logoIconUrl: null,
   ogImageUrl: null,
@@ -274,6 +298,8 @@ const DEFAULT_SETTINGS: AllSettings = {
   categoriesSeoDescription: null,
   trendingSeoTitle: null,
   trendingSeoDescription: null,
+  faqSeoTitle: null,
+  faqSeoDescription: null,
   tagsSeoTitle: null,
   tagsSeoDescription: null,
   industriesSeoTitle: null,
@@ -298,6 +324,10 @@ const DEFAULT_SETTINGS: AllSettings = {
   tagsPageJsonLdStructuredData: null,
   tagsPageJsonLdLastGenerated: null,
   tagsPageJsonLdValidationReport: null,
+  faqPageMetaTags: null,
+  faqPageJsonLdStructuredData: null,
+  faqPageJsonLdLastGenerated: null,
+  faqPageJsonLdValidationReport: null,
   industriesPageMetaTags: null,
   industriesPageJsonLdStructuredData: null,
   industriesPageJsonLdLastGenerated: null,
@@ -449,6 +479,14 @@ export async function getAllSettings(): Promise<AllSettings> {
         orgGeoLatitude: newSettings.orgGeoLatitude,
         orgGeoLongitude: newSettings.orgGeoLongitude,
         orgSearchUrlTemplate: newSettings.orgSearchUrlTemplate,
+        orgAddressNeighborhood: newSettings.orgAddressNeighborhood,
+        orgLegalName: newSettings.orgLegalName,
+        orgCommercialRegistrationNumber: newSettings.orgCommercialRegistrationNumber,
+        orgCommercialRegistrationStatus: newSettings.orgCommercialRegistrationStatus,
+        orgUnifiedNationalNumber: newSettings.orgUnifiedNationalNumber,
+        orgLegalForm: newSettings.orgLegalForm,
+        orgCapitalAmount: newSettings.orgCapitalAmount,
+        orgFoundingDate: newSettings.orgFoundingDate,
         logoUrl: newSettings.logoUrl,
         logoIconUrl: newSettings.logoIconUrl,
         ogImageUrl: newSettings.ogImageUrl,
@@ -462,6 +500,8 @@ export async function getAllSettings(): Promise<AllSettings> {
         categoriesSeoDescription: (newSettings as Record<string, unknown>).categoriesSeoDescription as string | null,
         trendingSeoTitle: (newSettings as Record<string, unknown>).trendingSeoTitle as string | null,
         trendingSeoDescription: (newSettings as Record<string, unknown>).trendingSeoDescription as string | null,
+        faqSeoTitle: (newSettings as Record<string, unknown>).faqSeoTitle as string | null,
+        faqSeoDescription: (newSettings as Record<string, unknown>).faqSeoDescription as string | null,
         tagsSeoTitle: (newSettings as Record<string, unknown>).tagsSeoTitle as string | null,
         tagsSeoDescription: (newSettings as Record<string, unknown>).tagsSeoDescription as string | null,
         industriesSeoTitle: (newSettings as Record<string, unknown>).industriesSeoTitle as string | null,
@@ -501,6 +541,10 @@ export async function getAllSettings(): Promise<AllSettings> {
         tagsPageJsonLdStructuredData: ((newSettings as Record<string, unknown>).tagsPageJsonLdStructuredData ?? null) as string | null,
         tagsPageJsonLdLastGenerated: ((newSettings as Record<string, unknown>).tagsPageJsonLdLastGenerated ?? null) as Date | null,
         tagsPageJsonLdValidationReport: ((newSettings as Record<string, unknown>).tagsPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
+        faqPageMetaTags: ((newSettings as Record<string, unknown>).faqPageMetaTags ?? null) as Record<string, unknown> | null,
+        faqPageJsonLdStructuredData: ((newSettings as Record<string, unknown>).faqPageJsonLdStructuredData ?? null) as string | null,
+        faqPageJsonLdLastGenerated: ((newSettings as Record<string, unknown>).faqPageJsonLdLastGenerated ?? null) as Date | null,
+        faqPageJsonLdValidationReport: ((newSettings as Record<string, unknown>).faqPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
         industriesPageMetaTags: ((newSettings as Record<string, unknown>).industriesPageMetaTags ?? null) as Record<string, unknown> | null,
         industriesPageJsonLdStructuredData: ((newSettings as Record<string, unknown>).industriesPageJsonLdStructuredData ?? null) as string | null,
         industriesPageJsonLdLastGenerated: ((newSettings as Record<string, unknown>).industriesPageJsonLdLastGenerated ?? null) as Date | null,
@@ -584,6 +628,14 @@ export async function getAllSettings(): Promise<AllSettings> {
       orgGeoLatitude: settings.orgGeoLatitude,
       orgGeoLongitude: settings.orgGeoLongitude,
       orgSearchUrlTemplate: settings.orgSearchUrlTemplate,
+      orgAddressNeighborhood: settings.orgAddressNeighborhood,
+      orgLegalName: settings.orgLegalName,
+      orgCommercialRegistrationNumber: settings.orgCommercialRegistrationNumber,
+      orgCommercialRegistrationStatus: settings.orgCommercialRegistrationStatus,
+      orgUnifiedNationalNumber: settings.orgUnifiedNationalNumber,
+      orgLegalForm: settings.orgLegalForm,
+      orgCapitalAmount: settings.orgCapitalAmount,
+      orgFoundingDate: settings.orgFoundingDate,
       logoUrl: settings.logoUrl,
       logoIconUrl: settings.logoIconUrl,
       ogImageUrl: settings.ogImageUrl,
@@ -597,6 +649,8 @@ export async function getAllSettings(): Promise<AllSettings> {
       categoriesSeoDescription: (settings as Record<string, unknown>).categoriesSeoDescription as string | null ?? null,
       trendingSeoTitle: (settings as Record<string, unknown>).trendingSeoTitle as string | null ?? null,
       trendingSeoDescription: (settings as Record<string, unknown>).trendingSeoDescription as string | null ?? null,
+      faqSeoTitle: (settings as Record<string, unknown>).faqSeoTitle as string | null ?? null,
+      faqSeoDescription: (settings as Record<string, unknown>).faqSeoDescription as string | null ?? null,
       tagsSeoTitle: (settings as Record<string, unknown>).tagsSeoTitle as string | null ?? null,
       tagsSeoDescription: (settings as Record<string, unknown>).tagsSeoDescription as string | null ?? null,
       industriesSeoTitle: (settings as Record<string, unknown>).industriesSeoTitle as string | null ?? null,
@@ -636,6 +690,10 @@ export async function getAllSettings(): Promise<AllSettings> {
       tagsPageJsonLdStructuredData: ((settings as Record<string, unknown>).tagsPageJsonLdStructuredData ?? null) as string | null,
       tagsPageJsonLdLastGenerated: ((settings as Record<string, unknown>).tagsPageJsonLdLastGenerated ?? null) as Date | null,
       tagsPageJsonLdValidationReport: ((settings as Record<string, unknown>).tagsPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
+      faqPageMetaTags: ((settings as Record<string, unknown>).faqPageMetaTags ?? null) as Record<string, unknown> | null,
+      faqPageJsonLdStructuredData: ((settings as Record<string, unknown>).faqPageJsonLdStructuredData ?? null) as string | null,
+      faqPageJsonLdLastGenerated: ((settings as Record<string, unknown>).faqPageJsonLdLastGenerated ?? null) as Date | null,
+      faqPageJsonLdValidationReport: ((settings as Record<string, unknown>).faqPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
       industriesPageMetaTags: ((settings as Record<string, unknown>).industriesPageMetaTags ?? null) as Record<string, unknown> | null,
       industriesPageJsonLdStructuredData: ((settings as Record<string, unknown>).industriesPageJsonLdStructuredData ?? null) as string | null,
       industriesPageJsonLdLastGenerated: ((settings as Record<string, unknown>).industriesPageJsonLdLastGenerated ?? null) as Date | null,
@@ -763,6 +821,14 @@ export async function saveOrganizationSettings(data: Partial<Omit<SiteOrgSetting
         orgGeoLatitude: data.orgGeoLatitude,
         orgGeoLongitude: data.orgGeoLongitude,
         orgSearchUrlTemplate: data.orgSearchUrlTemplate,
+        orgAddressNeighborhood: data.orgAddressNeighborhood,
+        orgLegalName: data.orgLegalName,
+        orgCommercialRegistrationNumber: data.orgCommercialRegistrationNumber,
+        orgCommercialRegistrationStatus: data.orgCommercialRegistrationStatus,
+        orgUnifiedNationalNumber: data.orgUnifiedNationalNumber,
+        orgLegalForm: data.orgLegalForm,
+        orgCapitalAmount: data.orgCapitalAmount,
+        orgFoundingDate: data.orgFoundingDate,
       },
     });
     revalidatePath("/settings");
@@ -862,6 +928,8 @@ export async function saveModontySettings(data: Partial<ModontySettings>): Promi
         categoriesSeoDescription: data.categoriesSeoDescription,
         trendingSeoTitle: data.trendingSeoTitle,
         trendingSeoDescription: data.trendingSeoDescription,
+        faqSeoTitle: data.faqSeoTitle,
+        faqSeoDescription: data.faqSeoDescription,
         tagsSeoTitle: data.tagsSeoTitle,
         tagsSeoDescription: data.tagsSeoDescription,
         industriesSeoTitle: data.industriesSeoTitle,
@@ -979,6 +1047,22 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           orgSearchUrlTemplate: data.orgSearchUrlTemplate,
         },
       });
+      // Third chunk: the legal-entity block. Kept separate on purpose — folding these
+      // eight into the chunk above pushed it to 54 fields, past the 50-stage aggregation
+      // limit MongoDB Atlas enforces, and the whole save would have failed.
+      await db.settings.update({
+        where: { id },
+        data: {
+          orgAddressNeighborhood: data.orgAddressNeighborhood,
+          orgLegalName: data.orgLegalName,
+          orgCommercialRegistrationNumber: data.orgCommercialRegistrationNumber,
+          orgCommercialRegistrationStatus: data.orgCommercialRegistrationStatus,
+          orgUnifiedNationalNumber: data.orgUnifiedNationalNumber,
+          orgLegalForm: data.orgLegalForm,
+          orgCapitalAmount: data.orgCapitalAmount,
+          orgFoundingDate: data.orgFoundingDate,
+        },
+      });
       settings = await db.settings.update({
         where: { id },
         data: {
@@ -995,6 +1079,8 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           categoriesSeoDescription: data.categoriesSeoDescription,
           trendingSeoTitle: data.trendingSeoTitle,
           trendingSeoDescription: data.trendingSeoDescription,
+          faqSeoTitle: data.faqSeoTitle,
+          faqSeoDescription: data.faqSeoDescription,
           jsonLdStructuredData: data.jsonLdStructuredData,
           jsonLdLastGenerated: data.jsonLdLastGenerated,
           jsonLdValidationReport: data.jsonLdValidationReport as Prisma.InputJsonValue | undefined,
@@ -1038,6 +1124,10 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           tagsPageJsonLdStructuredData: data.tagsPageJsonLdStructuredData,
           tagsPageJsonLdLastGenerated: data.tagsPageJsonLdLastGenerated,
           tagsPageJsonLdValidationReport: data.tagsPageJsonLdValidationReport as Prisma.InputJsonValue | undefined,
+          faqPageMetaTags: data.faqPageMetaTags as Prisma.InputJsonValue | undefined,
+          faqPageJsonLdStructuredData: data.faqPageJsonLdStructuredData,
+          faqPageJsonLdLastGenerated: data.faqPageJsonLdLastGenerated,
+          faqPageJsonLdValidationReport: data.faqPageJsonLdValidationReport as Prisma.InputJsonValue | undefined,
           industriesPageMetaTags: data.industriesPageMetaTags as Prisma.InputJsonValue | undefined,
           industriesPageJsonLdStructuredData: data.industriesPageJsonLdStructuredData,
           industriesPageJsonLdLastGenerated: data.industriesPageJsonLdLastGenerated,

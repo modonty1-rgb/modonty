@@ -10,7 +10,8 @@ import { PageViewTracker } from "@/app/layout-components/analytics/PageViewTrack
 import { ClarityScript } from "@/app/layout-components/analytics/clarity-script";
 import { Footer } from "@/app/layout-components/Footer";
 import { TopNavWithFavorites } from "@/app/layout-components/nav/TopNavWithFavorites";
-import { BRAND_AR, SITE_URL } from "@/lib/brand";
+import { BRAND_AR, SITE_URL } from "@/constants";
+import { getSiteLanguage } from "@/lib/settings/get-site-language";
 
 const tajawal = Tajawal({
   subsets: ["arabic", "latin"],
@@ -59,14 +60,17 @@ export const viewport: Viewport = {
   themeColor: "#0E065A",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Content Language comes from Settings — the field admin has always shown was ignored here.
+  const siteLanguage = await getSiteLanguage();
+
   return (
     <html
-      lang="ar-SA"
+      lang={siteLanguage}
       dir="rtl"
       suppressHydrationWarning
       className={`${tajawal.variable} ${montserrat.variable}`}

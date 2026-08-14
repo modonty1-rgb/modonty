@@ -117,6 +117,24 @@ function buildHreflangFromOgLocaleAlternate(
   return result;
 }
 
+/**
+ * Modonty serves Saudi Arabia AND Egypt, so every page must declare both markets — the
+ * generic `ar` entry tells Google the language but not that an Egyptian reader is served.
+ * Added on top of whatever the page declared; anything already present is left untouched,
+ * and both point at the canonical because one page serves both markets today.
+ */
+function withBothArabicMarkets(
+  entries: Array<{ lang: string; href: string }>,
+  canonicalUrl: string,
+): Array<{ lang: string; href: string }> {
+  const present = new Set(entries.map((e) => e.lang));
+  const result = [...entries];
+  for (const market of ["ar-SA", "ar-EG"]) {
+    if (!present.has(market)) result.push({ lang: market, href: canonicalUrl });
+  }
+  return result;
+}
+
 export interface PageLikeForMeta {
   slug: string;
   title?: string | null;
@@ -258,10 +276,12 @@ export function buildMetaFromPageLike(pageLike: PageLikeForMeta, options: BuildM
 
   const hreflangDefault = defaultHreflang?.trim() || FALLBACK_HREFLANG;
   const pathnameDefault = defaultPathname?.trim() || FALLBACK_PATHNAME;
-  const hreflang =
+  const hreflang = withBothArabicMarkets(
     Array.isArray(pageLike.alternateLanguages) && pageLike.alternateLanguages.length > 0
       ? buildHreflangFromAlternateLanguages(pageLike.alternateLanguages, pageLike.ogLocale, canonicalUrl, siteUrl, hreflangDefault)
-      : buildHreflangFromOgLocaleAlternate(ogLocaleAlternateStr, pageLike.ogLocale, canonicalUrl, siteUrl, hreflangDefault, pathnameDefault);
+      : buildHreflangFromOgLocaleAlternate(ogLocaleAlternateStr, pageLike.ogLocale, canonicalUrl, siteUrl, hreflangDefault, pathnameDefault),
+    canonicalUrl,
+  );
 
   const ogImageAlt = (pageLike.socialImageAlt ?? pageLike.heroImageAlt ?? (existingMeta.ogImageAlt as string) ?? "").trim();
   const twitterImageAltValue = ((existingMeta.twitterImageAlt as string) ?? pageLike.twitterImageAlt ?? pageLike.socialImageAlt ?? pageLike.heroImageAlt ?? (existingMeta.ogImageAlt as string) ?? "").trim();

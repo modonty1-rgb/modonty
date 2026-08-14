@@ -11,7 +11,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SortMenu } from "@/app/home-components/RightSidebar/SortMenu";
 import { IconFilter } from "@/lib/icons";
-import { BRAND_AVATAR_RADIUS } from "@/lib/brand";
+import { BRAND_AVATAR_RADIUS } from "@/constants";
 import { cn } from "@/lib/utils";
 import type { FilterOption } from "./types";
 

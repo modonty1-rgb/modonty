@@ -161,6 +161,31 @@ Names are read by humans. `get-client-hero-slides.ts` says what it returns;
 `client-queries.ts` says only which table it touches. Pick the name that answers
 "what do I get from this?" before the name that answers "where did it come from?".
 
+### The name must state its SCOPE, not a bigger one
+
+A name broader than what the code covers is worse than a vague name: a vague name makes
+you open the file, a too-broad name makes you *think you already know it*. Khalid, on
+`getPageSeo` (2026-08-14): «اختيارك الاسم الخاطئ هذا الذي أدخلني في لبس وتوهان… أنا الذي
+فهمته أنه يخص كل الصفحات».
+
+`get-page-seo.ts` served SEVEN listing pages whose SEO lives on the Settings singleton.
+It never served article or client pages — those store SEO on their own row. But the name
+claimed every page in the site, so every conversation about it started from a false map
+and had to be walked back. Renamed to `get-listing-page-seo.ts` / `getListingPageSeo`.
+
+Apply it as a test before you commit a name:
+
+- Read the name alone, with no file open. What set does it promise?
+- Is anything in that set NOT handled here? Then the name is lying — narrow it.
+- Prefer the qualifier that marks the boundary: `listing-page` over `page`,
+  `staff-session` over `session`, `client-invoice` over `invoice`.
+- The qualifier is worth the extra characters. `getListingPageSeo` is 7 characters longer
+  than `getPageSeo` and saves the reader from a wrong mental model.
+
+Same rule for exported types and functions, not just filenames — `SeoPageKey` became
+`ListingPageKey` in the same pass, because a union of seven keys named "page" reads as
+"every page".
+
 ## This repo's shape, for reference
 
 Four workspace packages at the root, not under `apps/`: `modonty` (public site),

@@ -5,7 +5,7 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { FormattedDate } from "@/components/date/FormattedDate";
 import { getUserAgreementPageForMetadata } from "./helpers/user-agreement-metadata";
 import { getUserAgreementPageContent } from "./helpers/user-agreement-content";
-import { BRAND_AR, SITE_URL } from "@/lib/brand";
+import { BRAND_AR, SITE_URL } from "@/constants";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
     if (!page) {
       return {
-        title: "اتفاقية المستخدم - مدونتي",
+        title: "اتفاقية المستخدم",
         description: "اتفاقية استخدام منصة مدونتي - الشروط والأحكام التي تحكم استخدامك للمنصة",
       };
     }
@@ -62,7 +62,8 @@ export async function generateMetadata(): Promise<Metadata> {
     }
 
     return {
-      title: `${title} - ${siteName}`,
+      // The root layout's template already appends the brand (layout.tsx:35).
+      title,
       description: description,
       alternates: buildAlternates(canonicalUrl),
       openGraph,
@@ -82,7 +83,7 @@ export async function generateMetadata(): Promise<Metadata> {
   } catch (error) {
     console.error("Error generating metadata for user agreement page:", error);
     return {
-      title: "اتفاقية المستخدم - مدونتي",
+      title: "اتفاقية المستخدم",
       description: "اتفاقية استخدام منصة مدونتي - الشروط والأحكام التي تحكم استخدامك للمنصة",
     };
   }
@@ -154,7 +155,9 @@ async function UserAgreementContent() {
   const pageTitle = page?.title || fallbackTitle;
   const pageContent = hasContent ? page!.content : fallbackContent;
 
-  const structuredData = generateStructuredData({
+  // Prefer the stored, admin-validated card; build live ONLY when it is absent.
+  const storedJsonLd = page?.jsonLdStructuredData?.trim();
+  const buildFallbackStructuredData = () => generateStructuredData({
     type: "WebPage",
     name: `${pageTitle} - مدونتي`,
     description: "اتفاقية استخدام منصة مدونتي - الشروط والأحكام التي تحكم استخدامك للمنصة",
@@ -165,7 +168,7 @@ async function UserAgreementContent() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: sanitizeJsonLd(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: storedJsonLd ?? sanitizeJsonLd(buildFallbackStructuredData()) }}
       />
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <Breadcrumb

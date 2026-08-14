@@ -12,9 +12,11 @@ interface PageFormWrapperProps {
   settingsDefaults: ComponentProps<typeof PageForm>["settingsDefaults"];
   /** Modonty Core (T2): platform images come from the core client's own library. */
   coreClientId: string | null;
+  /** Page body is built in code — the form shows SEO only. */
+  seoOnly?: boolean;
 }
 
-export function PageFormWrapper({ slug, pageLabel, pageDescription, pageData, settingsDefaults, coreClientId }: PageFormWrapperProps) {
+export function PageFormWrapper({ slug, pageLabel, pageDescription, pageData, settingsDefaults, coreClientId, seoOnly }: PageFormWrapperProps) {
   const router = useRouter();
 
   const rawOgLocaleAlternate = (pageData?.metaTags as Record<string, unknown> | undefined)?.ogLocaleAlternate ?? pageData?.ogLocaleAlternate;
@@ -33,6 +35,7 @@ export function PageFormWrapper({ slug, pageLabel, pageDescription, pageData, se
       onRegenerated={() => router.refresh()}
       settingsDefaults={settingsDefaults}
       coreClientId={coreClientId}
+      seoOnly={seoOnly}
     />
   );
 }

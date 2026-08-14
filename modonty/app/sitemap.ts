@@ -3,7 +3,7 @@ import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
-import { SITE_URL } from "@/lib/brand";
+import { SITE_URL } from "@/constants";
 
 /**
  * Main sitemap (Google's primary trust signal).

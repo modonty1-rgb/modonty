@@ -1,4 +1,4 @@
-import { BRAND_AR, SITE_URL, LOGO_URL } from "@/lib/brand";
+import { BRAND_AR, SITE_URL, LOGO_URL } from "@/constants";
 
 // Brand colors
 const NAVY = "#0E065A";

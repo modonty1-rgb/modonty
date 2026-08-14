@@ -227,16 +227,12 @@ async function ClientPageBody({ params }: ClientPageProps) {
   const decodedSlug = decodeURIComponent(slug);
 
   try {
-    const [data, reviews, discussionsData, gallery, faqs, cachedSeo, session] = await Promise.all([
+    const [data, reviews, discussionsData, gallery, faqs, session] = await Promise.all([
       getClientPageData(slug),
       getClientReviews(slug),
       getClientReviewsBySlug(slug), // ARTICLE comments → repurposed as "discussions"
       getClientGallery(decodedSlug),
       getClientPageFaqs(decodedSlug), // page-level ClientFAQ
-      db.client.findUnique({
-        where: { slug: decodedSlug },
-        select: { jsonLdStructuredData: true },
-      }),
       auth(),
     ]);
 
@@ -272,24 +268,27 @@ async function ClientPageBody({ params }: ClientPageProps) {
       ),
     });
 
-    const structuredData = generateStructuredData({
-      type: "Client",
-      name: client.name,
-      description: client.description || client.seoDescription || undefined,
-      url: client.url || `/clients/${encodeURIComponent(slug)}`,
-      image: mediaSrc(client.logoMedia) || mediaSrc(client.heroImageMedia) || undefined,
-      "@type": "Organization",
-      legalName: client.legalName || undefined,
-      email: client.email || undefined,
-      telephone: client.phone || undefined,
-      sameAs: client.sameAs.length > 0 ? client.sameAs : undefined,
-      foundingDate: client.foundingDate
-        ? (typeof client.foundingDate === "string"
-            ? (client.foundingDate as string).split("T")[0]
-            : client.foundingDate.toISOString().split("T")[0])
-        : undefined,
-    });
+    // Built only when the DB cache is empty — see the branch below.
+    const buildFallbackOrganization = () =>
+      generateStructuredData({
+        type: "Client",
+        name: client.name,
+        description: client.description || client.seoDescription || undefined,
+        url: client.url || `/clients/${encodeURIComponent(slug)}`,
+        image: mediaSrc(client.logoMedia) || mediaSrc(client.heroImageMedia) || undefined,
+        "@type": "Organization",
+        legalName: client.legalName || undefined,
+        email: client.email || undefined,
+        telephone: client.phone || undefined,
+        sameAs: client.sameAs.length > 0 ? client.sameAs : undefined,
+        foundingDate: client.foundingDate
+          ? (typeof client.foundingDate === "string"
+              ? (client.foundingDate as string).split("T")[0]
+              : client.foundingDate.toISOString().split("T")[0])
+          : undefined,
+      });
 
+    // Breadcrumb always ships — it is a separate entity, not an alternative to the graph above.
     const breadcrumbData = generateBreadcrumbStructuredData([
       { name: "الرئيسية", url: "/" },
       { name: "الشركاء", url: "/clients" },
@@ -299,15 +298,15 @@ async function ClientPageBody({ params }: ClientPageProps) {
     return (
       <>
         {/* Organization JSON-LD — DB cache (rich graph: Service/AggregateRating/Review/employee/hasCredential/image) or live fallback */}
-        {cachedSeo?.jsonLdStructuredData ? (
+        {client.jsonLdStructuredData ? (
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(cachedSeo.jsonLdStructuredData) }}
+            dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(client.jsonLdStructuredData) }}
           />
         ) : (
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: jsonLdHtml(structuredData) }}
+            dangerouslySetInnerHTML={{ __html: jsonLdHtml(buildFallbackOrganization()) }}
           />
         )}
         <script

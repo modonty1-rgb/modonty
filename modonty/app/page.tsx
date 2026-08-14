@@ -9,12 +9,12 @@ import { getReelsFeedPage } from "@/app/reels/helpers/reels-feed";
 import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
 import { getClientServiceCards } from "@/app/home-helpers/get-client-service-cards";
-import { getHomePageSeo } from "@/app/home-helpers/home-page-seo";
+import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { jsonLdHtmlFromString } from "@/lib/seo";
-import { SITE_URL, BRAND_AR } from "@/lib/brand";
+import { SITE_URL, BRAND_AR } from "@/constants";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { metadata } = await getHomePageSeo();
+  const { metadata } = await getListingPageSeo("home");
   const safeMetadata = metadata ?? {};
   // Mariam audit 2026-05-27: homepage og:url was https://modonty.com (no www) from DB
   // Settings.homeMetaTags column — mismatched the canonical (www). Force override here so
@@ -48,7 +48,7 @@ export default async function HomePage() {
   cacheTag("homepage", "articles", "settings");
 
   const [{ jsonLd }, posts, corePublisherArticles, brandMedia, industries, reels, clientServices] = await Promise.all([
-    getHomePageSeo(),
+    getListingPageSeo("home"),
     getHomeFeedArticles(),
     getCorePublisherArticles(),
     getBrandMedia(),

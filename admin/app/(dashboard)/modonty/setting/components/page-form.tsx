@@ -37,9 +37,11 @@ interface PageFormProps {
   initialData?: PageInitialData;
   /** Modonty Core (T2): platform images come from the core client's own library. */
   coreClientId: string | null;
+  /** Page body is built in code — edit its SEO here, not its content. */
+  seoOnly?: boolean;
 }
 
-export function PageForm({ slug, pageLabel, pageDescription, initialData, onRegenerated, settingsDefaults, coreClientId }: PageFormProps) {
+export function PageForm({ slug, pageLabel, pageDescription, initialData, onRegenerated, settingsDefaults, coreClientId, seoOnly = false }: PageFormProps) {
   const {
     formData,
     loading,
@@ -221,6 +223,12 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
                 required
                 hint="Main heading shown on the page"
               />
+              {seoOnly ? (
+                <p className="rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+                  This page&apos;s body is built in code — edit its title, description and social
+                  image below. Nothing you type here would reach the page, so there is no editor.
+                </p>
+              ) : (
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-1.5">
                   Content <span className="text-destructive">*</span>
@@ -244,6 +252,7 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
                   </div>
                 )}
               </div>
+              )}
             </CardContent>
           </Card>
 
@@ -322,6 +331,25 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
                 lockClient
                 mediaId={formData.heroImageMediaId || null}
               />
+              {/* Alt text had no input at all: it only ever arrived as a copy of the media
+                  row's alt when a NEW image was picked, so a page keeping its image could
+                  never get one. It is the og:image alt Google and every social card read —
+                  the dashboard flagged all six content pages for exactly this. */}
+              {formData.heroImage ? (
+                <div className="mt-3">
+                  <FormInput
+                    label="Image alt text"
+                    name="heroImageAlt"
+                    value={formData.heroImageAlt || ""}
+                    onChange={(e) => {
+                      updateField("heroImageAlt", e.target.value);
+                      updateField("socialImageAlt", e.target.value);
+                    }}
+                    placeholder="وصف الصورة لمن لا يراها — يظهر في بطاقة المشاركة"
+                    hint="Describes the image for screen readers and for og:image:alt."
+                  />
+                </div>
+              ) : null}
               <p className="text-xs text-muted-foreground mt-2">
                 Used as hero image and shared on social media
               </p>

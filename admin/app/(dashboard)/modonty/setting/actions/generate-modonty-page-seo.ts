@@ -5,7 +5,6 @@ import { MODONTY_AUTHOR_SLUG } from "@/lib/constants/modonty-author";
 import { revalidatePath } from "next/cache";
 import { getAllSettings, getSameAsFromSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { generateModontyPageJsonLd, type ModontySiteConfig } from "../helpers/generate-modonty-page-jsonld";
-import { normalizeModontyJsonLd } from "../helpers/jsonld-normalize";
 import { validateModontyPageJsonLdComplete } from "../helpers/modonty-jsonld-validator";
 import { getPageConfig } from "../helpers/page-config";
 import { buildMetaFromPageLike } from "../helpers/build-meta-from-page";
@@ -160,8 +159,16 @@ export async function generateModontyPageSEO(slug: string) {
     };
 
     const rawJsonLd = generateModontyPageJsonLd(siteConfig, pageForJsonLd);
-    const normalizedJsonLd = await normalizeModontyJsonLd(rawJsonLd);
-    const validationReport = await validateModontyPageJsonLdComplete(normalizedJsonLd);
+    // Validate exactly what gets STORED and served — not a normalized copy nobody sees.
+    //
+    // This used to validate `normalizeModontyJsonLd(rawJsonLd)` while storing the raw
+    // card, so the report described a different document. jsonld@9.0.0 compacts against
+    // the schema.org context, which aliases `@type` → `type` and `@id` → `id`; the schema
+    // check then reported «/@graph/0 must have required property '@type'» on all five
+    // nodes. Measured directly on the installed version:
+    //   [0] "@type"? false · "type"? true · keys: id, type, name, url
+    // The stored card was correct the whole time — /about read 79 on a false alarm.
+    const validationReport = await validateModontyPageJsonLdComplete(rawJsonLd);
     const jsonLdString = JSON.stringify(rawJsonLd, null, 2);
 
     await db.modonty.update({

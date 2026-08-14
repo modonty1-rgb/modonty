@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { IconChevronLeft } from "@/lib/icons";
 
 export const metadata: Metadata = {
@@ -35,6 +36,18 @@ const legalPages = [
 export default function LegalIndexPage() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
+      {/* Same trail as the visible nav below — Google reads this one, not the markup. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLdHtml(
+            generateBreadcrumbStructuredData([
+              { name: "الرئيسية", url: "/" },
+              { name: "القانونية", url: "/legal" },
+            ])
+          ),
+        }}
+      />
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },

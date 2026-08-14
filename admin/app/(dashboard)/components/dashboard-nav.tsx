@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   Sparkles,
   Wrench,
+  LayoutList,
   MousePointerClick,
   FileText,
   Users,
@@ -23,6 +24,7 @@ interface NavItem {
 // Order mirrors the page's reading order. Each id matches a <section id> in page.tsx.
 const ITEMS: NavItem[] = [
   { id: "sec-today", label: "Today", icon: Sparkles },
+  { id: "sec-listing-seo", label: "Pages SEO", icon: LayoutList },
   { id: "sec-errors-to-fix", label: "Errors", icon: Wrench },
   { id: "sec-visitors", label: "Visitors", icon: MousePointerClick },
   { id: "sec-articles", label: "Articles", icon: FileText },

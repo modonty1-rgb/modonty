@@ -3,7 +3,7 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 
 
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
-import { BRAND_AR } from "@/lib/brand";
+import { BRAND_AR } from "@/constants";
 
 interface LogoNavProps {
   className?: string;

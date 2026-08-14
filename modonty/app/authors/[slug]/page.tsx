@@ -8,7 +8,7 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { ArticleStatus } from "@prisma/client";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbStructuredData, buildAlternates, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
-import { SITE_URL, LOGO_URL, BRAND_AR, MODONTY_AUTHOR_SLUG } from "@/lib/brand";
+import { SITE_URL, LOGO_URL, BRAND_AR, MODONTY_AUTHOR_SLUG } from "@/constants";
 import { getPlatformSocialLinks } from "@/lib/settings/get-platform-social-links";
 import { IconFacebook, IconLinkedin, IconTwitter, IconExternal, IconEmail, IconVerified } from "@/lib/icons";
 import { Card, CardContent } from "@/components/ui/card";

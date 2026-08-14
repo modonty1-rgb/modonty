@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { SITE_NAME } from "@/lib/constants/site-name";
+import { SITE_NAME_FALLBACK } from "@/lib/constants/site-name";
 import { BRAND_LOGO_URL } from "@modonty/shared/lib/brand-assets";
 
 export interface SEOData {
@@ -38,7 +38,7 @@ export function generateMetadataFromSEO(data: SEOData, options?: SEOOptions): Me
     image,
     url,
     type = "website",
-    siteName = SITE_NAME,
+    siteName = SITE_NAME_FALLBACK,
     locale = "ar_SA",
     firstName,
     lastName,

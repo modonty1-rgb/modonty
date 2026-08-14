@@ -168,10 +168,16 @@ function validateHomeOrListPageBusinessRules(jsonLd: object): ModontyValidationR
   }
   const hasOrg = graph.some((n: unknown) => resolveType(n) === "Organization");
   const hasWebSite = graph.some((n: unknown) => resolveType(n) === "WebSite");
-  const hasCollectionPage = graph.some((n: unknown) => resolveType(n) === "CollectionPage");
+  // The rule is "the graph must describe a page", and CollectionPage is only ONE of the
+  // schema.org WebPage subtypes that does. /help/faq legitimately uses FAQPage, and this
+  // rule warned on it forever — the dashboard read «1 تحذير» on a page that was correct.
+  // (FAQPage no longer earns a rich result: Google retired the FAQ feature 2026-05-07 and
+  // removed its docs 2026-06-15. The markup stays valid, it just buys no rich result.)
+  const PAGE_TYPES = ["CollectionPage", "FAQPage", "WebPage", "AboutPage", "ItemPage"];
+  const hasPageNode = graph.some((n: unknown) => PAGE_TYPES.includes(resolveType(n) ?? ""));
   if (!hasOrg) errors.push("Missing Organization node in @graph");
   if (!hasWebSite) errors.push("Missing WebSite node in @graph");
-  if (!hasCollectionPage) warnings.push("Home/list JSON-LD typically has CollectionPage");
+  if (!hasPageNode) warnings.push("Home/list JSON-LD should have a page node (CollectionPage, FAQPage…)");
   return { errors, warnings };
 }
 

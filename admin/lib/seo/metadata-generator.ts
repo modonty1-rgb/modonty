@@ -7,7 +7,7 @@
 
 import type { Metadata } from "next";
 import type { Article, Client, Author, Category, Media } from "@prisma/client";
-import { SITE_NAME } from "@/lib/constants/site-name";
+import { SITE_NAME_FALLBACK } from "@/lib/constants/site-name";
 import { loadSiteUrl } from "./site-url";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { BRAND_LOGO_URL } from "@modonty/shared/lib/brand-assets";
@@ -140,7 +140,7 @@ export async function generateNextjsMetadata(
   options?: GenerateMetadataOptions
 ): Promise<Metadata> {
   const siteUrl = options?.siteUrl || (await loadSiteUrl());
-  const siteName = article.client.name || SITE_NAME;
+  const siteName = article.client.name || SITE_NAME_FALLBACK;
 
   // Effective values
   const effectiveTitle = article.seoTitle || article.title || "";

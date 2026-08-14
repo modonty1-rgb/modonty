@@ -10,6 +10,8 @@ export async function getUserAgreementPageContent() {
     where: { slug: "user-agreement" },
     select: {
       title: true,
+      // The admin-generated card — the page prefers it and only builds live as a fallback.
+      jsonLdStructuredData: true,
       content: true,
       updatedAt: true,
     },

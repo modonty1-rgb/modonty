@@ -4,7 +4,7 @@ import type { ComponentType, SVGProps } from "react";
 import { OptimizedImage } from "@modonty/shared/components/optimized-image";
 import { Card } from "@/components/ui/card";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
-import { BRAND_AVATAR_RADIUS } from "@/lib/brand";
+import { BRAND_AVATAR_RADIUS } from "@/constants";
 import { IconClients, IconChevronLeft, IconPhone, IconVerified, IconExternal } from "@/lib/icons";
 import { WhatsAppIconLink } from "@/components/cta/whatsapp-icon-link";
 import { Linkedin } from "@/components/icons/linkedin";

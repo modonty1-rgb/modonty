@@ -3,7 +3,7 @@ import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { BRAND_AVATAR_RADIUS } from "@/lib/brand";
+import { BRAND_AVATAR_RADIUS } from "@/constants";
 import { IconClients } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 

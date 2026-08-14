@@ -12,7 +12,7 @@
  * All entities use stable @id for cross-referencing.
  */
 
-import { SITE_NAME } from "@/lib/constants/site-name";
+import { SITE_NAME_FALLBACK } from "@/lib/constants/site-name";
 import { safeOrganizationType, resolveOrganizationType, isLocalFamilyType } from "@modonty/shared/lib/seo/organization-schema-types";
 import { deriveClientType } from "@modonty/shared/lib/seo/generate-organization-jsonld";
 import {
@@ -166,6 +166,8 @@ export function generateArticleKnowledgeGraph(
 ): JsonLdGraph {
   // branding.siteUrl SHOULD come from loadSiteUrl() (DB-backed). Hardcoded fallback only as safety net.
   const siteUrl = branding?.siteUrl || "https://www.modonty.com";
+  // Settings is the source of truth for the brand name — it already arrives in `branding`.
+  const resolvedSiteName = branding?.siteName?.trim() || SITE_NAME_FALLBACK;
 
   // Modonty image-licensing defaults (Settings) → Google Licensable badge on article images.
   const imageLicensing: ModontyImageDefaults = {
@@ -214,7 +216,9 @@ export function generateArticleKnowledgeGraph(
   const graph: JsonLdNode[] = [];
 
   // 1. WebPage (container for the article)
-  graph.push(generateWebPageNode(article, articleUrl, ids, siteUrl, !pageBase));
+  graph.push(
+    generateWebPageNode(article, articleUrl, ids, siteUrl, !pageBase, resolvedSiteName)
+  );
 
   // 2. Article (main content)
   graph.push(
@@ -325,7 +329,9 @@ function generateWebPageNode(
   ids: Record<string, string>,
   siteUrl: string,
   /** False for a client's own site, where no BreadcrumbList node is emitted. */
-  hasBreadcrumb: boolean
+  hasBreadcrumb: boolean,
+  /** Settings.siteName — the one name Google should read. See the isPartOf note below. */
+  siteName: string
 ): JsonLdNode {
   return {
     "@type": "WebPage",
@@ -335,10 +341,15 @@ function generateWebPageNode(
     description: article.seoDescription || article.excerpt || undefined,
     mainEntity: { "@id": ids.article },
     inLanguage: "ar",
+    // The site entity, named from Settings and keyed with the SAME @id the home page uses.
+    // Both were wrong: the name came from a hardcoded constant spelling the brand
+    // «مودونتي» (117 stored cards carried it), and the id omitted the trailing slash, so
+    // this shipped as a SECOND WebSite entity competing with the home page's — the exact
+    // opposite of Google's "use your site name consistently" (SOT5, 2026-08-15).
     isPartOf: {
       "@type": "WebSite",
-      "@id": `${siteUrl}#website`,
-      name: SITE_NAME,
+      "@id": `${siteUrl}/#website`,
+      name: siteName,
       url: siteUrl,
     },
     // Dropped together with the node itself — a reference to an @id that is not in the

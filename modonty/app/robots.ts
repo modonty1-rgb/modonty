@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { SITE_URL } from "@/lib/brand";
+import { SITE_URL } from "@/constants";
 
 /**
  * Modonty robots.txt — global AI-visibility policy (2026).

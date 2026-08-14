@@ -137,15 +137,6 @@ export interface CategoryAnalytics {
   engagedBlogs: number;
 }
 
-export interface CategoryPageParams {
-  searchParams: Promise<{
-    search?: string;
-    sort?: 'name' | 'articles' | 'trending' | 'recent';
-    view?: 'grid' | 'list';
-    featured?: string;
-  }>;
-}
-
 export interface CategoryQueryOptions {
   search?: string;
   sortBy?: 'name' | 'articles' | 'trending' | 'recent';
@@ -178,16 +169,6 @@ export interface IndustryQueryOptions {
   sortBy?: 'clients' | 'name';
 }
 
-export interface CategoryDetailPageParams {
-  params: Promise<{ slug: string }>;
-  searchParams: Promise<{
-    search?: string;
-    sort?: 'latest' | 'oldest' | 'popular' | 'trending';
-    view?: 'grid' | 'list' | 'compact';
-    client?: string;
-  }>;
-}
-
 export interface ClientResponse {
   id: string;
   name: string;
@@ -213,12 +194,6 @@ export interface ClientResponse {
   createdAt: Date;
   isVerified: boolean;
   isFeatured?: boolean; // featured/premium partner spotlight (admin toggle)
-}
-
-export interface NavigationItem {
-  icon: string;
-  label: string;
-  href: string;
 }
 
 export interface ArticleFilters {

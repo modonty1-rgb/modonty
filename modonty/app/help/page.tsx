@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { generateMetadataFromSEO } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { IconHelpCircle, IconFaqQuestion, IconEmail } from "@/lib/icons";
 
@@ -18,6 +19,18 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function HelpPage() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
+      {/* Same trail as the visible nav below — Google reads this one, not the markup. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLdHtml(
+            generateBreadcrumbStructuredData([
+              { name: "الرئيسية", url: "/" },
+              { name: "مركز المساعدة", url: "/help" },
+            ])
+          ),
+        }}
+      />
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },

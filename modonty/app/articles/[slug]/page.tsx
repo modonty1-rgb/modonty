@@ -11,19 +11,19 @@ import { getPlatformSocialLinks, getPlatformImageLicensing } from "@/lib/setting
 import {
   generateMetadataFromSEO,
   generateBreadcrumbStructuredData,
-  generateArticleStructuredData,
-  generateSiteIdentityStructuredData,
   jsonLdHtml,
   jsonLdHtmlFromString,
-  normalizeOgImages,
 } from "@/lib/seo";
+import { generateArticleStructuredData } from "@/app/articles/[slug]/helpers/generate-article-structured-data";
+import { generateSiteIdentityStructuredData } from "@/app/articles/[slug]/helpers/generate-site-identity-structured-data";
+import { normalizeOgImages } from "@/app/articles/[slug]/helpers/normalize-og-images";
 import { IconFolder } from "@/lib/icons";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 
 import {
   getArticleSlugsForStaticParams,
   getArticleBySlugMinimal,
-  getArticleForMetadata,
+  getArticleContentBySlug,
   getArticleFaqs,
 } from "./actions";
 import {
@@ -118,7 +118,8 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const slug = decodeURIComponent(rawSlug);
 
     const [article, articleDefaults] = await Promise.all([
-      getArticleForMetadata(slug),
+      // Same cached read the page body uses — one DB hit serves both.
+      getArticleContentBySlug(slug),
       getArticleDefaultsFromSettings(),
     ]);
 
@@ -370,22 +371,25 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
     // FAQPage still ships when visitor questions were approved AFTER the last regeneration.
     const storedHasFaq = storedCard?.includes('"FAQPage"') ?? false;
 
-    // Live fallback JSON-LD (pulls current author + image data from this render's
-    // article object). Data fetchers above are cached, so this is fast.
+    // Live fallback JSON-LD, built ONLY when no stored card exists (see the branch below).
+    // Every published article carries a stored card, so on the normal path this never runs —
+    // and it is the heaviest builder on the page (three image crops + tags + semantic keywords).
     // No featured image → substitute the platform POST default (already resolved above as
     // `featuredImage`) so Article JSON-LD never ships without `image` — Google Article
     // rich results require it. The default is admin-enforced 1200×630 (/settings/defaults).
-    const jsonLdGraph: object = generateArticleStructuredData(
-      article.featuredImage || !featuredImage
-        ? article
-        : { ...article, featuredImage: { ...featuredImage, width: 1200, height: 630 } }
-    );
-    const breadcrumbJsonLd = generateBreadcrumbStructuredData([
-      { name: "الرئيسية", url: "/" },
-      { name: "الشركاء", url: "/clients" },
-      { name: article.client.name, url: `/clients/${article.client.slug}` },
-      { name: article.title, url: `/articles/${article.slug}` },
-    ]);
+    const buildFallbackArticleJsonLd = (): object =>
+      generateArticleStructuredData(
+        article.featuredImage || !featuredImage
+          ? article
+          : { ...article, featuredImage: { ...featuredImage, width: 1200, height: 630 } }
+      );
+    const buildFallbackBreadcrumb = () =>
+      generateBreadcrumbStructuredData([
+        { name: "الرئيسية", url: "/" },
+        { name: "الشركاء", url: "/clients" },
+        { name: article.client.name, url: `/clients/${article.client.slug}` },
+        { name: article.title, url: `/articles/${article.slug}` },
+      ]);
     // Site identity (Modonty Organization + WebSite brand entity) for knowledge-graph + AI/GEO.
     // Always emitted: its @id (/#organization) does not collide with the stored card's
     // nodes (client publisher + /authors/... author).
@@ -393,6 +397,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       sameAs: platformSocialLinks.map((l) => l.href),
       imageLicenseUrl: platformImageLicensing.imageLicenseUrl,
       imageAcquireLicensePageUrl: platformImageLicensing.imageAcquireLicensePageUrl,
+      inLanguage: articleDefaults.inLanguage,
     });
 
     return (
@@ -401,10 +406,14 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(storedCard) }} />
         ) : (
           <>
-            {jsonLdGraph && (
-              <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLdGraph) }} />
-            )}
-            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbJsonLd) }} />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: jsonLdHtml(buildFallbackArticleJsonLd()) }}
+            />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: jsonLdHtml(buildFallbackBreadcrumb()) }}
+            />
           </>
         )}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(siteIdentityJsonLd) }} />

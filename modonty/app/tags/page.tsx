@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { generateMetadataFromSEO, generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
-import { getTagsPageSeo } from "@/app/tags/helpers/tags-page-seo";
+import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { getTagsEnhanced } from "@/app/tags/helpers/get-tags-enhanced";
 import { loadMoreTags } from "@/app/tags/actions";
@@ -21,7 +21,7 @@ const SORT_OPTIONS: EntitySortOption[] = [
 ];
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { metadata } = await getTagsPageSeo();
+  const { metadata } = await getListingPageSeo("tags");
   const fallback = await generateMetadataFromSEO({
     title: "الوسوم",
     description: "تصفح جميع الوسوم في مدونتي واكتشف المقالات المصنّفة حسب المواضيع والاهتمامات",
@@ -50,7 +50,7 @@ export default async function TagsPage({ searchParams }: TagsPageProps) {
 
   const [all, seo] = await Promise.all([
     getTagsEnhanced({ search, sortBy }),
-    getTagsPageSeo(),
+    getListingPageSeo("tags"),
   ]);
 
   // Hero copy comes from the admin SEO cache (single source of truth) — the visible H1
@@ -81,29 +81,36 @@ export default async function TagsPage({ searchParams }: TagsPageProps) {
   const loadMore = loadMoreTags.bind(null, { search, sortBy });
 
   // Prefer the admin-generated + validated JSON-LD cache (Settings.tagsPageJsonLdStructuredData —
-  // same source of truth as getCategoriesPageSeo()); only compute it live as a fallback so the
+  // same source of truth as getListingPageSeo()); only compute it live as a fallback so the
   // page never ships with zero structured data before admin runs the generator.
   const storedJsonLd = seo.jsonLd?.trim();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.modonty.com";
-  const breadcrumbData = generateBreadcrumbStructuredData([
-    { name: "الرئيسية", url: "/" },
-    { name: "الوسوم", url: "/tags" },
-  ]);
-  const collectionData = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "الوسوم - مدونتي",
-    description: "تصفح جميع الوسوم في مدونتي واكتشف المقالات المصنّفة حسب المواضيع",
-    url: `${siteUrl}/tags`,
-    mainEntity: {
-      "@type": "ItemList",
-      numberOfItems: all.length,
-      itemListElement: all.slice(0, 20).map((tag, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        item: { "@type": "DefinedTerm", name: tag.name, url: `${siteUrl}/tags/${tag.slug}` },
-      })),
-    },
+
+  // Built only when the cache is empty — mapping the tag list on every request just to throw
+  // the result away is work nobody reads.
+  const buildFallbackJsonLd = () => {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.modonty.com";
+    return {
+      breadcrumb: generateBreadcrumbStructuredData([
+        { name: "الرئيسية", url: "/" },
+        { name: "الوسوم", url: "/tags" },
+      ]),
+      collection: {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: "الوسوم - مدونتي",
+        description: "تصفح جميع الوسوم في مدونتي واكتشف المقالات المصنّفة حسب المواضيع",
+        url: `${siteUrl}/tags`,
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: all.length,
+          itemListElement: all.slice(0, 20).map((tag, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            item: { "@type": "DefinedTerm", name: tag.name, url: `${siteUrl}/tags/${tag.slug}` },
+          })),
+        },
+      },
+    };
   };
 
   return (
@@ -111,10 +118,15 @@ export default async function TagsPage({ searchParams }: TagsPageProps) {
       {storedJsonLd ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(storedJsonLd) }} />
       ) : (
-        <>
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbData) }} />
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(collectionData) }} />
-        </>
+        (() => {
+          const fallback = buildFallbackJsonLd();
+          return (
+            <>
+              <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(fallback.breadcrumb) }} />
+              <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(fallback.collection) }} />
+            </>
+          );
+        })()
       )}
 
       <Breadcrumb

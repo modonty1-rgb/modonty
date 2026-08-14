@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getArticles } from "@/lib/queries/get-articles";
@@ -16,6 +17,18 @@ export default async function NewsPage() {
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8">
+      {/* Same trail as the visible nav below — Google reads this one, not the markup. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLdHtml(
+            generateBreadcrumbStructuredData([
+              { name: "الرئيسية", url: "/" },
+              { name: "أخبار مدونتي", url: "/news" },
+            ])
+          ),
+        }}
+      />
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },

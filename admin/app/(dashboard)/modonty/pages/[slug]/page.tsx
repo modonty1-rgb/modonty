@@ -46,6 +46,7 @@ export default async function ModontyPageEditPage({ params }: { params: Promise<
           pageData={pageResult.success ? pageResult.page : null}
           settingsDefaults={settingsDefaults}
           coreClientId={coreClientId}
+          seoOnly={config.seoOnly ?? false}
         />
       </Suspense>
     </div>

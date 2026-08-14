@@ -12,7 +12,7 @@
  */
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { SITE_URL } from "@/lib/brand";
+import { SITE_URL } from "@/constants";
 
 /** Markdown link labels break on square brackets — swap them, keep everything else. */
 function mdText(s: string): string {

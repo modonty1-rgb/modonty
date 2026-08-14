@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { getCategoriesEnhanced } from "@/app/categories/helpers/get-categories-enhanced";
-import { getCategoriesPageSeo } from "@/app/categories/helpers/categories-page-seo";
+import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { loadMoreCategories } from "@/app/categories/actions";
 import { extractOgImageFromMetadata } from "@/lib/seo/og-image";
@@ -11,7 +11,8 @@ import { EntitySortFilter, type EntitySortOption } from "@/components/listing/En
 import { InfiniteEntityGrid } from "@/components/listing/InfiniteEntityGrid";
 import { IconSearch } from "@/lib/icons";
 import { parseCategorySearchParams } from "./helpers/category-utils";
-import type { CategoryPageParams, CategoryResponse } from "@/lib/types";
+import type { CategoryPageParams } from "./helpers/category-page-params";
+import type { CategoryResponse } from "@/lib/types";
 import type { EntityCardProps } from "@/components/listing/EntityCard";
 
 const PAGE_SIZE = 20;
@@ -24,7 +25,7 @@ const SORT_OPTIONS: EntitySortOption[] = [
 ];
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { metadata } = await getCategoriesPageSeo();
+  const { metadata } = await getListingPageSeo("categories");
   const merged: Metadata = {
     description:
       "استعرض جميع تصنيفات مدونتي — اختر تصنيفك المفضل وتابع أحدث المقالات في التقنية والأعمال والتسويق وغيرها من المجالات.",
@@ -44,7 +45,7 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
   const sortBy = sort || "articles";
 
   const [seo, all] = await Promise.all([
-    getCategoriesPageSeo(),
+    getListingPageSeo("categories"),
     getCategoriesEnhanced({ search, sortBy }),
   ]);
 
@@ -76,19 +77,25 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
   const loadMore = loadMoreCategories.bind(null, { search, sortBy });
 
   // Prefer the admin-generated + validated JSON-LD cache; fall back to a live
-  // breadcrumb so the page never ships with zero structured data.
+  // breadcrumb so the page never ships with zero structured data. The fallback is built
+  // inside its own branch — when the cache is present (the normal case) it is never built.
   const storedJsonLd = seo.jsonLd?.trim();
-  const breadcrumbData = generateBreadcrumbStructuredData([
-    { name: "الرئيسية", url: "/" },
-    { name: "الفئات", url: "/categories" },
-  ]);
+
+  const buildFallbackJsonLd = () =>
+    generateBreadcrumbStructuredData([
+      { name: "الرئيسية", url: "/" },
+      { name: "الفئات", url: "/categories" },
+    ]);
 
   return (
     <>
       {storedJsonLd ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(storedJsonLd) }} />
       ) : (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbData) }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLdHtml(buildFallbackJsonLd()) }}
+        />
       )}
 
       <Breadcrumb

@@ -1,6 +1,6 @@
 import type { HeroPageState } from "./client-hero-v2";
 import { IconUsers, IconArticle, IconViews, IconFeatured } from "@/lib/icons";
-import { SHOW_CLIENT_ENGAGEMENT_STATS } from "@/lib/feature-flags";
+import { SHOW_CLIENT_ENGAGEMENT_STATS } from "@/constants";
 import { cn } from "@/lib/utils";
 
 interface HeroStatsData {

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RelativeTime } from "@/components/date/RelativeTime";
 import { IconTrending, IconViews, IconComment, IconArticle } from "@/lib/icons";
-import { SHOW_ARTICLE_ENGAGEMENT_STATS } from "@/lib/feature-flags";
+import { SHOW_ARTICLE_ENGAGEMENT_STATS } from "@/constants";
 
 interface TrendingArticle {
   id: string;

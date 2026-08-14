@@ -7,11 +7,20 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 
-import { BRAND_AR, SITE_URL, CONTACT_EMAIL, LEGAL } from "@/lib/brand";
-import { ORGANIZATION_JSONLD } from "@/lib/organization-jsonld";
+import {
+  BRAND_AR,
+  SITE_URL,
+  CONTACT_EMAIL,
+  SAUDI_BUSINESS_VERIFY_URL,
+  CR_CERTIFICATE_FALLBACK_IMAGE,
+} from "@/constants";
+import { getLegalEntity, buildOrganizationJsonLd } from "@/lib/seo/organization-jsonld";
+import { toLegalEntityDisplay, type LegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 import { cn } from "@/lib/utils";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
 import { getWhatsappContactUrl } from "@/app/trust/helpers/get-whatsapp-contact";
+import { getTrustPageForMetadata } from "@/app/trust/helpers/trust-metadata";
+import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import {
   IconVerified,
   IconFileCheck,
@@ -31,38 +40,37 @@ const PAGE_URL = `${SITE_URL}/trust`;
 const PAGE_DESC =
   "شركة سعودية موثّقة. سجل تجاري رسمي قابل للتحقّق، عنوان حقيقي، وشفافية كاملة — لأن فلسفتنا حضور لا وعود.";
 
-const MAP_LAT = "21.502370834350586";
-const MAP_LNG = "39.1859245300293";
-const MAP_EMBED = `https://www.google.com/maps?q=${MAP_LAT},${MAP_LNG}&hl=ar&z=15&output=embed`;
-const MAP_LINK = `https://www.google.com/maps?q=${MAP_LAT},${MAP_LNG}`;
+// The pin is the office address, so it comes from the same row as the address itself.
+// No coordinates on file → no map, rather than a pin pointing at a remembered spot.
+const mapEmbedUrl = (lat: number, lng: number) =>
+  `https://www.google.com/maps?q=${lat},${lng}&hl=ar&z=15&output=embed`;
+const mapLinkUrl = (lat: number, lng: number) => `https://www.google.com/maps?q=${lat},${lng}`;
 
-export const metadata: Metadata = {
-  title: "الموثوقية — مدونتي",
-  description: PAGE_DESC,
-  alternates: {
-    canonical: PAGE_URL,
-    languages: { "ar-SA": PAGE_URL, "ar-EG": PAGE_URL },
-  },
-  openGraph: {
-    title: "الموثوقية — مدونتي",
-    description: PAGE_DESC,
-    url: PAGE_URL,
-    type: "website",
-    locale: "ar_SA",
-    siteName: BRAND_AR,
-  },
-  robots: { index: true, follow: true },
-};
+// Title and description come from the page's own row, edited at /modonty/pages/trust.
+// The constants below stay as the fallback for a row that does not exist yet — an indexed
+// page must never ship with an empty title while someone fills a form.
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadataFromPageRow(await getTrustPageForMetadata(), {
+    path: "/trust",
+    fallbackTitle: "الموثوقية",
+    fallbackDescription: PAGE_DESC,
+  });
+}
 
-const FACTS: { k: string; v: string; ltr?: boolean; active?: boolean }[] = [
-  { k: "الاسم القانوني", v: LEGAL.legalName },
-  { k: "الحالة", v: LEGAL.status, active: true },
-  { k: "رقم السجل التجاري", v: LEGAL.cr, ltr: true },
-  { k: "الرقم الوطني الموحّد", v: LEGAL.unifiedNumber, ltr: true },
-  { k: "نوع الكيان", v: LEGAL.entityType },
-  { k: "تاريخ القيد", v: LEGAL.registrationDateAr },
-  { k: "رأس المال", v: `${LEGAL.capital} ﷼` },
-];
+// Built per request from Settings. A field the team has not filled is dropped, so the list
+// never shows a label with an empty value beside it.
+function buildFacts(legal: LegalEntityDisplay) {
+  const rows: { k: string; v: string; ltr?: boolean; active?: boolean }[] = [
+    { k: "الاسم القانوني", v: legal.legalName ?? "" },
+    { k: "الحالة", v: legal.crStatus ?? "", active: legal.isRegistrationActive },
+    { k: "رقم السجل التجاري", v: legal.cr ?? "", ltr: true },
+    { k: "الرقم الوطني الموحّد", v: legal.unifiedNumber ?? "", ltr: true },
+    { k: "نوع الكيان", v: legal.entityType ?? "" },
+    { k: "تاريخ القيد", v: legal.registrationDate ?? "" },
+    { k: "رأس المال", v: legal.capital ? `${legal.capital} ﷼` : "" },
+  ];
+  return rows.filter((r) => r.v !== "");
+}
 
 const PILLARS: { Icon: typeof IconShield; title: string; desc: string }[] = [
   {
@@ -92,16 +100,17 @@ const CHECKS: { title: string; desc: string }[] = [
   { title: "سياسات معلنة", desc: "الخصوصية والاستخدام والاسترجاع — صفحات منشورة." },
 ];
 
-const CONTACT: { Icon: typeof IconMapPin; k: string; v: string; ltr?: boolean }[] = [
-  {
-    Icon: IconMapPin,
-    k: "العنوان (حسب السجل الرسمي)",
-    v: `${LEGAL.city} — ${LEGAL.district} — ${LEGAL.street}`,
-  },
-  { Icon: IconEmail, k: "البريد الرسمي", v: CONTACT_EMAIL, ltr: true },
-  { Icon: IconClock, k: "ساعات العمل", v: "على مدار الساعة — 24/7" },
-  { Icon: IconMessage, k: "تواصل مباشر", v: "واتساب + نموذج تواصل + دعم داخل اللوحة" },
-];
+function buildContact(legal: LegalEntityDisplay) {
+  const rows: { Icon: typeof IconMapPin; k: string; v: string; ltr?: boolean }[] = [
+    { Icon: IconEmail, k: "البريد الرسمي", v: CONTACT_EMAIL, ltr: true },
+    { Icon: IconClock, k: "ساعات العمل", v: "على مدار الساعة — 24/7" },
+    { Icon: IconMessage, k: "تواصل مباشر", v: "واتساب + نموذج تواصل + دعم داخل اللوحة" },
+  ];
+  if (legal.address) {
+    rows.unshift({ Icon: IconMapPin, k: "العنوان (حسب السجل الرسمي)", v: legal.address });
+  }
+  return rows;
+}
 
 function sanitizeJsonLd(json: object): string {
   return JSON.stringify(json).replace(/</g, "\\u003c");
@@ -110,7 +119,10 @@ function sanitizeJsonLd(json: object): string {
 export default async function TrustPage() {
   let ogImageUrl: string | null = null;
   let whatsappHref: string | null = null;
-  let certificateSrc: string = LEGAL.certificateImage;
+  let certificateSrc: string = CR_CERTIFICATE_FALLBACK_IMAGE;
+  // The legal entity joins the same parallel read — it is one cached Settings query
+  // shared with /story, so the two pages can never publish conflicting Organization data.
+  const [entity] = await Promise.all([getLegalEntity()]);
   try {
     const [media, wa] = await Promise.all([getBrandMedia(), getWhatsappContactUrl()]);
     ogImageUrl = media.ogImageUrl;
@@ -119,6 +131,17 @@ export default async function TrustPage() {
   } catch (error) {
     console.error("Trust page settings fetch failed:", error);
   }
+
+  const ORGANIZATION_JSONLD = buildOrganizationJsonLd(entity);
+  // Same row the JSON-LD above was built from — what the visitor reads and what Google
+  // reads can no longer be two different numbers.
+  const legal = toLegalEntityDisplay(entity);
+  const facts = buildFacts(legal);
+  const contact = buildContact(legal);
+  const map =
+    legal.latitude != null && legal.longitude != null
+      ? { lat: legal.latitude, lng: legal.longitude }
+      : null;
 
   const webPage = {
     "@context": "https://schema.org",
@@ -181,20 +204,42 @@ export default async function TrustPage() {
             <div className="px-6 pb-6 pt-5">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                 <h1 className="text-2xl font-semibold">{BRAND_AR}</h1>
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-sm font-semibold text-primary">
-                  <IconVerified className="h-4 w-4" />
-                  موثّقة لدى وزارة التجارة
-                </span>
+                {/* A verification claim needs a live registration behind it — otherwise the
+                    badge would contradict the status row below it. */}
+                {legal.cr && legal.isRegistrationActive && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-sm font-semibold text-primary">
+                    <IconVerified className="h-4 w-4" />
+                    موثّقة لدى وزارة التجارة
+                  </span>
+                )}
               </div>
               <p className="mt-1.5 text-base text-foreground">
-                منصة المحتوى العربي للأعمال — تعمل ضمن مظلّة {LEGAL.legalName}.
+                منصة المحتوى العربي للأعمال
+                {legal.legalName ? ` — تعمل ضمن مظلّة ${legal.legalName}.` : "."}
               </p>
               <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-sm text-muted-foreground">
-                <span className="inline-flex items-center gap-1.5 font-medium text-green-600">
-                  <span className="h-2 w-2 rounded-full bg-green-600" /> السجل نشط
-                </span>
-                <span>المقر: <span className="font-medium text-foreground">{LEGAL.city}، {LEGAL.country}</span></span>
-                <span>السجل التجاري: <span className="font-medium text-foreground [direction:ltr]">{LEGAL.cr}</span></span>
+                {legal.crStatus && (
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1.5 font-medium",
+                      legal.isRegistrationActive ? "text-green-600" : "text-muted-foreground"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "h-2 w-2 rounded-full",
+                        legal.isRegistrationActive ? "bg-green-600" : "bg-muted-foreground"
+                      )}
+                    />{" "}
+                    السجل {legal.crStatus}
+                  </span>
+                )}
+                {legal.city && (
+                  <span>المقر: <span className="font-medium text-foreground">{legal.city}{legal.country ? `، ${legal.country}` : ""}</span></span>
+                )}
+                {legal.cr && (
+                  <span>السجل التجاري: <span className="font-medium text-foreground [direction:ltr]">{legal.cr}</span></span>
+                )}
               </div>
             </div>
           </Card>
@@ -218,7 +263,14 @@ export default async function TrustPage() {
                   >
                     <OptimizedImage
                       media={asMedia(certificateSrc)}
-                      alt="شهادة السجل التجاري — شركة جبر الجنوبية للمقاولات، الرقم الموحّد 7036024383، وزارة التجارة"
+                      alt={[
+                        "شهادة السجل التجاري",
+                        legal.legalName,
+                        legal.unifiedNumber && `الرقم الموحّد ${legal.unifiedNumber}`,
+                        "وزارة التجارة",
+                      ]
+                        .filter(Boolean)
+                        .join(" — ")}
                       width={2573}
                       height={1818}
                       sizes="(max-width: 768px) 100vw, 520px"
@@ -235,8 +287,11 @@ export default async function TrustPage() {
                 </figure>
 
                 <div>
+                  {/* Nothing on file yet → no empty bordered box, and no "verify it yourself"
+                      pointing at a number that is not there. */}
+                  {facts.length > 0 && (
                   <ul className="divide-y divide-border rounded-lg border border-border">
-                    {FACTS.map((f) => (
+                    {facts.map((f) => (
                       <li
                         key={f.k}
                         className="flex items-center justify-between gap-3 px-4 py-3 text-sm"
@@ -255,25 +310,30 @@ export default async function TrustPage() {
                       </li>
                     ))}
                   </ul>
+                  )}
 
-                  <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                    <span className="font-semibold">تحقّق بنفسك:</span>
-                    <a
-                      href={LEGAL.verifyUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 font-semibold text-primary underline underline-offset-4 hover:opacity-80"
-                    >
-                      المركز السعودي للأعمال
-                      <IconExternal className="h-3.5 w-3.5" />
-                    </a>
-                  </div>
+                  {legal.cr && (
+                    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                      <span className="font-semibold">تحقّق بنفسك:</span>
+                      <a
+                        href={SAUDI_BUSINESS_VERIFY_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 font-semibold text-primary underline underline-offset-4 hover:opacity-80"
+                      >
+                        المركز السعودي للأعمال
+                        <IconExternal className="h-3.5 w-3.5" />
+                      </a>
+                    </div>
+                  )}
 
-                  <p className="mt-4 border-t border-border pt-4 text-sm text-muted-foreground">
-                    تعمل منصّة <span className="font-semibold text-foreground">{BRAND_AR}</span> ضمن
-                    مظلّة <span className="font-semibold text-foreground">{LEGAL.legalName}</span> —
-                    كيان سعودي مسجّل رسمياً.
-                  </p>
+                  {legal.legalName && (
+                    <p className="mt-4 border-t border-border pt-4 text-sm text-muted-foreground">
+                      تعمل منصّة <span className="font-semibold text-foreground">{BRAND_AR}</span> ضمن
+                      مظلّة <span className="font-semibold text-foreground">{legal.legalName}</span> —
+                      كيان سعودي مسجّل رسمياً.
+                    </p>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -309,9 +369,9 @@ export default async function TrustPage() {
               <CardDescription>عنوان حقيقي ووسائل تواصل مباشرة.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-6 md:grid-cols-2">
+              <div className={cn("grid gap-6", map && "md:grid-cols-2")}>
                 <ul className="space-y-4">
-                  {CONTACT.map(({ Icon, k, v, ltr }) => (
+                  {contact.map(({ Icon, k, v, ltr }) => (
                     <li key={k} className="flex gap-3">
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                         <Icon className="h-5 w-5" />
@@ -323,25 +383,29 @@ export default async function TrustPage() {
                     </li>
                   ))}
                 </ul>
-                <div className="overflow-hidden rounded-lg border border-border">
-                  <iframe
-                    title="خريطة موقع شركة جبر الجنوبية — جدة"
-                    src={MAP_EMBED}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    className="h-64 w-full border-0 md:h-full"
-                  />
-                </div>
+                {map && (
+                  <div className="overflow-hidden rounded-lg border border-border">
+                    <iframe
+                      title={`خريطة موقع ${legal.legalName ?? BRAND_AR}${legal.city ? ` — ${legal.city}` : ""}`}
+                      src={mapEmbedUrl(map.lat, map.lng)}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      className="h-64 w-full border-0 md:h-full"
+                    />
+                  </div>
+                )}
               </div>
-              <a
-                href={MAP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary underline underline-offset-4 hover:opacity-80"
-              >
-                افتح في خرائط جوجل
-                <IconExternal className="h-3.5 w-3.5" />
-              </a>
+              {map && (
+                <a
+                  href={mapLinkUrl(map.lat, map.lng)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary underline underline-offset-4 hover:opacity-80"
+                >
+                  افتح في خرائط جوجل
+                  <IconExternal className="h-3.5 w-3.5" />
+                </a>
+              )}
             </CardContent>
           </Card>
 

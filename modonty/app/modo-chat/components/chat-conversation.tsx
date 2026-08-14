@@ -1,6 +1,6 @@
 "use client";
 
-import { CHARACTER_URL } from "@/lib/brand";
+import { CHARACTER_URL } from "@/constants";
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";

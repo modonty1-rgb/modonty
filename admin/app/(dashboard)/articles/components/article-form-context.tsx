@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { ArticleFormData, FormSubmitResult } from '@/lib/types/form-types';
 import { generateSEOTitle, generateSEODescription, generateCanonicalUrl } from '../helpers/seo-helpers';
-import { SITE_NAME } from '@/lib/constants/site-name';
+import { SITE_NAME_FALLBACK } from '@/lib/constants/site-name';
 import { updateArticle } from '../actions/articles-actions';
 import {
   applyLinkDecisions,
@@ -193,7 +193,7 @@ const initialFormData: ArticleFormData = {
   ogTitle: '',
   ogDescription: '',
   ogType: 'article',
-  ogSiteName: SITE_NAME,
+  ogSiteName: SITE_NAME_FALLBACK,
   ogLocale: 'ar_SA',
   ogArticleAuthor: '',
   ogArticlePublishedTime: null,

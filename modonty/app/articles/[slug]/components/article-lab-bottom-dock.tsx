@@ -10,7 +10,7 @@ import { WhatsAppLeadLink } from "@/components/cta/whatsapp-icon-link";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { bookingWhatsappMessage } from "@/lib/whatsapp";
-import { BRAND_AVATAR_RADIUS } from "@/lib/brand";
+import { BRAND_AVATAR_RADIUS } from "@/constants";
 import { IconClients, IconExternal, IconCalendar } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 

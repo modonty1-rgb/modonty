@@ -1,5 +1,5 @@
 import { baseTemplate, ctaButton, heading, paragraph, divider } from "./base";
-import { BRAND_AR } from "@/lib/brand";
+import { BRAND_AR } from "@/constants";
 
 export interface BookingNotificationEmailParams {
   /** The provider / doctor (Client.name) — the recipient. */

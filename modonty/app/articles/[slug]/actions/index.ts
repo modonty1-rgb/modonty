@@ -2,6 +2,7 @@ export {
   getArticleSlugsForStaticParams,
   getArticleBySlug,
   getArticleBySlugMinimal,
+  getArticleContentBySlug,
   getArchivedArticleRedirectSlug,
   getRelatedArticlesByAuthor,
   getRelatedArticlesByClient,
@@ -10,7 +11,6 @@ export {
   getArticlesForOutOfScopeSearch,
   getArticleFaqs,
 } from "./article-data";
-export { getArticleForMetadata } from "./article-metadata";
 export {
   fetchArticleFaqs,
   fetchArticleComments,

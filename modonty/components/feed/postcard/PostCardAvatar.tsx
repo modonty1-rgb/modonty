@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
-import { BRAND_AVATAR_RADIUS } from "@/lib/brand";
+import { BRAND_AVATAR_RADIUS } from "@/constants";
 
 
 interface PostCardAvatarProps {

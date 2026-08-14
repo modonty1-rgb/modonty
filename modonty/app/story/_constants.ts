@@ -3,8 +3,6 @@
  */
 import { BRAND_WORDMARK_URL } from "@modonty/shared/lib/brand-assets";
 
-import { BRAND_AR, LEGAL } from "@/lib/brand";
-
 /**
  * Brand logo — spotlight widgets + page.tsx OG_IMAGE.
  * Was a hardcoded Cloudinary SVG; verified byte-identical (sha 0057be46…, 5728 B) to the
@@ -21,18 +19,9 @@ export const storyTeamImage = (file: string) => `${STORY_ASSETS}/team/${file}`;
 export const storyPartnerImage = (file: string) => `${STORY_ASSETS}/partners/${file}`;
 
 /**
- * Legal entity facts for the Trust Strip + JSON-LD Organization schema.
- * Single source of truth for CR + capital + DBA + address + verification.
+ * The trust strip's entity facts used to be a constant here. They now arrive as props from
+ * the server page, which reads them from Settings — the same row the page's Organization
+ * JSON-LD is built from, so the strip and the markup can never state different numbers.
+ * Currency label stays: it is how the amount is spelled, not a fact about the company.
  */
-export const LEGAL_ENTITY = {
-  brand: BRAND_AR,
-  dba: LEGAL.dba,
-  cr: LEGAL.cr,
-  capital: LEGAL.capital,
-  currency: "ر.س",
-  city: LEGAL.city,
-  country: LEGAL.country,
-  countryFull: "المملكة العربية السعودية",
-  foundedYear: LEGAL.foundedYear,
-  verifyUrl: "https://eauthenticate.saudibusiness.gov.sa/inquiry",
-} as const;
+export const CAPITAL_CURRENCY_LABEL = "ر.س";

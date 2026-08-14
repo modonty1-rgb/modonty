@@ -7,7 +7,7 @@ import { ClientCtaMode } from "@prisma/client";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 import { IconChevronRight, IconCheck, IconClients } from "@/lib/icons";
-import { BRAND_AVATAR_RADIUS } from "@/lib/brand";
+import { BRAND_AVATAR_RADIUS } from "@/constants";
 
 import { cn } from "@/lib/utils";
 import { db } from "@/lib/db";

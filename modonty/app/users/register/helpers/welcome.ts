@@ -1,5 +1,5 @@
 import { baseTemplate, ctaButton, heading, paragraph, divider } from "@/lib/email/templates/base";
-import { BRAND_AR, SITE_URL } from "@/lib/brand";
+import { BRAND_AR, SITE_URL } from "@/constants";
 
 export interface WelcomeEmailParams {
   userName: string;

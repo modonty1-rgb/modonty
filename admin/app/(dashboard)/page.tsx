@@ -13,6 +13,7 @@ import { MembersPipeline } from "./components/sections/members-pipeline";
 import { SubscribersPipeline } from "./components/sections/subscribers-pipeline";
 import { NewsletterPipeline } from "./components/sections/newsletter-pipeline";
 import { ErrorsToFix } from "./components/sections/errors-to-fix";
+import { ListingPagesSeo } from "./components/sections/listing-pages-seo";
 import { MediaLibrary } from "./components/sections/media-library";
 import { ReferenceData } from "./components/sections/reference-data";
 
@@ -55,6 +56,15 @@ export default async function DashboardPage() {
 
       {/* Urgent cross-source alerts — renders nothing when all is clear */}
       <DashboardAlertsBanner alerts={alerts} />
+
+      {/* The seven modonty listing pages — meta + JSON-LD + their link to Settings.
+          Sits right under the platform number because it explains it: these are the
+          pages Google lands on, and nothing measured them before today. */}
+      <section id="sec-listing-seo" className="scroll-mt-24">
+        <Suspense fallback={<Skeleton className="h-24 w-full" />}>
+          <ListingPagesSeo />
+        </Suspense>
+      </section>
 
       {/* Data problems needing a human — reusable «Errors to fix» aggregator */}
       <section id="sec-errors-to-fix" className="scroll-mt-24">

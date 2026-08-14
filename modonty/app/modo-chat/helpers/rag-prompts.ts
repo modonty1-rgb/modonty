@@ -1,5 +1,5 @@
 import "server-only";
-import { BRAND_AR } from "@/lib/brand";
+import { BRAND_AR } from "@/constants";
 
 /**
  * Centralized prompt builder for the brand's AI chatbot.

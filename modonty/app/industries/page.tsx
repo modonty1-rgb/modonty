@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getIndustriesEnhanced } from "@/app/industries/helpers/get-industries-enhanced";
-import { getIndustriesPageSeo } from "@/app/industries/helpers/industries-page-seo";
+import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { loadMoreIndustries } from "@/app/industries/actions";
 import { extractOgImageFromMetadata } from "@/lib/seo/og-image";
@@ -24,7 +24,7 @@ const FALLBACK_DESCRIPTION =
   "استعرض جميع القطاعات والصناعات على مدونتي — اكتشف الشركات والخبراء في كل مجال من التقنية والرعاية الصحية والتجارة الإلكترونية وغيرها.";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { metadata } = await getIndustriesPageSeo();
+  const { metadata } = await getListingPageSeo("industries");
   const merged: Metadata = {
     description: FALLBACK_DESCRIPTION,
     ...(metadata ?? {}),
@@ -47,7 +47,7 @@ export default async function IndustriesPage({ searchParams }: IndustriesPagePro
   const sortBy: "clients" | "name" = params.sort === "name" ? "name" : "clients";
 
   const [seo, all] = await Promise.all([
-    getIndustriesPageSeo(),
+    getListingPageSeo("industries"),
     getIndustriesEnhanced({ search, sortBy }),
   ]);
 
@@ -77,19 +77,25 @@ export default async function IndustriesPage({ searchParams }: IndustriesPagePro
   const loadMore = loadMoreIndustries.bind(null, { search, sortBy });
 
   // Prefer the admin-generated + validated JSON-LD cache; fall back to a live
-  // breadcrumb so the page never ships with zero structured data.
+  // breadcrumb so the page never ships with zero structured data. The fallback is built
+  // inside its own branch — when the cache is present (the normal case) it is never built.
   const storedJsonLd = seo.jsonLd?.trim();
-  const breadcrumbData = generateBreadcrumbStructuredData([
-    { name: "الرئيسية", url: "/" },
-    { name: "الصناعات", url: "/industries" },
-  ]);
+
+  const buildFallbackJsonLd = () =>
+    generateBreadcrumbStructuredData([
+      { name: "الرئيسية", url: "/" },
+      { name: "الصناعات", url: "/industries" },
+    ]);
 
   return (
     <>
       {storedJsonLd ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(storedJsonLd) }} />
       ) : (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbData) }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLdHtml(buildFallbackJsonLd()) }}
+        />
       )}
 
       <Breadcrumb

@@ -282,7 +282,7 @@ export async function getArticleBySlug(slug: string, userId?: string) {
  * Deliberately EXCLUDES per-user reactions AND the fast-changing aggregate counts —
  * those are fetched live (below) so nothing visible goes stale vs the old dynamic page.
  */
-async function getArticleContentBySlug(slug: string) {
+export async function getArticleContentBySlug(slug: string) {
   "use cache";
   cacheTag("articles");
   cacheLife("hours");

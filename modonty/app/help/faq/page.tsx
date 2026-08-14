@@ -1,7 +1,8 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { generateMetadataFromSEO, generateFAQPageStructuredData, jsonLdHtmlFromString } from "@/lib/seo";
-import { getFaqPageSeo } from "@/app/help/faq/helpers/faq-page-seo";
+import { generateMetadataFromSEO, jsonLdHtmlFromString } from "@/lib/seo";
+import { generateFAQPageStructuredData } from "@/app/help/faq/helpers/generate-faq-page-structured-data";
+import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ import { IconArrowRight, IconEmail, IconHelpCircle } from "@/lib/icons";
 import { FAQPageContent } from "./components/faq-page-content";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { metadata } = await getFaqPageSeo();
+  const { metadata } = await getListingPageSeo("faq");
   if (metadata) return metadata;
   return generateMetadataFromSEO({
     title: "الأسئلة الشائعة",
@@ -26,10 +27,11 @@ function sanitizeJsonLd(json: unknown): string {
 }
 
 export default async function FAQPage() {
-  const [faqs, seo] = await Promise.all([getActiveFAQs(), getFaqPageSeo()]);
+  const [faqs, seo] = await Promise.all([getActiveFAQs(), getListingPageSeo("faq")]);
 
-  // Use cached JSON-LD from Settings (escaped — stored blobs are bare-stringified), fallback to live generation
-  const jsonLdString = seo.jsonLd ? jsonLdHtmlFromString(seo.jsonLd) : sanitizeJsonLd(generateFAQPageStructuredData(faqs));
+  // Use cached JSON-LD from Settings (escaped — stored blobs are bare-stringified).
+  const buildFallbackJsonLd = () => sanitizeJsonLd(generateFAQPageStructuredData(faqs));
+  const jsonLdString = seo.jsonLd ? jsonLdHtmlFromString(seo.jsonLd) : buildFallbackJsonLd();
 
   const lastUpdated = faqs.length > 0
     ? faqs.reduce((latest, faq) => {

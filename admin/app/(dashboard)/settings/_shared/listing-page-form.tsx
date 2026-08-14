@@ -15,7 +15,7 @@ import { ImageField } from "./image-field";
 import { formatTimeAgo } from "./format-time-ago";
 import { SEO_HINTS } from "./seo-hints";
 
-type ListingKey = "categories" | "tags" | "industries" | "trending" | "clients";
+type ListingKey = "categories" | "tags" | "industries" | "trending" | "clients" | "faq";
 
 interface Props {
   pageKey: ListingKey;
@@ -89,6 +89,16 @@ const KEY_MAP: Record<ListingKey, {
   // No `articles` entry: modonty has no /articles listing route and must not have one —
   // next.config.ts keeps that path a clean 404 because a `/articles` rule corrupted Arabic
   // article slugs and put 17+ live articles at de-indexing risk. Page removed 2026-08-02.
+  // /help/faq had columns and a generator but no screen, so its title and description
+  // stayed empty and the page shipped on the generator's fallback copy (dashboard read
+  // «العنوان والوصف فارغان» on 2026-08-14). Same form as the rest — nothing bespoke.
+  faq: {
+    titleKey: "faqSeoTitle",
+    descKey: "faqSeoDescription",
+    cacheDateKey: "faqPageJsonLdLastGenerated",
+    regenerator: "regenerateFaqPageCache",
+    fieldList: ["faqSeoTitle", "faqSeoDescription"],
+  },
   trending: {
     titleKey: "trendingSeoTitle",
     descKey: "trendingSeoDescription",

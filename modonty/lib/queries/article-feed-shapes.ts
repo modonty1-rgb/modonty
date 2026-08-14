@@ -4,9 +4,8 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus } from "@prisma/client";
 import type { ArticleResponse, ArticleFilters, InteractionCounts } from "@/lib/types";
-import { calculateTrendingScore, getTrendingTimeRange } from "@/lib/trending";
 import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
-import { getCoreClientId } from "@modonty/shared/lib/core-client";
+import { getCoreClientId } from "@/lib/settings/get-core-client-id";
 
 export const feedArticleSelect = {
   id: true,

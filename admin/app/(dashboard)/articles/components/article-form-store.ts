@@ -5,7 +5,7 @@ import { devtools } from 'zustand/middleware';
 import { ArticleFormData, FormSubmitResult } from '@/lib/types/form-types';
 import { ArticleStatus } from '@prisma/client';
 import { slugify } from '../helpers/seo-helpers';
-import { SITE_NAME } from '@/lib/constants/site-name';
+import { SITE_NAME_FALLBACK } from '@/lib/constants/site-name';
 import type { FullPageValidationResult } from '@/lib/seo/types';
 import {
   FileText,
@@ -91,7 +91,7 @@ const initialFormData: ArticleFormData = {
   metaRobots: 'index, follow',
   ogTitle: '',
   ogDescription: '',
-  ogSiteName: SITE_NAME,
+  ogSiteName: SITE_NAME_FALLBACK,
   ogLocale: 'ar_SA',
   ogArticleAuthor: '',
   ogArticleSection: '',

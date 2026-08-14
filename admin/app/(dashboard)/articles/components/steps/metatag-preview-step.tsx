@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/collapsible';
 import { AlertCircle, Code, Copy, ScanSearch, Database, GitCompare, ChevronDown } from 'lucide-react';
 import { JsonLdValidationButton } from '@/components/shared/jsonld-validation-button';
-import { SITE_NAME } from '@/lib/constants/site-name';
+import { SITE_NAME_FALLBACK } from '@/lib/constants/site-name';
 import { useToast } from '@/hooks/use-toast';
 import { messages } from '@/lib/messages';
 import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
@@ -94,7 +94,7 @@ export function MetaTagPreviewStep() {
       title: effectiveTitle,
       description: effectiveDescription,
       url: ogUrl,
-      siteName: formData.ogSiteName || selectedClient?.name || SITE_NAME,
+      siteName: formData.ogSiteName || selectedClient?.name || SITE_NAME_FALLBACK,
       locale: formData.ogLocale || formData.inLanguage || 'ar_SA',
     };
 
@@ -152,7 +152,7 @@ export function MetaTagPreviewStep() {
   }), [formData, effectiveTitle, effectiveDescription, selectedAuthor, featuredMedia]);
 
   const nextjsMetadataObject = useMemo(() => {
-    const siteName = selectedClient?.name || SITE_NAME;
+    const siteName = selectedClient?.name || SITE_NAME_FALLBACK;
     const fullTitle = `${effectiveTitle} - ${siteName}`;
     // Mirrors metadata-generator: never `${siteUrl}/og-image.jpg` — that file 404s.
     const ogImage = featuredMedia?.url || BRAND_LOGO_URL;
@@ -311,7 +311,7 @@ export function MetaTagPreviewStep() {
       url: articleUrl,
       name: effectiveTitle,
       description: effectiveDescription,
-      isPartOf: { '@type': 'WebSite', name: selectedClient?.name || SITE_NAME, url: siteUrl },
+      isPartOf: { '@type': 'WebSite', name: selectedClient?.name || SITE_NAME_FALLBACK, url: siteUrl },
       breadcrumb: { '@id': ids.breadcrumb },
     });
 
@@ -339,7 +339,7 @@ export function MetaTagPreviewStep() {
     const organizationNode: Record<string, unknown> = {
       '@type': 'Organization',
       '@id': ids.publisher,
-      name: selectedClient?.name || SITE_NAME,
+      name: selectedClient?.name || SITE_NAME_FALLBACK,
       url: (selectedClient && 'url' in selectedClient ? selectedClient.url : undefined) || siteUrl,
     };
 

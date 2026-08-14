@@ -1,6 +1,6 @@
 "use client";
 
-import { CHARACTER_URL } from "@/lib/brand";
+import { CHARACTER_URL } from "@/constants";
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";

@@ -2495,10 +2495,21 @@ model Settings {
   orgAddressLocality  String?
   orgAddressRegion    String?
   orgAddressCountry   String?
+  orgAddressNeighborhood String? // الحيّ — جزء من العنوان الوطني، يظهر في /trust مع الشارع
   orgPostalCode       String?
   orgGeoLatitude      Float?
   orgGeoLongitude     Float?
   orgSearchUrlTemplate String?
+
+  // السجل التجاري لمدونتي نفسها — تُدخَل من الأدمن وتُعرض في /trust و/story و JSON-LD.
+  // مكانها هنا لأن Settings تخصّ المشروع؛ جدول Client للعملاء.
+  orgLegalName                    String? // الاسم القانوني كما في الشهادة
+  orgCommercialRegistrationNumber String? // رقم السجل التجاري
+  orgCommercialRegistrationStatus String? // حالة السجل كما تقولها وزارة التجارة («نشط»…)
+  orgUnifiedNationalNumber        String? // الرقم الوطني الموحّد للمنشأة (سلسلة 700)
+  orgLegalForm                    String? // نوع الكيان (ذات مسؤولية محدودة، مساهمة…)
+  orgCapitalAmount                String? // رأس المال كما هو مقيّد. نصّ لا رقم: يُعرض كما هو ولا يدخل في حساب
+  orgFoundingDate                 DateTime? // تاريخ القيد في السجل
 
   // Media Settings (Cloudinary URLs)
   logoUrl     String? // Wide wordmark logo — desktop navbar

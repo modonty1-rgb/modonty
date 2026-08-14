@@ -5,7 +5,7 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { FormattedDate } from "@/components/date/FormattedDate";
 import { getCookiePolicyPageForMetadata } from "./helpers/cookie-policy-metadata";
 import { getCookiePolicyPageContent } from "./helpers/cookie-policy-content";
-import { BRAND_AR, SITE_URL } from "@/lib/brand";
+import { BRAND_AR, SITE_URL } from "@/constants";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
     if (!page) {
       // Fallback to default metadata
       return {
-        title: "سياسة ملفات تعريف الارتباط - مدونتي",
+        title: "سياسة ملفات تعريف الارتباط",
         description: "تعرف على كيفية استخدام منصة مدونتي لملفات تعريف الارتباط (Cookies)",
       };
     }
@@ -64,7 +64,8 @@ export async function generateMetadata(): Promise<Metadata> {
     }
 
     return {
-      title: `${title} - ${siteName}`,
+      // The root layout's template already appends the brand (layout.tsx:35).
+      title,
       description: description,
       alternates: buildAlternates(canonicalUrl),
       openGraph,
@@ -85,7 +86,7 @@ export async function generateMetadata(): Promise<Metadata> {
     console.error("Error generating metadata for cookie policy page:", error);
     // Fallback to default metadata
     return {
-      title: "سياسة ملفات تعريف الارتباط - مدونتي",
+      title: "سياسة ملفات تعريف الارتباط",
       description: "تعرف على كيفية استخدام منصة مدونتي لملفات تعريف الارتباط (Cookies)",
     };
   }
@@ -141,7 +142,9 @@ async function CookiePolicyContent() {
   const pageTitle = page?.title || fallbackTitle;
   const pageContent = hasContent ? page!.content : fallbackContent;
 
-  const structuredData = generateStructuredData({
+  // Prefer the stored, admin-validated card; build live ONLY when it is absent.
+  const storedJsonLd = page?.jsonLdStructuredData?.trim();
+  const buildFallbackStructuredData = () => generateStructuredData({
     type: "WebPage",
     name: `${pageTitle} - مدونتي`,
     description: "تعرف على كيفية استخدام منصة مدونتي لملفات تعريف الارتباط (Cookies)",
@@ -152,7 +155,7 @@ async function CookiePolicyContent() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: sanitizeJsonLd(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: storedJsonLd ?? sanitizeJsonLd(buildFallbackStructuredData()) }}
       />
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <Breadcrumb

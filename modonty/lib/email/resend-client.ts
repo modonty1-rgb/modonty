@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { NOREPLY_FROM } from "@/lib/brand";
+import { NOREPLY_FROM } from "@/constants";
 
 let resendInstance: Resend | null = null;
 

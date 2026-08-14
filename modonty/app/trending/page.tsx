@@ -4,7 +4,7 @@ import { getTrendingArticles } from "@/app/trending/helpers/get-trending-article
 import type { ArticleResponse } from "@/lib/types";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { TimePeriodFilter } from "./components/time-period-filter";
-import { getTrendingPageSeo } from "@/app/trending/helpers/trending-page-seo";
+import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { jsonLdHtmlFromString } from "@/lib/seo";
 
 interface TrendingPageProps {
@@ -13,7 +13,7 @@ interface TrendingPageProps {
 
 // Metadata from Settings cache
 export async function generateMetadata(): Promise<Metadata> {
-  const { metadata } = await getTrendingPageSeo();
+  const { metadata } = await getListingPageSeo("trending");
   return metadata ?? {};
 }
 
@@ -25,7 +25,7 @@ export default async function TrendingPage({ searchParams }: TrendingPageProps) 
   
   // Server-side data fetching
   const trendingArticles = await getTrendingArticles(12, days);
-  const { jsonLd: storedJsonLd } = await getTrendingPageSeo();
+  const { jsonLd: storedJsonLd } = await getListingPageSeo("trending");
 
   // Helper function for period text
   const getPeriodText = (days: number) => {
