@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { OptimizedImage, type ImageMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, type ImageMedia } from "@modonty/shared/components/optimized-image";
 
 interface ArticleFeaturedImageProps {
   /** The media row itself — `bunnyUrl` and `blurDataURL` are required keys on `ImageMedia`,

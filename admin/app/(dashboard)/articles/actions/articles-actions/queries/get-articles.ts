@@ -119,7 +119,7 @@ export async function getArticles(filters?: ArticleFilters) {
           scheduledAt: true,
           client: { select: { id: true, name: true, logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true } }, editor: { select: { id: true, name: true } } } },
           category: { select: { id: true, name: true } },
-          // Fields the SHARED dataLayer SEO scorer reads. All five must be here: it scores
+          // Fields the SHARED shared SEO scorer reads. All five must be here: it scores
           // the STORED, published page, and a missing field is indistinguishable from an
           // empty one — leave any of them out and every row silently scores the same low
           // number, which is exactly the bug this list fixes.

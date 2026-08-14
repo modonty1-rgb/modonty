@@ -1,4 +1,4 @@
-import { ArticleHeroWarm } from "@/components/media/hero-warm";
+import { PreloadArticleHero } from "@/components/media/preload-hero";
 import { cn } from "@/lib/utils";
 import { PostCardBody } from "./PostCardBody";
 import { PostCardFooter } from "./PostCardFooter";
@@ -19,7 +19,7 @@ export function DesktopPostCard({ className, index, isLcp, hideClient, featured,
         className
       )}
     >
-      <ArticleHeroWarm href={`/articles/${rest.post.slug}`} imageUrl={rest.post.image ?? null} />
+      <PreloadArticleHero href={`/articles/${rest.post.slug}`} imageUrl={rest.post.image ?? null} />
       <PostCardHeroImage post={rest.post} isLcp={effectiveIsLcp} index={index} articleTitle={rest.post.title} featured={featured} />
       <div data-nosnippet className="space-y-3 p-4">
         <PostCardHeader post={rest.post} index={index} hideClient={hideClient} />

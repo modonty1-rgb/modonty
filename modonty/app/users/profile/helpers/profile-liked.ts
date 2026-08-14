@@ -1,4 +1,4 @@
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
 
 export type LikedItemType = "client" | "article" | "comment";
@@ -21,7 +21,7 @@ export interface LikedItem {
 }
 
 /**
- * Server-side counterpart of GET /api/users/[id]/liked. Merges client likes
+ * Reads directly on the server — the old /api endpoint was removed. Merges client likes
  * and article likes into a single timeline, sorted by date desc. Per-request
  * (not cached) — profile is `noindex` and likes mutate interactively.
  */

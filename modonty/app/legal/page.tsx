@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "@/components/link";
+import Link from "next/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { IconChevronLeft } from "@/lib/icons";
 

@@ -17,8 +17,8 @@ import { approveArticle, requestChanges } from "../actions/article-actions";
 import { FeedbackForm } from "./feedback-form";
 import { ApproveConfirmDialog } from "./approve-confirm-dialog";
 import type { ArticleWithAllData } from "../helpers/article-queries";
-import { OptimizedImage } from "@modonty/database/components/optimized-image";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { OptimizedImage } from "@modonty/shared/components/optimized-image";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { ar } from "@/lib/ar";
 
 interface ArticlePreviewClientProps {

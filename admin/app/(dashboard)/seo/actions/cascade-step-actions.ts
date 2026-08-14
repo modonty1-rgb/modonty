@@ -95,7 +95,7 @@ export async function regenerateOneArticleCascade(
  * a field you do not select reads as a field the client does not have. Caught on dev
  * before it ever ran in production (2026-07-14).
  *
- * generateClientSEO goes through the shared dataLayer bundle — the one generator, the one
+ * generateClientSEO goes through the shared shared bundle — the one generator, the one
  * select, the one @type rule — so the cascade and a save now produce byte-identical cards.
  */
 export async function regenerateOneClientCascade(

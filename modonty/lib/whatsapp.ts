@@ -1,4 +1,4 @@
-import { normalizePhone } from "@modonty/database/lib/phone";
+import { normalizePhone } from "@modonty/shared/lib/phone";
 
 /**
  * WhatsApp number for `wa.me` — one rule for the hero CTA, sidebar quick-contact,

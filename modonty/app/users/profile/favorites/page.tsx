@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
-import { OptimizedImage } from "@modonty/database/components/optimized-image";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import Link from "next/link";
+import { OptimizedImage } from "@modonty/shared/components/optimized-image";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconSaved } from "@/lib/icons";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import Link from "@/components/link";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
 import { getProfileFavorites } from "../helpers/profile-favorites";

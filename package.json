@@ -13,14 +13,14 @@
     "build:all": "pnpm build:admin && pnpm build:modonty && pnpm build:console",
     "lint": "pnpm --filter \"@modonty/*\" lint",
     "format": "prettier --write .",
-    "prisma:generate": "pnpm --filter @modonty/database prisma:generate",
-    "prisma:push": "pnpm --filter @modonty/database prisma:push",
-    "prisma:dedupe-push": "pnpm --filter @modonty/database dedupe-before-push && pnpm prisma:push",
-    "prisma:studio": "pnpm --filter @modonty/database prisma:studio",
-    "prisma:format": "pnpm --filter @modonty/database prisma:format",
-    "prisma:validate": "pnpm --filter @modonty/database prisma:validate",
-    "seed": "pnpm --filter @modonty/database seed",
-    "seed:clear": "pnpm --filter @modonty/database seed:clear"
+    "prisma:generate": "pnpm --filter @modonty/shared prisma:generate",
+    "prisma:push": "pnpm --filter @modonty/shared prisma:push",
+    "prisma:dedupe-push": "pnpm --filter @modonty/shared dedupe-before-push && pnpm prisma:push",
+    "prisma:studio": "pnpm --filter @modonty/shared prisma:studio",
+    "prisma:format": "pnpm --filter @modonty/shared prisma:format",
+    "prisma:validate": "pnpm --filter @modonty/shared prisma:validate",
+    "seed": "pnpm --filter @modonty/shared seed",
+    "seed:clear": "pnpm --filter @modonty/shared seed:clear"
   },
   "devDependencies": {
     "@lhci/cli": "^0.15.1",

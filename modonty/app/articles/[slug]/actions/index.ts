@@ -18,4 +18,4 @@ export {
   fetchMoreFromClient,
   fetchRelatedArticlesByCategoryTags,
 } from "./article-lazy-actions";
-export { submitAskClient, getPendingFaqsForCurrentUser, fetchPendingFaqsForArticle } from "./ask-client-actions";
+export { getPendingFaqsForCurrentUser } from "./get-pending-faqs-for-current-user";

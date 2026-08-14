@@ -8,7 +8,7 @@ import type { ClientWithRelations } from "@/lib/types";
 import { updateMedia } from "../../../media/actions/media-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useMediaPreview } from "../../helpers/hooks/use-media-preview";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 interface MediaSectionProps {
   form: UseFormReturn<ClientFormSchemaType>;

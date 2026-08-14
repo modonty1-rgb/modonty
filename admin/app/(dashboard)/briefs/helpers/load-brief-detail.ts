@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { ArticleStatus, type NotificationPriority } from "@prisma/client";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 // One client's writer brief.
 //

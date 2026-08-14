@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { deleteBunnyUrl } from "@modonty/database/lib/bunny";
+import { deleteBunnyUrl } from "@modonty/shared/lib/bunny";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";

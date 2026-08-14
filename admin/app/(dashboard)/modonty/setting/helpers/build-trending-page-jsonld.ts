@@ -6,7 +6,7 @@
 import type { SettingsForHomeJsonLd } from "./build-home-jsonld-from-settings";
 import type { ArticleForHomeJsonLd } from "./build-home-jsonld-from-settings";
 import { buildSiteOrgAndWebSite } from "./build-clients-page-jsonld";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): string | undefined {
   if (!url?.trim()) return undefined;

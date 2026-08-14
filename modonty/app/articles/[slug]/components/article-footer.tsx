@@ -1,6 +1,6 @@
-import Link from "@/components/link";
+import Link from "next/link";
 import { RelativeTime } from "@/components/date/RelativeTime";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 
 interface ArticleFooterProps {
   client: {

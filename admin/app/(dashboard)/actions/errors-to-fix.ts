@@ -1,6 +1,6 @@
 "use server";
 
-import { toE164 } from "@modonty/database/lib/phone";
+import { toE164 } from "@modonty/shared/lib/phone";
 
 import { db } from "@/lib/db";
 

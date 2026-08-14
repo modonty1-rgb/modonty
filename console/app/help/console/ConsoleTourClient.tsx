@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import Link from "next/link";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";

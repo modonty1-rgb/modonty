@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { useRouter } from "next/navigation";
 
 import {
@@ -19,8 +19,8 @@ import { Button } from "@/components/ui/button";
 import { Trash2, ImageOff, ExternalLink, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { deleteMedia } from "../actions/media-actions";
-import { formatBytes } from "@modonty/database/lib/utils";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { formatBytes } from "@modonty/shared/lib/utils";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 interface UnusedItem {
   id: string;

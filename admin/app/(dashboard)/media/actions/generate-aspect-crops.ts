@@ -1,6 +1,6 @@
 import "server-only";
 
-import { BUNNY_ASPECT_SUFFIX } from "@modonty/database/lib/bunny";
+import { BUNNY_ASPECT_SUFFIX } from "@modonty/shared/lib/bunny";
 import { loadSharp } from "@/lib/utils/sharp-loader";
 
 import type Sharp from "sharp";

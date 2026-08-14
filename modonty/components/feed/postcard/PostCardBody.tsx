@@ -1,4 +1,4 @@
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { highlightQuery } from "@/lib/highlight-query";
 import type { PostCardProps } from "./PostCard.types";
 

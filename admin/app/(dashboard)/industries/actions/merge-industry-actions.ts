@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
 
-import { generateClientSeoBundle } from "@modonty/database/lib/seo/generate-client-seo-bundle";
+import { generateClientSeoBundle } from "@modonty/shared/lib/seo/generate-client-seo-bundle";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
@@ -140,7 +140,7 @@ export interface RegenerateClientResult {
 
 /**
  * Phase 2 (per client, idempotent): rebuild one moved client's Next.js metadata +
- * JSON-LD so its knowsAbout reflects the target industry. Uses the SHARED dataLayer
+ * JSON-LD so its knowsAbout reflects the target industry. Uses the SHARED shared
  * bundle (byte-identical to an admin/console save). Called in a client loop to drive
  * the live progress bar.
  */

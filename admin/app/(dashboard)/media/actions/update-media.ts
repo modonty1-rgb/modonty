@@ -7,7 +7,7 @@ import { MediaType, MediaScope } from "@prisma/client";
 import { generateAndSaveJsonLd } from "@/lib/seo";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
-import { buildBunnyMediaPath, moveBunnyMedia, bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/database/lib/bunny";
+import { buildBunnyMediaPath, moveBunnyMedia, bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/shared/lib/bunny";
 
 interface UpdateMediaData {
   scope?: MediaScope;

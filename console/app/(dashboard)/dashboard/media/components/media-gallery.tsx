@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { OptimizedImage } from "@modonty/database/components/optimized-image";
+import { OptimizedImage } from "@modonty/shared/components/optimized-image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ImageIcon, Search, X } from "lucide-react";
 import { MediaWithStats } from "../helpers/media-queries";
 import { ar } from "@/lib/ar";
-import { formatBytes } from "@modonty/database/lib/utils";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { formatBytes } from "@modonty/shared/lib/utils";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 interface MediaGalleryProps {
   clientId: string;

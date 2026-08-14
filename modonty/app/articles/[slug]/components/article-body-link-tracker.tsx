@@ -22,7 +22,7 @@ function handleClick(articleId: string, e: MouseEvent) {
 
   const linkText = (anchor.textContent || "").trim().slice(0, 500);
 
-  fetch("/api/track/article-link-click", {
+  fetch("/articles/api/track/article-link-click", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

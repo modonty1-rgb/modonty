@@ -4,8 +4,8 @@ import { getClientPageData } from "../helpers/client-page-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
-import { OptimizedImage } from "@modonty/database/components/optimized-image";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { OptimizedImage } from "@modonty/shared/components/optimized-image";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { IconPlay } from "@/lib/icons";
 
 interface ClientReelsPageProps {

@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useSession } from "@/components/providers/SessionContext";
 import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { IconUsers, IconCheck, IconShare, IconFeatured, IconClients, IconSaved } from "@/lib/icons";
-import { stripCloudinaryTransforms } from "@/lib/image-utils";
+
 import { cn } from "@/lib/utils";
 
 import { ClientContactSheet } from "./client-contact-sheet";
@@ -61,7 +61,7 @@ export function ClientBottomBar({
 
   const hasContact = !!phone || !!email;
   const hasCta = ctaMode === "FORM" || (ctaMode === "LINK" && !!linkUrl);
-  const logoSrc = clientLogoUrl ? stripCloudinaryTransforms(clientLogoUrl) ?? clientLogoUrl : null;
+  const logoSrc = clientLogoUrl ? clientLogoUrl ?? clientLogoUrl : null;
   const badgeLabel =
     ctaMode === "FORM"
       ? ctaLabel?.trim() || "احجز الآن"
@@ -84,7 +84,7 @@ export function ClientBottomBar({
     const prev = following;
     setFollowing(!following);
     try {
-      const res = await fetch(`/api/clients/${encodeURIComponent(clientSlug)}/follow`, {
+      const res = await fetch(`/clients/${encodeURIComponent(clientSlug)}/api/follow`, {
         method: following ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
       });
@@ -108,7 +108,7 @@ export function ClientBottomBar({
     const prev = favorited;
     setFavorited(!favorited);
     try {
-      const res = await fetch(`/api/clients/${encodeURIComponent(clientSlug)}/favorite`, {
+      const res = await fetch(`/clients/${encodeURIComponent(clientSlug)}/api/favorite`, {
         method: favorited ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
       });
@@ -132,7 +132,7 @@ export function ClientBottomBar({
     } catch {
       /* user dismissed share — ignore */
     }
-    fetch(`/api/clients/${encodeURIComponent(clientSlug)}/share`, {
+    fetch(`/clients/${encodeURIComponent(clientSlug)}/api/share`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ platform: "NATIVE" }),

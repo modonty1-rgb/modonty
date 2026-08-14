@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { toast } from "sonner";
 import { Upload, X, Loader2, ImageIcon } from "lucide-react";
 

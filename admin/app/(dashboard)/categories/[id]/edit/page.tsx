@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getCoreClientId } from "@modonty/database/lib/core-client";
+import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { getCategoryById, getCategories } from "../../actions/categories-actions";
 import { CategoryForm } from "../../components/category-form";
 import { DeleteCategoryButton } from "../components/delete-category-button";

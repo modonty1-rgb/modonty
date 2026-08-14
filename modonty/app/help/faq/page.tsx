@@ -1,11 +1,11 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { generateMetadataFromSEO, generateFAQPageStructuredData, jsonLdHtmlFromString } from "@/lib/seo";
-import { getFaqPageSeo } from "@/lib/seo/faq-page-seo";
+import { getFaqPageSeo } from "@/app/help/faq/helpers/faq-page-seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getActiveFAQs } from "./actions/faq-actions";
-import Link from "@/components/link";
 import { IconArrowRight, IconEmail, IconHelpCircle } from "@/lib/icons";
 import { FAQPageContent } from "./components/faq-page-content";
 

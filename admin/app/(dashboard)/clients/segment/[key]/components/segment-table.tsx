@@ -38,7 +38,7 @@ export interface SegmentClient {
   subscriptionStartDate: string | null;
   subscriptionEndDate: string | null;
   articleCount: number;
-  /** 0-100 from the shared dataLayer client scorer — same number as the clients table. */
+  /** 0-100 from the shared shared client scorer — same number as the clients table. */
   seoScore: number;
   /** Which of logo · hero · share image are absent. Empty = all three are there. */
   missingImages: string[];

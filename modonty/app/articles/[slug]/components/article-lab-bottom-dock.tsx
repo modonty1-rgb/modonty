@@ -1,14 +1,14 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { BookingForm } from "@/app/articles/[slug]/components/booking-form";
-import { WhatsAppBookingCta } from "@/components/whatsapp-booking-cta";
-import { WhatsAppLeadLink } from "@/components/whatsapp-icon-link";
+import { WhatsAppBookingCta } from "@/components/cta/whatsapp-booking-cta";
+import { WhatsAppLeadLink } from "@/components/cta/whatsapp-icon-link";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { bookingWhatsappMessage } from "@/lib/whatsapp";
 import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { IconClients, IconExternal, IconCalendar } from "@/lib/icons";

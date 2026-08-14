@@ -15,7 +15,7 @@ import {
   ORGANIZATION_TYPES,
   normalizeLegalForm,
   normalizeOrganizationType,
-} from "@modonty/database/lib/constants/client-classification";
+} from "@modonty/shared/lib/constants/client-classification";
 import { Building2, MapPin, Scale, Clock, CheckCircle2, AlertCircle, Loader2, ShieldCheck, Lock, ChevronDown } from "lucide-react";
 
 const DAY_ORDER = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"] as const;

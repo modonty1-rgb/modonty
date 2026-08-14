@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -10,8 +10,8 @@ import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { DeleteClientButton } from "./delete-client-button";
 import { ClientLogoModal } from "../../components/client-logo-modal";
 import { ClientHeroModal } from "../../components/client-hero-modal";
-import { YMYL_CATEGORIES, type YmylCategory } from "@modonty/database/lib/seo/ymyl-config";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { YMYL_CATEGORIES, type YmylCategory } from "@modonty/shared/lib/seo/ymyl-config";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 interface ClientHeaderProps {
   client: {

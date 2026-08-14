@@ -11,7 +11,7 @@ import {
   uploadManifest,
   SKIP_COLLECTIONS,
   type BackupManifest,
-} from "@modonty/database/lib/backup";
+} from "@modonty/shared/lib/backup";
 
 /**
  * Daily database backup → private Bunny zone.

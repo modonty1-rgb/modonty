@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { IconImage } from "@/lib/icons";
-import { OptimizedImage } from "@modonty/database/components/optimized-image";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { OptimizedImage } from "@modonty/shared/components/optimized-image";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 interface ClientPhotosPreviewProps {
   articles: {

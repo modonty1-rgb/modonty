@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
 import { ConversionType } from "@prisma/client";
-import { notifyTelegram } from "@/lib/telegram/notify";
+import { notifyTelegram } from "@/lib/telegram";
 import { trackContactSubmit } from "@/lib/analytics/events-registry";
 
 interface ContactMessageData {

@@ -7,8 +7,8 @@ import { getTierConfigByTier } from "@/app/(dashboard)/subscription-tiers/action
 import { SubscriptionTier } from "@prisma/client";
 import { validateAndNormalizeUrls } from "./validate-and-normalize-urls";
 import { probeArticlesBaseUrl } from "./probe-articles-base-url";
-import { normalizeOrganizationType } from "@modonty/database/lib/constants/client-classification";
-import { normalizePhone } from "@modonty/database/lib/phone";
+import { normalizeOrganizationType } from "@modonty/shared/lib/constants/client-classification";
+import { normalizePhone } from "@modonty/shared/lib/phone";
 import bcrypt from "bcryptjs";
 
 export interface GroupUpdateResult {

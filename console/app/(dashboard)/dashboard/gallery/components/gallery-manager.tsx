@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { OptimizedImage } from "@modonty/database/components/optimized-image";
+import { OptimizedImage } from "@modonty/shared/components/optimized-image";
 import { toast } from "sonner";
 import { ImagePlus } from "lucide-react";
 
@@ -9,9 +9,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { compressToWebP } from "@/lib/compress-image";
 import { cn } from "@/lib/utils";
-import { mediaSrc } from "@modonty/database/lib/media-src";
-import { MediaUploadZone } from "@modonty/database/components/media-upload-zone";
-import { ConfirmDeleteButton } from "@modonty/database/components/confirm-delete-button";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { MediaUploadZone } from "@modonty/shared/components/media-upload-zone";
+import { ConfirmDeleteButton } from "@modonty/shared/components/confirm-delete-button";
 import {
   addGalleryImage,
   updateGalleryImageAlt,

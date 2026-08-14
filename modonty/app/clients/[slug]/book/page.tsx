@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import Link from "next/link";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { ClientCtaMode } from "@prisma/client";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
-import Link from "@/components/link";
 import { IconChevronRight, IconCheck, IconClients } from "@/lib/icons";
 import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
-import { stripCloudinaryTransforms } from "@/lib/image-utils";
+
 import { cn } from "@/lib/utils";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { BookingForm } from "@/app/articles/[slug]/components/booking-form";
-import { WhatsAppBookingCta } from "@/components/whatsapp-booking-cta";
+import { WhatsAppBookingCta } from "@/components/cta/whatsapp-booking-cta";
 import type { BookingSource } from "@/app/articles/[slug]/actions/booking-actions";
 
 const VALID_SOURCES: readonly BookingSource[] = [
@@ -74,7 +74,7 @@ export default async function ClientBookingPage({
 
   const logoResolved = mediaSrc(client.logoMedia);
   const logoSrc = logoResolved
-    ? stripCloudinaryTransforms(logoResolved) ?? logoResolved
+    ? logoResolved ?? logoResolved
     : null;
 
   return (

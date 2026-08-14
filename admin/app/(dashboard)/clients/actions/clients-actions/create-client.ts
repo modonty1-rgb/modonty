@@ -12,8 +12,8 @@ import { mapFormDataToClientData } from "../../helpers/client-field-mapper";
 import { generateClientSEO } from "./generate-client-seo";
 import { logAction } from "@/lib/audit/log-action";
 import { clientServerSchema } from "./client-server-schema";
-import { normalizeOrganizationType } from "@modonty/database/lib/constants/client-classification";
-import { normalizePhone } from "@modonty/database/lib/phone";
+import { normalizeOrganizationType } from "@modonty/shared/lib/constants/client-classification";
+import { normalizePhone } from "@modonty/shared/lib/phone";
 import { DEFAULT_CLIENT_PASSWORD } from "@/lib/default-client-password";
 import bcrypt from "bcryptjs";
 

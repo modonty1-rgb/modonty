@@ -1,7 +1,7 @@
 "use client";
 
-import { OptimizedImage } from "@modonty/database/components/optimized-image";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { OptimizedImage } from "@modonty/shared/components/optimized-image";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import Link from "next/link";
 import { toast } from "sonner";
 import { ar } from "@/lib/ar";

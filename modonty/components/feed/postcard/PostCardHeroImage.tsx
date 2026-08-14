@@ -1,5 +1,5 @@
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
-import type { SizePreset } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
+import type { SizePreset } from "@modonty/shared/components/optimized-image";
 import { IconArticle, IconVolume2 } from "@/lib/icons";
 import type { PostCardProps } from "./PostCard.types";
 

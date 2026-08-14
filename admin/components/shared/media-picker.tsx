@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { ImageIcon, X, Upload, Pencil } from "lucide-react";
 import { MediaPickerDialog } from "./media-picker-dialog";
 

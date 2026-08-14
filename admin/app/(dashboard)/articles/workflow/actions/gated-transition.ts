@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { auth } from "@/lib/auth";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
@@ -11,7 +11,7 @@ import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
 import { logAction } from "@/lib/audit/log-action";
 import type { ValidationResult } from "@/lib/seo/article-validator";
 import { regenerateJsonLd, needsRegeneration } from "@/lib/seo/jsonld-storage";
-import { getYmylAuthorityCodes } from "@modonty/database/lib/seo/ymyl-authorities";
+import { getYmylAuthorityCodes } from "@modonty/shared/lib/seo/ymyl-authorities";
 import { checkYmylPublishGate } from "@/lib/seo/ymyl-helpers";
 
 export interface GatedTransitionResult {

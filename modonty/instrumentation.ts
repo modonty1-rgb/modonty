@@ -1,5 +1,5 @@
 import type { Instrumentation } from "next";
-import { enrichError } from "@modonty/database/lib/system-error/enrich";
+import { enrichError } from "@modonty/shared/lib/system-error/enrich";
 
 export async function register() {}
 

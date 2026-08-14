@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IconEmail } from "@/lib/icons";
 import { GoogleIcon } from "@/components/auth/google-icon";
-import { trackLoginClient } from "@/lib/analytics/track-login-client";
-import Link from "@/components/link";
+import { trackLoginClient } from "@/app/users/login/helpers/track-login-client";
 
 interface LoginFormProps {
   callbackUrl: string;

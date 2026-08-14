@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getCoreClientId } from "@modonty/database/lib/core-client";
+import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { getIndustryById } from "../../actions/industries-actions";
 import { IndustryForm } from "../../components/industry-form";
 import { DeleteIndustryButton } from "../components/delete-industry-button";

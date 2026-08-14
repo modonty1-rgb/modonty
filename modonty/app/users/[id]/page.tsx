@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 import { notFound, permanentRedirect, unstable_rethrow } from "next/navigation";
+import Link from "next/link";
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 import { generateMetadataFromSEO, generateStructuredData, generateAuthorStructuredData, jsonLdHtml } from "@/lib/seo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import Link from "@/components/link";
 import { IconUser, IconEmail, IconCalendar } from "@/lib/icons";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 

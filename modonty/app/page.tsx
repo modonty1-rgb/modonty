@@ -1,14 +1,15 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { cacheLife, cacheTag } from "next/cache";
-import { FeedContainer } from "@/components/feed/FeedContainer";
-import { HomeBottomBar } from "@/components/feed/HomeBottomBar/HomeBottomBar";
-import { getCorePublisherArticles, getHomeFeedArticles } from "@/app/api/helpers/article-queries";
+import { FeedContainer } from "@/app/home-components/feed/FeedContainer";
+import { HomeBottomBar } from "@/app/home-components/feed/HomeBottomBar/HomeBottomBar";
+import { getCorePublisherArticles } from "@/app/home-helpers/get-core-publisher-articles";
+import { getHomeFeedArticles } from "@/app/home-helpers/get-home-feed-articles";
 import { getReelsFeedPage } from "@/app/reels/helpers/reels-feed";
-import { getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
+import { getIndustriesWithCounts } from "@/lib/queries";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
-import { getClientServiceCards } from "@/app/api/helpers/client-queries";
-import { getHomePageSeo } from "@/lib/seo/home-page-seo";
+import { getClientServiceCards } from "@/app/home-helpers/get-client-service-cards";
+import { getHomePageSeo } from "@/app/home-helpers/home-page-seo";
 import { jsonLdHtmlFromString } from "@/lib/seo";
 import { SITE_URL, BRAND_AR } from "@/lib/brand";
 

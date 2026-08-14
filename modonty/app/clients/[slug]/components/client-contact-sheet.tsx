@@ -10,13 +10,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { IconPhone, IconEmail, IconWebsite } from "@/lib/icons";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 import { recordWhatsappLead } from "@/app/articles/[slug]/actions/booking-actions";
 
-import { BookingCtaLink } from "@/components/booking-cta-link";
+import { BookingCtaLink } from "@/components/cta/booking-cta-link";
 
 interface ClientContactSheetProps {
   clientId: string;

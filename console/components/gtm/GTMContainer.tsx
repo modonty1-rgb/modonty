@@ -1,4 +1,4 @@
-import { getGTMSettings } from "@modonty/database/lib/gtm/getGTMSettings";
+import { getGTMSettings } from "@modonty/shared/lib/gtm/getGTMSettings";
 import Script from "next/script";
 
 export function GTMContainer() {
@@ -17,9 +17,9 @@ export function GTMContainer() {
           __html: `
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            j=d.createElement(s),dl=l!='shared'?'&l='+l:'';j.async=true;j.src=
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','${containerId}');
+            })(window,document,'script','shared','${containerId}');
           `,
         }}
       />

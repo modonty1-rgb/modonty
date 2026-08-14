@@ -1,4 +1,4 @@
-import Link from "@/components/link";
+import Link from "next/link";
 import { IconSearch } from "@/lib/icons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

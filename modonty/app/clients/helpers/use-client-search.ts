@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useDebounce } from '@/lib/hooks/use-debounce';
+import { useDebounce } from '@/app/clients/helpers/use-debounce';
 
 export function useClientSearch<T extends { 
   name: string; 

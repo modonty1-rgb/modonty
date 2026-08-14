@@ -16,8 +16,8 @@ import { getSEOSettings, type SEOSettings } from "@/app/(dashboard)/settings/act
 import { buildClientSeoData } from "../helpers/build-client-seo-data";
 import { MediaSocialSection } from "./form-sections/media-social-section";
 import { ClientSEOValidationSection } from "./form-sections/client-seo-validation-section";
-import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
-import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
+import { computeClientSeoScore } from "@modonty/shared/lib/seo/client/seo-score";
+import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
 
 type OpeningHoursDay = {
   dayOfWeek: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Search, ChevronLeft, ChevronRight, Images, Building2 } from "lucide-react";

@@ -11,7 +11,7 @@ import {
   deleteStreamVideo,
   getStreamVideo,
   streamUrls,
-} from "@modonty/database/lib/bunny-stream";
+} from "@modonty/shared/lib/bunny-stream";
 
 /**
  * The client's intro video — hosted by us, not by YouTube (Khalid 2026-08-05).

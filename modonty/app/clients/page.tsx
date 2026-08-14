@@ -1,10 +1,10 @@
 import { Metadata } from "next";
-import { getClientsWithCounts } from "@/app/api/helpers/client-queries";
-import { getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
+import { getClientsWithCounts } from "@/app/clients/helpers/get-clients-with-counts";
+import { getIndustriesWithCounts } from "@/lib/queries";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { getClientsPageSeo } from "@/lib/seo/clients-page-seo";
+import { getClientsPageSeo } from "@/app/clients/helpers/clients-page-seo";
 import { jsonLdHtmlFromString } from "@/lib/seo";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { ClientsSection } from "./components/clients-section";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 

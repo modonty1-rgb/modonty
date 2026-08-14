@@ -19,7 +19,7 @@ import { AlertCircle, AlertTriangle, Link2, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { ClientLogoModal } from '@/app/(dashboard)/clients/components/client-logo-modal';
 import { cn, slugify } from '@/lib/utils';
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 export function BasicSection() {
   const { formData, updateField, errors, clients, categories, tags, authors, mode, articleId } = useArticleForm();

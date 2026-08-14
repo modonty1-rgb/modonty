@@ -9,7 +9,7 @@
 import Validator from "@adobe/structured-data-validator";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import { ORGANIZATION_SCHEMA_TYPES } from "@modonty/database/lib/seo/organization-schema-types";
+import { ORGANIZATION_SCHEMA_TYPES } from "@modonty/shared/lib/seo/organization-schema-types";
 
 // Validation result structure
 export interface ValidationResult {

@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { ar } from "@/lib/ar";
 import { db } from "@/lib/db";
-import { mediaSrc } from "@modonty/database/lib/media-src";
-import { getYmylAuthorityCodes } from "@modonty/database/lib/seo/ymyl-authorities";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { getYmylAuthorityCodes } from "@modonty/shared/lib/seo/ymyl-authorities";
 import { isYmylClientComplete } from "@/lib/seo/ymyl-helpers";
 import {
   statusLabel,

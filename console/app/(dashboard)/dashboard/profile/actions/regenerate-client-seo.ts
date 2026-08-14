@@ -3,13 +3,13 @@
 import { revalidatePath } from "next/cache";
 import type { Prisma } from "@prisma/client";
 
-import { generateClientSeoBundle } from "@modonty/database/lib/seo/generate-client-seo-bundle";
+import { generateClientSeoBundle } from "@modonty/shared/lib/seo/generate-client-seo-bundle";
 import { db } from "@/lib/db";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 /**
  * Regenerate the client's cached SEO (Next.js metadata + JSON-LD @graph) and persist
- * it. Generation lives in the SHARED dataLayer bundle (ALL platform values from
+ * it. Generation lives in the SHARED shared bundle (ALL platform values from
  * Settings) so output is byte-identical to an admin save — single source of truth,
  * zero hardcoded constants. Console skips the admin Adobe/Ajv validation.
  * NEVER throws — a regen failure must never break the profile save.

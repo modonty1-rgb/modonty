@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
-import Link from "@/components/link";
+import Link from "next/link";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 import { IconCheck, IconChevronRight, IconChevronLeft } from "@/lib/icons";
-import { stripCloudinaryTransforms } from "@/lib/image-utils";
+
 
 export interface FeaturedPartner {
   id: string;
@@ -131,8 +131,8 @@ export function FeaturedPartnersSlider({ partners }: FeaturedPartnersSliderProps
 }
 
 function PartnerSlide({ partner, priority }: { partner: FeaturedPartner; priority: boolean }) {
-  const cover = partner.ogImage ? stripCloudinaryTransforms(partner.ogImage) ?? partner.ogImage : null;
-  const logo = partner.logo ? stripCloudinaryTransforms(partner.logo) ?? partner.logo : null;
+  const cover = partner.ogImage ? partner.ogImage ?? partner.ogImage : null;
+  const logo = partner.logo ? partner.logo ?? partner.logo : null;
 
   return (
     <Link

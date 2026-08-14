@@ -3,9 +3,9 @@ import { notFound } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { db } from "@/lib/db";
-import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
-import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
-import { hasStoredOgImage } from "@modonty/database/lib/seo/client/meta-score";
+import { computeClientSeoScore } from "@modonty/shared/lib/seo/client/seo-score";
+import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
+import { hasStoredOgImage } from "@modonty/shared/lib/seo/client/meta-score";
 import { getSegment } from "../segments";
 import { SegmentTable, type SegmentClient } from "./components/segment-table";
 import { MoneySegmentTable, type MoneySegmentClient } from "./components/money-segment-table";
@@ -23,7 +23,7 @@ export default async function ClientSegmentPage({ params }: { params: Promise<{ 
   // raw columns, and it cannot tell "not selected" from "empty" — leave one out and
   // every row quietly scores low. That exact bug shipped a table of 34%s on the article
   // side. Clients are few and carry no article-sized bodies, so we take every scalar
-  // and let the one adapter in dataLayer decide what it needs.
+  // and let the one adapter in shared decide what it needs.
   const rows = await db.client.findMany({
     where: segment.where,
     include: { _count: { select: { articles: true } } },

@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { notFound } from "next/navigation";
 import { cacheTag, cacheLife } from "next/cache";
 import { ArticleStatus, CommentStatus, SubscriptionStatus } from "@prisma/client";
 import { TagIcon } from "lucide-react";
 import { db } from "@/lib/db";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 import { generateMetadataFromSEO, jsonLdHtmlFromString } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { ClientCard } from "@/components/shared/client-card";
+import { ClientCard } from "@/components/client/client-card";
 
 interface CategoryDetailPageProps {
   params: Promise<{ slug: string }>;

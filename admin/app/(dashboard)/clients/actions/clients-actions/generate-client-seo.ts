@@ -4,12 +4,12 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import type { Prisma } from "@prisma/client";
 
-import { generateClientSeoBundle } from "@modonty/database/lib/seo/generate-client-seo-bundle";
+import { generateClientSeoBundle } from "@modonty/shared/lib/seo/generate-client-seo-bundle";
 import { validateClientJsonLdComplete } from "../../helpers/client-seo-config/client-jsonld-validator";
 
 /**
  * Admin entry point. Generation (metaTags + JSON-LD, all Settings-sourced) lives in
- * the SHARED dataLayer bundle so admin + console produce identical output. Admin adds
+ * the SHARED shared bundle so admin + console produce identical output. Admin adds
  * the heavy Adobe/Ajv validation (writes jsonLdValidationReport) on top.
  */
 export async function generateClientSEO(clientId: string) {

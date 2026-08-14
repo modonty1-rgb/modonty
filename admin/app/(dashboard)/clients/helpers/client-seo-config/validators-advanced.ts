@@ -4,7 +4,7 @@
 import type { SEOFieldValidator } from "@/components/shared/seo-doctor";
 import type { MediaRelation } from "./media-relation";
 import { getFieldMapping } from "../client-field-mapping";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 // ============================================================================
 // MEDIA VALIDATORS

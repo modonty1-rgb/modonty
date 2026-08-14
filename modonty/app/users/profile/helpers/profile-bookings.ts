@@ -1,4 +1,4 @@
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
 
 export interface ProfileBooking {

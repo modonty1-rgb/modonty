@@ -1,9 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { IconLike, IconComment } from "@/lib/icons";
-import Link from "@/components/link";
 import { formatRelativeTime } from "@/lib/utils";
 
 interface CommentCardProps {

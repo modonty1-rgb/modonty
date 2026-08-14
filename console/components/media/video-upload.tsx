@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { Upload, Video, X } from "lucide-react";
 import { toast } from "sonner";
 
-import { ProgressBar } from "@modonty/database/components/progress-bar";
+import { ProgressBar } from "@modonty/shared/components/progress-bar";
 
 /**
  * Direct browser → Bunny upload over tus (ق2, 2026-08-05).

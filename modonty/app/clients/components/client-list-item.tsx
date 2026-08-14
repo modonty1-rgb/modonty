@@ -1,4 +1,4 @@
-import Link from "@/components/link";
+import Link from "next/link";
 import { IconCheckCircle, IconArticle, IconViews, IconUsers, IconTrending } from "@/lib/icons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

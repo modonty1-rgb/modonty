@@ -19,8 +19,8 @@ import { messages } from '@/lib/messages';
 import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
 import { generateBreadcrumbStructuredData } from '@/lib/seo';
 import { openInspect } from '@/app/(dashboard)/inspect/helpers/open-inspect';
-import { mediaSrc } from "@modonty/database/lib/media-src";
-import { BRAND_LOGO_URL } from "@modonty/database/lib/brand-assets";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { BRAND_LOGO_URL } from "@modonty/shared/lib/brand-assets";
 
 interface FeaturedMedia {
   url: string;

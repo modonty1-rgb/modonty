@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { computeMediaSeoScore } from "@modonty/database/lib/seo/media/seo-score";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { computeMediaSeoScore } from "@modonty/shared/lib/seo/media/seo-score";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 /**
  * The media library, by the two questions an admin actually has (Khalid 2026-07-13:
@@ -15,7 +15,7 @@ import { mediaSrc } from "@modonty/database/lib/media-src";
  * has to be counted per-relation and the SEO score has to be computed in JS anyway.
  * At a few hundred rows that is cheaper than a dozen count() round-trips.
  *
- * The score comes from dataLayer/lib/seo/media — the same source of truth as the article,
+ * The score comes from shared/lib/seo/media — the same source of truth as the article,
  * client and reference scorers.
  */
 

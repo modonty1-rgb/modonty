@@ -1,5 +1,5 @@
 import { SEOFieldConfig, SEODoctorConfig, SEOFieldValidator } from "@/components/shared/seo-doctor";
-import { buildImageObject } from "@modonty/database/lib/seo/media/build-image-object";
+import { buildImageObject } from "@modonty/shared/lib/seo/media/build-image-object";
 
 const validateAltText: SEOFieldValidator = (value) => {
   if (value && typeof value === "string" && value.trim().length > 0) {

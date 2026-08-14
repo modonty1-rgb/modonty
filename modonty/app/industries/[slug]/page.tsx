@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { notFound } from "next/navigation";
 import { CommentStatus } from "@prisma/client";
 import { BuildingIcon } from "lucide-react";
 import { db } from "@/lib/db";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
-import { getIndustryBySlug, getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
+import { getIndustriesWithCounts } from "@/lib/queries";
+import { getIndustryBySlug } from "@/app/industries/helpers/get-industry-by-slug";
 import { jsonLdHtmlFromString } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { ClientCard } from "@/components/shared/client-card";
+import { ClientCard } from "@/components/client/client-card";
 
 interface IndustryPageProps {
   params: Promise<{ slug: string }>;

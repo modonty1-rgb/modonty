@@ -1,5 +1,5 @@
-import { mediaSrc } from "@modonty/database/lib/media-src";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";

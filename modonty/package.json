@@ -3,7 +3,7 @@
   "version": "1.87.1",
   "private": true,
   "prisma": {
-    "schema": "../dataLayer/prisma/schema/schema.prisma"
+    "schema": "../shared/prisma/schema/schema.prisma"
   },
   "scripts": {
     "dev": "next dev",
@@ -12,8 +12,8 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "npx prisma generate",
-    "seed": "cd ../dataLayer && pnpm seed",
-    "seed:clear": "cd ../dataLayer && pnpm seed:clear",
+    "seed": "cd ../shared && pnpm seed",
+    "seed:clear": "cd ../shared && pnpm seed:clear",
     "seed:client1": "tsx app/clients/[slug]/helpers/seed-client1-test-data.ts",
     "create-test-user": "tsx scripts/create-test-user.ts",
     "diagnose-comments": "tsx ../scripts/diagnose-comments.ts",
@@ -27,7 +27,7 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.2",
     "@hookform/resolvers": "^3.9.1",
-    "@modonty/database": "workspace:*",
+    "@modonty/shared": "workspace:*",
     "@prisma/client": "^6.19.1",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-checkbox": "^1.3.3",

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { sendContentTeamTelegram, escapeTgHtml } from "@modonty/database/lib/telegram/client";
+import { sendContentTeamTelegram, escapeTgHtml } from "@modonty/shared/lib/telegram/client";
 
 // The client's verdict on an article, pushed to the content team's Telegram.
 //

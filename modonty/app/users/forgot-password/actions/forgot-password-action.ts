@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import crypto from "crypto";
 import { z } from "zod";
 import { sendEmail } from "@/lib/email/resend-client";
-import { passwordResetEmail } from "@/lib/email/templates/password-reset";
+import { passwordResetEmail } from "@/app/users/forgot-password/helpers/password-reset";
 
 const schema = z.object({
   email: z.string().email("بريد إلكتروني غير صحيح"),

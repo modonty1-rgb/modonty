@@ -9,9 +9,9 @@ import { trackSignupComplete } from "@/lib/analytics/events-registry";
 import { ConversionType } from "@prisma/client";
 import { randomBytes } from "crypto";
 import { sendEmail } from "@/lib/email/resend-client";
-import { welcomeEmail } from "@/lib/email/templates/welcome";
-import { emailVerificationEmail } from "@/lib/email/templates/email-verification";
-import { sendTelegramMessage } from "@/lib/telegram";
+import { welcomeEmail } from "@/app/users/register/helpers/welcome";
+import { emailVerificationEmail } from "@/app/users/register/helpers/email-verification";
+import { sendAdminTelegram } from "@modonty/shared/lib/telegram/client";
 
 export async function registerUser(data: RegisterFormData) {
   try {
@@ -46,7 +46,7 @@ export async function registerUser(data: RegisterFormData) {
 
     // Notify Telegram group — non-blocking
     const now = new Date().toLocaleString("ar-SA", { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
-    sendTelegramMessage(`👤 <b>مستخدم جديد — مدونتي</b>\n📧 ${user.email}\n🙋 ${user.name || "—"}\n📅 ${now}`).catch(() => null);
+    sendAdminTelegram(`👤 <b>مستخدم جديد — مدونتي</b>\n📧 ${user.email}\n🙋 ${user.name || "—"}\n📅 ${now}`).catch(() => null);
 
     if (user.email) {
       const welcome = welcomeEmail({ userName: user.name ?? user.email });

@@ -24,7 +24,7 @@ export interface SegmentArticle {
   categoryName: string | null;
   authorName: string | null;
   views: number;
-  /** 0-100 from the shared dataLayer scorer — the published page, not the draft form. */
+  /** 0-100 from the shared shared scorer — the published page, not the draft form. */
   seoScore: number;
   publishedAt: string | null;
   updatedAt: string;

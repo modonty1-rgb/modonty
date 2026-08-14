@@ -86,7 +86,7 @@ export function ProfileSettings() {
     try {
       const body = new FormData();
       body.append("file", file);
-      const res = await fetch("/api/users/avatar", { method: "POST", body });
+      const res = await fetch("/users/profile/api/avatar", { method: "POST", body });
       const json = (await res.json()) as { success: boolean; url?: string; error?: string };
 
       if (!res.ok || !json.success || !json.url) {

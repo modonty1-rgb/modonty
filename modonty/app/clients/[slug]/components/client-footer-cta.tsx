@@ -1,4 +1,4 @@
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 
 interface ClientFooterCtaProps {
   clientId?: string;

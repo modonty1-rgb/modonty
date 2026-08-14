@@ -1,4 +1,4 @@
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 import { ArticleFormData, FAQItem, GalleryFormItem } from "@/lib/types/form-types";
 import { getArticleById } from "../../actions/articles-actions";

@@ -1,13 +1,13 @@
-import { computeArticleSeoScore, computeArticleEntitySeo } from "@modonty/database/lib/seo/article/seo-score";
-import type { JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
+import { computeArticleSeoScore, computeArticleEntitySeo } from "@modonty/shared/lib/seo/article/seo-score";
+import type { JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
 
 /**
- * The one adapter between an admin article row and the SHARED dataLayer scorer
+ * The one adapter between an admin article row and the SHARED shared scorer
  * (Khalid 2026-07-13: «أحتاج نتيجة 100% من source of truth واحد»).
  *
  * Every admin surface that displays an article's SEO number goes through here, so
  * the badge, the articles table and the segment tables cannot drift apart — there is
- * exactly one mapping and exactly one rubric, and both live in dataLayer.
+ * exactly one mapping and exactly one rubric, and both live in shared.
  *
  * It scores the STORED, published fields (nextjsMetadata + jsonLdStructuredData + the
  * cached validation report). It deliberately does NOT score the draft form: that is a

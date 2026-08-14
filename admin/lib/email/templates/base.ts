@@ -1,4 +1,4 @@
-import { BRAND_LOGO_URL } from "@modonty/database/lib/brand-assets";
+import { BRAND_LOGO_URL } from "@modonty/shared/lib/brand-assets";
 
 const NAVY = "#0E065A";
 const BLUE = "#3030FF";

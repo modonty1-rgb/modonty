@@ -1,7 +1,7 @@
 "use client";
 
 import { m, AnimatePresence } from "framer-motion";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { memo, useMemo } from "react";
 import { MODONTY_LOGO_URL } from "./_constants";
 import { splitIntoPhrases } from "./_utils/phrases";

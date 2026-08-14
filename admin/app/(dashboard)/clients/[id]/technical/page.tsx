@@ -3,9 +3,9 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { getClientById } from "../../actions/clients-actions";
-import { computeClientEntitySeo } from "@modonty/database/lib/seo/client/seo-score";
-import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
-import type { SeoCheck, JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
+import { computeClientEntitySeo } from "@modonty/shared/lib/seo/client/seo-score";
+import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
+import type { SeoCheck, JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { GoogleIcon } from "@/components/admin/icons/google-icon";
 
@@ -15,7 +15,7 @@ import { GoogleIcon } from "@/components/admin/icons/google-icon";
 
 type SideCheck = SeoCheck & { side: "META" | "JSON-LD" };
 
-// Ownership (verified against dataLayer/lib/seo/generate-client-seo-bundle.ts):
+// Ownership (verified against shared/lib/seo/generate-client-seo-bundle.ts):
 //  · DATA  — the client/admin must supply the field (title=seoTitle:215, logo, contact…).
 //  · SYSTEM — regenerated automatically (canonical:204, hreflang:280-293, graph/validity).
 const DATA_KEYS = new Set([

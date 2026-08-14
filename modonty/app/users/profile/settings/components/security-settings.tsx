@@ -43,7 +43,7 @@ export function SecuritySettings() {
     const fetchAccounts = async () => {
       if (!session?.user?.id) return;
       try {
-        const response = await fetch(`/api/users/${session.user.id}/accounts`);
+        const response = await fetch(`/users/profile/settings/api/${session.user.id}/accounts`);
         if (response.ok) {
           const data = await response.json();
           if (data.success && data.data) {

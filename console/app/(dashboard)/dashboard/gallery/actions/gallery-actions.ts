@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { messages } from "@/lib/messages";
-import { deleteBunnyUrl, isBunnyUrl } from "@modonty/database/lib/bunny";
+import { deleteBunnyUrl, isBunnyUrl } from "@modonty/shared/lib/bunny";
 import { regenerateClientSeo } from "../../profile/actions/regenerate-client-seo";
 import { notifyReelPending } from "../../reels/actions/notify-reel-pending";
 

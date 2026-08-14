@@ -1,6 +1,6 @@
 "use client";
 
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { SectionCard } from "@/app/clients/[slug]/components/sections/section-card";
 import { IconPhone, IconEmail } from "@/lib/icons";
 

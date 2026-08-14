@@ -1,7 +1,7 @@
 /**
  * GA4 Data API — server-side report fetching (admin).
  * Base client ported from the proven console implementation
- * (console/lib/analytics/ga4-data-api.ts) — consolidation into dataLayer is
+ * (console/lib/analytics/ga4-data-api.ts) — consolidation into shared is
  * tracked in the shared-code audit.
  *
  * Auth: service account JWT (GA4_PRIVATE_KEY_BASE64 or fallback to GA4_PRIVATE_KEY).

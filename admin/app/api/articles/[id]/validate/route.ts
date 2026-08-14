@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { mediaSrc } from '@modonty/database/lib/media-src';
+import { mediaSrc } from '@modonty/shared/lib/media-src';
 
 /**
  * POST /api/articles/[id]/validate

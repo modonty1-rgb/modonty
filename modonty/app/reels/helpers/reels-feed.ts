@@ -1,5 +1,5 @@
 import { cacheTag, cacheLife } from "next/cache";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
 
 export const REELS_PAGE_SIZE = 6;

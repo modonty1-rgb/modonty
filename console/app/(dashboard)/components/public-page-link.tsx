@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
-import { BRAND_ICON_URL } from "@modonty/database/lib/brand-assets";
+import { BRAND_ICON_URL } from "@modonty/shared/lib/brand-assets";
 import { cn } from "@/lib/utils";
 
 /**

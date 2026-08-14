@@ -13,8 +13,8 @@
  */
 
 import { SITE_NAME } from "@/lib/constants/site-name";
-import { safeOrganizationType, resolveOrganizationType, isLocalFamilyType } from "@modonty/database/lib/seo/organization-schema-types";
-import { deriveClientType } from "@modonty/database/lib/seo/generate-organization-jsonld";
+import { safeOrganizationType, resolveOrganizationType, isLocalFamilyType } from "@modonty/shared/lib/seo/organization-schema-types";
+import { deriveClientType } from "@modonty/shared/lib/seo/generate-organization-jsonld";
 import {
   Article,
   Client,
@@ -30,10 +30,10 @@ import {
   buildImageObject,
   resolveImageAttribution,
   type ModontyImageDefaults,
-} from "@modonty/database/lib/seo/media/build-image-object";
-import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl } from "@modonty/database/lib/bunny";
-import { mediaSrc } from "@modonty/database/lib/media-src";
-import { BRAND_LOGO_URL } from "@modonty/database/lib/brand-assets";
+} from "@modonty/shared/lib/seo/media/build-image-object";
+import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl } from "@modonty/shared/lib/bunny";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { BRAND_LOGO_URL } from "@modonty/shared/lib/brand-assets";
 
 /**
  * Build Cloudinary URL for a specific aspect ratio (1:1, 4:3, 16:9).

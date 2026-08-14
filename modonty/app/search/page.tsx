@@ -1,9 +1,9 @@
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { getArticles } from "@/app/api/helpers/article-queries";
-import { getClientsSearch } from "@/app/api/helpers/client-queries";
-import type { ClientSortOption } from "@/app/api/helpers/client-queries";
+import { getArticles } from "@/lib/queries";
+import { getClientsSearch } from "@/app/search/helpers/get-clients-search";
+import type { ClientSortOption } from "./helpers/client-sort";
 import type { ArticleResponse, ClientResponse, FeedPost } from "@/lib/types";
 import { generateMetadataFromSEO } from "@/lib/seo";
 

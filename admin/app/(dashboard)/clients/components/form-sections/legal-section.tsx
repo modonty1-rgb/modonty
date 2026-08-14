@@ -4,7 +4,7 @@ import { UseFormReturn } from "react-hook-form";
 import { messages } from "@/lib/messages";
 import { FormInput, FormSelect } from "@/components/admin/form-field";
 import { SelectItem } from "@/components/ui/select";
-import { LEGAL_FORMS, type LegalForm } from "@modonty/database/lib/constants/client-classification";
+import { LEGAL_FORMS, type LegalForm } from "@modonty/shared/lib/constants/client-classification";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 
 interface LegalSectionProps {

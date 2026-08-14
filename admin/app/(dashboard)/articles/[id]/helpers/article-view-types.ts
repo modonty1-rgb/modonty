@@ -80,7 +80,7 @@ export interface Article {
       tags?: { tag: { id: string; name: string } }[];
     };
   }[];
-  // The stored, published SEO fields the shared dataLayer scorer reads. Without these
+  // The stored, published SEO fields the shared shared scorer reads. Without these
   // the badge would have to fall back to scoring the draft form — a different question
   // and a different number, which is exactly the drift we removed.
   nextjsMetadata?: Prisma.JsonValue | null;

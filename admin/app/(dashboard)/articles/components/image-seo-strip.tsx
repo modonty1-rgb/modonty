@@ -9,7 +9,7 @@ import { SeoScoreBadge } from '@/components/shared/seo-score-badge';
 import { ImageSeoDialog } from '@/app/(dashboard)/seo-images/components/image-seo-dialog';
 import { getSeoImageRow } from '@/app/(dashboard)/media/actions/get-seo-image-row';
 import type { SeoImageRow } from '@/app/(dashboard)/seo-images/helpers/load-groups';
-import type { MediaCheckStatus } from '@modonty/database/lib/seo/media/seo-score';
+import type { MediaCheckStatus } from '@modonty/shared/lib/seo/media/seo-score';
 
 // The writer's inline SEO lever for one image (article cover / gallery item): shows the live
 // score + the gaps the writer can actually fix (alt · description) and opens the SAME dialog

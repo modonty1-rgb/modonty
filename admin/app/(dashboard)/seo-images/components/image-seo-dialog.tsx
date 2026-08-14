@@ -13,7 +13,7 @@ import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { useToast } from "@/hooks/use-toast";
 import { saveImageSeo } from "@/app/(dashboard)/media/actions/save-image-seo";
 import { generateImageSeoAi } from "@/app/(dashboard)/media/actions/generate-image-seo-ai";
-import type { MediaCheckStatus } from "@modonty/database/lib/seo/media/seo-score";
+import type { MediaCheckStatus } from "@modonty/shared/lib/seo/media/seo-score";
 import type { SeoImageRow } from "../helpers/load-groups";
 
 const CHECK_ICON: Record<MediaCheckStatus, typeof CheckCircle2> = {

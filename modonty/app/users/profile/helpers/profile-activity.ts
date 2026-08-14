@@ -26,7 +26,7 @@ export interface ProfileActivity {
 }
 
 /**
- * Server-side counterpart of GET /api/users/[id]/activity — merges 4 activity
+ * Reads directly on the server — the old /api endpoint was removed — merges 4 activity
  * sources (comments, comment-likes, article favorites, client follows), sorts
  * by timestamp desc, then paginates. Not cached (per-request) because the
  * profile page is `noindex` and the data is highly user-specific.

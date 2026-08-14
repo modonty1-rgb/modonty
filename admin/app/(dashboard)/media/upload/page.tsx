@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getCoreClientId } from "@modonty/database/lib/core-client";
+import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { UploadZone } from "../components/upload-zone";
 
 interface UploadMediaPageProps {

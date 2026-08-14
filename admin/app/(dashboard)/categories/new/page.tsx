@@ -1,5 +1,5 @@
 import { getCategories } from "../actions/categories-actions";
-import { getCoreClientId } from "@modonty/database/lib/core-client";
+import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { PageHeader } from "@/components/shared/page-header";
 import { CategoryForm } from "../components/category-form";
 

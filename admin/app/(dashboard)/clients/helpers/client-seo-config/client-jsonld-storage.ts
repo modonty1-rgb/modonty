@@ -2,7 +2,7 @@
  * Client JSON-LD — READ ONLY.
  *
  * Writing a client's JSON-LD has exactly one entry point: `generateClientSEO`, which runs
- * the shared dataLayer bundle (`generateClientSeoBundle`) so admin, console and the cascade
+ * the shared shared bundle (`generateClientSeoBundle`) so admin, console and the cascade
  * all produce byte-identical cards.
  *
  * This file used to hold a second writer — `generateAndSaveClientJsonLd` /

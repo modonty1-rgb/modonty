@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { OptimizedImage } from "@modonty/database/components/optimized-image";
+import { OptimizedImage } from "@modonty/shared/components/optimized-image";
 
 import { IconClose, IconChevronLeft, IconChevronRight } from "@/lib/icons";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 export interface ClientGalleryImage {
   id: string;

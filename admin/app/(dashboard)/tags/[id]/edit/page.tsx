@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getCoreClientId } from "@modonty/database/lib/core-client";
+import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { getTagById } from "../../actions/tags-actions";
 import { TagForm } from "../../components/tag-form";
 import { DeleteTagButton } from "../components/delete-tag-button";

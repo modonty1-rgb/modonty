@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import Link from "next/link";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { IconLike, IconClients, IconArticle, IconMessage } from "@/lib/icons";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { formatRelativeTime } from "@/lib/utils";
-import Link from "@/components/link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";

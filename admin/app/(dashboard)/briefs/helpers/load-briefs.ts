@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 import { getIntakeForm } from "@/app/(dashboard)/intake/actions/intake-admin-actions";
 

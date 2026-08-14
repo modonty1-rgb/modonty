@@ -10,7 +10,7 @@ import { ReferenceTable } from "./components/reference-table";
 // (Khalid 2026-07-13: «لما أضغط عليها يوديني على الـ table، وأبغى الـ SEO بتاع كل category»).
 //
 // Same contract as the client and article segments: the card's count and this list come
-// from the same query and the same scorer (dataLayer/lib/seo/reference), so they cannot
+// from the same query and the same scorer (shared/lib/seo/reference), so they cannot
 // tell two different stories.
 
 export default async function ReferenceSegmentPage({ params }: { params: Promise<{ key: string }> }) {

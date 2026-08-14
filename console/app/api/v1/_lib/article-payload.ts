@@ -1,4 +1,4 @@
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 /**
  * What the client's website receives.

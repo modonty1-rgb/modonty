@@ -1,6 +1,6 @@
 "use client";
 
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import type { GalleryFormItem } from "@/lib/types/form-types";
 import { ImageSeoStrip } from "./image-seo-strip";
 
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 interface ImageGalleryManagerProps {
   clientId: string | null;

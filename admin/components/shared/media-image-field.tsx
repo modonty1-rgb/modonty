@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { X, ImageIcon, Library } from "lucide-react";

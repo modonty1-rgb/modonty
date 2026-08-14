@@ -14,7 +14,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-import type { SeoCheck } from "@modonty/database/lib/seo/client/types";
+import type { SeoCheck } from "@modonty/shared/lib/seo/client/types";
 
 interface SeoReadinessButtonProps {
   score: number;

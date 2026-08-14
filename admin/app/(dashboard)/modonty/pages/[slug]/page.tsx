@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import { PAGE_CONFIGS } from "../../setting/helpers/page-config";
 import { getPage } from "../../setting/actions/page-actions";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
-import { getCoreClientId } from "@modonty/database/lib/core-client";
+import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { PageFormWrapper } from "./page-form-wrapper";
 
 export default async function ModontyPageEditPage({ params }: { params: Promise<{ slug: string }> }) {

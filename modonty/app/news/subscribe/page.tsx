@@ -1,6 +1,6 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import Link from "@/components/link";
 import { NewsSubscribeForm } from "./components/news-subscribe-form";
 
 export const metadata: Metadata = {

@@ -1,12 +1,12 @@
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import type { ComponentType, SVGProps } from "react";
 
-import { OptimizedImage } from "@modonty/database/components/optimized-image";
+import { OptimizedImage } from "@modonty/shared/components/optimized-image";
 import { Card } from "@/components/ui/card";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { IconClients, IconChevronLeft, IconPhone, IconVerified, IconExternal } from "@/lib/icons";
-import { WhatsAppIconLink } from "@/components/whatsapp-icon-link";
+import { WhatsAppIconLink } from "@/components/cta/whatsapp-icon-link";
 import { Linkedin } from "@/components/icons/linkedin";
 import { Twitter } from "@/components/icons/twitter";
 import { Instagram } from "@/components/icons/instagram";
@@ -15,8 +15,8 @@ import { Youtube } from "@/components/icons/youtube";
 import { TiktokLogoLight } from "@/components/icons/tiktok";
 import { RoundSnapchat } from "@/components/icons/snapchat";
 
-import { AskClientDialog } from "@/app/articles/[slug]/components/ask-client-dialog";
-import { BookingCtaLink } from "@/components/booking-cta-link";
+import { AskClientDialog } from "@/components/client/ask-client-dialog";
+import { BookingCtaLink } from "@/components/cta/booking-cta-link";
 import type { BookingSource } from "@/app/articles/[slug]/actions/booking-actions";
 
 type IconC = ComponentType<SVGProps<SVGSVGElement>>;

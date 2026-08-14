@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-guard";
-import { uploadToBunny, bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/database/lib/bunny";
+import { uploadToBunny, bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/shared/lib/bunny";
 import { generateBlurDataUrl } from "@/app/(dashboard)/media/actions/generate-blur";
 
 /**

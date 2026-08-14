@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 // Data for the Client Galleries route (client-page GALLERY images, type=GALLERY · scope=CLIENT).
 // These live here now instead of the general /media library.

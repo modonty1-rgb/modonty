@@ -5,7 +5,7 @@ import type { ValidationReport } from "@/lib/seo/jsonld-validator";
 
 /**
  * Read-only. Writing a client's JSON-LD has exactly one entry point —
- * `generateClientSEO`, which goes through the shared dataLayer bundle.
+ * `generateClientSEO`, which goes through the shared shared bundle.
  *
  * There used to be a `regenerateClientJsonLdAction` here too, wired to the Update button on
  * the client's SEO tab. It ran a separate generator fed by its own hand-written `select`

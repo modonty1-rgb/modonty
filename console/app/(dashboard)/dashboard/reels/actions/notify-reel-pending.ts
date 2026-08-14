@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "@/lib/db";
-import { sendContentTeamTelegram, escapeTgHtml } from "@modonty/database/lib/telegram/client";
+import { sendContentTeamTelegram, escapeTgHtml } from "@modonty/shared/lib/telegram/client";
 
 /**
  * Tell the team a reel is sitting in the approval queue.

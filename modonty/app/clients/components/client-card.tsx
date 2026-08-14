@@ -1,9 +1,9 @@
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
-import Link from "@/components/link";
+import Link from "next/link";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 import { highlightQuery } from "@/lib/highlight-query";
 import { IconArticle, IconViews, IconCheck } from "@/lib/icons";
-import { stripCloudinaryTransforms } from "@/lib/image-utils";
+
 import { formatMetric } from "../helpers/format-metrics";
 
 interface ClientCardProps {
@@ -43,8 +43,8 @@ export function ClientCard(props: ClientCardProps) {
   const initials = props.name.split(" ").map((n) => n[0]).join("").slice(0, 2);
   const q = props.highlightQuery;
   const nameContent = q ? highlightQuery(props.name, q) : props.name;
-  const cover = props.ogImage ? stripCloudinaryTransforms(props.ogImage) ?? props.ogImage : null;
-  const logo = props.logo ? stripCloudinaryTransforms(props.logo) ?? props.logo : null;
+  const cover = props.ogImage ? props.ogImage ?? props.ogImage : null;
+  const logo = props.logo ? props.logo ?? props.logo : null;
   const location = props.industry?.name;
 
   return (

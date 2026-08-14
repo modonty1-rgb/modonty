@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, Mail, MessageSquare, User, Plus, Minus } from "lucide-react";
@@ -9,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import Link from "@/components/link";
 
 import { PhoneField } from "./phone-field";
 import { bookingSchema, type BookingFormData } from "../helpers/schemas/booking-schema";

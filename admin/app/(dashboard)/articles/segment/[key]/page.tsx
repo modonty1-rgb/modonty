@@ -11,7 +11,7 @@ import { ArticleSegmentTable, type SegmentArticle } from "./components/article-s
 // (Khalid 2026-07-13) — same contract as the client segments: the `where` lives in
 // segments.ts and is shared with the count, so the card and the list cannot diverge.
 //
-// The SEO number comes from dataLayer/lib/seo/article — the shared source of truth,
+// The SEO number comes from shared/lib/seo/article — the shared source of truth,
 // exactly where the client scorer's header said the article one would go. It reads the
 // STORED published fields (nextjsMetadata + jsonLdStructuredData + the cached validation
 // report), so:

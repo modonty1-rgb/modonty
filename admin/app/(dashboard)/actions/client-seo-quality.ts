@@ -3,8 +3,8 @@
 import { unstable_cache } from "next/cache";
 
 import { db } from "@/lib/db";
-import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
-import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
+import { computeClientSeoScore } from "@modonty/shared/lib/seo/client/seo-score";
+import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
 import type { SeoCheckTally, SeoCheckItem } from "@/app/(dashboard)/components/seo-health-card";
 
 // Cap the drill-down list per check so a broad failure can't bloat the cached payload.

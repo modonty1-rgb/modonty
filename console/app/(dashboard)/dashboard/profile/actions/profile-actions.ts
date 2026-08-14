@@ -6,10 +6,10 @@ import { messages } from "@/lib/messages";
 import { auth } from "@/lib/auth";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import { validateYmylData } from "@/lib/seo/ymyl-helpers";
-import { getYmylAuthorityCodes } from "@modonty/database/lib/seo/ymyl-authorities";
-import { normalizePhone } from "@modonty/database/lib/phone";
+import { getYmylAuthorityCodes } from "@modonty/shared/lib/seo/ymyl-authorities";
+import { normalizePhone } from "@modonty/shared/lib/phone";
 import { regenerateClientSeo } from "./regenerate-client-seo";
-import { normalizeLegalForm, normalizeOrganizationType } from "@modonty/database/lib/constants/client-classification";
+import { normalizeLegalForm, normalizeOrganizationType } from "@modonty/shared/lib/constants/client-classification";
 
 function str(v: string | undefined | null) {
   return v === undefined ? undefined : (v?.trim() || null);
@@ -106,7 +106,7 @@ export async function updateProfile(clientId: string, data: ProfileUpdate) {
     if (data.commercialRegistrationNumber !== undefined) u.commercialRegistrationNumber = str(data.commercialRegistrationNumber);
     if (data.vatID !== undefined) u.vatID = str(data.vatID);
     if (data.taxID !== undefined) u.taxID = str(data.taxID);
-    // Normalize to the canonical enum (shared dataLayer) so the DB never stores a
+    // Normalize to the canonical enum (shared shared) so the DB never stores a
     // free-text value the admin's strict enum would later reject and block saves.
     if (data.legalForm !== undefined) u.legalForm = normalizeLegalForm(data.legalForm);
     if (data.industryId !== undefined) u.industryId = str(data.industryId) || null;

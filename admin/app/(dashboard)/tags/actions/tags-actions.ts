@@ -8,8 +8,8 @@ import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
 import { tagServerSchema } from "./tag-server-schema";
 import { Prisma, ArticleStatus } from "@prisma/client";
-import { computeReferenceSeoScore } from "@modonty/database/lib/seo/reference/seo-score";
-import type { JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
+import { computeReferenceSeoScore } from "@modonty/shared/lib/seo/reference/seo-score";
+import type { JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
 
 export interface TagFilters {
   createdFrom?: Date;

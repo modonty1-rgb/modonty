@@ -4,8 +4,8 @@ import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
 import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
 import { ConversionType } from "@prisma/client";
-import { sendTelegramMessage } from "@/lib/telegram";
-import { notifyTelegram } from "@/lib/telegram/notify";
+import { sendAdminTelegram } from "@modonty/shared/lib/telegram/client";
+import { notifyTelegram } from "@/lib/telegram";
 import { trackNewsletterSubscribe } from "@/lib/analytics/events-registry";
 
 const subscribeSchema = z.object({
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     // Notify Telegram group (admin) — non-blocking
     const now = new Date().toLocaleString("ar-SA", { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
-    sendTelegramMessage(`🔔 <b>مشترك جديد</b>\n📧 ${email}\n🏢 ${client?.name || clientId}\n📅 ${now}`).catch(() => null);
+    sendAdminTelegram(`🔔 <b>مشترك جديد</b>\n📧 ${email}\n🏢 ${client?.name || clientId}\n📅 ${now}`).catch(() => null);
 
     // Notify Client's Telegram (per-client) — non-blocking
     const ip =

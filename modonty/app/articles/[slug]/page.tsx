@@ -1,12 +1,12 @@
 import { Metadata } from "next";
-import { mediaSrc } from "@modonty/database/lib/media-src";
-import { getPlatformDefaultImages } from "@modonty/database/lib/platform-defaults";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { getPlatformDefaultImages } from "@modonty/shared/lib/platform-defaults";
 import { Suspense } from "react";
 import { notFound, unstable_rethrow } from "next/navigation";
 
 import { auth } from "@/lib/auth";
-import { sanitizeHtml } from "@/lib/sanitize-html";
-import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
+import { sanitizeHtml } from "@/app/articles/[slug]/helpers/sanitize-html";
+import { getArticleDefaultsFromSettings } from "@/app/articles/[slug]/helpers/get-article-defaults-from-settings";
 import { getPlatformSocialLinks, getPlatformImageLicensing } from "@/lib/settings/get-platform-social-links";
 import {
   generateMetadataFromSEO,
@@ -31,7 +31,7 @@ import {
   getRelatedArticlesByClient,
   getRelatedArticlesByAuthor,
 } from "./actions/article-data";
-import { getPendingFaqsForCurrentUser } from "./actions/ask-client-actions";
+import { getPendingFaqsForCurrentUser } from "./actions/get-pending-faqs-for-current-user";
 
 // Reused content components.
 import {

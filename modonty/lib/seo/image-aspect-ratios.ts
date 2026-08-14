@@ -14,7 +14,7 @@
  * @see https://developers.google.com/search/docs/appearance/structured-data/article
  */
 
-import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl } from "@modonty/database/lib/bunny";
+import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl } from "@modonty/shared/lib/bunny";
 
 const ASPECT_RATIOS = ["1:1", "4:3", "16:9"] as const;
 

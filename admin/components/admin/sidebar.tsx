@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { usePathname } from "next/navigation";
 
-import { BRAND_ICON_URL } from "@modonty/database/lib/brand-assets";
+import { BRAND_ICON_URL } from "@modonty/shared/lib/brand-assets";
 import { cn } from "@/lib/utils";
 import {
   Collapsible,

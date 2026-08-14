@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 import { getArticleEntitySeo, ARTICLE_SEO_SELECT } from "@/lib/seo/article-seo-score";
-import type { SeoCheck, JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
+import type { SeoCheck, JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 
 // The article's SEO guide — the lamp that shows what's wrong and how to fix it, driven by the

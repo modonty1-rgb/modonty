@@ -1,7 +1,7 @@
-import { OptimizedImage } from "@modonty/database/components/optimized-image";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { OptimizedImage } from "@modonty/shared/components/optimized-image";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { IconClients, IconVerified, IconChevronLeft } from "@/lib/icons";
 
 interface ArticleLabMobileIdentityProps {

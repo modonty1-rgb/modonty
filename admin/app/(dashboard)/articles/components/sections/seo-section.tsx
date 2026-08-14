@@ -1,6 +1,6 @@
 'use client';
 
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { useArticleForm } from '../article-form-context';
 import { SITE_NAME } from '@/lib/constants/site-name';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Info, Globe, ImageIcon } from 'lucide-react';
 import { useMemo, useState, useEffect } from 'react';
 import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
-import { mediaSrc } from '@modonty/database/lib/media-src';
+import { mediaSrc } from '@modonty/shared/lib/media-src';
 
 interface FeaturedMedia {
   url: string;

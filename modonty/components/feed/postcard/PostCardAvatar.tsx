@@ -1,7 +1,7 @@
-import Link from "@/components/link";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import Link from "next/link";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
-import { getOptimizedThumbnailUrl } from "@/lib/image-utils";
+
 
 interface PostCardAvatarProps {
   clientSlug: string;
@@ -30,7 +30,7 @@ export function PostCardAvatar({
 
   const optimizedLogo =
     clientLogo != null
-      ? getOptimizedThumbnailUrl(clientLogo, 96) ?? clientLogo
+      ? clientLogo ?? clientLogo
       : null;
 
   return (

@@ -7,7 +7,7 @@ import { FormInput, FormField, FormSelect } from "@/components/admin/form-field"
 import { SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Link2, RefreshCw } from "lucide-react";
-import { ORGANIZATION_TYPES, type OrganizationType, LEGAL_FORMS, type LegalForm } from "@modonty/database/lib/constants/client-classification";
+import { ORGANIZATION_TYPES, type OrganizationType, LEGAL_FORMS, type LegalForm } from "@modonty/shared/lib/constants/client-classification";
 import { BusinessBriefSection } from "./business-brief-section";
 import { SocialProfilesInput } from "../social-profiles-input";
 import { SlugChangeDialog } from "../slug-change-dialog";

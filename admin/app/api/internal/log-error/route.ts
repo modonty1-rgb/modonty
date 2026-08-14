@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-import { sendAdminTelegram, escapeTgHtml } from "@modonty/database/lib/telegram/client";
-import { classifyCategory } from "@modonty/database/lib/system-error/enrich";
+import { sendAdminTelegram, escapeTgHtml } from "@modonty/shared/lib/telegram/client";
+import { classifyCategory } from "@modonty/shared/lib/system-error/enrich";
 
 const APP_EMOJI: Record<string, string> = {
   modonty: "🟢",

@@ -1,5 +1,5 @@
 import { LoginForm } from "./components/login-form";
-import { logError } from "@/lib/log-error";
+import { logError } from "./helpers/log-error";
 
 // NextAuth redirects a failed sign-in back to this page (pages.signIn) with
 // ?error=<type> (client-safe types per Auth.js: OAuthCallbackError,

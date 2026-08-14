@@ -3,13 +3,13 @@ import "server-only";
 import { db } from "@/lib/db";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
-import { computeMediaSeoScore, type MediaSeoCheck } from "@modonty/database/lib/seo/media/seo-score";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { computeMediaSeoScore, type MediaSeoCheck } from "@modonty/shared/lib/seo/media/seo-score";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import {
   resolveImageAttribution,
   type MediaTypeName,
   type ModontyImageDefaults,
-} from "@modonty/database/lib/seo/media/build-image-object";
+} from "@modonty/shared/lib/seo/media/build-image-object";
 
 // Single source for the "SEO Images" grouping. BOTH the clients table (/seo-images) and the
 // per-client grid (/seo-images/[clientId]) call this — so a client's summary row and its
@@ -177,7 +177,7 @@ export function buildSeoImageRow(m: SeoImageMediaRow, defaults: ModontyImageDefa
     fileSize: m.fileSize,
     mimeType: m.mimeType,
     // Display the EFFECTIVE filename — the public_id's last segment (what Cloudinary actually
-    // serves), the SAME source the SEO score grades (dataLayer/lib/seo/media/seo-score.ts).
+    // serves), the SAME source the SEO score grades (shared/lib/seo/media/seo-score.ts).
     // The stored `filename` can be a stale upload hash; the public_id is the source of truth
     // after any rename, so display and score never diverge.
     filename: (() => {

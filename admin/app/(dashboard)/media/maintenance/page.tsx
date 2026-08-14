@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { MEDIA_UNUSED_WHERE } from "@/lib/media/usage-where";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { formatBytes } from "@modonty/database/lib/utils";
+import { formatBytes } from "@modonty/shared/lib/utils";
 import { UnusedMediaList } from "../components/unused-media-list";
 import { FixBrokenMediaButton } from "../components/fix-broken-media-button";
 import { getOptimizableImages } from "./helpers/optimizable";

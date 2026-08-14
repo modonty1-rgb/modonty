@@ -1,9 +1,10 @@
 import { Metadata } from "next";
-import { safeOrganizationType } from "@modonty/database/lib/seo/organization-schema-types";
+import { safeOrganizationType } from "@modonty/shared/lib/seo/organization-schema-types";
 import { buildArticleImageObjects } from "./image-aspect-ratios";
+import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl, hasBunnyAspectCrops } from "@modonty/shared/lib/bunny";
 import { BRAND_AR, BRAND_EN, SITE_URL, LOGO_URL } from "@/lib/brand";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 export { buildAlternates } from "./build-alternates";
 
@@ -27,34 +28,68 @@ export function jsonLdHtmlFromString(json: string): string {
 }
 
 /**
- * Force a Cloudinary image to the OG-recommended 1200×630 (smart crop, keeps focal subject)
- * so the declared og:image width/height are truthful. Non-Cloudinary or already-transformed
- * URLs pass through unchanged.
+ * The share image, resolved to a crop the platform ACTUALLY stores.
+ *
+ * Admin pre-generates exactly three crops per image at upload — 1:1, 4:3 and 16:9, all
+ * 1200 wide (`admin/…/media/actions/generate-aspect-crops.ts:16-20`). There is no
+ * 1200×630 variant and never was on Bunny: the old `toOgImage1200x630` built a
+ * Cloudinary `c_fill,w_1200,h_630` url, so after the migration it early-returned and
+ * every page still declared `og:image:width 1200` / `height 630` over the untouched
+ * ORIGINAL. Measured on production 2026-08-14 across four articles: the declared size
+ * was 1200×630 while the served file was 1920×1080 — and two of the four were PNG
+ * behind a `.webp` name, ~600KB where the 16:9 crop is ~60KB.
+ *
+ * So the share image is the 16:9 crop: it is the widest stored ratio (1.78 vs the
+ * 1.90 the OG docs suggest — both well inside what every platform renders without a
+ * visible crop), it exists for every uploaded image, and its dimensions are known
+ * exactly, which is what makes the declared width/height true instead of aspirational.
  */
-export function toOgImage1200x630(url: string): string {
-  if (!url.includes("res.cloudinary.com") || !url.includes("/upload/")) return url;
-  if (/\/upload\/[^/]*(?:c_|w_|h_|ar_)/.test(url)) return url; // already transformed
-  const i = url.indexOf("/upload/") + 8;
-  return `${url.slice(0, i)}c_fill,g_auto,w_1200,h_630,f_auto,q_auto/${url.slice(i)}`;
+export const OG_IMAGE_WIDTH = 1200;
+export const OG_IMAGE_HEIGHT = 675;
+
+export interface OgImageEntry {
+  url: string;
+  width?: number;
+  height?: number;
+  alt?: string;
 }
 
 /**
- * Normalize cached og:image entries to the OG-recommended 1200×630 (Cloudinary smart crop)
- * with truthful declared width/height. Accepts the loose Metadata openGraph.images shape
- * (string | object | array) and always returns a clean array (or undefined when empty).
+ * Bunny stores the crops next to the base file, so the 16:9 url is derivable. Anything
+ * NOT on Bunny (an external url, a brand asset set by hand) has no crop to point at —
+ * it is returned untouched and WITHOUT dimensions, because asserting a size we did not
+ * measure is the exact bug this replaces.
  */
-export function normalizeOgImages(
-  images: unknown,
-): Array<{ url: string; width: number; height: number; alt?: string }> | undefined {
+export function toShareImage(url: string): OgImageEntry {
+  // NOT `isBunnyUrl(zone, …)`: that resolves a zone config and THROWS when the BUNNY_* env is
+  // absent — unacceptable inside metadata generation, which runs on every page. And the real
+  // question is not the zone but whether crops were generated for this file at all.
+  if (!hasBunnyAspectCrops(url)) return { url };
+  if (/__(?:1x1|4x3|16x9)\.webp(?:\?|$)/.test(url)) {
+    return { url, width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT };
+  }
+  return {
+    url: bunnyAspectUrl(url, BUNNY_ASPECT_SUFFIX["16:9"]),
+    width: OG_IMAGE_WIDTH,
+    height: OG_IMAGE_HEIGHT,
+  };
+}
+
+/**
+ * Normalize cached og:image entries onto the stored 16:9 crop. Accepts the loose
+ * `Metadata.openGraph.images` shape (string | object | array) and always returns a clean
+ * array (or undefined when empty).
+ */
+export function normalizeOgImages(images: unknown): OgImageEntry[] | undefined {
   const list = Array.isArray(images) ? images : images ? [images] : [];
   const out = list
     .map((entry) => {
       const url = typeof entry === "string" ? entry : (entry as { url?: string } | null)?.url;
       if (!url || typeof url !== "string") return null;
       const alt = typeof entry === "object" && entry ? (entry as { alt?: string }).alt : undefined;
-      return { url: toOgImage1200x630(url), width: 1200, height: 630, ...(alt ? { alt } : {}) };
+      return { ...toShareImage(url), ...(alt ? { alt } : {}) };
     })
-    .filter((x): x is { url: string; width: number; height: number; alt?: string } => x !== null);
+    .filter((x): x is OgImageEntry => x !== null);
   return out.length > 0 ? out : undefined;
 }
 
@@ -131,11 +166,10 @@ export async function generateMetadataFromSEO(data: SEOData, options?: MetadataO
   // The admin is alerted to fill it via the EssentialSeoDialog in the admin app.
   const brandMedia = await getBrandMedia();
   const ogImageRaw = image || brandMedia.ogImageUrl || undefined;
-  // Normalize to 1200×630 so the declared og:image dimensions are accurate (Open Graph rec).
-  const ogImage = ogImageRaw ? toOgImage1200x630(ogImageRaw) : undefined;
   const imageAltResolved = imageAlt || title || brandMedia.altImage || siteName;
-  const ogImages = ogImage
-    ? [{ url: ogImage, width: 1200, height: 630, alt: imageAltResolved }]
+  // Point at the stored 16:9 crop and declare ITS size — see `toShareImage`.
+  const ogImages = ogImageRaw
+    ? [{ ...toShareImage(ogImageRaw), alt: imageAltResolved }]
     : undefined;
 
   const robotsDirective = data.robots || options?.robots || "index,follow";
@@ -182,7 +216,7 @@ export async function generateMetadataFromSEO(data: SEOData, options?: MetadataO
     card: "summary_large_image",
     title: fullTitle,
     description: description || "",
-    images: ogImage ? [{ url: ogImage, alt: imageAltResolved }] : undefined,
+    images: ogImages ? [{ url: ogImages[0].url, alt: imageAltResolved }] : undefined,
   };
 
   if (twitterCreator) {

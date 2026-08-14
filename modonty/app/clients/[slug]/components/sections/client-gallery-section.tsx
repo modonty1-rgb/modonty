@@ -1,8 +1,8 @@
-import { OptimizedImage } from "@modonty/database/components/optimized-image";
+import { OptimizedImage } from "@modonty/shared/components/optimized-image";
 
-import { justifyRows, tileAspectRatio, shouldContainTile } from "@modonty/database/lib/justify-rows";
+import { justifyRows, tileAspectRatio, shouldContainTile } from "@modonty/shared/lib/justify-rows";
 
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { SectionCard } from "./section-card";
 
 /** Section content width at the widest breakpoint — only decides tiles-per-row.

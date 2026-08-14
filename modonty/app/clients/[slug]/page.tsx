@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { mediaSrc } from "@modonty/database/lib/media-src";
-import { getPlatformDefaultImages } from "@modonty/database/lib/platform-defaults";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { getPlatformDefaultImages } from "@modonty/shared/lib/platform-defaults";
 import { SubscriptionStatus, ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";

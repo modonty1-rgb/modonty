@@ -31,7 +31,7 @@ function WhatsAppIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { LogoSpotlight } from "./LogoSpotlight";
 import { Vision2030Spotlight } from "./Vision2030Spotlight";
 import { TeamCarousel } from "./TeamCarousel";

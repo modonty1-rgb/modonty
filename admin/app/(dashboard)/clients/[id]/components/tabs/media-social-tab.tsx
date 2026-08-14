@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import Link from "next/link";
 import { Eye, ExternalLink, Image as ImageIcon, Video, File } from "lucide-react";
 import {
@@ -30,7 +30,7 @@ import {
   type Platform,
 } from "../../../helpers/url-validation";
 import type { MediaType } from "@prisma/client";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 interface MediaSocialTabProps {
   client: any;

@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { computeReferenceSeoScore } from "@modonty/database/lib/seo/reference/seo-score";
-import type { JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
+import { computeReferenceSeoScore } from "@modonty/shared/lib/seo/reference/seo-score";
+import type { JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
 
 /**
  * Reference data — categories, tags, industries, authors (Khalid 2026-07-13).
@@ -10,7 +10,7 @@ import type { JsonLdValidationReport } from "@modonty/database/lib/seo/client/ty
  * looks at their SEO. So the dashboard shows exactly one thing per group: how many of
  * them are failing.
  *
- * The score comes from dataLayer/lib/seo/reference — the same source of truth as the
+ * The score comes from shared/lib/seo/reference — the same source of truth as the
  * client and article scorers, on the same contract.
  *
  * Every select below must fetch ALL FOUR fields the scorer reads. It cannot tell "not

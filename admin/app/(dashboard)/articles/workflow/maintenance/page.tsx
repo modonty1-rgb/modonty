@@ -1,11 +1,11 @@
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Inbox, Wrench } from "lucide-react";
 import { ArticleStatus } from "@prisma/client";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 import { getStatusLabel, getStatusVariant } from "../../helpers/status-utils";
 import { getRollbackTargets } from "../lib/rollback-targets";

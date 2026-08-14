@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { toast } from "sonner";
 import { Film, ImageIcon, Eye, Heart, MessageCircle, Star } from "lucide-react";
 
@@ -11,9 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { compressToWebP } from "@/lib/compress-image";
 import { cn } from "@/lib/utils";
-import { mediaSrc } from "@modonty/database/lib/media-src";
-import { MediaUploadZone } from "@modonty/database/components/media-upload-zone";
-import { ConfirmDeleteButton } from "@modonty/database/components/confirm-delete-button";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { MediaUploadZone } from "@modonty/shared/components/media-upload-zone";
+import { ConfirmDeleteButton } from "@modonty/shared/components/confirm-delete-button";
 import { setImageInReels } from "../../gallery/actions/gallery-actions";
 import { removeVideoReel, setVideoCover } from "../../videos/actions/video-actions";
 import {

@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/shared/page-header";
-import { getCoreClientId } from "@modonty/database/lib/core-client";
+import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { TagForm } from "../components/tag-form";
 
 export default async function NewTagPage() {

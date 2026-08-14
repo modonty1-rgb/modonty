@@ -6,7 +6,7 @@ import {
 } from "@prisma/client";
 
 import { db } from "@/lib/db";
-import { hasStoredOgImage } from "@modonty/database/lib/seo/client/meta-score";
+import { hasStoredOgImage } from "@modonty/shared/lib/seo/client/meta-score";
 
 /**
  * Every clickable number on the dashboard's Clients section maps to a segment key

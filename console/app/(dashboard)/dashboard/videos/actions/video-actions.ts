@@ -10,7 +10,7 @@ import {
   deleteStreamVideo,
   getStreamVideo,
   streamUrls,
-} from "@modonty/database/lib/bunny-stream";
+} from "@modonty/shared/lib/bunny-stream";
 
 /**
  * Video reels — upload and finish (ق2 + ق7, 2026-08-05).

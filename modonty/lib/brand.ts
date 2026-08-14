@@ -10,7 +10,7 @@
  * DB Settings table; this file is for the FIXED identity facts only.
  */
 
-import { BRAND_LOGO_URL, BRAND_CHARACTER_URL } from "@modonty/database/lib/brand-assets";
+import { BRAND_LOGO_URL, BRAND_CHARACTER_URL } from "@modonty/shared/lib/brand-assets";
 
 // Display name — Arabic UI. Official spelling = «مدونتي» (from «مدوّنة»), NOT «مودونتي» (wrong transliteration).
 export const BRAND_AR = "مدونتي";
@@ -27,7 +27,7 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.modont
 
 // Brand logo (square PNG) — used in nav, email, JSON-LD logo.
 // Brand character/avatar (used in feed fallback + some OG contexts).
-// Both live on Bunny and are defined ONCE in dataLayer so the admin and console email
+// Both live on Bunny and are defined ONCE in shared so the admin and console email
 // templates read the same value instead of re-hardcoding it (2026-07-30).
 export const LOGO_URL = BRAND_LOGO_URL;
 export const CHARACTER_URL = BRAND_CHARACTER_URL;

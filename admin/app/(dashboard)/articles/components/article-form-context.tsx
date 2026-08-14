@@ -111,7 +111,7 @@ interface ArticleFormContextType {
   overallProgress: number;
   /** Live editor-completeness heuristic (analyzeArticleSEO on the draft form). NOT the SEO score. */
   seoScore: number;
-  /** The real SEO score from the SHARED dataLayer scorer on the STORED article — matches the tables/dashboard. */
+  /** The real SEO score from the SHARED shared scorer on the STORED article — matches the tables/dashboard. */
   realSeoScore: number;
 
   // DB snapshot for MetaTag & JSON-LD tab (edit only)

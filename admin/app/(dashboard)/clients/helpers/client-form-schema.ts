@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { SubscriptionTier, SubscriptionStatus, PaymentStatus, ClientCtaMode } from "@prisma/client";
-import { LEGAL_FORM_VALUES, ORGANIZATION_TYPE_VALUES } from "@modonty/database/lib/constants/client-classification";
+import { LEGAL_FORM_VALUES, ORGANIZATION_TYPE_VALUES } from "@modonty/shared/lib/constants/client-classification";
 
 /**
  * Zod validation schema for Client form
@@ -56,10 +56,10 @@ const metaRobotsSchema = z
   .optional()
   .nullable();
 
-// Legal Form validation — values come from the shared dataLayer source of truth
+// Legal Form validation — values come from the shared shared source of truth
 const legalFormSchema = z.enum(LEGAL_FORM_VALUES).optional().nullable();
 
-// Organization Type validation — values come from the shared dataLayer source of truth
+// Organization Type validation — values come from the shared shared source of truth
 const organizationTypeSchema = z.enum(ORGANIZATION_TYPE_VALUES).optional().nullable();
 
 // Console-owned text fields: the CLIENT edits these from the console profile (which enforces

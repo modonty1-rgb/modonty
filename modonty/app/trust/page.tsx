@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import Link from "next/link";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
-import Link from "@/components/link";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
@@ -11,7 +11,7 @@ import { BRAND_AR, SITE_URL, CONTACT_EMAIL, LEGAL } from "@/lib/brand";
 import { ORGANIZATION_JSONLD } from "@/lib/organization-jsonld";
 import { cn } from "@/lib/utils";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
-import { getWhatsappContactUrl } from "@/lib/settings/get-whatsapp-contact";
+import { getWhatsappContactUrl } from "@/app/trust/helpers/get-whatsapp-contact";
 import {
   IconVerified,
   IconFileCheck,

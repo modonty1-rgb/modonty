@@ -1,7 +1,7 @@
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 import { IconCheck } from "@/lib/icons";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 import { getInitials, getTagline, getSocialPlatform } from "../hero/utils";
 import { HeroChips } from "./hero-chips";
@@ -120,7 +120,7 @@ export function ClientHeroV2({
                 alt={`غلاف ${client.name}`}
                 fill
                 preload
-                sizes="(max-width: 1128px) 100vw, 1096px"
+                sizes="clientHero"
                 className="object-cover"
               />
             ) : (

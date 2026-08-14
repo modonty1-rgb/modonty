@@ -12,7 +12,7 @@
  */
 import { ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 interface ArticleImagesRow {
   slug: string;

@@ -1,13 +1,13 @@
 "use client";
 
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Wand2, Loader2, CheckCircle2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { formatBytes } from "@modonty/database/lib/utils";
+import { formatBytes } from "@modonty/shared/lib/utils";
 import { compressToWebP } from "@/lib/compress-image";
 import { saveOptimizedImage } from "../../actions/optimize-image";
 import { uploadImageToBunny } from "../../actions/upload-image-to-bunny";

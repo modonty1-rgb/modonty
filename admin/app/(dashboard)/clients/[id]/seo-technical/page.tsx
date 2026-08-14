@@ -4,9 +4,9 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
-import { computeClientEntitySeo } from "@modonty/database/lib/seo/client/seo-score";
-import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
-import type { SeoCheck } from "@modonty/database/lib/seo/client/types";
+import { computeClientEntitySeo } from "@modonty/shared/lib/seo/client/seo-score";
+import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
+import type { SeoCheck } from "@modonty/shared/lib/seo/client/types";
 
 // The client's SEO guide — same idea as the article technical page: the lamp that shows
 // what's wrong and WHY the score is what it is, driven by the ONE shared scorer

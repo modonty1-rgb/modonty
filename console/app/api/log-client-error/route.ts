@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { enrichError } from "@modonty/database/lib/system-error/enrich";
+import { enrichError } from "@modonty/shared/lib/system-error/enrich";
 
 export const runtime = "nodejs";
 

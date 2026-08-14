@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,8 +14,7 @@ import { IconLoading, IconRegister, IconViews, IconEyeOff } from "@/lib/icons";
 import { GoogleIcon } from "@/components/auth/google-icon";
 import { registerSchema, type RegisterFormData } from "../helpers/schemas/register-schema";
 import { registerUser } from "../actions/register-actions";
-import { trackSignupClient } from "@/lib/analytics/track-signup-client";
-import Link from "@/components/link";
+import { trackSignupClient } from "@/app/users/register/helpers/track-signup-client";
 
 const BENEFITS = [
   { icon: "🔔", text: "جديد تخصصك" },

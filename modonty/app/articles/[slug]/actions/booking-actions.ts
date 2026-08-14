@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { ClientCtaMode, ConversionType, CTAType } from "@prisma/client";
 import { bookingSchema, type BookingFormData } from "../helpers/schemas/booking-schema";
-import { notifyTelegram } from "@/lib/telegram/notify";
+import { notifyTelegram } from "@/lib/telegram";
 import { createConversion } from "@/lib/conversion-tracking";
 import {
   trackBookingAttempt,

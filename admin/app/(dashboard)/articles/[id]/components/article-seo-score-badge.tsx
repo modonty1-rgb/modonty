@@ -5,7 +5,7 @@ import { getArticleSeoScore } from '@/lib/seo/article-seo-score';
 import { SeoScoreBadge } from '@/components/shared/seo-score-badge';
 import { Article } from '../helpers/article-view-types';
 
-// The SEO number comes from dataLayer — the single source of truth for every surface
+// The SEO number comes from shared — the single source of truth for every surface
 // (Khalid 2026-07-13: «أحتاج نتيجة 100% من source of truth واحد»). It scores the STORED,
 // published fields, so this badge, the articles table and the segment tables all show
 // the same figure for the same article. The old form-based analyzer is not an SEO score

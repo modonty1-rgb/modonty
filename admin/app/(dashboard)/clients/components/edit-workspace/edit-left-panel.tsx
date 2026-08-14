@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { ShieldCheck, ArrowLeft, Pencil } from "lucide-react";
 
 interface EditLeftPanelProps {

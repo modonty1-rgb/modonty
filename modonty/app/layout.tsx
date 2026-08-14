@@ -2,14 +2,14 @@ import type { Metadata, Viewport } from "next";
 import { Tajawal, Montserrat } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { SessionProviderWrapper } from "@/components/providers/SessionProviderWrapper";
-import { GTMContainer } from "@/components/gtm/GTMContainer";
-import { WebVitals } from "@/components/gtm/WebVitals";
-import { PageViewTracker } from "@/components/analytics/PageViewTracker";
-import { ClarityScript } from "@/components/analytics/clarity-script";
-import { Footer } from "@/components/layout/Footer";
-import { TopNavWithFavorites } from "@/components/navigatore/TopNavWithFavorites";
+import { ThemeProvider } from "@/app/layout-components/theme-provider";
+import { SessionProviderWrapper } from "@/app/layout-components/SessionProviderWrapper";
+import { GTMContainer } from "@/app/layout-components/gtm/GTMContainer";
+import { WebVitals } from "@/app/layout-components/gtm/WebVitals";
+import { PageViewTracker } from "@/app/layout-components/analytics/PageViewTracker";
+import { ClarityScript } from "@/app/layout-components/analytics/clarity-script";
+import { Footer } from "@/app/layout-components/Footer";
+import { TopNavWithFavorites } from "@/app/layout-components/nav/TopNavWithFavorites";
 import { BRAND_AR, SITE_URL } from "@/lib/brand";
 
 const tajawal = Tajawal({

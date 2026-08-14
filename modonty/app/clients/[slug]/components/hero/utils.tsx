@@ -1,6 +1,6 @@
 import { type ReactElement } from "react";
 import { IconLinkedin, IconTwitter, IconFacebook } from "@/lib/icons";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 export function getSocialPlatform(url: string): { name: string; icon: ReactElement } | null {
   const lowerUrl = url.toLowerCase();

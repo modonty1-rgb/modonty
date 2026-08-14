@@ -6,7 +6,7 @@ import { NotificationPriority, StaffRole } from "@prisma/client";
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { sendContentTeamTelegram, escapeTgHtml } from "@modonty/database/lib/telegram/client";
+import { sendContentTeamTelegram, escapeTgHtml } from "@modonty/shared/lib/telegram/client";
 
 // The operations manager's note about a client, pushed to the content team's Telegram
 // group and kept as a record here.

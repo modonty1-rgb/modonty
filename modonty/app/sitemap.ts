@@ -1,7 +1,7 @@
 // Build trigger: 2026-05-27 v0.63.4 cache rebuild
 import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { SITE_URL } from "@/lib/brand";
 

@@ -1,0 +1,3523 @@
+// Main Prisma schema file for Modonty Blog Platform
+// MongoDB provider for multi-client blog platform with 100% SEO optimization
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  ADMIN
+  EDITOR
+}
+
+// Company staff who sign in to the ADMIN app. Kept in a SEPARATE table from
+// public readers (User) so a reader can never gain admin access by a role flip.
+enum StaffRole {
+  ADMIN
+  EDITOR
+  CREATIVE
+  SOCIAL
+  QC
+  SALES
+}
+
+enum ArticleStatus {
+  WRITING
+  DRAFT
+  AWAITING_APPROVAL
+  NEEDS_REVISION
+  SCHEDULED
+  PUBLISHED
+  // Live on the CLIENT's own website, never on modonty.com. This value is the
+  // isolation wall: every public modonty query filters `status: PUBLISHED`
+  // exactly, so an article carrying this value is invisible to the site, the
+  // sitemap, the feed and llms.txt without a single line of hide-logic.
+  PUBLISHED_ON_CLIENT_SITE
+  ARCHIVED
+}
+
+enum TrafficSource {
+  ORGANIC
+  DIRECT
+  REFERRAL
+  SOCIAL
+  EMAIL
+  PAID
+  INTERNAL // same-site navigation (was misclassified as ORGANIC before 2026-07-07)
+}
+
+enum SubscriptionTier {
+  BASIC
+  STANDARD
+  PRO
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  PENDING
+}
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  OVERDUE
+}
+
+enum MediaType {
+  LOGO
+  POST
+  OGIMAGE // Social share image (og:image) — reserved for future use
+  TWITTER_IMAGE
+  HERO
+  GENERAL
+  GALLERY // Client-page gallery image (ImageObject[])
+  CLIENT_MINI // Client mini/card image (1200×630 · 1.91:1) — sidebar slider + article client card
+}
+
+enum MediaScope {
+  CLIENT   // Belongs to a specific client
+  GENERAL  // No client — visible in all pickers
+  PLATFORM // Modonty platform assets (categories, logos, OG images)
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  DELETED
+}
+
+enum ArticleFAQStatus {
+  PENDING
+  PUBLISHED
+  REJECTED
+}
+
+enum ConversionType {
+  SIGNUP
+  CONTACT_FORM
+  DOWNLOAD
+  NEWSLETTER
+  PURCHASE
+  TRIAL_START
+  DEMO_REQUEST
+  PHONE_CLICK
+  EMAIL_CLICK
+  DIRECTORY_VIEW
+  BOOKING // FORM submit (احجز الآن)
+  LINK_CLICK // external CTA click (تسوّق الآن) — known logged-in user = warm lead
+}
+
+enum CTAType {
+  BUTTON
+  LINK
+  FORM
+  BANNER
+  POPUP
+}
+
+enum ClientCtaMode {
+  NONE
+  FORM
+  LINK
+}
+
+enum SharePlatform {
+  FACEBOOK
+  TWITTER
+  LINKEDIN
+  WHATSAPP
+  EMAIL
+  COPY_LINK
+  PRINT
+  OTHER
+}
+
+enum CampaignType {
+  EMAIL
+  SOCIAL
+  PAID_ADS
+  SEO
+  AFFILIATE
+  INFLUENCER
+  CONTENT
+}
+
+enum LinkType {
+  INTERNAL
+  EXTERNAL
+  AFFILIATE
+  CITATION
+  SOCIAL
+  EMAIL
+  PHONE
+  DOWNLOAD
+}
+
+// ============================================
+// AUTHENTICATION MODELS
+// ============================================
+
+model User {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // NextAuth.js required fields
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? // Email verification timestamp
+  image         String? // NextAuth standard field (profile image URL)
+
+  // Custom fields
+  bio                   String?   // Short user bio (max 500 chars)
+  password              String?   // Hashed password (optional for OAuth users)
+  passwordResetToken    String?   // SHA-256 hash of token
+  passwordResetExpires  DateTime? // typically 1h from request
+  role                  UserRole @default(EDITOR)
+  avatar   String? // Keep for compatibility, prefer using 'image'
+
+  // Email notification preferences (USR-R3)
+  notificationPreferences Json? // { commentReply: true, faqReply: true, newsletter: true }
+
+  // Links to clients (for client users)
+  clientAccess String[] @db.ObjectId // Array of client IDs this user can access
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // NextAuth.js relations
+  accounts Account[]
+  sessions Session[]
+
+  // Interaction relations
+  comments              Comment[]
+  clientComments        ClientComment[]
+  clientReviews         ClientReview[]
+  articleLikes          ArticleLike[]
+  articleDislikes       ArticleDislike[]
+  articleFavorites      ArticleFavorite[]
+  clientLikes           ClientLike[]
+  clientDislikes        ClientDislike[]
+  clientFavorites       ClientFavorite[]
+  commentLikes          CommentLike[]
+  commentDislikes       CommentDislike[]
+  clientCommentLikes    ClientCommentLike[]
+  clientCommentDislikes ClientCommentDislike[]
+  articleViews          ArticleView[]
+  clientViews           ClientView[]
+  shares                Share[]
+  conversions           Conversion[]
+  ctaClicks             CTAClick[]
+  linkClicks            ArticleLinkClick[]
+  campaignTracking      CampaignTracking[]
+  leadScoring           LeadScoring[]
+  engagementDuration    EngagementDuration[]
+  faqFeedbacks         FAQFeedback[]
+  chatbotMessages      ChatbotMessage[]
+  contactMessages      ContactMessage[]
+  notifications        Notification[]
+  ownedClients         Client[]         @relation("ClientOwner")
+  bookingRequests      BookingRequest[]
+  mediaComments        MediaComment[]
+  mediaReactions       MediaReaction[]
+  commentReactions     CommentReaction[]
+
+  @@index([role])
+  @@map("users")
+}
+
+// Company staff (admin panel sign-in). Separate collection from `users` (public
+// readers). Migration copies the 8 admins here PRESERVING their _id, so every
+// existing reference to a staff id (createdBy/reviewedBy/authorId/notifications…)
+// keeps resolving. Relations to other models are added in a later step.
+model Staff {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  bio           String?
+
+  // Auth (admin uses credentials + JWT — no NextAuth adapter, so no Account/Session)
+  password             String?
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
+
+  role StaffRole @default(ADMIN)
+
+  // Employment status. Absent/null = active (never backfilled); only explicit false
+  // means "left" — the record + their history stay, but they can no longer sign in.
+  isActive Boolean? @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notifications Notification[] @relation("StaffNotifications")
+  salesClients  Client[]       @relation("StaffSalesClients")
+  editorClients Client[]       @relation("StaffEditorClients")
+
+  @@index([role])
+  @@map("staff")
+}
+
+model Account {
+  id                String @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String @db.ObjectId
+  type              String // OAuth or email
+  provider          String // google, facebook, credentials, etc.
+  providerAccountId String // Provider's unique user ID
+
+  // OAuth tokens (optional, for OAuth providers)
+  refresh_token String?
+  access_token  String?
+  expires_at    Int?
+  token_type    String?
+  scope         String?
+  id_token      String?
+  session_state String?
+
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String // Email address or other identifier
+  token      String   @unique
+  expires    DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model ChatbotMessage {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String   @db.ObjectId
+  user              User     @relation(fields: [userId], references: [id])
+  userQuery         String
+  assistantResponse String
+  scopeType         String // "article" | "category"
+  articleSlug       String?
+  categorySlug      String?
+  articleId         String?  @db.ObjectId
+  categoryId        String?  @db.ObjectId
+  outcome           String // "outOfScope" | "redirect" | "stream" | "error"
+  source            String? // "web" | "db" | null
+  webSources        Json? // [{title, link}] for web search results
+  createdAt         DateTime @default(now())
+
+  @@index([userId])
+  @@index([articleSlug])
+  @@index([categorySlug])
+  @@index([createdAt])
+  @@map("chatbot_messages")
+}
+
+// ============================================
+// CLIENT/ORGANIZATION MODELS
+// ============================================
+
+// ---- Client-page presentation (embedded composite types, MongoDB) ----
+// Stored ON the Client document (read-together, bounded, no independent lifecycle).
+// JSON-LD: services→OfferCatalog · teamMembers→employee:Person[] · credentials→hasCredential.
+
+type ClientServiceItem {
+  title       String
+  description String?
+  icon        String? // lucide icon name (optional)
+}
+
+type ClientTeamMember {
+  name     String
+  role     String?
+  bio      String?
+  photoUrl String? // Cloudinary
+}
+
+type ClientAchievement {
+  value       String // e.g. "12+", "98%"
+  label       String // e.g. "سنة خبرة" (≤52 chars)
+  image       String? // Bunny CDN (reels): clients/{id}/achievements/*.webp
+  description String? // story paragraph (≤250 chars)
+}
+
+type ClientCredential {
+  name      String // e.g. "ISO 9001"
+  authority String? // issuing body
+  year      String?
+  url       String? // proof / certificate link
+}
+
+model Client {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId // wiil use as unique for gtm integration
+  name      String
+  slug      String  @unique
+  legalName String? // Schema.org Organization
+  url       String? // Organization website
+
+  // Media (optional for backward compatibility, required in form UI)
+  logoMediaId      String? @db.ObjectId
+  logoMedia        Media?  @relation("ClientLogoMedia", fields: [logoMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  heroImageMediaId String? @db.ObjectId
+  heroImageMedia   Media?  @relation("ClientHeroImageMedia", fields: [heroImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Schema.org Organization - Social profiles
+  sameAs String[] // LinkedIn, Twitter, Facebook URLs
+
+  // Contact
+  email String
+  phone String? @unique
+
+  // Security
+  password String? // Hashed password for client authentication
+
+  // SEO
+  seoTitle       String?
+  seoDescription String?
+  description    String? // Schema.org Organization description (separate from seoDescription)
+
+  // Business Information
+  businessBrief     String? // Business description for content writers
+  industryId        String?   @db.ObjectId // Industry/category
+  industry          Industry? @relation(fields: [industryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Sales — the rep (Staff with role SALES) who brought & manages this client.
+  salesRepId        String?   @db.ObjectId
+  salesRep          Staff?    @relation("StaffSalesClients", fields: [salesRepId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Editor — the content writer (Staff with role EDITOR) responsible for this
+  // client's articles. Informational only: the schema.org author stays Modonty.
+  editorId          String?   @db.ObjectId
+  editor            Staff?    @relation("StaffEditorClients", fields: [editorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  targetAudience    String? // Target audience description
+  contentPriorities String[] // Key topics/priorities
+
+  // Contact Point (Schema.org)
+  contactType String? // customer service, technical support, sales, etc.
+
+  // Address (for Local SEO)
+  addressStreet     String?
+  addressCity       String?
+  addressCountry    String?
+  addressPostalCode String?
+
+  // Saudi Arabia & Gulf Identifiers (CRITICAL)
+  commercialRegistrationNumber String? // CR Number - CRITICAL
+  vatID                        String? // VAT registration number (ZATCA)
+  taxID                        String? // Tax identification number (ZATCA/Zakat)
+  legalForm                    String? // Entity type: LLC, JSC, Sole Proprietorship, Partnership, etc.
+
+  // Address Enhancement (National Address Format)
+  addressRegion                String? // Province/region (Saudi has 13 regions)
+  addressNeighborhood          String? // Neighborhood/district (National Address)
+  addressBuildingNumber        String? // Building number (National Address)
+  addressAdditionalNumber      String? // Additional number (National Address)
+  addressLatitude              Float?  // Geographic latitude for GeoCoordinates
+  addressLongitude             Float?  // Geographic longitude for GeoCoordinates
+
+  // Classification & Business Info
+  businessActivityCode         String? // Local business activity classification code
+  isicV4                       String? // International Standard Industrial Classification (V4)
+  numberOfEmployees            String? // Employee count (QuantitativeValue as string)
+  // (Deprecated 2026-05-24: licenseNumber + licenseAuthority moved to Client.ymylData JSON, owned by YMYL system)
+
+  // Additional Properties
+  alternateName                String? // Alternative names (Arabic name, trade name, etc.)
+  slogan                       String? // Company slogan/motto
+  newsletterCtaText            String? // Custom newsletter CTA text on article page (MB1)
+  keywords                     String[] // Keywords for classification
+  knowsLanguage                String[] // Languages: ["Arabic", "English"]
+  organizationType             String? // Subtype: Organization, Corporation, LocalBusiness, NonProfit, etc.
+
+  // Organization Relationships
+  parentOrganizationId         String? @db.ObjectId // Parent company reference
+
+  // Twitter Cards
+  // (Twitter cache fields moved to nextjsMetadata)
+
+  // Canonical URL
+  canonicalUrl String?
+
+  // GBP
+  gbpProfileUrl String?
+  gbpPlaceId    String?
+  gbpAccountId  String?
+  gbpLocationId String?
+  gbpCategory   String?
+
+  // Business Details
+  priceRange                String?
+  openingHoursSpecification Json?
+
+  // Subscription Management
+  subscriptionTier      SubscriptionTier
+  subscriptionTierConfigId String? @db.ObjectId // Reference to tier config
+  subscriptionTierConfig SubscriptionTierConfig? @relation("ClientTierConfig", fields: [subscriptionTierConfigId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subscriptionStartDate DateTime?
+  subscriptionEndDate   DateTime?
+  articlesPerMonth      Int? // Calculated from tier (can be overridden manually)
+  // Billing cycle — client-owned (set on the client edit page, not per-invoice). New
+  // invoices read it instead of copying the previous invoice's period. Optional so
+  // legacy docs (which lack it) keep working; defaults to annual on read.
+  billingCycle          String?            @default("annual") // "monthly" | "annual"
+  subscriptionStatus    SubscriptionStatus @default(PENDING)
+  paymentStatus         PaymentStatus      @default(PENDING)
+  // Opening balance — the founding payment («تأسيسه معناه دفع»). Cash received the day
+  // the client is created (paid date = createdAt), recognized as revenue immediately.
+  // NO invoice is issued at founding; the sales report counts this amount directly. When
+  // the client's first article goes live, an admin generates the first invoice from this
+  // balance (flagged Invoice.fromOpeningBalance) — that invoice is a document, not extra
+  // revenue, so the report excludes it to avoid double-counting. Absent for internal/free
+  // accounts and legacy clients.
+  openingBalance        Float?
+  // Platform's own / demo accounts (مدونتي, جبر, بسيطة…). Free by nature — excluded from
+  // every billing, renewal and money counter so they never appear as "expired" or
+  // "unpaid". Admin-controlled via a checkbox on the client edit form. OPTIONAL on
+  // purpose: legacy docs predate the field, so `isSet` (Mongo) must stay available to
+  // tell "not internal" (absent/false) from the handful marked true.
+  isInternal            Boolean?           @default(false)
+
+  // Presentation — featured "premium" partner spotlight. Manual admin toggle
+  // (suggested for active annual subscribers). Drives the «شركاء مميّزون» section,
+  // the badge, the hero slider, and priority ordering on the public site.
+  isFeatured            Boolean            @default(false)
+
+  /// Does the client see the «مجدولة» tab in their console articles page — the queue of
+  /// articles our team has scheduled but not published yet?
+  ///
+  /// Defaults to TRUE because that tab has been live for every client since it was built;
+  /// starting at false would silently take away something they already see. The switch is
+  /// therefore a way to HIDE it from a particular client (a nervous one who reads an
+  /// unpublished date as a promise), not a way to unlock it.
+  ///
+  /// Read only to decide whether to render the tab — never used in a `where` filter. That
+  /// matters: existing documents predate the field, so the key is simply ABSENT in Mongo,
+  /// and an absent key matches neither `true` nor `false` in a query. Reading it back
+  /// returns the default, which is exactly what those clients should get.
+  showSchedule          Boolean            @default(true)
+
+  // ============================================
+  // Publishing to the client's own website
+  // ============================================
+
+  /// Is this client allowed to receive articles on their OWN website instead of
+  /// modonty.com? Admin-only switch on the client edit form. Turning it on is
+  /// what auto-generates `apiKey`, and it cannot be turned on while
+  /// `articlesBaseUrl` is empty.
+  canPublishToOwnSite Boolean @default(false)
+
+  /// Where the client's articles live on their own domain, e.g.
+  /// "https://jbrseo.com/articles". Every canonical URL, `mainEntityOfPage`,
+  /// `og:url` and internal link of that client's articles is built from it.
+  /// Changing it triggers a background rebake of all their articles.
+  articlesBaseUrl String?
+
+  /// Read-only API key handed to the client's website. Plaintext on purpose —
+  /// it grants read access to articles that are about to be public anyway, and a
+  /// hash would make «show me my key» impossible. One key per client, no expiry;
+  /// a lost key is replaced by us on request, not self-served.
+  /// Format: "mdk_" + 32 random bytes, base64url.
+  apiKey           String?
+  apiKeyCreatedAt  DateTime?
+  apiKeyLastUsedAt DateTime? // Last successful call — a silent integration shows up here
+  apiKeySuspended  Boolean   @default(false) // Admin kill-switch; the key stays, the service stops
+
+  // Metadata
+  foundingDate DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Modonty user who owns/manages this client (for notifications e.g. contact reply)
+  userId String? @db.ObjectId
+  user   User?   @relation("ClientOwner", fields: [userId], references: [id], onDelete: SetNull)
+
+  // ============================================
+  // JSON-LD Knowledge Graph
+  // ============================================
+  jsonLdStructuredData   String?   @db.String // Cached @graph JSON string (source of truth)
+  jsonLdLastGenerated    DateTime? // When JSON-LD was last generated
+  jsonLdValidationReport Json? // {adobe: {valid, errors, warnings}, custom: {...}, richResults: {...}}
+  
+  // Complete Meta Tags Object
+  nextjsMetadata              Json?     // Cached Next.js Metadata object (title, description, openGraph, twitter, robots)
+  nextjsMetadataLastGenerated DateTime? // When metadata was last generated
+
+  // Client Notification Preferences
+  notificationPreferences Json? // { articlePublished, articleApproved, commentsNew, supportReplies }
+
+  // ============ Telegram Integration ============
+  telegramChatId           String?   // chat_id بعد ما يتم الربط
+  telegramPairingCode      String?   // كود 6 أرقام للربط
+  telegramPairingExpiresAt DateTime? // الكود ينتهي بعد 10 دقائق
+  telegramConnectedAt      DateTime? // وقت اكتمال الربط
+  telegramEventPreferences Json?     // { commentNew: true, articleView: false, ... } — 26 event toggle
+
+  // ============ Primary CTA («احجز الآن») — admin-controlled ============
+  ctaMode  ClientCtaMode @default(NONE) // NONE | FORM | LINK
+  ctaLabel String?                      // the text actually rendered — the client's own wording, or the picked button's
+  ctaUrl   String?                      // mode=LINK only (https / wa.me / tel:)
+  // Which button from Settings → Dropdown Lists this client is on. Kept so the picker still
+  // shows the chosen button after the admin rewords it for this client: the WORDING lives in
+  // ctaLabel, the IDENTITY lives here. Deliberately not a relation — deleting a button must
+  // never touch a client, whose resolved mode/label/url keep working untouched.
+  ctaPresetId String? @db.ObjectId
+
+  // Content-responsibility acknowledgement (acceptance proof; editable text lives on Settings)
+  disclaimerAcceptedAt       DateTime?
+  disclaimerAcceptedByUserId String?   @db.ObjectId
+  disclaimerAcceptedVersion  Int? // snapshot of Settings.disclaimerVersion at accept time
+
+  // Unified Intake — single JSON home for all content/SEO strategy answers
+  // Replaces the scattered fields below + the SeoIntake model (Phase 2 will remove them).
+  intake          Json?      // { voice, audience, goals, policy, technical, business, story, customers, strategy, competition, ymylReviewer, version }
+  intakeUpdatedAt DateTime?
+  intakeUpdatedBy String?    // userId who last edited the intake
+
+  // SEO Intake & Strategy (static/config - dynamic data in related tables)
+  technicalProfile           Json?   // { platform?, stagingUrl?, hreflang?, cacheType? }
+  seoGoals                   Json?   // { primaryGoal?, kpis?, successMetrics?, timeline? }
+  seoMetrics                 Json?   // { domainAuthority?, backlinkCount?, lastUpdated? }
+  linkBuildingPolicy         String?
+  brandGuidelines            Json?   // { tone?, voice?, colors?, dosAndDonts? }
+  contentTone                String?
+  complianceConstraints      Json?   // { industry?, restrictedClaims?, needsReview? }
+  googleBusinessProfileUrl   String?
+  forbiddenKeywords          String[]
+  forbiddenClaims            String[]
+  competitiveMentionsAllowed Boolean?
+
+  // YMYL (Your Money Your Life) verification — admin-controlled per client.
+  // When isYmyl=true, ymylCategory determines which JSON shape applies to ymylData
+  // (see admin/lib/seo/ymyl-config.ts). Drives form rendering, publish gates, and
+  // JSON-LD output (MedicalClinic / LegalService / FinancialService).
+  isYmyl        Boolean @default(false)
+  ymylCategory  String? // "medical" | "legal" | "financial"
+  ymylData      Json?   // shape varies per ymylCategory — see ymyl-config.ts
+
+  // ============ Client Page (mini-site presentation) ============
+  //
+  // The intro video, twice over — on purpose, for as long as the migration takes.
+  //
+  // `introVideoUrl` is what five clients have today: a bare link to YouTube, Facebook or
+  // Google Drive, on somebody ELSE's channel. Google credits that video to the host, the
+  // client cannot edit or delete it, and two of the five links do not even play. It stays
+  // readable so nobody's page goes dark mid-migration, and it is cleared the moment its
+  // replacement lands.
+  //
+  // `introVideoMedia` is where it goes: our own file on Bunny, carrying the title,
+  // description, cover and duration that a valid VideoObject needs — which is why the
+  // schema.org output for this video has been switched off until now.
+  introVideoUrl        String? // legacy external link — read-only, cleared on upload
+  introVideoMediaId    String? @db.ObjectId
+  // NoAction on both, exactly like logoMedia/heroImageMedia above: Client→Media→Client is
+  // a referential cycle, and Prisma refuses any other action on it.
+  introVideoMedia      Media?  @relation("ClientIntroVideoMedia", fields: [introVideoMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  verificationImageUrl String?             // صورة التوثيق (سجل/ترخيص) — from the client's media library (Bunny), displayed on page (admin-controlled)
+  services             ClientServiceItem[] // OfferCatalog
+  teamMembers          ClientTeamMember[]  // employee: Person[]
+  achievements         ClientAchievement[] // stats counters
+  credentials          ClientCredential[]  // hasCredential
+
+  // Relationships
+  articles          Article[]
+  subscribers       Subscriber[]
+  media             Media[]      @relation("ClientMedia")
+  parentOrganization Client?     @relation("ClientParent", fields: [parentOrganizationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subOrganizations  Client[]     @relation("ClientParent")
+
+  // Interaction relations
+  comments        ClientComment[]
+  clientFaqs      ClientFAQ[]
+  reviews         ClientReview[]
+  likes           ClientLike[]
+  dislikes        ClientDislike[]
+  favorites       ClientFavorite[]
+  views           ClientView[]
+  shares          Share[]
+  conversions       Conversion[]
+  ctaClicks         CTAClick[]
+  leadScoring       LeadScoring[]
+  campaignTracking  CampaignTracking[]
+  engagementDuration EngagementDuration[]
+  contactMessages  ContactMessage[]
+  notifications    Notification[]
+  bookingRequests  BookingRequest[]
+
+  // SEO Intake relations
+  seoIntakes     SeoIntake[]
+  competitors    ClientCompetitor[]
+  targetKeywords ClientKeyword[]
+
+  // Campaign sales lead (from teaser CTA)
+  campaignInterest CampaignInterest?
+
+  // Notes the operations manager pushed to the content team's Telegram about this client.
+  clientNotifications ClientNotification[]
+
+  // Billing
+  invoices Invoice[]
+
+  @@index([industryId])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([apiKey]) // Bearer auth on the client-site read endpoint resolves the owner by key
+  @@map("clients")
+}
+
+/// Booking / lead requests from the «احجز الآن» / «اترك رقمك» CTA. Two channels (see `channel`):
+/// FORM (phone callback, login required → name/email snapshotted from session) or WhatsApp
+/// (tracked click, anonymous). `source` = the surface it came from (article_dock/card/client_page/list).
+model BookingRequest {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  clientId    String   @db.ObjectId
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  articleId   String?  @db.ObjectId // null when booked from client page / listing (not an article)
+  article     Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
+  userId      String?  @db.ObjectId // SetNull on account deletion — snapshot below preserves the lead
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  source      String // article_dock | article_card | client_page | client_list
+  // Lead channel: "form" = «اترك رقمك» callback (has phone) · "whatsapp" = tracked WhatsApp
+  // click (anonymous — no phone; the conversation happens on WhatsApp itself).
+  channel     String   @default("form")
+  name        String? // snapshot from session (null for whatsapp leads)
+  email       String? // snapshot from session (null for whatsapp leads)
+  phone       String? // collected by the form (null for whatsapp leads)
+  preferredAt DateTime? // free-text preferred time now lives in `message`; kept for legacy
+  confirmedAt DateTime? // appointment time the provider CONFIRMS from the console
+  message     String?
+  status      String   @default("new") // new | contacted | done | archived
+  // Visitor identity (from getVisitorContext) — powers whatsapp-lead dedup:
+  // one whatsapp lead per (visitorId × clientId × sessionId). Also useful analytics.
+  visitorId   String?
+  sessionId   String?
+  // Geo snapshot from Vercel headers (x-vercel-ip-*) — shown on the whatsapp lead row.
+  country     String?
+  city        String?
+  ipAddress   String?
+  userAgent   String?
+  // YMYL liability acknowledgment — true when the visitor ticked the disclaimer
+  // (required for isYmyl clients; false otherwise). Recorded as proof of consent.
+  disclaimerAccepted   Boolean   @default(false)
+  disclaimerAcceptedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([clientId, createdAt])
+  @@index([clientId, channel]) // console filter: form vs whatsapp
+  @@index([clientId, channel, visitorId, sessionId]) // whatsapp-lead dedup lookup
+  @@index([userId])
+  @@index([status])
+  @@map("booking_requests")
+}
+
+// ============================================
+// SEO INTAKE MODELS
+// ============================================
+
+model SeoIntake {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  clientId    String   @db.ObjectId
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  answers     Json     // Full questionnaire answers by section
+  collectedAt DateTime @default(now())
+  collectedBy String?  // User/system who collected
+
+  @@index([clientId])
+  @@map("seo_intakes")
+}
+
+model ClientCompetitor {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String  @db.ObjectId
+  client   Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name     String
+  url      String?
+  notes    String?
+  order    Int     @default(0)  // Display/priority order
+
+  @@index([clientId])
+  @@map("client_competitors")
+}
+
+model ClientKeyword {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String  @db.ObjectId
+  client   Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  keyword  String
+  intent   String? // transactional | informational | commercial
+  priority Int     @default(0)
+  reason   String?
+
+  @@index([clientId])
+  @@map("client_keywords")
+}
+
+// ============================================
+// CAMPAIGN INTEREST — sales leads from teaser CTA
+// ============================================
+
+enum CampaignReach {
+  OWN      // own newsletter subscribers
+  INDUSTRY // subscribers from same industry across modonty
+  FULL     // entire modonty subscriber base
+}
+
+enum CampaignInterestStatus {
+  NEW       // just submitted, awaiting team contact
+  CONTACTED // team reached out
+  CONVERTED // client booked/paid for a campaign
+  CANCELLED // client declined or unresponsive
+}
+
+model CampaignInterest {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String @unique @db.ObjectId // one record per client (Idempotency: subsequent clicks update reach)
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  reach  CampaignReach
+  source String?       // which CTA was clicked: "hero" | "tier-own" | "tier-industry" | "tier-full" | "final-cta"
+
+  status CampaignInterestStatus @default(NEW)
+
+  assignedTo   String?   @db.ObjectId // User handling this lead
+  notes        String?                 // admin notes (history of reach changes appended automatically)
+  contactedAt  DateTime?
+  convertedAt  DateTime?
+  cancelledAt  DateTime?
+  cancelReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("campaign_interests")
+}
+
+// ============================================
+// SUBSCRIPTION TIER CONFIG
+// ============================================
+
+model SubscriptionTierConfig {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+
+  // ─── Step A (compatibility — تُحذف Step B بعد refactor الـ 52 ملف) ───
+  tier            SubscriptionTier @unique
+  price           Float
+  articlesPerMonth Int
+  name            String
+  isActive        Boolean          @default(true)
+  isPopular       Boolean          @default(false)
+  description     String?
+  createdAt       DateTime         @default(now())
+
+  // ─── Jbrseo integration (Round 6) ───
+  jbrseoId        String?         @unique          // "free" | "starter" | "growth" | "scale"
+  pricing         Json?                            // { SA: { mo, yr }, EG: { mo, yr } }
+  articleCounts   Json?                            // global mapping: { اسم الباقة: عدد المقالات }
+  syncedAtSA      DateTime?
+  syncedAtEG      DateTime?
+
+  updatedAt       DateTime        @updatedAt
+
+  // Relationships
+  clients         Client[]        @relation("ClientTierConfig")
+
+  @@map("subscription_tier_configs")
+}
+
+// ============================================
+// JBRSEO SUBSCRIBERS MIRROR
+// ============================================
+// Pure mirror of jbrseo's Subscriber collection — display only, no workflow.
+// Synced via admin button (manual). See: JBRSEO-INTEGRATION-PLAN.md Phase 4.
+
+model JbrseoSubscriber {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  jbrseoId        String   @unique          // _id الأصلي من jbrseo
+  contactName     String?
+  email           String
+  phone           String
+  businessName    String?
+  businessType    String?
+  planName        String                    // الباقة اللي اختارها
+  planIndex       Int?
+  country         String                    // "SA" | "EG"
+  isAnnual        Boolean
+  jbrseoCreatedAt DateTime                  // الـ createdAt الأصلي من jbrseo
+  syncedAt        DateTime @default(now())
+
+  // ─── Subscriber → Client conversion tracking ───
+  convertedToClientId String?   @db.ObjectId   // null = لسه، موجود = اتحوّل لعميل
+  convertedAt         DateTime?                 // متى تم التحويل
+
+  @@index([country])
+  @@index([jbrseoCreatedAt])
+  @@index([convertedToClientId])
+  @@map("jbrseo_subscribers")
+}
+
+// ============================================
+// EMAIL EVENTS (Resend webhook tracking)
+// ============================================
+// Generic, reusable log of Resend email events (delivered, opened, clicked, bounced...).
+// Linked to an entity via tags sent with the email (clientId + emailType). No formal
+// relation — query by clientId directly (same pattern as conversion tracking).
+model EmailEvent {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  emailId   String                         // Resend data.email_id
+  type      String                         // delivered | opened | clicked | bounced | sent | complained | delivery_delayed
+  recipient String?                        // data.to[0]
+  subject   String?
+  emailType String?                        // our tag: e.g. "client-welcome"
+  clientId  String?   @db.ObjectId         // our tag: which client this email was about
+  eventAt   DateTime?                      // Resend data.created_at (when the event happened)
+  createdAt DateTime  @default(now())       // when we received the webhook
+
+  @@index([emailId])
+  @@index([clientId])
+  @@index([type])
+  @@index([emailType])
+  @@map("email_events")
+}
+
+// ============================================
+// AUTHOR MODELS
+// ============================================
+
+model Author {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String // Schema.org Person
+  slug String @unique
+
+  // Schema.org Person - Name fields
+  firstName String? // Schema.org givenName
+  lastName  String? // Schema.org familyName
+
+  // Schema.org Person - E-E-A-T fields
+  jobTitle String? // WorksFor job title
+  worksFor String? @db.ObjectId // Organization/Client reference
+  bio      String?
+  image    String? // Profile image
+  imageAlt String? // Alt text for profile image (accessibility + SEO)
+  // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
+  imageMediaId String? @db.ObjectId
+  imageMedia   Media?  @relation("AuthorImageMedia", fields: [imageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  url      String? // Author page URL
+  email    String? // Schema.org email - Contact email (optional, privacy-sensitive)
+
+  // Social profiles for verification (sameAs)
+  linkedIn String?
+  twitter  String?
+  facebook String?
+  sameAs   String[] // Additional social profiles
+
+  // E-E-A-T Signals
+  credentials        String[] // Degrees, certifications
+  qualifications     String[] // Professional qualifications
+  expertiseAreas     String[] // Topics of specialization (knowsAbout)
+  experienceYears    Int?
+  verificationStatus Boolean  @default(false)
+  memberOf          String[] // Schema.org memberOf - Professional organizations (E-E-A-T authoritativeness)
+
+  // Education (optional structured data)
+  education Json? // Array of education objects
+
+  // SEO
+  seoTitle       String?
+  seoDescription String?
+  socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
+  socialImageAlt String? // Alt text
+  // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
+  socialImageMediaId String? @db.ObjectId
+  socialImageMedia   Media?  @relation("AuthorSocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cloudinaryPublicId String? // Cloudinary public_id for direct deletion
+  canonicalUrl   String?
+
+  // === SEO Cache - Standard Pattern ===
+  nextjsMetadata              Json?
+  nextjsMetadataLastGenerated DateTime?
+  jsonLdStructuredData        String?   @db.String
+  jsonLdLastGenerated         DateTime?
+  jsonLdValidationReport      Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  articles         Article[] @relation("ArticleAuthor")
+  reviewedArticles Article[] @relation("ArticleReviewer")
+
+  @@map("authors")
+}
+
+// ============================================
+// CONTENT MODELS
+// ============================================
+
+model Category {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  slug        String  @unique
+  description String?
+  parentId    String? @db.ObjectId // Hierarchical categories
+
+  // SEO
+  seoTitle       String?
+  seoDescription String?
+  socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
+  socialImageAlt String? // Alt text
+  // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
+  socialImageMediaId String? @db.ObjectId
+  socialImageMedia   Media?  @relation("CategorySocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cloudinaryPublicId String? // Cloudinary public_id for direct deletion
+  canonicalUrl   String?
+
+  // === SEO Cache - Standard Pattern ===
+  nextjsMetadata              Json?
+  nextjsMetadataLastGenerated DateTime?
+  jsonLdStructuredData        String?   @db.String
+  jsonLdLastGenerated         DateTime?
+  jsonLdValidationReport      Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  articles Article[]
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children Category[] @relation("CategoryHierarchy")
+
+  @@index([parentId])
+  @@map("categories")
+}
+
+model Tag {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  slug        String  @unique
+  description String?
+
+  // SEO
+  seoTitle       String?
+  seoDescription String?
+  socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
+  socialImageAlt String? // Alt text
+  // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
+  socialImageMediaId String? @db.ObjectId
+  socialImageMedia   Media?  @relation("TagSocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cloudinaryPublicId String? // Cloudinary public_id for direct deletion
+  canonicalUrl   String?
+
+  // === SEO Cache - Standard Pattern ===
+  nextjsMetadata              Json?
+  nextjsMetadataLastGenerated DateTime?
+  jsonLdStructuredData        String?   @db.String
+  jsonLdLastGenerated         DateTime?
+  jsonLdValidationReport      Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  articles ArticleTag[]
+
+  @@map("tags")
+}
+
+model Industry {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  slug        String  @unique
+  description String?
+
+  // SEO
+  seoTitle       String?
+  seoDescription String?
+  socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
+  socialImageAlt String? // Alt text
+  // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
+  socialImageMediaId String? @db.ObjectId
+  socialImageMedia   Media?  @relation("IndustrySocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cloudinaryPublicId String? // Cloudinary public_id for direct deletion
+  canonicalUrl   String?
+
+  // === SEO Cache - Standard Pattern ===
+  nextjsMetadata              Json?
+  nextjsMetadataLastGenerated DateTime?
+  jsonLdStructuredData        String?   @db.String
+  jsonLdLastGenerated         DateTime?
+  jsonLdValidationReport      Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  clients Client[]
+
+  @@map("industries")
+}
+
+/// Permanent (308) redirects served by proxy.ts for merged/renamed entity slugs.
+/// section = matcher segment (articles|categories|tags|industries|clients).
+/// One redirect per (section, fromSlug); target is another live slug in the same section.
+/// Google treats 308 ≡ 301 (Search Central) → passes link equity to the successor.
+model Redirect {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  section   String
+  fromSlug  String
+  toSlug    String
+  createdAt DateTime @default(now())
+
+  @@unique([section, fromSlug])
+  @@map("redirects")
+}
+
+model Article {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Optimistic concurrency — user-initiated edits only.
+  // System operations (SEO regen, JSON-LD storage, cron) MUST NOT bump this.
+  // Only update-article action increments it. Use this (not updatedAt) for conflict detection.
+  userVersion Int @default(0)
+
+  // Basic content
+  title         String // Schema.org Article headline
+  slug          String
+  excerpt       String?
+  content String // Article body (markdown/HTML)
+  audioUrl      String? // Audio version URL (A7)
+
+  // Relationships
+  clientId   String    @db.ObjectId
+  client     Client    @relation(fields: [clientId], references: [id])
+  categoryId String?   @db.ObjectId
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  authorId   String    @db.ObjectId
+  author     Author    @relation("ArticleAuthor", fields: [authorId], references: [id])
+
+  // YMYL reviewer (required when client.isYmyl=true). Cross-client allowed so
+  // freelance specialists can review for multiple clients.
+  reviewedById String? @db.ObjectId
+  reviewer     Author? @relation("ArticleReviewer", fields: [reviewedById], references: [id])
+
+  // Status & workflow
+  status        ArticleStatus @default(WRITING)
+  scheduledAt   DateTime?
+  featured      Boolean       @default(false)
+  revisionNotes String? // Client's feedback when requesting changes (status=NEEDS_REVISION)
+
+  // ============================================
+  // Client-site articles («مقالات العملاء»)
+  // ============================================
+
+  /// DESTINATION, deliberately separate from `status`. Set once, when the article
+  /// is created from the admin's «مقالات العملاء» section — there is no checkbox
+  /// and no button that moves an article between sections.
+  ///
+  /// It drives BAKING, not visibility: when true, `canonicalUrl`,
+  /// `mainEntityOfPage`, the JSON-LD card, `og:url` and every internal link are
+  /// built from `client.articlesBaseUrl` instead of modonty's domain — from the
+  /// very first save, while the article is still a draft. Visibility is the job
+  /// of `status: PUBLISHED_ON_CLIENT_SITE`.
+  ///
+  /// Never used alone in a public `where` filter: existing documents predate the
+  /// field, so the key is simply ABSENT in Mongo and matches neither true nor
+  /// false. Reading it back returns the default, which is correct for them.
+  isClientSiteArticle Boolean @default(false)
+
+  /// The client's ONE main article — the hub every other article of that client
+  /// links up to. Marked by the editor, and only for a client who already has at
+  /// least four articles (a hub with nothing under it is a thin page).
+  isMainArticle Boolean @default(false)
+
+  /// Last time the client's own website actually fetched this article through
+  /// the console read endpoint. Absent = never fetched. This is what exposes a
+  /// client whose integration broke silently.
+  lastFetchedAt DateTime?
+
+  // Schema.org Article - Required fields
+  datePublished    DateTime? // ISO 8601
+  dateModified     DateTime  @updatedAt
+  lastReviewed     DateTime? // Content freshness signal
+  mainEntityOfPage String? // Canonical URL
+
+  // Schema.org Article - Extended fields
+  wordCount          Int? // Auto-calculated content depth
+  readingTimeMinutes Int? // Auto-calculated (~200-250 words/min)
+  contentDepth       String? // short, medium, long
+
+  // Meta tags
+  seoTitle       String?
+  seoDescription String? // 155-160 chars optimal
+
+  // Open Graph (Complete)
+  ogArticleAuthor        String?
+  ogArticlePublishedTime DateTime?
+  ogArticleModifiedTime  DateTime?
+
+  // Technical SEO
+  canonicalUrl String?
+
+  // Breadcrumb support
+  breadcrumbPath Json? // Array for BreadcrumbList schema
+
+  // Featured media
+  featuredImageId String? @db.ObjectId
+  featuredImage   Media?  @relation("ArticleFeaturedImage", fields: [featuredImageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // ============================================
+  // JSON-LD Knowledge Graph (Phase 1)
+  // ============================================
+
+  // JSON-LD Cache & Validation
+  jsonLdStructuredData   String?   @db.String // Cached @graph JSON string (source of truth)
+  jsonLdLastGenerated    DateTime? // When JSON-LD was last generated
+  jsonLdValidationReport Json? // {adobe: {valid, errors, warnings}, custom: {...}, richResults: {...}}
+
+  // Content for structured data
+  articleBodyText String? // Plain text extracted from content (for schema.org articleBody)
+
+  // Optional semantic enhancement (for AI crawlers)
+  semanticKeywords Json? // Array of {name, wikidataId?, url?} for entity disambiguation
+
+  // E-E-A-T enhancement
+  citations String[] // External authoritative source URLs (isBasedOn/citation)
+
+  // Schema versioning (safe rollback)
+  // (removed: jsonLdVersion/jsonLdHistory/jsonLdDiffSummary)
+
+  // Performance tracking
+  // (removed: jsonLdGenerationTimeMs/performanceBudgetMet)
+
+  // ============================================
+  // Next.js Metadata Cache
+  // ============================================
+  nextjsMetadata Json? // Cached Next.js Metadata object
+  nextjsMetadataLastGenerated DateTime? // When metadata was last generated
+
+  // Denormalized interaction counts (updated atomically with each interaction)
+  likesCount     Int @default(0)
+  dislikesCount  Int @default(0)
+  commentsCount  Int @default(0)
+  favoritesCount Int @default(0)
+  viewsCount     Int @default(0)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  tags        ArticleTag[]
+  versions    ArticleVersion[]
+  analytics   Analytics[]
+  relatedFrom RelatedArticle[] @relation("ArticleRelatedFrom")
+  relatedTo   RelatedArticle[] @relation("ArticleRelatedTo")
+  faqs        ArticleFAQ[]
+  gallery     ArticleMedia[] // Image gallery for article
+  // Reels that PROMOTE this article — a third, distinct meaning next to
+  // `featuredImage` (the article's cover) and `gallery` (images inside it).
+  reelMedia   Media[]        @relation("MediaReelArticle")
+
+  // Interaction relations
+  comments    Comment[]
+  likes       ArticleLike[]
+  dislikes    ArticleDislike[]
+  favorites   ArticleFavorite[]
+  views       ArticleView[]
+  shares      Share[]
+  conversions Conversion[]
+  ctaClicks         CTAClick[]
+  linkClicks        ArticleLinkClick[]
+  campaignTracking  CampaignTracking[]
+  engagementDuration EngagementDuration[]
+  bookingRequests   BookingRequest[]
+
+  @@unique([clientId, slug]) // Slug unique per client
+  @@index([clientId, status, datePublished])
+  // Read endpoint for client sites: filter by owner + PUBLISHED_ON_CLIENT_SITE,
+  // page with a cursor on updatedAt.
+  @@index([clientId, status, updatedAt])
+  @@index([status, datePublished])
+  @@index([categoryId, status, datePublished])
+  @@index([authorId, status, datePublished])
+  @@index([dateModified])
+  @@index([datePublished])
+  @@map("articles")
+}
+
+model ArticleVersion {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  // Snapshot of article data
+  title          String
+  content        String
+  excerpt        String?
+  seoTitle       String?
+  seoDescription String?
+
+  // Audit trail
+  createdBy String?  @db.ObjectId // User ID
+  createdAt DateTime @default(now())
+
+  @@index([articleId, createdAt])
+  @@map("article_versions")
+}
+
+model ArticleTag {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String  @db.ObjectId
+  tagId     String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([articleId, tagId])
+  @@index([articleId])
+  @@index([tagId])
+  @@map("article_tags")
+}
+
+// ============================================
+// ARTICLE MEDIA GALLERY (Phase 1 - JSON-LD)
+// ============================================
+
+model ArticleMedia {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String @db.ObjectId
+  mediaId   String @db.ObjectId
+
+  // Gallery metadata
+  position Int     @default(0) // Display order in gallery (drag & drop)
+  caption  String? // Per-article caption override (differs from Media.caption)
+  altText  String? // Per-article alt text override (for SEO customization)
+
+  // Relationships
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  media   Media   @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([articleId, mediaId])
+  @@index([articleId, position])
+  @@index([mediaId])
+  @@map("article_media")
+}
+
+// ============================================
+// MEDIA MODELS
+// ============================================
+
+model Media {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // File info
+  filename String
+  url      String // CDN/Storage URL
+  mimeType String
+  fileSize Int? // Bytes
+
+  // Schema.org ImageObject
+  width           Int?
+  height          Int?
+  encodingFormat  String? // image/jpeg, image/png, etc.
+  contentUrl      String?
+  thumbnailUrl    String?
+  copyrightHolder String?
+
+  // SEO (Critical)
+  altText     String? // Required for accessibility and SEO
+  caption     String?
+  credit      String?
+  title       String?
+  description String?
+  license     String? // License type (CC0, CC-BY, CC-BY-SA, CC-BY-NC, Commercial, All Rights Reserved, Public Domain)
+  creator     String? // Creator/Author name
+  dateCreated DateTime? // Date when the image was created (from EXIF or manual)
+
+  // Schema.org Enhancement
+  geoLatitude     Float? // Geographic latitude
+  geoLongitude    Float? // Geographic longitude
+  geoLocationName String? // Human-readable location name
+  contentLocation String? // Content location (where the image was taken/shows)
+  exifData        Json? // Full EXIF metadata stored as JSON
+
+  // Cloudinary Integration
+  cloudinaryPublicId  String? // Cloudinary public ID
+  cloudinaryVersion   String? // Cloudinary version
+  cloudinarySignature String? // Cloudinary signature
+
+  // Bunny Migration (ADDITIVE — dual-read). Does NOT touch `url`.
+  // Production keeps reading `url` (Cloudinary) until the controlled switch (Epic 3.5).
+  bunnyUrl String? // Bunny CDN URL — populated by Dual-Write (new uploads) + migration script (old assets)
+
+  // Blur placeholder for next/image `placeholder="blur"` — a base64 data URL of a 10px WebP.
+  // Next.js requires a DATA URL, never a remote link: it embeds the value as `href` inside an
+  // inline SVG served through `background-image`, and browsers block external loads from there
+  // (verified in next@16.2.9 `get-img-props.js:508` + `image-blur-svg.js`). ~110-130 chars each.
+  // Generated with sharp at every write path — Bunny's optimizer is OFF on all pull zones.
+  // Do NOT pre-blur it: Next applies `feGaussianBlur stdDeviation='20'` itself.
+  blurDataURL String?
+
+  // Client association (REQUIRED after migration)
+  // Temporarily optional to allow querying existing media without clientId
+  clientId String? @db.ObjectId
+  client   Client? @relation("ClientMedia", fields: [clientId], references: [id], onDelete: Cascade)
+
+  // Scope: CLIENT | GENERAL | PLATFORM
+  // Existing records without this field default to GENERAL on read
+  scope MediaScope @default(GENERAL)
+
+  // Media type classification
+  type MediaType @default(GENERAL)
+
+  // Primary client media roles (centralized; many clients can share same media)
+  logoClients      Client[] @relation("ClientLogoMedia")
+  heroImageClients Client[] @relation("ClientHeroImageMedia")
+  introVideoClients Client[] @relation("ClientIntroVideoMedia")
+  // Modonty Core (T2): back-relations for the six platform entities
+  authorImages        Author[]   @relation("AuthorImageMedia")
+  authorSocialImages  Author[]   @relation("AuthorSocialImageMedia")
+  categorySocialImages Category[] @relation("CategorySocialImageMedia")
+  tagSocialImages     Tag[]      @relation("TagSocialImageMedia")
+  industrySocialImages Industry[] @relation("IndustrySocialImageMedia")
+  modontyHeroImages   Modonty[]  @relation("ModontyHeroImageMedia")
+  modontySocialImages Modonty[]  @relation("ModontySocialImageMedia")
+
+  // ── Reels (merged 2026-08-05 — the `Reel` table is gone) ─────────────────
+  //
+  // TWO INDEPENDENT SWITCHES, not one state. An image can sit in the client's
+  // gallery AND run as a reel at the same time; it can also be pulled out of the
+  // gallery and stay a reel. Neither switch implies the other.
+  //
+  // `inGallery` defaults to true, but a default does NOT reach rows that already
+  // exist — in MongoDB the key is simply ABSENT, and an absent key matches neither
+  // `true` nor `null`. Existing rows are filled explicitly in the backfill step;
+  // until then no gallery query may read this field, or every gallery renders empty.
+  inGallery Boolean @default(true)
+  inReels   Boolean @default(false)
+
+  // Reel workflow — null on every file that never entered the reels flow.
+  reelStatus          ReelStatus?
+  reelUploadedBy      ReelUploader?
+  reelRejectionReason String?
+  // Standalone watch page. Uniqueness is checked IN CODE: a database unique index
+  // would reject the second file that simply has no slug at all.
+  reelSlug            String?
+  reelApprovedAt      DateTime?
+  reelPublishedAt     DateTime? // feed = newest first
+  reelRevealedAt      DateTime? // hidden-batch launch — null = still hidden
+
+  /// The article this reel promotes. A third meaning, distinct from
+  /// `featuredArticles` (this file is the article's cover) and `articleGallery`
+  /// (this file sits inside the article) — which is why it needs its own field.
+  reelArticleId String?  @db.ObjectId
+  reelArticle   Article? @relation("MediaReelArticle", fields: [reelArticleId], references: [id], onDelete: SetNull)
+
+  // Video reels (Bunny Stream) — full public URLs, modonty holds zero Bunny secrets.
+  // Images need none of these: `url` and `thumbnailUrl` above already carry them.
+  bunnyVideoId String? // Bunny Stream video GUID
+  playbackUrl  String? // HLS playlist
+  mp4Url       String? // Google requires a fetchable file (no token auth)
+  durationSec  Int? // ≤ 90s locked limit
+
+  transcript       String?
+  transcriptStatus ReelTranscriptStatus?
+
+  // Cached counters — TikTok-style rail: like / comment / favorite, no dislike.
+  viewsCount     Int @default(0)
+  likesCount     Int @default(0)
+  commentsCount  Int @default(0)
+  favoritesCount Int @default(0)
+
+  // Relationships
+  featuredArticles Article[]      @relation("ArticleFeaturedImage")
+  articleGallery   ArticleMedia[] // Gallery appearances in articles
+  comments         MediaComment[]
+  reactions        MediaReaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([clientId, createdAt])
+  @@index([clientId, type])
+  @@index([scope])
+  @@index([clientId, scope])
+  @@index([filename])
+  // Reels — the three that came over from the old table, plus the gallery switch.
+  // Without them the feed and the approval queue scan the whole media collection.
+  @@index([clientId, reelStatus])
+  @@index([reelStatus, reelPublishedAt])
+  @@index([reelArticleId])
+  @@index([clientId, inGallery])
+  @@map("media")
+}
+
+// ============================================
+// ANALYTICS MODELS
+// ============================================
+
+model Analytics {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  clientId  String? @db.ObjectId
+
+  // User/Session tracking (for unique visitor calculation)
+  sessionId String? // Browser session ID (cookie-based)
+  userId    String? @db.ObjectId // User ID if logged in
+
+  // Core Web Vitals (2025 Standard) - per view
+  lcp  Float? // Largest Contentful Paint (target < 2.5s)
+  cls  Float? // Cumulative Layout Shift (target < 0.1)
+  inp  Float? // Interaction to Next Paint (target < 200ms) - replaced FID in 2024
+  fid  Float? // First Input Delay (legacy, target < 100ms)
+  ttfb Float? // Time to First Byte (target < 800ms)
+  tbt  Float? // Total Blocking Time (target < 200ms)
+
+  // Engagement metrics - per view
+  timeOnPage       Float? // Seconds spent on page for THIS view
+  scrollDepth      Float? // Percentage scrolled (0-100) for THIS view
+  bounced          Boolean @default(false) // Did user leave immediately? (bounce)
+  clickThroughRate Float? // CTR for THIS view (if applicable)
+
+  // Traffic sources - per view
+  source         TrafficSource @default(DIRECT) // default was ORGANIC pre-2026-07-07 (misleading)
+  searchEngine   String? // Google, Bing, etc.
+  referrerDomain String?
+  userAgent      String? // Browser user agent
+  ipAddress      String? // IP address (for geo-location if needed)
+
+  // Geo - per view (Vercel edge headers: x-vercel-ip-country/-country-region/-city — free, no external API)
+  country String? // ISO 3166-1 alpha-2 (SA, EG, ...)
+  region  String? // ISO 3166-2 region portion
+  city    String? // decoded city name
+
+  timestamp DateTime @default(now())
+
+  @@index([articleId, timestamp])
+  @@index([clientId, timestamp])
+  @@index([timestamp])
+  @@index([sessionId])
+  @@index([userId])
+  @@map("analytics")
+}
+
+// ============================================
+// NEWSLETTER MODELS
+// ============================================
+
+model Subscriber {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  email    String
+  name     String?
+  clientId String  @db.ObjectId
+  client   Client  @relation(fields: [clientId], references: [id])
+
+  // GDPR compliance
+  subscribed     Boolean   @default(true)
+  subscribedAt   DateTime  @default(now())
+  unsubscribedAt DateTime?
+  consentGiven   Boolean   @default(false)
+  consentDate    DateTime?
+
+  // Preferences
+  preferences Json? // Notification preferences
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([email, clientId])
+  @@index([clientId])
+  @@map("subscribers")
+}
+
+model NewsSubscriber {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  email          String    @unique
+  name           String?
+  subscribed     Boolean   @default(true)
+  subscribedAt   DateTime  @default(now())
+  unsubscribedAt DateTime?
+  consentGiven   Boolean   @default(false)
+  consentDate    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([subscribed])
+  @@index([createdAt])
+  @@map("news_subscribers")
+}
+
+// ============================================
+// RELATION MODELS
+// ============================================
+
+model ArticleFAQ {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  question String // Schema.org Question
+  answer   String? // Optional until client answers (reader submissions)
+  position Int // Order in FAQ list
+  status   ArticleFAQStatus @default(PENDING) // PENDING until client answers, then PUBLISHED
+
+  submittedByName  String? // Set for reader submissions
+  submittedByEmail String? // Set for reader submissions
+  source           String? @default("manual") // "manual" | "chatbot" | "user" (CHAT-FAQ2)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([articleId, position])
+  @@index([articleId, status])
+  @@map("faqs")
+}
+
+model ClientFAQ {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  question String // Schema.org Question
+  answer   String? // Optional until client answers (reader submissions)
+  position Int // Order in FAQ list
+  status   ArticleFAQStatus @default(PENDING) // reuse existing enum — PENDING until answered, then PUBLISHED
+
+  submittedByName  String? // Set for reader submissions
+  submittedByEmail String? // Set for reader submissions
+  source           String? @default("manual") // "manual" | "chatbot" | "user"
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId, position])
+  @@index([clientId, status])
+  @@map("client_faqs")
+}
+
+model RelatedArticle {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String  @db.ObjectId
+  relatedId String  @db.ObjectId
+  article   Article @relation("ArticleRelatedFrom", fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  related   Article @relation("ArticleRelatedTo", fields: [relatedId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  relationshipType String? @default("related") // related, similar, recommended
+
+  createdAt DateTime @default(now())
+
+  @@unique([articleId, relatedId])
+  @@index([articleId])
+  @@index([relatedId])
+  @@map("related_articles")
+}
+
+// ============================================
+// INTERACTION MODELS
+// ============================================
+
+model Comment {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Content
+  content String // Comment text
+
+  // Relationships
+  articleId String @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  authorId String? @db.ObjectId // Optional - allow anonymous comments
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  // Reply support (nested comments)
+  parentId String? @db.ObjectId // If null, it's a top-level comment
+  parent   Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies  Comment[] @relation("CommentReplies")
+
+  // Status & Moderation
+  status   CommentStatus @default(PENDING) // PENDING, APPROVED, REJECTED, DELETED
+  isEdited Boolean       @default(false)
+
+  // Timestamps
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  editedAt  DateTime? // When comment was last edited
+
+  // Relationships for interactions
+  likes    CommentLike[]
+  dislikes CommentDislike[]
+
+  @@index([articleId, createdAt])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([status])
+  @@map("comments")
+}
+
+model ArticleLike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId // Optional - allow anonymous likes
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Optional: session-based tracking for anonymous users
+  sessionId String? // Browser session ID for anonymous likes
+
+  createdAt DateTime @default(now())
+
+  // Ensure one like per user per article
+  @@unique([articleId, userId])
+  @@unique([articleId, sessionId]) // For anonymous users
+  @@index([articleId])
+  @@index([userId])
+  @@map("article_likes")
+}
+
+model ArticleDislike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([articleId, userId])
+  @@unique([articleId, sessionId])
+  @@index([articleId])
+  @@index([userId])
+  @@map("article_dislikes")
+}
+
+model ArticleFavorite {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  userId String @db.ObjectId // Required - favorites need user account
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([articleId, userId])
+  @@index([articleId])
+  @@index([userId])
+  @@map("article_favorites")
+}
+
+model CommentLike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  commentId String  @db.ObjectId
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
+  @@unique([commentId, sessionId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("comment_likes")
+}
+
+model CommentDislike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  commentId String  @db.ObjectId
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
+  @@unique([commentId, sessionId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("comment_dislikes")
+}
+
+model ArticleView {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId // Optional - logged in users
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Anonymous tracking
+  sessionId String? // Browser session ID
+  ipAddress String? // IP address for unique visitor tracking
+
+  // Metadata
+  userAgent String? // Browser user agent
+  referrer  String? // Where user came from
+
+  createdAt DateTime @default(now())
+
+  @@index([articleId, createdAt])
+  @@index([userId])
+  @@index([sessionId])
+  @@map("article_views")
+}
+
+model ClientView {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Anonymous tracking
+  sessionId String?
+  ipAddress String?
+
+  // Metadata
+  userAgent String?
+  referrer  String?
+
+  // Traffic source (classified — added 2026-07-07 with the geo fields)
+  source         TrafficSource @default(DIRECT)
+  searchEngine   String?
+  referrerDomain String?
+
+  // Geo - per view (Vercel edge headers — free, no external API)
+  country String? // ISO 3166-1 alpha-2
+  region  String? // ISO 3166-2 region portion
+  city    String? // decoded city name
+
+  createdAt DateTime @default(now())
+
+  @@index([clientId, createdAt])
+  @@index([userId])
+  @@index([sessionId])
+  @@map("client_views")
+}
+
+/// Universal page-view log — one row per genuine page entry on ANY surface NOT
+/// already covered by ArticleView/ClientView (home, categories, tags, authors,
+/// help, search, etc.). Feeds the footer "بالأرقام" views total alongside
+/// article + client views (additive, no double-count). Honest count: a
+/// refresh-in-place is suppressed in /api/track/pageview; a genuine return after
+/// navigating elsewhere counts.
+model PageView {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  path     String // pathname, e.g. "/", "/categories", "/tags/seo"
+  pageType String // coarse bucket: home | categories | tags | authors | help | search | other
+
+  userId    String? @db.ObjectId
+  sessionId String?
+
+  userAgent String?
+  referrer  String?
+
+  createdAt DateTime @default(now())
+
+  @@index([sessionId, createdAt])
+  @@index([createdAt])
+  @@map("page_views")
+}
+
+model ClientComment {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Content
+  content String // Comment text
+
+  // Relationships
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  authorId String? @db.ObjectId // Optional - allow anonymous comments
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  // Reply support (nested comments)
+  parentId String? @db.ObjectId // If null, it's a top-level comment
+  parent   ClientComment? @relation("ClientCommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies  ClientComment[] @relation("ClientCommentReplies")
+
+  // Status & Moderation
+  status   CommentStatus @default(PENDING)
+  isEdited Boolean       @default(false)
+
+  // Timestamps
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  editedAt  DateTime?
+
+  // Relationships for interactions
+  likes    ClientCommentLike[]
+  dislikes ClientCommentDislike[]
+
+  @@index([clientId, createdAt])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([status])
+  @@map("client_comments")
+}
+
+/// Customer review of a CLIENT's service — stars + text, one per visitor per client.
+/// Separate from ClientComment (discussion): rating is required, @@unique enforces
+/// one review per author, feeds AggregateRating + Review[] JSON-LD on the client page.
+/// A visitor's review OF a client. `reviewer` is a `User` (a signed-in visitor) — it is NOT
+/// the `Author` model, which is the person who writes articles. The field used to be called
+/// `author`, which read as if a Client had an Author relation; it never did (renamed
+/// 2026-07-30). `@map("authorId")` keeps the stored MongoDB field name, so this rename is
+/// code-only: no document changes, nothing to migrate, zero production impact.
+///
+/// NOTE on `onDelete: Cascade` — MongoDB has no referential actions; Prisma emulates them
+/// "on a best-effort basis" and only for deletes issued through Prisma Client. A user removed
+/// any other way leaves an orphaned reviewerId, so every READ must tolerate a missing
+/// reviewer instead of joining the required relation (see client-reviews.ts).
+model ClientReview {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  clientId   String @db.ObjectId
+  client     Client @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  reviewerId String @map("authorId") @db.ObjectId
+  reviewer   User   @relation(fields: [reviewerId], references: [id], onDelete: Cascade)
+
+  rating  Int    // 1–5 (required)
+  comment String // review text
+
+  status CommentStatus @default(PENDING) // PENDING until moderated → APPROVED feeds the page
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([clientId, reviewerId]) // one review per visitor per client (DB fields unchanged)
+  @@index([clientId, status])
+  @@map("client_reviews")
+}
+
+model ClientLike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([clientId, userId])
+  @@index([clientId, sessionId])
+  @@index([clientId])
+  @@index([userId])
+  @@map("client_likes")
+}
+
+model ClientDislike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([clientId, userId])
+  @@unique([clientId, sessionId])
+  @@index([clientId])
+  @@index([userId])
+  @@map("client_dislikes")
+}
+
+model ClientFavorite {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  userId String @db.ObjectId // Required - favorites need user account
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([clientId, userId])
+  @@index([clientId])
+  @@index([userId])
+  @@map("client_favorites")
+}
+
+model ClientCommentLike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  commentId String       @db.ObjectId
+  comment   ClientComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
+  @@unique([commentId, sessionId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("client_comment_likes")
+}
+
+model ClientCommentDislike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  commentId String       @db.ObjectId
+  comment   ClientComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
+  @@unique([commentId, sessionId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("client_comment_dislikes")
+}
+
+// ============================================
+// MARKETING METRICS MODELS
+// ============================================
+
+model Share {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships - can share articles OR clients
+  articleId String?  @db.ObjectId
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  clientId String? @db.ObjectId
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Share details
+  platform  SharePlatform // Where it was shared
+  sessionId String? // Anonymous tracking
+
+  // Metadata
+  referrer  String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  @@index([articleId, createdAt])
+  @@index([clientId, createdAt])
+  @@index([platform, createdAt])
+  @@index([userId])
+  @@map("shares")
+}
+
+model Conversion {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships - conversions can happen on articles OR clients
+  articleId String?  @db.ObjectId
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
+
+  clientId String? @db.ObjectId
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Conversion details
+  type     ConversionType // What type of conversion
+  value    Float? // Monetary value (for purchases)
+  currency String? @default("USD")
+
+  // Campaign tracking
+  campaignId  String? // Campaign identifier
+  utmSource   String? // UTM source
+  utmMedium   String? // UTM medium
+  utmCampaign String? // UTM campaign
+  utmTerm     String? // UTM term
+  utmContent  String? // UTM content
+
+  // Attribution
+  sessionId   String? // Session ID for anonymous conversions
+  firstTouch  Boolean @default(false) // First touch attribution
+  lastTouch   Boolean @default(true) // Last touch attribution
+
+  // Metadata
+  ipAddress String?
+  userAgent String?
+  referrer  String?
+
+  createdAt DateTime @default(now())
+
+  @@index([articleId, createdAt])
+  @@index([clientId, createdAt])
+  @@index([type, createdAt])
+  @@index([userId])
+  @@index([campaignId])
+  @@index([utmCampaign, createdAt])
+  @@map("conversions")
+}
+
+/// CTA (call-to-action) click tracking: one row per button/link click for CTR and which CTAs perform best.
+model CTAClick {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships — from page context or API when recording the click
+  articleId String?  @db.ObjectId // Article page where CTA was clicked; from current route or payload
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  clientId String? @db.ObjectId // Client (brand) context; from page or payload
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId // Logged-in user; from auth() when recording (null if anonymous)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // CTA details — from the clicked element or tracking payload
+  type     CTAType // Enum: e.g. READ_MORE, SUBSCRIBE, CONTACT; set by frontend when sending click
+  label    String? // Visible text of button/link (e.g. "اقرأ المزيد"); from element or payload
+  targetUrl String? // href or destination URL; from element.getAttribute("href") or payload
+
+  // Engagement context — calculated on client at click time
+  sessionId   String? // Same cookie as view tracking (modonty_view_sid); from API via cookies()
+  timeOnPage  Float?  // Seconds from page load to click: (Date.now() - pageLoadedAt) / 1000
+  scrollDepth Float?  // Scroll % when clicked: (window.scrollY / (docHeight - viewportHeight)) * 100
+
+  // Campaign tracking — from URL query params at click time (optional)
+  campaignId  String? // From ?campaign_id= or payload
+  utmSource   String? // From ?utm_source= or new URL(url).searchParams
+  utmMedium   String? // From ?utm_medium=
+  utmCampaign String? // From ?utm_campaign=
+
+  createdAt DateTime @default(now()) // Server time when row is inserted
+
+  @@index([articleId, createdAt])
+  @@index([clientId, createdAt])
+  @@index([type, createdAt])
+  @@index([userId])
+  @@map("cta_clicks")
+}
+
+model CampaignTracking {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Campaign identification
+  campaignId   String // Unique campaign identifier
+  campaignName String
+  type         CampaignType
+
+  // Relationships - track campaign performance on articles/clients
+  articleId String?  @db.ObjectId
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
+
+  clientId String? @db.ObjectId
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // UTM parameters (industry standard)
+  utmSource   String? // Traffic source (google, facebook, email)
+  utmMedium   String? // Marketing medium (cpc, email, social)
+  utmCampaign String? // Campaign name
+  utmTerm     String? // Paid search keyword
+  utmContent  String? // Ad variation/content
+
+  // Performance metrics
+  cost        Float? // Campaign cost
+  currency    String? @default("USD")
+  impressions Int? // Ad impressions
+  clicks      Int? // Ad clicks
+  conversions Int? // Conversions from this touchpoint
+
+  // Attribution
+  sessionId            String?
+  firstVisit           Boolean @default(true) // First visit from campaign
+  conversionAttributed Boolean @default(false) // Did this touchpoint lead to conversion?
+
+  // Metadata
+  referrer  String?
+  userAgent String?
+  ipAddress String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([campaignId, sessionId]) // Prevent duplicate tracking
+  @@index([campaignId, createdAt])
+  @@index([utmCampaign, createdAt])
+  @@index([type, createdAt])
+  @@index([articleId])
+  @@index([clientId])
+  @@index([userId])
+  @@map("campaign_tracking")
+}
+
+model LeadScoring {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  userId String? @db.ObjectId // Known user
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  clientId String? @db.ObjectId // Which client this lead is for
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  // Anonymous lead tracking
+  sessionId String?
+  email     String? // Captured email (if available)
+  phone     String? // Captured phone (if available)
+
+  // Engagement scoring (0-100)
+  engagementScore Int @default(0) // Overall engagement score
+
+  // Score components
+  viewScore        Int @default(0) // Based on page views
+  timeScore        Int @default(0) // Based on time spent
+  interactionScore Int @default(0) // Based on likes, comments, shares
+  conversionScore  Int @default(0) // Based on conversions
+
+  // Behavior tracking
+  pagesViewed    Int    @default(0)
+  totalTimeSpent Float  @default(0) // Total seconds
+  interactions   Int    @default(0) // Total interactions (likes, comments, shares)
+  conversions    Int    @default(0)
+
+  // Qualification
+  isQualified        Boolean  @default(false) // Meets qualification threshold
+  qualificationLevel String? // HOT, WARM, COLD
+
+  // Last activity
+  lastActivityAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([clientId, engagementScore])
+  @@index([isQualified, engagementScore])
+  @@index([sessionId])
+  @@unique([userId, clientId])
+  @@unique([sessionId, clientId])
+  @@map("lead_scoring")
+}
+
+model EngagementDuration {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  articleId String?  @db.ObjectId
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  clientId String? @db.ObjectId
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Engagement metrics
+  sessionId     String?
+  timeOnPage    Float // Total seconds on page
+  activeTime    Float? // Active engagement time (user actively scrolling/interacting)
+  scrollDepth   Float // Percentage scrolled (0-100)
+  maxScrollDepth Float // Maximum scroll depth reached
+
+  // Reading behavior
+  readingTime    Float? // Estimated reading time (content length based)
+  completionRate Float? // How much of content was read (0-100)
+
+  // Interaction timing
+  firstInteractionAt DateTime? // When user first interacted (click, scroll)
+  lastInteractionAt  DateTime? // Last interaction timestamp
+  timeToFirstClick   Float? // Seconds until first click/interaction
+
+  // Bounce detection
+  bounced        Boolean @default(false) // Left within 30 seconds
+  engagedSession Boolean @default(false) // Spent > 2 minutes or scrolled > 75%
+
+  // Metadata
+  pageLoadTime Float? // Page load performance
+  referrer     String?
+
+  createdAt DateTime @default(now())
+
+  @@index([articleId, createdAt])
+  @@index([clientId, createdAt])
+  @@index([userId])
+  @@index([sessionId])
+  @@index([bounced, timeOnPage])
+  @@map("engagement_duration")
+}
+
+model ArticleLinkClick {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Link details
+  linkUrl    String // The URL that was clicked
+  linkText   String? // Anchor text of the link
+  linkType   LinkType // INTERNAL, EXTERNAL, AFFILIATE, CITATION, SOCIAL
+  isExternal Boolean @default(true) // Whether link goes to external domain
+
+  // Context
+  linkPosition   Int? // Position of link in article (0-indexed)
+  sectionContext String? // Which section/paragraph the link is in
+  linkDomain     String? // Extracted domain for grouping (e.g., "example.com")
+
+  // Engagement context
+  sessionId   String?
+  timeOnPage  Float? // Seconds on page before clicking link
+  scrollDepth Float? // Scroll depth when link was clicked (0-100%)
+
+  // Campaign/Attribution
+  campaignId  String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+
+  // Metadata
+  userAgent String?
+  referrer  String?
+  ipAddress String?
+
+  createdAt DateTime @default(now())
+
+  @@index([articleId, createdAt])
+  @@index([linkUrl, createdAt])
+  @@index([linkType, createdAt])
+  @@index([linkDomain, createdAt])
+  @@index([userId])
+  @@index([sessionId])
+  @@index([isExternal])
+  @@map("article_link_clicks")
+}
+
+// ============================================
+// SETTINGS MODEL (Singleton Pattern)
+// ============================================
+
+model Settings {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Singleton lock — guarantees only ONE Settings doc ever exists.
+  // All callers MUST use upsert({where: {singletonKey: "global"}}) — never findFirst+create.
+  singletonKey String @unique @default("global")
+
+  // Cascade progress tracking (T1.8 — UI feedback for Save & Publish)
+  cascadeStatus      String?   // "running" | "done" | "error" | null = idle
+  cascadeProgress    Json?     // { total, completed, phase: "articles"|"clients"|"categories"|"tags"|"industries"|"listings" }
+  cascadeStartedAt   DateTime?
+  cascadeCompletedAt DateTime?
+  cascadeError       String?
+
+  // SEO Title Settings
+  seoTitleMin      Int     @default(30)
+  seoTitleMax      Int     @default(60)
+  seoTitleRestrict Boolean @default(false) // false = allow max (warn), true = restrict (block)
+
+  // SEO Description Settings
+  seoDescriptionMin      Int     @default(120)
+  seoDescriptionMax      Int     @default(160)
+  seoDescriptionRestrict Boolean @default(false) // false = allow max (warn), true = restrict (block)
+
+  // Twitter Title Settings
+  twitterTitleMax      Int     @default(70)
+  twitterTitleRestrict Boolean @default(true) // true = hard limit (Twitter display limit)
+
+  // Twitter Description Settings
+  twitterDescriptionMax      Int     @default(200)
+  twitterDescriptionRestrict Boolean @default(true) // true = hard limit (Twitter display limit)
+
+  // OG Title Settings
+  ogTitleMax      Int     @default(60)
+  ogTitleRestrict Boolean @default(false)
+
+  // OG Description Settings
+  ogDescriptionMax      Int     @default(200)
+  ogDescriptionRestrict Boolean @default(false)
+
+  // Social Media Links (Platform-wide)
+  facebookUrl  String?
+  twitterUrl   String?
+  linkedInUrl  String?
+  instagramUrl String?
+  youtubeUrl   String?
+  tiktokUrl    String?
+  pinterestUrl String?
+  snapchatUrl  String?
+  whatsappChannelUrl String? // Modonty WhatsApp Channel link
+  telegramChannelUrl String? // Modonty Telegram Channel link
+  googleBusinessProfileUrl String? // Modonty/JBR Google Business Profile (Maps) URL — feeds Organization sameAs; team pastes it after creating + verifying the profile
+
+  // Content-responsibility disclaimer (admin-edited central text; clients accept it in console)
+  disclaimerText    String? @db.String // full acknowledgement text shown to clients
+  disclaimerVersion Int     @default(1) // bump when text changes → clients re-prompted
+
+  // Telegram — admin activity feed. When true, ALL client Telegram events are
+  // mirrored to TELEGRAM_ADMIN_CHAT_ID (full site-activity firehose for the admin).
+  telegramAdminMirrorAll Boolean @default(true)
+
+  // Site & Organization (from .env defaults, editable in Settings UI)
+  siteUrl             String?
+  siteName            String?
+  brandDescription    String?
+  siteAuthor          String?
+  inLanguage            String?  // Default language code (e.g., "ar", "en") for hreflang
+  defaultMetaRobots     String?  // Default meta robots (e.g. "index, follow")
+  defaultGooglebot      String?  // Default meta googlebot (e.g. "index, follow")
+  defaultOgType         String?  // Default og:type (e.g. "website")
+  defaultOgLocale       String?  // Default og:locale (e.g. "ar_SA")
+  defaultOgDeterminer   String?  // Default og:determiner (e.g. "auto")
+  defaultTwitterCard    String?  // Default twitter:card (e.g. "summary_large_image")
+  defaultSitemapPriority Float?  // Default sitemap priority (0.5)
+  defaultSitemapChangeFreq String? // Default sitemap changefreq (e.g. "monthly")
+  articleDefaultSitemapChangeFreq String? // Default sitemap changefreq for articles (e.g. "weekly")
+  articleDefaultSitemapPriority  Float?  // Default sitemap priority for articles (e.g. 0.5)
+  defaultLicense                 String? // Default license URL for articles (e.g. CC-BY)
+  // Image licensing defaults (schema.org ImageObject → Google Licensable badge).
+  // Used for Modonty-PRODUCED images (HERO/POST/OGIMAGE/TWITTER_IMAGE/CLIENT_MINI/GENERAL);
+  // LOGO/GALLERY are attributed to the owning client at generation time instead.
+  imageOwnerName             String? // creator/creditText/copyrightHolder name (e.g. "مدوّنتي")
+  imageLicenseUrl            String? // URL to a page describing the licence (e.g. "/legal/copyright-policy")
+  imageAcquireLicensePageUrl String? // URL where users can acquire a licence / contact
+  defaultIsAccessibleForFree     Boolean  @default(true) // Default for articles: free to access (structured data)
+  defaultAlternateLanguages     Json?    // Default for articles: array of {hreflang, url} for hreflang
+  defaultContentFormat         String?  // Default for articles: "markdown" | "html" | "rich_text"
+  defaultCharset         String?  // Meta charset (e.g. "UTF-8")
+  defaultOgImageType     String?  // og:image type (e.g. "image/jpeg")
+  defaultOgImageWidth    Int?     // og:image width (e.g. 1200)
+  defaultOgImageHeight   Int?     // og:image height (e.g. 630)
+  defaultHreflang        String?  // hreflang default (e.g. "x-default")
+  defaultPathname        String?  // URL pathname fallback (e.g. "/")
+  defaultTruncationSuffix String? // Suffix when truncating title/description (e.g. "...")
+  defaultReferrerPolicy  String?  // Referrer policy (e.g. "strict-origin-when-cross-origin")
+  defaultNotranslate     Boolean? // Prevent Chrome translate prompt for Arabic
+  twitterSite            String?
+  twitterCreator      String?
+  twitterSiteId       String?
+  twitterCreatorId    String?
+  orgContactType             String?
+  orgContactEmail            String?
+  orgContactTelephone        String?
+  orgContactAvailableLanguage String?  // ContactPoint.availableLanguage (e.g. "ar"); falls back to inLanguage
+  orgContactOption           String?   // ContactPoint.contactOption (e.g. toll-free)
+  orgContactHoursAvailable   String?   // ContactPoint.hoursAvailable (e.g. "Mo-Fr 09:00-17:00")
+  orgAreaServed              String?
+  orgStreetAddress    String?
+  orgAddressLocality  String?
+  orgAddressRegion    String?
+  orgAddressCountry   String?
+  orgPostalCode       String?
+  orgGeoLatitude      Float?
+  orgGeoLongitude     Float?
+  orgSearchUrlTemplate String?
+
+  // Media Settings (Cloudinary URLs)
+  logoUrl     String? // Wide wordmark logo — desktop navbar
+  logoIconUrl String? // Small icon/mark logo — mobile navbar (falls back to logoUrl if empty)
+  ogImageUrl  String?
+  altImage    String?  // Default alt text for logo/OG image when none set
+  certificateImageUrl String? // CR certificate shown on /trust — picked from the Modonty library; static /public file stays as fallback
+
+  // Modonty app defaults (fallback when page has no SEO title/description)
+  modontySeoTitle       String?
+  modontySeoDescription  String?
+
+  // List pages defaults (fallback when generating meta/JSON-LD)
+  clientsSeoTitle       String?
+  clientsSeoDescription String?
+  categoriesSeoTitle    String?
+  categoriesSeoDescription String?
+  trendingSeoTitle      String?
+  trendingSeoDescription  String?
+  tagsSeoTitle          String?
+  tagsSeoDescription    String?
+  industriesSeoTitle    String?
+  industriesSeoDescription String?
+
+  // Cached site-level JSON-LD (optional; same pattern as Client/Modonty)
+  jsonLdStructuredData   String?   @db.String // Cached @graph JSON string
+  jsonLdLastGenerated   DateTime?
+  jsonLdValidationReport Json?     // { adobe, custom, richResults }
+
+  // Home page meta (PRD: generate once, store, read from DB)
+  homeMetaTags Json?
+
+  // Clients list page meta + JSON-LD
+  clientsPageMetaTags              Json?
+  clientsPageJsonLdStructuredData  String?   @db.String
+  clientsPageJsonLdLastGenerated   DateTime?
+  clientsPageJsonLdValidationReport Json?
+
+  // Categories list page meta + JSON-LD
+  categoriesPageMetaTags              Json?
+  categoriesPageJsonLdStructuredData  String?   @db.String
+  categoriesPageJsonLdLastGenerated   DateTime?
+  categoriesPageJsonLdValidationReport Json?
+
+  // Trending list page meta + JSON-LD
+  trendingPageMetaTags              Json?
+  trendingPageJsonLdStructuredData  String?   @db.String
+  trendingPageJsonLdLastGenerated   DateTime?
+  trendingPageJsonLdValidationReport Json?
+
+  // Tags list page meta + JSON-LD
+  tagsPageMetaTags              Json?
+  tagsPageJsonLdStructuredData  String?   @db.String
+  tagsPageJsonLdLastGenerated   DateTime?
+  tagsPageJsonLdValidationReport Json?
+
+  // Industries list page meta + JSON-LD
+  industriesPageMetaTags              Json?
+  industriesPageJsonLdStructuredData  String?   @db.String
+  industriesPageJsonLdLastGenerated   DateTime?
+  industriesPageJsonLdValidationReport Json?
+
+  // Articles list page meta + JSON-LD
+
+  // FAQ page meta + JSON-LD
+  faqPageMetaTags              Json?
+  faqPageJsonLdStructuredData  String?   @db.String
+  faqPageJsonLdLastGenerated   DateTime?
+  faqPageJsonLdValidationReport Json?
+  faqSeoTitle                  String?
+  faqSeoDescription            String?
+
+  // Clients page — Hero B2B panel (CP-1 / JBRSEO-ADMIN-1)
+  b2bLabel    String?  // e.g. "لأصحاب الأعمال والشركات"
+  b2bHeadline String?  // e.g. "عملاؤك يبحثون عنك على جوجل"
+  b2bBullet1  String?
+  b2bBullet2  String?
+  b2bBullet3  String?
+  b2bCtaText  String?  // e.g. "عملاء بلا إعلانات"
+  b2bCtaUrl   String?  // e.g. "https://www.jbrseo.com"
+
+  // Homepage feed banner (JBRSEO-ADMIN-2)
+  platformTagline     String?  // e.g. "مرحباً بك في مودونتي"
+  platformDescription String?  // e.g. "منصة المحتوى العربي — اكتشف مقالات..."
+
+  // Per-listing-page hero image (visible hero background + og:image). Empty → falls back
+  // to the global ogImageUrl. Cloudinary URL + alt, mirroring ogImageUrl/altImage.
+  categoriesPageImage    String?
+  categoriesPageImageAlt String?
+  tagsPageImage          String?
+  tagsPageImageAlt       String?
+  industriesPageImage    String?
+  industriesPageImageAlt String?
+
+  // Modonty Core (T2, 2026-07-31): the Client row that IS the platform itself.
+  // One key answers "is this Modonty?" everywhere — media ownership, picker scoping,
+  // partner-list exclusion, featured article cards. Set from /settings/system, never a script.
+  coreClientId String? @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
+
+// ============================================
+// MODONTY PAGE MODELS
+// ============================================
+
+model Modonty {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  
+  // Page identification
+  slug String @unique // e.g., "about", "terms", "privacy-policy"
+  title String // Page title
+  
+  // Content (TipTap HTML format)
+  content String // Rich text content from TipTap editor
+  
+  // Hero Image (for page display)
+  heroImage                String? // Cloudinary URL
+  heroImageAlt             String? // Alt text
+  // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
+  heroImageMediaId String? @db.ObjectId
+  heroImageMedia   Media?  @relation("ModontyHeroImageMedia", fields: [heroImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  heroImageCloudinaryPublicId String? // Cloudinary public_id for direct deletion
+  
+  // ============================================
+  // SEO FIELDS (Following codebase pattern)
+  // ============================================
+  
+  // Basic SEO (Category/Tag/Industry/Author pattern)
+  seoTitle       String?
+  seoDescription String? // 155-160 chars optimal
+  metaRobots     String? // index, noindex, follow, nofollow
+  
+  // Social Images (Category/Tag/Industry pattern)
+  socialImage        String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
+  socialImageAlt     String? // Alt text
+  // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
+  socialImageMediaId String? @db.ObjectId
+  socialImageMedia   Media?  @relation("ModontySocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cloudinaryPublicId String? // Cloudinary public_id for direct deletion
+  
+  // Open Graph (Article pattern)
+  ogTitle       String?
+  ogDescription String?
+  ogType        String?   @default("website")
+  ogUrl         String?
+  ogSiteName    String?
+  ogLocale      String?
+  ogImage       String? // Open Graph image URL
+  
+  // Twitter Cards (Client/Article pattern)
+  twitterCard        String? // summary_large_image, summary
+  twitterTitle       String?
+  twitterDescription String?
+  twitterSite        String? // @username
+  twitterCreator     String?
+  
+  // Technical SEO
+  canonicalUrl       String?
+  alternateLanguages Json? // Array of {hreflang, url} objects
+  sitemapPriority    Float?  @default(0.5) // 0.0 to 1.0
+  sitemapChangeFreq  String? @default("monthly") // always, hourly, daily, weekly, monthly, yearly, never
+  
+  // Language
+  inLanguage String @default("ar") // For hreflang
+  
+  // Cached SEO (meta tags + JSON-LD, generated on save)
+  metaTags              Json?    // Client-shaped meta object
+  jsonLdStructuredData  String?  // WebPage @graph JSON-LD string
+  jsonLdLastGenerated   DateTime?
+  jsonLdValidationReport Json?   // { adobe, ajv, custom }
+  
+  // ============================================
+  // METADATA
+  // ============================================
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  lastModifiedBy String?  @db.ObjectId // User ID who last edited
+  
+  @@map("modonty")
+}
+
+// ============================================
+// CONTACT MODELS
+// ============================================
+
+model ContactMessage {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Contact information
+  name    String
+  email   String
+  subject String
+  message String
+
+  // Status tracking
+  status String @default("new") // new, read, replied, archived
+
+  // Optional client association (if contact form is client-specific)
+  clientId String? @db.ObjectId
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  // Optional user (when contact form submitted by logged-in modonty user)
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Reply from client (console)
+  replyBody String?
+
+  // Metadata
+  ipAddress String?
+  userAgent String?
+  referrer  String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  readAt    DateTime? // When message was read
+  repliedAt DateTime? // When reply was sent
+
+  @@index([email])
+  @@index([status])
+  @@index([clientId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("contact_messages")
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  // Recipient is EITHER a reader (userId) OR a staff member (staffId). Readers
+  // keep userId; staff notifications (e.g. booking alerts) use staffId so they
+  // survive after staff are moved out of the users collection.
+  userId    String?  @db.ObjectId
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  staffId   String?  @db.ObjectId
+  staff     Staff?   @relation("StaffNotifications", fields: [staffId], references: [id], onDelete: Cascade)
+  clientId  String?  @db.ObjectId
+  client    Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  type      String   // e.g. "contact_reply"
+  title     String
+  body      String
+  readAt    DateTime?
+  relatedId String?  @db.ObjectId // e.g. ContactMessage id
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([staffId])
+  @@index([clientId])
+  @@index([readAt])
+  @@map("notifications")
+}
+
+// ============================================
+// FAQ MODELS
+// ============================================
+
+model FAQ {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Basic content
+  question String // The question text
+  answer   String // The answer text (can be HTML/rich text)
+  position Int    @default(0) // For ordering
+  isActive Boolean @default(true) // To show/hide FAQs
+
+  // SEO Fields (following Schema.org FAQPage best practices)
+  seoTitle       String? // SEO-optimized title for the question (for meta tags, 50-60 chars optimal)
+  seoDescription String? // SEO description/preview text (155-160 chars optimal)
+  lastReviewed   DateTime? // When this FAQ was last reviewed/updated (Schema.org lastReviewed)
+  reviewedBy     String? @db.ObjectId // User ID who last reviewed (Schema.org reviewedBy)
+  author         String? @db.ObjectId // Author/creator of this FAQ (Schema.org author - Person/Organization)
+  upvoteCount    Int? @default(0) // Community upvotes (Schema.org upvoteCount)
+  downvoteCount  Int? @default(0) // Track "not helpful" feedback
+  answerCount    Int? // Number of alternative answers (if multiple answers supported)
+  dateCreated    DateTime? // Original creation date (Schema.org dateCreated)
+  datePublished  DateTime? // Publication date (Schema.org datePublished)
+  inLanguage     String  @default("ar") // Language code (for hreflang)
+
+  // Structured Data Enhancement
+  speakable Json? // Speakable content for voice search (Schema.org SpeakableSpecification)
+  // Format: { "@type": "SpeakableSpecification", "cssSelector": ["#question-1", "#answer-1"] }
+  mainEntity Json? // Additional structured data context
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?  @db.ObjectId // User who created
+  updatedBy String?  @db.ObjectId // User who last updated
+
+  // Relations
+  feedbacks FAQFeedback[]
+
+  @@index([position])
+  @@index([isActive, position])
+  @@index([lastReviewed])
+  @@index([upvoteCount])
+  @@index([downvoteCount])
+  @@map("general_faqs")
+}
+
+model FAQFeedback {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  faqId String @db.ObjectId
+  faq   FAQ    @relation(fields: [faqId], references: [id], onDelete: Cascade)
+
+  // User/Session tracking
+  userId    String? @db.ObjectId // User ID if logged in
+  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  sessionId String?  // Browser session ID for anonymous users
+
+  // Feedback data
+  isHelpful Boolean // true = helpful, false = not helpful
+
+  // Metadata
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@unique([faqId, sessionId]) // Prevent duplicate feedback from same session
+  @@unique([faqId, userId])    // Prevent duplicate feedback from same user
+  @@index([faqId, createdAt])
+  @@index([userId])
+  @@index([sessionId])
+  @@index([isHelpful])
+  @@map("faq_feedback")
+}
+
+// ============================================
+// CHANGELOG & ADMIN NOTES
+// ============================================
+
+model Changelog {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  version   String
+  title     String
+  items     Json     // [{type: "fix"|"feature"|"improve", text: "..."}]
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("changelogs")
+}
+
+model AdminNote {
+  id           String           @id @default(auto()) @map("_id") @db.ObjectId
+  author       String
+  type         String?          // "bug" | "idea" | "other"
+  app          String?          // "modonty" | "console" | "admin" | "general"
+  whereExactly String?          // human description: "Article edit page", "Comments list", etc.
+  message      String           // what happened / the idea / the comment
+  steps        String?          // bug-only: reproduction steps
+  severity     String?          // bug-only: "critical" | "bug" | "minor"
+  benefit      String?          // idea-only: why it would help
+  page         String?          // auto-captured URL pathname (technical reference)
+  replies      AdminNoteReply[]
+  createdAt    DateTime         @default(now())
+
+  @@index([createdAt])
+  @@map("admin_notes")
+}
+
+model AdminNoteReply {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  noteId    String    @db.ObjectId
+  note      AdminNote @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  author    String
+  message   String
+  createdAt DateTime  @default(now())
+
+  @@index([noteId, createdAt])
+  @@map("admin_note_replies")
+}
+
+model SlugChangeOtp {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  clientId  String   @db.ObjectId
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([clientId, expiresAt])
+  @@map("slug_change_otps")
+}
+
+model ArticleSlugOtp {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String   @db.ObjectId
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([articleId, expiresAt])
+  @@map("article_slug_otps")
+}
+
+model SystemError {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  message    String
+  digest     String?
+  path       String
+  method     String
+  routePath  String
+  routeType  String
+  source     String
+  // Tracing enrichment (Khalid 2026-07-22) — turns the log from noise into triage.
+  category   String?  // "framework" (Next/React internals, not our bug) | "app" (ours)
+  renderType String?  // Next context.renderType: "dynamic" | "dynamic-resume" (PPR resume)
+  device     String?  // "mobile" | "tablet" | "desktop" | "bot"
+  botName    String?  // e.g. "Googlebot" when the UA is a known crawler
+  country    String?  // Vercel geo (x-vercel-ip-country)
+  city       String?  // Vercel geo (x-vercel-ip-city)
+  userAgent  String?  // raw UA — the ground truth for tracing
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([category])
+  @@map("system_errors")
+}
+
+/// Who did what, and when — the answer to "مين عمل ده؟" (Khalid 2026-07-14: more than
+/// one person now works in the admin, and until today every action was anonymous).
+///
+/// Written by `logAction()` after an action SUCCEEDS. Append-only: rows are never edited.
+///
+/// Identity is stored twice on purpose:
+///   · userId    — the real key. Never changes, survives a rename, and is what you filter by.
+///   · userEmail — a SNAPSHOT of who they were at that moment. It answers "who?" without a
+///                 second query, and it still answers it after the person leaves and their
+///                 account is deleted. A log that outlives its subject is the whole point.
+///
+/// A password is NEVER stored here. It is bcrypt-hashed (we cannot read it), logging it
+/// would hand every account to anyone who opens this table, and it says nothing about who
+/// acted — userId already does. That is not a preference; it is the rule.
+model AuditLog {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Who — both, for the reasons above.
+  userId    String  @db.ObjectId
+  userEmail String
+  userName  String? // Snapshot too — nice to read, but email is the one that must be there.
+  userRole  String? // ADMIN · EDITOR — their role AT THE TIME, not today's.
+
+  // What — a stable dotted key: "article.publish" · "client.delete" · "settings.update".
+  action String
+
+  // On what — entity is always set; entityId is null for global actions (settings, cascade).
+  entity   String // Article · Client · Category · Tag · Settings · Database …
+  entityId String? @db.ObjectId
+
+  /// Human-readable line for the log screen: "نشر: أفضل واكس شعر للرجال".
+  /// A snapshot as well — the title at the time, so a later rename cannot rewrite history.
+  summary String?
+
+  /// Anything worth keeping that has no column: { from: "DRAFT", to: "PUBLISHED" }.
+  /// Never put personal data or secrets in here.
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  // The three ways this table gets read: newest-first, per person, per entity.
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([entity, entityId, createdAt])
+  @@map("audit_logs")
+}
+
+// Cache table for Google Search Console URL Inspection results.
+// Avoids hitting the 2,000/day API quota — refresh on demand or every 7 days.
+model GscUrlInspection {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  url             String   @unique
+  verdict         String? // PASS · FAIL · NEUTRAL · PARTIAL
+  coverageState   String? // e.g. "Submitted and indexed"
+  robotsTxtState  String? // ALLOWED · DISALLOWED
+  indexingState   String? // INDEXING_ALLOWED · BLOCKED_BY_META_TAG · etc.
+  pageFetchState  String? // SUCCESSFUL · SOFT_404 · BLOCKED_ROBOTS_TXT · etc.
+  userCanonical   String? // canonical declared by us
+  googleCanonical String? // canonical chosen by Google
+  mobileVerdict   String? // PASS · FAIL · NEUTRAL
+  mobileIssues    String[] // list of issue types
+  lastCrawlTime   DateTime?
+  crawledAs       String? // DESKTOP · MOBILE
+  sitemap         String[] // sitemap URLs that include this URL
+  rawJson         Json?
+  inspectedAt     DateTime @default(now())
+  expiresAt       DateTime
+
+  @@index([expiresAt])
+  @@index([verdict])
+  @@map("gsc_url_inspections")
+}
+
+/// Tracks manual GSC requests (Removal tool + URL Inspection "Request Indexing").
+/// Two-step state:
+/// `openedAt` = user clicked the deep-link button (intent only — Google may not have received it).
+/// `doneAt`   = user explicitly clicked "Mark done" after submitting in GSC (confirmed action).
+/// One row per (url, type) — same URL can have both REMOVAL and INDEXING requests at different times.
+model GscManualRequest {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  url            String
+  type           String    @default("REMOVAL") // "REMOVAL" | "INDEXING"
+  openedAt       DateTime  @default(now())
+  openedByUserId String?
+  doneAt         DateTime?
+  doneByUserId   String?
+
+  @@unique([url, type])
+  @@index([type, doneAt])
+  @@map("gsc_removal_requests")
+}
+
+// ============================================
+// BILLING — Invoices issued from the Accounts page
+// ============================================
+model Invoice {
+  id                String           @id @default(auto()) @map("_id") @db.ObjectId
+  number            String           @unique // human invoice number e.g. MOD-2026-00042
+  clientId          String           @db.ObjectId
+  client            Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  tier              SubscriptionTier
+  tierName          String // display-name snapshot at issue time (e.g. "الزخم")
+  period            String // "monthly" | "annual"
+  currency          String // "SAR" | "EGP"
+  amount            Float
+  paymentMethod     String? // deprecated — kept for old rows; not captured on new invoices
+  paymentStatus     String // "PAID" | "DUE"
+  subscriptionStart DateTime?
+  subscriptionEnd   DateTime?
+  issuedAt          DateTime         @default(now())
+  issuedByUserId    String?          @db.ObjectId
+  emailSentAt       DateTime?
+  paidAt            DateTime? // settlement date entered by admin at «تحديد مدفوعة»
+  paidByUserId      String?          @db.ObjectId
+  // Voiding an invoice, never deleting it — the ledger has to stay whole for accounting.
+  // Only an UNPAID invoice can be archived; it then leaves every unpaid total, stops
+  // blocking the next issuance, and its period stops counting toward the client's end date.
+  archivedAt        DateTime?
+  archivedReason    String?
+  archivedByUserId  String?          @db.ObjectId
+  // Marks the invoice that embodies the client's opening balance (see Client.openingBalance).
+  // The founding payment is already counted in the sales report as the opening balance, so
+  // an invoice generated from it MUST be excluded from report revenue — it is a document,
+  // not new money. Default false = a normal renewal invoice that DOES count.
+  fromOpeningBalance Boolean         @default(false)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@index([clientId, issuedAt])
+  @@map("invoices")
+}
+
+/// Atomic sequential counters (e.g. gapless invoice numbering per year).
+model Counter {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  key   String @unique // e.g. "invoice-2026"
+  value Int    @default(0)
+
+  @@map("counters")
+}
+
+// ============================================
+// INTAKE ENGINE — admin-managed questionnaire
+// Questions/options live in DB (admin-editable); client answers stay in
+// Client.intake JSON keyed by IntakeQuestion.key, so downstream consumers
+// (pre-publish audit, JSON-LD, admin brief) keep reading the same shape.
+// ============================================
+
+enum IntakeQuestionType {
+  SELECT // single choice, dropdown
+  RADIO // single choice, visible list
+  MULTI_PILL // multi-select chips
+  CHECKBOX // multi-select checkboxes
+  TEXT // single-line text
+  TEXTAREA // multi-line text
+  BOOLEAN // single toggle
+  REPEATED_GROUP // repeats a set of sub-fields (e.g. competitors) — shape in `config`
+  GROUP // fixed nested sub-fields (e.g. YMYL reviewer) — shape in `config`
+}
+
+/// A questionnaire definition. One row today ("intake"); the parent table lets
+/// new forms (onboarding, review) be added later with zero schema change.
+model IntakeForm {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  key         String          @unique // "intake"
+  title       String
+  description String?
+  version     Int             @default(1)
+  enabled     Boolean         @default(true)
+  sections    IntakeSection[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("intake_forms")
+}
+
+/// A group of questions inside a form (e.g. "نبرة الكتابة", "سياسة المحتوى").
+model IntakeSection {
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  formId      String           @db.ObjectId
+  form        IntakeForm       @relation(fields: [formId], references: [id], onDelete: Cascade)
+  key         String // stable section key: "voice", "policy", ...
+  title       String
+  description String?
+  icon        String? // lucide icon name (e.g. "Mic2")
+  order       Int              @default(0)
+  enabled     Boolean          @default(true)
+  visibility  Json? // conditional display, e.g. { ymylOnly: true } or { market: ["SA"] }
+  questions   IntakeQuestion[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@unique([formId, key])
+  @@map("intake_sections")
+}
+
+/// A single question. `key` is the STABLE semantic path the answer is stored
+/// under in Client.intake (e.g. "policy.forbiddenKeywords") — never changes on
+/// edit, so downstream code never breaks. Editing label/options is always safe.
+model IntakeQuestion {
+  id          String             @id @default(auto()) @map("_id") @db.ObjectId
+  sectionId   String             @db.ObjectId
+  section     IntakeSection      @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  key         String // stable answer path, e.g. "policy.forbiddenKeywords"
+  label       String
+  helpText    String?
+  placeholder String?
+  type        IntakeQuestionType
+  required    Boolean            @default(false)
+  maxLength   Int?
+  order       Int                @default(0)
+  enabled     Boolean            @default(true)
+  visibility  Json? // per-question conditional + market scope
+  config      Json? // type-specific shape (e.g. REPEATED_GROUP/GROUP sub-fields)
+  options     IntakeOption[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@unique([sectionId, key])
+  @@map("intake_questions")
+}
+
+/// A predefined choice for SELECT/RADIO/MULTI_PILL/CHECKBOX questions.
+model IntakeOption {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  questionId  String         @db.ObjectId
+  question    IntakeQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  value       String // stored value
+  label       String // shown label
+  order       Int            @default(0)
+  enabled     Boolean        @default(true)
+  marketScope String? // "SA" | "EG" | null (all markets)
+
+  @@map("intake_options")
+}
+
+// ============================================
+// REFERENCE DATA — admin-managed foundational lookups
+// (Settings → Reference Data). Countries drive the client country picker;
+// licensing authorities power YMYL verification. Read by console + SEO,
+// written by admin. Replaces the hardcoded matrix in ymyl-config.ts.
+// ============================================
+
+/// Fixed YMYL category set. Mirrors Client.ymylCategory string values
+/// ("medical" | "legal" | "financial"). Kept an enum here to enforce a valid
+/// category on every authority row.
+enum YmylCategory {
+  medical
+  legal
+  financial
+}
+
+/// A supported country. `code` (ISO 3166-1 alpha-2) is the value stored on
+/// Client.addressCountry and used to resolve licensing authorities.
+model Country {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  code      String  @unique // ISO 3166-1 alpha-2: SA, EG, AE
+  nameAr    String
+  nameEn    String
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("countries")
+}
+
+// REMOVED 2026-07-30 (Khalid): the whole social-publishing feature is gone — the
+// /social admin pages, `lib/social/{meta,twitter}.ts`, and the auto-post on first
+// publish. `SocialPost` + `SocialPlatform` + `SocialPostStatus` were only ever used
+// by that code, so the model went with it.
+//
+// The `social_posts` MongoDB collection is NOT dropped — Prisma simply stops
+// mapping it. Old rows stay readable via mongosh if the history is ever needed;
+// drop the collection manually (after a backup) once it is confirmed unwanted.
+
+/// A licensing/regulatory body a YMYL client picks during verification.
+/// Linked to a country by ISO `countryCode` (no relation — resolved in queries).
+model LicensingAuthority {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  countryCode String // → Country.code (ISO 3166-1 alpha-2)
+  category    YmylCategory
+  code        String // short identifier shown alongside the name (MOH, SCFHS, CMA…)
+  nameAr      String
+  nameEn      String
+  isActive    Boolean      @default(true)
+  sortOrder   Int          @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([countryCode, category, code])
+  @@index([countryCode, category])
+  @@map("licensing_authorities")
+}
+
+// Named CTA presets the admin adds WITHOUT a code change (Khalid 2026-07-24).
+// A preset is not a new behaviour — picking one fills the three fields that already
+// exist on Client (ctaMode / ctaLabel / ctaUrl), so every surface that renders a CTA
+// and every segment that counts one keeps working untouched. The two real behaviours
+// stay in code and cannot be added from a screen:
+//   FORM → internal booking sheet — the lead lands in OUR database
+//   LINK → tracked external anchor (https · wa.me · tel:) — we only see the click
+// «Unlimited CTAs» therefore means unlimited label + behaviour + destination combos,
+// which already covers booking, store, WhatsApp and phone.
+// The button text IS the identity here (Khalid 2026-07-24: «أنت بتتكلم مع إنسان»).
+// There is deliberately no admin-facing slug — the machine identifier is `id`, and the
+// human identifier is what the visitor reads. Uniqueness is enforced on `labelKey`, the
+// NORMALISED text: Arabic makes «تسوق» and «تسوّق» two different strings that render
+// almost identically, so comparing the raw text would guard nothing. `labelAr` keeps
+// exactly what was typed — the normalisation exists only to answer «is this the same
+// button?».
+model CtaPreset {
+  id         String        @id @default(auto()) @map("_id") @db.ObjectId
+  labelAr    String // the Arabic text the visitor actually reads on the button
+  labelKey   String        @unique // derived from labelAr: no diacritics, unified alef/yaa, collapsed spaces
+  mode       ClientCtaMode // FORM | LINK — NONE is «no button», never a preset
+  defaultUrl String? // LINK only: prefilled destination (https · wa.me · tel:)
+  isActive   Boolean       @default(true)
+  sortOrder  Int           @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+  @@map("cta_presets")
+}
+
+// ============================================
+// REELS — merged into Media (locked 2026-08-05)
+//
+// The `Reel` table is gone. A media file IS the reel: the row that holds the image
+// or the video carries the reel state itself. What this removes is the copy — two
+// rows holding the same URL, kept in sync by hand in two admin actions, where every
+// bug in this feature came from.
+//
+// `Media.type` keeps its old meaning (the file's ROLE) and is NOT touched: 15 queries
+// read it and 6 write it. Reel membership rides on top as its own switch instead.
+//
+// There is no `ReelType` any more — image vs video is already in `mimeType`.
+// Study: documents/reels/REELS-ARCHITECTURE-STUDY-v1.html
+// ============================================
+
+/// How loud a note to the content team is allowed to be.
+///
+/// Three levels, deliberately — not two, not five. Two cannot separate "read this" from
+/// "work is blocked"; five or more collapse in practice into "urgent" and "ignored",
+/// because every sender believes their own note is urgent. Three forces a real choice.
+enum NotificationPriority {
+  NORMAL /// للعلم — نفّذها لما توصلها
+  IMPORTANT /// تحتاج تحرّكاً هذا الأسبوع
+  URGENT /// شغل واقف — اليوم
+}
+
+
+/// A note the operations manager sent to the content team's Telegram about one client.
+///
+/// The row is the record, the Telegram message is just its delivery. Which is why
+/// `delivered` and `error` are stored: a log that says "sent" while Telegram was down is
+/// worse than no log at all — somebody would rely on it.
+///
+/// Identity is stored twice on purpose, exactly like [AuditLog]: `sentById` is the key
+/// that never changes, and the name/email are a SNAPSHOT of who that person was at that
+/// moment — so the history still answers "who told us?" after they leave and their staff
+/// record is gone.
+model ClientNotification {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  message  String
+  priority NotificationPriority @default(NORMAL)
+
+  /// Who the note is FOR. EMPTY means everyone in the content group.
+  ///
+  /// One Telegram group holds the whole team, so the only thing that tells a person a note
+  /// is theirs is seeing their name on it. Ids are kept for filtering later; names are
+  /// SNAPSHOTTED for the same reason `sentByName` is — a note has to keep saying who it was
+  /// addressed to after that person leaves and their staff row is gone.
+  recipientIds   String[] @db.ObjectId
+  recipientNames String[]
+
+  // Who sent it — the signed-in staff member, never a value the browser supplies.
+  sentById    String  @db.ObjectId
+  sentByName  String
+  sentByEmail String
+
+  // Outcome of the actual Telegram call.
+  delivered Boolean
+  error     String?
+
+  createdAt DateTime @default(now())
+
+  @@index([clientId, createdAt])
+  @@index([createdAt])
+  @@map("client_notifications")
+}
+
+enum ReelStatus {
+  DRAFT
+  PENDING_APPROVAL // client upload awaiting admin approval
+  APPROVED // approved, not yet live in the feed
+  PUBLISHED // live on the public feed + standalone watch page
+  REJECTED
+  ARCHIVED
+}
+
+enum ReelUploader {
+  ADMIN
+  CLIENT
+}
+
+enum ReelTranscriptStatus {
+  PENDING // auto transcription runs after approval (Arabic — language pinned manually)
+  DONE
+  FAILED
+  SKIPPED // images / transcription not applicable
+}
+
+/// Reaction kinds on a media file. One row per (file, actor, kind).
+///
+/// `FAVORITE` needs a signed-in user, `LIKE` allows an anonymous visitor. The old
+/// two-table split expressed that rule in the database; one table with a nullable
+/// `userId` cannot — so the guard moved into the server action that writes the row.
+enum MediaReactionKind {
+  LIKE
+  FAVORITE
+}
+
+/// Comments on a media file — same shape as article comments (nesting + moderation).
+model MediaComment {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  content String
+
+  mediaId String @db.ObjectId
+  media   Media  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  authorId String? @db.ObjectId
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  parentId String?       @db.ObjectId
+  parent   MediaComment? @relation("MediaCommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  replies MediaComment[] @relation("MediaCommentReplies")
+
+  status   CommentStatus @default(PENDING)
+  isEdited Boolean       @default(false)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  editedAt  DateTime?
+
+  reactions CommentReaction[]
+
+  @@index([mediaId, createdAt])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([status])
+  @@map("media_comments")
+}
+
+/// A visitor's like or favorite ON THE FILE.
+///
+/// Two uniqueness rules, not one: a signed-in visitor is identified by `userId`, an
+/// anonymous one by `sessionId`. Drop either and the same person can react without
+/// limit through the other path.
+model MediaReaction {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  mediaId String @db.ObjectId
+  media   Media  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  kind MediaReactionKind
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // anonymous visitors
+
+  createdAt DateTime @default(now())
+
+  @@unique([mediaId, kind, userId])
+  @@unique([mediaId, kind, sessionId])
+  @@index([mediaId, kind])
+  @@index([userId])
+  @@map("media_reactions")
+}
+
+/// A like or dislike ON A COMMENT — a separate table on purpose.
+///
+/// It cannot live inside `MediaReaction`: that row points at a file, this one points
+/// at a comment. Merging them would force a row that references two different things
+/// with one of the two columns always empty.
+model CommentReaction {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  commentId String       @db.ObjectId
+  comment   MediaComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  isLike Boolean // true = like · false = dislike
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // anonymous visitors
+
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
+  @@unique([commentId, sessionId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("comment_reactions")
+}
+
+/// One row per backup attempt — success or failure.
+///
+/// Exists because both earlier backup paths failed silently: the manual script copied
+/// modonty_dev while everyone read it as production, and the scheduled .bat never ran
+/// once (zero output folders on disk, undetected for months). A backup system without
+/// a record of its own runs cannot tell you it has stopped.
+///
+/// `dbName` is stored and displayed deliberately — it is the single field that would
+/// have exposed the original trap at a glance.
+/// Decisions: documents/tasks/BACKUP-STRATEGY-v1.html (ق5)
+model BackupRun {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  source BackupSource // who produced it — the daily cron, Khalid's machine, or Atlas
+  dbName String // "modonty" | "modonty_dev" — shown in the UI, never inferred
+  status BackupStatus @default(RUNNING)
+
+  collections Int? // collections written
+  documents   Int? // total documents across all collections
+  sizeBytes   Int? // compressed size actually stored
+  bunnyPath   String? // folder on the private zone, e.g. daily/2026-08-04
+
+  errorText String? // failing collection + message when status = FAILED
+
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+  durationMs Int?
+
+  @@index([status, startedAt])
+  @@index([source, startedAt])
+  @@map("backup_runs")
+}
+
+enum BackupSource {
+  VERCEL_CRON // daily, the guaranteed layer
+  LOCAL_DUMP // mongodump on Khalid's machine — opportunistic, BSON format
+  RESTORE_TEST // monthly restore drill, not a backup itself
+}
+
+enum BackupStatus {
+  RUNNING
+  SUCCESS
+  FAILED
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// جبر سيو — إدارة المحتوى
+//
+// الجدولان أنشأهما موقع jbrseo.com وهما موجودان في هذه القاعدة نفسها
+// (متحقَّق ٨ أغسطس: jbrseo.com/.env.local:1 و shared/.env:4 كلاهما
+// يشير إلى modonty_dev على العنقود ذاته). ما يلي وصفٌ لهما لا إنشاء —
+// الـ@@map يشير إلى المجموعتين القائمتين، فالأدمن يحرّر نفس الصفوف
+// التي يحرّرها أدمن جبر سيو. صفر ترحيل · صفر نسخ · صفر اتصال ثانٍ.
+//
+// ⚠️ النموذجان مرآة لـ jbrseo.com/prisma/schema.prisma — أي تغيير حقل
+//    يُطبَّق في المكانين (نفس قاعدة الصيانة في قرار JBR8).
+//
+// ⛔ خارج النطاق عمداً: Plan و PriceSectionMeta — الأسعار تبقى بيد خالد
+//    من أدمن جبر سيو، ولا يحرّرها طارق (قرار JBR11).
+// ═══════════════════════════════════════════════════════════════════
+
+model JbrSiteSettings {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  gtmId          String   @default("")
+  whatsappNumber String   @default("")
+  updatedAt      DateTime @default(now())
+
+  @@map("SiteSettings")
+}
+
+model JbrLandingSection {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  section   String   @unique
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("LandingSection")
+}

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconEmail } from "@/lib/icons";
-import Link from "@/components/link";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { MarkAsReadOnOpen } from "./components/mark-as-read-on-open";
 import { BellRevalidateTrigger } from "./components/bell-revalidate-trigger";
 

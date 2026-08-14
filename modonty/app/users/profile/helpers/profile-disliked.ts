@@ -1,4 +1,4 @@
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
 
 export type DislikedItemType = "client" | "article" | "comment";
@@ -30,7 +30,7 @@ export interface DislikedItem {
 }
 
 /**
- * Server-side counterpart of GET /api/users/[id]/disliked. Merges client +
+ * Reads directly on the server — the old /api endpoint was removed. Merges client +
  * article + comment dislikes into a single timeline sorted by date desc.
  * Per-request (not cached) — profile is `noindex` and counts mutate.
  */

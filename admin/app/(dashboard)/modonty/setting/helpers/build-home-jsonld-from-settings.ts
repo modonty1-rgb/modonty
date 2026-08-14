@@ -3,7 +3,7 @@
  * Output: Organization, WebSite, CollectionPage, ItemList (up to 20 Articles).
  */
 
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 export interface SettingsForHomeJsonLd {
   siteUrl?: string | null;

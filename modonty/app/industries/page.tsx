@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { getIndustriesEnhanced } from "@/app/api/helpers/industry-queries";
-import { getIndustriesPageSeo } from "@/lib/seo/industries-page-seo";
+import { getIndustriesEnhanced } from "@/app/industries/helpers/get-industries-enhanced";
+import { getIndustriesPageSeo } from "@/app/industries/helpers/industries-page-seo";
 import { generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
-import { loadMoreIndustries } from "@/app/actions/industry-actions";
+import { loadMoreIndustries } from "@/app/industries/actions";
 import { extractOgImageFromMetadata } from "@/lib/seo/og-image";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { ListingHero } from "@/components/shared/ListingHero";
-import { EntitySearchForm } from "@/components/shared/EntitySearchForm";
-import { EntitySortFilter, type EntitySortOption } from "@/components/shared/EntitySortFilter";
-import { InfiniteEntityGrid } from "@/components/shared/InfiniteEntityGrid";
+import { ListingHero } from "@/components/listing/ListingHero";
+import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
+import { EntitySortFilter, type EntitySortOption } from "@/components/listing/EntitySortFilter";
+import { InfiniteEntityGrid } from "@/components/listing/InfiniteEntityGrid";
 import { IconSearch } from "@/lib/icons";
 import type { IndustryListItem } from "@/lib/types";
-import type { EntityCardProps } from "@/components/shared/EntityCard";
+import type { EntityCardProps } from "@/components/listing/EntityCard";
 
 const PAGE_SIZE = 20;
 

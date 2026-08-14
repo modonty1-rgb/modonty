@@ -1,7 +1,7 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { generateMetadataFromSEO } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import Link from "@/components/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { IconHelpCircle, IconFaqQuestion, IconEmail } from "@/lib/icons";
 

@@ -36,7 +36,7 @@ export function ClientFollowButton({
     const fetchFollowStatus = async () => {
       if (status === "authenticated" && session?.user) {
         try {
-          const response = await fetch(`/api/clients/${encodeURIComponent(clientSlug)}/follow`);
+          const response = await fetch(`/clients/${encodeURIComponent(clientSlug)}/api/follow`);
           if (response.ok) {
             const data = await response.json();
             if (data.success) {
@@ -70,7 +70,7 @@ export function ClientFollowButton({
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/clients/${encodeURIComponent(clientSlug)}/follow`, {
+      const response = await fetch(`/clients/${encodeURIComponent(clientSlug)}/api/follow`, {
         method: isFollowing ? "DELETE" : "POST",
         headers: {
           "Content-Type": "application/json",

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronRight, Plus, Trash2, Loader2, ImagePlus } from "lucide-react";
 
-import { OptimizedImage } from "@modonty/database/components/optimized-image";
+import { OptimizedImage } from "@modonty/shared/components/optimized-image";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -18,8 +18,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { formatBytes } from "@modonty/database/lib/utils";
-import { justifyRows, tileAspectRatio, shouldContainTile } from "@modonty/database/lib/justify-rows";
+import { formatBytes } from "@modonty/shared/lib/utils";
+import { justifyRows, tileAspectRatio, shouldContainTile } from "@modonty/shared/lib/justify-rows";
 
 /** Page content width at the widest breakpoint — only decides tiles-per-row.
  *  `flex-grow` fills the real width exactly. See the `gallery-justified-rows` standard. */

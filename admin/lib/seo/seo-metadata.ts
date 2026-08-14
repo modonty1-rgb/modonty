@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { SITE_NAME } from "@/lib/constants/site-name";
-import { BRAND_LOGO_URL } from "@modonty/database/lib/brand-assets";
+import { BRAND_LOGO_URL } from "@modonty/shared/lib/brand-assets";
 
 export interface SEOData {
   title?: string;

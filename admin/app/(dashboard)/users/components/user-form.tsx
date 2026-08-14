@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { messages } from "@/lib/messages";
 import { useRouter } from "next/navigation";
 import Link from "next/link";

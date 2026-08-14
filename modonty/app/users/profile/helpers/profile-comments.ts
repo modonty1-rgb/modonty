@@ -33,7 +33,7 @@ export interface ProfileComments {
 }
 
 /**
- * Server-side counterpart of GET /api/users/[id]/comments. Excludes DELETED.
+ * Reads directly on the server — the old /api endpoint was removed. Excludes DELETED.
  * Per-request (not cached) — profile is `noindex` and comment counts mutate.
  */
 export async function getProfileComments(

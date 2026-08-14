@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 import { IconPlay } from "@/lib/icons";
 

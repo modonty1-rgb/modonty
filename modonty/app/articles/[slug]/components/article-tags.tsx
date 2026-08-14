@@ -1,4 +1,4 @@
-import Link from "@/components/link";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { IconClients, IconFolder, IconCategory, IconHash } from "@/lib/icons";
 

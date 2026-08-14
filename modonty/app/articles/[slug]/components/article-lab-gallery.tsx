@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { OptimizedImage, type ImageMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, type ImageMedia } from "@modonty/shared/components/optimized-image";
 
 import { Card } from "@/components/ui/card";
 import { IconImage } from "@/lib/icons";

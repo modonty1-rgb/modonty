@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { uploadToBunny } from "@modonty/database/lib/bunny";
+import { uploadToBunny } from "@modonty/shared/lib/bunny";
 
 // Bunny-primary (2026-07-29): staff avatars go to the platform assets zone.
 export async function uploadAvatar(

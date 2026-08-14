@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "@/components/link";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { IconError, IconRefresh, IconForward } from "@/lib/icons";

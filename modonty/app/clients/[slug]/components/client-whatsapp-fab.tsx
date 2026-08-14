@@ -1,7 +1,7 @@
 "use client";
 
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 import { recordWhatsappLead } from "@/app/articles/[slug]/actions/booking-actions";
 

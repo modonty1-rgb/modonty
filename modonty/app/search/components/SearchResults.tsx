@@ -5,7 +5,7 @@ import { SearchSortBar } from "./SearchSortBar";
 import { SearchEmptyState } from "./SearchEmptyState";
 import { SearchNoQueryState } from "./SearchNoQueryState";
 import type { ClientResponse, FeedPost } from "@/lib/types";
-import type { ClientSortOption } from "@/app/api/helpers/client-queries";
+import type { ClientSortOption } from "../helpers/client-sort";
 
 type SearchScope = "all" | "articles" | "clients";
 type ArticleSortOption = "newest" | "oldest" | "title";

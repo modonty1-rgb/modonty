@@ -3,7 +3,7 @@
  * Shows the FULL value of modonty as a complete platform, not just a CMS.
  */
 
-import { BRAND_CHARACTER_URL } from "@modonty/database/lib/brand-assets";
+import { BRAND_CHARACTER_URL } from "@modonty/shared/lib/brand-assets";
 
 import type { LucideIcon } from "lucide-react";
 import {

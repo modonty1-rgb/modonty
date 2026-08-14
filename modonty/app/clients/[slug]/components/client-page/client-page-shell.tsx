@@ -1,4 +1,4 @@
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { ClientHeroV2 } from "../shell-hero/client-hero-v2";
 import { ClientSectionNav } from "../nav/client-section-nav";
 import { ClientSectionMenu } from "../nav/client-section-menu";

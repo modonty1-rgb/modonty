@@ -1,5 +1,5 @@
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
-import { BRAND_WORDMARK_URL } from "@modonty/database/lib/brand-assets";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
+import { BRAND_WORDMARK_URL } from "@modonty/shared/lib/brand-assets";
 import { ar } from "@/lib/ar";
 
 const DEFAULT_SRC = BRAND_WORDMARK_URL;

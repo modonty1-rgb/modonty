@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { messages } from "@/lib/messages";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { format } from "date-fns";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { useRouter } from "next/navigation";
 import { Edit, Trash2, Info, Copy, ChevronDown, ImageOff, Check, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -17,8 +17,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { computeMediaSeoScore } from "@modonty/database/lib/seo/media/seo-score";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { computeMediaSeoScore } from "@modonty/shared/lib/seo/media/seo-score";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { MediaType } from "@prisma/client";
 import { getMediaTypeLabel } from "../helpers/media-utils";
@@ -230,7 +230,7 @@ export function MediaGrid({
                   );
                 })()}
                 {isImage(infoMedia.mimeType) && (() => {
-                  // ONE image SEO score — the shared dataLayer SOT (computeMediaSeoScore),
+                  // ONE image SEO score — the shared shared SOT (computeMediaSeoScore),
                   // the same number the SEO Images section shows. No second local rubric.
                   const { score } = computeMediaSeoScore({
                     altText: infoMedia.altText,

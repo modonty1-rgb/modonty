@@ -1,4 +1,4 @@
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { IconLike, IconSaved, IconComment, IconViews, IconShare, IconChevronLeft } from "@/lib/icons";
 import { SHOW_ARTICLE_ENGAGEMENT_STATS } from "@/lib/feature-flags";
 import type { PostCardProps } from "./PostCard.types";

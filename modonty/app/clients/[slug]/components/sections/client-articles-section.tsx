@@ -1,4 +1,4 @@
-import { OptimizedImage, type ImageMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, type ImageMedia } from "@modonty/shared/components/optimized-image";
 
 import { SectionCard } from "@/app/clients/[slug]/components/sections/section-card";
 import { cn } from "@/lib/utils";

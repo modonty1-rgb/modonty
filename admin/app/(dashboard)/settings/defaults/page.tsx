@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getCoreClientId } from "@modonty/database/lib/core-client";
+import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { SettingsPageHeader } from "../_shared/page-header";
 import { getPlatformDefaults } from "./actions/defaults-actions";
 import { DefaultsForm } from "./components/defaults-form";

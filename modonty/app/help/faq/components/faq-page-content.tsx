@@ -2,8 +2,8 @@
 
 import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { FAQAccordion } from "../../components/faq-accordion";
-import { FAQSearch } from "../../components/faq-search";
+import { FAQAccordion } from "./faq-accordion";
+import { FAQSearch } from "./faq-search";
 
 interface FAQ {
   id: string;

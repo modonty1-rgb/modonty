@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { cookies } from "next/headers";
 import type { ConversionType } from "@prisma/client";
-import { notifyTelegram } from "@/lib/telegram/notify";
+import { notifyTelegram } from "@/lib/telegram";
 import { trackConversionComplete } from "@/lib/analytics/events-registry";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";

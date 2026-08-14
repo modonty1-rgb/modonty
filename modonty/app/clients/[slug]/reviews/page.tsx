@@ -4,7 +4,7 @@ import { getClientPageData } from "../helpers/client-page-data";
 import { getClientReviewsBySlug } from "../helpers/client-reviews";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { IconMessage } from "@/lib/icons";
 
 interface ClientReviewsPageProps {

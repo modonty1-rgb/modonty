@@ -1,6 +1,6 @@
 "use client";
 
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { platformCapabilities, engagementStats } from "../../data/platform-capabilities";

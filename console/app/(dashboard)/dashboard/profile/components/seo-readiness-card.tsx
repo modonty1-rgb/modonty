@@ -1,5 +1,5 @@
-import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
-import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
+import { computeClientSeoScore } from "@modonty/shared/lib/seo/client/seo-score";
+import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
 
 import { SeoReadinessButton } from "./seo-readiness-button";
 

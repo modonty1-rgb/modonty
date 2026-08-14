@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import {
   normalizeLegalForm,
   normalizeOrganizationType,
-} from "@modonty/database/lib/constants/client-classification";
+} from "@modonty/shared/lib/constants/client-classification";
 
 /**
  * Classification sanitizer (legalForm + organizationType).
@@ -14,7 +14,7 @@ import {
  * now writes canonical values (dropdown + normalize), but old rows still need fixing.
  *
  * Single source of truth: the canonical lists + mapping live in
- * `@modonty/database/lib/constants/client-classification`. This tool only scans the
+ * `@modonty/shared/lib/constants/client-classification`. This tool only scans the
  * DB and applies `normalize*()` — no mapping table is duplicated here.
  */
 

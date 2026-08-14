@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SortDropdown } from "@/app/clients/components/sort-dropdown";
 import type { SortOption } from "@/app/clients/components/sort-dropdown";
-import type { ClientSortOption } from "@/app/api/helpers/client-queries";
+import type { ClientSortOption } from "../helpers/client-sort";
 
 type SearchScope = "all" | "articles" | "clients";
 type ArticleSortOption = "newest" | "oldest" | "title";

@@ -1,6 +1,6 @@
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { ArticleStatus, CommentStatus } from "@prisma/client";
 
 export async function getArticleSlugsForStaticParams() {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
@@ -14,7 +14,7 @@ import { getArticleSeoScore } from "@/lib/seo/article-seo-score";
 import { GoogleIcon } from "@/components/admin/icons/google-icon";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import type { Article as ArticleViewType } from "../[id]/helpers/article-view-types";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 type Article = ArticleViewType & {
   views: number;
@@ -31,7 +31,7 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
   const router = useRouter();
   const [editorFilter, setEditorFilter] = useState<string | null>(null);
 
-  // Shared dataLayer scorer — the same number the article badge + segment tables show.
+  // Shared shared scorer — the same number the article badge + segment tables show.
   const seoScores = useMemo(() => {
     const map = new Map<string, number>();
     for (const a of articles) map.set(a.id, getArticleSeoScore(a));

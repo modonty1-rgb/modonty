@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
-import Link from "@/components/link";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import Link from "next/link";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { generateStructuredData, buildAlternates } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { getAboutPageForMetadata } from "./helpers/about-metadata";

@@ -13,14 +13,14 @@
 
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-guard";
-import { getCoreClientId } from "@modonty/database/lib/core-client";
+import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { generateBlurDataUrlFromUrl } from "@/app/(dashboard)/media/actions/generate-blur";
 import {
   BRAND_LOGO_URL,
   BRAND_CHARACTER_URL,
   BRAND_WORDMARK_URL,
   BRAND_ICON_URL,
-} from "@modonty/database/lib/brand-assets";
+} from "@modonty/shared/lib/brand-assets";
 
 const STORAGE_HOST = process.env.BUNNY_STORAGE_HOSTNAME || "storage.bunnycdn.com";
 
@@ -263,7 +263,7 @@ export async function linkCoreMedia(mode: "preview" | "apply"): Promise<LinkCore
       }
     }
 
-    // ⑤ Brand identity constants (dataLayer/lib/brand-assets.ts) → core-owned rows.
+    // ⑤ Brand identity constants (shared/lib/brand-assets.ts) → core-owned rows.
     const brandItems: PlanItem[] = [];
     for (const url of [BRAND_LOGO_URL, BRAND_CHARACTER_URL, BRAND_WORDMARK_URL, BRAND_ICON_URL]) {
       const ensured = await ensureCoreRow(url, coreId, apply);

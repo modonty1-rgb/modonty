@@ -1,10 +1,10 @@
 import { Metadata } from "next";
-import { TrendingArticles } from "@/components/feed/TrendingArticles";
-import { getTrendingArticles } from "@/app/api/helpers/article-queries";
+import { TrendingArticles } from "@/app/trending/components/TrendingArticles";
+import { getTrendingArticles } from "@/app/trending/helpers/get-trending-articles";
 import type { ArticleResponse } from "@/lib/types";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { TimePeriodFilter } from "./components/time-period-filter";
-import { getTrendingPageSeo } from "@/lib/seo/trending-page-seo";
+import { getTrendingPageSeo } from "@/app/trending/helpers/trending-page-seo";
 import { jsonLdHtmlFromString } from "@/lib/seo";
 
 interface TrendingPageProps {

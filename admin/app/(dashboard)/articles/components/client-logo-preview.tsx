@@ -2,7 +2,7 @@
 
 import { CheckCircle2, AlertCircle, Building2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { mediaSrc } from '@modonty/database/lib/media-src';
+import { mediaSrc } from '@modonty/shared/lib/media-src';
 
 import type { Client, Media } from '@prisma/client';
 

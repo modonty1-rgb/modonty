@@ -1,18 +1,18 @@
 import { Metadata } from "next";
-import { getCategoriesEnhanced } from "@/app/api/helpers/category-queries";
-import { getCategoriesPageSeo } from "@/lib/seo/categories-page-seo";
+import { getCategoriesEnhanced } from "@/app/categories/helpers/get-categories-enhanced";
+import { getCategoriesPageSeo } from "@/app/categories/helpers/categories-page-seo";
 import { generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
-import { loadMoreCategories } from "@/app/actions/category-actions";
+import { loadMoreCategories } from "@/app/categories/actions";
 import { extractOgImageFromMetadata } from "@/lib/seo/og-image";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { ListingHero } from "@/components/shared/ListingHero";
-import { EntitySearchForm } from "@/components/shared/EntitySearchForm";
-import { EntitySortFilter, type EntitySortOption } from "@/components/shared/EntitySortFilter";
-import { InfiniteEntityGrid } from "@/components/shared/InfiniteEntityGrid";
+import { ListingHero } from "@/components/listing/ListingHero";
+import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
+import { EntitySortFilter, type EntitySortOption } from "@/components/listing/EntitySortFilter";
+import { InfiniteEntityGrid } from "@/components/listing/InfiniteEntityGrid";
 import { IconSearch } from "@/lib/icons";
 import { parseCategorySearchParams } from "./helpers/category-utils";
 import type { CategoryPageParams, CategoryResponse } from "@/lib/types";
-import type { EntityCardProps } from "@/components/shared/EntityCard";
+import type { EntityCardProps } from "@/components/listing/EntityCard";
 
 const PAGE_SIZE = 20;
 

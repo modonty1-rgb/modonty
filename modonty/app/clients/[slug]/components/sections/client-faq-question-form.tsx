@@ -2,9 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 import { IconLoading, IconSend, IconSuccess } from "@/lib/icons";
-import Link from "@/components/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { IconUser, IconEmail } from "@/lib/icons";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import Link from "@/components/link";
 import { ProfileTabs } from "./components/profile-tabs";
 import { ActivityFeed } from "./components/activity-feed";
 import { getProfileStats, getProfileBio } from "./helpers/profile-stats";

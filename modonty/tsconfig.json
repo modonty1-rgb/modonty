@@ -23,6 +23,15 @@
       }
     ],
     "paths": {
+      "@/components/ui/*": [
+        "../shared/components/ui/*"
+      ],
+      "@/components/icons/*": [
+        "../shared/components/icons/*"
+      ],
+      "@/lib/icons": [
+        "../shared/lib/icons"
+      ],
       "@/*": [
         "./*"
       ]

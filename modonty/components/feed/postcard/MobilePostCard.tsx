@@ -1,5 +1,5 @@
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
-import { ArticleHeroWarm } from "@/components/media/hero-warm";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
+import { PreloadArticleHero } from "@/components/media/preload-hero";
 import { IconArticle } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { PostCardHeroImage } from "./PostCardHeroImage";
@@ -62,7 +62,7 @@ export function MobilePostCard({ className, featured, post }: PostCardProps) {
       itemType="https://schema.org/Article"
       className={cn("relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm lg:hidden", featured && "border-primary/20 shadow-primary/5", className)}
     >
-      <ArticleHeroWarm href={`/articles/${post.slug}`} imageUrl={post.image ?? null} />
+      <PreloadArticleHero href={`/articles/${post.slug}`} imageUrl={post.image ?? null} />
       <div data-nosnippet className="p-3">
         <MobilePostCardContent post={post} />
       </div>

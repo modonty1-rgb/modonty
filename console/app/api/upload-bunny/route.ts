@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { uploadToBunny } from "@modonty/database/lib/bunny";
+import { uploadToBunny } from "@modonty/shared/lib/bunny";
 import { auth } from "@/lib/auth";
 import { generateBlurDataUrl } from "@/lib/media/generate-blur";
 

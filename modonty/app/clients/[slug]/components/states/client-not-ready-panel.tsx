@@ -1,6 +1,6 @@
-import Link from "@/components/link";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
-import { BookingCtaLink } from "@/components/booking-cta-link";
+import Link from "next/link";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
+import { BookingCtaLink } from "@/components/cta/booking-cta-link";
 
 interface Props {
   clientId: string;

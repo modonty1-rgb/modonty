@@ -1,4 +1,4 @@
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 
@@ -16,7 +16,7 @@ export interface FavoritedArticle {
 }
 
 /**
- * Server-side counterpart of GET /api/users/[id]/favorites. Filters out
+ * Reads directly on the server — the old /api endpoint was removed. Filters out
  * unpublished articles. Per-request (not cached) — profile is `noindex` and
  * favorites change interactively.
  */

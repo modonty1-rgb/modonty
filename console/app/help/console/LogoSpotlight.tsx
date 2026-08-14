@@ -1,10 +1,10 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { useMemo } from "react";
 
-import { BRAND_WORDMARK_URL } from "@modonty/database/lib/brand-assets";
+import { BRAND_WORDMARK_URL } from "@modonty/shared/lib/brand-assets";
 
 const LOGO_URL = BRAND_WORDMARK_URL;
 

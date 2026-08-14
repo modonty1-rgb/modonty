@@ -29,7 +29,7 @@ export function ArticleViewTracker({ articleSlug }: ArticleViewTrackerProps) {
     // Send the real entry context: document.referrer (external source) +
     // location.href (UTM params) — the fetch's own Referer header is useless
     // for source attribution (it's always this page).
-    fetch(`/api/articles/${slug}/view`, {
+    fetch(`/articles/${slug}/api/view`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ referrer: document.referrer || null, url: window.location.href }),
@@ -58,7 +58,7 @@ export function ArticleViewTracker({ articleSlug }: ArticleViewTrackerProps) {
       const scrollDepth = maxScrollRef.current;
       const bounced = timeOnPage < BOUNCE_TIME_SEC && scrollDepth < BOUNCE_SCROLL_THRESHOLD;
       const payload = JSON.stringify({ timeOnPage, scrollDepth, bounced });
-      fetch(`/api/track/analytics/${encodeURIComponent(id)}`, {
+      fetch(`/articles/${encodeURIComponent(articleSlug)}/api/analytics/${encodeURIComponent(id)}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: payload,
@@ -78,7 +78,9 @@ export function ArticleViewTracker({ articleSlug }: ArticleViewTrackerProps) {
       window.removeEventListener("pagehide", onPageHide);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, []);
+    // `articleSlug` is now part of the beacon URL, so it must be a dependency —
+    // otherwise a client-side nav to another article would report the old slug.
+  }, [articleSlug]);
 
   return null;
 }

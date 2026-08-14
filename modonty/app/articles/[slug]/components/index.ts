@@ -13,5 +13,4 @@ export {
   NewsletterCTA,
   ArticleTableOfContents,
 } from "./sidebar";
-export { AskClientDialog } from "./ask-client-dialog";
 export { CommentFormDialog } from "./comment-form-dialog";

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { format } from "date-fns";
 import {
   ArrowRight,
@@ -34,7 +34,7 @@ import { ArticleViewRelatedFrom } from "./components/article-view-related-from";
 import { sanitizeHtmlContent } from "@/lib/sanitize-html";
 import { PreviewToc } from "./components/article-toc";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 export default async function ArticleViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

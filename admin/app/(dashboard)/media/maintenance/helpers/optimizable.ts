@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 // Best-practice ceiling for a web image. Anything heavier — or any non-WebP format —
 // is flagged for the maintenance optimizer. WebP masters average ~130KB in this library.

@@ -5,7 +5,7 @@ import { getOrCreateSessionId, createConversion } from "@/lib/conversion-trackin
 import { ConversionType } from "@prisma/client";
 import { sendEmail } from "@/lib/email/resend-client";
 import { newsletterWelcomeEmail } from "@/lib/email/templates/newsletter-welcome";
-import { sendTelegramMessage } from "@/lib/telegram";
+import { sendAdminTelegram } from "@modonty/shared/lib/telegram/client";
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     // Notify Telegram group — non-blocking
     const now = new Date().toLocaleString("ar-SA", { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
-    sendTelegramMessage(`🔔 <b>مشترك جديد — نشرة مدونتي</b>\n📧 ${normalizedEmail}\n📅 ${now}`).catch(() => null);
+    sendAdminTelegram(`🔔 <b>مشترك جديد — نشرة مدونتي</b>\n📧 ${normalizedEmail}\n📅 ${now}`).catch(() => null);
 
     // Send welcome email — non-blocking, failure doesn't affect subscription
     const welcomeEmail = newsletterWelcomeEmail({ email: normalizedEmail });

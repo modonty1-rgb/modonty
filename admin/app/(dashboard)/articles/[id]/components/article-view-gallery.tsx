@@ -1,13 +1,13 @@
 "use client";
 
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Image as ImageIcon } from "lucide-react";
 import { Article } from "../helpers/article-view-types";
 import { CopyableId } from "./shared/copyable-id";
 
-import { mediaSrc } from "@modonty/database/lib/media-src";
-import { justifyRows, tileAspectRatio, shouldContainTile } from "@modonty/database/lib/justify-rows";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { justifyRows, tileAspectRatio, shouldContainTile } from "@modonty/shared/lib/justify-rows";
 
 /** Card content width at the widest breakpoint. Only decides tiles-per-row — flex-grow
  *  fills the actual width exactly. See the `gallery-justified-rows` standard. */

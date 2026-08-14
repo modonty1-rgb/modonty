@@ -2,8 +2,8 @@ import Link from "next/link";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { computeReferenceSeoScore } from "@modonty/database/lib/seo/reference/seo-score";
-import type { SeoCheck, JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
+import { computeReferenceSeoScore } from "@modonty/shared/lib/seo/reference/seo-score";
+import type { SeoCheck, JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
 
 // Shared SEO technical view for reference entities (category · tag · author · industry).
 // Driven by computeReferenceSeoScore — the ONE source of truth (same family as article/

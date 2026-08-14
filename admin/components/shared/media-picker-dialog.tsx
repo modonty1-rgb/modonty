@@ -21,14 +21,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { Loader2, Search, Upload, RefreshCw } from "lucide-react";
 import { getMedia, type MediaFilters } from "@/app/(dashboard)/media/actions/media-actions";
 import Link from "next/link";
 import { MediaType } from "@prisma/client";
 import { getMediaTypeLabel, getMediaTypeBadgeVariant } from "@/app/(dashboard)/media/helpers/media-utils";
-import { mediaSrc } from "@modonty/database/lib/media-src";
-import { justifyRows, tileAspectRatio, shouldContainTile } from "@modonty/database/lib/justify-rows";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { justifyRows, tileAspectRatio, shouldContainTile } from "@modonty/shared/lib/justify-rows";
 
 /** DialogContent is `max-w-4xl` (896px) minus padding. Only decides tiles-per-row —
  *  the widths come back as percentages, so the row fills its parent at any size. */

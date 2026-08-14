@@ -1,6 +1,6 @@
 "use client";
 
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { motion } from "framer-motion";
 import { ArrowLeft, Lightbulb } from "lucide-react";
 import type { EngagementCard as EngagementCardData } from "../../data/guide-v2";

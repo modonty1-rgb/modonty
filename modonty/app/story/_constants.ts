@@ -1,7 +1,7 @@
 /**
  * Shared constants for /story page components.
  */
-import { BRAND_WORDMARK_URL } from "@modonty/database/lib/brand-assets";
+import { BRAND_WORDMARK_URL } from "@modonty/shared/lib/brand-assets";
 
 import { BRAND_AR, LEGAL } from "@/lib/brand";
 

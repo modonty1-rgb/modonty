@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,8 +16,8 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
-import { computeReferenceSeoScore } from "@modonty/database/lib/seo/reference/seo-score";
-import type { JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
+import { computeReferenceSeoScore } from "@modonty/shared/lib/seo/reference/seo-score";
+import type { JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
 
 interface Industry {
   id: string;

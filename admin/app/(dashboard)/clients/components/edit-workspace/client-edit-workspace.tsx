@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { Link2, RefreshCw, Pencil, ImageIcon, ChevronDown } from "lucide-react";
 import { SubscriptionTier } from "@prisma/client";
 
@@ -14,7 +14,7 @@ import {
   type OrganizationType,
   LEGAL_FORMS,
   type LegalForm,
-} from "@modonty/database/lib/constants/client-classification";
+} from "@modonty/shared/lib/constants/client-classification";
 
 import { SocialProfilesInput } from "../social-profiles-input";
 import { SlugChangeDialog } from "../slug-change-dialog";
@@ -27,7 +27,7 @@ import { EditLeftPanel } from "./edit-left-panel";
 
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 import type { ClientWithRelations } from "@/lib/types";
-import type { SeoCheck } from "@modonty/database/lib/seo/client/types";
+import type { SeoCheck } from "@modonty/shared/lib/seo/client/types";
 
 interface ClientEditWorkspaceProps {
   form: UseFormReturn<ClientFormSchemaType>;

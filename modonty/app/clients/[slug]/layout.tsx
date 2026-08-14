@@ -1,14 +1,14 @@
 import { ReactNode } from "react";
 import dynamicImport from "next/dynamic";
 import { notFound } from "next/navigation";
-import Link from "@/components/link";
+import Link from "next/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { IconChevronRight } from "@/lib/icons";
 import { getClientPageData } from "./helpers/client-page-data";
 
 // Dynamic import for GTM tracker (SSR enabled; component guards browser APIs)
 const GTMClientTracker = dynamicImport(
-  () => import("@/components/gtm/GTMClientTracker").then((mod) => ({ default: mod.GTMClientTracker })),
+  () => import("@/components/tracking/GTMClientTracker").then((mod) => ({ default: mod.GTMClientTracker })),
   { ssr: true }
 );
 

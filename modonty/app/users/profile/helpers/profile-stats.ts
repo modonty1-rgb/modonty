@@ -11,7 +11,7 @@ export interface ProfileStats {
 }
 
 /**
- * Server-side counterpart of GET /api/users/[id]/stats — used to render the
+ * Reads directly on the server — the old /api endpoint was removed — used to render the
  * profile page without a client-side fetch waterfall. Per-request (not cached)
  * because counts mutate frequently and the page is `noindex` (no SEO benefit
  * from caching).

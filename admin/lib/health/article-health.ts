@@ -1,7 +1,7 @@
 import "server-only";
 
-import { mediaSrc } from "@modonty/database/lib/media-src";
-import { bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/database/lib/bunny";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/shared/lib/bunny";
 import { buildArticleUrlFromBase } from "@/lib/seo/url-builders";
 import type { HeadChecker } from "@/lib/seo/head-check";
 import type { HealthIssue, HealthTarget } from "./article-health-types";

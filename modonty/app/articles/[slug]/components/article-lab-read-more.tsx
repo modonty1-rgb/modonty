@@ -1,8 +1,8 @@
 import { Card } from "@/components/ui/card";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
-import { OptimizedImage } from "@modonty/database/components/optimized-image";
-import { ArticleHeroWarm } from "@/components/media/hero-warm";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
+import { OptimizedImage } from "@modonty/shared/components/optimized-image";
+import { PreloadArticleHero } from "@/components/media/preload-hero";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 interface ReadMoreItem {
   id: string;
@@ -40,7 +40,7 @@ export function ArticleLabReadMore({ articleId, clientId, items }: ArticleLabRea
             clientId={clientId}
             className="block h-full"
           >
-            <ArticleHeroWarm href={`/articles/${a.slug}`} imageUrl={mediaSrc(a.featuredImage)} />
+            <PreloadArticleHero href={`/articles/${a.slug}`} imageUrl={mediaSrc(a.featuredImage)} />
             <Card className="flex h-full flex-col overflow-hidden transition-shadow hover:shadow-md">
               <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-muted">
                 {a.featuredImage ? (

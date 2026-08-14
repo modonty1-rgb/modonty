@@ -16,9 +16,9 @@ import { ClientEditWorkspace } from "./edit-workspace/client-edit-workspace";
 import { OpenClientConsoleButton } from "./edit-workspace/open-client-console-button";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import type { ClientWithRelations } from "@/lib/types";
-import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
-import { mediaSrc } from "@modonty/database/lib/media-src";
-import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
+import { computeClientSeoScore } from "@modonty/shared/lib/seo/client/seo-score";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
 
 interface ClientFormProps {
   initialData?: Partial<ClientWithRelations>;

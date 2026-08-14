@@ -1,4 +1,4 @@
-import Link from "@/components/link";
+import Link from "next/link";
 import { RelativeTime } from "@/components/date/RelativeTime";
 import type { PostCardProps } from "./PostCard.types";
 import { PostCardAvatar } from "./PostCardAvatar";

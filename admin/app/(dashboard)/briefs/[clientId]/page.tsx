@@ -1,5 +1,5 @@
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
-import { tileAspectRatio, shouldContainTile } from "@modonty/database/lib/justify-rows";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
+import { tileAspectRatio, shouldContainTile } from "@modonty/shared/lib/justify-rows";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {

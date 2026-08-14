@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "@/components/link";
+import Link from "next/link";
 import { formatRelativeTime } from "@/lib/utils";
 import { IconComment, IconLike, IconSaved, IconUsers } from "@/lib/icons";
 

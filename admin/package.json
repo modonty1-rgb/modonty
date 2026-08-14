@@ -3,7 +3,7 @@
   "version": "1.15.0",
   "private": true,
   "prisma": {
-    "schema": "../dataLayer/prisma/schema/schema.prisma"
+    "schema": "../shared/prisma/schema/schema.prisma"
   },
   "scripts": {
     "dev": "next dev",
@@ -28,7 +28,7 @@
     "@google/genai": "^2.10.0",
     "@hookform/resolvers": "^3.9.1",
     "@marbec/web-auto-extractor": "^2.2.0",
-    "@modonty/database": "workspace:*",
+    "@modonty/shared": "workspace:*",
     "@prisma/client": "^6.19.1",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",

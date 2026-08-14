@@ -2,8 +2,8 @@
 
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus } from "@prisma/client";
-import { computeReferenceSeoScore } from "@modonty/database/lib/seo/reference/seo-score";
-import type { JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
+import { computeReferenceSeoScore } from "@modonty/shared/lib/seo/reference/seo-score";
+import type { JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
 
 export interface CategoryFilters {
   createdFrom?: Date;

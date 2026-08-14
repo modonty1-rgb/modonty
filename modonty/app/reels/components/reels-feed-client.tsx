@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { OptimizedImage, asMedia } from "@modonty/database/components/optimized-image";
 import Link from "next/link";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 import { loadMoreReels } from "../actions/load-more";
 import type { ReelFeedItemWithState } from "../helpers/reels-feed";

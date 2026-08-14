@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { generateMetadataFromSEO, generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
-import { getTagsPageSeo } from "@/lib/seo/tags-page-seo";
+import { getTagsPageSeo } from "@/app/tags/helpers/tags-page-seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { getTagsEnhanced } from "@/app/api/helpers/tag-queries";
-import { loadMoreTags } from "@/app/actions/tag-actions";
+import { getTagsEnhanced } from "@/app/tags/helpers/get-tags-enhanced";
+import { loadMoreTags } from "@/app/tags/actions";
 import { extractOgImageFromMetadata } from "@/lib/seo/og-image";
-import { InfiniteEntityGrid } from "@/components/shared/InfiniteEntityGrid";
-import { ListingHero } from "@/components/shared/ListingHero";
-import { EntitySearchForm } from "@/components/shared/EntitySearchForm";
-import { EntitySortFilter, type EntitySortOption } from "@/components/shared/EntitySortFilter";
+import { InfiniteEntityGrid } from "@/components/listing/InfiniteEntityGrid";
+import { ListingHero } from "@/components/listing/ListingHero";
+import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
+import { EntitySortFilter, type EntitySortOption } from "@/components/listing/EntitySortFilter";
 import { IconSearch } from "@/lib/icons";
-import type { EntityCardProps } from "@/components/shared/EntityCard";
+import type { EntityCardProps } from "@/components/listing/EntityCard";
 
 const PAGE_SIZE = 20;
 

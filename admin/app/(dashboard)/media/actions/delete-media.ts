@@ -7,7 +7,7 @@ import { canDeleteMedia } from "./can-delete-media";
 import { deleteCloudinaryAsset } from "./delete-cloudinary-asset";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
-import { deleteBunnyUrl, bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/database/lib/bunny";
+import { deleteBunnyUrl, bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/shared/lib/bunny";
 
 export async function deleteMedia(id: string, clientId?: string) {
   try {

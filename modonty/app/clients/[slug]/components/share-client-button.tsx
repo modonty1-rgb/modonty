@@ -1,6 +1,6 @@
 "use client";
 
-import { ShareButtons } from "@/components/shared";
+import { ShareButtons } from "@/components/share";
 import { trackCtaClick } from "@/lib/cta-tracking";
 
 interface ShareClientButtonProps {
@@ -22,7 +22,7 @@ export function ShareClientButton({ clientName, clientUrl, clientId, clientSlug 
       targetUrl: clientUrl,
       clientId,
     });
-    fetch(`/api/clients/${encodeURIComponent(clientSlug)}/share`, {
+    fetch(`/clients/${encodeURIComponent(clientSlug)}/api/share`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ platform: bodyPlatform }),

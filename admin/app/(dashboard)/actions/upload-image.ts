@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { ImageUploadData } from "@/components/shared/deferred-image-upload";
 import { generateSEOFileName } from "@/lib/utils/image-seo";
-import { uploadToBunny } from "@modonty/database/lib/bunny";
+import { uploadToBunny } from "@modonty/shared/lib/bunny";
 
 type EntityTableName = "categories" | "tags" | "industries" | "authors";
 

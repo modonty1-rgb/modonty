@@ -8,7 +8,7 @@
 import dynamic from "next/dynamic";
 
 export const GTMClientTracker = dynamic(
-  () => import("@/components/gtm/GTMClientTracker").then((m) => ({ default: m.GTMClientTracker })),
+  () => import("@/components/tracking/GTMClientTracker").then((m) => ({ default: m.GTMClientTracker })),
   { ssr: false }
 );
 

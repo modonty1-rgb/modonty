@@ -8,7 +8,7 @@ import { requireAdmin } from "@/lib/admin-guard";
 /**
  * Modonty Core key (T2). `Settings.coreClientId` marks the Client row that IS the platform.
  * Set from /settings/system only — never a script. Read everywhere through
- * `@modonty/database/lib/core-client`.
+ * `@modonty/shared/lib/core-client`.
  */
 
 export interface CoreClientOption {

@@ -2,7 +2,7 @@ import "server-only";
 
 import { createHash } from "node:crypto";
 
-import { buildBunnyMediaPath, bunnyAspectUrl, uploadToBunny } from "@modonty/database/lib/bunny";
+import { buildBunnyMediaPath, bunnyAspectUrl, uploadToBunny } from "@modonty/shared/lib/bunny";
 import { generateAspectCrops } from "./generate-aspect-crops";
 import { generateBlurDataUrl } from "./generate-blur";
 

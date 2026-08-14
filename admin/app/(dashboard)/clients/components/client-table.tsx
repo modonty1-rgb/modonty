@@ -22,10 +22,10 @@ import { SortableValue } from "@/lib/types";
 import { SubscriptionStatus } from "@prisma/client";
 import { calculateDeliveryRate } from "../helpers/business-metrics";
 import type { ClientForList } from "../actions/clients-actions/types";
-import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
+import { computeClientSeoScore } from "@modonty/shared/lib/seo/client/seo-score";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
-import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { ClientAvatar } from "./client-avatar";
 import { readIntroVideoLink } from "../helpers/intro-video-link";
 

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { deleteBunnyUrl, isBunnyUrl } from "@modonty/database/lib/bunny";
+import { deleteBunnyUrl, isBunnyUrl } from "@modonty/shared/lib/bunny";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { generateClientSEO } from "@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo";
 

@@ -12,7 +12,7 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.10.3 (admin) · 0.2.2 (dataLayer)",
+    version: "1.10.3 (admin) · 0.2.2 (shared)",
     title: "Images with Arabic names no longer overwrite each other",
     items: [
       { type: "fix" as const, text: "When a picture was saved to our storage, its filename was stripped down to English letters and numbers only — so a fully Arabic name was erased and the picture was simply called \"file\". Every Arabic-named picture belonging to the same company then landed on the exact same slot and quietly replaced the one before it. Filenames now keep their Arabic, and every picture gets its own unique fingerprint, so two pictures can never share a slot again." },

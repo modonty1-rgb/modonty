@@ -1,6 +1,6 @@
 import { Article, Client, Author, Category, ArticleFAQ } from "@prisma/client";
 import { ArticleStructuredData } from "@/lib/types";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 interface ArticleWithRelations extends Article {
   client: Client & {
@@ -107,7 +107,7 @@ export function generateAuthorStructuredData(author: Author): PersonStructuredDa
 }
 
 import { OrganizationStructuredData } from "@/lib/types";
-import { safeOrganizationType } from "@modonty/database/lib/seo/organization-schema-types";
+import { safeOrganizationType } from "@modonty/shared/lib/seo/organization-schema-types";
 
 export function generateOrganizationStructuredData(client: Client & {
   logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; width?: number | null; height?: number | null } | null;

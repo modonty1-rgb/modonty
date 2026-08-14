@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 // Data for the Reels Approval route — every media row a client pushed into the reels
 // flow that is still waiting for a Modonty decision (reelStatus = PENDING_APPROVAL).

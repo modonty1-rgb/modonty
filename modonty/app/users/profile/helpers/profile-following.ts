@@ -1,4 +1,4 @@
-import { mediaSrc } from "@modonty/database/lib/media-src";
+import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
 
 export interface FollowedClient {
@@ -13,7 +13,7 @@ export interface FollowedClient {
 }
 
 /**
- * Server-side counterpart of GET /api/users/[id]/following. Returns clients
+ * Reads directly on the server — the old /api endpoint was removed. Returns clients
  * the user follows (i.e. `clientLike`). Per-request (not cached) — profile
  * is `noindex` and follow state changes interactively.
  */
