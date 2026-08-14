@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { getClientsWithCounts } from "@/app/clients/helpers/get-clients-with-counts";
-import { getIndustriesWithCounts } from "@/lib/queries";
+import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { getClientsPageSeo } from "@/app/clients/helpers/clients-page-seo";
 import { jsonLdHtmlFromString } from "@/lib/seo";

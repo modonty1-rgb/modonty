@@ -1,6 +1,6 @@
-import { getEntityIcon } from "@/lib/entity-utils";
+import { getEntityIcon } from "./entity-utils";
 import { cn } from "@/lib/utils";
-import type { EntityType } from "@/lib/entity-utils";
+import type { EntityType } from "./entity-utils";
 
 interface EntityPlaceholderProps {
   type: EntityType;

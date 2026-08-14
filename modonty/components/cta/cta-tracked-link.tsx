@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { trackCtaClick } from "@/lib/cta-tracking";
-import type { CTAType } from "@/lib/cta-tracking";
+import { trackCtaClick } from "@/lib/analytics/cta-tracking";
+import type { CTAType } from "@/lib/analytics/cta-tracking";
 
 interface CtaTrackedLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
   href: string;

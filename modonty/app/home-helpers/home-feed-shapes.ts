@@ -3,7 +3,7 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus } from "@prisma/client";
 import type { FeedPost } from "@/lib/types";
-import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
+import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
 
 /** شكل الاستعلام والمحوّل لتغذية الصفحة الرئيسية — لا يقرأهما غير ملفَّي الرئيسية. */
 export const homeFeedSelect = {

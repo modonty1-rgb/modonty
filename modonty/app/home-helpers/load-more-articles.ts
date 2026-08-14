@@ -1,7 +1,7 @@
 "use server";
 
-import { getArticles } from "@/lib/queries";
-import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
+import { getArticles } from "@/lib/queries/get-articles";
+import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
 import type { ArticleResponse, FeedPost } from "@/lib/types";
 
 export interface LoadMoreArticlesResult {

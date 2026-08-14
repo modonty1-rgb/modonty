@@ -5,8 +5,8 @@ import { ArticleStatus, ArticleFAQStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { askClientSchema, type AskClientFormData } from "@/lib/schemas/ask-client-schema";
-import { notifyTelegram } from "@/lib/telegram";
+import { askClientSchema, type AskClientFormData } from "./ask-client-schema";
+import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { trackAskClientSubmit } from "@/lib/analytics/events-registry";
 
 function sanitizeText(text: string): string {

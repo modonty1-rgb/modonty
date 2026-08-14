@@ -1,9 +1,9 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
+import { getOrCreateSessionId, createConversion } from "@/lib/analytics/conversion-tracking";
 import { ConversionType } from "@prisma/client";
-import { notifyTelegram } from "@/lib/telegram";
+import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { trackContactSubmit } from "@/lib/analytics/events-registry";
 
 interface ContactMessageData {

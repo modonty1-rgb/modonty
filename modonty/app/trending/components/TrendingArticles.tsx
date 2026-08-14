@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
-import { PreloadArticleHero } from "@/components/media/preload-hero";
+import { PreloadArticleHero } from "@/components/media/preload-hero/preload-article-hero";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RelativeTime } from "@/components/date/RelativeTime";

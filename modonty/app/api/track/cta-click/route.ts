@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { CTAType } from "@prisma/client";
-import { notifyTelegram } from "@/lib/telegram";
+import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { trackOutboundClick } from "@/lib/analytics/events-registry";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";

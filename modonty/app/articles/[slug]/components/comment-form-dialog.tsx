@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { CommentForm } from "./comment-form";
 import { submitComment } from "../actions/comment-actions";
 import { useRouter } from "next/navigation";
-import { trackCtaClick } from "@/lib/cta-tracking";
+import { trackCtaClick } from "@/lib/analytics/cta-tracking";
 
 interface CommentFormDialogProps {
   articleId: string;

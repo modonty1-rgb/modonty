@@ -20,10 +20,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { askClientSchema, type AskClientFormData } from "@/lib/schemas/ask-client-schema";
-import { submitAskClient } from "@/lib/actions";
+import { askClientSchema, type AskClientFormData } from "./ask-client-schema";
+import { submitAskClient } from "./submit-ask-client";
 import { Badge } from "@/components/ui/badge";
-import { trackCtaClick } from "@/lib/cta-tracking";
+import { trackCtaClick } from "@/lib/analytics/cta-tracking";
 
 interface PendingFaq {
   id: string;

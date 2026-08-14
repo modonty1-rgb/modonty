@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
-import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
+import { getOrCreateSessionId, createConversion } from "@/lib/analytics/conversion-tracking";
 import { ConversionType } from "@prisma/client";
 import { sendEmail } from "@/lib/email/resend-client";
 import { newsletterWelcomeEmail } from "@/lib/email/templates/newsletter-welcome";

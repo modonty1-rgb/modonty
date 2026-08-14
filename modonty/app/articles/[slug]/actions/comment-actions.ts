@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { CommentStatus } from "@prisma/client";
-import { notifyTelegram } from "@/lib/telegram";
+import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import {
   trackCommentSubmit,
   trackCommentReply,

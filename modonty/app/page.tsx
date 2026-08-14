@@ -6,7 +6,7 @@ import { HomeBottomBar } from "@/app/home-components/feed/HomeBottomBar/HomeBott
 import { getCorePublisherArticles } from "@/app/home-helpers/get-core-publisher-articles";
 import { getHomeFeedArticles } from "@/app/home-helpers/get-home-feed-articles";
 import { getReelsFeedPage } from "@/app/reels/helpers/reels-feed";
-import { getIndustriesWithCounts } from "@/lib/queries";
+import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
 import { getClientServiceCards } from "@/app/home-helpers/get-client-service-cards";
 import { getHomePageSeo } from "@/app/home-helpers/home-page-seo";

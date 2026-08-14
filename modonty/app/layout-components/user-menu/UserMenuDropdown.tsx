@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IconUser, IconLogout, IconSettings, IconEmail } from "@/lib/icons";
-import { handleLogout } from "@/lib/logout";
+import { handleLogout } from "@/app/layout-components/logout";
 import { UserAvatarButton } from "@/app/layout-components/user-menu/UserAvatarButton";
 
 type SessionUser = NonNullable<Session["user"]>;

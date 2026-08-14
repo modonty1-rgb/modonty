@@ -1,5 +1,5 @@
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
-import { PreloadArticleHero } from "@/components/media/preload-hero";
+import { PreloadArticleHero } from "@/components/media/preload-hero/preload-article-hero";
 import { IconArticle } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { PostCardHeroImage } from "./PostCardHeroImage";

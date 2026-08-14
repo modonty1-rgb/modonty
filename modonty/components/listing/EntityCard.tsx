@@ -4,7 +4,7 @@ import { EntityPlaceholder } from "@/components/listing/EntityPlaceholder";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { IconArticle, IconIndustry } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import type { EntityType } from "@/lib/entity-utils";
+import type { EntityType } from "./entity-utils";
 
 export interface EntityCardClientPreview {
   id: string;

@@ -15,13 +15,9 @@
     "seed": "cd ../shared && pnpm seed",
     "seed:clear": "cd ../shared && pnpm seed:clear",
     "seed:client1": "tsx app/clients/[slug]/helpers/seed-client1-test-data.ts",
-    "create-test-user": "tsx scripts/create-test-user.ts",
     "diagnose-comments": "tsx ../scripts/diagnose-comments.ts",
     "diagnose-article-comments": "tsx ../scripts/diagnose-article-comments.ts",
     "approve-comments": "tsx ../scripts/approve-and-revalidate.ts",
-    "test:chatbot": "tsx scripts/test-chatbot-live.ts",
-    "test:chatbot-cases": "tsx scripts/test-chatbot-cases.ts",
-    "test:chatbot-rag": "tsx scripts/test-chatbot-rag-scores.ts",
     "gen:section": "node scripts/generate-section.mjs"
   },
   "dependencies": {

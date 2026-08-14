@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { IconExternal } from "@/lib/icons";
-import { trackCtaClick } from "@/lib/cta-tracking";
+import { trackCtaClick } from "@/lib/analytics/cta-tracking";
 
 interface ClientCardCtaProps {
   clientId: string;

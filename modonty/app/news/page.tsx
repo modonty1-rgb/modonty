@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getArticles } from "@/lib/queries";
+import { getArticles } from "@/lib/queries/get-articles";
 import { IconEmail, IconCheckCircle, IconForward } from "@/lib/icons";
 
 export const metadata: Metadata = {

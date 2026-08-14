@@ -1,8 +1,8 @@
 import { db } from "@/lib/db";
 import { cookies } from "next/headers";
 import type { ConversionType } from "@prisma/client";
-import { notifyTelegram } from "@/lib/telegram";
-import { trackConversionComplete } from "@/lib/analytics/events-registry";
+import { notifyTelegram } from "@/lib/telegram/notify-telegram";
+import { trackConversionComplete } from "./events-registry";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;

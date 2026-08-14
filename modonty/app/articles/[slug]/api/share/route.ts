@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { SharePlatform, ArticleStatus } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
-import { notifyTelegram } from "@/lib/telegram";
+import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { trackArticleShare } from "@/lib/analytics/events-registry";
 
 const SHARE_RATE_LIMIT = 10;

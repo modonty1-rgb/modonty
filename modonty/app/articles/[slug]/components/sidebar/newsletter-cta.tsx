@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { IconNews } from "@/lib/icons";
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "@/components/providers/SessionContext";
-import { trackCtaClick } from "@/lib/cta-tracking";
+import { trackCtaClick } from "@/lib/analytics/cta-tracking";
 
 interface NewsletterCTAProps {
   clientId: string;

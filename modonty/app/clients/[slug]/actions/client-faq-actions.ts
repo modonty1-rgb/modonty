@@ -5,7 +5,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { ArticleFAQStatus } from "@prisma/client";
-import { notifyTelegram } from "@/lib/telegram";
+import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 
 // Visitor question on a client mini-site page → ClientFAQ (source "user",
 // PENDING). The client answers it from console /dashboard/page-faq, which

@@ -4,13 +4,13 @@ import { ArticleStatus } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getArticleForChat, getArticlesForOutOfScopeSearch } from "@/app/articles/[slug]/actions/article-data";
-import { chunkArticleContent } from "@/lib/rag/chunk";
-import { retrieveFromChunks } from "@/lib/rag/retrieve";
-import { isOutOfScope, isGreetingOrShortPleasantry } from "@/lib/rag/scope";
-import { buildArticleDbPrompt, buildArticleWebPrompt, hasTrustedContent } from "@/lib/rag/prompts";
-import { chatStream, rerank, type ChatMessage } from "@/lib/cohere";
-import { searchSerper } from "@/lib/serper";
-import { saveChatbotMessage } from "@/lib/chat/save-chatbot-message";
+import { chunkArticleContent } from "@/app/modo-chat/helpers/rag-chunk";
+import { retrieveFromChunks } from "@/app/modo-chat/helpers/rag-retrieve";
+import { isOutOfScope, isGreetingOrShortPleasantry } from "@/app/modo-chat/helpers/rag-scope";
+import { buildArticleDbPrompt, buildArticleWebPrompt, hasTrustedContent } from "@/app/modo-chat/helpers/rag-prompts";
+import { chatStream, rerank, type ChatMessage } from "@/app/modo-chat/helpers/cohere";
+import { searchSerper } from "@/app/modo-chat/helpers/serper";
+import { saveChatbotMessage } from "@/app/modo-chat/helpers/save-chatbot-message";
 import type { ApiResponse } from "@/lib/types";
 
 const bodySchema = z.object({
@@ -264,7 +264,7 @@ export async function POST(
     ];
 
     if (!wantStream) {
-      const { chat } = await import("@/lib/cohere");
+      const { chat } = await import("@/app/modo-chat/helpers/cohere");
       const response = await chat(chatMessages, docs.length > 0 ? docs : undefined);
       const msg = response as { text?: string; message?: { content?: Array<{ text?: string }> } };
       const text = msg.text ?? msg.message?.content?.[0]?.text ?? "";

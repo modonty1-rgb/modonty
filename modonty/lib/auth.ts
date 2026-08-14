@@ -3,7 +3,7 @@ import { ConversionType } from "@prisma/client";
 import { authConfig } from "../auth.config";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "./db";
-import { createConversion } from "./conversion-tracking";
+import { createConversion } from "./analytics/conversion-tracking";
 import { trackSignupComplete } from "./analytics/events-registry";
 
 // Required for deployment. See: https://authjs.dev/getting-started/deployment

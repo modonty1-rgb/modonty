@@ -5,7 +5,7 @@ import { cookies, headers } from "next/headers";
 import { ArticleStatus } from "@prisma/client";
 import { classifyTrafficSource } from "@/lib/analytics/classify-source";
 import { getGeoFromHeaders } from "@/lib/analytics/geo-headers";
-import { notifyTelegram } from "@/lib/telegram";
+import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { trackArticleView } from "@/lib/analytics/events-registry";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";

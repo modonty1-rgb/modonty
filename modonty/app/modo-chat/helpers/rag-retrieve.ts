@@ -1,5 +1,5 @@
 import "server-only";
-import { embed, rerank, type DocumentForChat } from "@/lib/cohere";
+import { embed, rerank, type DocumentForChat } from "./cohere";
 
 const RETRIEVE_TOP_K = 10;
 const RERANK_TOP_N = 3;

@@ -5,7 +5,7 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 import { usePathname, useRouter } from "next/navigation";
 
 import { useSession } from "@/components/providers/SessionContext";
-import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
+import { BRAND_AVATAR_RADIUS } from "@/lib/brand";
 import { IconUsers, IconCheck, IconShare, IconFeatured, IconClients, IconSaved } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";

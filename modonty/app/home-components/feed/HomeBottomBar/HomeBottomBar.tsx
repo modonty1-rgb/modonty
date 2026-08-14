@@ -1,5 +1,5 @@
 import { getCategoriesWithCounts } from "@/app/home-helpers/get-categories-with-counts";
-import { getIndustriesWithCounts } from "@/lib/queries";
+import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
 import { getTagsWithCounts } from "@/app/home-helpers/get-tags-with-counts";
 import { getClientServiceCards } from "@/app/home-helpers/get-client-service-cards";
 import { getClientsForSidebar } from "@/app/home-helpers/get-clients-for-sidebar";

@@ -4,8 +4,8 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
-import { notifyTelegram } from "@/lib/telegram";
-import type { TelegramEventKey } from "@/lib/telegram";
+import { notifyTelegram } from "@/lib/telegram/notify-telegram";
+import type { TelegramEventKey } from "@/lib/telegram/telegram-events";
 import {
   trackArticleLike,
   trackArticleDislike,

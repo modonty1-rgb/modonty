@@ -6,7 +6,7 @@ import { BuildingIcon } from "lucide-react";
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
-import { getIndustriesWithCounts } from "@/lib/queries";
+import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
 import { getIndustryBySlug } from "@/app/industries/helpers/get-industry-by-slug";
 import { jsonLdHtmlFromString } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";

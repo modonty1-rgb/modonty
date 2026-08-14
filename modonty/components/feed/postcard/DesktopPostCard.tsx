@@ -1,4 +1,4 @@
-import { PreloadArticleHero } from "@/components/media/preload-hero";
+import { PreloadArticleHero } from "@/components/media/preload-hero/preload-article-hero";
 import { cn } from "@/lib/utils";
 import { PostCardBody } from "./PostCardBody";
 import { PostCardFooter } from "./PostCardFooter";

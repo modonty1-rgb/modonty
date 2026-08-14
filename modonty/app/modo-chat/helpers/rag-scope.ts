@@ -1,5 +1,5 @@
 import "server-only";
-import { embed } from "@/lib/cohere";
+import { embed } from "./cohere";
 
 /** Relevance threshold: below this = out-of-scope (query not about this category). */
 const OUT_OF_SCOPE_THRESHOLD = 0.52;

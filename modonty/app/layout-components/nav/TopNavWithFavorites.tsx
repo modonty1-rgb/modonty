@@ -1,5 +1,5 @@
 import { getFavoritesCountForNav } from "@/app/layout-helpers/get-favorites-count";
-import { getUnreadNotificationCount } from "@/lib/notifications";
+import { getUnreadNotificationCount } from "@/app/layout-components/notifications/get-unread-notification-count";
 import { TopNav } from "./TopNav";
 
 export async function TopNavWithFavorites() {

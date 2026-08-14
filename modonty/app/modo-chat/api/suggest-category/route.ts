@@ -3,7 +3,7 @@ import { z } from "zod";
 import { ArticleStatus } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { embed } from "@/lib/cohere";
+import { embed } from "@/app/modo-chat/helpers/cohere";
 
 const bodySchema = z.object({
   message: z.string().min(1).max(500),

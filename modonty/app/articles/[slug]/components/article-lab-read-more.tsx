@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { OptimizedImage } from "@modonty/shared/components/optimized-image";
-import { PreloadArticleHero } from "@/components/media/preload-hero";
+import { PreloadArticleHero } from "@/components/media/preload-hero/preload-article-hero";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 interface ReadMoreItem {

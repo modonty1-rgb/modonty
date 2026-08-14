@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
+import { BRAND_AVATAR_RADIUS } from "@/lib/brand";
 import { formatMetric, calculateEngagementScore, getEngagementLabel } from "../helpers/format-metrics";
 import { ClientCardCta } from "./client-card-cta";
 

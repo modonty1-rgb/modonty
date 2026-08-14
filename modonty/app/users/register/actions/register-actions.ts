@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { Prisma } from "@prisma/client";
 import type { RegisterFormData } from "../helpers/schemas/register-schema";
-import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
+import { getOrCreateSessionId, createConversion } from "@/lib/analytics/conversion-tracking";
 import { trackSignupComplete } from "@/lib/analytics/events-registry";
 import { ConversionType } from "@prisma/client";
 import { randomBytes } from "crypto";

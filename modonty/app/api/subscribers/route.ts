@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
-import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
+import { getOrCreateSessionId, createConversion } from "@/lib/analytics/conversion-tracking";
 import { ConversionType } from "@prisma/client";
 import { sendAdminTelegram } from "@modonty/shared/lib/telegram/client";
-import { notifyTelegram } from "@/lib/telegram";
+import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { trackNewsletterSubscribe } from "@/lib/analytics/events-registry";
 
 const subscribeSchema = z.object({

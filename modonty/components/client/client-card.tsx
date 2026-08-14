@@ -3,7 +3,7 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 import { ChevronLeftIcon, MapPinIcon, StarIcon } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { WhatsAppLeadLink } from "@/components/cta/whatsapp-icon-link";
-import { PreloadClientHero } from "@/components/media/preload-hero";
+import { PreloadClientHero } from "@/components/media/preload-hero/preload-client-hero";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 
 interface ClientCardProps {

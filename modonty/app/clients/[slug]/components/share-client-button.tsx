@@ -1,7 +1,7 @@
 "use client";
 
-import { ShareButtons } from "@/components/share";
-import { trackCtaClick } from "@/lib/cta-tracking";
+import { ShareButtons } from "@/components/share/ShareButtons";
+import { trackCtaClick } from "@/lib/analytics/cta-tracking";
 
 interface ShareClientButtonProps {
   clientName: string;
