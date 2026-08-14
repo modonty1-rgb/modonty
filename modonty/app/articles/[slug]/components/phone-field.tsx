@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { IconCheck, IconChevronDown } from "@/lib/icons";
 
 /**
  * International phone input — no external library (bundle-safe for modonty).
@@ -114,7 +114,7 @@ export function PhoneField({ defaultCountry, onChange, onFirstTouch, id = "booki
         >
           <span className="text-base">{country.flag}</span>
           <span dir="ltr">+{country.dial}</span>
-          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          <IconChevronDown className="h-4 w-4 text-muted-foreground" />
         </button>
 
         {/* National number */}
@@ -133,7 +133,7 @@ export function PhoneField({ defaultCountry, onChange, onFirstTouch, id = "booki
             className="h-12 w-full rounded-md border border-input bg-background px-3 pe-10 text-right text-base outline-none focus:ring-2 focus:ring-primary/40"
           />
           {valid && (
-            <Check className="pointer-events-none absolute inset-y-0 end-3 my-auto h-5 w-5 text-emerald-500" />
+            <IconCheck className="pointer-events-none absolute inset-y-0 end-3 my-auto h-5 w-5 text-emerald-500" />
           )}
         </div>
       </div>

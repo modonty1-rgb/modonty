@@ -44,8 +44,7 @@ export async function submitFAQFeedback(faqId: string, isHelpful: boolean) {
     });
 
     // Get metadata
-    const ipAddress = await getClientIp();
-    const userAgent = await getUserAgent();
+    const [ipAddress, userAgent] = await Promise.all([getClientIp(), getUserAgent()]);
 
     // Handle feedback creation or update atomically using transaction
     await db.$transaction(async (tx) => {

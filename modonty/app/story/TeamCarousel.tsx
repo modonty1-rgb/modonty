@@ -3,7 +3,7 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { m } from "framer-motion";
-import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import { IconChevronLeft, IconChevronRight, IconPause, IconPlay } from "@/lib/icons";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 import { storyTeamImage } from "./_constants";
@@ -230,7 +230,7 @@ function TeamCarouselImpl() {
           aria-label={isPaused ? "تشغيل التنقّل التلقائي" : "إيقاف التنقّل التلقائي"}
           className="w-11 h-11 rounded-full bg-muted hover:bg-muted/70 inline-flex items-center justify-center text-foreground/70 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
         >
-          {isPaused ? <Play className="w-4 h-4" fill="currentColor" /> : <Pause className="w-4 h-4" fill="currentColor" />}
+          {isPaused ? <IconPlay className="w-4 h-4" fill="currentColor" /> : <IconPause className="w-4 h-4" fill="currentColor" />}
         </button>
       </div>
 
@@ -318,7 +318,7 @@ function TeamCarouselImpl() {
           aria-label="العضو السابق"
           className="absolute top-1/2 -translate-y-1/2 right-1.5 md:right-2 w-11 h-11 rounded-full bg-background/85 backdrop-blur hover:bg-background border border-border shadow-lg inline-flex items-center justify-center text-foreground/80 hover:text-foreground transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary z-10"
         >
-          <ChevronRight className="w-4 h-4" />
+          <IconChevronRight className="w-4 h-4" />
         </button>
         <button
           type="button"
@@ -326,7 +326,7 @@ function TeamCarouselImpl() {
           aria-label="العضو التالي"
           className="absolute top-1/2 -translate-y-1/2 left-1.5 md:left-2 w-11 h-11 rounded-full bg-background/85 backdrop-blur hover:bg-background border border-border shadow-lg inline-flex items-center justify-center text-foreground/80 hover:text-foreground transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary z-10"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <IconChevronLeft className="w-4 h-4" />
         </button>
       </div>
 

@@ -2,7 +2,7 @@
 
 import { memo } from "react";
 import { m } from "framer-motion";
-import { ExternalLink } from "lucide-react";
+import { IconExternal } from "@/lib/icons";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 import { storyPartnerImage } from "./_constants";
@@ -91,7 +91,7 @@ function PartnersShowcaseImpl() {
                     aria-hidden
                     className="absolute top-1.5 left-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
                   >
-                    <ExternalLink className="w-3 h-3 text-primary" />
+                    <IconExternal className="w-3 h-3 text-primary" />
                   </span>
                 )}
               </m.div>

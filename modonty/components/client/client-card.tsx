@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
-import { ChevronLeftIcon, MapPinIcon, StarIcon } from "lucide-react";
+import { IconChevronLeft, IconMapPin, IconFeatured } from "@/lib/icons";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { WhatsAppLeadLink } from "@/components/cta/whatsapp-icon-link";
 import { PreloadClientHero } from "@/components/media/preload-hero/preload-client-hero";
@@ -99,13 +99,13 @@ export function ClientCard({
         <div className="flex items-center gap-1.5 flex-wrap">
           {addressCity && (
             <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
-              <MapPinIcon className="h-2.5 w-2.5 shrink-0" />
+              <IconMapPin className="h-2.5 w-2.5 shrink-0" />
               {addressCity}
             </span>
           )}
           {averageRating > 0 && (
             <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full">
-              <StarIcon className="h-2.5 w-2.5 shrink-0 fill-current" />
+              <IconFeatured className="h-2.5 w-2.5 shrink-0 fill-current" />
               {averageRating.toFixed(1)}
             </span>
           )}
@@ -155,13 +155,13 @@ export function ClientCard({
                 </a>
               )}
               <span className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-muted/50 text-muted-foreground">
-                <ChevronLeftIcon className="h-3.5 w-3.5 rtl:rotate-180" />
+                <IconChevronLeft className="h-3.5 w-3.5 rtl:rotate-180" />
               </span>
             </>
           ) : (
             <span className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-primary/8 px-3 py-2 text-xs font-bold text-primary">
               عرض الملف الكامل
-              <ChevronLeftIcon className="h-3.5 w-3.5 rtl:rotate-180" />
+              <IconChevronLeft className="h-3.5 w-3.5 rtl:rotate-180" />
             </span>
           )}
         </div>

@@ -158,3 +158,24 @@ export { Gift             as IconGift          } from 'lucide-react';
 export { BadgePercent     as IconDiscount      } from 'lucide-react';
 export { Ticket           as IconTicket        } from 'lucide-react';
 export { Compass          as IconCompass       } from 'lucide-react';
+
+// ── Media player (story / testimonial) ───────────────────────────────────────
+export { SkipBack         as IconSkipBack      } from 'lucide-react';
+export { SkipForward      as IconSkipForward   } from 'lucide-react';
+export { Square           as IconStop          } from 'lucide-react';
+export { Gauge            as IconSpeed         } from 'lucide-react';
+export { RotateCcw        as IconReplay        } from 'lucide-react';
+
+// ── Devices ──────────────────────────────────────────────────────────────────
+export { Smartphone       as IconMobile        } from 'lucide-react';
+export { Monitor          as IconDesktop       } from 'lucide-react';
+
+// ── Trust & commerce ─────────────────────────────────────────────────────────
+export { ShieldCheck      as IconShieldCheck   } from 'lucide-react';
+export { Wallet           as IconWallet        } from 'lucide-react';
+
+// ── Controls (counter) ───────────────────────────────────────────────────────
+export { Minus            as IconRemove        } from 'lucide-react';
+
+// ── Entities ─────────────────────────────────────────────────────────────────
+export { Building         as IconBuilding      } from 'lucide-react';

@@ -3,21 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BRAND_AR, CONTACT_EMAIL } from "@/lib/brand";
 import { LazyMotion, domAnimation, m, AnimatePresence, useReducedMotion } from "framer-motion";
-import {
-  Play,
-  Pause,
-  SkipBack,
-  SkipForward,
-  Volume2,
-  Gauge,
-  RotateCcw,
-  Square,
-  Mail,
-  ChevronDown,
-  Wallet,
-  MapPin,
-  ShieldCheck,
-} from "lucide-react";
+import { IconPlay, IconPause, IconSkipBack, IconSkipForward, IconVolume2, IconSpeed, IconReplay, IconStop, IconEmail, IconChevronDown, IconWallet, IconMapPin, IconShieldCheck } from "@/lib/icons";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -639,7 +625,7 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                               {count}
                             </span>
                           )}
-                          <ChevronDown
+                          <IconChevronDown
                             aria-hidden
                             className={`w-3.5 h-3.5 text-foreground/60 shrink-0 transition-transform duration-200 ${isCollapsed ? "-rotate-90" : ""}`}
                           />
@@ -954,7 +940,7 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                       className="w-11 h-11 rounded-full bg-muted hover:bg-muted/70 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                       aria-label="المقطع السابق"
                     >
-                      <SkipBack className="w-4 h-4 rtl:rotate-180" />
+                      <IconSkipBack className="w-4 h-4 rtl:rotate-180" />
                     </button>
                     <div className="relative">
                       <m.span
@@ -980,7 +966,7 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                         className="relative w-14 h-14 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                         aria-label={isPlaying ? "إيقاف مؤقت" : "تشغيل"}
                       >
-                        {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ms-0.5" />}
+                        {isPlaying ? <IconPause className="w-6 h-6" /> : <IconPlay className="w-6 h-6 ms-0.5" />}
                       </m.button>
                     </div>
                     <button
@@ -991,7 +977,7 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                       aria-label="إيقاف نهائي"
                       title="إيقاف وإعادة تعيين"
                     >
-                      <Square className="w-4 h-4 fill-current" />
+                      <IconStop className="w-4 h-4 fill-current" />
                     </button>
                     <button
                       type="button"
@@ -1000,7 +986,7 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                       className="w-11 h-11 rounded-full bg-muted hover:bg-muted/70 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                       aria-label="المقطع التالي"
                     >
-                      <SkipForward className="w-4 h-4 rtl:rotate-180" />
+                      <IconSkipForward className="w-4 h-4 rtl:rotate-180" />
                     </button>
                     <button
                       type="button"
@@ -1008,7 +994,7 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                       className="w-11 h-11 rounded-full bg-muted hover:bg-muted/70 flex items-center justify-center transition-colors ms-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                       aria-label="إعادة من البداية"
                     >
-                      <RotateCcw className="w-3.5 h-3.5" />
+                      <IconReplay className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
@@ -1019,11 +1005,11 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                       className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-muted hover:bg-muted/70 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                       aria-label={`تغيير السرعة (الحالية ${speed} مرة)`}
                     >
-                      <Gauge className="w-3.5 h-3.5" />
+                      <IconSpeed className="w-3.5 h-3.5" />
                       {speed}×
                     </button>
                     <div className="hidden md:flex items-center gap-1.5">
-                      <Volume2 className="w-3.5 h-3.5 text-muted-foreground" />
+                      <IconVolume2 className="w-3.5 h-3.5 text-muted-foreground" />
                       <input
                         type="range"
                         min={0}
@@ -1217,7 +1203,7 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                       className="w-full mb-6 inline-flex items-center justify-center gap-2.5 px-5 py-3.5 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground text-base font-extrabold shadow-lg shadow-primary/30 hover:shadow-primary/40 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                       aria-label="ابدأ الاستماع للقصة الآن"
                     >
-                      <Play className="w-5 h-5" fill="currentColor" />
+                      <IconPlay className="w-5 h-5" fill="currentColor" />
                       <span>ابدأ القصة الآن</span>
                     </m.button>
                     {/* Secondary CTA — outline/ghost (demoted from primary to reduce decision paralysis) */}
@@ -1270,7 +1256,7 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                         className="group flex items-center gap-2 text-[12px] py-1 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
                         aria-label={`إيميل المبيعات — ${SALES_EMAIL}`}
                       >
-                        <Mail className="w-4 h-4 text-foreground/50 shrink-0" />
+                        <IconEmail className="w-4 h-4 text-foreground/50 shrink-0" />
                         <span className="text-foreground/55">إيميل:</span>
                         <span
                           className="font-medium text-foreground/85 group-hover:text-foreground transition-colors"
@@ -1294,7 +1280,7 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                         </p>
                         <div className="inline-flex items-center gap-1.5 shrink-0">
                           <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/15 px-1.5 py-0.5 rounded">
-                            <ShieldCheck className="w-3 h-3" aria-hidden />
+                            <IconShieldCheck className="w-3 h-3" aria-hidden />
                             نشط
                           </span>
                           <a
@@ -1328,7 +1314,7 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                           className="inline-flex items-baseline gap-1"
                           aria-label={`رأس المال ثمانية ملايين ${LEGAL_ENTITY.currency}`}
                         >
-                          <Wallet className="w-3 h-3 text-amber-600 dark:text-amber-400 self-center" aria-hidden />
+                          <IconWallet className="w-3 h-3 text-amber-600 dark:text-amber-400 self-center" aria-hidden />
                           <span className="text-foreground/65 text-[9px]" aria-hidden>
                             رأس المال
                           </span>
@@ -1344,7 +1330,7 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                           </span>
                         </span>
                         <span className="inline-flex items-center gap-1 text-foreground/65">
-                          <MapPin className="w-3 h-3" aria-hidden />
+                          <IconMapPin className="w-3 h-3" aria-hidden />
                           <span>
                             {LEGAL_ENTITY.city} · {LEGAL_ENTITY.country} · {LEGAL_ENTITY.foundedYear}
                           </span>
@@ -1607,7 +1593,7 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                             aria-label={`إيميل فريق المبيعات — ${SALES_EMAIL}`}
                             title={`إيميل — ${SALES_EMAIL}`}
                           >
-                            <Mail className="w-3.5 h-3.5" />
+                            <IconEmail className="w-3.5 h-3.5" />
                           </a>
                         </div>
                       </div>

@@ -2,7 +2,7 @@
 
 import { memo, useState } from "react";
 import { m } from "framer-motion";
-import { ExternalLink, Smartphone, Monitor } from "lucide-react";
+import { IconExternal, IconMobile, IconDesktop } from "@/lib/icons";
 
 type VariantId = "short" | "full";
 
@@ -12,7 +12,7 @@ interface Variant {
   hint: string;
   outcome: string;
   duration: string;
-  icon: typeof Smartphone;
+  icon: typeof IconMobile;
   youtubeId: string;
   watchUrl: string;
   aspect: "vertical" | "landscape";
@@ -25,7 +25,7 @@ const VARIANTS: Variant[] = [
     hint: "من السوق المصري للعميل السعودي",
     outcome: "تموضع في السوق السعودي بهوية موثوقة",
     duration: "Short",
-    icon: Smartphone,
+    icon: IconMobile,
     youtubeId: "s4nYJRY3heE",
     watchUrl: "https://www.youtube.com/shorts/s4nYJRY3heE",
     aspect: "vertical",
@@ -36,7 +36,7 @@ const VARIANTS: Variant[] = [
     hint: "من مبالغات السوشيال ميديا إلى المحتوى المستدام",
     outcome: "محتوى تقني يبني سلطة في قطاع المقاولات",
     duration: "نسخة كاملة",
-    icon: Monitor,
+    icon: IconDesktop,
     youtubeId: "87TI084Jc6E",
     watchUrl: "https://www.youtube.com/watch?v=87TI084Jc6E",
     aspect: "landscape",
@@ -74,7 +74,7 @@ function TestimonialPlayerImpl() {
           aria-label="افتح في YouTube"
         >
           <span>YouTube</span>
-          <ExternalLink className="w-3 h-3" />
+          <IconExternal className="w-3 h-3" />
         </a>
       </div>
 

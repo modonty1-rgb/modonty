@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { notFound } from "next/navigation";
 import { CommentStatus } from "@prisma/client";
-import { BuildingIcon } from "lucide-react";
+import { IconBuilding } from "@/lib/icons";
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
@@ -107,7 +107,7 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
         <section className="bg-gradient-to-b from-primary/5 to-background py-10 border-b">
           <div className="container mx-auto max-w-[1128px] px-4 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border bg-muted">
-              <BuildingIcon className="h-8 w-8 text-primary/50" />
+              <IconBuilding className="h-8 w-8 text-primary/50" />
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">{industry.name}</h1>
             {industry.description && (
@@ -122,7 +122,7 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
       <div className="container mx-auto max-w-[1128px] px-4 py-10">
         {industry.clients.length === 0 ? (
           <div className="text-center py-20 text-muted-foreground">
-            <BuildingIcon className="mx-auto mb-4 h-12 w-12 opacity-30" />
+            <IconBuilding className="mx-auto mb-4 h-12 w-12 opacity-30" />
             <p className="text-lg">لا توجد شركات في هذا القطاع بعد</p>
           </div>
         ) : (

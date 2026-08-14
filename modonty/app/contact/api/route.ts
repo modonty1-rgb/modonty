@@ -9,8 +9,7 @@ const CONTACT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    const body = await request.json();
+    const [session, body] = await Promise.all([auth(), request.json()]);
     const { name, email, subject, message, clientId } = body;
 
     if (!name || !email || !subject || !message) {

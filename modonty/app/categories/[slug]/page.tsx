@@ -3,7 +3,7 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 import { notFound } from "next/navigation";
 import { cacheTag, cacheLife } from "next/cache";
 import { ArticleStatus, CommentStatus, SubscriptionStatus } from "@prisma/client";
-import { TagIcon } from "lucide-react";
+import { IconCategory } from "@/lib/icons";
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
@@ -169,7 +169,7 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
           <section className="bg-gradient-to-b from-primary/5 to-background py-10 border-b">
             <div className="container mx-auto max-w-[1128px] px-4 text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border bg-muted">
-                <TagIcon className="h-8 w-8 text-primary/50" />
+                <IconCategory className="h-8 w-8 text-primary/50" />
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">{category.name}</h1>
               {category.description && (
@@ -184,7 +184,7 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
         <div className="container mx-auto max-w-[1128px] px-4 py-10">
           {clients.length === 0 ? (
             <div className="text-center py-20 text-muted-foreground">
-              <TagIcon className="mx-auto mb-4 h-12 w-12 opacity-30" />
+              <IconCategory className="mx-auto mb-4 h-12 w-12 opacity-30" />
               <p className="text-lg">لا توجد شركات في هذه الفئة بعد</p>
             </div>
           ) : (

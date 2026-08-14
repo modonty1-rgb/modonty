@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2, Mail, MessageSquare, User, Plus, Minus } from "lucide-react";
+import { IconCheckCircle, IconEmail, IconMessage, IconUser, IconAdd, IconRemove } from "@/lib/icons";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -97,7 +97,7 @@ export function BookingForm({
     return (
       <div className="flex flex-col items-center gap-3 py-10 text-center">
         <div className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/40 bg-emerald-500/10">
-          <CheckCircle2 className="h-7 w-7 text-emerald-500" />
+          <IconCheckCircle className="h-7 w-7 text-emerald-500" />
         </div>
         <p className="text-base font-bold">تم استلام طلبك ✨</p>
         <p className="text-sm text-muted-foreground">
@@ -147,7 +147,7 @@ export function BookingForm({
         }}
         className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-primary/40 bg-primary/[0.03] py-2.5 text-sm font-semibold text-primary"
       >
-        {showDetails ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+        {showDetails ? <IconRemove className="h-4 w-4" /> : <IconAdd className="h-4 w-4" />}
         {showDetails ? "إخفاء التفاصيل" : "أضف تفاصيل (اختياري)"}
       </button>
 
@@ -155,7 +155,7 @@ export function BookingForm({
         <div className="space-y-4 rounded-xl border border-border bg-muted/20 p-4">
           <div className="space-y-2">
             <Label htmlFor="booking-name" className="flex items-center gap-1.5 text-sm font-semibold">
-              <User className="h-4 w-4 text-primary/80" />
+              <IconUser className="h-4 w-4 text-primary/80" />
               اسمك <span className="text-xs font-normal text-muted-foreground">— اختياري</span>
             </Label>
             <Input id="booking-name" {...register("name")} placeholder="مثال: أحمد محمد" autoComplete="name" className="h-11 text-right" />
@@ -164,7 +164,7 @@ export function BookingForm({
 
           <div className="space-y-2">
             <Label htmlFor="booking-email" className="flex items-center gap-1.5 text-sm font-semibold">
-              <Mail className="h-4 w-4 text-primary/80" />
+              <IconEmail className="h-4 w-4 text-primary/80" />
               بريدك <span className="text-xs font-normal text-muted-foreground">— اختياري</span>
             </Label>
             <Input id="booking-email" type="email" inputMode="email" autoComplete="email" {...register("email")} placeholder="example@email.com" className="h-11" dir="ltr" />
@@ -173,7 +173,7 @@ export function BookingForm({
 
           <div className="space-y-2">
             <Label htmlFor="booking-message" className="flex items-center gap-1.5 text-sm font-semibold">
-              <MessageSquare className="h-4 w-4 text-primary/80" />
+              <IconMessage className="h-4 w-4 text-primary/80" />
               تفاصيل أو وقت تفضّله؟ <span className="text-xs font-normal text-muted-foreground">— اختياري، والمزوّد يؤكّده</span>
             </Label>
             <Textarea id="booking-message" {...register("message")} placeholder="مثال: بعد العصر، نهاية الأسبوع…" rows={3} className="resize-none text-right" />
