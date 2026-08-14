@@ -146,5 +146,5 @@ export function justifyRows<T extends Tile>(
 
 ## المرجع البصري
 
-`documents/tasks/media-picker-layout-compare.html` — أربع طرق على نفس الصور
+`documents/archive/tasks/media-picker-layout-compare.html` — أربع طرق على نفس الصور
 الحقيقية. يُفتح عند أي نقاش حول تخطيط معرض بدل إعادة الجدل من الصفر.

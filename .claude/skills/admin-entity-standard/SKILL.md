@@ -63,7 +63,7 @@ description: معيار موحّد لكل كيانات الأدمن (article · 
 - **لماذا:** شعار Google يعرّف السكور كـ«سيو/بحث» فوراً؛ توحيد اللون والعتبة يمنع تضارب التقييم بين الكيانات.
 - **التحقق (المصدر الوحيد):**
   - **الـ UI:** `admin/components/shared/seo-score-badge.tsx` — أعد استخدامه، لا تبنِ بديلاً. أحجام `sm|md|lg`، خيارات `showIcon/label/href/onClick`.
-  - **السكورر (التقني):** الرقم يأتي من السكورر المشترك للكيان في `dataLayer/lib/seo/<entity>/seo-score.ts` (مقال: `getArticleSeoScore` عبر `article/seo-score.ts` · عميل: `client/seo-score.ts` … إلخ). كل كيان يمرّر حقوله الخمسة الكاملة للسكورر (nextjsMetadata · jsonLd · إلخ) وإلا يسجّل الكل نفس الرقم المنخفض خطأً.
+  - **السكورر (التقني):** الرقم يأتي من السكورر المشترك للكيان في `shared/lib/seo/<entity>/seo-score.ts` (مقال: `getArticleSeoScore` عبر `article/seo-score.ts` · عميل: `client/seo-score.ts` … إلخ). كل كيان يمرّر حقوله الخمسة الكاملة للسكورر (nextjsMetadata · jsonLd · إلخ) وإلا يسجّل الكل نفس الرقم المنخفض خطأً.
 - **ثُبِّت:** 2026-07-26 (خالد — صورة شريحة G + 62%). **تبعة مباشرة:** صفحة تفصيل الـ category تعرض حالياً «50% · 50/100» دائرة غير معيارية → تُستبدل بـ`SeoScoreBadge`.
 
 ### 3. الجدول = `DataTable` المشترك (shadcn) + ألوان دلالية
@@ -125,7 +125,7 @@ description: معيار موحّد لكل كيانات الأدمن (article · 
 - `CodeBlock{text,empty}` — `<pre dir="ltr" bg-slate-950 max-h-[420px] overflow-auto font-mono text-[12.5px]>` أو رسالة فراغ.
 
 - **🥇 ملكية الفجوات (جوهر):** «يحتاج عملك أنت» (محتوى: title/description/image) مقابل «النظام يتكفّل» (canonical/dates/author/publisher/JSON-LD مولّدة تلقائياً — الكاتب لا يُنذَر بها، [[project_jsonld_is_code_responsibility]]). **رسائل عربية مبسّطة** لكل خطأ (`plainJsonLdError`-style)، لا jargon validator خام.
-- **السكورر:** مدفوعة بسكورر الكيان المشترك (`getArticleEntitySeo`/`computeClientEntitySeo` → `{meta, jsonLd, overall}` + `SeoCheck[]`). كيان بلا سكورر (category/tag/author) → يُبنى سكورر dataLayer (خيار B) **أو** يُكيَّف بنفس الأقسام على بيانات فحصه — **لكن قسم ٨ (META+JSON-LD الخام) إلزامي دائماً** لأن كل كيان عنده `nextjsMetadata`+`jsonLdStructuredData`.
+- **السكورر:** مدفوعة بسكورر الكيان المشترك (`getArticleEntitySeo`/`computeClientEntitySeo` → `{meta, jsonLd, overall}` + `SeoCheck[]`). كيان بلا سكورر (category/tag/author) → يُبنى سكورر shared (خيار B) **أو** يُكيَّف بنفس الأقسام على بيانات فحصه — **لكن قسم ٨ (META+JSON-LD الخام) إلزامي دائماً** لأن كل كيان عنده `nextjsMetadata`+`jsonLdStructuredData`.
 - **ثُبِّت:** 2026-07-26 (خالد — «ادرس الصفحة كاملة، الميتا+JSON-LD ينعرضوا زي الرئيسية، ممنوع تخمين»).
 
 ---

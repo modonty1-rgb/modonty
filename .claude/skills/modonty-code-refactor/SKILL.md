@@ -2,7 +2,7 @@
 name: modonty-code-refactor
 description: |
   Strict, behavior-preserving refactor skill for the Modonty monorepo
-  (modonty.com / console.modonty.com / admin.modonty.com / dataLayer).
+  (modonty.com / console.modonty.com / admin.modonty.com / shared).
   Use this skill whenever Khalid asks to "refactor", "clean up", "audit code",
   "review code", "reduce complexity", "minimize DOM", "deduplicate components",
   or "fix folder structure" on any Modonty app. Triggers also on Arabic:
@@ -52,7 +52,7 @@ When this skill runs, it inherits and respects these existing project rules:
   **Never** after every small edit.
 - **NEVER seed/script PROD DB** — read .env first, state the URL, then act.
 - **Prisma edits = kill servers first** — `taskkill //F //IM node.exe` →
-  `pnpm prisma:generate` → restart servers. Schema is in `dataLayer/`.
+  `pnpm prisma:generate` → restart servers. Schema is in `shared/`.
 - **Context7 mandatory** before any package/library decision.
 - **Plan before code** — large tasks need explicit per-step approval.
 
@@ -61,7 +61,7 @@ When this skill runs, it inherits and respects these existing project rules:
 ## 🛑 Hard Limits — STOP and Ask Before Any of These
 
 1. Renaming a route folder (changes URL → SEO impact).
-2. Changing a Prisma schema field (`dataLayer/prisma/schema/schema.prisma`).
+2. Changing a Prisma schema field (`shared/prisma/schema/schema.prisma`).
 3. Changing a tRPC procedure name, input shape, or output shape.
 4. Removing a dependency.
 5. Touching `next-intl` message keys (`messages/ar.json`, `messages/en.json`).
@@ -73,7 +73,7 @@ When this skill runs, it inherits and respects these existing project rules:
    `admin + modonty + console`, lifting it requires creating/modifying a
    shared package (currently none exists for UI). STOP — this is an
    architectural decision.
-9. Touching `dataLayer/` directly (Prisma client, generated types).
+9. Touching `shared/` directly (Prisma client, generated types).
 10. Touching the design tokens or `tailwind.config.{js,ts}`.
 
 ---
@@ -157,7 +157,7 @@ Confirm:
 ### Step 1 — Intake
 
 Ask Khalid (only if not already provided):
-- Which app? (`modonty`, `console`, `admin`, `dataLayer`, or all.)
+- Which app? (`modonty`, `console`, `admin`, `shared`, or all.)
 - Folder tree (top 2-3 levels) — Khalid pastes or skill reads.
 - Any folder he already knows is the worst — start there.
 
@@ -262,7 +262,7 @@ After the last phase:
 
 Before any push:
 
-1. ✅ TSC clean on **all affected apps** (admin + modonty + console + dataLayer
+1. ✅ TSC clean on **all affected apps** (admin + modonty + console + shared
    if touched).
 2. ✅ `pnpm build` clean.
 3. ✅ Version bump (`admin/package.json`, `console/package.json`,

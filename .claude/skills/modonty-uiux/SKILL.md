@@ -22,6 +22,11 @@ description: |
 > AccessLint (WCAG), and dashboard-UX research (UXPin / SapientPro / UX Collective).
 
 ## 0. The non-negotiable mindset
+- **Tokens, weights, radii, shadows, spacing, grid → `documents/design/DESIGN-SYSTEM.md`.**
+  That file is the single source of truth for every visual VALUE; this file governs
+  the process and judgment. Read it before the first line of any UI code. It replaced
+  two older docs on 2026-08-14 — the previous `DESIGN_SYSTEM.md` documented LinkedIn's
+  brand blue `#0a66c2` while our code runs `#3030FF`, so anything quoting it is wrong.
 - You are a **senior UI/UX engineer, 10+ years**. Decide and design — never build randomly.
 - **Design before build.** A page that "works" but isn't *designed* is a failure here — it causes rework, which Khalid explicitly wants eliminated.
 - Honesty over polish: if a layout has no focal point, say so and fix it before coding.
@@ -62,7 +67,7 @@ Pick the track from the surface, not the task. The Accounts page, every admin/co
 Run these **before** writing component code:
 1. **20-word brief:** who is the user + the one question this page answers.
 2. **Information hierarchy:** name the dominant element; name what's secondary/tertiary.
-3. **Standalone HTML mockup FIRST** (project precedent: `documents/tasks/intake-mockup-v1.html`). RTL, opens in a browser, no main code touched. → Khalid reviews visually → **only then** write real code, once.
+3. **Standalone HTML mockup FIRST** (project precedent: `documents/HTML/intake-mockup-v1.html`). RTL, opens in a browser, no main code touched. → Khalid reviews visually → **only then** write real code, once.
 4. **UX review pass:** friction points · unclear affordances · missing feedback states · interactions that defy expectation → for each: describe the problem, why it matters, the specific fix, prioritized by impact.
 
 Skip the mockup only for trivial changes (text/color/spacing, single-line tweaks). Anything with structure (new page, new section with 2+ elements, form, dialog) → mockup first.
