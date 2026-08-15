@@ -6,6 +6,13 @@ import type { NextConfig } from "next";
 // override:false (default) → modonty/.env.local takes precedence.
 loadDotenv({ path: path.resolve(process.cwd(), "../.env.shared") });
 
+// Any deployment that is not production (the test subdomain, branch previews) must
+// stay out of Google. Vercel drops its own noindex header once a custom domain is
+// attached to a preview branch, so we send it ourselves.
+// NOT keyed on NEXT_PUBLIC_SITE_URL: that variable carries the SAME value in all
+// three environments, so the condition would never fire on the test domain.
+const isProduction = process.env.VERCEL_ENV === "production";
+
 const nextConfig: NextConfig = {
   // NO global /articles → / redirect.
   // Reason: when a request arrives as /articles/{arabic-slug} (raw, non-percent-encoded),
@@ -28,6 +35,12 @@ const nextConfig: NextConfig = {
         { key: "X-XSS-Protection", value: "1; mode=block" },
         { key: "Referrer-Policy", value: "origin-when-cross-origin" },
         { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+        // Only on non-production deployments. robots.txt stays permissive on purpose:
+        // a Disallow would stop Google fetching the page, so it would never read this
+        // header and the URL could still be indexed from an external link.
+        ...(isProduction
+          ? []
+          : [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]),
       ],
     },
   ],

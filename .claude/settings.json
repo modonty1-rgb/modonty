@@ -437,7 +437,10 @@
       "Edit(/.claude/skills/modonty-uiux/**)",
       "Edit(~/.claude/skills/vercel-cost/**)",
       "Bash(cd \"c:/Users/w2nad/Desktop/dreamToApp/MODONTY/modonty\" && git mv lib/seo/get-page-seo.ts lib/seo/get-listing-page-seo.ts 2>/dev/null || mv lib/seo/get-page-seo.ts lib/seo/get-listing-page-seo.ts; ls lib/seo/)",
-      "Bash(cd \"c:/Users/w2nad/Desktop/dreamToApp/MODONTY\" && sed -n '/## Naming/,/## This repo/p' .claude/rules/folder-structure.md)"
+      "Bash(cd \"c:/Users/w2nad/Desktop/dreamToApp/MODONTY\" && sed -n '/## Naming/,/## This repo/p' .claude/rules/folder-structure.md)",
+      "Edit(/.claude/skills/modonty-naming/**)",
+      "Bash(sed -n '/^6\\\\. \\\\*\\\\*Documentation saves time/,/because it gets believed/p' .claude/skills/modonty-naming/SKILL.md)",
+      "Bash(sed -n '/^### `documentation\\\\/`/,/^### The data function/p' .claude/skills/modonty-naming/SKILL.md)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [

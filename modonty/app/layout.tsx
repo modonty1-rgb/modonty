@@ -2,14 +2,14 @@ import type { Metadata, Viewport } from "next";
 import { Tajawal, Montserrat } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
-import { ThemeProvider } from "@/app/layout-components/theme-provider";
-import { SessionProviderWrapper } from "@/app/layout-components/SessionProviderWrapper";
-import { GTMContainer } from "@/app/layout-components/gtm/GTMContainer";
-import { WebVitals } from "@/app/layout-components/gtm/WebVitals";
-import { PageViewTracker } from "@/app/layout-components/analytics/PageViewTracker";
-import { ClarityScript } from "@/app/layout-components/analytics/clarity-script";
-import { Footer } from "@/app/layout-components/Footer";
-import { TopNavWithFavorites } from "@/app/layout-components/nav/TopNavWithFavorites";
+import { ThemeProvider } from "@/app/layout/components/theme-provider";
+import { SessionProviderWrapper } from "@/app/layout/components/SessionProviderWrapper";
+import { GTMContainer } from "@/app/layout/components/gtm/GTMContainer";
+import { WebVitals } from "@/app/layout/components/gtm/WebVitals";
+import { PageViewTracker } from "@/app/layout/components/analytics/PageViewTracker";
+import { ClarityScript } from "@/app/layout/components/analytics/clarity-script";
+import { Footer } from "@/app/layout/components/Footer";
+import { TopNavWithFavorites } from "@/app/layout/components/nav/TopNavWithFavorites";
 import { BRAND_AR, SITE_URL } from "@/constants";
 import { getSiteLanguage } from "@/lib/settings/get-site-language";
 
@@ -101,17 +101,18 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Suspense fallback={null}>
-            <SessionProviderWrapper>
-              <div className="min-h-screen flex flex-col">
-                <Suspense fallback={<header className="h-14 border-b bg-card" />}>
-                  <TopNavWithFavorites />
-                </Suspense>
-                <main id="main-content" className="flex-1">{children}</main>
-                <Footer />
-              </div>
-            </SessionProviderWrapper>
-          </Suspense>
+          {/* The provider hands down an unresolved session promise, so nothing here
+              blocks the prerender. Only the components that read the session suspend,
+              each behind its own boundary. */}
+          <SessionProviderWrapper>
+            <div className="min-h-screen flex flex-col">
+              <Suspense fallback={<header className="h-14 border-b bg-card" />}>
+                <TopNavWithFavorites />
+              </Suspense>
+              <main id="main-content" className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </SessionProviderWrapper>
         </ThemeProvider>
       </body>
     </html>
