@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 
-import { BRAND_AR, SITE_URL } from "@/constants";
+import { SITE_URL } from "@/constants";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 
-import { buildAlternates } from "./build-alternates";
+import { buildHreflangLanguages } from "./build-hreflang-languages";
 
 /** The SEO columns every editable page row exposes. All optional — a row may be half-filled. */
 export interface PageSeoRow {
@@ -51,30 +52,36 @@ export async function buildMetadataFromPageRow(
   // falls back, so the page still ships og:, twitter: and robots exactly as before. An
   // early return here would silently drop them until someone filled the form.
   const row: PageSeoRow = page ?? {};
+
+  // The chain is page column → Settings default → literal. The middle link is the one the
+  // older pages skipped, which is how Settings could list nine hreflang locales while the
+  // pages declared four.
+  const [brandMedia, defaults] = await Promise.all([getBrandMedia(), getPageSeoDefaults()]);
+
   const canonicalUrl = row.canonicalUrl?.trim() || `${SITE_URL}${path}`;
-  const siteName = row.ogSiteName?.trim() || BRAND_AR;
+  const siteName = row.ogSiteName?.trim() || defaults.siteName;
   const title = row.seoTitle?.trim() || row.title?.trim() || fallbackTitle;
   const description = row.seoDescription?.trim() || fallbackDescription;
-  const locale = row.ogLocale?.trim() || row.inLanguage?.trim() || "ar_SA";
+  const locale = row.ogLocale?.trim() || row.inLanguage?.trim() || defaults.ogLocale;
 
-  const brandMedia = await getBrandMedia();
   const ogImage =
     row.ogImage?.trim() || row.socialImage?.trim() || brandMedia.ogImageUrl || undefined;
 
   // The column stores the directive as written ("index, follow"); absence means indexable.
-  const robotsDirective = row.metaRobots?.trim() || "index,follow";
+  const robotsDirective = row.metaRobots?.trim() || defaults.metaRobots;
   const shouldIndex = !robotsDirective.includes("noindex");
   const shouldFollow = !robotsDirective.includes("nofollow");
 
   const twitter: NonNullable<Metadata["twitter"]> = {
-    card: (row.twitterCard as "summary" | "summary_large_image") || "summary_large_image",
+    card: (row.twitterCard?.trim() || defaults.twitterCard) as "summary" | "summary_large_image",
     title: row.twitterTitle?.trim() || title,
     description: row.twitterDescription?.trim() || description,
     images: ogImage ? [ogImage] : undefined,
   };
 
-  const twitterSite = row.twitterSite?.trim() || brandMedia.twitterSite;
-  const twitterCreator = row.twitterCreator?.trim() || brandMedia.twitterCreator;
+  const twitterSite = row.twitterSite?.trim() || brandMedia.twitterSite || defaults.twitterSite;
+  const twitterCreator =
+    row.twitterCreator?.trim() || brandMedia.twitterCreator || defaults.twitterCreator;
   if (twitterSite) twitter.site = twitterSite.startsWith("@") ? twitterSite : `@${twitterSite}`;
   if (twitterCreator) twitter.creator = `@${twitterCreator.replace(/^@/, "")}`;
 
@@ -84,7 +91,10 @@ export async function buildMetadataFromPageRow(
     // read "… - مدونتي | مدونتي" — measured on /about, 2026-08-15.
     title,
     description,
-    alternates: buildAlternates(canonicalUrl),
+    alternates: {
+      canonical: canonicalUrl,
+      languages: buildHreflangLanguages(defaults.alternateLanguages, canonicalUrl, SITE_URL),
+    },
     openGraph: {
       title: row.ogTitle?.trim() || title,
       description: row.ogDescription?.trim() || description,

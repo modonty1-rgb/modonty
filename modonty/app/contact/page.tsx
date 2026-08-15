@@ -1,12 +1,12 @@
 import { Metadata } from "next";
-import { generateStructuredData, buildAlternates } from "@/lib/seo";
+import { generateStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ContactForm } from "./components/contact-form";
 import { auth } from "@/lib/auth";
 import { getContactPageForMetadata } from "./helpers/contact-metadata";
+import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getContactPageContent } from "./helpers/contact-content";
-import { BRAND_AR, SITE_URL } from "@/constants";
-import { getBrandMedia } from "@/lib/settings/get-brand-media";
+import { BRAND_AR } from "@/constants";
 
 const FALLBACK_TITLE = "اتصل بنا";
 const FALLBACK_DESCRIPTION = "تواصل مع فريق مدونتي. نحن هنا للإجابة على أسئلتك ومساعدتك";
@@ -15,78 +15,14 @@ const FALLBACK_DESCRIPTION = "تواصل مع فريق مدونتي. نحن هن
 // to change. It was the last modonty page whose copy needed a deploy to edit; now it reads
 // its row from the DB like /about and the legal pages, and falls back to these constants
 // only while the row is still empty.
+// Tags come from this page row, then the Settings defaults, then these constants —
+// one builder for every editable page so the chain can never lose its middle link.
 export async function generateMetadata(): Promise<Metadata> {
-  try {
-    const page = await getContactPageForMetadata();
-
-    if (!page) {
-      return { title: `${FALLBACK_TITLE} - ${BRAND_AR}`, description: FALLBACK_DESCRIPTION };
-    }
-
-    const siteUrl = SITE_URL;
-    const siteName = page.ogSiteName || BRAND_AR;
-    const title = page.seoTitle || page.title || FALLBACK_TITLE;
-    const description = page.seoDescription || FALLBACK_DESCRIPTION;
-    const canonicalUrl = page.canonicalUrl || `${siteUrl}/contact`;
-    const brandMedia = await getBrandMedia();
-    const ogImage = page.ogImage || page.socialImage || brandMedia.ogImageUrl || undefined;
-    const locale = page.ogLocale || page.inLanguage || "ar_SA";
-
-    const robotsDirective = page.metaRobots || "index,follow";
-    const shouldIndex = !robotsDirective.includes("noindex");
-    const shouldFollow = !robotsDirective.includes("nofollow");
-
-    const openGraph: Metadata["openGraph"] = {
-      title,
-      description,
-      url: canonicalUrl,
-      siteName,
-      images: ogImage
-        ? [{ url: ogImage, width: 1200, height: 630, alt: page.socialImageAlt || title }]
-        : undefined,
-      locale,
-      type: (page.ogType as "website" | "article" | "profile") || "website",
-    };
-
-    const twitter: NonNullable<Metadata["twitter"]> = {
-      card: (page.twitterCard as "summary" | "summary_large_image") || "summary_large_image",
-      title,
-      description,
-      images: ogImage ? [ogImage] : undefined,
-    };
-
-    const twitterSite = page.twitterSite || brandMedia.twitterSite;
-    const twitterCreator = page.twitterCreator || brandMedia.twitterCreator;
-    if (twitterSite) {
-      twitter.site = twitterSite.startsWith("@") ? twitterSite : `@${twitterSite}`;
-    }
-    if (twitterCreator) {
-      twitter.creator = `@${twitterCreator.replace(/^@/, "")}`;
-    }
-
-    return {
-      // The root layout's template already appends the brand (layout.tsx:35).
-      title,
-      description,
-      alternates: buildAlternates(canonicalUrl),
-      openGraph,
-      twitter,
-      robots: {
-        index: shouldIndex,
-        follow: shouldFollow,
-        googleBot: {
-          index: shouldIndex,
-          follow: shouldFollow,
-          "max-video-preview": -1,
-          "max-image-preview": "large",
-          "max-snippet": -1,
-        },
-      },
-    };
-  } catch (error) {
-    console.error("Error generating metadata for contact page:", error);
-    return { title: `${FALLBACK_TITLE} - ${BRAND_AR}`, description: FALLBACK_DESCRIPTION };
-  }
+  return buildMetadataFromPageRow(await getContactPageForMetadata(), {
+    path: "/contact",
+    fallbackTitle: FALLBACK_TITLE,
+    fallbackDescription: FALLBACK_DESCRIPTION,
+  });
 }
 
 function sanitizeJsonLd(json: object): string {

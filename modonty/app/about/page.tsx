@@ -3,79 +3,22 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
-import { generateStructuredData, buildAlternates } from "@/lib/seo";
+import { generateStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { getAboutPageForMetadata } from "./helpers/about-metadata";
+import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getAboutPageContent } from "./helpers/about-content";
-import { BRAND_AR, SITE_URL } from "@/constants";
-import { getBrandMedia } from "@/lib/settings/get-brand-media";
 
+// Tags come from this page's row, then the Settings defaults, then these literals —
+// one builder for every editable page so the chain can never lose its middle link.
 export async function generateMetadata(): Promise<Metadata> {
-  try {
-    const page = await getAboutPageForMetadata();
-
-    if (!page) {
-      return {
-        title: "من نحن",
-        description: "تعرف على منصة مدونتي - منصة المدونات الاحترافية متعددة العملاء",
-      };
-    }
-
-    const siteUrl = SITE_URL;
-    const siteName = page.ogSiteName || BRAND_AR;
-    const title = page.seoTitle || page.title || "من نحن";
-    const description = page.seoDescription || "تعرف على منصة مدونتي";
-    const canonicalUrl = page.canonicalUrl || `${siteUrl}/about`;
-    const brandMedia = await getBrandMedia();
-    const ogImage = page.ogImage || page.socialImage || brandMedia.ogImageUrl || undefined;
-    const locale = page.ogLocale || page.inLanguage || "ar_SA";
-
-    const robotsDirective = page.metaRobots || "index,follow";
-    const shouldIndex = !robotsDirective.includes("noindex");
-    const shouldFollow = !robotsDirective.includes("nofollow");
-
-    const openGraph: Metadata["openGraph"] = {
-      title,
-      description,
-      url: canonicalUrl,
-      siteName: siteName,
-      images: ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: page.socialImageAlt || title }] : undefined,
-      locale: locale,
-      type: (page.ogType as "website" | "article" | "profile") || "website",
-    };
-
-    const twitter: NonNullable<Metadata["twitter"]> = {
-      card: (page.twitterCard as "summary" | "summary_large_image") || "summary_large_image",
-      title,
-      description,
-      images: ogImage ? [ogImage] : undefined,
-    };
-
-    const twitterSite = page.twitterSite || brandMedia.twitterSite;
-    const twitterCreator = page.twitterCreator || brandMedia.twitterCreator;
-    if (twitterSite) twitter.site = twitterSite.startsWith("@") ? twitterSite : `@${twitterSite}`;
-    if (twitterCreator) twitter.creator = `@${twitterCreator.replace(/^@/, "")}`;
-
-    return {
-      // The root layout's template already appends the brand (layout.tsx:35).
-      title,
-      description,
-      alternates: buildAlternates(canonicalUrl),
-      openGraph,
-      twitter,
-      robots: {
-        index: shouldIndex,
-        follow: shouldFollow,
-        googleBot: { index: shouldIndex, follow: shouldFollow, "max-video-preview": -1, "max-image-preview": "large", "max-snippet": -1 },
-      },
-    };
-  } catch {
-    return {
-      title: "من نحن",
-      description: "تعرف على منصة مدونتي - منصة المدونات الاحترافية متعددة العملاء",
-    };
-  }
+  return buildMetadataFromPageRow(await getAboutPageForMetadata(), {
+    path: "/about",
+    fallbackTitle: "من نحن",
+    fallbackDescription: "تعرف على منصة مدونتي - منصة المدونات الاحترافية متعددة العملاء",
+  });
 }
+
 
 function sanitizeJsonLd(json: object): string {
   return JSON.stringify(json).replace(/</g, '\\u003c');

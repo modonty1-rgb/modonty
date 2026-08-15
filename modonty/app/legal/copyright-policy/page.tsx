@@ -1,96 +1,22 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { generateStructuredData, buildAlternates } from "@/lib/seo";
+import { generateStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { FormattedDate } from "@/components/date/FormattedDate";
 import { getCopyrightPolicyPageForMetadata } from "./helpers/copyright-policy-metadata";
+import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getCopyrightPolicyPageContent } from "./helpers/copyright-policy-content";
-import { BRAND_AR, SITE_URL } from "@/constants";
-import { getBrandMedia } from "@/lib/settings/get-brand-media";
 
+// Tags come from this page's row, then the Settings defaults, then these literals —
+// one builder for every editable page so the chain can never lose its middle link.
 export async function generateMetadata(): Promise<Metadata> {
-  try {
-    const page = await getCopyrightPolicyPageForMetadata();
-
-    if (!page) {
-      // Fallback to default metadata
-      return {
-        title: "سياسة حقوق النشر",
-        description: "سياسة حقوق النشر والملكية الفكرية لمنصة مدونتي",
-      };
-    }
-
-    const siteUrl = SITE_URL;
-    const siteName = page.ogSiteName || BRAND_AR;
-    const title = page.seoTitle || page.title || "سياسة حقوق النشر";
-    const description = page.seoDescription || "سياسة حقوق النشر والملكية الفكرية لمنصة مدونتي";
-    const canonicalUrl = page.canonicalUrl || `${siteUrl}/legal/copyright-policy`;
-    const brandMedia = await getBrandMedia();
-    const ogImage = page.ogImage || page.socialImage || brandMedia.ogImageUrl || undefined;
-    const locale = page.ogLocale || page.inLanguage || "ar_SA";
-
-    // Parse robots directive
-    const robotsDirective = page.metaRobots || "index,follow";
-    const shouldIndex = !robotsDirective.includes("noindex");
-    const shouldFollow = !robotsDirective.includes("nofollow");
-
-    const openGraph: Metadata["openGraph"] = {
-      title,
-      description,
-      url: canonicalUrl,
-      siteName: siteName,
-      images: ogImage
-        ? [{ url: ogImage, width: 1200, height: 630, alt: page.socialImageAlt || title }]
-        : undefined,
-      locale: locale,
-      type: (page.ogType as "website" | "article" | "profile") || "website",
-    };
-
-    const twitter: NonNullable<Metadata["twitter"]> = {
-      card: (page.twitterCard as "summary" | "summary_large_image") || "summary_large_image",
-      title,
-      description,
-      images: ogImage ? [ogImage] : undefined,
-    };
-
-    const twitterSite = page.twitterSite || brandMedia.twitterSite;
-    const twitterCreator = page.twitterCreator || brandMedia.twitterCreator;
-    if (twitterSite) {
-      twitter.site = twitterSite.startsWith("@") ? twitterSite : `@${twitterSite}`;
-    }
-    if (twitterCreator) {
-      const creatorHandle = twitterCreator.replace(/^@/, "");
-      twitter.creator = `@${creatorHandle}`;
-    }
-
-    return {
-      // The root layout's template already appends the brand (layout.tsx:35).
-      title,
-      description: description,
-      alternates: buildAlternates(canonicalUrl),
-      openGraph,
-      twitter,
-      robots: {
-        index: shouldIndex,
-        follow: shouldFollow,
-        googleBot: {
-          index: shouldIndex,
-          follow: shouldFollow,
-          "max-video-preview": -1,
-          "max-image-preview": "large",
-          "max-snippet": -1,
-        },
-      },
-    };
-  } catch (error) {
-    console.error("Error generating metadata for copyright policy page:", error);
-    // Fallback to default metadata
-    return {
-      title: "سياسة حقوق النشر",
-      description: "سياسة حقوق النشر والملكية الفكرية لمنصة مدونتي",
-    };
-  }
+  return buildMetadataFromPageRow(await getCopyrightPolicyPageForMetadata(), {
+    path: "/legal/copyright-policy",
+    fallbackTitle: "سياسة حقوق النشر",
+    fallbackDescription: "سياسة حقوق النشر والملكية الفكرية لمنصة مدونتي",
+  });
 }
+
 
 function sanitizeJsonLd(json: object): string {
   return JSON.stringify(json).replace(/</g, '\\u003c');
