@@ -1,3 +1,5 @@
+import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+
 import type { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 
 // The full settings object returned at runtime (richer than the exported SEOSettings type).
@@ -115,7 +117,13 @@ export function buildModontyAuthorSeo(a: ModontyAuthorSeoSource, settings: AllSe
     robots: metaRobots,
     alternates: {
       canonical: `${siteUrl}/authors/${a.slug}`,
-      languages: { [inLanguage]: `${siteUrl}/authors/${a.slug}` },
+      // Was the single `{ [inLanguage]: url }`, so an author page declared one locale while
+      // Settings listed nine and every other page now declares all of them.
+      languages: buildHreflangLanguages(
+        settings.defaultAlternateLanguages,
+        `${siteUrl}/authors/${a.slug}`,
+        siteUrl,
+      ),
     },
     openGraph: {
       title,

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
+import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+
 import { SITE_URL } from "@/constants";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
-
-import { buildHreflangLanguages } from "./build-hreflang-languages";
 
 /** The SEO columns every editable page row exposes. All optional — a row may be half-filled. */
 export interface PageSeoRow {

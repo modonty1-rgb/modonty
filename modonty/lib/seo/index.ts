@@ -3,8 +3,6 @@ import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl, hasBunnyAspectCrops } from "@modon
 import { BRAND_AR, SITE_URL } from "@/constants";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
 
-export { buildAlternates } from "./build-alternates";
-
 /**
  * Serialize JSON-LD for safe inline injection inside <script type="application/ld+json">.
  * Escapes `<` → `<` so a string field containing `</script>` (or any markup) can't

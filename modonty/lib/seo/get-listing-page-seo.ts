@@ -1,6 +1,10 @@
 import { cacheTag, cacheLife } from "next/cache";
 
+import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+
+import { SITE_URL } from "@/constants";
 import { db } from "@/lib/db";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 
 import type { Metadata } from "next";
@@ -78,9 +82,9 @@ const SEO_COLUMNS: Record<ListingPageKey, (s: SettingsSeoColumns) => RawSeoPair>
 
 // Reads the Metadata + JSON-LD that admin cached on Settings (source of truth).
 // Never builds or mutates SEO — a null return is the caller's cue to serve its
-// own fallback.
+// own fallback. The one exception is hreflang, below.
 export async function getListingPageSeo(page: ListingPageKey): Promise<ListingPageSeo> {
-  const settings = await readSettingsSeoColumns();
+  const [settings, defaults] = await Promise.all([readSettingsSeoColumns(), getPageSeoDefaults()]);
   if (!settings) {
     return { metadata: null, jsonLd: null };
   }
@@ -91,8 +95,25 @@ export async function getListingPageSeo(page: ListingPageKey): Promise<ListingPa
   const { viewport: _viewport, themeColor: _themeColor, ...metaOnly } =
     (meta as Record<string, unknown> | null) ?? {};
 
+  if (!Object.keys(metaOnly).length) {
+    return { metadata: null, jsonLd: rawJsonLd?.trim() ? rawJsonLd : null };
+  }
+
+  // hreflang is site-wide policy, not this page's content, so it is read live rather than
+  // inherited from the blob. The blob is a cache the admin wrote at save time; these seven
+  // pages were last generated when the generator hardcoded two locales, so they shipped
+  // ar-SA + ar-EG and no x-default while Settings listed nine (measured 2026-08-15). Fixing
+  // only the generator would leave them wrong until someone pressed regenerate on each.
+  const alternates = (metaOnly.alternates ?? {}) as Record<string, unknown>;
+  const canonical = typeof alternates.canonical === "string" ? alternates.canonical : SITE_URL;
+  metaOnly.alternates = {
+    ...alternates,
+    canonical,
+    languages: buildHreflangLanguages(defaults.alternateLanguages, canonical, SITE_URL),
+  };
+
   return {
-    metadata: (Object.keys(metaOnly).length ? metaOnly : null) as Metadata | null,
+    metadata: metaOnly as Metadata,
     jsonLd: rawJsonLd && rawJsonLd.trim().length > 0 ? rawJsonLd : null,
   };
 }

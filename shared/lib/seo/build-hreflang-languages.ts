@@ -2,8 +2,11 @@
  * The hreflang map, from `Settings.defaultAlternateLanguages`.
  *
  * Promoted out of the article route, which was the only page reading the stored list while
- * every other page hardcoded four locales. Settings holds nine, so five Gulf markets were
- * never declared (measured 2026-08-15). One builder now serves both.
+ * every other page hardcoded its own locale set. Settings holds nine; the pages declared
+ * four (`build-alternates.ts`) or two (`buildHreflang` in the admin generator), so five Gulf
+ * markets were never declared and the listing pages shipped no `x-default` at all — measured
+ * 2026-08-15. It lives in `shared/` because the admin writes the same map into the cached
+ * blob that modonty renders: two writers of one value is exactly how they drifted apart.
  *
  * An entry without a `url` means "same Arabic content for that market", so it points at the
  * page's own canonical — a single-source site, many locales.

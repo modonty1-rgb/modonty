@@ -15,6 +15,8 @@
  * Called when: items are created, updated, or deleted in that entity, and by the SEO cascade.
  */
 
+import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
@@ -47,9 +49,16 @@ interface ListingPageConfig {
   settings: Record<string, unknown>;
 }
 
-/** Modonty serves both markets; a listing page missing either is invisible to half the audience. */
-function buildHreflang(pageUrl: string) {
-  return { "ar-SA": pageUrl, "ar-EG": pageUrl };
+/**
+ * The hreflang map, from `Settings.defaultAlternateLanguages` — the same list modonty reads.
+ *
+ * This used to be the literal `{ "ar-SA": url, "ar-EG": url }`. Settings holds nine locales,
+ * so seven Gulf-and-default entries never reached Google, `x-default` included (measured
+ * 2026-08-15). A cached blob generated here is what modonty ships, so a literal here was a
+ * hardcoded value wearing a database's clothes.
+ */
+function buildHreflang(pageUrl: string, settings: Record<string, unknown>, siteUrl: string) {
+  return buildHreflangLanguages(settings?.defaultAlternateLanguages, pageUrl, siteUrl);
 }
 
 function buildListingMetadata(config: ListingPageConfig) {
@@ -68,7 +77,7 @@ function buildListingMetadata(config: ListingPageConfig) {
     ...(author && { authors: [{ name: author }] }),
     alternates: {
       canonical: config.pageUrl,
-      languages: buildHreflang(config.pageUrl),
+      languages: buildHreflang(config.pageUrl, s, config.siteUrl),
     },
     openGraph: {
       title: config.title,
@@ -307,7 +316,7 @@ export async function regenerateHomePageCache(): Promise<{ success: boolean; err
       description,
       robots: (s.defaultMetaRobots as string)?.trim() || "index, follow",
       ...(author && { authors: [{ name: author }] }),
-      alternates: { canonical: siteUrl, languages: buildHreflang(siteUrl) },
+      alternates: { canonical: siteUrl, languages: buildHreflang(siteUrl, s, siteUrl) },
       openGraph: ogMeta,
       twitter: twMeta,
     };

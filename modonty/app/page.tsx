@@ -7,7 +7,9 @@ import { getCorePublisherArticles } from "@/app/home-helpers/get-core-publisher-
 import { getHomeFeedArticles } from "@/app/home-helpers/get-home-feed-articles";
 import { getReelsFeedPage } from "@/app/reels/helpers/reels-feed";
 import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
+import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { getClientServiceCards } from "@/app/home-helpers/get-client-service-cards";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { jsonLdHtmlFromString } from "@/lib/seo";
@@ -27,13 +29,14 @@ export async function generateMetadata(): Promise<Metadata> {
       ...(safeMetadata as { alternates?: object } | null)?.alternates,
       canonical: `${SITE_URL}/`,
       // Mariam audit: Next.js replaces `alternates` entirely from generateMetadata —
-      // inherited languages from layout.tsx get lost. Must re-declare here.
-      languages: {
-        "ar-SA": `${SITE_URL}/`,
-        "ar-EG": `${SITE_URL}/`,
-        ar: `${SITE_URL}/`,
-        "x-default": `${SITE_URL}/`,
-      },
+      // inherited languages from layout.tsx get lost. Must re-declare here. The list itself
+      // comes from Settings: this block used to spell out four locales while Settings held
+      // nine, so the homepage — the page Google crawls most — declared the fewest markets.
+      languages: buildHreflangLanguages(
+        (await getPageSeoDefaults()).alternateLanguages,
+        `${SITE_URL}/`,
+        SITE_URL,
+      ),
     },
     openGraph: {
       ...baseOpenGraph,

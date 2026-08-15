@@ -3,11 +3,13 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getPlatformDefaultImages } from "@modonty/shared/lib/platform-defaults";
+import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
 import { SubscriptionStatus, ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { generateMetadataFromSEO, generateStructuredData, generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { cacheTag, cacheLife } from "next/cache";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { getClientPageData } from "./helpers/client-page-data";
 import { getClientReviews, getClientReviewsBySlug } from "./helpers/client-reviews";
 import { getClientPageFaqs } from "./helpers/client-faqs";
@@ -85,6 +87,14 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
     const siteUrl = rawSiteUrl.replace(/^(https?:\/\/)(?!www\.)modonty\.com/, "$1www.modonty.com").replace(/\/$/, "");
     const canonicalUrl = `${siteUrl}/clients/${encodeURIComponent(decodedSlug)}`;
 
+    // From Settings, not a literal: both returns below used to spell out `{ ar, x-default }`,
+    // so a partner page reached two markets while Settings listed nine.
+    const hreflangLanguages = buildHreflangLanguages(
+      (await getPageSeoDefaults()).alternateLanguages,
+      canonicalUrl,
+      siteUrl,
+    );
+
     // Thin "قيد التجهيز" pages → noindex,follow (perfect-before-index golden rule).
     let robots: Metadata["robots"] | undefined;
     const ps = resolveClientPageState({
@@ -110,10 +120,7 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
         },
         alternates: {
           canonical: canonicalUrl,
-          languages: {
-            ar: canonicalUrl,
-            "x-default": canonicalUrl,
-          },
+          languages: hreflangLanguages,
         },
       };
     }
@@ -124,10 +131,7 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
         image: mediaSrc(client.heroImageMedia) || mediaSrc(client.logoMedia) || undefined,
         url: canonicalUrl,
         type: "website",
-        languages: {
-          ar: canonicalUrl,
-          "x-default": canonicalUrl,
-        },
+        languages: hreflangLanguages,
       }),
       ...(robots ? { robots } : {}),
     };

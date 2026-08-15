@@ -7,7 +7,10 @@ import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { ArticleStatus } from "@prisma/client";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { generateBreadcrumbStructuredData, buildAlternates, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
+import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+
+import { generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { SITE_URL, LOGO_URL, BRAND_AR, MODONTY_AUTHOR_SLUG } from "@/constants";
 import { getPlatformSocialLinks } from "@/lib/settings/get-platform-social-links";
 import { IconFacebook, IconLinkedin, IconTwitter, IconExternal, IconEmail, IconVerified } from "@/lib/icons";
@@ -121,14 +124,27 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // `absolute` opts out of the root layout's `%s | مدونتي` template: the stored
   // title already embeds the brand (admin generator appends it), so letting the
   // template run again shipped «… | مدونتي | مدونتي» (GEO audit, بند ٥ب).
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+  const authorUrl = `${siteUrl}/authors/${author.slug}`;
+
   if (author.nextjsMetadata && typeof author.nextjsMetadata === "object") {
     const stored = author.nextjsMetadata as Metadata;
-    return typeof stored.title === "string"
-      ? { ...stored, title: { absolute: stored.title } }
-      : stored;
+    return {
+      ...stored,
+      ...(typeof stored.title === "string" && { title: { absolute: stored.title } }),
+      // hreflang is read live, not inherited from the blob: blobs written before
+      // 2026-08-15 carry a single locale because the generator hardcoded one.
+      alternates: {
+        ...stored.alternates,
+        canonical: stored.alternates?.canonical ?? authorUrl,
+        languages: buildHreflangLanguages(
+          (await getPageSeoDefaults()).alternateLanguages,
+          String(stored.alternates?.canonical ?? authorUrl),
+          siteUrl,
+        ),
+      },
+    };
   }
-
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
   const title = (author.seoTitle || `${author.name} — Author`)?.slice(0, 51);
   const description = author.seoDescription || author.bio || `Articles by ${author.name}`;
 
@@ -136,7 +152,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     // Live titles may embed the brand too (seoTitle) — same template opt-out.
     title: { absolute: title },
     description,
-    alternates: buildAlternates(`${siteUrl}/authors/${author.slug}`),
+    alternates: {
+      canonical: authorUrl,
+      languages: buildHreflangLanguages(
+        (await getPageSeoDefaults()).alternateLanguages,
+        authorUrl,
+        siteUrl,
+      ),
+    },
     openGraph: {
       title,
       description,
