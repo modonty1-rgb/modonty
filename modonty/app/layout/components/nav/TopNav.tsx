@@ -26,7 +26,10 @@ export function TopNav() {
           <div className="flex shrink-0 items-center gap-0.5">
             <ThemeToggle />
             <div className="relative">
-              <UserMenu />
+              {/* Session read → own boundary (see DesktopUserAreaClient); 44px slot held. */}
+              <Suspense fallback={<span className="inline-block h-11 w-11" aria-hidden />}>
+                <UserMenu />
+              </Suspense>
               <Suspense fallback={null}>
                 <MobileNotificationBadge />
               </Suspense>

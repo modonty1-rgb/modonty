@@ -5,9 +5,9 @@ import { SearchLink } from "@/app/layout/components/nav/SearchLink";
 import { DesktopNavItem } from "@/app/layout/components/nav/DesktopNavItem";
 import { mainNavItems } from "@/app/layout/helpers/nav-config";
 
-export function DesktopNavLinks() {
-  const pathname = usePathname();
-
+// Presentational: the same links whether or not the pathname is known yet, so the
+// Suspense fallback below is the real nav minus the active mark — nothing moves.
+export function DesktopNavList({ pathname }: { pathname: string | null }) {
   return (
     <div className="flex items-center gap-3">
       <SearchLink />
@@ -15,7 +15,8 @@ export function DesktopNavLinks() {
         {mainNavItems.map((item) => {
           // Home matches the exact root only; others match their path prefix
           // (e.g. /clients/[slug]). Same logic the mobile footer already uses.
-          const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+          const active =
+            pathname !== null && (item.href === "/" ? pathname === "/" : pathname.startsWith(item.href));
           return (
             <DesktopNavItem
               key={item.href}
@@ -29,4 +30,12 @@ export function DesktopNavLinks() {
       </nav>
     </div>
   );
+}
+
+// `usePathname` on a route with a dynamic param needs a Suspense boundary under
+// cacheComponents (use-pathname.md, "Good to know") — the caller wraps this and uses
+// <DesktopNavList pathname={null} /> as the fallback.
+export function DesktopNavLinks() {
+  const pathname = usePathname();
+  return <DesktopNavList pathname={pathname} />;
 }
