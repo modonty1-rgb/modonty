@@ -70,9 +70,10 @@ export interface InteractionCounts {
 export interface FeedPost {
   id: string;
   title: string;
-  content: string;
   excerpt?: string;
   image?: string;
+  /** Stored LQIP for `image`. Dropping it silently disables the blur placeholder on every card. */
+  imageBlur?: string;
   slug: string;
   publishedAt: Date;
   clientName: string;

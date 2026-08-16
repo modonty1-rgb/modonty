@@ -110,6 +110,7 @@ export { Hash             as IconHash          } from 'lucide-react';
 export { Languages        as IconLanguages     } from 'lucide-react';
 export { SearchX          as IconSearchX       } from 'lucide-react';
 export { Calendar         as IconCalendar      } from 'lucide-react';
+export { CalendarCheck    as IconCalendarCheck } from 'lucide-react'; // «احجز» — a booked slot, not a bare calendar
 export { ShoppingBag      as IconShoppingBag   } from 'lucide-react';
 export { Ellipsis as IconEllipsis } from 'lucide-react'; // أفقي (≠ EllipsisVertical)
 export { Check as IconCheck } from 'lucide-react';
@@ -169,6 +170,10 @@ export { RotateCcw        as IconReplay        } from 'lucide-react';
 // ── Devices ──────────────────────────────────────────────────────────────────
 export { Smartphone       as IconMobile        } from 'lucide-react';
 export { Monitor          as IconDesktop       } from 'lucide-react';
+
+// ── Theme ────────────────────────────────────────────────────────────────────
+export { Sun              as IconSun           } from 'lucide-react';
+export { Moon             as IconMoon          } from 'lucide-react';
 
 // ── Trust & commerce ─────────────────────────────────────────────────────────
 export { ShieldCheck      as IconShieldCheck   } from 'lucide-react';

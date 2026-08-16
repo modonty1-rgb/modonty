@@ -1,35 +1,33 @@
 import { cn } from "@/lib/utils";
-import { ModontyCard } from "@/app/(homepage)/components/modonty-card/ModontyCard";
-import { ServicesCard } from "@/app/(homepage)/components/services-card/ServicesCard";
 import { ClientsCard } from "@/app/(homepage)/components/clients-card/ClientsCard";
-import type { FeedPost } from "@/lib/types";
+import { CommerceActions } from "@/app/(homepage)/components/commerce-actions/CommerceActions";
+import { IndustriesCard } from "@/app/(homepage)/components/industries-card/IndustriesCard";
+import { StickyRail } from "@/app/(homepage)/components/shared/StickyRail";
 
 interface RightSidebarProps {
   className?: string;
-  articles: FeedPost[];
-  brandLogoUrl: string | null;
-  clientServices: Array<{ id: string; label: string; visual: "booking" | "shop" }>;
+  industries: Array<{ id: string; name: string; slug: string; clientCount: number; socialImage?: string | null; description?: string | null }>;
 }
 
-// Partners list — server-rendered directly (the slider moved to the left sidebar).
-// The third column starts at 1240px with a compact center rail; the mobile
-// partner list lives in the bottom-bar sheet instead.
-export function RightSidebar({ articles, brandLogoUrl, clientServices, className }: RightSidebarProps) {
-  // Load ALL active partners (safety cap 500) so the industry filter shows EVERY
-  // sector that has partners — not only the industries present in the first 20.
+// In RTL this is the visually left-hand, far rail (from 1240px): «verified partners and
+// their fields» — the trust strip, discovery by industry in two columns so every name
+// reads whole, then the reels. No inner scrollbar: a rail taller than the viewport is
+// revealed by scrolling the page and then sticks at its bottom (see StickyRail).
+export function RightSidebar({ industries, className }: RightSidebarProps) {
   return (
-    <aside
-      aria-label="الشريط الجانبي الأيمن"
-      className={cn(
-        "hidden h-[calc(100dvh-5rem)] w-[300px] shrink-0 self-start overflow-visible min-[1240px]:sticky min-[1240px]:top-20 min-[1240px]:block",
-        className
-      )}
+    <StickyRail
+      label="الشركاء والمجالات"
+      className={cn("hidden w-[300px] shrink-0 self-start min-[1240px]:sticky min-[1240px]:block", className)}
     >
       <div className="space-y-4">
-        <ModontyCard articles={articles} brandLogoUrl={brandLogoUrl} />
-        <ServicesCard services={clientServices} />
+        {/* Trust strip sits right above discovery: no partner is listed before their official
+            papers are verified — a business-model promise, so it stays in the visitor's eye. */}
         <ClientsCard />
+        {/* Booking/shop above discovery (Khalid, 2026-08-15): the partner-facing promise
+            (we bring you bookings and sales) sits with the partner-facing rail. */}
+        <CommerceActions />
+        <IndustriesCard industries={industries} layout="rail" />
       </div>
-    </aside>
+    </StickyRail>
   );
 }

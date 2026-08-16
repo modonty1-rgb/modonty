@@ -1,11 +1,9 @@
 import { cacheTag, cacheLife } from "next/cache";
-import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
-import { Prisma, ArticleStatus, ClientCtaMode, SubscriptionStatus } from "@prisma/client";
-import type { ClientResponse } from "@/lib/types";
+import { ClientCtaMode, SubscriptionStatus } from "@prisma/client";
 
 /** بطاقة الخدمة في الشريط السفلي — لا يقرأها غير هذا الملف. */
-export interface ClientServiceCardData {
+interface ClientServiceCardData {
   id: string;
   label: string;
   visual: "booking" | "shop";

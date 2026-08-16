@@ -1,10 +1,8 @@
 import { cache } from 'react';
 import { cacheTag, cacheLife } from 'next/cache';
-import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
-import { Prisma, ArticleStatus } from "@prisma/client";
-import type { ArticleResponse, ArticleFilters, InteractionCounts, FeedPost } from "@/lib/types";
-import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
+import { ArticleStatus } from "@prisma/client";
+import type { FeedPost } from "@/lib/types";
 import { getCoreClientId } from "@/lib/settings/get-core-client-id";
 import { homeFeedSelect, mapHomeFeedArticle } from "./home-feed-shapes";
 
@@ -24,12 +22,13 @@ export const getCorePublisherArticles = cache(async (): Promise<FeedPost[]> => {
       OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
     },
     select: homeFeedSelect,
+    // Newest first, by Khalid's call. `featured` used to sort ahead of the date, so a
+    // pinned old article could sit in the hero slot while a fresh one hid below it.
     orderBy: [
-      { featured: "desc" },
       { datePublished: "desc" },
       { id: "desc" },
     ],
-    take: 5,
+    take: 4,
   });
 
   return articles.map(mapHomeFeedArticle);

@@ -79,6 +79,41 @@ get-more-articles.ts               db-calls=0   ← يجلب عبر lib/queries/
 
 ---
 
+## 📋 جرد `"use client"` — ١٦ مكوّناً من ٤٠ ملفاً
+
+> القاعدة: الافتراضي سيرفر كومبوننت، و`"use client"` **فقط** لحالة أو تأثير أو مرجع
+> أو معالج حدث أو واجهة متصفّح. الجرد أدناه مقيس، ولكل ملف سبب صريح.
+
+### ✅ مبرَّرة — لها سبب حقيقي (١٥)
+
+| الملف | السبب المقيس |
+|---|---|
+| `articles-list/MoreArticles.tsx` | `useState` `useEffect` `useRef` `useCallback` `useSearchParams` + `onClick` |
+| `articles-list/MoreArticlesOnScroll.tsx` | `useState` `useEffect` `useRef` + `dynamic()` ×١ |
+| `ask-modo/AskModo.tsx` | `useState` `useRouter` + `onSubmit` `onChange` |
+| `industries-card/IndustriesCard.tsx` | `useRef` (تمرير الشريط) + `onClick` |
+| `mobile-bottom-bar/BottomBarLoader.tsx` | `dynamic()` بـ`ssr:false` — القشرة كلّها خارج المسار الحرج |
+| `mobile-bottom-bar/BottomBarShell.tsx` | `useState` `useSearchParams` + `dynamic()` ×٢ |
+| `mobile-bottom-bar/DiscoverSheet.tsx` | `onClick` (إغلاق الورقة عند التنقّل) |
+| `mobile-bottom-bar/FloatingButton.tsx` | `useState` + `onClick` |
+| `mobile-bottom-bar/PartnersSheet.tsx` | `useState` `useMemo` + `onClick` `onChange` |
+| `mobile-bottom-bar/SortMenu.tsx` | `onChange` (قائمة منسدلة) |
+| `modonty-card/ModontyCard.tsx` | `useState` (الكاروسيل) + `onClick` |
+| `scroll-buttons/BackToTop.tsx` | `useState` `useEffect` + `onClick` |
+| `scroll-buttons/ScrollButtons.tsx` | `useState` `useEffect` `onScroll` + `dynamic()` ×٢ |
+| `scroll-buttons/ScrollProgress.tsx` | `useState` `useEffect` (مستمع تمرير) |
+| `user-card/UserCard.tsx` | `useSession` — يقرأ الجلسة من المتصفّح |
+
+### 🔴 مشكوك فيها — مرشّحة للحذف (١)
+
+**`mobile-bottom-bar/AskModoButton.tsx`** — **صفر حالة · صفر تأثير · صفر معالج حدث.**
+كل ما يفعله أنه يمرّر ثوابت لـ`FloatingButton` (وهو العميل الحقيقي).
+`"use client"` هنا يسحب `OptimizedImage` و`IconForward` و`CHARACTER_URL` للباندل بلا داعٍ.
+**المقترح:** يُحذف السطر ويبقى سيرفر كومبوننت — العميل يبدأ من `FloatingButton` وحده.
+**قبل التنفيذ:** يُتحقّق أن `FloatingButton` يقبل `ReactNode` من السيرفر (يقبله، الأنواع `ReactNode`).
+
+---
+
 ## 🟢 أولوية منخفضة
 
 ### ٨. استيراد برميلي
@@ -102,3 +137,13 @@ get-more-articles.ts               db-calls=0   ← يجلب عبر lib/queries/
 - `api/articles/route.ts` — الشبّاك للجوّال، ينادي نفس الدالّة.
   مُختبَر: `page=1` ← ٢٠٠ · `page=abc` ← ٤٠٠.
 - عنوان الصفحة كان يكتب البراند مرّتين — أُصلح، ومقيس من HTML الخام قبل/بعد.
+- **كل عنصر تحكّم صار من shadcn** — كانت ١٠ `<button>` خام و`<input>` خام.
+  المقيس بعدها: صفر عنصر خام في المسار.
+- **الروابط بهيئة زرّ صارت `buttonVariants` لا `<Button asChild>`** في خمسة مواضع.
+  السبب من توثيق shadcn: *"Avoid wrapping an anchor tag inside the Button component,
+  as the component applies a button role that overrides the semantic link role."*
+- **كنسة نظام التصميم:** صفر ظلّ في التدفّق (٢١ حلقة بدلها) · صفر وزن ممنوع ·
+  ثلاثة أقطار بدل سبعة · الحاوية `1128px` · صفر جهة فيزيائية ·
+  أسهم الكاروسيل قرص ٣٢ داخل هدف لمس ٤٨.
+- **كود ميت محذوف:** ٣٩ مستورَداً بلا استعمال في ٦ ملفات · ٣ تصديرات بلا مستهلك ·
+  النوع الوسيط `LoadMoreArticlesResult` · الحقل `ReelItem.slug`.

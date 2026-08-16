@@ -1,13 +1,16 @@
+import { Suspense } from "react";
 import { TopNavDesktop } from "./TopNavDesktop";
 import { LogoNav } from "@/app/layout/components/nav/LogoNav";
 import { MobileMenuClient } from "./MobileMenuClient";
+import { ThemeToggle } from "@/app/layout/components/nav/ThemeToggle";
 import { UserMenu } from "@/app/layout/components/user-menu/UserMenu";
-interface TopNavProps {
-  favoritesCount?: number;
-  notificationCount?: number;
-}
+import { MobileNotificationBadge } from "@/app/layout/components/notifications/MobileNotificationBadge";
 
-export function TopNav({ favoritesCount, notificationCount }: TopNavProps) {
+// Static header: everything here is in the cached shell. The only request-time reads
+// (unread count · notifications bell) stream into their own small boundaries, so the
+// logo and links never wait for them. Measured 2026-08-15: the header used to be the
+// LAST thing to arrive (3.3s after the shell in dev) because it sat behind two counters.
+export function TopNav() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-accent/20 bg-slate-100/95 dark:bg-card/95 backdrop-blur-sm supports-[backdrop-filter]:bg-slate-100/90 dark:supports-[backdrop-filter]:bg-card/90 shadow-sm">
       <a
@@ -21,20 +24,19 @@ export function TopNav({ favoritesCount, notificationCount }: TopNavProps) {
         <div className="flex md:hidden h-14 items-center justify-between gap-1.5 px-3">
           <LogoNav />
           <div className="flex shrink-0 items-center gap-0.5">
+            <ThemeToggle />
             <div className="relative">
               <UserMenu />
-              {!!notificationCount && (
-                <span className="pointer-events-none absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium text-primary-foreground">
-                  {notificationCount > 99 ? "99+" : notificationCount}
-                </span>
-              )}
+              <Suspense fallback={null}>
+                <MobileNotificationBadge />
+              </Suspense>
             </div>
             <MobileMenuClient />
           </div>
         </div>
 
         {/* Desktop Layout */}
-        <TopNavDesktop favoritesCount={favoritesCount} />
+        <TopNavDesktop />
       </div>
     </header>
   );

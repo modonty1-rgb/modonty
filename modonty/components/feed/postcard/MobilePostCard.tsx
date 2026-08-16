@@ -1,5 +1,4 @@
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
-import { PreloadArticleHero } from "@/components/media/preload-hero/preload-article-hero";
 import { IconArticle } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { PostCardHeroImage } from "./PostCardHeroImage";
@@ -10,7 +9,7 @@ interface MobilePostCardContentProps {
 }
 
 function MobilePostCardContent({ post }: MobilePostCardContentProps) {
-  const excerpt = post.excerpt ?? post.content;
+  const excerpt = post.excerpt ?? "";
 
   return (
     <div className="flex min-w-0 gap-2">
@@ -60,9 +59,8 @@ export function MobilePostCard({ className, featured, post }: PostCardProps) {
     <article
       itemScope
       itemType="https://schema.org/Article"
-      className={cn("relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm lg:hidden", featured && "border-primary/20 shadow-primary/5", className)}
+      className={cn("relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm lg:hidden [content-visibility:auto] [contain-intrinsic-size:auto_420px]", featured && "border-primary/20 shadow-primary/5", className)}
     >
-      <PreloadArticleHero href={`/articles/${post.slug}`} imageUrl={post.image ?? null} />
       <div data-nosnippet className="p-3">
         <MobilePostCardContent post={post} />
       </div>

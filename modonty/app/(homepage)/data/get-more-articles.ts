@@ -30,9 +30,9 @@ export async function getMoreArticles(
     const posts: FeedPost[] = articles.map((article: ArticleResponse) => ({
       id: article.id,
       title: article.title,
-      content: article.excerpt || "",
       excerpt: article.excerpt ?? undefined,
       image: article.image,
+      imageBlur: article.featuredImage?.blurDataURL ?? undefined,
       slug: article.slug,
       publishedAt: new Date(article.publishedAt),
       clientName: article.client.name,

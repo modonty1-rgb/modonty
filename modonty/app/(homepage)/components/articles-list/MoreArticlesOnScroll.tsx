@@ -1,66 +1,36 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 
+import { useMountOnApproach } from "@modonty/shared/components/use-mount-on-approach";
+
 const MoreArticles = dynamic(
-  () =>
-    import("@/app/(homepage)/components/articles-list/MoreArticles").then(
-      (mod) => mod.MoreArticles
-    ),
-  {
-    ssr: false,
-  }
+  () => import("./MoreArticles").then((mod) => mod.MoreArticles),
+  { ssr: false }
 );
 
 interface MoreArticlesOnScrollProps {
   initialStartIndex: number;
-  categorySlug?: string;
   initialPage?: number;
 }
 
+// Thin gate: the MoreArticles chunk (engine + PostCard tree) isn't downloaded
+// until the visitor scrolls within 200px of the feed's end.
 export function MoreArticlesOnScroll({
   initialStartIndex,
-  categorySlug,
   initialPage = 1,
 }: MoreArticlesOnScrollProps) {
-  const [shouldRender, setShouldRender] = useState(false);
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (!sentinelRef.current || shouldRender) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry?.isIntersecting) {
-          setShouldRender(true);
-          observer.disconnect();
-        }
-      },
-      {
-        root: null,
-        rootMargin: "200px",
-        threshold: 0,
-      }
-    );
-
-    observer.observe(sentinelRef.current);
-
-    return () => observer.disconnect();
-  }, [shouldRender]);
+  const { ref, mounted } = useMountOnApproach();
 
   return (
-    <div ref={sentinelRef}>
-      {shouldRender ? (
+    <div ref={ref}>
+      {mounted ? (
         <MoreArticles
           initialPosts={[]}
           initialStartIndex={initialStartIndex}
-          categorySlug={categorySlug}
           initialPage={initialPage}
         />
       ) : null}
     </div>
   );
 }
-

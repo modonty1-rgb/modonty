@@ -50,15 +50,15 @@ function SheetLink({ href, icon: Icon, label, isActive, onClick }: SheetLinkProp
       className={cn(
         "flex items-center gap-3 h-12 px-3 rounded-xl text-sm font-medium transition-all duration-200",
         isActive
-          ? "text-primary bg-primary/10"
-          : "text-foreground hover:text-primary hover:bg-primary/5 active:bg-primary/10 active:scale-[0.98]"
+          ? "text-link bg-primary/10"
+          : "text-foreground hover:text-link hover:bg-primary/5 active:bg-primary/10 active:scale-[0.98]"
       )}
     >
       {Icon && (
         <Icon
           className={cn(
             "h-5 w-5 shrink-0 transition-colors",
-            isActive ? "text-primary" : "text-muted-foreground"
+            isActive ? "text-link" : "text-muted-foreground"
           )}
         />
       )}

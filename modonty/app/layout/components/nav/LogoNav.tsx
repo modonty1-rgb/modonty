@@ -22,18 +22,22 @@ export async function LogoNav({ className }: LogoNavProps) {
       aria-label={`${BRAND_AR} - الصفحة الرئيسية`}
     >
       {source ? (
+        // Fixed HEIGHT, free width. When no compact icon is set, this is the full wordmark
+        // (~4:1) — forcing it into a 40×40 square squeezed it to 10px tall and requested
+        // a 48px-wide file (measured 2026-08-15). A square icon uploaded later still fits:
+        // the browser keeps the natural aspect and only the height is fixed.
         <OptimizedImage
           media={asMedia(source, BRAND_AR)}
           alt={BRAND_AR}
-          width={96}
-          height={96}
+          width={160}
+          height={40}
           loading="eager"
           fetchPriority="high"
-          sizes="40px"
-          className={`h-9 w-9 object-contain md:h-10 md:w-10 ${className ?? ""}`}
+          sizes="160px"
+          className={`h-7 w-auto object-contain md:h-8 ${className ?? ""}`}
         />
       ) : (
-        <span className="text-lg font-bold text-primary">{BRAND_AR}</span>
+        <span className="text-lg font-bold text-link">{BRAND_AR}</span>
       )}
     </Link>
   );

@@ -1,48 +1,32 @@
-"use client";
-
-import { CHARACTER_URL } from "@/constants";
-
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { IconArrowRight } from "@/lib/icons";
 
+import { CHARACTER_URL } from "@/constants";
 
+// Top of the feed, LinkedIn "Start a post" style: the character plus a pill drawn like
+// a text field. It is a LINK, not an input — the whole row opens /modo-chat, where the
+// typing happens — so this stays a server component with zero client JavaScript.
 export function AskModo() {
-  const [draft, setDraft] = useState("");
-  const router = useRouter();
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const question = draft.trim();
-    router.push(question ? `/modo-chat?q=${encodeURIComponent(question)}` : "/modo-chat");
-  };
-
   return (
-    <section aria-labelledby="modo-heading" className="rounded-2xl border border-primary/10 bg-card p-3 shadow-[0_10px_30px_-22px_rgba(14,6,90,0.45)] sm:p-5">
-      <div className="mb-2 flex items-center gap-2.5 sm:mb-3 sm:gap-3">
-        <span className="relative flex size-10 shrink-0 overflow-hidden rounded-xl border border-primary/15 shadow-sm sm:size-12">
-          <OptimizedImage media={asMedia(CHARACTER_URL)} alt="" fill className="object-cover" sizes="48px" />
+    <Link
+      href="/modo-chat"
+      aria-label="اسأل مودو — افتح المحادثة"
+      className="group flex items-center gap-3 rounded-lg bg-card p-3 ring-1 ring-border transition-shadow sm:gap-4 sm:px-4 sm:hover:ring-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+    >
+      <span className="relative flex size-11 shrink-0 overflow-hidden rounded-full ring-1 ring-primary/15 sm:size-12">
+        <OptimizedImage media={asMedia(CHARACTER_URL)} alt="" fill className="object-cover" sizes="48px" />
+      </span>
+      {/* The "field": muted placeholder text, brand ring on hover — reads as "type here",
+          without being one. */}
+      <span className="flex min-h-11 min-w-0 flex-1 items-center justify-between gap-3 rounded-full bg-muted/50 px-4 text-sm text-muted-foreground ring-1 ring-inset ring-border transition-colors sm:group-hover:bg-muted sm:group-hover:text-foreground">
+        <span className="truncate">
+          <span className="font-bold text-foreground">اسأل مودو</span>
+          <span className="mx-1.5" aria-hidden>·</span>
+          اكتب احتياجك وسأرشدك للمحتوى أو الشريك المناسب…
         </span>
-        <div>
-          <h2 id="modo-heading" className="text-base font-bold text-foreground">اسأل Modo</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">اكتب احتياجك وسأرشدك للمحتوى أو الشريك المناسب.</p>
-        </div>
-      </div>
-      <form onSubmit={handleSubmit} className="flex items-center gap-2">
-        <label className="sr-only" htmlFor="modo-question">ما الذي تبحث عنه؟</label>
-        <input
-          id="modo-question"
-          value={draft}
-          onChange={(event) => setDraft(event.target.value)}
-          placeholder="مثال: أبغى أحجز موعد أسنان..."
-          className="h-11 min-w-0 flex-1 rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
-        />
-        <button type="submit" className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-primary px-3 text-sm font-semibold text-primary-foreground transition-colors sm:hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
-          <span className="hidden sm:inline">اسأل</span>
-          <IconArrowRight className="h-4 w-4" aria-hidden />
-        </button>
-      </form>
-    </section>
+        <IconArrowRight className="h-4 w-4 shrink-0 text-link rtl:rotate-180" aria-hidden />
+      </span>
+    </Link>
   );
 }

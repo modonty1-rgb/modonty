@@ -34,7 +34,7 @@ export function PostCardFooter({ post }: PostCardProps) {
       <div className="flex items-center justify-between">
         <span
           aria-hidden="true"
-          className="relative z-10 inline-flex items-center gap-1 text-sm font-semibold text-primary pointer-events-none"
+          className="relative z-10 inline-flex items-center gap-1 text-sm font-semibold text-link pointer-events-none"
         >
           اقرأ المزيد
           <IconChevronLeft className="h-4 w-4" />
@@ -47,7 +47,7 @@ export function PostCardFooter({ post }: PostCardProps) {
           articleId={post.id}
           clientId={post.clientId}
           aria-label="مشاركة المقال"
-          className="relative z-10 inline-flex min-h-11 min-w-11 items-center justify-center gap-1 hover:text-primary"
+          className="relative z-10 inline-flex min-h-11 min-w-11 items-center justify-center gap-1 hover:text-link"
         >
           <IconShare className="h-4 w-4" />
           <span className="hidden sm:inline">مشاركة</span>

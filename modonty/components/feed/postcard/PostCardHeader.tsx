@@ -41,7 +41,7 @@ export function PostCardHeader({ post, index, hideClient }: PostCardProps) {
           <>
             <Link
               href={`/clients/${encodeURIComponent(post.clientSlug)}`}
-              className="relative z-10 font-semibold text-sm hover:text-primary hover:underline"
+              className="relative z-10 font-semibold text-sm hover:text-link hover:underline"
             >
               <span
                 itemProp="publisher"

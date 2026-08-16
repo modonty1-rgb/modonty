@@ -3,7 +3,10 @@ import type { SizePreset } from "@modonty/shared/components/optimized-image";
 import { IconArticle, IconVolume2 } from "@/lib/icons";
 import type { PostCardProps } from "./PostCard.types";
 
-const LCP_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px";
+// The desktop card is `hidden lg:block`, so below 1024px this image is display:none —
+// yet an eager <img> still downloads. Declaring 1px there makes the browser pick the
+// smallest srcset candidate (16w) instead of a 100vw one for an image nobody sees.
+const LCP_SIZES = "(min-width: 1024px) 600px, 1px";
 const DEFAULT_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
 
 interface PostCardHeroImageProps extends PostCardProps {
@@ -15,7 +18,6 @@ export function PostCardHeroImage({
   post,
   index,
   isLcp,
-  featured,
   enableHoverEffect = true,
   sizes,
 }: PostCardHeroImageProps) {
@@ -58,22 +60,26 @@ export function PostCardHeroImage({
   }
 
   return (
-    <div className={`relative w-full overflow-hidden ${featured ? "aspect-[16/7]" : "aspect-video"}`}>
+    // 5:2 instead of 16:9 — the hero keeps the card's full width and loses ~29% of its
+    // height to a centred vertical crop (Khalid, 2026-08-15: the cover was too tall).
+    <div className="relative w-full overflow-hidden aspect-[5/2]">
       {audioBadge}
       <OptimizedImage
-        // `post.image` is a resolved url on the feed payload, not a Media relation → asMedia.
+        // `post.image` is a resolved url on the feed payload, not a Media relation → asMedia,
+        // with the stored LQIP so OptimizedImage renders its blur placeholder while loading.
         // The old `optimizeCloudinaryUrl(post.image, lcp)` wrapper is gone: it rewrites
         // Cloudinary urls only, and every served feed image is on Bunny (verified
         // 2026-08-07: 95/95 article covers, 27/27 client logos → zero Cloudinary).
-        media={asMedia(post.image, post.title)}
+        media={asMedia(post.image, post.title, post.imageBlur)}
         alt={post.title || "صورة المقال"}
         fill
         className={enableHoverEffect ? "object-cover transition-transform duration-300 group-hover:scale-105" : "object-cover"}
         sizes={imageSizes}
-        // Next 16 official: `preload` inserts <link rel=preload> in <head> so the LCP
-        // image is discovered + fetched early (kills the ~1.2s load-delay). Docs say
-        // avoid combining preload with loading/fetchPriority — so preload alone for LCP.
-        {...(lcp ? { preload: true } : { loading: "lazy" as const })}
+        // Next 16 image docs: "In most cases, you should use loading="eager" or
+        // fetchPriority="high" instead of preload" — and preload is explicitly NOT for
+        // pages whose LCP element differs by viewport, which is our case (this hero on
+        // desktop, the Modonty card hero on mobile). So: eager + high, no preload.
+        {...(lcp ? { loading: "eager" as const, fetchPriority: "high" as const } : { loading: "lazy" as const })}
         decoding="async"
       />
       <div

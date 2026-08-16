@@ -32,15 +32,15 @@ export const homeFeedSelect = {
   viewsCount: true,
 } satisfies Prisma.ArticleSelect;
 
-export type HomeFeedPayload = Prisma.ArticleGetPayload<{ select: typeof homeFeedSelect }>;
+type HomeFeedPayload = Prisma.ArticleGetPayload<{ select: typeof homeFeedSelect }>;
 
 export function mapHomeFeedArticle(a: HomeFeedPayload): FeedPost {
   return {
     id: a.id,
     title: a.title,
-    content: a.excerpt || "",
     excerpt: a.excerpt ?? undefined,
     image: mediaSrc(a.featuredImage) ?? undefined,
+    imageBlur: a.featuredImage?.blurDataURL ?? undefined,
     slug: a.slug,
     publishedAt: a.datePublished || a.createdAt,
     clientName: a.client.name,

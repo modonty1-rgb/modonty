@@ -221,7 +221,7 @@ export async function generateMetadataFromSEO(data: SEOData, options?: MetadataO
 
   return {
     title: fullTitle,
-    description: description || "منصة مدونات احترافية لإدارة المحتوى عبر عملاء متعددين",
+    description: description || "منصة مدونات احترافية لإدارة المحتوى عبر شركاء متعددين",
     keywords: keywords || [],
     alternates: {
       canonical: canonicalUrl,

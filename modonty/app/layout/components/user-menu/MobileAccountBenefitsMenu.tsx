@@ -13,7 +13,7 @@ import {
 import { IconCheck, IconClose, IconLogin } from "@/lib/icons";
 
 const accountBenefits = [
-  "عروض وخصومات من العملاء",
+  "عروض وخصومات من الشركاء",
   "هدايا وفرص حجز مميزة",
   "احفظ المحتوى وتابع اهتماماتك",
 ] as const;
@@ -40,7 +40,7 @@ function AccountBenefitsActions() {
         </Link>
       </DropdownMenuItem>
       <DropdownMenuItem asChild className="justify-center p-0 focus:bg-transparent">
-        <Link href="/users/login" className="inline-flex min-h-11 items-center justify-center px-4 text-sm font-semibold text-primary focus-visible:outline-none focus-visible:underline">
+        <Link href="/users/login" className="inline-flex min-h-11 items-center justify-center px-4 text-sm font-semibold text-link focus-visible:outline-none focus-visible:underline">
           لدي حساب
         </Link>
       </DropdownMenuItem>

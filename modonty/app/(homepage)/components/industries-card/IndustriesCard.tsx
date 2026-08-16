@@ -1,11 +1,6 @@
-"use client";
-
-import { useRef } from "react";
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
-import { SectionLink } from "@/app/(homepage)/components/shared/SectionLink";
-import { IconChevronLeft, IconChevronRight, IconIndustry } from "@/lib/icons";
-
+import { Scroller } from "@/components/shared/scroller/Scroller";
 
 interface IndustryPreview {
   id: string;
@@ -13,64 +8,105 @@ interface IndustryPreview {
   slug: string;
   clientCount: number;
   socialImage?: string | null;
+  description?: string | null;
 }
 
 interface IndustriesCardProps {
   industries: IndustryPreview[];
+  /**
+   * `rail` — desktop side rail (300px): LinkedIn-style rows — square image, name, one
+   * line of description from the DB — six visible, the rest scroll inside the card.
+   * `row`  — phones: one horizontal scroller row of square tiles above the feed.
+   */
+  layout: "rail" | "row";
 }
 
-export function IndustriesCard({ industries }: IndustriesCardProps) {
-  const railRef = useRef<HTMLDivElement>(null);
-  const slides = [...industries]
-    .filter((industry) => industry.clientCount > 0)
-    .sort((first, second) => second.clientCount - first.clientCount)
-    .slice(0, 8);
+// Rail: six rows visible, the rest reachable by scrolling inside the card (Khalid,
+// 2026-08-15) — no «كل المجالات» link; the row on phones scrolls through all of them.
+const RAIL_VISIBLE_ROWS = 6;
+const RAIL_ROW_HEIGHT = 56; // = min-h-14 on each row
 
-  if (slides.length === 0) return null;
-
-  const moveRail = (direction: 1 | -1) => {
-    railRef.current?.scrollBy({ left: direction * railRef.current.clientWidth * 0.82, behavior: "smooth" });
-  };
-
+function IndustryImage({ industry, sizes, className }: { industry: IndustryPreview; sizes: string; className: string }) {
   return (
-    <section aria-labelledby="industries-heading" className="overflow-hidden rounded-2xl border border-primary/10 bg-card shadow-[0_10px_30px_-22px_rgba(14,6,90,0.45)]">
-      <div className="flex items-center justify-between gap-2 px-3 py-1.5 sm:gap-3 sm:px-5 sm:pb-3 sm:pt-4">
-        <div>
-          <h2 id="industries-heading" className="text-base font-bold text-foreground">استكشف المجالات</h2>
-          <p className="mt-0.5 hidden text-xs text-muted-foreground sm:block">اختر المجال الأقرب لاحتياجك</p>
-        </div>
-        <SectionLink href="/industries" label="كل المجالات" />
-      </div>
+    <span className={`relative shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-primary to-secondary ring-1 ring-inset ring-transparent transition-shadow sm:group-hover:ring-primary ${className}`}>
+      {industry.socialImage ? (
+        <OptimizedImage media={asMedia(industry.socialImage, industry.name)} alt="" fill sizes={sizes} loading="lazy" className="object-cover" />
+      ) : (
+        <span aria-hidden className="absolute inset-0 grid place-items-center text-xl font-bold text-white">
+          {industry.name.trim().charAt(0)}
+        </span>
+      )}
+    </span>
+  );
+}
 
-      <div className="relative">
-        <div ref={railRef} className="flex snap-x snap-proximity gap-2 overflow-x-auto px-3 pb-2.5 scrollbar-none sm:gap-3 sm:px-5 sm:pb-4" dir="rtl">
-          {slides.map((industry) => {
-            const image = industry.socialImage;
+// Text sits beside or under the image, never on it, so contrast does not depend on
+// whatever picture the industry gets. The partner count only sorts the list.
+export function IndustriesCard({ industries, layout }: IndustriesCardProps) {
+  const sorted = [...industries]
+    .filter((industry) => industry.clientCount > 0)
+    .sort((first, second) => second.clientCount - first.clientCount);
+
+  if (sorted.length === 0) return null;
+
+  // Both layouts are in the DOM at once (rail on desktop, row on phones — CSS hides the
+  // other), so the heading id must differ or the page ships a duplicate id.
+  const headingId = `industries-heading-${layout}`;
+
+  if (layout === "rail") {
+    return (
+      <section aria-labelledby={headingId} className="relative overflow-hidden rounded-lg ring-1 ring-primary/10 bg-card">
+        <div className="px-4 py-2">
+          <h2 id={headingId} className="text-base font-medium text-foreground">استكشف المجالات</h2>
+        </div>
+        {/* Bottom fade: says «more below» without a visible scrollbar. */}
+        <span className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-8 bg-gradient-to-t from-card to-transparent" aria-hidden />
+        <ul
+          className="overflow-y-auto overscroll-contain px-2 pb-2 scrollbar-rail"
+          style={{ maxHeight: RAIL_VISIBLE_ROWS * RAIL_ROW_HEIGHT + 8 }}
+        >
+          {sorted.map((industry) => {
+            const description = industry.description?.trim();
             return (
-              <Link
-                key={industry.id}
-                href={`/industries/${encodeURIComponent(industry.slug)}`}
-                className="group relative isolate aspect-[3/2] w-[clamp(5.75rem,29vw,7rem)] shrink-0 snap-start overflow-hidden rounded-xl bg-primary text-white sm:aspect-[4/3] sm:w-[clamp(9rem,24vw,10.5rem)] lg:w-[calc((100%-1.5rem)/3)]"
-              >
-                {image ? (
-                  <OptimizedImage media={asMedia(image, industry.name)} alt="" fill sizes="(min-width: 1024px) 175px, (min-width: 640px) 168px, 112px" quality={75} loading="lazy" className="object-cover transition-transform duration-300 sm:group-hover:scale-105" />
-                ) : (
-                  <span className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary to-secondary"><IconIndustry className="h-8 w-8" aria-hidden /></span>
-                )}
-                <span className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" aria-hidden />
-                <span className="absolute end-2 top-2 rounded-full bg-background/90 px-1.5 py-0.5 text-[9px] font-semibold text-primary">{industry.clientCount.toLocaleString("ar-SA")} شريك</span>
-                <span className="absolute inset-x-2.5 bottom-2.5 line-clamp-2 text-xs font-bold leading-snug drop-shadow-sm sm:inset-x-3 sm:bottom-3 sm:text-base">{industry.name}</span>
-              </Link>
+              <li key={industry.id}>
+                <Link
+                  href={`/industries/${encodeURIComponent(industry.slug)}`}
+                  className="group flex min-h-14 items-center gap-3 rounded-lg px-2 py-1.5 transition-colors sm:hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <IndustryImage industry={industry} sizes="44px" className="size-11" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium text-foreground">{industry.name}</span>
+                    {/* Only when the admin wrote one — never a placeholder line. */}
+                    {description && <span className="mt-0.5 block truncate text-xs text-muted-foreground">{description}</span>}
+                  </span>
+                </Link>
+              </li>
             );
           })}
-        </div>
-        <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center bg-gradient-to-r from-card via-card/70 to-transparent px-1" dir="ltr">
-          <button type="button" onClick={() => moveRail(1)} className="pointer-events-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background/95 text-primary shadow-sm sm:hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" aria-label="المجالات التالية"><IconChevronRight className="h-4 w-4" aria-hidden /></button>
-        </div>
-        <div className="pointer-events-none absolute inset-y-0 end-0 flex items-center bg-gradient-to-l from-card via-card/70 to-transparent px-1" dir="ltr">
-          <button type="button" onClick={() => moveRail(-1)} className="pointer-events-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background/95 text-primary shadow-sm sm:hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" aria-label="المجالات السابقة"><IconChevronLeft className="h-4 w-4" aria-hidden /></button>
-        </div>
+        </ul>
+      </section>
+    );
+  }
+
+  return (
+    <section aria-labelledby={headingId} className="overflow-hidden rounded-lg ring-1 ring-primary/10 bg-card">
+      <div className="px-3 py-1.5">
+        <h2 id={headingId} className="text-base font-medium text-foreground">استكشف المجالات</h2>
       </div>
+      <Scroller label="المجالات" className="gap-3 px-3 pb-3">
+        {sorted.map((industry) => (
+          <Link
+            key={industry.id}
+            href={`/industries/${encodeURIComponent(industry.slug)}`}
+            className="group flex w-28 shrink-0 snap-start flex-col items-center gap-1.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+          >
+            <IndustryImage industry={industry} sizes="72px" className="size-[4.5rem]" />
+            {/* min-w-0 + truncate: a flex child refuses to shrink below its content width
+                otherwise, and a long single word spills into the next tile (measured). */}
+            <span className="w-full min-w-0 truncate px-0.5 text-center text-xs font-normal text-foreground">{industry.name}</span>
+          </Link>
+        ))}
+      </Scroller>
     </section>
   );
 }

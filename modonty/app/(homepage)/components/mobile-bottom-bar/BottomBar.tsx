@@ -1,50 +1,13 @@
-import { getCategoriesWithCounts } from "@/app/(homepage)/data/get-categories-with-counts";
-import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
-import { getTagsWithCounts } from "@/app/(homepage)/data/get-tags-with-counts";
-import { getServicesCard } from "@/app/(homepage)/data/get-services-card";
-import { getClientsForSidebar } from "@/app/(homepage)/data/get-clients-for-sidebar";
-import { BottomBarLoader } from "./BottomBarLoader";
-import type { FilterOption } from "./types";
+import { DiscoveryBar } from "./DiscoveryBar";
+import { ServiceBar } from "./ServiceBar";
 
-// Server component — homepage-only mobile action bar.
-// Mirrors the desktop discovery controls and supplies the mobile service CTAs.
-// Reuses the same cached queries the sidebars use (zero extra DB cost), then hands minimal
-// data to a lazy client shell.
-export async function BottomBar() {
-  const [categories, industries, tags, clients, services] = await Promise.all([
-    getCategoriesWithCounts(),
-    getIndustriesWithCounts(),
-    getTagsWithCounts(),
-    getClientsForSidebar(500),
-    getServicesCard(),
-  ]);
-
-  const categoryOptions: FilterOption[] = categories
-    .filter((c) => c.articleCount > 0)
-    .sort((a, b) => b.articleCount - a.articleCount)
-    .map((c) => ({ name: c.name, slug: c.slug, count: c.articleCount }));
-
-  const industryOptions: FilterOption[] = [...industries]
-    .sort((a, b) => b.clientCount - a.clientCount)
-    .map((i) => ({ name: i.name, slug: i.slug, count: i.clientCount }));
-
-  const tagOptions: FilterOption[] = [...tags]
-    .sort((a, b) => b.articleCount - a.articleCount)
-    .map((t) => ({ name: t.name, slug: t.slug, count: t.articleCount }));
-
-  // Mirror the desktop sidebar 1:1 — show ALL active partners (incl. those with no
-  // articles yet), same order (createdAt desc from getClientsForSidebar). The feed-filter
-  // chip is hidden per-row when count === 0 (see BottomBarShell), matching desktop.
-  const partnerOptions: FilterOption[] = clients
-    .map((c) => ({ name: c.name, slug: c.slug, count: c.articleCount, logo: c.logo, industry: c.industry }));
-
+// The homepage's two mobile bars. Both are links only, so both render on the server
+// and the homepage ships no JavaScript for either.
+export function BottomBar() {
   return (
-    <BottomBarLoader
-      categories={categoryOptions}
-      industries={industryOptions}
-      tags={tagOptions}
-      partners={partnerOptions}
-      services={services.map(({ id, visual }) => ({ id, visual }))}
-    />
+    <>
+      <DiscoveryBar />
+      <ServiceBar />
+    </>
   );
 }

@@ -119,6 +119,50 @@ export async function isLiveSlug(section: LiveSection, slug: string): Promise<bo
  * caller finds no redirect and falls through to the existing live/410 logic. We must
  * never invent a redirect that isn't in the DB.
  */
+/**
+ * Total pages of the unfiltered home feed — the proxy's upper bound for `/page/n`
+ * (Google, lazy-loading doc: out-of-range page values must return a 404).
+ *
+ * Same design rules as the slug caches: module-scoped, 5-minute TTL, dedup, no
+ * next/cache. Fail-OPEN (Infinity) — on DB error the proxy must pass the request
+ * through rather than 404 a page that may exist; the page's own notFound() is the
+ * second line of defense. The `where` mirrors the feed query in
+ * `article-feed-shapes.ts` — if that filter changes, this count must change with it.
+ */
+let feedPagesCache: number | null = null;
+let feedPagesCachedAt = 0;
+let feedPagesInFlight: Promise<number> | null = null;
+
+export async function publishedFeedTotalPages(pageSize: number): Promise<number> {
+  const now = Date.now();
+  const stale = feedPagesCache === null || now - feedPagesCachedAt > CACHE_TTL_MS;
+  if (stale) {
+    if (!feedPagesInFlight) {
+      feedPagesInFlight = db.article
+        .count({
+          where: {
+            status: "PUBLISHED",
+            OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
+          },
+        })
+        .then((total) => {
+          feedPagesCache = Math.max(1, Math.ceil(total / pageSize));
+          feedPagesCachedAt = Date.now();
+          return feedPagesCache;
+        })
+        .finally(() => {
+          feedPagesInFlight = null;
+        });
+    }
+    try {
+      return await feedPagesInFlight;
+    } catch {
+      return Infinity;
+    }
+  }
+  return feedPagesCache!;
+}
+
 const redirectKey = (section: string, fromSlug: string) => `${section}\n${fromSlug}`;
 
 let redirectCache: Map<string, string> | null = null;

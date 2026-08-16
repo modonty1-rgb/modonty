@@ -3,7 +3,7 @@ import { highlightQuery } from "@/lib/highlight-query";
 import type { PostCardProps } from "./PostCard.types";
 
 export function PostCardBody({ post, highlightQuery: query, featured }: PostCardProps) {
-  const rawExcerpt = post.excerpt ?? post.content;
+  const rawExcerpt = post.excerpt ?? "";
   const titleContent = query ? highlightQuery(post.title, query) : post.title;
   const excerptContent = query ? highlightQuery(rawExcerpt, query) : rawExcerpt;
 
@@ -22,7 +22,7 @@ export function PostCardBody({ post, highlightQuery: query, featured }: PostCard
             type="LINK"
             articleId={post.id}
             clientId={post.clientId}
-            className="hover:text-primary transition-colors after:absolute after:inset-0 after:content-['']"
+            className="hover:text-link transition-colors after:absolute after:inset-0 after:content-['']"
           >
             {titleContent}
           </CtaTrackedLink>

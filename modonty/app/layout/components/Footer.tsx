@@ -5,7 +5,7 @@ import { FooterStats } from "@/app/layout/components/FooterStats";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { BRAND_AR } from "@/constants";
 const linkClass =
-  "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors";
+  "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-link transition-colors";
 
 function FooterStatsSkeleton() {
   return <div className="w-full h-[76px] rounded-lg bg-primary/80 skeleton-shimmer" aria-hidden />;
@@ -31,7 +31,7 @@ export function Footer() {
           rel="noopener noreferrer"
           label="Footer CTA — جبر SEO"
           type="LINK"
-          className="font-semibold text-primary hover:underline inline-flex items-center gap-0.5"
+          className="font-semibold text-link hover:underline inline-flex items-center gap-0.5"
         >
           جبر SEO <span aria-hidden="true">↗</span>
         </CtaTrackedLink>
@@ -45,9 +45,13 @@ export function Footer() {
         <Link href="/" className={linkClass}>الرئيسية</Link>
         <Link href="/trending" className={linkClass}>الرائجة</Link>
         <Link href="/clients" className={linkClass}>الشركاء</Link>
-        <Link href="/industries" className={linkClass}>الصناعات</Link>
+        <Link href="/industries" className={linkClass}>المجالات</Link>
+        <Link href="/categories" className={linkClass}>التصنيفات</Link>
+        <Link href="/reels" className={linkClass}>الطلّات</Link>
         <Link href="/tags" className={linkClass}>الوسوم</Link>
         <Link href="/help" className={linkClass}>المساعدة</Link>
+        <Link href="/help/faq" className={linkClass}>الأسئلة الشائعة</Link>
+        <Link href="/contact" className={linkClass}>تواصل معنا</Link>
         <Link href="/about" className={linkClass}>عن {BRAND_AR}</Link>
       </nav>
 

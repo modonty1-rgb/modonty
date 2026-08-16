@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة الصفحة الرئيسية</title>
+<style>
+  :root{
+    --blue:#3030FF;
+    --ground:#F3F3F8; --surface:#FFFFFF;
+    --ink:#14133A; --ink-2:rgba(20,19,58,.72); --ink-3:rgba(20,19,58,.55);
+    --line:rgba(20,19,58,.14);
+    --bad:#B02A2A;  --bad-bg:rgba(176,42,42,.10);
+    --good:#166B4E; --good-bg:rgba(22,107,78,.10);
+    --open:#8A5A00; --open-bg:rgba(138,90,0,.12);
+    --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
+    --arab:"Tajawal","Noto Sans Arabic","Segoe UI",system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#0A0A1E; --surface:#121233; --ink:#EDEDFA;
+      --ink-2:rgba(237,237,250,.74); --ink-3:rgba(237,237,250,.55);
+      --line:rgba(237,237,250,.16);
+      --bad:#FF8A8A;  --bad-bg:rgba(255,138,138,.12);
+      --good:#5FD8AC; --good-bg:rgba(95,216,172,.12);
+      --open:#F0BE5A; --open-bg:rgba(240,190,90,.14);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0A0A1E; --surface:#121233; --ink:#EDEDFA;
+    --ink-2:rgba(237,237,250,.74); --ink-3:rgba(237,237,250,.55);
+    --line:rgba(237,237,250,.16);
+    --bad:#FF8A8A;  --bad-bg:rgba(255,138,138,.12);
+    --good:#5FD8AC; --good-bg:rgba(95,216,172,.12);
+    --open:#F0BE5A; --open-bg:rgba(240,190,90,.14);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--arab);font-size:16px;line-height:1.6}
+  .wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px;display:flex;flex-direction:column;gap:28px}
+
+  header{border-block-end:2px solid var(--blue);padding-block-end:12px}
+  h1{margin:0;font-size:25px;font-weight:700;line-height:1.25}
+  .meta{margin-block-start:4px;font-size:13px;color:var(--ink-3);font-family:var(--mono)}
+
+  section{display:flex;flex-direction:column;gap:10px}
+  h2{margin:0;font-size:18px;font-weight:700;line-height:1.3}
+  p{margin:0;color:var(--ink-2);max-width:70ch}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .card > .head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 15px;border-block-end:1px solid var(--line)}
+  .card > .body{padding:13px 15px;display:flex;flex-direction:column;gap:7px}
+  .card .id{font-family:var(--mono);font-size:12px;color:var(--blue)}
+  .card .name{font-size:16px;font-weight:700;flex:1 1 auto;min-width:12ch}
+  .card.open{border-inline-start:3px solid var(--open)}
+  .card.todo{border-inline-start:3px solid var(--bad)}
+
+  .chip{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap}
+  .chip.open{color:var(--open);background:var(--open-bg)}
+  .chip.blocked{color:var(--ink-3);background:var(--line)}
+  .chip.ready{color:var(--bad);background:var(--bad-bg)}
+
+  code{font-family:var(--mono);font-size:.86em;background:color-mix(in srgb,var(--blue) 8%,transparent);padding:1px 5px;border-radius:4px;direction:ltr;display:inline-block}
+
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:460px}
+  th,td{text-align:start;padding:8px 13px;border-block-end:1px solid var(--line);vertical-align:top}
+  thead th{background:color-mix(in srgb,var(--blue) 7%,var(--surface));font-size:12px;color:var(--ink-2);font-weight:700}
+  tbody tr:last-child td{border-block-end:0}
+  .num{font-variant-numeric:tabular-nums;font-family:var(--mono)}
+
+  ul.plain{margin:0;padding-inline-start:1.1rem;color:var(--ink-2);font-size:14px}
+  footer{border-block-start:1px solid var(--line);padding-block-start:12px;font-size:13px;color:var(--ink-3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>لوحة الصفحة الرئيسية</h1>
+  <div class="meta">app/(homepage) · ١٥ أغسطس ٢٠٢٦ · فرع modonty-ui</div>
+</header>
+
+<!-- ═════ جاهز للتنفيذ ═════ -->
+<section>
+  <h2>🔴 جاهز للتنفيذ — بترتيب الأولوية</h2>
+  <p>مراجعة حيّة ١٥ أغسطس (ديسكتوب ١٢٨٠ · جوّال ٣٩٠ · ١١٢٧). <strong>ما نجح بالقياس:</strong> صفر تمرير أفقي · CLS = 0 · تركيز مرئي ١٤/١٤ بالكيبورد · صفر أيقونة بلا اسم · صفر صورة بلا <code>alt</code> · أهداف اللمس ٤٤ في الشريطين · لا شيء محجوب خلف شريط الخدمات. اللقطات في <code>.playwright-mcp/home-*.png</code>.</p>
+
+  <article class="card todo">
+    <div class="head"><span class="id">V7</span><span class="name">«٢١ شريك» بحجم ٩ بكسل</span><span class="chip ready">🟡</span></div>
+    <div class="body">
+      <p>ثماني شارات في بلاطات المجالات بـ<code>9px</code> — تحت أي حدّ قراءة. الحدّ الأدنى ١١ بكسل، وعلى صورة ١٢.</p>
+    </div>
+  </article>
+
+  <article class="card todo">
+    <div class="head"><span class="id">V4</span><span class="name">العمود الأيمن ينهار بعد بطاقتين</span><span class="chip ready">🟡</span></div>
+    <div class="body">
+      <p>محتوى العمود ينتهي عند 457 بكسل مقابل 962 للأيسر — فراغ ٥٠٠ بكسل تحت «اسأل Modo». السبب <code>ReelsCard.tsx:86</code> → <code>return null</code> بلا حالة فراغ.</p>
+    </div>
+  </article>
+
+  <article class="card todo">
+    <div class="head"><span class="id">T5</span><span class="name">القائمة العلوية بلا <code>aria-current</code></span><span class="chip ready">🟡</span></div>
+    <div class="body">
+      <p>الأربعة (الرئيسية · الرائجة · الشركاء · المزايا) بلا <code>aria-current="page"</code> — النشط يُعرف باللون فقط، فقارئ الشاشة لا يعرف أين هو. سطر واحد في رابط القائمة.</p>
+    </div>
+  </article>
+
+  <article class="card todo">
+    <div class="head"><span class="id">T2</span><span class="name">ألوان مكتوبة باليد</span><span class="chip ready">🟡</span></div>
+    <div class="body">
+      <p><code>rgba(</code> ×١٣ في ٨ ملفات. §١٠ يوجب أن تأتي من <code>globals.css</code> — اللون اليدوي يكسر الوضع الليلي/النهاري.</p>
+    </div>
+  </article>
+
+  <article class="card todo">
+    <div class="head"><span class="id">T3</span><span class="name">المساران الجديدان ناقصان</span><span class="chip ready">🟡</span></div>
+    <div class="body">
+      <p><code>/booking</code> و<code>/shop</code> يعملان، لكن بلا <code>loading.tsx</code> وبلا إدراج في <code>sitemap.ts</code>.</p>
+    </div>
+  </article>
+
+  <article class="card todo">
+    <div class="head"><span class="id">V8</span><span class="name">شعار كرت مدونتي مشوَّه النسبة</span><span class="chip ready">🟢</span></div>
+    <div class="body">
+      <p>أصله ٧٠×١٦ ويُرسم ٦٦×٣٦ — تحذير Next «عُدّل بُعد واحد دون الآخر». <code>h-auto</code> أو أبعاد صحيحة.</p>
+    </div>
+  </article>
+
+  <article class="card todo">
+    <div class="head"><span class="id">V9</span><span class="name">تبويبات كرت مدونتي ٣٢ بكسل</span><span class="chip ready">🟢</span></div>
+    <div class="body">
+      <p>(مقالات · استمع · لقطات) ارتفاعها ٣٢ — فوق حدّ WCAG (٢٤) وتحت Apple (٤٤). إمّا نقبلها أو نرفعها لـ٤٤.</p>
+    </div>
+  </article>
+
+  <article class="card todo">
+    <div class="head"><span class="id">T6</span><span class="name">تحذير Next: <code>scroll-behavior: smooth</code> بلا <code>data-scroll-behavior</code></span><span class="chip ready">🟢</span></div>
+    <div class="body">
+      <p>ظهر في الكونسول عند التنقّل من الرئيسية: Next يطلب <code>data-scroll-behavior="smooth"</code> على <code>&lt;html&gt;</code> كي يعطّل التمرير الناعم أثناء الانتقال بين المسارات (وإلا يقفز الانتقال بشكل غريب). سطر واحد في التخطيط الجذري — خارج مجلد الرئيسية لكنه يمسّها.</p>
+    </div>
+  </article>
+
+  <article class="card todo">
+    <div class="head"><span class="id">V3</span><span class="name">صور المجالات مكرّرة</span><span class="chip ready">آخر حاجة — بيانات لا كود</span></div>
+    <div class="body">
+      <p>٨ بلاطات، الصور الفريدة = <strong>١</strong>. <strong>السبب مقروء من القاعدة (<code>modonty_dev</code>):</strong> المجالات الثمانية كلها <code>socialImage = logo/_platform/platform-default-logo</code> — شعار المنصّة الافتراضي مخزَّن كصورة لكل مجال بدل الفراغ؛ فالبديل المصمَّم في الكود (تدرّج + أيقونة) لا يُرسم أبداً. لا الأدمن ولا الصيانة يكتبان هذه القيمة — إدخال قديم.</p>
+      <p><strong>العلاج:</strong> (١) تفريغ <code>socialImage</code> للثمانية → بلاطات متمايزة فوراً؛ (٢) رفع صورة حقيقية لكل مجال من الأدمن (4:3). على dev ثم الإنتاج بيد خالد.</p>
+    </div>
+  </article>
+</section>
+
+<!-- ═════ محجوب ═════ -->
+<section>
+  <h2>⏸️ محجوب بـD1</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>#</th><th>البند</th><th>المقيس</th></tr></thead>
+      <tbody>
+        <tr><td class="num">V1</td><td>لا عنوان مرئي على الصفحة</td><td><code>&lt;h1 class="sr-only"&gt;</code> — موجود للآلة، مخفيّ عن الإنسان</td></tr>
+        <tr><td class="num">V2</td><td>لا بؤرة بصرية</td><td>كل البطاقات بنفس الحلقة والاستدارة والخلفية</td></tr>
+        <tr><td class="num">V5</td><td>ترتيب بطاقة المقال مقلوب</td><td>صورة ← كاتب ← عنوان. العنوان سبب النقرة ويأتي ثالثاً</td></tr>
+        <tr><td class="num">V10</td><td>ترتيب قشرة الجوّال</td><td>أول ٤٧٠ من ٨٤٤ بكسل = مجالات (روبوتات) + كرت مدونتي؛ المقالات تبدأ عند ٥٥٪ من القشرة</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═════ خلصنا ═════ -->
+<section>
+  <h2>✅ خلصنا</h2>
+  <div class="scroll">
+    <table>
+      <tbody>
+        <tr><td>كل عنصر تحكّم من shadcn</td><td class="num">صفر عنصر خام</td></tr>
+        <tr><td>الروابط بهيئة زرّ ← <code>buttonVariants</code></td><td class="num">٥ مواضع</td></tr>
+        <tr><td>كنسة نظام التصميم (ظلال · أوزان · أقطار · حاوية · جهات · لمس)</td><td class="num">٦ بنود</td></tr>
+        <tr><td>تحويل إلى سيرفر كومبوننت — الباقيان بمبرّر مقيس: <code>MoreArticles</code> (جِلد المحرّك) · <code>MoreArticlesOnScroll</code> (بوّابة التحميل)</td><td class="num">"use client" ١٦ → ٢</td></tr>
+        <tr><td>حذف كود ميت وملفات بلا مستهلك</td><td class="num">ملفات ٤٠ → ٢٩</td></tr>
+        <tr><td>أزرار التمرير بلا جافاسكربت</td><td class="num"><code>animation-timeline: scroll()</code></td></tr>
+        <tr><td>استعلامات قاعدة اختفت من الرئيسية</td><td class="num">−٤</td></tr>
+        <tr><td>مساران جديدان <code>/booking</code> · <code>/shop</code></td><td class="num">٢٠٠ · ٢٠٠</td></tr>
+        <tr><td>مكوّن <code>Scroller</code> مشترك، صفر تبعية</td><td class="num">بديل embla (١٢ كيلو)</td></tr>
+        <tr><td>التمرير اللانهائي كاملاً (IS1–IS6): سلسلة <code>/page/n</code> + 308/404 من البروكسي + <code>GET /api/articles</code> + محرّك مشترك في <code>shared/</code></td><td class="num">٧/٧ شروط جوجل بالقياس</td></tr>
+        <tr><td>حذف <code>content</code> من الحمولة + <code>content-visibility</code> على البطاقات</td><td class="num">IS4 · IS5</td></tr>
+        <tr><td>T1 أسماء المجالات تُقصّ — لم يتكرّر بعد <code>Scroller</code></td><td class="num">٨ أسماء بلا قصّ عند 1127 و1280</td></tr>
+        <tr><td>🚨 المصيبة (خالد ١٥ أغسطس): الريفرش على <code>/page/3</code> كان يرمي الزائر في أرشيف عارٍ بلا أعمدة الرئيسية، والشريط يقفز لـ<code>/page/4</code> وحده. <strong>الحلّ:</strong> <code>/page/n</code> صار الرئيسية نفسها (<code>CachedHomePage</code> مشترك بين المسارين، <code>page</code> في مفتاح الكاش) وتغذيتها من الفصل n + عنوان مرئي «الصفحة n» + سابقة/تالية · والبوّابة <code>useMountOnApproach</code> لا تركّب المحرّك بعد ريفرش/رجوع إلا بحركة إنسان (عجلة/لمس/مفاتيح — لأن استعادة التمرير نفسها تطلق <code>scroll</code>، مقيس)</td><td class="num">مقيس: تمرير / → 2 → 3، ريفرش → الرابط يبقى <code>/page/3</code> (٤ ث خمول) · العمود والمجالات وكرت مدونتي والحساب كلها حاضرة · عجلة حقيقية → <code>/page/4</code> · السلسلة سليمة: 308 · 200 · 404 · تداخل التغذية 0/0/0 · tsc = 0</td></tr>
+        <tr><td>V6 — أزرق البراند نصّاً: رمز جديد <code>--link</code> (الليلي 72% = <code>#7070FF</code>؛ الفاتح = primary) + لون Tailwind <code>text-link</code>، وسُحب <code>text-primary</code> → <code>text-link</code> في ٢١ ملفاً (الرئيسية · بطاقات التغذية · النافبار). لون واحد لا يكفي الدورين (تعبئة تحت أبيض ≠ نصّ على داكن) — نمط Primer. موثَّق في <code>DESIGN-SYSTEM.md</code> §١</td><td class="num">مقيس: النصوص الفاشلة ٣ → ٠ · «الرئيسية» 4.73:1 · الشارات 5.05:1</td></tr>
+        <tr><td>T4 — صورة LCP: البطلان (تغذية الديسكتوب · كرت مدونتي على الجوّال) صارا <code>loading="eager"</code> + <code>fetchPriority="high"</code> بدل <code>preload</code>/lazy (توثيق Next 16.2.9)، و<code>sizes</code> صادقة تعطي التوأم المخفيّ أصغر مرشّح (بلا <code>vw</code> — أي vw يُسقط المرشّحات تحت 640 في <code>getWidths</code>). React نفسه يضيف <code>&lt;link rel=preload&gt;</code> للصور غير الكسولة. الجذر (نسخة DOM واحدة للبطاقة) يبقى مع V5</td><td class="num">مقيس بارد على جوّال DPR 3: طلب واحد ≥640w = بطل الجوّال 1200w (٤٤ كيلو) · بطل الديسكتوب المخفي 16w · ١٦ طلب صور = ١٨٨ كيلو · ديسكتوب: بطل التغذية 640w eager/high والتوأم 16w · تحذير LCP اختفى</td></tr>
+        <tr><td>البلور (LQIP) رجع لبطاقات التغذية وكرت مدونتي — كان الاستعلام يجلب <code>blurDataURL</code> ثم يرميه قبل البطاقة. أُضيف <code>imageBlur</code> إلى <code>FeedPost</code> (إضافة فقط — عقد <code>/api/articles</code> لم يتغيّر) في المنتجين الثلاثة، و<code>asMedia()</code> صارت تقبل البلور</td><td class="num">مقيس: صور بالبلور ٠ → ٢٥ في HTML الخام · <code>/api/articles?page=2</code> ١٠/١٠ تحمل <code>imageBlur</code></td></tr>
+        <tr><td>حذف تسخين صور الصفحة التالية (<code>components/preload-hero/</code> الثلاثة + ٥ استدعاءات في البطاقات والرائجة و«اقرأ أيضاً» وبطاقة العميل) — بقرار خالد بعد فحص المصادر: توثيق Next وVercel لا يذكرانها، مناقشة Next #40711 بلا ردّ، ومصدرها قالب شخصي (NextFaster). كانت تنزّل حتى ٦ صور مقالات بلا ضغط + حدّ عميل تحت كل بطاقة</td><td class="num">تست حيّ: الرئيسية · التمرير ٣٥→٦٥ · الرائجة · المقال («اقرأ أيضاً» ١٣) · /booking (٢٣ بطاقة) — صفر أخطاء جديدة</td></tr>
+        <tr><td>D3 — بطل كرت مدونتي = الأحدث دائماً بلا تثبيت (قرار خالد ١٥ أغسطس: كل مقال جديد هو البطل). الكود كذلك أصلاً — صفر تعديل</td><td class="num"><code>orderBy: datePublished desc</code></td></tr>
+        <tr><td>D2 — قاعدة الزرّ المشتركة صارت على نظام تصميم مدونتي (<code>rounded-full</code> · <code>font-bold</code>) بقرار خالد: مدونتي هي الماستر والأدمن والكونسول يرثان. حُذفت الأصناف الزائدة من ٥ نداءات في الرئيسية</td><td class="num">مقيس: «أنشئ حسابًا» 9999px · 700 بلا تجاوز</td></tr>
+        <tr><td>كرت الحساب <code>UserCard</code> سيرفر: يقرأ الجلسة بـ<code>auth()</code> ويدخل الصفحة المخبّأة كفتحة تمريرية (نمط «Interleaving» في توثيق <code>use cache</code>) — الجلسة ما تغادر السيرفر</td><td class="num">"use client" ٣ → ٢</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═════ D1 — اقتراح للمراجعة آخر شيء ═════ -->
+<section>
+  <h2>🧭 D1 — اقتراحي من المصادر (نراجعه آخر حاجة)</h2>
+  <p>ليس قراراً بعد. جُمع ١٥ أغسطس من NN/g وتقرير رويترز ٢٠٢٥ وتجارب واشنطن بوست ونيويورك تايمز، ثم أُسقط على طبيعة مدونتي.</p>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>السؤال</th><th>الاقتراح</th><th>المصدر</th></tr></thead>
+      <tbody>
+        <tr><td>ليش يوصل الزائر؟</td><td>الرئيسية ليست صفحة هبوط من جوجل — جوجل يرمي القارئ على المقال. من يأتي إليها ثلاثة: قارئ راجع «ودّي المزيد» · شريك (أو محتمل) يقيّم المنصّة · باحث عن البراند. فهي <strong>موزّع للراجعين</strong> لا مصيدة للغرباء.</td><td>رويترز ٢٠٢٥: الوصول المباشر لمواقع الأخبار ينحسر (٤٨٪ في أمريكا) لصالح المنصّات والبحث</td></tr>
+        <tr><td>الفعل الواحد؟</td><td><strong>فتح مقال.</strong> القراءة هي الوحدة التي يدفع عليها الشريك؛ التسجيل والحجز ثانويان بصرياً.</td><td>NN/g: «if everything is emphasized, nothing stands out» · «use examples to reveal the site's content, rather than just describing it»</td></tr>
+        <tr><td>إيش يرجّعه بعد أسبوع؟</td><td><strong>«الجديد منذ زيارتك»</strong> — متابعة شركاء/مجالات + النشرة؛ هذا دور الحساب. تخصيص نعم، إزعاج لا.</td><td>واشنطن بوست (For You) · نيويورك تايمز (In Case You Missed It) — Digiday · رويترز: ٧٩٪ عطّلوا التنبيهات «كثيرة أو غير مهمّة»</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <article class="card open">
+    <div class="head"><span class="name">لو اعتُمد — تبعاته على المحجوب</span></div>
+    <div class="body">
+      <ul class="plain">
+        <li><strong>V1</strong> — عنوان مرئي سطر واحد فوق التغذية («آخر المقالات من شركاء مدونتي»)، لا بطل تسويقي.</li>
+        <li><strong>V2</strong> — أول بطاقة = العنصر المهيمن (أكبر، معاملة «مميّز»)، والأعمدة الجانبية تهدأ بصرياً.</li>
+        <li><strong>V5</strong> — ترتيب البطاقة: صورة ← عنوان ← الشريك والوقت ← مقتطف.</li>
+        <li><strong>V10</strong> — الجوّال: التغذية تدخل القشرة الأولى؛ المجالات وكرت مدونتي ينزلان.</li>
+      </ul>
+      <p>المصادر: <a href="https://www.nngroup.com/articles/homepage-design-principles/">NN/g — Homepage Design: 5 Principles</a> · <a href="https://www.nngroup.com/articles/113-design-guidelines-homepage-usability/">NN/g — 113 Guidelines</a> · <a href="https://digiday.com/media/how-publishers-are-experimenting-with-more-homepage-personalization-sections/">Digiday — homepage personalization</a> · <a href="https://reutersinstitute.politics.ox.ac.uk/digital-news-report/2025/dnr-executive-summary">Reuters DNR 2025</a></p>
+    </div>
+  </article>
+</section>
+
+<footer>تُحدَّث هذه اللوحة في نفس الكوميت الذي يغيّر ما فيها.</footer>
+
+</div>
+</body>
+</html>

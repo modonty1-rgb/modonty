@@ -86,8 +86,8 @@ const TEAM: Member[] = [
   },
   {
     name: "م. عمر حسني",
-    role: "مدير حسابات العملاء",
-    bio: "حلقة الوصل مع العملاء، يبني علاقات مستدامة ويضمن رضاهم.",
+    role: "مدير حسابات الشركاء",
+    bio: "حلقة الوصل مع الشركاء، يبني علاقات مستدامة ويضمن رضاهم.",
     imageUrl:
       storyTeamImage("omar-hosney.jpg"),
     dept: "ops",
@@ -118,7 +118,7 @@ const TEAM: Member[] = [
   },
   {
     name: "أ. بلال يوسف",
-    role: "خدمة العملاء",
+    role: "خدمة الشركاء",
     bio: "الواجهة المباشرة للمنصة، يقدّم الدعم السريع لتجربة مثالية.",
     imageUrl:
       storyTeamImage("belal-youssef.jpg"),

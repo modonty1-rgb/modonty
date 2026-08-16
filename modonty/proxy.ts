@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { isLiveSection, isLiveSlug, lookupRedirect } from "@/lib/archive-cache";
+import { isLiveSection, isLiveSlug, lookupRedirect, publishedFeedTotalPages } from "@/lib/archive-cache";
+import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
 
 /**
  * Proxy (Next.js 16+ — replaces deprecated middleware) resolves every entity
@@ -41,6 +42,7 @@ export const config = {
     "/clients/:slug",
     "/authors/:slug",
     "/users/:id",
+    "/page/:pageNumber",
   ],
 };
 
@@ -51,6 +53,42 @@ function gone(): NextResponse {
     status: 410,
     headers: { "Content-Type": "text/html; charset=utf-8" },
   });
+}
+
+const NOT_FOUND_HTML = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>404 Not Found</title></head><body><h1>404 Not Found</h1><p>This page does not exist.</p></body></html>`;
+
+// 404 (not 410) on purpose: an out-of-range feed page never existed, and Google's
+// lazy-loading doc prescribes 404 for it — 410 is reserved for content that lived
+// and was removed.
+function feedPageNotFound(): NextResponse {
+  return new NextResponse(NOT_FOUND_HTML, {
+    status: 404,
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
+}
+
+/**
+ * `/page/n` — the homepage's paginated series (chunk 1 lives at `/`).
+ * Resolved here for the SAME measured symptom as every other section in this file:
+ * the shell flushes before `page.tsx` reaches `notFound()`, so in-page validation
+ * produced HTTP 200 soft-404s (measured: /page/abc → 200, /page/999 → 200).
+ *   not a canonical integer ≥ 2 → 404   ("02", "abc", "0" can never be a chunk)
+ *   "1"                         → 308 to `/`  (one URL per chunk, no duplicate)
+ *   beyond the last page        → 404   (Google: out-of-range must 404)
+ */
+async function resolveFeedPage(rawPage: string, request: NextRequest): Promise<NextResponse | undefined> {
+  if (rawPage === "1") {
+    return NextResponse.redirect(new URL("/", request.url), 308);
+  }
+  if (!/^[1-9]\d{0,5}$/.test(rawPage)) {
+    return feedPageNotFound();
+  }
+  const page = Number(rawPage);
+  const totalPages = await publishedFeedTotalPages(FEED_PAGE_SIZE);
+  if (page > totalPages) {
+    return feedPageNotFound();
+  }
+  return undefined; // live chunk → pass through to the page
 }
 
 /**
@@ -99,6 +137,10 @@ export async function proxy(request: NextRequest) {
   const section = segments[1];
   const rawSlug = segments[2];
   if (!section || !rawSlug) return;
+
+  if (section === "page") {
+    return resolveFeedPage(rawSlug, request);
+  }
 
   if (section === "users") {
     let id: string;

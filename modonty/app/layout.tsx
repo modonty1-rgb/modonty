@@ -9,7 +9,7 @@ import { WebVitals } from "@/app/layout/components/gtm/WebVitals";
 import { PageViewTracker } from "@/app/layout/components/analytics/PageViewTracker";
 import { ClarityScript } from "@/app/layout/components/analytics/clarity-script";
 import { Footer } from "@/app/layout/components/Footer";
-import { TopNavWithFavorites } from "@/app/layout/components/nav/TopNavWithFavorites";
+import { TopNav } from "@/app/layout/components/nav/TopNav";
 import { BRAND_AR, SITE_URL } from "@/constants";
 import { getSiteLanguage } from "@/lib/settings/get-site-language";
 
@@ -32,10 +32,10 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${BRAND_AR} - منصة المدونات متعددة العملاء`,
+    default: `${BRAND_AR} - منصة المدونات متعددة الشركاء`,
     template: `%s | ${BRAND_AR}`,
   },
-  description: "منصة مدونات احترافية لإدارة المحتوى عبر عملاء متعددين",
+  description: "منصة مدونات احترافية لإدارة المحتوى عبر شركاء متعددين",
   // Site-wide hreflang signals to AI search engines + Google geo-targeting.
   // Mariam audit 2026-05-27: site had ZERO hreflang on homepage; only ar+x-default on articles.
   // Per-page generateMetadata can override `alternates.canonical` but inherits these languages.
@@ -106,9 +106,7 @@ export default async function RootLayout({
               each behind its own boundary. */}
           <SessionProviderWrapper>
             <div className="min-h-screen flex flex-col">
-              <Suspense fallback={<header className="h-14 border-b bg-card" />}>
-                <TopNavWithFavorites />
-              </Suspense>
+              <TopNav />
               <main id="main-content" className="flex-1">{children}</main>
               <Footer />
             </div>

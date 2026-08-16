@@ -1,23 +1,42 @@
-import { IconShield, IconVerified } from "@/lib/icons";
+import Link from "next/link";
+import { ModontyTrustMark } from "@/components/icons/modonty-trust-mark";
+
+// Why a visitor can book or shop with confidence — the business-model promise in three
+// DIFFERENT lines: the gate, what it means for you, where to read how (Khalid, 2026-08-16:
+// the earlier three said the same thing twice). The card claims; /trust explains, so the
+// whole card links there. The bullet is our official verification mark (shield with M),
+// shared repo-wide, not a generic check.
+const proofs = [
+  "ما يدخل أي شريك إلا بعد فحص أوراقه الرسمية",
+  "تحجز وتشتري من جهة معروفة الاسم والسجل",
+] as const;
 
 export function ClientsCard() {
   return (
-    <section aria-labelledby="client-trust-heading" className="relative overflow-hidden rounded-2xl border border-accent/20 bg-primary/80 p-4 text-primary-foreground shadow-[0_12px_24px_-20px_rgba(14,6,90,0.75)]">
-      <span className="absolute -top-7 -end-7 h-24 w-24 rounded-full border border-accent/30" aria-hidden />
-      <span className="absolute -bottom-10 -start-8 h-28 w-28 rounded-full bg-accent/10" aria-hidden />
-      <div className="relative flex items-start gap-3">
-        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-accent text-primary shadow-[0_8px_20px_-10px_rgba(0,216,216,0.9)]" aria-hidden>
-          <IconShield className="h-6 w-6" />
+    <Link
+      href="/trust"
+      aria-label="شركاء موثوقون — كيف نتأكّد منهم"
+      className="group relative block overflow-hidden rounded-lg bg-card p-4 ring-1 ring-primary/10 transition-shadow sm:hover:ring-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+    >
+      <span className="absolute inset-y-0 start-0 w-1 bg-accent" aria-hidden />
+      <div className="flex items-center gap-3">
+        <ModontyTrustMark className="h-11 w-11 shrink-0" />
+        <span className="min-w-0 flex-1 text-base font-medium text-foreground">شركاء موثوقون</span>
+        <span className="inline-flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
+          <ModontyTrustMark className="h-4 w-4" />
+          موثّق
         </span>
-        <div>
-          <h2 id="client-trust-heading" className="text-base font-bold">عملاء موثوقون</h2>
-          <p className="mt-1 text-xs leading-5 text-primary-foreground/80">لا يُضاف أي عميل إلى مدونتي قبل التحقق من بياناته الرسمية الحكومية.</p>
-        </div>
       </div>
-      <p className="relative mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-accent">
-        <IconVerified className="h-3.5 w-3.5" aria-hidden />
-        نتحقق قبل الظهور
-      </p>
-    </section>
+      <ul className="mt-2.5 space-y-1">
+        {proofs.map((line) => (
+          <li key={line} className="flex items-start gap-2 text-xs leading-5 text-muted-foreground">
+            <ModontyTrustMark className="mt-[3px] h-3.5 w-3.5 shrink-0" />
+            {line}
+          </li>
+        ))}
+      </ul>
+      {/* The way out, as a footer line rather than a third bullet: the card is one link. */}
+      <span className="mt-2 block text-xs text-link group-hover:underline">كيف نتأكّد؟ اقرأ طريقتنا ←</span>
+    </Link>
   );
 }

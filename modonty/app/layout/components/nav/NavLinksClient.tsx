@@ -3,16 +3,9 @@
 import { usePathname } from "next/navigation";
 import { SearchLink } from "@/app/layout/components/nav/SearchLink";
 import { DesktopNavItem } from "@/app/layout/components/nav/DesktopNavItem";
-import { MazayaNavTrigger } from "@/app/layout/components/nav/MazayaNavTrigger";
 import { mainNavItems } from "@/app/layout/helpers/nav-config";
 
-const FAVORITES_HREF = "/users/profile/favorites";
-
-interface DesktopNavLinksProps {
-  favoritesCount?: number;
-}
-
-export function DesktopNavLinks({ favoritesCount }: DesktopNavLinksProps) {
+export function DesktopNavLinks() {
   const pathname = usePathname();
 
   return (
@@ -30,11 +23,9 @@ export function DesktopNavLinks({ favoritesCount }: DesktopNavLinksProps) {
               label={item.label}
               href={item.href}
               active={active}
-              badge={item.href === FAVORITES_HREF ? favoritesCount : undefined}
             />
           );
         })}
-        <MazayaNavTrigger />
       </nav>
     </div>
   );

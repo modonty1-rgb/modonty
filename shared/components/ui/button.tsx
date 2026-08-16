@@ -4,8 +4,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "../../lib/utils/index";
 
+// Base follows the modonty design system (documents/design/DESIGN-SYSTEM.md):
+// controls are rounded-full (§4) and the only text weights are 400/700 (§3.1) —
+// Tajawal ships no 500, so font-medium was being faked. modonty is the master;
+// admin and console inherit (Khalid, 2026-08-15).
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -21,8 +25,8 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
+        sm: "h-9 px-3",
+        lg: "h-11 px-8",
         icon: "h-10 w-10",
         mobileDefault: "h-11 px-4 py-2 md:h-10 md:px-4 md:py-2",
         mobileIcon: "h-11 w-11 md:h-10 md:w-10",

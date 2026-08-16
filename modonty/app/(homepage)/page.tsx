@@ -1,18 +1,9 @@
 import { Metadata } from "next";
-import { Suspense } from "react";
-import { cacheLife, cacheTag } from "next/cache";
-import { PageLayout } from "@/app/(homepage)/components/page-layout/PageLayout";
-import { BottomBar } from "@/app/(homepage)/components/mobile-bottom-bar/BottomBar";
-import { getCorePublisherArticles } from "@/app/(homepage)/data/get-core-publisher-articles";
-import { getHomeFeedArticles } from "@/app/(homepage)/data/get-home-feed-articles";
-import { getReelsFeedPage } from "@/app/reels/helpers/reels-feed";
-import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
+import { CachedHomePage } from "@/app/(homepage)/components/page-layout/CachedHomePage";
+import { UserCard } from "@/app/(homepage)/components/user-card/UserCard";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
-import { getBrandMedia } from "@/lib/settings/get-brand-media";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
-import { getServicesCard } from "@/app/(homepage)/data/get-services-card";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
-import { jsonLdHtmlFromString } from "@/lib/seo";
 import { SITE_URL, BRAND_AR } from "@/constants";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -53,36 +44,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function HomePage() {
-  "use cache";
-  cacheLife("minutes");
-  cacheTag("homepage", "articles", "settings");
-
-  const [{ jsonLd }, posts, corePublisherArticles, brandMedia, industries, reels, clientServices] = await Promise.all([
-    getListingPageSeo("home"),
-    getHomeFeedArticles(),
-    getCorePublisherArticles(),
-    getBrandMedia(),
-    getIndustriesWithCounts(),
-    getReelsFeedPage(),
-    getServicesCard(),
-  ]);
-
-  return (
-    <>
-      {jsonLd?.trim() && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(jsonLd) }}
-        />
-      )}
-      <h1 className="sr-only">مدونتي — منصة المحتوى العربي</h1>
-      <PageLayout posts={posts} corePublisherArticles={corePublisherArticles} brandLogoUrl={brandMedia.logoUrl} industries={industries} reels={reels.items} clientServices={clientServices} />
-      {/* Mobile-only action bar (filters + newsletter) — homepage only, lazy client shell */}
-      <Suspense fallback={null}>
-        <BottomBar />
-      </Suspense>
-    </>
-  );
+// Uncached on purpose. UserCard reads the session cookie, which "use cache" forbids
+// inside its scope — so the element is created out here and handed to the cached page
+// as a pass-through slot. The cached shell never introspects it, so the cache entry is
+// unaffected and only the card renders per request (use-cache.md, "Interleaving").
+export default function HomePage() {
+  return <CachedHomePage page={1} userCard={<UserCard />} />;
 }
-

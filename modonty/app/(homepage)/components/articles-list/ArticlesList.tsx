@@ -1,43 +1,19 @@
-'use client';
-
-import { useSearchParams } from 'next/navigation';
 import { PostCard } from '@/components/feed/postcard/PostCard';
-import { MoreArticles } from '@/app/(homepage)/components/articles-list/MoreArticles';
 import { MoreArticlesOnScroll } from '@/app/(homepage)/components/articles-list/MoreArticlesOnScroll';
+import { FEED_PAGE_SIZE } from '@/lib/queries/feed-constants';
 import type { FeedPost } from '@/lib/types';
 
 interface ArticlesListProps {
   serverPosts: FeedPost[];
+  /** Chunk these posts belong to; the scroll continues from the next one. */
+  page: number;
 }
 
-export function ArticlesList({ serverPosts }: ArticlesListProps) {
-  const searchParams = useSearchParams();
-  const client = searchParams.get('client') ?? undefined;
-  const category = searchParams.get('category') ?? undefined;
-
-  // Client filter wins over category — it's the more specific intent.
-  if (client) {
-    return (
-      <MoreArticles
-        initialPosts={[]}
-        initialStartIndex={0}
-        clientSlug={client}
-        initialPage={0}
-      />
-    );
-  }
-
-  if (category) {
-    return (
-      <MoreArticles
-        initialPosts={[]}
-        initialStartIndex={0}
-        categorySlug={category}
-        initialPage={0}
-      />
-    );
-  }
-
+// Server component on purpose: the cards render to HTML once instead of being
+// serialized a second time into a client boundary. It used to be 'use client' for a
+// useSearchParams filter (?client= / ?category=) whose producers — the discovery
+// sheets — were removed; nothing links to those URLs anymore.
+export function ArticlesList({ serverPosts, page }: ArticlesListProps) {
   return (
     <>
       {serverPosts.length > 0 && (
@@ -47,10 +23,8 @@ export function ArticlesList({ serverPosts }: ArticlesListProps) {
           ))}
         </div>
       )}
-      <MoreArticlesOnScroll
-        initialStartIndex={serverPosts.length}
-        initialPage={1}
-      />
+      {/* Absolute index of the first scrolled-in card = everything the series showed before it. */}
+      <MoreArticlesOnScroll initialStartIndex={(page - 1) * FEED_PAGE_SIZE + serverPosts.length} initialPage={page} />
     </>
   );
 }

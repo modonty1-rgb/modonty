@@ -22,6 +22,9 @@
     /* Primary = Vibrant Blue (Main CTAs, Links, Active States) */
     --primary: 240 100% 59%;           /* Brand Blue */
     --primary-foreground: 0 0% 100%;   /* White text on blue */
+    /* Brand blue used AS TEXT (links, active labels). Same as --primary in light mode
+       (7:1 on white); dark mode needs its own lighter value — see .dark. */
+    --link: 240 100% 59%;
     
     /* Secondary = light gray surface (shadcn / DESIGN_SYSTEM) */
     --secondary: 0 0% 96%;
@@ -75,6 +78,12 @@
        most-clicked button of the site. White measures 5.5:1 and matches light mode,
        so the primary button now reads the same way in both themes. */
     --primary-foreground: 0 0% 100%;   /* White text on blue — 5.5:1 (AA) */
+    /* One blue cannot be both a fill under white text (needs to stay dark enough:
+       ≤ ~L18 luminance) and text on the dark background (needs ≥ ~L19) — measured
+       2026-08-15: --primary as text = 3.5:1 on the page, 3.3:1 on cards. So text gets
+       its own step, like Primer's accent-fg vs accent-emphasis: 72% = 5.1:1 on the
+       background, 4.6:1 on cards. */
+    --link: 240 100% 72%;
     
     /* Secondary - Lighter navy */
     --secondary: 245 50% 25%;          /* Lighter navy */
@@ -156,6 +165,64 @@
 
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background-color: hsl(var(--muted-foreground));
+  }
+
+  /* Horizontal rows (Scroller). The track is a brand-tinted groove so the row reads
+     as scrollable at rest; the thumb wakes up to full brand colour on hover.
+     Deliberately NOT hidden: a row with no visible bar looks like a cut-off grid. */
+  .scrollbar-rail {
+    scrollbar-width: thin;                                        /* Firefox / standard */
+    scrollbar-color: hsl(var(--primary) / 0.45) hsl(var(--primary) / 0.08);
+  }
+
+  .scrollbar-rail::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .scrollbar-rail::-webkit-scrollbar-track {
+    background: hsl(var(--primary) / 0.08);
+    border-radius: 999px;
+  }
+
+  .scrollbar-rail::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--primary) / 0.45);
+    border-radius: 999px;
+    transition: background-color 0.216s cubic-bezier(0.34, 0, 0.21, 1);
+  }
+
+  .scrollbar-rail:hover::-webkit-scrollbar-thumb,
+  .scrollbar-rail:focus-within::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--primary));
+  }
+
+  /* Sticky desktop sidebars keep their own scroll area, but should not compete with
+     the page scrollbar. The thumb stays quiet until the visitor engages the rail. */
+  .scrollbar-sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+
+  .scrollbar-sidebar:hover,
+  .scrollbar-sidebar:focus-within {
+    scrollbar-color: hsl(var(--muted-foreground) / 0.38) transparent;
+  }
+
+  .scrollbar-sidebar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .scrollbar-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-sidebar::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 999px;
+  }
+
+  .scrollbar-sidebar:hover::-webkit-scrollbar-thumb,
+  .scrollbar-sidebar:focus-within::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.38);
   }
 
   .scrollbar-none {

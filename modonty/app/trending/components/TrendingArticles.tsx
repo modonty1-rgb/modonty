@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
-import { PreloadArticleHero } from "@/components/media/preload-hero/preload-article-hero";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RelativeTime } from "@/components/date/RelativeTime";
@@ -58,7 +57,6 @@ export function TrendingArticles({ articles, showTitle = true }: TrendingArticle
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {articles.map((article, index) => (
           <Link key={article.id} href={`/articles/${article.slug}`}>
-            <PreloadArticleHero href={`/articles/${article.slug}`} imageUrl={article.image ?? null} />
             <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer h-full relative overflow-hidden group">
               {/* Trending Badge */}
               <div className="absolute top-2 right-2 z-10">

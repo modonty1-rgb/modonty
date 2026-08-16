@@ -1,31 +1,35 @@
 import { Suspense } from "react";
-import { AskModo } from "@/app/(homepage)/components/ask-modo/AskModo";
-import { UserCard } from "@/app/(homepage)/components/user-card/UserCard";
-import { ReelsCard } from "@/app/(homepage)/components/reels-card/ReelsCard";
+import type { ReactNode } from "react";
+import { ModontyCard } from "@/app/(homepage)/components/modonty-card/ModontyCard";
+import { StickyRail } from "@/app/(homepage)/components/shared/StickyRail";
 import { cn } from "@/lib/utils";
-import type { ReelItem } from "@/app/(homepage)/components/reels-card/ReelsCard";
+import type { FeedPost } from "@/lib/types";
 
 interface LeftSidebarProps {
   className?: string;
-  reels: ReelItem[];
+  articles: FeedPost[];
+  brandLogoUrl: string | null;
+  /** The session card, created outside the cached page and passed through untouched. */
+  userCard: ReactNode;
 }
 
-// In RTL this is the visually right-hand rail. Discovery belongs to the main rail.
-export function LeftSidebar({ className, reels }: LeftSidebarProps) {
+// In RTL this is the visually right-hand rail — the first one the eye lands on. It holds
+// «you and us»: the visitor's account, then modonty's own articles (LinkedIn keeps the
+// profile card in the first rail too). Discovery lives in the far rail (Khalid, 2026-08-15).
+export function LeftSidebar({ className, articles, brandLogoUrl, userCard }: LeftSidebarProps) {
   return (
-    <aside
-      aria-label="مساعدة Modo"
-      className={cn("hidden w-[300px] shrink-0 self-start lg:sticky lg:top-20 lg:block", className)}
+    <StickyRail
+      label="حسابك ومدونتي"
+      className={cn("hidden w-[300px] shrink-0 self-start lg:sticky lg:block", className)}
     >
       <div className="space-y-4">
         {/* Reads the session, so it streams in. Fallback matches its height so the
             rail does not jump when the card lands. */}
-        <Suspense fallback={<div className="h-[220px] rounded-[1.35rem] border border-primary/20 bg-card skeleton-shimmer" aria-hidden />}>
-          <UserCard />
+        <Suspense fallback={<div className="h-[190px] rounded-lg bg-card ring-1 ring-primary/20 skeleton-shimmer" aria-hidden />}>
+          {userCard}
         </Suspense>
-        <AskModo />
-        <ReelsCard items={reels} layout="sidebar" />
+        <ModontyCard articles={articles} brandLogoUrl={brandLogoUrl} />
       </div>
-    </aside>
+    </StickyRail>
   );
 }

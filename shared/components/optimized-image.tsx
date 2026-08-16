@@ -119,9 +119,11 @@ interface BaseProps {
 export type OptimizedImageProps = BaseProps &
   ({ width: number; height: number; fill?: never } | { fill: true; width?: never; height?: never });
 
-/** Wrap a bare url so it satisfies the media contract (no stored blur, no intrinsic size). */
-export function asMedia(url: string, altText?: string | null): ImageMedia {
-  return { url, bunnyUrl: null, blurDataURL: null, altText: altText ?? null };
+/** Wrap a bare url so it satisfies the media contract (no intrinsic size). Pass the row's
+ *  stored LQIP as `blurDataURL` when the payload carries it — otherwise the card renders
+ *  without a placeholder, which is what happened to every feed card until 2026-08-15. */
+export function asMedia(url: string, altText?: string | null, blurDataURL?: string | null): ImageMedia {
+  return { url, bunnyUrl: null, blurDataURL: blurDataURL ?? null, altText: altText ?? null };
 }
 
 export function OptimizedImage({
