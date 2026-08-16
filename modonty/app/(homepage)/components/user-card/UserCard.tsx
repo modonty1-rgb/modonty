@@ -27,12 +27,12 @@ export async function UserCard() {
   const user = session?.user;
 
   if (!user) {
+    // A plain card like every other one in the rail — no gradient, no glow (Khalid, 2026-08-16).
     return (
-      <section className="relative overflow-hidden rounded-lg bg-gradient-to-bl from-primary/25 via-card to-card p-3 ring-1 ring-primary/30 lg:p-4">
-        <span className="absolute -top-12 -start-10 h-28 w-28 rounded-full bg-accent/15 blur-2xl" aria-hidden />
-        <h2 className="relative text-base font-medium leading-snug text-foreground">مدونتي أحلى بحسابك</h2>
-        <p className="relative mt-1 text-xs leading-5 text-muted-foreground">عروض وفرص من شركاء مدونتي.</p>
-        <ul className="relative mt-2.5 grid grid-cols-2 gap-x-3 gap-y-1.5 lg:mt-3 lg:gap-y-2">
+      <section className="rounded-lg bg-card p-3 ring-1 ring-primary/10 lg:p-4">
+        <h2 className="text-base font-medium leading-snug text-foreground">مدونتي أحلى بحسابك</h2>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">عروض وفرص من شركاء مدونتي.</p>
+        <ul className="mt-2.5 grid grid-cols-2 gap-x-3 gap-y-1.5 lg:mt-3 lg:gap-y-2">
           {accountBenefits.map((benefit) => (
             <li key={benefit} className="flex items-start gap-1.5 text-[11px] font-normal leading-4 text-foreground/90">
               <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-accent" aria-hidden />
@@ -42,7 +42,7 @@ export async function UserCard() {
         </ul>
         {/* buttonVariants keeps the anchor's link role; <Button asChild> would force
             role="button" over it. shadcn docs, "As Link". */}
-        <Link href="/users/register" className={buttonVariants({ className: "relative mt-3 min-h-11 w-full lg:mt-4" })}>إنشاء حساب</Link>
+        <Link href="/users/register" className={buttonVariants({ className: "mt-3 min-h-11 w-full lg:mt-4" })}>إنشاء حساب</Link>
       </section>
     );
   }

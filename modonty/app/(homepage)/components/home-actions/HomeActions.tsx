@@ -5,7 +5,7 @@ import { IconArrowRight } from "@/lib/icons";
 import { CHARACTER_URL } from "@/constants";
 
 // Top of the desktop feed — Modo's LinkedIn "Start a post"-style prompt.
-// Booking and shopping live in the separate CommerceActions card below it.
+// Booking and shopping live in the account rail (CommerceActions), not here.
 export function HomeActions() {
   return (
     <section aria-label="اسأل مودو" className="flex items-center gap-3 rounded-lg bg-card p-3 ring-1 ring-border">

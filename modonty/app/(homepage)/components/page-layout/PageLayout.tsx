@@ -44,9 +44,12 @@ export function PageLayout({ posts, hasMore, page, corePublisherArticles, brandL
             <div className="lg:hidden">
               <IndustriesCard industries={industries} layout="row" />
             </div>
-            {/* Reels sit under Modo in the feed column on every viewport; the booking/shop
-                card moved to the far rail above the industries (Khalid, 2026-08-15). */}
-            <ReelsCard items={reels} layout="feed" />
+            {/* Reels left the desktop feed for a link card in the far rail (Khalid, 2026-08-16).
+                Below 1240px that rail is hidden, so the reels stay here — otherwise phones
+                and small laptops would lose them entirely (mobile pass is still pending). */}
+            <div className="min-[1240px]:hidden">
+              <ReelsCard items={reels} layout="feed" />
+            </div>
             <div className="lg:hidden">
               <ModontyCardMobile articles={corePublisherArticles} brandLogoUrl={brandLogoUrl} />
             </div>
@@ -88,7 +91,7 @@ export function PageLayout({ posts, hasMore, page, corePublisherArticles, brandL
               )}
             </section>
           </div>
-          <RightSidebar industries={industries} />
+          <RightSidebar />
         </div>
       </div>
     </>
