@@ -16,7 +16,7 @@ interface LeftSidebarProps {
   userCard: ReactNode;
 }
 
-// In RTL this is the visually right-hand rail — the first one the eye lands on. It holds
+// Rendered LAST in the row, so in RTL it is the visually LEFT rail (swapped 2026-08-16). It holds
 // «you and us»: the visitor's account, then booking / shop / modonty as link cards (LinkedIn keeps the
 // profile card in the first rail too). Discovery lives in the far rail (Khalid, 2026-08-15).
 export function LeftSidebar({ className, userCard }: LeftSidebarProps) {

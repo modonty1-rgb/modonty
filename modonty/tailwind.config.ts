@@ -42,6 +42,7 @@ const config: Config = {
         },
         // Brand blue as TEXT (`text-link`); `text-primary` fails AA on dark surfaces.
         link: "hsl(var(--link))",
+        "link-accent": "hsl(var(--link-accent))",
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",

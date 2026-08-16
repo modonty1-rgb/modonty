@@ -33,7 +33,8 @@ export function PageLayout({ posts, hasMore, page, corePublisherArticles, brandL
       <h2 className="sr-only">أحدث المقالات والمدونات - مدونتي</h2>
       <div className="container mx-auto max-w-[1128px] px-3 py-3 sm:px-4 sm:py-6">
         <div className="flex flex-col items-start gap-6 lg:flex-row lg:justify-center min-[1240px]:gap-4 min-[1296px]:gap-6">
-          <LeftSidebar articles={corePublisherArticles} brandLogoUrl={brandLogoUrl} userCard={userCard} />
+          {/* Columns swapped 2026-08-16 (Khalid): partners rail on the visual right, account rail on the left. */}
+          <RightSidebar />
           <div className="mx-auto w-full space-y-3 pb-20 sm:space-y-4 md:max-w-[600px] md:pb-0 lg:mx-0 lg:flex-1 min-[1240px]:max-w-[560px] min-[1296px]:max-w-[600px] [&>article:first-of-type]:!mt-0">
             {/* Desktop: Modo leads the feed, followed by the booking and shopping card. Phones keep the
                 industries row here — the rail is hidden there, and the bottom bar already
@@ -91,7 +92,7 @@ export function PageLayout({ posts, hasMore, page, corePublisherArticles, brandL
               )}
             </section>
           </div>
-          <RightSidebar />
+          <LeftSidebar articles={corePublisherArticles} brandLogoUrl={brandLogoUrl} userCard={userCard} />
         </div>
       </div>
     </>

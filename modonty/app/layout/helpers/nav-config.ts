@@ -6,6 +6,8 @@ export interface MainNavItem {
   icon: ComponentType<{ className?: string }>;
   label: string;
   href: string;
+  /** `accent`: teal text (`--link-accent`) at rest — the one item that is the brand itself. */
+  tone?: "accent";
 }
 
 export const mainNavItems: MainNavItem[] = [
@@ -16,6 +18,7 @@ export const mainNavItems: MainNavItem[] = [
   { icon: IconVolume2, label: "استمع", href: "/audio" },
   // «عن مدونتي» — a first-time visitor (and a prospective partner) must find what the
   // platform is from the top bar, not only from the footer (Khalid, 2026-08-15).
-  { icon: ModontyMark, label: "عن مدونتي", href: "/about" },
+  // Teal at rest so it stands apart from the section links (Khalid, 2026-08-16).
+  { icon: ModontyMark, label: "عن مدونتي", href: "/about", tone: "accent" },
 ];
 

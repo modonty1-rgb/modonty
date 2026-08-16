@@ -24,6 +24,7 @@ export function DesktopNavList({ pathname }: { pathname: string | null }) {
               label={item.label}
               href={item.href}
               active={active}
+              tone={item.tone}
             />
           );
         })}

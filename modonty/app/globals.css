@@ -25,6 +25,9 @@
     /* Brand blue used AS TEXT (links, active labels). Same as --primary in light mode
        (7:1 on white); dark mode needs its own lighter value — see .dark. */
     --link: 240 100% 59%;
+    /* Brand teal used AS TEXT: --accent (42%) is a fill and reads 2.6:1 on white; text
+       gets its own darker step — 23% = 5.5:1 on white, 5.0:1 on the header. */
+    --link-accent: 180 100% 23%;
     
     /* Secondary = light gray surface (shadcn / DESIGN_SYSTEM) */
     --secondary: 0 0% 96%;
@@ -84,6 +87,8 @@
        its own step, like Primer's accent-fg vs accent-emphasis: 72% = 5.1:1 on the
        background, 4.6:1 on cards. */
     --link: 240 100% 72%;
+    /* Teal as text: the bright accent already clears contrast on the dark ground. */
+    --link-accent: 180 100% 50%;
     
     /* Secondary - Lighter navy */
     --secondary: 245 50% 25%;          /* Lighter navy */
