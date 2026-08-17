@@ -1,12 +1,11 @@
 import { ReactNode, Suspense } from "react";
 import dynamicImport from "next/dynamic";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
-import { IconChevronRight } from "@/lib/icons";
-import { getClientIdentity } from "./helpers/get-client-identity";
-import { SiteShell } from "@/app/layout/components/SiteShell";
+import { getPartnerSite } from "./helpers/get-partner-site";
+import { PlatformBar } from "./components/chrome/platform-bar";
+import { PartnerHeader } from "./components/chrome/partner-header";
+import { PartnerFooter } from "./components/chrome/partner-footer";
 
 // Dynamic import for GTM tracker (SSR enabled; component guards browser APIs)
 const GTMClientTracker = dynamicImport(
@@ -20,74 +19,62 @@ interface ClientLayoutProps {
 }
 
 /**
- * Partner-site layout. Since 2026-08-17 it is the top of its own route group
- * `app/(partner)`, so nothing above it provides a Suspense boundary any more (the
- * partners-list `loading.tsx` used to). Everything that touches `params` therefore
- * lives in <ClientChrome/> behind its own boundary; the layout itself stays static.
- * Temporary: it mounts modonty's SiteShell so the move commit changes nothing visually —
- * the partner's own header/footer replace it in the next phase.
+ * The partner's site shell: modonty's thin platform bar, then HIS header, his pages,
+ * his footer. This layout is the top of its own route group (`app/(partner)`), so
+ * nothing above it provides a Suspense boundary — everything that reads `params`
+ * lives in <PartnerChrome/> behind its own boundary and the layout stays static.
+ * The header/footer fallbacks reserve their height so the page never jumps.
  */
 export default function ClientLayout({ children, params }: ClientLayoutProps) {
   return (
-    <SiteShell>
-      <Suspense fallback={null}>
-        <ClientChrome params={params} />
+    <div className="flex min-h-screen flex-col">
+      <Suspense fallback={<div className="h-[108px]" aria-hidden />}>
+        <PartnerChrome params={params} slot="header" />
       </Suspense>
-      <div className="mx-auto w-full max-w-[1128px] flex-1">{children}</div>
-    </SiteShell>
+      <main id="main-content" className="flex-1">{children}</main>
+      <Suspense fallback={null}>
+        <PartnerChrome params={params} slot="footer" />
+      </Suspense>
+    </div>
   );
 }
 
-/** Breadcrumb (visible + JSON-LD) and GTM context — the only params-dependent part of the layout. */
-async function ClientChrome({ params }: Pick<ClientLayoutProps, "params">) {
-  const { slug } = await params;
-  const client = await getClientIdentity(decodeURIComponent(slug));
-  if (!client) notFound();
+interface PartnerChromeProps extends Pick<ClientLayoutProps, "params"> {
+  slot: "header" | "footer";
+}
 
-  // The visible trail below and this machine-readable one are built from ONE array —
-  // Google never infers the path from the rendered nav, and a sub-page opened straight
-  // from search (photos, reviews) has no other way to say where it sits.
+/** One cached read serves both slots (React dedups within the request). */
+async function PartnerChrome({ params, slot }: PartnerChromeProps) {
+  const { slug } = await params;
+  const site = await getPartnerSite(decodeURIComponent(slug));
+  if (!site) notFound();
+
+  if (slot === "footer") return <PartnerFooter site={site} />;
+
+  const isVerified = Boolean(site.commercialRegistrationNumber || site.legalName || site.verificationImageUrl);
+  // Visible trail lives in the partner header's home link; this machine-readable one tells
+  // Google where a sub-page opened straight from search (photos, reviews) sits.
   const breadcrumbTrail = [
     { name: "الرئيسية", url: "/" },
     { name: "الشركاء", url: "/clients" },
-    { name: client.name, url: `/clients/${client.slug}` },
+    { name: site.name, url: `/clients/${site.slug}` },
   ];
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: jsonLdHtml(generateBreadcrumbStructuredData(breadcrumbTrail)),
-        }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(generateBreadcrumbStructuredData(breadcrumbTrail)) }}
       />
       <GTMClientTracker
-        clientContext={{
-          client_id: client.id,
-          client_slug: client.slug,
-          client_name: client.name,
-        }}
-        pageTitle={client.seoTitle || client.name}
+        clientContext={{ client_id: site.id, client_slug: site.slug, client_name: site.name }}
+        pageTitle={site.seoTitle || site.name}
       />
-
-      {/* Mobile-only back button — breadcrumb hidden on sm: */}
-      <Link
-        href="/clients"
-        className="sm:hidden flex items-center gap-1 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        aria-label="رجوع إلى قائمة الشركاء"
-      >
-        <IconChevronRight className="h-4 w-4 rtl:rotate-0" aria-hidden />
-        الشركاء
-      </Link>
-
-      <Breadcrumb
-        items={[
-          { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "الشركاء", href: "/clients" },
-          { label: client.name },
-        ]}
-        className="hidden sm:block"
-      />
+      {/* One sticky block: the platform bar folds on scroll-down, the partner header stays. */}
+      <div className="sticky top-0 z-40">
+        <PlatformBar isVerified={isVerified} />
+        <PartnerHeader site={site} />
+      </div>
     </>
   );
 }

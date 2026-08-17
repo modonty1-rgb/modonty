@@ -14,7 +14,7 @@ import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { IconPhone, IconEmail, IconWebsite } from "@/lib/icons";
 import { getWhatsAppLink } from "@/lib/whatsapp";
-import { recordWhatsappLead } from "@/app/(site)/articles/[slug]/actions/booking-actions";
+import { recordWhatsappLead } from "@/components/shared/booking-form/booking-actions";
 
 import { BookingCtaLink } from "@/components/cta/booking-cta-link";
 

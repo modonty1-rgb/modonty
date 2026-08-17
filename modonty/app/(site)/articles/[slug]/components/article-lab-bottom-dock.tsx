@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { BookingForm } from "@/app/(site)/articles/[slug]/components/booking-form";
+import { BookingForm } from "@/components/shared/booking-form/BookingForm";
 import { WhatsAppAction } from "@/components/shared/whatsapp-action/WhatsAppAction";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { BRAND_AVATAR_RADIUS } from "@/constants";

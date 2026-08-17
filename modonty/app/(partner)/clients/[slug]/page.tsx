@@ -2,25 +2,32 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
-import { getPlatformDefaultImages } from "@modonty/shared/lib/platform-defaults";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
 import { SubscriptionStatus, ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { auth } from "@/lib/auth";
 import { generateMetadataFromSEO, generateStructuredData, generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { cacheTag, cacheLife } from "next/cache";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
+import { getPartnerSite } from "./helpers/get-partner-site";
 import { getClientPageData } from "./helpers/client-page-data";
-import { getClientReviews, getClientReviewsBySlug } from "./helpers/client-reviews";
+import { getClientReviews } from "./helpers/client-reviews";
 import { getClientPageFaqs } from "./helpers/client-faqs";
 import { getClientGallery } from "./helpers/client-gallery";
-import { getClientDigitalImpact } from "@/lib/analytics/ga4";
 import { resolveClientPageState } from "./components/client-page-state";
-import { ClientPageShell, type ShellClient } from "./components/client-page/client-page-shell";
-import { ClientBodySkeleton } from "./components/client-page/client-body-skeleton";
-import { ClientHeroV2 } from "./components/shell-hero/client-hero-v2";
 import { ClientNotReadyPanel } from "./components/states/client-not-ready-panel";
 import { ClientViewTracker } from "./components/client-view-tracker";
+import { PartnerHero } from "./components/home/partner-hero";
+import { BookingCard, BookingCardSkeleton } from "./components/home/booking-card";
+import { CredentialsStrip } from "./components/home/credentials-strip";
+import { ServicesTeaser } from "./components/home/services-teaser";
+import { AchievementsStrip } from "./components/home/achievements-strip";
+import { GalleryTeaser } from "./components/home/gallery-teaser";
+import { ArticlesTeaser } from "./components/home/articles-teaser";
+import { AboutTeaser } from "./components/home/about-teaser";
+import { ClientReviewsSection } from "./components/sections/client-reviews-section";
+import { ContactBlock } from "./components/home/contact-block";
+import { FinalCta } from "./components/home/final-cta";
+import { PartnerHomeSkeleton } from "./components/home/partner-home-skeleton";
 
 interface ClientPageProps {
   params: Promise<{ slug: string }>;
@@ -143,86 +150,33 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
 }
 
 /**
- * Hero, rendered OUTSIDE the body Suspense from cached data only (no auth/cookies),
- * so it's part of the prerendered static shell — the real cover + name paint
- * immediately and never swap from a skeleton (this is the CLS fix). `user` is null
- * here (booking is a no-login flow by design); the logged-in body streams below it.
- * Returns null for not-found / not-ready so the body handles those states.
+ * Hero from cached data only (no auth/cookies) so it is part of the prerendered shell:
+ * the real cover + name paint immediately. The request card inside it reads session +
+ * geo, so it streams behind its own boundary. Returns null for not-found / not-ready.
  */
 async function ClientHeroBlock({ params }: ClientPageProps) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-
-  const [data, reviews, gallery, digitalImpact] = await Promise.all([
-    getClientPageData(slug),
-    getClientReviews(slug),
-    getClientGallery(decodedSlug),
-    getClientDigitalImpact(decodedSlug),
-  ]);
-
-  if (!data) return null;
-
-  const { client, stats } = data;
-  const articleCount = client.articles.length;
-
-  const pageState = resolveClientPageState({
-    aboutText: client.description || client.seoDescription,
-    servicesCount: client.services?.length ?? 0,
-    articlesCount: articleCount,
-    teamCount: client.teamMembers?.length ?? 0,
-    achievementsCount: client.achievements?.length ?? 0,
-    galleryCount: gallery.length,
-    hasContact: !!(
-      client.phone ||
-      client.email ||
-      client.addressCity ||
-      (client.addressLatitude != null && client.addressLongitude != null)
-    ),
-  });
-
-  if (pageState === "not-ready") return null;
-
-  // Platform fallbacks — fetched only when the client actually lacks a logo or hero.
-  const needsDefaults = !client.logoMedia?.url || !client.heroImageMedia;
-  const defaultImages = needsDefaults ? await getPlatformDefaultImages() : null;
+  const [site, reviews] = await Promise.all([getPartnerSite(decodedSlug), getClientReviews(slug)]);
+  if (!site) return null;
 
   return (
-    <div id="overview">
-      <ClientHeroV2
-        client={{
-          id: client.id,
-          name: client.name,
-          slug: client.slug,
-          logoMedia: client.logoMedia,
-          heroImageMedia: client.heroImageMedia,
-          industry: client.industry,
-          addressCity: client.addressCity,
-          addressRegion: client.addressRegion,
-          addressCountry: client.addressCountry,
-          foundingDate: client.foundingDate,
-          sameAs: client.sameAs,
-          url: client.url,
-          phone: client.phone,
-        }}
-        stats={{
-          followers: stats.followers,
-          articles: articleCount,
-          totalViews: stats.totalViews,
-          rating: reviews.averageRating,
-          reviewCount: reviews.reviewCount,
-        }}
-        pageState={pageState}
-        // Client model has no featured flag — matches the shell's runtime value.
-        featured={false}
-        ctaMode={client.ctaMode}
-        ctaLabel={client.ctaLabel}
-        ctaUrl={client.ctaUrl}
-        user={null}
-        initialIsFollowing={false}
-        digitalImpact={digitalImpact}
-        defaultImages={defaultImages && { logo: defaultImages.logo, hero: defaultImages.hero }}
-      />
-    </div>
+    <PartnerHero
+      site={site}
+      rating={{ average: reviews.averageRating, count: reviews.reviewCount }}
+      requestSlot={
+        <Suspense fallback={<BookingCardSkeleton />}>
+          <BookingCard
+            clientId={site.id}
+            clientName={site.name}
+            phone={site.phone ?? null}
+            ctaMode={site.ctaMode}
+            ctaLabel={site.ctaLabel ?? null}
+            ctaUrl={site.ctaUrl ?? null}
+          />
+        </Suspense>
+      }
+    />
   );
 }
 
@@ -231,31 +185,20 @@ async function ClientPageBody({ params }: ClientPageProps) {
   const decodedSlug = decodeURIComponent(slug);
 
   try {
-    const [data, reviews, discussionsData, gallery, faqs, session] = await Promise.all([
+    const [site, data, reviews, gallery, faqs] = await Promise.all([
+      getPartnerSite(decodedSlug),
       getClientPageData(slug),
       getClientReviews(slug),
-      getClientReviewsBySlug(slug), // ARTICLE comments → repurposed as "discussions"
       getClientGallery(decodedSlug),
-      getClientPageFaqs(decodedSlug), // page-level ClientFAQ
-      auth(),
+      getClientPageFaqs(decodedSlug), // page-level ClientFAQ → FAQPage JSON-LD
     ]);
 
-    if (!data) {
+    if (!site || !data) {
       notFound();
     }
 
-    const { client, stats, relatedClients } = data;
-    const userBox = session?.user
-      ? { name: session.user.name ?? null, email: session.user.email ?? null }
-      : null;
-
-    const discussions = (discussionsData?.reviews ?? []).map((r) => ({
-      id: r.id,
-      content: r.content,
-      createdAt: r.createdAt,
-      author: { name: r.author?.name ?? null, image: r.author?.image ?? null },
-      article: r.article ? { title: r.article.title, slug: r.article.slug } : null,
-    }));
+    const { client } = data;
+    const base = `/clients/${encodeURIComponent(client.slug)}`;
 
     const pageState = resolveClientPageState({
       aboutText: client.description || client.seoDescription,
@@ -298,6 +241,15 @@ async function ClientPageBody({ params }: ClientPageProps) {
       { name: "الشركاء", url: "/clients" },
       { name: client.name, url: `/clients/${encodeURIComponent(slug)}` },
     ]);
+
+    const articles = client.articles.slice(0, 3).map((a) => ({
+      id: a.id,
+      slug: a.slug,
+      title: a.title,
+      image: a.featuredImage ?? null,
+      category: a.category?.name ?? null,
+      datePublished: a.datePublished ?? null,
+    }));
 
     return (
       <>
@@ -348,20 +300,40 @@ async function ClientPageBody({ params }: ClientPageProps) {
             />
           </div>
         ) : (
-          <ClientPageShell
-            client={client as unknown as ShellClient}
-            stats={stats}
-            pageState={pageState}
-            reviews={reviews}
-            faqs={faqs}
-            gallery={gallery}
-            discussions={discussions}
-            relatedClients={relatedClients}
-            user={userBox}
-            initialIsFollowing={false}
-            initialIsFavorited={false}
-            renderHero={false}
-          />
+          <>
+            <CredentialsStrip credentials={site.credentials} />
+            <div className="space-y-20 pt-16">
+              <ServicesTeaser services={site.services} base={base} />
+              <AchievementsStrip achievements={site.achievements} />
+              <GalleryTeaser images={gallery} totalCount={site._count.media} base={base} />
+              <ArticlesTeaser articles={articles} totalCount={client._count.articles} base={base} />
+              <AboutTeaser
+                site={site}
+                videoUrl={client.introVideoMedia?.mp4Url ?? client.introVideoUrl ?? null}
+                videoPoster={client.introVideoMedia?.thumbnailUrl ?? null}
+                base={base}
+              />
+              {reviews.reviewCount > 0 ? (
+                <div className="mx-auto max-w-[1216px] px-4">
+                  <ClientReviewsSection
+                    reviews={reviews.reviews.map((r) => ({
+                      id: r.id,
+                      rating: r.rating,
+                      comment: r.comment,
+                      author: { name: r.author?.name ?? null, image: r.author?.image ?? null },
+                    }))}
+                    averageRating={reviews.averageRating}
+                    reviewCount={reviews.reviewCount}
+                    googleUrl={client.gbpProfileUrl ?? null}
+                    slug={client.slug}
+                    isLoggedIn={false}
+                  />
+                </div>
+              ) : null}
+              <ContactBlock site={site} />
+              <FinalCta clientId={site.id} clientName={site.name} phone={site.phone ?? null} />
+            </div>
+          </>
         )}
       </>
     );
@@ -375,8 +347,8 @@ export default function ClientPage(props: ClientPageProps) {
     <>
       {/* Static shell: real hero paints immediately (cached data, no auth) */}
       <ClientHeroBlock {...props} />
-      {/* Deferred: auth + the rest of the page stream in below the fold */}
-      <Suspense fallback={<ClientBodySkeleton />}>
+      {/* Deferred: the rest of the page streams in below the fold */}
+      <Suspense fallback={<PartnerHomeSkeleton />}>
         <ClientPageBody {...props} />
       </Suspense>
     </>

@@ -3,7 +3,7 @@ import { WhatsAppLeadLink } from "@/components/cta/whatsapp-icon-link";
 import { bookingWhatsappMessage } from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
 import { messages } from "@/lib/i18n/messages";
-import type { BookingSource } from "@/app/(site)/articles/[slug]/actions/booking-actions";
+import type { BookingSource } from "@/components/shared/booking-form/booking-actions";
 
 interface WhatsAppActionProps {
   /** As the partner stored it — normalised downstream by `getWhatsAppLink`. */

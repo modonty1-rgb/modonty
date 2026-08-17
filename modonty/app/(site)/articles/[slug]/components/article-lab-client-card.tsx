@@ -17,7 +17,7 @@ import { RoundSnapchat } from "@/components/icons/snapchat";
 
 import { AskClientDialog } from "@/components/client/ask-client-dialog";
 import { BookingCtaLink } from "@/components/cta/booking-cta-link";
-import type { BookingSource } from "@/app/(site)/articles/[slug]/actions/booking-actions";
+import type { BookingSource } from "@/components/shared/booking-form/booking-actions";
 
 type IconC = ComponentType<SVGProps<SVGSVGElement>>;
 

@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { getWhatsAppLink } from "@/lib/whatsapp";
-import { recordWhatsappLead, type BookingSource } from "@/app/(site)/articles/[slug]/actions/booking-actions";
+import { recordWhatsappLead, type BookingSource } from "@/components/shared/booking-form/booking-actions";
 
 interface WhatsAppLeadLinkProps {
   phone: string;

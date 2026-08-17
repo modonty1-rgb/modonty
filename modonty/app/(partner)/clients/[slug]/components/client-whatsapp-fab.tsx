@@ -3,7 +3,7 @@
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { getWhatsAppLink } from "@/lib/whatsapp";
-import { recordWhatsappLead } from "@/app/(site)/articles/[slug]/actions/booking-actions";
+import { recordWhatsappLead } from "@/components/shared/booking-form/booking-actions";
 
 // #25d366 = WhatsApp brand green — local literal, not a design token.
 const WA_GREEN = "#25d366";
