@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>بانِي موقع الشريك — السكيما · التدفّق · الشاشات (من أوّل خطوة في الكونسول حتى موقع حيّ على مدونتي)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0b0d1f;--card:#12152b;--ring:#242846;--fg:#fafafa;--muted:#a3a7c2;--primary:#7070ff;--accent:#00e5e5;--ok:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+  html{background:var(--bg);color:var(--fg);font-family:Tajawal,system-ui,sans-serif}
+  .card{background:var(--card);border:1px solid var(--ring);border-radius:12px}
+  .h2{display:flex;align-items:center;gap:.5rem;font-size:1.3rem;font-weight:500}
+  .h2:before{content:"";width:20px;height:2px;border-radius:9999px;background:var(--accent)}
+  .eyebrow{display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:var(--muted)}
+  .eyebrow:before{content:"";width:16px;height:2px;border-radius:9999px;background:var(--accent)}
+  .pill{font-size:.7rem;padding:.15rem .5rem;border-radius:9999px;border:1px solid var(--ring);white-space:nowrap}
+  .pill.ok{color:var(--ok);border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.08)}
+  .pill.warn{color:var(--warn);border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08)}
+  .pill.bad{color:var(--bad);border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08)}
+  .pill.info{color:var(--primary);border-color:rgba(112,112,255,.4);background:rgba(112,112,255,.08)}
+  code{background:#1b1f3a;padding:.05rem .35rem;border-radius:4px;font-size:.85em;direction:ltr;unicode-bidi:embed}
+  pre{background:#0e1126;border:1px solid var(--ring);border-radius:10px;padding:.9rem 1rem;font-size:.8rem;line-height:1.55;direction:ltr;text-align:left;overflow:auto}
+  table{border-collapse:collapse;width:100%;font-size:.9rem}
+  th,td{border:1px solid var(--ring);padding:.5rem .65rem;text-align:start;vertical-align:top}
+  th{background:#161a33;font-weight:500}
+  .q{border-inline-start:3px solid var(--accent);padding-inline-start:.9rem}
+  .rec{color:var(--accent);font-weight:700}
+  .step{position:relative;padding-inline-start:2.25rem}
+  .step:before{content:attr(data-n);position:absolute;inset-inline-start:0;top:0;width:1.6rem;height:1.6rem;border-radius:9999px;background:rgba(112,112,255,.15);color:var(--primary);display:grid;place-items:center;font-weight:700;font-size:.8rem}
+  /* flow boxes */
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem;align-items:stretch}
+  .box{background:#0e1126;border:1px solid var(--ring);border-radius:10px;padding:.7rem .8rem;font-size:.82rem;position:relative}
+  .box b{display:block;color:#fff;font-weight:500;margin-bottom:.25rem}
+  .box:not(:last-child):after{content:"←";position:absolute;inset-inline-start:-1.05rem;top:40%;color:var(--accent);font-size:1.1rem}
+  .box.db{border-color:rgba(0,229,229,.5)}
+  .box.web{border-color:rgba(112,112,255,.6)}
+  /* mini screens */
+  .screen{background:#f6f8fa;color:#0f172a;border-radius:12px;padding:12px;font-size:11px;line-height:1.4;border:1px solid #d9dee8}
+  .screen .bar{display:flex;align-items:center;gap:8px;padding:6px 8px;background:#fff;border:1px solid #e3e8f0;border-radius:8px;margin-bottom:8px}
+  .sc{background:#fff;border:1px solid #e3e8f0;border-radius:8px;padding:8px}
+  .sc h5{font-size:11px;font-weight:700;margin-bottom:6px}
+  .toggle{display:inline-block;width:26px;height:14px;border-radius:9999px;background:#cbd5e1;position:relative;vertical-align:middle}
+  .toggle.on{background:#3030ff}
+  .toggle:after{content:"";position:absolute;top:2px;inset-inline-start:2px;width:10px;height:10px;border-radius:50%;background:#fff}
+  .toggle.on:after{inset-inline-start:auto;inset-inline-end:2px}
+  .btn{display:inline-block;background:#3030ff;color:#fff;border-radius:9999px;padding:4px 10px;font-size:10px}
+  .btn.o{background:#fff;color:#3030ff;border:1px solid #3030ff}
+  .thumb{height:54px;border-radius:6px;background:linear-gradient(135deg,#dbe4ff,#eef2ff);border:1px solid #e3e8f0}
+  .lock{color:#f59e0b}
+</style>
+</head>
+<body class="min-h-screen">
+<main class="mx-auto max-w-[1180px] px-4 py-8 space-y-10">
+
+  <header class="space-y-3">
+    <p class="eyebrow">فكرة · v1 · ١٧ أغسطس ٢٠٢٦ · <span class="pill warn">⏸ للنقاش — لا كود قبل الاعتماد</span> · تعتمد على مهارة <code>partner-site-templates</code></p>
+    <h1 class="text-3xl font-bold leading-tight">🧱 بانِي موقع الشريك — السكيما · التدفّق · الشاشات</h1>
+    <p class="max-w-3xl text-[15px] leading-relaxed" style="color:var(--muted)">من اللحظة اللي يفتح فيها الشريك الكونسول أوّل مرّة حتى يطلع موقعه حيّاً على مدونتي — وكيف يتحوّل نفس الأساس إلى قوالب بريميوم بعد سنة بلا إعادة بناء. النموذج منقول من طريقة Shopify وSalla وWix (القالب كود، التاجر يخزّن قيماً وقرارات فقط).</p>
+  </header>
+
+  <!-- ٠ الفكرة -->
+  <section class="card p-6 space-y-3" style="border-color:rgba(112,112,255,.5)">
+    <p class="font-bold text-lg">٠ — الفكرة في أربع جُمل (تُقرأ وحدها بعد شهور)</p>
+    <ol class="text-sm leading-relaxed space-y-1" style="color:var(--muted)">
+      <li>١. <b class="text-white">القالب كود في مدونتي</b> (مكوّن لكل قالب) — ولا يُخزَّن HTML/CSS في القاعدة أبداً.</li>
+      <li>٢. <b class="text-white">القاعدة تخزّن قرارات الشريك</b>: أي قالب · قيم إعداداته (لون…) · أي أقسام مفعَّلة وبأي ترتيب — بالإضافة لبياناته الحالية.</li>
+      <li>٣. <b class="text-white">الكونسول هو المحرّر</b> («موقعي»): يختار، يقلب، يملأ، يعاين بنفس مكوّنات الموقع، يحفظ.</li>
+      <li>٤. <b class="text-white">مدونتي تقرأ وترسم</b> — والسيو وJSON-LD خارج القالب؛ والأداء همّ مدونتي وحدها.</li>
+    </ol>
+  </section>
+
+  <!-- ١ السكيما -->
+  <section class="space-y-4">
+    <h2 class="h2">١ — السكيما (Prisma) — ثلاثة إضافات، صفر تعديل على الموجود</h2>
+    <div class="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
+<pre>enum PageTemplateTier { FREE PREMIUM }
+
+/// كتالوج القوالب — صفّ لكل قالب. التصميم نفسه في الكود:
+/// modonty/app/(partner)/clients/[slug]/templates/&lt;key&gt;/
+model PageTemplate {
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  key          String  @unique          // "storefront" | "office" | ...  = اسم مجلّد المكوّن
+  name         String                   // «المتجر»
+  description  String?
+  previewImage String?                  // لقطة للكتالوج (Bunny)
+  tier         PageTemplateTier @default(FREE)
+  price        Float?                   // للبريميوم فقط
+  version      String  @default("1.0.0")
+  isActive     Boolean @default(true)
+  sortOrder    Int     @default(0)
+  features     String[]                 // نقاط تسويقية تُعرض في الكونسول
+  clients      Client[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+/// على Client (إضافة فقط)
+templateId     String?  @db.ObjectId
+template       PageTemplate? @relation(fields:[templateId], references:[id])
+themeSettings  Json?    // قيم يعرّفها القالب: { "primaryColor": "#0e8f8a", "heroVariant": "cover-band" }
+sections       Json?    // [{ "key":"about","enabled":true }, { "key":"services","enabled":true }, ...]
+siteUpdatedAt  DateTime? // آخر حفظ من «موقعي» — للمعاينة والسجلّ
+
+/// (اختياري لاحقاً) شراء قالب بريميوم
+model TemplatePurchase {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  clientId    String @db.ObjectId
+  templateId  String @db.ObjectId
+  paidAt      DateTime
+  expiresAt   DateTime?   // null = مدى الحياة
+  invoiceId   String? @db.ObjectId
+}</pre>
+      <div class="space-y-3 text-sm">
+        <div class="card p-4"><p class="font-medium">لماذا جدول لا تعداد (enum)؟</p><p style="color:var(--muted)">لأن السعر والمعاينة والإصدار والتفعيل بيانات تتغيّر من الأدمن بلا نشر كود — نفس ما تفعله بوّابة شركاء سلّة (تدير «السعر واللقطات والإصدار»).</p></div>
+        <div class="card p-4"><p class="font-medium">لماذا <code>key</code> نصّي يطابق مجلّداً؟</p><p style="color:var(--muted)">هو الجسر بين البيانات والكود: <code>TEMPLATES[key]</code> في سجلّ واحد. لو الصفّ موجود والمجلّد لا (أو العكس) → يقع على الافتراضي ويُسجَّل خطأ في «أخطاء تُصلَح» بالأدمن.</p></div>
+        <div class="card p-4"><p class="font-medium">لماذا <code>themeSettings</code> و<code>sections</code> Json؟</p><p style="color:var(--muted)">شكلهما يحدّده القالب (سكيمته) لا السكيما — كل قالب له حقوله. التحقّق يتمّ بـZod من سكيما القالب عند الحفظ (نفس فكرة <code>settings_schema.json</code> عند Shopify).</p></div>
+        <div class="card p-4" style="border-color:rgba(245,158,11,.5)"><p class="font-medium">التعبئة الإلزامية</p><p style="color:var(--muted)">الشركاء الموجودون → <code>templateId</code> = القالب المجاني الافتراضي، <code>sections</code> = ترتيب القالب الافتراضي كلّه مفعَّل، <code>themeSettings = {}</code>. سكربت مرّة واحدة داخل Run-All (قاعدة المشروع)، ويُقرأ الـURL قبل التشغيل.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ٢ عقد القالب في الكود -->
+  <section class="space-y-3">
+    <h2 class="h2">٢ — عقد القالب في الكود (ما يعنيه «القالب كود»)</h2>
+    <div class="grid gap-4 lg:grid-cols-2">
+<pre>// templates/registry.ts — الحَكَم الوحيد
+export const TEMPLATES = {
+  storefront: {
+    component: StorefrontTemplate,      // مكوّن سيرفر يرسم الصفحة كاملة
+    schema:    storefrontSchema,        // ما يقدر الشريك يغيّره
+    sections:  ["about","numbers","services","reviews","gallery","contact","articles"], // الترتيب الافتراضي
+  },
+  office: { component: OfficeTemplate, schema: officeSchema, sections: [...] },
+} as const;
+export const DEFAULT_TEMPLATE_KEY = "storefront";
+
+// templates/storefront/schema.ts — نفس فكرة settings_schema.json
+export const storefrontSchema = {
+  primaryColor: { type: "color",  label: "اللون الأساسي",  default: null },   // null = لون مدونتي
+  heroVariant:  { type: "select", label: "شكل الهيرو",     options: ["cover-band","cover-bleed"], default: "cover-band" },
+  showPlatformBar: { type: "boolean", label: "شريط مدونتي", default: true, locked: true }, // مقفول: البراندنغ ثابت
+} as const;</pre>
+      <div class="space-y-3 text-sm">
+        <div class="card p-4"><p class="font-medium">الرندر على مدونتي</p><p style="color:var(--muted)"><code>getPartnerSite(slug)</code> يرجّع البيانات + <code>template.key</code> + <code>themeSettings</code> + <code>sections</code> → <code>TEMPLATES[key] ?? TEMPLATES[DEFAULT]</code> → المكوّن يمشي على <code>sections</code> المفعَّلة بترتيبها، ويُسقط أي قسم بياناته فاضية ولو كان مفعَّلاً (ذكيّ مع النقص).</p></div>
+        <div class="card p-4"><p class="font-medium">اللون</p><p style="color:var(--muted)">قيمة واحدة تصير <code>--partner-primary</code> على حاوية الموقع بعد فحص تباين تلقائي (فشل → لون مدونتي). الباقي (خلفية · نصّ · حدود) من نظام مدونتي كي لا ينكسر الوضع الداكن.</p></div>
+        <div class="card p-4"><p class="font-medium">السيو خارج القالب — بلا استثناء</p><p style="color:var(--muted)"><code>generateMetadata</code> · JSON-LD · canonical · <code>h1</code> لا تقرأ القالب. اختبار قبول: <code>curl … | grep ld+json</code> متطابق لثلاثة قوالب.</p></div>
+        <div class="card p-4"><p class="font-medium">الاحتياط</p><p style="color:var(--muted)">قالب موقوف/محذوف/بريميوم منتهٍ → الافتراضي المجاني، والموقع لا ينكسر أبداً.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ٣ التدفّق الكامل -->
+  <section class="space-y-4">
+    <h2 class="h2">٣ — التدفّق الكامل: من أوّل دخول للكونسول حتى موقع حيّ</h2>
+    <div class="flow">
+      <div class="box"><b>١ الكونسول — «موقعي»</b>أوّل دخول: القالب الافتراضي مختار، كل الأقسام مفعَّلة، نسبة اكتمال تظهر.</div>
+      <div class="box"><b>٢ يكمّل بياناته</b>نفس شاشات الكونسول الحالية (وصف · خدمات · صور · فيديو · دوام…) — «موقعي» يشير للناقص.</div>
+      <div class="box"><b>٣ يختار ويضبط</b>قالب (مجاني/بريميوم) · مفاتيح الأقسام وترتيبها · اللون · معاينة حيّة.</div>
+      <div class="box db"><b>٤ يحفظ → القاعدة</b><code>templateId · themeSettings · sections · siteUpdatedAt</code> بعد Zod من سكيما القالب.</div>
+      <div class="box web"><b>٥ مدونتي</b><code>revalidateTag("clients")</code> → الرندر بالقالب المختار خلال ثوانٍ، على <code>/clients/[slug]</code> (والنطاق الفرعي لاحقاً).</div>
+    </div>
+    <div class="grid gap-3 md:grid-cols-3 text-sm mt-2">
+      <div class="card p-4"><p class="font-medium">حالة «قيد التجهيز»</p><p style="color:var(--muted)">لو البيانات أقل من الحدّ (القاعدة الحالية <code>resolveClientPageState</code>) → الموقع يعرض لوحة «قريباً» بلا فهرسة، والكونسول يعرض «موقعك ما نُشر بعد — ينقصك: …».</p></div>
+      <div class="card p-4"><p class="font-medium">مين يعتمد؟</p><p style="color:var(--muted)"><span class="rec">توصية:</span> الشريك ينشر بنفسه (لا انتظار أدمن) — لكن الأقسام الحسّاسة (السجل التجاري · صورة التوثيق) تبقى بموافقة الأدمن كما اليوم.</p></div>
+      <div class="card p-4"><p class="font-medium">التتبّع</p><p style="color:var(--muted)">كل حفظ يُسجَّل (مين · متى · إيش تغيّر) في سجلّ الكونسول الحالي؛ الأدمن يرى القالب واللون في ملف العميل ويقدر يقفل قالباً على باقة.</p></div>
+    </div>
+  </section>
+
+  <!-- ٤ شاشة موقعي -->
+  <section class="space-y-4">
+    <h2 class="h2">٤ — شاشة «موقعي» في الكونسول (Track A: وضوح ووظيفة)</h2>
+    <div class="grid gap-4 lg:grid-cols-[1.35fr_1fr]">
+      <div class="screen">
+        <div class="bar"><b>موقعي</b><span style="color:#5b6474">· آخر حفظ: قبل ٣ أيام</span><span style="margin-inline-start:auto" class="btn o">معاينة</span><span class="btn">حفظ ونشر</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="sc">
+            <h5>القالب</h5>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+              <div style="border:2px solid #3030ff;border-radius:8px;padding:4px"><div class="thumb"></div><div style="margin-top:4px">🏪 المتجر <span style="color:#16a34a">✓ مختار</span></div></div>
+              <div style="border:1px solid #e3e8f0;border-radius:8px;padding:4px"><div class="thumb"></div><div style="margin-top:4px">🏢 المكتب <span style="color:#5b6474">مجاني</span></div></div>
+              <div style="border:1px solid #e3e8f0;border-radius:8px;padding:4px;opacity:.75"><div class="thumb"></div><div style="margin-top:4px">🎬 الاستوديو <span class="lock">🔒 بريميوم ٤٩٩ ر.س</span></div></div>
+            </div>
+          </div>
+          <div class="sc">
+            <h5>اكتمال موقعك — ٧٠٪</h5>
+            <div style="height:6px;border-radius:9999px;background:#e3e8f0"><div style="width:70%;height:100%;border-radius:9999px;background:#3030ff"></div></div>
+            <ul style="margin-top:6px;color:#5b6474;line-height:1.7">
+              <li>✓ الوصف · ✓ الخدمات (٣) · ✓ الصور (٢١)</li>
+              <li>⚠ فيديو تعريفي ناقص — يرفع الثقة <a style="color:#3030ff">أضف</a></li>
+              <li>⚠ إحداثيات العنوان ناقصة — بلا خريطة <a style="color:#3030ff">أضف</a></li>
+              <li>⚠ لا آراء بعد — <a style="color:#3030ff">اطلب رأياً</a></li>
+            </ul>
+          </div>
+          <div class="sc" style="grid-column:1/-1">
+            <h5>أقسام الصفحة الرئيسية (اسحب لإعادة الترتيب)</h5>
+            <table style="width:100%;font-size:11px">
+              <tr><td>⋮⋮ تعرّف عليه</td><td><span class="toggle on"></span></td><td style="color:#16a34a">جاهز — فيديو + وصف + ٣ اعتمادات</td></tr>
+              <tr><td>⋮⋮ أرقامه</td><td><span class="toggle on"></span></td><td style="color:#16a34a">٤ أرقام</td></tr>
+              <tr><td>⋮⋮ ماذا يقدّم</td><td><span class="toggle on"></span></td><td style="color:#16a34a">٣ خدمات</td></tr>
+              <tr><td>⋮⋮ قالوا عنه</td><td><span class="toggle"></span></td><td style="color:#f59e0b">مخفيّ تلقائياً — لا آراء بعد</td></tr>
+              <tr><td>⋮⋮ من شغله</td><td><span class="toggle on"></span></td><td style="color:#16a34a">٢١ صورة</td></tr>
+              <tr><td>⋮⋮ فين وكيف</td><td><span class="toggle on"></span></td><td style="color:#f59e0b">بلا خريطة (لا إحداثيات)</td></tr>
+              <tr><td>⋮⋮ من قلمه</td><td><span class="toggle on"></span></td><td style="color:#16a34a">٢ مقال</td></tr>
+            </table>
+          </div>
+          <div class="sc">
+            <h5>الإعدادات (من سكيما القالب)</h5>
+            <div>اللون الأساسي: <span style="display:inline-block;width:14px;height:14px;background:#0e8f8a;border-radius:3px;vertical-align:middle"></span> <span style="color:#5b6474">#0e8f8a · التباين ٤٫٩:١ ✓</span></div>
+            <div style="margin-top:4px">شكل الهيرو: <span class="btn o">غلاف كامل</span> <span style="color:#5b6474">· ممتدّ</span></div>
+            <div style="margin-top:4px;color:#5b6474">شريط مدونتي: مفعَّل دائماً 🔒</div>
+          </div>
+          <div class="sc">
+            <h5>الرابط</h5>
+            <div style="direction:ltr;text-align:left;color:#5b6474">modonty.com/clients/كيما-زون</div>
+            <div style="margin-top:4px;color:#5b6474">النطاق الفرعي: <span class="lock">🔒 لاحقاً</span> kimazone.modonty.com</div>
+          </div>
+        </div>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div class="card p-4"><p class="font-medium">القالب</p><p style="color:var(--muted)">من <code>PageTemplate</code> النشطة: معاينة · اسم · شارة مجاني/بريميوم · سعر. البريميوم مقفول بزرّ شراء يربط بنظام الفواتير الحالي (<code>TemplatePurchase</code>).</p></div>
+        <div class="card p-4"><p class="font-medium">الأقسام</p><p style="color:var(--muted)">قائمة أقسام القالب المختار، مفتاح لكل قسم + سحب للترتيب + <b class="text-white">حالة بياناته</b> من نفس شروط الرندر (لا وعد كاذب: قسم مفعَّل بلا بيانات لا يظهر ويُقال له ليش).</p></div>
+        <div class="card p-4"><p class="font-medium">الإعدادات</p><p style="color:var(--muted)">نموذج مولَّد من <code>schema</code> القالب — لا حقول يدوية لكل قالب؛ حقول <code>locked</code> تظهر رمادية (البراندنغ).</p></div>
+        <div class="card p-4"><p class="font-medium">المعاينة</p><p style="color:var(--muted)">تفتح <code>/clients/[slug]?preview=&lt;token&gt;</code> على مدونتي بنفس مكوّنات القالب وبالقيم غير المحفوظة (draft) — لا نسخة ثانية من الواجهة. الكونسول يعرضها في إطار أو تبويب.</p></div>
+        <div class="card p-4"><p class="font-medium">حفظ ونشر</p><p style="color:var(--muted)">Server Action: <code>auth()</code> → Zod من سكيما القالب → فحص الاستحقاق (بريميوم؟) → كتابة → <code>revalidateTag("clients")</code>.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ٥ الرندر على مدونتي -->
+  <section class="space-y-3">
+    <h2 class="h2">٥ — الرندر على مدونتي (Track B: الأداء أوّلاً)</h2>
+    <div class="grid gap-3 md:grid-cols-4 text-sm">
+      <div class="card p-4 step" data-n="١"><p class="font-medium">قراءة واحدة مكاشة</p><p style="color:var(--muted)"><code>getPartnerSite</code> (موجود اليوم) يزيد <code>template.key · themeSettings · sections</code>.</p></div>
+      <div class="card p-4 step" data-n="٢"><p class="font-medium">اختيار القالب</p><p style="color:var(--muted)"><code>TEMPLATES[key] ?? DEFAULT</code> — والاستحقاق يُفحص هنا أيضاً.</p></div>
+      <div class="card p-4 step" data-n="٣"><p class="font-medium">الأقسام</p><p style="color:var(--muted)">حلقة على <code>sections</code> المفعَّلة → كل قسم مكوّن سيرفر يرجّع <code>null</code> لو بياناته فاضية.</p></div>
+      <div class="card p-4 step" data-n="٤"><p class="font-medium">الكروم ثابت</p><p style="color:var(--muted)">شريط مدونتي + هيدر الشريك + فوتره (المبني اليوم) — القالب يغيّر الجسد لا الكروم؛ الهيدر يقرأ نفس <code>sections</code> لبناء قائمته.</p></div>
+    </div>
+    <p class="text-sm card p-4 q">القالب الحالي المبني على الفرع (<code>app/(partner)/clients/[slug]</code>) يصير <b>القالب المجاني الافتراضي «المتجر»</b> بعد نقل مكوّنات الرئيسية إلى <code>templates/storefront/</code> — لا إعادة بناء.</p>
+  </section>
+
+  <!-- ٦ البريميوم -->
+  <section class="space-y-3">
+    <h2 class="h2">٦ — بعد سنة: قالب بريميوم بلا تغيير سكيما</h2>
+    <div class="flow" style="grid-template-columns:repeat(4,1fr)">
+      <div class="box"><b>١ الأدمن</b>يضيف صفّاً في <code>PageTemplate</code>: اسم · معاينة · <code>PREMIUM</code> · سعر · <code>isActive</code>.</div>
+      <div class="box"><b>٢ الكود</b>مجلّد <code>templates/&lt;key&gt;/</code> جديد + سطر في السجلّ. نشر عادي.</div>
+      <div class="box"><b>٣ الشريك</b>يراه مقفولاً في «موقعي» → يشتري (فاتورة) → <code>TemplatePurchase</code> → يفتح له.</div>
+      <div class="box web"><b>٤ مدونتي</b>الاستحقاق يُفحص عند الرندر؛ انتهى → يرجع للمجاني تلقائياً.</div>
+    </div>
+    <p class="text-sm" style="color:var(--muted)">الإصدارات: <code>version</code> على الكتالوج؛ تحديث القالب لا يلمس <code>themeSettings</code> — الحقل الجديد يأخذ افتراضيه من السكيما (مبدأ Shopify: التبديل يغيّر «العرضي» ومحتوى التاجر ثابت).</p>
+  </section>
+
+  <!-- ٧ المراحل -->
+  <section class="space-y-3">
+    <h2 class="h2">٧ — المراحل التنفيذية (كل واحدة تُقفل وحدها)</h2>
+    <table>
+      <tr><th>#</th><th>المرحلة</th><th>أين</th><th>القبول</th></tr>
+      <tr><td>١</td><td>السكيما: <code>PageTemplate</code> + حقول <code>Client</code> + تعبئة الموجودين + صفّ «المتجر» (FREE)</td><td>shared/prisma + سكربت Run-All</td><td><code>prisma generate</code> بعد قتل السيرفرات · كل عميل نشط له <code>templateId</code></td></tr>
+      <tr><td>٢</td><td>السجلّ + نقل الرئيسية الحالية إلى <code>templates/storefront/</code> + قراءة <code>sections/themeSettings</code> في الرندر</td><td>modonty</td><td>الموقع كما هو بالضبط (لقطة قبل/بعد) · JSON-LD مطابق</td></tr>
+      <tr><td>٣</td><td>شاشة «موقعي»: قالب · أقسام · إعدادات · اكتمال · حفظ</td><td>console</td><td>حفظ → الموقع يتغيّر خلال ثوانٍ · Zod يرفض القيم الغلط</td></tr>
+      <tr><td>٤</td><td>المعاينة بالتوكن (draft) على مدونتي</td><td>modonty + console</td><td>المعاينة = الموقع بعد الحفظ حرفياً</td></tr>
+      <tr><td>٥</td><td>القالب الثاني «المكتب» (مجاني)</td><td>modonty</td><td>تبديل القالب لا يغيّر SEO</td></tr>
+      <tr><td>٦</td><td>البريميوم: <code>TemplatePurchase</code> + الشراء + الاستحقاق</td><td>console + admin + modonty</td><td>لاحقاً — عند القرار التجاري</td></tr>
+    </table>
+  </section>
+
+  <!-- ٨ القرارات -->
+  <section class="space-y-3">
+    <h2 class="h2">٨ — القرارات المطلوبة (تُقفل قبل الاعتماد)</h2>
+    <ol class="space-y-2 text-sm">
+      <li class="card p-4 q"><b>١</b> الشريك ينشر بنفسه بلا موافقة أدمن (عدا الحقول الحسّاسة كما اليوم)؟ <span class="rec">توصيتي: نعم.</span></li>
+      <li class="card p-4 q"><b>٢</b> اللون: من هوية الشريك بشرط التباين، أم لون مدونتي للجميع؟ <span class="rec">توصيتي: من هويته، حقل واحد.</span></li>
+      <li class="card p-4 q"><b>٣</b> شريط مدونتي مقفول دائماً (لا يقدر يخفيه)؟ <span class="rec">توصيتي: نعم — البراندنغ.</span></li>
+      <li class="card p-4 q"><b>٤</b> عدد القوالب في الإطلاق: اثنان (المتجر · المكتب)؟</li>
+      <li class="card p-4 q"><b>٥</b> المعاينة: توكن على مدونتي (نفس المكوّنات) أم إطار داخل الكونسول يستورد المكوّنات؟ <span class="rec">توصيتي: توكن على مدونتي — صفر تكرار.</span></li>
+      <li class="card p-4 q"><b>٦</b> البريميوم يُباع كشراء مرّة أم ضمن باقة أعلى؟ (يؤجَّل — لا يغيّر السكيما).</li>
+    </ol>
+  </section>
+
+  <footer class="text-xs pt-4" style="color:var(--muted)">مراجع: مهارة <code>.claude/skills/partner-site-templates/SKILL.md</code> (المصادر الرسمية لـShopify/Salla/Wix) · <code>documents/idea/partner-page.html</code> · الموقع الحالي على فرع <code>modonty-site-groups</code>. لا كود قبل الاعتماد الصريح.</footer>
+</main>
+</body>
+</html>
