@@ -18,6 +18,29 @@ export function ServicesTeaser({ services, base }: ServicesTeaserProps) {
   if (items.length === 0) return null;
   const cols = items.length >= 4 ? "md:grid-cols-4" : items.length === 3 ? "md:grid-cols-3" : "md:grid-cols-2";
 
+  // One or two entries don't fill a card row — a compact list says the same in less space.
+  if (items.length <= 2) {
+    return (
+      <section id="services" className="mx-auto max-w-[1216px] px-4">
+        <SectionHeading eyebrow="ماذا يقدّم" title="خدماته" />
+        <ul className="mt-6 divide-y divide-border rounded-lg bg-card ring-1 ring-border">
+          {items.map((s) => (
+            <li key={s.title} className="flex items-center gap-4 p-5">
+              <span className="grid size-11 shrink-0 place-items-center rounded-full bg-primary/10 text-xl text-primary" aria-hidden>
+                {s.icon?.trim() ? s.icon : <IconBriefcase className="h-5 w-5" />}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-base font-medium text-foreground">{s.title}</span>
+                {s.description?.trim() ? <span className="mt-0.5 block text-sm text-muted-foreground">{s.description}</span> : null}
+              </span>
+              <Link href={`${base}#request`} className="shrink-0 text-sm text-primary hover:underline underline-offset-4">اطلب ›</Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+    );
+  }
+
   return (
     <section id="services" className="mx-auto max-w-[1216px] px-4">
       <SectionHeading eyebrow="ماذا يقدّم" title="خدماته" more={services.length > 4 ? { href: `${base}/services`, label: "كل الخدمات" } : undefined} />

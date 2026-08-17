@@ -18,7 +18,6 @@ import { ClientNotReadyPanel } from "./components/states/client-not-ready-panel"
 import { ClientViewTracker } from "./components/client-view-tracker";
 import { PartnerHero } from "./components/home/partner-hero";
 import { BookingCard, BookingCardSkeleton } from "./components/home/booking-card";
-import { CredentialsStrip } from "./components/home/credentials-strip";
 import { ServicesTeaser } from "./components/home/services-teaser";
 import { AchievementsStrip } from "./components/home/achievements-strip";
 import { GalleryTeaser } from "./components/home/gallery-teaser";
@@ -301,18 +300,18 @@ async function ClientPageBody({ params }: ClientPageProps) {
           </div>
         ) : (
           <>
-            <CredentialsStrip credentials={site.credentials} />
+            {/* The visitor's order: who is this (video · story · credentials · faces) → the
+                numbers → what they offer → proof (reviews · work) → where and how → what they
+                write. Every block hides itself when the partner left its data empty. */}
             <div className="space-y-16 pt-14">
-              <ServicesTeaser services={site.services} base={base} />
-              <AchievementsStrip achievements={site.achievements} />
-              <GalleryTeaser images={gallery} totalCount={site._count.media} base={base} />
-              <ArticlesTeaser articles={articles} totalCount={client._count.articles} base={base} />
               <AboutTeaser
                 site={site}
                 videoUrl={client.introVideoMedia?.mp4Url ?? client.introVideoUrl ?? null}
                 videoPoster={client.introVideoMedia?.thumbnailUrl ?? null}
                 base={base}
               />
+              <AchievementsStrip achievements={site.achievements} />
+              <ServicesTeaser services={site.services} base={base} />
               {reviews.reviewCount > 0 ? (
                 <div className="mx-auto max-w-[1216px] px-4">
                   <ClientReviewsSection
@@ -330,7 +329,9 @@ async function ClientPageBody({ params }: ClientPageProps) {
                   />
                 </div>
               ) : null}
+              <GalleryTeaser images={gallery} totalCount={site._count.media} base={base} />
               <ContactBlock site={site} />
+              <ArticlesTeaser articles={articles} totalCount={client._count.articles} base={base} />
               <FinalCta clientId={site.id} clientName={site.name} phone={site.phone ?? null} />
             </div>
           </>
