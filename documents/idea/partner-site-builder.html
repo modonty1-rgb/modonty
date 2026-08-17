@@ -67,6 +67,7 @@
       <li>٢. <b class="text-white">القاعدة تخزّن قرارات الشريك</b>: أي قالب · قيم إعداداته (لون…) · أي أقسام مفعَّلة وبأي ترتيب — بالإضافة لبياناته الحالية.</li>
       <li>٣. <b class="text-white">الكونسول هو المحرّر</b> («موقعي»): يختار، يقلب، يملأ، يعاين بنفس مكوّنات الموقع، يحفظ.</li>
       <li>٤. <b class="text-white">مدونتي تقرأ وترسم</b> — والسيو وJSON-LD خارج القالب؛ والأداء همّ مدونتي وحدها.</li>
+      <li>٥. <b class="text-white">الشريك ليس تقنياً</b> (خالد، ١٧ أغسطس): كل شيء يشتغل بالافتراضي من أوّل ثانية، وأي خيار زائد يُحذف. اختيار قالب بضغطة · مفتاح تشغيل/إيقاف لا سحب وترتيب · لوحة ألوان جاهزة لا حقل هيكس · معاينة بضغطة · «انشر» بضغطة. لغة عادية بلا مصطلحات.</li>
     </ol>
   </section>
 
@@ -193,20 +194,20 @@ export const storefrontSchema = {
             </ul>
           </div>
           <div class="sc" style="grid-column:1/-1">
-            <h5>أقسام الصفحة الرئيسية (اسحب لإعادة الترتيب)</h5>
+            <h5>أقسام موقعك (شغّل أو أطفئ — الترتيب جاهز)</h5>
             <table style="width:100%;font-size:11px">
-              <tr><td>⋮⋮ تعرّف عليه</td><td><span class="toggle on"></span></td><td style="color:#16a34a">جاهز — فيديو + وصف + ٣ اعتمادات</td></tr>
-              <tr><td>⋮⋮ أرقامه</td><td><span class="toggle on"></span></td><td style="color:#16a34a">٤ أرقام</td></tr>
-              <tr><td>⋮⋮ ماذا يقدّم</td><td><span class="toggle on"></span></td><td style="color:#16a34a">٣ خدمات</td></tr>
-              <tr><td>⋮⋮ قالوا عنه</td><td><span class="toggle"></span></td><td style="color:#f59e0b">مخفيّ تلقائياً — لا آراء بعد</td></tr>
-              <tr><td>⋮⋮ من شغله</td><td><span class="toggle on"></span></td><td style="color:#16a34a">٢١ صورة</td></tr>
-              <tr><td>⋮⋮ فين وكيف</td><td><span class="toggle on"></span></td><td style="color:#f59e0b">بلا خريطة (لا إحداثيات)</td></tr>
-              <tr><td>⋮⋮ من قلمه</td><td><span class="toggle on"></span></td><td style="color:#16a34a">٢ مقال</td></tr>
+              <tr><td>تعرّف عليه</td><td><span class="toggle on"></span></td><td style="color:#16a34a">جاهز — فيديو + وصف + ٣ اعتمادات</td></tr>
+              <tr><td>أرقامه</td><td><span class="toggle on"></span></td><td style="color:#16a34a">٤ أرقام</td></tr>
+              <tr><td>ماذا يقدّم</td><td><span class="toggle on"></span></td><td style="color:#16a34a">٣ خدمات</td></tr>
+              <tr><td>قالوا عنه</td><td><span class="toggle"></span></td><td style="color:#f59e0b">مخفيّ تلقائياً — لا آراء بعد</td></tr>
+              <tr><td>من شغله</td><td><span class="toggle on"></span></td><td style="color:#16a34a">٢١ صورة</td></tr>
+              <tr><td>فين وكيف</td><td><span class="toggle on"></span></td><td style="color:#f59e0b">بلا خريطة (لا إحداثيات)</td></tr>
+              <tr><td>من قلمه</td><td><span class="toggle on"></span></td><td style="color:#16a34a">٢ مقال</td></tr>
             </table>
           </div>
           <div class="sc">
             <h5>الإعدادات (من سكيما القالب)</h5>
-            <div>اللون الأساسي: <span style="display:inline-block;width:14px;height:14px;background:#0e8f8a;border-radius:3px;vertical-align:middle"></span> <span style="color:#5b6474">#0e8f8a · التباين ٤٫٩:١ ✓</span></div>
+            <div>لون موقعك: <span style="display:inline-block;width:12px;height:12px;background:#0e8f8a;border-radius:50%;outline:2px solid #3030ff;outline-offset:1px;vertical-align:middle"></span> <span style="display:inline-block;width:12px;height:12px;background:#3030ff;border-radius:50%;vertical-align:middle;margin-inline-start:4px"></span> <span style="display:inline-block;width:12px;height:12px;background:#c026d3;border-radius:50%;vertical-align:middle;margin-inline-start:4px"></span> <span style="display:inline-block;width:12px;height:12px;background:#d97706;border-radius:50%;vertical-align:middle;margin-inline-start:4px"></span> <span style="display:inline-block;width:12px;height:12px;background:#059669;border-radius:50%;vertical-align:middle;margin-inline-start:4px"></span> <span style="color:#5b6474">· ٨ ألوان جاهزة، كلها مقروءة</span></div>
             <div style="margin-top:4px">شكل الهيرو: <span class="btn o">غلاف كامل</span> <span style="color:#5b6474">· ممتدّ</span></div>
             <div style="margin-top:4px;color:#5b6474">شريط مدونتي: مفعَّل دائماً 🔒</div>
           </div>
@@ -219,8 +220,8 @@ export const storefrontSchema = {
       </div>
       <div class="space-y-3 text-sm">
         <div class="card p-4"><p class="font-medium">القالب</p><p style="color:var(--muted)">من <code>PageTemplate</code> النشطة: معاينة · اسم · شارة مجاني/بريميوم · سعر. البريميوم مقفول بزرّ شراء يربط بنظام الفواتير الحالي (<code>TemplatePurchase</code>).</p></div>
-        <div class="card p-4"><p class="font-medium">الأقسام</p><p style="color:var(--muted)">قائمة أقسام القالب المختار، مفتاح لكل قسم + سحب للترتيب + <b class="text-white">حالة بياناته</b> من نفس شروط الرندر (لا وعد كاذب: قسم مفعَّل بلا بيانات لا يظهر ويُقال له ليش).</p></div>
-        <div class="card p-4"><p class="font-medium">الإعدادات</p><p style="color:var(--muted)">نموذج مولَّد من <code>schema</code> القالب — لا حقول يدوية لكل قالب؛ حقول <code>locked</code> تظهر رمادية (البراندنغ).</p></div>
+        <div class="card p-4"><p class="font-medium">الأقسام — بلا سحب</p><p style="color:var(--muted)">الترتيب يقرّره القالب (خبرتنا)، والشريك عنده مفتاح واحد لكل قسم فقط + <b class="text-white">حالة بياناته</b> بلغة عادية («ناقص فيديو» لا «introVideoMedia null»). قسم مفعَّل بلا بيانات لا يظهر ويُقال له ليش. <code>sections</code> يخزّن التشغيل فقط؛ الترتيب من القالب.</p></div>
+        <div class="card p-4"><p class="font-medium">الإعدادات — أقل ما يمكن</p><p style="color:var(--muted)">مولَّدة من <code>schema</code> القالب، لكن السكيما نفسها تُبقي خيارين أو ثلاثة كحدّ أقصى: لون من لوحة جاهزة (٨ ألوان مفحوصة التباين، لا حقل هيكس) وشكل الهيرو. كل شيء له افتراضي يشتغل بلا لمس.</p></div>
         <div class="card p-4"><p class="font-medium">المعاينة</p><p style="color:var(--muted)">تفتح <code>/clients/[slug]?preview=&lt;token&gt;</code> على مدونتي بنفس مكوّنات القالب وبالقيم غير المحفوظة (draft) — لا نسخة ثانية من الواجهة. الكونسول يعرضها في إطار أو تبويب.</p></div>
         <div class="card p-4"><p class="font-medium">حفظ ونشر</p><p style="color:var(--muted)">Server Action: <code>auth()</code> → Zod من سكيما القالب → فحص الاستحقاق (بريميوم؟) → كتابة → <code>revalidateTag("clients")</code>.</p></div>
       </div>
@@ -275,6 +276,7 @@ export const storefrontSchema = {
       <li class="card p-4 q"><b>٤</b> عدد القوالب في الإطلاق: اثنان (المتجر · المكتب)؟</li>
       <li class="card p-4 q"><b>٥</b> المعاينة: توكن على مدونتي (نفس المكوّنات) أم إطار داخل الكونسول يستورد المكوّنات؟ <span class="rec">توصيتي: توكن على مدونتي — صفر تكرار.</span></li>
       <li class="card p-4 q"><b>٦</b> البريميوم يُباع كشراء مرّة أم ضمن باقة أعلى؟ (يؤجَّل — لا يغيّر السكيما).</li>
+      <li class="card p-4 q"><b>٧</b> إعادة ترتيب الأقسام: نمنعها نهائياً (الترتيب من القالب) أم نتيحها لاحقاً كخيار متقدّم مخفيّ؟ <span class="rec">توصيتي: نمنعها — البساطة أوّلاً؛ ولو احتجنا نضيفها بلا تغيير سكيما.</span></li>
     </ol>
   </section>
 
