@@ -29,7 +29,7 @@ export function PartnerHero({ site, rating, requestSlot }: PartnerHeroProps) {
   const sub = site.description?.split("\n").slice(1).join(" ").trim() || (site.description ? site.slogan : site.seoDescription);
 
   return (
-    <section className="relative overflow-hidden bg-[#0b1f3a] text-white">
+    <section className="relative overflow-clip bg-[#0b1f3a] text-white">
       {coverSrc ? (
         <div
           aria-hidden

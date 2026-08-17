@@ -26,7 +26,7 @@ export async function BookingCard({ clientId, clientName, phone, ctaMode, ctaLab
     const [session, h] = await Promise.all([auth(), headers()]);
     const user = session?.user ? { name: session.user.name ?? null, email: session.user.email ?? null } : null;
     return (
-      <div id="request" className="rounded-2xl border border-border bg-card p-6 shadow-2xl">
+      <div id="request" className="scroll-mt-32 rounded-2xl border border-border bg-card p-6 shadow-2xl">
         <div className="flex items-baseline justify-between">
           <p className="text-lg font-bold text-foreground">اطلب اتصالاً</p>
           <span className="text-xs text-green-600 dark:text-green-400">● يردّ في نفس اليوم</span>
@@ -51,7 +51,7 @@ export async function BookingCard({ clientId, clientName, phone, ctaMode, ctaLab
   }
 
   return (
-    <div id="request" className="rounded-2xl border border-border bg-card p-6 shadow-2xl">
+    <div id="request" className="scroll-mt-32 rounded-2xl border border-border bg-card p-6 shadow-2xl">
       <p className="text-lg font-bold text-foreground">تواصل مع {clientName}</p>
       <p className="mt-1 text-sm text-muted-foreground">اختر الطريقة الأسهل لك.</p>
       <div className="mt-5 flex flex-col gap-3">
