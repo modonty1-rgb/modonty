@@ -56,7 +56,18 @@ export function AboutTeaser({ site, videoUrl, videoPoster, base }: AboutTeaserPr
 
         <div>
           <SectionHeading eyebrow="تعرّف عليه" title={site.name} />
-          {text ? <p className="mt-4 whitespace-pre-line text-base leading-relaxed text-foreground/85">{text}</p> : null}
+          {text ? (
+            // A partner may write a whole story here. The home page shows it in a fixed
+            // window (≈ 9 lines) that scrolls inside — the site's thin scrollbar, a soft
+            // fade at the bottom as the cue — and /about carries the full text.
+            <div
+              tabIndex={0}
+              aria-label={`عن ${site.name}`}
+              className="scrollbar-thin mt-4 max-h-60 overflow-y-auto pe-3 [mask-image:linear-gradient(to_bottom,black_calc(100%-2rem),transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
+            >
+              <p className="whitespace-pre-line pb-6 text-base leading-relaxed text-foreground/85">{text}</p>
+            </div>
+          ) : null}
 
           {credentials.length > 0 ? (
             <ul className="mt-6 space-y-2">

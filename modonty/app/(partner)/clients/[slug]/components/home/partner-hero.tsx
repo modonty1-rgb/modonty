@@ -14,6 +14,14 @@ interface PartnerHeroProps {
 
 const YEAR_FMT = new Intl.DateTimeFormat("ar-SA", { year: "numeric" });
 
+/** Cut at a word boundary with an ellipsis — the hero never shows a wall of text. */
+function clip(text: string, max: number): string {
+  const t = text.trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max);
+  return `${cut.slice(0, Math.max(cut.lastIndexOf(" "), max - 20)).trimEnd()}…`;
+}
+
 /**
  * The partner's cover is a designed 6:1 poster (2400×400 today, with its own text), so it
  * is shown WHOLE — never cropped into a background. Under it, a deck in the partner's dark
@@ -25,8 +33,14 @@ export function PartnerHero({ site, rating, requestSlot }: PartnerHeroProps) {
   const coverSrc = cover ? mediaSrc(cover) : null;
   const founded = site.foundingDate ? YEAR_FMT.format(site.foundingDate) : null;
   const isVerified = Boolean(site.commercialRegistrationNumber || site.legalName || site.verificationImageUrl);
-  const headline = site.description?.split("\n")[0]?.trim() || site.slogan || site.name;
-  const sub = site.description?.split("\n").slice(1).join(" ").trim() || (site.description ? site.slogan : site.seoDescription);
+  // The hero carries ONE promise and ONE short line — never the whole story (a partner may
+  // write forty lines; that lives in «تعرّف عليه» and /about). Headline: the slogan when
+  // it is short, else the first line of the description. Sub: the next line, clamped.
+  const lines = (site.description ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
+  const sloganShort = site.slogan && site.slogan.length <= 90 ? site.slogan : null;
+  const headline = clip(sloganShort ?? lines[0] ?? site.name, 90);
+  const subSource = sloganShort ? lines[0] : lines[1];
+  const sub = clip(subSource ?? site.seoDescription ?? "", 180);
 
   return (
     <section className="relative overflow-clip bg-[#0b1f3a] text-white">
@@ -66,9 +80,6 @@ export function PartnerHero({ site, rating, requestSlot }: PartnerHeroProps) {
 
             <h1 className="mt-5 text-4xl font-bold leading-[1.2] md:text-[44px]">{headline}</h1>
             {sub ? <p className="mt-4 max-w-xl text-lg leading-relaxed text-white/80">{sub}</p> : null}
-            {site.slogan && headline !== site.slogan && sub !== site.slogan ? (
-              <p className="mt-3 text-base text-white/65">{site.slogan}</p>
-            ) : null}
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
               {site.phone ? (

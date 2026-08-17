@@ -38,7 +38,7 @@ export async function PartnerFooter({ site }: PartnerFooterProps) {
             ) : null}
             <span className="text-base font-bold text-foreground">{site.name}</span>
           </div>
-          {site.description ? <p className="mt-4 max-w-sm leading-relaxed">{site.description}</p> : null}
+          {site.description ? <p className="mt-4 max-w-sm leading-relaxed line-clamp-3">{site.description.split("\n").filter(Boolean)[0]}</p> : null}
         </div>
 
         {site.services.length > 0 ? (
