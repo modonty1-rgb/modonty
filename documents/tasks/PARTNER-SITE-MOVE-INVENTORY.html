@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>جرد نقل مدونتي إلى (site) و(partner) — المقياس قبل أي git mv (١٧ أغسطس ٢٠٢٦)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0b0d1f;--card:#12152b;--ring:#242846;--fg:#fafafa;--muted:#a3a7c2;--primary:#7070ff;--accent:#00e5e5;--ok:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+  html{background:var(--bg);color:var(--fg);font-family:Tajawal,system-ui,sans-serif}
+  .card{background:var(--card);border:1px solid var(--ring);border-radius:12px}
+  .h2{display:flex;align-items:center;gap:.5rem;font-size:1.25rem;font-weight:500}
+  .h2:before{content:"";width:20px;height:2px;border-radius:9999px;background:var(--accent)}
+  .eyebrow{display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:var(--muted)}
+  .eyebrow:before{content:"";width:16px;height:2px;border-radius:9999px;background:var(--accent)}
+  .pill{font-size:.7rem;padding:.15rem .5rem;border-radius:9999px;border:1px solid var(--ring);white-space:nowrap}
+  .pill.ok{color:var(--ok);border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.08)}
+  .pill.warn{color:var(--warn);border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08)}
+  .pill.bad{color:var(--bad);border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08)}
+  .pill.info{color:var(--primary);border-color:rgba(112,112,255,.4);background:rgba(112,112,255,.08)}
+  code{background:#1b1f3a;padding:.05rem .35rem;border-radius:4px;font-size:.85em;direction:ltr;unicode-bidi:embed}
+  pre{background:#0e1126;border:1px solid var(--ring);border-radius:10px;padding:.9rem 1rem;font-size:.82rem;direction:ltr;text-align:left;overflow:auto}
+  table{border-collapse:collapse;width:100%;font-size:.9rem}
+  th,td{border:1px solid var(--ring);padding:.5rem .65rem;text-align:start;vertical-align:top}
+  th{background:#161a33;font-weight:500}
+  .q{border-inline-start:3px solid var(--accent);padding-inline-start:.9rem}
+  .big{font-size:2.4rem;font-weight:700;line-height:1}
+</style>
+</head>
+<body class="min-h-screen">
+<main class="mx-auto max-w-[1180px] px-4 py-8 space-y-10">
+
+  <header class="space-y-3">
+    <p class="eyebrow">جرد · ١٧ أغسطس ٢٠٢٦ · الفرع <code>modonty-ui</code> · <span class="pill info">قراءة فقط — لم يُنقل شيء بعد</span></p>
+    <h1 class="text-3xl font-bold leading-tight">جرد نقل مدونتي إلى مجموعتي مسارات <code>(site)</code> و<code>(partner)</code></h1>
+    <p class="max-w-3xl text-[15px] leading-relaxed" style="color:var(--muted)">هيدر مدونتي وفوترها ينتقلان من <code>app/layout.tsx</code> إلى <code>app/(site)/layout.tsx</code>، وصفحة الشريك تعيش في <code>app/(partner)/clients/[slug]/</code> بهيدرها وفوترها. <b class="text-white">الروابط لا تتغيّر حرفاً</b> — اسم المجموعة بين قوسين يُحذف من المسار (توثيق Next.js الرسمي).</p>
+  </header>
+
+  <!-- ٠ المخاطرة -->
+  <section class="card p-6 space-y-4" style="border-color:rgba(112,112,255,.5)">
+    <p class="font-bold text-lg">٠ — نسبة المخاطرة (تقدير هندسي مبنيّ على الجرد أدناه، لا قياس)</p>
+    <div class="grid gap-4 md:grid-cols-3">
+      <div class="card p-5"><p class="big" style="color:var(--ok)">٠٪</p><p class="mt-2 font-medium">السيو</p><p class="text-sm" style="color:var(--muted)">لا يتغيّر رابط ولا canonical ولا JSON-LD ولا خريطة موقع. مشروط ببوّابة واحدة: <code>diff</code> قائمة المسارات قبل/بعد <b class="text-white">فاضٍ</b> — لو لم يكن فاضياً لا نُكمل.</p></div>
+      <div class="card p-5"><p class="big" style="color:var(--warn)">≈ ١٠٪</p><p class="mt-2 font-medium">أن يظهر عطل على <code>test.modonty.com</code></p><p class="text-sm" style="color:var(--muted)">استيراد فات الاستبدال يمسكه <code>tsc</code> (٠ تسريب). ما لا يمسكه <code>tsc</code>: سلوك <code>error/not-found</code>، تموضع <code>main-content</code>، القشرة الثابتة للهيدر — كلها في قائمة التست الحيّ (§٧). يُصلَح قبل أي دمج.</p></div>
+      <div class="card p-5"><p class="big" style="color:var(--ok)">&lt; ٢٪</p><p class="mt-2 font-medium">أن يصل عطل إلى الإنتاج</p><p class="text-sm" style="color:var(--muted)">بعد <code>tsc</code> + بناء + <code>diff</code> روابط + تست حيّ لسبع صفحات + مراجعة على test — الباقي هو ما لا يُرى إلا بحركة حقيقية، وأي شيء منه يُرجَع بكوميت واحد (<code>git revert</code> لكوميت ميكانيكي).</p></div>
+    </div>
+    <p class="text-sm q" style="color:var(--muted)">أكبر مخاطرة فعلية ليست تقنية: <b class="text-white">تعارض دمج</b> لو عدّل أحد فرعاً آخر ملفات <code>modonty/app</code> في نفس الوقت — يُتفادى بتنفيذ النقل في جلسة واحدة ودفعه فوراً.</p>
+  </section>
+
+  <!-- ١ -->
+  <section class="space-y-3">
+    <h2 class="h2">١ — ما يُنقل وما يبقى في <code>modonty/app/</code></h2>
+    <table>
+      <tr><th>العنصر</th><th>العدد</th><th>القرار</th><th>السبب</th></tr>
+      <tr><td>مجلّدات صفحات (تحمل <code>page.tsx</code>)</td><td><b>٢٦</b></td><td>→ <code>(site)/</code></td><td>تحتاج هيدر/فوتر مدونتي</td></tr>
+      <tr><td><code>clients/</code></td><td>١ (يُقسَم)</td><td><code>page · components · helpers · loading · error · api · TASK.md · documentation</code> → <code>(site)/clients/</code><br><code>[slug]/</code> → <code>(partner)/clients/[slug]/</code></td><td>قائمة الشركاء = مدونتي، صفحة الشريك = موقعه</td></tr>
+      <tr><td><code>error.tsx</code> · <code>not-found.tsx</code> (الجذر)</td><td>٢</td><td>→ <code>(site)/</code> + <b>نسخة جذرية مبسّطة تبقى</b></td><td>لو بقيا في الجذر وحده، صفحات ٤٠٤ والأخطاء تفقد الهيدر</td></tr>
+      <tr><td><code>api/</code> (٩ هاندلر) · <code>feed.xml/</code> · <code>image-sitemap.xml/</code> · <code>llms.txt/</code></td><td>٤</td><td>تبقى</td><td>هاندلر بلا واجهة</td></tr>
+      <tr><td><code>layout/</code> (مكوّنات الهيدر/الفوتر — ٣٣ استيراداً)</td><td>١</td><td>يبقى</td><td>ليس مساراً؛ نقله = ٣٣ تعديلاً بلا فائدة</td></tr>
+      <tr><td><code>layout.tsx · globals.css · sitemap.ts · robots.ts</code> · أيقونات</td><td>٧ ملفات</td><td>تبقى</td><td>الجذر = <code>html/body</code> + المزوّدات فقط</td></tr>
+    </table>
+    <p class="text-sm" style="color:var(--muted)">ملفات غير مثبَّتة داخل <code>modonty/app/</code> الآن: <b class="text-white">١</b> (<code>trust/</code>) — تُثبَّت قبل النقل.</p>
+  </section>
+
+  <!-- ٢ -->
+  <section class="space-y-3">
+    <h2 class="h2">٢ — الاستيرادات <code>@/app/…</code> (٧٨ ملفاً مستورِداً)</h2>
+    <table>
+      <tr><th>الهدف</th><th>العدد</th><th>يتأثّر؟</th></tr>
+      <tr><td><code>@/app/layout/…</code></td><td>٣٣</td><td><span class="pill ok">لا</span> يبقى في الجذر</td></tr>
+      <tr><td><code>@/app/clients/…</code></td><td>٣٤</td><td><span class="pill warn">نعم</span> يتفرّع: القائمة → <code>(site)/clients</code> · <code>[slug]</code> → <code>(partner)/clients/[slug]</code></td></tr>
+      <tr><td><code>@/app/articles/…</code></td><td>٢٠</td><td><span class="pill warn">نعم</span></td></tr>
+      <tr><td><code>@/app/(homepage)/…</code></td><td>١٧</td><td><span class="pill warn">نعم</span> → <code>(site)/(homepage)</code> (مجموعة داخل مجموعة — مسموح)</td></tr>
+      <tr><td><code>modonty</code> ١٥ · <code>modo-chat</code> ١٥ · <code>industries</code> ١٢ · <code>users</code> ٦ · <code>categories</code> ٥ · <code>tags</code> ٣ · <code>trust</code> ٢ · <code>trending</code> ٢ · <code>search · reels · help · contact</code> ١ لكلٍّ</td><td>٦٤</td><td><span class="pill warn">نعم</span></td></tr>
+    </table>
+    <p class="text-sm" style="color:var(--muted)"><b class="text-white">الطريقة:</b> استبدال ميكانيكي <code>@/app/&lt;segment&gt;</code> → <code>@/app/(site)/&lt;segment&gt;</code> (وللشريك <code>(partner)/clients/[slug]</code>)، ثم <code>tsc</code> هو الحَكَم.<br><b class="text-white">استيراد نسبي يعبر جذر app:</b> ١ فقط — <code>clients/[slug]/helpers/seed-client1-test-data.ts:1</code> (<code>../../../../lib/db</code>) — سكربت بذر تجريبي؛ يُصحَّح أو يُحذف.</p>
+    <div class="card p-4 text-sm space-y-2">
+      <p class="font-medium">استيرادات عابرة بين مسارات (مخالفة لقاعدة المجلّدات أصلاً — <b>تُسجَّل ولا تُصلَح في كوميت النقل</b>): ١٧ سطراً</p>
+      <ul class="space-y-1" style="color:var(--muted)">
+        <li>• <code>clients/[slug]/book/page.tsx:15,17</code> · <code>client-contact-sheet.tsx:17</code> · <code>client-whatsapp-fab.tsx:6</code> · <code>components/cta/*</code> (٣) · <code>components/shared/whatsapp-action</code> → كلها تستورد <code>articles/[slug]/actions/booking-actions</code> و<code>booking-form</code>. <b class="text-white">نموذج الحجز يخصّ الشريك ويعيش تحت المقال</b> — يُرقّى إلى <code>components/shared/</code> مع مرحلة «الرئيسية».</li>
+        <li>• <code>users/profile/following/page.tsx:10</code> → <code>clients/[slug]/components/client-follow-button</code> (بعد النقل يعبر من <code>(site)</code> إلى <code>(partner)</code>) — يُرقّى.</li>
+        <li>• <code>search/…</code> → <code>clients/components/client-card · sort-dropdown</code> (٣) · <code>help/feedback</code> → <code>contact/components/contact-form</code> · <code>modo-chat</code> → <code>articles · categories</code> (٣) · <code>about</code> → <code>industries</code> · <code>(homepage)</code> → <code>reels</code>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ٣ -->
+  <section class="space-y-3">
+    <h2 class="h2">٣ — <code>revalidatePath</code>: هل يتأثّر شيء؟</h2>
+    <table>
+      <tr><th>المصدر</th><th>العدد</th><th>يتأثّر؟</th></tr>
+      <tr><td>كل النداءات في الحزم الأربع</td><td>٣٢٢</td><td>—</td></tr>
+      <tr><td>بنوع <code>"page"/"layout"</code> (مسار ملفات)</td><td><b>٩ — كلها في <code>admin/</code></b> وتشير إلى مسارات الأدمن نفسه (<code>/articles</code>, <code>/articles/[id]</code>, <code>/modonty/pages</code>)</td><td><span class="pill ok">لا</span> لا تخصّ مدونتي</td></tr>
+      <tr><td><code>modonty/app/api/revalidate/route.ts:6,30</code> — يستقبل <code>path</code> رابطاً ويستدعي <code>revalidatePath(path)</code> بلا نوع</td><td>١</td><td><span class="pill ok">لا</span> الروابط لا تتغيّر</td></tr>
+      <tr><td>بقيّة النداءات (روابط URL)</td><td>٣١٢</td><td><span class="pill ok">لا</span></td></tr>
+    </table>
+  </section>
+
+  <!-- ٤ -->
+  <section class="space-y-3">
+    <h2 class="h2">٤ — إعدادات ومسارات ملفات أخرى</h2>
+    <table>
+      <tr><th>الملف</th><th>ما فيه</th><th>يتأثّر؟</th></tr>
+      <tr><td><code>modonty/proxy.ts:37-46</code></td><td><code>matcher</code> بروابط URL (<code>/clients/:slug</code>…)</td><td><span class="pill ok">لا</span></td></tr>
+      <tr><td><code>modonty/next.config.ts:25-30</code></td><td><code>redirects</code> بروابط URL · <code>cacheComponents:true</code> · لا <code>rewrites</code> ولا <code>typedRoutes</code></td><td><span class="pill ok">لا</span></td></tr>
+      <tr><td><code>modonty/tailwind.config.ts:5-9</code></td><td><code>content: ["./app/**/*"]</code></td><td><span class="pill ok">لا</span> يغطّي المجموعات</td></tr>
+      <tr><td><code>modonty/components.json:8</code></td><td><code>"css": "app/globals.css"</code></td><td><span class="pill ok">لا</span> يبقى</td></tr>
+      <tr><td><code>sitemap.ts</code> · <code>robots.ts</code></td><td>روابط من القاعدة</td><td><span class="pill ok">لا</span></td></tr>
+      <tr><td><code>scripts/</code> · اختبارات</td><td>لا مرجع لمسارات <code>modonty/app/</code></td><td><span class="pill ok">لا</span></td></tr>
+      <tr><td><code>documents/</code> · <code>.claude/rules</code> · <code>HOMEPAGE-BOARD.html</code></td><td>مراجع نصّية لمسارات قديمة</td><td><span class="pill info">توثيق</span> يُحدَّث بعد النقل</td></tr>
+    </table>
+  </section>
+
+  <!-- ٥ -->
+  <section class="space-y-3">
+    <h2 class="h2">٥ — مخاطر سلوكية يجب التخطيط لها (ليست استيرادات)</h2>
+    <ol class="space-y-2 text-sm">
+      <li class="card p-4 q"><b>١</b> الليآوتات: الجذر يحتفظ بـ<code>html/body/ThemeProvider/SessionProviderWrapper/Trackers</code>. <code>(site)/layout.tsx</code> = <code>TopNav + &lt;main id="main-content" class="flex-1"&gt; + Footer</code> داخل <code>min-h-screen flex-col</code>. <code>(partner)/clients/[slug]/layout.tsx</code> = شريط مدونتي + هيدر الشريك + <code>main</code> + فوتر الشريك (بريدكرمب + GTM يبقيان داخله).</li>
+      <li class="card p-4 q"><b>٢</b> <code>error.tsx</code>/<code>not-found.tsx</code>: الأقرب يفوز. <code>(site)</code> يأخذ النسختين الحاليتين؛ الجذر يبقى فيه <code>not-found.tsx</code> بسيط ببراندنغ مدونتي (يخدم <code>/clients/&lt;slug-غلط&gt;</code> وأي مسار خارج المجموعتين).</li>
+      <li class="card p-4 q"><b>٣</b> جذر ليآوت واحد فقط (لا ليآوتين جذريين) → <b>لا إعادة تحميل كاملة</b> عند التنقّل بين مدونتي وصفحة الشريك (التوثيق: إعادة التحميل تحدث فقط بين ليآوتات جذرية متعدّدة).</li>
+      <li class="card p-4 q"><b>٤</b> رابط «تخطّى إلى المحتوى» في <code>TopNav</code> يشير إلى <code>#main-content</code> — يبقى صحيحاً لأن <code>main</code> ينتقل مع <code>TopNav</code>.</li>
+      <li class="card p-4 q"><b>٥</b> <code>.next</code> بعد النقل الضخم: يُحذف ويُعاد البناء (تجنّباً لأعطال Turbopack المعروفة).</li>
+      <li class="card p-4 q"><b>٦</b> الفرع: ١٠ ملفات غير مثبَّتة في <code>modonty/</code> — تُثبَّت في كوميت قبل النقل.</li>
+    </ol>
+  </section>
+
+  <!-- ٦ -->
+  <section class="card p-5 space-y-2" style="border-color:rgba(0,229,229,.4)">
+    <h2 class="h2">٦ — النطاق الفرعي: هل النقل يفيده؟ <span class="pill ok">نعم، مباشرةً</span></h2>
+    <ul class="text-sm space-y-1" style="color:var(--muted)">
+      <li>• على <code>kimazone.modonty.com</code> يعيد <code>proxy.ts</code> كتابة الطلب إلى <code>/clients/kimazone/…</code> — يهبط في شجرة <code>(partner)</code> وحدها، فهيدر مدونتي غير موجود أصلاً (لا مخفيّ).</li>
+      <li>• شجرة الشريك المستقلّة تسمح لاحقاً بأن يقرأ ليآوت الشريك وحده المضيف ويخفي شريط مدونتي على النطاق الفرعي — بلا لمس جذر التطبيق ولا صفحات مدونتي.</li>
+      <li>• مع حلّ CSS كان هذا مستحيلاً بلا كشط الجذر. <b class="text-white">النقل هو ما يفتح باب النطاق الفرعي نظيفاً.</b></li>
+    </ul>
+  </section>
+
+  <!-- ٧ -->
+  <section class="space-y-3">
+    <h2 class="h2">٧ — خطّة كوميت النقل (ميكانيكي، بلا سلوك)</h2>
+    <ol class="text-sm space-y-1.5" style="color:var(--muted)">
+      <li>١. تثبيت العمل الحالي (١٠ ملفات).</li>
+      <li>٢. <code>git mv</code> لـ٢٦ مجلّداً + <code>error.tsx</code> + <code>not-found.tsx</code> إلى <code>app/(site)/</code>، وتقسيم <code>clients/</code>.</li>
+      <li>٣. إنشاء <code>app/(site)/layout.tsx</code> (TopNav + main + Footer) وتقليص <code>app/layout.tsx</code>.</li>
+      <li>٤. استبدال <code>@/app/&lt;segment&gt;</code> → <code>@/app/(site)/&lt;segment&gt;</code> / <code>(partner)</code> (٦٤ + ٣٤ استيراداً).</li>
+      <li>٥. حذف <code>.next</code> · <code>tsc</code> صفر · <code>pnpm build</code>.</li>
+      <li>٦. <b class="text-white">إثبات صفر تغيير روابط:</b> <code>diff</code> بين قائمة المسارات قبل/بعد (<code>.next/types/routes.d.ts</code>) وخريطة الموقع = فاضٍ.</li>
+      <li>٧. تست حيّ: الرئيسية · مقال · قائمة الشركاء · صفحة شريك · <code>/users/login</code> · صفحة ٤٠٤ · صفحة خطأ.</li>
+      <li>٨. دفع إلى <code>modonty-ui</code> → <code>test.modonty.com</code>.</li>
+    </ol>
+    <p class="text-sm" style="color:var(--muted)"><b class="text-white">ما لا يدخل في هذا الكوميت:</b> ترقية الاستيرادات العابرة (§٢) · هيدر الشريك الجديد · أي تغيير تصميمي.</p>
+  </section>
+
+  <!-- ٨ المراجعة الانتقادية -->
+  <section class="space-y-3">
+    <h2 class="h2">٨ — مراجعة انتقادية للخطّة (١٧ أغسطس، بعد الجرد) — ما كان ناقصاً أو غلطاً</h2>
+    <table>
+      <tr><th>#</th><th>الاكتشاف</th><th>الأثر لو تجاهلناه</th><th>التصحيح في الخطّة</th></tr>
+      <tr><td><span class="pill bad">١</span></td><td><b>صفحة ٤٠٤ العامّة كانت غلطاً في الخطّة.</b> توثيق Next: <code>app/not-found.tsx</code> الجذري هو الذي يخدم <b>كل الروابط غير المطابقة</b> في التطبيق، ويُرسم داخل ليآوت الجذر. بعد نقل الهيدر إلى <code>(site)</code> يصير ٤٠٤ أيّ رابط عشوائي <b>بلا هيدر ولا فوتر</b>.</td><td>رِغرِشن ظاهر لكل زائر يكتب رابطاً غلط.</td><td><code>not-found.tsx</code> الجذري يستورد <code>TopNav</code> و<code>Footer</code> ويرسمهما بنفسه (ليس «مبسّطاً»). و<code>(site)/not-found.tsx</code> نسخة لـ<code>notFound()</code> داخل صفحات مدونتي. صفحة شريك بـslug غلط → تصل للجذري (بهيدر مدونتي) ✓.</td></tr>
+      <tr><td><span class="pill warn">٢</span></td><td><b>لقطة المسارات قبل النقل لم تكن خطوة صريحة.</b> بوّابة «diff فاضٍ» تحتاج ملفّ «قبل» محفوظاً <b>قبل</b> أوّل <code>git mv</code> (<code>.next/dev/types/routes.d.ts</code> + خريطة الموقع + جدول مسارات <code>pnpm build</code>).</td><td>بلا «قبل» لا يوجد دليل، والحكم يصير انطباعاً.</td><td>خطوة ٠ جديدة: حفظ اللقطات الثلاث في <code>documents/tasks/move-snapshot/</code>.</td></tr>
+      <tr><td><span class="pill warn">٣</span></td><td><b>معرّفات Server Actions تتغيّر بتغيّر مسار الملف.</b> صفحة مفتوحة قبل النشر ترسل معرّفاً قديماً بعد النشر → خطأ مرّة واحدة حتى إعادة التحميل. يحدث في أي نشر يلمس ملف actions، لكن النقل يلمسها <b>كلّها دفعة واحدة</b>. <span class="pill info">مؤشّر — يُتحقّق من توثيق Next قبل النشر</span></td><td>مستخدمون بصفحات قديمة مفتوحة يرون خطأ لحظياً في أوّل إرسال.</td><td>النشر في وقت هادئ، والتحقّق من سلوك Next 16 الرسمي؛ لا يمنع النقل.</td></tr>
+      <tr><td><span class="pill warn">٤</span></td><td><b>مفاتيح <code>"use cache"</code> مرتبطة بموقع الدالّة</b> → كاش بارد بعد النشر (أوّل طلبات أبطأ).</td><td>انطباع «الموقع صار أبطأ» عند طارق أوّل دقائق.</td><td>يُذكر لطارق مسبقاً؛ لا إجراء.</td></tr>
+      <tr><td><span class="pill warn">٥</span></td><td><b>طارق يراجع <code>test.modonty.com/modonty</code> الآن</b> على نفس الفرع؛ دفع النقل يغيّر بيئته تحت يده.</td><td>لو تسرّب عطل، تتلوّث مراجعته.</td><td>تنسيق التوقيت معه، أو دفع النقل بعد ما ينهي جولته.</td></tr>
+      <tr><td><span class="pill warn">٦</span></td><td><b><code>(site)/layout.tsx</code> الجديد يجب أن يبقى ثابتاً بالكامل</b> (لا كوكيز ولا هيدرز) وإلا تخرج القشرة الثابتة لكل الموقع من الكاش — وهذا ما صلّحناه ١٥ أغسطس.</td><td>رِغرِشن أداء على كل صفحة.</td><td>الليآوت ينسخ ما في الجذر حرفياً (<code>TopNav</code> بحدود <code>Suspense</code> الحالية) — بلا أي قراءة طلب.</td></tr>
+      <tr><td><span class="pill warn">٧</span></td><td><b>تعارض محتمل عبر المجموعتين:</b> <code>(site)/clients/api/route.ts</code> (<code>/clients/api</code>) و<code>(partner)/clients/[slug]</code>. اليوم يتعايشان في شجرة واحدة (الثابت يسبق الديناميكي).</td><td>لو اعتبره Next تعارضاً، البناء يفشل <b>بصوت عالٍ</b> — فشل آمن لا صامت.</td><td>يُكشف في خطوة البناء (§٧-٥)؛ الحلّ حينها نقل <code>clients/api</code> إلى <code>(partner)</code> بلا تغيير رابط.</td></tr>
+      <tr><td><span class="pill ok">٨</span></td><td>تحقّقات أُغلقت: <code>[slug]</code> لا يستورد من قائمة الشركاء (الوحيد <code>client-page-shell.tsx:26</code> داخل <code>[slug]</code> نفسه) · <code>sitemap.ts</code>/<code>robots.ts</code> بلا استيرادات <code>@/app</code> · لا قواعد ESLint تقيّد الاستيراد · لا <code>global-not-found.tsx</code> اليوم · <code>error.tsx</code> الجذري يبقى لأخطاء الليآوت نفسه و<code>(site)/error.tsx</code> لأخطاء الصفحات (بالهيدر) · <code>clients/[slug]/error.tsx</code> موجود.</td><td>—</td><td>—</td></tr>
+      <tr><td><span class="pill ok">٩</span></td><td>ويندوز: <code>git mv</code> بمسارات فيها <code>( )</code> و<code>[ ]</code> يُنفَّذ من Bash بعلامات اقتباس، ويُتحقّق بـ<code>git status</code> بعده (درس <code>-LiteralPath</code>).</td><td>—</td><td>—</td></tr>
+    </table>
+    <p class="text-sm q" style="color:var(--muted)"><b class="text-white">أثر المراجعة على النِّسَب (§٠):</b> السيو يبقى ٠٪. مخاطرة test تبقى ≈١٠٪ <b>بشرط</b> تنفيذ التصحيحين ١ و٢ — بدونهما كانت ستُدفع صفحة ٤٠٤ عارية وبلا دليل «قبل».</p>
+  </section>
+
+  <footer class="text-xs pt-4" style="color:var(--muted)">أرقام هذا الجرد مأخوذة من فحص فعلي للمستودع يوم ١٧ أغسطس ٢٠٢٦ (<code>grep</code> على <code>modonty/app · components · lib</code> والحزم الأربع لـ<code>revalidatePath</code>). لا كود قبل «do».</footer>
+</main>
+</body>
+</html>
