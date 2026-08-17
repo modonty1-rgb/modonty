@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { BookingForm } from "@/app/articles/[slug]/components/booking-form";
-import { WhatsAppBookingCta } from "@/components/cta/whatsapp-booking-cta";
+import { WhatsAppAction } from "@/components/shared/whatsapp-action/WhatsAppAction";
 import type { BookingSource } from "@/app/articles/[slug]/actions/booking-actions";
 
 const VALID_SOURCES: readonly BookingSource[] = [
@@ -135,12 +135,13 @@ export default async function ClientBookingPage({
         <div className="space-y-4 p-5">
           {client.phone && (
             <>
-              <WhatsAppBookingCta
+              <WhatsAppAction
                 clientId={client.id}
                 phone={client.phone}
                 clientName={client.name}
                 source={source}
                 articleId={articleId ?? null}
+                className="w-full"
               />
               <p className="-mt-1 text-center text-[11px] text-muted-foreground">
                 أسرع طريقة — رسالة جاهزة، ردّ مباشر

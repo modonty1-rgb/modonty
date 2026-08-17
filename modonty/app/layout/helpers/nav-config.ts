@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { IconHome, IconTrending, IconClients, IconPlay, IconVolume2 } from "@/lib/icons";
+import { IconHome, IconTrending, IconArticleList, IconClients, IconPlay, IconVolume2 } from "@/lib/icons";
 import { ModontyMark } from "@/components/icons/modonty-mark";
 
 export interface MainNavItem {
@@ -13,6 +13,9 @@ export interface MainNavItem {
 export const mainNavItems: MainNavItem[] = [
   { icon: IconHome, label: "الرئيسية", href: "/" },
   { icon: IconTrending, label: "الرائجة", href: "/trending" },
+  // «المقالات» — the browse archive (grid + filters + /articles/page/n). Route not built yet
+  // (Khalid, 2026-08-16: add the entry now, build the page later — board card A1).
+  { icon: IconArticleList, label: "المقالات", href: "/articles" },
   { icon: IconClients, label: "الشركاء", href: "/clients" },
   { icon: IconPlay, label: "الطلّات", href: "/reels" },
   { icon: IconVolume2, label: "استمع", href: "/audio" },

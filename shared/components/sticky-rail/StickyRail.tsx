@@ -17,10 +17,9 @@ interface StickyRailProps {
 // A sticky rail that behaves like LinkedIn's: a rail shorter than the viewport sticks
 // under the header; a TALLER one scrolls with the page until its bottom reaches the
 // viewport bottom, then sticks there — so the whole rail can be seen without an inner
-// scrollbar (Khalid, 2026-08-15: «يطلعوا لحد ما يثبتوا»). CSS alone can't express
-// "stick when my bottom reaches the fold" without knowing the element's height, so the
-// only client work here is measuring that height and writing one `top` value. Server
-// content comes in as children and never hydrates.
+// scrollbar. CSS alone can't express "stick when my bottom reaches the fold" without
+// knowing the element's height, so the only client work here is measuring that height
+// and writing one `top` value. Server content comes in as children and never hydrates.
 export function StickyRail({ label, className, children }: StickyRailProps) {
   const ref = useRef<HTMLElement | null>(null);
 

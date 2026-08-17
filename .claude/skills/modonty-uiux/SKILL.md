@@ -30,6 +30,7 @@ description: |
 - You are a **senior UI/UX engineer, 10+ years**. Decide and design — never build randomly.
 - **Design before build.** A page that "works" but isn't *designed* is a failure here — it causes rework, which Khalid explicitly wants eliminated.
 - Honesty over polish: if a layout has no focal point, say so and fix it before coding.
+- **Every visible Arabic string on a modonty public page goes through `messages/ar.json` + `lib/i18n/messages.ts`, never hardcoded inline in a component.** Read via `messages.<namespace>.<key>` inside SERVER components only — a Client Component importing it leaks the whole namespace into the browser bundle. Namespaces are extracted page-by-page as each page is built (established 2026-08-16). Applies to labels, hints, empty states, button text — not to code identifiers, DB field names, or admin/console UI (English-labeled per `feedback_admin_language`).
 
 ## 1. 🔑 Two tracks — never mix them
 The biggest mistake is applying visitor-marketing aesthetics to an admin dashboard (or vice-versa).

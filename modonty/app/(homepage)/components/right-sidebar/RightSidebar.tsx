@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { LinkCard } from "@/components/shared/link-card/LinkCard";
-import { AboutCard } from "@/app/(homepage)/components/about-card/AboutCard";
-import { StickyRail } from "@/app/(homepage)/components/shared/StickyRail";
+import { AboutCard } from "@/components/shared/about-card/AboutCard";
+import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { IconCompass, IconPlay, IconVolume2 } from "@/lib/icons";
 
 interface RightSidebarProps {

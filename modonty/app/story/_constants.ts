@@ -12,10 +12,9 @@ export const MODONTY_LOGO_URL = BRAND_WORDMARK_URL;
 
 export const STORY_OG_IMAGE = MODONTY_LOGO_URL;
 
-/** Bunny assets zone, `brand/story/` — team + partner photos for this page only. */
+/** Bunny assets zone, `brand/story/` — partner photos for this page. (Team photos moved to `lib/team/team-members.ts`.) */
 const STORY_ASSETS = "https://modonty-asset.b-cdn.net/brand/story";
 
-export const storyTeamImage = (file: string) => `${STORY_ASSETS}/team/${file}`;
 export const storyPartnerImage = (file: string) => `${STORY_ASSETS}/partners/${file}`;
 
 /**

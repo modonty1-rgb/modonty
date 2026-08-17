@@ -34,7 +34,7 @@ export function AboutCard() {
           </li>
         ))}
       </ul>
-      <Link href="/about" className={buttonVariants({ variant: "outline", className: "mt-3 min-h-11 w-full lg:mt-4" })}>
+      <Link href="/modonty" className={buttonVariants({ variant: "outline", className: "mt-3 min-h-11 w-full lg:mt-4" })}>
         تعرّف على مدونتي
       </Link>
     </section>

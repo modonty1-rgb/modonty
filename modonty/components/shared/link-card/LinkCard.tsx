@@ -23,7 +23,7 @@ export function LinkCard({ href, title, description, icon: Icon, className }: Li
     <Link
       href={href}
       className={cn(
-        "group flex items-center gap-3 rounded-lg bg-card p-3 ring-1 ring-primary/10 transition-shadow sm:hover:ring-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+        "group flex items-center gap-3 rounded-lg bg-card p-3 ring-1 ring-primary/10 transition-[box-shadow,transform] sm:hover:ring-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary motion-safe:active:scale-[0.98]",
         className,
       )}
     >

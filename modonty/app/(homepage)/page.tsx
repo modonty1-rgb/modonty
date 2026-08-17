@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { CachedHomePage } from "@/app/(homepage)/components/page-layout/CachedHomePage";
-import { UserCard } from "@/app/(homepage)/components/user-card/UserCard";
+import { UserCard } from "@/components/shared/user-card/UserCard";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";

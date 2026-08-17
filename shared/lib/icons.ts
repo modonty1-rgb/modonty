@@ -104,6 +104,7 @@ export { Clock            as IconClock         } from 'lucide-react';
 export { AlignJustify     as IconAlignJustify  } from 'lucide-react';
 export { AlignJustify     as IconContent       } from 'lucide-react';
 export { Play             as IconPlay          } from 'lucide-react';
+export { Video            as IconVideo         } from 'lucide-react'; // فيديو تعريفي (≠ Play الذي يعني تشغيل)
 export { FileCheck        as IconFileCheck     } from 'lucide-react';
 export { Scale            as IconScale         } from 'lucide-react';
 export { Hash             as IconHash          } from 'lucide-react';
@@ -178,6 +179,9 @@ export { Moon             as IconMoon          } from 'lucide-react';
 // ── Trust & commerce ─────────────────────────────────────────────────────────
 export { ShieldCheck      as IconShieldCheck   } from 'lucide-react';
 export { Wallet           as IconWallet        } from 'lucide-react';
+export { Handshake        as IconHandshake     } from 'lucide-react';
+export { Award            as IconAward         } from 'lucide-react';
+export { Layers           as IconLayers        } from 'lucide-react'; // ترابط المحتوى — لا يعني «طبقات UI»
 
 // ── Controls (counter) ───────────────────────────────────────────────────────
 export { Minus            as IconRemove        } from 'lucide-react';

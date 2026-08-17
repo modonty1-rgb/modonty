@@ -1,9 +1,13 @@
-import { getClientsByService } from "@/lib/queries/get-clients-by-service";
+import { getClientsList } from "@/lib/queries/get-clients-list";
+import { PartnerCard } from "@/components/shared/partner-card/PartnerCard";
+import { BecomePartnerBanner } from "@/components/shared/become-partner-banner/BecomePartnerBanner";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { ClientCard } from "@/components/client/client-card";
+import { messages, formatCount } from "@/lib/i18n/messages";
 import { SITE_URL } from "@/constants";
 
 import type { Metadata } from "next";
+
+const text = messages.shop;
 
 export const metadata: Metadata = {
   title: { absolute: "تسوّق الآن — متاجر شركاء مدونتي | مدونتي" },
@@ -11,48 +15,50 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/shop` },
 };
 
+/**
+ * The shopping door: same partner card as `/clients` and `/booking` (Khalid, 2026-08-16
+ * — «خلي الكرت تبع العميل يكون reusable»), filtered to partners whose CTA sends visitors
+ * to an external store. Reads the same cached list the other two doors read — one query,
+ * one card, three doors.
+ */
 export default async function ShopPage() {
-  const clients = await getClientsByService("shop");
+  const partners = (await getClientsList()).filter((partner) => partner.ctaMode === "LINK");
 
   return (
     <>
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "تسوّق الآن" },
+          { label: text.breadcrumbLabel },
         ]}
       />
 
       <div className="container mx-auto max-w-[1128px] px-4 py-6">
-        <header className="mb-6">
-          <h1 className="text-2xl font-bold leading-tight text-foreground">تسوّق الآن</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            متاجر شركاء مدونتي. افتح صفحة الشريك وانتقل لمتجره مباشرة.
-          </p>
+        <header className="mb-6 flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <h1 className="text-2xl font-bold leading-tight text-foreground">{text.pageTitle}</h1>
+            <p className="mt-1 text-sm text-muted-foreground">{text.pageSubtitle}</p>
+          </div>
+          {partners.length > 0 && (
+            <p className="text-xs text-muted-foreground">
+              {formatCount(partners.length, messages.clients.counts.partnersCount)} {text.sellingSuffix}
+            </p>
+          )}
         </header>
 
-        {clients.length === 0 ? (
+        {partners.length === 0 ? (
           <p className="rounded-lg bg-card p-6 text-center text-sm text-muted-foreground ring-1 ring-border">
-            ما فيه متاجر معروضة حالياً. تابعنا، الخدمة تفتح قريباً.
+            {text.emptyStateMessage}
           </p>
         ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {clients.map((client, index) => (
-              <ClientCard
-                key={client.id}
-                id={client.id}
-                name={client.name}
-                slug={client.slug}
-                logoUrl={client.logoUrl}
-                heroUrl={client.heroUrl}
-                slogan={client.slogan}
-                addressCity={client.addressCity}
-                articleCount={client.articleCount}
-                phone={client.phone}
-                priority={index < 3}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {partners.map((partner) => (
+                <PartnerCard key={partner.id} partner={partner} />
+              ))}
+            </div>
+            <BecomePartnerBanner source="Shop Page" className="mt-8" />
+          </>
         )}
       </div>
     </>

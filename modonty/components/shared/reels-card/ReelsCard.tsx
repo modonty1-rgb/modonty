@@ -51,7 +51,7 @@ function ReelPreviewTile({ item, layout, itemCount }: ReelPreviewTileProps) {
       href="/reels"
       aria-label={`شوف الطلّة: ${item.title}`}
       className={cn(
-        "group relative isolate shrink-0 overflow-hidden rounded-lg bg-primary text-white",
+        "group relative isolate shrink-0 overflow-hidden rounded-lg bg-primary text-white ring-1 ring-transparent transition-[box-shadow,transform] sm:hover:ring-2 sm:hover:ring-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary motion-safe:active:scale-[0.98]",
         // Keep the familiar portrait preview on small screens; the desktop feed uses
         // square crops so this discovery rail does not push the first article too far down.
         layout === "feed" ? "aspect-[4/5] lg:aspect-square" : "aspect-[4/5]",

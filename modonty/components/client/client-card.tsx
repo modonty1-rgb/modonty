@@ -2,7 +2,7 @@ import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { IconChevronLeft, IconMapPin, IconFeatured } from "@/lib/icons";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
-import { WhatsAppLeadLink } from "@/components/cta/whatsapp-icon-link";
+import { WhatsAppAction } from "@/components/shared/whatsapp-action/WhatsAppAction";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 
 interface ClientCardProps {
@@ -131,16 +131,14 @@ export function ClientCard({
           {phone ? (
             <>
               {id ? (
-                <WhatsAppLeadLink
+                <WhatsAppAction
                   phone={phone}
                   clientId={id}
+                  clientName={name}
                   source="client_list"
-                  ariaLabel={`تواصل عبر واتساب مع ${name}`}
-                  className={waClassName}
-                >
-                  <WhatsAppIcon size={13} />
-                  تواصل واتساب
-                </WhatsAppLeadLink>
+                  variant="quiet"
+                  className="flex-1"
+                />
               ) : (
                 <a
                   href={getWhatsAppLink(phone)}

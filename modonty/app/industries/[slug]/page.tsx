@@ -1,19 +1,18 @@
 import type { Metadata } from "next";
-import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { notFound } from "next/navigation";
-import { CommentStatus } from "@prisma/client";
-import { IconBuilding } from "@/lib/icons";
-import { db } from "@/lib/db";
-import { mediaSrc } from "@modonty/shared/lib/media-src";
-import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
+import { getIndustriesEnhanced } from "@/app/industries/helpers/get-industries-enhanced";
 import { getIndustryBySlug } from "@/app/industries/helpers/get-industry-by-slug";
-import { jsonLdHtmlFromString } from "@/lib/seo";
+import { getIndustryFeed } from "@/app/industries/data/get-industry-feed";
+import { getClientsList } from "@/lib/queries/get-clients-list";
+import { IndustryPageLayout } from "@/app/industries/components/page-layout/IndustryPageLayout";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { ClientCard } from "@/components/client/client-card";
+import { jsonLdHtmlFromString } from "@/lib/seo";
+import { SITE_URL } from "@/constants";
 
 interface IndustryPageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ page?: string }>;
 }
 
 export async function generateStaticParams() {
@@ -29,124 +28,67 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: IndustryPageProps): Promise<Metadata> {
   const { slug } = await params;
   const industry = await getIndustryBySlug(decodeURIComponent(slug));
-  if (!industry) return { title: "صناعة غير موجودة - مدونتي" };
-  // Serve-the-stored pattern (same as category/tag pages): the admin generator bakes the
-  // full metadata (openGraph images included) — the hand-built object here dropped og:image.
+  if (!industry) return { title: "المجال غير موجود - مدونتي" };
+  // Serve-the-stored pattern (same as the client/category/tag pages): the admin generator
+  // bakes the full metadata (og:image included) — a hand-built object here would drop it.
   if (industry.nextjsMetadata) {
     const stored = industry.nextjsMetadata as Metadata;
     if (stored.title) return stored;
   }
   return {
-    title: `${industry.name} - الصناعات | مدونتي`,
-    description: industry.description ?? `استعرض شركات قطاع ${industry.name} الموثوقة على مدونتي`,
+    title: `${industry.name} - المجالات | مدونتي`,
+    description: industry.description ?? `اكتشف شركاء ${industry.name} الموثوقين على مدونتي`,
+    alternates: { canonical: `${SITE_URL}/industries/${slug}` },
   };
 }
 
-export default async function IndustryPage({ params }: IndustryPageProps) {
-  const { slug } = await params;
-  const industry = await getIndustryBySlug(decodeURIComponent(slug));
+export default async function IndustryPage({ params, searchParams }: IndustryPageProps) {
+  const [{ slug }, { page: pageParam }] = await Promise.all([params, searchParams]);
+  const decodedSlug = decodeURIComponent(slug);
+  const page = Number.isFinite(Number(pageParam)) && Number(pageParam) > 1 ? Number(pageParam) : 1;
+
+  const industry = await getIndustryBySlug(decodedSlug);
   if (!industry) notFound();
 
-  const clientIds = industry.clients.map((c) => c.id);
-
-  // Batch fetch GA4 stats + ratings in parallel — one query each, not per-client
-  const [ga4Stats, ratingsRaw] = await Promise.all([
-    getClientsGA4Stats(),
-    clientIds.length > 0
-      ? db.clientReview.groupBy({
-          by: ["clientId"],
-          where: { clientId: { in: clientIds }, status: CommentStatus.APPROVED },
-          _avg: { rating: true },
-        })
-      : Promise.resolve([]),
+  const [industries, articles, allPartners] = await Promise.all([
+    getIndustriesEnhanced({ sortBy: "clients" }),
+    getIndustryFeed(industry.id),
+    getClientsList(),
   ]);
 
-  const ratingMap = new Map(ratingsRaw.map((r) => [r.clientId, r._avg.rating ?? 0]));
+  const partners = allPartners.filter((partner) => partner.industry?.slug === decodedSlug);
+  const buildPageHref = (targetPage: number) =>
+    targetPage > 1 ? `/industries/${slug}?page=${targetPage}` : `/industries/${slug}`;
 
   return (
     <>
-      {/* CollectionPage JSON-LD — DB cache, same serve-the-stored pattern as the
-          client page. Emitted only when generated. */}
+      {/* CollectionPage JSON-LD — DB cache, same serve-the-stored pattern as the client page. */}
       {industry.jsonLdStructuredData && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(industry.jsonLdStructuredData) }}
         />
       )}
+
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "الصناعات", href: "/industries" },
+          { label: "المجالات", href: "/industries" },
           { label: industry.name },
         ]}
       />
 
-      {/* Hero */}
-      {industry.socialImage ? (
-        <section className="relative border-b overflow-hidden">
-          <div className="relative w-full max-w-[1200px] mx-auto aspect-[1200/630]">
-            <OptimizedImage
-              media={asMedia(industry.socialImage, industry.socialImageAlt ?? industry.name)}
-              alt={industry.socialImageAlt ?? industry.name}
-              fill
-              preload
-              className="object-cover"
-              sizes="(max-width: 1200px) 100vw, 1200px"
-            />
-            <div className="absolute inset-0 bg-black/50" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">{industry.name}</h1>
-              {industry.description && (
-                <p className="text-white/80 text-base max-w-xl mx-auto">{industry.description}</p>
-              )}
-              <p className="mt-4 text-sm text-white/70">{industry.clients.length} شركة موثوقة</p>
-            </div>
-          </div>
-        </section>
-      ) : (
-        <section className="bg-gradient-to-b from-primary/5 to-background py-10 border-b">
-          <div className="container mx-auto max-w-[1128px] px-4 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border bg-muted">
-              <IconBuilding className="h-8 w-8 text-primary/50" />
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">{industry.name}</h1>
-            {industry.description && (
-              <p className="text-muted-foreground text-base max-w-xl mx-auto">{industry.description}</p>
-            )}
-            <p className="mt-4 text-sm text-muted-foreground">{industry.clients.length} شركة موثوقة</p>
-          </div>
-        </section>
-      )}
-
-      {/* Clients grid */}
-      <div className="container mx-auto max-w-[1128px] px-4 py-10">
-        {industry.clients.length === 0 ? (
-          <div className="text-center py-20 text-muted-foreground">
-            <IconBuilding className="mx-auto mb-4 h-12 w-12 opacity-30" />
-            <p className="text-lg">لا توجد شركات في هذا القطاع بعد</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {industry.clients.map((client, index) => (
-              <ClientCard
-                key={client.id}
-                id={client.id}
-                name={client.name}
-                slug={client.slug}
-                logoUrl={mediaSrc(client.logoMedia) ?? undefined}
-                heroUrl={mediaSrc(client.heroImageMedia) ?? undefined}
-                slogan={client.slogan}
-                addressCity={client.addressCity}
-                averageRating={ratingMap.get(client.id) ?? 0}
-                articleCount={client._count.articles}
-                googleTotal={ga4Stats[client.slug]?.total ?? 0}
-                phone={client.phone}
-                priority={index < 3}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      <IndustryPageLayout
+        industries={industries}
+        currentSlug={decodedSlug}
+        industryName={industry.name}
+        articles={articles}
+        partners={partners}
+        partnersHeading={`${partners.length.toLocaleString("ar-SA")} في هذا المجال`}
+        partnersBrowseAllHref={`/clients?industry=${encodeURIComponent(decodedSlug)}`}
+        page={page}
+        buildPageHref={buildPageHref}
+      />
     </>
   );
 }

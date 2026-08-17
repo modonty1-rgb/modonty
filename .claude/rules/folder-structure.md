@@ -192,3 +192,19 @@ Four workspace packages at the root, not under `apps/`: `modonty` (public site),
 `admin` (team), `console` (client), `shared` (shared: Prisma, shared components,
 shared lib). The rules above are written for that shape; do not restructure the
 workspace to match a generic `apps/` + `packages/` example.
+
+## Existing cross-app shells — check here before founding a page layout
+
+Before writing container/flex markup for a new page, check whether one of these already
+does the job. They were promoted after the same shell got duplicated across four routes
+independently (Khalid, 2026-08-17: «كل مرة نؤسسه أم نناديه من reusable component؟»).
+
+- `shared/components/column-layout/ThreeColumnLayout.tsx` — the `right`/`center`/`left`
+  listing shell (300 · flex-1(560/600) · 300, same container/gaps) used by `/`, `/clients`,
+  `/industries`, `/modonty`. Owns width/gap only — pass pre-wrapped content (e.g. already
+  inside a `StickyRail`) if a column should stick.
+- `shared/components/column-layout/TwoColumnLayout.tsx` — its one-rail sibling (`main`/`rail`).
+- `shared/components/sticky-rail/StickyRail.tsx` — the rail-sticking behavior itself, cross-app.
+
+A new listing-style page reaches for these first. Only fork a new shell when the visual
+shape genuinely differs (not just its content) — matching the promotion rule above.

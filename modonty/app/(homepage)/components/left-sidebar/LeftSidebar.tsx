@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import type { ReactNode } from "react";
-import { CommerceActions } from "@/app/(homepage)/components/commerce-actions/CommerceActions";
+import { CommerceActions } from "@/components/shared/commerce-actions/CommerceActions";
 import { LinkCard } from "@/components/shared/link-card/LinkCard";
 import { ModontyTrustMark } from "@/components/icons/modonty-trust-mark";
-import { StickyRail } from "@/app/(homepage)/components/shared/StickyRail";
+import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { cn } from "@/lib/utils";
 import type { FeedPost } from "@/lib/types";
 
@@ -34,7 +34,7 @@ export function LeftSidebar({ className, userCard }: LeftSidebarProps) {
         {/* Trust strip right under the account (Khalid, 2026-08-16); the full ClientsCard is hidden,
             not deleted. */}
         <LinkCard
-          href="/trust"
+          href="/clients"
           title="شركاء موثوقون"
           description="كل شريك مفحوص بأوراقه الرسمية"
           icon={ModontyTrustMark}

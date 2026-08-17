@@ -1,0 +1,245 @@
+{
+  "shared": {
+    "badges": {
+      "verifiedPartnerLabel": "شريك موثّق",
+      "featuredPartnerLabel": "شريك مميّز",
+      "verifiedLicenseLabel": "ترخيص موثّق",
+      "ratingScreenReaderLabel": "تقييم من خمسة"
+    },
+    "whatsapp": {
+      "defaultButtonLabel": "تواصل واتساب"
+    },
+    "partnerCapabilities": {
+      "whatsappChat": "كلّمه واتساب",
+      "photoGallery": "صور من شغله",
+      "introVideo": "فيديو عنه",
+      "reels": "طلّات",
+      "articles": "مقالات"
+    }
+  },
+  "modonty": {
+    "rightRailLabel": "تعرّف علينا",
+    "leftRailLabel": "طلّ علينا",
+    "story": {
+      "summary": {
+        "title": "قصتنا",
+        "chapters": [
+          {
+            "title": "قصة الشعار",
+            "teaser": "النقطة الصغيرة تحت الحروف مش زخرفة — كل شيء كبير يبدأ من نقطة."
+          },
+          {
+            "title": "كيف بدأنا",
+            "teaser": "من تجربة حقيقية مع الإعلانات المدفوعة: صرف يكبر كل شهر وأثر يختفي مع الميزانية، فبنينا محتوى يتراكم بدل ما يُطفأ."
+          },
+          {
+            "title": "فلسفتنا",
+            "teaser": "«المؤمن للمؤمن كالبنيان» — الشريك يحضر بكل ما عنده، والمشترك يلقاه ويثق فيه؛ وكل واحد يدخل مدونتي طوبة تشدّ اللي قبلها."
+          },
+          {
+            "title": "رؤية ٢٠٣٠",
+            "teaser": "من روح رؤية ٢٠٣٠ انطلقت مدونتي من السعودية، ووصلت مصر، وتتّجه لتغطية الخليج — لتخدم العالم العربي كله: الشريك يظهر، والمشترك يلقاه ويطمّن.",
+            "highlight": "السعودية"
+          }
+        ],
+        "moreLabel": "اسمع قصتنا كاملة",
+        "signature": "— فريق مدونتي"
+      },
+      "team": {
+        "buttonLabel": "أبطالنا",
+        "moreLabel": "المزيد"
+      }
+    },
+    "galleryLabel": "لكل مقال لوحة بريشتنا",
+    "feedTitle": "من قلمنا",
+    "feedTitlePaged": "من قلمنا — الصفحة {page}",
+    "legal": {
+      "title": "منصة مدونتي",
+      "cr": "السجل التجاري",
+      "active": "نشط",
+      "hq": "مقرّنا",
+      "openInMaps": "افتح · خرائط جوجل",
+      "operator": "المشغّل الرسمي",
+      "since": "منذ",
+      "whatsapp": "واتساب",
+      "crPrefix": "سجل تجاري رقم",
+      "verifyAtTrust": "تفاصيل التوثيق",
+      "contact": "تواصل معنا"
+    },
+    "trust": {
+      "title": "شارة الموثوق",
+      "subtitle": "أربع خطوات قبل ما نمنحها، على معايير جوجل حتى في محتوى الصحة والمال",
+      "steps": [
+        "نتأكّد من أوراقه الرسمية",
+        "نعرف مين وراه",
+        "مقالاته باسم كاتب حقيقي",
+        "تحجز وتشتري منه على طول"
+      ],
+      "moreLabel": "كيف نتأكّد"
+    }
+  },
+  "clients": {
+    "trustCard": {
+      "title": "شركاء موثوقون",
+      "subtitle": "ما نحط شريك هنا إلا بعد ما نشوف أوراقه الرسمية.",
+      "checklist": [
+        "سجل تجاري نشوفه",
+        "تعرف مين وراه",
+        "مقالات بأسماء حقيقية",
+        "تحجز وتشتري على طول"
+      ],
+      "howWeVerifyButton": "كيف نتأكّد؟"
+    },
+    "industryFilter": {
+      "navAriaLabel": "تصفية بالمجال",
+      "sectionTitle": "المجال",
+      "allIndustriesOption": "الكل"
+    },
+    "searchBar": {
+      "sectionAriaLabel": "دوّر على شريك",
+      "inputPlaceholder": "دوّر على اللي تبيه… بالاسم أو الخدمة",
+      "inputAriaLabel": "دوّر على شريك بالاسم أو الخدمة",
+      "submitButtonAriaLabel": "دوّر"
+    },
+    "partnersList": {
+      "headingAllPartners": "كل الشركاء",
+      "headingByIndustry": "الشركاء — {industry}",
+      "noResultsTitle": "ما لقينا أحد بهذا البحث",
+      "noResultsHint": "جرّب كلمة أقصر، أو شوف الكل.",
+      "showAllPartnersButton": "وريني الكل",
+      "paginationNavAriaLabel": "تنقّل بين صفحات الشركاء",
+      "previousPageLink": "→ الصفحة السابقة",
+      "nextPageLink": "الصفحة التالية ←"
+    },
+    "partnerCard": {
+      "bookButton": "احجز عنده",
+      "shopButton": "تسوّق من عنده",
+      "viewProfileButton": "شوف صفحته",
+      "yearsExperienceSuffix": "خبرة"
+    },
+    "sidebars": {
+      "partnersRailAriaLabel": "الشركاء والمجالات",
+      "accountRailAriaLabel": "حسابك",
+      "reelsCardTitle": "الطلّات",
+      "reelsCardSubtitle": "مقاطع قصيرة من الشركاء",
+      "audioCardTitle": "استمع",
+      "audioCardSubtitle": "المقالات صوت وأنت ماشي"
+    },
+    "counts": {
+      "partnersCount": {
+        "one": "شريك واحد",
+        "two": "شريكان",
+        "few": "شركاء",
+        "many": "شريكاً"
+      },
+      "industriesCount": {
+        "one": "مجال واحد",
+        "two": "مجالين",
+        "few": "مجالات",
+        "many": "مجالاً"
+      },
+      "articlesCount": {
+        "one": "مقال واحد",
+        "two": "مقالان",
+        "few": "مقالات",
+        "many": "مقالاً"
+      },
+      "reelsCount": {
+        "one": "طلّة واحدة",
+        "two": "طلّتان",
+        "few": "طلّات",
+        "many": "طلّة"
+      },
+      "yearsCount": {
+        "one": "سنة",
+        "two": "سنتان",
+        "few": "سنوات",
+        "many": "سنة"
+      }
+    }
+  },
+  "booking": {
+    "breadcrumbLabel": "احجز الآن",
+    "pageTitle": "احجز الآن",
+    "pageSubtitle": "شركاء مدونتي اللي يستقبلون حجوزات — اختر اللي يناسبك واحجز موعدك من صفحته.",
+    "emptyStateMessage": "ما فيه شريك يستقبل حجوزات الحين. تابعنا، الخدمة تفتح قريباً.",
+    "receivingBookingsSuffix": "يستقبلون حجوزات"
+  },
+  "shop": {
+    "breadcrumbLabel": "تسوّق الآن",
+    "pageTitle": "تسوّق الآن",
+    "pageSubtitle": "متاجر شركاء مدونتي — افتح صفحة الشريك وروح لمتجره على طول.",
+    "emptyStateMessage": "ما فيه متجر معروض الحين. تابعنا، الخدمة تفتح قريباً.",
+    "sellingSuffix": "عندهم متجر"
+  },
+  "becomePartner": {
+    "title": "انضم لشركاء مدونتي",
+    "subtitle": "عملاء من جوجل بلا إعلانات",
+    "cta": "صِر شريكاً"
+  },
+  "team": {
+    "breadcrumbLabel": "فريق مدونتي",
+    "title": "فريق مدونتي",
+    "tagline": "الناس اللي يشتغلون على محتواك كل يوم — بالاسم والصورة، ولكل واحد إيميله لو احتجت تتواصل معه مباشرة.",
+    "seoTitle": "فريق مدونتي — مَن خلف المنصة",
+    "seoDescription": "تعرّف على فريق مدونتي: القيادة، المحتوى، التصميم، العمليات، والمبيعات — بالصورة والدور وبريد التواصل المباشر.",
+    "contactLabel": "راسل",
+    "departments": {
+      "leadership": "الإدارة",
+      "content": "المحتوى وتحسين محركات البحث",
+      "creative": "التصميم والإنتاج المرئي",
+      "ops": "العمليات وحسابات الشركاء",
+      "outreach": "المبيعات والحملات وخدمة الشركاء"
+    }
+  },
+  "about": {
+    "breadcrumbLabel": "عن مدونتي",
+    "hero": {
+      "eyebrow": "منظومة عربية سعودية",
+      "title": "مدونتي",
+      "tagline": "نربط الباحث عن المعلومة بالخبير اللي يعرف، والشريك اللي يقدّم الحل — تحت سقف واحد موثوق.",
+      "explorePrimary": "استكشف المجالات",
+      "becomePartnerSecondary": "صِر شريكاً"
+    },
+    "cornerstones": {
+      "sectionTitle": "إيش يفرّقنا",
+      "sectionSubtitle": "ثلاث ركائز ما نتنازل عنها",
+      "items": [
+        {
+          "title": "بيتك الرقمي",
+          "description": "صفحة رسمية باسمك — شعارك، خدماتك، تقييماتك، كل شي في مكان واحد."
+        },
+        {
+          "title": "جدار ثقة بينك وبين زوّارك",
+          "description": "تدينا أوراقك الرسمية، نعرضها في صفحتك — اللي يبحث عنك يطمّن من أول نظرة إنك حقيقي."
+        },
+        {
+          "title": "تعرف بزنسك كيف يتنفّس",
+          "description": "كل زيارة، كل قراءة، كل تفاعل — يوصلك لحظة بلحظة، بيانات حقيقية لا تقديرية."
+        }
+      ]
+    },
+    "liveStats": {
+      "sectionTitle": "اليوم على مدونتي",
+      "partnersSuffix": "شريك موثّق",
+      "industriesSuffix": "مجال"
+    },
+    "audience": {
+      "sectionTitle": "لمين مدونتي",
+      "sectionSubtitle": "لكل صاحب بزنس عربي — أي مجال",
+      "chips": [
+        "طبيب",
+        "محامي",
+        "تاجر",
+        "صاحب مطعم",
+        "صاحب مكتب",
+        "مهندس",
+        "مستشار",
+        "أي مجال"
+      ]
+    },
+    "editorial": {
+      "sectionTitle": "بالتفصيل"
+    }
+  }
+}

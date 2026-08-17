@@ -5,11 +5,8 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { BookingForm } from "@/app/articles/[slug]/components/booking-form";
-import { WhatsAppBookingCta } from "@/components/cta/whatsapp-booking-cta";
-import { WhatsAppLeadLink } from "@/components/cta/whatsapp-icon-link";
-import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
+import { WhatsAppAction } from "@/components/shared/whatsapp-action/WhatsAppAction";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
-import { bookingWhatsappMessage } from "@/lib/whatsapp";
 import { BRAND_AVATAR_RADIUS } from "@/constants";
 import { IconClients, IconExternal, IconCalendar } from "@/lib/icons";
 import { cn } from "@/lib/utils";
@@ -59,12 +56,13 @@ export function ArticleLabBottomDock({
     <div className="space-y-4">
       {clientPhone && (
         <>
-          <WhatsAppBookingCta
+          <WhatsAppAction
             clientId={clientId!}
             phone={clientPhone}
             clientName={clientName}
             source="article_dock"
             articleId={articleId}
+            className="w-full"
           />
           <div className="flex items-center gap-3 text-[12px] font-semibold text-muted-foreground">
             <span className="h-px flex-1 bg-border" />
@@ -143,17 +141,14 @@ export function ArticleLabBottomDock({
 
       {/* WhatsApp — icon-only (keeps the one-tap lead path); label lives in the booking sheet */}
       {clientPhone && clientId && (
-        <WhatsAppLeadLink
+        <WhatsAppAction
           phone={clientPhone}
           clientId={clientId}
+          clientName={clientName}
           source="article_dock"
           articleId={articleId}
-          message={bookingWhatsappMessage(clientName)}
-          ariaLabel={`تواصل عبر واتساب مع ${clientName}`}
-          className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#25d366] text-white shadow-[0_6px_12px_-8px_rgba(37,211,102,0.55)] transition-transform active:scale-[0.98]"
-        >
-          <WhatsAppIcon size={20} />
-        </WhatsAppLeadLink>
+          variant="dock"
+        />
       )}
 
       {/* Logo → client info sheet (identity + repeated actions) */}

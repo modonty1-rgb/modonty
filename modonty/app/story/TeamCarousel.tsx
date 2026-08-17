@@ -6,125 +6,10 @@ import { m } from "framer-motion";
 import { IconChevronLeft, IconChevronRight, IconPause, IconPlay } from "@/lib/icons";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
-import { storyTeamImage } from "./_constants";
+import { TEAM_MEMBERS } from "@/lib/team/team-members";
+import type { TeamDept as Dept, TeamMember as Member } from "@/lib/team/team-members";
 
-type Dept = "leadership" | "content" | "creative" | "ops" | "outreach";
-
-interface Member {
-  name: string;
-  role: string;
-  bio: string;
-  imageUrl?: string;
-  initials?: string;
-  dept: Dept;
-}
-
-const TEAM: Member[] = [
-  {
-    name: "م. محمد حسني جبر",
-    role: "المدير العام",
-    bio: "صاحب الرؤية الاستراتيجية، يضمن تكامل كل الإدارات.",
-    imageUrl:
-      storyTeamImage("abo-salman.jpg"),
-    dept: "leadership",
-  },
-  {
-    name: "م. خالد علي",
-    role: "المدير التنفيذي",
-    bio: "قائد العمليات اليومية وتحويل الخطط لواقع ملموس.",
-    imageUrl:
-      storyTeamImage("khalid.jpg"),
-    dept: "leadership",
-  },
-  {
-    name: "د. محمد شلبي",
-    role: "أخصائي تحسين محركات البحث",
-    bio: "يضمن تصدّر المواقع نتائج البحث الأولى لزيادة الانتشار.",
-    imageUrl:
-      storyTeamImage("muhammed-shlpy.jpg"),
-    dept: "content",
-  },
-  {
-    name: "أ. مايا أحمد",
-    role: "كاتبة محتوى وأخصائية SEO",
-    bio: "تكتب محتوى عربياً قوياً مُحسَّناً لمحركات البحث ويتحدّث بصوت العميل.",
-    imageUrl:
-      "https://api.dicebear.com/9.x/micah/png?seed=maya&earringsProbability=100&facialHairProbability=0&baseColor=f9c9b6&backgroundColor=10b981,059669&size=256&radius=50",
-    dept: "content",
-  },
-  {
-    name: "أ. روان عطيتو",
-    role: "استراتيجي محتوى",
-    bio: "تخطّط وتبتكر محتوى إبداعي يربط الجمهور بالعلامة التجارية.",
-    imageUrl:
-      storyTeamImage("rawan.jpg"),
-    dept: "content",
-  },
-  {
-    name: "أ. مصطفى محمد",
-    role: "قائد فريق التصميم",
-    bio: "يقود المصممين لتقديم هوية بصرية احترافية تعزّز الثقة.",
-    imageUrl:
-      storyTeamImage("mustafa.jpg"),
-    dept: "creative",
-  },
-  {
-    name: "أ. أحمد عثمان",
-    role: "قائد فريق المونتاج",
-    bio: "يصنع محتوى مرئياً يروي قصة العلامة التجارية بأسلوب مبهر.",
-    imageUrl:
-      storyTeamImage("ahmed.png"),
-    dept: "creative",
-  },
-  {
-    name: "م. محمد سليمان",
-    role: "مدير المشروعات",
-    bio: "يخطّط ويدير الموارد لتسليم المشاريع بدقة وكفاءة عالية.",
-    imageUrl:
-      storyTeamImage("mohamed-soliman.jpg"),
-    dept: "ops",
-  },
-  {
-    name: "م. عمر حسني",
-    role: "مدير حسابات الشركاء",
-    bio: "حلقة الوصل مع الشركاء، يبني علاقات مستدامة ويضمن رضاهم.",
-    imageUrl:
-      storyTeamImage("omar-hosney.jpg"),
-    dept: "ops",
-  },
-  {
-    name: "م. أحمد طارق",
-    role: "الموارد البشرية",
-    bio: "يستقطب الكفاءات ويطوّر بيئة العمل لضمان إنتاجية الفريق.",
-    imageUrl:
-      storyTeamImage("ahmed-tarek.jpg"),
-    dept: "ops",
-  },
-  {
-    name: "ميديا باير سمية محمد",
-    role: "مسؤول الحملات الإعلانية",
-    bio: "تدير الحملات الإعلانية لأفضل وصول وأعلى عائد على الاستثمار.",
-    imageUrl:
-      storyTeamImage("somaya.jpg"),
-    dept: "outreach",
-  },
-  {
-    name: "أ. أحمد فرج",
-    role: "مدير المبيعات",
-    bio: "يقود الخطط البيعية ويصنع الفرص التجارية لتحقيق النمو.",
-    imageUrl:
-      storyTeamImage("ahmed-farag.jpg"),
-    dept: "outreach",
-  },
-  {
-    name: "أ. بلال يوسف",
-    role: "خدمة الشركاء",
-    bio: "الواجهة المباشرة للمنصة، يقدّم الدعم السريع لتجربة مثالية.",
-    imageUrl:
-      storyTeamImage("belal-youssef.jpg"),
-    dept: "outreach",
-  },
-];
+const TEAM: readonly Member[] = TEAM_MEMBERS;
 
 const DEPT_STYLES: Record<Dept, { label: string; chip: string; ring: string; glow: string }> = {
   leadership: {
@@ -265,22 +150,13 @@ function TeamCarouselImpl() {
                         <div
                           className={`relative w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden ring-4 ${style.ring} shadow-2xl ${style.glow} bg-muted`}
                         >
-                          {member.imageUrl ? (
-                            <OptimizedImage
-                              media={asMedia(member.imageUrl)}
-                              alt={`صورة ${member.name} — فريق مدونتي`}
-                              fill
-                              sizes="(max-width: 768px) 112px, 128px"
-                              className="object-cover"
-                            />
-                          ) : (
-                            <div
-                              className={`w-full h-full flex items-center justify-center text-2xl md:text-3xl font-extrabold ${style.chip}`}
-                              aria-label={`صورة رمزية للأحرف الأولى — ${member.name}`}
-                            >
-                              {member.initials ?? member.name.slice(0, 2)}
-                            </div>
-                          )}
+                          <OptimizedImage
+                            media={asMedia(member.imageUrl)}
+                            alt={`صورة ${member.name} — فريق مدونتي`}
+                            fill
+                            sizes="(max-width: 768px) 112px, 128px"
+                            className="object-cover"
+                          />
                         </div>
                         {/* dept badge floating */}
                         <span

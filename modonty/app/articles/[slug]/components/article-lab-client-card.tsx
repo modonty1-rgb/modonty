@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { BRAND_AVATAR_RADIUS } from "@/constants";
 import { IconClients, IconChevronLeft, IconPhone, IconVerified, IconExternal } from "@/lib/icons";
-import { WhatsAppIconLink } from "@/components/cta/whatsapp-icon-link";
+import { WhatsAppAction } from "@/components/shared/whatsapp-action/WhatsAppAction";
 import { Linkedin } from "@/components/icons/linkedin";
 import { Twitter } from "@/components/icons/twitter";
 import { Instagram } from "@/components/icons/instagram";
@@ -162,12 +162,14 @@ export function ArticleLabClientCard({ client, askClientProps, cta }: ArticleLab
           <nav className="flex flex-wrap items-center gap-1.5 pt-0.5" aria-label="تواصل ومتابعة">
             {hasPhone && (
               <>
-                <WhatsAppIconLink
-                  phone={client.phone!}
+                <WhatsAppAction
+                  phone={client.phone}
                   clientId={client.id}
+                  clientName={client.name}
                   source="article_card"
                   articleId={askClientProps?.articleId ?? null}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-[#25D366] text-white transition-opacity hover:opacity-90"
+                  variant="icon"
+                  className="size-8"
                 />
                 <a href={`tel:${client.phone}`} aria-label="اتصال" className={railBtn}>
                   <IconPhone className="h-4 w-4" />

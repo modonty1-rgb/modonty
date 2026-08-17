@@ -31,6 +31,8 @@ export interface LegalEntityDisplay {
   /** Same date, year only, Latin digits — the /story strip sets it beside other numerals. */
   foundedYear: string | null;
   city: string | null;
+  /** District on its own — the rail card shows «city، district» and leaves the street to the map. */
+  district: string | null;
   country: string | null;
   /** City — district — street, skipping whatever is not filled. */
   address: string | null;
@@ -83,6 +85,7 @@ export function toLegalEntityDisplay(legal: LegalEntity): LegalEntityDisplay {
     registrationDate: legal.foundingDate ? DATE_FORMAT.format(legal.foundingDate) : null,
     foundedYear: legal.foundingDate ? String(legal.foundingDate.getUTCFullYear()) : null,
     city: legal.city,
+    district: legal.district,
     country: legal.country ? (COUNTRY_NAMES_AR[legal.country] ?? legal.country) : null,
     address: address || null,
     latitude: legal.latitude,

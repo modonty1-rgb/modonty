@@ -1,40 +1,43 @@
 import { Metadata } from "next";
-import { getClientsWithCounts } from "@/app/clients/helpers/get-clients-with-counts";
-import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import { UserCard } from "@/components/shared/user-card/UserCard";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { jsonLdHtmlFromString } from "@/lib/seo";
-import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
-import { ClientsSection } from "./components/clients-section";
-import { getClientsGA4Stats } from "@/lib/analytics/ga4";
+import { getClientsList } from "@/lib/queries/get-clients-list";
+import { parsePartnersQuery } from "@/app/clients/helpers/parse-partners-query";
+import { PageLayout } from "@/app/clients/components/page-layout/PageLayout";
+import { SITE_URL } from "@/constants";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getListingPageSeo("clients");
   return {
-    description: "اكتشف أبرز العلامات التجارية والشركات الناشرة على مدونتي — محتوى عربي متخصص وموثوق من مصادر معتمدة في السعودية ومصر والخليج.",
+    description:
+      "اكتشف أبرز العلامات التجارية والشركات الناشرة على مدونتي — محتوى عربي متخصص وموثوق من مصادر معتمدة في السعودية ومصر والخليج.",
     ...(metadata ?? {}),
+    // Search, industry and page live in the URL, so one canonical for all of them —
+    // a filtered view is the same directory, not a new page.
+    alternates: {
+      ...(metadata as { alternates?: object } | null)?.alternates,
+      canonical: `${SITE_URL}/clients`,
+    },
   };
 }
 
-export default async function ClientsPage({ searchParams }: { searchParams: Promise<{ service?: string }> }) {
-  const { service } = await searchParams;
-  const [{ jsonLd: storedJsonLd }, clients, industries, clientsGA4] = await Promise.all([
-    getListingPageSeo("clients"),
-    getClientsWithCounts(service),
-    getIndustriesWithCounts(),
-    getClientsGA4Stats(),
-  ]);
+interface ClientsPageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
 
-  // Featured = paid/premium partners (annual) — the admin isFeatured toggle.
-  const featuredClients = clients.filter((c) => c.isFeatured);
+export default async function ClientsPage({ searchParams }: ClientsPageProps) {
+  const [params, { jsonLd: storedJsonLd }, partners] = await Promise.all([
+    searchParams,
+    getListingPageSeo("clients"),
+    getClientsList(),
+  ]);
 
   return (
     <>
       {storedJsonLd?.trim() && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(storedJsonLd) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(storedJsonLd) }} />
       )}
       <Breadcrumb
         items={[
@@ -42,46 +45,9 @@ export default async function ClientsPage({ searchParams }: { searchParams: Prom
           { label: "الشركاء" },
         ]}
       />
-
-      <div>
-        <ClientsSection
-          featuredClients={featuredClients}
-          allClients={clients}
-          industries={industries}
-          clientsGA4={clientsGA4}
-        />
-
-        {/* JBRSEO-2: CTA — join as client */}
-        <section aria-labelledby="join-cta-heading" className="container mx-auto max-w-[1128px] px-4 py-12 mt-4">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-l from-primary to-primary/80 px-8 py-12 text-center text-primary-foreground shadow-lg">
-            {/* decorative circles */}
-            <span className="pointer-events-none absolute -start-10 -top-10 h-40 w-40 rounded-full bg-white/5" aria-hidden="true" />
-            <span className="pointer-events-none absolute -bottom-10 -end-10 h-56 w-56 rounded-full bg-white/5" aria-hidden="true" />
-
-            <h2 id="join-cta-heading" className="relative text-2xl font-bold leading-snug sm:text-3xl">
-              هل تريد عملاء من جوجل — بدون إعلانات؟
-            </h2>
-            <p className="relative mt-3 text-base text-primary-foreground/80 sm:text-lg">
-              انضم لشركاء مدونتي واجعل المحتوى يبيع لصالحك على مدار الساعة
-            </p>
-            <CtaTrackedLink
-              href="https://www.jbrseo.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              label="Clients Page Bottom CTA — عملاء بلا إعلانات"
-              type="BANNER"
-              className="relative mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-3 text-sm font-bold text-primary shadow-md hover:bg-white/90 transition-colors"
-            >
-              عملاء بلا إعلانات
-              <span aria-hidden="true">↗</span>
-            </CtaTrackedLink>
-          </div>
-        </section>
-      </div>
+      {/* UserCard reads the session cookie, so it is created here — outside anything
+          cached — and handed down as a slot the layout never introspects. */}
+      <PageLayout partners={partners} query={parsePartnersQuery(params)} userCard={<UserCard />} />
     </>
   );
 }
-
-
-
-

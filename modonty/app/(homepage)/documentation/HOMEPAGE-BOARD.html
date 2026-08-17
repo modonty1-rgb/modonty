@@ -77,132 +77,162 @@
 
 <header>
   <h1>لوحة الصفحة الرئيسية</h1>
-  <div class="meta">app/(homepage) · ١٥ أغسطس ٢٠٢٦ · فرع modonty-ui</div>
+  <div class="meta">app/(homepage) · ١٦ أغسطس ٢٠٢٦ (مراجعة كاملة بعد الاعتماد) · فرع modonty-ui</div>
 </header>
 
-<!-- ═════ جاهز للتنفيذ ═════ -->
+<!-- ═════ حالة الاعتماد ═════ -->
 <section>
-  <h2>🔴 جاهز للتنفيذ — بترتيب الأولوية</h2>
-  <p>مراجعة حيّة ١٥ أغسطس (ديسكتوب ١٢٨٠ · جوّال ٣٩٠ · ١١٢٧). <strong>ما نجح بالقياس:</strong> صفر تمرير أفقي · CLS = 0 · تركيز مرئي ١٤/١٤ بالكيبورد · صفر أيقونة بلا اسم · صفر صورة بلا <code>alt</code> · أهداف اللمس ٤٤ في الشريطين · لا شيء محجوب خلف شريط الخدمات. اللقطات في <code>.playwright-mcp/home-*.png</code>.</p>
+  <h2>📋 مراجعة الاعتماد — ١٦ أغسطس (ديسكتوب ١٢٨٠ + جوّال ٣٩٠ · محلي <code>339b369</code> · <code>modonty_dev</code>)</h2>
+  <p>الرئيسية على الديسكتوب <strong>معتمدة</strong>. هذه اللوحة تحمل <strong>المفتوح فقط</strong> — المنجز يُحذف منها لحظة إغلاقه (خالد ١٦ أغسطس). ما سلِم بالقياس يُذكر سطراً واحداً كي لا يُعاد فحصه: سيو أساسي كامل (title · canonical www · robots index · hreflang ٩ · OG ١٠ · Twitter ٦ · JSON-LD صالح Organization/WebSite/CollectionPage) · h1 واحد · صفر id مكرّر · سلسلة الترقيم 308/200/404 وتداخل التغذية ٠ · ٤٧ صورة كلّها بـalt وأبعاد · انزياح ٠ · تباين نصّي ٠ فشل فاتح/داكن على ١٤٣ عقدة · ٤٠ عنصراً بالكيبورد بحلقة تركيز · ٠ زرّ/رابط بلا اسم · ٠ رابط خارجي بلا rel · ٠ لون يدوي في مجلد الرئيسية · ٠ <code>console.log</code> · <code>"use client"</code> ٣ ملفات بمبرّر · أول مقال y=١٦٥/٨٠٠ · مساران جديدان ٢٠٠. اللقطات: <code>.playwright-mcp/t1-*.png</code> · <code>audit-mobile-light.png</code>.</p>
+</section>
+
+<!-- ═════ الرئيسية — ديسكتوب ═════ -->
+<section>
+  <h2>🔴 الرئيسية (ديسكتوب) — مفتوح، بترتيب الأولوية</h2>
 
   <article class="card todo">
-    <div class="head"><span class="id">V7</span><span class="name">«٢١ شريك» بحجم ٩ بكسل</span><span class="chip ready">🟡</span></div>
+    <div class="head"><span class="id">A1</span><span class="name">صفحة «المقالات» — أرشيف تصفّح <code>/articles</code></span><span class="chip ready">🟠 مؤجَّل بقرار خالد — نرجع له</span></div>
     <div class="body">
-      <p>ثماني شارات في بلاطات المجالات بـ<code>9px</code> — تحت أي حدّ قراءة. الحدّ الأدنى ١١ بكسل، وعلى صورة ١٢.</p>
+      <p><code>/articles</code> = 404 اليوم؛ رابط «المقالات» أُضيف إلى القائمة العلوية (<code>nav-config.ts</code>) قبل بناء الصفحة — يبقى ٤٠٤ حتى تُبنى. <strong>الاتفاق:</strong> ليست نسخة من تغذية الرئيسية (تكرار محتوى) بل أرشيف: شبكة + تصفية (مجال · تصنيف · وسم · ترتيب) + سلسلة <code>/articles/page/n</code> بكانونيكال ذاتي وعنوان مرئي. تبدأ بموكب HTML للتصميم ثم مراحل.</p>
     </div>
   </article>
 
   <article class="card todo">
-    <div class="head"><span class="id">V4</span><span class="name">العمود الأيمن ينهار بعد بطاقتين</span><span class="chip ready">🟡</span></div>
+    <div class="head"><span class="id">T3</span><span class="name">خريطة الموقع ناقصة خمسة مسارات + <code>loading.tsx</code> لمسارين</span><span class="chip ready">🟡 سيو</span></div>
     <div class="body">
-      <p>محتوى العمود ينتهي عند 457 بكسل مقابل 962 للأيسر — فراغ ٥٠٠ بكسل تحت «اسأل Modo». السبب <code>ReelsCard.tsx:86</code> → <code>return null</code> بلا حالة فراغ.</p>
+      <p><code>sitemap.xml</code> (٢١٢ رابطاً، مقيس) لا يحوي <code>/reels</code> · <code>/audio</code> · <code>/trust</code> · <code>/booking</code> · <code>/shop</code> — وكلّها في القائمة العلوية أو الرِيلين. و<code>/booking</code> و<code>/shop</code> بلا <code>loading.tsx</code> (قاعدة المشروع لكل مسار).</p>
+      <p><strong>الحلّ:</strong> إضافة الخمسة إلى <code>app/sitemap.ts</code> + ملفَّي loading.</p>
     </div>
   </article>
 
   <article class="card todo">
-    <div class="head"><span class="id">T5</span><span class="name">القائمة العلوية بلا <code>aria-current</code></span><span class="chip ready">🟡</span></div>
+    <div class="head"><span class="id">T5</span><span class="name">القائمة العلوية بلا <code>aria-current="page"</code></span><span class="chip ready">🟡 إتاحة</span></div>
     <div class="body">
-      <p>الأربعة (الرئيسية · الرائجة · الشركاء · المزايا) بلا <code>aria-current="page"</code> — النشط يُعرف باللون فقط، فقارئ الشاشة لا يعرف أين هو. سطر واحد في رابط القائمة.</p>
+      <p><code>grep aria-current DesktopNavItem.tsx</code> = ٠. النشط يُعرف باللون فقط؛ قارئ الشاشة لا يعرف أين هو. سطر واحد: <code>aria-current={active ? "page" : undefined}</code>.</p>
     </div>
   </article>
 
   <article class="card todo">
-    <div class="head"><span class="id">T2</span><span class="name">ألوان مكتوبة باليد</span><span class="chip ready">🟡</span></div>
+    <div class="head"><span class="id">T7</span><span class="name">مكوّنان مخفيّان بلا مستهلك — قرار</span><span class="chip ready">🟡 قرار خالد</span></div>
     <div class="body">
-      <p><code>rgba(</code> ×١٣ في ٨ ملفات. §١٠ يوجب أن تأتي من <code>globals.css</code> — اللون اليدوي يكسر الوضع الليلي/النهاري.</p>
+      <p>بعد بطاقات الرابط: <code>clients-card/ClientsCard.tsx</code> و<code>modonty-card/ModontyCard.tsx</code> صفر مستورد (النسختان الجوّال <code>*Mobile.tsx</code> ما زالتا تُستخدمان). قاعدة المستودع: «ملف بلا مستهلك = كود ميت، يُحذف لا يُنقل». خالد قال «اخفِ» — <strong>يُحسم:</strong> حذف الآن، أو إبقاء مؤقّت حتى تنتهي جلسة الجوّال ثم حذف.</p>
     </div>
   </article>
 
   <article class="card todo">
-    <div class="head"><span class="id">T3</span><span class="name">المساران الجديدان ناقصان</span><span class="chip ready">🟡</span></div>
+    <div class="head"><span class="id">T10</span><span class="name">الطلّات الوهمية في التطوير — قرار</span><span class="chip ready">🟡 قرار خالد</span></div>
     <div class="body">
-      <p><code>/booking</code> و<code>/shop</code> يعملان، لكن بلا <code>loading.tsx</code> وبلا إدراج في <code>sitemap.ts</code>.</p>
+      <p><code>CachedHomePage.tsx:59</code>: لمّا القاعدة بلا طلّات و<code>NODE_ENV=development</code> تُصنع ٣ بدائل من مقالات التغذية. لا تصل الإنتاج، لكنها كود مؤقّت داخل الصفحة المخبّأة. <strong>يُحسم:</strong> تبقى (dev فقط) أو تُحذف قبل الدمج.</p>
     </div>
   </article>
 
   <article class="card todo">
-    <div class="head"><span class="id">V8</span><span class="name">شعار كرت مدونتي مشوَّه النسبة</span><span class="chip ready">🟢</span></div>
+    <div class="head"><span class="id">T8</span><span class="name">شعار الهيدر بأولوية LCP</span><span class="chip ready">🟢 أداء</span></div>
     <div class="body">
-      <p>أصله ٧٠×١٦ ويُرسم ٦٦×٣٦ — تحذير Next «عُدّل بُعد واحد دون الآخر». <code>h-auto</code> أو أبعاد صحيحة.</p>
+      <p>HTML الخام: ٤ صور <code>eager</code>+<code>fetchPriority="high"</code> = شعاران (جوّال + ديسكتوب) + بطلان. الشعاران ينافسان البطل على أول جولة تحميل. الأولوية العالية للبطل وحده؛ الشعار <code>eager</code> بلا <code>high</code>.</p>
     </div>
   </article>
 
   <article class="card todo">
-    <div class="head"><span class="id">V9</span><span class="name">تبويبات كرت مدونتي ٣٢ بكسل</span><span class="chip ready">🟢</span></div>
+    <div class="head"><span class="id">T6</span><span class="name"><code>scroll-behavior: smooth</code> بلا <code>data-scroll-behavior</code></span><span class="chip ready">🟢 تخطيط جذري</span></div>
     <div class="body">
-      <p>(مقالات · استمع · لقطات) ارتفاعها ٣٢ — فوق حدّ WCAG (٢٤) وتحت Apple (٤٤). إمّا نقبلها أو نرفعها لـ٤٤.</p>
+      <p>مقيس: <code>html.scrollBehavior = smooth</code> و<code>data-scroll-behavior = null</code>. Next يطلب السمة على <code>&lt;html&gt;</code> ليعطّل التمرير الناعم أثناء الانتقال بين المسارات. سطر في <code>app/layout.tsx</code>.</p>
     </div>
   </article>
 
   <article class="card todo">
-    <div class="head"><span class="id">T6</span><span class="name">تحذير Next: <code>scroll-behavior: smooth</code> بلا <code>data-scroll-behavior</code></span><span class="chip ready">🟢</span></div>
+    <div class="head"><span class="id">T9</span><span class="name">وصف الميتا ١٣٤ حرفاً</span><span class="chip ready">🟢 بيانات (أدمن)</span></div>
     <div class="body">
-      <p>ظهر في الكونسول عند التنقّل من الرئيسية: Next يطلب <code>data-scroll-behavior="smooth"</code> على <code>&lt;html&gt;</code> كي يعطّل التمرير الناعم أثناء الانتقال بين المسارات (وإلا يقفز الانتقال بشكل غريب). سطر واحد في التخطيط الجذري — خارج مجلد الرئيسية لكنه يمسّها.</p>
+      <p>وصف الرئيسية ١٣٤ حرفاً؛ الهدف ١٥٠–١٦٠ ليمتلئ سطر جوجل. يُعدَّل من الأدمن (Settings) لا من الكود.</p>
     </div>
   </article>
 
   <article class="card todo">
-    <div class="head"><span class="id">V3</span><span class="name">صور المجالات مكرّرة</span><span class="chip ready">آخر حاجة — بيانات لا كود</span></div>
+    <div class="head"><span class="id">V3</span><span class="name">صور المجالات ووصفها = بيانات</span><span class="chip ready">🟢 بيانات (خالد)</span></div>
     <div class="body">
-      <p>٨ بلاطات، الصور الفريدة = <strong>١</strong>. <strong>السبب مقروء من القاعدة (<code>modonty_dev</code>):</strong> المجالات الثمانية كلها <code>socialImage = logo/_platform/platform-default-logo</code> — شعار المنصّة الافتراضي مخزَّن كصورة لكل مجال بدل الفراغ؛ فالبديل المصمَّم في الكود (تدرّج + أيقونة) لا يُرسم أبداً. لا الأدمن ولا الصيانة يكتبان هذه القيمة — إدخال قديم.</p>
-      <p><strong>العلاج:</strong> (١) تفريغ <code>socialImage</code> للثمانية → بلاطات متمايزة فوراً؛ (٢) رفع صورة حقيقية لكل مجال من الأدمن (4:3). على dev ثم الإنتاج بيد خالد.</p>
+      <p>على dev: المجالات كلّها <code>socialImage = logo/_platform/platform-default-logo</code> (شعار المنصّة الافتراضي بدل الفراغ) فالبديل المصمَّم لا يُرسم؛ و<code>description</code> فارغ لأغلبها. تظهر اليوم في صفّ الجوّال فقط (رِيل الديسكتوب مخفيّ). <strong>العلاج:</strong> تفريغ <code>socialImage</code> + رفع صورة 4:3 ووصف سطر لكل مجال — dev ثم الإنتاج بيد خالد.</p>
+    </div>
+  </article>
+
+  <article class="card open">
+    <div class="head"><span class="name">ملاحظة بنية (لا تاسك)</span></div>
+    <div class="body">
+      <p><code>components/shared/link-card/LinkCard.tsx</code> في مجلد المشترك بمستهلك واحد (الرئيسية) — استثناء واعٍ من قاعدة «الترقية بمستهلكَين» بقرار خالد («هنستخدمه في أكثر من مكان»). يُذكر كي لا يُقرأ خطأً في مراجعة لاحقة.</p>
     </div>
   </article>
 </section>
 
-<!-- ═════ محجوب ═════ -->
+<!-- ═════ الجوّال ═════ -->
 <section>
-  <h2>⏸️ محجوب بـD1</h2>
+  <h2>📱 الجوّال (٣٩٠×٨٤٤) — مؤجَّل بقرار خالد، مقيس ١٦ أغسطس</h2>
+  <p>القياس على الوضع الفاتح. اللقطة: <code>.playwright-mcp/audit-mobile-light.png</code>.</p>
+
+  <article class="card todo">
+    <div class="head"><span class="id">V10</span><span class="name">التغذية تبدأ عند y=٧٤٢ من ٨٤٤</span><span class="chip ready">🔴</span></div>
+    <div class="body">
+      <p>فوق أول مقال: صفّ المجالات (١٥٢) → الطلّات (١٥٤) → كرت مدونتي جوّال (٢٤١) → شركاء موثوقون (٦٢). القارئ لا يرى مقالاً في القشرة الأولى. نفس علاج الديسكتوب: بطاقات رابط بدل الكروت الثقيلة، والتغذية تصعد.</p>
+    </div>
+  </article>
+
+  <article class="card todo">
+    <div class="head"><span class="id">M1</span><span class="name">شريط الأسفل: «احجز الآن» أبيض على فاتح</span><span class="chip ready">🔴 تباين ١٫١١:١</span></div>
+    <div class="body">
+      <p>مقيس: نصّ <code>rgb(255,255,255)</code> على <code>rgb(243,243,241)</code> = ١٫١١:١ — الزرّ يكاد يختفي (اللقطة). و«تسوّق الآن» تركواز على فاتح ١٫٦٣:١، و«مودو» بحجم <strong>٨ بكسل</strong> ١٫٦٣:١. العلاج: تعبئة أساسية حقيقية للزرّ + <code>text-link-accent</code> للتركواز + حجم ≥ ١١.</p>
+    </div>
+  </article>
+
+  <article class="card todo">
+    <div class="head"><span class="id">M2</span><span class="name">شارة «مزاياك هنا» في الهيدر</span><span class="chip ready">🟡 تباين ١٫٨١:١</span></div>
+    <div class="body">
+      <p>تركواز ١١ بكسل على أبيض. نفس العلاج: <code>text-link-accent</code>.</p>
+    </div>
+  </article>
+
+  <article class="card todo">
+    <div class="head"><span class="id">M3</span><span class="name">كرت مدونتي جوّال: تبويبات ٣٢ بكسل + رابط الشعار ٢٨</span><span class="chip ready">🟡 لمس</span></div>
+    <div class="body">
+      <p>(مقالات · استمع · لقطات) ٣٢ بكسل ورابط الشعار ٢٨ — فوق WCAG (٢٤) وتحت Apple (٤٤). يُحسم مع إعادة بناء الجوّال (قد يزول الكرت كما زال على الديسكتوب).</p>
+    </div>
+  </article>
+
+  <article class="card todo">
+    <div class="head"><span class="id">M4</span><span class="name"><code>ClientsCardMobile</code> ما زال بأيقونة الصحّ العامّة</span><span class="chip ready">🟢</span></div>
+    <div class="body">
+      <p><code>IconVerified</code> بدل علامة التوثيق الرسمية (الدرع مع M، <code>ModontyTrustMark</code>) التي اعتُمدت على الديسكتوب.</p>
+    </div>
+  </article>
+
+  <article class="card todo">
+    <div class="head"><span class="id">M5</span><span class="name">التركواز نصّاً في الجوّال عموماً</span><span class="chip ready">🟢 نظام تصميم</span></div>
+    <div class="body">
+      <p>٦ عناصر مرئية بالتركواز الخام على فاتح (شارة الهيدر · مودو · تسوّق الآن · ٣ أيقونات). الرمز الجديد <code>--link-accent</code> (فاتح <code>#007575</code> ٥٫٥:١) جاهز في <code>globals.css</code> — يُسحب عليها كلّها في جلسة الجوّال.</p>
+    </div>
+  </article>
+</section>
+
+<!-- ═════ خارج نطاق الرئيسية ═════ -->
+<section>
+  <h2>🌐 خارج مجلد الرئيسية — لُوحظ أثناء المراجعة (تخطيط · فوتر · تطوير)</h2>
   <div class="scroll">
     <table>
-      <thead><tr><th>#</th><th>البند</th><th>المقيس</th></tr></thead>
+      <thead><tr><th>#</th><th>الملاحظة</th><th>الدليل</th><th>الحلّ المقترح</th></tr></thead>
       <tbody>
-        <tr><td class="num">V1</td><td>لا عنوان مرئي على الصفحة</td><td><code>&lt;h1 class="sr-only"&gt;</code> — موجود للآلة، مخفيّ عن الإنسان</td></tr>
-        <tr><td class="num">V2</td><td>لا بؤرة بصرية</td><td>كل البطاقات بنفس الحلقة والاستدارة والخلفية</td></tr>
-        <tr><td class="num">V5</td><td>ترتيب بطاقة المقال مقلوب</td><td>صورة ← كاتب ← عنوان. العنوان سبب النقرة ويأتي ثالثاً</td></tr>
-        <tr><td class="num">V10</td><td>ترتيب قشرة الجوّال</td><td>أول ٤٧٠ من ٨٤٤ بكسل = مجالات (روبوتات) + كرت مدونتي؛ المقالات تبدأ عند ٥٥٪ من القشرة</td></tr>
+        <tr><td class="num">L1</td><td>شريط GA4 في الفوتر («الأثر الرقمي» · زيارات · مشاهدات…) بنصوص <code>text-white/35–45</code> بحجم ١٠–١١ بكسل على تدرّج كحلي</td><td>خارج مسح التباين الآلي (تدرّج) — يحتاج قياساً يدوياً؛ ١٠ بكسل تحت حدّ القراءة أصلاً</td><td>≥ ١١ بكسل + شفافية ≥ ٧٠٪</td></tr>
+        <tr><td class="num">L2</td><td>الأدمن يعطي وصف ميتا للرئيسية ١٣٤ حرفاً (T9) — لا حارس طول في نموذج Settings</td><td>مقيس من HTML</td><td>عدّاد ١٥٠–١٦٠ في الأدمن (خارج نطاق مدونتي — سطر للتذكير)</td></tr>
+        <tr><td class="num">L3</td><td>الأدمن لا يمنع <code>socialImage</code> = شعار المنصّة الافتراضي على المجالات (V3)</td><td>القاعدة</td><td>حارس في حفظ المجال (أدمن)</td></tr>
+        <tr><td class="num">L4</td><td>HTML الرئيسية ٦٣٧ كيلو و٢٤ سكربت</td><td>وضع التطوير (خريطة المصادر + حمولة RSC)</td><td>يُقاس على <code>test.modonty.com</code> فقط؛ ليس عطلاً</td></tr>
+        <tr><td class="num">L5</td><td>٣ أخطاء <code>[auth][error] JWTSessionError</code> في كل تحميل محلي</td><td>كوكي جلسة قديم في متصفّح Playwright</td><td>مسح كوكيز <code>localhost</code> في متصفّح الاختبار</td></tr>
+        <tr><td class="num">L6</td><td><code>USE_CACHE_TIMEOUT</code> من <code>getClientsGA4Stats</code> (<code>lib/analytics/ga4.ts:208</code>) على <code>/clients/[slug]</code></td><td>ظهر في <code>next build --debug-prerender</code> فقط؛ البناء العادي وفيرسل نجحا</td><td>مرشّح للمراجعة، ليس عطلاً مثبتاً</td></tr>
+        <tr><td class="num">L7</td><td>ملفان تجريبيان في جذر المستودع غير مثبَّتين: <code>img-reqs.txt</code> · <code>mobile-uiux-mockup.html</code></td><td><code>git status</code></td><td>حذف بإذن أو نقلهما لـ<code>documents/</code></td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
-<!-- ═════ خلصنا ═════ -->
+<!-- ═════ D1 ═════ -->
 <section>
-  <h2>✅ خلصنا</h2>
-  <div class="scroll">
-    <table>
-      <tbody>
-        <tr><td>طلبات الفريق ١٦ أغسطس (١): مكوّن رابط-بطاقة مشترك <code>components/shared/link-card/LinkCard</code> (أيقونة على قرص · عنوان · سطر · سهم بلون البراند). عمود الحساب: كرت الحساب → «شركاء موثوقون» (درع التوثيق) → «احجز الآن» → «تسوّق الآن». الرِيل الأيسر: «مدونتي» → «استكشف المجالات» → «الطلّات» → «استمع». الطلّات خرجت من تغذية الديسكتوب (تبقى تحت 1240). مخفيّ لا محذوف: <code>ModontyCard</code> · <code>ClientsCard</code> · رِيل <code>IndustriesCard</code></td><td class="num">٧ بطاقات رابط · أول مقال y=165</td></tr>
-        <tr><td>كل عنصر تحكّم من shadcn</td><td class="num">صفر عنصر خام</td></tr>
-        <tr><td>الروابط بهيئة زرّ ← <code>buttonVariants</code></td><td class="num">٥ مواضع</td></tr>
-        <tr><td>كنسة نظام التصميم (ظلال · أوزان · أقطار · حاوية · جهات · لمس)</td><td class="num">٦ بنود</td></tr>
-        <tr><td>تحويل إلى سيرفر كومبوننت — الباقيان بمبرّر مقيس: <code>MoreArticles</code> (جِلد المحرّك) · <code>MoreArticlesOnScroll</code> (بوّابة التحميل)</td><td class="num">"use client" ١٦ → ٢</td></tr>
-        <tr><td>حذف كود ميت وملفات بلا مستهلك</td><td class="num">ملفات ٤٠ → ٢٩</td></tr>
-        <tr><td>أزرار التمرير بلا جافاسكربت</td><td class="num"><code>animation-timeline: scroll()</code></td></tr>
-        <tr><td>استعلامات قاعدة اختفت من الرئيسية</td><td class="num">−٤</td></tr>
-        <tr><td>مساران جديدان <code>/booking</code> · <code>/shop</code></td><td class="num">٢٠٠ · ٢٠٠</td></tr>
-        <tr><td>مكوّن <code>Scroller</code> مشترك، صفر تبعية</td><td class="num">بديل embla (١٢ كيلو)</td></tr>
-        <tr><td>التمرير اللانهائي كاملاً (IS1–IS6): سلسلة <code>/page/n</code> + 308/404 من البروكسي + <code>GET /api/articles</code> + محرّك مشترك في <code>shared/</code></td><td class="num">٧/٧ شروط جوجل بالقياس</td></tr>
-        <tr><td>حذف <code>content</code> من الحمولة + <code>content-visibility</code> على البطاقات</td><td class="num">IS4 · IS5</td></tr>
-        <tr><td>T1 أسماء المجالات تُقصّ — لم يتكرّر بعد <code>Scroller</code></td><td class="num">٨ أسماء بلا قصّ عند 1127 و1280</td></tr>
-        <tr><td>🚨 المصيبة (خالد ١٥ أغسطس): الريفرش على <code>/page/3</code> كان يرمي الزائر في أرشيف عارٍ بلا أعمدة الرئيسية، والشريط يقفز لـ<code>/page/4</code> وحده. <strong>الحلّ:</strong> <code>/page/n</code> صار الرئيسية نفسها (<code>CachedHomePage</code> مشترك بين المسارين، <code>page</code> في مفتاح الكاش) وتغذيتها من الفصل n + عنوان مرئي «الصفحة n» + سابقة/تالية · والبوّابة <code>useMountOnApproach</code> لا تركّب المحرّك بعد ريفرش/رجوع إلا بحركة إنسان (عجلة/لمس/مفاتيح — لأن استعادة التمرير نفسها تطلق <code>scroll</code>، مقيس)</td><td class="num">مقيس: تمرير / → 2 → 3، ريفرش → الرابط يبقى <code>/page/3</code> (٤ ث خمول) · العمود والمجالات وكرت مدونتي والحساب كلها حاضرة · عجلة حقيقية → <code>/page/4</code> · السلسلة سليمة: 308 · 200 · 404 · تداخل التغذية 0/0/0 · tsc = 0</td></tr>
-        <tr><td>V6 — أزرق البراند نصّاً: رمز جديد <code>--link</code> (الليلي 72% = <code>#7070FF</code>؛ الفاتح = primary) + لون Tailwind <code>text-link</code>، وسُحب <code>text-primary</code> → <code>text-link</code> في ٢١ ملفاً (الرئيسية · بطاقات التغذية · النافبار). لون واحد لا يكفي الدورين (تعبئة تحت أبيض ≠ نصّ على داكن) — نمط Primer. موثَّق في <code>DESIGN-SYSTEM.md</code> §١</td><td class="num">مقيس: النصوص الفاشلة ٣ → ٠ · «الرئيسية» 4.73:1 · الشارات 5.05:1</td></tr>
-        <tr><td>T4 — صورة LCP: البطلان (تغذية الديسكتوب · كرت مدونتي على الجوّال) صارا <code>loading="eager"</code> + <code>fetchPriority="high"</code> بدل <code>preload</code>/lazy (توثيق Next 16.2.9)، و<code>sizes</code> صادقة تعطي التوأم المخفيّ أصغر مرشّح (بلا <code>vw</code> — أي vw يُسقط المرشّحات تحت 640 في <code>getWidths</code>). React نفسه يضيف <code>&lt;link rel=preload&gt;</code> للصور غير الكسولة. الجذر (نسخة DOM واحدة للبطاقة) يبقى مع V5</td><td class="num">مقيس بارد على جوّال DPR 3: طلب واحد ≥640w = بطل الجوّال 1200w (٤٤ كيلو) · بطل الديسكتوب المخفي 16w · ١٦ طلب صور = ١٨٨ كيلو · ديسكتوب: بطل التغذية 640w eager/high والتوأم 16w · تحذير LCP اختفى</td></tr>
-        <tr><td>البلور (LQIP) رجع لبطاقات التغذية وكرت مدونتي — كان الاستعلام يجلب <code>blurDataURL</code> ثم يرميه قبل البطاقة. أُضيف <code>imageBlur</code> إلى <code>FeedPost</code> (إضافة فقط — عقد <code>/api/articles</code> لم يتغيّر) في المنتجين الثلاثة، و<code>asMedia()</code> صارت تقبل البلور</td><td class="num">مقيس: صور بالبلور ٠ → ٢٥ في HTML الخام · <code>/api/articles?page=2</code> ١٠/١٠ تحمل <code>imageBlur</code></td></tr>
-        <tr><td>حذف تسخين صور الصفحة التالية (<code>components/preload-hero/</code> الثلاثة + ٥ استدعاءات في البطاقات والرائجة و«اقرأ أيضاً» وبطاقة العميل) — بقرار خالد بعد فحص المصادر: توثيق Next وVercel لا يذكرانها، مناقشة Next #40711 بلا ردّ، ومصدرها قالب شخصي (NextFaster). كانت تنزّل حتى ٦ صور مقالات بلا ضغط + حدّ عميل تحت كل بطاقة</td><td class="num">تست حيّ: الرئيسية · التمرير ٣٥→٦٥ · الرائجة · المقال («اقرأ أيضاً» ١٣) · /booking (٢٣ بطاقة) — صفر أخطاء جديدة</td></tr>
-        <tr><td>D3 — بطل كرت مدونتي = الأحدث دائماً بلا تثبيت (قرار خالد ١٥ أغسطس: كل مقال جديد هو البطل). الكود كذلك أصلاً — صفر تعديل</td><td class="num"><code>orderBy: datePublished desc</code></td></tr>
-        <tr><td>D2 — قاعدة الزرّ المشتركة صارت على نظام تصميم مدونتي (<code>rounded-full</code> · <code>font-bold</code>) بقرار خالد: مدونتي هي الماستر والأدمن والكونسول يرثان. حُذفت الأصناف الزائدة من ٥ نداءات في الرئيسية</td><td class="num">مقيس: «أنشئ حسابًا» 9999px · 700 بلا تجاوز</td></tr>
-        <tr><td>كرت الحساب <code>UserCard</code> سيرفر: يقرأ الجلسة بـ<code>auth()</code> ويدخل الصفحة المخبّأة كفتحة تمريرية (نمط «Interleaving» في توثيق <code>use cache</code>) — الجلسة ما تغادر السيرفر</td><td class="num">"use client" ٣ → ٢</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- ═════ D1 — اقتراح للمراجعة آخر شيء ═════ -->
-<section>
-  <h2>🧭 D1 — اقتراحي من المصادر (نراجعه آخر حاجة)</h2>
+  <h2>🧭 D1 — اقتراحي من المصادر (يُراجَع آخر حاجة) + ما يحجبه</h2>
   <p>ليس قراراً بعد. جُمع ١٥ أغسطس من NN/g وتقرير رويترز ٢٠٢٥ وتجارب واشنطن بوست ونيويورك تايمز، ثم أُسقط على طبيعة مدونتي.</p>
-
   <div class="scroll">
     <table>
       <thead><tr><th>السؤال</th><th>الاقتراح</th><th>المصدر</th></tr></thead>
@@ -213,22 +243,20 @@
       </tbody>
     </table>
   </div>
-
-  <article class="card open">
-    <div class="head"><span class="name">لو اعتُمد — تبعاته على المحجوب</span></div>
-    <div class="body">
-      <ul class="plain">
-        <li><strong>V1</strong> — عنوان مرئي سطر واحد فوق التغذية («آخر المقالات من شركاء مدونتي»)، لا بطل تسويقي.</li>
-        <li><strong>V2</strong> — أول بطاقة = العنصر المهيمن (أكبر، معاملة «مميّز»)، والأعمدة الجانبية تهدأ بصرياً.</li>
-        <li><strong>V5</strong> — ترتيب البطاقة: صورة ← عنوان ← الشريك والوقت ← مقتطف.</li>
-        <li><strong>V10</strong> — الجوّال: التغذية تدخل القشرة الأولى؛ المجالات وكرت مدونتي ينزلان.</li>
-      </ul>
-      <p>المصادر: <a href="https://www.nngroup.com/articles/homepage-design-principles/">NN/g — Homepage Design: 5 Principles</a> · <a href="https://www.nngroup.com/articles/113-design-guidelines-homepage-usability/">NN/g — 113 Guidelines</a> · <a href="https://digiday.com/media/how-publishers-are-experimenting-with-more-homepage-personalization-sections/">Digiday — homepage personalization</a> · <a href="https://reutersinstitute.politics.ox.ac.uk/digital-news-report/2025/dnr-executive-summary">Reuters DNR 2025</a></p>
-    </div>
-  </article>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>#</th><th>محجوب بـD1</th><th>المقيس اليوم</th></tr></thead>
+      <tbody>
+        <tr><td class="num">V1</td><td>لا عنوان مرئي على الصفحة</td><td><code>&lt;h1 class="sr-only"&gt;</code> — للآلة، مخفيّ عن الإنسان</td></tr>
+        <tr><td class="num">V2</td><td>لا بؤرة بصرية</td><td>كل البطاقات بنفس الحلقة والاستدارة والخلفية</td></tr>
+        <tr><td class="num">V5</td><td>ترتيب بطاقة المقال مقلوب</td><td>صورة ← كاتب ← عنوان. العنوان سبب النقرة ويأتي ثالثاً</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>لو اعتُمد: V1 عنوان مرئي سطر واحد فوق التغذية · V2 أول بطاقة مهيمنة والأعمدة تهدأ · V5 صورة ← عنوان ← الشريك والوقت ← مقتطف · V10 التغذية تدخل قشرة الجوّال. المصادر: <a href="https://www.nngroup.com/articles/homepage-design-principles/">NN/g — Homepage Design: 5 Principles</a> · <a href="https://www.nngroup.com/articles/113-design-guidelines-homepage-usability/">NN/g — 113 Guidelines</a> · <a href="https://digiday.com/media/how-publishers-are-experimenting-with-more-homepage-personalization-sections/">Digiday</a> · <a href="https://reutersinstitute.politics.ox.ac.uk/digital-news-report/2025/dnr-executive-summary">Reuters DNR 2025</a></p>
 </section>
 
-<footer>تُحدَّث هذه اللوحة في نفس الكوميت الذي يغيّر ما فيها.</footer>
+<footer>تُحدَّث هذه اللوحة في نفس الكوميت الذي يغيّر ما فيها. المنجز يُحذف منها لا يُؤرشف — تاريخه في <code>documents/context/SESSION-LOG.md</code> وكوميتات الفرع.</footer>
 
 </div>
 </body>

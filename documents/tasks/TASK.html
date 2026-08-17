@@ -1335,6 +1335,32 @@ const TASKS = [
    "<b>ليس عاجلاً ولا يحجب <code>T9</code>.</b>",
  ref:"٧ أغسطس"},
 
+{id:"ADM-GAPS", b:"projects", app:["admin"], tab:"open", sev:"high", who:"c", date:"١٦ أغسطس ٢٠٢٦",
+ t:"⚡ عاجل — كرت «مشاكل صفحات العملاء» في الأدمن (لروان)",
+ d:"<b>فكرة خالد (١٦ أغسطس ٢٠٢٦):</b> بدل ملف على درايف يتقادم، كرت في الأدمن يجرد نواقص ملفّ كل شريك — تفتحه روان وتشوف مباشرةً وش ينقص كل عميل.<br><br>" +
+   "<b>لماذا الأدمن لا الدرايف:</b> الشيت لقطة ميّتة تتقادم لحظة ما يعبّي شريك حقلاً؛ الكرت يقرأ من القاعدة كل مرة فيصحّح نفسه، والعدّاد النازل يصير مؤشّر تقدّم. وروان شغّالة في الأدمن أصلاً، فكل صفّ يوديها لملف الشريك بضغطة.<br><br>" +
+   "<b>الجرد الأوّلي — متحقَّق بالقياس الحيّ</b> (قراءة DOM لصفحة <code>/clients</code> على السيرفر المحلي، ٣٠ شريكاً نشطاً عبر ٣ صفحات، ١٦ أغسطس ٢٠٢٦):<br>" +
+   "• <b>٢١</b> شريكاً مصنّفين «السياحة العلاجية» وفيهم أطباء أسنان وعيون وطبّ نفسي وعظام — <b>أخطر بند</b>، والفلتر يعرضه للزائر كما هو.<br>" +
+   "• <b>٢٣</b> بلا خدمات مسجّلة فيسقط الكرت على اسم المجال · <b>٢٦</b> بلا رخصة ولا صورة سجلّ · <b>٢٣</b> بلا فيديو · <b>١٥</b> بلا معرض.<br>" +
+   "• <b>٣٠/٣٠</b> بلا أي مراجعة معتمدة — إشارة الثقة الأولى فاضية تماماً.<br>" +
+   "• أوصاف مكسورة الطرفين: <b>١٨</b> حرفاً عند «دكتور شريف الفاتح» مقابل <b>٢٦٢٠</b> عند «فرسان التعافي». المكتمل الوحيد: <b>دكتور علاء الدين بدوي</b>.<br><br>" +
+   "<b>الحقول التي يقرأها الكرت — متحقَّقة سطراً سطراً في</b> <code>shared/prisma/schema/schema.prisma</code>:<br>" +
+   "<code>type ClientServiceItem</code> (٣٦٢) · <code>type ClientCredential</code> (٣٨٢) · <code>heroImageMediaId</code> (٣٩٩) · <code>priceRange</code> (٤٨٨) · <code>isFeatured</code> (٥٢٢) · <code>foundingDate</code> (٥٦٥) · <code>introVideoMediaId</code> (٦٥٠) · <code>verificationImageUrl</code> (٦٥٤) · و<code>Media type=GALLERY</code> (نفس شرط معرض صفحة الشريك في <code>app/clients/[slug]/helpers/client-gallery.ts:25</code>) · و<code>ClientReview.rating</code> بحالة <code>APPROVED</code>.<br><br>" +
+   "<b>مكان البناء — متحقَّق من وجوده:</b> <code>admin/app/(dashboard)/clients/page.tsx</code> (قائمة العملاء) أو لوحة <code>admin/app/(dashboard)/page.tsx</code>. الاختيار بينهما يُحسم عند التنفيذ بعد فحص شكل الصفحتين.<br><br>" +
+   "<b>شروط البناء:</b> يُحسب من القاعدة لا يُكتب بيد · يُرتَّب بالمميّزين أوّلاً (الأعلى ظهوراً والأكثر دفعاً) · كل صفّ = اسم الشريك + شارات نواقصه + زرّ «افتح ملفه».<br><br>" +
+   "<b>لقطة مؤقّتة</b> (تُحذف بعد بناء الكرت): <a href='https://docs.google.com/spreadsheets/d/1vpj8kdxSuCBk_W4eqrgxRN7l5SOkTZcr1Ttpq7XAZso/edit' target='_blank'>شيت نواقص الشركاء — ١٦ أغسطس</a>.<br><br>" +
+   "<b>التوقيت:</b> بعد ريفاكتور مدونتي — خالد: «نكمل الـRefactor، بس ضيف النقطة هذي».",
+ ref:"١٦ أغسطس ٢٠٢٦"},
+
+{id:"PREV", b:"projects", app:["console","admin","modonty"], tab:"open", sev:"high", who:"k", date:"١٧ أغسطس ٢٠٢٦",
+ t:"⏸ نظام الثقة والتقييمات — «هدية من مدونتي» + تقييمات الزوّار للشركاء (بعد الريفاكتور)",
+ d:"<b>الحالة:</b> الرؤية والفلو والشاشات متّفق عليها · <b>صفر كود</b> · مؤجَّل بقرار خالد (١٧ أغسطس): «نخلص أوّل حاجة الريفاكتور العام لمدونتي، بعدها نرجع للمزايا هذي».<br><br>" +
+   "<b>الوثيقة الواحدة — كل ما يخصّ الفكرة:</b> <a href='../idea/trust-reviews-idea.html' target='_blank'>documents/idea/trust-reviews-idea.html</a> — المقدّمة تشرح الفكرة كاملة، النوعان جنباً لجنب، نصوص جوجل، المقترحات، شاشات «هدية من مدونتي» الثلاث والنموذج (٤ب/٤ج)، المحرّك الواحد، خارطة الطريق A→E، والقرارات السبعة.<br><br>" +
+   "<b>الفكرة في سطرين:</b> نوعان من التقييم — الشريك يقيّم مدونتي (ثقة للمبيعات؛ بلا نجوم جوجل لأنها تقييم الكيان لنفسه) · الزائر يقيّم الشريك (نجوم جوجل؛ <b>مبنيّ بالكود من قبل</b> — <code>ClientReview</code> <code>schema.prisma:1942</code> — لكنه فاضٍ: صفر معتمد/٣٠ شريكاً). محرّك واحد «هدية من مدونتي»: هدية (شهر · مقال · أخرى) + مطلوب مقابلها (تقييم · فيديو · اجمع تقييمات عملائك · بلا مقابل) + اختيار الشركاء من الأدمن → البطاقة للمدعوّين فقط → اعتماد عندنا → منح → الأصول (مدونتي · بني/سوشيال · صفحة الشريك).<br><br>" +
+   "<b>اكتشاف سيو يحسم أوّل خطوة:</b> الشريك يعتمد تقييماته عن نفسه من الكونسول (<code>console/.../client-reviews/actions/client-review-actions.ts:51</code>) — ونصّ جوجل (Review snippet، جُلب ١٧ أغسطس): «If the entity that's being reviewed controls the reviews about itself … ineligible for star review feature». <b>الخطوة A:</b> نقل الاعتماد إلى الأدمن قبل أي جمع.<br><br>" +
+   "<b>عند الاستئناف:</b> اقفل القرارات السبعة (القسم ٧ في الوثيقة ١) ثم A→B→C→D→E، كل مرحلة تاسك يُتحقَّق منه حيّاً.",
+ ref:"١٧ أغسطس ٢٠٢٦"},
+
 {id:"ADM-AUTH-IMG", b:"projects", app:["admin"], tab:"open", sev:"normal", who:"c",
  t:"الأدمن بلا حقل لصورة الكاتب — اضطررنا لكتابتها في القاعدة",
  d:"<b>كُشف أثناء بند ٥٤ (٧ أغسطس):</b> أردنا ضبط أفاتار الكاتب «مدونتي» من الواجهة، فتبيّن أنّ الواجهة لا تسمح.<br><br>" +
@@ -1343,6 +1369,14 @@ const TASKS = [
    "<b>المقترح:</b> إمّا حقل صورة في صفحة الكاتب يستخدم منتقي الوسائط نفسه المستعمل في العملاء، أو — أبسط وأوفق للمعمار المعلَن — أن تقرأ مدونتي أفاتار البراند فولباكاً حين يكون <code>author.image</code> فارغاً، فيختفي الحقل من دورة التحرير أصلاً.<br><br>" +
    "<b>ليس عاجلاً:</b> القيمة مضبوطة الآن، والنظام كاتب واحد.",
  ref:"٧ أغسطس"},
+
+{id:"83d", b:"projects", app:["modonty"], tab:"open", sev:"high", who:"c", date:"١٧ أغسطس ٢٠٢٦",
+ t:"🎬 الريلز: بناء الصفحة كاملة + ربط كرت «طلّات مدونتي» على /modonty",
+ d:"<b>قرار خالد (١٧ أغسطس ٢٠٢٦):</b> «صفحة الريلز لسّه ما بنيناها، وهي من الصفحات المهمّة. الربط نخلّيه لمّا نوصل للريلز — الآن بس ضيف الكرت في صفحة مدونتي وضيف التاسك عشان ما ننساها.»<br><br>" +
+   "<b>المبني اليوم — متحقَّق بالكود والقياس الحيّ (١٧ أغسطس):</b> كرت طلّات مدونتي أوّل الرايل الأيسر لـ<code>/modonty</code> — نفس <code>ReelsCard</code> تبع الرئيسية، رُقّي إلى <code>modonty/components/shared/reels-card/ReelsCard.tsx</code> (مستهلكان: <code>app/(homepage)/components/page-layout/PageLayout.tsx:8</code> و<code>app/modonty/components/left-rail/ModontyLeftRail.tsx</code>)، مصدره <code>modonty/app/modonty/data/get-modonty-reels.ts</code> (<code>where: { clientId, inReels: true, reelStatus: \"PUBLISHED\", mimeType: image/ }</code> · <code>take: 3</code> · يختفي إذا فاضٍ). قياس حيّ بعد البناء: <code>reelsCard: true · tiles: 3 · loaded: 3</code>، والرئيسية <code>homeReelsCard: true · tiles: 3</code>. البلاطات ترابط <code>/reels</code> العامّة (سلوك <code>ReelsCard</code> الحالي).<br><br>" +
+   "<b>بيانات dev فقط (بإذن خالد الصريح):</b> ٣ من صور مقالات مدونتي على <code>modonty_dev</code> عُلّمت <code>inReels + PUBLISHED</code> بسكربت مؤقّت حُذف (<code>6a7db7c5bbbda6cd4ba277dc</code> · <code>6a7db7b144d5f698bce3d310</code> · <code>6a7db79644d5f698bce3d30d</code>) — ناتجه <code>publishedReelsModonty: 3</code>؛ قبله كانت القاعدة <code>publishedReelsAllClients: 0</code>. الإنتاج لم يُمسّ.<br><br>" +
+   "<b>عند الوصول للريلز:</b> ١) بناء صفحة <code>/reels</code> كاملة (البند ٨٣ عرض أوّلي) + رفع الفيديو من المتصفّح لبني (٨٣b) + قرار الفهرسة (٨٣c) · ٢) بلاطة طلّة مدونتي تفتح طلّتها لا الخلاصة العامّة · ٣) الكرت يحسب الفيديو أيضاً (اليوم يفلتر <code>image/</code> مثل خلاصة <code>app/reels/helpers/reels-feed.ts:46</code>) · ٤) تنظيف الثلاث التجريبية على dev أو إبقاؤها.",
+ ref:"بند ٨٣ · ١٧ أغسطس"},
 
 {id:"83c", b:"projects", app:["modonty"], tab:"open", sev:"normal", who:"k",
  t:"قرار: فتح فهرسة صفحة الريلز",

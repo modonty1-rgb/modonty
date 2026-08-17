@@ -26,6 +26,8 @@ export async function sendTelegramMessage(
   chatId: string,
   text: string
 ): Promise<SendMessageResult> {
+  // Disabled outside production — never fire real Telegram alerts from local dev testing.
+  if (process.env.NODE_ENV !== "production") return { success: false, error: "Telegram disabled outside production" };
   const token = getToken();
   if (!token) {
     return { success: false, error: "TELEGRAM_BOT_TOKEN not configured" };
@@ -66,6 +68,7 @@ export async function sendTelegramMessage(
  * whether the client connected their own Telegram. No-ops if not configured.
  */
 export async function sendAdminTelegram(text: string): Promise<SendMessageResult> {
+  if (process.env.NODE_ENV !== "production") return { success: false, error: "Telegram disabled outside production" };
   const token = process.env.TELEGRAM_BOT_TOKEN ?? null;
   const chatId = process.env.TELEGRAM_ADMIN_CHAT_ID ?? null;
   if (!token || !chatId) {
@@ -111,6 +114,7 @@ export async function sendAdminTelegram(text: string): Promise<SendMessageResult
  * error the UI shows and the notification row records.
  */
 export async function sendContentTeamTelegram(text: string): Promise<SendMessageResult> {
+  if (process.env.NODE_ENV !== "production") return { success: false, error: "Telegram disabled outside production" };
   const token = process.env.CONTENT_TEAM_BOT_TOKEN ?? null;
   const chatId = process.env.CONTENT_TEAM_CHAT_ID ?? null;
   if (!token || !chatId) {

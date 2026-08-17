@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { CachedHomePage } from "@/app/(homepage)/components/page-layout/CachedHomePage";
-import { UserCard } from "@/app/(homepage)/components/user-card/UserCard";
+import { UserCard } from "@/components/shared/user-card/UserCard";
 import { SITE_URL } from "@/constants";
 
 import type { Metadata } from "next";
