@@ -55,6 +55,57 @@
 
 ---
 
+## Session: 2026-08-17 (نهاراً → مساءً) — 🏬 موقع الشريك على مجموعات المسار `(site)/(partner)` + بانِي الموقع (دراسة) + جرد الكونسول (فرع `modonty-site-groups` · **٥ كوميتات لم تُدفع** · **لا merge**)
+
+> خالد في نهاية الجلسة: «خلصنا الـtask هذا — ٨٠٪ من الشغل، باقي صفحتان أو ثلاث» · و«التاسك الجاي كبير ومحتاج تركيز ١٠٠٪، الغلطة فيه مصيبة» → الجلسة الجاية تبدأ **نظيفة** بـ`hh>` ثم تنتظر تعريفه للتاسك.
+
+### 🎯 أين توقفت
+- **موقع الشريك** (`modonty/app/(partner)/clients/[slug]/`) مبنيّ ومتحقَّق حيّاً على الديسكتوب (فرسان التعافي مقياساً): كروم (شريط مدونتي + هيدر الشريك + فوتر) · رئيسية بترتيب الزائر (تعرّف عليه → أرقامه → خدماته → آراؤه → معرضه → فين وكيف → مقالاته → نداء) · صفحات داخلية `(inner)` (about · services · contact · articles · faq · photos · reels · reviews · book · followers · likes · mentions). خالد يعتبره **٨٠٪** — المتبقّي «صفحتان أو ثلاث» (لم يسمّها؛ مرشَّحات: تحسين الصفحات الداخلية القديمة المنقولة photos/reels/reviews بنفس نظام التصميم — **مؤشّر لا قرار**).
+- **بانِي الموقع (Site Builder)** — ملف نقاش `documents/idea/partner-site-builder.html` (v2) ينتظر قرارات خالد الثمانية (§٨). **صفر كود** فيه.
+- **الخطوة التالية عند الرجوع:** `hh>` → خالد يعرّف «التاسك الكبير» → قبل أي سطر: تصنيفه (محدود/معماري) + خطة مراحل + قراءة الكود المعني كاملاً (`feedback_pre_task_code_review`).
+
+### ✅ المنجز هذه الجلسة (بعد الضغط السياقي — التفاصيل الأقدم في كوميتات الفرع)
+- **`b016aed`** الهيرو وعد واحد وسطر واحد (`clip()` على slogan/description) · «تعرّف عليه» نافذة تمرير رفيعة `max-h-60` · الفوتر `line-clamp-3`.
+- **`ad4d572`** مهارة `.claude/skills/partner-site-templates/SKILL.md` — نموذج القوالب (Shopify settings_schema · Salla twilight.json · Wix) → كتالوج `PageTemplate` + `Client.templateId/themeSettings/sections`.
+- **`65d4d14` + `0857e2c`** ملف الفكرة `partner-site-builder.html`: سكيما · تدفّق · شاشة «موقعي» · بريميوم · مراحل · قرارات · قاعدة «الشريك ليس تقنياً» (مفاتيح لا سحب · ٨ ألوان جاهزة · افتراضيات تشتغل).
+- **`7fb99da`** قسم **٠.٥ «الوضع الحالي في الكونسول»** (بطلب خالد «المفروض تسويه بدون ما أقول لك»): خريطة القائمة الجانبية (`console/app/(dashboard)/components/nav-config.ts`) · كل قسم في الموقع ← شاشته ← مالكه · ما يشتغل صح (الحفظ → `regenerateClientSeo` → `revalidateModontyTag("clients")` في ٨ أكشنات) · ٦ فجوات · ٧ تحسينات مرتّبة P0/P1/P2 · **قرار ٨**: نقل ملكية الغلاف/الشعار/زرّ الطلب/اللون للشريك (اليوم أدمن فقط: `admin/.../form-sections/cta-section.tsx` و`media-section.tsx`).
+- **سكيلز:** نُزّلت ثم **استُخلصت وحُذفت** (بأمر خالد «ما نبغى ضجيج»): superpowers ×١٤ + task-observer + find-skills → ٨ بنود جديدة في `~/.claude/CLAUDE.md` قسم «🧪 منهجية الشغل — مستخلَص» (الأسطر 225–248). `impeccable` v4.0.4 كانت موجودة وبقيت. `claude-mem` بلَغن — **خالد ينزّله بنفسه** (`/plugin marketplace add thedotmack/claude-mem` → `/plugin install claude-mem`).
+- **ذاكرة جديدة:** `feedback_study_current_state_before_proposing` (أي دراسة تبدأ بالوضع الحالي المقيس) + `feedback_deliverable_docs_html_not_md`.
+- **TSC:** لم يُشغَّل هذه الجلسة (تعديلات المرحلة الأخيرة وثائق فقط) — آخر tsc صفر أخطاء كان بعد نقل المجموعات (**غير متحقَّق الآن**). **Build:** لم يُشغَّل بعد `b016aed`. **تست حي:** الرئيسية والصفحات الداخلية على `http://localhost:3000/clients/مؤسسة-فرسان-التعافي` (ديسكتوب ١٢٨٠×٨٠٠) قبل الضغط السياقي — **الجوّال لم يُختبر عمداً** (قاعدة «الديسكتوب أوّلاً»).
+
+### 📝 قرارات
+- **الشريك = موقع كامل داخل مدونتي بشريط منصّة رفيع** (لا صفحة داخلية) — نُفّذ بمجموعتَي مسار `(site)` (٢٦ مسار + SiteShell) و`(partner)`؛ الروابط والسيو لم يتغيّرا (routes 99=99، render modes مطابقة — من جرد `documents/tasks/PARTNER-SITE-MOVE-INVENTORY.html`).
+- **الفرع `modonty-site-groups` يُدفع وحده، ولا merge إلى `modonty-ui` إلا بأمر خالد بعد تسته** (`feedback_never_merge_without_explicit_confirmation`).
+- **بانِي الموقع:** القالب كود، القاعدة قيم وقرارات، الكونسول محرّر، مدونتي ترسم؛ الشريك ليس تقنياً؛ الأداء همّ مدونتي وحدها.
+- **الدراسة تبدأ بالوضع الحالي** — قاعدة جديدة بعد ملاحظة خالد.
+
+### 🚧 معلّق / بانتظار خالد
+- **قرارات بانِي الموقع (٨)** في `partner-site-builder.html §٨` — أهمّها **٨** (الملكية) و**١** (النشر الذاتي) و**٤** (قالبان في الإطلاق).
+- **دفع الفرع** `modonty-site-groups` (٥ كوميتات محلية: `b016aed` `ad4d572` `65d4d14` `0857e2c` `7fb99da`) — بأمر خالد فقط.
+- **ملفّان ميّتان بانتظار حذف خالد:** `modonty/app/(partner)/clients/[slug]/components/home/credentials-strip.tsx` · `modonty/app/(partner)/clients/[slug]/helpers/get-client-identity.ts` (الحذف رُفض لي).
+- **بطاقات TASK.html:** `GALPNG` (صور معرض PNG قديمة ١.٧ م.ب على بني ← محسّن الصور 500) · `PREV` · `83d`. النطاق الفرعي مؤجَّل.
+- **محمول من بلوك `/modonty` (الفرع `modonty-ui`):** عطل hydration على الرايل الأيمن — **لم يُلمس هذه الجلسة، حالته غير متحقَّقة**.
+- **ملفّات غير متتبَّعة بجذر المستودع ليست منّي في هذه الجلسة:** `img-reqs.txt` · `mobile-uiux-mockup.html` · `.pnpm-store/` — لا تُضاف للكوميت حتى يقرّر خالد.
+
+### 📂 ملفّات لُمست (هذه الجلسة بعد الضغط)
+- `documents/idea/partner-site-builder.html` — v2 + §٠.٥ + قرار ٨ · `documents/idea/README.md` — سطر الفهرس.
+- `.claude/skills/partner-site-templates/SKILL.md` — قواعد «ليس تقنياً».
+- `~/.claude/CLAUDE.md` — قسم «🧪 منهجية الشغل — مستخلَص» · `~/.claude/skills/` (حذف ١٦ سكيل مستخلَصة).
+- الذاكرة: `feedback_study_current_state_before_proposing.md` + سطر في `MEMORY.md`.
+
+### 🔁 Git / النشر
+- الفرع: `modonty-site-groups` (= `modonty-ui` عند `bf8f51a` + ١٣ كوميت؛ `modonty-ui` صفر كوميت أمامه).
+- غير مثبَّت: `.claude/settings*.json` · `.mcp.json` (مستثناة دائماً) + الثلاثة غير المتتبَّعة أعلاه.
+- آخر كوميت: `7fb99da` · **مدفوع: لا** (`origin/modonty-site-groups` عند `c4bb848`، ٥ خلفه).
+- فيرسل: لا نشر من هذا الفرع (لا preview مطلوب حتى الآن).
+
+### 🚀 كيف تستأنف في ٣٠ ثانية
+1. `hh>` — ثم `git status` و`git log --oneline -6` على `modonty-site-groups`.
+2. افتح `documents/idea/partner-site-builder.html` (§٠.٥ و§٨) لو التاسك الجاي هو البانِي — وإلا انتظر تعريف خالد للتاسك الكبير.
+3. قبل أي كود في التاسك الكبير: تصنيف + خطة مراحل + قراءة كاملة للكود المعني + `pnpm tsc --noEmit` كخط أساس.
+
+---
+
 ## Session: 2026-08-17 (ليلاً، حتى ≈ 03:00) — 🏛️ صفحة `/modonty` الرائدة: ثلاثة أعمدة مشتركة + درج→Popover + هيرو «النقطة» + جاليري الفريق (فرع `modonty-ui` · محلي فقط · **لم يُدفع** · **عطل hydration مفتوح**)
 
 ### 🎯 أين توقفت
