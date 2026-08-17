@@ -2,9 +2,16 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { IconFileQuestion, IconHome, IconFolder, IconClients } from "@/lib/icons";
+import { SiteShell } from "@/app/layout/components/SiteShell";
 
+/**
+ * The ONE not-found for the whole app: unmatched URLs and every notFound() call
+ * (modonty pages and partner slugs alike) land here, rendered inside the root layout —
+ * so it mounts modonty's shell itself; the root layout carries no chrome.
+ */
 export default function GlobalNotFound() {
   return (
+    <SiteShell>
     <div className="container mx-auto max-w-[1128px] px-4 py-16">
         <Card className="max-w-2xl mx-auto">
           <CardHeader className="text-center">
@@ -43,5 +50,6 @@ export default function GlobalNotFound() {
           </CardContent>
         </Card>
     </div>
+    </SiteShell>
   );
 }

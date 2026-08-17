@@ -2,7 +2,7 @@
 
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { getWhatsAppLink, bookingWhatsappMessage } from "@/lib/whatsapp";
-import { recordWhatsappLead, type BookingSource } from "@/app/articles/[slug]/actions/booking-actions";
+import { recordWhatsappLead, type BookingSource } from "@/app/(site)/articles/[slug]/actions/booking-actions";
 
 // #25d366 = WhatsApp brand green.
 const WA_GREEN = "#25d366";

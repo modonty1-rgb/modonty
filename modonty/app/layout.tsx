@@ -8,8 +8,6 @@ import { GTMContainer } from "@/app/layout/components/gtm/GTMContainer";
 import { WebVitals } from "@/app/layout/components/gtm/WebVitals";
 import { PageViewTracker } from "@/app/layout/components/analytics/PageViewTracker";
 import { ClarityScript } from "@/app/layout/components/analytics/clarity-script";
-import { Footer } from "@/app/layout/components/Footer";
-import { TopNav } from "@/app/layout/components/nav/TopNav";
 import { BRAND_AR, SITE_URL } from "@/constants";
 import { getSiteLanguage } from "@/lib/settings/get-site-language";
 
@@ -104,13 +102,9 @@ export default async function RootLayout({
           {/* The provider hands down an unresolved session promise, so nothing here
               blocks the prerender. Only the components that read the session suspend,
               each behind its own boundary. */}
-          <SessionProviderWrapper>
-            <div className="min-h-screen flex flex-col">
-              <TopNav />
-              <main id="main-content" className="flex-1">{children}</main>
-              <Footer />
-            </div>
-          </SessionProviderWrapper>
+          {/* No chrome here on purpose: `app/(site)/layout.tsx` mounts modonty's
+              header/footer, `app/(partner)/…` mounts the partner's own. */}
+          <SessionProviderWrapper>{children}</SessionProviderWrapper>
         </ThemeProvider>
       </body>
     </html>
