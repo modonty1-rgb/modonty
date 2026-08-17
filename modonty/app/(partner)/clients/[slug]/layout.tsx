@@ -6,6 +6,7 @@ import { getPartnerSite } from "./helpers/get-partner-site";
 import { PlatformBar } from "./components/chrome/platform-bar";
 import { PartnerHeader } from "./components/chrome/partner-header";
 import { PartnerFooter } from "./components/chrome/partner-footer";
+import { StickyChrome } from "./components/chrome/sticky-chrome";
 
 // Dynamic import for GTM tracker (SSR enabled; component guards browser APIs)
 const GTMClientTracker = dynamicImport(
@@ -70,11 +71,11 @@ async function PartnerChrome({ params, slot }: PartnerChromeProps) {
         clientContext={{ client_id: site.id, client_slug: site.slug, client_name: site.name }}
         pageTitle={site.seoTitle || site.name}
       />
-      {/* One sticky block: the platform bar folds on scroll-down, the partner header stays. */}
-      <div className="sticky top-0 z-40">
+      {/* One sticky block: slides up by the bar's height on scroll-down, so the partner header stays. */}
+      <StickyChrome>
         <PlatformBar isVerified={isVerified} />
         <PartnerHeader site={site} />
-      </div>
+      </StickyChrome>
     </>
   );
 }

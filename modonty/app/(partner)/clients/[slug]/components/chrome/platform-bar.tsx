@@ -4,7 +4,6 @@ import { ModontyMark } from "@/components/icons/modonty-mark";
 import { ThemeToggle } from "@/app/layout/components/nav/ThemeToggle";
 import { UserMenu } from "@/app/layout/components/user-menu/UserMenu";
 import { IconShieldCheck } from "@/lib/icons";
-import { CollapseOnScroll } from "./collapse-on-scroll";
 
 interface PlatformBarProps {
   /** True when the partner has papers on file (CR / legal name / verification image). */
@@ -14,11 +13,10 @@ interface PlatformBarProps {
 /**
  * The one strip of modonty on a partner site: a way back, the trust mark, your account,
  * the theme. It replaces modonty's full header here — the partner's own header sits
- * right under it. Folds while scrolling down so the partner's chrome owns the screen.
+ * right under it; StickyChrome slides both up on scroll so the partner's chrome owns the screen.
  */
 export function PlatformBar({ isVerified }: PlatformBarProps) {
   return (
-    <CollapseOnScroll>
       <div className="bg-[#0b0d1f] text-xs text-[#c9ccdf]">
         <div className="mx-auto flex h-9 max-w-[1216px] items-center gap-4 px-4">
           <Link href="/" className="flex items-center gap-2 font-medium text-white hover:text-white/80" aria-label="الرجوع إلى مدونتي">
@@ -44,6 +42,5 @@ export function PlatformBar({ isVerified }: PlatformBarProps) {
           </span>
         </div>
       </div>
-    </CollapseOnScroll>
   );
 }
