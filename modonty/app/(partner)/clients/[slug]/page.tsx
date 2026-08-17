@@ -302,7 +302,7 @@ async function ClientPageBody({ params }: ClientPageProps) {
         ) : (
           <>
             <CredentialsStrip credentials={site.credentials} />
-            <div className="space-y-20 pt-16">
+            <div className="space-y-16 pt-14">
               <ServicesTeaser services={site.services} base={base} />
               <AchievementsStrip achievements={site.achievements} />
               <GalleryTeaser images={gallery} totalCount={site._count.media} base={base} />

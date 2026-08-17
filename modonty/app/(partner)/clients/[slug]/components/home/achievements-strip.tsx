@@ -24,13 +24,13 @@ export function AchievementsStrip({ achievements }: AchievementsStripProps) {
 
   return (
     <section className="border-y border-border bg-card">
-      <div className={`mx-auto grid max-w-[1216px] gap-4 px-4 py-10 ${cols}`}>
+      <div className={`mx-auto grid max-w-[1216px] divide-border px-4 py-10 md:divide-x md:divide-x-reverse ${cols}`}>
         {items.map((a, i) => {
           const { figure, rest } = splitValue(a.value);
           return (
-            <div key={`${a.label}-${i}`} className="rounded-2xl bg-primary/10 p-6">
-              {figure ? <p className="text-3xl font-extrabold text-primary" dir="ltr">{figure}</p> : null}
-              <p className={`mt-1 font-medium text-foreground ${figure ? "" : "text-lg"}`}>{figure ? rest || a.label : a.value}</p>
+            <div key={`${a.label}-${i}`} className="px-6 py-2 text-center md:py-0">
+              {figure ? <p className="text-4xl font-bold leading-none text-primary" dir="ltr">{figure}</p> : null}
+              <p className={`mt-3 text-foreground ${figure ? "text-sm font-medium" : "text-lg font-medium"}`}>{figure ? rest || a.label : a.value}</p>
               {figure && rest ? <p className="mt-1 text-xs text-muted-foreground">{a.label}</p> : null}
               {a.description?.trim() ? <p className="mt-1 text-xs text-muted-foreground">{a.description}</p> : null}
             </div>

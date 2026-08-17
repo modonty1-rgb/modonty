@@ -27,13 +27,13 @@ export function ArticlesTeaser({ articles, totalCount, base }: ArticlesTeaserPro
 
   return (
     <section className="border-y border-border bg-card">
-      <div className="mx-auto max-w-[1216px] px-4 py-16">
+      <div className="mx-auto max-w-[1216px] px-4 py-14">
         <SectionHeading eyebrow="من قلمه" title={`يكتب من خبرته — ${totalCount.toLocaleString("ar-SA")} مقالاً على مدونتي`} more={{ href: `${base}/articles`, label: "كل المقالات" }} />
         <div className={`mt-8 grid gap-6 ${cols}`}>
           {items.map((a) => (
             <article key={a.id} className="group">
               <Link href={`/articles/${encodeURIComponent(a.slug)}`} className="block">
-                <div className="relative aspect-[3/2] overflow-hidden rounded-2xl bg-muted">
+                <div className="relative aspect-[3/2] overflow-hidden rounded-lg bg-muted">
                   {a.image ? (
                     <OptimizedImage media={a.image} alt="" fill loading="lazy" sizes="card" className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105" />
                   ) : null}

@@ -32,7 +32,7 @@ export async function PartnerFooter({ site }: PartnerFooterProps) {
         <div>
           <div className="flex items-center gap-3">
             {site.logoMedia ? (
-              <span className="relative size-10 overflow-hidden rounded-xl bg-white ring-1 ring-border">
+              <span className="relative size-10 overflow-hidden rounded-lg bg-white ring-1 ring-border">
                 <OptimizedImage media={site.logoMedia} alt="" fill sizes="40px" className="object-cover" />
               </span>
             ) : null}

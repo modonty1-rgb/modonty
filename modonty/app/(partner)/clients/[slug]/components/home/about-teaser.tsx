@@ -45,7 +45,7 @@ export function AboutTeaser({ site, videoUrl, videoPoster, base }: AboutTeaserPr
     <section className="mx-auto max-w-[1216px] px-4">
       <div className={`grid items-center gap-10 ${videoUrl ? "lg:grid-cols-[1fr_1.1fr] lg:gap-14" : ""}`}>
         {videoUrl ? (
-          <div className="overflow-hidden rounded-3xl bg-muted">
+          <div className="overflow-hidden rounded-lg bg-muted">
             <ClientVideoEmbed url={videoUrl} poster={videoPoster} label={`فيديو تعريفي — ${site.name}`} />
           </div>
         ) : null}
@@ -72,7 +72,7 @@ export function AboutTeaser({ site, videoUrl, videoPoster, base }: AboutTeaserPr
                 ))}
               </span>
             ) : null}
-            <Link href={`${base}/about`} className="inline-flex h-10 items-center rounded-xl border border-border px-4 text-sm text-foreground hover:border-primary">
+            <Link href={`${base}/about`} className="inline-flex h-10 items-center rounded-full px-5 text-sm text-foreground ring-1 ring-inset ring-border hover:ring-primary">
               اقرأ عنه أكثر ›
             </Link>
           </div>

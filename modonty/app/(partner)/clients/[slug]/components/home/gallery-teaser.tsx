@@ -12,8 +12,8 @@ interface GalleryTeaserProps {
 
 /** Packing width for the 1216px container (padding removed); widths come back as flex-grow, so the rows stay justified at any size. */
 const PACK_WIDTH = 1184;
-/** Two rows on the home page is a taste, not the album — the album is /photos. */
-const MAX_ROWS = 2;
+/** One generous row on the home page is a taste, not the album — the album is /photos. */
+const MAX_ROWS = 1;
 
 /**
  * «من شغله» — the newest gallery images in justified rows (the project gallery standard:
@@ -22,7 +22,7 @@ const MAX_ROWS = 2;
 export function GalleryTeaser({ images, totalCount, base }: GalleryTeaserProps) {
   const items = images.filter((img) => img.url?.trim());
   if (items.length === 0) return null;
-  const rows = justifyRows(items, PACK_WIDTH, 240, 12).slice(0, MAX_ROWS);
+  const rows = justifyRows(items, PACK_WIDTH, 300, 12).slice(0, MAX_ROWS);
   const href = `${base}/photos`;
 
   return (
@@ -37,7 +37,7 @@ export function GalleryTeaser({ images, totalCount, base }: GalleryTeaserProps) 
                 href={href}
                 aria-label={img.altText?.trim() || "افتح المعرض"}
                 style={row.isLast ? { flex: "0 0 auto", width: `${row.height * grow}px` } : { flexGrow: grow, flexBasis: 0, minWidth: 0 }}
-                className="group relative overflow-hidden rounded-2xl bg-muted"
+                className="group relative overflow-hidden rounded-lg bg-muted"
               >
                 <div style={{ aspectRatio: tileAspectRatio(img) }} className="relative">
                   <OptimizedImage

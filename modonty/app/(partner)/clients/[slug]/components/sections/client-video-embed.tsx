@@ -88,6 +88,11 @@ export function ClientVideoEmbed({ url, poster, label }: ClientVideoEmbedProps) 
     >
       {/* The real first frame when we host the video. Still zero third-party JS — an
           image, not a player. External links keep the gradient: they have no cover. */}
+      {!poster && embed.kind === "youtube" ? (
+        // YouTube publishes a still for every video — the one thing an external link does give us.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={`https://i.ytimg.com/vi/${embed.id}/hqdefault.jpg`} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+      ) : null}
       {poster && (
         <OptimizedImage
           media={asMedia(poster)}

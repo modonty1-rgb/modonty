@@ -24,11 +24,11 @@ export function PartnerHeader({ site }: PartnerHeaderProps) {
       <div className="mx-auto flex h-[72px] max-w-[1216px] items-center gap-6 px-4">
         <Link href={home} className="flex min-w-0 items-center gap-3">
           {site.logoMedia ? (
-            <span className="relative size-11 shrink-0 overflow-hidden rounded-xl bg-white ring-1 ring-border">
+            <span className="relative size-11 shrink-0 overflow-hidden rounded-lg bg-white ring-1 ring-border">
               <OptimizedImage media={site.logoMedia} alt="" fill sizes="44px" className="object-cover" />
             </span>
           ) : (
-            <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary text-lg font-bold text-white">
+            <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-primary text-lg font-bold text-white">
               {site.name.slice(0, 1)}
             </span>
           )}
@@ -55,7 +55,7 @@ export function PartnerHeader({ site }: PartnerHeaderProps) {
           ) : null}
           <Link
             href={`${home}#request`}
-            className="inline-flex h-10 items-center rounded-xl bg-primary px-4 text-sm font-medium text-white transition-[filter,transform] hover:brightness-110 motion-safe:active:scale-[0.98]"
+            className="inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-medium text-white transition-[filter,transform] hover:brightness-110 motion-safe:active:scale-[0.98]"
           >
             اطلب اتصالاً
           </Link>

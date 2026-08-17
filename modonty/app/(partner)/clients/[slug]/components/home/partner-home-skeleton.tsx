@@ -9,15 +9,15 @@ export function PartnerHomeSkeleton() {
         <Skeleton className="mt-3 h-8 w-64" />
         <div className="mt-8 grid gap-4 md:grid-cols-4">
           {Array.from({ length: 4 }, (_, i) => (
-            <Skeleton key={i} className="h-44 rounded-2xl" />
+            <Skeleton key={i} className="h-44 rounded-lg" />
           ))}
         </div>
       </div>
-      <Skeleton className="h-32 rounded-2xl" />
+      <Skeleton className="h-32 rounded-lg" />
       <div>
         <Skeleton className="h-4 w-24" />
         <Skeleton className="mt-3 h-8 w-64" />
-        <Skeleton className="mt-8 h-60 rounded-2xl" />
+        <Skeleton className="mt-8 h-60 rounded-lg" />
       </div>
     </div>
   );

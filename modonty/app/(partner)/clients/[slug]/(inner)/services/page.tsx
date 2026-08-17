@@ -32,8 +32,8 @@ export default async function ClientServicesPage({ params }: PageProps) {
     <PageFrame siteName={site.name} base={base} eyebrow="ماذا يقدّم" title="خدماته">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {items.map((s) => (
-          <div key={s.title} className="rounded-2xl border border-border bg-card p-6">
-            <span className="grid size-12 place-items-center rounded-xl bg-primary/10 text-2xl text-primary" aria-hidden>
+          <div key={s.title} className="rounded-lg bg-card ring-1 ring-border p-6">
+            <span className="grid size-12 place-items-center rounded-full bg-primary/10 text-2xl text-primary" aria-hidden>
               {s.icon?.trim() ? s.icon : <IconBriefcase className="h-6 w-6" />}
             </span>
             <h2 className="mt-4 text-lg font-bold text-foreground">{s.title}</h2>

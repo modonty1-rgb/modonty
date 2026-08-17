@@ -41,12 +41,12 @@ export function PartnerHero({ site, rating, requestSlot }: PartnerHeroProps) {
 
       <div className="relative mx-auto max-w-[1216px] px-4 pt-6">
         {cover ? (
-          <div className="relative w-full overflow-hidden rounded-b-3xl shadow-2xl" style={{ aspectRatio: `${cover.width ?? 2400} / ${cover.height ?? 400}` }}>
+          <div className="relative w-full overflow-hidden rounded-b-lg ring-1 ring-white/10" style={{ aspectRatio: `${cover.width ?? 2400} / ${cover.height ?? 400}` }}>
             <OptimizedImage media={cover} alt={`غلاف ${site.name}`} fill sizes="clientHero" loading="eager" className="object-cover" />
           </div>
         ) : null}
 
-        <div className="grid items-start gap-10 pb-16 pt-10 lg:grid-cols-[1.25fr_400px] lg:gap-14">
+        <div className="grid items-start gap-10 pb-14 pt-8 lg:grid-cols-[1.25fr_400px] lg:gap-14">
           <div>
             <div className="flex flex-wrap items-center gap-2">
               {isVerified ? (
@@ -64,7 +64,7 @@ export function PartnerHero({ site, rating, requestSlot }: PartnerHeroProps) {
               {founded ? <span className="inline-flex h-8 items-center rounded-full border border-white/25 bg-white/10 px-3 text-sm backdrop-blur">منذ {founded}</span> : null}
             </div>
 
-            <h1 className="mt-6 text-4xl font-extrabold leading-[1.15] tracking-tight md:text-[46px]">{headline}</h1>
+            <h1 className="mt-5 text-4xl font-bold leading-[1.2] md:text-[44px]">{headline}</h1>
             {sub ? <p className="mt-4 max-w-xl text-lg leading-relaxed text-white/80">{sub}</p> : null}
             {site.slogan && headline !== site.slogan && sub !== site.slogan ? (
               <p className="mt-3 text-base text-white/65">{site.slogan}</p>

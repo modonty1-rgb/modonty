@@ -23,8 +23,8 @@ export function ServicesTeaser({ services, base }: ServicesTeaserProps) {
       <SectionHeading eyebrow="ماذا يقدّم" title="خدماته" more={services.length > 4 ? { href: `${base}/services`, label: "كل الخدمات" } : undefined} />
       <div className={`mt-8 grid gap-4 ${cols}`}>
         {items.map((s) => (
-          <div key={s.title} className="rounded-2xl border border-border bg-card p-6 transition-[transform,box-shadow] motion-safe:hover:-translate-y-1 hover:shadow-lg">
-            <span className="grid size-12 place-items-center rounded-xl bg-primary/10 text-2xl text-primary" aria-hidden>
+          <div key={s.title} className="rounded-lg bg-card ring-1 ring-border p-6 transition-[transform,box-shadow] motion-safe:hover:-translate-y-1 hover:ring-primary/40">
+            <span className="grid size-12 place-items-center rounded-full bg-primary/10 text-2xl text-primary" aria-hidden>
               {s.icon?.trim() ? s.icon : <IconBriefcase className="h-6 w-6" />}
             </span>
             <h3 className="mt-4 text-lg font-bold text-foreground">{s.title}</h3>

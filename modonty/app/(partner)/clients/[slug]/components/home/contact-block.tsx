@@ -31,7 +31,7 @@ export function ContactBlock({ site }: ContactBlockProps) {
       <SectionHeading eyebrow="تواصل" title={site.addressCity ? `في ${site.addressCity} — ونردّ عليك في نفس اليوم` : "نردّ عليك في نفس اليوم"} />
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         {address ? (
-          <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="rounded-lg bg-card ring-1 ring-border p-6">
             <p className="flex items-center gap-2 text-sm text-muted-foreground"><IconMapPin className="h-4 w-4" aria-hidden /> العنوان</p>
             <p className="mt-2 text-lg font-bold leading-snug text-foreground">{address}</p>
             {mapsHref ? (
@@ -43,13 +43,13 @@ export function ContactBlock({ site }: ContactBlockProps) {
         ) : null}
 
         <div className="[&>section]:h-full [&_h2]:text-sm">
-          <Suspense fallback={<div className="h-40 rounded-2xl border border-border bg-card" aria-hidden />}>
+          <Suspense fallback={<div className="h-40 rounded-lg bg-card ring-1 ring-border" aria-hidden />}>
             <HoursCard openingHours={site.openingHoursSpecification} />
           </Suspense>
         </div>
 
         {hasContact ? (
-          <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="rounded-lg bg-card ring-1 ring-border p-6">
             <div className="space-y-4 text-sm">
               {site.phone ? (
                 <div>

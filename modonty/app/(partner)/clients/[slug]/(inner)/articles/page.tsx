@@ -40,7 +40,7 @@ export default async function ClientArticlesPage({ params }: PageProps) {
         {client.articles.map((a) => (
           <article key={a.id} className="group">
             <Link href={`/articles/${encodeURIComponent(a.slug)}`} className="block">
-              <div className="relative aspect-[3/2] overflow-hidden rounded-2xl bg-muted">
+              <div className="relative aspect-[3/2] overflow-hidden rounded-lg bg-muted">
                 {a.featuredImage ? (
                   <OptimizedImage media={a.featuredImage} alt="" fill loading="lazy" sizes="card" className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105" />
                 ) : null}
