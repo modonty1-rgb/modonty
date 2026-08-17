@@ -4,6 +4,7 @@ import { UserCard } from "@/components/shared/user-card/UserCard";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { jsonLdHtmlFromString } from "@/lib/seo";
 import { getClientsList } from "@/lib/queries/get-clients-list";
+import { getCoreClientId } from "@/lib/settings/get-core-client-id";
 import { parsePartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
 import { PageLayout } from "@/app/(site)/clients/components/page-layout/PageLayout";
 import { SITE_URL } from "@/constants";
@@ -28,11 +29,15 @@ interface ClientsPageProps {
 }
 
 export default async function ClientsPage({ searchParams }: ClientsPageProps) {
-  const [params, { jsonLd: storedJsonLd }, partners] = await Promise.all([
+  const [params, { jsonLd: storedJsonLd }, allPartners, coreClientId] = await Promise.all([
     searchParams,
     getListingPageSeo("clients"),
     getClientsList(),
+    getCoreClientId(),
   ]);
+  // Modonty is a client row too (its articles need one), but it is not a partner — it has
+  // /modonty (Khalid, 2026-08-17: «مدونتي ما تطلع مع العملاء، عنده صفحته الخاصّة»).
+  const partners = coreClientId ? allPartners.filter((p) => p.id !== coreClientId) : allPartners;
 
   return (
     <>
