@@ -54,7 +54,7 @@
 <main class="mx-auto max-w-[1180px] px-4 py-8 space-y-10">
 
   <header class="space-y-3">
-    <p class="eyebrow">فكرة · v1 · ١٧ أغسطس ٢٠٢٦ · <span class="pill warn">⏸ للنقاش — لا كود قبل الاعتماد</span> · تعتمد على مهارة <code>partner-site-templates</code></p>
+    <p class="eyebrow">فكرة · v2 (+ الوضع الحالي في الكونسول) · ١٧ أغسطس ٢٠٢٦ · <span class="pill warn">⏸ للنقاش — لا كود قبل الاعتماد</span> · تعتمد على مهارة <code>partner-site-templates</code></p>
     <h1 class="text-3xl font-bold leading-tight">🧱 بانِي موقع الشريك — السكيما · التدفّق · الشاشات</h1>
     <p class="max-w-3xl text-[15px] leading-relaxed" style="color:var(--muted)">من اللحظة اللي يفتح فيها الشريك الكونسول أوّل مرّة حتى يطلع موقعه حيّاً على مدونتي — وكيف يتحوّل نفس الأساس إلى قوالب بريميوم بعد سنة بلا إعادة بناء. النموذج منقول من طريقة Shopify وSalla وWix (القالب كود، التاجر يخزّن قيماً وقرارات فقط).</p>
   </header>
@@ -69,6 +69,78 @@
       <li>٤. <b class="text-white">مدونتي تقرأ وترسم</b> — والسيو وJSON-LD خارج القالب؛ والأداء همّ مدونتي وحدها.</li>
       <li>٥. <b class="text-white">الشريك ليس تقنياً</b> (خالد، ١٧ أغسطس): كل شيء يشتغل بالافتراضي من أوّل ثانية، وأي خيار زائد يُحذف. اختيار قالب بضغطة · مفتاح تشغيل/إيقاف لا سحب وترتيب · لوحة ألوان جاهزة لا حقل هيكس · معاينة بضغطة · «انشر» بضغطة. لغة عادية بلا مصطلحات.</li>
     </ol>
+  </section>
+
+  <!-- ٠.٥ الوضع الحالي في الكونسول -->
+  <section class="space-y-4">
+    <h2 class="h2">٠.٥ — الوضع الحالي في الكونسول (مقيس على الكود، ١٧ أغسطس) — وما تغيّره الدراسة</h2>
+    <p class="text-sm" style="color:var(--muted)">قبل هذا القسم كانت الدراسة مبنيّة على السكيما ونماذج شوبيفاي/سلّة/ويكس فقط. هنا مطابقة كل قسم في الموقع الجديد بالشاشة اللي تغذّيه اليوم ومَن يملك الحقل — ثم الفجوات والتحسينات مرتّبة بالأثر.</p>
+
+    <div class="card p-4 space-y-2 text-sm">
+      <p class="font-medium">أ) خريطة الكونسول اليوم — القائمة الجانبية (<code>console/app/(dashboard)/components/nav-config.ts</code>)</p>
+      <table>
+        <tr><th>المجموعة</th><th>الشاشات</th><th>ملاحظة</th></tr>
+        <tr><td>نشاطك</td><td>بيانات نشاطك <code>/profile</code> · معلومات نشاطك <code>/seo</code> · محتوى صفحتك <code>/page-content</code> · أسئلة صفحتك <code>/page-faq</code></td><td>أربعة أسماء متقاربة (نشاطك/صفحتك) — القارئ ما يعرف أيّها يفتح ليغيّر موقعه.</td></tr>
+        <tr><td>الوسائط</td><td>معرض الصور · الريلز · الفيديوهات · الصور والملفات</td><td>«الصور والملفات» تعرض وتفلتر (شعار · غلاف · مقالات) لكن <b class="text-white">لا ترفع غلافاً ولا شعاراً</b>.</td></tr>
+        <tr><td>جمهورك</td><td>المشتركون · العملاء المحتملون · الحجوزات · آراء حول نشاطك · تقييمات نشاطك</td><td>التقييمات = موافقة/رفض قبل الظهور — تغذّي «آراء عملائه».</td></tr>
+        <tr><td>حسابك</td><td>الفواتير · الحملات · الإعدادات</td><td>الإعدادات = كلمة المرور + إشعارات + عنوان السحب — لا شيء يخصّ شكل الموقع.</td></tr>
+      </table>
+    </div>
+
+    <div class="card p-4 space-y-2 text-sm">
+      <p class="font-medium">ب) كل قسم في موقع الشريك (المبني على الفرع) ← من أين تأتي بياناته ← مَن يملك التعديل</p>
+      <table>
+        <tr><th>قسم الموقع</th><th>الحقول</th><th>شاشة الكونسول</th><th>المالك اليوم</th></tr>
+        <tr><td>هيدر الشريك + الفوتر</td><td>الشعار <code>logoMedia</code> · الاسم · المجال · المدينة · الهاتف · القائمة</td><td>الاسم/المدينة: بيانات نشاطك · الباقي عرض فقط</td><td><span class="pill warn">الشعار والهاتف والمجال: الأدمن</span></td></tr>
+        <tr><td>الهيرو</td><td>الغلاف <code>heroImageMedia</code> · الشعار النصّي <code>slogan</code> · أوّل سطرين من <code>description</code> · التأسيس · التقييم</td><td>بيانات نشاطك (slogan/description/foundingDate) · تقييمات نشاطك</td><td><span class="pill warn">الغلاف: الأدمن</span> — والشريك لا يعرف أن أوّل سطر من وصفه يصير عنوان الهيرو (<code>partner-hero.tsx:39-43</code>)</td></tr>
+        <tr><td>بطاقة الطلب</td><td><code>ctaMode/ctaLabel/ctaUrl</code> · واتساب من <code>phone</code></td><td>— لا شاشة</td><td><span class="pill bad">الأدمن فقط</span> (<code>admin/.../form-sections/cta-section.tsx</code>)</td></tr>
+        <tr><td>تعرّف عليه</td><td>الوصف · فيديو التعريف · الاعتمادات · الفريق · الكيان</td><td>بيانات نشاطك + محتوى صفحتك</td><td><span class="pill ok">الشريك</span> · الكيان: الأدمن</td></tr>
+        <tr><td>أرقامه · ماذا يقدّم</td><td><code>achievements</code> · <code>services</code></td><td>محتوى صفحتك</td><td><span class="pill ok">الشريك</span></td></tr>
+        <tr><td>آراء عملائه</td><td>التقييمات المعتمَدة</td><td>تقييمات نشاطك (موافقة)</td><td><span class="pill ok">الشريك يوافق</span></td></tr>
+        <tr><td>من شغله (المعرض)</td><td>وسائط <code>GALLERY</code></td><td>معرض الصور</td><td><span class="pill ok">الشريك</span></td></tr>
+        <tr><td>فين وكيف</td><td>العنوان · الدوام · الهاتف · البريد · الإحداثيات</td><td>بيانات نشاطك (عنوان + دوام)</td><td><span class="pill warn">الهاتف/البريد/الإحداثيات: الأدمن</span></td></tr>
+        <tr><td>من قلمه · الأسئلة</td><td>المقالات المنشورة · <code>clientFaqs</code></td><td>المقالات · أسئلة صفحتك</td><td><span class="pill ok">الشريك</span></td></tr>
+        <tr><td>هوية اللون</td><td><code>brandGuidelines</code> Json</td><td>— لا شاشة في الكونسول</td><td><span class="pill bad">لا أحد يحرّره فعلياً</span> (يظهر في جدول الأدمن فقط — مؤشّر)</td></tr>
+      </table>
+    </div>
+
+    <div class="grid gap-3 md:grid-cols-2 text-sm">
+      <div class="card p-4 space-y-2">
+        <p class="font-medium" style="color:var(--ok)">ج) اللي شغّال صح اليوم — نبني عليه لا نعيده</p>
+        <ul class="space-y-1" style="color:var(--muted)">
+          <li>• <b class="text-white">الأنابيب سليمة:</b> كل حفظ في الكونسول (بروفايل · محتوى · معرض · فيديو · أسئلة · تقييمات · مقالات) يمرّ بـ<code>regenerateClientSeo</code> ← <code>revalidateModontyTag("clients")</code> — الموقع يتحدّث خلال ثوانٍ (٨ ملفات أكشن تستدعيه).</li>
+          <li>• <b class="text-white">الحقول موجودة:</b> الخدمات · الأرقام · الفريق · الاعتمادات · الفيديو (على بني) · الدوام (٧ أيام) · العنوان الوطني — كلها تُدخل من الكونسول اليوم، والقيم فارغة تُهمَل.</li>
+          <li>• <b class="text-white">لغة الشاشات إنسانية</b> («شِلنا الفيديو» · «كل قسم اختياري — املأ اللي يخصّك») — نفس النبرة المطلوبة لـ«موقعي».</li>
+          <li>• <b class="text-white">يوجد «اكتمال»</b> (شارة نسبة + حوار بالناقص) و«جاهزية السيو» ورابط الصفحة العامة (<code>PublicPageLink</code>).</li>
+          <li>• <b class="text-white">قاعدة الحالة موجودة على مدونتي:</b> <code>resolveClientPageState</code> (قيد التجهيز / بسيط / قوي) من ٦ إشارات.</li>
+        </ul>
+      </div>
+      <div class="card p-4 space-y-2">
+        <p class="font-medium" style="color:var(--bad)">د) الفجوات — بالدليل</p>
+        <ul class="space-y-1" style="color:var(--muted)">
+          <li>• <b class="text-white">١ · اللي يحدّد شكل الموقع ليس بيد الشريك:</b> الغلاف · الشعار · زرّ الطلب · اللون — كلها أدمن أو لا أحد. أي «بانٍ» بلا هذي الأربعة = يقلب مفاتيح فقط.</li>
+          <li>• <b class="text-white">٢ · التقسيم بمنطق JSON-LD لا بمنطق الزائر:</b> «بيانات نشاطك» = Organization، و«محتوى صفحتك» = OfferCatalog/employee/hasCredential (النصوص المساعدة تقول ذلك حرفياً). الشريك ما يفكّر كذا.</li>
+          <li>• <b class="text-white">٣ · لا معاينة ولا مسوّدة:</b> الحفظ ينشر مباشرة، والطريقة الوحيدة ليرى موقعه هي رابط الصفحة الحيّة.</li>
+          <li>• <b class="text-white">٤ · «الاكتمال» يقيس ١٥ حقل بروفايل</b> (اسم/سجل/عنوان…) لا ما يحتاجه الموقع (فيديو · صور · آراء · إحداثيات · غلاف). الكونسول لا يخبره أبداً إن موقعه في حالة «بسيط» أو «قيد التجهيز» رغم أن مدونتي تقرّرها.</li>
+          <li>• <b class="text-white">٥ · الوصف بلا توجيه:</b> صندوق ٣ أسطر بلا عدّاد ولا تلميح — والموقع يقتطع منه عنوان الهيرو وسطره الفرعي وأوّل سطر في الفوتر.</li>
+          <li>• <b class="text-white">٦ · صفر مفهوم قالب/أقسام/لون</b> في أي شاشة — متوقَّع، لكنه يعني أن «موقعي» شاشة جديدة لا تعديل شاشة.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card p-4 space-y-2 text-sm" style="border-color:rgba(0,229,229,.5)">
+      <p class="font-medium">هـ) التحسينات — مرتّبة بالأثر، وكل واحدة تربط بمرحلة من §٧</p>
+      <table>
+        <tr><th>#</th><th>التحسين</th><th>ليش</th><th>أين في الخطة</th></tr>
+        <tr><td><span class="pill bad">P0</span></td><td><b class="text-white">نقل ملكية الغلاف والشعار وزرّ الطلب واللون إلى الشريك</b> داخل «موقعي» (الأدمن يبقى قادراً على القفل/التجاوز). التوثيق والسجل والهاتف والمجال تبقى للأدمن كما هي.</td><td>بلا هذا، البانِي وهم. يخالف قاعدة الملكية الحالية (<code>project_client_field_ownership</code>) — لذلك قرار ٨ أدناه.</td><td>مرحلة ٣ (وتُقدَّم أوّل شيء فيها)</td></tr>
+        <tr><td><span class="pill bad">P0</span></td><td><b class="text-white">«موقعي» = شاشة واحدة على رأس مجموعة «نشاطك»</b>: القالب · الأقسام (مفاتيح + حالة البيانات) · اللون · الغلاف والشعار والزرّ · <b>جاهزية الموقع</b> (نفس إشارات <code>resolveClientPageState</code> + فيديو/آراء/إحداثيات) · معاينة · الرابط. الشاشات الحالية تبقى شاشات إدخال، و«موقعي» يوجّه إليها بزرّ «أضف».</td><td>لا نهدم ٥٠٠ سطر × ٢ شاشة شغّالة؛ نضيف طبقة توجيه فوقها.</td><td>مرحلة ٣</td></tr>
+        <tr><td><span class="pill warn">P1</span></td><td><b class="text-white">تسمية بمنطق الزائر:</b> «موقعي» (الشكل والجاهزية) · «بيانات نشاطك» (مَن أنت) · «محتوى صفحتك» → «خدماتك وفريقك» · و«معلومات نشاطك» (SEO) تبقى.</td><td>أربعة أسماء متقاربة اليوم؛ الاسم يذكر نطاقه (<code>feedback_names_must_state_their_scope</code>).</td><td>مرحلة ٣ (نصّ فقط)</td></tr>
+        <tr><td><span class="pill warn">P1</span></td><td><b class="text-white">توجيه الوصف والشعار النصّي:</b> تلميح «أوّل سطر يظهر عنواناً كبيراً في موقعك» + عدّاد (الشعار ≤ ٩٠ حرفاً) + سطر معاينة صغير تحت الحقل.</td><td>الحقل نفسه هو مصدر الهيرو — الشريك يجب أن يعرف.</td><td>مرحلة ٣ (تعديل صغير على <code>profile-form.tsx</code>)</td></tr>
+        <tr><td><span class="pill warn">P1</span></td><td><b class="text-white">جاهزية الموقع تحلّ محلّ «اكتمال البروفايل»</b> في الرأس (أو تُضاف بجانبها) وتُقال بلغة نتيجة: «موقعك يظهر بسيطاً — ينقصك فيديو وصور».</td><td>الرقم الحالي يطمئن (٧٠٪) بينما الموقع «بسيط».</td><td>مرحلة ٣</td></tr>
+        <tr><td><span class="pill info">P2</span></td><td><b class="text-white">المعاينة بالتوكن + مسوّدة</b> قبل النشر.</td><td>اليوم الحفظ = نشر فوري.</td><td>مرحلة ٤ (كما هي)</td></tr>
+        <tr><td><span class="pill info">P2</span></td><td>«الصور والملفات» تصير مكتبة رفع حقيقية (غلاف/شعار من هنا أيضاً) بدل عرض وفلترة فقط.</td><td>مكرّر مع «موقعي» — يُنفَّذ فقط لو احتيج.</td><td>لاحقاً</td></tr>
+      </table>
+    </div>
   </section>
 
   <!-- ١ السكيما -->
@@ -156,8 +228,8 @@ export const storefrontSchema = {
     <h2 class="h2">٣ — التدفّق الكامل: من أوّل دخول للكونسول حتى موقع حيّ</h2>
     <div class="flow">
       <div class="box"><b>١ الكونسول — «موقعي»</b>أوّل دخول: القالب الافتراضي مختار، كل الأقسام مفعَّلة، نسبة اكتمال تظهر.</div>
-      <div class="box"><b>٢ يكمّل بياناته</b>نفس شاشات الكونسول الحالية (وصف · خدمات · صور · فيديو · دوام…) — «موقعي» يشير للناقص.</div>
-      <div class="box"><b>٣ يختار ويضبط</b>قالب (مجاني/بريميوم) · مفاتيح الأقسام وترتيبها · اللون · معاينة حيّة.</div>
+      <div class="box"><b>٢ يكمّل بياناته</b>نفس الشاشات الموجودة اليوم (بيانات نشاطك · محتوى صفحتك · معرض الصور · أسئلة صفحتك · تقييمات) — «موقعي» يوجّه للناقص بزرّ «أضف».</div>
+      <div class="box"><b>٣ يختار ويضبط</b>قالب (مجاني/بريميوم) · الغلاف والشعار وزرّ الطلب (كانت أدمن — تنتقل له) · مفاتيح الأقسام · اللون · معاينة.</div>
       <div class="box db"><b>٤ يحفظ → القاعدة</b><code>templateId · themeSettings · sections · siteUpdatedAt</code> بعد Zod من سكيما القالب.</div>
       <div class="box web"><b>٥ مدونتي</b><code>revalidateTag("clients")</code> → الرندر بالقالب المختار خلال ثوانٍ، على <code>/clients/[slug]</code> (والنطاق الفرعي لاحقاً).</div>
     </div>
@@ -184,10 +256,10 @@ export const storefrontSchema = {
             </div>
           </div>
           <div class="sc">
-            <h5>اكتمال موقعك — ٧٠٪</h5>
+            <h5>جاهزية موقعك — يظهر «قويّاً» ✓</h5>
             <div style="height:6px;border-radius:9999px;background:#e3e8f0"><div style="width:70%;height:100%;border-radius:9999px;background:#3030ff"></div></div>
             <ul style="margin-top:6px;color:#5b6474;line-height:1.7">
-              <li>✓ الوصف · ✓ الخدمات (٣) · ✓ الصور (٢١)</li>
+              <li>✓ الغلاف · ✓ الوصف · ✓ الخدمات (٣) · ✓ الصور (٢١)</li>
               <li>⚠ فيديو تعريفي ناقص — يرفع الثقة <a style="color:#3030ff">أضف</a></li>
               <li>⚠ إحداثيات العنوان ناقصة — بلا خريطة <a style="color:#3030ff">أضف</a></li>
               <li>⚠ لا آراء بعد — <a style="color:#3030ff">اطلب رأياً</a></li>
@@ -204,6 +276,14 @@ export const storefrontSchema = {
               <tr><td>فين وكيف</td><td><span class="toggle on"></span></td><td style="color:#f59e0b">بلا خريطة (لا إحداثيات)</td></tr>
               <tr><td>من قلمه</td><td><span class="toggle on"></span></td><td style="color:#16a34a">٢ مقال</td></tr>
             </table>
+          </div>
+          <div class="sc" style="grid-column:1/-1">
+            <h5>هويتك على الموقع (كانت عند مودونتي — صارت بيدك)</h5>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+              <div><div class="thumb" style="height:34px"></div><div style="margin-top:3px">الغلاف ٢٤٠٠×٤٠٠ <span class="btn o">غيّر</span></div></div>
+              <div><div class="thumb" style="height:34px;width:34px;border-radius:50%"></div><div style="margin-top:3px">الشعار <span class="btn o">غيّر</span></div></div>
+              <div><div style="height:34px;display:grid;place-items:center"><span class="btn">اطلب اتصالاً</span></div><div style="margin-top:3px">زرّ الطلب: نموذج حجز · رابط · واتساب <span class="btn o">غيّر</span></div></div>
+            </div>
           </div>
           <div class="sc">
             <h5>الإعدادات (من سكيما القالب)</h5>
@@ -259,7 +339,7 @@ export const storefrontSchema = {
       <tr><th>#</th><th>المرحلة</th><th>أين</th><th>القبول</th></tr>
       <tr><td>١</td><td>السكيما: <code>PageTemplate</code> + حقول <code>Client</code> + تعبئة الموجودين + صفّ «المتجر» (FREE)</td><td>shared/prisma + سكربت Run-All</td><td><code>prisma generate</code> بعد قتل السيرفرات · كل عميل نشط له <code>templateId</code></td></tr>
       <tr><td>٢</td><td>السجلّ + نقل الرئيسية الحالية إلى <code>templates/storefront/</code> + قراءة <code>sections/themeSettings</code> في الرندر</td><td>modonty</td><td>الموقع كما هو بالضبط (لقطة قبل/بعد) · JSON-LD مطابق</td></tr>
-      <tr><td>٣</td><td>شاشة «موقعي»: قالب · أقسام · إعدادات · اكتمال · حفظ</td><td>console</td><td>حفظ → الموقع يتغيّر خلال ثوانٍ · Zod يرفض القيم الغلط</td></tr>
+      <tr><td>٣</td><td>شاشة «موقعي»: (أ) نقل الغلاف/الشعار/زرّ الطلب للشريك · (ب) قالب · أقسام · لون · (ج) جاهزية الموقع بلغة نتيجة · (د) توجيه الوصف في «بيانات نشاطك» · (هـ) التسميات بمنطق الزائر</td><td>console</td><td>حفظ → الموقع يتغيّر خلال ثوانٍ · Zod يرفض القيم الغلط · الأدمن يرى نفس القيم ويقدر يقفلها</td></tr>
       <tr><td>٤</td><td>المعاينة بالتوكن (draft) على مدونتي</td><td>modonty + console</td><td>المعاينة = الموقع بعد الحفظ حرفياً</td></tr>
       <tr><td>٥</td><td>القالب الثاني «المكتب» (مجاني)</td><td>modonty</td><td>تبديل القالب لا يغيّر SEO</td></tr>
       <tr><td>٦</td><td>البريميوم: <code>TemplatePurchase</code> + الشراء + الاستحقاق</td><td>console + admin + modonty</td><td>لاحقاً — عند القرار التجاري</td></tr>
@@ -277,6 +357,7 @@ export const storefrontSchema = {
       <li class="card p-4 q"><b>٥</b> المعاينة: توكن على مدونتي (نفس المكوّنات) أم إطار داخل الكونسول يستورد المكوّنات؟ <span class="rec">توصيتي: توكن على مدونتي — صفر تكرار.</span></li>
       <li class="card p-4 q"><b>٦</b> البريميوم يُباع كشراء مرّة أم ضمن باقة أعلى؟ (يؤجَّل — لا يغيّر السكيما).</li>
       <li class="card p-4 q"><b>٧</b> إعادة ترتيب الأقسام: نمنعها نهائياً (الترتيب من القالب) أم نتيحها لاحقاً كخيار متقدّم مخفيّ؟ <span class="rec">توصيتي: نمنعها — البساطة أوّلاً؛ ولو احتجنا نضيفها بلا تغيير سكيما.</span></li>
+      <li class="card p-4 q"><b>٨</b> <b>ملكية الغلاف والشعار وزرّ الطلب واللون تنتقل للشريك</b> في «موقعي» (الأدمن يقفل/يتجاوز)؟ اليوم كلها أدمن أو بلا مالك (§٠.٥ د-١)، والقاعدة المسجَّلة تقول «الميديا للأدمن». <span class="rec">توصيتي: نعم — هذي الأربعة هي «الموقع» في عين الشريك؛ ما عداها (التوثيق · السجل · الهاتف · المجال · الكيان) يبقى للأدمن.</span></li>
     </ol>
   </section>
 
