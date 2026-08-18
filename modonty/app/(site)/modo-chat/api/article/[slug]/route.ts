@@ -3,7 +3,8 @@ import { ArticleStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
-import { getArticleForChat, getArticlesForOutOfScopeSearch } from "@/app/(site)/articles/[slug]/actions/article-data";
+import { getArticleForChat } from "@/lib/queries/get-article-for-chat";
+import { getArticlesForOutOfScopeSearch } from "@/lib/queries/get-articles-for-out-of-scope-search";
 import { guardChatRequest } from "@/app/(site)/modo-chat/data/guard-chat-request";
 import { getEmbeddedChunks } from "@/app/(site)/modo-chat/data/get-embedded-chunks";
 import { retrieveFromEmbedded } from "@/app/(site)/modo-chat/data/retrieve-from-embedded";

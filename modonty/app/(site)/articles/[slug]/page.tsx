@@ -25,13 +25,11 @@ import {
   getArticleBySlugMinimal,
   getArticleContentBySlug,
   getArticleFaqs,
-} from "./actions";
-import {
   getRelatedArticlesByArticleId,
   getRelatedArticlesByClient,
   getRelatedArticlesByAuthor,
-} from "./actions/article-data";
-import { getPendingFaqsForCurrentUser } from "./actions/get-pending-faqs-for-current-user";
+} from "./data";
+import { getPendingFaqsForCurrentUser } from "./data/get-pending-faqs-for-current-user";
 
 // Reused content components.
 import {
@@ -45,22 +43,21 @@ import {
   ArticleTableOfContents,
   ArticleAuthorBio,
 } from "./components";
-// Client-only lazy wrappers — ssr:false must live in a 'use client' file
-import {
-  ArticleFeaturedImageNewsletter,
-  GTMClientTracker,
-  ArticleViewTracker,
-  ArticleBodyLinkTracker,
-} from "./components/client-lazy";
-// Article layout components (promoted from the design lab — now the production article).
-import { AskModoCard } from "./components/ask-modo-card";
-import { ArticleLabClientCard } from "./components/article-lab-client-card";
-import { ArticleLabGallery } from "./components/article-lab-gallery";
-import { ArticleLabReadMore } from "./components/article-lab-read-more";
-import { ArticleLabEngagementStrip } from "./components/article-lab-engagement";
-import { ArticleLabBottomDock } from "./components/article-lab-bottom-dock";
-import { ArticleTopEngagementBar } from "./components/article-top-engagement-bar";
-import { ArticleLabMobileIdentity } from "./components/article-lab-mobile-identity";
+// Client-only wrappers — `ssr: false` is only legal inside a 'use client' file, so each one
+// sits beside the component it defers.
+import { FeaturedImageNewsletterLazy } from "./components/featured-image/FeaturedImageNewsletterLazy";
+import { GtmTrackerLazy } from "./components/gtm-tracker/GtmTrackerLazy";
+import { ArticleViewTrackerLazy } from "./components/view-tracker/ViewTrackerLazy";
+import { ArticleBodyLinkTrackerLazy } from "./components/body-link-tracker/BodyLinkTrackerLazy";
+
+import { AskModoCard } from "./components/ask-modo-card/AskModoCard";
+import { PartnerCard } from "./components/partner-card/PartnerCard";
+import { Gallery } from "./components/gallery/Gallery";
+import { ReadMore } from "./components/read-more/ReadMore";
+import { EngagementBar } from "./components/engagement-bar/EngagementBar";
+import { BottomDock } from "./components/bottom-dock/BottomDock";
+import { ArticleTopEngagementBar } from "./components/top-engagement-bar/TopEngagementBar";
+import { PartnerCardMobile } from "./components/partner-card/PartnerCardMobile";
 import ArticleLoading from "./loading";
 
 interface ArticlePageProps {
@@ -436,7 +433,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
         )}
 
         {article.client && (
-          <GTMClientTracker
+          <GtmTrackerLazy
             clientContext={{
               client_id: article.client.id,
               client_slug: article.client.slug,
@@ -447,7 +444,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
           />
         )}
 
-        <ArticleViewTracker articleSlug={article.slug} />
+        <ArticleViewTrackerLazy articleSlug={article.slug} />
 
         <ReadingProgressBar />
 
@@ -466,7 +463,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
             {/* RIGHT (RTL first): engagement strip + client card + TOC + gallery */}
             <aside className="hidden self-start lg:sticky lg:top-[3.5rem] lg:block" aria-label="العميل والتفاعل">
               <div className="flex flex-col gap-6">
-                <ArticleLabEngagementStrip
+                <EngagementBar
                   likes={article._count.likes}
                   userLiked={article.userLiked}
                   userFavorited={article.userFavorited}
@@ -477,7 +474,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   ctaText={article.client?.newsletterCtaText}
                 />
                 {article.client && (
-                  <ArticleLabClientCard
+                  <PartnerCard
                     client={article.client}
                     askClientProps={{
                       articleId: article.id,
@@ -497,7 +494,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   />
                 )}
                 <ArticleTableOfContents content={article.content} collapsible />
-                <ArticleLabGallery images={galleryImages} fallbackText={article.client?.description} clientName={article.client?.name} />
+                <Gallery images={galleryImages} fallbackText={article.client?.description} clientName={article.client?.name} />
               </div>
             </aside>
 
@@ -533,13 +530,13 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
                 {/* MOBILE: client identity (engagement lives in the sticky top bar; conversion in the bottom bar) */}
                 {article.client && (
-                  <ArticleLabMobileIdentity client={article.client} articleId={article.id} />
+                  <PartnerCardMobile client={article.client} articleId={article.id} />
                 )}
 
                 {featuredImage && (
                   <ArticleFeaturedImage image={featuredImage} title={article.title}>
                     {article.client && (
-                      <ArticleFeaturedImageNewsletter
+                      <FeaturedImageNewsletterLazy
                         clientId={article.clientId}
                         clientName={article.client.name}
                         articleId={article.id}
@@ -613,7 +610,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   style={{ lineHeight: "1.6", direction: "rtl" }}
                   dangerouslySetInnerHTML={{ __html: safeHtml }}
                 />
-                <ArticleBodyLinkTracker articleId={article.id} />
+                <ArticleBodyLinkTrackerLazy articleId={article.id} />
 
                 {article.citations?.length ? (
                   <div className="mb-8 [&_section]:my-0">
@@ -623,7 +620,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
                 {/* MOBILE: image gallery (desktop keeps it in the aside) */}
                 <div className="mb-8 lg:hidden">
-                  <ArticleLabGallery images={galleryImages} fallbackText={article.client?.description} clientName={article.client?.name} />
+                  <Gallery images={galleryImages} fallbackText={article.client?.description} clientName={article.client?.name} />
                 </div>
 
                 <ArticleFaq articleId={article.id} faqsCount={article._count.faqs} faqs={articleFaqsForJsonLd} pendingFaqs={pendingFaqs} />
@@ -646,7 +643,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 )}
 
                 {/* CONSOLIDATED: one "اقرأ أيضاً" grid (replaces the 4 repetitive related sections) */}
-                <ArticleLabReadMore articleId={article.id} clientId={article.clientId ?? undefined} items={readMoreTop} />
+                <ReadMore articleId={article.id} clientId={article.clientId ?? undefined} items={readMoreTop} />
 
                 <ArticleFooter
                   client={article.client}
@@ -667,7 +664,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
             style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
           >
             <div className="mx-auto max-w-[480px]">
-              <ArticleLabBottomDock
+              <BottomDock
                 clientId={article.clientId}
                 articleId={article.id}
                 clientName={article.client.name}
@@ -680,7 +677,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 }}
                 bookingUser={userBox}
                 clientCard={
-                  <ArticleLabClientCard
+                  <PartnerCard
                     client={article.client}
                     askClientProps={{
                       articleId: article.id,

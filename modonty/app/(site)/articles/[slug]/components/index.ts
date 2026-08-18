@@ -1,16 +1,14 @@
-export { ArticleHeader } from "./article-header";
-export { ArticleTags } from "./article-tags";
-export { ArticleFeaturedImage } from "./article-featured-image";
-export { ArticleFaq } from "./faq/article-faq";
-export { ArticleFooter } from "./article-footer";
-export { ArticleComments } from "./comments/article-comments";
-export { ArticleShareButtons } from "./article-share-buttons";
-export { ArticleInteractionButtons } from "./article-interaction-buttons";
-export { ReadingProgressBar } from "./client-only-reading-progress";
-export {
-  ArticleAuthorBio,
-  ArticleCitations,
-  NewsletterCTA,
-  ArticleTableOfContents,
-} from "./sidebar";
-export { CommentFormDialog } from "./comment-form-dialog";
+export { ArticleHeader } from "./article-header/ArticleHeader";
+export { ArticleTags } from "./article-tags/ArticleTags";
+export { ArticleFeaturedImage } from "./featured-image/FeaturedImage";
+export { ArticleFaq } from "./faq/ArticleFaq";
+export { ArticleFooter } from "./article-footer/ArticleFooter";
+export { ArticleComments } from "./comments/ArticleComments";
+export { ArticleShareButtons } from "./share-buttons/ShareButtons";
+export { ArticleInteractionButtons } from "./interaction-buttons/InteractionButtons";
+export { ReadingProgressBar } from "./reading-progress/ReadingProgressBarLazy";
+export { ArticleAuthorBio } from "./sidebar/AuthorBio";
+export { ArticleCitations } from "./sidebar/Citations";
+export { NewsletterCTA } from "./sidebar/NewsletterCta";
+export { ArticleTableOfContents } from "./sidebar/TableOfContentsLazy";
+export { CommentFormDialog } from "./comment-form/CommentFormDialog";
