@@ -1,49 +1,25 @@
 "use client";
-import { CHARACTER_URL } from "@/constants";
+import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
 
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "@/components/providers/SessionContext";
-import { signIn } from "next-auth/react";
-import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
-import { IconAi, IconLogin, IconMessage, IconHistory } from "@/lib/icons";
-import { getCategoryIcon } from "@/app/(site)/categories/helpers/category-utils";
-import { Button } from "@/components/ui/button";
+import { IconMessage, IconHistory, IconAdd } from "@/lib/icons";
+import { getScopeIcon } from "../../helpers/get-scope-icon";
 import { cn } from "@/lib/utils";
 
-const ChatConversation = dynamic(
-  () => import("./chat-conversation").then((m) => ({ default: m.ChatConversation })),
+import { LoginCard } from "../login-card/LoginCard";
+
+const ChatList = dynamic(
+  () => import("../chat-list/ChatList").then((m) => ({ default: m.ChatList })),
   { ssr: false, loading: () => <div className="flex h-full items-center justify-center p-8"><div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div> }
 );
 
-const ChatHistoryList = dynamic(
-  () => import("./chat-history-list").then((m) => ({ default: m.ChatHistoryList })),
+const HistoryList = dynamic(
+  () => import("../history-list/HistoryList").then((m) => ({ default: m.HistoryList })),
   { ssr: false }
 );
-
-function ChatLoginPrompt() {
-  return (
-    <div dir="rtl" className="flex flex-col h-full items-center justify-center p-8 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 mb-6">
-        <IconAi className="h-8 w-8 text-primary" strokeWidth={1.5} />
-      </div>
-      <h2 className="text-lg font-semibold text-foreground mb-2 flex items-center justify-center gap-2">
-        مودو شات بانتظارك
-        <span className="rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-          تجريبي
-        </span>
-      </h2>
-      <p className="text-sm text-muted-foreground mb-6 max-w-[260px]">
-        سجّل دخولك للاستفادة من محادثات ذكية حول مقالاتك المفضلة
-      </p>
-      <Button onClick={() => signIn()} className="gap-2" size="lg">
-        <IconLogin className="h-4 w-4" />
-        تسجيل الدخول
-      </Button>
-    </div>
-  );
-}
 
 const BETA_BADGE = (
   <span
@@ -57,10 +33,10 @@ const BETA_BADGE = (
 
 function ChatHeading({
   articleSlug,
-  selectedCategory,
+  selectedIndustry,
 }: {
   articleSlug: string | null;
-  selectedCategory: { slug: string; name: string } | null;
+  selectedIndustry: { slug: string; name: string } | null;
 }) {
   if (articleSlug) {
     return (
@@ -70,8 +46,8 @@ function ChatHeading({
       </span>
     );
   }
-  if (selectedCategory) {
-    const Icon = getCategoryIcon(selectedCategory.name);
+  if (selectedIndustry) {
+    const Icon = getScopeIcon(selectedIndustry.name);
     return (
       <span className="inline-flex items-center gap-2 flex-wrap min-w-0" dir="rtl">
         <span
@@ -79,7 +55,7 @@ function ChatHeading({
           role="status"
         >
           <Icon className="h-4 w-4 shrink-0 text-primary" aria-hidden />
-          <span className="truncate">اسأل عن مقالات {selectedCategory.name}</span>
+          <span className="truncate">{selectedIndustry.name}</span>
         </span>
         {BETA_BADGE}
       </span>
@@ -95,37 +71,57 @@ function ChatHeading({
 
 type TabMode = "chat" | "history";
 
-export function ModoChatClient() {
+export function PageLayout() {
   const searchParams = useSearchParams();
   const draft = searchParams.get("q") ?? "";
   const articleSlug = searchParams.get("article");
   const [tab, setTab] = useState<TabMode>("chat");
-  const [selectedCategory, setSelectedCategory] = useState<{ slug: string; name: string } | null>(null);
+  const [historyOpened, setHistoryOpened] = useState(false);
+  /** Set when a history row asks to reopen a thread; ChatList rehydrates from it. */
+  const [resumeConversationId, setResumeConversationId] = useState<string | null>(null);
+  /**
+   * Bumped by «محادثة جديدة» to remount the chat with empty state. A returning visitor is
+   * restored into their last thread on load, and before this there was no way out of it —
+   * the industry chips, which only render on an empty chat, became unreachable forever.
+   */
+  const [chatSession, setChatSession] = useState(0);
+  const [selectedIndustry, setSelectedIndustry] = useState<{ slug: string; name: string } | null>(null);
   const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (articleSlug) setSelectedCategory(null);
+    if (articleSlug) setSelectedIndustry(null);
   }, [articleSlug]);
 
   return (
-    <div dir="rtl" className="flex min-h-[calc(100vh-3.5rem)] flex-col">
+    // A fixed pane, not min-height: the message list must own the scrollbar, or the whole
+    // page scrolls and the composer drifts away from the bottom of the screen.
+    <div dir="rtl" className="flex h-[calc(100dvh-3.5rem)] flex-col overflow-hidden">
       <header
         className="shrink-0 border-b border-border bg-background"
         aria-label="رأس المحادثة"
       >
         <div className="mx-auto flex min-h-[56px] w-full max-w-3xl flex-row items-center gap-3 px-4 py-3">
           <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg ring-1 ring-border/50 shadow-sm">
-            <OptimizedImage
-              media={asMedia(CHARACTER_URL)}
-              alt="مودو شات"
-              fill
-              className="object-cover"
-              sizes="32px"
-            />
+            <ModoCharacter sizes="32px" decorative />
           </div>
           <h1 className="flex-1 min-w-0 text-base font-semibold text-foreground">
-            <ChatHeading articleSlug={articleSlug} selectedCategory={selectedCategory} />
+            <ChatHeading articleSlug={articleSlug} selectedIndustry={selectedIndustry} />
           </h1>
+          {session?.user && (
+            <button
+              type="button"
+              onClick={() => {
+                setTab("chat");
+                setResumeConversationId(null);
+                setSelectedIndustry(null);
+                setChatSession((n) => n + 1);
+              }}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <IconAdd className="h-3.5 w-3.5" aria-hidden />
+              محادثة جديدة
+            </button>
+          )}
         </div>
         {session?.user && (
           <nav
@@ -157,7 +153,7 @@ export function ModoChatClient() {
               aria-controls="chat-panel"
               id="tab-history"
               type="button"
-              onClick={() => setTab("history")}
+              onClick={() => { setTab("history"); setHistoryOpened(true); }}
               className={cn(
                 "flex flex-1 items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset",
@@ -185,21 +181,38 @@ export function ModoChatClient() {
             <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
           </div>
         ) : session?.user ? (
-          tab === "history" ? (
-            <ChatHistoryList />
-          ) : (
-            <ChatConversation
-              initialInput={draft}
-              articleSlug={articleSlug}
-              userName={session.user.name ?? session.user.email ?? undefined}
-              userImage={session.user.image ?? undefined}
-              userEmail={session.user.email ?? undefined}
-              selectedCategory={selectedCategory}
-              onSelectedCategoryChange={setSelectedCategory}
-            />
-          )
+          /* Both stay mounted and are toggled with `hidden`. Swapping them with a ternary
+             unmounted the chat, so one tap on «سجل» silently threw away a live conversation. */
+          <>
+            <div className={cn("h-full", tab === "history" && "hidden")}>
+              <ChatList
+                key={chatSession}
+                startFresh={chatSession > 0}
+                initialInput={draft}
+                articleSlug={articleSlug}
+                userName={session.user.name ?? session.user.email ?? undefined}
+                userImage={session.user.image ?? undefined}
+                userEmail={session.user.email ?? undefined}
+                selectedIndustry={selectedIndustry}
+                onSelectedIndustryChange={setSelectedIndustry}
+                resumeConversationId={resumeConversationId}
+              />
+            </div>
+            {/* Loaded on first open only — but never unmounted afterwards, so switching back
+                and forth costs nothing and the chat above keeps its state. */}
+            {historyOpened && (
+              <div className={cn("h-full", tab === "chat" && "hidden")}>
+                <HistoryList
+                  onResume={(id) => {
+                    setResumeConversationId(id);
+                    setTab("chat");
+                  }}
+                />
+              </div>
+            )}
+          </>
         ) : (
-          <ChatLoginPrompt />
+          <LoginCard />
         )}
       </div>
     </div>

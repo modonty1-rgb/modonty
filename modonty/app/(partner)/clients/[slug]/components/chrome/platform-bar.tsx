@@ -1,9 +1,9 @@
 import { Suspense } from "react";
+import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 import Link from "next/link";
 import { ModontyMark } from "@/components/icons/modonty-mark";
 import { ThemeToggle } from "@/app/layout/components/nav/ThemeToggle";
 import { UserMenu } from "@/app/layout/components/user-menu/UserMenu";
-import { IconShieldCheck } from "@/lib/icons";
 
 interface PlatformBarProps {
   /** True when the partner has papers on file (CR / legal name / verification image). */
@@ -27,7 +27,7 @@ export function PlatformBar({ isVerified }: PlatformBarProps) {
             <>
               <span className="h-3 w-px bg-white/20" aria-hidden />
               <span className="flex items-center gap-1">
-                <IconShieldCheck className="h-3.5 w-3.5 text-green-500" aria-hidden />
+                <VerifiedBadge className="h-3.5 w-3.5 text-white fill-white/20" label="شريك موثّق" />
                 شريك موثّق
               </span>
               <Link href="/trust" className="hover:text-white">كيف نتأكّد؟</Link>

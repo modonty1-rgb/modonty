@@ -53,6 +53,7 @@ import {
   ArticleBodyLinkTracker,
 } from "./components/client-lazy";
 // Article layout components (promoted from the design lab — now the production article).
+import { AskModoCard } from "./components/ask-modo-card";
 import { ArticleLabClientCard } from "./components/article-lab-client-card";
 import { ArticleLabGallery } from "./components/article-lab-gallery";
 import { ArticleLabReadMore } from "./components/article-lab-read-more";
@@ -527,6 +528,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   views={article._count.views}
                   questionsCount={article._count.faqs}
                 />
+
+                <AskModoCard slug={article.slug} />
 
                 {/* MOBILE: client identity (engagement lives in the sticky top bar; conversion in the bottom bar) */}
                 {article.client && (

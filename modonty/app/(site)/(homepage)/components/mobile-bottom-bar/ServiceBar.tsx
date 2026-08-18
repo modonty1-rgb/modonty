@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
+import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
 import { buttonVariants } from "@/components/ui/button";
 import { IconCalendar, IconShoppingBag } from "@/lib/icons";
 
-import { CHARACTER_URL } from "@/constants";
 import { cn } from "@/lib/utils";
 
 // The mobile bottom bar: three links and nothing else, so it is a Server Component.
@@ -26,7 +25,7 @@ export function ServiceBar() {
         <span className="pointer-events-none absolute inset-0 rounded-t-xl border-x border-t border-accent/35 bg-background" aria-hidden="true" />
         <span className="relative z-10 flex shrink-0 items-center justify-center">
           <span className="relative block size-7 shrink-0 overflow-hidden rounded-full">
-            <OptimizedImage media={asMedia(CHARACTER_URL)} alt="" fill className="object-cover" sizes="28px" />
+            <ModoCharacter sizes="28px" decorative />
           </span>
         </span>
         <span className="relative z-10 text-[8px] font-normal leading-none text-accent">مودو</span>

@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
+import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
 import { IconArrowRight } from "@/lib/icons";
-
-import { CHARACTER_URL } from "@/constants";
 
 // Top of the feed, LinkedIn "Start a post" style: the character plus a pill drawn like
 // a text field. It is a LINK, not an input — the whole row opens /modo-chat, where the
@@ -15,7 +13,7 @@ export function AskModo() {
       className="group flex items-center gap-3 rounded-lg bg-card p-3 ring-1 ring-border transition-shadow sm:gap-4 sm:px-4 sm:hover:ring-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
     >
       <span className="relative flex size-11 shrink-0 overflow-hidden rounded-full ring-1 ring-primary/15 sm:size-12">
-        <OptimizedImage media={asMedia(CHARACTER_URL)} alt="" fill className="object-cover" sizes="48px" />
+        <ModoCharacter sizes="(min-width:640px) 48px, 44px" decorative />
       </span>
       {/* The "field": muted placeholder text, brand ring on hover — reads as "type here",
           without being one. */}

@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 import { notFound } from "next/navigation";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { cacheTag, cacheLife } from "next/cache";
@@ -13,7 +14,7 @@ import { generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } fr
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { SITE_URL, LOGO_URL, BRAND_AR, MODONTY_AUTHOR_SLUG } from "@/constants";
 import { getPlatformSocialLinks } from "@/lib/settings/get-platform-social-links";
-import { IconFacebook, IconLinkedin, IconTwitter, IconExternal, IconEmail, IconVerified } from "@/lib/icons";
+import { IconFacebook, IconLinkedin, IconTwitter, IconExternal, IconEmail } from "@/lib/icons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -281,7 +282,7 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
                   {author.name}
                   {author.verificationStatus && (
                     <span title="ناشر موثّق" className="inline-flex text-primary">
-                      <IconVerified className="h-6 w-6" aria-label="ناشر موثّق" />
+                      <VerifiedBadge className="h-6 w-6" label="ناشر موثّق" />
                     </span>
                   )}
                 </h1>

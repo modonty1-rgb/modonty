@@ -6,14 +6,14 @@ function getSerperKey() {
   return key;
 }
 
-export interface SerperOrganicResult {
+interface SerperOrganicResult {
   title: string;
   link: string;
   snippet: string;
   position?: number;
 }
 
-export interface SerperResponse {
+interface SerperResponse {
   organic: SerperOrganicResult[];
 }
 

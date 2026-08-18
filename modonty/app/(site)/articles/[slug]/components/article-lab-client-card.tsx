@@ -1,11 +1,12 @@
 import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 import type { ComponentType, SVGProps } from "react";
 
 import { OptimizedImage } from "@modonty/shared/components/optimized-image";
 import { Card } from "@/components/ui/card";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { BRAND_AVATAR_RADIUS } from "@/constants";
-import { IconClients, IconChevronLeft, IconPhone, IconVerified, IconExternal } from "@/lib/icons";
+import { IconClients, IconChevronLeft, IconPhone, IconExternal } from "@/lib/icons";
 import { WhatsAppAction } from "@/components/shared/whatsapp-action/WhatsAppAction";
 import { Linkedin } from "@/components/icons/linkedin";
 import { Twitter } from "@/components/icons/twitter";
@@ -142,7 +143,7 @@ export function ArticleLabClientCard({ client, askClientProps, cta }: ArticleLab
               className="inline-flex items-center gap-1 text-foreground transition-colors hover:text-primary"
             >
               {client.name}
-              <IconVerified className="h-4 w-4 shrink-0 text-primary" aria-label="موثّق" />
+              <VerifiedBadge className="h-4 w-4" label="شريك موثّق" />
             </CtaTrackedLink>
           </h2>
           <IconChevronLeft className="ms-auto h-4 w-4 shrink-0 text-muted-foreground ltr:rotate-180" aria-hidden />

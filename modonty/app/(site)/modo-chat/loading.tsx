@@ -1,5 +1,5 @@
-import { ModoChatSkeleton } from "./components/modo-chat-skeleton";
+import { PageSkeleton } from "./components/page-layout/PageSkeleton";
 
 export default function Loading() {
-  return <ModoChatSkeleton />;
+  return <PageSkeleton />;
 }

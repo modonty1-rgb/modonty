@@ -33,11 +33,13 @@ export async function GET(request: NextRequest) {
       ...(cursor && { cursor, skip: 1 }),
       select: {
         id: true,
+        conversationId: true,
         userQuery: true,
         assistantResponse: true,
         scopeType: true,
         articleSlug: true,
         categorySlug: true,
+        industrySlug: true,
         outcome: true,
         source: true,
         webSources: true,
@@ -51,8 +53,9 @@ export async function GET(request: NextRequest) {
 
     const articleSlugs = [...new Set(items.map((m) => m.articleSlug).filter(Boolean))] as string[];
     const categorySlugs = [...new Set(items.map((m) => m.categorySlug).filter(Boolean))] as string[];
+    const industrySlugs = [...new Set(items.map((m) => m.industrySlug).filter(Boolean))] as string[];
 
-    const [articles, categories] = await Promise.all([
+    const [articles, categories, industries] = await Promise.all([
       articleSlugs.length > 0
         ? db.article.findMany({
             where: { slug: { in: articleSlugs } },
@@ -65,24 +68,36 @@ export async function GET(request: NextRequest) {
             select: { slug: true, name: true },
           })
         : [],
+      industrySlugs.length > 0
+        ? db.industry.findMany({
+            where: { slug: { in: industrySlugs } },
+            select: { slug: true, name: true },
+          })
+        : [],
     ]);
 
     const articleMap = new Map(articles.map((a) => [a.slug, a.title]));
     const categoryMap = new Map(categories.map((c) => [c.slug, c.name]));
+    const industryMap = new Map(industries.map((i) => [i.slug, i.name]));
 
     const result = items.map((m) => ({
       id: m.id,
+      // Lets the history row hand the chat tab a thread to reopen.
+      conversationId: m.conversationId,
       userQuery: m.userQuery,
       assistantResponse: m.assistantResponse,
       scopeType: m.scopeType,
       scopeLabel:
         m.scopeType === "article" && m.articleSlug
           ? articleMap.get(m.articleSlug) ?? m.articleSlug
-          : m.scopeType === "category" && m.categorySlug
-            ? categoryMap.get(m.categorySlug) ?? m.categorySlug
-            : null,
+          : m.scopeType === "industry" && m.industrySlug
+            ? industryMap.get(m.industrySlug) ?? m.industrySlug
+            : m.scopeType === "category" && m.categorySlug
+              ? categoryMap.get(m.categorySlug) ?? m.categorySlug
+              : null,
       articleSlug: m.articleSlug,
       categorySlug: m.categorySlug,
+      industrySlug: m.industrySlug,
       outcome: m.outcome,
       source: m.source,
       webSources: Array.isArray(m.webSources) ? m.webSources : undefined,

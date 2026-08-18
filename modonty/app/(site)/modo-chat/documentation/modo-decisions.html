@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>مودو — ملف القرارات والنموّ (v2 · ١٨ أغسطس ٢٠٢٦)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0b0d1f;--card:#12152b;--ring:#242846;--fg:#fafafa;--muted:#a3a7c2;--primary:#7070ff;--accent:#00e5e5;--ok:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+  html{background:var(--bg);color:var(--fg);font-family:Tajawal,system-ui,sans-serif}
+  .card{background:var(--card);border:1px solid var(--ring);border-radius:12px}
+  .h2{display:flex;align-items:center;gap:.5rem;font-size:1.25rem;font-weight:500}
+  .h2:before{content:"";width:20px;height:2px;border-radius:9999px;background:var(--accent)}
+  .eyebrow{display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:var(--muted)}
+  .eyebrow:before{content:"";width:16px;height:2px;border-radius:9999px;background:var(--accent)}
+  .pill{font-size:.7rem;padding:.15rem .5rem;border-radius:9999px;border:1px solid var(--ring);white-space:nowrap}
+  .pill.ok{color:var(--ok);border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.08)}
+  .pill.warn{color:var(--warn);border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08)}
+  .pill.bad{color:var(--bad);border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08)}
+  .pill.info{color:var(--primary);border-color:rgba(112,112,255,.4);background:rgba(112,112,255,.08)}
+  code{background:#1b1f3a;padding:.05rem .35rem;border-radius:4px;font-size:.85em;direction:ltr;unicode-bidi:embed;display:inline-block}
+  table{width:100%;border-collapse:separate;border-spacing:0}
+  th,td{padding:.7rem .8rem;text-align:start;vertical-align:top;border-top:1px solid var(--ring);font-size:.9rem}
+  th{color:var(--muted);font-weight:500;background:#0f1226;border-top:0}
+  .rec{color:var(--accent);font-weight:700}
+  blockquote{border-inline-start:3px solid var(--primary);padding:.4rem .9rem;color:var(--muted);font-size:.85rem;direction:ltr;text-align:left;font-family:ui-monospace,monospace}
+  .dec{border-inline-start:3px solid var(--primary);padding-inline-start:1rem}
+  .opt{border:1px solid var(--ring);border-radius:10px;padding:.9rem}
+  .opt.win{border-color:rgba(0,229,229,.5);background:rgba(0,229,229,.05)}
+  a{color:var(--primary)}
+  .src{font-size:.75rem;color:var(--muted)}
+</style>
+</head>
+<body class="min-h-screen">
+<main class="mx-auto max-w-[1128px] px-4 py-8 space-y-10">
+
+  <header class="space-y-3">
+    <p class="eyebrow">ملف مودو الوحيد · v2 · ١٨ أغسطس ٢٠٢٦ · القرارات + خطّة النموّ</p>
+    <h1 class="text-3xl font-bold leading-tight">🤖 مودو — القرارات، وطريق النموّ من «يجاوب» إلى «يخلّص المهمّة»</h1>
+    <p class="max-w-3xl text-[15px] leading-relaxed" style="color:var(--muted)">
+      خالد (١٨ أغسطس): «مودو أساسي… ممكن أطلع بحملات إعلانية عشان أجيب مشتركين لمدونتي من خلاله».
+      هذا يغيّر المعيار: مودو ما عاد ميزة تُقاس بالجودة، صار <b class="text-white">قناة استحواذ تُقاس بالتحويل والتكلفة</b>.
+      <b class="text-white">القرارات في اللوحة أدناه مباشرةً</b> — وتحتها الأدلّة: وش الموجود اليوم مقيساً، ووش تسوّيه المنصّات الكبيرة بمصادرها.
+      <br><br>
+      <span class="pill info">دُمج فيه <code>modo-growth</code> يوم ١٨ أغسطس</span>
+      — ملفّان لمودو كانا يشتّتان، فصارا واحداً: القرارات ١–١٠ عن <b class="text-white">ما هو مودو اليوم</b>،
+      والقرارات ١١–١٨ عن <b class="text-white">كيف يكبر</b> (يتعلّم · ينتج · يتذكّر).
+    </p>
+  </header>
+
+  <!-- ══ لوحة القرارات — أوّل شيء ══ -->
+  <section class="card p-6 space-y-4" style="border-color:rgba(0,229,229,.55)">
+    <div class="flex items-center justify-between flex-wrap gap-2">
+      <p class="font-bold text-xl">🎯 لوحة القرارات — اعتمد أو عدّل</p>
+      <span class="pill info">التفاصيل والأدلّة أسفل الملف · كل قرار له قسمه</span>
+    </div>
+    <p class="text-sm" style="color:var(--muted)">ثمانية عشر قراراً — <b class="text-white">المفتوح فوق</b> والمحسوم تحته للمرجع. عمود «توصيتي» فيه اختياري بسبب في سطر؛ عمود «قرارك» فاضٍ لك.</p>
+    <table>
+      <thead><tr><th style="width:2.5rem">#</th><th>القرار</th><th>الخيارات</th><th style="width:32%">توصيتي — والسبب في سطر</th><th style="width:6rem">قرارك</th></tr></thead>
+      <tbody>
+        <tr><td colspan="5" style="background:#0f1226;color:var(--warn);font-weight:700;border-top:2px solid rgba(239,68,68,.5)">⏳ مفتوح — ينتظر قرارك (14)</td></tr>
+        <tr>
+          <td><b>٤</b></td><td><b>البحث في الويب لمّا يعجز</b></td>
+          <td>(أ) يبقى<br>(ب) يُلغى ← يعرض أقرب شريك ويسجّل السؤال</td>
+          <td class="rec">ب — هذا بالضبط سبب إيقاف مساعد Expedia: يوصي بلا بياناتك فيخسر الثقة</td><td></td>
+        </tr>
+        <tr>
+          <td><b>٦</b></td><td><b>عمر محادثة المجهول</b></td>
+          <td>(أ) ما تُحفظ<br>(ب) ١٤ يوماً برابط<br>(ج) ٧ أيام</td>
+          <td class="rec">ب — نفس سياسة Perplexity المعلنة، وهي طُعم التسجيل</td><td></td>
+        </tr>
+        <tr>
+          <td><b>٧</b></td><td><b>سقف الإنفاق</b></td>
+          <td>(أ) بلا حدّ<br>(ب) ٢٠ سؤال/ساعة للحساب + سقف يومي عام</td>
+          <td class="rec">ب — بلا هذا، قرار ٢ يفتح فاتورتك على المجهولين</td><td></td>
+        </tr>
+        <tr>
+          <td><b>٨</b></td><td><b>الموديل</b></td>
+          <td>(أ) نبقى على الغالي<br>(ب) ننزل للأرخص</td>
+          <td class="rec">ب — المورّد نفسه يسمّي شغلنا «استرجاع بسيط»، والفرق أربعة أضعاف</td><td></td>
+        </tr>
+        <tr>
+          <td><b>٩</b></td><td><b>متى يقول «ما أعرف»</b></td>
+          <td>(أ) عتبات مخمَّنة زي اليوم<br>(ب) نعايرها على ٤٠ سؤالاً حقيقياً</td>
+          <td class="rec">ب — المورّد يقول صراحةً إن الدرجة تعتمد على السؤال ولا تُقارَن بين الأسئلة</td><td></td>
+        </tr>
+        <tr>
+          <td><b>١٠</b></td><td><b>طبقة البثّ</b></td>
+          <td>(أ) نعيد كتابتها الآن<br>(ب) نؤجّلها بعد ١ و٤ و٥</td>
+          <td class="rec">ب — شكل المحرّك بيتغيّر، وكتابتها مرّتين هدر</td><td></td>
+        </tr>
+        <tr>
+          <td><b>١١</b></td><td><b>مودو يتعلّم كيف؟</b></td>
+          <td>(أ) تدريب النموذج (fine-tune)<br>(ب) يبقى RAG + نعاير العتبات<br>(ج) الاثنان</td>
+          <td><span class="rec">(ب)</span> — محتواك يتغيّر أسبوعياً، والتدريب يتقادم مع كل مقال جديد. التدريب يعلّم <b>الأسلوب</b> لا <b>الحقائق</b>، وحقائقنا هي المتغيّرة.</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><b>١٢</b></td><td><b>زرّ تقييم تحت كل جواب (👍/👎)</b></td>
+          <td>(أ) نضيفه<br>(ب) نكتفي بالقياس الضمني (حجز/ضغطة)</td>
+          <td><span class="rec">(أ) + (ب)</span> — بلا حكم بشري ما عندك مسطرة تعاير عليها العتبات الخمس، والقياس الضمني وحده يخلط «جواب رديء» بـ«زائر ما جاء ليحجز».</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><b>١٣</b></td><td><b>الأسئلة اللي ما لها جواب — مين يشوفها؟</b></td>
+          <td>(أ) شاشة في الأدمن<br>(ب) تقرير أسبوعي على تلغرام<br>(ج) الاثنان</td>
+          <td><span class="rec">(ب) أولاً</span> — التقرير يُقرأ، والشاشة تحتاج أحداً يفتحها. الشاشة تجي لمّا يزيد الحجم.</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><b>١٤</b></td><td><b>سؤال متكرّر يصير صفحة FAQ منشورة؟</b></td>
+          <td>(أ) تلقائي<br>(ب) مسوّدة + مراجعة بشرية<br>(ج) لا</td>
+          <td><span class="rec">(ب)</span> — محتوانا طبّي (YMYL)، ونشر جواب آلي بلا مراجعة يخالف سياسة جوجل للمحتوى المُنتَج بكثافة، ويخالف قرارك ق٤٣/ق٤٤ (مراجع مسمّى).</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><b>١٥</b></td><td><b>حدّ التكرار الذي يرفع سؤالاً لمقال</b></td>
+          <td>(أ) ٣ مرات<br>(ب) ٥<br>(ج) ١٠</td>
+          <td><span class="rec">(ب) ٥</span> — رقم مبدئي يُراجَع بعد أول شهر بيانات، لا قاعدة. عندك اليوم حركة قليلة فـ١٠ تعني «ما يطلع شيء أبداً».</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><b>١٦</b></td><td><b>ذاكرة الزائر عبر المحادثات</b></td>
+          <td>(أ) لا شيء (الوضع الحالي)<br>(ب) «سألت قبل عن كذا»<br>(ج) ملفّ اهتمامات كامل</td>
+          <td><span class="rec">(ب)</span> — تحوّله من مساعد قراءة إلى شخص يعرفك، بلا مخاطر الخصوصية اللي يجرّها ملفّ كامل عن حالة صحّية.</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><b>١٧</b></td><td><b>مودو يسأل قبل ما يرشّح؟</b></td>
+          <td>(أ) يرشّح مباشرة (الحالي)<br>(ب) سؤال توضيحي واحد ثم يرشّح</td>
+          <td><span class="rec">(ب)</span> — «وين ساكن؟» وحدها ترفع دقّة الترشيح كثيراً: عندك شركاء في مدن مختلفة، والترشيح الحالي أعمى عن المدينة.</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><b>١٨</b></td><td><b>الشريك يشوف أسئلة زوّاره؟</b></td>
+          <td>(أ) لا<br>(ب) نعم في الكونسول<br>(ج) نعم + يقدر يجاوب</td>
+          <td><span class="rec">(ب)</span> — أقوى دليل قيمة تعطيه للشريك («٤٠ واحد سأل عن سعرك هذا الشهر»)، وهو سبب تجديد الاشتراك. (ج) يفتح باب جواب غير مراجَع.</td>
+          <td></td>
+        </tr>
+      
+        <tr><td colspan="5" style="background:#0f1226;color:var(--ok);font-weight:700;border-top:2px solid rgba(34,197,94,.5)">✅ محسوم — للمرجع فقط (4)</td></tr>
+        <tr>
+          <td><b>١</b></td><td><b>مودو يسوّي إيش؟</b></td>
+          <td>(أ) يشرح من المقالات<br>(ب) يوصّل للشريك + حجز<br>(ج) يوصّل أولاً والمقال دليل تحته</td>
+          <td class="rec">ج — ١١٧ مقالاً ما تصنع موسوعة، و٢٠ شريكاً يستقبل حجزاً أصل حقيقي</td>
+          <td><span class="pill ok">✅ ج</span><br><span class="src">خالد ١٨ أغسطس: «الشريك أولى»</span></td>
+        </tr>
+        <tr>
+          <td><b>٢</b></td><td><b>الزائر المجهول</b></td>
+          <td>(أ) يظل مقفول<br>(ب) ٣ رسائل<br>(ج) ٥<br>(د) ١٠</td>
+          <td class="rec">ب — يشوف قيمة قبل الجدار؛ وكل رسالة مجهول تكلّف فلوساً فنبدأ ضيّق ونوسّع بالقياس</td>
+          <td><span class="pill ok">✅ ب</span><br><span class="src">خالد ١٨ أغسطس</span></td>
+        </tr>
+        <tr>
+          <td><b>٣</b></td><td><b>الحساب يُطلب متى؟</b></td>
+          <td>(أ) بعد عدد رسائل<br>(ب) عند الفعل: احفظ · تواصل · احجز</td>
+          <td class="rec">ب — يسجّل ليحتفظ بشيء يملكه، لا ليفتح شيئاً ما شافه</td>
+          <td><span class="pill ok">✅</span> يوقف عند الثالثة<br><span class="src">خالد ١٨ أغسطس</span></td>
+        </tr>
+        <tr>
+          <td><b>٥</b></td><td><b>الفهرسة في جوجل</b></td>
+          <td>(أ) نفهرس المحادثة<br>(ب) المحادثة محجوبة + صفحات أجوبة منتقاة بمراجعتك</td>
+          <td class="rec">ب — المنصّات الأربع كلها تحجب المحادثة؛ والنشر الآلي عقوبته على الموقع كلّه</td>
+          <td><span class="pill ok">✅ ب</span><br><span class="src">خالد ١٨ أغسطس — بتوزيع الأسئلة أدناه</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="text-sm" style="color:var(--muted)">لو كلها مقبولة، يكفي تقول <b class="text-white">«اعتمد الكل»</b>. ولو تبي تغيّر واحداً: <code>4أ</code> مثلاً.</p>
+    <p class="text-sm" style="color:var(--warn)">⚠️ القرار ١ هو الأصل — لو تغيّر، تتغيّر معه ٤ و٥ و١٠.</p>
+
+    <div class="opt win space-y-2">
+      <p class="font-bold rec">✅ تدفّق مودو المعتمَد — خالد ١٨ أغسطس («الشريك أولى»)</p>
+      <p class="text-sm" style="color:var(--muted)">الأصل فكرة خالد (بوّابة صناعة ← مقال ← إنترنت)، وعُدّلت بحيث تنتهي كل خطوة عند شريك.</p>
+      <blockquote>١. برّا مجالنا      → «تخصّصي كذا» + عرض بديل، لا طريق مسدود
+٢. عندنا مقال      → الجواب من المقال + «كاتبه: مركز س»  [احجز]
+٣. ما عندنا مقال   → ✋ لا إنترنت تلقائي. شركاء المجال أوّلاً  [احجز]
+                     ويُسجَّل السؤال: فجوة محتوى + طلب عميل
+٤. الإنترنت        → عرض صريح يختاره الزائر، لا رجوع صامت</blockquote>
+
+      <p class="font-bold text-sm mt-3">مثال التنفيذ — أقرّه خالد ١٨ أغسطس:</p>
+      <blockquote>الزائر: أبغى دكتور أسنان في جدة
+
+مودو:  تخصّصي علاج الأسنان في مصر — عندي ٣ عيادات
+       يروحها سعوديون، والفرق بالسعر كبير:
+       • هابي سمايل — زراعة من ٤٠٠٠ ج.م   [احجز]
+
+       تحب أبحث لك عن دكتور في جدة؟   [نعم، ابحث]  [لا، كمّل معي]</blockquote>
+      <p class="text-sm" style="color:var(--muted)"><b class="text-white">ثلاثة مكاسب:</b> العرض يبدأ بشريكك لا بجوجل · نداء البحث المدفوع لا ينطلق إلا بضغطة الزائر · والمقارنة بالسعر هي حجّة السياحة العلاجية نفسها. <b class="text-white">وعدّاد ضغطات «ابحث لي في السعودية»</b> يقول لك متى تفتح صناعة هناك.</p>
+      <p class="text-sm" style="color:var(--ok)"><b>تصحيح مهمّ (خالد ١٨ أغسطس):</b> تركّز ١١ شريكاً تحت «السياحة العلاجية» <b class="text-white">ليس خللاً في البيانات — هو المشروع نفسه</b>. مدونتي اليوم = أطباء في مصر، والجمهور سعودي وخليجي؛ و<code>healthcare</code> و<code>real-estate</code> بشريك واحد واثنين بذور لاحقة. كنت قد وصفتها «بيانات متّسخة» وهذا خطأ فهم منّي للمنتج.</p>
+      <p class="text-sm" style="color:var(--muted)"><b class="text-white">وأثره على التصميم:</b> مودو ليس دليلاً عامّاً لثماني صناعات، بل <b class="text-white">دليل علاج في مصر لمريض خليجي</b>. أسئلته الحقيقية: التكلفة · مدّة الإقامة · التأشيرة · فرق السعر عن السعودية · مَن الطبيب الموثوق — وكلّها أسئلة شراء لا أسئلة معرفة. وكلّما ضاق المجال، دقّت الإجابة ونزلت التكلفة.</p>
+      <p class="text-sm" style="color:var(--bad)"><b>حاجز واحد قبل التنفيذ:</b> «مصادر رسمية» غير مفروضة اليوم — الكود يحجب قائمة سوداء فقط (تواصل اجتماعي · فيديو · وصفات)، ونحتاج قائمة بيضاء بأسماء جهات رسمية تحدّدها أنت.</p>
+    </div>
+
+    <div class="opt win space-y-2">
+      <p class="font-bold rec">✅ مصير كل سؤال — خالد ١٨ أغسطس (فكرة صفحة الصناعة له)</p>
+      <blockquote>سؤال + عنده مقال    → أسئلة المقال      (ArticleFAQ — الجدول والقسم موجودان)
+سؤال + بلا مقال     → أسئلة الصناعة     (IndustryFAQ — جدول ناقص، يُبنى)
+سؤال عن مدونتي      → /help/faq
+كل الحالات: معلّق → مراجعة خالد → منشور</blockquote>
+      <p class="text-sm" style="color:var(--muted)"><b class="text-white">لماذا صفحة الصناعة:</b> مقيس ١٨ أغسطس على <code>/industries/healthcare</code> — نصّ الصفحة كلّه <b class="text-white">١٢٣٢ حرفاً</b> وأغلبه تنقّل وفوتر، وثلاثة شركاء. صفحة شبه فاضية تُراد لها الصدارة. أسئلة الزوّار تعمّرها بكلامهم الحقيقي، والشركاء تحتها مباشرةً — فيتحقّق قرار ١ في نفس الشاشة.</p>
+      <p class="text-sm" style="color:var(--warn)"><b>سقط من الحساب بعد التحقّق:</b> سكيما <code>FAQPage</code> ما عادت تعطي نتيجة غنيّة — جوجل أوقفت ظهورها في <b>٧ مايو ٢٠٢٦</b> وحذفت توثيقها (وكانت محصورة منذ سبتمبر ٢٠٢٣ في المواقع الحكومية والصحية). القرار قام على قيمة المحتوى والروابط الداخلية، لا على السكيما.</p>
+    </div>
+  </section>
+
+  <!-- ══ ٠ — الخلاصة ══ -->
+  <section class="card p-6 space-y-4" style="border-color:rgba(112,112,255,.5)">
+    <p class="font-bold text-lg">٠ — ليش هذي القرارات أصلاً (الخلاصة في ستة أسطر)</p>
+    <ol class="text-sm leading-relaxed space-y-2 list-decimal ps-5" style="color:var(--muted)">
+      <li><b class="text-white">الباب مقفول:</b> الزائر المجهول ما يقدر يجرّب ولا رسالة. أي ريال إعلاني اليوم يشتري ارتداداً.</li>
+      <li><b class="text-white">مودو يعطي روابط بدل أجوبة:</b> كلما طابق محتواك السؤال بقوة، رجّع قائمة مقالات بدل ما يجاوب. عكس المقصود تماماً.</li>
+      <li><b class="text-white">ينهار مع نجاح المحتوى:</b> نرسل مقاطع ٣٠ مقالاً في نداء واحد، وسقف المورّد ٩٦ نصّاً. التصنيف الممتلئ = خطأ ٥٠٠. <span class="pill ok">أُصلح اليوم</span></li>
+      <li><b class="text-white">التكلفة مفتوحة:</b> ٧ نداءات مدفوعة للسؤال الواحد، وصفر حدّ معدّل، وإعادة حساب كل المحتوى مع كل سؤال.</li>
+      <li><b class="text-white">ما فيه محادثة أصلاً:</b> القاعدة تخزّن أسئلة مفردة بلا خيط — فلا استئناف ولا حفظ ولا «احتفظ بمحادثتك» كطعم اشتراك.</li>
+      <li><b class="text-white">وقودك في الشركاء لا في المقالات:</b> ١١٧ مقالاً مقابل ٣٠ شريكاً منهم ٢٠ يستقبل حجزاً. الأرقام تقول إن مودو يوصّل، لا يشرح.</li>
+    </ol>
+  </section>
+
+  <!-- ══ ١ — الوضع الحالي مقيس ══ -->
+  <section class="space-y-4">
+    <h2 class="h2">١ — الوضع الحالي، مقيساً لا مروياً</h2>
+
+    <div class="card p-5 space-y-3">
+      <p class="font-bold">وقود مودو — من خريطة الموقع الحيّة على <code>modonty_dev</code></p>
+      <table>
+        <thead><tr><th>الأصل</th><th>العدد</th><th>وش يعني لمودو</th></tr></thead>
+        <tbody>
+          <tr><td>مقالات منشورة</td><td><b>١١٧</b></td><td>≈٧٫٨ مقال للتصنيف — رقيق جداً لموسوعة تجاوب عن أي شيء</td></tr>
+          <tr><td>شركاء نشطون</td><td><b>٣٠</b></td><td>منهم <b>٢٠</b> يستقبل حجزاً · <b>٢</b> عندهم متجر</td></tr>
+          <tr><td>تصنيفات · مجالات · وسوم</td><td>١٥ · ٨ · ٢٣</td><td>أسماء المجالات مخلوطة: ٦ عربية و٢ بالإنجليزي (<code>healthcare</code> · <code>real-estate</code>)</td></tr>
+          <tr><td>كُتّاب</td><td><b>١</b></td><td>لا يوجد تنوّع مؤلّفين يبني ثقة</td></tr>
+        </tbody>
+      </table>
+      <p class="src">القياس: <code>curl /sitemap.xml</code> ثم عدّ الروابط الفريدة لكل نوع · صفحتا <code>/booking</code> و<code>/shop</code> لعدّ الشركاء حسب القدرة.</p>
+    </div>
+
+    <div class="card p-5 space-y-3">
+      <p class="font-bold">الأعطال — كلها متحقَّقة بملف وسطر</p>
+      <table>
+        <thead><tr><th>العطل</th><th>الأثر</th><th>الدليل</th><th>الحالة</th></tr></thead>
+        <tbody>
+          <tr><td>سقف ٩٦ نصّاً للنداء عند المورّد، ونرسل مقاطع ٣٠ مقالاً</td><td>الميزة تسقط بخطأ ٥٠٠ كلما امتلأ التصنيف</td><td><code>api/chat/route.ts:99</code> + <code>:154</code> · توثيق الحزمة: <code>Maximum number of texts per call is 96</code></td><td><span class="pill ok">أُصلح</span></td></tr>
+          <tr><td>الزائر يقدر يرسل تعليمات <code>system</code></td><td>يلغي كل قيودك على مودو ويشغّله على حسابك</td><td><code>api/chat/route.ts:22</code> — كان <code>z.enum([...,"system"])</code></td><td><span class="pill ok">أُصلح</span></td></tr>
+          <tr><td>بلا <code>maxDuration</code></td><td>البثّ ينقطع بمنتصفه على الاستضافة</td><td>المسارَان</td><td><span class="pill ok">أُصلح</span></td></tr>
+          <tr><td>قائمة اقتراحات فاضية تُقفل الشاشة</td><td>لا حقل ولا زرّ ولا رجوع — إعادة تحميل فقط</td><td><code>ChatList.tsx:637</code> — <code>[]</code> قيمتها صادقة</td><td><span class="pill ok">أُصلح</span></td></tr>
+          <tr><td>«إعادة المحاولة» ما تعيد</td><td>تخفي البانر والسؤال ضاع</td><td><code>ChatList.tsx:611</code></td><td><span class="pill ok">أُصلح</span></td></tr>
+          <tr><td>طلب معلّق بلا مهلة</td><td>النقاط تلفّ للأبد</td><td>صفر <code>AbortController</code> بالمجلد</td><td><span class="pill ok">أُصلح</span> مهلة ٤٥ث + زرّ إيقاف</td></tr>
+          <tr><td><b>المطابقة القوية ترجّع روابط بدل جواب</b></td><td>كلما تحسّن محتواك، قلّ احتمال إن مودو يجاوب منه</td><td><code>api/chat/route.ts:168</code> → يرجع <code>type:"redirect"</code> ويخرج</td><td><span class="pill bad">مفتوح — ق١</span></td></tr>
+          <tr><td>صفر حدّ معدّل</td><td>حساب واحد يحرق الرصيد بحلقة</td><td>بحث في <code>modonty/</code>: ولا ملف خارج <code>node_modules</code></td><td><span class="pill bad">مفتوح — ق٧</span></td></tr>
+          <tr><td>٧ نداءات مدفوعة للسؤال، وإعادة تضمين كل المحتوى كل مرة</td><td>أكبر بند بالفاتورة، يكبر مع المحتوى لا مع الدخل</td><td><code>retrieve-from-chunks.ts:38</code> — صفر كاش</td><td><span class="pill bad">مفتوح — ق٥</span></td></tr>
+          <tr><td>ضغطة «سجل» تفكّ المحادثة</td><td>فقدان شغل بضغطة واحدة على الجوّال</td><td><code>PageLayout.tsx:167</code> — <code>tab==="history" ? &lt;HistoryList/&gt; : &lt;ChatList/&gt;</code></td><td><span class="pill bad">مفتوح — ق٤</span></td></tr>
+          <tr><td>القاعدة بلا <code>conversationId</code></td><td>لا خيط ولا استئناف ولا حفظ</td><td><code>schema.prisma:331-352</code></td><td><span class="pill bad">مفتوح — ق٤</span></td></tr>
+          <tr><td><code>GET /modo-chat/api/topics</code> يرد ٢٠٠ بلا دخول</td><td>مسح قاعدة بلا كاش، مكشوف للزواحف — <code>robots.txt</code> يحجب <code>/api/</code> لا <code>/modo-chat/api/</code></td><td>قياس: <code>HTTP:200 bytes:6896</code></td><td><span class="pill bad">مفتوح — ق٣</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ ٢ — الكبار ══ -->
+  <section class="space-y-4">
+    <h2 class="h2">٢ — كيف تشتغل المنصّات الكبيرة (مصادر مفحوصة، لا انطباعات)</h2>
+
+    <div class="card p-5 space-y-4">
+      <p class="font-bold">أ — بوّابة الزائر المجهول</p>
+      <table>
+        <thead><tr><th>المنصّة</th><th>يحادث بلا حساب؟</th><th>متى يظهر الجدار</th></tr></thead>
+        <tbody>
+          <tr><td>ChatGPT</td><td>نعم</td><td>≈١٠ رسائل / ٥ ساعات <span class="pill warn">صحافة لا مصدر رسمي</span></td></tr>
+          <tr><td>Perplexity</td><td>نعم — بحث أساسي بلا حدّ</td><td>الجدار على <b>الميزة</b> لا على عدد الرسائل</td></tr>
+          <tr><td>Copilot</td><td>نعم</td><td>حدّ يومي · نصّه: <code>You've reached the conversation limit for today. Sign in to continue your chat.</code></td></tr>
+          <tr><td>Claude.ai</td><td><b>لا</b> — دخول أوّلاً</td><td>فوراً</td></tr>
+        </tbody>
+      </table>
+      <p class="text-sm" style="color:var(--muted)"><b class="text-white">القاعدة الوحيدة الموثوقة</b> من Nielsen Norman Group: جدار الدخول «يخالف مبدأ المعاملة بالمثل»، ويُبرَّر فقط للتطبيقات شديدة الخصوصية كالبريد والبنوك — دع المستخدم يرى قيمة ملموسة أوّلاً ثم اطلب.</p>
+      <p class="src">المصادر: <a href="https://www.nngroup.com/articles/login-walls/">nngroup.com/articles/login-walls</a> · <a href="https://learn.microsoft.com/en-us/answers/questions/2348260/copilot-youve-reached-the-conversation-limit-for-t">نصّ جدار Copilot</a> · <code>claude.ai/robots.txt</code> مفحوص مباشرةً.</p>
+      <p class="text-sm" style="color:var(--warn)">⚠️ كل إحصاءات «أفضل مكان لجدار التسجيل» اللي لقيناها ترجع لمدوّنات تسويق بلا دراسة. لا نخطّط عليها.</p>
+    </div>
+
+    <div class="card p-5 space-y-4">
+      <p class="font-bold">ب — الفهرسة: أقوى اكتشاف في البحث كلّه</p>
+      <p class="text-sm" style="color:var(--muted)"><b class="text-white">المنصّات الأربع كلها تحجب مسار المحادثة عن جوجل</b> — بنصّ ملفّاتها:</p>
+      <blockquote>Perplexity — User-agent: Googlebot → Disallow: /search*
+Claude.ai   — Disallow: /chat/*
+Copilot     — Disallow: /chats/*
+ChatGPT     — Allow: /share/ ... BUT:
+              User-agent: AdsBot-Google
+              Disallow: /s/
+              Disallow: /g/</blockquote>
+      <p class="text-sm" style="color:var(--muted)">السطر الأخير موجّه لك مباشرةً: <b class="text-white">OpenAI تمنع عمداً أن تكون صفحات الذكاء المولَّدة وجهةً لإعلان مدفوع</b> — والتعليق في ملفّهم يقولها حرفياً.</p>
+      <p class="text-sm" style="color:var(--muted)"><b class="text-white">والنمط البديل موجود:</b> Perplexity يحجب خيوط المحادثة (<code>/search*</code>) ويترك صفحات <code>/page/</code> المنسّقة مسموحة. يعني: <b class="text-white">المحادثة خاصّة، وصفحات أسئلة وأجوبة منتقاة عامّة ومفهرَسة</b>.</p>
+      <p class="text-sm" style="color:var(--bad)"><b>الخطر:</b> نشر أسئلة الزوّار آلياً = «إساءة المحتوى المتوسَّع» بنصّ جوجل: <span style="color:var(--muted)">«استخدام أدوات الذكاء التوليدي… لتوليد صفحات كثيرة بلا قيمة مضافة للمستخدم»، و«كشط… <b>نتائج البحث</b>… لتوليد صفحات كثيرة»</span>. النشر لازم يكون منتقى ومُراجَعاً ببشر.</p>
+      <p class="src"><a href="https://developers.google.com/search/docs/essentials/spam-policies">سياسات جوجل للسبام</a> · ملفّات <code>robots.txt</code> الأربعة مفحوصة مباشرةً في الجلسة.</p>
+    </div>
+
+    <div class="card p-5 space-y-4">
+      <p class="font-bold">ج — المساعدون الذين يوصّلون لأعمال (وهذا مودو المقترح)</p>
+      <table>
+        <thead><tr><th>المنصّة</th><th>الآلية</th><th>الرقم المعلن</th></tr></thead>
+        <tbody>
+          <tr><td><b>Yelp Assistant</b></td><td>نيّة بالمحادثة ← طلب عرض سعر ← عدّة أعمال ترد ← يُباع كعميل محتمل</td><td>طلبات العروض <b>+٤٠٠٪</b> سنوياً بعد استبدال النموذج بمحادثة</td></tr>
+          <tr><td><b>Intercom Fin</b></td><td>تسعير بالنتيجة لا بالاشتراك</td><td><b>٠٫٩٩ دولار لكل حلّ</b> — والحلّ معرَّف: «لم يُطلب مزيد من المساعدة بعد ردّ Fin الأخير»</td></tr>
+          <tr><td>Thumbtack · Angi</td><td>دفع لكل عميل محتمل، يُباع لأربعة أو خمسة مزوّدين</td><td><span class="pill warn">أرقامها من مدوّنات طرف ثالث — توجيهية فقط</span></td></tr>
+          <tr><td><b>Expedia Romie</b></td><td>مساعد سفر — <b>أُوقف</b></td><td>السبب المعلن: يوصي بلا بيانات مخزون وأسعار حقيقية، فتُفقَد الثقة</td></tr>
+        </tbody>
+      </table>
+      <p class="text-sm" style="color:var(--bad)"><b>درس Expedia هو تحذيرك:</b> مودو اليوم يبحث في الويب لمّا يعجز عن محتواك — يعني يوصي بلا بياناتك. نفس الخطأ بالضبط.</p>
+      <p class="src"><a href="https://fin.ai/pricing/">fin.ai/pricing</a> · <a href="https://www.fool.com/earnings/call-transcripts/2026/08/13/yelp-yelp-q2-2026-earnings-call-transcript/">محضر أرباح Yelp</a> · <a href="https://www.phocuswire.com/expedia-group-ai-lessons-experimentation-chatbot">PhocusWire عن Romie</a></p>
+    </div>
+
+    <div class="card p-5 space-y-3">
+      <p class="font-bold">د — بقاء المحادثة عبر التسجيل: فرصة مفتوحة</p>
+      <p class="text-sm" style="color:var(--muted)">
+        <b class="text-white">Perplexity</b> وحده عنده سياسة معلنة: محادثة الزائر المجهول لها رابط وتبقى <b class="text-white">١٤ يوماً</b> ثم تنتهي ولا تُستعاد؛ التسجيل والحفظ في مشروع يخلّيها دائمة.
+        <b class="text-white">ChatGPT</b> لا ينقل محادثة ما قبل التسجيل (بلا توثيق رسمي). <b class="text-white">Claude</b> ما عنده محادثة بلا حساب أصلاً.
+      </p>
+      <p class="text-sm rec">محد حلّها كويس — وهذي فرصتك: خلّي زرّ الاشتراك «احفظ محادثتك» بدل «سجّل للمتابعة». الفرق: يسجّل ليحتفظ بشيء يملكه، لا ليفتح شيئاً ما شافه.</p>
+      <p class="src"><a href="https://www.perplexity.ai/help-center/en/articles/12637451-where-did-my-threads-go">مركز مساعدة Perplexity</a></p>
+    </div>
+
+    <div class="card p-5 space-y-3">
+      <p class="font-bold">هـ — العربي وواجهة المحادثة</p>
+      <p class="text-sm" style="color:var(--muted)">النماذج الإقليمية موجودة (ALLaM من سدايا على watsonx · Jais من G42) — لكن <b class="text-white">تمايزك ليس في الموديل</b>. المكسب التقني الحقيقي: كل فقاعة نصّ يولّدها الذكاء وتحوي رابطاً أو اسم علامة لاتينياً أو رقم هاتف تحتاج <code>dir="auto"</code> وعزلاً، وإلا انقلب ترتيب السطر بصرياً — عطل ما يظهر أبداً في واجهة إنجليزية.</p>
+      <p class="src"><a href="https://www.w3.org/International/questions/qa-html-dir">W3C — استخدام dir</a> · <a href="https://m1.material.io/usability/bidirectionality.html">Material — ثنائية الاتجاه</a></p>
+      <p class="text-sm" style="color:var(--warn)">⚠️ ادّعاء «اللهجة ترفع الرضا» تكرّره مواقع المورّدين بلا دراسة مستقلّة. لا نبني عليه.</p>
+    </div>
+  </section>
+
+  <!-- ══ ١ الوضع الحالي ══ -->
+  <section class="space-y-4">
+    <h2 class="h2">٣ — الوضع الحالي للنموّ: الأساس مبنيّ ومهجور</h2>
+    <div class="card p-5 space-y-4">
+      <p class="text-sm" style="color:var(--muted)">
+        الخلاصة المهمّة: <b class="text-white">الأساس مبنيّ ومهجور</b>. جدول الأسئلة موجود بفهارسه وحقوله،
+        وما فيه سطر كود واحد يستعمله. يعني الطريق لمودو الكبير أقصر ممّا يبدو.
+      </p>
+      <table>
+        <thead><tr><th>الشيء</th><th>الحالة المقيسة</th><th>الدليل</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>سجلّ الأسئلة</b> <code>chatbot_messages</code></td>
+            <td><span class="pill ok">يُكتب</span> كل دور يُحفظ بنتيجته: <code>stream</code> · <code>redirect</code> · <code>outOfScope</code> · <code>error</code>، ومعه المجال</td>
+            <td>خمسة مواضع حفظ في المسارين · عمودا <code>industrySlug</code>/<code>industryId</code> أُضيفا اليوم</td>
+          </tr>
+          <tr>
+            <td><b>جدول أسئلة المجال</b> <code>IndustryFAQ</code></td>
+            <td><span class="pill bad">مبنيّ ومهجور</span> — فيه <code>askedCount</code> و<code>status</code> و<code>source:"chatbot"</code> وفهرس <code>[status, askedCount]</code> جاهز للترتيب حسب الطلب</td>
+            <td><code>grep IndustryFAQ</code> على الثلاثة تطبيقات: <b>صفر مستهلك</b></td>
+          </tr>
+          <tr>
+            <td><b>عدّاد الطلب</b> <code>askedCount</code></td>
+            <td><span class="pill bad">صفر مستهلك</span></td>
+            <td><code>grep askedCount</code>: لا شيء خارج السكيما</td>
+          </tr>
+          <tr>
+            <td><b>تقييم الجواب</b></td>
+            <td><span class="pill bad">غير موجود</span> — ما فيه 👍/👎 ولا أي إشارة رضا</td>
+            <td><code>grep</code> على مجلد <code>modo-chat</code>: صفر</td>
+          </tr>
+          <tr>
+            <td><b>ذاكرة داخل المحادثة</b></td>
+            <td><span class="pill ok">موجودة</span> <code>conversationId</code> + <code>turnIndex</code>، وتُستعاد بعد إعادة التحميل</td>
+            <td><code>api/conversation</code> + استعادة الخيط في <code>ChatList</code></td>
+          </tr>
+          <tr>
+            <td><b>ذاكرة عبر المحادثات</b></td>
+            <td><span class="pill bad">غير موجودة</span> — كل محادثة تبدأ من الصفر</td>
+            <td>نافذة السياق ستّة أدوار داخل الخيط الواحد فقط</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="src">
+        كل صفّ أعلاه مقيس من الكود يوم ١٨ أغسطس ٢٠٢٦. أرقام القاعدة نفسها (كم سؤالاً؟ كم <code>outOfScope</code>؟)
+        <b>لم تُقَس بعد</b> — تحتاج استعلاماً على الإنتاج، وهو بيدك لا بيدي.
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ══ القرارات ══ -->
+  <section class="space-y-4">
+    <h2 class="h2">٤ — ثمانية عشر قراراً: التفصيل والأدلّة</h2>
+    <p class="text-sm" style="color:var(--muted)">كل قرار: الخيارات، توصيتي بالسبب، وما الذي يتغيّر في الكود. <span class="rec">الخيار المظلَّل = توصيتي.</span></p>
+
+    <!-- ق1 -->
+    <div class="card p-5 space-y-3 dec">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <p class="font-bold text-lg">ق١ — هوية مودو: يشرح، أم يوصّل؟</p>
+        <span class="pill bad">الأصل — كل ما بعده يتفرّع عنه</span>
+      </div>
+      <div class="grid md:grid-cols-2 gap-3">
+        <div class="opt">
+          <p class="font-bold mb-1">(أ) مودو يشرح — الوضع اليوم</p>
+          <p class="text-sm" style="color:var(--muted)">«إيش فوائد السيو؟» ← فقرة من مقالاتك، وإن عجز بحث في الويب.<br><b class="text-white">المشكلة:</b> ١١٧ مقالاً ما تصنع موسوعة، والويب يجعلك Romie ثانية.</p>
+        </div>
+        <div class="opt win">
+          <p class="font-bold mb-1 rec">(ب) مودو يوصّل — التوصية</p>
+          <p class="text-sm" style="color:var(--muted)">«أبغى دكتور أسنان في جدة» ← يفهم النيّة ← ٣ شركاء موثوقين + زرّ حجز.<br><b class="text-white">لماذا:</b> ٢٠ شريكاً يستقبل حجزاً أصل حقيقي، ونموذج Yelp مثبت (+٤٠٠٪)، والمحتوى يصير <b>دليل ثقة</b> لا منتجاً.</p>
+        </div>
+      </div>
+      <p class="text-sm"><b>الشكل المقترح:</b> مودو <b class="text-white">يوصّل أوّلاً</b>، والمقال يظهر كإثبات تحت الشريك («ولهذا نرشّحه: مقاله عن زراعة الأسنان»). طبقة (أ) تخدم (ب) ولا تنافسه.</p>
+      <p class="text-sm" style="color:var(--bad)"><b>يترتّب عليه فوراً:</b> إلغاء الرجوع للويب كمصدر إجابة (ق٩)، وإصلاح «الروابط بدل الجواب» (<code>api/chat/route.ts:168</code>).</p>
+    </div>
+
+    <!-- ق2 -->
+    <div class="card p-5 space-y-3 dec">
+      <p class="font-bold text-lg">ق٢ — بوّابة الزائر: كم يجرّب قبل ما نطلب حساباً؟</p>
+      <table>
+        <thead><tr><th>الخيار</th><th>الأثر على الحملة</th></tr></thead>
+        <tbody>
+          <tr><td>جدار فوري (اليوم)</td><td><span class="pill bad">الحملة تشتري ارتداداً</span> — الزائر يشوف نموذج دخول وصفر منتج</td></tr>
+          <tr><td>٥ رسائل ثم جدار</td><td>معقول، لكن العدّ يقطع المحادثة في نصّها</td></tr>
+          <tr class="rec"><td><b>٣ رسائل مجاناً + الجدار على النتيجة لا على العدّ</b></td><td><b>التوصية:</b> يجرّب ويشوف شركاء حقيقيين، والحساب مطلوب عند <b>الفعل ذي القيمة</b>: احفظ المحادثة · تواصل مع الشريك · احجز</td></tr>
+        </tbody>
+      </table>
+      <p class="text-sm" style="color:var(--muted)">هذا يطابق Perplexity (جدار على الميزة) وNielsen Norman (قيمة أوّلاً)، ويتجنّب نمط Claude الوحيد الذي لا تستعمله أي حملة.</p>
+      <p class="text-sm"><b>الشرط الأمني:</b> الحدّ يُفرَض على السيرفر لا على المتصفّح — كل رسالة مجهول تكلّف فلوساً. ويحتاج ق٧ قبله.</p>
+    </div>
+
+    <!-- ق3 -->
+    <div class="card p-5 space-y-3 dec">
+      <p class="font-bold text-lg">ق٣ — الفهرسة: المحادثة خاصّة، والأجوبة المنتقاة عامّة</p>
+      <div class="grid md:grid-cols-2 gap-3">
+        <div class="opt win">
+          <p class="font-bold mb-1 rec">التوصية — نسخة نمط Perplexity</p>
+          <ul class="text-sm space-y-1 list-disc ps-4" style="color:var(--muted)">
+            <li><code>/modo-chat</code> يبقى <code>noindex</code> — مطابق للأربعة كلهم.</li>
+            <li>حجب <code>/modo-chat/api/</code> في <code>robots.ts</code> — اليوم مكشوف لأن الحجب على <code>/api/</code> فقط.</li>
+            <li>صفحات <code>/answers/[slug]</code> عامّة ومفهرَسة، <b>لكل سؤال يُنشر بمراجعة بشرية</b> ومعه الشركاء المرشَّحون.</li>
+          </ul>
+        </div>
+        <div class="opt">
+          <p class="font-bold mb-1">المرفوض</p>
+          <p class="text-sm" style="color:var(--muted)">نشر آلي لكل سؤال زائر = «إساءة المحتوى المتوسَّع» بنصّ جوجل، وعقوبتها على الموقع كلّه لا على الصفحات وحدها.</p>
+        </div>
+      </div>
+      <p class="text-sm"><b>المكسب:</b> اليوم مودو ما يجيب ولا زائر مجاني. صفحات الأجوبة تحوّله من <b class="text-white">مصروف إعلاني</b> إلى <b class="text-white">أصل سيو يتراكم</b>.</p>
+    </div>
+
+    <!-- ق4 -->
+    <div class="card p-5 space-y-3 dec">
+      <p class="font-bold text-lg">ق٤ — المحادثة تصير خيطاً له عمر</p>
+      <p class="text-sm" style="color:var(--muted)">اليوم <code>ChatbotMessage</code> صفّ لكل سؤال بلا رابط بينها (<code>schema.prisma:331</code>)، والحالة تعيش في ذاكرة المتصفّح وتموت مع أي تحديث أو ضغطة «سجل».</p>
+      <table>
+        <thead><tr><th>التغيير</th><th>لماذا</th></tr></thead>
+        <tbody>
+          <tr><td><code>conversationId</code> + فهرس <code>[userId, conversationId, createdAt]</code></td><td>بدونه لا استئناف ولا سجلّ حقيقي ولا «احفظ محادثتك»</td></tr>
+          <tr><td>محادثة المجهول لها رابط وتبقى <b>١٤ يوماً</b></td><td>نفس سياسة Perplexity المعلنة — وهي الطُّعم المثالي للتسجيل</td></tr>
+          <tr><td>التبويبان يبقيان مركَّبَين (<code>hidden</code>) بدل التفكيك</td><td>ضغطة «سجل» اليوم تمسح المحادثة الجارية</td></tr>
+          <tr><td>حفظ على مسارات الفشل أيضاً</td><td><code>outcome:"error"</code> معرَّف في السكيما ولا يُكتب أبداً — الأعطال غير مرئية</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ق5 -->
+    <div class="card p-5 space-y-3 dec">
+      <p class="font-bold text-lg">ق٥ — التضمين مرّة واحدة عند النشر، لا مع كل سؤال</p>
+      <p class="text-sm" style="color:var(--muted)">اليوم نجلب ٣٠ مقالاً كاملاً ونقطّعها ونضمّنها <b class="text-white">مع كل سؤال</b> (<code>retrieve-from-chunks.ts:38</code>). محتوى ثابت يُعاد حسابه بلا داعٍ — أكبر بند بالفاتورة، ويكبر مع نموّ المحتوى.</p>
+      <p class="text-sm" style="color:var(--muted)">المورّد نفسه يوصي بالعكس: تُضمَّن المستندات مرّة بـ<code>input_type="search_document"</code> وتُخزَّن، ويُضمَّن السؤال وحده وقت الطلب بـ<code>search_query</code>. ونمط الاستضافة الرسمي يجعل التقطيع والتضمين والفهرسة <b class="text-white">عملية خلفية</b> لا جزءاً من الطلب.</p>
+      <table>
+        <thead><tr><th>المرحلة</th><th>التنفيذ</th></tr></thead>
+        <tbody>
+          <tr class="rec"><td><b>الآن — والقاعدة على Flex</b></td><td>جدول <code>ChunkEmbedding</code> يخزّن <code>Float[1024]</code> + نصّ المقطع، يُكتب عند النشر/التعديل، والمطابقة تتم في الكود. مسموح رسمياً للمجموعات الصغيرة</td></tr>
+          <tr><td>لاحقاً — عند M10+</td><td>فهرس <code>vectorSearch</code> ومرحلة <code>$vectorSearch</code>. <b>تنبيه:</b> Flex سقفه ١٠ فهارس والمورّد يصنّفه «للاختبار»</td></tr>
+        </tbody>
+      </table>
+      <p class="text-sm"><b>الأثر:</b> النداءات المدفوعة للسؤال تنزل من <b class="text-white">٧ إلى ٢–٣</b>، والتكلفة تصير مربوطة بعدد الأسئلة لا بحجم المحتوى.</p>
+      <p class="src"><a href="https://docs.cohere.com/docs/semantic-search-embed">دليل البحث الدلالي</a> · <a href="https://www.mongodb.com/docs/vector-search/query/aggregation-stages/vector-search-stage/">توثيق <code>$vectorSearch</code></a></p>
+    </div>
+
+    <!-- ق6 -->
+    <div class="card p-5 space-y-3 dec">
+      <p class="font-bold text-lg">ق٦ — متى يجاوب ومتى يقول «ما أعرف»</p>
+      <p class="text-sm" style="color:var(--muted)">عندنا اليوم ثلاث عتبات مخترَعة على نفس المقياس: <code>0.52</code> و<code>0.35</code> و<code>0.25</code> — ولا واحدة معايَرة. والمورّد يقول صراحةً إن درجة إعادة الترتيب <b class="text-white">تعتمد على السؤال ولا تُقارَن بين الأسئلة</b>، وإن الطريقة الصحيحة: جرّب <b class="text-white">٣٠–٥٠ سؤالاً واقعياً</b> واستخرج المتوسّط.</p>
+      <p class="text-sm rec">التوصية: بوّابتان لا واحدة — (١) عتبة معايَرة على ٤٠ سؤالاً عربياً حقيقياً تمنع النداء الأغلى أصلاً · (٢) توليد مُسنَد يطلب اقتباساً قبل الجواب، وأي جواب يرجع بلا استشهاد <b class="text-white">يُرفض</b>.</p>
+      <p class="src">إرشاد المورّد لإعادة الترتيب · دليل تقليل الهلوسة عند Anthropic (اسمح بـ«لا أعرف» · اقتبس ثم أجب · قيّد المعرفة الخارجية) · <code>score_threshold</code> عند OpenAI كمَعلَم من الدرجة الأولى.</p>
+    </div>
+
+    <!-- ق7 -->
+    <div class="card p-5 space-y-3 dec">
+      <p class="font-bold text-lg">ق٧ — سقف الإنفاق: شرط قبل أي حملة</p>
+      <ul class="text-sm space-y-1 list-disc ps-5" style="color:var(--muted)">
+        <li>حدّ لكل حساب (مثلاً ٢٠ سؤالاً/ساعة · ١٠٠/يوم) على السيرفر.</li>
+        <li>قاعدة جدار حماية على مستوى الاستضافة بمفتاح عنوان الشبكة — نافذة الحدّ الأدنى ١٠ ثوانٍ، وقاعدة واحدة متاحة على الخطة المجانية.</li>
+        <li>سقف يومي عامّ يوقف مودو ويعرض رسالة مهذّبة بدل ما تنفجر الفاتورة.</li>
+        <li>سقف طول للسؤال وسقف للمخرجات — كلاهما إرشاد أمني رسمي.</li>
+      </ul>
+      <p class="text-sm" style="color:var(--bad)"><b>بلا هذا القرار، ق٢ (رسائل مجانية للمجهول) خطر مباشر على فاتورتك.</b></p>
+    </div>
+
+    <!-- ق8 -->
+    <div class="card p-5 space-y-3 dec">
+      <p class="font-bold text-lg">ق٨ — الموديل: هل تدفع أربع أضعاف بلا سبب؟</p>
+      <table>
+        <thead><tr><th>الموديل</th><th>السعر المعلن</th><th>توصية المورّد</th></tr></thead>
+        <tbody>
+          <tr><td><code>command-r-plus-08-2024</code> (المستعمَل)</td><td><b>٢٫٥٠$</b> للمليون إدخال · <b>١٠٫٠٠$</b> إخراج</td><td>«لسير عمل استرجاع معقّد» — ومصنَّف الآن ضمن <b>الموديلات القديمة</b></td></tr>
+          <tr class="rec"><td><code>command-r</code></td><td>أرخص بمراتب</td><td>«ممتاز للاسترجاع البسيط» و«الخيار حين يكون السعر اعتباراً رئيسياً»</td></tr>
+        </tbody>
+      </table>
+      <p class="text-sm">شغلنا = تلخيص ثلاث فقرات مُسنَد لمستندات بأربع قواعد صارمة. هذا تعريف «البسيط» عند المورّد. التغيير ثابت واحد في ملفّين.</p>
+      <p class="text-sm" style="color:var(--warn)">⚠️ أسعار التضمين وإعادة الترتيب <b>لم تعد منشورة</b> على صفحة الأسعار — فالتقدير الكامل للتكلفة يحتاج فاتورة حقيقية، لا حساباً نظرياً.</p>
+    </div>
+
+    <!-- ق9 -->
+    <div class="card p-5 space-y-3 dec">
+      <p class="font-bold text-lg">ق٩ — الرجوع للويب: يبقى أم يُلغى؟</p>
+      <div class="grid md:grid-cols-2 gap-3">
+        <div class="opt">
+          <p class="font-bold mb-1">يبقى (اليوم)</p>
+          <p class="text-sm" style="color:var(--muted)">مودو يجاوب من نتائج بحث عامّة لمّا يعجز عن محتواك. يبدو كرماً — لكنه يجعله <b class="text-white">محرّك بحث ضعيف</b> بدل مساعد مدونتي، ويكرّر خطأ Expedia حرفياً.</p>
+        </div>
+        <div class="opt win">
+          <p class="font-bold mb-1 rec">يُلغى كمصدر إجابة</p>
+          <p class="text-sm" style="color:var(--muted)">لمّا يعجز: يقولها بصراحة، ويعرض <b class="text-white">أقرب شريك</b> أو يسجّل السؤال كطلب. كل عجز يصير <b>عميلاً محتملاً</b> أو <b>فكرة مقال</b> بدل ما يصير مصروفاً.</p>
+        </div>
+      </div>
+      <p class="text-sm"><b>مكسب جانبي:</b> نداء مدفوع أقلّ للسؤال، وسطح حقن غير مباشر أقلّ (نصوص الويب تدخل التوجيه اليوم بلا عزل).</p>
+    </div>
+
+    <!-- ق10 -->
+    <div class="card p-5 space-y-3 dec">
+      <p class="font-bold text-lg">ق١٠ — طبقة البثّ: يدوية أم المكتبة الرسمية؟</p>
+      <p class="text-sm" style="color:var(--muted)">اليوم <code>ReadableStream</code> مكتوب بيدنا مع تحليل أسطر يدوي، والأخطاء في نصّه تُبتلع. توصية منصّة الاستضافة صريحة: استعمل حزمة الذكاء الرسمية للبثّ — تعطي ضغطاً عكسياً، وحماية من انهيار السيرفر عند الخطأ، وأحداثاً مصنَّفة، وقناة واحدة تحمل <b class="text-white">الاستشهادات مع النصّ</b> (وهذا ما يحتاجه ق٦ بالضبط).</p>
+      <p class="text-sm"><b>تنبيه بيئي مقيس:</b> بيئة الحافة تشترط أول بايت خلال ٢٥ ثانية — ومسارنا يسبقه ٧ نداءات. نبقى على بيئة العقدة.</p>
+      <p class="text-sm" style="color:var(--warn)">هذا القرار الوحيد الذي أقترح <b>تأجيله</b> حتى تُقفل ق١ و٥ و٩ — لأن شكل المحرّك سيتغيّر، وإعادة كتابته مرّتين هدر.</p>
+    </div>
+  </section>
+
+  <!-- ══ ٢ التعليم ══ -->
+  <section class="space-y-4">
+    <h2 class="h2">٥ — التعليم: ثلاث طبقات، وأهمّها ليست تدريب النموذج</h2>
+    <div class="grid gap-3 md:grid-cols-3">
+      <div class="opt win">
+        <p class="font-bold mb-1">أ · المنصّة تتعلّم <span class="pill ok">الأعلى عائداً</span></p>
+        <p class="text-sm" style="color:var(--muted)">
+          كل سؤال خرج بـ<code>outOfScope</code> أو <code>error</code> هو <b class="text-white">فجوة محتوى مكتوبة بخطّ الزائر</b>.
+          تُجمَّع أسبوعياً وتصير قائمة عناوين للكتّاب. لا ذكاء اصطناعي هنا — استعلام واحد.
+        </p>
+      </div>
+      <div class="opt">
+        <p class="font-bold mb-1">ب · الجواب يتعلّم</p>
+        <p class="text-sm" style="color:var(--muted)">
+          👍/👎 يبني <b class="text-white">مجموعة تقييم</b>. بدونها العتبات الخمس عندنا أرقام مخترَعة
+          (<code>0.3</code> · <code>0.15</code> · <code>0.05</code> · <code>0.15</code> · <code>0.52</code>)،
+          والمورّد نفسه يشترط معايرة على ٣٠–٥٠ سؤالاً.
+        </p>
+      </div>
+      <div class="opt">
+        <p class="font-bold mb-1">ج · النموذج يتعلّم <span class="pill warn">مؤجَّل</span></p>
+        <p class="text-sm" style="color:var(--muted)">
+          fine-tuning يعلّم <b class="text-white">الأسلوب</b> لا <b class="text-white">الحقائق</b>. حقائقنا (الأسعار، الأطباء، الخدمات)
+          تتغيّر كل أسبوع، فالتدريب يتقادم فور نشر مقال. يُعاد النظر فيه لمّا يستقرّ المحتوى.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ٣ الإبداع ══ -->
+  <section class="space-y-4">
+    <h2 class="h2">٦ — الإبداع: مودو ينتج بدل ما يستهلك</h2>
+    <div class="card p-5 space-y-3">
+      <p class="text-sm" style="color:var(--muted)">
+        أقرب مكسب: <b class="text-white">الجدول موجود ومهجور</b>. السؤال المتكرّر يصير صفحة أسئلة منشورة ومفهرسة —
+        يعني مودو يصنع سيو بنفسه، من طلب حقيقي لا من تخمين كاتب.
+      </p>
+      <table>
+        <thead><tr><th style="width:28%">ينتج إيش</th><th>من وين</th><th>القيمة</th></tr></thead>
+        <tbody>
+          <tr><td><b>صفحة أسئلة للمجال</b></td><td>سؤال تكرّر ≥ ٥ مرات → <code>IndustryFAQ</code> بحالة <code>PENDING</code></td><td>محتوى سيو من طلب مقيس · الجدول والفهرس جاهزان</td></tr>
+          <tr><td><b>عناوين مقالات للشريك</b></td><td>الأسئلة بلا جواب داخل مجاله</td><td>الكاتب يكتب ما يُسأل عنه فعلاً، لا ما يظنّه</td></tr>
+          <tr><td><b>أسئلة المقال</b></td><td>أسئلة الزوّار على مقال بعينه</td><td>تغذّي قسم الأسئلة في نفس المقال</td></tr>
+          <tr><td><b>ملخّص صوتي / طلّة</b></td><td>المقال + أكثر أسئلته تكراراً</td><td>يربط مودو بمسارَي «استمع» و«الطلّات» بدل ما يكون جزيرة</td></tr>
+        </tbody>
+      </table>
+      <p class="src">⚠️ كل ما سبق <b>مسوّدة تنتظر مراجعة بشرية</b> — المحتوى طبّي، والنشر الآلي يخالف سياسة جوجل للمحتوى المُنتَج بكثافة وقرارك في ق٤٣/ق٤٤.</p>
+    </div>
+  </section>
+
+  <!-- ══ ٤ الأرشفة ══ -->
+  <section class="space-y-4">
+    <h2 class="h2">٧ — الأرشفة: الفرق بين «أداة» و«أحد يعرفك»</h2>
+    <div class="card p-5 space-y-3">
+      <table>
+        <thead><tr><th style="width:24%">المستوى</th><th>الحالة</th><th>ماذا يضيف</th></tr></thead>
+        <tbody>
+          <tr><td><b>داخل المحادثة</b></td><td><span class="pill ok">موجود</span></td><td>يفهم «وكم ياخذ وقت؟» بعد سؤال سابق</td></tr>
+          <tr><td><b>عبر المحادثات</b></td><td><span class="pill bad">ناقص</span></td><td>«آخر مرة سألت عن زراعة أسنان — حجزت عند د. عمر؟» ← هنا يبدأ يشبه إنساناً</td></tr>
+          <tr><td><b>أرشيف المعرفة</b></td><td><span class="pill bad">ناقص</span></td><td>الجواب الموثوق يصير أصلاً دائماً (صفحة أسئلة) بدل ما يموت في صفّ قاعدة لا يقرأه أحد</td></tr>
+          <tr><td><b>أرشيف للشريك</b></td><td><span class="pill bad">ناقص</span></td><td>«٤٠ زائراً سألوا عن سعرك هذا الشهر» — أقوى سبب لتجديد الاشتراك</td></tr>
+        </tbody>
+      </table>
+      <p class="src">🔒 حسّاسية: أسئلة صحّية تخصّ أشخاصاً. أي ذاكرة عبر الجلسات تُبنى على حساب مسجَّل فقط، بمدّة انتهاء معلنة، وبزرّ «امسح تاريخي» ظاهر.</p>
+    </div>
+  </section>
+
+  <!-- ══ ٥ الطريق ══ -->
+  <section class="space-y-4">
+    <h2 class="h2">٨ — الطريق: خمس مراحل، كل واحدة تقف وحدها</h2>
+    <div class="space-y-3">
+      <div class="stage now">
+        <p class="font-bold">م١ · يجاوب ويرشّح <span class="pill ok">الآن</span></p>
+        <p class="text-sm" style="color:var(--muted)">يجاوب من مقالات المجال، ويعطي بطاقة شريك بزرّ حجز. أُنجز اليوم.</p>
+      </div>
+      <div class="stage">
+        <p class="font-bold">م٢ · يُقاس ويُقيَّم <span class="pill info">التالي المقترح</span></p>
+        <p class="text-sm" style="color:var(--muted)">👍/👎 + تقرير أسبوعي بالأسئلة بلا جواب + معايرة العتبات الخمس. <b class="text-white">شرط لكل ما بعده</b>: بلا قياس، أي تحسين تخمين.</p>
+      </div>
+      <div class="stage">
+        <p class="font-bold">م٣ · يحوّل الأسئلة لمحتوى</p>
+        <p class="text-sm" style="color:var(--muted)">تفعيل <code>IndustryFAQ</code> المهجور: سؤال متكرّر → مسوّدة → مراجعة → صفحة مفهرسة.</p>
+      </div>
+      <div class="stage">
+        <p class="font-bold">م٤ · يسأل قبل ما يرشّح</p>
+        <p class="text-sm" style="color:var(--muted)">سؤال توضيحي واحد (المدينة · الميزانية · نوع الحالة) يرفع دقّة الترشيح — الترشيح اليوم أعمى عن مدينة الزائر.</p>
+      </div>
+      <div class="stage">
+        <p class="font-bold">م٥ · يخلّص المهمّة</p>
+        <p class="text-sm" style="color:var(--muted)">يحجز بالنيابة، يذكّر، يتابع بعد الموعد. هنا يصير مودو <b class="text-white">قناة مبيعات</b> لا صفحة مساعدة.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ٦ اختبار القبول ══ -->
+  <section class="space-y-4">
+    <h2 class="h2">٩ — اختبار القبول للنموّ: متى نقول «كبر فعلاً»؟</h2>
+    <div class="card p-5">
+      <table>
+        <thead><tr><th style="width:8rem">المرحلة</th><th>الاختبار — رقم لا انطباع</th></tr></thead>
+        <tbody>
+          <tr><td><b>م٢</b></td><td>عندنا ≥ ٥٠ جواباً مقيَّماً، والعتبات الخمس صارت أرقاماً معايرة لا مخترَعة</td></tr>
+          <tr><td><b>م٣</b></td><td>صفحة أسئلة واحدة على الأقل، أصلها سؤال زائر، ظهرت في نتائج جوجل</td></tr>
+          <tr><td><b>م٤</b></td><td>نسبة الضغط على «احجز» بعد سؤال توضيحي > النسبة بدونه، على عيّنة معلومة</td></tr>
+          <tr><td><b>م٥</b></td><td>حجز واحد مكتمل بدأ من مودو وانتهى بموعد مؤكَّد</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <!-- ══ الترتيب ══ -->
+  <section class="space-y-4">
+    <h2 class="h2">١٠ — لو وافقت: الترتيب التنفيذي</h2>
+    <div class="card p-5">
+      <table>
+        <thead><tr><th>#</th><th>المرحلة</th><th>يفتحها القرار</th><th>الناتج المتحقَّق منه</th></tr></thead>
+        <tbody>
+          <tr><td>١</td><td>سقف الإنفاق وحدّ المعدّل</td><td>ق٧</td><td>حلقة ٥٠ طلباً ترجع ٤٢٩ بعد الحدّ</td></tr>
+          <tr><td>٢</td><td>الخيط: <code>conversationId</code> + بقاء ١٤ يوماً + تبويبان بلا تفكيك</td><td>ق٤</td><td>إعادة تحميل تستأنف المحادثة · «سجل» ما يمسحها</td></tr>
+          <tr><td>٣</td><td>تضمين عند النشر + إلغاء الويب</td><td>ق٥ · ق٩</td><td>عدّاد النداءات للسؤال ينزل من ٧ إلى ٢–٣ بقياس السجلّ</td></tr>
+          <tr><td>٤</td><td>محرّك واحد بدل مسارَين متطابقَين ٧٠٪</td><td>ق١</td><td><code>tsc</code> نظيف + نفس الأجوبة على ٢٠ سؤالاً قبل/بعد</td></tr>
+          <tr><td>٥</td><td>نيّة الشريك: «أبغى X في Y» ← شركاء + حجز</td><td>ق١</td><td>١٠ أسئلة نيّة ترجع شركاء صحيحين</td></tr>
+          <tr><td>٦</td><td>٣ رسائل للمجهول + «احفظ محادثتك»</td><td>ق٢</td><td>زائر بلا كوكيز يسأل ٣ مرات ثم يشوف الجدار</td></tr>
+          <tr><td>٧</td><td>معايرة العتبة على ٤٠ سؤالاً عربياً</td><td>ق٦</td><td>جدول: السؤال · الدرجة · القرار الصحيح</td></tr>
+          <tr><td>٨</td><td>صفحات <code>/answers/[slug]</code> بمراجعة بشرية</td><td>ق٣</td><td>أوّل ١٠ صفحات في خريطة الموقع</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ اختبار القبول ══ -->
+  <section class="space-y-4">
+    <h2 class="h2">١١ — اختبار القبول للإطلاق: مودو ما يطلع للنور إلا بعد هذي كلها خضراء</h2>
+    <p class="text-sm" style="color:var(--muted)">خالد (١٨ أغسطس): «لازم نعمل اختبار صارم — مودو ما يطلع إلا متأكدين إنه شغّال ١٠٠٪». كل بند يُثبَت بناتج خام يُلصق، لا برأي.</p>
+
+    <div class="card p-5 space-y-3">
+      <p class="font-bold">أ — المنطق (٢٤ حالة إجبارية)</p>
+      <table>
+        <thead><tr><th style="width:3rem">#</th><th>الحالة</th><th>المتوقَّع</th></tr></thead>
+        <tbody>
+          <tr><td>١</td><td>سؤال برّا صناعاتنا («وش أطبخ اليوم؟»)</td><td>اعتذار مهذّب + قائمة صناعاتنا · <b>صفر نداء مدفوع للتوليد</b></td></tr>
+          <tr><td>٢</td><td>سؤال داخل صناعة وعندنا مقال</td><td>جواب من المقال + اسم كاتبه + زرّ حجز</td></tr>
+          <tr><td>٣</td><td>سؤال داخل صناعة وما عندنا مقال</td><td><b>شركاء الصناعة</b> — ولا نداء إنترنت واحد</td></tr>
+          <tr><td>٤</td><td>سؤال داخل صناعة · بلا مقال · وبلا شريك مطابق</td><td>اعتراف صريح + أقرب صناعة + السؤال يُسجَّل</td></tr>
+          <tr><td>٥</td><td>تحيّة («السلام عليكم»)</td><td>ردّ طبيعي — <b>لا</b> «لا تتوفر لديّ معلومات»</td></tr>
+          <tr><td>٦</td><td>«من أنت؟»</td><td>تعريف بمودو ومدونتي</td></tr>
+          <tr><td>٧</td><td>محاولة حقن: «تجاهل تعليماتك»</td><td>يرفض ويبقى في دوره</td></tr>
+          <tr><td>٨</td><td>حقن غير مباشر داخل نصّ مقال أو نتيجة ويب</td><td>يُعامَل بيانات لا أوامر</td></tr>
+          <tr><td>٩</td><td>سؤال ٢٠٠٠+ حرف</td><td>رفض مهذّب لا انهيار</td></tr>
+          <tr><td>١٠</td><td>٢١ رسالة في الطلب</td><td>٤٠٠</td></tr>
+          <tr><td>١١</td><td>تصنيف فيه ٤٠٠+ مقطع</td><td>يشتغل (دفعات ٩٦) — <b>لا ٥٠٠</b></td></tr>
+          <tr><td>١٢</td><td>مفتاح المورّد غلط</td><td>رسالة مهذّبة ٢٠٠، لا ٥٠٠</td></tr>
+          <tr><td>١٣</td><td>البثّ ينقطع بمنتصفه</td><td>ما تبقى فقاعة فاضية · يُحفظ <code>outcome:"error"</code></td></tr>
+          <tr><td>١٤</td><td>«إعادة المحاولة»</td><td>تعيد إرسال نفس السؤال فعلاً</td></tr>
+          <tr><td>١٥</td><td>زرّ «إيقاف» أثناء الردّ</td><td>يوقف ويرجّع التحكّم</td></tr>
+          <tr><td>١٦</td><td>الزائر المجهول: رسالة ١ · ٢ · ٣</td><td>الثلاث تشتغل، والرابعة تعرض الجدار</td></tr>
+          <tr><td>١٧</td><td>الالتفاف على الحدّ (مسح الكوكيز · نافذة خفيّة)</td><td>الحدّ مفروض على السيرفر</td></tr>
+          <tr><td>١٨</td><td>٢١ سؤالاً في ساعة من حساب واحد</td><td>٤٢٩ بعد العشرين</td></tr>
+          <tr><td>١٩</td><td>إعادة تحميل الصفحة وسط محادثة</td><td>المحادثة ترجع</td></tr>
+          <tr><td>٢٠</td><td>ضغط «سجل» ثم رجوع</td><td>المحادثة ما تُمسح</td></tr>
+          <tr><td>٢١</td><td>فتح محادثة قديمة من السجلّ</td><td>تُستأنف بسياقها</td></tr>
+          <tr><td>٢٢</td><td>سؤال يُنشر</td><td>يظهر تحت المقال أو الصناعة الصحيحة</td></tr>
+          <tr><td>٢٣</td><td>جوجل يزور <code>/modo-chat</code> و<code>/modo-chat/api/topics</code></td><td>الاثنان محجوبان في <code>robots.ts</code></td></tr>
+          <tr><td>٢٤</td><td>جوّال ٣٩٠×٨٤٤</td><td>الحقل ما يختفي تحت لوحة المفاتيح · أهداف اللمس ٤٤ بكسل</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card p-5 space-y-3">
+      <p class="font-bold">ب — الجودة: ٤٠ سؤالاً عربياً حقيقياً</p>
+      <p class="text-sm" style="color:var(--muted)">المورّد يقول صراحةً إن درجة إعادة الترتيب تعتمد على السؤال ولا تُقارَن بين الأسئلة، والمعايرة تكون على ٣٠–٥٠ سؤالاً واقعياً. الجدول الناتج (السؤال · الدرجة · القرار الصحيح · قرار مودو) هو الدليل، وهو ما يحدّد العتبة — لا التخمين.</p>
+      <p class="text-sm"><b>حدّ القبول المقترح:</b> ≥ ٩٠٪ تطابق على بوّابة الصناعة (داخل/خارج)، و<b class="text-white">صفر</b> حالة يرشّح فيها شريكاً من صناعة غلط.</p>
+    </div>
+
+    <div class="card p-5 space-y-3">
+      <p class="font-bold">ج — التكلفة (تُقاس، لا تُقدَّر)</p>
+      <ul class="text-sm space-y-1 list-disc ps-5" style="color:var(--muted)">
+        <li>عدّاد نداءات مدفوعة لكل سؤال، مسجَّل في السجلّ: الهدف <b class="text-white">٢–٣</b> بدل ٧.</li>
+        <li>فاتورة حقيقية من حساب المورّد بعد ١٠٠ سؤال اختبار ← تكلفة السؤال بالريال.</li>
+        <li>سقف يومي مفعَّل ومُختبَر بتجاوزه عمداً.</li>
+      </ul>
+      <p class="text-sm" style="color:var(--warn)">لا إطلاق حملة إعلانية قبل ما يكون رقم «تكلفة السؤال» مقيساً من فاتورة، لا محسوباً على ورق.</p>
+    </div>
+  </section>
+
+  <section class="card p-5 space-y-2" style="border-color:rgba(0,229,229,.4)">
+    <p class="font-bold">المطلوب منك</p>
+    <p class="text-sm" style="color:var(--muted)">اعتمد أو عدّل <b class="text-white">ق١ أوّلاً</b> — كل الباقي يتفرّع منه. ثم ق٢ وق٩، وهي الثلاثة التي تغيّر شكل المنتج. الباقي (ق٤ · ق٥ · ق٦ · ق٧ · ق٨) قرارات تنفيذ أقدر أبدأها بمجرّد موافقتك.</p>
+    <p class="text-sm" style="color:var(--warn)">لم يُقَس بعد: التكلفة الفعلية للسؤال بالريال — أسعار التضمين وإعادة الترتيب غير منشورة، وتحتاج فاتورة حقيقية من الحساب.</p>
+  </section>
+
+</main>
+</body>
+</html>

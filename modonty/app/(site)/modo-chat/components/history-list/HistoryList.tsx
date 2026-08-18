@@ -15,12 +15,14 @@ type WebSource = { title: string; link: string };
 
 type HistoryItem = {
   id: string;
+  conversationId: string | null;
   userQuery: string;
   assistantResponse: string;
   scopeType: string;
   scopeLabel: string | null;
   articleSlug: string | null;
   categorySlug: string | null;
+  industrySlug: string | null;
   outcome: string;
   source?: string | null;
   webSources?: WebSource[] | null;
@@ -42,7 +44,12 @@ function formatRelativeDate(dateStr: string): string {
   return `${label} ${time}`;
 }
 
-export function ChatHistoryList() {
+interface HistoryListProps {
+  /** Reopens a past thread in the chat tab. Absent means history stays read-only. */
+  onResume?: (conversationId: string) => void;
+}
+
+export function HistoryList({ onResume }: HistoryListProps = {}) {
   const [items, setItems] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +73,7 @@ export function ChatHistoryList() {
     return (
       <div dir="rtl" className="flex flex-col h-full overflow-hidden">
         <p className="text-sm font-medium text-foreground px-4 pt-4 pb-2 shrink-0">سجل المحادثات</p>
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-2">
+        <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin p-4 space-y-2">
           {[1, 2, 3, 4, 5].map((i) => (
             <Card key={i} className="overflow-hidden border-border p-3">
               <div className="flex justify-between items-start gap-2">
@@ -105,12 +112,21 @@ export function ChatHistoryList() {
   return (
     <div dir="rtl" className="flex flex-col h-full overflow-hidden">
       <p className="text-sm font-medium text-foreground px-4 pt-4 pb-2 shrink-0">سجل المحادثات</p>
-      <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-2">
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin p-4 space-y-2">
         {items.map((item) => {
-          const scopeLabel = item.scopeLabel ?? (item.scopeType === "article" ? "مقال" : "موضوع");
+          const scopeWord =
+            item.scopeType === "article" ? "مقال" : item.scopeType === "industry" ? "مجال" : "موضوع";
+          // Rows saved before the industry column existed carry no resolvable scope. Repeating
+          // the word («موضوع: موضوع») says nothing — the question alone is the useful part.
+          const scopeLabel = item.scopeLabel;
           const isExpanded = expandedId === item.id;
-          const href =
-            item.articleSlug ? `/articles/${encodeURIComponent(item.articleSlug)}` : item.categorySlug ? `/categories/${encodeURIComponent(item.categorySlug)}` : null;
+          const href = item.articleSlug
+            ? `/articles/${encodeURIComponent(item.articleSlug)}`
+            : item.industrySlug
+              ? `/industries/${encodeURIComponent(item.industrySlug)}`
+              : item.categorySlug
+                ? `/categories/${encodeURIComponent(item.categorySlug)}`
+                : null;
 
           return (
             <Card key={item.id} className="overflow-hidden border-border">
@@ -121,20 +137,22 @@ export function ChatHistoryList() {
               >
                 <div className="flex justify-between items-start gap-2">
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs text-muted-foreground mb-1">
-                      {item.scopeType === "article" ? "مقال:" : "موضوع:"}{" "}
-                      {href ? (
-                        <Link
-                          href={href}
-                          className="text-primary hover:underline"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {scopeLabel}
-                        </Link>
-                      ) : (
-                        scopeLabel
-                      )}
-                    </p>
+                    {scopeLabel && (
+                      <p className="text-xs text-muted-foreground mb-1">
+                        {scopeWord}:{" "}
+                        {href ? (
+                          <Link
+                            href={href}
+                            className="text-primary hover:underline"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {scopeLabel}
+                          </Link>
+                        ) : (
+                          scopeLabel
+                        )}
+                      </p>
+                    )}
                     <p className="text-sm text-foreground line-clamp-2">{item.userQuery}</p>
                   </div>
                   <span className="text-xs text-muted-foreground shrink-0">
@@ -182,16 +200,31 @@ export function ChatHistoryList() {
                       <p className="text-xs text-muted-foreground">تم اقتراح مقالات ذات صلة</p>
                     )
                   )}
-                  {href && (
-                    <Link
-                      href={href}
-                      className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <IconExternal className="h-3.5 w-3.5" />
-                      {item.articleSlug ? "فتح المقال" : "فتح الموضوع"}
-                    </Link>
-                  )}
+                  <div className="flex flex-wrap items-center gap-3">
+                    {onResume && item.conversationId && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onResume(item.conversationId!);
+                        }}
+                        className="inline-flex min-h-[44px] items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                      >
+                        <IconHistory className="h-3.5 w-3.5" />
+                        أكمل هذه المحادثة
+                      </button>
+                    )}
+                    {href && (
+                      <Link
+                        href={href}
+                        className="inline-flex min-h-[44px] items-center gap-1.5 text-sm text-primary hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <IconExternal className="h-3.5 w-3.5" />
+                        {item.articleSlug ? "فتح المقال" : "فتح الموضوع"}
+                      </Link>
+                    )}
+                  </div>
                 </div>
               )}
             </Card>

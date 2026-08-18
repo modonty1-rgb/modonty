@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
@@ -22,7 +23,6 @@ import { getWhatsappContactUrl } from "@/app/(site)/trust/helpers/get-whatsapp-c
 import { getTrustPageForMetadata } from "@/app/(site)/trust/helpers/trust-metadata";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import {
-  IconVerified,
   IconFileCheck,
   IconExternal,
   IconShield,
@@ -208,7 +208,7 @@ export default async function TrustPage() {
                     badge would contradict the status row below it. */}
                 {legal.cr && legal.isRegistrationActive && (
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-sm font-semibold text-primary">
-                    <IconVerified className="h-4 w-4" />
+                    <VerifiedBadge className="h-4 w-4" label="موثّقة لدى وزارة التجارة" />
                     موثّقة لدى وزارة التجارة
                   </span>
                 )}

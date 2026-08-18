@@ -332,21 +332,35 @@ model ChatbotMessage {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
   userId            String   @db.ObjectId
   user              User     @relation(fields: [userId], references: [id])
+  /// Groups the turns of one conversation. Without it a reload lost the thread, because
+  /// the only copy of the conversation lived in React state.
+  conversationId    String?  @db.ObjectId
+  /// Position inside the conversation, so turns replay in the order they happened.
+  turnIndex         Int?
   userQuery         String
   assistantResponse String
-  scopeType         String // "article" | "category"
+  scopeType         String // "article" | "industry" | "category"
   articleSlug       String?
   categorySlug      String?
+  /// The scope Modo actually answers in. Partners belong to an industry, so this is the only
+  /// column that says which part of the business a conversation belonged to.
+  industrySlug      String?
   articleId         String?  @db.ObjectId
   categoryId        String?  @db.ObjectId
+  industryId        String?  @db.ObjectId
   outcome           String // "outOfScope" | "redirect" | "stream" | "error"
   source            String? // "web" | "db" | null
   webSources        Json? // [{title, link}] for web search results
+  /// The articles offered on a `redirect` turn — the reply itself is empty, so without this
+  /// the history row renders as a question with a blank answer.
+  redirectArticles  Json?
   createdAt         DateTime @default(now())
 
   @@index([userId])
+  @@index([userId, conversationId, createdAt])
   @@index([articleSlug])
   @@index([categorySlug])
+  @@index([industrySlug])
   @@index([createdAt])
   @@map("chatbot_messages")
 }
@@ -1121,8 +1135,68 @@ model Industry {
 
   // Relationships
   clients Client[]
+  faqs    IndustryFAQ[]
 
   @@map("industries")
+}
+
+/// One embedded slice of an article, stored so Modo never re-embeds the same immutable text.
+/// Before this existed, every single question re-chunked and re-embedded up to 30 full articles
+/// at request time — the largest line on the bill, and it grew with the corpus rather than with
+/// revenue. Cohere's own guidance is embed-once-at-ingest, embed-only-the-query-at-request.
+///
+/// `contentHash` is the invalidation key: when an article's text changes the hash changes, the
+/// old rows stop matching, and the chunks are rebuilt on the next question.
+model ArticleChunk {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  /// Position within the article, so chunks can be replayed in reading order.
+  chunkIndex Int
+  /// The chunk text exactly as it was embedded — the reranker and the model read this, not the article.
+  text       String
+  /// embed-multilingual-v3.0 returns 1024 floats.
+  embedding  Float[]
+  /// Hash of the article body this chunk was derived from.
+  contentHash String
+
+  createdAt DateTime @default(now())
+
+  @@index([articleId, chunkIndex])
+  @@index([articleId, contentHash])
+  @@map("article_chunks")
+}
+
+/// Questions visitors asked Modo that no article answers, published on the industry page.
+/// Khalid's call (2026-08-18): the industry page already lists the partners who serve that
+/// need, so an answer landing there sits directly above the people who can be booked — and
+/// it fills a page measured at 1232 characters of mostly navigation.
+/// Mirrors ArticleFAQ/ClientFAQ so the admin review screen is the same in all three.
+model IndustryFAQ {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  industryId String   @db.ObjectId
+  industry   Industry @relation(fields: [industryId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  question String // Schema.org Question
+  answer   String? // Empty until reviewed and answered
+  position Int     @default(0)
+  status   ArticleFAQStatus @default(PENDING) // reuse the existing enum
+
+  /// How many visitors asked essentially this — the demand signal that ranks the content backlog.
+  askedCount Int @default(1)
+
+  submittedByName  String?
+  submittedByEmail String?
+  source           String? @default("manual") // "manual" | "chatbot" | "user"
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([industryId, position])
+  @@index([industryId, status])
+  @@index([status, askedCount])
+  @@map("industry_faqs")
 }
 
 /// Permanent (308) redirects served by proxy.ts for merged/renamed entity slugs.
@@ -1281,6 +1355,7 @@ model Article {
   relatedFrom RelatedArticle[] @relation("ArticleRelatedFrom")
   relatedTo   RelatedArticle[] @relation("ArticleRelatedTo")
   faqs        ArticleFAQ[]
+  chunks      ArticleChunk[] // Modo's cached embeddings of this article's text
   gallery     ArticleMedia[] // Image gallery for article
   // Reels that PROMOTE this article — a third, distinct meaning next to
   // `featuredImage` (the article's cover) and `gallery` (images inside it).

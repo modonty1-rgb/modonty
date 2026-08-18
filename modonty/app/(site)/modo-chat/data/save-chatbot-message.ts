@@ -1,19 +1,28 @@
 import { db } from "@/lib/db";
 
 export type WebSource = { title: string; link: string };
+export type RedirectArticle = { id: string; title: string; slug: string; excerpt: string | null };
 
 type SaveParams = {
   userId: string;
+  /** Ties this turn to its conversation — without it the log is a flat pile of questions. */
+  conversationId: string;
+  /** Position in the conversation, so a restored thread replays in order. */
+  turnIndex: number;
   userQuery: string;
   assistantResponse: string;
-  scopeType: "article" | "category";
+  scopeType: "article" | "industry" | "category";
   articleSlug?: string | null;
   categorySlug?: string | null;
+  industrySlug?: string | null;
   articleId?: string | null;
   categoryId?: string | null;
+  industryId?: string | null;
   outcome: "outOfScope" | "redirect" | "stream" | "error";
   source?: "web" | "db" | null;
   webSources?: WebSource[] | null;
+  /** A redirect turn has an empty answer; without these the history row renders blank. */
+  redirectArticles?: RedirectArticle[] | null;
 };
 
 export async function saveChatbotMessage(params: SaveParams): Promise<void> {
@@ -21,21 +30,26 @@ export async function saveChatbotMessage(params: SaveParams): Promise<void> {
     await db.chatbotMessage.create({
       data: {
         userId: params.userId,
+        conversationId: params.conversationId,
+        turnIndex: params.turnIndex,
         userQuery: params.userQuery,
         assistantResponse: params.assistantResponse,
         scopeType: params.scopeType,
         articleSlug: params.articleSlug ?? undefined,
         categorySlug: params.categorySlug ?? undefined,
+        industrySlug: params.industrySlug ?? undefined,
         articleId: params.articleId ?? undefined,
         categoryId: params.categoryId ?? undefined,
+        industryId: params.industryId ?? undefined,
         outcome: params.outcome,
         source: params.source ?? undefined,
         webSources: params.webSources?.length ? params.webSources : undefined,
+        redirectArticles: params.redirectArticles?.length ? params.redirectArticles : undefined,
       },
     });
   } catch (err) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("[saveChatbotMessage]", err);
-    }
+    // Always logged: a silent write failure means the conversation log — and every metric
+    // built on it, including the rate limiter — is quietly wrong.
+    console.error("[saveChatbotMessage] failed to persist a turn", err);
   }
 }

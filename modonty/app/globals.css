@@ -132,6 +132,30 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 3.5rem;
+    /* The page's own scrollbar, in brand colour. Left at `auto` it rendered as the grey
+       Windows bar with stepper arrows on every page — the one piece of chrome that still
+       said "default browser" on a site that styles everything else. Utilities like
+       `.scrollbar-thin` are more specific, so inner scroll areas keep their own look. */
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.45) transparent;
+  }
+
+  html::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  html::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--primary) / 0.45);
+    border-radius: 999px;
+    transition: background-color 0.216s cubic-bezier(0.34, 0, 0.21, 1);
+  }
+
+  html::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--primary));
   }
 
   body {

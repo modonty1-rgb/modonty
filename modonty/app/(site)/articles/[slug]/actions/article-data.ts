@@ -38,7 +38,20 @@ export async function getArticleForChat(slug: string) {
       excerpt: true,
       categoryId: true,
       category: { select: { id: true, name: true, slug: true } },
-      client: { select: { id: true, name: true, slug: true } },
+      // Everything Modo's answer card shows about him — ctaMode decides whether it can end
+      // in a booking button, the rest is what makes the card worth trusting.
+      client: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          ctaMode: true,
+          addressCity: true,
+          verificationImageUrl: true,
+          logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
+          credentials: { select: { name: true } },
+        },
+      },
     },
   });
 }

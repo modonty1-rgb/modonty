@@ -2,8 +2,8 @@ import { Suspense } from "react";
 
 import type { Metadata } from "next";
 
-import { ModoChatClient } from "./components/modo-chat-client";
-import { ModoChatSkeleton } from "./components/modo-chat-skeleton";
+import { PageLayout } from "./components/page-layout/PageLayout";
+import { PageSkeleton } from "./components/page-layout/PageSkeleton";
 
 export const metadata: Metadata = {
   title: "مودو شات — مساعدك الذكي في مدونتي",
@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 
 export default function ModoChatPage() {
   return (
-    <Suspense fallback={<ModoChatSkeleton />}>
-      <ModoChatClient />
+    <Suspense fallback={<PageSkeleton />}>
+      <PageLayout />
     </Suspense>
   );
 }

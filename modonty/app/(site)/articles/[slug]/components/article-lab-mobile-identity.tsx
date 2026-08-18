@@ -1,8 +1,9 @@
 import { OptimizedImage } from "@modonty/shared/components/optimized-image";
+import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
-import { IconClients, IconVerified, IconChevronLeft } from "@/lib/icons";
+import { IconClients, IconChevronLeft } from "@/lib/icons";
 
 interface ArticleLabMobileIdentityProps {
   client: {
@@ -40,7 +41,7 @@ export function ArticleLabMobileIdentity({ client, articleId }: ArticleLabMobile
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-1 text-[15px] font-bold leading-tight text-foreground">
           {client.name}
-          <IconVerified className="h-4 w-4 shrink-0 text-primary" aria-label="موثّق" />
+          <VerifiedBadge className="h-4 w-4" label="شريك موثّق" />
         </span>
         <span className="mt-0.5 block text-[11px] text-muted-foreground">
           {client.addressCity?.trim() ? `${client.addressCity} · ` : ""}موثّق من مدونتي

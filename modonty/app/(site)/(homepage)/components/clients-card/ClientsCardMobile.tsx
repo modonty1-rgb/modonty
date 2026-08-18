@@ -1,4 +1,5 @@
-import { IconShield, IconVerified } from "@/lib/icons";
+import { IconShield } from "@/lib/icons";
+import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 
 export function ClientsCardMobile() {
   return (
@@ -13,7 +14,7 @@ export function ClientsCardMobile() {
             <h2 className="text-sm font-medium">شركاء موثوقون</h2>
             <p className="mt-0.5 text-xs leading-5 text-primary-foreground/80">نتأكّد من الأوراق الرسمية قبل ما يظهر أي شريك.</p>
           </div>
-          <IconVerified className="h-5 w-5 shrink-0 text-accent" aria-hidden />
+          <VerifiedBadge className="h-5 w-5 text-accent fill-accent/20" label="شركاء موثوقون" />
         </div>
       </div>
     </section>

@@ -1,20 +1,10 @@
 import "server-only";
-import { embed } from "./cohere";
+
+import { isGreetingOrShortPleasantry } from "../helpers/is-greeting";
+import { embedTexts } from "./embed-texts";
 
 /** Relevance threshold: below this = out-of-scope (query not about this category). */
 const OUT_OF_SCOPE_THRESHOLD = 0.52;
-
-/** Greetings, pleasantries, and meta identity questions — never out-of-scope. */
-const GREETING_PATTERNS = [
-  /^(hi|hello|hey|hiya|yo|sup|howdy)\s*!?$/i,
-  /^(مرحبا?|أهلا|هلا|سلام|مرحبتين|السلام عليكم|أهلين)\s*!?$/i,
-  /^(thanks?|thank you|شكرا|شكراً|مشكور|يعطيك العافية)\s*!?$/i,
-  /^(ok|okay|تمام|حسنا)\s*!?$/i,
-  /^(bye|goodbye|مع السلامة)\s*!?$/i,
-  // Identity/meta questions — bot should answer these regardless of topic
-  /^(من أنت|ما أنت|من انت|ما انت|what are you|who are you)\s*[?؟]?$/i,
-  /^(ماذا تفعل|ما وظيفتك|كيف تعمل|what can you do|how do you work)\s*[?؟]?$/i,
-];
 
 function cosineSimilarity(a: number[], b: number[]): number {
   if (a.length !== b.length) return 0;
@@ -30,21 +20,10 @@ function cosineSimilarity(a: number[], b: number[]): number {
   return denom === 0 ? 0 : dot / denom;
 }
 
-export function isGreetingOrShortPleasantry(text: string): boolean {
-  const t = text.trim();
-  if (t.length < 3) return true;
-  if (t.split(/\s+/).length <= 2 && t.length < 25) {
-    return GREETING_PATTERNS.some((p) => p.test(t));
-  }
-  return false;
-}
-
 /**
  * Check if user message is out of scope (asking about a different topic/article).
- * Uses Cohere embed: compare query to scope. Per Cohere semantic-search docs,
- * we compare to multiple scope texts and use max similarity so related
- * sub-topics (e.g. Core Web Vitals in Content SEO) match the category.
- * Returns true if out-of-scope.
+ * Compares the query to several scope texts and takes the MAX similarity, so a related
+ * sub-topic (Core Web Vitals inside Content SEO) still matches the category.
  */
 export async function isOutOfScope(
   userMessage: string,
@@ -72,8 +51,8 @@ export async function isOutOfScope(
   }
 
   const [queryEmb, docEmbs] = await Promise.all([
-    embed([userMessage], "search_query"),
-    embed(textsToCompare, "search_document"),
+    embedTexts([userMessage], "search_query"),
+    embedTexts(textsToCompare, "search_document"),
   ]);
 
   if (!queryEmb?.[0] || !docEmbs?.length) return false;

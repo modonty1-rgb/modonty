@@ -26,7 +26,11 @@ import { SITE_URL } from "@/constants";
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = SITE_URL;
 
-  const SENSITIVE_PATHS = ["/api/", "/admin/", "/users/"];
+  // `/modo-chat` is listed for the same reason Perplexity blocks `/search*`, Claude `/chat/*` and
+  // Copilot `/chats/*`: a crawler arrives signed-out and can only reach the login gate, and each
+  // visitor's transcript is private. Its endpoints sit under `/modo-chat/api/`, which `/api/` misses
+  // — `GET /modo-chat/api/topics` answered 200 to an anonymous request before this line existed.
+  const SENSITIVE_PATHS = ["/api/", "/admin/", "/users/", "/modo-chat"];
 
   return {
     rules: [

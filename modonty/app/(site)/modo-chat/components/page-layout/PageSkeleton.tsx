@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function ModoChatSkeleton() {
+export function PageSkeleton() {
   return (
     <div dir="rtl" className="flex min-h-[calc(100vh-3.5rem)] flex-col">
       <header className="shrink-0 border-b border-border bg-background">
