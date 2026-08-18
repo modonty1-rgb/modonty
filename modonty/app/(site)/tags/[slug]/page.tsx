@@ -10,6 +10,7 @@ import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 import { generateMetadataFromSEO, jsonLdHtmlFromString } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ClientCard } from "@/components/client/client-card";
+import { ReadArticlesLink } from "@/components/shared/read-articles-link/ReadArticlesLink";
 
 interface TagPageProps {
   params: Promise<{ slug: string }>;
@@ -70,7 +71,7 @@ export default async function TagPage({ params }: TagPageProps) {
   const decodedSlug = decodeURIComponent(slug);
 
   try {
-    const [tag, clients] = await Promise.all([
+    const [tag, clients, articleCount] = await Promise.all([
       db.tag.findUnique({
         where: { slug: decodedSlug },
         select: {
@@ -104,6 +105,14 @@ export default async function TagPage({ params }: TagPageProps) {
           addressCity: true,
           slogan: true,
           _count: { select: { articles: true } },
+        },
+      }),
+      // How many articles carry this tag — the read-link stays hidden at zero.
+      db.article.count({
+        where: {
+          status: ArticleStatus.PUBLISHED,
+          OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
+          tags: { some: { tag: { slug: decodedSlug } } },
         },
       }),
     ]);
@@ -179,6 +188,13 @@ export default async function TagPage({ params }: TagPageProps) {
             </div>
           </section>
         )}
+
+        {/* The way out for a visitor who came to read, not to shop — this page lists partners. */}
+        <ReadArticlesLink
+          label={tag.name}
+          href={`/articles?tag=${encodeURIComponent(tag.slug)}`}
+          count={articleCount}
+        />
 
         {/* Clients grid */}
         <div className="container mx-auto max-w-[1128px] px-4 py-10">

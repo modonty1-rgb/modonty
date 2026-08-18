@@ -112,6 +112,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const listingUrls: MetadataRoute.Sitemap = [
     // Homepage — most-recent article touches it (latest feed/trending shown)
     { url: baseUrl, lastModified: lastArticleModified },
+    // The article archive. Only the unfiltered view is listed: every `?category=`/`?tag=`
+    // combination is reachable from its rail and carries its own canonical, so listing them
+    // here would flood the sitemap with URLs that differ only by a query string.
+    { url: new URL("/articles", baseUrl).href, lastModified: lastArticleModified },
     { url: new URL("/trending", baseUrl).href, lastModified: lastArticleModified },
     { url: new URL("/categories", baseUrl).href, lastModified: lastCategoryModified },
     { url: new URL("/clients", baseUrl).href, lastModified: lastClientModified },
