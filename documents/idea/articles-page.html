@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>صفحة المقالات — قرار ما هي أصلاً (١٩ أغسطس ٢٠٢٦)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0b0d1f;--card:#12152b;--ring:#242846;--fg:#fafafa;--muted:#a3a7c2;--primary:#7070ff;--accent:#00e5e5;--ok:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+  html{background:var(--bg);color:var(--fg);font-family:Tajawal,system-ui,sans-serif;scroll-behavior:smooth}
+  .card{background:var(--card);border:1px solid var(--ring);border-radius:12px}
+  .h2{display:flex;align-items:center;gap:.5rem;font-size:1.35rem;font-weight:700}
+  .h2:before{content:"";width:22px;height:3px;border-radius:9999px;background:var(--accent)}
+  .h3{font-weight:700;font-size:1.05rem}
+  .eyebrow{display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:var(--muted)}
+  .eyebrow:before{content:"";width:16px;height:2px;border-radius:9999px;background:var(--accent)}
+  .pill{font-size:.7rem;padding:.15rem .5rem;border-radius:9999px;border:1px solid var(--ring);white-space:nowrap;display:inline-block}
+  .pill.ok{color:var(--ok);border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.08)}
+  .pill.warn{color:var(--warn);border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08)}
+  .pill.bad{color:var(--bad);border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08)}
+  .pill.info{color:var(--primary);border-color:rgba(112,112,255,.4);background:rgba(112,112,255,.08)}
+  code{background:#1b1f3a;padding:.05rem .35rem;border-radius:4px;font-size:.85em;direction:ltr;unicode-bidi:embed;display:inline-block}
+  table{width:100%;border-collapse:separate;border-spacing:0}
+  th,td{padding:.6rem .7rem;text-align:start;vertical-align:top;border-top:1px solid var(--ring);font-size:.87rem}
+  th{color:var(--muted);font-weight:500;background:#0f1226;border-top:0}
+  blockquote{border-inline-start:3px solid var(--primary);padding:.5rem .9rem;color:var(--muted);font-size:.82rem;direction:ltr;text-align:left;font-family:ui-monospace,monospace;white-space:pre-wrap;margin:.5rem 0}
+  a{color:var(--primary)}
+  .src{font-size:.72rem;color:var(--muted)}
+  .rec{color:var(--accent);font-weight:700}
+  .v{color:var(--ok);font-weight:700}
+  .u{color:var(--warn);font-weight:700}
+  .opt{border:1px solid var(--ring);border-radius:12px;padding:1rem;background:#0f1226}
+  .opt.pick{border-color:var(--accent);box-shadow:0 0 0 1px rgba(0,229,229,.25)}
+</style>
+</head>
+<body class="min-h-screen">
+<main class="mx-auto max-w-[1128px] px-4 py-8 space-y-6">
+
+  <header class="space-y-3">
+    <p class="eyebrow">بطاقة A1 في لوحة الرئيسية · قِسته بنفسي على <code>modonty_dev</code> يوم ١٩ أغسطس ٢٠٢٦</p>
+    <h1 class="text-3xl font-bold leading-tight">صفحة «المقالات» — القرار قبل الكود</h1>
+    <p class="max-w-3xl text-[15px] leading-relaxed" style="color:var(--muted)">
+      <code>/articles</code> يرجع <b class="text-white">٤٠٤</b> اليوم، والرابط موجود في القائمة العلوية.
+      قبل ما أبني، قِست الموقع: <b class="text-white">الأرشيف الذي كنّا ننوي بناءه موجود أصلاً</b> —
+      لكن باسم ثانٍ وفي مكان ثانٍ. هذا الملف يعرض ما قِسته، ولماذا يغيّر تعريف الصفحة، والخياران أمامك.
+    </p>
+  </header>
+
+  <!-- ══════ المطلوب منك — أوّل شيء ══════ -->
+  <section class="card p-5 space-y-4" style="border-color:rgba(239,68,68,.45)">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="pill bad">مطلوب منك</span>
+      <h2 class="text-xl font-bold">قرار واحد: ما هي صفحة المقالات؟</h2>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="opt pick space-y-2">
+        <p class="font-bold"><span class="rec">الخيار أ ‏(توصيتي)</span> — محور اكتشاف المقالات</p>
+        <p class="text-sm" style="color:var(--muted)">
+          صفحة تجيب سؤالاً ما تجيبه أي صفحة عندنا اليوم:
+          <b class="text-white">«وريني مقالات تصنيف كذا» · «وريني الأكثر قراءة»</b>.
+          تصفية بالتصنيف والوسم والمجال، وترتيب بغير الأحدث.
+        </p>
+        <p class="text-sm"><b class="text-white">تكسب:</b> صفحة جديدة فعلاً، وتفتح
+          <code>/categories/[slug]</code> و<code>/tags/[slug]</code> على مقالاتها
+          (اليوم يعرضان شركاء فقط).</p>
+        <p class="text-sm"><b class="text-white">تدفع:</b> شغل أكبر — ريل تصفية، وروابط بحالات،
+          وكانونيكال لكل تركيبة.</p>
+      </div>
+
+      <div class="opt space-y-2">
+        <p class="font-bold">الخيار ب — أرشيف بسيط كما في اللوحة</p>
+        <p class="text-sm" style="color:var(--muted)">
+          شبكة كل المقالات، الأحدث أوّلاً، ترقيم صفحات. أسرع بيوم تقريباً.
+        </p>
+        <p class="text-sm"><b class="text-white">لكن:</b> <span class="pill bad">تطابق ١٠٠٪</span>
+          مع <code>/industries</code> — ١١٧ مقالاً مقابل ١١٧. نفس المقالات، نفس الترتيب،
+          نفس البطاقة، نفس الترقيم. صفحتان تتنافسان على نفس الكلمات في جوجل.</p>
+        <p class="text-sm"><b class="text-white">يصير منطقياً فقط لو</b> قرّرنا نفس اللحظة أن
+          <code>/industries</code> يوقف عرض التغذية المجمّعة ويصير صفحة مجالات فقط.</p>
+      </div>
+    </div>
+
+    <p class="text-sm" style="color:var(--muted)">
+      قرارات فرعية تنتظر معها (تفصيلها في آخر الصفحة): شكل رابط الترقيم ·
+      هل نصفّي بالمجال أصلاً · ماذا نفعل بـ<code>/industries</code>.
+    </p>
+  </section>
+
+  <!-- ══════ الوضع الحالي — مقيس ══════ -->
+  <section class="space-y-4">
+    <h2 class="h2">الوضع الحالي في الكود — مقيس لا مفترَض</h2>
+
+    <div class="card p-5 space-y-3">
+      <p class="h3">١ · الأرقام</p>
+      <blockquote>DB: modonty_dev   (19 Aug 2026)
+{
+  total: 117,          // مقالات منشورة
+  inIndustries: 117,   // منها تظهر على /industries
+  orphan: 0,
+  withCat: 115,        // لها تصنيف
+  cats: 15, inds: 8, tags: 23
+}</blockquote>
+      <p class="text-sm" style="color:var(--muted)">
+        تتحقّق منه بنفسك: شغّل نفس العدّ على <code>modonty_dev</code>، أو افتح
+        <code>http://localhost:3000/industries</code> وعُدّ الصفحات — ١١٧ مقالاً على
+        عشرة لكل صفحة = ١٢ صفحة.
+      </p>
+    </div>
+
+    <div class="card p-5 space-y-3">
+      <p class="h3">٢ · ماذا تعرض كل صفحة فعلاً</p>
+      <table>
+        <thead><tr><th>المسار</th><th>يعرض</th><th>الملف</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>/industries</code></td>
+            <td><b class="text-white">مقالات</b> — كل المنشور من شريك فعّال له مجال، الأحدث أوّلاً، ترقيم <code>?page=</code></td>
+            <td><code>industries/data/get-industry-feed.ts</code></td>
+          </tr>
+          <tr>
+            <td><code>/categories/[slug]</code></td>
+            <td><span class="u">شركاء</span> (<code>ClientCard</code>) — ولا مقال</td>
+            <td><code>categories/[slug]/page.tsx:193</code></td>
+          </tr>
+          <tr>
+            <td><code>/tags/[slug]</code></td>
+            <td><span class="u">شركاء</span> (<code>ClientCard</code>) — ولا مقال</td>
+            <td><code>tags/[slug]/page.tsx:193</code></td>
+          </tr>
+          <tr>
+            <td><code>/</code> الرئيسية</td>
+            <td>مقالات، عشرة ثم تمرير لا نهائي — <span class="u">بلا روابط صفحات</span> يقدر جوجل يزحفها</td>
+            <td><code>(homepage)/data/home-feed-shapes.ts</code></td>
+          </tr>
+          <tr>
+            <td><code>/articles</code></td>
+            <td><span class="pill bad">٤٠٤</span> — لا <code>page.tsx</code>، والرابط في القائمة العلوية</td>
+            <td><code>console/…/nav-config.ts</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="src">
+        القياس من الكود مباشرةً يوم ١٩ أغسطس. الملفّات تتغيّر — لو مرّ أسبوع، افتحها قبل ما تبني عليها.
+      </p>
+    </div>
+
+    <div class="card p-5 space-y-2">
+      <p class="h3">٣ · الخلاصة التي غيّرت رأيي</p>
+      <p class="text-sm" style="color:var(--muted)">
+        اللوحة كانت تقول: «ليست نسخة من تغذية الرئيسية». صحيح، لكنه ما كان الخطر الحقيقي —
+        الرئيسية تمرير لا نهائي بلا روابط، فهي أصلاً لا تنافس أحداً في جوجل.
+        <b class="text-white">المنافس الحقيقي هو <code>/industries</code></b>، وهي بالضبط الأرشيف
+        الذي كنّا سنبنيه. وفي المقابل، <b class="text-white">التصنيفات والوسوم — ٣٨ صفحة —
+        لا تعرض ولا مقالاً واحداً</b>، وهذا هو الفراغ الفعلي.
+      </p>
+    </div>
+  </section>
+
+  <!-- ══════ المقترح ══════ -->
+  <section class="space-y-4">
+    <h2 class="h2">الخيار أ بالتفصيل — كيف تشتغل الصفحة</h2>
+
+    <div class="card p-5 space-y-3">
+      <p class="h3">من يدخلها ولماذا</p>
+      <table>
+        <thead><tr><th>الزائر</th><th>يدخل من</th><th>يبغى</th></tr></thead>
+        <tbody>
+          <tr><td>قارئ يتصفّح</td><td>القائمة العلوية</td><td>يشوف كل المقالات ويصفّي على اللي يهمّه</td></tr>
+          <tr><td>قارئ خلّص مقالاً</td><td>وسم أو تصنيف داخل المقال</td><td>«وريني الباقي في نفس الموضوع»</td></tr>
+          <tr><td>جوجل</td><td>خريطة الموقع</td><td>رابط ثابت لكل تصنيف ووسم يقدر يزحفه</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card p-5 space-y-3">
+      <p class="h3">الشكل</p>
+      <table>
+        <thead><tr><th>العنصر</th><th>القرار</th><th>لماذا</th></tr></thead>
+        <tbody>
+          <tr><td>الهيكل</td><td>عمودان: نتائج + ريل تصفية</td><td><code>TwoColumnLayout</code> موجود ومستعمل — صفر هيكل جديد</td></tr>
+          <tr><td>البطاقة</td><td><code>PostCard</code> نفسها</td><td>الرئيسية والمجالات والبحث والرائج كلها تستعملها — بطاقة ثانية = صيانة مزدوجة</td></tr>
+          <tr><td>التصفية</td><td>تصنيف · وسم · مجال</td><td>الثلاثة موجودة في القاعدة: ١٥ · ٢٣ · ٨</td></tr>
+          <tr><td>الترتيب</td><td>الأحدث · الأكثر قراءة · الأكثر تفاعلاً</td><td><code>viewsCount</code> و<code>likesCount</code> محفوظان أصلاً على المقال</td></tr>
+          <tr><td>الترقيم</td><td>روابط حقيقية، لا تمرير لا نهائي</td><td>جوجل ما يوصل المقال الحادي عشر بالتمرير — نفس سبب <code>/clients</code> و<code>/industries</code></td></tr>
+          <tr><td>بلا نتائج</td><td>حالة فراغ مكتوبة + زرّ «امسح التصفية»</td><td>تركيبة تصنيف ووسم قد ترجع صفراً بسهولة</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card p-5 space-y-2">
+      <p class="h3">المكسب المجّاني</p>
+      <p class="text-sm" style="color:var(--muted)">
+        لمّا تشتغل التصفية، نضيف في <code>/categories/[slug]</code> و<code>/tags/[slug]</code>
+        زرّ «شوف مقالات هذا التصنيف» يروح <code>/articles?category=…</code> —
+        ٣٨ صفحة تكسب مخرجاً حقيقياً بدل ما تنتهي عند الشركاء.
+      </p>
+    </div>
+  </section>
+
+  <!-- ══════ المراحل ══════ -->
+  <section class="space-y-4">
+    <h2 class="h2">المراحل — لكل مرحلة ناتج تشوفه بنفسك</h2>
+    <div class="card p-5">
+      <table>
+        <thead><tr><th>المرحلة</th><th>الشغل</th><th>تتحقّق منها بـ</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b class="text-white">١</b></td>
+            <td>جلب البيانات: ملف واحد يرجع المقالات مصفّاة ومرتّبة، بالكاش ووسم <code>articles</code></td>
+            <td>ما فيه شاشة بعد — يُقاس بعدد النتائج لكل تركيبة</td>
+          </tr>
+          <tr>
+            <td><b class="text-white">٢</b></td>
+            <td>الصفحة تفتح: <code>page.tsx</code> + <code>loading.tsx</code> + العمودان + البطاقات</td>
+            <td><code>/articles</code> يوقف ٤٠٤ ويرسم — تشوفه في المتصفّح</td>
+          </tr>
+          <tr>
+            <td><b class="text-white">٣</b></td>
+            <td>ريل التصفية والترتيب — روابط، لا جافاسكربت في المتصفّح</td>
+            <td>ضغطة على تصنيف تغيّر الرابط والنتائج</td>
+          </tr>
+          <tr>
+            <td><b class="text-white">٤</b></td>
+            <td>الترقيم + الكانونيكال + العنوان والوصف لكل حالة</td>
+            <td>مصدر الصفحة: كانونيكال صحيح، وعنوان يذكر التصنيف والصفحة</td>
+          </tr>
+          <tr>
+            <td><b class="text-white">٥</b></td>
+            <td>الربط: خريطة الموقع + زرّ «شوف المقالات» في التصنيفات والوسوم</td>
+            <td><code>/sitemap.xml</code> يحوي المسار، والزرّ يشتغل</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="src mt-3">
+        كل مرحلة تُبنى وتُفحص حيّاً قبل التي بعدها، ولا ألمس شغل مرحلة سابقة إلا لإصلاح عطل ظهر.
+      </p>
+    </div>
+  </section>
+
+  <!-- ══════ قرارات فرعية ══════ -->
+  <section class="space-y-4">
+    <h2 class="h2">قرارات فرعية — أجاوبها بافتراضي لو ما ردّيت</h2>
+    <div class="card p-5">
+      <table>
+        <thead><tr><th>القرار</th><th>الافتراض الذي أمشي عليه</th><th>لماذا</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>شكل رابط الصفحة الثانية</td>
+            <td><code>/articles?page=2</code></td>
+            <td>اللوحة كتبت <code>/articles/page/2</code>، لكن مع التصفية يصير الرابط نصفه مسار ونصفه استعلام. و<code>/industries</code> و<code>/clients</code> ماشيتان على <code>?page=</code> — الاتّساق أهمّ، والفرق في السيو صفر</td>
+          </tr>
+          <tr>
+            <td>تصفية بالمجال؟</td>
+            <td>نعم، لكن ثانوية تحت التصنيف والوسم</td>
+            <td>المجال له صفحته الخاصة أصلاً، فلا نكرّرها في المقدّمة</td>
+          </tr>
+          <tr>
+            <td>ماذا نفعل بـ<code>/industries</code>؟</td>
+            <td>تبقى كما هي الآن</td>
+            <td>مع الخيار أ لا يوجد تعارض: تلك «مقالات المجالات»، وهذه «ابحث في المقالات». لو اخترت ب، لازم نحسمها في نفس اليوم</td>
+          </tr>
+          <tr>
+            <td>مقال بلا تصنيف (٢ من ١١٧)</td>
+            <td>يظهر في «الكل»، ويختفي عند التصفية بتصنيف</td>
+            <td>السلوك المتوقَّع، ولا يحتاج حقلاً جديداً</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════ لم أتحقّق منه ══════ -->
+  <section class="space-y-4">
+    <h2 class="h2">ما لم أتحقّق منه — بصراحة</h2>
+    <div class="card p-5 space-y-2 text-sm" style="color:var(--muted)">
+      <p>· <b class="text-white">الإنتاج</b>: كل الأرقام أعلاه من <code>modonty_dev</code>. ما قِست قاعدة الإنتاج، وقد تختلف أعدادها.</p>
+      <p>· <b class="text-white">هل يبحث الزائر فعلاً بالتصنيف؟</b> ما عندي رقم من جوجل أناليتكس يقول إن الناس تصفّي. المنطق يقول نعم، والقياس ما صار.</p>
+      <p>· <b class="text-white">أثر السيو للتطابق</b>: أن صفحتين بنفس المحتوى تتنافسان — قاعدة معروفة، لكن ما قِست أثرها على موقعنا تحديداً لأن <code>/articles</code> ما وُجدت أصلاً.</p>
+      <p>· <b class="text-white">أداء الترتيب بالأكثر قراءة</b>: <code>viewsCount</code> موجود على المقال، لكن ما فحصت هل عليه فهرس يخلّي الترتيب سريعاً على ألف مقال.</p>
+    </div>
+  </section>
+
+  <footer class="pt-4 text-center">
+    <p class="src">
+      ملف نقاش — يُحدَّث بعد ردّك، ويُحذف أو يُنقل إلى مجلد المسار لمّا تُقفل الصفحة.
+      البطاقة الأصلية: <code>modonty/app/(site)/(homepage)/documentation/HOMEPAGE-BOARD.html</code> — A1
+    </p>
+  </footer>
+
+</main>
+</body>
+</html>

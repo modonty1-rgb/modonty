@@ -330,8 +330,11 @@ model VerificationToken {
 
 model ChatbotMessage {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String   @db.ObjectId
-  user              User     @relation(fields: [userId], references: [id])
+  /// Null for a visitor on the free trial. Optional on purpose: their turns cost the same money
+  /// as a member's, so a spend ceiling that cannot see them does not cap the bill (measured
+  /// 2026-08-19 — anonymous turns were not written at all, and the counter read this table).
+  userId            String?  @db.ObjectId
+  user              User?    @relation(fields: [userId], references: [id])
   /// Groups the turns of one conversation. Without it a reload lost the thread, because
   /// the only copy of the conversation lived in React state.
   conversationId    String?  @db.ObjectId

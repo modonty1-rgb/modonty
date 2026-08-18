@@ -293,7 +293,14 @@ export function ChatList({
             return;
           }
           if (d.type === "noSources") {
-            setMessages((p) => [...p, { role: "assistant", content: d.message ?? "لم أعثر على مصادر موثوقة كافية.", noSources: true }]);
+            // Partners ride along on this branch too: a price or appointment question has no
+            // answer in our content by definition, and the partner who sets it is the whole point.
+            setMessages((p) => [...p, {
+              role: "assistant",
+              content: d.message ?? "ما لقيت جواباً أضمنه لسؤالك، وما أبغى أخمّن عليك.",
+              noSources: true,
+              ...(d.partners?.length && { partners: d.partners }),
+            }]);
             return;
           }
           if (d.text) {
@@ -718,11 +725,12 @@ export function ChatList({
                     <IconAi className="h-4 w-4 text-primary" />
                   </AvatarFallback>
                 </Avatar>
+                {/* The server's own sentence, not a second one written here: it names the scope
+                    and tells the visitor their question was recorded. The old fixed copy hid both
+                    (measured live 2026-08-19). */}
                 <div className="rounded-2xl border border-amber-200/60 bg-amber-50/50 dark:bg-amber-950/20 dark:border-amber-800/30 p-4 space-y-2">
-                  <p className="text-sm font-medium text-amber-800 dark:text-amber-300">⚠️ لم أعثر على مصادر موثوقة</p>
-                  <p className="text-xs text-amber-700/80 dark:text-amber-400/80 leading-relaxed">
-                    لم أجد مصادر موثوقة كافية للإجابة على هذا السؤال. جرّب إعادة صياغته أو اختر موضوعاً مختلفاً.
-                  </p>
+                  <p className="text-sm font-medium text-amber-800 dark:text-amber-300">ما لقيت جواب أضمنه</p>
+                  <p className="text-xs text-amber-700/80 dark:text-amber-400/80 leading-relaxed">{m.content}</p>
                 </div>
               </div>
             ) : (
@@ -754,10 +762,14 @@ export function ChatList({
               <RateAnswer messageId={m.messageId} />
             )}
 
-            {/* Web sources */}
+            {/* The partners behind the answer — each one able to take the question itself.
+                The question handed over is the visitor's own, read back from the turn above. */}
             {m.role === "assistant" && m.partners?.length ? (
               <div className="me-10">
-                <PartnerCards partners={m.partners} />
+                <PartnerCards
+                  partners={m.partners}
+                  question={[...messages.slice(0, i)].reverse().find((x) => x.role === "user")?.content}
+                />
               </div>
             ) : null}
 

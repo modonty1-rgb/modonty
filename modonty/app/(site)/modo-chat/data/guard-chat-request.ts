@@ -67,16 +67,19 @@ export async function guardChatRequest(
   const session = await auth();
   let trialRemaining: number | null = null;
 
-  if (session?.user?.id) {
-    const limit = await checkRateLimit(session.user.id, new Date());
-    if (!limit.allowed) {
-      return {
-        error: NextResponse.json(
-          { success: false, error: limit.message } as ApiResponse<never>,
-          { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } }
-        ),
-      };
-    }
+  /**
+   * Runs for everyone, not just members. The trial visitor's three questions live in a cookie
+   * they can delete, so without the site-wide half of this check the bill has no ceiling at all
+   * (measured 2026-08-19: the limiter sat inside `if (session)` and never saw an anonymous turn).
+   */
+  const limit = await checkRateLimit(session?.user?.id ?? null, new Date());
+  if (!limit.allowed) {
+    return {
+      error: NextResponse.json(
+        { success: false, error: limit.message } as ApiResponse<never>,
+        { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } }
+      ),
+    };
   }
 
   const body = await request.json().catch(() => null);

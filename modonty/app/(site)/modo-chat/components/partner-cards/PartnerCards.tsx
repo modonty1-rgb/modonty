@@ -5,6 +5,8 @@ import { VerifiedBadge } from "@modonty/shared/components/verified-badge/Verifie
 import { Card } from "@/components/ui/card";
 import { IconCalendar, IconChevronLeft, IconClients, IconMapPin } from "@/lib/icons";
 
+import { AskPartnerButton } from "../ask-partner-button/AskPartnerButton";
+
 export interface SuggestedPartner {
   name: string;
   slug: string;
@@ -32,7 +34,18 @@ export interface SuggestedPartner {
  * primary action, full width; the profile link is quiet text beside it, so the two stop
  * competing the way two equal buttons did.
  */
-export function PartnerCards({ partners }: { partners: SuggestedPartner[] }) {
+export function PartnerCards({
+  partners,
+  question,
+}: {
+  partners: SuggestedPartner[];
+  /**
+   * The visitor's own question. When present, each card offers to hand it to that partner —
+   * ق١٩ (Khalid, 2026-08-19): a price or appointment question is one Modo can never fully
+   * answer, because only the partner sets those.
+   */
+  question?: string;
+}) {
   if (partners.length === 0) return null;
 
   return (
@@ -109,6 +122,16 @@ export function PartnerCards({ partners }: { partners: SuggestedPartner[] }) {
                 <IconChevronLeft className="h-4 w-4 shrink-0" aria-hidden />
               </Link>
             </div>
+
+            {question && (
+              <div className="border-t border-border px-3 py-2.5">
+                <AskPartnerButton
+                  partnerSlug={partner.slug}
+                  partnerName={partner.name}
+                  question={question}
+                />
+              </div>
+            )}
           </Card>
         );
       })}

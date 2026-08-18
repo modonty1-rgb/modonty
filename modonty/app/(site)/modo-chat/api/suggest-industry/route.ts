@@ -4,6 +4,7 @@ import { SubscriptionStatus } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { embedTexts } from "@/app/(site)/modo-chat/data/embed-texts";
+import { checkRateLimit } from "@/app/(site)/modo-chat/data/check-rate-limit";
 
 const bodySchema = z.object({
   message: z.string().min(1).max(500),
@@ -33,9 +34,23 @@ function cosineSimilarity(a: number[], b: number[]): number {
  */
 export async function POST(request: NextRequest) {
   try {
+    /**
+     * Open to visitors with no account, because the welcome screen promises exactly that:
+     * «اكتب سؤالك وأنا أعرف مجاله» plus three free questions. Requiring a session here broke the
+     * primary path — measured live 2026-08-19, an anonymous visitor typing a question got a 401
+     * and the client drew a generic "حدث خطأ". Only clicking an industry button worked.
+     *
+     * It deliberately does NOT spend a trial question: this is a helper for the question the
+     * visitor is about to ask, and charging it here would halve a three-question trial. The
+     * ceiling that matters — the site-wide daily cap — still applies.
+     */
     const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    const limit = await checkRateLimit(session?.user?.id ?? null, new Date());
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { success: false, error: limit.message },
+        { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } }
+      );
     }
 
     const body = await request.json();

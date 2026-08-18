@@ -4,7 +4,7 @@ export type WebSource = { title: string; link: string };
 export type RedirectArticle = { id: string; title: string; slug: string; excerpt: string | null };
 
 type SaveParams = {
-  /** Null for a visitor on the free trial — that turn is deliberately not logged. */
+  /** Null for a visitor on the free trial — the turn is still logged, just without an owner. */
   userId: string | null;
   /** Ties this turn to its conversation — without it the log is a flat pile of questions. */
   conversationId: string;
@@ -28,15 +28,15 @@ type SaveParams = {
 
 /** Returns the saved row id so the answer can be rated, or null when nothing was saved. */
 export async function saveChatbotMessage(params: SaveParams): Promise<string | null> {
-  // The log has a required relation to User, so an anonymous trial turn has nothing to hang on.
-  // Guarding here rather than at six call sites keeps every caller honest by construction.
-  if (!params.userId) return null;
-
   try {
     const row = await db.chatbotMessage.create({
       select: { id: true },
       data: {
-        userId: params.userId,
+        // Anonymous turns are written with no owner — they cost the same upstream, and a spend
+        // ceiling can only stop what it can count. `undefined` leaves the field ABSENT in Mongo,
+        // so counting them needs `OR: [{userId: null}, {userId: {isSet: false}}]` — a plain
+        // `userId: null` filter returns zero (measured 2026-08-19).
+        userId: params.userId ?? undefined,
         conversationId: params.conversationId,
         turnIndex: params.turnIndex,
         userQuery: params.userQuery,

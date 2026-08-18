@@ -9,12 +9,11 @@ import { getEmbeddedFaqs } from "@/app/(site)/modo-chat/data/get-embedded-faqs";
 import { getIndustryScope } from "@/app/(site)/modo-chat/data/get-industry-scope";
 import { retrieveFromEmbedded } from "@/app/(site)/modo-chat/data/retrieve-from-embedded";
 import { rankPartners } from "@/app/(site)/modo-chat/data/rank-partners";
-import { resolveWebFallback } from "@/app/(site)/modo-chat/data/resolve-web-fallback";
 import { streamAnswerResponse } from "@/app/(site)/modo-chat/data/stream-answer-response";
 import { saveChatbotMessage } from "@/app/(site)/modo-chat/data/save-chatbot-message";
 import { isGreetingOrShortPleasantry } from "@/app/(site)/modo-chat/helpers/is-greeting";
+import { isPriceOrAppointmentQuestion } from "@/app/(site)/modo-chat/helpers/is-price-or-appointment-question";
 import { buildCategoryDbPrompt } from "@/app/(site)/modo-chat/helpers/build-category-db-prompt";
-import { buildCategoryWebPrompt } from "@/app/(site)/modo-chat/helpers/build-category-web-prompt";
 import { buildIdentityPrompt } from "@/app/(site)/modo-chat/helpers/build-identity-prompt";
 
 import type { ChatMessage } from "@/app/(site)/modo-chat/data/cohere-client";
@@ -238,34 +237,27 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    let docs = dbDocs;
-    let webSources: { title: string; link: string }[] = [];
-    let suggestedArticle: { id: string; title: string; slug: string; excerpt: string | null; client: { id: string; name: string; slug: string } } | null = null;
+    const docs = dbDocs;
 
+    /**
+     * ق٤ (Khalid, 2026-08-19): the web search is gone. Measured live the same day — asked about
+     * the cost of a rhinoplasty inside السياحة العلاجية, where we have 21 partners, Modo answered
+     * with Turkish clinics found on Google and cited eight sites that are not ours. That is the
+     * failure that got Expedia's assistant pulled: it recommends without your data, and the
+     * platform's own trust pays the bill.
+     *
+     * Silence is the correct answer here, and it is not a dead end — the partner branch above
+     * runs first, and the closest article is still offered underneath. The turn is logged as
+     * `outOfScope`, which is what turns an unanswered question into the next article.
+     */
     if (!isIdentityQuestion && docs.length === 0) {
-      const web = await resolveWebFallback(`${lastUserMessage} ${scopeName}`.trim());
-      if (!web.ok) {
-        saveChatbotMessage({
-          userId,
-          conversationId,
-          turnIndex,
-          userQuery: lastUserMessage,
-          assistantResponse: web.message,
-          ...scopeColumns,
-          outcome: "error",
-        }).catch(() => {});
-        return NextResponse.json({ conversationId, type: "noSources", message: web.message });
-      }
-      docs = web.docs;
-      webSources = web.sources;
-
       /**
        * «هل تريد قراءة أعمق؟» — the article CLOSEST to the question, not the most-read one.
        * Ordering by views put a herniated-disc article under a rhinoplasty answer, measured
        * live on 2026-08-18. Below the floor nothing is offered: an unrelated card is worse
        * than no card.
        */
-      suggestedArticle =
+      const suggestedArticle =
         bestArticleId && bestArticleScore >= SUGGEST_MIN_SCORE
           ? await db.article.findUnique({
               where: { id: bestArticleId },
@@ -278,16 +270,58 @@ export async function POST(request: NextRequest) {
               },
             })
           : null;
+
+      /**
+       * ق١٩ (Khalid, 2026-08-19): a price or an appointment is a question Modo can never answer —
+       * only the partner sets either. Retrieval returning nothing here is CORRECT, and stopping
+       * there wastes the highest-intent question the visitor will ever ask.
+       *
+       * The floor is dropped for this handoff on purpose: the ranker's ORDER is right (dental
+       * clinics came 1-2-3 for «كم سعر زراعة الأسنان») while its magnitude is near zero, because
+       * it is answering "does this text answer the question" — and no clinic's description holds
+       * a price. We are asking a different question: who is the right person to ask.
+       */
+      const handoff =
+        isPriceOrAppointmentQuestion(lastUserMessage) && scopePartners.length > 0
+          ? await rankPartners(lastUserMessage, scopePartners, 1, 0)
+          : [];
+
+      const message = handoff.length > 0
+        ? `السعر والموعد يحدّدهما الشريك نفسه، وما أبغى أخمّن عليك. تقدر توصّل سؤالك له من تحت.`
+        : `ما عندي جواب موثّق لسؤالك في محتوى ${scopeName}، وما أبغى أخمّن عليك. سجّلت سؤالك عندنا.`;
+
+      saveChatbotMessage({
+        userId,
+        conversationId,
+        turnIndex,
+        userQuery: lastUserMessage,
+        assistantResponse: message,
+        ...scopeColumns,
+        outcome: "outOfScope",
+      }).catch(() => {});
+      return NextResponse.json({
+        conversationId,
+        type: "noSources",
+        message,
+        ...(suggestedArticle && { suggestedArticle }),
+        ...(handoff.length > 0 && {
+          partners: handoff.map((p) => ({
+            name: p.name,
+            slug: p.slug,
+            canBook: p.ctaMode !== "NONE",
+            whyRecommended: p.slogan?.trim() || p.description?.trim() || `من شركاء ${scopeName}`,
+            logo: p.logo,
+            city: p.city,
+            credential: p.credential,
+            hasVerifiedPapers: p.hasVerifiedPapers,
+          })),
+        }),
+      });
     }
 
-    const usedWebSource = docs.some((d) => d.id.startsWith("doc-web-"));
-    // Three cases, not two — an identity question has no documents by design, and the
-    // documents-only prompt turns that into a refusal.
-    const systemPrompt = isIdentityQuestion
-      ? buildIdentityPrompt()
-      : usedWebSource
-        ? buildCategoryWebPrompt(scopeName)
-        : buildCategoryDbPrompt(scopeName);
+    // Two cases — an identity question has no documents by design, and the documents-only
+    // prompt turns that into a refusal.
+    const systemPrompt = isIdentityQuestion ? buildIdentityPrompt() : buildCategoryDbPrompt(scopeName);
 
     const chatMessages: ChatMessage[] = [
       { role: "system", content: systemPrompt },
@@ -303,8 +337,7 @@ export async function POST(request: NextRequest) {
         assistantResponse: fullText,
         ...scopeColumns,
         outcome,
-        source: usedWebSource ? "web" : "db",
-        webSources: usedWebSource ? webSources : undefined,
+        source: "db",
       }).catch(() => null);
 
     if (!wantStream) {
@@ -317,7 +350,6 @@ export async function POST(request: NextRequest) {
         conversationId,
         type: "message",
         text,
-        ...(usedWebSource && suggestedArticle && { suggestedArticle }),
         ...(partners.length > 0 && { partners }),
       });
     }
@@ -327,10 +359,8 @@ export async function POST(request: NextRequest) {
       docs,
       conversationId,
       doneExtras: {
-        ...(usedWebSource && { source: "web", sources: webSources }),
-        ...(usedWebSource && suggestedArticle && { suggestedArticle }),
         // The platform articles the answer was grounded in — proof, not a replacement.
-        ...(!usedWebSource && sourceArticles.length > 0 && { sourceArticles }),
+        ...(sourceArticles.length > 0 && { sourceArticles }),
         ...(partners.length > 0 && { partners }),
       },
       onFinish: save,

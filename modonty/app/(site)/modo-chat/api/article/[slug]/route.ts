@@ -8,13 +8,11 @@ import { guardChatRequest } from "@/app/(site)/modo-chat/data/guard-chat-request
 import { getEmbeddedChunks } from "@/app/(site)/modo-chat/data/get-embedded-chunks";
 import { retrieveFromEmbedded } from "@/app/(site)/modo-chat/data/retrieve-from-embedded";
 import { rerankDocuments } from "@/app/(site)/modo-chat/data/rerank-documents";
-import { resolveWebFallback } from "@/app/(site)/modo-chat/data/resolve-web-fallback";
 import { streamAnswerResponse } from "@/app/(site)/modo-chat/data/stream-answer-response";
 import { saveChatbotMessage } from "@/app/(site)/modo-chat/data/save-chatbot-message";
 import { isOutOfScope } from "@/app/(site)/modo-chat/data/is-out-of-scope";
 import { isGreetingOrShortPleasantry } from "@/app/(site)/modo-chat/helpers/is-greeting";
 import { buildArticleDbPrompt } from "@/app/(site)/modo-chat/helpers/build-article-db-prompt";
-import { buildArticleWebPrompt } from "@/app/(site)/modo-chat/helpers/build-article-web-prompt";
 import { buildIdentityPrompt } from "@/app/(site)/modo-chat/helpers/build-identity-prompt";
 
 import type { ChatMessage } from "@/app/(site)/modo-chat/data/cohere-client";
@@ -215,30 +213,7 @@ export async function POST(
       }
     }
 
-    let docs = dbDocs;
-    let webSources: { title: string; link: string }[] = [];
-
-    if (!isIdentityQuestion && docs.length === 0) {
-      const web = await resolveWebFallback(lastUserMessage);
-      if (!web.ok) {
-        // A swallowed failure used to fall through with no documents, so the model produced its
-        // canned refusal while the row was saved as a successful answer from our own content.
-        saveChatbotMessage({
-          userId,
-          conversationId,
-          turnIndex,
-          userQuery: lastUserMessage,
-          assistantResponse: web.message,
-          ...scopeColumns,
-          outcome: "error",
-        }).catch(() => {});
-        return NextResponse.json({ conversationId, type: "noSources", message: web.message });
-      }
-      docs = web.docs;
-      webSources = web.sources;
-    }
-
-    const usedWebSource = docs.some((d) => d.id.startsWith("doc-web-"));
+    const docs = dbDocs;
 
     /**
      * The partner behind the article the visitor is reading, as a bookable card.
@@ -261,11 +236,38 @@ export async function POST(
           hasVerifiedPapers: Boolean(article.client.verificationImageUrl?.trim()),
         }];
 
+    /**
+     * ق٤ (Khalid, 2026-08-19): no web fallback. Answering a visitor who is reading OUR article
+     * with clinics found on Google is the failure that got Expedia's assistant pulled — it
+     * recommends without our data, and the trust the article earned pays for it. Silence plus the
+     * article's own author beats a confident answer we cannot stand behind.
+     *
+     * The turn is logged as `outOfScope`, which is what makes the gap findable later: an
+     * unanswered question is the cheapest signal for what to write next.
+     */
+    if (!isIdentityQuestion && docs.length === 0) {
+      const message =
+        "ما لقيت في المقال جواباً دقيقاً لسؤالك، وما أبغى أخمّن. سجّلت سؤالك، وصاحب المقال أقدر واحد يجاوبك.";
+      saveChatbotMessage({
+        userId,
+        conversationId,
+        turnIndex,
+        userQuery: lastUserMessage,
+        assistantResponse: message,
+        ...scopeColumns,
+        outcome: "outOfScope",
+      }).catch(() => {});
+      return NextResponse.json({
+        conversationId,
+        type: "noSources",
+        message,
+        ...(partners.length > 0 && { partners }),
+      });
+    }
+
     const systemPrompt = isIdentityQuestion
       ? buildIdentityPrompt()
-      : usedWebSource
-        ? buildArticleWebPrompt(categoryName)
-        : buildArticleDbPrompt(article.title, categoryName);
+      : buildArticleDbPrompt(article.title, categoryName);
 
     const chatMessages: ChatMessage[] = [
       { role: "system", content: systemPrompt },
@@ -281,8 +283,7 @@ export async function POST(
         assistantResponse: fullText,
         ...scopeColumns,
         outcome,
-        source: usedWebSource ? "web" : "db",
-        webSources: usedWebSource ? webSources : undefined,
+        source: "db",
       }).catch(() => null);
 
     if (!wantStream) {
@@ -305,7 +306,6 @@ export async function POST(
       docs,
       conversationId,
       doneExtras: {
-        ...(usedWebSource && { source: "web", sources: webSources }),
         ...(partners.length > 0 && { partners }),
       },
       onFinish: save,

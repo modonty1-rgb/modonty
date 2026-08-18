@@ -13,6 +13,16 @@ import { db } from "@/lib/db";
 const MAX_PER_HOUR = 20;
 const MAX_PER_DAY = 100;
 
+/**
+ * The whole-site ceiling. The per-account limit above caps one member; it cannot cap the bill,
+ * because an anonymous visitor holds their trial in a cookie they can delete and start over.
+ *
+ * The default is a placeholder, not a measurement — the real cost of one question in riyals is
+ * still unknown (embedding and rerank prices are not published per call). Set
+ * `MODO_DAILY_QUESTION_CAP` once a real invoice exists.
+ */
+const SITE_MAX_PER_DAY = Number(process.env.MODO_DAILY_QUESTION_CAP) || 2000;
+
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
 
@@ -24,15 +34,31 @@ export interface RateLimitVerdict {
   retryAfterSeconds: number;
 }
 
-export async function checkRateLimit(userId: string, now: Date): Promise<RateLimitVerdict> {
-  const [lastHour, lastDay] = await Promise.all([
-    db.chatbotMessage.count({
-      where: { userId, createdAt: { gte: new Date(now.getTime() - HOUR_MS) } },
-    }),
-    db.chatbotMessage.count({
-      where: { userId, createdAt: { gte: new Date(now.getTime() - DAY_MS) } },
-    }),
+/**
+ * Runs for every question, signed in or not. `userId` is null for a trial visitor: they have no
+ * per-account history to count, but they still count against the site ceiling.
+ */
+export async function checkRateLimit(userId: string | null, now: Date): Promise<RateLimitVerdict> {
+  const dayAgo = new Date(now.getTime() - DAY_MS);
+
+  const [lastHour, lastDay, siteLastDay] = await Promise.all([
+    userId
+      ? db.chatbotMessage.count({
+          where: { userId, createdAt: { gte: new Date(now.getTime() - HOUR_MS) } },
+        })
+      : Promise.resolve(0),
+    userId ? db.chatbotMessage.count({ where: { userId, createdAt: { gte: dayAgo } } }) : Promise.resolve(0),
+    db.chatbotMessage.count({ where: { createdAt: { gte: dayAgo } } }),
   ]);
+
+  // Checked first: it protects the account that owns the bill, not the visitor in front of us.
+  if (siteLastDay >= SITE_MAX_PER_DAY) {
+    return {
+      allowed: false,
+      message: "مودو مشغول جداً اليوم. جرّب بعد شوي.",
+      retryAfterSeconds: 3600,
+    };
+  }
 
   if (lastDay >= MAX_PER_DAY) {
     return {
