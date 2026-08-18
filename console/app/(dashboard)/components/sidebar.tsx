@@ -157,7 +157,7 @@ export function Sidebar({
           must be readable the moment the menu opens. */}
       <SidebarSubscription {...subscription} isCollapsed={isCollapsed} />
 
-      <nav className="flex-1 overflow-y-auto p-2">
+      <nav className="scrollbar-sidebar flex-1 overflow-y-auto p-2">
         {/* Above the accordion and never inside it — the one screen the client opens daily. */}
         <div className="mb-2 space-y-0.5 border-b border-border pb-2">
           {pinnedItems.map((item) => (

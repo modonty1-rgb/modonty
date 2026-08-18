@@ -41,6 +41,10 @@ export async function getPartnerSite(decodedSlug: string) {
       ctaLabel: true,
       ctaUrl: true,
       brandGuidelines: true,
+
+
+      // The partner's look, chosen in the console «إعدادات الموقع» (ClientSite): keys into the shared registries.
+      site: { select: { headerTemplate: true, footerTemplate: true, primaryColor: true, hiddenSections: true } },
       services: true,
       achievements: true,
       credentials: true,

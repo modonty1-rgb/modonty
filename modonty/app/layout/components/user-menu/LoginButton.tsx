@@ -13,7 +13,7 @@ import { MobileAccountBenefitsMenu } from "@/app/layout/components/user-menu/Mob
 // block — not a hierarchy but a jump, and the muted grey barely cleared contrast
 // (Khalid 2026-07-24: «من منطقة الـ UI جداً سيئة»). An outline button carries the
 // secondary weight without disappearing.
-export function LoginButton() {
+export function LoginButton({ hint = true }: { hint?: boolean } = {}) {
   // Phones: only «دخول», as an icon sitting beside the burger — same ghost treatment,
   // same 44px box, same 20px glyph, so the two read as one control group. Subscribing
   // is NOT repeated here; the feed banner already asks a few pixels below, and the
@@ -22,7 +22,7 @@ export function LoginButton() {
   // Desktop: the pair, with only the fill separating primary from secondary.
   return (
     <>
-      <MobileAccountBenefitsMenu />
+      <MobileAccountBenefitsMenu hint={hint} />
 
       <div className="hidden items-center sm:flex">
         <Button

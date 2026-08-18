@@ -73,47 +73,33 @@ export function PageContentEditor({ initial }: Props) {
         achievements,
         credentials,
       });
-      if (res.success) toast.success("تم حفظ محتوى صفحتك");
+      if (res.success) toast.success("تم حفظ محتوى الموقع");
       else toast.error(res.error || "فشل الحفظ");
     });
   }
 
   return (
-    <div className="space-y-6">
-      {/* Services */}
-      <Section icon={Briefcase} title="الخدمات" hint="الخدمات اللي تقدّمها — تظهر في صفحتك وفي بيانات Google (OfferCatalog).">
-        {services.map((s, i) => (
-          <Row key={i} onRemove={() => setServices(services.filter((_, j) => j !== i))}>
-            <Input
-              placeholder="اسم الخدمة *"
-              value={s.title}
-              onChange={(e) => setServices(upd(services, i, { title: e.target.value }))}
-            />
-            <Input
-              placeholder="وصف مختصر (اختياري)"
-              value={s.description ?? ""}
-              onChange={(e) => setServices(upd(services, i, { description: e.target.value }))}
-            />
-          </Row>
-        ))}
-        <AddButton label="أضف خدمة" onClick={() => setServices([...services, { title: "", description: "", icon: "" }])} />
-      </Section>
+    <div className="space-y-10">
+      {/* Grouped by the site page each section lives on (Khalid 2026-08-18): the same
+          editors, ordered the way the pages are — so the partner knows where his words land. */}
 
-      {/* Achievements */}
-      <Section icon={BarChart3} title="إنجازاتنا بالأرقام" hint="أرقام تختصر خبرتك (مثال: +500 عميل سعيد). ضيف صورة وفقرة تحكي القصة — أو خلّها رقم بسيط. عرض فقط، بلا تأثير على Google.">
-        {achievements.map((a, i) => (
-          <AchievementRow
-            key={i}
-            achievement={a}
-            onChange={(patch) => setAchievements(upd(achievements, i, patch))}
-            onRemove={() => setAchievements(achievements.filter((_, j) => j !== i))}
-          />
-        ))}
-        <AddButton label="أضف إنجازاً" onClick={() => setAchievements([...achievements, { value: "", label: "", image: "", description: "" }])} />
-      </Section>
+      <PageGroup page="الرئيسية">
+        <Section icon={BarChart3} title="إنجازاتنا بالأرقام" hint="رقم + وصفه، مثل: +500 عميل.">
+          {achievements.map((a, i) => (
+            <AchievementRow
+              key={i}
+              achievement={a}
+              onChange={(patch) => setAchievements(upd(achievements, i, patch))}
+              onRemove={() => setAchievements(achievements.filter((_, j) => j !== i))}
+            />
+          ))}
+          <AddButton label="أضف إنجازاً" onClick={() => setAchievements([...achievements, { value: "", label: "", image: "", description: "" }])} />
+        </Section>
+      </PageGroup>
 
+      <PageGroup page="من نحن">
       {/* Team */}
-      <Section icon={Users} title="فريق العمل" hint="أعضاء فريقك — يظهرون كأشخاص في بيانات Google (employee).">
+      <Section icon={Users} title="فريق العمل" hint="الاسم والمسمّى وصورة.">
         {team.map((m, i) => (
           <Row key={i} onRemove={() => setTeam(team.filter((_, j) => j !== i))}>
             <Input
@@ -137,7 +123,7 @@ export function PageContentEditor({ initial }: Props) {
       </Section>
 
       {/* Credentials */}
-      <Section icon={Award} title="الاعتمادات والشهادات" hint="شهاداتك واعتماداتك — تظهر في بيانات Google (hasCredential).">
+      <Section icon={Award} title="الاعتمادات والشهادات" hint="الشهادة والجهة والسنة.">
         {credentials.map((c, i) => (
           <Row key={i} onRemove={() => setCredentials(credentials.filter((_, j) => j !== i))}>
             <Input
@@ -164,10 +150,31 @@ export function PageContentEditor({ initial }: Props) {
       <Section
         icon={Video}
         title="فيديو التعريف"
-        hint="مقطع يعرّف بنشاطك — يظهر في صفحتك وفي بيانات Google (VideoObject)."
+        hint="مقطع قصير يعرّف بنشاطك."
       >
         <IntroVideoSection video={initial.introVideo} legacyUrl={initial.introVideoUrl} />
       </Section>
+      </PageGroup>
+
+      <PageGroup page="خدماتنا">
+        <Section icon={Briefcase} title="الخدمات" hint="اسم الخدمة وسطر يشرحها.">
+          {services.map((s, i) => (
+            <Row key={i} onRemove={() => setServices(services.filter((_, j) => j !== i))}>
+              <Input
+                placeholder="اسم الخدمة *"
+                value={s.title}
+                onChange={(e) => setServices(upd(services, i, { title: e.target.value }))}
+              />
+              <Input
+                placeholder="وصف مختصر (اختياري)"
+                value={s.description ?? ""}
+                onChange={(e) => setServices(upd(services, i, { description: e.target.value }))}
+              />
+            </Row>
+          ))}
+          <AddButton label="أضف خدمة" onClick={() => setServices([...services, { title: "", description: "", icon: "" }])} />
+        </Section>
+      </PageGroup>
 
       {/* Sticky save */}
       <div className="sticky bottom-4 z-10 flex justify-end">
@@ -371,6 +378,16 @@ function Section({
         <div className="space-y-2">{children}</div>
       </CardContent>
     </Card>
+  );
+}
+
+/** A page heading over the editors whose content lands on that page («يظهر في: الرئيسية»). */
+function PageGroup({ page, children }: { page: string; children: React.ReactNode }) {
+  return (
+    <section className="space-y-4">
+      <h2 className="border-b pb-2 text-lg font-bold text-foreground">{page}</h2>
+      {children}
+    </section>
   );
 }
 

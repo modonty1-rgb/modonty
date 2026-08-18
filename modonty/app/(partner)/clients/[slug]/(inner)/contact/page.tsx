@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { CONTACT_BLOCKS } from "@modonty/shared/components/partner-site/free/contact";
+import { PageBlocks } from "../../components/page-blocks";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getPartnerSite } from "../../helpers/get-partner-site";
@@ -23,43 +25,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 /** «تواصل» — address · hours · phone · map (when he has coordinates) · the request card. */
-export default async function ClientContactPage({ params }: PageProps) {
-  const { slug } = await params;
-  const decodedSlug = decodeURIComponent(slug);
-  const [site, data] = await Promise.all([getPartnerSite(decodedSlug), getClientPageData(slug)]);
-  if (!site || !data) notFound();
-  const { client } = data;
-  const addressLine = [client.addressNeighborhood, client.addressCity].filter(Boolean).join(" · ") || null;
 
-  return (
-    <PageFrame siteName={site.name} base={`/clients/${encodeURIComponent(site.slug)}`} eyebrow="تواصل" title={`تواصل مع ${site.name}`}>
-      <div className="space-y-12">
-        <div className="[&>section]:px-0">
-          <ContactBlock site={site} />
-        </div>
-        {client.addressLatitude != null && client.addressLongitude != null ? (
-          <ClientContactSection
-            lat={client.addressLatitude}
-            lng={client.addressLongitude}
-            gbpProfileUrl={client.gbpProfileUrl ?? null}
-            gbpPlaceId={client.gbpPlaceId ?? null}
-            clientName={client.name}
-            addressLine={addressLine}
-          />
-        ) : null}
-        <div className="max-w-md">
-          <Suspense fallback={<BookingCardSkeleton />}>
-            <BookingCard
-              clientId={site.id}
-              clientName={site.name}
-              phone={site.phone ?? null}
-              ctaMode={site.ctaMode}
-              ctaLabel={site.ctaLabel ?? null}
-              ctaUrl={site.ctaUrl ?? null}
-            />
-          </Suspense>
-        </div>
-      </div>
-    </PageFrame>
-  );
+/** Rendered from the shared block registry — same components the partner previewed in the console. */
+export default async function Page({ params }: PageProps) {
+  const { slug } = await params;
+  return <PageBlocks slug={slug} blocks={CONTACT_BLOCKS} />;
 }

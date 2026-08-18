@@ -69,7 +69,8 @@ function AccountBenefitsContent({ onClose }: AccountBenefitsContentProps) {
   );
 }
 
-export function MobileAccountBenefitsMenu() {
+/** `hint` — the «مزاياك هنا» bubble under the icon. Off inside the thin partner-site platform bar, where it spilled over the partner's own header. */
+export function MobileAccountBenefitsMenu({ hint = true }: { hint?: boolean } = {}) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -83,7 +84,7 @@ export function MobileAccountBenefitsMenu() {
             className="relative min-h-11 min-w-11 overflow-visible rounded-xl text-accent hover:bg-transparent hover:text-accent [&_svg]:size-5"
           >
             <IconLogin aria-hidden="true" />
-            {!isOpen && (
+            {hint && !isOpen && (
               <span className="absolute start-1/2 top-[calc(100%+3px)] z-[60] translate-x-1/2 whitespace-nowrap rounded-lg border border-primary/45 bg-card px-2.5 py-1 text-[11px] font-bold text-accent shadow-lg">
                 <span className="absolute -top-1 start-1/2 size-2 translate-x-1/2 rotate-45 border-s border-t border-primary/45 bg-card" aria-hidden="true" />
                 مزاياك هنا

@@ -65,7 +65,7 @@ export function SidebarGroups({ groups, isCollapsed = false }: SidebarGroupsProp
           >
             <CollapsibleTrigger
               className={cn(
-                "flex w-full items-center gap-2 rounded-md px-3 py-1.5 text-start text-xs font-semibold transition-colors",
+                "flex w-full items-center gap-2 rounded-md px-3 py-1.5 text-start text-xs font-normal transition-colors",
                 "hover:bg-muted",
                 isOpen ? "text-foreground" : "text-muted-foreground"
               )}

@@ -6,6 +6,8 @@ import { Menu, Settings, LayoutDashboard, BarChart3, HelpCircle, MessageSquare, 
 import { ar } from "@/lib/ar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "./theme-toggle";
+import { findSitePage } from "./site-pages";
 
 interface DashboardHeaderProps {
   onMenuClick: () => void;
@@ -25,6 +27,7 @@ const routeLabels: Record<string, string> = {
   "/dashboard/comments": ar.nav.comments,
   "/dashboard/client-comments": ar.nav.clientComments,
   "/dashboard/client-reviews": ar.nav.clientReviews,
+  "/dashboard/my-site": ar.nav.mySite,
   "/dashboard/page-content": ar.nav.pageContent,
   "/dashboard/gallery": ar.nav.gallery,
   "/dashboard/reels": ar.nav.reels,
@@ -42,6 +45,11 @@ const routeLabels: Record<string, string> = {
 function getNavTitle(pathname: string): string {
   const base = pathname.replace(/\/$/, "") || "/dashboard";
   if (routeLabels[base]) return routeLabels[base];
+  // Site page settings share one route: /dashboard/site-pages/<key> → that page's label.
+  const sitePage = base.startsWith("/dashboard/site-pages/")
+    ? findSitePage(base.slice("/dashboard/site-pages/".length))
+    : undefined;
+  if (sitePage) return sitePage.label;
   // Try parent paths (e.g., /dashboard/seo/intake → /dashboard/seo)
   const segments = base.split("/");
   while (segments.length > 1) {
@@ -210,6 +218,7 @@ export function DashboardHeader({
               <Settings className="h-4 w-4" />
             </Button>
           </Link>
+          <ThemeToggle />
         </div>
       </nav>
     </header>

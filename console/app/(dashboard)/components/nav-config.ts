@@ -17,8 +17,10 @@ import {
   Star,
   Activity,
   Receipt,
+  Globe,
 } from "lucide-react";
 import { ar } from "@/lib/ar";
+import { SITE_PAGES } from "./site-pages";
 
 import type { LucideIcon } from "lucide-react";
 
@@ -85,6 +87,20 @@ export function buildPinnedNavItems(counts: NavCounts): NavItemConfig[] {
 export function buildNavGroups(counts: NavCounts): NavGroupConfig[] {
   return [
     {
+      // The partner's SITE, as its own group (Khalid 2026-08-17): «موقعي» is the site's
+      // main settings (template · sections · colour); «محتوى صفحتك» is what fills it.
+      // Both belong to the site, not to «نشاطك» (who the business is).
+      key: "site",
+      label: ar.nav.groupSite,
+      items: [
+        { href: "/dashboard/my-site", icon: Globe, label: ar.nav.mySite },
+        // Every page of the site, in the visitor's order (Khalid 2026-08-17: «اسرد الصفحات كاملة»).
+        ...SITE_PAGES.map((p) => ({ href: `/dashboard/site-pages/${p.key}`, icon: p.icon, label: p.label })),
+        // Temporary: its fields get redistributed across the page screens above.
+        { href: "/dashboard/page-content", icon: LayoutTemplate, label: ar.nav.pageContent },
+      ],
+    },
+    {
       key: "business",
       label: ar.nav.groupBusiness,
       items: [
@@ -96,7 +112,6 @@ export function buildNavGroups(counts: NavCounts): NavGroupConfig[] {
           badgeVariant: counts.isYmyl ? (counts.ymylComplete ? "success" : "danger") : undefined,
         },
         { href: "/dashboard/seo", icon: Sparkles, label: ar.nav.seo },
-        { href: "/dashboard/page-content", icon: LayoutTemplate, label: ar.nav.pageContent },
         {
           href: "/dashboard/page-faq",
           icon: MessageCircleQuestion,

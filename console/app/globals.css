@@ -106,6 +106,37 @@
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background-color: hsl(var(--muted-foreground) / 0.5);
   }
+
+  /* Same rule as modonty's sidebars: the rail keeps its own scroll area but must not
+     compete with the page scrollbar — the thumb stays quiet until the user engages it.
+     Copied from modonty/app/globals.css (Khalid 2026-08-17: «ليش مش نفس الـ scrollbar»). */
+  .scrollbar-sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+
+  .scrollbar-sidebar:hover,
+  .scrollbar-sidebar:focus-within {
+    scrollbar-color: hsl(var(--muted-foreground) / 0.38) transparent;
+  }
+
+  .scrollbar-sidebar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .scrollbar-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-sidebar::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 999px;
+  }
+
+  .scrollbar-sidebar:hover::-webkit-scrollbar-thumb,
+  .scrollbar-sidebar:focus-within::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.38);
+  }
 }
 
 /* driver.js RTL + brand polish for /help tour */

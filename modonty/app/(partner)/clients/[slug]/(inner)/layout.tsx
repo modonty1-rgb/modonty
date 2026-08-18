@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
 
 /**
- * Every inner page of a partner site (services · about · photos · reviews · articles ·
- * faq · contact · book …) sits in the same reading container. The home page is NOT in
- * this group on purpose — its hero and bands run full-bleed.
+ * Inner pages of a partner site render from the shared block registries, and each block
+ * carries its own container and bands (full-bleed like the home page) — so this layout is
+ * a passthrough. The few pages that are not block-driven live under `(plain)/`, whose
+ * layout restores the reading container.
  */
 export default function PartnerInnerLayout({ children }: { children: ReactNode }) {
-  return <div className="mx-auto w-full max-w-[1216px] px-4 pb-20 pt-8">{children}</div>;
+  return <>{children}</>;
 }

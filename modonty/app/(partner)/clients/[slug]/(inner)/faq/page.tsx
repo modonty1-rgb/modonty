@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { FAQ_BLOCKS } from "@modonty/shared/components/partner-site/free/faq";
+import { PageBlocks } from "../../components/page-blocks";
 import { notFound } from "next/navigation";
 import { jsonLdHtml } from "@/lib/seo";
 import { getPartnerSite } from "../../helpers/get-partner-site";
@@ -21,27 +23,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 /** «الأسئلة» — the partner's published FAQ + the ask-a-question form (FAQPage JSON-LD ships too). */
-export default async function ClientFaqPage({ params }: PageProps) {
-  const { slug } = await params;
-  const decodedSlug = decodeURIComponent(slug);
-  const [site, faqs] = await Promise.all([getPartnerSite(decodedSlug), getClientPageFaqs(decodedSlug)]);
-  if (!site) notFound();
 
-  return (
-    <PageFrame siteName={site.name} base={`/clients/${encodeURIComponent(site.slug)}`} eyebrow="يسألونه كثيراً" title="أسئلة قبل ما تحجز">
-      {faqs.length > 0 ? (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: jsonLdHtml({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              mainEntity: faqs.map((faq) => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })),
-            }),
-          }}
-        />
-      ) : null}
-      <ClientFaqSection faqs={faqs} slug={site.slug} />
-    </PageFrame>
-  );
+/** Rendered from the shared block registry — same components the partner previewed in the console. */
+export default async function Page({ params }: PageProps) {
+  const { slug } = await params;
+  return <PageBlocks slug={slug} blocks={FAQ_BLOCKS} />;
 }

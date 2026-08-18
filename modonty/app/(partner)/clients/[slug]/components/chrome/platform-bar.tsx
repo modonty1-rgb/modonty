@@ -37,7 +37,7 @@ export function PlatformBar({ isVerified }: PlatformBarProps) {
             <Link href="/clients" className="hover:text-white">تصفّح الشركاء</Link>
             <ThemeToggle />
             <Suspense fallback={<span className="inline-block h-8 w-8" aria-hidden />}>
-              <UserMenu />
+              <UserMenu hint={false} />
             </Suspense>
           </span>
         </div>

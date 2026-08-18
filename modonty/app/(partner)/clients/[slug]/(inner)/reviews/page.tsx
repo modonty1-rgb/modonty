@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { REVIEWS_BLOCKS } from "@modonty/shared/components/partner-site/free/testimonials";
+import { PageBlocks } from "../../components/page-blocks";
 import { notFound } from "next/navigation";
 import { getClientPageData } from "../../helpers/client-page-data";
 import { getClientReviewsBySlug } from "../../helpers/client-reviews";
@@ -21,91 +23,9 @@ export async function generateMetadata({ params }: ClientReviewsPageProps): Prom
   };
 }
 
-export default async function ClientReviewsPage({ params }: ClientReviewsPageProps) {
+
+/** Rendered from the shared block registry — same components the partner previewed in the console. */
+export default async function Page({ params }: ClientReviewsPageProps) {
   const { slug } = await params;
-
-  const data = await getClientReviewsBySlug(slug);
-
-  if (!data) {
-    notFound();
-  }
-
-  const { client, reviews } = data;
-
-  if (reviews.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <IconMessage className="h-4 w-4" />
-            التقييمات
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            لا توجد تقييمات منشورة بعد لمحتوى {client.name}. عند إضافة تعليقات على مقالات هذا العميل ستظهر هنا.
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <IconMessage className="h-4 w-4" />
-          التقييمات
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {reviews.map((review) => {
-          const initials = (review.author?.name || "مستخدم")
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .slice(0, 2)
-            .toUpperCase();
-
-          return (
-            <div
-              key={review.id}
-              className="flex gap-3 rounded-lg border border-border/60 bg-muted/40 px-3 py-3"
-            >
-              <Avatar className="h-9 w-9 flex-shrink-0">
-                {review.author?.image ? (
-                  <AvatarImage src={review.author.image} alt={review.author.name ?? "مراجع"} />
-                ) : (
-                  <AvatarFallback className="text-xs font-medium bg-primary text-primary-foreground">{initials}</AvatarFallback>
-                )}
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium">
-                      {review.author?.name || "مستخدم مجهول"}
-                    </span>
-                    <CtaTrackedLink
-                      href={`/articles/${review.article.slug}`}
-                      label="View review article"
-                      type="LINK"
-                      clientId={client.id}
-                      articleId={review.article.id}
-                      className="text-xs text-primary hover:underline"
-                    >
-                      على مقال: {review.article.title}
-                    </CtaTrackedLink>
-                  </div>
-                </div>
-                <p className="mt-2 text-sm leading-relaxed text-foreground">
-                  {review.content}
-                </p>
-              </div>
-            </div>
-          );
-        })}
-      </CardContent>
-    </Card>
-  );
+  return <PageBlocks slug={slug} blocks={REVIEWS_BLOCKS} />;
 }
-

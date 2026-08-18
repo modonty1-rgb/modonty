@@ -8,24 +8,14 @@ import { db } from "@/lib/db";
 import { generateMetadataFromSEO, generateStructuredData, generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { cacheTag, cacheLife } from "next/cache";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
-import { getPartnerSite } from "./helpers/get-partner-site";
+import { HOME_BLOCKS } from "@modonty/shared/components/partner-site/free/home";
+import { PageBlocks } from "./components/page-blocks";
 import { getClientPageData } from "./helpers/client-page-data";
-import { getClientReviews } from "./helpers/client-reviews";
 import { getClientPageFaqs } from "./helpers/client-faqs";
 import { getClientGallery } from "./helpers/client-gallery";
 import { resolveClientPageState } from "./components/client-page-state";
 import { ClientNotReadyPanel } from "./components/states/client-not-ready-panel";
 import { ClientViewTracker } from "./components/client-view-tracker";
-import { PartnerHero } from "./components/home/partner-hero";
-import { BookingCard, BookingCardSkeleton } from "./components/home/booking-card";
-import { ServicesTeaser } from "./components/home/services-teaser";
-import { AchievementsStrip } from "./components/home/achievements-strip";
-import { GalleryTeaser } from "./components/home/gallery-teaser";
-import { ArticlesTeaser } from "./components/home/articles-teaser";
-import { AboutTeaser } from "./components/home/about-teaser";
-import { ClientReviewsSection } from "./components/sections/client-reviews-section";
-import { ContactBlock } from "./components/home/contact-block";
-import { FinalCta } from "./components/home/final-cta";
 import { PartnerHomeSkeleton } from "./components/home/partner-home-skeleton";
 
 interface ClientPageProps {
@@ -148,56 +138,14 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
   }
 }
 
-/**
- * Hero from cached data only (no auth/cookies) so it is part of the prerendered shell:
- * the real cover + name paint immediately. The request card inside it reads session +
- * geo, so it streams behind its own boundary. Returns null for not-found / not-ready.
- */
-async function ClientHeroBlock({ params }: ClientPageProps) {
+/** JSON-LD (cached bundle or live fallback) + FAQPage + view tracking + the not-ready gate — the SEO half, unchanged by the template work. */
+async function ClientPageMeta({ params }: ClientPageProps) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-  const [site, reviews] = await Promise.all([getPartnerSite(decodedSlug), getClientReviews(slug)]);
-  if (!site) return null;
-
-  return (
-    <PartnerHero
-      site={site}
-      rating={{ average: reviews.averageRating, count: reviews.reviewCount }}
-      requestSlot={
-        <Suspense fallback={<BookingCardSkeleton />}>
-          <BookingCard
-            clientId={site.id}
-            clientName={site.name}
-            phone={site.phone ?? null}
-            ctaMode={site.ctaMode}
-            ctaLabel={site.ctaLabel ?? null}
-            ctaUrl={site.ctaUrl ?? null}
-          />
-        </Suspense>
-      }
-    />
-  );
-}
-
-async function ClientPageBody({ params }: ClientPageProps) {
-  const { slug } = await params;
-  const decodedSlug = decodeURIComponent(slug);
-
   try {
-    const [site, data, reviews, gallery, faqs] = await Promise.all([
-      getPartnerSite(decodedSlug),
-      getClientPageData(slug),
-      getClientReviews(slug),
-      getClientGallery(decodedSlug),
-      getClientPageFaqs(decodedSlug), // page-level ClientFAQ → FAQPage JSON-LD
-    ]);
-
-    if (!site || !data) {
-      notFound();
-    }
-
+    const [data, faqs, gallery] = await Promise.all([getClientPageData(slug), getClientPageFaqs(decodedSlug), getClientGallery(decodedSlug)]);
+    if (!data) notFound();
     const { client } = data;
-    const base = `/clients/${encodeURIComponent(client.slug)}`;
 
     const pageState = resolveClientPageState({
       aboutText: client.description || client.seoDescription,
@@ -206,15 +154,9 @@ async function ClientPageBody({ params }: ClientPageProps) {
       teamCount: client.teamMembers?.length ?? 0,
       achievementsCount: client.achievements?.length ?? 0,
       galleryCount: gallery.length,
-      hasContact: !!(
-        client.phone ||
-        client.email ||
-        client.addressCity ||
-        (client.addressLatitude != null && client.addressLongitude != null)
-      ),
+      hasContact: !!(client.phone || client.email || client.addressCity || (client.addressLatitude != null && client.addressLongitude != null)),
     });
 
-    // Built only when the DB cache is empty — see the branch below.
     const buildFallbackOrganization = () =>
       generateStructuredData({
         type: "Client",
@@ -228,47 +170,24 @@ async function ClientPageBody({ params }: ClientPageProps) {
         telephone: client.phone || undefined,
         sameAs: client.sameAs.length > 0 ? client.sameAs : undefined,
         foundingDate: client.foundingDate
-          ? (typeof client.foundingDate === "string"
-              ? (client.foundingDate as string).split("T")[0]
-              : client.foundingDate.toISOString().split("T")[0])
+          ? (typeof client.foundingDate === "string" ? (client.foundingDate as string).split("T")[0] : client.foundingDate.toISOString().split("T")[0])
           : undefined,
       });
 
-    // Breadcrumb always ships — it is a separate entity, not an alternative to the graph above.
     const breadcrumbData = generateBreadcrumbStructuredData([
       { name: "الرئيسية", url: "/" },
       { name: "الشركاء", url: "/clients" },
       { name: client.name, url: `/clients/${encodeURIComponent(slug)}` },
     ]);
 
-    const articles = client.articles.slice(0, 3).map((a) => ({
-      id: a.id,
-      slug: a.slug,
-      title: a.title,
-      image: a.featuredImage ?? null,
-      category: a.category?.name ?? null,
-      datePublished: a.datePublished ?? null,
-    }));
-
     return (
       <>
-        {/* Organization JSON-LD — DB cache (rich graph: Service/AggregateRating/Review/employee/hasCredential/image) or live fallback */}
         {client.jsonLdStructuredData ? (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(client.jsonLdStructuredData) }}
-          />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(client.jsonLdStructuredData) }} />
         ) : (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: jsonLdHtml(buildFallbackOrganization()) }}
-          />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(buildFallbackOrganization()) }} />
         )}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbData) }}
-        />
-        {/* FAQPage JSON-LD — page-level ClientFAQ (answered + published) */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbData) }} />
         {faqs.length > 0 && (
           <script
             type="application/ld+json"
@@ -276,65 +195,18 @@ async function ClientPageBody({ params }: ClientPageProps) {
               __html: jsonLdHtml({
                 "@context": "https://schema.org",
                 "@type": "FAQPage",
-                mainEntity: faqs.map((faq) => ({
-                  "@type": "Question",
-                  name: faq.question,
-                  acceptedAnswer: { "@type": "Answer", text: faq.answer },
-                })),
+                mainEntity: faqs.map((faq) => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })),
               }),
             }}
           />
         )}
         <ClientViewTracker clientSlug={client.slug} />
-
         {pageState === "not-ready" ? (
           <div className="px-4 py-6">
-            <ClientNotReadyPanel
-              clientId={client.id}
-              clientName={client.name}
-              clientSlug={client.slug}
-              ctaMode={client.ctaMode}
-              ctaUrl={client.ctaUrl}
-              ctaLabel={client.ctaLabel}
-            />
+            <ClientNotReadyPanel clientId={client.id} clientName={client.name} clientSlug={client.slug} ctaMode={client.ctaMode} ctaUrl={client.ctaUrl} ctaLabel={client.ctaLabel} />
           </div>
         ) : (
-          <>
-            {/* The visitor's order: who is this (video · story · credentials · faces) → the
-                numbers → what they offer → proof (reviews · work) → where and how → what they
-                write. Every block hides itself when the partner left its data empty. */}
-            <div className="space-y-16 pt-14">
-              <AboutTeaser
-                site={site}
-                videoUrl={client.introVideoMedia?.mp4Url ?? client.introVideoUrl ?? null}
-                videoPoster={client.introVideoMedia?.thumbnailUrl ?? null}
-                base={base}
-              />
-              <AchievementsStrip achievements={site.achievements} />
-              <ServicesTeaser services={site.services} base={base} />
-              {reviews.reviewCount > 0 ? (
-                <div className="mx-auto max-w-[1216px] px-4">
-                  <ClientReviewsSection
-                    reviews={reviews.reviews.map((r) => ({
-                      id: r.id,
-                      rating: r.rating,
-                      comment: r.comment,
-                      author: { name: r.author?.name ?? null, image: r.author?.image ?? null },
-                    }))}
-                    averageRating={reviews.averageRating}
-                    reviewCount={reviews.reviewCount}
-                    googleUrl={client.gbpProfileUrl ?? null}
-                    slug={client.slug}
-                    isLoggedIn={false}
-                  />
-                </div>
-              ) : null}
-              <GalleryTeaser images={gallery} totalCount={site._count.media} base={base} />
-              <ContactBlock site={site} />
-              <ArticlesTeaser articles={articles} totalCount={client._count.articles} base={base} />
-              <FinalCta clientId={site.id} clientName={site.name} phone={site.phone ?? null} />
-            </div>
-          </>
+          <PageBlocks slug={slug} blocks={HOME_BLOCKS} />
         )}
       </>
     );
@@ -345,13 +217,8 @@ async function ClientPageBody({ params }: ClientPageProps) {
 
 export default function ClientPage(props: ClientPageProps) {
   return (
-    <>
-      {/* Static shell: real hero paints immediately (cached data, no auth) */}
-      <ClientHeroBlock {...props} />
-      {/* Deferred: the rest of the page streams in below the fold */}
-      <Suspense fallback={<PartnerHomeSkeleton />}>
-        <ClientPageBody {...props} />
-      </Suspense>
-    </>
+    <Suspense fallback={<PartnerHomeSkeleton />}>
+      <ClientPageMeta {...props} />
+    </Suspense>
   );
 }

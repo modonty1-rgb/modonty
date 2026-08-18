@@ -1370,6 +1370,14 @@ const TASKS = [
    "<b>ليس عاجلاً:</b> القيمة مضبوطة الآن، والنظام كاتب واحد.",
  ref:"٧ أغسطس"},
 
+{id:"SUBDOM", b:"projects", app:["modonty","console"], tab:"open", sev:"high", who:"k", date:"١٨ أغسطس ٢٠٢٦",
+ t:"🌐 النطاق الفرعي للشريك <code>&lt;name&gt;.modonty.com</code> — مؤجَّل بقرار خالد (ميزة بريميوم اختيارية، لا افتراضية)",
+ d:"<b>الجاهز (متحقَّق بالكود):</b> حقل <code>ClientSite.subdomain</code> فريد (<code>shared/prisma/schema/schema.prisma:726</code>) · قواعد الاسم المشتركة <code>validateSubdomain</code> (<code>shared/lib/partner-site/validate-subdomain.ts:44</code>: ٣–٦٣ · a-z0-9- · محجوزات) · الحفظ من «إعدادات الموقع» (<code>console/…/my-site/actions/save-my-site.ts:26</code>). <code>*.modonty.com</code> مُضاف لمشروع <code>modonty-modonty</code> على Vercel (<code>POST /v10/projects/…/domains</code> → pending_domain_verification، بلا أثر حيّ).<br><br>" +
+   "<b>العقبة المقيسة (١٨ أغسطس، Vercel API):</b> <code>POST /v5/domains {modonty.com} → domain_already_exists</code> · <code>GET /v6/domains?teamId → []</code> · <code>GET /v4/domains/modonty.com/records → forbidden</code> — منطقة DNS مملوكة في حساب Vercel آخر (خالد: dreamtoapp). الـwildcard يشترط نيم سيرفرات Vercel (توثيق رسمي: vercel.com/docs/domains/working-with-domains/add-a-domain «must use the nameservers method»؛ النيم سيرفران: vercel.com/docs/domains/working-with-nameservers → ns1/ns2.vercel-dns.com).<br><br>" +
+   "<b>الخطوات (بالترتيب):</b> ١) خالد/مريم: حساب dreamtoapp → vercel.com/domains → modonty.com → Move إلى فريق modonty · ٢) كلود: نسخ الـ٢٤ سجلّاً (مقاسة بـResolve-DnsName ١٨ أغسطس؛ أهمّها بريد Hostinger: MX mx1/mx2 · SPF · DKIM ×٣ · DMARC) بالـAPI + تحقّق ضدّ <code>ns1.vercel-dns.com</code> قبل التبديل · ٣) Namecheap: النيم سيرفرات → <code>ns1/ns2.vercel-dns.com</code> · ٤) تحقّق بعدي (بريد · www · admin · console · test · wildcard) · ٥) كود: <code>modonty/proxy.ts:135</code> يقرأ الـHost → <code>ClientSite.subdomain</code> → rewrite إلى <code>/clients/&lt;slug&gt;</code> + قفل <code>allowSubdomain</code> يفتحه الأدمن.<br><br>" +
+   "<b>الرجوع:</b> إعادة نيم سيرفرات Namecheap. لا تكلفة على Vercel (Pro).",
+ ref:"١٨ أغسطس · إعدادات الموقع"},
+
 {id:"GALPNG", b:"mediaimg", app:["admin","modonty"], tab:"open", sev:"high", who:"c", date:"١٧ أغسطس ٢٠٢٦",
  t:"🖼️ صور المعارض الثقيلة على Bunny: PNG ~1.7MB بلا نوع محتوى → تنكسر على صفحة الشريك",
  d:"<b>الظاهرة (خالد، ١٧ أغسطس):</b> على <code>/clients/مؤسسة-فرسان-التعافي</code> صورة واحدة من ست تظهر والباقي مكسور.<br><br>" +

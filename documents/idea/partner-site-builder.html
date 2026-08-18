@@ -337,9 +337,9 @@ export const storefrontSchema = {
     <h2 class="h2">٧ — المراحل التنفيذية (كل واحدة تُقفل وحدها)</h2>
     <table>
       <tr><th>#</th><th>المرحلة</th><th>أين</th><th>القبول</th></tr>
-      <tr><td>١</td><td>السكيما: <code>PageTemplate</code> + حقول <code>Client</code> + تعبئة الموجودين + صفّ «المتجر» (FREE)</td><td>shared/prisma + سكربت Run-All</td><td><code>prisma generate</code> بعد قتل السيرفرات · كل عميل نشط له <code>templateId</code></td></tr>
-      <tr><td>٢</td><td>السجلّ + نقل الرئيسية الحالية إلى <code>templates/storefront/</code> + قراءة <code>sections/themeSettings</code> في الرندر</td><td>modonty</td><td>الموقع كما هو بالضبط (لقطة قبل/بعد) · JSON-LD مطابق</td></tr>
-      <tr><td>٣</td><td>شاشة «موقعي»: (أ) نقل الغلاف/الشعار/زرّ الطلب للشريك · (ب) قالب · أقسام · لون · (ج) جاهزية الموقع بلغة نتيجة · (د) توجيه الوصف في «بيانات نشاطك» · (هـ) التسميات بمنطق الزائر</td><td>console</td><td>حفظ → الموقع يتغيّر خلال ثوانٍ · Zod يرفض القيم الغلط · الأدمن يرى نفس القيم ويقدر يقفلها</td></tr>
+      <tr><td>١</td><td>✅ <b>على dev (١٧ أغسطس مساءً)</b> — السكيما: <code>PageTemplate</code> + على <code>Client</code>: <code>templateId · themeSettings · hiddenSections · siteUpdatedAt</code> (بدل <code>sections</code>: نخزّن المخفيّ فقط) + العقد المشترك <code>shared/lib/partner-site/</code> + خطوتا Run-All (<code>seed-page-templates</code> · <code>backfill-client-template</code>)</td><td>shared/prisma + shared/lib + admin Run-All</td><td>الدليل: <code>db push</code> → <code>[+] Unique index page_templates_key_key</code> · Run-All dev مرّة ١: <code>Templates 2 fixed · Client Template 30 fixed · 30 hiddenSections</code> · مرّة ٢: <code>clean · 2 already present / clean</code> · admin tsc 0. <b>الإنتاج: بانتظار الدفع ثم ضغطة خالد على Run-All.</b></td></tr>
+      <tr><td>٢</td><td>✅ <b>على dev (١٧ أغسطس مساءً) — الجزء «يقرأ»:</b> <code>get-partner-site.ts</code> يقرأ <code>template/hiddenSections/themeSettings</code> · <code>helpers/resolve-site-choices.ts</code> (احتياط: قالب مجهول→الافتراضي، مفتاح مجهول→يُهمل، لون خارج اللوحة→بلا لون) · <code>page.tsx</code> يتخطّى الأقسام المطفأة · <code>layout.tsx</code> يحقن <code>--primary/--ring</code> على <code>#main-content,[data-partner-theme]</code> (لا على شريط مدونتي) · <code>shared/lib/partner-site/hex-to-hsl-triplet.ts</code>. <b>المتبقّي من ٢:</b> سجلّ القوالب + نقل الرئيسية إلى <code>templates/storefront/</code> — يجي مع مرحلة ٥ لأن القالبين اليوم نفس الجسم.</td><td>modonty</td><td>مقيس على جبر سيو (dev): <code>hiddenSections=[gallery,articles]</code> → لا معرض ولا مقالات · <code>[]</code> → «بعدسة فريقه» + «١٥ مقالاً» رجعا · <code>--primary: 224 76% 48%</code> على main والزرّ <code>rgb(29,79,215)</code> · JSON-LD ٣ كتل كما هي (مساره لم يُلمس) · tsc مودونتي 0 · لقطة <code>.playwright-mcp/phase2-jbrseo-blue.png</code></td></tr>
+      <tr><td>٣</td><td>شاشة «موقعي»: <b>3a ✅ على dev (١٧ أغسطس مساءً)</b> — مسار <code>/dashboard/my-site</code> أوّل بند في «نشاطك» · قالب · مفاتيح الأقسام السبعة + حالة بياناتها بلغة عادية · ٨ ألوان (تباين ≥ ٤٫٥) · شريط مدونتي مقفول · حفظ ينشر (Zod في <code>my-site-schema.ts</code>؛ <code>zod 3.24.2</code> أُضيف للكونسول) · <b>3b</b> نقل الغلاف/الشعار/زرّ الطلب للشريك · <b>3c</b> جاهزية الموقع بلغة نتيجة + توجيه الوصف + التسميات</td><td>console</td><td>3a مقيس: حفظ «أرقامنا=مطفأ + أزرق» بحساب جبر سيو → ريفرش → <code>أرقامنا=false · أزرق</code> مقروءان من القاعدة · tsc كونسول 0 · لقطة <code>.playwright-mcp/my-site-3a-initial.png</code>. المتبقّي: 3b · 3c · الموقع يقرأ الخانة (مرحلة ٢)</td></tr>
       <tr><td>٤</td><td>المعاينة بالتوكن (draft) على مدونتي</td><td>modonty + console</td><td>المعاينة = الموقع بعد الحفظ حرفياً</td></tr>
       <tr><td>٥</td><td>القالب الثاني «المكتب» (مجاني)</td><td>modonty</td><td>تبديل القالب لا يغيّر SEO</td></tr>
       <tr><td>٦</td><td>البريميوم: <code>TemplatePurchase</code> + الشراء + الاستحقاق</td><td>console + admin + modonty</td><td>لاحقاً — عند القرار التجاري</td></tr>
@@ -348,16 +348,17 @@ export const storefrontSchema = {
 
   <!-- ٨ القرارات -->
   <section class="space-y-3">
-    <h2 class="h2">٨ — القرارات المطلوبة (تُقفل قبل الاعتماد)</h2>
+    <h2 class="h2">٨ — القرارات — <span class="text-white">مقفولة (خالد، ١٧ أغسطس مساءً)</span></h2>
+    <p class="text-sm" style="color:var(--muted)">خالد اعتمد التوصيات كلها عدا ٤ (بدّل «المكتب» بـ«YMYL»). التنفيذ يبدأ بمرحلة ١ (السكيما) على فرع <code>modonty-site-groups</code>.</p>
     <ol class="space-y-2 text-sm">
-      <li class="card p-4 q"><b>١</b> الشريك ينشر بنفسه بلا موافقة أدمن (عدا الحقول الحسّاسة كما اليوم)؟ <span class="rec">توصيتي: نعم.</span></li>
-      <li class="card p-4 q"><b>٢</b> اللون: من هوية الشريك بشرط التباين، أم لون مدونتي للجميع؟ <span class="rec">توصيتي: من هويته، حقل واحد.</span></li>
-      <li class="card p-4 q"><b>٣</b> شريط مدونتي مقفول دائماً (لا يقدر يخفيه)؟ <span class="rec">توصيتي: نعم — البراندنغ.</span></li>
-      <li class="card p-4 q"><b>٤</b> عدد القوالب في الإطلاق: اثنان (المتجر · المكتب)؟</li>
-      <li class="card p-4 q"><b>٥</b> المعاينة: توكن على مدونتي (نفس المكوّنات) أم إطار داخل الكونسول يستورد المكوّنات؟ <span class="rec">توصيتي: توكن على مدونتي — صفر تكرار.</span></li>
-      <li class="card p-4 q"><b>٦</b> البريميوم يُباع كشراء مرّة أم ضمن باقة أعلى؟ (يؤجَّل — لا يغيّر السكيما).</li>
-      <li class="card p-4 q"><b>٧</b> إعادة ترتيب الأقسام: نمنعها نهائياً (الترتيب من القالب) أم نتيحها لاحقاً كخيار متقدّم مخفيّ؟ <span class="rec">توصيتي: نمنعها — البساطة أوّلاً؛ ولو احتجنا نضيفها بلا تغيير سكيما.</span></li>
-      <li class="card p-4 q"><b>٨</b> <b>ملكية الغلاف والشعار وزرّ الطلب واللون تنتقل للشريك</b> في «موقعي» (الأدمن يقفل/يتجاوز)؟ اليوم كلها أدمن أو بلا مالك (§٠.٥ د-١)، والقاعدة المسجَّلة تقول «الميديا للأدمن». <span class="rec">توصيتي: نعم — هذي الأربعة هي «الموقع» في عين الشريك؛ ما عداها (التوثيق · السجل · الهاتف · المجال · الكيان) يبقى للأدمن.</span></li>
+      <li class="card p-4 q"><b>١</b> ✅ الشريك ينشر بنفسه بلا موافقة أدمن (عدا الحقول الحسّاسة كما اليوم).</li>
+      <li class="card p-4 q"><b>٢</b> ✅ اللون من هوية الشريك، حقل واحد، بشرط التباين.</li>
+      <li class="card p-4 q"><b>٣</b> ✅ شريط مدونتي مقفول دائماً.</li>
+      <li class="card p-4 q"><b>٤</b> ✅ <b>قالبان في الإطلاق: «المتجر» (عام) · «YMYL» (طبّي · قانوني · مالي وما شابه)</b> — قرار خالد بدل «المكتب». الربط: <code>Client.isYmyl</code> + <code>ymylCategory</code> موجودان أصلاً في السكيما (<code>schema.prisma:632-634</code>) → القالب الافتراضي = YMYL لمن <code>isYmyl=true</code>، والمتجر للباقي؛ لا حقل جديد للفئة.</li>
+      <li class="card p-4 q"><b>٥</b> ✅ المعاينة بتوكن على مدونتي (نفس المكوّنات) — مرحلة ٤.</li>
+      <li class="card p-4 q"><b>٦</b> ⏸ البريميوم شراء أم باقة — مؤجَّل، لا يغيّر السكيما.</li>
+      <li class="card p-4 q"><b>٧</b> ✅ لا إعادة ترتيب للأقسام — مفاتيح تشغيل/إيقاف فقط، الترتيب من القالب.</li>
+      <li class="card p-4 q"><b>٨</b> ✅ <b>ملكية الغلاف والشعار وزرّ الطلب واللون تنتقل للشريك</b> في «موقعي» (الأدمن يقفل/يتجاوز)؛ ما عداها (التوثيق · السجل · الهاتف · المجال · الكيان) يبقى للأدمن.</li>
     </ol>
   </section>
 

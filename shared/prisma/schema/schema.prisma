@@ -633,6 +633,9 @@ model Client {
   ymylCategory  String? // "medical" | "legal" | "financial"
   ymylData      Json?   // shape varies per ymylCategory — see ymyl-config.ts
 
+  // The partner's site look (header/footer/colour/blocks) lives on its own row — ClientSite.
+  site ClientSite?
+
   // ============ Client Page (mini-site presentation) ============
   //
   // The intro video, twice over — on purpose, for as long as the migration takes.
@@ -701,6 +704,31 @@ model Client {
   @@index([createdAt])
   @@index([apiKey]) // Bearer auth on the client-site read endpoint resolves the owner by key
   @@map("clients")
+}
+
+// ============================================
+// PARTNER SITE — the partner's look, one row per client
+// ============================================
+
+/// What the partner chose in the console «إعدادات الموقع» + page screens. Every field is a
+/// KEY into a code registry (shared/components/partner-site/free/…): the component is
+/// code, this row is the choice. One row per client, named columns (Khalid 2026-08-18:
+/// «صفّ واحد متّفقين») — no key/value rows, no catalog. Absent row = all defaults.
+model ClientSite {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String @unique @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  headerTemplate String   @default("classic") // HEADER_TEMPLATES key
+  footerTemplate String   @default("columns") // FOOTER_TEMPLATES key
+  primaryColor   String? // palette hex; null = modonty's colour
+  hiddenSections String[] // block keys the partner switched OFF (any page); a new block is visible by default
+  subdomain      String?  @unique // `<label>.modonty.com`, validated by shared validateSubdomain
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("client_sites")
 }
 
 /// Booking / lead requests from the «احجز الآن» / «اترك رقمك» CTA. Two channels (see `channel`):

@@ -39,7 +39,7 @@ export function SidebarNavItem({
     <Link
       href={href}
       className={cn(
-        "flex items-center rounded-md font-medium transition-colors",
+        "flex items-center rounded-md font-normal transition-colors",
         isCompact ? "gap-2 px-2 py-2 text-xs" : "gap-3 px-3 py-2 text-sm",
         "hover:bg-muted",
         isActive

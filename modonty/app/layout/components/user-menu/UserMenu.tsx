@@ -9,7 +9,7 @@ import { UserMenuDropdown } from "@/app/layout/components/user-menu/UserMenuDrop
 
 type SessionUser = NonNullable<Session["user"]>;
 
-export function UserMenu() {
+export function UserMenu({ hint = true }: { hint?: boolean } = {}) {
   const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
 
@@ -20,7 +20,7 @@ export function UserMenu() {
   const user = session?.user as SessionUser | undefined;
 
   if (!user) {
-    return <LoginButton />;
+    return <LoginButton hint={hint} />;
   }
 
   if (!mounted) {

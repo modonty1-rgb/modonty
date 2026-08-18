@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { GALLERY_BLOCKS } from "@modonty/shared/components/partner-site/free/gallery";
+import { PageBlocks } from "../../components/page-blocks";
 import { notFound } from "next/navigation";
 import { getClientPageData } from "../../helpers/client-page-data";
 import { ClientPhotosPreview } from "../../components/client-photos-preview";
@@ -17,27 +19,9 @@ export async function generateMetadata({ params }: ClientPhotosPageProps): Promi
   };
 }
 
-export default async function ClientPhotosPage({ params }: ClientPhotosPageProps) {
+
+/** Rendered from the shared block registry — same components the partner previewed in the console. */
+export default async function Page({ params }: ClientPhotosPageProps) {
   const { slug } = await params;
-
-  const data = await getClientPageData(slug);
-
-  if (!data) {
-    notFound();
-  }
-
-  const { client } = data;
-
-  return (
-    <section aria-labelledby="client-photos-heading" className="space-y-4">
-      <h2
-        id="client-photos-heading"
-        className="text-xl font-semibold leading-snug text-foreground"
-      >
-        الصور
-      </h2>
-      <ClientPhotosPreview articles={client.articles} clientId={client.id} showEmptyState />
-    </section>
-  );
+  return <PageBlocks slug={slug} blocks={GALLERY_BLOCKS} />;
 }
-

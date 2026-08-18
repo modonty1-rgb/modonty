@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-08-17
+# Session Context — Last Updated: 2026-08-18
 
 > ⚙️ **ملف نشط = آخر أسبوع فقط** (يتوزّع أسبوعياً لتوفير الـ token عند القراءة).
 > الأرشيف الكامل بالأشهر:
@@ -27,6 +27,8 @@
 - **رقم إصدار الأدمن صار ظاهراً في القائمة الجانبية** (كان مدفوناً داخل قائمة "M" المنسدلة) — بطلب خالد، عشان يعرف الفريق أي نسخة شغّالة وقت التنسيق.
 
 ### 🚧 لا يزال معلّقاً — لم يُلمس اليوم
+- **بانِي موقع الشريك (2026-08-18) — مبنيّ ومتحقَّق على `modonty_dev` · ٧٧ ملفاً غير مثبَّت على فرع `modonty-site-groups` · لم يُدفع · لم يُدمج.** بند «٦ — الدفع» بانتظار نقاش خالد (tsc×3 · build · `prisma db push` على الإنتاج بيد خالد). المصدر الموثوق: بلوك جلسة 2026-08-18 أدناه.
+- **`SUBDOM` — النطاق الفرعي للشريك (HIGH، مؤجَّل بقرار خالد 2026-08-18)** — منطقة DNS لـ`modonty.com` في حساب Vercel آخر (dreamtoapp)؛ الخطوات الخمس مكتوبة على `TASK.html:1373`.
 - **«مقالات العملاء» (المشروع الحالي)** — خدمة نشر مقالات على موقع العميل نفسه. التصميم مكتمل على اللوحة و**صفر كود**. أربعة قرارات تنتظر خالد (المشاهد ٢ · ٤ · ١٠ · ١١). المصدر الموثوق: TASK.html بورد ca.
 - **`IMGDIM` (خطوة صيانة الأبعاد داخل Run-All)** — جاهزة بالكود ومُختبَرة على dev، **بانتظار ضغطة خالد على Run-All بالإنتاج** (المتوقَّع `29 fixed`).
 - **`DIMWRONG`** — ٣ صفوف تخزّن أبعاداً تخالف الملفّ الذي تخدمه.
@@ -52,6 +54,68 @@
 
 ### 🔮 مستقبلي
 - [ ] **`ADM-AUTH-IMG`** — الأدمن بلا حقل لصورة الكاتب؛ اضطررنا لكتابتها بسكربت.
+
+---
+
+## Session: 2026-08-18 (ظهراً) — 📦 كوميت ودفع بانِي موقع الشريك على `modonty-site-groups` (بأمر خالد «COMMIT AND PUSH TO THE CURRENT BRANCH» · لا merge)
+
+### 🎯 أين توقفت
+- `hh>` ثم أمر خالد بالكوميت والدفع للفرع الحالي. نُفِّذ طقس الدفع: **tsc صفر أخطاء على الثلاثة** (modonty `EXIT:0` · console `EXIT:0` · admin `EXIT:0`) · باكب الإنتاج `PROD-2026-08-18_13-53` (٩٥ مجموعة · ٦٦ م.ب) · رفع الإصدارات: modonty 1.92.0→**1.93.0** · console 0.27.0→**0.28.0** · shared 0.2.4→**0.3.0** (الأدمن بلا تغيير محتوى — ملفّا Run-All فرقهما نهايات أسطر فقط، `git diff --stat` فارغ، لم يُبمَّب ولم يُضَف).
+- **الخطوة التالية:** بند ٦ الباقي: `pnpm build` مدونتي · `prisma db push` على الإنتاج بيد خالد · ثم قرار الدمج بأمره الصريح. البنود المعلّقة الأخرى (`SUBDOM` · بلوك الفيديو · تحديث `partner-site-builder.html`) كما في البلوك السابق.
+
+### 🚧 مستثنى من الكوميت عمداً
+- `.pnpm-store/` · `img-reqs.txt` · `mobile-uiux-mockup.html` · `.claude/settings*.json` · `.mcp.json` · ملفّا الأدمن (EOL فقط).
+- تسجيل changelog في القاعدة (`createChangelog`) **لم يُنفَّذ** — دفع فرع ميزة لا نشر إنتاج؛ يُسجَّل عند الدمج/النشر.
+
+---
+
+## Session: 2026-08-17 (مساءً) → 2026-08-18 (فجراً) — 🧱 بانِي موقع الشريك: كونسول «موقعك» + جدول `ClientSite` + مكوّنات مشتركة + رِندَر مطابق على مدونتي (فرع `modonty-site-groups` · **٧٧ ملفاً غير مثبَّت** · **لم يُدفع** · **لا merge**)
+
+> خالد في نهاية الجلسة: حصّة موديل Fable الأسبوعية عند ٩٥٪ → جمّد الجلسة (`us>`) وقد يكمّل بموديل آخر. **الجلسة الجاية تبدأ بـ`hh>`** ثم إمّا كوميت محلّي للـ٧٧ ملفاً (عرضتُه، لم يقرّر) أو نقاش بند «٦ — الدفع».
+
+### 🎯 أين توقفت
+- **آخر تاسك:** بانِي موقع الشريك — البنود ١ (تحسين التصميم) · ٢ (الجوّال) · ٤ (الفيديو) · ٥ (التنظيف) **أُنجزت**. البند ٣ (النطاق الفرعي) **أُجّل بقرار خالد** إلى بطاقة `SUBDOM` على اللوحة (HIGH). البند ٦ (الدفع/النشر) **لم يُناقَش**.
+- **الخطوة التالية عند الرجوع:** `hh>` → اسأل خالد: (أ) كوميت محلّي بلا دفع للـ٧٧ ملفاً؟ (ب) نبدأ بند ٦ (`tsc` على الثلاثة · `pnpm build` مدونتي · خطة `prisma db push` على الإنتاج بيد خالد)؟ — لا تُنفَّذ إلا بأمره.
+
+### ✅ المنجز هذه الجلسة (بعد ضغط سياقي؛ الأقدم في ملخّص الجلسة داخل المحادثة)
+- **السكيما (`shared/prisma/schema/schema.prisma`):** حُذف `PageTemplate` وحقول القوالب من `Client`؛ أُضيف `model ClientSite` (1:1 مع `Client`: `headerTemplate` · `footerTemplate` · `primaryColor?` · `hiddenSections[]` · `subdomain? @unique` — السطر 726) + `site ClientSite?` على `Client`. **دُفعت إلى `modonty_dev` فقط** (`pnpm prisma:push -- --skip-generate` بأمر خالد الصريح «you do it»؛ الناتج `[+] Collection client_sites`). ⚠️ `db push` أسقط ٣ فهارس TTL — Run-All يعيدها.
+- **المكوّنات المشتركة `shared/components/partner-site/`:** ٥ هيدرات (`free/header/{classic,centered,utility,transparent,pill}-header.tsx` + سجلّ `HEADER_TEMPLATES`) · ٤ فوترات (`free/footer/{columns,simple,brand,centered}-footer.tsx` + `FOOTER_TEMPLATES`) · بلوكات الرئيسية والصفحات (`free/{hero,trust,about,services,stats,testimonials,gallery,team,video,faq,blog,contact,cta,newsletter,booking}/…` بسجلّات `HOME_BLOCKS` · `ABOUT_BLOCKS` · `SERVICES_BLOCKS` · `GALLERY_BLOCKS` · `FAQ_BLOCKS` · `CONTACT_BLOCKS` · `BLOG_BLOCKS` · `BOOKING_BLOCKS` · `REVIEWS_BLOCKS`؛ كل بلوك `{key,name,toggleable,isEmpty(data),Component}`) · أجزاء `parts/{brand-logo,whatsapp-button}` · `social-links.tsx`.
+- **المكتبة المشتركة `shared/lib/partner-site/`:** `get-home-data.ts` (استعلامات Prisma → `HomeData` واحد) · `partner-site-palette.ts` (٨ ألوان WCAG) · `hex-to-hsl-triplet.ts` · `detect-social-platform.ts` · `validate-subdomain.ts:44` · `index.ts`.
+- **الكونسول:** مجموعة تنقّل «موقعك» أوّلاً (`nav-config.ts` · `site-pages.ts` ٩ صفحات) · `/dashboard/my-site` (راديو هيدر/فوتر بمعاينة كاملة العرض `dir="rtl"` · لوحة ألوان · حقل النطاق الفرعي؛ حفظ = upsert `ClientSite` + `revalidateModontyTag("clients")`) · `/dashboard/site-pages/[page]` (مفتاح إظهار/إخفاء لكل بلوك = حفظ فوري) · «محتوى الموقع» مرتَّب بالصفحة · تبديل الوضع الداكن (`next-themes` من الجذر) · شريط تمرير جانبي · خط القائمة `font-normal` · حزم: `zod` + `next-themes` في `console/package.json`.
+- **مدونتي `app/(partner)/clients/[slug]/`:** `layout.tsx` يقرأ `client.site` → هيدر/فوتر من السجلّات + `--primary` · `components/page-blocks.tsx` (يرشّح المخفيّ والفارغ) · الرئيسية + ٨ صفحات داخلية `(inner)/{about,services,photos,faq,contact,articles,reviews,book}` كلها `PageBlocks` · `(inner)/(plain)/{reels,followers,likes,mentions}` منقولة (بيانات الزائر لا الشريك) · **حُذفت ١٨ ملفاً ميّتاً** (هيرو/تيزرات/أقسام/هيدر/فوتر القديمة). قائمة المستخدم: `hint` prop لإخفاء فقاعة «مزاياك هنا» في شريط الشريك.
+- **الأدمن:** خطوات القوالب أُزيلت من Run-All (رجع لأصله). **اللوحة:** بطاقة `SUBDOM` (HIGH) على `TASK.html:1373` بأثر تحقّق (ملف:سطر + ناتج Vercel API + توثيق رسمي).
+- **TSC:** ⚠️ **لم يُشغَّل هذه الجلسة على أي تطبيق** (قاعدة «ممنوع tsc إلا بطلب») — **غير متحقَّق**. **Build:** لم يُشغَّل. **تست حيّ:** ✅ على `modonty_dev` — جبر سيو (`support@jbrseo.com` / `JbrSeo2026!` كلمة تست أُعيد ضبطها بسكربت dev): الكونسول يحفظ (هيدر pill · فوتر brand · لون teal `175 77% 26%` · النشرة مخفيّة) → مدونتي ترسم نفس المكوّنات؛ ٨ صفحات داخلية 200 بمعرّفات الأقسام المتوقَّعة؛ ٦ عملاء آخرون يرسمون الافتراضي. **بلوك الفيديو غير مختبَر بصرياً** (لا عميل dev عنده فيديو Bunny).
+
+### 📝 قرارات (بالسبب)
+- **جدول منفصل `ClientSite` صف واحد لكل عميل بمفاتيح مكوّنات** (فكرة خالد، وافقتُ) بدل كتالوج `PageTemplate` الأوّل → أبسط وأسرع؛ الصف الغائب = افتراضيات؛ الكتالوج القديم كان معقّداً («الفكرة اللي عملتها أول كانت معقدة»).
+- **قالب واحد لكل بلوك الآن + مفتاح إظهار/إخفاء** → «الشريك ليس تقنياً»: بلا سحب، لوحة ألوان جاهزة، افتراضيات تشتغل.
+- **النطاق الفرعي = ميزة بريميوم اختيارية لا افتراضية، ومؤجَّل** → منطقة DNS مملوكة في حساب Vercel آخر (`domain_already_exists` · `GET /v6/domains?teamId → []` · records `forbidden`)؛ الـwildcard يشترط نيم سيرفرات Vercel (توثيق رسمي).
+- **حُذف الريلز/المتابعون/الإعجابات/الإشارات من قائمة صفحات الشريك** → بيانات يولّدها الزائر لا يديرها الشريك (خالد: «إيوة، شيلها»).
+- **`year` يُمرَّر في `FooterData` و`getCopyrightYear()` تحت `use cache`** → `new Date()` ممنوع في الـprerender مع `cacheComponents`.
+- **سجلّ البلوكات لا يُمرَّر من صفحة سيرفر إلى مكوّن عميل** → «Functions cannot be passed to Client Components»؛ يُمرَّر مفتاح الصفحة نصّاً والخريطة تعيش في العميل.
+
+### 🚧 معلّق / محجوب
+- **بند ٦ — الدفع/النشر:** لم يُناقَش. يتطلّب: `tsc` على admin/console/modonty · `pnpm build` مدونتي · `prisma db push` على الإنتاج **بيد خالد** (سيُنشئ `client_sites` ويُسقط `page_templates`+حقول القوالب — تأكّد أنّ لا بيانات إنتاج فيها قبل الحذف) · لا Run-All مطلوب.
+- **`SUBDOM`** — بانتظار خالد/مريم: نقل `modonty.com` من حساب dreamtoapp إلى فريق `modonty` على Vercel، ثم بقية الخطوات على البطاقة.
+- **بلوك الفيديو** — تست بصري بعد رفع فيديو حقيقي على Bunny من الكونسول.
+- **ملفات ميّتة قديمة تُركت بقرار خالد** (client-discussions-section · client-results-section · client-review-form · gallery-interactive · seed-client1-test-data · client-bottom-bar · client-footer-cta · client-newsletter-card · client-whatsapp-fab · related-clients).
+- **`documents/idea/partner-site-builder.html`** — §7/§8 محدَّثان لكن الملف ما زال يصف كتالوج `PageTemplate` المهجور في صفوف المرحلتين ١/٢ — يحتاج تحديثاً.
+- **ملفات خارج الشغل على الشجرة:** `.pnpm-store/` · `img-reqs.txt` · `mobile-uiux-mockup.html` · `.claude/settings*.json` · `.mcp.json` — **لا تُضاف لأي كوميت**.
+
+### 📂 الملفات (٧٧ = `git status --porcelain | wc -l`) — الأهم
+- `shared/prisma/schema/schema.prisma` · `shared/components/partner-site/**` (جديد) · `shared/lib/partner-site/**` (جديد)
+- `console/app/(dashboard)/dashboard/my-site/**` · `console/app/(dashboard)/dashboard/site-pages/**` (جديدان) · `console/app/(dashboard)/dashboard/page-content/{page,components/page-content-editor}.tsx` · `console/app/(dashboard)/components/{nav-config,site-pages,theme-toggle,dashboard-header,sidebar,sidebar-nav,sidebar-groups}.tsx` · `console/app/components/providers/theme-provider.tsx` · `console/app/{layout.tsx,globals.css}` · `console/lib/ar.ts` · `console/package.json` · `pnpm-lock.yaml`
+- `modonty/app/(partner)/clients/[slug]/{layout,page}.tsx` · `…/components/page-blocks.tsx` · `…/components/chrome/platform-bar.tsx` · `…/helpers/{get-partner-site,build-chrome-data,get-cached-home-data,get-copyright-year}.ts` · `…/(inner)/**` (٨ صفحات + `(plain)/`) · `modonty/app/layout/components/user-menu/{UserMenu,LoginButton,MobileAccountBenefitsMenu}.tsx` · **٢٧ ملفاً محذوفاً** تحت `…/clients/[slug]/`
+- `admin/app/(dashboard)/database/{actions/run-all-maintenance.ts,components/auto-maintenance-panel.tsx}` (رجوع لأصله)
+- `documents/tasks/TASK.html` (+٨ أسطر: `SUBDOM`) · `documents/idea/partner-site-builder.html`
+
+### 🔁 Git / النشر
+- **الفرع:** `modonty-site-groups` · **آخر كوميت:** `3f8f766` (تجميد ١٧ أغسطس) · **غير مثبَّت:** نعم — ٧٧ ملفاً · **مدفوع:** لا · **merge:** لا (ممنوع بلا تأكيد صريح) · **Vercel:** لا شيء نُشر؛ `*.modonty.com` مُضاف للمشروع فقط (pending verification، بلا أثر حيّ). · **القاعدة:** الإنتاج لم يُلمس؛ كل شيء على `modonty_dev`.
+
+### 🚀 كيف تستأنف في ٣٠ ثانية
+1. `hh>` — ثم `git status --porcelain | wc -l` (المتوقَّع ٧٧) و`git log -1` (المتوقَّع `3f8f766`).
+2. افتح `documents/tasks/TASK.html:1373` (`SUBDOM`) و`shared/prisma/schema/schema.prisma:700-735` (`ClientSite`).
+3. قرار خالد: كوميت محلّي الآن؟ ثم بند ٦ (الدفع) أم إكمال تصميم/بلوكات؟
 
 ---
 
