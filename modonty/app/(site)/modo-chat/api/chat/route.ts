@@ -5,6 +5,7 @@ import { ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { guardChatRequest } from "@/app/(site)/modo-chat/data/guard-chat-request";
 import { getEmbeddedChunks } from "@/app/(site)/modo-chat/data/get-embedded-chunks";
+import { getEmbeddedFaqs } from "@/app/(site)/modo-chat/data/get-embedded-faqs";
 import { getIndustryScope } from "@/app/(site)/modo-chat/data/get-industry-scope";
 import { retrieveFromEmbedded } from "@/app/(site)/modo-chat/data/retrieve-from-embedded";
 import { rankPartners } from "@/app/(site)/modo-chat/data/rank-partners";
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
   try {
     const guarded = await guardChatRequest(request);
     if ("error" in guarded) return guarded.error;
-    const { userId, messages, lastUserMessage, conversationId, turnIndex, wantStream, body } =
+    const { userId, messages, lastUserMessage, conversationId, turnIndex, wantStream, trialRemaining, body } =
       guarded.ok;
 
     const scope = scopeSchema.safeParse(body);
@@ -125,7 +126,14 @@ export async function POST(request: NextRequest) {
     const isIdentityQuestion = isGreetingOrShortPleasantry(lastUserMessage);
 
     const tChunks = Date.now();
-    const chunks = isIdentityQuestion ? [] : await getEmbeddedChunks(scopeArticles);
+    // Partner answers are retrieved alongside article text: a doctor answering one visitor
+    // in their own words is the strongest material we have, and it used to serve that visitor only.
+    const chunks = isIdentityQuestion
+      ? []
+      : (await Promise.all([
+          getEmbeddedChunks(scopeArticles),
+          industry ? getEmbeddedFaqs(industry.id) : Promise.resolve([]),
+        ])).flat();
     const tRetrieve = Date.now();
     const { docs: dbDocs, topRerankScore, bestArticleId, bestArticleScore } = isIdentityQuestion
       ? { docs: [], topRerankScore: 0, bestArticleId: null, bestArticleScore: 0 }
@@ -297,7 +305,7 @@ export async function POST(request: NextRequest) {
         outcome,
         source: usedWebSource ? "web" : "db",
         webSources: usedWebSource ? webSources : undefined,
-      }).catch(() => {});
+      }).catch(() => null);
 
     if (!wantStream) {
       const { askCohere } = await import("@/app/(site)/modo-chat/data/ask-cohere");

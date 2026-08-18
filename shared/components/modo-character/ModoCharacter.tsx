@@ -26,12 +26,18 @@ export interface ModoCharacterProps {
  */
 export function ModoCharacter({ sizes, decorative = false }: ModoCharacterProps) {
   return (
-    <OptimizedImage
-      media={asMedia(BRAND_CHARACTER_URL, decorative ? null : "مودو")}
-      alt={decorative ? "" : "مودو"}
-      fill
-      sizes={sizes}
-      className="object-cover"
-    />
+    // The component brings its OWN positioned box. `fill` resolves against the nearest
+    // positioned ancestor, so a caller who forgot `relative` had the face stretch across the
+    // whole viewport — measured live 2026-08-18 on the greeting, and the same failure is already
+    // recorded from nine other places in this repo. Nobody can forget it here.
+    <span className="relative block h-full w-full overflow-hidden">
+      <OptimizedImage
+        media={asMedia(BRAND_CHARACTER_URL, decorative ? null : "مودو")}
+        alt={decorative ? "" : "مودو"}
+        fill
+        sizes={sizes}
+        className="object-cover"
+      />
+    </span>
   );
 }

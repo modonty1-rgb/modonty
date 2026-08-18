@@ -14,6 +14,10 @@ import { Card } from "@/components/ui/card";
 import { Composer } from "../composer/Composer";
 import { PartnerCards, type SuggestedPartner } from "../partner-cards/PartnerCards";
 import { TypingDots } from "../shared/TypingDots";
+import { TrialWall } from "../login-card/TrialWall";
+import { AiDisclaimer } from "../shared/AiDisclaimer";
+import { RateAnswer } from "../shared/RateAnswer";
+import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
 import { getScopeIcon } from "../../helpers/get-scope-icon";
 import { cn } from "@/lib/utils";
 
@@ -49,6 +53,8 @@ type Msg = {
   source?: "web";
   sources?: WebSource[];
   noSources?: boolean;
+  /** The saved row this answer became — present only for a signed-in visitor. */
+  messageId?: string;
   industrySuggestion?: IndustrySuggestion;
 };
 
@@ -102,6 +108,8 @@ interface ArticleChatbotContentProps {
   resumeConversationId?: string | null;
   /** Set by «محادثة جديدة» — start empty instead of restoring the last thread. */
   startFresh?: boolean;
+  /** False for a visitor on the free trial: no history, no saving, and a wall after 3 questions. */
+  isSignedIn?: boolean;
 }
 
 export function ChatList({
@@ -114,6 +122,7 @@ export function ChatList({
   onSelectedIndustryChange,
   resumeConversationId = null,
   startFresh = false,
+  isSignedIn = true,
 }: ArticleChatbotContentProps) {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState(initialInput);
@@ -123,6 +132,13 @@ export function ChatList({
   const [industries, setIndustries] = useState<Industry[]>([]);
   const [industriesLoading, setIndustriesLoading] = useState(false);
   const [suggestedArticle, setSuggestedArticle] = useState<SuggestedArticle | null>(null);
+  /** Set when the server refuses because the free questions ran out. */
+  const [trialEnded, setTrialEnded] = useState(false);
+  /** What Modo remembers from earlier visits — scope names only, never a health profile. */
+  const [memory, setMemory] = useState<{ recentScopes: string[]; lastQuestion: string | null }>({
+    recentScopes: [],
+    lastQuestion: null,
+  });
   const pendingQuestionRef = useRef<string | null>(null);
   const lastAttemptRef = useRef<{ text: string; industrySlug: string | null; artSlug: string | null } | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -149,7 +165,7 @@ export function ChatList({
   // Rebuild the last conversation after a reload. Only when the visitor arrived with no
   // article and no draft — those mean they came to start something specific, not to resume.
   useEffect(() => {
-    if (startFresh) return;
+    if (startFresh || !isSignedIn) return;
     if (!resumeConversationId && (articleSlug || initialInput)) return;
     let cancelled = false;
 
@@ -183,7 +199,18 @@ export function ChatList({
     return () => {
       cancelled = true;
     };
-  }, [articleSlug, initialInput, resumeConversationId, startFresh]);
+  }, [articleSlug, initialInput, resumeConversationId, startFresh, isSignedIn]);
+
+  // Only on an empty chat: recalling a past visit under a running conversation is noise.
+  useEffect(() => {
+    if (!isSignedIn || articleSlug) return;
+    let cancelled = false;
+    fetch("/modo-chat/api/memory")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => { if (!cancelled && data) setMemory(data); })
+      .catch(() => { /* memory is a courtesy, never a blocker */ });
+    return () => { cancelled = true; };
+  }, [isSignedIn, articleSlug]);
 
   useEffect(() => {
     if (!articleSlug) {
@@ -246,6 +273,10 @@ export function ChatList({
 
         if (!res.ok) {
           const d = await res.json().catch(() => ({}));
+          if (res.status === 401 && d.needsSignIn) {
+            setTrialEnded(true);
+            return;
+          }
           throw new Error(d.error || `HTTP ${res.status}`);
         }
 
@@ -290,6 +321,7 @@ export function ChatList({
         setMessages((p) => [...p, { role: "assistant", content: "" }]);
 
         if (reader) {
+          let lastMessageId: string | undefined;
           let lastSource: "web" | undefined;
           let lastSources: WebSource[] | undefined;
           let lastSuggestedArticle: SuggestedArticle | undefined;
@@ -316,6 +348,7 @@ export function ChatList({
                 }
                 if (p.type === "done") {
                   if (p.conversationId) conversationIdRef.current = p.conversationId;
+                  if (p.messageId) lastMessageId = p.messageId;
                   if (p.source === "web") lastSource = "web";
                   if (p.sources?.length) lastSources = p.sources;
                   if (p.suggestedArticle) lastSuggestedArticle = p.suggestedArticle as SuggestedArticle;
@@ -326,6 +359,14 @@ export function ChatList({
             }
           }
 
+          if (lastMessageId) {
+            setMessages((prev) => {
+              const n = [...prev];
+              const last = n[n.length - 1];
+              if (last?.role === "assistant") n[n.length - 1] = { ...last, messageId: lastMessageId };
+              return n;
+            });
+          }
           if (lastPartners?.length) {
             setMessages((prev) => {
               const n = [...prev];
@@ -392,6 +433,11 @@ export function ChatList({
         // الموضوع», so the visitor kept retrying against a dead session forever.
         if (!res.ok) {
           const detail = await res.json().catch(() => ({}));
+          if (res.status === 401 && detail.needsSignIn) {
+            setTrialEnded(true);
+            setMessages((p) => p.slice(0, -1));
+            return;
+          }
           throw new Error(
             res.status === 401
               ? "انتهت جلستك. سجّل دخولك من جديد وأكمل."
@@ -540,13 +586,16 @@ export function ChatList({
       <div dir="rtl" className="flex h-full flex-col justify-start overflow-y-auto overscroll-contain scrollbar-thin px-4 py-8">
         <div className="mx-auto my-auto w-full max-w-2xl animate-in fade-in duration-300">
           <div className="mb-6 flex flex-col items-center text-center">
-            <Avatar className="mb-4 h-14 w-14 ring-2 ring-primary/10">
-              <AvatarImage src={userImage ?? undefined} alt={userName ?? ""} />
-              <AvatarFallback className="bg-gradient-to-br from-primary/15 to-primary/5">
-                <IconAi className="h-7 w-7 text-primary" strokeWidth={1.5} />
-              </AvatarFallback>
-            </Avatar>
-            <h2 className="text-xl font-bold text-foreground">أهلاً {displayName} ✨</h2>
+            {/* Modo greets with ITS OWN face, not the visitor's. The old avatar showed
+                `userImage`, so an anonymous visitor — the exact person we are trying to win —
+                was welcomed by an empty circle. */}
+            <span className="mb-4 block h-14 w-14 overflow-hidden rounded-2xl ring-2 ring-primary/10">
+              <ModoCharacter sizes="56px" decorative />
+            </span>
+            <h2 className="text-xl font-bold text-foreground">
+              {memory.recentScopes.length > 0 ? "أهلاً من جديد " : "أهلاً "}
+              {displayName} ✨
+            </h2>
             <p className="mt-1 max-w-sm text-sm leading-relaxed text-muted-foreground">
               {hasArticle
                 ? "اسألني أي سؤال عن هذا المقال."
@@ -556,7 +605,39 @@ export function ChatList({
             </p>
           </div>
 
-          {composer}
+          {trialEnded ? <TrialWall /> : composer}
+
+          {!isSignedIn && !trialEnded && (
+            <p className="mt-2 text-center text-xs text-muted-foreground">
+              جرّب ٣ أسئلة بلا تسجيل — وبعدها تسجّل عشان تحفظ محادثتك.
+            </p>
+          )}
+
+          {!trialEnded && <AiDisclaimer />}
+
+          {!hasArticle && !selectedIndustry && memory.recentScopes.length > 0 && (
+            <div className="mt-5" dir="rtl">
+              <p className="mb-2 text-xs font-medium text-muted-foreground">
+                آخر مرة كنت تسأل في:
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {memory.recentScopes.map((name) => {
+                  const match = industries.find((i) => i.name === name);
+                  if (!match) return null;
+                  return (
+                    <button
+                      key={name}
+                      type="button"
+                      onClick={() => onSelectedIndustryChange({ slug: match.slug, name: match.name })}
+                      className="rounded-full border border-primary/25 bg-primary/5 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/10"
+                    >
+                      {name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {!hasArticle && !selectedIndustry && (
             <div className="mt-6">
@@ -667,6 +748,10 @@ export function ChatList({
                   {m.role === "assistant" && m.content === "" && loading ? <TypingDots /> : m.content}
                 </div>
               </div>
+            )}
+
+            {m.role === "assistant" && m.messageId && !loading && (
+              <RateAnswer messageId={m.messageId} />
             )}
 
             {/* Web sources */}
@@ -835,9 +920,16 @@ export function ChatList({
       {/* Composer — hidden only while article suggestions are on screen.
           An EMPTY redirect array is truthy, so testing `!redirects` alone stranded the
           visitor with no input and no button. */}
-      {(!redirects || redirects.length === 0) && (
+      {trialEnded ? (
         <div className="shrink-0 px-4 pb-4">
-          <div className="mx-auto w-full max-w-2xl">{composer}</div>
+          <TrialWall />
+        </div>
+      ) : (!redirects || redirects.length === 0) && (
+        <div className="shrink-0 px-4 pb-4">
+          <div className="mx-auto w-full max-w-2xl">
+            {composer}
+            <AiDisclaimer />
+          </div>
         </div>
       )}
     </div>

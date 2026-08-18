@@ -6,6 +6,7 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 
 import { checkRateLimit } from "./check-rate-limit";
+import { spendAnonymousQuestion } from "./check-anonymous-quota";
 import { newConversationId } from "../helpers/new-conversation-id";
 
 import type { ApiResponse } from "@/lib/types";
@@ -32,12 +33,15 @@ export const chatBodySchema = z.object({
 });
 
 export interface ChatTurnContext {
-  userId: string;
+  /** Null for a visitor on the free trial — nothing is saved for them. */
+  userId: string | null;
   messages: { role: "user" | "assistant"; content: string }[];
   lastUserMessage: string;
   conversationId: string;
   turnIndex: number;
   wantStream: boolean;
+  /** Free questions left for an anonymous visitor; null when signed in. */
+  trialRemaining: number | null;
   /** The parsed body, for the caller to read its own scope field off. */
   body: unknown;
 }
@@ -53,24 +57,26 @@ export interface ChatTurnContext {
 export async function guardChatRequest(
   request: Request
 ): Promise<{ error: NextResponse } | { ok: ChatTurnContext }> {
+  /**
+   * A visitor with no account gets three questions before the wall. Khalid (2026-08-18): Modo is
+   * a paid-acquisition channel, and the old behaviour — sign in before you see anything — meant
+   * every ad click bought a bounce.
+   *
+   * The trial is spent BEFORE any paid call, exactly like the per-account limiter.
+   */
   const session = await auth();
-  if (!session?.user?.id) {
-    return {
-      error: NextResponse.json(
-        { success: false, error: "يجب تسجيل الدخول لاستخدام مدونتي الذكية" } as ApiResponse<never>,
-        { status: 401 }
-      ),
-    };
-  }
+  let trialRemaining: number | null = null;
 
-  const limit = await checkRateLimit(session.user.id, new Date());
-  if (!limit.allowed) {
-    return {
-      error: NextResponse.json(
-        { success: false, error: limit.message } as ApiResponse<never>,
-        { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } }
-      ),
-    };
+  if (session?.user?.id) {
+    const limit = await checkRateLimit(session.user.id, new Date());
+    if (!limit.allowed) {
+      return {
+        error: NextResponse.json(
+          { success: false, error: limit.message } as ApiResponse<never>,
+          { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } }
+        ),
+      };
+    }
   }
 
   const body = await request.json().catch(() => null);
@@ -95,15 +101,34 @@ export async function guardChatRequest(
     };
   }
 
+  /**
+   * The trial is spent only once the request is real: a malformed body costs us nothing
+   * upstream, and charging a free question for it burned the visitor's trial on a bug of ours.
+   * Measured 2026-08-18: three invalid bodies exhausted the trial without a single answer.
+   */
+  if (!session?.user?.id) {
+    const trial = await spendAnonymousQuestion();
+    if (!trial.allowed) {
+      return {
+        error: NextResponse.json(
+          { success: false, error: trial.message, needsSignIn: true } as ApiResponse<never> & { needsSignIn: boolean },
+          { status: 401 }
+        ),
+      };
+    }
+    trialRemaining = trial.remaining;
+  }
+
   return {
     ok: {
-      userId: session.user.id,
+      userId: session?.user?.id ?? null,
       messages,
       lastUserMessage: lastUserMsg.content,
       conversationId: parsed.data.conversationId ?? newConversationId(Date.now(), Math.random),
       // The turn number is simply how many turns the client already holds.
       turnIndex: messages.filter((m) => m.role === "user").length - 1,
       wantStream,
+      trialRemaining,
       body,
     },
   };

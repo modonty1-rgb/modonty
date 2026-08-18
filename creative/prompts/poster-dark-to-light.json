@@ -1,0 +1,128 @@
+{
+  "task": "restyle_existing_poster_for_facebook_ad",
+  "language": "ar",
+  "direction": "rtl",
+  "output": {
+    "platform": "Facebook / Instagram feed",
+    "aspect_ratio": "1:1",
+    "dimensions": "1080x1080",
+    "format": "single image, no text overlays added beyond what already exists",
+    "note": "لو المطلوب ستوري أو ريلز بدّل إلى 1080x1920 (9:16) وأعد ترتيب النصّ رأسياً بنفس الكلمات."
+  },
+  "preserve_exactly": {
+    "arabic_text": "identical wording, order, and line breaks",
+    "doctor_photo": "same face, same pose, same crop",
+    "composition_logic": "same visual hierarchy — headline, sub-line, photo, trust row"
+  },
+  "change_only": [
+    "background",
+    "color_palette",
+    "logo_placement",
+    "trust_mark_placement",
+    "photo_edge_treatment",
+    "canvas_ratio"
+  ],
+  "background": {
+    "base": "#F7F8FC",
+    "gradient": "very soft, from base toward a translucent light blue in the top-right corner",
+    "forbidden": [
+      "black",
+      "navy",
+      "any dark fill"
+    ]
+  },
+  "palette": {
+    "primary": {
+      "hex": "#3030FF",
+      "use": "main headline only"
+    },
+    "text": {
+      "hex": "#0E065A",
+      "use": "body copy and sub-lines"
+    },
+    "accent": {
+      "hex": "#00D8D8",
+      "use": "one thin element only — a divider rule or a dot"
+    },
+    "surface": {
+      "hex": "#FFFFFF",
+      "use": "breathing space"
+    },
+    "rule": "one colour dominates, the rest are accents; maximum three colours in the composition",
+    "forbidden": [
+      "gold",
+      "metallic",
+      "neon",
+      "harsh gradients"
+    ]
+  },
+  "attached_assets": [
+    {
+      "file": "modonty-icon.svg",
+      "role": "platform logo",
+      "placement": "top-right",
+      "size": "small and restrained",
+      "clear_space": "empty margin around it not less than its own height",
+      "forbidden": [
+        "cropping",
+        "recolouring",
+        "rotating",
+        "adding effects"
+      ]
+    },
+    {
+      "file": "modonty-trust-shield.svg",
+      "role": "the modonty trust shield — a navy shield outlined in cyan with the modonty m inside it; it means «verified partner on modonty»",
+      "placement": "immediately beside the doctor or clinic name",
+      "size": "about 1.2x the height of the text line it sits on",
+      "forbidden": [
+        "recolouring",
+        "replacing it with a check mark, ribbon, or any other symbol",
+        "flattening the shield into a circle or square",
+        "adding a glow"
+      ]
+    }
+  ],
+  "photo_treatment": {
+    "subject": "unchanged",
+    "separation": "very soft drop shadow instead of a hard frame",
+    "edge": "feather the edge so it blends into the light background"
+  },
+  "typography": {
+    "script": "clear Arabic typeface",
+    "hierarchy": "by size and weight, never by colour alone",
+    "min_contrast_ratio": 4.5,
+    "min_readable_size": "text must stay legible at 500px wide — that is how the ad is first seen on a phone feed"
+  },
+  "facebook_ad_rules": {
+    "text_density": "keep on-image text light — heavy text reduces delivery even though the old 20% rule was retired",
+    "safe_margins": "keep every element at least 5% of the canvas away from all edges",
+    "thumbnail_test": "the headline and the face must still read when the image is scaled to 250x250",
+    "forbidden": [
+      "fake UI elements such as play buttons or notification badges",
+      "before/after medical imagery",
+      "claims of guaranteed results",
+      "personal-attribute targeting language addressed to the viewer's condition"
+    ]
+  },
+  "mood": {
+    "target": "calm, upscale clinic",
+    "not": "discount advertisement",
+    "means": [
+      "generous white space",
+      "relaxed vertical rhythm",
+      "gentle contrast"
+    ],
+    "principle": "elegance comes from space and proportion, not from more colour"
+  },
+  "hard_constraints": [
+    "no dark backgrounds",
+    "no gold",
+    "no glow or neon",
+    "no heavy shadows",
+    "no more than three colours",
+    "do not reorder or reword the Arabic copy",
+    "do not add any new text",
+    "do not replace the trust shield with a check icon, circle, or ribbon — use the attached shield exactly"
+  ]
+}

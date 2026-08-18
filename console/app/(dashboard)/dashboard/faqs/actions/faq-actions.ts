@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { messages } from "@/lib/messages";
+import { publishFaqAnswer } from "@/lib/faq/publish-faq-answer";
 
 type Result = { success: true } | { success: false; error: string };
 type BulkResult =
@@ -22,24 +23,15 @@ async function ensureOwnedFaq(faqId: string, clientId: string) {
   });
 }
 
+/**
+ * Publishing an answer from this screen now does exactly what it does on /dashboard/questions —
+ * including telling the person who asked. Before, this one wrote the row and told nobody, so the
+ * same button had two different outcomes depending on which screen the partner happened to open.
+ */
 export async function approveFaq(faqId: string, answer: string): Promise<Result> {
   const clientId = await getClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
-  if (!answer.trim()) return { success: false, error: messages.error.required };
-
-  try {
-    const owned = await ensureOwnedFaq(faqId, clientId);
-    if (!owned) return { success: false, error: messages.error.notFound };
-
-    await db.articleFAQ.update({
-      where: { id: faqId },
-      data: { status: "PUBLISHED", answer: answer.trim() },
-    });
-    revalidatePath("/dashboard/faqs");
-    return { success: true };
-  } catch {
-    return { success: false, error: messages.error.serverError };
-  }
+  return publishFaqAnswer(faqId, clientId, answer);
 }
 
 export async function rejectFaq(faqId: string): Promise<Result> {

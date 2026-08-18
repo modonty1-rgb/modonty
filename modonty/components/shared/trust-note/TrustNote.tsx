@@ -1,4 +1,4 @@
-import { IconFileCheck } from "@/lib/icons";
+import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 import { cn } from "@/lib/utils";
 import { messages } from "@/lib/i18n/messages";
 
@@ -23,7 +23,9 @@ export function TrustNote({ credential, hasVerifiedPapers, className }: TrustNot
 
   return (
     <span className={cn("inline-flex items-center gap-1 font-medium text-foreground", className)}>
-      <IconFileCheck className="h-3.5 w-3.5 text-link-accent" aria-hidden />
+      {/* One verification mark on the site — Khalid (18 Aug): «من الاثنين واحدة». The paperwork
+          line and the partner badge said the same thing with two different icons. */}
+      <VerifiedBadge className="h-3.5 w-3.5" label={label} />
       {label}
     </span>
   );

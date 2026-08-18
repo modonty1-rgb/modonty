@@ -17,7 +17,8 @@ export interface StreamAnswerParams {
    * Called exactly once, whatever happens. `outcome` is `"stream"` for a completed answer and
    * `"error"` for one cut short — the visitor walking away counts as cut short, not as success.
    */
-  onFinish: (fullText: string, outcome: "stream" | "error") => void;
+  /** Returns the saved row id, so the final frame can hand the browser something to rate. */
+  onFinish: (fullText: string, outcome: "stream" | "error") => Promise<string | null> | void;
 }
 
 /**
@@ -74,12 +75,20 @@ export function streamAnswerResponse({
           onFinish(fullText, "error");
           return;
         }
+        // Saved BEFORE the final frame, not after: the row id is what lets the visitor rate the
+        // answer, and it does not exist until the write returns. The answer is already fully on
+        // screen by now, so the extra moment costs the reader nothing.
+        const messageId = await onFinish(fullText, "stream");
         controller.enqueue(
           encoder.encode(
-            JSON.stringify({ type: "done", conversationId, ...doneExtras }) + "\n"
+            JSON.stringify({
+              type: "done",
+              conversationId,
+              ...(messageId && { messageId }),
+              ...doneExtras,
+            }) + "\n"
           )
         );
-        onFinish(fullText, "stream");
       } catch (err) {
         if (cancelled) return;
         const errMsg = err instanceof Error ? err.message : "حدث خطأ. حاول مرة أخرى.";

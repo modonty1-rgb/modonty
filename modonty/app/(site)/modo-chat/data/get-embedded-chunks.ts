@@ -42,7 +42,10 @@ export async function getEmbeddedChunks(articles: ArticleRef[]): Promise<Embedde
   const titleById = new Map(articles.map((a) => [a.id, a.title]));
 
   const cached = await db.articleChunk.findMany({
-    where: { articleId: { in: ids } },
+    // `kind` was added after these rows existed, and in Mongo an ABSENT field is not null —
+    // filtering on `kind: "article"` alone would have declared every cached chunk cold and
+    // re-embedded the whole corpus once. Rows written before the column count as article chunks.
+    where: { articleId: { in: ids }, OR: [{ kind: "article" }, { kind: { isSet: false } }] },
     orderBy: { chunkIndex: "asc" },
     select: { articleId: true, text: true, embedding: true },
   });
@@ -104,7 +107,10 @@ async function buildAndStore(
     .filter((p): p is typeof p & { embedding: number[] } => Array.isArray(p.embedding));
 
   try {
-    await db.articleChunk.deleteMany({ where: { articleId: { in: articleIds } } });
+    // Scoped by kind: FAQ chunks live in the same table and must survive an article re-chunk.
+    await db.articleChunk.deleteMany({
+      where: { articleId: { in: articleIds }, OR: [{ kind: "article" }, { kind: { isSet: false } }] },
+    });
     await db.articleChunk.createMany({
       data: rows.map((r) => ({
         articleId: r.articleId,

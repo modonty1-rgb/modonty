@@ -140,6 +140,27 @@
     scrollbar-color: hsl(var(--primary) / 0.45) transparent;
   }
 
+  /* A full-screen pane owns the viewport: the site footer sitting under it made the whole page
+     scroll past a chat that is already exactly one screen tall. Measured 2026-08-18 on
+     /modo-chat: pane ended at 602px, document was 894px — 292px of footer below a fixed pane.
+     `:has()` keeps this in CSS, so no client component and no layout split. */
+  body:has([data-fullscreen-pane]) > div > footer {
+    display: none;
+  }
+
+  /* And the pane measures itself by flex instead of `100dvh - 3.5rem`. That subtraction assumed
+     a 56px header; the real one is 57px with its border, so the page still scrolled by exactly
+     one pixel. Flex has no magic number to drift. */
+  body:has([data-fullscreen-pane]) > div {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  body:has([data-fullscreen-pane]) > div > main {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
   html::-webkit-scrollbar {
     width: 10px;
   }

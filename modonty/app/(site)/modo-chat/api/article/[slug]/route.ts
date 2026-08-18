@@ -39,7 +39,7 @@ export async function POST(
   try {
     const guarded = await guardChatRequest(request);
     if ("error" in guarded) return guarded.error;
-    const { userId, messages, lastUserMessage, conversationId, turnIndex, wantStream } = guarded.ok;
+    const { userId, messages, lastUserMessage, conversationId, turnIndex, wantStream, trialRemaining } = guarded.ok;
 
     const { slug } = await params;
     const decodedSlug = decodeURIComponent(slug);
@@ -283,7 +283,7 @@ export async function POST(
         outcome,
         source: usedWebSource ? "web" : "db",
         webSources: usedWebSource ? webSources : undefined,
-      }).catch(() => {});
+      }).catch(() => null);
 
     if (!wantStream) {
       const { askCohere } = await import("@/app/(site)/modo-chat/data/ask-cohere");

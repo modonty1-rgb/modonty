@@ -48,6 +48,74 @@
     </p>
   </header>
 
+  <!-- ══ صندوق خالد — أوّل شيء على الصفحة، كل ما ينتظره في مكان واحد ══ -->
+  <section class="card p-6 space-y-4" style="border-color:rgba(0,229,229,.6)">
+    <div class="flex items-center justify-between flex-wrap gap-2">
+      <p class="font-bold text-xl">🙋 المطلوب منك — كل شيء هنا، لا تدوّر في الصفحة</p>
+      <span class="pill warn">محدَّث ١٨ أغسطس، مساءً</span>
+    </div>
+
+    <table>
+      <thead><tr><th style="width:2.5rem">#</th><th>المطلوب</th><th style="width:34%">ليش يهمّ</th><th style="width:9rem">أين</th></tr></thead>
+      <tbody>
+        <tr><td colspan="4" style="background:#0f1226;color:var(--bad);font-weight:700">🔴 فِعل بيدك — ما أقدر أنفّذه</td></tr>
+        <tr>
+          <td><b>١</b></td>
+          <td><b><code>prisma db push</code> على الإنتاج</b></td>
+          <td>أُضيف عمودا <code>industrySlug</code>/<code>industryId</code> لسجلّ المحادثات وفهرس عليهما.
+            الحقول اختيارية فتُكتب بلا دفع، لكن <b class="text-white">الفهرس لا يُنشأ إلا بأمرك</b> — الاستعلامات تبقى أبطأ حتى تضغطه.</td>
+          <td>الإنتاج</td>
+        </tr>
+        <tr>
+          <td><b>٢</b></td>
+          <td><b>إذن الدفع</b> — ١٨ كوميت على <code>modonty-ui</code></td>
+          <td>الدفع = نشر على <code>test.modonty.com</code>. قاعدتك: إذن صريح لكل مرة.</td>
+          <td>git</td>
+        </tr>
+
+        <tr><td colspan="4" style="background:#0f1226;color:var(--warn);font-weight:700">🟠 قرار سريع — سطر واحد يكفي</td></tr>
+        
+        
+
+        <tr><td colspan="4" style="background:#0f1226;color:var(--primary);font-weight:700">🔵 قرارات في ملفّين — بترتيب الأولوية</td></tr>
+        <tr>
+          <td><b>٥</b></td>
+          <td><b>أربعة قرارات في دورة السؤال</b> (أ · ب · ج · د)</td>
+          <td>متى يحوّل مودو للشريك · الجواب يُنشر أو يبقى خاصاً · لو الشريك ما ردّ أسبوعاً · سؤال بلا مقال وين يُعلَّق.
+            <b class="text-white">هذي أقرب شغل تنفيذي</b>، وتُبنى على دورة شغّالة ٧٠٪.</td>
+          <td><code>modo-chat/documentation/<br>ask-partner-loop.html</code></td>
+        </tr>
+        <tr>
+          <td><b>٦</b></td>
+          <td><b>١٤ قراراً مفتوحاً</b> عن مودو ونموّه</td>
+          <td>مرتّبة: المفتوح فوق والمحسوم تحته. أهمّها المترابطة <code>٤ · ١٣ · ١٤ · ١٥</code> — مصير السؤال الذي يعجز عنه مودو.</td>
+          <td><code>modo-chat/documentation/<br>modo-decisions.html</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card p-4 space-y-1" style="border-color:rgba(34,197,94,.35)">
+      <p class="font-bold" style="color:var(--ok)">✅ ما عاد يحتاج منك شيئاً</p>
+      <p class="text-sm" style="color:var(--muted)"><b class="text-white">الفجوات الستّ أُقفلت كلها (١٨–١٩ أغسطس):</b></p>
+      <table>
+        <thead><tr><th style="width:30%">الفجوة</th><th>الدليل</th></tr></thead>
+        <tbody>
+          <tr><td>الزائر المجهول ما يجرّب</td><td>٣ أسئلة بكوكي موقَّع: <code>طلب 1-3 → 404 + cookie</code> · <code>طلب 4 → 401 needsSignIn</code> · الجسم الخاطئ لا يأكل حصّة</td></tr>
+          <tr><td>الواجهة تترك فراغاً</td><td><code>docHeight 894 → 601</code> · <code>documentScrolls: false</code> — الفوتر أُخفي واللوحة صارت بالفلكس لا بحساب سحري</td></tr>
+          <tr><td>الجوّال</td><td><code>fontSize 14px → 16px</code> (آيفون كان يكبّر الصفحة قسراً) · <code>height 44</code> · صفر تمرير أفقي</td></tr>
+          <tr><td>عتبات مخترَعة</td><td>معايرة على ٣٥ سؤالاً: الفجوة الحقيقية بين <code>0.5151</code> و<code>0.8578</code> → العتبة <b class="text-white">0.7</b> بدل 0.3. الأداة باقية: <code>scripts/calibrate-modo.mjs</code></td></tr>
+          <tr><td>مودو ما يتعلّم</td><td>👍/👎 على كل جواب (<code>ChatbotMessage.wasHelpful</code>) · ذاكرة عبر المحادثات (<code>api/memory</code>) تعرض «آخر مرة كنت تسأل في…»</td></tr>
+          <tr><td>دورة السؤال</td><td>شاشتا الكونسول صارتا <code>publishFaqAnswer</code> واحدة (الردّ من <code>faqs</code> كان لا يُخطر أحداً) · مودو يقرأ أجوبة الشركاء: <b class="text-white"><code>chunks 153 → 193</code></b> · <code>askPartnerFromChat</code> يكتب <code>source:"chatbot"</code></td></tr>
+        </tbody>
+      </table>
+      <p class="text-sm" style="color:var(--muted)"><b class="text-white">أُنجز بعد قرارك (١٨ أغسطس مساءً):</b> أيقونة التوثيق صارت واحدة في الموقع كلّه · الزائر المجهول ياخذ <b class="text-white">٣ أسئلة</b> قبل الجدار (مقيس: الرابع يرجع <code>401 needsSignIn</code>) · صفحة مودو صارت لوحة واحدة بلا تمرير (<code>894px → 601px</code>) · الجوّال بلا تكبير قسري (<code>16px</code>) · العتبة صارت <b class="text-white">مقيسة 0.7</b> بدل مخترَعة · إفصاح الذكاء الاصطناعي تحت كل مُدخل.</p>
+      <p class="text-sm" style="color:var(--muted)">
+        مودو: <b class="text-white">صفر بند مفتوح</b> (٤٠ مقفولاً بدليل حيّ).
+        وقراراك <b>ق٤٣/ق٤٤</b> (مراجع طبّي مسمّى) سقطا عملياً بفكرتك: الجواب يجي من الشريك المرخَّص بتوقيعه، لا من نموذج.
+      </p>
+    </div>
+  </section>
+
   <div role="tablist" aria-label="الأقسام" class="flex flex-wrap gap-2">
     <button type="button" role="tab" id="tab-modo"  aria-controls="panel-modo"  aria-selected="true"  class="tabbtn">🤖 مودو <span class="pill ok">صفر مفتوح</span> <span class="pill info">٢ بقرارك</span></button>
     <button type="button" role="tab" id="tab-reels" aria-controls="panel-reels" aria-selected="false" class="tabbtn">🎬 الريلز <span class="pill info">للبناء</span></button>
@@ -57,6 +125,47 @@
   <div id="panel-modo" role="tabpanel" aria-labelledby="tab-modo" class="tabpanel space-y-8">
 <section id="m1" class="space-y-4 pt-6">
     <h2 class="h2">القسم الثالث — مودو: المشاكل كبنود تُقفل</h2>
+      <div class="card p-4 space-y-2" style="border-color:rgba(245,158,11,.5)">
+        <p class="font-bold" style="color:var(--warn)">🔍 مراجعة تحقّق — ١٨ أغسطس، مساءً (بطلب خالد: «ما أبني على الأخطاء»)</p>
+        <p class="text-sm" style="color:var(--muted)">
+          أُعيد فحص كل بند مقفول من الكود مباشرةً. <b class="text-white">البنود التقنية كلها صحيحة</b> — تحقّقت من
+          <code>MAX_TEXTS_PER_CALL = 96</code> · <code>role: z.enum(["user","assistant"])</code> · <code>.max(20)</code> ·
+          <code>maxDuration = 60</code> في المسارين · <code>checkRateLimit</code> · <code>contentHash</code> ·
+          <code>CHAT_MODEL = "command-r-08-2024"</code> · <code>CONTEXT_TURNS = 6</code> في المسارين ·
+          صفر <code>type:"redirect"</code> وصفر <code>isOutOfScope</code> في مسار المجال · <code>RERANK_MIN_SCORE = 0.3</code>.
+        </p>
+        <p class="text-sm" style="color:var(--bad)">
+          <b>وثلاثة أحكام لي كانت خاطئة</b>، كلها من نفس السبب: بحثت في مجلد واحد ثم حكمت على المنصّة كلها.
+          الغياب لا يُثبَت ببحث ضيّق.
+        </p>
+        <table>
+          <thead><tr><th style="width:30%">قلت</th><th>الصحيح — بالدليل</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>«صفر إرسال إيميل عند الرد»</td>
+              <td>الإيميل <b class="text-white">مبنيّ وشغّال</b>: <code>questions/actions/question-actions.ts:81</code>
+                <code>faqReplyEmail()</code> + <code>sendEmail()</code> + إشعار <code>type:"faq_reply"</code>.
+                العطل الحقيقي أدقّ: <b class="text-white">شاشتان</b> للأسئلة — <code>/dashboard/questions</code> ترسل،
+                و<code>/dashboard/faqs</code> (<code>approveFaq</code>) تحدّث القاعدة فقط بلا إخطار.</td>
+            </tr>
+            <tr>
+              <td>«صفر زرّ تقييم في المنصّة»</td>
+              <td>موجود ومبنيّ في <code>/help/faq</code>: <code>faq-accordion.tsx:62</code> <code>handleFeedback</code>
+                + <code>submitFAQFeedback()</code> + جدول <code>FAQFeedback</code> بفهرس <code>isHelpful</code>.
+                الصحيح: <b class="text-white">مودو</b> بلا تقييم، والنمط جاهز للنقل لا للبناء.</td>
+            </tr>
+            <tr>
+              <td>«<code>modonty-ui</code> فرع ميت»</td>
+              <td>هو <b class="text-white">فرع النشر التجريبي</b> على <code>test.modonty.com</code>.
+                استنتجت الموت من <code>git rev-list</code> = <code>0 17</code> — والرقم لا يقول ما المعلَّق على الفرع.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="text-sm" style="color:var(--muted)">
+          <b class="text-white">وثبت بالفحص الشامل (لا الضيّق):</b> <code>IndustryFAQ</code> و<code>askedCount</code>
+          صفر مستهلك فعلاً عبر <code>modonty · admin · console · shared · scripts</code> — الادّعاء صحيح.
+        </p>
+      </div>
     <p class="text-sm" style="color:var(--muted)">ثلاثة وكلاء فحصوا مودو. كل عطل هنا <b class="text-white">بند مستقلّ</b> برمز، وحالته: <span class="pill ok">مقفول</span> · <span class="pill warn">مفتوح</span> · <span class="pill info">ينتظر قرار</span>. المقفول يُحذف من هنا يوم يتأكّد على الإنتاج.</p>
 
     <h3 class="h3">١ · مسار الإجابة (السيرفر)</h3>

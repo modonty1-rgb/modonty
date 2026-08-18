@@ -1,0 +1,82 @@
+{
+  "usage": "لو الناتج ناقص، الصق قيمة `send` للحالة المطابقة — لا تعيد البرومبت كلّه.",
+  "fixes": [
+    {
+      "problem": "الأزرق طاغٍ على التصميم",
+      "send": {
+        "adjust": "palette",
+        "instruction": "restrict #3030FF to the headline only; render all other text in #0E065A on white"
+      }
+    },
+    {
+      "problem": "الشعار صغير أو مقصوص",
+      "send": {
+        "adjust": "logo",
+        "instruction": "scale the logo up 20% and keep clear space around it equal to its own height; never crop it"
+      }
+    },
+    {
+      "problem": "الصورة تبدو ملصوقة",
+      "send": {
+        "adjust": "photo_treatment",
+        "instruction": "increase the softness of the shadow under the subject and feather the edge so it fades gradually into the background"
+      }
+    },
+    {
+      "problem": "النصّ باهت وصعب القراءة",
+      "send": {
+        "adjust": "typography",
+        "instruction": "render body text in solid #0E065A with no opacity; ensure contrast ratio of at least 4.5:1"
+      }
+    },
+    {
+      "problem": "صار يشبه إعلان تخفيضات",
+      "send": {
+        "adjust": "mood",
+        "instruction": "increase white space by 30%, remove any glow or gloss, and reduce decorative elements to a single thin accent"
+      }
+    },
+    {
+      "problem": "غيّر النصّ أو رتّب العناصر من نفسه",
+      "send": {
+        "adjust": "layout",
+        "instruction": "restore the exact original layout, wording, order and line breaks; change colour and treatment only"
+      }
+    },
+    {
+      "problem": "الخلفية رجعت داكنة",
+      "send": {
+        "adjust": "background",
+        "instruction": "set the background to #F7F8FC with a very soft light-blue gradient in the top-right; no dark fills anywhere"
+      }
+    },
+    {
+      "problem": "حطّ علامة صحّ بدل درع مدونتي",
+      "send": {
+        "adjust": "trust_shield",
+        "instruction": "use the attached modonty-trust-shield.svg exactly as provided — a navy shield with cyan outline and the modonty m inside. Do not substitute a check mark, circle, ribbon or any other symbol."
+      }
+    },
+    {
+      "problem": "الدرع كبير أو بعيد عن الاسم",
+      "send": {
+        "adjust": "trust_shield",
+        "instruction": "size the shield to about 1.2x the adjacent text line height and place it directly beside the name"
+      }
+    },
+    {
+      "problem": "النصّ ما يُقرأ في الفيد",
+      "send": {
+        "adjust": "typography",
+        "instruction": "increase headline size until it remains legible when the image is scaled to 250x250; reduce secondary text instead of shrinking the headline"
+      }
+    },
+    {
+      "problem": "عناصر ملتصقة بالحافة",
+      "send": {
+        "adjust": "safe_margins",
+        "instruction": "keep every element at least 5% of the canvas away from all four edges"
+      }
+    }
+  ]
+}

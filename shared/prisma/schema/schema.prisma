@@ -350,6 +350,10 @@ model ChatbotMessage {
   industryId        String?  @db.ObjectId
   outcome           String // "outOfScope" | "redirect" | "stream" | "error"
   source            String? // "web" | "db" | null
+  /// The visitor's verdict on this answer: true 👍, false 👎, null = not rated.
+  /// It is the only human judgment we have, and the calibration set is built from it — the five
+  /// reranker thresholds cannot be tuned on anything else.
+  wasHelpful        Boolean?
   webSources        Json? // [{title, link}] for web search results
   /// The articles offered on a `redirect` turn — the reply itself is empty, so without this
   /// the history row renders as a question with a blank answer.
@@ -361,6 +365,7 @@ model ChatbotMessage {
   @@index([articleSlug])
   @@index([categorySlug])
   @@index([industrySlug])
+  @@index([wasHelpful])
   @@index([createdAt])
   @@map("chatbot_messages")
 }
@@ -1158,13 +1163,20 @@ model ArticleChunk {
   text       String
   /// embed-multilingual-v3.0 returns 1024 floats.
   embedding  Float[]
-  /// Hash of the article body this chunk was derived from.
+  /// Hash of the source text this chunk was derived from.
   contentHash String
+  /// "article" = a slice of the article body · "faq" = a partner's published answer.
+  /// Both live here because they are embedded and searched identically; only their source differs.
+  /// Optional on purpose: rows written before this column exist without it, and in Mongo an
+  /// absent field cannot be matched by value. Optional lets the query use `isSet` instead of
+  /// forcing a backfill over the whole cache.
+  kind        String? @default("article")
 
   createdAt DateTime @default(now())
 
   @@index([articleId, chunkIndex])
   @@index([articleId, contentHash])
+  @@index([articleId, kind])
   @@map("article_chunks")
 }
 

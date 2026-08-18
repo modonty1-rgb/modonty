@@ -4,7 +4,8 @@ export type WebSource = { title: string; link: string };
 export type RedirectArticle = { id: string; title: string; slug: string; excerpt: string | null };
 
 type SaveParams = {
-  userId: string;
+  /** Null for a visitor on the free trial — that turn is deliberately not logged. */
+  userId: string | null;
   /** Ties this turn to its conversation — without it the log is a flat pile of questions. */
   conversationId: string;
   /** Position in the conversation, so a restored thread replays in order. */
@@ -25,9 +26,15 @@ type SaveParams = {
   redirectArticles?: RedirectArticle[] | null;
 };
 
-export async function saveChatbotMessage(params: SaveParams): Promise<void> {
+/** Returns the saved row id so the answer can be rated, or null when nothing was saved. */
+export async function saveChatbotMessage(params: SaveParams): Promise<string | null> {
+  // The log has a required relation to User, so an anonymous trial turn has nothing to hang on.
+  // Guarding here rather than at six call sites keeps every caller honest by construction.
+  if (!params.userId) return null;
+
   try {
-    await db.chatbotMessage.create({
+    const row = await db.chatbotMessage.create({
+      select: { id: true },
       data: {
         userId: params.userId,
         conversationId: params.conversationId,
@@ -47,9 +54,11 @@ export async function saveChatbotMessage(params: SaveParams): Promise<void> {
         redirectArticles: params.redirectArticles?.length ? params.redirectArticles : undefined,
       },
     });
+    return row.id;
   } catch (err) {
     // Always logged: a silent write failure means the conversation log — and every metric
     // built on it, including the rate limiter — is quietly wrong.
     console.error("[saveChatbotMessage] failed to persist a turn", err);
+    return null;
   }
 }

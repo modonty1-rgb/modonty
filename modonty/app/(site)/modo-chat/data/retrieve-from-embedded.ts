@@ -9,13 +9,25 @@ const RETRIEVE_TOP_K = 10;
 const RERANK_TOP_N = 3;
 const RELEVANCE_THRESHOLD = 0.25;
 /**
- * Floor for a reranked chunk to count as a match at all.
- * PROVISIONAL: the vendor states relevance scores are query-dependent and not comparable
- * across queries, and prescribes calibrating on 30–50 representative questions instead of
- * guessing. That calibration has not been run — treat this number as a placeholder, not a
- * tuned value, and expect it to move once real Arabic questions are measured.
+ * Floor for a reranked chunk to count as a match at all. CALIBRATED, not guessed.
+ *
+ * Measured 2026-08-18 with `scripts/calibrate-modo.mjs` over 35 real Arabic questions against
+ * السياحة العلاجية (30 articles, 153 chunks). Inside that scope the two populations separate
+ * cleanly:
+ *   should answer  → 0.8578 · 0.9017 · 0.9805 · 0.9974 · 0.9982 · 0.9985 · 0.9999 · 1.0 · 1.0
+ *   should not     → 0.5151 · 0.0775 · 0.0185 · 0.011 · 0.0
+ * The gap runs from 0.5151 to 0.8578, so the floor sits in the middle at 0.7 — 14 of 15 correct.
+ *
+ * Why the HIGH side of the gap: at 0.08 the accuracy is identical, but the single error changes
+ * character — it answers «كم مدة التعافي» off a 0.5151 chunk. On medical content a weakly
+ * grounded answer is worse than silence, and silence now falls through to a partner card rather
+ * than a dead end.
+ *
+ * The one remaining miss is «إيش الفرق بين الزراعة الفورية والتقليدية؟» at 0.1965 — the article
+ * covers it, so that is a CHUNKING problem, not a threshold one. Re-run the script after any
+ * change to the corpus or the chunker.
  */
-const RERANK_MIN_SCORE = 0.3;
+const RERANK_MIN_SCORE = 0.7;
 
 function cosineSimilarity(a: number[], b: number[]): number {
   if (a.length !== b.length) return 0;

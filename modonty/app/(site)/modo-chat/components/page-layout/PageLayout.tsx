@@ -9,7 +9,6 @@ import { IconMessage, IconHistory, IconAdd } from "@/lib/icons";
 import { getScopeIcon } from "../../helpers/get-scope-icon";
 import { cn } from "@/lib/utils";
 
-import { LoginCard } from "../login-card/LoginCard";
 
 const ChatList = dynamic(
   () => import("../chat-list/ChatList").then((m) => ({ default: m.ChatList })),
@@ -93,9 +92,14 @@ export function PageLayout() {
   }, [articleSlug]);
 
   return (
-    // A fixed pane, not min-height: the message list must own the scrollbar, or the whole
-    // page scrolls and the composer drifts away from the bottom of the screen.
-    <div dir="rtl" className="flex h-[calc(100dvh-3.5rem)] flex-col overflow-hidden">
+    // A fixed pane, not min-height: the message list must own the scrollbar, or the whole page
+    // scrolls and the composer drifts away from the bottom. The `data-fullscreen-pane` attribute
+    // is what makes globals.css size the layout and hide the site footer — see the rule there.
+    <div
+      dir="rtl"
+      data-fullscreen-pane
+      className="flex h-full flex-col overflow-hidden"
+    >
       <header
         className="shrink-0 border-b border-border bg-background"
         aria-label="رأس المحادثة"
@@ -180,9 +184,11 @@ export function PageLayout() {
           <div className="flex h-full items-center justify-center p-8">
             <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
           </div>
-        ) : session?.user ? (
-          /* Both stay mounted and are toggled with `hidden`. Swapping them with a ternary
-             unmounted the chat, so one tap on «سجل» silently threw away a live conversation. */
+        ) : (
+          /* The chat renders for EVERYONE now. An anonymous visitor gets three questions before
+             the wall — Khalid (2026-08-18): Modo is an acquisition channel, and a sign-in gate
+             in front of it meant every ad click bought a bounce. The server owns the count;
+             this component only shows what is left. */
           <>
             <div className={cn("h-full", tab === "history" && "hidden")}>
               <ChatList
@@ -190,9 +196,10 @@ export function PageLayout() {
                 startFresh={chatSession > 0}
                 initialInput={draft}
                 articleSlug={articleSlug}
-                userName={session.user.name ?? session.user.email ?? undefined}
-                userImage={session.user.image ?? undefined}
-                userEmail={session.user.email ?? undefined}
+                userName={session?.user?.name ?? session?.user?.email ?? undefined}
+                userImage={session?.user?.image ?? undefined}
+                userEmail={session?.user?.email ?? undefined}
+                isSignedIn={Boolean(session?.user)}
                 selectedIndustry={selectedIndustry}
                 onSelectedIndustryChange={setSelectedIndustry}
                 resumeConversationId={resumeConversationId}
@@ -211,8 +218,6 @@ export function PageLayout() {
               </div>
             )}
           </>
-        ) : (
-          <LoginCard />
         )}
       </div>
     </div>

@@ -79,7 +79,9 @@ export function Composer({
           autoFocus={autoFocus && typeof window !== "undefined" && window.matchMedia("(pointer: fine)").matches}
           aria-label="رسالة المحادثة"
           className={cn(
-            "min-h-[40px] flex-1 resize-none bg-transparent px-2 py-2 text-sm leading-relaxed",
+            // 16px on phones, not 14: iOS zooms the whole page in when a focused field is under
+            // 16px, and the visitor is left with a chat wider than the screen. Measured 2026-08-18.
+            "min-h-[44px] flex-1 resize-none bg-transparent px-2 py-2 text-base leading-relaxed sm:min-h-[40px] sm:text-sm",
             "text-foreground placeholder:text-muted-foreground",
             "focus:outline-none disabled:opacity-60"
           )}
