@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>مودو + الريلز + السيو — نتائج الوكلاء (١٨ أغسطس ٢٠٢٦)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0b0d1f;--card:#12152b;--ring:#242846;--fg:#fafafa;--muted:#a3a7c2;--primary:#7070ff;--accent:#00e5e5;--ok:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+  html{background:var(--bg);color:var(--fg);font-family:Tajawal,system-ui,sans-serif;scroll-behavior:smooth}
+  .card{background:var(--card);border:1px solid var(--ring);border-radius:12px}
+  .h2{display:flex;align-items:center;gap:.5rem;font-size:1.35rem;font-weight:700}
+  .h2:before{content:"";width:22px;height:3px;border-radius:9999px;background:var(--accent)}
+  .h3{font-weight:700;font-size:1.05rem}
+  .eyebrow{display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:var(--muted)}
+  .eyebrow:before{content:"";width:16px;height:2px;border-radius:9999px;background:var(--accent)}
+  .pill{font-size:.7rem;padding:.15rem .5rem;border-radius:9999px;border:1px solid var(--ring);white-space:nowrap;display:inline-block}
+  .pill.ok{color:var(--ok);border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.08)}
+  .pill.warn{color:var(--warn);border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08)}
+  .pill.bad{color:var(--bad);border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08)}
+  .pill.info{color:var(--primary);border-color:rgba(112,112,255,.4);background:rgba(112,112,255,.08)}
+  code{background:#1b1f3a;padding:.05rem .35rem;border-radius:4px;font-size:.85em;direction:ltr;unicode-bidi:embed;display:inline-block}
+  table{width:100%;border-collapse:separate;border-spacing:0}
+  th,td{padding:.6rem .7rem;text-align:start;vertical-align:top;border-top:1px solid var(--ring);font-size:.87rem}
+  th{color:var(--muted);font-weight:500;background:#0f1226;border-top:0}
+  blockquote{border-inline-start:3px solid var(--primary);padding:.5rem .9rem;color:var(--muted);font-size:.82rem;direction:ltr;text-align:left;font-family:ui-monospace,monospace;white-space:pre-wrap;margin:.5rem 0}
+  a{color:var(--primary)}
+  .src{font-size:.72rem;color:var(--muted)}
+  .rec{color:var(--accent);font-weight:700}
+  .v{color:var(--ok);font-weight:700}
+  .u{color:var(--warn);font-weight:700}
+  .tabbtn{display:flex;align-items:center;gap:.5rem;padding:.7rem 1.3rem;border-radius:10px;font-weight:700;font-size:.95rem;border:1px solid var(--ring);background:var(--card);color:var(--muted);cursor:pointer}
+  .tabbtn[aria-selected=true]{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .tabbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .tabpanel[hidden]{display:none}
+</style>
+</head>
+<body class="min-h-screen">
+<main class="mx-auto max-w-[1128px] px-4 py-8 space-y-6">
+
+  <header class="space-y-3">
+    <p class="eyebrow">أرشيف مودو · مُقفَل ١٩ أغسطس ٢٠٢٦ · نُقل من لوحة «نتائج الوكلاء»</p>
+    <h1 class="text-3xl font-bold leading-tight">🤖 مودو — سجلّ الأعطال والإصلاحات</h1>
+    <p class="max-w-3xl text-[15px] leading-relaxed" style="color:var(--muted)">
+      <b class="text-white">صفر بند مفتوح.</b> ٤٦ بنداً: ٤٠ مقفولاً بدليل حيّ · ٣ يُبنى عليها · ٢ تنتظران قرار خالد.
+      نُقل هذا القسم إلى مجلد مودو نفسه يوم أُقفل، حتى تبقى لوحة «نتائج الوكلاء» للمفتوح وحده
+      (الريلز والسيو). التفاصيل والقرارات في <code>modo-decisions.html</code> و<code>ask-partner-loop.html</code>
+      بجانب هذا الملف.
+    </p>
+  </header>
+
+  <!-- ══ صندوق خالد — أوّل شيء على الصفحة ══ -->
+  <section class="card p-6 space-y-4" style="border-color:rgba(0,229,229,.6)">
+    <div class="flex items-center justify-between flex-wrap gap-2">
+      <p class="font-bold text-xl">🙋 المطلوب منك</p>
+      <span class="pill warn">محدَّث ١٩ أغسطس</span>
+    </div>
+
+    <table>
+      <thead><tr><th style="width:2.5rem">#</th><th>المطلوب</th><th style="width:44%">الحالة والدليل</th></tr></thead>
+      <tbody>
+        <tr><td colspan="3" style="background:#0f1226;color:var(--bad);font-weight:700">🔴 بيدك — ما أقدر أنفّذه</td></tr>
+        <tr>
+          <td><b>١</b></td>
+          <td><b><code>prisma db push</code> على الإنتاج</b></td>
+          <td>نُفِّذ على التطوير: <code>chatbot_messages_industrySlug_idx</code> ·
+            <code>chatbot_messages_wasHelpful_idx</code> · <code>article_chunks_articleId_kind_idx</code>.
+            الإنتاج ينتظر ضغطتك — الأمر في <code>modo-chat/TASK.md</code>.</td>
+        </tr>
+        <tr>
+          <td><b>٢</b></td>
+          <td><b>إذن الدفع</b> — ٢٠ كوميت على <code>modonty-ui</code></td>
+          <td>الدفع = نشر على <code>test.modonty.com</code>. قاعدتك: إذن صريح لكل مرة.</td>
+        </tr>
+
+        <tr><td colspan="3" style="background:#0f1226;color:var(--primary);font-weight:700">🔵 قرارات مفتوحة (لا تعطّل شيئاً)</td></tr>
+        <tr>
+          <td><b>٣</b></td>
+          <td><b>أربعة قرارات في دورة السؤال</b> (أ · ب · ج · د)</td>
+          <td>متى يحوّل مودو للشريك · الجواب يُنشر أو خاص · لو الشريك ما ردّ · سؤال بلا مقال.
+            الدورة تشتغل اليوم بالافتراضات؛ ردّك يضبطها.
+            <code>modo-chat/documentation/ask-partner-loop.html</code></td>
+        </tr>
+        <tr>
+          <td><b>٤</b></td>
+          <td><b>١٤ قراراً</b> عن مودو ونموّه</td>
+          <td><code>modo-chat/documentation/modo-decisions.html</code> — المفتوح فوق والمحسوم تحته.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card p-4 space-y-2" style="border-color:rgba(34,197,94,.35)">
+      <p class="font-bold" style="color:var(--ok)">✅ مودو — صفر بند مفتوح</p>
+      <p class="text-sm" style="color:var(--muted)">
+        ٤٠ بنداً مقفولاً + <b class="text-white">الفجوات الستّ</b> (١٨–١٩ أغسطس). الرحلة كاملة:
+        زائر بلا حساب يسأل ٣ أسئلة → جواب من محتوانا أو من جواب شريك منشور → بطاقة شريك بزرّ حجز →
+        يقيّم الجواب → يرجع فيتذكّره مودو.
+      </p>
+      <table>
+        <thead><tr><th style="width:26%">الفجوة</th><th>الدليل</th></tr></thead>
+        <tbody>
+          <tr><td>الزائر ما يجرّب</td><td><code>طلب 4 → 401 needsSignIn</code> · كوكي موقَّع HMAC · الجسم الخاطئ لا يأكل حصّة</td></tr>
+          <tr><td>الواجهة</td><td><code>docHeight 894 → 601</code> · <code>documentScrolls: false</code></td></tr>
+          <tr><td>الجوّال</td><td><code>fontSize 14 → 16px</code> (آيفون كان يكبّر قسراً) · صفر تمرير أفقي</td></tr>
+          <tr><td>عتبة مخترَعة</td><td><b class="text-white">0.3 → 0.7</b> على ٣٥ سؤالاً · الفجوة بين <code>0.5151</code> و<code>0.8578</code></td></tr>
+          <tr><td>ما يتعلّم</td><td>👍/👎 في <code>wasHelpful</code> · ذاكرة عبر المحادثات</td></tr>
+          <tr><td>دورة السؤال</td><td>شاشتا الكونسول صارتا واحدة · <b class="text-white"><code>chunks 153 → 193</code></b> (أجوبة الشركاء دخلت الاسترجاع)</td></tr>
+        </tbody>
+      </table>
+      <p class="text-sm" style="color:var(--muted)">
+        <b class="text-white">باقٍ صغير غير معطِّل:</b> عتبة بوّابة المقال <code>0.52</code> لم تُعايَر بعد ·
+        ٤ أخطاء <code>JWTSessionError</code> سابقة لشغل مودو ولم تُشخَّص · <code>ChatList.tsx</code> ٦٣٧ سطراً يستحقّ تقسيماً.
+      </p>
+    </div>
+  </section>
+
+  <div role="tablist" aria-label="الأقسام" class="flex flex-wrap gap-2">
+
+<section id="m1" class="space-y-4 pt-6">
+    <h2 class="h2">القسم الثالث — مودو: المشاكل كبنود تُقفل</h2>
+      <div class="card p-4 space-y-2" style="border-color:rgba(245,158,11,.5)">
+        <p class="font-bold" style="color:var(--warn)">🔍 مراجعة تحقّق — ١٨ أغسطس، مساءً (بطلب خالد: «ما أبني على الأخطاء»)</p>
+        <p class="text-sm" style="color:var(--muted)">
+          أُعيد فحص كل بند مقفول من الكود مباشرةً. <b class="text-white">البنود التقنية كلها صحيحة</b> — تحقّقت من
+          <code>MAX_TEXTS_PER_CALL = 96</code> · <code>role: z.enum(["user","assistant"])</code> · <code>.max(20)</code> ·
+          <code>maxDuration = 60</code> في المسارين · <code>checkRateLimit</code> · <code>contentHash</code> ·
+          <code>CHAT_MODEL = "command-r-08-2024"</code> · <code>CONTEXT_TURNS = 6</code> في المسارين ·
+          صفر <code>type:"redirect"</code> وصفر <code>isOutOfScope</code> في مسار المجال · <code>RERANK_MIN_SCORE = 0.3</code>.
+        </p>
+        <p class="text-sm" style="color:var(--bad)">
+          <b>وثلاثة أحكام لي كانت خاطئة</b>، كلها من نفس السبب: بحثت في مجلد واحد ثم حكمت على المنصّة كلها.
+          الغياب لا يُثبَت ببحث ضيّق.
+        </p>
+        <table>
+          <thead><tr><th style="width:30%">قلت</th><th>الصحيح — بالدليل</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>«صفر إرسال إيميل عند الرد»</td>
+              <td>الإيميل <b class="text-white">مبنيّ وشغّال</b>: <code>questions/actions/question-actions.ts:81</code>
+                <code>faqReplyEmail()</code> + <code>sendEmail()</code> + إشعار <code>type:"faq_reply"</code>.
+                العطل الحقيقي أدقّ: <b class="text-white">شاشتان</b> للأسئلة — <code>/dashboard/questions</code> ترسل،
+                و<code>/dashboard/faqs</code> (<code>approveFaq</code>) تحدّث القاعدة فقط بلا إخطار.</td>
+            </tr>
+            <tr>
+              <td>«صفر زرّ تقييم في المنصّة»</td>
+              <td>موجود ومبنيّ في <code>/help/faq</code>: <code>faq-accordion.tsx:62</code> <code>handleFeedback</code>
+                + <code>submitFAQFeedback()</code> + جدول <code>FAQFeedback</code> بفهرس <code>isHelpful</code>.
+                الصحيح: <b class="text-white">مودو</b> بلا تقييم، والنمط جاهز للنقل لا للبناء.</td>
+            </tr>
+            <tr>
+              <td>«<code>modonty-ui</code> فرع ميت»</td>
+              <td>هو <b class="text-white">فرع النشر التجريبي</b> على <code>test.modonty.com</code>.
+                استنتجت الموت من <code>git rev-list</code> = <code>0 17</code> — والرقم لا يقول ما المعلَّق على الفرع.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="text-sm" style="color:var(--muted)">
+          <b class="text-white">وثبت بالفحص الشامل (لا الضيّق):</b> <code>IndustryFAQ</code> و<code>askedCount</code>
+          صفر مستهلك فعلاً عبر <code>modonty · admin · console · shared · scripts</code> — الادّعاء صحيح.
+        </p>
+      </div>
+    <p class="text-sm" style="color:var(--muted)">ثلاثة وكلاء فحصوا مودو. كل عطل هنا <b class="text-white">بند مستقلّ</b> برمز، وحالته: <span class="pill ok">مقفول</span> · <span class="pill warn">مفتوح</span> · <span class="pill info">ينتظر قرار</span>. المقفول يُحذف من هنا يوم يتأكّد على الإنتاج.</p>
+
+    <h3 class="h3">١ · مسار الإجابة (السيرفر)</h3>
+    <div class="card p-5">
+      <table>
+        <thead><tr><th style="width:4.5rem">البند</th><th>المشكلة</th><th>الدليل</th><th style="width:6rem">الحالة</th></tr></thead>
+        <tbody>
+          <tr><td><code>MD-01</code></td><td><b>سقف المورّد ٩٦ نصّاً، ونرسل مقاطع ٣٠ مقالاً دفعة واحدة</b> — التصنيف الممتلئ يرجّع خطأ ٥٠٠، فكلّما نجح محتواك سقط مودو</td><td>توثيق الحزمة: <code>Maximum number of texts per call is 96</code> · <code>chat/route.ts:99</code> <code>take: 30</code></td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-02</code></td><td><b>الزائر يقدر يرسل تعليمات <code>system</code></b> فيلغي كل قيودك ويشغّل مودو على حسابك</td><td><code>chat/route.ts:22</code> كان <code>z.enum([...,"system"])</code></td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-03</code></td><td>مصفوفة الرسائل بلا سقف — جسم بآلاف الرسائل يمرّ ويُرسَل كاملاً للمورّد</td><td>السكيما كانت بلا <code>.max()</code></td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-04</code></td><td>بلا <code>maxDuration</code> — البثّ ينقطع بمنتصفه على الاستضافة</td><td>المساران</td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-05</code></td><td><b>صفر حدّ معدّل</b> — حساب واحد يحرق الرصيد بحلقة</td><td>بحث في <code>modonty/</code>: ولا ملف خارج <code>node_modules</code></td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-06</code></td><td><b>٧ نداءات مدفوعة للسؤال الواحد</b>، ومقاطع كل المقالات تُحسب من جديد في كل مرة — بلا أي كاش</td><td><code>retrieve-from-chunks.ts:38</code></td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — جدول <code>article_chunks</code> يخزّن التضمين مرّة، ويُبطَل ببصمة المحتوى؛ السؤال وحده يُضمَّن لكل طلب</span></td></tr>
+          <tr><td><code>MD-07</code></td><td><b>المطابقة القوية ترجّع روابط بدل جواب</b> — كلّما تحسّن محتواك قلّ احتمال أن يجاوب منه</td><td><code>chat/route.ts:168</code> يرجع <code>type:"redirect"</code> ويخرج</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — مقيس حيّاً: <code>outcome=stream</code> بدل <code>redirect</code>، والزائر استلم ٣٥٠٠ حرف جواباً من محتوانا مع مقالاته كمصادر</span></td></tr>
+          <tr><td><code>MD-08</code></td><td>ترتيب النتائج بلا حدّ أدنى — يرشّح مقالات غير ذات صلة</td><td><code>rerank-documents.ts</code> بلا عتبة</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — حدّ أدنى لدرجة إعادة الترتيب قبل اعتماد المقطع. <b>الرقم مؤقّت</b>: المورّد يشترط معايرة على ٣٠–٥٠ سؤالاً، ولم تُنفَّذ بعد</span></td></tr>
+          <tr><td><code>MD-09</code></td><td><b>ثلاث عتبات مخترَعة على نفس المقياس</b> (<code>0.52</code> · <code>0.35</code> · <code>0.25</code>) بلا معايرة — والمورّد يقول إن الدرجة تعتمد على السؤال ولا تُقارَن بين الأسئلة</td><td>إرشاد المورّد: عايِر على ٣٠–٥٠ سؤالاً</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — حُذفت بوّابة النطاق المسبقة (كانت ترفض عند <code>0.4565</code> سؤال متابعة مشروعاً)؛ القرار صار مشتقّاً من الاسترجاع بلا نداءين مدفوعين</span></td></tr>
+          <tr><td><code>MD-10</code></td><td>سؤال «من أنت؟» يُردّ عليه بـ«لا تتوفر لديّ معلومات» — التوجيه يمنعه من الإجابة بلا مستندات</td><td>مسار سؤال الهويّة يصل لتوجيه المستندات</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — توجيه ثالث للهويّة. مقيس حيّاً: «من أنت؟» ردّ بتعريف حقيقي بدل «لا تتوفر لديّ معلومات»</span></td></tr>
+          <tr><td><code>MD-11</code></td><td>فشل البحث في الويب <b>يُبتلع</b> ويتحوّل لجواب وهمي، والسجلّ يقول «نجح من القاعدة»</td><td>الالتقاط يضبط <code>docs = []</code> ويكمّل</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — فشل البحث صار يُسجَّل <code>outcome:"error"</code> ويردّ برسالة صريحة، بدل جواب وهمي مسجَّل كنجاح</span></td></tr>
+          <tr><td><code>MD-12</code></td><td><b>المسار الطبّي مكرَّر ٧٠٪</b> — ٤٠٠ و٣٩٧ سطراً بنفس التسلسل، فكل إصلاح يُكتب مرّتين</td><td>مقيس: كتلة البثّ متطابقة حرفياً</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — ثلاث قطع مشتركة (<code>guard-chat-request</code> · <code>resolve-web-fallback</code> · <code>stream-answer-response</code>). مسار المقال ربح حماية إلغاء البثّ وفشل بحث صادق وحذف حفظ مكرّر</span></td></tr>
+          <tr><td><code>MD-13</code></td><td>الموديل المستعمَل هو الأغلى، ومصنَّف «قديم» عند المورّد</td><td><code>$2.50</code>/مليون إدخال و<code>$10.00</code> إخراج · والمورّد يوصي بالأرخص للاسترجاع البسيط</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — <code>command-r-08-2024</code> بدل <code>command-r-plus</code>؛ المورّد يسمّي شغلنا «استرجاع أبسط» ويرشّح الأرخص</span></td></tr>
+          <tr><td><code>MD-14</code></td><td>كل تاريخ المحادثة يُعاد إرساله كل دور بلا سقف — التكلفة تتضاعف مع طول الجلسة</td><td>العميل يبني السجلّ كاملاً</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — نافذة ستّة أدوار بدل السجلّ الكامل؛ تكلفة الجلسة الطويلة ما عادت تتضاعف</span></td></tr>
+          <tr><td><code>MD-50</code></td><td><b>الردّ بطيء</b> — أول كلمة بعد ١٠٫٢ ثانية والجواب كامل بعد ١٠٤ ثانية</td><td>كنّا نجلب نصّ ٣٠ مقالاً كاملاً في كل سؤال رغم أن التضمين مخزَّن</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — الأجسام تُقرأ فقط للمقالات الباردة. مقيس: أول كلمة <b>٥٫٦ث</b> · الجواب كامل <b>١٧٫٧ث</b></span></td></tr>
+          <tr><td><code>MD-51</code></td><td><b>الترشيح بلا تحويل</b> — مودو يذكر اسم الطبيب نصّاً بلا رابط ولا حجز</td><td>قِسته بنفسي: رشّح «د. عمرو مصطفى» وما فيه شي يُضغط</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — كرت شريك تحت الجواب بزرَّي «احجز» و«شوف صفحته» وسبب الترشيح. الرابطان يردّان <b>200</b></span></td></tr>
+          <tr><td><code>MD-52</code></td><td><b>النطاق كان تصنيفاً لا مجالاً</b> — سؤال عن دكتور أسنان يُجاب من تصنيف فيه شريك واحد، بينما ٢١ عيادة قاعدة في مجال ما يشوفه مودو</td><td>مقيس: <code>GET api/industries</code> → السياحة العلاجية <b>٢١ شريكاً</b> وما لها تصنيف</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — الشاشة كلها صارت على المجال: بطاقات المجالات بعدد شركائها · <code>api/suggest-industry</code> بدل التصنيف · <code>industrySlug</code> في كل طلب. مقيس حيّاً: «أبغى أزرع أسنان» → جواب بأسعار حقيقية + عيادتان بزرّ «احجز»</span></td></tr>
+          <tr><td><code>MD-53</code></td><td><b>سجلّ المحادثات ما يعرف المجال</b> — كل دور يُحفظ <code>scopeType:"category"</code> بمعرّف فارغ، فالجدول اللي يفترض يقول أي مجال حوّل من الحملة ما يقول شيئاً</td><td>مقيس: خمسة مواضع حفظ تكتب نفس القيمة الثابتة</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — عمودا <code>industrySlug</code>/<code>industryId</code> + فهرس. مقيس حيّاً في تبويب «سجل»: <b>مجال: السياحة العلاجية</b> برابط شغّال</span></td></tr>
+          <tr><td><code>MD-54</code></td><td><b>ترشيح شركاء بلا صلة</b> — سؤال عن تجميل أنف رجّع ثلاث عيادات علاج ألم تحت سطر «شركاء يقدرون يخدمونك»</td><td>مقيس حيّاً: الترتيب كان أبجدياً (<code>slice(0,3)</code>) بلا أي صلة بالسؤال</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — <code>rank-partners.ts</code> يرتّب بوصف الشريك نفسه وله حدّ أدنى. مقيس: نفس السؤال ما عاد يرشّح أحداً، ونزل لبحث الويب بثمانية مصادر</span></td></tr>
+          <tr><td><code>MD-55</code></td><td><b>«قراءة أعمق» ترشّح الأكثر قراءة لا الأقرب</b> — مقال انزلاق غضروفي تحت جواب عن تجميل الأنف</td><td>مقيس: <code>orderBy: views</code> داخل النطاق، بلا أي علاقة بالسؤال</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — صار أقرب مقال بإعادة الترتيب، ولا شيء إن نزل عن الحدّ. مقيس: <code>suggestedArticle: undefined</code> بدل مقال غلط</span></td></tr>
+          <tr><td><code>MD-56</code></td><td><b>انهيار السيرفر لمّا يمشي الزائر</b> — إلغاء البثّ يرمي <code>ERR_INVALID_STATE</code>، والالتقاط يكتب مرّة ثانية على نفس المتحكّم المقفول</td><td>مقيس حيّاً في سجلّ الخادم: <code>Invalid state: Controller is already closed</code></td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — الإلغاء صار نهاية طبيعية: نوقف قراءة الموديل (فيتوقّف الحساب) ونحفظ ما صدر</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="m2" class="space-y-4">
+    <h3 class="h3">٢ · الواجهة والحالات (العميل)</h3>
+    <div class="card p-5">
+      <table>
+        <thead><tr><th style="width:4.5rem">البند</th><th>المشكلة</th><th>الدليل</th><th style="width:6rem">الحالة</th></tr></thead>
+        <tbody>
+          <tr><td><code>MD-57</code></td><td><b>الزائر العائد محبوس في محادثته القديمة</b> — الصفحة تستعيد آخر خيط تلقائياً، وما فيه أي طريقة يبدأ من جديد، فبطاقات المجالات ما تظهر له أبداً</td><td>مقيس بنفسي: تبويب «جديد» يبدّل التبويب فقط ولا يمسح شيئاً</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — زرّ «محادثة جديدة» في الرأس؛ الخيط القديم يبقى في «سجل»</span></td></tr>
+          <tr><td><code>MD-58</code></td><td><b>«الشريك أولى» وعد بلا شيء تحته</b> — الردّ يقول «عندي شركاء يقدرون يخدمونك» ثم لا تظهر ولا بطاقة</td><td>مقيس حيّاً: مسار غير-البثّ يهمل <code>partners</code> في الردّ</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — البطاقات تركب مع الرسالة. مقيس: ثلاثة شركاء بأزرار «احجز» شغّالة</span></td></tr>
+          <tr><td><code>MD-20</code></td><td><b>طلب معلّق بلا مهلة</b> — النقاط تلفّ للأبد والحلّ الوحيد إعادة تحميل تمسح المحادثة</td><td>صفر <code>AbortController</code> بالمجلد كلّه</td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-21</code></td><td>بثّ ينقطع قبل أول كلمة يترك <b>فقاعة فاضية للأبد</b></td><td>البديل يُدفع قبل القراءة ولا يُحذف</td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-22</code></td><td><b>«إعادة المحاولة» ما تعيد</b> — تخفي البانر، والسؤال أصلاً انمسح من الحقل</td><td>كانت <code>onClick={() =&gt; setError(null)}</code></td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-23</code></td><td><b>قائمة اقتراحات فاضية تُقفل الشاشة</b> — لا حقل ولا زرّ ولا رجوع</td><td>مصفوفة فاضية قيمتها صادقة، فالملحن كان يختفي</td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-24</code></td><td><b>ضغطة «سجل» تمسح المحادثة الجارية</b> — فقدان شغل بضغطة واحدة على الجوّال</td><td><code>PageLayout.tsx</code> كان يبدّل بشرط فيفكّ المكوّن</td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-25</code></td><td><b>إعادة التحميل تمسح كل شي</b> — الحالة تعيش في ذاكرة المتصفّح وحدها</td><td>صفر تخزين محلي أو مزامنة</td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-26</code></td><td>التحية تطبع الإيميل كاملاً: «أهلاً modotest@modonty.com»</td><td>الاسم يرجع للإيميل عند غيابه</td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-27</code></td><td>التمرير التلقائي <b>يشدّ القارئ لتحت</b> مع كل كلمة تُبَثّ لو كان طالع يقرأ</td><td>حركة ناعمة على كل تغيّر رسالة</td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-28</code></td><td>أهداف لمس ٤٠ بكسل (الحدّ ٤٤)</td><td>زرّ الإرسال وزرّ تغيير الموضوع</td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-29</code></td><td>بانر الخطأ لا يُنطق لقارئ الشاشة</td><td>كان بلا <code>role="alert"</code></td><td><span class="pill ok">مقفول</span></td></tr>
+          <tr><td><code>MD-30</code></td><td><b>السؤال يُرسَل مرّتين</b> في مسار تأكيد الموضوع — النموذج يستلم دورين متطابقين</td><td>بانِي السجلّ يضيف دور المستخدم وهو مضاف أصلاً</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — السجلّ يُبنى بإسقاط دور مستخدم مكرَّر في الذيل، فالنداءان يتصرّفان صح</span></td></tr>
+          <tr><td><code>MD-31</code></td><td>بطاقة اقتراح الموضوع <b>تبقى حيّة بعد استعمالها</b>، وزرّها الثاني يمسح المحادثة</td><td>لا تُستبدل بعد التأكيد</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — البطاقة تُستبدل بسطر محسوم بعد استعمالها، وزرّها الثاني ما عاد يمسح المحادثة</span></td></tr>
+          <tr><td><code>MD-32</code></td><td>انتهاء الجلسة يظهر كـ«لم أتمكّن من تحديد الموضوع» — والرسالة تشير لقائمة <b>غير ظاهرة على الشاشة</b></td><td>لا فحص لحالة الردّ قبل قراءته</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — فحص <code>res.ok</code> قبل القراءة؛ انتهاء الجلسة يقول «انتهت جلستك، سجّل دخولك» بدل «لم أتمكّن من تحديد الموضوع»</span></td></tr>
+          <tr><td><code>MD-33</code></td><td><b>السجلّ للقراءة فقط</b> — لا يمكن استئناف محادثة قديمة منه</td><td>لا مسار من صفّ السجلّ إلى الرسائل</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — زرّ «أكمل هذه المحادثة» في السجلّ. مقيس حيّاً: التبويب انتقل لـ«جديد» والمحادثة أُعيد بناؤها (٦٥٥ حرفاً)</span></td></tr>
+          <tr><td><code>MD-34</code></td><td>الدخول لا يعيد الزائر لمكانه — سؤاله يضيع</td><td><code>signIn()</code> بلا رابط عودة</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — <code>signIn</code> صار يحمل <code>callbackUrl</code> بالمسار والمعاملات، فالزائر يرجع لمكانه</span></td></tr>
+          <tr><td><code>MD-35</code></td><td>الحالة الفاضية على الجوّال <b>تقصّ أعلاها ولا يمكن التمرير إليه</b></td><td>توسيط رأسي مع تمرير — عطل معروف</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — <code>justify-start</code> مع <code>my-auto</code> بدل التوسيط؛ الحافة العليا صارت قابلة للوصول على ٣٩٠ بكسل</span></td></tr>
+          <tr><td><code>MD-36</code></td><td>لوحة المفاتيح تفتح تلقائياً على الجوّال فتدفن بطاقات المواضيع — وهي طريق التحويل</td><td>تركيز تلقائي على الحقل</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — التركيز التلقائي على أجهزة المؤشّر الدقيق فقط، فلوحة المفاتيح ما تدفن بطاقات المواضيع</span></td></tr>
+          <tr><td><code>MD-37</code></td><td>لا <code>error.tsx</code> للمسار — أي خطأ رسم يبتلع المحادثة كلها</td><td>المجلد فيه <code>loading.tsx</code> فقط</td><td><span class="pill ok">مقفول</span><br><span class="src">أُقفل ١٨ أغسطس — أُضيف <code>error.tsx</code> للمسار: الخلل يبقى داخل مودو مع زرّي «جرّب» و«محادثة جديدة»</span></td></tr>
+        </tbody>
+      </table>
+      <p class="text-sm mt-3" style="color:var(--muted)"><b class="text-white">لغز حُسم:</b> ظهور محادثة بلا ضغطة منّي — الوكيل تتبّع كل المسارات وأثبت أنه <b>لا يوجد مسار يرسل رسالة بلا ضغطة أو مفتاح</b>. الأرجح استعادة حالة من سيرفر التطوير. <b>غير مؤكَّد، وغير قابل للتكرار على الإنتاج.</b></p>
+    </div>
+  </section>
+
+  <section id="m3" class="space-y-4">
+    <h3 class="h3">٣ · موقف جوجل من نشر أجوبة الذكاء — يغيّر قرار ٥</h3>
+    <div class="card p-5 space-y-3" style="border-color:rgba(239,68,68,.45)">
+      <p class="text-sm" style="color:var(--muted)">هذا أخطر ما رجع اليوم: خطّتنا لنشر أسئلة الزوّار بأجوبة مودو <b class="text-white">مسمّاة بالاسم في دليل مقيّمي الجودة كأسلوب سبام</b>.</p>
+      <blockquote>دليل مقيّمي الجودة (١١ سبتمبر ٢٠٢٥) §4.7 — إساءة المحتوى المتوسَّع:
+"the format of the articles (question and answer) is a common technique to
+ create scaled content by collecting questions … and answering the questions
+ with unoriginal, paraphrased content (often using generative AI tools)"
+
+§5.1 — الحاكمة:
+"No other considerations such as positive reputation or the type of website
+ can overcome a lack of E-E-A-T for the topic or purpose of the page."
+
+صفحة مزايا الذكاء (تحقّقتُ منها بنفسي):
+"There are no additional requirements to appear in AI Overviews or AI Mode,
+ nor other special optimizations necessary."
+"There's also no special schema.org structured data that you need to add."</blockquote>
+      <table>
+        <thead><tr><th style="width:4.5rem">البند</th><th>الأثر على خطّتنا</th><th>الحالة</th></tr></thead>
+        <tbody>
+          <tr><td><code>MD-40</code></td><td><b>الإفصاح «أنا ذكاء صناعي» لا يحمي.</b> كلمة <code>disclaimer</code> وردت <b>مرّة واحدة</b> في الدليل كلّه — في مثال أفصح إفصاحاً كاملاً <b>وأخذ أدنى تقييم برغمه</b></td><td><span class="pill info">يُبنى عليه</span></td></tr>
+          <tr><td><code>MD-41</code></td><td><b>«GEO» كتخصّص منفصل تنفيه جوجل بنصّها.</b> وOpenAI وPerplexity ينشران التحكّم بالزحف فقط — صفر توجيه عن «كيف تُقتبَس»</td><td><span class="pill info">يُبنى عليه</span></td></tr>
+          <tr><td><code>MD-42</code></td><td><b>سكيما <code>reviewedBy</code> و<code>MedicalWebPage</code> بلا أي ميزة موثَّقة عند جوجل</b> — schema.org تعرّفها، وجوجل لا توثّق لها شيئاً. أي ادّعاء بأنها «ترفع الثقة الطبّية» بلا مصدر</td><td><span class="pill info">يُبنى عليه</span></td></tr>
+          <tr><td><code>MD-43</code></td><td><b>المطلوب فعلاً: طبيب باسمه يراجع كل جواب طبّي منشور، ورابط لمؤهّلاته.</b> نصّ جوجل: «written <b>or reviewed</b> by an expert»</td><td><span class="pill warn">ينتظر قرارك</span></td></tr>
+          <tr><td><code>MD-44</code></td><td><b>تعديل قرار ٥:</b> لا نشر بالجملة إطلاقاً — فقط ما راجعه خبير مسمّى</td><td><span class="pill warn">ينتظر قرارك</span></td></tr>
+        </tbody>
+      </table>
+      <p class="src">المصادر: <a href="https://developers.google.com/search/blog/2023/02/google-search-and-ai-content">توجيه جوجل للمحتوى المولَّد</a> · <a href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content">المحتوى المفيد</a> · <a href="https://developers.google.com/search/docs/appearance/ai-features">مزايا الذكاء</a> · دليل مقيّمي الجودة (PDF).</p>
+      <p class="text-sm" style="color:var(--warn)"><b>أمانة:</b> اقتباسات دليل المقيّمين فكّها الوكيل من ملفّ مضغوط الترميز — لم أفتحه بنفسي. صفحة مزايا الذكاء تحقّقت منها مباشرةً.</p>
+    </div>
+  </section>
+
+  <section id="m4" class="space-y-4">
+    <h3 class="h3">٤ · ما أُصلح فعلاً اليوم — بناتج خام</h3>
+    <div class="card p-5 space-y-3">
+      <blockquote>npx tsc --noEmit          →  TSC:0
+/modo-chat                →  HTTP:200
+robots.txt                →  "Disallow: /modo-chat" في ٤ مجموعات زواحف
+prisma:push (modonty_dev) →  [+] Collection industry_faqs
+                             [+] Index chatbot_messages_userId_conversationId_createdAt_idx
+                             [+] 3 فهارس industry_faqs      ·  إضافات فقط، صفر حذف</blockquote>
+      <table>
+        <thead><tr><th>ما بُني</th><th>البنود التي أقفلها</th></tr></thead>
+        <tbody>
+          <tr><td>تقسيم نداء التضمين إلى دفعات ٩٦</td><td><code>MD-01</code></td></tr>
+          <tr><td>حذف دور <code>system</code> + سقف ٢٠ رسالة + <code>maxDuration</code></td><td><code>MD-02</code> · <code>MD-03</code> · <code>MD-04</code></td></tr>
+          <tr><td>سقف إنفاق على السيرفر: ٢٠/ساعة · ١٠٠/يوم، قبل أي نداء مدفوع، يعدّ من سجلّ المحادثات نفسه</td><td><code>MD-05</code></td></tr>
+          <tr><td>مهلة ٤٥ ثانية + زرّ «إيقاف» + حذف الفقاعة الفاضية + «إعادة المحاولة» تعيد فعلاً</td><td><code>MD-20</code> · <code>MD-21</code> · <code>MD-22</code></td></tr>
+          <tr><td>التبويبان يبقيان مركَّبَين · السجلّ يُحمَّل عند أول فتح فقط</td><td><code>MD-24</code></td></tr>
+          <tr><td>خيط المحادثة في القاعدة + نقطة استرجاع تعيد بناء المحادثة بعد إعادة التحميل (نافذة ١٤ يوماً، مقيَّدة بالمستخدم)</td><td><code>MD-25</code></td></tr>
+          <tr><td>حجب <code>/modo-chat</code> عن الزواحف — كان <code>api/topics</code> يردّ ٢٠٠ بلا دخول</td><td>ثغرة زحف</td></tr>
+          <tr><td>واجهة بطابع ChatGPT: الحقل في الوسط · بلا فقاعة لمودو · إنتر يرسل وشِفت+إنتر سطر جديد</td><td>—</td></tr>
+          <tr><td>إصلاحات جوّال وإتاحة</td><td><code>MD-26</code> · <code>MD-27</code> · <code>MD-28</code> · <code>MD-29</code></td></tr>
+        </tbody>
+      </table>
+      <p class="text-sm"><b class="text-white">الحصيلة (١٨ أغسطس، مساءً — معدودة من الجدول نفسه: ٤٠ مقفولاً · ١ مفتوح · ٣ يُبنى عليها · ٢ بقرارك):</b> المفتوح الوحيد في مودو هو <code>MD-12</code> — توحيد المسارين في محرّك واحد. كل ما عداه أُقفل بدليل حيّ، وآخر سبعة بنود (<code>MD-52</code>…<code>MD-58</code>) كشفها اختبار الصفحة كزائر حقيقي بعد نقل النطاق للمجال. <b>باقٍ بلا معايرة:</b> عتبات إعادة الترتيب الثلاث — المورّد يشترط ٣٠–٥٠ سؤالاً حقيقياً ولم تُنفَّذ.</p>
+    </div>
+  </section>
+
+
+  </div>
+</main>
+</body>
+</html>
