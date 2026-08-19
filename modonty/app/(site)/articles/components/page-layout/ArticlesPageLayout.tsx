@@ -1,4 +1,5 @@
 import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
+import { AiDisclaimer } from "@/components/shared/ai-disclaimer/AiDisclaimer";
 
 import { AskModo } from "../ask-modo/AskModo";
 import { ResultsLine } from "../results-line/ResultsLine";
@@ -9,12 +10,12 @@ import { ArticlesFeed } from "../articles-feed/ArticlesFeed";
 import type { ArchiveState } from "../../helpers/build-archive-href";
 import type { ReadingTimeBucket } from "../../helpers/reading-time-buckets";
 import type { ArchiveFilters } from "../../data/get-articles-filters";
-import type { FeedPost } from "@/lib/types";
+import type { ArchiveArticle } from "../../data/get-articles-archive";
 import type { ReactNode } from "react";
 
 interface ArticlesPageLayoutProps {
   breadcrumb: ReactNode;
-  articles: FeedPost[];
+  articles: ArchiveArticle[];
   total: number;
   filters: ArchiveFilters;
   readingTimeCounts: Record<ReadingTimeBucket, number>;
@@ -71,8 +72,12 @@ export function ArticlesPageLayout({
       <ArticlesFeed articles={articles} current={current} />
 
       {/* Last, not first: Modo is what you reach for after the list did not answer you. */}
+      {/* The disclosure travels with Modo, not with the chat page. EU AI Act Article 50 asks that
+          a person be told they are talking to a machine at the FIRST interaction — and for many
+          visitors that first interaction starts here. */}
       <div className="mt-6">
         <AskModo />
+        <AiDisclaimer />
       </div>
     </div>
   );

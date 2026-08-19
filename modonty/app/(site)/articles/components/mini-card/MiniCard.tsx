@@ -1,14 +1,15 @@
 import Link from "next/link";
 
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
+import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 import { IconClock, IconClients } from "@/lib/icons";
 
-import type { FeedPost } from "@/lib/types";
+import type { ArchiveArticle } from "../../data/get-articles-archive";
 
 const DATE_FMT = new Intl.DateTimeFormat("ar-SA", { year: "numeric", month: "short", day: "numeric" });
 
 interface MiniCardProps {
-  post: FeedPost;
+  post: ArchiveArticle;
   /** Only the first row on the first page is worth loading eagerly. */
   isLcp?: boolean;
 }
@@ -62,7 +63,15 @@ export function MiniCard({ post, isLcp }: MiniCardProps) {
 
           {/* The partner is the trust signal, so it leads; date and length are context and step back. */}
           <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground/70">
-            <span className="truncate font-medium text-muted-foreground">{post.clientName}</span>
+            <span className="inline-flex min-w-0 items-center gap-1 font-medium text-muted-foreground">
+              <span className="truncate">{post.clientName}</span>
+              {/* Shown only when the partner's papers were actually checked. Measured 2026-08-19 on
+                  dev: zero of twenty-three partners have them, so today this renders nothing — and
+                  the day they are uploaded it appears by itself. A badge over an empty column is a
+                  claim, and a false claim costs more trust than a missing one. */}
+              {post.verified && <VerifiedBadge className="h-3.5 w-3.5 shrink-0" label="شريك موثّق" />}
+            </span>
+            {post.credential && <span className="truncate">{post.credential}</span>}
             {/* Every archive measured on 2026-08-19 — Vercel, Stripe, Intercom — shows the date.
                 On a page sorted by recency, a row without one cannot be judged.
                 Rendered on the server:  is a client component, and twenty rows would

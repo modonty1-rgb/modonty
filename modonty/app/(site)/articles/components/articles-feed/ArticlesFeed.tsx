@@ -6,7 +6,7 @@ import { MiniCard } from "../mini-card/MiniCard";
 import { buildArchiveHref, type ArchiveState } from "../../helpers/build-archive-href";
 import { FOCUS_RING } from "../../helpers/focus-ring";
 
-import type { FeedPost } from "@/lib/types";
+import type { ArchiveArticle } from "../../data/get-articles-archive";
 
 /**
  * Twenty, not the feed's ten: a mini row is roughly a quarter the height of the homepage card, so
@@ -17,7 +17,7 @@ const ARCHIVE_PAGE_SIZE = 20;
 
 interface ArticlesFeedProps {
   /** Everything in scope — this component only chunks and draws. */
-  articles: FeedPost[];
+  articles: ArchiveArticle[];
   current: ArchiveState;
 }
 

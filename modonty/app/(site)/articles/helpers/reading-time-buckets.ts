@@ -36,7 +36,7 @@ function bucketOf(minutes: number | undefined): ReadingTimeBucket | null {
 }
 
 /** Keeps only the articles that fit the chosen bucket. */
-export function filterByReadingTime(articles: FeedPost[], bucket: ReadingTimeBucket | undefined) {
+export function filterByReadingTime<T extends FeedPost>(articles: T[], bucket: ReadingTimeBucket | undefined): T[] {
   if (!bucket) return articles;
   return articles.filter((a) => bucketOf(a.readingTimeMinutes) === bucket);
 }
@@ -45,7 +45,7 @@ export function filterByReadingTime(articles: FeedPost[], bucket: ReadingTimeBuc
  * How many articles sit in each bucket, counted on the CURRENT result set — so the numbers move
  * with the industry or category the visitor already picked instead of quoting the whole site.
  */
-export function countByReadingTime(articles: FeedPost[]): Record<ReadingTimeBucket, number> {
+export function countByReadingTime(articles: readonly FeedPost[]): Record<ReadingTimeBucket, number> {
   const counts: Record<ReadingTimeBucket, number> = { short: 0, medium: 0, long: 0 };
   for (const article of articles) {
     const key = bucketOf(article.readingTimeMinutes);

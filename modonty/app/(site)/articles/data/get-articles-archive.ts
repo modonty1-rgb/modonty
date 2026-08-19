@@ -6,6 +6,17 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 import type { FeedPost } from "@/lib/types";
 
+/**
+ * A row plus what makes it trustworthy. Kept local instead of widening the shared `FeedPost`:
+ * only this page renders trust marks, and a field nobody else fills is a field that goes stale.
+ */
+export type ArchiveArticle = FeedPost & {
+  /** The partner's official papers were checked. */
+  verified: boolean;
+  /** A named licence or accreditation, when there is one. */
+  credential: string | null;
+};
+
 /** The three orders the visitor can pick. Anything else falls back to newest. */
 export type ArchiveSort = "newest" | "mostRead" | "mostEngaged";
 
@@ -39,6 +50,10 @@ const archiveSelect = {
       name: true,
       slug: true,
       logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
+      // Trust marks. Empty on dev today (0 of 23 partners) — the card simply renders nothing,
+      // and lights up on its own the day the papers are uploaded. No second pass needed.
+      verificationImageUrl: true,
+      credentials: { select: { name: true } },
     },
   },
   featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true } },
@@ -51,7 +66,7 @@ const archiveSelect = {
 
 type ArchivePayload = Prisma.ArticleGetPayload<{ select: typeof archiveSelect }>;
 
-function mapArchiveArticle(a: ArchivePayload): FeedPost {
+function mapArchiveArticle(a: ArchivePayload): ArchiveArticle {
   return {
     id: a.id,
     title: a.title,
@@ -71,6 +86,8 @@ function mapArchiveArticle(a: ArchivePayload): FeedPost {
     favorites: a.favoritesCount || 0,
     views: a.viewsCount || 0,
     status: "published",
+    verified: Boolean(a.client.verificationImageUrl?.trim()),
+    credential: a.client.credentials[0]?.name?.trim() || null,
   };
 }
 
@@ -88,7 +105,7 @@ function orderFor(sort: ArchiveSort | undefined): Prisma.ArticleOrderByWithRelat
  * why the industry↔category link is DERIVED and not stored: it is a fact about the articles, and
  * it changes every time one is published.
  */
-export async function getArticlesArchive(query: ArchiveQuery = {}): Promise<FeedPost[]> {
+export async function getArticlesArchive(query: ArchiveQuery = {}): Promise<ArchiveArticle[]> {
   "use cache";
   cacheTag("articles");
   cacheLife("hours");

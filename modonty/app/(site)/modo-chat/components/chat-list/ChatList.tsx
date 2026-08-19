@@ -15,7 +15,7 @@ import { Composer } from "../composer/Composer";
 import { PartnerCards, type SuggestedPartner } from "../partner-cards/PartnerCards";
 import { TypingDots } from "../shared/TypingDots";
 import { TrialWall } from "../login-card/TrialWall";
-import { AiDisclaimer } from "../shared/AiDisclaimer";
+import { AiDisclaimer } from "@/components/shared/ai-disclaimer/AiDisclaimer";
 import { RateAnswer } from "../shared/RateAnswer";
 import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
 import { getScopeIcon } from "../../helpers/get-scope-icon";
