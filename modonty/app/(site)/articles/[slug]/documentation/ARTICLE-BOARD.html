@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة صفحة المقال</title>
+<style>
+  :root{
+    --blue:#3030FF;
+    --ground:#F3F3F8; --surface:#FFFFFF;
+    --ink:#14133A; --ink-2:rgba(20,19,58,.72); --ink-3:rgba(20,19,58,.55);
+    --line:rgba(20,19,58,.14);
+    --bad:#B02A2A;  --bad-bg:rgba(176,42,42,.10);
+    --good:#166B4E; --good-bg:rgba(22,107,78,.10);
+    --open:#8A5A00; --open-bg:rgba(138,90,0,.12);
+    --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
+    --arab:"Tajawal","Noto Sans Arabic","Segoe UI",system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#0A0A1E; --surface:#121233; --ink:#EDEDFA;
+      --ink-2:rgba(237,237,250,.74); --ink-3:rgba(237,237,250,.55);
+      --line:rgba(237,237,250,.16);
+      --bad:#FF8A8A;  --bad-bg:rgba(255,138,138,.12);
+      --good:#5FD8AC; --good-bg:rgba(95,216,172,.12);
+      --open:#F0BE5A; --open-bg:rgba(240,190,90,.14);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0A0A1E; --surface:#121233; --ink:#EDEDFA;
+    --ink-2:rgba(237,237,250,.74); --ink-3:rgba(237,237,250,.55);
+    --line:rgba(237,237,250,.16);
+    --bad:#FF8A8A;  --bad-bg:rgba(255,138,138,.12);
+    --good:#5FD8AC; --good-bg:rgba(95,216,172,.12);
+    --open:#F0BE5A; --open-bg:rgba(240,190,90,.14);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--arab);font-size:16px;line-height:1.6}
+  .wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px;display:flex;flex-direction:column;gap:28px}
+
+  header{border-block-end:2px solid var(--blue);padding-block-end:12px}
+  h1{margin:0;font-size:25px;font-weight:700;line-height:1.25}
+  .meta{margin-block-start:4px;font-size:13px;color:var(--ink-3);font-family:var(--mono)}
+
+  section{display:flex;flex-direction:column;gap:10px}
+  h2{margin:0;font-size:18px;font-weight:700;line-height:1.3}
+  p{margin:0;color:var(--ink-2);max-width:70ch}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .card > .head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 15px;border-block-end:1px solid var(--line)}
+  .card > .body{padding:13px 15px;display:flex;flex-direction:column;gap:7px}
+  .card .id{font-family:var(--mono);font-size:12px;color:var(--blue)}
+  .card .name{font-size:16px;font-weight:700;flex:1 1 auto;min-width:12ch}
+  .card.hi{border-inline-start:3px solid var(--bad)}
+  .card.mid{border-inline-start:3px solid var(--open)}
+  .card.low{border-inline-start:3px solid var(--line)}
+
+  .chip{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap}
+  .chip.hi{color:var(--bad);background:var(--bad-bg)}
+  .chip.mid{color:var(--open);background:var(--open-bg)}
+  .chip.low{color:var(--ink-3);background:var(--line)}
+
+  .fix{font-size:14px;color:var(--ink);background:color-mix(in srgb,var(--blue) 6%,transparent);border-radius:6px;padding:8px 11px}
+  .fix b{color:var(--blue)}
+
+  code{font-family:var(--mono);font-size:.86em;background:color-mix(in srgb,var(--blue) 8%,transparent);padding:1px 5px;border-radius:4px;direction:ltr;display:inline-block}
+
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:460px}
+  th,td{text-align:start;padding:8px 13px;border-block-end:1px solid var(--line);vertical-align:top}
+  thead th{background:color-mix(in srgb,var(--blue) 7%,var(--surface));font-size:12px;color:var(--ink-2);font-weight:700}
+  tbody tr:last-child td{border-block-end:0}
+  .num{font-variant-numeric:tabular-nums;font-family:var(--mono)}
+
+  ul.plain{margin:0;padding-inline-start:1.1rem;color:var(--ink-2);font-size:14px}
+  footer{border-block-start:1px solid var(--line);padding-block-start:12px;font-size:13px;color:var(--ink-3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>لوحة صفحة المقال</h1>
+  <div class="meta">app/(site)/articles/[slug] · ١٩ أغسطس ٢٠٢٦ · فرع modonty-ui · قاعدة modonty_dev</div>
+</header>
+
+<!-- ═════ كيف تُقرأ ═════ -->
+<section>
+  <h2>كيف تُقرأ هذه اللوحة</h2>
+  <p>تحمل <strong>المفتوح فقط</strong> — البند المنجَز يُحذف منها لحظة إغلاقه، وتاريخه يبقى في الكوميتات وسجلّ الجلسة. كل بند تحته قياس حيّ أو مرجع <code>ملف:سطر</code>؛ ما لم يُقَس يُوسم «مؤشّر». <strong>تاسك واحد لكل بند</strong> — يُنفَّذ، يُتحقَّق حيّاً، يُحذف من هنا، ثم التالي.</p>
+</section>
+
+<!-- ═════ عيّنة القياس ═════ -->
+<section>
+  <h2>عيّنة القياس — ١٩ أغسطس، ديسكتوب ١٤٢٢×٨٨٩</h2>
+  <p>المقال المفحوص: <code>/articles/علاج-الانزلاق-الغضروفي-بدون-جراحة-في-مصر</code> · شريك <span dir="ltr">pain core clinic</span> · الحالة ٢٠٠ · صفر خطأ جافاسكربت.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>المقاس</th><th class="num">القيمة</th><th>ملاحظة</th></tr></thead>
+      <tbody>
+        <tr><td>ارتفاع الصفحة</td><td class="num">١٣٠٦٤ px</td><td>مقال طويل بكل المقاييس</td></tr>
+        <tr><td>ارتفاع المتن وحده</td><td class="num">٩٨٤٨ px</td><td>١٤٧ فقرة · ١٨ عنواناً</td></tr>
+        <tr><td>أول كلمة من المقال</td><td class="num">y = ١٠٨١</td><td>شاشة وربع قبل بداية النص</td></tr>
+        <tr><td>عرض عمود القراءة</td><td class="num">٧٣٢ px</td><td>≈ ٩٠ حرفاً في السطر</td></tr>
+        <tr><td>حجم الفقرة / العنوان</td><td class="num">١٦ / ١٦ px</td><td>متطابقان — انظر AR1</td></tr>
+        <tr><td>ارتفاع الريل اللاصق</td><td class="num">٩٦٦ px</td><td>الشاشة ٨٨٩ — انظر AR3</td></tr>
+        <tr><td>كلمات المقال الحقيقية</td><td class="num">١٩٧٨</td><td>المعروض: ١٤ — انظر AR2</td></tr>
+        <tr><td>عناصر تفاعلية بمقاس صفر</td><td class="num">٤٥</td><td>نسخ الجوّال في صفحة الديسكتوب</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═════ كاسر ═════ -->
+<section>
+  <h2>🔴 كاسر — يُبدأ من هنا</h2>
+
+  <article class="card hi">
+    <div class="head"><span class="id">AR1</span><span class="name">المتن بلا نظام خطوط — العنوان بحجم الفقرة ووزنها</span><span class="chip hi">🔴 قراءة · سيو</span></div>
+    <div class="body">
+      <p><strong>القياس:</strong> <code>h2 → 16px / وزن 400</code> و<code>p → 16px / وزن 400</code>. متطابقان تماماً، فلا يستطيع أحد مسح المقال بالعين ولا معرفة أين يبدأ قسم جديد.</p>
+      <p><strong>الجذر:</strong> إضافة الخطوط <span dir="ltr">@tailwindcss/typography</span> <strong>غير مثبَّتة ولا مسجَّلة</strong> — <code>tailwind.config.ts:126</code> يسجّل <code>tailwindcss-animate</code> وحده، والحزمة غير موجودة في أيّ ملفّ حزم في المستودع. فكل أصناف <code>prose prose-base md:prose-lg</code> في <code>page.tsx:609</code> نصّ بلا أثر، وبلوك <code>typography</code> في <code>tailwind.config.ts:83</code> معطّل معه. الذي نراه اليوم هو إعادة الضبط الافتراضية التي تُسقط حجم العناوين ووزنها إلى الموروث.</p>
+      <div class="fix"><b>الإصلاح:</b> تثبيت الإضافة وتسجيلها، ثم ضبط سلّم الأحجام للعربي (عنوان ثانوي أكبر من الفقرة بوضوح، وزن أثقل، مسافة فوقه أوسع من تحته). يُقاس بعدها: حجم <code>h2</code> ≠ حجم <code>p</code>، ولقطة قبل/بعد لنفس المقطع.</div>
+    </div>
+  </article>
+
+  <article class="card hi">
+    <div class="head"><span class="id">AR2</span><span class="name">سطر البيانات يعطي رقماً غلطاً للقارئ ولجوجل</span><span class="chip hi">🔴 مصداقية · سيو</span></div>
+    <div class="body">
+      <p><strong>المعروض:</strong> «١ دقيقة قراءة · ١٤ كلمة». <strong>الحقيقة المقيسة:</strong> ١٩٧٨ كلمة ≈ ١٠ دقائق.</p>
+      <p>الحقلان مخزَّنان في القاعدة لا محسوبان عند العرض (<code>ArticleHeader.tsx:49-52</code>)، ونفس الرقم يُرسَل في البيانات المنظَّمة إلى جوجل (<code>helpers/generate-article-structured-data.ts:56</code>).</p>
+      <p><strong>حجم المشكلة على القاعدة:</strong> ٢٣ مقالاً من ١٦٠ رقمها لا يطابق محتواه — أحدها مخزَّن <code>10</code> ومحتواه ١٩٩٧ كلمة، وآخر مخزَّن <code>545</code> ومحتواه ٣١٥٤.</p>
+      <p><strong>أثر جانبي على صفحة الأرشيف:</strong> مرشِّح «عندك كم دقيقة؟» في <code>/articles</code> يقرأ نفس الحقل — فهذا المقال ذو العشر دقائق مصنَّف اليوم تحت «على الماشي ≤٣ دقائق».</p>
+      <div class="fix"><b>الإصلاح:</b> إعادة حساب الحقلين من المحتوى لكل المقالات (صيانة داخل Run-All كما هي القاعدة، لا سكربت منفصل)، وضمان الحساب عند كل حفظ في الكونسول. يُقاس بعدها: صفر مقال يخالف محتواه، وإعادة توزيع فئات الوقت في الأرشيف.</div>
+    </div>
+  </article>
+
+  <article class="card hi">
+    <div class="head"><span class="id">AR3</span><span class="name">الريل اللاصق أطول من الشاشة — جزء منه لا يُرى أبداً</span><span class="chip hi">🔴 محتوى غير قابل للوصول</span></div>
+    <div class="body">
+      <p><strong>القياس:</strong> <code>aside</code> ارتفاعه ٩٦٦ بكسل والشاشة ٨٨٩ ← <strong>١٣٣ بكسل مقطوعة دائماً</strong>. وبفتح جدول المحتويات يصير ١٤٦٦ ← <strong>٥٧٧ بكسل</strong> لا يصلها أي تمرير. معرض صور المقال يقع في هذه المنطقة، فهو عملياً غير موجود على ديسكتوب ١٤٢٢×٨٨٩.</p>
+      <div class="fix"><b>الإصلاح:</b> الريل يلتزم ارتفاع الشاشة ويمرّر داخل نفسه، أو يُستعمل <code>shared/components/sticky-rail/StickyRail.tsx</code> المشترك بدل اللصق اليدوي. يُقاس بعدها: آخر عنصر في الريل يظهر كاملاً على ٨٨٩ وعلى ٧٦٨.</div>
+    </div>
+  </article>
+
+  <article class="card hi">
+    <div class="head"><span class="id">AR4</span><span class="name">أول كلمة من المقال عند ١٠٨١ بكسل</span><span class="chip hi">🔴 نيّة الزائر</span></div>
+    <div class="body">
+      <p>الزائر جاء يقرأ، وقبل النص خمس كتل: الترويسة (١٣٣) · بطاقة مودو (٣٥٣) · الصورة (٤٣٨، ارتفاعها ٤١٢) · «أهم النقاط» (٨٧٤) · الوسوم (١٠٣٢). شاشة وربع تمرير على شاشة ٨٨٩.</p>
+      <div class="fix"><b>الإصلاح:</b> قرار ترتيب — أيّها يستحق أن يسبق النص فعلاً. مرشّح: الصورة تصغر أو تصير جنب الترويسة، وبطاقة مودو والوسوم تنزل تحت أول مقطع. يُقاس بعدها: أول كلمة قبل ٦٠٠ بكسل.</div>
+    </div>
+  </article>
+</section>
+
+<!-- ═════ مؤلم ═════ -->
+<section>
+  <h2>🟡 مؤلم</h2>
+
+  <article class="card mid">
+    <div class="head"><span class="id">AR5</span><span class="name">بداية القراءة في العربي فيها الإعلان لا المقال</span><span class="chip mid">🟡 هرمية</span></div>
+    <div class="body">
+      <p>الصفحة <code>dir=rtl</code>، فبداية القراءة هي اليمين — وهناك يجلس عمود الشريك (<code>x=938</code>) بينما العنوان والنص على اليسار (<code>x=174</code>). أول ما تقع عليه العين من فوق: «سجّل مجاناً» ← أزرار الإعجاب ← بطاقة الشريك ← زرّان له.</p>
+      <p>وأعلى عنصر بصري في الصفحة هو زرّ الشريك البرتقالي (٥٧ بكسل، أسود على برتقالي) بينما عنوان المقال ٣٠ بكسل. أثقل شيء على الشاشة ليس المقال.</p>
+      <div class="fix"><b>الإصلاح:</b> قرار — تبديل جهة العمودين، أو خفض الوزن البصري لزرّ الشريك ورفع وزن العنوان. يُقاس بعدها بلقطة: ما أوّل ثلاثة عناصر يمرّ عليها النظر من أعلى اليمين.</div>
+    </div>
+  </article>
+
+  <article class="card mid">
+    <div class="head"><span class="id">AR6</span><span class="name">«⚡ أهم النقاط» ليست نقاطاً — وتكرّر جدول المحتويات</span><span class="chip mid">🟡 وعد مكسور</span></div>
+    <div class="body">
+      <p>محتواها المقيس ثلاثة أسطر: «ما هو الانزلاق الغضروفي؟ · كيف يحدث الانزلاق الغضروفي؟ · ما أسباب الانزلاق الغضروفي؟» — وهي حرفياً أوّل ثلاثة عناوين من عشرة في المقال. القارئ يقرأ صندوقاً اسمه «أهم النقاط» ويخرج منه بلا معلومة واحدة.</p>
+      <p>وفي نفس الوقت «جدول المحتويات» في الريل يحمل نفس القائمة، <strong>مطويّاً افتراضياً</strong>، في صفحة طولها ١٣٠٦٤ بكسل.</p>
+      <div class="fix"><b>الإصلاح:</b> إمّا يحمل الصندوق خلاصة حقيقية (ثلاث جمل تُجيب لا ثلاثة أسئلة تُطرح)، وإمّا يُحذف ويُفتح جدول المحتويات افتراضياً. لا يبقى الاثنان بنفس المحتوى.</div>
+    </div>
+  </article>
+
+  <article class="card mid">
+    <div class="head"><span class="id">AR7</span><span class="name">جدول المحتويات بلا روابط حقيقية</span><span class="chip mid">🟡 إتاحة · سيو</span></div>
+    <div class="body">
+      <p>العناوين الثمانية عشر كلّها تحمل <code>id</code> (مقيس: ١٨ من ١٨) — لكن الصفحة كلّها فيها <strong>رابطا <code>#</code> اثنان فقط</strong>. فلا نسخ رابط لقسم، ولا فتح قسم في تبويب جديد، ولا بنية أقسام يقرأها الزاحف.</p>
+      <div class="fix"><b>الإصلاح:</b> بنود الجدول تصير <code>&lt;a href="#id"&gt;</code> حقيقية. يُقاس بعدها: عدد روابط <code>#</code> = ١٨.</div>
+    </div>
+  </article>
+
+  <article class="card mid">
+    <div class="head"><span class="id">AR8</span><span class="name">أيقونتا فيسبوك متطابقتان في صفّ واحد</span><span class="chip mid">🟡 حيرة</span></div>
+    <div class="body">
+      <p>في صفّ تواصل الشريك أيقونتان بنفس الشكل ونفس التسمية «فيسبوك» ورابطين مختلفين (<code>share/18mzhY4B2U</code> و<code>share/1HaLUkJMUW</code>). الزائر يختار بالحظّ.</p>
+      <div class="fix"><b>الإصلاح:</b> قرار على مستوى البيانات — حقل واحد لفيسبوك، أو تمييز الثاني بتسمية تقول ما هو (صفحة العيادة / صفحة الدكتور).</div>
+    </div>
+  </article>
+
+  <article class="card mid">
+    <div class="head"><span class="id">AR9</span><span class="name">قسم التعليقات: حالة فارغة بلا أي فعل</span><span class="chip mid">🟡 حالة فارغة</span></div>
+    <div class="body">
+      <p>يعرض «التعليقات (٠) · لا توجد تعليقات بعد» ومعه زرّ «انقر للإخفاء» — <strong>وما فيه حقل كتابة</strong> (مقيس: صفر <code>textarea</code> في الصفحة). قسم يشغل ١٤٩ بكسل ولا يقود إلى شيء.</p>
+      <p>وفوقه في سطر البيانات «٠ مشاهدة · ٠ تعليق» معروضة للناس — دليل مكتوب على أن أحداً لم يقرأ.</p>
+      <div class="fix"><b>الإصلاح:</b> الحالة الفارغة تحمل فعلها (حقل كتابة أو زرّ يفتحه)، وإخفاء العدّاد حين يكون صفراً بدل إعلانه.</div>
+    </div>
+  </article>
+
+  <article class="card mid">
+    <div class="head"><span class="id">AR10</span><span class="name">«اقرأ أيضاً» سبع بطاقات في شبكة ثلاثية</span><span class="chip mid">🟡 حرفة</span></div>
+    <div class="body">
+      <p>مقيس: ٧ بطاقات ← صفّ ٣ + صفّ ٣ + بطاقة يتيمة وحدها (<code>y=11762 · 12043 · 12341</code>).</p>
+      <div class="fix"><b>الإصلاح:</b> العدد يصير ٦ أو ٩، أو الصفّ الأخير يمتدّ. يُقاس بعدها: صفر صفّ ناقص.</div>
+    </div>
+  </article>
+
+  <article class="card mid">
+    <div class="head"><span class="id">AR11</span><span class="name">«عن الكاتب: Modonty — Content Platform» على مقال طبّي</span><span class="chip mid">🟡 ثقة · قرار خالد</span></div>
+    <div class="body">
+      <p>هذا صحيح حسب نموذجنا (فريق مدونتي يكتب والشريك المختصّ يعتمد) — لكن في محتوى صحّي، وهو أكثر ما يقيسه جوجل على الخبرة والموثوقية، أضعف ما يمكن قوله عن كاتب مقال طبّي هو أنّه «منصّة محتوى». ويُعرض بحروف لاتينية داخل صفحة عربية.</p>
+      <div class="fix"><b>القرار المطلوب:</b> هل يظهر الطبيب المعتمِد في «عن الكاتب» بصفته المراجِع المختصّ، ومدونتي بصفة جهة التحرير؟ هذا قرارك لا قرار الكود.</div>
+    </div>
+  </article>
+</section>
+
+<!-- ═════ حرفة ═════ -->
+<section>
+  <h2>🟢 حرفة</h2>
+
+  <article class="card low">
+    <div class="head"><span class="id">AR12</span><span class="name">سطر القراءة ٩٠ حرفاً</span><span class="chip low">🟢</span></div>
+    <div class="body"><p>٧٣٢ بكسل ÷ ١٦ بكسل ← ≈ ٩٠ حرفاً في السطر. المريح في العربي ٥٠–٧٥؛ العين تضيع عند الرجوع لبداية السطر. يُحلّ ضمن AR1 (حجم الخطّ) أو بتضييق العمود.</p></div>
+  </article>
+
+  <article class="card low">
+    <div class="head"><span class="id">AR13</span><span class="name">متن المقال أبيض ناصع مفروض بـ<code>!important</code></span><span class="chip low">🟢 راحة العين</span></div>
+    <div class="body"><p><code>globals.css:376</code> يفرض <code>color: hsl(var(--foreground)) !important</code> على كل عناصر المتن في الوضع الداكن — والقيمة الناتجة <code>rgb(250,250,250)</code> على خلفية <code>rgb(12,10,31)</code>. القاعدة موجودة لسبب صحيح (المحرّر يخبز لوناً أسود داخل النصّ)، لكن الأبيض الناصع على خلفية شبه سوداء يُتعب العين في قراءة عشر دقائق؛ المعتاد نحو ٨٧٪ لا ١٠٠٪. تعديل قيمة واحدة.</p></div>
+  </article>
+
+  <article class="card low">
+    <div class="head"><span class="id">AR14</span><span class="name">٤٥ عنصراً تفاعلياً بمقاس صفر داخل <code>main</code></span><span class="chip low">🟢 وزن الصفحة</span></div>
+    <div class="body"><p>نسخ الجوّال (الشريط السفلي · شريط التفاعل · بطاقة الشريك · جدول المحتويات) تُشحن في صفحة الديسكتوب وتُخفى بالأصناف. تُقاس فائدتها مقابل كلفتها.</p></div>
+  </article>
+
+  <article class="card low">
+    <div class="head"><span class="id">AR15</span><span class="name">لاتيني داخل الجمل العربية في الواجهة</span><span class="chip low">🟢 قراءة</span></div>
+    <div class="body"><p>مقيس على الصفحة: <code>Giza</code> · <code>Modonty</code> · <code>Content Platform</code> · <code>Health Care</code> · واسم العيادة اللاتيني داخل العنوان الرئيسي نفسه. بعضها بيانات شريك وبعضها نصّ واجهة — يُفصل بينهما ثم يُعالَج نصّ الواجهة أولاً.</p></div>
+  </article>
+
+  <article class="card low">
+    <div class="head"><span class="id">AR16</span><span class="name">شعار الشريك مقصوص في بطاقته</span><span class="chip low">🟢 حرفة</span></div>
+    <div class="body"><p>الغلاف يقصّ الاسم فيظهر «Dr. Amr S» مقطوعاً. الصورة تُحتوى بدل أن تُقصّ، أو تُضبط نسبة البطاقة على نسبة الأغلفة الفعلية كما فُعل في الكرت المصغَّر بالأرشيف.</p></div>
+  </article>
+</section>
+
+<!-- ═════ خارج نطاق هذه اللوحة ═════ -->
+<section>
+  <h2>خارج نطاق هذه اللوحة</h2>
+  <ul class="plain">
+    <li><strong>الجوّال (٣٩٠×٨٤٤):</strong> لم يُقس على هذه الصفحة إطلاقاً. كل ما فوق مقيس على ديسكتوب ١٤٢٢×٨٨٩ وحده.</li>
+    <li><strong><code>[slug]/page.tsx</code> ٧٢٩ سطراً:</strong> مسجّل في <code>articles/TASK.md</code> — تقسيمه بعد استقرار الصفحة، لا معه.</li>
+    <li><strong>بند LOAD1:</strong> مراجعة ٦٣ ملفّ <code>loading.tsx</code> لتطابق صفحاتها — في لوحة الشغل العامّة <code>documents/tasks/TASK.html</code>.</li>
+    <li><strong>صورة مكسورة في الأرشيف:</strong> <code>مختبرات-الأطباء/webp-fvyag5tve.webp</code> ترجع ٤٠٤ من بني — بيانات لا كود، وتخصّ <code>/articles</code> لا صفحة المقال.</li>
+  </ul>
+</section>
+
+<footer>
+  اللقطات: <code>.playwright-mcp/article-audit-top.png</code> · <code>article-audit-body-headings.png</code> · <code>article-audit-toc-open.png</code><br>
+  المصدر: جلسة فحص ١٩ أغسطس ٢٠٢٦ · مقال واحد على <code>modonty_dev</code> · لم يُعدَّل أيّ سطر كود أثناء الفحص.
+</footer>
+
+</div>
+</body>
+</html>
