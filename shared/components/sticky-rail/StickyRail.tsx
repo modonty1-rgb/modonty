@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import type { ReactNode } from "react";
 
-/** Header height the rail sits under (h-20). */
+/** Header height the rail sits under (h-20). Pages with a shorter header pass their own. */
 const HEADER_OFFSET = 80;
 /** Breathing room under a rail that is taller than the viewport. */
 const BOTTOM_GAP = 16;
@@ -11,6 +11,8 @@ const BOTTOM_GAP = 16;
 interface StickyRailProps {
   label: string;
   className?: string;
+  /** Distance from the top of the viewport, in pixels. Defaults to the h-20 header. */
+  offset?: number;
   children: ReactNode;
 }
 
@@ -20,7 +22,7 @@ interface StickyRailProps {
 // scrollbar. CSS alone can't express "stick when my bottom reaches the fold" without
 // knowing the element's height, so the only client work here is measuring that height
 // and writing one `top` value. Server content comes in as children and never hydrates.
-export function StickyRail({ label, className, children }: StickyRailProps) {
+export function StickyRail({ label, className, offset = HEADER_OFFSET, children }: StickyRailProps) {
   const ref = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -28,8 +30,8 @@ export function StickyRail({ label, className, children }: StickyRailProps) {
     if (!rail) return;
 
     const place = () => {
-      const overflow = rail.offsetHeight + HEADER_OFFSET + BOTTOM_GAP - window.innerHeight;
-      rail.style.top = `${overflow > 0 ? HEADER_OFFSET - overflow : HEADER_OFFSET}px`;
+      const overflow = rail.offsetHeight + offset + BOTTOM_GAP - window.innerHeight;
+      rail.style.top = `${overflow > 0 ? offset - overflow : offset}px`;
     };
 
     place();
@@ -40,10 +42,10 @@ export function StickyRail({ label, className, children }: StickyRailProps) {
       observer.disconnect();
       window.removeEventListener("resize", place);
     };
-  }, []);
+  }, [offset]);
 
   return (
-    <aside ref={ref} aria-label={label} className={className} style={{ top: HEADER_OFFSET }}>
+    <aside ref={ref} aria-label={label} className={className} style={{ top: offset }}>
       {children}
     </aside>
   );

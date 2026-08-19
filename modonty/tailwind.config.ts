@@ -80,12 +80,40 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      // Article typography. `maxWidth: none` is kept because every consumer already
+      // sets its own column width — the plugin's 65ch would narrow eleven live pages.
+      // Heading sizes are stated explicitly rather than inherited: Tajawal reads
+      // smaller than the Latin faces the plugin's defaults were drawn for, and an
+      // Arabic heading needs the extra step to separate from the paragraph.
       typography: {
         DEFAULT: {
           css: {
+            // Every prose colour is bound to a theme token, so `prose` follows light and
+            // dark on its own and no page needs `dark:prose-invert`. Without this the
+            // plugin's own near-black defaults ship to every consumer: /terms lost its
+            // headings and bold text into the dark background the moment it was enabled.
+            "--tw-prose-body": "hsl(var(--foreground))",
+            "--tw-prose-headings": "hsl(var(--foreground))",
+            "--tw-prose-lead": "hsl(var(--muted-foreground))",
+            "--tw-prose-links": "hsl(var(--primary))",
+            "--tw-prose-bold": "hsl(var(--foreground))",
+            "--tw-prose-counters": "hsl(var(--muted-foreground))",
+            "--tw-prose-bullets": "hsl(var(--muted-foreground))",
+            "--tw-prose-hr": "hsl(var(--border))",
+            "--tw-prose-quotes": "hsl(var(--foreground))",
+            "--tw-prose-quote-borders": "hsl(var(--border))",
+            "--tw-prose-captions": "hsl(var(--muted-foreground))",
+            "--tw-prose-code": "hsl(var(--foreground))",
+            "--tw-prose-pre-code": "hsl(var(--foreground))",
+            "--tw-prose-pre-bg": "hsl(var(--muted))",
+            "--tw-prose-th-borders": "hsl(var(--border))",
+            "--tw-prose-td-borders": "hsl(var(--border))",
             maxWidth: "none",
             color: "hsl(var(--foreground))",
-            lineHeight: "1.6",
+            lineHeight: "1.8",
+            h2: { fontSize: "1.75em", fontWeight: "700", lineHeight: "1.35", marginTop: "1.9em", marginBottom: "0.7em" },
+            h3: { fontSize: "1.35em", fontWeight: "700", lineHeight: "1.4", marginTop: "1.6em", marginBottom: "0.6em" },
+            h4: { fontSize: "1.15em", fontWeight: "700", lineHeight: "1.45" },
           },
         },
       },
@@ -123,7 +151,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 };
 
 export default config;

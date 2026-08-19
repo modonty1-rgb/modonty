@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getPlatformDefaultImages } from "@modonty/shared/lib/platform-defaults";
+import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { Suspense } from "react";
 import { notFound, unstable_rethrow } from "next/navigation";
 
@@ -460,8 +461,16 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
         <div className="container mx-auto max-w-[1128px] px-4 py-6 pb-8 sm:px-6 md:py-8 lg:px-8">
           <div className="flex flex-col gap-6 md:gap-8 lg:grid lg:grid-cols-[300px_1fr] lg:items-start">
 
-            {/* RIGHT (RTL first): engagement strip + client card + TOC + gallery */}
-            <aside className="hidden self-start lg:sticky lg:top-[3.5rem] lg:block" aria-label="العميل والتفاعل">
+            {/* RIGHT (RTL first): engagement strip + client card + TOC + gallery.
+                StickyRail, not a plain `sticky top-14`: this rail is TALLER than the
+                viewport (966px against 889px, and 1466px with the contents open), so a
+                fixed top pins its head and puts its tail — the gallery — permanently out
+                of reach. The rail scrolls with the page until its bottom meets the fold. */}
+            <StickyRail
+              label="العميل والتفاعل"
+              offset={56}
+              className="hidden self-start lg:sticky lg:block"
+            >
               <div className="flex flex-col gap-6">
                 <EngagementBar
                   likes={article._count.likes}
@@ -496,7 +505,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 <ArticleTableOfContents content={article.content} collapsible />
                 <Gallery images={galleryImages} fallbackText={article.client?.description} clientName={article.client?.name} />
               </div>
-            </aside>
+            </StickyRail>
 
             {/* CENTER */}
             <div className="w-full min-w-0">
@@ -525,8 +534,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   views={article._count.views}
                   questionsCount={article._count.faqs}
                 />
-
-                <AskModoCard slug={article.slug} />
 
                 {/* MOBILE: client identity (engagement lives in the sticky top bar; conversion in the bottom bar) */}
                 {article.client && (
@@ -572,9 +579,32 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   </div>
                 )}
 
-                {/* Category badge + capped tags */}
+                <div
+                  id="article-content"
+                  // Typography ships lists with `list-style: none`, so an ordered list the
+                  // writer created rendered here as plain paragraphs — the reader lost the
+                  // sequence and Google got an <ol> with nothing to show. Markers sit in the
+                  // inline-start padding, hence `ps-*`: in Arabic the number belongs right.
+                  className="article-body prose prose-base md:prose-lg mt-6 max-w-none mb-8 text-right [&_h2]:text-right [&_h3]:text-right [&_h4]:text-right [&_li]:text-right [&_ol]:list-decimal [&_ol]:ps-6 [&_ul]:list-disc [&_ul]:ps-6 [&_li]:my-1"
+                  // Leading is the typography plugin's now (config: 1.8, and per-element
+                  // values for headings) — an inline 1.6 here would silently outrank it.
+                  style={{ direction: "rtl" }}
+                  dangerouslySetInnerHTML={{ __html: safeHtml }}
+                />
+                <ArticleBodyLinkTrackerLazy articleId={article.id} />
+
+                {article.citations?.length ? (
+                  <div className="mb-8 [&_section]:my-0">
+                    <ArticleCitations citations={article.citations} />
+                  </div>
+                ) : null}
+
+                {/* Category badge + capped tags — AFTER the article, not before it. Tags are
+                    where you go once you have finished reading; in front of the first
+                    sentence they are one more block between the visitor and what they came
+                    for (measured: the first word of the article sat at y=1081). */}
                 {(article.category || visibleTags.length > 0) && (
-                  <div className="mt-4 flex flex-wrap gap-2">
+                  <div className="mb-8 flex flex-wrap gap-2">
                     {article.category && (
                       <a
                         href={`/categories/${article.category.slug}`}
@@ -600,23 +630,10 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   </div>
                 )}
 
-                <div
-                  id="article-content"
-                  // Typography ships lists with `list-style: none`, so an ordered list the
-                  // writer created rendered here as plain paragraphs — the reader lost the
-                  // sequence and Google got an <ol> with nothing to show. Markers sit in the
-                  // inline-start padding, hence `ps-*`: in Arabic the number belongs right.
-                  className="article-body prose prose-base md:prose-lg mt-6 max-w-none mb-8 text-right [&_h2]:text-right [&_h3]:text-right [&_h4]:text-right [&_li]:text-right [&_ol]:list-decimal [&_ol]:ps-6 [&_ul]:list-disc [&_ul]:ps-6 [&_li]:my-1"
-                  style={{ lineHeight: "1.6", direction: "rtl" }}
-                  dangerouslySetInnerHTML={{ __html: safeHtml }}
-                />
-                <ArticleBodyLinkTrackerLazy articleId={article.id} />
-
-                {article.citations?.length ? (
-                  <div className="mb-8 [&_section]:my-0">
-                    <ArticleCitations citations={article.citations} />
-                  </div>
-                ) : null}
+                {/* «عندك سؤال عن المقال؟» reads as an interruption above the first sentence
+                    and as an offer under the last one — the question only exists after the
+                    reading. */}
+                <AskModoCard slug={article.slug} />
 
                 {/* MOBILE: image gallery (desktop keeps it in the aside) */}
                 <div className="mb-8 lg:hidden">

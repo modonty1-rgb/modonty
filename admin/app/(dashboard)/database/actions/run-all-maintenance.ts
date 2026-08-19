@@ -8,6 +8,7 @@ import { createTTLIndex, getIndexHealth, ensurePerfIndexes } from "./index-healt
 import { sanitizeAllLegalForms, sanitizeAllOrganizationTypes } from "./legalform-sanitizer";
 import { sanitizeAllCanonicals } from "./canonical-sanitizer";
 import { backfillArticleHreflang } from "./hreflang-backfill";
+import { backfillArticleWordCount } from "./word-count-backfill";
 import { backfillClientSiteFlag } from "./client-site-flag-backfill";
 import { backfillMediaReelsFields } from "./media-reels-backfill";
 import { backfillBlurPlaceholders } from "./blur-backfill";
@@ -146,6 +147,21 @@ export async function runStepHreflang(): Promise<MaintenanceStepResult> {
     };
   } catch (e) {
     return fail("hreflang", "Article hreflang Backfilled", e);
+  }
+}
+
+export async function runStepWordCount(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await backfillArticleWordCount();
+    return {
+      key: "wordCount",
+      label: "Article Word Count / Reading Time Recomputed",
+      ok: r.failed === 0,
+      count: r.successful,
+      detail: r.failed > 0 ? `${r.failed} failed` : undefined,
+    };
+  } catch (e) {
+    return fail("wordCount", "Article Word Count / Reading Time Recomputed", e);
   }
 }
 

@@ -97,12 +97,13 @@ export async function createArticle(data: ArticleFormData) {
         })
       : null;
 
-    const wordCount =
-      data.wordCount ||
-      calculateWordCountImproved(data.content, data.inLanguage || "ar");
-    const readingTimeMinutes =
-      data.readingTimeMinutes || calculateReadingTime(wordCount);
-    const contentDepth = data.contentDepth || determineContentDepth(wordCount);
+    // Always derived from the content, never taken from the payload. A caller-supplied
+    // count used to win, and a wrong one rode straight through to the reader, to the
+    // JSON-LD, and to the reading-time filter on /articles — one live article stored 14
+    // words for a 1,978-word body. No screen lets anyone type these, so nothing is lost.
+    const wordCount = calculateWordCountImproved(data.content, data.inLanguage || "ar");
+    const readingTimeMinutes = calculateReadingTime(wordCount);
+    const contentDepth = determineContentDepth(wordCount);
 
     const seoTitle = data.seoTitle || generateSEOTitle(data.title, client?.name);
     const seoDescription =

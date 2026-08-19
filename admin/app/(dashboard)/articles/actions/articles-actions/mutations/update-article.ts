@@ -142,12 +142,11 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
         })
       : null;
 
-    const wordCount =
-      data.wordCount ||
-      calculateWordCountImproved(data.content, data.inLanguage || "ar");
-    const readingTimeMinutes =
-      data.readingTimeMinutes || calculateReadingTime(wordCount);
-    const contentDepth = data.contentDepth || determineContentDepth(wordCount);
+    // Same rule as create: the content decides, not the payload. An edit that changed the
+    // body while carrying an old count used to keep the old count for good.
+    const wordCount = calculateWordCountImproved(data.content, data.inLanguage || "ar");
+    const readingTimeMinutes = calculateReadingTime(wordCount);
+    const contentDepth = determineContentDepth(wordCount);
 
     const seoTitle = data.seoTitle || generateSEOTitle(data.title, client?.name);
     const seoDescription =
