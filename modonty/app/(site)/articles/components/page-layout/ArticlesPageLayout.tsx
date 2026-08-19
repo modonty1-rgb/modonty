@@ -1,6 +1,8 @@
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
-import { ModontyCard } from "@/components/shared/modonty-card/ModontyCard";
+import { AboutCard } from "@/components/shared/about-card/AboutCard";
+import { LinkCard } from "@/components/shared/link-card/LinkCard";
+import { IconVolume2, IconPlay } from "@/lib/icons";
 
 import { FiltersRail } from "../filters-rail/FiltersRail";
 import { ArticlesFeed } from "../articles-feed/ArticlesFeed";
@@ -17,8 +19,6 @@ interface ArticlesPageLayoutProps {
   articles: FeedPost[];
   readingTimeCounts: Record<ReadingTimeBucket, number>;
   filters: ArchiveFilters;
-  modontyArticles: FeedPost[];
-  brandLogoUrl: string | null;
   current: ArchiveState;
   scopeLabel: string | null;
 }
@@ -35,8 +35,6 @@ export function ArticlesPageLayout({
   articles,
   readingTimeCounts,
   filters,
-  modontyArticles,
-  brandLogoUrl,
   current,
   scopeLabel,
 }: ArticlesPageLayoutProps) {
@@ -62,7 +60,14 @@ export function ArticlesPageLayout({
           label="مدونتي"
           className="hidden w-[300px] shrink-0 self-start min-[1240px]:sticky min-[1240px]:block"
         >
-          <ModontyCard articles={modontyArticles} brandLogoUrl={brandLogoUrl} />
+          <div className="space-y-3">
+            <AboutCard />
+            {/* The same content in the two other shapes modonty publishes it in — a reader who
+                ran out of time to read has not run out of ways to consume. «استكشف المجالات»
+                is deliberately absent: the rail on the right already does exactly that. */}
+            <LinkCard href="/audio" title="استمع" description="المقالات صوتاً وأنت ماشي" icon={IconVolume2} />
+            <LinkCard href="/reels" title="الطلّات" description="مقاطع قصيرة من الشركاء" icon={IconPlay} />
+          </div>
         </StickyRail>
       }
     />

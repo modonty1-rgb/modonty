@@ -7,7 +7,7 @@ import { HomeActions } from "@/app/(site)/(homepage)/components/home-actions/Hom
 import { IndustriesCard } from "@/app/(site)/(homepage)/components/industries-card/IndustriesCard";
 import { ReelsCard } from "@/components/shared/reels-card/ReelsCard";
 import { ClientsCardMobile } from "@/app/(site)/(homepage)/components/clients-card/ClientsCardMobile";
-import { ModontyCardMobile } from "@/components/shared/modonty-card/ModontyCardMobile";
+import { ModontyCardMobile } from "@/app/(site)/(homepage)/components/modonty-card/ModontyCardMobile";
 import type { ReactNode } from "react";
 import type { FeedPost } from "@/lib/types";
 import type { ReelItem } from "@/components/shared/reels-card/ReelsCard";
