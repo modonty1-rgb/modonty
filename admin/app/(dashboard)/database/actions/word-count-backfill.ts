@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { regenerateJsonLd } from "@/lib/seo/jsonld-storage";
 import {
   calculateWordCountImproved,
   calculateReadingTime,
@@ -37,7 +38,7 @@ export interface WordCountBackfillStats {
 
 export async function getWordCountBackfillStats(): Promise<WordCountBackfillStats> {
   const rows = await db.article.findMany({
-    select: { id: true, title: true, content: true, wordCount: true },
+    select: { id: true, title: true, content: true, wordCount: true, jsonLdStructuredData: true },
     take: 1000,
   });
 
@@ -45,7 +46,7 @@ export async function getWordCountBackfillStats(): Promise<WordCountBackfillStat
     // No language argument: the helper detects Arabic from the text itself, and the
     // Article row does not carry a language — forcing "ar" would mis-count an English body.
     .map((r) => ({ ...r, real: calculateWordCountImproved(r.content ?? "") }))
-    .filter((r) => r.real > 0 && !withinTolerance(r.wordCount, r.real));
+    .filter((r) => r.real > 0 && isStale(r.wordCount, r.jsonLdStructuredData, r.real));
 
   return {
     totalArticles: rows.length,
@@ -64,6 +65,20 @@ function withinTolerance(stored: number | null, real: number): boolean {
   return Math.abs(stored - real) <= Math.max(1, real * TOLERANCE);
 }
 
+/** The `wordCount` inside the stored JSON-LD card, which Google reads instead of the column. */
+function cardWordCount(card: string | null): number | null {
+  if (!card) return null;
+  const match = card.match(/"wordCount"\s*:\s*(\d+)/);
+  return match ? Number(match[1]) : null;
+}
+
+/** A row is stale if EITHER its column or its stored card disagrees with the body. */
+function isStale(stored: number | null, card: string | null, real: number): boolean {
+  if (!withinTolerance(stored, real)) return true;
+  const inCard = cardWordCount(card);
+  return inCard !== null && !withinTolerance(inCard, real);
+}
+
 export interface WordCountBackfillResult {
   attempted: number;
   successful: number;
@@ -72,13 +87,18 @@ export interface WordCountBackfillResult {
 
 export async function backfillArticleWordCount(): Promise<WordCountBackfillResult> {
   const rows = await db.article.findMany({
-    select: { id: true, content: true, wordCount: true },
+    select: { id: true, content: true, wordCount: true, jsonLdStructuredData: true },
     take: 1000,
   });
 
   const targets = rows
-    .map((r) => ({ id: r.id, real: calculateWordCountImproved(r.content ?? ""), stored: r.wordCount }))
-    .filter((r) => r.real > 0 && !withinTolerance(r.stored, r.real));
+    .map((r) => ({
+      id: r.id,
+      real: calculateWordCountImproved(r.content ?? ""),
+      stored: r.wordCount,
+      card: r.jsonLdStructuredData,
+    }))
+    .filter((r) => r.real > 0 && isStale(r.stored, r.card, r.real));
 
   let successful = 0;
   let failed = 0;
@@ -98,7 +118,10 @@ export async function backfillArticleWordCount(): Promise<WordCountBackfillResul
             },
             select: { id: true },
           })
-          .then(() => true)
+          // The visitor reads the column; Google reads the STORED JSON-LD card, which
+          // carries its own copy of `wordCount`. Fixing the column alone left the page
+          // showing 1,835 words while its structured data still told Google 14.
+          .then(() => regenerateJsonLd(t.id).then((r) => r.success))
           .catch(() => false),
       ),
     );
