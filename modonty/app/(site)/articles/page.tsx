@@ -153,6 +153,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
           />
         }
         articles={articles}
+        filters={filters}
         modontyArticles={modontyArticles}
         brandLogoUrl={brandMedia.logoUrl}
         readingTimeCounts={readingTimeCounts}

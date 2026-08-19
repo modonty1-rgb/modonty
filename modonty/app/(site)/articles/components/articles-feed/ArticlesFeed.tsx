@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
+
 import { MiniCard } from "../mini-card/MiniCard";
 
 import { cn } from "@/lib/utils";
@@ -15,12 +17,6 @@ import type { FeedPost } from "@/lib/types";
  * فاضية»). The shared ARCHIVE_PAGE_SIZE stays at ten for the homepage, where the card is a poster.
  */
 const ARCHIVE_PAGE_SIZE = 20;
-
-const SORTS: { key: ArchiveSort; label: string }[] = [
-  { key: "newest", label: "الأحدث" },
-  { key: "mostRead", label: "الأكثر قراءة" },
-  { key: "mostEngaged", label: "الأكثر تفاعلاً" },
-];
 
 interface ArticlesFeedProps {
   /** Everything in scope — this component only chunks and draws. */
@@ -46,35 +42,21 @@ export function ArticlesFeed({ articles, current, scopeLabel }: ArticlesFeedProp
 
   return (
     <section aria-labelledby="articles-heading" className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1 id="articles-heading" className="text-base font-bold text-foreground">
-          {page > 1 ? `${heading} — الصفحة ${page.toLocaleString("ar-SA")}` : heading}
-        </h1>
-        <p className="text-xs text-muted-foreground">
-          {articles.length.toLocaleString("ar-SA")} مقالاً
-        </p>
-      </div>
+      {/* Removed from view on Khalid's call (2026-08-19) — he pointed at the strip and said
+          «remove». The heading stays in the markup, invisible: a page with no `h1` loses its
+          name in search results and leaves a screen reader with nothing to announce. */}
+      <h1 id="articles-heading" className="sr-only">
+        {page > 1 ? `${heading} — الصفحة ${page.toLocaleString("ar-SA")}` : heading}
+      </h1>
 
-      <nav aria-label="ترتيب المقالات" className="flex flex-wrap gap-2">
-        {SORTS.map((sort) => {
-          const active = (current.sort ?? "newest") === sort.key;
-          return (
-            <Link
-              key={sort.key}
-              href={withArchiveChange(current, { sort: sort.key })}
-              aria-current={active ? "true" : undefined}
-              className={cn(
-                "rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors",
-                active
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-card text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {sort.label}
-            </Link>
-          );
-        })}
-      </nav>
+      {/* Search sits where the sort buttons were — Khalid pointed at them in a screenshot
+          (2026-08-19) and asked for the box in their place. The same component `/categories` and
+          `/tags` use, so search behaves identically across the site. */}
+      <EntitySearchForm
+        basePath="/articles"
+        placeholder="اكتب كلمة من العنوان..."
+        defaultValue={current.search ?? ""}
+      />
 
       {rows.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border bg-card p-8 text-center">
