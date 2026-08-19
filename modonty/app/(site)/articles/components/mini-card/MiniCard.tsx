@@ -5,6 +5,8 @@ import { IconClock, IconClients } from "@/lib/icons";
 
 import type { FeedPost } from "@/lib/types";
 
+const DATE_FMT = new Intl.DateTimeFormat("ar-SA", { year: "numeric", month: "short", day: "numeric" });
+
 interface MiniCardProps {
   post: FeedPost;
   /** Only the first row on the first page is worth loading eagerly. */
@@ -25,6 +27,8 @@ interface MiniCardProps {
  * modonty's compact standard.
  */
 export function MiniCard({ post, isLcp }: MiniCardProps) {
+  const publishedAt = new Date(post.publishedAt);
+
   return (
     <li>
       <Link
@@ -58,6 +62,11 @@ export function MiniCard({ post, isLcp }: MiniCardProps) {
 
           <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
             <span className="truncate">{post.clientName}</span>
+            {/* Every archive measured on 2026-08-19 — Vercel, Stripe, Intercom — shows the date.
+                On a page sorted by recency, a row without one cannot be judged.
+                Rendered on the server:  is a client component, and twenty rows would
+                have meant twenty s on a page whose whole point is that it ships none. */}
+            <time dateTime={publishedAt.toISOString()}>{DATE_FMT.format(publishedAt)}</time>
             {post.readingTimeMinutes ? (
               <span className="inline-flex items-center gap-1">
                 <IconClock className="h-3 w-3 shrink-0" aria-hidden />

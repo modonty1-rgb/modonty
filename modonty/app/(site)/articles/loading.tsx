@@ -1,32 +1,47 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-/** Mirrors the real three columns, so nothing jumps when the data lands. */
+/**
+ * Mirrors the real single column, so nothing jumps when the data lands.
+ *
+ * It was still drawing the old three-column shell after the page became one column — a skeleton
+ * that lies about the layout is worse than none, because it guarantees the shift it exists to
+ * prevent.
+ */
 export default function ArticlesLoading() {
   return (
-    <div className="container mx-auto max-w-[1128px] px-3 py-3 sm:px-4 sm:py-6">
-      <Skeleton className="mb-6 h-5 w-56" />
-      <div className="flex flex-col items-start gap-6 lg:flex-row lg:justify-center min-[1240px]:gap-4 min-[1296px]:gap-6">
-        <div className="hidden w-[300px] shrink-0 space-y-3 min-[1240px]:block">
-          <Skeleton className="h-56 w-full rounded-xl" />
-          <Skeleton className="h-64 w-full rounded-xl" />
-        </div>
+    <div className="container mx-auto max-w-[760px] px-3 py-3 sm:px-4 sm:py-6">
+      <div className="mb-5 space-y-4">
+        <Skeleton className="h-5 w-44" />
 
-        <div className="mx-auto w-full space-y-4 md:max-w-[600px] lg:mx-0 lg:flex-1 min-[1240px]:max-w-[560px] min-[1296px]:max-w-[600px]">
-          <Skeleton className="h-6 w-40" />
-          <div className="flex gap-2">
-            <Skeleton className="h-7 w-20 rounded-lg" />
-            <Skeleton className="h-7 w-24 rounded-lg" />
-            <Skeleton className="h-7 w-24 rounded-lg" />
-          </div>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-28 w-full rounded-lg" />
+        {/* chips */}
+        <div className="flex flex-wrap gap-2">
+          {[88, 120, 104, 132, 96, 112, 100].map((w, i) => (
+            <Skeleton key={i} className="h-9 rounded-full" style={{ width: w }} />
           ))}
         </div>
 
-        <div className="hidden w-[300px] shrink-0 space-y-3 min-[1240px]:block">
-          <Skeleton className="h-44 w-full rounded-xl" />
-          <Skeleton className="h-32 w-full rounded-xl" />
+        {/* reading-time buttons */}
+        <div className="flex flex-wrap gap-2">
+          {[150, 150, 158].map((w, i) => (
+            <Skeleton key={i} className="h-11 rounded-lg" style={{ width: w }} />
+          ))}
         </div>
+
+        <Skeleton className="h-[72px] w-full rounded-lg" />
+        <Skeleton className="h-12 w-full rounded-xl" />
+      </div>
+
+      <div className="overflow-hidden rounded-xl border border-border">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="flex items-start gap-3 border-t border-border p-3 first:border-t-0">
+            <Skeleton className="h-[72px] w-[128px] shrink-0 rounded-lg" />
+            <div className="min-w-0 flex-1 space-y-2">
+              <Skeleton className="h-4 w-11/12" />
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-3 w-1/3" />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

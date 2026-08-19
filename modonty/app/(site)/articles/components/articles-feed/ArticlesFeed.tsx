@@ -1,7 +1,5 @@
 import Link from "next/link";
 
-import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
-
 import { MiniCard } from "../mini-card/MiniCard";
 
 
@@ -21,8 +19,6 @@ interface ArticlesFeedProps {
   /** Everything in scope — this component only chunks and draws. */
   articles: FeedPost[];
   current: ArchiveState;
-  /** What the visitor filtered by, in words, for the heading. */
-  scopeLabel: string | null;
 }
 
 /**
@@ -31,31 +27,21 @@ interface ArticlesFeedProps {
  * Pagination is real `<a href>` links, not infinite scroll — Google never reaches article eleven
  * by scrolling, and this page exists to be crawled as much as read.
  */
-export function ArticlesFeed({ articles, current, scopeLabel }: ArticlesFeedProps) {
+export function ArticlesFeed({ articles, current }: ArticlesFeedProps) {
   const page = current.page && current.page > 1 ? current.page : 1;
   const start = (page - 1) * ARCHIVE_PAGE_SIZE;
   const rows = articles.slice(start, start + ARCHIVE_PAGE_SIZE);
   const hasMore = articles.length > start + ARCHIVE_PAGE_SIZE;
 
-  const heading = scopeLabel ? `مقالات ${scopeLabel}` : "كل المقالات";
-
   return (
     <section aria-labelledby="articles-heading" className="space-y-4">
-      {/* Removed from view on Khalid's call (2026-08-19) — he pointed at the strip and said
-          «remove». The heading stays in the markup, invisible: a page with no `h1` loses its
-          name in search results and leaves a screen reader with nothing to announce. */}
+      {/* Invisible by Khalid's call (2026-08-19) — he pointed at the old title strip and said
+          «remove». It stays in the markup: a page with no `h1` loses its name in search results
+          and leaves a screen reader with nothing to announce. What the visitor sees instead is
+          the results line above the list, which says the same thing and adds a way out. */}
       <h1 id="articles-heading" className="sr-only">
-        {page > 1 ? `${heading} — الصفحة ${page.toLocaleString("ar-SA")}` : heading}
+        {page > 1 ? `كل المقالات — الصفحة ${page.toLocaleString("ar-SA")}` : "كل المقالات"}
       </h1>
-
-      {/* Search sits where the sort buttons were — Khalid pointed at them in a screenshot
-          (2026-08-19) and asked for the box in their place. The same component `/categories` and
-          `/tags` use, so search behaves identically across the site. */}
-      <EntitySearchForm
-        basePath="/articles"
-        placeholder="اكتب كلمة من العنوان..."
-        defaultValue={current.search ?? ""}
-      />
 
       {rows.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border bg-card p-8 text-center">

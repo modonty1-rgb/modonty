@@ -149,6 +149,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
           />
         }
         articles={articles}
+        total={articles.length}
         filters={filters}
         readingTimeCounts={readingTimeCounts}
         current={state}
