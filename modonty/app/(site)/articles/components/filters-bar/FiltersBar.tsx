@@ -28,7 +28,7 @@ function Chip({
       href={href}
       aria-current={active ? "true" : undefined}
       className={cn(
-        "inline-flex min-h-9 items-center rounded-full border px-3.5 transition-colors active:scale-[0.98] " + FOCUS_RING,
+        "inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-full border px-3.5 transition-colors active:scale-[0.98] " + FOCUS_RING,
         small ? "text-xs" : "text-sm",
         active
           ? "border-primary bg-primary font-medium text-primary-foreground"
@@ -67,7 +67,10 @@ export function FiltersBar({ filters, current }: FiltersBarProps) {
 
   return (
     <div className="space-y-2">
-      <nav aria-label="تصفية بالمجال" className="flex flex-wrap gap-2">
+      {/* One row that scrolls, not a block that wraps. Eight chips wrapped onto two lines and
+          pushed the first article to 61% down the screen — Stripe keeps its categories on a single
+          scrollable line for the same reason. */}
+      <nav aria-label="تصفية بالمجال" className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5 scrollbar-none">
         <Chip
           href={withArchiveChange(current, { industry: undefined, category: undefined })}
           label="كل المجالات"
@@ -84,7 +87,7 @@ export function FiltersBar({ filters, current }: FiltersBarProps) {
       </nav>
 
       {categories.length > 0 && (
-        <nav aria-label="تصفية بالتصنيف" className="flex flex-wrap gap-2 border-t border-border pt-2">
+        <nav aria-label="تصفية بالتصنيف" className="-mx-1 flex gap-2 overflow-x-auto border-t border-border px-1 pb-0.5 pt-2 scrollbar-none">
           {categories.map((category) => {
             const active = current.category === category.slug;
             return (

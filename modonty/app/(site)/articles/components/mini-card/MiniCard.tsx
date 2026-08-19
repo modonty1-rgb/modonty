@@ -60,8 +60,9 @@ export function MiniCard({ post, isLcp }: MiniCardProps) {
             {post.title}
           </span>
 
-          <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
-            <span className="truncate">{post.clientName}</span>
+          {/* The partner is the trust signal, so it leads; date and length are context and step back. */}
+          <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground/70">
+            <span className="truncate font-medium text-muted-foreground">{post.clientName}</span>
             {/* Every archive measured on 2026-08-19 — Vercel, Stripe, Intercom — shows the date.
                 On a page sorted by recency, a row without one cannot be judged.
                 Rendered on the server:  is a client component, and twenty rows would

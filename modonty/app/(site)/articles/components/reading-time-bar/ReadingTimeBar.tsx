@@ -46,7 +46,7 @@ export function ReadingTimeBar({ counts, current }: ReadingTimeBarProps) {
           <>
             <Icon className="h-4 w-4 shrink-0" aria-hidden />
             <span className="text-sm">{bucket.label}</span>
-            <span className="text-[11px] opacity-70">{bucket.hint}</span>
+            <span className="hidden text-[11px] opacity-70 sm:inline">{bucket.hint}</span>
           </>
         );
 
@@ -55,7 +55,7 @@ export function ReadingTimeBar({ counts, current }: ReadingTimeBarProps) {
             <span
               key={bucket.key}
               aria-disabled="true"
-              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-dashed border-border px-3 text-muted-foreground opacity-45"
+              className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-dashed border-border px-2.5 text-muted-foreground opacity-45"
             >
               {inner}
             </span>
@@ -68,7 +68,7 @@ export function ReadingTimeBar({ counts, current }: ReadingTimeBarProps) {
             href={withArchiveChange(current, { time: active ? undefined : bucket.key })}
             aria-current={active ? "true" : undefined}
             className={cn(
-              "inline-flex min-h-11 items-center gap-2 rounded-lg px-3 ring-1 transition-colors active:scale-[0.98] " + FOCUS_RING,
+              "inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 ring-1 transition-colors active:scale-[0.98] " + FOCUS_RING,
               active
                 ? "bg-primary text-primary-foreground ring-primary"
                 : "bg-card text-muted-foreground ring-border hover:text-foreground hover:ring-primary/40"

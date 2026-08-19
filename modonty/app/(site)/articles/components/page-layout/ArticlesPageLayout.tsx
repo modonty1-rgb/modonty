@@ -59,8 +59,13 @@ export function ArticlesPageLayout({
           defaultValue={current.search ?? ""}
         />
         <FiltersBar filters={filters} current={current} />
-        <ReadingTimeBar counts={readingTimeCounts} current={current} />
-        <ResultsLine total={total} scopeLabel={scopeLabel} current={current} />
+
+        {/* Count and time on ONE line. Stacked, the controls filled 61% of the screen before the
+            first article; side by side they read as one row and the list starts above the fold. */}
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          <ResultsLine total={total} scopeLabel={scopeLabel} current={current} />
+          <ReadingTimeBar counts={readingTimeCounts} current={current} />
+        </div>
       </div>
 
       <ArticlesFeed articles={articles} current={current} />
