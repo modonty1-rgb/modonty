@@ -43,6 +43,21 @@ export function useMountOnApproach(rootMargin = "200px") {
     const navigationType = navigationEntry?.type ?? "navigate";
     const restored = navigationType !== "navigate";
 
+    /**
+     * A page that cannot scroll can never produce the movement this hook waits for, so the gate
+     * would stay shut forever and the lazy list below it would never load — measured 2026-08-19
+     * on `/articles?time=short`: document height 2667 === viewport height 2667, zero fetches, and
+     * seven articles unreachable by any means. Khalid had been seeing this repeatedly.
+     *
+     * The movement condition exists to stop an auto-fetch on a RESTORED viewport, and that risk
+     * needs a scrollbar to exist at all. With nothing to scroll there is nothing to guard against.
+     * Re-checked on resize, because a page can become unscrollable after content collapses.
+     */
+    const syncScrollability = () => {
+      const canScroll = document.documentElement.scrollHeight > window.innerHeight + 1;
+      if (!canScroll && !moved) onMove();
+    };
+
     // Re-observing replays the current intersection, so a placeholder that was already
     // on screen mounts on the first real movement instead of waiting for the next one.
     const onMove = () => {
@@ -74,7 +89,13 @@ export function useMountOnApproach(rootMargin = "200px") {
     };
     attach();
 
+    // After paint: layout must be settled before asking whether the page can scroll at all.
+    const raf = requestAnimationFrame(syncScrollability);
+    window.addEventListener("resize", syncScrollability, opts);
+
     return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", syncScrollability);
       observer.disconnect();
       detach();
     };
