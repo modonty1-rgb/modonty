@@ -606,6 +606,15 @@ const TASKS = [
     "<b>باقٍ على هذه الصفحة:</b> ٥٨ نصّاً عربياً انتقلت مع المكوّنات ولم تُستخرَج بعد إلى <code>messages</code> — انظر STATIC-I18N.",
  ref:"بند TRUST1"},
 
+{id:"STATIC2", b:"fs", app:["modonty"], tab:"now", sev:"normal", who:"c", date:"١٩ أغسطس ٢٠٢٦",
+ t:"باقي الصفحات الثابتة — إحدى عشرة صفحة تكتب كل شي في <code>page.tsx</code>",
+ d:"<b>متحقَّق ١٩ أغسطس بعدّ محتوى <code>components/</code> لكل صفحة</b> (بعد إغلاق TRUST1): إحدى عشرة صفحة ثابتة مجلّدها فارغ و<code>page.tsx</code> يكتب كل الواجهة بنفسه —<br>" +
+    "<code>legal/copyright-policy</code> ١٣٧ · <code>legal/privacy-policy</code> ١٣٧ · <code>legal/user-agreement</code> ١٣٦ · <code>legal/cookie-policy</code> ١٣٤ · <code>terms</code> ١٢٩ · <code>help</code> ٩٠ · <code>legal</code> ٨٩ · <code>story</code> ٨٨ · <code>contact</code> ٨٠ · <code>audio</code> ٧٤ · <code>help/feedback</code> ٣٥ سطراً.<br>" +
+    "<b>الأربع القانونية متطابقة البنية</b> (١٣٤–١٣٧ سطراً لكل واحدة) — أي أنّ التقسيم هنا يخرج بمكوّن واحد مشترك لأربع صفحات، لا بأربع نسخ.<br>" +
+    "<b>وثغرة صغيرة باقية:</b> <code>help/feedback</code> بلا بيانات منظَّمة إطلاقاً (<code>grep application/ld+json</code> = ٠) — وهي الصفحة الوحيدة كذلك بعد إصلاح <code>/audio</code>. الصفحة <code>noindex</code> فمردودها السيوي صفر، لكن اتّساق البنية يطلبها.<br>" +
+    "<b>الترتيب المقترح:</b> الأربع القانونية أولاً (أعلى تكرار وأقصر طريق)، ثم <code>terms</code>، ثم البقيّة. ولا يبدأ قبل TRUST1 — وقد أُغلق.",
+ ref:"بند STATIC2"},
+
 {id:"STATIC-I18N", b:"fs", app:["modonty"], tab:"now", sev:"normal", who:"c", date:"١٩ أغسطس ٢٠٢٦",
  t:"١٦٥ نصّاً عربياً مكتوباً في كود الصفحات الثابتة",
  d:"<b>متحقَّق ١٩ أغسطس بجرد آليّ:</b> ١٣ من ١٥ صفحة ثابتة لا تستورد <code>@/lib/i18n/messages</code>، ومجموع النصوص العربية المكتوبة داخل ملفّاتها <b>١٦٥</b>. الأثقل: <code>trust</code> ٥٨ · <code>legal</code> ١٦ · <code>help/faq</code> ١٥ · <code>help</code> ١٣ · <code>help/feedback</code> ١٠. الملتزمتان: <code>about</code> و<code>team</code>.<br>" +
