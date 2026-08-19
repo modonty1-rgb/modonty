@@ -87,7 +87,7 @@
 
 <header>
   <h1>لوحة صفحة المقال</h1>
-  <div class="meta">app/(site)/articles/[slug] · ١٩ أغسطس ٢٠٢٦ · فرع modonty-ui · قاعدة modonty_dev · ٤ من ١٦ مقفولة</div>
+  <div class="meta">app/(site)/articles/[slug] · ١٩ أغسطس ٢٠٢٦ · فرع modonty-ui · قاعدة modonty_dev · ١٥ من ١٦ مقفولة</div>
 </header>
 
 <!-- ═════ كيف تُقرأ ═════ -->
@@ -164,98 +164,131 @@
   </article>
 </section>
 
-<!-- ═════ مؤلم ═════ -->
+<!-- ═════ الصفراء — مقفولة ═════ -->
 <section>
-  <h2>🟡 مؤلم</h2>
+  <h2>✅ البنود الصفراء — مقفولة ومتحقَّق منها حيّاً (<code>5670699</code>)</h2>
 
-  <article class="card mid">
-    <div class="head"><span class="id">AR5</span><span class="name">بداية القراءة في العربي فيها الإعلان لا المقال</span><span class="chip mid">🟡 هرمية</span></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR5</span><span class="name">بداية القراءة في العربي فيها الإعلان لا المقال</span><span class="chip done">✅ منجَز</span></div>
     <div class="body">
-      <p>الصفحة <code>dir=rtl</code>، فبداية القراءة هي اليمين — وهناك يجلس عمود الشريك (<code>x=938</code>) بينما العنوان والنص على اليسار (<code>x=174</code>). أول ما تقع عليه العين من فوق: «سجّل مجاناً» ← أزرار الإعجاب ← بطاقة الشريك ← زرّان له.</p>
-      <p>وأعلى عنصر بصري في الصفحة هو زرّ الشريك البرتقالي (٥٧ بكسل، أسود على برتقالي) بينما عنوان المقال ٣٠ بكسل. أثقل شيء على الشاشة ليس المقال.</p>
-      <div class="fix"><b>الإصلاح:</b> قرار — تبديل جهة العمودين، أو خفض الوزن البصري لزرّ الشريك ورفع وزن العنوان. يُقاس بعدها بلقطة: ما أوّل ثلاثة عناصر يمرّ عليها النظر من أعلى اليمين.</div>
+      <p><strong>كان:</strong> الصفحة <code>rtl</code>، وبداية القراءة يمين — وهناك عمود الشريك (<code>x=938</code>) والنصّ على اليسار (<code>x=174</code>). أوّل ما تقع عليه العين: «سجّل مجاناً» ← أزرار الإعجاب ← بطاقة الشريك ← زرّاه. وأثقل عنصر بصري كان زرّ الشريك (٥٧ بكسل) والعنوان ٣٠.</p>
+      <p><strong>ما عُمِل:</strong> المقال أخذ جهة بداية القراءة والريل انتقل إلى الطرف الآخر — الريل مساند لا رئيسي. والعنوان رُفع إلى ٤٠ بكسل ووزن ٧٠٠ ليكون هو أثقل ما على الشاشة، فما يراه الزائر أوّلاً هو ما جاء من أجله.</p>
+      <div class="proof"><b>الدليل:</b> المقال <code>x=501</code> (يمين) · الريل <code>x=169</code> (يسار) · العنوان <code>40px / 700</code>. لقطة <code>article-final-top.png</code>.</div>
     </div>
   </article>
 
-  <article class="card mid">
-    <div class="head"><span class="id">AR6</span><span class="name">«⚡ أهم النقاط» ليست نقاطاً — وتكرّر جدول المحتويات</span><span class="chip mid">🟡 وعد مكسور</span></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR6</span><span class="name">«أهم النقاط» لم تكن نقاطاً — وكرّرت جدول المحتويات</span><span class="chip done">✅ منجَز</span></div>
     <div class="body">
-      <p>محتواها المقيس ثلاثة أسطر: «ما هو الانزلاق الغضروفي؟ · كيف يحدث الانزلاق الغضروفي؟ · ما أسباب الانزلاق الغضروفي؟» — وهي حرفياً أوّل ثلاثة عناوين من عشرة في المقال. القارئ يقرأ صندوقاً اسمه «أهم النقاط» ويخرج منه بلا معلومة واحدة.</p>
-      <p>وفي نفس الوقت «جدول المحتويات» في الريل يحمل نفس القائمة، <strong>مطويّاً افتراضياً</strong>، في صفحة طولها ١٣٠٦٤ بكسل.</p>
-      <p><strong>هذا البند يحمل أيضاً آخر ١٦٢ بكسل من AR4</strong> — الصندوق هو ما يفصل أول كلمة عن حافّة الشاشة.</p>
-      <div class="fix"><b>القرار المطلوب:</b> إمّا يحمل الصندوق خلاصة حقيقية — وهي مستخرَجة من المقال نفسه: أوّل جملة تحت كلّ عنوان من الثلاثة الأولى، فيصير سؤالاً وجوابه بدل سؤال وحده — وإمّا يُحذف ويُفتح جدول المحتويات افتراضياً. لا يبقى الاثنان بنفس المحتوى.</div>
+      <p><strong>كان:</strong> ثلاثة أسطر هي حرفياً أوّل ثلاثة عناوين من عشرة — صندوق يطرح ثلاثة أسئلة ولا يجيب أيّاً منها، ويكرّر جدول المحتويات كلمة بكلمة.</p>
+      <p><strong>ما عُمِل:</strong> صار اسمه «⚡ باختصار» ومحتواه <strong>أوّل جملة من كلّ قسم من الثلاثة الأولى</strong> — مستخرَجة من المقال نفسه، فهو جواب لا سؤال. ونُقل <strong>فوق الصورة</strong>: أوّل شيء يجيب على الصفحة لا ينتظر خلف ٤١٢ بكسل من الصورة.</p>
+      <div class="proof"><b>الدليل:</b> محتواه الآن «الانزلاق الغضروفي هو خروج جزء من الغضروف الموجود بين فقرات العمود الفقري…» بدل «ما هو الانزلاق الغضروفي؟». وموضعه <code>y=431</code> — داخل أوّل شاشة.</div>
     </div>
   </article>
 
-  <article class="card mid">
-    <div class="head"><span class="id">AR7</span><span class="name">جدول المحتويات بلا روابط حقيقية</span><span class="chip mid">🟡 إتاحة · سيو</span></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR7</span><span class="name">جدول المحتويات بلا روابط حقيقية</span><span class="chip done">✅ منجَز</span></div>
     <div class="body">
-      <p>العناوين الثمانية عشر كلّها تحمل <code>id</code> (مقيس: ١٨ من ١٨) — لكن الصفحة كلّها فيها <strong>رابطا <code>#</code> اثنان فقط</strong>. فلا نسخ رابط لقسم، ولا فتح قسم في تبويب جديد، ولا بنية أقسام يقرأها الزاحف.</p>
-      <div class="fix"><b>الإصلاح:</b> بنود الجدول تصير <code>&lt;a href="#id"&gt;</code> حقيقية. يُقاس بعدها: عدد روابط <code>#</code> = ١٨.</div>
+      <p><strong>كان:</strong> ١٨ عنواناً لها معرّفات، والصفحة كلّها فيها رابطا <code>#</code> اثنان. والسبب طبقتان: المكوّن كان يقرأ العناوين من المتصفّح بعد التركيب ويرسمها <strong>أزراراً</strong> لا روابط، وكان ملفوفاً بـ<code>ssr:false</code> فلا يصل الحرف منه إلى الصفحة. والمعرّفات <code>toc-0</code> و<code>toc-1</code> — مبنيّة على الترتيب، فأيّ قسم يُضاف فوقها يكسر كل رابط محفوظ.</p>
+      <p><strong>ما عُمِل:</strong> المعرّفات تُبنى على السيرفر <strong>من نصّ العنوان نفسه</strong> فتثبت عبر التعديلات، والفهرس صار روابط <code>&lt;a href="#…"&gt;</code> حقيقية مرسومة على السيرفر ومفتوحة افتراضياً. لم يبقَ للمتصفّح إلا إبراز القسم الذي أنت فيه. وحُذف الغلاف الكسول لأنه صار بلا مستهلك.</p>
+      <div class="proof"><b>الدليل:</b> روابط <code>#</code> على الصفحة <code>2 ← 20</code> · والمعرّفات <code>ما-هو-الانزلاق-الغضروفي</code> بدل <code>toc-0</code>.</div>
     </div>
   </article>
 
-  <article class="card mid">
-    <div class="head"><span class="id">AR8</span><span class="name">أيقونتا فيسبوك متطابقتان في صفّ واحد</span><span class="chip mid">🟡 حيرة</span></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR8</span><span class="name">أيقونتا فيسبوك متطابقتان في صفّ واحد</span><span class="chip done">✅ منجَز</span></div>
     <div class="body">
-      <p>في صفّ تواصل الشريك أيقونتان بنفس الشكل ونفس التسمية «فيسبوك» ورابطين مختلفين (<code>share/18mzhY4B2U</code> و<code>share/1HaLUkJMUW</code>). الزائر يختار بالحظّ.</p>
-      <div class="fix"><b>الإصلاح:</b> قرار على مستوى البيانات — حقل واحد لفيسبوك، أو تمييز الثاني بتسمية تقول ما هو (صفحة العيادة / صفحة الدكتور).</div>
+      <p><strong>ما عُمِل:</strong> أيقونة واحدة لكلّ منصّة — أوّل رابط يفوز. الشريك قد يخزّن رابطين لنفس المنصّة، وهذا شأنه، لكن الزائر لا يُعرض عليه زرّان بنفس الشكل ونفس الاسم ليختار بالحظّ.</p>
+      <div class="proof"><b>الدليل:</b> صفّ التواصل الآن: واتساب · اتصال · فيسبوك · انستغرام · تيك توك — بلا تكرار.</div>
     </div>
   </article>
 
-  <article class="card mid">
-    <div class="head"><span class="id">AR9</span><span class="name">قسم التعليقات: حالة فارغة بلا أي فعل</span><span class="chip mid">🟡 حالة فارغة</span></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR9</span><span class="name">حالة التعليقات الفارغة بلا فعل + عدّاد صفر معروض</span><span class="chip done">✅ منجَز</span></div>
     <div class="body">
-      <p>يعرض «التعليقات (٠) · لا توجد تعليقات بعد» ومعه زرّ «انقر للإخفاء» — <strong>وما فيه حقل كتابة</strong> (مقيس: صفر <code>textarea</code> في الصفحة). قسم يشغل ١٤٩ بكسل ولا يقود إلى شيء.</p>
-      <p>وفوقه في سطر البيانات «٠ مشاهدة · ٠ تعليق» معروضة للناس — دليل مكتوب على أن أحداً لم يقرأ.</p>
-      <div class="fix"><b>الإصلاح:</b> الحالة الفارغة تحمل فعلها (حقل كتابة أو زرّ يفتحه)، وإخفاء العدّاد حين يكون صفراً بدل إعلانه.</div>
+      <p><strong>كان:</strong> «لا توجد تعليقات بعد. كن أوّل من يعلّق!» — دعوة بلا أيّ طريقة لتلبيتها؛ المدخل الوحيد أيقونة في شريط بعيد فوق. وفوقها في سطر البيانات «٠ مشاهدة» معروضة للناس.</p>
+      <p><strong>ما عُمِل:</strong> الحالة الفارغة صارت تحمل زرّها «اكتب أوّل تعليق» يفتح نفس نافذة التعليق الموجودة (وللزائر غير المسجَّل تعرض له التسجيل). والنصّ صار بلهجة عادية: «ما فيه تعليقات لحد الآن. تكون أوّل واحد؟». والعدّاد الصفري لا يُطبع أصلاً — الصفر تحت العنوان يقول لكلّ قارئ جديد إن أحداً لم يقرأ.</p>
+      <div class="proof"><b>الدليل:</b> زرّ «اكتب أوّل تعليق» يظهر في القسم الفارغ · وسطر البيانات لا يحوي «٠».</div>
     </div>
   </article>
 
-  <article class="card mid">
-    <div class="head"><span class="id">AR10</span><span class="name">«اقرأ أيضاً» سبع بطاقات في شبكة ثلاثية</span><span class="chip mid">🟡 حرفة</span></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR10</span><span class="name">«اقرأ أيضاً» سبع بطاقات في شبكة ثلاثية</span><span class="chip done">✅ منجَز</span></div>
     <div class="body">
-      <p>مقيس: ٧ بطاقات ← صفّ ٣ + صفّ ٣ + بطاقة يتيمة وحدها (<code>y=11762 · 12043 · 12341</code>).</p>
-      <div class="fix"><b>الإصلاح:</b> العدد يصير ٦ أو ٩، أو الصفّ الأخير يمتدّ. يُقاس بعدها: صفر صفّ ناقص.</div>
+      <p><strong>ما عُمِل:</strong> العدد يُقصّ على مضاعف الأعمدة الثلاثة، فلا يبقى صفّ ناقص أبداً مهما كبر أو صغر مجمع المقالات.</p>
+      <div class="proof"><b>الدليل:</b> <code>٧ ← ٦</code> بطاقات · صفّان كاملان · صفر بطاقة يتيمة.</div>
     </div>
   </article>
 
-  <article class="card mid">
-    <div class="head"><span class="id">AR11</span><span class="name">«عن الكاتب: Modonty — Content Platform» على مقال طبّي</span><span class="chip mid">🟡 ثقة · قرار خالد</span></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR11</span><span class="name">«عن الكاتب: Modonty» على مقال طبّي</span><span class="chip done">✅ منجَز</span></div>
     <div class="body">
-      <p>هذا صحيح حسب نموذجنا (فريق مدونتي يكتب والشريك المختصّ يعتمد) — لكن في محتوى صحّي، وهو أكثر ما يقيسه جوجل على الخبرة والموثوقية، أضعف ما يمكن قوله عن كاتب مقال طبّي هو أنّه «منصّة محتوى». ويُعرض بحروف لاتينية داخل صفحة عربية.</p>
-      <div class="fix"><b>القرار المطلوب:</b> هل يظهر الطبيب المعتمِد في «عن الكاتب» بصفته المراجِع المختصّ، ومدونتي بصفة جهة التحرير؟ هذا قرارك لا قرار الكود.</div>
+      <p><strong>كان:</strong> على مقال صحّي، أضعف جواب ممكن على «مين قال هذا؟» هو «منصّة محتوى» — وهو ليس الحقيقة كاملة: فريقنا يكتب، <strong>والشريك المختصّ يراجع ويعتمد</strong>. نصف الجواب كان غائباً عن الصفحة.</p>
+      <p><strong>ما عُمِل:</strong> بطاقة «عن الكاتب» صارت تعرض المراجِع تحت الكاتب: «راجعه واعتمده <em>&lt;اسم الشريك&gt;</em> — &lt;التاريخ&gt;» برابط إلى صفحته، من <code>lastReviewed</code> الموجود أصلاً. بلا حقل جديد ولا بيانات جديدة.</p>
+      <div class="proof"><b>الدليل:</b> السطر ظاهر على الصفحة، والتاريخ عبر <code>Intl</code> بالعربية.</div>
     </div>
   </article>
 </section>
 
-<!-- ═════ حرفة ═════ -->
+<!-- ═════ الحرفة — مقفولة ═════ -->
 <section>
-  <h2>🟢 حرفة</h2>
+  <h2>✅ بنود الحرفة — مقفولة</h2>
 
-  <article class="card low">
-    <div class="head"><span class="id">AR12</span><span class="name">سطر القراءة ٩٠ حرفاً</span><span class="chip low">🟢</span></div>
-    <div class="body"><p>٧٣٢ بكسل ÷ ١٦ بكسل ← ≈ ٩٠ حرفاً في السطر. المريح في العربي ٥٠–٧٥؛ العين تضيع عند الرجوع لبداية السطر. يُحلّ ضمن AR1 (حجم الخطّ) أو بتضييق العمود.</p></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR12</span><span class="name">سطر القراءة ٩٠ حرفاً</span><span class="chip done">✅ منجَز</span></div>
+    <div class="body">
+      <p>المتن وحده قُيِّد بـ<code>68ch</code>؛ العنوان والصورة والخلاصة تبقى بعرض العمود كاملاً — وهو الشكل التحريري المعتاد.</p>
+      <div class="proof"><b>الدليل:</b> العرض <code>732 ← 655</code> بكسل · الأحرف في السطر <code>90 ← 72 · 68 · 72</code> (المريح للعربي ٥٠–٧٥).</div>
+    </div>
   </article>
 
-  <article class="card low">
-    <div class="head"><span class="id">AR13</span><span class="name">متن المقال أبيض ناصع مفروض بـ<code>!important</code></span><span class="chip low">🟢 راحة العين</span></div>
-    <div class="body"><p><code>globals.css:376</code> يفرض <code>color: hsl(var(--foreground)) !important</code> على كل عناصر المتن في الوضع الداكن — والقيمة الناتجة <code>rgb(250,250,250)</code> على خلفية <code>rgb(12,10,31)</code>. القاعدة موجودة لسبب صحيح (المحرّر يخبز لوناً أسود داخل النصّ)، لكن الأبيض الناصع على خلفية شبه سوداء يُتعب العين في قراءة عشر دقائق؛ المعتاد نحو ٨٧٪ لا ١٠٠٪. تعديل قيمة واحدة.</p></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR13</span><span class="name">متن المقال أبيض ناصع مفروض بـ<code>!important</code></span><span class="chip done">✅ منجَز</span></div>
+    <div class="body">
+      <p>القاعدة تبقى (المحرّر يخبز لوناً أسود داخل النصّ فيختفي في الوضع الداكن) لكن القيمة نزلت إلى <strong>٨٨٪</strong> للمتن، والعناوين احتفظت بكامل قوّتها فبقي الفرق بينها وبين الفقرة واضحاً. الورق ليس مصباحاً.</p>
+      <div class="proof"><b>الدليل:</b> الفقرة <code>rgba(250,250,250,0.88)</code> · العنوان <code>rgb(250,250,250)</code> · والوضع الفاتح سليم <code>rgb(13,6,91)</code>.</div>
+    </div>
   </article>
 
-  <article class="card low">
-    <div class="head"><span class="id">AR14</span><span class="name">٤٥ عنصراً تفاعلياً بمقاس صفر داخل <code>main</code></span><span class="chip low">🟢 وزن الصفحة</span></div>
-    <div class="body"><p>نسخ الجوّال (الشريط السفلي · شريط التفاعل · بطاقة الشريك · جدول المحتويات) تُشحن في صفحة الديسكتوب وتُخفى بالأصناف. تُقاس فائدتها مقابل كلفتها.</p></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR14</span><span class="name">عناصر تفاعلية بمقاس صفر داخل <code>main</code></span><span class="chip done">✅ منجَز</span></div>
+    <div class="body">
+      <p>نزلت من <strong>٤٥ إلى ١٠</strong> نتيجة بقيّة الإصلاحات (حذف الغلاف الكسول للفهرس · أزرار الفهرس صارت روابط · إزالة تكرار أيقونات الشريك). العشرة الباقية هي شريط التفاعل العلوي والشريط السفلي للجوّال — كروم جوّال لا بدّ منه، وليس هدراً يُطارَد.</p>
+      <div class="proof"><b>الدليل:</b> العدّ الحيّ <code>45 ← 10</code>، كلّها داخل حاويات <code>lg:hidden</code>.</div>
+    </div>
   </article>
 
-  <article class="card low">
-    <div class="head"><span class="id">AR15</span><span class="name">لاتيني داخل الجمل العربية في الواجهة</span><span class="chip low">🟢 قراءة</span></div>
-    <div class="body"><p>مقيس على الصفحة: <code>Giza</code> · <code>Modonty</code> · <code>Content Platform</code> · <code>Health Care</code> · واسم العيادة اللاتيني داخل العنوان الرئيسي نفسه. بعضها بيانات شريك وبعضها نصّ واجهة — يُفصل بينهما ثم يُعالَج نصّ الواجهة أولاً.</p></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR16</span><span class="name">شعار الشريك مقصوص في بطاقته</span><span class="chip done">✅ منجَز</span></div>
+    <div class="body">
+      <p>الغلاف صار يُحتوى بدل أن يُقصّ. هذه الأغلفة رسم الشريك نفسه واسمه مكتوب داخلها، والقصّ ليملأ الإطار كان يأكل الاسم.</p>
+      <div class="proof"><b>الدليل:</b> «Dr. Amr S…» ← «Dr. Amr Saeed» كاملاً في <code>article-final-top.png</code>.</div>
+    </div>
+  </article>
+</section>
+
+<!-- ═════ المتبقّي ═════ -->
+<section>
+  <h2>🟠 المتبقّي — قرارات وبيانات لا كود</h2>
+
+  <article class="card mid">
+    <div class="head"><span class="id">AR15</span><span class="name">لاتيني داخل الجمل العربية — كلّه بيانات لا نصّ واجهة</span><span class="chip mid">🟠 تحرير بيانات</span></div>
+    <div class="body">
+      <p>فُحص كلّ لاتيني ظاهر على الصفحة، و<strong>لا واحد منه مكتوب في الكود</strong> — كلّها قيم مخزَّنة، فالإصلاح تحرير في لوحة التحكم لا تعديل برمجي:</p>
+      <ul class="plain">
+        <li><code>Modonty</code> و<code>Content Platform</code> — اسم كاتب مدونتي ومسمّاه الوظيفي. <strong>سجلّنا نحن</strong>: الأدمن ← Authors ← مدونتي.</li>
+        <li><code>Giza</code> — مدينة الشريك · <code>Pain Core Clinic</code> — اسمه · <code>Health Care</code> — اسم التصنيف. بيانات يملكها الشريك أو قائمة التصنيفات.</li>
+      </ul>
+      <p>القاعدة الذهبية تخصّ ما نكتبه نحن للقارئ؛ اسم علامة الشريك يبقى كما سجّله. المطلوب حسمه: هل نلزم الشريك باسم عربي معروض؟</p>
+    </div>
   </article>
 
-  <article class="card low">
-    <div class="head"><span class="id">AR16</span><span class="name">شعار الشريك مقصوص في بطاقته</span><span class="chip low">🟢 حرفة</span></div>
-    <div class="body"><p>الغلاف يقصّ الاسم فيظهر «Dr. Amr S» مقطوعاً. الصورة تُحتوى بدل أن تُقصّ، أو تُضبط نسبة البطاقة على نسبة الأغلفة الفعلية كما فُعل في الكرت المصغَّر بالأرشيف.</p></div>
+  <article class="card mid">
+    <div class="head"><span class="id">AR-A</span><span class="name">صورة البطل ٤١٢ بكسل — آخر ما يفصل النصّ عن أوّل شاشة</span><span class="chip mid">🟠 قرار تصميم</span></div>
+    <div class="body">
+      <p>بعد نقل الخلاصة فوق الصورة، <strong>الزائر يحصل على الجواب عند ٤٣١ بكسل</strong> — داخل أوّل شاشة. أوّل كلمة من المتن نفسه ما زالت عند ١٠٥١ لأن الصورة بينهما.</p>
+      <p>لم ألمسها: قصّها يأكل من عمل الشريك (وهو بالضبط ما أصلحناه في AR16)، وتصغيرها قرار شكل يخصّك. المقياس الذي يهمّ — متى يصل الجواب — تحقّق.</p>
+    </div>
   </article>
 </section>
 
