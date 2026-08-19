@@ -55,7 +55,6 @@ import { AskModoCard } from "./components/ask-modo-card/AskModoCard";
 import { PartnerCard } from "./components/partner-card/PartnerCard";
 import { Gallery } from "./components/gallery/Gallery";
 import { ReadMore } from "./components/read-more/ReadMore";
-import { EngagementBar } from "./components/engagement-bar/EngagementBar";
 import { BottomDock } from "./components/bottom-dock/BottomDock";
 import { ArticleTopEngagementBar } from "./components/top-engagement-bar/TopEngagementBar";
 import { PartnerCardMobile } from "./components/partner-card/PartnerCardMobile";
@@ -485,15 +484,9 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
               className="hidden self-start lg:order-2 lg:sticky lg:block"
             >
               <div className="flex flex-col gap-6">
-                <EngagementBar
-                  likes={article._count.likes}
-                  userLiked={article.userLiked}
-                  userFavorited={article.userFavorited}
-                  clientId={article.clientId}
-                  articleId={article.id}
-                  articleSlug={article.slug}
-                  userId={userId}
-                />
+                {/* The engagement strip used to sit here too — a second copy of the same four
+                    actions, and the copy that scrolled away. One strip now, sticky above the
+                    article on every screen. */}
                 {/* The partner card used to sit here — 468px of cover, logo, badge, five social
                     icons and an amber button, first thing on the reading-start side. Eyetracking
                     research on right-rail content is blunt about that shape: people have trained
@@ -508,8 +501,13 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
             {/* THE ARTICLE — first track, which in RTL is the right-hand side */}
             <div className="w-full min-w-0 lg:order-1">
-              {/* MOBILE: quiet engagement bar, sticky just under the navbar (h-14) — full-bleed + opaque */}
-              <div className="sticky top-14 z-30 -mx-4 mb-3 shadow-sm sm:-mx-6 lg:hidden">
+              {/* The engagement bar, sticky under the navbar (h-14) — on every screen now.
+                  It used to live at the top of the rail on desktop, and the rail is taller
+                  than the viewport, so StickyRail pushes it 376px up to keep the rail's
+                  bottom on the fold: measured on a 16,700px article, like/save/comment/share
+                  were reachable in the FIRST SCREEN ONLY and gone for the rest of the read.
+                  Full-bleed on phones, aligned to the reading column from lg. */}
+              <div className="sticky top-14 z-30 -mx-4 mb-3 shadow-sm sm:-mx-6 lg:mx-0">
                 <ArticleTopEngagementBar
                   likes={article._count.likes}
                   favorites={article._count.favorites}
