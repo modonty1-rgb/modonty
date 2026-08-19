@@ -80,10 +80,11 @@ export function ModontyCard({ articles, brandLogoUrl, className }: ModontyCardPr
         </ul>
       )}
 
-      {/* The sidebar teases; browsing happens on the articles page. One door out
-          keeps the card the same height however many articles modonty publishes. */}
+      {/* Goes to `/modonty`, NOT `/clients/{slug}`. Modonty publishes under its own `Client` row
+          like any partner, so the link used to land on a partner profile — Khalid, 2026-08-19:
+          modonty has its own page, and that is where its articles belong. */}
       <Link
-        href={`/clients/${encodeURIComponent(hero.clientSlug)}`}
+        href="/modonty"
         className="flex items-center justify-center border-t border-border px-3 py-2.5 text-xs font-normal text-link transition-colors sm:hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
         كل مقالات مدونتي
