@@ -54,11 +54,17 @@
   .card.hi{border-inline-start:3px solid var(--bad)}
   .card.mid{border-inline-start:3px solid var(--open)}
   .card.low{border-inline-start:3px solid var(--line)}
+  .card.done{border-inline-start:3px solid var(--good)}
+  .card.done > .head{background:var(--good-bg)}
 
   .chip{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap}
   .chip.hi{color:var(--bad);background:var(--bad-bg)}
   .chip.mid{color:var(--open);background:var(--open-bg)}
   .chip.low{color:var(--ink-3);background:var(--line)}
+  .chip.done{color:var(--good);background:var(--good-bg)}
+
+  .proof{font-size:14px;border-radius:6px;padding:8px 11px;background:var(--good-bg);color:var(--ink)}
+  .proof b{color:var(--good)}
 
   .fix{font-size:14px;color:var(--ink);background:color-mix(in srgb,var(--blue) 6%,transparent);border-radius:6px;padding:8px 11px}
   .fix b{color:var(--blue)}
@@ -81,13 +87,14 @@
 
 <header>
   <h1>لوحة صفحة المقال</h1>
-  <div class="meta">app/(site)/articles/[slug] · ١٩ أغسطس ٢٠٢٦ · فرع modonty-ui · قاعدة modonty_dev</div>
+  <div class="meta">app/(site)/articles/[slug] · ١٩ أغسطس ٢٠٢٦ · فرع modonty-ui · قاعدة modonty_dev · ٤ من ١٦ مقفولة</div>
 </header>
 
 <!-- ═════ كيف تُقرأ ═════ -->
 <section>
   <h2>كيف تُقرأ هذه اللوحة</h2>
-  <p>تحمل <strong>المفتوح فقط</strong> — البند المنجَز يُحذف منها لحظة إغلاقه، وتاريخه يبقى في الكوميتات وسجلّ الجلسة. كل بند تحته قياس حيّ أو مرجع <code>ملف:سطر</code>؛ ما لم يُقَس يُوسم «مؤشّر». <strong>تاسك واحد لكل بند</strong> — يُنفَّذ، يُتحقَّق حيّاً، يُحذف من هنا، ثم التالي.</p>
+  <p>كل بند تحته قياس حيّ أو مرجع <code>ملف:سطر</code>؛ ما لم يُقَس يُوسم «مؤشّر». <strong>تاسك واحد لكل بند</strong> — يُنفَّذ، يُتحقَّق حيّاً، ثم التالي.</p>
+  <p>البنود المنجَزة تبقى هنا <strong>خضراء ومعها دليل «قبل ← بعد»</strong> بطلبك (١٩ أغسطس)، بدل حذفها فور الإغلاق. تُحذف حين تُقفل الصفحة كلها.</p>
 </section>
 
 <!-- ═════ عيّنة القياس ═════ -->
@@ -102,9 +109,9 @@
         <tr><td>ارتفاع المتن وحده</td><td class="num">٩٨٤٨ px</td><td>١٤٧ فقرة · ١٨ عنواناً</td></tr>
         <tr><td>أول كلمة من المقال</td><td class="num">y = ١٠٨١</td><td>شاشة وربع قبل بداية النص</td></tr>
         <tr><td>عرض عمود القراءة</td><td class="num">٧٣٢ px</td><td>≈ ٩٠ حرفاً في السطر</td></tr>
-        <tr><td>حجم الفقرة / العنوان</td><td class="num">١٦ / ١٦ px</td><td>متطابقان — انظر AR1</td></tr>
-        <tr><td>ارتفاع الريل اللاصق</td><td class="num">٩٦٦ px</td><td>الشاشة ٨٨٩ — انظر AR3</td></tr>
-        <tr><td>كلمات المقال الحقيقية</td><td class="num">١٩٧٨</td><td>المعروض: ١٤ — انظر AR2</td></tr>
+        <tr><td>حجم الفقرة / العنوان</td><td class="num">١٦ / ١٦ px</td><td>متطابقان — أُصلح في AR1 ← ١٨ / ٣٠</td></tr>
+        <tr><td>ارتفاع الريل اللاصق</td><td class="num">٩٦٦ px</td><td>الشاشة ٨٨٩ — أُصلح في AR3</td></tr>
+        <tr><td>كلمات المقال الحقيقية</td><td class="num">١٨٣٥</td><td>المعروض كان ١٤ — أُصلح في AR2</td></tr>
         <tr><td>عناصر تفاعلية بمقاس صفر</td><td class="num">٤٥</td><td>نسخ الجوّال في صفحة الديسكتوب</td></tr>
       </tbody>
     </table>
@@ -113,41 +120,46 @@
 
 <!-- ═════ كاسر ═════ -->
 <section>
-  <h2>🔴 كاسر — يُبدأ من هنا</h2>
+  <h2>✅ البنود الحمراء — مقفولة ومتحقَّق منها حيّاً (١٩ أغسطس · <code>d9203a6</code> · <code>62a6f9e</code>)</h2>
 
-  <article class="card hi">
-    <div class="head"><span class="id">AR1</span><span class="name">المتن بلا نظام خطوط — العنوان بحجم الفقرة ووزنها</span><span class="chip hi">🔴 قراءة · سيو</span></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR1</span><span class="name">المتن بلا نظام خطوط — العنوان بحجم الفقرة ووزنها</span><span class="chip done">✅ منجَز</span></div>
     <div class="body">
-      <p><strong>القياس:</strong> <code>h2 → 16px / وزن 400</code> و<code>p → 16px / وزن 400</code>. متطابقان تماماً، فلا يستطيع أحد مسح المقال بالعين ولا معرفة أين يبدأ قسم جديد.</p>
-      <p><strong>الجذر:</strong> إضافة الخطوط <span dir="ltr">@tailwindcss/typography</span> <strong>غير مثبَّتة ولا مسجَّلة</strong> — <code>tailwind.config.ts:126</code> يسجّل <code>tailwindcss-animate</code> وحده، والحزمة غير موجودة في أيّ ملفّ حزم في المستودع. فكل أصناف <code>prose prose-base md:prose-lg</code> في <code>page.tsx:609</code> نصّ بلا أثر، وبلوك <code>typography</code> في <code>tailwind.config.ts:83</code> معطّل معه. الذي نراه اليوم هو إعادة الضبط الافتراضية التي تُسقط حجم العناوين ووزنها إلى الموروث.</p>
-      <div class="fix"><b>الإصلاح:</b> تثبيت الإضافة وتسجيلها، ثم ضبط سلّم الأحجام للعربي (عنوان ثانوي أكبر من الفقرة بوضوح، وزن أثقل، مسافة فوقه أوسع من تحته). يُقاس بعدها: حجم <code>h2</code> ≠ حجم <code>p</code>، ولقطة قبل/بعد لنفس المقطع.</div>
+      <p><strong>كان:</strong> <code>h2 → 16px / وزن 400</code> و<code>p → 16px / وزن 400</code> — متطابقان تماماً، فلا أحد يستطيع مسح المقال بالعين ولا معرفة أين يبدأ قسم.</p>
+      <p><strong>الجذر:</strong> إضافة الخطوط <strong>لم تكن مثبَّتة ولا مسجَّلة</strong> — <code>tailwind.config.ts</code> كان يسجّل <code>tailwindcss-animate</code> وحده، والحزمة غير موجودة في أيّ ملفّ حزم. فكل أصناف <code>prose prose-base md:prose-lg</code> على الصفحة كانت نصّاً بلا أثر، وبلوك <code>typography</code> في الإعدادات معطّلاً معها. ما كنّا نراه هو إعادة الضبط الافتراضية التي تُسقط حجم العناوين ووزنها إلى الموروث.</p>
+      <p><strong>ما عُمِل:</strong> تثبيت الإضافة وتسجيلها · سلّم عربي صريح للعناوين (<code>h2 1.75em/700</code> · <code>h3 1.35em/700</code>) لأن Tajawal يُقرأ أصغر من الخطوط اللاتينية التي رُسمت عليها الافتراضيات · وربط <strong>كل ألوان النصّ بمتغيّرات الثيم</strong> فيتبع الفاتح والداكن وحده.</p>
+      <div class="proof"><b>الدليل:</b> <code>h2 = 30px / 700</code> · <code>p = 18px</code> · لقطة <code>article-fix-ar1-headings.png</code>.<br>
+        <b>أثر جانبي أُمسك وأُصلح في نفس الجلسة:</b> الإضافة تُطبَّق على ١١ صفحة تستعمل <code>prose</code>، وألوانها الافتراضية فاتحة — فاختفت عناوين <code>/terms</code> ونصّها العريض في الخلفية الداكنة. الربط بمتغيّرات الثيم أصلحه، والصفحة صارت أوضح ممّا كانت (<code>side-effect-terms.png</code> ← <code>side-effect-terms-fixed.png</code>).</div>
     </div>
   </article>
 
-  <article class="card hi">
-    <div class="head"><span class="id">AR2</span><span class="name">سطر البيانات يعطي رقماً غلطاً للقارئ ولجوجل</span><span class="chip hi">🔴 مصداقية · سيو</span></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR2</span><span class="name">سطر البيانات يعطي رقماً غلطاً للقارئ ولجوجل</span><span class="chip done">✅ منجَز</span></div>
     <div class="body">
-      <p><strong>المعروض:</strong> «١ دقيقة قراءة · ١٤ كلمة». <strong>الحقيقة المقيسة:</strong> ١٩٧٨ كلمة ≈ ١٠ دقائق.</p>
-      <p>الحقلان مخزَّنان في القاعدة لا محسوبان عند العرض (<code>ArticleHeader.tsx:49-52</code>)، ونفس الرقم يُرسَل في البيانات المنظَّمة إلى جوجل (<code>helpers/generate-article-structured-data.ts:56</code>).</p>
-      <p><strong>حجم المشكلة على القاعدة:</strong> ٢٣ مقالاً من ١٦٠ رقمها لا يطابق محتواه — أحدها مخزَّن <code>10</code> ومحتواه ١٩٩٧ كلمة، وآخر مخزَّن <code>545</code> ومحتواه ٣١٥٤.</p>
-      <p><strong>أثر جانبي على صفحة الأرشيف:</strong> مرشِّح «عندك كم دقيقة؟» في <code>/articles</code> يقرأ نفس الحقل — فهذا المقال ذو العشر دقائق مصنَّف اليوم تحت «على الماشي ≤٣ دقائق».</p>
-      <div class="fix"><b>الإصلاح:</b> إعادة حساب الحقلين من المحتوى لكل المقالات (صيانة داخل Run-All كما هي القاعدة، لا سكربت منفصل)، وضمان الحساب عند كل حفظ في الكونسول. يُقاس بعدها: صفر مقال يخالف محتواه، وإعادة توزيع فئات الوقت في الأرشيف.</div>
+      <p><strong>كان:</strong> «١ دقيقة قراءة · ١٤ كلمة» على مقال فيه ١٨٣٥ كلمة ≈ ١٠ دقائق.</p>
+      <p><strong>الجذر:</strong> الإنشاء والتعديل كانا يقبلان رقماً جاهزاً من الطلب (<code>data.wordCount || calculate(...)</code>)، فالرقم الغلط يدخل ويبقى للأبد. ولا شاشة في المنظومة تسمح لأحد بكتابة هذا الرقم — فالسقّاطة كانت فخّاً بلا فائدة.</p>
+      <p><strong>ما عُمِل:</strong> الرقم صار يُشتقّ من المتن دائماً في المسارين (إنشاء وتعديل) · وخطوة صيانة جديدة داخل Run-All تصحّح الصفوف القديمة — <strong>وتجدّد معها بطاقة البيانات المنظَّمة</strong>، لأن البطاقة تحمل نسخة ثانية من الرقم ولا تتحدّث بتحديث العمود (أُمسك حيّاً: الصفحة تعرض ١٨٣٥ والبطاقة ما زالت تقول ١٤).</p>
+      <div class="proof"><b>الدليل:</b> Run-All على <code>modonty_dev</code> ← <strong>«Article Word Count / Reading Time — 79 fixed»</strong>. وعلى الصفحة: «⏱️ ١٠ دقيقة قراءة · 📝 ١٨٣٥ كلمة»، والبيانات المنظَّمة <code>"wordCount": 1835</code>. السطحان يقولان نفس الرقم.</div>
+      <p><strong>يبقى على الإنتاج:</strong> الخطوة تعمل عند أول ضغطة Run-All هناك — الإصلاح جاهز، والتنفيذ عليك كالعادة.</p>
     </div>
   </article>
 
-  <article class="card hi">
-    <div class="head"><span class="id">AR3</span><span class="name">الريل اللاصق أطول من الشاشة — جزء منه لا يُرى أبداً</span><span class="chip hi">🔴 محتوى غير قابل للوصول</span></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR3</span><span class="name">الريل اللاصق أطول من الشاشة — جزء منه لا يُرى أبداً</span><span class="chip done">✅ منجَز</span></div>
     <div class="body">
-      <p><strong>القياس:</strong> <code>aside</code> ارتفاعه ٩٦٦ بكسل والشاشة ٨٨٩ ← <strong>١٣٣ بكسل مقطوعة دائماً</strong>. وبفتح جدول المحتويات يصير ١٤٦٦ ← <strong>٥٧٧ بكسل</strong> لا يصلها أي تمرير. معرض صور المقال يقع في هذه المنطقة، فهو عملياً غير موجود على ديسكتوب ١٤٢٢×٨٨٩.</p>
-      <div class="fix"><b>الإصلاح:</b> الريل يلتزم ارتفاع الشاشة ويمرّر داخل نفسه، أو يُستعمل <code>shared/components/sticky-rail/StickyRail.tsx</code> المشترك بدل اللصق اليدوي. يُقاس بعدها: آخر عنصر في الريل يظهر كاملاً على ٨٨٩ وعلى ٧٦٨.</div>
+      <p><strong>كان:</strong> <code>aside</code> ارتفاعه ٩٦٦ والشاشة ٨٨٩ ← ١٣٣ بكسل مقطوعة دائماً؛ وبفتح جدول المحتويات ١٤٦٦ ← ٥٧٧ بكسل لا يصلها أي تمرير. معرض صور المقال كان في هذه المنطقة.</p>
+      <p><strong>ما عُمِل:</strong> الريل صار يستعمل <code>StickyRail</code> المشترك — الذي كُتب أصلاً لهذه الحالة: ريل أطول من الشاشة يمشي مع الصفحة حتى يصل أسفله إلى حافّة الشاشة ثمّ يثبت. أُضيف له <code>offset</code> اختياري لأنه كان يفترض ترويسة ٨٠ بكسل وهذه الصفحة ترويستها ٥٦.</p>
+      <div class="proof"><b>الدليل:</b> عند التمرير، أسفل الريل عند <code>873</code> والشاشة <code>889</code> — ظاهر كاملاً بفاصل ١٦ بكسل، ومعرض الصور بعنوانه وسطر «١ صور» بان في اللقطة <code>article-fix-ar1-headings.png</code>.</div>
     </div>
   </article>
 
-  <article class="card hi">
-    <div class="head"><span class="id">AR4</span><span class="name">أول كلمة من المقال عند ١٠٨١ بكسل</span><span class="chip hi">🔴 نيّة الزائر</span></div>
+  <article class="card done">
+    <div class="head"><span class="id">AR4</span><span class="name">أول كلمة من المقال عند ١٠٨١ بكسل</span><span class="chip done">✅ منجَز — والباقي قرارك</span></div>
     <div class="body">
-      <p>الزائر جاء يقرأ، وقبل النص خمس كتل: الترويسة (١٣٣) · بطاقة مودو (٣٥٣) · الصورة (٤٣٨، ارتفاعها ٤١٢) · «أهم النقاط» (٨٧٤) · الوسوم (١٠٣٢). شاشة وربع تمرير على شاشة ٨٨٩.</p>
-      <div class="fix"><b>الإصلاح:</b> قرار ترتيب — أيّها يستحق أن يسبق النص فعلاً. مرشّح: الصورة تصغر أو تصير جنب الترويسة، وبطاقة مودو والوسوم تنزل تحت أول مقطع. يُقاس بعدها: أول كلمة قبل ٦٠٠ بكسل.</div>
+      <p><strong>كان:</strong> خمس كتل قبل النص — الترويسة · بطاقة مودو · الصورة · «أهم النقاط» · الوسوم.</p>
+      <p><strong>ما عُمِل:</strong> الكتلتان اللتان كانتا مقاطعةً بلا مبرّر نزلتا تحت النص: <strong>الوسوم</strong> (مكانها الطبيعي بعد القراءة لا قبلها) و<strong>بطاقة «عندك سؤال عن المقال؟»</strong> (السؤال لا يوجد إلا بعد القراءة، فهي فوق النصّ مقاطعة وتحته عرض).</p>
+      <div class="proof"><b>الدليل:</b> أول كلمة <code>1081 ← 954</code> بكسل. الباقي فوق النص كتلتان مشروعتان: الترويسة (١٨٨) والصورة (٤١٢)، وبينهما صندوق «أهم النقاط» (١٦٢ بكسل).</div>
+      <p><strong>القرار المتبقّي عندك:</strong> النزول تحت ٦٠٠ بكسل يحتاج واحداً من اثنين — إمّا صندوق «أهم النقاط» (وهو اليوم مكرّر وفارغ، انظر AR6) وإمّا تصغير صورة البطل. لم ألمس أيّاً منهما لأن كليهما تغيير تصميم يخصّك.</p>
     </div>
   </article>
 </section>
@@ -170,7 +182,8 @@
     <div class="body">
       <p>محتواها المقيس ثلاثة أسطر: «ما هو الانزلاق الغضروفي؟ · كيف يحدث الانزلاق الغضروفي؟ · ما أسباب الانزلاق الغضروفي؟» — وهي حرفياً أوّل ثلاثة عناوين من عشرة في المقال. القارئ يقرأ صندوقاً اسمه «أهم النقاط» ويخرج منه بلا معلومة واحدة.</p>
       <p>وفي نفس الوقت «جدول المحتويات» في الريل يحمل نفس القائمة، <strong>مطويّاً افتراضياً</strong>، في صفحة طولها ١٣٠٦٤ بكسل.</p>
-      <div class="fix"><b>الإصلاح:</b> إمّا يحمل الصندوق خلاصة حقيقية (ثلاث جمل تُجيب لا ثلاثة أسئلة تُطرح)، وإمّا يُحذف ويُفتح جدول المحتويات افتراضياً. لا يبقى الاثنان بنفس المحتوى.</div>
+      <p><strong>هذا البند يحمل أيضاً آخر ١٦٢ بكسل من AR4</strong> — الصندوق هو ما يفصل أول كلمة عن حافّة الشاشة.</p>
+      <div class="fix"><b>القرار المطلوب:</b> إمّا يحمل الصندوق خلاصة حقيقية — وهي مستخرَجة من المقال نفسه: أوّل جملة تحت كلّ عنوان من الثلاثة الأولى، فيصير سؤالاً وجوابه بدل سؤال وحده — وإمّا يُحذف ويُفتح جدول المحتويات افتراضياً. لا يبقى الاثنان بنفس المحتوى.</div>
     </div>
   </article>
 
@@ -254,12 +267,14 @@
     <li><strong><code>[slug]/page.tsx</code> ٧٢٩ سطراً:</strong> مسجّل في <code>articles/TASK.md</code> — تقسيمه بعد استقرار الصفحة، لا معه.</li>
     <li><strong>بند LOAD1:</strong> مراجعة ٦٣ ملفّ <code>loading.tsx</code> لتطابق صفحاتها — في لوحة الشغل العامّة <code>documents/tasks/TASK.html</code>.</li>
     <li><strong>صورة مكسورة في الأرشيف:</strong> <code>مختبرات-الأطباء/webp-fvyag5tve.webp</code> ترجع ٤٠٤ من بني — بيانات لا كود، وتخصّ <code>/articles</code> لا صفحة المقال.</li>
+    <li><strong>أخطاء <code>JWTSessionError</code> في الكونسول أثناء الفحص:</strong> أثر تجربة لا عيب صفحة. سجّلتُ الدخول إلى الأدمن على <code>localhost:3001</code>، والكوكيز تُشارَك بين المنافذ على نفس المضيف، فحمل المتصفّح جلسة الأدمن إلى مدونتي. طلب بلا كوكيز لم يُنتج ولا خطأ جديداً (العدّاد ثابت على ٥٦ قبل وبعد).</li>
   </ul>
 </section>
 
 <footer>
-  اللقطات: <code>.playwright-mcp/article-audit-top.png</code> · <code>article-audit-body-headings.png</code> · <code>article-audit-toc-open.png</code><br>
-  المصدر: جلسة فحص ١٩ أغسطس ٢٠٢٦ · مقال واحد على <code>modonty_dev</code> · لم يُعدَّل أيّ سطر كود أثناء الفحص.
+  اللقطات — قبل: <code>.playwright-mcp/article-audit-top.png</code> · <code>article-audit-body-headings.png</code> · <code>article-audit-toc-open.png</code><br>
+  بعد: <code>article-fix-ar1-headings.png</code> · <code>article-fix-top-after.png</code> · <code>side-effect-terms.png</code> ← <code>side-effect-terms-fixed.png</code><br>
+  المصدر: جلسة ١٩ أغسطس ٢٠٢٦ · الفحص على مقال واحد ثمّ الإصلاح · <code>tsc</code> صفر أخطاء في مدونتي والأدمن.
 </footer>
 
 </div>
