@@ -1,5 +1,8 @@
 import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
 import { AiDisclaimer } from "@/components/shared/ai-disclaimer/AiDisclaimer";
+import { AboutCard } from "@/components/shared/about-card/AboutCard";
+import { LinkCard } from "@/components/shared/link-card/LinkCard";
+import { ModontyTrustMark } from "@/components/icons/modonty-trust-mark";
 
 import { AskModo } from "../ask-modo/AskModo";
 import { ResultsLine } from "../results-line/ResultsLine";
@@ -72,12 +75,23 @@ export function ArticlesPageLayout({
       <ArticlesFeed articles={articles} current={current} />
 
       {/* Last, not first: Modo is what you reach for after the list did not answer you. */}
-      {/* The disclosure travels with Modo, not with the chat page. EU AI Act Article 50 asks that
-          a person be told they are talking to a machine at the FIRST interaction — and for many
-          visitors that first interaction starts here. */}
-      <div className="mt-6">
-        <AskModo />
-        <AiDisclaimer />
+      {/* Three cards, because a visitor arriving here asks three things before he reads: can I
+          trust these partners · who is modonty · and what if the list has no answer.
+          The trust card carries the shield mark and the same line the homepage uses, so the
+          promise is worded once. */}
+      <div className="mt-8 grid items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <LinkCard
+          href="/clients"
+          title="شركاء موثوقون"
+          description="كل شريك مفحوص بأوراقه الرسمية"
+          icon={ModontyTrustMark}
+          className="h-full"
+        />
+        <AboutCard />
+        <div className="sm:col-span-2 lg:col-span-1">
+          <AskModo />
+          <AiDisclaimer />
+        </div>
       </div>
     </div>
   );

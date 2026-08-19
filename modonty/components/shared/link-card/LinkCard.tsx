@@ -32,7 +32,10 @@ export function LinkCard({ href, title, description, icon: Icon, className }: Li
       </span>
       <span className="min-w-0 flex-1">
         <span className="block truncate text-sm font-medium text-foreground">{title}</span>
-        <span className="mt-0.5 block truncate text-xs text-muted-foreground">{description}</span>
+        {/* Two lines, not one truncated. In a 300px rail the line always fit; dropped into a
+            narrower grid column it cut «كل شريك مفحوص بأوراقه الرسمية» mid-word — and a trust
+            promise that ends in «…» is not a promise. */}
+        <span className="mt-0.5 block text-xs leading-4 text-muted-foreground line-clamp-2">{description}</span>
       </span>
       <IconChevronRight
         className="h-4 w-4 shrink-0 text-primary rtl:rotate-180"
