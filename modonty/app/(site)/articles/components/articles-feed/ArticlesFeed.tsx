@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { MiniCard } from "../mini-card/MiniCard";
+import { MoreArticlesOnScroll } from "../more-articles/MoreArticlesOnScroll";
 
 
 import { buildArchiveHref, type ArchiveState } from "../../helpers/build-archive-href";
@@ -55,11 +56,20 @@ export function ArticlesFeed({ articles, current }: ArticlesFeedProps) {
           </Link>
         </div>
       ) : (
-        <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
-          {rows.map((post, index) => (
-            <MiniCard key={post.id} post={post} isLcp={index === 0 && page === 1} />
-          ))}
-        </ul>
+        <div className="overflow-hidden rounded-xl border border-border bg-card">
+          <ul className="divide-y divide-border">
+            {rows.map((post, index) => (
+              <MiniCard key={post.id} post={post} isLcp={index === 0 && page === 1} />
+            ))}
+          </ul>
+
+          {/* Scrolling continues from where the server stopped. The prev/next links below stay in
+              the markup on purpose: a crawler neither scrolls nor clicks, and the engine's own
+              contract requires a server-rendered paginated twin behind the scroll. */}
+          {hasMore && (
+            <MoreArticlesOnScroll current={current} startIndex={start + rows.length} initialPage={page} />
+          )}
+        </div>
       )}
 
       {(page > 1 || hasMore) && (
