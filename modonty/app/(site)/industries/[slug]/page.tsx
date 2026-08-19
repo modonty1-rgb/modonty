@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
-import { getIndustriesEnhanced } from "@/app/(site)/industries/helpers/get-industries-enhanced";
+import { getIndustriesEnhanced } from "@/lib/queries/get-industries-enhanced";
 import { getIndustryBySlug } from "@/app/(site)/industries/helpers/get-industry-by-slug";
 import { getIndustryFeed } from "@/app/(site)/industries/data/get-industry-feed";
 import { getClientsList } from "@/lib/queries/get-clients-list";

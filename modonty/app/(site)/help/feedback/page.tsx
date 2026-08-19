@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { generateMetadataFromSEO } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { ContactForm } from "@/app/(site)/contact/components/contact-form";
+import { ContactForm } from "@/components/shared/contact-form/ContactForm";
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataFromSEO({

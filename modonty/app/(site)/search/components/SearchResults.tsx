@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PostCard } from "@/components/feed/postcard/PostCard";
-import { ClientCard } from "@/app/(site)/clients/components/client-card";
+import { ClientCard } from "./client-card";
 import { SearchSortBar } from "./SearchSortBar";
 import { SearchEmptyState } from "./SearchEmptyState";
 import { SearchNoQueryState } from "./SearchNoQueryState";

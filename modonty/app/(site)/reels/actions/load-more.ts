@@ -2,11 +2,9 @@
 
 import { auth } from "@/lib/auth";
 
-import {
-  getReelsFeedPage,
-  getUserReelFlags,
-  type ReelFeedItemWithState,
-} from "../helpers/reels-feed";
+import { getReelsFeedPage } from "@/lib/queries/get-reels-feed-page";
+import { getUserReelFlags } from "@/lib/queries/get-user-reel-flags";
+import type { ReelFeedItemWithState } from "@/lib/queries/reels-feed-shapes";
 
 export interface LoadMoreResult {
   items: ReelFeedItemWithState[];

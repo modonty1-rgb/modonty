@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { generateStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { ContactForm } from "./components/contact-form";
+import { ContactForm } from "@/components/shared/contact-form/ContactForm";
 import { auth } from "@/lib/auth";
 import { getContactPageForMetadata } from "./helpers/contact-metadata";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
-import { getIndustriesEnhanced } from "@/app/(site)/industries/helpers/get-industries-enhanced";
+import { getIndustriesEnhanced } from "@/lib/queries/get-industries-enhanced";
 import { getIndustryFeed } from "@/app/(site)/industries/data/get-industry-feed";
 import { getClientsList } from "@/lib/queries/get-clients-list";
 import { IndustryPageLayout } from "@/app/(site)/industries/components/page-layout/IndustryPageLayout";

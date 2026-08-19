@@ -4,7 +4,8 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 
 import { ReelsFeedClient } from "./components/reels-feed-client";
-import { getReelsFeedPage, getUserReelFlags } from "./helpers/reels-feed";
+import { getReelsFeedPage } from "@/lib/queries/get-reels-feed-page";
+import { getUserReelFlags } from "@/lib/queries/get-user-reel-flags";
 
 // Immersive feed: fixed full-viewport layer above the site chrome (header/footer).
 // Kept out of the index until the reels launch.

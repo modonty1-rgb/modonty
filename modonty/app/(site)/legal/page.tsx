@@ -2,13 +2,23 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
+import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { IconChevronLeft } from "@/lib/icons";
 
-export const metadata: Metadata = {
-  title: "الصفحات القانونية - مدونتي",
-  description: "اطلع على سياسات مدونتي القانونية: سياسة الخصوصية، سياسة ملفات الارتباط، حقوق النشر، واتفاقية المستخدم.",
-  robots: { index: true, follow: true },
-};
+/**
+ * Through the shared builder, like the four pages it links to. The hand-written object it
+ * replaces carried a title and a description and nothing else — no canonical, no hreflang,
+ * no og:, no twitter: — so the index page was the one link in the legal set Google could not
+ * place. It also appended "- مدونتي" a second time on top of the layout's title template.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadataFromPageRow(null, {
+    path: "/legal",
+    fallbackTitle: "الصفحات القانونية",
+    fallbackDescription:
+      "سياسات مدونتي القانونية في مكان واحد: الخصوصية · ملفات تعريف الارتباط · حقوق النشر · اتفاقية المستخدم.",
+  });
+}
 
 const legalPages = [
   {

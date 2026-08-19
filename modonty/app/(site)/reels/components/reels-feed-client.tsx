@@ -5,7 +5,7 @@ import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 import { loadMoreReels } from "../actions/load-more";
-import type { ReelFeedItemWithState } from "../helpers/reels-feed";
+import type { ReelFeedItemWithState } from "@/lib/queries/reels-feed-shapes";
 import { ReelActionsRail } from "./reel-actions-rail";
 
 interface ReelsFeedClientProps {

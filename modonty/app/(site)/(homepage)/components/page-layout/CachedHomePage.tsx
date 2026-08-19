@@ -7,7 +7,7 @@ import { BottomBar } from "@/app/(site)/(homepage)/components/mobile-bottom-bar/
 import { getCorePublisherArticles } from "@/app/(site)/(homepage)/data/get-core-publisher-articles";
 import { getHomeFeedArticles } from "@/app/(site)/(homepage)/data/get-home-feed-articles";
 import { getMoreArticles } from "@/app/(site)/(homepage)/data/get-more-articles";
-import { getReelsFeedPage } from "@/app/(site)/reels/helpers/reels-feed";
+import { getReelsFeedPage } from "@/lib/queries/get-reels-feed-page";
 import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
 import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";

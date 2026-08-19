@@ -4,7 +4,7 @@ import { generateStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { BecomePartnerBanner } from "@/components/shared/become-partner-banner/BecomePartnerBanner";
 import { getClientsList } from "@/lib/queries/get-clients-list";
-import { getIndustriesEnhanced } from "@/app/(site)/industries/helpers/get-industries-enhanced";
+import { getIndustriesEnhanced } from "@/lib/queries/get-industries-enhanced";
 import { getAboutPageForMetadata } from "./helpers/about-metadata";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getAboutPageContent } from "./helpers/about-content";

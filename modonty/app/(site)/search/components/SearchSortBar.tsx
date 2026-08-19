@@ -9,8 +9,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SortDropdown } from "@/app/(site)/clients/components/sort-dropdown";
-import type { SortOption } from "@/app/(site)/clients/components/sort-dropdown";
+import { SortDropdown } from "./sort-dropdown";
+import type { SortOption } from "./sort-dropdown";
 import type { ClientSortOption } from "../helpers/client-sort";
 
 type SearchScope = "all" | "articles" | "clients";

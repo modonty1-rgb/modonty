@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { SubscriptionStatus } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import type { IndustryListItem, IndustryQueryOptions } from "@/lib/types";
-import { getIndustriesEnhanced } from "./get-industries-enhanced";
+import { getIndustriesEnhanced } from "@/lib/queries/get-industries-enhanced";
 
 export async function getIndustriesPage(
   page: number,
