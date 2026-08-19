@@ -597,12 +597,13 @@ const TASKS = [
     "<b>المطلوب:</b> (١) تأكيد قيمة <code>defaultAlternateLanguages</code> على <b>الإنتاج</b> — لو فاضية هناك أيضاً فالموقع كلّه بلا hreflang ولا <code>x-default</code>، وهذا يضرب استهداف السعودية ومصر والخليج مباشرةً. (٢) تعبئتها من الأدمن ← الإعدادات.",
  ref:"بند HREF0"},
 
-{id:"TRUST1", b:"fs", app:["modonty"], tab:"now", sev:"high", who:"c", date:"١٩ أغسطس ٢٠٢٦",
- t:"<code>trust/page.tsx</code> ٤٨٢ سطراً — أضخم صفحة ثابتة في مدونتي",
- d:"<b>متحقَّق ١٩ أغسطس بجرد آليّ على ١٥ صفحة ثابتة:</b> <code>app/(site)/trust/page.tsx</code> = <b>٤٨٢ سطراً</b> و<b>٥٨ نصّاً عربياً مكتوباً داخل الملفّ</b>، ومجلّد <code>components/</code> عنده <b>فارغ</b> — أي أن الصفحة تجلب وتُركّب وتكتب كل شيء في ملفّ واحد. للمقارنة: بقية الصفحات الثابتة بين ٨ و١٣٨ سطراً.<br>" +
-    "<b>القاعدة المخالَفة:</b> «<code>page.tsx</code> سيرفر كومبوننت <b>نحيف</b>: يجلب ويركّب» + «مجلّد لكل عنصر مرئي».<br>" +
-    "<b>العمل:</b> تقسيم الأقسام المرئية إلى <code>trust/components/&lt;thing&gt;-card|-list/</code> باسم ما يراه الزائر، ويبقى <code>page.tsx</code> جلباً وتركيباً.<br>" +
-    "<b>يُقاس بعدها:</b> <code>page.tsx</code> تحت ١٢٠ سطراً · <code>components/</code> غير فارغ · الصفحة ٢٠٠ ونفس الشكل بلقطة قبل/بعد.",
+{id:"TRUST1", b:"fs", app:["modonty"], tab:"done", sev:"ok", who:"c", date:"١٩ أغسطس ٢٠٢٦",
+ t:"✅ صفحة الموثوقية ٤٨٢ ← ١٠٠ سطراً · ستة مكوّنات ومساعدان",
+ d:"<b>كان (متحقَّق بجرد آليّ على ١٥ صفحة ثابتة):</b> <code>app/(site)/trust/page.tsx</code> = ٤٨٢ سطراً و٥٨ نصّاً عربياً في ملفّ واحد، ومجلّد <code>components/</code> فارغ — الصفحة تجلب وتُركّب وتكتب كل شيء بنفسها. بقية الصفحات الثابتة بين ٨ و١٣٨ سطراً.<br>" +
+    "<b>صار:</b> <code>page.tsx</code> يجلب ويركّب فقط. الأقسام الستّة المرئية صارت مجلّداً لكل واحد باسم ما يراه الزائر — <code>identity-card</code> (الترويسة) · <code>record-card</code> (السجل التجاري) · <code>pillars-card</code> (ليش تثق فينا) · <code>location-card</code> (فين تلقانا) · <code>promises-card</code> (شفافيتنا معك) · <code>question-card</code> (عندك سؤال قبل تبدأ؟). وبناة البيانات خرجت إلى <code>helpers/build-legal-facts.ts</code> و<code>build-contact-rows.ts</code>.<br>" +
+    "<b>وحُذفت نسخة مكرّرة:</b> <code>sanitizeJsonLd</code> المحلّية كانت حرفياً نفس <code>jsonLdHtml</code> في <code>lib/seo/index.ts:11</code>.<br>" +
+    "<b>الدليل (متحقَّق حيّاً ١٩ أغسطس):</b> <code>tsc</code> صفر أخطاء · العناوين الستّة كلّها ترسم · بطاقتا <code>Organization</code> و<code>WebPage</code> صالحتان · صورة الشهادة تحمّل <code>520×367</code> · لقطة <code>trust-after-split.png</code>. صفر تغيير سلوك — كوميت <code>f90d21f</code>.<br>" +
+    "<b>باقٍ على هذه الصفحة:</b> ٥٨ نصّاً عربياً انتقلت مع المكوّنات ولم تُستخرَج بعد إلى <code>messages</code> — انظر STATIC-I18N.",
  ref:"بند TRUST1"},
 
 {id:"STATIC-I18N", b:"fs", app:["modonty"], tab:"now", sev:"normal", who:"c", date:"١٩ أغسطس ٢٠٢٦",
