@@ -38,21 +38,33 @@ export function ReadingTimeBar({ counts, current }: ReadingTimeBarProps) {
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
       {total > 0 && (
+        /* Same 72px height and 8px radius as Modo's row, measured off it — two controls sharing a
+           line read as one strip only if they share a silhouette. Each button carries its range
+           under its name, because «فنجان قهوة» alone says nothing about what it filters. */
         <nav aria-label="اقرأ حسب وقتك" className="flex shrink-0 flex-wrap gap-2">
           {READING_TIME_BUCKETS.map((bucket) => {
             const Icon = ICONS[bucket.key];
             const count = counts[bucket.key];
             const active = current.time === bucket.key;
 
+            const inner = (
+              <>
+                <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                <span className="min-w-0 text-start">
+                  <span className="block text-sm font-medium leading-5">{bucket.label}</span>
+                  <span className="block text-[11px] leading-4 opacity-70">{bucket.hint}</span>
+                </span>
+              </>
+            );
+
             if (count === 0) {
               return (
                 <span
                   key={bucket.key}
                   aria-disabled="true"
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full border border-dashed border-border px-3.5 text-sm text-muted-foreground opacity-45"
+                  className="inline-flex h-[72px] items-center gap-2 rounded-lg border border-dashed border-border px-4 text-muted-foreground opacity-45"
                 >
-                  <Icon className="h-4 w-4 shrink-0" aria-hidden />
-                  {bucket.label}
+                  {inner}
                 </span>
               );
             }
@@ -62,16 +74,14 @@ export function ReadingTimeBar({ counts, current }: ReadingTimeBarProps) {
                 key={bucket.key}
                 href={withArchiveChange(current, { time: active ? undefined : bucket.key })}
                 aria-current={active ? "true" : undefined}
-                title={bucket.hint}
                 className={cn(
-                  "inline-flex min-h-11 items-center gap-2 rounded-full border px-3.5 text-sm transition-colors active:scale-[0.98] " + FOCUS_RING,
+                  "inline-flex h-[72px] items-center gap-2 rounded-lg px-4 ring-1 transition-colors active:scale-[0.98] " + FOCUS_RING,
                   active
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    ? "bg-primary text-primary-foreground ring-primary"
+                    : "bg-card text-muted-foreground ring-border hover:text-foreground hover:ring-primary/40"
                 )}
               >
-                <Icon className="h-4 w-4 shrink-0" aria-hidden />
-                {bucket.label}
+                {inner}
               </Link>
             );
           })}
