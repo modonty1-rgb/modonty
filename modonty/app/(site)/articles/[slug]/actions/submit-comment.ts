@@ -8,9 +8,6 @@ import { CommentStatus } from "@prisma/client";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import {
   trackCommentSubmit,
-  trackCommentReply,
-  trackCommentLike,
-  trackCommentDislike,
 } from "@/lib/analytics/events-registry";
 
 import { isPublicArticle } from "../helpers/is-public-article";

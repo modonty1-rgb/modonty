@@ -21,7 +21,6 @@ import {
 } from "@/lib/icons";
 import { CommentForm } from "../comment-form/CommentForm";
 import { useRouter } from "next/navigation";
-import { submitComment } from "../../actions/submit-comment";
 import { submitReply } from "../../actions/submit-reply";
 import { likeComment } from "../../actions/like-comment";
 import { fetchArticleComments } from "../../data/fetch-article-comments";
@@ -85,11 +84,6 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
       .slice(0, 5);
   }, [comments]); 
 
-
-  const handleCommentSubmit = async (content: string) => {
-    const result = await submitComment(articleId, articleSlug, content);
-    return result;
-  };
 
   const handleReplySubmit = async (content: string, parentCommentId: string) => {
     const result = await submitReply(articleId, articleSlug, parentCommentId, content);

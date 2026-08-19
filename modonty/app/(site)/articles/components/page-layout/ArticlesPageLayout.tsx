@@ -6,6 +6,7 @@ import { ArticlesFeed } from "../articles-feed/ArticlesFeed";
 import { DiscoverRail } from "../discover-rail/DiscoverRail";
 
 import type { ArchiveState } from "../../helpers/build-archive-href";
+import type { ReadingTimeBucket } from "../../helpers/reading-time-buckets";
 import type { ArchiveFilters } from "../../data/get-articles-filters";
 import type { FeedPost } from "@/lib/types";
 import type { ReactNode } from "react";
@@ -14,22 +15,21 @@ interface ArticlesPageLayoutProps {
   header?: ReactNode;
   articles: FeedPost[];
   filters: ArchiveFilters;
-  modontyArticles: FeedPost[];
-  brandLogoUrl: string | null;
+  readingTimeCounts: Record<ReadingTimeBucket, number>;
   current: ArchiveState;
   scopeLabel: string | null;
 }
 
 /**
  * The same three columns as `/`, `/clients` and `/industries` — identical widths and gaps, so
- * moving between them never moves the furniture. Right narrows, centre reads, left wanders.
+ * moving between them never moves the furniture. Right narrows by subject, centre reads, left
+ * narrows by how much time the visitor has.
  */
 export function ArticlesPageLayout({
   header,
   articles,
   filters,
-  modontyArticles,
-  brandLogoUrl,
+  readingTimeCounts,
   current,
   scopeLabel,
 }: ArticlesPageLayoutProps) {
@@ -47,15 +47,10 @@ export function ArticlesPageLayout({
       center={<ArticlesFeed articles={articles} current={current} scopeLabel={scopeLabel} />}
       left={
         <StickyRail
-          label="اكتشف"
+          label="اقرأ حسب وقتك"
           className="hidden w-[300px] shrink-0 self-start min-[1240px]:sticky min-[1240px]:block"
         >
-          <DiscoverRail
-            modontyArticles={modontyArticles}
-            brandLogoUrl={brandLogoUrl}
-            tags={filters.tags}
-            current={current}
-          />
+          <DiscoverRail readingTimeCounts={readingTimeCounts} current={current} />
         </StickyRail>
       }
     />

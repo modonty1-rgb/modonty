@@ -4,18 +4,10 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
-import { CommentStatus } from "@prisma/client";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import {
-  trackCommentSubmit,
-  trackCommentReply,
   trackCommentLike,
-  trackCommentDislike,
 } from "@/lib/analytics/events-registry";
-
-import { isPublicArticle } from "../helpers/is-public-article";
-
-import { sanitizeComment, validateCommentContent } from "../helpers/validate-comment";
 
 export async function likeComment(commentId: string, articleSlug: string) {
   try {

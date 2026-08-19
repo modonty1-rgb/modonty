@@ -6,18 +6,25 @@ import { SITE_URL } from "@/constants";
 
 import { getArticlesArchive, type ArchiveSort } from "./data/get-articles-archive";
 import { getArticlesFilters } from "./data/get-articles-filters";
-import { getModontyArticles } from "./data/get-modonty-articles";
-import { getBrandMedia } from "@/lib/settings/get-brand-media";
+import { getTagName } from "./data/get-tag-name";
 import { buildArchiveHref, type ArchiveState } from "./helpers/build-archive-href";
+import {
+  countByReadingTime,
+  filterByReadingTime,
+  READING_TIME_BUCKETS,
+  type ReadingTimeBucket,
+} from "./helpers/reading-time-buckets";
 import { ArticlesPageLayout } from "./components/page-layout/ArticlesPageLayout";
 
 const SORTS: ArchiveSort[] = ["newest", "mostRead", "mostEngaged"];
+const TIMES: ReadingTimeBucket[] = ["short", "medium", "long"];
 
 interface ArticlesPageProps {
   searchParams: Promise<{
     industry?: string;
     category?: string;
     tag?: string;
+    time?: string;
     sort?: string;
     page?: string;
   }>;
@@ -30,35 +37,45 @@ function readState(raw: Awaited<ArticlesPageProps["searchParams"]>): ArchiveStat
     industry: raw.industry?.trim() || undefined,
     category: raw.category?.trim() || undefined,
     tag: raw.tag?.trim() || undefined,
+    time: TIMES.includes(raw.time as ReadingTimeBucket) ? (raw.time as ReadingTimeBucket) : undefined,
     sort: SORTS.includes(raw.sort as ArchiveSort) ? (raw.sort as ArchiveSort) : undefined,
     page: Number.isFinite(page) && page > 1 ? Math.floor(page) : undefined,
   };
 }
 
 /** The filter in words — used in the heading and the title, so both say the same thing. */
-function describeScope(
+async function describeScope(
   state: ArchiveState,
   filters: Awaited<ReturnType<typeof getArticlesFilters>>
-): string | null {
+): Promise<string | null> {
   const category = state.category && filters.categories.find((c) => c.slug === state.category)?.name;
+  if (category) return category;
+
   const industry = state.industry && filters.industries.find((i) => i.slug === state.industry)?.name;
-  const tag = state.tag && filters.tags.find((t) => t.slug === state.tag)?.name;
-  return category || industry || tag || null;
+  if (industry) return industry;
+
+  // Tags are not offered in the rail any more, but `/tags/[slug]` still links here — so the name
+  // is looked up rather than carried through the page.
+  if (state.tag) return await getTagName(state.tag);
+
+  return null;
 }
 
 export async function generateMetadata({ searchParams }: ArticlesPageProps): Promise<Metadata> {
   const state = readState(await searchParams);
   const filters = await getArticlesFilters();
-  const scope = describeScope(state, filters);
+  const scope = await describeScope(state, filters);
   const page = state.page ?? 1;
+  const timeLabel = state.time
+    ? READING_TIME_BUCKETS.find((b) => b.key === state.time)?.hint
+    : undefined;
 
-  const title = scope
-    ? `مقالات ${scope}${page > 1 ? ` — صفحة ${page}` : ""} - مدونتي`
-    : `كل المقالات${page > 1 ? ` — صفحة ${page}` : ""} - مدونتي`;
+  const base = scope ? `مقالات ${scope}` : "كل المقالات";
+  const title = `${base}${timeLabel ? ` — ${timeLabel}` : ""}${page > 1 ? ` — صفحة ${page}` : ""} - مدونتي`;
 
   const description = scope
     ? `اقرأ مقالات ${scope} على مدونتي — محتوى يكتبه شركاء موثوقون، مرتّب بالأحدث والأكثر قراءة.`
-    : "كل مقالات مدونتي في مكان واحد — صفِّ بالمجال أو التصنيف أو الوسم، ورتّب بالأحدث أو الأكثر قراءة.";
+    : "كل مقالات مدونتي في مكان واحد — صفِّ بالمجال أو التصنيف، واختر حسب الوقت اللي عندك.";
 
   /**
    * Every filter combination gets its OWN canonical, not one pointing at `/articles`: the filtered
@@ -86,7 +103,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
 export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
   const state = readState(await searchParams);
 
-  const [articles, filters, modontyArticles, brandMedia] = await Promise.all([
+  const [subjectMatches, filters] = await Promise.all([
     getArticlesArchive({
       industrySlug: state.industry,
       categorySlug: state.category,
@@ -94,11 +111,17 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
       sort: state.sort,
     }),
     getArticlesFilters(),
-    getModontyArticles(),
-    getBrandMedia(),
   ]);
 
-  const scopeLabel = describeScope(state, filters);
+  /**
+   * Reading time is applied HERE, not in the query, so the left rail can count the buckets against
+   * what the subject filters already returned. Counting after the time filter would collapse every
+   * other bucket to zero the moment one was picked.
+   */
+  const readingTimeCounts = countByReadingTime(subjectMatches);
+  const articles = filterByReadingTime(subjectMatches, state.time);
+
+  const scopeLabel = await describeScope(state, filters);
 
   const jsonLd = generateBreadcrumbStructuredData([
     { name: "الرئيسية", url: "/" },
@@ -122,8 +145,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
         }
         articles={articles}
         filters={filters}
-        modontyArticles={modontyArticles}
-        brandLogoUrl={brandMedia.logoUrl}
+        readingTimeCounts={readingTimeCounts}
         current={state}
         scopeLabel={scopeLabel}
       />

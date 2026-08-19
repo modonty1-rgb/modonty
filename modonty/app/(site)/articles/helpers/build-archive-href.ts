@@ -1,9 +1,12 @@
 import type { ArchiveSort } from "../data/get-articles-archive";
+import type { ReadingTimeBucket } from "./reading-time-buckets";
 
 export interface ArchiveState {
   industry?: string;
   category?: string;
   tag?: string;
+  /** How long a read the visitor is in the mood for. */
+  time?: ReadingTimeBucket;
   sort?: ArchiveSort;
   page?: number;
 }
@@ -23,6 +26,7 @@ export function buildArchiveHref(state: ArchiveState): string {
   if (state.industry) params.set("industry", state.industry);
   if (state.category) params.set("category", state.category);
   if (state.tag) params.set("tag", state.tag);
+  if (state.time) params.set("time", state.time);
   if (state.sort && state.sort !== "newest") params.set("sort", state.sort);
   if (state.page && state.page > 1) params.set("page", String(state.page));
   const qs = params.toString();
