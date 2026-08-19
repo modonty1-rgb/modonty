@@ -4,6 +4,7 @@ import { IconIndustry, IconCategory } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 import { withArchiveChange, type ArchiveState } from "../../helpers/build-archive-href";
+import { FOCUS_RING } from "../../helpers/focus-ring";
 
 import type { ArchiveFilters } from "../../data/get-articles-filters";
 
@@ -40,7 +41,7 @@ export function FiltersRail({ filters, current }: FiltersRailProps) {
         href={withArchiveChange(current, { industry: undefined, category: undefined })}
         aria-current={nothingPicked ? "true" : undefined}
         className={cn(
-          "block truncate py-1.5 text-sm transition-colors",
+          "flex min-h-11 items-center rounded-md px-1 text-sm transition-colors active:bg-muted " + FOCUS_RING,
           nothingPicked ? "font-bold text-foreground" : "text-muted-foreground hover:text-foreground"
         )}
       >
@@ -62,7 +63,7 @@ export function FiltersRail({ filters, current }: FiltersRailProps) {
                 href={withArchiveChange(current, { industry: industry.slug, category: undefined })}
                 aria-current={current.industry === industry.slug ? "true" : undefined}
                 className={cn(
-                  "flex items-center gap-2 py-1.5 text-sm transition-colors",
+                  "flex min-h-11 items-center gap-2 rounded-md px-1 text-sm transition-colors active:bg-muted " + FOCUS_RING,
                   industryActive ? "font-bold text-foreground" : "text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -83,7 +84,7 @@ export function FiltersRail({ filters, current }: FiltersRailProps) {
                           })}
                           aria-current={active ? "true" : undefined}
                           className={cn(
-                            "flex items-center gap-1.5 py-1 text-xs transition-colors",
+                            "flex min-h-11 items-center gap-1.5 rounded-md px-1 text-xs transition-colors active:bg-muted " + FOCUS_RING,
                             active ? "font-bold text-primary" : "text-muted-foreground hover:text-foreground"
                           )}
                         >

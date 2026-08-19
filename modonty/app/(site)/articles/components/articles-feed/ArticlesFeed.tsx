@@ -4,11 +4,10 @@ import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
 
 import { MiniCard } from "../mini-card/MiniCard";
 
-import { cn } from "@/lib/utils";
 
-import { withArchiveChange, buildArchiveHref, type ArchiveState } from "../../helpers/build-archive-href";
+import { buildArchiveHref, type ArchiveState } from "../../helpers/build-archive-href";
+import { FOCUS_RING } from "../../helpers/focus-ring";
 
-import type { ArchiveSort } from "../../data/get-articles-archive";
 import type { FeedPost } from "@/lib/types";
 
 /**
@@ -64,7 +63,7 @@ export function ArticlesFeed({ articles, current, scopeLabel }: ArticlesFeedProp
           <p className="mt-1 text-xs text-muted-foreground">جرّب تشيل واحداً من الفلاتر.</p>
           <Link
             href={buildArchiveHref({})}
-            className="mt-3 inline-block text-sm font-medium text-link hover:underline"
+            className={"mt-3 inline-flex min-h-11 items-center rounded-md px-2 text-sm font-medium text-link hover:underline active:bg-muted " + FOCUS_RING}
           >
             اعرض كل المقالات
           </Link>
@@ -85,7 +84,7 @@ export function ArticlesFeed({ articles, current, scopeLabel }: ArticlesFeedProp
           {page > 1 ? (
             <Link
               href={buildArchiveHref({ ...current, page: page - 1 })}
-              className="text-sm font-medium text-link hover:underline"
+              className={"inline-flex min-h-11 items-center rounded-md px-2 text-sm font-medium text-link transition-colors hover:underline active:bg-muted " + FOCUS_RING}
             >
               → الصفحة السابقة
             </Link>
@@ -95,7 +94,7 @@ export function ArticlesFeed({ articles, current, scopeLabel }: ArticlesFeedProp
           {hasMore && (
             <Link
               href={buildArchiveHref({ ...current, page: page + 1 })}
-              className="text-sm font-medium text-link hover:underline"
+              className={"inline-flex min-h-11 items-center rounded-md px-2 text-sm font-medium text-link transition-colors hover:underline active:bg-muted " + FOCUS_RING}
             >
               الصفحة التالية ←
             </Link>

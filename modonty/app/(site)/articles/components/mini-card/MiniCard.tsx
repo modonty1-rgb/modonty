@@ -29,7 +29,7 @@ export function MiniCard({ post, isLcp }: MiniCardProps) {
     <li>
       <Link
         href={`/articles/${encodeURIComponent(post.slug)}`}
-        className="flex items-start gap-3 p-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:hover:bg-muted/50"
+        className="flex items-start gap-3 p-3 transition-colors active:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:hover:bg-muted/50"
       >
         {/* 16:9, not a square. Measured 2026-08-19: 115 of 116 featured images are 1.78, and a
             square thumbnail cropped 44% of the width off — on banners whose subject IS text, that
