@@ -98,7 +98,7 @@ export function ArticleTopEngagementBar({
   const tab = "absolute inset-x-2.5 top-0 h-[3px] rounded-b-full";
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex w-full items-center justify-between gap-2">
       <button type="button" onClick={handleLike} disabled={busy === "like"} className={cn(item, liked && "text-primary")} aria-pressed={liked} aria-label="أعجبني">
         <span className={cn(tab, "bg-primary")} aria-hidden />
         <IconLike className={cn("size-[18px]", liked && "fill-current")} />
