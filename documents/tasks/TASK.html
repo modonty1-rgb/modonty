@@ -564,6 +564,55 @@ const TASKS = [
     "<b>النطاق (محدَّث ١٩ أغسطس):</b> <b>٦٦</b> ملفّ <code>loading.tsx</code> تحت <code>modonty/app/</code> — واحد لكل صفحة. كانت ٦٣، وأُضيفت ثلاثة لمسارات لم يكن لها هيكل إطلاقاً (<code>/audio</code> · <code>/booking</code> · <code>/shop</code>) مبنيّة بالقياس الحيّ: الكرت ٣٠٦ بكسل · الترويسة ٥٤ · البانر ٩٥ (<code>0d5e1bc</code>). الباقي لم يُراجَع بعد.",
  ref:"بند LOAD1"},
 
+{id:"INV0", b:"sot", app:["modonty","admin","console"], tab:"ref", sev:"ok", who:"c", date:"١٩ أغسطس ٢٠٢٦",
+ t:"📍 الجرد الشامل — كل المفتوح، وأين يسكن",
+ d:"<b>متحقَّق ١٩ أغسطس ٢٠٢٦</b> — الأرقام كلّها من قراءة آليّة لملفّات المهام نفسها، لا من الذاكرة. الشغل المفتوح موزَّع على <b>أربعة أنواع من الملفّات</b>، وهذه خريطتها.<br><br>" +
+
+    "<b>■ ١ · لوحة الشغل الرئيسية</b> — <code>documents/tasks/TASK.html</code> (هذا الملفّ)<br>" +
+    "متحقَّق بتحليل مصفوفة <code>TASKS</code>: ٢٦٠ بطاقة · <b>٧٨ مفتوحة</b> · ١٥٣ منجَزة · ٢٩ مرجعية.<br>" +
+    "<b>حسب الخطورة:</b> حرج ١ · عالٍ ٣٣ · عادي ٤٢ · فكرة ٢.<br>" +
+    "<b>حسب البورد:</b> To&nbsp;Do ٢٣ · مقالات العملاء ١٦ · قائمة الانتظار ١٤ · سيو ٩ · بنية مدونتي ٦ · بيانات ٢ · إنتاج ٢ · أفكار ٢ · مصدر السيو ١ · نشر ١ · بني ١ · صور ١.<br><br>" +
+
+    "<b>■ ٢ · ملفّ مهام لكل مسار</b> — ثمانية ملفّات، متحقَّق بوجودها على القرص:<br>" +
+    "<code>modonty/app/(site)/(homepage)/TASK.md</code> ١٥٠ سطراً (الأثقل — فيه جرد <code>\"use client\"</code>: ١٦ مكوّناً من ٤٠) · <code>modo-chat</code> ٦١ · <code>clients</code> ٥٠ · <code>industries</code> ٣٩ · <code>modonty</code> ٣٩ · <code>articles</code> ٣٧ · <code>categories</code> ٣٠ · <code>trust</code> ٢٨.<br>" +
+    "<b>المشترك بينها:</b> أربعة تحمل قسم «قرارات تنتظر خالد» (<code>clients</code> · <code>industries</code> · <code>modonty</code> · <code>trust</code>)، وثلاثة تحمل «مؤجَّل حتى يكتمل الريفاكتور».<br><br>" +
+
+    "<b>■ ٣ · لوحات HTML لمسارات بعينها</b> — متحقَّق بعدّ بطاقات كل ملفّ:<br>" +
+    "<code>modonty/app/(site)/(homepage)/documentation/HOMEPAGE-BOARD.html</code> — <b>١٦ بنداً مفتوحاً</b> (اللوحة تحمل المفتوح فقط بقاعدتها، فلا منجَز معروض فيها).<br>" +
+    "<code>modonty/app/(site)/articles/[slug]/documentation/ARTICLE-BOARD.html</code> — <b>٢ مفتوح</b> · ١٥ منجَزاً بالأخضر (AR15 بيانات · AR-A قرار الصورة).<br><br>" +
+
+    "<b>■ ٤ · قرارات مودو</b> — <code>modonty/app/(site)/modo-chat/documentation/modo-decisions.html</code><br>" +
+    "متحقَّق بعدّ بطاقات <code>class=\"card … dec\"</code>: <b>١٠ قرارات</b> تنتظر خالد. الأثقل ق٢٢ (<code>ArticleFAQ.articleId</code> إلزامي و٣١ ملفاً يقرأ الموديل). مودو موقوف بأمر خالد حتى تُقفل صفحة المقالات.<br><br>" +
+
+    "<b>■ ملفّات لا تحمل شغلاً مفتوحاً</b> (لا تُفتح بحثاً عن مهام): <code>documents/tasks/TODO.md</code> مصفَّر عمداً ومحوَّل لهذه اللوحة (نصّه يقول ذلك حرفياً) · <code>TECH-NOTES.md</code> تفاصيل تقنية لبنود منجَزة · <code>CLAUDE.md</code> سجلّ تست حيّ خام · <code>NEW-IDEAS.md</code> أفكار مراحل قادمة.<br><br>" +
+
+    "<b>الخلاصة الرقمية:</b> ٧٨ بطاقة هنا + ١٦ على لوحة الرئيسية + ٢ على لوحة المقال + ١٠ قرارات مودو + أقسام ملفّات المسارات الثمانية.",
+ ref:"بند INV0"},
+
+{id:"HREF0", b:"seo", app:["modonty"], tab:"now", sev:"high", who:"k", date:"١٩ أغسطس ٢٠٢٦",
+ t:"صفر وسم hreflang على كل صفحات مدونتي — الحقل فاضٍ في الإعدادات",
+ d:"<b>متحقَّق ١٩ أغسطس بقياس حيّ (<code>curl | grep -c 'hreflang='</code>) على خمس صفحات:</b> <code>/terms</code> · <code>/about</code> · <code>/legal/privacy-policy</code> · <code>/trust</code> · <code>/legal</code> — <b>كلّها ٠</b>، بينما الكانونيكال يخرج سليماً على الخمس.<br>" +
+    "<b>الجذر — بيانات لا كود:</b> البانِي <code>lib/seo/build-metadata-from-page-row.ts:96</code> ينادي <code>buildHreflangLanguages(defaults.alternateLanguages, …)</code>، والمصدر <code>lib/settings/get-page-seo-defaults.ts:61</code> = <code>settings.defaultAlternateLanguages</code>. الدالّة المشتركة <code>shared/lib/seo/build-hreflang-languages.ts</code> ترجع كائناً فارغاً حين تكون القائمة فارغة — وهذا ما يحصل على <code>modonty_dev</code>.<br>" +
+    "<b>تعليق الدالّة نفسها يقول «Settings holds nine»</b> — أي أنّ القائمة كانت مملوءة يوم كُتبت. فإمّا أُفرغت على التطوير، أو لم تُنسَخ مع آخر Sync.<br>" +
+    "<b>المطلوب:</b> (١) تأكيد قيمة <code>defaultAlternateLanguages</code> على <b>الإنتاج</b> — لو فاضية هناك أيضاً فالموقع كلّه بلا hreflang ولا <code>x-default</code>، وهذا يضرب استهداف السعودية ومصر والخليج مباشرةً. (٢) تعبئتها من الأدمن ← الإعدادات.",
+ ref:"بند HREF0"},
+
+{id:"TRUST1", b:"fs", app:["modonty"], tab:"now", sev:"high", who:"c", date:"١٩ أغسطس ٢٠٢٦",
+ t:"<code>trust/page.tsx</code> ٤٨٢ سطراً — أضخم صفحة ثابتة في مدونتي",
+ d:"<b>متحقَّق ١٩ أغسطس بجرد آليّ على ١٥ صفحة ثابتة:</b> <code>app/(site)/trust/page.tsx</code> = <b>٤٨٢ سطراً</b> و<b>٥٨ نصّاً عربياً مكتوباً داخل الملفّ</b>، ومجلّد <code>components/</code> عنده <b>فارغ</b> — أي أن الصفحة تجلب وتُركّب وتكتب كل شيء في ملفّ واحد. للمقارنة: بقية الصفحات الثابتة بين ٨ و١٣٨ سطراً.<br>" +
+    "<b>القاعدة المخالَفة:</b> «<code>page.tsx</code> سيرفر كومبوننت <b>نحيف</b>: يجلب ويركّب» + «مجلّد لكل عنصر مرئي».<br>" +
+    "<b>العمل:</b> تقسيم الأقسام المرئية إلى <code>trust/components/&lt;thing&gt;-card|-list/</code> باسم ما يراه الزائر، ويبقى <code>page.tsx</code> جلباً وتركيباً.<br>" +
+    "<b>يُقاس بعدها:</b> <code>page.tsx</code> تحت ١٢٠ سطراً · <code>components/</code> غير فارغ · الصفحة ٢٠٠ ونفس الشكل بلقطة قبل/بعد.",
+ ref:"بند TRUST1"},
+
+{id:"STATIC-I18N", b:"fs", app:["modonty"], tab:"now", sev:"normal", who:"c", date:"١٩ أغسطس ٢٠٢٦",
+ t:"١٦٥ نصّاً عربياً مكتوباً في كود الصفحات الثابتة",
+ d:"<b>متحقَّق ١٩ أغسطس بجرد آليّ:</b> ١٣ من ١٥ صفحة ثابتة لا تستورد <code>@/lib/i18n/messages</code>، ومجموع النصوص العربية المكتوبة داخل ملفّاتها <b>١٦٥</b>. الأثقل: <code>trust</code> ٥٨ · <code>legal</code> ١٦ · <code>help/faq</code> ١٥ · <code>help</code> ١٣ · <code>help/feedback</code> ١٠. الملتزمتان: <code>about</code> و<code>team</code>.<br>" +
+    "<b>القاعدة المخالَفة</b> (<code>.claude/skills/modonty-uiux</code>): «كل نصّ عربي يراه الزائر يمرّ عبر <code>messages/ar.json</code> + <code>lib/i18n/messages.ts</code>، ولا يُكتب داخل المكوّن». والقراءة في سيرفر كومبوننت فقط — الكلاينت يسحب النطاق كلّه إلى الباندل.<br>" +
+    "<b>ليش يهمّ عملياً:</b> تعديل صياغة اليوم يعني فتح ملفّ كود لكل صفحة؛ ولا توجد نقطة واحدة تُراجَع فيها اللهجة.<br>" +
+    "<b>يُنفَّذ صفحة صفحة</b> بنطاق باسمها، لا دفعة واحدة — الأثقل أولاً (<code>trust</code> بعد تقسيمه في TRUST1).",
+ ref:"بند STATIC-I18N"},
+
 {id:"ERR1", b:"fs", app:["modonty"], tab:"now", sev:"high", who:"c", date:"١٩ أغسطس ٢٠٢٦",
  t:"توحيد ٢٢ حارس أخطاء قديماً على المكوّن المشترك",
  d:"<b>الوضع:</b> ٦٦ مساراً، كلّها الآن عندها <code>error.tsx</code> (متحقَّق ١٩ أغسطس: <code>page.tsx = 66 · error.tsx = 67</code>). الـ٤٥ الجديدة أغلفة من ١٩ سطراً تنادي <code>components/shared/route-error/RouteError.tsx</code> (<code>bdefebb</code>).<br>" +
