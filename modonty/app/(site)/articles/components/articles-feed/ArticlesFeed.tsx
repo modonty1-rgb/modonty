@@ -6,15 +6,9 @@ import { MoreArticlesOnScroll } from "../more-articles/MoreArticlesOnScroll";
 
 import { buildArchiveHref, type ArchiveState } from "../../helpers/build-archive-href";
 import { FOCUS_RING } from "../../helpers/focus-ring";
+import { ARCHIVE_PAGE_SIZE } from "../../helpers/archive-page-size";
 
 import type { ArchiveArticle } from "../../data/get-articles-archive";
-
-/**
- * Twenty, not the feed's ten: a mini row is roughly a quarter the height of the homepage card, so
- * ten of them left the column half empty next to the rails (Khalid, 2026-08-19: «مساحات كبيرة
- * فاضية»). The shared ARCHIVE_PAGE_SIZE stays at ten for the homepage, where the card is a poster.
- */
-const ARCHIVE_PAGE_SIZE = 20;
 
 interface ArticlesFeedProps {
   /** Everything in scope — this component only chunks and draws. */

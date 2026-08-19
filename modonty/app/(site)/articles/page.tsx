@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
@@ -8,6 +9,7 @@ import { getArticlesArchive, type ArchiveSort } from "./data/get-articles-archiv
 import { getArticlesFilters } from "./data/get-articles-filters";
 import { getTagName } from "./data/get-tag-name";
 import { buildArchiveHref, type ArchiveState } from "./helpers/build-archive-href";
+import { ARCHIVE_PAGE_SIZE } from "./helpers/archive-page-size";
 import {
   countByReadingTime,
   filterByReadingTime,
@@ -69,6 +71,26 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
   const state = readState(await searchParams);
   const filters = await getArticlesFilters();
   const scope = await describeScope(state, filters);
+
+  /**
+   * A page past the end renders the not-found UI, but the HTTP status stays 200: with Cache
+   * Components the shell is flushed before `page.tsx` reaches `notFound()` — the same behaviour
+   * `proxy.ts` was written for on `/users/:id`. A 200 with nothing on it is a soft 404, so the
+   * page tells Google not to index it instead. Cheap: `getArticlesArchive` is cached, so this is
+   * the same read the body already does.
+   */
+  const outOfRange =
+    (state.page ?? 1) > 1 &&
+    filterByReadingTime(
+      await getArticlesArchive({
+        industrySlug: state.industry,
+        categorySlug: state.category,
+        tagSlug: state.tag,
+        search: state.search,
+        sort: state.sort,
+      }),
+      state.time
+    ).length <= ((state.page ?? 1) - 1) * ARCHIVE_PAGE_SIZE;
   const page = state.page ?? 1;
   const timeLabel = state.time
     ? READING_TIME_BUCKETS.find((b) => b.key === state.time)?.hint
@@ -92,6 +114,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
     title: { absolute: title },
     description,
     alternates: { canonical },
+    ...(outOfRange && { robots: { index: false, follow: false } }),
     openGraph: { title, description, url: canonical, type: "website" },
   };
 }
@@ -125,6 +148,16 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
    */
   const readingTimeCounts = countByReadingTime(subjectMatches);
   const articles = filterByReadingTime(subjectMatches, state.time);
+
+  /**
+   * A page number past the end is not an empty page — it is a page that does not exist. Returning
+   * 200 with nothing in it is a soft 404: Google indexes the URL, finds no content, and distrusts
+   * the whole series. The engine's own contract asks for this explicitly. Measured 2026-08-19:
+   * `?page=99` served 200 with zero rows.
+   */
+  if ((state.page ?? 1) > 1 && articles.length <= ((state.page ?? 1) - 1) * ARCHIVE_PAGE_SIZE) {
+    notFound();
+  }
 
   const scopeLabel = await describeScope(state, filters);
 
