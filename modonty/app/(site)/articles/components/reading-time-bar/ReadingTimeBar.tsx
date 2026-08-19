@@ -1,15 +1,16 @@
 import Link from "next/link";
 
-import { IconZap, IconCoffee, IconArmchair } from "@/lib/icons";
+import { IconFootprints, IconCoffee, IconArmchair } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
+import { AskModo } from "../ask-modo/AskModo";
 import { withArchiveChange, type ArchiveState } from "../../helpers/build-archive-href";
 import { READING_TIME_BUCKETS, type ReadingTimeBucket } from "../../helpers/reading-time-buckets";
 
 import type { ComponentType, SVGProps } from "react";
 
 const ICONS: Record<ReadingTimeBucket, ComponentType<SVGProps<SVGSVGElement>>> = {
-  short: IconZap,
+  short: IconFootprints,
   medium: IconCoffee,
   long: IconArmchair,
 };
@@ -20,107 +21,65 @@ interface ReadingTimeBarProps {
 }
 
 /**
- * «عندك كم دقيقة؟» — full width across the top of the archive, above the three columns.
+ * The top strip: pick how long a read you want, or go straight to Modo.
  *
- * It started as a small box in the left rail. Khalid moved it up (2026-08-19): it is the first
- * question a reader answers before he picks a subject, so it belongs where the eye lands, not
- * beside the results.
+ * Stripped down twice on Khalid's call (2026-08-19). The card frame, the heading and the number
+ * on every button are gone — «شيل Counters وشيل الديف الرئيسي… خليه بس buttons بشكل أنيق». The
+ * counts were guarding against a click that leads nowhere, and that cannot happen here: a bucket
+ * with no articles is still drawn, but dimmed and unclickable.
  *
- * It is also the only axis on this page that belongs to nobody. The two things that stood in the
- * rail before it — a most-read list and a tag cloud — both ranked partners against each other, and
- * a strip fixed on every archive page speaks in the platform's voice. Time describes the article,
- * not who paid for it.
- *
- * A bucket with nothing in it is drawn dimmed and unclickable rather than hidden — a button that
- * appears and disappears while you filter is harder to trust than one that says "not here".
+ * Modo's row is the component the homepage uses, unchanged — same character, same pill, same
+ * behaviour, so the two pages feel like one product.
  */
 export function ReadingTimeBar({ counts, current }: ReadingTimeBarProps) {
   const total = counts.short + counts.medium + counts.long;
-  if (total === 0) return null;
 
   return (
-    <section
-      aria-labelledby="reading-time-heading"
-      className="rounded-2xl border border-border bg-gradient-to-l from-primary/[0.07] via-card to-card p-4 sm:p-5"
-    >
-      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="reading-time-heading" className="text-base font-bold text-foreground sm:text-lg">
-          عندك كم دقيقة؟
-        </h2>
-        <p className="text-xs text-muted-foreground">اختر على مزاجك، والباقي نرتّبه لك</p>
-      </div>
+    <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+      {total > 0 && (
+        <nav aria-label="اقرأ حسب وقتك" className="flex shrink-0 flex-wrap gap-2">
+          {READING_TIME_BUCKETS.map((bucket) => {
+            const Icon = ICONS[bucket.key];
+            const count = counts[bucket.key];
+            const active = current.time === bucket.key;
 
-      <div className="grid gap-2.5 sm:grid-cols-3">
-        {READING_TIME_BUCKETS.map((bucket) => {
-          const Icon = ICONS[bucket.key];
-          const count = counts[bucket.key];
-          const active = current.time === bucket.key;
-
-          const body = (
-            <>
-              <span
-                className={cn(
-                  "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors",
-                  active ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
-                )}
-              >
-                <Icon className="h-5 w-5" aria-hidden />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className={cn("block text-sm font-bold", active ? "text-primary" : "text-foreground")}>
+            if (count === 0) {
+              return (
+                <span
+                  key={bucket.key}
+                  aria-disabled="true"
+                  className="inline-flex items-center gap-2 rounded-full border border-dashed border-border px-3.5 py-2 text-sm text-muted-foreground opacity-45"
+                >
+                  <Icon className="h-4 w-4 shrink-0" aria-hidden />
                   {bucket.label}
                 </span>
-                <span className="block text-xs text-muted-foreground">{bucket.hint}</span>
-              </span>
-              <span
+              );
+            }
+
+            return (
+              <Link
+                key={bucket.key}
+                href={withArchiveChange(current, { time: active ? undefined : bucket.key })}
+                aria-current={active ? "true" : undefined}
+                title={bucket.hint}
                 className={cn(
-                  "shrink-0 rounded-full px-2 py-0.5 text-xs font-medium tabular-nums",
-                  active ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
+                  "inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-sm transition-colors",
+                  active
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
                 )}
               >
-                {count.toLocaleString("ar-SA")}
-              </span>
-            </>
-          );
-
-          if (count === 0) {
-            return (
-              <div
-                key={bucket.key}
-                aria-disabled="true"
-                className="flex items-center gap-3 rounded-xl border border-dashed border-border p-3 opacity-45"
-              >
-                {body}
-              </div>
+                <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                {bucket.label}
+              </Link>
             );
-          }
-
-          return (
-            <Link
-              key={bucket.key}
-              href={withArchiveChange(current, { time: active ? undefined : bucket.key })}
-              aria-current={active ? "true" : undefined}
-              className={cn(
-                "flex items-center gap-3 rounded-xl border p-3 transition-all",
-                active
-                  ? "border-primary bg-primary/[0.08] shadow-sm"
-                  : "border-border bg-card hover:border-primary/40 hover:bg-muted/40"
-              )}
-            >
-              {body}
-            </Link>
-          );
-        })}
-      </div>
-
-      {current.time && (
-        <Link
-          href={withArchiveChange(current, { time: undefined })}
-          className="mt-3 inline-block text-xs font-medium text-link hover:underline"
-        >
-          اعرض كل الأطوال
-        </Link>
+          })}
+        </nav>
       )}
-    </section>
+
+      <div className="min-w-0 flex-1">
+        <AskModo />
+      </div>
+    </div>
   );
 }

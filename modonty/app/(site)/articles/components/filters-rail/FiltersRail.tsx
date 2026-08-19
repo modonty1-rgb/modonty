@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { IconIndustry, IconCategory } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 import { withArchiveChange, type ArchiveState } from "../../helpers/build-archive-href";
@@ -61,11 +62,12 @@ export function FiltersRail({ filters, current }: FiltersRailProps) {
                 href={withArchiveChange(current, { industry: industry.slug, category: undefined })}
                 aria-current={current.industry === industry.slug ? "true" : undefined}
                 className={cn(
-                  "block truncate py-1.5 text-sm transition-colors",
+                  "flex items-center gap-2 py-1.5 text-sm transition-colors",
                   industryActive ? "font-bold text-foreground" : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                {industry.name}
+                <IconIndustry className="h-4 w-4 shrink-0 opacity-70" aria-hidden />
+                <span className="truncate">{industry.name}</span>
               </Link>
 
               {children.length > 0 && (
@@ -81,11 +83,12 @@ export function FiltersRail({ filters, current }: FiltersRailProps) {
                           })}
                           aria-current={active ? "true" : undefined}
                           className={cn(
-                            "block truncate py-1 text-xs transition-colors",
+                            "flex items-center gap-1.5 py-1 text-xs transition-colors",
                             active ? "font-bold text-primary" : "text-muted-foreground hover:text-foreground"
                           )}
                         >
-                          {category.name}
+                          <IconCategory className="h-3.5 w-3.5 shrink-0 opacity-70" aria-hidden />
+                          <span className="truncate">{category.name}</span>
                         </Link>
                       </li>
                     );
