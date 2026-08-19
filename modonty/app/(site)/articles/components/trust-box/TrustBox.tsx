@@ -9,6 +9,11 @@ import { ModontyTrustMark } from "@/components/icons/modonty-trust-mark";
  *
  * The mark sits above the words rather than beside them, so the shield is read first and the two
  * lines explain it — the order a trust mark actually works in.
+ *
+ * The wording matters and was wrong once: the partner does NOT write these articles. Modonty
+ * writes them and the specialist partner reviews and signs off before publication (Khalid,
+ * 2026-08-19: «الشريك ما بيكتب، إحنا اللي بنكتب، بس هو اللي بيدي التعميد»). That also explains
+ * why every article's author is «Modonty» — it is accurate, not a placeholder.
  */
 export function TrustBox() {
   return (
@@ -21,10 +26,10 @@ export function TrustBox() {
       </span>
 
       <h2 id="trust-box-heading" className="text-sm font-bold text-foreground">
-        محتوى من جهات موثوقة
+        مكتوب عندنا، ومعتمَد من المختصّ
       </h2>
       <p className="mt-1 text-xs leading-5 text-muted-foreground">
-        كل مقال هنا يكتبه شريك في مدونتي، وأوراقه الرسمية مفحوصة قبل ما ينشر.
+        فريق مدونتي يكتب المقال، والشريك المختصّ يراجعه ويعتمده قبل النشر.
       </p>
     </section>
   );
