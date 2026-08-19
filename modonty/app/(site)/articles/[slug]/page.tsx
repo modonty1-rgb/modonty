@@ -507,7 +507,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   bottom on the fold: measured on a 16,700px article, like/save/comment/share
                   were reachable in the FIRST SCREEN ONLY and gone for the rest of the read.
                   Full-bleed on phones, aligned to the reading column from lg. */}
-              <div className="sticky top-14 z-30 -mx-4 mb-3 shadow-sm sm:-mx-6 lg:mx-0">
+              <div className="sticky top-14 z-30 mb-3 py-2">
                 <ArticleTopEngagementBar
                   likes={article._count.likes}
                   favorites={article._count.favorites}

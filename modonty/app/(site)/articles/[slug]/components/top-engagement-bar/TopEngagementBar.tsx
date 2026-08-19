@@ -81,26 +81,33 @@ export function ArticleTopEngagementBar({
     finally { setBusy(null); }
   };
 
-  // The notebook-tab look Khalid asked for (19 Aug): in the reference photo the colour lives
-  // on the protruding tab EDGE, and the page itself stays quiet. So each action carries a
-  // 3px coloured edge on top and nothing else — distinct enough to aim at from memory, quiet
-  // enough not to read as an ad bar, which is what eyetracking says happens to colourful
-  // blocks sitting under the top chrome.
+  // Four separate tabs, not one divided bar (Khalid, 19 Aug). Each is 48×48 — the thumb-sized
+  // touch target both platform guidelines land on (Material 48dp; Apple asks 44pt minimum), so
+  // the same control works under a thumb on a phone and a pointer on a desktop without two
+  // sizes to maintain.
+  //
+  // Colour lives on the protruding tab EDGE only, as in the notebook Khalid used for the
+  // reference; the tab body stays quiet. Colourful blocks under the top chrome get read as an
+  // ad bar and skipped — an edge stays distinct without paying that price.
+  //
+  // No visible label at this size: an Arabic word does not fit 48px, so the icon carries the
+  // meaning (thumb · bookmark · bubble · share are all conventional) and `aria-label` carries
+  // it for anyone who cannot see the icon. The number below is the count, when there is one.
   const item =
-    "relative flex flex-1 items-center justify-center gap-1.5 pb-2.5 pt-3 text-[12px] font-semibold text-foreground/65 transition-colors hover:text-primary";
-  const tab = "absolute inset-x-2 top-0 h-[3px] rounded-b-full";
+    "relative flex size-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-border bg-card/95 pt-1.5 text-[10px] font-semibold leading-none text-foreground/65 shadow-sm backdrop-blur-sm transition-colors hover:text-primary";
+  const tab = "absolute inset-x-2.5 top-0 h-[3px] rounded-b-full";
 
   return (
-    <div className="flex items-stretch divide-x divide-border/60 border-b border-[#cbeee9] bg-[#f0fdfa]/95 backdrop-blur-sm dark:border-border dark:bg-card/95 lg:rounded-b-xl lg:border-x">
+    <div className="flex items-center gap-2">
       <button type="button" onClick={handleLike} disabled={busy === "like"} className={cn(item, liked && "text-primary")} aria-pressed={liked} aria-label="أعجبني">
         <span className={cn(tab, "bg-primary")} aria-hidden />
         <IconLike className={cn("size-[18px]", liked && "fill-current")} />
-        <span>{likeN > 0 ? likeN : "إعجاب"}</span>
+        {likeN > 0 && <span className="tabular-nums">{likeN}</span>}
       </button>
       <button type="button" onClick={handleSave} disabled={busy === "save"} className={cn(item, saved && "text-amber-500")} aria-pressed={saved} aria-label="حفظ">
         <span className={cn(tab, "bg-amber-500")} aria-hidden />
         <IconSaved className={cn("size-[18px]", saved && "fill-current")} />
-        <span>{favN > 0 ? favN : "حفظ"}</span>
+        {favN > 0 && <span className="tabular-nums">{favN}</span>}
       </button>
       <CommentFormDialog
         articleId={articleId}
@@ -112,14 +119,12 @@ export function ArticleTopEngagementBar({
           <button type="button" className={item} aria-label="أضف تعليق">
             <span className={cn(tab, "bg-accent")} aria-hidden />
             <IconComment className="size-[18px]" />
-            <span>تعليق</span>
           </button>
         }
       />
       <button type="button" onClick={shareNow} className={item} aria-label="مشاركة">
         <span className={cn(tab, "bg-violet-500")} aria-hidden />
         <IconShare className="size-[18px]" />
-        <span>مشاركة</span>
       </button>
     </div>
   );
