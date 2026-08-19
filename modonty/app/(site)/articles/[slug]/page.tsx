@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getPlatformDefaultImages } from "@modonty/shared/lib/platform-defaults";
-import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
+import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoColumnLayout";
 import { Suspense } from "react";
 import { notFound, unstable_rethrow } from "next/navigation";
 
@@ -466,48 +466,54 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
           ]}
         />
 
-        <div className="container mx-auto max-w-[1128px] px-4 py-6 pb-8 sm:px-6 md:py-8 lg:px-8">
-          {/* The article takes the reading-start side. In Arabic the eye lands top-right, and
-              that corner used to hold the sponsor card — «سجّل مجاناً», like/save, then two
-              partner buttons — while the title and the text sat off to the left. The rail is
-              support, so it moves to the far side. DOM order follows: the article is first. */}
-          <div className="flex flex-col gap-6 md:gap-8 lg:grid lg:grid-cols-[1fr_300px] lg:items-start">
-
-            {/* SUPPORT RAIL (RTL: left): engagement strip + client card + TOC + gallery.
-                StickyRail, not a plain `sticky top-14`: this rail is TALLER than the
-                viewport (966px against 889px, and 1466px with the contents open), so a
-                fixed top pins its head and puts its tail — the gallery — permanently out
-                of reach. The rail scrolls with the page until its bottom meets the fold. */}
-            <StickyRail
-              label="العميل والتفاعل"
-              offset={56}
-              className="hidden self-start lg:order-2 lg:sticky lg:block"
+        {/* The shared two-column shell, not a hand-rolled grid: same container and gaps as
+            `/articles`, `/clients` and the homepage. `main` renders first in DOM and lands on
+            the visual right in RTL — the reading-start side, which is the point. */}
+        <TwoColumnLayout
+          className="pb-8"
+          rail={
+            /* SUPPORT RAIL (RTL: left). `self-stretch` so it spans the whole row: the contents
+               card inside is `sticky`, and a sticky child can only travel as far as its own
+               parent's box. With the rail sized to its content it would unstick after ~1000px
+               of a 16,700px article — which is the same defect the strip had. */
+            <aside
+              className="hidden w-[300px] shrink-0 lg:block lg:self-stretch"
+              aria-label="فهرس المقال ومعرض الصور"
             >
-              <div className="flex flex-col gap-6">
-                {/* The engagement strip used to sit here too — a second copy of the same four
-                    actions, and the copy that scrolled away. One strip now, sticky above the
-                    article on every screen. */}
-                {/* The partner card used to sit here — 468px of cover, logo, badge, five social
-                    icons and an amber button, first thing on the reading-start side. Eyetracking
-                    research on right-rail content is blunt about that shape: people have trained
-                    themselves to skip it ("I saw that, but it looked like an ad, so I ignored
-                    it"), and the louder the graphics the harder they skip. So it moved to where
-                    it is actually read — under the article, at the moment the reader has a
-                    reason to reach out. The rail keeps only what serves the reading. */}
+              {/* The four actions as tabs growing out of the contents card (Khalid, 19 Aug):
+                  the card is the notebook, the tabs are its index. The whole unit is pinned
+                  under the navbar, so both the actions and the outline follow the reader. */}
+              <div className="sticky top-14 flex flex-col">
+                <ArticleTopEngagementBar
+                  likes={article._count.likes}
+                  favorites={article._count.favorites}
+                  userLiked={article.userLiked}
+                  userFavorited={article.userFavorited}
+                  articleId={article.id}
+                  articleSlug={article.slug}
+                  userId={userId}
+                  clientId={article.clientId}
+                  attached
+                />
                 <ArticleTableOfContents headings={outline.headings} />
+              </div>
+              {/* The partner card used to sit in this rail — 468px of cover, logo, badge, five
+                  social icons and an amber button, first thing on the reading-start side.
+                  Eyetracking research on right-rail content is blunt about that shape: people
+                  have trained themselves to skip it ("I saw that, but it looked like an ad, so
+                  I ignored it"), and the louder the graphics the harder they skip. It moved to
+                  where it is actually read — under the article, at the moment the reader has a
+                  reason to reach out. The rail keeps only what serves the reading. */}
+              <div className="mt-6">
                 <Gallery images={galleryImages} fallbackText={article.client?.description} clientName={article.client?.name} />
               </div>
-            </StickyRail>
-
-            {/* THE ARTICLE — first track, which in RTL is the right-hand side */}
-            <div className="w-full min-w-0 lg:order-1">
-              {/* The engagement bar, sticky under the navbar (h-14) — on every screen now.
-                  It used to live at the top of the rail on desktop, and the rail is taller
-                  than the viewport, so StickyRail pushes it 376px up to keep the rail's
-                  bottom on the fold: measured on a 16,700px article, like/save/comment/share
-                  were reachable in the FIRST SCREEN ONLY and gone for the rest of the read.
-                  Full-bleed on phones, aligned to the reading column from lg. */}
-              <div className="sticky top-14 z-30 mb-3 py-2">
+            </aside>
+          }
+          main={
+            <div className="w-full min-w-0">
+              {/* MOBILE: the same four tabs, sticky under the navbar. Desktop draws them on the
+                  contents card in the rail instead — there is no rail on a phone. */}
+              <div className="sticky top-14 z-30 mb-3 py-2 lg:hidden">
                 <ArticleTopEngagementBar
                   likes={article._count.likes}
                   favorites={article._count.favorites}
@@ -719,9 +725,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 />
               </article>
             </div>
-
-          </div>
-        </div>
+          }
+        />
         {/* MOBILE: sticky conversion bar — احجز الآن · واتساب · logo (thumb zone) */}
         {article.client && (
           <div

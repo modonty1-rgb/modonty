@@ -19,13 +19,23 @@ interface ArticleTopEngagementBarProps {
   articleSlug: string;
   userId?: string | null;
   clientId?: string | null;
+  /** Sit flush on the card below, so the tabs read as growing out of it (desktop rail). */
+  attached?: boolean;
 }
 
 /**
- * Quiet, thin engagement bar (like / save / comment / share) — mobile, sticky just under the
- * main navbar. Deliberately muted (soft brand tint, no loud color) so it stays visible without
- * competing with the bottom conversion bar. Like/save keep the optimistic-UI wiring from the
- * old dock; comment = CommentFormDialog; share = native share sheet.
+ * The four reader actions — like · save · comment · share — as separate 48×48 tabs.
+ *
+ * 48 is where both platform guidelines land for a touch target (Material 48dp; Apple asks 44pt
+ * minimum), so one size serves a thumb on a phone and a pointer on a desktop.
+ *
+ * Two placements, one component:
+ *  - mobile: standalone rounded chips, sticky under the navbar.
+ *  - desktop (`attached`): flush on the table-of-contents card, so they read as index tabs
+ *    growing out of it — the notebook Khalid used for the reference.
+ *
+ * Colour lives on the protruding tab edge only; the body stays quiet, because colourful blocks
+ * near the top chrome get pattern-matched as ads and skipped.
  */
 export function ArticleTopEngagementBar({
   likes,
@@ -36,6 +46,7 @@ export function ArticleTopEngagementBar({
   articleSlug,
   userId,
   clientId,
+  attached,
 }: ArticleTopEngagementBarProps) {
   const { data: session } = useSession();
   const isLoggedIn = Boolean(session?.user);
@@ -93,12 +104,19 @@ export function ArticleTopEngagementBar({
   // No visible label at this size: an Arabic word does not fit 48px, so the icon carries the
   // meaning (thumb · bookmark · bubble · share are all conventional) and `aria-label` carries
   // it for anyone who cannot see the icon. The number below is the count, when there is one.
-  const item =
-    "relative flex size-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-border bg-card/95 pt-1.5 text-[10px] font-semibold leading-none text-foreground/65 shadow-sm backdrop-blur-sm transition-colors hover:text-primary";
+  // `attached`: the tabs sit ON the table-of-contents card and read as tabs growing out of it
+  // — square bottom, no bottom border, so the two shapes merge into one object. Standalone
+  // (mobile) they are separate rounded chips under the navbar.
+  const item = cn(
+    "relative flex size-12 shrink-0 flex-col items-center justify-center gap-0.5 border border-border bg-card/95 pt-1.5 text-[10px] font-semibold leading-none text-foreground/65 backdrop-blur-sm transition-colors hover:text-primary",
+    attached
+      ? "-mb-px rounded-t-xl border-b-transparent"
+      : "rounded-xl shadow-sm"
+  );
   const tab = "absolute inset-x-2.5 top-0 h-[3px] rounded-b-full";
 
   return (
-    <div className="flex w-full items-center justify-between gap-2">
+    <div className={cn("flex w-full items-center gap-2", attached ? "justify-around px-2" : "justify-between")}>
       <button type="button" onClick={handleLike} disabled={busy === "like"} className={cn(item, liked && "text-primary")} aria-pressed={liked} aria-label="أعجبني">
         <span className={cn(tab, "bg-primary")} aria-hidden />
         <IconLike className={cn("size-[18px]", liked && "fill-current")} />
