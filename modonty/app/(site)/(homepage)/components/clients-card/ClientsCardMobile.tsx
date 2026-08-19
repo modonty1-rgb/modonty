@@ -14,7 +14,7 @@ export function ClientsCardMobile() {
             <h2 className="text-sm font-medium">شركاء موثوقون</h2>
             <p className="mt-0.5 text-xs leading-5 text-primary-foreground/80">نتأكّد من الأوراق الرسمية قبل ما يظهر أي شريك.</p>
           </div>
-          <VerifiedBadge className="h-5 w-5 text-accent fill-accent/20" label="شركاء موثوقون" />
+          <VerifiedBadge className="h-5 w-5" label="شركاء موثوقون" />
         </div>
       </div>
     </section>

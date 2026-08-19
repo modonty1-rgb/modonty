@@ -1,8 +1,8 @@
-import { IconCheckCircle } from "../../lib/icons";
+import { ModontyTrustMark } from "../icons/modonty-trust-mark";
 import { cx } from "../../lib/cx";
 
 export interface VerifiedBadgeProps {
-  /** Size and any colour override, e.g. `"h-5 w-5 text-accent"`. Caller's classes win. */
+  /** Size, e.g. `"h-5 w-5"`. Colour classes have no effect — the mark carries its own. */
   className?: string;
   /** What the mark claims here — «شريك موثّق» · «ناشر موثّق». */
   label?: string;
@@ -17,14 +17,21 @@ export interface VerifiedBadgeProps {
  * nothing, and verification is the thing modonty sells: every partner is checked against their
  * official papers, so the mark that says so has to be recognisable at a glance.
  *
- * The circled check in brand colour is the one Khalid picked. Colour is overridable because a
- * couple of surfaces sit on a filled brand background, where `text-primary` would disappear.
+ * Corrected 2026-08-19 (Khalid): that audit unified the shape but picked a generic circled
+ * check. modonty already owns a verification mark — the «M» inside a shield, in
+ * `icons/modonty-trust-mark.tsx` — and eight surfaces were already drawing it while these ten
+ * drew the circled check. One meaning, two marks. This component now renders the real one, so
+ * every consumer switches at once and the visitor learns a single shape.
+ *
+ * Colour is no longer overridable: the mark is a badge, not an interface icon, and its navy /
+ * teal / white are part of it. Callers pass size only.
  */
 export function VerifiedBadge({ className, label = "موثّق" }: VerifiedBadgeProps) {
   return (
-    <IconCheckCircle
-      className={cx("shrink-0 text-primary fill-primary/20", className)}
+    <ModontyTrustMark
+      className={cx("shrink-0", className)}
       aria-label={label}
+      aria-hidden={undefined}
       role="img"
     />
   );

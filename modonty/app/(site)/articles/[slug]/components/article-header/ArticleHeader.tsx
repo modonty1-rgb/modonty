@@ -53,7 +53,7 @@ export function ArticleHeader({
           "can I trust this?" — a line answers it. "How do I reach them?" comes after. */}
       {reviewer && (
         <div className="mb-5 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-primary/20 bg-primary/5 px-3.5 py-2.5 text-sm">
-          <VerifiedBadge className="h-4 w-4 shrink-0 text-primary" label="مراجَع ومعتمَد" />
+          <VerifiedBadge className="h-4 w-4" label="مراجَع ومعتمَد" />
           <span className="text-muted-foreground">راجعه واعتمده</span>
           <Link
             href={`/clients/${reviewer.slug}`}

@@ -27,7 +27,7 @@ export function PlatformBar({ isVerified }: PlatformBarProps) {
             <>
               <span className="h-3 w-px bg-white/20" aria-hidden />
               <span className="flex items-center gap-1">
-                <VerifiedBadge className="h-3.5 w-3.5 text-white fill-white/20" label="شريك موثّق" />
+                <VerifiedBadge className="h-3.5 w-3.5" label="شريك موثّق" />
                 شريك موثّق
               </span>
               <Link href="/trust" className="hover:text-white">كيف نتأكّد؟</Link>
