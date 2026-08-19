@@ -1,3 +1,5 @@
+import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoColumnLayout";
+import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
 import { AiDisclaimer } from "@/components/shared/ai-disclaimer/AiDisclaimer";
 import { AboutCard } from "@/components/shared/about-card/AboutCard";
@@ -27,19 +29,16 @@ interface ArticlesPageLayoutProps {
 }
 
 /**
- * ONE column, not three.
+ * Two columns: the archive, and the three cards beside it.
  *
- * This page had copied the homepage's three-column shell, and the result was a second homepage:
- * measured 2026-08-19, every shared component `/articles` imported was one the homepage imports
- * too — a 100% overlap, with only the card size and the pagination telling them apart. Khalid saw
- * it before the measurement did.
+ * It was three columns (a copy of the homepage), then one — the shape Vercel, Stripe and Intercom
+ * all use, measured 2026-08-19. Khalid then put the cards back as a RAIL rather than a strip under
+ * the list, and that is the right call for what they say: a visitor deciding whether to trust this
+ * content needs to see that the partners are checked *while* he reads it, not after he has
+ * scrolled past everything.
  *
- * The shape comes from how real archives are built. Vercel, Stripe and Intercom are all a single
- * column with a horizontal category strip and no side rails at all (measured the same day). A
- * reader here is searching, not browsing a feed — rails give him furniture, not answers.
- *
- * Order follows the order of his questions: which field → what am I looking for → how long do I
- * have → and if none of that worked, ask Modo.
+ * The main column keeps the order that research produced: which field → what am I looking for →
+ * how long do I have → the list.
  */
 export function ArticlesPageLayout({
   breadcrumb,
@@ -51,48 +50,50 @@ export function ArticlesPageLayout({
   scopeLabel,
 }: ArticlesPageLayoutProps) {
   return (
-    <div className="container mx-auto max-w-[760px] px-3 py-3 sm:px-4 sm:py-6">
-      <div className="mb-5 space-y-4">
-        {breadcrumb}
+    <TwoColumnLayout
+      header={breadcrumb}
+      main={
+        <>
+          {/* Search sits WITH the filters: known-item finding and exploratory browsing are the
+              same job, and every filter-UX guide puts their controls together. */}
+          <EntitySearchForm
+            basePath="/articles"
+            placeholder="اكتب كلمة من العنوان..."
+            defaultValue={current.search ?? ""}
+          />
+          <FiltersBar filters={filters} current={current} />
 
-        {/* Search sits WITH the filters, not below Modo. Known-item finding and exploratory
-            browsing are the same job, and every filter-UX guide puts their controls together. */}
-        <EntitySearchForm
-          basePath="/articles"
-          placeholder="اكتب كلمة من العنوان..."
-          defaultValue={current.search ?? ""}
-        />
-        <FiltersBar filters={filters} current={current} />
+          {/* Count and time on one line — stacked, the controls filled 61% of the screen before
+              the first article appeared. */}
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+            <ResultsLine total={total} scopeLabel={scopeLabel} current={current} />
+            <ReadingTimeBar counts={readingTimeCounts} current={current} />
+          </div>
 
-        {/* Count and time on ONE line. Stacked, the controls filled 61% of the screen before the
-            first article; side by side they read as one row and the list starts above the fold. */}
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-          <ResultsLine total={total} scopeLabel={scopeLabel} current={current} />
-          <ReadingTimeBar counts={readingTimeCounts} current={current} />
-        </div>
-      </div>
-
-      <ArticlesFeed articles={articles} current={current} />
-
-      {/* Last, not first: Modo is what you reach for after the list did not answer you. */}
-      {/* Three cards, because a visitor arriving here asks three things before he reads: can I
-          trust these partners · who is modonty · and what if the list has no answer.
-          The trust card carries the shield mark and the same line the homepage uses, so the
-          promise is worded once. */}
-      <div className="mt-8 grid items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <LinkCard
-          href="/clients"
-          title="شركاء موثوقون"
-          description="كل شريك مفحوص بأوراقه الرسمية"
-          icon={ModontyTrustMark}
-          className="h-full"
-        />
-        <AboutCard />
-        <div className="sm:col-span-2 lg:col-span-1">
-          <AskModo />
-          <AiDisclaimer />
-        </div>
-      </div>
-    </div>
+          <ArticlesFeed articles={articles} current={current} />
+        </>
+      }
+      rail={
+        <StickyRail
+          label="عن مدونتي"
+          className="w-full shrink-0 self-start lg:w-[300px] min-[1240px]:sticky"
+        >
+          <div className="space-y-3">
+            {/* Trust first: it is the question a visitor answers before he reads anything. */}
+            <LinkCard
+              href="/clients"
+              title="شركاء موثوقون"
+              description="كل شريك مفحوص بأوراقه الرسمية"
+              icon={ModontyTrustMark}
+            />
+            <AboutCard />
+            <div>
+              <AskModo />
+              <AiDisclaimer />
+            </div>
+          </div>
+        </StickyRail>
+      }
+    />
   );
 }
