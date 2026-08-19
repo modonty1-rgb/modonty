@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
+
 import { RelativeTime } from "@/components/date/RelativeTime";
 import { IconViews, IconHelp } from "@/lib/icons";
 
@@ -7,6 +10,8 @@ interface ArticleHeaderProps {
   author: {
     name: string;
   };
+  /** The partner who approved the article — the one line a reader checks before trusting it. */
+  reviewer?: { name: string; slug: string; credential: string | null } | null;
   datePublished: Date | null;
   createdAt: Date;
   readingTimeMinutes: number | null;
@@ -19,6 +24,7 @@ export function ArticleHeader({
   title,
   excerpt,
   author,
+  reviewer,
   datePublished,
   createdAt,
   readingTimeMinutes,
@@ -38,6 +44,27 @@ export function ArticleHeader({
         <p className="text-base md:text-lg text-muted-foreground mb-6 leading-relaxed">
           {excerpt}
         </p>
+      )}
+
+      {/* One line, above the article — the byline Google asks for ("is it self-evident to your
+          visitors who authored your content? do pages carry a byline where one might be
+          expected?"), and the shape every large medical publisher uses: reviewer named in a
+          single line at the top, full card at the end. Before reading, the visitor is asking
+          "can I trust this?" — a line answers it. "How do I reach them?" comes after. */}
+      {reviewer && (
+        <div className="mb-5 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-primary/20 bg-primary/5 px-3.5 py-2.5 text-sm">
+          <VerifiedBadge className="h-4 w-4 shrink-0 text-primary" label="مراجَع ومعتمَد" />
+          <span className="text-muted-foreground">راجعه واعتمده</span>
+          <Link
+            href={`/clients/${reviewer.slug}`}
+            className="font-semibold text-foreground underline-offset-4 hover:text-primary hover:underline"
+          >
+            {reviewer.name}
+          </Link>
+          {reviewer.credential && (
+            <span className="text-muted-foreground line-clamp-1">— {reviewer.credential}</span>
+          )}
+        </div>
       )}
 
       <div className="flex flex-row flex-wrap items-center gap-2 sm:gap-4 text-sm text-muted-foreground mb-4">

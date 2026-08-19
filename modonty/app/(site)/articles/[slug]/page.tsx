@@ -496,26 +496,13 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   userId={userId}
                   ctaText={article.client?.newsletterCtaText}
                 />
-                {article.client && (
-                  <PartnerCard
-                    client={article.client}
-                    askClientProps={{
-                      articleId: article.id,
-                      clientId: article.clientId,
-                      articleTitle: article.title,
-                      user: userBox,
-                      pendingFaqs,
-                    }}
-                    cta={{
-                      mode: article.client.ctaMode,
-                      label: article.client.ctaLabel,
-                      url: article.client.ctaUrl,
-                      articleId: article.id,
-                      source: "article_card",
-                      user: userBox,
-                    }}
-                  />
-                )}
+                {/* The partner card used to sit here — 468px of cover, logo, badge, five social
+                    icons and an amber button, first thing on the reading-start side. Eyetracking
+                    research on right-rail content is blunt about that shape: people have trained
+                    themselves to skip it ("I saw that, but it looked like an ad, so I ignored
+                    it"), and the louder the graphics the harder they skip. So it moved to where
+                    it is actually read — under the article, at the moment the reader has a
+                    reason to reach out. The rail keeps only what serves the reading. */}
                 <ArticleTableOfContents headings={outline.headings} />
                 <Gallery images={galleryImages} fallbackText={article.client?.description} clientName={article.client?.name} />
               </div>
@@ -547,6 +534,23 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   wordCount={article.wordCount}
                   views={article._count.views}
                   questionsCount={article._count.faqs}
+                  reviewer={
+                    article.client
+                      ? {
+                          name: article.client.name,
+                          slug: article.client.slug,
+                          // `description` first: it is the one field that says what they DO
+                          // («علاج آلام العمود الفقري…»). `slogan` is a brand line and on this
+                          // partner it reads "Pain cure" — Latin, and it tells a reader nothing
+                          // about why this name is worth trusting on this subject.
+                          credential:
+                            article.client.description?.trim() ||
+                            article.client.businessBrief?.trim() ||
+                            article.client.slogan?.trim() ||
+                            null,
+                        }
+                      : null
+                  }
                 />
 
                 {/* MOBILE: client identity (engagement lives in the sticky top bar; conversion in the bottom bar) */}
@@ -620,6 +624,36 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   </div>
                 ) : null}
 
+                {/* First thing after the last sentence: the question. «عندك سؤال عن المقال؟»
+                    is never more alive than the second a reader finishes — it used to sit
+                    third here, behind tags and comments. */}
+                <AskModoCard slug={article.slug} />
+
+                {/* Then who stands behind it, and how to reach them. The card that was in the
+                    rail lands here at full size, where the reader has a reason to act on it. */}
+                {article.client && (
+                  <div className="mb-8">
+                    <PartnerCard
+                      client={article.client}
+                      askClientProps={{
+                        articleId: article.id,
+                        clientId: article.clientId,
+                        articleTitle: article.title,
+                        user: userBox,
+                        pendingFaqs,
+                      }}
+                      cta={{
+                        mode: article.client.ctaMode,
+                        label: article.client.ctaLabel,
+                        url: article.client.ctaUrl,
+                        articleId: article.id,
+                        source: "article_card",
+                        user: userBox,
+                      }}
+                    />
+                  </div>
+                )}
+
                 {/* Category badge + capped tags — AFTER the article, not before it. Tags are
                     where you go once you have finished reading; in front of the first
                     sentence they are one more block between the visitor and what they came
@@ -650,11 +684,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     )}
                   </div>
                 )}
-
-                {/* «عندك سؤال عن المقال؟» reads as an interruption above the first sentence
-                    and as an offer under the last one — the question only exists after the
-                    reading. */}
-                <AskModoCard slug={article.slug} />
 
                 {/* MOBILE: image gallery (desktop keeps it in the aside) */}
                 <div className="mb-8 lg:hidden">
