@@ -4,7 +4,7 @@ export type ReadingTimeBucket = "short" | "medium" | "long";
 
 export interface BucketDefinition {
   key: ReadingTimeBucket;
-  /** What the visitor reads on the button — his own words, not a range. */
+  /** What the visitor reads on the button — the way he'd say it out loud, not a range. */
   label: string;
   /** The range, spelled out underneath. */
   hint: string;
@@ -19,11 +19,15 @@ export interface BucketDefinition {
  * `readingTimeMinutes`, spread from 1 to 27. These cuts split them 27 / 49 / 41, so no bucket is
  * a decoration and none swallows the rest. Cuts invented without looking would have produced an
  * empty button, which is the one thing a filter must never do.
+ *
+ * The names are one Gulf image, not three labels: standing, sitting with coffee, settling in.
+ * Khalid named the last one himself («جلسة روقان») and rejected the first draft's «على السريع»
+ * for being flat.
  */
 export const READING_TIME_BUCKETS: BucketDefinition[] = [
-  { key: "short", label: "على السريع", hint: "٣ دقائق أو أقل", min: 0, max: 3 },
-  { key: "medium", label: "قهوة", hint: "٤ إلى ٧ دقائق", min: 4, max: 7 },
-  { key: "long", label: "جلسة كاملة", hint: "٨ دقائق فأكثر", min: 8, max: Number.MAX_SAFE_INTEGER },
+  { key: "short", label: "على الماشي", hint: "٣ دقائق أو أقل", min: 0, max: 3 },
+  { key: "medium", label: "فنجان قهوة", hint: "٤ إلى ٧ دقائق", min: 4, max: 7 },
+  { key: "long", label: "جلسة روقان", hint: "٨ دقائق فأكثر", min: 8, max: Number.MAX_SAFE_INTEGER },
 ];
 
 function bucketOf(minutes: number | undefined): ReadingTimeBucket | null {

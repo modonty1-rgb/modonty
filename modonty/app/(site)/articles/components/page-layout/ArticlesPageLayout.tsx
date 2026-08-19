@@ -3,7 +3,8 @@ import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/Thre
 
 import { FiltersRail } from "../filters-rail/FiltersRail";
 import { ArticlesFeed } from "../articles-feed/ArticlesFeed";
-import { DiscoverRail } from "../discover-rail/DiscoverRail";
+import { ReadingTimeBar } from "../reading-time-bar/ReadingTimeBar";
+import { AskModo } from "../ask-modo/AskModo";
 
 import type { ArchiveState } from "../../helpers/build-archive-href";
 import type { ReadingTimeBucket } from "../../helpers/reading-time-buckets";
@@ -12,7 +13,7 @@ import type { FeedPost } from "@/lib/types";
 import type { ReactNode } from "react";
 
 interface ArticlesPageLayoutProps {
-  header?: ReactNode;
+  breadcrumb: ReactNode;
   articles: FeedPost[];
   filters: ArchiveFilters;
   readingTimeCounts: Record<ReadingTimeBucket, number>;
@@ -22,11 +23,13 @@ interface ArticlesPageLayoutProps {
 
 /**
  * The same three columns as `/`, `/clients` and `/industries` — identical widths and gaps, so
- * moving between them never moves the furniture. Right narrows by subject, centre reads, left
- * narrows by how much time the visitor has.
+ * moving between them never moves the furniture.
+ *
+ * Above them, full width, sits «عندك كم دقيقة؟». Khalid put it there (2026-08-19) because it is
+ * the question a reader answers before he picks a subject, so it belongs where the eye lands.
  */
 export function ArticlesPageLayout({
-  header,
+  breadcrumb,
   articles,
   filters,
   readingTimeCounts,
@@ -35,7 +38,12 @@ export function ArticlesPageLayout({
 }: ArticlesPageLayoutProps) {
   return (
     <ThreeColumnLayout
-      header={header}
+      header={
+        <div className="space-y-4">
+          {breadcrumb}
+          <ReadingTimeBar counts={readingTimeCounts} current={current} />
+        </div>
+      }
       right={
         <StickyRail
           label="تصفية المقالات"
@@ -47,10 +55,10 @@ export function ArticlesPageLayout({
       center={<ArticlesFeed articles={articles} current={current} scopeLabel={scopeLabel} />}
       left={
         <StickyRail
-          label="اقرأ حسب وقتك"
+          label="اسأل مودو"
           className="hidden w-[300px] shrink-0 self-start min-[1240px]:sticky min-[1240px]:block"
         >
-          <DiscoverRail readingTimeCounts={readingTimeCounts} current={current} />
+          <AskModo />
         </StickyRail>
       }
     />

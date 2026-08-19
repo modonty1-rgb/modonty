@@ -133,7 +133,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }} />
 
       <ArticlesPageLayout
-        header={
+        breadcrumb={
           <Breadcrumb
             items={[
               { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },

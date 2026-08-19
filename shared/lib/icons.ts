@@ -98,6 +98,8 @@ export { Code             as IconCode          } from 'lucide-react';
 export { Briefcase        as IconBriefcase     } from 'lucide-react';
 export { Lightbulb        as IconLightbulb     } from 'lucide-react';
 export { Zap              as IconZap           } from 'lucide-react';
+export { Coffee           as IconCoffee        } from 'lucide-react';
+export { Armchair         as IconArmchair      } from 'lucide-react';
 export { Rocket           as IconRocket        } from 'lucide-react';
 export { Target           as IconTarget        } from 'lucide-react';
 export { Clock            as IconClock         } from 'lucide-react';
