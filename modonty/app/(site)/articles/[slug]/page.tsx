@@ -504,9 +504,12 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   I ignored it"), and the louder the graphics the harder they skip. It moved to
                   where it is actually read — under the article, at the moment the reader has a
                   reason to reach out. The rail keeps only what serves the reading. */}
-              <div className="mt-6">
-                <Gallery images={galleryImages} fallbackText={article.client?.description} clientName={article.client?.name} />
-              </div>
+              {/* The gallery used to sit here, under the pinned contents card — and slid right
+                  through it: measured at scroll 500, the card held 56→653 while the gallery
+                  entered at 245, a 292px overlap, because a sticky element pins while its next
+                  sibling keeps scrolling and paints over it. It was also the second copy (the
+                  article column rendered one for phones). One gallery now, in the article flow
+                  where the images belong, on every screen. */}
             </aside>
           }
           main={
@@ -681,8 +684,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   </div>
                 )}
 
-                {/* MOBILE: image gallery (desktop keeps it in the aside) */}
-                <div className="mb-8 lg:hidden">
+                {/* «معرض صور المقال» — one copy, every screen, in the reading flow. */}
+                <div className="mb-8">
                   <Gallery images={galleryImages} fallbackText={article.client?.description} clientName={article.client?.name} />
                 </div>
 
