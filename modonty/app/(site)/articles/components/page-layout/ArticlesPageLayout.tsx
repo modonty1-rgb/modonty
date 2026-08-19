@@ -3,10 +3,9 @@ import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
 import { AiDisclaimer } from "@/components/shared/ai-disclaimer/AiDisclaimer";
 import { AboutCard } from "@/components/shared/about-card/AboutCard";
-import { LinkCard } from "@/components/shared/link-card/LinkCard";
-import { ModontyTrustMark } from "@/components/icons/modonty-trust-mark";
 
 import { AskModo } from "../ask-modo/AskModo";
+import { TrustBox } from "../trust-box/TrustBox";
 import { ResultsLine } from "../results-line/ResultsLine";
 import { FiltersBar } from "../filters-bar/FiltersBar";
 import { ReadingTimeBar } from "../reading-time-bar/ReadingTimeBar";
@@ -80,12 +79,7 @@ export function ArticlesPageLayout({
         >
           <div className="space-y-3">
             {/* Trust first: it is the question a visitor answers before he reads anything. */}
-            <LinkCard
-              href="/clients"
-              title="شركاء موثوقون"
-              description="كل شريك مفحوص بأوراقه الرسمية"
-              icon={ModontyTrustMark}
-            />
+            <TrustBox />
             <AboutCard />
             <div>
               <AskModo />
