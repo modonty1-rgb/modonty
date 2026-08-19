@@ -1,13 +1,20 @@
 import Link from "next/link";
 
-import { PostCard } from "@/components/feed/postcard/PostCard";
-import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
+import { MiniCard } from "../mini-card/MiniCard";
+
 import { cn } from "@/lib/utils";
 
 import { withArchiveChange, buildArchiveHref, type ArchiveState } from "../../helpers/build-archive-href";
 
 import type { ArchiveSort } from "../../data/get-articles-archive";
 import type { FeedPost } from "@/lib/types";
+
+/**
+ * Twenty, not the feed's ten: a mini row is roughly a quarter the height of the homepage card, so
+ * ten of them left the column half empty next to the rails (Khalid, 2026-08-19: «مساحات كبيرة
+ * فاضية»). The shared ARCHIVE_PAGE_SIZE stays at ten for the homepage, where the card is a poster.
+ */
+const ARCHIVE_PAGE_SIZE = 20;
 
 const SORTS: { key: ArchiveSort; label: string }[] = [
   { key: "newest", label: "الأحدث" },
@@ -24,16 +31,16 @@ interface ArticlesFeedProps {
 }
 
 /**
- * The middle column: the same card the homepage, the industries page and search all use.
+ * The middle column: one compact row per article, so the page can be scanned instead of scrolled.
  *
  * Pagination is real `<a href>` links, not infinite scroll — Google never reaches article eleven
  * by scrolling, and this page exists to be crawled as much as read.
  */
 export function ArticlesFeed({ articles, current, scopeLabel }: ArticlesFeedProps) {
   const page = current.page && current.page > 1 ? current.page : 1;
-  const start = (page - 1) * FEED_PAGE_SIZE;
-  const rows = articles.slice(start, start + FEED_PAGE_SIZE);
-  const hasMore = articles.length > start + FEED_PAGE_SIZE;
+  const start = (page - 1) * ARCHIVE_PAGE_SIZE;
+  const rows = articles.slice(start, start + ARCHIVE_PAGE_SIZE);
+  const hasMore = articles.length > start + ARCHIVE_PAGE_SIZE;
 
   const heading = scopeLabel ? `مقالات ${scopeLabel}` : "كل المقالات";
 
@@ -81,11 +88,11 @@ export function ArticlesFeed({ articles, current, scopeLabel }: ArticlesFeedProp
           </Link>
         </div>
       ) : (
-        <div className="space-y-4">
+        <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
           {rows.map((post, index) => (
-            <PostCard key={post.id} post={post} index={index} />
+            <MiniCard key={post.id} post={post} isLcp={index === 0 && page === 1} />
           ))}
-        </div>
+        </ul>
       )}
 
       {(page > 1 || hasMore) && (

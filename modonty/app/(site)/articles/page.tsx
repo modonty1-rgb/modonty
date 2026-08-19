@@ -114,7 +114,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
   ]);
 
   /**
-   * Reading time is applied HERE, not in the query, so the left rail can count the buckets against
+   * Reading time is applied HERE, not in the query, so the strip on top can count the buckets against
    * what the subject filters already returned. Counting after the time filter would collapse every
    * other bucket to zero the moment one was picked.
    */
