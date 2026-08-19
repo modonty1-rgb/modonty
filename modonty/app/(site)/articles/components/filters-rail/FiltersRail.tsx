@@ -21,6 +21,10 @@ interface FiltersRailProps {
  * حط التصنيفات اللي موجودة… وشيل قسم التصنيفات»). One list instead of two answers the question a
  * visitor actually has — "what is in this field?" — without making him match two boxes by eye.
  *
+ * Row heights are 36px for a field and 32px for a category — WCAG's 24px pointer minimum with
+ * room to spare, not Apple's 44px touch target. This rail only renders above 1240px, where the
+ * input is a mouse; 44 made it sparse for no one (Khalid: «the space too much between the rows»).
+ *
  * No count badges: they read as dated («موضة قديمة جداً») and they were solving a problem that no
  * longer exists — an option with zero articles never reaches this component, so no row here can
  * lead to an empty page whether or not it shows a number.
@@ -41,7 +45,7 @@ export function FiltersRail({ filters, current }: FiltersRailProps) {
         href={withArchiveChange(current, { industry: undefined, category: undefined })}
         aria-current={nothingPicked ? "true" : undefined}
         className={cn(
-          "flex min-h-11 items-center rounded-md px-1 text-sm transition-colors active:bg-muted " + FOCUS_RING,
+          "flex min-h-9 items-center rounded-md px-1 text-sm transition-colors active:bg-muted " + FOCUS_RING,
           nothingPicked ? "font-bold text-foreground" : "text-muted-foreground hover:text-foreground"
         )}
       >
@@ -63,7 +67,7 @@ export function FiltersRail({ filters, current }: FiltersRailProps) {
                 href={withArchiveChange(current, { industry: industry.slug, category: undefined })}
                 aria-current={current.industry === industry.slug ? "true" : undefined}
                 className={cn(
-                  "flex min-h-11 items-center gap-2 rounded-md px-1 text-sm transition-colors active:bg-muted " + FOCUS_RING,
+                  "flex min-h-9 items-center gap-2 rounded-md px-1 text-sm transition-colors active:bg-muted " + FOCUS_RING,
                   industryActive ? "font-bold text-foreground" : "text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -72,7 +76,7 @@ export function FiltersRail({ filters, current }: FiltersRailProps) {
               </Link>
 
               {children.length > 0 && (
-                <ul className="mb-1.5 border-s border-border ps-2.5">
+                <ul className="mb-1 border-s border-border ps-2.5">
                   {children.map((category) => {
                     const active = current.category === category.slug;
                     return (
@@ -84,7 +88,7 @@ export function FiltersRail({ filters, current }: FiltersRailProps) {
                           })}
                           aria-current={active ? "true" : undefined}
                           className={cn(
-                            "flex min-h-11 items-center gap-1.5 rounded-md px-1 text-xs transition-colors active:bg-muted " + FOCUS_RING,
+                            "flex min-h-8 items-center gap-1.5 rounded-md px-1 text-xs transition-colors active:bg-muted " + FOCUS_RING,
                             active ? "font-bold text-primary" : "text-muted-foreground hover:text-foreground"
                           )}
                         >
