@@ -3,13 +3,11 @@
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { CommentFormDialog } from "@/app/(site)/articles/[slug]/components/comment-form/CommentFormDialog";
-import { NewsletterCTA } from "@/app/(site)/articles/[slug]/components/sidebar/NewsletterCta";
 import { useSession } from "@/components/providers/SessionContext";
 import { likeArticle } from "@/app/(site)/articles/[slug]/actions/like-article";
 import { favoriteArticle } from "@/app/(site)/articles/[slug]/actions/favorite-article";
-import { IconLike, IconSaved, IconComment, IconShare, IconNews } from "@/lib/icons";
+import { IconLike, IconSaved, IconComment, IconShare } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 function shareNow() {
@@ -26,16 +24,15 @@ interface EngagementStripProps {
   articleId: string;
   articleSlug: string;
   userId?: string | null;
-  ctaText?: string | null;
 }
 
 /**
  * Thin engagement strip — desktop aside lane. Like/save are WIRED to the real
  * server actions (likeArticle/favoriteArticle) with optimistic UI + reconcile —
  * same pattern as the mobile bottom dock (one server-backed source of truth).
- * Comment & subscribe open dialogs. Share = native share sheet.
+ * Comment opens a dialog. Share = native share sheet.
  */
-export function EngagementBar({ likes, userLiked, userFavorited, clientId, articleId, articleSlug, userId, ctaText }: EngagementStripProps) {
+export function EngagementBar({ likes, userLiked, userFavorited, clientId, articleId, articleSlug, userId }: EngagementStripProps) {
   const { data: session } = useSession();
   const isLoggedIn = Boolean(session?.user);
   const router = useRouter();
@@ -115,24 +112,9 @@ export function EngagementBar({ likes, userLiked, userFavorited, clientId, artic
         <IconShare className="h-5 w-5" />
         <span>مشاركة</span>
       </button>
-      {clientId && (
-        <>
-          <div className="mx-0.5 h-7 w-px bg-border" />
-          <Dialog>
-            <DialogTrigger asChild>
-              <button type="button" className={btn} aria-label="اشترك في النشرة">
-                <IconNews className="h-5 w-5" />
-                <span>اشترك</span>
-              </button>
-            </DialogTrigger>
-            <DialogContent className="max-w-sm gap-0" dir="rtl">
-              <DialogTitle className="sr-only">اشترك في النشرة الإخبارية</DialogTitle>
-              <DialogDescription className="sr-only">سجّل بريدك ليصلك جديد مقالات العميل وتحديثاته.</DialogDescription>
-              <NewsletterCTA clientId={clientId} articleId={articleId} ctaText={ctaText} />
-            </DialogContent>
-          </Dialog>
-        </>
-      )}
+      {/* No «اشترك» here any more (Khalid, 19 Aug 2026): the newsletter is being retired, and
+          a reader who likes or saves an article has already told us they are interested —
+          asking for an email on top of that is a second ask for a signal we already have. */}
       </div>
     </div>
   );

@@ -47,7 +47,6 @@ import {
 } from "./components";
 // Client-only wrappers — `ssr: false` is only legal inside a 'use client' file, so each one
 // sits beside the component it defers.
-import { FeaturedImageNewsletterLazy } from "./components/featured-image/FeaturedImageNewsletterLazy";
 import { GtmTrackerLazy } from "./components/gtm-tracker/GtmTrackerLazy";
 import { ArticleViewTrackerLazy } from "./components/view-tracker/ViewTrackerLazy";
 import { ArticleBodyLinkTrackerLazy } from "./components/body-link-tracker/BodyLinkTrackerLazy";
@@ -494,7 +493,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   articleId={article.id}
                   articleSlug={article.slug}
                   userId={userId}
-                  ctaText={article.client?.newsletterCtaText}
                 />
                 {/* The partner card used to sit here — 468px of cover, logo, badge, five social
                     icons and an amber button, first thing on the reading-start side. Eyetracking
@@ -573,17 +571,11 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   </div>
                 )}
 
+                {/* The image carried a second newsletter ask on mobile — a dark scrim over the
+                    bottom third with «جديد … في بريدك 🔔 · اشترك الآن ←». Gone with the strip
+                    button for the same reason, and the artwork is no longer half-covered. */}
                 {featuredImage && (
-                  <ArticleFeaturedImage image={featuredImage} title={article.title}>
-                    {article.client && (
-                      <FeaturedImageNewsletterLazy
-                        clientId={article.clientId}
-                        clientName={article.client.name}
-                        articleId={article.id}
-                        ctaText={article.client.newsletterCtaText}
-                      />
-                    )}
-                  </ArticleFeaturedImage>
+                  <ArticleFeaturedImage image={featuredImage} title={article.title} />
                 )}
 
                 {article.audioUrl && (

@@ -2201,9 +2201,13 @@ const TASKS = [
  d:"<code>NewsSubscriber</code> + <code>Subscriber</code> + <code>JbrseoSubscriber</code> في موديل واحد. يحتاج قرار سكيما.",
  ref:"بند ١٢"},
 
-{id:"12b", b:"projects", app:["modonty"], tab:"open", sev:"normal", who:"c",
- t:"حذف بوكس نشرة المقال",
- d:"<b>متحقَّق أنه ما زال حيّاً:</b> <code>ArticleFeaturedImageNewsletter</code> مستورد ومرندَر في <code>articles/[slug]/page.tsx:516</code> عبر <code>client-lazy</code>.",
+{id:"12b", b:"projects", app:["modonty"], tab:"done", sev:"ok", who:"c", date:"١٩ أغسطس ٢٠٢٦",
+ t:"✅ حُذف الاشتراك من صفحة المقال — البوكس والزرّ معاً",
+ d:"<b>كان (متحقَّق):</b> <code>ArticleFeaturedImageNewsletter</code> مستورد ومرندَر في <code>articles/[slug]/page.tsx</code> عبر <code>client-lazy</code> — تدرّج أسود يغطّي ثلث الصورة على الجوّال بنصّ «جديد … في بريدك 🔔 · اشترك الآن ←». <b>ووُجد سطح ثانٍ</b> لم يكن مذكوراً في البند: زرّ «اشترك» في شريط التفاعل بجانب إعجاب وحفظ ومشاركة.<br>" +
+    "<b>قرار خالد (١٩ أغسطس):</b> «شيل وإلغي موضوع الاشتراك — القارئ لمّا يضغط حفظ أو إعجاب فهو عنده اهتمام بالمقال أصلاً». طلب واحد لإشارة نملكها مرّتين.<br>" +
+    "<b>ما عُمِل:</b> السطحان أُزيلا، ثم حُذفت السلسلة كلّها لأنها صارت بلا مستهلك — <code>FeaturedImageNewsletter</code> و<code>FeaturedImageNewsletterLazy</code> و<code>NewsletterCta</code> و<code>NewsletterCtaLazy</code> (٤ ملفّات) + تصديرها من <code>components/index.ts</code> + خاصية <code>ctaText</code> من شريط التفاعل.<br>" +
+    "<b>الدليل الحيّ:</b> أزرار الشريط صارت «أعجبني · حفظ · أضف تعليق · مشاركة» · وعدّ كلمة «اشترك» على الصفحة كلّها = <b>٠</b> · <code>tsc</code> صفر أخطاء.<br>" +
+    "<b>خارج النطاق عمداً:</b> حقل <code>Client.newsletterCtaText</code> في القاعدة، ومشتركو صفحات العملاء و<code>/news</code> و<code>/subscribe</code> — البند كان عن صفحة المقال. توحيد موديلات المشتركين الثلاثة ما زال في البند ١٢.",
  ref:"بند ١٢"},
 
 {id:"12c", b:"projects", app:["admin","console"], tab:"open", sev:"normal", who:"c",
