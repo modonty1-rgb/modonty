@@ -1,12 +1,7 @@
-import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
-import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
-import { AboutCard } from "@/components/shared/about-card/AboutCard";
-import { LinkCard } from "@/components/shared/link-card/LinkCard";
-import { IconVolume2, IconPlay } from "@/lib/icons";
-
-import { FiltersRail } from "../filters-rail/FiltersRail";
-import { ArticlesFeed } from "../articles-feed/ArticlesFeed";
+import { AskModo } from "../ask-modo/AskModo";
+import { FiltersBar } from "../filters-bar/FiltersBar";
 import { ReadingTimeBar } from "../reading-time-bar/ReadingTimeBar";
+import { ArticlesFeed } from "../articles-feed/ArticlesFeed";
 
 import type { ArchiveState } from "../../helpers/build-archive-href";
 import type { ReadingTimeBucket } from "../../helpers/reading-time-buckets";
@@ -17,59 +12,45 @@ import type { ReactNode } from "react";
 interface ArticlesPageLayoutProps {
   breadcrumb: ReactNode;
   articles: FeedPost[];
-  readingTimeCounts: Record<ReadingTimeBucket, number>;
   filters: ArchiveFilters;
+  readingTimeCounts: Record<ReadingTimeBucket, number>;
   current: ArchiveState;
   scopeLabel: string | null;
 }
 
 /**
- * The same three columns as `/`, `/clients` and `/industries` — identical widths and gaps, so
- * moving between them never moves the furniture.
+ * ONE column, not three.
  *
- * Right narrows by subject (المجال then التصنيف), left is modonty's own card, the same one the homepage carries. Above both, full
- * width, «عندك كم دقيقة؟» — the question a reader answers before he picks a subject.
+ * This page had copied the homepage's three-column shell, and the result was a second homepage:
+ * measured 2026-08-19, every shared component `/articles` imported was one the homepage imports
+ * too — a 100% overlap, with only the card size and the pagination telling them apart. Khalid saw
+ * it before the measurement did.
+ *
+ * The shape comes from how real archives are built. Vercel, Stripe and Intercom are all a single
+ * column with a horizontal category strip and no side rails at all (measured the same day). A
+ * reader here is searching, not browsing a feed — rails give him furniture, not answers.
+ *
+ * Order follows the order of his questions: which field → what am I looking for → how long do I
+ * have → and if none of that worked, ask Modo.
  */
 export function ArticlesPageLayout({
   breadcrumb,
   articles,
-  readingTimeCounts,
   filters,
+  readingTimeCounts,
   current,
   scopeLabel,
 }: ArticlesPageLayoutProps) {
   return (
-    <ThreeColumnLayout
-      header={
-        <div className="space-y-4">
-          {breadcrumb}
-          <ReadingTimeBar counts={readingTimeCounts} current={current} />
-        </div>
-      }
-      right={
-        <StickyRail
-          label="تصفية المقالات"
-          className="hidden w-[300px] shrink-0 self-start min-[1240px]:sticky min-[1240px]:block"
-        >
-          <FiltersRail filters={filters} current={current} />
-        </StickyRail>
-      }
-      center={<ArticlesFeed articles={articles} current={current} scopeLabel={scopeLabel} />}
-      left={
-        <StickyRail
-          label="مدونتي"
-          className="hidden w-[300px] shrink-0 self-start min-[1240px]:sticky min-[1240px]:block"
-        >
-          <div className="space-y-3">
-            <AboutCard />
-            {/* The same content in the two other shapes modonty publishes it in — a reader who
-                ran out of time to read has not run out of ways to consume. «استكشف المجالات»
-                is deliberately absent: the rail on the right already does exactly that. */}
-            <LinkCard href="/audio" title="استمع" description="المقالات صوتاً وأنت ماشي" icon={IconVolume2} />
-            <LinkCard href="/reels" title="الطلّات" description="مقاطع قصيرة من الشركاء" icon={IconPlay} />
-          </div>
-        </StickyRail>
-      }
-    />
+    <div className="container mx-auto max-w-[760px] px-3 py-3 sm:px-4 sm:py-6">
+      <div className="mb-5 space-y-4">
+        {breadcrumb}
+        <FiltersBar filters={filters} current={current} />
+        <ReadingTimeBar counts={readingTimeCounts} current={current} />
+        <AskModo />
+      </div>
+
+      <ArticlesFeed articles={articles} current={current} scopeLabel={scopeLabel} />
+    </div>
   );
 }
