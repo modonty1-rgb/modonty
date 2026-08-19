@@ -7,6 +7,8 @@ import { SITE_URL } from "@/constants";
 import { getArticlesArchive, type ArchiveSort } from "./data/get-articles-archive";
 import { getArticlesFilters } from "./data/get-articles-filters";
 import { getTagName } from "./data/get-tag-name";
+import { getModontyArticles } from "./data/get-modonty-articles";
+import { getBrandMedia } from "@/lib/settings/get-brand-media";
 import { buildArchiveHref, type ArchiveState } from "./helpers/build-archive-href";
 import {
   countByReadingTime,
@@ -107,7 +109,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
 export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
   const state = readState(await searchParams);
 
-  const [subjectMatches, filters] = await Promise.all([
+  const [subjectMatches, filters, modontyArticles, brandMedia] = await Promise.all([
     getArticlesArchive({
       industrySlug: state.industry,
       categorySlug: state.category,
@@ -116,6 +118,8 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
       sort: state.sort,
     }),
     getArticlesFilters(),
+    getModontyArticles(),
+    getBrandMedia(),
   ]);
 
   /**
@@ -149,7 +153,8 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
           />
         }
         articles={articles}
-        filters={filters}
+        modontyArticles={modontyArticles}
+        brandLogoUrl={brandMedia.logoUrl}
         readingTimeCounts={readingTimeCounts}
         current={state}
         scopeLabel={scopeLabel}
