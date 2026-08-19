@@ -5,6 +5,8 @@ export interface ArchiveState {
   industry?: string;
   category?: string;
   tag?: string;
+  /** Free text, from the rail search box. */
+  search?: string;
   /** How long a read the visitor is in the mood for. */
   time?: ReadingTimeBucket;
   sort?: ArchiveSort;
@@ -26,6 +28,7 @@ export function buildArchiveHref(state: ArchiveState): string {
   if (state.industry) params.set("industry", state.industry);
   if (state.category) params.set("category", state.category);
   if (state.tag) params.set("tag", state.tag);
+  if (state.search) params.set("search", state.search);
   if (state.time) params.set("time", state.time);
   if (state.sort && state.sort !== "newest") params.set("sort", state.sort);
   if (state.page && state.page > 1) params.set("page", String(state.page));

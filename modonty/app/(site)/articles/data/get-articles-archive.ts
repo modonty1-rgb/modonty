@@ -13,6 +13,8 @@ export interface ArchiveQuery {
   industrySlug?: string;
   categorySlug?: string;
   tagSlug?: string;
+  /** Free text over title and excerpt — the rail search box. */
+  search?: string;
   sort?: ArchiveSort;
 }
 
@@ -94,7 +96,24 @@ export async function getArticlesArchive(query: ArchiveQuery = {}): Promise<Feed
   const articles = await db.article.findMany({
     where: {
       status: ArticleStatus.PUBLISHED,
-      OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
+      /**
+       * Both conditions are OR-groups, so they go inside AND. Written as two sibling `OR` keys
+       * the second silently replaced the first — and the one it replaced is the guard that keeps
+       * scheduled articles out of the list.
+       */
+      AND: [
+        { OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }] },
+        ...(query.search
+          ? [
+              {
+                OR: [
+                  { title: { contains: query.search, mode: "insensitive" as const } },
+                  { excerpt: { contains: query.search, mode: "insensitive" as const } },
+                ],
+              },
+            ]
+          : []),
+      ],
       ...(query.categorySlug && { category: { slug: query.categorySlug } }),
       ...(query.tagSlug && { tags: { some: { tag: { slug: query.tagSlug } } } }),
       ...(query.industrySlug && {

@@ -4,7 +4,7 @@ import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/Thre
 import { FiltersRail } from "../filters-rail/FiltersRail";
 import { ArticlesFeed } from "../articles-feed/ArticlesFeed";
 import { ReadingTimeBar } from "../reading-time-bar/ReadingTimeBar";
-import { AskModo } from "../ask-modo/AskModo";
+import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
 
 import type { ArchiveState } from "../../helpers/build-archive-href";
 import type { ReadingTimeBucket } from "../../helpers/reading-time-buckets";
@@ -55,10 +55,14 @@ export function ArticlesPageLayout({
       center={<ArticlesFeed articles={articles} current={current} scopeLabel={scopeLabel} />}
       left={
         <StickyRail
-          label="اسأل مودو"
+          label="بحث في المقالات"
           className="hidden w-[300px] shrink-0 self-start min-[1240px]:sticky min-[1240px]:block"
         >
-          <AskModo />
+          <div className="rounded-xl border border-border bg-card p-3">
+            <h2 className="mb-2 text-sm font-bold text-foreground">دوّر على مقال</h2>
+            {/* Same component /categories and /tags use — one search behaviour across the site. */}
+            <EntitySearchForm basePath="/articles" placeholder="اكتب كلمة من العنوان..." defaultValue={current.search ?? ""} />
+          </div>
         </StickyRail>
       }
     />

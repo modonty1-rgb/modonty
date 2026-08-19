@@ -24,6 +24,7 @@ interface ArticlesPageProps {
     industry?: string;
     category?: string;
     tag?: string;
+    search?: string;
     time?: string;
     sort?: string;
     page?: string;
@@ -37,6 +38,7 @@ function readState(raw: Awaited<ArticlesPageProps["searchParams"]>): ArchiveStat
     industry: raw.industry?.trim() || undefined,
     category: raw.category?.trim() || undefined,
     tag: raw.tag?.trim() || undefined,
+    search: raw.search?.trim() || undefined,
     time: TIMES.includes(raw.time as ReadingTimeBucket) ? (raw.time as ReadingTimeBucket) : undefined,
     sort: SORTS.includes(raw.sort as ArchiveSort) ? (raw.sort as ArchiveSort) : undefined,
     page: Number.isFinite(page) && page > 1 ? Math.floor(page) : undefined,
@@ -57,6 +59,8 @@ async function describeScope(
   // Tags are not offered in the rail any more, but `/tags/[slug]` still links here — so the name
   // is looked up rather than carried through the page.
   if (state.tag) return await getTagName(state.tag);
+
+  if (state.search) return `«${state.search}»`;
 
   return null;
 }
@@ -108,6 +112,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
       industrySlug: state.industry,
       categorySlug: state.category,
       tagSlug: state.tag,
+      search: state.search,
       sort: state.sort,
     }),
     getArticlesFilters(),
