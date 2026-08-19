@@ -28,7 +28,9 @@ export function ArticleHeader({
 }: ArticleHeaderProps) {
   return (
     <header className="mb-6 md:mb-8">
-      <h1 className="text-2xl md:text-3xl font-semibold mb-4 break-words">
+      {/* The loudest thing on a reading page has to be what the visitor came to read. At
+          30px/600 the title was quieter than the partner's 57px call-to-action beside it. */}
+      <h1 className="mb-4 break-words text-3xl font-bold leading-tight tracking-tight md:text-[2.5rem]">
         {title}
       </h1>
 
@@ -49,8 +51,10 @@ export function ArticleHeader({
         {readingTimeMinutes && (
           <span>⏱️ {readingTimeMinutes} دقيقة قراءة</span>
         )}
-        {wordCount && <span>📝 {wordCount} كلمة</span>}
-        {views !== undefined && (
+        {wordCount && <span>📝 {wordCount.toLocaleString("ar-SA")} كلمة</span>}
+        {/* A zero is worse than nothing: printing «٠ مشاهدة» under the title tells every new
+            reader that nobody has read this. The counter appears once there is one. */}
+        {views !== undefined && views > 0 && (
           <span className="flex items-center gap-1">
             <IconViews className="h-3.5 w-3.5 shrink-0" />
             <span className="tabular-nums">{views.toLocaleString('ar-SA')}</span>

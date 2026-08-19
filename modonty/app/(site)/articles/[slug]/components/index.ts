@@ -10,5 +10,7 @@ export { ReadingProgressBar } from "./reading-progress/ReadingProgressBarLazy";
 export { ArticleAuthorBio } from "./sidebar/AuthorBio";
 export { ArticleCitations } from "./sidebar/Citations";
 export { NewsletterCTA } from "./sidebar/NewsletterCta";
-export { ArticleTableOfContents } from "./sidebar/TableOfContentsLazy";
+// Imported directly, not through a `ssr: false` wrapper: the outline has to be in the HTML —
+// a crawler does not run JavaScript, and neither does a visitor whose bundle failed.
+export { ArticleTableOfContents } from "./sidebar/TableOfContents";
 export { CommentFormDialog } from "./comment-form/CommentFormDialog";

@@ -7,6 +7,7 @@ import { notFound, unstable_rethrow } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { sanitizeHtml } from "@/app/(site)/articles/[slug]/helpers/sanitize-html";
+import { readArticleOutline } from "@/app/(site)/articles/[slug]/helpers/read-article-outline";
 import { getArticleDefaultsFromSettings } from "@/app/(site)/articles/[slug]/helpers/get-article-defaults-from-settings";
 import { getPlatformSocialLinks, getPlatformImageLicensing } from "@/lib/settings/get-platform-social-links";
 import {
@@ -293,7 +294,10 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
     const userBox = session?.user
       ? { name: session.user.name ?? null, email: session.user.email ?? null }
       : null;
-    const safeHtml = sanitizeHtml(article.content);
+    // One pass over the body gives the three things derived from its structure: heading ids,
+    // the outline the contents list links to, and the summary box's lines.
+    const outline = readArticleOutline(sanitizeHtml(article.content));
+    const safeHtml = outline.html;
 
     // derived
     const galleryImages = (article.gallery ?? [])
@@ -310,10 +314,10 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
     const allTags = (article.tags ?? []).map((t) => t.tag).filter(Boolean);
     const visibleTags = allTags.slice(0, 5);
     const extraTags = Math.max(0, allTags.length - visibleTags.length);
-    const keyPoints = Array.from(article.content.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/gi))
-      .map((m) => m[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim())
-      .filter(Boolean)
-      .slice(0, 3);
+    // Was the first three H2s copied verbatim — a box called "أهم النقاط" that asked three
+    // questions and answered none, and repeated the contents list word for word. Now it is the
+    // first sentence of each of those sections: the answer, not the question.
+    const keyPoints = outline.summary;
 
     // Consolidated "اقرأ أيضاً" — merge the 4 related sources, dedupe, NO cap (Khalid 2026-06-04:
     // "ما في انتهاء" → max internal linking for SEO; pool already bounded by source query takes).
@@ -358,7 +362,13 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
     collectReadMore(moreFromClient, article.client?.name);
     collectReadMore(moreFromAuthor);
     collectReadMore(relatedArticles);
-    const readMoreTop = readMoreItems;
+    // Trimmed to a whole number of rows. The grid is three across, and an uncapped pool left a
+    // seventh card alone on the last row — measured 3+3+1.
+    const READ_MORE_COLUMNS = 3;
+    const readMoreTop = readMoreItems.slice(
+      0,
+      Math.floor(readMoreItems.length / READ_MORE_COLUMNS) * READ_MORE_COLUMNS || readMoreItems.length
+    );
 
     // The stored knowledge-graph card (admin-generated on publish/update) is the designed
     // model: publisher = the CLIENT, YMYL doctor reviewer, citations. Serve it when present —
@@ -459,9 +469,13 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
         />
 
         <div className="container mx-auto max-w-[1128px] px-4 py-6 pb-8 sm:px-6 md:py-8 lg:px-8">
-          <div className="flex flex-col gap-6 md:gap-8 lg:grid lg:grid-cols-[300px_1fr] lg:items-start">
+          {/* The article takes the reading-start side. In Arabic the eye lands top-right, and
+              that corner used to hold the sponsor card — «سجّل مجاناً», like/save, then two
+              partner buttons — while the title and the text sat off to the left. The rail is
+              support, so it moves to the far side. DOM order follows: the article is first. */}
+          <div className="flex flex-col gap-6 md:gap-8 lg:grid lg:grid-cols-[1fr_300px] lg:items-start">
 
-            {/* RIGHT (RTL first): engagement strip + client card + TOC + gallery.
+            {/* SUPPORT RAIL (RTL: left): engagement strip + client card + TOC + gallery.
                 StickyRail, not a plain `sticky top-14`: this rail is TALLER than the
                 viewport (966px against 889px, and 1466px with the contents open), so a
                 fixed top pins its head and puts its tail — the gallery — permanently out
@@ -469,7 +483,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
             <StickyRail
               label="العميل والتفاعل"
               offset={56}
-              className="hidden self-start lg:sticky lg:block"
+              className="hidden self-start lg:order-2 lg:sticky lg:block"
             >
               <div className="flex flex-col gap-6">
                 <EngagementBar
@@ -502,13 +516,13 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     }}
                   />
                 )}
-                <ArticleTableOfContents content={article.content} collapsible />
+                <ArticleTableOfContents headings={outline.headings} />
                 <Gallery images={galleryImages} fallbackText={article.client?.description} clientName={article.client?.name} />
               </div>
             </StickyRail>
 
-            {/* CENTER */}
-            <div className="w-full min-w-0">
+            {/* THE ARTICLE — first track, which in RTL is the right-hand side */}
+            <div className="w-full min-w-0 lg:order-1">
               {/* MOBILE: quiet engagement bar, sticky just under the navbar (h-14) — full-bleed + opaque */}
               <div className="sticky top-14 z-30 -mx-4 mb-3 shadow-sm sm:-mx-6 lg:hidden">
                 <ArticleTopEngagementBar
@@ -540,6 +554,21 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   <PartnerCardMobile client={article.client} articleId={article.id} />
                 )}
 
+                {/* The summary sits ABOVE the image, not below it. It is the first thing on the
+                    page that answers anything, so it should not wait behind 412 pixels of
+                    artwork — the visitor gets the gist in the first screen and reads on by
+                    choice. Three sentences, one per opening section. */}
+                {keyPoints.length > 0 && (
+                  <div className="mb-5 rounded-xl border border-primary/25 bg-primary/5 p-4">
+                    <p className="mb-2 text-sm font-bold text-primary">⚡ باختصار</p>
+                    <ul className="space-y-1.5 ps-5 text-sm leading-relaxed text-foreground/85 [&>li]:list-disc">
+                      {keyPoints.map((point, i) => (
+                        <li key={i}>{point}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
                 {featuredImage && (
                   <ArticleFeaturedImage image={featuredImage} title={article.title}>
                     {article.client && (
@@ -564,20 +593,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
                 {/* MOBILE: collapsible table of contents */}
                 <div className="mt-4 lg:hidden">
-                  <ArticleTableOfContents content={article.content} collapsible />
+                  <ArticleTableOfContents headings={outline.headings} collapsible />
                 </div>
-
-                {/* TL;DR — real key points from H2 headings */}
-                {keyPoints.length > 0 && (
-                  <div className="mt-5 rounded-xl border border-primary/25 bg-primary/5 p-4">
-                    <p className="mb-2 text-sm font-bold text-primary">⚡ أهم النقاط</p>
-                    <ul className="space-y-1.5 ps-5 text-sm leading-relaxed text-foreground/85 [&>li]:list-disc">
-                      {keyPoints.map((p, i) => (
-                        <li key={i}>{p}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
 
                 <div
                   id="article-content"
@@ -585,7 +602,11 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   // writer created rendered here as plain paragraphs — the reader lost the
                   // sequence and Google got an <ol> with nothing to show. Markers sit in the
                   // inline-start padding, hence `ps-*`: in Arabic the number belongs right.
-                  className="article-body prose prose-base md:prose-lg mt-6 max-w-none mb-8 text-right [&_h2]:text-right [&_h3]:text-right [&_h4]:text-right [&_li]:text-right [&_ol]:list-decimal [&_ol]:ps-6 [&_ul]:list-disc [&_ul]:ps-6 [&_li]:my-1"
+                  // `68ch`, not the full column: at 732px the line ran ~90 characters, and past
+                  // about 75 the eye loses the start of the next line on every return. The
+                  // heading, image and summary keep the full width — only the running text is
+                  // capped, which is the ordinary editorial shape.
+                  className="article-body prose prose-base md:prose-lg mt-6 max-w-[68ch] mb-8 text-right [&_h2]:text-right [&_h3]:text-right [&_h4]:text-right [&_li]:text-right [&_ol]:list-decimal [&_ol]:ps-6 [&_ul]:list-disc [&_ul]:ps-6 [&_li]:my-1"
                   // Leading is the typography plugin's now (config: 1.8, and per-element
                   // values for headings) — an inline 1.6 here would silently outrank it.
                   style={{ direction: "rtl" }}
@@ -655,7 +676,15 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 {/* E-E-A-T: author bio */}
                 {article.author && (
                   <div className="mt-8 [&_section]:my-0">
-                    <ArticleAuthorBio author={article.author} platformSocialLinks={platformSocialLinks} />
+                    <ArticleAuthorBio
+                      author={article.author}
+                      platformSocialLinks={platformSocialLinks}
+                      reviewer={
+                        article.client
+                          ? { name: article.client.name, slug: article.client.slug, reviewedAt: article.lastReviewed }
+                          : null
+                      }
+                    />
                   </div>
                 )}
 

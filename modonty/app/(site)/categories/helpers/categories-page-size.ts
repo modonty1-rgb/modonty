@@ -1,9 +1,4 @@
-import { mediaSrc } from "@modonty/shared/lib/media-src";
-import { db } from "@/lib/db";
-import { Prisma, ArticleStatus, SubscriptionStatus } from "@prisma/client";
-import { unstable_cache, cacheTag, cacheLife } from "next/cache";
-import { getClientsGA4Stats } from "@/lib/analytics/ga4";
-import type { CategoryResponse, CategoryAnalytics, CategoryQueryOptions, CategoryArticleQueryOptions, ArticleResponse } from "@/lib/types";
+import { Prisma } from "@prisma/client";
 
 export const CATEGORIES_PAGE_SIZE = 20;
 

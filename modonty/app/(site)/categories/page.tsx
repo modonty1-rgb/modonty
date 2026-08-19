@@ -10,7 +10,7 @@ import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
 import { EntitySortFilter, type EntitySortOption } from "@/components/listing/EntitySortFilter";
 import { InfiniteEntityGrid } from "@/components/listing/InfiniteEntityGrid";
 import { IconSearch } from "@/lib/icons";
-import { parseCategorySearchParams } from "./helpers/category-utils";
+import { parseCategorySearchParams } from "./helpers/parse-category-search-params";
 import type { CategoryPageParams } from "./helpers/category-page-params";
 import type { CategoryResponse } from "@/lib/types";
 import type { EntityCardProps } from "@/components/listing/EntityCard";

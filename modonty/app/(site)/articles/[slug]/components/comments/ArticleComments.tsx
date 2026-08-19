@@ -20,6 +20,7 @@ import {
   IconChevronUp,
 } from "@/lib/icons";
 import { CommentForm } from "../comment-form/CommentForm";
+import { CommentFormDialog } from "../comment-form/CommentFormDialog";
 import { useRouter } from "next/navigation";
 import { submitReply } from "../../actions/submit-reply";
 import { likeComment } from "../../actions/like-comment";
@@ -320,8 +321,18 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                   <Button variant="outline" size="sm" onClick={retryComments}>إعادة المحاولة</Button>
                 </div>
               ) : comments.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-sm text-muted-foreground">لا توجد تعليقات بعد. كن أول من يعلق!</p>
+                /* An empty state has to carry its own action. This one used to say "كن أول من
+                   يعلق" and offer no way to do it — the only entry was an icon in the strip
+                   far above. */
+                <div className="flex flex-col items-center gap-3 py-8 text-center">
+                  <p className="text-sm text-muted-foreground">ما فيه تعليقات لحد الآن. تكون أول واحد؟</p>
+                  <CommentFormDialog
+                    articleId={articleId}
+                    articleSlug={articleSlug}
+                    userId={userId}
+                    bare
+                    trigger={<Button type="button" variant="outline" size="sm">اكتب أول تعليق</Button>}
+                  />
                 </div>
               ) : (
                 <div className="space-y-2">

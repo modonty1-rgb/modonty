@@ -1,9 +1,9 @@
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
-import { Prisma, ArticleStatus, SubscriptionStatus } from "@prisma/client";
-import { unstable_cache, cacheTag, cacheLife } from "next/cache";
+import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
-import type { CategoryResponse, CategoryAnalytics, CategoryQueryOptions, CategoryArticleQueryOptions, ArticleResponse } from "@/lib/types";
+import type { CategoryResponse, CategoryQueryOptions } from "@/lib/types";
 
 export const getCategoriesEnhanced = unstable_cache(
   async (options: CategoryQueryOptions = {}): Promise<CategoryResponse[]> => {

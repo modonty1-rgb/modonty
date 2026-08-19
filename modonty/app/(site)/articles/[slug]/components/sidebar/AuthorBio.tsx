@@ -42,9 +42,17 @@ interface ArticleAuthorBioProps {
     facebook: string | null;
   };
   platformSocialLinks: SocialLink[];
+  /**
+   * The partner who approved the article before publication.
+   *
+   * On a health or legal article, "written by: a content platform" is the weakest possible
+   * answer to "who says so" — and it is not even the whole truth: our team writes, and the
+   * specialist partner reviews and approves. The reviewer belongs next to the writer.
+   */
+  reviewer?: { name: string; slug: string; reviewedAt: Date | null } | null;
 }
 
-export function ArticleAuthorBio({ author, platformSocialLinks }: ArticleAuthorBioProps) {
+export function ArticleAuthorBio({ author, platformSocialLinks, reviewer }: ArticleAuthorBioProps) {
   const authorSocial: { key: string; href: string; label: string; icon: IconComponent }[] = [
     author.linkedIn ? { key: "author-linkedin", href: author.linkedIn, label: "لينكد إن الكاتب", icon: Linkedin } : null,
     author.twitter  ? { key: "author-twitter",  href: author.twitter,  label: "إكس الكاتب",     icon: Twitter } : null,
@@ -85,6 +93,28 @@ export function ArticleAuthorBio({ author, platformSocialLinks }: ArticleAuthorB
             )}
           </div>
         </div>
+
+        {reviewer && (
+          <>
+            <div className="border-t border-border" />
+            <div className="px-4 py-2.5">
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                راجعه واعتمده{" "}
+                <Link href={`/clients/${reviewer.slug}`} className="font-semibold text-foreground hover:text-primary">
+                  {reviewer.name}
+                </Link>
+                {reviewer.reviewedAt && (
+                  <>
+                    {" — "}
+                    <time dateTime={reviewer.reviewedAt.toISOString()}>
+                      {new Intl.DateTimeFormat("ar-SA", { dateStyle: "long" }).format(reviewer.reviewedAt)}
+                    </time>
+                  </>
+                )}
+              </p>
+            </div>
+          </>
+        )}
 
         {/* Bio */}
         {author.bio && (

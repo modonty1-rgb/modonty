@@ -97,9 +97,18 @@ export function PartnerCard({ client, askClientProps, cta }: PartnerCardProps) {
   const hasPhone = !!client.phone?.trim();
   // brief falls back across the fields admins actually fill (DRY, data-agnostic)
   const brief = client.description?.trim() || client.businessBrief?.trim() || client.slogan?.trim() || "";
-  const social = (client.sameAs ?? [])
-    .map((url) => ({ url, meta: socialIconFor(url) }))
-    .filter((s): s is { url: string; meta: { icon: IconC; label: string } } => s.meta !== null);
+  // One icon per platform. A partner with two Facebook URLs rendered two identical buttons,
+  // same glyph and same label, so the visitor picked by coin toss — the first one wins.
+  const social = Array.from(
+    (client.sameAs ?? [])
+      .map((url) => ({ url, meta: socialIconFor(url) }))
+      .filter((s): s is { url: string; meta: { icon: IconC; label: string } } => s.meta !== null)
+      .reduce((byPlatform, s) => {
+        if (!byPlatform.has(s.meta.label)) byPlatform.set(s.meta.label, s);
+        return byPlatform;
+      }, new Map<string, { url: string; meta: { icon: IconC; label: string } }>())
+      .values()
+  );
   const hasContactRow = hasPhone || social.length > 0;
 
   return (
@@ -110,7 +119,9 @@ export function PartnerCard({ client, askClientProps, cta }: PartnerCardProps) {
         {heroMedia && (
           <>
             <div className="absolute inset-0">
-              <OptimizedImage media={heroMedia} alt={client.name} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 280px" />
+              {/* `contain`, not `cover`: these covers are the partner's own artwork with their
+                  name set into it, and cropping to fill cut the name off — «Dr. Amr S…». */}
+              <OptimizedImage media={heroMedia} alt={client.name} fill className="object-contain" sizes="(max-width: 1024px) 100vw, 280px" />
             </div>
             <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-1/3 bg-gradient-to-t from-black/40 to-transparent" />
           </>

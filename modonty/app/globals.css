@@ -374,7 +374,12 @@ footer[role="contentinfo"] {
    Black-on-dark = invisible in dark mode. Force the theme foreground (overrides plain
    inline color — inline styles here are not !important). Light mode is untouched. */
 .dark .article-body,
-.dark .article-body :where(p, span, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, td, th, strong, em, b, i, mark) {
+.dark .article-body :where(p, span, li, blockquote, figcaption, td, th, strong, em, b, i, mark) {
+  /* 88%, not pure white. Paper is not a lamp: #FAFAFA on a near-black page glares over a
+     ten-minute read. Headings keep full strength below so the hierarchy still separates. */
+  color: hsl(var(--foreground) / 0.88) !important;
+}
+.dark .article-body :where(h1, h2, h3, h4, h5, h6) {
   color: hsl(var(--foreground)) !important;
 }
 .dark .article-body a,
