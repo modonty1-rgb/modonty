@@ -12,14 +12,40 @@
     "Result: the page always fills the real Edge window on whichever screen it lands on,",
     "and it scrolls exactly when the content genuinely does not fit.",
     "",
+    "--- BLACK SCREENSHOTS AFTER SCROLLING (measured 19 Aug 2026) ---",
+    "",
+    "Symptom: on a long page, a viewport screenshot taken after a programmatic scroll came",
+    "back solid black. Measured on a 16,701px article page, same page, same session:",
+    "  scroll 0        viewport shot  197 KB   renders",
+    "  scroll 5,000    viewport shot   73 KB   only the top ~400px rendered, rest black",
+    "  scroll 14,100   viewport shot  8.5 KB   fully black",
+    "  element shot deep in the page   3.1 KB  fully black",
+    "  fullPage: true                1.76 MB  renders the whole document",
+    "",
+    "Two theories were tested and DISPROVED, so nobody re-tests them:",
+    "  1. Paint race — double requestAnimationFrame + 600ms before capture: still black.",
+    "  2. Emulated viewport larger than the real window — shrinking the emulated viewport",
+    "     BELOW the real window size (1333x622 inside a 1280x672 window): still black.",
+    "",
+    "What it actually is: the GPU compositor does not re-rasterise the scrolled region for",
+    "the capture. `--disable-gpu` forces software rasterisation, which renders the whole",
+    "scrollable area deterministically. `launchOptions.args` is the only way to pass browser",
+    "flags here — playwright-mcp has no CLI flag for it (verified in its README options",
+    "table, Context7 /microsoft/playwright-mcp).",
+    "",
+    "Workaround with no reload needed: take screenshots with `fullPage: true`. It uses a",
+    "different capture path and was measured working on the same page (1.76 MB above).",
+    "",
     "launchOptions.args --auto-open-devtools-for-tabs: opens DevTools automatically for",
     "every tab (Chromium/Edge flag) so the Network panel is visible during live tests.",
-    "Official: playwright-mcp config supports browser.launchOptions.args (Context7 /microsoft/playwright-mcp).",
-    "Remove this arg when you don't want DevTools popping open on every run.",
+    "Add it back when you want that; it is off by default because it shrinks the render area.",
     "",
     "Changing this file (or .mcp.json) needs a Claude Code reload — MCP reads config at startup."
   ],
   "browser": {
+    "launchOptions": {
+      "args": ["--disable-gpu"]
+    },
     "contextOptions": {
       "viewport": null
     }
