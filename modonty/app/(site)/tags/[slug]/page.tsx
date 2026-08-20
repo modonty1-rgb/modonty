@@ -42,6 +42,21 @@ async function getTagForMetadata(slug: string) {
   });
 }
 
+// The count reads the clock (scheduled articles), and Next 16 forbids the current time in an
+// uncached prerender scope — so it lives in its own cached function, like getTagForMetadata.
+async function countTagArticles(slug: string) {
+  "use cache";
+  cacheTag("tags");
+  cacheLife("hours");
+  return db.article.count({
+    where: {
+      status: ArticleStatus.PUBLISHED,
+      OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
+      tags: { some: { tag: { slug } } },
+    },
+  });
+}
+
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
   try {
     const { slug } = await params;
@@ -108,13 +123,7 @@ export default async function TagPage({ params }: TagPageProps) {
         },
       }),
       // How many articles carry this tag — the read-link stays hidden at zero.
-      db.article.count({
-        where: {
-          status: ArticleStatus.PUBLISHED,
-          OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
-          tags: { some: { tag: { slug: decodedSlug } } },
-        },
-      }),
+      countTagArticles(decodedSlug),
     ]);
 
     if (!tag) notFound();

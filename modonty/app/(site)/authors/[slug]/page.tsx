@@ -72,6 +72,11 @@ async function getAuthorBySlug(slug: string) {
 }
 
 async function getAuthorArticles(authorId: string) {
+  // Cached for the same reason as the helpers below — the publish-date guard reads the
+  // clock, and Next 16 forbids the current time in an uncached prerender scope.
+  "use cache";
+  cacheTag("authors");
+  cacheLife("hours");
   return db.article.findMany({
     where: {
       authorId,

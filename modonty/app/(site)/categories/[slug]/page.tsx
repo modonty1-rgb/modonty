@@ -26,6 +26,21 @@ export async function generateStaticParams() {
   }
 }
 
+// The count reads the clock (scheduled articles), and Next 16 forbids the current time in an
+// uncached prerender scope — so it lives in its own cached function, like getCategoryForMetadata.
+async function countCategoryArticles(slug: string) {
+  "use cache";
+  cacheTag("categories");
+  cacheLife("hours");
+  return db.article.count({
+    where: {
+      status: ArticleStatus.PUBLISHED,
+      OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
+      category: { slug },
+    },
+  });
+}
+
 async function getCategoryForMetadata(slug: string) {
   "use cache";
   cacheTag("categories");
@@ -108,13 +123,7 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
         },
       }),
       // How many articles this category actually holds — the read-link stays hidden at zero.
-      db.article.count({
-        where: {
-          status: ArticleStatus.PUBLISHED,
-          OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
-          category: { slug },
-        },
-      }),
+      countCategoryArticles(slug),
     ]);
 
     if (!category) notFound();
