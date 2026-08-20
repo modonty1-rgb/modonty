@@ -18,6 +18,8 @@ export interface AudioArticle {
   readingTimeMinutes?: number;
   /** Whole seconds. Null on a recording uploaded before the field existed. */
   durationSeconds?: number;
+  /** The recording itself — the queue plays it in place, so the page needs the URL. */
+  audioUrl: string;
 }
 
 /** Small on purpose: today zero articles carry audio, and the page is a shelf, not the archive. */
@@ -54,6 +56,7 @@ export async function getAudioArticles(): Promise<AudioArticle[]> {
       datePublished: true,
       createdAt: true,
       readingTimeMinutes: true,
+      audioUrl: true,
       audioDurationSeconds: true,
       featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
       client: {
@@ -81,5 +84,7 @@ export async function getAudioArticles(): Promise<AudioArticle[]> {
     clientLogo: mediaSrc(a.client.logoMedia) ?? undefined,
     readingTimeMinutes: a.readingTimeMinutes ?? undefined,
     durationSeconds: a.audioDurationSeconds ?? undefined,
+    // Non-null by construction: the query filters `NOT: { audioUrl: null }`.
+    audioUrl: a.audioUrl as string,
   }));
 }

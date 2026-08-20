@@ -5,25 +5,32 @@ import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { IconVolume2 } from "@/lib/icons";
 
-import { AudioRow } from "./components/audio-row/AudioRow";
+import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoColumnLayout";
+
+import { ListenQueue } from "./components/listen-queue/ListenQueue";
+import { QuranPlayer } from "./components/quran-player/QuranPlayer";
 import { getAudioArticles } from "./data/get-audio-articles";
+import { SURAHS } from "./data/quran-surahs";
 
 /**
- * Through the shared builder like every other public page. The two-field object it replaces
- * shipped no canonical, no hreflang, no og: and no twitter: — the page was in the top nav and
- * in the sitemap while being the only one Google could not place.
+ * Through the shared builder like every other public page.
  *
- * `noindex` on purpose: the feature has no content yet, and an empty page in the index earns
- * a thin-content mark that outlives the emptiness. Lift it the day the first audio ships.
+ * The `noindex` that used to sit here was correct while the page was an empty state — an empty
+ * page in the index earns a thin-content mark that outlives the emptiness. It is wrong now: the
+ * page carries the complete mushaf, 114 surahs by twenty reciters, which is the most searched
+ * subject on this whole site in Saudi Arabia and Egypt. Keeping it hidden was pure waste.
+ *
+ * The title and description were about something else entirely — «النسخ الصوتية من المقالات …
+ * قيد التجهيز» — so anyone searching for a recitation could never have found us. They name the
+ * recitation first now, because that is what the page actually is.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const metadata = await buildMetadataFromPageRow(null, {
+  return buildMetadataFromPageRow(null, {
     path: "/audio",
-    fallbackTitle: "استمع إلى المقالات",
+    fallbackTitle: "استمع للقرآن الكريم كاملاً بعشرين قارئاً — ومقالات مدونتي مقروءة",
     fallbackDescription:
-      "النسخ الصوتية من مقالات مدونتي — اسمع المقال وأنت في الطريق أو في الجيم. قيد التجهيز.",
+      "المصحف كامل ١١٤ سورة برواية حفص عن عاصم، بصوت العفاسي والسديس والمعيقلي والحصري والمنشاوي وغيرهم — اسمع أي سورة بأي قارئ، ومعها النسخ الصوتية من مقالات مدونتي.",
   });
-  return { ...metadata, robots: { index: false, follow: true } };
 }
 
 export default async function AudioArticlesPage() {
@@ -43,6 +50,27 @@ export default async function AudioArticlesPage() {
         }}
       />
 
+      {/* The 114 surahs as a named list, so a search engine sees a catalogue rather than a wall of
+          buttons. `ItemList` is the vocabulary for exactly this: an ordered set of named things on
+          one page. Only names and positions — never a word of the Qur'an itself. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLdHtml({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: "المصحف المسموع — ١١٤ سورة برواية حفص عن عاصم",
+            numberOfItems: SURAHS.length,
+            itemListOrder: "https://schema.org/ItemListOrderAscending",
+            itemListElement: SURAHS.map((s) => ({
+              "@type": "ListItem",
+              position: s.n,
+              name: s.name,
+            })),
+          }),
+        }}
+      />
+
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
@@ -50,44 +78,39 @@ export default async function AudioArticlesPage() {
         ]}
       />
 
-      <main className="container mx-auto max-w-3xl px-4 py-10">
-        <h1 className="text-3xl font-bold leading-tight">استمع إلى المقالات</h1>
-        <p className="mt-2 text-muted-foreground">
-          النسخ الصوتية من مقالات مدونتي — تسمع المقال وأنت في الطريق أو في الجيم.
-        </p>
-
-        {articles.length === 0 ? (
-          /* A real empty state, not a blank page: it says what is coming and where to go
-             meanwhile. A visitor who lands here from the top nav leaves with somewhere to go. */
-          <div className="mt-8 flex flex-col items-center gap-4 rounded-xl border border-dashed border-border bg-muted/30 px-6 py-12 text-center">
-            <IconVolume2 className="h-10 w-10 text-muted-foreground" aria-hidden />
-            <div className="space-y-1">
-              <p className="font-semibold">لسه ما نزلت أول نسخة صوتية</p>
-              <p className="text-sm text-muted-foreground">
-                نشتغل عليها الآن. لين ما تجهز، المقالات كلها موجودة مكتوبة.
-              </p>
-            </div>
-            <a
-              href="/articles"
-              className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-            >
-              اقرأ المقالات
-            </a>
-          </div>
-        ) : (
+      {/* Two columns, not two tabs (Khalid, 20 Aug): the recitation is the page, and the articles
+          sit beside it. The shared shell rather than a hand-rolled grid — same container, same
+          gaps as every other two-column page on the site. */}
+      <TwoColumnLayout
+        header={
           <>
-            {/* The count is the page's own answer to "is there anything here for me". */}
-            <p className="mt-6 text-sm text-muted-foreground">
-              {articles.length.toLocaleString("ar-SA")} مقال تقدر تسمعه
+            {/* «اسمع» rather than «استمع» — nearer to how the word is actually said, and it carries
+                both halves of the page without flattering either. No single clever line tries to
+                cover recitation and marketing articles at once: one would cheapen the first or
+                inflate the second. A neutral verb, then a line that names them separately. */}
+            <h1 className="text-3xl font-bold leading-tight">اسمع</h1>
+            <p className="mt-2 text-muted-foreground">
+              القرآن الكريم كاملاً بعشرين قارئاً برواية حفص عن عاصم · ومقالات مدونتي مقروءة.
             </p>
-            <ul className="mt-2 divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
-              {articles.map((article, i) => (
-                <AudioRow key={article.id} article={article} isLcp={i === 0} />
-              ))}
-            </ul>
           </>
-        )}
-      </main>
+        }
+        main={<QuranPlayer />}
+        rail={
+          <aside className="w-full shrink-0 lg:w-[300px]" aria-label="المقالات المسموعة">
+            <div className="sticky top-20 space-y-3">
+              <h2 className="text-xs font-semibold uppercase text-muted-foreground">المقالات المسموعة</h2>
+              {articles.length === 0 ? (
+                <p className="flex items-start gap-2 rounded-xl border border-dashed border-border bg-muted/30 p-3 text-xs leading-relaxed text-muted-foreground">
+                  <IconVolume2 className="mt-0.5 size-4 shrink-0" aria-hidden />
+                  لسه ما نزلت أول نسخة صوتية من المقالات — والمقالات كلها موجودة مكتوبة.
+                </p>
+              ) : (
+                <ListenQueue articles={articles} compact />
+              )}
+            </div>
+          </aside>
+        }
+      />
     </>
   );
 }
