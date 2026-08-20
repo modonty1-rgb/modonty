@@ -70,7 +70,7 @@ export function AuthPrompt({ open, onOpenChange, action }: AuthPromptProps) {
           </span>
           <DialogTitle className="text-base">سجّل دخولك بثانية</DialogTitle>
           <DialogDescription className="text-[13px] leading-relaxed">
-            {line} — وترجع لمكانك في المقال على طول.
+            {line} — وترجع لمكانك على طول.
           </DialogDescription>
         </DialogHeader>
 

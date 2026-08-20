@@ -19,7 +19,7 @@ import {
   IconChevronDown,
   IconChevronUp,
 } from "@/lib/icons";
-import { CommentForm } from "../comment-form/CommentForm";
+import { CommentForm } from "@/components/shared/comment-form/CommentForm";
 import { CommentFormDialog } from "../comment-form/CommentFormDialog";
 import { submitReply } from "../../actions/submit-reply";
 import { likeComment } from "../../actions/like-comment";

@@ -1,6 +1,6 @@
 {
   "name": "@modonty/modonty",
-  "version": "1.93.1",
+  "version": "1.94.0",
   "private": true,
   "prisma": {
     "schema": "../shared/prisma/schema/schema.prisma"
@@ -43,6 +43,7 @@
     "dotenv": "^16.6.1",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.38.0",
+    "hls.js": "^1.7.1",
     "lucide-react": "^0.562.0",
     "next": "16.2.9",
     "next-auth": "^5.0.0-beta.25",

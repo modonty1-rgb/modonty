@@ -16,13 +16,14 @@ export async function getReelsFeedPage(cursor?: string | null): Promise<ReelFeed
   "use cache";
   cacheTag("reels");
   cacheLife("minutes");
-  // A reel is a media file with the switch on (2026-08-05). `mimeType` filters to images
-  // instead of the old `type: "IMAGE"` column — the file already carries that fact.
+  // Both kinds of reel now (2026-08-20): a video (bunnyVideoId set, plays) and a still image
+  // share one feed. The old `mimeType: "image/"` filter hid every video reel the console
+  // uploaded and the admin approved — they sat PUBLISHED and invisible. `client: isNot null`
+  // stays: a reel with no partner has no attribution to show.
   const reels = await db.media.findMany({
     where: {
       inReels: true,
       reelStatus: "PUBLISHED",
-      mimeType: { startsWith: "image/" },
       client: { isNot: null },
     },
     select: {
@@ -32,10 +33,17 @@ export async function getReelsFeedPage(cursor?: string | null): Promise<ReelFeed
       description: true,
       url: true,
       bunnyUrl: true, blurDataURL: true,
+      mimeType: true,
+      bunnyVideoId: true,
+      playbackUrl: true,
+      mp4Url: true,
+      thumbnailUrl: true,
+      durationSec: true,
       width: true,
       height: true,
       likesCount: true,
       favoritesCount: true,
+      commentsCount: true,
       client: {
         select: {
           name: true,
@@ -51,20 +59,33 @@ export async function getReelsFeedPage(cursor?: string | null): Promise<ReelFeed
   // `title`/`description` are optional columns now — they were required on the old reel
   // row. The admin approval screen refuses an empty one, so a published reel always has
   // both; these fallbacks only keep the type honest.
-  const items = reels.map((r) => ({
-    id: r.id,
-    slug: r.reelSlug ?? r.id,
-    title: r.title ?? "",
-    description: r.description ?? "",
-    imageUrl: mediaSrc(r),
-    width: r.width,
-    height: r.height,
-    likesCount: r.likesCount,
-    favoritesCount: r.favoritesCount,
-    clientName: r.client?.name ?? "",
-    clientSlug: r.client?.slug ?? "",
-    clientLogoUrl: mediaSrc(r.client?.logoMedia ?? null),
-  }));
+  const items = reels.map((r) => {
+    // A video reel is one Bunny actually encoded — `bunnyVideoId` present. The console never
+    // sets it on an image, so it is the honest discriminator, not the mime type.
+    const isVideo = Boolean(r.bunnyVideoId);
+    return {
+      id: r.id,
+      slug: r.reelSlug ?? r.id,
+      title: r.title ?? "",
+      description: r.description ?? "",
+      // For a video, the thumbnail is the still that carries the blurred backdrop and the poster;
+      // for an image, the image itself.
+      imageUrl: isVideo ? (r.thumbnailUrl ?? mediaSrc(r)) : mediaSrc(r),
+      width: r.width,
+      height: r.height,
+      isVideo,
+      hlsUrl: isVideo ? r.playbackUrl : null,
+      mp4Url: isVideo ? r.mp4Url : null,
+      posterUrl: isVideo ? (r.thumbnailUrl ?? null) : null,
+      durationSec: isVideo ? r.durationSec : null,
+      likesCount: r.likesCount,
+      favoritesCount: r.favoritesCount,
+      commentsCount: r.commentsCount,
+      clientName: r.client?.name ?? "",
+      clientSlug: r.client?.slug ?? "",
+      clientLogoUrl: mediaSrc(r.client?.logoMedia ?? null),
+    };
+  });
   return {
     items,
     nextCursor: items.length === REELS_PAGE_SIZE ? items[items.length - 1].id : null,

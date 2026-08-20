@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { CommentFormDialog } from "@/app/(site)/articles/[slug]/components/comment-form/CommentFormDialog";
-import { AuthPromptLazy, warmAuthPrompt } from "@/app/(site)/articles/[slug]/components/auth-prompt/AuthPromptLazy";
+import { AuthPromptLazy, warmAuthPrompt } from "@/components/shared/auth-prompt/AuthPromptLazy";
 import { useSession } from "@/components/providers/SessionContext";
 import { likeArticle } from "@/app/(site)/articles/[slug]/actions/like-article";
 import { favoriteArticle } from "@/app/(site)/articles/[slug]/actions/favorite-article";

@@ -12,7 +12,7 @@ import {
 
 import { isPublicArticle } from "../helpers/is-public-article";
 
-import { sanitizeComment, validateCommentContent } from "../helpers/validate-comment";
+import { sanitizeComment, validateCommentContent } from "@/lib/comments/validate-comment";
 
 export async function submitComment(
   articleId: string,

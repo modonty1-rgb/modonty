@@ -47,7 +47,7 @@ function notTestSlug<T extends { slug: string }>(e: T): boolean {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_URL;
 
-  const [articles, categories, clients, authors, tags, industries] = await Promise.all([
+  const [articles, categories, clients, authors, tags, industries, reels] = await Promise.all([
     db.article.findMany({
       where: {
         status: ArticleStatus.PUBLISHED,
@@ -66,6 +66,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     db.author.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     db.tag.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     db.industry.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
+    // Published reels carry a standalone, indexable watch page each (the feed itself is noindex).
+    // Only rows with a slug are listed — a reel without one has no URL to point at.
+    db.media.findMany({
+      where: { inReels: true, reelStatus: "PUBLISHED", reelSlug: { not: null }, client: { isNot: null } },
+      select: { reelSlug: true, reelPublishedAt: true, thumbnailUrl: true },
+      orderBy: { reelPublishedAt: "desc" },
+    }),
   ]);
 
   // ── DYNAMIC ENTITY URLS (lastmod from real DB timestamps) ────────────
@@ -74,6 +81,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: article.dateModified || article.datePublished || undefined,
     ...(mediaSrc(article.featuredImage) && { images: [mediaSrc(article.featuredImage) ?? article.featuredImage!.url] }),
   }));
+
+  const reelUrls: MetadataRoute.Sitemap = reels
+    .filter((r): r is typeof r & { reelSlug: string } => Boolean(r.reelSlug))
+    .map((r) => ({
+      url: new URL(`/reels/${r.reelSlug}`, baseUrl).href,
+      lastModified: r.reelPublishedAt || undefined,
+      ...(r.thumbnailUrl && { images: [r.thumbnailUrl] }),
+    }));
 
   const categoryUrls: MetadataRoute.Sitemap = (categories as EntityWithUpdatedAt[]).map((c) => ({
     url: new URL(`/categories/${c.slug}`, baseUrl).href,
@@ -148,6 +163,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...authorUrls,
     ...staticPages,
     ...articleUrls,
+    ...reelUrls,
     ...categoryUrls,
     ...clientUrls,
     ...tagUrls,

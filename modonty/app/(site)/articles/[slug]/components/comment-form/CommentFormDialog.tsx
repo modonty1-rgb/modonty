@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/dialog";
 import { trackCtaClick } from "@/lib/analytics/cta-tracking";
 
-import { CommentForm } from "./CommentForm";
-import { AuthPromptLazy } from "../auth-prompt/AuthPromptLazy";
+import { CommentForm } from "@/components/shared/comment-form/CommentForm";
+import { AuthPromptLazy } from "@/components/shared/auth-prompt/AuthPromptLazy";
 import { submitComment } from "../../actions/submit-comment";
 
 interface CommentFormDialogProps {
