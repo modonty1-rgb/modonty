@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { SITE_URL } from "@/constants";
 
 import { getArticlesArchive, type ArchiveSort } from "./data/get-articles-archive";
@@ -110,10 +113,24 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
    */
   const canonical = `${SITE_URL}${buildArchiveHref(state)}`;
 
+  /**
+   * The archive was declaring no language at all — measured 2026-08-20: `/audio`, `/clients` and
+   * the homepage each ship nine `hrefLang` entries and this one shipped zero, on one of the most
+   * important pages on the site. It hand-rolled its `alternates` and simply never grew the map
+   * every other page reads from `Settings.defaultAlternateLanguages`.
+   *
+   * Each entry points at THIS filtered canonical, not at the bare `/articles` — the same single
+   * source of Arabic content serving every Gulf market, per filter view.
+   */
+  const { alternateLanguages } = await getPageSeoDefaults();
+
   return {
     title: { absolute: title },
     description,
-    alternates: { canonical },
+    alternates: {
+      canonical,
+      languages: buildHreflangLanguages(alternateLanguages, canonical, SITE_URL),
+    },
     ...(outOfRange && { robots: { index: false, follow: false } }),
     openGraph: { title, description, url: canonical, type: "website" },
   };
