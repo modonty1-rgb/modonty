@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { auth } from "@/lib/auth";
@@ -60,15 +61,11 @@ export default async function FollowingPage() {
                         <div className="flex items-center gap-4">
                           <Link href={`/clients/${client.slug}`} className="flex-shrink-0">
                             {client.logo ? (
-                              <div className="relative w-16 h-16 rounded overflow-hidden bg-muted">
-                                <OptimizedImage
-                                  media={asMedia(client.logo, client.name)}
-                                  alt={client.name}
-                                  fill
-                                  className="object-cover"
-                                  sizes="64px"
-                                />
-                              </div>
+                              <PartnerAvatar
+                                media={asMedia(client.logo, client.name)}
+                                name={client.name}
+                                size="big"
+                              />
                             ) : (
                               <div className="w-16 h-16 rounded bg-muted flex items-center justify-center">
                                 <IconClients className="h-8 w-8 text-muted-foreground" />

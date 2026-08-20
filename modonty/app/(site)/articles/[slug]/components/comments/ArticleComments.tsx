@@ -21,7 +21,6 @@ import {
 } from "@/lib/icons";
 import { CommentForm } from "../comment-form/CommentForm";
 import { CommentFormDialog } from "../comment-form/CommentFormDialog";
-import { useRouter } from "next/navigation";
 import { submitReply } from "../../actions/submit-reply";
 import { likeComment } from "../../actions/like-comment";
 import { fetchArticleComments } from "../../data/fetch-article-comments";
@@ -60,7 +59,6 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
   const [loading, setLoading] = useState(false);
   const [fetched, setFetched] = useState(initialComments.length > 0);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     if (!commentsOpen || fetched) return;
@@ -91,12 +89,9 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
     return result;
   };
 
+  // Only rendered for a signed-in reader (the button below sits behind `{userId && …}`), so
+  // there is no signed-out branch to handle here.
   const handleLike = async (commentId: string) => {
-    if (!userId) {
-      router.push('/users/register');
-      return;
-    }
-
     const updatedComments = comments.map(comment => {
       if (comment.id === commentId) {
         const currentLikesCount = comment._count?.likes || 0;
@@ -173,12 +168,12 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
             {comment.author?.image ? (
               <>
                 <AvatarImage src={comment.author.image} alt={comment.author.name ?? undefined} />
-                <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
+                <AvatarFallback className="bg-secondary text-secondary-foreground font-semibold">
                   {comment.author.name?.charAt(0) ?? <IconUser className="h-4 w-4" />}
                 </AvatarFallback>
               </>
             ) : (
-              <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
+              <AvatarFallback className="bg-secondary text-secondary-foreground font-semibold">
                 {comment.author?.name ? comment.author.name.charAt(0) : <IconUser className="h-4 w-4" />}
               </AvatarFallback>
             )}
@@ -280,12 +275,12 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                           {author.image ? (
                             <>
                               <AvatarImage src={author.image} alt={author.name ?? undefined} />
-                              <AvatarFallback className="text-[10px] bg-primary text-primary-foreground font-semibold">
+                              <AvatarFallback className="text-[10px] bg-secondary text-secondary-foreground font-semibold">
                                 {author.name?.charAt(0) ?? <IconUser className="h-3 w-3" />}
                               </AvatarFallback>
                             </>
                           ) : (
-                            <AvatarFallback className="text-[10px] bg-primary text-primary-foreground font-semibold">
+                            <AvatarFallback className="text-[10px] bg-secondary text-secondary-foreground font-semibold">
                               {author.name?.charAt(0) ?? <IconUser className="h-3 w-3" />}
                             </AvatarFallback>
                           )}
@@ -330,7 +325,6 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                     articleId={articleId}
                     articleSlug={articleSlug}
                     userId={userId}
-                    bare
                     trigger={<Button type="button" variant="outline" size="sm">اكتب أول تعليق</Button>}
                   />
                 </div>

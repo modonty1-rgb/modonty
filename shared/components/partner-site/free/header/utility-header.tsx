@@ -35,7 +35,7 @@ export function UtilityHeader({ data }: { data: HeaderData }) {
       </div>
       <HeaderBar>
         <a href={data.homeHref} className="min-w-0">
-          <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} size={40} />
+          <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} size="standard" />
         </a>
         <NavLinks links={data.links} className="hidden md:flex" />
         <div className="flex items-center gap-2">

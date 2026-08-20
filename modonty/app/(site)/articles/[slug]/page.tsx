@@ -43,7 +43,6 @@ import {
   ReadingProgressBar,
   ArticleCitations,
   ArticleTableOfContents,
-  ArticleAuthorBio,
 } from "./components";
 // Client-only wrappers — `ssr: false` is only legal inside a 'use client' file, so each one
 // sits beside the component it defers.
@@ -53,10 +52,12 @@ import { ArticleBodyLinkTrackerLazy } from "./components/body-link-tracker/BodyL
 
 import { AskModoCard } from "./components/ask-modo-card/AskModoCard";
 import { PartnerCard } from "./components/partner-card/PartnerCard";
+import { PartnerStrip } from "./components/partner-strip/PartnerStrip";
 import { Gallery } from "./components/gallery/Gallery";
 import { ReadMore } from "./components/read-more/ReadMore";
 import { BottomDock } from "./components/bottom-dock/BottomDock";
 import { ArticleTopEngagementBar } from "./components/top-engagement-bar/TopEngagementBar";
+import { ReadingTools } from "./components/reading-tools/ReadingTools";
 import { PartnerCardMobile } from "./components/partner-card/PartnerCardMobile";
 import ArticleLoading from "./loading";
 
@@ -469,6 +470,35 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
         {/* The shared two-column shell, not a hand-rolled grid: same container and gaps as
             `/articles`, `/clients` and the homepage. `main` renders first in DOM and lands on
             the visual right in RTL — the reading-start side, which is the point. */}
+        {/* The four actions, FIXED under the navbar (Khalid, 19 Aug). Measured: the navbar is
+            `sticky top-0`, 57px tall, full width, z-50 — so the tabs pin at 56 to tuck one
+            pixel under it and leave no seam, at z-40 so the navbar always wins.
+            `fixed` is viewport-relative, so the layer repeats the page container's own centring
+            (`max-w-[1128px] mx-auto` + the same padding) and `ms-auto` parks the 300px box on
+            the rail's column — otherwise a hard `left` would drift on every other screen width.
+            The layer ignores pointer events; only the tabs themselves take them. */}
+        <div className="pointer-events-none fixed inset-x-0 top-[56px] z-40 hidden lg:block">
+          <div className="container mx-auto max-w-[1128px] px-3 sm:px-4">
+            {/* Centred over the rail column, not parked on its edge (Khalid, 19 Aug): the four
+                tabs and the card below them read as one stack when they share a centre line. */}
+            <div className="pointer-events-auto ms-auto flex w-[300px] justify-center gap-2">
+              <ArticleTopEngagementBar
+                likes={article._count.likes}
+                favorites={article._count.favorites}
+                userLiked={article.userLiked}
+                userFavorited={article.userFavorited}
+                articleId={article.id}
+                articleSlug={article.slug}
+                userId={userId}
+                clientId={article.clientId}
+                attached
+                audioUrl={article.audioUrl}
+                audioDurationSeconds={article.audioDurationSeconds}
+              />
+            </div>
+          </div>
+        </div>
+
         <TwoColumnLayout
           className="pb-8"
           rail={
@@ -480,21 +510,27 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
               className="hidden w-[300px] shrink-0 lg:block lg:self-stretch"
               aria-label="فهرس المقال ومعرض الصور"
             >
-              {/* The four actions as tabs growing out of the contents card (Khalid, 19 Aug):
-                  the card is the notebook, the tabs are its index. The whole unit is pinned
-                  under the navbar, so both the actions and the outline follow the reader. */}
-              <div className="sticky top-14 flex flex-col">
-                <ArticleTopEngagementBar
-                  likes={article._count.likes}
-                  favorites={article._count.favorites}
-                  userLiked={article.userLiked}
-                  userFavorited={article.userFavorited}
-                  articleId={article.id}
-                  articleSlug={article.slug}
-                  userId={userId}
-                  clientId={article.clientId}
-                  attached
-                />
+              {/* One pinned object, three parts: who stands behind the article · what the reader
+                  can do with it · where they are in it. Everything the rail owes a reader while
+                  they read, and nothing else. */}
+              <div className="sticky top-[120px] z-30 flex flex-col gap-4">
+                {/* Below xl the margin is too narrow to stand in (36px at 1200), so the tools
+                    stay here; from xl up they move out to the gutter layer below. */}
+                <div className="xl:hidden">
+                  <ReadingTools />
+                </div>
+                {article.client && (
+                  <PartnerStrip
+                    client={article.client}
+                    cta={{
+                      mode: article.client.ctaMode,
+                      label: article.client.ctaLabel,
+                      url: article.client.ctaUrl,
+                      articleId: article.id,
+                      source: "article_card",
+                    }}
+                  />
+                )}
                 <ArticleTableOfContents headings={outline.headings} />
               </div>
               {/* The partner card used to sit in this rail — 468px of cover, logo, badge, five
@@ -516,7 +552,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
             <div className="w-full min-w-0">
               {/* MOBILE: the same four tabs, sticky under the navbar. Desktop draws them on the
                   contents card in the rail instead — there is no rail on a phone. */}
-              <div className="sticky top-14 z-30 mb-3 py-2 lg:hidden">
+              {/* MOBILE only: no rail on a phone, so the tabs ride the article column. */}
+              <div className="sticky top-14 z-30 mb-6 flex gap-2 lg:hidden">
                 <ArticleTopEngagementBar
                   likes={article._count.likes}
                   favorites={article._count.favorites}
@@ -526,7 +563,16 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   articleSlug={article.slug}
                   userId={userId}
                   clientId={article.clientId}
+                  attached
+                  audioUrl={article.audioUrl}
+                  audioDurationSeconds={article.audioDurationSeconds}
                 />
+              </div>
+              {/* The reading tools live in the rail on a desktop, and there is no rail on a phone
+                  — so they ride the article column here instead. Measured 19 Aug: without this
+                  they were `display:none` at 390px, i.e. unreachable for every phone reader. */}
+              <div className="mb-6 lg:hidden">
+                <ReadingTools />
               </div>
               <article>
                 <ArticleHeader
@@ -585,19 +631,27 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   <ArticleFeaturedImage image={featuredImage} title={article.title} />
                 )}
 
-                {article.audioUrl && (
-                  <div className="my-4 rounded-lg border border-border bg-muted/30 p-3">
-                    <span className="mb-2 inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                      🎧 نسخة صوتية
-                    </span>
-                    <audio controls src={article.audioUrl} className="h-10 w-full" preload="none" />
-                  </div>
-                )}
+                {/* The audio card used to sit here. It scrolled out of reach the moment the
+                    reader started reading, and a second <audio> on the page could play over the
+                    tab's. The listen tab is the one player now. */}
 
                 {/* MOBILE: collapsible table of contents */}
                 <div className="mt-4 lg:hidden">
                   <ArticleTableOfContents headings={outline.headings} collapsible />
                 </div>
+
+                {/* The reading tools ride the body, not the page (Khalid, 19 Aug). This wrapper
+                    starts where the text starts and ends where it ends, so the icons are simply
+                    below the fold until the reader reaches the article, and gone again once it
+                    is over — no observer, no state, no client component doing the deciding.
+                    `sticky` inside an `absolute` box that spans the body is the whole mechanism.
+                    Only from xl, where the margin is wide enough to stand in. */}
+                <div className="relative">
+                  <div className="absolute -start-14 top-0 hidden h-full xl:block" aria-hidden={false}>
+                    <div className="sticky top-[150px]">
+                      <ReadingTools bare />
+                    </div>
+                  </div>
 
                 <div
                   id="article-content"
@@ -615,6 +669,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   style={{ direction: "rtl" }}
                   dangerouslySetInnerHTML={{ __html: safeHtml }}
                 />
+                </div>
                 <ArticleBodyLinkTrackerLazy articleId={article.id} />
 
                 {article.citations?.length ? (
@@ -701,26 +756,17 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   />
                 </div>
 
-                {/* E-E-A-T: author bio */}
-                {article.author && (
-                  <div className="mt-8 [&_section]:my-0">
-                    <ArticleAuthorBio
-                      author={article.author}
-                      platformSocialLinks={platformSocialLinks}
-                      reviewer={
-                        article.client
-                          ? { name: article.client.name, slug: article.client.slug, reviewedAt: article.lastReviewed }
-                          : null
-                      }
-                    />
-                  </div>
-                )}
-
                 {/* CONSOLIDATED: one "اقرأ أيضاً" grid (replaces the 4 repetitive related sections) */}
                 <ReadMore articleId={article.id} clientId={article.clientId ?? undefined} items={readMoreTop} />
 
+                {/* The «عن الكاتب» card used to stand on its own above this footer, and repeated
+                    what the footer already says — who reviewed it, and when. Khalid, 19 Aug: the
+                    publisher belongs IN the footer, as its second column. One block now answers
+                    «من كتبه ومن راجعه ومتى», instead of two stacked blocks answering it twice. */}
                 <ArticleFooter
                   client={article.client}
+                  author={article.author}
+                  platformSocialLinks={platformSocialLinks}
                   dateModified={article.dateModified}
                   lastReviewed={article.lastReviewed}
                   contentDepth={article.contentDepth}

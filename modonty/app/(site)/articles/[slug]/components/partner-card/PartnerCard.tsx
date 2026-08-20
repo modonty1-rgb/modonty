@@ -3,11 +3,10 @@ import { VerifiedBadge } from "@modonty/shared/components/verified-badge/Verifie
 import type { ComponentType, SVGProps } from "react";
 
 import { OptimizedImage } from "@modonty/shared/components/optimized-image";
+import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 import { Card } from "@/components/ui/card";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
-import { BRAND_AVATAR_RADIUS } from "@/constants";
 import { IconClients, IconChevronLeft, IconPhone, IconExternal } from "@/lib/icons";
-import { WhatsAppAction } from "@/components/shared/whatsapp-action/WhatsAppAction";
 import { Linkedin } from "@/components/icons/linkedin";
 import { Twitter } from "@/components/icons/twitter";
 import { Instagram } from "@/components/icons/instagram";
@@ -53,9 +52,22 @@ interface PartnerCardProps {
     sameAs?: string[];
     addressCity?: string | null;
     logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
-    heroImageMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
+    /** `width`/`height` are what let the cover box take the artwork's own shape. */
+    heroImageMedia?: {
+      url: string;
+      bunnyUrl: string | null;
+      blurDataURL: string | null;
+      width?: number | null;
+      height?: number | null;
+    } | null;
     /** Client Mini (1.91:1) media — preferred over the 6:1 hero for the card image. */
-    media?: { url: string; bunnyUrl: string | null; blurDataURL: string | null }[] | null;
+    media?: {
+      url: string;
+      bunnyUrl: string | null;
+      blurDataURL: string | null;
+      width?: number | null;
+      height?: number | null;
+    }[] | null;
   };
   askClientProps?: {
     articleId: string;
@@ -85,8 +97,11 @@ interface PendingFaq {
   createdAt: Date;
 }
 
+// 44, not 32 — the width of a fingertip, and the floor both platform guidelines set (Apple 44pt,
+// Material 48dp). Measured 19 Aug: six social buttons here were 32×32, small enough that the
+// finger covers the target and the tap lands on the neighbour.
 const railBtn =
-  "inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-muted/40 text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors";
+  "inline-flex h-11 w-11 items-center justify-center rounded-md border border-border bg-muted/40 text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors";
 
 export function PartnerCard({ client, askClientProps, cta }: PartnerCardProps) {
   // Pass the media ROW, not a resolved url — the shared component resolves src AND the
@@ -115,35 +130,42 @@ export function PartnerCard({ client, askClientProps, cta }: PartnerCardProps) {
     <Card className="min-w-0 overflow-hidden shadow-md">
       {/* media — aspect locked to the canonical hero spec (1200×630) so the image
           shows in full, consistent with the sidebar partner slider. */}
-      <div className="relative flex aspect-[1200/630] w-full shrink-0 items-center justify-center overflow-hidden bg-muted">
+      {/* No fixed box: the cover draws at its own height and the card follows (Khalid, 19 Aug).
+          It was locked to 1200/630, then to the dimensions on the media row — and both left
+          black bands, because the row LIES: measured 19 Aug on Dr. Amr Saeed, the file on the
+          CDN is 2400×400 (6:1) while the row says 2400×800 (3:1). `w-full h-auto` asks the
+          image itself, so a wrong number in the database can no longer put a hole in the card.
+          `width`/`height` still reserve space against layout shift; being off only costs one
+          settle, not a permanent gap. */}
+      <div className="relative w-full shrink-0 overflow-hidden bg-muted">
         {heroMedia && (
           <>
-            <div className="absolute inset-0">
-              {/* `contain`, not `cover`: these covers are the partner's own artwork with their
-                  name set into it, and cropping to fill cut the name off — «Dr. Amr S…». */}
-              <OptimizedImage media={heroMedia} alt={client.name} fill className="object-contain" sizes="(max-width: 1024px) 100vw, 280px" />
-            </div>
+            {/* `contain`, not `cover`: these covers are the partner's own artwork with their
+                name set into it, and cropping to fill cut the name off — «Dr. Amr S…». */}
+            <OptimizedImage
+              media={heroMedia}
+              alt={client.name}
+              width={heroMedia.width ?? 1200}
+              height={heroMedia.height ?? 630}
+              className="h-auto w-full object-contain"
+              sizes="(max-width: 1024px) 100vw, 280px"
+            />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-1/3 bg-gradient-to-t from-black/40 to-transparent" />
           </>
         )}
-        {logoMedia ? (
-          heroMedia ? (
-            <div className={`absolute bottom-3 left-3 z-10 flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden ${BRAND_AVATAR_RADIUS} bg-background shadow-lg ring-2 ring-background`}>
-              <OptimizedImage media={logoMedia} alt={client.name} width={56} height={56} className="object-contain p-1.5" sizes="56px" />
-            </div>
-          ) : (
-            <div className={`relative z-10 h-20 w-20 shrink-0 overflow-hidden ${BRAND_AVATAR_RADIUS} bg-background shadow-sm ring-2 ring-border`}>
-              <OptimizedImage media={logoMedia} alt={client.name} fill className="object-contain p-3" sizes="80px" />
-            </div>
-          )
-        ) : !heroMedia ? (
+        {!logoMedia && !heroMedia && (
           <IconClients className="relative z-10 h-12 w-12 text-muted-foreground" />
-        ) : null}
+        )}
       </div>
 
       {/* body */}
       <div className="flex flex-col gap-2.5 p-4">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2.5">
+          {/* Moved off the cover and onto this row (Khalid, 19 Aug) — over the banner it needed
+              a white disc to stay legible, and that disc was the halo. */}
+          {logoMedia && (
+            <PartnerAvatar media={logoMedia} name={client.name} size="standard" />
+          )}
           <h2 className="flex items-center gap-1.5 text-base font-semibold leading-tight">
             <CtaTrackedLink
               href={`/clients/${client.slug}`}
@@ -169,56 +191,57 @@ export function PartnerCard({ client, askClientProps, cta }: PartnerCardProps) {
           <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">{brief}</p>
         )}
 
-        {/* contact + social rail (conditional — no data, no icon) */}
-        {hasContactRow && (
-          <nav className="flex flex-wrap items-center gap-1.5 pt-0.5" aria-label="تواصل ومتابعة">
-            {hasPhone && (
-              <>
-                <WhatsAppAction
-                  phone={client.phone}
-                  clientId={client.id}
-                  clientName={client.name}
-                  source="article_card"
-                  articleId={askClientProps?.articleId ?? null}
-                  variant="icon"
-                  className="size-8"
-                />
-                <a href={`tel:${client.phone}`} aria-label="اتصال" className={railBtn}>
-                  <IconPhone className="h-4 w-4" />
-                </a>
-              </>
+        {/* One action row (Khalid, 19 Aug): the quiet ways to reach the partner on one side,
+            the two things we want him to do on the other. They used to be three stacked
+            full-width blocks — a social rail, then an amber «اسأل», then a blue «احجز» — so a
+            card that ends an article ended with three competing bars.
+
+            WhatsApp is gone from here: it already sits in the rail card that follows the reader
+            the whole way down, and a second copy at the end is the same button twice. */}
+        {(hasContactRow || askClientProps?.clientId || (cta && !cta.hideOwnCta && cta.mode === "FORM")) && (
+          <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">
+            {hasContactRow && (
+              <nav className="flex items-center gap-1.5" aria-label="تواصل ومتابعة">
+                {hasPhone && (
+                  <a href={`tel:${client.phone}`} aria-label="اتصال" className={railBtn}>
+                    <IconPhone className="h-4 w-4" />
+                  </a>
+                )}
+                {hasPhone && social.length > 0 && <span className="mx-1 h-5 w-px bg-border" />}
+                {social.map(({ url, meta: { icon: Icon, label } }) => (
+                  <a key={url} href={url} target="_blank" rel="noopener noreferrer" aria-label={label} className={railBtn}>
+                    <Icon className="h-4 w-4" aria-hidden />
+                  </a>
+                ))}
+              </nav>
             )}
-            {hasPhone && social.length > 0 && <span className="mx-1 h-5 w-px bg-border" />}
-            {social.map(({ url, meta: { icon: Icon, label } }) => (
-              <a key={url} href={url} target="_blank" rel="noopener noreferrer" aria-label={label} className={railBtn}>
-                <Icon className="h-4 w-4" aria-hidden />
-              </a>
-            ))}
-          </nav>
-        )}
 
-        {/* DUAL CTA */}
-        {askClientProps?.clientId && (
-          <AskClientDialog
-            articleId={askClientProps.articleId}
-            clientId={askClientProps.clientId}
-            clientName={client.name}
-            articleTitle={askClientProps.articleTitle}
-            user={askClientProps.user}
-            pendingFaqs={askClientProps.pendingFaqs}
-            embedInCard
-          />
-        )}
-
-        {/* Primary CTA — FORM (booking dialog) or LINK (external store), per admin config.
-            Hidden when the booking sheet owns the CTA (cta.hideOwnCta). NONE → nothing. */}
-        {cta && !cta.hideOwnCta && cta.mode === "FORM" && (
-          <BookingCtaLink
-            clientSlug={client.slug}
-            articleId={cta.articleId}
-            source={cta.source}
-            label={cta.label}
-          />
+            {/* The two actions sit together at the end of the row — «اسأل» quiet, «احجز» solid,
+                so the pair reads as one choice with an obvious default. */}
+            <div className="ms-auto flex items-center gap-2">
+              {askClientProps?.clientId && (
+                <AskClientDialog
+                  articleId={askClientProps.articleId}
+                  clientId={askClientProps.clientId}
+                  clientName={client.name}
+                  articleTitle={askClientProps.articleTitle}
+                  user={askClientProps.user}
+                  pendingFaqs={askClientProps.pendingFaqs}
+                  triggerOnly
+                  triggerClassName="w-auto h-11 px-4 bg-transparent border-border text-foreground font-semibold hover:bg-muted/60 hover:border-border shadow-none"
+                />
+              )}
+              {cta && !cta.hideOwnCta && cta.mode === "FORM" && (
+                <BookingCtaLink
+                  clientSlug={client.slug}
+                  articleId={cta.articleId}
+                  source={cta.source}
+                  label={cta.label}
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground ring-1 ring-inset ring-white/25 transition-opacity hover:opacity-90"
+                />
+              )}
+            </div>
+          </div>
         )}
         {cta && !cta.hideOwnCta && cta.mode === "LINK" && cta.url && (
           <CtaTrackedLink
@@ -229,7 +252,7 @@ export function PartnerCard({ client, askClientProps, cta }: PartnerCardProps) {
             clientId={client.id}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground ring-1 ring-inset ring-white/25 transition-opacity hover:opacity-90"
           >
             <IconExternal className="h-4 w-4" />
             {cta.label?.trim() || "تسوّق الآن"}

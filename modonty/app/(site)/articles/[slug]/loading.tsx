@@ -1,243 +1,124 @@
-import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
+/**
+ * The article page's own shape, held while it loads.
+ *
+ * It used to draw a three-column grid — `lg:grid-cols-[240px_1fr_280px]` with its own container
+ * padding — left over from a layout this page stopped using. So the reader watched a frame
+ * appear, then jump into a different one (Khalid, 19 Aug: «السكيلتون تمامه خاطئ»).
+ *
+ * The rule for this file: it mirrors `page.tsx`, block for block. Same shell
+ * (`TwoColumnLayout`'s container, padding and gaps, copied literally), same order — breadcrumb ·
+ * title · excerpt · byline · meta · summary · cover · body — and the same rail: partner strip
+ * above the contents card. When the page's structure changes, this changes with it in the same
+ * commit, or it goes back to lying.
+ */
 export default function ArticleLoading() {
   return (
     <div className="[&_.animate-pulse]:!bg-muted-foreground/15">
+      {/* reading progress bar */}
       <Skeleton className="h-1 w-full" />
-      <Breadcrumb
-        items={[
-          { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "الشركاء", href: "/clients" },
-          { label: "..." },
-          { label: "..." },
-        ]}
-      />
 
-      <main className="container mx-auto max-w-[1128px] px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex-1">
-        <div className="flex flex-col lg:grid lg:grid-cols-[240px_1fr_280px] lg:items-start gap-6 md:gap-8">
-          {/* Left sidebar – مشاركة وتفاعل + العميل */}
-          <aside
-            className="hidden lg:flex w-[240px] min-w-0 shrink-0 flex-col gap-6"
-            role="complementary"
-            aria-label="مشاركة وتفاعل"
-          >
-            <div className="sticky top-[3.5rem] flex flex-col gap-6">
-              <Card className="min-w-0 overflow-hidden">
-                <Skeleton className="aspect-video w-full rounded-none" />
-                <CardContent className="p-4 space-y-3">
-                  <Skeleton className="h-5 w-3/4" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-9 w-full" />
-                </CardContent>
-              </Card>
-              <Card className="min-w-0">
-                <CardContent className="p-4 flex flex-col gap-4">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Skeleton className="h-10 w-10" />
-                    <Skeleton className="h-10 w-10" />
-                    <Skeleton className="h-10 w-10" />
-                  </div>
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <Skeleton className="h-4 w-14" />
-                    <Skeleton className="h-4 w-12" />
-                    <Skeleton className="h-4 w-14" />
-                  </div>
-                  <div className="flex flex-col gap-2 border-t border-border pt-4">
-                    <Skeleton className="h-3 w-20" />
-                    <div className="flex gap-2">
-                      <Skeleton className="h-9 w-9" />
-                      <Skeleton className="h-9 w-9" />
-                      <Skeleton className="h-9 w-9" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+      {/* Same container as TwoColumnLayout — not this file's own guess at one. */}
+      <div className="container mx-auto max-w-[1128px] px-3 py-3 sm:px-4 sm:py-6">
+        {/* breadcrumb */}
+        <Skeleton className="mb-4 h-4 w-72 max-w-full" />
+
+        <div className="flex flex-col items-start gap-6 lg:flex-row lg:justify-center min-[1240px]:gap-4 min-[1296px]:gap-6">
+          {/* MAIN — the article column */}
+          <div className="mx-auto w-full space-y-3 sm:space-y-4 lg:mx-0 lg:flex-1">
+            {/* the four action tabs, mobile placement */}
+            <div className="mb-6 flex gap-2 lg:hidden">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="size-12 rounded-b-xl" />
+              ))}
             </div>
-          </aside>
 
-          <div className="w-full min-w-0">
-            <article>
-              <header className="mb-6 md:mb-8">
-                <Skeleton className="h-8 md:h-9 w-full mb-4" />
-                <Skeleton className="h-5 w-5/6 mb-6" />
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 text-sm mb-4">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-4 w-28" />
-                </div>
-              </header>
+            {/* reading tools, mobile/tablet placement */}
+            <Skeleton className="h-11 w-full rounded-xl xl:hidden" />
 
-              <div className="relative w-full aspect-video overflow-hidden rounded-lg mb-6">
-                <Skeleton className="h-full w-full rounded-none" />
-              </div>
+            {/* title — two lines at the real 2.5rem */}
+            <div className="space-y-2 pt-2">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-4/5" />
+            </div>
 
-              <div className="flex flex-wrap gap-2 mb-6">
-                <Skeleton className="h-7 w-20 rounded-md" />
-                <Skeleton className="h-7 w-24 rounded-md" />
-                <Skeleton className="h-7 w-16 rounded-md" />
-                <Skeleton className="h-7 w-20 rounded-md" />
-              </div>
+            {/* excerpt */}
+            <div className="space-y-2 pt-2">
+              <Skeleton className="h-5 w-full" />
+              <Skeleton className="h-5 w-11/12" />
+            </div>
 
-              <div id="article-content" className="mb-8 md:mb-12">
-                <div className="space-y-3 max-w-none">
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-5 w-11/12" />
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-5 w-10/12" />
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-5 w-9/12" />
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-5 w-10/12" />
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-5 w-4/5" />
-                </div>
-              </div>
+            {/* reviewer byline — the bordered line, not a box */}
+            <Skeleton className="h-5 w-2/3" />
 
-              <section className="my-8 md:my-12" aria-labelledby="gallery-heading">
-                <Skeleton className="h-7 w-32 mb-6" id="gallery-heading" />
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <Card key={i} className="overflow-hidden">
-                      <Skeleton className="aspect-video w-full" />
-                      <CardContent className="p-4">
-                        <Skeleton className="h-4 w-full" />
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </section>
+            {/* meta row: author · date · reading time · words · views */}
+            <div className="flex flex-wrap gap-3">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-4 w-20" />
+            </div>
 
-              <section id="article-faq" className="my-2 md:my-3">
-                <Card className="min-w-0">
-                  <CardContent className="p-4 flex flex-col gap-4">
-                    <div className="flex w-full items-center justify-between gap-2">
-                      <Skeleton className="h-5 w-5 shrink-0" />
-                      <Skeleton className="h-4 w-44" />
-                      <Skeleton className="h-4 w-28 shrink-0" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </section>
+            {/* «باختصار» summary box */}
+            <div className="space-y-2 rounded-lg border border-border p-4">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+            </div>
 
-              <section className="my-2 md:my-3" id="article-comments">
-                <Card className="min-w-0">
-                  <CardContent className="p-4 flex flex-col gap-4">
-                    <div className="flex w-full items-center justify-between gap-2">
-                      <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-5 w-5 shrink-0" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </section>
+            {/* cover image — 16:9, the shape the real one draws */}
+            <Skeleton className="aspect-video w-full rounded-lg" />
 
-              <section className="my-2 md:my-3">
-                <Card className="min-w-0">
-                  <CardContent className="p-4 flex flex-col gap-4">
-                    <div className="flex w-full items-center justify-between gap-2">
-                      <Skeleton className="h-5 w-5 shrink-0" />
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-4 w-28 shrink-0" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </section>
-              <section className="my-2 md:my-3">
-                <Card className="min-w-0">
-                  <CardContent className="p-4 flex flex-col gap-4">
-                    <div className="flex w-full items-center justify-between gap-2">
-                      <Skeleton className="h-5 w-5 shrink-0" />
-                      <Skeleton className="h-4 w-36" />
-                      <Skeleton className="h-4 w-28 shrink-0" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </section>
-              <section className="my-2 md:my-3">
-                <Card className="min-w-0">
-                  <CardContent className="p-4 flex flex-col gap-4">
-                    <div className="flex w-full items-center justify-between gap-2">
-                      <Skeleton className="h-5 w-5 shrink-0" />
-                      <Skeleton className="h-4 w-40" />
-                      <Skeleton className="h-4 w-28 shrink-0" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </section>
-              <section className="my-2 md:my-3">
-                <Card className="min-w-0">
-                  <CardContent className="p-4 flex flex-col gap-4">
-                    <div className="flex w-full items-center justify-between gap-2">
-                      <Skeleton className="h-5 w-5 shrink-0" />
-                      <Skeleton className="h-4 w-36" />
-                      <Skeleton className="h-4 w-28 shrink-0" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </section>
+            {/* body — capped at 68ch like the real prose, so the line length matches */}
+            <div className="max-w-[68ch] space-y-3 pt-2">
+              <Skeleton className="h-7 w-1/2" />
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-4 w-full" />
+              ))}
+              <Skeleton className="h-4 w-5/6" />
 
-              <footer className="my-8 md:my-12 pt-6 md:pt-8 border-t border-border space-y-2">
-                <Skeleton className="h-4 w-48" />
-                <Skeleton className="h-4 w-36" />
-                <Skeleton className="h-4 w-40" />
-              </footer>
-            </article>
+              <Skeleton className="mt-6 h-7 w-2/5" />
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-4 w-full" />
+              ))}
+              <Skeleton className="h-4 w-2/3" />
+            </div>
           </div>
 
-          <aside
-            className="hidden lg:flex min-w-0 flex-col gap-6"
-            role="complementary"
-            aria-label="جدول المحتويات"
-          >
-            <div className="[&_section]:my-0">
-              <Card className="min-w-0">
-                <CardContent className="p-4 flex flex-col gap-3">
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="h-12 w-12 rounded-full shrink-0" />
-                    <Skeleton className="h-5 w-28" />
+          {/* RAIL — 300px, partner strip then contents card, in that order */}
+          <aside className="hidden w-[300px] shrink-0 lg:block" aria-hidden="true">
+            <div className="flex flex-col gap-4">
+              {/* reading tools sit here below xl */}
+              <Skeleton className="h-11 w-full rounded-xl xl:hidden" />
+
+              {/* partner strip: avatar + name + one line, then two buttons */}
+              <div className="space-y-2.5 rounded-xl border border-border p-3">
+                <div className="flex items-center gap-2.5">
+                  <Skeleton className="size-12 rounded-full" />
+                  <div className="flex-1 space-y-1.5">
+                    <Skeleton className="h-3.5 w-3/4" />
+                    <Skeleton className="h-3 w-full" />
                   </div>
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-4/5" />
-                </CardContent>
-              </Card>
-            </div>
-            <div className="[&>div]:mt-0 [&>div]:mb-0">
-              <Card className="min-w-0">
-                <CardContent className="p-4 flex flex-col gap-3">
-                  <Skeleton className="h-5 w-32" />
-                  <Skeleton className="h-10 w-full" />
-                  <Skeleton className="h-10 w-full" />
-                </CardContent>
-              </Card>
-            </div>
-            <div className="min-w-0">
-              <Skeleton className="h-24 w-full rounded-lg mb-2" />
-              <Skeleton className="h-10 w-full" />
-            </div>
-            <div className="[&>div]:mt-0 [&>div]:mb-0">
-              <Card className="sticky top-24 min-w-0">
-                <CardHeader className="pb-3">
-                  <Skeleton className="h-5 w-24 mb-2" />
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {Array.from({ length: 6 }).map((_, index) => (
-                    <Skeleton
-                      key={index}
-                      className={`h-4 ${index % 3 === 2 ? "w-3/4" : "w-full"}`}
-                    />
-                  ))}
-                </CardContent>
-              </Card>
+                </div>
+                <div className="flex gap-2">
+                  <Skeleton className="h-10 flex-1 rounded-md" />
+                  <Skeleton className="h-10 w-24 rounded-md" />
+                </div>
+              </div>
+
+              {/* contents card */}
+              <div className="space-y-2.5 rounded-xl border border-border p-3">
+                <Skeleton className="h-4 w-28" />
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <Skeleton key={i} className="h-3.5" style={{ width: `${92 - i * 6}%` }} />
+                ))}
+              </div>
             </div>
           </aside>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

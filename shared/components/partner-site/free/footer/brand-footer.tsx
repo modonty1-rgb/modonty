@@ -1,4 +1,5 @@
 import { OptimizedImage, asMedia } from "../../../optimized-image";
+import { PartnerAvatar } from "../../../partner-avatar/PartnerAvatar";
 import { WhatsAppIcon } from "../../../icons/whatsapp-icon";
 import { cn } from "../../../../lib/utils/index";
 import { WHATSAPP_GREEN } from "../../parts/whatsapp-button";
@@ -20,11 +21,11 @@ export function BrandFooter({ data, preview = false }: { data: FooterData; previ
       <div className={cn("text-white", !data.primaryColor && "bg-primary")} style={data.primaryColor ? { backgroundColor: data.primaryColor } : undefined}>
         <div className="mx-auto flex max-w-[1128px] flex-wrap items-center justify-between gap-6 px-6 py-6">
           <div className="flex items-center gap-4">
-            {data.logoUrl && (
-              <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-sm bg-white">
-                <OptimizedImage media={asMedia(data.logoUrl, data.name)} alt="" fill sizes="avatar" className="object-contain" />
-              </span>
-            )}
+            <PartnerAvatar
+              media={data.logoUrl ? asMedia(data.logoUrl, data.name) : null}
+              name={data.name}
+              size="standard"
+            />
             <div className="leading-tight">
               <p className="text-lg font-bold">جاهز تبدأ مع {data.name}؟</p>
               <p className="mt-1 text-sm text-white/80">راسلنا الآن ونردّ عليك في نفس اليوم.</p>

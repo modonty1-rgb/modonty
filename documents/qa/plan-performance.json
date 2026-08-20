@@ -1,0 +1,961 @@
+[
+  {
+    "id": "P-01",
+    "phase": "build",
+    "title": "استعلام مسارات المقالات الثابتة بلا سقف",
+    "why": "`getArticleSlugsForStaticParams` في `modonty/app/(site)/articles/[slug]/data/get-article-slugs-for-static-params.ts` يعمل `db.article.findMany({ where: { status: PUBLISHED, ... }, select: { slug: true } })` بلا `take`. `generateStaticParams` في `page.tsx:96` يحوّل كل صف إلى مسار يُبنى وقت البناء. مع مئات آلاف المقالات زمن البناء ينمو خطّياً مع المحتوى، والاستعلام نفسه يسحب كل الصفوف إلى ذاكرة عامل البناء دفعة واحدة.",
+    "how": "شغّل `pnpm --filter @modonty/modonty build` وسجّل الزمن الكلّي. ثم عُدّ المسارات المُنتَجة: `find modonty/.next/server/app/\\(site\\)/articles -name '*.html' | wc -l`. كرّر بعد زرع بيانات ضخمة في قاعدة تطوير معزولة (١ ألف · ١٠ آلاف · ١٠٠ ألف مقال) وارسم الزمن مقابل عدد الصفوف.",
+    "expected": "زمن البناء ≤ 15 دقيقة عند 100000 مقال منشور، والمنحنى ليس خطّياً (بحد أقصى 2000 مسار مُولَّد مسبقاً + الباقي on-demand عبر `dynamicParams`). أي بناء يتجاوز 45 دقيقة = فشل.",
+    "severityIfFailed": "critical",
+    "evidence": "ناتج `next build` كاملاً مع سطر Route (App) وعمود Size/First Load JS، وزمن البناء بالثواني، وعدد ملفات .html المُنتَجة لكل حجم بيانات.",
+    "targets": [
+      "modonty/app/(site)/articles/[slug]/data/get-article-slugs-for-static-params.ts",
+      "modonty/app/(site)/articles/[slug]/page.tsx"
+    ],
+    "source": "Next.js docs — app/api-reference/functions/generate-static-params (partial generation + dynamicParams)"
+  },
+  {
+    "id": "P-02",
+    "phase": "build",
+    "title": "خمسة `generateStaticParams` بلا سقف ولا فلتر",
+    "why": "خمسة من ستة: `app/(partner)/clients/[slug]/page.tsx:25` (`db.client.findMany` بلا take)، `app/(site)/categories/[slug]/page.tsx:19` (`db.category.findMany({select:{slug}})` بلا take ولا فلتر حالة)، `app/(site)/tags/[slug]/page.tsx:19`، `app/(site)/authors/[slug]/page.tsx:29`، وملف المقالات في P-01. الوسوم والكتّاب تحديداً تنمو مع كل مقال يُنشر، فصفحة وسم بلا مقالات تُبنى وتُخزَّن بلا سبب.",
+    "how": "أضف عدّاداً مؤقتاً في كل `generateStaticParams` يطبع `console.error('[gsp] <route>', rows.length)` ثم `pnpm build`، والتقط الأرقام من سجل البناء. قارنها بعدد الصفحات المُنتَجة في `.next/server/app`.",
+    "expected": "لا يتجاوز أي `generateStaticParams` واحد 5000 مسار، ومجموع المسارات المُولَّدة مسبقاً لكل المسارات الديناميكية ≤ 20000.",
+    "severityIfFailed": "major",
+    "evidence": "سطر `[gsp] <route> <count>` لكل مسار من سجل البناء + جدول Route (App) من ناتج `next build`.",
+    "targets": [
+      "modonty/app/(partner)/clients/[slug]/page.tsx",
+      "modonty/app/(site)/categories/[slug]/page.tsx",
+      "modonty/app/(site)/tags/[slug]/page.tsx",
+      "modonty/app/(site)/authors/[slug]/page.tsx"
+    ],
+    "source": "Next.js docs — generate-static-params, \"Generate a subset of params\""
+  },
+  {
+    "id": "P-03",
+    "phase": "build",
+    "title": "تثبيت خريطة استراتيجية الرسم لكل المسارات الـ66",
+    "why": "`cacheComponents: true` في `modonty/next.config.ts:47` يجعل كل صفحة تُرسم قشرةً ثابتة + أجزاء متدفّقة. أي قراءة غير مقصودة لـ`cookies()`/`headers()`/`searchParams` خارج حدود `Suspense` تُسقط القشرة الثابتة وتحوّل الصفحة إلى رسم عند الطلب — وهذا لا يظهر في `tsc` ولا في المتصفح، فقط في جدول البناء.",
+    "how": "شغّل `pnpm build` واحفظ جدول Route (App) كاملاً في ملف. طابق كل صف مع `documents/qa/inventory-performance.md`. أي مسار مصنَّف ƒ (Dynamic) وليس في القائمة البيضاء (users/*، modo-chat، search، api/*) = انحدار.",
+    "expected": "على الأقل 55 من 66 مسار مصنَّف ○ (Static) أو ◐ (Partial Prerender). عدد مسارات ƒ (Dynamic) ≤ 11 وكلّها في القائمة البيضاء.",
+    "severityIfFailed": "critical",
+    "evidence": "جدول Route (App) الخام من `next build` مع رمز كل مسار، محفوظاً كملف نصّي ومقارَناً سطراً بسطر مع الجرد.",
+    "targets": ["modonty/next.config.ts", "documents/qa/inventory-performance.md"],
+    "source": "Next.js docs — app/getting-started/partial-prerendering + cacheComponents"
+  },
+  {
+    "id": "P-04",
+    "phase": "build",
+    "title": "`maxDuration = 60` على صفحة المقال — قياس الاستهلاك الحقيقي",
+    "why": "`modonty/app/(site)/articles/[slug]/page.tsx:94` يرفع المهلة إلى 60 ثانية بتعليل «البدء البارد لـPrisma+MongoDB يأخذ 6-9 ثوان». تحت حمل عالٍ على Fluid Compute هذا يعني أن طلباً عالقاً يحجز موارد دالة لدقيقة كاملة بدل أن يفشل بسرعة — وهذا يضاعف كلفة الاستدعاءات ويؤخّر الطابور.",
+    "how": "من لوحة Vercel Observability، مسار `/articles/[slug]`: التقط توزيع مدّة التنفيذ (p50/p95/p99/max) على 24 ساعة من حركة الإنتاج، وعدّ الاستدعاءات التي تجاوزت 10 ثوان.",
+    "expected": "p95 لمدّة الدالة ≤ 800ms عند التسخين، و p99 ≤ 3000ms، ونسبة الاستدعاءات فوق 10 ثوان ≤ 0.1%.",
+    "severityIfFailed": "major",
+    "evidence": "لقطة/تصدير CSV من Vercel Observability لمسار `/articles/[slug]` تحمل الأعمدة: invocations · p50 · p95 · p99 · max duration · GB-hours.",
+    "targets": ["modonty/app/(site)/articles/[slug]/page.tsx"],
+    "source": "Vercel docs — Functions: maxDuration & Fluid compute billing"
+  },
+  {
+    "id": "P-05",
+    "phase": "build",
+    "title": "`ignoreCommand` يمنع إعادة البناء غير الضرورية",
+    "why": "`modonty/vercel.json` يحمل `ignoreCommand: git diff --quiet HEAD^ HEAD -- ./ ../shared/ ../.env.shared ../package.json ../pnpm-lock.yaml`. لو انكسر هذا الشرط، كل دفعة على admin أو console تُطلق بناءً كاملاً لمدونتي — وبناء مدونتي هو الأثقل لأنه يُولّد آلاف المسارات (P-01).",
+    "how": "ادفع كوميت يمسّ `admin/` فقط وراقب في Vercel أن مشروع modonty يسجّل \"Build skipped\". كرّرها بكوميت يمسّ `shared/prisma/` وتأكّد أنه يبني.",
+    "expected": "كوميت يمسّ `admin/` وحده = 0 دقائق بناء على مشروع modonty. كوميت يمسّ `shared/` = بناء واحد.",
+    "severityIfFailed": "minor",
+    "evidence": "سجل Deployments من Vercel لمشروع modonty يظهر حالة \"Skipped\" مع hash الكوميت، وناتج `git show --stat` لنفس الكوميت.",
+    "targets": ["modonty/vercel.json"],
+    "source": "Vercel docs — Project Configuration: ignoreCommand"
+  },
+  {
+    "id": "P-06",
+    "phase": "build",
+    "title": "زمن أول بايت للصفحة المُولَّدة عند الطلب (ISR miss)",
+    "why": "مع P-01/P-02 محلولين بسقف، أغلب المقالات لن تكون مبنية مسبقاً وستُرسم عند أول طلب. مسار الرسم في `app/(site)/articles/[slug]/page.tsx:242-276` فيه ثلاث جولات متتالية إلى القاعدة قبل أول بايت من المحتوى.",
+    "how": "على البناء الإنتاجي، اطلب 50 مقالاً لم يُطلبا من قبل (slugs عشوائية من القاعدة) وقِس TTFB لكل واحد: `curl -w '%{time_starttransfer}\\n' -o /dev/null -s <url>`.",
+    "expected": "TTFB p95 للطلب الأول (cache MISS) ≤ 1200ms، و p95 للطلب الثاني (HIT) ≤ 200ms.",
+    "severityIfFailed": "major",
+    "evidence": "50 سطراً من ناتج curl مع رأس `x-nextjs-cache` (MISS/HIT/STALE) لكل طلب.",
+    "targets": ["modonty/app/(site)/articles/[slug]/page.tsx"],
+    "source": "Next.js docs — Incremental Static Regeneration; web.dev — TTFB"
+  },
+  {
+    "id": "P-07",
+    "phase": "build",
+    "title": "خريطة الموقع بلا سقف — تتجاوز حدّ 50 ألف رابط",
+    "why": "`modonty/app/sitemap.ts` يجمع ستّة `findMany` بلا `take` ولا `generateSitemaps()`. مع مئات آلاف المقالات: (أ) يتجاوز حدّ Google الرسمي 50000 رابط / 50MB لكل ملف، (ب) يبني المصفوفة كاملة في ذاكرة دالة واحدة → OOM.",
+    "how": "اطلب `/sitemap.xml` على الإنتاج وقِس: `curl -s -o sitemap.xml -w '%{size_download} %{time_total}\\n' https://www.modonty.com/sitemap.xml` ثم `grep -c '<loc>' sitemap.xml`.",
+    "expected": "عدد `<loc>` ≤ 50000 وحجم الملف ≤ 50MB وزمن التوليد ≤ 10 ثوان. فوق ذلك يجب تقسيمه بـ`generateSitemaps()`.",
+    "severityIfFailed": "critical",
+    "evidence": "ناتج curl (الحجم بالبايت + الزمن) وعدد `<loc>` الفعلي.",
+    "targets": ["modonty/app/sitemap.ts"],
+    "source": "Google Search Central — Sitemaps limits (50,000 URLs / 50MB uncompressed); Next.js docs — generateSitemaps"
+  },
+  {
+    "id": "P-08",
+    "phase": "build",
+    "title": "خريطة الصور تسحب متن كل مقال إلى الذاكرة",
+    "why": "`modonty/app/image-sitemap.xml/route.ts:56-70` يعمل `db.article.findMany` بلا `take` ويختار `content: true` — أي متن HTML الكامل لكل مقال منشور، ثم يمرّر كل واحد على regex لاستخراج `<img src>`. متوسط المتن آلاف الحروف؛ عند 100 ألف مقال هذا جيغابايتات في دالة واحدة عمرها 10 ثوان. هذا أخطر استعلام غير محدود في المستودع.",
+    "how": "اطلب `/image-sitemap.xml` تحت بيانات كبيرة وراقب استهلاك الذاكرة في سجلات Vercel: `curl -w '%{http_code} %{size_download} %{time_total}\\n' -o /dev/null -s https://www.modonty.com/image-sitemap.xml`، ثم افتح سجل الدالة وابحث عن `Memory Used`.",
+    "expected": "الذروة ≤ 512MB من 1024MB المتاحة، الاستجابة 200 خلال ≤ 10 ثوان، وحجم الرد ≤ 50MB. أي رمز 500 أو `FUNCTION_INVOCATION_TIMEOUT` = فشل.",
+    "severityIfFailed": "critical",
+    "evidence": "رمز HTTP + حجم الرد + الزمن من curl، وسطر `Report RequestId ... Memory Used: NNN MB` من سجل دالة Vercel.",
+    "targets": ["modonty/app/image-sitemap.xml/route.ts"],
+    "source": "Prisma docs — Pagination & select; Google Search Central — Image sitemaps"
+  },
+  {
+    "id": "P-09",
+    "phase": "data",
+    "title": "اثنا عشر `count()` على كل صفحة من الموقع",
+    "why": "`modonty/app/layout/helpers/get-footer-stats.ts` يُطلق 12 استعلام `count()` متوازياً على `article`, `client`, `articleView`, `clientView`, `pageView`, `articleLike`, `clientLike`, `comment`, `clientComment`, `articleFavorite`, `clientFavorite`, `clientReview`. يُستدعى من `app/layout/components/Footer.tsx:22` أي في تذييل كل صفحة من مسارات `(site)`. `cacheLife(\"minutes\")` يعني إعادة الحساب كل بضع دقائق. Prisma على مونجو يترجم `count` إلى `aggregate [{$match},{$count}]` — وهذا مسح كامل للمجموعة، لا عدّ بيانات وصفية. `article_views` و `page_views` هما أسرع مجموعتين نمواً في النظام.",
+    "how": "شغّل على نسخة تطوير محمّلة: `db.article_views.explain('executionStats').aggregate([{$count:'n'}])` والتقط `totalDocsExamined` و `executionTimeMillis`. كرّر للاثنتي عشرة مجموعة. ثم قِس الأثر النهائي: TTFB لصفحة `/about` (تذييل فقط، بلا محتوى ثقيل) عند MISS مقابل HIT.",
+    "expected": "مجموع زمن الاثني عشر عدّاً ≤ 500ms عند 500000 صفّ في `article_views` و 500000 في `page_views`. أي عدّ منفرد يتجاوز 200ms أو يفحص أكثر من 100000 مستند = فشل ويجب استبداله بعدّاد مُجمَّع مُحدَّث عند الكتابة.",
+    "severityIfFailed": "critical",
+    "evidence": "ناتج `explain('executionStats')` الخام لكل من المجموعات الاثنتي عشرة يظهر `totalDocsExamined` و `executionTimeMillis` و `stage` (COLLSCAN مقابل COUNT_SCAN).",
+    "targets": [
+      "modonty/app/layout/helpers/get-footer-stats.ts",
+      "modonty/app/layout/components/FooterStats.tsx",
+      "modonty/app/layout/components/Footer.tsx"
+    ],
+    "source": "MongoDB docs — Aggregation $count performance; Prisma docs — count() on MongoDB"
+  },
+  {
+    "id": "P-10",
+    "phase": "data",
+    "title": "فهرس مركّب ناقص على `article_views` — يُفحص عند كل مشاهدة",
+    "why": "`modonty/app/(site)/articles/[slug]/api/view/route.ts:85-89` يعمل `db.articleView.findFirst({ where: { sessionId }, orderBy: { createdAt: 'desc' } })`. سكيما `shared/prisma/schema/schema.prisma:1945` تعلن `@@index([sessionId])` فقط — بلا `createdAt`. مونجو تجلب كل مشاهدات الجلسة ثم تفرزها في الذاكرة. كوكي الجلسة عمره سنة (`SESSION_MAX_AGE = 60*60*24*365`)، فقارئ نشط يجمع آلاف الصفوف تحت `sessionId` واحد. المقارنة القاطعة: `PageView` في السطر 2004 يحمل `@@index([sessionId, createdAt])` — فالمسار الأثقل هو الوحيد بلا الفهرس.",
+    "how": "`db.article_views.explain('executionStats').find({sessionId:'<جلسة حقيقية ذات صفوف كثيرة>'}).sort({createdAt:-1}).limit(1)` — اقرأ `winningPlan.stage` و `totalDocsExamined` و `hasSortStage`.",
+    "expected": "`totalDocsExamined` ≤ 1 و `executionTimeMillis` ≤ 5 و `hasSortStage` = false. أي مرحلة SORT في الذاكرة = فشل. الإصلاح: `@@index([sessionId, createdAt])` على `ArticleView`.",
+    "severityIfFailed": "critical",
+    "evidence": "ناتج explain الخام كاملاً مع `executionStats.totalDocsExamined` و `executionStats.executionStages.stage`.",
+    "targets": [
+      "modonty/app/(site)/articles/[slug]/api/view/route.ts",
+      "shared/prisma/schema/schema.prisma"
+    ],
+    "source": "MongoDB docs — Use Indexes to Sort Query Results (ESR rule)"
+  },
+  {
+    "id": "P-11",
+    "phase": "data",
+    "title": "نفس الفهرس الناقص على `client_views`",
+    "why": "`modonty/app/(partner)/clients/[slug]/api/view/route.ts:58` يعمل `db.clientView.findFirst({ where: userId ? { userId } : { sessionId }, orderBy: { createdAt: 'desc' } })`. السكيما (السطور 1979-1981) تعلن `@@index([clientId, createdAt])` و `@@index([userId])` و `@@index([sessionId])` — لا شيء منها يخدم فرز `createdAt` تحت `userId` أو `sessionId`.",
+    "how": "`db.client_views.explain('executionStats').find({sessionId:'<جلسة>'}).sort({createdAt:-1}).limit(1)` و نفسها بـ`{userId:...}`.",
+    "expected": "`totalDocsExamined` ≤ 1 لكلا الشكلين و `executionTimeMillis` ≤ 5. الإصلاح: `@@index([sessionId, createdAt])` و `@@index([userId, createdAt])`.",
+    "severityIfFailed": "major",
+    "evidence": "ناتجا explain (بـ sessionId وبـ userId) مع totalDocsExamined و stage.",
+    "targets": [
+      "modonty/app/(partner)/clients/[slug]/api/view/route.ts",
+      "shared/prisma/schema/schema.prisma"
+    ],
+    "source": "MongoDB docs — Use Indexes to Sort Query Results"
+  },
+  {
+    "id": "P-12",
+    "phase": "data",
+    "title": "فرز الأرشيف بالأكثر قراءة/تفاعلاً بلا فهرس",
+    "why": "`modonty/app/(site)/articles/data/get-articles-archive.ts:93-97` (`orderFor`) يفرز بـ`[{viewsCount:'desc'},...]` أو `[{likesCount:'desc'},{commentsCount:'desc'},...]` مع فلتر `status: PUBLISHED`. سكيما `Article` (السطور 1393-1402) لا تحمل أي فهرس على `viewsCount` أو `likesCount` أو `commentsCount`. مونجو ستفرز في الذاكرة — وهي تُسقط الاستعلام بخطأ `Sort exceeded memory limit of 33554432 bytes` بمجرّد تجاوز 32MB من المستندات المفروزة. هذا ليس بطئاً، هذا انهيار للصفحة.",
+    "how": "`db.articles.explain('executionStats').find({status:'PUBLISHED'}).sort({viewsCount:-1}).limit(300)` تحت بيانات كبيرة، وراقب `hasSortStage` و رمز الخطأ 96 (OperationFailed).",
+    "expected": "`hasSortStage` = false و `totalDocsExamined` ≤ 300 و صفر أخطاء 96. الإصلاح: `@@index([status, viewsCount])` و `@@index([status, likesCount, commentsCount])`.",
+    "severityIfFailed": "critical",
+    "evidence": "ناتج explain الخام + رد HTTP الفعلي من `/articles?sort=mostRead` و `/articles?sort=mostEngaged` على بيانات ضخمة.",
+    "targets": [
+      "modonty/app/(site)/articles/data/get-articles-archive.ts",
+      "shared/prisma/schema/schema.prisma"
+    ],
+    "source": "MongoDB docs — Sort and Index Use / \"Sort Exceeded Memory Limit\""
+  },
+  {
+    "id": "P-13",
+    "phase": "data",
+    "title": "الرائجة: نطاق زمني على `createdAt` بلا فهرس، وبلا ترتيب أصلاً",
+    "why": "`modonty/app/(site)/trending/helpers/get-trending-articles.ts:20-32` يعمل `findMany({ where: { status: PUBLISHED, createdAt: { gte: timeRange } }, take: 100 })` — بلا `orderBy`. سكيما `Article` تحمل `@@index([status, datePublished])` لكن لا شيء على `[status, createdAt]`. النتيجة مشكلتان: (١) نطاق `createdAt` بلا فهرس = مسح، (٢) `take: 100` بلا ترتيب يأخذ مئة مستند اعتباطية ثم يحسب نقاط الرواج عليها في الذاكرة — فـ«الرائج» ليس رائجاً. وهو `cache()` من React فقط (لا `\"use cache\"`) فيضرب القاعدة في كل طلب.",
+    "how": "`db.articles.explain('executionStats').find({status:'PUBLISHED', createdAt:{$gte: ISODate('...')}}).limit(100)`. وقِس زمن `/trending?period=30` بـ`curl -w '%{time_starttransfer}'` عشر مرات متتالية (لا تخزين ⇒ كل مرة تضرب القاعدة).",
+    "expected": "`totalDocsExamined` ≤ 500 و TTFB p95 لـ`/trending` ≤ 400ms. الإصلاح: `@@index([status, createdAt])` + `orderBy` صريح + `\"use cache\"` مع `cacheTag(\"articles\")`.",
+    "severityIfFailed": "major",
+    "evidence": "ناتج explain + عشرة أسطر من `curl -w '%{time_starttransfer}\\n'` تُظهر عدم وجود تحسّن بين الطلب الأول والعاشر.",
+    "targets": [
+      "modonty/app/(site)/trending/helpers/get-trending-articles.ts",
+      "shared/prisma/schema/schema.prisma"
+    ],
+    "source": "MongoDB docs — ESR (Equality, Sort, Range) index rule; Next.js docs — use cache"
+  },
+  {
+    "id": "P-14",
+    "phase": "data",
+    "title": "ترقيم عميق بـ`skip` على تغذية المقالات",
+    "why": "`modonty/lib/queries/article-feed-shapes.ts:171-179` يعمل `skip: (page-1)*limit, take: limit`. مونجو تمشي على كل المستندات المتخطّاة فعلياً؛ عند `page=5000, limit=20` = 100000 مستند تُقرأ لترجع 20. المسار العام `app/(site)/(homepage)/api/articles/route.ts` يتحقّق فقط أن `page` عدد صحيح موجب — بلا حدّ أعلى، فأي زاحف أو مهاجم يطلب `?page=999999`.",
+    "how": "k6 مع `page` متزايد: `for p in 1 100 1000 5000 20000; do curl -w \"$p %{time_total}\\n\" -o /dev/null -s 'https://www.modonty.com/api/articles?page='$p; done`. وقارن مع `explain` لـ`skip` مقابل مؤشّر cursor.",
+    "expected": "الزمن عند `page=5000` ≤ 2× الزمن عند `page=1` (نمو ثابت لا خطّي)، و `page` فوق `totalPages` يردّ 400 خلال ≤ 50ms بدل تنفيذ الاستعلام.",
+    "severityIfFailed": "critical",
+    "evidence": "جدول من خمسة أسطر (page, time_total) + `explain` يظهر `totalDocsExamined` عند page=5000.",
+    "targets": [
+      "modonty/lib/queries/article-feed-shapes.ts",
+      "modonty/app/(site)/(homepage)/api/articles/route.ts"
+    ],
+    "source": "MongoDB docs — Pagination: avoid skip for large offsets; Prisma docs — Cursor-based pagination"
+  },
+  {
+    "id": "P-15",
+    "phase": "data",
+    "title": "`count({where})` يرافق كل صفحة تغذية",
+    "why": "`modonty/lib/queries/article-feed-shapes.ts:170-180` يعمل `Promise.all([findMany, db.article.count({ where })])`. العدّ يمرّ على كل الصفوف المطابقة — لا على صفحة واحدة. وحين يكون `where` فيه بحث نصّي (`contains`) يصبح العدّ مسحاً كاملاً مع regex على كل مستند.",
+    "how": "`db.articles.explain('executionStats').aggregate([{$match:{status:'PUBLISHED'}},{$count:'n'}])` والتقط `totalDocsExamined`. ثم كرّرها مع شرط `title: {$regex:'x', $options:'i'}` مضافاً.",
+    "expected": "العدّ بلا بحث ≤ 100ms. العدّ مع `contains` ≤ 300ms أو يُستبدَل بـ`hasMore` من `take: limit + 1` بلا عدّ إطلاقاً.",
+    "severityIfFailed": "major",
+    "evidence": "ناتجا explain (بدون بحث ومع بحث) يظهران `totalDocsExamined` و `executionTimeMillis`.",
+    "targets": ["modonty/lib/queries/article-feed-shapes.ts"],
+    "source": "MongoDB docs — countDocuments performance; Prisma docs — count"
+  },
+  {
+    "id": "P-16",
+    "phase": "data",
+    "title": "البحث يمرّ regex على متن كل مقال",
+    "why": "`modonty/lib/queries/article-feed-shapes.ts:157-166` يبني `OR: [{title:{contains}}, {excerpt:{contains}}, {content:{contains, mode:'insensitive'}}]`. Prisma تترجم `contains` على مونجو إلى `$regex` غير مثبّت البداية — لا يمكن لأي فهرس عادي أن يخدمه، ويُقرأ حقل `content` (متن HTML كامل) لكل مستند. تستدعيه `app/(site)/search/page.tsx:98` مباشرةً من searchParams الزائر. هذا أخطر مسار قراءة تحت الحمل: مسح كامل + regex + عدّ كامل، ثلاثتها في طلب واحد يتحكّم الزائر بمدخله.",
+    "how": "`db.articles.explain('executionStats').find({$or:[{title:{$regex:'سيو',$options:'i'}},{content:{$regex:'سيو',$options:'i'}}]})`. ثم اختبار حمل: 50 مستخدماً متزامناً يطلبون `/search?q=<كلمة عشوائية>` لمدة دقيقتين.",
+    "expected": "زمن الاستعلام المنفرد ≤ 500ms، و p95 لـ`/search` تحت 50 متزامناً ≤ 1500ms بنسبة أخطاء 0%. الإصلاح المرجعي: فهرس نصّي `$text` على `title`+`excerpt` وإسقاط `content` من البحث.",
+    "severityIfFailed": "critical",
+    "evidence": "ناتج explain يظهر COLLSCAN و `totalDocsExamined` = عدد كل المقالات، + تقرير k6 كامل (p50/p95/p99, http_req_failed).",
+    "targets": [
+      "modonty/lib/queries/article-feed-shapes.ts",
+      "modonty/app/(site)/search/page.tsx"
+    ],
+    "source": "MongoDB docs — $regex performance & Text Indexes; Prisma docs — full-text search"
+  },
+  {
+    "id": "P-17",
+    "phase": "data",
+    "title": "أعداد الفلاتر تسحب كل المقالات المنشورة",
+    "why": "`modonty/app/(site)/articles/data/get-articles-filters.ts:49-60` يعمل `db.article.findMany` بلا `take` مع `select` يشمل `client.industry` — أي انضمام لكل صف — ثم يعدّ في الذاكرة بحلقة JS. التعليق نفسه يقول «One read of 117 rows» وهذا صحيح اليوم فقط. عند 100 ألف مقال: 100 ألف صف + 100 ألف بحث عن عميل، ثم حلقة JS عليها كلّها، داخل دالة واحدة.",
+    "how": "قِس زمن `getArticlesFilters` عند MISS: امسح الكاش بـ`POST /api/revalidate/tag {tag:'articles'}` ثم اطلب `/articles` وقِس TTFB. كرّرها على أحجام بيانات 1k/10k/100k.",
+    "expected": "TTFB عند MISS ≤ 1500ms عند 100000 مقال. لو تجاوز، تُستبدَل الحلقة بـ`groupBy` على القاعدة أو بعدّادات مُجمَّعة.",
+    "severityIfFailed": "major",
+    "evidence": "زمن TTFB لكل حجم بيانات + `explain` للاستعلام يظهر `nReturned` الفعلي + قياس الذاكرة من سجل الدالة.",
+    "targets": ["modonty/app/(site)/articles/data/get-articles-filters.ts"],
+    "source": "Prisma docs — groupBy & aggregate; MongoDB docs — $group over $match"
+  },
+  {
+    "id": "P-18",
+    "phase": "data",
+    "title": "`include` أعمى على استعلام المقال الأثقل",
+    "why": "`modonty/app/(site)/articles/[slug]/data/get-article-content-by-slug.ts:18-90` يستخدم `include` لا `select` على المستوى الأعلى. النتيجة: كل أعمدة `Article` تُقرأ ويُخزَّن كلها في إدخال الكاش — بما فيها `content` و `articleBodyText` و `jsonLdStructuredData` و `nextjsMetadata` و `jsonLdValidationReport` و `semanticKeywords`. الصفحة تستعمل بعضها فقط، لكن الكل يُنقل ويُسلسَل ويُخزَّن. هذا يضخّم حجم كل إدخال في Data Cache ويطيل زمن السحب من الكاش نفسه.",
+    "how": "قِس حجم الحمولة: أضف قياساً مؤقتاً `console.error(JSON.stringify(article).length)` بعد الاستدعاء، واقرأ الرقم من سجل الدالة لعشرة مقالات مختلفة الطول.",
+    "expected": "حجم الكائن المُخزَّن لكل مقال ≤ 200KB. أي مقال يتجاوز 500KB يعني أن الحقول الثقيلة تُنقل بلا داعٍ ويجب استبدال `include` بـ`select` صريح.",
+    "severityIfFailed": "major",
+    "evidence": "عشرة أسطر من سجل الدالة تحمل حجم البايتات لكل مقال + قائمة الحقول المقروءة فعلاً في `page.tsx` مقابل المُعادة.",
+    "targets": [
+      "modonty/app/(site)/articles/[slug]/data/get-article-content-by-slug.ts"
+    ],
+    "source": "Prisma docs — Select fields (\"select only what you need\"); CLAUDE.md trpc_prisma_zod rule"
+  },
+  {
+    "id": "P-19",
+    "phase": "data",
+    "title": "الوسيط يبني مجموعة كل الـslugs في ذاكرة كل نسخة",
+    "why": "`modonty/lib/archive-cache.ts` يحمّل `db.article.findMany({ where: { status:'PUBLISHED' }, select:{slug:true} })` كاملاً في `Set` داخل ذاكرة الدالة، وكذلك للفئات والوسوم والمجالات والكتّاب والعملاء والتحويلات — كل 5 دقائق (`CACHE_TTL_MS`). `proxy.ts` يستدعيه على كل طلب لـ`/articles/:slug` وستّة مسارات أخرى. تحت حمل عالٍ، Vercel تُشغّل عشرات النسخ؛ كل نسخة باردة تنفّذ مسحاً كاملاً للمجموعة. عند 100 ألف مقال: عشرات النسخ × مسح كامل كل 5 دقائق = عاصفة استعلامات مستمرة، والطلب الأول بعد انتهاء المهلة يُحجب حتى يكتمل المسح.",
+    "how": "من MongoDB Atlas Profiler، فلتر على `article_views`/`articles` مع `command.filter.status = 'PUBLISHED'` و `projection: {slug:1}`، وعُدّ التنفيذات في ساعة تحت حمل حقيقي. وازِها مع عدد النسخ من Vercel.",
+    "expected": "≤ 12 تنفيذ في الساعة لكل نسخة (واحد كل 5 دقائق)، وزمن التنفيذ ≤ 300ms عند 100000 مقال. لو تجاوز، يُستبدل التحقّق بـ`findUnique({where:{slug}})` واحد (مفهرس) بدل تحميل كل الـslugs.",
+    "severityIfFailed": "critical",
+    "evidence": "لقطة من Atlas Profiler/Query Profiler تُظهر عدد التنفيذات وزمن كل واحد، مع طابع زمني ورقم النسخة.",
+    "targets": ["modonty/lib/archive-cache.ts", "modonty/proxy.ts"],
+    "source": "MongoDB Atlas docs — Query Profiler; Next.js docs — Proxy (middleware) execution model"
+  },
+  {
+    "id": "P-20",
+    "phase": "data",
+    "title": "ثلاث كتابات + زيادة عدّاد على مستند واحد في كل مشاهدة",
+    "why": "`modonty/app/(site)/articles/[slug]/api/view/route.ts:92-108` يعمل `Promise.all` بثلاث كتابات: `articleView.create` و `analytics.create` و `article.update({ viewsCount: { increment: 1 } })`. الأخيرة تكتب على مستند المقال نفسه. مقال رائج يستقبل آلاف المشاهدات في الدقيقة → آلاف التعديلات على نفس المستند → تنازع على قفل المستند في مونجو وتأخّر متتالٍ. وقبلها هناك قراءتان (`article.findFirst` و `articleView.findFirst`)، فالمجموع خمس عمليات قاعدة لكل مشاهدة.",
+    "how": "اختبار حمل مركّز: 200 مستخدماً متزامناً يرسلون `POST /articles/<نفس المقال>/api/view` لمدة 5 دقائق. راقب في Atlas: `WiredTiger concurrentTransactions available`, `opcounters.update`, و p95 لزمن الكتابة.",
+    "expected": "p95 لزمن الاستجابة ≤ 500ms، نسبة أخطاء ≤ 0.5%، وصفر `WriteConflict` في سجل مونجو. لو فشل، تُجمَّع الزيادات (batch) أو تُحسَب من `article_views` عند القراءة.",
+    "severityIfFailed": "major",
+    "evidence": "تقرير k6 (p50/p95/p99, http_req_failed) + عدّاد `WriteConflict` ورسم `Opcounters` من Atlas Metrics على نفس النافذة الزمنية.",
+    "targets": ["modonty/app/(site)/articles/[slug]/api/view/route.ts"],
+    "source": "MongoDB docs — Write conflicts & document-level concurrency"
+  },
+  {
+    "id": "P-21",
+    "phase": "data",
+    "title": "قائمة الشركاء تسحب كل تقييمات كل شريك",
+    "why": "`modonty/lib/queries/get-clients-list.ts:97` يختار `reviews: { where: { status: APPROVED }, select: { rating: true } }` بلا `take` لكل عميل، ثم يحسب المتوسّط في JS. التعليق يقول «شريك نشط عنده عشرات التقييمات لا آلاف» — وهذا افتراض لا قيد. `take: 500` على العملاء موجود، لكن لا سقف على التقييمات المتداخلة، فـ500 شريك × 5000 تقييم = 2.5 مليون صفّ في استعلام واحد.",
+    "how": "`explain` للاستعلام المتداخل بعد زرع 5000 تقييم لشريك واحد، وقِس زمن `/clients` عند MISS وحجم الحمولة المُعادة من مونجو (`nReturned`).",
+    "expected": "مجموع الصفوف المسحوبة ≤ 25000 وزمن `getClientsList` عند MISS ≤ 800ms. الإصلاح: تخزين `ratingAverage`/`ratingCount` مُجمَّعَين على `Client`.",
+    "severityIfFailed": "major",
+    "evidence": "`explain` بـ`nReturned` للاستعلام + زمن TTFB لـ`/clients` بعد `revalidateTag('clients')`.",
+    "targets": ["modonty/lib/queries/get-clients-list.ts"],
+    "source": "Prisma docs — Nested reads & take; MongoDB docs — $lookup result size limits"
+  },
+  {
+    "id": "P-22",
+    "phase": "data",
+    "title": "قراءة تضمينات مودو بلا سقف في كل سؤال",
+    "why": "`modonty/app/(site)/modo-chat/data/get-embedded-chunks.ts:46-51` يعمل `db.articleChunk.findMany({ where: { articleId: { in: ids }, OR: [...] }, select: { embedding: true, text: true } })` بلا `take`. `MAX_SCOPE_ARTICLES = 30` في `api/chat/route.ts:43`، وكل مقال يُقسَّم إلى عدّة مقاطع، وكل تضمين مصفوفة أرقام عائمة. النتيجة: ميغابايتات تُنقل من مونجو ثم يُحسب التشابه في JS داخل الدالة — في كل سؤال، لكل زائر.",
+    "how": "أضف قياساً مؤقتاً لعدد المقاطع وحجم JSON بعد الاستدعاء، واقرأه من سجل الدالة لعشرة أسئلة مختلفة النطاق. وقِس زمن الجزء غير المتعلّق بالنموذج (قبل أول توكن).",
+    "expected": "عدد المقاطع المقروءة ≤ 400 وحجم الحمولة ≤ 5MB وزمن الاسترجاع (قبل استدعاء النموذج) ≤ 600ms.",
+    "severityIfFailed": "major",
+    "evidence": "عشرة أسطر سجل تحمل (عدد المقاطع، حجم البايتات، زمن الاسترجاع بالمللي ثانية).",
+    "targets": [
+      "modonty/app/(site)/modo-chat/data/get-embedded-chunks.ts",
+      "modonty/app/(site)/modo-chat/api/chat/route.ts"
+    ],
+    "source": "MongoDB docs — Atlas Vector Search (server-side kNN vs client-side scoring)"
+  },
+  {
+    "id": "P-23",
+    "phase": "data",
+    "title": "حجم مجمّع اتصالات Prisma تحت التزامن",
+    "why": "`modonty/lib/db.ts` ينشئ `new PrismaClient({ log: ['error'] })` بلا أي ضبط لـ`connection_limit` ولا `pool_timeout`، ولا يُثبَّت في `globalThis` على الإنتاج (السطر يُنفَّذ فقط حين `NODE_ENV !== 'production'`). كل نسخة دالة Vercel تفتح مجمّعها الخاص؛ مع عشرات النسخ المتزامنة، مجموع الاتصالات يمكن أن يتجاوز حدّ MongoDB Atlas للطبقة الحالية ⇒ أخطاء `Server selection timeout` تظهر كـ500 على صفحات حيّة.",
+    "how": "اختبار حمل تصاعدي (ramp) على `/articles/[slug]` من 50 إلى 500 مستخدم متزامن على 10 دقائق. راقب في Atlas Metrics: `Connections` (current/available) و `Query Targeting`. وراقب في Vercel عدد النسخ المتزامنة.",
+    "expected": "ذروة الاتصالات ≤ 80% من حدّ العنقود، صفر أخطاء `P2024`/`Server selection timeout`، ونسبة أخطاء HTTP ≤ 0.1% عند 500 متزامن.",
+    "severityIfFailed": "critical",
+    "evidence": "رسم `Connections` من Atlas على نافذة الاختبار + عدّ أخطاء Prisma من سجلات Vercel + تقرير k6.",
+    "targets": ["modonty/lib/db.ts"],
+    "source": "Prisma docs — Connection pool & serverless; MongoDB Atlas docs — Connection limits per tier"
+  },
+  {
+    "id": "P-24",
+    "phase": "data",
+    "title": "`/api/track/pageview` — قراءة + كتابة بلا حدّ معدّل",
+    "why": "`modonty/app/api/track/pageview/route.ts` يُستدعى من `PageViewTracker` في `app/layout.tsx:74` أي على كل صفحة. لكل استدعاء: `auth()` (قراءة جلسة) + `pageView.findFirst({where:{sessionId},orderBy:{createdAt:'desc'}})` + `pageView.create`. لا يوجد حدّ معدّل على المسار (فحص المستودع: `rateLimit` موجود فقط تحت `modo-chat/data/`). أي سكربت بسيط يستطيع تضخيم `page_views` بلا سقف — وهي إحدى المجموعات التي يعدّها التذييل في P-09.",
+    "how": "أرسل 5000 طلب POST من عنوان واحد خلال دقيقة بـ`k6` واحسب كم صفّاً أُنشئ. ثم قِس زمن `getFooterStats` بعدها.",
+    "expected": "يُرفض ما فوق 60 طلباً في الدقيقة لكل جلسة/عنوان برمز 429، وعدد الصفوف المُنشأة ≤ 60. حالياً المتوقّع الفشل — أي أن يُنشأ ما يقارب 5000 صف.",
+    "severityIfFailed": "major",
+    "evidence": "عدد الصفوف قبل/بعد من `db.page_views.countDocuments({sessionId:'<جلسة الاختبار>'})` + توزيع رموز HTTP من k6.",
+    "targets": ["modonty/app/api/track/pageview/route.ts", "modonty/app/layout.tsx"],
+    "source": "Next.js docs — Route Handlers security; OWASP — API4:2023 Unrestricted Resource Consumption"
+  },
+  {
+    "id": "P-25",
+    "phase": "cache",
+    "title": "وسم `articles` يجرف عشرين دالة مخزَّنة دفعةً واحدة",
+    "why": "`cacheTag(\"articles\")` مُعلَن في 14 موضعاً على الأقل: `get-article-content-by-slug.ts:16`, `get-article-slugs-for-static-params.ts:9`, `get-related-articles-by-author.ts:9`, `get-related-articles-by-client.ts:9`, `get-articles-archive.ts:110`, `get-articles-filters.ts:46`, `get-tag-name.ts:15`, `home-feed-shapes.ts:62`, `get-core-publisher-articles.ts:11`, `article-feed-shapes.ts:113`, `get-industry-feed.ts:64`, `get-modonty-articles.ts:63`, `get-modonty-gallery.ts:26`, `client-page-data.ts:16`, و`CachedHomePage.tsx:41`. نشر مقال واحد من الأدمن يستدعي `revalidateTag('articles')` عبر `app/api/revalidate/tag/route.ts:34` بـ`\"max\"` — فتسقط كل هذه الإدخالات معاً. تحت حمل، الطلبات التالية مباشرةً تعيد حساب كل استعلام ثقيل في نفس اللحظة: عاصفة إبطال.",
+    "how": "على بيئة تحمل حركة اصطناعية ثابتة (200 مستخدم متزامن على الرئيسية + الأرشيف + مقال)، أطلق `POST /api/revalidate/tag {\"tag\":\"articles\"}` وراقب: قفزة p95، قفزة عدد استعلامات مونجو في الدقيقة، وزمن العودة إلى الخط القاعدي.",
+    "expected": "قفزة p95 ≤ 3× الخط القاعدي، والعودة إلى ±20% من الخط القاعدي خلال ≤ 60 ثانية، وصفر أخطاء 5xx خلال النافذة.",
+    "severityIfFailed": "critical",
+    "evidence": "رسم p95 مع طابع زمني قبل/أثناء/بعد الإبطال، ورسم `Opcounters` من Atlas على نفس النافذة، وعدّ 5xx من سجلات Vercel.",
+    "targets": [
+      "modonty/app/api/revalidate/tag/route.ts",
+      "modonty/app/(site)/articles/[slug]/data/get-article-content-by-slug.ts",
+      "modonty/lib/queries/article-feed-shapes.ts"
+    ],
+    "source": "Next.js docs — revalidateTag & cache tag granularity"
+  },
+  {
+    "id": "P-26",
+    "phase": "cache",
+    "title": "مفتاح الكاش يحمل نصّ البحث الحرّ — انفجار إدخالات",
+    "why": "`getArticlesCached` في `modonty/lib/queries/article-feed-shapes.ts:105` هو `\"use cache\"` ويستقبل كائن `filters` كاملاً، وفيه `search` و `page` و `category` و `client` و `sortBy`. مفتاح الكاش يُشتقّ من الوسائط، فكل عبارة بحث مختلفة = إدخال جديد دائم في Data Cache — بلا سقف على عدد الإدخالات. `app/(site)/search/page.tsx:98` يمرّر `q` الزائر مباشرةً. تلاحظ أن `getClientsList` في `lib/queries/get-clients-list.ts:52-54` تجنّبت هذا عمداً («keying the cache by a free-text query would create one entry per keystroke») — والقاعدة نفسها لم تُطبَّق هنا.",
+    "how": "أرسل 2000 عبارة بحث فريدة إلى `/search?q=...` ثم اقرأ حجم Data Cache من لوحة Vercel (Usage ← Edge/Function cache) وعُدّ الإدخالات الجديدة.",
+    "expected": "عدد إدخالات الكاش الناتجة ≤ 50 (أي أن البحث لا يُخزَّن بمفتاح النصّ الحرّ إطلاقاً). 2000 إدخالاً = فشل.",
+    "severityIfFailed": "major",
+    "evidence": "قراءة حجم/عدد إدخالات الكاش قبل وبعد الدفعة من لوحة Vercel، مع الطابع الزمني.",
+    "targets": [
+      "modonty/lib/queries/article-feed-shapes.ts",
+      "modonty/app/(site)/search/page.tsx",
+      "modonty/lib/queries/get-clients-list.ts"
+    ],
+    "source": "Next.js docs — use cache: \"arguments become part of the cache key\""
+  },
+  {
+    "id": "P-27",
+    "phase": "cache",
+    "title": "كل إعجاب وتعليق يُبطل مسار المقال كاملاً",
+    "why": "ستّة أفعال خادم تستدعي `revalidatePath('/articles/${articleSlug}')`: `like-article.ts:64`, `dislike-article.ts:64`, `favorite-article.ts:54`, `like-comment.ts:60`, `submit-comment.ts:67`, `submit-reply.ts:78` — كلّها تحت `modonty/app/(site)/articles/[slug]/actions/`. مقال رائج يتلقّى مئات التفاعلات في الدقيقة، وكل واحد يُسقط الكاش الكامل للمسار فيُعاد رسم الصفحة (بما فيها JSON-LD والمقالات المرتبطة). لكن الأعداد الحيّة تُقرأ أصلاً خارج الكاش في `get-article-by-slug-minimal.ts:5-18` — أي أن الإبطال لا يشتري شيئاً ويكلّف كل شيء.",
+    "how": "قِس معدّل إعادة الرسم: أرسل 100 إعجاب على مقال واحد خلال دقيقة، وراقب في Vercel عدد استدعاءات `/articles/[slug]` (ISR regenerations) و GB-hours على نفس النافذة.",
+    "expected": "عدد إعادات الرسم الناتجة عن 100 تفاعل ≤ 2. لو ساوى 100 = فشل، ويُحذف `revalidatePath` من هذه الأفعال الستّة.",
+    "severityIfFailed": "critical",
+    "evidence": "عدّاد Invocations لمسار `/articles/[slug]` قبل/بعد الدفعة من Vercel Observability، مع رأس `x-nextjs-cache` للطلبات التالية.",
+    "targets": [
+      "modonty/app/(site)/articles/[slug]/actions/like-article.ts",
+      "modonty/app/(site)/articles/[slug]/actions/submit-comment.ts",
+      "modonty/app/(site)/articles/[slug]/data/get-article-by-slug-minimal.ts"
+    ],
+    "source": "Next.js docs — revalidatePath cost & granularity"
+  },
+  {
+    "id": "P-28",
+    "phase": "cache",
+    "title": "استعلام واحد يخدم `generateMetadata` والصفحة معاً",
+    "why": "`app/(site)/articles/[slug]/page.tsx:121` يستدعي `getArticleContentBySlug(slug)` داخل `generateMetadata`، و`page.tsx:250` يستدعي `getArticleBySlugMinimal(slug)` الذي يستدعي نفس الدالة (`get-article-by-slug-minimal.ts:42`). الدالة `\"use cache\"` وليست `cache()` من React — فإزالة التكرار تعتمد على طبقة الكاش لا على تجميع الطلب. لو أخطأ المفتاح (مثلاً slug مُرمَّز مقابل غير مُرمَّز) يُنفَّذ الاستعلام الأثقل في الصفحة مرّتين.",
+    "how": "فعّل Query Profiler على Atlas، اطلب مقالاً واحداً غير مخزَّن، وعُدّ كم مرّة ظهر `articles.findFirst` بنفس الـslug في نفس الطلب.",
+    "expected": "تنفيذ واحد بالضبط (1) لـ`articles.findFirst` بنفس الـslug لكل طلب صفحة بارد.",
+    "severityIfFailed": "major",
+    "evidence": "سطور Atlas Profiler الخام مع الطابع الزمني والـfilter، تُظهر عدّاً = 1.",
+    "targets": [
+      "modonty/app/(site)/articles/[slug]/page.tsx",
+      "modonty/app/(site)/articles/[slug]/data/get-article-by-slug-minimal.ts",
+      "modonty/app/(site)/articles/[slug]/data/get-article-content-by-slug.ts"
+    ],
+    "source": "Next.js docs — Request memoization vs use cache; React docs — cache()"
+  },
+  {
+    "id": "P-29",
+    "phase": "cache",
+    "title": "الرئيسية بعمر `minutes` تعيد ستّة استعلامات كل نافذة",
+    "why": "`modonty/app/(site)/(homepage)/components/page-layout/CachedHomePage.tsx:40` يعلن `cacheLife(\"minutes\")` ثم يُطلق `Promise.all` بستّة استعلامات: `getListingPageSeo`, `getFeedChunk`, `getCorePublisherArticles`, `getBrandMedia`, `getIndustriesWithCounts`, `getReelsFeedPage`. أي أن أثقل صفحة في الموقع تُعاد كلّياً كل بضع دقائق حتى لو لم يتغيّر شيء — وهي تحمل أيضاً وسم `articles` فتسقط مع كل نشر (P-25).",
+    "how": "اطلب `/` كل 30 ثانية لمدة 30 دقيقة وسجّل رأس `x-nextjs-cache` و`time_starttransfer` لكل طلب. عُدّ عدد MISS.",
+    "expected": "عدد MISS خلال 30 دقيقة ≤ 6 (أي إعادة حساب كل ≈5 دقائق)، و TTFB عند MISS ≤ 900ms، وعند HIT ≤ 120ms.",
+    "severityIfFailed": "major",
+    "evidence": "60 سطراً (طابع زمني، `x-nextjs-cache`، `time_starttransfer`) من حلقة curl.",
+    "targets": [
+      "modonty/app/(site)/(homepage)/components/page-layout/CachedHomePage.tsx"
+    ],
+    "source": "Next.js docs — cacheLife profiles (stale/revalidate/expire)"
+  },
+  {
+    "id": "P-30",
+    "phase": "cache",
+    "title": "الرائجة وصفحة الكاتب بلا `\"use cache\"` إطلاقاً",
+    "why": "`app/(site)/trending/helpers/get-trending-articles.ts:15` يستخدم `cache()` من React فقط — إزالة تكرار داخل الطلب الواحد، لا تخزين عبر الطلبات. و`app/(site)/authors/[slug]/page.tsx:42` يعرّف `getAuthorBySlug` بلا `\"use cache\"` ولا `cacheTag`. المسارات التي تحمل التخزين (`categories/[slug]:31`, `tags/[slug]:31`) تُظهر النمط المتوقّع، فالاستثناءان مقصودان أم سهو؟ تحت حمل يعني هذا ضربة قاعدة لكل طلب على هذين المسارين.",
+    "how": "اطلب `/trending` و`/authors/<slug>` عشرين مرّة متتالية وقِس `time_starttransfer` ورأس `x-nextjs-cache` لكل مرّة. راقب Atlas Profiler بالتوازي.",
+    "expected": "نسبة إصابة الكاش (HIT) ≥ 90% على 20 طلباً، وعدد استعلامات مونجو الناتجة ≤ 2.",
+    "severityIfFailed": "major",
+    "evidence": "20 سطراً من curl مع رأس الكاش، + عدد سطور Atlas Profiler لنفس النافذة.",
+    "targets": [
+      "modonty/app/(site)/trending/helpers/get-trending-articles.ts",
+      "modonty/app/(site)/authors/[slug]/page.tsx"
+    ],
+    "source": "Next.js docs — use cache directive; React docs — cache() scope is per-request"
+  },
+  {
+    "id": "P-31",
+    "phase": "cache",
+    "title": "الكتابات التي لا تُبطل شيئاً — تحقّق أنها مقصودة",
+    "why": "مسارات الكتابة الساخنة لا تستدعي أي `revalidate*`: `api/track/pageview/route.ts`, `api/track/cta-click/route.ts`, `api/track/web-vitals/route.ts`, `articles/[slug]/api/view/route.ts`, `articles/[slug]/api/share/route.ts`, `clients/[slug]/api/{view,follow,favorite,share}/route.ts`. هذا صحيح للأداء، لكن يعني أن `viewsCount` الذي تزيده `view/route.ts:103` لا يظهر للزائر إلا حين تنتهي مهلة `cacheLife(\"hours\")` على تغذيات المقالات أو حين يُبطل النشر الوسم. لا بدّ من تثبيت هذا كقرار موثّق لا كسهو.",
+    "how": "اطلب مقالاً، سجّل `viewsCount` المعروض، أرسل 10 مشاهدات، ثم أعد الطلب فوراً وبعد ساعة. سجّل الرقم في الحالتين.",
+    "expected": "الفرق المعروض بعد الطلب الفوري = 0 (متوقّع ومقبول)، وبعد ساعة يعكس الزيادة. أقصى تأخّر مقبول 60 دقيقة.",
+    "severityIfFailed": "minor",
+    "evidence": "ثلاث قراءات للرقم المعروض (قبل، فوراً بعد، بعد ساعة) + قيمة `viewsCount` في القاعدة عند كل قراءة.",
+    "targets": [
+      "modonty/app/(site)/articles/[slug]/api/view/route.ts",
+      "modonty/app/api/track/pageview/route.ts"
+    ],
+    "source": "Next.js docs — Data Cache revalidation semantics"
+  },
+  {
+    "id": "P-32",
+    "phase": "cache",
+    "title": "`revalidateTag(tag, \"max\")` — أثره على النسخ الباردة",
+    "why": "`modonty/app/api/revalidate/tag/route.ts:34` يستدعي `revalidateTag(tag, \"max\")` — أقوى درجة إبطال. المسار محمي بسرّ (`REVALIDATE_SECRET`) لكن بلا حدّ معدّل. الأدمن والكونسول يستدعيانه على كل حفظ. لو حفظ محرّر عشرين مقالاً في دقيقة (تشغيل صيانة مثلاً) = عشرون عاصفة إبطال متتالية تحت حمل حيّ.",
+    "how": "أطلق 20 استدعاءً لـ`/api/revalidate/tag {\"tag\":\"articles\"}` خلال دقيقة تحت حمل 200 متزامن، وارصد p95 و 5xx.",
+    "expected": "p95 لا يتجاوز 4× الخط القاعدي في أي لحظة، ونسبة 5xx ≤ 0.5%. ويجب وجود حدّ معدّل ≤ 10 استدعاءات في الدقيقة على المسار.",
+    "severityIfFailed": "major",
+    "evidence": "رسم p95 و 5xx مع الطوابع الزمنية للاستدعاءات العشرين، من Vercel Observability.",
+    "targets": ["modonty/app/api/revalidate/tag/route.ts"],
+    "source": "Next.js docs — revalidateTag; Vercel docs — ISR revalidation limits"
+  },
+  {
+    "id": "P-33",
+    "phase": "cache",
+    "title": "`cacheLife(\"minutes\")` على إحصاءات التذييل = حساب متكرّر للاثني عشر عدّاً",
+    "why": "`modonty/app/layout/helpers/get-footer-stats.ts:9` يعلن `cacheLife(\"minutes\")` على الدالة الموصوفة في P-09. مجتمعَين: 12 مسحاً كاملاً لأكبر المجموعات، كل بضع دقائق، على كل نسخة. هذا يجمع بين أسوأ ما في P-09 وأسوأ ما في P-29.",
+    "how": "راقب في Atlas Profiler عدد تنفيذات `$count` على `article_views`/`page_views`/`analytics` في ساعة واحدة تحت حركة إنتاج طبيعية.",
+    "expected": "≤ 24 تنفيذاً في الساعة لكل مجموعة (واحد كل ≈2.5 دقيقة). فوق 100 = فشل، ويُرفع العمر إلى `hours` أو تُستبدل الأعداد بعدّادات مُجمَّعة.",
+    "severityIfFailed": "major",
+    "evidence": "عدّ سطور Atlas Profiler المطابقة لـ`$count` على كل مجموعة خلال ساعة، مع الطوابع الزمنية.",
+    "targets": ["modonty/app/layout/helpers/get-footer-stats.ts"],
+    "source": "Next.js docs — cacheLife; MongoDB docs — $count cost"
+  },
+  {
+    "id": "P-34",
+    "phase": "waterfall",
+    "title": "ثلاث جولات متتالية إلى القاعدة قبل أول محتوى في المقال",
+    "why": "`app/(site)/articles/[slug]/page.tsx` يرتّبها هكذا: (١) السطر 242 `Promise.all([auth(), getArticleDefaultsFromSettings(), getPlatformSocialLinks(), getPlatformImageLicensing()])`، ثم (٢) السطر 250 `await getArticleBySlugMinimal(slug, userId)` — ينتظر (١) لأنه يحتاج `userId`، وهو داخلياً متتالٍ أيضاً (`get-article-by-slug-minimal.ts:42` ثم `Promise.all` بعده)، ثم (٣) السطر 266 `Promise.all` بخمسة استعلامات تحتاج `articleRaw.id`. المحصّلة أربع جولات ذهاب-إياب متسلسلة قبل أن يُرسم أي شيء.",
+    "how": "أضف `console.time`/`timeEnd` حول كل مرحلة من الأربع واقرأ الأرقام من سجل الدالة على 20 طلباً بارداً. وقارن مع بديل: بدء `getArticleContentBySlug(slug)` بالتوازي مع `auth()` (لا يعتمد على `userId`).",
+    "expected": "مجموع زمن الجولات المتسلسلة ≤ 400ms عند التسخين. لو تجاوز 700ms، تُنقل `getArticleContentBySlug` إلى `Promise.all` الأول وتُوفَّر جولة كاملة.",
+    "severityIfFailed": "major",
+    "evidence": "20 مجموعة من أربعة أسطر `console.timeEnd` مع الأزمنة بالمللي ثانية، ومجموع كل طلب.",
+    "targets": [
+      "modonty/app/(site)/articles/[slug]/page.tsx",
+      "modonty/app/(site)/articles/[slug]/data/get-article-by-slug-minimal.ts"
+    ],
+    "source": "Next.js docs — Data Fetching Patterns: Parallel Data Fetching"
+  },
+  {
+    "id": "P-35",
+    "phase": "waterfall",
+    "title": "صفحة البحث تنتظر المقالات ثم الشركاء بالتتابع",
+    "why": "`modonty/app/(site)/search/page.tsx:95-103`: كتلة `if (scope === 'all' || scope === 'articles') { const result = await getArticles(...) }` ثم كتلة تالية `if (scope === 'all' || scope === 'clients') { clients = await getClientsSearch(...) }`. عند النطاق الافتراضي `all` ينفَّذ الاستعلامان بالتتابع رغم استقلالهما التام — واستعلام المقالات هو الأثقل في المستودع (P-16).",
+    "how": "قِس زمن الاستجابة لـ`/search?q=<كلمة>&type=all` مقابل `?type=articles` و`?type=clients` منفصلين. الفرق بين `all` ومجموع أطولهما يكشف التسلسل.",
+    "expected": "زمن `type=all` ≤ زمن أبطأ الاستعلامين + 100ms. أي زيادة تقارب مجموع الاثنين = فشل.",
+    "severityIfFailed": "major",
+    "evidence": "ثلاثة قياسات `curl -w '%{time_total}'` (all / articles / clients) × 10 تكرارات لكل واحد، مع الوسيط.",
+    "targets": ["modonty/app/(site)/search/page.tsx"],
+    "source": "Next.js docs — Parallel Data Fetching"
+  },
+  {
+    "id": "P-36",
+    "phase": "waterfall",
+    "title": "حدّ Suspense واحد يحجب كل صفحة المقال",
+    "why": "`app/(site)/articles/[slug]/page.tsx:845-851` يلفّ كامل `ArticlePageContent` في `<Suspense fallback={<ArticleLoading/>}>` واحد. أي أن التعليقات و«اقرأ أيضاً» و«من نفس الشريك» (الاستعلامات الخمسة في السطر 266) تحجب رسم العنوان والصورة والمتن — وهي عناصر LCP. مع `cacheComponents: true` كان يمكن لكل قسم أن يتدفّق خلف حدّه.",
+    "how": "التقط تتبّع أداء (Chrome DevTools Performance) على مقال بارد وسجّل الفارق بين First Byte وأول رسم للعنوان. ثم أعد القياس بحدود Suspense منفصلة للتعليقات و«اقرأ أيضاً».",
+    "expected": "الفارق بين TTFB وأول رسم للعنوان ≤ 300ms. أي أن استعلامات الأقسام السفلية لا تضيف أكثر من 300ms إلى بداية المحتوى.",
+    "severityIfFailed": "major",
+    "evidence": "تتبّع Performance يظهر علامات TTFB · FCP · LCP مع الأزمنة، ولقطة من شلال الشبكة لوثيقة HTML (streaming chunks).",
+    "targets": [
+      "modonty/app/(site)/articles/[slug]/page.tsx",
+      "modonty/app/(site)/articles/[slug]/components/comments/ArticleComments.tsx",
+      "modonty/app/(site)/articles/[slug]/components/read-more/ReadMore.tsx"
+    ],
+    "source": "Next.js docs — Streaming with Suspense; web.dev — Optimize LCP"
+  },
+  {
+    "id": "P-37",
+    "phase": "waterfall",
+    "title": "قراءة صور المنصّة الافتراضية داخل مسار الرسم",
+    "why": "`app/(site)/articles/[slug]/page.tsx:280`: `const defaultImages = article.featuredImage ? null : await getPlatformDefaultImages();` — `await` منفرد وسط الرسم. التعليق يقول «المسار الشائع لا يدفع شيئاً»، وهذا صحيح فقط ما دامت نسبة المقالات بلا صورة بارزة صغيرة. لو ارتفعت (استيراد ضخم مثلاً) يصبح هذا جولة إضافية على مقالات كثيرة.",
+    "how": "استعلم عن النسبة: `db.articles.countDocuments({status:'PUBLISHED', featuredImageId:{$exists:false}})` مقسومة على العدد الكلّي. ثم قِس التكلفة الإضافية لطلب مقال بلا صورة مقابل مقال بصورة.",
+    "expected": "نسبة المقالات بلا صورة بارزة ≤ 5%، والتكلفة الإضافية لهذا الـ`await` ≤ 80ms.",
+    "severityIfFailed": "minor",
+    "evidence": "العددان الخامان من مونجو + النسبة، و10 قياسات TTFB لكل حالة.",
+    "targets": ["modonty/app/(site)/articles/[slug]/page.tsx"],
+    "source": "Next.js docs — Data Fetching Patterns; Prisma docs — conditional queries"
+  },
+  {
+    "id": "P-38",
+    "phase": "waterfall",
+    "title": "الوسيط يضيف جولة قاعدة قبل كل صفحة كيان",
+    "why": "`modonty/proxy.ts` (matcher في السطور 34-45) يعترض `/articles/:slug` و`/categories/:slug` و`/tags/:slug` و`/industries/:slug` و`/clients/:slug` و`/authors/:slug` و`/users/:id` و`/page/:pageNumber`. كل طلب يمرّ على `isLiveSlug` ثم `lookupRedirect` من `lib/archive-cache.ts` — وعند انتهاء مهلة الـ5 دقائق يُحجب الطلب حتى يكتمل مسح كامل للمجموعة (P-19). هذا زمن يُضاف قبل أن يبدأ الرسم أصلاً.",
+    "how": "قِس زمن الوسيط مباشرةً من Vercel Observability (مسار Proxy/Middleware، عمود Duration) على 24 ساعة، وافصل p50 عن p99. وقارن الطلب الأول بعد انقضاء نافذة الـ5 دقائق بالطلبات التالية.",
+    "expected": "p50 لزمن الوسيط ≤ 5ms و p99 ≤ 50ms. الطلب الذي يصادف تحديث الكاش ≤ 300ms.",
+    "severityIfFailed": "major",
+    "evidence": "تصدير أزمنة الوسيط (p50/p95/p99/max) من Vercel Observability + عيّنة curl تُظهر الطلب البطيء عند حدود نافذة الـ5 دقائق.",
+    "targets": ["modonty/proxy.ts", "modonty/lib/archive-cache.ts"],
+    "source": "Next.js docs — Proxy (middleware) runs before every matched request"
+  },
+  {
+    "id": "P-39",
+    "phase": "bundle",
+    "title": "مئتا ملف `'use client'` مقابل خمسة عشر `dynamic()`",
+    "why": "قياس المستودع: 200 ملف تحت `modonty/app` و`modonty/components` يحملان `'use client'`، بينما `next/dynamic` مستخدَم في 15 ملفاً فقط. قاعدة المشروع في `CLAUDE.md` تنصّ على أن صفحات الزائر تحمّل كل مكوّنات العميل عبر `dynamic()`. الفجوة تعني أن جزءاً كبيراً من مكوّنات العميل يدخل الحزمة الأولى.",
+    "how": "`ANALYZE=true pnpm --filter @modonty/modonty build` (الحزمة `@next/bundle-analyzer` مثبّتة) أو `pnpm build:analyze` الموجود في `package.json`. صنّف كل مكوّن عميل: هل يحتاج حالة/حدث فعلاً؟ وهل هو فوق الطيّة؟",
+    "expected": "عدد ملفات `'use client'` غير المؤجّلة والداخلة في الحزمة الأولى لأي مسار زائر ≤ 25، ولا مكوّن عميل واحد فوق 20KB (gzip) في الحزمة الأولى.",
+    "severityIfFailed": "major",
+    "evidence": "تقرير `next experimental-analyze` بصيغة HTML/JSON مع أحجام الوحدات، وقائمة الملفات الـ200 من `grep -rl \"'use client'\" app/ components/`.",
+    "targets": ["modonty/app", "modonty/components", "modonty/package.json"],
+    "source": "Next.js docs — Server and Client Components; Vercel react-best-practices (bundle tier)"
+  },
+  {
+    "id": "P-40",
+    "phase": "bundle",
+    "title": "ميزانية جافاسكربت لكل نوع مسار",
+    "why": "الأداء هو الأولوية الأولى للمشروع، ولا توجد ميزانية معلنة اليوم — فأي انحدار يمرّ بلا إنذار. المسارات الأثقل مرشّحاً: `/articles/[slug]` (11 مكوّن عميل مستورَداً في `page.tsx:37-61`)، `/modo-chat` (بثّ + حالة)، `/story` (framer-motion)، `/clients/[slug]`.",
+    "how": "من جدول Route (App) في ناتج `pnpm build`، اقرأ عمود `First Load JS` لكل مسار وسجّله في `documents/qa/inventory-performance.md`. اجعل الفحص بوّابة في CI: أي زيادة تتجاوز السقف تُوقف الدفع.",
+    "expected": "الرئيسية ≤ 140KB · `/articles/[slug]` ≤ 180KB · صفحات القوائم (`/articles`,`/clients`,`/tags`,`/categories`) ≤ 150KB · `/clients/[slug]` ≤ 190KB · `/story` ≤ 260KB · الحزمة المشتركة (shared by all) ≤ 110KB — كلّها gzip.",
+    "severityIfFailed": "major",
+    "evidence": "جدول Route (App) الخام من `next build` مع عمود First Load JS لكل مسار من الـ66.",
+    "targets": ["modonty/app", "documents/qa/inventory-performance.md"],
+    "source": "web.dev — Performance budgets; Next.js docs — Analyzing bundles"
+  },
+  {
+    "id": "P-41",
+    "phase": "bundle",
+    "title": "سجلّ الأيقونات نفسه ملف برميلي غير مُحسَّن",
+    "why": "`shared/lib/icons.ts` (203 سطراً) هو سلسلة `export { X as IconY } from 'lucide-react'` — أي ملف برميلي. `modonty/next.config.ts:101-113` يدرج `lucide-react` في `optimizePackageImports` لكنه لا يدرج `@modonty/shared` ولا مسار السجلّ. الاستيراد يمرّ عبر alias `@/lib/icons` → `../shared/lib/icons` (tsconfig:32-33)، فالتحسين المُعلَن على الحزمة قد لا يُطبَّق على البرميل الوسيط.",
+    "how": "ابنِ صفحة اختبار تستورد أيقونة واحدة من `@/lib/icons`، ثم افحص الحزمة الناتجة: `ANALYZE=true pnpm build` وابحث عن عدد وحدات `lucide-react` الداخلة. قارنها باستيراد مباشر من `lucide-react/dist/esm/icons/house`.",
+    "expected": "عدد أيقونات lucide الداخلة في حزمة مسار يستورد أيقونة واحدة = 1 بالضبط، ووزن lucide في الحزمة المشتركة ≤ 15KB gzip.",
+    "severityIfFailed": "major",
+    "evidence": "لقطة من تقرير المحلّل تُظهر وحدات `lucide-react` المُدرَجة وأحجامها، لكلتا الحالتين.",
+    "targets": [
+      "shared/lib/icons.ts",
+      "modonty/next.config.ts",
+      "modonty/tsconfig.json"
+    ],
+    "source": "Next.js docs — optimizePackageImports & barrel files"
+  },
+  {
+    "id": "P-42",
+    "phase": "bundle",
+    "title": "framer-motion محصور في `/story` وحدها",
+    "why": "`framer-motion@^12.38.0` في `modonty/package.json` ويُستورد في ستّة ملفات كلّها تحت `app/(site)/story/`: `LogoSpotlight`, `PartnersShowcase`, `SalesPitchPage`, `TeamCarousel`, `TestimonialPlayer`, `Vision2030Spotlight`. المكتبة ثقيلة (عشرات الكيلوبايتات)، و`app/(site)/story/StoryClientLoader.tsx` يستعمل `next/dynamic` — يجب إثبات أن التأجيل يعمل فعلاً وأن المكتبة لا تتسرّب إلى الحزمة المشتركة.",
+    "how": "من تقرير المحلّل، تأكّد أن chunk فيه `framer-motion` مرتبط بمسار `/story` وحده وليس بـ`shared by all`. وتأكّد بـ`grep -rn \"framer-motion\" app/ --include=*.tsx` أن لا مستورد جديداً خارج `/story`.",
+    "expected": "وزن framer-motion في الحزمة المشتركة (shared by all) = 0KB، وظهورها في chunk واحد فقط مربوط بـ`/story`.",
+    "severityIfFailed": "major",
+    "evidence": "لقطة/تصدير من تقرير المحلّل يُظهر chunk framer-motion واسم المسار المرتبط به + ناتج grep الكامل.",
+    "targets": [
+      "modonty/app/(site)/story/StoryClientLoader.tsx",
+      "modonty/package.json"
+    ],
+    "source": "Next.js docs — Lazy Loading with next/dynamic"
+  },
+  {
+    "id": "P-43",
+    "phase": "bundle",
+    "title": "`next-cloudinary` ما زالت في التبعيات رغم قرار Bunny الحصري",
+    "why": "`modonty/package.json` يحمل `\"next-cloudinary\": \"^6.17.5\"`، و`modonty/next.config.ts:54-57` ما زال يسمح بـ`res.cloudinary.com` في `remotePatterns`. قرار المشروع المسجّل: بني هو مورّد الوسائط الوحيد. أي مسار يستورد `next-cloudinary` يجرّ حزمة كاملة بلا فائدة.",
+    "how": "`grep -rn \"next-cloudinary\" modonty/app modonty/components modonty/lib` — أي نتيجة تعني تسرّباً. وتأكّد من تقرير المحلّل أن المكتبة غير مُدرَجة في أي chunk.",
+    "expected": "0 مستوردين في الكود، و 0KB في كل الـchunks. لو صفر، تُحذف التبعية ويُحذف نمط cloudinary من `remotePatterns`.",
+    "severityIfFailed": "minor",
+    "evidence": "ناتج grep الكامل (متوقّع فارغاً) + بحث عن `cloudinary` في تقرير المحلّل.",
+    "targets": ["modonty/package.json", "modonty/next.config.ts"],
+    "source": "Next.js docs — next.config images.remotePatterns; project rule: Bunny-only media"
+  },
+  {
+    "id": "P-44",
+    "phase": "bundle",
+    "title": "أحد عشر مكوّناً مستورَداً مباشرةً في صفحة المقال",
+    "why": "`app/(site)/articles/[slug]/page.tsx:53-61` يستورد مباشرةً: `AskModoCard`, `PartnerCard`, `PartnerStrip`, `Gallery`, `ReadMore`, `BottomDock`, `ArticleTopEngagementBar`, `ReadingTools`, `PartnerCardMobile`. خمسة منها فقط مؤجَّلة عبر ملفات `*Lazy` (`GtmTrackerLazy`, `ViewTrackerLazy`, `BodyLinkTrackerLazy`, `ReadingProgressBarLazy`, `AuthPromptLazy`). `BottomDock` و`Gallery` و`ReadMore` كلّها تحت الطيّة بالكامل، و`Gallery` تدير حالة (`images[active]`).",
+    "how": "من تقرير المحلّل، اقرأ وزن chunk مسار `/articles/[slug]` وافصل مساهمة كل مكوّن. ثم قِس LCP قبل/بعد تأجيل `Gallery`+`ReadMore`+`BottomDock` بـ`dynamic()`.",
+    "expected": "وزن مكوّنات تحت الطيّة في الحزمة الأولى لمسار المقال ≤ 30KB gzip، وتحسّن LCP ≥ 150ms بعد التأجيل.",
+    "severityIfFailed": "major",
+    "evidence": "تفصيل وحدات chunk المقال من المحلّل + قياسا LCP (Lighthouse على بناء إنتاجي) قبل وبعد.",
+    "targets": [
+      "modonty/app/(site)/articles/[slug]/page.tsx",
+      "modonty/app/(site)/articles/[slug]/components/gallery/Gallery.tsx",
+      "modonty/app/(site)/articles/[slug]/components/bottom-dock/BottomDock.tsx"
+    ],
+    "source": "Next.js docs — next/dynamic; web.dev — Reduce JavaScript payloads"
+  },
+  {
+    "id": "P-45",
+    "phase": "bundle",
+    "title": "الخطّان يُحمَّلان مسبقاً على كل صفحة",
+    "why": "`modonty/app/layout.tsx:14-28` يحمّل `Tajawal` بثلاثة أوزان (400/500/700) و`Montserrat` بأربعة (400/500/600/700) — سبعة ملفات خطّ، كلّها `preload: true`، و`Tajawal` بمجموعتَي `arabic` و`latin`. الموقع عربي بالكامل (`dir=\"rtl\"`)، فأوزان Montserrat الأربعة مرشّحة لأن تكون بلا استعمال حقيقي فوق الطيّة.",
+    "how": "من شلال الشبكة لصفحة الرئيسية على بناء إنتاجي، عُدّ ملفات `.woff2` المُحمَّلة قبل FCP ومجموع بايتاتها. وافحص تغطية الاستخدام في تبويب Coverage.",
+    "expected": "عدد ملفات الخطّ المُحمَّلة مسبقاً ≤ 3 ومجموع حجمها ≤ 120KB. أي وزن خطّ بتغطية استخدام تحت 5% يُنزَع من `preload`.",
+    "severityIfFailed": "minor",
+    "evidence": "شلال الشبكة يُظهر كل طلبات `.woff2` مع الأحجام والتوقيت، + تقرير Coverage لكل ملف خطّ.",
+    "targets": ["modonty/app/layout.tsx"],
+    "source": "Next.js docs — next/font optimization; web.dev — Optimize web fonts (LCP)"
+  },
+  {
+    "id": "P-46",
+    "phase": "bundle",
+    "title": "سكربتات الطرف الثالث في الجذر — GTM و Clarity",
+    "why": "`modonty/app/layout.tsx:82-89` يركّب `GTMContainer` و`ClarityScript` و`WebVitals` و`PageViewTracker` على كل صفحة من الموقع، مع `dns-prefetch` لثلاثة نطاقات خارجية (googletagmanager, clarity.ms, connect.facebook.net). سكربتات الطرف الثالث هي المساهم الأول في INP في معظم المواقع لأنها تحتلّ الخيط الرئيسي أثناء التفاعل المبكر.",
+    "how": "Lighthouse على بناء إنتاجي مع تدقيق \"Reduce the impact of third-party code\": اقرأ Main-Thread Blocking Time لكل نطاق. وقارن INP مع/بلا هذه السكربتات عبر تعطيلها بـ`--block-third-party` أو حظر النطاقات في DevTools.",
+    "expected": "مجموع Main-Thread Blocking Time من الأطراف الثالثة ≤ 250ms، ومساهمتها في INP ≤ 40ms.",
+    "severityIfFailed": "major",
+    "evidence": "جدول \"Third-party usage\" من Lighthouse مع الأعمدة: النطاق · Transfer Size · Main-Thread Blocking Time، وقياسا INP مع وبدون.",
+    "targets": [
+      "modonty/app/layout.tsx",
+      "modonty/app/layout/components/gtm/GTMContainer.tsx",
+      "modonty/app/layout/components/analytics/clarity-script.tsx"
+    ],
+    "source": "web.dev — Third-party JavaScript & INP; Next.js docs — next/script strategies"
+  },
+  {
+    "id": "P-47",
+    "phase": "media",
+    "title": "لا استيراد مباشر لـ`next/image` — يجب أن يبقى صفراً",
+    "why": "قياس المستودع: `grep -rn 'from \"next/image\"' modonty/app modonty/components` = 0 نتيجة. كل الصور تمرّ عبر `shared/components/optimized-image.tsx` الذي يفرض `sizes` على مستوى النوع (السطر 99) ويفرض `width+height` أو `fill` (السطر 119-120). هذا هو الحاجز الوحيد ضد صور بلا `sizes` — وضياعه يعني تحميل صور بحجم 100vw على كل بطاقة.",
+    "how": "بوّابة CI: `! grep -rq 'from \"next/image\"' modonty/app modonty/components` وإلا يفشل الفحص. وأعد التشغيل بعد كل دمج.",
+    "expected": "0 استيرادات مباشرة لـ`next/image` خارج `shared/components/optimized-image.tsx`.",
+    "severityIfFailed": "major",
+    "evidence": "ناتج الأمر الخام (فارغ) ورمز الخروج 1 من grep.",
+    "targets": [
+      "shared/components/optimized-image.tsx",
+      "modonty/app",
+      "modonty/components"
+    ],
+    "source": "Next.js docs — next/image sizes prop (\"If sizes is missing, the browser assumes 100vw\")"
+  },
+  {
+    "id": "P-48",
+    "phase": "media",
+    "title": "مصفوفة تحويلات الصور — كل تركيبة إدخال كاش وتحويل مدفوع",
+    "why": "`modonty/next.config.ts:89-92`: `formats: ['image/avif','image/webp']` (٢) × `deviceSizes` (٨ قيم) × `imageSizes` (٨ قيم) × `qualities: [25,50,75,100]` (٤). كل تركيبة `/_next/image?url&w&q` مفتاح كاش منفصل وتحويل مدفوع منفصل على Vercel. اليوم لا يستعمل غير الافتراضي إلا موضعان: `app/(site)/modonty/components/gallery/ModontyGallery.tsx:88` بـ`quality={50}` و`components/shared/reels-card/ReelsCard.tsx:67` بـ`quality={75}` (وهو الافتراضي أصلاً، فهو زائد). أي إضافة جودة جديدة تضاعف المصفوفة.",
+    "how": "من لوحة Vercel: Usage ← Image Optimization، اقرأ عدد الصور المُحوَّلة (Source Images) في شهر. وقارنه بعدد الصور الفريدة في `media` من القاعدة. النسبة = عدد التركيبات لكل صورة.",
+    "expected": "عدد التركيبات لكل صورة مصدر ≤ 6. ونطاق `qualities` يُضيَّق إلى قيمتين على الأكثر (`[50, 75]`).",
+    "severityIfFailed": "major",
+    "evidence": "قراءة Source Images / Transformations الشهرية من لوحة Vercel + عدد صفوف `media` الفريدة، والنسبة المحسوبة.",
+    "targets": [
+      "modonty/next.config.ts",
+      "shared/components/optimized-image.tsx",
+      "modonty/app/(site)/modonty/components/gallery/ModontyGallery.tsx"
+    ],
+    "source": "Next.js docs — images.qualities / deviceSizes / imageSizes; Vercel docs — Image Optimization pricing"
+  },
+  {
+    "id": "P-49",
+    "phase": "media",
+    "title": "`priority` على ثلاث بطاقات في شبكة تحت الطيّة",
+    "why": "`app/(site)/categories/[slug]/page.tsx:222` و`app/(site)/tags/[slug]/page.tsx:222` يمرّران `priority={index < 3}` لبطاقات في شبكة. أول ثلاث بطاقات في شبكة ليست بالضرورة فوق الطيّة على الجوّال (390px عرضاً)، و`preload` على صور تحت الطيّة يزاحم صورة LCP الحقيقية على النطاق الترددي.",
+    "how": "افتح `/categories/<slug>` على 390×844 والتقط `<link rel=preload as=image>` من `<head>`، ثم قارن مع موقع الصور فعلياً (`getBoundingClientRect().top` مقابل ارتفاع النافذة). وأكّد أي عنصر هو LCP من Lighthouse.",
+    "expected": "عدد صور `preload` ≤ 1 لكل صفحة، وهي عنصر LCP نفسه. أي صورة `preload` تبدأ تحت 844px على الجوّال = فشل.",
+    "severityIfFailed": "major",
+    "evidence": "HTML الخام لـ`<head>` يُظهر وسوم preload، + قسم \"Largest Contentful Paint element\" من Lighthouse، + إحداثيات كل صورة مُحمَّلة مسبقاً.",
+    "targets": [
+      "modonty/app/(site)/categories/[slug]/page.tsx",
+      "modonty/app/(site)/tags/[slug]/page.tsx",
+      "modonty/components/client/client-card.tsx"
+    ],
+    "source": "web.dev — Optimize LCP: preload only the LCP image; Next.js docs — priority prop"
+  },
+  {
+    "id": "P-50",
+    "phase": "media",
+    "title": "`blurDataURL` مضمَّن في HTML لكل بطاقة في التغذية",
+    "why": "`shared/components/optimized-image.tsx:156-174` يضيف `blurDataURL` تلقائياً كلّما حمله صفّ الوسائط. كل استعلامات التغذية تختاره: `article-feed-shapes.ts:44-48`, `get-articles-archive.ts:60`, `get-industry-feed.ts:25`, `get-clients-list.ts:83-85`. `blurDataURL` سلسلة base64 مضمّنة في HTML — عشرون بطاقة في الصفحة الواحدة تعني عشرين سلسلة base64 داخل الوثيقة، وهذا يزيد حجم HTML ويؤخّر أول رسم.",
+    "how": "قِس حجم وثيقة HTML للرئيسية: `curl -s https://www.modonty.com/ | wc -c`، ثم `curl -s ... | grep -o 'data:image[^\"]*' | wc -c` لعزل نصيب الـblur. كرّر لـ`/articles`.",
+    "expected": "نصيب سلاسل blur من حجم HTML ≤ 15%، وحجم وثيقة HTML الكلّي (قبل ضغط النقل) ≤ 250KB للرئيسية.",
+    "severityIfFailed": "minor",
+    "evidence": "الرقمان الخامان (حجم HTML الكلّي، مجموع بايتات `data:image`) والنسبة، لـ`/` و`/articles`.",
+    "targets": [
+      "shared/components/optimized-image.tsx",
+      "modonty/lib/queries/article-feed-shapes.ts",
+      "modonty/app/(site)/articles/data/get-articles-archive.ts"
+    ],
+    "source": "Next.js docs — placeholder=\"blur\" & blurDataURL size guidance"
+  },
+  {
+    "id": "P-51",
+    "phase": "media",
+    "title": "`minimumCacheTTL` واحد وثلاثون يوماً — تحقّق من الإصابة الفعلية",
+    "why": "`modonty/next.config.ts:93` يضبط `minimumCacheTTL: 2678400` (31 يوماً). هذا صحيح لخفض تكلفة التحويل، لكنه يتفاعل مع خمسة نطاقات في `remotePatterns` (cloudinary + أربع مناطق Bunny). لو استبدل شريك صورته على نفس الرابط، تبقى النسخة القديمة معروضة شهراً. ويجب أيضاً إثبات أن نسبة إصابة كاش الصور مرتفعة فعلاً وإلا فالتكلفة تُدفع مرّتين.",
+    "how": "من لوحة Vercel: Usage ← Image Optimization، اقرأ نسبة Cache Hit. وتحقّق من رأس `x-vercel-cache` على 20 طلب صورة عشوائياً من الرئيسية.",
+    "expected": "نسبة إصابة كاش الصور ≥ 90%، و`age` على الاستجابات المُصابة > 0.",
+    "severityIfFailed": "minor",
+    "evidence": "قراءة Cache Hit Ratio من لوحة Vercel + رؤوس `x-vercel-cache` و`age` و`cache-control` لعشرين طلب صورة.",
+    "targets": ["modonty/next.config.ts"],
+    "source": "Next.js docs — images.minimumCacheTTL; Vercel docs — Image Optimization caching"
+  },
+  {
+    "id": "P-52",
+    "phase": "media",
+    "title": "صور معرض المقال — كلها في الحمولة الأولى",
+    "why": "`app/(site)/articles/[slug]/page.tsx:302-312` يبني `galleryImages` من `article.gallery` بلا سقف، و`get-article-content-by-slug.ts:63-79` يجلب كل صفوف المعرض بـ`include` بلا `take`. مقال بأربعين صورة معرض يحمّل أربعين صفّ وسائط (مع blur لكل واحد) في حمولة الصفحة، رغم أن `Gallery.tsx:55` يعرض صورة واحدة نشطة + مصغّرات 56px.",
+    "how": "اعثر على أطول معرض: `db.article_media.aggregate([{$group:{_id:'$articleId',n:{$sum:1}}},{$sort:{n:-1}},{$limit:5}])`. اطلب ذلك المقال وقِس حجم HTML وعدد طلبات `/_next/image` قبل أي تفاعل.",
+    "expected": "عدد صور المعرض في الحمولة الأولى ≤ 12، وطلبات `/_next/image` قبل التمرير ≤ 8.",
+    "severityIfFailed": "major",
+    "evidence": "ناتج التجميع الخام (أعلى خمسة مقالات بعدد صور المعرض)، وحجم HTML وعدّ طلبات الصور من شلال الشبكة للمقال الأطول.",
+    "targets": [
+      "modonty/app/(site)/articles/[slug]/data/get-article-content-by-slug.ts",
+      "modonty/app/(site)/articles/[slug]/components/gallery/Gallery.tsx"
+    ],
+    "source": "Prisma docs — nested take; web.dev — Lazy-load offscreen images"
+  },
+  {
+    "id": "P-53",
+    "phase": "load",
+    "title": "حمل القراءة الأساسي — صفحة المقال",
+    "why": "`/articles/[slug]` هو مسار الدخول الأول من البحث وأثقل صفحة رسماً (P-18, P-34, P-36). الأداة: **k6** لأنها تكتب السيناريو بجافاسكربت (نفس لغة الفريق)، تدعم عتبات `thresholds` كبوّابة نجاح/فشل قابلة للتشغيل في CI، وتُخرج p99 مباشرةً — على عكس `ab` الذي لا يعطي إلا المتوسط.",
+    "how": "سيناريو k6 على بناء إنتاجي (لا خادم تطوير): قائمة 200 slug حقيقي، `stages: [{duration:'2m',target:100},{duration:'5m',target:500},{duration:'2m',target:0}]`، كل مستخدم افتراضي يطلب slug عشوائياً. `thresholds: { http_req_duration:['p(95)<800','p(99)<2000'], http_req_failed:['rate<0.005'] }`.",
+    "expected": "p50 ≤ 250ms · p95 ≤ 800ms · p99 ≤ 2000ms · نسبة الأخطاء ≤ 0.5% عند 500 مستخدم متزامن لمدة 5 دقائق.",
+    "severityIfFailed": "critical",
+    "evidence": "ملخّص k6 الكامل (http_req_duration بكل المئينات، http_req_failed، iterations، data_received) + رسوم Atlas Connections/Opcounters على نفس النافذة.",
+    "targets": ["modonty/app/(site)/articles/[slug]/page.tsx"],
+    "source": "k6 docs — Thresholds & ramping-vus executor; web.dev — TTFB"
+  },
+  {
+    "id": "P-54",
+    "phase": "load",
+    "title": "حمل الرئيسية والتغذية المتدرّجة",
+    "why": "الرئيسية `cacheLife(\"minutes\")` بستّة استعلامات (P-29)، و`/page/[pageNumber]` يمرّ على الوسيط الذي يستدعي `publishedFeedTotalPages` (`lib/archive-cache.ts`). الحمل يجب أن يخلط الصفحة 1 مع صفحات عميقة ليكشف تكلفة الـ`skip`.",
+    "how": "k6 بثلاثة سيناريوهات متوازية: 60% على `/`، 30% على `/page/{2..10}`، 10% على `/page/{100..500}`. 300 مستخدم متزامن، 10 دقائق.",
+    "expected": "p95 للرئيسية ≤ 400ms · p95 للصفحات 2-10 ≤ 600ms · p95 للصفحات 100+ ≤ 1200ms · نسبة الأخطاء ≤ 0.5%. والفارق بين الصفحة 2 والصفحة 500 ≤ 2×.",
+    "severityIfFailed": "major",
+    "evidence": "ملخّص k6 مقسّماً بالوسم (tag) لكل سيناريو، مع p95 لكل مجموعة على حدة.",
+    "targets": [
+      "modonty/app/(site)/(homepage)/page.tsx",
+      "modonty/app/(site)/(homepage)/page/[pageNumber]/page.tsx",
+      "modonty/lib/archive-cache.ts"
+    ],
+    "source": "k6 docs — scenarios & tags"
+  },
+  {
+    "id": "P-55",
+    "phase": "load",
+    "title": "حمل البحث — أخطر مسار قراءة",
+    "why": "`/search?q=` يجمع مسحاً كاملاً مع regex على `content` + عدّاً كاملاً + إدخال كاش جديداً لكل عبارة (P-16, P-26). ومدخله يتحكّم به الزائر بالكامل. هذا هو مسار الانهيار المرشّح الأول تحت هجوم أو حتى تحت زاحف فضولي.",
+    "how": "k6 بـ50 مستخدماً متزامناً فقط (عمداً منخفض) على `/search?q=<كلمة عربية عشوائية من قاموس 5000 كلمة>` لمدّة 3 دقائق. راقب Atlas: `Query Targeting` (نسبة المستندات المفحوصة إلى المُعادة) و CPU العنقود.",
+    "expected": "p95 ≤ 1500ms · نسبة الأخطاء ≤ 1% · `Query Targeting` (scanned/returned) ≤ 100 · CPU العنقود ≤ 70%. أي تجاوز يوجب فهرساً نصّياً وإسقاط `content` من البحث.",
+    "severityIfFailed": "critical",
+    "evidence": "ملخّص k6 + رسما `Query Targeting` و `System CPU` من Atlas Metrics على نفس النافذة، + عدد إدخالات الكاش الجديدة.",
+    "targets": [
+      "modonty/app/(site)/search/page.tsx",
+      "modonty/lib/queries/article-feed-shapes.ts"
+    ],
+    "source": "MongoDB Atlas docs — Query Targeting alert; k6 docs — Thresholds"
+  },
+  {
+    "id": "P-56",
+    "phase": "load",
+    "title": "حمل الكتابة — تتبّع المشاهدات",
+    "why": "`POST /articles/[slug]/api/view` ينفّذ خمس عمليات قاعدة لكل مشاهدة (P-20) منها زيادة على مستند المقال، وقراءة `findFirst` بلا فهرس مركّب (P-10). كل قارئ حقيقي يُطلق هذا الطلب، فحجمه يساوي حجم حركة القراءة بالضبط.",
+    "how": "k6: 300 مستخدماً متزامناً، خليط 80% مقالات مختلفة + 20% على مقال واحد رائج (لكشف تنازع المستند)، 5 دقائق، مع كوكي جلسة فريد لكل مستخدم افتراضي.",
+    "expected": "p95 ≤ 500ms · p99 ≤ 1500ms · نسبة الأخطاء ≤ 0.5% · صفر `WriteConflict` في سجل مونجو · معدّل الكتابة المستدام ≥ 500 مشاهدة/ثانية.",
+    "severityIfFailed": "critical",
+    "evidence": "ملخّص k6 + `db.serverStatus().metrics.operation.writeConflicts` قبل وبعد + رسم Opcounters (insert/update) من Atlas.",
+    "targets": [
+      "modonty/app/(site)/articles/[slug]/api/view/route.ts",
+      "modonty/app/(partner)/clients/[slug]/api/view/route.ts"
+    ],
+    "source": "MongoDB docs — Write conflicts; k6 docs — cookies per VU"
+  },
+  {
+    "id": "P-57",
+    "phase": "load",
+    "title": "استنزاف مجمّع اتصالات MongoDB",
+    "why": "`modonty/lib/db.ts` بلا ضبط لحجم المجمّع ولا تثبيت على `globalThis` في الإنتاج (P-23). كل نسخة دالة تفتح مجمّعها. الاختبار يجب أن يدفع عدد النسخ عالياً بما يكفي ليتجاوز حدّ العنقود.",
+    "how": "k6 بارتفاع حادّ (spike): من 0 إلى 1000 مستخدم متزامن في 30 ثانية على خليط من `/articles/[slug]` و`/` و`POST view`. راقب Atlas `Connections (current)` و Vercel `Concurrent Executions` لحظةً بلحظة.",
+    "expected": "ذروة الاتصالات ≤ 80% من حدّ العنقود، وصفر أخطاء `MongoServerSelectionError` أو Prisma `P2024` في سجلات Vercel، ونسبة 5xx ≤ 1% خلال الارتفاع الحادّ.",
+    "severityIfFailed": "critical",
+    "evidence": "رسم Atlas Connections مع خطّ الحدّ الأقصى، + `grep -c 'P2024\\|ServerSelection'` على سجلات Vercel للنافذة، + توزيع رموز HTTP من k6.",
+    "targets": ["modonty/lib/db.ts"],
+    "source": "Prisma docs — Connection management in serverless; MongoDB Atlas docs — Connection limits"
+  },
+  {
+    "id": "P-58",
+    "phase": "load",
+    "title": "غياب حدّ المعدّل على مسارات التتبّع العامّة",
+    "why": "فحص المستودع: `rateLimit` موجود فقط تحت `app/(site)/modo-chat/data/` (`check-rate-limit.ts`, `check-anonymous-quota.ts`, `guard-chat-request.ts`). سبعة مسارات كتابة عامّة بلا أي حدّ: `api/track/pageview`, `api/track/cta-click`, `api/track/web-vitals`, `articles/[slug]/api/view`, `articles/[slug]/api/share`, `articles/api/track/article-link-click`, `api/news/subscribe`. كلّها تكتب في القاعدة بلا مصادقة.",
+    "how": "من عنوان واحد: 10000 طلب POST إلى كل مسار خلال دقيقتين بـk6. عُدّ الصفوف المُنشأة والاستجابات 429.",
+    "expected": "كل مسار كتابة عام يردّ 429 بعد 60 طلباً في الدقيقة لكل عنوان/جلسة، ونسبة الطلبات المقبولة ≤ 2% من الدفعة.",
+    "severityIfFailed": "critical",
+    "evidence": "توزيع رموز HTTP من k6 لكل مسار + عدد الصفوف المُنشأة في كل مجموعة قبل/بعد.",
+    "targets": [
+      "modonty/app/api/track/pageview/route.ts",
+      "modonty/app/api/track/cta-click/route.ts",
+      "modonty/app/(site)/articles/[slug]/api/view/route.ts",
+      "modonty/app/api/news/subscribe/route.ts"
+    ],
+    "source": "OWASP API Security — API4:2023; Vercel docs — Rate limiting"
+  },
+  {
+    "id": "P-59",
+    "phase": "load",
+    "title": "حمل مسار مودو — الكلفة الخارجية والزمن",
+    "why": "`app/(site)/modo-chat/api/chat/route.ts` يعلن `maxDuration = 60` ويستدعي عدّة خدمات خارجية (تضمين + إعادة ترتيب + توليد) بعد قراءة كل المقاطع من القاعدة (P-22). هذا المسار يجمع كلفة قاعدة عالية + كلفة نموذج + احتجاز دالة طويل. الحدّ الوحيد الموجود هو `guardChatRequest`.",
+    "how": "k6 بـ30 مستخدماً متزامناً (منخفض عمداً) على `POST /modo-chat/api/chat` بأسئلة حقيقية لمدة 3 دقائق. قِس زمن أول توكن (TTFT) منفصلاً عن الزمن الكلّي، وعدّ 429 الصادرة عن الحارس.",
+    "expected": "زمن أول توكن p95 ≤ 3000ms · الزمن الكلّي p95 ≤ 20s · صفر انقطاع بسبب المهلة (60s) · الحارس يردّ 429 عند تجاوز الحصّة بنسبة صحيحة 100%.",
+    "severityIfFailed": "major",
+    "evidence": "ملخّص k6 مع قياس مخصّص لـTTFT + عدّ 429 + عدد استدعاءات المزوّد الخارجي من لوحته.",
+    "targets": [
+      "modonty/app/(site)/modo-chat/api/chat/route.ts",
+      "modonty/app/(site)/modo-chat/data/guard-chat-request.ts",
+      "modonty/app/(site)/modo-chat/data/get-embedded-chunks.ts"
+    ],
+    "source": "k6 docs — custom Trend metrics; Vercel docs — Streaming responses & maxDuration"
+  },
+  {
+    "id": "P-60",
+    "phase": "load",
+    "title": "حمل ملفات الفهرسة — sitemap و image-sitemap و feed و llms",
+    "why": "أربعة مسارات تُبنى من القاعدة: `app/sitemap.ts` (ستّة استعلامات بلا سقف)، `app/image-sitemap.xml/route.ts` (بلا سقف + `content: true`)، `app/feed.xml/route.ts` (`take: 50`)، `app/llms.txt/route.ts` (بحدود). الزواحف تطلبها بلا تنسيق، وGooglebot قد يطلب خريطة الموقع عدّة مرّات يومياً. الاثنان الأوّلان هما القنبلة (P-07, P-08).",
+    "how": "k6 بـ10 طلبات متزامنة فقط على كل واحد لمدّة دقيقة (الزواحف لا تُوازي كثيراً، لكن التزامن يكشف احتجاز الذاكرة). راقب `Memory Used` و رمز الخروج في سجلات Vercel.",
+    "expected": "زمن الاستجابة p95 ≤ 10s لكل الأربعة · صفر `FUNCTION_INVOCATION_TIMEOUT` · صفر `FUNCTION_INVOCATION_FAILED` · ذروة الذاكرة ≤ 60% من المخصّص.",
+    "severityIfFailed": "critical",
+    "evidence": "توزيع رموز HTTP والأزمنة من k6 + سطور `Report ... Memory Used` من سجلات Vercel لكل مسار من الأربعة.",
+    "targets": [
+      "modonty/app/sitemap.ts",
+      "modonty/app/image-sitemap.xml/route.ts",
+      "modonty/app/feed.xml/route.ts",
+      "modonty/app/llms.txt/route.ts"
+    ],
+    "source": "Vercel docs — Function memory & timeouts; Google Search Central — Crawl budget"
+  },
+  {
+    "id": "P-61",
+    "phase": "load",
+    "title": "اختبار تحمّل ممتدّ — تسريب ذاكرة كاش الوسيط",
+    "why": "`modonty/lib/archive-cache.ts` يبني `Set` و `Map` على مستوى الوحدة (module scope) داخل ذاكرة الدالة، ويستبدلها كل 5 دقائق. النسخة الدافئة التي تخدم آلاف الطلبات لساعات تحمل هذه البُنى؛ عند مئات آلاف الـslugs هذا عشرات الميغابايتات مقيمة دائماً في كل نسخة، وتتضخّم مع نمو المحتوى.",
+    "how": "شغّل حملاً ثابتاً بـ100 مستخدم متزامن لمدّة 60 دقيقة على مسارات الكيانات (`/articles/:slug` و`/clients/:slug` و`/tags/:slug`). ارسم `Memory Used` من سجلات Vercel عبر الساعة كاملة.",
+    "expected": "منحنى الذاكرة مستوٍ: الفرق بين الدقيقة 10 والدقيقة 60 ≤ 15%، وذروة الذاكرة ≤ 60% من المخصّص. أي منحنى صاعد باطّراد = تسريب.",
+    "severityIfFailed": "major",
+    "evidence": "سلسلة زمنية لـ`Memory Used` (كل دقيقة، 60 نقطة) من سجلات الدالة + p95 لزمن الاستجابة في نفس النوافذ.",
+    "targets": ["modonty/lib/archive-cache.ts", "modonty/proxy.ts"],
+    "source": "Node.js docs — memory profiling; Vercel docs — Function memory limits"
+  },
+  {
+    "id": "P-62",
+    "phase": "load",
+    "title": "خطّ قاعدي معلن قبل أي تحسين",
+    "why": "كل بنود هذا الملف تقارن بشيء. بلا خطّ قاعدي مسجَّل على البناء الإنتاجي الحالي (الإصدار في `modonty/package.json` = 1.93.0) لا يمكن إثبات أن أي إصلاح حسّن شيئاً — وهذا بالضبط ما يجعل تقارير الأداء بلا قيمة.",
+    "how": "شغّل السيناريوهات P-53 · P-54 · P-55 · P-56 مرّة واحدة على الإنتاج الحالي، واحفظ ملفات ملخّص k6 بصيغة JSON تحت `documents/qa/baseline-<version>.json`. أعد التشغيل بعد كل حزمة إصلاحات.",
+    "expected": "أربعة ملفات خطّ قاعدي محفوظة، كلّ واحد يحمل رقم الإصدار والطابع الزمني و p50/p95/p99 ونسبة الأخطاء. أي مقارنة لاحقة تُظهر تحسّناً ≥ 20% في p95 للمسار المُصلَح.",
+    "severityIfFailed": "major",
+    "evidence": "ملفات `k6 --summary-export` بصيغة JSON، مع `git rev-parse HEAD` ورقم الإصدار مسجَّلَين في كل ملف.",
+    "targets": ["modonty/package.json", "documents/qa/"],
+    "source": "k6 docs — summary export; web.dev — Measure first, optimize second"
+  },
+  {
+    "id": "P-63",
+    "phase": "cwv",
+    "title": "LCP لصفحة المقال على بناء إنتاجي",
+    "why": "صفحة المقال هي صفحة الهبوط من البحث، وعنصر LCP فيها هو `ArticleFeaturedImage` (`page.tsx:628-630`) أو العنوان في `ArticleHeader`. تسبقه أربع جولات قاعدة (P-34) وحدّ Suspense واحد يحجب كل شيء (P-36) وثلاث سكربتات طرف ثالث في الجذر (P-46). القياس يجب أن يكون على `next build && next start` أو على الإنتاج — خادم التطوير يعطي أرقاماً كاذبة تماماً لأنه يترجم عند الطلب.",
+    "how": "Lighthouse (وضع Navigation، خنق Slow 4G / 4× CPU) على 10 مقالات مختلفة الطول، على بناء إنتاجي. سجّل LCP وعنصر LCP وتفكيك مراحله الأربع (TTFB · Resource Load Delay · Resource Load Time · Render Delay).",
+    "expected": "LCP ≤ 2500ms عند المئين 75 عبر العشرة (عتبة \"جيد\" من web.dev). ونصيب TTFB من LCP ≤ 40%.",
+    "severityIfFailed": "critical",
+    "evidence": "تقارير Lighthouse JSON للعشرة، مع قيمة LCP وعنصره وتفكيك المراحل الأربع لكل واحد، والمئين 75 المحسوب.",
+    "targets": [
+      "modonty/app/(site)/articles/[slug]/page.tsx",
+      "modonty/app/(site)/articles/[slug]/components/featured-image/FeaturedImage.tsx"
+    ],
+    "source": "web.dev — Largest Contentful Paint (LCP) thresholds & sub-parts"
+  },
+  {
+    "id": "P-64",
+    "phase": "cwv",
+    "title": "INP على صفحة المقال — أربعة أزرار تفاعل ثابتة",
+    "why": "`ArticleTopEngagementBar` مركّب مرّتين في نفس الصفحة (`page.tsx:485` للديسكتوب و`page.tsx:556` للجوّال)، بالإضافة إلى `BottomDock` و`ReadingTools` و`ReadingProgressBar` و`Gallery` — كلّها مكوّنات عميل تستجيب للنقر أو التمرير. مع سكربتات GTM و Clarity في الجذر، الخيط الرئيسي مزدحم وقت أول تفاعل.",
+    "how": "قياس ميداني عبر `app/api/track/web-vitals/route.ts` الموجود أصلاً: اجمع INP من مستخدمين حقيقيين لمدّة 14 يوماً واحسب المئين 75. ومختبرياً: Chrome DevTools Performance مع تسجيل نقرات على الإعجاب والحفظ وفتح المعرض والتمرير.",
+    "expected": "INP ≤ 200ms عند المئين 75 (عتبة \"جيد\")، ولا تفاعل منفرد يتجاوز 500ms، ومهام طويلة (> 50ms) ≤ 3 في أول 5 ثوان.",
+    "severityIfFailed": "critical",
+    "evidence": "توزيع INP الميداني (المئينات 50/75/95) من `web-vitals` المُخزَّن، + تتبّع Performance يُظهر Long Tasks وInteraction markers.",
+    "targets": [
+      "modonty/app/(site)/articles/[slug]/components/top-engagement-bar/TopEngagementBar.tsx",
+      "modonty/app/(site)/articles/[slug]/components/bottom-dock/BottomDock.tsx",
+      "modonty/app/api/track/web-vitals/route.ts"
+    ],
+    "source": "web.dev — Interaction to Next Paint (INP) thresholds"
+  },
+  {
+    "id": "P-65",
+    "phase": "cwv",
+    "title": "CLS — الأشرطة الثابتة والمعرض والصور",
+    "why": "صفحة المقال تحمل طبقة `fixed` تحت الناف بار (`page.tsx:480`)، وشريطاً `sticky` على الجوّال (`page.tsx:555`)، وشريطاً `fixed` أسفل الشاشة (`page.tsx:788`)، وعنصر `<audio>` يُركَّب شرطياً (`page.tsx:640`)، ومعرضاً يبدّل صورته النشطة. كل واحد من هذه مرشّح لإزاحة تخطيط. الحاجز الوحيد: `optimized-image.tsx:119-120` يفرض `width+height` أو `fill` على مستوى النوع.",
+    "how": "Lighthouse على العشرة نفسها من P-63 + تتبّع Performance مع تفعيل \"Layout Shift Regions\" في DevTools Rendering. سجّل أكبر مساهم في كل إزاحة.",
+    "expected": "CLS ≤ 0.1 عند المئين 75، ولا إزاحة منفردة تتجاوز 0.05.",
+    "severityIfFailed": "major",
+    "evidence": "قيمة CLS من Lighthouse لكل صفحة + قائمة \"Layout Shift\" من تتبّع Performance مع اسم العنصر المسبِّب ونتيجة كل إزاحة.",
+    "targets": [
+      "modonty/app/(site)/articles/[slug]/page.tsx",
+      "shared/components/optimized-image.tsx"
+    ],
+    "source": "web.dev — Cumulative Layout Shift (CLS) thresholds"
+  },
+  {
+    "id": "P-66",
+    "phase": "cwv",
+    "title": "مؤشّرات الويب الأساسية لصفحات القوائم",
+    "why": "`/articles`, `/clients`, `/tags`, `/categories`, `/industries`, `/trending` تعرض شبكات بطاقات كلٌّ منها بصورة و`blurDataURL` مضمَّن (P-50). صفحة `/articles` تحديداً تُرقّم في الذاكرة (`get-articles-archive.ts` بـ`take: 300` ثم شرائح على الصفحة) فتحمل حمولةً أكبر بكثير من المعروض.",
+    "how": "Lighthouse على الستّة على بناء إنتاجي بخنق Slow 4G / 4× CPU، ثلاث تشغيلات لكل صفحة والوسيط.",
+    "expected": "LCP ≤ 2500ms · INP ≤ 200ms · CLS ≤ 0.1 · TBT ≤ 200ms لكل الست صفحات. ونتيجة Lighthouse Performance ≥ 90.",
+    "severityIfFailed": "major",
+    "evidence": "ستّة تقارير Lighthouse JSON مع المؤشّرات الأربعة والنتيجة الكلّية لكل صفحة (وسيط ثلاث تشغيلات).",
+    "targets": [
+      "modonty/app/(site)/articles/page.tsx",
+      "modonty/app/(site)/clients/page.tsx",
+      "modonty/app/(site)/tags/page.tsx",
+      "modonty/app/(site)/trending/page.tsx"
+    ],
+    "source": "web.dev — Core Web Vitals thresholds; Lighthouse scoring calculator"
+  },
+  {
+    "id": "P-67",
+    "phase": "cwv",
+    "title": "مؤشّرات صفحة الشريك — أثقل قالب في الموقع",
+    "why": "`app/(partner)/clients/[slug]/page.tsx` يركّب `HOME_BLOCKS` من `@modonty/shared/components/partner-site/free/home` عبر `PageBlocks`، مع بطل بصورة `fill` (`client-hero-v2.tsx:121`)، ومعرضاً تفاعلياً (`gallery-interactive.tsx` عبر `dynamic`)، وفيديو مُضمَّناً (`client-video-embed.tsx:100`)، واثنتي عشرة صفحة داخلية. عدد الكتل يجعله المرشّح الأول لتضخّم DOM وTBT.",
+    "how": "Lighthouse على خمسة شركاء مختلفي الثراء (بفيديو/بلا، بمعرض كبير/صغير) على بناء إنتاجي. سجّل أيضاً عدد عناصر DOM من تدقيق \"Avoid an excessive DOM size\".",
+    "expected": "LCP ≤ 2500ms · INP ≤ 200ms · CLS ≤ 0.1 · عدد عناصر DOM ≤ 1500 · عمق DOM ≤ 32.",
+    "severityIfFailed": "major",
+    "evidence": "خمسة تقارير Lighthouse JSON مع المؤشّرات الثلاثة وتدقيق DOM size (العدد والعمق وأكبر عنصر أباً).",
+    "targets": [
+      "modonty/app/(partner)/clients/[slug]/page.tsx",
+      "modonty/app/(partner)/clients/[slug]/components/shell-hero/client-hero-v2.tsx",
+      "modonty/app/(partner)/clients/[slug]/components/sections/gallery-interactive.tsx"
+    ],
+    "source": "web.dev — Core Web Vitals; Lighthouse — Avoid an excessive DOM size"
+  },
+  {
+    "id": "P-68",
+    "phase": "cwv",
+    "title": "بوّابة: صفر قياس على خادم التطوير",
+    "why": "خادم `next dev` مع Turbopack يترجم عند الطلب ولا يطبّق تصغيراً ولا `removeConsole` (`next.config.ts:95-99` مشروط بـ`NODE_ENV === 'production'`) ولا تقسيم الحزم النهائي. أي رقم LCP/INP/TBT منه لا يعني شيئاً، وقد سبق أن ضاع وقت على أرقام كاذبة من هذا الباب. هذه البوّابة تمنع تكرار ذلك.",
+    "how": "كل تقرير أداء يُسلَّم يجب أن يحمل: عنوان القياس (نطاق إنتاج أو `localhost:3000` بعد `next build && next start`)، ورقم إصدار Next من `next -v`، ورأس `x-vercel-id` أو تأكيد `NODE_ENV=production`. تقرير بلا هذه الثلاثة يُرفَض.",
+    "expected": "100% من تقارير الأداء الـ68 تحمل الحقول الثلاثة. أي تقرير من `next dev` = 0 نقاط ولا يُحتسب.",
+    "severityIfFailed": "critical",
+    "evidence": "ترويسة كل تقرير تحمل: URL · `next -v` · `NODE_ENV` · طابع زمني · `git rev-parse --short HEAD`.",
+    "targets": ["modonty/next.config.ts", "modonty/package.json"],
+    "source": "Next.js docs — \"Always test performance on a production build\"; Lighthouse docs — Testing environments"
+  }
+]

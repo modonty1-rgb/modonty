@@ -27,7 +27,7 @@ export function ReadingProgressBar() {
   return (
     <div className="fixed top-14 left-0 right-0 h-1 bg-background z-40">
       <div
-        className="h-full bg-primary transition-all duration-150"
+        className="h-full bg-accent transition-all duration-150"
         style={{ width: mounted ? `${progress}%` : "0%" }}
         aria-hidden="true"
       />

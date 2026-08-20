@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
+import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 import { EntityPlaceholder } from "@/components/listing/EntityPlaceholder";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { IconArticle, IconIndustry } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import type { EntityType } from "./entity-utils";
@@ -114,15 +114,15 @@ export function EntityCard({
               <>
                 <div className="flex">
                   {clientPreviews.slice(0, 3).map((client, i) => (
-                    <Avatar
+                    /* The ring is the stack separator, not decoration — it is what keeps three
+                       overlapping logos readable as three. `object-cover` used to crop them. */
+                    <PartnerAvatar
                       key={client.id}
-                      className={cn("h-8 w-8 ring-2 ring-card", i > 0 && "-ms-2")}
-                    >
-                      <AvatarImage src={client.logoUrl} alt={client.name} className="object-cover" />
-                      <AvatarFallback className="bg-primary/10 text-[11px] font-bold text-primary">
-                        {client.name.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
+                      media={client.logoUrl ? asMedia(client.logoUrl, client.name) : null}
+                      name={client.name}
+                      size="small"
+                      className={cn("ring-2 ring-card", i > 0 && "-ms-2")}
+                    />
                   ))}
                   {overflowCount > 0 && (
                     <div className="-ms-2 flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary ring-2 ring-card">

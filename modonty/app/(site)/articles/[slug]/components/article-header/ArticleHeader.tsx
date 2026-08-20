@@ -51,8 +51,12 @@ export function ArticleHeader({
           expected?"), and the shape every large medical publisher uses: reviewer named in a
           single line at the top, full card at the end. Before reading, the visitor is asking
           "can I trust this?" — a line answers it. "How do I reach them?" comes after. */}
+      {/* A line, not a box. It used to be a bordered tinted panel — the same width, the same
+          background and the same border as the «باختصار» box ninety pixels below it, so the
+          reader met two identical blocks before reaching a single sentence. The summary is the
+          one that earns a box; the byline is a fact you scan in passing. */}
       {reviewer && (
-        <div className="mb-5 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-primary/20 bg-primary/5 px-3.5 py-2.5 text-sm">
+        <div className="mb-5 flex flex-wrap items-center gap-x-2 gap-y-1 border-s-2 border-primary/40 ps-3 text-sm">
           <VerifiedBadge className="h-4 w-4" label="مراجَع ومعتمَد" />
           <span className="text-muted-foreground">راجعه واعتمده</span>
           <Link
@@ -90,7 +94,10 @@ export function ArticleHeader({
         {questionsCount !== undefined && questionsCount > 0 && (
           <a
             href="#article-faq"
-            className="flex items-center gap-1 hover:text-primary transition-colors"
+            /* The visible mark stays small so the meta line keeps its rhythm; the tappable area
+               is grown to 44 with an invisible overlay. Measured 19 Aug at 24×20 — half a
+               fingertip. Padding instead would have pushed the whole row apart. */
+            className="relative flex items-center gap-1 transition-colors after:absolute after:left-1/2 after:top-1/2 after:size-11 after:-translate-x-1/2 after:-translate-y-1/2 after:content-[''] hover:text-primary"
             aria-label="انتقل إلى الأسئلة الشائعة"
           >
             <IconHelp className="h-3.5 w-3.5 shrink-0" />

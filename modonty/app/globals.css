@@ -4,56 +4,64 @@
 
 @layer base {
   :root {
-    /* ===== MODONTY BRAND COLORS ===== */
-    /* Primary Palette - Defined once for the entire design system */
-    --brand-navy: 245 87% 19%;        /* #0E065A - الكحلي */
-    --brand-blue: 240 100% 59%;       /* #3030FF - الأزرق */
-    --brand-teal: 180 100% 42%;       /* #00D8D8 - السماوي */
+    /* ===== MODONTY BRAND COLORS =====
+       The six values the designer signs off on, taken from their sheet on 2026-08-19 and
+       converted so each one round-trips back to its exact hex. They used to be rounded to whole
+       percentages, which drifted 1–2 of 255 from the real colour — invisible on screen, but it
+       meant nothing here ever matched the brand file when the two were compared. */
+    --brand-navy: 245.71 87.5% 18.82%;   /* #0E065A - الكحلي */
+    --brand-blue: 240 100% 59.41%;       /* #3030FF - الأزرق */
+    --brand-teal: 180 100% 42.35%;       /* #00D8D8 - السماوي */
+    /* The three greys of the sheet. Light and dark were already in use as --border and
+       --muted-foreground; the middle one was missing entirely. */
+    --brand-gray-light: 0 0% 85.88%;     /* #DBDBDB */
+    --brand-gray: 0 0% 62.75%;           /* #A0A0A0 */
+    --brand-gray-dark: 0 0% 35.69%;      /* #5B5B5B */
     
     /* ===== SEMANTIC COLOR MAPPING ===== */
     /* Background & Surfaces */
     --background: 45 8% 95%;           /* Warm gray #f3f2ef */
-    --foreground: 245 87% 19%;         /* Navy for main text */
+    --foreground: var(--brand-navy);         /* Navy for main text */
     --card: 0 0% 100%;
-    --card-foreground: 245 87% 19%;    /* Navy for card text */
+    --card-foreground: var(--brand-navy);    /* Navy for card text */
     --popover: 0 0% 100%;
-    --popover-foreground: 245 87% 19%; /* Navy for popover text */
+    --popover-foreground: var(--brand-navy); /* Navy for popover text */
     
     /* Primary = Vibrant Blue (Main CTAs, Links, Active States) */
-    --primary: 240 100% 59%;           /* Brand Blue */
+    --primary: var(--brand-blue);         /* Brand Blue — exactly #3030FF, the M in the logo */
     --primary-foreground: 0 0% 100%;   /* White text on blue */
     /* Brand blue used AS TEXT (links, active labels). Same as --primary in light mode
        (7:1 on white); dark mode needs its own lighter value — see .dark. */
-    --link: 240 100% 59%;
+    --link: var(--brand-blue);
     /* Brand teal used AS TEXT: --accent (42%) is a fill and reads 2.6:1 on white; text
        gets its own darker step — 23% = 5.5:1 on white, 5.0:1 on the header. */
     --link-accent: 180 100% 23%;
     
     /* Secondary = light gray surface (shadcn / DESIGN_SYSTEM) */
     --secondary: 0 0% 96%;
-    --secondary-foreground: 245 87% 19%;
+    --secondary-foreground: var(--brand-navy);
     
     /* Accent = Teal (Hover States, Badges, Highlights) */
-    --accent: 180 100% 42%;            /* Brand Teal */
-    --accent-foreground: 245 87% 19%;  /* Navy text on teal */
+    --accent: var(--brand-teal);            /* Brand Teal */
+    --accent-foreground: var(--brand-navy);  /* Navy text on teal */
     
     /* Muted & Neutral States */
     --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 36%;      /* #5b5b5b — brand gray-dark */
+    --muted-foreground: var(--brand-gray-dark);      /* #5b5b5b — brand gray-dark */
     
     /* Destructive (Keep red for errors) */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
     
     /* Borders & Inputs */
-    --border: 0 0% 86%;      /* #dbdbdb — brand gray-light, neutral */
-    --input: 0 0% 86%;
-    --ring: 240 100% 59%;              /* Primary blue for focus rings */
+    --border: var(--brand-gray-light);      /* #dbdbdb — brand gray-light, neutral */
+    --input: var(--brand-gray-light);
+    --ring: var(--brand-blue);              /* Primary blue for focus rings */
     
     /* Charts - Use Brand Colors */
-    --chart-1: 240 100% 59%;           /* Brand blue */
-    --chart-2: 180 100% 42%;           /* Brand teal */
-    --chart-3: 245 87% 19%;            /* Brand navy */
+    --chart-1: var(--brand-blue);           /* Brand blue */
+    --chart-2: var(--brand-teal);           /* Brand teal */
+    --chart-3: var(--brand-navy);            /* Brand navy */
     --chart-4: 240 80% 70%;            /* Light blue variant */
     --chart-5: 180 80% 60%;            /* Light teal variant */
 
@@ -62,21 +70,45 @@
     --success: 142 71% 45%;            /* #16a34a green — open-now + verification */
     --success-foreground: 0 0% 100%;
 
+    /* Reader actions — one colour each, so the four are told apart at a glance.
+       Adopted 2026-08-19 (Khalid): they started as raw Tailwind values on the article
+       tabs; as tokens they carry a dark-mode step and can be reused anywhere the same
+       four actions appear. Like and comment reuse the brand blue and teal; save and
+       share needed two more hues that clash with neither. */
+    --action-like: var(--brand-blue);       /* Brand blue */
+    --action-like-foreground: 0 0% 100%;
+    --action-save: 38 92% 50%;         /* Amber */
+    --action-save-foreground: var(--brand-navy);
+    --action-comment: var(--brand-teal);    /* Brand teal */
+    --action-comment-foreground: var(--brand-navy);
+    --action-share: 262 83% 58%;       /* Violet */
+    --action-share-foreground: 0 0% 100%;
+    --action-listen: 158 64% 42%;      /* Green — the fifth tab: listen instead of read */
+    --action-listen-foreground: 0 0% 100%;
+
     --radius: 0.5rem;
   }
 
   .dark {
     /* ===== DARK MODE - BRAND CONSISTENT ===== */
-    /* Dark navy background with brand consistency */
-    --background: 245 50% 8%;          /* Very dark navy */
+    /* Khalid, 19 Aug: «الخلفية تكتم الصدر». It was 50% saturation at 8% lightness — a heavily
+       tinted near-black. Saturation, not lightness, is what makes a dark ground feel heavy, and
+       lightness could not be raised anyway: the brand blue button sits at 2.99:1 against pure
+       black and every step lighter closes that gap further (measured 19 Aug: 8% → 2.77,
+       11% → 2.59, 13% → 2.44). So the tint comes down and the lightness barely moves. */
+    --background: 245 8% 9%;            /* Near-neutral, a whisper of navy */
     --foreground: 0 0% 98%;            /* Off-white text */
-    --card: 245 40% 12%;               /* Dark navy card */
+    --card: 245 7% 13%;                /* Near-neutral card */
     --card-foreground: 0 0% 98%;
-    --popover: 245 40% 12%;
+    --popover: 245 7% 13%;
     --popover-foreground: 0 0% 98%;
     
-    /* Primary - Lighter for dark mode visibility */
-    --primary: 240 100% 65%;           /* Lighter blue */
+    /* Khalid, 19 Aug: «ما نقدر نغير لون البراند عشان لون الخلفية» — so dark mode now runs the
+       same #3030FF as the logo instead of a lightened stand-in. White on it measures 7.02:1,
+       better than the 5.5:1 the lighter blue gave. Its edge against the page is 2.77:1, under
+       the 3:1 asked of a control's boundary — which no dark ground can fix (pure black caps at
+       2.99), so the CTA carries a light hairline ring instead, the boundary the rule allows. */
+    --primary: var(--brand-blue);         /* Brand Blue — #3030FF, same as light mode */
     /* Was navy (245 87% 19%) on this blue = 3.2:1 — under the 4.5:1 AA floor, on the
        most-clicked button of the site. White measures 5.5:1 and matches light mode,
        so the primary button now reads the same way in both themes. */
@@ -91,21 +123,21 @@
     --link-accent: 180 100% 50%;
     
     /* Secondary - Lighter navy */
-    --secondary: 245 50% 25%;          /* Lighter navy */
+    --secondary: 245 8% 24%;           /* Lighter neutral */
     --secondary-foreground: 0 0% 98%;
     
     /* Accent - Brighter teal for dark mode */
     --accent: 180 100% 50%;            /* Brighter teal */
     --accent-foreground: 245 87% 19%;  /* Navy text */
     
-    --muted: 245 40% 15%;
+    --muted: 245 7% 16%;
     --muted-foreground: 215 20.2% 65.1%;
     
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 98%;
     
-    --border: 245 40% 20%;             /* Navy-tinted borders */
-    --input: 245 40% 20%;
+    --border: 245 8% 20%;              /* Near-neutral borders */
+    --input: 245 8% 20%;
     --ring: 240 100% 65%;              /* Lighter blue ring */
     
     /* Charts - Brand colors adjusted for dark mode */
@@ -115,13 +147,27 @@
     --chart-4: 240 80% 75%;
     --chart-5: 180 80% 65%;
 
-    --brand-navy: 220 60% 80%;
-    --brand-blue: 240 100% 75%;
-    --brand-teal: 180 100% 55%;
+    /* The three --brand-* values used to be re-declared here, lightened for dark mode. Nothing
+       read them (grepped 19 Aug: zero consumers outside this file), and a brand colour that
+       changes with the theme is not a brand colour — the semantic tokens below are where a
+       theme is allowed to differ. Removed. */
 
     --star: 38 92% 58%;
     --success: 142 60% 50%;
     --success-foreground: 0 0% 100%;
+
+    /* Reader actions — each lifted a step, the same way --primary and --accent are,
+       so the fills stay separable against the dark navy ground. */
+    --action-like: var(--brand-blue);     /* The brand blue, same as light — one blue on the page */
+    --action-like-foreground: 0 0% 100%;
+    --action-save: 38 92% 58%;
+    --action-save-foreground: 245 87% 19%;
+    --action-comment: 180 100% 50%;
+    --action-comment-foreground: 245 87% 19%;
+    --action-share: 262 85% 68%;
+    --action-share-foreground: 245 87% 19%;
+    --action-listen: 158 64% 50%;
+    --action-listen-foreground: 245 87% 19%;
   }
 }
 
@@ -354,6 +400,40 @@
 .article-body :where(p, h1, h2, h3, h4, h5, h6, li, a),
 .article-content :where(p, h1, h2, h3, h4, h5, h6, li, a) {
   overflow-wrap: break-word;
+}
+
+/* Reader-chosen text size (Khalid, 19 Aug — the one thing worth taking from Wikipedia's
+   third column). The typography plugin sizes every child in `em`, so setting the size on the
+   container alone scales headings, lists and quotes with it — no per-element overrides.
+
+   Unlayered on purpose: `prose-lg` lives in Tailwind's utilities layer, and an unlayered rule
+   outranks any layered one no matter the specificity. Without this the choice would be
+   silently ignored.
+
+   The attribute sits on <html> and is written before first paint by the inline script in the
+   article page, so a reader who picked «كبير» never sees one frame of the default size. */
+html[data-article-text="small"] .article-body {
+  font-size: 1rem;
+  line-height: 1.85;
+}
+html[data-article-text="large"] .article-body {
+  font-size: 1.3125rem;
+  line-height: 1.85;
+}
+
+/* «أبغى أستمتع بالقراءة» (Khalid, 19 Aug) — the reader can put the article's images away and be
+   left with the text.
+
+   Hiding the <img> alone was not enough: images sit inside `aspect-video` wrappers that keep
+   their height whatever the child does, so the first version left 13 empty boxes down the page
+   (measured 19 Aug) and the reader gained nothing. The toggle now marks the whole image BOX —
+   the outermost ancestor around the image that carries no text of its own — and this rule
+   collapses it. See `reading-tools/ReadingTools.tsx`.
+
+   The attribute is never set unless a person clicks, and it is not stored — so the served HTML,
+   and anything that renders it without clicking, always has every image. */
+[data-img-hidden] {
+  display: none !important;
 }
 
 /* Mobile bottom clearance for the global footer. Article/home pages render a fixed

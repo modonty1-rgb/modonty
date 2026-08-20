@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 import { highlightQuery } from "@/lib/highlight-query";
@@ -72,13 +73,11 @@ export function ClientCard(props: ClientCardProps) {
 
         {/* Logo — overlapping the banner edge */}
         <div className="absolute top-[62px] end-4 z-[2] h-[58px] w-[58px]">
-          <div className="relative h-full w-full overflow-hidden rounded-xl">
-            {logo ? (
-              <OptimizedImage media={asMedia(logo, props.name)} alt={props.name} fill className="object-contain" sizes="58px" />
-            ) : (
-              <span className="grid h-full w-full place-items-center text-lg font-black text-primary">{initials}</span>
-            )}
-          </div>
+          <PartnerAvatar
+            media={logo ? asMedia(logo, props.name) : null}
+            name={props.name}
+            size="standard"
+          />
           <span
             className="absolute -bottom-1 -start-1 grid h-[18px] w-[18px] place-items-center rounded-full border-2 border-white bg-accent text-white"
             aria-label="موثّق من مدوّنتي"

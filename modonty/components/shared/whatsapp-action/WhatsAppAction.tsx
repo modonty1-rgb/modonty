@@ -18,8 +18,9 @@ interface WhatsAppActionProps {
    * `quiet` — a soft pill for lists and rails, where green must not shout over the page.
    * `icon` — round, icon only, for tight rows.
    * `dock` — filled square, for the mobile action bar where every button is a square.
+   * `split` — one half of a two-button row, matching the booking button beside it.
    */
-  variant?: "solid" | "quiet" | "icon" | "dock";
+  variant?: "solid" | "quiet" | "icon" | "dock" | "split";
   label?: string;
   className?: string;
 }
@@ -32,8 +33,13 @@ const VARIANT = {
     "h-11 gap-2 rounded-full bg-[#25D366] px-5 text-sm font-bold text-white shadow-[0_10px_20px_-12px_rgba(37,211,102,.9)] transition-[background-color,transform] sm:hover:bg-[#1EBE5A] sm:hover:-translate-y-px",
   quiet:
     "h-9 gap-2 rounded-full bg-[#25D366]/10 px-4 text-sm font-medium text-[#0F7B45] ring-1 ring-inset ring-[#25D366]/30 transition-colors sm:hover:bg-[#25D366]/20 dark:text-[#4BE08A]",
-  icon: "size-9 rounded-full bg-[#25D366]/10 text-[#0F7B45] ring-1 ring-inset ring-[#25D366]/30 transition-colors sm:hover:bg-[#25D366]/20 dark:text-[#4BE08A]",
+  // 44 — a fingertip. It was 36, and it sits in rows beside other small controls.
+  icon: "size-11 rounded-full bg-[#25D366]/10 text-[#0F7B45] ring-1 ring-inset ring-[#25D366]/30 transition-colors sm:hover:bg-[#25D366]/20 dark:text-[#4BE08A]",
   dock: "size-11 rounded-xl bg-[#25D366] text-white shadow-[0_6px_12px_-8px_rgba(37,211,102,.55)] transition-transform active:scale-[0.98]",
+  // Deliberately the same box as `BookingCtaLink` — radius, padding, text size — so the two
+  // halves read as one control split in two: book, or ask first. Only the colour differs.
+  split:
+    "flex-1 gap-2 rounded-md bg-[#25D366] px-3 py-2.5 text-sm font-semibold text-white transition-opacity sm:hover:opacity-90",
 } as const;
 
 /**
@@ -73,7 +79,7 @@ export function WhatsAppAction({
         className,
       )}
     >
-      <WhatsAppIcon size={variant === "dock" ? 20 : isIcon ? 16 : 18} />
+      <WhatsAppIcon size={variant === "dock" ? 20 : isIcon || variant === "split" ? 16 : 18} />
       {!isIcon && label}
     </WhatsAppLeadLink>
   );

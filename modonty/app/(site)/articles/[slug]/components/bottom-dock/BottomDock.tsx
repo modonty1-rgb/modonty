@@ -101,11 +101,15 @@ export function BottomDock({
       {/* Primary — booking form (FORM) or external link (LINK) */}
       {isForm && (
         <Sheet>
+          {/* Was amber with a hand-written amber shadow: the same booking action was blue on the
+              desktop rail and amber here, so one act wore two colours. It now runs the brand
+              blue like everywhere else, and the ring carries the boundary the dark page cannot
+              give it. */}
           <SheetTrigger asChild>
             <button
               type="button"
               aria-label={`${bookLabel} — ${clientName}`}
-              className={cn(pill, "h-11 flex-1 bg-amber-500 text-black shadow-[0_6px_12px_-6px_rgba(245,158,11,0.55)]")}
+              className={cn(pill, "h-11 flex-1 bg-primary text-primary-foreground ring-1 ring-inset ring-white/25 shadow-lg shadow-primary/25")}
             >
               <IconCalendar className="h-4 w-4" />
               {bookLabel}
@@ -132,7 +136,7 @@ export function BottomDock({
           clientId={clientId ?? undefined}
           target="_blank"
           rel="noopener noreferrer"
-          className={cn(pill, "h-11 flex-1 bg-primary text-primary-foreground shadow-[0_6px_12px_-6px_rgba(15,118,110,0.5)]")}
+          className={cn(pill, "h-11 flex-1 bg-primary text-primary-foreground ring-1 ring-inset ring-white/25 shadow-lg shadow-primary/25")}
         >
           <IconExternal className="h-4 w-4" />
           {linkLabel}

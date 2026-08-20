@@ -1,4 +1,5 @@
 "use client";
+import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -162,13 +163,13 @@ function PartnerSlide({ partner, priority }: { partner: FeaturedPartner; priorit
       {/* caption — constrained to the page width, anchored bottom-start */}
       <div className="absolute inset-x-0 bottom-0">
         <div className="mx-auto flex max-w-[1128px] items-end gap-3.5 px-4 pb-4 sm:pb-5">
-          <div className="relative grid h-14 w-14 flex-shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/70 bg-white shadow-lg sm:h-16 sm:w-16">
-            {logo ? (
-              <OptimizedImage media={asMedia(logo, partner.name)} alt={partner.name} fill className="object-contain p-1.5" sizes="64px" />
-            ) : (
-              <span className="text-xl font-black text-primary">{partner.name.slice(0, 2)}</span>
-            )}
-          </div>
+          {/* Was `bg-white` + `border-white/70` — the whitest instance of the halo. */}
+          <PartnerAvatar
+            media={logo ? asMedia(logo, partner.name) : null}
+            name={partner.name}
+            size="standard"
+            className="shadow-lg"
+          />
           <div className="min-w-0 flex-1">
             <h3 className="flex items-center gap-2 text-lg font-black text-white drop-shadow sm:text-xl lg:text-2xl">
               <span className="truncate">{partner.name}</span>

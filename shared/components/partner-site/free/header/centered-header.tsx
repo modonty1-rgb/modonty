@@ -16,7 +16,7 @@ export function CenteredHeader({ data }: { data: HeaderData }) {
       <div className="mx-auto grid h-16 max-w-[1128px] grid-cols-[1fr_auto_1fr] items-center px-6">
         <PhoneLine phone={data.phone} className="hidden justify-self-start text-muted-foreground lg:flex" />
         <a href={data.homeHref} className="min-w-0">
-          <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} size={40} />
+          <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} size="standard" />
         </a>
         <div className="flex items-center justify-self-end">
           <WhatsAppButton href={data.whatsappHref} variant="text" className="hidden md:inline-flex" />

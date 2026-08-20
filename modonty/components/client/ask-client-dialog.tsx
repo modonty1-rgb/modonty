@@ -127,7 +127,11 @@ export function AskClientDialog({
           className={cn("w-full h-auto py-2 whitespace-normal justify-center bg-amber-500 border-amber-500 text-black font-semibold hover:bg-amber-400 hover:border-amber-400 shadow-sm", triggerClassName)}
           type="button"
         >
-          {triggerLabel ?? (clientName ? `اسأل ${clientName} مباشرةً` : "اسأل العميل")}
+          {/* One default for every surface (Khalid, 19 Aug). It used to build
+              «اسأل ⟨الاسم⟩ مباشرةً» here, and only the partner card overrode it — so the same
+              button read differently in Modo's chat than under an article. An invitation with
+              no pronoun also fits a doctor, a company and a shop alike. */}
+          {triggerLabel ?? "عندك سؤال؟"}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md" dir="rtl">

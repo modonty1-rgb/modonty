@@ -7,7 +7,6 @@ export { ArticleComments } from "./comments/ArticleComments";
 export { ArticleShareButtons } from "./share-buttons/ShareButtons";
 export { ArticleInteractionButtons } from "./interaction-buttons/InteractionButtons";
 export { ReadingProgressBar } from "./reading-progress/ReadingProgressBarLazy";
-export { ArticleAuthorBio } from "./sidebar/AuthorBio";
 export { ArticleCitations } from "./sidebar/Citations";
 // Imported directly, not through a `ssr: false` wrapper: the outline has to be in the HTML —
 // a crawler does not run JavaScript, and neither does a visitor whose bundle failed.

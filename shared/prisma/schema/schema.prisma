@@ -1243,6 +1243,12 @@ model Article {
   excerpt       String?
   content String // Article body (markdown/HTML)
   audioUrl      String? // Audio version URL (A7)
+  // Length of that recording, in whole seconds. Stored rather than read from the file: the
+  // listen tab and the /audio shelf both show the duration before anything plays, and without
+  // this every article view would range-read the audio just to learn a number — measured on a
+  // two-hour recording, that is a 116MB origin hit for a feature most readers never use.
+  // Written when the recording is uploaded; null means "not measured yet", never "zero".
+  audioDurationSeconds Int?
 
   // Relationships
   clientId   String    @db.ObjectId

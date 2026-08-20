@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { buttonVariants } from "@/components/ui/button";
 import { ModontyTrustMark } from "@/components/icons/modonty-trust-mark";
@@ -81,13 +82,8 @@ export function PartnerCard({ partner }: PartnerCardProps) {
       )}
 
       <div className="flex items-start gap-3">
-        <span className="relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-full bg-muted ring-1 ring-border">
-          {partner.logo ? (
-            <OptimizedImage media={asMedia(partner.logo, partner.name)} alt="" fill sizes="44px" loading="lazy" className="object-cover" />
-          ) : (
-            <span aria-hidden className="text-base font-bold text-link">{initial}</span>
-          )}
-        </span>
+        {/* Was object-cover, which crops a logo. */}
+        <PartnerAvatar media={partner.logo ? asMedia(partner.logo, partner.name) : null} name={partner.name} size="small" />
         <div className="min-w-0 flex-1">
           <h2 className="flex items-center gap-1.5 text-sm font-bold text-foreground">
             <Link href={href} className="truncate rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:hover:text-link">

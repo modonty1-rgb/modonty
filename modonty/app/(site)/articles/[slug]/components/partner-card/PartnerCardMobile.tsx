@@ -1,4 +1,4 @@
-import { OptimizedImage } from "@modonty/shared/components/optimized-image";
+import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 
@@ -31,13 +31,7 @@ export function PartnerCardMobile({ client, articleId }: PartnerCardMobileProps)
       clientId={client.id}
       className="mt-3 flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 p-2.5 lg:hidden"
     >
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-background ring-1 ring-border">
-        {logoMedia ? (
-          <OptimizedImage media={logoMedia} alt={client.name} width={44} height={44} className="object-contain p-1" sizes="44px" />
-        ) : (
-          <IconClients className="h-5 w-5 text-muted-foreground" />
-        )}
-      </span>
+      <PartnerAvatar media={logoMedia} name={client.name} size="standard" />
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-1 text-[15px] font-bold leading-tight text-foreground">
           {client.name}

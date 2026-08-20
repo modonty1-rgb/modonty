@@ -440,7 +440,11 @@
       "Bash(cd \"c:/Users/w2nad/Desktop/dreamToApp/MODONTY\" && sed -n '/## Naming/,/## This repo/p' .claude/rules/folder-structure.md)",
       "Edit(/.claude/skills/modonty-naming/**)",
       "Bash(sed -n '/^6\\\\. \\\\*\\\\*Documentation saves time/,/because it gets believed/p' .claude/skills/modonty-naming/SKILL.md)",
-      "Bash(sed -n '/^### `documentation\\\\/`/,/^### The data function/p' .claude/skills/modonty-naming/SKILL.md)"
+      "Bash(sed -n '/^### `documentation\\\\/`/,/^### The data function/p' .claude/skills/modonty-naming/SKILL.md)",
+      "Edit(/.claude/skills/seo-listing-pages/**)",
+      "Bash(powershell -NoProfile -Command \"Remove-Item -LiteralPath 'app/clients/helpers/format-arabic-count.ts' -Force -ErrorAction SilentlyContinue\")",
+      "Bash(grep -vE \"aria-hidden|className|messages\\\\.|//|\\\\* \")",
+      "Bash(powershell -NoProfile -Command \"New-Item -ItemType Directory -Force -Path 'c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/idea' | Out-Null; Move-Item -LiteralPath 'c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/HTML/TRUST-REVIEWS-STRATEGY-v1.html' -Destination 'c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/idea/trust-reviews-idea.html'; Move-Item -LiteralPath 'c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/HTML/PARTNER-REVIEWS-MOCKUP-v1.html' -Destination 'c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/idea/trust-reviews-screens.html'; Get-ChildItem 'c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/idea' | Select-Object -ExpandProperty Name\")"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [

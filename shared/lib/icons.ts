@@ -145,6 +145,16 @@ export { MessageCircleQuestion as IconFaqQuestion } from 'lucide-react';
 export { HelpCircle       as IconHelpCircle    } from 'lucide-react';
 export { Chrome           as IconChrome        } from 'lucide-react';
 export { EyeOff           as IconEyeOff        } from 'lucide-react';
+// Same glyph as IconViews, under the name that reads right next to IconEyeOff in a show/hide pair.
+export { Eye              as IconEye           } from 'lucide-react';
+// The three text-size marks — an A shrinking, an A and a small a, an A growing. The shape a
+// reader already knows from every word processor, so the control needs no label.
+export { AArrowDown       as IconTextSmaller   } from 'lucide-react';
+export { ALargeSmall      as IconTextNormal    } from 'lucide-react';
+export { AArrowUp         as IconTextBigger    } from 'lucide-react';
+// The listen tab — headphones when the article has an audio version, struck through when not.
+export { Headphones       as IconListen        } from 'lucide-react';
+export { HeadphoneOff     as IconListenOff     } from 'lucide-react';
 export { Link2Off         as IconLinkOff       } from 'lucide-react';
 export { History          as IconHistory       } from 'lucide-react';
 export { Send             as IconSend          } from 'lucide-react';
@@ -170,6 +180,9 @@ export { SkipForward      as IconSkipForward   } from 'lucide-react';
 export { Square           as IconStop          } from 'lucide-react';
 export { Gauge            as IconSpeed         } from 'lucide-react';
 export { RotateCcw        as IconReplay        } from 'lucide-react';
+// The +15s twin of IconReplay. SkipForward means "next track" everywhere else, so it would
+// read as the wrong promise on an article's audio version.
+export { RotateCw         as IconAdvance       } from 'lucide-react';
 
 // ── Devices ──────────────────────────────────────────────────────────────────
 export { Smartphone       as IconMobile        } from 'lucide-react';

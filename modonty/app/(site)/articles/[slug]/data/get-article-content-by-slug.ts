@@ -24,11 +24,11 @@ export async function getArticleContentBySlug(slug: string) {
       client: {
         include: {
           logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
-          heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
+          heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, width: true, height: true } },
           // Client Mini (1.91:1) — preferred over the 6:1 hero for the card image.
           media: {
             where: { type: "CLIENT_MINI" },
-            select: { url: true, bunnyUrl: true, blurDataURL: true },
+            select: { url: true, bunnyUrl: true, blurDataURL: true, width: true, height: true },
             orderBy: { createdAt: "desc" },
             take: 1,
           },

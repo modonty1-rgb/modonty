@@ -1,11 +1,8 @@
-import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { BRAND_AVATAR_RADIUS } from "@/constants";
 import { IconClients } from "@/lib/icons";
-import { cn } from "@/lib/utils";
 
 interface RelatedClient {
   id: string;
@@ -34,12 +31,6 @@ export function RelatedClients({ clients, clientId }: RelatedClientsProps) {
       <CardContent>
         <div className="flex flex-col gap-2">
           {clients.map((client) => {
-            const initials = client.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-              .slice(0, 2)
-              .toUpperCase();
             const href = `/clients/${encodeURIComponent(client.slug)}`;
 
             return (
@@ -52,10 +43,7 @@ export function RelatedClients({ clients, clientId }: RelatedClientsProps) {
                 className="group"
               >
                 <div className="flex items-center gap-2.5 py-2 px-2.5 rounded-lg border border-border hover:border-primary/50 hover:bg-accent/50 transition-all duration-300">
-                  <Avatar className={cn("h-9 w-9 flex-shrink-0", BRAND_AVATAR_RADIUS)}>
-                    <AvatarImage src={mediaSrc(client.logoMedia) ?? undefined} alt={client.name} />
-                    <AvatarFallback className={cn("text-xs font-medium bg-primary text-primary-foreground", BRAND_AVATAR_RADIUS)}>{initials}</AvatarFallback>
-                  </Avatar>
+                  <PartnerAvatar media={client.logoMedia} name={client.name} size="small" />
                   <div className="flex-1 min-w-0 flex items-center gap-2">
                     <h3 className="font-medium text-sm group-hover:text-primary transition-colors truncate">
                       {client.name}

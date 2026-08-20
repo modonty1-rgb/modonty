@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
+import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 import { IconChevronLeft, IconMapPin, IconFeatured } from "@/lib/icons";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { WhatsAppAction } from "@/components/shared/whatsapp-action/WhatsAppAction";
@@ -65,24 +66,11 @@ export function ClientCard({
       <div className="flex flex-col gap-2.5 px-4 py-3.5">
         {/* Identity: logo + name + slogan */}
         <div className="flex items-center gap-3">
-          <div className="shrink-0 w-[42px] h-[42px] rounded-xl border border-border/50 bg-muted overflow-hidden">
-            {logoUrl ? (
-              <OptimizedImage
-                media={asMedia(logoUrl, `شعار ${name}`)}
-                alt={`شعار ${name}`}
-                width={42}
-                height={42}
-                // Was missing entirely before the swap — the shared component turns that
-                // into a compile error instead of a silent 100vw assumption.
-                sizes="42px"
-                className="object-contain w-full h-full p-1"
-              />
-            ) : (
-              <span className="flex h-full w-full items-center justify-center text-base font-black text-primary/40">
-                {name.slice(0, 1)}
-              </span>
-            )}
-          </div>
+          <PartnerAvatar
+            media={logoUrl ? asMedia(logoUrl, `شعار ${name}`) : null}
+            name={name}
+            size="standard"
+          />
           <div className="flex flex-col min-w-0 flex-1">
             <h2 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors truncate">
               {name}

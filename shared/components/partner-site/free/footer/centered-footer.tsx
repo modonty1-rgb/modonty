@@ -12,7 +12,7 @@ export function CenteredFooter({ data, preview = false }: { data: FooterData; pr
       <FooterWrap>
         <div className="flex flex-col items-center gap-6 text-center">
           <a href={data.homeHref}>
-            <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} size={44} />
+            <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} size="standard" />
           </a>
           <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
             {data.pages.map((p) => (

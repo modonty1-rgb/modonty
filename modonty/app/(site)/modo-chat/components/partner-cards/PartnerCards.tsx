@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
@@ -61,23 +62,11 @@ export function PartnerCards({
         return (
           <Card key={partner.slug} className="overflow-hidden p-0">
             <div className="flex items-start gap-3 p-3">
-              <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-muted ring-1 ring-border">
-                {partner.logo ? (
-                  <OptimizedImage
-                    media={asMedia(partner.logo, partner.name)}
-                    alt=""
-                    fill
-                    sizes="44px"
-                    loading="lazy"
-                    className="object-cover"
-                  />
-                ) : (
-                  <span className="flex h-full w-full items-center justify-center">
-                    <IconClients className="h-5 w-5 text-muted-foreground" aria-hidden />
-                  </span>
-                )}
-              </span>
-
+              <PartnerAvatar
+                media={partner.logo ? asMedia(partner.logo, partner.name) : null}
+                name={partner.name}
+                size="small"
+              />
               <div className="min-w-0 flex-1">
                 <p className="flex items-center gap-1.5 text-sm font-bold leading-snug text-foreground">
                   <span className="truncate">{partner.name}</span>

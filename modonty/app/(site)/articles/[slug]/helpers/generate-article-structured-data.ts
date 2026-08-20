@@ -61,6 +61,25 @@ export function generateArticleStructuredData(article: any) {
     inLanguage: article.inLanguage || "ar",
     isAccessibleForFree: article.isAccessibleForFree ?? true,
     ...(article.license && { license: article.license }),
+    // What the page actually gives a reader who needs it. Every term is from the approved W3C
+    // "Accessibility Discoverability Vocabulary for Schema.org", and every one is claimed only
+    // because the page does it:
+    //   displayTransformability — the reader can set the body text size, and the type is sized
+    //     in rem/em throughout, which is what the term requires (no absolute px).
+    //   tableOfContents + structuralNavigation — the pinned contents list, built from real
+    //     headings, so the article can be navigated by structure rather than by scrolling.
+    //   readingOrder — one column of prose in source order; nothing is placed out of sequence.
+    //   alternativeText — images carry alt text.
+    // Honest scope: Google does not rank on these. They are read by accessibility-aware
+    // catalogues and aggregators, and they are true — which is the only reason to emit them.
+    accessibilityFeature: [
+      "displayTransformability",
+      "tableOfContents",
+      "structuralNavigation",
+      "readingOrder",
+      "alternativeText",
+    ],
+    accessibilityHazard: ["noFlashingHazard", "noSoundHazard", "noMotionSimulationHazard"],
   };
 
   if (article.faqs && article.faqs.length > 0) {

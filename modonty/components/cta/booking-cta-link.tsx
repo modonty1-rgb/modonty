@@ -31,7 +31,11 @@ export function BookingCtaLink({ clientSlug, label, source, articleId, className
       href={href}
       className={
         className ??
-        "inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+        // The ring is not decoration: the brand blue sits at 2.77:1 against the dark page, and
+        // no dark ground reaches the 3:1 a control's boundary needs (pure black caps at 2.99).
+        // A visible edge is the alternative the rule allows, so the button keeps the exact
+        // brand colour instead of being lightened away from it.
+        "inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground ring-1 ring-inset ring-white/25 transition-opacity hover:opacity-90"
       }
     >
       <IconCalendar className="h-4 w-4" />

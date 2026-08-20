@@ -12,7 +12,7 @@ export function SimpleFooter({ data, preview = false }: { data: FooterData; prev
       <FooterWrap className="pt-8">
         <div className="flex flex-wrap items-center justify-between gap-6">
           <a href={data.homeHref} className="min-w-0">
-            <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} size={40} />
+            <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} size="standard" />
           </a>
           <ul className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
             {data.pages.map((p) => (

@@ -1,4 +1,5 @@
 import { OptimizedImage, asMedia } from "../../../optimized-image";
+import { PartnerAvatar } from "../../../partner-avatar/PartnerAvatar";
 import { WhatsAppButton } from "../../parts/whatsapp-button";
 import type { HomeData } from "../home/home-data";
 
@@ -27,11 +28,14 @@ export function CoverHero({ data }: { data: HomeData; preview?: boolean }) {
       <div className={hasCover ? "mx-auto max-w-[1128px] px-6" : "mx-auto max-w-[1128px] px-6 pt-16"}>
         <div className="flex flex-col gap-6 pt-5 md:flex-row md:items-end md:justify-between">
           <div className="flex min-w-0 items-end gap-5">
-            {hero.logoUrl && (
-              <span className={hasCover ? "relative -mt-16 h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-white p-2 ring-1 ring-border shadow-[0_0_1px_rgba(0,0,0,.45),0_4px_12px_rgba(0,0,0,.25)] md:-mt-20 md:h-24 md:w-24" : "relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-white p-2 ring-1 ring-border md:h-24 md:w-24"}>
-                <OptimizedImage media={asMedia(hero.logoUrl, data.name)} alt="" fill sizes="avatar" className="object-contain p-2" />
-              </span>
-            )}
+            {/* Was a white square with a ring — the halo, and the square kept the white corners
+                of a partner logo file visible. */}
+            <PartnerAvatar
+              media={hero.logoUrl ? asMedia(hero.logoUrl, data.name) : null}
+              name={data.name}
+              size="big"
+              className={hasCover ? "-mt-16 md:-mt-20" : undefined}
+            />
             <div className="min-w-0 pb-1">
               {meta && <p className="text-sm text-muted-foreground">{meta}</p>}
               <h1 className="mt-1 text-3xl font-bold leading-tight text-foreground md:text-4xl">{promise}</h1>

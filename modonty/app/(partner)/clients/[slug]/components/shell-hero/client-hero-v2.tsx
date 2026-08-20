@@ -1,9 +1,10 @@
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
+import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 
 import { IconCheck } from "@/lib/icons";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 
-import { getInitials, getTagline, getSocialPlatform } from "../hero/utils";
+import { getTagline, getSocialPlatform } from "../hero/utils";
 import { HeroChips } from "./hero-chips";
 import { HeroStats } from "./hero-stats";
 import { HeroGoogleStat } from "./hero-google-stat";
@@ -74,7 +75,6 @@ export function ClientHeroV2({
   digitalImpact = 0,
   defaultImages = null,
 }: ClientHeroV2Props) {
-  const initials = getInitials(client.name);
   const tagline = getTagline(client);
 
   const socialLinks = client.sameAs
@@ -138,24 +138,11 @@ export function ClientHeroV2({
           <div className="p-4 sm:p-5">
             {/* DESKTOP: everything on one line */}
             <div className="hidden items-center gap-5 lg:flex">
-              {/* Distinctive neutral logo frame (white ring + border + shadow — no brand-gradient
-                  so the partner's own logo colors stay intact). */}
+              {/* This frame was `ring-4 ring-white` over a `bg-card` fill — the loudest instance
+                  of the white halo, on the partner's own page. One shared avatar now, same as
+                  every other surface. */}
               <div className="relative flex-shrink-0">
-                <div className="relative h-[70px] w-[70px] overflow-hidden rounded-[14px] border border-border bg-card shadow-[0_6px_16px_rgba(0,0,0,0.12)] ring-4 ring-white">
-                  {logoMedia ? (
-                    <OptimizedImage
-                      media={logoMedia}
-                      alt={client.name}
-                      fill
-                      className="object-contain p-1.5"
-                      sizes="70px"
-                    />
-                  ) : (
-                    <span className="flex h-full w-full items-center justify-center bg-gradient-to-br from-foreground to-accent text-3xl font-black text-white">
-                      {initials}
-                    </span>
-                  )}
-                </div>
+                <PartnerAvatar media={logoMedia} name={client.name} size="big" />
                 <span
                   className="absolute -bottom-1 -start-1 grid h-6 w-6 place-items-center rounded-full border-2 border-card bg-accent text-white shadow-sm"
                   aria-label="موثّق من مدوّنتي"

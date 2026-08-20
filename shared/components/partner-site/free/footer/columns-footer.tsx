@@ -24,7 +24,7 @@ export function ColumnsFooter({ data, preview = false }: { data: FooterData; pre
         <div className="grid gap-8" style={{ gridTemplateColumns: `1.6fr ${columns.map(() => "1fr").join(" ")}` }}>
           <div className="space-y-4">
             <a href={data.homeHref} className="inline-block">
-              <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} size={40} />
+              <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} size="standard" />
             </a>
             {data.description && <p className="line-clamp-3 max-w-xs text-sm leading-6 text-muted-foreground">{data.description}</p>}
             <SocialLinks urls={data.socialLinks} inert={preview} />

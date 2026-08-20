@@ -1,4 +1,5 @@
 "use client";
+import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 
 import { useState } from "react";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
@@ -148,13 +149,12 @@ export function ClientBottomBar({
   const chipInner = (
     <>
       <span className="relative inline-block">
-        <span className={cn("grid size-14 place-items-center overflow-hidden bg-background shadow-lg shadow-primary/30 outline outline-[3px] outline-background ring-2 ring-primary/60 transition-transform group-active:scale-95", BRAND_AVATAR_RADIUS)}>
-          {logoSrc ? (
-            <OptimizedImage media={asMedia(logoSrc, clientName)} alt={clientName} width={56} height={56} className="size-full object-contain p-1.5" sizes="56px" />
-          ) : (
-            <IconClients className="size-7 text-primary" />
-          )}
-        </span>
+        <PartnerAvatar
+          media={logoSrc ? asMedia(logoSrc, clientName) : null}
+          name={clientName}
+          size="standard"
+          className="shadow-lg shadow-primary/30 transition-transform group-active:scale-95"
+        />
         {/* verified mark — مدوّنتي */}
         <span
           className="absolute -bottom-0.5 -start-0.5 grid size-5 place-items-center rounded-full border-2 border-background bg-accent text-white"

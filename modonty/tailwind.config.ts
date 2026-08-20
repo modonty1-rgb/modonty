@@ -7,6 +7,12 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./lib/**/*.{js,ts,jsx,tsx,mdx}",
+    // The shadcn primitives live in `shared`, outside this app's folder. Without this glob
+    // every class used ONLY by them is purged: the dialog kept `fixed` (other files use it)
+    // but lost `top-[50%]`, `left-[50%]` and the translates, so it landed at its static
+    // position ~18,700px down the page while the black overlay covered the screen. Console
+    // already carries this line for the same reason.
+    "../shared/components/**/*.{ts,tsx}",
   ],
   theme: {
     extend: {
@@ -62,7 +68,30 @@ const config: Config = {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
+        // The designer's three greys, reachable by name. The light and dark ones already serve
+        // as --border and --muted-foreground; the middle one had no token at all before 19 Aug.
+        brand: {
+          navy: "hsl(var(--brand-navy))",
+          blue: "hsl(var(--brand-blue))",
+          teal: "hsl(var(--brand-teal))",
+          "gray-light": "hsl(var(--brand-gray-light))",
+          gray: "hsl(var(--brand-gray))",
+          "gray-dark": "hsl(var(--brand-gray-dark))",
+        },
         star: "hsl(var(--star))",
+        // The four reader actions — like · save · comment · share.
+        action: {
+          like: "hsl(var(--action-like))",
+          "like-foreground": "hsl(var(--action-like-foreground))",
+          save: "hsl(var(--action-save))",
+          "save-foreground": "hsl(var(--action-save-foreground))",
+          comment: "hsl(var(--action-comment))",
+          "comment-foreground": "hsl(var(--action-comment-foreground))",
+          share: "hsl(var(--action-share))",
+          "share-foreground": "hsl(var(--action-share-foreground))",
+          listen: "hsl(var(--action-listen))",
+          "listen-foreground": "hsl(var(--action-listen-foreground))",
+        },
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
