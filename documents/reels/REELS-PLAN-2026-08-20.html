@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>خطة صفحة الطلّات — تشغيل سلس بلا تأخير</title>
+<style>
+  :root{
+    --bg:#0b0b10; --panel:#14141c; --panel2:#1b1b26; --line:#2a2a38; --fg:#eef0f6; --dim:#9aa0b4;
+    --teal:#00d8d8; --navy:#0e065a; --blue:#3030ff; --gold:#ffb020; --red:#ff5470; --green:#22d39a;
+    --mono:ui-monospace,"Cascadia Code",Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:radial-gradient(1200px 600px at 80% -10%,rgba(48,48,255,.18),transparent 60%),var(--bg);
+    color:var(--fg);font-family:"Tajawal","Segoe UI",system-ui,sans-serif;line-height:1.85;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1040px;margin:0 auto;padding:40px 22px 100px}
+  .kicker{color:var(--teal);font-weight:700;font-size:13px;letter-spacing:.5px}
+  h1{font-size:34px;margin:6px 0 10px;line-height:1.25}
+  h1 .g{background:linear-gradient(90deg,var(--teal),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{color:var(--dim);font-size:16px;max-width:70ch}
+  h2{font-size:22px;margin:52px 0 6px;display:flex;align-items:center;gap:10px}
+  h2 .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;
+    background:linear-gradient(135deg,var(--blue),var(--navy));color:#fff;font-size:14px;font-weight:800;flex:none}
+  h3{font-size:16px;margin:24px 0 6px;color:var(--fg)}
+  .sub{color:var(--dim);font-size:14px;margin:0 0 14px;border-bottom:1px solid var(--line);padding-bottom:14px}
+  p{margin:8px 0}
+  code{font-family:var(--mono);background:#000;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:12.5px;direction:ltr;display:inline-block}
+  pre{background:#05050a;border:1px solid var(--line);border-radius:12px;padding:15px 16px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;direction:ltr;text-align:left;line-height:1.7}
+  pre .c{color:#5b6274}
+  pre .k{color:var(--teal)}
+  pre .s{color:var(--gold)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin:16px 0}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr 1fr}
+  @media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;margin-inline-end:6px}
+  .p-now{background:rgba(255,84,112,.15);color:var(--red)}
+  .p-ok{background:rgba(34,211,154,.15);color:var(--green)}
+  .p-src{background:rgba(0,216,216,.13);color:var(--teal)}
+  .p-need{background:rgba(255,176,32,.15);color:var(--gold)}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{text-align:right;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--dim);font-size:12px;font-weight:700}
+  .path{font-family:var(--mono);font-size:12px;color:var(--teal);direction:ltr;display:inline-block}
+  .diagram{background:#05050a;border:1px solid var(--line);border-radius:14px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;color:var(--dim);white-space:pre;line-height:1.65;direction:ltr;text-align:left}
+  .phase{border-inline-start:3px solid var(--blue);background:var(--panel);border-radius:0 14px 14px 0;padding:16px 20px;margin:14px 0}
+  .phase h3{margin-top:0;color:var(--teal)}
+  .kv{display:flex;gap:8px;font-size:13px;margin:4px 0}
+  .kv b{color:var(--dim);min-width:70px;flex:none}
+  .note{background:rgba(48,48,255,.08);border:1px solid rgba(48,48,255,.4);border-radius:12px;padding:14px 18px;margin:16px 0}
+  .warn{background:rgba(255,176,32,.07);border:1px solid rgba(255,176,32,.4);border-radius:12px;padding:14px 18px;margin:16px 0}
+  ul{padding-inline-start:22px;margin:8px 0}
+  li{margin:6px 0}
+  a{color:var(--teal)}
+  .foot{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);color:var(--dim);font-size:13px}
+  .tag{font-family:var(--mono);font-size:11px;color:var(--gold);direction:ltr}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="kicker">مُدَوَّنَتِي · خطّة معمارية · ٢٠ أغسطس ٢٠٢٦</div>
+<h1>صفحة الطلّات — <span class="g">تشغيل سلس بلا تأخير</span></h1>
+<p class="lead">
+  خطّة كاملة لتحويل صفحة الطلّات من عرض صور ثابتة إلى خلاصة فيديو عمودية تعمل كما تعمل
+  تيك توك وإنستغرام وسناب: أول إطار يظهر فوراً، والانتقال بين الطلّات بلا لحظة سواد ولا انتظار
+  تحميل. مبنيّة على بني ستريم (المورّد المعتمد) وعلى مصادر رسمية فقط.
+</p>
+
+<!-- ============ 1 ============ -->
+<h2><span class="n">١</span> الوضع الحالي — مقيس من الكود</h2>
+<p class="sub">لا افتراض: كل سطر هنا مفتوح ومقروء اليوم.</p>
+
+<div class="card">
+  <p><span class="pill p-ok">مقيس ٢٠ أغسطس</span> <b>الدورة الخلفية كاملةً مبنيّة — العميل يرفع، والأدمن يعتمد. الناقص كلّه في مدونتي.</b></p>
+  <div class="diagram">   كونسول (العميل)                أدمن (مُدَوَّنَتِي)           مدونتي (العام)
+   ┌──────────────────┐          ┌──────────────────┐         ┌──────────────────┐
+   │ رفع فيديو → بني   │  ✅      │ approveReel       │  ✅     │ الخلاصة           │  ✗
+   │ ستريم (TUS)      │─────────▶│ PENDING→PUBLISHED │────────▶│ تعرض صوراً فقط    │
+   │ PENDING_APPROVAL │          │ + إبطال كاش reels │         │ (الفيديو محجوب)   │
+   └──────────────────┘          └──────────────────┘         └──────────────────┘
+   video-actions.ts:62-92        reel-approval.ts:22          get-reels-feed-page.ts
+   bunnyVideoId·playbackUrl      حرّاس: عنوان+وصف+فريد          mimeType:"image/" ✗
+   ·mp4Url·durationSec           reelApprovedAt·reelPublishedAt</div>
+  <p style="color:var(--dim);font-size:13.5px">
+    <b>✅ جاهز ومتحقَّق:</b> رفع الفيديو للكونسول عبر بني ستريم (<span class="path">console/.../videos/actions/video-actions.ts:62</span>
+    يكتب <code>bunnyVideoId·playbackUrl·mp4Url</code> بحالة <code>PENDING_APPROVAL</code>) · رفع الصور (<span class="path">reels-actions.ts:95</span>) ·
+    موافقة الأدمن ورفضه مع الحرّاس وإبطال كاش مدونتي (<span class="path">admin/.../reels/actions/reel-approval.ts:22</span>) ·
+    السكيما كاملة (<code>ReelStatus</code> · <code>mp4Url</code> «لأن Google يطلب ملفاً» · <code>reelSlug</code> «صفحة مشاهدة مستقلّة»).
+  </p>
+</div>
+
+<div class="card">
+  <p><span class="pill p-now">الناقص — كلّه في مدونتي (نطاقي)</span></p>
+  <table>
+    <tr><th>#</th><th>الناقص</th><th>الدليل</th></tr>
+    <tr><td>١</td><td>الخلاصة تفلتر الصور فقط — الفيديو المعتمَد <b>غير مرئيّ</b> رغم أنه <code>PUBLISHED</code></td><td><span class="path">get-reels-feed-page.ts</span> · <code>mimeType:"image/"</code></td></tr>
+    <tr><td>٢</td><td>لا مشغّل <code>&lt;video&gt;</code> — يرسم صوراً فقط</td><td><span class="path">reels-feed-client.tsx</span></td></tr>
+    <tr><td>٣</td><td>لا يُصدَر <code>VideoObject</code> في مدونتي — رغم أن الأرضية مُجهَّزة بالأعلى</td><td>بحث <code>@type VideoObject</code> في مدونتي = <b>صفر</b></td></tr>
+    <tr><td>٤</td><td>لا صفحة مشاهدة مستقلّة <code>/reels/[slug]</code> — <code>reelSlug</code> يشير للعدم</td><td>لا <span class="path">reels/[slug]/page.tsx</span> في مدونتي</td></tr>
+  </table>
+</div>
+
+<div class="grid g2">
+  <div class="card">
+    <h3>✅ الأساس الموجود وجيّد</h3>
+    <ul>
+      <li>طبقة ملء الشاشة <code>fixed inset-0</code> فوق الهيدر والفوتر.</li>
+      <li>تمرير خطّاف <code>snap-y snap-mandatory</code> — طلّة واحدة تملأ الشاشة.</li>
+      <li>تمرير لا نهائي عبر <code>IntersectionObserver</code> + مؤشّر (<code>rootMargin: 200%</code>).</li>
+      <li>حالة الإعجاب/الحفظ لكل مستخدم خارج الكاش المشترك — صحيح.</li>
+      <li><code>content-visibility:auto</code> — المتصفّح يتخطّى رسم الطلّات البعيدة.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>✅ بنية الفيديو جاهزة في السكيما</h3>
+    <ul>
+      <li><span class="path">schema.prisma:1584</span> — <code>bunnyVideoId</code> (معرّف بني ستريم).</li>
+      <li><span class="path">schema.prisma:1585</span> — <code>playbackUrl</code> (قائمة HLS).</li>
+      <li>بني ستريم <b>مزوَّد بالكامل</b>: مكتبة <code>698133</code>، المفاتيح فعّالة، وMP4 fallback مُفعّل.</li>
+      <li>الرفع موجود: <span class="path">shared/lib/bunny-stream.ts</span> (رفع TUS).</li>
+      <li>النطاقان مسجَّلان في <span class="path">next.config.ts</span> — لا تعديل إعداد.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="warn">
+  <b>الفجوة في جملة:</b> عندنا خلاصة صور بعظام سليمة، وبنية بني ستريم كاملة —
+  والناقص هو <b>مشغّل الفيديو نفسه</b> (<code>hls.js</code> غير مركَّب) وربط حقول الفيديو بالخلاصة.
+  هذا ما تبنيه الخطّة.
+</div>
+
+<!-- ============ 2 ============ -->
+<h2><span class="n">٢</span> كيف تشغّلها المنصّات الكبيرة</h2>
+<p class="sub">تيك توك · إنستغرام ريلز · سناب — النمط واحد، وموثّق هندسياً.</p>
+
+<p>
+  المصادر الأربعة (مهندسو Mux، وتحليل بنية إنستغرام، ومكتبات بركة المشغّلات) تتقاطع على
+  <b>خمسة مبادئ</b>. صفحتنا اليوم تطبّق اثنين منها؛ الخطّة تضيف الثلاثة الباقية:
+</p>
+
+<table>
+  <tr><th>المبدأ</th><th>ماذا يعني</th><th>عندنا اليوم</th></tr>
+  <tr><td><b>بثّ متكيّف HLS</b></td><td>الفيديو مقطّع لأجزاء ٢-٣ ثوانٍ، والجودة تتبع الشبكة تلقائياً</td><td><span class="pill p-need">ناقص</span></td></tr>
+  <tr><td><b>بركة مشغّلات</b></td><td>٣-٥ عناصر <code>&lt;video&gt;</code> يُعاد تدويرها، لا واحد لكل طلّة</td><td><span class="pill p-need">ناقص</span></td></tr>
+  <tr><td><b>تسخين مُسبق</b></td><td>الطلّة التالية تُحمَّل في الخلفية قبل وصولك إليها</td><td><span class="pill p-need">ناقص</span> (للصفحات فقط)</td></tr>
+  <tr><td><b>تشغيل الظاهر فقط</b></td><td>مراقب تقاطع يشغّل المرئي ويوقف الباقي</td><td><span class="pill p-ok">موجود</span> (للتحميل)</td></tr>
+  <tr><td><b>مصغّرة أولاً</b></td><td>صورة المصغّرة تظهر فوراً بينما الفيديو يُخزَّن — صفر سواد</td><td><span class="pill p-need">ناقص</span></td></tr>
+</table>
+
+<div class="note">
+  <b>لماذا هذا يعطي «السلاسة»؟</b> السلاسة ليست سرعة الشبكة — هي <b>إخفاء زمن التحميل</b>:
+  المصغّرة تملأ العين في الإطار الأول، والفيديو التالي يكون مخزَّناً قبل أن تصله، فالانتقال يبدو فورياً
+  لأن العمل تمّ قبل لحظته. هذا بالضبط ما يفعله بني: يعطينا HLS + مصغّرة + MP4 احتياطي من نفس المصدر.
+</div>
+
+<!-- ============ 3 ============ -->
+<h2><span class="n">٣</span> القرار المعماري — محرّك التشغيل</h2>
+<p class="sub">بركة ٣ مشغّلات · نافذة تسخين · سلّم احتياطي ثلاثي.</p>
+
+<h3>بركة المشغّلات ونافذة التسخين</h3>
+<div class="diagram">   المؤشّر يقرأ ٦ طلّات في الـDOM  ·  لكن ٣ مشغّلات حيّة فقط
+
+   … طلّة ٢     [ثابتة، مصغّرة فقط، لا مشغّل]
+   ┌───────────────────────────────────────────┐
+   │  طلّة ٣    ◀ prev   مُخزَّنة، موقوفة       │  ← نافذة الحياة
+   │  طلّة ٤    ◀ current تعمل، صوت إن رغبت     │     ٣ مشغّلات
+   │  طلّة ٥    ◀ next   مُخزَّنة، جاهزة صامتة   │
+   └───────────────────────────────────────────┘
+   … طلّة ٦     [ثابتة، مصغّرة فقط، لا مشغّل]
+
+   عند التمرير للأمام:  ٣ يُدمَّر مشغّله ويحرّر ذاكرته
+                        ٦ يُنشأ له مشغّل ويبدأ التخزين
+   → في أي لحظة: ٣ عناصر video + ٣ نُسخ hls فقط، مهما طالت الخلاصة</div>
+
+<h3>سلّم الاحتياط — لا طلّة تبقى سوداء</h3>
+<div class="diagram">   ١) Safari / iOS  →  &lt;video&gt; يشغّل HLS أصلاً بلا مكتبة
+                       (video.canPlayType('application/vnd.apple.mpegurl'))
+
+   ٢) Chrome/Edge/Firefox  →  hls.js يربط الـHLS بالـ&lt;video&gt;
+                              (Hls.isSupported())
+
+   ٣) فشل hls.js أو متصفّح قديم  →  MP4 مباشر من بني
+                                    play_720p.mp4  (الاحتياطي مُفعّل أصلاً)
+
+   وفوق الثلاثة جميعاً:  poster = thumbnail.jpg  يظهر فوراً في كل الحالات</div>
+
+<h3>حلقة التنشيط (مراقب التقاطع)</h3>
+<div class="diagram">   IntersectionObserver  threshold: 0.6
+   ├─ طلّة ≥ ٦٠٪ ظاهرة  →  تصير "النشطة": play()  (صامتة تلقائياً)
+   ├─ الطلّات الأخرى     →  pause() + currentTime=0
+   └─ عند تغيّر النشطة   →  حرّك نافذة الحياة (prev/current/next)
+                            وابدأ تسخين next عبر hls.startLoad()</div>
+
+<!-- ============ 4 ============ -->
+<h2><span class="n">٤</span> روابط بني ستريم — من التوثيق الرسمي</h2>
+<p class="sub"><span class="pill p-src">bunny.net/docs</span> النطاق <code>vz-a26f5478-719.b-cdn.net</code> · مكتبة <code>698133</code> — كلاهما مسجَّل في next.config.ts</p>
+
+<pre><span class="c">// من bunnyVideoId المخزَّن في Media، نبني كل شيء بلا نداء API إضافي:</span>
+<span class="k">const</span> host = <span class="s">"https://vz-a26f5478-719.b-cdn.net"</span>;
+
+HLS      → <span class="s">`${host}/${bunnyVideoId}/playlist.m3u8`</span>
+MP4      → <span class="s">`${host}/${bunnyVideoId}/play_720p.mp4`</span>   <span class="c">// احتياطي</span>
+مصغّرة   → <span class="s">`${host}/${bunnyVideoId}/thumbnail.jpg`</span>   <span class="c">// poster فوري</span>
+معاينة   → <span class="s">`${host}/${bunnyVideoId}/preview.webp`</span>   <span class="c">// اختياري: hover</span></pre>
+
+<div class="note">
+  <b>لماذا نبني الرابط بدل تخزينه؟</b> <code>playbackUrl</code> موجود في السكيما، لكن اشتقاق الرابط من
+  <code>bunnyVideoId</code> يعني أن الأربعة (HLS · MP4 · مصغّرة · معاينة) تأتي من حقل واحد، فلا يتفرّقان
+  ولا يتقادم أحدهما. نفس مبدأ «مصدر واحد» الذي يحكم بقيّة الموقع.
+</div>
+
+<!-- ============ 5 ============ -->
+<h2><span class="n">٥</span> إعداد hls.js — من التوثيق الرسمي</h2>
+<p class="sub"><span class="pill p-src">video-dev/hls.js · docs/API.md</span> قيم مضبوطة لخلاصة قصيرة على شبكة جوّال</p>
+
+<pre><span class="k">new</span> Hls({
+  <span class="c">// بدء يدوي: نتحكّم متى يبدأ التخزين (للتسخين المُسبق)</span>
+  autoStartLoad: <span class="k">false</span>,
+  <span class="c">// لا نجلب 1080p لعمود 420 بكسل — يتبع حجم المشغّل</span>
+  capLevelToPlayerSize: <span class="k">true</span>,
+  <span class="c">// خلاصة قصيرة: تخزين محدود يوفّر الذاكرة والباقة</span>
+  maxBufferLength: <span class="s">10</span>,
+  maxMaxBufferLength: <span class="s">20</span>,
+  backBufferLength: <span class="s">6</span>,
+  <span class="c">// فيديو مسجَّل لا بثّ حيّ → نطفئ وضع الكمون المنخفض</span>
+  lowLatencyMode: <span class="k">false</span>,
+  <span class="c">// عامل يشغّل فكّ الترميز خارج الخيط الرئيسي → تمرير أنعم</span>
+  enableWorker: <span class="k">true</span>,
+  <span class="c">// احترام "توفير البيانات" على شبكات مصر الجوّالة</span>
+  startLevel: <span class="s">-1</span>,
+});</pre>
+
+<h3>التسخين: نحمّل بلا تشغيل</h3>
+<pre><span class="c">// الطلّة التالية: نربط ونبدأ التخزين، بلا play()</span>
+hls.attachMedia(nextVideoEl);
+hls.loadSource(nextHlsUrl);
+hls.startLoad();            <span class="c">// يملأ المخزّن مقدّماً</span>
+<span class="c">// حين تصبح نشطة لاحقاً: nextVideoEl.play() → فوري، المخزّن جاهز</span></pre>
+
+<div class="warn">
+  <span class="pill p-need">قرار تبعية</span>
+  <code>hls.js</code> مكتبة جديدة خارج الاستاك الحالي (~٤٠٠ ك.ب). لكنها المعيار الصناعي، وبني يُخرج HLS،
+  وتُحمَّل <b>عبر <code>dynamic import</code> على مسار الطلّات فقط</b> — صفر بايت على بقيّة الموقع، وصفر على Safari (تشغيل أصلي).
+  تحتاج موافقتك الصريحة قبل التركيب.
+</div>
+
+<!-- ============ 6 ============ -->
+<h2><span class="n">٦</span> خطّة المراحل</h2>
+<p class="sub">كل مرحلة مسؤولية واحدة وناتج متحقَّق · <code>tsc</code> بعد كلٍّ · لا لمس لكود مرحلة سابقة إلا لإصلاح.</p>
+
+<div class="phase">
+  <h3>مرحلة ١ — ربط بيانات الفيديو</h3>
+  <div class="kv"><b>الملفات</b><span><span class="path">lib/queries/get-reels-feed-page.ts</span> · <span class="path">lib/queries/reels-feed-shapes.ts</span></span></div>
+  <div class="kv"><b>العمل</b><span>توسيع <code>ReelFeedItem</code> بـ<code>bunnyVideoId</code>؛ اشتقاق روابط HLS/MP4/المصغّرة؛ قبول الطلّات ذات الفيديو (لا فلترة الصور وحدها). حقل مساعد <code>hasVideo</code>.</span></div>
+  <div class="kv"><b>التحقّق</b><span>سكربت قراءة على <code>modonty_dev</code> يطبع كم طلّة لها <code>bunnyVideoId</code> فعلاً؛ لا نبني مشغّلاً على وهم.</span></div>
+</div>
+
+<div class="phase">
+  <h3>مرحلة ٢ — محرّك المشغّل (اللبّ)</h3>
+  <div class="kv"><b>الملفات</b><span>جديد: <span class="path">reels/helpers/use-reel-player.ts</span> · <span class="path">reels/components/reel-video.tsx</span></span></div>
+  <div class="kv"><b>العمل</b><span>خطّاف يدير عنصر <code>&lt;video&gt;</code> واحداً: poster=المصغّرة فوراً → سلّم الاحتياط الثلاثي (Safari أصلي / hls.js / MP4). <code>muted</code> + <code>playsInline</code>. <code>hls.js</code> عبر <code>dynamic import</code>.</span></div>
+  <div class="kv"><b>التحقّق</b><span>طلّة واحدة تعمل حيّاً في المتصفّح: أول إطار فوري، صفر خطأ كونسول، والفيديو يشتغل صامتاً.</span></div>
+</div>
+
+<div class="phase">
+  <h3>مرحلة ٣ — البركة + التنشيط + التسخين</h3>
+  <div class="kv"><b>الملفات</b><span><span class="path">reels/components/reels-feed-client.tsx</span> (يُعاد بناء التشغيل داخله)</span></div>
+  <div class="kv"><b>العمل</b><span>نافذة حياة من ٣ مشغّلات (prev/current/next)؛ <code>IntersectionObserver</code> بعتبة ٠٫٦ يشغّل النشط ويوقف الباقي؛ تسخين <code>next</code> عبر <code>startLoad()</code>؛ تدمير ما يخرج من النافذة لتحرير الذاكرة.</span></div>
+  <div class="kv"><b>التحقّق</b><span>حيّ: قياس عدد عناصر <code>&lt;video&gt;</code> = ٣ مهما مرّرت؛ الانتقال بلا سواد؛ الذاكرة ثابتة بعد ٢٠ طلّة.</span></div>
+</div>
+
+<div class="phase">
+  <h3>مرحلة ٤ — التحكّم والوصولية</h3>
+  <div class="kv"><b>الملفات</b><span><span class="path">reels/components/reel-video.tsx</span> · <span class="path">reel-actions-rail.tsx</span></span></div>
+  <div class="kv"><b>العمل</b><span>لمسة = كتم/إلغاء كتم؛ شريط تقدّم رفيع؛ ضغطة مطوّلة = إيقاف مؤقّت؛ زرّ صوت واضح (يبدأ صامتاً بحكم المتصفّح)؛ <code>prefers-reduced-motion</code> يوقف التشغيل التلقائي ويكتفي بالمصغّرة؛ <code>aria-label</code> لكل زرّ.</span></div>
+  <div class="kv"><b>التحقّق</b><span>حيّ ٣٩٠ بكسل: أزرار ٤٤+، لوحة مفاتيح تصل الكلّ، والكتم يعمل من أوّل لمسة.</span></div>
+</div>
+
+<div class="phase">
+  <h3>مرحلة ٥ — وعي الشبكة والصقل</h3>
+  <div class="kv"><b>الملفات</b><span><span class="path">reels/helpers/use-reel-player.ts</span> · <span class="path">reels/page.tsx</span></span></div>
+  <div class="kv"><b>العمل</b><span>احترام <code>navigator.connection.saveData</code> → تقييد الجودة؛ مصغّرة كـ<code>poster</code> على الطلّات البعيدة؛ مراجعة الفهرسة (<code>robots</code>)؛ جسون-إل-دي <code>VideoObject</code> إن قرّرنا الفهرسة؛ قياس نهائي على شبكة مخنوقة يحاكي مصر.</span></div>
+  <div class="kv"><b>التحقّق</b><span>تحت خنق «Fast 3G»: أول إطار &lt; ١ ثانية (المصغّرة)، والفيديو يبدأ دون سواد.</span></div>
+</div>
+
+<!-- ============ 7 ============ -->
+<h2><span class="n">٧</span> قرارات تنتظرك قبل البدء</h2>
+<div class="grid g3">
+  <div class="card">
+    <p><span class="pill p-need">تبعية</span></p>
+    <b>تركيب <code>hls.js</code>؟</b>
+    <p style="color:var(--dim);font-size:13px">المعيار الصناعي، مُحمّل على مسار الطلّات فقط. لا بديل حقيقي لتشغيل HLS متكيّف في كروم.</p>
+  </div>
+  <div class="card">
+    <p><span class="pill p-need">فهرسة</span></p>
+    <b>نفهرس الطلّات؟</b>
+    <p style="color:var(--dim);font-size:13px">اليوم <code>noindex</code>. فيديو الشركاء قد يستحق الفهرسة بـ<code>VideoObject</code> — قرار سيو.</p>
+  </div>
+  <div class="card">
+    <p><span class="pill p-need">محتوى</span></p>
+    <b>صورة + فيديو معاً؟</b>
+    <p style="color:var(--dim);font-size:13px">هل تبقى الطلّات الصور مع الفيديو في خلاصة واحدة، أم الفيديو فقط؟ يؤثّر على الفلترة في مرحلة ١.</p>
+  </div>
+</div>
+
+<div class="note" style="margin-top:22px">
+  <b>الحالة قبل البناء:</b> صفر تركيب، صفر تعديل — هذه دراسة وخطّة فقط. لم يُلمس أي ملف كود.
+  البناء يبدأ بأمرك، مرحلةً مرحلة، بعد حسم القرارات الثلاثة أعلاه.
+</div>
+
+<!-- ============ sources ============ -->
+<h2><span class="n">٨</span> المصادر</h2>
+<ul>
+  <li><span class="tag">bunny.net/docs</span> — Stream Embedding &amp; Storage Structure (أنماط HLS · MP4 · thumbnail · preview)</li>
+  <li><span class="tag">github.com/video-dev/hls.js</span> — API.md &amp; basic-usage (الإعداد · التشغيل الأصلي البديل · التسخين)</li>
+  <li><span class="tag">mux.com/blog/slop-social</span> — بركة المشغّلات والتسخين في خلاصة على نمط تيك توك</li>
+  <li><span class="tag">medium · Instagram Reels architecture</span> — تقطيع HLS ٢-٣ ثوانٍ وتوزيع CDN</li>
+  <li><span class="tag">github/video-pool</span> — تدوير بركة المشغّلات (٣-٥) بلا اهتزاز</li>
+  <li>الكود المقيس: <span class="path">reels-feed-client.tsx</span> · <span class="path">get-reels-feed-page.ts</span> · <span class="path">schema.prisma:1584-1585</span> · <span class="path">bunny-stream.ts</span></li>
+</ul>
+
+<div class="foot">
+  خطّة صفحة الطلّات · مُدَوَّنَتِي · ٢٠ أغسطس ٢٠٢٦ · بني ستريم مكتبة 698133 ·
+  مبنيّة على مصادر رسمية ومقاسة من الكود — لا تخمين.
+</div>
+
+</div>
+</body>
+</html>

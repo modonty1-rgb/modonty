@@ -12,13 +12,16 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.10.3 (admin) · 0.2.2 (shared)",
-    title: "Images with Arabic names no longer overwrite each other",
+    version: "1.94.0 (modonty)",
+    title: "Reels play video, take comments, and count views",
     items: [
-      { type: "fix" as const, text: "When a picture was saved to our storage, its filename was stripped down to English letters and numbers only — so a fully Arabic name was erased and the picture was simply called \"file\". Every Arabic-named picture belonging to the same company then landed on the exact same slot and quietly replaced the one before it. Filenames now keep their Arabic, and every picture gets its own unique fingerprint, so two pictures can never share a slot again." },
-      { type: "fix" as const, text: "The three extra crops Google asks us to publish for each article picture were saved beside it under the same name, so they were overwritten too — meaning some articles were handing Google crops that belonged to a different picture entirely." },
-      { type: "improve" as const, text: "Moving a picture between companies now keeps the picture's own identity instead of inventing a new name for it." },
-      { type: "improve" as const, text: "A safety rule was added in code: any future upload path that forgets to make the filename unique will refuse to build, instead of silently overwriting a customer's image." },
+      { type: "feature" as const, text: "Reels are real videos now — approved partner videos play in the feed (adaptive streaming with a fallback chain), and every clip has its own shareable, Google-indexable page." },
+      { type: "feature" as const, text: "Comments on reels: a bottom sheet like TikTok's with replies and likes. Same trust contract as article comments — a comment waits for the partner's approval in the console before visitors see it, and the partner gets a Telegram note." },
+      { type: "feature" as const, text: "Views are counted: a reel that holds the screen for two seconds earns one view per visitor session — flicking past counts nothing." },
+      { type: "fix" as const, text: "The share button used to share the whole feed; it now shares the exact reel the visitor is watching." },
+      { type: "fix" as const, text: "Signed-out visitors tapping like, save, or comment now get the same one-tap Google sign-in card the article page uses, instead of bare links." },
+      { type: "feature" as const, text: "New listen page: the full Quran (114 surahs, 20 reciters, audio only) next to the site's narrated articles with an auto-advancing queue." },
+      { type: "fix" as const, text: "Production build was failing on three listing pages that read the clock outside a cached scope (a Next 16 rule) — all three fixed the same way." },
     ],
   },
 ];
