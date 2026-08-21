@@ -30,6 +30,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -755,6 +756,9 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                         <DialogTitle className="text-base md:text-lg font-extrabold text-foreground text-start">
                           {currentSection?.label ? stripTashkeel(currentSection.label) : "نص المقطع"}
                         </DialogTitle>
+                        <DialogDescription className="sr-only">
+                          النص الكامل للمقطع الحالي
+                        </DialogDescription>
                       </DialogHeader>
                       <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4 scrollbar-thin">
                         <p

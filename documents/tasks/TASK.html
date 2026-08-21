@@ -743,6 +743,33 @@ const TASKS = [
     "<b>التحقّق:</b> خطأ متعمَّد في مسار من كل مجموعة، ثم إرجاعه — كما فُعل مع <code>/audio</code> (<code>route-error-boundary.png</code>).",
  ref:"بند ERR1"},
 
+{id:"INVREV", b:"projects", app:["admin"], tab:"now", sev:"normal", who:"k", date:"٢٠ أغسطس ٢٠٢٦",
+ t:"مراجعة الفواتير — الدورة كاملة من الإصدار إلى بريد العميل",
+ d:"<b>طلب خالد (٢٠ أغسطس)</b> بعد تعديل تمبلت الفاتورة لعميل منتظر.<br>" +
+    "<b>ما يُراجع (المسارات متحقَّقة — قُرئت وعُدِّلت في جلسة ٢٠ أغسطس):</b> الإرسال <code>admin/app/(dashboard)/clients/[id]/account/actions/send-invoice.ts</code> · التمبلت <code>admin/lib/email/templates/invoice.ts</code> · الذيل <code>admin/lib/email/templates/base.ts</code> — البيانات القانونية صارت تُقرأ من <code>Settings.org*</code> (نفس حقول صفحة الموثوقية، مصدرها <code>modonty/lib/seo/organization-jsonld.ts:44</code>) مع نصّ احتياطي ثابت عند نقصها.<br>" +
+    "<b>عطلان مرصودان (متحقَّقان بقياس ٢٠ أغسطس):</b> التاريخ مقلوب في RTL — «Jul 2026 26» في الرندر الحي، مصدره <code>invoice.ts:18</code> (<code>Intl en-GB</code>) · حقول السجل على الإنتاج فاضية — قراءة مباشرة من قاعدة الإنتاج: كل <code>org*</code> = null إلا الشارع والمدينة، فتحتاج تعبئة من إعدادات الأدمن.",
+ ref:"بند INVREV"},
+
+{id:"MAILREV", b:"projects", app:["admin"], tab:"now", sev:"normal", who:"k", date:"٢٠ أغسطس ٢٠٢٦",
+ t:"مراجعة كل قوالب الإيميلات بنفس معيار الفاتورة",
+ d:"<b>طلب خالد (٢٠ أغسطس):</b> جرد كل تمبلتات <code>admin/lib/email/templates/</code> (المجلد متحقَّق — منه قُرئ <code>invoice.ts</code> و<code>base.ts</code> في جلسة ٢٠ أغسطس) وأي قوالب بريد في الكونسول أو مدونتي (تُحصر بالجرد).<br>" +
+    "<b>معيار المراجعة:</b> البيانات القانونية في الذيل — <code>base.ts</code> صار يقبل بديلاً من القاعدة عبر البارامتر الثالث لـ<code>baseTemplate</code> (متحقَّق: أُضيف وجُرّب بالرندر الحي ٢٠ أغسطس)، يُؤكَّد أن كل قالب يستفيد · اللهجة بشرية · التواريخ غير مقلوبة في RTL · الفوتر موحّد.",
+ ref:"بند MAILREV"},
+
+{id:"INDMARK", b:"projects", app:["modonty","admin","console"], tab:"now", sev:"normal", who:"k", date:"٢١ أغسطس ٢٠٢٦",
+ t:"تعميم علامة المجالات المعتمدة على كل التطبيق",
+ d:"<b>طلب خالد (٢١ أغسطس):</b> العلامة الرسمية <code>shared/assets/brand/modonty-industries-mark.svg</code> (ثلاث بوابات حول ماسة مدوّنتي — اعتمدها ٢١ أغسطس) تحلّ محلّ أيقونة المصنع العامة <code>IconIndustry</code> في كل موضع يمثّل المجالات.<br>" +
+    "<b>منجز:</b> المكوّن <code>shared/components/icons/modonty-industries-mark.tsx</code> أُنشئ على عقد الدمج في <code>shared/assets/brand/README.md</code> (Inline SVG · متغيّرا <code>--modonty-industries-body/accent</code> · currentColor احتياطاً) + رُكّب في مربع «المجالات» بألسنة الصفحة الرئيسية.<br>" +
+    "<b>الباقي:</b> جرد كل استعمالات <code>IconIndustry</code> في مدونتي (رايل المجالات · التشيبس · القوائم · صفحة المجالات) ثم الأدمن والكونسول، والاستبدال موضعاً موضعاً بقياس حي — النسخة ثنائية اللون حسب العقد: البوابات <code>foreground</code> والماسة <code>accent</code>.",
+ ref:"بند INDMARK"},
+
+{id:"PARTMARK", b:"projects", app:["modonty","admin","console"], tab:"now", sev:"normal", who:"k", date:"٢١ أغسطس ٢٠٢٦",
+ t:"تعميم علامة الشريك المعتمدة على كل التطبيق",
+ d:"<b>طلب خالد (٢١ أغسطس):</b> علامة الشريك (حرف M والماسة فوقه — أملاها كوداً في الجلسة) تمثّل الشركاء بدل أيقونة المبنى العامة <code>IconClients</code> (<code>Building2</code> — متحقَّق: <code>shared/lib/icons.ts:28</code>).<br>" +
+    "<b>منجز (متحقَّق بالرندر الحي ٢١ أغسطس):</b> المكوّن <code>shared/components/icons/modonty-partner-mark.tsx</code> على عقد الأيقونات (1em · currentColor · متغيّرا <code>--modonty-partner-body/accent</code> — نفس عقد <code>modonty-industries-mark.tsx</code>) + رُكّب في لسان «الشركاء» (<code>quick-links/QuickLinks.tsx</code>).<br>" +
+    "<b>الباقي — مواضع <code>IconClients</code> المجرودة grep ٢١ أغسطس:</b> <code>nav-config.ts:19</code> · <code>MobileMenu.tsx:167</code> · <code>FooterStats.tsx:112</code> · <code>not-found.tsx:45</code> · <code>profile/liked:77</code> · <code>following:71</code> · <code>disliked:77</code> · <code>bookings:84</code> · <code>ListenQueue.tsx:306</code> · <code>LiveStats.tsx:1</code> — تُستبدل موضعاً موضعاً بقياس حي، ثم جرد الأدمن والكونسول.",
+ ref:"بند PARTMARK"},
+
 {id:"MOB1", b:"projects", app:["modonty"], tab:"now", sev:"critical", who:"c", date:"١٩ أغسطس ٢٠٢٦",
  t:"الجوّال ٣٩٠×٨٤٤ — صفحتا المقالات لم تُقاسا إطلاقاً",
  d:"<b>متحقَّق ١٩ أغسطس (مصدره <code>modonty/app/(site)/articles/TASK.md:8</code> + قياسات هذه الجلسة):</b> <code>/articles</code> و<code>/articles/[slug]</code> بُنيتا وروجعتا على الديسكتوب وحده. كل قياسات اليوم على <code>1280×800</code> و<code>1413×601</code> — <b>صفر قياس جوّال</b>.<br>" +

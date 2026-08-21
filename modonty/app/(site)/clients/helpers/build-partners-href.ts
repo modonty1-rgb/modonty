@@ -11,6 +11,7 @@ export function buildPartnersHref(current: PartnersQuery, patch: Partial<Partner
 
   if (next.q) params.set("q", next.q);
   if (next.industry) params.set("industry", next.industry);
+  if (next.featuredOnly) params.set("featured", "1");
   // Any change of filter starts the list over — page 3 of the old result set means
   // nothing in the new one. Only an explicit page patch survives.
   if (patch.page && patch.page > 1) params.set("page", String(patch.page));

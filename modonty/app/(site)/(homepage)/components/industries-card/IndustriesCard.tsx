@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
-import { Scroller } from "@/components/shared/scroller/Scroller";
+import { IndustriesCarousel } from "@/app/(site)/(homepage)/components/industries-card/IndustriesCarousel";
 
 interface IndustryPreview {
   id: string;
@@ -16,7 +16,7 @@ interface IndustriesCardProps {
   /**
    * `rail` — desktop side rail (300px): LinkedIn-style rows — square image, name, one
    * line of description from the DB — six visible, the rest scroll inside the card.
-   * `row`  — phones: one horizontal scroller row of square tiles above the feed.
+   * `row`  — phones: a compact multi-browse carousel above the feed.
    */
   layout: "rail" | "row";
 }
@@ -88,25 +88,5 @@ export function IndustriesCard({ industries, layout }: IndustriesCardProps) {
     );
   }
 
-  return (
-    <section aria-labelledby={headingId} className="overflow-hidden rounded-lg ring-1 ring-primary/10 bg-card">
-      <div className="px-3 py-1.5">
-        <h2 id={headingId} className="text-base font-medium text-foreground">استكشف المجالات</h2>
-      </div>
-      <Scroller label="المجالات" className="gap-3 px-3 pb-3">
-        {sorted.map((industry) => (
-          <Link
-            key={industry.id}
-            href={`/industries/${encodeURIComponent(industry.slug)}`}
-            className="group flex w-28 shrink-0 snap-start flex-col items-center gap-1.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
-          >
-            <IndustryImage industry={industry} sizes="72px" className="size-[4.5rem]" />
-            {/* min-w-0 + truncate: a flex child refuses to shrink below its content width
-                otherwise, and a long single word spills into the next tile (measured). */}
-            <span className="w-full min-w-0 truncate px-0.5 text-center text-xs font-normal text-foreground">{industry.name}</span>
-          </Link>
-        ))}
-      </Scroller>
-    </section>
-  );
+  return <IndustriesCarousel industries={sorted} headingId={headingId} />;
 }

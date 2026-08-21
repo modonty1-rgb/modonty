@@ -24,9 +24,12 @@ export function PostCardHeroImage({
   const lcp = isLcp ?? (index === 0);
   const imageSizes = sizes ?? (lcp ? LCP_SIZES : DEFAULT_SIZES);
 
+  // Below lg this image is the 92px feed THUMB (MobilePostCard) — ANY overlay eats it
+  // (Khalid, 21 Aug: «ماكل الصورة كلها»), so the badge exists only ≥1024px, where the
+  // DesktopPostCard hero has room. The mobile card announces audio in its text column.
   const audioBadge = post.hasAudio ? (
     <span
-      className="absolute top-2 start-2 z-10 inline-flex items-center gap-1 rounded-full bg-teal-500/90 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm"
+      className="absolute top-2 start-2 z-10 hidden items-center gap-1 rounded-full bg-teal-500/90 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm lg:inline-flex"
       aria-label="نسخة صوتية متاحة"
     >
       <IconVolume2 className="h-3 w-3" aria-hidden />

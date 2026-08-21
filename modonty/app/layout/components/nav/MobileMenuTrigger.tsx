@@ -1,24 +1,28 @@
 "use client";
 
-import { IconMoreVertical } from "@/lib/icons";
+import { IconMenu } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 
 interface MobileMenuTriggerProps {
   onClick: () => void;
+  open: boolean;
+  controls?: string;
 }
 
-export function MobileMenuTrigger({ onClick }: MobileMenuTriggerProps) {
+export function MobileMenuTrigger({ onClick, open, controls }: MobileMenuTriggerProps) {
   return (
     <Button
-      variant="ghost"
-      size="icon"
-      className="md:hidden min-h-11 min-w-11 rounded-xl [&_svg]:size-5"
-      aria-label="Open menu"
+      variant="navigation"
+      size="mobileIcon"
+      className="rounded-xl md:hidden"
+      type="button"
+      aria-label="فتح القائمة"
+      aria-haspopup="dialog"
+      aria-expanded={open}
+      aria-controls={controls}
       onClick={onClick}
     >
-      {/* 20px inside the 44px target. The Button base pins svgs to 16px, which reads
-          undersized beside the 24px nav icons — the arbitrary variant overrides it. */}
-      <IconMoreVertical />
+      <IconMenu aria-hidden />
     </Button>
   );
 }

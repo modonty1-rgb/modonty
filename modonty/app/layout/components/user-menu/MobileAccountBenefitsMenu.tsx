@@ -10,7 +10,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IconCheck, IconClose, IconLogin } from "@/lib/icons";
+import { ModontyLoginMark } from "@/components/icons/modonty-login-mark";
+import { IconCheck, IconClose } from "@/lib/icons";
 
 const accountBenefits = [
   "عروض وخصومات من الشركاء",
@@ -77,16 +78,18 @@ export function MobileAccountBenefitsMenu({ hint = true }: { hint?: boolean } = 
     <div className="relative sm:hidden">
       <DropdownMenu dir="rtl" open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger asChild>
+          {/* The hint sits INLINE beside the icon with a soft pulse — the old bubble hung
+              below the navbar and landed on whatever the page put there (Khalid, 21 Aug,
+              with a screenshot of it covering the «الشركاء» tab). */}
           <Button
-            variant="ghost"
-            size="icon"
+            variant="navigation"
+            size="mobileIcon"
             aria-label="افتح مزايا الحساب"
-            className="relative min-h-11 min-w-11 overflow-visible rounded-xl text-accent hover:bg-transparent hover:text-accent [&_svg]:size-5"
+            className={hint && !isOpen ? "w-auto gap-1.5 rounded-xl px-2.5" : "rounded-xl"}
           >
-            <IconLogin aria-hidden="true" />
+            <ModontyLoginMark className="[--modonty-login-accent:hsl(var(--accent))]" aria-hidden="true" />
             {hint && !isOpen && (
-              <span className="absolute start-1/2 top-[calc(100%+3px)] z-[60] translate-x-1/2 whitespace-nowrap rounded-lg border border-primary/45 bg-card px-2.5 py-1 text-[11px] font-bold text-accent shadow-lg">
-                <span className="absolute -top-1 start-1/2 size-2 translate-x-1/2 rotate-45 border-s border-t border-primary/45 bg-card" aria-hidden="true" />
+              <span className="whitespace-nowrap text-[11px] font-bold text-link-accent motion-safe:animate-pulse">
                 مزاياك هنا
               </span>
             )}

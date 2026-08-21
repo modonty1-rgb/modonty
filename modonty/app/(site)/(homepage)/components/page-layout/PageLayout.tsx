@@ -4,10 +4,8 @@ import { RightSidebar } from "@/app/(site)/(homepage)/components/right-sidebar/R
 import { ScrollButtons } from "@/app/(site)/(homepage)/components/scroll-buttons/ScrollButtons";
 import { ArticlesList } from "@/app/(site)/(homepage)/components/articles-list/ArticlesList";
 import { HomeActions } from "@/app/(site)/(homepage)/components/home-actions/HomeActions";
-import { IndustriesCard } from "@/app/(site)/(homepage)/components/industries-card/IndustriesCard";
+import { QuickLinks } from "@/app/(site)/(homepage)/components/quick-links/QuickLinks";
 import { ReelsCard } from "@/components/shared/reels-card/ReelsCard";
-import { ClientsCardMobile } from "@/app/(site)/(homepage)/components/clients-card/ClientsCardMobile";
-import { ModontyCardMobile } from "@/app/(site)/(homepage)/components/modonty-card/ModontyCardMobile";
 import type { ReactNode } from "react";
 import type { FeedPost } from "@/lib/types";
 import type { ReelItem } from "@/components/shared/reels-card/ReelsCard";
@@ -37,26 +35,25 @@ export function PageLayout({ posts, hasMore, page, corePublisherArticles, brandL
         right={<RightSidebar />}
         center={
           <div className="space-y-3 sm:space-y-4 [&>article:first-of-type]:!mt-0">
-            {/* Desktop: Modo leads the feed, followed by the booking and shopping card. Phones keep the
-                industries row here — the rail is hidden there, and the bottom bar already
-                carries the same three actions. */}
-            <div className="hidden lg:block">
+            {/* Mobile (<1024px): four doorway tabs hanging from the navbar itself — the
+                article page's pattern (Khalid, 21 Aug 2026: «تجي نازلة من تحت الناف بار»).
+                The negative margin cancels the shell container's top padding (py-3/sm:py-6)
+                so the tabs sit flush on the navbar's bottom edge. They replaced the four
+                stacked full-size cards (industries · reels · modonty · clients) that pushed
+                the articles a full screen down. The card FILES stay — hiding is not deleting. */}
+            <div className="-mt-3 sm:-mt-6 lg:hidden">
+              <QuickLinks />
+            </div>
+            {/* Modo leads the feed — except on phones (<768px), where the bottom bar already
+                carries him (Khalid, 21 Aug 2026: two Modo doors on one screen is one too many). */}
+            <div className="max-md:hidden">
               <HomeActions />
             </div>
-            <div className="lg:hidden">
-              <IndustriesCard industries={industries} layout="row" />
-            </div>
             {/* Reels left the desktop feed for a link card in the far rail (Khalid, 2026-08-16).
-                Below 1240px that rail is hidden, so the reels stay here — otherwise phones
-                and small laptops would lose them entirely (mobile pass is still pending). */}
-            <div className="min-[1240px]:hidden">
+                In the 1024-1239px band that rail is hidden, so the card stays here for small
+                laptops; phones now reach the reels through the QuickLinks tile instead. */}
+            <div className="hidden lg:block min-[1240px]:hidden">
               <ReelsCard items={reels} layout="feed" />
-            </div>
-            <div className="lg:hidden">
-              <ModontyCardMobile articles={corePublisherArticles} brandLogoUrl={brandLogoUrl} />
-            </div>
-            <div className="lg:hidden">
-              <ClientsCardMobile />
             </div>
             <section aria-labelledby="articles-feed-heading" className="space-y-3 sm:space-y-4 [&>*:nth-child(2)]:!mt-0">
               {/* Chunk n is its own page (own title + canonical), so its heading is the h1

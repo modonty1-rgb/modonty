@@ -4,7 +4,7 @@ import { signIn } from "next-auth/react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
-import { IconLogin } from "@/lib/icons";
+import { ModontyLoginMark } from "@/components/icons/modonty-login-mark";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -42,7 +42,7 @@ export function TrialWall() {
         className="mt-4 w-full"
         onClick={() => signIn(undefined, { callbackUrl })}
       >
-        <IconLogin className="h-4 w-4" aria-hidden />
+        <ModontyLoginMark className="h-4 w-4" aria-hidden />
         سجّل دخولك وأكمل
       </Button>
     </div>

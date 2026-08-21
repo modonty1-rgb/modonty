@@ -4,6 +4,7 @@ import { UserCard } from "@/components/shared/user-card/UserCard";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { jsonLdHtmlFromString } from "@/lib/seo";
 import { getClientsList } from "@/lib/queries/get-clients-list";
+import { getIndustriesEnhanced } from "@/lib/queries/get-industries-enhanced";
 import { getCoreClientId } from "@/lib/settings/get-core-client-id";
 import { parsePartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
 import { PageLayout } from "@/app/(site)/clients/components/page-layout/PageLayout";
@@ -29,11 +30,13 @@ interface ClientsPageProps {
 }
 
 export default async function ClientsPage({ searchParams }: ClientsPageProps) {
-  const [params, { jsonLd: storedJsonLd }, allPartners, coreClientId] = await Promise.all([
+  const [params, { jsonLd: storedJsonLd }, allPartners, coreClientId, industries] = await Promise.all([
     searchParams,
     getListingPageSeo("clients"),
     getClientsList(),
     getCoreClientId(),
+    // The fields' artwork — the mobile filter draws the same cards `/industries` does.
+    getIndustriesEnhanced({ sortBy: "clients" }),
   ]);
   // Modonty is a client row too (its articles need one), but it is not a partner — it has
   // /modonty (Khalid, 2026-08-17: «مدونتي ما تطلع مع العملاء، عنده صفحته الخاصّة»).
@@ -52,7 +55,7 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
       />
       {/* UserCard reads the session cookie, so it is created here — outside anything
           cached — and handed down as a slot the layout never introspects. */}
-      <PageLayout partners={partners} query={parsePartnersQuery(params)} userCard={<UserCard />} />
+      <PageLayout partners={partners} industries={industries} query={parsePartnersQuery(params)} userCard={<UserCard />} />
     </>
   );
 }

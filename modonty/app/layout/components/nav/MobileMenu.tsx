@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetClose,
@@ -20,7 +21,8 @@ import {
   IconNotifications,
   IconHelpCircle,
   IconFaqQuestion,
-  IconCategories,
+  IconClients,
+  IconCompass,
   IconSaved,
   IconChevronLeft,
   IconTrending,
@@ -28,10 +30,12 @@ import {
 } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { navLinksConfig } from "@/app/layout/helpers/nav-links-config";
+import { ThemeToggle } from "@/app/layout/components/nav/ThemeToggle";
 
 interface MobileMenuProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  contentId: string;
 }
 
 interface SheetLinkProps {
@@ -47,6 +51,7 @@ function SheetLink({ href, icon: Icon, label, isActive, onClick }: SheetLinkProp
     <Link
       href={href}
       onClick={onClick}
+      aria-current={isActive ? "page" : undefined}
       className={cn(
         "flex items-center gap-3 h-12 px-3 rounded-xl text-sm font-medium transition-all duration-200",
         isActive
@@ -68,7 +73,7 @@ function SheetLink({ href, icon: Icon, label, isActive, onClick }: SheetLinkProp
   );
 }
 
-export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
+export function MobileMenu({ open, onOpenChange, contentId }: MobileMenuProps) {
   const pathname = usePathname();
   const close = () => onOpenChange(false);
 
@@ -82,19 +87,26 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-[300px] sm:w-[320px] p-0 [&>button:last-child]:hidden">
+      <SheetContent id={contentId} side="right" className="w-[300px] sm:w-[320px] p-0 [&>button:last-child]:hidden">
 
         {/* Header */}
         <SheetHeader className="flex flex-row items-center justify-between px-4 py-3 border-b border-border/60">
           <SheetClose asChild>
-            <button
-              className="flex items-center justify-center h-11 w-11 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent active:scale-95 transition-all duration-200"
+            <Button
+              type="button"
+              variant="navigation"
+              size="mobileIcon"
+              className="rounded-xl"
               aria-label="إغلاق القائمة"
             >
-              <IconClose className="h-5 w-5" />
-            </button>
+              <IconClose aria-hidden />
+            </Button>
           </SheetClose>
           <SheetTitle className="text-base font-bold">القائمة</SheetTitle>
+          <SheetDescription className="sr-only">
+            روابط التنقل وإدارة حساب المستخدم
+          </SheetDescription>
+          <ThemeToggle />
         </SheetHeader>
 
         <div className="overflow-y-auto py-3 px-3 space-y-0.5">
@@ -145,9 +157,16 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
           />
           <SheetLink
             href="/categories"
-            icon={IconCategories}
+            icon={IconCompass}
             label="الفئات"
             isActive={pathname === "/categories" || pathname.startsWith("/categories/")}
+            onClick={close}
+          />
+          <SheetLink
+            href="/clients"
+            icon={IconClients}
+            label="الشركاء"
+            isActive={pathname === "/clients" || pathname.startsWith("/clients/")}
             onClick={close}
           />
           <SheetLink

@@ -1,0 +1,25 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 100 100"
+  fill="none"
+  role="img"
+  aria-labelledby="modonty-partners-title modonty-partners-desc"
+>
+  <title id="modonty-partners-title">علامة شركاء مدوّنتي</title>
+  <desc id="modonty-partners-desc">واجهة شركة بمدخلين مقوسين تصنع إيقاع حرف إم، وبجوارها ماسة مدوّنتي كحجر أساس</desc>
+  <metadata id="design-story">{"schemaVersion":1,"slug":"modonty-partners-mark","status":"approved","approvedAt":"2026-08-21","approvedBy":"Khalid","ideaAr":"واجهة شركة واحدة تصنع فتحتاها إيقاع حرف m، وتستقر ماسة مدوّنتي عند القاعدة كحجر أساس للهوية","objectivesAr":["هوية مستقلة للشركاء","دمج مدلول الشركة مع حرف مدوّنتي","وضوح من 16 بكسل"],"themeTokens":{"building":"--foreground","diamond":"--accent"}}</metadata>
+
+  <path
+    fill="var(--modonty-partners-body, currentColor)"
+    d="M38 16h43a11 11 0 0 1 11 11v60h-9V55c0-6.63-4.25-12-9.5-12S64 48.37 64 55v32h-9V55c0-6.63-4.25-12-9.5-12S36 48.37 36 55v32h-9V27a11 11 0 0 1 11-11Z"
+  />
+
+  <rect
+    x="12.5"
+    y="77"
+    width="10"
+    height="10"
+    fill="var(--modonty-partners-accent, currentColor)"
+    transform="rotate(45 17.5 82)"
+  />
+</svg>

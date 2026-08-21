@@ -12,15 +12,16 @@ function fold(text: string): string {
 }
 
 /**
- * The two filters the URL can carry, applied to the cached list in memory: the industry
- * picked in the rail, and the free text typed in the bar (name · description · industry ·
- * city).
+ * The filters the URL can carry, applied to the cached list in memory: the industry
+ * picked in the rail, «المميّزون» only, and the free text typed in the bar
+ * (name · description · industry · city).
  */
 export function filterPartners(partners: ClientListItem[], query: PartnersQuery): ClientListItem[] {
   const needle = fold(query.q);
 
   return partners.filter((partner) => {
     if (query.industry && partner.industry?.slug !== query.industry) return false;
+    if (query.featuredOnly && !partner.isFeatured) return false;
     if (!needle) return true;
 
     const haystack = fold(

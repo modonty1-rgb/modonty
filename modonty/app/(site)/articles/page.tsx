@@ -10,6 +10,7 @@ import { SITE_URL } from "@/constants";
 
 import { getArticlesArchive, type ArchiveSort } from "./data/get-articles-archive";
 import { getArticlesFilters } from "./data/get-articles-filters";
+import { getIndustriesEnhanced } from "@/lib/queries/get-industries-enhanced";
 import { getTagName } from "./data/get-tag-name";
 import { buildArchiveHref, type ArchiveState } from "./helpers/build-archive-href";
 import { ARCHIVE_PAGE_SIZE } from "./helpers/archive-page-size";
@@ -147,7 +148,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
 export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
   const state = readState(await searchParams);
 
-  const [subjectMatches, filters] = await Promise.all([
+  const [subjectMatches, filters, industryArtwork, wholeArchive] = await Promise.all([
     getArticlesArchive({
       industrySlug: state.industry,
       categorySlug: state.category,
@@ -156,14 +157,21 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
       sort: state.sort,
     }),
     getArticlesFilters(),
+    // The fields' artwork — the mobile filter draws the same branded cards `/industries`
+    // and `/clients` use; counts still come from `filters`, which are counted from the
+    // articles actually on the page.
+    getIndustriesEnhanced({ sortBy: "clients" }),
+    // Unfiltered — the reading-time strip counts the whole archive, since time is its own axis.
+    getArticlesArchive({ sort: state.sort }),
   ]);
 
   /**
-   * Reading time is applied HERE, not in the query, so the strip on top can count the buckets against
-   * what the subject filters already returned. Counting after the time filter would collapse every
-   * other bucket to zero the moment one was picked.
+   * Reading time is applied HERE, not in the query, so the strip can count buckets separately
+   * from the filter it applies. The counts come from the WHOLE archive (Khalid, 21 Aug: time is
+   * a standalone axis) — counted against the current field they dropped to zero and disabled the
+   * very question the strip exists to answer.
    */
-  const readingTimeCounts = countByReadingTime(subjectMatches);
+  const readingTimeCounts = countByReadingTime(wholeArchive);
   const articles = filterByReadingTime(subjectMatches, state.time);
 
   /**
@@ -204,6 +212,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
         readingTimeCounts={readingTimeCounts}
         current={state}
         scopeLabel={scopeLabel}
+        industryArtwork={industryArtwork}
       />
     </>
   );

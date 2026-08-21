@@ -15,6 +15,20 @@ import { ModontyTrustMark } from "@/components/icons/modonty-trust-mark";
  * 2026-08-19: «الشريك ما بيكتب، إحنا اللي بنكتب، بس هو اللي بيدي التعميد»). That also explains
  * why every article's author is «Modonty» — it is accurate, not a placeholder.
  */
+/**
+ * The phone version: one quiet hint line, not a card (Khalid, 21 Aug — «this card is not
+ * needed, make it a hint, it looks like a small bar»). Same statement, ~24px instead of
+ * ~120px, so it sits above the list without pushing the articles down.
+ */
+export function TrustHint() {
+  return (
+    <p className="flex items-center justify-center gap-1.5 text-[11px] leading-4 text-muted-foreground">
+      <ModontyTrustMark className="size-4 shrink-0" aria-hidden />
+      مكتوب عندنا، ومعتمَد من الشريك المختصّ قبل النشر.
+    </p>
+  );
+}
+
 export function TrustBox() {
   return (
     <section

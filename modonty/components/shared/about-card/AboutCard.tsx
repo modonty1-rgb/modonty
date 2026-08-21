@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { ModontyMark } from "@/components/icons/modonty-mark";
+import { IconChevronRight } from "@/lib/icons";
 
 // Same four things the platform gives a visitor — one short line each, like the account
 // card's benefits, so the two cards read as siblings.
@@ -17,6 +18,30 @@ const platformPoints = [
  * cards of equal height (Khalid, 2026-08-16). Outline CTA: registering stays the one
  * filled action on the page.
  */
+/**
+ * The phone version: one bar, not a card (Khalid, 21 Aug — «make it small, like a bar,
+ * because this is the core card»). Same promise and the same door to `/modonty`, in ~52px
+ * instead of 174: the full card pushed the first article to 67% of the first screen on a
+ * page whose whole job is showing articles. The desktop rail keeps `AboutCard`.
+ */
+export function AboutBar() {
+  return (
+    <Link
+      href="/modonty"
+      className="flex min-h-12 items-center gap-2.5 rounded-lg bg-card px-3 py-2 ring-1 ring-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+    >
+      <ModontyMark className="size-6 shrink-0 text-link" aria-hidden />
+      <span className="min-w-0 flex-1">
+        <span className="block text-[13px] font-bold leading-tight text-link">مدونتي</span>
+        <span className="mt-0.5 block truncate text-[11px] text-muted-foreground">
+          محتوى عربي موثوق من شركاء معتمدين.
+        </span>
+      </span>
+      <IconChevronRight className="size-4 shrink-0 text-link rtl:rotate-180" aria-hidden />
+    </Link>
+  );
+}
+
 export function AboutCard() {
   return (
     <section aria-labelledby="about-card-heading" className="rounded-lg bg-card p-3 ring-1 ring-primary/10 lg:p-4">

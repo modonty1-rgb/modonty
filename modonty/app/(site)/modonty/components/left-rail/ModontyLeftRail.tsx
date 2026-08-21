@@ -27,9 +27,14 @@ export function ModontyLeftRail({ gallery, reels }: ModontyLeftRailProps) {
         {messages.modonty.leftRailLabel}
       </AccentHeading>
       <ReelsCard items={reels} layout="sidebar" />
-      <Suspense fallback={<ModontyGallerySkeleton />}>
-        <ModontyGallery pool={gallery} />
-      </Suspense>
+      {/* The pinboard is a desktop-rail piece only (Khalid, 21 Aug: «no need in mobile») —
+          in the stacked phone view it added a screen of covers between the visitor and the
+          end of the page. Hidden, not deleted: ≥1240px the rail shows it as before. */}
+      <div className="hidden min-[1240px]:block">
+        <Suspense fallback={<ModontyGallerySkeleton />}>
+          <ModontyGallery pool={gallery} />
+        </Suspense>
+      </div>
     </div>
   );
 }

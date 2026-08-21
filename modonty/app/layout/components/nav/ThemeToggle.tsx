@@ -21,11 +21,15 @@ export function ThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        {/* relative: the moon is absolutely stacked on the sun. h-11: same hit size as the bell. */}
-        {/* Muted like the other bar controls; full-strength white read as glare (Khalid). */}
-        <Button variant="ghost" size="icon" aria-label="تغيير المظهر" className="relative h-11 w-11 rounded-full text-muted-foreground hover:text-foreground">
-          <IconSun className="h-5 w-5 rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0" aria-hidden />
-          <IconMoon className="absolute h-5 w-5 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" aria-hidden />
+        {/* Muted like the other navigation controls; the moon is stacked on the sun. */}
+        <Button
+          variant="navigation"
+          size="mobileIcon"
+          aria-label="تغيير المظهر"
+          className="relative rounded-xl"
+        >
+          <IconSun className="rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0" aria-hidden />
+          <IconMoon className="absolute rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" aria-hidden />
         </Button>
       </DropdownMenuTrigger>
       {/* Same surface as the header it drops from (slate-100 light / card dark) — the

@@ -18,7 +18,7 @@ export async function LogoNav({ className }: LogoNavProps) {
   return (
     <Link
       href="/"
-      className="inline-block shrink-0 transition-transform duration-200 hover:scale-[1.03]"
+      className="inline-flex min-h-11 max-w-full shrink-0 items-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:scale-[1.03]"
       aria-label={`${BRAND_AR} - الصفحة الرئيسية`}
     >
       {source ? (
@@ -33,8 +33,8 @@ export async function LogoNav({ className }: LogoNavProps) {
           height={40}
           loading="eager"
           fetchPriority="high"
-          sizes="160px"
-          className={`h-7 w-auto object-contain md:h-8 ${className ?? ""}`}
+          sizes="(max-width: 767px) 104px, 160px"
+          className={`h-7 w-auto max-w-full object-contain md:h-8 ${className ?? ""}`}
         />
       ) : (
         <span className="text-lg font-bold text-link">{BRAND_AR}</span>

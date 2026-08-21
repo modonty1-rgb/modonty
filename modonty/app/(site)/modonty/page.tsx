@@ -14,6 +14,8 @@ import { ModontyLeftRail } from "@/app/(site)/modonty/components/left-rail/Modon
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import { MobileCtaBar } from "@/components/shared/mobile-cta-bar/MobileCtaBar";
+import { IconHandshake, IconInfo } from "@/lib/icons";
 import { messages } from "@/lib/i18n/messages";
 import { SITE_URL } from "@/constants";
 import { reveal } from "./helpers/reveal";
@@ -60,6 +62,7 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
   const buildPageHref = (targetPage: number) => (targetPage > 1 ? `/modonty?page=${targetPage}` : "/modonty");
 
   return (
+    <>
     <ThreeColumnLayout
       header={
         <div className={`space-y-4 ${reveal(0)}`}>
@@ -79,9 +82,13 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
         </div>
       }
       right={
+        // Mobile: the rail was `hidden`, so 64% of the page (story, papers, team, gallery,
+        // reels) never reached a phone visitor (measured 21 Aug: pageH 5833→2104). Now it
+        // stacks full-width AFTER the feed (`order-2`); ≥1240px nothing changes — same
+        // 300px sticky rail, order reset to DOM position.
         <StickyRail
           label={messages.modonty.rightRailLabel}
-          className={`hidden w-[300px] shrink-0 self-start min-[1240px]:sticky min-[1240px]:block ${reveal(2)}`}
+          className={`order-2 w-full shrink-0 self-start lg:hidden min-[1240px]:order-none min-[1240px]:block min-[1240px]:sticky min-[1240px]:w-[300px] ${reveal(2)}`}
         >
           <ModontyRightRail legal={legal} clientId={profile.id} clientName={profile.name} whatsappPhone={whatsappPhone} />
         </StickyRail>
@@ -92,13 +99,24 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
         </div>
       }
       left={
+        // Mobile: stacks last (`order-3`) — feed → about us → our reels/gallery.
         <StickyRail
           label={messages.modonty.leftRailLabel}
-          className={`hidden w-[300px] shrink-0 self-start min-[1240px]:sticky min-[1240px]:block ${reveal(2)}`}
+          className={`order-3 w-full shrink-0 self-start lg:hidden min-[1240px]:order-none min-[1240px]:block min-[1240px]:sticky min-[1240px]:w-[300px] ${reveal(2)}`}
         >
           <ModontyLeftRail gallery={gallery} reels={reels} />
         </StickyRail>
       }
     />
+    {/* Same shared bottom bar as the homepage — only this page's two asks change
+        (Khalid, 21 Aug 2026): become a partner, or read who modonty is. */}
+    <MobileCtaBar
+      ariaLabel="صِر شريكاً أو تعرّف على مدونتي"
+      // Same destination as the hero's desktop button (Khalid, 21 Aug): the partner
+      // funnel lives on jbrseo.com, not on /story.
+      primary={{ href: "https://www.jbrseo.com", label: "صِر شريكاً", icon: IconHandshake, external: true }}
+      secondary={{ href: "/about", label: "عن مدونتي", icon: IconInfo }}
+    />
+    </>
   );
 }

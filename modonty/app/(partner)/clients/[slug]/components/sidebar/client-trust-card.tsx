@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -146,9 +147,9 @@ export function ClientTrustCard({
                   <DialogTitle className="text-sm font-black text-white">
                     توثيق {name}
                   </DialogTitle>
-                  <span className="text-[11px] text-white/85">
+                  <DialogDescription className="text-[11px] text-white/85">
                     بيانات رسمية موثّقة من مدوّنتي
-                  </span>
+                  </DialogDescription>
                 </div>
               </div>
 

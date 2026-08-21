@@ -1,0 +1,31 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 100 100"
+  fill="none"
+  role="img"
+  aria-labelledby="modonty-industries-title modonty-industries-desc"
+>
+  <title id="modonty-industries-title">علامة مجالات مدوّنتي</title>
+  <desc id="modonty-industries-desc">ثلاث بوابات متساوية تلتقي حول ماسة مدوّنتي</desc>
+  <metadata id="design-story">{"schemaVersion":1,"slug":"modonty-industries-mark","status":"approved","approvedAt":"2026-08-21","approvedBy":"Khalid","ideaAr":"ثلاث بوابات متطابقة تمثل تنوع المجالات وتلتقي حول ماسة مدوّنتي التي تمثل المنصة الواحدة","objectivesAr":["هوية مستقلة للمجالات","ربط الرمز بعائلة مدوّنتي","وضوح من 16 بكسل"],"themeTokens":{"gateways":"--foreground","diamond":"--accent"}}</metadata>
+
+  <g
+    stroke="var(--modonty-industries-body, currentColor)"
+    stroke-width="8.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M35 30v-8a15 12 0 0 1 30 0v8"/>
+    <path d="M35 30v-8a15 12 0 0 1 30 0v8" transform="rotate(120 50 50)"/>
+    <path d="M35 30v-8a15 12 0 0 1 30 0v8" transform="rotate(240 50 50)"/>
+  </g>
+
+  <rect
+    x="42.5"
+    y="42.5"
+    width="15"
+    height="15"
+    fill="var(--modonty-industries-accent, currentColor)"
+    transform="rotate(45 50 50)"
+  />
+</svg>

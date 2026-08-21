@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "slug": "modonty-industries-mark",
+  "asset": "modonty-industries-mark.svg",
+  "titleAr": "علامة مجالات مدوّنتي",
+  "status": "approved",
+  "ideaAr": "ثلاث بوابات متطابقة تمثل تنوع المجالات، وتلتقي حول ماسة مدوّنتي التي تمثل المنصة الواحدة.",
+  "objectivesAr": [
+    "منح قسم المجالات هوية مستقلة يمكن تمييزها في المقاسات الصغيرة.",
+    "ربط العلامة مباشرة بهوية مدوّنتي من خلال الماسة الأصلية دون تكرار حرف M.",
+    "التعبير عن التنوع والترابط بدون استخدام رمز خاص بمجال واحد."
+  ],
+  "symbolismAr": [
+    {
+      "part": "البوابات الثلاث",
+      "meaning": "مجالات مختلفة لها وزن متساوٍ ومسارات مفتوحة للاكتشاف."
+    },
+    {
+      "part": "الدوران 120 درجة",
+      "meaning": "توازن المجالات وتنظيمها حول مركز واحد."
+    },
+    {
+      "part": "ماسة مدوّنتي",
+      "meaning": "نقطة الهوية الأصلية والمنصة التي تجمع المجالات."
+    },
+    {
+      "part": "الفجوات المتساوية",
+      "meaning": "استقلال كل مجال مع بقاء العلاقة البصرية بينها واضحة."
+    }
+  ],
+  "geometry": {
+    "viewBox": "0 0 100 100",
+    "rotationStepDeg": 120,
+    "strokeWidth": 8.5,
+    "diamondSize": 15,
+    "minimumTwoColorSizePx": 16
+  },
+  "themeTokens": {
+    "gateways": "--foreground",
+    "diamond": "--accent",
+    "background": "transparent"
+  },
+  "accessibilityAr": {
+    "standaloneLabel": "استكشف المجالات",
+    "decorativeWhenTextAdjacent": true,
+    "minimumTouchTargetPx": 44
+  },
+  "approval": {
+    "status": "approved",
+    "approvedBy": "Khalid",
+    "approvedAt": "2026-08-21"
+  }
+}

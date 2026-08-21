@@ -21,6 +21,8 @@ const buttonVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
+        navigation:
+          "text-muted-foreground hover:bg-primary/10 hover:text-foreground active:bg-primary/15",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
@@ -29,7 +31,8 @@ const buttonVariants = cva(
         lg: "h-11 px-8",
         icon: "h-10 w-10",
         mobileDefault: "h-11 px-4 py-2 md:h-10 md:px-4 md:py-2",
-        mobileIcon: "h-11 w-11 md:h-10 md:w-10",
+        mobileIcon:
+          "h-11 w-11 p-3 [&_svg]:size-5 md:h-10 md:w-10 md:p-2.5",
         mobileLg: "h-12 px-8 py-2 md:h-11 md:px-8",
       },
     },
@@ -61,7 +64,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
-
 
 
 

@@ -4,6 +4,8 @@ export interface PartnersQuery {
   q: string;
   /** Industry slug, or "" for «الكل». */
   industry: string;
+  /** Only the partners who pay for the spotlight — «المميّزون» (Khalid, 21 Aug). */
+  featuredOnly: boolean;
   /** 1-based chunk of the list. */
   page: number;
 }
@@ -24,6 +26,7 @@ export function parsePartnersQuery(searchParams: Record<string, string | string[
   return {
     q: read("q"),
     industry: read("industry"),
+    featuredOnly: read("featured") === "1",
     page: Number.isFinite(page) && page > 1 ? page : 1,
   };
 }

@@ -50,7 +50,10 @@ export function ModontyProfileHero({
       )}
 
       {/* `relative` so the name paints ABOVE the positioned cover when it overlaps its edge. */}
-      <div className={`relative px-5 pb-6 sm:px-6 ${heroImage ? "-mt-10" : "pt-6"}`}>
+      {/* <640px the pull-up is softened (-40px → -16px): with the promise stacked under
+          the name, -40px pushed both onto the cover and the text drowned in it (Khalid,
+          21 Aug: «move text a little down»). ≥640px unchanged. */}
+      <div className={`relative px-5 pb-6 sm:px-6 ${heroImage ? "-mt-4 sm:-mt-10" : "pt-6"}`}>
         <div className="flex items-end gap-4">
           <span className="relative grid size-20 shrink-0 place-items-center overflow-hidden rounded-full bg-card ring-4 ring-background">
             {logo ? (
@@ -63,10 +66,13 @@ export function ModontyProfileHero({
               «مدونتي تكمل مع الكلام»), so no mark between them and a tight gap. The promise
               truncates rather than wraps — it is a line, not a paragraph. The city moved
               into the legal card in the rail, with the rest of the papers. */}
-          <div className="flex min-w-0 flex-1 items-baseline gap-2 pb-1">
+          {/* <640px the promise drops to its own two lines under the name — truncated
+              beside it, the page's whole point read «تكتب باسمك، وتظهرك …» (Khalid, 21 Aug).
+              ≥640px unchanged: one line, truncating. */}
+          <div className="flex min-w-0 flex-1 flex-col gap-1 pb-1 sm:flex-row sm:items-baseline sm:gap-2">
             <h1 className="shrink-0 text-2xl font-bold leading-tight text-foreground sm:text-3xl">{name}</h1>
             {description && (
-              <p className="min-w-0 truncate text-sm leading-relaxed text-foreground/75 sm:text-[15px]">{description}</p>
+              <p className="min-w-0 line-clamp-2 text-sm leading-relaxed text-foreground/75 sm:line-clamp-none sm:truncate sm:text-[15px]">{description}</p>
             )}
           </div>
           <CtaTrackedLink
@@ -75,7 +81,9 @@ export function ModontyProfileHero({
             rel="noopener noreferrer"
             label="Modonty Hero — become a partner"
             type="BANNER"
-            className={buttonVariants({ className: "mb-1 shrink-0" })}
+            // <768px the bottom bar already carries «صِر شريكاً» (Khalid, 21 Aug: two of
+            // the same door on one screen is one too many) — desktop has no bottom bar.
+            className={buttonVariants({ className: "mb-1 shrink-0 max-md:hidden" })}
           >
             <IconAdd aria-hidden />
             {messages.becomePartner.cta}
@@ -105,8 +113,9 @@ function TrustStrip() {
       {/* Row 1: the badge and its one-line rule · the link. Row 2: the four steps on an even grid. */}
       <div className="flex items-center gap-3">
         <ModontyTrustMark className="h-6 w-6 shrink-0" />
-        {/* Title and rule on ONE line (Khalid, 2026-08-17: «خلّيهم في سطر واحد»). */}
-        <p className="min-w-0 flex-1 truncate text-sm leading-tight">
+        {/* Title and rule on ONE line ≥640px (Khalid, 2026-08-17: «خلّيهم في سطر واحد»);
+            <640px the line truncated to «أربع خطوا…» — it wraps instead (Khalid, 21 Aug). */}
+        <p className="min-w-0 flex-1 text-sm leading-tight sm:truncate">
           <span className="font-medium text-foreground">{TRUST.title}</span>
           <span className="text-foreground/60"> — {TRUST.subtitle}</span>
         </p>
@@ -130,7 +139,9 @@ function TrustStrip() {
             >
               {(index + 1).toLocaleString("ar-SA")}
             </span>
-            <span className="w-full truncate text-xs leading-tight text-foreground/80 sm:text-sm">
+            {/* <640px the step labels wrap in full — clamped they read «نتأكّد من وج…»,
+                and these four facts are the badge's whole force (Khalid, 21 Aug). */}
+            <span className="w-full text-xs leading-tight text-foreground/80 sm:truncate sm:text-sm">
               <span className="sr-only">{(index + 1).toLocaleString("ar-SA")}. </span>
               {step}
             </span>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جرد صفحات الجوّال — مدونتي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0f1117;--card:#181b23;--line:#2a2e3a;--txt:#e8eaf0;--dim:#9aa1b2;--red:#ff5c5c;--orange:#ffab4a;--yellow:#ffd54a;--blue:#5b8cff;--green:#3ddc84;--violet:#b98cff}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--txt);padding:32px 20px;line-height:1.65}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:26px;font-weight:800}
+  .sub{color:var(--dim);font-size:14px;margin:4px 0 20px}
+  .warn{background:#2a1f10;border:1px solid #4a3410;border-radius:10px;padding:12px 16px;font-size:13.5px;color:var(--orange);margin-bottom:22px}
+  .real{background:linear-gradient(135deg,#13291d,#181b23);border:1px solid #2c5a3d;border-radius:14px;padding:18px 20px;margin-bottom:16px}
+  .law{background:linear-gradient(135deg,#2a1216,#181b23);border:2px solid #5c2028;border-radius:14px;padding:18px 20px;margin-bottom:16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px}
+  .c{background:#141821;border:1px solid var(--line);border-radius:12px;padding:13px 15px;transition:border-color .15s}
+  .c:hover{border-color:#3c4356}
+  .c.done{border-color:#2c5a3d;background:linear-gradient(135deg,#122318,#141821)}
+  .c.done h3{text-decoration:line-through;text-decoration-color:#2c5a3d}
+  .ch{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+  .n{width:24px;height:24px;border-radius:7px;background:#222735;color:var(--dim);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+  .c.done .n{background:#1b3b28;color:var(--green)}
+  .st{font-size:10.5px;font-weight:800;border-radius:99px;padding:2px 9px;background:#222735;color:var(--dim);margin-inline-start:auto}
+  .c.done .st{background:#14321f;color:var(--green)}
+  .c h3{font-size:14.5px;font-weight:800;margin-bottom:5px;line-height:1.5}
+  .c .w{font-size:12px;color:var(--violet);margin-bottom:5px}
+  .c .f{font-size:12px;color:var(--dim);margin-bottom:6px;line-height:1.7}
+  .c .m{font-size:12.5px;color:var(--dim);line-height:1.65;border-top:1px solid #222735;padding-top:6px}
+  .totals{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+  .tot{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 16px;text-align:center;min-width:96px}
+  .tot b{display:block;font-size:22px}
+  .tot span{font-size:11.5px;color:var(--dim)}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px}
+  h2{font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .cnt{font-size:12px;font-weight:700;background:#222735;color:var(--dim);border-radius:99px;padding:2px 10px}
+  .note{color:var(--dim);font-size:13px;margin:6px 0 12px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{color:var(--dim);font-size:11.5px;text-align:start;padding:6px;border-bottom:1px solid var(--line);font-weight:700}
+  td{padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  code{font-size:12.5px;color:var(--violet);direction:ltr;display:inline-block}
+  .sig{font-size:11.5px;color:var(--dim);direction:ltr;display:inline-block}
+  .b{font-size:11px;font-weight:800;border-radius:6px;padding:1px 8px;white-space:nowrap}
+  .b.done{background:#14321f;color:var(--green)}
+  .b.struct{background:#4a1720;color:var(--red)}
+  .b.risk{background:#42300f;color:var(--orange)}
+  .b.check{background:#1d3050;color:var(--blue)}
+  .b.thin{background:#2a2e3a;color:var(--dim)}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin-bottom:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>📱 جرد صفحات الجوّال — مدونتي</h1>
+<p class="sub">٢١ أغسطس ٢٠٢٦ · <b>٦٧ صفحة</b> — الجرد كامل من <code>find app -name page.tsx</code>، صفر صفحة محذوفة · النطاق: <code>modonty/</code> وحده</p>
+
+<div class="law">
+  <h2 style="color:var(--red);margin-bottom:8px">⛔ القاعدة الحاكمة — الديسكتوب لا يُمسّ</h2>
+  <p style="font-size:14px;line-height:1.85;color:var(--txt)">
+    الديسكتوب <b>مُقفل ومُعتمد</b>. أي تعديل للجوّال يجب ألّا يغيّر شكل الديسكتوب <b>ولا بكسل واحد</b>.
+    ممنوع «نصلح هنا فنكسر هناك» — الكسر في المُعتمد أغلى من أي مكسب على الجوّال.
+  </p>
+  <ol style="padding-inline-start:20px;font-size:13.5px;line-height:1.95;margin-top:10px">
+    <li><b>الإضافة لا التغيير:</b> يُضاف صنف خاصّ بالجوّال (<code>max-lg:</code> · <code>lg:hidden</code> · <code>md:hidden</code>) ولا يُعدَّل الصنف المشترك الذي يقرأه الديسكتوب.</li>
+    <li><b>مكوّن جوّال منفصل مسموح تماماً</b> — بل مفضَّل عند اختلاف البنية. السابقة قائمة في المستودع: <code>ClientsCardMobile</code> · <code>ModontyCardMobile</code> · <code>PartnerCardMobile</code> · <code>MobileMenu</code>. لا تتردّد في إنشاء واحد جديد.</li>
+    <li><b>القياس قبل وبعد:</b> كل بطاقة تُقاس على <b>١٢٨٠×٨٠٠ ديسكتوب</b> قبل التعديل وبعده — والناتجان يجب أن يتطابقا. الديسكتوب هو <b>بوّابة القبول</b>، لا الجوّال وحده.</li>
+    <li><b>عند التعارض:</b> لو كان الإصلاح يتطلّب مسّ الديسكتوب — <b>قف واسأل خالد</b>، لا تجتهد.</li>
+  </ol>
+  <p style="font-size:13.5px;line-height:1.85;color:var(--txt);margin-top:12px;border-top:1px solid #5c2028;padding-top:10px">
+    🍎 <b>المرجع التصميمي المعتمد: سكيل <code>apple-design</code></b> — الجوّال يُبنى على مبادئه:
+    حركة زنبركية قابلة للمقاطعة (لا مدد ثابتة) · لمس ≥ ٤٤ بكسل · إيماءات السحب والغلق بزخم حقيقي ·
+    احترام <code>prefers-reduced-motion</code> · <code>env(safe-area-inset-*)</code> في كل عنصر ثابت ·
+    ضبط بصري للخطّ (<code>optical-sizing</code> · تباعد الأحرف والأسطر) · العمق بالمواد والطبقات لا بالحدود.
+    يُستدعى قبل أول سطر في كل بطاقة.
+  </p>
+</div>
+
+<div class="real">
+  <h2 style="color:var(--green);margin-bottom:6px">🎯 الشغل الحقيقي = ١٠ صفحات، لا ٦٧</h2>
+  <p style="font-size:13.5px;color:var(--txt);margin-bottom:10px">
+    الجرد كامل للعلم، لكن <b>التعديل الفعلي</b> محصور في التسع ذوات قوالب الأعمدة + صفحة الشريك الأمّ.
+    الباقي ٥٧ <b>تمريرة فحص</b> — والاثنتا عشرة الداخلية للشريك تُصلَح بإصلاح أمّها.
+  </p>
+  <p style="font-size:13px;color:var(--dim);margin-bottom:14px;border-bottom:1px solid #24402e;padding-bottom:10px">
+    <b>لماذا «تتدهور» لا «مكسورة»:</b> قياس حيّ للرئيسية ٢١ أغسطس على ٣٩٠ — <b>صفر تمرير أفقي</b> ·
+    شريط الأسفل يرسم (<code>nav[aria-label="احجز أو تسوّق"]</code> · ٦٥px) · <b>٦ من ٨٣</b> هدف لمس تحت ٤٤ بكسل.
+  </p>
+
+  <p style="font-size:13px;color:var(--txt);background:#1b2438;border:1px solid #31405e;border-radius:8px;padding:10px 12px;margin-bottom:14px">
+    🧭 <b>ترتيب التنفيذ = من الأسهل إلى الأصعب</b> (قرار خالد، ٢١ أغسطس). الرئيسية <b>آخر بند</b> لأنها القلب —
+    ندخلها بعد ما تكون الأنماط مجرَّبة على تسع صفحات، لا قبل. البطاقة صفر (القوائم) تسبق الكلّ لأنها تظهر في ٦٧ صفحة.
+  </p>
+
+  <div class="grid">
+
+    <!-- ٠ · القوائم والهيكل المشترك -->
+    <article class="c todo" data-id="CHROME">
+      <div class="ch"><span class="n">٠</span><span class="st">🟡 بدأ جزئياً — ٢١ أغسطس</span></div>
+      <h3>القوائم والهيكل المشترك</h3>
+      <p class="w">يُصلَح <b>قبل</b> الصفحات — يظهر في كلّ صفحة، وأي عطل فيه يتكرّر ٦٧ مرّة.</p>
+      <p class="f"><code>layout/components/nav/</code> — MobileMenu · MobileMenuTrigger · TopNav · SearchLink · ThemeToggle · LogoNav<br>
+        <code>components/shared/mobile-cta-bar/MobileCtaBar</code> (جديد) · <code>articles/[slug]/components/bottom-dock</code> · <code>(partner)/…/client-bottom-bar</code></p>
+      <p class="m"><b>القرار المحدَّث (خالد، ٢١ أغسطس):</b> الشريط السفلي <b>سياقي حسب الصفحة</b> — هيكل واحد (زرّان + مودو بالوسط) وكل صفحة تمرّر نصّي زرّيها ورابطيهما؛ «يُشتغل حسب الصفحة ونخليه آخر حاجة».<br>
+        <b>منجز (مقيس ٢١ أغسطس):</b> <code>MobileCtaBar</code> المشترك بُني وركّب في الرئيسية (احجز/تسوّق) و<code>/modonty</code> (صِر شريكاً → jbrseo · عن مدونتي) بتباين توكنات مضمون بالوضعين · «مزاياك هنا» صارت بجانب أيقونة الدخول بنبض خفيف والبحث تنازل عن العرض (كانت فقاعة تغطّي المحتوى) · <b>علامات البراند المعتمدة</b> رُكّبت: المجالات والشريك والطلّات (ألسنة الرئيسية) والبحث (<code>SearchLink</code> بنسخه الثلاث) — مكوّناتها في <code>shared/components/icons/</code>.<br>
+        <b>الباقي:</b> عطل القائمة المقيس (٣ من ٧ أقسام — ناقص <code>/</code> و<code>/articles</code> و<code>/reels</code> و<code>/audio</code> من <code>nav-config.ts:13-26</code>) · أشرطة CTA لبقية الصفحات (المقال · الشريك) تُمرَّر صفحةً صفحة · قياس <code>safe-area-inset</code> وتداخل الشريطين في صفحة المقال.</p>
+    </article>
+
+    <!-- سهل: الدلائل الثلاثة -->
+    <article class="c done" data-id="MODONTY">
+      <div class="ch"><span class="n">١</span><span class="st">✅ أُنجزت ٢١ أغسطس</span></div>
+      <h3>مدونتي <code>/modonty</code></h3>
+      <p class="w">🟢 كانت الأسهل — وثبّتت نمط الدليل للبطاقتين ٢ و٣</p>
+      <p class="f"><code>modonty/page.tsx</code> — الرايلان كانا <code>hidden</code> تحت ١٢٤٠: ٦٤٪ من الصفحة (القصّة · السجل · الفريق · الطلّات · المعرض) لا تصل زائر الجوّال إطلاقاً (ارتفاع ٥٨٣٣ ← ٢١٠٤).</p>
+      <p class="m"><b>الإصلاح:</b> الرايلان يتكدّسان بعرض كامل تحت الخلاصة (<code>order-2/3</code>) دون لمس الديسكتوب.
+        <b>مقيس بمحاكاة جهاز:</b> ٣٩٠ = ثلاثة أقسام ظاهرة، ارتفاع ٣٣٨٢، صفر تمرير أفقي · ٧٦٨ ✓ · ١١٠٠ = مخفيان (كما قبل) ✓ · <b>١٢٨٠ مطابق حرفياً</b> (٣٠٠/٥٠٢/٣٠٠ · ارتفاع ٥٨٣٣) ✓<br>
+        <b>جولة ٢١ أغسطس (مقيسة كلها):</b> شريط سفلي مشترك <code>MobileCtaBar</code> («صِر شريكاً» → jbrseo بتبويب جديد · «عن مدونتي» → <code>/about</code> · مودو بالوسط) وزر الهيرو مخفي تحت ٧٦٨ · لوحة «بريشتنا» ديسكتوب فقط · وعد الهيرو سطران كاملان تحت الغلاف (<code>-mt-4</code> جوّال) · شريط الموثوقية كامل النص بلا بتر · شارة «مدونتي» المكرّرة أُخفيت من البطاقات (<code>hideClient</code>).
+        <b>مؤجَّل بعلم خالد:</b> ١٢ هدف لمس &lt;٤٠ بكسل (أسهم وأيقونات ثانوية) — مؤشّر لا عطل.</p>
+    </article>
+
+    <article class="c done" data-id="INDUSTRIES">
+      <div class="ch"><span class="n">٢</span><span class="st">✅ أُنجزت وأكّدها خالد ٢١ أغسطس</span></div>
+      <h3>المجالات <code>/industries</code></h3>
+      <p class="w">🟢 العطل: رايل المجالات كان <code>hidden</code> تحت ١٢٤٠ — زائر الجوّال بلا أي طريقة لتبديل المجال، ورايل الشركاء مخفي تحت ١٠٢٤.</p>
+      <p class="f"><code>industries-chips/IndustriesChips.tsx</code> (جديد — شريط تشيبس بتمرير أفقي snap فوق الخلاصة، «الكل» + مجال بعدّاده) · <code>IndustryPageLayout.tsx</code> (التشيبس تحت ١٢٤٠ فقط + رايل الشركاء يتكدّس بعرض كامل تحت ١٠٢٤)</p>
+      <p class="m"><b>جولة ١ (تشيبس):</b> استُبدلت بالكامل بعد حكم خالد «ما في روح».<br>
+        <b>جولة ٢ — إعادة تصميم من المصادر (Baymard: تصنيف بصورة مصغّرة · NN/g: التصنيفات فوق الخلاصة + مؤشّر الرائج)، موكب معتمد <code>documents/idea/industries-mobile-ui.html</code>:</b>
+        رأس هوية بعلامة المجالات · بطاقات مصوّرة موحّدة ١٣٦ بكسل (<code>object-contain</code> بمسافة تنفّس، لون ثابت لكل مجال من توكنات الأكشن <code>helpers/industry-tones.ts</code>، شارة «الأنشط»، عدّادات بعربي سليم) · شريط توجيه بلون بطاقة المجال المختار وشركاؤه <b>طيّة تفتح مكانها</b> (<code>details</code> بلا جافاسكريبت) · شبكة شعارات الشركاء عمودان.<br>
+        <b>المسح الختامي (محاكاة جهاز ٢١ أغسطس):</b> ٣٩٠ و٧٦٨ = بطاقات + رأس + شبكة شركاء، صفر تمرير أفقي · ١١٠٠ = بطاقات + رايل شركاء ٣٠٠ بلا ازدواج · <b>١٢٨٠ مطابق حرفياً</b> (٣٠٠/٥٠١/٣٠٠ وكل الجديد مخفي) · الغامق: الطيّة تفتح ببطاقتين ولون الشريط = لون البطاقة (كهرماني ٢٤٥,١٥٩,١٠ مطابَق) · تنقّل لمس حقيقي soft-nav (علامة الذاكرة نجت) · الشريط السفلي (احجز/تسوّق) على القاعدة والفرعية عبر التخطيط المشترك (مقيس).</p>
+    </article>
+
+    <article class="c done" data-id="CLIENTS">
+      <div class="ch"><span class="n">٣</span><span class="st">✅ أُنجزت ٢١ أغسطس</span></div>
+      <h3>الشركاء <code>/clients</code></h3>
+      <p class="w">🔴 حكم خالد: «very poor» — الرايلان مخفيان تحت ١٢٤٠ (لا فلترة ولا موثوقية لزائر الجوّال) وبطاقة الشريك ~٣٠٠ بكسل ← ١٢ شريكاً = ٤٤٦٧ بكسل تمرير.</p>
+      <p class="f"><code>partner-card/PartnerCardMobile.tsx</code> (جديد — بطاقة مضغوطة: شعار + اسم + سطر ثقة + فعل واحد، وخط علوي ٤ بكسل بلون المجال لكل بطاقة) · <code>components/shared/industry-cards/IndustryCards.tsx</code> (نُقل للمشترك — نفس مكوّن المجالات، هنا يفلتر وهناك ينقل) · <code>clients/components/partners-filter-bar</code> · <code>trust-card/TrustStripMobile.tsx</code> · <code>helpers/industry-tones.ts</code> (<code>toneForSlug</code> — لون المجال ثابت بالسلاق لا بالترتيب)</p>
+      <p class="m"><b>المُنجَز:</b> فلتر بطاقات المجالات + بطاقة «المميّزون» الذهبية داخل صفّ الفلاتر (قرار خالد كان وضعهما في الشريط السفلي — نوقش ورُفض: «العاديون» تسمية تضرّ ٢١ من ٢٩ شريكاً) · الشريط السفلي صار «صِر شريكاً + المجالات» بدل «احجز» المكرّر · زر الشريك المميّز بلون البراند · البحث داخل الصفحة أُخفي على الجوّال · عيوب الفلترة أُصلحت (الكل تثبت ٢٩ · العنوان يسمّي المعروض · العدّادات لا تنكمش) · رسالة الفراغ تخاطب الفلتر لا البحث · جملة الثقة بلا بتر · أهداف اللمس ٣٨ ← ١.<br>
+        <b>المسح الختامي (٤ مقاسات × وضعين):</b> ٣٩٠ و٧٦٨ = صفر تمرير أفقي، ارتفاع ٤٤٦٧ ← <b>٢٠٤٠</b>، هدف لمس صغير واحد («الرئيسية» في مسار التنقّل — عنصر مشترك خارج نطاق البطاقة) · ١١٠٠ ✓ · <b>١٢٨٠ مطابق</b> (٣٠٠/٤٦٤/٣٠٠ · البحث ظاهر · الشريط السفلي مخفي).<br>
+        <b>معلّق على خالد (بيانات لا كود):</b> صور المجالات الثمانية كلها <code>logo/_platform/platform-default-logo</code> — الكود يعرض <code>socialImage</code> فور حفظها.</p>
+    </article>
+
+    <!-- سهل-متوسط -->
+    <article class="c todo" data-id="ABOUTCARD" style="border-color:#4a3410">
+      <div class="ch"><span class="n">◆</span><span class="st">مكوّن مشترك — يُعاد بناؤه</span></div>
+      <h3>بطاقة «مدونتي» <code>AboutCard</code></h3>
+      <p class="w">🟡 طلب خالد (٢١ أغسطس): <b>ريفاكتور كامل للبطاقة</b> — بشكلها الحالي (عنوان + سطر + أربع نقاط + زر «تعرّف على مدونتي») تقرأ كإعلان داخلي لا كقيمة للزائر.</p>
+      <p class="f"><code>modonty/components/shared/about-card/AboutCard.tsx</code> — <b>مستهلكوها الثلاثة (جرد grep ٢١ أغسطس):</b> <code>(homepage)/components/right-sidebar/RightSidebar.tsx</code> · <code>articles/components/page-layout/ArticlesPageLayout.tsx</code> · <code>clients/components/trust-card/TrustCard.tsx</code> — أي تعديل يمسّ ثلاث صفحات، فيُقاس على الثلاث.</p>
+      <p class="m"><b>ما استقرّ حتى الآن:</b> على `/articles` رُفعت إلى أعلى العمود بأمر خالد («should be at top») بعد ما كانت تحت ٢٠ بطاقة (تمرير ٥٨١٥ بكسل)، وبطاقة الثقة بجانبها صارت <b>سطر تلميح</b> (<code>TrustHint</code>) بدل بطاقة كاملة.<br>
+        <b>الباقي:</b> إعادة تفكير المحتوى نفسه من نيّة الزائر — ماذا يريد أن يعرف عن مدونتي وهو في منتصف تصفّح المقالات؟ ثم توحيد الشكل على المستهلكين الثلاثة.</p>
+    </article>
+
+    <article class="c todo" data-id="PROFILE" style="border-color:#4a3410">
+      <div class="ch"><span class="n">٤</span><span class="st">⏸️ مؤجَّلة بقرار خالد ٢١ أغسطس</span></div>
+      <h3>ملف القارئ <code>/users/profile</code></h3>
+      <p class="w">⏸️ <b>تُؤجَّل لما بعد صفحات المحتوى</b> — خالد (٢١ أغسطس): «موضوع اليوزر فيه شغل كثير جداً؛ نخلص الصفحات الرئيسية أولاً». الترتيب المعدَّل: <code>/articles</code> ← <code>/articles/[slug]</code> ← موقع الشريك ← ثم نرجع لها.</p>
+      <p class="f"><span class="sig">2col:1 · px:13 · mq:0</span> — أبناؤها الستة (bookings · comments · favorites · liked · disliked · following) تتبعها. <b>الإعدادات أُنجزت</b> بنفس النمط ومقيسة على ٣٩٠.</p>
+      <p class="m"><b>التشخيص مقيس ٢١ أغسطس (بحساب <code>testreels@modonty.com</code>):</b> الصفحة سليمة بنيوياً — صفر تمرير أفقي، عمود واحد، بلا رايلات (<code>asides: []</code>) — لكن <b>لا يوجد تخطيط جوّال أصلاً</b>: التبويبات السبعة والأرقام الستة متطابقة على ٣٩٠ و١٢٨٠ (<code>pageH 1382</code> مقابل <code>1104</code>).<br>
+        <b>ما ينتظرها:</b> نيّة الزائر مفقودة (يستقبله بريده و«الاسم: غير محدد» وستة أصفار بلا دعوة) · «لا يوجد نشاط حتى الآن» بلا مخرج · لا شريط سفلي · ٥ أهداف لمس ٣٨ بكسل (<code>0تعليق 28x38</code> · <code>0إعجاب 31x38</code> · <code>0مقال محفوظ 65x38</code>).</p>
+    </article>
+
+    <article class="c todo" data-id="AUDIO">
+      <div class="ch"><span class="n">٥</span><span class="st">لم يبدأ</span></div>
+      <h3>اسمع <code>/audio</code></h3>
+      <p class="w">🟡 متوسط — بسيطة بنيوياً لكن فيها قرار المشغّل</p>
+      <p class="f"><span class="sig">2col:1 · px:3 · mq:0</span></p>
+      <p class="m">مشغّل القرآن (١١٤ سورة · ٢٠ قارئاً) + قائمة تشغيل المقالات المسموعة — مشغّل صوت ثابت على الجوّال يحتاج قراراً مع شريط الأسفل (يُحسم في البطاقة صفر)</p>
+    </article>
+
+    <article class="c todo" data-id="STORY">
+      <div class="ch"><span class="n">٦</span><span class="st">لم يبدأ</span></div>
+      <h3>القصّة <code>/story</code></h3>
+      <p class="w">🟡 متوسط — صفحة بيعية طويلة، وعيٌ جزئي بالجوّال موجود</p>
+      <p class="f"><span class="sig">px:12 · mq:6</span></p>
+      <p class="m">أدنى أولويةً في التأثير لكنها مستقلّة — تُقاس وتُكمَل بلا تبعية على غيرها</p>
+    </article>
+
+    <!-- متوسط-صعب: مسار القراءة -->
+    <article class="c done" data-id="ARTICLES">
+      <div class="ch"><span class="n">٤</span><span class="st">✅ أُنجزت ٢١ أغسطس</span></div>
+      <h3>أرشيف المقالات <code>/articles</code></h3>
+      <p class="w">🔴 <b>عطل بنيوي مكتشَف ومُصلَح:</b> العمود الرئيسي كان عالقاً على ٩٣٠ بكسل ولا يتقلّص (<code>min-width:auto</code> على عنصر فليكس) فتفيض الصفحة أفقياً في كل نطاق ١٠٢٤–١٢٣٩: <b>١٢٠ بكسل عند ١٠٢٤ · ٨٢ عند ١١٠٠ · ٣٢ عند ١٢٠٠</b>.</p>
+      <p class="f"><code>shared/components/column-layout/TwoColumnLayout.tsx</code> (<code>min-w-0</code> — يخدم كل مستهلكيه) · <code>filters-bar/FiltersBar.tsx</code> · <code>reading-time-bar/ReadingTimeBar.tsx</code> · <code>articles-feed/ArticlesFeed.tsx</code> · <code>more-articles/MoreArticles.tsx</code> · <code>trust-box/TrustBox.tsx</code> (<code>TrustHint</code>) · <code>shared/about-card/AboutCard.tsx</code> (<code>AboutBar</code>) · <code>page-layout/ArticlesPageLayout.tsx</code><br>
+        <b>حُذف (كود ميت):</b> <code>mini-card/</code> — صار بلا مستهلك بعد توحيد البطاقة.</p>
+      <p class="m"><b>المُنجَز:</b> <b>بطاقة مقال واحدة للموقع كله</b> — <code>PostCard</code> نفسها (الناشر بشعاره · العنوان · المقتطف · صورة ١٦:٩ · علامة الصوت) في الخلاصة وفي التمرير اللانهائي · فلتر المجالات صار <b>نفس مكوّن <code>IndustryCards</code></b> المعتمد (بعدّاد مقالات لا شركاء) · صفّ التصنيفات وسطر النتيجة وبحث الصفحة كلها ديسكتوب فقط (محور فلترة واحد على الجوّال) · <b>أزرار الوقت صارت محوراً مستقلاً</b> لا يرث المجال وعدّاده من كل الأرشيف · سطر ثقة مختصر + شريط «مدونتي» ٥١ بكسل بدل بطاقة ١٧٤ · شريط سفلي «شاهد الطلّات · استمع» · أهداف اللمس ٤٤ · <code>contain-intrinsic-size</code> صُحّح ٤٢٠ ← ١٥٠ (كان ينفخ الصفحة ٦٦٥٩ بدل ~٤١٠٠).<br>
+        <b>المسح الختامي (٤ مقاسات × وضعين، ٢١ أغسطس):</b> صفر تمرير أفقي في الثمانية · ٣٩٠ = أول مقال عند ٤٤٢، ارتفاع ٤١١٥، شريط سفلي ظاهر، هدف لمس صغير واحد («الرئيسية» في مسار التنقّل — عنصر مشترك) · ٧٦٨ ✓ · ١١٠٠ و١٢٨٠ = تصميم الديسكتوب بلا مساس · <b>صفر خطأ جافاسكريبت</b>.<br>
+        <b>معلّق (بيانات لا كود):</b> صور المجالات كلها <code>platform-default-logo</code> — بقرار خالد تُعالَج لاحقاً.</p>
+    </article>
+
+    <article class="c todo" data-id="ARTICLE">
+      <div class="ch"><span class="n">٨</span><span class="st">لم يبدأ</span></div>
+      <h3>صفحة المقال <code>/articles/[slug]</code></h3>
+      <p class="w">🟠 صعب — الأهمّ للسيو، وأطول ملف في المسار</p>
+      <p class="f"><span class="sig">2col:2 · px:13 · mq:7</span> · الملف ٨٤٥ سطراً</p>
+      <p class="m">بطاقة <b>HERO1</b>: صورة البطل ٤١٢ بكسل تفصل «باختصار» عن المتن · شريط تفاعل سفلي خاصّ (<code>bottom-dock</code>) قد يتداخل مع شريط الموقع الجديد</p>
+    </article>
+
+    <article class="c todo" data-id="PARTNER">
+      <div class="ch"><span class="n">٩</span><span class="st">لم يبدأ</span></div>
+      <h3>موقع الشريك <code>/(partner)/clients/[slug]</code></h3>
+      <p class="w">🔴 الأصعب بنيوياً — ٤٢ عرضاً ثابتاً + ١٢ صفحة تابعة</p>
+      <p class="f"><span class="sig">px:42 · mq:6</span> — الأعلى في المستودع</p>
+      <p class="m">الاثنتا عشرة الداخلية (about · articles · book · contact · faq · photos · reviews · services · followers · likes · mentions · reels) ملفّاتها نحيفة ٣٠–٨٦ سطراً، التخطيط في المشترك — إصلاح الأمّ يصلحها كلها</p>
+    </article>
+
+    <!-- آخر بند: القلب -->
+    <article class="c todo" data-id="HOME" style="border-color:#7a4a2a;background:linear-gradient(135deg,#241d16,#1a1a1f)">
+      <div class="ch"><span class="n">١٠</span><span class="st">آخر بند — بأمر خالد</span></div>
+      <h3>الرئيسية <code>/</code></h3>
+      <p class="w">🔴 القلب — ٩٠٪ من الزائر يمرّ من هنا، فتُترك للنهاية عمداً</p>
+      <p class="f"><span class="sig">3col:1 · px:8 · mq:7</span></p>
+      <p class="m">مقيسة ٢١ أغسطس: صفر تمرير أفقي · ٦/٨٣ هدف تحت ٤٤.<br>
+        <b>شغل مبكّر تمّ فيها اليوم بأمر خالد (مقيس كله):</b> أبواب الأقسام صارت <b>ألسنة ملوّنة معلّقة تحت الناف بار</b> بنمط تبويبات المقال (مدونتي · المجالات · الطلّات · الشركاء بعلامات البراند) بدل البطاقات الأربع المكدّسة — والمقالات صعدت لأول شاشة · بار «اسأل مودو» مخفي تحت ٧٦٨ (الشريط السفلي يحمل مودو) · تباين شريط احجز/تسوّق اتصلّح بالوضعين · <b>بطاقة المقال أعيد بناؤها</b> (ناشر بشعاره فوق · عنوان ١٤ · مقتطف سطران · صورة ١٦:٩ · «نسخة صوتية» بسطر الناشر · اتجاه تلقائي للأسماء اللاتينية).<br>
+        <b>يبقى لإقفالها آخر المسار:</b> المراجعة الكلّية كزائر + قرار «احجز/تسوّق» النهائي حسب سياقها + أهداف اللمس الستة.</p>
+    </article>
+
+  </div>
+
+  <p style="font-size:12.5px;color:var(--dim);margin-top:14px">
+    كل بطاقة تُوسم <b style="color:var(--green)">✅ أُنجزت</b> فور قياسها على ٣٩٠×٨٤٤ بمحاكاة جهاز حقيقية — والمنجَز يبقى للرجوع، لا يُحذف.
+  </p>
+</div>
+
+<div class="warn">
+  ⚠️ <b>هذي مؤشّرات من مسح الكود، لا قياسات حيّة.</b> الأعمدة تحت (<code>3col</code> · <code>2col</code> · <code>px</code> · <code>mq</code>) عدّ آلي لأنماط في ملفّات كل مسار — تدلّ على <b>مرشَّح</b> للمراجعة ولا تثبت عطلاً. الصفحة لا تُوسم «سليمة» إلا بقياس على ٣٩٠×٨٤٤ <b>بمحاكاة جهاز حقيقية</b> (لمس + DPR)، لا بتصغير نافذة.
+</div>
+
+<div class="totals">
+  <div class="tot"><b>٦٧</b><span>إجمالي الصفحات</span></div>
+  <div class="tot"><b style="color:var(--green)">٧</b><span>مقيسة فعلاً</span></div>
+  <div class="tot"><b style="color:var(--red)">٩</b><span>هيكل ديسكتوب</span></div>
+  <div class="tot"><b style="color:var(--orange)">١٣</b><span>عرض ثابت بلا استعلام</span></div>
+  <div class="tot"><b style="color:var(--blue)">١٢</b><span>صفحات الشريك</span></div>
+  <div class="tot"><b style="color:var(--dim)">٣٠</b><span>بسيطة/نماذج</span></div>
+</div>
+
+<p class="legend">
+  <span><b>3col/2col</b> = تستهلك قالب الأعمدة المشترك</span>
+  <span><b>px</b> = عدد أعراض <code>w-[NNNpx]</code> الثابتة</span>
+  <span><b>mq</b> = عدد أصناف <code>md:hidden</code>/<code>hidden md:</code> (وعيٌ بالجوّال)</span>
+</p>
+
+<!-- ═══════ مقيسة ═══════ -->
+<section>
+  <h2>✅ مقيسة على الجوّال فعلاً <span class="cnt">٧</span></h2>
+  <p class="note">الوحيدة التي لها دليل قياس — الباقي كلّه غير مقيس.</p>
+  <table>
+    <tr><th>المسار</th><th>الحالة</th><th>الدليل</th></tr>
+    <tr><td><code>/modonty</code></td><td><span class="b done">أُنجزت</span></td><td>بطاقة ١ — أربعة مقاسات + الغامق، ٢١ أغسطس (التفاصيل في البطاقة)</td></tr>
+    <tr><td><code>/industries</code> + <code>[slug]</code></td><td><span class="b done">أُنجزت</span></td><td>بطاقة ٢ — إعادة تصميم كاملة من المصادر، مسح ختامي أخضر ٢١ أغسطس</td></tr>
+    <tr><td><code>/clients</code></td><td><span class="b done">أُنجزت</span></td><td>بطاقة ٣ — ٤ مقاسات × وضعين، ارتفاع ٤٤٦٧ ← ٢٠٤٠ ٢١ أغسطس</td></tr>
+    <tr><td><code>/articles</code></td><td><span class="b done">أُنجزت</span></td><td>بطاقة ٤ — ٤ مقاسات × وضعين، فيض أفقي ١٢٠px ← ٠ في نطاق ١٠٢٤-١٢٣٩ ٢١ أغسطس</td></tr>
+    <tr><td><code>/reels</code></td><td><span class="b done">مقيسة</span></td><td>خالد جرّبها على جوّاله الحقيقي ٢٠ أغسطس وقال «أوكي» · تمرير اللمس أُصلح (<code>h-dvh</code>) بمحاكاة لمس حقيقية</td></tr>
+    <tr><td><code>/reels/[slug]</code></td><td><span class="b done">مقيسة</span></td><td>صفحة المشاهدة المفردة — بُنيت ضمن نفس التاسك ومعها عدّاد المشاهدات</td></tr>
+    <tr><td><code>/users/profile/settings</code></td><td><span class="b done">مقيسة</span></td><td>٢١ أغسطس عند ٣٩٠×٨٤٤: الرايل مخفي · صفر تمرير أفقي · ٣ أقسام</td></tr>
+  </table>
+</section>
+
+<!-- ═══════ هيكل ═══════ -->
+<section>
+  <h2>🔴 هيكل ديسكتوب — تحتاج قراراً في التخطيط <span class="cnt">٩</span></h2>
+  <p class="note">تستهلك <code>ThreeColumnLayout</code> أو <code>TwoColumnLayout</code>: أعمدة ٣٠٠ بكسل جانبية لا مكان لها على ٣٩٠ — أين تذهب؟ فوق المتن، أسفله، أم تُطوى؟ هذا قرار شكل قبل الكود.</p>
+  <table>
+    <tr><th>المسار</th><th>المؤشّر</th><th>الحالة</th><th>ملاحظة</th></tr>
+    <tr><td><code>/</code> الرئيسية</td><td class="sig">3col:1 · px:8 · mq:7</td><td><span class="b struct">هيكل</span></td><td>وعيٌ جزئي بالجوّال موجود (٧ استعلامات) — يُقاس ويُكمل</td></tr>
+    <tr><td><code>/articles</code></td><td class="sig">2col:3 · px:13 · mq:6</td><td><span class="b done">أُنجزت ٢١ أغسطس</span></td><td>بطاقة ٤ — بطاقة مقال موحّدة + فلتر المجالات المعتمد + إصلاح فيض ١٠٢٤-١٢٣٩</td></tr>
+    <tr><td><code>/articles/[slug]</code></td><td class="sig">2col:2 · px:13 · mq:7</td><td><span class="b struct">هيكل</span></td><td>نفس البطاقة · الملف ٨٤٥ سطراً · صورة البطل ٤١٢ بكسل (بطاقة HERO1)</td></tr>
+    <tr><td><code>/clients</code></td><td class="sig">3col:1 · px:12 · mq:0</td><td><span class="b done">أُنجزت ٢١ أغسطس</span></td><td>بطاقة ٣ — بطاقة شريك مضغوطة + فلتر بطاقات + المميّزون</td></tr>
+    <tr><td><code>/industries</code></td><td class="sig">3col:1 · px:11 · mq:0</td><td><span class="b done">أُنجزت ٢١ أغسطس</span></td><td>بطاقة ٢ — بطاقات مصوّرة + طيّة الشركاء</td></tr>
+    <tr><td><code>/modonty</code></td><td class="sig">3col:1 · px:7 · mq:0</td><td><span class="b done">أُنجزت ٢١ أغسطس</span></td><td>بطاقة ١ — تكديس الرايلين + الشريط السفلي</td></tr>
+    <tr><td><code>/audio</code></td><td class="sig">2col:1 · px:3 · mq:0</td><td><span class="b struct">هيكل</span></td><td>جديدة (٢٠ أغسطس) — مشغّل القرآن + قوائم التشغيل بلا أي قياس جوّال</td></tr>
+    <tr><td><code>/users/profile</code></td><td class="sig">2col:1 · px:13 · mq:0</td><td><span class="b struct">هيكل</span></td><td>بوّابة ٦ صفحات فرعية تحتها</td></tr>
+    <tr><td><code>/story</code></td><td class="sig">px:12 · mq:6</td><td><span class="b struct">هيكل</span></td><td>صفحة بيعية — ١٢ عرضاً ثابتاً مع وعي جزئي</td></tr>
+  </table>
+</section>
+
+<!-- ═══════ عرض ثابت ═══════ -->
+<section>
+  <h2>🟠 عرض ثابت بلا أي استعلام جوّال <span class="cnt">١٣</span></h2>
+  <p class="note">فيها <code>w-[NNNpx]</code> و<b>صفر</b> صنف <code>md:hidden</code> — أي أن الجوّال لم يُؤخذ في الحسبان أصلاً في هذي الملفّات. مرشَّح أوّل للتمرير الأفقي.</p>
+  <table>
+    <tr><th>المسار</th><th>عرض ثابت</th><th>الحالة</th></tr>
+    <tr><td><code>/(partner)/clients/[slug]</code> موقع الشريك</td><td class="sig">px:42 · mq:6</td><td><span class="b risk">الأعلى — ٤٢</span></td></tr>
+    <tr><td><code>/categories</code></td><td class="sig">px:10 · mq:0</td><td><span class="b risk">مرشَّح</span></td></tr>
+    <tr><td><code>/tags</code></td><td class="sig">px:10 · mq:0</td><td><span class="b risk">مرشَّح</span></td></tr>
+    <tr><td><code>/search</code></td><td class="sig">px:7 · mq:2</td><td><span class="b risk">مرشَّح</span></td></tr>
+    <tr><td><code>/categories/[slug]</code></td><td class="sig">px:6 · mq:0</td><td><span class="b risk">مرشَّح</span></td></tr>
+    <tr><td><code>/tags/[slug]</code></td><td class="sig">px:6 · mq:0</td><td><span class="b risk">مرشَّح</span></td></tr>
+    <tr><td><code>/industries/[slug]</code></td><td class="sig">px:6 · mq:0</td><td><span class="b risk">مرشَّح</span></td></tr>
+    <tr><td><code>/trending</code></td><td class="sig">px:3 · mq:0</td><td><span class="b risk">مرشَّح</span></td></tr>
+    <tr><td><code>/users/[id]</code></td><td class="sig">px:3 · mq:0</td><td><span class="b risk">مرشَّح</span></td></tr>
+    <tr><td><code>/authors/[slug]</code></td><td class="sig">px:2 · mq:0</td><td><span class="b risk">مرشَّح</span></td></tr>
+    <tr><td><code>/booking</code></td><td class="sig">px:2 · mq:0</td><td><span class="b risk">مرشَّح</span></td></tr>
+    <tr><td><code>/shop</code></td><td class="sig">px:2 · mq:0</td><td><span class="b risk">مرشَّح</span></td></tr>
+    <tr><td><code>/modo-chat</code></td><td class="sig">px:1 · mq:0</td><td><span class="b risk">مرشَّح</span> — مودو موقوف بقرارك</td></tr>
+  </table>
+</section>
+
+<!-- ═══════ الشريك ═══════ -->
+<section>
+  <h2>🔵 صفحات موقع الشريك الداخلية <span class="cnt">١٢</span></h2>
+  <p class="note">كلها تحت <code>/(partner)/clients/[slug]/(inner)/</code>. ملفّات <code>page.tsx</code> نحيفة (٣٠–٨٦ سطراً) — التخطيط الحقيقي في المكوّنات المشتركة وفي صفحة الشريك الأمّ (٤٢ عرضاً ثابتاً). <b>إصلاح الأمّ يصلح أغلبها.</b></p>
+  <table>
+    <tr><th>المسارات</th><th>الحالة</th></tr>
+    <tr><td><code>/about</code> · <code>/articles</code> · <code>/book</code> · <code>/contact</code> · <code>/faq</code> · <code>/photos</code> · <code>/reviews</code> · <code>/services</code></td><td><span class="b check">تُفحص بعد الأمّ</span></td></tr>
+    <tr><td><code>(plain)/followers</code> · <code>(plain)/likes</code> · <code>(plain)/mentions</code> · <code>(plain)/reels</code></td><td><span class="b check">تُفحص بعد الأمّ</span></td></tr>
+  </table>
+</section>
+
+<!-- ═══════ بسيطة ═══════ -->
+<section>
+  <h2>⚪ صفحات بسيطة ونماذج <span class="cnt">٣٠</span></h2>
+  <p class="note">صفر عرض ثابت وصفر هيكل أعمدة — نصّ أو نموذج. خطرها الأقل، <b>لكنها تُفحص</b>: مقاس اللمس ٤٤ بكسل · تسمية الحقول · لوحة المفاتيح لا تغطّي زرّ الإرسال.</p>
+  <table>
+    <tr><th>المجموعة</th><th>المسارات</th></tr>
+    <tr><td><b>الحساب والدخول</b> (٦)</td><td><code>/users/login</code> · <code>/users/register</code> · <code>/users/forgot-password</code> · <code>/users/reset-password</code> · <code>/users/verify-email</code> · <code>/users/notifications</code></td></tr>
+    <tr><td><b>ملف القارئ</b> (٦)</td><td><code>/profile/bookings</code> · <code>/profile/comments</code> · <code>/profile/favorites</code> · <code>/profile/liked</code> · <code>/profile/disliked</code> · <code>/profile/following</code></td></tr>
+    <tr><td><b>قانونية</b> (٦)</td><td><code>/legal</code> · <code>/legal/privacy-policy</code> · <code>/legal/cookie-policy</code> · <code>/legal/copyright-policy</code> · <code>/legal/user-agreement</code> · <code>/terms</code></td></tr>
+    <tr><td><b>مساعدة وتواصل</b> (٤)</td><td><code>/help</code> · <code>/help/faq</code> · <code>/help/feedback</code> · <code>/contact</code></td></tr>
+    <tr><td><b>تعريفية</b> (٤)</td><td><code>/about</code> · <code>/team</code> · <code>/trust</code> · <code>/analytics</code></td></tr>
+    <tr><td><b>نشرة واشتراك</b> (٣)</td><td><code>/news</code> · <code>/news/subscribe</code> · <code>/subscribe</code></td></tr>
+    <tr><td><b>ترقيم الرئيسية</b> (١)</td><td><code>/page/[pageNumber]</code> — غلاف نحيف (٥٥ سطراً) يعيد استعمال مكوّنات الرئيسية</td></tr>
+  </table>
+</section>
+
+<!-- ═══════ الترتيب ═══════ -->
+<section style="background:linear-gradient(135deg,#1b2438,#181b23);border-color:#31405e">
+  <h2>🗺️ الترتيب المعتمد — من الأسهل إلى الأصعب</h2>
+  <p class="note">قرار خالد ٢١ أغسطس: نبدأ بالسهل ونترك القلب للنهاية. كل بند يُقاس على ٣٩٠×٨٤٤ بمحاكاة جهاز، و١٢٨٠×٨٠٠ قبل وبعد.</p>
+  <ol style="padding-inline-start:20px">
+    <li><b>٠ · المشترك:</b> القوائم وشريط الأسفل — يظهر في ٦٧ صفحة، فيسبق الكلّ.</li>
+    <li><b>١–٣ · الدلائل (🟢 سهل):</b> <code>/modonty</code> ← <code>/industries</code> ← <code>/clients</code> — نمط واحد يُثبَّت مرّة ويُعاد ثلاثاً.</li>
+    <li><b>الترتيب عُدِّل (خالد، ٢١ أغسطس):</b> صفحات المحتوى أولاً، وملف القارئ يُؤجَّل — «فيه شغل كثير جداً».</li>
+    <li><b>٤–٥ · مسار القراءة (🟠 صعب):</b> <code>/articles</code> ← <code>/articles/[slug]</code>.</li>
+    <li><b>٦ · الشريك (🔴):</b> الأمّ ٤٢ عرضاً ثابتاً — تجرّ معها ١٢ صفحة داخلية.</li>
+    <li><b>٧–٩ · المؤجَّلة:</b> <code>/users/profile</code> (نمط الإعدادات جاهز) ← <code>/audio</code> ← <code>/story</code>.</li>
+    <li><b>١٠ · الرئيسية (🔴 القلب):</b> آخر بند — ندخلها والأنماط كلها مجرَّبة.</li>
+    <li><b>ثم البسيطة الثلاثون:</b> تمريرة واحدة سريعة (لمس ٤٤ · تمرير أفقي · لوحة المفاتيح).</li>
+  </ol>
+</section>
+
+<p style="color:var(--dim);font-size:12px;text-align:center;margin-top:22px">
+  المصدر: <code>find app -name "page.tsx"</code> = ٦٧ · المؤشّرات: <code>grep -l ThreeColumnLayout|TwoColumnLayout</code> و<code>grep -o "w-\[[0-9]+px\]"</code> و<code>grep -o "md:hidden|hidden md:"</code> على ملفّات <code>.tsx</code> داخل كل مسار (عمق ٣)
+</p>
+
+</div>
+</body>
+</html>

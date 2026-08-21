@@ -10,7 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IconUser, IconLogout, IconSettings, IconEmail } from "@/lib/icons";
+import { ModontyLogoutMark } from "@/components/icons/modonty-logout-mark";
+import { IconUser, IconSettings, IconEmail } from "@/lib/icons";
 import { handleLogout } from "@/app/layout/components/logout";
 import { UserAvatarButton } from "@/app/layout/components/user-menu/UserAvatarButton";
 
@@ -57,7 +58,7 @@ export function UserMenuDropdown({ user }: UserMenuDropdownProps) {
           onClick={() => handleLogout()}
           className="text-destructive focus:text-destructive"
         >
-          <IconLogout className="h-4 w-4 mr-2" />
+          <ModontyLogoutMark className="mr-2 h-4 w-4 [--modonty-logout-accent:hsl(var(--accent))]" />
           تسجيل الخروج
         </DropdownMenuItem>
       </DropdownMenuContent>

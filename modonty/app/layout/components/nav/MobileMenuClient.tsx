@@ -9,6 +9,8 @@ const MobileMenu = dynamic(
   { ssr: false }
 );
 
+const MOBILE_MENU_ID = "mobile-navigation-sheet";
+
 export function MobileMenuClient() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -20,8 +22,18 @@ export function MobileMenuClient() {
 
   return (
     <>
-      <MobileMenuTrigger onClick={handleOpen} />
-      {mounted && <MobileMenu open={menuOpen} onOpenChange={setMenuOpen} />}
+      <MobileMenuTrigger
+        onClick={handleOpen}
+        open={menuOpen}
+        controls={mounted ? MOBILE_MENU_ID : undefined}
+      />
+      {mounted && (
+        <MobileMenu
+          open={menuOpen}
+          onOpenChange={setMenuOpen}
+          contentId={MOBILE_MENU_ID}
+        />
+      )}
     </>
   );
 }

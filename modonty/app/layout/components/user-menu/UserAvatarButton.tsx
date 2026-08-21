@@ -4,6 +4,7 @@ import { forwardRef } from "react";
 import type { Session } from "next-auth";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 type SessionUser = NonNullable<Session["user"]>;
 
@@ -14,18 +15,17 @@ interface UserAvatarButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEle
 
 export const UserAvatarButton = forwardRef<HTMLButtonElement, UserAvatarButtonProps>(
   ({ user, disabled, className, ...props }, ref) => (
-    <button
+    <Button
       ref={ref}
       type="button"
-      className={cn(
-        "flex items-center gap-2 rounded-full focus:outline-none min-h-11 min-w-11",
-        className
-      )}
+      variant="navigation"
+      size="mobileIcon"
+      className={cn("rounded-full p-1.5 disabled:opacity-100 md:p-1", className)}
       disabled={disabled}
       aria-label={user.name || "ملف المستخدم"}
       {...props}
     >
-      <Avatar className="h-8 w-8">
+      <Avatar className="size-8">
         <AvatarImage
           src={user.image || undefined}
           alt={user.name || ""}
@@ -35,8 +35,7 @@ export const UserAvatarButton = forwardRef<HTMLButtonElement, UserAvatarButtonPr
           {user.name?.charAt(0) || user.email?.charAt(0) || "U"}
         </AvatarFallback>
       </Avatar>
-    </button>
+    </Button>
   )
 );
 UserAvatarButton.displayName = "UserAvatarButton";
-

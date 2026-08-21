@@ -1,0 +1,25 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 100 100"
+  fill="none"
+  role="img"
+  aria-labelledby="modonty-partners-review-title modonty-partners-review-desc"
+>
+  <title id="modonty-partners-review-title">معاينة علامة شركاء مدوّنتي</title>
+  <desc id="modonty-partners-review-desc">واجهة شركة تصنع حرف إم، وتستقر ماسة مدوّنتي داخل قاعدة الحرف كحجر أساس</desc>
+
+  <path
+    fill="var(--modonty-partners-body, currentColor)"
+    d="M32 20h46a14 14 0 0 1 14 14v50H78V51a9 11 0 0 0-18 0v33H50V51a9 11 0 0 0-18 0v33h-1c0-3-1-5-3-7l-4-4c-2-2-4-3-6-3V34a14 14 0 0 1 14-14Z"
+  />
+
+  <rect
+    x="17.25"
+    y="76.25"
+    width="7.5"
+    height="7.5"
+    rx="0.6"
+    fill="var(--modonty-partners-accent, currentColor)"
+    transform="rotate(45 21 80)"
+  />
+</svg>

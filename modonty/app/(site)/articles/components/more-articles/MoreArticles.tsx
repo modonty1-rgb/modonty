@@ -3,7 +3,7 @@
 import { InfiniteList } from "@modonty/shared/components/infinite-list";
 import { IconLoading } from "@/lib/icons";
 
-import { MiniCard } from "../mini-card/MiniCard";
+import { PostCard } from "@/components/feed/postcard/PostCard";
 import { buildArchiveHref, type ArchiveState } from "../../helpers/build-archive-href";
 
 import type { InfiniteListPage } from "@modonty/shared/components/infinite-list";
@@ -58,8 +58,10 @@ export function MoreArticles({ current, startIndex, initialPage }: MoreArticlesP
       fetchPage={fetchPage}
       getKey={(item) => item.id}
       pageUrl={(page) => buildArchiveHref({ ...current, page })}
-      listClassName="divide-y divide-border"
-      renderItem={(item) => <MiniCard post={item} />}
+      // The same one article card the whole site uses (Khalid, 21 Aug) — what the scroll
+      // appends must be identical to what the server already drew above it.
+      listClassName="space-y-3"
+      renderItem={(item) => <PostCard post={item} />}
       renderLoading={(seen) => (
         <div className="flex items-center justify-center gap-2 border-t border-border py-4 text-muted-foreground">
           <IconLoading className="h-4 w-4 animate-spin" aria-hidden />

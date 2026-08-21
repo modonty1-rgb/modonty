@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { IconSearch } from "@/lib/icons";
+import { ModontySearchMark } from "@/components/icons/modonty-search-mark";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface SearchLinkProps {
   variant?: "full" | "compact" | "icon";
@@ -9,33 +11,54 @@ interface SearchLinkProps {
 export function SearchLink({ variant = "full", className = "" }: SearchLinkProps) {
   if (variant === "icon") {
     return (
+      <Button
+        asChild
+        variant="navigation"
+        size="mobileIcon"
+        className={cn("rounded-xl", className)}
+      >
+        <Link href="/search" prefetch={false} aria-label="بحث المقالات" className="[--modonty-search-accent:hsl(var(--accent))]">
+          <ModontySearchMark aria-hidden />
+        </Link>
+      </Button>
+    );
+  }
+
+  if (variant === "compact") {
+    return (
       <Link
         href="/search"
+        prefetch={false}
         aria-label="بحث المقالات"
-        className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-input bg-background text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground ${className}`}
+        className={cn(
+          "group flex h-11 min-w-0 max-w-[200px] items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          className
+        )}
       >
-        <IconSearch className="h-5 w-5" />
+        <span className="relative flex h-9 w-full min-w-0 items-center overflow-hidden rounded-full border border-input bg-background pe-4 ps-10 text-xs text-muted-foreground transition-colors group-hover:border-primary/50 group-hover:bg-primary/5 group-hover:text-foreground">
+          <span className="absolute right-3 top-1/2 inline-flex -translate-y-1/2 items-center justify-center [--modonty-search-accent:hsl(var(--accent))]">
+            <ModontySearchMark className="size-4" aria-hidden />
+          </span>
+          <span className="truncate">البحث…</span>
+        </span>
       </Link>
     );
   }
 
-  const sizeClasses =
-    variant === "compact"
-      ? "h-9 w-full max-w-[200px] text-xs"
-      : "h-10 w-full max-w-xs text-sm";
-
   return (
     <Link
       href="/search"
-      role="search"
       aria-label="بحث المقالات"
-      className={`relative flex items-center rounded-full border border-input bg-background pr-10 pl-4 text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground ${sizeClasses} ${className}`}
+      className={cn(
+        "relative flex items-center overflow-hidden rounded-full border border-input bg-background pe-4 ps-10 text-muted-foreground transition-colors hover:border-primary/50 hover:bg-primary/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        "h-10 w-full max-w-xs text-sm",
+        className
+      )}
     >
-      <span className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center">
-        <IconSearch className="h-4 w-4" aria-hidden />
+      <span className="absolute right-3 top-1/2 inline-flex -translate-y-1/2 items-center justify-center [--modonty-search-accent:hsl(var(--accent))]">
+        <ModontySearchMark className="h-4 w-4" aria-hidden />
       </span>
-      <span>ابحث…</span>
+      <span className="truncate">البحث…</span>
     </Link>
   );
 }
-

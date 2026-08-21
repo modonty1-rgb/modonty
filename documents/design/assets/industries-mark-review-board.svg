@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">معاينة هندسية لعلامة مجالات مدوّنتي</title>
+  <desc id="desc">ثلاث بوابات كحلية متطابقة حول ماسة مدوّنتي السماوية، مع معاينات للمقاسات والخلفيات</desc>
+  <metadata id="design-story">{"schemaVersion":1,"slug":"industries-mark","status":"review","ideaAr":"ثلاث بوابات متطابقة تمثل تنوع المجالات وتلتقي حول ماسة مدوّنتي التي تمثل المنصة الواحدة","objectivesAr":["هوية مستقلة للمجالات","ربط الرمز بعائلة مدوّنتي","وضوح في المقاسات الصغيرة"]}</metadata>
+  <rect width="1200" height="760" fill="#F4F3F7"/>
+
+  <g font-family="Tahoma, Arial, sans-serif" text-anchor="end">
+    <text x="1120" y="72" font-size="31" font-weight="700" fill="#0E065A">علامة مجالات مدوّنتي</text>
+    <text x="1120" y="108" font-size="18" fill="#5B5B5B">ثلاث بوابات · منصة واحدة · ماسة مدوّنتي الأصلية</text>
+  </g>
+  <g font-family="Tahoma, Arial, sans-serif">
+    <rect x="80" y="48" width="174" height="42" rx="21" fill="#FFF2CC" stroke="#D6A700"/>
+    <text x="167" y="75" text-anchor="middle" font-size="15" fill="#705600">مسودة · بانتظار الموافقة</text>
+  </g>
+
+  <rect x="650" y="150" width="470" height="410" rx="28" fill="#FFFFFF" stroke="#DBDBDB"/>
+  <rect x="80" y="150" width="470" height="410" rx="28" fill="#17161C" stroke="#2E2D36"/>
+
+  <!-- Official light-background mark -->
+  <g transform="translate(735 188) scale(3)">
+    <g fill="none" stroke="#0E065A" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M37 43V29a13 13 0 0 1 26 0v14"/>
+      <path d="M37 43V29a13 13 0 0 1 26 0v14" transform="rotate(120 50 50)"/>
+      <path d="M37 43V29a13 13 0 0 1 26 0v14" transform="rotate(240 50 50)"/>
+    </g>
+    <rect x="46" y="46" width="8" height="8" rx="0.7" fill="#00D8D8" transform="rotate(45 50 50)"/>
+  </g>
+
+  <!-- Adaptive dark-background mark -->
+  <g transform="translate(165 188) scale(3)">
+    <g fill="none" stroke="#F3F3F3" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M37 43V29a13 13 0 0 1 26 0v14"/>
+      <path d="M37 43V29a13 13 0 0 1 26 0v14" transform="rotate(120 50 50)"/>
+      <path d="M37 43V29a13 13 0 0 1 26 0v14" transform="rotate(240 50 50)"/>
+    </g>
+    <rect x="46" y="46" width="8" height="8" rx="0.7" fill="#00D8D8" transform="rotate(45 50 50)"/>
+  </g>
+
+  <g font-family="Tahoma, Arial, sans-serif" text-anchor="middle">
+    <text x="885" y="520" font-size="18" font-weight="700" fill="#0E065A">النسخة الرسمية</text>
+    <text x="315" y="520" font-size="18" font-weight="700" fill="#F3F3F3">نسخة الواجهة الداكنة</text>
+  </g>
+
+  <rect x="80" y="606" width="1040" height="104" rx="20" fill="#FFFFFF" stroke="#DBDBDB"/>
+  <g font-family="Tahoma, Arial, sans-serif">
+    <text x="1080" y="648" text-anchor="end" font-size="17" font-weight="700" fill="#0E065A">اختبار التصغير</text>
+    <text x="1080" y="679" text-anchor="end" font-size="14" fill="#5B5B5B">64 · 32 · 24 · 16 بكسل</text>
+  </g>
+
+  <defs>
+    <g id="industries-mark">
+      <g fill="none" stroke="#0E065A" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M37 43V29a13 13 0 0 1 26 0v14"/>
+        <path d="M37 43V29a13 13 0 0 1 26 0v14" transform="rotate(120 50 50)"/>
+        <path d="M37 43V29a13 13 0 0 1 26 0v14" transform="rotate(240 50 50)"/>
+      </g>
+      <rect x="46" y="46" width="8" height="8" rx="0.7" fill="#00D8D8" transform="rotate(45 50 50)"/>
+    </g>
+  </defs>
+  <use href="#industries-mark" transform="translate(600 626) scale(.64)"/>
+  <use href="#industries-mark" transform="translate(730 642) scale(.32)"/>
+  <use href="#industries-mark" transform="translate(825 646) scale(.24)"/>
+  <use href="#industries-mark" transform="translate(905 650) scale(.16)"/>
+</svg>

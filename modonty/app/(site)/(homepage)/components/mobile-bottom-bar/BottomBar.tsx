@@ -1,13 +1,8 @@
-import { DiscoveryBar } from "./DiscoveryBar";
 import { ServiceBar } from "./ServiceBar";
 
-// The homepage's two mobile bars. Both are links only, so both render on the server
-// and the homepage ships no JavaScript for either.
+// The homepage service bar is links only, so it renders on the server without adding
+// client JavaScript. Search now lives in the global TopNav where its DOM order matches
+// its visual position and it remains available on every site route.
 export function BottomBar() {
-  return (
-    <>
-      <DiscoveryBar />
-      <ServiceBar />
-    </>
-  );
+  return <ServiceBar />;
 }

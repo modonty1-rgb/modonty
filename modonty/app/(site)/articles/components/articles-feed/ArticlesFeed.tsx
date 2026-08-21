@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { MiniCard } from "../mini-card/MiniCard";
+import { PostCard } from "@/components/feed/postcard/PostCard";
 import { MoreArticlesOnScroll } from "../more-articles/MoreArticlesOnScroll";
 
 
@@ -40,8 +40,11 @@ export function ArticlesFeed({ articles, current }: ArticlesFeedProps) {
 
       {rows.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border bg-card p-8 text-center">
+          {/* The hint names what the visitor can actually see and undo: on a phone the search
+              box is in the navbar, not on the page, so «شيل واحداً من الفلاتر» pointed at a
+              control that was not there (Khalid, 21 Aug). */}
           <p className="text-sm font-medium text-foreground">ما فيه مقالات بهذي التصفية</p>
-          <p className="mt-1 text-xs text-muted-foreground">جرّب تشيل واحداً من الفلاتر.</p>
+          <p className="mt-1 text-xs text-muted-foreground">جرّب مجالاً آخر، أو وقت قراءة أطول.</p>
           <Link
             href={buildArchiveHref({})}
             className={"mt-3 inline-flex min-h-11 items-center rounded-md px-2 text-sm font-medium text-link hover:underline active:bg-muted " + FOCUS_RING}
@@ -50,10 +53,16 @@ export function ArticlesFeed({ articles, current }: ArticlesFeedProps) {
           </Link>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border bg-card">
-          <ul className="divide-y divide-border">
+        <div className="space-y-3">
+          {/* ONE article card for the whole site (Khalid, 21 Aug): the same `PostCard` the
+              homepage feed draws — publisher with his logo, title, brief, 16:9 thumb, audio
+              mark. `ArchiveArticle` is a `FeedPost` plus trust fields, so it slots straight
+              in. The archive's own `MiniCard` is no longer rendered; its file stays. */}
+          <ul className="space-y-3">
             {rows.map((post, index) => (
-              <MiniCard key={post.id} post={post} isLcp={index === 0 && page === 1} />
+              <li key={post.id}>
+                <PostCard post={post} index={index} isLcp={index === 0 && page === 1} />
+              </li>
             ))}
           </ul>
 
