@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { notFound, permanentRedirect, unstable_rethrow } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { ArticleStatus } from "@prisma/client";
 import { generateMetadataFromSEO, generateStructuredData, jsonLdHtml } from "@/lib/seo";
 import { generateAuthorStructuredData } from "@/app/(site)/users/[id]/helpers/generate-author-structured-data";
@@ -23,7 +24,6 @@ export async function generateMetadata({ params }: UserPageProps): Promise<Metad
       where: { id },
       select: {
         name: true,
-        email: true,
         image: true,
       },
     });
@@ -180,6 +180,12 @@ export default async function UserPage({ params }: UserPageProps) {
       notFound();
     }
 
+    // The email is personal data on a page any visitor can open (S-01, QA 2026-08-20):
+    // it renders ONLY when the signed-in viewer IS this profile's owner. It stays in the
+    // db select above because the author-match reads it server-side.
+    const session = await auth();
+    const isOwner = !!session?.user?.id && session.user.id === user?.id;
+
     const initials = (author?.name || user?.name || "U")
       .split(" ")
       .map((n) => n[0])
@@ -237,7 +243,7 @@ export default async function UserPage({ params }: UserPageProps) {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {user?.email && (
+                  {isOwner && user?.email && (
                     <div className="flex items-center gap-2 text-sm">
                       <IconEmail className="h-4 w-4 text-muted-foreground" />
                       <span>{user.email}</span>

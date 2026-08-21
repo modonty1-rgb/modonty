@@ -177,11 +177,13 @@ export function ProfileSettings() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="bio">السيرة الذاتية</Label>
+            {/* «نبذة عنك» لا «السيرة الذاتية» — هذا تعريف شخصي قصير، والسيرة الذاتية تعني CV
+                (خالد ٢٠ أغسطس: «هذا بروفايل شخص، دخل إيش موضوع السيرة الذاتية؟»). */}
+            <Label htmlFor="bio">نبذة عنك</Label>
             <textarea
               id="bio"
               {...register("bio")}
-              placeholder="اكتب سيرتك الذاتية (اختياري)"
+              placeholder="اكتب نبذة قصيرة عنك (اختياري)"
               className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               maxLength={500}
             />

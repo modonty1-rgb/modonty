@@ -4,13 +4,10 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
-import { profileSchema } from "../helpers/schemas/settings-schemas";
+import { profileSchema, passwordSchema } from "../helpers/schemas/settings-schemas";
 import type {
   ProfileFormData,
   PasswordFormData,
-  PrivacyFormData,
-  NotificationFormData,
-  PreferencesFormData,
 } from "../helpers/schemas/settings-schemas";
 
 export async function updateProfile(userId: string, data: ProfileFormData) {
@@ -65,6 +62,13 @@ export async function createPassword(
       return { success: false, error: "User not found" };
     }
 
+    // CREATE means create: an account that already has a password never changes it here —
+    // that path is changePassword, which demands the current one. Without this guard the
+    // create door overwrites an existing password with zero proof (same class as S-02).
+    if (user.password) {
+      return { success: false, error: "عندك كلمة مرور — غيّرها من «تغيير كلمة المرور»" };
+    }
+
     if (data.password !== data.confirmPassword) {
       return { success: false, error: "كلمات المرور غير متطابقة" };
     }
@@ -104,9 +108,23 @@ export async function changePassword(
       return { success: false, error: "User not found" };
     }
 
-    if (user.password && data.currentPassword) {
+    // Server-side validation is the real gate — the client schema is UX only (S-02, QA
+    // 2026-08-20: the action trusted a raw type, so a request that simply omitted
+    // currentPassword skipped the bcrypt check and took over the account).
+    const parsed = passwordSchema.safeParse(data);
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.issues[0]?.message ?? "بيانات غير صالحة" };
+    }
+
+    // An account that HAS a password never changes it without proving the current one.
+    // The schema keeps currentPassword optional only for Google-first accounts, which
+    // have no password to prove — and those go through createPassword anyway.
+    if (user.password) {
+      if (!parsed.data.currentPassword) {
+        return { success: false, error: "كلمة المرور الحالية مطلوبة" };
+      }
       const isPasswordValid = await bcrypt.compare(
-        data.currentPassword,
+        parsed.data.currentPassword,
         user.password
       );
       if (!isPasswordValid) {
@@ -114,7 +132,7 @@ export async function changePassword(
       }
     }
 
-    const hashedPassword = await bcrypt.hash(data.newPassword, 10);
+    const hashedPassword = await bcrypt.hash(parsed.data.newPassword, 10);
 
     await db.user.update({
       where: { id: userId },
@@ -130,83 +148,8 @@ export async function changePassword(
   }
 }
 
-export async function updatePrivacySettings(
-  userId: string,
-  settings: PrivacyFormData
-) {
-  try {
-    const session = await auth();
-    if (!session?.user?.id || session.user.id !== userId) {
-      return { success: false, error: "Unauthorized" };
-    }
-
-    await db.user.update({
-      where: { id: userId },
-      data: {
-        // Store privacy settings in a JSON field or extend User model
-        // For now, we'll use a simple approach
-      },
-    });
-
-    revalidatePath("/users/profile/settings");
-
-    return { success: true };
-  } catch (error) {
-    console.error("Error updating privacy settings:", error);
-    return { success: false, error: "Failed to update privacy settings" };
-  }
-}
-
-export async function updateNotificationSettings(
-  userId: string,
-  settings: NotificationFormData
-) {
-  try {
-    const session = await auth();
-    if (!session?.user?.id || session.user.id !== userId) {
-      return { success: false, error: "Unauthorized" };
-    }
-
-    await db.user.update({
-      where: { id: userId },
-      data: { notificationPreferences: settings },
-    });
-
-    revalidatePath("/users/profile/settings");
-
-    return { success: true };
-  } catch (error) {
-    console.error("Error updating notification settings:", error);
-    return { success: false, error: "Failed to update notification settings" };
-  }
-}
-
-export async function updatePreferences(
-  userId: string,
-  preferences: PreferencesFormData
-) {
-  try {
-    const session = await auth();
-    if (!session?.user?.id || session.user.id !== userId) {
-      return { success: false, error: "Unauthorized" };
-    }
-
-    await db.user.update({
-      where: { id: userId },
-      data: {
-        // Store preferences
-      },
-    });
-
-    revalidatePath("/users/profile/settings");
-
-    return { success: true };
-  } catch (error) {
-    console.error("Error updating preferences:", error);
-    return { success: false, error: "Failed to update preferences" };
-  }
-}
-
+// «الإشعارات» و«المظهر» و«الخصوصية» حُذفت من إعدادات القارئ (خالد ٢٠ أغسطس):
+// حفظ المظهر والخصوصية كان يكتب كائناً فاضياً، ومفاتيح الإشعارات ما كان يقرأها أي كود.
 export async function disconnectOAuthProvider(
   userId: string,
   provider: string,

@@ -1,5 +1,19 @@
 import { baseTemplate, heading, paragraph, divider, badge } from "./base";
 
+/**
+ * The platform's legal registry on the invoice — same Settings.org* fields the /trust page
+ * shows (Khalid 2026-08-20: an invoice without them is incomplete). Every field nullable:
+ * an unfilled column renders no row, never a label with nothing after it.
+ */
+export interface InvoiceLegalInfo {
+  legalName: string | null;
+  cr: string | null;
+  unifiedNumber: string | null;
+  entityType: string | null;
+  capital: string | null;
+  address: string | null;
+}
+
 export interface InvoiceEmailParams {
   clientName: string;
   email: string;
@@ -13,6 +27,7 @@ export interface InvoiceEmailParams {
   issuedAt: Date;
   subscriptionStart?: Date | null;
   subscriptionEnd?: Date | null;
+  legal?: InvoiceLegalInfo | null;
 }
 
 const dateFmt = new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "short", day: "numeric" });
@@ -32,9 +47,41 @@ function detailRow(label: string, value: string): string {
   </tr>`;
 }
 
+function legalRows(l: InvoiceLegalInfo): Array<[string, string]> {
+  const rows: Array<[string, string | null]> = [
+    ["الاسم القانوني", l.legalName],
+    ["رقم السجل التجاري", l.cr],
+    ["الرقم الوطني الموحّد", l.unifiedNumber],
+    ["نوع الكيان", l.entityType],
+    ["رأس المال", l.capital ? `${l.capital} ﷼` : null],
+    ["العنوان", l.address],
+  ];
+  return rows.filter((r): r is [string, string] => !!r[1]);
+}
+
 export function invoiceEmail(p: InvoiceEmailParams): { subject: string; html: string; text: string } {
   const paid = p.paymentStatus === "PAID";
   const statusBadge = paid ? badge("مدفوعة", "#10b981") : badge("مستحقّة", "#f59e0b");
+
+  // The full registry goes into the FOOTER, in the footer's own format and color
+  // (Khalid 2026-08-20) — it replaces the base template's hardcoded two lines.
+  const legal = p.legal ? legalRows(p.legal) : [];
+  const l = p.legal;
+  const footerLine1 = l
+    ? [l.legalName, l.cr && `السجل التجاري ${l.cr}`, l.unifiedNumber && `الرقم الوطني الموحّد ${l.unifiedNumber}`, l.entityType]
+        .filter(Boolean)
+        .join(" &nbsp;·&nbsp; ")
+    : "";
+  const footerLine2 = l
+    ? [l.address, l.capital && `رأس المال ${l.capital} ﷼`].filter(Boolean).join(" &nbsp;·&nbsp; ")
+    : "";
+  // Replace the footer only when the registry actually carries the essentials — production
+  // Settings can be partially filled, and an invoice footer with an address but no CR is
+  // worse than the hardcoded fallback in base.ts.
+  const legalFooterHtml =
+    l?.cr && l?.unifiedNumber
+      ? [footerLine1, footerLine2].filter(Boolean).join("<br/>")
+      : undefined;
 
   const content = `
     ${heading(`فاتورة ${p.invoiceNumber}`)}
@@ -71,7 +118,7 @@ export function invoiceEmail(p: InvoiceEmailParams): { subject: string; html: st
 
   return {
     subject: `فاتورة ${p.invoiceNumber} — مُدَوَّنَتِي`,
-    html: baseTemplate(content, `فاتورة ${p.invoiceNumber} بقيمة ${money(p.amount, p.currency)}`),
+    html: baseTemplate(content, `فاتورة ${p.invoiceNumber} بقيمة ${money(p.amount, p.currency)}`, legalFooterHtml),
     text: `فاتورة ${p.invoiceNumber}
 
 مرحباً ${p.clientName}،
@@ -82,7 +129,7 @@ ${p.paymentMethodLabel ? `طريقة الدفع: ${p.paymentMethodLabel}\n` : ""
 ${p.subscriptionStart ? `بداية الاشتراك: ${dateFmt.format(p.subscriptionStart)}\n` : ""}${p.subscriptionEnd ? `نهاية الاشتراك: ${dateFmt.format(p.subscriptionEnd)}\n` : ""}الحالة: ${paid ? "مدفوعة" : "مستحقّة"}
 
 الإجمالي: ${money(p.amount, p.currency)}
-
+${legal.length ? `\nالبيانات القانونية للمنشأة:\n${legal.map(([k, v]) => `${k}: ${v}`).join("\n")}\n` : ""}
 شكراً لتعاملك مع مُدَوَّنَتِي.
 لأي استفسار حول الفاتورة:
 جوال: 0560299034
