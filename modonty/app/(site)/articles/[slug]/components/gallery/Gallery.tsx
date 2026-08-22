@@ -44,7 +44,9 @@ export function Gallery({ images, fallbackText, clientName }: GalleryProps) {
 
   return (
     <Card className="overflow-hidden">
-      <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-4 py-2.5 text-xs font-semibold text-muted-foreground">
+      {/* `data-section-head`: on a phone this section sits inside a collapsible whose bar already
+          carries the title, and that wrapper hides this one so the title is not printed twice. */}
+      <div data-section-head className="flex items-center gap-2 border-b border-border bg-muted/40 px-4 py-2.5 text-xs font-semibold text-muted-foreground">
         <IconImage className="h-4 w-4" />
         معرض صور المقال
       </div>

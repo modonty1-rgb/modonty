@@ -42,7 +42,7 @@ export function MobileMenu({ data, light = false }: MobileMenuProps) {
           <div className="flex flex-wrap items-center gap-3 py-4">
             <WhatsAppButton href={data.whatsappHref} />
             {data.phone && (
-              <a href={`tel:${data.phone}`} className="inline-flex h-10 items-center gap-2 rounded-full border px-5 text-sm font-medium">
+              <a href={`tel:${data.phone}`} className="inline-flex h-10 items-center gap-2 rounded-full border px-5 text-sm font-medium max-md:h-11">
                 <Phone className="h-4 w-4" aria-hidden /> <span dir="ltr">{data.phone}</span>
               </a>
             )}

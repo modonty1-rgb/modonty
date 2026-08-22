@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { messages } from "@/lib/i18n/messages";
 import { FaqCollapsibleBody } from "./FaqCollapsibleBody";
 
 interface PendingFaq {
@@ -30,7 +31,10 @@ export function ArticleFaq({ articleId: _articleId, faqsCount, faqs, pendingFaqs
         <CardContent className="p-4 flex flex-col gap-4">
           <FaqCollapsibleBody
             headingId="faq-heading"
-            title={`الأسئلة الشائعة (${faqsCount})`}
+            title={messages.article.sections.faq}
+            // The number moved out of the title and into the bar's own count pill, so it
+            // matches every other section instead of living inside parentheses.
+            count={faqsCount}
           >
             {faqs.map((faq) => (
               <Card key={faq.id}>

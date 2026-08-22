@@ -15,7 +15,7 @@ import { IconDesktop, IconMoon, IconSun } from "@/lib/icons";
 // system. Lives in the header's utility group so signed-out visitors get it too.
 // The sun/moon swap is CSS-only (`dark:` classes), so there is no hydration mismatch
 // and no need to wait for mount.
-export function ThemeToggle() {
+export function ThemeToggle({ labels }: { labels: { toggle: string; light: string; dark: string; system: string } }) {
   const { setTheme } = useTheme();
 
   return (
@@ -25,7 +25,7 @@ export function ThemeToggle() {
         <Button
           variant="navigation"
           size="mobileIcon"
-          aria-label="تغيير المظهر"
+          aria-label={labels.toggle}
           className="relative rounded-xl"
         >
           <IconSun className="rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0" aria-hidden />
@@ -37,15 +37,15 @@ export function ThemeToggle() {
       <DropdownMenuContent align="end" className="min-w-36 bg-slate-100 dark:bg-card">
         <DropdownMenuItem onClick={() => setTheme("light")} className="gap-2">
           <IconSun className="h-4 w-4" aria-hidden />
-          فاتح
+          {labels.light}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")} className="gap-2">
           <IconMoon className="h-4 w-4" aria-hidden />
-          داكن
+          {labels.dark}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")} className="gap-2">
           <IconDesktop className="h-4 w-4" aria-hidden />
-          حسب الجهاز
+          {labels.system}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

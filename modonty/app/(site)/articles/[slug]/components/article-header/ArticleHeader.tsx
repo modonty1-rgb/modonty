@@ -2,6 +2,7 @@ import Link from "next/link";
 import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 
 import { RelativeTime } from "@/components/date/RelativeTime";
+import { cn } from "@/lib/utils";
 import { IconViews, IconHelp } from "@/lib/icons";
 
 interface ArticleHeaderProps {
@@ -17,6 +18,8 @@ interface ArticleHeaderProps {
   readingTimeMinutes: number | null;
   wordCount: number | null;
   views?: number;
+  /** True when the «باختصار» box below will summarise the article too. */
+  hasKeyPoints?: boolean;
   questionsCount?: number;
 }
 
@@ -31,6 +34,7 @@ export function ArticleHeader({
   wordCount,
   views,
   questionsCount,
+  hasKeyPoints,
 }: ArticleHeaderProps) {
   return (
     <header className="mb-6 md:mb-8">
@@ -40,8 +44,12 @@ export function ArticleHeader({
         {title}
       </h1>
 
+      {/* Hidden on a phone when the «باختصار» box follows (Khalid, 22 Aug): two summaries stood
+          between the reader and the first sentence, and the box is the richer of the two — a line
+          per opening section instead of one paragraph. It stays in the HTML for the crawler and
+          returns in full from  up, where the screen can afford both. */}
       {excerpt && (
-        <p className="text-base md:text-lg text-muted-foreground mb-6 leading-relaxed">
+        <p className={cn("text-base md:text-lg text-muted-foreground mb-6 leading-relaxed", hasKeyPoints && "max-sm:hidden")}>
           {excerpt}
         </p>
       )}
@@ -55,8 +63,13 @@ export function ArticleHeader({
           background and the same border as the «باختصار» box ninety pixels below it, so the
           reader met two identical blocks before reaching a single sentence. The summary is the
           one that earns a box; the byline is a fact you scan in passing. */}
+      {/* Desktop only (Khalid, 21 Aug). On a phone the partner card sits directly beneath this
+          line and says the same name behind the same ✓, so the reader met one partner twice in a
+          row — and a claim repeated back to back stops reading as trust and starts reading as an
+          ad. The card carries the review claim there; this line is the desktop byline, where no
+          card follows it. */}
       {reviewer && (
-        <div className="mb-5 flex flex-wrap items-center gap-x-2 gap-y-1 border-s-2 border-primary/40 ps-3 text-sm">
+        <div className="mb-5 hidden flex-wrap items-center gap-x-2 gap-y-1 border-s-2 border-primary/40 ps-3 text-sm lg:flex">
           <VerifiedBadge className="h-4 w-4" label="مراجَع ومعتمَد" />
           <span className="text-muted-foreground">راجعه واعتمده</span>
           <Link
@@ -82,7 +95,7 @@ export function ArticleHeader({
         {readingTimeMinutes && (
           <span>⏱️ {readingTimeMinutes} دقيقة قراءة</span>
         )}
-        {wordCount && <span>📝 {wordCount.toLocaleString("ar-SA")} كلمة</span>}
+        {wordCount && <span className="max-sm:hidden">📝 {wordCount.toLocaleString("ar-SA")} كلمة</span>}
         {/* A zero is worse than nothing: printing «٠ مشاهدة» under the title tells every new
             reader that nobody has read this. The counter appears once there is one. */}
         {views !== undefined && views > 0 && (

@@ -31,7 +31,7 @@ export function ClientWhatsAppFab({ phone, clientId }: ClientWhatsAppFabProps) {
       rel="noopener noreferrer"
       aria-label="تواصل عبر واتساب"
       title="تواصل عبر واتساب"
-      className="fixed bottom-20 start-4 z-[60] inline-flex h-12 w-12 items-center justify-center rounded-full text-white shadow-[0_16px_32px_-10px_rgba(37,211,102,0.65)] lg:bottom-6 lg:start-6 lg:h-14 lg:w-14"
+      className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] start-4 z-[60] inline-flex h-12 w-12 items-center justify-center rounded-full text-white shadow-[0_16px_32px_-10px_rgba(37,211,102,0.65)] lg:bottom-6 lg:start-6 lg:h-14 lg:w-14"
       style={{ backgroundColor: WA_GREEN }}
     >
       {/* pulse ring */}

@@ -1,6 +1,8 @@
 import type { ComponentType } from "react";
-import { IconHome, IconTrending, IconArticleList, IconClients, IconPlay, IconVolume2 } from "@/lib/icons";
+import { IconHome, IconTrending, IconArticleList, IconClients } from "@/lib/icons";
 import { ModontyMark } from "@/components/icons/modonty-mark";
+import { ModontyReelsMark } from "@/components/icons/modonty-reels-mark";
+import { ModontyAudioMark } from "@/components/icons/modonty-audio-mark";
 
 export interface MainNavItem {
   icon: ComponentType<{ className?: string }>;
@@ -17,8 +19,10 @@ export const mainNavItems: MainNavItem[] = [
   // (Khalid, 2026-08-16: add the entry now, build the page later — board card A1).
   { icon: IconArticleList, label: "المقالات", href: "/articles" },
   { icon: IconClients, label: "الشركاء", href: "/clients" },
-  { icon: IconPlay, label: "الطلّات", href: "/reels" },
-  { icon: IconVolume2, label: "استمع", href: "/audio" },
+  // The brand's own reels mark, not a generic play triangle — the same glyph the homepage
+  // quick-links and the articles action bar already use for this destination.
+  { icon: ModontyReelsMark, label: "الطلّات", href: "/reels" },
+  { icon: ModontyAudioMark, label: "استمع", href: "/audio" },
   // «عن مدونتي» — a first-time visitor (and a prospective partner) must find what the
   // platform is from the top bar, not only from the footer (Khalid, 2026-08-15).
   // Teal at rest so it stands apart from the section links (Khalid, 2026-08-16).

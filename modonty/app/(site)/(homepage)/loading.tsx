@@ -12,7 +12,7 @@ export default function HomeLoading() {
             <div className={card}><div className={`${pulse} h-40`} /></div>
             <div className={card}><div className={`${pulse} h-20`} /></div>
           </aside>
-          <div className="w-full lg:flex-1 lg:max-w-[600px] space-y-4 pb-20 md:pb-0">
+          <div className="w-full lg:flex-1 lg:max-w-[600px] space-y-4 pb-20 lg:pb-0">
             <h2 id="loading-articles-heading" className="sr-only">نحمّل لك آخر المقالات…</h2>
             {[1, 2, 3, 4].map((i) => (
               <article key={i} className={card}>

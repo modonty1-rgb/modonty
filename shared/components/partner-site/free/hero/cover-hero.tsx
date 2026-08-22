@@ -44,7 +44,7 @@ export function CoverHero({ data }: { data: HomeData; preview?: boolean }) {
           <div className="flex shrink-0 items-center gap-3 pb-1">
             <WhatsAppButton href={data.whatsappHref} />
             {data.phone && (
-              <a href={`tel:${data.phone}`} className="inline-flex h-10 items-center rounded-full border px-5 text-sm font-medium text-foreground">
+              <a href={`tel:${data.phone}`} className="inline-flex h-10 items-center rounded-full border px-5 text-sm font-medium text-foreground max-md:h-11">
                 اتصل بنا
               </a>
             )}

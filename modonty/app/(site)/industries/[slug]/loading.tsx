@@ -9,7 +9,7 @@ export default function IndustryLoading() {
           <Skeleton className="h-[280px] w-full rounded-lg" />
         </div>
 
-        <div className="mx-auto w-full space-y-4 pb-20 md:max-w-[600px] md:pb-0 lg:mx-0 lg:flex-1 min-[1240px]:max-w-[560px] min-[1296px]:max-w-[600px]">
+        <div className="mx-auto w-full space-y-4 pb-20 md:max-w-[600px] lg:pb-0 lg:mx-0 lg:flex-1 min-[1240px]:max-w-[560px] min-[1296px]:max-w-[600px]">
           <Skeleton className="h-5 w-40" />
           {Array.from({ length: 4 }).map((_, index) => (
             <Skeleton key={index} className="h-[160px] w-full rounded-lg" />

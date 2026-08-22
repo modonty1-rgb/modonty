@@ -11,8 +11,8 @@ export function LegalBar({ data, centered = false }: { data: FooterData; centere
         {data.registrationNumber ? ` · سجل تجاري ${data.registrationNumber}` : ""}
       </span>
       <span className="flex items-center gap-6">
-        <a href={data.privacyHref ?? "/legal/privacy-policy"} className="transition-colors hover:text-foreground">سياسة الخصوصية</a>
-        <a href="https://www.modonty.com" className="transition-colors hover:text-foreground">موقع مبني على مدونتي</a>
+        <a href={data.privacyHref ?? "/legal/privacy-policy"} className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">سياسة الخصوصية</a>
+        <a href="https://www.modonty.com" className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">موقع مبني على مدونتي</a>
       </span>
     </div>
   );

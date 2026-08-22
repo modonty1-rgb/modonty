@@ -4,8 +4,6 @@ export { ArticleFeaturedImage } from "./featured-image/FeaturedImage";
 export { ArticleFaq } from "./faq/ArticleFaq";
 export { ArticleFooter } from "./article-footer/ArticleFooter";
 export { ArticleComments } from "./comments/ArticleComments";
-export { ArticleShareButtons } from "./share-buttons/ShareButtons";
-export { ArticleInteractionButtons } from "./interaction-buttons/InteractionButtons";
 export { ReadingProgressBar } from "./reading-progress/ReadingProgressBarLazy";
 export { ArticleCitations } from "./sidebar/Citations";
 // Imported directly, not through a `ssr: false` wrapper: the outline has to be in the HTML —

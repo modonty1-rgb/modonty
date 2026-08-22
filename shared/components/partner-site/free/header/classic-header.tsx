@@ -11,7 +11,7 @@ export function ClassicHeader({ data }: { data: HeaderData }) {
   return (
     <header className="relative border-b bg-background">
       <HeaderBar>
-        <a href={data.homeHref} className="min-w-0">
+        <a href={data.homeHref} className="min-w-0 max-md:flex max-md:min-h-11 max-md:items-center">
           <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} />
         </a>
         <NavLinks links={data.links} className="hidden md:flex" />

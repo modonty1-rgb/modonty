@@ -26,7 +26,8 @@ export function ReadMore({ articleId, clientId, items }: ReadMoreProps) {
 
   return (
     <section className="mt-10" aria-labelledby="read-more-heading">
-      <h2 id="read-more-heading" className="mb-4 text-xl font-bold text-foreground">اقرأ أيضاً</h2>
+      {/* `data-section-head`: the phone wrapper's bar already says «اقرأ أيضاً» — see MobileSection. */}
+      <h2 data-section-head id="read-more-heading" className="mb-4 text-xl font-bold text-foreground">اقرأ أيضاً</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((a) => (
           <CtaTrackedLink

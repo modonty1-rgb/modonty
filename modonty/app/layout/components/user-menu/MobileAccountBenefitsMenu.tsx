@@ -78,19 +78,28 @@ export function MobileAccountBenefitsMenu({ hint = true }: { hint?: boolean } = 
     <div className="relative sm:hidden">
       <DropdownMenu dir="rtl" open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger asChild>
-          {/* The hint sits INLINE beside the icon with a soft pulse — the old bubble hung
-              below the navbar and landed on whatever the page put there (Khalid, 21 Aug,
-              with a screenshot of it covering the «الشركاء» tab). */}
+          {/* The hint stacks UNDER the icon, inside the same 44px button (Khalid, 22 Aug).
+              Beside the icon it made this one item 96px wide in a row of 44px icons, and a
+              row only reads as evenly spaced when every item is the same width. It stays
+              INSIDE the button — the old version was a bubble hanging below the navbar,
+              which landed on whatever the page had put there (Khalid, 21 Aug, screenshot of
+              it covering the «الشركاء» tab). The label is positioned, not laid out: the
+              button stays exactly 44px like every icon beside it, and the two words overhang
+              symmetrically into the column's own slack instead of widening the target. */}
           <Button
             variant="navigation"
             size="mobileIcon"
             aria-label="افتح مزايا الحساب"
-            className={hint && !isOpen ? "w-auto gap-1.5 rounded-xl px-2.5" : "rounded-xl"}
+            className={
+              hint && !isOpen
+                ? "relative rounded-xl pb-3.5 [&_svg]:size-5 motion-safe:transition-transform motion-safe:active:scale-95"
+                : "rounded-xl motion-safe:transition-transform motion-safe:active:scale-95"
+            }
           >
             <ModontyLoginMark className="[--modonty-login-accent:hsl(var(--accent))]" aria-hidden="true" />
             {hint && !isOpen && (
-              <span className="whitespace-nowrap text-[11px] font-bold text-link-accent motion-safe:animate-pulse">
-                مزاياك هنا
+              <span className="pointer-events-none absolute inset-x-0 bottom-1 whitespace-nowrap text-center text-[10px] font-bold leading-none text-link-accent motion-safe:animate-pulse">
+                المتعة هنا
               </span>
             )}
           </Button>

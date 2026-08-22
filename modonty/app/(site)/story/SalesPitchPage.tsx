@@ -106,6 +106,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
     idx: number;
   } | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const tvRef = useRef<HTMLDivElement | null>(null);
   const transitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTimeUpdateRef = useRef(0);
 
@@ -381,6 +382,27 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
     return () => window.removeEventListener("keydown", onKey);
   }, [togglePlay, currentSection]);
 
+  // On a phone the chapter list sits BELOW the player (see the `max-md:order-*` note on the
+  // columns), so tapping a chapter starts audio a full screen away from the screen showing
+  // its words. Bring the player back under the reader's thumb. Phones only — at `md` the
+  // three columns are side by side and nothing needs to move.
+  //
+  // Fired twice on purpose. Both panels swap through `AnimatePresence mode="wait"`, so at the
+  // moment of the tap the page is still laid out for the OLD section and a single scroll
+  // lands wherever that stale layout put the player — measured 235px past it on an iPhone 12.
+  // The first call starts moving immediately so the tap feels answered; the second corrects
+  // once the swap has settled (both exits are 0.4–0.5s in this file, so 560ms clears them),
+  // and it is a no-op whenever the first call already landed right. `scroll-mt` on the player
+  // itself owns the offset that clears the sticky header.
+  const scrollPlayerIntoViewOnPhone = useCallback(() => {
+    if (typeof window === "undefined") return;
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+    const behavior = shouldReduceMotion ? "auto" : "smooth";
+    const go = () => tvRef.current?.scrollIntoView({ behavior, block: "start" });
+    go();
+    window.setTimeout(go, 560);
+  }, [shouldReduceMotion]);
+
   const handleSectionClick = useCallback(
     (idx: number) => {
       if (!manifest) return;
@@ -391,6 +413,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
       setNextChapter(null);
       setCurrentIdx(idx);
       setCurrentTime(0);
+      scrollPlayerIntoViewOnPhone();
       const sec = manifest.sections[idx];
       const audio = audioRef.current;
       if (!audio || !sec.file) return;
@@ -400,7 +423,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
         .then(() => setIsPlaying(true))
         .catch(() => setIsPlaying(false));
     },
-    [manifest, audioBase],
+    [manifest, audioBase, scrollPlayerIntoViewOnPhone],
   );
 
   const prevCoreIdx = useMemo(() => findPrevCoreIdx(currentIdx), [currentIdx, findPrevCoreIdx]);
@@ -456,7 +479,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
         key={sec.id}
         type="button"
         onClick={() => handleSectionClick(idx)}
-        className={`text-start text-[12px] md:text-[13px] font-medium px-3 py-2 rounded-lg transition-all duration-200 flex items-start gap-2 group ${
+        className={`text-start text-[12px] md:text-[13px] font-medium px-3 py-2 max-md:min-h-11 max-md:items-center rounded-lg transition-all duration-200 flex items-start gap-2 group ${
           isActive
             ? "bg-gradient-to-l from-primary to-primary/80 text-primary-foreground shadow-md shadow-primary/30 font-bold scale-[1.02]"
             : isDraft
@@ -467,7 +490,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
       >
         {position !== undefined && (
           <span
-            className={`text-[10px] font-bold shrink-0 px-1.5 py-0.5 rounded tabular-nums mt-0.5 ${
+            className={`text-[10px] font-bold shrink-0 px-1.5 py-0.5 rounded tabular-nums mt-0.5 max-md:mt-0 ${
               isActive ? "bg-white/25 text-primary-foreground" : "bg-muted text-muted-foreground"
             }`}
           >
@@ -484,7 +507,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
         </span>
         {isDraft && (
           <span
-            className="text-[9px] font-bold shrink-0 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 mt-0.5"
+            className="text-[9px] font-bold shrink-0 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 mt-0.5 max-md:mt-0"
             aria-label="مسوّدة"
           >
             مسوّدة
@@ -509,8 +532,13 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
           <div className="flex flex-col md:flex-row gap-3 md:gap-4 h-full">
 
             {/* RIGHT COLUMN (RTL natural first read): MENU */}
+            {/* On a phone the three columns stack, and DOM order put the chapter list first:
+                the reader landed on a menu, and the page's own title + play button sat at
+                1205px — two screens down (measured 22 Aug, iPhone 12). `max-md:order-*` flips
+                the stack to hero → player → chapters and stops applying at `md`, where the row
+                keeps its DOM order untouched. */}
             <aside
-              className="w-full md:w-64 lg:w-72 md:shrink-0 bg-card rounded-2xl shadow-lg ring-1 ring-border/60 overflow-hidden md:h-full flex flex-col"
+              className="w-full md:w-64 lg:w-72 md:shrink-0 bg-card rounded-2xl shadow-lg ring-1 ring-border/60 overflow-hidden md:h-full flex flex-col max-md:order-3"
               dir="rtl"
               aria-label="قائمة الأقسام"
             >
@@ -523,7 +551,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     transition={{ type: "spring", stiffness: 400, damping: 22 }}
-                    className="flex w-full items-center justify-center gap-2 px-3 py-2 rounded-full bg-gradient-to-l from-emerald-700/25 via-emerald-600/20 to-amber-500/20 hover:from-emerald-700/40 hover:via-emerald-600/35 hover:to-amber-500/35 border border-emerald-600/40 hover:border-emerald-500/70 shadow-sm shadow-emerald-700/15 hover:shadow-emerald-600/30 transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                    className="flex w-full items-center justify-center gap-2 px-3 py-2 max-md:min-h-11 rounded-full bg-gradient-to-l from-emerald-700/25 via-emerald-600/20 to-amber-500/20 hover:from-emerald-700/40 hover:via-emerald-600/35 hover:to-amber-500/35 border border-emerald-600/40 hover:border-emerald-500/70 shadow-sm shadow-emerald-700/15 hover:shadow-emerald-600/30 transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                     aria-label="اسمع: نساهم في رؤية المملكة ٢٠٣٠"
                     title="اضغط للاستماع: مدونتي ٢٠٣٠ — لبنة في الرؤية"
                   >
@@ -568,7 +596,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                           key={opt.id}
                           type="button"
                           onClick={() => handleSectionClick(idx)}
-                          className={`text-start text-[13px] md:text-[14px] font-medium px-3 py-2.5 rounded-xl transition-all duration-200 flex items-start gap-2.5 group ${
+                          className={`text-start text-[13px] md:text-[14px] font-medium px-3 py-2.5 max-md:min-h-11 max-md:items-center rounded-xl transition-all duration-200 flex items-start gap-2.5 group ${
                             isActive
                               ? "bg-gradient-to-l from-amber-400/95 to-amber-500/90 text-amber-950 shadow-md shadow-amber-400/30 font-bold scale-[1.02]"
                               : "bg-amber-400/10 hover:bg-amber-400/20 hover:translate-x-[-2px] text-foreground border border-amber-400/30 hover:border-amber-400/60"
@@ -576,7 +604,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                           title={`اختياري — ${stripTashkeel(shortLabel)}`}
                         >
                           {opt.chipEmoji && (
-                            <span className="text-[18px] leading-none shrink-0 mt-0.5">
+                            <span className="text-[18px] leading-none shrink-0 mt-0.5 max-md:mt-0">
                               {opt.chipEmoji}
                             </span>
                           )}
@@ -618,7 +646,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                           onClick={() => toggleCategory(cat.label)}
                           aria-expanded={!isCollapsed}
                           aria-controls={`cat-body-${cat.label}`}
-                          className="w-full flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 active:bg-muted transition-colors group sticky top-0 bg-gradient-to-b from-card to-card/85 backdrop-blur z-10 -mx-2"
+                          className="w-full flex items-center gap-1.5 px-2 py-1.5 max-md:min-h-11 rounded-md hover:bg-muted/60 active:bg-muted transition-colors group sticky top-0 bg-gradient-to-b from-card to-card/85 backdrop-blur z-10 -mx-2"
                         >
                           {cat.emoji && <span className="text-base shrink-0" aria-hidden>{cat.emoji}</span>}
                           <span className="text-[10px] uppercase tracking-wider font-extrabold text-foreground/85 flex-1 text-start">
@@ -710,7 +738,10 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
             </aside>
 
             {/* CENTER COLUMN: TV */}
-            <div className="flex-1 min-w-0 w-full relative bg-gradient-to-b from-card to-card/95 backdrop-blur-sm text-foreground rounded-3xl shadow-[0_30px_80px_-20px_rgba(0,0,0,0.55)] ring-2 ring-foreground/5 overflow-hidden flex flex-col md:h-full min-h-[60vh]">
+            <div
+              ref={tvRef}
+              className="flex-1 min-w-0 w-full relative bg-gradient-to-b from-card to-card/95 backdrop-blur-sm text-foreground rounded-3xl shadow-[0_30px_80px_-20px_rgba(0,0,0,0.55)] ring-2 ring-foreground/5 overflow-hidden flex flex-col md:h-full min-h-[60vh] max-md:order-2 max-md:scroll-mt-16"
+            >
               <div className="border-b border-border bg-muted/30 px-3 md:px-5 py-2 shrink-0">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <div className="flex items-center gap-x-3 gap-y-1 text-[10px] md:text-[11px] text-foreground/75 flex-wrap">
@@ -740,7 +771,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                     <DialogTrigger asChild>
                       <button
                         type="button"
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-border bg-background/40 hover:bg-muted/40 text-[11px] font-bold text-foreground/75 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 max-md:min-h-11 max-md:px-4 rounded-full border border-border bg-background/40 hover:bg-muted/40 text-[11px] font-bold text-foreground/75 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                         title="اقرأ النص الكامل للمقطع الحالي"
                         aria-label="افتح نص المقطع الحالي"
                       >
@@ -774,7 +805,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                 <button
                   type="button"
                   onClick={() => setAutoplay((v) => !v)}
-                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-foreground/80 hover:text-foreground transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card rounded"
+                  className="inline-flex items-center gap-1.5 max-md:min-h-11 max-md:px-2 text-[11px] font-medium text-foreground/80 hover:text-foreground transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card rounded"
                   role="switch"
                   aria-checked={autoplay}
                   aria-label="تشغيل تلقائي للمقاطع التالية"
@@ -931,7 +962,10 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                     step={0.1}
                     value={currentTime}
                     onChange={handleSeek}
-                    className="flex-1 h-1.5 rounded-full bg-muted accent-primary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                    // 6px tall is a mouse target, not a thumb one — measured 246×6 on an
+                    // iPhone 12. `h-11` gives the range its 44px row; the native track stays
+                    // its own thickness, centred, so only the touchable area grows.
+                    className="flex-1 h-1.5 max-md:h-11 max-md:bg-transparent rounded-full bg-muted accent-primary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                     aria-label="موضع المقطع"
                     aria-valuetext={`${formatTime(currentTime)} من ${formatTime(duration)}`}
                   />
@@ -1009,7 +1043,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                     <button
                       type="button"
                       onClick={handleSpeedToggle}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-muted hover:bg-muted/70 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                      className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 max-md:min-h-11 max-md:min-w-11 rounded-md bg-muted hover:bg-muted/70 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                       aria-label={`تغيير السرعة (الحالية ${speed} مرة)`}
                     >
                       <IconSpeed className="w-3.5 h-3.5" />
@@ -1132,7 +1166,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                           setNextChapter(null);
                           handleSectionClick(target);
                         }}
-                        className="text-[11px] text-white/85 hover:text-white transition-colors underline decoration-dotted underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded"
+                        className="text-[11px] text-white/85 hover:text-white transition-colors underline decoration-dotted underline-offset-4 max-md:inline-flex max-md:items-center max-md:min-h-11 max-md:px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded"
                         aria-label="ابدأ الفصل التالي الآن"
                       >
                         ابدأ الآن ▸
@@ -1146,7 +1180,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                           }
                           setNextChapter(null);
                         }}
-                        className="text-[11px] text-white/50 hover:text-white/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 rounded"
+                        className="text-[11px] text-white/50 hover:text-white/80 transition-colors max-md:inline-flex max-md:items-center max-md:min-h-11 max-md:px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 rounded"
                         aria-label="إلغاء الانتقال التلقائي والبقاء في هذا المقطع"
                       >
                         ابقَ هنا ✕
@@ -1159,7 +1193,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
 
             {/* LEFT COLUMN: Cinematic "Now Playing" panel */}
             <aside
-              className="relative w-full md:w-64 lg:w-80 md:shrink-0 bg-gradient-to-br from-card via-card to-muted/40 rounded-2xl shadow-lg ring-1 ring-border/60 p-5 md:p-6 md:h-full overflow-hidden"
+              className="relative w-full md:w-64 lg:w-80 md:shrink-0 bg-gradient-to-br from-card via-card to-muted/40 rounded-2xl shadow-lg ring-1 ring-border/60 p-5 md:p-6 md:h-full overflow-hidden max-md:order-1"
               dir="rtl"
               aria-label="معلومات المقطع الحالي"
             >
@@ -1188,7 +1222,10 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="h-full flex flex-col justify-center"
                   >
-                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-1 leading-[1.05] bg-gradient-to-l from-primary via-foreground to-primary bg-clip-text text-transparent">
+                    {/* The page's one focal point on a phone, now that it is the first thing
+                        in the stack — 30px was sized for a third column, not for a 390px
+                        screen where nothing competes with it. */}
+                    <h1 className="text-3xl max-md:text-[34px] md:text-4xl lg:text-5xl font-extrabold mb-1 leading-[1.05] bg-gradient-to-l from-primary via-foreground to-primary bg-clip-text text-transparent">
                       قصة مدونتي
                     </h1>
                     <p className="text-sm md:text-base lg:text-lg text-foreground/55 italic mb-6 leading-snug">
@@ -1201,6 +1238,11 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                       حياك الله في مدونتي. مشروعك يطلع لعميلك — وأنت مرتاح.
                     </blockquote>
 
+                    {/* Deliberately NOT scrolled to the player: the hero collapses into the
+                        now-playing panel right under the thumb, which is the answer to the
+                        tap. A scroll here has to chase a layout that keeps moving while the
+                        words stream in — measured 179px past the player — and an unasked-for
+                        561px jump reads worse than staying put. */}
                     <m.button
                       type="button"
                       onClick={togglePlay}
@@ -1218,7 +1260,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                       href={JBRSEO_PRICING_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group mb-1 flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-border/60 hover:border-primary/50 hover:bg-primary/5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                      className="group mb-1 flex items-center justify-between gap-2 px-3 py-2.5 max-md:min-h-11 rounded-lg border border-border/60 hover:border-primary/50 hover:bg-primary/5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                       aria-label="افتح صفحة الباقات على جبر-سيو في تاب جديد"
                     >
                       <span className="flex flex-col gap-0 min-w-0">
@@ -1246,7 +1288,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                         href={SALES_WHATSAPP_URL}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex items-center gap-2 text-[12px] py-1 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500 rounded"
+                        className="group flex items-center gap-2 text-[12px] py-1 max-md:min-h-11 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500 rounded"
                         aria-label={`واتساب المبيعات — ${SALES_WHATSAPP_DISPLAY}`}
                       >
                         <WhatsAppIcon className="w-4 h-4 text-emerald-500/80 shrink-0" />
@@ -1260,7 +1302,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                       </a>
                       <a
                         href={SALES_EMAIL_URL}
-                        className="group flex items-center gap-2 text-[12px] py-1 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
+                        className="group flex items-center gap-2 text-[12px] py-1 max-md:min-h-11 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
                         aria-label={`إيميل المبيعات — ${SALES_EMAIL}`}
                       >
                         <IconEmail className="w-4 h-4 text-foreground/50 shrink-0" />
@@ -1309,7 +1351,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                               href={SAUDI_BUSINESS_VERIFY_URL}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[10px] font-bold text-primary hover:underline whitespace-nowrap focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
+                              className="text-[10px] font-bold text-primary hover:underline whitespace-nowrap max-md:inline-flex max-md:items-center max-md:justify-center max-md:min-h-11 max-md:min-w-11 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
                               aria-label={`ابحث بالرقم ${legal.cr} في وزارة التجارة`}
                             >
                               تحقّق
@@ -1612,7 +1654,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                             href={SALES_WHATSAPP_URL}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-7 h-7 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center transition-colors shadow-sm"
+                            className="w-7 h-7 max-md:w-11 max-md:h-11 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center transition-colors shadow-sm"
                             aria-label={`واتساب فريق المبيعات — ${SALES_WHATSAPP_DISPLAY}`}
                             title={`واتساب — ${SALES_WHATSAPP_DISPLAY}`}
                           >
@@ -1620,7 +1662,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                           </a>
                           <a
                             href={SALES_EMAIL_URL}
-                            className="w-7 h-7 rounded-full bg-foreground/15 hover:bg-foreground/25 text-foreground flex items-center justify-center transition-colors"
+                            className="w-7 h-7 max-md:w-11 max-md:h-11 rounded-full bg-foreground/15 hover:bg-foreground/25 text-foreground flex items-center justify-center transition-colors"
                             aria-label={`إيميل فريق المبيعات — ${SALES_EMAIL}`}
                             title={`إيميل — ${SALES_EMAIL}`}
                           >

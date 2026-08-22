@@ -27,7 +27,7 @@ export function ThreeColumnLayout({ header, right, center, left, className }: Th
       {header && <div className="mb-6">{header}</div>}
       <div className="flex flex-col items-start gap-6 lg:flex-row lg:justify-center min-[1240px]:gap-4 min-[1296px]:gap-6">
         {right}
-        <div className="mx-auto w-full space-y-3 pb-20 sm:space-y-4 md:max-w-[600px] md:pb-0 lg:mx-0 lg:flex-1 min-[1240px]:max-w-[560px] min-[1296px]:max-w-[600px]">
+        <div className="mx-auto w-full space-y-3 pb-20 sm:space-y-4 md:max-w-[600px] lg:pb-0 lg:mx-0 lg:flex-1 min-[1240px]:max-w-[560px] min-[1296px]:max-w-[600px]">
           {center}
         </div>
         {left}

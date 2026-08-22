@@ -17,13 +17,13 @@ export function CenteredFooter({ data, preview = false }: { data: FooterData; pr
           <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
             {data.pages.map((p) => (
               <li key={p.href}>
-                <a href={p.href} className="transition-colors hover:text-foreground">{p.label}</a>
+                <a href={p.href} className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{p.label}</a>
               </li>
             ))}
           </ul>
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
-            {data.phone && <a href={`tel:${data.phone}`} dir="ltr" className="transition-colors hover:text-foreground">{data.phone}</a>}
-            {data.email && <a href={`mailto:${data.email}`} className="transition-colors hover:text-foreground">{data.email}</a>}
+            {data.phone && <a href={`tel:${data.phone}`} dir="ltr" className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{data.phone}</a>}
+            {data.email && <a href={`mailto:${data.email}`} className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{data.email}</a>}
             <WhatsAppButton href={data.whatsappHref} variant="text" />
           </div>
           <SocialLinks urls={data.socialLinks} inert={preview} />

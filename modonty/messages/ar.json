@@ -241,5 +241,109 @@
     "editorial": {
       "sectionTitle": "بالتفصيل"
     }
+  },
+  "article": {
+    "summary": "باختصار",
+    "allTags": "عرض كل الوسوم",
+    "moreTagsSuffix": "وسوم",
+    "sections": {
+      "citations": "مصادر",
+      "tags": "الوسوم والتصنيف",
+      "gallery": "معرض صور المقال",
+      "readMore": "اقرأ أيضاً",
+      "faq": "الأسئلة الشائعة",
+      "comments": "التعليقات"
+    },
+    "partner": {
+      "reviewed": "راجعه واعتمده",
+      "verifiedBadge": "شريك موثّق",
+      "verifiedBy": "موثّق من مدونتي",
+      "detailsOf": "تفاصيل",
+      "cardOf": "بطاقة",
+      "sheetDescription": "معلومات الشريك وطرق التواصل معه."
+    },
+    "tools": {
+      "sizeGroup": "حجم خط المقال",
+      "small": "خط صغير",
+      "normal": "خط عادي",
+      "large": "خط كبير",
+      "showImages": "إظهار الصور",
+      "hideImages": "إخفاء الصور والقراءة نصّاً فقط",
+      "images": "الصور",
+      "noImages": "بلا صور"
+    },
+    "actions": {
+      "like": "أعجبني",
+      "save": "حفظ",
+      "comment": "أضف تعليق",
+      "share": "مشاركة",
+      "open": "إعدادات القراءة",
+      "close": "إغلاق"
+    },
+    "cta": {
+      "book": "احجز الآن",
+      "whatsapp": "واتساب",
+      "visitSite": "زور الموقع",
+      "allPartners": "كل الشركاء",
+      "contactWith": "تواصل مع"
+    }
+  },
+  "chrome": {
+    "skipToContent": "تخطى إلى المحتوى الرئيسي",
+    "homePage": "الصفحة الرئيسية",
+    "mainNav": "التنقل الرئيسي",
+    "searchArticles": "بحث المقالات",
+    "searchPlaceholder": "البحث…",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة",
+    "menu": "القائمة",
+    "menuDescription": "روابط التنقل وإدارة حساب المستخدم",
+    "yourAccount": "حسابك",
+    "signUpFree": "سجّل مجاناً",
+    "signIn": "دخول",
+    "theme": {
+      "toggle": "تغيير المظهر",
+      "light": "فاتح",
+      "dark": "داكن",
+      "system": "حسب الجهاز"
+    },
+    "footer": {
+      "quickLinks": "روابط سريعة",
+      "legalLinks": "روابط قانونية",
+      "ctaQuestion": "هل تريد عملاء من جوجل بلا إعلانات؟",
+      "ctaBrand": "جبر SEO",
+      "home": "الرئيسية",
+      "trending": "الرائجة",
+      "partners": "الشركاء",
+      "industries": "المجالات",
+      "categories": "التصنيفات",
+      "reels": "الطلّات",
+      "tags": "الوسوم",
+      "help": "المساعدة",
+      "faq": "الأسئلة الشائعة",
+      "contact": "تواصل معنا",
+      "about": "عن",
+      "trust": "الموثوقية",
+      "terms": "الشروط والأحكام",
+      "userAgreement": "اتفاقية المستخدم",
+      "privacy": "سياسة الخصوصية",
+      "cookies": "سياسة ملفات تعريف الارتباط",
+      "copyright": "سياسة حقوق النشر"
+    },
+    "menuSections": {
+      "browse": "تصفح",
+      "modonty": "مدونتي",
+      "support": "الدعم"
+    },
+    "menuItems": {
+      "search": "بحث",
+      "articles": "المقالات",
+      "trending": "الرائجة",
+      "categories": "الفئات",
+      "partners": "الشركاء",
+      "reels": "الطلّات",
+      "audio": "استمع",
+      "saved": "المحفوظات"
+    }
   }
 }

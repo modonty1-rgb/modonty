@@ -28,10 +28,12 @@ export function WhatsAppButton({ href, variant = "solid", className }: WhatsAppB
 
   const classes = cn(
     "inline-flex items-center gap-2 text-sm font-bold",
-    variant === "solid" && "h-10 rounded-full px-5 text-white",
-    variant === "outline-light" && "h-10 rounded-full border border-white/80 px-5 text-white",
-    variant === "round" && "grid h-10 w-10 place-items-center rounded-full text-white",
-    variant === "text" && "font-medium",
+    // 40px is under the 44px floor on touch. Raised on phones only, so every desktop
+    // partner site keeps the exact pill it has today.
+    variant === "solid" && "h-10 rounded-full px-5 text-white max-md:h-11",
+    variant === "outline-light" && "h-10 rounded-full border border-white/80 px-5 text-white max-md:h-11",
+    variant === "round" && "grid h-10 w-10 place-items-center rounded-full text-white max-md:h-11 max-md:w-11",
+    variant === "text" && "font-medium max-md:min-h-11",
     className,
   );
   const style =

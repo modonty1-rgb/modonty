@@ -1,11 +1,16 @@
 import { Suspense } from "react";
+import { messages } from "@/lib/i18n/messages";
 import Link from "next/link";
 import { FooterCopyright } from "@/app/layout/components/FooterCopyright";
 import { FooterStats } from "@/app/layout/components/FooterStats";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { BRAND_AR } from "@/constants";
+// `max-lg:min-h-11` — the fingertip floor, on phones and tablets only (Khalid, 22 Aug: mobile
+// refactor). These links measured 16px tall on a phone: eighteen targets stacked two to a row,
+// each a third of a fingertip, in the one place a lost reader goes looking for a way out.
+// A pointer does not need the same room, so the desktop footer keeps its compact rhythm.
 const linkClass =
-  "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-link transition-colors";
+  "inline-flex max-lg:min-h-11 max-lg:min-w-11 max-lg:justify-center items-center gap-1.5 text-xs text-muted-foreground hover:text-link transition-colors";
 
 function FooterStatsSkeleton() {
   return <div className="w-full h-[76px] rounded-lg bg-primary/80 skeleton-shimmer" aria-hidden />;
@@ -24,48 +29,48 @@ export function Footer() {
 
       {/* jbr SEO CTA */}
       <div className="flex items-center gap-2 text-xs">
-        <span className="text-muted-foreground">هل تريد عملاء من جوجل بلا إعلانات؟</span>
+        <span className="text-muted-foreground">{messages.chrome.footer.ctaQuestion}</span>
         <CtaTrackedLink
           href="https://www.jbrseo.com"
           target="_blank"
           rel="noopener noreferrer"
           label="Footer CTA — جبر SEO"
           type="LINK"
-          className="font-semibold text-link hover:underline inline-flex items-center gap-0.5"
+          className="font-semibold text-link hover:underline inline-flex max-lg:min-h-11 items-center gap-0.5"
         >
-          جبر SEO <span aria-hidden="true">↗</span>
+          {messages.chrome.footer.ctaBrand} <span aria-hidden="true">↗</span>
         </CtaTrackedLink>
       </div>
 
       {/* Quick links */}
       <nav
         className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1"
-        aria-label="روابط سريعة"
+        aria-label={messages.chrome.footer.quickLinks}
       >
-        <Link href="/" className={linkClass}>الرئيسية</Link>
-        <Link href="/trending" className={linkClass}>الرائجة</Link>
-        <Link href="/clients" className={linkClass}>الشركاء</Link>
-        <Link href="/industries" className={linkClass}>المجالات</Link>
-        <Link href="/categories" className={linkClass}>التصنيفات</Link>
-        <Link href="/reels" className={linkClass}>الطلّات</Link>
-        <Link href="/tags" className={linkClass}>الوسوم</Link>
-        <Link href="/help" className={linkClass}>المساعدة</Link>
-        <Link href="/help/faq" className={linkClass}>الأسئلة الشائعة</Link>
-        <Link href="/contact" className={linkClass}>تواصل معنا</Link>
-        <Link href="/about" className={linkClass}>عن {BRAND_AR}</Link>
+        <Link href="/" className={linkClass}>{messages.chrome.footer.home}</Link>
+        <Link href="/trending" className={linkClass}>{messages.chrome.footer.trending}</Link>
+        <Link href="/clients" className={linkClass}>{messages.chrome.footer.partners}</Link>
+        <Link href="/industries" className={linkClass}>{messages.chrome.footer.industries}</Link>
+        <Link href="/categories" className={linkClass}>{messages.chrome.footer.categories}</Link>
+        <Link href="/reels" className={linkClass}>{messages.chrome.footer.reels}</Link>
+        <Link href="/tags" className={linkClass}>{messages.chrome.footer.tags}</Link>
+        <Link href="/help" className={linkClass}>{messages.chrome.footer.help}</Link>
+        <Link href="/help/faq" className={linkClass}>{messages.chrome.footer.faq}</Link>
+        <Link href="/contact" className={linkClass}>{messages.chrome.footer.contact}</Link>
+        <Link href="/about" className={linkClass}>{messages.chrome.footer.about} {BRAND_AR}</Link>
       </nav>
 
       {/* Legal links */}
       <nav
         className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1"
-        aria-label="روابط قانونية"
+        aria-label={messages.chrome.footer.legalLinks}
       >
-        <Link href="/trust" className={linkClass}>الموثوقية</Link>
-        <Link href="/terms" className={linkClass}>الشروط والأحكام</Link>
-        <Link href="/legal/user-agreement" className={linkClass}>اتفاقية المستخدم</Link>
-        <Link href="/legal/privacy-policy" className={linkClass}>سياسة الخصوصية</Link>
-        <Link href="/legal/cookie-policy" className={linkClass}>سياسة ملفات تعريف الارتباط</Link>
-        <Link href="/legal/copyright-policy" className={linkClass}>سياسة حقوق النشر</Link>
+        <Link href="/trust" className={linkClass}>{messages.chrome.footer.trust}</Link>
+        <Link href="/terms" className={linkClass}>{messages.chrome.footer.terms}</Link>
+        <Link href="/legal/user-agreement" className={linkClass}>{messages.chrome.footer.userAgreement}</Link>
+        <Link href="/legal/privacy-policy" className={linkClass}>{messages.chrome.footer.privacy}</Link>
+        <Link href="/legal/cookie-policy" className={linkClass}>{messages.chrome.footer.cookies}</Link>
+        <Link href="/legal/copyright-policy" className={linkClass}>{messages.chrome.footer.copyright}</Link>
       </nav>
 
       <small className="text-xs text-muted-foreground text-center">

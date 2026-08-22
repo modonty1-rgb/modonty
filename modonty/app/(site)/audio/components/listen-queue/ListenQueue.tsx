@@ -207,7 +207,9 @@ export function ListenQueue({ articles, compact }: ListenQueueProps) {
             onClick={cycleSpeed}
             aria-label={`سرعة التشغيل ${rate}`}
             dir="ltr"
-            className="shrink-0 rounded-full border border-border px-2.5 py-1 text-xs font-semibold tabular-nums hover:bg-muted"
+            // 31×26 measured on a phone — under the 44px floor, and it is the one control here
+            // someone reaches for while driving. Phones only, so the rail on desktop is unchanged.
+            className="shrink-0 rounded-full border border-border px-2.5 py-1 text-xs font-semibold tabular-nums hover:bg-muted max-md:inline-grid max-md:h-11 max-md:min-w-11 max-md:place-items-center"
           >
             {toArabic(`×${rate}`)}
           </button>

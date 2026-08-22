@@ -7,18 +7,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RelativeTime } from "@/components/date/RelativeTime";
 import { cn } from "@/lib/utils";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  IconReply,
-  IconLike,
-  IconUser,
-  IconChevronDown,
-  IconChevronUp,
-} from "@/lib/icons";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
+import { IconReply, IconLike, IconUser } from "@/lib/icons";
+import { SectionBar } from "../section-bar/SectionBar";
 import { CommentForm } from "@/components/shared/comment-form/CommentForm";
 import { CommentFormDialog } from "../comment-form/CommentFormDialog";
 import { submitReply } from "../../actions/submit-reply";
@@ -51,9 +42,11 @@ interface ArticleCommentsProps {
   articleId: string;
   articleSlug: string;
   userId?: string | null;
+  /** From the server — a client component importing the message file ships all of it. */
+  sectionTitle: string;
 }
 
-export function ArticleComments({ comments: initialComments, commentsCount, articleId, articleSlug, userId }: ArticleCommentsProps) {
+export function ArticleComments({ comments: initialComments, commentsCount, articleId, articleSlug, userId, sectionTitle }: ArticleCommentsProps) {
   const [comments, setComments] = useState(initialComments);
   const [commentsOpen, setCommentsOpen] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -250,50 +243,39 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
       <Card className="min-w-0">
         <CardContent className="p-4 flex flex-col gap-4">
           <Collapsible open={commentsOpen} onOpenChange={setCommentsOpen}>
-            <CollapsibleTrigger asChild>
-              <button
-                type="button"
-                className="flex w-full items-center justify-between gap-2 rounded-md hover:bg-muted/50 p-2 -m-2 transition-colors text-right"
-                aria-expanded={commentsOpen}
-              >
-                <div className="flex items-center gap-2">
-                  <div className="flex flex-col items-end">
-                    <h2 className="text-xs font-semibold text-muted-foreground uppercase shrink-0">
-                      التعليقات ({(fetched ? comments.length : commentsCount).toLocaleString("ar-SA")})
-                    </h2>
-                    <span className="text-xs text-muted-foreground">
-                      {commentsOpen ? "انقر للإخفاء" : "انقر لعرض التعليقات"}
-                    </span>
-                  </div>
-                  {uniqueCommenters.length > 0 && (
-                    <div className="flex shrink-0 [&>*]:ring-2 [&>*]:ring-background [&>*]:rounded-full" dir="ltr">
-                      {uniqueCommenters.map((author) => (
-                        <Avatar
-                          key={author.id}
-                          className={cn("h-6 w-6 -ml-2 first:ml-0 border-0")}
-                        >
-                          {author.image ? (
-                            <>
-                              <AvatarImage src={author.image} alt={author.name ?? undefined} />
-                              <AvatarFallback className="text-[10px] bg-secondary text-secondary-foreground font-semibold">
-                                {author.name?.charAt(0) ?? <IconUser className="h-3 w-3" />}
-                              </AvatarFallback>
-                            </>
-                          ) : (
+            {/* The shared bar (Khalid, 21 Aug): this header used to carry its own shape — a small
+                grey uppercase label with «انقر لعرض التعليقات» beneath it — while the sections
+                collapsed during the mobile refactor carried another. One control, one look.
+                The commenters' faces ride the bar's end slot, where they still say «people are
+                already talking here» without competing with the title. */}
+            <SectionBar
+              title={sectionTitle}
+              count={fetched ? comments.length : commentsCount}
+              open={commentsOpen}
+              onToggle={() => setCommentsOpen((v) => !v)}
+              end={
+                uniqueCommenters.length > 0 ? (
+                  <div className="flex shrink-0 [&>*]:ring-2 [&>*]:ring-background [&>*]:rounded-full" dir="ltr">
+                    {uniqueCommenters.map((author) => (
+                      <Avatar key={author.id} className={cn("h-6 w-6 -ml-2 first:ml-0 border-0")}>
+                        {author.image ? (
+                          <>
+                            <AvatarImage src={author.image} alt={author.name ?? undefined} />
                             <AvatarFallback className="text-[10px] bg-secondary text-secondary-foreground font-semibold">
                               {author.name?.charAt(0) ?? <IconUser className="h-3 w-3" />}
                             </AvatarFallback>
-                          )}
-                        </Avatar>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <span className="shrink-0 text-muted-foreground" aria-hidden>
-                  {commentsOpen ? <IconChevronUp className="h-5 w-5" /> : <IconChevronDown className="h-5 w-5" />}
-                </span>
-              </button>
-            </CollapsibleTrigger>
+                          </>
+                        ) : (
+                          <AvatarFallback className="text-[10px] bg-secondary text-secondary-foreground font-semibold">
+                            {author.name?.charAt(0) ?? <IconUser className="h-3 w-3" />}
+                          </AvatarFallback>
+                        )}
+                      </Avatar>
+                    ))}
+                  </div>
+                ) : null
+              }
+            />
             <CollapsibleContent>
               {loading ? (
                 <div className="space-y-2">
@@ -325,7 +307,7 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                     articleId={articleId}
                     articleSlug={articleSlug}
                     userId={userId}
-                    trigger={<Button type="button" variant="outline" size="sm">اكتب أول تعليق</Button>}
+                    trigger={<Button type="button" variant="outline" size="sm" className="max-lg:min-h-11">اكتب أول تعليق</Button>}
                   />
                 </div>
               ) : (

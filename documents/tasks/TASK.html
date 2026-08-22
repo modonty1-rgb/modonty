@@ -750,6 +750,77 @@ const TASKS = [
     "<b>عطلان مرصودان (متحقَّقان بقياس ٢٠ أغسطس):</b> التاريخ مقلوب في RTL — «Jul 2026 26» في الرندر الحي، مصدره <code>invoice.ts:18</code> (<code>Intl en-GB</code>) · حقول السجل على الإنتاج فاضية — قراءة مباشرة من قاعدة الإنتاج: كل <code>org*</code> = null إلا الشارع والمدينة، فتحتاج تعبئة من إعدادات الأدمن.",
  ref:"بند INVREV"},
 
+{id:"HOMEMOB", b:"projects", app:["modonty"], tab:"next", sev:"high", who:"k", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"الرئيسية على الجوّال — المراجعة الكلّية كزائر + قرار «احجز/تسوّق»",
+ d:"<b>نُقل من لوحة الجوّال ٢٢ أغسطس.</b> الأعطال المقيسة أُغلقت؛ الباقي حكمٌ لا إصلاح.<br>" +
+    "<b>ما أُغلق فعلاً (مقيس ٢٢ أغسطس):</b> المسح على ٣٩٠ أعطى ٢٢ هدفاً تحت ٤٤ — <b>١٤ منها إيجابيات كاذبة</b> (عناوين المقالات تحمل <code>after:absolute after:inset-0</code>، فالهدف الفعلي البطاقة كلها لا سطر العنوان)، وواحد <code>sr-only</code> بحكم تعريفه. الحقيقي سبعة: «الصفحة التالية» ٩٨×<b>٢٠</b> في <code>(homepage)/components/page-layout/PageLayout.tsx</code> + ستّة روابط فوتر عرضها ٣١–٤٣. أُصلحت بـ<code>max-lg:min-h-11</code> و<code>max-lg:min-w-11</code>. <b>بعد:</b> <code>m390</code> → الرابط ١١٤×٤٤ · <code>footerSmall 0</code> · <code>realSmall 0</code> · <code>overflow 0</code>؛ <b><code>d1280</code> → الرابط رجع ٩٨×٢٠ بالضبط</b>.<br>" +
+    "<b>الباقي — بندان:</b> (١) <b>مراجعة كلّية كزائر</b> على جهاز حقيقي: هل ترتيب الأقسام يخدم نيّة الداخل؟ الألسنة الملوّنة (مدونتي · المجالات · الطلّات · الشركاء) هل تُقرأ كأبواب أم كزينة؟ (٢) <b>قرار «احجز/تسوّق» النهائي</b> — الشريط السفلي المشترك يحمل زرّين، ونصّهما ووجهتهما على الرئيسية لم يُحسما حسب سياقها (بخلاف <code>/modonty</code> حيث حُسما: صِر شريكاً · عن مدونتي).<br>" +
+    "<b>تحذير قياس:</b> الخلاصة تمرير لا نهائي، فعدد البطاقات يختلف بين تشغيلة وأخرى — أي حكم يُبنى على عنصر مسمّى، لا على عدّاد إجمالي.<br>" +
+    "<b>سجلّ القياس (نُقل هنا ٢٢ أغسطس؛ لوحة الجوّال حُذفت بعد إفراغها):</b> الرئيسية على ٣٩٠ — <code>overflow 0</code> · <code>realSmall 0</code> · <code>footerSmall 0</code> · «الصفحة التالية» ١١٤×٤٤. على ١٢٨٠ — الرابط ٩٨×٢٠ (مطابق لما قبل التعديل). تاريخ القياسات الكامل لعشر الصفحات في كوميتات ٢١–٢٢ أغسطس و<code>documents/context/SESSION-LOG.md</code>.",
+ ref:"بند HOMEMOB"},
+
+{id:"MOBCHROME", b:"projects", app:["modonty"], tab:"next", sev:"normal", who:"k", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"بقايا القوائم والأشرطة المشتركة على الجوّال",
+ d:"<b>نُقل من لوحة الجوّال ٢٢ أغسطس بعد إقفال عشر صفحات.</b> الشريط العلوي والقائمة الجانبية أُقفلا (ثلاثة أعمدة · الطلّات و«اسمع» صار لهما مدخل · <code>/articles</code> أُضيف للقائمة · الأهداف الستّة ٤٤×٤٤ · <code>aria-current</code> · مادّة <code>backdrop-filter</code> حقيقية مع <code>prefers-reduced-transparency</code>).<br>" +
+    "<b>الباقي — ثلاثة:</b> (١) <code>MobileCtaBar</code> رُكّب على الرئيسية و<code>/modonty</code> و<code>/articles</code> والمقال، ويبقى تمريره لصفحة الشريك بنصّي زرّيها. (٢) تداخل الشريطين في صفحة المقال (شريط الفهرس اللاصق + البار السفلي) لم يُقس. (٣) <code>w-[210px]</code> في قائمة أقسام الشريك — العرض الثابت الحقيقي الوحيد في ٨٨ مكوّناً.",
+ ref:"بند MOBCHROME"},
+
+{id:"ABOUTCARD", b:"projects", app:["modonty"], tab:"next", sev:"normal", who:"k", date:"٢١ أغسطس ٢٠٢٦",
+ t:"ريفاكتور بطاقة «مدونتي» — تقرأ كإعلان داخلي لا كقيمة للزائر",
+ d:"<b>طلب خالد (٢١ أغسطس):</b> بشكلها الحالي (عنوان + سطر + أربع نقاط + زرّ «تعرّف على مدونتي») تقرأ كإعلان داخلي.<br>" +
+    "<b>الملف ومستهلكوه الثلاثة (جرد ٢١ أغسطس):</b> <code>modonty/components/shared/about-card/AboutCard.tsx</code> ← <code>(homepage)/components/right-sidebar/RightSidebar.tsx</code> · <code>articles/components/page-layout/ArticlesPageLayout.tsx</code> · <code>clients/components/trust-card/TrustCard.tsx</code> — أي تعديل يمسّ ثلاث صفحات فيُقاس على الثلاث.<br>" +
+    "<b>ما استقرّ:</b> على <code>/articles</code> رُفعت لأعلى العمود بأمر خالد بعد ما كانت تحت ٢٠ بطاقة (٥٨١٥ بكسل تمرير)، وبطاقة الثقة بجانبها صارت سطر تلميح (<code>TrustHint</code>).<br>" +
+    "<b>الباقي:</b> إعادة تفكير المحتوى من نيّة الزائر — ماذا يريد أن يعرف عن مدونتي وهو في منتصف تصفّح المقالات؟ ثم توحيد الشكل على المستهلكين الثلاثة.",
+ ref:"بند ABOUTCARD"},
+
+{id:"PROFILEMOB", b:"projects", app:["modonty"], tab:"next", sev:"normal", who:"k", date:"٢١ أغسطس ٢٠٢٦",
+ t:"ملف القارئ /users/profile — لا يوجد تخطيط جوّال أصلاً",
+ d:"<b>مؤجَّلة بقرار خالد (٢١ أغسطس):</b> «موضوع اليوزر فيه شغل كثير جداً؛ نخلص الصفحات الرئيسية أولاً» — وقد خلصت الآن.<br>" +
+    "<b>التشخيص مقيس ٢١ أغسطس (بحساب <code>testreels@modonty.com</code>):</b> سليمة بنيوياً — صفر تمرير أفقي، عمود واحد، بلا رايلات — لكن التبويبات السبعة والأرقام الستة <b>متطابقة</b> على ٣٩٠ و١٢٨٠ (<code>pageH 1382</code> مقابل <code>1104</code>)، أي لا تخطيط جوّال.<br>" +
+    "<b>ما ينتظرها:</b> نيّة الزائر مفقودة (يستقبله بريده و«الاسم: غير محدد» وستة أصفار بلا دعوة) · «لا يوجد نشاط حتى الآن» بلا مخرج · لا شريط سفلي · ٥ أهداف لمس ٣٨ بكسل (<code>0تعليق 28x38</code> · <code>0إعجاب 31x38</code> · <code>0مقال محفوظ 65x38</code>).<br>" +
+    "<b>النطاق:</b> أبناؤها الستة (bookings · comments · favorites · liked · disliked · following) يتبعونها. الإعدادات أُنجزت بنفس النمط ومقيسة على ٣٩٠.",
+ ref:"بند PROFILEMOB"},
+
+{id:"I18NAUDIOSTORY", b:"projects", app:["modonty"], tab:"next", sev:"normal", who:"k", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"نقل نصوص /audio و/story إلى messages/ar.json",
+ d:"<b>القاعدة:</b> كل نصّ عربي يراه الزائر يمرّ على <code>messages/ar.json</code> ويُقرأ داخل مكوّن سيرفر وحده — مكوّن الكلاينت لو استورد الملف حمّل النطاق كلّه في الباندل.<br>" +
+    "<b>الحجم المقيس ٢٢ أغسطس:</b> <code>ar.json</code> عشرة نطاقات و٧٧٧٥ حرفاً؛ المنقول منها <code>clients</code> و<code>booking</code> و<code>article</code> و<code>chrome</code>. <code>/story</code> وحدها ~٤٠ نصّاً كلّها داخل مكوّن كلاينت واحد.<br>" +
+    "<b>العقبة:</b> <code>QuranPlayer</code> و<code>SalesPitchPage</code> كلاهما <code>\"use client\"</code>، فالنصوص تُقرأ في <code>page.tsx</code> وتُمرَّر بروبس. في القصّة السلسلة ثلاث طبقات: <code>page.tsx → StoryClientLoader → SalesPitchPage</code>.<br>" +
+    "<b>الترتيب المقترح:</b> <code>/audio</code> أولاً (أقصر، طبقة واحدة) ثم <code>/story</code>؛ وبعد كلٍّ منهما يُعاد قياس ٣٩٠ و١٢٨٠ للتأكّد أن الترحيل لم يحرّك شيئاً.<br>" +
+    "<b>خارج النطاق:</b> ما يكتبه الشريك أو المحرّر يبقى في القاعدة، وأسماء السور والقرّاء تبقى في <code>data/</code> — بيانات لا نصوص واجهة.",
+ ref:"بند I18NAUDIOSTORY"},
+
+{id:"MOBSWEEP", b:"projects", app:["modonty"], tab:"next", sev:"normal", who:"k", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"تمريرة فحص للثلاثين صفحة البسيطة على الجوّال",
+ d:"<b>نُقل من لوحة الجوّال ٢٢ أغسطس.</b> ثلاثون صفحة صفر عرض ثابت وصفر هيكل أعمدة — نصّ أو نموذج. خطرها الأقل، لكنها تُفحص.<br>" +
+    "<b>ما يُفحص في كلٍّ منها:</b> مقاس اللمس ٤٤ بكسل · تسمية الحقول · لوحة المفاتيح لا تغطّي زرّ الإرسال · صفر تمرير أفقي.<br>" +
+    "<b>الثلاثون بمساراتها (نُقلت هنا بالكامل ٢٢ أغسطس — لا مرجع خارجي):</b><br>" +
+    "<b>الحساب والدخول (٦):</b> <code>/users/login</code> · <code>/users/register</code> · <code>/users/forgot-password</code> · <code>/users/reset-password</code> · <code>/users/verify-email</code> · <code>/users/notifications</code><br>" +
+    "<b>ملف القارئ (٦):</b> <code>/profile/bookings</code> · <code>/profile/comments</code> · <code>/profile/favorites</code> · <code>/profile/liked</code> · <code>/profile/disliked</code> · <code>/profile/following</code> — تتبع بند <code>PROFILEMOB</code><br>" +
+    "<b>قانونية (٦):</b> <code>/legal</code> · <code>/legal/privacy-policy</code> · <code>/legal/cookie-policy</code> · <code>/legal/copyright-policy</code> · <code>/legal/user-agreement</code> · <code>/terms</code><br>" +
+    "<b>مساعدة وتواصل (٤):</b> <code>/help</code> · <code>/help/faq</code> · <code>/help/feedback</code> · <code>/contact</code><br>" +
+    "<b>تعريفية (٤):</b> <code>/about</code> · <code>/team</code> · <code>/trust</code> · <code>/analytics</code><br>" +
+    "<b>نشرة واشتراك (٣):</b> <code>/news</code> · <code>/news/subscribe</code> · <code>/subscribe</code><br>" +
+    "<b>ترقيم الرئيسية (١):</b> <code>/page/[pageNumber]</code> — غلاف نحيف (٥٥ سطراً) يعيد استعمال مكوّنات الرئيسية.<br>" +
+    "<b>لماذا تمريرة واحدة:</b> الأنماط كلها صارت مجرَّبة على عشر صفحات، فما بقي تطبيق لا اجتهاد.",
+ ref:"بند MOBSWEEP"},
+
+{id:"PARTNERMOB", b:"projects", app:["modonty"], tab:"next", sev:"high", who:"k", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"ريفاكتور الجوّال لصفحة الشريك — مرحلة، لا بند",
+ d:"<b>لماذا الآن:</b> صفحة الشريك هي وجهة <b>كل ضغطة «احجز الآن»</b> من كل مقال بعد ريفاكتور اليوم (البار السفلي المشترك يوجّه إليها) — فأي خلل فيها يبتلع التحويل الذي حسّنّاه في المقال.<br>" +
+    "<b>الحجم — مقيس ٢٢ أغسطس على <code>modonty/app/(partner)/clients/[slug]</code>:</b> ١٣ صفحة فرعية · ١٠٨ ملفات · ٧١٦٢ سطراً · ٣٤ مكوّن عميل. للمقارنة، صفحة المقال التي استغرقت جلسة كاملة: ٦٢ ملفاً · ٦٢٥٩ سطراً · ٢١ مكوّن عميل.<br>" +
+    "<b>ما يتكرّر فيها من دروس المقال:</b> الكتل المكرّرة · نسبة المحتوى إلى الكروم (معيار NN/g) · أهداف اللمس ٤٤ · نمط طيّ واحد · القشرة الستاتيكية بعزل <code>auth()</code> داخل جزر <code>Suspense</code> · التحميل الكسول لمكوّنات العميل · النصوص إلى ملف الرسائل.<br>" +
+    "<b>الخطوة الأولى:</b> جرد ودراسة قبل أي تعديل — كما بدأنا صفحة المقال — ثم بنود مرتّبة بالأولوية، بند واحد في كل تاسك.",
+ ref:"بند PARTNERMOB"},
+
+{id:"ARTCTA", b:"projects", app:["modonty"], tab:"next", sev:"normal", who:"k", date:"٢١ أغسطس ٢٠٢٦",
+ t:"CTA خاص بالمقال نفسه — يودّي على المنتج لا على الصفحة العامة",
+ d:"<b>طلب خالد (٢١ أغسطس) أثناء شغل شريط الجوّال السفلي:</b> «لازم يكون في سي تي إي خاص بالمقال. لو الارتكل هذا عن منتج، المفروض يوديه على المنتج على صفحة العميل الرئيسية اللي في موقعه».<br>" +
+    "<b>الوضع الحالي — متحقَّق بقراءة السكيما (٢١ أغسطس):</b> الـCTA يعيش على <b>العميل</b> لا على المقال — <code>shared/prisma/schema/schema.prisma:617-619</code> يحمل <code>ctaMode</code> (NONE·FORM·LINK) و<code>ctaLabel</code> و<code>ctaUrl</code> على موديل <code>Client</code>. وموديل <code>Article</code> فيه <code>ctaClicks CTAClick[]</code> فقط (سطر 162) — أي يسجّل الضغطات ولا يملك وجهة. فكل مقالات الشريك الواحد تعرض نفس الزرّ ونفس الوجهة.<br>" +
+    "<b>ما يحتاج قراراً قبل أي كود:</b> حقلان جديدان على <code>Article</code> (وجهة + نصّ الزرّ) · مَن يعبّيهما — الكونسول أم الأدمن · وسلوك الرجوع حين يكونان فاضيين (يرث وجهة العميل الحالية).<br>" +
+    "<b>لماذا يهمّ:</b> قارئ مقال عن منتج بعينه يُرسَل الآن إلى صفحة عامة فيبحث عن المنتج بنفسه — والخطوة الزائدة تأكل التحويل الذي دفعنا مكانه من الشاشة.",
+ ref:"بند ARTCTA"},
+
 {id:"MAILREV", b:"projects", app:["admin"], tab:"now", sev:"normal", who:"k", date:"٢٠ أغسطس ٢٠٢٦",
  t:"مراجعة كل قوالب الإيميلات بنفس معيار الفاتورة",
  d:"<b>طلب خالد (٢٠ أغسطس):</b> جرد كل تمبلتات <code>admin/lib/email/templates/</code> (المجلد متحقَّق — منه قُرئ <code>invoice.ts</code> و<code>base.ts</code> في جلسة ٢٠ أغسطس) وأي قوالب بريد في الكونسول أو مدونتي (تُحصر بالجرد).<br>" +

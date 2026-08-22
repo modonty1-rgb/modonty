@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import { OptimizedImage, asMedia } from "../../../optimized-image";
 import { PartnerAvatar } from "../../../partner-avatar/PartnerAvatar";
 import { WhatsAppIcon } from "../../../icons/whatsapp-icon";
@@ -12,7 +14,7 @@ import type { FooterData } from "./footer-data";
 /** «بلوك الهوية» — a brand-colour band (logo · closing line · WhatsApp) over the standard columns. */
 export function BrandFooter({ data, preview = false }: { data: FooterData; preview?: boolean }) {
   const cta = (
-    <span className="inline-flex h-10 items-center gap-2 rounded-full bg-white px-5 text-sm font-bold" style={{ color: WHATSAPP_GREEN }}>
+    <span className="inline-flex h-10 items-center gap-2 rounded-full bg-white px-5 text-sm font-bold max-md:h-11" style={{ color: WHATSAPP_GREEN }}>
       <WhatsAppIcon size={16} /> واتساب
     </span>
   );
@@ -39,8 +41,18 @@ export function BrandFooter({ data, preview = false }: { data: FooterData; previ
         </div>
       </div>
       <FooterWrap className="pt-10">
-        <div className="grid gap-8" style={{ gridTemplateColumns: data.services.length > 0 ? "1fr 1fr 1fr" : "1fr 1fr" }}>
-          <LinkColumn title="خدماتنا" links={data.services} />
+        {/* Same fix as `columns-footer`: an inline `grid-template-columns` cannot be reached by
+            a breakpoint, so three equal tracks stayed three on a 390px phone. The value moves to
+            a custom property and a variant owns the property — stacked below 768, identical at
+            and above it. */}
+        <div
+          className="grid grid-cols-1 gap-8 md:[grid-template-columns:var(--partner-footer-cols)]"
+          style={{ "--partner-footer-cols": data.services.length > 0 ? "1fr 1fr 1fr" : "1fr 1fr" } as CSSProperties}
+        >
+          {/* `LinkColumn` returns null on an empty list, and the track count already drops to two
+              when there are no services — so rendering it unconditionally was safe by luck, not by
+              design. Made explicit: children and tracks now agree by construction. */}
+          {data.services.length > 0 && <LinkColumn title="خدماتنا" links={data.services} />}
           <LinkColumn title="الصفحات" links={data.pages} />
           <ContactColumn data={data} social inert={preview} />
         </div>

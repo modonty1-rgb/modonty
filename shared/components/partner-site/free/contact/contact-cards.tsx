@@ -30,8 +30,8 @@ export function ContactCards({ data }: { data: HomeData; preview?: boolean }) {
         <div className="rounded-lg p-6 ring-1 ring-border">
           <p className="flex items-center gap-2 text-sm font-medium"><Phone className="h-4 w-4 text-primary" aria-hidden /> اتصل أو راسل</p>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            {data.phone && <li><a href={`tel:${data.phone}`} dir="ltr" className="hover:text-foreground">{data.phone}</a></li>}
-            {c.email && <li className="flex items-center gap-2"><Mail className="h-4 w-4" aria-hidden /><a href={`mailto:${c.email}`} className="hover:text-foreground">{c.email}</a></li>}
+            {data.phone && <li><a href={`tel:${data.phone}`} dir="ltr" className="hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{data.phone}</a></li>}
+            {c.email && <li className="flex items-center gap-2"><Mail className="h-4 w-4" aria-hidden /><a href={`mailto:${c.email}`} className="hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{c.email}</a></li>}
           </ul>
           <div className="mt-4"><WhatsAppButton href={data.whatsappHref} /></div>
         </div>

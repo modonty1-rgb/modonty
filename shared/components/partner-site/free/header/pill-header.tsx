@@ -13,7 +13,7 @@ export function PillHeader({ data }: { data: HeaderData }) {
   return (
     <header className="relative bg-background">
       <HeaderBar>
-        <a href={data.homeHref} className="min-w-0">
+        <a href={data.homeHref} className="min-w-0 max-md:flex max-md:min-h-11 max-md:items-center">
           <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} />
         </a>
         <nav className="hidden items-center rounded-full border p-1 md:flex" aria-label="الصفحات">

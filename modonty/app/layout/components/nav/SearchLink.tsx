@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { messages } from "@/lib/i18n/messages";
 import { ModontySearchMark } from "@/components/icons/modonty-search-mark";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -17,7 +18,7 @@ export function SearchLink({ variant = "full", className = "" }: SearchLinkProps
         size="mobileIcon"
         className={cn("rounded-xl", className)}
       >
-        <Link href="/search" prefetch={false} aria-label="بحث المقالات" className="[--modonty-search-accent:hsl(var(--accent))]">
+        <Link href="/search" prefetch={false} aria-label={messages.chrome.searchArticles} className="[--modonty-search-accent:hsl(var(--accent))]">
           <ModontySearchMark aria-hidden />
         </Link>
       </Button>
@@ -29,7 +30,7 @@ export function SearchLink({ variant = "full", className = "" }: SearchLinkProps
       <Link
         href="/search"
         prefetch={false}
-        aria-label="بحث المقالات"
+        aria-label={messages.chrome.searchArticles}
         className={cn(
           "group flex h-11 min-w-0 max-w-[200px] items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           className
@@ -39,7 +40,7 @@ export function SearchLink({ variant = "full", className = "" }: SearchLinkProps
           <span className="absolute right-3 top-1/2 inline-flex -translate-y-1/2 items-center justify-center [--modonty-search-accent:hsl(var(--accent))]">
             <ModontySearchMark className="size-4" aria-hidden />
           </span>
-          <span className="truncate">البحث…</span>
+          <span className="truncate">{messages.chrome.searchPlaceholder}</span>
         </span>
       </Link>
     );
@@ -48,7 +49,7 @@ export function SearchLink({ variant = "full", className = "" }: SearchLinkProps
   return (
     <Link
       href="/search"
-      aria-label="بحث المقالات"
+      aria-label={messages.chrome.searchArticles}
       className={cn(
         "relative flex items-center overflow-hidden rounded-full border border-input bg-background pe-4 ps-10 text-muted-foreground transition-colors hover:border-primary/50 hover:bg-primary/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         "h-10 w-full max-w-xs text-sm",
@@ -58,7 +59,7 @@ export function SearchLink({ variant = "full", className = "" }: SearchLinkProps
       <span className="absolute right-3 top-1/2 inline-flex -translate-y-1/2 items-center justify-center [--modonty-search-accent:hsl(var(--accent))]">
         <ModontySearchMark className="h-4 w-4" aria-hidden />
       </span>
-      <span className="truncate">البحث…</span>
+      <span className="truncate">{messages.chrome.searchPlaceholder}</span>
     </Link>
   );
 }

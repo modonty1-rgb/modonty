@@ -50,8 +50,13 @@ function LogoSpotlightImpl({
           transition={{ duration: 0.5 }}
         />
 
+        {/* `h-full` is a percentage against a flex item whose own height comes from
+            `min-height`, which resolves to zero — on a phone the wordmark measured 551×0 and
+            the opening chapter showed an empty card (22 Aug, iPhone 12). Absolute + inset-0
+            against the `relative` parent above gives it a real box. Phones only: at `md` the
+            column has a definite height and `h-full` already resolves. */}
         <m.div
-          className="relative w-full h-full"
+          className="relative w-full h-full max-md:absolute max-md:inset-0"
           style={{ transformOrigin: "center center", willChange: "transform, filter" }}
           animate={{
             scale: hasPoint ? [1, 1.06, 1] : isPlaying ? [1, 1.018, 1] : 1,

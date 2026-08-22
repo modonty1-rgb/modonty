@@ -70,7 +70,7 @@ function TestimonialPlayerImpl() {
           href={active.watchUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-muted hover:bg-muted/70 text-[10px] font-bold text-foreground/80 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+          className="inline-flex items-center gap-1 px-2.5 py-1.5 max-md:min-h-11 max-md:px-4 rounded-full bg-muted hover:bg-muted/70 text-[10px] font-bold text-foreground/80 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
           aria-label="افتح في YouTube"
         >
           <span>YouTube</span>
@@ -170,7 +170,7 @@ function TestimonialPlayerImpl() {
           href="https://www.youtube.com/@modonty"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-primary hover:underline"
+          className="text-primary hover:underline max-md:inline-flex max-md:items-center max-md:justify-center max-md:min-h-11 max-md:min-w-11 max-md:px-2 max-md:align-middle"
         >
           @modonty
         </a>

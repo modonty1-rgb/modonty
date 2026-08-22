@@ -10,6 +10,7 @@ import {
   IconReplay,
   IconAdvance,
   IconAlertTriangle,
+  IconClose,
 } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
@@ -222,6 +223,17 @@ export function ArticleAudioPlayer({ src, slug, tabClassName, durationSeconds }:
           className="absolute -end-[10px] top-full z-50 mt-2 w-[292px] rounded-xl border border-border bg-card p-3 shadow-lg lg:-end-[30px]"
           dir="rtl"
         >
+          {/* A close button inside the panel (Khalid, 22 Aug). The tab above closes it too, but
+              once the panel is open the tab is behind the reader's own hand and reads as the
+              thing that opened this — not as the way out. Every panel needs its own exit. */}
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            aria-label="إغلاق المشغّل"
+            className="absolute end-1 top-1 grid size-9 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <IconClose className="size-4" />
+          </button>
           {failed ? (
             <div className="flex items-start gap-2 text-sm">
               <IconAlertTriangle className="mt-0.5 size-4 shrink-0 text-destructive" aria-hidden />

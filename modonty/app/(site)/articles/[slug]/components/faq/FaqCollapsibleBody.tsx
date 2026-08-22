@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { IconChevronDown, IconChevronUp } from "@/lib/icons";
+
+import { SectionBar } from "@/app/(site)/articles/[slug]/components/section-bar/SectionBar";
 
 interface FaqCollapsibleBodyProps {
   headingId: string;
   title: string;
+  /** Shown in the bar so a closed section still says how much is inside. */
+  count?: number | null;
   children: ReactNode;
 }
 
@@ -16,31 +19,35 @@ interface FaqCollapsibleBodyProps {
  * `children` — Googlebot + AI engines see them in raw HTML regardless of
  * the open/closed state (CSS-only hide, not DOM removal).
  */
-export function FaqCollapsibleBody({ headingId, title, children }: FaqCollapsibleBodyProps) {
+export function FaqCollapsibleBody({ headingId, title, count, children }: FaqCollapsibleBodyProps) {
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const open = !isCollapsed;
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setIsCollapsed((c) => !c)}
-        className="flex w-full items-center justify-between gap-2 rounded-md hover:bg-muted/50 p-2 -m-2 transition-colors text-right"
-        aria-expanded={!isCollapsed}
-        aria-controls={`${headingId}-body`}
+      {/* The shared bar (Khalid, 21 Aug): this section used to wear its own shape — a small grey
+          uppercase label with «انقر لعرض الأسئلة» under it — while the sections collapsed during
+          the mobile refactor wore another. Same control, same look now. */}
+      <h2 id={headingId} className="contents">
+        <SectionBar
+          title={title}
+          count={count}
+          open={open}
+          onToggle={() => setIsCollapsed((c) => !c)}
+          controls={`${headingId}-body`}
+        />
+      </h2>
+      <div
+        id={`${headingId}-body`}
+        // The frame is the phone's: there the bar and its panel have to read as one object.
+        // Inside the desktop card it would be a border drawn inside a border, which is the
+        // double-framing every design system warns about — so it stops at `lg`.
+        className={
+          open
+            ? "space-y-4 max-lg:rounded-b-xl max-lg:border max-lg:border-border max-lg:p-3"
+            : "hidden"
+        }
       >
-        <div className="flex flex-col items-end">
-          <h2 id={headingId} className="text-xs font-semibold text-muted-foreground uppercase shrink-0">
-            {title}
-          </h2>
-          <span className="text-xs text-muted-foreground">
-            {isCollapsed ? "انقر لعرض الأسئلة" : "انقر للإخفاء"}
-          </span>
-        </div>
-        <span className="shrink-0 text-muted-foreground" aria-hidden>
-          {isCollapsed ? <IconChevronDown className="h-5 w-5" /> : <IconChevronUp className="h-5 w-5" />}
-        </span>
-      </button>
-      <div id={`${headingId}-body`} className={isCollapsed ? "hidden" : "space-y-4"}>
         {children}
       </div>
     </>

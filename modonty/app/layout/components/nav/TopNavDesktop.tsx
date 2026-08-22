@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { messages } from "@/lib/i18n/messages";
 import { LogoNav } from "@/app/layout/components/nav/LogoNav";
 import { DesktopUserAreaClient } from "@/app/layout/components/nav/DesktopUserAreaClient";
 import { DesktopNavLinks, DesktopNavList } from "@/app/layout/components/nav/NavLinksClient";
@@ -13,11 +14,11 @@ export function TopNavDesktop() {
       </div>
       {/* Active mark reads the pathname → own boundary on dynamic routes (/page/n,
           /tags/x); the fallback is the same links, unmarked, so the shell keeps them. */}
-      <Suspense fallback={<DesktopNavList pathname={null} />}>
-        <DesktopNavLinks />
+      <Suspense fallback={<DesktopNavList labels={{ mainNav: messages.chrome.mainNav }} pathname={null} />}>
+        <DesktopNavLinks labels={{ mainNav: messages.chrome.mainNav }} />
       </Suspense>
       <div className="flex items-center justify-end gap-3">
-        <ThemeToggle />
+        <ThemeToggle labels={messages.chrome.theme} />
         {/* Reads the session → streams behind its own boundary; the fallback holds the
             bell's 44px slot so the avatar doesn't slide when it lands. */}
         <Suspense fallback={<span className="inline-block h-11 w-11" aria-hidden />}>

@@ -7,6 +7,7 @@ import { IconVolume2 } from "@/lib/icons";
 
 import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoColumnLayout";
 
+import { AudioTabs, AudioTabBar, AudioPanel } from "./components/audio-tabs/AudioTabs";
 import { ListenQueue } from "./components/listen-queue/ListenQueue";
 import { QuranPlayer } from "./components/quran-player/QuranPlayer";
 import { getAudioArticles } from "./data/get-audio-articles";
@@ -78,39 +79,63 @@ export default async function AudioArticlesPage() {
         ]}
       />
 
-      {/* Two columns, not two tabs (Khalid, 20 Aug): the recitation is the page, and the articles
-          sit beside it. The shared shell rather than a hand-rolled grid — same container, same
-          gaps as every other two-column page on the site. */}
-      <TwoColumnLayout
-        header={
-          <>
-            {/* «اسمع» rather than «استمع» — nearer to how the word is actually said, and it carries
-                both halves of the page without flattering either. No single clever line tries to
-                cover recitation and marketing articles at once: one would cheapen the first or
-                inflate the second. A neutral verb, then a line that names them separately. */}
-            <h1 className="text-3xl font-bold leading-tight">اسمع</h1>
-            <p className="mt-2 text-muted-foreground">
-              القرآن الكريم كاملاً بعشرين قارئاً برواية حفص عن عاصم · ومقالات مدونتي مقروءة.
-            </p>
-          </>
-        }
-        main={<QuranPlayer />}
-        rail={
-          <aside className="w-full shrink-0 lg:w-[300px]" aria-label="المقالات المسموعة">
-            <div className="sticky top-20 space-y-3">
-              <h2 className="text-xs font-semibold uppercase text-muted-foreground">المقالات المسموعة</h2>
-              {articles.length === 0 ? (
-                <p className="flex items-start gap-2 rounded-xl border border-dashed border-border bg-muted/30 p-3 text-xs leading-relaxed text-muted-foreground">
-                  <IconVolume2 className="mt-0.5 size-4 shrink-0" aria-hidden />
-                  لسه ما نزلت أول نسخة صوتية من المقالات — والمقالات كلها موجودة مكتوبة.
-                </p>
-              ) : (
-                <ListenQueue articles={articles} compact />
-              )}
-            </div>
-          </aside>
-        }
-      />
+      {/* Two columns on desktop, not two tabs (Khalid, 20 Aug): the recitation is the page, and the
+          articles sit beside it. The shared shell rather than a hand-rolled grid — same container,
+          same gaps as every other two-column page on the site.
+          On a phone the same two columns stack, and the second one landed 25 screens down — so
+          `AudioTabs` puts a switch between them there and ONLY there. See its own comment. */}
+      <AudioTabs>
+        <TwoColumnLayout
+          header={
+            <>
+              {/* «اسمع» rather than «استمع» — nearer to how the word is actually said, and it carries
+                  both halves of the page without flattering either. No single clever line tries to
+                  cover recitation and marketing articles at once: one would cheapen the first or
+                  inflate the second. A neutral verb, then a line that names them separately. */}
+              {/* Off the screen, not out of the page (Khalid, 22 Aug): the breadcrumb above already
+                  says «استمع» and the tabs below name both halves, so drawing it a third time was
+                  a wasted 38px. The tag stays — this page is meant to rank for recitation searches,
+                  and an h1-less page hands that away for nothing. */}
+              <h1 className="sr-only">اسمع</h1>
+              {/* On a phone the two buttons directly below say the same thing in four words, and
+                  this line cost 90px of a 664px screen to repeat them. */}
+              <p className="mt-2 text-muted-foreground max-md:hidden">
+                القرآن الكريم كاملاً بعشرين قارئاً برواية حفص عن عاصم · ومقالات مدونتي مقروءة.
+              </p>
+              {/* «متعة الروح» غيّرت القاعدة: التبويبان صارا يقولان وش تكسب، لا وش نوع المحتوى.
+                  «مقالات مدونتي» كان تصنيفاً واقفاً جنب وعد — والروح يقابلها العقل. */}
+              <AudioTabBar
+                labels={{ group: "وش تبي تسمع", quran: "متعة الروح", articles: "زاد العقل" }}
+              />
+            </>
+          }
+          main={
+            <AudioPanel name="quran">
+              <QuranPlayer />
+            </AudioPanel>
+          }
+          rail={
+            <AudioPanel
+              name="articles"
+              as="aside"
+              className="w-full shrink-0 lg:w-[300px]"
+              label="المقالات المسموعة"
+            >
+              <div className="sticky top-20 space-y-3">
+                <h2 className="text-xs font-semibold uppercase text-muted-foreground">المقالات المسموعة</h2>
+                {articles.length === 0 ? (
+                  <p className="flex items-start gap-2 rounded-xl border border-dashed border-border bg-muted/30 p-3 text-xs leading-relaxed text-muted-foreground">
+                    <IconVolume2 className="mt-0.5 size-4 shrink-0" aria-hidden />
+                    لسه ما نزلت أول نسخة صوتية من المقالات — والمقالات كلها موجودة مكتوبة.
+                  </p>
+                ) : (
+                  <ListenQueue articles={articles} compact />
+                )}
+              </div>
+            </AudioPanel>
+          }
+        />
+      </AudioTabs>
     </>
   );
 }

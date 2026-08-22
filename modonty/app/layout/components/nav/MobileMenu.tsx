@@ -27,7 +27,10 @@ import {
   IconChevronLeft,
   IconTrending,
   IconSearch,
+  IconArticleList,
 } from "@/lib/icons";
+import { ModontyReelsMark } from "@/components/icons/modonty-reels-mark";
+import { ModontyAudioMark } from "@/components/icons/modonty-audio-mark";
 import { cn } from "@/lib/utils";
 import { navLinksConfig } from "@/app/layout/helpers/nav-links-config";
 import { ThemeToggle } from "@/app/layout/components/nav/ThemeToggle";
@@ -73,7 +76,9 @@ function SheetLink({ href, icon: Icon, label, isActive, onClick }: SheetLinkProp
   );
 }
 
-export function MobileMenu({ open, onOpenChange, contentId }: MobileMenuProps) {
+export function MobileMenu({ open, onOpenChange, contentId, labels, themeLabels, sections, items }: MobileMenuProps & { labels: import("./MobileMenuClient").MobileMenuLabels; themeLabels: { toggle: string; light: string; dark: string; system: string };
+  sections: import("./MobileMenuClient").MobileMenuSections;
+  items: import("./MobileMenuClient").MobileMenuItems }) {
   const pathname = usePathname();
   const close = () => onOpenChange(false);
 
@@ -97,16 +102,16 @@ export function MobileMenu({ open, onOpenChange, contentId }: MobileMenuProps) {
               variant="navigation"
               size="mobileIcon"
               className="rounded-xl"
-              aria-label="إغلاق القائمة"
+              aria-label={labels.closeMenu}
             >
               <IconClose aria-hidden />
             </Button>
           </SheetClose>
-          <SheetTitle className="text-base font-bold">القائمة</SheetTitle>
+          <SheetTitle className="text-base font-bold">{labels.menu}</SheetTitle>
           <SheetDescription className="sr-only">
-            روابط التنقل وإدارة حساب المستخدم
+            {labels.menuDescription}
           </SheetDescription>
-          <ThemeToggle />
+          <ThemeToggle labels={themeLabels} />
         </SheetHeader>
 
         <div className="overflow-y-auto py-3 px-3 space-y-0.5">
@@ -115,12 +120,12 @@ export function MobileMenu({ open, onOpenChange, contentId }: MobileMenuProps) {
           {isLoggedOut && (
             <>
               <p className="px-3 pt-3 pb-1.5 text-[11px] font-semibold text-muted-foreground/70 tracking-wide">
-                حسابك
+                {labels.yourAccount}
               </p>
               <div className="flex flex-col gap-2 px-3 pb-1">
                 <Button asChild className="h-11 w-full rounded-xl text-sm font-semibold">
                   <Link href="/users/register" onClick={close}>
-                    سجّل مجاناً
+                    {labels.signUpFree}
                   </Link>
                 </Button>
                 <Button
@@ -129,7 +134,7 @@ export function MobileMenu({ open, onOpenChange, contentId }: MobileMenuProps) {
                   className="h-11 w-full rounded-xl text-sm font-medium"
                 >
                   <Link href="/users/login" onClick={close}>
-                    دخول
+                    {labels.signIn}
                   </Link>
                 </Button>
               </div>
@@ -139,40 +144,68 @@ export function MobileMenu({ open, onOpenChange, contentId }: MobileMenuProps) {
 
           {/* Browse Section */}
           <p className="px-3 pt-3 pb-1.5 text-[11px] font-semibold text-muted-foreground/70 tracking-wide">
-            تصفح
+            {sections.browse}
           </p>
           <SheetLink
             href="/search"
             icon={IconSearch}
-            label="بحث"
+            label={items.search}
             isActive={pathname === "/search" || pathname.startsWith("/search/")}
             onClick={close}
           />
           <SheetLink
             href="/trending"
             icon={IconTrending}
-            label="الرائجة"
+            label={items.trending}
             isActive={pathname === "/trending" || pathname.startsWith("/trending/")}
+            onClick={close}
+          />
+          {/* The archive itself. It sat in the desktop bar and in nothing a phone could open —
+              the same gap the two media sections had. Placed before the taxonomies because it is
+              the content; categories and partners are ways INTO it. */}
+          <SheetLink
+            href="/articles"
+            icon={IconArticleList}
+            label={items.articles}
+            isActive={pathname === "/articles"}
             onClick={close}
           />
           <SheetLink
             href="/categories"
             icon={IconCompass}
-            label="الفئات"
+            label={items.categories}
             isActive={pathname === "/categories" || pathname.startsWith("/categories/")}
             onClick={close}
           />
           <SheetLink
             href="/clients"
             icon={IconClients}
-            label="الشركاء"
+            label={items.partners}
             isActive={pathname === "/clients" || pathname.startsWith("/clients/")}
+            onClick={close}
+          />
+          {/* الطلّات · استمع — the two media sections. They were on the desktop bar and in
+              nothing a phone could reach: the sheet is the whole navigation on a phone, so
+              two of the site's seven sections had no entry point at all. Kept in the desktop
+              bar's order (partners → reels → audio) so the two surfaces read the same. */}
+          <SheetLink
+            href="/reels"
+            icon={ModontyReelsMark}
+            label={items.reels}
+            isActive={pathname === "/reels" || pathname.startsWith("/reels/")}
+            onClick={close}
+          />
+          <SheetLink
+            href="/audio"
+            icon={ModontyAudioMark}
+            label={items.audio}
+            isActive={pathname === "/audio" || pathname.startsWith("/audio/")}
             onClick={close}
           />
           <SheetLink
             href="/users/profile/favorites"
             icon={IconSaved}
-            label="المحفوظات"
+            label={items.saved}
             isActive={pathname === "/users/profile/favorites"}
             onClick={close}
           />
@@ -181,7 +214,7 @@ export function MobileMenu({ open, onOpenChange, contentId }: MobileMenuProps) {
 
           {/* Company Section */}
           <p className="px-3 pt-2 pb-1.5 text-[11px] font-semibold text-muted-foreground/70 tracking-wide">
-            مدونتي
+            {sections.modonty}
           </p>
           {navLinksConfig.company.map((link) => {
             const iconMap: Record<string, ComponentType<{ className?: string }>> = {
@@ -205,7 +238,7 @@ export function MobileMenu({ open, onOpenChange, contentId }: MobileMenuProps) {
 
           {/* Support Section */}
           <p className="px-3 pt-2 pb-1.5 text-[11px] font-semibold text-muted-foreground/70 tracking-wide">
-            الدعم
+            {sections.support}
           </p>
           {navLinksConfig.support
             .filter((link) => link.href !== "/help/feedback")

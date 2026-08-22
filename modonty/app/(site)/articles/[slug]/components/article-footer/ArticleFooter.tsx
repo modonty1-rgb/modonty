@@ -128,7 +128,7 @@ export function ArticleFooter({
               {author.slug && (
                 <Link
                   href={`/authors/${author.slug}`}
-                  className="inline-flex shrink-0 items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-foreground transition-colors hover:bg-muted/50"
+                  className="inline-flex max-lg:min-h-11 shrink-0 items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-foreground transition-colors hover:bg-muted/50"
                 >
                   صفحة الكاتب
                   <IconChevronLeft className="size-3 ltr:rotate-180" aria-hidden />

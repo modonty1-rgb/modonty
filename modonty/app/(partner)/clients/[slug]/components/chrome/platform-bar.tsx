@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { messages } from "@/lib/i18n/messages";
 import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 import Link from "next/link";
 import { ModontyMark } from "@/components/icons/modonty-mark";
@@ -18,8 +19,8 @@ interface PlatformBarProps {
 export function PlatformBar({ isVerified }: PlatformBarProps) {
   return (
       <div className="bg-[#0b0d1f] text-xs text-[#c9ccdf]">
-        <div className="mx-auto flex h-9 max-w-[1216px] items-center gap-4 px-4">
-          <Link href="/" className="flex items-center gap-2 font-medium text-white hover:text-white/80" aria-label="الرجوع إلى مدونتي">
+        <div className="mx-auto flex h-9 max-w-[1216px] items-center gap-4 px-4 max-md:h-11">
+          <Link href="/" className="flex items-center gap-2 font-medium text-white hover:text-white/80 max-md:min-h-11" aria-label="الرجوع إلى مدونتي">
             <ModontyMark className="h-4 w-4 text-primary" aria-hidden />
             مُدَوَّنَتِي
           </Link>
@@ -30,12 +31,12 @@ export function PlatformBar({ isVerified }: PlatformBarProps) {
                 <VerifiedBadge className="h-3.5 w-3.5" label="شريك موثّق" />
                 شريك موثّق
               </span>
-              <Link href="/trust" className="hover:text-white">كيف نتأكّد؟</Link>
+              <Link href="/trust" className="hover:text-white max-md:inline-flex max-md:min-h-11 max-md:min-w-11 max-md:items-center max-md:justify-center">كيف نتأكّد؟</Link>
             </>
           ) : null}
           <span className="ms-auto flex items-center gap-3">
-            <Link href="/clients" className="hover:text-white">تصفّح الشركاء</Link>
-            <ThemeToggle />
+            <Link href="/clients" className="hover:text-white max-md:inline-flex max-md:min-h-11 max-md:min-w-11 max-md:items-center max-md:justify-center">تصفّح الشركاء</Link>
+            <ThemeToggle labels={messages.chrome.theme} />
             <Suspense fallback={<span className="inline-block h-8 w-8" aria-hidden />}>
               <UserMenu hint={false} />
             </Suspense>

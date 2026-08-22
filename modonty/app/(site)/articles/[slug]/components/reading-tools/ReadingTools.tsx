@@ -15,9 +15,9 @@ import { cn } from "@/lib/utils";
 // its meaning without a label. It started as «ص · ع · ك» (initials of the size names): correct
 // Arabic, unreadable as a control. Icons rather than a drawn letter, on Khalid's call (19 Aug).
 const SIZES = [
-  { key: "small", title: "خط صغير", Icon: IconTextSmaller },
-  { key: "normal", title: "خط عادي", Icon: IconTextNormal },
-  { key: "large", title: "خط كبير", Icon: IconTextBigger },
+  { key: "small", Icon: IconTextSmaller },
+  { key: "normal", Icon: IconTextNormal },
+  { key: "large", Icon: IconTextBigger },
 ] as const;
 
 type SizeKey = (typeof SIZES)[number]["key"];
@@ -36,12 +36,32 @@ const TEXT_SIZE_STORAGE_KEY = "modonty:article-text";
  * Neither is required to read the article. This is the extra that makes the page feel looked
  * after rather than merely delivered.
  */
+interface ReadingToolsLabels {
+  sizeGroup: string;
+  small: string;
+  normal: string;
+  large: string;
+  showImages: string;
+  hideImages: string;
+  images: string;
+  noImages: string;
+}
+
 interface ReadingToolsProps {
   /** Icons only, stacked, no card — for the empty margin beside the article on wide screens. */
   bare?: boolean;
+  /** Same card, shrunk to ride the phone's sticky action row beside the five tabs. */
+  compact?: boolean;
+  /** From the server — a client component importing the message file would ship all of it. */
+  labels: ReadingToolsLabels;
 }
 
-export function ReadingTools({ bare = false }: ReadingToolsProps) {
+export function ReadingTools({ bare = false, compact = false, labels }: ReadingToolsProps) {
+  const sizeTitle: Record<SizeKey, string> = {
+    small: labels.small,
+    normal: labels.normal,
+    large: labels.large,
+  };
   const [size, setSize] = useState<SizeKey>("normal");
   const [imagesHidden, setImagesHidden] = useState(false);
 
@@ -114,7 +134,7 @@ export function ReadingTools({ bare = false }: ReadingToolsProps) {
       <div className="flex flex-col items-center gap-3">
         <div
           role="radiogroup"
-          aria-label="حجم خط المقال"
+          aria-label={labels.sizeGroup}
           className="flex flex-col items-center gap-1"
         >
           {SIZES.map((s) => (
@@ -123,10 +143,10 @@ export function ReadingTools({ bare = false }: ReadingToolsProps) {
               type="button"
               role="radio"
               aria-checked={size === s.key}
-              title={s.title}
+              title={sizeTitle[s.key]}
               onClick={() => pickSize(s.key)}
               className={cn(
-                "grid size-9 place-items-center rounded-lg transition-colors",
+                "grid size-9 max-lg:size-11 place-items-center rounded-lg transition-colors",
                 size === s.key
                   ? "bg-primary/15 text-link"
                   : "text-muted-foreground/70 hover:bg-muted/60 hover:text-foreground",
@@ -144,12 +164,74 @@ export function ReadingTools({ bare = false }: ReadingToolsProps) {
           role="switch"
           aria-checked={imagesHidden}
           onClick={toggleImages}
-          title={imagesHidden ? "إظهار الصور" : "إخفاء الصور والقراءة نصّاً فقط"}
+          title={imagesHidden ? labels.showImages : labels.hideImages}
           className={cn(
-            "grid size-9 place-items-center rounded-lg transition-colors",
+            "grid size-9 max-lg:size-11 place-items-center rounded-lg transition-colors",
             imagesHidden
               ? "bg-primary/15 text-link"
               : "text-muted-foreground/70 hover:bg-muted/60 hover:text-foreground",
+          )}
+        >
+          {imagesHidden ? <IconEyeOff className="size-4" /> : <IconEye className="size-4" />}
+        </button>
+      </div>
+    );
+  }
+
+  /* The same controls, shrunk to ride the far end of the outline bar on a phone (Khalid,
+     21 Aug) — they belong to the article body and so does that bar, so they share it instead of
+     standing as a block of their own above the title.
+     32px visual with a 44px-tall hit area: growing the box itself to 44 would push the group
+     past the bar, and 44 invisible boxes side by side would overlap into each other so the
+     first buttons stop being reachable. Height is the axis that is free here, so height is the
+     one that grows. */
+  if (compact) {
+    const cell =
+      "relative grid size-8 place-items-center rounded-md transition-[background-color,color,transform] " +
+      "after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] " +
+      "active:scale-[0.94] motion-reduce:active:scale-100";
+
+    return (
+      <div className="flex shrink-0 items-center gap-1 rounded-xl border border-primary/30 bg-primary/5 p-1">
+        <div
+          role="radiogroup"
+          aria-label={labels.sizeGroup}
+          className="flex items-center rounded-lg bg-background/70"
+        >
+          {SIZES.map((s) => (
+            <button
+              key={s.key}
+              type="button"
+              role="radio"
+              aria-checked={size === s.key}
+              aria-label={sizeTitle[s.key]}
+              title={sizeTitle[s.key]}
+              onClick={() => pickSize(s.key)}
+              className={cn(
+                cell,
+                size === s.key
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <s.Icon className="size-4" aria-hidden />
+            </button>
+          ))}
+        </div>
+
+        <button
+          type="button"
+          role="switch"
+          aria-checked={imagesHidden}
+          aria-label={imagesHidden ? labels.showImages : labels.hideImages}
+          title={imagesHidden ? labels.showImages : labels.hideImages}
+          onClick={toggleImages}
+          className={cn(
+            cell,
+            "shrink-0",
+            imagesHidden
+              ? "bg-primary text-primary-foreground"
+              : "bg-background/70 text-muted-foreground hover:text-foreground",
           )}
         >
           {imagesHidden ? <IconEyeOff className="size-4" /> : <IconEye className="size-4" />}
@@ -165,7 +247,7 @@ export function ReadingTools({ bare = false }: ReadingToolsProps) {
     <div className="flex items-center justify-between gap-2 rounded-xl border border-primary/30 bg-primary/5 px-2.5 py-1.5">
       <div
         role="radiogroup"
-        aria-label="حجم خط المقال"
+        aria-label={labels.sizeGroup}
         className="flex items-center gap-0.5 rounded-lg bg-background/70 p-0.5"
       >
         {SIZES.map((s) => (
@@ -174,7 +256,7 @@ export function ReadingTools({ bare = false }: ReadingToolsProps) {
             type="button"
             role="radio"
             aria-checked={size === s.key}
-            title={s.title}
+            title={sizeTitle[s.key]}
             onClick={() => pickSize(s.key)}
             className={cn(
               "grid size-7 place-items-center rounded-md transition-colors",
@@ -193,7 +275,7 @@ export function ReadingTools({ bare = false }: ReadingToolsProps) {
         role="switch"
         aria-checked={imagesHidden}
         onClick={toggleImages}
-        title={imagesHidden ? "إظهار الصور" : "إخفاء الصور والقراءة نصّاً فقط"}
+        title={imagesHidden ? labels.showImages : labels.hideImages}
         className={cn(
           "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-[11px] font-semibold transition-colors",
           imagesHidden
@@ -202,7 +284,7 @@ export function ReadingTools({ bare = false }: ReadingToolsProps) {
         )}
       >
         {imagesHidden ? <IconEyeOff className="size-3.5" /> : <IconEye className="size-3.5" />}
-        {imagesHidden ? "بلا صور" : "الصور"}
+        {imagesHidden ? labels.noImages : labels.images}
       </button>
     </div>
   );

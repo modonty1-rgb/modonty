@@ -488,3 +488,29 @@ footer[role="contentinfo"] {
   }
 }
 
+/* The phone header's material, written as plain CSS on purpose.
+   Tailwind's `backdrop-blur-*` composes ONE `backdrop-filter` out of nine `--tw-backdrop-*`
+   variables, and in this build that chain resolves to nothing: the header computed
+   `backdrop-filter: none` at 1280 AND at 390 while carrying `backdrop-blur-sm`. So the
+   utility was dead, and any utility layered on top of it was dead too. One declaration,
+   no variables, no cascade to lose. `-webkit-` first for older iOS Safari, which still
+   ships the property only under the prefix.
+   The reduced-transparency block is not decoration: a reader who asked the system for
+   less see-through must get an opaque bar, not a slightly dimmer one. */
+@media (max-width: 767px) {
+  header.site-header-material {
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+  }
+}
+
+/* Flat, not nested: nested at-rules need a CSS-nesting pass this build does not run, and
+   a nested block is dropped SILENTLY — it takes a computed-style read to notice. */
+@media (max-width: 767px) and (prefers-reduced-transparency: reduce) {
+  header.site-header-material {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: hsl(var(--card));
+  }
+}
+

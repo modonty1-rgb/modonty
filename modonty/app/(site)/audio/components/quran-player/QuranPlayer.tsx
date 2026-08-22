@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   IconPlay,
@@ -32,6 +32,30 @@ function clock(seconds: number) {
 
 const JUMP = 15;
 
+/** «سُورَةُ ٱلْكَهۡفِ» → «ٱلْكَهۡفِ». The word «سورة» on every chip is six characters of nothing. */
+const shortName = (name: string) => name.replace(/^\S+\s+/, "");
+
+/**
+ * The six people actually come for.
+ *
+ * A phone list of 114 puts سورة الملك twenty-two screens down, and searching means stopping,
+ * typing, and reading — three steps for something someone already decided before opening the page.
+ * These six cover the overwhelming share of what is asked for in Saudi Arabia and Egypt: the
+ * opening, the one recited on Friday, the two of the evening, and the two longest habits.
+ */
+const QUICK = [1, 2, 18, 36, 55, 67] as const;
+
+/** Where the last recitation stopped, kept in this browser only. */
+const RESUME_KEY = "modonty.audio.quran.last";
+/** Under half a minute is not a place anyone wants back. */
+const RESUME_MIN_SECONDS = 30;
+
+interface ResumePoint {
+  n: number;
+  r: number;
+  t: number;
+}
+
 /**
  * المصحف المسموع — a card per surah, each with its own reciter.
  *
@@ -51,18 +75,86 @@ const JUMP = 15;
  */
 export function QuranPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
-  /** Surah number → reciter id. Anything unset is recited by the default. */
+  /** Surah number → reciter id. Anything unset is recited by the page-wide voice below. */
   const [choice, setChoice] = useState<Record<number, number>>({});
-  const [picking, setPicking] = useState<number | null>(null);
+  /**
+   * The voice for everything that has not been given one of its own.
+   *
+   * The per-surah choice stays — Khalid listens to different reciters for different surahs, and
+   * that is why it lives on the card. But on a phone that meant the SAME name printed 114 times
+   * in a 288px-wide button, when nine readers out of ten want one voice for the whole sitting.
+   * So the session-wide choice moves up top and the per-surah one becomes an override.
+   */
+  const [defaultReciter, setDefaultReciter] = useState(DEFAULT_RECITER);
+  const [picking, setPicking] = useState<number | "default" | null>(null);
   const [index, setIndex] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
   const [current, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
   const [failed, setFailed] = useState(false);
   const [query, setQuery] = useState("");
+  const [resume, setResume] = useState<ResumePoint | null>(null);
+  /** Set before a source change when playback must land somewhere other than the beginning. */
+  const seekTo = useRef<number | null>(null);
+  const savedAt = useRef(0);
 
   const reciterFor = (n: number) =>
-    RECITERS.find((r) => r.id === (choice[n] ?? DEFAULT_RECITER)) ?? RECITERS[0];
+    RECITERS.find((r) => r.id === (choice[n] ?? defaultReciter)) ?? RECITERS[0];
+
+  // Read on the client, never during render: the server has no `localStorage`, and a value read
+  // during render would make the first paint disagree with the HTML it is hydrating.
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(RESUME_KEY);
+      if (!raw) return;
+      const v: unknown = JSON.parse(raw);
+      if (
+        typeof v === "object" &&
+        v !== null &&
+        typeof (v as ResumePoint).n === "number" &&
+        typeof (v as ResumePoint).r === "number" &&
+        typeof (v as ResumePoint).t === "number" &&
+        (v as ResumePoint).t >= RESUME_MIN_SECONDS
+      ) {
+        setResume(v as ResumePoint);
+      }
+    } catch {
+      // Private mode, or a value someone else wrote. Losing the bookmark is not worth a crash.
+    }
+  }, []);
+
+  /**
+   * سورة البقرة runs two hours. Without this, closing the tab costs the whole sitting — which is
+   * the single thing that decides whether someone uses this page twice.
+   * Written every five seconds, not every quarter of one: `timeupdate` fires four times a second.
+   */
+  const remember = (t: number) => {
+    if (!surah || t < RESUME_MIN_SECONDS || Math.abs(t - savedAt.current) < 5) return;
+    savedAt.current = t;
+    try {
+      window.localStorage.setItem(
+        RESUME_KEY,
+        JSON.stringify({ n: surah.n, r: reciterFor(surah.n).id, t: Math.floor(t) } satisfies ResumePoint)
+      );
+    } catch {
+      // Storage full or blocked — the recitation keeps playing, which is the part that matters.
+    }
+  };
+
+  const playResume = () => {
+    if (!resume) return;
+    const i = SURAHS.findIndex((s) => s.n === resume.n);
+    if (i === -1) return;
+    setChoice((prev) => ({ ...prev, [resume.n]: resume.r }));
+    setFailed(false);
+    setCurrent(resume.t);
+    setDuration(0);
+    seekTo.current = resume.t;
+    savedAt.current = resume.t;
+    setIndex(i);
+    setResume(null);
+    requestAnimationFrame(() => void audioRef.current?.play().catch(() => setFailed(true)));
+  };
 
   const surah = index === null ? null : SURAHS[index];
   const src = surah ? surahFile(reciterFor(surah.n).server, surah.n) : undefined;
@@ -78,19 +170,27 @@ export function QuranPlayer() {
     }
     setCurrent(0);
     setDuration(0);
+    savedAt.current = 0;
+    seekTo.current = null;
     setIndex(i);
     // `src` follows the state, so play once the element has it.
     requestAnimationFrame(() => void audioRef.current?.play().catch(() => setFailed(true)));
   };
 
-  const chooseReciter = (surahNumber: number, reciterId: number) => {
-    setChoice((prev) => ({ ...prev, [surahNumber]: reciterId }));
+  const chooseReciter = (target: number | "default", reciterId: number) => {
+    if (target === "default") setDefaultReciter(reciterId);
+    else setChoice((prev) => ({ ...prev, [target]: reciterId }));
     setPicking(null);
     // Changing the voice of the surah being recited restarts it in that voice — anything else
-    // would leave the header naming a reciter that is not the one being heard.
-    if (surah?.n === surahNumber) {
+    // would leave the header naming a reciter that is not the one being heard. Changing the
+    // page-wide voice only touches it when this surah had no voice of its own.
+    const affectsCurrent =
+      surah !== null &&
+      (target === surah.n || (target === "default" && choice[surah.n] === undefined));
+    if (affectsCurrent) {
       setFailed(false);
       setCurrent(0);
+      savedAt.current = 0;
       requestAnimationFrame(() => void audioRef.current?.play().catch(() => setFailed(true)));
     }
   };
@@ -110,7 +210,10 @@ export function QuranPlayer() {
     }
   };
 
-  const pickingSurah = picking === null ? null : SURAHS.find((s) => s.n === picking);
+  const pickingSurah = typeof picking === "number" ? SURAHS.find((s) => s.n === picking) ?? null : null;
+  const pickingOpen = picking !== null;
+  const pickedReciterId = pickingSurah ? choice[pickingSurah.n] ?? defaultReciter : defaultReciter;
+  const defaultReciterName = RECITERS.find((r) => r.id === defaultReciter)?.name ?? RECITERS[0].name;
 
   // Matched against the bare letters: the stored names carry full diacritics and a leading
   // «سُورَةُ», neither of which anybody types. The index travels with each match so the play
@@ -136,16 +239,19 @@ export function QuranPlayer() {
   );
 
   return (
-    <section aria-labelledby="quran-heading">
+    // Flex on phones for one reason: the attribution moves to the bottom there (see below).
+    <section aria-labelledby="quran-heading" className="max-md:flex max-md:flex-col">
       {/* The section had no heading at all: a screen reader met 114 cards with nothing telling it
           what they were, and the page's outline jumped from «استمع» straight to «المقالات». */}
-      <h2 id="quran-heading" className="text-xl font-bold leading-tight">
+      {/* On a phone the active tab already reads «القرآن», so the heading is spoken but not drawn —
+          the outline stays intact for a screen reader without spending 58px saying it twice. */}
+      <h2 id="quran-heading" className="text-xl font-bold leading-tight max-md:sr-only">
         المصحف المسموع
       </h2>
 
       {/* Provenance on the page, not in the code (Khalid: «المصدر لازم يكون موجود»). The riwaya is
           named because a recitation without one is unattributed. */}
-      <p className="mt-2 rounded-2xl border border-border bg-card p-4 text-[11px] leading-relaxed text-muted-foreground">
+      <p className="mt-2 rounded-2xl border border-border bg-card p-4 text-[11px] leading-relaxed text-muted-foreground max-md:order-last max-md:mt-6 max-md:p-3">
         <span className="font-semibold text-foreground">المصحف كامل ١١٤ سورة</span> برواية{" "}
         <span className="font-semibold text-foreground">{RIWAYA}</span> · عشرون قارئاً · التلاوات من{" "}
         <a
@@ -157,8 +263,66 @@ export function QuranPlayer() {
         >
           {SOURCE.name}
         </a>
-        . لا نستضيف التلاوة ولا نعدّل عليها، ولا يُعرض نصّ القرآن هنا — الصوت فقط.
+        {/* The credit is owed and stays at every size. The explanation behind it is worth 150px of
+            a 664px phone screen only once, and this is not it. */}
+        <span className="max-md:hidden">
+          . لا نستضيف التلاوة ولا نعدّل عليها، ولا يُعرض نصّ القرآن هنا — الصوت فقط.
+        </span>
       </p>
+
+      {/* Phone only, all three: the page-wide voice, the six surahs people ask for, and the
+          bookmark. Each is `md:hidden`, so the desktop column is byte-identical to what it was. */}
+      <div className="mt-3 flex items-center gap-2 md:hidden">
+        <span className="shrink-0 text-xs text-muted-foreground">القارئ</span>
+        <button
+          type="button"
+          onClick={() => setPicking("default")}
+          aria-label={`اختر القارئ لكل السور — الحالي ${defaultReciterName}`}
+          className="flex h-11 min-w-0 flex-1 items-center justify-between gap-2 rounded-xl border border-border bg-card px-3 text-sm font-bold motion-safe:transition-transform motion-safe:active:scale-95"
+        >
+          <span className="truncate">{defaultReciterName}</span>
+          <IconChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+        </button>
+      </div>
+
+      {resume && (
+        <button
+          type="button"
+          onClick={playResume}
+          className="mt-3 flex w-full items-center gap-3 rounded-xl border border-action-listen/40 bg-action-listen/10 p-3 text-start motion-safe:transition-transform motion-safe:active:scale-95 md:hidden"
+        >
+          <span className="grid size-11 shrink-0 place-items-center rounded-full bg-action-listen text-action-listen-foreground">
+            <IconPlay className="size-5" aria-hidden />
+          </span>
+          <span className="min-w-0 flex-1">
+            {/* The surah name carries its own full diacritics, so it cannot be dropped into a
+                sentence after a verb without the vowels fighting the grammar. It gets its own
+                line instead, where it is a label rather than an object. */}
+            <span className="block truncate text-sm font-bold">كمّل من وين وقفت</span>
+            <span className="block truncate text-xs text-muted-foreground">
+              {SURAHS.find((s) => s.n === resume.n)?.name} · وقفت عند {clock(resume.t)}
+            </span>
+          </span>
+        </button>
+      )}
+
+      <div className="mt-3 flex gap-2 overflow-x-auto pb-1 md:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {QUICK.map((n) => {
+          const i = SURAHS.findIndex((s) => s.n === n);
+          if (i === -1) return null;
+          return (
+            <button
+              key={n}
+              type="button"
+              onClick={() => playSurah(i)}
+              aria-label={`تلاوة ${SURAHS[i].name}`}
+              className="h-11 shrink-0 rounded-full border border-border bg-card px-4 text-xs font-bold motion-safe:transition-transform motion-safe:active:scale-95"
+            >
+              {shortName(SURAHS[i].name)}
+            </button>
+          );
+        })}
+      </div>
 
       {/* Docked at the bottom in one row, the way every music player people already know does it —
           Spotify, Apple Music, YouTube Music, SoundCloud. It was a 152px block pinned under the
@@ -167,7 +331,10 @@ export function QuranPlayer() {
           second after you start scrolling, and control has to travel with the reader.
           Bottom rather than top so it never pushes the surahs down. */}
       {surah && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur">
+        // `env(safe-area-inset-bottom)`: on a phone with a home indicator the last 34px of the
+        // screen belong to the system, and without this the play button sits under it. Resolves
+        // to 0 everywhere else, so desktop is untouched. Same pattern as `MobileCtaBar`.
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
           <div className="container mx-auto flex max-w-[1128px] items-center gap-3 px-3 py-2 sm:px-4">
             <button
               type="button"
@@ -266,7 +433,7 @@ export function QuranPlayer() {
       </div>
 
       {/* Room for the dock, so the last surahs are never hidden under it. */}
-      <ul className={cn("mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3", surah && "pb-20")}>
+      <ul className={cn("mt-4 grid grid-cols-1 gap-3 max-md:gap-2 sm:grid-cols-2 xl:grid-cols-3", surah && "pb-[calc(5rem+env(safe-area-inset-bottom))]")}>
         {shown.map(({ s, i }) => {
           const isCurrent = i === index;
           const r = reciterFor(s.n);
@@ -274,11 +441,11 @@ export function QuranPlayer() {
             <li
               key={s.n}
               className={cn(
-                "rounded-2xl border bg-card p-3 transition-colors",
+                "rounded-2xl border bg-card p-3 transition-colors max-md:p-2",
                 isCurrent ? "border-action-listen bg-action-listen/5" : "border-border"
               )}
             >
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-3 max-md:items-center max-md:gap-2">
                 <span
                   className={cn(
                     "grid size-10 shrink-0 place-items-center rounded-full text-xs font-bold tabular-nums",
@@ -293,9 +460,37 @@ export function QuranPlayer() {
                     {toArabic(s.a)} آية · {s.p} · الجزء {toArabic(s.j)}
                   </span>
                 </span>
+
+                {/* Phone: the card is ONE row, 60px instead of 129 — 114 of them was 17,589px of
+                    page. The reciter keeps its own button so the per-surah override survives, but
+                    it shows a letter rather than repeating the same name 114 times down the page.
+                    Both are 44px, and the label still says whose voice it is. */}
+                <span className="flex shrink-0 items-center gap-1 md:hidden">
+                  <button
+                    type="button"
+                    onClick={() => setPicking(s.n)}
+                    aria-label={`اختر قارئ ${s.name} — الحالي ${r.name}`}
+                    className={cn(
+                      "grid size-11 shrink-0 place-items-center rounded-full text-sm font-bold motion-safe:transition-transform motion-safe:active:scale-95",
+                      choice[s.n] === undefined
+                        ? "border border-border text-muted-foreground"
+                        : "bg-action-listen/15 text-action-listen ring-1 ring-action-listen/40"
+                    )}
+                  >
+                    {r.name.trim().charAt(0)}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => playSurah(i)}
+                    aria-label={`تلاوة ${s.name}`}
+                    className="grid size-11 shrink-0 place-items-center rounded-full bg-action-listen text-action-listen-foreground motion-safe:transition-transform motion-safe:active:scale-95"
+                  >
+                    {isCurrent && playing ? <IconPause className="size-4" /> : <IconPlay className="size-4" />}
+                  </button>
+                </span>
               </div>
 
-              <div className="mt-3 flex items-center gap-2">
+              <div className="mt-3 flex items-center gap-2 max-md:hidden">
                 {/* The voice for THIS surah. One shared dialog does the picking. */}
                 <button
                   type="button"
@@ -320,11 +515,11 @@ export function QuranPlayer() {
         })}
       </ul>
 
-      {pickingSurah && (
+      {pickingOpen && (
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={`اختر قارئ ${pickingSurah.name}`}
+          aria-label={pickingSurah ? `اختر قارئ ${pickingSurah.name}` : "اختر القارئ لكل السور"}
           className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 sm:items-center sm:p-4"
           onClick={() => setPicking(null)}
         >
@@ -334,8 +529,12 @@ export function QuranPlayer() {
           >
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="truncate text-sm font-bold">{pickingSurah.name}</p>
-                <p className="text-xs text-muted-foreground">اختر القارئ · {RIWAYA}</p>
+                <p className="truncate text-sm font-bold">
+                  {pickingSurah ? pickingSurah.name : "القارئ لكل السور"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {pickingSurah ? "قارئ هذي السورة وحدها" : "تقدر تغيّره لسورة وحدها من بطاقتها"} · {RIWAYA}
+                </p>
               </div>
               <button
                 type="button"
@@ -349,12 +548,12 @@ export function QuranPlayer() {
 
             <ul className="mt-3 space-y-1">
               {RECITERS.map((rec) => {
-                const active = rec.id === (choice[pickingSurah.n] ?? DEFAULT_RECITER);
+                const active = rec.id === pickedReciterId;
                 return (
                   <li key={rec.id}>
                     <button
                       type="button"
-                      onClick={() => chooseReciter(pickingSurah.n, rec.id)}
+                      onClick={() => chooseReciter(pickingSurah ? pickingSurah.n : "default", rec.id)}
                       className={cn(
                         "flex w-full items-center gap-3 rounded-lg p-3 text-start text-sm transition-colors",
                         active ? "bg-action-listen/15 font-bold ring-1 ring-action-listen/40" : "hover:bg-muted"
@@ -384,8 +583,22 @@ export function QuranPlayer() {
           setPlaying(true);
         }}
         onPause={() => setPlaying(false)}
-        onLoadedMetadata={() => setDuration(audioRef.current?.duration ?? 0)}
-        onTimeUpdate={() => setCurrent(audioRef.current?.currentTime ?? 0)}
+        onLoadedMetadata={() => {
+          const el = audioRef.current;
+          if (!el) return;
+          setDuration(el.duration ?? 0);
+          // `preload="none"` means the file has no length until now, so a resume can only seek here.
+          if (seekTo.current !== null) {
+            el.currentTime = seekTo.current;
+            setCurrent(seekTo.current);
+            seekTo.current = null;
+          }
+        }}
+        onTimeUpdate={() => {
+          const t = audioRef.current?.currentTime ?? 0;
+          setCurrent(t);
+          remember(t);
+        }}
         onEnded={onEnded}
         onError={() => index !== null && setFailed(true)}
       />

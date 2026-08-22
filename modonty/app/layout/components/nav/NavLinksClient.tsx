@@ -7,11 +7,11 @@ import { mainNavItems } from "@/app/layout/helpers/nav-config";
 
 // Presentational: the same links whether or not the pathname is known yet, so the
 // Suspense fallback below is the real nav minus the active mark — nothing moves.
-export function DesktopNavList({ pathname }: { pathname: string | null }) {
+export function DesktopNavList({ pathname, labels }: { pathname: string | null; labels: { mainNav: string } }) {
   return (
     <div className="flex items-center gap-3">
       <SearchLink />
-      <nav aria-label="التنقل الرئيسي" className="flex items-center gap-0.5 flex-shrink-0">
+      <nav aria-label={labels.mainNav} className="flex items-center gap-0.5 flex-shrink-0">
         {mainNavItems.map((item) => {
           // Home matches the exact root only; others match their path prefix
           // (e.g. /clients/[slug]). Same logic the mobile footer already uses.
@@ -36,7 +36,7 @@ export function DesktopNavList({ pathname }: { pathname: string | null }) {
 // `usePathname` on a route with a dynamic param needs a Suspense boundary under
 // cacheComponents (use-pathname.md, "Good to know") — the caller wraps this and uses
 // <DesktopNavList pathname={null} /> as the fallback.
-export function DesktopNavLinks() {
+export function DesktopNavLinks({ labels }: { labels: { mainNav: string } }) {
   const pathname = usePathname();
-  return <DesktopNavList pathname={pathname} />;
+  return <DesktopNavList pathname={pathname} labels={labels} />;
 }

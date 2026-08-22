@@ -20,6 +20,12 @@ interface MobileCtaBarProps {
   primary: CtaBarLink;
   /** Soft wash button — the quieter second door. */
   secondary: CtaBarLink;
+  /**
+   * Where Modo opens. Defaults to a blank chat; a page that has a subject hands it over so the
+   * conversation starts knowing what the reader was looking at (Khalid, 21 Aug — the article was
+   * rendering its own second Modo card to achieve exactly this).
+   */
+  modoHref?: string;
 }
 
 /**
@@ -32,7 +38,7 @@ interface MobileCtaBarProps {
  * primary = solid `accent` with its designed `accent-foreground`; secondary text uses
  * the text-grade teal `link-accent`, which carries its own dark-mode step.
  */
-export function MobileCtaBar({ ariaLabel, primary, secondary }: MobileCtaBarProps) {
+export function MobileCtaBar({ ariaLabel, primary, secondary, modoHref = "/modo-chat" }: MobileCtaBarProps) {
   const PrimaryIcon = primary.icon;
   const SecondaryIcon = secondary.icon;
   return (
@@ -40,10 +46,14 @@ export function MobileCtaBar({ ariaLabel, primary, secondary }: MobileCtaBarProp
     // them to white, where accent-on-accent would vanish.
     <nav
       aria-label={ariaLabel}
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background pb-[env(safe-area-inset-bottom)] md:hidden [--modonty-booking-accent:hsl(var(--accent))] [--modonty-shopping-accent:hsl(var(--accent))]"
+      // `lg:hidden`, not `md:hidden` (Khalid, 21 Aug — mobile refactor): the columns only go
+      // side by side at `lg`, so 768–1023 is still a single-column reading screen and still
+      // wants the bar. It is a PAIR with `lg:pb-0` on the column layouts — the padding that
+      // clears this bar has to end exactly where the bar does, or it covers the last block.
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background pb-[env(safe-area-inset-bottom)] lg:hidden [--modonty-booking-accent:hsl(var(--accent))] [--modonty-shopping-accent:hsl(var(--accent))]"
     >
       <Link
-        href="/modo-chat"
+        href={modoHref}
         aria-label="افتح مودو"
         className={buttonVariants({
           variant: "ghost",

@@ -5,7 +5,6 @@ import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoCol
 import { Suspense } from "react";
 import { notFound, unstable_rethrow } from "next/navigation";
 
-import { auth } from "@/lib/auth";
 import { sanitizeHtml } from "@/app/(site)/articles/[slug]/helpers/sanitize-html";
 import { readArticleOutline } from "@/app/(site)/articles/[slug]/helpers/read-article-outline";
 import { getArticleDefaultsFromSettings } from "@/app/(site)/articles/[slug]/helpers/get-article-defaults-from-settings";
@@ -20,6 +19,7 @@ import { generateArticleStructuredData } from "@/app/(site)/articles/[slug]/help
 import { generateSiteIdentityStructuredData } from "@/app/(site)/articles/[slug]/helpers/generate-site-identity-structured-data";
 import { normalizeOgImages } from "@/app/(site)/articles/[slug]/helpers/normalize-og-images";
 import { IconFolder } from "@/lib/icons";
+import { messages } from "@/lib/i18n/messages";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 
 import {
@@ -31,15 +31,12 @@ import {
   getRelatedArticlesByClient,
   getRelatedArticlesByAuthor,
 } from "./data";
-import { getPendingFaqsForCurrentUser } from "./data/get-pending-faqs-for-current-user";
 
 // Reused content components.
 import {
   ArticleHeader,
   ArticleFeaturedImage,
-  ArticleFaq,
   ArticleFooter,
-  ArticleComments,
   ReadingProgressBar,
   ArticleCitations,
   ArticleTableOfContents,
@@ -51,15 +48,20 @@ import { ArticleViewTrackerLazy } from "./components/view-tracker/ViewTrackerLaz
 import { ArticleBodyLinkTrackerLazy } from "./components/body-link-tracker/BodyLinkTrackerLazy";
 
 import { AskModoCard } from "./components/ask-modo-card/AskModoCard";
-import { PartnerCard } from "./components/partner-card/PartnerCard";
+import { ReaderPartnerCard } from "./components/partner-card/ReaderPartnerCard";
 import { PartnerStrip } from "./components/partner-strip/PartnerStrip";
-import { Gallery } from "./components/gallery/Gallery";
+import { Gallery } from "./components/gallery/GalleryLazy";
 import { ReadMore } from "./components/read-more/ReadMore";
-import { BottomDock } from "./components/bottom-dock/BottomDock";
-import { ArticleTopEngagementBar } from "./components/top-engagement-bar/TopEngagementBar";
-import { ReadingTools } from "./components/reading-tools/ReadingTools";
+import { ArticleCtaBar } from "./components/article-cta-bar/ArticleCtaBar";
+import { ReaderActions } from "./components/reader-actions/ReaderActions";
+import { ReadingTools } from "./components/reading-tools/ReadingToolsLazy";
+import { ArticleAudioPlayer } from "./components/audio-player/ArticleAudioPlayerLazy";
+import { MobileSection } from "./components/mobile-section/MobileSection";
+import { EngagementFab } from "./components/engagement-fab/EngagementFab";
 import { PartnerCardMobile } from "./components/partner-card/PartnerCardMobile";
-import ArticleLoading from "./loading";
+import { ReaderPartnerDetails } from "./components/partner-card/ReaderPartnerDetails";
+import { ReaderComments } from "./components/comments/ReaderComments";
+import { ReaderFaq } from "./components/faq/ReaderFaq";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
@@ -239,15 +241,17 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
   const slug = decodeURIComponent(rawSlug);
 
   try {
-    const [session, articleDefaults, platformSocialLinks, platformImageLicensing] = await Promise.all([
-      auth(),
+    // No `auth()` here, deliberately. Next is explicit that touching the session at the top of a
+    // route «forces the entire page into dynamic rendering» — and this article is the same bytes
+    // for every reader. The five parts that genuinely differ per person read the session inside
+    // their own Suspense boundaries below, so the article prerenders and only they stream.
+    const [articleDefaults, platformSocialLinks, platformImageLicensing] = await Promise.all([
       getArticleDefaultsFromSettings(),
       getPlatformSocialLinks(),
       getPlatformImageLicensing(),
     ]);
-    const userId = session?.user?.id;
 
-    const articleRaw = await getArticleBySlugMinimal(slug, userId);
+    const articleRaw = await getArticleBySlugMinimal(slug);
     if (!articleRaw) {
       // Archived → 410 handled by proxy.ts (Next.js 16 — proxy runs before page).
       // Reaching here means slug genuinely doesn't exist → 404.
@@ -262,7 +266,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       relatedArticles,
       moreFromClient,
       moreFromAuthor,
-      pendingFaqs,
     ] = await Promise.all([
       articleRaw._count.faqs > 0 ? getArticleFaqs(articleRaw.id) : Promise.resolve([]),
       getRelatedArticlesByArticleId(articleRaw.id),
@@ -272,7 +275,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       articleRaw.authorId
         ? getRelatedArticlesByAuthor(articleRaw.authorId, articleRaw.id)
         : Promise.resolve([]),
-      userId ? getPendingFaqsForCurrentUser(articleRaw.id) : Promise.resolve([]),
     ]);
 
     // No featured image → platform default (admin /settings/defaults). Fetched only when
@@ -290,9 +292,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
           }
         : null);
 
-    const userBox = session?.user
-      ? { name: session.user.name ?? null, email: session.user.email ?? null }
-      : null;
     // One pass over the body gives the three things derived from its structure: heading ids,
     // the outline the contents list links to, and the summary box's lines.
     const outline = readArticleOutline(sanitizeHtml(article.content));
@@ -310,6 +309,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
         alt: g.media?.altText || article.title,
         caption: g.media?.caption || g.media?.altText || null,
       }));
+    // Every string modonty writes itself on this page comes from one file (see lib/i18n).
+    const copy = messages.article;
     const allTags = (article.tags ?? []).map((t) => t.tag).filter(Boolean);
     const visibleTags = allTags.slice(0, 5);
     const extraTags = Math.max(0, allTags.length - visibleTags.length);
@@ -482,19 +483,19 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
             {/* Centred over the rail column, not parked on its edge (Khalid, 19 Aug): the four
                 tabs and the card below them read as one stack when they share a centre line. */}
             <div className="pointer-events-auto ms-auto flex w-[300px] justify-center gap-2">
-              <ArticleTopEngagementBar
-                likes={article._count.likes}
-                favorites={article._count.favorites}
-                userLiked={article.userLiked}
-                userFavorited={article.userFavorited}
-                articleId={article.id}
-                articleSlug={article.slug}
-                userId={userId}
-                clientId={article.clientId}
-                attached
-                audioUrl={article.audioUrl}
-                audioDurationSeconds={article.audioDurationSeconds}
-              />
+              <Suspense fallback={<div className="h-10 w-full" aria-hidden />}>
+                <ReaderActions
+                  articleId={article.id}
+                  articleSlug={article.slug}
+                  clientId={article.clientId}
+                  likes={article._count.likes}
+                  favorites={article._count.favorites}
+                  audioUrl={article.audioUrl}
+                  audioDurationSeconds={article.audioDurationSeconds}
+                  labels={copy.actions}
+                  attached
+                />
+              </Suspense>
             </div>
           </div>
         </div>
@@ -517,7 +518,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 {/* Below xl the margin is too narrow to stand in (36px at 1200), so the tools
                     stay here; from xl up they move out to the gutter layer below. */}
                 <div className="xl:hidden">
-                  <ReadingTools />
+                  <ReadingTools labels={copy.tools} />
                 </div>
                 {article.client && (
                   <PartnerStrip
@@ -553,31 +554,20 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
               {/* MOBILE: the same four tabs, sticky under the navbar. Desktop draws them on the
                   contents card in the rail instead — there is no rail on a phone. */}
               {/* MOBILE only: no rail on a phone, so the tabs ride the article column. */}
-              <div className="sticky top-14 z-30 mb-6 flex gap-2 lg:hidden">
-                <ArticleTopEngagementBar
-                  likes={article._count.likes}
-                  favorites={article._count.favorites}
-                  userLiked={article.userLiked}
-                  userFavorited={article.userFavorited}
-                  articleId={article.id}
-                  articleSlug={article.slug}
-                  userId={userId}
-                  clientId={article.clientId}
-                  attached
-                  audioUrl={article.audioUrl}
-                  audioDurationSeconds={article.audioDurationSeconds}
-                />
-              </div>
-              {/* The reading tools live in the rail on a desktop, and there is no rail on a phone
-                  — so they ride the article column here instead. Measured 19 Aug: without this
-                  they were `display:none` at 390px, i.e. unreachable for every phone reader. */}
-              <div className="mb-6 lg:hidden">
-                <ReadingTools />
-              </div>
+              {/* The five tabs used to open the page. They now sit under the article, where the
+                  actions they offer become possible (Khalid, 21 Aug — mobile refactor).
+                  Like, save, comment and share are things a reader does when they have FINISHED;
+                  nobody saves an article they have not read. In front of the first sentence they
+                  were 55px of the path to the answer and the loudest thing on the screen.
+                  «استمع» is a before-reading choice, so it did not follow them down — it moved
+                  into the outline bar instead, beside the reading tools. That bar sits exactly
+                  where the article starts AND pins while the reader scrolls, so the offer to
+                  listen is there at the moment it makes sense and stays reachable after it. */}
               <article>
                 <ArticleHeader
                   title={article.title}
                   excerpt={article.excerpt}
+                  hasKeyPoints={keyPoints.length > 0}
                   author={article.author}
                   datePublished={article.datePublished}
                   createdAt={article.createdAt}
@@ -606,7 +596,33 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
                 {/* MOBILE: client identity (engagement lives in the sticky top bar; conversion in the bottom bar) */}
                 {article.client && (
-                  <PartnerCardMobile client={article.client} articleId={article.id} />
+                  <PartnerCardMobile
+                    client={article.client}
+                    articleId={article.id}
+                    labels={copy.partner}
+                    // Same field, same order as the header's desktop byline — one merged block
+                    // on a phone instead of that line plus this card saying it twice.
+                    credential={
+                      article.client.description?.trim() ||
+                      article.client.businessBrief?.trim() ||
+                      article.client.slogan?.trim() ||
+                      null
+                    }
+                    // Only what the row does not already say: their channels, their number,
+                    // their site, and asking them about this article. The full card repeated the
+                    // logo, name, ✓, city and brief that are two lines above it — and its cover
+                    // image was 200px of artwork for a panel the reader opened to find a link.
+                    details={
+                      <Suspense fallback={<div className="h-11" aria-hidden />}>
+                        <ReaderPartnerDetails
+                          client={article.client}
+                          articleId={article.id}
+                          articleTitle={article.title}
+                          clientId={article.clientId}
+                        />
+                      </Suspense>
+                    }
+                  />
                 )}
 
                 {/* The summary sits ABOVE the image, not below it. It is the first thing on the
@@ -615,7 +631,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     choice. Three sentences, one per opening section. */}
                 {keyPoints.length > 0 && (
                   <div className="mb-5 rounded-xl border border-primary/25 bg-primary/5 p-4">
-                    <p className="mb-2 text-sm font-bold text-primary">⚡ باختصار</p>
+                    <p className="mb-2 text-sm font-bold text-primary">⚡ {copy.summary}</p>
                     <ul className="space-y-1.5 ps-5 text-sm leading-relaxed text-foreground/85 [&>li]:list-disc">
                       {keyPoints.map((point, i) => (
                         <li key={i}>{point}</li>
@@ -635,9 +651,47 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     reader started reading, and a second <audio> on the page could play over the
                     tab's. The listen tab is the one player now. */}
 
-                {/* MOBILE: collapsible table of contents */}
-                <div className="mt-4 lg:hidden">
-                  <ArticleTableOfContents headings={outline.headings} collapsible />
+                {/* MOBILE: the outline bar carries the reading tools (Khalid, 21 Aug) — both
+                    belong to the article body and nothing else, so they share one bar instead of
+                    the tools standing as a block of their own above the title.
+                    It pins at 56, directly under the navbar: it is now the only thing pinned over
+                    the article, since the action tabs stopped sticking.
+                    Sticky is the whole point — the tools used to sit still while the page moved,
+                    so from the middle of an 18,917px article the only way to reach the text size
+                    was to scroll all the way back to the top. */}
+                <div className="sticky top-14 z-30 mt-4 lg:hidden">
+                  <ArticleTableOfContents
+                    headings={outline.headings}
+                    collapsible
+                    // Only the listen tab rides the bar now (Khalid, 21 Aug): the text controls
+                    // moved into the corner button, where every control the reader owns sits
+                    // together and the bar goes back to being an outline with one offer on it.
+                    actions={
+                      <span className="flex shrink-0 items-center gap-1">
+                        <Suspense fallback={<div className="h-11 w-[188px]" aria-hidden />}>
+                          <ReaderActions
+                            articleId={article.id}
+                            articleSlug={article.slug}
+                            clientId={article.clientId}
+                            likes={article._count.likes}
+                            favorites={article._count.favorites}
+                            audioUrl={article.audioUrl}
+                            audioDurationSeconds={article.audioDurationSeconds}
+                            labels={copy.actions}
+                            show="engagement"
+                            size="compact"
+                          />
+                        </Suspense>
+                        <ArticleAudioPlayer
+                          src={article.audioUrl}
+                          slug={article.slug}
+                          durationSeconds={article.audioDurationSeconds}
+                          // Sized to the tools beside it, not to the old 48px tab row.
+                          tabClassName="relative flex size-11 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl text-[9px] font-semibold leading-none shadow-sm transition-transform active:scale-[0.94] motion-reduce:active:scale-100"
+                        />
+                      </span>
+                    }
+                  />
                 </div>
 
                 {/* The reading tools ride the body, not the page (Khalid, 19 Aug). This wrapper
@@ -647,9 +701,22 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     `sticky` inside an `absolute` box that spans the body is the whole mechanism.
                     Only from xl, where the margin is wide enough to stand in. */}
                 <div className="relative">
+                  {/* An overlay the exact height of the article body: the corner button inside it
+                      is sticky, so it rides the reading and leaves when the reading ends. */}
+                  <div className="pointer-events-none absolute inset-0 flex flex-col justify-end lg:hidden">
+                    <EngagementFab label={copy.actions.open} closeLabel={copy.actions.close}>
+                  <div className="flex flex-col items-center gap-2">
+                    {/* The text controls, in the `bare` column shape they were already built for
+                        — the boxed row is 106px wide and this stack is one tab across. */}
+                    <div className="rounded-2xl border border-border bg-card p-2 shadow-lg">
+                      <ReadingTools bare labels={copy.tools} />
+                    </div>
+                  </div>
+                </EngagementFab>
+                  </div>
                   <div className="absolute -start-14 top-0 hidden h-full xl:block" aria-hidden={false}>
                     <div className="sticky top-[150px]">
-                      <ReadingTools bare />
+                      <ReadingTools bare labels={copy.tools} />
                     </div>
                   </div>
 
@@ -674,37 +741,39 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
                 {article.citations?.length ? (
                   <div className="mb-8 [&_section]:my-0">
-                    <ArticleCitations citations={article.citations} />
+                    <MobileSection title={copy.sections.citations} count={article.citations.length}>
+                      <ArticleCitations citations={article.citations} />
+                    </MobileSection>
                   </div>
                 ) : null}
 
                 {/* First thing after the last sentence: the question. «عندك سؤال عن المقال؟»
                     is never more alive than the second a reader finishes — it used to sit
                     third here, behind tags and comments. */}
-                <AskModoCard slug={article.slug} />
+                {/* Desktop only (Khalid, 21 Aug): on a phone Modo already sits in the bottom
+                    bar, and this card was the same character asking the same question a second
+                    time. The bar's Modo now carries the article with it. */}
+                <div className="hidden lg:block">
+                  <AskModoCard slug={article.slug} />
+                </div>
 
                 {/* Then who stands behind it, and how to reach them. The card that was in the
-                    rail lands here at full size, where the reader has a reason to act on it. */}
+                    rail lands here at full size, where the reader has a reason to act on it.
+                    Desktop only since the mobile refactor (Khalid, 21 Aug): on a phone the same
+                    card opens from the identity row above, and conversion sits in the bottom bar
+                    — three partner blocks in one column was the reader meeting one name three
+                    times and reading the third as an ad. */}
                 {article.client && (
-                  <div className="mb-8">
-                    <PartnerCard
-                      client={article.client}
-                      askClientProps={{
-                        articleId: article.id,
-                        clientId: article.clientId,
-                        articleTitle: article.title,
-                        user: userBox,
-                        pendingFaqs,
-                      }}
-                      cta={{
-                        mode: article.client.ctaMode,
-                        label: article.client.ctaLabel,
-                        url: article.client.ctaUrl,
-                        articleId: article.id,
-                        source: "article_card",
-                        user: userBox,
-                      }}
-                    />
+                  <div className="mb-8 hidden lg:block">
+                    <Suspense fallback={<div className="h-64 animate-pulse rounded-xl bg-muted" aria-hidden />}>
+                      <ReaderPartnerCard
+                        client={article.client}
+                        articleId={article.id}
+                        articleTitle={article.title}
+                        clientId={article.clientId}
+                        cta={{ mode: article.client.ctaMode, label: article.client.ctaLabel, url: article.client.ctaUrl }}
+                      />
+                    </Suspense>
                   </div>
                 )}
 
@@ -713,51 +782,61 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     sentence they are one more block between the visitor and what they came
                     for (measured: the first word of the article sat at y=1081). */}
                 {(article.category || visibleTags.length > 0) && (
+                  <MobileSection title={copy.sections.tags} count={allTags.length}>
                   <div className="mb-8 flex flex-wrap gap-2">
                     {article.category && (
                       <a
                         href={`/categories/${article.category.slug}`}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/60 px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-muted"
+                        className="inline-flex max-lg:min-h-11 items-center gap-1.5 rounded-full border border-border bg-muted/60 px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-muted"
                       >
                         <IconFolder className="h-3.5 w-3.5" />
                         {article.category.name}
                       </a>
                     )}
                     {visibleTags.map((t) => (
-                      <a key={t.id} href={`/tags/${t.slug}`} className="rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs text-primary">
+                      <a key={t.id} href={`/tags/${t.slug}`} className="inline-flex max-lg:min-h-11 items-center rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs text-primary">
                         #{t.name}
                       </a>
                     ))}
                     {extraTags > 0 && (
-                      <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">+{extraTags} وسوم</span>
+                      <span className="inline-flex max-lg:min-h-11 items-center rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">+{extraTags} {copy.moreTagsSuffix}</span>
                     )}
                     {allTags.length > 0 && (
-                      <a href="/tags" className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground">
-                        عرض كل الوسوم
+                      <a href="/tags" className="inline-flex max-lg:min-h-11 items-center rounded-full border border-border px-3 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground">
+                        {copy.allTags}
                       </a>
                     )}
                   </div>
+                  </MobileSection>
                 )}
 
                 {/* «معرض صور المقال» — one copy, every screen, in the reading flow. */}
                 <div className="mb-8">
-                  <Gallery images={galleryImages} fallbackText={article.client?.description} clientName={article.client?.name} />
+                  <MobileSection title={copy.sections.gallery} count={galleryImages.length} defaultOpen>
+                    <Gallery images={galleryImages} fallbackText={article.client?.description} clientName={article.client?.name} />
+                  </MobileSection>
                 </div>
 
-                <ArticleFaq articleId={article.id} faqsCount={article._count.faqs} faqs={articleFaqsForJsonLd} pendingFaqs={pendingFaqs} />
+                <Suspense fallback={<div className="h-11 rounded-xl bg-muted/40" aria-hidden />}>
+                  <ReaderFaq articleId={article.id} faqsCount={article._count.faqs} faqs={articleFaqsForJsonLd} />
+                </Suspense>
 
                 <div id="article-comments">
-                  <ArticleComments
-                    comments={article.comments}
-                    commentsCount={article._count.comments}
-                    articleId={article.id}
-                    articleSlug={article.slug}
-                    userId={userId}
-                  />
+                  <Suspense fallback={<div className="h-11 rounded-xl bg-muted/40" aria-hidden />}>
+                    <ReaderComments
+                      comments={article.comments}
+                      commentsCount={article._count.comments}
+                      articleId={article.id}
+                      articleSlug={article.slug}
+                      sectionTitle={copy.sections.comments}
+                    />
+                  </Suspense>
                 </div>
 
                 {/* CONSOLIDATED: one "اقرأ أيضاً" grid (replaces the 4 repetitive related sections) */}
-                <ReadMore articleId={article.id} clientId={article.clientId ?? undefined} items={readMoreTop} />
+                <MobileSection title={copy.sections.readMore} count={readMoreTop.length}>
+                  <ReadMore articleId={article.id} clientId={article.clientId ?? undefined} items={readMoreTop} />
+                </MobileSection>
 
                 {/* The «عن الكاتب» card used to stand on its own above this footer, and repeated
                     what the footer already says — who reviewed it, and when. Khalid, 19 Aug: the
@@ -776,48 +855,24 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
             </div>
           }
         />
-        {/* MOBILE: sticky conversion bar — احجز الآن · واتساب · logo (thumb zone) */}
+        {/* MOBILE: the same bottom bar every other page uses (Khalid, 21 Aug) — «احجز الآن»
+            goes to the partner's page, where the booking form and the tracked WhatsApp button
+            already live, and the second door adapts to what the partner has.
+            The bar it replaced was built for this page alone and rendered a SECOND full copy of
+            the partner card inside a panel — so every phone paid for a 264-line card twice,
+            once visible and once waiting on a tap that may never come. */}
         {article.client && (
-          <div
-            className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur lg:hidden"
-            style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
-          >
-            <div className="mx-auto max-w-[480px]">
-              <BottomDock
-                clientId={article.clientId}
-                articleId={article.id}
-                clientName={article.client.name}
-                clientLogoUrl={mediaSrc(article.client.logoMedia)}
-                clientPhone={article.client.phone ?? null}
-                cta={{
-                  mode: article.client.ctaMode,
-                  label: article.client.ctaLabel,
-                  url: article.client.ctaUrl,
-                }}
-                bookingUser={userBox}
-                clientCard={
-                  <PartnerCard
-                    client={article.client}
-                    askClientProps={{
-                      articleId: article.id,
-                      clientId: article.clientId,
-                      articleTitle: article.title,
-                      user: userBox,
-                      pendingFaqs,
-                    }}
-                    cta={{
-                      mode: article.client.ctaMode,
-                      label: article.client.ctaLabel,
-                      url: article.client.ctaUrl,
-                      hideOwnCta: true,
-                      source: "article_dock",
-                      user: userBox,
-                    }}
-                  />
-                }
-              />
-            </div>
-          </div>
+          <ArticleCtaBar
+            clientName={article.client.name}
+            clientSlug={article.client.slug}
+            articleSlug={article.slug}
+            clientPhone={article.client.phone ?? null}
+            cta={{
+              mode: article.client.ctaMode,
+              label: article.client.ctaLabel,
+              url: article.client.ctaUrl,
+            }}
+          />
         )}
       </>
     );
@@ -837,9 +892,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 }
 
 export default function ArticlePage(props: ArticlePageProps) {
-  return (
-    <Suspense fallback={<ArticleLoading />}>
-      <ArticlePageContent {...props} />
-    </Suspense>
-  );
+  // No Suspense wrapper here: `loading.tsx` is the route's own boundary and Next renders it on
+  // navigation already. Wrapping the same skeleton again showed it, cleared it, then showed it a
+  // second time before the article appeared.
+  return <ArticlePageContent {...props} />;
 }

@@ -75,14 +75,14 @@ export function PageLayout({ posts, hasMore, page, corePublisherArticles, brandL
               {(page > 1 || hasMore) && (
                 <nav aria-label="تنقّل بين صفحات المقالات" className="flex items-center justify-between gap-3 border-t border-border pt-4">
                   {page > 1 ? (
-                    <a href={page === 2 ? "/" : `/page/${page - 1}`} className="text-sm font-medium text-link hover:underline">
+                    <a href={page === 2 ? "/" : `/page/${page - 1}`} className="inline-flex items-center text-sm font-medium text-link hover:underline max-lg:min-h-11 max-lg:rounded-md max-lg:px-2">
                       → الصفحة السابقة
                     </a>
                   ) : (
                     <span />
                   )}
                   {hasMore && (
-                    <a href={`/page/${page + 1}`} className="text-sm font-medium text-link hover:underline">
+                    <a href={`/page/${page + 1}`} className="inline-flex items-center text-sm font-medium text-link hover:underline max-lg:min-h-11 max-lg:rounded-md max-lg:px-2">
                       الصفحة التالية ←
                     </a>
                   )}
