@@ -7,7 +7,7 @@ import { CARD_GRID, SummaryChip, TierCard } from "../dashboard-ui";
 import { CollapsibleSection } from "../collapsible-section";
 
 /**
- * Newsletter subscribers (contract: admin-dashboard-triage-v2-ui.html style).
+ * Newsletter subscribers.
  * Active audience and this month's growth are the health signals; a subscriber
  * with no recorded GDPR consent is the one thing that asks for action (warm).
  */

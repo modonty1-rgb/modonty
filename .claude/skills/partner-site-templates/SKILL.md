@@ -145,6 +145,6 @@ export const storefrontSchema = {
 - Next.js — Multi-tenant guide (للنطاق الفرعي لاحقاً): `node_modules/next/dist/docs/` → multi-tenant.md
 
 ## ٥. المرجع الداخلي
-- ملف الفكرة والقرارات: `documents/idea/partner-page.html` (§٤ القوالب · §٥ النطاق الفرعي)
+- ملف الفكرة والقرارات: `documents/HTML/الشركاء/فكرة-صفحة-الشريك.html` (§٤ القوالب · §٥ النطاق الفرعي)
 - الموقع الحالي: `modonty/app/(partner)/clients/[slug]/` (كروم + رئيسية + صفحات داخلية — قالب واحد اليوم بلا جدول)
 - نظام التصميم: `documents/design/DESIGN-SYSTEM.md` · مهارة `modonty-uiux`

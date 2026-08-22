@@ -23,7 +23,7 @@ import { IBOX, SummaryChip, type Tier } from "../dashboard-ui";
 import { CollapsibleSection } from "../collapsible-section";
 
 /**
- * The page's answer to its own title (contract: admin-dashboard-triage-v2-ui.html).
+ * The page's answer to its own title.
  * "What needs you today" used to be scattered across ~14 red numbers on two screens;
  * this strip IS the ranked answer, built from the SAME cached fetches the sections
  * below consume — so it can never disagree with them.

@@ -382,9 +382,9 @@
     <b class="hl">دوري أنا</b> = أقدر أبدأ فيها الآن.<br>
     تقول «بند ٤٧» فأشتغل فيه، و«خلّص ٨٦» فينتقل لبورد «Done» فوق — البند المنجز يُنقل ولا يُشطب في مكانه.
     كل بند عملٌ واحد فقط.<br>
-    <b class="hl">شغل الفريق مش هنا</b> — محتوى ومراجعة وتعبئة بيانات في
-    <code>documents/HTML/CONTENT-TEAM-BRAINSTORM-v1.html</code> قسم «٠ · مهام على الفريق الآن».
-    التفاصيل التقنية في <code>documents/tasks/TECH-NOTES.md</code>.
+    <b class="hl">شغل الفريق صار هنا كمان</b> (٢٢ أغسطس) — بند <code>CONTENTTEAM</code>.
+    النقاش الكامل كان في ملف حُذف بعد النقل،
+    والتفاصيل التقنية في <code>documents/tasks/TECH-NOTES.md</code>.
   </footer>
 </main>
 
@@ -417,6 +417,7 @@ const BOARDS = [
   {k:"prod",     n:"⚡ إنتاج",          c:"var(--amber)",  s:"ما ننفّذه على الإنتاج بيدنا بعد الدفع — لا كود. كل بند: إيش تضغط · وين · وإيش الرقم المتوقَّع. خالد ينفّذ وكلود يراقب ويبلّغ. يبقى فاضياً حتى ينتظر شيءٌ الإنتاج فعلاً."},
   {k:"fs",       n:"🗂️ بنية مدونتي",  c:"var(--violet)", s:"ترتيب المسارات: كل صفحة تجمع ما يخصّها، والمشترك وحده في الخارج. القاعدة في <code>.claude/rules/folder-structure.md</code>. كل بند هنا مقيس بأمر، والأرقام من جرد ١٤ أغسطس ٢٠٢٦ بعد نقل البدائيات والأيقونات."},
   {k:"bunny",    n:"🐰 بني",           c:"var(--violet)", s:"المرجع الأساسي لكل ما يخص بني (طلب خالد ٧ أغسطس): الزونات وبنيتها · المفاتيح وأماكنها · صفحة الترحيل · القرارات والفخاخ. بطاقات مرجعية تُحدَّث مع كل تغيير، لا تُقفَل."},
+  {k:"docs",     n:"📚 وثائق",         c:"var(--dim)",    s:"كل ملفّات HTML الباقية في المشروع — ستّة فقط، وكلها <b>مراجع لا مهامّ</b>. الشغل المفتوح الذي كان فيها انتقل بنوداً على هذه اللوحة (٢٢ أغسطس) والملفّات المستهلَكة حُذفت. لا تُقفَل هذه البطاقات؛ تُفتح عند الحاجة. اضغط اسم الملف يفتح."},
 ];
 
 /* ══════════════════════════════════════════════════════════════
@@ -584,7 +585,7 @@ const TASKS = [
     "<b>■ ٤ · قرارات مودو</b> — <code>modonty/app/(site)/modo-chat/documentation/modo-decisions.html</code><br>" +
     "متحقَّق بعدّ بطاقات <code>class=\"card … dec\"</code>: <b>١٠ قرارات</b> تنتظر خالد. الأثقل ق٢٢ (<code>ArticleFAQ.articleId</code> إلزامي و٣١ ملفاً يقرأ الموديل). مودو موقوف بأمر خالد حتى تُقفل صفحة المقالات.<br><br>" +
 
-    "<b>■ ملفّات لا تحمل شغلاً مفتوحاً</b> (لا تُفتح بحثاً عن مهام): <code>documents/tasks/TODO.md</code> مصفَّر عمداً ومحوَّل لهذه اللوحة (نصّه يقول ذلك حرفياً) · <code>TECH-NOTES.md</code> تفاصيل تقنية لبنود منجَزة · <code>CLAUDE.md</code> سجلّ تست حيّ خام · <code>NEW-IDEAS.md</code> أفكار مراحل قادمة.<br><br>" +
+    "<b>■ ملفّات لا تحمل شغلاً مفتوحاً</b> (لا تُفتح بحثاً عن مهام): <code>documents/tasks/TODO.md</code> مصفَّر عمداً ومحوَّل لهذه اللوحة (نصّه يقول ذلك حرفياً) · <code>TECH-NOTES.md</code> تفاصيل تقنية لبنود منجَزة · <code>CLAUDE.md</code> سجلّ تست حيّ خام · <code>بورد «أفكار»</code> أفكار مراحل قادمة.<br><br>" +
 
     "<b>الخلاصة الرقمية:</b> ٧٨ بطاقة هنا + ١٦ على لوحة الرئيسية + ٢ على لوحة المقال + ١٠ قرارات مودو + أقسام ملفّات المسارات الثمانية.",
  ref:"بند INV0"},
@@ -922,7 +923,7 @@ const TASKS = [
 
 {id:"SOT1", b:"sot", app:["modonty"], tab:"done", sev:"ok", who:"c", date:"١٥ أغسطس ٢٠٢٦",
  t:"سؤال زائد على القاعدة في كل زيارة — مقفول",
- d:"<b>كان يصير:</b> <code>getCoreClientId()</code> تسأل القاعدة «أيّ عميل هو مدونتي نفسها؟» في كل استدعاء، وجوابها يتغيّر مرّة في العمر (يُضبط يدوياً من <code>/settings/system</code>). وخمسة مسارات قراءة تناديها: الرئيسية · شريط الناشر الأساسي · الرائج · واستعلاما قوائم المقالات.<br><br><b>ما نُفِّذ (١٥ أغسطس ٢٠٢٦):</b> قارئ مخبّأ جديد <code>modonty/lib/settings/get-core-client-id.ts</code> — <code>&quot;use cache&quot;</code> + <code>cacheTag('settings')</code> + <code>cacheLife('hours')</code>، ووُصِّلت به الملفّات الخمسة.<br><br><b>القرار المعماري الأهمّ — لم يُلمس <code>shared/</code>:</b> الميزة تحتاج <code>cacheComponents</code>، وهي مفعّلة في <b>مدونتي وحدها</b> (<code>modonty/next.config.ts</code>)؛ الأدمن والكونسول بلا تفعيل. فوضع <code>&quot;use cache&quot;</code> في المشترك كان <b>سيكسر بناءهما</b> — ولهذا لا يوجد <code>&quot;use cache&quot;</code> في <code>shared/lib</code> كلّه. النسخة المشتركة تبقى كما هي لهما، والسبب مكتوب داخل الملف الجديد حتى لا «يوحّدها» أحد لاحقاً.<div style='overflow-x:auto'><table style='width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0'><thead><tr><th style='padding:6px 8px;text-align:right;border-bottom:1px solid rgba(255,255,255,.18);font-weight:700;white-space:nowrap'>الشرط الرسمي</th><th style='padding:6px 8px;text-align:right;border-bottom:1px solid rgba(255,255,255,.18);font-weight:700;white-space:nowrap'>مطابق</th><th style='padding:6px 8px;text-align:right;border-bottom:1px solid rgba(255,255,255,.18);font-weight:700;white-space:nowrap'>السند</th></tr></thead><tbody><tr><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'>لا معاملات ولا إغلاق متغيّرات</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;white-space:nowrap'>✅</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'>«When a cached function references variables from outer scopes, those variables … become part of the cache key» — دالّتنا بلا معاملات، فمفتاح واحد ثابت</td></tr><tr><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'>المخرَج قابل للتسلسل</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;white-space:nowrap'>✅</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'>«Arguments … and their return values must be serializable» — المخرَج <code>string | null</code></td></tr><tr><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'>لا cookies/headers/searchParams</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;white-space:nowrap'>✅</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'>«Cached functions … cannot directly access runtime APIs like <code>cookies()</code>, <code>headers()</code>»</td></tr><tr><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'><code>hours</code> ملفّ مدمج</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;white-space:nowrap'>✅</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'><code>cacheLife.md:143</code> — «Content updated multiple times per day · expire: 1 day»</td></tr><tr><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'>الإبطال يصل فعلاً</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;white-space:nowrap'>✅</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'><code>cacheTag('settings')</code> — نفس الوسم الذي يبطّله الأدمن بعد كل حفظ إعدادات</td></tr></tbody></table></div><b>ملاحظة على <code>hours</code>:</b> يعني عند Next «تُحدَّث عدّة مرّات يومياً»، وقيمتنا أثبت من ذلك بكثير. لكن <code>cacheTag</code> هو الحاكم الفعلي — الإبطال يجي من حفظ الإعدادات لا من انتهاء المدّة — واخترناه اتّساقاً مع بقيّة قرّاء الإعدادات عندنا.<br><b>المصدر:</b> التوثيق المرفق مع النسخة المثبَّتة — <code>node_modules/next/dist/docs/01-app/03-api-reference/01-directives/use-cache.md</code> و<code>…/04-functions/cacheLife.md</code> (مقروء ١٥ أغسطس ٢٠٢٦).<br><b>tsc:</b> صفر أخطاء على مدونتي.",
+ d:"<b>كان يصير:</b> <code>getCoreClientId()</code> تسأل القاعدة «أيّ عميل هو مدونتي نفسها؟» في كل استدعاء، وجوابها يتغيّر مرّة في العمر (يُضبط يدوياً من <code>/settings/system</code>). وخمسة مسارات قراءة تناديها: الرئيسية · شريط الناشر الأساسي · الرائج · واستعلاما قوائم المقالات.<br><br><b>ما نُفِّذ (١٥ أغسطس ٢٠٢٦):</b> قارئ مخبّأ جديد <code>modonty/lib/settings/get-core-client-id.ts</code> — <code>&quot;use cache&quot;</code> + <code>cacheTag('settings')</code> + <code>cacheLife('hours')</code>، ووُصِّلت به الملفّات الخمسة.<br><br><b>القرار المعماري الأهمّ — لم يُلمس <code>shared/</code>:</b> الميزة تحتاج <code>cacheComponents</code>، وهي مفعّلة في <b>مدونتي وحدها</b> (<code>modonty/next.config.ts</code>)؛ الأدمن والكونسول بلا تفعيل. فوضع <code>&quot;use cache&quot;</code> في المشترك كان <b>سيكسر بناءهما</b> — ولهذا لا يوجد <code>&quot;use cache&quot;</code> في <code>shared/lib</code> كلّه. النسخة المشتركة تبقى كما هي لهما، والسبب مكتوب داخل الملف الجديد حتى لا «يوحّدها» أحد لاحقاً.<div style='overflow-x:auto'><table style='width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0'><thead><tr><th style='padding:6px 8px;text-align:right;border-bottom:1px solid rgba(255,255,255,.18);font-weight:700;white-space:nowrap'>الشرط الرسمي</th><th style='padding:6px 8px;text-align:right;border-bottom:1px solid rgba(255,255,255,.18);font-weight:700;white-space:nowrap'>مطابق</th><th style='padding:6px 8px;text-align:right;border-bottom:1px solid rgba(255,255,255,.18);font-weight:700;white-space:nowrap'>السند</th></tr></thead><tbody><tr><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'>لا معاملات ولا إغلاق متغيّرات</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;white-space:nowrap'>✅</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'>«When a cached function references variables from outer scopes, those variables … become part of the cache key» — دالّتنا بلا معاملات، فمفتاح واحد ثابت</td></tr><tr><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'>المخرَج قابل للتسلسل</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;white-space:nowrap'>✅</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'>«Arguments … and their return values must be serializable» — المخرَج <code>string | null</code></td></tr><tr><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'>لا cookies/headers/searchParams</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;white-space:nowrap'>✅</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'>«Cached functions … cannot directly access runtime APIs like <code>cookies()</code>, <code>headers()</code>»</td></tr><tr><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'><code>hours</code> ملفّ مدمج</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;white-space:nowrap'>✅</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'><code>cacheLife.md:143</code> — «Content updated multiple times per day · expire: 1 day»</td></tr><tr><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'>الإبطال يصل فعلاً</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;white-space:nowrap'>✅</td><td style='padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top'><code>cacheTag('settings')</code> — نفس الوسم الذي يبطّله الأدمن بعد كل حفظ إعدادات</td></tr></tbody></table></div><b>ملاحظة على <code>hours</code>:</b> يعني عند Next «تُحدَّث عدّة مرّات يومياً»، وقيمتنا أثبت من ذلك بكثير. لكن <code>cacheTag</code> هو الحاكم الفعلي — الإبطال يجي من حفظ الإعدادات لا من انتهاء المدّة — واخترناه اتّساقاً مع بقيّة قرّاء الإعدادات عندنا.<br><b>كان في:</b> التوثيق المرفق مع النسخة المثبَّتة — <code>node_modules/next/dist/docs/01-app/03-api-reference/01-directives/use-cache.md</code> و<code>…/04-functions/cacheLife.md</code> (مقروء ١٥ أغسطس ٢٠٢٦).<br><b>tsc:</b> صفر أخطاء على مدونتي.",
  ref:"بند SOT1"},
 
 {id:"SOT2", b:"sot", app:["modonty"], tab:"done", sev:"ok", who:"c", date:"١٥ أغسطس ٢٠٢٦",
@@ -1320,7 +1321,7 @@ const TASKS = [
  ref:"تاسك ②"},
 {id:"B1", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
  t:"ذيل A2 — تبويبات الأدمن",
- d:"<b>الأصل:</b> <code>INV-A2</code> «عرض داخلي في الأدمن» (<code>BUNNY-MIGRATION-PRD-v1.html:228</code>) — بقي ذيل يقرأ حقل <code>url</code> الخام بدل المُحلِّل <code>mediaSrc</code>.<br><br>" +
+ d:"<b>الأصل:</b> <code>INV-A2</code> «عرض داخلي في الأدمن» — بقي ذيل يقرأ حقل <code>url</code> الخام بدل المُحلِّل <code>mediaSrc</code>.<br><br>" +
 
    "<b>الجرد الكامل:</b> بحث على كل مواضع <code>src={…url}</code> في <code>admin/app/</code> ← ٩ مواضع. فُحص كل واحد على مصدر بياناته:<br><br>" +
 
@@ -1342,7 +1343,7 @@ const TASKS = [
 
 {id:"B6", b:"deploy", tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
  t:"مهمّة S1 من Epic INV — الحقول النصّية الخام",
- d:"<b>ما هي:</b> حقول تخزّن رابط الصورة <b>نصّاً مباشراً</b> لا عبر علاقة بمكتبة الوسائط — فلا يمسّها الترحيل ولا التبديل. مواضعها في السكيما: <code>dataLayer/prisma/schema/schema.prisma:936</code> (Author) · <code>:975</code> (Category) · <code>:1011</code> (Tag) · <code>:1044</code> (Industry) · <code>:2440-2442</code> (Settings) · <code>:175,183</code> (User). القرار قُفل ٢٩ يوليو (خيار «ب»: تُعاد كلها من بني) — <code>BUNNY-MIGRATION-PRD-v1.html:235-237</code>.<br><br>" +
+ d:"<b>ما هي:</b> حقول تخزّن رابط الصورة <b>نصّاً مباشراً</b> لا عبر علاقة بمكتبة الوسائط — فلا يمسّها الترحيل ولا التبديل. مواضعها في السكيما: <code>dataLayer/prisma/schema/schema.prisma:936</code> (Author) · <code>:975</code> (Category) · <code>:1011</code> (Tag) · <code>:1044</code> (Industry) · <code>:2440-2442</code> (Settings) · <code>:175,183</code> (User). القرار قُفل ٢٩ يوليو (خيار «ب»: تُعاد كلها من بني).<br><br>" +
 
    "<b>متحقَّق باستعلام مباشر على قاعدة الإنتاج <code>modonty</code> (٧ أغسطس، قراءة فقط — عدّ لكل حقل مع تصنيف المضيف):</b><br>" +
    "· <code>categories.socialImage</code> ١٥/١٥ · <code>tags.socialImage</code> ٢٣/٢٣ · <code>industries.socialImage</code> ٨/٨ ← <b>٤٦ كلها بني ✅</b><br>" +
@@ -1361,7 +1362,7 @@ const TASKS = [
 
 {id:"B10", b:"deploy", tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
  t:"مهمّة V1 من Epic INV — بوّابة التحقّق الحيّ بـPlaywright",
- d:"<b>البوّابة كما نصّها المستند</b> (<code>BUNNY-MIGRATION-PRD-v1.html:240-241</code>): «كل <code>&lt;img&gt;</code> + كل رابط JSON-LD يطلع <code>b-cdn.net</code> · صفر <code>res.cloudinary.com</code> · صفر صورة مكسورة · صفر console error».<br><br>" +
+ d:"<b>البوّابة كما نصّها المستند</b>: «كل <code>&lt;img&gt;</code> + كل رابط JSON-LD يطلع <code>b-cdn.net</code> · صفر <code>res.cloudinary.com</code> · صفر صورة مكسورة · صفر console error».<br><br>" +
 
    "<b>متحقَّق بمتصفّح حقيقي (Edge headed، ٧ أغسطس) — لا بقراءة HTML خام.</b> الفرق مهمّ: المتصفّح يفكّ <code>/_next/image?url=</code>، ويرصد الصور المرسومة من جافاسكربت، ويكشف الصورة المكسورة بـ<code>naturalWidth === 0</code>.<br><br>" +
 
@@ -1677,13 +1678,283 @@ const TASKS = [
    "<b>التوقيت:</b> بعد ريفاكتور مدونتي — خالد: «نكمل الـRefactor، بس ضيف النقطة هذي».",
  ref:"١٦ أغسطس ٢٠٢٦"},
 
+/* ── بورد «وثائق»: بطاقات مرجعية، لا مهامّ. كل بطاقة = ملف HTML باقٍ في المشروع.
+   أثر التحقّق لكل بطاقة: الملف مُدرَج في ناتج `find documents/HTML -name '*.html'`
+   (٢٢ أغسطس ٢٠٢٦ — سبعة أسطر، منها _INDEX)، وحجمه وعناوينه مقروءة بسكربت
+   قرأ `<title>` و`<h1..h3>` من الملف نفسه. لا تُنفَّذ هذه البطاقات ولا تُقفَل. ── */
+
+{id:"DOC1", b:"docs", tab:"ref", sev:"ok", who:"c",
+ t:"نظام التصميم — المرجع الذي يحكم كل قرار بصري",
+ d:"<a href='../HTML/وثائق-مدونتي.html#design' target='_blank'><b>افتح الوثيقة</b></a> · <b>متحقَّق ٢٢ أغسطس:</b> داخل <code>documents/HTML/وثائق-مدونتي.html</code> · ٤١ كيلوبايت · عناوينه مقروءة من الملف.<br><br>" +
+   "<b>فيه:</b> المعرض المرئي لكل عنصر · من أين جاءت كل قيمة (القياس أُعيد على ثلاثة أسطح لا صفحة واحدة) · الهويّة واللون («الصفحة ليست بيضاء») · الخطّ · الظلال والحلقات الثلاث (ولماذا حلقة لا حدّ) · الطباعة (وزنان فقط ٤٠٠ و٧٠٠ · ارتفاعا سطر · السلّم) · نصف القطر بثلاث فئات لا تُخلط · المسافات · التخطيط و<code>RTL</code>.<br><br>" +
+   "<b>متى تفتحه:</b> قبل أي لون أو ظلّ أو مقاس جديد.",
+ ref:"مرجع دائم"},
+
+{id:"DOC2", b:"docs", tab:"ref", sev:"ok", who:"k",
+ t:"دليل بوابة العملاء — ما يُسلَّم للشريك",
+ d:"<a href='../HTML/وثائق-مدونتي.html#portal' target='_blank'><b>افتح الوثيقة</b></a> · <b>متحقَّق ٢٢ أغسطس:</b> موجود · ٢٨ كيلوبايت · ١٧ عنواناً مقروءاً من الملف.<br><br>" +
+   "<b>فصوله بلغة الشريك:</b> كيف يدخل · الجولة السريعة · تعبئة بيانات شركته · مقالاته وحصّته الشهرية · الصور · الإحصائيات · صحّة موقعه · المشتركون · الزوّار المحتملون · أسئلة الزوّار · التعليقات · التقييمات · إعدادات حسابه.<br><br>" +
+   "<b>متى تفتحه:</b> عند إدخال شريك جديد، أو لمّا نغيّر شاشة في الكونسول فيحتاج الدليل تحديثاً.",
+ ref:"مرجع دائم"},
+
+{id:"DOC3", b:"docs", tab:"ref", sev:"ok", who:"k",
+ t:"قواعد كتّاب مدونتي — ما يُسلَّم للكاتب عند التعاقد",
+ d:"<a href='../HTML/وثائق-مدونتي.html#writers' target='_blank'><b>افتح الوثيقة</b></a> · <b>متحقَّق ٢٢ أغسطس:</b> موجود · ١٦ كيلوبايت · ثمانية عناوين مقروءة من الملف.<br><br>" +
+   "<b>فيه:</b> ثلاث مسؤوليات فقط · نموذج العمل ورخصة النشر · شروط اختيار الكلمة المفتاحية · خطوات المقال · الأرقام · التقييم الشهري · الدخل بثلاث طبقات · الخطوط الحمراء.<br><br>" +
+   "<b>متى تفتحه:</b> عند توظيف كاتب — الهدف خمسة كتّاب على دفعات.",
+ ref:"مرجع دائم"},
+
+{id:"DOC4", b:"docs", tab:"ref", sev:"ok", who:"k",
+ t:"الشروط والأحكام — النسخة الوحيدة",
+ d:"<a href='../HTML/وثائق-مدونتي.html#terms' target='_blank'><b>افتح الوثيقة</b></a> · <b>متحقَّق ٢٢ أغسطس:</b> موجود · ١٠ كيلوبايت · ١٢ عنواناً مقروءاً من الملف.<br><br>" +
+   "<b>⚠️ هذه النسخة الوحيدة</b> — مجلّد <code>documents/legal/</code> المذكور في الذاكرة <b>غير موجود</b> (<code>ls</code> رجع «No such file or directory»). النصّ يُلصق من الأدمن على <code>/modonty/pages/terms</code>.<br><br>" +
+   "<b>موادّه:</b> طبيعة المنصّة ومَن لسنا · العلاقة بين الأطراف وإخلاء المسؤولية · الحجز ونقل الطلب · تنبيه المحتوى الطبّي والقانوني والمالي · الملكية الفكرية · حدود المسؤولية · النظام الواجب التطبيق.",
+ ref:"مرجع دائم"},
+
+{id:"DOC5", b:"docs", tab:"ref", sev:"ok", who:"k",
+ t:"سياسة الخصوصية — النسخة الوحيدة",
+ d:"<a href='../HTML/وثائق-مدونتي.html#privacy' target='_blank'><b>افتح الوثيقة</b></a> · <b>متحقَّق ٢٢ أغسطس:</b> موجود · ١٠ كيلوبايت · ١٤ عنواناً مقروءاً من الملف.<br><br>" +
+   "<b>⚠️ النسخة الوحيدة كذلك</b> (نفس دليل <code>documents/legal/</code> الغائب). تُلصق على <code>/modonty/pages/privacy-policy</code>.<br><br>" +
+   "<b>بنودها:</b> جهة التحكّم · الأساس النظامي للمعالجة · ما نجمعه ولماذا وكيف · المشاركة · مدّة الاحتفاظ والإتلاف · حقوقك تجاه بياناتك · النشرة البريدية · ملفات تعريف الارتباط · خصوصية الأطفال.",
+ ref:"مرجع دائم"},
+
+{id:"DOC6", b:"docs", tab:"ref", sev:"ok", who:"k",
+ t:"عقد الاشتراك — ما يُرسل للعميل",
+ d:"<a href='../HTML/وثائق-مدونتي.html#contract' target='_blank'><b>افتح الوثيقة</b></a> · <b>متحقَّق ٢٢ أغسطس:</b> موجود · ٣٣ كيلوبايت · عناوين موادّه مقروءة من الملف.<br><br>" +
+   "<b>يبدأ بـ«باختصار — قبل ما تقرأ التفاصيل»</b> ثم موادّه: نطاق الخدمة والتسليمات · مدّة الاشتراك والتجديد · الرسوم والدفع · <b>المادّة ٦ — النتائج والترتيب في محركات البحث</b> · التزامات الطرفين · الملكية الفكرية · السرّية · حماية البيانات · القبول الإلكتروني وحجّية السجلّ · تحديد المسؤولية · الإنهاء.<br><br>" +
+   "<b>متى تفتحه:</b> عند كل تعاقد، وعند أي تغيير في الباقات أو التسليمات.",
+ ref:"مرجع دائم"},
+
+{id:"LEGALPASTE", b:"projects", app:["admin","modonty"], tab:"open", sev:"high", who:"k", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"الإنتاج يعرض نصّاً قانونياً أقصر من مسوّدتنا — الصق النصّين",
+ d:"<b>متحقَّق بالجلب الحيّ ٢٢ أغسطس</b> (<code>curl</code> على <code>www.modonty.com</code>، الاثنتان <code>HTTP 200</code>):<br><br>" +
+   "<b>على <code>/terms</code>:</b> ✗ «طبيعة المنصّة» · ✗ «إخلاء المسؤولية» · ✗ «الحجز ونقل الطلب» · ✗ «حدود المسؤولية» — والموجود ✓ «تعريفات» و✓ «الملكية الفكرية» فقط. النصّ المرئي ١٦١٥٨ حرفاً.<br>" +
+   "<b>على <code>/legal/privacy-policy</code>:</b> ✗ «جهة التحكّم» · ✗ «الأساس النظامي» · ✗ «خصوصية الأطفال» · ✗ «إتلاف البيانات» — والموجود ✓ «ملفات تعريف الارتباط» فقط. النصّ المرئي ١٢٢٤٠ حرفاً.<br><br>" +
+   "<b>يعني:</b> النصّان الحيّان نسخة أقدم وأقصر، ومسوّدتانا في <code>documents/HTML/وثائق-مدونتي.html</code> (بطاقتا <code>DOC4</code> و<code>DOC5</code>) <b>لم تُلصقا بعد</b>. الملفّان يبدآن حرفياً بـ«📋 للصقّ في قاعدة البيانات: انسخ… إلى حقل <code>content</code> حيث <code>slug = \"terms\"</code>».<br><br>" +
+   "<b>لماذا يهمّ:</b> الناقص هو بند إخلاء المسؤولية وبند المحتوى الطبّي (YMYL) — وهما ما يحمي مدونتي كوسيط بين الزائر وطبيب أو محامٍ. والمسوّدة مبنيّة على نظام حماية البيانات الشخصية السعودي.<br><br>" +
+   "<b>⚠️ الملفّان نفساهما يوصيان:</b> «يُفضَّل مراجعتها من محامٍ سعودي مرخّص قبل النشر».<br><br>" +
+   "<b>بعد اللصق والتحقّق من الصفحتين حيّاً، يُحذف الملفّان</b> — يصيران نسخة مكرّرة عندها فعلاً.",
+ ref:"متحقَّق حيّاً ٢٢ أغسطس ٢٠٢٦"},
+
+{id:"CAMERGE", b:"ca", app:["admin","console","modonty"], tab:"open", sev:"high", who:"k", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"مقالات العملاء — ستّة بنود قبل دمج فرع client-articles",
+ d:"<b>الفرع حيّ ومتحقَّق ٢٢ أغسطس:</b> <code>git branch -a</code> يُظهر <code>client-articles</code> محلياً وعلى <code>origin</code> · رابطا المعاينة يردّان <code>302</code> (حماية فيرسل، أي أنهما قائمان). آخر كوميت موثَّق: <code>deb8452</code> (٩ أغسطس).<br><br>" +
+   "<b>١·</b> طارق يجرّب الرحلة كاملة على المعاينة ويعطي موافقته.<br>" +
+   "<b>٢·</b> <code>prisma db push</code> للفهرسين: <code>@@index([clientId, status, updatedAt])</code> و<code>@@index([apiKey])</code> — <b>غير موجودين بعد</b>.<br>" +
+   "<b>٣·</b> تشغيل خطوة <b>Client-Site Flag</b> في Run-All على الإنتاج بعد الدمج (شُغّلت على dev: ١٣٤ مقالاً).<br>" +
+   "<b>٤·</b> بند ٣٫٣ — منتقي الروابط الداخلية بُني <b>ولم يُختبَر حيّاً</b> بمقالين منشورين على موقع العميل.<br>" +
+   "<b>٥·</b> بعد الدمج: تحديث عنوان السحب عند جبر سيو من رابط المعاينة إلى <code>api.modonty.com/v1</code>، وحذف مفتاح التجاوز.<br>" +
+   "<b>٦·</b> المشهد ١١ (انتهاء الاشتراك) — قرار إداري مؤجَّل.",
+ ref:"٩ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"SEC15", b:"bugs", app:["modonty","admin"], tab:"open", sev:"high", who:"c", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"١٥ ثغرة أمنية باقية — تسع متوسطة وستّ بسيطة، كلٌّ بملفّها",
+ d:"<b>الحرجان أُصلحا وتحقّقا حيّاً (٢٠ أغسطس مساءً):</b> بريد العضو صار يظهر لصاحبه وحده · كلمة المرور الحالية صارت إلزامية بـZod. <b>الباقي ١٥:</b><br><br>" +
+   "<b>متوسط (٩):</b><br>" +
+   "• تعديل أي صفّ تحليلات بلا حساب وبلا كوكي — <code>api/analytics/[id]/route.ts:26</code><br>" +
+   "• تسجيل الحساب بلا أي تحقّق على السيرفر — <code>register-actions.ts</code><br>" +
+   "• حقن HTML في قناة تيليجرام الإدارية عبر اسم التسجيل — <code>register-actions.ts</code><br>" +
+   "• إعادة تعيين كلمة المرور لا تُبطل الجلسات القائمة — <code>reset-password-action.ts</code><br>" +
+   "• أي مستخدم مسجَّل يفرّغ كاش أي مقال — <code>api/revalidate/article/route.ts</code><br>" +
+   "• الاشتراك بالنشرة يرسل بريداً لأي عنوان بلا تحقّق ولا حدّ — <code>api/news/subscribe/route.ts</code><br>" +
+   "• نقطة تتبّع النقر تفتح تيليجرام أي شريك لأي شخص — <code>api/track/cta-click/route.ts</code><br>" +
+   "• لا <code>Content-Security-Policy</code> على أي صفحة — <code>next.config.ts</code><br>" +
+   "• إعادة توجيه مفتوحة بعد الدخول عبر <code>callbackUrl</code> — <code>users/login/page.tsx</code><br><br>" +
+   "<b>بسيط (٦):</b> رأس <code>X-DNS-Prefetch-Control</code> غائب (<code>next.config.ts</code>) · نموذج التسجيل يكشف أي بريد له حساب · حدّ نموذج التواصل مبنيّ على ترويسة يرسلها الزائر (<code>contact/api/route.ts</code>) · رفع الأفاتار يثق بنوع الملف المعلَن (<code>users/profile/api/avatar/route.ts</code>) · تعديل الملف الشخصي بلا تحقّق Zod (<code>settings/api/[id]/route.ts</code>).<br><br>" +
+   "<b>الترتيب الموصى به في المصدر:</b> التسع المتوسطة أوّلاً (≈ يوم عمل) — «ما ينفع جوّال فوق ثغرات».",
+ ref:"٢٠ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"PRODDATA", b:"data", app:["modonty"], tab:"open", sev:"high", who:"k", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"صفحات حيّة فاضية — الكود جاهز وينتظر المحتوى",
+ d:"<b>مقيس على قاعدة الإنتاج مباشرة (قراءة فقط، ٢٠ أغسطس):</b><br><br>" +
+   "<b>١· الطلّات: صفر منشور</b> — لا فيديو ولا صورة. <code>/reels</code> على الإنتاج تعرض «لا توجد ريلز». <b>الخطّ كامل ومتحقَّق:</b> كونسول يرفع ← أدمن يعتمد ← تظهر.<br>" +
+   "<b>٢· «اسمع»: صفر مقال مسموع</b> — لا <code>audioUrl</code> على أي مقال من ١٢٥. عمود المقالات المسموعة فاضٍ (القرآن يعمل لأنه ثابت في الكود). ومعها تعبئة مدد الصوت.<br>" +
+   "<b>٣· مؤلّف واحد لكل ١٢٥ مقالاً</b> («Modonty | Content Platform») — أكبر فجوة ثقة في محتوى طبّي، ولهذا الواجهة ترفض عرض المؤلّف حالياً.<br>" +
+   "<b>٤· أوراق توثيق الشركاء: صفر</b> — خانة شارة التوثيق جاهزة في الكروت وتظهر وحدها متى رُفعت الأوراق.<br>" +
+   "<b>٥· مقالان بلا تصنيف</b> من ١٢٥ — فمجموع أعداد التصنيفات لا يساوي المجموع الكلّي.<br><br>" +
+   "<b>هذي مو كود</b> — بيدك وبيد الفريق، وتمشي بالتوازي مع شغل الكود.",
+ ref:"٢٠ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"PENDDEC", b:"projects", app:["modonty"], tab:"open", sev:"normal", who:"k", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"أربعة قرارات معلّقة — لا توقف الشغل، وتنحسم وقت ما تحبّ",
+ d:"<b>١· إطلاق الطلّات للفهرسة</b> — الخلاصة <code>noindex</code> عمداً حتى تقرّر الإطلاق. صفحات المشاهدة المفردة جاهزة ومفهرسة أصلاً.<br>" +
+   "<b>٢· مودو: ١١ قراراً</b> في <code>modonty/app/(site)/modo-chat/documentation/modo-decisions.html</code> — موقوفة بقرارك «نخلّص الأرتكل ونرجع»، وأثقلها ق٢٢.<br>" +
+   "<b>٣· أحداث GA للطلّات</b> — سجلّ الأحداث الحالي مفصَّل على المقالات؛ أحداث الطلّات (مشاهدة/إعجاب/تعليق) تحتاج تصميم مجموعة جديدة. التصميم يُعرض متى تطلب.<br>" +
+   "<b>٤· أربعة بنود نقاش لها بطاقاتها على هذه اللوحة:</b> <code>LOGIN-SOCIAL</code> · <code>CONSOLE-CHAT</code> · <code>TW-SHARED</code> · <code>DIALOG-MOBILE</code>.",
+ ref:"٢٠ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"SMALLCODE", b:"projects", app:["modonty"], tab:"open", sev:"normal", who:"c", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"ثلاثة بنود كود صغيرة غير-واجهة",
+ d:"<b>١· تفضيلات النظام</b> — <code>prefers-reduced-motion</code> موجود في <b>٣ ملفات فقط</b> بالموقع كله (من جرد أبل)، و<code>prefers-contrast</code> <b>غائب تماماً</b>.<br>" +
+   "<b>٢· صفحة المقال ٨٤٥ سطراً</b> — <code>modonty/app/(site)/articles/[slug]/page.tsx</code> يستحقّ تقسيماً.<br>" +
+   "<b>٣· ضجيج البناء</b> — سطر خطأ من <code>modo-chat/api/conversation</code> في كل بناء. الإطار يعالجه ولا يُفشل البناء — يُنظَّف مع رجعة مودو (بند <code>PENDDEC</code>).<br><br>" +
+   "<b>وبندان لهما بطاقتاهما:</b> <code>INVREV</code> (مراجعة الفواتير) · <code>MAILREV</code> (مراجعة قوالب الإيميلات).",
+ ref:"٢٠ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"QA7", b:"projects", app:["modonty","console","admin"], tab:"open", sev:"high", who:"c", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"سبع مراحل فحص لم تبدأ — أهمّها «ما يُحفظ» و«مستخدمون معاً»",
+ d:"<b>من تقرير الجودة (٢٠ أغسطس) — القسم «ما لم يُفحص إطلاقاً»:</b><br>" +
+   "<b>١·</b> <b>٦٦ صفحة</b> لم تُفتح واحدة واحدة، ولا رُصدت أخطاء الكونسول فيها.<br>" +
+   "<b>٢·</b> <b>٣٦ نقطة API</b> لم تُختبر بمدخل ناقص أو نوع خاطئ أو حجم ضخم — إلا ما لمسه فحص الأمن.<br>" +
+   "<b>٣·</b> الدخول والتسجيل وبقاء الجلسة والخروج — لم يُجرَّب أيّ منها حيّاً.<br>" +
+   "<b>٤· «ما يُحفظ»</b> — لم يُختبَر إعجاب ولا حفظ ولا تعليق ولا ردّ، ولم تُفتح القاعدة للتأكّد من الصفوف.<br>" +
+   "<b>٥· «مستخدمون متعدّدون بنفس اللحظة»</b> — لم تبدأ، وهي أهمّ مرحلة عندك بنصّك: «ما في داتا تروح، ما في تعارض».<br>" +
+   "<b>٦·</b> الأداء — لم يُبنَ بناء إنتاج ولم تُقس مؤشّرات الويب ولا أحجام الحزم.<br>" +
+   "<b>٧·</b> سيو ووصولية وجوّال ٣٩٠ — لم تبدأ.<br><br>" +
+   "<b>البنود الأربعة التي كانت قبلها في ترتيب التقرير أُغلقت:</b> S-01 و S-02 و S-03 أُصلحت وتحقّقت حيّاً (٢٠ أغسطس مساءً)، ونشر الفرع تمّ (٢٢ أغسطس).<br><br>" +
+   "<b>المصادر الخام باقية:</b> <code>documents/qa/findings.jsonl</code> · <code>clarity-ux-report.json</code> · <code>clarity-ux-summary.md</code> · <code>clarity-raw/</code>.",
+ ref:"٢٠ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"HEALTHCHK", b:"projects", app:["admin"], tab:"open", sev:"normal", who:"c", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"فاحص صحّة المقالات — مصمَّم بالكامل، صفر كود",
+ d:"<b>الحالة:</b> القراران الأوّلان مقفولان والحراسات مكتوبة · الأداة نفسها لم تُبنَ. <code>documents/tasks/TECH-NOTES.md:279</code> يقول «الحالة: مفتوح».<br><br>" +
+   "<b>الشكل المتّفق عليه:</b> شريط تقدّم · زرّ إيقاف · جدول النتائج مجمَّعاً <b>حسب المقال لا حسب نوع الفحص</b> (الكاتب يفكّر بمقاله لا بمعاييرنا) · رابط تحرير مباشر لكل صفّ · زرّ نسخ · <b>حفظ نتيجة كل تشغيلة</b> ليقارنها التالي ويقول «جديد منذ آخر فحص» · شارة العدد على مدخل الشريط الجانبي.<br><br>" +
+   "<b>ثلاث حراسات لا تُكسر:</b><br>" +
+   "<b>ح١·</b> قراءة فقط — الأداة تكشف ولا تُصلح. أي إصلاح بزرّ منفصل وبمراجعة بشرية.<br>" +
+   "<b>ح٢·</b> سقف تزامن ١٠ + كاش للمكرّر — القصّات الثلاث تشترك في الأصل وعملاء كثر يتشاركون الشعار.<br>" +
+   "<b>ح٣·</b> لا تشغيل على الإنتاج إلا بإذنك، وخارج ذروة مصر.<br><br>" +
+   "<b>التحقّق عند البناء:</b> تشغيلتان متتاليتان، والثانية تميّز الجديد.",
+ ref:"٤ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"I18NSHARED", b:"projects", app:["modonty"], tab:"open", sev:"normal", who:"c", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"نصوص المكوّنات المشتركة ما زالت داخل الكود — الفوتر والناف",
+ d:"<b>البند الوحيد الباقي</b> من حصيلة ريفاكتور صفحة المقال على الجوّال: الفوتر والناف والمكوّنات المشتركة نصوصها مكتوبة داخل الكود لا في <code>messages/ar.json</code>.<br><br>" +
+   "<b>ما أُغلق في نفس الملف — للسياق:</b> الطريق للجواب <code>1187 → 1152</code> · أهداف اللمس <code>40 → 15</code> (المتبقّي مستثنى بـWCAG 2.5.8 أو مخفيّ بالتصميم) · المكوّنان الثقيلان لم يعودا يُرسلان قبل الضغط.<br><br>" +
+   "<b>شقيق البند:</b> <code>I18NAUDIOSTORY</code> (نصوص «اسمع» و«القصّة») — يُنفَّذان معاً أوفر.",
+ ref:"٢١ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"UXREPORT", b:"projects", app:["modonty"], tab:"open", sev:"idea", who:"c", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"التقرير الرئيسي للمنتج والتجربة — يُفرَز قبل أن يُعمل به",
+ d:"<b>⚠️ ما فرزته بنداً بنداً</b> — ١٢٨ كيلوبايت من ١٤ أغسطس، وأقول هذا صراحةً بدل أن أدّعي جرداً لم أفعله.<br><br>" +
+   "<b>ما يحويه (من عناوينه):</b> ترتيب مصادر الحقيقة · ما لا نملكه بعد · حلقة القيمة والـmoat · تعريف المنتج المقترح · ما نأخذه من LinkedIn وما لا نأخذه · دليل سوق السعودية ومصر · قرار اللغة · <b>تشخيص النسخة الحيّة §٥ والمشكلات حسب الخطورة</b>.<br><br>" +
+   "<b>لماذا يُفرَز أوّلاً:</b> كُتب قبل ريفاكتور الديسكتوب (١٦ أغسطس) وريفاكتور الجوّال (٢١–٢٢)، فأغلب «تشخيص النسخة الحيّة» فيه قد يكون عولج فعلاً.<br><br>" +
+   "<b>أوّل خطوة:</b> جلسة فرز للقسم ٥ وحده ضدّ الموقع الحالي، ثم تُفتح بنوداً مستقلّة.",
+ ref:"١٤ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"SCROLLATTR", b:"bugs", app:["modonty"], tab:"open", sev:"normal", who:"c", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"التمرير الناعم يشتغل وقت تنقّل الصفحات — سمة واحدة ناقصة على <html>",
+ d:"<b>المقيس في كودنا:</b> <code>modonty/app/globals.css:179</code> فيه <code>html { scroll-behavior: smooth; }</code> · و<code>modonty/app/layout.tsx:70-75</code> وسم <code>&lt;html&gt;</code> يحمل <code>lang</code> و<code>dir</code> و<code>suppressHydrationWarning</code> و<code>className</code> — <b>وما فيه <code>data-scroll-behavior</code></b>.<br><br>" +
+   "<b>التوثيق الرسمي (Context7 · مستودع نكست):</b> صفحة الترقية إلى ١٦ تقول حرفياً: «In Next.js 16, Next.js no longer overrides your scroll-behavior CSS setting during single-page application route transitions… To restore the previous override behavior, add the <code>data-scroll-behavior=\"smooth\"</code> attribute to your <code>&lt;html&gt;</code> element.» وعند نكست صفحة خطأ باسم <code>missing-data-scroll-behavior</code> لنفس الحالة.<br><br>" +
+   "<b>الأثر:</b> كل تنقّل بين الصفحات يصير تمريراً ناعماً للأعلى بدل قفزة فورية — يظهر أوضح في فيد الطلّات ذي المحاذاة العمودية.<br><br>" +
+   "<b>الإصلاح:</b> سمة واحدة على <code>&lt;html&gt;</code> في <code>modonty/app/layout.tsx</code>. <b>لم أنفّذها</b> — خارج نطاق ما طلبته.",
+ ref:"من عصف-ذهني-فيديو-الطلات — نُقل ٢٢ أغسطس"},
+
+{id:"BUNNYWH", b:"bunny", app:["console","admin"], tab:"open", sev:"normal", who:"c", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"توقيع إشعارات بني ستريم غير متحقَّق منه — المفتاح الرابع بلا مستهلك",
+ d:"<b>المقيس:</b> بحثٌ عن <code>BUNNY_STREAM_*</code> في <code>console</code> و<code>admin</code> و<code>shared</code> رجع <b>ثلاثة فقط</b>، كلها في <code>shared/lib/bunny-stream.ts</code>: <code>BUNNY_STREAM_API_KEY</code> · <code>BUNNY_STREAM_CDN_HOSTNAME</code> · <code>BUNNY_STREAM_LIBRARY_ID</code>.<br><br>" +
+   "<b>الناقص:</b> <code>BUNNY_STREAM_READONLY_API_KEY</code> — كان الغرض منه في وثيقة المتطلّبات: «المفتاح للقراءة فقط — نتحقق به من توقيع إشعارات بني». <b>صفر مستهلك له في الكود.</b><br><br>" +
+   "<b>الأثر:</b> لو بني يرسل إشعار انتهاء ترميز، ما عندنا تحقّق من أن المُرسِل هو بني فعلاً.<br><br>" +
+   "<b>⚠️ ما تحقّقت بعد:</b> هل عندنا نقطة استقبال إشعارات من بني أصلاً؟ لو ما فيها، البند يسقط. <b>أوّل خطوة = فحص وجود مسار الإشعارات، لا كتابة تحقّق.</b>",
+ ref:"من متطلبات-وتدفق-الطلات — نُقل ٢٢ أغسطس"},
+
+{id:"BUNNYDASH", b:"bunny", app:["console"], tab:"open", sev:"normal", who:"k", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"لوحة بني — تفعيل التفريغ الصوتي وتنبيه الفوترة",
+ d:"<b>بند بيدك من وثيقة المتطلّبات:</b> من لوحة بني — تفعيل <b>التفريغ الصوتي</b> (الترجمة التلقائية للفيديو) + ضبط <b>تنبيه فوترة</b> على الحساب.<br><br>" +
+   "<b>لماذا يهمّ:</b> التفريغ يعطي نصّاً للفيديو (وصولية + مادّة يقرأها جوجل)، والتنبيه يمنع مفاجأة في الفاتورة مع نمو الطلّات.<br><br>" +
+   "<b>⚠️ ما تحقّقت من حالتهما</b> — الإعداد في لوحة بني لا في كودنا، فما أقدر أقرأه. تفتح اللوحة وتقول لي، وأشطب البند.",
+ ref:"من متطلبات-وتدفق-الطلات — نُقل ٢٢ أغسطس"},
+
+{id:"CONTENTTEAM", b:"projects", app:["admin"], tab:"open", sev:"high", who:"k", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"شغل الفريق — أربعة بنود محتوى ومراجعة (نُقلت للّوحة اليوم)",
+ d:"<b>⚠️ هذا ينقض فصلاً ثبّته أنت ٦ أغسطس</b> («شغل الفريق مش هنا» في ذيل اللوحة). نقلته بأمرك اليوم: ملف تاسك واحد. الذيل حُدّث.<br><br>" +
+   "<b>١· مقالان مكرّران بنفس العنوان لجبر سيو — <span style='color:#ef4444'>عاجل</span>:</b> <code>6a6ee349…</code> بانتظار الموافقة و<code>6a60a5dd…</code> قيد الكتابة — نفس العنوان بالحرف ونفس العميل ونفس المحرّر. <b>القرار:</b> أيّهما يبقى، والثاني يُدمج أو يُؤرشف أو يتغيّر عنوانه. <b>لِمَ عاجل:</b> نشرهما معاً = محتوى مطابق على نفس النطاق، وجوجل يختار واحداً ويهمل الثاني.<br><br>" +
+   "<b>٢· عناوين ١٢ عميلاً ناقصة</b> — من ٢٩. <b>أربعة بلا أي عنوان:</b> Dream to App · جبر سيو · كيما زون · متجر باقتك. من <code>/clients/[id]/edit</code> ← بيانات العنوان ← حفظ ← إعادة توليد السيو. العنوان يقوّي الظهور المحلّي.<br><br>" +
+   "<b>٣· مراجعة خبير سيو لكلمات الصفحة الرئيسية</b> بعد النشر.<br><br>" +
+   "<b>٤· إقفال قرارات جلسة الفريق — ٧ من ١١ مفتوحة.</b> نصّها في <code>نقاش-فريق-المحتوى.html</code> <span style='opacity:.6'>(حُذف بعد النقل — محتواه هنا)</span> القسم ٣.",
+ ref:"٦ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"SEO52", b:"seo", app:["modonty"], tab:"open", sev:"high", who:"c", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"جرد سيو ٥٢ صفحة — أعلى عشرة إصلاحات بالأثر",
+ d:"<b>كان في:</b> <code>نتائج-الطلات-والسيو.html</code> <span style='opacity:.6'>(حُذف بعد النقل — محتواه هنا)</span> القسم الثاني (١٨ أغسطس).<br><br>" +
+   "<b>١·</b> إضافة الحجز · المتجر · مدونتي · الموثوقية · الفريق · القصة إلى <code>sitemap.ts</code> — اثنتان منها صفحتا مال، والحجز مربوط من موضعين فقط.<br>" +
+   "<b>٢·</b> تصحيح <code>wordCount</code> — رقم كاذب مثبَّت على قالب يخدم ١١٧ رابطاً.<br>" +
+   "<b>٣·</b> حلّ تضارب معرّف المستشفى — معرّف واحد لا يصحّ أن يعني كيانين.<br>" +
+   "<b>٤·</b> حسم وسوم اللغة: روابط منفصلة حقيقية أو حذفها — ~٢٠٠ صفحة تحملها بلا أثر.<br>" +
+   "<b>٥·</b> وسوم المشاركة الأربعة على السبع الخالية (الحجز والمتجر أوّلاً) — كل مشاركة اليوم بلا صورة ولا عنوان.<br>" +
+   "<b>٦·</b> إصلاح <code>/trending</code> — في الخريطة وترسم ١٣٨ حرفاً.<br>" +
+   "<b>٧·</b> حجب <code>/audio</code> أو بناؤها — <b>ملاحظة: بُنيت فعلاً ورُفع عنها الـnoindex في ٢٠–٢٢ أغسطس، فالبند غالباً مغلق.</b><br>" +
+   "<b>٨·</b> تعريب <code>/authors/[slug]</code> + عقدة شخص — عنوان ووصف إنجليزيان على موقع عربي.<br>" +
+   "<b>٩·</b> إصلاح تكرار البراند في العنوان («مدونتي | مدونتي») + تعريب عنوان صفحة الشريك («From Google to Growth»).<br>" +
+   "<b>١٠·</b> صورة واحدة بأولوية عالية على الرئيسية.<br><br>" +
+   "<b>⚠️ حدود الجرد بنصّ الوثيقة:</b> كل القياسات من سيرفر التطوير لا الإنتاج · أوزان الجافاسكربت ليست وزن الإنتاج · الصفحات الفاضية قد تكون فاضية ببيانات المحلي لا بالكود. <b>يُعاد القياس على الإنتاج قبل الحكم على أي بند.</b>",
+ ref:"١٨ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"GEOAEO", b:"seo", app:["modonty"], tab:"open", sev:"normal", who:"c", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"بقايا فحص الظهور في محرّكات الإجابة — يُعاد فرزها قبل العمل",
+ d:"<b>كان في:</b> <code>فحص-الظهور-في-الذكاء-الاصطناعي.html</code> <span style='opacity:.6'>(حُذف بعد النقل — محتواه هنا)</span> (١٤ يوليو).<br><br>" +
+   "<b>الحالة المقيسة:</b> الملف يحمل <b>٣٠ وسم «أُصلح»</b> و<b>٤ «مؤجل»</b> — أي أن أغلبه أُغلق فعلاً في يوليو (فاحص robots · حجب الزواحف عن <code>/api/</code> و<code>/users/</code> · قياس زيارات محرّكات الإجابة في GA4).<br><br>" +
+   "<b>ما زال معنوناً كنقص:</b> <code>llms.txt</code> ملف ميت · لا سكور «جاهزية الإجابة» · تقريرا الأداء التوليدي لا يُسحبان + كود ميت · ن١١ صفحات العملاء تُقدَّم فقيرة · ن١٢ الفئات والوسوم والصناعات بصفر سكيما · ن١٣ hreflang يُستبدل لا يُورَّث · ن١٤ لا RSS · ن١٥ سايت ماب الصور ينشر أقل مما يعد · ن١٦ <code>ai-plugin.json</code> أثر قديم مضلّل · ن١٧ هوية المؤلف مزدوجة.<br><br>" +
+   "<b>🔴 لا يُعمل بهذه القائمة كما هي:</b> عمرها شهر وجرد ١٨ أغسطس (بند <code>SEO52</code>) أحدث منها ويتقاطع معها. <b>أوّل خطوة = فرز البنود الباقية ضدّ الكود الحالي</b>، ثم تُفتح بنوداً مستقلّة.",
+ ref:"١٤ يوليو ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"REELS56", b:"projects", app:["console","admin"], tab:"open", sev:"normal", who:"k", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"٥٦ طلّة واقفة ما اختارها أحد — قرارك",
+ d:"<b>الخلفية:</b> علامة «تطلع في الطلّات» كانت مؤشَّرة تلقائياً وقت الرفع، فصارت ٥٦ صورة معرض لأربعة عملاء طلّاتٍ <b>بلا أن يقصدها العميل ولا نحن</b>.<br><br>" +
+   "<b>✅ ثلاثة من قرارات الملف أُغلقت بالكود — متحقَّق:</b><br>" +
+   "<b>ق١</b> العلامة صارت لكل صورة ومطفأة افتراضياً: <code>inReels Boolean @default(false)</code> (<code>shared/prisma/schema/schema.prisma:1563</code>)، وتعليق السكيما عند <code>:1555</code> ينصّ أن المعرض والطلّات مفتاحان مستقلّان.<br>" +
+   "<b>ق٢</b> شاشة الاعتماد في الأدمن مبنيّة: <code>admin/app/(dashboard)/reels/components/reels-approval-list.tsx</code> + <code>actions/reel-approval.ts</code>.<br>" +
+   "<b>ق٤</b> صفحة الطلّات على مدونتي نُشرت (٢٠ أغسطس).<br><br>" +
+   "<b>الباقي عليك — ق٣: مصير الـ٥٦.</b> توصية الملف: <b>ترفضها كلها ونبدأ من نظيف</b> — ما أحد اختارها أصلاً، وبعد ق١ يرجع العميل يختار ما يبغاه فعلاً. البديل: مراجعتها واحدة واحدة.<br><br>" +
+   "<b>وق٥ معك كذلك — كيف تشتغل شاشة الاعتماد يومياً؟</b> (أ) وحدة وحدة مع تعديل النص <i>— التوصية، لأن العدد يقلّ كثيراً بعد ق١</i> · (ب) تختار عدّة وتوافق مرّة (أسرع، لكن النصّ ما يُراجَع) · (ج) الاثنان في نفس الشاشة.<br><br>" +
+   "<b>⚠️ الرقم ٥٦ من الملف (١٤ أغسطس)، ولم أُعِد عدّه على القاعدة اليوم</b> — يُعاد العدّ قبل أي رفض جماعي.",
+ ref:"١٤ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"WHEEL", b:"ideas", app:["modonty"], tab:"open", sev:"idea", who:"k", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"💡 عجلة الحظ واكتشف الفروقات — أربعة أشياء تُحسم قبل أي كود",
+ d:"<b>الحالة:</b> فكرة مسجَّلة ١٧ أغسطس · <b>لم تُعتمد</b> · صفر كود.<br><br>" +
+   "<b>١·</b> شروط الاشتراك والأهلية — مَن يحقّ له · مرّة كم · حساب مطلوب؟ <i>(قلت: «نتّفق عليها بعدين»)</i><br>" +
+   "<b>٢·</b> قيمة الجائزة وطريقة الصرف (تحويل · قسيمة · شهر اشتراك للشريك؟) والسقف الشهري.<br>" +
+   "<b>٣·</b> نسبة الظهور ومكان اللعبة (<code>/modonty</code> أوّلاً؟) ومدّة الحملة.<br>" +
+   "<b>٤·</b> الوضع النظامي — بعد التحقّق من متطلّبات وزارة التجارة.<br><br>" +
+   "<b>وثلاثة تُحسم قبل أي كود:</b><br>" +
+   "<b>نظامي·</b> الجوائز والمسابقات الترويجية في السعودية قد تحتاج ترخيصاً أو إشعاراً لوزارة التجارة وشروطاً على الإعلان. <b>غير متحقَّق — يُراجَع في المصدر الرسمي قبل الاعتماد.</b><br>" +
+   "<b>تلاعب·</b> الريفرش المتكرّر والبوتات وتعدّد الحسابات — الحلّ في التصميم: السحب على السيرفر · تذكرة لكل فوز · حدّ لكل زائر/جوّال/يوم · سقف جوائز.<br>" +
+   "<b>تكلفة·</b> ٥٠ ريالاً × عدد الفائزين — تُضبط بنسبة الظهور والسقف الشهري، وتُقاس بعد أوّل أسبوع.<br><br>" +
+   "<b>البنية القريبة موجودة:</b> السحب العشوائي على السيرفر في لوحة <code>/modonty</code>.",
+ ref:"١٧ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"PARTNERPAGE", b:"projects", app:["modonty","console"], tab:"open", sev:"high", who:"k", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"صفحة الشريك الجديدة — سبعة قرارات تنتظرك قبل أي كود",
+ d:"<b>الحالة:</b> الفكرة والموكب جاهزان · <b>صفر كود</b> · لا يبدأ التنفيذ إلا باعتماد صريح.<br><br>" +
+   "<b>كانتا في:</b> <code>فكرة-صفحة-الشريك.html</code> <span style='opacity:.6'>(حُذف بعد النقل — محتواه هنا)</span> (الفكرة والقرارات) · <code>موكب-صفحة-الشريك.html</code> <span style='opacity:.6'>(حُذف بعد النقل — محتواه هنا)</span> (موكب v4 — د. علاء الدين بدوي).<br><br>" +
+   "<b>الفكرة في سطر:</b> واجهة محلّ بثلاثة أعمدة (نظام <code>/modonty</code>) بدل التمريرة الطويلة، مع قوالب لكل شريك ونطاق فرعي باسمه.<br><br>" +
+   "<b>القرارات السبعة — كلٌّ ومعه توصيتي:</b><br>" +
+   "<b>١·</b> الشكل: ثلاثة أعمدة وحذف التمريرة الطويلة؟ <i>توصيتي: نعم — العمق موجود في الصفحات الفرعية أصلاً.</i><br>" +
+   "<b>٢·</b> أوّل شاشة: أيّ زرّين؟ <i>توصيتي: واتساب + احجز موعداً (الموقع الخارجي زرّ ثانوي).</i><br>" +
+   "<b>٣·</b> شريط الحقائق فيه التقييم — ونظام التقييم لم يُبنَ بعد (بند <code>PREV</code>). <i>توصيتي: نُبقيه مكاناً ويظهر عند أوّل رأي.</i><br>" +
+   "<b>٤·</b> القوالب: قالبان أوّل مرة (المتجر · المكتب) والثالث لاحقاً كميزة باقة؟<br>" +
+   "<b>٥·</b> اللون: من هوية الشريك أم لون مدونتي للجميع؟ <i>توصيتي: لون واحد من هويته بشرط التباين.</i><br>" +
+   "<b>٦·</b> النطاق الفرعي: مرآة بـcanonical على المسار (أ) أم مستقلّ (ب)؟ ومَن يحقّ له؟ <i>توصيتي: أ.</i><br>" +
+   "<b>٧·</b> الترتيب: تبدأ صفحة الشريك قبل <code>/trust</code> و<code>/about</code>؟ <i>توصيتي: نعم — أعلى صفحة قيمة للشريك الذي يدفع.</i>",
+ ref:"١٧ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
+{id:"PARTNERSITE", b:"projects", app:["console","modonty"], tab:"open", sev:"normal", who:"c", date:"٢٢ أغسطس ٢٠٢٦",
+ t:"بانِي موقع الشريك — المتبقّي بعد ما شُحن الأساس",
+ d:"<b>🔴 الوثيقة تخالف الكود — الأهمّ في البطاقة:</b> <code>باني-موقع-الشريك.html</code> <span style='opacity:.6'>(حُذف بعد النقل — محتواه هنا)</span> تقترح جدول <code>PageTemplate</code> وحقلَي <code>templateId</code>/<code>themeSettings</code>. <b>الذي شُحن مختلف:</b> نموذج <code>ClientSite</code> (<code>shared/prisma/schema/schema.prisma:739-753</code>) فيه <code>headerTemplate</code> · <code>footerTemplate</code> · <code>primaryColor</code> · <code>hiddenSections</code> · <code>subdomain</code>. <b>صفر أثر لـ<code>PageTemplate</code> أو <code>templateId</code> في السكيما</b> (مقيس بالبحث). فالوثيقة مرجع تاريخي للفكرة، لا مواصفة تُنفَّذ حرفياً.<br><br>" +
+   "<b>المشحون فعلاً على <code>modonty-ui</code> (مقيس):</b> <code>console/app/(dashboard)/dashboard/my-site/</code> (page · actions · components · helpers) · <code>shared/lib/partner-site/</code> · <b>٥ قوالب هيدر</b> (classic · centered · pill · transparent · utility) و<b>٤ قوالب فوتر</b> (columns · brand · centered · simple) في <code>shared/components/partner-site/free/</code>.<br><br>" +
+   "<b>المتبقّي من خطة الوثيقة:</b><br>" +
+   "<b>٣ب·</b> نقل الغلاف والشعار وزرّ الطلب إلى يد الشريك.<br>" +
+   "<b>٣ج·</b> جاهزية الموقع بلغة نتيجة + توجيه الوصف + التسميات.<br>" +
+   "<b>٤·</b> المعاينة بالتوكن (draft) على مدونتي — «المعاينة = الموقع بعد الحفظ حرفياً».<br>" +
+   "<b>٦·</b> مسار القالب البريميوم (يحتاج قرار: جدول كتالوج ولّا نكمّل بمنطق الهيدر/الفوتر الحالي).<br><br>" +
+   "<b>النطاق الفرعي:</b> بند <code>SUBDOM</code> منفصل.",
+ ref:"١٧ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"},
+
 {id:"PREV", b:"projects", app:["console","admin","modonty"], tab:"open", sev:"high", who:"k", date:"١٧ أغسطس ٢٠٢٦",
  t:"⏸ نظام الثقة والتقييمات — «هدية من مدونتي» + تقييمات الزوّار للشركاء (بعد الريفاكتور)",
  d:"<b>الحالة:</b> الرؤية والفلو والشاشات متّفق عليها · <b>صفر كود</b> · مؤجَّل بقرار خالد (١٧ أغسطس): «نخلص أوّل حاجة الريفاكتور العام لمدونتي، بعدها نرجع للمزايا هذي».<br><br>" +
-   "<b>الوثيقة الواحدة — كل ما يخصّ الفكرة:</b> <a href='../idea/trust-reviews-idea.html' target='_blank'>documents/idea/trust-reviews-idea.html</a> — المقدّمة تشرح الفكرة كاملة، النوعان جنباً لجنب، نصوص جوجل، المقترحات، شاشات «هدية من مدونتي» الثلاث والنموذج (٤ب/٤ج)، المحرّك الواحد، خارطة الطريق A→E، والقرارات السبعة.<br><br>" +
+   "<b>الوثيقة الواحدة — كل ما يخصّ الفكرة:</b> <code>فكرة-الثقة-والتقييمات.html</code> <span style='opacity:.6'>(حُذف بعد النقل — محتواه هنا)</span> — المقدّمة تشرح الفكرة كاملة، النوعان جنباً لجنب، نصوص جوجل، المقترحات، شاشات «هدية من مدونتي» الثلاث والنموذج (٤ب/٤ج)، المحرّك الواحد، خارطة الطريق A→E، والقرارات السبعة.<br><br>" +
    "<b>الفكرة في سطرين:</b> نوعان من التقييم — الشريك يقيّم مدونتي (ثقة للمبيعات؛ بلا نجوم جوجل لأنها تقييم الكيان لنفسه) · الزائر يقيّم الشريك (نجوم جوجل؛ <b>مبنيّ بالكود من قبل</b> — <code>ClientReview</code> <code>schema.prisma:1942</code> — لكنه فاضٍ: صفر معتمد/٣٠ شريكاً). محرّك واحد «هدية من مدونتي»: هدية (شهر · مقال · أخرى) + مطلوب مقابلها (تقييم · فيديو · اجمع تقييمات عملائك · بلا مقابل) + اختيار الشركاء من الأدمن → البطاقة للمدعوّين فقط → اعتماد عندنا → منح → الأصول (مدونتي · بني/سوشيال · صفحة الشريك).<br><br>" +
    "<b>اكتشاف سيو يحسم أوّل خطوة:</b> الشريك يعتمد تقييماته عن نفسه من الكونسول (<code>console/.../client-reviews/actions/client-review-actions.ts:51</code>) — ونصّ جوجل (Review snippet، جُلب ١٧ أغسطس): «If the entity that's being reviewed controls the reviews about itself … ineligible for star review feature». <b>الخطوة A:</b> نقل الاعتماد إلى الأدمن قبل أي جمع.<br><br>" +
-   "<b>عند الاستئناف:</b> اقفل القرارات السبعة (القسم ٧ في الوثيقة ١) ثم A→B→C→D→E، كل مرحلة تاسك يُتحقَّق منه حيّاً.",
+   "<b>القرارات السبعة التي تنتظرك — كلٌّ ومعه توصيتي:</b><br>" +
+   "<b>١·</b> نقل اعتماد تقييمات الزوّار من الكونسول إلى الأدمن (الشريك يردّ ويبلّغ فقط). <i>توصيتي: نعم</i><br>" +
+   "<b>٢·</b> الترتيب A→B→C→D→E (تقييمات جوجل أوّلاً) أم الهدية أوّلاً؟ <i>توصيتي: A أوّلاً</i><br>" +
+   "<b>٣·</b> «اجمع تقييمات عملائك» مطلباً ثالثاً في الهدية. <i>توصيتي: نعم</i><br>" +
+   "<b>٤·</b> سطر الإفصاح تحت تقييمات الشركاء لمدونتي. <i>توصيتي: نعم، صغيراً</i><br>" +
+   "<b>٥·</b> تقييم الشريك لمدونتي يُعرض شفّافاً (كل معتمد حتى المنخفض؛ الرفض للإساءة فقط). <i>توصيتي: شفّاف</i><br>" +
+   "<b>٦·</b> مكان بطاقة الهدية في الكونسول: رئيسية <code>/dashboard</code> + سجلّ في الإعدادات. <i>توصيتي: نعم</i><br>" +
+   "<b>٧·</b> تنبيهات: تيليجرام للأدمن على كل جديد + إشعار للشريك عند الاعتماد/المنح. <i>توصيتي: نعم</i><br><br>" +
+   "<b>عند الاستئناف:</b> اقفل السبعة أعلاه ثم A→B→C→D→E، كل مرحلة تاسك يُتحقَّق منه حيّاً.",
  ref:"١٧ أغسطس ٢٠٢٦"},
 
 {id:"ADM-AUTH-IMG", b:"projects", app:["admin"], tab:"open", sev:"normal", who:"c",
@@ -1809,7 +2080,7 @@ const TASKS = [
 
 {id:"JC1", b:"ca", app:["dataLayer"], tab:"done", sev:"high", who:"c", date:"٨ أغسطس", ref:"أُنجز",
  t:"✅ ١ · النماذج — <code>SiteSettings</code> و<code>LandingSection</code> في dataLayer",
- d:"<b>المصدر:</b> <code>jbrseo.com/prisma/schema.prisma:10</code> (SiteSettings) و<code>:86</code> (LandingSection) — تُنسخ كما هي بنفس <code>@@map</code> فتشير للمجموعات القائمة.<br>" +
+ d:"<b>كان في:</b> <code>jbrseo.com/prisma/schema.prisma:10</code> (SiteSettings) و<code>:86</code> (LandingSection) — تُنسخ كما هي بنفس <code>@@map</code> فتشير للمجموعات القائمة.<br>" +
    "<b>بلا <code>Plan</code> ولا <code>PriceSectionMeta</code></b> — خارج النطاق (JBR11).<br>" +
    "<b>⚠️ الترتيب إلزامي:</b> اقتل node ← <code>pnpm prisma:generate</code> ← أعد التشغيل.<br>" +
    "<b>الدليل:</b> قراءة صفّ حقيقي من <code>modonty_dev</code> عبر عميل مودونتي — يثبت أنّ الجدول نفسه لا نسخة جديدة." +
@@ -1818,7 +2089,7 @@ const TASKS = [
 
 {id:"JC2", b:"ca", app:["admin"], tab:"done", sev:"high", who:"c", date:"٨ أغسطس", ref:"أُنجز",
  t:"٢ · نسخ صفحة إدارة المحتوى — منقّاة من الأسعار",
- d:"<b>المصدر:</b> أربعة ملفات في <code>jbrseo.com/app/admin/(dashboard)/review/</code> — <code>page.tsx</code> (٢١ك) · <code>ReviewClient.tsx</code> · <code>EditFieldButton.tsx</code> · <code>EditArrayButton.tsx</code>.<br>" +
+ d:"<b>كان في:</b> أربعة ملفات في <code>jbrseo.com/app/admin/(dashboard)/review/</code> — <code>page.tsx</code> (٢١ك) · <code>ReviewClient.tsx</code> · <code>EditFieldButton.tsx</code> · <code>EditArrayButton.tsx</code>.<br>" +
    "<b>الوجهة:</b> <code>admin/app/(dashboard)/jbr-seo/content/</code>.<br>" +
    "<b>التنقية:</b> يُحذف استيراد <code>getAllPlansIncludingHidden</code> وكل مجموعة تعرض بيانات الباقات — الواجهة تبقى كما هي في كل ما عداها.<br>" +
    "<b>الدليل:</b> <code>tsc</code> صفر أخطاء · صفر ذكر لـ<code>Plan</code> في الملفات المنسوخة." +
@@ -1827,7 +2098,7 @@ const TASKS = [
 
 {id:"JC3", b:"ca", app:["admin"], tab:"done", sev:"high", who:"c", date:"٨ أغسطس", ref:"أُنجز",
  t:"٣ · الأكشنز — الحفظ في نفس الجداول",
- d:"<b>المصدر:</b> <code>jbrseo.com/app/actions/content-sections.ts</code> + دوال القراءة من <code>landing.ts</code>.<br>" +
+ d:"<b>كان في:</b> <code>jbrseo.com/app/actions/content-sections.ts</code> + دوال القراءة من <code>landing.ts</code>.<br>" +
    "<b>يُستبعد:</b> الفرع الذي يكتب في <code>prisma.plan</code> (<code>content-sections.ts:141</code>).<br>" +
    "<b>يُضاف بمعايير الأدمن:</b> <code>auth()</code> قبل كل كتابة · <code>revalidatePath</code> بعدها — الأصل في جبر سيو قد لا يحملهما.<br>" +
    "<b>الدليل:</b> حفظ حقل واحد ثم قراءته من القاعدة يرجع القيمة الجديدة." +
@@ -2239,7 +2510,7 @@ const TASKS = [
 },
 {id:"CAP", b:"ca", app:["admin","console"], tab:"ref", sev:"high", who:"c", ref:"٩ أغسطس",
  t:"📋 المعاينة — الروابط والمفاتيح وما بقي قبل الدمج",
- d:"<b>الفرع <code>client-articles</code> · الكوميت <code>deb8452</code>. الملف الكامل: <code>documents/tasks/CLIENT-ARTICLES-PREVIEW.md</code>.</b><br><br>" +
+ d:"<b>الفرع <code>client-articles</code> · الكوميت <code>deb8452</code>. الملف الكامل: بند <code>CAMERGE</code>.</b><br><br>" +
    "<b>روابط المعاينة (تتغيّر مع كل دفعة):</b><br>" +
    "· الأدمن <code>modonty-admin-ld8cvhktp-modonty-72c2a2ca.vercel.app</code><br>" +
    "· الكونسول <code>modonty-console-nmdyr41dc-modonty-72c2a2ca.vercel.app</code><br>" +
@@ -2432,7 +2703,12 @@ const TASKS = [
 
 {id:"UX", b:"projects", app:["modonty"], tab:"open", sev:"normal", who:"k",
  t:"Refactor الواجهة الكامل لمودونتي",
- d:"ملفه الوحيد <code>MODONTY-UIUX-REFACTOR-v1.html</code> — وفيه بنود «مدوّنتي ليس شريكاً» الأربعة ومسار الأداء <code>PERF-0→4</code>.<br><b>تلك رموز داخل ذلك الملف، مش بنوداً في هذه اللوحة</b> — تتقسّم بنوداً هنا يوم نقرّر نبدأ.",
+ d:"<b>بنود «مدوّنتي ليس شريكاً» الأربعة</b> (نُقلت هنا نصّاً ٢٢ أغسطس، والملف حُذف). الأساس جاهز: <code>getCoreClientId()</code> و<code>isCoreClient(id)</code> في <code>dataLayer/lib/core-client.ts</code>.<br><br>" +
+   "<b>١·</b> <code>/clients</code> — استثناء مدوّنتي من قائمة الشركاء (صفحتها تبقى مفتوحة — قرار مقفول).<br>" +
+   "<b>٢·</b> صفحات التصنيف والوسم والصناعة — مدوّنتي لا تُعدّ ولا تُعرض «كشركة شريكة» في العدّادات وقوائم كروت الشركات (مقالاتها تظهر عادي).<br>" +
+   "<b>٣·</b> الكارت المميّز — مقال مدوّنتي في الفيد الرئيسي بتصميم يميّزه عن مقالات العملاء.<br>" +
+   "<b>٤·</b> تست حيّ: الرئيسية + الشركاء + صفحة تصنيف — مدوّنتي مميّزة لا مُدرَجة.<br><br>" +
+   "<b>ونطاق الريفاكتور الكامل</b> كان فاضياً عمداً في الملف — يُبنى بريفه يوم ننطلق.",
  ref:"مسار مستقل"},
 
 {id:"34", b:"projects", app:["admin"], tab:"open", sev:"normal", who:"k",
@@ -2495,7 +2771,7 @@ const TASKS = [
    "<code>articles/components/image-gallery-manager.tsx</code> · <code>transform-article-to-form-data.ts</code> · " +
    "<code>client-galleries/helpers/load-galleries.ts</code> · وثلاثة مسارات سير عمل المقال.<br><br>" +
    "<b>ملاحظة على القياس:</b> <code>grep</code> على سطر <code>bunnyUrl</code> يعطي نتيجة كاذبة حين يقع المفتاح في السطر التالي — <b>المترجم وحده هو الحَكَم</b>، لا البحث النصّي.<br><br>" +
-   "<b>📄 التقرير المرجعي:</b> <code>documents/tasks/reports/BL2-blur-inventory-2026-08-07.md</code>",
+   "<b>📄 حصيلة الجرد</b> (كانت في تقرير حُذف ٢٢ أغسطس بعد إقفال البند): <code>pnpm tsc --noEmit</code> بعد جعل <code>blurDataURL</code> إلزامياً في <code>dataLayer/lib/media-src.ts:33</code> كشف <b>مودونتي ٩٩ خطأ في ٤٧ ملفاً · الأدمن ٨٣ في ٤١ · الكونسول صفر</b> — أي ١٨٢ موضعاً كان يُسقط الضبابة صامتاً.",
  ref:"بند ٦٥b"},
 
 {id:"BL3", b:"projects", app:["admin"], tab:"done", sev:"high", who:"c", date:"٦ أغسطس",
@@ -2606,7 +2882,7 @@ const TASKS = [
 
    "<hr style='border:0;border-top:1px solid var(--line);margin:10px 0'>" +
    "<h4 style='margin:0 0 6px'>الجرد الأصلي</h4>" +
-   "<b>ليش نبنيه</b> (قرار خالد ٦ أغسطس): تنظيم الكود قبل ريفاكتور شامل، وبوّابة واحدة للسياسات القادمة معالريلز والقصص — <b>لا</b> لمنع التسرّب، ذاك حارسه بند <code>BL2</code>.<br><br><b>الجرد — متحقَّق ٦ أغسطس بعدّ فعلي على المستودع:</b><br>① <b>التشتّت:</b> مودونتي ٤٨ ملفاً تستورد <code>next/image</code> مباشرة · ٢٤ تستخدم <code>OptimizedImage</code> · ٣ تخلط الاثنين. و<code>fullOptmizeImage.tsx</code> <b>صفر مستهلك — كود ميّت</b> (سُجّل تحت بند <code>40</code>).<br>② <b>الحدّ العميل:</b> ١٦ مكوّن عميل مقابل <b>٣٢ سيرفر</b> ← المكوّن <b>لازم يكون سيرفر</b>، وإلا كرّرنا فخّ <code>65b</code>.<br>③ <b><code>onError</code> غير مستعمل على أي صورة</b> — المطابقات كانت أيقونات باسم <code>IconError</code>. فلا يوجد ما يجبرنا على مكوّن عميل. <b>هذي النقطة هي التي تجعل الخطة ممكنة أصلاً.</b><br>④ <b>الخصائص المطلوبة بالعدّ:</b> <code>sizes</code> ٥٤ · <code>fill</code> ٤٧ · <code>width/height</code> ٢٦ · <code>priority</code> ١٦ · <code>style</code> ٦ · <code>loading</code> ٥ · <code>quality</code> ٤ · <code>fetchPriority</code> ٤ · <code>unoptimized</code> ٣ · <code>placeholder</code> ٢.<br>⑤ <b>المصدر:</b> ٣٠ ملفاً عبر <code>mediaSrc</code> · <b>صفر رابط خارجي مكتوب يدوياً</b> — كل الصور من القاعدة، فالمكوّن يقدر يستقبل صفّ الوسائط كاملاً.<br>⑥ <b>واجهة <code>OptimizedImage</code> الحالية مكتملة فعلاً</b> (١٨ خاصية فيها <code>preload</code> و<code>fetchPriority</code> و<code>loader</code> و<code>overrideSrc</code> و<code>itemProp</code>) — نبني عليها لا نخترع غيرها.<br>⑦ <b>ما يجب استبعاده:</b> <code>optimizeCloudinaryUrl</code> بالكامل — يحقن <code>d_article-placeholder-default</code> وهو بند <code>65</code> المفتوح لحذفه. المكوّن الجديد يُبنى على بني من أول يوم.<br>⑧ <b>قصّات بني</b> (<code>bunnyAspectUrl</code> · <code>__16x9</code>) تُستعمل في <code>lib/seo/image-aspect-ratios.ts</code> للجيسون-إل-دي لا للعرض — فالمكوّن لا يلمسها.<br>⑨ <b>الحزمة:</b> <code>@modonty/database</code> تصدّر مصدر TS مباشرة (<code>main: ./index.ts</code>)، والكونسول يستورد منها اليوم بلا <code>transpilePackages</code> — فالمسار مثبت. لكن <code>next</code> ليست تبعية فيها ← تُضاف <code>peerDependency</code> صريحة.<br><br><b>═══ تدقيق التغطية — ٦ أغسطس ═══</b><br>الجرد الأول مسح <code>app/</code> و<code>components/</code> فقط وامتداد <code>.tsx</code> وحده، فأُعيد المسح على <b>٦٩٥ ملفاً — المستودع كله وكل الامتدادات</b>:<br>• <b>ملفات تستورد <code>next/image</code> أو <code>OptimizedImage</code> وفاتت الجرد: صفر.</b><br>• وسم <code>&lt;img&gt;</code> خام غير مسجَّل: واحد — <code>lib/email/templates/base.ts</code>، وهو <b>قالب بريد</b>؛ الإيميل لا يعرف <code>next/image</code> فالوسم الخام هو الصحيح فيه. استثناء مشروع لا نقص.<br>• <code>background-image</code> في ٥ ملفات — <b>فُحصت واحداً واحداً وكلها تدرّجات لونية لا صور</b> (نقاط زخرفية · توهّج شعاعي · خطوط مائلة)، صفر <code>url()</code> يشير لملف.<br><b>النتيجة: ٧٠ ملفاً هي كل ما يعرض صورة حقيقية في مودونتي، وكلها ممثَّلة في البطاقات <code>MI2a</code>…<code>MI2i</code> (٧٢ صندوقاً — <code>trust/page.tsx</code> في بطاقتين لأنه يجمع الطريقتين).</b><br><br><b>خطآن في القياس صُحّحا:</b> ① العدّ الأول أعطى «صفر صورة» لسبعة ملفات لأنها تستورد باسم <code>NextImage</code> لا <code>Image</code> — المجموع الحقيقي <b>١٠٧ نداء صورة</b>. ② قلتُ «صفر وسم خام» لأن البحث كان <code>&lt;img </code> بمسافة والوسوم متعدّدة الأسطر فاتته — الحقيقة اثنان مرسومان فعلاً.",
+   "<b>ليش نبنيه</b> (قرار خالد ٦ أغسطس): تنظيم الكود قبل ريفاكتور شامل، وبوّابة واحدة للسياسات القادمة معالريلز والقصص — <b>لا</b> لمنع التسرّب، ذاك حارسه بند <code>BL2</code>.<br><br><b>الجرد — متحقَّق ٦ أغسطس بعدّ فعلي على المستودع:</b><br>① <b>التشتّت:</b> مودونتي ٤٨ ملفاً تستورد <code>next/image</code> مباشرة · ٢٤ تستخدم <code>OptimizedImage</code> · ٣ تخلط الاثنين. و<code>fullOptmizeImage.tsx</code> <b>صفر مستهلك — كود ميّت</b> (سُجّل تحت بند <code>40</code>).<br>② <b>الحدّ العميل:</b> ١٦ مكوّن عميل مقابل <b>٣٢ سيرفر</b> ← المكوّن <b>لازم يكون سيرفر</b>، وإلا كرّرنا فخّ <code>65b</code>.<br>③ <b><code>onError</code> غير مستعمل على أي صورة</b> — المطابقات كانت أيقونات باسم <code>IconError</code>. فلا يوجد ما يجبرنا على مكوّن عميل. <b>هذي النقطة هي التي تجعل الخطة ممكنة أصلاً.</b><br>④ <b>الخصائص المطلوبة بالعدّ:</b> <code>sizes</code> ٥٤ · <code>fill</code> ٤٧ · <code>width/height</code> ٢٦ · <code>priority</code> ١٦ · <code>style</code> ٦ · <code>loading</code> ٥ · <code>quality</code> ٤ · <code>fetchPriority</code> ٤ · <code>unoptimized</code> ٣ · <code>placeholder</code> ٢.<br>⑤ <b>كان في:</b> ٣٠ ملفاً عبر <code>mediaSrc</code> · <b>صفر رابط خارجي مكتوب يدوياً</b> — كل الصور من القاعدة، فالمكوّن يقدر يستقبل صفّ الوسائط كاملاً.<br>⑥ <b>واجهة <code>OptimizedImage</code> الحالية مكتملة فعلاً</b> (١٨ خاصية فيها <code>preload</code> و<code>fetchPriority</code> و<code>loader</code> و<code>overrideSrc</code> و<code>itemProp</code>) — نبني عليها لا نخترع غيرها.<br>⑦ <b>ما يجب استبعاده:</b> <code>optimizeCloudinaryUrl</code> بالكامل — يحقن <code>d_article-placeholder-default</code> وهو بند <code>65</code> المفتوح لحذفه. المكوّن الجديد يُبنى على بني من أول يوم.<br>⑧ <b>قصّات بني</b> (<code>bunnyAspectUrl</code> · <code>__16x9</code>) تُستعمل في <code>lib/seo/image-aspect-ratios.ts</code> للجيسون-إل-دي لا للعرض — فالمكوّن لا يلمسها.<br>⑨ <b>الحزمة:</b> <code>@modonty/database</code> تصدّر مصدر TS مباشرة (<code>main: ./index.ts</code>)، والكونسول يستورد منها اليوم بلا <code>transpilePackages</code> — فالمسار مثبت. لكن <code>next</code> ليست تبعية فيها ← تُضاف <code>peerDependency</code> صريحة.<br><br><b>═══ تدقيق التغطية — ٦ أغسطس ═══</b><br>الجرد الأول مسح <code>app/</code> و<code>components/</code> فقط وامتداد <code>.tsx</code> وحده، فأُعيد المسح على <b>٦٩٥ ملفاً — المستودع كله وكل الامتدادات</b>:<br>• <b>ملفات تستورد <code>next/image</code> أو <code>OptimizedImage</code> وفاتت الجرد: صفر.</b><br>• وسم <code>&lt;img&gt;</code> خام غير مسجَّل: واحد — <code>lib/email/templates/base.ts</code>، وهو <b>قالب بريد</b>؛ الإيميل لا يعرف <code>next/image</code> فالوسم الخام هو الصحيح فيه. استثناء مشروع لا نقص.<br>• <code>background-image</code> في ٥ ملفات — <b>فُحصت واحداً واحداً وكلها تدرّجات لونية لا صور</b> (نقاط زخرفية · توهّج شعاعي · خطوط مائلة)، صفر <code>url()</code> يشير لملف.<br><b>النتيجة: ٧٠ ملفاً هي كل ما يعرض صورة حقيقية في مودونتي، وكلها ممثَّلة في البطاقات <code>MI2a</code>…<code>MI2i</code> (٧٢ صندوقاً — <code>trust/page.tsx</code> في بطاقتين لأنه يجمع الطريقتين).</b><br><br><b>خطآن في القياس صُحّحا:</b> ① العدّ الأول أعطى «صفر صورة» لسبعة ملفات لأنها تستورد باسم <code>NextImage</code> لا <code>Image</code> — المجموع الحقيقي <b>١٠٧ نداء صورة</b>. ② قلتُ «صفر وسم خام» لأن البحث كان <code>&lt;img </code> بمسافة والوسوم متعدّدة الأسطر فاتته — الحقيقة اثنان مرسومان فعلاً.",
  ref:"مكوّن الصور"},
 
 {id:"MI1", b:"mediaimg", app:["dataLayer"], tab:"done", sev:"ok", who:"c", date:"٧ أغسطس ٢٠٢٦",
@@ -2907,11 +3183,11 @@ const TASKS = [
 {id:"I1", b:"ideas", app:["modonty"], tab:"idea", sev:"idea", who:"k",
  t:"قوالب جاهزة لصفحة العميل",
  d:"زي سلّة وزد — العميل يختار قالباً يناسب نشاطه، ولاحقاً قوالب مدفوعة كمصدر دخل. <b>أخطر سؤال:</b> تغيير القالب لازم ما يمسّ JSON-LD ولا العناوين.",
- ref:"NEW-IDEAS ١"},
+ ref:"فكرة مسجَّلة ٥ أغسطس"},
 {id:"I3", b:"ideas", app:["modonty"], tab:"idea", sev:"idea", who:"k",
  t:"نطاق فرعي وبريد رسمي لكل عميل",
  d:"🔴 <b>الأثر على السيو هو القرار الأهم:</b> الوضع الحالي يجمّع قوّة النطاق في مكان واحد، والنطاق الفرعي يفصلها وقوقل يعامله كموقع مستقل تقريباً — <b>قد تضرّ هدفنا الأول لو نُفّذت بلا دراسة</b>. و🔴 البريد الرسمي مسؤولية تشغيلية دائمة: سمعة إرسال · SPF/DKIM/DMARC · سبام · دعم. والتحويل أرخص بمراحل من صناديق حقيقية.",
- ref:"NEW-IDEAS ٣"},
+ ref:"فكرة مسجَّلة ٥ أغسطس"},
 
 /* ═════ Done ═════ */
 {id:"L1", b:"deploy", app:["modonty"], tab:"done", sev:"ok", who:"k", date:"٦ أغسطس ٢٠٢٦",
@@ -2922,7 +3198,7 @@ const TASKS = [
 {id:"I2", b:"projects", app:["modonty","console"], tab:"done", sev:"ok", who:"c", date:"٦ أغسطس ٢٠٢٦",
  t:"تبليغ تيليجرام للريلز المنتظرة اعتماداً",
  d:"العميل يرفع ريلاً من الكونسول ← رسالة لقروب المحتوى: مرسل · مستلم · نوع الملف · عدد المنتظر · رابط شاشة الاعتماد. <b>ثلاثة أبواب غُطّيت لا باب واحد:</b> رفع مستقل من صفحة الريلز · علامة على صورة في المعرض · وريل مرفوض عُدِّل فرجع للطابور. <b>وفخّ الطوفان اللي حذّرنا منه انحلّ بلا جدولة ولا حقل جديد:</b> التبليغ يخرج فقط لو ما دخل الطابور شي آخر لنفس العميل في آخر عشر دقائق — والسؤال مُجاب من <code>updatedAt</code> الموجود أصلاً. <b>تست حيّ:</b> ثلاث علامات متتابعة ← رسالة واحدة وصلت فعلاً. والرسالة تنبّه لو الريل بلا عنوان لأنه ما ينعتمد بدونه.",
- ref:"NEW-IDEAS ٢"},
+ ref:"فكرة مسجَّلة ٥ أغسطس"},
 
 {id:"63", b:"deploy", app:["admin"], tab:"done", sev:"ok", who:"c", date:"٦ أغسطس ٢٠٢٦",
  t:"أرشيف نسخ احتياطي ليلي على بني + كرت Atlas المالي",

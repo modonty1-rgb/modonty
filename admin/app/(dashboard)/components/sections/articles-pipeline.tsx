@@ -10,7 +10,7 @@ import { SeoHealthCard } from "../seo-health-card";
 import { BudgetRow, NUM, RAIL } from "../pipeline-row";
 
 /**
- * The article pipeline (contract: admin-dashboard-triage-v2-ui.html).
+ * The article pipeline.
  * Rendered as ranked-strip ROWS — same visual language as "Today — start here"
  * (Khalid 2026-07-23: «بدل كروت، نفس فكرة Start Today») — so the whole page reads
  * as one system. Live stages get a row; empty stages compress into one chip line

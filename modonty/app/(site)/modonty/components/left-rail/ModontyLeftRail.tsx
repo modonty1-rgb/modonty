@@ -15,7 +15,7 @@ interface ModontyLeftRailProps {
 /**
  * modonty's own reels first (Khalid, 2026-08-17: «كرت الريلز ارفعه فوق الصور بدل آراء
  * الشركاء» — the testimonials card went; partner reviews return as the trust system in
- * `documents/idea/trust-reviews-idea.html`), then the pinboard of our article covers.
+ * بند PREV في documents/tasks/TASK.html), then the pinboard of our article covers.
  * Same `ReelsCard` as the homepage; the `/reels` page itself is still to be built (83d).
  * The board draws its eight prints per request, so it streams inside its own `<Suspense>`
  * and the rest of the rail stays in the static shell. About modonty itself → right rail.

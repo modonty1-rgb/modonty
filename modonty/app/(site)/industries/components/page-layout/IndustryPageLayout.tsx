@@ -35,9 +35,8 @@ interface IndustryPageLayoutProps {
  * Right = every field, one click away · center = articles (one field's, or every field's
  * combined) · left = who provides them. Same widths and gaps as `/` and `/clients`.
  *
- * MOBILE (<1240px, redesigned 21 Aug per the approved mockup
- * `documents/idea/industries-mobile-ui.html`, grounded in Baymard/NN/g): identity header
- * (base page) → visual field CARDS with thumbnails and counts → context strip (field
+ * MOBILE (<1240px, redesigned 21 Aug per the approved mockup, grounded in Baymard/NN/g):
+ * identity header (base page) → visual field CARDS with thumbnails and counts → context strip (field
  * page) → feed → partners LOGO GRID (<1024px, where the rail is hidden). Desktop ≥1240px
  * untouched: nav rail + partners rail exactly as before.
  */

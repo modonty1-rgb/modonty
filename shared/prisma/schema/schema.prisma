@@ -3401,7 +3401,7 @@ model CtaPreset {
 // read it and 6 write it. Reel membership rides on top as its own switch instead.
 //
 // There is no `ReelType` any more — image vs video is already in `mimeType`.
-// Study: documents/reels/REELS-ARCHITECTURE-STUDY-v1.html
+// Study: بطاقات بورد «الطلّات» في documents/tasks/TASK.html (الملف حُذف ٢٢ أغسطس بعد نقل محتواه)
 // ============================================
 
 /// How loud a note to the content team is allowed to be.

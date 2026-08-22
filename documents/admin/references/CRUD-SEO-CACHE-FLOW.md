@@ -1,5 +1,7 @@
 # CRUD → SEO Cache Flow
 
+> ⚠️ **تحديث ٢٢ أغسطس ٢٠٢٦:** Cloudinary أُطفئت نهائياً — كل الوسائط على بني.
+
 > مرجع لكل عملية CRUD — ايش يصير للـ SEO Cache بعد كل خطوة
 > آخر تحديث: 2026-04-04
 
@@ -70,7 +72,7 @@ DB Operation → Admin Refresh → Modonty Refresh → Individual SEO → Listin
    ├── نعم → يرفض الحذف + رسالة خطأ
    └── لا → يكمل ↓
        ↓
-1. حذف الصورة من Cloudinary (إن وجدت)
+1. الصورة تبقى في مكتبة الوسائط (لا تُحذف مع الكيان)
        ↓
 2. db.entity.delete()                      ← العنصر يتحذف من DB
        ↓

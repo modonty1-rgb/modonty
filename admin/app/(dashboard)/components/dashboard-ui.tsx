@@ -3,8 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 /**
- * The dashboard's shared visual language (contract: documents/mockups/
- * admin-dashboard-triage-v2-ui.html, approved 2026-07-13).
+ * The dashboard's shared visual language (design approved 2026-07-13).
  *
  * Three tiers, one meaning everywhere on the page:
  *   hot   (red)   — costing money or a client RIGHT NOW

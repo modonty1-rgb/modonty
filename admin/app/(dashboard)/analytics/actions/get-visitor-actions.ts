@@ -5,7 +5,7 @@ import { runReport } from "@/lib/analytics/ga4-data-api";
 import { getBookPageOpens, getBookingFunnel, getWhatsappClicks } from "@/lib/analytics/book-funnel";
 
 /**
- * Visitor Actions card row — approved mockup: documents/mockups/admin-visitor-actions-v1.html
+ * Visitor Actions card row.
  *
  * Our DB carries the headline number (it is the actionable one: name, phone, status).
  * GA4 stays the traffic signal — it still owns visitors/sessions.

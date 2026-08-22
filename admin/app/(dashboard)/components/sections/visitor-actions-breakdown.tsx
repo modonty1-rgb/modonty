@@ -7,8 +7,7 @@ import { IBOX, SummaryChip, type Tier } from "../dashboard-ui";
 import { CollapsibleSection } from "../collapsible-section";
 
 /**
- * Visitor Actions — what people did to us, last 90 days
- * (contract: admin-dashboard-triage-v2-ui.html).
+ * Visitor Actions — what people did to us, last 90 days.
  *
  * The old "Needs action" summary card is gone: the Today strip above the sections IS
  * that summary now, and repeating the same four numbers side by side was double

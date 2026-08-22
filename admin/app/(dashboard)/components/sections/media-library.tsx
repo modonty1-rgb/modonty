@@ -6,7 +6,7 @@ import { CARD_GRID, Ghost, SummaryChip, TierCard, ZChip } from "../dashboard-ui"
 import { CollapsibleSection } from "../collapsible-section";
 
 /**
- * Media (contract: admin-dashboard-triage-v2-ui.html). Two questions only:
+ * Media. Two questions only:
  * is it used, and can search read it. SEO gaps are amber — this week's work — and
  * unused files are plain: they cost storage, not clients (the tier system's whole point).
  */

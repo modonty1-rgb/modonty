@@ -5,7 +5,7 @@ import { CARD_GRID, SummaryChip, TierCard } from "../dashboard-ui";
 import { CollapsibleSection } from "../collapsible-section";
 
 /**
- * Reference data (contract: admin-dashboard-triage-v2-ui.html). Four indexed listing
+ * Reference data. Four indexed listing
  * groups nobody ever checks. Each one is named on its own card — a broken group is
  * amber (SEO is this-week work), a healthy group is green — so it is always clear
  * exactly what is tracked, not just what is broken.

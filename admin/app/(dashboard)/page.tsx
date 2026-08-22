@@ -19,7 +19,7 @@ import { ReferenceData } from "./components/sections/reference-data";
 
 /**
  * The dashboard is a TRIAGE screen, and the Today strip is its answer
- * (contract: documents/mockups/admin-dashboard-triage-v2-ui.html, approved 2026-07-13).
+ * (design approved 2026-07-13).
  *
  * Reading order = business order: what needs me now (Today) → what visitors did →
  * our content → the money → the housekeeping (media + reference share one row).

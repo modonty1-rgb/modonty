@@ -1,5 +1,7 @@
 # Admin UI/UX — Standard Pattern
 
+> ⚠️ **تحديث ٢٢ أغسطس ٢٠٢٦:** Cloudinary أُطفئت نهائياً — كل الوسائط على بني. سطور الصور أدناه صُحّحت إلى `MediaImageField` + `MediaPickerDialog`.
+
 > المرجع الموحد لكل الأقسام المتشابهة: Categories, Tags, Industries
 > آخر تحديث: 2026-04-04
 
@@ -67,7 +69,7 @@
 ┌──────────────────────────────────────┬────────────────────┐
 │  ● Basic Information                  │  ◈ Social Image    │
 │  ┌───────────────┬──────────────┐    │  Image URL         │
-│  │ Name *        │ Parent Cat   │    │  [cloudinary url]  │
+│  │ Name *        │ Parent Cat   │    │  [مكتبة الوسائط]   │
 │  └───────────────┴──────────────┘    │  ✅ Optimized      │
 │  Slug: auto-generated                │                    │
 │  Description (2 rows + counter)      │  Alt Text          │
@@ -96,10 +98,11 @@
 - Social Image card + Actions card
 - الأزرار full width مع أيقونات (Save + ArrowLeft)
 
-### Image Input (CloudinaryImageInput):
+### Image Input (`MediaImageField`):
 
-- Input field لرابط Cloudinary (مو file upload)
-- Auto-optimize on blur: يضيف `w_1200,h_630,c_fill,q_auto,f_auto`
+- اختيار من **مكتبة الوسائط** عبر `MediaPickerDialog` — لا لصق رابط ولا رفع مباشر
+- يُحفَظ حقلان: الرابط + `mediaId` (العلاقة بصفّ `Media`)
+- التحسين يتولّاه بني عند الرفع — لا معاملات تحويل في الرابط
 - مؤشر حالة: ✅ Optimized (أخضر) / Will optimize (أصفر) / External (رمادي)
 - Alt Text input منفصل
 - Preview مع error handling
@@ -215,7 +218,7 @@ User clicks Delete → AlertDialog opens:
 - **دائماً `AlertDialog`** — في كل مكان (row actions + detail page)
 - فحص العلاقات قبل الحذف (articles, children, clients)
 - رفض الحذف لو فيه عناصر مرتبطة
-- حذف الصورة من Cloudinary قبل الحذف
+- الصورة **لا تُحذف** مع الكيان — تبقى في مكتبة الوسائط، وحذفها من بني قرار مستقلّ
 - Toast notification بعد النجاح/الفشل
 
 ---
