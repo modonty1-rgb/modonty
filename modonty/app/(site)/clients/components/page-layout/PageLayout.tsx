@@ -67,7 +67,7 @@ export function PageLayout({ partners, industries, query, userCard }: PageLayout
                 href={buildPartnersHref(query, { industry: "", featuredOnly: false })}
                 aria-current={!query.industry && !query.featuredOnly ? "page" : undefined}
                 className={cn(
-                  "flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-2 py-2 text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+                  "flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-2 py-2 text-primary-foreground motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                   !query.industry && !query.featuredOnly && "ring-2 ring-primary ring-offset-2",
                 )}
               >
@@ -85,7 +85,7 @@ export function PageLayout({ partners, industries, query, userCard }: PageLayout
                 className={cn(
                   // Lighter ground under the dark mark (Khalid, 23 Aug: «fix the color
                   // contrast, make background lighter») — the 400→500 amber swallowed it.
-                  "flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-amber-100 to-amber-200 px-2 py-2 text-amber-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  "flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-amber-100 to-amber-200 px-2 py-2 text-amber-950 motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                   query.featuredOnly && "ring-2 ring-amber-500 ring-offset-2",
                 )}
               >

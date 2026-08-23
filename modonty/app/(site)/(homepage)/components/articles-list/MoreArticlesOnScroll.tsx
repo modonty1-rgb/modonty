@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
 import { useMountOnApproach } from "@modonty/shared/components/use-mount-on-approach";
@@ -21,9 +22,17 @@ export function MoreArticlesOnScroll({
   initialPage = 1,
 }: MoreArticlesOnScrollProps) {
   const { ref, mounted } = useMountOnApproach();
+  // Browser-only flag, never in the server HTML: `section:has([data-infinite-live])
+  // [data-feed-pagination]` (globals.css) hides the prev/next links for a reader whose
+  // scroll is actually running, and leaves them for crawlers and no-JS readers. Same
+  // pattern as `/modonty` (22 Aug) — the homepage was still showing «الصفحة التالية»
+  // under a feed the scroll had already exhausted (measured 23 Aug: 100 cards loaded,
+  // link still visible).
+  const [live, setLive] = useState(false);
+  useEffect(() => setLive(true), []);
 
   return (
-    <div ref={ref}>
+    <div ref={ref} {...(live ? { "data-infinite-live": "" } : {})}>
       {mounted ? (
         <MoreArticles
           initialPosts={[]}

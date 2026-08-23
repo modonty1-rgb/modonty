@@ -9,8 +9,11 @@ import { BRAND_AR } from "@/constants";
 // refactor). These links measured 16px tall on a phone: eighteen targets stacked two to a row,
 // each a third of a fingertip, in the one place a lost reader goes looking for a way out.
 // A pointer does not need the same room, so the desktop footer keeps its compact rhythm.
+// `max-lg:active:text-link`: a thumb has no hover, so the press itself is the only moment
+// the link can answer — it takes the hover colour on touch-down (Apple: respond on
+// pointer-down, never only on release). Phones only; the desktop footer is unchanged.
 const linkClass =
-  "inline-flex max-lg:min-h-11 max-lg:min-w-11 max-lg:justify-center items-center gap-1.5 text-xs text-muted-foreground hover:text-link transition-colors";
+  "inline-flex max-lg:min-h-11 max-lg:min-w-11 max-lg:justify-center items-center gap-1.5 text-xs text-muted-foreground hover:text-link max-lg:active:text-link transition-colors";
 
 function FooterStatsSkeleton() {
   return <div className="w-full h-[76px] rounded-lg bg-primary/80 skeleton-shimmer" aria-hidden />;
@@ -36,7 +39,7 @@ export function Footer() {
           rel="noopener noreferrer"
           label="Footer CTA — جبر SEO"
           type="LINK"
-          className="font-semibold text-link hover:underline inline-flex max-lg:min-h-11 items-center gap-0.5"
+          className="font-semibold text-link hover:underline max-lg:active:underline inline-flex max-lg:min-h-11 items-center gap-0.5"
         >
           {messages.chrome.footer.ctaBrand} <span aria-hidden="true">↗</span>
         </CtaTrackedLink>

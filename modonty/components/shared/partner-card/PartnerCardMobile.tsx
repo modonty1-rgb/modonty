@@ -48,6 +48,9 @@ export function PartnerCardMobile({ partner }: PartnerCardMobileProps) {
     <article
       className={cn(
         "relative overflow-hidden rounded-xl border bg-card",
+        // The whole row is one target (the name's `after:inset-0`); it answers on touch-down
+        // like the article card does — `:active` reaches the row from the pressed link.
+        "motion-safe:transition-transform motion-safe:duration-100 motion-safe:active:scale-[0.99]",
         partner.isFeatured ? "border-primary/30 shadow-sm" : "border-border",
       )}
     >

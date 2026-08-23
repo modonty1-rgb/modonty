@@ -5,6 +5,7 @@ import { ScrollButtons } from "@/app/(site)/(homepage)/components/scroll-buttons
 import { ArticlesList } from "@/app/(site)/(homepage)/components/articles-list/ArticlesList";
 import { HomeActions } from "@/app/(site)/(homepage)/components/home-actions/HomeActions";
 import { ReelsCard } from "@/components/shared/reels-card/ReelsCard";
+import { FeedPagination } from "@/components/shared/pagination/FeedPagination";
 import type { ReactNode } from "react";
 import type { FeedPost } from "@/lib/types";
 import type { ReelItem } from "@/components/shared/reels-card/ReelsCard";
@@ -64,22 +65,18 @@ export function PageLayout({ posts, hasMore, page, corePublisherArticles, brandL
               {/* Crawl entry into the paginated series (Google: "Link sequentially to
                   the individual URLs"). Sits below the infinite scroll, so the visitor
                   only meets it at the true bottom — or with JavaScript off. */}
-              {(page > 1 || hasMore) && (
-                <nav aria-label="تنقّل بين صفحات المقالات" className="flex items-center justify-between gap-3 border-t border-border pt-4">
-                  {page > 1 ? (
-                    <a href={page === 2 ? "/" : `/page/${page - 1}`} className="inline-flex items-center text-sm font-medium text-link hover:underline max-lg:min-h-11 max-lg:rounded-md max-lg:px-2">
-                      → الصفحة السابقة
-                    </a>
-                  ) : (
-                    <span />
-                  )}
-                  {hasMore && (
-                    <a href={`/page/${page + 1}`} className="inline-flex items-center text-sm font-medium text-link hover:underline max-lg:min-h-11 max-lg:rounded-md max-lg:px-2">
-                      الصفحة التالية ←
-                    </a>
-                  )}
-                </nav>
-              )}
+              {/* The shared `FeedPagination` (promoted 22 Aug for exactly this nav — the
+                  homepage had kept its own copy). `data-feed-pagination` is the handle the
+                  globals.css rule uses to hide it while the infinite scroll is live, so the
+                  links stop offering «الصفحة التالية» under an exhausted feed. */}
+              <div data-feed-pagination>
+                <FeedPagination
+                  page={page}
+                  hasMore={hasMore}
+                  buildHref={(n) => (n === 1 ? "/" : `/page/${n}`)}
+                  label="تنقّل بين صفحات المقالات"
+                />
+              </div>
             </section>
           </div>
         }

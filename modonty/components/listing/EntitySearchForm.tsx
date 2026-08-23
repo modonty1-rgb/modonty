@@ -50,6 +50,7 @@ export function EntitySearchForm({ basePath, placeholder, defaultValue = "", liv
         if (debounce.current) clearTimeout(debounce.current);
         applySearch(searchValue.trim());
       }}
+      role="search"
       className="relative flex-1"
     >
       <div className="relative">
@@ -63,10 +64,15 @@ export function EntitySearchForm({ basePath, placeholder, defaultValue = "", liv
         )}
         <Input
           type="text"
+          // The phone keyboard's return key reads «بحث» instead of «return», and the browser
+          // stops offering address/password autofill in a search box.
+          enterKeyHint="search"
+          autoComplete="off"
+          aria-label={placeholder}
           placeholder={placeholder}
           value={searchValue}
           onChange={(e) => handleChange(e.target.value)}
-          className="h-12 rounded-xl ps-10 pe-10"
+          className="h-12 rounded-xl ps-10 pe-12"
           // Live mode NEVER locks the input — freezing the keyboard mid-word to show a
           // pending state is the opposite of a fast search.
           disabled={!live && isPending}
@@ -82,7 +88,9 @@ export function EntitySearchForm({ basePath, placeholder, defaultValue = "", liv
               setSearchValue("");
               applySearch("");
             }}
-            className="absolute end-1.5 top-1/2 h-7 w-7 -translate-y-1/2 rounded-full p-0 text-muted-foreground hover:text-foreground"
+            // 44×44 hit box (was 28): a ghost button's box is invisible until pressed, so the
+            // bigger target costs nothing visually and the «x» stops being a 28px miss.
+            className="absolute end-0.5 top-1/2 h-11 w-11 -translate-y-1/2 rounded-full p-0 text-muted-foreground hover:text-foreground motion-safe:active:scale-95"
             disabled={!live && isPending}
           >
             <IconClose className="h-4 w-4" />

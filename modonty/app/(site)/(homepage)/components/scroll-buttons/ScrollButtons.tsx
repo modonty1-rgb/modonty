@@ -21,7 +21,13 @@ const NO_SUPPORT = "supports-[not_(animation-timeline:scroll())]";
 export function ScrollButtons() {
   return (
     <>
-      <div className={`fixed inset-x-0 top-14 z-40 h-1 bg-muted ${NO_SUPPORT}:hidden motion-reduce:hidden`}>
+      {/* Under the WHOLE sticky chrome, not under the header alone: on the phone the tabs
+          band hangs below the header, and `top-14` drew this line across the tabs' welded
+          top edge (measured 23 Aug: track y=56, band y=56–123). The homepage never has an
+          active tab, so its band is always 56 (tab) + 12 (reserved overhang) − 1 (`-mt-px`)
+          = 7.75rem − 1px below the 3.5rem header. `lg:top-14`: the band is `lg:hidden`,
+          so the desktop line stays exactly where it was. */}
+      <div className={`fixed inset-x-0 top-[calc(7.75rem-1px)] lg:top-14 z-40 h-1 bg-muted ${NO_SUPPORT}:hidden motion-reduce:hidden`}>
         <div className={`h-full origin-right bg-accent animate-scroll-fill ${TIMELINE}`} />
       </div>
 
