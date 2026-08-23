@@ -14,19 +14,22 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { GoogleIcon } from "@/components/auth/google-icon";
-import { IconLoading, IconLike, IconSaved, IconComment } from "@/lib/icons";
+import { IconLoading, IconLike, IconSaved, IconComment, IconBell } from "@/lib/icons";
 
 interface AuthPromptProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /** What the reader was trying to do — the dialog says it back to them. */
-  action: "like" | "save" | "comment";
+  action: "like" | "save" | "comment" | "follow";
 }
 
 const ASKED_FOR = {
   like: { Icon: IconLike, line: "عشان نحفظ إعجابك" },
   save: { Icon: IconSaved, line: "عشان نحفظ المقال في قائمتك" },
   comment: { Icon: IconComment, line: "عشان نعرف مين صاحب التعليق" },
+  // The only one of the four that is not a reaction to something on screen — it is the
+  // page's main ask on `/modonty`, where the reader has nothing to like or save yet.
+  follow: { Icon: IconBell, line: "عشان يوصلك جديدنا أول بأول" },
 } as const;
 
 /**

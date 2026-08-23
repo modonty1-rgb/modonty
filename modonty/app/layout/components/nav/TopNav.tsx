@@ -3,18 +3,9 @@ import { messages } from "@/lib/i18n/messages";
 import { TopNavDesktop } from "./TopNavDesktop";
 import { LogoNav } from "@/app/layout/components/nav/LogoNav";
 import { MobileMenuClient } from "./MobileMenuClient";
-import {
-  MobileNavDestinations,
-  MobileNavDestinationList,
-} from "@/app/layout/components/nav/MobileNavDestinations";
+import { SearchLink } from "@/app/layout/components/nav/SearchLink";
 import { UserMenu } from "@/app/layout/components/user-menu/UserMenu";
 import { MobileNotificationBadge } from "@/app/layout/components/notifications/MobileNotificationBadge";
-
-const destinationLabels = {
-  search: messages.chrome.searchArticles,
-  reels: messages.chrome.menuItems.reels,
-  audio: messages.chrome.menuItems.audio,
-};
 
 // Static header: everything here is in the cached shell. The only request-time reads
 // (unread count · notifications bell) stream into their own small boundaries, so the
@@ -43,23 +34,21 @@ export function TopNav() {
         {messages.chrome.skipToContent}
       </a>
       <div className="container mx-auto max-w-[1128px]">
-        {/* Three columns, and the middle one is the wide one: brand · destinations · menu
-            (Khalid, 22 Aug). The two edge columns are sized by their content, so the icons
-            take every pixel left over and sit centred in it — with `justify-between` they
-            were pinned against the menu with 110px of dead air on the other side.
-            DOM order is the RTL visual order: logo → search → reels → audio → account → menu.
-            Six 44px targets on a 360px phone: 264px of content in 344px of row, so the
-            middle column keeps real slack even on the narrowest phone still shipping. */}
-        <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center gap-1 px-2 md:hidden">
+        {/* Three columns, and the middle one is the wide one: brand · search · menu
+            (Khalid, 22 Aug). The two edge columns are sized by their content, so the search
+            box takes every pixel left over.
+            DOM order is the RTL visual order: logo → search → account → menu.
+            The reels and audio icons left this row (Khalid, 22 Aug evening) — both still
+            reach the reader: audio as its own tab in the bottom bar, reels from the sheet
+            menu (`nav-config.ts`). Search became a BOX instead of an icon in the same pass:
+            a bordered field with the mark and a placeholder reads as "type here" at a
+            glance, where a lone magnifier asks the reader to recognise a symbol first.
+            It is still a link, not an input — the field lives on `/search`. */}
+        <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center gap-2 px-2 md:hidden">
           <LogoNav variant="mark" />
-          {/* One gap for the whole row. `gap-0.5` next to a 96px button read as a ragged
-              rhythm — even spacing only reads as even when every item in the row is the
-              same width (Khalid, 22 Aug: «the space between the icons is not perfect»).
-              Active mark reads the pathname → own boundary on dynamic routes; the fallback
-              is the same three links, unmarked, so the shell keeps them. */}
-          <Suspense fallback={<MobileNavDestinationList pathname={null} labels={destinationLabels} />}>
-            <MobileNavDestinations labels={destinationLabels} />
-          </Suspense>
+          {/* The desktop's own `compact` search box, uncapped so it fills the column —
+              same component, so the two headers can never drift apart. */}
+          <SearchLink variant="compact" className="w-full max-w-none" />
           {/* The account sits with the menu, not with the destinations (Khalid, 22 Aug).
               The middle column is where the reader GOES; this column is what they DO with
               their own account — grouping by that split is why the three icons now read as

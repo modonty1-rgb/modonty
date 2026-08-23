@@ -85,6 +85,28 @@
     --action-share-foreground: 0 0% 100%;
     --action-listen: 158 64% 42%;      /* Green — the fifth tab: listen instead of read */
     --action-listen-foreground: 0 0% 100%;
+    /* Rose — the sixth tab («اسمع», 22 Aug). The five hues above were taken; rose is the
+       one that separates from all of them at a 54px tile, and from the amber beside it. */
+    --action-audio: 346 77% 50%;
+    --action-audio-foreground: 0 0% 100%;
+
+    /* Two tab tiles that had to leave the shared action palette (Khalid, 22 Aug: «you can
+       change the background because it's eating the white color»).
+       «الطلّات» wore `--action-comment`, which IS `--accent` — so the brand diamond on it was
+       accent-on-accent and disappeared, and it was the one tab in the row forced to flip its
+       diamond to white. It keeps its hue family and drops its LIGHTNESS instead (42% → 24%),
+       so the bright accent diamond and the white label both separate cleanly and no tab in
+       the row overrides its diamond any more.
+       «المقالات» was darkened the same way in the first pass and that was a MISTAKE —
+       measured on Khalid's light-mode screenshot, a 162/72/26 emerald sat next to this
+       186/95/24 teal and the two tiles read as one colour. It went back to `--action-listen`
+       (158/64/42): 28° of hue AND 18 points of lightness away, which is the separation the
+       row needs. Its diamond was never the problem — that was my judgment call, not a
+       measurement.
+       The shared action tokens stay untouched — they still dress the audio player, the
+       reading-time bar and the article engagement tabs. */
+    --tab-reels: 186 95% 24%;
+    --tab-reels-foreground: 0 0% 100%;
 
     --radius: 0.5rem;
   }
@@ -168,6 +190,59 @@
     --action-share-foreground: 245 87% 19%;
     --action-listen: 158 64% 50%;
     --action-listen-foreground: 245 87% 19%;
+    --action-audio: 346 82% 62%;
+    --action-audio-foreground: 245 87% 19%;
+    /* Same two hues, lifted a step so the tiles still read as tiles against the dark
+       ground — but kept well under the accent's lightness so the diamond stays the
+       brightest thing on them. */
+    --tab-reels: 186 85% 30%;
+    --tab-reels-foreground: 0 0% 100%;
+  }
+}
+
+/* ── الألسنة: اللسان الفعّال ─────────────────────────────────────────────────
+   The tab of the section you are in reaches further down — a folder tab touching the
+   page it owns. The marker is the ONLY client code — the six links and their SVGs stay server-rendered
+   and are passed to it as children, so none of that enters the bundle: `ActiveTabMarker` (the strip's only client code) puts the current section on
+   `data-active-tab`, and these rules raise the tab carrying the same key in `data-tab`.
+
+   Height, not `scale`: scaling would enlarge the 10px label and the 20px mark with the
+   surface and spill sideways over the neighbours. Height grows only into the strip's own
+   `pb-3`, so no sibling moves and no content is covered.
+
+   A server-rendered `data-route` marker was tried first and MEASURED to fail: on soft
+   navigation the old markers are not removed, so after three sections three tabs were
+   marked at once. The pathname is the only signal true exactly once.
+   ────────────────────────────────────────────────────────────────────────── */
+@layer components {
+  [data-active-tab="modonty"] [data-tab="modonty"],
+  [data-active-tab="articles"] [data-tab="articles"],
+  [data-active-tab="industries"] [data-tab="industries"],
+  [data-active-tab="reels"] [data-tab="reels"],
+  [data-active-tab="clients"] [data-tab="clients"],
+  [data-active-tab="audio"] [data-tab="audio"] {
+    height: 4.25rem; /* 68px — 12px past the resting 56px, exactly the row's pb-3 */
+    /* The 12px is DEAD SPACE at the bottom, not room the content spreads into. Without
+       this, `justify-center` re-centres the icon and label inside the taller box and drops
+       them 6px below their five siblings — the labels stop sharing a baseline and the row
+       reads as broken rather than as one tab reaching down (Khalid, 22 Aug, on the reels
+       tab). With it, the content keeps centring inside the same 56px it always did and the
+       extra height simply hangs. */
+    padding-bottom: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  /* ── الطلّات: سطح غامر بلا كروم ───────────────────────────────────────────
+     `/reels` is a full-screen vertical video feed (`fixed inset-0 z-50`), the one surface
+     on the site that owns the whole screen. The site header and the tab strip sat behind
+     it: measured 22 Aug, the element painting at the strip's centre was the reel's own
+     `<video>`, and a purple sliver of the «الشركاء» tab still showed down the edge.
+     Chrome you cannot reach is not navigation, it is a seam. TikTok, Reels and Shorts all
+     hand the feed the entire screen and give it ONE explicit exit instead.
+     Same `:has()` mechanism as the active tab — no client component, no per-page prop. */
+  [data-site-shell]:has([data-active-tab="reels"]) > header,
+  [data-site-shell]:has([data-active-tab="reels"]) > div:has(nav[aria-label="أقسام الموقع"]) {
+    display: none;
   }
 }
 
@@ -177,13 +252,26 @@
   }
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 3.5rem;
+    /* Clears the sticky chrome so an anchor never lands underneath it.
+       Desktop: the 56px header alone. Below `lg` the tab strip became sticky too on
+       22 Aug — 56px header + 79px strip (56 tab + 12 reserved overhang + border) — so the
+       phone needs 135px or every in-page link drops the reader behind the tabs.
+       One number, two places: `--sticky-chrome` is also what the two other sticky bars
+       offset themselves by, so they can never drift apart from this again. */
+    --sticky-chrome: 8.4375rem; /* 135px */
+    scroll-padding-top: var(--sticky-chrome);
     /* The page's own scrollbar, in brand colour. Left at `auto` it rendered as the grey
        Windows bar with stepper arrows on every page — the one piece of chrome that still
        said "default browser" on a site that styles everything else. Utilities like
        `.scrollbar-thin` are more specific, so inner scroll areas keep their own look. */
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--primary) / 0.45) transparent;
+  }
+  @media (min-width: 1024px) {
+    /* The strip is `lg:hidden`, so from here up the header is the only sticky chrome. */
+    html {
+      --sticky-chrome: 3.5rem;
+    }
   }
 
   /* A full-screen pane owns the viewport: the site footer sitting under it made the whole page
@@ -514,3 +602,16 @@ footer[role="contentinfo"] {
   }
 }
 
+
+@layer components {
+  /* Prev/next links under an infinite feed.
+     They are server-rendered from the FIRST chunk's `hasMore`, so once the scroll has
+     pulled the rest in they sit under «خلصت المقالات» still offering «الصفحة التالية»
+     (Khalid, 22 Aug: «how come, while all showed»). The scroll marks itself
+     `data-infinite-live` only in the browser, so this rule hides them for a reader whose
+     scroll is actually running — and leaves them fully visible for a crawler and for a
+     browser with JavaScript off, which are the two audiences that still need them. */
+  section:has([data-infinite-live]) [data-feed-pagination] {
+    display: none;
+  }
+}

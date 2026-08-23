@@ -9,11 +9,20 @@ interface AccentHeadingProps {
 }
 
 /**
- * The one section-heading treatment on modonty's own pages: a short teal dash before the
+ * The one section-heading treatment on modonty's own pages: the brand diamond before the
  * words. Same mark over the rails and the feed on `/modonty` and over each department on
  * `/team`, so the pages read as one voice, not three widgets. Promoted out of `/modonty`
  * on 2026-08-17 when `/team` became its second consumer.
- * Teal as a MARK not as text (`bg-accent` fill is fine; `text-accent` would fail AA on light).
+ *
+ * It was a teal DASH until 22 Aug 2026 (Khalid: «replace the line with our dot»). A dash
+ * is a generic rule — every site has one, and it said nothing about whose page this is.
+ * The diamond is the brand's signature, the same shape sitting inside all 47 marks, so a
+ * section title now carries the identity the icons carry. Drawn with the icon set's own
+ * geometry rather than a new shape: a square rotated 45° with a small radius, matching the
+ * `14 · rx 2` proportion the whole set uses (DESIGN-SYSTEM «أحجام الأيقونات»).
+ *
+ * Teal as a MARK, never as text — `bg-accent` fill is fine; `text-accent` would fail AA
+ * on light.
  */
 export function AccentHeading({ id, size, children, className }: AccentHeadingProps) {
   const Tag = size === "title" ? "h2" : "p";
@@ -26,7 +35,15 @@ export function AccentHeading({ id, size, children, className }: AccentHeadingPr
         className,
       )}
     >
-      <span aria-hidden className={cn("h-0.5 shrink-0 rounded-full bg-accent", size === "title" ? "w-5" : "w-4")} />
+      {/* `rounded-[2px]` before the rotation, so the corners land soft at 45° the way the
+          icon set's `rx="2"` diamond does — a hard-cornered square reads as a bullet. */}
+      <span
+        aria-hidden
+        className={cn(
+          "shrink-0 rotate-45 rounded-[2px] bg-accent",
+          size === "title" ? "size-2.5" : "size-2",
+        )}
+      />
       {children}
     </Tag>
   );

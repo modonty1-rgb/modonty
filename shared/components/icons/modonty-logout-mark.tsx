@@ -1,11 +1,20 @@
 import type { SVGProps } from "react";
 
 /**
- * The modonty LOGOUT mark — a door with the arrow leaving it and the brand diamond at
- * the threshold (Khalid's corrected version, 21 Aug 2026). The mirror of
- * `ModontyLoginMark`, whose arrow enters. Same icon contract: `currentColor` + `1em`
- * box, two CSS hooks — `--modonty-logout-body` (door + arrow) ·
- * `--modonty-logout-accent` (the diamond).
+ * The modonty LOGOUT mark — تسجيل الخروج.
+ *
+ * Traced verbatim from the approved original in
+ * `documents/design/modonty_icon_system_MASTER_COMPLETE.html` (`data-icon-id="logout"`),
+ * which that file names the single source of truth: "لا يتم إعادة تصميم الأيقونة أثناء
+ * مرحلة SVG". Nothing here was redrawn — only the colours became CSS hooks and the
+ * attributes became JSX.
+ *
+ * Approved concept: إطار خروج متناسق مع سهم متجه نحو الخارج ينطلق من ماسة الأمان المركزية.
+ *
+ * Category: Account / Auth · User sign-out, session termination
+ *
+ * Icon contract, same as the rest of the set: `currentColor` + a `1em` box so the mark
+ * takes the size and colour of the text around it, two CSS hooks — `--modonty-logout-body` · `--modonty-logout-accent` (the diamond).
  */
 export function ModontyLogoutMark(props: SVGProps<SVGSVGElement>) {
   return (
@@ -18,30 +27,9 @@ export function ModontyLogoutMark(props: SVGProps<SVGSVGElement>) {
       aria-hidden="true"
       {...props}
     >
-      <path
-        d="M82 44 V36 C82 29.3726 76.6274 24 70 24 H36 C29.3726 24 24 29.3726 24 36 V84 C24 90.6274 29.3726 96 36 96 H70 C76.6274 96 82 90.6274 82 84 V76"
-        stroke="var(--modonty-logout-body, currentColor)"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path d="M54 60H102" stroke="var(--modonty-logout-body, currentColor)" strokeWidth="8" strokeLinecap="round" />
-      <path
-        d="M88 46L102 60L88 74"
-        stroke="var(--modonty-logout-body, currentColor)"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <rect
-        x="40"
-        y="68"
-        width="14"
-        height="14"
-        rx="2.5"
-        transform="rotate(45 47 75)"
-        fill="var(--modonty-logout-accent, currentColor)"
-      />
+      <path d="M58 24H34C28.5 24 24 28.5 24 34V86C24 91.5 28.5 96 34 96H58" stroke="var(--modonty-logout-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M50 60H96M96 60L80 44M96 60L80 76" stroke="var(--modonty-logout-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
+      <rect x="43" y="53" width="14" height="14" rx="2" transform="rotate(45 50 60)" fill="var(--modonty-logout-accent, hsl(var(--accent)))"/>
     </svg>
   );
 }

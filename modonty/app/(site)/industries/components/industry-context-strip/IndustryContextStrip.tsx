@@ -1,7 +1,7 @@
-import { formatArticlesCount, formatClientsCount } from "@/app/(site)/industries/helpers/format-counts";
+import { formatArticlesCount, formatClientsCount } from "@/lib/format-counts";
 import { IconChevronDown } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import type { IndustryTone } from "@/app/(site)/industries/helpers/industry-tones";
+import type { IndustryTone } from "@/lib/industry-tones";
 import type { ReactNode } from "react";
 
 interface IndustryContextStripProps {

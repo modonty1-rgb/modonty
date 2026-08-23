@@ -1,12 +1,20 @@
 import type { SVGProps } from "react";
 
 /**
- * The modonty BOOKING mark — a calendar whose date cells are modonty diamonds, with the
- * confirmed day as a large brand-cyan diamond carrying the check (Khalid's corrected
- * version, 21 Aug 2026). Same icon contract as the other modonty marks: `currentColor`
- * + `1em` box, three CSS hooks — `--modonty-booking-body` (frame, binders, small
- * diamonds) · `--modonty-booking-accent` (the confirmed day) ·
- * `--modonty-booking-check` (the tick inside it, white by default).
+ * The modonty BOOKING / CALENDAR mark — الحجوزات / المواعيد.
+ *
+ * Traced verbatim from the approved original in
+ * `documents/design/modonty_icon_system_MASTER_COMPLETE.html` (`data-icon-id="booking"`),
+ * which that file names the single source of truth: "لا يتم إعادة تصميم الأيقونة أثناء
+ * مرحلة SVG". Nothing here was redrawn — only the colours became CSS hooks and the
+ * attributes became JSX.
+ *
+ * Approved concept: روزنامة مواعيد منظمة بخطوط أفقية واضحة ومثبتات علوية، ويوم الحجز المحدد يرمز له بالماسة السماوية.
+ *
+ * Category: Utility / Operations · Appointments, schedule management, reservations
+ *
+ * Icon contract, same as the rest of the set: `currentColor` + a `1em` box so the mark
+ * takes the size and colour of the text around it, two CSS hooks — `--modonty-booking-body` · `--modonty-booking-accent` (the diamond).
  */
 export function ModontyBookingMark(props: SVGProps<SVGSVGElement>) {
   return (
@@ -19,30 +27,10 @@ export function ModontyBookingMark(props: SVGProps<SVGSVGElement>) {
       aria-hidden="true"
       {...props}
     >
-      <rect
-        x="20.62"
-        y="23.30"
-        width="78.56"
-        height="78.84"
-        rx="10.4"
-        stroke="var(--modonty-booking-body, currentColor)"
-        strokeWidth="3.92"
-      />
-      <path d="M20.62 40.63H99.18" stroke="var(--modonty-booking-body, currentColor)" strokeWidth="3.92" />
-      <rect x="36.65" y="15.02" width="5.74" height="16.45" rx="2.87" fill="var(--modonty-booking-body, currentColor)" />
-      <rect x="77.51" y="15.02" width="5.65" height="16.45" rx="2.82" fill="var(--modonty-booking-body, currentColor)" />
-      <rect x="31.52" y="49.94" width="7.48" height="7.48" rx="1.15" transform="rotate(45 35.26 53.68)" fill="var(--modonty-booking-body, currentColor)" />
-      <rect x="80.90" y="49.99" width="7.48" height="7.48" rx="1.15" transform="rotate(45 84.64 53.73)" fill="var(--modonty-booking-body, currentColor)" />
-      <rect x="31.56" y="86.06" width="7.40" height="7.40" rx="1.15" transform="rotate(45 35.26 89.76)" fill="var(--modonty-booking-body, currentColor)" />
-      <rect x="80.94" y="86.06" width="7.40" height="7.40" rx="1.15" transform="rotate(45 84.64 89.76)" fill="var(--modonty-booking-body, currentColor)" />
-      <rect x="46.10" y="57.87" width="27.70" height="27.70" rx="4.1" transform="rotate(45 59.95 71.72)" fill="var(--modonty-booking-accent, currentColor)" />
-      <path
-        d="M50.2 71.9L56.1 77.8L69.3 64.8"
-        stroke="var(--modonty-booking-check, #FFFFFF)"
-        strokeWidth="5.1"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <rect x="22" y="28" width="76" height="74" rx="14" stroke="var(--modonty-booking-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M40 18V30M80 18V30" stroke="var(--modonty-booking-body, currentColor)" strokeWidth="8" strokeLinecap="round"/>
+      <path d="M24 48H96" stroke="var(--modonty-booking-body, currentColor)" strokeWidth="6" strokeLinecap="round"/>
+      <rect x="53" y="66" width="14" height="14" rx="2" transform="rotate(45 60 73)" fill="var(--modonty-booking-accent, hsl(var(--accent)))"/>
     </svg>
   );
 }

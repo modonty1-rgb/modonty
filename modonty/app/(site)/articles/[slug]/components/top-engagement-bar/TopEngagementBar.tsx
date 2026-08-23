@@ -6,7 +6,7 @@ import { CommentFormDialog } from "@/app/(site)/articles/[slug]/components/comme
 import { AuthPromptLazy, warmAuthPrompt } from "@/components/shared/auth-prompt/AuthPromptLazy";
 import { useSession } from "@/components/providers/SessionContext";
 import { likeArticle } from "@/app/(site)/articles/[slug]/actions/like-article";
-import { favoriteArticle } from "@/app/(site)/articles/[slug]/actions/favorite-article";
+import { favoriteArticle } from "@/lib/articles/favorite-article";
 import { ArticleAudioPlayer } from "@/app/(site)/articles/[slug]/components/audio-player/ArticleAudioPlayerLazy";
 import { IconLike, IconSaved, IconComment, IconShare, IconCheck } from "@/lib/icons";
 import { cn } from "@/lib/utils";

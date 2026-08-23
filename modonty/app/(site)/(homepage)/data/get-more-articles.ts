@@ -17,7 +17,13 @@ export interface MoreArticlesResult {
 export async function getMoreArticles(
   page: number,
   categorySlug?: string,
-  clientSlug?: string
+  clientSlug?: string,
+  /**
+   * The feed view the reader is on. Added 22 Aug 2026: without it an infinite feed under a
+   * filter had to stop after the first chunk, because a scrolled page would arrive in the
+   * default order and silently undo the filter the reader had just chosen.
+   */
+  view?: "latest" | "popular" | "audio"
 ): Promise<MoreArticlesResult> {
   try {
     const { articles, pagination } = await getArticles({
@@ -25,6 +31,8 @@ export async function getMoreArticles(
       limit: FEED_PAGE_SIZE,
       ...(categorySlug && { category: categorySlug }),
       ...(clientSlug && { client: clientSlug }),
+      ...(view === "audio" && { hasAudio: true }),
+      ...(view === "popular" && { sortBy: "popular" as const }),
     });
 
     const posts: FeedPost[] = articles.map((article: ArticleResponse) => ({

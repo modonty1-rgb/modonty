@@ -27,7 +27,7 @@ export function ModontyPartnerMark(props: SVGProps<SVGSVGElement>) {
         height="22"
         rx="4"
         transform="rotate(45 60 10)"
-        fill="var(--modonty-partner-accent, currentColor)"
+        fill="var(--modonty-partner-accent, hsl(var(--accent)))"
       />
       <path
         d="M18 94 V57 C18 49 26 45 32 51 L52 71 C57 76 63 76 68 71 L88 51 C94 45 102 49 102 57 V94"

@@ -9,28 +9,76 @@ import { getLegalEntity } from "@/lib/seo/organization-jsonld";
 import { toLegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 import { ModontyProfileHero } from "@/app/(site)/modonty/components/profile-hero/ModontyProfileHero";
 import { ModontyArticlesFeed } from "@/app/(site)/modonty/components/articles-feed/ModontyArticlesFeed";
+import { FEED_VIEWS, type FeedView } from "@/app/(site)/modonty/components/articles-feed/feed-views";
 import { ModontyRightRail } from "@/app/(site)/modonty/components/right-rail/ModontyRightRail";
 import { ModontyLeftRail } from "@/app/(site)/modonty/components/left-rail/ModontyLeftRail";
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { MobileCtaBar } from "@/components/shared/mobile-cta-bar/MobileCtaBar";
-import { IconHandshake, IconInfo } from "@/lib/icons";
+import { FollowCtaButton } from "@/components/shared/mobile-cta-bar/FollowCtaButton";
+import { IconHandshake } from "@/lib/icons";
 import { messages } from "@/lib/i18n/messages";
+import type { FeedPost } from "@/lib/types";
+import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
 import { SITE_URL } from "@/constants";
 import { reveal } from "./helpers/reveal";
 
 /** modonty's own slug in the `Client` table — the same row every partner card reads. */
 const MODONTY_CLIENT_SLUG = "مدونتي";
 
-export const metadata: Metadata = {
-  title: { absolute: "مقالات مدونتي | مدونتي" },
-  description: "كل مقالات مدونتي الخاصة — بمعرضها وأرقامها الحقيقية، من نفس صفّها في قاعدة الشركاء.",
-  alternates: { canonical: `${SITE_URL}/modonty` },
-};
+/**
+ * `pagination` emits `<link rel="prev">` / `<link rel="next">` — the machine-readable half
+ * of a paginated series, added 22 Aug 2026 once the feed grew an infinite scroll.
+ *
+ * It matters MORE with the scroll than without it. Next's own docs are blunt about the
+ * limit: "content that requires user interaction or specific events to trigger will not be
+ * visible to crawlers that do not execute JavaScript" — so everything the scroll appends is
+ * invisible to a crawler, and the only trail left to article eleven is the paginated URLs.
+ * The visible prev/next links carry that trail, these tags declare it.
+ *
+ * `canonical` stays pinned to the bare `/modonty` on every variant so the filtered and
+ * paged URLs consolidate instead of competing with the page they belong to.
+ */
+export async function generateMetadata({ searchParams }: ModontyPageProps): Promise<Metadata> {
+  const { page: pageParam } = await searchParams;
+  const page = Number.isFinite(Number(pageParam)) && Number(pageParam) > 1 ? Number(pageParam) : 1;
+  const pageUrl = (target: number) => (target > 1 ? `${SITE_URL}/modonty?page=${target}` : `${SITE_URL}/modonty`);
+
+  // Both reads are `use cache` and React dedups them against the page's own calls, so
+  // asking here costs nothing — and a `rel="next"` that points past the last page is worse
+  // than none at all.
+  const partners = await getClientsList();
+  const profile = partners.find((partner) => partner.slug === MODONTY_CLIENT_SLUG);
+  const total = profile ? (await getModontyArticles(profile.id)).length : 0;
+  const hasNext = total > page * FEED_PAGE_SIZE;
+
+  return {
+    title: { absolute: page > 1 ? `مقالات مدونتي — الصفحة ${page.toLocaleString("ar-SA")} | مدونتي` : "مقالات مدونتي | مدونتي" },
+    description: "كل مقالات مدونتي الخاصة — بمعرضها وأرقامها الحقيقية، من نفس صفّها في قاعدة الشركاء.",
+    alternates: { canonical: `${SITE_URL}/modonty` },
+    pagination: {
+      previous: page > 1 ? pageUrl(page - 1) : undefined,
+      next: hasNext ? pageUrl(page + 1) : undefined,
+    },
+  };
+}
 
 interface ModontyPageProps {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; view?: string }>;
+}
+
+/**
+ * Sorting and filtering happen on the array the page already fetched, not in a second
+ * query. `getModontyArticles` returns modonty's whole published set in one read — a
+ * few dozen rows — so a per-view query would be a second round trip to reorder data
+ * already in memory. Revisit if modonty's own output ever outgrows one page of results.
+ */
+function applyView(articles: FeedPost[], view: FeedView): FeedPost[] {
+  if (view === "audio") return articles.filter((article) => article.hasAudio);
+  if (view === "popular") return [...articles].sort((a, b) => b.views - a.views);
+  return articles;
 }
 
 /**
@@ -43,13 +91,12 @@ interface ModontyPageProps {
  * rejected the drawer, then the popover, the same day.
  */
 export default async function ModontyPage({ searchParams }: ModontyPageProps) {
-  const { page: pageParam } = await searchParams;
+  const { page: pageParam, view: viewParam } = await searchParams;
   const page = Number.isFinite(Number(pageParam)) && Number(pageParam) > 1 ? Number(pageParam) : 1;
-
+  const view: FeedView = FEED_VIEWS.includes(viewParam as FeedView) ? (viewParam as FeedView) : "latest";
   const partners = await getClientsList();
   const profile = partners.find((partner) => partner.slug === MODONTY_CLIENT_SLUG);
   if (!profile) notFound();
-
   const [articles, gallery, reels, legalEntity, whatsappPhone] = await Promise.all([
     getModontyArticles(profile.id),
     getModontyGallery(profile.id),
@@ -58,14 +105,39 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
     getModontyPhone(profile.id),
   ]);
   const legal = toLegalEntityDisplay(legalEntity);
-
-  const buildPageHref = (targetPage: number) => (targetPage > 1 ? `/modonty?page=${targetPage}` : "/modonty");
-
+  const visibleArticles = applyView(articles, view);
+  const buildHref = (targetPage: number, targetView: FeedView) => {
+    const params = new URLSearchParams();
+    if (targetView !== "latest") params.set("view", targetView);
+    if (targetPage > 1) params.set("page", String(targetPage));
+    const query = params.toString();
+    return query ? `/modonty?${query}` : "/modonty";
+  };
+  const buildPageHref = (targetPage: number) => buildHref(targetPage, view);
+  // Switching the filter always returns to page 1 — page 3 of «الأحدث» is not page 3 of
+  // «الأكثر قراءة», and landing on an empty page after a filter change reads as a bug.
+  const viewHrefs = Object.fromEntries(FEED_VIEWS.map((option) => [option, buildHref(1, option)])) as Record<FeedView, string>;
   return (
     <>
+    {/* `BreadcrumbList` — measured missing on 22 Aug while `/clients`, `/industries` and
+        `/articles` all emitted theirs. The visible trail below was drawn without any markup
+        behind it, so Google had no breadcrumb to show for this page. The two must ship
+        together: the markup is what earns the trail in the result, the visible one is what
+        the reader follows. */}
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: jsonLdHtml(
+          generateBreadcrumbStructuredData([
+            { name: "الرئيسية", url: "/" },
+            { name: "مدونتي", url: "/modonty" },
+          ])
+        ),
+      }}
+    />
     <ThreeColumnLayout
       header={
-        <div className={`space-y-4 ${reveal(0)}`}>
+        <div className={`space-y-4 max-lg:space-y-2 ${reveal(0)}`}>
           <Breadcrumb
             items={[
               { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
@@ -74,7 +146,6 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
           />
           <ModontyProfileHero
             name={profile.name}
-            description={profile.description}
             logo={profile.logo}
             heroImage={profile.heroImage}
             services={profile.services}
@@ -82,20 +153,32 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
         </div>
       }
       right={
-        // Mobile: the rail was `hidden`, so 64% of the page (story, papers, team, gallery,
-        // reels) never reached a phone visitor (measured 21 Aug: pageH 5833→2104). Now it
-        // stacks full-width AFTER the feed (`order-2`); ≥1240px nothing changes — same
-        // 300px sticky rail, order reset to DOM position.
+        // 21 Aug this rail was un-hidden on phones so its 683px (story · papers · team)
+        // would reach a phone visitor at all. 22 Aug that is reversed FOR PHONES ONLY
+        // (Khalid: «قصتنا والصف والكلام هذا كله ما له داعي هنا»): read through the
+        // reader's eyes, none of the three answers «why keep reading» or «why come back» —
+        // the commercial register, the address and the WhatsApp number reassure a business
+        // owner deciding whether to buy, not someone who came to read. Nothing is lost:
+        // the story lives at `/story`, the team at `/team`, both linked from the footer.
+        // Desktop is untouched — at ≥1240px the rail is a column beside the feed, not
+        // 683px stacked between the reader and the end of the page.
         <StickyRail
           label={messages.modonty.rightRailLabel}
-          className={`order-2 w-full shrink-0 self-start lg:hidden min-[1240px]:order-none min-[1240px]:block min-[1240px]:sticky min-[1240px]:w-[300px] ${reveal(2)}`}
+          className={`order-2 w-full shrink-0 self-start max-lg:hidden lg:hidden min-[1240px]:order-none min-[1240px]:block min-[1240px]:sticky min-[1240px]:w-[300px] ${reveal(2)}`}
         >
           <ModontyRightRail legal={legal} clientId={profile.id} clientName={profile.name} whatsappPhone={whatsappPhone} />
         </StickyRail>
       }
       center={
         <div className={reveal(1)}>
-          <ModontyArticlesFeed articles={articles} page={page} buildPageHref={buildPageHref} />
+          <ModontyArticlesFeed
+            articles={visibleArticles}
+            page={page}
+            view={view}
+            clientSlug={profile.slug}
+            buildPageHref={buildPageHref}
+            viewHrefs={viewHrefs}
+          />
         </div>
       }
       left={
@@ -110,12 +193,16 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
     />
     {/* Same shared bottom bar as the homepage — only this page's two asks change
         (Khalid, 21 Aug 2026): become a partner, or read who modonty is. */}
+    {/* The two asks swapped on 22 Aug. «صِر شريكاً» held the solid button — 65px of every
+        screen pointing a READER off the site into a sales funnel. The main ask on a
+        reader's page is the one thing that turns them into someone who comes back, so
+        «تابع مدونتي» takes it and the partner door keeps the quieter second slot
+        (jbrseo.com, same destination as before — Khalid, 21 Aug: the funnel is there,
+        not on /story). */}
     <MobileCtaBar
-      ariaLabel="صِر شريكاً أو تعرّف على مدونتي"
-      // Same destination as the hero's desktop button (Khalid, 21 Aug): the partner
-      // funnel lives on jbrseo.com, not on /story.
-      primary={{ href: "https://www.jbrseo.com", label: "صِر شريكاً", icon: IconHandshake, external: true }}
-      secondary={{ href: "/about", label: "عن مدونتي", icon: IconInfo }}
+      ariaLabel="تابع مدونتي أو صِر شريكاً"
+      primarySlot={<FollowCtaButton />}
+      secondary={{ href: "https://www.jbrseo.com", label: "صِر شريكاً", icon: IconHandshake, external: true }}
     />
     </>
   );

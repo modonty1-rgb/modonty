@@ -145,6 +145,29 @@ export function InfiniteList<T>({
     return () => observer.disconnect();
   }, []);
 
+  // The observer reports TRANSITIONS, not state — and that alone is not enough to keep a
+  // list moving. An intersection that arrives while a fetch is in flight hits the
+  // `loadingRef` guard at the top of `loadMore` and returns; the event is consumed and
+  // never replayed. If the sentinel is still on screen when that fetch lands, no new
+  // transition ever happens and the list is stuck for good.
+  //
+  // Measured on `/articles` (22 Aug 2026): scrolling in slow steps loaded page after page,
+  // but jumping straight to the bottom repeatedly froze it at 40 rows — six more jumps,
+  // zero requests, sentinel sitting at `top: 57` fully in view. That is not a test artifact:
+  // a phone fling produces exactly the same sequence.
+  //
+  // So after every settled load, ask the sentinel where it is instead of waiting to be
+  // told. Same `100px` margin the observer uses, so the two agree on «near the end».
+  useEffect(() => {
+    if (loading || !hasMore || error) return;
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const box = sentinel.getBoundingClientRect();
+    const stillInReach = box.top < window.innerHeight + 100 && box.bottom > -100;
+    if (stillInReach) loadMoreRef.current();
+  }, [loading, hasMore, error, items.length]);
+
   const handleRetry = () => {
     setError(false);
     loadMoreRef.current();

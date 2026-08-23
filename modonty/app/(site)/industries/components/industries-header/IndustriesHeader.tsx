@@ -8,7 +8,7 @@ import { ModontyIndustriesMark } from "@/components/icons/modonty-industries-mar
  */
 export function IndustriesHeader() {
   return (
-    <div className="flex items-center gap-3 [--modonty-industries-accent:hsl(var(--accent))]">
+    <div className="flex items-center gap-3">
       <ModontyIndustriesMark className="size-11 shrink-0 text-foreground" aria-hidden />
       <div>
         <p className="text-lg font-black leading-tight text-foreground">المجالات</p>

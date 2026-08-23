@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
 import { RightSidebar } from "@/app/(site)/clients/components/right-sidebar/RightSidebar";
 import { LeftSidebar } from "@/app/(site)/clients/components/left-sidebar/LeftSidebar";
@@ -9,6 +10,10 @@ import { TrustStripMobile } from "@/app/(site)/clients/components/trust-card/Tru
 import { MobileCtaBar } from "@/components/shared/mobile-cta-bar/MobileCtaBar";
 import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { ModontyIndustriesMark } from "@/components/icons/modonty-industries-mark";
+import { ModontyFeaturedMark } from "@/components/icons/modonty-featured-mark";
+import { cn } from "@/lib/utils";
+import { formatClientsCount } from "@/lib/format-counts";
+import { buildPartnersHref } from "@/app/(site)/clients/helpers/build-partners-href";
 import { filterPartners } from "@/app/(site)/clients/helpers/filter-partners";
 import { sortPartners } from "@/app/(site)/clients/helpers/sort-partners";
 import { countIndustries } from "@/app/(site)/clients/helpers/count-industries";
@@ -52,13 +57,46 @@ export function PageLayout({ partners, industries, query, userCard }: PageLayout
               (Khalid, 21 Aug). Both come back here, above the list, and disappear again
               at 1240 where the rails take over. */}
           <div className="space-y-3 min-[1240px]:hidden">
-            <TrustStripMobile />
-            <PartnersFilterBar
-              rows={industryRows}
-              featuredCount={searched.filter((partner) => partner.isFeatured).length}
-              industries={industries}
-              query={query}
-            />
+            {/* The three doors stretched edge to edge (Khalid, 23 Aug: «make them stretch
+                all in the div and add descriptive title and catchy word») — each tile is
+                mark + name + one pulling line: the trust story, the whole directory, and
+                the «المميّزون» filter that was the big amber card; same URL toggles. */}
+            <div className="flex items-stretch gap-2">
+              <TrustStripMobile />
+              <Link
+                href={buildPartnersHref(query, { industry: "", featuredOnly: false })}
+                aria-current={!query.industry && !query.featuredOnly ? "page" : undefined}
+                className={cn(
+                  "flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-2 py-2 text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+                  !query.industry && !query.featuredOnly && "ring-2 ring-primary ring-offset-2",
+                )}
+              >
+                {/* The brand «M» with its diamond (Khalid, 23 Aug: «use this icon») — the
+                    diamond keeps its accent teal over the primary ground. */}
+                <ModontyPartnerMark className="h-6 w-6 shrink-0" aria-hidden />
+                <span className="min-w-0">
+                  <span className="block text-xs font-bold leading-tight">كل الشركاء</span>
+                  <span className="mt-0.5 block text-[10px] leading-none opacity-80">{formatClientsCount(searched.length)}</span>
+                </span>
+              </Link>
+              <Link
+                href={buildPartnersHref(query, { featuredOnly: !query.featuredOnly, industry: "" })}
+                aria-current={query.featuredOnly ? "page" : undefined}
+                className={cn(
+                  // Lighter ground under the dark mark (Khalid, 23 Aug: «fix the color
+                  // contrast, make background lighter») — the 400→500 amber swallowed it.
+                  "flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-amber-100 to-amber-200 px-2 py-2 text-amber-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  query.featuredOnly && "ring-2 ring-amber-500 ring-offset-2",
+                )}
+              >
+                <ModontyFeaturedMark className="h-6 w-6 shrink-0" aria-hidden />
+                <span className="min-w-0">
+                  <span className="block text-xs font-bold leading-tight">المميّزون</span>
+                  <span className="mt-0.5 block text-[10px] leading-none text-amber-800">نخبة الشركاء</span>
+                </span>
+              </Link>
+            </div>
+            <PartnersFilterBar rows={industryRows} industries={industries} query={query} />
           </div>
           {/* The search pill is desktop-only now (Khalid, 21 Aug: «remove») — the navbar
               already carries a search on a phone, and the field cards above are the

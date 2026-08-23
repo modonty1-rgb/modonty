@@ -12,16 +12,15 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.94.0 (modonty)",
-    title: "Reels play video, take comments, and count views",
+    version: "1.96.0 (modonty)",
+    title: "Mobile: infinite scroll on /modonty, brand icons everywhere, one field tile for /clients and /industries",
     items: [
-      { type: "feature" as const, text: "Reels are real videos now — approved partner videos play in the feed (adaptive streaming with a fallback chain), and every clip has its own shareable, Google-indexable page." },
-      { type: "feature" as const, text: "Comments on reels: a bottom sheet like TikTok's with replies and likes. Same trust contract as article comments — a comment waits for the partner's approval in the console before visitors see it, and the partner gets a Telegram note." },
-      { type: "feature" as const, text: "Views are counted: a reel that holds the screen for two seconds earns one view per visitor session — flicking past counts nothing." },
-      { type: "fix" as const, text: "The share button used to share the whole feed; it now shares the exact reel the visitor is watching." },
-      { type: "fix" as const, text: "Signed-out visitors tapping like, save, or comment now get the same one-tap Google sign-in card the article page uses, instead of bare links." },
-      { type: "feature" as const, text: "New listen page: the full Quran (114 surahs, 20 reciters, audio only) next to the site's narrated articles with an auto-advancing queue." },
-      { type: "fix" as const, text: "Production build was failing on three listing pages that read the clock outside a cached scope (a Next 16 rule) — all three fixed the same way." },
+      { type: "feature" as const, text: "/modonty on a phone loads more articles as you scroll (and fixed a freeze in the shared infinite-list engine that also hit /articles on a fast fling)." },
+      { type: "improve" as const, text: "38 approved brand icons extracted from the master reference — zero lucide icons left on the nine mobile surfaces; the diamond is one size and always accent-coloured." },
+      { type: "improve" as const, text: "/clients on a phone: one row of three tiles (trusted partners · all partners · featured) above the field strip, and the field strip now uses the same standard tile as /industries — no repeated platform logo." },
+      { type: "improve" as const, text: "Save on a card asks signed-out readers to sign in; «تابع مدونتي» is the primary bottom-bar action, «صِر شريكاً» moved to secondary." },
+      { type: "improve" as const, text: "Filters on the /modonty feed: «popular» and «audio» views; pagination is one shared component with 44px targets." },
+      { type: "fix" as const, text: "Reels action rail: brand marks, token colours instead of hardcoded hex, Arabic-Indic counts, zero counts hidden." },
     ],
   },
 ];

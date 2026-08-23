@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { PostCard } from "@/components/feed/postcard/PostCard";
+import { FeedPagination } from "@/components/shared/pagination/FeedPagination";
 import { MoreArticlesOnScroll } from "../more-articles/MoreArticlesOnScroll";
 
 
@@ -29,15 +30,10 @@ export function ArticlesFeed({ articles, current }: ArticlesFeedProps) {
   const hasMore = articles.length > start + ARCHIVE_PAGE_SIZE;
 
   return (
-    <section aria-labelledby="articles-heading" className="space-y-4">
-      {/* Invisible by Khalid's call (2026-08-19) — he pointed at the old title strip and said
-          «remove». It stays in the markup: a page with no `h1` loses its name in search results
-          and leaves a screen reader with nothing to announce. What the visitor sees instead is
-          the results line above the list, which says the same thing and adds a way out. */}
-      <h1 id="articles-heading" className="sr-only">
-        {page > 1 ? `كل المقالات — الصفحة ${page.toLocaleString("ar-SA")}` : "كل المقالات"}
-      </h1>
-
+    // The page's `h1` moved out of here on 22 Aug — `ArticlesHeader` draws it at the top of
+    // the page (visible on phones, `sr-only` on desktop). A second one in the feed would be
+    // two names for one page, so the list labels itself by pointing UP at it.
+    <section aria-label="قائمة المقالات" className="space-y-4">
       {rows.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border bg-card p-8 text-center">
           {/* The hint names what the visitor can actually see and undo: on a phone the search
@@ -75,31 +71,12 @@ export function ArticlesFeed({ articles, current }: ArticlesFeedProps) {
         </div>
       )}
 
-      {(page > 1 || hasMore) && (
-        <nav
-          aria-label="تنقّل بين صفحات المقالات"
-          className="flex items-center justify-between gap-3 border-t border-border pt-4"
-        >
-          {page > 1 ? (
-            <Link
-              href={buildArchiveHref({ ...current, page: page - 1 })}
-              className={"inline-flex min-h-11 items-center rounded-md px-2 text-sm font-medium text-link transition-colors hover:underline active:bg-muted " + FOCUS_RING}
-            >
-              → الصفحة السابقة
-            </Link>
-          ) : (
-            <span />
-          )}
-          {hasMore && (
-            <Link
-              href={buildArchiveHref({ ...current, page: page + 1 })}
-              className={"inline-flex min-h-11 items-center rounded-md px-2 text-sm font-medium text-link transition-colors hover:underline active:bg-muted " + FOCUS_RING}
-            >
-              الصفحة التالية ←
-            </Link>
-          )}
-        </nav>
-      )}
+      <FeedPagination
+        page={page}
+        hasMore={hasMore}
+        buildHref={(target) => buildArchiveHref({ ...current, page: target })}
+        label="تنقّل بين صفحات المقالات"
+      />
     </section>
   );
 }

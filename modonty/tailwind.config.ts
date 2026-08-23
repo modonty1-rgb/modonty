@@ -91,6 +91,12 @@ const config: Config = {
           "share-foreground": "hsl(var(--action-share-foreground))",
           listen: "hsl(var(--action-listen))",
           "listen-foreground": "hsl(var(--action-listen-foreground))",
+          audio: "hsl(var(--action-audio))",
+          "audio-foreground": "hsl(var(--action-audio-foreground))",
+          // Tab-strip only — see the `--tab-*` note in globals.css. Kept inside `action`
+          // so the six tiles are declared the same way, not in two different namespaces.
+          reels: "hsl(var(--tab-reels))",
+          "reels-foreground": "hsl(var(--tab-reels-foreground))",
         },
         success: {
           DEFAULT: "hsl(var(--success))",

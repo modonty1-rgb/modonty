@@ -10,7 +10,7 @@ import {
   trackCommentReply,
 } from "@/lib/analytics/events-registry";
 
-import { isPublicArticle } from "../helpers/is-public-article";
+import { isPublicArticle } from "@/lib/articles/is-public-article";
 
 import { sanitizeComment, validateCommentContent } from "@/lib/comments/validate-comment";
 

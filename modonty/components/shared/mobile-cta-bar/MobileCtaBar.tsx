@@ -3,7 +3,7 @@ import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCha
 import { buttonVariants } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
-import type { ComponentType, SVGProps } from "react";
+import type { ComponentType, ReactNode, SVGProps } from "react";
 
 interface CtaBarLink {
   href: string;
@@ -13,11 +13,30 @@ interface CtaBarLink {
   external?: boolean;
 }
 
+/**
+ * The solid-accent styling of the primary slot, exported so a page that fills it with its
+ * own control (see `primarySlot`) is visually identical to a page that passes a link.
+ * The mark's diamond goes WHITE here — brand teal on brand teal was invisible (measured
+ * 21 Aug).
+ */
+export const CTA_BAR_PRIMARY_CLASS = cn(
+  "min-h-12 min-w-0 flex-1 gap-2 rounded-se-none px-3 ring-1 ring-accent/35 focus-visible:ring-accent",
+  "bg-accent text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground",
+  "[--modonty-booking-accent:white] [--modonty-booking-check:hsl(var(--accent))] [--modonty-shopping-accent:white] [--modonty-shopping-hub:hsl(var(--accent))]",
+);
+
 interface MobileCtaBarProps {
   /** Names the nav for assistive tech — e.g. «احجز أو تسوّق». */
   ariaLabel: string;
   /** Solid teal button — the page's main ask. Renders first (visual right in RTL). */
-  primary: CtaBarLink;
+  primary?: CtaBarLink;
+  /**
+   * Use INSTEAD of `primary` when the main ask opens something in place rather than
+   * navigating — `/modonty`'s «تابع مدونتي» opens the sign-in dialog, so it has to be a
+   * Client Component and cannot be described by an href. Style it with
+   * `CTA_BAR_PRIMARY_CLASS` so both forms look the same. Pass exactly one of the two.
+   */
+  primarySlot?: ReactNode;
   /** Soft wash button — the quieter second door. */
   secondary: CtaBarLink;
   /**
@@ -38,8 +57,8 @@ interface MobileCtaBarProps {
  * primary = solid `accent` with its designed `accent-foreground`; secondary text uses
  * the text-grade teal `link-accent`, which carries its own dark-mode step.
  */
-export function MobileCtaBar({ ariaLabel, primary, secondary, modoHref = "/modo-chat" }: MobileCtaBarProps) {
-  const PrimaryIcon = primary.icon;
+export function MobileCtaBar({ ariaLabel, primary, primarySlot, secondary, modoHref = "/modo-chat" }: MobileCtaBarProps) {
+  const PrimaryIcon = primary?.icon;
   const SecondaryIcon = secondary.icon;
   return (
     // The marks' diamonds default to the brand accent here; the solid button below flips
@@ -50,7 +69,7 @@ export function MobileCtaBar({ ariaLabel, primary, secondary, modoHref = "/modo-
       // side by side at `lg`, so 768–1023 is still a single-column reading screen and still
       // wants the bar. It is a PAIR with `lg:pb-0` on the column layouts — the padding that
       // clears this bar has to end exactly where the bar does, or it covers the last block.
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background pb-[env(safe-area-inset-bottom)] lg:hidden [--modonty-booking-accent:hsl(var(--accent))] [--modonty-shopping-accent:hsl(var(--accent))]"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
       <Link
         href={modoHref}
@@ -71,20 +90,21 @@ export function MobileCtaBar({ ariaLabel, primary, secondary, modoHref = "/modo-
       </Link>
 
       <div className="flex items-center px-3 py-2">
-        <Link
-          href={primary.href}
-          {...(primary.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-          // The brand mark's diamond goes WHITE on this solid-accent button — brand teal
-          // on brand teal was invisible (measured 21 Aug). On the wash button below, the
-          // diamond simply inherits the text colour, which is already contrast-checked.
-          className={buttonVariants({ variant: "ghost", className: cn("min-h-12 min-w-0 flex-1 gap-2 rounded-se-none px-3 ring-1 ring-accent/35 focus-visible:ring-accent", "bg-accent text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground", "[--modonty-booking-accent:white] [--modonty-booking-check:hsl(var(--accent))] [--modonty-shopping-accent:white] [--modonty-shopping-hub:hsl(var(--accent))]") })}
-        >
-          <PrimaryIcon // `!` needed: the Button's own `[&_svg]:size-4` rule outranks a plain class, which
-          // pinned the mark at 16px next to a 14px/700 label. Material 3 puts the standard
-          // icon at 24 inside a ≥48 target; Apple asks the symbol to match the label's weight.
-          className="!size-6 shrink-0" aria-hidden />
-          {primary.label}
-        </Link>
+        {primary && PrimaryIcon ? (
+          <Link
+            href={primary.href}
+            {...(primary.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            className={buttonVariants({ variant: "ghost", className: CTA_BAR_PRIMARY_CLASS })}
+          >
+            <PrimaryIcon // `!` needed: the Button's own `[&_svg]:size-4` rule outranks a plain class, which
+            // pinned the mark at 16px next to a 14px/700 label. Material 3 puts the standard
+            // icon at 24 inside a ≥48 target; Apple asks the symbol to match the label's weight.
+            className="!size-6 shrink-0" aria-hidden />
+            {primary.label}
+          </Link>
+        ) : (
+          primarySlot
+        )}
 
         <span className="w-14 shrink-0" aria-hidden="true" />
 

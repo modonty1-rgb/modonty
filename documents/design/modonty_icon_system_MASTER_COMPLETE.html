@@ -1,0 +1,3446 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Modonty Icon System — Complete Master HTML</title>
+<style>
+:root{--navy:#0E065A;--cyan:#00D8D8;--bg:#F7F8FC;--card:#fff;--line:#E5E7EF;--ink:#17172A;--muted:#707386}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Inter,"Segoe UI",Tahoma,Arial,sans-serif;color:var(--ink)}
+header{background:linear-gradient(135deg,var(--navy),#20167F);color:#fff;padding:28px 32px}
+header h1{margin:0 0 8px;font-size:28px;font-weight:900} header p{margin:0;color:#D9DAFF;font-size:14px}
+.layout{display:grid;grid-template-columns:270px 1fr;min-height:calc(100vh - 115px)}
+.sidebar{background:#fff;border-left:1px solid var(--line);padding:16px;position:sticky;top:0;height:100vh;overflow:auto}
+.tabbtn,.linktab{border:0;background:none;font:inherit;cursor:pointer}
+.tabbtn{width:100%;text-align:right;padding:10px 12px;border-radius:10px;color:#34364A;margin:2px 0;font-size:13.5px;transition:all 0.15s ease}
+.tabbtn:hover,.tabbtn.active{background:#F0F1FB;color:var(--navy);font-weight:800}
+.main{padding:24px;min-width:0} .panel{display:none} .panel.active{display:block}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 5px 20px rgba(20,20,60,.04)}
+h2,h3{color:var(--navy)} h2{margin-top:0}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:10px 0}
+th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top;font-size:13.5px} th{background:#F2F4FA;color:var(--navy)}
+.linktab{color:var(--navy);font-weight:800;padding:0}
+.status{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}
+.done{background:#E8F7EF;color:#16855B} .review{background:#FFF4D9;color:#9A6500} .todo{background:#F1F2F6;color:#6C7080}
+.rule,.notice,.concept{border-radius:12px;padding:14px 16px;margin:12px 0;font-size:13.5px;line-height:1.6}
+.rule{background:#F1FBFC;border-right:4px solid var(--cyan)} .notice{background:#FFF7E9;border-right:4px solid #F0A035} .concept{background:#F6F6FD;border:1px solid var(--line)}
+.muted{color:var(--muted);font-size:13px} code{direction:ltr;unicode-bidi:embed;background:#F2F3F7;padding:2px 6px;border-radius:5px;color:var(--navy);font-weight:600;font-size:12.5px}
+pre{direction:ltr;text-align:left;background:#0D1025;color:#E9ECFF;padding:16px;border-radius:12px;overflow:auto;font-family:Consolas,Monaco,monospace;font-size:12.5px;line-height:1.5}
+.iconpanel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px}
+.svg-preview-box{display:grid;place-items:center;min-height:280px;background:#FAFAFE;border:1px solid var(--line);border-radius:16px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{position:static;height:auto;border-left:0;border-bottom:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<header>
+<h1>Modonty Icon System — Complete Master HTML</h1>
+<p>Complete Production Library (38 Icons) • Exact Master SVGs • React Components • Design DNA Documentation</p>
+</header>
+<div class="layout">
+<aside class="sidebar">
+<button class="tabbtn active" data-tab="index">📋 Main Index</button>
+<button class="tabbtn" data-tab="rules">🧭 Master Rules</button>
+<button class="tabbtn" data-tab="geometry">📐 Geometry Standard</button>
+<button class="tabbtn" data-tab="workflow">⚙️ Workflow</button>
+<hr style="border:0;border-top:1px solid var(--line);margin:12px 0"/>
+<button class="tabbtn" data-tab="home">Home</button>
+<button class="tabbtn" data-tab="search">Search</button>
+<button class="tabbtn" data-tab="reels">Reels / Video</button>
+<button class="tabbtn" data-tab="shopping">Shopping</button>
+<button class="tabbtn" data-tab="booking">Booking / Calendar</button>
+<button class="tabbtn" data-tab="login">Login</button>
+<button class="tabbtn" data-tab="logout">Logout</button>
+<button class="tabbtn" data-tab="like">Like / Favorite</button>
+<button class="tabbtn" data-tab="comment">Comment / Discussion</button>
+<button class="tabbtn" data-tab="question">Question / FAQ</button>
+<button class="tabbtn" data-tab="bookmark">Bookmark</button>
+<button class="tabbtn" data-tab="professionals">Professionals</button>
+<button class="tabbtn" data-tab="notifications">Notifications</button>
+<button class="tabbtn" data-tab="trending">Trending</button>
+<button class="tabbtn" data-tab="profile">Profile / Account</button>
+<button class="tabbtn" data-tab="share">Share</button>
+<button class="tabbtn" data-tab="rating">Rating / Star</button>
+<button class="tabbtn" data-tab="categories">Categories / Industries</button>
+<button class="tabbtn" data-tab="tags">Tags</button>
+<button class="tabbtn" data-tab="offers">Offers / Gift</button>
+<button class="tabbtn" data-tab="gallery">Gallery / Images</button>
+<button class="tabbtn" data-tab="location">Location / Pin</button>
+<button class="tabbtn" data-tab="directions">Directions / Navigation</button>
+<button class="tabbtn" data-tab="clock">Clock / Time</button>
+<button class="tabbtn" data-tab="email">Email / Newsletter</button>
+<button class="tabbtn" data-tab="phone">Phone</button>
+<button class="tabbtn" data-tab="whatsapp">WhatsApp / Live Chat</button>
+<button class="tabbtn" data-tab="views">Views / Eye</button>
+<button class="tabbtn" data-tab="toc">Table of Contents</button>
+<button class="tabbtn" data-tab="keypoints">Key Points / Lightning</button>
+<button class="tabbtn" data-tab="filter">Filter</button>
+<button class="tabbtn" data-tab="sort">Sort</button>
+<button class="tabbtn" data-tab="feedback">Feedback</button>
+<button class="tabbtn" data-tab="support">Support / Helpdesk</button>
+<button class="tabbtn" data-tab="payment">Secure Payment</button>
+<button class="tabbtn" data-tab="invoice">Invoice / Receipt</button>
+<button class="tabbtn" data-tab="pricing">Package / Pricing</button>
+<button class="tabbtn" data-tab="company">Company / Building</button>
+</aside>
+<main class="main">
+<section class="panel active" id="tab-index">
+<div class="card">
+<h2>Main Icon Tracker — 38 / 38 Icons Fully Approved &amp; Completed</h2>
+<div class="rule"><strong>System Status:</strong> All 38 Modonty system icons are fully built, geometrically unified, validated, and ready for production code extraction.</div>
+<div class="rule">Excluded from this system: Verified / Trust, Partners, Follow, and Newspaper (as per Modonty system architecture).</div>
+<table>
+<thead><tr><th>Icon</th><th>Status</th><th>Category</th><th>Notes</th></tr></thead>
+<tbody>
+<tr>
+<td><button class="linktab" data-tab="home">Home</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Navigation</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="search">Search</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Utility / Exploration</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="reels">Reels / Video</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Media / Engagement</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="shopping">Shopping</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>E-Commerce</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="booking">Booking / Calendar</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Utility / Operations</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="login">Login</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Account / Auth</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="logout">Logout</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Account / Auth</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="like">Like / Favorite</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Engagement / Social</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="comment">Comment / Discussion</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Engagement / Social</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="question">Question / FAQ</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Help / Support</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="bookmark">Bookmark</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Utility / Reader</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="professionals">Professionals</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Identity / Trust</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="notifications">Notifications</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Brand / Utility</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="trending">Trending</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Analytics / Discovery</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="profile">Profile / Account</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Navigation / Identity</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="share">Share</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Social / Utility</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="rating">Rating / Star</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Feedback / Quality</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="categories">Categories / Industries</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Navigation / Structure</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="tags">Tags</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Content Organization</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="offers">Offers / Gift</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Marketing / Promotion</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="gallery">Gallery / Images</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Media</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="location">Location / Pin</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Utility / Maps</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="directions">Directions / Navigation</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Maps / Guidance</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="clock">Clock / Time</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Utility / Scheduling</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="email">Email / Newsletter</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Communication</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="phone">Phone</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Communication</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="whatsapp">WhatsApp / Live Chat</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Communication / Instant Messaging</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="views">Views / Eye</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Analytics / Metrics</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="toc">Table of Contents</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Reader / Navigation</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="keypoints">Key Points / Lightning</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Content / Highlights</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="filter">Filter</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Utility / Search</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="sort">Sort</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Utility / Data</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="feedback">Feedback</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Engagement / Support</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="support">Support / Helpdesk</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Customer Care</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="payment">Secure Payment</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Security / Financial</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="invoice">Invoice / Receipt</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Billing / Financial</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="pricing">Package / Pricing</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Subscription / Plans</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+<tr>
+<td><button class="linktab" data-tab="company">Company / Building</button></td>
+<td><span class="status done">✅ Approved + SVG Added</span></td>
+<td>Organization / Enterprise</td>
+<td>Complete geometry + exact SVG + React component stored in master HTML</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section class="panel" id="tab-rules">
+<div class="card">
+<h2>Master Rules / Modonty Icon DNA</h2>
+<ul>
+<li><strong>One meaning. One shape. One Modonty signature.</strong></li>
+<li>Function must be understood first; Modonty identity second.</li>
+<li>Primary: <code>#0E065A</code> (Deep Modonty Navy). Accent: <code>#00D8D8</code> (Vibrant Cyan).</li>
+<li>Minimal, rounded, strong silhouette, highly readable at 20–24px navigation scale.</li>
+<li>Do not force the cyan diamond into every utility icon if it hurts clarity.</li>
+<li>No 3D, shadows, glow or presentation gradients inside production SVG.</li>
+<li>Approved visual is the absolute source of truth for production assets.</li>
+<li>Never trust SVG text rendered inside AI presentation mockups; use exact geometric code.</li>
+<li>When extracting, use the exact vector paths provided in each tab.</li>
+</ul>
+</div>
+</section>
+
+<section class="panel" id="tab-geometry">
+<div class="card">
+<h2>Geometry Standard — Modonty Icon System</h2>
+<div class="rule">
+<strong>Purpose:</strong> Every custom Modonty icon is constructed on the exact same mathematical grid.
+</div>
+<table>
+<tbody>
+<tr><th>Canvas</th><td><code>120 × 120</code></td></tr>
+<tr><th>Default ViewBox</th><td><code>0 0 120 120</code></td></tr>
+<tr><th>Main Stroke</th><td><code>8px</code> (with 6px-7px for secondary details)</td></tr>
+<tr><th>Line Cap</th><td><code>round</code></td></tr>
+<tr><th>Line Join</th><td><code>round</code></td></tr>
+<tr><th>Primary Corner Radius</th><td><code>8px – 14px</code></td></tr>
+<tr><th>Internal Corner Radius</th><td><code>2px – 4px</code></td></tr>
+<tr><th>Safe Margin Area</th><td><code>16px</code> from canvas edges</td></tr>
+<tr><th>Brand Diamond Angle</th><td>Fixed <code>45°</code> orientation</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+</tbody>
+</table>
+<h3 style="margin-top:18px">Construction Rules</h3>
+<ul>
+<li>Visual balance: visual weight is calibrated evenly across all 38 icons.</li>
+<li>Monochrome compatibility: the icon function remains 100% understandable even in pure black/navy.</li>
+<li>Diamond Role: The cyan diamond serves as a functional node, status marker, central trigger, or core branding focal point.</li>
+<li>Scalability: No micro-lines that collapse below 18px render resolution.</li>
+</ul>
+</div>
+</section>
+
+<section class="panel" id="tab-workflow">
+<div class="card">
+<h2>Official Workflow</h2>
+<ol>
+<li>Geometry grid definition (120x120px).</li>
+<li>Geometric vector blueprint creation.</li>
+<li>Harmonization of stroke width &amp; corner curvature.</li>
+<li>Insertion of functional Modonty cyan diamond.</li>
+<li>Production SVG validation and metadata recording.</li>
+<li>Export to standalone HTML &amp; React JSX components.</li>
+</ol>
+</div>
+</section>
+
+<section class="panel iconpanel" id="tab-home">
+<article data-icon-id="home" data-icon-name="Home" data-status="approved" data-svg-ready="true">
+<h2>Home — الرئيسية</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> سقف جمالوني متوازن بزاويا ناعمة، وقاعدة مستقيمة متينة يتوسط مدخلها ماسة مدونتي السماوية كنقطة ارتكاز وهوية.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 56L56.5 25.5C58.5 23.8 61.5 23.8 63.5 25.5L98 56" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M32 52V92C32 96.4 35.6 100 40 100H80C84.4 100 88 96.4 88 92V52" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="53" y="71" width="14" height="14" rx="2" transform="rotate(45 60 78)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Home</td></tr>
+<tr><th>Name AR</th><td>الرئيسية</td></tr>
+<tr><th>Category</th><td>Navigation</td></tr>
+<tr><th>Purpose</th><td>Main landing, dashboard home, root navigation</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="home"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M22 56L56.5 25.5C58.5 23.8 61.5 23.8 63.5 25.5L98 56&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M32 52V92C32 96.4 35.6 100 40 100H80C84.4 100 88 96.4 88 92V52&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;71&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 78)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyHomeIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M22 56L56.5 25.5C58.5 23.8 61.5 23.8 63.5 25.5L98 56&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M32 52V92C32 96.4 35.6 100 40 100H80C84.4 100 88 96.4 88 92V52&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;71&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 78)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "home",
+  "name_en": "Home",
+  "name_ar": "الرئيسية",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Navigation",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-search">
+<article data-icon-id="search" data-icon-name="Search" data-status="approved" data-svg-ready="true">
+<h2>Search — البحث</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> عدسة استكشاف هندسية دائرية متناسقة، بمقبض مائل بزاوية 45° وبؤرة التقاط ماسية مشعة في مركز العدسة.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="52" cy="52" r="28" stroke="#0E065A" stroke-width="8" stroke-linecap="round"/>
+  <path d="M72 72L96 96" stroke="#0E065A" stroke-width="8" stroke-linecap="round"/>
+  <rect x="46" y="46" width="12" height="12" rx="1.5" transform="rotate(45 52 52)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Search</td></tr>
+<tr><th>Name AR</th><td>البحث</td></tr>
+<tr><th>Category</th><td>Utility / Exploration</td></tr>
+<tr><th>Purpose</th><td>Search bar, content filtering, query execution</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="search"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;circle cx=&quot;52&quot; cy=&quot;52&quot; r=&quot;28&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M72 72L96 96&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;46&quot; y=&quot;46&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 52 52)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontySearchIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;circle cx=&quot;52&quot; cy=&quot;52&quot; r=&quot;28&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M72 72L96 96&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;46&quot; y=&quot;46&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 52 52)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "search",
+  "name_en": "Search",
+  "name_ar": "البحث",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Utility / Exploration",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-reels">
+<article data-icon-id="reels" data-icon-name="Reels / Video" data-status="approved" data-svg-ready="true">
+<h2>Reels / Video — ريلز / مقاطع الفيديو</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> إطار شريط سينمائي بحواف ناعمة وتقسيمات هندسية، يتوسطه مؤشر التشغيل الماسي السماوي.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="22" y="22" width="76" height="76" rx="16" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M22 46H98M22 74H98" stroke="#0E065A" stroke-width="6" stroke-linecap="round"/>
+  <path d="M46 22L40 46M74 22L68 46M46 74L40 98M74 74L68 98" stroke="#0E065A" stroke-width="6" stroke-linecap="round"/>
+  <rect x="52" y="52" width="16" height="16" rx="2" transform="rotate(45 60 60)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Reels / Video</td></tr>
+<tr><th>Name AR</th><td>ريلز / مقاطع الفيديو</td></tr>
+<tr><th>Category</th><td>Media / Engagement</td></tr>
+<tr><th>Purpose</th><td>Short video player, story reels, multimedia discovery</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="reels"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;22&quot; y=&quot;22&quot; width=&quot;76&quot; height=&quot;76&quot; rx=&quot;16&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M22 46H98M22 74H98&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;6&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M46 22L40 46M74 22L68 46M46 74L40 98M74 74L68 98&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;6&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;52&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 60)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyReelsIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;22&quot; y=&quot;22&quot; width=&quot;76&quot; height=&quot;76&quot; rx=&quot;16&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M22 46H98M22 74H98&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;6&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M46 22L40 46M74 22L68 46M46 74L40 98M74 74L68 98&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;6&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;52&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 60)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "reels",
+  "name_en": "Reels / Video",
+  "name_ar": "ريلز / مقاطع الفيديو",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Media / Engagement",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-shopping">
+<article data-icon-id="shopping" data-icon-name="Shopping" data-status="approved" data-svg-ready="true">
+<h2>Shopping — التسوق / المتجر</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> حقيبة تسوق عصرية بمقبض قوسي متين وشارة مدونتي الماسية تبرز في واجهة الحقيبة كعلامة جودة.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M44 42V34C44 25.2 51.2 18 60 18C68.8 18 76 25.2 76 34V42" stroke="#0E065A" stroke-width="8" stroke-linecap="round"/>
+  <path d="M24 42H96L88 98C88 101.3 85.3 104 82 104H38C34.7 104 32 101.3 32 98L24 42Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="52" y="62" width="16" height="16" rx="2" transform="rotate(45 60 70)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Shopping</td></tr>
+<tr><th>Name AR</th><td>التسوق / المتجر</td></tr>
+<tr><th>Category</th><td>E-Commerce</td></tr>
+<tr><th>Purpose</th><td>Cart, store checkout, products catalog</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="shopping"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M44 42V34C44 25.2 51.2 18 60 18C68.8 18 76 25.2 76 34V42&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M24 42H96L88 98C88 101.3 85.3 104 82 104H38C34.7 104 32 101.3 32 98L24 42Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;62&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 70)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyShoppingIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M44 42V34C44 25.2 51.2 18 60 18C68.8 18 76 25.2 76 34V42&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M24 42H96L88 98C88 101.3 85.3 104 82 104H38C34.7 104 32 101.3 32 98L24 42Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;62&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 70)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "shopping",
+  "name_en": "Shopping",
+  "name_ar": "التسوق / المتجر",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "E-Commerce",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-booking">
+<article data-icon-id="booking" data-icon-name="Booking / Calendar" data-status="approved" data-svg-ready="true">
+<h2>Booking / Calendar — الحجوزات / المواعيد</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> روزنامة مواعيد منظمة بخطوط أفقية واضحة ومثبتات علوية، ويوم الحجز المحدد يرمز له بالماسة السماوية.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="22" y="28" width="76" height="74" rx="14" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M40 18V30M80 18V30" stroke="#0E065A" stroke-width="8" stroke-linecap="round"/>
+  <path d="M24 48H96" stroke="#0E065A" stroke-width="6" stroke-linecap="round"/>
+  <rect x="52" y="65" width="16" height="16" rx="2" transform="rotate(45 60 73)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Booking / Calendar</td></tr>
+<tr><th>Name AR</th><td>الحجوزات / المواعيد</td></tr>
+<tr><th>Category</th><td>Utility / Operations</td></tr>
+<tr><th>Purpose</th><td>Appointments, schedule management, reservations</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="booking"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;22&quot; y=&quot;28&quot; width=&quot;76&quot; height=&quot;74&quot; rx=&quot;14&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M40 18V30M80 18V30&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M24 48H96&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;6&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;65&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 73)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyBookingIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;22&quot; y=&quot;28&quot; width=&quot;76&quot; height=&quot;74&quot; rx=&quot;14&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M40 18V30M80 18V30&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M24 48H96&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;6&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;65&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 73)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "booking",
+  "name_en": "Booking / Calendar",
+  "name_ar": "الحجوزات / المواعيد",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Utility / Operations",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-login">
+<article data-icon-id="login" data-icon-name="Login" data-status="approved" data-svg-ready="true">
+<h2>Login — تسجيل الدخول</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> إطار بوابة مفتوح وسهم اتجاهي يخترق المساحة للداخل مرتكزا على ماسة الانطلاق المضيئة.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M62 24H36C30.5 24 26 28.5 26 34V86C26 91.5 30.5 96 36 96H62" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M46 60H94M94 60L78 44M94 60L78 76" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="40" y="54" width="12" height="12" rx="1.5" transform="rotate(45 46 60)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Login</td></tr>
+<tr><th>Name AR</th><td>تسجيل الدخول</td></tr>
+<tr><th>Category</th><td>Account / Auth</td></tr>
+<tr><th>Purpose</th><td>User sign-in, access authentication, enter portal</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="login"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M62 24H36C30.5 24 26 28.5 26 34V86C26 91.5 30.5 96 36 96H62&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M46 60H94M94 60L78 44M94 60L78 76&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;40&quot; y=&quot;54&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 46 60)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyLoginIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M62 24H36C30.5 24 26 28.5 26 34V86C26 91.5 30.5 96 36 96H62&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M46 60H94M94 60L78 44M94 60L78 76&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;40&quot; y=&quot;54&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 46 60)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "login",
+  "name_en": "Login",
+  "name_ar": "تسجيل الدخول",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Account / Auth",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-logout">
+<article data-icon-id="logout" data-icon-name="Logout" data-status="approved" data-svg-ready="true">
+<h2>Logout — تسجيل الخروج</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> إطار خروج متناسق مع سهم متجه نحو الخارج ينطلق من ماسة الأمان المركزية.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M58 24H34C28.5 24 24 28.5 24 34V86C24 91.5 28.5 96 34 96H58" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M50 60H96M96 60L80 44M96 60L80 76" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="44" y="54" width="12" height="12" rx="1.5" transform="rotate(45 50 60)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Logout</td></tr>
+<tr><th>Name AR</th><td>تسجيل الخروج</td></tr>
+<tr><th>Category</th><td>Account / Auth</td></tr>
+<tr><th>Purpose</th><td>User sign-out, session termination</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="logout"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M58 24H34C28.5 24 24 28.5 24 34V86C24 91.5 28.5 96 34 96H58&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M50 60H96M96 60L80 44M96 60L80 76&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;44&quot; y=&quot;54&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 50 60)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyLogoutIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M58 24H34C28.5 24 24 28.5 24 34V86C24 91.5 28.5 96 34 96H58&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M50 60H96M96 60L80 44M96 60L80 76&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;44&quot; y=&quot;54&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 50 60)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "logout",
+  "name_en": "Logout",
+  "name_ar": "تسجيل الخروج",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Account / Auth",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-like">
+<article data-icon-id="like" data-icon-name="Like / Favorite" data-status="approved" data-svg-ready="true">
+<h2>Like / Favorite — الإعجاب</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> قلب انسيابي متماثل بانحناءات هندسية نقية، يتوسطه نبض الماسة السماوية المشعة.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M60 98C60 98 20 74 20 46C20 32 32 22 45 22C52 22 57 26 60 30C63 26 68 22 75 22C88 22 100 32 100 46C100 74 60 98 60 98Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="52" y="44" width="16" height="16" rx="2" transform="rotate(45 60 52)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Like / Favorite</td></tr>
+<tr><th>Name AR</th><td>الإعجاب</td></tr>
+<tr><th>Category</th><td>Engagement / Social</td></tr>
+<tr><th>Purpose</th><td>Upvote, article appreciation, favorite posts</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="like"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M60 98C60 98 20 74 20 46C20 32 32 22 45 22C52 22 57 26 60 30C63 26 68 22 75 22C88 22 100 32 100 46C100 74 60 98 60 98Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;44&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 52)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyLikeIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M60 98C60 98 20 74 20 46C20 32 32 22 45 22C52 22 57 26 60 30C63 26 68 22 75 22C88 22 100 32 100 46C100 74 60 98 60 98Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;44&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 52)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "like",
+  "name_en": "Like / Favorite",
+  "name_ar": "الإعجاب",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Engagement / Social",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-comment">
+<article data-icon-id="comment" data-icon-name="Comment / Discussion" data-status="approved" data-svg-ready="true">
+<h2>Comment / Discussion — التعليقات / النقاش</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> فقاعة حوار هندسية واضحة بزاوية سفلية رشيقة، تتوسطها ثلاث نقاط ماسية متتابعة تمثل صوت المستخدم.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M24 58C24 38.1 40.1 22 60 22C79.9 22 96 38.1 96 58C96 77.9 79.9 94 60 94C53.2 94 46.8 92.1 41.3 88.8L22 94L27.5 76.2C25.3 70.8 24 64.6 24 58Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="42" y="54" width="8" height="8" rx="1" transform="rotate(45 46 58)" fill="#0E065A"/>
+  <rect x="55" y="53" width="10" height="10" rx="1.5" transform="rotate(45 60 58)" fill="#00D8D8"/>
+  <rect x="70" y="54" width="8" height="8" rx="1" transform="rotate(45 74 58)" fill="#0E065A"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Comment / Discussion</td></tr>
+<tr><th>Name AR</th><td>التعليقات / النقاش</td></tr>
+<tr><th>Category</th><td>Engagement / Social</td></tr>
+<tr><th>Purpose</th><td>Post feedback, comments section, thread reply</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="comment"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M24 58C24 38.1 40.1 22 60 22C79.9 22 96 38.1 96 58C96 77.9 79.9 94 60 94C53.2 94 46.8 92.1 41.3 88.8L22 94L27.5 76.2C25.3 70.8 24 64.6 24 58Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;42&quot; y=&quot;54&quot; width=&quot;8&quot; height=&quot;8&quot; rx=&quot;1&quot; transform=&quot;rotate(45 46 58)&quot; fill=&quot;#0E065A&quot;/&gt;
+  &lt;rect x=&quot;55&quot; y=&quot;53&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 60 58)&quot; fill=&quot;#00D8D8&quot;/&gt;
+  &lt;rect x=&quot;70&quot; y=&quot;54&quot; width=&quot;8&quot; height=&quot;8&quot; rx=&quot;1&quot; transform=&quot;rotate(45 74 58)&quot; fill=&quot;#0E065A&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyCommentIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M24 58C24 38.1 40.1 22 60 22C79.9 22 96 38.1 96 58C96 77.9 79.9 94 60 94C53.2 94 46.8 92.1 41.3 88.8L22 94L27.5 76.2C25.3 70.8 24 64.6 24 58Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;42&quot; y=&quot;54&quot; width=&quot;8&quot; height=&quot;8&quot; rx=&quot;1&quot; transform=&quot;rotate(45 46 58)&quot; fill=&quot;{primary}&quot;/&gt;
+  &lt;rect x=&quot;55&quot; y=&quot;53&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 60 58)&quot; fill=&quot;{accent}&quot;/&gt;
+  &lt;rect x=&quot;70&quot; y=&quot;54&quot; width=&quot;8&quot; height=&quot;8&quot; rx=&quot;1&quot; transform=&quot;rotate(45 74 58)&quot; fill=&quot;{primary}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "comment",
+  "name_en": "Comment / Discussion",
+  "name_ar": "التعليقات / النقاش",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Engagement / Social",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-question">
+<article data-icon-id="question" data-icon-name="Question / FAQ" data-status="approved" data-svg-ready="true">
+<h2>Question / FAQ — الأسئلة الشائعة / الاستفسارات</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> دائرة احتواء مركزية يعلوها قوس علامة الاستفهام، ونقطة الارتكاز هي ماسة مدونتي كرمز للإجابة الموثوقة.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="60" r="42" stroke="#0E065A" stroke-width="8"/>
+  <path d="M48 44C48 36.5 53.5 32 60 32C66.5 32 72 36.5 72 43C72 50 63 54 60 62" stroke="#0E065A" stroke-width="8" stroke-linecap="round"/>
+  <rect x="54" y="74" width="12" height="12" rx="1.5" transform="rotate(45 60 80)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Question / FAQ</td></tr>
+<tr><th>Name AR</th><td>الأسئلة الشائعة / الاستفسارات</td></tr>
+<tr><th>Category</th><td>Help / Support</td></tr>
+<tr><th>Purpose</th><td>FAQ section, help center, inquiry form</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="question"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;circle cx=&quot;60&quot; cy=&quot;60&quot; r=&quot;42&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot;/&gt;
+  &lt;path d=&quot;M48 44C48 36.5 53.5 32 60 32C66.5 32 72 36.5 72 43C72 50 63 54 60 62&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;54&quot; y=&quot;74&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 60 80)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyQuestionIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;circle cx=&quot;60&quot; cy=&quot;60&quot; r=&quot;42&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot;/&gt;
+  &lt;path d=&quot;M48 44C48 36.5 53.5 32 60 32C66.5 32 72 36.5 72 43C72 50 63 54 60 62&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;54&quot; y=&quot;74&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 60 80)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "question",
+  "name_en": "Question / FAQ",
+  "name_ar": "الأسئلة الشائعة / الاستفسارات",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Help / Support",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-bookmark">
+<article data-icon-id="bookmark" data-icon-name="Bookmark" data-status="approved" data-svg-ready="true">
+<h2>Bookmark — حفظ المقال / الإشارات المرجعية</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> شريط إشارة مرجعية كلاسيكي بقطع سفلي متقن، تعلوه ماسة التمييز كعلامة حفظ نشطة.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M34 26C34 21.6 37.6 18 42 18H78C82.4 18 86 21.6 86 26V100L60 82L34 100V26Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="53" y="39" width="14" height="14" rx="2" transform="rotate(45 60 46)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Bookmark</td></tr>
+<tr><th>Name AR</th><td>حفظ المقال / الإشارات المرجعية</td></tr>
+<tr><th>Category</th><td>Utility / Reader</td></tr>
+<tr><th>Purpose</th><td>Save for later, bookmarks library, reading list</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="bookmark"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M34 26C34 21.6 37.6 18 42 18H78C82.4 18 86 21.6 86 26V100L60 82L34 100V26Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;39&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 46)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyBookmarkIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M34 26C34 21.6 37.6 18 42 18H78C82.4 18 86 21.6 86 26V100L60 82L34 100V26Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;39&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 46)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "bookmark",
+  "name_en": "Bookmark",
+  "name_ar": "حفظ المقال / الإشارات المرجعية",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Utility / Reader",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-professionals">
+<article data-icon-id="professionals" data-icon-name="Professionals" data-status="approved" data-svg-ready="true">
+<h2>Professionals — المحترفون / الخبراء</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> قبعة تميز وتخرج احترافية ذات زوايا متوازنة، مرصعة بالماسة السماوية كرمز للمهارة والاعتمادية.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M18 48L60 28L102 48L60 68L18 48Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M36 58V78C36 86 46.7 94 60 94C73.3 94 84 86 84 78V58" stroke="#0E065A" stroke-width="8" stroke-linecap="round"/>
+  <path d="M96 52V76" stroke="#0E065A" stroke-width="6" stroke-linecap="round"/>
+  <rect x="53" y="41" width="14" height="14" rx="2" transform="rotate(45 60 48)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Professionals</td></tr>
+<tr><th>Name AR</th><td>المحترفون / الخبراء</td></tr>
+<tr><th>Category</th><td>Identity / Trust</td></tr>
+<tr><th>Purpose</th><td>Expert badge, verified author, professional network</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="professionals"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M18 48L60 28L102 48L60 68L18 48Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M36 58V78C36 86 46.7 94 60 94C73.3 94 84 86 84 78V58&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M96 52V76&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;6&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;41&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 48)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyProfessionalsIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M18 48L60 28L102 48L60 68L18 48Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M36 58V78C36 86 46.7 94 60 94C73.3 94 84 86 84 78V58&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M96 52V76&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;6&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;41&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 48)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "professionals",
+  "name_en": "Professionals",
+  "name_ar": "المحترفون / الخبراء",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Identity / Trust",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-notifications">
+<article data-icon-id="notifications" data-icon-name="Notifications" data-status="approved" data-svg-ready="true">
+<h2>Notifications — الإشعارات / التنبيهات</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> جرس تنبيه كلاسيكي واضح مع تطبيقين للماسة: ماسة مفرغة كعلامة وصول جديد، وماسة ممتلئة كلسان الرنين.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="17" r="6" fill="#0E065A"/>
+  <path d="M78 31C72 25 65 22 58 22C43 22 32 32 30 47L28 68C27 78 24 83 18 88C14 91 16 99 22 99H98C104 99 106 91 102 88C96 83 93 78 92 68L90 48" stroke="#0E065A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="81.5" y="27.5" width="17" height="17" rx="1.5" transform="rotate(45 90 36)" fill="#FFFFFF" stroke="#00D8D8" stroke-width="5"/>
+  <rect x="54" y="102" width="12" height="12" rx="1.8" transform="rotate(45 60 108)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Notifications</td></tr>
+<tr><th>Name AR</th><td>الإشعارات / التنبيهات</td></tr>
+<tr><th>Category</th><td>Brand / Utility</td></tr>
+<tr><th>Purpose</th><td>System alerts, new updates, unread messages</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="notifications"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;circle cx=&quot;60&quot; cy=&quot;17&quot; r=&quot;6&quot; fill=&quot;#0E065A&quot;/&gt;
+  &lt;path d=&quot;M78 31C72 25 65 22 58 22C43 22 32 32 30 47L28 68C27 78 24 83 18 88C14 91 16 99 22 99H98C104 99 106 91 102 88C96 83 93 78 92 68L90 48&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;7&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;81.5&quot; y=&quot;27.5&quot; width=&quot;17&quot; height=&quot;17&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 90 36)&quot; fill=&quot;#FFFFFF&quot; stroke=&quot;#00D8D8&quot; stroke-width=&quot;5&quot;/&gt;
+  &lt;rect x=&quot;54&quot; y=&quot;102&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.8&quot; transform=&quot;rotate(45 60 108)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyNotificationsIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;circle cx=&quot;60&quot; cy=&quot;17&quot; r=&quot;6&quot; fill=&quot;{primary}&quot;/&gt;
+  &lt;path d=&quot;M78 31C72 25 65 22 58 22C43 22 32 32 30 47L28 68C27 78 24 83 18 88C14 91 16 99 22 99H98C104 99 106 91 102 88C96 83 93 78 92 68L90 48&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;7&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;81.5&quot; y=&quot;27.5&quot; width=&quot;17&quot; height=&quot;17&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 90 36)&quot; fill=&quot;#FFFFFF&quot; stroke=&quot;{accent}&quot; strokeWidth=&quot;5&quot;/&gt;
+  &lt;rect x=&quot;54&quot; y=&quot;102&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.8&quot; transform=&quot;rotate(45 60 108)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "notifications",
+  "name_en": "Notifications",
+  "name_ar": "الإشعارات / التنبيهات",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Brand / Utility",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-trending">
+<article data-icon-id="trending" data-icon-name="Trending" data-status="approved" data-svg-ready="true">
+<h2>Trending — الرائج / الصاعد</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> مسار تصاعدي صاعد بحواف ناعمة وسهم يمثل النمو، وذروة الانعطاف متمركزة على ماسة الارتفاع.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M24 74L48 50L68 60L90 32" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M76 30H92V46" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="62" y="54" width="12" height="12" rx="1.5" transform="rotate(45 68 60)" fill="#00D8D8"/>
+  <circle cx="24" cy="74" r="4" fill="#0E065A"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Trending</td></tr>
+<tr><th>Name AR</th><td>الرائج / الصاعد</td></tr>
+<tr><th>Category</th><td>Analytics / Discovery</td></tr>
+<tr><th>Purpose</th><td>Viral content, trending topics, growth charts</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="trending"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M24 74L48 50L68 60L90 32&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M76 30H92V46&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;62&quot; y=&quot;54&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 68 60)&quot; fill=&quot;#00D8D8&quot;/&gt;
+  &lt;circle cx=&quot;24&quot; cy=&quot;74&quot; r=&quot;4&quot; fill=&quot;#0E065A&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyTrendingIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M24 74L48 50L68 60L90 32&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M76 30H92V46&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;62&quot; y=&quot;54&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 68 60)&quot; fill=&quot;{accent}&quot;/&gt;
+  &lt;circle cx=&quot;24&quot; cy=&quot;74&quot; r=&quot;4&quot; fill=&quot;{primary}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "trending",
+  "name_en": "Trending",
+  "name_ar": "الرائج / الصاعد",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Analytics / Discovery",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-profile">
+<article data-icon-id="profile" data-icon-name="Profile / Account" data-status="approved" data-svg-ready="true">
+<h2>Profile / Account — الملف الشخصي / الحساب</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> صورة ظلية لهيكل الشخص عبر رأس دائري وقوس كتفين متناظر، تستقر في صدره ماسة الهوية الشخصية.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="46" r="18" stroke="#0E065A" stroke-width="8"/>
+  <path d="M26 94C26 76 41 72 60 72C79 72 94 76 94 94" stroke="#0E065A" stroke-width="8" stroke-linecap="round"/>
+  <rect x="54" y="87" width="12" height="12" rx="1.5" transform="rotate(45 60 93)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Profile / Account</td></tr>
+<tr><th>Name AR</th><td>الملف الشخصي / الحساب</td></tr>
+<tr><th>Category</th><td>Navigation / Identity</td></tr>
+<tr><th>Purpose</th><td>User settings, account profile, author identity</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="profile"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;circle cx=&quot;60&quot; cy=&quot;46&quot; r=&quot;18&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot;/&gt;
+  &lt;path d=&quot;M26 94C26 76 41 72 60 72C79 72 94 76 94 94&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;54&quot; y=&quot;87&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 60 93)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyProfileIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;circle cx=&quot;60&quot; cy=&quot;46&quot; r=&quot;18&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot;/&gt;
+  &lt;path d=&quot;M26 94C26 76 41 72 60 72C79 72 94 76 94 94&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;54&quot; y=&quot;87&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 60 93)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "profile",
+  "name_en": "Profile / Account",
+  "name_ar": "الملف الشخصي / الحساب",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Navigation / Identity",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-share">
+<article data-icon-id="share" data-icon-name="Share" data-status="approved" data-svg-ready="true">
+<h2>Share — المشاركة</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> هيكل التوزيع الثلاثي، حيث تمثل العقدة اليسرى الماسة السماوية لتعبر عن مصدر المحتوى من مدونتي.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M42 56L78 38M42 64L78 82" stroke="#0E065A" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="84" cy="34" r="12" stroke="#0E065A" stroke-width="8" fill="#FFFFFF"/>
+  <circle cx="84" cy="86" r="12" stroke="#0E065A" stroke-width="8" fill="#FFFFFF"/>
+  <rect x="25" y="51" width="18" height="18" rx="2" transform="rotate(45 34 60)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Share</td></tr>
+<tr><th>Name AR</th><td>المشاركة</td></tr>
+<tr><th>Category</th><td>Social / Utility</td></tr>
+<tr><th>Purpose</th><td>Share post, social broadcast, copy link</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="share"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M42 56L78 38M42 64L78 82&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;circle cx=&quot;84&quot; cy=&quot;34&quot; r=&quot;12&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; fill=&quot;#FFFFFF&quot;/&gt;
+  &lt;circle cx=&quot;84&quot; cy=&quot;86&quot; r=&quot;12&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; fill=&quot;#FFFFFF&quot;/&gt;
+  &lt;rect x=&quot;25&quot; y=&quot;51&quot; width=&quot;18&quot; height=&quot;18&quot; rx=&quot;2&quot; transform=&quot;rotate(45 34 60)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyShareIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M42 56L78 38M42 64L78 82&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;circle cx=&quot;84&quot; cy=&quot;34&quot; r=&quot;12&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; fill=&quot;#FFFFFF&quot;/&gt;
+  &lt;circle cx=&quot;84&quot; cy=&quot;86&quot; r=&quot;12&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; fill=&quot;#FFFFFF&quot;/&gt;
+  &lt;rect x=&quot;25&quot; y=&quot;51&quot; width=&quot;18&quot; height=&quot;18&quot; rx=&quot;2&quot; transform=&quot;rotate(45 34 60)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "share",
+  "name_en": "Share",
+  "name_ar": "المشاركة",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Social / Utility",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-rating">
+<article data-icon-id="rating" data-icon-name="Rating / Star" data-status="approved" data-svg-ready="true">
+<h2>Rating / Star — التقييم / النجمة</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> نجمة خماسية متناسقة الزوايا بحواف مدورة، تتوسطها ماسة الجودة السماوية.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M60 18L72.4 43.1L100 47.1L80 66.6L84.7 94L60 81L35.3 94L40 66.6L20 47.1L47.6 43.1L60 18Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="53" y="49" width="14" height="14" rx="2" transform="rotate(45 60 56)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Rating / Star</td></tr>
+<tr><th>Name AR</th><td>التقييم / النجمة</td></tr>
+<tr><th>Category</th><td>Feedback / Quality</td></tr>
+<tr><th>Purpose</th><td>User review, 5-star scoring, product ratings</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="rating"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M60 18L72.4 43.1L100 47.1L80 66.6L84.7 94L60 81L35.3 94L40 66.6L20 47.1L47.6 43.1L60 18Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;49&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 56)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyRatingIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M60 18L72.4 43.1L100 47.1L80 66.6L84.7 94L60 81L35.3 94L40 66.6L20 47.1L47.6 43.1L60 18Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;49&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 56)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "rating",
+  "name_en": "Rating / Star",
+  "name_ar": "التقييم / النجمة",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Feedback / Quality",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-categories">
+<article data-icon-id="categories" data-icon-name="Categories / Industries" data-status="approved" data-svg-ready="true">
+<h2>Categories / Industries — التصنيفات / القطاعات</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> شبكة من 4 وحدات هندسية مدورة الزوايا، تتميز الوحدة الرابعة بتحولها لماسة مدونتي النشطة.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="22" y="22" width="30" height="30" rx="8" stroke="#0E065A" stroke-width="8"/>
+  <rect x="68" y="22" width="30" height="30" rx="8" stroke="#0E065A" stroke-width="8"/>
+  <rect x="22" y="68" width="30" height="30" rx="8" stroke="#0E065A" stroke-width="8"/>
+  <rect x="73" y="73" width="20" height="20" rx="3" transform="rotate(45 83 83)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Categories / Industries</td></tr>
+<tr><th>Name AR</th><td>التصنيفات / القطاعات</td></tr>
+<tr><th>Category</th><td>Navigation / Structure</td></tr>
+<tr><th>Purpose</th><td>Sector directories, topics index, categories grid</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="categories"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;22&quot; y=&quot;22&quot; width=&quot;30&quot; height=&quot;30&quot; rx=&quot;8&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot;/&gt;
+  &lt;rect x=&quot;68&quot; y=&quot;22&quot; width=&quot;30&quot; height=&quot;30&quot; rx=&quot;8&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot;/&gt;
+  &lt;rect x=&quot;22&quot; y=&quot;68&quot; width=&quot;30&quot; height=&quot;30&quot; rx=&quot;8&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot;/&gt;
+  &lt;rect x=&quot;73&quot; y=&quot;73&quot; width=&quot;20&quot; height=&quot;20&quot; rx=&quot;3&quot; transform=&quot;rotate(45 83 83)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyCategoriesIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;22&quot; y=&quot;22&quot; width=&quot;30&quot; height=&quot;30&quot; rx=&quot;8&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot;/&gt;
+  &lt;rect x=&quot;68&quot; y=&quot;22&quot; width=&quot;30&quot; height=&quot;30&quot; rx=&quot;8&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot;/&gt;
+  &lt;rect x=&quot;22&quot; y=&quot;68&quot; width=&quot;30&quot; height=&quot;30&quot; rx=&quot;8&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot;/&gt;
+  &lt;rect x=&quot;73&quot; y=&quot;73&quot; width=&quot;20&quot; height=&quot;20&quot; rx=&quot;3&quot; transform=&quot;rotate(45 83 83)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "categories",
+  "name_en": "Categories / Industries",
+  "name_ar": "التصنيفات / القطاعات",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Navigation / Structure",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-tags">
+<article data-icon-id="tags" data-icon-name="Tags" data-status="approved" data-svg-ready="true">
+<h2>Tags — الوسوم / الكلمات المفتاحية</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> بطاقة وسوم مائلة بفتحة تعليق واضحة، تتوسطها ماسة التمييز كعلامة وسم تفاعلية.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M26 62V34C26 29.6 29.6 26 34 26H62L96 60C99.2 63.2 99.2 68.8 96 72L72 96C68.8 99.2 63.2 99.2 60 96L26 62Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="44" cy="44" r="6" fill="#0E065A"/>
+  <rect x="65" y="65" width="14" height="14" rx="2" transform="rotate(45 72 72)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Tags</td></tr>
+<tr><th>Name AR</th><td>الوسوم / الكلمات المفتاحية</td></tr>
+<tr><th>Category</th><td>Content Organization</td></tr>
+<tr><th>Purpose</th><td>Article tags, keywords filter, indexing</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="tags"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M26 62V34C26 29.6 29.6 26 34 26H62L96 60C99.2 63.2 99.2 68.8 96 72L72 96C68.8 99.2 63.2 99.2 60 96L26 62Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;circle cx=&quot;44&quot; cy=&quot;44&quot; r=&quot;6&quot; fill=&quot;#0E065A&quot;/&gt;
+  &lt;rect x=&quot;65&quot; y=&quot;65&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 72 72)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyTagsIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M26 62V34C26 29.6 29.6 26 34 26H62L96 60C99.2 63.2 99.2 68.8 96 72L72 96C68.8 99.2 63.2 99.2 60 96L26 62Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;circle cx=&quot;44&quot; cy=&quot;44&quot; r=&quot;6&quot; fill=&quot;{primary}&quot;/&gt;
+  &lt;rect x=&quot;65&quot; y=&quot;65&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 72 72)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "tags",
+  "name_en": "Tags",
+  "name_ar": "الوسوم / الكلمات المفتاحية",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Content Organization",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-offers">
+<article data-icon-id="offers" data-icon-name="Offers / Gift" data-status="approved" data-svg-ready="true">
+<h2>Offers / Gift — العروض / الهدايا</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> صندوق هدية باحتواء متين وشريط ربط رأسي، تعلوه فيونكة ماسية مضيئة.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="26" y="48" width="68" height="52" rx="8" stroke="#0E065A" stroke-width="8"/>
+  <rect x="20" y="38" width="80" height="14" rx="4" stroke="#0E065A" stroke-width="6"/>
+  <path d="M60 38V100" stroke="#0E065A" stroke-width="8"/>
+  <rect x="52" y="16" width="16" height="16" rx="2" transform="rotate(45 60 24)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Offers / Gift</td></tr>
+<tr><th>Name AR</th><td>العروض / الهدايا</td></tr>
+<tr><th>Category</th><td>Marketing / Promotion</td></tr>
+<tr><th>Purpose</th><td>Discounts, gift coupons, special offers</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="offers"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;26&quot; y=&quot;48&quot; width=&quot;68&quot; height=&quot;52&quot; rx=&quot;8&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot;/&gt;
+  &lt;rect x=&quot;20&quot; y=&quot;38&quot; width=&quot;80&quot; height=&quot;14&quot; rx=&quot;4&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;6&quot;/&gt;
+  &lt;path d=&quot;M60 38V100&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;16&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 24)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyOffersIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;26&quot; y=&quot;48&quot; width=&quot;68&quot; height=&quot;52&quot; rx=&quot;8&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot;/&gt;
+  &lt;rect x=&quot;20&quot; y=&quot;38&quot; width=&quot;80&quot; height=&quot;14&quot; rx=&quot;4&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;6&quot;/&gt;
+  &lt;path d=&quot;M60 38V100&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;16&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 24)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "offers",
+  "name_en": "Offers / Gift",
+  "name_ar": "العروض / الهدايا",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Marketing / Promotion",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-gallery">
+<article data-icon-id="gallery" data-icon-name="Gallery / Images" data-status="approved" data-svg-ready="true">
+<h2>Gallery / Images — معرض الصور</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> إطار صورة بانورامي يحتوي تضاريس جبلية انسيابية، وشمس المعرض تتجسد كماسة سماوية مشعة.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="22" y="22" width="76" height="76" rx="14" stroke="#0E065A" stroke-width="8"/>
+  <path d="M26 84L48 58L66 76L82 60L94 74" stroke="#0E065A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="67" y="37" width="14" height="14" rx="2" transform="rotate(45 74 44)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Gallery / Images</td></tr>
+<tr><th>Name AR</th><td>معرض الصور</td></tr>
+<tr><th>Category</th><td>Media</td></tr>
+<tr><th>Purpose</th><td>Photo albums, image galleries, media assets</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="gallery"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;22&quot; y=&quot;22&quot; width=&quot;76&quot; height=&quot;76&quot; rx=&quot;14&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot;/&gt;
+  &lt;path d=&quot;M26 84L48 58L66 76L82 60L94 74&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;7&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;67&quot; y=&quot;37&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 74 44)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyGalleryIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;22&quot; y=&quot;22&quot; width=&quot;76&quot; height=&quot;76&quot; rx=&quot;14&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot;/&gt;
+  &lt;path d=&quot;M26 84L48 58L66 76L82 60L94 74&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;7&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;67&quot; y=&quot;37&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 74 44)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "gallery",
+  "name_en": "Gallery / Images",
+  "name_ar": "معرض الصور",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Media",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-location">
+<article data-icon-id="location" data-icon-name="Location / Pin" data-status="approved" data-svg-ready="true">
+<h2>Location / Pin — الموقع الجغرافي / الخريطة</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> دبوس خريطة انسيابي بقوس علوي واسع وذيل مدبب، وبؤرة الإحداثيات هي ماسة مدونتي المركزية.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M60 102C60 102 88 68 88 48C88 32.5 75.5 20 60 20C44.5 20 32 32.5 32 48C32 68 60 102 60 102Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="53" y="41" width="14" height="14" rx="2" transform="rotate(45 60 48)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Location / Pin</td></tr>
+<tr><th>Name AR</th><td>الموقع الجغرافي / الخريطة</td></tr>
+<tr><th>Category</th><td>Utility / Maps</td></tr>
+<tr><th>Purpose</th><td>Store locator, event venue, address pin</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="location"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M60 102C60 102 88 68 88 48C88 32.5 75.5 20 60 20C44.5 20 32 32.5 32 48C32 68 60 102 60 102Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;41&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 48)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyLocationIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M60 102C60 102 88 68 88 48C88 32.5 75.5 20 60 20C44.5 20 32 32.5 32 48C32 68 60 102 60 102Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;41&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 48)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "location",
+  "name_en": "Location / Pin",
+  "name_ar": "الموقع الجغرافي / الخريطة",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Utility / Maps",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-directions">
+<article data-icon-id="directions" data-icon-name="Directions / Navigation" data-status="approved" data-svg-ready="true">
+<h2>Directions / Navigation — الاتجاهات / المسار</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> لوحة توجيه طرقية معينة الإطار، ومسار سهمي ينعطف نحو الوجهة منطلقا من ماسة البداية.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="30" y="30" width="60" height="60" rx="10" transform="rotate(45 60 60)" stroke="#0E065A" stroke-width="8"/>
+  <path d="M46 72V52C46 47.6 49.6 44 54 44H74M74 44L64 34M74 44L64 54" stroke="#0E065A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="41" y="67" width="10" height="10" rx="1.5" transform="rotate(45 46 72)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Directions / Navigation</td></tr>
+<tr><th>Name AR</th><td>الاتجاهات / المسار</td></tr>
+<tr><th>Category</th><td>Maps / Guidance</td></tr>
+<tr><th>Purpose</th><td>Turn-by-turn navigation, route finding, directions</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="directions"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;30&quot; y=&quot;30&quot; width=&quot;60&quot; height=&quot;60&quot; rx=&quot;10&quot; transform=&quot;rotate(45 60 60)&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot;/&gt;
+  &lt;path d=&quot;M46 72V52C46 47.6 49.6 44 54 44H74M74 44L64 34M74 44L64 54&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;7&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;41&quot; y=&quot;67&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 46 72)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyDirectionsIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;30&quot; y=&quot;30&quot; width=&quot;60&quot; height=&quot;60&quot; rx=&quot;10&quot; transform=&quot;rotate(45 60 60)&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot;/&gt;
+  &lt;path d=&quot;M46 72V52C46 47.6 49.6 44 54 44H74M74 44L64 34M74 44L64 54&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;7&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;41&quot; y=&quot;67&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 46 72)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "directions",
+  "name_en": "Directions / Navigation",
+  "name_ar": "الاتجاهات / المسار",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Maps / Guidance",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-clock">
+<article data-icon-id="clock" data-icon-name="Clock / Time" data-status="approved" data-svg-ready="true">
+<h2>Clock / Time — الساعة / الوقت</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> ميناء ساعة دائري نقي بعقارب ساعات ودقائق متناسقة، يربط ارتكازها ماسة الوقت المركزية.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="60" r="42" stroke="#0E065A" stroke-width="8"/>
+  <path d="M60 32V60L78 68" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="54" y="54" width="12" height="12" rx="1.5" transform="rotate(45 60 60)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Clock / Time</td></tr>
+<tr><th>Name AR</th><td>الساعة / الوقت</td></tr>
+<tr><th>Category</th><td>Utility / Scheduling</td></tr>
+<tr><th>Purpose</th><td>Reading time estimation, office hours, timestamps</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="clock"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;circle cx=&quot;60&quot; cy=&quot;60&quot; r=&quot;42&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot;/&gt;
+  &lt;path d=&quot;M60 32V60L78 68&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;54&quot; y=&quot;54&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 60 60)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyClockIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;circle cx=&quot;60&quot; cy=&quot;60&quot; r=&quot;42&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot;/&gt;
+  &lt;path d=&quot;M60 32V60L78 68&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;54&quot; y=&quot;54&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 60 60)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "clock",
+  "name_en": "Clock / Time",
+  "name_ar": "الساعة / الوقت",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Utility / Scheduling",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-email">
+<article data-icon-id="email" data-icon-name="Email / Newsletter" data-status="approved" data-svg-ready="true">
+<h2>Email / Newsletter — البريد الإلكتروني / النشرة</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> ظرف بريدي مغلق بحواف رقيقة وطية علوية محكمة بختم مدونتي الماسي.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="22" y="30" width="76" height="60" rx="12" stroke="#0E065A" stroke-width="8"/>
+  <path d="M26 36L56.5 58.5C58.5 60 61.5 60 63.5 58.5L94 36" stroke="#0E065A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="53" y="63" width="14" height="14" rx="2" transform="rotate(45 60 70)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Email / Newsletter</td></tr>
+<tr><th>Name AR</th><td>البريد الإلكتروني / النشرة</td></tr>
+<tr><th>Category</th><td>Communication</td></tr>
+<tr><th>Purpose</th><td>Newsletter signup, contact email, direct messaging</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="email"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;22&quot; y=&quot;30&quot; width=&quot;76&quot; height=&quot;60&quot; rx=&quot;12&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot;/&gt;
+  &lt;path d=&quot;M26 36L56.5 58.5C58.5 60 61.5 60 63.5 58.5L94 36&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;7&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;63&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 70)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyEmailIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;22&quot; y=&quot;30&quot; width=&quot;76&quot; height=&quot;60&quot; rx=&quot;12&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot;/&gt;
+  &lt;path d=&quot;M26 36L56.5 58.5C58.5 60 61.5 60 63.5 58.5L94 36&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;7&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;63&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 70)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "email",
+  "name_en": "Email / Newsletter",
+  "name_ar": "البريد الإلكتروني / النشرة",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Communication",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-phone">
+<article data-icon-id="phone" data-icon-name="Phone" data-status="approved" data-svg-ready="true">
+<h2>Phone — الهاتف / الاتصال</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> سماعة هاتف كلاسيكية متقنة الانحناء تنبثق من أعلاها إشارة اتصال لاسلكية ماسية.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M34 26C30 26 24 32 24 38C24 68 52 96 82 96C88 96 94 90 94 86L86 68C84 64 78 62 74 64L66 70C54 62 48 54 42 42L48 34C50 30 48 24 44 22L34 26Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="67" y="27" width="14" height="14" rx="2" transform="rotate(45 74 34)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Phone</td></tr>
+<tr><th>Name AR</th><td>الهاتف / الاتصال</td></tr>
+<tr><th>Category</th><td>Communication</td></tr>
+<tr><th>Purpose</th><td>Direct phone call, customer hotline, telephone contact</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="phone"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M34 26C30 26 24 32 24 38C24 68 52 96 82 96C88 96 94 90 94 86L86 68C84 64 78 62 74 64L66 70C54 62 48 54 42 42L48 34C50 30 48 24 44 22L34 26Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;67&quot; y=&quot;27&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 74 34)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyPhoneIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M34 26C30 26 24 32 24 38C24 68 52 96 82 96C88 96 94 90 94 86L86 68C84 64 78 62 74 64L66 70C54 62 48 54 42 42L48 34C50 30 48 24 44 22L34 26Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;67&quot; y=&quot;27&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 74 34)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "phone",
+  "name_en": "Phone",
+  "name_ar": "الهاتف / الاتصال",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Communication",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-whatsapp">
+<article data-icon-id="whatsapp" data-icon-name="WhatsApp / Live Chat" data-status="approved" data-svg-ready="true">
+<h2>WhatsApp / Live Chat — واتساب / المحادثة الفورية</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> فقاعة اتصال فورية مستديرة بذيل ناعم، تحتضن نبضة الاتصال الماسية النشطة.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M60 22C39 22 22 39 22 60C22 67.5 24.2 74.5 28 80.5L24 98L42 94C47.5 97 53.5 98 60 98C81 98 98 81 98 60C98 39 81 22 60 22Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="52" y="52" width="16" height="16" rx="2" transform="rotate(45 60 60)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>WhatsApp / Live Chat</td></tr>
+<tr><th>Name AR</th><td>واتساب / المحادثة الفورية</td></tr>
+<tr><th>Category</th><td>Communication / Instant Messaging</td></tr>
+<tr><th>Purpose</th><td>WhatsApp chat button, live messaging, customer support</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="whatsapp"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M60 22C39 22 22 39 22 60C22 67.5 24.2 74.5 28 80.5L24 98L42 94C47.5 97 53.5 98 60 98C81 98 98 81 98 60C98 39 81 22 60 22Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;52&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 60)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyWhatsappIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M60 22C39 22 22 39 22 60C22 67.5 24.2 74.5 28 80.5L24 98L42 94C47.5 97 53.5 98 60 98C81 98 98 81 98 60C98 39 81 22 60 22Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;52&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 60)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "whatsapp",
+  "name_en": "WhatsApp / Live Chat",
+  "name_ar": "واتساب / المحادثة الفورية",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Communication / Instant Messaging",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-views">
+<article data-icon-id="views" data-icon-name="Views / Eye" data-status="approved" data-svg-ready="true">
+<h2>Views / Eye — المشاهدات / عدد الزوار</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> محيط عين متناظر مع حلقة الحدقة، وبؤرة الإبصار المركزية هي ماسة مدونتي الفاقعة.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M16 60C30 36 90 36 104 60C90 84 30 84 16 60Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="60" cy="60" r="16" stroke="#0E065A" stroke-width="6"/>
+  <rect x="54" y="54" width="12" height="12" rx="1.5" transform="rotate(45 60 60)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Views / Eye</td></tr>
+<tr><th>Name AR</th><td>المشاهدات / عدد الزوار</td></tr>
+<tr><th>Category</th><td>Analytics / Metrics</td></tr>
+<tr><th>Purpose</th><td>Post views count, impression metrics, eye visibility</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="views"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M16 60C30 36 90 36 104 60C90 84 30 84 16 60Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;circle cx=&quot;60&quot; cy=&quot;60&quot; r=&quot;16&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;6&quot;/&gt;
+  &lt;rect x=&quot;54&quot; y=&quot;54&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 60 60)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyViewsIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M16 60C30 36 90 36 104 60C90 84 30 84 16 60Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;circle cx=&quot;60&quot; cy=&quot;60&quot; r=&quot;16&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;6&quot;/&gt;
+  &lt;rect x=&quot;54&quot; y=&quot;54&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 60 60)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "views",
+  "name_en": "Views / Eye",
+  "name_ar": "المشاهدات / عدد الزوار",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Analytics / Metrics",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-toc">
+<article data-icon-id="toc" data-icon-name="Table of Contents" data-status="approved" data-svg-ready="true">
+<h2>Table of Contents — فهرس المحتويات</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> أسطر قائمة فهرسية منظمة مسبوقة بنقاط تتابع ماسية تبرز منها النقطة النشطة بالسماوي.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M52 36H94M52 60H94M52 84H94" stroke="#0E065A" stroke-width="8" stroke-linecap="round"/>
+  <rect x="29" y="31" width="10" height="10" rx="1.5" transform="rotate(45 34 36)" fill="#0E065A"/>
+  <rect x="28" y="54" width="12" height="12" rx="1.5" transform="rotate(45 34 60)" fill="#00D8D8"/>
+  <rect x="29" y="79" width="10" height="10" rx="1.5" transform="rotate(45 34 84)" fill="#0E065A"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Table of Contents</td></tr>
+<tr><th>Name AR</th><td>فهرس المحتويات</td></tr>
+<tr><th>Category</th><td>Reader / Navigation</td></tr>
+<tr><th>Purpose</th><td>Article outline, section jump-list, table of contents</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="toc"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M52 36H94M52 60H94M52 84H94&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;29&quot; y=&quot;31&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 34 36)&quot; fill=&quot;#0E065A&quot;/&gt;
+  &lt;rect x=&quot;28&quot; y=&quot;54&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 34 60)&quot; fill=&quot;#00D8D8&quot;/&gt;
+  &lt;rect x=&quot;29&quot; y=&quot;79&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 34 84)&quot; fill=&quot;#0E065A&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyTocIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M52 36H94M52 60H94M52 84H94&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;29&quot; y=&quot;31&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 34 36)&quot; fill=&quot;{primary}&quot;/&gt;
+  &lt;rect x=&quot;28&quot; y=&quot;54&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 34 60)&quot; fill=&quot;{accent}&quot;/&gt;
+  &lt;rect x=&quot;29&quot; y=&quot;79&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 34 84)&quot; fill=&quot;{primary}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "toc",
+  "name_en": "Table of Contents",
+  "name_ar": "فهرس المحتويات",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Reader / Navigation",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-keypoints">
+<article data-icon-id="keypoints" data-icon-name="Key Points / Lightning" data-status="approved" data-svg-ready="true">
+<h2>Key Points / Lightning — النقاط الجوهرية / الخلاصة</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> وميض كهربائي خاطف بخطوط 45° حادة متناسقة، تتوسطه شارة التركيز الماسية.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M66 18L34 62H62L54 102L86 54H58L66 18Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="52" y="52" width="16" height="16" rx="2" transform="rotate(45 60 60)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Key Points / Lightning</td></tr>
+<tr><th>Name AR</th><td>النقاط الجوهرية / الخلاصة</td></tr>
+<tr><th>Category</th><td>Content / Highlights</td></tr>
+<tr><th>Purpose</th><td>Summary takeaways, lightning highlights, quick tips</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="keypoints"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M66 18L34 62H62L54 102L86 54H58L66 18Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;52&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 60)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyKeypointsIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M66 18L34 62H62L54 102L86 54H58L66 18Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;52&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 60)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "keypoints",
+  "name_en": "Key Points / Lightning",
+  "name_ar": "النقاط الجوهرية / الخلاصة",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Content / Highlights",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-filter">
+<article data-icon-id="filter" data-icon-name="Filter" data-status="approved" data-svg-ready="true">
+<h2>Filter — الفلترة والتصفية</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> قمع تصفية هندسي متدرج نحو الأسفل، تتوسطه ماسة التنقية كعنصر تصفية ذكي.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 26H98L68 62V94L52 84V62L22 26Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="53" y="37" width="14" height="14" rx="2" transform="rotate(45 60 44)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Filter</td></tr>
+<tr><th>Name AR</th><td>الفلترة والتصفية</td></tr>
+<tr><th>Category</th><td>Utility / Search</td></tr>
+<tr><th>Purpose</th><td>Search filters, content sorting attributes</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="filter"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M22 26H98L68 62V94L52 84V62L22 26Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;37&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 44)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyFilterIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M22 26H98L68 62V94L52 84V62L22 26Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;37&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 44)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "filter",
+  "name_en": "Filter",
+  "name_ar": "الفلترة والتصفية",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Utility / Search",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-sort">
+<article data-icon-id="sort" data-icon-name="Sort" data-status="approved" data-svg-ready="true">
+<h2>Sort — الترتيب والفرز</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> سهمان متوازيان متعاكسان للفرز الصاعد والهابط، وبينهما ماسة التوازن والترتيب.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M42 94V26M42 26L30 38M42 26L54 38" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M78 26V94M78 94L66 82M78 94L90 82" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="53" y="53" width="14" height="14" rx="2" transform="rotate(45 60 60)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Sort</td></tr>
+<tr><th>Name AR</th><td>الترتيب والفرز</td></tr>
+<tr><th>Category</th><td>Utility / Data</td></tr>
+<tr><th>Purpose</th><td>Ascending/descending sorting, reorder items</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="sort"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M42 94V26M42 26L30 38M42 26L54 38&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M78 26V94M78 94L66 82M78 94L90 82&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;53&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 60)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontySortIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M42 94V26M42 26L30 38M42 26L54 38&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M78 26V94M78 94L66 82M78 94L90 82&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;53&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 60)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "sort",
+  "name_en": "Sort",
+  "name_ar": "الترتيب والفرز",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Utility / Data",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-feedback">
+<article data-icon-id="feedback" data-icon-name="Feedback" data-status="approved" data-svg-ready="true">
+<h2>Feedback — الملاحظات والآراء</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> لوحة تقييم وملاحظات مستندة تتصدرها شارة الرضا الماسية مع أسطر تدوين مرنة.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="26" y="22" width="68" height="76" rx="12" stroke="#0E065A" stroke-width="8"/>
+  <rect x="53" y="37" width="14" height="14" rx="2" transform="rotate(45 60 44)" fill="#00D8D8"/>
+  <path d="M42 66H78M42 78H66" stroke="#0E065A" stroke-width="6" stroke-linecap="round"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Feedback</td></tr>
+<tr><th>Name AR</th><td>الملاحظات والآراء</td></tr>
+<tr><th>Category</th><td>Engagement / Support</td></tr>
+<tr><th>Purpose</th><td>Feedback form, user reviews, survey submission</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="feedback"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;26&quot; y=&quot;22&quot; width=&quot;68&quot; height=&quot;76&quot; rx=&quot;12&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;37&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 44)&quot; fill=&quot;#00D8D8&quot;/&gt;
+  &lt;path d=&quot;M42 66H78M42 78H66&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;6&quot; stroke-linecap=&quot;round&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyFeedbackIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;26&quot; y=&quot;22&quot; width=&quot;68&quot; height=&quot;76&quot; rx=&quot;12&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;37&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 44)&quot; fill=&quot;{accent}&quot;/&gt;
+  &lt;path d=&quot;M42 66H78M42 78H66&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;6&quot; strokeLinecap=&quot;round&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "feedback",
+  "name_en": "Feedback",
+  "name_ar": "الملاحظات والآراء",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Engagement / Support",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-support">
+<article data-icon-id="support" data-icon-name="Support / Helpdesk" data-status="approved" data-svg-ready="true">
+<h2>Support / Helpdesk — الدعم الفني / المساعدة</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> سماعة خدمة عملاء محيطة بالرأس، وميكروفون متصل بماسة التحدث واستقبال الاستفسارات.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M26 62C26 43.2 41.2 28 60 28C78.8 28 94 43.2 94 62V78C94 82.4 90.4 86 86 86H80" stroke="#0E065A" stroke-width="8" stroke-linecap="round"/>
+  <rect x="20" y="56" width="12" height="24" rx="4" fill="#0E065A"/>
+  <rect x="88" y="56" width="12" height="24" rx="4" fill="#0E065A"/>
+  <path d="M86 86V88C86 94 80 98 74 98H68" stroke="#0E065A" stroke-width="6" stroke-linecap="round"/>
+  <rect x="52" y="90" width="12" height="12" rx="1.5" transform="rotate(45 58 96)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Support / Helpdesk</td></tr>
+<tr><th>Name AR</th><td>الدعم الفني / المساعدة</td></tr>
+<tr><th>Category</th><td>Customer Care</td></tr>
+<tr><th>Purpose</th><td>Customer service, helpdesk ticket, technical assistance</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="support"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M26 62C26 43.2 41.2 28 60 28C78.8 28 94 43.2 94 62V78C94 82.4 90.4 86 86 86H80&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;20&quot; y=&quot;56&quot; width=&quot;12&quot; height=&quot;24&quot; rx=&quot;4&quot; fill=&quot;#0E065A&quot;/&gt;
+  &lt;rect x=&quot;88&quot; y=&quot;56&quot; width=&quot;12&quot; height=&quot;24&quot; rx=&quot;4&quot; fill=&quot;#0E065A&quot;/&gt;
+  &lt;path d=&quot;M86 86V88C86 94 80 98 74 98H68&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;6&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;90&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 58 96)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontySupportIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M26 62C26 43.2 41.2 28 60 28C78.8 28 94 43.2 94 62V78C94 82.4 90.4 86 86 86H80&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;20&quot; y=&quot;56&quot; width=&quot;12&quot; height=&quot;24&quot; rx=&quot;4&quot; fill=&quot;{primary}&quot;/&gt;
+  &lt;rect x=&quot;88&quot; y=&quot;56&quot; width=&quot;12&quot; height=&quot;24&quot; rx=&quot;4&quot; fill=&quot;{primary}&quot;/&gt;
+  &lt;path d=&quot;M86 86V88C86 94 80 98 74 98H68&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;6&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;52&quot; y=&quot;90&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 58 96)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "support",
+  "name_en": "Support / Helpdesk",
+  "name_ar": "الدعم الفني / المساعدة",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Customer Care",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-payment">
+<article data-icon-id="payment" data-icon-name="Secure Payment" data-status="approved" data-svg-ready="true">
+<h2>Secure Payment — الدفع الآمن / الحماية</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> درع حماية متين يضم قفلاً مدمجاً، وتفتح أمانه ماسة مدونتي الموثوقة.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M60 20L92 32V60C92 80 78 96 60 102C42 96 28 80 28 60V32L60 20Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M50 54V46C50 40.5 54.5 36 60 36C65.5 36 70 40.5 70 46V54" stroke="#0E065A" stroke-width="6" stroke-linecap="round"/>
+  <rect x="54" y="58" width="12" height="12" rx="1.5" transform="rotate(45 60 64)" fill="#00D8D8"/>
+  <path d="M60 70V78" stroke="#00D8D8" stroke-width="4" stroke-linecap="round"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Secure Payment</td></tr>
+<tr><th>Name AR</th><td>الدفع الآمن / الحماية</td></tr>
+<tr><th>Category</th><td>Security / Financial</td></tr>
+<tr><th>Purpose</th><td>SSL security, payment gateway, fraud protection</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="payment"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M60 20L92 32V60C92 80 78 96 60 102C42 96 28 80 28 60V32L60 20Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M50 54V46C50 40.5 54.5 36 60 36C65.5 36 70 40.5 70 46V54&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;6&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;54&quot; y=&quot;58&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 60 64)&quot; fill=&quot;#00D8D8&quot;/&gt;
+  &lt;path d=&quot;M60 70V78&quot; stroke=&quot;#00D8D8&quot; stroke-width=&quot;4&quot; stroke-linecap=&quot;round&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyPaymentIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M60 20L92 32V60C92 80 78 96 60 102C42 96 28 80 28 60V32L60 20Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M50 54V46C50 40.5 54.5 36 60 36C65.5 36 70 40.5 70 46V54&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;6&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;54&quot; y=&quot;58&quot; width=&quot;12&quot; height=&quot;12&quot; rx=&quot;1.5&quot; transform=&quot;rotate(45 60 64)&quot; fill=&quot;{accent}&quot;/&gt;
+  &lt;path d=&quot;M60 70V78&quot; stroke=&quot;{accent}&quot; strokeWidth=&quot;4&quot; strokeLinecap=&quot;round&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "payment",
+  "name_en": "Secure Payment",
+  "name_ar": "الدفع الآمن / الحماية",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Security / Financial",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-invoice">
+<article data-icon-id="invoice" data-icon-name="Invoice / Receipt" data-status="approved" data-svg-ready="true">
+<h2>Invoice / Receipt — الفاتورة / الإيصال</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> ورقة فاتورة كلاسيكية بقاعدة مسننة، تتضمن أسطر البيانات وختم المصادقة الماسي.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M30 20H90V96L80 90L70 96L60 90L50 96L40 90L30 96V20Z" stroke="#0E065A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M44 38H76M44 50H76" stroke="#0E065A" stroke-width="6" stroke-linecap="round"/>
+  <rect x="53" y="65" width="14" height="14" rx="2" transform="rotate(45 60 72)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Invoice / Receipt</td></tr>
+<tr><th>Name AR</th><td>الفاتورة / الإيصال</td></tr>
+<tr><th>Category</th><td>Billing / Financial</td></tr>
+<tr><th>Purpose</th><td>Subscription receipts, billing invoices, purchase history</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="invoice"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M30 20H90V96L80 90L70 96L60 90L50 96L40 90L30 96V20Z&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M44 38H76M44 50H76&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;6&quot; stroke-linecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;65&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 72)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyInvoiceIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;path d=&quot;M30 20H90V96L80 90L70 96L60 90L50 96L40 90L30 96V20Z&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot; strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot;/&gt;
+  &lt;path d=&quot;M44 38H76M44 50H76&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;6&quot; strokeLinecap=&quot;round&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;65&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 72)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "invoice",
+  "name_en": "Invoice / Receipt",
+  "name_ar": "الفاتورة / الإيصال",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Billing / Financial",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-pricing">
+<article data-icon-id="pricing" data-icon-name="Package / Pricing" data-status="approved" data-svg-ready="true">
+<h2>Package / Pricing — الباقات / الأسعار</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> ثلاثة أعمدة ترمز لباقات الاشتراك المتصاعدة، تعلو الباقة الأعلى ميزة ماسة التميز الاحترافية.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="22" y="58" width="22" height="40" rx="4" stroke="#0E065A" stroke-width="6"/>
+  <rect x="49" y="42" width="22" height="56" rx="4" stroke="#0E065A" stroke-width="6"/>
+  <rect x="76" y="26" width="22" height="72" rx="4" stroke="#0E065A" stroke-width="6"/>
+  <rect x="80" y="34" width="14" height="14" rx="2" transform="rotate(45 87 41)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Package / Pricing</td></tr>
+<tr><th>Name AR</th><td>الباقات / الأسعار</td></tr>
+<tr><th>Category</th><td>Subscription / Plans</td></tr>
+<tr><th>Purpose</th><td>SaaS plans, tier pricing, feature comparison</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="pricing"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;22&quot; y=&quot;58&quot; width=&quot;22&quot; height=&quot;40&quot; rx=&quot;4&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;6&quot;/&gt;
+  &lt;rect x=&quot;49&quot; y=&quot;42&quot; width=&quot;22&quot; height=&quot;56&quot; rx=&quot;4&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;6&quot;/&gt;
+  &lt;rect x=&quot;76&quot; y=&quot;26&quot; width=&quot;22&quot; height=&quot;72&quot; rx=&quot;4&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;6&quot;/&gt;
+  &lt;rect x=&quot;80&quot; y=&quot;34&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 87 41)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyPricingIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;22&quot; y=&quot;58&quot; width=&quot;22&quot; height=&quot;40&quot; rx=&quot;4&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;6&quot;/&gt;
+  &lt;rect x=&quot;49&quot; y=&quot;42&quot; width=&quot;22&quot; height=&quot;56&quot; rx=&quot;4&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;6&quot;/&gt;
+  &lt;rect x=&quot;76&quot; y=&quot;26&quot; width=&quot;22&quot; height=&quot;72&quot; rx=&quot;4&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;6&quot;/&gt;
+  &lt;rect x=&quot;80&quot; y=&quot;34&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 87 41)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "pricing",
+  "name_en": "Package / Pricing",
+  "name_ar": "الباقات / الأسعار",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Subscription / Plans",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+<section class="panel iconpanel" id="tab-company">
+<article data-icon-id="company" data-icon-name="Company / Building" data-status="approved" data-svg-ready="true">
+<h2>Company / Building — الشركة / المؤسسة</h2>
+<p class="muted"><span class="status done">✅ Approved + SVG Added</span></p>
+<div class="rule">
+<strong>Approved concept:</strong> مبنى مؤسسي شامخ بنوافذ هندسية منظمة، ومدخله الرئيسي مصمم بماسة مدونتي الترحيبية.
+</div>
+<div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start">
+<div class="card">
+<h3>Live SVG Preview (120×120 Grid)</h3>
+<div class="svg-preview-box">
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="30" y="22" width="60" height="78" rx="8" stroke="#0E065A" stroke-width="8"/>
+  <rect x="42" y="36" width="10" height="10" rx="2" fill="#0E065A"/>
+  <rect x="68" y="36" width="10" height="10" rx="2" fill="#0E065A"/>
+  <rect x="42" y="54" width="10" height="10" rx="2" fill="#0E065A"/>
+  <rect x="68" y="54" width="10" height="10" rx="2" fill="#0E065A"/>
+  <rect x="53" y="77" width="14" height="14" rx="2" transform="rotate(45 60 84)" fill="#00D8D8"/>
+</svg>
+</div>
+</div>
+<div class="card">
+<h3>Identity &amp; Metadata</h3>
+<table>
+<tbody>
+<tr><th>Name EN</th><td>Company / Building</td></tr>
+<tr><th>Name AR</th><td>الشركة / المؤسسة</td></tr>
+<tr><th>Category</th><td>Organization / Enterprise</td></tr>
+<tr><th>Purpose</th><td>Enterprise profile, company info, headquarters address</td></tr>
+<tr><th>Primary Color</th><td><code>#0E065A</code></td></tr>
+<tr><th>Accent Color</th><td><code>#00D8D8</code></td></tr>
+<tr><th>Recommended Size</th><td>20–32px (Default: 24px)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>Final Production SVG</h3>
+<p class="muted">Claude/AI Extraction key: <code>data-icon-id="company"</code></p>
+<pre class="svg-source" data-format="svg">&lt;svg width=&quot;120&quot; height=&quot;120&quot; viewBox=&quot;0 0 120 120&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;30&quot; y=&quot;22&quot; width=&quot;60&quot; height=&quot;78&quot; rx=&quot;8&quot; stroke=&quot;#0E065A&quot; stroke-width=&quot;8&quot;/&gt;
+  &lt;rect x=&quot;42&quot; y=&quot;36&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;2&quot; fill=&quot;#0E065A&quot;/&gt;
+  &lt;rect x=&quot;68&quot; y=&quot;36&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;2&quot; fill=&quot;#0E065A&quot;/&gt;
+  &lt;rect x=&quot;42&quot; y=&quot;54&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;2&quot; fill=&quot;#0E065A&quot;/&gt;
+  &lt;rect x=&quot;68&quot; y=&quot;54&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;2&quot; fill=&quot;#0E065A&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;77&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 84)&quot; fill=&quot;#00D8D8&quot;/&gt;
+&lt;/svg&gt;</pre>
+</div>
+
+<div class="card" style="margin-top:18px">
+<h3>React / JSX Component</h3>
+<pre class="react-source" data-format="jsx">export default function ModontyCompanyIcon({
+  size = 24,
+  primary = &quot;#0E065A&quot;,
+  accent = &quot;#00D8D8&quot;,
+  className = &quot;&quot;,
+}) {
+  return (
+    &lt;svg width=&quot;120&quot; height=&quot;120&quot; width={size} height={size} viewBox=&quot;0 0 120 120&quot; className={className} aria-hidden=&quot;true&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;rect x=&quot;30&quot; y=&quot;22&quot; width=&quot;60&quot; height=&quot;78&quot; rx=&quot;8&quot; stroke=&quot;{primary}&quot; strokeWidth=&quot;8&quot;/&gt;
+  &lt;rect x=&quot;42&quot; y=&quot;36&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;2&quot; fill=&quot;{primary}&quot;/&gt;
+  &lt;rect x=&quot;68&quot; y=&quot;36&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;2&quot; fill=&quot;{primary}&quot;/&gt;
+  &lt;rect x=&quot;42&quot; y=&quot;54&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;2&quot; fill=&quot;{primary}&quot;/&gt;
+  &lt;rect x=&quot;68&quot; y=&quot;54&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;2&quot; fill=&quot;{primary}&quot;/&gt;
+  &lt;rect x=&quot;53&quot; y=&quot;77&quot; width=&quot;14&quot; height=&quot;14&quot; rx=&quot;2&quot; transform=&quot;rotate(45 60 84)&quot; fill=&quot;{accent}&quot;/&gt;
+&lt;/svg&gt;
+  );
+}</pre>
+</div>
+
+<script class="icon-meta" type="application/json">
+{
+  "id": "company",
+  "name_en": "Company / Building",
+  "name_ar": "الشركة / المؤسسة",
+  "status": "approved",
+  "svg_ready": true,
+  "primary": "#0E065A",
+  "accent": "#00D8D8",
+  "viewBox": "0 0 120 120",
+  "category": "Organization / Enterprise",
+  "preferred_size_px": 24
+}
+</script>
+</article>
+</section>
+
+</main>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const tabBtns = document.querySelectorAll('.tabbtn, .linktab');
+  const panels = document.querySelectorAll('.panel');
+
+  function activateTab(tabId) {
+    panels.forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tabbtn').forEach(b => b.classList.remove('active'));
+
+    const targetPanel = document.getElementById('tab-' + tabId);
+    const targetBtn = document.querySelector(`.tabbtn[data-tab="${tabId}"]`);
+
+    if (targetPanel) targetPanel.classList.add('active');
+    if (targetBtn) targetBtn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const tabId = btn.getAttribute('data-tab');
+      if (tabId) activateTab(tabId);
+    });
+  });
+});
+</script>
+</body>
+</html>

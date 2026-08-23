@@ -10,7 +10,6 @@ import { SITE_URL } from "@/constants";
 
 import { getArticlesArchive, type ArchiveSort } from "./data/get-articles-archive";
 import { getArticlesFilters } from "./data/get-articles-filters";
-import { getIndustriesEnhanced } from "@/lib/queries/get-industries-enhanced";
 import { getTagName } from "./data/get-tag-name";
 import { buildArchiveHref, type ArchiveState } from "./helpers/build-archive-href";
 import { ARCHIVE_PAGE_SIZE } from "./helpers/archive-page-size";
@@ -148,7 +147,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
 export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
   const state = readState(await searchParams);
 
-  const [subjectMatches, filters, industryArtwork, wholeArchive] = await Promise.all([
+  const [subjectMatches, filters, wholeArchive] = await Promise.all([
     getArticlesArchive({
       industrySlug: state.industry,
       categorySlug: state.category,
@@ -157,12 +156,10 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
       sort: state.sort,
     }),
     getArticlesFilters(),
-    // The fields' artwork — the mobile filter draws the same branded cards `/industries`
-    // and `/clients` use; counts still come from `filters`, which are counted from the
-    // articles actually on the page.
-    getIndustriesEnhanced({ sortBy: "clients" }),
-    // Unfiltered — the reading-time strip counts the whole archive, since time is its own axis.
-    getArticlesArchive({ sort: state.sort }),
+    // The reading-time strip counts the whole archive — EXCEPT under a search (Khalid,
+    // 23 Aug: search and time now compose), where a whole-archive «١٦» over three matching
+    // results would be a number about a different list than the one on screen.
+    getArticlesArchive({ search: state.search, sort: state.sort }),
   ]);
 
   /**
@@ -212,7 +209,6 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
         readingTimeCounts={readingTimeCounts}
         current={state}
         scopeLabel={scopeLabel}
-        industryArtwork={industryArtwork}
       />
     </>
   );

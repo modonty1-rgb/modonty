@@ -659,7 +659,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     Sticky is the whole point — the tools used to sit still while the page moved,
                     so from the middle of an 18,917px article the only way to reach the text size
                     was to scroll all the way back to the top. */}
-                <div className="sticky top-14 z-30 mt-4 lg:hidden">
+                <div className="sticky top-[var(--sticky-chrome)] z-30 mt-4 lg:hidden">
                   <ArticleTableOfContents
                     headings={outline.headings}
                     collapsible

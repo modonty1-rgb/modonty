@@ -5,16 +5,11 @@ import { cn } from "@/lib/utils";
 import { withArchiveChange, type ArchiveState } from "../../helpers/build-archive-href";
 import { FOCUS_RING } from "../../helpers/focus-ring";
 
-import { IndustryCards } from "@/components/shared/industry-cards/IndustryCards";
-
 import type { ArchiveFilters } from "../../data/get-articles-filters";
-import type { IndustryListItem } from "@/lib/types";
 
 interface FiltersBarProps {
   filters: ArchiveFilters;
   current: ArchiveState;
-  /** The fields' artwork — feeds the shared `IndustryCards` thumbnails below 1240px. */
-  industryArtwork: IndustryListItem[];
 }
 
 function Chip({
@@ -61,8 +56,7 @@ function Chip({
  * The second row appears only after a field is picked: showing every category at once is a wall
  * of eighteen chips, and the fields alone answer the first question a visitor has.
  */
-export function FiltersBar({ filters, current, industryArtwork }: FiltersBarProps) {
-  const artwork = new Map(industryArtwork.map((industry) => [industry.slug, industry]));
+export function FiltersBar({ filters, current }: FiltersBarProps) {
   const nothingPicked = !current.industry && !current.category;
 
   // Which field's categories to show: the one clicked, or the one the chosen category belongs to.
@@ -81,27 +75,11 @@ export function FiltersBar({ filters, current, industryArtwork }: FiltersBarProp
       {/* One row that scrolls, not a block that wraps. Eight chips wrapped onto two lines and
           pushed the first article to 61% down the screen — Stripe keeps its categories on a single
           scrollable line for the same reason. */}
-      {/* Below 1240px the fields wear the SAME branded cards `/industries` and `/clients`
-          use (Khalid, 21 Aug: «this component is confirmed — use it anywhere, don't build
-          a new one every time»); the desktop keeps the one-line chip strip, which is the
-          right density for a pointer. */}
-      <div className="min-[1240px]:hidden">
-        <IndustryCards
-          ariaLabel="تصفية بالمجال"
-          countKind="articles"
-          items={filters.industries.map((industry) => ({
-            name: industry.name,
-            slug: industry.slug,
-            count: industry.count,
-            image: artwork.get(industry.slug)?.socialImage ?? null,
-            imageAlt: artwork.get(industry.slug)?.socialImageAlt ?? null,
-          }))}
-          currentSlug={openIndustry ?? ""}
-          allHref={withArchiveChange(current, { industry: undefined, category: undefined })}
-          buildHref={(slug) => withArchiveChange(current, { industry: slug, category: undefined })}
-        />
-      </div>
-
+      {/* The field GRID lived here below 1240px for a day (22–23 Aug); Khalid moved it to
+          `/industries`, where picking a sector is the page's whole job. On a phone this page
+          now filters by TIME and searches by WORD only — a reader who wants to browse by
+          field has the tab bar's «المجالات» one tap away. The chip strip below is ≥1240px,
+          so on a phone this component renders nothing until a category axis exists. */}
       <nav aria-label="تصفية بالمجال" className="-mx-1 hidden gap-2 overflow-x-auto px-1 pb-0.5 scrollbar-none min-[1240px]:flex">
         <Chip
           href={withArchiveChange(current, { industry: undefined, category: undefined })}

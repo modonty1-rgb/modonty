@@ -5,8 +5,10 @@ import { IndustriesCards } from "@/app/(site)/industries/components/industries-c
 import { IndustriesHeader } from "@/app/(site)/industries/components/industries-header/IndustriesHeader";
 import { IndustryContextStrip } from "@/app/(site)/industries/components/industry-context-strip/IndustryContextStrip";
 import { PartnersGridMobile } from "@/app/(site)/industries/components/partners-grid-mobile/PartnersGridMobile";
+import { PickIndustryPrompt } from "@/app/(site)/industries/components/pick-industry-prompt/PickIndustryPrompt";
 import { PartnersRail } from "@/app/(site)/industries/components/partners-rail/PartnersRail";
-import { toneForSlug } from "@/app/(site)/industries/helpers/industry-tones";
+import { toneForSlug } from "@/lib/industry-tones";
+import { cn } from "@/lib/utils";
 import { MobileCtaBar } from "@/components/shared/mobile-cta-bar/MobileCtaBar";
 import { ModontyShoppingMark } from "@/components/icons/modonty-shopping-mark";
 import { ModontyBookingMark } from "@/components/icons/modonty-booking-mark";
@@ -80,7 +82,20 @@ export function IndustryPageLayout({
               </IndustryContextStrip>
             )}
           </div>
-          <ArticlesFeed articles={articles} page={page} industryName={industryName} buildPageHref={buildPageHref} />
+          {/* Base page, phone: the pick-first pattern that lived on `/articles` for a day
+              (Khalid, 23 Aug: «what we did in the article, we make it there»). Choosing a
+              sector IS this page — the combined feed under it repeated `/articles` card for
+              card (117/117 measured 19 Aug), so the prompt replaces it for the reader while
+              the feed stays in the HTML for the crawler, hidden by class exactly as before.
+              Field pages and every desktop viewport keep the feed visible. */}
+          {!industryName && (
+            <div className="min-[1240px]:hidden">
+              <PickIndustryPrompt />
+            </div>
+          )}
+          <div className={cn(!industryName && "max-[1239px]:hidden")}>
+            <ArticlesFeed articles={articles} page={page} industryName={industryName} buildPageHref={buildPageHref} />
+          </div>
           {/* Base page only: no context strip, so the partners keep their own section
               after the feed. Field pages open them from the strip's collapse instead. */}
           {!industryName && (

@@ -1,6 +1,7 @@
 import * as React from "react";
 import Link from "next/link";
-import { IconChevronLeft, IconHome, IconMoreHorizontal } from "../../lib/icons";
+import { IconChevronLeft, IconMoreHorizontal } from "../../lib/icons";
+import { ModontyHomeMark } from "../icons/modonty-home-mark";
 import { cn } from "../../lib/utils/index";
 
 export interface BreadcrumbItem {
@@ -43,7 +44,13 @@ export function Breadcrumb({ items = [], className, maxItems = 3 }: BreadcrumbPr
       aria-label="تنقل الصفحة"
       className={cn("container mx-auto max-w-[1128px] px-4", className)}
     >
-      <ol className="flex items-center gap-2 py-3 text-sm overflow-hidden">
+      {/* On phones the row is the text and nothing else: `py-3` made it a 44px band for a
+          20px line, and the chrome above it already costs 135px (Khalid, 22 Aug — measured).
+          Shrunk, not hidden: Google indexes the mobile version («Only the content shown on
+          the mobile site is used for indexing») and its structured-data policy forbids
+          marking up what the reader cannot see, so `BreadcrumbList` must keep a visible
+          twin. `sm:py-3` leaves every larger screen exactly as it was. */}
+      <ol className="flex items-center gap-2 py-0 sm:py-3 text-sm overflow-hidden">
         {displayItems.map((item, index) => {
           const isLast = index === displayItems.length - 1;
           const isEllipsis = item.label === "...";
@@ -87,5 +94,7 @@ export function Breadcrumb({ items = [], className, maxItems = 3 }: BreadcrumbPr
 }
 
 export function BreadcrumbHome() {
-  return <IconHome className="h-4 w-4" aria-label="الرئيسية" />;
+  // Our own house, not lucide's (Khalid, 22 Aug: «zero branding icon»). Body muted so the
+  // trail stays a trail; the diamond inside takes the accent on its own.
+  return <ModontyHomeMark className="h-4 w-4" aria-label="الرئيسية" />;
 }

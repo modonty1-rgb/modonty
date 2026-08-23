@@ -2,13 +2,14 @@ import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoCol
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
 import { AiDisclaimer } from "@/components/shared/ai-disclaimer/AiDisclaimer";
-import { AboutBar, AboutCard } from "@/components/shared/about-card/AboutCard";
+import { AboutCard } from "@/components/shared/about-card/AboutCard";
 import { MobileCtaBar } from "@/components/shared/mobile-cta-bar/MobileCtaBar";
 import { ModontyReelsMark } from "@/components/icons/modonty-reels-mark";
 import { IconVolume2 } from "@/lib/icons";
 
+import { ArticlesHeader } from "../articles-header/ArticlesHeader";
 import { AskModo } from "../ask-modo/AskModo";
-import { TrustBox, TrustHint } from "../trust-box/TrustBox";
+import { TrustBox } from "../trust-box/TrustBox";
 import { ResultsLine } from "../results-line/ResultsLine";
 import { FiltersBar } from "../filters-bar/FiltersBar";
 import { ReadingTimeBar } from "../reading-time-bar/ReadingTimeBar";
@@ -19,7 +20,6 @@ import type { ReadingTimeBucket } from "../../helpers/reading-time-buckets";
 import type { ArchiveFilters } from "../../data/get-articles-filters";
 import type { ArchiveArticle } from "../../data/get-articles-archive";
 import type { ReactNode } from "react";
-import type { IndustryListItem } from "@/lib/types";
 
 interface ArticlesPageLayoutProps {
   breadcrumb: ReactNode;
@@ -29,8 +29,6 @@ interface ArticlesPageLayoutProps {
   readingTimeCounts: Record<ReadingTimeBucket, number>;
   current: ArchiveState;
   scopeLabel: string | null;
-  /** The fields' artwork — the mobile filter draws the same branded cards the other pages do. */
-  industryArtwork: IndustryListItem[];
 }
 
 /**
@@ -53,7 +51,6 @@ export function ArticlesPageLayout({
   readingTimeCounts,
   current,
   scopeLabel,
-  industryArtwork,
 }: ArticlesPageLayoutProps) {
   return (
     <>
@@ -61,30 +58,32 @@ export function ArticlesPageLayout({
       header={breadcrumb}
       main={
         <>
-          {/* Why these articles can be trusted, and who publishes them — both at the top of
-              the phone view (Khalid, 21 Aug: «make it as before»). Trust is a one-line hint;
-              «مدونتي» keeps its full card, the same one the desktop rail shows. */}
-          <div className="space-y-2 min-[1240px]:hidden">
-            <TrustHint />
-            <AboutBar />
-          </div>
+          {/* The trust hint and the «مدونتي» bar were here on the phone until 22 Aug; Khalid
+              removed both. They sat between the reader and the one thing this page asks him to
+              do — pick and read — and neither answered a question he had at that moment. Both
+              still live in the desktop rail below, where there is room for them. */}
+          <ArticlesHeader page={current.page && current.page > 1 ? current.page : 1} />
+
           {/* Search sits WITH the filters: known-item finding and exploratory browsing are the
-              same job, and every filter-UX guide puts their controls together. Desktop only
-              (Khalid, 21 Aug: «remove») — the navbar already carries a search on a phone, and
-              the field cards below are the faster way in. */}
-          <div className="hidden min-[1240px]:block">
-            <EntitySearchForm
-              basePath="/articles"
-              placeholder="اكتب كلمة من العنوان..."
-              defaultValue={current.search ?? ""}
-            />
-          </div>
-          <FiltersBar filters={filters} current={current} industryArtwork={industryArtwork} />
+              same job, and every filter-UX guide puts their controls together. On the phone it
+              was removed on 21 Aug and brought back on 23 Aug (Khalid: «all the articles with
+              filter and fast search») — this page is now the site's reading archive, and an
+              archive the reader can only search from the navbar is a search he has to find. */}
+          <EntitySearchForm
+            basePath="/articles"
+            placeholder="اكتب كلمة من العنوان..."
+            defaultValue={current.search ?? ""}
+            live
+          />
+          <FiltersBar filters={filters} current={current} />
 
           {/* Count and time on one line — stacked, the controls filled 61% of the screen before
               the first article appeared. The results line is desktop-only (Khalid, 21 Aug:
               «remove»): on a phone the picked field card is already lit and the breadcrumb
               names it, so the line repeated what two elements above it had said. */}
+          {/* The list had a label here — «مقالات تستاهل وقتك» — until the title moved to the
+              top of the page on 22 Aug. Two promise lines a screen apart is one too many, and
+              the `h1` up there is the stronger place for it. */}
           <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
             <div className="hidden min-[1240px]:block">
               <ResultsLine total={total} scopeLabel={scopeLabel} current={current} />
@@ -92,6 +91,12 @@ export function ArticlesPageLayout({
             <ReadingTimeBar counts={readingTimeCounts} current={current} />
           </div>
 
+          {/* The list is OPEN from the first paint, every viewport. For one day (22–23 Aug) the
+              phone opened with a «pick a field first» prompt instead; Khalid moved that pattern
+              to `/industries`, where choosing a sector IS the page, and set this page back to
+              what its name promises: all the articles, with the filters and the search above
+              them. That also dissolved the twin problem — the unfiltered list here and the
+              combined feed there measured 117/117 identical on 19 Aug. */}
           <ArticlesFeed articles={articles} current={current} />
         </>
       }

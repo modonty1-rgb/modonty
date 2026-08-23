@@ -10,10 +10,16 @@ export async function GET(request: Request) {
     return Response.json({ error: "page must be a positive whole number" }, { status: 400 });
   }
 
+  // Anything the endpoint does not recognise falls back to the default order rather than
+  // erroring — a bad `view` should not break a feed.
+  const viewParam = params.get("view");
+  const view = viewParam === "popular" || viewParam === "audio" ? viewParam : undefined;
+
   const result = await getMoreArticles(
     page,
     params.get("category") ?? undefined,
-    params.get("client") ?? undefined
+    params.get("client") ?? undefined,
+    view
   );
 
   return Response.json(result);

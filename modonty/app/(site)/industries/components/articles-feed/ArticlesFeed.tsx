@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { FeedPagination } from "@/components/shared/pagination/FeedPagination";
 import { PostCard } from "@/components/feed/postcard/PostCard";
 import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
 import type { FeedPost } from "@/lib/types";
@@ -48,22 +48,7 @@ export function ArticlesFeed({ articles, page, industryName, buildPageHref }: Ar
         </div>
       )}
 
-      {(page > 1 || hasMore) && (
-        <nav aria-label="تنقّل بين صفحات المقالات" className="flex items-center justify-between gap-3 border-t border-border pt-4">
-          {page > 1 ? (
-            <Link href={buildPageHref(page - 1)} className="text-sm font-medium text-link hover:underline">
-              → الصفحة السابقة
-            </Link>
-          ) : (
-            <span />
-          )}
-          {hasMore && (
-            <Link href={buildPageHref(page + 1)} className="text-sm font-medium text-link hover:underline">
-              الصفحة التالية ←
-            </Link>
-          )}
-        </nav>
-      )}
+      <FeedPagination page={page} hasMore={hasMore} buildHref={buildPageHref} label="تنقّل بين صفحات المقالات" />
     </section>
   );
 }

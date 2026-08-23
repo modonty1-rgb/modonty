@@ -1,13 +1,25 @@
 import type { SVGProps } from "react";
 
 /**
- * The modonty ARTICLES mark — an outlined page with text lines and the brand diamond as
- * its folded corner. Drawn in the family Khalid supplied (`viewBox 0 0 120 120`, stroke
- * width 8, rounded caps, one diamond) so it sits beside the industries · partner · reels
- * marks without looking borrowed; it stands in until an approved original replaces it.
+ * The modonty ARTICLE mark — a written piece: the articles tab, and the empty frame a
+ * card falls back to when an article has no cover.
  *
- * Same icon contract: `currentColor` + `1em` box, two CSS hooks —
- * `--modonty-articles-body` (page + lines) · `--modonty-articles-accent` (the diamond).
+ * NOT in the approved 38 — "Article / Newspaper" sits on the master reference's own
+ * missing list — so it is drawn to the file's Geometry Standard rather than traced:
+ * 120 canvas · 8px main stroke · 7px for the text lines, which the standard allows for
+ * secondary detail · round caps and joins · inside the 16px safe margin. Redrawn 22 Aug
+ * 2026 from an earlier stroke-8-on-a-different-grid version that predated the standard.
+ *
+ * The diamond is the folded corner, not a badge stuck on a page: the fold is where a page
+ * turns, and the reference asks the diamond to be "a functional node… or core branding
+ * focal point" rather than an ornament laid on top.
+ *
+ * TWO text lines, not three or four. The standard forbids detail that collapses at small
+ * sizes ("No micro-lines that collapse below 18px render resolution"), and this mark ships
+ * at 20px on a feed card.
+ *
+ * Contract: `currentColor` + a `1em` box, two CSS hooks — `--modonty-articles-body` ·
+ * `--modonty-articles-accent` (the folded corner).
  */
 export function ModontyArticlesMark(props: SVGProps<SVGSVGElement>) {
   return (
@@ -21,22 +33,26 @@ export function ModontyArticlesMark(props: SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path
-        d="M26 30 C26 25.582 29.582 22 34 22 H70 L94 46 V90 C94 94.418 90.418 98 86 98 H34 C29.582 98 26 94.418 26 90 Z"
+        d="M34 22H70L94 46V90C94 94.4 90.4 98 86 98H34C29.6 98 26 94.4 26 90V30C26 25.6 29.6 22 34 22Z"
         stroke="var(--modonty-articles-body, currentColor)"
         strokeWidth="8"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path d="M42 58H72" stroke="var(--modonty-articles-body, currentColor)" strokeWidth="8" strokeLinecap="round" />
-      <path d="M42 76H62" stroke="var(--modonty-articles-body, currentColor)" strokeWidth="8" strokeLinecap="round" />
+      <path
+        d="M42 60H72M42 78H62"
+        stroke="var(--modonty-articles-body, currentColor)"
+        strokeWidth="7"
+        strokeLinecap="round"
+      />
       <rect
-        x="70"
-        y="22"
-        width="17"
-        height="17"
-        rx="3"
+        x="63"
+        y="15"
+        width="14"
+        height="14"
+        rx="2"
         transform="rotate(45 70 22)"
-        fill="var(--modonty-articles-accent, currentColor)"
+        fill="var(--modonty-articles-accent, hsl(var(--accent)))"
       />
     </svg>
   );

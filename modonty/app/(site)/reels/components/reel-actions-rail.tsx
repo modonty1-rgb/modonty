@@ -3,7 +3,10 @@
 import { useState, useTransition } from "react";
 
 import { AuthPromptLazy, warmAuthPrompt } from "@/components/shared/auth-prompt/AuthPromptLazy";
-import { IconComment, IconLike, IconSaved, IconShare } from "@/lib/icons";
+import { ModontyBookmarkMark } from "@/components/icons/modonty-bookmark-mark";
+import { ModontyCommentMark } from "@/components/icons/modonty-comment-mark";
+import { ModontyLikeMark } from "@/components/icons/modonty-like-mark";
+import { ModontyShareMark } from "@/components/icons/modonty-share-mark";
 
 import { toggleReelLike, toggleReelFavorite } from "../actions/reel-interactions";
 import { ReelCommentsSheetLazy, warmReelCommentsSheet } from "./reel-comments-sheet-lazy";
@@ -96,7 +99,8 @@ export function ReelActionsRail({
       if (navigator.share) await navigator.share({ title, url });
       else {
         await navigator.clipboard.writeText(url);
-        setHint("انسخ الرابط ✓");
+        // Past tense — the copy already happened; «انسخ» ordered the visitor to do it.
+        setHint("انتسخ الرابط ✓");
         setTimeout(() => setHint(null), 2000);
       }
     } catch {
@@ -114,6 +118,12 @@ export function ReelActionsRail({
         </div>
       )}
       <div className="absolute bottom-24 end-2 z-10 flex flex-col items-center gap-4">
+        {/* Brand marks, not lucide (the rule that governs all nine mobile surfaces) — the
+            like, comment, bookmark and share marks the article page already wears, size-5 in
+            a 44px circle, the mobile icon standard. State lives on the CIRCLE via tokens
+            (`bg-primary` / `bg-accent`), never a raw hex: #3030FF and #00D8D8 sat here
+            hardcoded and would have missed any future token change. Counts through Intl —
+            a latin «0» under an Arabic feed was the first thing the screenshot showed. */}
         <button
           type="button"
           onClick={handleLike}
@@ -123,10 +133,13 @@ export function ReelActionsRail({
           aria-label="إعجاب"
           aria-pressed={liked}
         >
-          <span className={`${iconWrap} ${liked ? "bg-[#3030FF]" : ""}`}>
-            <IconLike className={`size-5 ${liked ? "fill-white" : ""}`} />
+          <span className={`${iconWrap} ${liked ? "bg-primary" : ""}`}>
+            <ModontyLikeMark className="size-5" aria-hidden />
           </span>
-          <span className="text-xs font-bold">{likes}</span>
+          {/* A zero count draws nothing: in Arabic-Indic numerals zero is a DOT, and «٠»
+              under a button reads as dirt on the screen, not as a number. The aria-label
+              already names the action, so the button loses nothing. */}
+          {likes > 0 && <span className="text-xs font-bold">{likes.toLocaleString("ar-SA")}</span>}
         </button>
         <button
           type="button"
@@ -137,9 +150,11 @@ export function ReelActionsRail({
           aria-label="التعليقات"
         >
           <span className={iconWrap}>
-            <IconComment className="size-5" />
+            <ModontyCommentMark className="size-5" aria-hidden />
           </span>
-          <span className="text-xs font-bold">{commentsCount}</span>
+          {commentsCount > 0 && (
+            <span className="text-xs font-bold">{commentsCount.toLocaleString("ar-SA")}</span>
+          )}
         </button>
         <button
           type="button"
@@ -150,14 +165,16 @@ export function ReelActionsRail({
           aria-label="حفظ"
           aria-pressed={saved}
         >
-          <span className={`${iconWrap} ${saved ? "bg-[#00D8D8] text-neutral-950" : ""}`}>
-            <IconSaved className={`size-5 ${saved ? "fill-current" : ""}`} />
+          {/* The one allowed diamond exception: on the accent-coloured circle the accent
+              diamond would vanish, so it flips to the dark foreground with the body. */}
+          <span className={`${iconWrap} ${saved ? "bg-accent text-neutral-950" : ""}`}>
+            <ModontyBookmarkMark className={`size-5 ${saved ? "[&>rect]:fill-current" : ""}`} aria-hidden />
           </span>
-          <span className="text-xs font-bold">{saves}</span>
+          {saves > 0 && <span className="text-xs font-bold">{saves.toLocaleString("ar-SA")}</span>}
         </button>
         <button type="button" onClick={handleShare} className={btn} aria-label="مشاركة">
           <span className={iconWrap}>
-            <IconShare className="size-5" />
+            <ModontyShareMark className="size-5" aria-hidden />
           </span>
           <span className="text-xs font-bold">مشاركة</span>
         </button>

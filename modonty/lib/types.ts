@@ -206,5 +206,5 @@ export interface ArticleFilters {
   search?: string;
   hasAudio?: boolean;
   status?: "PUBLISHED" | "DRAFT" | "SCHEDULED";
-  sortBy?: "newest" | "oldest" | "title";
+  sortBy?: "newest" | "oldest" | "title" | "popular";
 }

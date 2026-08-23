@@ -18,7 +18,7 @@ export function SearchLink({ variant = "full", className = "" }: SearchLinkProps
         size="mobileIcon"
         className={cn("rounded-xl", className)}
       >
-        <Link href="/search" prefetch={false} aria-label={messages.chrome.searchArticles} className="[--modonty-search-accent:hsl(var(--accent))]">
+        <Link href="/search" prefetch={false} aria-label={messages.chrome.searchArticles}>
           <ModontySearchMark aria-hidden />
         </Link>
       </Button>
@@ -37,7 +37,7 @@ export function SearchLink({ variant = "full", className = "" }: SearchLinkProps
         )}
       >
         <span className="relative flex h-9 w-full min-w-0 items-center overflow-hidden rounded-full border border-input bg-background pe-4 ps-10 text-xs text-muted-foreground transition-colors group-hover:border-primary/50 group-hover:bg-primary/5 group-hover:text-foreground">
-          <span className="absolute right-3 top-1/2 inline-flex -translate-y-1/2 items-center justify-center [--modonty-search-accent:hsl(var(--accent))]">
+          <span className="absolute right-3 top-1/2 inline-flex -translate-y-1/2 items-center justify-center">
             <ModontySearchMark className="size-4" aria-hidden />
           </span>
           <span className="truncate">{messages.chrome.searchPlaceholder}</span>
@@ -56,7 +56,7 @@ export function SearchLink({ variant = "full", className = "" }: SearchLinkProps
         className
       )}
     >
-      <span className="absolute right-3 top-1/2 inline-flex -translate-y-1/2 items-center justify-center [--modonty-search-accent:hsl(var(--accent))]">
+      <span className="absolute right-3 top-1/2 inline-flex -translate-y-1/2 items-center justify-center">
         <ModontySearchMark className="h-4 w-4" aria-hidden />
       </span>
       <span className="truncate">{messages.chrome.searchPlaceholder}</span>

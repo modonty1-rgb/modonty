@@ -23,9 +23,13 @@ interface ThreeColumnLayoutProps {
  */
 export function ThreeColumnLayout({ header, right, center, left, className }: ThreeColumnLayoutProps) {
   return (
-    <div className={cx("container mx-auto max-w-[1128px] px-3 py-3 sm:px-4 sm:py-6", className)}>
-      {header && <div className="mb-6">{header}</div>}
-      <div className="flex flex-col items-start gap-6 lg:flex-row lg:justify-center min-[1240px]:gap-4 min-[1296px]:gap-6">
+    // `max-lg:` only — desktop keeps every value it had. On a 390px screen the shell was
+    // spending 12px above the breadcrumb, 24px under the header and 24px between the
+    // stacked columns before a single word of content: 60px of a 844px screen on gaps that
+    // exist to separate columns which, below `lg`, are not columns at all.
+    <div className={cx("container mx-auto max-w-[1128px] px-3 py-3 max-lg:py-1.5 sm:px-4 sm:py-6", className)}>
+      {header && <div className="mb-6 max-lg:mb-4">{header}</div>}
+      <div className="flex flex-col items-start gap-6 max-lg:gap-4 lg:flex-row lg:justify-center min-[1240px]:gap-4 min-[1296px]:gap-6">
         {right}
         <div className="mx-auto w-full space-y-3 pb-20 sm:space-y-4 md:max-w-[600px] lg:pb-0 lg:mx-0 lg:flex-1 min-[1240px]:max-w-[560px] min-[1296px]:max-w-[600px]">
           {center}

@@ -58,7 +58,7 @@ export function UserMenuDropdown({ user }: UserMenuDropdownProps) {
           onClick={() => handleLogout()}
           className="text-destructive focus:text-destructive"
         >
-          <ModontyLogoutMark className="mr-2 h-4 w-4 [--modonty-logout-accent:hsl(var(--accent))]" />
+          <ModontyLogoutMark className="mr-2 h-4 w-4" />
           تسجيل الخروج
         </DropdownMenuItem>
       </DropdownMenuContent>

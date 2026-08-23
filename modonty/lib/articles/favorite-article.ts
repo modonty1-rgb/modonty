@@ -5,8 +5,8 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 
-import { isPublicArticle } from "../helpers/is-public-article";
-import { fireEngagement } from "../helpers/fire-engagement";
+import { isPublicArticle } from "./is-public-article";
+import { fireEngagement } from "./fire-engagement";
 
 export async function favoriteArticle(articleId: string, articleSlug: string) {
   try {

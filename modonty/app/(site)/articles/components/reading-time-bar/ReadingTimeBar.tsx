@@ -44,7 +44,21 @@ export function ReadingTimeBar({ counts, current }: ReadingTimeBarProps) {
   if (total === 0) return null;
 
   return (
-    <nav aria-label="اقرأ حسب وقتك" className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5 scrollbar-none">
+    // A GRID of three on the phone, not a scroll strip (Khalid's screenshot, 23 Aug: «جلسة
+    // روقان» clipped at the screen edge — the chips wore `shrink-0` over nowrap text, so
+    // their natural width beat 390px and the third one paid for it). Three questions the
+    // reader picks ONE of should all be on screen at once; stacked like the field tiles
+    // above, the row speaks the same visual language as the rest of the filters. The
+    // desktop keeps its horizontal strip untouched.
+    <nav
+      aria-label="اقرأ حسب وقتك"
+      // `w-full`: the bar sits inside a `justify-between` flex row, so without an explicit
+      // width it shrinks to its content and hugs one side, leaving dead space beside it
+      // (Khalid's screenshot, 23 Aug: «make the button stretch on the space»). Full width
+      // lets the three columns split whatever the row has. Desktop keeps its content-wide
+      // strip so the results line can share the same row.
+      className="w-full grid grid-cols-3 gap-2 min-[1240px]:w-auto min-[1240px]:-mx-1 min-[1240px]:flex min-[1240px]:overflow-x-auto min-[1240px]:px-1 min-[1240px]:pb-0.5 min-[1240px]:scrollbar-none"
+    >
       {READING_TIME_BUCKETS.map((bucket) => {
         const Icon = ICONS[bucket.key];
         const tone = TONES[bucket.key];
@@ -54,22 +68,28 @@ export function ReadingTimeBar({ counts, current }: ReadingTimeBarProps) {
         return (
           <Link
             key={bucket.key}
-            // A clean state, not `current`: time is its own axis, so it never carries the
-            // field, category, tag or search along with it.
-            href={buildArchiveHref(active ? {} : { time: bucket.key })}
+            // Time still drops the field/category/tag (its own axis — 21 Aug), but it KEEPS
+            // the search (Khalid, 23 Aug: he typed «الظهر», tapped «على الماشي», and the two
+            // ignored each other). A search is the reader's question; time only narrows it.
+            href={buildArchiveHref(
+              active ? { search: current.search } : { time: bucket.key, search: current.search }
+            )}
             aria-current={active ? "true" : undefined}
             className={cn(
-              "flex min-h-11 flex-1 shrink-0 items-center gap-2 rounded-lg px-3 py-2 ring-1 transition-colors active:scale-[0.98] min-[1240px]:min-h-9 " + FOCUS_RING,
+              "flex flex-col items-center justify-center gap-1 rounded-lg px-1.5 py-2 text-center ring-1 transition-colors active:scale-[0.98] min-[1240px]:min-h-9 min-[1240px]:flex-1 min-[1240px]:shrink-0 min-[1240px]:flex-row min-[1240px]:gap-2 min-[1240px]:px-3 " + FOCUS_RING,
               active ? tone.on : "bg-card ring-border hover:ring-primary/40"
             )}
           >
             <Icon className={cn("size-5 shrink-0", active ? "" : tone.icon)} aria-hidden />
-            <span className="min-w-0 text-start leading-tight">
+            <span className="min-w-0 leading-tight min-[1240px]:text-start">
               <span className={cn("block whitespace-nowrap text-[13px] font-bold", active ? "" : "text-foreground")}>
                 {bucket.label}
               </span>
+              {/* Parentheses, NOT a middot, before the count: in Arabic-Indic numerals the
+                  zero IS a dot, so «١٦ ·» read as «١٦٠» — Khalid caught it on the live
+                  screen (23 Aug) as a wrong number, not a separator. */}
               <span className={cn("block whitespace-nowrap text-[10px]", active ? "opacity-80" : "text-muted-foreground")}>
-                {bucket.hint} · {count.toLocaleString("ar-SA")}
+                {bucket.hint} ({count.toLocaleString("ar-SA")})
               </span>
             </span>
           </Link>

@@ -4,7 +4,6 @@ import { RightSidebar } from "@/app/(site)/(homepage)/components/right-sidebar/R
 import { ScrollButtons } from "@/app/(site)/(homepage)/components/scroll-buttons/ScrollButtons";
 import { ArticlesList } from "@/app/(site)/(homepage)/components/articles-list/ArticlesList";
 import { HomeActions } from "@/app/(site)/(homepage)/components/home-actions/HomeActions";
-import { QuickLinks } from "@/app/(site)/(homepage)/components/quick-links/QuickLinks";
 import { ReelsCard } from "@/components/shared/reels-card/ReelsCard";
 import type { ReactNode } from "react";
 import type { FeedPost } from "@/lib/types";
@@ -35,15 +34,8 @@ export function PageLayout({ posts, hasMore, page, corePublisherArticles, brandL
         right={<RightSidebar />}
         center={
           <div className="space-y-3 sm:space-y-4 [&>article:first-of-type]:!mt-0">
-            {/* Mobile (<1024px): four doorway tabs hanging from the navbar itself — the
-                article page's pattern (Khalid, 21 Aug 2026: «تجي نازلة من تحت الناف بار»).
-                The negative margin cancels the shell container's top padding (py-3/sm:py-6)
-                so the tabs sit flush on the navbar's bottom edge. They replaced the four
-                stacked full-size cards (industries · reels · modonty · clients) that pushed
-                the articles a full screen down. The card FILES stay — hiding is not deleting. */}
-            <div className="-mt-3 sm:-mt-6 lg:hidden">
-              <QuickLinks />
-            </div>
+            {/* The doorway tabs moved to `SiteShell` on 22 Aug — they now hang from the
+                navbar on every page, so the homepage no longer renders its own copy. */}
             {/* Modo leads the feed — except on phones (<768px), where the bottom bar already
                 carries him (Khalid, 21 Aug 2026: two Modo doors on one screen is one too many). */}
             <div className="max-md:hidden">

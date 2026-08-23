@@ -18,7 +18,6 @@ const DOT_GRID =
 
 interface ModontyProfileHeroProps {
   name: string;
-  description: string | null;
   logo: string | null;
   heroImage: string | null;
   services: string[];
@@ -36,7 +35,6 @@ interface ModontyProfileHeroProps {
  */
 export function ModontyProfileHero({
   name,
-  description,
   logo,
   heroImage,
   services,
@@ -44,18 +42,32 @@ export function ModontyProfileHero({
   return (
     <section className={`relative rounded-lg ${DOT_GRID}`}>
       {heroImage && (
-        <div className="relative aspect-[6/1] w-full overflow-hidden rounded-lg bg-muted ring-1 ring-border after:absolute after:inset-0 after:bg-gradient-to-t after:from-background/70 after:to-transparent">
+        // Hidden on phones (Khalid, 22 Aug): a 6:1 band carries no information at 390 —
+        // it is texture, and it pushed the name and the promise further down a screen that
+        // already spends 135px on chrome. Desktop keeps it: the column is wide enough that
+        // 6:1 reads as a cover, not a stripe.
+        <div className="relative aspect-[6/1] w-full overflow-hidden rounded-lg bg-muted ring-1 ring-border after:absolute after:inset-0 after:bg-gradient-to-t after:from-background/70 after:to-transparent max-lg:hidden">
           <OptimizedImage media={asMedia(heroImage, name)} alt="" fill sizes="1096px" preload className="object-cover" />
         </div>
       )}
-
       {/* `relative` so the name paints ABOVE the positioned cover when it overlaps its edge. */}
       {/* <640px the pull-up is softened (-40px → -16px): with the promise stacked under
           the name, -40px pushed both onto the cover and the text drowned in it (Khalid,
           21 Aug: «move text a little down»). ≥640px unchanged. */}
-      <div className={`relative px-5 pb-6 sm:px-6 ${heroImage ? "-mt-4 sm:-mt-10" : "pt-6"}`}>
+      {/* The pull-up exists to overlap the cover. With the cover gone below `lg`, the phone
+          gets normal top padding instead — `max-lg:mt-0 max-lg:pt-6` — or the name would
+          float 16px into nothing. */}
+      {/* Phone padding cut 24 → 16 on all four sides (Khalid, 22 Aug: «كميه مساحات فاضيه
+          كثيره»): the block stands 141px tall there and was spending 48 of them on its own
+          padding. Desktop keeps 24 — it has the room and the cover to sit under. */}
+      <div className={`relative px-5 pb-6 max-lg:px-4 max-lg:pb-4 sm:px-6 ${heroImage ? "-mt-4 sm:-mt-10 max-lg:mt-0 max-lg:pt-4" : "pt-6 max-lg:pt-4"}`}>
         <div className="flex items-end gap-4">
-          <span className="relative grid size-20 shrink-0 place-items-center overflow-hidden rounded-full bg-card ring-4 ring-background">
+          {/* Hidden on phones (Khalid, 22 Aug): the navbar already carries the mark and the
+              active tab already says «مدونتي» — an 80px logo here was the brand's third
+              appearance above the fold, and it pushed the promise sideways into a narrow
+              column. Desktop keeps it: the row is wide enough that the avatar reads as a
+              profile identity rather than a repeat. */}
+          <span className="relative grid size-20 shrink-0 place-items-center overflow-hidden rounded-full bg-card ring-4 ring-background max-lg:hidden">
             {logo ? (
               <OptimizedImage media={asMedia(logo, name)} alt="" fill sizes="80px" className="object-cover" />
             ) : (
@@ -69,11 +81,30 @@ export function ModontyProfileHero({
           {/* <640px the promise drops to its own two lines under the name — truncated
               beside it, the page's whole point read «تكتب باسمك، وتظهرك …» (Khalid, 21 Aug).
               ≥640px unchanged: one line, truncating. */}
-          <div className="flex min-w-0 flex-1 flex-col gap-1 pb-1 sm:flex-row sm:items-baseline sm:gap-2">
-            <h1 className="shrink-0 text-2xl font-bold leading-tight text-foreground sm:text-3xl">{name}</h1>
-            {description && (
-              <p className="min-w-0 line-clamp-2 text-sm leading-relaxed text-foreground/75 sm:line-clamp-none sm:truncate sm:text-[15px]">{description}</p>
-            )}
+          {/* On phones this block is now the page's dominant element — the cover and the
+              logo left, so nothing else competes and the type has to carry the weight on
+              its own (Khalid, 22 Aug: «refine it, make it professional»).
+              `gap-2` under `lg`: at `gap-1` the 28px name and the promise read as one
+              paragraph. Desktop keeps its baseline row untouched. */}
+          <div className="flex min-w-0 flex-1 flex-col gap-2 pb-1 max-lg:pb-0 sm:flex-row sm:items-baseline sm:gap-2">
+            {/* A 3px teal rule above the name: the brand's colour anchoring the block
+                without drawing the mark a third time. Phones only — desktop has the avatar
+                doing that job. */}
+            <h1 className="shrink-0 text-[28px] font-black leading-[1.15] tracking-tight text-foreground max-lg:relative max-lg:ps-3 max-lg:before:absolute max-lg:before:inset-y-1 max-lg:before:start-0 max-lg:before:w-[3px] max-lg:before:rounded-full max-lg:before:bg-accent sm:text-3xl sm:font-bold sm:leading-tight sm:tracking-normal sm:ps-0 sm:before:hidden">
+              {name}
+            </h1>
+            {/* NOT `description`. That field is modonty's sales line — «تكتب باسمك،
+                وتظهرك في جوجل، وتجيب لك عميلاً» — written for a business owner deciding
+                whether to buy. The person standing on this page is a READER (Khalid,
+                22 Aug: «اللي داخل هذا مو عميل… داخل يقرا، داخل يستمتع»), and a pitch
+                aimed past them is the fastest way to lose them. `description` stays
+                untouched in the DB and keeps serving the metadata and the partner card,
+                where the audience really is a client. */}
+            {/* The promise is the most important sentence on the page — on a phone it gets
+                its full length (no clamp), a readable 15px, and 85% ink instead of 75%. */}
+            <p className="min-w-0 text-[15px] leading-[1.75] text-foreground/85 max-lg:ps-3 line-clamp-none sm:text-foreground/75 sm:line-clamp-2 sm:ps-0 sm:text-[15px] sm:leading-relaxed">
+              {messages.modonty.readerPromise}
+            </p>
           </div>
           <CtaTrackedLink
             href="https://www.jbrseo.com"
@@ -89,9 +120,12 @@ export function ModontyProfileHero({
             {messages.becomePartner.cta}
           </CtaTrackedLink>
         </div>
-
-        <TrustStrip />
-
+        {/* Hidden on phones (Khalid, 22 Aug). Measured on 390: it cost 160px of the first
+            screen — four numbered steps explaining OUR process, standing between the reader
+            and the first article. On desktop the column has the room, so it stays. */}
+        <div className="max-lg:hidden">
+          <TrustStrip />
+        </div>
         <ServiceChips services={services} className="mt-4" />
       </div>
     </section>

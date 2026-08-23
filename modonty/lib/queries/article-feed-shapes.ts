@@ -133,7 +133,15 @@ export async function getArticlesCached(filters: ArticleFilters = {}) {
       ? [{ featured: "desc" as const }, { datePublished: "asc" as const }, { id: "asc" as const }]
       : sortBy === "title"
         ? [{ title: "asc" as const }, { id: "asc" as const }]
-        : [{ featured: "desc" as const }, { datePublished: "desc" as const }, { id: "desc" as const }];
+        : // «الأكثر قراءة». Added 22 Aug 2026 so an infinite feed can keep scrolling under a
+          // filter instead of stopping at the first chunk — a sort the client cannot fake,
+          // because it only ever holds the rows it has already been given.
+          // NO `featured` first here: featured is an editorial thumb on the scale, and this
+          // view exists to answer «what do people actually read». `id` closes the tie so
+          // offset paging never overlaps.
+          sortBy === "popular"
+          ? [{ viewsCount: "desc" as const }, { id: "desc" as const }]
+          : [{ featured: "desc" as const }, { datePublished: "desc" as const }, { id: "desc" as const }];
 
   const where: Prisma.ArticleWhereInput = {
     status,

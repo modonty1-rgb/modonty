@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { auth } from "@/lib/auth";
+import { ModontyLogoutMark } from "@/components/icons/modonty-logout-mark";
 
 import { ReelsFeedClient } from "./components/reels-feed-client";
 import { getReelsFeedPage } from "@/lib/queries/get-reels-feed-page";
@@ -50,12 +51,17 @@ export default async function ReelsPage() {
         <h1 className="rounded-full bg-black/40 px-4 py-1.5 text-sm font-bold text-white backdrop-blur">
           الريلز
         </h1>
+        {/* The way OUT of a full-screen layer has to be unmissable (Khalid, 23 Aug: «exit
+            button need more enhancement to be clear»): 44px tall, a solid dark pill with a
+            visible edge instead of a 40%-black wash that vanished over bright footage, the
+            brand logout mark instead of a bare «✕» text glyph, and bold text. */}
         <Link
           href="/"
           aria-label="الخروج من الريلز"
-          className="pointer-events-auto rounded-full bg-black/40 px-4 py-1.5 text-sm text-white backdrop-blur transition hover:bg-black/60"
+          className="pointer-events-auto flex min-h-11 items-center gap-2 rounded-full bg-black/70 px-4 text-sm font-bold text-white ring-1 ring-white/25 backdrop-blur transition hover:bg-black/90 hover:ring-white/40"
         >
-          ✕ خروج
+          <ModontyLogoutMark className="size-5" aria-hidden />
+          خروج
         </Link>
       </header>
 
