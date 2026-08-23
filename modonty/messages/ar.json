@@ -289,6 +289,82 @@
       "contactWith": "تواصل مع"
     }
   },
+  "audio": {
+    "breadcrumbLabel": "استمع",
+    "srTitle": "اسمع",
+    "intro": "القرآن الكريم كاملاً بعشرين قارئاً برواية حفص عن عاصم · ومقالات مدونتي مقروءة.",
+    "tabs": {
+      "group": "وش تبي تسمع",
+      "quran": "متعة الروح",
+      "articles": "زاد العقل"
+    },
+    "articlesRail": {
+      "heading": "المقالات المسموعة",
+      "empty": "لسه ما نزلت أول نسخة صوتية من المقالات — والمقالات كلها موجودة مكتوبة."
+    },
+    "quranListName": "المصحف المسموع — ١١٤ سورة برواية حفص عن عاصم",
+    "player": {
+      "heading": "المصحف المسموع",
+      "provenanceLead": "المصحف كامل ١١٤ سورة",
+      "provenanceRiwaya": "برواية",
+      "provenanceMiddle": "· عشرون قارئاً · التلاوات من",
+      "provenanceDisclaimer": ". لا نستضيف التلاوة ولا نعدّل عليها، ولا يُعرض نصّ القرآن هنا — الصوت فقط.",
+      "reciterLabel": "القارئ",
+      "pickReciterAll": "اختر القارئ لكل السور",
+      "pickReciterForPrefix": "اختر قارئ",
+      "currentPrefix": "الحالي",
+      "resumeTitle": "كمّل من وين وقفت",
+      "resumeAtPrefix": "وقفت عند",
+      "recitePrefix": "تلاوة",
+      "pause": "إيقاف التلاوة",
+      "resume": "متابعة التلاوة",
+      "loadFailed": "ما فتحت — جرّب قارئاً آخر",
+      "seekLabel": "موضع التلاوة",
+      "back15": "رجوع ١٥ ثانية",
+      "forward15": "تقديم ١٥ ثانية",
+      "nextSurah": "السورة التالية",
+      "closePlayer": "إغلاق المشغّل",
+      "searchLabel": "ابحث عن سورة",
+      "searchPlaceholder": "ابحث عن سورة — الكهف · يس · الرحمن",
+      "searchCountOf": "من",
+      "searchCountUnit": "سورة",
+      "verseUnit": "آية",
+      "juzPrefix": "الجزء",
+      "defaultVoiceTitle": "القارئ لكل السور",
+      "pickThisSurahOnly": "قارئ هذي السورة وحدها",
+      "pickDefaultHint": "تقدر تغيّره لسورة وحدها من بطاقتها",
+      "close": "إغلاق"
+    },
+    "queue": {
+      "countUnit": "مقالات",
+      "pause": "إيقاف مؤقّت",
+      "resume": "متابعة",
+      "playAll": "شغّل الكل",
+      "playAllHint": "يمشي مقال ورا مقال بلا ما تلمس شيء",
+      "skipNext": "تخطَّ إلى التالي",
+      "skip": "تخطَّ",
+      "speedPrefix": "سرعة التشغيل",
+      "seekLabel": "موضع التشغيل",
+      "back15": "رجوع ١٥ ثانية",
+      "forward15": "تقديم ١٥ ثانية",
+      "trackFailed": "هذا التسجيل ما فتح. اضغط اللي بعده، والمقال مكتوب كامل.",
+      "playPrefix": "شغّل",
+      "noValidRecording": "لا يوجد تسجيل صالح",
+      "read": "اقرأ",
+      "hourForms": {
+        "one": "ساعة",
+        "two": "ساعتان",
+        "many": "ساعات"
+      },
+      "minuteForms": {
+        "one": "دقيقة",
+        "two": "دقيقتان",
+        "many": "دقيقة"
+      },
+      "joiner": " و",
+      "underMinute": "أقل من دقيقة"
+    }
+  },
   "chrome": {
     "skipToContent": "تخطى إلى المحتوى الرئيسي",
     "homePage": "الصفحة الرئيسية",

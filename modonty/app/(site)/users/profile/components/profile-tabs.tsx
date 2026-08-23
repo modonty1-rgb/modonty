@@ -73,7 +73,31 @@ export function ProfileTabs() {
 
   return (
     <div className="w-full">
-      <div className="w-full grid grid-cols-3 md:grid-cols-6 gap-2 p-1 bg-muted rounded-lg">
+      {/* الجوّال: رقائق سكرول أفقي ٤٤px — نفس نمط قائمة أقسام الشريك. غريد ٣×٢ كان يضغط
+          الستّة في شاشتين من الأزرار الصغيرة (بند PROFILEMOB). الديسكتوب على غريده كما هو. */}
+      <div className="flex gap-1.5 overflow-x-auto pb-1 lg:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.value;
+          return (
+            <Link
+              key={`m-${tab.value}`}
+              href={tab.href}
+              aria-current={isActive ? "page" : undefined}
+              className={cn(
+                "inline-flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-[13px] font-bold transition-colors",
+                isActive
+                  ? "border-transparent bg-primary/[0.08] text-primary"
+                  : "border-border bg-card text-muted-foreground"
+              )}
+            >
+              <Icon className="h-4 w-4" aria-hidden />
+              {tab.label}
+            </Link>
+          );
+        })}
+      </div>
+      <div className="w-full hidden lg:grid grid-cols-3 md:grid-cols-6 gap-2 p-1 bg-muted rounded-lg">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.value;

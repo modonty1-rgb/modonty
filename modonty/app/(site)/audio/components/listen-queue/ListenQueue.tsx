@@ -19,8 +19,42 @@ import { cn } from "@/lib/utils";
 import { hushOtherAudio } from "../../helpers/hush-other-audio";
 import type { AudioArticle } from "../../data/get-audio-articles";
 
+/** أشكال العدد (واحد/اثنان/جمع) تصل جاهزة من `messages/ar.json` عبر الصفحة — لا نصّ في العميل. */
+interface CountForms {
+  one: string;
+  two: string;
+  many: string;
+}
+
+/**
+ * كل نصّ يراه الزائر هنا يصل من `messages/ar.json` عبر الصفحة (سيرفر) — لا استيراد للملف
+ * في مكوّن عميل حتى لا تدخل الرسائل كلها في باندل المتصفح.
+ */
+export interface ListenQueueLabels {
+  countUnit: string;
+  pause: string;
+  resume: string;
+  playAll: string;
+  playAllHint: string;
+  skipNext: string;
+  skip: string;
+  speedPrefix: string;
+  seekLabel: string;
+  back15: string;
+  forward15: string;
+  trackFailed: string;
+  playPrefix: string;
+  noValidRecording: string;
+  read: string;
+  hourForms: CountForms;
+  minuteForms: CountForms;
+  joiner: string;
+  underMinute: string;
+}
+
 interface ListenQueueProps {
   articles: AudioArticle[];
+  labels: ListenQueueLabels;
   /**
    * Rail form: the articles sit beside the Qur'an now, in a 300px column.
    *
@@ -48,12 +82,14 @@ function clock(seconds: number) {
 }
 
 /** «ساعتان و١٣ دقيقة» — a total is read, not counted, so it is said in words. */
-function totalPhrase(seconds: number) {
+function totalPhrase(seconds: number, labels: ListenQueueLabels) {
   const h = Math.floor(seconds / 3600);
   const m = Math.round((seconds % 3600) / 60);
-  const hours = h === 0 ? "" : h === 1 ? "ساعة" : h === 2 ? "ساعتان" : `${toArabic(String(h))} ساعات`;
-  const mins = m === 0 ? "" : m === 1 ? "دقيقة" : m === 2 ? "دقيقتان" : `${toArabic(String(m))} دقيقة`;
-  return [hours, mins].filter(Boolean).join(" و") || "أقل من دقيقة";
+  const hours =
+    h === 0 ? "" : h === 1 ? labels.hourForms.one : h === 2 ? labels.hourForms.two : `${toArabic(String(h))} ${labels.hourForms.many}`;
+  const mins =
+    m === 0 ? "" : m === 1 ? labels.minuteForms.one : m === 2 ? labels.minuteForms.two : `${toArabic(String(m))} ${labels.minuteForms.many}`;
+  return [hours, mins].filter(Boolean).join(labels.joiner) || labels.underMinute;
 }
 
 /**
@@ -71,7 +107,7 @@ function totalPhrase(seconds: number) {
  * Nothing is fetched until the reader presses play: every duration shown here comes from
  * `Article.audioDurationSeconds` in the database, so the page opens having downloaded no audio.
  */
-export function ListenQueue({ articles, compact }: ListenQueueProps) {
+export function ListenQueue({ articles, compact, labels }: ListenQueueProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   // The 404 recording in the seed data proves the case: a row with no playable file must not be
   // able to stall the queue, so unplayable rows are listed but never become `current`.
@@ -165,7 +201,7 @@ export function ListenQueue({ articles, compact }: ListenQueueProps) {
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <IconListen className="size-4 text-action-listen" aria-hidden />
           <span>
-            {toArabic(String(playable.length))} مقالات · {totalPhrase(totalSeconds)}
+            {toArabic(String(playable.length))} {labels.countUnit} · {totalPhrase(totalSeconds, labels)}
           </span>
         </div>
 
@@ -173,7 +209,7 @@ export function ListenQueue({ articles, compact }: ListenQueueProps) {
           <button
             type="button"
             onClick={() => playIndex(index)}
-            aria-label={playing ? "إيقاف مؤقّت" : started ? "متابعة" : "شغّل الكل"}
+            aria-label={playing ? labels.pause : started ? labels.resume : labels.playAll}
             className="grid size-12 shrink-0 place-items-center rounded-full bg-action-listen text-action-listen-foreground transition-transform hover:scale-105"
           >
             {playing ? <IconPause className="size-5" /> : <IconPlay className="size-5" />}
@@ -185,8 +221,8 @@ export function ListenQueue({ articles, compact }: ListenQueueProps) {
             <button
               type="button"
               onClick={skip}
-              aria-label="تخطَّ إلى التالي"
-              title="تخطَّ"
+              aria-label={labels.skipNext}
+              title={labels.skip}
               className="grid size-11 shrink-0 place-items-center rounded-full border border-border hover:bg-muted"
             >
               <IconSkipForward className="size-4" aria-hidden />
@@ -195,17 +231,17 @@ export function ListenQueue({ articles, compact }: ListenQueueProps) {
 
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-bold">
-              {started ? track?.title : "شغّل الكل"}
+              {started ? track?.title : labels.playAll}
             </p>
             <p className="truncate text-xs text-muted-foreground">
-              {started ? track?.clientName : "يمشي مقال ورا مقال بلا ما تلمس شيء"}
+              {started ? track?.clientName : labels.playAllHint}
             </p>
           </div>
 
           <button
             type="button"
             onClick={cycleSpeed}
-            aria-label={`سرعة التشغيل ${rate}`}
+            aria-label={`${labels.speedPrefix} ${rate}`}
             dir="ltr"
             // 31×26 measured on a phone — under the 44px floor, and it is the one control here
             // someone reaches for while driving. Phones only, so the rail on desktop is unchanged.
@@ -231,7 +267,7 @@ export function ListenQueue({ articles, compact }: ListenQueueProps) {
               el.currentTime = Number(e.target.value);
               setCurrent(el.currentTime);
             }}
-            aria-label="موضع التشغيل"
+            aria-label={labels.seekLabel}
             dir="ltr"
             className="h-1 w-full cursor-pointer appearance-none rounded-full bg-border accent-action-listen"
           />
@@ -240,7 +276,7 @@ export function ListenQueue({ articles, compact }: ListenQueueProps) {
           <button
             type="button"
             onClick={() => nudge(-JUMP)}
-            aria-label="رجوع ١٥ ثانية"
+            aria-label={labels.back15}
             className="grid size-11 shrink-0 place-items-center rounded-lg border border-border hover:bg-muted"
           >
             <IconReplay className="size-4" aria-hidden />
@@ -248,7 +284,7 @@ export function ListenQueue({ articles, compact }: ListenQueueProps) {
           <button
             type="button"
             onClick={() => nudge(JUMP)}
-            aria-label="تقديم ١٥ ثانية"
+            aria-label={labels.forward15}
             className="grid size-11 shrink-0 place-items-center rounded-lg border border-border hover:bg-muted"
           >
             <IconAdvance className="size-4" aria-hidden />
@@ -258,7 +294,7 @@ export function ListenQueue({ articles, compact }: ListenQueueProps) {
         {failed && (
           <p className="mt-2 flex items-center gap-2 text-xs text-destructive">
             <IconAlertTriangle className="size-4 shrink-0" aria-hidden />
-            هذا التسجيل ما فتح. اضغط اللي بعده، والمقال مكتوب كامل.
+            {labels.trackFailed}
           </p>
         )}
       </div>
@@ -276,7 +312,7 @@ export function ListenQueue({ articles, compact }: ListenQueueProps) {
                   type="button"
                   onClick={() => isPlayable && playIndex(queueAt)}
                   disabled={!isPlayable}
-                  aria-label={isPlayable ? `شغّل ${article.title}` : "لا يوجد تسجيل صالح"}
+                  aria-label={isPlayable ? `${labels.playPrefix} ${article.title}` : labels.noValidRecording}
                   className={cn(
                     "grid size-11 shrink-0 place-items-center rounded-full transition-transform",
                     isPlayable
@@ -329,7 +365,7 @@ export function ListenQueue({ articles, compact }: ListenQueueProps) {
                     compact && "hidden"
                   )}
                 >
-                  اقرأ
+                  {labels.read}
                 </Link>
               </div>
 

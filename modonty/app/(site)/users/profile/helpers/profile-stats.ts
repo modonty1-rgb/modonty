@@ -7,6 +7,7 @@ export interface ProfileStats {
   dislikesGiven: number;
   favoritesCount: number;
   followingCount: number;
+  bookingsCount: number;
   joinedAt: Date;
 }
 
@@ -24,6 +25,7 @@ export async function getProfileStats(userId: string): Promise<ProfileStats> {
     dislikesCount,
     favoritesCount,
     followingCount,
+    bookingsCount,
     user,
   ] = await Promise.all([
     db.comment.count({
@@ -34,6 +36,7 @@ export async function getProfileStats(userId: string): Promise<ProfileStats> {
     db.commentDislike.count({ where: { userId } }),
     db.articleFavorite.count({ where: { userId } }),
     db.clientFavorite.count({ where: { userId } }),
+    db.bookingRequest.count({ where: { userId } }),
     db.user.findUnique({
       where: { id: userId },
       select: { createdAt: true, bio: true },
@@ -47,6 +50,7 @@ export async function getProfileStats(userId: string): Promise<ProfileStats> {
     dislikesGiven: dislikesCount,
     favoritesCount,
     followingCount,
+    bookingsCount,
     joinedAt: user?.createdAt ?? new Date(),
   };
 }

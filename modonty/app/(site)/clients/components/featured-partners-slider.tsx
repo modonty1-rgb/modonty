@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
-import { IconCheck, IconChevronRight, IconChevronLeft } from "@/lib/icons";
+import { IconCheck, IconChevronUp, IconChevronDown } from "@/lib/icons";
 
 
 export interface FeaturedPartner {
@@ -77,6 +77,10 @@ export function FeaturedPartnersSlider({ partners }: FeaturedPartnersSliderProps
     );
   }
 
+  // VERTICAL since 23 Aug (Khalid: «رأسي») — the slides stack and the track slides UP, the
+  // same axis the whole page moves on, instead of a sideways carousel fighting the scroll.
+  // The window is one fixed slide tall; translateY is direction-agnostic, so RTL needs no
+  // special case the way translateX did.
   return (
     <section aria-label="الشركاء المميّزون" className="relative w-full overflow-hidden bg-foreground">
       <div className="relative" onMouseEnter={stop} onMouseLeave={play}>
@@ -86,26 +90,25 @@ export function FeaturedPartnersSlider({ partners }: FeaturedPartnersSliderProps
               type="button"
               onClick={() => go(index - 1)}
               aria-label="السابق"
-              className="absolute start-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/50 text-white shadow-lg backdrop-blur-sm transition-colors hover:bg-black/70 sm:grid lg:start-6"
+              className="absolute end-3 top-3 z-10 hidden h-11 w-11 place-items-center rounded-full bg-black/50 text-white shadow-lg backdrop-blur-sm transition-colors hover:bg-black/70 sm:grid"
             >
-              <IconChevronRight className="h-5 w-5" />
+              <IconChevronUp className="h-5 w-5" />
             </button>
             <button
               type="button"
               onClick={() => go(index + 1)}
               aria-label="التالي"
-              className="absolute end-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/50 text-white shadow-lg backdrop-blur-sm transition-colors hover:bg-black/70 sm:grid lg:end-6"
+              className="absolute bottom-3 end-3 z-10 hidden h-11 w-11 place-items-center rounded-full bg-black/50 text-white shadow-lg backdrop-blur-sm transition-colors hover:bg-black/70 sm:grid"
             >
-              <IconChevronLeft className="h-5 w-5" />
+              <IconChevronDown className="h-5 w-5" />
             </button>
           </>
         )}
 
-        <div className="overflow-hidden">
-          {/* RTL: positive translateX reveals later slides (they sit to the left) */}
+        <div className="h-[170px] overflow-hidden">
           <div
-            className="flex transition-transform duration-500 ease-out"
-            style={{ transform: `translateX(${index * 100}%)` }}
+            className="flex h-full flex-col transition-transform duration-500 ease-out"
+            style={{ transform: `translateY(-${index * 100}%)` }}
           >
             {partners.map((p, i) => (
               <PartnerSlide key={p.id} partner={p} priority={i === 0} />
@@ -113,15 +116,17 @@ export function FeaturedPartnersSlider({ partners }: FeaturedPartnersSliderProps
           </div>
         </div>
 
+        {/* The dots stand on the END edge, one per slide, top-to-bottom — the same axis the
+            track moves on, so the lit dot's position IS the current slide's position. */}
         {count > 1 && (
-          <div className="absolute inset-x-0 bottom-3 z-10 flex justify-center gap-2">
+          <div className="absolute end-2 top-1/2 z-10 flex -translate-y-1/2 flex-col gap-2">
             {partners.map((p, i) => (
               <button
                 key={p.id}
                 type="button"
                 onClick={() => go(i)}
                 aria-label={`الانتقال إلى ${p.name}`}
-                className={`h-2 rounded-full transition-all ${i === index ? "w-5 bg-amber-400" : "w-2 bg-white/45"}`}
+                className={`w-2 rounded-full transition-all ${i === index ? "h-5 bg-amber-400" : "h-2 bg-white/45"}`}
               />
             ))}
           </div>
@@ -138,9 +143,10 @@ function PartnerSlide({ partner, priority }: { partner: FeaturedPartner; priorit
   return (
     <Link
       href={`/clients/${encodeURIComponent(partner.slug)}`}
-      // Box follows the 6:1 Client-Cover spec → object-cover fills it with NO crop on desktop;
-      // min-h keeps it usable on phones (center stays visible — the spec keeps content centered).
-      className="relative block aspect-[6/1] min-h-[170px] w-full flex-[0_0_100%] overflow-hidden"
+      // Every slide is exactly one window tall — the vertical track counts on it: a slide
+      // taller or shorter than 100% would desync `translateY(index * 100%)` from the real
+      // offsets. The cover stays object-cover-centered per the Client-Cover spec.
+      className="relative block h-full w-full flex-none overflow-hidden"
     >
       {cover ? (
         <OptimizedImage media={asMedia(cover)} alt="" fill {...(priority ? { preload: true } : {})} sizes="100vw" className="object-cover" />

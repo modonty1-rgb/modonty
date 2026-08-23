@@ -1,0 +1,176 @@
+{
+  "10": {
+    "ask": "نراجع السكيما وسياسة تكلفة مونجو سوا في جلسة: تقرير + سياسة احتفاظ + سكربت TTL، بلا حذف. متى؟"
+  },
+  "11": {
+    "ask": "خمسة قرارات صلاحيات في ADMIN-PERMISSIONS-PLAN-v1.html — أهمّها: مَن يملك عمليات الفلوس (createInvoice · mark-paid). افتح الخطة وقرّر."
+  },
+  "12": {
+    "ask": "قرار سكيما: دمج NewsSubscriber + Subscriber + JbrseoSubscriber في موديل واحد — نعم/لا/لاحقاً."
+  },
+  "19": {
+    "ask": "نظام الروابط المختصرة — ٣ قرارات قبل ٩ مراحل: النطاق القصير · مَن ينشئ الروابط · هل QR لكل عميل. نفتحه الآن أم يبقى في الانتظار؟"
+  },
+  "22": {
+    "ask": "موقوف على بند 10 (سياسة الاحتفاظ). قرّر السياسة هناك أوّلاً ثم أنفّذ الخطوات الستّ داخل Run-All."
+  },
+  "28": {
+    "ask": "قراران: مفتاح Google Places وحدّ استهلاكه · وهل نعرض AggregateRating على صفحة العميل أصلاً."
+  },
+  "29": {
+    "ask": "قرار منتج: نبني نظام آراء عن مدونتي نفسها (غير آراء Google للعميل)؟ ومتى."
+  },
+  "31": {
+    "ask": "قرار: صلاحية العرض (validUntil) إلزامية أم اختيارية في بطاقة عروض الشركاء؟"
+  },
+  "34": {
+    "ask": "قرار محتوى: ماذا يعرض تبويب «نشاط العميل» بالضبط (آخر مقالات · حجوزات · تعليقات · زيارات)؟ أعطني القائمة وأبنيه."
+  },
+  "43": {
+    "ask": "نعم/لا: هل سنضيف محتوى وظائف أو فعاليات (الوحيدان المسموحان في Indexing API)؟ لا = يبقى الملف ساكناً بلا حذف."
+  },
+  "82": {
+    "ask": "اسمح بجدول جديد في القاعدة يميّز الرابط الساقط ٣ مرّات عن السقطة العابرة — نعم/لا. ثم يُشغَّل الفاحص على الإنتاج."
+  },
+  "CONSOLE-CHAT": {
+    "ask": "قرّر قبل أي كود: (١) محادثة حيّة تحتاج موظّفاً متصلاً وبنية ما نملكها، أم صندوق رسائل غير متزامن يُبنى على الموجود (توصيتي). (٢) مَن يردّ ومتى. (٣) تُربط بمودو أم مسار منفصل."
+  },
+  "BUILD-SCALE": {
+    "ask": "لا قرار اليوم — سليم حتى مئات المقالات. متى نصل ~٥٠٠ مقال: نحدّ generateStaticParams بأحدث N ونترك الباقي للطلب الأول. قل «نفّذ» عندها فقط."
+  },
+  "AUTOLINK": {
+    "ask": "تحتاج جلسة مخصَّصة (قرارك ١٩ أغسطس). القرار: متى نفتحها، وهل نبدأ بالتصنيف والوسوم فقط (توصيتي) أم نضيف روابط بين المقالات."
+  },
+  "INVREV": {
+    "ask": "عطلان ينتظرانك: (١) تاريخ الفاتورة مقلوب «Jul 2026 26» — أقلبه لصيغة عربية؟ سألتك مرّتين. (٢) حقول السجل (org*) فاضية على الإنتاج — تُعبَّأ من إعدادات الأدمن بيدك."
+  },
+  "MOBCHROME": {
+    "ask": "ثلاث بقايا صغيرة — قل «ابدأ» وأقيسها وأصلحها واحدة واحدة: شريط CTA لصفحة الشريك · تداخل شريطَي المقال · العرض الثابت ٢١٠px في قائمة الشريك."
+  },
+  "ABOUTCARD": {
+    "ask": "يحتاج توجيهك على المحتوى: ماذا يريد الزائر أن يعرف عن مدونتي وهو يتصفّح؟ أعطني ٢–٣ أسطر (أو «اقترح أنت») ثم أوحّد الشكل على المستهلكين الثلاثة."
+  },
+  "I18NAUDIOSTORY": {
+    "ask": "مهمّة ميكانيكية جاهزة — قل «ابدأ» وأنقل /audio أولاً ثم /story، بقياس ٣٩٠/١٢٨٠ بعد كلّ منهما."
+  },
+  "MOBSWEEP": {
+    "ask": "تمريرة فحص على ٣٠ صفحة بسيطة — قل «ابدأ» (جلسة واحدة تقريباً). لا قرار تصميمي فيها."
+  },
+  "PARTNERMOB": {
+    "ask": "مرحلة كاملة (١٠٨ ملفاً). القرار: نفتحها الآن كمرحلة (جرد ثم بنود) أم بعد إقفال المعلّقات الأصغر؟ توصيتي: بعد LEGALPASTE وبطاقات المقال."
+  },
+  "MAILREV": {
+    "ask": "قل «ابدأ» وأجرد كل القوالب وأعرض جدول (قالب · ذيل قانوني · لهجة · تاريخ) ثم تقرّر التعديلات."
+  },
+  "INDMARK": {
+    "ask": "قل «ابدأ» — استبدال IconIndustry بالعلامة المعتمدة موضعاً موضعاً بقياس حيّ (مدونتي ثم الأدمن والكونسول). لا قرار تصميمي."
+  },
+  "PARTMARK": {
+    "ask": "قل «ابدأ» — ١٠ مواضع IconClients مجرودة تُستبدل بعلامة الشريك، ثم الأدمن والكونسول."
+  },
+  "HERO1": {
+    "ask": "قرار شكل: صورة البطل ٤١٢px تبقى كما هي (الجواب يصل داخل أول شاشة أصلاً) أم نصغّرها؟ توصيتي: تبقى."
+  },
+  "MEDIA1": {
+    "ask": "مؤجَّل بقرارك لما بعد ريفاكتور مدونتي. عند الفتح: أوّل قرار — رفع noindex عن /reels (بند 83c) و/modo-chat تبقى."
+  },
+  "65b": {
+    "ask": "مؤجَّل. عند الاستئناف: توافق على غلاف عميل رفيع في ٣–٥ مواضع فقط (لا داخل OptimizedImage) — أم تعتبر الضبابة كافية وتقفله؟"
+  },
+  "IMGDIM": {
+    "ask": "ضغطة واحدة بيدك على الإنتاج: admin.modonty.com/maintenance → Run All → سطر Image Dimensions = 29 fixed."
+  },
+  "BNOPT": {
+    "ask": "ثلاث بوّابات قبل أي تنفيذ: (١) تأكيد تفعيل Bunny Optimizer من لوحة بني (بيدك). (٢) رقم فاتورة تحويلات Vercel. (٣) ثم أقيس السرعة. قرارك: نفتح البوّابة الأولى الآن؟"
+  },
+  "LEGALPASTE": {
+    "ask": "بيدك: الصق نصّي الشروط والخصوصية من وثائق-مدونتي.html (DOC4/DOC5) في الأدمن على /terms و/legal/privacy-policy، ثم قل «تحقّق» وأقيس الصفحتين وأحذف المسوّدتين. يُستحسن مراجعة محامٍ قبلها."
+  },
+  "CAMERGE": {
+    "ask": "ستّة بنود قبل دمج client-articles: موافقة طارق على المعاينة · db push لفهرسين · Run-All بعد الدمج · اختبار منتقي الروابط · تبديل عنوان السحب عند جبر سيو · قرار المشهد ١١. أيّها نبدأ؟"
+  },
+  "PRODDATA": {
+    "ask": "بيدك وبيد الفريق (لا كود): ريل واحد منشور · مقال مسموع واحد · مؤلّف حقيقي للمقالات · أوراق توثيق الشركاء · تصنيف لمقالين. أيّها أوّلاً؟"
+  },
+  "WHEEL": {
+    "ask": "أربعة تُحسم قبل أي كود: الأهلية · قيمة الجائزة وسقفها · مكان اللعبة ونسبة الظهور · الوضع النظامي (وزارة التجارة — غير متحقَّق). أو تبقى فكرة مؤجَّلة."
+  },
+  "SUBDOM": {
+    "ask": "مؤجَّل بقرارك (بريميوم اختياري). الخطوة الأولى بيدك أنت/مريم: نقل modonty.com من حساب dreamtoapp إلى فريق modonty على Vercel — ثم أنا أنسخ الـ٢٤ سجلّ DNS."
+  },
+  "83c": {
+    "ask": "نعم/لا: نرفع noindex عن /reels؟ سطر واحد. توصيتي: لا قبل وجود ريل منشور واحد على الأقلّ (PRODDATA)."
+  },
+  "CAJ": {
+    "ask": "بعد الدمج: تبديل معرّف جبر سيو من dev إلى الإنتاج في lib/modonty-articles.ts، وقراءة سجلّ النشرة لتشخيص الـ500. قل «ابدأ» عند دمج client-articles."
+  },
+  "83b": {
+    "ask": "تصميم: رفع فيديو الريل من المتصفّح إلى بني مباشرة بمفتاح مؤقّت — توافق على المبدأ؟ ثم أعرض خطة."
+  },
+  "UX": {
+    "ask": "بنود «مدوّنتي ليس شريكاً» الأربعة جاهزة للتنفيذ (الأساس isCoreClient موجود) — قل «ابدأ». والريفاكتور الكامل يحتاج بريفاً منك يوم ننطلق."
+  },
+  "14b": {
+    "ask": "رقم تسعير: كم ريل شهرياً لكل باقة؟ بلا الرقم لا يُبنى العدّاد."
+  },
+  "HOMEMOB": {
+    "ask": "نصّ زرّي الرئيسية ووجهتاهما — ما حُسم. (ملاحظة ٢٣ أغسطس: الشريط السفلي اختفى من الرئيسية بقرارك؛ لو بقي مخفيّاً يُقفل البند.)"
+  },
+  "PENDDEC": {
+    "ask": "بطاقة تجميع لقراراتك المعلّقة — راجع «يحتاج قرارك» أعلى اللوحة؛ هذه البطاقة تُحذف حين تخلو."
+  },
+  "BRAND-ID": {
+    "ask": "Khalid must pick one brand spelling; source is the author row + settings.siteName (lib/seo/build-metadata-from-page-row.ts:62)."
+  },
+  "HREF0": {
+    "ask": "Data, not code: builder path intact (build-metadata-from-page-row.ts:96 → buildHreflangLanguages); needs defaultAlternateLanguages filled in admin settings on production."
+  },
+  "LOGIN-SOCIAL": {
+    "ask": "modonty/auth.config.ts still Google + Credentials only; needs Khalid's decision + a prod count of password accounts."
+  },
+  "DIALOG-MOBILE": {
+    "ask": "shared/components/ui/dialog.tsx:41 still `w-full … sm:rounded-lg`; fixing at source touches admin+console — left for Khalid's order."
+  },
+  "CTA-DUP": {
+    "ask": "Both blue \"احجز الآن\" CTAs still by Khalid's own placement; card asks him which stays solid."
+  },
+  "ARTCTA": {
+    "ask": "Schema unchanged — Article has only `ctaClicks` (schema.prisma:221); ctaMode/ctaLabel/ctaUrl still on Client (617-619). Card itself blocks on Khalid: 2 new fields + who fills + fallback."
+  },
+  "AR15": {
+    "ask": "Pure data edit in the admin + Khalid's ruling on whether partners must supply an Arabic display name; no code involved."
+  },
+  "WC-PROD": {
+    "ask": "Code root verified fixed in git: d9203a6 (wordCount derived from body) + 62a6f9e (structured-data card refreshed in Run-All). Remaining is the prod Run-All click."
+  },
+  "LE1": {
+    "ask": "Fields exist in schema (orgCommercialRegistrationStatus:2632 · orgUnifiedNationalNumber:2633 · orgCapitalAmount:2635). Remaining is prod db push + manual data entry + certificate image."
+  },
+  "FS16": {
+    "ask": "admin upload still never re-encodes the original (upload-image.ts:55-59 keeps the raw buffer + file.type) — needs Khalid's call on re-encode + regeneration."
+  },
+  "BUNNYDASH": {
+    "ask": "Both toggles live in the Bunny panel, not in code — Khalid must open it and report"
+  },
+  "CONTENTTEAM": {
+    "ask": "Duplicate-article choice, 12 client addresses, SEO expert review, 7 open team decisions — content-team/Khalid actions on prod data."
+  },
+  "REELS56": {
+    "ask": "ق١ verified (schema.prisma:1563 `inReels Boolean @default(false)`) and ق٢ built (admin/(dashboard)/reels/). ق٣ and ق٥ are Khalid's."
+  },
+  "PARTNERPAGE": {
+    "ask": "Zero code by design; seven decisions await Khalid."
+  },
+  "PREV": {
+    "ask": "Seven decisions plus roadmap await Khalid; console-side review approval (client-review-actions.ts) not yet moved to admin."
+  },
+  "S11": {
+    "ask": "Khalid must rule: revoke the pull on lapse, or let published articles stay forever"
+  },
+  "BNMAP": {
+    "ask": "Explicitly waiting on Khalid; no bunny-map page exists in admin."
+  },
+  "I3": {
+    "ask": "SUBDOM is parked by Khalid (DNS zone in another Vercel account); official mail box is an operational decision, zero code."
+  }
+}

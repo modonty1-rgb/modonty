@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-08-23
+# Session Context — Last Updated: 2026-08-23 (مساءً)
 
 > ⚙️ **ملف نشط = آخر أسبوع فقط** (يتوزّع أسبوعياً لتوفير الـ token عند القراءة).
 > الأرشيف الكامل بالأشهر:
@@ -54,6 +54,64 @@
 
 ### 🔮 مستقبلي
 - [ ] **`ADM-AUTH-IMG`** — الأدمن بلا حقل لصورة الكاتب؛ اضطررنا لكتابتها بسكربت.
+
+---
+
+## Session: 2026-08-23 (مساءً، حتى ≈ 21:45) — 📱 تدقيق الجوّال على معيار أبل (٧ صفحات) + الرئيسية: بلا شريط سفلي · بحث وفلتر · بطاقة واجهة هجينة + مضغوط ١٦ · محرّك الأرشيف صار مشتركاً (فرع `modonty-ui` · ٣ دفعات `5795fb9` → `3d1cadb` → `5d25bef` · modonty 1.99.0 · shared 0.3.4 · **مدفوع**)
+
+### 🎯 أين توقفت
+- **آخر تاسك:** الهجين المعتمد من الموكب مبنيّ ومدفوع (`5d25bef`). خالد سأل «نعمّمه؟» → الجواب: الرئيسية فقط، وهذا المطبَّق.
+- **الفعل التالي:** انتظر أمره. مرشَّحات واضحة: `LEGALPASTE` · بطاقات صفحة المقال السبع (تنتظر موكب+ابروف) · `BottomBar`/`ServiceBar` بلا مستهلك (حذف أم إبقاء) · `pb-20` في `ThreeColumnLayout.tsx:34` · تحقّق `test.modonty.com` بعد `5d25bef` (**لم يُنفَّذ**).
+
+### ✅ المنجز (بترتيبه)
+1. **`hh>` + `pl>modonty`** — السيرفر كان مطفأً، شُغّل. `test.modonty.com/clients` تحقّق أنه يحمل `e443146` (١٦ `w-[86px]` · ٠ `w-[118px]`).
+2. **قائمة البرغر** (`MobileMenu.tsx`): ما كانت تسكرل (القائمة بلا قيد ارتفاع، آخر رابط عند `y=938` على ٨٤٤) → `flex-col` + `min-h-0 flex-1 overscroll-contain` + safe-area؛ `side="left"` (كانت تطلع من عكس جهة زرّها) · فتح ٠٫٣ث بدل ٠٫٥ · حافّة سكرول متدرّجة بدل `border-b`. خالد ثبّت اتجاه السهم «<» كما هو بعد نقاش (RTL صحيح).
+3. **بطاقة الحساب** (`MobileAccountBenefitsMenu.tsx`): تكبر من زرّها (`origin x=77` مقابل مركز الزرّ ٧٨، كانت ١٧٢) عبر سهم Radix صفري + `origin-[--radix…]` **في `shared/components/ui/dropdown-menu.tsx`** (خالد: «all shadcn should be in shared — DRY») · زواياها رجعت ١٦px: `:focus-visible{border-radius:4px}` عام في `globals.css` كان يضرب كل عنصر مركَّز — حُذف.
+4. **شريط التبويبات** (`SiteShell.tsx` · `TopNav.tsx` · `globals.css`): الهيدر والشريط مادّة واحدة (كانا `card/90` + `background` معتم وبينهما خطّ) · التدرّج انتقل لقاع الشريط · باق قديم: `prefers-reduced-transparency` كان يخسر أمام Tailwind (بقي ٩٠٪) — سلكتور مضاعَف (0,2,1).
+5. **بطاقة المقال**: زرّ الحفظ هدف ٤٤ بامتداد `before:` (الشكل ٣٢) · ضغط البطاقة `scale .99`.
+6. **الرئيسية «مقالات فقط»** (أمر خالد): الشريط السفلي (احجز · تسوّق · مودو) **مخفيّ** من `CachedHomePage` (ملفّاه باقيان بلا مستهلك) · مودو صار شريطاً داخل الخلاصة بعد البطاقة الثانية (`AskModo` رُقّي إلى `components/shared/ask-modo/`) · «ارجع لفوق» نزل ٨٠→١٦px · خطّ التقدّم نزل من رؤوس التبويبات (`y=56`) إلى قاع الكروم (`y=123`؛ على المقال `top-[var(--sticky-chrome)]`=١٣٥) · الترقيم: الرئيسية صارت تستعمل `FeedPagination` المشترك وترفع `data-infinite-live` (كانت تُظهر «الصفحة التالية» تحت خلاصة خلّصها السكرول — نفس عطل `/modonty` ٢٢ أغسطس).
+7. **الفوتر**: ردّ ضغط للجوّال (`max-lg:active:text-link`) — ١٨ رابطاً كلها ≥٤٤ أصلاً.
+8. **مسح الصفحات** (`/articles` · `/clients` · `/industries` · `/reels` · `/audio` · `/modonty` · `/articles/[slug]`) — كل ما سقط: مسار التنقّل ٧٠×٢٠→٤٤ (`shared/components/ui/breadcrumb.tsx`, جوّال فقط) · زرّ مسح البحث ٢٨→٤٤ + `enterKeyHint=search` + `role=search` (`EntitySearchForm.tsx`) · بلاطات `/clients` وصفوف الشركاء تضغط · «كل الشركاء ←» ٢٠→٤٤ · شريحة الشريك على الريل ٣٦→٤٤ + ضغط الخروج/الصوت · زرّ «تصفية» على `/modonty` هدف ٤٤ · صفحة المقال: خطّ القراءة، مصغّرات المعرض ٥٦×٣٢→هدف ٦٨×٤٤ (`overflow-hidden` انتقل للصورة)، رابط الكاتب وCTA ٤٤، أيقونات اتصال/موقع تضغط. `/audio` مرّت بلا تعديل.
+9. **ناف بار**: «البحث…» → «بحث متقدم» (`messages/ar.json:297`).
+10. **بحث + فلتر على الرئيسية (جوّال)** بثلاث مراحل: (١) ترقية محرّك الأرشيف من `/articles` — `FiltersBar` · `ReadingTimeBar` → `components/shared/archive-filters/`، `get-articles-archive` · `get-articles-filters` · `build-archive-href` · `reading-time-buckets` · `focus-ring` → `lib/articles/archive/` (git mv، ٩ استيرادات أُعيد توجيهها)؛ (٢) الرئيسية: `ArchiveSearchForm` جديد **فورم GET بلا جافاسكربت** (الحيّ كان سيبدّل الصفحة من أول حرف) + `ReadingTimeBar` — `lg:hidden`، العدّ من `getArticlesArchive({})` داخل `Promise.all` المكاش؛ (٣) تست: «الظهر» + Enter → `/articles?search=الظهر` · ١٢٨٠ `display:none`.
+11. **دراسة «8 best practices for UI card design»** وجدول مقارنة (نحن أقوى في ١·٣·٦·٧·٨، أضعف في ٢ الأحجام و٤ هيكل التحميل) → هيكل تحميل جوّالي مطابق (`loading.tsx`) + ملخّص ١٣ وتاريخ ١٢ → ثم **الهجين** (موكب `documents/design/feed-card-hybrid-mockup.html`، ابروف): بطاقة أولى «واجهة» (صورة ١٦:٩ `eager/high` · عنوان ١٨ · متن ١٤ · شارة «الأحدث») + مضغوط بعنوان ١٦ وبلا «اقرأ المزيد» — `mobileHero` من `ArticlesList` للرئيسية فقط (`page===1 && index===0`). الديسكتوب: أول بطاقة `y=165 h=461` بلا تغيير.
+12. **الدفع ×٣** (`push>` بلا باك أب ولا تشينج لوق): `5795fb9` (1.97.0/0.3.3) · `3d1cadb` (1.98.0/0.3.4) · `5d25bef` (1.99.0). tsc `exit=0` على الثلاثة قبل كل دفعة. البناء لم يُشغَّل محلياً. التست الحيّ: curl + Playwright ٣٩٠/١٢٨٠ لكل بند.
+
+### 📝 قرارات (بأسبابها)
+- **الشريط السفلي يختفي من الرئيسية فقط** (خالد: «no that only on the main page») — يبقى على `/articles` وغيرها.
+- **الهجين للرئيسية فقط**: «الأحدث» معناه صادق في الصفحة الأولى؛ في قوائم الفلتر/البحث أول نتيجة ليست مميّزة؛ المضغوط بطاقة واحدة في كل مكان. كلفة «الكل واجهة» مقيسة: ٣٫٧→٢٫١ بطاقة/شاشة، سكرول +٧٧٪، صور ×٤–٥ — رُفضت.
+- **البحث على الرئيسية فورم GET لا مكوّن حيّ** — أداء (صفر JS) + الحيّ يبدّل الصفحة ويطيّر الكيبورد.
+- **شادسي كله في `shared/`** (خالد) — تراجعت عن استيراد Radix مباشرةً في مدونتي.
+- **سهم القائمة يبقى «<»** — RTL صحيح (Apple HIG right-to-left)؛ خالد وافق بعد سؤال تأكيد بخيارات.
+- **درس مسجَّل:** تعليق JSX داخل تعبير = 500 (حصل مرتين) → `feedback_jsx_comment_never_inside_expression`.
+
+### 🚧 معلّق
+- بطاقات صفحة المقال السبع (٢١ أغسطس) — موكب + ابروف.
+- `BottomBar.tsx`/`ServiceBar.tsx` بلا مستهلك — حذف أم إبقاء (قرار خالد).
+- `pb-20` في `shared/components/column-layout/ThreeColumnLayout.tsx:34` — ٨٠px فاضية آخر الرئيسية (الشِّل مشترك بين ٤ صفحات).
+- `app/(site)/articles/documentation/MAP.md` يشير لمسارات ما قبل الترقية.
+- تحقّق `test.modonty.com` بعد `5d25bef` — لم يُنفَّذ.
+- `--sticky-chrome` = ١٣٥ لكن شريط الرئيسية ٦٧ (١٢٣) لأن لا تبويب فعّالاً فيها — مؤشّر، لم يُلمس.
+- الثوابت أعلى الملف + `featured-partners-slider.tsx` اليتيم + `chrome cOmmand`.
+
+### 📂 الملفات (أبرزها — ٣ كوميتات، ~٥٠ ملفاً)
+- جوّال الكروم: `app/layout/components/nav/MobileMenu.tsx` · `user-menu/MobileAccountBenefitsMenu.tsx` · `SiteShell.tsx` · `nav/TopNav.tsx` · `app/globals.css` · `Footer.tsx`.
+- مشترك: `shared/components/ui/dropdown-menu.tsx` (origin + `DropdownMenuArrow`) · `shared/components/ui/breadcrumb.tsx`.
+- الرئيسية: `(homepage)/components/page-layout/{CachedHomePage,PageLayout}.tsx` · `articles-list/{ArticlesList,MoreArticlesOnScroll}.tsx` · `scroll-buttons/ScrollButtons.tsx` · `loading.tsx`.
+- البطاقة: `components/feed/postcard/{MobilePostCard,SavePostButton,PostCard.types}.ts(x)`.
+- **جديد:** `components/shared/ask-modo/AskModo.tsx` (منقول) · `components/shared/archive-filters/{ArchiveSearchForm,FiltersBar,ReadingTimeBar}.tsx` · `lib/articles/archive/*` (٥ منقولة) · `documents/design/feed-card-hybrid-mockup.html`.
+- صفحات: `articles/[slug]/components/{reading-progress/*,gallery/Gallery,article-footer/ArticleFooter,partner-card/PartnerDetailsMobile}.tsx` · `clients/components/{page-layout/PageLayout,trust-card/TrustStripMobile}.tsx` · `components/shared/partner-card/PartnerCardMobile.tsx` · `industries/components/partners-grid-mobile/PartnersGridMobile.tsx` · `modonty/components/articles-feed/FeedFilterMenu.tsx` · `reels/{page,components/reels-feed-client,[slug]/components/reel-watch-player}.tsx` · `components/listing/EntitySearchForm.tsx` · `messages/ar.json`.
+- الذاكرة: **+** `feedback_jsx_comment_never_inside_expression.md`.
+
+### 🔁 حالة git / النشر
+- الفرع `modonty-ui` · آخر كوميت `5d25bef` · **مدفوع** (`0 0`).
+- غير مثبَّت (مقصود): `.mcp.json` · `.claude/settings.local.json` · `.pnpm-store/` · `chrome cOmmand` · `featured-partners-slider.tsx` · هذا الملف.
+- `test.modonty.com` يبني من `5d25bef` — **لم يُتحقَّق**. لا merge إلى `main`.
+
+### 🚀 الرجوع في ٣٠ ثانية
+1. `git log --oneline -1` ← `5d25bef`؛ `pnpm dev` في `modonty/` وافتح `localhost:3000` على ٣٩٠: بحث + ٣ بلاطات + بطاقة واجهة ثم مضغوطة، بلا شريط سفلي.
+2. الموكب المعتمد: `documents/design/feed-card-hybrid-mockup.html`.
+3. أول قرار: أيّ معلّق نفتح — `LEGALPASTE` · بطاقات المقال السبع · ملفّا الشريط · `pb-20`.
 
 ---
 
@@ -929,87 +987,3 @@
 2. شغّل مودونتي، افتح `/modonty`، انتظر ٤ ثوانٍ، نفّذ في الكونسول: `document.querySelectorAll('aside button[aria-haspopup]').length` — لو ≠ 6 فالعطل قائم → بيسكشن (انقل بطاقة واحدة بين الرايلين).
 3. بعد الإصلاح: قرار خالد على نموذج بيانات الفريق (`Author` + `isPublic`) قبل أي سكيما.
 
----
-
-## Session: 2026-08-16 (صباحاً) — 🛠️ إصلاح فشل بناء فيرسل بعد `c71cb61` (`1e79b3c` · modonty 1.90.1 · فرع `modonty-ui` · مدفوع · `test.modonty.com` أخذ التعديلات)
-
-### 🎯 أين توقفت
-- **آخر شيء:** خالد سأل «ليش ما تأثر النطاق الفرعي بالتعديلات؟» + لقطة فيرسل: نشر `c71cb61` **Error 39s**. شخّصت من سجلّ البناء، أصلحت، بنيت محلياً (٢٨٢/٢٨٢)، دفعت `1e79b3c` بأمره «push»، وتحقّقت: النشر الجديد **Ready** و`test.modonty.com` يخدم الرئيسية الجديدة (200، النصوص الأربعة موجودة في الـHTML الحيّ).
-- **الخطوة التالية عند الرجوع:** خالد يقرّر — الجوّال (V10) أو مراجعة الرئيسية الحيّة على `test.modonty.com` (ريفرش على `/page/3` + الرِيلان). الدمج بأمره الصريح فقط.
-
-### ✅ المنجز هذه الجلسة
-- **السبب الجذري (سببان من نقل الهيدر إلى القشرة الثابتة في `c71cb61`):** لمّا شِلت `<Suspense>` القديم حول الهيدر (كان في `TopNavWithFavorites`)، صار جوّاه مكوّنان يقرأان بيانات الطلب بلا حدّ → `Uncached data was accessed outside of <Suspense>` وقت التصيير المسبق:
-  1. `UserMenu` → `useSession()` (يعلّق على وعد الجلسة) — أول فشل على `/tags/[slug]` (سجلّ فيرسل: `UserMenu.tsx:13`).
-  2. `DesktopNavLinks` → `usePathname()` — الثاني على `/page/[pageNumber]` (أثر `--debug-prerender` → `TopNavDesktop`). التوثيق الرسمي `node_modules/next/dist/docs/.../use-pathname.md:8`: مع `cacheComponents` يحتاج `Suspense` على أي مسار له باراميتر ديناميكي.
-- **الإصلاح:** حدّان صغيران بدل حدّ واحد حول الهيدر كلّه (الهدف الأصلي — الهيدر في القشرة — محفوظ): `UserMenu` تحت حدّ بحجم زرّ «دخول» (ديسكتوب `h-9 w-16`، جوّال `h-11 w-11`) · القائمة فُصلت إلى `DesktopNavList` عرضية، الحدّ يبثّ علامة «النشط» فقط والبديل هو نفس الروابط بلا علامة — صفر إزاحة، الروابط تبقى في القشرة.
-- **`loading.tsx` لـ`/page/[pageNumber]`** كان ناقصاً (قاعدة المشروع) — يعيد تصدير هيكل الرئيسية. (لم يكن هو سبب الفشل — جرّبته أوّلاً وفشل البناء ثانيةً؛ سُجّل هنا كي لا يُعاد التخمين).
-- **الحالة:** `next build` محلياً = `✓ 282/282` · EXIT 0 (TypeScript ضمنه) · فيرسل `ak9hx2l0j` **● Ready** · `curl test.modonty.com` = 200 ويحوي «اسأل مودو · استكشف المجالات · الطلّات · شركاء موثوقون».
-
-### 📝 قرارات
-- الحدود على المستهلكين (UserMenu · روابط القائمة) لا على الهيدر كلّه → لأن حدّاً حول الهيدر يعيد المشكلة المقيسة يوم ١٥ أغسطس (الهيدر آخر ما يصل). البديل المرفوض: `generateStaticParams` على `/page/n` (يجعل الحدّ اختيارياً لكنه يثبّت أرقام صفحات تتغيّر مع كل مقال).
-
-### 🚧 معلّق
-- ⚠️ ملاحظة جانبية من `--debug-prerender` فقط: `USE_CACHE_TIMEOUT` من `getClientsGA4Stats` (`lib/analytics/ga4.ts:208`) على `/clients/[slug]` — لم يظهر في البناء العادي ولا على فيرسل؛ مرشّح للمراجعة، ليس عطلاً مثبتاً.
-- كل معلّقات البلوك السابق كما هي: V10 الجوّال · V3 صور/وصف المجالات (بيانات) · T3 (`loading.tsx` + sitemap لـ/booking و/shop) · T6 · «الطلّات» الوهمية dev-only في `CachedHomePage.tsx` · `IconVerified` في `ClientsCardMobile` · ملفان تجريبيان في الجذر (`img-reqs.txt` · `mobile-uiux-mockup.html`).
-- الدمج إلى `main` — بأمر خالد الصريح فقط.
-
-### 📂 الملفات
-- `modonty/app/layout/components/nav/DesktopUserAreaClient.tsx` — Suspense حول `UserMenu` (بديل بحجم زرّ دخول).
-- `modonty/app/layout/components/nav/TopNav.tsx` — نفسه للجوّال (44px).
-- `modonty/app/layout/components/nav/NavLinksClient.tsx` — `DesktopNavList({pathname})` عرضية + `DesktopNavLinks` تقرأ `usePathname`.
-- `modonty/app/layout/components/nav/TopNavDesktop.tsx` — `<Suspense fallback={<DesktopNavList pathname={null}/>}>`.
-- `modonty/app/(homepage)/page/[pageNumber]/loading.tsx` — جديد، يعيد تصدير `(homepage)/loading`.
-- `modonty/package.json` — 1.90.0 → 1.90.1.
-
-### 🔁 Git
-- الفرع `modonty-ui` · آخر كوميت `1e79b3c` «إصلاح فشل بناء فيرسل…» · **مدفوع** (`c71cb61..1e79b3c`) · محلي = بعيد ٠/٠ · غير مثبَّت: `settings.local.json` · `.mcp.json` · `.pnpm-store/` · الملفان التجريبيان.
-- فيرسل: `modonty-modonty` نشر `ak9hx2l0j` Ready (Preview من الفرع) · `test.modonty.com` حيّ عليه.
-
-### 🚀 الرجوع في ٣٠ ثانية
-1. `hh>` ثم افتح `test.modonty.com` بريفرش قاسٍ وقارن مع `.playwright-mcp/review4-desktop.png`.
-2. اختبر على التست: `/page/3` ريفرش + عجلة → `/page/4`، والرِيلان.
-3. قرار خالد: الجوّال (V10) أو الدمج.
-
----
-
-## Session: 2026-08-16 (فجراً) — 🖥️ إعادة بناء الرئيسية على الديسكتوب اكتملت ودُفعت (`c71cb61` · modonty 1.90.0 · shared 0.2.3 · فرع `modonty-ui`)
-
-### 🎯 أين توقفت
-- **آخر شيء:** دفعت كوميت واحد كبير `c71cb61` (كل شغل ١٥–١٦ أغسطس) إلى `origin/modonty-ui` — الفرع المحلي = البعيد (٠/٠). خالد قال «خلصنا الديسكتوب بهذا».
-- **الخطوة التالية عند الرجوع:** خالد نفسه قال إن **الجوّال له شغل ثانٍ لاحقاً** (لم يبدأ) — أول مقال على الجوّال عند y≈٧٩٨ من ٨٤٤ (بند V10). ثم قرار الدمج/النشر لـ`test.modonty.com` (الفرع يخدم نطاق التست تلقائياً بعد الدفع — يُتحقّق منه أولاً).
-
-### ✅ المنجز هذه الجلسة (كلّه مقيس، اللقطات في `.playwright-mcp/review*.png`)
-**بنية الرئيسية (ديسكتوب):**
-- الرِيل الأيمن (يظهر من ١٠٢٤): كرت الحساب (سيرفر، فتحة تمريرية عبر `use cache`) + كرت مدونتي. الرِيل الأيسر (من ١٢٤٠): «شركاء موثوقون» → «احجز/تسوّق» (أيقونات لا صور) → «استكشف المجالات» (صفوف: صورة مربّعة + اسم + وصف من القاعدة، ٦ ظاهرة والباقي سكرول داخلي بتدرّج، بلا رابط «كل المجالات»).
-- عمود المقالات: شريط مودو (رابط بشكل حقل «Start a post») → طلّات (٤ مربّعات، عنوان للآلة فقط، أيقونة تشغيل وسطية ٣٢) → المقالات. **أول مقال عند y=٣٢٠ من ٨٠٠** (كان ٥٣٧).
-- `StickyRail` (مكوّن عميل صغير): الرِيل الأقصر من الشاشة يثبت تحت الهيدر، الأطول يتحرّك حتى يظهر آخره ثم يثبت — بلا سكرول داخلي للرِيل. الرِيلان ٦٥٣/٦٩٠ < ٧٠٤.
-- «المزايا» حُذفت من القائمة مع سلسلتها الميتة (٣ ملفات) + `TopNavWithFavorites` و`get-favorites-count` (كانا يحجبان الهيدر لعدّاد لا يُعرض) + `SectionLink` + `services-card` + `ask-modo` القديم.
-- القائمة العلوية: الرئيسية · الرائجة · الشركاء · الطلّات · استمع · عن مدونتي (بعلامة مدونتي M). الفوتر: «الصناعات»→«المجالات» + التصنيفات + الطلّات + الأسئلة الشائعة (`/help/faq`) + تواصل معنا.
-- مبدّل المظهر (فاتح/داكن/حسب الجهاز، shadcn فوق next-themes) في مجموعة أدوات الهيدر (ديسكتوب + جوّال)، لونه باهت وقائمته بلون الهيدر. حقل البحث بيضاوي بلا شارة `/`. الشعار: ارتفاع ثابت وعرض حرّ (كان محشوراً ٤٠×١٠).
-**الأداء:**
-- الهيدر ثابت في القشرة (كان آخر ما يصل، +٣٫٣ ث بعد القشرة) — الجرس وشارة التنبيهات وحدهما يُبثّان في حدود صغيرة. كرت الحساب: هيكل ١٩٠ = الكرت (كان ٢٢٠ → قفزة ٣٠). قِست: `auth()` ٢٥–٥٧ مللي، القاعدة ٣٠ — التأخير الملحوظ = وضع التطوير.
-- LCP: البطلان (تغذية الديسكتوب · كرت مدونتي جوّال) `eager` + `fetchPriority="high"` بدل `preload`/lazy، و`sizes` صادقة تعطي التوأم المخفيّ 16w. مقيس بارد على DPR 3: طلب واحد ≥640w، ١٨٨ كيلو للرئيسية.
-- البلور (LQIP) رجع لكل بطاقات التغذية (`imageBlur` على `FeedPost` — إضافة فقط، عقد `/api/articles` لم يتغيّر). صورة بطاقة المقال 5:2 بدل 16:9.
-- حذف نمط تسخين صور الصفحة التالية (NextFaster) بعد فحص المصادر — ليس رسمياً (`project_preload_hero_removed`).
-**نظام التصميم:** `--link` للنصّ الأزرق (الليلي #7070FF — النصوص الفاشلة ٣→٠) · ثلاثة أوزان 400/500/700 (§٣.١ صُحّح: 500 محمَّل أصلاً) · قاعدة الزرّ المشتركة `rounded-full`+`font-bold` (مدونتي ماستر) · علامة التوثيق (الدرع مع M) مكوّن مشترك `shared/components/icons/modonty-trust-mark.tsx` + `modonty-mark.tsx`.
-**النصوص:** ٢٧ نصّاً بلهجة سعودية بسيطة («مدونتي أحلى بحسابك» · «إنشاء حساب» · «نجيب لك المزيد…») · «عملاء»→«شركاء» في ١١ موضعاً بمعنى الشركاء (تُركت ١٥ بمعنى زبائن الشريك عمداً).
-**الحالة:** tsc = 0 (عدا ضجيج `.next/dev/types/validator.ts`) · build لم يُعَد بعد الكوميت · تست حيّ Playwright ديسكتوب مكتمل · الجوّال غير مراجَع.
-
-### 📝 قرارات
-- الجوّال يُترك لجلسة لاحقة (خالد). · الحجز/التسوّق تبقى بطاقة مستقلّة (قيمة بزنس للشريك) لا أزراراً داخل شريط مودو. · لا سكرول داخلي في الرِيل؛ سكرول داخلي مقبول في كرت المجالات فقط. · «عملاء» بمعنى زبائن الشريك تبقى.
-
-### 🚧 معلّق
-- V10 الجوّال (أول مقال خارج القشرة) · V3 صور المجالات = بيانات (`socialImage` = الشعار الافتراضي للثمانية؛ تفريغها بيد خالد على dev ثم prod) + وصف المجالات فارغ في dev · T3 (`loading.tsx` + sitemap لـ/booking و/shop) · T6 (`data-scroll-behavior`) · «الطلّات» وهمية في dev (٣ من المقالات، `NODE_ENV=development` فقط في `CachedHomePage.tsx`) — تُحذف قبل الدمج أو تبقى لأنها dev-only (قرار).
-- شارة `IconVerified` ما زالت في `ClientsCardMobile` (الجوّال) — تُستبدل بعلامة التوثيق مع شغل الجوّال.
-- ملفان تجريبيان في الجذر غير مثبَّتين: `img-reqs.txt` · `mobile-uiux-mockup.html`.
-
-### 📂 أبرز الملفات (٩٩ ملفاً في الكوميت)
-`app/(homepage)/components/{page-layout/CachedHomePage,shared/StickyRail,home-actions,commerce-actions,industries-card,clients-card,reels-card,left-sidebar,right-sidebar}` · `app/layout/components/nav/{TopNav,TopNavDesktop,ThemeToggle,LogoNav,SearchLink,NavLinksClient}` · `app/layout/helpers/nav-config.ts` · `shared/components/{infinite-list,use-mount-on-approach,icons/modonty-mark,icons/modonty-trust-mark,ui/button}` · `app/globals.css` (`--link`) · `documents/design/DESIGN-SYSTEM.md` · `app/(homepage)/documentation/HOMEPAGE-BOARD.html`.
-
-### 🔁 Git
-- الفرع `modonty-ui` · آخر كوميت `c71cb61` · **مدفوع** (`ed121af..c71cb61`) · محلي = بعيد · غير مثبَّت: `settings.local.json` · `.mcp.json` · `.pnpm-store/` · الملفان التجريبيان.
-
-### 🚀 الرجوع في ٣٠ ثانية
-1. `hh>` ثم افتح `.playwright-mcp/review4-desktop.png` واللوحة `HOMEPAGE-BOARD.html`.
-2. تحقّق أن `test.modonty.com` أخذ الكوميت (الفرع يغذّيه) واختبر الريفرش على `/page/3` والرِيلين هناك.
-3. ابدأ الجوّال (V10) لو قال خالد، أو الدمج بأمره الصريح فقط.

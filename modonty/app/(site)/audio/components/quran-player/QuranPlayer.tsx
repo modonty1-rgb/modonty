@@ -57,6 +57,48 @@ interface ResumePoint {
 }
 
 /**
+ * كل نصّ يراه الزائر هنا يصل من `messages/ar.json` عبر الصفحة (سيرفر) — لا استيراد للملف
+ * في مكوّن عميل حتى لا تدخل الرسائل كلها في باندل المتصفح. الجمل المركّبة تُبنى بكلمات
+ * بادئة (prefix) بدل قوالب، فيبقى العميل خالياً من أي منطق قوالب.
+ */
+export interface QuranPlayerLabels {
+  heading: string;
+  provenanceLead: string;
+  provenanceRiwaya: string;
+  provenanceMiddle: string;
+  provenanceDisclaimer: string;
+  reciterLabel: string;
+  pickReciterAll: string;
+  pickReciterForPrefix: string;
+  currentPrefix: string;
+  resumeTitle: string;
+  resumeAtPrefix: string;
+  recitePrefix: string;
+  pause: string;
+  resume: string;
+  loadFailed: string;
+  seekLabel: string;
+  back15: string;
+  forward15: string;
+  nextSurah: string;
+  closePlayer: string;
+  searchLabel: string;
+  searchPlaceholder: string;
+  searchCountOf: string;
+  searchCountUnit: string;
+  verseUnit: string;
+  juzPrefix: string;
+  defaultVoiceTitle: string;
+  pickThisSurahOnly: string;
+  pickDefaultHint: string;
+  close: string;
+}
+
+interface QuranPlayerProps {
+  labels: QuranPlayerLabels;
+}
+
+/**
  * المصحف المسموع — a card per surah, each with its own reciter.
  *
  * Not one list and not one global reciter: Khalid listens to different reciters for different
@@ -73,7 +115,7 @@ interface ResumePoint {
  * on a screen can lose a diacritic to a font, and no reader should be handed scripture this site
  * has not verified letter by letter.
  */
-export function QuranPlayer() {
+export function QuranPlayer({ labels }: QuranPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   /** Surah number → reciter id. Anything unset is recited by the page-wide voice below. */
   const [choice, setChoice] = useState<Record<number, number>>({});
@@ -246,14 +288,14 @@ export function QuranPlayer() {
       {/* On a phone the active tab already reads «القرآن», so the heading is spoken but not drawn —
           the outline stays intact for a screen reader without spending 58px saying it twice. */}
       <h2 id="quran-heading" className="text-xl font-bold leading-tight max-md:sr-only">
-        المصحف المسموع
+        {labels.heading}
       </h2>
 
       {/* Provenance on the page, not in the code (Khalid: «المصدر لازم يكون موجود»). The riwaya is
           named because a recitation without one is unattributed. */}
       <p className="mt-2 rounded-2xl border border-border bg-card p-4 text-[11px] leading-relaxed text-muted-foreground max-md:order-last max-md:mt-6 max-md:p-3">
-        <span className="font-semibold text-foreground">المصحف كامل ١١٤ سورة</span> برواية{" "}
-        <span className="font-semibold text-foreground">{RIWAYA}</span> · عشرون قارئاً · التلاوات من{" "}
+        <span className="font-semibold text-foreground">{labels.provenanceLead}</span> {labels.provenanceRiwaya}{" "}
+        <span className="font-semibold text-foreground">{RIWAYA}</span> {labels.provenanceMiddle}{" "}
         <a
           href={SOURCE.url}
           target="_blank"
@@ -265,19 +307,17 @@ export function QuranPlayer() {
         </a>
         {/* The credit is owed and stays at every size. The explanation behind it is worth 150px of
             a 664px phone screen only once, and this is not it. */}
-        <span className="max-md:hidden">
-          . لا نستضيف التلاوة ولا نعدّل عليها، ولا يُعرض نصّ القرآن هنا — الصوت فقط.
-        </span>
+        <span className="max-md:hidden">{labels.provenanceDisclaimer}</span>
       </p>
 
       {/* Phone only, all three: the page-wide voice, the six surahs people ask for, and the
           bookmark. Each is `md:hidden`, so the desktop column is byte-identical to what it was. */}
       <div className="mt-3 flex items-center gap-2 md:hidden">
-        <span className="shrink-0 text-xs text-muted-foreground">القارئ</span>
+        <span className="shrink-0 text-xs text-muted-foreground">{labels.reciterLabel}</span>
         <button
           type="button"
           onClick={() => setPicking("default")}
-          aria-label={`اختر القارئ لكل السور — الحالي ${defaultReciterName}`}
+          aria-label={`${labels.pickReciterAll} — ${labels.currentPrefix} ${defaultReciterName}`}
           className="flex h-11 min-w-0 flex-1 items-center justify-between gap-2 rounded-xl border border-border bg-card px-3 text-sm font-bold motion-safe:transition-transform motion-safe:active:scale-95"
         >
           <span className="truncate">{defaultReciterName}</span>
@@ -298,9 +338,9 @@ export function QuranPlayer() {
             {/* The surah name carries its own full diacritics, so it cannot be dropped into a
                 sentence after a verb without the vowels fighting the grammar. It gets its own
                 line instead, where it is a label rather than an object. */}
-            <span className="block truncate text-sm font-bold">كمّل من وين وقفت</span>
+            <span className="block truncate text-sm font-bold">{labels.resumeTitle}</span>
             <span className="block truncate text-xs text-muted-foreground">
-              {SURAHS.find((s) => s.n === resume.n)?.name} · وقفت عند {clock(resume.t)}
+              {SURAHS.find((s) => s.n === resume.n)?.name} · {labels.resumeAtPrefix} {clock(resume.t)}
             </span>
           </span>
         </button>
@@ -315,7 +355,7 @@ export function QuranPlayer() {
               key={n}
               type="button"
               onClick={() => playSurah(i)}
-              aria-label={`تلاوة ${SURAHS[i].name}`}
+              aria-label={`${labels.recitePrefix} ${SURAHS[i].name}`}
               className="h-11 shrink-0 rounded-full border border-border bg-card px-4 text-xs font-bold motion-safe:transition-transform motion-safe:active:scale-95"
             >
               {shortName(SURAHS[i].name)}
@@ -339,7 +379,7 @@ export function QuranPlayer() {
             <button
               type="button"
               onClick={() => playSurah(index as number)}
-              aria-label={playing ? "إيقاف التلاوة" : "متابعة التلاوة"}
+              aria-label={playing ? labels.pause : labels.resume}
               className="grid size-11 shrink-0 place-items-center rounded-full bg-action-listen text-action-listen-foreground transition-transform hover:scale-105"
             >
               {playing ? <IconPause className="size-5" /> : <IconPlay className="size-5" />}
@@ -351,7 +391,7 @@ export function QuranPlayer() {
                 {failed ? (
                   <span className="flex items-center gap-1 text-destructive">
                     <IconAlertTriangle className="size-3 shrink-0" aria-hidden />
-                    ما فتحت — جرّب قارئاً آخر
+                    {labels.loadFailed}
                   </span>
                 ) : (
                   reciterFor(surah.n).name
@@ -372,7 +412,7 @@ export function QuranPlayer() {
                 el.currentTime = Number(e.target.value);
                 setCurrent(el.currentTime);
               }}
-              aria-label="موضع التلاوة"
+              aria-label={labels.seekLabel}
               dir="ltr"
               className="h-1 min-w-0 flex-1 cursor-pointer appearance-none rounded-full bg-border accent-action-listen"
             />
@@ -381,16 +421,16 @@ export function QuranPlayer() {
               {clock(current)} / {clock(duration)}
             </span>
 
-            <button type="button" onClick={() => nudge(-JUMP)} aria-label="رجوع ١٥ ثانية" className="hidden size-11 shrink-0 place-items-center rounded-lg hover:bg-muted sm:grid">
+            <button type="button" onClick={() => nudge(-JUMP)} aria-label={labels.back15} className="hidden size-11 shrink-0 place-items-center rounded-lg hover:bg-muted sm:grid">
               <IconReplay className="size-4" aria-hidden />
             </button>
-            <button type="button" onClick={() => nudge(JUMP)} aria-label="تقديم ١٥ ثانية" className="hidden size-11 shrink-0 place-items-center rounded-lg hover:bg-muted sm:grid">
+            <button type="button" onClick={() => nudge(JUMP)} aria-label={labels.forward15} className="hidden size-11 shrink-0 place-items-center rounded-lg hover:bg-muted sm:grid">
               <IconAdvance className="size-4" aria-hidden />
             </button>
             <button
               type="button"
               onClick={() => index !== null && index + 1 < SURAHS.length && playSurah(index + 1)}
-              aria-label="السورة التالية"
+              aria-label={labels.nextSurah}
               className="grid size-11 shrink-0 place-items-center rounded-lg hover:bg-muted"
             >
               <IconSkipForward className="size-4" aria-hidden />
@@ -401,7 +441,7 @@ export function QuranPlayer() {
                 audioRef.current?.pause();
                 setIndex(null);
               }}
-              aria-label="إغلاق المشغّل"
+              aria-label={labels.closePlayer}
               className="grid size-11 shrink-0 place-items-center rounded-lg text-muted-foreground hover:bg-muted"
             >
               <IconClose className="size-4" aria-hidden />
@@ -415,19 +455,19 @@ export function QuranPlayer() {
           in, since «الفاتحة» is typed far more often than «سُورَةُ ٱلْفَاتِحَةِ». */}
       <div className="mt-4">
         <label htmlFor="surah-search" className="sr-only">
-          ابحث عن سورة
+          {labels.searchLabel}
         </label>
         <input
           id="surah-search"
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="ابحث عن سورة — الكهف · يس · الرحمن"
+          placeholder={labels.searchPlaceholder}
           className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
         />
         {query && (
           <p className="mt-1 text-xs text-muted-foreground">
-            {toArabic(shown.length)} من {toArabic(SURAHS.length)} سورة
+            {toArabic(shown.length)} {labels.searchCountOf} {toArabic(SURAHS.length)} {labels.searchCountUnit}
           </p>
         )}
       </div>
@@ -457,7 +497,7 @@ export function QuranPlayer() {
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[15px] font-bold">{s.name}</span>
                   <span className="text-xs text-muted-foreground">
-                    {toArabic(s.a)} آية · {s.p} · الجزء {toArabic(s.j)}
+                    {toArabic(s.a)} {labels.verseUnit} · {s.p} · {labels.juzPrefix} {toArabic(s.j)}
                   </span>
                 </span>
 
@@ -469,7 +509,7 @@ export function QuranPlayer() {
                   <button
                     type="button"
                     onClick={() => setPicking(s.n)}
-                    aria-label={`اختر قارئ ${s.name} — الحالي ${r.name}`}
+                    aria-label={`${labels.pickReciterForPrefix} ${s.name} — ${labels.currentPrefix} ${r.name}`}
                     className={cn(
                       "grid size-11 shrink-0 place-items-center rounded-full text-sm font-bold motion-safe:transition-transform motion-safe:active:scale-95",
                       choice[s.n] === undefined
@@ -482,7 +522,7 @@ export function QuranPlayer() {
                   <button
                     type="button"
                     onClick={() => playSurah(i)}
-                    aria-label={`تلاوة ${s.name}`}
+                    aria-label={`${labels.recitePrefix} ${s.name}`}
                     className="grid size-11 shrink-0 place-items-center rounded-full bg-action-listen text-action-listen-foreground motion-safe:transition-transform motion-safe:active:scale-95"
                   >
                     {isCurrent && playing ? <IconPause className="size-4" /> : <IconPlay className="size-4" />}
@@ -495,7 +535,7 @@ export function QuranPlayer() {
                 <button
                   type="button"
                   onClick={() => setPicking(s.n)}
-                  aria-label={`اختر قارئ ${s.name} — الحالي ${r.name}`}
+                  aria-label={`${labels.pickReciterForPrefix} ${s.name} — ${labels.currentPrefix} ${r.name}`}
                   className="flex h-11 min-w-0 flex-1 items-center justify-between gap-2 rounded-lg border border-border px-3 text-xs font-semibold hover:bg-muted"
                 >
                   <span className="truncate">{r.name}</span>
@@ -504,7 +544,7 @@ export function QuranPlayer() {
                 <button
                   type="button"
                   onClick={() => playSurah(i)}
-                  aria-label={`تلاوة ${s.name}`}
+                  aria-label={`${labels.recitePrefix} ${s.name}`}
                   className="grid size-11 shrink-0 place-items-center rounded-full bg-action-listen text-action-listen-foreground transition-transform hover:scale-105"
                 >
                   {isCurrent && playing ? <IconPause className="size-4" /> : <IconPlay className="size-4" />}
@@ -519,7 +559,7 @@ export function QuranPlayer() {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={pickingSurah ? `اختر قارئ ${pickingSurah.name}` : "اختر القارئ لكل السور"}
+          aria-label={pickingSurah ? `${labels.pickReciterForPrefix} ${pickingSurah.name}` : labels.pickReciterAll}
           className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 sm:items-center sm:p-4"
           onClick={() => setPicking(null)}
         >
@@ -530,16 +570,16 @@ export function QuranPlayer() {
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <p className="truncate text-sm font-bold">
-                  {pickingSurah ? pickingSurah.name : "القارئ لكل السور"}
+                  {pickingSurah ? pickingSurah.name : labels.defaultVoiceTitle}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {pickingSurah ? "قارئ هذي السورة وحدها" : "تقدر تغيّره لسورة وحدها من بطاقتها"} · {RIWAYA}
+                  {pickingSurah ? labels.pickThisSurahOnly : labels.pickDefaultHint} · {RIWAYA}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setPicking(null)}
-                aria-label="إغلاق"
+                aria-label={labels.close}
                 className="grid size-11 shrink-0 place-items-center rounded-lg border border-border hover:bg-muted"
               >
                 <IconClose className="size-4" aria-hidden />

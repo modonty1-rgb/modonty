@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>موكب — ملف القارئ على الجوّال (PROFILEMOB)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f3f2ef; --card:#ffffff; --border:#e4e2dd; --muted:#f5f5f4;
+    --fg:#1c1c1c; --mutedfg:#5b5b5b;
+    --primary:#3030FF; --primary-soft:rgba(48,48,255,.08);
+    --teal:#0fb5ba;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Tajawal',sans-serif;background:#e9e7e2;color:var(--fg);padding:24px}
+  h1{font-size:20px;margin-bottom:4px}
+  .sub{color:var(--mutedfg);font-size:13px;margin-bottom:24px}
+  .row{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}
+
+  /* ===== إطار الجوّال ٣٩٠ ===== */
+  .phone{width:390px;flex:0 0 390px;background:var(--bg);border:1px solid #d4d2cc;border-radius:28px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.10)}
+  .phone .label{background:#1c1c1c;color:#fff;font-size:12px;font-weight:700;text-align:center;padding:6px}
+  .screen{padding:12px 12px 16px}
+
+  .crumb{font-size:11px;color:var(--mutedfg);padding:2px 4px 10px}
+  .crumb b{color:var(--fg)}
+
+  /* رأس الملف */
+  .hero{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px}
+  .avatar{width:64px;height:64px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:26px;font-weight:800;flex-shrink:0}
+  .hero .who{min-width:0;flex:1}
+  .hero .name{font-size:17px;font-weight:800;line-height:1.3}
+  .hero .mail{font-size:11px;color:var(--mutedfg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hero .joined{font-size:11px;color:var(--mutedfg);margin-top:2px}
+  .gear{width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:var(--card);display:grid;place-items:center;font-size:18px;flex-shrink:0}
+  .complete{display:inline-block;margin-top:4px;font-size:12px;font-weight:700;color:var(--primary)}
+
+  /* تبويبات سكرول */
+  .tabs{display:flex;gap:6px;overflow-x:auto;padding:12px 2px 2px;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{height:44px;display:inline-flex;align-items:center;gap:6px;padding:0 14px;border-radius:999px;border:1px solid var(--border);background:var(--card);font-size:13px;font-weight:700;color:var(--mutedfg);white-space:nowrap;flex-shrink:0}
+  .tab.on{background:var(--primary-soft);color:var(--primary);border-color:transparent}
+
+  /* أرقام */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:14px;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 4px}
+  .stat b{font-size:18px;line-height:1}
+  .stat span{font-size:11px;color:var(--mutedfg)}
+
+  /* بطاقة الدعوة (حساب جديد) */
+  .invite{margin-top:12px;background:var(--card);border:1px dashed var(--border);border-radius:16px;padding:20px 16px;text-align:center}
+  .invite p{font-size:13px;color:var(--mutedfg);line-height:1.7}
+  .invite .cta{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 22px;margin-top:12px;border-radius:12px;background:var(--primary);color:#fff;font-size:14px;font-weight:800;text-decoration:none}
+
+  /* النشاط */
+  .feed{margin-top:12px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px}
+  .feed h3{font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px;margin-bottom:10px}
+  .item{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--border);font-size:12.5px}
+  .item:first-of-type{border-top:0}
+  .dot{width:34px;height:34px;border-radius:10px;background:var(--muted);display:grid;place-items:center;font-size:15px;flex-shrink:0;color:var(--mutedfg)}
+  .item .t{color:var(--mutedfg);font-size:11px;margin-top:2px}
+  .empty{text-align:center;padding:10px 0 4px}
+  .empty p{font-size:13px;color:var(--mutedfg)}
+  .empty .cta{display:inline-flex;align-items:center;height:44px;padding:0 20px;margin-top:10px;border-radius:12px;border:1.5px solid var(--primary);color:var(--primary);font-size:13.5px;font-weight:800;text-decoration:none}
+
+  /* ===== لوحة الملاحظات ===== */
+  .notes{flex:1 1 380px;max-width:560px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+  .notes h2{font-size:15px;margin-bottom:10px}
+  .notes table{width:100%;border-collapse:collapse;font-size:12.5px}
+  .notes td,.notes th{border:1px solid var(--border);padding:7px 9px;text-align:right;vertical-align:top}
+  .notes th{background:var(--muted);font-size:12px}
+  .notes .keep{color:#0a7a44;font-weight:700}
+  .notes .drop{color:#b42318;font-weight:700}
+  .notes ul{margin:8px 18px 0 0;font-size:12.5px;line-height:1.9}
+  code{font-family:Consolas,monospace;font-size:11px;background:var(--muted);padding:1px 5px;border-radius:5px}
+</style>
+</head>
+<body>
+
+<h1>ملف القارئ على الجوّال — موكب ٣٩٠ (بند PROFILEMOB)</h1>
+<p class="sub">حالتان: حساب جديد (كل الأرقام صفر — حال أغلب القرّاء الجدد) وحساب نشط. الديسكتوب لا يُمسّ — كل هذا إضافات جوّال فقط.</p>
+
+<div class="row">
+
+  <!-- ================= حساب جديد ================= -->
+  <div class="phone">
+    <div class="label">حساب جديد — الأرقام كلها صفر (٣٩٠×٨٤٤)</div>
+    <div class="screen">
+      <div class="crumb">الرئيسية ‹ <b>الملف الشخصي</b></div>
+
+      <div class="hero">
+        <div class="avatar">م</div>
+        <div class="who">
+          <div class="name">أهلاً بك 👋</div>
+          <div class="mail">reader@example.com</div>
+          <a class="complete" href="#">أكمل ملفك — أضف اسمك ›</a>
+        </div>
+        <div class="gear" title="الإعدادات">⚙️</div>
+      </div>
+
+      <div class="tabs">
+        <span class="tab on">👤 نظرة عامة</span>
+        <span class="tab">💬 تعليقاتي</span>
+        <span class="tab">❤️ الإعجابات</span>
+        <span class="tab">🔖 المحفوظات</span>
+        <span class="tab">📅 حجوزاتي</span>
+        <span class="tab">👥 المتابَعون</span>
+      </div>
+
+      <div class="invite">
+        <p><b>رحلتك تبدأ بمقال واحد.</b><br>
+        كل ما تقرأ وتحفظ وتعلّق، صفحتك هذي تتعبّى — تعليقاتك، محفوظاتك، والعملاء اللي تتابعهم، كلهم هنا.</p>
+        <a class="cta" href="#">تصفّح المقالات</a>
+      </div>
+
+      <div class="feed">
+        <h3>⚡ النشاط الأخير</h3>
+        <div class="empty">
+          <p>ما فيه نشاط لسه — أول تعليق أو حفظ بيظهر هنا.</p>
+          <a class="cta" href="#">اقرأ أول مقال</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= حساب نشط ================= -->
+  <div class="phone">
+    <div class="label">حساب نشط (٣٩٠×٨٤٤)</div>
+    <div class="screen">
+      <div class="crumb">الرئيسية ‹ <b>الملف الشخصي</b></div>
+
+      <div class="hero">
+        <div class="avatar">خ</div>
+        <div class="who">
+          <div class="name">خالد النادي</div>
+          <div class="mail">khaled@example.com</div>
+          <div class="joined">انضم في يناير ٢٠٢٦</div>
+        </div>
+        <div class="gear" title="الإعدادات">⚙️</div>
+      </div>
+
+      <div class="tabs">
+        <span class="tab on">👤 نظرة عامة</span>
+        <span class="tab">💬 تعليقاتي</span>
+        <span class="tab">❤️ الإعجابات</span>
+        <span class="tab">🔖 المحفوظات</span>
+        <span class="tab">📅 حجوزاتي</span>
+        <span class="tab">👥 المتابَعون</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><b>١٢</b><span>تعليق</span></div>
+        <div class="stat"><b>٣٤</b><span>إعجاب</span></div>
+        <div class="stat"><b>٨</b><span>مقال محفوظ</span></div>
+        <div class="stat"><b>٢١</b><span>إعجاب بمقال</span></div>
+        <div class="stat"><b>٥</b><span>عميل متابَع</span></div>
+        <div class="stat"><b>٢</b><span>حجز</span></div>
+      </div>
+
+      <div class="feed">
+        <h3>⚡ النشاط الأخير (٤٧)</h3>
+        <div class="item"><span class="dot">💬</span><div>علّقت على «علاج الانزلاق الغضروفي بدون جراحة»<div class="t">قبل ساعتين</div></div></div>
+        <div class="item"><span class="dot">🔖</span><div>حفظت «تقويم الأسنان الشفاف — الدليل الكامل»<div class="t">أمس</div></div></div>
+        <div class="item"><span class="dot">👥</span><div>تابعت «مدار حواء»<div class="t">قبل ٣ أيام</div></div></div>
+        <div class="item"><span class="dot">❤️</span><div>أعجبك تعليق على «تجميل الأنف في مصر»<div class="t">قبل ٤ أيام</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= الملاحظات / عقد الدقة ================= -->
+  <div class="notes">
+    <h2>عقد الدقّة — وش يتغيّر ووش يبقى</h2>
+    <table>
+      <tr><th>العنصر</th><th>اليوم (مقيس ٢١ أغسطس)</th><th>الموكب</th></tr>
+      <tr><td>الرأس</td><td>أفاتار ٨٠ + «مستخدم» + البريد أكبر سطر + «الاسم: غير محدد» في صندوق تحته</td><td class="keep">أفاتار ٦٤ + الاسم أولاً · بريد صغير خافت · «انضم في…» · زرّ إعدادات ٤٤</td></tr>
+      <tr><td>صندوقا الاسم/البريد</td><td>يكرّران بيانات الرأس</td><td class="drop">يختفيان على الجوّال فقط (الديسكتوب كما هو)</td></tr>
+      <tr><td>التبويبات الستة</td><td>غريد ٣×٢ أزرار مضغوطة</td><td class="keep">رقائق سكرول أفقي ٤٤px — نفس نمط قائمة أقسام الشريك</td></tr>
+      <tr><td>الأرقام الستة</td><td>صف واحد بفواصل، أهداف لمس ٣٨px (٢٨×٣٨)</td><td class="keep">بطاقات ٣×٢ كل واحدة ≥٦٤px ولها رابطها</td></tr>
+      <tr><td>كل الأرقام صفر</td><td>ستة أصفار بلا أي دعوة</td><td class="keep">تُستبدل الشبكة ببطاقة دعوة + زرّ «تصفّح المقالات»</td></tr>
+      <tr><td>النشاط الفاضي</td><td>«لا يوجد نشاط حتى الآن» — طريق مسدود</td><td class="keep">جملة أدفأ + زرّ «اقرأ أول مقال» → /articles</td></tr>
+      <tr><td>الاسم مفقود</td><td>«مستخدم» + «غير محدد»</td><td class="keep">«أهلاً بك» + رابط «أكمل ملفك» → الإعدادات</td></tr>
+    </table>
+    <h2 style="margin-top:16px">قواعد التنفيذ</h2>
+    <ul>
+      <li>كل التعديلات <code>lg:hidden</code> / <code>max-lg:</code> — قياس ١٢٨٠ قبل وبعد يطلع متطابقاً.</li>
+      <li>الأيقونات هنا إيموجي للتوضيح فقط — في الكود من <code>@/lib/icons</code> وماركات <code>shared/components/icons/</code> أولاً.</li>
+      <li>كل هدف لمس ٤٤px فأعلى.</li>
+      <li>النطاق: صفحة <code>/users/profile</code> وحدها الآن — الأبناء الستة بند لاحق بنفس النمط.</li>
+      <li>لا شريط سفلي (CTA bar): الصفحة مركز انطلاق، أزرار الدعوة داخل المحتوى تكفي.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

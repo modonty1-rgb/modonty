@@ -160,7 +160,7 @@ export function ClientSectionMenu({ items }: ClientSectionMenuProps) {
       {menuOpen && rest.length > 0 && (
         <nav
           aria-label="أقسام إضافية"
-          className="absolute end-3 top-full z-[6] mt-1 flex w-[210px] flex-col gap-0.5 rounded-xl border border-border bg-card p-1.5 shadow-lg"
+          className="absolute end-3 top-full z-[6] mt-1 flex w-[min(210px,calc(100vw-1.5rem))] flex-col gap-0.5 rounded-xl border border-border bg-card p-1.5 shadow-lg"
         >
           {rest.map((item) => {
             const isActive = item.id === activeId;

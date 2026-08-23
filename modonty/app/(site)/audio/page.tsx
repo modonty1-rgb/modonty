@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
+import { messages } from "@/lib/i18n/messages";
 import { IconVolume2 } from "@/lib/icons";
 
 import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoColumnLayout";
@@ -36,6 +37,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AudioArticlesPage() {
   const articles = await getAudioArticles();
+  // كل نصّ عربي يراه الزائر في هذه الصفحة يمرّ على messages/ar.json ويُقرأ هنا (سيرفر)
+  // ثم يُمرَّر للمكوّنين العميلين كخصائص — صفر جافاسكربت إضافي للرسائل.
+  const t = messages.audio;
 
   return (
     <>
@@ -45,7 +49,7 @@ export default async function AudioArticlesPage() {
           __html: jsonLdHtml(
             generateBreadcrumbStructuredData([
               { name: "الرئيسية", url: "/" },
-              { name: "استمع", url: "/audio" },
+              { name: t.breadcrumbLabel, url: "/audio" },
             ])
           ),
         }}
@@ -60,7 +64,7 @@ export default async function AudioArticlesPage() {
           __html: jsonLdHtml({
             "@context": "https://schema.org",
             "@type": "ItemList",
-            name: "المصحف المسموع — ١١٤ سورة برواية حفص عن عاصم",
+            name: t.quranListName,
             numberOfItems: SURAHS.length,
             itemListOrder: "https://schema.org/ItemListOrderAscending",
             itemListElement: SURAHS.map((s) => ({
@@ -75,7 +79,7 @@ export default async function AudioArticlesPage() {
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "استمع" },
+          { label: t.breadcrumbLabel },
         ]}
       />
 
@@ -96,22 +100,18 @@ export default async function AudioArticlesPage() {
                   says «استمع» and the tabs below name both halves, so drawing it a third time was
                   a wasted 38px. The tag stays — this page is meant to rank for recitation searches,
                   and an h1-less page hands that away for nothing. */}
-              <h1 className="sr-only">اسمع</h1>
+              <h1 className="sr-only">{t.srTitle}</h1>
               {/* On a phone the two buttons directly below say the same thing in four words, and
                   this line cost 90px of a 664px screen to repeat them. */}
-              <p className="mt-2 text-muted-foreground max-md:hidden">
-                القرآن الكريم كاملاً بعشرين قارئاً برواية حفص عن عاصم · ومقالات مدونتي مقروءة.
-              </p>
+              <p className="mt-2 text-muted-foreground max-md:hidden">{t.intro}</p>
               {/* «متعة الروح» غيّرت القاعدة: التبويبان صارا يقولان وش تكسب، لا وش نوع المحتوى.
                   «مقالات مدونتي» كان تصنيفاً واقفاً جنب وعد — والروح يقابلها العقل. */}
-              <AudioTabBar
-                labels={{ group: "وش تبي تسمع", quran: "متعة الروح", articles: "زاد العقل" }}
-              />
+              <AudioTabBar labels={t.tabs} />
             </>
           }
           main={
             <AudioPanel name="quran">
-              <QuranPlayer />
+              <QuranPlayer labels={t.player} />
             </AudioPanel>
           }
           rail={
@@ -119,17 +119,17 @@ export default async function AudioArticlesPage() {
               name="articles"
               as="aside"
               className="w-full shrink-0 lg:w-[300px]"
-              label="المقالات المسموعة"
+              label={t.articlesRail.heading}
             >
               <div className="sticky top-20 space-y-3">
-                <h2 className="text-xs font-semibold uppercase text-muted-foreground">المقالات المسموعة</h2>
+                <h2 className="text-xs font-semibold uppercase text-muted-foreground">{t.articlesRail.heading}</h2>
                 {articles.length === 0 ? (
                   <p className="flex items-start gap-2 rounded-xl border border-dashed border-border bg-muted/30 p-3 text-xs leading-relaxed text-muted-foreground">
                     <IconVolume2 className="mt-0.5 size-4 shrink-0" aria-hidden />
-                    لسه ما نزلت أول نسخة صوتية من المقالات — والمقالات كلها موجودة مكتوبة.
+                    {t.articlesRail.empty}
                   </p>
                 ) : (
-                  <ListenQueue articles={articles} compact />
+                  <ListenQueue articles={articles} compact labels={t.queue} />
                 )}
               </div>
             </AudioPanel>

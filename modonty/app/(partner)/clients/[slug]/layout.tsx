@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { hexToHslTriplet } from "@modonty/shared/lib/partner-site";
 import { getHeaderTemplate } from "@modonty/shared/components/partner-site/free/header";
 import { getFooterTemplate } from "@modonty/shared/components/partner-site/free/footer";
+import { MobileCtaBar } from "@/components/shared/mobile-cta-bar/MobileCtaBar";
+import { IconCalendarCheck, IconPhone, IconWebsite } from "@/lib/icons";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { getPartnerSite } from "./helpers/get-partner-site";
 import { buildChromeData } from "./helpers/build-chrome-data";
@@ -58,9 +60,28 @@ async function PartnerChrome({ params, slot }: PartnerChromeProps) {
 
   if (slot === "footer") {
     const Footer = getFooterTemplate(site.site?.footerTemplate).Component;
+    // The partner page's two doors in the shared mobile bar (MOBCHROME): primary = his
+    // admin-chosen CTA (the same ctaMode/ctaLabel/ctaUrl every other surface reads),
+    // secondary = «تواصل» to his contact block. Full path (not bare #hash) so the bar
+    // works from sub-pages too. NONE mode folds to contact as the main ask.
+    const base = `/clients/${encodeURIComponent(site.slug)}`;
+    const ctaLabel = site.ctaLabel?.trim();
+    const primary =
+      site.ctaMode === "FORM"
+        ? { href: `${base}/book?source=mobile_cta_bar`, label: ctaLabel || "احجز الآن", icon: IconCalendarCheck }
+        : site.ctaMode === "LINK" && site.ctaUrl
+          ? { href: site.ctaUrl, label: ctaLabel || "تسوّق الآن", icon: IconWebsite, external: true }
+          : { href: `${base}#contact`, label: "تواصل معنا", icon: IconPhone };
+    const secondary =
+      primary.href === `${base}#contact`
+        ? { href: `${base}#about`, label: "عن الشريك", icon: IconWebsite }
+        : { href: `${base}#contact`, label: "تواصل", icon: IconPhone };
     return (
       <div data-partner-theme>
         <Footer data={footer} />
+        {/* Clears the fixed bar below lg — the PAIR rule from MobileCtaBar's contract. */}
+        <div aria-hidden className="h-20 lg:hidden" />
+        <MobileCtaBar ariaLabel="احجز أو تواصل" primary={primary} secondary={secondary} />
       </div>
     );
   }
