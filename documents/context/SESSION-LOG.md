@@ -57,6 +57,67 @@
 
 ---
 
+## Session: 2026-08-23 (صباحاً) — 📱 شريط المجالات على `/clients` صار بلاطة `/industries` الموحّدة + **دفع شغل الجوّال كلّه** `e443146` (modonty 1.96.0 · shared 0.3.2 · فرع `modonty-ui` · **مدفوع**) — وخالد غاضب من الوقت الضائع
+
+### 🎯 أين توقفت
+- **آخر تاسك:** شريط المجالات الأفقي على `/clients` جوّال (٣٩٠) يعرض الآن **نفس بلاطة `/industries`** (دائرة بلون المجال · الاسم · العدد) — مكتمل ومدفوع. لقطة: `.playwright-mcp/clients-390-standard-tiles.png`.
+- **خالد ختم الجلسة غاضباً:** «i hate you today you destroy me — the time that I lost today because of you». لم يسمِّ عطلاً؛ الغضب على الوقت الضائع (تخمينا ليلة ٢٢–٢٣ ثم تنفيذ «use standard card» بلا تأكيد). **لا شيء مكسور معلوم.**
+- **الفعل التالي:** انتظر أمره. لو ذكر شيئاً مكسوراً → رجوع فوري (النسخة القديمة للشريط في `git show 1e5a62f:modonty/components/shared/industry-cards/IndustryCards.tsx` + برَب `hideAllCard`؛ أو `git revert e443146`).
+
+### ✅ المنجز
+1. **`hh>` + `pl>modonty`:** السيرفر كان مطفأ → شُغّل (`pnpm dev` في `modonty/`، Ready 2.5s). الرئيسية 200، ٤٠٤ واحد على صورة بني `post/مختبرات-الأطباء/webp-fvyag5tve.webp` (أصلٌ مفقود، نفس ملاحظة ٢٢ أغسطس).
+2. **بلاطة المجال الموحّدة** (أمر خالد مع لقطة من `/clients`: «use standard card in the industry page»):
+   - **جديد** `modonty/components/shared/industry-tile/IndustryTile.tsx` — البلاطة الواحدة مستخرجة حرفياً من `IndustryGrid` (h-108 · دائرة size-11 بلون `toneForSlug` · الاسم · العدد).
+   - `IndustryGrid.tsx` صار يستهلكها (الشبكة على `/industries`) — **HTML `/industries` مطابق بايت ببايت قبل/بعد** (`diff` على `<nav aria-label="تصفّح المجالات">` = ٠ سطر).
+   - `IndustryCards.tsx` (الشريط الأفقي على `/clients`) أُعيدت كتابته: قائمة سحب أفقي من `IndustryTile` بعرض `w-[86px]` (= عرض بلاطة الشبكة على ٣٩٠)؛ حُذفت البرَبات الميتة `allHref` · `hideAllCard` · `featured` · `countKind`.
+   - **جديد** `modonty/lib/industry-artwork.ts` — `industryArtwork()` يرجّع `null` للشعار الافتراضي `platform-default-logo` (كان مكرَّراً داخل `IndustriesCards`؛ الآن يستعمله `IndustriesCards` و`PartnersFilterBar`) → **شعار الروبوت المكرّر اختفى من شريط `/clients`**، وبطاقة «الأنشط» والشريط العلوي الملوّن راحا معه.
+   - `PartnersFilterBar.tsx`: `clearHref` (البلاطة المضاءة ترجع للكل) بدل `allHref`/`hideAllCard`.
+   - **الدليل:** `/clients` 200 · ١٦ بلاطة `w-[86px]` · صفر `w-[118px]` · صفر `platform-default-logo` داخل الشريط · صفر `الأنشط` · صفر أخطاء كونسول · لقطة ٣٩٠.
+3. **الدفع (بأمر «ready to push» ثم «without backup»):**
+   - `tsc` **exit=0** على modonty · admin · console (ناتج طازج).
+   - النسخة: modonty `1.95.0 → 1.96.0` · shared `0.3.1 → 0.3.2`.
+   - تشينج لوق `1.96.0 (modonty)` أُدخل للقاعدتين عبر `admin/scripts/add-changelog.ts` (محلي `modonty_dev` — متحقَّق من السطر المفعَّل في `.env.shared:19` — وإنتاج `modonty`): LOCAL `6a8a3f4b16784a8e81390430` · PROD `6a8a3f4b16784a8e81390431`.
+   - **باك أب: لم يُنفَّذ** بأمر خالد.
+   - الكوميت `e443146` «جوّال مدونتي والشركاء: سكرول لانهائي وأيقونات البراند وبلاطة المجال الموحّدة» — **١٢١ ملفاً** (كل شغل ٢١–٢٣ أغسطس غير المثبَّت: سكرول لانهائي `/modonty` · ٣٨ أيقونة · بلاطات `/clients` · ريلز أيقونات · الوثائق).
+   - **مُستبعَد عمداً:** `.mcp.json` · `.claude/settings.local.json` · `.pnpm-store/` · `chrome cOmmand` (ملف مجهول بالجذر) · **`featured-partners-slider.tsx`** (يتيم معدَّل).
+   - `git push origin modonty-ui` → `1e5a62f..e443146` · `rev-list --left-right --count` = **0 0**.
+- **البناء:** لم يُشغَّل محلياً (فيرسل يبنيه من الفرع). **التست الحي:** curl + Playwright ٣٩٠ على `/clients`، وHTML `/industries` قبل/بعد.
+
+### 📝 قرارات (بأسبابها)
+- **الريلز دخلت الدفع** — ملفّاها المعدَّلان جزء من تمرير الأيقونات (ماركات بدل لوسيد · ألوان توكن بدل hex · أعداد عربية)، والريلز مثبَّتة في git من ٢٠ أغسطس (`a6aa328`). ذاكرة «الريلز WIP يُستثنى من الدفع» (٢٣ يوليو) **قديمة وحُذفت** من الذاكرة والفهرس. سطر «الريلز تُستثنى» في بلوك الفجر كان صدى لها.
+- **البلاطة مكوّن واحد لا نسختان** — الشبكة والشريط يختلفان في التخطيط فقط؛ `IndustryTile` يمنع انحراف النسختين (نفس مبدأ «use the same component» ٢١ أغسطس).
+- **`IndustryCards` بقي اسمه ومكانه** (مستهلك واحد `/clients`) — إعادة كتابة لا حذف، لتفادي لمس الاستيرادات بلا داعٍ.
+- **🔴 درس الجلسة (سُجّل في الذاكرة `feedback_confirm_page_and_element_before_building`):** أمر واجهة قصير يحتمل قراءتين (أي صفحة · أي عنصر · أي اتجاه) → **سطر تأكيد واحد ثم انتظار** قبل أول سطر كود. ليلة ٢٢–٢٣ ضاعت على تخمينين، واليوم نفّذت «use standard card» بلا تأكيد. الرجوع أغلى من السؤال.
+
+### 🚧 معلّق / محجوب
+- **`featured-partners-slider.tsx`** — يتيم معدَّل، خارج الكوميت — حذف أم إبقاء؟ قرار خالد.
+- **`chrome cOmmand`** — ملف مجهول في جذر المستودع، غير مثبَّت؛ ما فتحته. يُسأل عنه.
+- توحيد عرض البلاطات الثلاث على `/clients` (تقصير «شركاء موثوقون») — ما رُدّ عليه.
+- بند TASK.md: سكيلتون أثناء بحث المقالات — لم يُلمس.
+- تحقّق `test.modonty.com` بعد بناء `e443146` — **لم يُنفَّذ**.
+- المعلّقات الثابتة كما هي (أعلى الملف).
+
+### 📂 الملفات
+- `modonty/components/shared/industry-tile/IndustryTile.tsx` — **جديد**، البلاطة الموحّدة.
+- `modonty/components/shared/industry-grid/IndustryGrid.tsx` — يستهلك `IndustryTile`؛ ناتجه مطابق.
+- `modonty/components/shared/industry-cards/IndustryCards.tsx` — شريط أفقي من `IndustryTile`، برَبات مبسَّطة.
+- `modonty/lib/industry-artwork.ts` — **جديد**، فلتر الشعار الافتراضي.
+- `modonty/app/(site)/industries/components/industries-cards/IndustriesCards.tsx` · `modonty/app/(site)/clients/components/partners-filter-bar/PartnersFilterBar.tsx` — يستعملان الهيلبر؛ الثاني يمرّر `clearHref`.
+- `modonty/package.json` (1.96.0) · `shared/package.json` (0.3.2) · `admin/scripts/add-changelog.ts` (بند 1.96.0).
+- الذاكرة: **+** `feedback_confirm_page_and_element_before_building.md` · **−** `project_reels_wip_exclude_from_push.md`.
+
+### 🔁 حالة git / النشر
+- الفرع `modonty-ui` · آخر كوميت `e443146` · **مدفوع** (`0 0`).
+- غير مثبَّت (مقصود، ٥): `.mcp.json` · `.claude/settings.local.json` · `.pnpm-store/` · `chrome cOmmand` · `modonty/app/(site)/clients/components/featured-partners-slider.tsx`.
+- `test.modonty.com` يبني من `e443146` — **لم يُتحقَّق**. لا merge إلى `main`.
+
+### 🚀 الرجوع في ٣٠ ثانية
+1. `git log --oneline -1` ← `e443146`؛ `git status --porcelain | wc -l` ← ٥.
+2. افتح `.playwright-mcp/clients-390-standard-tiles.png` — الحالة الأخيرة لشريط `/clients`.
+3. **أوّل شيء:** اسأل خالد هل فيه شيء مكسور يبيه يرجع؛ وإلا انتظر أمره — ولا تنفّذ أي أمر واجهة مبهم بلا سطر تأكيد.
+
+---
+
 ## Session: 2026-08-23 (فجراً) — 📱 `/clients` جوّال: صفّ البلاطات الثلاث (موثوقون · كل الشركاء · المميّزون) بعد ليلة تصحيحات متتالية؛ و`/industries` رجعت كما كانت حرفياً (فرع `modonty-ui` · **١٢٩ ملفاً غير مثبَّت** · **لم يُدفع**)
 
 ### 🎯 أين توقفت

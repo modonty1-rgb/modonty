@@ -20,13 +20,16 @@ import { MobileNotificationBadge } from "@/app/layout/components/notifications/M
 // broken Tailwind chain. Removing it silently dropped the blur on desktop, which is exactly the
 // thing that must never happen. The `.site-header-material` rule below outranks it on phones
 // (element+class beats class), so the thicker material still wins there.
-// `max-md:border-b-0` + the gradient below it: a hard 1px rule is a divider between two
-// regions; where floating chrome overlaps content, the edge is a short fade instead.
+// `max-md:border-b-0` / no shadow on phones: a hard 1px rule is a divider between two
+// regions. The scroll-edge fade itself is NOT here any more — on every page the tabs band
+// (SiteShell) hangs directly under this bar, so a fade on the header only ever painted onto
+// the band's top, never onto content. It moved to the band's bottom edge, where content
+// actually meets the chrome. The band shares this bar's bg tokens + `site-header-material`.
 // `prefers-reduced-transparency` turns the whole thing solid — a reader who asked the system
 // for less see-through gets an opaque bar, not a dimmer one.
 export function TopNav() {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-accent/20 bg-slate-100/95 dark:bg-card/95 backdrop-blur-sm supports-[backdrop-filter]:bg-slate-100/90 dark:supports-[backdrop-filter]:bg-card/90 shadow-sm max-md:border-b-0 max-md:shadow-none site-header-material max-md:after:pointer-events-none max-md:after:absolute max-md:after:inset-x-0 max-md:after:top-full max-md:after:h-3 max-md:after:bg-gradient-to-b max-md:after:from-foreground/[0.06] max-md:after:to-transparent">
+    <header className="sticky top-0 z-40 w-full border-b border-accent/20 bg-slate-100/95 dark:bg-card/95 backdrop-blur-sm supports-[backdrop-filter]:bg-slate-100/90 dark:supports-[backdrop-filter]:bg-card/90 shadow-sm max-md:border-b-0 max-md:shadow-none site-header-material">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:start-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-md focus:text-sm font-medium"

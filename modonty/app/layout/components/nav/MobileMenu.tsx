@@ -92,10 +92,21 @@ export function MobileMenu({ open, onOpenChange, contentId, labels, themeLabels,
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent id={contentId} side="right" className="w-[300px] sm:w-[320px] p-0 [&>button:last-child]:hidden">
+      {/* flex-col + min-h-0 on the list: without them the list grows to its content
+          height and overflows the fixed sheet, so nothing scrolls and the last links
+          sit below the fold (measured: last link at y=938 on an 844px screen). */}
+      {/* side="left": the burger sits at the visual left of the bar, so the sheet must
+          emerge from under it (Apple: anchor to source, enter/exit on the same path).
+          It used to slide in from the right — the opposite side of its own trigger.
+          duration-300 on open: the drawer response Apple ships (~0.3s); 500ms read slow. */}
+      <SheetContent
+        id={contentId}
+        side="left"
+        className="flex flex-col w-[300px] sm:w-[320px] p-0 data-[state=open]:duration-300 [&>button:last-child]:hidden"
+      >
 
-        {/* Header */}
-        <SheetHeader className="flex flex-row items-center justify-between px-4 py-3 border-b border-border/60">
+        {/* Header — no hard divider; the list below carries a scroll-edge fade instead */}
+        <SheetHeader className="flex flex-row items-center justify-between px-4 py-3">
           <SheetClose asChild>
             <Button
               type="button"
@@ -114,7 +125,16 @@ export function MobileMenu({ open, onOpenChange, contentId, labels, themeLabels,
           <ThemeToggle labels={themeLabels} />
         </SheetHeader>
 
-        <div className="overflow-y-auto py-3 px-3 space-y-0.5">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] space-y-0.5">
+          {/* Scroll-edge fade: invisible at rest, softens the seam once rows scroll up
+              under the header. Replaces the 1px border. No top padding on the list —
+              sticky can't leave its containing block, so padding would push the fade
+              down 12px and let rows pass unfaded; the fade's own net height (h-4 -mb-1)
+              is the 12px breathing room instead. */}
+          <div
+            aria-hidden
+            className="pointer-events-none sticky top-0 z-10 -mx-3 -mb-1 h-4 bg-gradient-to-b from-background to-transparent"
+          />
 
           {/* Account — first, because signing in is what a returning reader opened this for */}
           {isLoggedOut && (

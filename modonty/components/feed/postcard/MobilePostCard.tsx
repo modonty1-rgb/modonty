@@ -216,8 +216,13 @@ export function MobilePostCard({ className, featured, post, hideClient }: PostCa
       // old tall card, so off-screen rows inflated `/articles` to 6,659px instead of ~3,000
       // and the scrollbar lied (measured 21 Aug — on-screen cards 131-153px, off-screen 421).
       // 150 → 175 on 22 Aug: the footer row and the taller 4:3 thumb grew the real card.
+      // Press feedback on the card itself: the whole card is one target (the title's
+      // `after:inset-0`), and a target must answer on touch-DOWN, not on navigation.
+      // `:active` reaches ancestors, so a tap anywhere on the stretched link presses the
+      // card. Scale, not colour — 1% is felt, never seen as a layout move.
       className={cn(
         "relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm lg:hidden [content-visibility:auto] [contain-intrinsic-size:auto_175px]",
+        "motion-safe:transition-transform motion-safe:duration-100 motion-safe:active:scale-[0.99]",
         featured && "border-primary/20 shadow-primary/5",
         className,
       )}

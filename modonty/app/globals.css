@@ -440,10 +440,13 @@
 }
 
 /* ── Phase 4: Focus rings ─────────────────────────────────── */
+/* No border-radius here: the rule applied to EVERY focused element, so a 16px card
+   (the account popover, which Radix focuses on open) and every rounded-xl button
+   snapped to 4px corners the moment they took focus. `outline` already follows the
+   element's own radius in every browser we ship to. */
 :focus-visible {
   outline: 2px solid hsl(var(--primary));
   outline-offset: 2px;
-  border-radius: 4px;
 }
 :focus:not(:focus-visible) {
   outline: none;
@@ -584,9 +587,13 @@ footer[role="contentinfo"] {
    no variables, no cascade to lose. `-webkit-` first for older iOS Safari, which still
    ships the property only under the prefix.
    The reduced-transparency block is not decoration: a reader who asked the system for
-   less see-through must get an opaque bar, not a slightly dimmer one. */
+   less see-through must get an opaque bar, not a slightly dimmer one.
+   `div.site-header-material` = the tabs band under the header (SiteShell): header + band
+   are one 135px chrome block and must be one material. Element-qualified on purpose, so
+   each still outranks a stray `backdrop-blur-*` utility on the same element. */
 @media (max-width: 767px) {
-  header.site-header-material {
+  header.site-header-material,
+  div.site-header-material {
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     backdrop-filter: blur(20px) saturate(180%);
   }
@@ -595,7 +602,11 @@ footer[role="contentinfo"] {
 /* Flat, not nested: nested at-rules need a CSS-nesting pass this build does not run, and
    a nested block is dropped SILENTLY — it takes a computed-style read to notice. */
 @media (max-width: 767px) and (prefers-reduced-transparency: reduce) {
-  header.site-header-material {
+  /* The class is doubled on purpose: (0,2,1) — measured 23 Aug, the single-class form
+     (0,1,1) LOST the background to Tailwind's `.dark .dark:supports-[…]:bg-card/90`
+     (0,2,0), so a reader who asked for no transparency still got a 90% bar. */
+  header.site-header-material.site-header-material,
+  div.site-header-material.site-header-material {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
     background-color: hsl(var(--card));

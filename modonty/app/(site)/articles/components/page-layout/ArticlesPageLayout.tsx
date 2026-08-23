@@ -8,7 +8,7 @@ import { ModontyReelsMark } from "@/components/icons/modonty-reels-mark";
 import { IconVolume2 } from "@/lib/icons";
 
 import { ArticlesHeader } from "../articles-header/ArticlesHeader";
-import { AskModo } from "../ask-modo/AskModo";
+import { AskModo } from "@/components/shared/ask-modo/AskModo";
 import { TrustBox } from "../trust-box/TrustBox";
 import { ResultsLine } from "../results-line/ResultsLine";
 import { FiltersBar } from "../filters-bar/FiltersBar";

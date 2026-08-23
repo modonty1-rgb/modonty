@@ -37,7 +37,10 @@ export function ScrollButtons() {
           // No `motion-reduce` variant: the reveal is a fade, not motion. And never
           // `animate-none` in a fallback — with no animation nothing sets opacity 0, so
           // the button sat on screen from the first pixel.
-          className: `fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] start-4 z-40 h-12 w-12 rounded-full shadow-lg animate-scroll-reveal md:bottom-8 ${TIMELINE} ${REVEAL_AFTER} ${NO_SUPPORT}:hidden`,
+          // `1rem` + safe-area, not `5rem`: the 5rem cleared the fixed bottom bar, which the
+          // homepage no longer shows (23 Aug). Without it the button floated 64px above the
+          // edge over nothing.
+          className: `fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] start-4 z-40 h-12 w-12 rounded-full shadow-lg animate-scroll-reveal md:bottom-8 ${TIMELINE} ${REVEAL_AFTER} ${NO_SUPPORT}:hidden`,
         })}
       >
         <IconScrollTop className="h-5 w-5" />

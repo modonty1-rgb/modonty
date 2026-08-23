@@ -1,16 +1,28 @@
 import Link from "next/link";
 import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
 import { IconArrowRight } from "@/lib/icons";
+import { cn } from "@/lib/utils";
 
-// Top of the feed, LinkedIn "Start a post" style: the character plus a pill drawn like
-// a text field. It is a LINK, not an input — the whole row opens /modo-chat, where the
-// typing happens — so this stays a server component with zero client JavaScript.
-export function AskModo() {
+interface AskModoProps {
+  /** Caller-side shape only (radius, visibility) — the row itself is one design. */
+  className?: string;
+}
+
+// LinkedIn "Start a post" style: the character plus a pill drawn like a text field. It is a
+// LINK, not an input — the whole row opens /modo-chat, where the typing happens — so this
+// stays a server component with zero client JavaScript.
+// Promoted from `/articles` on 23 Aug: the homepage feed now shows the same row after its
+// second card (Khalid: «add modo as bar after 2 article») — two routes, one component.
+export function AskModo({ className }: AskModoProps) {
   return (
     <Link
       href="/modo-chat"
       aria-label="اسأل مودو — افتح المحادثة"
-      className="group flex items-center gap-3 rounded-lg bg-card p-3 ring-1 ring-border transition-shadow sm:gap-4 sm:px-4 sm:hover:ring-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      className={cn(
+        "group flex items-center gap-3 rounded-lg bg-card p-3 ring-1 ring-border transition-shadow sm:gap-4 sm:px-4 sm:hover:ring-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+        "motion-safe:active:scale-[0.99]",
+        className,
+      )}
     >
       <span className="relative flex size-11 shrink-0 overflow-hidden rounded-full ring-1 ring-primary/15 sm:size-12">
         <ModoCharacter sizes="(min-width:640px) 48px, 44px" decorative />

@@ -65,8 +65,12 @@ export function SavePostButton({ articleId, articleSlug }: SavePostButtonProps) 
         disabled={pending}
         // `relative z-10` lifts it above the card-wide link overlay; 32px clears WCAG 2.2
         // SC 2.5.8 (24×24 minimum) with room to spare on a 390px screen.
+        // The VISIBLE control stays 32px (the footer row's fixed height); the invisible
+        // `before:` pad extends the hit area by 6px on every side → 44×44, Apple's minimum
+        // tap target. The row does not grow, the thumb does not land on «التاريخ».
         className={cn(
           "relative z-10 grid size-8 shrink-0 place-items-center rounded-lg transition-colors",
+          "before:absolute before:-inset-1.5 before:content-['']",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
           "motion-safe:active:scale-95",
           saved ? "text-link-accent" : "text-muted-foreground hover:text-foreground",

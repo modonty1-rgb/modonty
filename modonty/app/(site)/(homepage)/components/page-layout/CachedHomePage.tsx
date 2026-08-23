@@ -1,9 +1,7 @@
-import { Suspense } from "react";
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { cacheLife, cacheTag } from "next/cache";
 import { PageLayout } from "@/app/(site)/(homepage)/components/page-layout/PageLayout";
-import { BottomBar } from "@/app/(site)/(homepage)/components/mobile-bottom-bar/BottomBar";
 import { getCorePublisherArticles } from "@/app/(site)/(homepage)/data/get-core-publisher-articles";
 import { getHomeFeedArticles } from "@/app/(site)/(homepage)/data/get-home-feed-articles";
 import { getMoreArticles } from "@/app/(site)/(homepage)/data/get-more-articles";
@@ -80,10 +78,10 @@ export async function CachedHomePage({ page, userCard }: CachedHomePageProps) {
         reels={reelItems}
         userCard={userCard}
       />
-      {/* Mobile-only action bar (filters + newsletter) — homepage only, lazy client shell */}
-      <Suspense fallback={null}>
-        <BottomBar />
-      </Suspense>
+      {/* The mobile bottom bar (احجز · تسوّق · مودو) is HIDDEN on the homepage as of 23 Aug
+          (Khalid: «no need to show الشريط السفلي, let make pure article»). Its files
+          (`mobile-bottom-bar/BottomBar` · `ServiceBar`) stay on disk — hidden, not deleted —
+          until he decides. Modo's doorway moved into the feed (ArticlesList, after card 2). */}
     </>
   );
 }

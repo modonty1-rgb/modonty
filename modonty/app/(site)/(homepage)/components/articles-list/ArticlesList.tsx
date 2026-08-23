@@ -1,4 +1,7 @@
+import { Fragment } from 'react';
+
 import { PostCard } from '@/components/feed/postcard/PostCard';
+import { AskModo } from '@/components/shared/ask-modo/AskModo';
 import { MoreArticlesOnScroll } from '@/app/(site)/(homepage)/components/articles-list/MoreArticlesOnScroll';
 import { FEED_PAGE_SIZE } from '@/lib/queries/feed-constants';
 import type { FeedPost } from '@/lib/types';
@@ -19,7 +22,15 @@ export function ArticlesList({ serverPosts, page }: ArticlesListProps) {
       {serverPosts.length > 0 && (
         <div className="space-y-4">
           {serverPosts.map((post, index) => (
-            <PostCard key={post.id} post={post} index={index} className="animate-in fade-in duration-300" />
+            <Fragment key={post.id}>
+              <PostCard post={post} index={index} className="animate-in fade-in duration-300" />
+              {/* Modo's doorway on the phone, IN the feed after the second card (Khalid, 23 Aug:
+                  «pure article» homepage — the fixed bottom bar is gone from `/`, and Modo
+                  moved from that bar into the flow). Page 1 only, so the series shows it once;
+                  `lg:hidden` because the desktop rails already carry Modo. `rounded-2xl` matches
+                  the mobile card it sits between. */}
+              {page === 1 && index === 1 && <AskModo className="rounded-2xl lg:hidden" />}
+            </Fragment>
           ))}
         </div>
       )}

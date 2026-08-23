@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuArrow,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
@@ -36,12 +37,12 @@ function AccountBenefitsActions() {
   return (
     <>
       <DropdownMenuItem asChild className="p-0 focus:bg-transparent">
-        <Link href="/users/register" className="flex min-h-11 w-full items-center justify-center rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+        <Link href="/users/register" className="flex min-h-11 w-full items-center justify-center rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary motion-safe:transition-transform motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
           أنشئ حسابًا
         </Link>
       </DropdownMenuItem>
       <DropdownMenuItem asChild className="justify-center p-0 focus:bg-transparent">
-        <Link href="/users/login" className="inline-flex min-h-11 items-center justify-center px-4 text-sm font-semibold text-link focus-visible:outline-none focus-visible:underline">
+        <Link href="/users/login" className="inline-flex min-h-11 items-center justify-center px-4 text-sm font-semibold text-link motion-safe:transition-transform motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:underline">
           لدي حساب
         </Link>
       </DropdownMenuItem>
@@ -56,6 +57,10 @@ interface AccountBenefitsContentProps {
 function AccountBenefitsContent({ onClose }: AccountBenefitsContentProps) {
   return (
     <DropdownMenuContent side="bottom" align="center" sideOffset={14} collisionPadding={12} className="z-[70] w-[min(20rem,calc(100vw-1.5rem))] rounded-2xl border-primary/35 bg-popover p-4 shadow-[0_20px_50px_-18px_hsl(var(--primary)/0.55)]">
+      {/* Zero-size arrow, never painted: it only gives Radix an anchor so the card scales
+          out of the icon that opened it. Without it the origin was the card's own middle
+          ("160px 137px"), ~100px away from the trigger. */}
+      <DropdownMenuArrow width={0} height={0} aria-hidden="true" />
       <div className="space-y-3 text-start">
         <DropdownMenuItem asChild className="absolute end-1 top-1 size-11 justify-center rounded-xl p-0 focus:bg-accent/10">
           <button type="button" onClick={onClose} aria-label="إغلاق مزايا الحساب">
