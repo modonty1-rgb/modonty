@@ -1,5 +1,5 @@
-import { getArticlesArchive, type ArchiveSort } from "@/app/(site)/articles/data/get-articles-archive";
-import { filterByReadingTime, type ReadingTimeBucket } from "@/app/(site)/articles/helpers/reading-time-buckets";
+import { getArticlesArchive, type ArchiveSort } from "@/lib/articles/archive/get-articles-archive";
+import { filterByReadingTime, type ReadingTimeBucket } from "@/lib/articles/archive/reading-time-buckets";
 import { ARCHIVE_PAGE_SIZE } from "@/app/(site)/articles/helpers/archive-page-size";
 
 const SORTS: ArchiveSort[] = ["newest", "mostRead", "mostEngaged"];

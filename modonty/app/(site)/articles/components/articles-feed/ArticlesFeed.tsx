@@ -5,11 +5,11 @@ import { FeedPagination } from "@/components/shared/pagination/FeedPagination";
 import { MoreArticlesOnScroll } from "../more-articles/MoreArticlesOnScroll";
 
 
-import { buildArchiveHref, type ArchiveState } from "../../helpers/build-archive-href";
-import { FOCUS_RING } from "../../helpers/focus-ring";
+import { buildArchiveHref, type ArchiveState } from "@/lib/articles/archive/build-archive-href";
+import { FOCUS_RING } from "@/lib/articles/archive/focus-ring";
 import { ARCHIVE_PAGE_SIZE } from "../../helpers/archive-page-size";
 
-import type { ArchiveArticle } from "../../data/get-articles-archive";
+import type { ArchiveArticle } from "@/lib/articles/archive/get-articles-archive";
 
 interface ArticlesFeedProps {
   /** Everything in scope — this component only chunks and draws. */

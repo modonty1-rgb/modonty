@@ -58,7 +58,7 @@ export default async function ReelsPage() {
         <Link
           href="/"
           aria-label="الخروج من الريلز"
-          className="pointer-events-auto flex min-h-11 items-center gap-2 rounded-full bg-black/70 px-4 text-sm font-bold text-white ring-1 ring-white/25 backdrop-blur transition hover:bg-black/90 hover:ring-white/40"
+          className="pointer-events-auto flex min-h-11 items-center gap-2 rounded-full bg-black/70 px-4 text-sm font-bold text-white ring-1 ring-white/25 backdrop-blur transition hover:bg-black/90 hover:ring-white/40 motion-safe:active:scale-95 active:bg-black/90"
         >
           <ModontyLogoutMark className="size-5" aria-hidden />
           خروج

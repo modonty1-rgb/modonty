@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 
 import { useMountOnApproach } from "@modonty/shared/components/use-mount-on-approach";
 
-import type { ArchiveState } from "../../helpers/build-archive-href";
+import type { ArchiveState } from "@/lib/articles/archive/build-archive-href";
 
 const MoreArticles = dynamic(() => import("./MoreArticles").then((m) => m.MoreArticles), {
   ssr: false,

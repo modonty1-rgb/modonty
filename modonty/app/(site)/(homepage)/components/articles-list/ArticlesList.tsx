@@ -23,7 +23,10 @@ export function ArticlesList({ serverPosts, page }: ArticlesListProps) {
         <div className="space-y-4">
           {serverPosts.map((post, index) => (
             <Fragment key={post.id}>
-              <PostCard post={post} index={index} className="animate-in fade-in duration-300" />
+              {/* The first card of chunk 1 is the phone feed's one cover-on-top «واجهة» card
+                  (Khalid, 23 Aug — hybrid mockup approved); chunk n≥2 and every other card
+                  stay compact. Desktop ignores the flag. */}
+              <PostCard post={post} index={index} mobileHero={page === 1 && index === 0} className="animate-in fade-in duration-300" />
               {/* Modo's doorway on the phone, IN the feed after the second card (Khalid, 23 Aug:
                   «pure article» homepage — the fixed bottom bar is gone from `/`, and Modo
                   moved from that bar into the flow). Page 1 only, so the series shows it once;

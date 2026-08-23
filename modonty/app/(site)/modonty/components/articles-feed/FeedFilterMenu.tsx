@@ -34,7 +34,9 @@ interface FeedFilterMenuProps {
 export function FeedFilterMenu({ view, hrefs }: FeedFilterMenuProps) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-card px-3.5 text-xs font-bold text-muted-foreground ring-1 ring-border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary data-[state=open]:bg-primary data-[state=open]:text-primary-foreground data-[state=open]:ring-primary">
+      {/* The pill stays drawn at 36px (the reference's size); the invisible `before:` pad
+          makes the tap box 44px, and the press answers on touch-down. */}
+      <DropdownMenuTrigger className="relative inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-card px-3.5 text-xs font-bold text-muted-foreground ring-1 ring-border transition-colors before:absolute before:-inset-1 before:content-[''] motion-safe:active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary data-[state=open]:bg-primary data-[state=open]:text-primary-foreground data-[state=open]:ring-primary">
         {/* Label first, mark after it — in RTL that puts the sliders on the LEFT of the
             word, the way Khalid's reference pill is drawn. */}
         {view === "latest" ? "تصفية" : VIEW_LABEL[view]}

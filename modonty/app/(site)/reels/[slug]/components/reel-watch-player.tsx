@@ -67,7 +67,7 @@ export function ReelWatchPlayer({ reel }: { reel: ReelWatch }) {
           type="button"
           onClick={() => setMuted((m) => !m)}
           aria-label={muted ? "تشغيل الصوت" : "كتم الصوت"}
-          className="absolute end-3 top-3 z-10 grid size-11 place-items-center rounded-full bg-black/50 text-white backdrop-blur transition hover:bg-black/70"
+          className="absolute end-3 top-3 z-10 grid size-11 place-items-center rounded-full bg-black/50 text-white backdrop-blur transition hover:bg-black/70 motion-safe:active:scale-95 active:bg-black/70"
         >
           {muted ? <IconVolumeX className="size-5" /> : <IconVolume2 className="size-5" />}
         </button>

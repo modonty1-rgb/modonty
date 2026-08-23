@@ -6,9 +6,12 @@ import { ArticlesList } from "@/app/(site)/(homepage)/components/articles-list/A
 import { HomeActions } from "@/app/(site)/(homepage)/components/home-actions/HomeActions";
 import { ReelsCard } from "@/components/shared/reels-card/ReelsCard";
 import { FeedPagination } from "@/components/shared/pagination/FeedPagination";
+import { ArchiveSearchForm } from "@/components/shared/archive-filters/ArchiveSearchForm";
+import { ReadingTimeBar } from "@/components/shared/archive-filters/ReadingTimeBar";
 import type { ReactNode } from "react";
 import type { FeedPost } from "@/lib/types";
 import type { ReelItem } from "@/components/shared/reels-card/ReelsCard";
+import type { ReadingTimeBucket } from "@/lib/articles/archive/reading-time-buckets";
 
 interface PageLayoutProps {
   posts: FeedPost[];
@@ -22,9 +25,11 @@ interface PageLayoutProps {
   reels: ReelItem[];
   /** Per-request slot created outside the cached page (reads the session). Passed through, never read. */
   userCard: ReactNode;
+  /** Archive-wide counts per reading-time bucket — the phone's three filter tiles. */
+  readingTimeCounts: Record<ReadingTimeBucket, number>;
 }
 
-export function PageLayout({ posts, hasMore, page, corePublisherArticles, brandLogoUrl, industries, reels, userCard }: PageLayoutProps) {
+export function PageLayout({ posts, hasMore, page, corePublisherArticles, brandLogoUrl, industries, reels, userCard, readingTimeCounts }: PageLayoutProps) {
   const pageArabic = page.toLocaleString("ar-SA");
   return (
     <>
@@ -47,6 +52,16 @@ export function PageLayout({ posts, hasMore, page, corePublisherArticles, brandL
                 laptops; phones now reach the reels through the QuickLinks tile instead. */}
             <div className="hidden lg:block min-[1240px]:hidden">
               <ReelsCard items={reels} layout="feed" />
+            </div>
+            {/* PHONE ONLY (Khalid, 23 Aug: «in home page need search and filter»): the archive's
+                own two controls, promoted from `/articles` so there is one search box and one
+                reading-time bar on the site. Search is a zero-JS GET form that lands on
+                `/articles?search=…`; the tiles are plain links to `/articles?time=…`. The field
+                axis is deliberately absent on phones (Khalid, 22–23 Aug: the «المجالات» tab is
+                the field picker), exactly as on `/articles`. Desktop keeps its rails untouched. */}
+            <div className="space-y-3 lg:hidden">
+              <ArchiveSearchForm />
+              <ReadingTimeBar counts={readingTimeCounts} current={{}} />
             </div>
             <section aria-labelledby="articles-feed-heading" className="space-y-3 sm:space-y-4 [&>*:nth-child(2)]:!mt-0">
               {/* Chunk n is its own page (own title + canonical), so its heading is the h1

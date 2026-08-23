@@ -7,6 +7,8 @@ import { getHomeFeedArticles } from "@/app/(site)/(homepage)/data/get-home-feed-
 import { getMoreArticles } from "@/app/(site)/(homepage)/data/get-more-articles";
 import { getReelsFeedPage } from "@/lib/queries/get-reels-feed-page";
 import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
+import { getArticlesArchive } from "@/lib/articles/archive/get-articles-archive";
+import { countByReadingTime } from "@/lib/articles/archive/reading-time-buckets";
 import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
@@ -38,14 +40,19 @@ export async function CachedHomePage({ page, userCard }: CachedHomePageProps) {
   cacheLife("minutes");
   cacheTag("homepage", "articles", "settings");
 
-  const [{ jsonLd }, feed, corePublisherArticles, brandMedia, industries, reels] = await Promise.all([
+  // `wholeArchive` feeds ONLY the phone's reading-time tiles (counts per bucket). Same cached
+  // call `/articles` makes, inside the same Promise.all — one more parallel read inside this
+  // page's own cache, no waterfall, nothing extra on the client.
+  const [{ jsonLd }, feed, corePublisherArticles, brandMedia, industries, reels, wholeArchive] = await Promise.all([
     getListingPageSeo("home"),
     getFeedChunk(page),
     getCorePublisherArticles(),
     getBrandMedia(),
     getIndustriesWithCounts(),
     getReelsFeedPage(),
+    getArticlesArchive({}),
   ]);
+  const readingTimeCounts = countByReadingTime(wholeArchive);
 
   // Google: "make sure that page values adjust correctly … return a 404".
   if (page > 1 && feed.articles.length === 0) notFound();
@@ -77,6 +84,7 @@ export async function CachedHomePage({ page, userCard }: CachedHomePageProps) {
         industries={industries}
         reels={reelItems}
         userCard={userCard}
+        readingTimeCounts={readingTimeCounts}
       />
       {/* The mobile bottom bar (احجز · تسوّق · مودو) is HIDDEN on the homepage as of 23 Aug
           (Khalid: «no need to show الشريط السفلي, let make pure article»). Its files

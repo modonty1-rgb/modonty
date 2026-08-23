@@ -71,7 +71,7 @@ export function PartnerDetailsMobile({ client, askClientProps }: PartnerDetailsM
   if (!hasPhone && !hasSite && social.length === 0 && !canAsk) return null;
 
   const chip =
-    "grid size-11 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:text-foreground";
+    "grid size-11 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:text-foreground active:bg-muted active:text-foreground motion-safe:active:scale-95";
 
   return (
     <div className="flex flex-wrap items-center gap-2">

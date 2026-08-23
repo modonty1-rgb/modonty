@@ -8,17 +8,17 @@ import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { SITE_URL } from "@/constants";
 
-import { getArticlesArchive, type ArchiveSort } from "./data/get-articles-archive";
-import { getArticlesFilters } from "./data/get-articles-filters";
+import { getArticlesArchive, type ArchiveSort } from "@/lib/articles/archive/get-articles-archive";
+import { getArticlesFilters } from "@/lib/articles/archive/get-articles-filters";
 import { getTagName } from "./data/get-tag-name";
-import { buildArchiveHref, type ArchiveState } from "./helpers/build-archive-href";
+import { buildArchiveHref, type ArchiveState } from "@/lib/articles/archive/build-archive-href";
 import { ARCHIVE_PAGE_SIZE } from "./helpers/archive-page-size";
 import {
   countByReadingTime,
   filterByReadingTime,
   READING_TIME_BUCKETS,
   type ReadingTimeBucket,
-} from "./helpers/reading-time-buckets";
+} from "@/lib/articles/archive/reading-time-buckets";
 import { ArticlesPageLayout } from "./components/page-layout/ArticlesPageLayout";
 
 const SORTS: ArchiveSort[] = ["newest", "mostRead", "mostEngaged"];

@@ -2,8 +2,8 @@ import Link from "next/link";
 
 import { IconClose } from "@/lib/icons";
 
-import { buildArchiveHref, type ArchiveState } from "../../helpers/build-archive-href";
-import { FOCUS_RING } from "../../helpers/focus-ring";
+import { buildArchiveHref, type ArchiveState } from "@/lib/articles/archive/build-archive-href";
+import { FOCUS_RING } from "@/lib/articles/archive/focus-ring";
 
 interface ResultsLineProps {
   total: number;

@@ -1,4 +1,4 @@
-import type { ArchiveSort } from "../data/get-articles-archive";
+import type { ArchiveSort } from "./get-articles-archive";
 import type { ReadingTimeBucket } from "./reading-time-buckets";
 
 export interface ArchiveState {

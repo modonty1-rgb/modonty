@@ -2,10 +2,10 @@ import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 
-import { withArchiveChange, type ArchiveState } from "../../helpers/build-archive-href";
-import { FOCUS_RING } from "../../helpers/focus-ring";
+import { withArchiveChange, type ArchiveState } from "@/lib/articles/archive/build-archive-href";
+import { FOCUS_RING } from "@/lib/articles/archive/focus-ring";
 
-import type { ArchiveFilters } from "../../data/get-articles-filters";
+import type { ArchiveFilters } from "@/lib/articles/archive/get-articles-filters";
 
 interface FiltersBarProps {
   filters: ArchiveFilters;

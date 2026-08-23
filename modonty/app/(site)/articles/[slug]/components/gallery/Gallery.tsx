@@ -70,11 +70,15 @@ export function Gallery({ images, fallbackText, clientName }: GalleryProps) {
                 onClick={() => setActive(i)}
                 aria-label={`صورة ${i + 1}`}
                 aria-current={i === active ? "true" : undefined}
-                className={`relative aspect-video w-[56px] shrink-0 overflow-hidden rounded-md bg-muted transition-opacity ${
+                // The thumb stays 56×32; the `before:` pad (−6px each side) makes its tap
+                // box 68×44 — adjacent pads meet inside the 6px gap, nothing overlaps a
+                // neighbour's own thumb. `overflow-hidden` moved off the button (it would
+                // clip the pad) onto the image, which now rounds itself.
+                className={`relative aspect-video w-[56px] shrink-0 rounded-md bg-muted transition-opacity before:absolute before:-inset-1.5 before:content-[''] motion-safe:active:scale-95 ${
                   i === active ? "opacity-100 ring-2 ring-primary" : "opacity-60 hover:opacity-90"
                 }`}
               >
-                <OptimizedImage media={img.media} alt={img.alt} fill className="object-cover" sizes="56px" />
+                <OptimizedImage media={img.media} alt={img.alt} fill className="rounded-md object-cover" sizes="56px" />
               </button>
             ))}
           </div>

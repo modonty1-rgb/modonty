@@ -3,9 +3,9 @@ import Link from "next/link";
 import { IconFootprints, IconCoffee, IconArmchair } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
-import { buildArchiveHref, type ArchiveState } from "../../helpers/build-archive-href";
-import { FOCUS_RING } from "../../helpers/focus-ring";
-import { READING_TIME_BUCKETS, type ReadingTimeBucket } from "../../helpers/reading-time-buckets";
+import { buildArchiveHref, type ArchiveState } from "@/lib/articles/archive/build-archive-href";
+import { FOCUS_RING } from "@/lib/articles/archive/focus-ring";
+import { READING_TIME_BUCKETS, type ReadingTimeBucket } from "@/lib/articles/archive/reading-time-buckets";
 
 import type { ComponentType, SVGProps } from "react";
 

@@ -11,14 +11,14 @@ import { ArticlesHeader } from "../articles-header/ArticlesHeader";
 import { AskModo } from "@/components/shared/ask-modo/AskModo";
 import { TrustBox } from "../trust-box/TrustBox";
 import { ResultsLine } from "../results-line/ResultsLine";
-import { FiltersBar } from "../filters-bar/FiltersBar";
-import { ReadingTimeBar } from "../reading-time-bar/ReadingTimeBar";
+import { FiltersBar } from "@/components/shared/archive-filters/FiltersBar";
+import { ReadingTimeBar } from "@/components/shared/archive-filters/ReadingTimeBar";
 import { ArticlesFeed } from "../articles-feed/ArticlesFeed";
 
-import type { ArchiveState } from "../../helpers/build-archive-href";
-import type { ReadingTimeBucket } from "../../helpers/reading-time-buckets";
-import type { ArchiveFilters } from "../../data/get-articles-filters";
-import type { ArchiveArticle } from "../../data/get-articles-archive";
+import type { ArchiveState } from "@/lib/articles/archive/build-archive-href";
+import type { ReadingTimeBucket } from "@/lib/articles/archive/reading-time-buckets";
+import type { ArchiveFilters } from "@/lib/articles/archive/get-articles-filters";
+import type { ArchiveArticle } from "@/lib/articles/archive/get-articles-archive";
 import type { ReactNode } from "react";
 
 interface ArticlesPageLayoutProps {

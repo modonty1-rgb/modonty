@@ -13,5 +13,11 @@ export interface PostCardProps {
   articleTitle?: string;
   /** When true, renders as a larger hero card (first article on client page). */
   featured?: boolean;
+  /**
+   * PHONE ONLY: the feed's one «واجهة» card — cover image on top, 18px title — the first
+   * card of the homepage's first chunk (Khalid, 23 Aug: approved the hybrid mockup). The
+   * desktop card ignores it.
+   */
+  mobileHero?: boolean;
 }
 

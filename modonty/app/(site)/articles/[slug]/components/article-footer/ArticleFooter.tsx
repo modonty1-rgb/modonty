@@ -91,7 +91,7 @@ export function ArticleFooter({
                 {author.slug ? (
                   <Link
                     href={`/authors/${author.slug}`}
-                    className="block truncate text-sm font-semibold text-link hover:underline"
+                    className="block truncate text-sm font-semibold text-link hover:underline max-lg:flex max-lg:min-h-11 max-lg:items-center max-lg:active:underline"
                   >
                     {author.name}
                   </Link>
@@ -182,7 +182,7 @@ export function ArticleFooter({
           rel="noopener noreferrer"
           label="Article Footer CTA — عملاء بلا إعلانات"
           type="BANNER"
-          className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-link hover:underline"
+          className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-link hover:underline max-lg:min-h-11 max-lg:active:underline"
         >
           عملاء بلا إعلانات <span aria-hidden="true">↗</span>
         </CtaTrackedLink>

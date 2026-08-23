@@ -113,7 +113,7 @@ export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn }: Ree
           type="button"
           onClick={() => setMuted((m) => !m)}
           aria-label={muted ? "تشغيل الصوت" : "كتم الصوت"}
-          className="pointer-events-auto fixed end-4 top-16 z-30 grid size-11 place-items-center rounded-full bg-black/50 text-white backdrop-blur transition hover:bg-black/70"
+          className="pointer-events-auto fixed end-4 top-16 z-30 grid size-11 place-items-center rounded-full bg-black/50 text-white backdrop-blur transition hover:bg-black/70 motion-safe:active:scale-95 active:bg-black/70"
         >
           {muted ? <IconVolumeX className="size-5" /> : <IconVolume2 className="size-5" />}
         </button>
@@ -188,7 +188,10 @@ export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn }: Ree
               <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 pe-16 pt-20">
                 <Link
                   href={`/clients/${reel.clientSlug}`}
-                  className="pointer-events-auto mb-2 flex w-fit items-center gap-2 rounded-full bg-white/10 py-1 pe-4 ps-1 backdrop-blur transition hover:bg-white/20"
+                  // `min-h-11`: the chip measured 142×36 (23 Aug) over moving footage — the
+                  // one place a thumb needs the full 44. The pill keeps its look; only the
+                  // tap box grew, and it answers on touch-down.
+                  className="pointer-events-auto mb-2 flex min-h-11 w-fit items-center gap-2 rounded-full bg-white/10 py-1 pe-4 ps-1 backdrop-blur transition hover:bg-white/20 active:bg-white/20 motion-safe:active:scale-95"
                 >
                   <span className="relative block size-7 overflow-hidden rounded-full bg-white">
                     {reel.clientLogoUrl && (

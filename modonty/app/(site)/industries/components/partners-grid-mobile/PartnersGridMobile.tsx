@@ -36,8 +36,10 @@ export function PartnersGridMobile({ partners, heading, browseAllHref, embedded 
           </li>
         ))}
       </ul>
+      {/* 44px tall and answers on touch-down — it measured 356×20 (23 Aug), a thumb-miss
+          at the bottom of the list where a miss means scrolling back. Phone-only component. */}
       {partners.length > MAX_VISIBLE && (
-        <Link href={browseAllHref} className="mt-3 block text-center text-sm font-medium text-link hover:underline">
+        <Link href={browseAllHref} className="mt-1 flex min-h-11 items-center justify-center rounded-md text-sm font-medium text-link hover:underline active:bg-muted">
           كل الشركاء ←
         </Link>
       )}

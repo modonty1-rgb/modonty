@@ -4,10 +4,10 @@ import { InfiniteList } from "@modonty/shared/components/infinite-list";
 import { IconLoading } from "@/lib/icons";
 
 import { PostCard } from "@/components/feed/postcard/PostCard";
-import { buildArchiveHref, type ArchiveState } from "../../helpers/build-archive-href";
+import { buildArchiveHref, type ArchiveState } from "@/lib/articles/archive/build-archive-href";
 
 import type { InfiniteListPage } from "@modonty/shared/components/infinite-list";
-import type { ArchiveArticle } from "../../data/get-articles-archive";
+import type { ArchiveArticle } from "@/lib/articles/archive/get-articles-archive";
 
 interface MoreArticlesProps {
   /** Everything the visitor filtered by — every scrolled chunk must obey the same filters. */

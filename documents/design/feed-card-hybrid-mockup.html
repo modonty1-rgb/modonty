@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بطاقة الخلاصة — الحالي مقابل الهجين</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#151519; --card:#1f1f23; --border:#302f37; --fg:#fafafa; --muted:#94a3b8;
+    --primary:#3030ff; --accent:#00ffff; --accent-text:#19e0e0; --ring:#3030ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#0b0b0e;color:var(--fg);font-family:Tajawal,system-ui,sans-serif;padding:24px 16px}
+  h1{font-size:20px;margin:0 0 6px}
+  .lead{color:var(--muted);font-size:14px;margin:0 0 20px;max-width:900px;line-height:1.7}
+  .row{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start;justify-content:center}
+  .phone{width:390px;background:var(--bg);border:10px solid #2a2a31;border-radius:38px;padding:12px 12px 24px;position:relative}
+  .phone h2{font-size:13px;color:var(--muted);font-weight:500;margin:0 0 10px;text-align:center;letter-spacing:.02em}
+  .phone h2 b{color:var(--fg);font-weight:700}
+  .feed{display:flex;flex-direction:column;gap:16px}
+  /* ---- shared anatomy ---- */
+  .card{position:relative;overflow:hidden;border-radius:16px;border:1px solid var(--border);background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.2)}
+  .pad{padding:10px}
+  .pub{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);font-weight:500;line-height:16px}
+  .pub img{width:20px;height:20px;border-radius:999px;object-fit:cover;background:#2a2a31;flex:none}
+  .title{margin:0;font-weight:700;color:var(--fg);text-wrap:pretty;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+  .excerpt{margin:4px 0 0;color:var(--muted);display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+  .meta{margin-top:8px;display:flex;align-items:center;gap:12px;height:32px}
+  .meta .read{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:700;color:var(--accent-text)}
+  .meta .sp{flex:1}
+  .meta .date{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px}
+  .ic{width:20px;height:20px;display:inline-block;vertical-align:middle;color:var(--muted)}
+  .ic.dot::after{content:"";display:block;width:6px;height:6px;background:var(--accent);transform:rotate(45deg);margin:7px auto 0}
+  .save{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:var(--muted)}
+  /* ---- compact (current) ---- */
+  .compact .body{margin-top:8px;display:flex;align-items:flex-start;gap:10px}
+  .compact .text{min-width:0;flex:1}
+  .compact .thumb{width:124px;aspect-ratio:4/3;border-radius:8px;overflow:hidden;background:#2a2a31;flex:none}
+  .compact .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .v-cur .title{font-size:15px;line-height:1.4;-webkit-line-clamp:3}
+  .v-cur .excerpt{font-size:13px;line-height:1.5;-webkit-line-clamp:2}
+  /* ---- hybrid proposal ---- */
+  .v-hyb .compact .title{font-size:16px;line-height:1.4;-webkit-line-clamp:3}
+  .v-hyb .compact .excerpt{font-size:13px;line-height:1.5;-webkit-line-clamp:2}
+  .hero .cover{aspect-ratio:16/9;background:#2a2a31;overflow:hidden}
+  .hero .cover img{width:100%;height:100%;object-fit:cover;display:block}
+  .hero .title{font-size:18px;line-height:1.35;-webkit-line-clamp:2;margin-top:6px}
+  .hero .excerpt{font-size:14px;line-height:1.55;-webkit-line-clamp:2}
+  .hero .pub{margin-top:2px}
+  .tag{position:absolute;top:10px;inset-inline-start:10px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);color:#fff;font-size:11px;font-weight:700;padding:4px 8px;border-radius:999px}
+  /* ---- notes ---- */
+  .notes{max-width:900px;margin:28px auto 0;background:#111115;border:1px solid var(--border);border-radius:14px;padding:16px 18px;line-height:1.8;font-size:14px}
+  .notes h3{margin:0 0 8px;font-size:15px}
+  .notes ol{margin:0;padding-inline-start:20px}
+  .notes li{margin:4px 0}
+  .notes code{font-family:ui-monospace,monospace;font-size:12px;background:#1a1a20;padding:1px 5px;border-radius:4px}
+  .good{color:#5be49b} .bad{color:#ff7a90}
+</style>
+</head>
+<body>
+<h1>بطاقة الخلاصة على الجوّال — الحالي مقابل الهجين المقترح</h1>
+<p class="lead">بيانات حقيقية من الرئيسية المحلية (٢٣ أغسطس). اليسار = البطاقة كما هي الآن بعد تعديلات اليوم. اليمين = الهجين: بطاقة أولى «واجهة» بنمط المقال (صورة فوق · عنوان ١٨ · متن ١٤)، وبقيّة البطاقات مضغوطة بعنوان ١٦ بدل ١٥ وبلا «اقرأ المزيد».</p>
+
+<div class="row">
+
+<!-- ============ الحالي ============ -->
+<section class="phone v-cur" aria-label="الحالي">
+  <h2><b>الحالي</b> · عنوان ١٥ · ملخّص ١٣ · ٧ عناصر</h2>
+  <div class="feed">
+    <article class="card compact"><div class="pad">
+      <div class="pub"><img src="https://modonty-clients.b-cdn.net/logo/pain-core-clinic-دكتور-عمرو-سعيد/pain-core-97m2vvg8n.webp" alt=""><span>pain core clinic- دكتور عمرو سعيد</span></div>
+      <div class="body"><div class="text">
+        <h3 class="title">أحدث طرق علاج الانزلاق الغضروفي بدون جراحة في مصر د. عمرو سعيد Pain Core Clinic</h3>
+        <p class="excerpt">تعرف على أحدث طرق علاج الانزلاق الغضروفي بدون جراحة في مصر، ومتى يكون العلاج التداخلي أو كي وتبخير الغضروف هو الخيار المناسب، مع د. عمرو سعيد استشاري علاج الألم</p>
+      </div><div class="thumb"><img src="https://modonty-clients.b-cdn.net/post/pain-core-clinic-دكتور-عمرو-سعيد/webp-d9gg5rfg7.webp" alt=""></div></div>
+      <div class="meta"><span class="read">اقرأ المزيد <span class="ic">←</span></span><span class="sp"></span><span class="ic dot" title="نسخة صوتية"></span><span class="date"><span class="ic">▦</span>أغسطس ٢٠٢٦</span><span class="save">⌑</span></div>
+    </div></article>
+
+    <article class="card compact"><div class="pad">
+      <div class="pub"><img src="https://modonty-clients.b-cdn.net/logo/مؤسسة-فرسان-التعافي/img-92ylztmpv.webp" alt=""><span>مؤسسة فرسان التعافي</span></div>
+      <div class="body"><div class="text">
+        <h3 class="title">رحلتك نحو التعافي: دليلك المبسط لفهم الطب النفسي وطرق العلاج</h3>
+        <p class="excerpt">تعرف على أسرار الطب النفسي وطرق التعامل مع الاضطرابات النفسية المختلفة. دليلك الشامل لفهم خطط العلاج ومتى تزور الطبيب النفسي لاستعادة استقرارك.</p>
+      </div><div class="thumb"><img src="https://modonty-clients.b-cdn.net/post/مؤسسة-فرسان-التعافي/webp-ew6kf0ytb.webp" alt=""></div></div>
+      <div class="meta"><span class="read">اقرأ المزيد <span class="ic">←</span></span><span class="sp"></span><span class="ic dot"></span><span class="date"><span class="ic">▦</span>أغسطس ٢٠٢٦</span><span class="save">⌑</span></div>
+    </div></article>
+
+    <article class="card compact"><div class="pad">
+      <div class="pub"><img src="https://modonty-clients.b-cdn.net/logo/دكتور-علاء-الدين-بدوي/79a2e4e0-56a2-4b3f-b968-192401070952webp-yzytpcesi.webp" alt=""><span>دكتور/ علاء الدين بدوي</span></div>
+      <div class="body"><div class="text">
+        <h3 class="title">هل عملية تكميم المعدة تسبب الوفاة؟ إليك كل اللي تبي تعرفه عن تكميم المعدة</h3>
+        <p class="excerpt">هل تكميم المعدة يسبب الوفاة فعلًا؟ تعرف على النسب الحقيقية، أسباب المخاطر وأضرارها للنساء، ومميزاتها وعيوبها بإشراف د. علاء الدين بدوي.</p>
+      </div><div class="thumb"><img src="https://modonty-clients.b-cdn.net/post/دكتور-علاء-الدين-بدوي/دكتور-علاء-بدوي-استشاري-جراحة-المناظير-والسمنة-بالإسكندرية-والقاهرة-للسياحة-العل-73372a0ef4.webp" alt=""></div></div>
+      <div class="meta"><span class="read">اقرأ المزيد <span class="ic">←</span></span><span class="sp"></span><span class="ic dot"></span><span class="date"><span class="ic">▦</span>أغسطس ٢٠٢٦</span><span class="save">⌑</span></div>
+    </div></article>
+
+    <article class="card compact"><div class="pad">
+      <div class="pub"><img src="https://modonty-clients.b-cdn.net/general/مدونتي/img-5204raj05.png" alt=""><span>مدونتي</span></div>
+      <div class="body"><div class="text">
+        <h3 class="title">دليل التحقق من السجل التجاري الشامل للاستعلام عن بيانات المنشآت</h3>
+        <p class="excerpt">تعرّف إلى طريقة التحقق من السجل التجاري في السعودية، وخطوات الاستعلام عن بيانات المنشآت وحالة السجل، والفرق بين الاستعلام والمستخرج التجاري.</p>
+      </div><div class="thumb"><img src="https://modonty-clients.b-cdn.net/post/مدونتي/دليل-التحقق-من-السجل-التجاري-الشامل-للاستعلام-عن-بيانات-المنشآت-b1b2d5edd2.webp" alt=""></div></div>
+      <div class="meta"><span class="read">اقرأ المزيد <span class="ic">←</span></span><span class="sp"></span><span class="ic dot"></span><span class="date"><span class="ic">▦</span>أغسطس ٢٠٢٦</span><span class="save">⌑</span></div>
+    </div></article>
+  </div>
+</section>
+
+<!-- ============ الهجين ============ -->
+<section class="phone v-hyb" aria-label="الهجين المقترح">
+  <h2><b>الهجين المقترح</b> · واجهة + مضغوط ١٦ · ٥ عناصر</h2>
+  <div class="feed">
+    <!-- البطاقة الأولى: واجهة بنمط المقال -->
+    <article class="card hero">
+      <div class="cover"><img src="https://modonty-clients.b-cdn.net/post/pain-core-clinic-دكتور-عمرو-سعيد/webp-d9gg5rfg7.webp" alt=""><span class="tag">الأحدث</span></div>
+      <div class="pad">
+        <div class="pub"><img src="https://modonty-clients.b-cdn.net/logo/pain-core-clinic-دكتور-عمرو-سعيد/pain-core-97m2vvg8n.webp" alt=""><span>pain core clinic- دكتور عمرو سعيد</span></div>
+        <h3 class="title">أحدث طرق علاج الانزلاق الغضروفي بدون جراحة في مصر د. عمرو سعيد Pain Core Clinic</h3>
+        <p class="excerpt">تعرف على أحدث طرق علاج الانزلاق الغضروفي بدون جراحة في مصر، ومتى يكون العلاج التداخلي أو كي وتبخير الغضروف هو الخيار المناسب، مع د. عمرو سعيد استشاري علاج الألم</p>
+        <div class="meta"><span class="ic dot" title="نسخة صوتية"></span><span class="date"><span class="ic">▦</span>أغسطس ٢٠٢٦</span><span class="sp"></span><span class="save">⌑</span></div>
+      </div>
+    </article>
+
+    <!-- بقيّة البطاقات: مضغوطة ١٦ -->
+    <article class="card compact"><div class="pad">
+      <div class="pub"><img src="https://modonty-clients.b-cdn.net/logo/مؤسسة-فرسان-التعافي/img-92ylztmpv.webp" alt=""><span>مؤسسة فرسان التعافي</span></div>
+      <div class="body"><div class="text">
+        <h3 class="title">رحلتك نحو التعافي: دليلك المبسط لفهم الطب النفسي وطرق العلاج</h3>
+        <p class="excerpt">تعرف على أسرار الطب النفسي وطرق التعامل مع الاضطرابات النفسية المختلفة. دليلك الشامل لفهم خطط العلاج ومتى تزور الطبيب النفسي لاستعادة استقرارك.</p>
+      </div><div class="thumb"><img src="https://modonty-clients.b-cdn.net/post/مؤسسة-فرسان-التعافي/webp-ew6kf0ytb.webp" alt=""></div></div>
+      <div class="meta"><span class="ic dot"></span><span class="date"><span class="ic">▦</span>أغسطس ٢٠٢٦</span><span class="sp"></span><span class="save">⌑</span></div>
+    </div></article>
+
+    <article class="card compact"><div class="pad">
+      <div class="pub"><img src="https://modonty-clients.b-cdn.net/logo/دكتور-علاء-الدين-بدوي/79a2e4e0-56a2-4b3f-b968-192401070952webp-yzytpcesi.webp" alt=""><span>دكتور/ علاء الدين بدوي</span></div>
+      <div class="body"><div class="text">
+        <h3 class="title">هل عملية تكميم المعدة تسبب الوفاة؟ إليك كل اللي تبي تعرفه عن تكميم المعدة</h3>
+        <p class="excerpt">هل تكميم المعدة يسبب الوفاة فعلًا؟ تعرف على النسب الحقيقية، أسباب المخاطر وأضرارها للنساء، ومميزاتها وعيوبها بإشراف د. علاء الدين بدوي.</p>
+      </div><div class="thumb"><img src="https://modonty-clients.b-cdn.net/post/دكتور-علاء-الدين-بدوي/دكتور-علاء-بدوي-استشاري-جراحة-المناظير-والسمنة-بالإسكندرية-والقاهرة-للسياحة-العل-73372a0ef4.webp" alt=""></div></div>
+      <div class="meta"><span class="ic dot"></span><span class="date"><span class="ic">▦</span>أغسطس ٢٠٢٦</span><span class="sp"></span><span class="save">⌑</span></div>
+    </div></article>
+
+    <article class="card compact"><div class="pad">
+      <div class="pub"><img src="https://modonty-clients.b-cdn.net/general/مدونتي/img-5204raj05.png" alt=""><span>مدونتي</span></div>
+      <div class="body"><div class="text">
+        <h3 class="title">دليل التحقق من السجل التجاري الشامل للاستعلام عن بيانات المنشآت</h3>
+        <p class="excerpt">تعرّف إلى طريقة التحقق من السجل التجاري في السعودية، وخطوات الاستعلام عن بيانات المنشآت وحالة السجل، والفرق بين الاستعلام والمستخرج التجاري.</p>
+      </div><div class="thumb"><img src="https://modonty-clients.b-cdn.net/post/مدونتي/دليل-التحقق-من-السجل-التجاري-الشامل-للاستعلام-عن-بيانات-المنشآت-b1b2d5edd2.webp" alt=""></div></div>
+      <div class="meta"><span class="ic dot"></span><span class="date"><span class="ic">▦</span>أغسطس ٢٠٢٦</span><span class="sp"></span><span class="save">⌑</span></div>
+    </div></article>
+  </div>
+</section>
+
+</div>
+
+<div class="notes">
+  <h3>التوصية</h3>
+  <ol>
+    <li><b>البطاقة الأولى فقط «واجهة»</b> بنمط المقال: صورة ١٦:٩ فوق · عنوان ١٨/1.35 سطران · متن ١٤ سطران · شارة «الأحدث». تُعطي الخلاصة مرساة بصرية وتعرض أفضل صورة، وتكلّف شاشة واحدة لا كل شاشة. <span class="bad">الخسارة:</span> بطاقة واحدة أقلّ في أول شاشة.</li>
+    <li><b>بقيّة البطاقات مضغوطة</b> (صورة ٤:٣ بجانب العنوان — نمط القوائم) لكن بعنوان <b>١٦</b> بدل ١٥ وملخّص ١٣ وتاريخ ١٢ — يقترب من أرضية المقال (١٤ للمتن) بلا خسارة كثافة (~٤ بطاقات/شاشة تبقى).</li>
+    <li><b>حذف «اقرأ المزيد»</b>: البطاقة كلها رابط أصلاً، والنصّ يقرأه الزائر زرّاً وهو ليس كذلك (ليس رابطاً حتى لقارئ الشاشة). ينزل عدد العناصر من ٧ إلى ٥ — أقرب لتجرّد المقال.</li>
+    <li><b>ما لا أنصح به من المقال:</b> ارتفاع ثابت (يهدر فراغاً في عمود واحد) · عنوان ٢٤ (كلمتان في السطر بجانب صورة) · زرّان (ضجيج في خلاصة).</li>
+    <li>صفر تغيير على الديسكتوب — كل هذا داخل <code>MobilePostCard</code> + شرط <code>index === 0</code> للواجهة.</li>
+  </ol>
+</div>
+</body>
+</html>
