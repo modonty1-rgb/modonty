@@ -9,10 +9,10 @@ import {
   ChevronRight,
   ArrowLeft,
   Images,
-  Building2,
   AlertTriangle,
   CheckCircle2,
 } from "lucide-react";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -135,7 +135,7 @@ export function SeoGroupsTable({ groups }: { groups: SeoGroupSummary[] }) {
                       {g.isModonty ? (
                         <Images className="h-3.5 w-3.5 shrink-0 text-primary" />
                       ) : (
-                        <Building2 className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                        <ModontyPartnerMark className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                       )}
                       <span className="truncate font-medium" title={g.name}>
                         {g.name}

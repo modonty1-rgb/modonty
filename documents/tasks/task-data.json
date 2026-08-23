@@ -240,14 +240,13 @@
    "app": [
     "modonty"
    ],
-   "tab": "now",
+   "tab": "done",
    "sev": "idea",
    "who": "k",
    "date": "٢٠ أغسطس ٢٠٢٦",
-   "t": "النافذة المشتركة تلتصق بحافّتي الجوّال بزوايا حادّة",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> shared/components/ui/dialog.tsx:41 still `w-full … sm:rounded-lg`; fixing at source touches admin+console — left for Khalid's order.<br><b>المقيس (٣٩٠×٨٤٤، ٢٠ أغسطس):</b> <code>DialogContent</code> في <code>shared/components/ui/dialog.tsx</code> فيه <code>w-full</code> و<code>sm:rounded-lg</code> — أي أن التدوير يبدأ من <code>sm</code> فما فوق. فعلى الجوّال النافذة <code>[0, 296, 390, 250]</code>: بعرض الشاشة كاملاً، ملتصقة بالحافّتين، بزوايا حادّة — تُقرأ لوحاً مكسوراً لا بطاقة.<br><b>ما عولج الآن:</b> نافذتا المقال (<code>AuthPrompt</code> و<code>CommentFormDialog</code>) أخذتا <code>w-[calc(100%-2rem)] rounded-xl</code> ⇒ صارت <code>[16, 296, 358, 250]</code> بهامش ١٦ وتدوير ١٢.<br><b>الباقي لقرارك:</b> العلّة في المكوّن المشترك نفسه، فكل نافذة أخرى في مدونتي ما زالت لوحاً على الجوّال. إصلاحها من المصدر يمسّ الأدمن والكونسول أيضاً — لذلك لم أفعله بلا أمرك.",
-   "ref": "بند DIALOG-MOBILE",
-   "ease": 2
+   "t": "النوافذ المنبثقة على الجوّال — أُقفلت بإصلاح من المصدر",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بأمر خالد «fix all» + فحصي الحيّ.</b><br><b>المشكلة مقيسة:</b> النافذة على ٣٩٠ كانت <code>{ left: 0, width: 390, rightGap: 0, radius: \"0px\" }</code> — ملزوقة بالحافّتين وزواياها حادّة، تُقرأ شريطاً مقطوعاً لا بطاقة.<br><b>الإصلاح — كلمتان في <code>shared/components/ui/dialog.tsx</code>:</b> <code>w-full</code> ← <code>w-[calc(100%-2rem)]</code> و<code>sm:rounded-lg</code> ← <code>rounded-lg</code>. تصلح <b>٧١ نافذة</b> دفعةً واحدة (مدونتي ٧ · الأدمن ٥٩ · الكونسول ٥).<br><b>الدليل بعد الإصلاح:</b><br><code>modonty390: { left: 16, width: 358, rightGap: 16, radius: \"8px\" }</code> ✅<br><code>modonty1280: { width: 448, radius: \"8px\" }</code> ← بلا تغيير (النافذة لها <code>sm:max-w-md</code>)<br><b>لماذا الديسكتوب لا يتحرّك — حسابياً لا ظنّاً:</b> النافذة <code>fixed</code> فعرضها <code>min(الشاشة − 32, max-w)</code>. مع <code>max-w-lg</code> الافتراضي (٥١٢) التغيير يبدأ أثره تحت <b>٥٤٤</b> بكسل فقط؛ عند ١٢٨٠ العرض يبقى ٥١٢ حرفياً. والتدوير: <code>sm:</code> يبدأ من ٦٤٠ فما فوقها الصيغتان متطابقتان. تجاوزات العرض الخمسة في الأدمن كلّها <code>w-[95vw]</code> ويبقيها tailwind-merge، وتجاوزات التدوير صفر.<br><b>لقطتان:</b> <code>.playwright-mcp/dialog-mobile-broken.png</code> قبل · <code>dialog-mobile-fixed.png</code> بعد.<br><b>مذكور لا مُسكَت عنه:</b> ① <code>sheet.tsx</code> (الأدراج) ملتصقة بالحافّة <b>عمداً</b> وهذا صحيح — لم تُمسّ. ② <code>account-settings.tsx:156</code> فيها <code>mr-2</code> — مخالفة RTL حقيقية خارج نطاق البند، تستحقّ بنداً. ③ نوافذ الأدمن على ١٢٨٠ لم أفتح واحدة منها بيدي (الحساب الحيّ يغطّيها، والفتح اليدوي تعثّر على أزرار غير ظاهرة) — <b>مؤشّر قويّ لا قياس مباشر</b>.",
+   "ref": "بند DIALOG-MOBILE"
   },
   {
    "id": "BUILD-SCALE",
@@ -313,14 +312,13 @@
    "app": [
     "modonty"
    ],
-   "tab": "now",
+   "tab": "done",
    "sev": "normal",
-   "who": "k",
+   "who": "c",
    "date": "١٩ أغسطس ٢٠٢٦",
-   "t": "زرّان أزرقان «احجز الآن» في شاشة واحدة عند نهاية المقال",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Both blue \"احجز الآن\" CTAs still by Khalid's own placement; card asks him which stays solid.<br><b>متحقَّق ١٩ أغسطس بقياس حيّ</b> (قراءة <code>getBoundingClientRect</code> لكل عنصر خلفيته <code>rgb(48,48,255)</code>): عند نهاية المقال يظهر الزرّان معاً على الشاشة —<br><code>bookingCta[0] = { pageY: 14798, w: 739 }</code> ← بطاقة الشريك الكاملة أسفل المقال<br><code>bookingCta[1] = { pageY: 15633, w: 133 }</code> ← بطاقة الشريك في الريل (لاصقة، فتظهر دائماً)<br><b>وهذا يخالف قاعدة Carbon</b> «Primary buttons should only appear once per screen». نفس الفعل مكرَّر في موضعين، وكلا الموضعين بقرارك أنت.<br><b>القرار المطلوب:</b> أيّهما يبقى صلباً؟ اقتراحي: زرّ الريل يصير مُفرَّغاً (إطار أزرق بلا تعبئة) لأنه تذكير دائم منخفض الالتزام، ويبقى الصلب لبطاقة النهاية حيث لحظة القرار.",
-   "ref": "بند CTA-DUP",
-   "ease": 1
+   "t": "زرّ أزرق صلب واحد عند نهاية المقال — أُقفل بقياس حيّ",
+   "d": "<b>أُقفل ٢٤ أغسطس ٢٠٢٦ بعد فحصي الحيّ (لا على تقرير الوكيل).</b> زرّ الريل صار مُفرَّغاً: <code>PartnerStrip.tsx:84</code> — <code>border-link bg-transparent text-link min-h-11</code>. بطاقة النهاية بقيت صلبة، و<code>booking-cta-link.tsx</code> المشترك لم يُلمس (يخدم سبعة مواضع).<br><b>الدليل الخام — قياس ١٢٨٠×٩٠٠ في نفس الشاشة التي تظهر فيها البطاقتان:</b> <code>solidCount: 1</code> · الصلب <code>bg rgb(48,48,255) · h 44 · viewportY 456</code> · المُفرَّغ <code>bg rgba(0,0,0,0) · border rgb(112,112,255) · h 44 · viewportY 175</code>. قبل الإصلاح كانا صلبين معاً (<code>pageY 14798</code> و<code>15633</code>). لقطة: <code>.playwright-mcp/ctadup-1280-verified.png</code>.<br><b>اللون:</b> <code>--link</code> لا <code>--primary</code> — الأخير يقيس ٣٫٥:١ كنصّ و٢٫٧٧:١ كحدّ في الداكن (<code>globals.css</code>)، و<code>--link</code> يبلغ ٥٫١:١.<br><b>باقٍ لم يُلمس (مذكور لا مُسكَت عنه):</b> فرع <code>cta.mode === LINK</code> («تسوّق الآن») في <code>PartnerStrip.tsx:106</code> ما زال صلباً — لا يظهر مع فرع FORM فلا تعارض اليوم، لكنه يستحق نفس المعالجة لو ظهر مع بطاقة نهاية صلبة.",
+   "ref": "بند CTA-DUP"
   },
   {
    "id": "STATIC2",
@@ -435,24 +433,10 @@
    "sev": "normal",
    "who": "k",
    "date": "٢١ أغسطس ٢٠٢٦",
-   "t": "ملف القارئ /users/profile — لا يوجد تخطيط جوّال أصلاً",
-   "d": "<b>أُقفل ٢٣ أغسطس ٢٠٢٦ — موكب معتمد ثم بناء مطابق ثم تست حي (٣٩٠ و١٢٨٠، حساب testreels):</b> الرأس: الاسم أولاً والبريد سطر خافت وزرّ إعدادات ٤٤×٤٤؛ الاسم الناقص صار «أهلاً بك 👋» + «أكمل ملفك» → الإعدادات (كان «مستخدم / غير محدد»). التبويبات الستة رقائق سكرول أفقي كلها ٤٤px (كانت غريد ٣×٢). الأرقام ستّ بطاقات ٩٤×٦٤ بأرقام عربية (Intl ar-SA) — أُضيف عدّاد الحجوزات لـprofile-stats — بدل صفّ أهدافه ٣٨px. كل الأرقام صفر → بطاقة «رحلتك تبدأ بمقال واحد» + زرّ «تصفّح المقالات» ١٤٢×٤٤ (مُثبت حيّاً بإزالة الحفظ الوحيد ثم إرجاعه). النشاط الفاضي: «ما فيه نشاط لسه…» + «اقرأ أول مقال» ١٢٣×٤٤ → /articles. صندوقا الاسم/البريد وسطر الانضمام السفلي مخفيون على الجوّال (التاريخ صار في الرأس). بوّابة ١٢٨٠: كل عناصر الديسكتوب ظاهرة كما كانت والإضافات الست مخفية كلها، صفر أخطاء كونسول، صفر سكرول أفقي. الملفات: page.tsx · profile-tabs.tsx · activity-feed.tsx · profile-stats.ts. اللقطات: .playwright-mcp/profilemob-390-{active,zero,final}.png. الأبناء الستة بند لاحق.",
-   "ref": "بند PROFILEMOB"
-  },
-  {
-   "id": "I18NAUDIOSTORY",
-   "b": "projects",
-   "app": [
-    "modonty"
-   ],
-   "tab": "next",
-   "sev": "normal",
-   "who": "k",
-   "date": "٢٢ أغسطس ٢٠٢٦",
-   "t": "نقل نصوص /story إلى messages/ar.json — نصف /audio أُنجز",
-   "d": "<b>نصف /audio أُقفل ٢٣ أغسطس ٢٠٢٦:</b> نطاق <code>audio</code> أُضيف إلى <code>ar.json</code> (١١ نطاقاً الآن) — العنوان والمقدّمة والتبويبات وعمود المقالات في <code>page.tsx</code> (سيرفر)، و<code>QuranPlayer</code> (٣٠ مفتاحاً) و<code>ListenQueue</code> (١٩ مفتاحاً) صارا يستقبلان <code>labels</code> بروبس — صفر استيراد للملف في كلاينت. تحقّق حيّ ٣٩٠×٨٤٤ و١٢٨٠: كل النصوص ترسم من الملف، الجملة المركّبة «٤ مقالات · ساعتان و١٣ دقيقة» صحّت، صفر أخطاء كونسول، لا سكرول أفقي.<br><b>الباقي — /story وحدها (خالد ٢٣ أغسطس: «long and complext now not urgent»):</b> ~٤٠ نصّاً داخل <code>SalesPitchPage</code> (كلاينت)، والسلسلة ثلاث طبقات <code>page.tsx → StoryClientLoader → SalesPitchPage</code> — تُقرأ في السيرفر وتُمرَّر بروبس عبر الطبقتين.<br><b>خارج النطاق:</b> ما يكتبه الشريك أو المحرّر يبقى في القاعدة، وأسماء السور والقرّاء تبقى في <code>data/</code> — بيانات لا نصوص واجهة.<br><b>بعد التنفيذ:</b> قياس ٣٩٠ و١٢٨٠ من جديد.",
-   "ref": "بند I18NAUDIOSTORY",
-   "ease": 3
+   "t": "ملف القارئ /users/profile — الصفحة الأمّ بُنيت، الأبناء الستة باقون",
+   "d": "<b>الصفحة الأمّ شُحنت في <code>736ae1f</code> (٢٣ أغسطس) — مطابقة للموكب المعتمد</b> (<code>documents/tasks/PROFILEMOB-mockup.html</code>): الرأس صار الاسم أولاً والبريد سطر خافت + «انضم في» وزرّ إعدادات ٤٤ · صندوقا الاسم/البريد المكرّران يختفيان على الجوّال · التبويبات الستة رقائق سكرول أفقي ٤٤ بدل غريد ٣×٢ · الأرقام بطاقات ٣×٢ (أُضيف <code>bookingsCount</code> في <code>profile-stats.ts</code> ليكتمل الستّة) بدل صفّ أهدافه ٣٨ · حساب بلا نشاط يرى بطاقة دعوة وزرّ «تصفّح المقالات» بدل ستّة أصفار · «لا يوجد نشاط» صار جملة أدفأ بزرّ «اقرأ أول مقال» · الاسم الناقص صار «أهلاً بك» + «أكمل ملفك».<br><b>المتحقَّق (خام، ١٢٨٠):</b> إضافات الجوّال كلها مخفيّة (<code>gear/chips/cards/completeLink = hidden</code>) والأصول الديسكتوب كلها ظاهرة (<code>gridTabs · nameBox · emailBox · statsRow = visible</code>)، <code>hScroll:false</code> · <code>pageH:1100</code> — بوّابة «الجوّال لا يمسّ الديسكتوب» عابرة.<br><b>غير متحقَّق بعد:</b> قياس ٣٩٠×٨٤٤ الحيّ — الصفحة تتطلّب دخول قارئ وما عندي كلمة مروره (أعطني حساباً على <code>/users/login</code> وأقيسه في دقيقة).<br><b>الباقي:</b> الأبناء الستة (bookings · comments · favorites · liked · disliked · following) بنفس النمط.",
+   "ref": "بند PROFILEMOB",
+   "ease": 2
   },
   {
    "id": "MOBSWEEP",
@@ -460,15 +444,13 @@
    "app": [
     "modonty"
    ],
-   "tab": "next",
+   "tab": "done",
    "sev": "normal",
    "who": "k",
    "date": "٢٢ أغسطس ٢٠٢٦",
-   "t": "تمريرة فحص للثلاثين صفحة البسيطة على الجوّال",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> No evidence of the 30-page sweep in git log or SESSION-LOG (sessions 19–23 cover ~10 pages only); legal/help/news/profile routes untouched.<br><b>نُقل من لوحة الجوّال ٢٢ أغسطس.</b> ثلاثون صفحة صفر عرض ثابت وصفر هيكل أعمدة — نصّ أو نموذج. خطرها الأقل، لكنها تُفحص.<br><b>ما يُفحص في كلٍّ منها:</b> مقاس اللمس ٤٤ بكسل · تسمية الحقول · لوحة المفاتيح لا تغطّي زرّ الإرسال · صفر تمرير أفقي.<br><b>الثلاثون بمساراتها (نُقلت هنا بالكامل ٢٢ أغسطس — لا مرجع خارجي):</b><br><b>الحساب والدخول (٦):</b> <code>/users/login</code> · <code>/users/register</code> · <code>/users/forgot-password</code> · <code>/users/reset-password</code> · <code>/users/verify-email</code> · <code>/users/notifications</code><br><b>ملف القارئ (٦):</b> <code>/profile/bookings</code> · <code>/profile/comments</code> · <code>/profile/favorites</code> · <code>/profile/liked</code> · <code>/profile/disliked</code> · <code>/profile/following</code> — تتبع بند <code>PROFILEMOB</code><br><b>قانونية (٦):</b> <code>/legal</code> · <code>/legal/privacy-policy</code> · <code>/legal/cookie-policy</code> · <code>/legal/copyright-policy</code> · <code>/legal/user-agreement</code> · <code>/terms</code><br><b>مساعدة وتواصل (٤):</b> <code>/help</code> · <code>/help/faq</code> · <code>/help/feedback</code> · <code>/contact</code><br><b>تعريفية (٤):</b> <code>/about</code> · <code>/team</code> · <code>/trust</code> · <code>/analytics</code><br><b>نشرة واشتراك (٣):</b> <code>/news</code> · <code>/news/subscribe</code> · <code>/subscribe</code><br><b>ترقيم الرئيسية (١):</b> <code>/page/[pageNumber]</code> — غلاف نحيف (٥٥ سطراً) يعيد استعمال مكوّنات الرئيسية.<br><b>لماذا تمريرة واحدة:</b> الأنماط كلها صارت مجرَّبة على عشر صفحات، فما بقي تطبيق لا اجتهاد.",
-   "ref": "بند MOBSWEEP",
-   "ease": 1,
-   "go": true
+   "t": "تمريرة الجوّال على ٢٤ صفحة — أُقفلت بقياس ١٧ صفحة حيّاً",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بعد فحصي الحيّ (لا على تقرير الوكيل).</b> ٢٠ ملفاً عُدِّلت، كل كلاس مضاف بسابقة <code>max-md:</code>.<br><b>الدليل الخام — ١٧ صفحة مقيسة على ٣٩٠×٨٤٤:</b> <b>صفر</b> هدف لمس تحت ٤٤ في ١٥ صفحة · <b>صفر</b> حقل بلا تسمية في الـ١٧ · <b>صفر</b> تمرير أفقي في الـ١٧. الاستثناءان الوحيدان روابط نصّية داخل فقرة — <code>/trust</code> «المركز السعودي للأعمال» <code>h=20</code> و<code>/terms</code> بريد <code>h=19</code> — وهما معفيان صراحةً بـWCAG 2.5.8 (استثناء الروابط داخل النصّ)، فلا يُعدّان سقوطاً.<br><b>بوّابة «الجوّال لا يمسّ الديسكتوب» عابرة بالرقم:</b> نفس الملفّين — <code>/users/login</code> و<code>/contact</code> — الحقول <code>h=40</code> على ١٢٨٠ و<code>h=44</code> على ٣٩٠. الديسكتوب لم يتحرّك بكسلاً.<br><b>الجذر الباقي (يحتاج قرارك):</b> <code>shared/components/ui/input.tsx</code> ارتفاعه <code>h-10</code> ثابتاً، و<code>Button</code> افتراضيه <code>h-10</code> و<code>sm</code> = <code>h-9</code>. رُقِّع كل موضع نداء على حدة، فأي حقل جديد سيسقط مجدداً. الحلّ الدائم سطر واحد <code>max-md:h-11</code> في <code>input.tsx</code> — يمسّ الأدمن والكونسول معاً، لذلك لم يُنفَّذ.<br><b>مذكور لا مُسكَت عنه:</b> مخالفات RTL قائمة (<code>mr-2</code> في <code>login-form</code> و<code>ContactForm</code> و<code>subscribe-form</code> · <code>ml-2</code> في <code>faq-accordion</code> · <code>pr-10 pl-10</code> و<code>right-3</code> في <code>faq-search</code>) — أخطاء حقيقية خارج الفحوص الأربعة، وإصلاحها يمسّ الديسكتوب. وأبناء ملف القارئ الستة بقوا لبند PROFILEMOB.",
+   "ref": "بند MOBSWEEP"
   },
   {
    "id": "PARTNERMOB",
@@ -504,35 +486,32 @@
    "id": "MAILREV",
    "b": "projects",
    "app": [
-    "admin"
+    "admin",
+    "console",
+    "modonty",
+    "shared"
    ],
-   "tab": "now",
+   "tab": "done",
    "sev": "normal",
    "who": "k",
    "date": "٢٠ أغسطس ٢٠٢٦",
-   "t": "مراجعة كل قوالب الإيميلات بنفس معيار الفاتورة",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> Only invoice.ts passes the legal footer: baseTemplate 3rd arg used at invoice.ts:121; the other 9 templates call baseTemplate with 2 args.<br><b>طلب خالد (٢٠ أغسطس):</b> جرد كل تمبلتات <code>admin/lib/email/templates/</code> (المجلد متحقَّق — منه قُرئ <code>invoice.ts</code> و<code>base.ts</code> في جلسة ٢٠ أغسطس) وأي قوالب بريد في الكونسول أو مدونتي (تُحصر بالجرد).<br><b>معيار المراجعة:</b> البيانات القانونية في الذيل — <code>base.ts</code> صار يقبل بديلاً من القاعدة عبر البارامتر الثالث لـ<code>baseTemplate</code> (متحقَّق: أُضيف وجُرّب بالرندر الحي ٢٠ أغسطس)، يُؤكَّد أن كل قالب يستفيد · اللهجة بشرية · التواريخ غير مقلوبة في RTL · الفوتر موحّد.",
-   "ref": "بند MAILREV",
-   "ease": 1,
-   "go": true
+   "t": "قوالب الإيميلات: هيدر وفوتر مشتركان في shared + مراجعة الكل بمعيار الفاتورة",
+   "d": "<b>أُقفل ٢٤ أغسطس ٢٠٢٦.</b> <b>الهيدر والفوتر مكوّنان مستقلّان</b> (طلب خالد ٢٤ أغسطس — «نقدر نستخدمهما في المستودع كله»): <code>parts/email-header.ts</code> → <code>emailHeader()</code> و<code>parts/email-footer.ts</code> → <code>await emailFooter()</code>، مُصدَّران من <code>@modonty/shared/lib/email</code> فأي تطبيق يبني هيكله الخاص بنفس الرأس والذيل. <code>baseTemplate</code> صار يركّبهما فقط.<br><b>الأساس المشترك</b> <code>shared/lib/email/</code>: <code>baseTemplate</code> واحد (async — يقرأ السجل القانوني من <code>Settings.org*</code> بنفسه عبر <code>getLegalFooterHtml()</code> بكاش ٥ دقائق، فيستحيل أن يسقطه أي مرسِل) + ذيل موحّد (سطر التواصل · روابط الموقع/الخصوصية · السجل) + الأجزاء ملف لكل واحدة. <b>التوحيد:</b> حُذفت نسخ <code>base.ts</code> الثلاث (أدمن · كونسول · مدونتي) والقوالب المكرّرة الستّ في الأدمن + <code>comment-reply</code> الميّت في مدونتي؛ القوالب المشتركة (ترحيب · تفعيل · كلمة المرور · النشرة · ردّ التعليق · ردّ الأسئلة) صارت في <code>shared/lib/email/templates/</code> — مدونتي والكونسول ترسل والأدمن يعاين من نفس الملف. الأدمن احتفظ بـ٤ (فاتورة · ترحيب العميل · مقال معلّق/منشور) ومدونتي بالحجز، كلها على الأساس المشترك. <b>المراجعة:</b> اللهجة بشرية في الـ١٦ («قام بإرسال»→«أرسل» · «إذا لم تقم»→«لو ما كنت أنت» · «تلقّينا طلباً»→«وصلنا طلب») · تاريخ الفاتورة <code>en-GB</code> داخل RTL → <code>ar-SA</code> · الإملاء الرسمي مُدَوَّنَتِي في الكل · تكرار «ريال ﷼» في رأس المال أُصلح. <b>الدليل:</b> tsc admin 0 · console 0 · modonty 0 (بعد مسح <code>.next</code> فاسد) · grep <code>function baseTemplate</code> خارج shared = صفر · معاينة الأدمن <code>/emails</code> للقوالب التسعة: الذيل يحمل سجل <code>4030512345</code> وموحّد <code>7001234567</code> (قيم dev، مطابقة لنموذج <code>/settings/business</code> حرفاً) · صفر تواريخ لاتينية · لقطات <code>.playwright-mcp/mailrev-*.png</code>. بعد فصل الهيدر والفوتر أُعيد القياس: الشعار في الهيدر والسجل في الفوتر حاضران في التسعة، و«ريال» مرّة واحدة لا مكرّرة.",
+   "ref": "بند MAILREV"
   },
   {
    "id": "INDMARK",
    "b": "projects",
    "app": [
-    "modonty",
-    "admin",
-    "console"
+    "modonty"
    ],
-   "tab": "now",
+   "tab": "done",
    "sev": "normal",
    "who": "k",
    "date": "٢١ أغسطس ٢٠٢٦",
-   "t": "تعميم علامة المجالات المعتمدة على كل التطبيق",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — جزئي:</b> Done: shared/components/icons/modonty-industries-mark.tsx used in IndustriesHeader.tsx + IndustryTile.tsx. Remaining: IconIndustry still in IndustriesCarousel.tsx:53, LiveStats.tsx:40, listing/entity-utils.ts:14, EntityCard.tsx:98 + admin/console.<br><b>طلب خالد (٢١ أغسطس):</b> العلامة الرسمية <code>shared/assets/brand/modonty-industries-mark.svg</code> (ثلاث بوابات حول ماسة مدوّنتي — اعتمدها ٢١ أغسطس) تحلّ محلّ أيقونة المصنع العامة <code>IconIndustry</code> في كل موضع يمثّل المجالات.<br><b>منجز:</b> المكوّن <code>shared/components/icons/modonty-industries-mark.tsx</code> أُنشئ على عقد الدمج في <code>shared/assets/brand/README.md</code> (Inline SVG · متغيّرا <code>--modonty-industries-body/accent</code> · currentColor احتياطاً) + رُكّب في مربع «المجالات» بألسنة الصفحة الرئيسية.<br><b>الباقي:</b> جرد كل استعمالات <code>IconIndustry</code> في مدونتي (رايل المجالات · التشيبس · القوائم · صفحة المجالات) ثم الأدمن والكونسول، والاستبدال موضعاً موضعاً بقياس حي — النسخة ثنائية اللون حسب العقد: البوابات <code>foreground</code> والماسة <code>accent</code>.",
-   "ref": "بند INDMARK",
-   "ease": 1,
-   "go": true
+   "t": "علامة المجالات معمّمة على مدونتي — جوّال وديسكتوب",
+   "d": "<b>أُقفل ٢٤ أغسطس ٢٠٢٦ — نطاق مدونتي وحدها بأمر خالد («on modonty only mobile and desktop»).</b> المواضع الأربعة الباقية استُبدلت بـ<code>ModontyIndustriesMark</code>: رايل المجالات في الرئيسية (<code>IndustriesCarousel.tsx</code> — بديل الصورة الغائبة) · إحصائيات «عن مدونتي» (<code>LiveStats.tsx</code>) · سجلّ أيقونات الكيانات (<code>listing/entity-utils.ts</code> — يغذّي كل بطاقة كيان نوعها industry) · شارة العدّ على بطاقة الكيان (<code>listing/EntityCard.tsx</code>).<br><b>الدليل الخام:</b> grep <code>IconIndustry</code> في مدونتي = <b>صفر</b>. قياس حيّ على ٣٩٠×٨٤٤ و١٢٨٠×٨٠٠ بفحص بصمة الـSVG (<code>industries-body/accent</code> مقابل <code>lucide-factory</code>): الرئيسية <code>1/0</code> · عن مدونتي <code>2/0</code> · المجالات <code>10/0</code> — <b>نفس الأرقام على المقاسين</b>، وصفر أيقونة مصنع في الثلاثة. تفصيل صفحة المجالات على الجوّال: لسان ٢٠ · ترويسة ٤٤ · ثماني بلاطات ٢٠. لقطات: <code>.playwright-mcp/indmark-390-industries.png</code> · <code>indmark-390-about.png</code> · <code>indmark-390-livestats.png</code> (العلامتان جنب بعض: M للشركاء والبوابات الثلاث للمجالات) · <code>indmark-1280-about.png</code>.<br><b>خارج النطاق بقرار خالد:</b> الأدمن والكونسول — وجردهما أصلاً <code>IconIndustry</code> صفر في كليهما (grep ٢٤ أغسطس)، فأي تعميم هناك يحتاج جرد <code>Building2/Factory</code> منفصلاً.",
+   "ref": "بند INDMARK"
   },
   {
    "id": "PARTMARK",
@@ -542,15 +521,13 @@
     "admin",
     "console"
    ],
-   "tab": "now",
+   "tab": "done",
    "sev": "normal",
    "who": "k",
    "date": "٢١ أغسطس ٢٠٢٦",
-   "t": "تعميم علامة الشريك المعتمدة على كل التطبيق",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — جزئي:</b> Done: modonty-partner-mark.tsx used in QuickLinks.tsx + clients PageLayout.tsx. Remaining: IconClients still at nav-config.ts:21, MobileMenu.tsx:202, FooterStats.tsx:112, not-found.tsx:45, ListenQueue.tsx:308, LiveStats.tsx:39, 4 profile pages.<br><b>طلب خالد (٢١ أغسطس):</b> علامة الشريك (حرف M والماسة فوقه — أملاها كوداً في الجلسة) تمثّل الشركاء بدل أيقونة المبنى العامة <code>IconClients</code> (<code>Building2</code> — متحقَّق: <code>shared/lib/icons.ts:28</code>).<br><b>منجز (متحقَّق بالرندر الحي ٢١ أغسطس):</b> المكوّن <code>shared/components/icons/modonty-partner-mark.tsx</code> على عقد الأيقونات (1em · currentColor · متغيّرا <code>--modonty-partner-body/accent</code> — نفس عقد <code>modonty-industries-mark.tsx</code>) + رُكّب في لسان «الشركاء» (<code>quick-links/QuickLinks.tsx</code>).<br><b>الباقي — مواضع <code>IconClients</code> المجرودة grep ٢١ أغسطس:</b> <code>nav-config.ts:19</code> · <code>MobileMenu.tsx:167</code> · <code>FooterStats.tsx:112</code> · <code>not-found.tsx:45</code> · <code>profile/liked:77</code> · <code>following:71</code> · <code>disliked:77</code> · <code>bookings:84</code> · <code>ListenQueue.tsx:306</code> · <code>LiveStats.tsx:1</code> — تُستبدل موضعاً موضعاً بقياس حي، ثم جرد الأدمن والكونسول.",
-   "ref": "بند PARTMARK",
-   "ease": 1,
-   "go": true
+   "t": "علامة الشريك معمّمة على مدونتي والأدمن — أُقفلت بقياس حيّ",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بعد فحصي الحيّ (لا على تقرير الوكيل).</b><br><b>مدونتي (أُنجز ٢٣ أغسطس):</b> ١٤ ملفاً · grep <code>IconClients</code> = صفر في الكود الحيّ · العلامة مقيسة على ٣٩٠ و١٢٨٠.<br><b>الأدمن (٢٤ أغسطس):</b> ١٦ موضعاً في ١٦ ملفاً استُبدلت بـ<code>ModontyPartnerMark</code> عبر <code>@modonty/shared/components/icons/modonty-partner-mark</code> — تنقّل «العملاء» · ترويسات صفحات الشركاء · نشاط <code>client_created</code> · زرّ «New Client» · بدائل شعار الشريك الغائب (٤ مواضع) · صفوف اسم الشريك في الوارد والسيو والمعارض · قسم «Associated Client».<br><b>مقيس حيّاً على <code>/inbox</code>:</b> <code>partnerMarks: 25</code> · <code>buildingIcons: 0</code>. لقطة: <code>.playwright-mcp/partmark-admin-inbox-verified.png</code>.<br><b>🔴 عطل كشفه فحصي وأصلحته:</b> الماسة كانت تُرسَم <code>rgb(30,41,59)</code> على خلفية <code>rgb(2,10,28)</code> — تباين <b>١٫٣:١</b>، أي غير مرئية. السبب: <code>--accent</code> في الأدمن <b>سطح</b> (<code>217.2 32.6% 17.5%</code>) لا لون ماركة كما في مدونتي. العلاج سطر واحد في <code>admin/app/globals.css</code> ضمن <code>:root</code>: <code>--modonty-partner-accent: hsl(var(--primary))</code> — يقرأه هذا المكوّن وحده فلا يمسّ أي لون آخر. <b>بعد الإصلاح:</b> الماسة <code>rgb(59,130,246)</code> بتباين <b>٥٫٣٧:١</b> (فوق ٣:١ المطلوبة لعنصر رسومي).<br><b>مواضع تُركت عمداً (١٣):</b> «Homepage» و«Business Info» (بيانات مودونتي نفسها) · القطاعات (<code>industries</code>) · أقسام نماذج البيانات · ICP العقارات (مبنى فعلاً) · سجلّ أيقونات لوسيد عام.<br><b>ثلاثة تنتظر كلمتك:</b> ① الكونسول صفر استبدال — موضعاه يقودان لصفحة «بيانات نشاطك» (نوع المنشأة · الكيان القانوني · السجل التجاري) وهذا من قائمة «لا تستبدل»؛ لو تقصد أن صاحب الكونسول هو الشريك نفسه فالموضعان ينقلبان. ② <code>admin/components/admin/sidebar.tsx:256</code> فيه <code>{ icon: Briefcase, label: \"Clients\" }</code> — ينطبق عليه معيارك لكنه خارج جرد <code>Building2</code>. ③ ملفّان ميتان لم يُلمسا: <code>client-health-overview.tsx</code> (صفر مستهلك) و<code>briefs/[clientId]/page.tsx:8</code> (استيراد يتيم سابق).",
+   "ref": "بند PARTMARK"
   },
   {
    "id": "MOB1",
@@ -602,14 +579,13 @@
    "app": [
     "modonty"
    ],
-   "tab": "now",
+   "tab": "done",
    "sev": "normal",
    "who": "k",
    "date": "١٩ أغسطس ٢٠٢٦",
-   "t": "صورة البطل ٤١٢ بكسل — قرار شكل",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Card states the function metric already passes; shrinking/cropping the 412px hero is Khalid's aesthetic call.<br><b>متحقَّق ١٩ أغسطس بقياس حيّ على <code>/articles/علاج-الانزلاق-الغضروفي-بدون-جراحة-في-مصر</code>:</b> بعد نقل صندوق «باختصار» فوق الصورة، الزائر يحصل على الجواب عند <b>y=431</b> — داخل أول شاشة. أول كلمة من المتن نفسه عند <b>1051</b> لأن الصورة بينهما (٤١٢ بكسل).<br><b>لم تُلمس عمداً:</b> قصّها يأكل من عمل الشريك — وهو بالضبط ما أُصلح في AR16 (<code>object-cover</code> كان يقطع «Dr. Amr S…»). وتصغيرها قرار شكل يخصّك.<br><b>المقياس الذي يهمّ — متى يصل الجواب — تحقّق.</b> البند مفتوح للشكل لا للوظيفة.",
-   "ref": "بند HERO1",
-   "ease": 1
+   "t": "صورة البطل ٤٣٩ ← ٣٦٠ على الديسكتوب بصفر قصّ — أُقفلت بقياس حيّ",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بعد فحصي الحيّ (لا على تقرير الوكيل).</b> خالد اعتمد التوصية.<br><b>الحلّ:</b> <code>FeaturedImage.tsx</code> — <code>md:max-w-[640px] md:mx-auto</code> على صندوق الصورة. <b>عرضاً لا ارتفاعاً</b>: النسبة <code>16/9</code> لم تُمسّ فالصورة لا تُقصّ، بخلاف <code>max-h</code> (كان يقصّ رأسياً) وتغيير النسبة (كان يقصّ جانبياً).<br><b>الدليل الخام:</b><br><code>desktop1280: { boxW: 640, boxH: <b>360</b>, natural: \"900x506\", boxRatio: 1.778, imgRatio: 1.779, cropPct: <b>0</b> }</code><br><code>mobile390: { boxW: 356, boxH: <b>200</b>, cropPct: 0.2 }</code> ← بلا تغيير، <code>md:</code> لا يُفعَّل تحت ٧٦٨<br><code>التوسيط داخل العمود: { parentW: 780, gapStart: 70, gapEnd: 70, centeredInParent: true }</code><br><b>المكسب:</b> ٧٩ بكسل أقلّ على الديسكتوب (٤٣٩ ← ٣٦٠) والمتن يقترب بنفس المقدار. صفر تغيير على الجوّال.<br><b>مذكور لا مُسكَت عنه:</b> <code>sizes=\"hero\"</code> صار أوسع من الحاجة (يصف عرض ٧٨٠ والصندوق ٦٤٠) — قد يُنزَّل عرض أكبر من اللازم. لم يُعدَّل لأنه معرَّف مركزياً ويمسّ صفحات أخرى؛ يستحقّ بنداً مستقلاً. و<code>preload</code> و<code>object-cover</code> و<code>aspect-video</code> و<code>fill</code> كما هي.",
+   "ref": "بند HERO1"
   },
   {
    "id": "WC-PROD",
@@ -3212,14 +3188,13 @@
    "app": [
     "modonty"
    ],
-   "tab": "open",
+   "tab": "now",
    "sev": "normal",
    "who": "k",
-   "t": "Refactor الواجهة الكامل لمودونتي",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — جزئي:</b> ①done: modonty/app/(site)/clients/page.tsx:43 filters coreClientId out of the partner list. ②③④ pending.<br><b>بنود «مدوّنتي ليس شريكاً» الأربعة</b> (نُقلت هنا نصّاً ٢٢ أغسطس، والملف حُذف). الأساس جاهز: <code>getCoreClientId()</code> و<code>isCoreClient(id)</code> في <code>dataLayer/lib/core-client.ts</code>.<br><br><b>١·</b> <code>/clients</code> — استثناء مدوّنتي من قائمة الشركاء (صفحتها تبقى مفتوحة — قرار مقفول).<br><b>٢·</b> صفحات التصنيف والوسم والصناعة — مدوّنتي لا تُعدّ ولا تُعرض «كشركة شريكة» في العدّادات وقوائم كروت الشركات (مقالاتها تظهر عادي).<br><b>٣·</b> الكارت المميّز — مقال مدوّنتي في الفيد الرئيسي بتصميم يميّزه عن مقالات العملاء.<br><b>٤·</b> تست حيّ: الرئيسية + الشركاء + صفحة تصنيف — مدوّنتي مميّزة لا مُدرَجة.<br><br><b>ونطاق الريفاكتور الكامل</b> كان فاضياً عمداً في الملف — يُبنى بريفه يوم ننطلق.",
+   "t": "مدوّنتي ليست شريكاً — أربعة بنود (③ ينتظر اعتمادك للموكب)",
+   "d": "<b>⏳ الموكب جاهز وينتظر اختيارك ٢٤ أغسطس ٢٠٢٦:</b> <code>documents/tasks/UX-modonty-card-mockup.html</code> — ثلاثة خيارات لكارت مقال مدوّنتي في الفيد، مبنيّة مطابقةً لـ<code>MobilePostCard.tsx</code> (عنوان ١٦ · مقتطف ١٣ · صورة ١٢٤ بنسبة ٤:٣ · صفّ سفلي ٣٢) ومعها كارت عميل قبلها وبعدها ليُقاس التمييز في سياقه. <b>الخيارات:</b> أ شريط ماركة · ب سطح ملوّن · ج وسم «من تحرير المنصّة». <b>توصيتي ج</b> — ب ينهار يوم تنشر مدوّنتي ثلاثة مقالات متتالية (ثلث الفيد ملوّن = ضجيج)، وأ يقول «مختلف» بلا ما يقول «ليش»؛ ج يجيب نصّاً وهذا جوهر البند. الارتفاع صفر تغيير في الثلاثة.<br><b>الحالة بالبنود الأربعة:</b> ① <b>منجَز</b> — <code>modonty/app/(site)/clients/page.tsx:43</code> يستثني <code>coreClientId</code> من قائمة الشركاء. ② مفتوح — صفحات التصنيف والوسم والصناعة: مدوّنتي لا تُعدّ ولا تُعرض كشركة شريكة في العدّادات وقوائم الكروت (مقالاتها تظهر عادي). ③ ينتظر اعتمادك للموكب. ④ تست حيّ بعدهما: الرئيسية + الشركاء + صفحة تصنيف.<br><b>قيد ملزِم:</b> المصدر الوحيد للتمييز <code>isCoreClient(post.clientId)</code> من <code>shared/lib/core-client.ts</code> — ممنوع مقارنة بالاسم أو بمعرّف مكتوب في الكود.<br><b>ملاحظة:</b> «نطاق الريفاكتور الكامل» كان فاضياً عمداً في الملف الأصلي — يُبنى بريفه يوم ننطلق فيه.",
    "ref": "مسار مستقل",
-   "ease": 1,
-   "go": true
+   "running": true
   },
   {
    "id": "34",

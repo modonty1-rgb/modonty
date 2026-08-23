@@ -39,7 +39,7 @@ export function TeamMemberCard({ member, aboveFold = false }: TeamMemberCardProp
 
         <a
           href={`mailto:${member.email}`}
-          className="mt-auto flex items-center gap-2 pt-4 text-sm text-foreground/75 transition-colors hover:text-primary focus-visible:outline-none focus-visible:text-primary"
+          className="mt-auto flex items-center gap-2 pt-4 text-sm text-foreground/75 transition-colors hover:text-primary focus-visible:outline-none focus-visible:text-primary max-md:min-h-11"
         >
           <IconEmail className="h-4 w-4 shrink-0 text-primary" aria-hidden />
           <span className="sr-only">{messages.team.contactLabel} </span>

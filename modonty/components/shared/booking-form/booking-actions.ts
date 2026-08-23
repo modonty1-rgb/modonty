@@ -290,7 +290,7 @@ export async function submitBookingRequest(
       recipientEmail = admin?.email ?? null;
     }
     if (recipientEmail) {
-      const mail = bookingNotificationEmail({
+      const mail = await bookingNotificationEmail({
         providerName: client.name,
         visitorName: name,
         phone,

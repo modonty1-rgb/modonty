@@ -81,7 +81,13 @@ export function PartnerStrip({ client, cta }: PartnerStripProps) {
             articleId={cta.articleId}
             source={cta.source}
             label={cta.label}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground ring-1 ring-inset ring-white/25 transition-opacity hover:opacity-90"
+            /* Outlined, not solid: the full card under the article carries the SAME solid blue
+               «احجز الآن», and this rail is sticky — so both were on screen together, two primary
+               buttons competing for one decision (Carbon: a primary button appears once per
+               screen). The solid one stays where the reader has finished and is deciding; this
+               one steps down to a standing reminder. `--link` rather than `--primary` for the
+               blue: as text/edge on dark, primary measures 3.5:1 and 2.77:1 — see globals.css. */
+            className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-md border border-link bg-transparent px-3 py-2.5 text-sm font-semibold text-link transition-colors hover:bg-primary/10"
           />
           <WhatsAppAction
             phone={client.phone}

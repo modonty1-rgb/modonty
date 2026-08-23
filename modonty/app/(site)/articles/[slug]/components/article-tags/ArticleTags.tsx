@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { IconClients, IconFolder, IconCategory, IconHash } from "@/lib/icons";
+import { IconFolder, IconCategory, IconHash } from "@/lib/icons";
+import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 
 interface ArticleTagsProps {
   client: {
@@ -25,7 +26,7 @@ export function ArticleTags({ client, category, tags }: ArticleTagsProps) {
     <div className="flex flex-wrap gap-2 mb-6">
       <Link href={`/clients/${client.slug}`}>
         <Badge variant="secondary" className="text-sm flex items-center gap-1.5">
-          <IconClients className="h-3.5 w-3.5" />
+          <ModontyPartnerMark className="h-3.5 w-3.5" />
           {client.name}
         </Badge>
       </Link>

@@ -31,5 +31,9 @@ export const getCorePublisherArticles = cache(async (): Promise<FeedPost[]> => {
     take: 4,
   });
 
-  return articles.map(mapHomeFeedArticle);
+  // `isCore` is left false on purpose: every article in THIS list is modonty's, so a badge
+  // that marks all of them marks none. The flag exists to single one out inside a mixed feed.
+  // Wrapped rather than passed by reference — bare `.map(fn)` hands the index to the second
+  // parameter, which is the `coreClientId` slot (caught by tsc, 24 Aug).
+  return articles.map((a) => mapHomeFeedArticle(a));
 });

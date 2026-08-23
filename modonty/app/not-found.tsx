@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { IconFileQuestion, IconHome, IconFolder, IconClients } from "@/lib/icons";
+import { IconFileQuestion, IconHome, IconFolder } from "@/lib/icons";
+import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { SiteShell } from "@/app/layout/components/SiteShell";
 
 /**
@@ -42,7 +43,7 @@ export default function GlobalNotFound() {
               </Link>
               <Link href="/clients">
                 <Button variant="ghost" className="gap-2">
-                  <IconClients className="h-4 w-4" />
+                  <ModontyPartnerMark className="h-4 w-4" />
                   الشركاء
                 </Button>
               </Link>

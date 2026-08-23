@@ -3,7 +3,8 @@ import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IconCalendar, IconClients } from "@/lib/icons";
+import { IconCalendar } from "@/lib/icons";
+import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
@@ -81,7 +82,7 @@ export default async function ProfileBookingsPage() {
                                 />
                               ) : (
                                 <div className="grid h-full place-items-center">
-                                  <IconClients className="h-6 w-6 text-muted-foreground" />
+                                  <ModontyPartnerMark className="h-6 w-6 text-muted-foreground" />
                                 </div>
                               )}
                             </div>

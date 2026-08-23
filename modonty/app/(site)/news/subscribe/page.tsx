@@ -22,7 +22,10 @@ export default function NewsSubscribePage() {
       <h1 className="text-3xl font-bold mb-6">اشتراك في أخبار مدونتي</h1>
       <p className="text-muted-foreground mb-8">
         احصل على آخر الأخبار والمقالات مباشرة في بريدك الإلكتروني.{" "}
-        <Link href="/news" className="text-primary underline underline-offset-2">
+        <Link
+          href="/news"
+          className="text-primary underline underline-offset-2 max-md:inline-flex max-md:min-h-11 max-md:items-center"
+        >
           عرض الأخبار
         </Link>
       </p>

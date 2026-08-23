@@ -46,7 +46,10 @@ function VerifyResult({ success, message }: { success: boolean; message: string 
         </div>
         <h1 className="text-xl font-semibold">{success ? "تم تفعيل حسابك!" : "تعذّر التفعيل"}</h1>
         <p className="text-muted-foreground text-sm">{message}</p>
-        <Link href="/users/login" className="inline-block text-primary hover:underline text-sm">
+        <Link
+          href="/users/login"
+          className="inline-block text-primary hover:underline text-sm max-md:inline-flex max-md:min-h-11 max-md:items-center max-md:px-3"
+        >
           تسجيل الدخول
         </Link>
       </div>

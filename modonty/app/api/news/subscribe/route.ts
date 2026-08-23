@@ -4,7 +4,7 @@ import type { ApiResponse } from "@/lib/types";
 import { getOrCreateSessionId, createConversion } from "@/lib/analytics/conversion-tracking";
 import { ConversionType } from "@prisma/client";
 import { sendEmail } from "@/lib/email/resend-client";
-import { newsletterWelcomeEmail } from "@/lib/email/templates/newsletter-welcome";
+import { newsletterWelcomeEmail } from "@modonty/shared/lib/email/templates/newsletter-welcome";
 import { sendAdminTelegram } from "@modonty/shared/lib/telegram/client";
 
 export async function POST(request: NextRequest) {
@@ -47,8 +47,9 @@ export async function POST(request: NextRequest) {
     sendAdminTelegram(`🔔 <b>مشترك جديد — نشرة مدونتي</b>\n📧 ${normalizedEmail}\n📅 ${now}`).catch(() => null);
 
     // Send welcome email — non-blocking, failure doesn't affect subscription
-    const welcomeEmail = newsletterWelcomeEmail({ email: normalizedEmail });
-    sendEmail({ to: normalizedEmail, ...welcomeEmail }).catch((err) =>
+    newsletterWelcomeEmail({ email: normalizedEmail })
+      .then((mail) => sendEmail({ to: normalizedEmail, ...mail }))
+      .catch((err) =>
       console.error("[news/subscribe] Welcome email failed:", err)
     );
 

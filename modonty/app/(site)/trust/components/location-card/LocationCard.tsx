@@ -59,7 +59,7 @@ export function LocationCard({ contact, map, legal }: LocationCardProps) {
             href={mapLinkUrl(map.lat, map.lng)}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary underline underline-offset-4 hover:opacity-80"
+            className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary underline underline-offset-4 hover:opacity-80 max-md:min-h-11"
           >
             افتح في خرائط جوجل
             <IconExternal className="h-3.5 w-3.5" />

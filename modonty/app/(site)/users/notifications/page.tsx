@@ -118,7 +118,7 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
                 <Link
                   key={t.value}
                   href={`/users/notifications?tab=${t.value}`}
-                  className={`px-3 py-2 text-sm font-medium transition-colors rounded-t-md ${
+                  className={`px-3 py-2 text-sm font-medium transition-colors rounded-t-md max-md:inline-flex max-md:min-h-11 max-md:items-center ${
                     tab === t.value
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -195,7 +195,7 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
                         label="Visit client from notification"
                         type="LINK"
                         clientId={client.id}
-                        className="font-medium text-primary underline hover:opacity-80 transition-opacity"
+                        className="font-medium text-primary underline hover:opacity-80 transition-opacity max-md:inline-flex max-md:min-h-11 max-md:items-center"
                       >
                         {client.name}
                       </CtaTrackedLink>
@@ -209,7 +209,7 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
                     <p className="text-sm text-muted-foreground mb-1">المقال</p>
                     <Link
                       href={`/articles/${faqReply.article.slug}`}
-                      className="text-sm text-primary underline hover:opacity-80 transition-opacity"
+                      className="text-sm text-primary underline hover:opacity-80 transition-opacity max-md:inline-flex max-md:min-h-11 max-md:items-center"
                     >
                       {faqReply.article.title}
                     </Link>
@@ -245,7 +245,7 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
                         label="Visit client from notification"
                         type="LINK"
                         clientId={client.id}
-                        className="font-medium text-primary underline hover:opacity-80 transition-opacity"
+                        className="font-medium text-primary underline hover:opacity-80 transition-opacity max-md:inline-flex max-md:min-h-11 max-md:items-center"
                       >
                         {client.name}
                       </CtaTrackedLink>

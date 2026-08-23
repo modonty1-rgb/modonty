@@ -21,6 +21,12 @@
     --muted-foreground: 0 0% 40%;    /* #666666 - LinkedIn's gray text */
     --accent: 0 0% 96%;
     --accent-foreground: 0 0% 0%;
+    /* The diamond in `ModontyPartnerMark`. Its own default is `hsl(var(--accent))`, which is
+       the brand teal on modonty — but here `--accent` is a SURFACE (a near-white / near-black
+       fill), so the diamond rendered invisible: measured 1.3:1 against the dark page on
+       24 Aug. Pointing it at `--primary` keeps the mark two-toned in both themes without
+       touching any other colour. Only this component reads the variable. */
+    --modonty-partner-accent: hsl(var(--primary));
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
     /* LinkedIn's subtle border color */

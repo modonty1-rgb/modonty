@@ -1,6 +1,7 @@
 'use client';
 
-import { CheckCircle2, AlertCircle, Building2 } from 'lucide-react';
+import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { ModontyPartnerMark } from '@modonty/shared/components/icons/modonty-partner-mark';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { mediaSrc } from '@modonty/shared/lib/media-src';
 
@@ -40,7 +41,7 @@ export function ClientLogoPreview({ client, size = 'md' }: ClientLogoPreviewProp
       <Avatar className={sizeClasses[size]}>
         {logoSrc ? <AvatarImage src={logoSrc} alt={client.name} /> : null}
         <AvatarFallback className="bg-primary/10 text-primary">
-          {initials || <Building2 className={iconSizes[size]} />}
+          {initials || <ModontyPartnerMark className={iconSizes[size]} />}
         </AvatarFallback>
       </Avatar>
 

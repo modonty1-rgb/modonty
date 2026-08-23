@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ComponentType } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/table";
 import {
   FileText,
-  Building2,
   FolderTree,
   Tag,
   Briefcase,
@@ -30,6 +29,7 @@ import {
   Share2,
   Megaphone,
 } from "lucide-react";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 import { exportArticlesToCSV } from "../../articles/actions/export-actions";
@@ -57,7 +57,7 @@ interface ExportConfig {
   id: ExportId;
   title: string;
   columns: string;
-  icon: typeof FileText;
+  icon: ComponentType<{ className?: string }>;
   countKey: keyof ExportCounts;
   group: string;
 }
@@ -85,7 +85,7 @@ const exportConfigs: ExportConfig[] = [
   { id: "tags", title: "Tags", columns: "Name, Article Count, Created Date", icon: Tag, countKey: "tags", group: "Content" },
   { id: "authors", title: "Authors", columns: "Name, Job Title, Email, Bio, LinkedIn, Twitter, Expertise, Experience, Verified, Articles", icon: User, countKey: "authors", group: "Content" },
   { id: "industries", title: "Industries", columns: "Name, Client Count, Created Date", icon: Briefcase, countKey: "industries", group: "Content" },
-  { id: "clients", title: "Clients", columns: "Name, Email, Phone, Website, Industry, Plan, Payment, Dates, Articles, City, CR, VAT", icon: Building2, countKey: "clients", group: "Clients & Audience" },
+  { id: "clients", title: "Clients", columns: "Name, Email, Phone, Website, Industry, Plan, Payment, Dates, Articles, City, CR, VAT", icon: ModontyPartnerMark, countKey: "clients", group: "Clients & Audience" },
   { id: "subscribers", title: "Client Subscribers", columns: "Name, Email, Client, Subscribed Status, Dates, Consent", icon: Mail, countKey: "subscribers", group: "Clients & Audience" },
   { id: "newsSubscribers", title: "Newsletter Subscribers", columns: "Name, Email, Subscribed Status, Dates, Consent", icon: Newspaper, countKey: "newsSubscribers", group: "Clients & Audience" },
   { id: "contactMessages", title: "Contact Messages", columns: "Name, Email, Subject, Message, Status, Client, Reply, Date", icon: MessageSquare, countKey: "contactMessages", group: "Clients & Audience" },

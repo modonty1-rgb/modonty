@@ -6,7 +6,7 @@ import { ArticleFAQStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { messages } from "@/lib/messages";
 import { sendEmail } from "@/lib/email/resend-client";
-import { faqReplyEmail } from "@/lib/email/templates/faq-reply";
+import { faqReplyEmail } from "@modonty/shared/lib/email/templates/faq-reply";
 
 export type PublishResult = { success: true } | { success: false; error: string };
 
@@ -72,16 +72,15 @@ export async function publishFaqAnswer(
       }
 
       const articleUrl = `https://modonty.com/articles/${faq.article.slug}`;
-      sendEmail({
-        to: faq.submittedByEmail,
-        ...faqReplyEmail({
-          userName: faq.submittedByName ?? faq.submittedByEmail,
-          question: faq.question,
-          answer: trimmed,
-          articleTitle: faq.article.title,
-          articleUrl,
-        }),
-      }).catch((err) => console.error("[publishFaqAnswer] reply email failed:", err));
+      faqReplyEmail({
+        userName: faq.submittedByName ?? faq.submittedByEmail,
+        question: faq.question,
+        answer: trimmed,
+        articleTitle: faq.article.title,
+        articleUrl,
+      })
+        .then((mail) => sendEmail({ to: faq.submittedByEmail!, ...mail }))
+        .catch((err) => console.error("[publishFaqAnswer] reply email failed:", err));
     }
 
     revalidatePath(`/articles/${faq.article.slug}`);

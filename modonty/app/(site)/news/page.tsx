@@ -67,7 +67,7 @@ export default async function NewsPage() {
               ))}
             </ul>
 
-            <Button asChild className="w-full sm:w-auto">
+            <Button asChild className="w-full sm:w-auto max-md:h-11">
               <Link href="/news/subscribe" className="inline-flex items-center gap-2">
                 اشترك في النشرة الآن
                 <IconForward className="h-4 w-4" />
@@ -90,7 +90,7 @@ export default async function NewsPage() {
                 <li key={a.id}>
                   <Link
                     href={`/articles/${a.slug}`}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1.5"
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1.5 max-md:min-h-11"
                   >
                     <span>{a.title}</span>
                     <IconForward className="h-3.5 w-3.5" />
@@ -100,7 +100,7 @@ export default async function NewsPage() {
             </ul>
             <Link
               href="/"
-              className="inline-block mt-4 text-sm text-primary font-medium hover:underline"
+              className="inline-block mt-4 text-sm text-primary font-medium hover:underline max-md:inline-flex max-md:min-h-11 max-md:items-center"
             >
               تصفح كل المقالات ←
             </Link>

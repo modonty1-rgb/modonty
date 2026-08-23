@@ -26,7 +26,10 @@ export default function ResetPasswordPage() {
             <CardDescription>هذا الرابط غير صحيح أو منتهي الصلاحية.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Link href="/users/forgot-password" className="text-primary text-sm hover:underline">
+            <Link
+              href="/users/forgot-password"
+              className="text-primary text-sm hover:underline max-md:inline-flex max-md:min-h-11 max-md:items-center max-md:px-3"
+            >
               طلب رابط جديد
             </Link>
           </CardContent>
@@ -87,6 +90,7 @@ export default function ResetPasswordPage() {
                 id="password"
                 name="password"
                 type="password"
+                className="max-md:h-11"
                 placeholder="••••••••"
                 minLength={8}
                 required

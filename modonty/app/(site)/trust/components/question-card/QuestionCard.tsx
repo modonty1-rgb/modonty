@@ -26,7 +26,7 @@ export function QuestionCard({ whatsappHref }: QuestionCardProps) {
               rel="noopener noreferrer"
               label="Trust Page CTA — تواصل واتساب"
               type="BUTTON"
-              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 max-md:min-h-11"
             >
               <IconMessage className="h-4 w-4" />
               تواصل عبر واتساب
@@ -34,7 +34,7 @@ export function QuestionCard({ whatsappHref }: QuestionCardProps) {
           ) : (
             <Link
               href="/contact"
-              className="rounded-md bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+              className="rounded-md bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 max-md:inline-flex max-md:min-h-11 max-md:items-center"
             >
               تواصل معنا
             </Link>
@@ -45,7 +45,7 @@ export function QuestionCard({ whatsappHref }: QuestionCardProps) {
             rel="noopener noreferrer"
             label="Trust Page CTA — شوف الباقات (جبر SEO)"
             type="BUTTON"
-            className="inline-flex items-center gap-1 rounded-md border border-primary px-6 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
+            className="inline-flex items-center gap-1 rounded-md border border-primary px-6 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10 max-md:min-h-11"
           >
             شوف الباقات <span aria-hidden="true">↗</span>
           </CtaTrackedLink>

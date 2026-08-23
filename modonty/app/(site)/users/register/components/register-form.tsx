@@ -142,6 +142,7 @@ export function RegisterForm() {
                 id="email"
                 type="email"
                 autoComplete="email"
+                className="max-md:h-11"
                 placeholder="example@email.com"
                 {...register("email")}
                 disabled={isSubmitting}
@@ -159,14 +160,14 @@ export function RegisterForm() {
                   type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
                   placeholder="٨ أحرف على الأقل"
-                  className="pe-10"
+                  className="pe-10 max-md:h-11 max-md:pe-12"
                   {...register("password")}
                   disabled={isSubmitting}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute inset-y-0 end-2 flex items-center text-muted-foreground hover:text-foreground"
+                  className="absolute inset-y-0 end-2 flex items-center text-muted-foreground hover:text-foreground max-md:end-0 max-md:w-11 max-md:justify-center"
                   aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
                 >
                   {showPassword ? <IconEyeOff className="h-5 w-5" /> : <IconViews className="h-5 w-5" />}
@@ -199,7 +200,10 @@ export function RegisterForm() {
 
           <div className="text-center text-sm">
             <span className="text-muted-foreground">لديك حساب بالفعل؟ </span>
-            <Link href="/users/login" className="text-primary hover:underline">
+            <Link
+              href="/users/login"
+              className="text-primary hover:underline max-md:inline-flex max-md:min-h-11 max-md:items-center max-md:px-2"
+            >
               تسجيل الدخول
             </Link>
           </div>

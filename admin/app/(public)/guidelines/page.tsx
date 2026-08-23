@@ -5,7 +5,6 @@ import {
   Image as ImageIcon,
   FileText,
   Pen,
-  Building2,
   Folder,
   BookOpen,
   ChevronLeft,
@@ -18,6 +17,7 @@ import {
   BarChart3,
   Swords,
 } from "lucide-react";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 import { ModontyIcon } from "@/components/admin/icons/modonty-icon";
 
 
@@ -149,7 +149,7 @@ const guidelineSections = [
     id: "clients",
     title: "Clients",
     description: "إعداد بيانات العملاء، الشعار، المعلومات التجارية، والربط مع المقالات",
-    icon: Building2,
+    icon: ModontyPartnerMark,
     href: "/guidelines/clients",
     color: "text-orange-500",
     borderColor: "border-orange-500/20",

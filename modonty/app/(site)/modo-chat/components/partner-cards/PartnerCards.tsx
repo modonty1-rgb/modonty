@@ -4,7 +4,7 @@ import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/Partner
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 import { Card } from "@/components/ui/card";
-import { IconCalendar, IconChevronLeft, IconClients, IconMapPin } from "@/lib/icons";
+import { IconCalendar, IconChevronLeft, IconMapPin } from "@/lib/icons";
 
 import { AskPartnerButton } from "../ask-partner-button/AskPartnerButton";
 

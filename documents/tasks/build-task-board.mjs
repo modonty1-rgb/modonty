@@ -79,6 +79,14 @@ h1{font-size:18px;margin:0 0 8px}
 .stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
 .stat{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--mut)}
 .stat b{color:var(--fg);font-size:15px;margin-inline-end:4px}
+/* مفتاح الألوان — أي لون يعني أي تطبيق */
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;font-size:12px}
+.lg{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;color:var(--mut)}
+.lg::before{content:"";width:9px;height:9px;border-radius:3px}
+.lg-modonty::before{background:var(--violet)}.lg-admin::before{background:var(--blue)}
+.lg-console::before{background:var(--cyan)}.lg-shared::before{background:var(--green)}
+.lg-none::before{background:var(--dim)}
+.lg-running::before{background:var(--red)}.lg-running{color:var(--red);border-color:var(--red)}
 .tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .tools input{flex:1;min-width:220px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:0 12px;font:inherit}
 .chip{height:34px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--mut);padding:0 12px;font:inherit;font-size:13px;cursor:pointer}
@@ -92,6 +100,23 @@ section.grp{margin:0 0 28px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .card[data-sev="critical"]{border-inline-start:4px solid var(--red)}.card[data-sev="high"]{border-inline-start:4px solid var(--amber)}
 .card[data-sev="normal"]{border-inline-start:4px solid var(--blue)}.card[data-sev="ok"],.card[data-sev="idea"]{border-inline-start:4px solid var(--line)}
+/* خلفية البطاقة حسب التطبيق — خالد يعرف نطاق البند من لونه قبل ما يقرأ (٢٤ أغسطس).
+   الترتيب مقصود: مدونتي آخر قاعدة فتغلب لو كان البند على أكثر من تطبيق، لأنها النطاق الحالي. */
+.card[data-apps~="shared"],.card[data-apps~="dataLayer"]{background:color-mix(in srgb,var(--green) 7%,var(--card))}
+.card[data-apps~="console"]{background:color-mix(in srgb,var(--cyan) 7%,var(--card))}
+.card[data-apps~="admin"]{background:color-mix(in srgb,var(--blue) 7%,var(--card))}
+.card[data-apps~="modonty"]{background:color-mix(in srgb,var(--violet) 9%,var(--card))}
+/* شريط لوني رفيع أعلى البطاقة — إشارة ثانية لمن لا يميّز الفروق الخفيفة في الخلفية */
+.card{position:relative}
+.card::before{content:"";position:absolute;inset-block-start:0;inset-inline:0;height:2px;background:var(--line)}
+.card[data-apps~="shared"]::before,.card[data-apps~="dataLayer"]::before{background:var(--green)}
+.card[data-apps~="console"]::before{background:var(--cyan)}
+.card[data-apps~="admin"]::before{background:var(--blue)}
+.card[data-apps~="modonty"]::before{background:var(--violet)}
+/* البند الجاري الآن: خلفية حمراء صريحة — خالد يلمحه من أول نظرة بلا قراءة (٢٤ أغسطس) */
+.card[data-running="1"]{background:color-mix(in srgb,var(--red) 16%,var(--card));border-color:var(--red);border-inline-start:4px solid var(--red);box-shadow:0 0 0 1px color-mix(in srgb,var(--red) 30%,transparent)}
+.card[data-running="1"] .id{background:var(--red);color:#fff;border-color:var(--red)}
+.tag.running{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
 .hd{display:flex;gap:8px;align-items:flex-start}
 .id{font:700 11px ui-monospace,monospace;color:var(--dim);background:var(--panel);border:1px solid var(--line);padding:2px 6px;border-radius:6px;white-space:nowrap;margin-top:3px}
 .copy{margin-inline-start:auto;flex:none;width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--mut);font-size:13px;cursor:pointer;line-height:1}
@@ -129,9 +154,10 @@ function cardHTML(t) {
     t.ease === 2 ? `<span class="tag ease-2">🤔 قرار قصير</span>` :
     t.ease === 3 ? `<span class="tag ease-3">🤔 يحتاج جلسة</span>` : "";
   const ask = t.who === "k" ? (t.ask ? `<div class="ask"><b>المطلوب منك:</b> ${esc(t.ask)}</div>` : `<div class="ask missing"><b>المطلوب منك:</b> لم يُصَغ بعد — افتح التفاصيل.</div>`) : "";
-  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}">
+  const runningTag = t.running ? `<span class="tag running">⏳ جارٍ الآن</span>` : "";
+  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.running ? ' data-running="1"' : ""}>
   <div class="hd"><span class="id">${esc(t.id)}</span><div class="t">${t.t}</div><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ${esc(t.id)}">⧉</button></div>
-  <div class="meta">${easeTag}<span class="tag tab-${esc(t.tab)}">${tabL}</span><span class="tag">${sevL}</span>${apps}<span class="tag">${esc(t.board)}</span>${t.date ? `<span>${esc(t.date)}</span>` : ""}</div>
+  <div class="meta">${runningTag}${easeTag}<span class="tag tab-${esc(t.tab)}">${tabL}</span><span class="tag">${sevL}</span>${apps}<span class="tag">${esc(t.board)}</span>${t.date ? `<span>${esc(t.date)}</span>` : ""}</div>
   <p class="sum">${esc(t.sum)}</p>
   ${ask}
   <details><summary>التفاصيل الكاملة</summary><div class="full">${t.d || ""}</div></details>
@@ -167,6 +193,7 @@ const boardHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset=
 <header class="top"><div class="wrap">
 <h1>لوحة الشغل — المفتوح فقط <span style="color:var(--dim);font-weight:500;font-size:13px">· تحديث البيانات في <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> · المنجز في <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a> · آخر بناء ٢٣ أغسطس ٢٠٢٦</span></h1>
 <div class="stats"><span class="stat"><b>${kCount}</b>يحتاج قرارك</span><span class="stat"><b>${sections[1].items.length}</b>الجاري</span><span class="stat"><b>${sections[2].items.length}</b>التالي</span><span class="stat"><b>${sections[3].items.length}</b>مفتوح</span><span class="stat"><b>${sections[4].items.length}</b>مراجع</span><span class="stat"><b>${dataOpen.length}</b><a href="DATA-REFACTOR.html" style="text-decoration:none">تحديث البيانات</a></span><span class="stat"><b>${done.length}</b>منجز (أرشيف)</span></div>
+<div class="legend"><span class="lg lg-modonty">مدونتي</span><span class="lg lg-admin">الأدمن</span><span class="lg lg-console">الكونسول</span><span class="lg lg-shared">المشترك والقاعدة</span><span class="lg lg-none">بلا تطبيق</span><span class="lg lg-running">جارٍ الآن</span></div>
 <div class="tools"><input id="q" type="search" placeholder="ابحث بالكلمة أو رقم البند…" aria-label="بحث">
 ${appsAll.map(a => `<button class="chip" data-app="${a}" aria-pressed="false">${a}</button>`).join("")}
 <button class="chip" data-sev="critical high" aria-pressed="false">الحرج والمهم فقط</button></div>

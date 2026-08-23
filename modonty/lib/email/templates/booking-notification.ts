@@ -1,5 +1,5 @@
-import { baseTemplate, ctaButton, heading, paragraph, divider } from "./base";
-import { BRAND_AR } from "@/constants";
+import { baseTemplate, ctaButton, divider, heading, paragraph, EMAIL_BRAND_AR } from "@modonty/shared/lib/email";
+import type { EmailContent } from "@modonty/shared/lib/email";
 
 export interface BookingNotificationEmailParams {
   /** The provider / doctor (Client.name) — the recipient. */
@@ -18,7 +18,6 @@ export interface BookingNotificationEmailParams {
   bookingsUrl: string;
 }
 
-const NAVY = "#0E065A";
 const GRAY = "#777777";
 
 /** One label/value row inside the details box. `value` may contain HTML (links). */
@@ -29,7 +28,7 @@ function detailRow(label: string, value: string): string {
   </tr>`;
 }
 
-export function bookingNotificationEmail({
+export async function bookingNotificationEmail({
   providerName,
   visitorName,
   phone,
@@ -37,11 +36,7 @@ export function bookingNotificationEmail({
   preferredAtLabel,
   message,
   bookingsUrl,
-}: BookingNotificationEmailParams): {
-  subject: string;
-  html: string;
-  text: string;
-} {
+}: BookingNotificationEmailParams): Promise<EmailContent> {
   const waNumber = phone.replace(/[^0-9]/g, "");
   const phoneCell = `<span dir="ltr">${phone}</span> &nbsp;·&nbsp; <a href="tel:${phone}" style="color:#3030FF;text-decoration:none;">اتصال</a> &nbsp;·&nbsp; <a href="https://wa.me/${waNumber}" style="color:#16a34a;text-decoration:none;">واتساب</a>`;
 
@@ -58,19 +53,19 @@ export function bookingNotificationEmail({
   const content = `
     ${heading("📩 وصلك طلب حجز جديد")}
     ${paragraph(`مرحباً ${providerName}،`)}
-    ${paragraph(`وصلك طلب حجز جديد من صفحتك على ${BRAND_AR}. تواصل مع العميل بأسرع وقت — السرعة تفرق في إغلاق الطلب.`)}
+    ${paragraph(`وصلك طلب حجز جديد من صفحتك على ${EMAIL_BRAND_AR}. تواصل مع العميل بأسرع وقت — السرعة تفرق في إغلاق الطلب.`)}
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8f9ff;border:1px solid #e6e8ff;border-radius:8px;padding:8px 20px;margin:8px 0 8px;">
       ${rows}
     </table>
-    ${ctaButton("فتح إدارة الحجوزات", bookingsUrl)}
+    ${ctaButton("افتح إدارة الحجوزات", bookingsUrl)}
     ${divider()}
-    ${paragraph(`<span style="font-size:13px;color:${GRAY};">وصلك هذا التنبيه لأن نشاطك مُدرَج في ${BRAND_AR}. تابع كل حجوزاتك وغيّر حالتها من لوحة تحكّمك.</span>`)}
+    ${paragraph(`<span style="font-size:13px;color:${GRAY};">وصلك هذا التنبيه لأن نشاطك مُدرَج في ${EMAIL_BRAND_AR}. تابع كل حجوزاتك وغيّر حالتها من لوحة تحكّمك.</span>`)}
   `;
 
   const textLines = [
     `مرحباً ${providerName}،`,
     "",
-    `وصلك طلب حجز جديد من صفحتك على ${BRAND_AR}:`,
+    `وصلك طلب حجز جديد من صفحتك على ${EMAIL_BRAND_AR}:`,
     `العميل: ${visitorName}`,
     `الجوال: ${phone}`,
     email ? `البريد: ${email}` : "",
@@ -79,12 +74,12 @@ export function bookingNotificationEmail({
     "",
     `إدارة الحجوزات: ${bookingsUrl}`,
     "",
-    `— فريق ${BRAND_AR}`,
+    `— فريق ${EMAIL_BRAND_AR}`,
   ].filter(Boolean);
 
   return {
     subject: `طلب حجز جديد — ${visitorName}`,
-    html: baseTemplate(content, `${visitorName} — ${phone}`),
+    html: await baseTemplate(content, `${visitorName} — ${phone}`),
     text: textLines.join("\n"),
   };
 }

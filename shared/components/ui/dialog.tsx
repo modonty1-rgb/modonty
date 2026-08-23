@@ -38,7 +38,17 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+        // `w-[calc(100%-2rem)]` + always-on `rounded-lg`, not `w-full` + `sm:rounded-lg`:
+        // on a phone every dialog spanned the screen edge-to-edge with square corners and
+        // read as a broken strip, not a card — measured 24 Aug on modonty at 390px:
+        // `{ left: 0, width: 390, right: 0, radius: "0px" }`.
+        //
+        // The dialog is `fixed`, so its width is `min(screen − 32, max-w)`. With the default
+        // `max-w-lg` (512) the new value only bites BELOW 544px — at 1280 the width is still
+        // exactly 512. Same for the radius: `sm:` starts at 640, so above it the two spellings
+        // were already identical. Admin and console are desktop tools, and their five width
+        // overrides are all `w-[95vw]`, which tailwind-merge keeps. Net change above 640: none.
+        "fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
         className
       )}
       {...props}

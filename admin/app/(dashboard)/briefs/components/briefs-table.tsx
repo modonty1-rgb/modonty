@@ -3,7 +3,8 @@
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { BookOpen, Building2, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { BookOpen, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -102,7 +103,7 @@ export function BriefsTable({ rows }: { rows: BriefRow[] }) {
                         {r.logoUrl ? (
                           <OptimizedImage fill media={asMedia(r.logoUrl, "")} alt="" sizes="32px" className="h-full w-full object-cover" />
                         ) : (
-                          <Building2 className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                          <ModontyPartnerMark className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                         )}
                       </div>
                       <span className="truncate text-sm font-medium" title={r.name}>

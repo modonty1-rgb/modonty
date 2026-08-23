@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { Prisma, ArticleStatus } from "@prisma/client";
 import type { FeedPost } from "@/lib/types";
 import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
+import { getCoreClientId } from "@/lib/settings/get-core-client-id";
 
 /** شكل الاستعلام والمحوّل لتغذية الصفحة الرئيسية — لا يقرأهما غير ملفَّي الرئيسية. */
 export const homeFeedSelect = {
@@ -34,8 +35,14 @@ export const homeFeedSelect = {
 
 type HomeFeedPayload = Prisma.ArticleGetPayload<{ select: typeof homeFeedSelect }>;
 
-export function mapHomeFeedArticle(a: HomeFeedPayload): FeedPost {
+/**
+ * `coreClientId` is passed in, not read here: the mapper stays pure and the settings row is
+ * read ONCE per query instead of once per row. Pass `null` where the distinction is
+ * meaningless (a page that is already all-modonty, e.g. `/modonty`).
+ */
+export function mapHomeFeedArticle(a: HomeFeedPayload, coreClientId: string | null = null): FeedPost {
   return {
+    isCore: coreClientId !== null && a.client.id === coreClientId,
     id: a.id,
     title: a.title,
     excerpt: a.excerpt ?? undefined,
@@ -76,5 +83,8 @@ export async function getHomeFeedArticlesCached(): Promise<FeedPost[]> {
     take: FEED_PAGE_SIZE,
   });
 
-  return articles.map(mapHomeFeedArticle);
+  // One extra read per query, cached with the articles — every card downstream then knows
+  // whether modonty wrote it, without the card asking the database.
+  const coreClientId = await getCoreClientId();
+  return articles.map((a) => mapHomeFeedArticle(a, coreClientId));
 }

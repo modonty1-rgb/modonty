@@ -4,14 +4,15 @@
  */
 
 import type { ComponentType } from "react";
-import { IconCategory, IconIndustry, IconHash } from "@/lib/icons";
+import { IconCategory, IconHash } from "@/lib/icons";
+import { ModontyIndustriesMark } from "@/components/icons/modonty-industries-mark";
 
 export type EntityType = "category" | "industry" | "tag";
 export type EntityIconComponent = ComponentType<{ className?: string }>;
 
 const ENTITY_ICONS: Record<EntityType, EntityIconComponent> = {
   category: IconCategory,
-  industry: IconIndustry,
+  industry: ModontyIndustriesMark,
   tag: IconHash,
 };
 

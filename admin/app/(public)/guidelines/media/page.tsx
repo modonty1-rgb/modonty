@@ -16,12 +16,12 @@ import {
   Shield,
   XCircle,
   FileText,
-  Building2,
   LayoutGrid,
   ChevronDown,
   Film,
   Zap,
 } from "lucide-react";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 
 // ─── Quick specs ──────────────────────────────────────────────────────────────
 
@@ -247,7 +247,7 @@ export default function MediaGuidelinesPage() {
                 صفحة المقال
               </TabsTrigger>
               <TabsTrigger value="client" className="flex items-center gap-1.5 text-xs">
-                <Building2 className="h-3.5 w-3.5" />
+                <ModontyPartnerMark className="h-3.5 w-3.5" />
                 صفحة العميل
               </TabsTrigger>
               <TabsTrigger value="postcard" className="flex items-center gap-1.5 text-xs">

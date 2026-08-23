@@ -8,7 +8,6 @@ import {
   Image as ImageIcon,
   FileText,
   Pen,
-  Building2,
   Folder,
   BarChart3,
   BookOpen,
@@ -19,6 +18,7 @@ import {
   Users,
   Swords,
 } from "lucide-react";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 import { ModontyIcon } from "@/components/admin/icons/modonty-icon";
 
 type IconComponent = React.ComponentType<{ className?: string }>;
@@ -62,7 +62,7 @@ const groups: SidebarGroup[] = [
       { icon: ImageIcon, label: "دليل الوسائط", href: "/guidelines/media" },
       { icon: FileText, label: "المقالات", href: "/guidelines/articles" },
       { icon: Pen, label: "الكتّاب", href: "/guidelines/authors" },
-      { icon: Building2, label: "العملاء", href: "/guidelines/clients" },
+      { icon: ModontyPartnerMark, label: "العملاء", href: "/guidelines/clients" },
       { icon: Folder, label: "تنظيم المحتوى", href: "/guidelines/organization" },
     ],
   },

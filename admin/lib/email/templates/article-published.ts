@@ -1,26 +1,24 @@
-import { baseTemplate, ctaButton, divider, heading, paragraph } from "./base";
+import { baseTemplate, ctaButton, divider, heading, paragraph } from "@modonty/shared/lib/email";
+import type { EmailContent } from "@modonty/shared/lib/email";
 
 export interface ArticlePublishedEmailParams {
   clientName: string;
   articleTitle: string;
   articleUrl: string;
+  /** Already formatted for the reader (Arabic date) — the caller owns the format. */
   publishedAt: string;
 }
 
-export function articlePublishedEmail({
+export async function articlePublishedEmail({
   clientName,
   articleTitle,
   articleUrl,
   publishedAt,
-}: ArticlePublishedEmailParams): {
-  subject: string;
-  html: string;
-  text: string;
-} {
+}: ArticlePublishedEmailParams): Promise<EmailContent> {
   const content = `
-    ${heading("تم نشر مقالك بنجاح ✅")}
+    ${heading("مقالك صار منشوراً ✅")}
     ${paragraph(`مرحباً ${clientName}،`)}
-    ${paragraph("تمّ نشر مقالك وأصبح متاحاً للقراء على موقع مودونتي.")}
+    ${paragraph("مقالك انتشر على مُدَوَّنَتِي والقرّاء يقدرون يوصلون له الحين.")}
     ${divider()}
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
       <tr>
@@ -32,14 +30,14 @@ export function articlePublishedEmail({
         </td>
       </tr>
     </table>
-    ${ctaButton("مشاهدة المقال المنشور", articleUrl)}
+    ${ctaButton("شوف المقال المنشور", articleUrl)}
     ${divider()}
-    ${paragraph(`<span style="font-size:13px;color:#999;">شارك مقالك مع جمهورك للحصول على أكبر انتشار ممكن.</span>`)}
+    ${paragraph(`<span style="font-size:13px;color:#999;">شارك مقالك مع جمهورك عشان يوصل لأكبر عدد.</span>`)}
   `;
 
   return {
-    subject: `تم نشر مقالك: ${articleTitle}`,
-    html: baseTemplate(content, `مقالك منشور الآن على مودونتي`),
-    text: `مرحباً ${clientName}،\n\nتم نشر مقالك:\n${articleTitle}\n\nتاريخ النشر: ${publishedAt}\n\nشاهد المقال: ${articleUrl}\n\n— فريق مودونتي`,
+    subject: `مقالك صار منشوراً: ${articleTitle}`,
+    html: await baseTemplate(content, "مقالك منشور الحين على مُدَوَّنَتِي"),
+    text: `مرحباً ${clientName}،\n\nمقالك صار منشوراً:\n${articleTitle}\n\nتاريخ النشر: ${publishedAt}\n\nشوف المقال: ${articleUrl}\n\n— فريق مُدَوَّنَتِي`,
   };
 }

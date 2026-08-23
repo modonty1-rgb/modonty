@@ -21,7 +21,6 @@ import {
   IconNotifications,
   IconHelpCircle,
   IconFaqQuestion,
-  IconClients,
   IconCompass,
   IconSaved,
   IconChevronLeft,
@@ -29,6 +28,7 @@ import {
   IconSearch,
   IconArticleList,
 } from "@/lib/icons";
+import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { ModontyReelsMark } from "@/components/icons/modonty-reels-mark";
 import { ModontyAudioMark } from "@/components/icons/modonty-audio-mark";
 import { cn } from "@/lib/utils";
@@ -199,7 +199,7 @@ export function MobileMenu({ open, onOpenChange, contentId, labels, themeLabels,
           />
           <SheetLink
             href="/clients"
-            icon={IconClients}
+            icon={ModontyPartnerMark}
             label={items.partners}
             isActive={pathname === "/clients" || pathname.startsWith("/clients/")}
             onClick={close}

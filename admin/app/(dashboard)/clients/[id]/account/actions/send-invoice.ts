@@ -6,42 +6,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
 import { sendEmailWithRetry } from "@/lib/email/resend-client";
-import { invoiceEmail, type InvoiceLegalInfo } from "@/lib/email/templates/invoice";
-import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
-
-/**
- * The platform's legal registry for the invoice body — read from the SAME Settings.org*
- * fields the /trust page shows, so the invoice can never state a different CR number
- * than the site does.
- */
-async function getInvoiceLegalInfo(): Promise<InvoiceLegalInfo | null> {
-  const s = await db.settings.findUnique({
-    where: SETTINGS_SINGLETON_WHERE,
-    select: {
-      orgLegalName: true,
-      orgCommercialRegistrationNumber: true,
-      orgUnifiedNationalNumber: true,
-      orgLegalForm: true,
-      orgCapitalAmount: true,
-      orgStreetAddress: true,
-      orgAddressNeighborhood: true,
-      orgAddressLocality: true,
-    },
-  });
-  if (!s) return null;
-  const t = (v: string | null) => v?.trim() || null;
-  const address = [t(s.orgAddressLocality), t(s.orgAddressNeighborhood), t(s.orgStreetAddress)]
-    .filter(Boolean)
-    .join(" — ");
-  return {
-    legalName: t(s.orgLegalName),
-    cr: t(s.orgCommercialRegistrationNumber),
-    unifiedNumber: t(s.orgUnifiedNationalNumber),
-    entityType: t(s.orgLegalForm),
-    capital: t(s.orgCapitalAmount),
-    address: address || null,
-  };
-}
+import { invoiceEmail } from "@/lib/email/templates/invoice";
 
 interface SendInvoiceResult {
   ok: boolean;
@@ -75,9 +40,8 @@ export async function sendInvoiceAction(invoiceId: string): Promise<SendInvoiceR
 
   try {
     const currency = invoice.currency === "EGP" ? "EGP" : "SAR";
-    const legal = await getInvoiceLegalInfo();
-    const tpl = invoiceEmail({
-      legal,
+    // Legal registry: printed in the footer by the shared baseTemplate (reads Settings itself).
+    const tpl = await invoiceEmail({
       clientName: invoice.client.name,
       email: invoice.client.email,
       invoiceNumber: invoice.number,

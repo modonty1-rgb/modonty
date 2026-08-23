@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>موكب — كارت مقال مدوّنتي في الفيد (بند UX ③)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  /* القيم مأخوذة من modonty/app/globals.css (الوضع الداكن) لا مخترعة */
+  :root{
+    --bg:#16161a; --card:#1d1e24; --border:#2c2d36;
+    --fg:#f3f4f6; --muted:#9aa3b2;
+    --primary:#3030FF;      /* --brand-blue */
+    --link:#6b6bff;         /* --link في الداكن: أزرق كنصّ (5.1:1) */
+    --accent:#00D8D8;       /* --brand-teal */
+    --navy:#0E065A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Tajawal',sans-serif;background:#0f1013;color:var(--fg);padding:24px;line-height:1.65}
+  h1{font-size:19px;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:6px}
+  .rule{color:var(--muted);font-size:12.5px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:24px}
+  .rule b{color:var(--fg)}
+  .row{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}
+
+  /* ===== إطار الجوّال ٣٩٠ ===== */
+  .phone{width:390px;flex:0 0 390px;background:var(--bg);border:1px solid #34353f;border-radius:24px;overflow:hidden}
+  .phone .cap{background:#0b0b0e;color:#fff;font-size:12px;font-weight:700;text-align:center;padding:7px;border-bottom:1px solid #34353f}
+  .phone .cap small{display:block;font-weight:400;color:#9aa3b2;font-size:11px;margin-top:2px}
+  .screen{padding:10px;display:flex;flex-direction:column;gap:10px}
+
+  /* ===== الكارت المضغوط — مطابق MobilePostCard.tsx ===== */
+  .card{position:relative;border:1px solid var(--border);border-radius:16px;background:var(--card);padding:10px;overflow:hidden}
+  .pub{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;line-height:16px;color:var(--muted)}
+  .pub .logo{width:20px;height:20px;border-radius:50%;background:#33343d;flex-shrink:0;display:grid;place-items:center;font-size:9px;color:#c9cdd6;overflow:hidden}
+  .body{display:flex;align-items:flex-start;gap:10px;margin-top:8px}
+  .txt{min-width:0;flex:1}
+  .title{font-size:16px;font-weight:700;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .exc{font-size:13px;line-height:1.5;color:var(--muted);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .thumb{width:124px;aspect-ratio:4/3;flex-shrink:0;border-radius:8px;background:#2a2b33;display:grid;place-items:center;font-size:10px;color:#6b7280;overflow:hidden}
+  .foot{display:flex;align-items:center;gap:12px;margin-top:8px;color:var(--muted);font-size:12px}
+  .foot .sp{flex:1}
+  .ic{width:20px;height:20px;display:inline-grid;place-items:center}
+  .save{width:32px;height:32px;display:grid;place-items:center;border-radius:8px}
+
+  /* ===== الخيارات ===== */
+  /* أ — شريط الماركة */
+  .optA{border-inline-start:3px solid var(--accent)}
+  .optA .pub{color:var(--accent);font-weight:700}
+  .optA .pub .logo{background:rgba(0,216,216,.14);color:var(--accent)}
+
+  /* ب — سطح ملوّن */
+  .optB{background:linear-gradient(180deg,rgba(48,48,255,.10),rgba(48,48,255,.03));border-color:rgba(48,48,255,.35)}
+  .optB .pub{color:var(--link);font-weight:700}
+  .optB .pub .logo{background:rgba(48,48,255,.18);color:var(--link)}
+
+  /* ج — وسم المحرّر */
+  .optC .pub{color:var(--fg);font-weight:700}
+  .optC .pub .logo{background:rgba(0,216,216,.14);color:var(--accent)}
+  .tagC{font-size:10.5px;font-weight:700;color:var(--navy);background:var(--accent);border-radius:999px;padding:1px 7px;line-height:1.6}
+
+  /* شارة مشتركة للخيار أ */
+  .tagA{font-size:10.5px;font-weight:700;color:var(--accent);border:1px solid rgba(0,216,216,.45);border-radius:999px;padding:0 7px;line-height:1.7}
+
+  /* ===== لوحة المقارنة ===== */
+  .notes{flex:1 1 420px;max-width:560px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px}
+  .notes h2{font-size:15px;margin-bottom:10px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  td,th{border:1px solid var(--border);padding:7px 9px;text-align:right;vertical-align:top}
+  th{background:#22232a;font-size:12px}
+  .yes{color:#4ade80;font-weight:700}.no{color:#ff6b7f;font-weight:700}.mid{color:#f6ae31;font-weight:700}
+  .notes ul{margin:10px 18px 0 0;font-size:12.5px;line-height:1.9;color:var(--muted)}
+  .notes ul b{color:var(--fg)}
+  code{font-family:Consolas,monospace;font-size:11px;background:#22232a;padding:1px 5px;border-radius:5px}
+  .lbl{font-size:12px;color:var(--muted);margin:2px 0 -4px;font-weight:700}
+</style>
+</head>
+<body>
+
+<h1>كارت مقال مدوّنتي في الفيد الرئيسي — ثلاثة خيارات</h1>
+<p class="sub">بند UX ③ · موكب مطابق لـ <code>MobilePostCard.tsx</code> (الكارت المضغوط: عنوان ١٦ · مقتطف ١٣ · صورة ١٢٤ بنسبة ٤:٣ · صفّ سفلي ٣٢).</p>
+<p class="rule"><b>المشكلة:</b> مدوّنتي كيان ناشر لا شريك. اليوم كارت مقالها يبدو مطابقاً لكارت مقال العميل، فيقرأه الزائر كأنها إحدى الشركات المُدرَجة. <b>المطلوب:</b> يميّزها بلا أن يكسر مسح الفيد — الكارت يبقى نفس الارتفاع والبنية، والفرق في الإشارة لا في الشكل.</p>
+
+<div class="row">
+
+  <!-- ================= إطار الجوّال ================= -->
+  <div class="phone">
+    <div class="cap">الفيد الرئيسي — ٣٩٠×٨٤٤<small>كارت عميل للمرجع، ثم الخيارات الثلاثة</small></div>
+    <div class="screen">
+
+      <!-- المرجع: كارت عميل عادي -->
+      <p class="lbl">المرجع — كارت مقال عميل (كما هو اليوم)</p>
+      <article class="card">
+        <div class="pub"><span class="logo">PC</span><span>Pain Core Clinic - د. عمرو سعيد</span></div>
+        <div class="body">
+          <div class="txt">
+            <div class="title">أحدث طرق علاج الانزلاق الغضروفي بدون جراحة في مصر</div>
+            <div class="exc">تعرّف على أحدث طرق علاج الانزلاق الغضروفي بدون جراحة، ومتى يكون العلاج التداخلي أنسب.</div>
+          </div>
+          <div class="thumb">صورة</div>
+        </div>
+        <div class="foot"><span class="ic">🔊</span><span class="ic">📅</span> أغسطس ٢٠٢٦ <span class="sp"></span><span class="save">🔖</span></div>
+      </article>
+
+      <!-- أ -->
+      <p class="lbl">الخيار أ — شريط الماركة</p>
+      <article class="card optA">
+        <div class="pub"><span class="logo">م</span><span>مدوّنتي</span><span class="tagA">المنصّة</span></div>
+        <div class="body">
+          <div class="txt">
+            <div class="title">كيف تختار شريك المحتوى الصحيح لنشاطك؟ دليل عملي</div>
+            <div class="exc">معايير واضحة تفرّق بين من يكتب لك محتوى ومن يبني لك حضوراً يدوم.</div>
+          </div>
+          <div class="thumb">صورة</div>
+        </div>
+        <div class="foot"><span class="ic">🔊</span><span class="ic">📅</span> أغسطس ٢٠٢٦ <span class="sp"></span><span class="save">🔖</span></div>
+      </article>
+
+      <!-- ب -->
+      <p class="lbl">الخيار ب — سطح ملوّن</p>
+      <article class="card optB">
+        <div class="pub"><span class="logo">م</span><span>مدوّنتي</span></div>
+        <div class="body">
+          <div class="txt">
+            <div class="title">كيف تختار شريك المحتوى الصحيح لنشاطك؟ دليل عملي</div>
+            <div class="exc">معايير واضحة تفرّق بين من يكتب لك محتوى ومن يبني لك حضوراً يدوم.</div>
+          </div>
+          <div class="thumb">صورة</div>
+        </div>
+        <div class="foot"><span class="ic">🔊</span><span class="ic">📅</span> أغسطس ٢٠٢٦ <span class="sp"></span><span class="save">🔖</span></div>
+      </article>
+
+      <!-- ج -->
+      <p class="lbl">الخيار ج — وسم المحرِّر</p>
+      <article class="card optC">
+        <div class="pub"><span class="logo">م</span><span>مدوّنتي</span><span class="tagC">من تحرير المنصّة</span></div>
+        <div class="body">
+          <div class="txt">
+            <div class="title">كيف تختار شريك المحتوى الصحيح لنشاطك؟ دليل عملي</div>
+            <div class="exc">معايير واضحة تفرّق بين من يكتب لك محتوى ومن يبني لك حضوراً يدوم.</div>
+          </div>
+          <div class="thumb">صورة</div>
+        </div>
+        <div class="foot"><span class="ic">🔊</span><span class="ic">📅</span> أغسطس ٢٠٢٦ <span class="sp"></span><span class="save">🔖</span></div>
+      </article>
+
+      <!-- كارت عميل بعده ليُقاس التمييز في السياق -->
+      <p class="lbl">كارت عميل بعده — ليُقاس التمييز في السياق</p>
+      <article class="card">
+        <div class="pub"><span class="logo">فت</span><span>مؤسسة فرسان التعافي</span></div>
+        <div class="body">
+          <div class="txt">
+            <div class="title">رحلتك نحو التعافي: دليلك المبسّط لفهم الطب النفسي</div>
+            <div class="exc">تعرّف على أسرار الطب النفسي وطرق التعامل مع الاضطرابات.</div>
+          </div>
+          <div class="thumb">صورة</div>
+        </div>
+        <div class="foot"><span class="ic">📅</span> أغسطس ٢٠٢٦ <span class="sp"></span><span class="save">🔖</span></div>
+      </article>
+
+    </div>
+  </div>
+
+  <!-- ================= المقارنة ================= -->
+  <div class="notes">
+    <h2>المقارنة — ما يكسبه كل خيار وما يكلّفه</h2>
+    <table>
+      <tr><th>المعيار</th><th>أ · شريط الماركة</th><th>ب · سطح ملوّن</th><th>ج · وسم المحرِّر</th></tr>
+      <tr><td>يُلمَح أثناء المسح السريع</td><td class="mid">متوسط</td><td class="yes">قوي</td><td class="mid">متوسط</td></tr>
+      <tr><td>يبقى الفيد هادئاً (لا ضجيج)</td><td class="yes">نعم</td><td class="no">لا — يسحب الانتباه دائماً</td><td class="yes">نعم</td></tr>
+      <tr><td>يقول <b>لماذا</b> هو مختلف</td><td class="mid">ضمنياً</td><td class="no">لا يقول شيئاً</td><td class="yes">صراحةً بالنصّ</td></tr>
+      <tr><td>يصمد لو تعدّدت مقالات مدوّنتي</td><td class="yes">نعم</td><td class="no">لا — ثلاثة أسطح ملوّنة = فوضى</td><td class="yes">نعم</td></tr>
+      <tr><td>الارتفاع يتغيّر؟</td><td class="yes">صفر</td><td class="yes">صفر</td><td class="yes">صفر</td></tr>
+      <tr><td>حجم التغيير في الكود</td><td>كلاس واحد + شارة</td><td>كلاسان</td><td>كلاس + شارة نصّية</td></tr>
+    </table>
+
+    <h2 style="margin-top:16px">توصيتي: <span style="color:var(--accent)">ج</span> — ووراءها سبب</h2>
+    <ul>
+      <li><b>ب مرفوض عملياً:</b> السطح الملوّن يعمل ما دام كارت واحد في الشاشة. يوم تنشر مدوّنتي ثلاثة مقالات متتالية يصير ثلث الفيد ملوّناً، فيفقد المعنى ويصير ضجيجاً.</li>
+      <li><b>أ يميّز بلا أن يشرح:</b> الشريط الأخضر يقول «هذا مختلف» ولا يقول «لماذا». الزائر الجديد لا يعرف أن مدوّنتي هي المنصّة نفسها.</li>
+      <li><b>ج يجيب السؤال نصّاً:</b> «من تحرير المنصّة» تفصل الناشر عن الشريك بكلمة يفهمها القارئ العادي بلا تدريب — وهذا جوهر البند: مدوّنتي ليست شريكاً.</li>
+      <li><b>الماسة أكسنت والجسم هادئ</b> — الشعار في سطر الناشر يتبع قاعدة الماركة المعتمدة، لا لون جديد.</li>
+    </ul>
+
+    <h2 style="margin-top:16px">قيود التنفيذ (تُثبَّت قبل الاعتماد)</h2>
+    <ul>
+      <li>المصدر الوحيد للحقيقة <code>isCoreClient(post.clientId)</code> من <code>shared/lib/core-client.ts</code> — ممنوع مقارنة بالاسم أو بمعرّف مكتوب في الكود.</li>
+      <li>الكارت لا يزيد ارتفاعه ولا بكسل — الشارة داخل سطر الناشر القائم.</li>
+      <li>البنود ② (استثناء مدوّنتي من عدّادات الشركاء) و④ (تست حيّ) تُنفَّذان بعد اعتماد الشكل.</li>
+      <li>هذا الموكب <b>عقد ملزم</b>: ما تعتمده يُبنى مطابقاً ١٠٠٪، وأي فرق بينه وبين الكود يُذكر قبل التنفيذ لا بعده.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,7 +1,8 @@
 import { MobileCtaBar } from "@/components/shared/mobile-cta-bar/MobileCtaBar";
 import { ModontyBookingMark } from "@/components/icons/modonty-booking-mark";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
-import { IconClients, IconExternal } from "@/lib/icons";
+import { IconExternal } from "@/lib/icons";
+import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { messages } from "@/lib/i18n/messages";
 
 interface ArticleCtaBarProps {
@@ -40,7 +41,7 @@ export function ArticleCtaBar({ clientName, clientSlug, articleSlug, clientPhone
     ? { href: `https://wa.me/${waDigits}`, label: t.whatsapp, icon: WhatsAppIcon, external: true }
     : cta.mode === "LINK" && cta.url
       ? { href: cta.url, label: cta.label?.trim() || t.visitSite, icon: IconExternal, external: true }
-      : { href: "/clients", label: t.allPartners, icon: IconClients };
+      : { href: "/clients", label: t.allPartners, icon: ModontyPartnerMark };
 
   return (
     <MobileCtaBar

@@ -33,14 +33,14 @@ export function FAQSearch({ onSearchChange, resultCount, totalCount }: FAQSearch
           placeholder="ابحث في الأسئلة الشائعة..."
           value={searchQuery}
           onChange={(e) => handleSearch(e.target.value)}
-          className="pr-10 pl-10"
+          className="pr-10 pl-10 max-md:h-11"
           aria-label="بحث في الأسئلة الشائعة"
         />
         {searchQuery && (
           <Button
             variant="ghost"
             size="icon"
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 h-6 w-6"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 h-6 w-6 max-md:h-11 max-md:w-11"
             onClick={clearSearch}
             aria-label="مسح البحث"
           >

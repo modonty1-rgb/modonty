@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ChevronRight,
-  Building2,
   Mail,
   Phone,
   ExternalLink,
@@ -11,6 +10,7 @@ import {
   Pencil,
   Calendar,
 } from "lucide-react";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 import { format, formatDistanceToNow } from "date-fns";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -57,7 +57,7 @@ export default async function InboxClientPage({ params }: PageProps) {
         <CardHeader className="pb-4">
           <div className="flex items-start gap-3">
             <div className="h-12 w-12 rounded-xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center shrink-0">
-              <Building2 className="h-6 w-6" />
+              <ModontyPartnerMark className="h-6 w-6" />
             </div>
             <div className="flex-1 min-w-0">
               <CardTitle className="text-xl leading-snug">{client.name}</CardTitle>

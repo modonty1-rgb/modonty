@@ -5,12 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   FileText,
-  Building2,
   CreditCard,
   Calendar,
   Clock,
   AlertTriangle,
 } from "lucide-react";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 import { format, formatDistanceToNow } from "date-fns";
 
 interface Activity {
@@ -39,7 +39,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
       case "article_published":
         return <FileText className="h-4 w-4" />;
       case "client_created":
-        return <Building2 className="h-4 w-4" />;
+        return <ModontyPartnerMark className="h-4 w-4" />;
       case "subscription_updated":
         return <Calendar className="h-4 w-4" />;
       case "payment_updated":

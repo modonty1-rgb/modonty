@@ -5,12 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   FileText,
-  Building2,
   Calendar,
   CreditCard,
   AlertTriangle,
   Plus,
 } from "lucide-react";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 
 export function QuickActions() {
   return (
@@ -28,7 +28,7 @@ export function QuickActions() {
           </Button>
           <Button asChild variant="outline" className="w-full justify-start text-sm">
             <Link href="/clients/new">
-              <Building2 className="h-4 w-4 mr-2 flex-shrink-0" />
+              <ModontyPartnerMark className="h-4 w-4 mr-2 flex-shrink-0" />
               New Client
             </Link>
           </Button>

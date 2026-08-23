@@ -97,6 +97,18 @@ export interface FeedPost {
   favorites: number;
   views: number;
   status: "published" | "draft";
+  /**
+   * This article was published by MODONTY ITSELF, not by a partner.
+   *
+   * Modonty is a Client row like any other (`Settings.coreClientId` points at it), so its
+   * articles arrive in the feed indistinguishable from a partner's — and a reader parses
+   * «مدونتي» in the publisher line as just another listed company. The flag travels WITH
+   * the data rather than being computed in the card, so infinite scroll (which refetches
+   * through `/articles/api/list`) carries it too.
+   *
+   * Resolved once per query from `getCoreClientId()` — never by comparing the name.
+   */
+  isCore?: boolean;
 }
 
 export interface CategoryClientPreview {

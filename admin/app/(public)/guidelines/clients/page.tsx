@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 import { GuidelineLayout } from "../components/guideline-layout";
 import {
   Building2,
@@ -174,7 +175,7 @@ export default function ClientsGuidelinesPage() {
         <CardContent className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2.5 rounded-lg bg-primary/15 border border-primary/30">
-              <Building2 className="h-6 w-6 text-primary" />
+              <ModontyPartnerMark className="h-6 w-6 text-primary" />
             </div>
             <div>
               <h2 className="text-xl font-bold leading-tight">باقة العميل — كل شيء في مكان واحد</h2>

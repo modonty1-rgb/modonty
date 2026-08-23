@@ -92,7 +92,7 @@ export function FAQPageContent({ faqs, lastUpdated }: FAQPageContentProps) {
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="px-3 py-1 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                    className="px-3 py-1 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed text-sm max-md:inline-flex max-md:min-h-11 max-md:items-center max-md:px-4"
                     aria-label="الصفحة السابقة"
                   >
                     السابق
@@ -103,7 +103,7 @@ export function FAQPageContent({ faqs, lastUpdated }: FAQPageContentProps) {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="px-3 py-1 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                    className="px-3 py-1 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed text-sm max-md:inline-flex max-md:min-h-11 max-md:items-center max-md:px-4"
                     aria-label="الصفحة التالية"
                   >
                     التالي

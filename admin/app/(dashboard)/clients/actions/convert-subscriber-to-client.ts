@@ -101,7 +101,7 @@ export async function convertSubscriberToClientAction(
     // 6. Welcome email (real send — non-blocking)
     let warning: string | undefined;
     try {
-      const email = clientWelcomeEmail({
+      const email = await clientWelcomeEmail({
         clientName: client.name,
         email: subscriber.email,
         password: TEMP_PASSWORD,

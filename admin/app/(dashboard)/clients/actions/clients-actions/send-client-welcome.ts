@@ -28,7 +28,7 @@ export async function sendClientWelcome(clientId: string) {
       return { success: false, error: "العميل غير موجود أو لا يملك بريداً إلكترونياً." };
     }
 
-    const email = clientWelcomeEmail({
+    const email = await clientWelcomeEmail({
       clientName: client.name,
       email: client.email,
       password: DEFAULT_CLIENT_PASSWORD,

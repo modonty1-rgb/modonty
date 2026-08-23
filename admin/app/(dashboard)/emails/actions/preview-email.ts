@@ -1,12 +1,15 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { welcomeEmail } from "@/lib/email/templates/welcome";
-import { emailVerificationEmail } from "@/lib/email/templates/email-verification";
-import { passwordResetEmail } from "@/lib/email/templates/password-reset";
-import { commentReplyEmail } from "@/lib/email/templates/comment-reply";
-import { faqReplyEmail } from "@/lib/email/templates/faq-reply";
-import { newsletterWelcomeEmail } from "@/lib/email/templates/newsletter-welcome";
+// The six reader-facing templates live in shared: modonty/console SEND them, this page
+// previews the SAME file — no more admin copies drifting from what actually goes out.
+import { welcomeEmail } from "@modonty/shared/lib/email/templates/welcome";
+import { emailVerificationEmail } from "@modonty/shared/lib/email/templates/email-verification";
+import { passwordResetEmail } from "@modonty/shared/lib/email/templates/password-reset";
+import { commentReplyEmail } from "@modonty/shared/lib/email/templates/comment-reply";
+import { faqReplyEmail } from "@modonty/shared/lib/email/templates/faq-reply";
+import { newsletterWelcomeEmail } from "@modonty/shared/lib/email/templates/newsletter-welcome";
+import type { EmailContent } from "@modonty/shared/lib/email";
 import { articlePendingEmail } from "@/lib/email/templates/article-pending";
 import { articlePublishedEmail } from "@/lib/email/templates/article-published";
 import { clientWelcomeEmail } from "@/lib/email/templates/client-welcome";
@@ -31,7 +34,7 @@ const MOCK = {
   password: "ahmed@example.com",
 };
 
-function renderTemplate(id: string): { subject: string; html: string; text: string } {
+function renderTemplate(id: string): Promise<EmailContent> {
   switch (id) {
     case "welcome":
       return welcomeEmail({ userName: MOCK.userName });
@@ -84,7 +87,7 @@ function renderTemplate(id: string): { subject: string; html: string; text: stri
 }
 
 export async function getTemplatePreview(id: string): Promise<{ subject: string; html: string }> {
-  const { subject, html } = renderTemplate(id);
+  const { subject, html } = await renderTemplate(id);
   return { subject, html };
 }
 
@@ -98,7 +101,7 @@ export async function sendTestEmail(
   if (!template) return { success: false, message: "Template not found" };
 
   try {
-    const { subject, html, text } = renderTemplate(id);
+    const { subject, html, text } = await renderTemplate(id);
     await sendEmailWithRetry({
       from: process.env.RESEND_FROM!,
       to: "modonty1@gmail.com",

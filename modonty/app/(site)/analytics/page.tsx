@@ -148,7 +148,7 @@ export default async function AnalyticsPage() {
           href={LOOKER_PUBLIC_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 inline-flex items-center gap-2 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold shadow-sm transition-colors hover:bg-muted"
+          className="mt-4 inline-flex items-center gap-2 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold shadow-sm transition-colors hover:bg-muted max-md:min-h-11"
         >
           <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[conic-gradient(at_center,_#ea4335,_#fbbc05,_#34a853,_#4285f4,_#ea4335)] text-[10px] font-black text-white">G</span>
           شاهد الأرقام مباشرة على Google
@@ -216,7 +216,7 @@ export default async function AnalyticsPage() {
               a.topPages.map((p, i) => (
                 <div key={i} className="flex items-center gap-3 text-xs">
                   <span className="min-w-0 flex-1 truncate" title={p.title || p.path}>{p.title || p.path}</span>
-                  <span className="shrink-0 truncate text-muted-foreground/70" dir="ltr">{p.path}</span>
+                  <span className="shrink-0 truncate text-muted-foreground/70 max-md:min-w-0 max-md:shrink" dir="ltr">{p.path}</span>
                   <span className="w-14 shrink-0 text-start font-semibold tabular-nums">{ar(p.views)}</span>
                 </div>
               ))

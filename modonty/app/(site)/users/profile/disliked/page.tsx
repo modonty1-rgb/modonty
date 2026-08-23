@@ -4,7 +4,8 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { IconLike, IconClients, IconArticle, IconMessage } from "@/lib/icons";
+import { IconLike, IconArticle, IconMessage } from "@/lib/icons";
+import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { formatRelativeTime } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -74,7 +75,7 @@ export default async function DislikedPage() {
 
 function TypeBadge({ type }: { type: DislikedItemType }) {
   const config = {
-    client: { icon: IconClients, label: "عميل" },
+    client: { icon: ModontyPartnerMark, label: "عميل" },
     article: { icon: IconArticle, label: "مقالة" },
     comment: { icon: IconMessage, label: "تعليق" },
   } as const;

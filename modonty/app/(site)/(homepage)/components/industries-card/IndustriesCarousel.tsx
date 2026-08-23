@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
-import { IconChevronLeft, IconIndustry } from "@/lib/icons";
+import { IconChevronLeft } from "@/lib/icons";
+import { ModontyIndustriesMark } from "@/components/icons/modonty-industries-mark";
 import { cn } from "@/lib/utils";
 
 interface IndustryPreview {
@@ -50,7 +51,7 @@ function IndustryVisual({ industry, index }: { industry: IndustryPreview; index:
           className="object-contain"
         />
       ) : (
-        <IconIndustry className="size-8" aria-hidden />
+        <ModontyIndustriesMark className="size-8" aria-hidden />
       )}
     </span>
   );

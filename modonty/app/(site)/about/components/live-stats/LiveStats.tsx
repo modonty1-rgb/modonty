@@ -1,4 +1,5 @@
-import { IconClients, IconIndustry } from "@/lib/icons";
+import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
+import { ModontyIndustriesMark } from "@/components/icons/modonty-industries-mark";
 import { messages } from "@/lib/i18n/messages";
 import type { ComponentType } from "react";
 
@@ -36,8 +37,8 @@ export function LiveStats({ partnerCount, industryCount }: LiveStatsProps) {
         {text.sectionTitle}
       </h2>
       <div className="flex flex-col gap-3 sm:flex-row">
-        <Stat icon={IconClients} value={partnerCount} label={text.partnersSuffix} />
-        <Stat icon={IconIndustry} value={industryCount} label={text.industriesSuffix} />
+        <Stat icon={ModontyPartnerMark} value={partnerCount} label={text.partnersSuffix} />
+        <Stat icon={ModontyIndustriesMark} value={industryCount} label={text.industriesSuffix} />
       </div>
     </section>
   );

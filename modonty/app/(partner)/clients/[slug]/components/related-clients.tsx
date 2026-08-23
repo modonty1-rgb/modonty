@@ -2,7 +2,7 @@ import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/Partner
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
-import { IconClients } from "@/lib/icons";
+import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 
 interface RelatedClient {
   id: string;
@@ -26,7 +26,7 @@ export function RelatedClients({ clients, clientId }: RelatedClientsProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitleWithIcon title="شركاء مشابهون" icon={IconClients} />
+        <CardTitleWithIcon title="شركاء مشابهون" icon={ModontyPartnerMark} />
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-2">

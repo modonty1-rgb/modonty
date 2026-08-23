@@ -3,6 +3,7 @@ import { Prisma, ArticleStatus, SubscriptionStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { getCoreClientId } from "@modonty/shared/lib/core-client";
 
 import type { FeedPost } from "@/lib/types";
 
@@ -66,8 +67,10 @@ const archiveSelect = {
 
 type ArchivePayload = Prisma.ArticleGetPayload<{ select: typeof archiveSelect }>;
 
-function mapArchiveArticle(a: ArchivePayload): ArchiveArticle {
+/** `coreClientId` is read once per query, not per row — see `FeedPost.isCore`. */
+function mapArchiveArticle(a: ArchivePayload, coreClientId: string | null): ArchiveArticle {
   return {
+    isCore: coreClientId !== null && a.client.id === coreClientId,
     id: a.id,
     title: a.title,
     excerpt: a.excerpt ?? undefined,
@@ -110,7 +113,11 @@ export async function getArticlesArchive(query: ArchiveQuery = {}): Promise<Arch
   cacheTag("articles");
   cacheLife("hours");
 
-  const articles = await db.article.findMany({
+  // One extra read per query (cached alongside the articles), so every card downstream —
+  // including the ones infinite scroll fetches later — knows whether modonty wrote it.
+  const [coreClientId, articles] = await Promise.all([
+    getCoreClientId(),
+    db.article.findMany({
     where: {
       status: ArticleStatus.PUBLISHED,
       /**
@@ -143,7 +150,8 @@ export async function getArticlesArchive(query: ArchiveQuery = {}): Promise<Arch
     select: archiveSelect,
     orderBy: orderFor(query.sort),
     take: MAX_ARCHIVE_ARTICLES,
-  });
+    }),
+  ]);
 
-  return articles.map(mapArchiveArticle);
+  return articles.map((a) => mapArchiveArticle(a, coreClientId));
 }

@@ -145,8 +145,8 @@ export function FAQAccordion({ items }: FAQAccordionProps) {
                     disabled={isSubmittingHelpful || isSubmittingNotHelpful}
                     className={
                       feedbackState === "helpful"
-                        ? "bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 shadow-sm"
-                        : "hover:bg-primary/5 border border-transparent hover:border-primary/10"
+                        ? "max-md:h-11 bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 shadow-sm"
+                        : "max-md:h-11 hover:bg-primary/5 border border-transparent hover:border-primary/10"
                     }
                   >
                     {isSubmittingHelpful ? (
@@ -163,8 +163,8 @@ export function FAQAccordion({ items }: FAQAccordionProps) {
                     disabled={isSubmittingHelpful || isSubmittingNotHelpful}
                     className={
                       feedbackState === "not-helpful"
-                        ? "bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20 shadow-sm"
-                        : "hover:bg-destructive/5 border border-transparent hover:border-destructive/10"
+                        ? "max-md:h-11 bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20 shadow-sm"
+                        : "max-md:h-11 hover:bg-destructive/5 border border-transparent hover:border-destructive/10"
                     }
                   >
                     {isSubmittingNotHelpful ? (

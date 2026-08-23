@@ -4,7 +4,8 @@ import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IconUsers, IconClients } from "@/lib/icons";
+import { IconUsers } from "@/lib/icons";
+import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
@@ -68,7 +69,7 @@ export default async function FollowingPage() {
                               />
                             ) : (
                               <div className="w-16 h-16 rounded bg-muted flex items-center justify-center">
-                                <IconClients className="h-8 w-8 text-muted-foreground" />
+                                <ModontyPartnerMark className="h-8 w-8 text-muted-foreground" />
                               </div>
                             )}
                           </Link>

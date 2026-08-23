@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import crypto from "crypto";
 import { z } from "zod";
 import { sendEmail } from "@/lib/email/resend-client";
-import { passwordResetEmail } from "@/app/(site)/users/forgot-password/helpers/password-reset";
+import { passwordResetEmail } from "@modonty/shared/lib/email/templates/password-reset";
 
 const schema = z.object({
   email: z.string().email("بريد إلكتروني غير صحيح"),
@@ -44,7 +44,7 @@ export async function forgotPasswordAction(formData: FormData) {
     });
 
     const resetUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/users/reset-password?token=${rawToken}`;
-    const { subject, html, text } = passwordResetEmail({
+    const { subject, html, text } = await passwordResetEmail({
       userName: user.name ?? "عزيزي المستخدم",
       resetUrl,
     });

@@ -6,7 +6,8 @@ import { OptimizedImage } from "@modonty/shared/components/optimized-image";
 import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 import { Card } from "@/components/ui/card";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
-import { IconClients, IconChevronLeft, IconPhone, IconExternal } from "@/lib/icons";
+import { IconChevronLeft, IconPhone, IconExternal } from "@/lib/icons";
+import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { Linkedin } from "@/components/icons/linkedin";
 import { Twitter } from "@/components/icons/twitter";
 import { Instagram } from "@/components/icons/instagram";
@@ -154,7 +155,7 @@ export function PartnerCard({ client, askClientProps, cta }: PartnerCardProps) {
           </>
         )}
         {!logoMedia && !heroMedia && (
-          <IconClients className="relative z-10 h-12 w-12 text-muted-foreground" />
+          <ModontyPartnerMark className="relative z-10 h-12 w-12 text-muted-foreground" />
         )}
       </div>
 

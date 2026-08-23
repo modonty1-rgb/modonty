@@ -3,10 +3,10 @@ import {
   HelpCircle,
   Mail,
   ChevronLeft,
-  Building2,
   Inbox as InboxIcon,
   FileText,
 } from "lucide-react";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 import { formatDistanceToNow } from "date-fns";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,7 +74,7 @@ export default async function InboxPage() {
                       <td className="px-4 py-3">
                         <Link href={`/inbox/${row.clientId}`} className="block">
                           <div className="flex items-start gap-2">
-                            <Building2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                            <ModontyPartnerMark className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
                             <div className="min-w-0">
                               <div className="font-medium hover:text-primary line-clamp-1">
                                 {row.clientName}

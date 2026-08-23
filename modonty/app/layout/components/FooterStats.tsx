@@ -5,11 +5,11 @@ import {
   IconArticle,
   IconViews,
   IconActivity,
-  IconClients,
   IconUsers,
   IconTrending,
   IconTotal,
 } from "@/lib/icons";
+import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 
 // «بالأرقام» — site-wide traffic from GA4 (sessions / page views / activity /
 // interactions), cached ~1min so the global footer stays fast. If GA4 is
@@ -109,7 +109,7 @@ export async function FooterStats() {
         <Stat icon={IconViews}    label="مشاهدات"  value={stats.views.toLocaleString("ar-SA")} highlight />
         <Stat icon={IconActivity} label="تفاعلات"  value={stats.interactions.toLocaleString("ar-SA")} />
         <Stat icon={IconUsers}    label="إعجابات"  value={stats.likes.toLocaleString("ar-SA")} />
-        <Stat icon={IconClients}  label="الشركاء"  value={stats.partners.toLocaleString("ar-SA")} />
+        <Stat icon={ModontyPartnerMark}  label="الشركاء"  value={stats.partners.toLocaleString("ar-SA")} />
       </div>
     </div>
   );

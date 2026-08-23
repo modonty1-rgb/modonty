@@ -3,7 +3,8 @@
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Search, ChevronLeft, ChevronRight, Images, Building2 } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Images } from "lucide-react";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -65,7 +66,7 @@ export function ClientImagesGrid({ name, isModonty, avgScore, images }: Props) {
           {isModonty ? (
             <Images className="h-4 w-4 shrink-0 text-primary" />
           ) : (
-            <Building2 className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <ModontyPartnerMark className="h-4 w-4 shrink-0 text-muted-foreground" />
           )}
           <span className="truncate text-sm font-bold" title={name}>
             {name}

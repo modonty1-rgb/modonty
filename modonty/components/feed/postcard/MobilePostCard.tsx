@@ -225,6 +225,12 @@ export function MobilePostCard({ className, featured, post, hideClient, mobileHe
         "relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm lg:hidden [content-visibility:auto] [contain-intrinsic-size:auto_175px]",
         "motion-safe:transition-transform motion-safe:duration-100 motion-safe:active:scale-[0.99]",
         featured && "border-primary/20 shadow-primary/5",
+        // Modonty publishes here too, and its card was byte-identical to a partner's —
+        // measured 24 Aug: same bg `rgb(31,31,35)`, same border, same radius — so a reader
+        // parsed «مدونتي» as one more listed company. A tinted surface says «this one is the
+        // platform» before any word is read (Khalid picked option B from the mockup).
+        // Surface only: the anatomy, the height and the type scale are untouched.
+        post.isCore && "border-primary/40 bg-gradient-to-b from-primary/[0.10] to-primary/[0.03]",
         className,
       )}
     >

@@ -3,7 +3,8 @@
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Search, ChevronLeft, ChevronRight, Images, Building2 } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Images } from "lucide-react";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -72,7 +73,7 @@ export function GalleriesClientsTable({ clients }: { clients: GalleryClientRow[]
                         {c.logoUrl ? (
                           <OptimizedImage fill media={asMedia(c.logoUrl, "")} alt="" sizes="32px" className="h-full w-full object-cover" />
                         ) : (
-                          <Building2 className="h-4 w-4 text-muted-foreground" />
+                          <ModontyPartnerMark className="h-4 w-4 text-muted-foreground" />
                         )}
                       </div>
                       <span className="truncate text-sm font-medium" title={c.name}>

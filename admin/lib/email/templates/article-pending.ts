@@ -1,4 +1,5 @@
-import { baseTemplate, ctaButton, divider, heading, paragraph, badge } from "./base";
+import { baseTemplate, ctaButton, divider, heading, paragraph } from "@modonty/shared/lib/email";
+import type { EmailContent } from "@modonty/shared/lib/email";
 
 export interface ArticlePendingEmailParams {
   clientName: string;
@@ -7,20 +8,16 @@ export interface ArticlePendingEmailParams {
   authorName: string;
 }
 
-export function articlePendingEmail({
+export async function articlePendingEmail({
   clientName,
   articleTitle,
   articleUrl,
   authorName,
-}: ArticlePendingEmailParams): {
-  subject: string;
-  html: string;
-  text: string;
-} {
+}: ArticlePendingEmailParams): Promise<EmailContent> {
   const content = `
     ${heading("مقال جديد ينتظر موافقتك")}
     ${paragraph(`مرحباً ${clientName}،`)}
-    ${paragraph(`قام <strong>${authorName}</strong> بإرسال مقال جديد للمراجعة والموافقة على نشره في موقعك.`)}
+    ${paragraph(`<strong>${authorName}</strong> أرسل لك مقالاً جديداً تراجعه وتوافق على نشره في موقعك.`)}
     ${divider()}
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
       <tr>
@@ -32,14 +29,14 @@ export function articlePendingEmail({
         </td>
       </tr>
     </table>
-    ${ctaButton("مراجعة المقال والموافقة", articleUrl)}
+    ${ctaButton("راجع المقال ووافق", articleUrl)}
     ${divider()}
-    ${paragraph(`<span style="font-size:13px;color:#999;">بإمكانك الموافقة على النشر أو طلب تعديلات من خلال لوحة تحكم مودونتي.</span>`)}
+    ${paragraph(`<span style="font-size:13px;color:#999;">تقدر توافق على النشر أو تطلب تعديلات من لوحة تحكّمك.</span>`)}
   `;
 
   return {
     subject: `مقال ينتظر موافقتك: ${articleTitle}`,
-    html: baseTemplate(content, `${authorName} أرسل مقالاً للمراجعة`),
-    text: `مرحباً ${clientName}،\n\nمقال جديد ينتظر موافقتك:\n${articleTitle}\n\nالكاتب: ${authorName}\n\nراجع المقال: ${articleUrl}\n\n— فريق مودونتي`,
+    html: await baseTemplate(content, `${authorName} أرسل مقالاً للمراجعة`),
+    text: `مرحباً ${clientName}،\n\nمقال جديد ينتظر موافقتك:\n${articleTitle}\n\nالكاتب: ${authorName}\n\nراجع المقال: ${articleUrl}\n\n— فريق مُدَوَّنَتِي`,
   };
 }

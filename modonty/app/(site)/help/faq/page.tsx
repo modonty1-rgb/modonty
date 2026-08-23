@@ -63,13 +63,13 @@ export default async function FAQPage() {
         </div>
 
         <div className="flex flex-wrap gap-3 mb-6">
-          <Button asChild variant="outline" size="sm">
+          <Button asChild variant="outline" size="sm" className="max-md:h-11">
             <Link href="/help">
               <IconArrowRight className="h-4 w-4 ml-2" />
               العودة إلى مركز المساعدة
             </Link>
           </Button>
-          <Button asChild variant="outline" size="sm">
+          <Button asChild variant="outline" size="sm" className="max-md:h-11">
             <Link href="/contact">
               <IconEmail className="h-4 w-4 ml-2" />
               اتصل بنا
@@ -88,10 +88,10 @@ export default async function FAQPage() {
                 يمكنك التواصل معنا للحصول على المساعدة
               </p>
               <div className="flex gap-4 justify-center">
-                <Button asChild variant="default">
+                <Button asChild variant="default" className="max-md:h-11">
                   <Link href="/contact">اتصل بنا</Link>
                 </Button>
-                <Button asChild variant="outline">
+                <Button asChild variant="outline" className="max-md:h-11">
                   <Link href="/help/feedback">إرسال ملاحظات</Link>
                 </Button>
               </div>

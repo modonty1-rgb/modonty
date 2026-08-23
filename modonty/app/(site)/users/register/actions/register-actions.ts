@@ -9,8 +9,8 @@ import { trackSignupComplete } from "@/lib/analytics/events-registry";
 import { ConversionType } from "@prisma/client";
 import { randomBytes } from "crypto";
 import { sendEmail } from "@/lib/email/resend-client";
-import { welcomeEmail } from "@/app/(site)/users/register/helpers/welcome";
-import { emailVerificationEmail } from "@/app/(site)/users/register/helpers/email-verification";
+import { welcomeEmail } from "@modonty/shared/lib/email/templates/welcome";
+import { emailVerificationEmail } from "@modonty/shared/lib/email/templates/email-verification";
 import { sendAdminTelegram } from "@modonty/shared/lib/telegram/client";
 
 export async function registerUser(data: RegisterFormData) {
@@ -49,8 +49,9 @@ export async function registerUser(data: RegisterFormData) {
     sendAdminTelegram(`👤 <b>مستخدم جديد — مدونتي</b>\n📧 ${user.email}\n🙋 ${user.name || "—"}\n📅 ${now}`).catch(() => null);
 
     if (user.email) {
-      const welcome = welcomeEmail({ userName: user.name ?? user.email });
-      sendEmail({ to: user.email, ...welcome }).catch((err) =>
+      welcomeEmail({ userName: user.name ?? user.email })
+        .then((welcome) => sendEmail({ to: user.email!, ...welcome }))
+        .catch((err) =>
         console.error("[registerUser] Welcome email failed:", err)
       );
 
@@ -59,9 +60,9 @@ export async function registerUser(data: RegisterFormData) {
       const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
       db.verificationToken
         .create({ data: { identifier: user.email, token, expires } })
-        .then(() => {
+        .then(async () => {
           const verifyUrl = `https://modonty.com/users/verify-email?token=${token}`;
-          const verification = emailVerificationEmail({
+          const verification = await emailVerificationEmail({
             userName: user.name ?? user.email!,
             verifyUrl,
           });

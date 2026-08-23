@@ -10,7 +10,7 @@ export default function HelpLoading() {
         <Skeleton className="h-4 w-28" />
       </div>
       <Skeleton className="h-9 w-48 mb-4" />
-      <Skeleton className="h-5 w-96 mb-8" />
+      <Skeleton className="h-5 w-96 mb-8 max-md:w-full" />
       <div className="grid gap-6 md:grid-cols-2">
         {Array.from({ length: 2 }).map((_, i) => (
           <Card key={i}>

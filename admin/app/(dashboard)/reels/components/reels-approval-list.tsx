@@ -4,7 +4,6 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Building2,
   CheckCircle2,
   Clapperboard,
   Clock,
@@ -12,6 +11,7 @@ import {
   Video,
   XCircle,
 } from "lucide-react";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -148,7 +148,7 @@ export function ReelsApprovalList({ reels }: { reels: PendingReelRow[] }) {
                   {reel.clientLogoUrl ? (
                     <OptimizedImage width={16} height={16} media={asMedia(reel.clientLogoUrl, "")} alt="" sizes="16px" className="h-4 w-4 rounded-full object-cover" />
                   ) : (
-                    <Building2 className="h-3.5 w-3.5" aria-hidden="true" />
+                    <ModontyPartnerMark className="h-3.5 w-3.5" aria-hidden="true" />
                   )}
                   {reel.clientName}
                 </span>

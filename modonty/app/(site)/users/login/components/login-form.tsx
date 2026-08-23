@@ -102,6 +102,7 @@ export function LoginForm({ callbackUrl, initialError }: LoginFormProps) {
               <Input
                 id="email"
                 type="email"
+                className="max-md:h-11"
                 placeholder="example@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -113,6 +114,7 @@ export function LoginForm({ callbackUrl, initialError }: LoginFormProps) {
               <Input
                 id="password"
                 type="password"
+                className="max-md:h-11"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -130,7 +132,10 @@ export function LoginForm({ callbackUrl, initialError }: LoginFormProps) {
             </Button>
 
             <div className="text-center">
-              <Link href="/users/forgot-password" className="text-sm text-muted-foreground hover:text-primary">
+              <Link
+                href="/users/forgot-password"
+                className="text-sm text-muted-foreground hover:text-primary max-md:inline-flex max-md:min-h-11 max-md:items-center max-md:px-3"
+              >
                 نسيت كلمة المرور؟
               </Link>
             </div>
@@ -147,7 +152,10 @@ export function LoginForm({ callbackUrl, initialError }: LoginFormProps) {
 
           <div className="text-center text-sm">
             <span className="text-muted-foreground">ليس لديك حساب؟ </span>
-            <Link href="/users/register" className="text-primary hover:underline">
+            <Link
+              href="/users/register"
+              className="text-primary hover:underline max-md:inline-flex max-md:min-h-11 max-md:items-center max-md:px-2"
+            >
               سجل الآن
             </Link>
           </div>

@@ -13,8 +13,14 @@ interface ArticleFeaturedImageProps {
 }
 
 export function ArticleFeaturedImage({ image, title, children }: ArticleFeaturedImageProps) {
+  // Desktop pays 439px of height for this box, so it is capped by WIDTH, not height.
+  // `max-h` would have cropped (the box shrinks while `object-cover` keeps filling it),
+  // and a shorter aspect ratio crops for the same reason. Capping the width keeps the
+  // ratio untouched — 640 × 9/16 = 360px tall, 79px cheaper, and the file (900×506,
+  // ratio 1.779 against the box's 1.777) still lands whole, exactly as it does today.
+  // `md:` only: mobile shows it at 200px and has nothing to save.
   return (
-    <div className="relative w-full aspect-video overflow-hidden rounded-lg mb-6">
+    <div className="relative w-full md:max-w-[640px] md:mx-auto aspect-video overflow-hidden rounded-lg mb-6">
       <OptimizedImage
         media={image}
         alt={image.altText || title}

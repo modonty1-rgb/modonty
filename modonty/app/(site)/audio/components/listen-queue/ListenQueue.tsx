@@ -12,8 +12,8 @@ import {
   IconSkipForward,
   IconListen,
   IconAlertTriangle,
-  IconClients,
 } from "@/lib/icons";
+import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { cn } from "@/lib/utils";
 
 import { hushOtherAudio } from "../../helpers/hush-other-audio";
@@ -341,7 +341,7 @@ export function ListenQueue({ articles, compact, labels }: ListenQueueProps) {
                     />
                   ) : (
                     <span className="flex h-full w-full items-center justify-center">
-                      <IconClients className="size-4 text-muted-foreground" aria-hidden />
+                      <ModontyPartnerMark className="size-4 text-muted-foreground" aria-hidden />
                     </span>
                   )}
                 </span>

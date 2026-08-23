@@ -20,13 +20,13 @@ import {
   Trash2,
   Copy,
   ExternalLink,
-  Building2,
   Globe,
   Monitor,
   Link as LinkIcon,
   Send,
   Loader2,
 } from "lucide-react";
+import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "../../components/status-badge";
 import {
@@ -307,7 +307,7 @@ export function ContactMessageView({ message }: ContactMessageViewProps) {
                 <Separator />
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Building2 className="h-4 w-4" />
+                    <ModontyPartnerMark className="h-4 w-4" />
                     <span>Associated Client</span>
                   </div>
                   <div className="flex items-center gap-2">

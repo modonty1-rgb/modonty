@@ -2,7 +2,8 @@ import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 import { EntityPlaceholder } from "@/components/listing/EntityPlaceholder";
-import { IconArticle, IconIndustry } from "@/lib/icons";
+import { IconArticle } from "@/lib/icons";
+import { ModontyIndustriesMark } from "@/components/icons/modonty-industries-mark";
 import { cn } from "@/lib/utils";
 import type { EntityType } from "./entity-utils";
 
@@ -95,7 +96,7 @@ export function EntityCard({
 
           <span className="absolute top-2 end-2 inline-flex items-center gap-1 rounded-full bg-black/40 px-2 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm">
             {type === "industry" ? (
-              <IconIndustry className="h-2.5 w-2.5" aria-hidden />
+              <ModontyIndustriesMark className="h-2.5 w-2.5" aria-hidden />
             ) : (
               <IconArticle className="h-2.5 w-2.5" aria-hidden />
             )}
