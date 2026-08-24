@@ -148,10 +148,13 @@ function MobilePostCardContent({ post, hideClient, hero }: MobilePostCardContent
             الأحدث
           </span>
         </div>
-        {publisher && <div className="flex items-center gap-2">{publisher}</div>}
-        <h3 itemProp="headline" className="mt-1.5 line-clamp-2 text-pretty text-lg font-bold leading-[1.35]">
+        {/* Headline first, byline second — same reorder as the desktop card. The partner
+            answers "can I trust this?", which the reader only asks after the headline has
+            interested them; putting it above meant the deciding line arrived third. */}
+        <h3 itemProp="headline" className="line-clamp-2 text-pretty text-lg font-bold leading-[1.35]">
           {titleLink}
         </h3>
+        {publisher && <div className="mt-1.5 flex items-center gap-2">{publisher}</div>}
         {post.excerpt && (
           <p itemProp="description" className="mt-1 line-clamp-2 text-sm leading-[1.55] text-muted-foreground">
             {post.excerpt}

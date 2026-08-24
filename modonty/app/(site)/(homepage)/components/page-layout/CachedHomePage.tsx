@@ -64,7 +64,7 @@ export async function CachedHomePage({ page, userCard }: CachedHomePageProps) {
   // loses the preview while the phase is still running. Board card DEVREELS tracks it.
   const reelItems =
     process.env.NODE_ENV === "development" && reels.items.length === 0
-      ? feed.articles.slice(0, 3).map((a) => ({ id: `preview-${a.id}`, title: a.title, imageUrl: a.image ?? null, clientName: a.clientName }))
+      ? feed.articles.slice(0, 3).map((a) => ({ id: `preview-${a.id}`, title: a.title, imageUrl: a.image ?? null, clientName: a.clientName, slug: null }))
       : reels.items;
 
   return (

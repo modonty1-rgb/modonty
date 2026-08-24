@@ -1,4 +1,6 @@
 import { mediaSrc } from "@modonty/shared/lib/media-src";
+// Uncached shared reader — this body runs inside `unstable_cache`, not a `"use cache"` scope.
+import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { db } from "@/lib/db";
 import { SubscriptionStatus } from "@prisma/client";
 import { unstable_cache } from "next/cache";
@@ -15,6 +17,14 @@ export const getIndustriesEnhanced = unstable_cache(
   async (options: IndustryQueryOptions = {}): Promise<IndustryListItem[]> => {
     const { search, sortBy = "clients" } = options;
 
+    // Modonty holds a Client row of its own; counting it here would list the platform among
+    // the partners of its own industry tile. `Settings.coreClientId` is the only switch.
+    const coreClientId = await getCoreClientId();
+    const activePartner = {
+      subscriptionStatus: SubscriptionStatus.ACTIVE,
+      ...(coreClientId ? { id: { not: coreClientId } } : {}),
+    };
+
     const industries = await db.industry.findMany({
       select: {
         id: true,
@@ -24,10 +34,10 @@ export const getIndustriesEnhanced = unstable_cache(
         socialImage: true,
         socialImageAlt: true,
         _count: {
-          select: { clients: { where: { subscriptionStatus: SubscriptionStatus.ACTIVE } } },
+          select: { clients: { where: activePartner } },
         },
         clients: {
-          where: { subscriptionStatus: SubscriptionStatus.ACTIVE },
+          where: activePartner,
           orderBy: { name: "asc" },
           take: 3,
           select: {

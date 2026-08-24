@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { ModontyLogoutMark } from "@/components/icons/modonty-logout-mark";
 
 import { ReelsFeedClient } from "./components/reels-feed-client";
+import { ReelsNavRail } from "./components/reels-nav-rail";
 import { getReelsFeedPage } from "@/lib/queries/get-reels-feed-page";
 import { getUserReelFlags } from "@/lib/queries/get-user-reel-flags";
 
@@ -52,8 +53,13 @@ export default async function ReelsPage() {
 
   return (
     <div className="fixed inset-0 z-50 bg-neutral-950">
-      {/* Floating header above the feed */}
-      <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-4">
+      {/* Desktop navigation, `md` and up. Mounted HERE and not inside `ReelsFeedClient`:
+          it is a plain server component, and importing it into the client file would drag
+          `nav-config` — and the whole `messages` object it reads — into the client bundle. */}
+      <ReelsNavRail />
+
+      {/* Floating header above the feed. `md:ps-*` keeps its title clear of the nav rail. */}
+      <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-4 md:ps-24 lg:ps-60">
         <h1 className="rounded-full bg-black/40 px-4 py-1.5 text-sm font-bold text-white backdrop-blur">
           الريلز
         </h1>

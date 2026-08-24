@@ -32,12 +32,22 @@ export function PageLayout({ posts, hasMore, page, industries, reels, userCard, 
   return (
     <>
       <ScrollButtons />
-      <h2 className="sr-only">أحدث المقالات والمدونات - مدونتي</h2>
+      {/* The sr-only «أحدث المقالات والمدونات» that used to sit here is gone: the feed now
+          carries a real visible heading below, and two headings for one list would make a
+          screen reader announce the section twice. */}
       <ThreeColumnLayout
         // Columns swapped 2026-08-16 (Khalid): partners rail on the visual right, account rail on the left.
         right={<RightSidebar />}
         center={
           <div className="space-y-3 sm:space-y-4 [&>article:first-of-type]:!mt-0">
+            {/* A visible heading, not just the sr-only one in CachedHomePage. Measured 24 Aug:
+                the page's only h1 was `sr-only` at 1×1px, so a sighted reader landed on a wall
+                of cards with nothing naming where they are — the machine was told and the human
+                was not. One line, above the feed, where the eye starts. It is an h2 because the
+                page's h1 (the site name) already exists for the crawler; two h1s would compete. */}
+            <h2 className="pt-1 text-[15px] font-bold leading-none text-foreground sm:text-base">
+              أحدث المقالات
+            </h2>
             {/* The doorway tabs moved to `SiteShell` on 22 Aug — they now hang from the
                 navbar on every page, so the homepage no longer renders its own copy. */}
             {/* Modo leads the feed — except on phones (<768px), where the bottom bar already
@@ -45,12 +55,9 @@ export function PageLayout({ posts, hasMore, page, industries, reels, userCard, 
             <div className="max-md:hidden">
               <HomeActions />
             </div>
-            {/* Reels left the desktop feed for a link card in the far rail (Khalid, 2026-08-16).
-                In the 1024-1239px band that rail is hidden, so the card stays here for small
-                laptops; phones now reach the reels through the QuickLinks tile instead. */}
-            <div className="hidden lg:block min-[1240px]:hidden">
-              <ReelsCard items={reels} layout="feed" />
-            </div>
+            {/* The small-laptop reels card moved INTO the feed (after the second article) on
+                24 Aug — see `ArticlesList`. Above the feed it delayed the opening article from
+                y=225 to y=389 at 1100px, so the reader met reels before reading anything. */}
             {/* PHONE ONLY (Khalid, 23 Aug: «in home page need search and filter»): the archive's
                 own two controls, promoted from `/articles` so there is one search box and one
                 reading-time bar on the site. Search is a zero-JS GET form that lands on
@@ -74,7 +81,7 @@ export function PageLayout({ posts, hasMore, page, industries, reels, userCard, 
                   آخر المقالات
                 </h2>
               )}
-              <ArticlesList serverPosts={posts} page={page} />
+              <ArticlesList serverPosts={posts} page={page} reels={reels} />
               {/* Crawl entry into the paginated series (Google: "Link sequentially to
                   the individual URLs"). Sits below the infinite scroll, so the visitor
                   only meets it at the true bottom — or with JavaScript off. */}

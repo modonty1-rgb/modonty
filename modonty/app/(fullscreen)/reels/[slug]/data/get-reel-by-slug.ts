@@ -31,13 +31,29 @@ export interface ReelWatch {
  * were put in place upstream for exactly this: the schema comment on `reelSlug` reads "standalone
  * watch page", and `mp4Url` exists "because Google requires a fetchable file".
  */
+/**
+ * A Mongo ObjectId, the shape `Media.id` always has. Guarded because Prisma throws
+ * «Malformed ObjectID» when a non-hex string is compared against an `@db.ObjectId`
+ * column — so the id branch below is only ever added for a value that could BE one.
+ */
+const OBJECT_ID = /^[0-9a-f]{24}$/i;
+
 export async function getReelBySlug(slug: string): Promise<ReelWatch | null> {
   "use cache";
   cacheTag("reels");
   cacheLife("minutes");
 
   const r = await db.media.findFirst({
-    where: { reelSlug: slug, inReels: true, reelStatus: "PUBLISHED", client: { isNot: null } },
+    where: {
+      // Every producer of a reel URL writes `reelSlug ?? id` (the feed, the share button, the
+      // preview tiles), so a reel that has no slug yet was handing out `/reels/<id>` — a URL
+      // this query could never match. Accepting the id closes that hole at its source instead
+      // of teaching four callers to hide the link (24 Aug 2026, card 83d).
+      OR: OBJECT_ID.test(slug) ? [{ reelSlug: slug }, { id: slug }] : [{ reelSlug: slug }],
+      inReels: true,
+      reelStatus: "PUBLISHED",
+      client: { isNot: null },
+    },
     select: {
       id: true,
       reelSlug: true,

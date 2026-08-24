@@ -5,6 +5,7 @@ import { cacheTag, cacheLife } from "next/cache";
 import { ArticleStatus, CommentStatus, SubscriptionStatus } from "@prisma/client";
 import { IconHash } from "@/lib/icons";
 import { db } from "@/lib/db";
+import { getCoreClientId } from "@/lib/settings/get-core-client-id";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 import { generateMetadataFromSEO, jsonLdHtmlFromString } from "@/lib/seo";
@@ -85,6 +86,10 @@ export default async function TagPage({ params }: TagPageProps) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
 
+  // Modonty is the platform, not one of the partners this page lists. Cached for hours and
+  // busted by the `settings` tag, so this is not a per-visit round-trip before the fan-out.
+  const coreClientId = await getCoreClientId();
+
   try {
     const [tag, clients, articleCount] = await Promise.all([
       db.tag.findUnique({
@@ -102,6 +107,7 @@ export default async function TagPage({ params }: TagPageProps) {
       db.client.findMany({
         where: {
           subscriptionStatus: SubscriptionStatus.ACTIVE,
+          ...(coreClientId ? { id: { not: coreClientId } } : {}),
           articles: {
             some: {
               status: ArticleStatus.PUBLISHED,

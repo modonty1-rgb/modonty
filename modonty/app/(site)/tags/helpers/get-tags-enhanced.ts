@@ -1,4 +1,6 @@
 import { mediaSrc } from "@modonty/shared/lib/media-src";
+// Uncached shared reader — this body runs inside `unstable_cache`, not a `"use cache"` scope.
+import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { db } from "@/lib/db";
 import { cacheTag, cacheLife } from "next/cache";
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
@@ -68,6 +70,13 @@ export const getTagsEnhanced = unstable_cache(
     // Batch-fetch client previews via the ArticleTag junction — one query for ALL tags (no N+1)
     const tagIds = results.map((t) => t.id);
     if (tagIds.length > 0) {
+      // Modonty is the platform, not a listed partner: it is out of the avatars and the
+      // «شريك» count on the tag card, while its articles stay in every count and feed.
+      const coreClientId = await getCoreClientId();
+      const activePartner = {
+        subscriptionStatus: SubscriptionStatus.ACTIVE,
+        ...(coreClientId ? { id: { not: coreClientId } } : {}),
+      };
       // Independent of each other — run in parallel (GA4 is a network call, the slower of the two).
       const [clientRows, clientGA4] = await Promise.all([
         db.articleTag.findMany({
@@ -76,7 +85,7 @@ export const getTagsEnhanced = unstable_cache(
             article: {
               status: ArticleStatus.PUBLISHED,
               OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
-              client: { subscriptionStatus: SubscriptionStatus.ACTIVE },
+              client: activePartner,
             },
           },
           select: {

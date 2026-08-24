@@ -49,6 +49,10 @@ const done = enriched.filter(isDone);
 // بنود «تحديث البيانات» (file:"data") تخرج للوحة مستقلة DATA-REFACTOR.html
 const dataOpen = allOpen.filter(t => t.file === "data");
 const open = allOpen.filter(t => t.file !== "data");
+// الشغل الحقيقي: بلا بطاقات المرجع وبلا «قبل الدمج» — وهو الرقم الذي تعرضه شارات التبويبات.
+// العنوان كان يقول `open.length` فيعدّ ٣٦ بطاقة مرجع بنوداً مفتوحة: ١٢١ مقابل ٧١ على الشاشة.
+const openWork = open.filter(t => t.tab !== "ref" && !t.last);
+const lastWork = open.filter(t => t.tab !== "ref" && t.last);
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const json = (v) => JSON.stringify(v).replace(/<\/script/gi, "<\\/script");
@@ -99,6 +103,7 @@ h1{font-size:18px;margin:0 0 8px}
 .apptab[data-app="console"][aria-selected="true"]{color:var(--cyan)}
 .apptab[data-app="dataLayer"][aria-selected="true"]{color:var(--green)}
 .apptab[data-app="partner"][aria-selected="true"]{color:var(--amber)}
+.apptab[data-app="__merge"][aria-selected="true"]{color:var(--dim)}
 .grp.hidden{display:none}
 /* بند «قبل الدمج» — مؤجَّل بقرار، لا متأخّر بإهمال. يبقى مرئياً لكنه يهدأ في الأسفل. */
 .card[data-last]{opacity:.72;border-inline-start:4px solid var(--dim)}
@@ -187,11 +192,28 @@ function cardHTML(t) {
 </article>`;
 }
 
+// أقسام الشغل الموضوعية. البطاقة تحمل `sec` في `task-data.json`؛ وما لم يُوسم بعد يُشتقّ من
+// بورده الأصلي، وما لا ينطبق عليه شيء ينزل «بنود أخرى» — قسم صريح خير من بطاقة تختفي.
+const SECTIONS = [
+  { k: "visible", n: "🔴 كسر يراه الزائر", s: "شيء مكسور على الشاشة الآن — يسبق كل تحسين." },
+  { k: "seo", n: "🔍 سيو", s: "ما يجلب زائراً جديداً من البحث." },
+  { k: "reels", n: "🎬 الطلّات", s: "الصفحة وربطها بباقي الموقع." },
+  { k: "analytics", n: "📊 قياس وتتبّع", s: "بلا رقم لا نعرف هل نجح ما بنيناه." },
+  { k: "ui", n: "🎨 واجهة وتجربة", s: "ما يراه الزائر ويستعمله." },
+  { k: "code", n: "🧱 بنية الكود", s: "ريفاكتور وتوحيد — بلا أثر مباشر على الزائر." },
+  { k: "qa", n: "🧪 فحص وجودة", s: "مسارات لم تُختبر بعد." },
+  { k: "other", n: "بنود أخرى — دوري", s: "لم تُصنَّف بعد؛ تُنقل إلى قسمها عند فتح مرحلتها." },
+];
+const SEC_FROM_BOARD = { seo: "seo", fs: "code", mediaimg: "visible", bunny: "visible", bugs: "visible" };
+const secOf = (t) => t.sec || SEC_FROM_BOARD[t.b] || "other";
+
 const groups = [
   { k: "decide", n: "يحتاج قرارك", s: "الأسهل أولاً: ⚡ = كلمة «ابدأ» تكفي · 🤔 سهل = نعم/لا · 🤔 قصير = جواب سطر · 🤔 جلسة = نقاش. كلود لا يبدأ قبل كلمتك.", f: t => t.who === "k" && t.tab !== "ref" },
-  { k: "now", n: "الجاري الآن — دوري", s: "ما أشتغل عليه فعلاً هذه الأيام.", f: t => t.who !== "k" && t.tab === "now" },
-  { k: "next", n: "التالي — دوري", s: "الدور القادم بعد الجاري.", f: t => t.who !== "k" && t.tab === "next" },
-  { k: "open", n: "مفتوح — دوري", s: "جاهز وأقدر أبدأ فيه متى قلت «بند رقم كذا».", f: t => t.who !== "k" && (t.tab === "open" || t.tab === "idea") },
+  // ── شغلي أنا، مجمَّعاً بالموضوع لا بالحالة (خالد، ٢٤ أغسطس: «جمعهم حسب السكشن —
+  // اللي يخصّ السيو في سكشن واللي يخصّ الواجهة في سكشن، عشان نبتدي حسب الأولوية»).
+  // «الآن/التالي/مفتوح» كانت تقول متى أبدأ ولا تقول في ماذا — والقرار يحتاج الثانية.
+  // الترتيب هنا هو ترتيب الأولوية: ما يراه الزائر مكسوراً، ثم ما يجلب زائراً، ثم الباقي.
+  ...SECTIONS.map(s => ({ k: s.k, n: s.n, s: s.s, f: t => t.who !== "k" && secOf(t) === s.k })),
   { k: "ref", n: "مراجع — لا مهامّ", s: "طرق قياس ومفاتيح وخرائط. تُفتح عند الحاجة.", f: t => t.tab === "ref", collapsed: true },
 ];
 const seen = new Set();
@@ -230,26 +252,31 @@ const APP_TABS = [
   { k: "console", n: "الكونسول" },
   { k: "dataLayer", n: "المشترك والقاعدة" },
   { k: "__none", n: "بلا تطبيق" },
+  { k: "__merge", n: "🏁 قبل الدمج" },
   { k: "__all", n: "الكل" },
 ];
 // حصريّ لا مزدوج (خالد، ٢٤ أغسطس: «still duplicate in modonty»): بطاقة صفحة الشريك تخرج من
 // تبويب تطبيقها. البطاقة التي تظهر في تبويبين تُعدّ مرّتين وتُقرأ كبندين — وهذا نقيض سبب التبويب.
 const inTab = (t, k) =>
   k === "__all" ? true
+  : k === "__merge" ? !!t.last
+  : t.last ? false
   : k === "partner" ? t.area === "partner"
   : t.area === "partner" ? false
   : k === "__none" ? !(t.app || []).length
   : (t.app || []).includes(k);
-const tabCount = (k) => open.filter(t => inTab(t, k)).length;
+// المراجع ليست مهامّ (طرق قياس ومفاتيح وخرائط) — إدخالها في العدّاد يضخّم الباقي
+// بـ٣٦ بنداً لا يُعمل فيها شيء (خالد، ٢٤ أغسطس: «only the remaining and open»).
+const tabCount = (k) => open.filter(t => t.tab !== "ref" && (k === "__merge" || !t.last) && inTab(t, k)).length;
 const appTabsHTML = APP_TABS
   .map(a => `<button class="apptab" role="tab" data-app="${a.k}" aria-selected="${a.k === "modonty"}" title="${tabCount(a.k)} بنداً مفتوحاً في ${a.n} — الرقم الكهرماني فوق يعدّ ما ينتظر قرارك منها وحدها">${a.n}<b>${tabCount(a.k)}</b></button>`)
   .join("");
 const boardHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>لوحة مدونتي — ${open.length} بنداً مفتوحاً</title>
+<title>لوحة مدونتي — ${openWork.length} بنداً مفتوحاً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>${CSS}</style></head><body>
 <header class="top"><div class="wrap">
-<h1>لوحة الشغل — المفتوح فقط <span style="color:var(--dim);font-weight:500;font-size:13px">· تحديث البيانات في <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> · المنجز في <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a> · آخر بناء ٢٣ أغسطس ٢٠٢٦</span></h1>
+<h1>لوحة الشغل — ${openWork.length} بنداً مفتوحاً <span style="color:var(--dim);font-weight:500;font-size:13px">· و${lastWork.length} في «قبل الدمج» · تحديث البيانات في <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> · المنجز في <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a></span></h1>
 <!-- لا صفّ إحصاءات إطلاقاً (خالد، ٢٤ أغسطس: «only the counter for what remain, no حشو»).
      كانت عشرون رقماً على الشاشة، ثم واحد بارز مع مطويّة — وكلّها ما زالت حشواً فوق ما يلزم.
      أرقام التبويبات وحدها تقول ما بقي، وعناوين الأقسام تقول توزيعه. الباقي كان يشرح لا يفيد. -->
@@ -271,7 +298,12 @@ ${sections.filter(g => g.items.length).map(g => `<section class="grp" data-grp="
   let app = 'modonty';
   try { const s = localStorage.getItem('taskboard-app'); if (s && tabs.some(t => t.dataset.app === s)) app = s; } catch {}
   const matchApp = (c) => {
-    if (app === '__all') return true;
+    // «الكل» يعني كل الشغل المفتوح — لا يشمل «قبل الدمج»، تماماً كما تستثنيه شارته.
+    // قبل ٢٤ أغسطس كان يعرضها ولا يعدّها: ٧١ في الشارة و٨٥ على الشاشة.
+    if (app === '__all') return !c.dataset.last;
+    // تبويب «قبل الدمج» حصريّ: بنوده تخرج من كل تبويب آخر كي لا تُعدّ مرّتين
+    if (app === '__merge') return !!c.dataset.last;
+    if (c.dataset.last) return false;
     if (app === 'partner') return c.dataset.area === 'partner';
     // بطاقة الشريك لا تظهر في تبويب تطبيقها — حصريّة كي لا تُعدّ مرّتين
     if (c.dataset.area === 'partner') return false;
@@ -285,6 +317,9 @@ ${sections.filter(g => g.items.length).map(g => `<section class="grp" data-grp="
     tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.app === app)));
     cards.forEach(c => {
       let ok = matchApp(c);
+      // بطاقات المرجع ليست شغلاً مفتوحاً، والشارة لا تعدّها — فلا تُرسم إلا لمن يبحث عنها
+      // بالاسم. قبل ٢٤ أغسطس كانت تُرسم ولا تُعدّ: ٢٢ في شارة مدونتي و٢٧ بطاقة تحتها.
+      if (ok && c.dataset.tab === 'ref' && !term) ok = false;
       if (ok && term) ok = (c._s ||= c.textContent.toLowerCase()).includes(term) || c.dataset.id.toLowerCase().includes(term);
       if (ok && sevOnly) ok = /critical|high/.test(c.dataset.sev);
       if (ok && agentOnly) ok = !!c.dataset.agent;
@@ -312,7 +347,13 @@ ${sections.filter(g => g.items.length).map(g => `<section class="grp" data-grp="
   if (location.hash) {
     const el = document.querySelector('.card[data-id="' + CSS.escape(location.hash.slice(1)) + '"]');
     if (el) {
-      if (!matchApp(el)) { app = '__all'; apply(); }
+      // بطاقة «قبل الدمج» أو بطاقة مرجع لن يفتحها «الكل» بعد اليوم — يُختار لها تبويبها،
+      // والمرجع يُكشف بكتابة معرّفه في البحث لأن هذا هو شرط ظهوره.
+      if (!matchApp(el) || el.dataset.tab === 'ref') {
+        app = el.dataset.last ? '__merge' : '__all';
+        if (el.dataset.tab === 'ref') q.value = el.dataset.id;
+        apply();
+      }
       el.querySelector('details').open = true;
       el.scrollIntoView({ block: 'center' });
     }

@@ -8,6 +8,12 @@ export interface ReelItem {
   title: string;
   imageUrl: string | null;
   clientName: string;
+  /**
+   * The reel's own watch URL segment (`Media.reelSlug`), when it has one. A tile with a slug
+   * opens THAT clip; one without falls back to the feed — a link built from the row id would
+   * 404, because `/reels/[slug]` matches on `reelSlug` alone.
+   */
+  slug?: string | null;
 }
 
 type ReelsPreviewLayout = "sidebar" | "feed";
@@ -48,7 +54,10 @@ function ReelPreviewTile({ item, layout, itemCount }: ReelPreviewTileProps) {
 
   return (
     <Link
-      href="/reels"
+      // The tile names ONE reel in its label, so it must land on that reel — it used to drop
+      // every visitor on the feed root instead (card 83d). No slug (older rows) → the feed,
+      // which is still true to the label's promise and never a dead URL.
+      href={item.slug ? `/reels/${encodeURIComponent(item.slug)}` : "/reels"}
       aria-label={`شوف الطلّة: ${item.title}`}
       className={cn(
         "group relative isolate shrink-0 overflow-hidden text-white ring-1 ring-transparent transition-[box-shadow,transform] sm:hover:ring-2 sm:hover:ring-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary motion-safe:active:scale-[0.98]",

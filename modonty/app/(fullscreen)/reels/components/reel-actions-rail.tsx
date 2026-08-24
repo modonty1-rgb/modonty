@@ -117,7 +117,11 @@ export function ReelActionsRail({
           {hint}
         </div>
       )}
-      <div className="absolute bottom-24 end-2 z-10 flex flex-col items-center gap-4">
+      {/* Phone: overlaid on the clip, bottom-end — unchanged. From `md` up it steps OUT of the
+          card (`-end-16`, the card's own edge plus a gutter) and centres vertically beside it,
+          which is where TikTok's desktop puts the same four counts. The card turns off its
+          clipping at the same breakpoint, so nothing here is cut. */}
+      <div className="absolute bottom-24 end-2 z-10 flex flex-col items-center gap-4 md:bottom-auto md:-end-16 md:top-1/2 md:-translate-y-1/2 md:gap-6">
         {/* Brand marks, not lucide (the rule that governs all nine mobile surfaces) — the
             like, comment, bookmark and share marks the article page already wears, size-5 in
             a 44px circle, the mobile icon standard. State lives on the CIRCLE via tokens

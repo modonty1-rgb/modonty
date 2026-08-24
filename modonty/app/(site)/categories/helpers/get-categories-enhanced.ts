@@ -1,4 +1,7 @@
 import { mediaSrc } from "@modonty/shared/lib/media-src";
+// The uncached shared reader, not `@/lib/settings/get-core-client-id`: this body runs inside
+// `unstable_cache`, which is not a `"use cache"` scope. One tiny Settings read per cache miss.
+import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { db } from "@/lib/db";
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { unstable_cache } from "next/cache";
@@ -78,6 +81,15 @@ export const getCategoriesEnhanced = unstable_cache(
     // Batch-fetch client previews — one query for ALL categories (no N+1)
     const categoryIds = categories.map((c) => c.id);
     if (categoryIds.length > 0) {
+      // Modonty publishes here too, but it is the platform, not one of the partners it lists —
+      // so it is excluded from the partner avatars and the «شريك» count on the category card
+      // (its ARTICLES stay in every count and every feed). Same rule `/clients` and the
+      // platform counters already apply; `Settings.coreClientId` is the only switch.
+      const coreClientId = await getCoreClientId();
+      const activePartner = {
+        subscriptionStatus: SubscriptionStatus.ACTIVE,
+        ...(coreClientId ? { id: { not: coreClientId } } : {}),
+      };
       // Independent of each other — run in parallel (GA4 is a network call, the slower of the two).
       const [clientRows, clientGA4] = await Promise.all([
         db.article.findMany({
@@ -85,7 +97,7 @@ export const getCategoriesEnhanced = unstable_cache(
             categoryId: { in: categoryIds },
             status: ArticleStatus.PUBLISHED,
             OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
-            client: { subscriptionStatus: SubscriptionStatus.ACTIVE },
+            client: activePartner,
           },
           select: {
             categoryId: true,
