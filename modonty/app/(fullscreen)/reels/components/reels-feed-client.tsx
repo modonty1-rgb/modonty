@@ -113,7 +113,11 @@ export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn }: Ree
       // address bar shows). The snap points then sat at a different rhythm than the container's
       // height, so on a real phone every swipe fought the snap — the "can't scroll" Khalid hit.
       // `overscroll-contain` stops a swipe past the last reel from scrolling the page behind it.
-      className="h-dvh snap-y snap-mandatory overflow-y-auto overscroll-y-contain"
+      // The scrollbar is hidden, not the scrolling: a classic (non-overlay) scrollbar reserves
+      // a 15px gutter, and on this feed that gutter came out of the reel itself — measured 24
+      // Aug: the clip was 375 wide on a 390 screen, with the bar's thumb drawn over the frame.
+      // Nothing is lost: the feed moves by swipe, by wheel, and by the two chevrons on desktop.
+      className="h-dvh snap-y snap-mandatory overflow-y-auto overscroll-y-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
       {/* Prev / next for a mouse — `lg` and up, NOT `md`. Measured at 768px: the free lane
           beside the card is one 44px column wide, so this pair landed exactly on the action
@@ -171,12 +175,17 @@ export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn }: Ree
             // the start rail, and the card never spans the whole screen. `ps` clears that
             // fixed rail; in RTL the start side is the RIGHT one, so the action buttons keep
             // the end (left) side they already had on the phone.
-            className="flex h-dvh snap-start items-center justify-center p-3 md:gap-4 md:ps-24 lg:gap-6 lg:ps-60"
+            // Phone: no padding at all — the reel IS the screen (Khalid, 24 Aug, with TikTok's
+            // phone feed as the reference). The 12px gutter and the rounded corners belong to
+            // the desktop card, so they start at `md` with the rest of that layout.
+            className="flex h-dvh snap-start items-center justify-center md:gap-4 md:p-3 md:ps-24 lg:gap-6 lg:ps-60"
           >
-            {/* `overflow-visible` from `md` up so the action rail can sit OUTSIDE the card;
-                the media keeps its own clipping wrapper below, so corners stay round. */}
-            <article className="relative aspect-[9/16] h-full max-h-[94dvh] overflow-hidden rounded-2xl bg-black shadow-2xl md:overflow-visible">
-              <div className="absolute inset-0 overflow-hidden rounded-2xl">
+            {/* Phone: edge to edge — full width, full height, square corners, no aspect box, so
+                nothing letterboxes. From `md` the 9:16 card comes back, and `overflow-visible`
+                lets the action rail sit OUTSIDE it; the media keeps its own clipping wrapper
+                below, so the corners stay round there. */}
+            <article className="relative h-full w-full bg-black md:aspect-[9/16] md:h-full md:max-h-[94dvh] md:w-auto md:overflow-visible md:rounded-2xl md:shadow-2xl">
+              <div className="absolute inset-0 overflow-hidden md:rounded-2xl">
               {/* The still layer is always present: the blurred backdrop plus the contained frame.
                   For a video reel this frame is its poster, so the video fades in over an identical
                   image and there is never a black gap. */}
@@ -219,7 +228,10 @@ export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn }: Ree
                   bottom edge, and outside it the square corners would poke past the radius
                   once `md` turns clipping off. `pe-16` only reserves room for the rail while
                   the rail is still overlaid — from `md` up it moved out, so the text is free. */}
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 pe-16 pt-20 md:pe-4">
+              {/* `pb-24` on the phone lifts the text clear of the 56px bottom bar (plus the
+                  safe-area it grows by); `md:pb-4` puts it back on the desktop card, which has
+                  no bar under it. */}
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 pb-24 pe-16 pt-20 md:pb-4 md:pe-4">
                 <Link
                   href={`/clients/${reel.clientSlug}`}
                   // `min-h-11`: the chip measured 142×36 (23 Aug) over moving footage — the

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { mainNavItems } from "@/app/layout/helpers/nav-config";
+import { reelsRailItems } from "../helpers/reels-nav-destinations";
 
 /**
  * The desktop navigation for a page that has no site chrome.
@@ -11,9 +11,9 @@ import { mainNavItems } from "@/app/layout/helpers/nav-config";
  * end, which is why TikTok keeps its own rail on desktop and goes chrome-less only on touch
  * (Khalid handed the reference, 24 Aug 2026).
  *
- * Items come from `mainNavItems` — the same list the top bar and the burger menu read, so a
- * renamed section changes here too. A second hand-written list would drift the first time
- * someone edits one of them.
+ * Items come from `reels-nav-destinations.ts`, which reads `mainNavItems` — the same list the
+ * top bar and the burger menu read, so a renamed section changes here too. The phone's bottom
+ * bar reads the same file and carries five of these seven.
  *
  * `md` shows icons only (64px); `lg` adds the labels (240px). Hidden below `md`, where the
  * page stays exactly as it was.
@@ -24,7 +24,7 @@ export function ReelsNavRail() {
       aria-label="أقسام الموقع"
       className="fixed inset-y-0 start-0 z-30 hidden w-16 flex-col gap-1 overflow-y-auto border-e border-white/10 bg-neutral-950/80 px-2 py-4 backdrop-blur md:flex lg:w-60 lg:px-3"
     >
-      {mainNavItems.map((item) => (
+      {reelsRailItems.map((item) => (
         <Link
           key={item.href}
           href={item.href}

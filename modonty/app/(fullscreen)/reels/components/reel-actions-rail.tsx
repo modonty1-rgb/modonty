@@ -25,8 +25,16 @@ interface ReelActionsRailProps {
 
 const btn =
   "flex flex-col items-center gap-1 text-white transition active:scale-90";
-const iconWrap =
-  "flex size-11 items-center justify-center rounded-full bg-black/40 backdrop-blur transition";
+// 24 Aug 2026 — rebuilt against TikTok's own phone rail, which Khalid handed as the reference
+// («الأيقونز صغيرة، البادنق اللي حواليها ماكل نص المكان»). The mark was 20px inside a 44px
+// tinted circle: 45% glyph, 55% padding, and the circle WAS that padding. TikTok draws no
+// circle at all — a bare white glyph over the footage, kept legible by a drop shadow.
+//
+// So the 44 box stays (it is the tap target, and it is the one thing a thumb needs) but turns
+// transparent, and the glyph grows 20 → 32. Legibility over bright frames now comes from the
+// shadow, not from a plate behind it.
+const iconWrap = "flex size-11 items-center justify-center rounded-full transition";
+const iconGlyph = "size-8 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]";
 
 export function ReelActionsRail({
   reelId,
@@ -121,9 +129,14 @@ export function ReelActionsRail({
           card (`-end-16`, the card's own edge plus a gutter) and centres vertically beside it,
           which is where TikTok's desktop puts the same four counts. The card turns off its
           clipping at the same breakpoint, so nothing here is cut. */}
-      <div className="absolute bottom-24 end-2 z-10 flex flex-col items-center gap-4 md:bottom-auto md:-end-16 md:top-1/2 md:-translate-y-1/2 md:gap-6">
+      {/* Phone: overlaid on the clip. `bottom-36` clears the caption block (which now ends
+          ~96px up, above the bottom bar) — at `bottom-24` the share button sat on the byline.
+          From `md` up it steps OUT of the card (`-end-16`) and centres beside it, where
+          TikTok's desktop puts the same four counts; the card stops clipping at that same
+          breakpoint, so nothing here is cut. */}
+      <div className="absolute bottom-36 end-3 z-10 flex flex-col items-center gap-4 md:bottom-auto md:-end-16 md:top-1/2 md:-translate-y-1/2 md:gap-6">
         {/* Brand marks, not lucide (the rule that governs all nine mobile surfaces) — the
-            like, comment, bookmark and share marks the article page already wears, size-5 in
+            like, comment, bookmark and share marks the article page already wears, 28px in
             a 44px circle, the mobile icon standard. State lives on the CIRCLE via tokens
             (`bg-primary` / `bg-accent`), never a raw hex: #3030FF and #00D8D8 sat here
             hardcoded and would have missed any future token change. Counts through Intl —
@@ -137,13 +150,18 @@ export function ReelActionsRail({
           aria-label="إعجاب"
           aria-pressed={liked}
         >
-          <span className={`${iconWrap} ${liked ? "bg-primary" : ""}`}>
-            <ModontyLikeMark className="size-5" aria-hidden />
+          {/* State moved from the plate to the GLYPH when the plate went away: a liked mark
+              carries the primary token itself, the way TikTok's heart turns colour rather
+              than gaining a background. */}
+          <span className={`${iconWrap} ${liked ? "text-primary" : ""}`}>
+            <ModontyLikeMark className={iconGlyph} aria-hidden />
           </span>
-          {/* A zero count draws nothing: in Arabic-Indic numerals zero is a DOT, and «٠»
-              under a button reads as dirt on the screen, not as a number. The aria-label
-              already names the action, so the button loses nothing. */}
-          {likes > 0 && <span className="text-xs font-bold">{likes.toLocaleString("ar-SA")}</span>}
+          {/* The word until there is a number, then the number — TikTok's own rule. A zero is
+              still never drawn («٠» in Arabic-Indic is a DOT, and it read as dirt on the
+              screen), but hiding the line entirely left three buttons blank beside a fourth
+              carrying «مشاركة», so the column stood uneven on every reel with no counts yet
+              (Khalid saw it on the phone, 24 Aug). One line under all four, always. */}
+          <span className="text-xs font-bold">{likes > 0 ? likes.toLocaleString("ar-SA") : "إعجاب"}</span>
         </button>
         <button
           type="button"
@@ -154,11 +172,9 @@ export function ReelActionsRail({
           aria-label="التعليقات"
         >
           <span className={iconWrap}>
-            <ModontyCommentMark className="size-5" aria-hidden />
+            <ModontyCommentMark className={iconGlyph} aria-hidden />
           </span>
-          {commentsCount > 0 && (
-            <span className="text-xs font-bold">{commentsCount.toLocaleString("ar-SA")}</span>
-          )}
+          <span className="text-xs font-bold">{commentsCount > 0 ? commentsCount.toLocaleString("ar-SA") : "تعليق"}</span>
         </button>
         <button
           type="button"
@@ -169,16 +185,17 @@ export function ReelActionsRail({
           aria-label="حفظ"
           aria-pressed={saved}
         >
-          {/* The one allowed diamond exception: on the accent-coloured circle the accent
-              diamond would vanish, so it flips to the dark foreground with the body. */}
-          <span className={`${iconWrap} ${saved ? "bg-accent text-neutral-950" : ""}`}>
-            <ModontyBookmarkMark className={`size-5 ${saved ? "[&>rect]:fill-current" : ""}`} aria-hidden />
+          {/* Saved fills the bookmark in the accent token — the mark itself changes, not a
+              plate behind it. The old «accent circle + dark glyph» exception is gone with the
+              circle, so the diamond keeps its normal accent colour again. */}
+          <span className={`${iconWrap} ${saved ? "text-accent" : ""}`}>
+            <ModontyBookmarkMark className={`${iconGlyph} ${saved ? "[&>rect]:fill-current" : ""}`} aria-hidden />
           </span>
-          {saves > 0 && <span className="text-xs font-bold">{saves.toLocaleString("ar-SA")}</span>}
+          <span className="text-xs font-bold">{saves > 0 ? saves.toLocaleString("ar-SA") : "حفظ"}</span>
         </button>
         <button type="button" onClick={handleShare} className={btn} aria-label="مشاركة">
           <span className={iconWrap}>
-            <ModontyShareMark className="size-5" aria-hidden />
+            <ModontyShareMark className={iconGlyph} aria-hidden />
           </span>
           <span className="text-xs font-bold">مشاركة</span>
         </button>

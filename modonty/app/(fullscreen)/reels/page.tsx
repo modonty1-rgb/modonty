@@ -6,6 +6,7 @@ import { ModontyLogoutMark } from "@/components/icons/modonty-logout-mark";
 
 import { ReelsFeedClient } from "./components/reels-feed-client";
 import { ReelsNavRail } from "./components/reels-nav-rail";
+import { ReelsBottomBar } from "./components/reels-bottom-bar";
 import { getReelsFeedPage } from "@/lib/queries/get-reels-feed-page";
 import { getUserReelFlags } from "@/lib/queries/get-user-reel-flags";
 
@@ -78,6 +79,9 @@ export default async function ReelsPage() {
       </header>
 
       <ReelsFeedClient initialItems={withState} initialCursor={nextCursor} isLoggedIn={!!userId} />
+
+      {/* The phone's counterpart to the rail — five destinations, hidden from `md` up. */}
+      <ReelsBottomBar />
     </div>
   );
 }
