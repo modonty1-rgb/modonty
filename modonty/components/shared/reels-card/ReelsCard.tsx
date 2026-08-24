@@ -63,7 +63,7 @@ function ReelPreviewTile({ item, layout, itemCount }: ReelPreviewTileProps) {
         "group relative isolate shrink-0 overflow-hidden text-white ring-1 ring-transparent transition-[box-shadow,transform] sm:hover:ring-2 sm:hover:ring-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary motion-safe:active:scale-[0.98]",
         // Phones fit the native vertical frame without cropping; tablets use the compact
         // preview ratio, and desktop retains its existing square treatment.
-        layout === "feed" ? "aspect-[9/16] rounded-none bg-black md:aspect-[4/5] lg:aspect-square lg:rounded-lg lg:bg-primary" : "aspect-[4/5] rounded-lg bg-primary",
+        layout === "feed" ? "aspect-[9/16] rounded-none bg-black md:aspect-[4/5] lg:aspect-square lg:rounded-lg lg:bg-muted" : "aspect-[4/5] rounded-lg bg-muted",
         tileWidth
       )}
     >

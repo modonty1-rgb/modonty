@@ -8,7 +8,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getActiveFAQs } from "./actions/faq-actions";
 import { IconArrowRight, IconEmail, IconHelpCircle } from "@/lib/icons";
+import { messages } from "@/lib/i18n/messages";
 import { FAQPageContent } from "./components/faq-page-content";
+
+const text = messages.faq;
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getListingPageSeo("faq");
@@ -50,29 +53,27 @@ export default async function FAQPage() {
         <Breadcrumb
           items={[
             { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-            { label: "مركز المساعدة", href: "/help" },
-            { label: "الأسئلة الشائعة" },
+            { label: text.helpBreadcrumbLabel, href: "/help" },
+            { label: text.breadcrumbLabel },
           ]}
         />
-        
+
         <div className="mb-6">
-          <h1 className="text-3xl font-semibold mb-2">الأسئلة الشائعة</h1>
-          <p className="text-muted-foreground">
-            ابحث عن إجابات للأسئلة الأكثر شيوعاً حول منصة مدونتي
-          </p>
+          <h1 className="text-3xl font-semibold mb-2">{text.title}</h1>
+          <p className="text-muted-foreground">{text.intro}</p>
         </div>
 
         <div className="flex flex-wrap gap-3 mb-6">
           <Button asChild variant="outline" size="sm" className="max-md:h-11">
             <Link href="/help">
               <IconArrowRight className="h-4 w-4 ml-2" />
-              العودة إلى مركز المساعدة
+              {text.backToHelp}
             </Link>
           </Button>
           <Button asChild variant="outline" size="sm" className="max-md:h-11">
             <Link href="/contact">
               <IconEmail className="h-4 w-4 ml-2" />
-              اتصل بنا
+              {text.contactUs}
             </Link>
           </Button>
         </div>
@@ -81,18 +82,14 @@ export default async function FAQPage() {
           <Card className="text-center py-12">
             <CardContent>
               <IconHelpCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
-                لا توجد أسئلة شائعة متاحة
-              </h3>
-              <p className="text-muted-foreground mb-6">
-                يمكنك التواصل معنا للحصول على المساعدة
-              </p>
+              <h3 className="text-lg font-semibold mb-2">{text.empty.title}</h3>
+              <p className="text-muted-foreground mb-6">{text.empty.description}</p>
               <div className="flex gap-4 justify-center">
                 <Button asChild variant="default" className="max-md:h-11">
-                  <Link href="/contact">اتصل بنا</Link>
+                  <Link href="/contact">{text.empty.contact}</Link>
                 </Button>
                 <Button asChild variant="outline" className="max-md:h-11">
-                  <Link href="/help/feedback">إرسال ملاحظات</Link>
+                  <Link href="/help/feedback">{text.empty.feedback}</Link>
                 </Button>
               </div>
             </CardContent>

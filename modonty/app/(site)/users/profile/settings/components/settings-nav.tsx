@@ -75,7 +75,7 @@ export function SettingsNav() {
               className={cn(
                 "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
                 active === id
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-secondary text-secondary-foreground"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >

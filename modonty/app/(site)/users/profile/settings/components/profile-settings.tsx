@@ -119,7 +119,7 @@ export function ProfileSettings() {
           <div className="flex flex-col items-center gap-4">
             <Avatar className="h-24 w-24">
               <AvatarImage src={imagePreview || imageUrl || undefined} alt={session?.user?.name || ""} />
-              <AvatarFallback className="text-2xl font-semibold bg-primary text-primary-foreground">
+              <AvatarFallback className="text-2xl font-semibold bg-secondary text-secondary-foreground">
                 {session?.user?.name?.charAt(0) || session?.user?.email?.charAt(0) || "U"}
               </AvatarFallback>
             </Avatar>

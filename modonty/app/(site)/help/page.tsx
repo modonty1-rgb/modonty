@@ -1,10 +1,12 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import { generateMetadataFromSEO } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { IconHelpCircle, IconFaqQuestion, IconEmail } from "@/lib/icons";
+import { messages } from "@/lib/i18n/messages";
+import { HelpHeader } from "./components/help-header/HelpHeader";
+import { HelpLinks } from "./components/help-links/HelpLinks";
+
+const text = messages.help;
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataFromSEO({
@@ -34,57 +36,11 @@ export default function HelpPage() {
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "مركز المساعدة" },
+          { label: text.breadcrumbLabel },
         ]}
       />
-      <h1 className="text-3xl font-bold mb-6">مركز المساعدة</h1>
-      <p className="text-muted-foreground mb-8">
-        مرحباً بك في مركز المساعدة. ابحث عن إجابات لأسئلتك أو تواصل معنا للحصول على الدعم.
-      </p>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <Link href="/help/faq">
-          <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <IconFaqQuestion className="h-5 w-5" />
-                الأسئلة الشائعة
-              </CardTitle>
-              <CardDescription>
-                ابحث عن إجابات للأسئلة الأكثر شيوعاً حول منصة مدونتي
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        </Link>
-
-        <Link href="/help/feedback">
-          <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <IconEmail className="h-5 w-5" />
-                إرسال ملاحظات
-              </CardTitle>
-              <CardDescription>
-                شاركنا ملاحظاتك واقتراحاتك لمساعدتنا على التحسين
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        </Link>
-
-        <Link href="/contact">
-          <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <IconHelpCircle className="h-5 w-5" />
-                اتصل بنا
-              </CardTitle>
-              <CardDescription>
-                تواصل مع فريق الدعم للحصول على مساعدة مباشرة
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        </Link>
-      </div>
+      <HelpHeader />
+      <HelpLinks />
     </div>
   );
 }

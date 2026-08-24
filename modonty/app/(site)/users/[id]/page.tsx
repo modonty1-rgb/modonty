@@ -226,7 +226,7 @@ export default async function UserPage({ params }: UserPageProps) {
                         src={author?.image || user?.image || undefined}
                         alt={author?.name || user?.name || "مستخدم"}
                       />
-                      <AvatarFallback className="text-2xl font-semibold bg-primary text-primary-foreground">{initials}</AvatarFallback>
+                      <AvatarFallback className="text-2xl font-semibold bg-secondary text-secondary-foreground">{initials}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
                       <h1 id="profile-heading" className="text-2xl mb-2">

@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
-import { IconChevronLeft } from "@/lib/icons";
+import { messages } from "@/lib/i18n/messages";
+
+import { LegalIndexBody } from "./components/legal-index-body/LegalIndexBody";
+
+const text = messages.legalIndex;
 
 /**
  * Through the shared builder, like the four pages it links to. The hand-written object it
@@ -19,29 +23,6 @@ export async function generateMetadata(): Promise<Metadata> {
       "سياسات مدونتي القانونية في مكان واحد: الخصوصية · ملفات تعريف الارتباط · حقوق النشر · اتفاقية المستخدم.",
   });
 }
-
-const legalPages = [
-  {
-    href: "/legal/privacy-policy",
-    title: "سياسة الخصوصية",
-    description: "كيف نجمع بياناتك ونستخدمها ونحميها",
-  },
-  {
-    href: "/legal/cookie-policy",
-    title: "سياسة ملفات تعريف الارتباط",
-    description: "كيف نستخدم ملفات الارتباط (Cookies) على منصتنا",
-  },
-  {
-    href: "/legal/copyright-policy",
-    title: "سياسة حقوق النشر",
-    description: "حقوق الملكية الفكرية وضوابط استخدام المحتوى",
-  },
-  {
-    href: "/legal/user-agreement",
-    title: "اتفاقية المستخدم",
-    description: "الشروط والأحكام الخاصة باستخدام منصة مدونتي",
-  },
-];
 
 export default function LegalIndexPage() {
   return (
@@ -60,30 +41,11 @@ export default function LegalIndexPage() {
       />
       <Breadcrumb
         items={[
-          { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "القانونية" },
+          { label: text.breadcrumbHome, href: "/", icon: <BreadcrumbHome /> },
+          { label: text.breadcrumbLegal },
         ]}
       />
-      <h1 className="text-3xl font-bold mb-2">الصفحات القانونية</h1>
-      <p className="text-muted-foreground mb-8">
-        تعرف على سياساتنا واتفاقياتنا المتعلقة بخصوصيتك وحقوقك.
-      </p>
-      <ul className="space-y-4">
-        {legalPages.map((page) => (
-          <li key={page.href}>
-            <Link
-              href={page.href}
-              className="flex items-center justify-between rounded-lg border border-border bg-card p-4 transition-colors hover:bg-muted/50"
-            >
-              <div>
-                <p className="font-semibold text-foreground">{page.title}</p>
-                <p className="text-sm text-muted-foreground mt-0.5">{page.description}</p>
-              </div>
-              <IconChevronLeft className="h-4 w-4 text-muted-foreground ltr:rotate-180 shrink-0" aria-hidden />
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <LegalIndexBody />
     </div>
   );
 }

@@ -36,7 +36,7 @@ function Chip({
         "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-lg px-3 ring-1 transition-colors active:scale-[0.98] min-[1240px]:min-h-9 " + FOCUS_RING,
         small ? "text-xs" : "text-sm",
         active
-          ? "bg-primary font-medium text-primary-foreground ring-primary"
+          ? "bg-secondary font-medium text-secondary-foreground ring-border"
           : "bg-card text-muted-foreground ring-border hover:text-foreground hover:ring-primary/40"
       )}
     >

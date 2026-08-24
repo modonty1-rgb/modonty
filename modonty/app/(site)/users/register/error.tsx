@@ -1,9 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { IconError, IconRefresh, IconForward } from "@/lib/icons";
+import { RouteError } from "@/components/shared/route-error/RouteError";
 
 export default function RegisterError({
   error,
@@ -13,48 +10,11 @@ export default function RegisterError({
   reset: () => void;
 }) {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <Card className="w-full max-w-md border-destructive/50">
-        <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <IconError className="h-16 w-16 text-destructive" />
-          </div>
-          <CardTitle className="text-3xl text-destructive">
-            حدث خطأ
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="text-center space-y-6">
-          <p className="text-muted-foreground text-lg">
-            عذراً، حدث خطأ أثناء تحميل صفحة التسجيل.
-          </p>
-          
-          {process.env.NODE_ENV === "development" && (
-            <div className="bg-muted p-4 rounded-md text-left">
-              <p className="text-sm font-mono text-destructive">
-                {error.message}
-              </p>
-              {error.digest && (
-                <p className="text-xs text-muted-foreground mt-2">
-                  Error ID: {error.digest}
-                </p>
-              )}
-            </div>
-          )}
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button onClick={reset} variant="default" className="gap-2">
-              <IconRefresh className="h-4 w-4" />
-              حاول مرة أخرى
-            </Button>
-            <Link href="/users/login">
-              <Button variant="outline" className="gap-2">
-                <IconForward className="h-4 w-4" />
-                العودة إلى تسجيل الدخول
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <RouteError
+      error={error}
+      reset={reset}
+      what="صفحة التسجيل"
+      back={{ href: "/users/login", label: "تسجيل الدخول" }}
+    />
   );
 }

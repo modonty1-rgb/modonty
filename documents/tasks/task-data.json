@@ -229,14 +229,13 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "sev": "normal",
       "who": "c",
-      "date": "٢٠ أغسطس ٢٠٢٦",
-      "t": "مسح تيلويند في مدونتي كان لا يشمل `shared` — كل صنف تستعمله المكوّنات المشتركة وحدها كان يُحذف",
-      "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — جزئي:</b> Done: modonty/tailwind.config.ts includes \"../shared/components/**\" (a6aa328). Remaining: admin/tailwind.config.ts:6-9 content still only pages/components/app — no shared path.<br><b>العطل كما رآه خالد:</b> الضغط على أي لسان تفاعل في المقال يعطي <b>شاشة سوداء</b> بلا محتوى — في كروم وبلاي رايت معاً.<br><b>السبب الجذري (متحقَّق حيّاً ٢٠ أغسطس):</b> <code>modonty/tailwind.config.ts</code> كان مسحه أربعة مسارات داخل <code>modonty/</code> فقط، و<b>مكوّنات شادسي إن تسكن <code>shared/components/ui/</code></b> خارجها. فكل صنف تستعمله تلك الملفّات وحدها يُحذف عند البناء. القياس على العنصر نفسه: <code>.fixed</code> موجودة (ملفّات أخرى تستعملها) بينما <code>.top-[50%]</code> و<code>.left-[50%]</code> و<code>.translate-y-[-50%]</code> <b>غير موجودة</b> في أيٍّ من الأنماط الثلاثة (١٨٦٨ قاعدة · صفر ملفّ محجوب).<br><b>لماذا شاشة سوداء تحديداً:</b> <code>fixed</code> تنطبق و<code>top</code>/<code>left</code> تبقيان <code>auto</code>، فالعنصر يقف عند موضعه الساكن — قِيس <code>top: 18785.4px</code> و<code>transform: none</code> — بينما الحجاب الأسود <code>inset-0</code> (صنف مولَّد لأن غيره يستعمله) يغطّي الشاشة وحده.<br><b>النطاق الحقيقي:</b> ليس صفحة المقال ولا نافذة الدخول — <b>كل مكوّن مشترك في مدونتي</b> (٢٢ مكوّناً عبر ٢٨٤ ملفاً). والدليل أن <code>console/tailwind.config.ts</code> يحمل السطر ذاته منذ زمن ومعه تعليق يشرح نفس العطل؛ مدونتي لم تأخذ الإصلاح.<br><b>الإصلاح:</b> إضافة <code>\"../shared/components/**/*.{ts,tsx}\"</code> إلى <code>content</code>. بعده: <code>top-[50%]</code> و<code>left-[50%]</code> والانزياحان مولَّدة، و<code>top</code> صارت <b>٣١٨ بكسل</b> بدل ١٨٧٨٥، والنافذة في منتصف الشاشة. الأنماط ١٨٦٨ ← ١٩٨٧ قاعدة.<br><b>باقٍ لقرارك:</b> <code>admin/tailwind.config.ts</code> ينقصه السطر نفسه — خارج نطاق مدونتي فلم أمسّه.",
-      "ref": "بند TW-SHARED",
-      "sec": "code"
+      "date": "٢٤ أغسطس ٢٠٢٦",
+      "t": "مسح تيلويند يشمل shared — في التطبيقات الثلاثة",
+      "d": "<b>أُغلق ٢٤ أغسطس ٢٠٢٦.</b> مدونتي وكونسول كانا مُصلحَين، و<b>الأدمن كان آخر واحد بلا المسار</b>: <code>admin/tailwind.config.ts</code> يمسح <code>pages</code> و<code>components</code> و<code>app</code> فقط، بينما <b>٥١ ملفاً عنده يستورد من <code>@modonty/shared/components</code></b> (مقيس) — فكل صنف تستعمله تلك المكوّنات وحدها كان يُمسح عنده.<br><b>نفس السبب الجذري الذي أعطى الشاشة السوداء في مدونتي:</b> الحوار احتفظ بـ<code>fixed</code> (تستعمله ملفات أخرى) وفقد <code>top-[50%]</code> والإزاحات، فنزل نحو ١٨٬٧٠٠ بكسل أسفل الصفحة بينما الطبقة السوداء تغطّي الشاشة.<br><b>الإصلاح:</b> سطر واحد — <code>\"../shared/components/**/*.{ts,tsx}\"</code> — والثلاثة صاروا متطابقين.<br><hr><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — جزئي:</b> Done: modonty/tailwind.config.ts includes \"../shared/components/**\" (a6aa328). Remaining: admin/tailwind.config.ts:6-9 content still only pages/components/app — no shared path.<br><b>العطل كما رآه خالد:</b> الضغط على أي لسان تفاعل في المقال يعطي <b>شاشة سوداء</b> بلا محتوى — في كروم وبلاي رايت معاً.<br><b>السبب الجذري (متحقَّق حيّاً ٢٠ أغسطس):</b> <code>modonty/tailwind.config.ts</code> كان مسحه أربعة مسارات داخل <code>modonty/</code> فقط، و<b>مكوّنات شادسي إن تسكن <code>shared/components/ui/</code></b> خارجها. فكل صنف تستعمله تلك الملفّات وحدها يُحذف عند البناء. القياس على العنصر نفسه: <code>.fixed</code> موجودة (ملفّات أخرى تستعملها) بينما <code>.top-[50%]</code> و<code>.left-[50%]</code> و<code>.translate-y-[-50%]</code> <b>غير موجودة</b> في أيٍّ من الأنماط الثلاثة (١٨٦٨ قاعدة · صفر ملفّ محجوب).<br><b>لماذا شاشة سوداء تحديداً:</b> <code>fixed</code> تنطبق و<code>top</code>/<code>left</code> تبقيان <code>auto</code>، فالعنصر يقف عند موضعه الساكن — قِيس <code>top: 18785.4px</code> و<code>transform: none</code> — بينما الحجاب الأسود <code>inset-0</code> (صنف مولَّد لأن غيره يستعمله) يغطّي الشاشة وحده.<br><b>النطاق الحقيقي:</b> ليس صفحة المقال ولا نافذة الدخول — <b>كل مكوّن مشترك في مدونتي</b> (٢٢ مكوّناً عبر ٢٨٤ ملفاً). والدليل أن <code>console/tailwind.config.ts</code> يحمل السطر ذاته منذ زمن ومعه تعليق يشرح نفس العطل؛ مدونتي لم تأخذ الإصلاح.<br><b>الإصلاح:</b> إضافة <code>\"../shared/components/**/*.{ts,tsx}\"</code> إلى <code>content</code>. بعده: <code>top-[50%]</code> و<code>left-[50%]</code> والانزياحان مولَّدة، و<code>top</code> صارت <b>٣١٨ بكسل</b> بدل ١٨٧٨٥، والنافذة في منتصف الشاشة. الأنماط ١٨٦٨ ← ١٩٨٧ قاعدة.<br><b>باقٍ لقرارك:</b> <code>admin/tailwind.config.ts</code> ينقصه السطر نفسه — خارج نطاق مدونتي فلم أمسّه.",
+      "ref": "بند TW-SHARED"
     },
     {
       "id": "DIALOG-MOBILE",
@@ -290,12 +289,12 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "sev": "normal",
       "who": "c",
-      "date": "١٩ أغسطس ٢٠٢٦",
-      "t": "أفاتار الشريك — وُحِّد في ١٦ موضعاً، وباقٍ مسح ثلاث صفحات",
-      "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — جزئي:</b> Done: shared/components/partner-avatar/PartnerAvatar.tsx with 18 consumers. Remaining: sweep of /categories, /tags, /search + partner site, and the Media width/height audit.<br><b>الجذر (متحقَّق ١٩ أغسطس):</b> شعار الشريك كان يُبنى بيده في كل موضع — أربعة مقاسات (٣٢ · ٤٤ · ٤٨ · ٥٦) و<code>object-contain</code> هنا و<code>object-cover</code> هناك (يقصّ الشعار) وحشوات <code>p-1</code>/<code>p-1.5</code>/لا شيء، وثلاثة أُطُر مختلفة أسوأها <code>bg-background ring-2 ring-background</code>. و<code>--background</code> رمادي شبه أبيض، فقرص وحلقة بيضاء خلف كل شعار — وهذا «البياض» الذي رآه خالد في كل مكان.<br><b>وطبقة ثانية للبياض، مقيسة بعيّنة بكسل:</b> ملفّ شعار الشريك نفسه ٥٠٠×٥٠٠ وزواياه <code>rgba(255,255,255,255)</code> — أبيض مطبوع في الصورة. الدائرة تقصّه، وشبه المربّع (<code>rounded-[28%]</code>) يتركه ظاهراً. ولهذا صار الشكل دائرياً إجبارياً بلا خيار في المكوّن.<br><b>صار:</b> <code>shared/components/partner-avatar/PartnerAvatar.tsx</code> — ثلاثة مقاسات فقط (<code>small</code> ٣٢ · <code>standard</code> ٤٨ · <code>big</code> ٨٠)، دائري، بلا تعبئة، بلا حلقة، بلا حشو، <code>object-contain</code> دائماً. <b>١٦ موضعاً</b> تجري منه الآن (١٣ في مدونتي + ٣ في موقع الشريك).<br><b>استُثني عمداً:</b> <code>ModontyProfileHero.tsx</code> — شعار مدونتي لا شعار شريك.<br><b>الدليل الحيّ (مسح ثلاث صفحات ١٩ أغسطس):</b> <code>/clients</code> = ١٢ نظيف · ٠ مشكلة · صفحة الشريك = ٣ · ٠ · صفحة المقال = ٠ مشكلة (الاثنان اللذان ظهرا في المسح هما <code>modonty-avatar.webp</code> بحلقة زرقاء، لا شعار شريك).<br><b>الباقي:</b> مسح <code>/categories</code> و<code>/tags</code> و<code>/search</code> وموقع الشريك بنفس الفحص.<br><b>وبند بيانات منفصل ظهر أثناء العمل:</b> أبعاد الوسائط في القاعدة قد تكون خاطئة — غلاف هذا الشريك ملفّه <code>2400×400</code> والقاعدة تقول <code>2400×800</code>. أي حساب يعتمد على <code>Media.height</code> يعطي نتيجة خاطئة؛ يحتاج فحص صيانة يقارن الأبعاد المخزَّنة بالملفّات الحقيقية.",
+      "date": "٢٤ أغسطس ٢٠٢٦",
+      "t": "أفاتار الشريك — المسح رجع فاضياً، وكشف عيب مقاس",
+      "d": "<b>أُقفل ٢٤ أغسطس ٢٠٢٦.</b> مسح <code>/categories</code> و<code>/tags</code> و<code>/search</code> رجع بـ<b>صفر أفاتار مبنيّ باليد</b> — الافتراض الذي بُنيت عليه البطاقة كان غلطاً. شعارات الشركاء في الصفحات الثلاث تمرّ أصلاً عبر <code>PartnerAvatar</code> لكن من مكوّنات خارجها (<code>components/listing/EntityCard.tsx:120</code> · <code>components/client/client-card.tsx:69</code> · <code>search/components/client-card.tsx:76</code>). وما ظهر في المسح كان لافتات وأيقونات حالات فارغة، لا أفاتارات.<br><b>ونظّف:</b> <code>search/components/client-card.tsx:44</code> — <code>const initials</code> ميت من تحويل سابق، صفر مراجع (متحقَّق بـ<code>git diff</code>: سطر واحد محذوف).<br><b>🔴 العيب الحقيقي الذي كشفه المسح وأُصلح:</b> غلاف الشعار في <code>search/components/client-card.tsx:74</code> كان <code>h-[58px] w-[58px]</code> بينما <code>PartnerAvatar size=\"standard\"</code> يرسم <code>size-12</code> = ٤٨px (<code>PartnerAvatar.tsx:28</code>) — فرق ١٠px، وشارة التوثيق معلّقة <code>-bottom-1 -start-1</code> على مربّع الـ٥٨ لا على الشعار، أي منفصلة عنه بصرياً. صار الغلاف <code>size-12</code>.<br><b>الدليل الخام — قياس في المتصفّح بعد الإصلاح:</b> <code>wrapper 48×48 · logo 48×48 · الفرق 0×0 · badgeOverlapsLogo: true</code>.<br><b>ولم يُضَف مقاس رابع للمكوّن المشترك</b> — الثلاثة (<code>small 32 · standard 48 · big 80</code>) كما ثبّتها خالد ١٩ أغسطس.",
       "ref": "بند AVATAR1",
       "area": "partner"
     },
@@ -305,14 +304,13 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "sev": "normal",
       "who": "c",
-      "date": "١٩ أغسطس ٢٠٢٦",
-      "t": "الأزرق يعني «افعل» — باقي مدونتي خارج صفحة المقال",
-      "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> grep \"bg-primary(?!/)\" on modonty/app+components = 76 hits (card measured 75) — no reduction outside the article route.<br><b>القاعدة المعتمدة (خالد، ١٩ أغسطس):</b> لون واحد يعرّف زرّ الفعل. ومن الوثائق الرسمية: Carbon حرفياً «Each page should have only one primary button, and any remaining calls to action should be represented as lower emphasis buttons»؛ وShopify Polaris تجعل زرّ الفعل أسود <code>#303030</code> لا لون براندها. أي أنّ التمييز يأتي من <b>نُدرة</b> اللون لا من ابتكار لون جديد — ولهذا رُفض الكهرماني (مأخوذ أصلاً لـ<code>--star</code> و<code>--action-save</code>).<br><b>المقيس (١٩ أغسطس، <code>grep -oP \"bg-primary(?!/)\"</code> على <code>modonty/app</code> و<code>modonty/components</code>):</b> <b>٧٥ استعمالاً صريحاً</b> للأزرق (زائد ٩٤ شفّافاً <code>bg-primary/NN</code> لا تنافس)، موزّعة على تبويبات وشارات وأزرار — فالأزرق ليس نادراً، فلا يقدر أن يقول «اضغطني».<br><b>ما أُغلق فعلاً:</b> صفحة المقال وحدها — نزلت من ١٢ أزرق صريح إلى <b>٥</b>، وكلّها أزرار فعل حقيقية. الأفاتار الخمسة نُقلت إلى <code>bg-secondary</code>، وشريط تقدّم القراءة إلى السماوي (مقيس <code>rgb(0,255,255)</code>).<br><b>الباقي:</b> جرد الـ٧٥ خارج مسار المقال وتصنيفها فعل/غير فعل، ثم تنزيل ما ليس زرّ فعل.",
-      "ref": "بند CTA-COLOR",
-      "sec": "ui"
+      "date": "٢٤ أغسطس ٢٠٢٦",
+      "t": "الأزرق يعني «افعل» — ٧٤ ← ٣٦، والباقي أزرار فعل",
+      "d": "<b>أُغلق ٢٤ أغسطس ٢٠٢٦.</b> القياس بـ<code>grep -oP \"bg-primary(?![-/\\w])\"</code> على <code>modonty/app</code> و<code>modonty/components</code>: <b>٧٤ ← ٣٦</b>، والمتبقّي أغلبه أزرار فعل حقيقية — وهو الهدف نفسه: اللون يصير نادراً فيقدر أن يقول «اضغطني».<br><b>ما نُقل، مصنَّفاً بسببه:</b> ① <b>١٢ أفاتار</b> (<code>AvatarFallback</code>) ← <code>bg-secondary</code>: حرف الاسم هويّة لا نداء، وهي نفس معالجة صفحة المقال. ② <b>٦ تبويبات وفلاتر</b> (<code>AudioTabs</code> · <code>FeedFilterMenu</code> · <code>profile-tabs</code> · <code>settings-nav</code> · <code>FiltersBar</code> · تبويب الإشعارات) ← <code>bg-secondary</code>: التبويب النشط <b>حالة</b> لا دعوة لفعل. ③ <b>٤ في أدوات القراءة</b> — كلّها <code>aria-checked</code> أي اختيار حجم أو تبديل صور. ④ <b>٩ زخرفية ورسوم</b>: خطّان تحت عناوين صفحة الشريك · شريط وعمود في <code>/analytics</code> · شريط تحميل البحث · نقطة الشريحة النشطة · نقطة «غير مقروء» · خلفيتا بلاطة الطلّات. ⑤ <b>٤ شارات وعدّادات</b>: شارة الترتيب في الرائج ← الأكسنت، وعدّادا الإشعارات ← <code>bg-destructive</code> (عرف عالمي: عدّاد التنبيه بلون التنبيه لا بلون الفعل).<br><b>ما بقي أزرق عمداً:</b> ٢٤ زرّ فعل حقيقي (حجز · تواصل · إرسال · تسجيل · زيارة صفحة…) · <code>TopNav</code> skip-link (يظهر عند التركيز فقط) · <code>search/client-card</code> بلون شفّاف <code>bg-primary/[0.08]</code> لا ينافس · و٧ في <code>trending/page.tsx</code> هي <b>محدِّدات تُلغي الأزرق</b> أصلاً على خلفية داكنة، لا استعمالات له.<br><b>معلَّق بقرارك:</b> <code>app/layout/components/FooterStats.tsx:106</code> — شريط الإحصاءات كلّه مطليّ بالأزرق. سطح كامل العرض لا زرّ، لكن تغييره يغيّر شكل الفوتر على كل صفحة، فتُرك لعينك.<br><b>الأساس الرسمي:</b> Carbon — «Each page should have only one primary button, and any remaining calls to action should be represented as lower emphasis buttons»؛ وShopify Polaris تجعل زرّ الفعل أسود لا لون براندها. التمييز من نُدرة اللون لا من ابتكار لون جديد.<br><b>التحقّق الحيّ:</b> <code>/</code> · <code>/analytics</code> · <code>/story</code> · <code>/audio</code> · <code>/trending</code> · <code>/users/notifications</code> · <code>/users/profile</code> · <code>/authors/modonty</code> — كلّها ٢٠٠. وعلى <code>/audio</code>: التبويب النشط <code>rgb(57,56,66)</code> بنصّ <code>#fafafa</code> تباين <b>11.06</b>، والخامل <code>rgb(31,31,35)</code> تباين 6.41 — فالنشط ما زال مميّزاً بلا اقتراض لون الفعل.<br><b>لم يُتحقَّق بصرياً:</b> <code>AvatarFallback</code> لا يُرسم إلا حين لا صورة للمستخدم، ولم أفرض تلك الحالة — التحقّق على مستوى الكود (صفر <code>AvatarFallback</code> بالأزرق).<br><hr><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> grep \"bg-primary(?!/)\" on modonty/app+components = 76 hits (card measured 75) — no reduction outside the article route.<br><b>القاعدة المعتمدة (خالد، ١٩ أغسطس):</b> لون واحد يعرّف زرّ الفعل. ومن الوثائق الرسمية: Carbon حرفياً «Each page should have only one primary button, and any remaining calls to action should be represented as lower emphasis buttons»؛ وShopify Polaris تجعل زرّ الفعل أسود <code>#303030</code> لا لون براندها. أي أنّ التمييز يأتي من <b>نُدرة</b> اللون لا من ابتكار لون جديد — ولهذا رُفض الكهرماني (مأخوذ أصلاً لـ<code>--star</code> و<code>--action-save</code>).<br><b>المقيس (١٩ أغسطس، <code>grep -oP \"bg-primary(?!/)\"</code> على <code>modonty/app</code> و<code>modonty/components</code>):</b> <b>٧٥ استعمالاً صريحاً</b> للأزرق (زائد ٩٤ شفّافاً <code>bg-primary/NN</code> لا تنافس)، موزّعة على تبويبات وشارات وأزرار — فالأزرق ليس نادراً، فلا يقدر أن يقول «اضغطني».<br><b>ما أُغلق فعلاً:</b> صفحة المقال وحدها — نزلت من ١٢ أزرق صريح إلى <b>٥</b>، وكلّها أزرار فعل حقيقية. الأفاتار الخمسة نُقلت إلى <code>bg-secondary</code>، وشريط تقدّم القراءة إلى السماوي (مقيس <code>rgb(0,255,255)</code>).<br><b>الباقي:</b> جرد الـ٧٥ خارج مسار المقال وتصنيفها فعل/غير فعل، ثم تنزيل ما ليس زرّ فعل.",
+      "ref": "بند CTA-COLOR"
     },
     {
       "id": "CTA-DUP",
@@ -334,12 +332,12 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "sev": "normal",
       "who": "c",
-      "date": "١٩ أغسطس ٢٠٢٦",
-      "t": "باقي الصفحات الثابتة — إحدى عشرة صفحة تكتب كل شي في <code>page.tsx</code>",
-      "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — جزئي:</b> Done: /audio split (page 141 lines + 3 component folders). Remaining: 10 pages still components=0 (legal×4, terms, help, story, contact, help/feedback) and help/feedback has 0 ld+json.<br><b>متحقَّق ١٩ أغسطس بعدّ محتوى <code>components/</code> لكل صفحة</b> (بعد إغلاق TRUST1): إحدى عشرة صفحة ثابتة مجلّدها فارغ و<code>page.tsx</code> يكتب كل الواجهة بنفسه —<br><code>legal/copyright-policy</code> ١٣٧ · <code>legal/privacy-policy</code> ١٣٧ · <code>legal/user-agreement</code> ١٣٦ · <code>legal/cookie-policy</code> ١٣٤ · <code>terms</code> ١٢٩ · <code>help</code> ٩٠ · <code>legal</code> ٨٩ · <code>story</code> ٨٨ · <code>contact</code> ٨٠ · <code>audio</code> ٧٤ · <code>help/feedback</code> ٣٥ سطراً.<br><b>الأربع القانونية متطابقة البنية</b> (١٣٤–١٣٧ سطراً لكل واحدة) — أي أنّ التقسيم هنا يخرج بمكوّن واحد مشترك لأربع صفحات، لا بأربع نسخ.<br><b>وثغرة صغيرة باقية:</b> <code>help/feedback</code> بلا بيانات منظَّمة إطلاقاً (<code>grep application/ld+json</code> = ٠) — وهي الصفحة الوحيدة كذلك بعد إصلاح <code>/audio</code>. الصفحة <code>noindex</code> فمردودها السيوي صفر، لكن اتّساق البنية يطلبها.<br><b>الترتيب المقترح:</b> الأربع القانونية أولاً (أعلى تكرار وأقصر طريق)، ثم <code>terms</code>، ثم البقيّة. ولا يبدأ قبل TRUST1 — وقد أُغلق.",
+      "date": "٢٤ أغسطس ٢٠٢٦",
+      "t": "تقسيم الصفحات الثابتة — تسع صفحات خلصت",
+      "d": "<b>أُقفل ٢٤ أغسطس ٢٠٢٦ بفحص حيّ.</b> تسع صفحات كانت ملفاً واحداً طويلاً، صار لكل وحدة مجلّد <code>components/</code> و<code>page.tsx</code> يجلب ويركّب.<br><code>legal/privacy-policy 137←82 · copyright-policy 137←82 · user-agreement 136←82 · cookie-policy 134←82 · terms 129←81 · help 90←46 · contact 80←71 · help/feedback · help/faq</code><br><b>الدليل:</b> التسع يردّون ٢٠٠.<br><b>الباقي خرج لبطاقتيه:</b> <code>LEGALIDX</code> و<code>STORYSPLIT</code>.",
       "ref": "بند STATIC2",
       "sec": "code"
     },
@@ -349,14 +347,59 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "sev": "normal",
       "who": "c",
-      "date": "١٩ أغسطس ٢٠٢٦",
-      "t": "١٦٥ نصّاً عربياً مكتوباً في كود الصفحات الثابتة",
-      "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> Still 13 static pages with 0 `i18n/messages` imports (trust, legal/*, help/*, terms, story, contact, audio); only about+team import it.<br><b>متحقَّق ١٩ أغسطس بجرد آليّ:</b> ١٣ من ١٥ صفحة ثابتة لا تستورد <code>@/lib/i18n/messages</code>، ومجموع النصوص العربية المكتوبة داخل ملفّاتها <b>١٦٥</b>. الأثقل: <code>trust</code> ٥٨ · <code>legal</code> ١٦ · <code>help/faq</code> ١٥ · <code>help</code> ١٣ · <code>help/feedback</code> ١٠. الملتزمتان: <code>about</code> و<code>team</code>.<br><b>القاعدة المخالَفة</b> (<code>.claude/skills/modonty-uiux</code>): «كل نصّ عربي يراه الزائر يمرّ عبر <code>messages/ar.json</code> + <code>lib/i18n/messages.ts</code>، ولا يُكتب داخل المكوّن». والقراءة في سيرفر كومبوننت فقط — الكلاينت يسحب النطاق كلّه إلى الباندل.<br><b>ليش يهمّ عملياً:</b> تعديل صياغة اليوم يعني فتح ملفّ كود لكل صفحة؛ ولا توجد نقطة واحدة تُراجَع فيها اللهجة.<br><b>يُنفَّذ صفحة صفحة</b> بنطاق باسمها، لا دفعة واحدة — الأثقل أولاً (<code>trust</code> بعد تقسيمه في TRUST1).",
+      "date": "٢٤ أغسطس ٢٠٢٦",
+      "t": "نصوص الصفحات الثابتة — تسع صفحات خلصت",
+      "d": "<b>أُقفل ٢٤ أغسطس ٢٠٢٦ بفحص حيّ.</b> نصوص تسع صفحات انتقلت إلى <code>messages/ar.json</code> — تسعة مفاتيح جديدة (<code>help · faq · feedback · contact · privacyPolicy · copyrightPolicy · userAgreement · cookiePolicy · terms</code>)، الملفّ صار ٢٠ مفتاحاً ويُحلَّل سليماً، والتسع يردّون ٢٠٠.<br>نصوص القانوني الخمسة استُخرجت برمجياً وطوبقت حرفاً بحرف (٩٥٦ / ١٠٥٦ / ١٠١٨ / ١٠٥٦ / ٩٠٠ حرفاً).<br><b>تُرك عمداً:</b> نصوص <code>generateMetadata</code> وكتل JSON-LD تبقى في الكود — تغذّي البيانات المنظَّمة، ونقلها يخلط لغة الواجهة بلغة المحرّكات.<br><b>الباقي خرج لبطاقاته:</b> <code>LEGALIDX</code> · <code>STORYSPLIT</code> · <code>TRUSTI18N</code>.",
       "ref": "بند STATIC-I18N",
       "sec": "code"
+    },
+    {
+      "b": "fs",
+      "app": [
+        "modonty"
+      ],
+      "tab": "done",
+      "sev": "normal",
+      "who": "c",
+      "date": "٢٤ أغسطس ٢٠٢٦",
+      "sec": "code",
+      "id": "LEGALIDX",
+      "t": "فهرس قسم legal — قُسّم وخرجت نصوصه",
+      "d": "<b>أُقفل ٢٤ أغسطس ٢٠٢٦ بفحص حيّ.</b> <code>legal/page.tsx</code> <b>٨٩ ← ٥١ سطراً</b>، ومكوّنان جديدان: <code>legal-index-body/LegalIndexBody.tsx</code> (٣٠) و<code>legal-link-card/LegalLinkCard.tsx</code> (٢٦). الصفحة تحتفظ بـ<code>generateMetadata</code> والـJSON-LD ومسار التنقّل، وتركّب فقط.<br>النصوص خرجت لمفتاح <code>legalIndex</code> في <code>ar.json</code> (الملفّ ٢٠ ← ٢١ مفتاحاً).<br><b>الدليل الخام:</b> <code>/legal 200 · /legal/privacy-policy 200 · /legal/cookie-policy 200 · /legal/copyright-policy 200 · /legal/user-agreement 200</code>، والنصوص الأربعة تظهر فعلاً في الـHTML المخدوم.<br><b>وتصحيح لغة:</b> وصف الكوكيز كان «ملفات الارتباط (Cookies)» — يخالف إخوته الأربعة في نفس الملف ويحمل كلمة لاتينية وسط جملة عربية. صار «كيف نستخدم ملفات تعريف الارتباط على منصتنا».<br><b>تُرك عمداً:</b> <code>(Cookies)</code> داخل نصّ سياسة الكوكيز القانوني (<code>ar.json:495</code>) — نصّ قانوني يعرّف المصطلح عند أول ذكر، وتغيير صياغته قرار خالد.",
+      "ref": "بند LEGALIDX"
+    },
+    {
+      "b": "fs",
+      "app": [
+        "modonty"
+      ],
+      "tab": "done",
+      "sev": "high",
+      "who": "c",
+      "date": "٢٤ أغسطس ٢٠٢٦",
+      "sec": "code",
+      "id": "STORYSPLIT",
+      "t": "صفحة story — أُغلقت بقرار خالد، بلا تنفيذ",
+      "d": "<b>أُغلقت ٢٤ أغسطس ٢٠٢٦ بأمر خالد: «close the card no need now». لم يُنفَّذ منها شيء — الملفّ كما هو.</b><br><b>الوضع المقيس ساعة الإغلاق:</b> <code>story/page.tsx</code> ٨٨ سطراً (نحيفة وسليمة: تقرأ الكيان القانوني مرّة، تبني ثلاث كتل JSON-LD، وتنادي <code>StoryClientLoader</code>) · <code>story/SalesPitchPage.tsx</code> = <b>١٦٨٤ سطراً</b> و<code>use client</code>، دالّة واحدة من السطر ٩١ إلى آخر الملف · <code>story/components/</code> فيه <code>.gitkeep</code> فقط.<br><b>ليش الإغلاق مقبول:</b> الملفّ ضخم لكنه <b>مكوّن عميل واحد متماسك</b> (مشغّل صوت بحالته: المانيفست · الأقسام · السرعة · الوقت)، لا صفحة مكدّسة. تقسيمه تحسين قابلية قراءة، لا إصلاح عطل — لا يظهر للزائر ولا يمسّ السيو ولا الأداء.<br><b>لو رجعنا له:</b> يُفتح ببطاقة جديدة، ونقطة البداية هي فصل حالة المشغّل في هوك واحد قبل أي تقسيم للـJSX.",
+      "ref": "بند STORYSPLIT"
+    },
+    {
+      "b": "fs",
+      "app": [
+        "modonty"
+      ],
+      "tab": "done",
+      "sev": "normal",
+      "who": "c",
+      "date": "٢٤ أغسطس ٢٠٢٦",
+      "sec": "code",
+      "id": "TRUSTI18N",
+      "t": "نصوص صفحة trust — ٦١ نصّاً خرجت من ستّة مكوّنات",
+      "d": "<b>أُقفل ٢٤ أغسطس ٢٠٢٦ بفحص حيّ.</b> <b>٦١ نصّاً</b> خرجت من ستّة مكوّنات (<code>identity · record · pillars · location · promises · question</code>) وملفَّي <code>helpers</code> يبنيان صفوف الحقائق والتواصل، إلى مفتاح <code>trust</code> في <code>ar.json</code> (٢١ ← ٢٢ مفتاحاً).<br><b>الشرط الحرج محقَّق:</b> الستّة كلّها سيرفر كومبوننت — <b>صفر نصّ يعبر حدّ العميل</b>، ولم يُحوَّل مكوّن إلى عميل ليقرأ النصوص.<br><b>الدليل الخام:</b> <code>/trust 200</code> · ثمانية نصوص من الملف تظهر في الـHTML المخدوم · <code>undefined</code> خارج السكربتات = <b>صفر</b> (والـ١٧٤ داخل سكربتات Next ضجيج خطّ أساس، نفسه على <code>/audio</code> و<code>/help</code> غير الملموستين).<br>المطابقة تمّت بسكربت حرفاً بحرف: <code>missing: NONE · unmatched: NONE</code>.<br><b>تُرك عمداً:</b> <code>generateMetadata</code> وكتل JSON-LD · تسميات أحداث GA4 في <code>QuestionCard</code> (أسماء أحداث لا نصّ يقرأه زائر؛ نقلها يكسر استمرارية القياس) · فواصل الترقيم بين قيم القاعدة · <code>error.tsx</code> فهو <code>use client</code> ومطابق لأخواته.",
+      "ref": "بند TRUSTI18N"
     },
     {
       "id": "ERR1",
@@ -364,14 +407,13 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "sev": "high",
       "who": "c",
-      "date": "١٩ أغسطس ٢٠٢٦",
-      "t": "توحيد ٢٢ حارس أخطاء قديماً على المكوّن المشترك",
-      "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> 67 error.tsx, only 45 reference RouteError → 22 legacy remain (largest 66 lines: categories/[slug], articles/[slug], clients/[slug]).<br><b>الوضع:</b> ٦٦ مساراً، كلّها الآن عندها <code>error.tsx</code> (متحقَّق ١٩ أغسطس: <code>page.tsx = 66 · error.tsx = 67</code>). الـ٤٥ الجديدة أغلفة من ١٩ سطراً تنادي <code>components/shared/route-error/RouteError.tsx</code> (<code>bdefebb</code>).<br><b>الباقي:</b> الـ٢٢ التي كُتبت قبل ذلك، كل واحدة تحمل نسختها من نفس البطاقة (~٧٠ سطراً) — <b>~١٥٠٠ سطر مكرّر</b>. أي تعديل في الصياغة أو الإتاحة يحتاج ٢٢ مرة، ولهذا لم يحصل ولا مرة: نصّها ما زال «حدث خطأ» بالصيغة المكتبية بدل «الصفحة ما فتحت».<br><b>العمل:</b> استبدال محتوى كلٍّ منها بغلاف يمرّر <code>what</code> و<code>back</code>. لا سلوك جديد — نفس الشاشة، مصدر واحد.<br><b>التحقّق:</b> خطأ متعمَّد في مسار من كل مجموعة، ثم إرجاعه — كما فُعل مع <code>/audio</code> (<code>route-error-boundary.png</code>).",
-      "ref": "بند ERR1",
-      "sec": "code"
+      "date": "٢٤ أغسطس ٢٠٢٦",
+      "t": "حرّاس الأخطاء — ٦٧ من ٦٧ على المكوّن المشترك",
+      "d": "<b>أُغلق ٢٤ أغسطس ٢٠٢٦.</b> القياس قبل: <code>error.tsx = 67 · تستعمل RouteError = 45 · قديمة = 22</code>. بعد: <code>67 · 67 · 0</code>.<br><b>الأثر بالأسطر:</b> ٩٦٧ ← ٤٤٨، أي <b>٥١٩ سطراً مكرّراً حُذف</b> — كانت اثنتان وعشرون نسخة من نفس البطاقة، فأي تصحيح في الصياغة أو في الوصول كان يلزمه اثنتان وعشرون تعديلاً ولم يحدث ولا مرّة.<br><b>ما صار كل ملفّ:</b> غلاف من ١٩ سطراً يمرّر <code>what</code> (ما كان الزائر يفتحه) و<code>back</code> حين يكون القسم الأب جواباً أفضل من الرئيسية — <code>/articles</code> لصفحة المقال · <code>/categories</code> للتصنيف · <code>/tags</code> للوسم · <code>/clients</code> لصفحة الشريك · <code>/users/profile</code> للإعدادات · <code>/help</code> للأسئلة الشائعة · <code>/users/login</code> للتسجيل. وحيث كان القديم يعرض «الرئيسية» وحدها، حُذف <code>back</code> لأن البطاقة المشتركة تعرضها أصلاً.<br><b>ومعه صُحّحت اللغة:</b> النصوص القديمة كانت «تعذّر تحميل صفحة كذا» — مبنيّ للمجهول بيروقراطي. البطاقة المشتركة تقول «{ما كنت تفتحه} ما فتحت» ثم «صار خلل من عندنا، مو من عندك» — وهو ما ينطقه إنسان.<br><b>التحقّق الحيّ:</b> <code>/articles</code> · <code>/categories</code> · <code>/clients</code> · <code>/tags</code> · <code>/trending</code> · <code>/help</code> · <code>/help/faq</code> · <code>/industries</code> · <code>/subscribe</code> · <code>/search</code> — عشرة مسارات محوَّلة، كلّها ٢٠٠.<br><hr><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> 67 error.tsx, only 45 reference RouteError → 22 legacy remain (largest 66 lines: categories/[slug], articles/[slug], clients/[slug]).<br><b>الوضع:</b> ٦٦ مساراً، كلّها الآن عندها <code>error.tsx</code> (متحقَّق ١٩ أغسطس: <code>page.tsx = 66 · error.tsx = 67</code>). الـ٤٥ الجديدة أغلفة من ١٩ سطراً تنادي <code>components/shared/route-error/RouteError.tsx</code> (<code>bdefebb</code>).<br><b>الباقي:</b> الـ٢٢ التي كُتبت قبل ذلك، كل واحدة تحمل نسختها من نفس البطاقة (~٧٠ سطراً) — <b>~١٥٠٠ سطر مكرّر</b>. أي تعديل في الصياغة أو الإتاحة يحتاج ٢٢ مرة، ولهذا لم يحصل ولا مرة: نصّها ما زال «حدث خطأ» بالصيغة المكتبية بدل «الصفحة ما فتحت».<br><b>العمل:</b> استبدال محتوى كلٍّ منها بغلاف يمرّر <code>what</code> و<code>back</code>. لا سلوك جديد — نفس الشاشة، مصدر واحد.<br><b>التحقّق:</b> خطأ متعمَّد في مسار من كل مجموعة، ثم إرجاعه — كما فُعل مع <code>/audio</code> (<code>route-error-boundary.png</code>).",
+      "ref": "بند ERR1"
     },
     {
       "id": "INVREV",
@@ -440,15 +482,14 @@
       "app": [
         "modonty"
       ],
-      "tab": "open",
+      "tab": "done",
       "sev": "normal",
       "who": "c",
-      "date": "٢١ أغسطس ٢٠٢٦",
-      "t": "أبناء ملف القارئ الستة على الجوّال — الأمّ أُنجزت",
-      "d": "<b>⚠️ تصحيح ٢٤ أغسطس ٢٠٢٦:</b> كانت مُعلَّمة «منجزة» خطأً. <b>الصفحة الأمّ فقط أُنجزت</b> (شُحنت في <code>736ae1f</code>، مطابقة للموكب، وبوّابة ١٢٨٠ عابرة: إضافات الجوّال مخفيّة والأصول ظاهرة، <code>hScroll:false</code>).<br><b>الباقي — الأبناء الستة:</b> <code>/profile/bookings</code> · <code>comments</code> · <code>favorites</code> · <code>liked</code> · <code>disliked</code> · <code>following</code> — بنفس نمط الأمّ (رقائق تبويب ٤٤ · بطاقات أرقام ٣×٢ · حالة فاضية لها مخرج).<br><b>غير متحقَّق بعد:</b> قياس الأمّ على ٣٩٠×٨٤٤ الحيّ — الصفحة تتطلّب دخول قارئ وما عندي كلمة مروره. أعطني حساباً على <code>/users/login</code> وأقيسه في دقيقة.<br><b>ملاحظة من تمريرة MOBSWEEP:</b> الأبناء الستة استُثنوا عمداً من تلك التمريرة لأنهم يتبعون هذا البند.",
+      "date": "٢٤ أغسطس ٢٠٢٦",
+      "t": "ملف القارئ وأبناؤه الستة على الجوّال — قِيست وأُصلحت",
+      "d": "<b>أُغلق ٢٤ أغسطس ٢٠٢٦.</b> الحاجز الذي أوقف البند («الصفحة تتطلّب دخول قارئ وما عندي كلمة مروره») فُكّ بتسجيل حساب قارئ على قاعدة <b>التطوير</b> من واجهة <code>/users/register</code> — <code>reader-test@modonty.local</code>، والإنتاج لم يُمسّ.<br><b>القياس الحيّ على ٣٩٠×٨٤٤ للسبع صفحات</b> (الأمّ + <code>bookings · comments · favorites · liked · disliked · following</code>): <code>overflowX = -10</code> في كلٍّ منها — أي لا فيض أفقي — والتبويبات الستّ ترتفع ٤٤ فعلاً. الوضع كان أسلم ممّا وصفته البطاقة: لا إعادة بناء لزمت، بل هدفا لمس فقط.<br><b>العيبان المقيسان وإصلاحهما:</b> ① زرّ «استكشف المحتوى» في الحالة الفاضية جاء <b>147×40</b> — وهو المخرج الوحيد من شاشة فارغة. الإصلاح في <code>components/empty-state.tsx</code>، ومصدرٌ واحد يخدم الأبناء الستة فسرى عليهم دفعةً واحدة. صار <b>147×44</b>. ② رابط «أكمل ملفك — أضف اسمك» في الأمّ وقف على <b>16px</b> فقط — وهو ما يحوّل ملفاً نصف فارغ إلى ممتلئ. صار <b>147×44</b> بـ<code>max-lg:min-h-11</code>، والنصّ بحجمه.<br><b>النتيجة بعد الإصلاح:</b> أهداف تحت ٤٤ = <b>صفر</b> في السبع صفحات كلّها.<br><b>بوّابة عدم المساس (١٢٨٠):</b> <code>overflowX = -10</code> ورابط «أكمل ملفك» <code>display: none</code> — الإضافة جوّالية بحتة ولم تلمس الديسكتوب.<br><hr><b>⚠️ تصحيح ٢٤ أغسطس ٢٠٢٦:</b> كانت مُعلَّمة «منجزة» خطأً. <b>الصفحة الأمّ فقط أُنجزت</b> (شُحنت في <code>736ae1f</code>، مطابقة للموكب، وبوّابة ١٢٨٠ عابرة: إضافات الجوّال مخفيّة والأصول ظاهرة، <code>hScroll:false</code>).<br><b>الباقي — الأبناء الستة:</b> <code>/profile/bookings</code> · <code>comments</code> · <code>favorites</code> · <code>liked</code> · <code>disliked</code> · <code>following</code> — بنفس نمط الأمّ (رقائق تبويب ٤٤ · بطاقات أرقام ٣×٢ · حالة فاضية لها مخرج).<br><b>غير متحقَّق بعد:</b> قياس الأمّ على ٣٩٠×٨٤٤ الحيّ — الصفحة تتطلّب دخول قارئ وما عندي كلمة مروره. أعطني حساباً على <code>/users/login</code> وأقيسه في دقيقة.<br><b>ملاحظة من تمريرة MOBSWEEP:</b> الأبناء الستة استُثنوا عمداً من تلك التمريرة لأنهم يتبعون هذا البند.",
       "ref": "بند PROFILEMOB",
-      "ease": 2,
-      "sec": "ui"
+      "ease": 2
     },
     {
       "id": "MOBSWEEP",
@@ -563,12 +604,12 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "sev": "high",
       "who": "c",
-      "date": "١٩ أغسطس ٢٠٢٦",
-      "t": "<code>articles/[slug]/page.tsx</code> ٧٢٩ سطراً — يُقسَّم",
-      "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> modonty/app/(site)/articles/[slug]/page.tsx is now 899 lines (was 729) — not split, it grew.<br><b>القاعدة:</b> «<code>page.tsx</code> سيرفر كومبوننت <b>نحيف</b>: يجلب ويركّب». هذا الملفّ يحمل اليوم توليد البيانات المنظَّمة والميتاداتا والتركيب معاً.<br><b>مؤجَّل بقرار:</b> يُقسَّم بعد ما تستقرّ الصفحة، لا معها — التقسيم أثناء إعادة التصميم يخلط تغييرين في نفس المراجعة.<br><b>الصفحة استقرّت الآن</b> (١٥ من ١٦ بنداً مقفولة)، فالبند صار جاهزاً للتنفيذ.",
+      "date": "٢٤ أغسطس ٢٠٢٦",
+      "t": "صفحة المقال قُسّمت — ٨٩٩ ← ٤٠٧ سطراً، والشلال أُصلح",
+      "d": "<b>أُقفل ٢٤ أغسطس ٢٠٢٦ بأربع مراحل، كل واحدة بفحص حيّ قبل التالية.</b><br><b>١ · شلال حقيقي أُصلح</b> (قاعدة فيرسل الأولى CRITICAL <code>async-parallel</code>): قراءة المقال كانت تنتظر قراءات الإعدادات وهي لا تعتمد عليها — <code>page.tsx:248</code> ثم <code>:254</code>. صارتا في <code>Promise.all</code> واحد. و<code>notFound()</code> ما تأخّر: الوعود تُحسم معاً.<br><b>٢ · الجلب خرج</b> إلى <code>helpers/get-article-page-data.ts</code> (٢٢٩ سطراً) — القراءات ومرور المتن ودمج «اقرأ أيضاً» وبناة الـJSON-LD.<br><b>٣ · البيانات المنظَّمة خرجت</b> إلى <code>components/article-json-ld/ArticleJsonLd.tsx</code> (٧٦). المكان مسنود رسمياً: جوجل تنصّ أن JSON-LD يجوز في <code>&lt;head&gt;</code> <b>و</b><code>&lt;body&gt;</code> («embedded in a script tag in the head and body elements») — فالرسم من مكوّن داخل الجسم مدعوم لا حيلة.<br><b>٤ · عمود المقال خرج</b> إلى <code>components/article-main-column/ArticleMainColumn.tsx</code> (٣٦٧) — ٣٠٣ سطر نُقلت كما هي بتعليقاتها، ويأخذ حزمة البيانات برَباً واحداً لا خمسة عشر (سيرفر إلى سيرفر، بلا حدّ تسلسل).<br><hr><b>الدليل الخام — ثلاثة مقالات حقيقية، لقطة قبل أي تعديل ثم مقارنة بعد كل مرحلة:</b><br>• <b>النصّ المرئي:</b> <code>16546→16546 · 28653→28653 · 14312→14312</code> — <b>كلمات مفقودة: صفر · روابط مفقودة: صفر · روابط مضافة: صفر</b>.<br>• <b>JSON-LD:</b> متطابق <code>true</code> في الثلاثة، وكل الكتل تُحلَّل سليمة: <code>@graph[WebPage,Article,Hospital,Organization,BreadcrumbList,Hospital,Person,MedicalWebPage]</code> + <code>@graph[Organization,WebSite]</code>.<br>• الصفحات تردّ <code>200</code> · <code>tsc EXIT=0</code>.<br><b>ما اختلف في الـHTML وسببه</b> (فُحص محرفاً محرفاً، لا افتراضاً): عدّادات مشاهدات حيّة تزيد مع كل طلب · معرّف بناء وترقيم قطع React · مسارات <code>_next/static</code> تتغيّر مع كل إعادة بناء · آثار تصحيح React داخل <code>&lt;template&gt;</code> (وضع التطوير فقط) · وحدّ Suspense صار <b>يُحلّ على السيرفر</b> بدل أن يُشحن معلّقاً — أثر مباشر لإصلاح الشلال، ومكسب لا خسارة. اختبار الضبط: خمسة طلبات متتالية بالكود نفسه أعطت ناتجاً حتمياً.<br><b>الباقي في <code>page.tsx</code> (٤٠٧):</b> <code>generateStaticParams</code> · <code>generateMetadata</code> (١٢٣ سطراً، لم تُمَسّ — عقد مع جوجل) · التركيب. لم يُحذف سطر تعليق واحد؛ كلها انتقلت مع الكود الذي تشرحه.",
       "ref": "بند SLUG1",
       "sec": "code"
     },
@@ -2186,10 +2227,11 @@
       "sev": "high",
       "who": "c",
       "date": "٢٢ أغسطس ٢٠٢٦",
-      "t": "سبع مراحل فحص لم تبدأ — أهمّها «ما يُحفظ» و«مستخدمون معاً»",
+      "t": "🏁 قبل الدمج — سبع مراحل فحص لم تبدأ — أهمّها «ما يُحفظ» و«مستخدمون معاً»",
       "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> The seven QA phases never ran; documents/qa/ still holds only the raw sources.<br><b>من تقرير الجودة (٢٠ أغسطس) — القسم «ما لم يُفحص إطلاقاً»:</b><br><b>١·</b> <b>٦٦ صفحة</b> لم تُفتح واحدة واحدة، ولا رُصدت أخطاء الكونسول فيها.<br><b>٢·</b> <b>٣٦ نقطة API</b> لم تُختبر بمدخل ناقص أو نوع خاطئ أو حجم ضخم — إلا ما لمسه فحص الأمن.<br><b>٣·</b> الدخول والتسجيل وبقاء الجلسة والخروج — لم يُجرَّب أيّ منها حيّاً.<br><b>٤· «ما يُحفظ»</b> — لم يُختبَر إعجاب ولا حفظ ولا تعليق ولا ردّ، ولم تُفتح القاعدة للتأكّد من الصفوف.<br><b>٥· «مستخدمون متعدّدون بنفس اللحظة»</b> — لم تبدأ، وهي أهمّ مرحلة عندك بنصّك: «ما في داتا تروح، ما في تعارض».<br><b>٦·</b> الأداء — لم يُبنَ بناء إنتاج ولم تُقس مؤشّرات الويب ولا أحجام الحزم.<br><b>٧·</b> سيو ووصولية وجوّال ٣٩٠ — لم تبدأ.<br><br><b>البنود الأربعة التي كانت قبلها في ترتيب التقرير أُغلقت:</b> S-01 و S-02 و S-03 أُصلحت وتحقّقت حيّاً (٢٠ أغسطس مساءً)، ونشر الفرع تمّ (٢٢ أغسطس).<br><br><b>المصادر الخام باقية:</b> <code>documents/qa/findings.jsonl</code> · <code>clarity-ux-report.json</code> · <code>clarity-ux-summary.md</code> · <code>clarity-raw/</code>.",
       "ref": "٢٠ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس",
-      "sec": "qa"
+      "sec": "qa",
+      "last": true
     },
     {
       "id": "HEALTHCHK",
@@ -2227,12 +2269,13 @@
       ],
       "tab": "open",
       "sev": "idea",
-      "who": "c",
+      "who": "k",
       "date": "٢٢ أغسطس ٢٠٢٦",
-      "t": "التقرير الرئيسي للمنتج والتجربة — يُفرَز قبل أن يُعمل به",
-      "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> No triage session recorded; the §5 pass against the current site was never done.<br><b>⚠️ ما فرزته بنداً بنداً</b> — ١٢٨ كيلوبايت من ١٤ أغسطس، وأقول هذا صراحةً بدل أن أدّعي جرداً لم أفعله.<br><br><b>ما يحويه (من عناوينه):</b> ترتيب مصادر الحقيقة · ما لا نملكه بعد · حلقة القيمة والـmoat · تعريف المنتج المقترح · ما نأخذه من LinkedIn وما لا نأخذه · دليل سوق السعودية ومصر · قرار اللغة · <b>تشخيص النسخة الحيّة §٥ والمشكلات حسب الخطورة</b>.<br><br><b>لماذا يُفرَز أوّلاً:</b> كُتب قبل ريفاكتور الديسكتوب (١٦ أغسطس) وريفاكتور الجوّال (٢١–٢٢)، فأغلب «تشخيص النسخة الحيّة» فيه قد يكون عولج فعلاً.<br><br><b>أوّل خطوة:</b> جلسة فرز للقسم ٥ وحده ضدّ الموقع الحالي، ثم تُفتح بنوداً مستقلّة.",
+      "t": "تقرير المنتج والتجربة — يحتاج قرارك: نفرزه أم نؤرشفه؟",
+      "d": "<b>٢٤ أغسطس ٢٠٢٦ — رُفع إليك بدل أن يُفرَز بصمت.</b> البند ليس شغلاً على الكود بل <b>جلسة فرز</b> لملفّ ١٢٨ كيلوبايت كُتب في ١٤ أغسطس، أي <b>قبل</b> ريفاكتور الديسكتوب (١٦ أغسطس) وريفاكتور الجوّال (٢١–٢٢) وقبل كل ما أُنجز بعدهما.<br><b>لماذا لا أفرزه من طرفي:</b> قسم «تشخيص النسخة الحيّة §٥» هو الجزء القابل للتنفيذ، وأغلبه يخصّ شاشات أُعيد بناؤها منذ كتابته — ففرزه اليوم يعني إعادة قراءة موقع تغيّر، وإنتاج بنود قد تكون منجزة. أمّا بقيّة الملف (ترتيب مصادر الحقيقة · حلقة القيمة · تعريف المنتج · قرار اللغة · ما نأخذه من LinkedIn) فهي <b>قرارات منتج لا مهامّ واجهة</b> — وهي لك لا لي.<br><b>الخياران:</b> ① جلسة فرز مخصّصة نقرأ فيها §٥ بنداً بنداً ضدّ الموقع الحالي ونفتح ما بقي حيّاً بطاقاتٍ مستقلّة. ② يُؤرشَف كمرجعٍ للقرارات الاستراتيجية ولا يُعامَل كقائمة مهامّ.<br><hr><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> No triage session recorded; the §5 pass against the current site was never done.<br><b>⚠️ ما فرزته بنداً بنداً</b> — ١٢٨ كيلوبايت من ١٤ أغسطس، وأقول هذا صراحةً بدل أن أدّعي جرداً لم أفعله.<br><br><b>ما يحويه (من عناوينه):</b> ترتيب مصادر الحقيقة · ما لا نملكه بعد · حلقة القيمة والـmoat · تعريف المنتج المقترح · ما نأخذه من LinkedIn وما لا نأخذه · دليل سوق السعودية ومصر · قرار اللغة · <b>تشخيص النسخة الحيّة §٥ والمشكلات حسب الخطورة</b>.<br><br><b>لماذا يُفرَز أوّلاً:</b> كُتب قبل ريفاكتور الديسكتوب (١٦ أغسطس) وريفاكتور الجوّال (٢١–٢٢)، فأغلب «تشخيص النسخة الحيّة» فيه قد يكون عولج فعلاً.<br><br><b>أوّل خطوة:</b> جلسة فرز للقسم ٥ وحده ضدّ الموقع الحالي، ثم تُفتح بنوداً مستقلّة.",
       "ref": "١٤ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس",
-      "sec": "ui"
+      "sec": "ui",
+      "ease": 2
     },
     {
       "id": "SCROLLATTR",

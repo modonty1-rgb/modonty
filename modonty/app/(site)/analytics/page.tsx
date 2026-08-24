@@ -86,7 +86,7 @@ function Bars({ items, format = ar, labelMap }: { items: NameVal[]; format?: (n:
         <div key={idx} className="flex items-center gap-3 text-xs">
           <span className="w-28 shrink-0 truncate text-muted-foreground" title={it.name}>{labelMap ? labelMap(it.name) : it.name || "—"}</span>
           <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-muted">
-            <div className="absolute inset-y-0 end-0 rounded-full bg-primary" style={{ width: `${(it.value / max) * 100}%` }} />
+            <div className="absolute inset-y-0 end-0 rounded-full bg-accent" style={{ width: `${(it.value / max) * 100}%` }} />
           </div>
           <span className="w-14 shrink-0 text-start font-semibold tabular-nums">{format(it.value)}</span>
         </div>
@@ -102,7 +102,7 @@ function TimeSeries({ data }: { data: Array<{ date: string; sessions: number; pa
     <div>
       <div className="flex h-32 items-end gap-px" dir="ltr">
         {data.map((d, i) => (
-          <div key={i} className="group relative flex-1 rounded-t bg-primary/80 hover:bg-primary" style={{ height: `${Math.max(2, (d.pageViews / max) * 100)}%` }} title={`${prettyDate(d.date)} — ${ar(d.pageViews)} مشاهدة · ${ar(d.sessions)} زيارة`} />
+          <div key={i} className="group relative flex-1 rounded-t bg-accent/80 hover:bg-accentary" style={{ height: `${Math.max(2, (d.pageViews / max) * 100)}%` }} title={`${prettyDate(d.date)} — ${ar(d.pageViews)} مشاهدة · ${ar(d.sessions)} زيارة`} />
         ))}
       </div>
       <div className="mt-2 flex justify-between text-[11px] text-muted-foreground" dir="ltr">

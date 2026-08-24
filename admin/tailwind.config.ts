@@ -6,6 +6,12 @@ const config: Config = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    // The shadcn primitives live in `shared`, outside this app's folder — and 51 files here
+    // import them. Without this glob every class used ONLY by them is purged, which is exactly
+    // what gave modonty a black dialog on a blank screen (the overlay painted, the panel sat
+    // ~18,700px down the page because `top-[50%]` and the translates were never emitted).
+    // modonty and console already carry this line; admin was the last one missing it.
+    "../shared/components/**/*.{ts,tsx}",
   ],
   theme: {
   	extend: {

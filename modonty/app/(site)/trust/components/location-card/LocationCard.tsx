@@ -1,11 +1,14 @@
 import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { BRAND_AR } from "@/constants";
+import { messages } from "@/lib/i18n/messages";
 import { IconMapPin, IconExternal } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import type { LegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 
 import type { ContactRow } from "../../helpers/build-contact-rows";
+
+const text = messages.trust.location;
 
 // The pin is the office address, so it comes from the same row as the address itself.
 // No coordinates on file → no map, rather than a pin pointing at a remembered spot.
@@ -24,8 +27,8 @@ export function LocationCard({ contact, map, legal }: LocationCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitleWithIcon title="فين تلقانا" icon={IconMapPin} />
-        <CardDescription>عنوان حقيقي ووسائل تواصل مباشرة.</CardDescription>
+        <CardTitleWithIcon title={text.title} icon={IconMapPin} />
+        <CardDescription>{text.description}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className={cn("grid gap-6", map && "md:grid-cols-2")}>
@@ -45,7 +48,7 @@ export function LocationCard({ contact, map, legal }: LocationCardProps) {
           {map && (
             <div className="overflow-hidden rounded-lg border border-border">
               <iframe
-                title={`خريطة موقع ${legal.legalName ?? BRAND_AR}${legal.city ? ` — ${legal.city}` : ""}`}
+                title={`${text.mapTitlePrefix} ${legal.legalName ?? BRAND_AR}${legal.city ? ` — ${legal.city}` : ""}`}
                 src={mapEmbedUrl(map.lat, map.lng)}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
@@ -61,7 +64,7 @@ export function LocationCard({ contact, map, legal }: LocationCardProps) {
             rel="noopener noreferrer"
             className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary underline underline-offset-4 hover:opacity-80 max-md:min-h-11"
           >
-            افتح في خرائط جوجل
+            {text.openInMaps}
             <IconExternal className="h-3.5 w-3.5" />
           </a>
         )}

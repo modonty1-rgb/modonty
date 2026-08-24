@@ -72,7 +72,7 @@ export function AudioTabBar({ labels }: AudioTabBarProps) {
             className={cn(
               "h-11 flex-1 rounded-xl text-sm font-bold motion-safe:transition-colors motion-safe:active:scale-95",
               on
-                ? "bg-primary text-white shadow-sm"
+                ? "bg-secondary text-secondary-foreground shadow-sm"
                 : "border border-border bg-card text-muted-foreground"
             )}
           >

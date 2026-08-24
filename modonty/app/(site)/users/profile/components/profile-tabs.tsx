@@ -112,7 +112,7 @@ export function ProfileTabs() {
                 variant="ghost"
                 className={cn(
                   "w-full gap-2 justify-center transition-colors",
-                  isActive && "bg-primary text-accent hover:bg-primary hover:text-primary-foreground",
+                  isActive && "bg-secondary text-secondary-foreground hover:bg-secondary hover:text-secondary-foreground",
                   !isActive &&
                     "text-muted-foreground hover:bg-background hover:text-foreground"
                 )}

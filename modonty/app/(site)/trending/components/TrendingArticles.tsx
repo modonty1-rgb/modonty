@@ -60,7 +60,7 @@ export function TrendingArticles({ articles, showTitle = true }: TrendingArticle
             <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer h-full relative overflow-hidden group">
               {/* Trending Badge */}
               <div className="absolute top-2 right-2 z-10">
-                <Badge className="bg-primary text-primary-foreground flex items-center gap-1">
+                <Badge className="bg-accent text-accent-foreground flex items-center gap-1">
                   <IconTrending className="h-3 w-3" />
                   <span>#{index + 1}</span>
                 </Badge>

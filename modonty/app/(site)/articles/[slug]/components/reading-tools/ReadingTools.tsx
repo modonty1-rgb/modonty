@@ -210,7 +210,7 @@ export function ReadingTools({ bare = false, compact = false, labels }: ReadingT
               className={cn(
                 cell,
                 size === s.key
-                  ? "bg-primary text-primary-foreground shadow-sm"
+                  ? "bg-secondary text-secondary-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
@@ -230,7 +230,7 @@ export function ReadingTools({ bare = false, compact = false, labels }: ReadingT
             cell,
             "shrink-0",
             imagesHidden
-              ? "bg-primary text-primary-foreground"
+              ? "bg-secondary text-secondary-foreground"
               : "bg-background/70 text-muted-foreground hover:text-foreground",
           )}
         >
@@ -261,7 +261,7 @@ export function ReadingTools({ bare = false, compact = false, labels }: ReadingT
             className={cn(
               "grid size-7 place-items-center rounded-md transition-colors",
               size === s.key
-                ? "bg-primary text-primary-foreground shadow-sm"
+                ? "bg-secondary text-secondary-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground",
             )}
           >
@@ -279,7 +279,7 @@ export function ReadingTools({ bare = false, compact = false, labels }: ReadingT
         className={cn(
           "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-[11px] font-semibold transition-colors",
           imagesHidden
-            ? "bg-primary text-primary-foreground"
+            ? "bg-secondary text-secondary-foreground"
             : "bg-background/70 text-muted-foreground hover:text-foreground",
         )}
       >

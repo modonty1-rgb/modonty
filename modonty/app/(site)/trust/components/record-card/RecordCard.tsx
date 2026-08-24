@@ -3,11 +3,14 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { BRAND_AR, SAUDI_BUSINESS_VERIFY_URL } from "@/constants";
+import { messages, fill } from "@/lib/i18n/messages";
 import { IconFileCheck, IconExternal } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import type { LegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 
 import type { LegalFact } from "../../helpers/build-legal-facts";
+
+const text = messages.trust.record;
 
 interface RecordCardProps {
   certificateSrc: string;
@@ -20,10 +23,8 @@ export function RecordCard({ certificateSrc, legal, facts }: RecordCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitleWithIcon title="السجل التجاري الرسمي" icon={IconFileCheck} />
-        <CardDescription>
-          الكيان القانوني المُشغِّل للمنصّة — صادر عن وزارة التجارة، المملكة العربية السعودية.
-        </CardDescription>
+        <CardTitleWithIcon title={text.title} icon={IconFileCheck} />
+        <CardDescription>{text.description}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid gap-6 md:grid-cols-2">
@@ -32,10 +33,11 @@ export function RecordCard({ certificateSrc, legal, facts }: RecordCardProps) {
               <OptimizedImage
                 media={asMedia(certificateSrc)}
                 alt={[
-                  "شهادة السجل التجاري",
+                  text.certificateAlt,
                   legal.legalName,
-                  legal.unifiedNumber && `الرقم الموحّد ${legal.unifiedNumber}`,
-                  "وزارة التجارة",
+                  legal.unifiedNumber &&
+                    fill(text.certificateAltUnified, { number: legal.unifiedNumber }),
+                  text.certificateAltMinistry,
                 ]
                   .filter(Boolean)
                   .join(" — ")}
@@ -50,7 +52,7 @@ export function RecordCard({ certificateSrc, legal, facts }: RecordCardProps) {
               />
             </a>
             <figcaption className="mt-2 text-center text-xs text-muted-foreground">
-              الشهادة الرسمية من وزارة التجارة · اضغط للتكبير · امسح الـ QR للتحقّق المباشر
+              {text.caption}
             </figcaption>
           </figure>
 
@@ -82,14 +84,14 @@ export function RecordCard({ certificateSrc, legal, facts }: RecordCardProps) {
 
             {legal.cr && (
               <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                <span className="font-semibold">تحقّق بنفسك:</span>
+                <span className="font-semibold">{text.verifyYourself}</span>
                 <a
                   href={SAUDI_BUSINESS_VERIFY_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 font-semibold text-primary underline underline-offset-4 hover:opacity-80"
                 >
-                  المركز السعودي للأعمال
+                  {text.verifyLink}
                   <IconExternal className="h-3.5 w-3.5" />
                 </a>
               </div>
@@ -97,9 +99,11 @@ export function RecordCard({ certificateSrc, legal, facts }: RecordCardProps) {
 
             {legal.legalName && (
               <p className="mt-4 border-t border-border pt-4 text-sm text-muted-foreground">
-                تعمل منصّة <span className="font-semibold text-foreground">{BRAND_AR}</span> ضمن
-                مظلّة <span className="font-semibold text-foreground">{legal.legalName}</span> —
-                كيان سعودي مسجّل رسمياً.
+                {text.umbrellaLead}{" "}
+                <span className="font-semibold text-foreground">{BRAND_AR}</span>{" "}
+                {text.umbrellaMid}{" "}
+                <span className="font-semibold text-foreground">{legal.legalName}</span>{" "}
+                {text.umbrellaTail}
               </p>
             )}
           </div>

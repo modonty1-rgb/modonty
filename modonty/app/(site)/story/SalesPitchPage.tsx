@@ -813,7 +813,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                 >
                   <span
                     className={`relative inline-block w-8 h-4 rounded-full transition-colors ${
-                      autoplay ? "bg-primary" : "bg-muted-foreground/30"
+                      autoplay ? "bg-accent" : "bg-muted-foreground/30"
                     }`}
                   >
                     <m.span
@@ -945,7 +945,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                     >
                       <m.span
                         aria-hidden
-                        className="inline-block w-1.5 h-1.5 rounded-full bg-primary"
+                        className="inline-block w-1.5 h-1.5 rounded-full bg-current"
                         animate={{ opacity: [0.4, 1, 0.4], scale: [1, 1.3, 1] }}
                         transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
                       />

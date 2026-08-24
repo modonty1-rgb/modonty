@@ -1,4 +1,7 @@
+import { messages } from "@/lib/i18n/messages";
 import type { LegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
+
+const text = messages.trust.facts;
 
 export interface LegalFact {
   k: string;
@@ -16,13 +19,13 @@ export interface LegalFact {
  */
 export function buildLegalFacts(legal: LegalEntityDisplay): LegalFact[] {
   const rows: LegalFact[] = [
-    { k: "الاسم القانوني", v: legal.legalName ?? "" },
-    { k: "الحالة", v: legal.crStatus ?? "", active: legal.isRegistrationActive },
-    { k: "رقم السجل التجاري", v: legal.cr ?? "", ltr: true },
-    { k: "الرقم الوطني الموحّد", v: legal.unifiedNumber ?? "", ltr: true },
-    { k: "نوع الكيان", v: legal.entityType ?? "" },
-    { k: "تاريخ القيد", v: legal.registrationDate ?? "" },
-    { k: "رأس المال", v: legal.capital ? `${legal.capital} ﷼` : "" },
+    { k: text.legalName, v: legal.legalName ?? "" },
+    { k: text.status, v: legal.crStatus ?? "", active: legal.isRegistrationActive },
+    { k: text.cr, v: legal.cr ?? "", ltr: true },
+    { k: text.unifiedNumber, v: legal.unifiedNumber ?? "", ltr: true },
+    { k: text.entityType, v: legal.entityType ?? "" },
+    { k: text.registrationDate, v: legal.registrationDate ?? "" },
+    { k: text.capital, v: legal.capital ? `${legal.capital} ${text.currency}` : "" },
   ];
   return rows.filter((r) => r.v !== "");
 }

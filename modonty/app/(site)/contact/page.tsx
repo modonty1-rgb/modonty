@@ -7,6 +7,7 @@ import { getContactPageForMetadata } from "./helpers/contact-metadata";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getContactPageContent } from "./helpers/contact-content";
 import { BRAND_AR } from "@/constants";
+import { ContactIntro } from "./components/contact-intro/ContactIntro";
 
 const FALLBACK_TITLE = "اتصل بنا";
 const FALLBACK_DESCRIPTION = "تواصل مع فريق مدونتي. نحن هنا للإجابة على أسئلتك ومساعدتك";
@@ -62,17 +63,7 @@ export default async function ContactPage() {
             { label: pageTitle },
           ]}
         />
-        <h1 className="text-3xl font-bold mb-6">{pageTitle}</h1>
-        {intro ? (
-          <div
-            className="prose prose-neutral dark:prose-invert max-w-none mb-8"
-            dangerouslySetInnerHTML={{ __html: intro }}
-          />
-        ) : (
-          <p className="text-muted-foreground mb-8">
-            نرحب بأسئلتك وملاحظاتك. يرجى ملء النموذج أدناه وسنقوم بالرد عليك في أقرب وقت ممكن.
-          </p>
-        )}
+        <ContactIntro title={pageTitle} html={intro} />
         <ContactForm defaultName={defaultName} defaultEmail={defaultEmail} />
       </div>
     </>

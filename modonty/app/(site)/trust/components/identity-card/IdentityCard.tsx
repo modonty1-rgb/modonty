@@ -3,8 +3,11 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 
 import { Card } from "@/components/ui/card";
 import { BRAND_AR } from "@/constants";
+import { messages, fill } from "@/lib/i18n/messages";
 import { cn } from "@/lib/utils";
 import type { LegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
+
+const text = messages.trust.identity;
 
 interface IdentityCardProps {
   ogImageUrl: string | null;
@@ -47,14 +50,14 @@ export function IdentityCard({ ogImageUrl, legal }: IdentityCardProps) {
               badge would contradict the status row below it. */}
           {legal.cr && legal.isRegistrationActive && (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-sm font-semibold text-primary">
-              <VerifiedBadge className="h-4 w-4" label="موثّقة لدى وزارة التجارة" />
-              موثّقة لدى وزارة التجارة
+              <VerifiedBadge className="h-4 w-4" label={text.verified} />
+              {text.verified}
             </span>
           )}
         </div>
         <p className="mt-1.5 text-base text-foreground">
-          منصة المحتوى العربي للأعمال
-          {legal.legalName ? ` — تعمل ضمن مظلّة ${legal.legalName}.` : "."}
+          {text.tagline}
+          {legal.legalName ? fill(text.umbrella, { name: legal.legalName }) : text.taglineEnd}
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-sm text-muted-foreground">
           {legal.crStatus && (
@@ -70,14 +73,14 @@ export function IdentityCard({ ogImageUrl, legal }: IdentityCardProps) {
                   legal.isRegistrationActive ? "bg-green-600" : "bg-muted-foreground"
                 )}
               />{" "}
-              السجل {legal.crStatus}
+              {text.crStatusPrefix} {legal.crStatus}
             </span>
           )}
           {legal.city && (
-            <span>المقر: <span className="font-medium text-foreground">{legal.city}{legal.country ? `، ${legal.country}` : ""}</span></span>
+            <span>{text.cityLabel} <span className="font-medium text-foreground">{legal.city}{legal.country ? `، ${legal.country}` : ""}</span></span>
           )}
           {legal.cr && (
-            <span>السجل التجاري: <span className="font-medium text-foreground [direction:ltr]">{legal.cr}</span></span>
+            <span>{text.crLabel} <span className="font-medium text-foreground [direction:ltr]">{legal.cr}</span></span>
           )}
         </div>
       </div>

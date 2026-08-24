@@ -120,7 +120,7 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
                   href={`/users/notifications?tab=${t.value}`}
                   className={`px-3 py-2 text-sm font-medium transition-colors rounded-t-md max-md:inline-flex max-md:min-h-11 max-md:items-center ${
                     tab === t.value
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-secondary text-secondary-foreground"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   }`}
                 >
@@ -149,7 +149,7 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-start gap-2 flex-1 min-w-0">
                           {isUnread ? (
-                            <span className="h-2 w-2 rounded-full bg-primary shrink-0 mt-1.5" />
+                            <span className="h-2 w-2 rounded-full bg-accent shrink-0 mt-1.5" />
                           ) : (
                             <IconEmail className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
                           )}

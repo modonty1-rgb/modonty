@@ -29,8 +29,12 @@ export function EmptyState({
         </div>
         <h3 className="text-xl font-semibold mb-2">{title}</h3>
         <p className="text-muted-foreground mb-6 max-w-md">{description}</p>
-        <Link href={actionHref}>
-          <Button>{actionLabel}</Button>
+        {/* `min-h-11`: measured 24 Aug on `/users/profile/liked` at 390 — the button came out
+            147×40, the only sub-44 target on the page, and it is the ONE way out of an empty
+            screen. One component serves all six profile children, so the fix lands on all of
+            them at once. */}
+        <Link href={actionHref} className="inline-flex">
+          <Button className="min-h-11">{actionLabel}</Button>
         </Link>
       </CardContent>
     </Card>

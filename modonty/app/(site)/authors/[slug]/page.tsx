@@ -338,7 +338,7 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
           <div className="flex flex-col items-center text-center mt-8 mb-10 gap-4">
             <Avatar className="h-24 w-24 ring-2 ring-primary/30 shadow-lg">
               <AvatarImage src={author.image ?? undefined} alt={author.imageAlt || author.name} />
-              <AvatarFallback className="text-2xl bg-primary text-primary-foreground font-bold">
+              <AvatarFallback className="text-2xl bg-secondary text-secondary-foreground font-bold">
                 {author.name.charAt(0)}
               </AvatarFallback>
             </Avatar>

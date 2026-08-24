@@ -55,7 +55,7 @@ export async function UserCard() {
         <div className="-mt-7 flex flex-col items-center gap-1 lg:-mt-8">
           <Avatar className="size-14 border-4 border-card lg:size-16">
             <AvatarImage src={user.image || undefined} alt={user.name || ""} className="object-cover" />
-            <AvatarFallback className="bg-primary text-lg font-bold text-primary-foreground">{fallback}</AvatarFallback>
+            <AvatarFallback className="bg-secondary text-lg font-bold text-secondary-foreground">{fallback}</AvatarFallback>
           </Avatar>
           <Link href="/users/profile" className="mb-1 text-xs font-normal text-link hover:underline">شوف ملفك</Link>
         </div>

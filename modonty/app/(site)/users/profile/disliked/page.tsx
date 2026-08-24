@@ -107,7 +107,7 @@ function ClientDislikeCard({ item }: { item: DislikedItem }) {
               />
             ) : (
               <Avatar className="h-16 w-16 flex-shrink-0">
-                <AvatarFallback className="text-xl font-semibold bg-primary text-primary-foreground">
+                <AvatarFallback className="text-xl font-semibold bg-secondary text-secondary-foreground">
                   {item.item.name?.charAt(0) || "C"}
                 </AvatarFallback>
               </Avatar>
@@ -152,7 +152,7 @@ function ArticleDislikeCard({ item }: { item: DislikedItem }) {
               />
             ) : (
               <Avatar className="h-16 w-16 flex-shrink-0">
-                <AvatarFallback className="text-xl font-semibold bg-primary text-primary-foreground">
+                <AvatarFallback className="text-xl font-semibold bg-secondary text-secondary-foreground">
                   <IconArticle className="h-8 w-8" />
                 </AvatarFallback>
               </Avatar>
@@ -204,7 +204,7 @@ function CommentDislikeCard({ item }: { item: DislikedItem }) {
               />
             ) : (
               <Avatar className="h-10 w-10 flex-shrink-0">
-                <AvatarFallback className="font-semibold bg-primary text-primary-foreground">
+                <AvatarFallback className="font-semibold bg-secondary text-secondary-foreground">
                   {item.item.author?.name?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>

@@ -58,7 +58,7 @@ export function ClientFollowersList({ clientId, followers }: ClientFollowersList
                 {follower.image ? (
                   <AvatarImage src={follower.image} alt={follower.name} />
                 ) : (
-                  <AvatarFallback className="text-xs font-medium bg-primary text-primary-foreground">
+                  <AvatarFallback className="text-xs font-medium bg-secondary text-secondary-foreground">
                     {follower.name.charAt(0)}
                   </AvatarFallback>
                 )}

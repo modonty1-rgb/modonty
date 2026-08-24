@@ -2,7 +2,10 @@ import Link from "next/link";
 
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { Card, CardContent } from "@/components/ui/card";
+import { messages } from "@/lib/i18n/messages";
 import { IconMessage } from "@/lib/icons";
+
+const text = messages.trust.question;
 
 interface QuestionCardProps {
   /** Null when the number is not on file — the card falls back to the contact page. */
@@ -14,10 +17,8 @@ export function QuestionCard({ whatsappHref }: QuestionCardProps) {
   return (
     <Card>
       <CardContent className="py-8 text-center">
-        <h2 className="text-xl font-semibold">عندك سؤال قبل تبدأ؟</h2>
-        <p className="mt-1.5 text-muted-foreground">
-          تواصل معنا مباشرة، أو شوف الباقات والأسعار بكل وضوح.
-        </p>
+        <h2 className="text-xl font-semibold">{text.title}</h2>
+        <p className="mt-1.5 text-muted-foreground">{text.description}</p>
         <div className="mt-5 flex flex-wrap justify-center gap-3">
           {whatsappHref ? (
             <CtaTrackedLink
@@ -29,14 +30,14 @@ export function QuestionCard({ whatsappHref }: QuestionCardProps) {
               className="inline-flex items-center gap-1.5 rounded-md bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 max-md:min-h-11"
             >
               <IconMessage className="h-4 w-4" />
-              تواصل عبر واتساب
+              {text.whatsapp}
             </CtaTrackedLink>
           ) : (
             <Link
               href="/contact"
               className="rounded-md bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 max-md:inline-flex max-md:min-h-11 max-md:items-center"
             >
-              تواصل معنا
+              {text.contact}
             </Link>
           )}
           <CtaTrackedLink
@@ -47,7 +48,7 @@ export function QuestionCard({ whatsappHref }: QuestionCardProps) {
             type="BUTTON"
             className="inline-flex items-center gap-1 rounded-md border border-primary px-6 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10 max-md:min-h-11"
           >
-            شوف الباقات <span aria-hidden="true">↗</span>
+            {text.pricing} <span aria-hidden="true">↗</span>
           </CtaTrackedLink>
         </div>
       </CardContent>

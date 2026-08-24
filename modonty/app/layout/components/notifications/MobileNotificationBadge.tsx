@@ -7,7 +7,7 @@ export async function MobileNotificationBadge() {
   if (!count) return null;
 
   return (
-    <span className="pointer-events-none absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium text-primary-foreground">
+    <span className="pointer-events-none absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-medium text-destructive-foreground">
       {count > 99 ? "99+" : count}
     </span>
   );

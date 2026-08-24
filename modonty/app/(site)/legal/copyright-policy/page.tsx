@@ -1,11 +1,17 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { generateStructuredData } from "@/lib/seo";
+
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { FormattedDate } from "@/components/date/FormattedDate";
-import { getCopyrightPolicyPageForMetadata } from "./helpers/copyright-policy-metadata";
+import { generateStructuredData } from "@/lib/seo";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
+import { messages } from "@/lib/i18n/messages";
+
+import { CopyrightPolicyBody } from "./components/copyright-policy-body/CopyrightPolicyBody";
+import { CopyrightPolicyFallback } from "./components/copyright-policy-fallback/CopyrightPolicyFallback";
+import { getCopyrightPolicyPageForMetadata } from "./helpers/copyright-policy-metadata";
 import { getCopyrightPolicyPageContent } from "./helpers/copyright-policy-content";
+
+const text = messages.copyrightPolicy;
 
 // Tags come from this page's row, then the Settings defaults, then these literals —
 // one builder for every editable page so the chain can never lose its middle link.
@@ -22,19 +28,6 @@ function sanitizeJsonLd(json: object): string {
   return JSON.stringify(json).replace(/</g, '\\u003c');
 }
 
-function CopyrightPolicyFallback() {
-  return (
-    <div className="container mx-auto max-w-4xl px-4 py-8">
-      <div className="h-8 w-48 bg-muted animate-pulse rounded mb-6" />
-      <div className="h-10 w-full bg-muted animate-pulse rounded mb-6" />
-      <div className="space-y-4">
-        <div className="h-4 w-full bg-muted animate-pulse rounded" />
-        <div className="h-4 w-5/6 bg-muted animate-pulse rounded" />
-      </div>
-    </div>
-  );
-}
-
 async function CopyrightPolicyContent() {
   let page;
   let hasContent = false;
@@ -48,42 +41,8 @@ async function CopyrightPolicyContent() {
     console.error("Error fetching copyright policy page:", error);
   }
 
-  // Fallback content
-  const fallbackTitle = "سياسة حقوق النشر";
-  const fallbackContent = `
-    <p>
-      جميع المحتويات الموجودة على منصة مدونتي محمية بحقوق الطبع والنشر. توضح هذه
-      السياسة حقوق الملكية الفكرية وكيفية استخدام المحتوى.
-    </p>
-    <h2>1. حقوق الملكية</h2>
-    <p>
-      جميع المحتويات الموجودة على المنصة، بما في ذلك النصوص والصور والتصاميم، محمية
-      بحقوق الطبع والنشر وهي ملك لصاحبها أو لصالح مدونتي.
-    </p>
-    <h2>2. استخدام المحتوى</h2>
-    <p>
-      لا يجوز نسخ أو توزيع أو تعديل أو إنشاء أعمال مشتقة من محتوى المنصة دون الحصول
-      على إذن كتابي مسبق من صاحب الحقوق.
-    </p>
-    <h2>3. المحتوى المقدم من المستخدمين</h2>
-    <p>
-      عند تقديم محتوى للمنصة، فإنك تمنحنا ترخيصاً لاستخدام وعرض وتوزيع هذا المحتوى
-      على المنصة. أنت تتحمل المسؤولية الكاملة عن المحتوى الذي تقدمه.
-    </p>
-    <h2>4. انتهاك حقوق النشر</h2>
-    <p>
-      نحن نحترم حقوق الملكية الفكرية للآخرين. إذا كنت تعتقد أن محتوى على المنصة
-      ينتهك حقوقك، يرجى التواصل معنا.
-    </p>
-    <h2>5. العلامات التجارية</h2>
-    <p>
-      جميع العلامات التجارية والأسماء التجارية المستخدمة على المنصة هي ملك لأصحابها
-      المعنيين.
-    </p>
-  `;
-
-  const pageTitle = page?.title || fallbackTitle;
-  const pageContent = hasContent ? page!.content : fallbackContent;
+  const pageTitle = page?.title || text.fallbackTitle;
+  const pageContent = hasContent ? page!.content : text.fallbackContent;
 
   // Prefer the stored, admin-validated card; build live ONLY when it is absent.
   const storedJsonLd = page?.jsonLdStructuredData?.trim();
@@ -103,26 +62,12 @@ async function CopyrightPolicyContent() {
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <Breadcrumb
           items={[
-            { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-            { label: "القانونية", href: "/legal" },
+            { label: text.breadcrumbHome, href: "/", icon: <BreadcrumbHome /> },
+            { label: text.breadcrumbLegal, href: "/legal" },
             { label: pageTitle },
           ]}
         />
-        <div className="prose prose-sm max-w-none">
-          <h1 className="text-3xl font-bold mb-6">{pageTitle}</h1>
-          {page?.updatedAt && (
-            <p className="text-sm text-muted-foreground mb-6">
-              آخر تحديث:{" "}
-              <Suspense fallback={<span>...</span>}>
-                <FormattedDate date={page.updatedAt} />
-              </Suspense>
-            </p>
-          )}
-          <div
-            className="space-y-6 text-muted-foreground"
-            dangerouslySetInnerHTML={{ __html: pageContent }}
-          />
-        </div>
+        <CopyrightPolicyBody title={pageTitle} html={pageContent} updatedAt={page?.updatedAt} />
       </div>
     </>
   );

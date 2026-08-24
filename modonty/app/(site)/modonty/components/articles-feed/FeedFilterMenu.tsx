@@ -50,7 +50,7 @@ export function FeedFilterMenu({ view, hrefs }: FeedFilterMenuProps) {
               scroll={false}
               aria-current={option === view ? "true" : undefined}
               className={`cursor-pointer text-xs font-medium ${
-                option === view ? "bg-primary text-primary-foreground focus:bg-primary focus:text-primary-foreground" : ""
+                option === view ? "bg-secondary text-secondary-foreground focus:bg-secondary focus:text-primary-foreground" : ""
               }`}
             >
               {VIEW_LABEL[option]}

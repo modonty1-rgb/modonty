@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { BRAND_AR, SITE_URL, CR_CERTIFICATE_FALLBACK_IMAGE } from "@/constants";
+import { messages } from "@/lib/i18n/messages";
 import { jsonLdHtml } from "@/lib/seo";
 import { getLegalEntity, buildOrganizationJsonLd } from "@/lib/seo/organization-jsonld";
 import { toLegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
@@ -18,6 +19,8 @@ import { PillarsCard } from "./components/pillars-card/PillarsCard";
 import { LocationCard } from "./components/location-card/LocationCard";
 import { PromisesCard } from "./components/promises-card/PromisesCard";
 import { QuestionCard } from "./components/question-card/QuestionCard";
+
+const text = messages.trust;
 
 const PAGE_URL = `${SITE_URL}/trust`;
 const PAGE_DESC =
@@ -81,8 +84,8 @@ export default async function TrustPage() {
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <Breadcrumb
           items={[
-            { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-            { label: "الموثوقية" },
+            { label: text.breadcrumbHome, href: "/", icon: <BreadcrumbHome /> },
+            { label: text.breadcrumbLabel },
           ]}
         />
 

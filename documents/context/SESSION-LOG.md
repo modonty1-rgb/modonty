@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-08-23 (مساءً)
+# Session Context — Last Updated: 2026-08-24 (نهاراً)
 
 > ⚙️ **ملف نشط = آخر أسبوع فقط** (يتوزّع أسبوعياً لتوفير الـ token عند القراءة).
 > الأرشيف الكامل بالأشهر:
@@ -57,6 +57,42 @@
 
 ---
 
+---
+
+## Session: 2026-08-24 (نهاراً) — 🧱 بنية الكود + الواجهة + الطلّات: حرّاس الأخطاء ٦٧/٦٧، تسع صفحات ثابتة، لون الفعل ٧٤←٣٦، وشيت «طلّاتي» (فرع `modonty-ui` · آخر كوميت `ac8528e` · **٦٥ معدَّلاً + ١٥ جديداً غير مدفوعة**)
+
+### 🎯 أين توقفت
+- **آخر فعل:** خالد يعيد تشغيل VS Code لتسري إعدادات الذاكرة الجديدة.
+- **الفعل التالي عند العودة:** `push>` — الشغل كلّه على القرص ومتحقَّق حيّاً، لكنه **غير مدفوع**، وفحص الأنواع لم يُشغَّل بعد آخر دفعة تعديلات (حرّاس الأخطاء + الصفحات الثابتة + لون الفعل).
+
+### ✅ المنجز (بترتيبه)
+1. **الطلّات — الديسكتوب على نمط تيك توك** (مدفوع `c2ef94f`): `/reels` خرجت إلى مجموعة `(fullscreen)` فما عاد الهيدر والفوتر يُرسمان خلفها (`buriedFocusable 18 ← 0`) · رايل تنقّل · صفّ الأزرار خارج البطاقة من `md` · سهما السابق/التالي من `lg` (على `md` كانا يعطّلان «التعليقات» و«حفظ» — مقيس بـ`elementFromPoint`).
+2. **الطلّات — الجوّال** (مدفوع `eda6488`): ملء الشاشة ٣٩٠×٨٤٤ · شريط سفلي بخمس وجهات من نفس مصدر الرايل · الدائرة خلف الأيقونات انحذفت (كانت ٤٥٪ حشواً) والأيقونة ٢٠←٣٢ · شريط التمرير كان يحجز ١٥px من عرض الطلّة.
+3. **الطلّات — أفاتار القارئ وأحداث GA4** (مدفوع `ac8528e`): رأس الصفّ صار للقارئ لا للشريك، وضغطه يفتح شيت «طلّاتي» (أعجبني/محفوظة) — وهذا أغلق ثغرة: `MediaReaction` كان له مستهلك واحد يقرأ الحالة فقط، فالحفظ يكتب بلا صفحة ترجعه. وخمسة أحداث `reel_*`.
+4. **اللوحة صارت أرقامها صادقة:** بطاقات المرجع ما عادت تُرسم بلا بحث · «الكل» ما عاد يعرض ما لا يعدّه · العنوان ٧١ بدل ١٢١ · وشغل مدونتي مجمَّع بالموضوع لا بالحالة (حقل `sec`).
+5. **غير مدفوع — قسم الواجهة:** `CTA-COLOR` (٧٤←٣٦ استعمالاً صريحاً لـ`bg-primary`؛ المنقول ١٢ أفاتار و٦ تبويبات و٤ أدوات قراءة و٩ زخرفية و٤ شارات) · `PROFILEMOB` (سجّلت قارئ تست على قاعدة التطوير لأفكّ الحاجز؛ السبع صفحات `overflowX = -10` وأهداف تحت ٤٤ صارت صفراً).
+6. **غير مدفوع — بنية الكود:** `ERR1` حرّاس الأخطاء ٦٧/٦٧ و٥١٩ سطراً مكرّراً حُذف · `TW-SHARED` الأدمن كان بلا مسار `shared` و٥١ ملفاً عنده يستورد منها · تسع صفحات ثابتة قُسّمت ونُقلت نصوصها (وكيلان على مجموعتَي ملفات منفصلتين، وتحقّقت أنا حيّاً: ٩ صفحات ٢٠٠ و`ar.json` ٢٠ مفتاحاً يُحلَّل).
+7. **الجهاز:** RAM حرّ = **صفر** و`node` وحده ٥٫٧ جيجا. إضافات VS Code ٢٠←٨ (أثقلها `vscode-typescript-next` الذي كان يشغّل خادم تايبسكربت ثانياً، وحزمة بايثون الأربع بصفر ملف `.py`) · `maxTsServerMemory` ٣٠٧٢←٢٠٤٨ · علاج التسريب: `Ctrl+Shift+P` → TypeScript: Restart TS Server — **والأمر لا يظهر إلا وملفّ تايبسكربت مفتوح**، والشرط مكتوب في الإضافة المدمجة: `{"command":"typescript.restartTsServer","when":"typescript.isManagedFile"}` (خالد بحث عنه و`TASK.html` مفتوح فلم يجده). التفاصيل في ذاكرة `project_vscode_memory_pressure`.
+8. **تدوير SESSION-LOG:** بلوكات ١٧ أغسطس الثلاثة نُقلت إلى `SESSION-LOG-2026-08.md` — النشط ١٧←١٤ والأرشيف ٣١←٣٤، المجموع ٤٨ ثابت، وقسم «معلّقات ثابتة» لم يُمَسّ.
+
+### 🚧 معلّق على خالد
+- `UXREPORT` — نفرزه في جلسة أم نؤرشفه؟ (كُتب قبل ريفاكتوري الديسكتوب والجوّال، فأغلب تشخيصه عن شاشات أُعيد بناؤها).
+- `FooterStats.tsx:106` — شريط الإحصاءات كلّه أزرق؛ تغييره يغيّر شكل الفوتر على كل صفحة.
+- `15` تيليجرام — معطّل بـlead-scoring غير مبنيّ (قرار بناء لا إصلاح).
+
+### 🔁 الحالة
+- الفرع `modonty-ui` · آخر كوميت مدفوع `ac8528e` (modonty 1.106.0) · **٦٥ معدَّلاً + ١٥ جديداً لم تُدفع**.
+- مستبعَد دائماً من الكوميت: `.claude/settings.local.json` · `.mcp.json` · `.pnpm-store/` · `chrome cOmmand`.
+- لوحة المهامّ: **مدونتي ١٢** (سيو ٦ · كود ٣ · فحص ١ · قياس ١ · قرارك ١) · قبل الدمج ١٤ · صفحة الشريك ١٠ · بيانات ١٤.
+- حساب قارئ التست على قاعدة التطوير: `reader-test@modonty.local` / `ReaderTest2026!` — أُنشئ لقياس صفحات الملف الشخصي، والإنتاج لم يُمسّ.
+
+### 🚀 الاستئناف في ٣٠ ثانية
+1. `git status --short` — تأكّد أن الثمانين ملفاً ما زالت.
+2. فحص الأنواع في `modonty/` ثم `push>`.
+3. القرار الأول: `UXREPORT` — فرز أم أرشفة؟
+
+---
+
 ## Session: 2026-08-23 (مساءً، حتى ≈ 21:45) — 📱 تدقيق الجوّال على معيار أبل (٧ صفحات) + الرئيسية: بلا شريط سفلي · بحث وفلتر · بطاقة واجهة هجينة + مضغوط ١٦ · محرّك الأرشيف صار مشتركاً (فرع `modonty-ui` · ٣ دفعات `5795fb9` → `3d1cadb` → `5d25bef` · modonty 1.99.0 · shared 0.3.4 · **مدفوع**)
 
 ### 🎯 أين توقفت
@@ -112,6 +148,8 @@
 1. `git log --oneline -1` ← `5d25bef`؛ `pnpm dev` في `modonty/` وافتح `localhost:3000` على ٣٩٠: بحث + ٣ بلاطات + بطاقة واجهة ثم مضغوطة، بلا شريط سفلي.
 2. الموكب المعتمد: `documents/design/feed-card-hybrid-mockup.html`.
 3. أول قرار: أيّ معلّق نفتح — `LEGALPASTE` · بطاقات المقال السبع · ملفّا الشريط · `pb-20`.
+
+---
 
 ---
 
@@ -176,6 +214,8 @@
 
 ---
 
+---
+
 ## Session: 2026-08-23 (فجراً) — 📱 `/clients` جوّال: صفّ البلاطات الثلاث (موثوقون · كل الشركاء · المميّزون) بعد ليلة تصحيحات متتالية؛ و`/industries` رجعت كما كانت حرفياً (فرع `modonty-ui` · **١٢٩ ملفاً غير مثبَّت** · **لم يُدفع**)
 
 ### 🎯 أين توقفت
@@ -218,6 +258,8 @@
 1. `hh>` ثم افتح `.playwright-mcp/clients-390-tiles-inline.png` — هذي الحالة المعتمدة الأخيرة.
 2. شغّل `pnpm dev` (إن ما كان شغّالاً) وافتح `localhost:3000/clients` على ٣٩٠.
 3. أول قرار: توحيد عرض البلاطات الثلاث أم الانتقال لصفحة أخرى — اسأل خالد.
+
+---
 
 ---
 
@@ -301,6 +343,8 @@
 
 ---
 
+---
+
 ## Session: 2026-08-22 (مساءً) — 🗂️ **تنظيف الوثائق كلّها**: ٨٧ ملف HTML ← واحد · شغلها المفتوح صار ١٩ بطاقة على اللوحة (فرع `modonty-ui` · `7118af1` · **مدفوع**)
 
 ### 🎯 أين توقفت
@@ -340,6 +384,8 @@
 1. افتح `file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/tasks/TASK.html` — كل شيء فيها.
 2. الوثائق: `documents/HTML/وثائق-مدونتي.html` · الخريطة: `documents/README.md`.
 3. أعلى بند ينتظر خالد: `LEGALPASTE`.
+
+---
 
 ---
 
@@ -426,6 +472,8 @@
 
 ---
 
+---
+
 ## Session: 2026-08-21 — 📱 **ريفاكتور الجوّال: أربع صفحات أُقفلت** (الرئيسية · المجالات · الشركاء · المقالات) + عائلة أيقونات البراند + **صفحة المقال شُخِّصت ولم تُلمس** (فرع `modonty-ui` · كوميتان جديدان `a3a5061` و`e8d07e3` · **لم يُدفعا**)
 
 ### 🎯 Where I stopped
@@ -494,6 +542,8 @@
 
 ---
 
+---
+
 ## Session: 2026-08-20 (مساءً) → 2026-08-21 (فجراً) — 🎬 **الطلّات أُنجزت ودُفعت 1.94.0 على التست** · 🛡️ **الحرجان الأمنيان أُصلحا** · ⚙️ **صفحة إعدادات القارئ أُعيد بناؤها وقُلّمت** · 🧾 **تمبلت الفاتورة صار بالبيانات القانونية** (فرع `modonty-ui` · آخر كوميت `5114b1c` **مدفوع** · ١٩ ملفاً غير مثبَّت · **لا merge**)
 
 ### 🎯 Where I stopped
@@ -540,6 +590,8 @@
 1. `cd modonty && pnpm dev` → افتح `http://localhost:3000/users/profile/settings` — تحقّق: أيقونة «الحساب» ترس لا سلة + عنوان «الإعدادات» ظاهر.
 2. `pnpm tsc --noEmit` (بعد التعديلين غير المقيسين).
 3. القرار: كوميت شغل الجلسة على `modonty-ui`؟ ثم التسعة الأمنية المتوسطة (البورد: `DESKTOP-REMAINING-2026-08-20.html`).
+
+---
 
 ---
 
@@ -609,6 +661,8 @@
 1. `cd modonty && pnpm dev` ثم افتح `http://localhost:3000/reels` (جوّال ٣٩٠) — الفيديو يشتغل ويمرّر سلس.
 2. افتح `modonty/app/(site)/reels/components/reel-actions-rail.tsx:80` — أصلح `url` ليصير `/reels/${slug}` (مرّر `slug` من الخلاصة).
 3. القرار: ننجز مشاركة + تتبّع مشاهدات + build، ثم نقرّر تعليقات الريلز؟
+
+---
 
 ---
 
@@ -683,6 +737,7 @@
 
 ---
 
+---
 
 ## Session: 2026-08-19 (فجراً → صباحاً) — 📰 **صفحة `/articles` وُلدت من ٤٠٤** + بنية مجلد المقالات + مودو موقوف مؤقتاً (فرع `modonty-ui` · **٤٠ كوميت لم تُدفع** · **لا merge**)
 
@@ -753,6 +808,7 @@
 
 ---
 
+---
 
 ## Session: 2026-08-18 (مساءً) → 2026-08-19 (فجراً) — 🤖 **مودو أُقفل بالكامل**: النطاق صار المجال · محرّك واحد · الزائر يجرّب بلا تسجيل · يتعلّم ويتذكّر · دورة السؤال اكتملت (فرع `modonty-ui` · **٢٢ كوميت لم تُدفع** · **لا merge**)
 
@@ -829,6 +885,7 @@
 
 ---
 
+---
 
 ## Session: 2026-08-18 (ظهراً) — 📦 كوميت ودفع بانِي موقع الشريك على `modonty-site-groups` (بأمر خالد «COMMIT AND PUSH TO THE CURRENT BRANCH» · لا merge)
 
@@ -841,149 +898,3 @@
 - تسجيل changelog في القاعدة (`createChangelog`) **لم يُنفَّذ** — دفع فرع ميزة لا نشر إنتاج؛ يُسجَّل عند الدمج/النشر.
 
 ---
-
-## Session: 2026-08-17 (مساءً) → 2026-08-18 (فجراً) — 🧱 بانِي موقع الشريك: كونسول «موقعك» + جدول `ClientSite` + مكوّنات مشتركة + رِندَر مطابق على مدونتي (فرع `modonty-site-groups` · **٧٧ ملفاً غير مثبَّت** · **لم يُدفع** · **لا merge**)
-
-> خالد في نهاية الجلسة: حصّة موديل Fable الأسبوعية عند ٩٥٪ → جمّد الجلسة (`us>`) وقد يكمّل بموديل آخر. **الجلسة الجاية تبدأ بـ`hh>`** ثم إمّا كوميت محلّي للـ٧٧ ملفاً (عرضتُه، لم يقرّر) أو نقاش بند «٦ — الدفع».
-
-### 🎯 أين توقفت
-- **آخر تاسك:** بانِي موقع الشريك — البنود ١ (تحسين التصميم) · ٢ (الجوّال) · ٤ (الفيديو) · ٥ (التنظيف) **أُنجزت**. البند ٣ (النطاق الفرعي) **أُجّل بقرار خالد** إلى بطاقة `SUBDOM` على اللوحة (HIGH). البند ٦ (الدفع/النشر) **لم يُناقَش**.
-- **الخطوة التالية عند الرجوع:** `hh>` → اسأل خالد: (أ) كوميت محلّي بلا دفع للـ٧٧ ملفاً؟ (ب) نبدأ بند ٦ (`tsc` على الثلاثة · `pnpm build` مدونتي · خطة `prisma db push` على الإنتاج بيد خالد)؟ — لا تُنفَّذ إلا بأمره.
-
-### ✅ المنجز هذه الجلسة (بعد ضغط سياقي؛ الأقدم في ملخّص الجلسة داخل المحادثة)
-- **السكيما (`shared/prisma/schema/schema.prisma`):** حُذف `PageTemplate` وحقول القوالب من `Client`؛ أُضيف `model ClientSite` (1:1 مع `Client`: `headerTemplate` · `footerTemplate` · `primaryColor?` · `hiddenSections[]` · `subdomain? @unique` — السطر 726) + `site ClientSite?` على `Client`. **دُفعت إلى `modonty_dev` فقط** (`pnpm prisma:push -- --skip-generate` بأمر خالد الصريح «you do it»؛ الناتج `[+] Collection client_sites`). ⚠️ `db push` أسقط ٣ فهارس TTL — Run-All يعيدها.
-- **المكوّنات المشتركة `shared/components/partner-site/`:** ٥ هيدرات (`free/header/{classic,centered,utility,transparent,pill}-header.tsx` + سجلّ `HEADER_TEMPLATES`) · ٤ فوترات (`free/footer/{columns,simple,brand,centered}-footer.tsx` + `FOOTER_TEMPLATES`) · بلوكات الرئيسية والصفحات (`free/{hero,trust,about,services,stats,testimonials,gallery,team,video,faq,blog,contact,cta,newsletter,booking}/…` بسجلّات `HOME_BLOCKS` · `ABOUT_BLOCKS` · `SERVICES_BLOCKS` · `GALLERY_BLOCKS` · `FAQ_BLOCKS` · `CONTACT_BLOCKS` · `BLOG_BLOCKS` · `BOOKING_BLOCKS` · `REVIEWS_BLOCKS`؛ كل بلوك `{key,name,toggleable,isEmpty(data),Component}`) · أجزاء `parts/{brand-logo,whatsapp-button}` · `social-links.tsx`.
-- **المكتبة المشتركة `shared/lib/partner-site/`:** `get-home-data.ts` (استعلامات Prisma → `HomeData` واحد) · `partner-site-palette.ts` (٨ ألوان WCAG) · `hex-to-hsl-triplet.ts` · `detect-social-platform.ts` · `validate-subdomain.ts:44` · `index.ts`.
-- **الكونسول:** مجموعة تنقّل «موقعك» أوّلاً (`nav-config.ts` · `site-pages.ts` ٩ صفحات) · `/dashboard/my-site` (راديو هيدر/فوتر بمعاينة كاملة العرض `dir="rtl"` · لوحة ألوان · حقل النطاق الفرعي؛ حفظ = upsert `ClientSite` + `revalidateModontyTag("clients")`) · `/dashboard/site-pages/[page]` (مفتاح إظهار/إخفاء لكل بلوك = حفظ فوري) · «محتوى الموقع» مرتَّب بالصفحة · تبديل الوضع الداكن (`next-themes` من الجذر) · شريط تمرير جانبي · خط القائمة `font-normal` · حزم: `zod` + `next-themes` في `console/package.json`.
-- **مدونتي `app/(partner)/clients/[slug]/`:** `layout.tsx` يقرأ `client.site` → هيدر/فوتر من السجلّات + `--primary` · `components/page-blocks.tsx` (يرشّح المخفيّ والفارغ) · الرئيسية + ٨ صفحات داخلية `(inner)/{about,services,photos,faq,contact,articles,reviews,book}` كلها `PageBlocks` · `(inner)/(plain)/{reels,followers,likes,mentions}` منقولة (بيانات الزائر لا الشريك) · **حُذفت ١٨ ملفاً ميّتاً** (هيرو/تيزرات/أقسام/هيدر/فوتر القديمة). قائمة المستخدم: `hint` prop لإخفاء فقاعة «مزاياك هنا» في شريط الشريك.
-- **الأدمن:** خطوات القوالب أُزيلت من Run-All (رجع لأصله). **اللوحة:** بطاقة `SUBDOM` (HIGH) على `TASK.html:1373` بأثر تحقّق (ملف:سطر + ناتج Vercel API + توثيق رسمي).
-- **TSC:** ⚠️ **لم يُشغَّل هذه الجلسة على أي تطبيق** (قاعدة «ممنوع tsc إلا بطلب») — **غير متحقَّق**. **Build:** لم يُشغَّل. **تست حيّ:** ✅ على `modonty_dev` — جبر سيو (`support@jbrseo.com` / `JbrSeo2026!` كلمة تست أُعيد ضبطها بسكربت dev): الكونسول يحفظ (هيدر pill · فوتر brand · لون teal `175 77% 26%` · النشرة مخفيّة) → مدونتي ترسم نفس المكوّنات؛ ٨ صفحات داخلية 200 بمعرّفات الأقسام المتوقَّعة؛ ٦ عملاء آخرون يرسمون الافتراضي. **بلوك الفيديو غير مختبَر بصرياً** (لا عميل dev عنده فيديو Bunny).
-
-### 📝 قرارات (بالسبب)
-- **جدول منفصل `ClientSite` صف واحد لكل عميل بمفاتيح مكوّنات** (فكرة خالد، وافقتُ) بدل كتالوج `PageTemplate` الأوّل → أبسط وأسرع؛ الصف الغائب = افتراضيات؛ الكتالوج القديم كان معقّداً («الفكرة اللي عملتها أول كانت معقدة»).
-- **قالب واحد لكل بلوك الآن + مفتاح إظهار/إخفاء** → «الشريك ليس تقنياً»: بلا سحب، لوحة ألوان جاهزة، افتراضيات تشتغل.
-- **النطاق الفرعي = ميزة بريميوم اختيارية لا افتراضية، ومؤجَّل** → منطقة DNS مملوكة في حساب Vercel آخر (`domain_already_exists` · `GET /v6/domains?teamId → []` · records `forbidden`)؛ الـwildcard يشترط نيم سيرفرات Vercel (توثيق رسمي).
-- **حُذف الريلز/المتابعون/الإعجابات/الإشارات من قائمة صفحات الشريك** → بيانات يولّدها الزائر لا يديرها الشريك (خالد: «إيوة، شيلها»).
-- **`year` يُمرَّر في `FooterData` و`getCopyrightYear()` تحت `use cache`** → `new Date()` ممنوع في الـprerender مع `cacheComponents`.
-- **سجلّ البلوكات لا يُمرَّر من صفحة سيرفر إلى مكوّن عميل** → «Functions cannot be passed to Client Components»؛ يُمرَّر مفتاح الصفحة نصّاً والخريطة تعيش في العميل.
-
-### 🚧 معلّق / محجوب
-- **بند ٦ — الدفع/النشر:** لم يُناقَش. يتطلّب: `tsc` على admin/console/modonty · `pnpm build` مدونتي · `prisma db push` على الإنتاج **بيد خالد** (سيُنشئ `client_sites` ويُسقط `page_templates`+حقول القوالب — تأكّد أنّ لا بيانات إنتاج فيها قبل الحذف) · لا Run-All مطلوب.
-- **`SUBDOM`** — بانتظار خالد/مريم: نقل `modonty.com` من حساب dreamtoapp إلى فريق `modonty` على Vercel، ثم بقية الخطوات على البطاقة.
-- **بلوك الفيديو** — تست بصري بعد رفع فيديو حقيقي على Bunny من الكونسول.
-- **ملفات ميّتة قديمة تُركت بقرار خالد** (client-discussions-section · client-results-section · client-review-form · gallery-interactive · seed-client1-test-data · client-bottom-bar · client-footer-cta · client-newsletter-card · client-whatsapp-fab · related-clients).
-- **`documents/idea/partner-site-builder.html`** — §7/§8 محدَّثان لكن الملف ما زال يصف كتالوج `PageTemplate` المهجور في صفوف المرحلتين ١/٢ — يحتاج تحديثاً.
-- **ملفات خارج الشغل على الشجرة:** `.pnpm-store/` · `img-reqs.txt` · `mobile-uiux-mockup.html` · `.claude/settings*.json` · `.mcp.json` — **لا تُضاف لأي كوميت**.
-
-### 📂 الملفات (٧٧ = `git status --porcelain | wc -l`) — الأهم
-- `shared/prisma/schema/schema.prisma` · `shared/components/partner-site/**` (جديد) · `shared/lib/partner-site/**` (جديد)
-- `console/app/(dashboard)/dashboard/my-site/**` · `console/app/(dashboard)/dashboard/site-pages/**` (جديدان) · `console/app/(dashboard)/dashboard/page-content/{page,components/page-content-editor}.tsx` · `console/app/(dashboard)/components/{nav-config,site-pages,theme-toggle,dashboard-header,sidebar,sidebar-nav,sidebar-groups}.tsx` · `console/app/components/providers/theme-provider.tsx` · `console/app/{layout.tsx,globals.css}` · `console/lib/ar.ts` · `console/package.json` · `pnpm-lock.yaml`
-- `modonty/app/(partner)/clients/[slug]/{layout,page}.tsx` · `…/components/page-blocks.tsx` · `…/components/chrome/platform-bar.tsx` · `…/helpers/{get-partner-site,build-chrome-data,get-cached-home-data,get-copyright-year}.ts` · `…/(inner)/**` (٨ صفحات + `(plain)/`) · `modonty/app/layout/components/user-menu/{UserMenu,LoginButton,MobileAccountBenefitsMenu}.tsx` · **٢٧ ملفاً محذوفاً** تحت `…/clients/[slug]/`
-- `admin/app/(dashboard)/database/{actions/run-all-maintenance.ts,components/auto-maintenance-panel.tsx}` (رجوع لأصله)
-- `documents/tasks/TASK.html` (+٨ أسطر: `SUBDOM`) · `documents/idea/partner-site-builder.html`
-
-### 🔁 Git / النشر
-- **الفرع:** `modonty-site-groups` · **آخر كوميت:** `3f8f766` (تجميد ١٧ أغسطس) · **غير مثبَّت:** نعم — ٧٧ ملفاً · **مدفوع:** لا · **merge:** لا (ممنوع بلا تأكيد صريح) · **Vercel:** لا شيء نُشر؛ `*.modonty.com` مُضاف للمشروع فقط (pending verification، بلا أثر حيّ). · **القاعدة:** الإنتاج لم يُلمس؛ كل شيء على `modonty_dev`.
-
-### 🚀 كيف تستأنف في ٣٠ ثانية
-1. `hh>` — ثم `git status --porcelain | wc -l` (المتوقَّع ٧٧) و`git log -1` (المتوقَّع `3f8f766`).
-2. افتح `documents/tasks/TASK.html:1373` (`SUBDOM`) و`shared/prisma/schema/schema.prisma:700-735` (`ClientSite`).
-3. قرار خالد: كوميت محلّي الآن؟ ثم بند ٦ (الدفع) أم إكمال تصميم/بلوكات؟
-
----
-
-## Session: 2026-08-17 (نهاراً → مساءً) — 🏬 موقع الشريك على مجموعات المسار `(site)/(partner)` + بانِي الموقع (دراسة) + جرد الكونسول (فرع `modonty-site-groups` · **٥ كوميتات لم تُدفع** · **لا merge**)
-
-> خالد في نهاية الجلسة: «خلصنا الـtask هذا — ٨٠٪ من الشغل، باقي صفحتان أو ثلاث» · و«التاسك الجاي كبير ومحتاج تركيز ١٠٠٪، الغلطة فيه مصيبة» → الجلسة الجاية تبدأ **نظيفة** بـ`hh>` ثم تنتظر تعريفه للتاسك.
-
-### 🎯 أين توقفت
-- **موقع الشريك** (`modonty/app/(partner)/clients/[slug]/`) مبنيّ ومتحقَّق حيّاً على الديسكتوب (فرسان التعافي مقياساً): كروم (شريط مدونتي + هيدر الشريك + فوتر) · رئيسية بترتيب الزائر (تعرّف عليه → أرقامه → خدماته → آراؤه → معرضه → فين وكيف → مقالاته → نداء) · صفحات داخلية `(inner)` (about · services · contact · articles · faq · photos · reels · reviews · book · followers · likes · mentions). خالد يعتبره **٨٠٪** — المتبقّي «صفحتان أو ثلاث» (لم يسمّها؛ مرشَّحات: تحسين الصفحات الداخلية القديمة المنقولة photos/reels/reviews بنفس نظام التصميم — **مؤشّر لا قرار**).
-- **بانِي الموقع (Site Builder)** — ملف نقاش `documents/idea/partner-site-builder.html` (v2) ينتظر قرارات خالد الثمانية (§٨). **صفر كود** فيه.
-- **الخطوة التالية عند الرجوع:** `hh>` → خالد يعرّف «التاسك الكبير» → قبل أي سطر: تصنيفه (محدود/معماري) + خطة مراحل + قراءة الكود المعني كاملاً (`feedback_pre_task_code_review`).
-
-### ✅ المنجز هذه الجلسة (بعد الضغط السياقي — التفاصيل الأقدم في كوميتات الفرع)
-- **`b016aed`** الهيرو وعد واحد وسطر واحد (`clip()` على slogan/description) · «تعرّف عليه» نافذة تمرير رفيعة `max-h-60` · الفوتر `line-clamp-3`.
-- **`ad4d572`** مهارة `.claude/skills/partner-site-templates/SKILL.md` — نموذج القوالب (Shopify settings_schema · Salla twilight.json · Wix) → كتالوج `PageTemplate` + `Client.templateId/themeSettings/sections`.
-- **`65d4d14` + `0857e2c`** ملف الفكرة `partner-site-builder.html`: سكيما · تدفّق · شاشة «موقعي» · بريميوم · مراحل · قرارات · قاعدة «الشريك ليس تقنياً» (مفاتيح لا سحب · ٨ ألوان جاهزة · افتراضيات تشتغل).
-- **`7fb99da`** قسم **٠.٥ «الوضع الحالي في الكونسول»** (بطلب خالد «المفروض تسويه بدون ما أقول لك»): خريطة القائمة الجانبية (`console/app/(dashboard)/components/nav-config.ts`) · كل قسم في الموقع ← شاشته ← مالكه · ما يشتغل صح (الحفظ → `regenerateClientSeo` → `revalidateModontyTag("clients")` في ٨ أكشنات) · ٦ فجوات · ٧ تحسينات مرتّبة P0/P1/P2 · **قرار ٨**: نقل ملكية الغلاف/الشعار/زرّ الطلب/اللون للشريك (اليوم أدمن فقط: `admin/.../form-sections/cta-section.tsx` و`media-section.tsx`).
-- **سكيلز:** نُزّلت ثم **استُخلصت وحُذفت** (بأمر خالد «ما نبغى ضجيج»): superpowers ×١٤ + task-observer + find-skills → ٨ بنود جديدة في `~/.claude/CLAUDE.md` قسم «🧪 منهجية الشغل — مستخلَص» (الأسطر 225–248). `impeccable` v4.0.4 كانت موجودة وبقيت. `claude-mem` بلَغن — **خالد ينزّله بنفسه** (`/plugin marketplace add thedotmack/claude-mem` → `/plugin install claude-mem`).
-- **ذاكرة جديدة:** `feedback_study_current_state_before_proposing` (أي دراسة تبدأ بالوضع الحالي المقيس) + `feedback_deliverable_docs_html_not_md`.
-- **TSC:** لم يُشغَّل هذه الجلسة (تعديلات المرحلة الأخيرة وثائق فقط) — آخر tsc صفر أخطاء كان بعد نقل المجموعات (**غير متحقَّق الآن**). **Build:** لم يُشغَّل بعد `b016aed`. **تست حي:** الرئيسية والصفحات الداخلية على `http://localhost:3000/clients/مؤسسة-فرسان-التعافي` (ديسكتوب ١٢٨٠×٨٠٠) قبل الضغط السياقي — **الجوّال لم يُختبر عمداً** (قاعدة «الديسكتوب أوّلاً»).
-
-### 📝 قرارات
-- **الشريك = موقع كامل داخل مدونتي بشريط منصّة رفيع** (لا صفحة داخلية) — نُفّذ بمجموعتَي مسار `(site)` (٢٦ مسار + SiteShell) و`(partner)`؛ الروابط والسيو لم يتغيّرا (routes 99=99، render modes مطابقة — من جرد `documents/tasks/PARTNER-SITE-MOVE-INVENTORY.html`).
-- **الفرع `modonty-site-groups` يُدفع وحده، ولا merge إلى `modonty-ui` إلا بأمر خالد بعد تسته** (`feedback_never_merge_without_explicit_confirmation`).
-- **بانِي الموقع:** القالب كود، القاعدة قيم وقرارات، الكونسول محرّر، مدونتي ترسم؛ الشريك ليس تقنياً؛ الأداء همّ مدونتي وحدها.
-- **الدراسة تبدأ بالوضع الحالي** — قاعدة جديدة بعد ملاحظة خالد.
-
-### 🚧 معلّق / بانتظار خالد
-- **قرارات بانِي الموقع (٨)** في `partner-site-builder.html §٨` — أهمّها **٨** (الملكية) و**١** (النشر الذاتي) و**٤** (قالبان في الإطلاق).
-- **دفع الفرع** `modonty-site-groups` (٥ كوميتات محلية: `b016aed` `ad4d572` `65d4d14` `0857e2c` `7fb99da`) — بأمر خالد فقط.
-- **ملفّان ميّتان بانتظار حذف خالد:** `modonty/app/(partner)/clients/[slug]/components/home/credentials-strip.tsx` · `modonty/app/(partner)/clients/[slug]/helpers/get-client-identity.ts` (الحذف رُفض لي).
-- **بطاقات TASK.html:** `GALPNG` (صور معرض PNG قديمة ١.٧ م.ب على بني ← محسّن الصور 500) · `PREV` · `83d`. النطاق الفرعي مؤجَّل.
-- **محمول من بلوك `/modonty` (الفرع `modonty-ui`):** عطل hydration على الرايل الأيمن — **لم يُلمس هذه الجلسة، حالته غير متحقَّقة**.
-- **ملفّات غير متتبَّعة بجذر المستودع ليست منّي في هذه الجلسة:** `img-reqs.txt` · `mobile-uiux-mockup.html` · `.pnpm-store/` — لا تُضاف للكوميت حتى يقرّر خالد.
-
-### 📂 ملفّات لُمست (هذه الجلسة بعد الضغط)
-- `documents/idea/partner-site-builder.html` — v2 + §٠.٥ + قرار ٨ · `documents/idea/README.md` — سطر الفهرس.
-- `.claude/skills/partner-site-templates/SKILL.md` — قواعد «ليس تقنياً».
-- `~/.claude/CLAUDE.md` — قسم «🧪 منهجية الشغل — مستخلَص» · `~/.claude/skills/` (حذف ١٦ سكيل مستخلَصة).
-- الذاكرة: `feedback_study_current_state_before_proposing.md` + سطر في `MEMORY.md`.
-
-### 🔁 Git / النشر
-- الفرع: `modonty-site-groups` (= `modonty-ui` عند `bf8f51a` + ١٣ كوميت؛ `modonty-ui` صفر كوميت أمامه).
-- غير مثبَّت: `.claude/settings*.json` · `.mcp.json` (مستثناة دائماً) + الثلاثة غير المتتبَّعة أعلاه.
-- آخر كوميت: `7fb99da` · **مدفوع: لا** (`origin/modonty-site-groups` عند `c4bb848`، ٥ خلفه).
-- فيرسل: لا نشر من هذا الفرع (لا preview مطلوب حتى الآن).
-
-### 🚀 كيف تستأنف في ٣٠ ثانية
-1. `hh>` — ثم `git status` و`git log --oneline -6` على `modonty-site-groups`.
-2. افتح `documents/idea/partner-site-builder.html` (§٠.٥ و§٨) لو التاسك الجاي هو البانِي — وإلا انتظر تعريف خالد للتاسك الكبير.
-3. قبل أي كود في التاسك الكبير: تصنيف + خطة مراحل + قراءة كاملة للكود المعني + `pnpm tsc --noEmit` كخط أساس.
-
----
-
-## Session: 2026-08-17 (ليلاً، حتى ≈ 03:00) — 🏛️ صفحة `/modonty` الرائدة: ثلاثة أعمدة مشتركة + درج→Popover + هيرو «النقطة» + جاليري الفريق (فرع `modonty-ui` · محلي فقط · **لم يُدفع** · **عطل hydration مفتوح**)
-
-### 🎯 أين توقفت
-- **آخر تاسك (مفتوح، عطل حقيقي):** بعد تحريك «قصة الشعار» إلى الرايل الأيمن + إضافة جاليري الفريق، ظهر **hydration mismatch** على `/modonty`: بعد ≈٤ ثوانٍ من التحميل، الرايل الأيمن («قصة مدونتي») يفقد بطاقاته الخمس كلها على العميل (`aside.innerHTML` = العنوان `<p>` فقط)، والرايل الأيسر (جاليري + «آراء شركائنا») سليم. **الدليل الخام:** HTML السيرفر (`curl`) فيه `aria-haspopup="dialog"` ×٦ · بعد الهيدريشن `document.querySelectorAll('aside button[aria-haspopup]').length` = **1** · حزمة RSC (`curl -H "RSC: 1"`) فيها كل العناوين الخمسة (`كيف بدأنا: 1` إلخ) و`StoryPopover: 2`. آخر خطوة كنت أحاول قراءة سياق العناوين داخل حزمة RSC (نسخ `/tmp/m.rsc` رُفض) — لم أصل للسبب الجذري بعد.
-- **فرضيتان لم تُختبَرا:** (أ) `StoryCardTrigger` مكوّن سيرفر بـ`forwardRef` يُمرَّر كـ`trigger` لمكوّن عميل — يعمل SSR لكن قد يفشل بالعميل عند خمس نسخ (اليسار نسخة واحدة تعمل)؛ (ب) شيء في `RIGHT_TOPICS`/`ModontyMark` يعطّل فكّ الحزمة. **الاختبار الأسرع:** انقل بطاقة «آراء شركائنا» إلى اليمين مؤقتاً أو انقل «قصة الشعار» لليسار وشوف مَن يكسر — بيسكشن سطر واحد.
-- **الخطوة التالية عند الرجوع:** (١) `hh>` (٢) افتح `http://localhost:3000/modonty`، انتظر ٤ ثوانٍ، عدّ الأزرار (٣) بيسكشن العطل ثم أصلحه (٤) بعدها قرار خالد على صفحة الموظف (أدناه).
-
-### ✅ المنجز هذه الجلسة
-- **`ThreeColumnLayout` + `TwoColumnLayout` + `StickyRail` صارت مشتركة عبر التطبيقات** في `shared/components/column-layout/` و`shared/components/sticky-rail/` (بطلب خالد الصريح: «وديه في الـshared الرئيسي») — واستُبدلت في `/` و`/clients` و`/industries` و`/modonty`. موثَّق في `.claude/rules/folder-structure.md` (قسم «Existing cross-app shells»).
-- **قاعدة «كل نصّ عربي من `messages/ar.json`»** أُضيفت لـ`.claude/skills/modonty-uiux/SKILL.md` §0 ومرآتها في `memory/feedback_uiux_standards.md`.
-- **`/modonty` رجعت ثلاثة أعمدة** بعد حذف `AboutCard` (self-link)؛ الرايلان = ٨ مواضيع من `/story` (نصّ مختصر مُعاد كتابته بلا تشكيل) في `messages.modonty.story.*`.
-- **درج (Sheet) → Popover:** خالد رفض الدرج حيّاً («فكرة فاشلة»). ثُبّت `@radix-ui/react-popover` في `shared/package.json` وأُنشئ `shared/components/ui/popover.tsx` (مأخوذ عبر `npx shadcn@latest view popover` ومكيَّف لنمط الريبو). `story-drawer/` حُذف. الأزرار موحّدة (`StoryCardTrigger` = بطاقة أيقونة+عنوان+وصف، `forwardRef`).
-- **تدقيق `apple-design` skill** (ثُبّت من `emilkowalski/skills` إلى `.claude/skills/apple-design/`) → إصلاحان على `shared/ui`: `motion-safe:active:scale-[0.97]` على `Button`/`StoryCardTrigger`، و`motion-reduce:` (فيد بدل سلايد/زوم) في `sheet.tsx` و`popover.tsx`.
-- **الصفحة الرائدة — مفهوم «النقطة»** (خالد: «أبهرني» ثم «do»): هيرو صورة ٦:١ + شبكة نقاط ٨٪ + شعار ٨٠px يركب الحافة + زرّ جدة (رابط خرائط بإحداثيات المقر) + العدّادات caption · `AccentHeading` (شرطة تركواز) موحّد · معرض فسيفساء · ظهور منسّق واحد (`helpers/reveal.ts`) · `loading.tsx` مطابق.
-- **جاليري الفريق** (`components/team-gallery/TeamGalleryCard.tsx`): مربّعات، القيادة ٢×٢، فسيفساء زغزاغ (L L s s / L L s s / s s L L / s s L L / s s s ·) مع بلاطة براند تسدّ الخلية الأخيرة (١٣ = عدد أوّلي). البيانات نُقلت من `app/story/TeamCarousel.tsx` إلى `lib/team/team-members.ts` (مستهلكان → lib التطبيق)، و`TeamCarousel` يستوردها.
-- **حذف «شركاؤنا الأوائل»** (كود + نصّ) بطلب خالد · «قصة الشعار» انتقلت لليمين (اليمين = «قصة مدونتي» ٥ · اليسار = «الفريق والشركاء») · دوران السهم استُبدل بانزلاق+تلاشٍ.
-- **TSC (modonty):** آخر تشغيل `TSC_EXIT:0` بعد جاليري الفريق. **Build:** لم يُشغَّل. **تست حيّ:** الهيرو/المعرض/الحركة/الـPopover تحقّقت فاتح+داكن ١٢٨٠×٨٠٠ **قبل** آخر تغييرين؛ العطل أعلاه ظهر بعدها.
-
-### 📝 قرارات
-- **الفريق ليس في القاعدة** — خالد قال «حتلاقيها في جدول السيو»؛ قِيس على `modonty_dev` (المفعَّل في `shared/.env`): `Author` = صفّ واحد (مدونتي نفسها) · `Staff` = ١٢ صفاً كلها بلا صورة وأسماء لا تطابق الـ١٣. **لا، غلط — أُبلغ.** الإنتاج لم يُفحص (ممنوع سكربت عليه بلا كلمته).
-- **توصيتي لصفحة الموظف (لم تُنفَّذ، تنتظر خالد):** استعمال `Author` (نموذج Person/E-E-A-T بصفحة عامة جاهزة `/authors/[slug]`) + `staffId?` + `isPublic`، لا حقول على `Staff` (جدول دخول فيه باسوردات). التواصل عبر إيميل الشركة من `Settings` فقط. الإدخال من الأدمن (١٣ سجلاً + صور بني).
-- الـPopover لا الدرج · Popover مو Accordion (الأكورديون يغيّر ارتفاع الرايل الـsticky).
-
-### 🚧 معلّق
-- 🔴 **عطل hydration الرايل الأيمن** (أعلاه) — لازم يُقفل قبل أي دفع.
-- ⚠️ `ahmed.png` على بني حجمه **1.45 MB** (`curl` → `SIZE:1452594`) — أول تحميل عبر محسّن Next تأخّر وظهرت الصورة مكسورة لحظة؛ يحتاج ضغطاً على بني (بيانات لا كود).
-- شرائح الخدمات لا تظهر على `/modonty` — `services` فاضي بالقاعدة (استنتاج من الرسم، لم يُقَس مباشرة).
-- توزيع المواضيع بين الرايلين لم يؤكّده خالد نهائياً · صفحة الموظف تنتظر قراره · V10 الجوّال · باقي معلّقات البلوكات السابقة.
-- تحذير مكرّر بالكونسول على كل صفحة: `[auth][error] JWTSessionError` ×٢ (`MobileNotificationBadge` · `NotificationsBell`) — موجود قبل الجلسة على `/` أيضاً، ليس من شغل اليوم.
-
-### 📂 الملفات
-- `shared/components/column-layout/{ThreeColumnLayout,TwoColumnLayout}.tsx` · `shared/components/sticky-rail/StickyRail.tsx` · `shared/components/ui/popover.tsx` (جديدة) · `shared/components/ui/{button,sheet}.tsx` (motion) · `shared/package.json` (+popover) · `.claude/rules/folder-structure.md` · `.claude/skills/modonty-uiux/SKILL.md` · `.claude/skills/apple-design/SKILL.md` (جديد).
-- `modonty/app/modonty/**` (page · loading · TASK.md · components/{profile-hero,gallery,articles-feed,right-rail,left-rail,story-popover,team-gallery,accent-heading} · helpers/reveal.ts) · `modonty/messages/ar.json` (namespace `modonty`) · `modonty/lib/team/team-members.ts` (جديد) · `modonty/app/story/{TeamCarousel.tsx,_constants.ts}` · `modonty/components/shared/about-card/AboutCard.tsx` (رابط `/modonty`) · صفحات `/`,`/clients`,`/industries` (استبدال القشرة).
-
-### 🔁 Git
-- الفرع `modonty-ui` · آخر كوميت **`339b369`** «الرئيسية: كرت مدونتي بارتفاع كرت الحساب…» (وقبله `b45b307` — كلاهما بعد `1e79b3c` المسجّل في البلوك السابق؛ **حالة دفعهما غير متحقَّقة**، افحص `git status -sb`).
-- **غير مثبَّت: كثير جداً** — كل شغل اليوم + شغل سابق (انظر `git status`؛ ≈ ٤٠ ملفاً معدَّلاً + عشرات المجلّدات الجديدة تحت `modonty/app/{clients,industries,modonty,about}` و`modonty/components/shared/*` و`modonty/messages` و`shared/components/*`).
-- **لم يُدفع.** فيرسل بلا تغيير.
-
-### 🚀 الرجوع في ٣٠ ثانية
-1. `hh>` ثم `git status -sb` (هل `339b369` مدفوع؟).
-2. شغّل مودونتي، افتح `/modonty`، انتظر ٤ ثوانٍ، نفّذ في الكونسول: `document.querySelectorAll('aside button[aria-haspopup]').length` — لو ≠ 6 فالعطل قائم → بيسكشن (انقل بطاقة واحدة بين الرايلين).
-3. بعد الإصلاح: قرار خالد على نموذج بيانات الفريق (`Author` + `isPublic`) قبل أي سكيما.
-

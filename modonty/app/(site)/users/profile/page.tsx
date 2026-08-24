@@ -71,7 +71,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
               <div className="relative ms-6 max-lg:ms-0">
                 <Avatar className="h-20 w-20 shrink-0 max-lg:h-16 max-lg:w-16">
                   <AvatarImage src={user.image || undefined} alt={user.name || ""} />
-                  <AvatarFallback className="text-2xl font-semibold bg-primary text-primary-foreground">
+                  <AvatarFallback className="text-2xl font-semibold bg-secondary text-secondary-foreground">
                     {user.name?.charAt(0) || user.email?.charAt(0) || "U"}
                   </AvatarFallback>
                 </Avatar>
@@ -89,7 +89,11 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
                 ) : (
                   <Link
                     href="/users/profile/settings"
-                    className="hidden text-xs font-bold text-primary mt-0.5 max-lg:inline-block"
+                    // `min-h-11` + `items-center`: measured 24 Aug at 390 — the link stood 16px
+                    // tall, the only sub-44 target on this page, and it is the prompt that turns
+                    // a half-empty profile into a filled one. The text keeps its size; only the
+                    // tap box grew.
+                    className="hidden text-xs font-bold text-primary mt-0.5 max-lg:inline-flex max-lg:min-h-11 max-lg:items-center"
                   >
                     أكمل ملفك — أضف اسمك ›
                   </Link>

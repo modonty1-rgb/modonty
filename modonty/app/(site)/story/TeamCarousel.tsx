@@ -241,7 +241,7 @@ function TeamCarouselImpl() {
               aria-hidden
               className={`block h-1.5 rounded-full transition-all ${
                 idx === selectedIdx
-                  ? "w-6 bg-primary"
+                  ? "w-6 bg-foreground"
                   : "w-1.5 bg-foreground/25 group-hover:bg-foreground/45"
               }`}
             />

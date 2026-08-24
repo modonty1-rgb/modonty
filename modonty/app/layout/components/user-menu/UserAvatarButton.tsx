@@ -31,7 +31,7 @@ export const UserAvatarButton = forwardRef<HTMLButtonElement, UserAvatarButtonPr
           alt={user.name || ""}
           className="object-cover"
         />
-        <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
+        <AvatarFallback className="bg-secondary text-secondary-foreground font-semibold">
           {user.name?.charAt(0) || user.email?.charAt(0) || "U"}
         </AvatarFallback>
       </Avatar>

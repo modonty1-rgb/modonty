@@ -41,7 +41,6 @@ interface ClientCardProps {
 export function ClientCard(props: ClientCardProps) {
   const displayViews = props.ga4Total ?? props.viewsCount;
   const viewsLabel  = props.ga4Total !== undefined ? "تفاعلات" : "مشاهدة";
-  const initials = props.name.split(" ").map((n) => n[0]).join("").slice(0, 2);
   const q = props.highlightQuery;
   const nameContent = q ? highlightQuery(props.name, q) : props.name;
   const cover = props.ogImage ? props.ogImage ?? props.ogImage : null;
@@ -72,7 +71,7 @@ export function ClientCard(props: ClientCardProps) {
         </div>
 
         {/* Logo — overlapping the banner edge */}
-        <div className="absolute top-[62px] end-4 z-[2] h-[58px] w-[58px]">
+        <div className="absolute top-[62px] end-4 z-[2] size-12">
           <PartnerAvatar
             media={logo ? asMedia(logo, props.name) : null}
             name={props.name}

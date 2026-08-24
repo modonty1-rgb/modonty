@@ -2,6 +2,10 @@ import { Metadata } from "next";
 import { generateMetadataFromSEO } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ContactForm } from "@/components/shared/contact-form/ContactForm";
+import { messages } from "@/lib/i18n/messages";
+import { FeedbackIntro } from "./components/feedback-intro/FeedbackIntro";
+
+const text = messages.feedback;
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataFromSEO({
@@ -20,15 +24,11 @@ export default function FeedbackPage() {
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "مركز المساعدة", href: "/help" },
-          { label: "إرسال ملاحظات" },
+          { label: text.helpBreadcrumbLabel, href: "/help" },
+          { label: text.breadcrumbLabel },
         ]}
       />
-      <h1 className="text-3xl font-bold mb-6">إرسال ملاحظات</h1>
-      <p className="text-muted-foreground mb-8">
-        نحن نقدر ملاحظاتك واقتراحاتك! شاركنا أفكارك لمساعدتنا على تحسين منصة مدونتي
-        وتقديم تجربة أفضل لك.
-      </p>
+      <FeedbackIntro />
       <ContactForm />
     </div>
   );

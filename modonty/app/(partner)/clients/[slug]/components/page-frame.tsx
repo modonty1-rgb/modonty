@@ -26,7 +26,7 @@ export function PageFrame({ siteName, base, eyebrow, title, intro, children }: P
       </nav>
       <div className="mt-6">
         <p className="flex items-center gap-2 text-sm font-medium text-primary">
-          <span className="h-0.5 w-6 rounded-full bg-primary" aria-hidden />
+          <span className="h-0.5 w-6 rounded-full bg-accent" aria-hidden />
           {eyebrow}
         </p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">{title}</h1>
