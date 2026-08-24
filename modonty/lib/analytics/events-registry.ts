@@ -51,9 +51,6 @@ export interface CommentReplyParams extends ArticleContext, ClientContext {
 export interface CommentLikeParams extends ArticleContext, ClientContext {
   comment_id: string;
 }
-export interface CommentDislikeParams extends ArticleContext, ClientContext {
-  comment_id: string;
-}
 
 // ─── Tier 2 — Client Page Events (5) ─────────────────────────────────────────
 
@@ -66,6 +63,37 @@ export interface ClientCommentSubmitParams extends ClientContext {
   comment_id: string;
 }
 export interface NewsletterSubscribeParams extends ClientContext {}
+
+// ─── Tier 2 — Reel Events (5) ────────────────────────────────────────────────
+//
+// Added 24 Aug 2026 (card 14). Until now `grep -i reel` on this file returned NOTHING while
+// the reels feed and every watch page were live — so the platform had no number for a reel:
+// not a view, not a like, not a share.
+//
+// Named `reel_*` to match `article_*` and `client_*` above, NOT the GA4 recommended
+// `select_content` / `share`. Those are real recommended events, but this registry already
+// chose `article_share` over `share` for the same choice, and one report that mixes
+// conventions is worse than one that is consistently ours. Every name here is ≤ 40 characters
+// and every event carries ≤ 25 parameters, GA4's documented ceilings.
+//
+// `ReelContext` deliberately carries no title: a reel title runs long and GA4 truncates a
+// parameter value at 100 characters, which would store a half-sentence and report it as a
+// distinct value from its own full form.
+
+interface ReelContext {
+  reel_id?: string;
+  reel_slug?: string;
+  /** `video` or `image` — the two kinds one feed carries; the split matters for retention. */
+  reel_kind?: string;
+}
+
+export interface ReelViewParams extends ReelContext, ClientContext {}
+export interface ReelLikeParams extends ReelContext, ClientContext {}
+export interface ReelFavoriteParams extends ReelContext, ClientContext {}
+export interface ReelShareParams extends ReelContext, ClientContext {
+  share_platform: string;
+}
+export interface ReelCommentSubmitParams extends ReelContext, ClientContext {}
 
 // ─── Tier 2 — Engagement (2) ─────────────────────────────────────────────────
 
@@ -205,11 +233,15 @@ export const GA4_EVENTS = {
   comment_submit: "comment_submit",
   comment_reply: "comment_reply",
   comment_like: "comment_like",
-  comment_dislike: "comment_dislike",
   client_view: "client_view",
   client_share: "client_share",
   client_favorite: "client_favorite",
   client_comment_submit: "client_comment_submit",
+  reel_view: "reel_view",
+  reel_like: "reel_like",
+  reel_favorite: "reel_favorite",
+  reel_share: "reel_share",
+  reel_comment_submit: "reel_comment_submit",
   newsletter_subscribe: "newsletter_subscribe",
   follow_client: "follow_client",
   outbound_click: "outbound_click",
@@ -270,8 +302,6 @@ export const trackCommentReply = (p: CommentReplyParams, o?: TrackOptions) =>
   trackEvent(GA4_EVENTS.comment_reply, p, o);
 export const trackCommentLike = (p: CommentLikeParams, o?: TrackOptions) =>
   trackEvent(GA4_EVENTS.comment_like, p, o);
-export const trackCommentDislike = (p: CommentDislikeParams, o?: TrackOptions) =>
-  trackEvent(GA4_EVENTS.comment_dislike, p, o);
 
 // Client page
 export const trackClientView = (p: ClientViewParams, o?: TrackOptions) =>
@@ -280,6 +310,18 @@ export const trackClientShare = (p: ClientShareParams, o?: TrackOptions) =>
   trackEvent(GA4_EVENTS.client_share, p, o);
 export const trackClientFavorite = (p: ClientFavoriteParams, o?: TrackOptions) =>
   trackEvent(GA4_EVENTS.client_favorite, p, o);
+// Reel
+export const trackReelViewEvent = (p: ReelViewParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.reel_view, p, o);
+export const trackReelLike = (p: ReelLikeParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.reel_like, p, o);
+export const trackReelFavorite = (p: ReelFavoriteParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.reel_favorite, p, o);
+export const trackReelShare = (p: ReelShareParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.reel_share, p, o);
+export const trackReelCommentSubmit = (p: ReelCommentSubmitParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.reel_comment_submit, p, o);
+
 export const trackClientCommentSubmit = (p: ClientCommentSubmitParams, o?: TrackOptions) =>
   trackEvent(GA4_EVENTS.client_comment_submit, p, o);
 export const trackNewsletterSubscribe = (p: NewsletterSubscribeParams, o?: TrackOptions) =>

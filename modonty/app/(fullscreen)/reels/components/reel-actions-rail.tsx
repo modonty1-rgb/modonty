@@ -9,12 +9,16 @@ import { ModontyLikeMark } from "@/components/icons/modonty-like-mark";
 import { ModontyShareMark } from "@/components/icons/modonty-share-mark";
 
 import { toggleReelLike, toggleReelFavorite } from "../actions/reel-interactions";
+import { trackReelShareEvent } from "../actions/track-reel-share";
 import { ReelCommentsSheetLazy, warmReelCommentsSheet } from "./reel-comments-sheet-lazy";
+import { ReelViewerAvatar } from "./reel-viewer-avatar";
 
 interface ReelActionsRailProps {
   reelId: string;
   slug: string;
   title: string;
+  userImage: string | null;
+  userName: string;
   likesCount: number;
   favoritesCount: number;
   commentsCount: number;
@@ -40,6 +44,8 @@ export function ReelActionsRail({
   reelId,
   slug,
   title,
+  userImage,
+  userName,
   likesCount,
   favoritesCount,
   commentsCount,
@@ -104,9 +110,12 @@ export function ReelActionsRail({
     // must land the receiver on THIS clip.
     const url = `${window.location.origin}/reels/${encodeURIComponent(slug)}`;
     try {
-      if (navigator.share) await navigator.share({ title, url });
-      else {
+      if (navigator.share) {
+        await navigator.share({ title, url });
+        void trackReelShareEvent(reelId, "native");
+      } else {
         await navigator.clipboard.writeText(url);
+        void trackReelShareEvent(reelId, "clipboard");
         // Past tense — the copy already happened; «انسخ» ordered the visitor to do it.
         setHint("انتسخ الرابط ✓");
         setTimeout(() => setHint(null), 2000);
@@ -125,16 +134,16 @@ export function ReelActionsRail({
           {hint}
         </div>
       )}
-      {/* Phone: overlaid on the clip, bottom-end — unchanged. From `md` up it steps OUT of the
-          card (`-end-16`, the card's own edge plus a gutter) and centres vertically beside it,
-          which is where TikTok's desktop puts the same four counts. The card turns off its
-          clipping at the same breakpoint, so nothing here is cut. */}
       {/* Phone: overlaid on the clip. `bottom-36` clears the caption block (which now ends
           ~96px up, above the bottom bar) — at `bottom-24` the share button sat on the byline.
           From `md` up it steps OUT of the card (`-end-16`) and centres beside it, where
           TikTok's desktop puts the same four counts; the card stops clipping at that same
           breakpoint, so nothing here is cut. */}
       <div className="absolute bottom-36 end-3 z-10 flex flex-col items-center gap-4 md:bottom-auto md:-end-16 md:top-1/2 md:-translate-y-1/2 md:gap-6">
+        {/* The READER's face heads the rail — the publisher is already named at the bottom of the
+            reel, so this slot carries «طلّاتي» instead (Khalid, 24 Aug: «الأفاتار اللي فوق
+            لليوزر اللي داخل على مدونتي»). No «+»: you do not follow yourself. */}
+        <ReelViewerAvatar userImage={userImage} userName={userName} isLoggedIn={isLoggedIn} />
         {/* Brand marks, not lucide (the rule that governs all nine mobile surfaces) — the
             like, comment, bookmark and share marks the article page already wears, 28px in
             a 44px circle, the mobile icon standard. State lives on the CIRCLE via tokens

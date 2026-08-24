@@ -4,6 +4,7 @@ import { updateTag } from "next/cache";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { trackReelLike, trackReelFavorite } from "@/lib/analytics/events-registry";
 import type { MediaReactionKind } from "@prisma/client";
 
 type ToggleResult =
@@ -60,6 +61,34 @@ async function toggleReaction(mediaId: string, kind: MediaReactionKind): Promise
 
     // Read-your-own-writes: expire the cached feed so counters reflect immediately.
     updateTag("reels");
+
+    // GA4 gets the ADD only, never the undo. An «إعجاب» that is toggled off is not half an
+    // engagement — counting both directions would inflate the number and make the ratio
+    // meaningless. The DB counter above already carries the true total either way.
+    if (!existing) {
+      const reel = await db.media.findUnique({
+        where: { id: mediaId },
+        select: {
+          reelSlug: true,
+          bunnyVideoId: true,
+          client: { select: { id: true, slug: true, name: true } },
+        },
+      });
+      if (reel) {
+        const params = {
+          reel_id: mediaId,
+          reel_slug: reel.reelSlug ?? mediaId,
+          reel_kind: reel.bunnyVideoId ? "video" : "image",
+          client_id: reel.client?.id,
+          client_slug: reel.client?.slug,
+          client_name: reel.client?.name,
+        };
+        // `void`: analytics must never delay the answer the button is waiting for.
+        if (kind === "LIKE") void trackReelLike(params, { userId });
+        else void trackReelFavorite(params, { userId });
+      }
+    }
+
     return { success: true, active: !existing, count: Math.max(0, updated[field]) };
   } catch {
     return { success: false, error: "server" };

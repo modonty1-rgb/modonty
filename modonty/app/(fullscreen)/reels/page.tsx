@@ -78,7 +78,13 @@ export default async function ReelsPage() {
         </Link>
       </header>
 
-      <ReelsFeedClient initialItems={withState} initialCursor={nextCursor} isLoggedIn={!!userId} />
+      <ReelsFeedClient
+        initialItems={withState}
+        initialCursor={nextCursor}
+        isLoggedIn={!!userId}
+        userImage={session?.user?.image ?? null}
+        userName={session?.user?.name ?? "حسابي"}
+      />
 
       {/* The phone's counterpart to the rail — five destinations, hidden from `md` up. */}
       <ReelsBottomBar />

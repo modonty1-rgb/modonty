@@ -14,6 +14,9 @@ import { ReelVideo } from "./reel-video";
 
 interface ReelsFeedClientProps {
   initialItems: ReelFeedItemWithState[];
+  /** The signed-in reader — drawn at the head of every action rail. */
+  userImage: string | null;
+  userName: string;
   initialCursor: string | null;
   isLoggedIn: boolean;
 }
@@ -21,7 +24,7 @@ interface ReelsFeedClientProps {
 /** Mount a live <video> only for the reel on screen and its immediate neighbours. */
 const WINDOW = 1;
 
-export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn }: ReelsFeedClientProps) {
+export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn, userImage, userName }: ReelsFeedClientProps) {
   const [items, setItems] = useState(initialItems);
   const [active, setActive] = useState(0);
   // Feeds must start muted or the browser refuses to autoplay; one tap turns sound on for all.
@@ -260,6 +263,8 @@ export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn }: Ree
                 reelId={reel.id}
                 slug={reel.slug}
                 title={reel.title}
+                userImage={userImage}
+                userName={userName}
                 likesCount={reel.likesCount}
                 favoritesCount={reel.favoritesCount}
                 commentsCount={reel.commentsCount}
