@@ -175,9 +175,14 @@ export default async function ArticleViewPage({ params }: { params: Promise<{ id
               {/* Featured Image */}
               {a.featuredImage?.url && (
                 <div className="aspect-video overflow-hidden rounded-lg mb-6 relative bg-muted">
+                  {/* This is the LCP element of the article view — it sits above the fold and is the
+                      largest thing on screen. Without a hint the browser discovers it late and queues
+                      it behind everything else. Same pair the visitor-side hero already uses. */}
                   <OptimizedImage
                     media={asMedia(mediaSrc(a.featuredImage) ?? "", a.featuredImage.altText || a.title)} alt={a.featuredImage.altText || a.title}
                     fill
+                    loading="eager"
+                    fetchPriority="high"
                     className="object-contain"
                     sizes="(max-width: 768px) 100vw, 800px"
                   />

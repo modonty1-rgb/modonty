@@ -387,8 +387,8 @@
    "sev": "high",
    "who": "k",
    "date": "٢٢ أغسطس ٢٠٢٦",
-   "t": "الرئيسية على الجوّال — المراجعة الكلّية كزائر + قرار «احجز/تسوّق»",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Measured fixes landed (modonty/app/layout/components/Footer.tsx:16 max-lg:min-h-11/min-w-11). Remaining 2 items are Khalid's judgment: visitor review + «احجز/تسوّق» wording+target.<br><b>نُقل من لوحة الجوّال ٢٢ أغسطس.</b> الأعطال المقيسة أُغلقت؛ الباقي حكمٌ لا إصلاح.<br><b>ما أُغلق فعلاً (مقيس ٢٢ أغسطس):</b> المسح على ٣٩٠ أعطى ٢٢ هدفاً تحت ٤٤ — <b>١٤ منها إيجابيات كاذبة</b> (عناوين المقالات تحمل <code>after:absolute after:inset-0</code>، فالهدف الفعلي البطاقة كلها لا سطر العنوان)، وواحد <code>sr-only</code> بحكم تعريفه. الحقيقي سبعة: «الصفحة التالية» ٩٨×<b>٢٠</b> في <code>(homepage)/components/page-layout/PageLayout.tsx</code> + ستّة روابط فوتر عرضها ٣١–٤٣. أُصلحت بـ<code>max-lg:min-h-11</code> و<code>max-lg:min-w-11</code>. <b>بعد:</b> <code>m390</code> → الرابط ١١٤×٤٤ · <code>footerSmall 0</code> · <code>realSmall 0</code> · <code>overflow 0</code>؛ <b><code>d1280</code> → الرابط رجع ٩٨×٢٠ بالضبط</b>.<br><b>الباقي — بندان:</b> (١) <b>مراجعة كلّية كزائر</b> على جهاز حقيقي: هل ترتيب الأقسام يخدم نيّة الداخل؟ الألسنة الملوّنة (مدونتي · المجالات · الطلّات · الشركاء) هل تُقرأ كأبواب أم كزينة؟ (٢) <b>قرار «احجز/تسوّق» النهائي</b> — الشريط السفلي المشترك يحمل زرّين، ونصّهما ووجهتهما على الرئيسية لم يُحسما حسب سياقها (بخلاف <code>/modonty</code> حيث حُسما: صِر شريكاً · عن مدونتي).<br><b>تحذير قياس:</b> الخلاصة تمرير لا نهائي، فعدد البطاقات يختلف بين تشغيلة وأخرى — أي حكم يُبنى على عنصر مسمّى، لا على عدّاد إجمالي.<br><b>سجلّ القياس (نُقل هنا ٢٢ أغسطس؛ لوحة الجوّال حُذفت بعد إفراغها):</b> الرئيسية على ٣٩٠ — <code>overflow 0</code> · <code>realSmall 0</code> · <code>footerSmall 0</code> · «الصفحة التالية» ١١٤×٤٤. على ١٢٨٠ — الرابط ٩٨×٢٠ (مطابق لما قبل التعديل). تاريخ القياسات الكامل لعشر الصفحات في كوميتات ٢١–٢٢ أغسطس و<code>documents/context/SESSION-LOG.md</code>.",
+   "t": "الرئيسية على الجوّال — المراجعة الكلّية كزائر",
+   "d": "<b>تدقيق ٢٤ أغسطس ٢٠٢٦ — بيدك:</b> Measured fixes landed (modonty/app/layout/components/Footer.tsx:16 max-lg:min-h-11/min-w-11). Remaining item is Khalid's judgment: the visitor review.<br><b>نُقل من لوحة الجوّال ٢٢ أغسطس.</b> الأعطال المقيسة أُغلقت؛ الباقي حكمٌ لا إصلاح.<br><b>ما أُغلق فعلاً (مقيس ٢٢ أغسطس):</b> المسح على ٣٩٠ أعطى ٢٢ هدفاً تحت ٤٤ — <b>١٤ منها إيجابيات كاذبة</b> (عناوين المقالات تحمل <code>after:absolute after:inset-0</code>، فالهدف الفعلي البطاقة كلها لا سطر العنوان)، وواحد <code>sr-only</code> بحكم تعريفه. الحقيقي سبعة: «الصفحة التالية» ٩٨×<b>٢٠</b> في <code>(homepage)/components/page-layout/PageLayout.tsx</code> + ستّة روابط فوتر عرضها ٣١–٤٣. أُصلحت بـ<code>max-lg:min-h-11</code> و<code>max-lg:min-w-11</code>. <b>بعد:</b> <code>m390</code> → الرابط ١١٤×٤٤ · <code>footerSmall 0</code> · <code>realSmall 0</code> · <code>overflow 0</code>؛ <b><code>d1280</code> → الرابط رجع ٩٨×٢٠ بالضبط</b>.<br><b>✅ قرار «احجز/تسوّق» أُغلق (خالد، ٢٤ أغسطس): «لا باب في الرئيسية — مقالات صافية».</b> الشريط السفلي أُخفي من الرئيسية في ٢٣ أغسطس، فما بقي نصٌّ ولا وجهة تُحسم. <b>مقيس بعد القرار:</b> على ٣٩٠ صفر زرّ «احجز/تسوّق» ظاهر وصفر رابط قابل للضغط إلى <code>/booking</code> أو <code>/shop</code> (الاثنان في الرفّ الأيسر <code>hidden lg:block</code> بمستطيل ٠×٠)، والعنصر الثابت الوحيد أسفل الشاشة «ارجع لفوق» ٤٨×٤٨؛ على ١٢٨٠ الزرّان ظاهران ٣٠٠×٦٨ كما كانا. <b>أثرٌ مقبول بقرار خالد:</b> زائر الجوّال ما عنده باب إلى <code>/booking</code> أو <code>/shop</code> من الرئيسية ولا من قائمة البرغر. <code>ServiceBar.tsx</code> و<code>BottomBar.tsx</code> بلا مستهلك — إخفاء لا حذف حتى يأمر.<br><b>الباقي — بند واحد:</b> <b>مراجعة كلّية كزائر</b> على جهاز حقيقي: هل ترتيب الأقسام يخدم نيّة الداخل؟ الألسنة الملوّنة (مدونتي · المجالات · الطلّات · الشركاء) هل تُقرأ كأبواب أم كزينة؟<br><b>تحذير قياس:</b> الخلاصة تمرير لا نهائي، فعدد البطاقات يختلف بين تشغيلة وأخرى — أي حكم يُبنى على عنصر مسمّى، لا على عدّاد إجمالي.<br><b>سجلّ القياس (نُقل هنا ٢٢ أغسطس؛ لوحة الجوّال حُذفت بعد إفراغها):</b> الرئيسية على ٣٩٠ — <code>overflow 0</code> · <code>realSmall 0</code> · <code>footerSmall 0</code> · «الصفحة التالية» ١١٤×٤٤. على ١٢٨٠ — الرابط ٩٨×٢٠ (مطابق لما قبل التعديل). تاريخ القياسات الكامل لعشر الصفحات في كوميتات ٢١–٢٢ أغسطس و<code>documents/context/SESSION-LOG.md</code>.",
    "ref": "بند HOMEMOB",
    "ease": 2
   },
@@ -414,14 +414,13 @@
    "app": [
     "modonty"
    ],
-   "tab": "next",
+   "tab": "done",
    "sev": "normal",
    "who": "k",
    "date": "٢١ أغسطس ٢٠٢٦",
-   "t": "ريفاكتور بطاقة «مدونتي» — تقرأ كإعلان داخلي لا كقيمة للزائر",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> modonty/components/shared/about-card/AboutCard.tsx still the ad-style card; no content rethink and no unification across the 3 consumers.<br><b>طلب خالد (٢١ أغسطس):</b> بشكلها الحالي (عنوان + سطر + أربع نقاط + زرّ «تعرّف على مدونتي») تقرأ كإعلان داخلي.<br><b>الملف ومستهلكوه الثلاثة (جرد ٢١ أغسطس):</b> <code>modonty/components/shared/about-card/AboutCard.tsx</code> ← <code>(homepage)/components/right-sidebar/RightSidebar.tsx</code> · <code>articles/components/page-layout/ArticlesPageLayout.tsx</code> · <code>clients/components/trust-card/TrustCard.tsx</code> — أي تعديل يمسّ ثلاث صفحات فيُقاس على الثلاث.<br><b>ما استقرّ:</b> على <code>/articles</code> رُفعت لأعلى العمود بأمر خالد بعد ما كانت تحت ٢٠ بطاقة (٥٨١٥ بكسل تمرير)، وبطاقة الثقة بجانبها صارت سطر تلميح (<code>TrustHint</code>).<br><b>الباقي:</b> إعادة تفكير المحتوى من نيّة الزائر — ماذا يريد أن يعرف عن مدونتي وهو في منتصف تصفّح المقالات؟ ثم توحيد الشكل على المستهلكين الثلاثة.",
-   "ref": "بند ABOUTCARD",
-   "ease": 2
+   "t": "بطاقة «مدونتي» صارت حقائق حيّة وتوحّدت مع بطاقة الثقة — أُقفلت بقياس حيّ",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بعد فحصي الحيّ.</b> خالد اعتمد الخيار «أ» من <code>documents/tasks/ABOUTCARD-mockup.html</code> ثم أمر «unify it» فوُحِّدت البطاقة الثالثة أيضاً.<br><b>التشخيص:</b> البطاقة كانت تقول ما نبيعه («مقالات موثوقة · طلّات وصوتيات · حجز وتسوّق بثقة · مودو يرشدك») لا ما يربحه الزائر — أربع وعود بلا رقم يقولها أي موقع، وزرّ «تعرّف على مدونتي» يطلب مغادرة الصفحة.<br><b>ما بُني:</b> ثلاث حقائق حيّة عبر <code>lib/queries/get-platform-counts.ts</code> (عدّ فقط، صفر صفوف تخرج، كاش موسوم بـ<code>clients</code>+<code>articles</code>+<code>settings</code>) + سطر ثقة بأيقونة <code>IconVerified</code> + زرّ «شوف الشركاء» بدل «تعرّف على مدونتي». وبلاطة <code>Fact</code> استُخرجت مكوّناً مشتركاً في <code>components/shared/about-card/Fact.tsx</code> فما عادت البطاقتان تتباعدان.<br><b>مطابقة الأرقام بالوجهة:</b> فلاتر الاستعلام تعكس <code>/clients</code> حرفياً (<code>ACTIVE</code> + استثناء <code>coreClientId</code>) — قِست الصفحة نفسها فأعطت <code>[\"٢٩ شريك\", \"٨ مجال\"]</code>، مطابقة لما تقوله البطاقة. صفر تناقض.<br><b>الدليل الخام — الصفحات الثلاث، ارتفاع واحد ٢١٥:</b><br><code>الرئيسية + /articles: [\"٢٩ شريكاً موثَّقاً\",\"١١٧ مقالاً منشوراً\",\"٨ مجالات\"] · «سجلّ تجاري موثَّق لكل شريك» · «شوف الشركاء»</code><br><code>/clients (TrustCard): [\"٢٩ سجلّاً تجارياً\",\"٨ مجالات\",\"١٠٠٪ بأسماء حقيقية\"] · «نتحقّق من الأوراق قبل النشر» · «كيف نتأكّد؟»</code><br>نفس الأرقام بلغة كل صفحة: زائر دليل الشركاء يسأل عن الأوراق لا عن العدد.<br><b>أيقونتا البراند (خالد أشار لهما بلقطتين):</b> «الرئيسية» في الناف كانت <code>IconHome</code> من lucide بينما <code>ModontyHomeMark</code> المعتمَدة موجودة و<b>غير مستعملة إطلاقاً</b> — استُبدلت في <code>nav-config.ts:17</code>. وشريط بحث الشركاء كان <code>IconSearch</code>+<code>IconArrowRight</code> — صارا <code>ModontySearchMark</code>+<code>ModontyArrowMark</code>. القياس: <code>{ partnersBarIcons: [\"brand ✓\",\"brand ✓\"], homeNavIcon: [\"brand ✓\"] }</code>.<br><b>مذكور لا مُسكَت عنه:</b> <code>AboutBar</code> (نسخة الجوّال ٥٢ بكسل) حُدِّث نصّها لكنها <b>بلا مستهلك</b> — grep يرجّع صفراً. لم تُحذف (الإخفاء ≠ الحذف).",
+   "ref": "بند ABOUTCARD"
   },
   {
    "id": "PROFILEMOB",
@@ -429,12 +428,12 @@
    "app": [
     "modonty"
    ],
-   "tab": "done",
+   "tab": "open",
    "sev": "normal",
-   "who": "k",
+   "who": "c",
    "date": "٢١ أغسطس ٢٠٢٦",
-   "t": "ملف القارئ /users/profile — الصفحة الأمّ بُنيت، الأبناء الستة باقون",
-   "d": "<b>الصفحة الأمّ شُحنت في <code>736ae1f</code> (٢٣ أغسطس) — مطابقة للموكب المعتمد</b> (<code>documents/tasks/PROFILEMOB-mockup.html</code>): الرأس صار الاسم أولاً والبريد سطر خافت + «انضم في» وزرّ إعدادات ٤٤ · صندوقا الاسم/البريد المكرّران يختفيان على الجوّال · التبويبات الستة رقائق سكرول أفقي ٤٤ بدل غريد ٣×٢ · الأرقام بطاقات ٣×٢ (أُضيف <code>bookingsCount</code> في <code>profile-stats.ts</code> ليكتمل الستّة) بدل صفّ أهدافه ٣٨ · حساب بلا نشاط يرى بطاقة دعوة وزرّ «تصفّح المقالات» بدل ستّة أصفار · «لا يوجد نشاط» صار جملة أدفأ بزرّ «اقرأ أول مقال» · الاسم الناقص صار «أهلاً بك» + «أكمل ملفك».<br><b>المتحقَّق (خام، ١٢٨٠):</b> إضافات الجوّال كلها مخفيّة (<code>gear/chips/cards/completeLink = hidden</code>) والأصول الديسكتوب كلها ظاهرة (<code>gridTabs · nameBox · emailBox · statsRow = visible</code>)، <code>hScroll:false</code> · <code>pageH:1100</code> — بوّابة «الجوّال لا يمسّ الديسكتوب» عابرة.<br><b>غير متحقَّق بعد:</b> قياس ٣٩٠×٨٤٤ الحيّ — الصفحة تتطلّب دخول قارئ وما عندي كلمة مروره (أعطني حساباً على <code>/users/login</code> وأقيسه في دقيقة).<br><b>الباقي:</b> الأبناء الستة (bookings · comments · favorites · liked · disliked · following) بنفس النمط.",
+   "t": "أبناء ملف القارئ الستة على الجوّال — الأمّ أُنجزت",
+   "d": "<b>⚠️ تصحيح ٢٤ أغسطس ٢٠٢٦:</b> كانت مُعلَّمة «منجزة» خطأً. <b>الصفحة الأمّ فقط أُنجزت</b> (شُحنت في <code>736ae1f</code>، مطابقة للموكب، وبوّابة ١٢٨٠ عابرة: إضافات الجوّال مخفيّة والأصول ظاهرة، <code>hScroll:false</code>).<br><b>الباقي — الأبناء الستة:</b> <code>/profile/bookings</code> · <code>comments</code> · <code>favorites</code> · <code>liked</code> · <code>disliked</code> · <code>following</code> — بنفس نمط الأمّ (رقائق تبويب ٤٤ · بطاقات أرقام ٣×٢ · حالة فاضية لها مخرج).<br><b>غير متحقَّق بعد:</b> قياس الأمّ على ٣٩٠×٨٤٤ الحيّ — الصفحة تتطلّب دخول قارئ وما عندي كلمة مروره. أعطني حساباً على <code>/users/login</code> وأقيسه في دقيقة.<br><b>ملاحظة من تمريرة MOBSWEEP:</b> الأبناء الستة استُثنوا عمداً من تلك التمريرة لأنهم يتبعون هذا البند.",
    "ref": "بند PROFILEMOB",
    "ease": 2
   },
@@ -1842,11 +1841,11 @@
     "admin",
     "modonty"
    ],
-   "tab": "open",
+   "tab": "done",
    "sev": "normal",
    "who": "c",
-   "t": "صورة البطل في عرض المقال بالأدمن بلا تهيئة تحميل",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> admin/app/(dashboard)/articles/[id]/page.tsx:178 now uses OptimizedImage but with no preload/eager/fetchPriority=\"high\" — hero still unhinted.<br><b>الزائر سليم</b> — بطل مقال مودونتي فيه <code>loading=&quot;eager&quot;</code> و<code>fetchPriority=&quot;high&quot;</code>، وهو <b>عين ما يوصي به توثيق Next.js</b> (متحقَّق عبر Context7).<br>المصدر أدمن فقط: <code>articles/[id]/page.tsx:147</code> بلا تهيئة.<br><b>⚠️ لا تستخدم <code>priority</code></b> — مهجورة في Next.js 16. طبّق نفس نمط مودونتي: <code>loading=&quot;eager&quot;</code> + <code>fetchPriority=&quot;high&quot;</code>.",
+   "t": "صورة البطل في عرض المقال بالأدمن صارت لها تهيئة تحميل",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بقياس في الدوم.</b><br><b>المشكلة:</b> صورة بطل المقال في صفحة العرض بالأدمن هي أكبر عنصر فوق الطيّة (عنصر LCP)، وكانت بلا أي تهيئة — فيكتشفها المتصفّح متأخّراً ويصفّها خلف كل شيء. جانب الزائر كان سليماً أصلاً.<br><b>التعديل:</b> <code>admin/app/(dashboard)/articles/[id]/page.tsx:178</code> — <code>loading=\"eager\"</code> + <code>fetchPriority=\"high\"</code> على <code>OptimizedImage</code>، نفس الزوج الذي يستعمله بطل مقال الزائر.<br><b>الدليل الخام (مقالة <code>69d6830820251ee8497527b4</code>):</b><br><code>{ heroBlockFound: true, alt: \"ما هو السيو وأهميته في التسويق\", loading: \"eager\", fetchpriority: \"high\" }</code><br><b>ملاحظة على طريقة الفحص — يُسجَّل كي لا يُعاد:</b> أوّل محاولة قلت إنها «محجوبة: ما فيه مقالة بصورة». كان ذلك خطأ في العيّنة لا في البيانات: قائمة الأدمن مرتّبة بالأحدث، وآخر عشر مقالات مُدخلة صادف أنها بلا صور. الاستعلام على القاعدة أعطى <code>total 160 · withImg 142 · published 117 · pubWithImg 116</code> — أي أن <b>٩٩٪ من المنشور له صورة</b>. العيّنة الصغيرة من رأس قائمة مرتّبة ليست عيّنة.",
    "ref": "بند G11"
   },
   {
@@ -2159,13 +2158,14 @@
    "app": [
     "modonty"
    ],
-   "tab": "open",
+   "tab": "next",
    "sev": "normal",
-   "who": "c",
+   "who": "k",
    "date": "٢٢ أغسطس ٢٠٢٦",
-   "t": "ثلاثة بنود كود صغيرة غير-واجهة",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — جزئي:</b> ① prefers-reduced-motion now in 11 source files (was 3), but prefers-contrast still 0 hits. ② articles/[slug]/page.tsx now 899 lines (card said 845). ③ modo-chat/api/conversation still present.<br><b>١· تفضيلات النظام</b> — <code>prefers-reduced-motion</code> موجود في <b>٣ ملفات فقط</b> بالموقع كله (من جرد أبل)، و<code>prefers-contrast</code> <b>غائب تماماً</b>.<br><b>٢· صفحة المقال ٨٤٥ سطراً</b> — <code>modonty/app/(site)/articles/[slug]/page.tsx</code> يستحقّ تقسيماً.<br><b>٣· ضجيج البناء</b> — سطر خطأ من <code>modo-chat/api/conversation</code> في كل بناء. الإطار يعالجه ولا يُفشل البناء — يُنظَّف مع رجعة مودو (بند <code>PENDDEC</code>).<br><br><b>وبندان لهما بطاقتاهما:</b> <code>INVREV</code> (مراجعة الفواتير) · <code>MAILREV</code> (مراجعة قوالب الإيميلات).",
-   "ref": "٢٠ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"
+   "t": "دعم «تباين عالٍ» في النظام — بند واحد بقي من ثلاثة",
+   "d": "<b>أُعيد تحديد نطاقها ٢٤ أغسطس ٢٠٢٦ بعد فحص البنود الثلاثة — اثنان سقطا:</b><br><b>① «قلّل الحركة» — ✅ سقط، أُنجز:</b> البطاقة كُتبت والدعم في <b>٣ ملفات</b>. القياس اليوم: <code>motion-safe:</code> أو <code>prefers-reduced-motion</code> في <b>٢٨ ملفاً</b>. لم يعد نقصاً.<br><b>③ «ملف API قديم للمحادثة» — ❌ سقط، الادّعاء خاطئ:</b> <code>modo-chat/api/conversation/route.ts</code> <b>ليس ميتاً</b> — <code>ChatList.tsx:173-174</code> يناديه فعلاً (<code>/modo-chat/api/conversation?id=…</code>)، وهو ما يجعل «حدِّث الصفحة وأكمل المحادثة» يشتغل. <b>حذفه يكسر استئناف المحادثة.</b><br><b>② «الملف ٨٤٥ سطراً» — نُقل:</b> <code>articles/[slug]/page.tsx</code> اليوم <b>٨٩٩ سطراً</b>، وله بطاقته الخاصّة <code>SLUG1</code> (جارية الآن). لا يُعالَج مرّتين.<br><br><b>الباقي فعلاً — بند واحد:</b> <code>prefers-contrast</code> غير مستعمل في المستودع كلّه (<b>٠ نتيجة</b>). المتصفّح يبلّغنا أن المستخدم طلب تبايناً عالياً من نظامه، ونحن لا نستجيب.<br><b>لماذا صار بيدك:</b> هذا ليس إصلاحاً ميكانيكياً — يحتاج قراراً: <b>ماذا يتغيّر</b> في وضع التباين العالي؟ (حدود أوضح · إلغاء الشفافيات · تقوية النصّ الثانوي · إظهار حلقات التركيز دائماً). بلا هذا القرار سيخمّن أي منفّذ.",
+   "ref": "٢٠ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس",
+   "ease": 1
   },
   {
    "id": "QA7",
@@ -2203,12 +2203,12 @@
    "app": [
     "modonty"
    ],
-   "tab": "open",
+   "tab": "done",
    "sev": "normal",
    "who": "c",
    "date": "٢٢ أغسطس ٢٠٢٦",
-   "t": "نصوص المكوّنات المشتركة ما زالت داخل الكود — الفوتر والناف",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> Nav/footer strings still literal in code: modonty/app/layout/helpers/nav-config.ts:21 `label: \"الشركاء\"` — not read from messages/ar.json.<br><b>البند الوحيد الباقي</b> من حصيلة ريفاكتور صفحة المقال على الجوّال: الفوتر والناف والمكوّنات المشتركة نصوصها مكتوبة داخل الكود لا في <code>messages/ar.json</code>.<br><br><b>ما أُغلق في نفس الملف — للسياق:</b> الطريق للجواب <code>1187 → 1152</code> · أهداف اللمس <code>40 → 15</code> (المتبقّي مستثنى بـWCAG 2.5.8 أو مخفيّ بالتصميم) · المكوّنان الثقيلان لم يعودا يُرسلان قبل الضغط.<br><br><b>شقيق البند:</b> <code>I18NAUDIOSTORY</code> (نصوص «اسمع» و«القصّة») — يُنفَّذان معاً أوفر.",
+   "t": "تسميات الناف العلوي خرجت من الكود إلى ملف النصوص",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بقياس حيّ على ١٢٨٠.</b><br><b>المشكلة:</b> <code>nav-config.ts</code> كان يحمل سبع تسميات مكتوبة داخل الكود (<code>label: \"الشركاء\"</code>…)، فتغيير كلمة يعني تحرير كود لا نصّ. الفوتر كان قد خرج سابقاً إلى <code>chrome.footer</code>؛ الناف بقي.<br><b>ما اخترته ولماذا:</b> <b>لم أُنشئ كتلة <code>nav</code> جديدة.</b> <code>chrome.menuItems</code> — التي تقرأها قائمة البرغر — فيها ستّ من السبع أصلاً (articles · trending · categories · partners · reels · audio). كتلة ثانية = نسختان من نفس الكلمة، وتفترقان يوم يُعاد تسمية قسم في واحدة فقط. فأضفتُ الناقصتين إليها: <code>home</code> و<code>about</code>.<br><b>التعديل:</b> <code>modonty/messages/ar.json</code> → <code>chrome.menuItems</code> صارت عشرة مفاتيح · <code>modonty/app/layout/helpers/nav-config.ts</code> يستورد <code>messages</code> ويقرأ منها. <b>نصوص حرفية باقية في الملف: ٠.</b><br>وصُحّح تعليق قديم فيه: كان يقول إن <code>/articles</code> «لم تُبنَ بعد» — بُنيت وترجع ٢٠٠.<br><b>الدليل الخام على <code>/clients</code> — السبع كما هي، صفر تسمية فارغة:</b><br><code>[/ الرئيسية] [/trending الرائجة] [/articles المقالات] [/clients الشركاء] [/reels الطلّات] [/audio استمع] [/about عن مدونتي]</code><br>و<code>aria-current=\"page\"</code> ما زال على <code>/clients</code> وحده — التعديل ما كسر بند NAVCUR.",
    "ref": "٢١ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"
   },
   {
@@ -2231,12 +2231,12 @@
    "app": [
     "modonty"
    ],
-   "tab": "open",
+   "tab": "done",
    "sev": "normal",
    "who": "c",
    "date": "٢٢ أغسطس ٢٠٢٦",
-   "t": "التمرير الناعم يشتغل وقت تنقّل الصفحات — سمة واحدة ناقصة على <html>",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> modonty/app/layout.tsx &lt;html&gt; still has no data-scroll-behavior (admin/app/layout.tsx:48 has it).<br><b>المقيس في كودنا:</b> <code>modonty/app/globals.css:179</code> فيه <code>html { scroll-behavior: smooth; }</code> · و<code>modonty/app/layout.tsx:70-75</code> وسم <code>&lt;html&gt;</code> يحمل <code>lang</code> و<code>dir</code> و<code>suppressHydrationWarning</code> و<code>className</code> — <b>وما فيه <code>data-scroll-behavior</code></b>.<br><br><b>التوثيق الرسمي (Context7 · مستودع نكست):</b> صفحة الترقية إلى ١٦ تقول حرفياً: «In Next.js 16, Next.js no longer overrides your scroll-behavior CSS setting during single-page application route transitions… To restore the previous override behavior, add the <code>data-scroll-behavior=\"smooth\"</code> attribute to your <code>&lt;html&gt;</code> element.» وعند نكست صفحة خطأ باسم <code>missing-data-scroll-behavior</code> لنفس الحالة.<br><br><b>الأثر:</b> كل تنقّل بين الصفحات يصير تمريراً ناعماً للأعلى بدل قفزة فورية — يظهر أوضح في فيد الطلّات ذي المحاذاة العمودية.<br><br><b>الإصلاح:</b> سمة واحدة على <code>&lt;html&gt;</code> في <code>modonty/app/layout.tsx</code>. <b>لم أنفّذها</b> — خارج نطاق ما طلبته.",
+   "t": "التمرير الناعم صار يُعطَّل وقت تنقّل الصفحات — سمة واحدة على &lt;html&gt;",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بقياس على الصفحة المُقدَّمة.</b><br><b>المشكلة:</b> Next 16 <b>ما عاد</b> يتجاوز <code>scroll-behavior</code> أثناء الانتقال بين المسارات (كان يفعلها افتراضياً في ١٥). ومدونتي تضع <code>scroll-behavior: smooth</code> على <code>&lt;html&gt;</code> لأجل الروابط الداخلية — فصار كل تنقّل بين صفحتين يتحرّك مسافة السكرول كلّها بدل القفز.<br><b>الحلّ من التوثيق الرسمي لا من الذاكرة:</b> <code>modonty/node_modules/next/dist/docs/01-app/02-guides/upgrading/version-16.md:984</code> — «If you want Next.js to perform this override (the previous default behavior), add the <code>data-scroll-behavior=\"smooth\"</code> attribute to your <code>&lt;html&gt;</code> element»، ومعه مثال حرفيّ.<br><b>التعديل:</b> سطر واحد في <code>modonty/app/layout.tsx:70</code> على عنصر <code>&lt;html&gt;</code>.<br><b>الدليل الخام — من HTML الذي يستلمه المتصفّح فعلاً لا من الكود:</b><br><code>curl localhost:3000 → data-scroll-behavior=\"smooth\"</code><br>قبل التعديل كان <code>grep data-scroll-behavior app/layout.tsx</code> = <b>٠</b>.",
    "ref": "من عصف-ذهني-فيديو-الطلات — نُقل ٢٢ أغسطس"
   },
   {
@@ -4370,6 +4370,271 @@
    "t": "فخاخ مجرَّبة — لا تُعاد",
    "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> Trap list valid; \"Cloudinary Orphans removed\" comment at admin/app/(dashboard)/database/components/auto-maintenance-panel.tsx:56, not :50<br><b>CDN يخبّي المحذوف:</b> بعد أي حذف تحقّق على <code>storage.bunnycdn.com</code> مباشرة لا على رابط الـCDN — الكاش يقدّم المحذوف فترة (ذاكرة <code>project_bunny_cdn_cache_delete_gotcha</code>).<br><b>Optimizer معطَّل على الزونات الخمسة</b> (<code>OptimizerEnabled: false</code> متحقَّق سابقاً) — بارامترات مثل <code>?width=10</code> تُتجاهَل؛ التصغير يتم عندنا بـsharp قبل الرفع.<br><b>الحذف الجماعي الأعمى سابقة كارثية:</b> «Cloudinary Orphans» حُذف من Run-All بعدما دمّر أصول إنتاج (تعليق <code>auto-maintenance-panel.tsx:50</code>) — أي كنس يكون واعياً بالمراجع.<br><b>بني مورّد الوسائط الوحيد</b> — قرار مقفول (ذاكرة <code>project_bunny_is_the_only_media_vendor</code>).",
    "ref": "ذاكرة المشروع"
+  },
+  {
+   "id": "SITEMAP5",
+   "b": "seo",
+   "app": [
+    "modonty"
+   ],
+   "tab": "done",
+   "sev": "high",
+   "who": "c",
+   "t": "خمسة مسارات دخلت خريطة الموقع — ‏/reels · /audio · /trust · /booking · /shop",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بقياس الخريطة الحيّة قبل وبعد.</b><br><b>المشكلة:</b> خمس صفحات أقسام موجودة في القائمة العلوية أو رفوف الرئيسية، ولا ذِكْر لها في <code>sitemap.xml</code>. الصفحة التي لا تُعرف إلا بالزحف تُكتشف متأخّرة ويُعاد زحفها نادراً.<br><b>القياس قبل:</b> ٢١٩ رابطاً · <code>/reels 0 · /audio 0 · /trust 0 · /booking 0 · /shop 0</code>.<br><b>التعديل:</b> خمسة أسطر في كتلة <code>staticPages</code> — <code>modonty/app/sitemap.ts:150</code>.<br><b>القياس بعد (من <code>curl /sitemap.xml</code> لا من الكود):</b> <b>٢٢٤ رابطاً</b> (+٥ بالضبط) · <code>/reels 1 · /audio 1 · /trust 1 · /booking 1 · /shop 1</code> · <b>صفر رابط مكرّر</b> في الخريطة كلّها.<br><b>تصحيح داخل البطاقة:</b> نسختها الأولى طلبت أيضاً <code>loading.tsx</code> لـ<code>/booking</code> و<code>/shop</code> — والفحص أثبت أن الخمسة كلّها عندها <code>page.tsx</code> و<code>loading.tsx</code> فعلاً، فلم يكن هناك ما يُضاف.",
+   "ref": "بند T3 (لوحة الرئيسية المحذوفة)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "NAVCUR",
+   "b": "projects",
+   "app": [
+    "modonty"
+   ],
+   "tab": "done",
+   "sev": "normal",
+   "who": "c",
+   "t": "ناف الديسكتوب صار يُعلن الصفحة الحالية لقارئ الشاشة",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بقياس حيّ على ١٢٨٠.</b><br><b>المشكلة:</b> العنصر النشط في القائمة العلوية كان يُعرَف باللون وحدّ سفليّ فقط — وقارئ الشاشة لا يرى لوناً. المستخدم الكفيف يتنقّل في سبعة روابط بلا ما يعرف أيّها الصفحة التي هو فيها.<br><b>القياس قبل:</b> <code>grep -rn aria-current app/layout/components/nav/</code> رجّع نتيجة واحدة — <code>MobileMenu.tsx:57</code>. ناف الديسكتوب صفر.<br><b>التعديل:</b> سطر في <code>modonty/app/layout/components/nav/DesktopNavItem.tsx</code> — <code>aria-current={active ? \"page\" : undefined}</code>. الشرط مربوط بنفس <code>active</code> الذي يلوّن العنصر، فلا يفترقان أبداً.<br><b>الدليل الخام (على <code>/clients</code>):</b> سبعة عناصر ناف، <b>واحد فقط</b> يحمل <code>aria-current=\"page\"</code> وهو <code>/clients</code> — مطابق للمسار الحالي؛ والستّة الأخرى <code>null</code>:<br><code>[/ null] [/trending null] [/articles null] [/clients \"page\"] [/reels null] [/audio null] [/about null]</code>",
+   "ref": "بند T5 (لوحة الرئيسية المحذوفة)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "DEADUI7",
+   "b": "projects",
+   "app": [
+    "modonty"
+   ],
+   "tab": "next",
+   "sev": "normal",
+   "who": "k",
+   "ease": 1,
+   "t": "سبعة مكوّنات بلا مستهلك — قرارك: تُحذف أم تبقى؟",
+   "d": "<b>مقيس ٢٤ أغسطس (عدّ المستوردين الحقيقيين، لا ذِكْر التعليقات):</b><br><code>ClientsCard.tsx</code> ٠ · <code>ClientsCardMobile.tsx</code> ٠ · <code>ModontyCard.tsx</code> ٠ · <code>ModontyCardMobile.tsx</code> ٠ · <code>mobile-bottom-bar/BottomBar.tsx</code> ٠ · <code>mobile-bottom-bar/ServiceBar.tsx</code> ٠ · <code>AboutBar</code> (في <code>about-card/AboutCard.tsx</code>) ٠.<br><b>انتبه:</b> ذِكْرهم في <code>LeftSidebar.tsx:12,34</code> و<code>RightSidebar.tsx:13,15</code> <b>تعليقات لا استيراد</b> — فُتحت الملفات وتُحقِّق منها.<br><b>قاعدة المستودع:</b> «ملف بلا مستهلك = كود ميت، يُحذف لا يُنقل». وقاعدتك المضادّة: «الإخفاء ≠ الحذف».<br><b>القرار المطلوب:</b> حذف الآن، أو إبقاء حتى تُقفل مرحلة الجوّال ثم حذف دفعةً واحدة.<br><b>مصدره:</b> بنود T7 · M3 · M4 من لوحة الرئيسية + ما ظهر في نقاش HOMEMOB.",
+   "ref": "بنود T7 · M3 · M4 (لوحة الرئيسية المحذوفة)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "LOGOPRI",
+   "b": "projects",
+   "app": [
+    "modonty"
+   ],
+   "tab": "done",
+   "sev": "normal",
+   "who": "c",
+   "t": "الأولوية العالية صارت لصورة المقال وحدها — الشعار خرج من المنافسة",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بقياس حيّ على ٣٩٠.</b><br><b>المشكلة:</b> ثلاث صور تحمل <code>fetchPriority=\"high\"</code> على الرئيسية — شعار الهيدر وصورتان لبطل المقال. الشعار صغير وليس عنصر LCP أبداً، لكنه كان يدخل نفس الجولة الأولى ويقاسم البطل عرض الشبكة.<br><b>التعديل:</b> <code>modonty/app/layout/components/nav/LogoNav.tsx:48</code> — حُذفت <code>fetchPriority=\"high\"</code> وبقيت <code>loading=\"eager\"</code>. الشعار فوق الطيّة فلا يُؤجَّل، لكنه لا يزاحم.<br><b>الدليل الخام بعد التعديل:</b> <code>img[fetchpriority=\"high\"]</code> = <b>٢</b> (كانت ٣) · والشعار الآن <code>{ loading: \"eager\", fetchpriority: null }</code>.<br><b>الصورتان الباقيتان ليستا هدراً — فُحصت:</b> إحداهما بعرض ٠ (بطاقة الديسكتوب المخفيّة على الجوّال) والأخرى ٣٥٥، و<b>كلتاهما تطلبان نفس الرابط بالضبط</b> <code>w=640 · q=75</code> — فالمتصفّح يحمّلها مرّة واحدة ويخدم الثانية من الكاش. الزائد عقدة دوم لا بايت شبكة.",
+   "ref": "بند T8 (لوحة الرئيسية المحذوفة)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "METADESC",
+   "b": "seo",
+   "app": [
+    "modonty"
+   ],
+   "tab": "open",
+   "sev": "normal",
+   "who": "k",
+   "ease": 1,
+   "file": "data",
+   "t": "وصف الرئيسية ١٣٤ حرفاً — سطر جوجل لا يمتلئ",
+   "d": "<b>مقيس حيّاً ٢٤ أغسطس:</b> <code>meta[name=\"description\"].content.length</code> = <b>١٣٤</b>. الهدف ١٥٠–١٦٠ ليمتلئ سطر نتيجة البحث.<br><b>لا كود:</b> يُعدَّل من الأدمن (Settings).<br><b>ملاحظة مرافقة (خارج مدونتي):</b> نموذج Settings في الأدمن بلا عدّاد طول يمنع النقص — سطر تذكير لا تاسك هنا.<br><b>مصدره:</b> بندا T9 · L2 من لوحة الرئيسية.",
+   "ref": "بندا T9 · L2 (لوحة الرئيسية المحذوفة)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "DEVREELS",
+   "b": "projects",
+   "app": [
+    "modonty"
+   ],
+   "tab": "next",
+   "sev": "normal",
+   "who": "k",
+   "ease": 1,
+   "t": "طلّات وهمية تُصنع في وضع التطوير — قرارك: تبقى أم تُحذف؟",
+   "d": "<b>مقيس ٢٤ أغسطس:</b> <code>modonty/app/(site)/(homepage)/components/page-layout/CachedHomePage.tsx:64</code> — الشرط <code>process.env.NODE_ENV === \"development\" && reels.items.length === 0</code> يصنع ٣ طلّات بديلة من مقالات التغذية.<br>لا تصل الإنتاج، لكنها كود مؤقّت داخل صفحة مخبّأة بـ<code>\"use cache\"</code>.<br><b>القرار:</b> تبقى (تسهّل التطوير حين تكون القاعدة فارغة) أو تُحذف قبل الدمج.<br><b>مصدره:</b> بند T10 من لوحة الرئيسية.",
+   "ref": "بند T10 (لوحة الرئيسية المحذوفة)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "FOOTCONTRAST",
+   "b": "projects",
+   "app": [
+    "modonty"
+   ],
+   "tab": "done",
+   "sev": "normal",
+   "who": "c",
+   "t": "تسميات شريط الفوتر صارت تُقرأ — ١١ بكسل وتباين ٩:١",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بحساب التباين في المتصفّح.</b><br><b>المشكلة:</b> خمس تسميات في شريط «الأثر الرقمي» بحجم <b>١٠ بكسل</b> وشفافية <b>٣٥٪</b> على تدرّج كحلي. عشرة بكسل تحت حدّ القراءة المريحة أصلاً، والشفافية المنخفضة تُنزل التباين أكثر. التدرّج أخرجها من المسح الآلي فلم تُلتقط في جولات التباين السابقة.<br><b>التعديل:</b> <code>modonty/app/layout/components/FooterStats.tsx</code> — الخمس تسميات: <code>text-[10px] text-white/35</code> ← <code>text-[11px] text-white/70</code>، و«الأثر الرقمي» <code>text-white/40</code> ← <code>text-white/75</code>. لا تغيير في التخطيط ولا في الأرقام نفسها.<br><b>الدليل الخام — حُسب على طرفَي التدرّج معاً (<code>#0d1424</code> و<code>#111827</code>) بعد مزج الشفافية:</b><br><code>«الأثر الرقمي» 11px rgba(255,255,255,.75) → 10.29:1 و 10.67:1</code><br><code>«نشاط» · «زيارات» · «مشاهدات» · «تفاعلات» 11px rgba(255,255,255,.7) → 9.10:1 و 9.43:1</code><br>الخمس فوق حدّ AA (٤٫٥:١) وفوق AAA (٧:١) كذلك، على أفتح نقطة في التدرّج وأغمقها.",
+   "ref": "بند L1 (لوحة الرئيسية المحذوفة)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "TEALSWEEP",
+   "b": "projects",
+   "app": [
+    "modonty"
+   ],
+   "tab": "done",
+   "sev": "normal",
+   "who": "c",
+   "t": "مسحة التركواز — انتهت فعلاً: صفر عنصر راسب على الفاتح",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بمسح تباين محسوب في المتصفّح على الوضع الفاتح المستقرّ.</b><br><b>الادّعاء القديم (١٦ أغسطس):</b> ستّة عناصر بالتركواز الخام على خلفية فاتحة — شارة الهيدر · مودو · تسوّق الآن · ثلاث أيقونات.<br><b>النتيجة اليوم — صفر راسب:</b><br><code>الرئيسية: ١ عنصر تركوازي · rgb(0,117,117) · 5.52:1 · صفر راسب</code><br><code>/clients: ٧ عناصر · النسب 5.52 و 4.97 · صفر راسب</code><br>كلّها تستعمل <code>--link-accent</code> (<code>180 100% 23%</code> = <code>#007575</code>) لا التركواز الخام. و«تسوّق الآن» سقط من العدّ أصلاً لأن الشريط السفلي أُخفي من الرئيسية (قرار HOMEMOB).<br><br><b>⚠️ إنذار كاذب أمسكته أثناء القياس — يُسجَّل كي لا يُعاد:</b> أوّل جولة أعطت «المجالات» بلون <code>rgb(0,255,255)</code> وتباين <b>١٫١٣:١</b> و«مودو» <b>٣٫٣:١</b>. لمّا فتحت العنصر للتأكّد رجع <b>«غير موجود»</b> — لأنني كنت أزيل صنف <code>dark</code> من الجافاسكربت فيقيس المسح <b>أثناء تحوّل الوضع</b>: لون الوضع الداكن مع خلفية الوضع الفاتح. القياس الصحيح كان بضبط <code>localStorage.theme = \"light\"</code> ثم <b>إعادة تحميل الصفحة</b> — وعندها صار الرقمان 4.97 و 5.52، وكلاهما ناجح.<br><b>القاعدة:</b> أي قياس ألوان يُؤخذ على وضع مستقرّ بعد إعادة تحميل، لا على وضع مبدَّل من الجافاسكربت.<br><br><b>ملاحظة باقية (ليست تبايناً):</b> «المتعة هنا» في الهيدر بحجم <b>١٠ بكسل</b> و«مودو» <b>٨ بكسل</b> — لونهما سليم لكن الحجم تحت حدّ القراءة المريحة. تُعالَج مع بند أحجام النصوص لا هنا.<br><br><b>أُعيد وضع المظهر إلى ما كان عليه (داكن) بعد القياس.</b>",
+   "ref": "بند M5 (لوحة الرئيسية المحذوفة)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "D1HOME",
+   "b": "projects",
+   "app": [
+    "modonty"
+   ],
+   "tab": "next",
+   "sev": "high",
+   "who": "k",
+   "ease": 3,
+   "t": "D1 — لمن الرئيسية وما فعلها الواحد؟ اقتراح مسنود بمصادر، ينتظر حكمك",
+   "d": "<b>ليس قراراً بعد.</b> جُمع ١٥ أغسطس من NN/g وتقرير رويترز الرقمي ٢٠٢٥ وتجارب واشنطن بوست ونيويورك تايمز، ثم أُسقط على طبيعة مدونتي. نُقل هنا من لوحة الرئيسية قبل إغلاقها.<br><br><b>١ · ليش يوصل الزائر؟</b> الرئيسية ليست صفحة هبوط من جوجل — جوجل يرمي القارئ على المقال مباشرةً. من يأتي إليها ثلاثة: قارئ راجع «ودّي المزيد» · شريك (أو محتمل) يقيّم المنصّة · باحث عن اسم البراند. فهي <b>موزّع للراجعين</b> لا مصيدة للغرباء. <i>المصدر: رويترز ٢٠٢٥ — الوصول المباشر لمواقع الأخبار ينحسر (٤٨٪ في أمريكا) لصالح المنصّات والبحث.</i><br><b>٢ · الفعل الواحد؟</b> <b>فتح مقال.</b> القراءة هي الوحدة التي يدفع عليها الشريك؛ التسجيل والحجز ثانويان بصرياً. <i>NN/g: «if everything is emphasized, nothing stands out» · «use examples to reveal the site's content, rather than just describing it».</i><br><b>٣ · إيش يرجّعه بعد أسبوع؟</b> <b>«الجديد منذ زيارتك»</b> — متابعة شركاء ومجالات + النشرة؛ هذا دور الحساب. تخصيص نعم، إزعاج لا. <i>واشنطن بوست (For You) · نيويورك تايمز (In Case You Missed It) عبر Digiday · رويترز: ٧٩٪ عطّلوا التنبيهات «كثيرة أو غير مهمّة».</i><br><br><b>ثلاثة بنود محجوبة بهذا القرار (مقيسة):</b> <b>V1</b> لا عنوان مرئي على الصفحة — <code>&lt;h1 class=\"sr-only\"&gt;</code> للآلة، مخفيّ عن الإنسان. <b>V2</b> لا بؤرة بصرية — كل البطاقات بنفس الحلقة والاستدارة والخلفية. <b>V5</b> ترتيب بطاقة المقال مقلوب — صورة ← كاتب ← عنوان، والعنوان سبب النقرة ويأتي ثالثاً.<br><b>لو اعتُمد:</b> V1 عنوان مرئي سطر واحد فوق التغذية · V2 أول بطاقة مهيمنة والأعمدة تهدأ · V5 صورة ← عنوان ← الشريك والوقت ← مقتطف.<br><b>ملاحظة ٢٤ أغسطس:</b> البند الرابع القديم (V10 — التغذية خارج قشرة الجوّال) <b>سقط</b>: القياس اليوم على ٣٩٠ أعطى أول بطاقة عند <code>y=٥٢١</code> من ٨٤٤، داخل الشاشة الأولى.<br><b>المصادر:</b> nngroup.com/articles/homepage-design-principles · nngroup.com/articles/113-design-guidelines-homepage-usability · digiday.com (homepage personalization) · reutersinstitute.politics.ox.ac.uk/digital-news-report/2025",
+   "ref": "قسم D1 (لوحة الرئيسية المحذوفة)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "CACHETMO",
+   "b": "bugs",
+   "app": [
+    "modonty"
+   ],
+   "tab": "open",
+   "sev": "normal",
+   "who": "c",
+   "ease": 2,
+   "t": "<code>USE_CACHE_TIMEOUT</code> على صفحة الشريك — مرشَّح لا عطل مثبت",
+   "d": "<b>مؤشّر، لم يُعَد التحقّق منه في ٢٤ أغسطس.</b><br>ظهر <code>USE_CACHE_TIMEOUT</code> من <code>getClientsGA4Stats</code> (<code>modonty/lib/analytics/ga4.ts:208</code>) على مسار <code>/clients/[slug]</code> — <b>في <code>next build --debug-prerender</code> فقط</b>؛ البناء العادي ونشر فيرسل نجحا كلاهما.<br><b>لذلك هو مرشَّح للمراجعة لا عطل مثبت</b> — أي حكم عليه يحتاج إعادة إنتاج أوّلاً.<br><b>أول خطوة عند الفتح:</b> شغّل <code>next build --debug-prerender</code> وأثبت أنه ما زال يظهر قبل لمس أي سطر.<br><b>مصدره:</b> بند L6 من لوحة الرئيسية.",
+   "ref": "بند L6 (لوحة الرئيسية المحذوفة)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "PWPLAIN",
+   "b": "bugs",
+   "app": [
+    "admin"
+   ],
+   "tab": "done",
+   "sev": "critical",
+   "who": "c",
+   "t": "كلمة مرور العميل ما عادت تُكتب مكشوفة في الأدمن — أُقفلت بفتح الكود",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦.</b> كانت مسجّلة في سجلّ الملاحظات منذ ٢٧ أبريل (<code>OBS-123</code>) على أنها ملف واحد، والفحص اليوم أظهرها في <b>ملفّين</b>.<br><b>قبل:</b> <code>client-edit-workspace.tsx:270</code> و<code>basic-info-section.tsx:164</code> كلاهما <code>name=\"password\" type=\"text\"</code> — الاعتمادية تُرسم على الشاشة، وتدخل الإكمال التلقائي، وتبقى في أي لقطة أو تسجيل أو مشاركة شاشة.<br><b>بعد:</b> <code>type=\"password\"</code> في الملفّين، مع تعليق يشرح السبب كي لا يُعاد.<br><b>تحقّق من وصول الإصلاح للدوم لا للكود فقط:</b> <code>FormInput</code> يمرّر السمة إلى <code>&lt;input&gt;</code> — <code>admin/components/admin/form-field.tsx:68</code> → <code>type={type}</code>.<br><b>مسح الأدمن كلّه بعد الإصلاح — أربعة حقول، كلّها آمنة:</b><br><code>login-form.tsx:159</code> → <code>type={showPassword ? \"text\" : \"password\"}</code> (مقنّع افتراضياً)<br><code>client-edit-workspace.tsx:273</code> → <code>password</code><br><code>basic-info-section.tsx:166</code> → <code>password</code><br><code>user-form.tsx:366</code> → <code>type={showPassword ? \"text\" : \"password\"}</code><br><b>صفر حقل باقٍ بـ<code>type=\"text\"</code> ثابت.</b>",
+   "ref": "OBS-123 (سجلّ الملاحظات المؤرشف)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "TGREVOKE",
+   "b": "prod",
+   "app": [
+    "console"
+   ],
+   "tab": "next",
+   "sev": "high",
+   "who": "k",
+   "ease": 1,
+   "t": "🔑 توكن بوت تيليجرام تسرّب في محادثة — هل أُبطل؟",
+   "d": "<b>مؤشّر عالي المخاطر — لم أتحقّق من حالته اليوم، ولا أستطيع (التحقّق داخل BotFather بيدك).</b><br><b>ما هو مسجَّل:</b> <code>OBS-197</code> (٢٩ أبريل) — توكن <code>@ModontyAlertsBot</code> شورك في المحادثة مرّتين (لقطة + نصّ صريح). مَن يملك التوكن يقدر ينتحل البوت، ويقرأ ويرسل رسائل أي عميل مربوط، أو يحذف البوت.<br><b>الإجراء المطلوب منك (دقيقة واحدة):</b> افتح <code>@BotFather</code> ← <code>/revoke</code> ← اختر البوت ← ينصدر توكن جديد ويُبطل القديم فوراً. ثم حدّث <code>TELEGRAM_BOT_TOKEN</code> في <code>console/.env.local</code> و<code>modonty/.env.local</code> وفي فيرسل (نطاق Production)، وأعِد <code>setWebhook</code>.<br><b>لماذا يظهر الآن:</b> كان مدفوناً في سجلّ الملاحظات؛ لم يُفتح له بند قط. إن كنت أبطلته سابقاً فأغلق البطاقة بسطر — لكن لا تفترض.<br><b>قاعدة مستفادة:</b> التوكن يمشي من BotFather إلى ملف البيئة مباشرةً، ولا يُلصق في محادثة أبداً — ولا معي.",
+   "ref": "OBS-197 (سجلّ الملاحظات المؤرشف)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "UVBACKFILL",
+   "b": "sot",
+   "app": [
+    "admin"
+   ],
+   "tab": "next",
+   "sev": "high",
+   "who": "k",
+   "ease": 2,
+   "t": "حقل <code>userVersion</code> على مقالات الإنتاج — هل عُبّئ؟",
+   "d": "<b>مؤشّر — لم أتحقّق من حالة الإنتاج اليوم.</b><br><b>ما هو مسجَّل:</b> <code>OBS-208</code> — سُجِّل مع إصلاح «تم تعديل المقال بواسطة مستخدم آخر» الكاذب: أُضيف <code>Article.userVersion Int @default(0)</code>، و<b>Prisma <code>{ increment: 1 }</code> لا يفعل شيئاً بصمت على مستند مونجو لا يملك الحقل أصلاً</b>. عُبّئت ٢٩ مقالة على dev بـ<code>$set userVersion: 0</code>، وسُجِّل صراحةً «PROD backfill required before push».<br><b>الخطر إن لم يُعبّأ:</b> كل مقالة إنتاج قديمة تبقى بلا الحقل، فيبقى <code>userVersion</code> صفراً للأبد، ويعود بالضبط سباق التعديل المتزامن الذي أُصلح — يظهر لرَوان ومَن يحرّر معها.<br><b>أول خطوة (قراءة فقط، لا كتابة):</b> عُدّ على الإنتاج المقالات التي ينقصها الحقل — <code>{ userVersion: { isSet: false } }</code> — وأثبت الرقم. صفر = تُغلق البطاقة؛ أكثر من صفر = تعبئة عبر Run-All بعد نسخة احتياطية.<br><b>تذكير القاعدة:</b> «حقل جديد على مجموعة قائمة = تعبئة إلزامية» — وهذه حالتها بالضبط.",
+   "ref": "OBS-208 (سجلّ الملاحظات المؤرشف)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "OLDMOBOBS",
+   "b": "projects",
+   "app": [
+    "modonty"
+   ],
+   "tab": "done",
+   "sev": "normal",
+   "who": "c",
+   "t": "ملاحظات جوّال أبريل — تسع من عشر سقطت بالقياس، وواحدة أُجّلت للإنتاج",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بجولة قياس على ٣٩٠×٨٤٤.</b> عشر ملاحظات من جولة ١٣ أبريل، ومرحلة الجوّال (٢١–٢٤ أغسطس) أعادت بناء أسطحها — فسقط أغلبها.<br><br><b>✅ سقطت بالقياس (٩):</b><br><code>OBS-008</code> ازدحام الناف بار — الهيدر ٣٨٠، تجاوز أفقي ٠، الشعار غير مقصوص (يُرسم علامة مدمجة على الجوّال).<br><code>OBS-010</code> 🔴 <b>الرابط المكسور</b> <code>/articles/م</code> — ٣٠ رابط مقال، <b>صفر</b> بمعرّف أقصر من ٣ أحرف. كان أخطر بند في القائمة.<br><code>OBS-012</code> التصنيفات بلا عدّاد — <b>١٠ من ١٠</b> تعرض أرقاماً.<br><code>OBS-014</code> محاذاة بطاقات الشركاء — <b>١٢ بطاقة، عرض واحد ٣٥٦، حافّة واحدة ١٢</b>. (قياسي الأوّل كان خاطئاً: قِست وسوم <code>&lt;a&gt;</code> فأعطت ١٨ بكسل، وهي روابط العناوين لا البطاقات.)<br><code>OBS-015</code> فراغ فوق نموذج الدخول — الادّعاء ٨٠ بكسل، <b>المقيس ٣٢</b> (<code>main</code> عند ١٢٣، البطاقة عند ١٥٥).<br><code>OBS-017</code> عناوين الشروط مقصوصة — ٢٨ عنواناً، <b>صفر مقصوص</b>.<br><code>OBS-018</code> تباعد شريط تفاعل المقال — ثلاثة أزرار (مشاركة · حفظ · أعجبني) <b>كلّها ٤٤×٤٤، صفر تحت الحدّ</b>.<br><code>OBS-026</code> انكسار صفّ إحصاءات الشريك — <b>الصفّ نفسه لم يعد موجوداً</b> على الجوّال؛ الوحيد المطابق لـ«متابع» جملة موافقة نصّية.<br><code>OBS-034</code> نسبة ١٦:٧ لبطاقة بلا صورة — <code>grep aspect-[16/7]</code> = <b>٠</b>. البطاقة تستعمل <code>aspect-video</code> بعلامة، والمضغوطة <code>aspect-[4/3]</code>.<br><b>عابر على ثماني صفحات:</b> تجاوز أفقي <b>٠</b> في كلٍّ منها.<br><br><b>⏸️ واحدة أُجّلت — <code>OBS-013</code> صور الرائجة:</b> <code>/trending</code> على التطوير تعرض الفلاتر وصفر بطاقة مقال، فلا شيء لتُقاس صوره. <b>لا يُفتح لها بند:</b> خالد ثبّت (٢٤ أغسطس) أن قاعدة التطوير ليست مرجعاً — البيانات تُحدَّث على الإنتاج. تُفحص هناك، وإن ظهرت البطاقات بلا صور فهو عطل حينها.",
+   "ref": "OBS-008/010/012/013/014/015/017/018/026/034",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "ADMMEDIAOBS",
+   "b": "projects",
+   "app": [
+    "admin"
+   ],
+   "tab": "open",
+   "sev": "normal",
+   "who": "c",
+   "ease": 3,
+   "t": "تسع ملاحظات على وسائط الأدمن — تُقاس قبل أن تُصدَّق",
+   "d": "<b>مؤشّرات لا أعطال مثبتة</b> (أبريل ٢٠٢٦)، والوسائط تحوّلت إلى بني منذ ذلك الحين فقد يكون بعضها سقط.<br><b>منتقي الوسائط:</b> <code>OBS-001</code> البحث لا يُصفّي (الحقل متحكَّم فيه ولا يُعاد الرسم) · <code>OBS-021</code> المنتقي يعرض صور «General» فقط فلا تظهر صور العميل · <code>OBS-022</code> لا زرّ رفع داخل نافذة الاختيار.<br><b>تعديل الوسائط:</b> <code>OBS-002</code> لا حقل «العميل» فالصورة المرفوعة لعميل خاطئ لا تُصحَّح إلا بحذف ورفع · <code>OBS-004</code> الرفع العام يُسنِد الصورة لعميل تلقائياً بلا اختيار · <code>OBS-005</code> لا مؤشّر نسبة أبعاد في المعاينة.<br><b>نافذة صورة الغلاف:</b> <code>OBS-019</code> لا زرّ تغيير واضح (يُضغط على الصورة نفسها) · <code>OBS-020</code> تحذير «No alt text» بلا حقل لإدخاله · <code>OBS-023</code> لا إشعار بعد الحفظ فلا يعرف الأدمن هل حُفظت.<br><b>ملاحظة نطاق:</b> كلها أدمن، خارج «مدونتي» — تُفتح حين تُقفل مرحلة واجهة مدونتي.<br><b>طريقة الإغلاق:</b> جولة واحدة على شاشات الوسائط، تثبيت الباقي، ثم بطاقة لكل بند حيّ.",
+   "ref": "OBS-001/002/004/005/019/020/021/022/023",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "ENGGAPS",
+   "b": "projects",
+   "app": [
+    "modonty"
+   ],
+   "tab": "open",
+   "sev": "normal",
+   "who": "c",
+   "ease": 2,
+   "t": "ثلاث فجوات في تتبّع التفاعل ورَدّ القارئ — من سجلّ تيليجرام",
+   "d": "<b>مؤشّرات من أبريل–يونيو ٢٠٢٦، لم يُعَد قياسها.</b><br><b>١ · <code>OBS-217</code> — أحداث التبديل لا تُطلَق عند الإلغاء:</b> <code>likeArticle</code> · <code>dislikeArticle</code> · <code>favoriteArticle</code> ومسارا follow/favorite للشريك تتبع نمط «موجود ← احذف بلا تتبّع». سلوك صحيح للتحليلات (لا نُغرقها بالإلغاءات) لكنه <b>يكسر إعادة إنتاج أي تست</b> لأن حساب التست يكون مفعِّلاً أصلاً فتُلغي نقرتُك بلا حدث. العلاج المقترح: سكربت تصفير حالة حساب التست قبل كل جولة.<br><b>٢ · <code>OBS-218</code> — <code>comment_dislike</code> بلا واجهة:</b> نقطة <code>POST /api/comments/[id]/dislike</code> موجودة وموصولة بالتتبّع، لكن واجهة التعليقات ترسم زرّ الإعجاب وحده. إمّا تُحذف النقطة أو يُضاف الزرّ — الوضع الحالي كود بلا مستهلك.<br><b>٣ · <code>OBS-228</code> — نافذة الحجز على الجوّال:</b> فتح «احجز موعد» من شريط المقال يرسم بطاقة الشريط كاملة <b>فوق</b> النموذج، فيمرّر القارئ طويلاً قبل زرّ التأكيد — في لحظة النيّة بالذات. خالد قرّر (٦ يونيو): يبقى في القائمة، لا يُنفَّذ الآن.<br><b>أول خطوة:</b> أثبت أن كلاً منها ما زال قائماً في الكود قبل أي تعديل.",
+   "ref": "OBS-217/218/228 (سجلّ الملاحظات المؤرشف)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "FAQKPI",
+   "b": "projects",
+   "app": [
+    "admin"
+   ],
+   "tab": "open",
+   "sev": "normal",
+   "who": "c",
+   "ease": 2,
+   "t": "عدّاد «أسئلة تنتظر ردّك» في لوحة الأدمن يضخّم الرقم",
+   "d": "<b>مؤشّر من ٢٦ أبريل، لم يُعَد قياسه على الإنتاج.</b><br><b>ما سُجِّل:</b> اللوحة عرضت «٨٦ سؤالاً ينتظر ردّك» بينما <b>ولا واحد منها من قارئ حقيقي</b> — ٢٠ بـ<code>source=manual</code> (أضافها الفريق كمسوّدات محتوى) و٦٦ بـ<code>source=null</code> (بنود قديمة سبقت إضافة الحقل)، وصفر بـ<code>source=user</code> أو <code>chatbot</code>.<br><b>الأثر:</b> بند «يحتاج انتباهك» يعرض شغل تحرير داخلياً على أنه تفاعل قرّاء عاجل — وهذا يجعل اللوحة تكذب في أهم خانة فيها.<br><b>العلاج المقترح:</b> تصفية العدّاد على <code>source IN ('user','chatbot')</code>؛ ومسوّدات الفريق تظهر داخل صفحة المقال لا في تنبيهات اللوحة.<br><b>أول خطوة:</b> أعِد العدّ على الإنتاج اليوم وأثبت التوزيع قبل تغيير أي استعلام — الأرقام أعلاه عمرها أربعة أشهر.",
+   "ref": "OBS-037 (سجلّ الملاحظات المؤرشف)",
+   "date": "٢٤ أغسطس ٢٠٢٦"
+  },
+  {
+   "id": "ADDR12",
+   "b": "seo",
+   "app": [
+    "admin"
+   ],
+   "tab": "open",
+   "sev": "normal",
+   "who": "k",
+   "ease": 2,
+   "file": "data",
+   "date": "٢٤ أغسطس ٢٠٢٦",
+   "t": "اثنا عشر عميلاً بلا عنوان شارع ورمز بريدي — حقلان اختياريان في بطاقة جوجل",
+   "d": "<b>مصدره:</b> بند ٧٥ في <code>TECH-NOTES.md</code> — كان له تفصيل تقني كامل ولا بطاقة على اللوحة، فبقي خارج العدّاد.<br><b>ما سُجِّل (فحص Google Rich Results حيّ، ٢ أغسطس ٢٠٢٦ على صفحة عميل «مدار حواء»):</b> ملاحظتان <b>غير حرجتين</b> على عقدة <code>Organization</code> — <code>Missing field \"streetAddress\" (optional)</code> و<code>Missing field \"postalCode\" (optional)</code>. البطاقة تبقى <b>صالحة ومؤهّلة</b>، وجوجل يصنّفها <code>check_circle</code>.<br><b>لماذا يستحقّ الإكمال رغم أنه اختياري:</b> العنوان الكامل يقوّي إشارة الأعمال المحلّية، وهو ما يخدم شركاء لهم مقرّ فعليّ.<br><b>لا كود:</b> إدخال يدوي من الأدمن على بطاقة كل عميل.<br><b>أول خطوة عند الفتح:</b> أعِد العدّ على الإنتاج — رقم «١٢» عمره ثلاثة أسابيع ولم أتحقّق منه اليوم.",
+   "ref": "بند ٧٥ (TECH-NOTES.md)"
   }
  ]
 }

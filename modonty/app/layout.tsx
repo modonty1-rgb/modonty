@@ -70,6 +70,10 @@ export default async function RootLayout({
     <html
       lang={siteLanguage}
       dir="rtl"
+      // Next 16 stopped overriding `scroll-behavior` during navigation; without this attribute a
+      // route change animates the whole scroll distance instead of jumping. We keep smooth
+      // scrolling for in-page anchors, so we opt back into the override (version-16 upgrade guide).
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={`${tajawal.variable} ${montserrat.variable}`}
     >

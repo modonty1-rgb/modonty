@@ -152,6 +152,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: new URL("/legal/cookie-policy", baseUrl).href },
     { url: new URL("/legal/copyright-policy", baseUrl).href },
     { url: new URL("/terms", baseUrl).href },
+    // Section landing pages. Each is linked from the top nav or a homepage rail, so Google meets
+    // them while crawling anyway — but a page reachable only by crawl is discovered late and
+    // recrawled rarely. Listing them here is how they get treated as first-class destinations.
+    { url: new URL("/reels", baseUrl).href },
+    { url: new URL("/audio", baseUrl).href },
+    { url: new URL("/trust", baseUrl).href },
+    { url: new URL("/booking", baseUrl).href },
+    { url: new URL("/shop", baseUrl).href },
     { url: new URL("/help", baseUrl).href },
     { url: new URL("/help/faq", baseUrl).href },
     { url: new URL("/help/feedback", baseUrl).href },

@@ -1,17 +1,29 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { ModontyTrustMark } from "@/components/icons/modonty-trust-mark";
+import { IconVerified } from "@/lib/icons";
 import { messages } from "@/lib/i18n/messages";
+import { getPlatformCounts } from "@/lib/queries/get-platform-counts";
+import { Fact } from "@/components/shared/about-card/Fact";
 
 const text = messages.clients.trustCard;
 
 /**
- * Top of the partners rail — the page's own version of the homepage AboutCard: same
- * skeleton (title · line · 2×2 bullets · outline CTA) and the same height, so the two
- * rails start level. It answers the first question the directory raises: why trust
- * anyone on this list?
+ * Top of the partners rail — the directory's own answer to «why trust anyone on this list?»
+ *
+ * UNIFIED 24 Aug 2026 (Khalid: «unify it»). It used to carry four bullets — «سجل تجاري
+ * نشوفه · تعرف مين وراه · مقالات بأسماء حقيقية · تحجز وتشتري على طول» — the same promise
+ * shape ABOUTCARD replaced on the homepage. Now it shares `AboutCard`'s anatomy exactly:
+ * three live facts, one trust line, one outline CTA — and the same `Fact` tile, so the two
+ * cards cannot drift apart again.
+ *
+ * The numbers are the same live counts, read differently: here «٢٩» is not a headcount but
+ * twenty-nine commercial registers actually on file — which is what this page's visitor is
+ * asking about. The CTA still goes to `/trust`, where the process is spelled out.
  */
-export function TrustCard() {
+export async function TrustCard() {
+  const { partners, industries } = await getPlatformCounts();
+
   return (
     <section aria-labelledby="trust-card-heading" className="rounded-lg bg-card p-3 ring-1 ring-primary/10 lg:p-4">
       <h2 id="trust-card-heading" className="flex items-center gap-1.5 text-base font-medium leading-snug text-link">
@@ -19,14 +31,18 @@ export function TrustCard() {
         {text.title}
       </h2>
       <p className="mt-1 text-xs leading-5 text-muted-foreground">{text.subtitle}</p>
-      <ul className="mt-2.5 grid grid-cols-2 gap-x-3 gap-y-1.5 lg:mt-3 lg:gap-y-2">
-        {text.checklist.map((point) => (
-          <li key={point} className="flex items-start gap-1.5 text-[11px] font-normal leading-4 text-foreground/90">
-            <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-accent" aria-hidden />
-            {point}
-          </li>
-        ))}
-      </ul>
+
+      <div className="mt-2.5 grid grid-cols-3 gap-2 lg:mt-3">
+        <Fact value={partners} label={text.factPartners} />
+        <Fact value={industries} label={text.factIndustries} />
+        <Fact value={text.namedValue} label={text.factNamed} />
+      </div>
+
+      <p className="mt-2 flex items-center justify-center gap-1.5 text-[10px] leading-tight text-action-listen">
+        <IconVerified className="size-3.5 shrink-0" aria-hidden />
+        {text.trustLine}
+      </p>
+
       <Link href="/trust" className={buttonVariants({ variant: "outline", className: "mt-3 min-h-11 w-full lg:mt-4" })}>
         {text.howWeVerifyButton}
       </Link>

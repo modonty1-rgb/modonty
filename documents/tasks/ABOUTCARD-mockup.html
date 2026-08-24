@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>موكب — بطاقة «مدونتي» في الرايل (بند ABOUTCARD)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  /* القيم من modonty/app/globals.css — الوضع الداكن */
+  :root{
+    --bg:#0f1013; --card:#1f1f23; --border:#302f37;
+    --fg:#f3f4f6; --muted:#9aa3b2; --dim:#6b7280;
+    --primary:#3030FF; --link:#7070ff; --accent:#00D8D8; --navy:#0E065A;
+    --green:#4ade80;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--fg);padding:24px;line-height:1.6}
+  h1{font-size:19px;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+  .why{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:22px;font-size:12.5px;color:var(--muted);max-width:1000px}
+  .why b{color:var(--fg)}
+  .row{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+
+  /* عمود الرايل الحقيقي: ٣٠٠ بكسل */
+  .rail{width:300px;flex:0 0 300px}
+  .lbl{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .lbl .h{font-size:11px;font-weight:400;color:var(--dim)}
+  .cur{color:#ff6b7f}.new{color:var(--green)}
+
+  /* البطاقة — نفس بنية AboutCard.tsx */
+  .c{background:var(--card);border-radius:8px;padding:16px;outline:1px solid rgba(48,48,255,.10);outline-offset:-1px}
+  .c h2{display:flex;align-items:center;gap:6px;font-size:16px;font-weight:500;line-height:1.35;color:var(--link)}
+  .mk{width:20px;height:20px;flex-shrink:0;display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--link)}
+  .c p.lede{margin-top:4px;font-size:12px;line-height:1.45;color:var(--muted)}
+  .pts{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px 12px}
+  .pts li{list-style:none;display:flex;align-items:flex-start;gap:6px;font-size:11px;line-height:1.35;color:rgba(243,244,246,.9)}
+  .pts li::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:5px}
+  .cta{display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:12px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-weight:500;color:var(--fg)}
+
+  /* أ — ثلاث حقائق */
+  .facts{margin-top:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+  .fact{background:rgba(255,255,255,.03);border-radius:8px;padding:7px 4px}
+  .fact b{display:block;font-size:16px;font-weight:800;color:var(--fg);line-height:1.1}
+  .fact span{display:block;font-size:10px;color:var(--muted);margin-top:2px}
+  .note{margin-top:8px;font-size:10.5px;color:var(--dim);text-align:center}
+
+  /* ب — سؤال وجواب */
+  .qa{margin-top:10px}
+  .qa .q{font-size:13px;font-weight:700;line-height:1.45;color:var(--fg)}
+  .qa .a{margin-top:5px;font-size:12px;line-height:1.6;color:var(--muted)}
+  .chk{margin-top:9px;display:flex;flex-direction:column;gap:5px}
+  .chk li{list-style:none;display:flex;align-items:flex-start;gap:6px;font-size:11.5px;line-height:1.4;color:rgba(243,244,246,.9)}
+  .chk li::before{content:"✓";color:var(--green);font-weight:800;font-size:11px;flex-shrink:0;margin-top:1px}
+
+  /* ج — من يكتب */
+  .who{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+  .wrow{display:flex;align-items:center;gap:8px}
+  .av{width:26px;height:26px;border-radius:50%;background:rgba(48,48,255,.16);color:var(--link);display:grid;place-items:center;font-size:10px;font-weight:800;flex-shrink:0}
+  .wtx{min-width:0}
+  .wtx b{display:block;font-size:11.5px;font-weight:700;line-height:1.3}
+  .wtx span{display:block;font-size:10.5px;color:var(--muted);line-height:1.3}
+  .verif{display:inline-flex;align-items:center;gap:4px;margin-top:9px;font-size:10.5px;color:var(--green);background:rgba(74,222,128,.10);border-radius:999px;padding:3px 9px}
+
+  /* لوحة المقارنة */
+  .notes{flex:1 1 400px;max-width:560px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px}
+  .notes h2{font-size:15px;margin-bottom:10px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  td,th{border:1px solid var(--border);padding:7px 9px;text-align:right;vertical-align:top}
+  th{background:rgba(255,255,255,.04);font-size:12px}
+  .yes{color:var(--green);font-weight:700}.no{color:#ff6b7f;font-weight:700}.mid{color:#f6ae31;font-weight:700}
+  .notes ul{margin:10px 18px 0 0;font-size:12.5px;line-height:1.9;color:var(--muted)}
+  .notes ul b{color:var(--fg)}
+  code{font-family:Consolas,monospace;font-size:11px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+
+<h1>بطاقة «مدونتي» في الرايل — ثلاثة بدائل</h1>
+<p class="sub">بند ABOUTCARD · مقاس البطاقة الحقيقي المقيس اليوم: <code>300×190</code> أعلى الرايل في الرئيسية و<code>/articles</code>.</p>
+<p class="why"><b>ملاحظتك (٢١ أغسطس):</b> «تقرأ كإعلان داخلي». والسبب واضح لما تُفكَّك: البطاقة تقول <b>ما نبيعه</b> («مقالات موثوقة · طلّات وصوتيات · حجز وتسوّق بثقة · مودو يرشدك») لا <b>ما يربحه الزائر</b>. أربع نقاط بلا رقم ولا دليل، وزرّ «تعرّف على مدونتي» يطلب منه يغادر الصفحة التي جاء لها. <b>السؤال الذي يجب أن تجيبه:</b> زائر نصّ تصفّح المقالات — ليش يثق بهذا المحتوى؟</p>
+
+<div class="row">
+
+  <!-- الحالي -->
+  <div class="rail">
+    <div class="lbl"><span class="cur">◉ الحالي</span> <span class="h">300×190</span></div>
+    <section class="c">
+      <h2><span class="mk">م</span> مدونتي</h2>
+      <p class="lede">محتوى عربي موثوق من شركاء معتمدين.</p>
+      <ul class="pts">
+        <li>مقالات موثوقة</li><li>طلّات وصوتيات</li>
+        <li>حجز وتسوّق بثقة</li><li>مودو يرشدك</li>
+      </ul>
+      <div class="cta">تعرّف على مدونتي</div>
+    </section>
+  </div>
+
+  <!-- أ -->
+  <div class="rail">
+    <div class="lbl"><span class="new">أ</span> ثلاث حقائق بدل أربع وعود</div>
+    <section class="c">
+      <h2><span class="mk">م</span> مدونتي</h2>
+      <p class="lede">كل مقال هنا كتبه شريك موثَّق بسجلّه التجاري.</p>
+      <div class="facts">
+        <div class="fact"><b>٣٠</b><span>شريكاً موثَّقاً</span></div>
+        <div class="fact"><b>١٢٤</b><span>مقالاً منشوراً</span></div>
+        <div class="fact"><b>٨</b><span>مجالات</span></div>
+      </div>
+      <p class="note">أرقام حيّة من القاعدة — تتغيّر مع كل نشر.</p>
+      <div class="cta">شوف الشركاء</div>
+    </section>
+  </div>
+
+  <!-- ب -->
+  <div class="rail">
+    <div class="lbl"><span class="new">ب</span> السؤال الذي في رأسه</div>
+    <section class="c">
+      <h2><span class="mk">م</span> مدونتي</h2>
+      <div class="qa">
+        <p class="q">ليش تثق باللي تقرأه هنا؟</p>
+        <p class="a">لأن كل مقال له صاحب معروف — لا محتوى مجهول المصدر.</p>
+      </div>
+      <ul class="chk">
+        <li>الكاتب شركة بسجلّ تجاري موثَّق</li>
+        <li>تقدر تتواصل معه من نفس المقال</li>
+        <li>لا إعلانات مدفوعة تتنكّر كمقالات</li>
+      </ul>
+      <div class="cta">كيف نتحقّق من الشركاء</div>
+    </section>
+  </div>
+
+  <!-- ج -->
+  <div class="rail">
+    <div class="lbl"><span class="new">ج</span> مَن يكتب هنا</div>
+    <section class="c">
+      <h2><span class="mk">م</span> مَن يكتب في مدونتي؟</h2>
+      <p class="lede">شركات ومختصّون، لا كتّاب مجهولون.</p>
+      <div class="who">
+        <div class="wrow"><span class="av">PC</span><span class="wtx"><b>Pain Core Clinic</b><span>د. عمرو سعيد · ٥ مقالات</span></span></div>
+        <div class="wrow"><span class="av">مأ</span><span class="wtx"><b>مختبرات الأطباء</b><span>تحاليل طبية · ٢ مقال</span></span></div>
+        <div class="wrow"><span class="av">مح</span><span class="wtx"><b>مدار حواء</b><span>صحة المرأة · ١٠ مقالات</span></span></div>
+      </div>
+      <span class="verif">✓ كلّهم موثَّقون بسجلّ تجاري</span>
+      <div class="cta">الشركاء الـ٣٠</div>
+    </section>
+  </div>
+
+  <!-- المقارنة -->
+  <div class="notes">
+    <h2>المقارنة</h2>
+    <table>
+      <tr><th>المعيار</th><th>أ · حقائق</th><th>ب · سؤال</th><th>ج · مَن يكتب</th></tr>
+      <tr><td>يجيب «ليش أثق؟»</td><td class="mid">ضمنياً بالرقم</td><td class="yes">نصّاً ومباشرةً</td><td class="yes">بالدليل المرئي</td></tr>
+      <tr><td>يعطي الزائر شيئاً جديداً</td><td class="yes">أرقام ما يعرفها</td><td class="mid">طمأنة لا معلومة</td><td class="yes">أسماء حقيقية</td></tr>
+      <tr><td>يبقى صحيحاً بلا صيانة</td><td class="yes">حيّ من القاعدة</td><td class="yes">ثابت</td><td class="yes">حيّ من القاعدة</td></tr>
+      <tr><td>يعمل على الصفحات الثلاث</td><td class="yes">نعم</td><td class="yes">نعم</td><td class="no">على صفحة الشريك يكرّر ما حوله</td></tr>
+      <tr><td>الارتفاع التقريبي</td><td>١٩٠</td><td>١٩٥</td><td>٢١٠</td></tr>
+      <tr><td>كلفة البناء</td><td>استعلام عدّادات</td><td>نصّ فقط</td><td>استعلام ٣ شركاء + صور</td></tr>
+    </table>
+
+    <h2 style="margin-top:16px">توصيتي: <span style="color:var(--green)">أ</span></h2>
+    <ul>
+      <li><b>الرقم يقتل الإعلان.</b> «مقالات موثوقة» وعدٌ يقوله أي موقع؛ «٣٠ شريكاً موثَّقاً» حقيقة تُفحص. هذا وحده ينقل البطاقة من دعاية إلى معلومة.</li>
+      <li><b>ب أضعفها:</b> يجيب سؤالاً لم يسأله الزائر بعد. مَن هو في منتصف قراءة مقال لم يشكّ بعد — والطمأنة قبل الشكّ تخلق الشكّ.</li>
+      <li><b>ج الأجمل والأخطر:</b> أسماء حقيقية تقنع فوراً، لكن على صفحة الشريك تصير البطاقة تعرض منافسيه في رايله. عيبٌ بنيوي لا تجميلي.</li>
+      <li><b>الزرّ:</b> «تعرّف على مدونتي» يطلب مغادرة. «شوف الشركاء» يعطيه خطوة داخل ما يفعله أصلاً.</li>
+    </ul>
+
+    <h2 style="margin-top:16px">قيود التنفيذ</h2>
+    <ul>
+      <li>الأرقام <b>حيّة من القاعدة</b> — ممنوع رقم مكتوب في الكود (قاعدتك: لا أرقام مزيفة).</li>
+      <li>الملفّ واحد لثلاثة مستهلكين: <code>RightSidebar</code> · <code>ArticlesPageLayout</code> · <code>TrustCard</code> — القياس على الثلاث قبل الإغلاق.</li>
+      <li><code>AboutBar</code> (نسخة الجوّال، ٥٢ بكسل) تتبع نفس النصّ الجديد ولا تكبر.</li>
+      <li>هذا الموكب <b>عقد ملزم</b>: المعتمَد يُبنى مطابقاً ١٠٠٪.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

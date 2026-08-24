@@ -1,5 +1,5 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>تحديث البيانات — 11 بنداً</title>
+<title>تحديث البيانات — 13 بنداً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f1013;--panel:#17181d;--card:#1d1e24;--line:#2c2d36;--fg:#f3f4f6;--mut:#9aa3b2;--dim:#6b7280;
@@ -25,6 +25,22 @@ h1{font-size:18px;margin:0 0 8px}
 .tools input{flex:1;min-width:220px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:0 12px;font:inherit}
 .chip{height:34px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--mut);padding:0 12px;font:inherit;font-size:13px;cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+/* شريط التبويبات — تطبيق واحد في المرّة. الاختيار الواحد هو المقصود: الخلط بين التطبيقات هو ما كان يُتيه. */
+.apptabs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 10px;border-bottom:2px solid var(--line);padding-bottom:0}
+.apptab{position:relative;display:flex;align-items:center;gap:7px;height:42px;padding:0 16px;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;background:none;color:var(--mut);font:inherit;font-size:14px;font-weight:600;cursor:pointer;border-radius:8px 8px 0 0}
+.apptab:hover{background:var(--panel);color:var(--fg)}
+.apptab b{font-size:12px;font-weight:800;min-width:22px;padding:2px 6px;border-radius:999px;background:var(--line);color:var(--mut)}
+.apptab[aria-selected="true"]{color:var(--fg);border-bottom-color:currentColor;background:var(--panel)}
+.apptab[aria-selected="true"] b{background:currentColor;color:var(--bg)}
+.apptab[data-app="modonty"][aria-selected="true"]{color:var(--violet)}
+.apptab[data-app="admin"][aria-selected="true"]{color:var(--blue)}
+.apptab[data-app="console"][aria-selected="true"]{color:var(--cyan)}
+.apptab[data-app="dataLayer"][aria-selected="true"]{color:var(--green)}
+.grp.hidden{display:none}
+/* الجاهز لوكيل — بند فحصتُه وأعرف حجمه، ولا يحتاج قراراً من خالد. الحافّة الخضراء تكفي لتمييزه من بعيد. */
+.card[data-agent]{border-inline-start:4px solid var(--green)}
+.tag.agent{background:var(--green);color:#04140c;font-weight:800}
+.tag.agent-measure{background:transparent;color:var(--green);border:1px solid var(--green);font-weight:700}
 main{padding:16px}
 section.grp{margin:0 0 28px}
 .grp>h2{font-size:16px;margin:0 0 4px;display:flex;align-items:center;gap:10px}
@@ -78,11 +94,11 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </style></head><body>
 <header class="top"><div class="wrap">
 <h1>تحديث البيانات — شغل على القاعدة لا على الكود <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة الرئيسية: <a href="TASK.html">TASK.html</a> · آخر بناء ٢٣ أغسطس ٢٠٢٦</span></h1>
-<div class="stats"><span class="stat"><b>10</b>بيدك</span><span class="stat"><b>1</b>دوري</span><span class="stat"><b>11</b>الإجمالي</span></div>
+<div class="stats"><span class="stat"><b>12</b>بيدك</span><span class="stat"><b>1</b>دوري</span><span class="stat"><b>13</b>الإجمالي</span></div>
 <div class="tools"><input id="q" type="search" placeholder="ابحث بالكلمة أو رقم البند…" aria-label="بحث"></div>
 </div></header>
 <main class="wrap">
-<section class="grp"><h2>بيدك أو بيد الفريق <span class="n" data-count>10</span></h2><p>إدخال أو تصحيح بيانات على الإنتاج — قرارك أو ضغطتك.</p><div class="grid"><article class="card" data-id="HREF0" data-sev="high" data-who="k" data-tab="now" data-board="seo" data-apps="modonty">
+<section class="grp"><h2>بيدك أو بيد الفريق <span class="n" data-count>12</span></h2><p>إدخال أو تصحيح بيانات على الإنتاج — قرارك أو ضغطتك.</p><div class="grid"><article class="card" data-id="HREF0" data-sev="high" data-who="k" data-tab="now" data-board="seo" data-apps="modonty">
   <div class="hd"><span class="id">HREF0</span><div class="t">صفر وسم hreflang على كل صفحات مدونتي — الحقل فاضٍ في الإعدادات</div><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند HREF0">⧉</button></div>
   <div class="meta"><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-now">الآن</span><span class="tag">مهم</span><span class="tag app-modonty">modonty</span><span class="tag">سيو وأداء</span><span>١٩ أغسطس ٢٠٢٦</span></div>
   <p class="sum">تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك: Data, not code: builder path intact (build-metadata-from-page-row.ts:96 → buildHreflangLanguages); needs defaultAlternateLanguages filled in admin settings on production.</p>
@@ -109,6 +125,13 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
   <p class="sum">تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك: Prod-only paste into DB `content` where slug=terms/privacy-policy, plus the file's own lawyer-review advice. No code path to change. متحقَّق بالجلب الحيّ ٢٢ أغسطس (curl على www.modonty.</p>
   <div class="ask"><b>المطلوب منك:</b> بيدك: الصق نصّي الشروط والخصوصية من وثائق-مدونتي.html (DOC4/DOC5) في الأدمن على /terms و/legal/privacy-policy، ثم قل «تحقّق» وأقيس الصفحتين وأحذف المسوّدتين. يُستحسن مراجعة محامٍ قبلها.</div>
   <details><summary>التفاصيل الكاملة</summary><div class="full"><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Prod-only paste into DB `content` where slug=terms/privacy-policy, plus the file's own lawyer-review advice. No code path to change.<br><b>متحقَّق بالجلب الحيّ ٢٢ أغسطس</b> (<code>curl</code> على <code>www.modonty.com</code>، الاثنتان <code>HTTP 200</code>):<br><br><b>على <code>/terms</code>:</b> ✗ «طبيعة المنصّة» · ✗ «إخلاء المسؤولية» · ✗ «الحجز ونقل الطلب» · ✗ «حدود المسؤولية» — والموجود ✓ «تعريفات» و✓ «الملكية الفكرية» فقط. النصّ المرئي ١٦١٥٨ حرفاً.<br><b>على <code>/legal/privacy-policy</code>:</b> ✗ «جهة التحكّم» · ✗ «الأساس النظامي» · ✗ «خصوصية الأطفال» · ✗ «إتلاف البيانات» — والموجود ✓ «ملفات تعريف الارتباط» فقط. النصّ المرئي ١٢٢٤٠ حرفاً.<br><br><b>يعني:</b> النصّان الحيّان نسخة أقدم وأقصر، ومسوّدتانا في <code>documents/HTML/وثائق-مدونتي.html</code> (بطاقتا <code>DOC4</code> و<code>DOC5</code>) <b>لم تُلصقا بعد</b>. الملفّان يبدآن حرفياً بـ«📋 للصقّ في قاعدة البيانات: انسخ… إلى حقل <code>content</code> حيث <code>slug = "terms"</code>».<br><br><b>لماذا يهمّ:</b> الناقص هو بند إخلاء المسؤولية وبند المحتوى الطبّي (YMYL) — وهما ما يحمي مدونتي كوسيط بين الزائر وطبيب أو محامٍ. والمسوّدة مبنيّة على نظام حماية البيانات الشخصية السعودي.<br><br><b>⚠️ الملفّان نفساهما يوصيان:</b> «يُفضَّل مراجعتها من محامٍ سعودي مرخّص قبل النشر».<br><br><b>بعد اللصق والتحقّق من الصفحتين حيّاً، يُحذف الملفّان</b> — يصيران نسخة مكرّرة عندها فعلاً.</div></details>
+</article>
+<article class="card" data-id="METADESC" data-sev="normal" data-who="k" data-tab="open" data-board="seo" data-apps="modonty">
+  <div class="hd"><span class="id">METADESC</span><div class="t">وصف الرئيسية ١٣٤ حرفاً — سطر جوجل لا يمتلئ</div><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند METADESC">⧉</button></div>
+  <div class="meta"><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-modonty">modonty</span><span class="tag">سيو وأداء</span><span>٢٤ أغسطس ٢٠٢٦</span></div>
+  <p class="sum">مقيس حيّاً ٢٤ أغسطس: meta[name=&quot;description&quot;].content.length = ١٣٤. الهدف ١٥٠–١٦٠ ليمتلئ سطر نتيجة البحث. · لا كود: يُعدَّل من الأدمن (Settings).</p>
+  <div class="ask"><b>المطلوب منك:</b> وصف الرئيسية ١٣٤ حرفاً والهدف ١٥٠–١٦٠. تعديل من الأدمن (Settings) لا كود. تكتبه أم أقترح صياغة؟</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>مقيس حيّاً ٢٤ أغسطس:</b> <code>meta[name="description"].content.length</code> = <b>١٣٤</b>. الهدف ١٥٠–١٦٠ ليمتلئ سطر نتيجة البحث.<br><b>لا كود:</b> يُعدَّل من الأدمن (Settings).<br><b>ملاحظة مرافقة (خارج مدونتي):</b> نموذج Settings في الأدمن بلا عدّاد طول يمنع النقص — سطر تذكير لا تاسك هنا.<br><b>مصدره:</b> بندا T9 · L2 من لوحة الرئيسية.</div></details>
 </article>
 <article class="card" data-id="BRAND-ID" data-sev="high" data-who="k" data-tab="now" data-board="seo" data-apps="modonty">
   <div class="hd"><span class="id">BRAND-ID</span><div class="t">هوية مدونتي تُكتب بثلاث صور مختلفة على الصفحة الواحدة</div><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند BRAND-ID">⧉</button></div>
@@ -137,6 +160,13 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
   <p class="sum">تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك: admin upload still never re-encodes the original (upload-image.ts:55-59 keeps the raw buffer + file.type) — needs Khalid's call on re-encode + regeneration. ·</p>
   <div class="ask"><b>المطلوب منك:</b> admin upload still never re-encodes the original (upload-image.ts:55-59 keeps the raw buffer + file.type) — needs Khalid's call on re-encode + regeneration.</div>
   <details><summary>التفاصيل الكاملة</summary><div class="full"><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> admin upload still never re-encodes the original (upload-image.ts:55-59 keeps the raw buffer + file.type) — needs Khalid's call on re-encode + regeneration.<br><b>القياس على الإنتاج (١٤ أغسطس، أربعة مقالات):</b> ملفان من الأربعة بصمتهما <code>89504e47</code> — أي <b>PNG</b> — رغم الامتداد <code>.webp</code> وترويسة <code>content-type: image/webp</code>. الوزن <b>٦٦٢KB</b> و<b>٥٩٦KB</b>، مقابل ١١٤ و١٢٧ للمقالين الآخرين (WebP حقيقي). ونسخة <code>16x9</code> المولَّدة من نفس الصورة <b>٦٨KB</b> — أي أن الأصل المخدوم أثقل من نسخته بعشرة أضعاف.<br><br><b>أين المشكلة:</b> ليست في مدونتي — العرض يقرأ ما هو مخزَّن. هي في مسار الرفع بالأدمن: الملف يُسمّى <code>.webp</code> ويُرفع بنوع <code>image/webp</code> دون إعادة ترميز فعلية للأصل. لاحظ أن <code>generateAspectCrops</code> تعيد الترميز للنسخ الثلاث (<code>.webp({ quality: 82 })</code>) لكن <b>الأصل يُرفع كما هو</b> (<code>bunny-mirror-core.ts:53</code>).<br><br><b>الأثر:</b> الأصل هو ما يُعرض في بطل المقال — أي أن أثقل صورة في الصفحة، وهي عنصر LCP، تُخدَم بعشرة أضعاف حجمها اللازم.<br><br><b>لم يُلمس:</b> يحتاج قراراً في الأدمن — هل يُعاد ترميز الأصل عند الرفع، وهل يُعاد توليد ما رُفع سابقاً.</div></details>
+</article>
+<article class="card" data-id="ADDR12" data-sev="normal" data-who="k" data-tab="open" data-board="seo" data-apps="admin">
+  <div class="hd"><span class="id">ADDR12</span><div class="t">اثنا عشر عميلاً بلا عنوان شارع ورمز بريدي — حقلان اختياريان في بطاقة جوجل</div><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ADDR12">⧉</button></div>
+  <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">سيو وأداء</span><span>٢٤ أغسطس ٢٠٢٦</span></div>
+  <p class="sum">مصدره: بند ٧٥ في TECH-NOTES.md — كان له تفصيل تقني كامل ولا بطاقة على اللوحة، فبقي خارج العدّاد. ما سُجِّل (فحص Google Rich Results حيّ، ٢ أغسطس ٢٠٢٦ على صفحة عميل «مدار حواء»): ملاحظتان غير حرجتين على عقدة Organization —</p>
+  <div class="ask"><b>المطلوب منك:</b> اثنا عشر عميلاً بلا عنوان شارع ورمز بريدي (حقلان اختياريان يقوّيان بطاقة جوجل). أعيد العدّ على الإنتاج ثم تكملها من الأدمن؟</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>مصدره:</b> بند ٧٥ في <code>TECH-NOTES.md</code> — كان له تفصيل تقني كامل ولا بطاقة على اللوحة، فبقي خارج العدّاد.<br><b>ما سُجِّل (فحص Google Rich Results حيّ، ٢ أغسطس ٢٠٢٦ على صفحة عميل «مدار حواء»):</b> ملاحظتان <b>غير حرجتين</b> على عقدة <code>Organization</code> — <code>Missing field "streetAddress" (optional)</code> و<code>Missing field "postalCode" (optional)</code>. البطاقة تبقى <b>صالحة ومؤهّلة</b>، وجوجل يصنّفها <code>check_circle</code>.<br><b>لماذا يستحقّ الإكمال رغم أنه اختياري:</b> العنوان الكامل يقوّي إشارة الأعمال المحلّية، وهو ما يخدم شركاء لهم مقرّ فعليّ.<br><b>لا كود:</b> إدخال يدوي من الأدمن على بطاقة كل عميل.<br><b>أول خطوة عند الفتح:</b> أعِد العدّ على الإنتاج — رقم «١٢» عمره ثلاثة أسابيع ولم أتحقّق منه اليوم.</div></details>
 </article>
 <article class="card" data-id="PRODDATA" data-sev="high" data-who="k" data-tab="open" data-board="data" data-apps="modonty">
   <div class="hd"><span class="id">PRODDATA</span><div class="t">صفحات حيّة فاضية — الكود جاهز وينتظر المحتوى</div><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PRODDATA">⧉</button></div>

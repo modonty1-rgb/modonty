@@ -87,9 +87,13 @@ export async function CachedHomePage({ page, userCard }: CachedHomePageProps) {
         readingTimeCounts={readingTimeCounts}
       />
       {/* The mobile bottom bar (احجز · تسوّق · مودو) is HIDDEN on the homepage as of 23 Aug
-          (Khalid: «no need to show الشريط السفلي, let make pure article»). Its files
-          (`mobile-bottom-bar/BottomBar` · `ServiceBar`) stay on disk — hidden, not deleted —
-          until he decides. Modo's doorway moved into the feed (ArticlesList, after card 2). */}
+          (Khalid: «no need to show الشريط السفلي, let make pure article»). CONFIRMED as the
+          final answer on 24 Aug — «no door in the home page, it pure article»: the phone
+          homepage deliberately offers no route to `/booking` or `/shop` at all (they live in
+          the desktop rail only, `hidden lg:block`). Board card HOMEMOB closed that decision.
+          Its files (`mobile-bottom-bar/BottomBar` · `ServiceBar`) stay on disk — hidden, not
+          deleted — until he decides. Modo's doorway moved into the feed (ArticlesList, after
+          card 2). */}
     </>
   );
 }

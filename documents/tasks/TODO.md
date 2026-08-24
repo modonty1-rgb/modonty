@@ -16,7 +16,7 @@
 | المنجز | **[`TASK.html`](./TASK.html)** — تبويب «منجز» |
 | التفاصيل التقنية (اقتباسات رسمية · أرقام خام · ملفات وأسطر) | **[`TECH-NOTES.md`](./TECH-NOTES.md)** |
 | مراجع تقنية لبنود منجزة (`sharp` على ويندوز · استبدال الغلافين) | **[`TECH-NOTES.md`](./TECH-NOTES.md)** — آخر قسم |
-| ملاحظات التست الحي الخام | **[`CLAUDE.md`](./CLAUDE.md)** |
+| ملاحظات التست الحي الخام (أبريل–يونيو، أُفرغ شغلها ٢٤ أغسطس) | **[`documents/archive/`](../archive/)** |
 | قرارات الريلز | **[`documents/reels/`](../reels/)** |
 | حالة الجلسة والتسليم | **[`documents/context/SESSION-LOG.md`](../context/SESSION-LOG.md)** |
 

@@ -159,9 +159,11 @@ export function BasicInfoSection({
             error={errors.email?.message}
             required
           />
+          {/* type="password", never "text" — same credential, same reason as the edit workspace:
+              plain text leaks through the screen, autofill, and any recording (card PWPLAIN). */}
           <FormInput
             name="password"
-            type="text"
+            type="password"
             label="Password"
             value={password || ""}
             onChange={(e) => form.setValue("password", e.target.value, { shouldValidate: true })}

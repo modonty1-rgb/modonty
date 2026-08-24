@@ -44,8 +44,11 @@ export async function LogoNav({ className, variant = "image" }: LogoNavProps) {
           alt={BRAND_AR}
           width={160}
           height={40}
+          // `eager` but NOT high priority. The logo is small and above the fold, so it must not
+          // wait for lazy-loading — but it is never the LCP element. Marking it "high" put it in
+          // the same first-round queue as the hero image, and the browser then split bandwidth
+          // between them (3 high-priority images measured on the homepage, 24 Aug).
           loading="eager"
-          fetchPriority="high"
           sizes="(max-width: 767px) 104px, 160px"
           className={`h-7 w-auto max-w-full object-contain md:h-8 ${className ?? ""}`}
         />

@@ -265,9 +265,12 @@ export function ClientEditWorkspace({
                 error={errors.email?.message}
                 required
               />
+              {/* type="password", never "text": this field carries a live client's credential.
+                  As plain text it renders on screen, lands in browser autofill, and survives in
+                  any screenshot, recording, or shared screen (card PWPLAIN, 24 Aug). */}
               <FormInput
                 name="password"
-                type="text"
+                type="password"
                 label="Password"
                 value={password || ""}
                 onChange={(e) => setValue("password", e.target.value, { shouldValidate: true })}

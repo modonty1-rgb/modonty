@@ -91,6 +91,22 @@ h1{font-size:18px;margin:0 0 8px}
 .tools input{flex:1;min-width:220px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:0 12px;font:inherit}
 .chip{height:34px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--mut);padding:0 12px;font:inherit;font-size:13px;cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+/* شريط التبويبات — تطبيق واحد في المرّة. الاختيار الواحد هو المقصود: الخلط بين التطبيقات هو ما كان يُتيه. */
+.apptabs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 10px;border-bottom:2px solid var(--line);padding-bottom:0}
+.apptab{position:relative;display:flex;align-items:center;gap:7px;height:42px;padding:0 16px;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;background:none;color:var(--mut);font:inherit;font-size:14px;font-weight:600;cursor:pointer;border-radius:8px 8px 0 0}
+.apptab:hover{background:var(--panel);color:var(--fg)}
+.apptab b{font-size:12px;font-weight:800;min-width:22px;padding:2px 6px;border-radius:999px;background:var(--line);color:var(--mut)}
+.apptab[aria-selected="true"]{color:var(--fg);border-bottom-color:currentColor;background:var(--panel)}
+.apptab[aria-selected="true"] b{background:currentColor;color:var(--bg)}
+.apptab[data-app="modonty"][aria-selected="true"]{color:var(--violet)}
+.apptab[data-app="admin"][aria-selected="true"]{color:var(--blue)}
+.apptab[data-app="console"][aria-selected="true"]{color:var(--cyan)}
+.apptab[data-app="dataLayer"][aria-selected="true"]{color:var(--green)}
+.grp.hidden{display:none}
+/* الجاهز لوكيل — بند فحصتُه وأعرف حجمه، ولا يحتاج قراراً من خالد. الحافّة الخضراء تكفي لتمييزه من بعيد. */
+.card[data-agent]{border-inline-start:4px solid var(--green)}
+.tag.agent{background:var(--green);color:#04140c;font-weight:800}
+.tag.agent-measure{background:transparent;color:var(--green);border:1px solid var(--green);font-weight:700}
 main{padding:16px}
 section.grp{margin:0 0 28px}
 .grp>h2{font-size:16px;margin:0 0 4px;display:flex;align-items:center;gap:10px}
@@ -155,9 +171,13 @@ function cardHTML(t) {
     t.ease === 3 ? `<span class="tag ease-3">🤔 يحتاج جلسة</span>` : "";
   const ask = t.who === "k" ? (t.ask ? `<div class="ask"><b>المطلوب منك:</b> ${esc(t.ask)}</div>` : `<div class="ask missing"><b>المطلوب منك:</b> لم يُصَغ بعد — افتح التفاصيل.</div>`) : "";
   const runningTag = t.running ? `<span class="tag running">⏳ جارٍ الآن</span>` : "";
-  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.running ? ' data-running="1"' : ""}>
+  // شارة «جاهز لوكيل»: بند فُحص حجمه ولا يحتاج قراراً — الرقم هو ترتيب التنفيذ المقترح.
+  const agentTag = t.agent
+    ? `<span class="tag ${t.agentKind === "قياس" ? "agent-measure" : "agent"}">🤖 وكيل ${t.agent}${t.agentKind === "قياس" ? " · قياس" : ""}</span>`
+    : "";
+  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.agent ? ` data-agent="${t.agent}"` : ""}${t.running ? ' data-running="1"' : ""}>
   <div class="hd"><span class="id">${esc(t.id)}</span><div class="t">${t.t}</div><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ${esc(t.id)}">⧉</button></div>
-  <div class="meta">${runningTag}${easeTag}<span class="tag tab-${esc(t.tab)}">${tabL}</span><span class="tag">${sevL}</span>${apps}<span class="tag">${esc(t.board)}</span>${t.date ? `<span>${esc(t.date)}</span>` : ""}</div>
+  <div class="meta">${agentTag}${runningTag}${easeTag}<span class="tag tab-${esc(t.tab)}">${tabL}</span><span class="tag">${sevL}</span>${apps}<span class="tag">${esc(t.board)}</span>${t.date ? `<span>${esc(t.date)}</span>` : ""}</div>
   <p class="sum">${esc(t.sum)}</p>
   ${ask}
   <details><summary>التفاصيل الكاملة</summary><div class="full">${t.d || ""}</div></details>
@@ -186,17 +206,37 @@ if (leftovers.length) console.error("UNGROUPED", leftovers.map(t => t.id + ":" +
 
 const kCount = sections[0].items.length;
 const appsAll = ["modonty", "admin", "console", "dataLayer"];
+
+// ── تبويبات التطبيقات ───────────────────────────────────────────────
+// خالد (٢٤ أغسطس): «رتّب الملف تبات — مدونتي تاب والأدمن تاب والكونسول تاب، أنا تايه».
+// السبب: ١٣٧ بنداً من أربعة تطبيقات في عمود واحد لا يُقرأ. التبويب يفصلها فصلاً حقيقياً.
+// الافتراضي «مدونتي» لأنها المرحلة الجارية — وتبويب «الكل» موجود كي لا يختفي شيء عن العين.
+const APP_TABS = [
+  { k: "modonty", n: "مدونتي" },
+  { k: "admin", n: "الأدمن" },
+  { k: "console", n: "الكونسول" },
+  { k: "dataLayer", n: "المشترك والقاعدة" },
+  { k: "__none", n: "بلا تطبيق" },
+  { k: "__all", n: "الكل" },
+];
+const inTab = (t, k) =>
+  k === "__all" ? true : k === "__none" ? !(t.app || []).length : (t.app || []).includes(k);
+const tabCount = (k) => open.filter(t => inTab(t, k)).length;
+const appTabsHTML = APP_TABS
+  .map(a => `<button class="apptab" role="tab" data-app="${a.k}" aria-selected="${a.k === "modonty"}">${a.n}<b>${tabCount(a.k)}</b></button>`)
+  .join("");
 const boardHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>لوحة مدونتي — ${open.length} بنداً مفتوحاً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>${CSS}</style></head><body>
 <header class="top"><div class="wrap">
 <h1>لوحة الشغل — المفتوح فقط <span style="color:var(--dim);font-weight:500;font-size:13px">· تحديث البيانات في <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> · المنجز في <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a> · آخر بناء ٢٣ أغسطس ٢٠٢٦</span></h1>
-<div class="stats"><span class="stat"><b>${kCount}</b>يحتاج قرارك</span><span class="stat"><b>${sections[1].items.length}</b>الجاري</span><span class="stat"><b>${sections[2].items.length}</b>التالي</span><span class="stat"><b>${sections[3].items.length}</b>مفتوح</span><span class="stat"><b>${sections[4].items.length}</b>مراجع</span><span class="stat"><b>${dataOpen.length}</b><a href="DATA-REFACTOR.html" style="text-decoration:none">تحديث البيانات</a></span><span class="stat"><b>${done.length}</b>منجز (أرشيف)</span></div>
+<div class="stats"><span class="stat"><b data-stat="decide">${kCount}</b>يحتاج قرارك</span><span class="stat"><b data-stat="now">${sections[1].items.length}</b>الجاري</span><span class="stat"><b data-stat="next">${sections[2].items.length}</b>التالي</span><span class="stat"><b data-stat="open">${sections[3].items.length}</b>مفتوح</span><span class="stat"><b data-stat="ref">${sections[4].items.length}</b>مراجع</span><span class="stat"><b>${dataOpen.length}</b><a href="DATA-REFACTOR.html" style="text-decoration:none">تحديث البيانات</a></span><span class="stat"><b>${done.length}</b>منجز (أرشيف)</span></div>
 <div class="legend"><span class="lg lg-modonty">مدونتي</span><span class="lg lg-admin">الأدمن</span><span class="lg lg-console">الكونسول</span><span class="lg lg-shared">المشترك والقاعدة</span><span class="lg lg-none">بلا تطبيق</span><span class="lg lg-running">جارٍ الآن</span></div>
+<div class="apptabs" role="tablist" aria-label="التطبيقات">${appTabsHTML}</div>
 <div class="tools"><input id="q" type="search" placeholder="ابحث بالكلمة أو رقم البند…" aria-label="بحث">
-${appsAll.map(a => `<button class="chip" data-app="${a}" aria-pressed="false">${a}</button>`).join("")}
-<button class="chip" data-sev="critical high" aria-pressed="false">الحرج والمهم فقط</button></div>
+<button class="chip" data-sev="critical high" aria-pressed="false">الحرج والمهم فقط</button>
+<button class="chip" data-agent="1" aria-pressed="false">🤖 الجاهز لوكيل (${open.filter(t => t.agent).length})</button></div>
 </div></header>
 <main class="wrap">
 ${sections.filter(g => g.items.length).map(g => `<section class="grp" data-grp="${g.k}"><h2>${g.n} <span class="n" data-count>${g.items.length}</span></h2><p>${g.s}</p>${g.collapsed ? `<details><summary>اعرض ${g.items.length} مرجعاً</summary>` : ""}<div class="grid">${g.items.map(cardHTML).join("\n") || '<div class="empty">لا شيء هنا.</div>'}</div>${g.collapsed ? "</details>" : ""}</section>`).join("\n")}
@@ -205,24 +245,55 @@ ${sections.filter(g => g.items.length).map(g => `<section class="grp" data-grp="
 <script>
 (() => {
   const q = document.getElementById('q'); const chips = [...document.querySelectorAll('.chip')];
+  const tabs = [...document.querySelectorAll('.apptab')];
   const cards = [...document.querySelectorAll('.card')];
+  // التبويب الفعّال يُخزَّن محلياً: يفتح خالد الملف فيجد آخر تطبيق كان فيه، لا الافتراضي كل مرّة.
+  let app = 'modonty';
+  try { const s = localStorage.getItem('taskboard-app'); if (s && tabs.some(t => t.dataset.app === s)) app = s; } catch {}
+  const matchApp = (c) => {
+    if (app === '__all') return true;
+    const list = (c.dataset.apps || '').split(' ').filter(Boolean);
+    return app === '__none' ? list.length === 0 : list.includes(app);
+  };
   const apply = () => {
     const term = q.value.trim().toLowerCase();
-    const apps = chips.filter(c => c.dataset.app && c.getAttribute('aria-pressed') === 'true').map(c => c.dataset.app);
     const sevOnly = chips.find(c => c.dataset.sev)?.getAttribute('aria-pressed') === 'true';
+    const agentOnly = chips.find(c => c.dataset.agent)?.getAttribute('aria-pressed') === 'true';
+    tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.app === app)));
     cards.forEach(c => {
-      let ok = true;
-      if (term) ok = (c._s ||= c.textContent.toLowerCase()).includes(term) || c.dataset.id.toLowerCase().includes(term);
-      if (ok && apps.length) ok = apps.some(a => c.dataset.apps.split(' ').includes(a));
+      let ok = matchApp(c);
+      if (ok && term) ok = (c._s ||= c.textContent.toLowerCase()).includes(term) || c.dataset.id.toLowerCase().includes(term);
       if (ok && sevOnly) ok = /critical|high/.test(c.dataset.sev);
+      if (ok && agentOnly) ok = !!c.dataset.agent;
       c.classList.toggle('hidden', !ok);
     });
-    document.querySelectorAll('.grp').forEach(g => { const n = g.querySelectorAll('.card:not(.hidden)').length; g.querySelector('[data-count]').textContent = n; });
+    // قسم بلا بطاقات مرئية يختفي كلّه — العنوان الفارغ ضجيج، وخالد جاء يقرأ لا يتصفّح.
+    // والعدّادات في الأعلى تتبع التبويب: رقمان مختلفان لنفس الشيء على شاشة واحدة هو أصل التيه.
+    document.querySelectorAll('.grp').forEach(g => {
+      const n = g.querySelectorAll('.card:not(.hidden)').length;
+      g.querySelector('[data-count]').textContent = n;
+      g.classList.toggle('hidden', n === 0);
+      const stat = document.querySelector('[data-stat="' + g.dataset.grp + '"]');
+      if (stat) stat.textContent = n;
+    });
   };
   q.addEventListener('input', apply);
   chips.forEach(c => c.addEventListener('click', () => { c.setAttribute('aria-pressed', c.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); apply(); }));
-  // deep link: #ID opens that card's details
-  if (location.hash) { const el = document.querySelector('.card[data-id="' + CSS.escape(location.hash.slice(1)) + '"]'); if (el) { el.querySelector('details').open = true; el.scrollIntoView({ block: 'center' }); } }
+  tabs.forEach(t => t.addEventListener('click', () => {
+    app = t.dataset.app;
+    try { localStorage.setItem('taskboard-app', app); } catch {}
+    apply(); window.scrollTo({ top: 0, behavior: 'smooth' });
+  }));
+  apply(); // يطبّق التبويب المحفوظ فور الفتح
+  // رابط مباشر ‎#ID: يفتح تفاصيل البطاقة — ويقفز إلى «الكل» أوّلاً وإلا بقيت مخفيّة خلف تبويب آخر.
+  if (location.hash) {
+    const el = document.querySelector('.card[data-id="' + CSS.escape(location.hash.slice(1)) + '"]');
+    if (el) {
+      if (!matchApp(el)) { app = '__all'; apply(); }
+      el.querySelector('details').open = true;
+      el.scrollIntoView({ block: 'center' });
+    }
+  }
 ${COPY_JS}
 })();
 </script></body></html>`;
