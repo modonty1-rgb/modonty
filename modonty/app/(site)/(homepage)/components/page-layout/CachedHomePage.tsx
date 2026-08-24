@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { cacheLife, cacheTag } from "next/cache";
 import { PageLayout } from "@/app/(site)/(homepage)/components/page-layout/PageLayout";
-import { getCorePublisherArticles } from "@/app/(site)/(homepage)/data/get-core-publisher-articles";
 import { getHomeFeedArticles } from "@/app/(site)/(homepage)/data/get-home-feed-articles";
 import { getMoreArticles } from "@/app/(site)/(homepage)/data/get-more-articles";
 import { getReelsFeedPage } from "@/lib/queries/get-reels-feed-page";
@@ -10,7 +9,6 @@ import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-count
 import { getArticlesArchive } from "@/lib/articles/archive/get-articles-archive";
 import { countByReadingTime } from "@/lib/articles/archive/reading-time-buckets";
 import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
-import { getBrandMedia } from "@/lib/settings/get-brand-media";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { jsonLdHtmlFromString } from "@/lib/seo";
 import type { FeedPost } from "@/lib/types";
@@ -43,11 +41,9 @@ export async function CachedHomePage({ page, userCard }: CachedHomePageProps) {
   // `wholeArchive` feeds ONLY the phone's reading-time tiles (counts per bucket). Same cached
   // call `/articles` makes, inside the same Promise.all — one more parallel read inside this
   // page's own cache, no waterfall, nothing extra on the client.
-  const [{ jsonLd }, feed, corePublisherArticles, brandMedia, industries, reels, wholeArchive] = await Promise.all([
+  const [{ jsonLd }, feed, industries, reels, wholeArchive] = await Promise.all([
     getListingPageSeo("home"),
     getFeedChunk(page),
-    getCorePublisherArticles(),
-    getBrandMedia(),
     getIndustriesWithCounts(),
     getReelsFeedPage(),
     getArticlesArchive({}),
@@ -57,9 +53,15 @@ export async function CachedHomePage({ page, userCard }: CachedHomePageProps) {
   // Google: "make sure that page values adjust correctly … return a 404".
   if (page > 1 && feed.articles.length === 0) notFound();
 
-  // TEMPORARY (2026-08-15, dev only): modonty_dev has no reels, and Khalid wants to see
-  // the reels card's shape under the action strip. Three stand-ins so the card renders;
-  // never reaches production, and gets removed once the placement is decided.
+  // ⚠️ TEMPORARY — DELETE THIS BLOCK BEFORE MERGING `modonty-ui` INTO `main`.
+  //
+  // Dev only: modonty_dev has no reels rows, so the card would render empty and its shape could
+  // not be judged. Three stand-ins are built from feed articles instead. The `NODE_ENV` guard
+  // means production never sees them, but this is scaffolding living inside a cached page.
+  //
+  // Khalid, 24 Aug 2026, asked for it explicitly: it stays through the rest of the UI phase and
+  // comes out LAST, immediately before the final merge to main — so nobody removes it early and
+  // loses the preview while the phase is still running. Board card DEVREELS tracks it.
   const reelItems =
     process.env.NODE_ENV === "development" && reels.items.length === 0
       ? feed.articles.slice(0, 3).map((a) => ({ id: `preview-${a.id}`, title: a.title, imageUrl: a.image ?? null, clientName: a.clientName }))
@@ -79,8 +81,6 @@ export async function CachedHomePage({ page, userCard }: CachedHomePageProps) {
         posts={feed.articles}
         hasMore={feed.hasMore}
         page={page}
-        corePublisherArticles={corePublisherArticles}
-        brandLogoUrl={brandMedia.logoUrl}
         industries={industries}
         reels={reelItems}
         userCard={userCard}
@@ -91,9 +91,9 @@ export async function CachedHomePage({ page, userCard }: CachedHomePageProps) {
           final answer on 24 Aug — «no door in the home page, it pure article»: the phone
           homepage deliberately offers no route to `/booking` or `/shop` at all (they live in
           the desktop rail only, `hidden lg:block`). Board card HOMEMOB closed that decision.
-          Its files (`mobile-bottom-bar/BottomBar` · `ServiceBar`) stay on disk — hidden, not
-          deleted — until he decides. Modo's doorway moved into the feed (ArticlesList, after
-          card 2). */}
+          Its files (`mobile-bottom-bar/BottomBar` · `ServiceBar`) were kept on disk for a day
+          and then DELETED on 24 Aug (card DEADUI7) — eight days at zero importers. Modo's
+          doorway moved into the feed (ArticlesList, after card 2). */}
     </>
   );
 }

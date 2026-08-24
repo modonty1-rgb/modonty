@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { Prisma } from "@prisma/client";
-import type { RegisterFormData } from "../helpers/schemas/register-schema";
+import { registerSchema } from "../helpers/schemas/register-schema";
 import { getOrCreateSessionId, createConversion } from "@/lib/analytics/conversion-tracking";
 import { trackSignupComplete } from "@/lib/analytics/events-registry";
 import { ConversionType } from "@prisma/client";
@@ -11,12 +11,30 @@ import { randomBytes } from "crypto";
 import { sendEmail } from "@/lib/email/resend-client";
 import { welcomeEmail } from "@modonty/shared/lib/email/templates/welcome";
 import { emailVerificationEmail } from "@modonty/shared/lib/email/templates/email-verification";
-import { sendAdminTelegram } from "@modonty/shared/lib/telegram/client";
+import { sendAdminTelegram, escapeTgHtml } from "@modonty/shared/lib/telegram/client";
 
-export async function registerUser(data: RegisterFormData) {
+export async function registerUser(data: unknown) {
+  // A server action is a public HTTP endpoint: the form's zodResolver only ever
+  // ran in the attacker's own browser, so anything can arrive here — a 2-char
+  // password, a non-email, or extra keys like role:"ADMIN". Re-checking the same
+  // schema server-side is what actually enforces it, and Zod strips unknown keys
+  // so only the three fields below can ever reach db.user.create.
+  const parsed = registerSchema.safeParse(data);
+
+  if (!parsed.success) {
+    const fieldErrors = parsed.error.flatten().fieldErrors;
+    return {
+      success: false as const,
+      error: parsed.error.errors[0]?.message ?? "بيانات غير صحيحة",
+      fieldErrors,
+    };
+  }
+
+  const input = parsed.data;
+
   try {
     const existingUser = await db.user.findUnique({
-      where: { email: data.email },
+      where: { email: input.email },
     });
 
     if (existingUser) {
@@ -26,12 +44,12 @@ export async function registerUser(data: RegisterFormData) {
       };
     }
 
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const hashedPassword = await bcrypt.hash(input.password, 10);
 
     const user = await db.user.create({
       data: {
-        name: data.name ?? null,
-        email: data.email,
+        name: input.name ?? null,
+        email: input.email,
         password: hashedPassword,
         role: "EDITOR",
       },
@@ -44,9 +62,12 @@ export async function registerUser(data: RegisterFormData) {
       sessionId,
     });
 
-    // Notify Telegram group — non-blocking
+    // Notify Telegram group — non-blocking. The name and email are escaped
+    // because this goes out in HTML parse mode: a registrant who signs up as
+    // `<b>مدفوع</b>` would otherwise forge formatting in the admin's alert, and
+    // a stray `<` breaks the whole message so the notification never arrives.
     const now = new Date().toLocaleString("ar-SA", { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
-    sendAdminTelegram(`👤 <b>مستخدم جديد — مدونتي</b>\n📧 ${user.email}\n🙋 ${user.name || "—"}\n📅 ${now}`).catch(() => null);
+    sendAdminTelegram(`👤 <b>مستخدم جديد — مدونتي</b>\n📧 ${escapeTgHtml(user.email ?? "—")}\n🙋 ${escapeTgHtml(user.name || "—")}\n📅 ${now}`).catch(() => null);
 
     if (user.email) {
       welcomeEmail({ userName: user.name ?? user.email })

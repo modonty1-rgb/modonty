@@ -1,7 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import type { ApiResponse } from "@/lib/types";
+
+/**
+ * The two fields this endpoint is allowed to write, and nothing else — the body used to reach
+ * Prisma unread. `image` is rendered as the avatar's `src` everywhere the user appears, so a
+ * `javascript:`/`data:` URL saved once came back out on every one of those pages; `new URL()`
+ * accepts both, which is why the scheme is pinned rather than left to `.url()`. An unbounded
+ * `name` is a megabyte the profile query then carries on every read.
+ * The row being written is chosen by the session above, never by anything in here.
+ */
+const profileUpdateSchema = z.object({
+  type: z.literal("profile"),
+  data: z.object({
+    name: z.string().trim().min(2).max(60),
+    image: z
+      .string()
+      .max(500)
+      .refine((value) => value === "" || value.startsWith("https://"), {
+        message: "Avatar URL must be https",
+      })
+      .nullish(),
+  }),
+});
 
 export async function GET(
   req: NextRequest,
@@ -114,18 +137,26 @@ export async function PUT(
       );
     }
 
-    const body = await req.json();
-    const { type, data } = body;
+    const parsed = profileUpdateSchema.safeParse(await req.json().catch(() => null));
 
-    if (type === "profile") {
-      await db.user.update({
-        where: { id: userId },
-        data: {
-          name: data.name,
-          image: data.image || null,
-        },
-      });
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid settings payload",
+          fields: parsed.error.flatten().fieldErrors,
+        } as ApiResponse<never> & { fields: Record<string, string[] | undefined> },
+        { status: 400 }
+      );
     }
+
+    await db.user.update({
+      where: { id: userId },
+      data: {
+        name: parsed.data.data.name,
+        image: parsed.data.data.image || null,
+      },
+    });
 
     return NextResponse.json({
       success: true,

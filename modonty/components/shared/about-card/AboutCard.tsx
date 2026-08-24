@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { ModontyMark } from "@/components/icons/modonty-mark";
-import { IconChevronRight, IconVerified } from "@/lib/icons";
+import { IconVerified } from "@/lib/icons";
 import { getPlatformCounts } from "@/lib/queries/get-platform-counts";
 import { Fact } from "./Fact";
 
@@ -22,25 +22,6 @@ import { Fact } from "./Fact";
  * The CTA changed too: «تعرّف على مدونتي» asked the reader to leave the page they came
  * for; «شوف الشركاء» is a step further into it.
  */
-
-/** The phone version stays a bar, not a card — see `AboutBar` below. */
-export function AboutBar() {
-  return (
-    <Link
-      href="/modonty"
-      className="flex min-h-12 items-center gap-2.5 rounded-lg bg-card px-3 py-2 ring-1 ring-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-    >
-      <ModontyMark className="size-6 shrink-0 text-link" aria-hidden />
-      <span className="min-w-0 flex-1">
-        <span className="block text-[13px] font-bold leading-tight text-link">مدونتي</span>
-        <span className="mt-0.5 block truncate text-[11px] text-muted-foreground">
-          كل مقال كتبه شريك موثَّق بسجلّه التجاري.
-        </span>
-      </span>
-      <IconChevronRight className="size-4 shrink-0 text-link rtl:rotate-180" aria-hidden />
-    </Link>
-  );
-}
 
 export async function AboutCard() {
   const { partners, articles, industries } = await getPlatformCounts();

@@ -70,23 +70,16 @@ const COPY_JS = `
 const CSS = `
 :root{--bg:#0f1013;--panel:#17181d;--card:#1d1e24;--line:#2c2d36;--fg:#f3f4f6;--mut:#9aa3b2;--dim:#6b7280;
 --amber:#f6ae31;--red:#ff6b7f;--green:#4ade80;--blue:#60a5fa;--violet:#a78bfa;--cyan:#22d3ee;--k:#f6ae31;--c:#60a5fa;}
-@media (prefers-color-scheme: light){:root{--bg:#f6f7fb;--panel:#fff;--card:#fff;--line:#e4e6ee;--fg:#141722;--mut:#5b6472;--dim:#8a93a3}}
+/* الوضع الفاتح كان يبدّل الأسطح فقط ويترك ألوان التطبيقات كما هي — وهي باستيل مصمَّم لخلفية
+   داكنة. النتيجة: رقم التبويب النشط بتباين ١٫٦٩–٢٫٥٤ على الأبيض (مقيس ٢٤ أغسطس)، أي غير مقروء.
+   فلكل لون نسخته الغامقة هنا، وكلّها فوق ٤٫٥:١ على الأبيض. */
+@media (prefers-color-scheme: light){:root{--bg:#f6f7fb;--panel:#fff;--card:#fff;--line:#e4e6ee;--fg:#141722;--mut:#5b6472;--dim:#8a93a3;
+--amber:#b45309;--red:#be123c;--green:#15803d;--blue:#1d4ed8;--violet:#6d28d9;--cyan:#0e7490;--k:#b45309;--c:#1d4ed8}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 Tajawal,system-ui,sans-serif}
 a{color:inherit}code{font:12px ui-monospace,monospace;background:var(--panel);padding:1px 5px;border-radius:4px;border:1px solid var(--line)}
 header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:12px 16px}
 .wrap{max-width:1120px;margin:0 auto}
 h1{font-size:18px;margin:0 0 8px}
-.stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--mut)}
-.stat b{color:var(--fg);font-size:15px;margin-inline-end:4px}
-/* مفتاح الألوان — أي لون يعني أي تطبيق */
-.legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;font-size:12px}
-.lg{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;color:var(--mut)}
-.lg::before{content:"";width:9px;height:9px;border-radius:3px}
-.lg-modonty::before{background:var(--violet)}.lg-admin::before{background:var(--blue)}
-.lg-console::before{background:var(--cyan)}.lg-shared::before{background:var(--green)}
-.lg-none::before{background:var(--dim)}
-.lg-running::before{background:var(--red)}.lg-running{color:var(--red);border-color:var(--red)}
 .tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .tools input{flex:1;min-width:220px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:0 12px;font:inherit}
 .chip{height:34px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--mut);padding:0 12px;font:inherit;font-size:13px;cursor:pointer}
@@ -97,12 +90,20 @@ h1{font-size:18px;margin:0 0 8px}
 .apptab:hover{background:var(--panel);color:var(--fg)}
 .apptab b{font-size:12px;font-weight:800;min-width:22px;padding:2px 6px;border-radius:999px;background:var(--line);color:var(--mut)}
 .apptab[aria-selected="true"]{color:var(--fg);border-bottom-color:currentColor;background:var(--panel)}
-.apptab[aria-selected="true"] b{background:currentColor;color:var(--bg)}
+/* كان: background:currentColor مع color:var(--bg) على نفس العنصر — وقيمة currentColor تُحسب من
+   لون العنصر النهائي، فصارت الخلفية بلون النصّ تماماً واختفى رقم التبويب النشط (خالد رآه دائرةً
+   فاضية، ٢٤ أغسطس). الآن: تظليل شفّاف من لون التبويب، والنصّ يبقى بلونه. */
+.apptab[aria-selected="true"] b{background:var(--bg);color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
 .apptab[data-app="modonty"][aria-selected="true"]{color:var(--violet)}
 .apptab[data-app="admin"][aria-selected="true"]{color:var(--blue)}
 .apptab[data-app="console"][aria-selected="true"]{color:var(--cyan)}
 .apptab[data-app="dataLayer"][aria-selected="true"]{color:var(--green)}
+.apptab[data-app="partner"][aria-selected="true"]{color:var(--amber)}
 .grp.hidden{display:none}
+/* بند «قبل الدمج» — مؤجَّل بقرار، لا متأخّر بإهمال. يبقى مرئياً لكنه يهدأ في الأسفل. */
+.card[data-last]{opacity:.72;border-inline-start:4px solid var(--dim)}
+.card[data-last]:hover{opacity:1}
+.tag.last-before-merge{background:transparent;color:var(--dim);border:1px dashed var(--dim);font-weight:700}
 /* الجاهز لوكيل — بند فحصتُه وأعرف حجمه، ولا يحتاج قراراً من خالد. الحافّة الخضراء تكفي لتمييزه من بعيد. */
 .card[data-agent]{border-inline-start:4px solid var(--green)}
 .tag.agent{background:var(--green);color:#04140c;font-weight:800}
@@ -171,13 +172,15 @@ function cardHTML(t) {
     t.ease === 3 ? `<span class="tag ease-3">🤔 يحتاج جلسة</span>` : "";
   const ask = t.who === "k" ? (t.ask ? `<div class="ask"><b>المطلوب منك:</b> ${esc(t.ask)}</div>` : `<div class="ask missing"><b>المطلوب منك:</b> لم يُصَغ بعد — افتح التفاصيل.</div>`) : "";
   const runningTag = t.running ? `<span class="tag running">⏳ جارٍ الآن</span>` : "";
+  // بند مؤجَّل عمداً إلى ما قبل الدمج — يُوسم كي لا يُقرأ تأخيرُه إهمالاً.
+  const lastTag = t.last ? `<span class="tag last-before-merge">🏁 قبل الدمج مع main</span>` : "";
   // شارة «جاهز لوكيل»: بند فُحص حجمه ولا يحتاج قراراً — الرقم هو ترتيب التنفيذ المقترح.
   const agentTag = t.agent
     ? `<span class="tag ${t.agentKind === "قياس" ? "agent-measure" : "agent"}">🤖 وكيل ${t.agent}${t.agentKind === "قياس" ? " · قياس" : ""}</span>`
     : "";
-  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.agent ? ` data-agent="${t.agent}"` : ""}${t.running ? ' data-running="1"' : ""}>
+  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.agent ? ` data-agent="${t.agent}"` : ""}${t.last ? " data-last=\"1\"" : ""}${t.area ? ` data-area="${esc(t.area)}"` : ""}${t.running ? ' data-running="1"' : ""}>
   <div class="hd"><span class="id">${esc(t.id)}</span><div class="t">${t.t}</div><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ${esc(t.id)}">⧉</button></div>
-  <div class="meta">${agentTag}${runningTag}${easeTag}<span class="tag tab-${esc(t.tab)}">${tabL}</span><span class="tag">${sevL}</span>${apps}<span class="tag">${esc(t.board)}</span>${t.date ? `<span>${esc(t.date)}</span>` : ""}</div>
+  <div class="meta">${lastTag}${agentTag}${runningTag}${easeTag}<span class="tag tab-${esc(t.tab)}">${tabL}</span><span class="tag">${sevL}</span>${apps}<span class="tag">${esc(t.board)}</span>${t.date ? `<span>${esc(t.date)}</span>` : ""}</div>
   <p class="sum">${esc(t.sum)}</p>
   ${ask}
   <details><summary>التفاصيل الكاملة</summary><div class="full">${t.d || ""}</div></details>
@@ -198,7 +201,13 @@ const sections = groups.map(g => {
   const sevRank = { critical: 0, high: 1, normal: 2, ok: 3, idea: 4 };
   // الأسهل أولاً: ⚡«قل ابدأ» ثم القرار السهل فالقصير فالجلسات؛ الشدّة تفصل داخل المستوى الواحد
   const easeRank = (t) => t.go ? 0 : (t.ease ?? 9);
-  items.sort((a, b) => easeRank(a) - easeRank(b) || (sevRank[a.sev] ?? 9) - (sevRank[b.sev] ?? 9));
+  // `last` ينزل تحت الكل مهما كانت شدّته: بنود «قبل الدمج مع main» لا تُعمل الآن، فوجودها في
+  // الأعلى يزاحم ما يُعمل اليوم (خالد، ٢٤ أغسطس: «move both to the bottom»).
+  items.sort((a, b) =>
+    (a.last ? 1 : 0) - (b.last ? 1 : 0) ||
+    easeRank(a) - easeRank(b) ||
+    (sevRank[a.sev] ?? 9) - (sevRank[b.sev] ?? 9)
+  );
   return { ...g, items };
 });
 const leftovers = open.filter(t => !seen.has(t.id));
@@ -211,19 +220,29 @@ const appsAll = ["modonty", "admin", "console", "dataLayer"];
 // خالد (٢٤ أغسطس): «رتّب الملف تبات — مدونتي تاب والأدمن تاب والكونسول تاب، أنا تايه».
 // السبب: ١٣٧ بنداً من أربعة تطبيقات في عمود واحد لا يُقرأ. التبويب يفصلها فصلاً حقيقياً.
 // الافتراضي «مدونتي» لأنها المرحلة الجارية — وتبويب «الكل» موجود كي لا يختفي شيء عن العين.
+// «صفحة الشريك» تبويب موضوع لا تبويب تطبيق (خالد، ٢٤ أغسطس). سببه أن شغلها متناثر: قرارات
+// تصميم وريفاكتور جوّال وباني موقع وتقييمات ومراجعات جوجل — كلّها تخصّ سطحاً واحداً يقرأه
+// الزائر، ولا يجمعها عمود «مدونتي» لأنه يجمع كل شيء. البطاقة تظهر في تبويبها وفي تبويب تطبيقها.
 const APP_TABS = [
   { k: "modonty", n: "مدونتي" },
+  { k: "partner", n: "صفحة الشريك" },
   { k: "admin", n: "الأدمن" },
   { k: "console", n: "الكونسول" },
   { k: "dataLayer", n: "المشترك والقاعدة" },
   { k: "__none", n: "بلا تطبيق" },
   { k: "__all", n: "الكل" },
 ];
+// حصريّ لا مزدوج (خالد، ٢٤ أغسطس: «still duplicate in modonty»): بطاقة صفحة الشريك تخرج من
+// تبويب تطبيقها. البطاقة التي تظهر في تبويبين تُعدّ مرّتين وتُقرأ كبندين — وهذا نقيض سبب التبويب.
 const inTab = (t, k) =>
-  k === "__all" ? true : k === "__none" ? !(t.app || []).length : (t.app || []).includes(k);
+  k === "__all" ? true
+  : k === "partner" ? t.area === "partner"
+  : t.area === "partner" ? false
+  : k === "__none" ? !(t.app || []).length
+  : (t.app || []).includes(k);
 const tabCount = (k) => open.filter(t => inTab(t, k)).length;
 const appTabsHTML = APP_TABS
-  .map(a => `<button class="apptab" role="tab" data-app="${a.k}" aria-selected="${a.k === "modonty"}">${a.n}<b>${tabCount(a.k)}</b></button>`)
+  .map(a => `<button class="apptab" role="tab" data-app="${a.k}" aria-selected="${a.k === "modonty"}" title="${tabCount(a.k)} بنداً مفتوحاً في ${a.n} — الرقم الكهرماني فوق يعدّ ما ينتظر قرارك منها وحدها">${a.n}<b>${tabCount(a.k)}</b></button>`)
   .join("");
 const boardHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>لوحة مدونتي — ${open.length} بنداً مفتوحاً</title>
@@ -231,8 +250,9 @@ const boardHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset=
 <style>${CSS}</style></head><body>
 <header class="top"><div class="wrap">
 <h1>لوحة الشغل — المفتوح فقط <span style="color:var(--dim);font-weight:500;font-size:13px">· تحديث البيانات في <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> · المنجز في <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a> · آخر بناء ٢٣ أغسطس ٢٠٢٦</span></h1>
-<div class="stats"><span class="stat"><b data-stat="decide">${kCount}</b>يحتاج قرارك</span><span class="stat"><b data-stat="now">${sections[1].items.length}</b>الجاري</span><span class="stat"><b data-stat="next">${sections[2].items.length}</b>التالي</span><span class="stat"><b data-stat="open">${sections[3].items.length}</b>مفتوح</span><span class="stat"><b data-stat="ref">${sections[4].items.length}</b>مراجع</span><span class="stat"><b>${dataOpen.length}</b><a href="DATA-REFACTOR.html" style="text-decoration:none">تحديث البيانات</a></span><span class="stat"><b>${done.length}</b>منجز (أرشيف)</span></div>
-<div class="legend"><span class="lg lg-modonty">مدونتي</span><span class="lg lg-admin">الأدمن</span><span class="lg lg-console">الكونسول</span><span class="lg lg-shared">المشترك والقاعدة</span><span class="lg lg-none">بلا تطبيق</span><span class="lg lg-running">جارٍ الآن</span></div>
+<!-- لا صفّ إحصاءات إطلاقاً (خالد، ٢٤ أغسطس: «only the counter for what remain, no حشو»).
+     كانت عشرون رقماً على الشاشة، ثم واحد بارز مع مطويّة — وكلّها ما زالت حشواً فوق ما يلزم.
+     أرقام التبويبات وحدها تقول ما بقي، وعناوين الأقسام تقول توزيعه. الباقي كان يشرح لا يفيد. -->
 <div class="apptabs" role="tablist" aria-label="التطبيقات">${appTabsHTML}</div>
 <div class="tools"><input id="q" type="search" placeholder="ابحث بالكلمة أو رقم البند…" aria-label="بحث">
 <button class="chip" data-sev="critical high" aria-pressed="false">الحرج والمهم فقط</button>
@@ -252,6 +272,9 @@ ${sections.filter(g => g.items.length).map(g => `<section class="grp" data-grp="
   try { const s = localStorage.getItem('taskboard-app'); if (s && tabs.some(t => t.dataset.app === s)) app = s; } catch {}
   const matchApp = (c) => {
     if (app === '__all') return true;
+    if (app === 'partner') return c.dataset.area === 'partner';
+    // بطاقة الشريك لا تظهر في تبويب تطبيقها — حصريّة كي لا تُعدّ مرّتين
+    if (c.dataset.area === 'partner') return false;
     const list = (c.dataset.apps || '').split(' ').filter(Boolean);
     return app === '__none' ? list.length === 0 : list.includes(app);
   };

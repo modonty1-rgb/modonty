@@ -5,13 +5,9 @@ import { LinkCard } from "@/components/shared/link-card/LinkCard";
 import { ModontyTrustMark } from "@/components/icons/modonty-trust-mark";
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { cn } from "@/lib/utils";
-import type { FeedPost } from "@/lib/types";
 
 interface LeftSidebarProps {
   className?: string;
-  /** Kept for the hidden ModontyCard (Khalid, 2026-08-16: hide, not delete). */
-  articles: FeedPost[];
-  brandLogoUrl: string | null;
   /** The session card, created outside the cached page and passed through untouched. */
   userCard: ReactNode;
 }
@@ -31,8 +27,9 @@ export function LeftSidebar({ className, userCard }: LeftSidebarProps) {
         <Suspense fallback={<div className="h-[190px] rounded-lg bg-card ring-1 ring-primary/20 skeleton-shimmer" aria-hidden />}>
           {userCard}
         </Suspense>
-        {/* Trust strip right under the account (Khalid, 2026-08-16); the full ClientsCard is hidden,
-            not deleted. */}
+        {/* Trust strip right under the account (Khalid, 2026-08-16). It replaced a full ClientsCard,
+            which was kept on disk "in case" until 24 Aug and then deleted — zero importers for
+            eight days, and a file nothing imports is not a spare part, it is a lie about the map. */}
         <LinkCard
           href="/clients"
           title="شركاء موثوقون"

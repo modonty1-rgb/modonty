@@ -9,7 +9,13 @@ import { getReelsFeedPage } from "@/lib/queries/get-reels-feed-page";
 import { getUserReelFlags } from "@/lib/queries/get-user-reel-flags";
 
 // Immersive feed: fixed full-viewport layer above the site chrome (header/footer).
-// Kept out of the index until the reels launch.
+//
+// ⚠️ FLIP `index` TO TRUE BEFORE MERGING `modonty-ui` INTO `main` — one line, board card 83c.
+//
+// It is noindex on purpose, not by oversight: an indexed feed with no published reels is an
+// empty page in Google's eyes, and a thin page indexed early is harder to rank later than one
+// indexed the day it has content. Khalid, 24 Aug 2026: keep it closed through the UI phase and
+// open it LAST, right before the final merge — by then PRODDATA has real reels behind it.
 export const metadata: Metadata = {
   title: "الريلز — مُدَوَّنَتِي",
   robots: { index: false, follow: false },

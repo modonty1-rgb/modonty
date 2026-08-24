@@ -18,13 +18,28 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   Configuration: "حدث خطأ غير متوقع أثناء الدخول. حاول مرة ثانية.",
 };
 
+// The post-login redirect target arrives in the query string, so a mailed
+// /users/login?callbackUrl=… link decides where a visitor lands the moment they
+// authenticate — a phisher points it at a look-alike domain and collects the
+// trust of a real sign-in. Only a same-origin path is allowed through:
+// "//evil.com" and "/\evil.com" start with a slash but browsers resolve them
+// protocol-relative to another host, and tab/CR/LF are stripped during URL
+// parsing, so "/<tab>/evil.com" would collapse into one of those after the check.
+function toSafeCallbackUrl(raw: string | undefined): string {
+  if (!raw) return "/";
+  const cleaned = raw.replace(/[\t\r\n]/g, "");
+  if (!cleaned.startsWith("/")) return "/";
+  if (cleaned.startsWith("//") || cleaned.startsWith("/\\")) return "/";
+  return cleaned;
+}
+
 export default async function LoginPage({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string; callbackUrl?: string }>;
 }) {
   const { error, callbackUrl: rawCallback } = await searchParams;
-  const callbackUrl = rawCallback?.startsWith("/") ? rawCallback : "/";
+  const callbackUrl = toSafeCallbackUrl(rawCallback);
 
   let initialError: string | undefined;
   if (error) {

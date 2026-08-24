@@ -290,7 +290,8 @@
    "date": "١٩ أغسطس ٢٠٢٦",
    "t": "أفاتار الشريك — وُحِّد في ١٦ موضعاً، وباقٍ مسح ثلاث صفحات",
    "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — جزئي:</b> Done: shared/components/partner-avatar/PartnerAvatar.tsx with 18 consumers. Remaining: sweep of /categories, /tags, /search + partner site, and the Media width/height audit.<br><b>الجذر (متحقَّق ١٩ أغسطس):</b> شعار الشريك كان يُبنى بيده في كل موضع — أربعة مقاسات (٣٢ · ٤٤ · ٤٨ · ٥٦) و<code>object-contain</code> هنا و<code>object-cover</code> هناك (يقصّ الشعار) وحشوات <code>p-1</code>/<code>p-1.5</code>/لا شيء، وثلاثة أُطُر مختلفة أسوأها <code>bg-background ring-2 ring-background</code>. و<code>--background</code> رمادي شبه أبيض، فقرص وحلقة بيضاء خلف كل شعار — وهذا «البياض» الذي رآه خالد في كل مكان.<br><b>وطبقة ثانية للبياض، مقيسة بعيّنة بكسل:</b> ملفّ شعار الشريك نفسه ٥٠٠×٥٠٠ وزواياه <code>rgba(255,255,255,255)</code> — أبيض مطبوع في الصورة. الدائرة تقصّه، وشبه المربّع (<code>rounded-[28%]</code>) يتركه ظاهراً. ولهذا صار الشكل دائرياً إجبارياً بلا خيار في المكوّن.<br><b>صار:</b> <code>shared/components/partner-avatar/PartnerAvatar.tsx</code> — ثلاثة مقاسات فقط (<code>small</code> ٣٢ · <code>standard</code> ٤٨ · <code>big</code> ٨٠)، دائري، بلا تعبئة، بلا حلقة، بلا حشو، <code>object-contain</code> دائماً. <b>١٦ موضعاً</b> تجري منه الآن (١٣ في مدونتي + ٣ في موقع الشريك).<br><b>استُثني عمداً:</b> <code>ModontyProfileHero.tsx</code> — شعار مدونتي لا شعار شريك.<br><b>الدليل الحيّ (مسح ثلاث صفحات ١٩ أغسطس):</b> <code>/clients</code> = ١٢ نظيف · ٠ مشكلة · صفحة الشريك = ٣ · ٠ · صفحة المقال = ٠ مشكلة (الاثنان اللذان ظهرا في المسح هما <code>modonty-avatar.webp</code> بحلقة زرقاء، لا شعار شريك).<br><b>الباقي:</b> مسح <code>/categories</code> و<code>/tags</code> و<code>/search</code> وموقع الشريك بنفس الفحص.<br><b>وبند بيانات منفصل ظهر أثناء العمل:</b> أبعاد الوسائط في القاعدة قد تكون خاطئة — غلاف هذا الشريك ملفّه <code>2400×400</code> والقاعدة تقول <code>2400×800</code>. أي حساب يعتمد على <code>Media.height</code> يعطي نتيجة خاطئة؛ يحتاج فحص صيانة يقارن الأبعاد المخزَّنة بالملفّات الحقيقية.",
-   "ref": "بند AVATAR1"
+   "ref": "بند AVATAR1",
+   "area": "partner"
   },
   {
    "id": "CTA-COLOR",
@@ -464,7 +465,8 @@
    "t": "ريفاكتور الجوّال لصفحة الشريك — مرحلة، لا بند",
    "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — جزئي:</b> Done: partner-route mobile fixes in bfd1e68 (overflow 135→0 via --partner-footer-cols, touch targets 20→0, platform-bar/client-whatsapp-fab). Remaining: the inventory+study step and the prioritized item list never started.<br><b>لماذا الآن:</b> صفحة الشريك هي وجهة <b>كل ضغطة «احجز الآن»</b> من كل مقال بعد ريفاكتور اليوم (البار السفلي المشترك يوجّه إليها) — فأي خلل فيها يبتلع التحويل الذي حسّنّاه في المقال.<br><b>الحجم — مقيس ٢٢ أغسطس على <code>modonty/app/(partner)/clients/[slug]</code>:</b> ١٣ صفحة فرعية · ١٠٨ ملفات · ٧١٦٢ سطراً · ٣٤ مكوّن عميل. للمقارنة، صفحة المقال التي استغرقت جلسة كاملة: ٦٢ ملفاً · ٦٢٥٩ سطراً · ٢١ مكوّن عميل.<br><b>ما يتكرّر فيها من دروس المقال:</b> الكتل المكرّرة · نسبة المحتوى إلى الكروم (معيار NN/g) · أهداف اللمس ٤٤ · نمط طيّ واحد · القشرة الستاتيكية بعزل <code>auth()</code> داخل جزر <code>Suspense</code> · التحميل الكسول لمكوّنات العميل · النصوص إلى ملف الرسائل.<br><b>الخطوة الأولى:</b> جرد ودراسة قبل أي تعديل — كما بدأنا صفحة المقال — ثم بنود مرتّبة بالأولوية، بند واحد في كل تاسك.",
    "ref": "بند PARTNERMOB",
-   "ease": 2
+   "ease": 2,
+   "area": "partner"
   },
   {
    "id": "ARTCTA",
@@ -479,7 +481,8 @@
    "t": "CTA خاص بالمقال نفسه — يودّي على المنتج لا على الصفحة العامة",
    "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Schema unchanged — Article has only `ctaClicks` (schema.prisma:221); ctaMode/ctaLabel/ctaUrl still on Client (617-619). Card itself blocks on Khalid: 2 new fields + who fills + fallback.<br><b>طلب خالد (٢١ أغسطس) أثناء شغل شريط الجوّال السفلي:</b> «لازم يكون في سي تي إي خاص بالمقال. لو الارتكل هذا عن منتج، المفروض يوديه على المنتج على صفحة العميل الرئيسية اللي في موقعه».<br><b>الوضع الحالي — متحقَّق بقراءة السكيما (٢١ أغسطس):</b> الـCTA يعيش على <b>العميل</b> لا على المقال — <code>shared/prisma/schema/schema.prisma:617-619</code> يحمل <code>ctaMode</code> (NONE·FORM·LINK) و<code>ctaLabel</code> و<code>ctaUrl</code> على موديل <code>Client</code>. وموديل <code>Article</code> فيه <code>ctaClicks CTAClick[]</code> فقط (سطر 162) — أي يسجّل الضغطات ولا يملك وجهة. فكل مقالات الشريك الواحد تعرض نفس الزرّ ونفس الوجهة.<br><b>ما يحتاج قراراً قبل أي كود:</b> حقلان جديدان على <code>Article</code> (وجهة + نصّ الزرّ) · مَن يعبّيهما — الكونسول أم الأدمن · وسلوك الرجوع حين يكونان فاضيين (يرث وجهة العميل الحالية).<br><b>لماذا يهمّ:</b> قارئ مقال عن منتج بعينه يُرسَل الآن إلى صفحة عامة فيبحث عن المنتج بنفسه — والخطوة الزائدة تأكل التحويل الذي دفعنا مكانه من الشاشة.",
    "ref": "بند ARTCTA",
-   "ease": 3
+   "ease": 3,
+   "area": "partner"
   },
   {
    "id": "MAILREV",
@@ -534,12 +537,12 @@
    "app": [
     "modonty"
    ],
-   "tab": "now",
-   "sev": "critical",
+   "tab": "done",
+   "sev": "normal",
    "who": "c",
    "date": "١٩ أغسطس ٢٠٢٦",
-   "t": "الجوّال ٣٩٠×٨٤٤ — صفحتا المقالات لم تُقاسا إطلاقاً",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — جزئي:</b> Done: /articles closed with 390 measurements (e8d07e3) and article-page 390 sweep in 5d25bef. Remaining: the 7 diagnosed article-page cards still await mockup+approval.<br><b>متحقَّق ١٩ أغسطس (مصدره <code>modonty/app/(site)/articles/TASK.md:8</code> + قياسات هذه الجلسة):</b> <code>/articles</code> و<code>/articles/[slug]</code> بُنيتا وروجعتا على الديسكتوب وحده. كل قياسات اليوم على <code>1280×800</code> و<code>1413×601</code> — <b>صفر قياس جوّال</b>.<br><b>ما يحتاج قياساً على الأرشيف:</b> شريط المجالات يمرّر أفقياً — هل يبان أنه يمرّر بإصبع؟ · أزرار الوقت الثلاثة مداها مخفيّ تحت <code>sm:</code> · <b>صفوف الريل ٣٦/٣٢ بكسل وهذا مقياس مؤشّر لا لمس — اللمس يحتاج ٤٤</b> · مكان البطاقات الثلاث لمّا ينزل الريل · الكرت المصغّر تحت ٣٩٠.<br><b>وعلى صفحة المقال:</b> العمودان صارا يتبادلان الجهة على الديسكتوب — كيف يترتّبان مركومَين؟ · الشريط السفلي والشريط العلوي اللاصق معاً · صندوق «باختصار» فوق الصورة · الفهرس مطويّ على الجوّال (صحيح) ومفتوح على الديسكتوب.<br><b>هذا أكبر شغل مفتوح على المسار.</b>",
+   "t": "صفحتا المقالات على الجوّال — قِيستا، أُصلح عطلان، والأشرطة تبقى بقرار خالد",
+   "d": "<b>قياس ٢٤ أغسطس ٢٠٢٦ على ٣٩٠×٨٤٤ — الصفحتان مسحتا بالكامل، وما وُجد أُصلح.</b><br><br><b>‏/articles — نظيفة:</b> تجاوز أفقي <b>٠</b> · أشرطة تمرير أفقية <b>٠</b> · أهداف تحت ٤٤ <b>٠ حقيقية</b>. المسح الأوّل أعطى ٢٠ هدفاً «تحت الحدّ» وكلّها زرّ «احفظ المقال» ٣٢×٣٢ — <b>إيجابيات كاذبة</b>: الزرّ يحمل <code>before:-inset-1.5</code>، و<code>elementFromPoint</code> عند ركن ٤٤×٤٤ يرجّع الزرّ نفسه. الهدف الفعليّ ٤٤×٤٤.<br><br><b>‏/articles/[slug] — عُطلان حقيقيان، أُصلحا:</b> رابطا سطور الإسناد في ذيل المقال (اسم الشريك والرخصة) كانا <b>١٧ بكسل ارتفاعاً</b> — ثلث بصمة إصبع.<br><b>محاولة أولى فشلت ويُسجَّل سببها:</b> جرّبت رقعة <code>after:</code> غير مرئية (نمط شارة الأسئلة في <code>ArticleHeader</code>) فلم تعمل — الأب <code>&lt;dd&gt;</code> يحمل <code>truncate</code> أي <code>overflow:hidden</code>، فيقصّ أي رقعة أطول من السطر. الحلّ الذي يصمد: تكبير الرابط نفسه بـ<code>max-lg:flex max-lg:min-h-11 max-lg:items-center</code> — نفس النمط المستعمل في هذا الملف أصلاً.<br><b>الدليل الخام — قبل وبعد، وبوّابة الديسكتوب:</b><br><code>٣٩٠ قبل: الشريك 171×17 · الرخصة 96×17 · الجدول 143</code><br><code>٣٩٠ بعد: الشريك 171×44 · الرخصة 96×44 · الجدول 199</code><br><code>١٢٨٠ بعد: الشريك 171×17 · الرخصة 96×17 · الجدول 143 — مطابق لما قبل التعديل بالضبط</code><br><br><b>✅ قرار الأشرطة أُغلق (خالد، ٢٤ أغسطس): «تبقى كما هي».</b><br><b>ما عُرض عليه مقيساً:</b> على صفحة المقال ٣٩٠×٨٤٤ — هيدر <b>٥٦</b> + شريط ألسنة الأقسام <b>٧٩</b> + شريط سفلي <b>٦٥</b> = <b>٢٠٠ من ٨٤٤ (٢٤٪)</b>، فالقارئ يرى ٦٤٤ بكسلاً في كل شاشة. اقتُرح إخفاء العلوي مع النزول وإرجاعه مع الطلوع.<br><b>ونطاق الأمر اتّضح بالقياس قبل القرار:</b> الشريطان العلويان ليسا خاصّين بصفحة المقال — هما في كل الصفحات: <code>/ 123 · /articles 135 · /clients 135 · /trending 123 · /audio 135</code>. صفحة المقال أثقلها فقط لأن الشريط السفلي (٦٥) ينضاف إليها.<br><b>القرار: تبقى.</b> فلا يُعاد فتح هذا البند إلا بأمره.<br><br><b>ملاحظة نطاق:</b> «٧ بطاقات صفحة المقال تنتظر موكباً وموافقة» — تلك بنود تصميم منفصلة، ليست جزءاً من هذا القياس.",
    "ref": "بند MOB1"
   },
   {
@@ -2113,12 +2116,12 @@
     "modonty",
     "admin"
    ],
-   "tab": "open",
+   "tab": "done",
    "sev": "high",
    "who": "c",
    "date": "٢٢ أغسطس ٢٠٢٦",
-   "t": "١٥ ثغرة أمنية باقية — تسع متوسطة وستّ بسيطة، كلٌّ بملفّها",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> All checked ones still unfixed: no headers()/CSP in modonty/next.config.ts; api/revalidate/article/route.ts still accepts any logged-in session; api/news/subscribe/route.ts has no rate limit; api/track/cta-click/route.ts has no auth.<br><b>الحرجان أُصلحا وتحقّقا حيّاً (٢٠ أغسطس مساءً):</b> بريد العضو صار يظهر لصاحبه وحده · كلمة المرور الحالية صارت إلزامية بـZod. <b>الباقي ١٥:</b><br><br><b>متوسط (٩):</b><br>• تعديل أي صفّ تحليلات بلا حساب وبلا كوكي — <code>api/analytics/[id]/route.ts:26</code><br>• تسجيل الحساب بلا أي تحقّق على السيرفر — <code>register-actions.ts</code><br>• حقن HTML في قناة تيليجرام الإدارية عبر اسم التسجيل — <code>register-actions.ts</code><br>• إعادة تعيين كلمة المرور لا تُبطل الجلسات القائمة — <code>reset-password-action.ts</code><br>• أي مستخدم مسجَّل يفرّغ كاش أي مقال — <code>api/revalidate/article/route.ts</code><br>• الاشتراك بالنشرة يرسل بريداً لأي عنوان بلا تحقّق ولا حدّ — <code>api/news/subscribe/route.ts</code><br>• نقطة تتبّع النقر تفتح تيليجرام أي شريك لأي شخص — <code>api/track/cta-click/route.ts</code><br>• لا <code>Content-Security-Policy</code> على أي صفحة — <code>next.config.ts</code><br>• إعادة توجيه مفتوحة بعد الدخول عبر <code>callbackUrl</code> — <code>users/login/page.tsx</code><br><br><b>بسيط (٦):</b> رأس <code>X-DNS-Prefetch-Control</code> غائب (<code>next.config.ts</code>) · نموذج التسجيل يكشف أي بريد له حساب · حدّ نموذج التواصل مبنيّ على ترويسة يرسلها الزائر (<code>contact/api/route.ts</code>) · رفع الأفاتار يثق بنوع الملف المعلَن (<code>users/profile/api/avatar/route.ts</code>) · تعديل الملف الشخصي بلا تحقّق Zod (<code>settings/api/[id]/route.ts</code>).<br><br><b>الترتيب الموصى به في المصدر:</b> التسع المتوسطة أوّلاً (≈ يوم عمل) — «ما ينفع جوّال فوق ثغرات».",
+   "t": "الثغرات الأمنية الخمس عشرة — أُغلقت أربع عشرة، وواحدة تحتاج سكيما",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦.</b> ثلاثة وكلاء على عناقيد لا تتقاطع، والرؤوس بيدي، والتحقّق كلّه منّي.<br><br><b>🔒 المتوسطة التسع:</b><br>• <b>تفريغ كاش أي مقال بأي حساب</b> — <code>api/revalidate/article/route.ts</code> كان يفحص وجود جلسة فقط، والتسجيل في مدونتي مفتوح للعامّة. صار يفحص الدور: <code>session?.user?.role !== UserRole.ADMIN</code>. <b>مهاجَم حيّاً: 401.</b><br>• <b>تعديل أي صفّ تحليلات بلا كوكي</b> — الحارس كان موجوداً لكنه <b>يعطّل نفسه</b>: <code>if (sessionId && existing.sessionId && …)</code> يعني «بلا كوكي = بلا فحص». صار <code>if (!sessionId || sessionId !== existing.sessionId)</code> — يفشل مغلقاً.<br>• <b>نقطة تتبّع النقر تفتح تيليجرام أي شريك</b> — <code>clientId</code> كان يُؤخذ من الجسم حرفياً. الآن: Zod بنمط ObjectId + <b>شرط ملكية</b> (الشريك لازم يملك المقال المذكور) + سقف ٢٠ رسالة/ساعة لكل شريك. <b>مهاجَم بمعرّف مزوَّر: 400.</b><br>• <b>حقن HTML في قناة الأدمن عبر اسم التسجيل</b> — الاسم يُحقن في رسالة <code>parse_mode: HTML</code>. استُعمل <code>escapeTgHtml</code> الموجود في <code>shared/lib/telegram/client.ts:156</code> لا واحد جديد.<br>• <b>التسجيل بلا تحقّق سيرفر</b> — التوقيع صار <code>data: unknown</code> ثم <code>registerSchema.safeParse</code>؛ المترجم نفسه يمنع تسرّب حقل غير مُتحقَّق.<br>• <b>النشرة ترسل لأي عنوان بلا حدّ</b> — Zod للبريد + محدِّد معدّل جديد (٥/ساعة لكل IP). <b>مهاجَم ببريد غير صالح: 400.</b><br>• <b>حدّ نموذج التواصل على ترويسة يرسلها الزائر</b> — <b>الادّعاء غير دقيق</b>: فيرسل يستبدل <code>x-forwarded-for</code> فلا تُزوَّر اليوم. العطل الحقيقي أنه يقرأ الترويسة كاملةً لا عنواناً واحداً، فأي بروكسي أمامه يُبطل السقف. صار يقرأ آخر مُدخَل (ما تكتبه بنيتنا) لا أوّله.<br>• <b>إعادة توجيه مفتوحة بعد الدخول</b> — <b>الادّعاء ناقص</b>: حارس كان موجوداً (<code>startsWith(\"/\")</code>) لكنه يمرّر <code>//evil.com</code>. الجديد يرفض الشرطتين والشرطة المعكوسة ويزيل التبويب والسطر الجديد أوّلاً. <b>اختُبر بثلاث عشرة حمولة هجوم: صفر هروب.</b><br>• <b>لا CSP ولا رؤوس</b> — انظر الرؤوس أدناه.<br><br><b>🔒 البسيطة:</b> <code>X-DNS-Prefetch-Control</code> أُضيف · رفع الأفاتار صار يقرأ <b>بصمة البايتات</b> (JPEG/PNG/WebP) لا <code>file.type</code> الذي يختاره الرافع، وامتداد الملف ونوعه على CDN صارا من المكتشَف · تعديل الملف الشخصي صار بـZod مع <code>https</code> إلزامي للصورة (<code>.url()</code> وحدها تقبل <code>javascript:</code>).<br><br><b>⚠️ واحدة لم تُصلَح — بصدق:</b> <b>إعادة تعيين كلمة المرور لا تُبطل الجلسات القائمة.</b> الجلسات في مدونتي <b>JWT بلا حالة</b> (<code>lib/auth.ts:21</code>). جدول <code>Session</code> موجود لأن <code>PrismaAdapter</code> يطلبه، لكن <b>لا يُكتب فيه شيء</b> تحت هذه الاستراتيجية — فسطر <code>db.session.deleteMany</code> كان سيبدو إصلاحاً ويمرّ في المراجعة <b>ويحذف صفراً</b>. لم يُكتب.<br><b>ما يلزم فعلاً (سكيما — قرارك):</b> ① حقل <code>sessionsValidAfter DateTime?</code> على <code>User</code> + تعبئة ② يُضبط عند إعادة التعيين ③ في <code>auth.config.ts</code> يُرفض التوكن الأقدم منه — مع ترتيبه ليفشل مغلقاً لأن الفرع الحالي يبتلع أخطاء القاعدة.<br><br><b>🛡️ الرؤوس — ثمانية تصل فعلاً:</b> <b>تصحيح:</b> «لا <code>headers()</code>» خاطئ — كانت موجودة بستّة. أُضيف <code>X-DNS-Prefetch-Control</code> و<code>Content-Security-Policy-Report-Only</code>.<br><b>لماذا تبليغ لا فرض:</b> سياسة مكتوبة من قراءة الكود تكسر الموقع صامتاً — <b>وهذا ما كاد يحصل</b>: أوّل تحميل لـ<code>/audio</code> أعطى <code>Loading media from cdn.islamic.network violates media-src</code>، وجردي أعطى <code>mp3quran.net</code> وحدها. <b>لو فُرضت لسكت القرآن في الإنتاج.</b><br><b>الدليل:</b> ثمانية رؤوس من <code>curl -D -</code> · مسح خمس صفحات = <b>صفر انتهاك</b> · سبع صفحات تُرسم <code>200</code> بعد كل التعديلات.<br><b>للفرض لاحقاً:</b> مراقبة <code>test.modonty.com</code> ثم إعادة تسمية الرأس. و<code>unsafe-inline</code> ضرورة الآن (١٣٧ سكربت مضمَّن في الصفحة) — إزالتها تحتاج nonce، تاسك مستقلّة.<br><br><b>لم يُشغَّل <code>tsc</code>:</b> البوّابة تمنعه بلا إذنك. يلزم قبل الدفع.",
    "ref": "٢٠ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"
   },
   {
@@ -2158,14 +2161,13 @@
    "app": [
     "modonty"
    ],
-   "tab": "next",
+   "tab": "done",
    "sev": "normal",
-   "who": "k",
+   "who": "c",
    "date": "٢٢ أغسطس ٢٠٢٦",
-   "t": "دعم «تباين عالٍ» في النظام — بند واحد بقي من ثلاثة",
-   "d": "<b>أُعيد تحديد نطاقها ٢٤ أغسطس ٢٠٢٦ بعد فحص البنود الثلاثة — اثنان سقطا:</b><br><b>① «قلّل الحركة» — ✅ سقط، أُنجز:</b> البطاقة كُتبت والدعم في <b>٣ ملفات</b>. القياس اليوم: <code>motion-safe:</code> أو <code>prefers-reduced-motion</code> في <b>٢٨ ملفاً</b>. لم يعد نقصاً.<br><b>③ «ملف API قديم للمحادثة» — ❌ سقط، الادّعاء خاطئ:</b> <code>modo-chat/api/conversation/route.ts</code> <b>ليس ميتاً</b> — <code>ChatList.tsx:173-174</code> يناديه فعلاً (<code>/modo-chat/api/conversation?id=…</code>)، وهو ما يجعل «حدِّث الصفحة وأكمل المحادثة» يشتغل. <b>حذفه يكسر استئناف المحادثة.</b><br><b>② «الملف ٨٤٥ سطراً» — نُقل:</b> <code>articles/[slug]/page.tsx</code> اليوم <b>٨٩٩ سطراً</b>، وله بطاقته الخاصّة <code>SLUG1</code> (جارية الآن). لا يُعالَج مرّتين.<br><br><b>الباقي فعلاً — بند واحد:</b> <code>prefers-contrast</code> غير مستعمل في المستودع كلّه (<b>٠ نتيجة</b>). المتصفّح يبلّغنا أن المستخدم طلب تبايناً عالياً من نظامه، ونحن لا نستجيب.<br><b>لماذا صار بيدك:</b> هذا ليس إصلاحاً ميكانيكياً — يحتاج قراراً: <b>ماذا يتغيّر</b> في وضع التباين العالي؟ (حدود أوضح · إلغاء الشفافيات · تقوية النصّ الثانوي · إظهار حلقات التركيز دائماً). بلا هذا القرار سيخمّن أي منفّذ.",
-   "ref": "٢٠ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس",
-   "ease": 1
+   "t": "الموقع صار يستجيب لطلب «تباين عالٍ» من نظام المستخدم",
+   "d": "<b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بقياس حيّ مع محاكاة الإعداد في المتصفّح.</b><br><b>المشكلة:</b> ويندوز («سمات التباين») والآيفون («زيادة التباين») يبلّغان الموقع أن المستخدم طلب تبايناً أعلى، عبر <code>prefers-contrast</code>. مدونتي كانت <b>تتجاهله كلّياً — صفر استعمال في المستودع</b>. فمن قال لنظامه صراحةً «لا أرى الواجهات الباهتة» كان يستقبل نفس الحدود الشاحبة والنصوص الرمادية.<br><b>التوثيق الرسمي (Tailwind ٣٫٤ — <code>hover-focus-and-other-states</code>):</b> «The prefers-contrast media query detects if a user has requested more or less contrast in their system settings» ومعه المتغيّران <code>contrast-more</code> و<code>contrast-less</code>.<br><b>ما اخترته ولماذا:</b> على مستوى <b>الرموز</b> في <code>modonty/app/globals.css</code>، لا بأصناف <code>contrast-more:</code> على العناصر. الرموز تغذّي كل حدّ وحقل وسطر خافت في التطبيق، فكتلة واحدة تغطّي أسطحاً كنّا سنضطر لتذكّرها واحداً واحداً — ولا يمكن أن تتفارق لاحقاً. الكتلة <b>مسطّحة لا متداخلة</b>: القاعدة المتداخلة تُسقَط بصمت في هذا البناء (نفس سبب كتلة <code>prefers-reduced-transparency</code> فوقها).<br><br><b>الدليل الخام — مقيس بمحاكاة <code>prefers-contrast: more</code> عبر CDP:</b><br><b>الفاتح:</b> <code>--border 0 0% 85.88% → 0 0% 35.69%</code> · حدّ البطاقة <code>rgb(219,219,219) → rgb(95,95,95)</code> · النصّ الخافت <code>rgb(91,91,91) → rgb(51,51,51)</code> والتباين <b>٦٫١١:١ → ١١٫٣٧:١</b>.<br><b>الداكن:</b> <code>--border 245 8% 20% → 245 8% 45%</code> · <code>--muted-foreground 215 20.2% 65.1% → 215 20% 85%</code>.<br><b>حلقة التركيز:</b> عند التفعيل صارت <code>2px solid rgb(48,48,255)</code> على كل <code>:focus</code> لا على <code>:focus-visible</code> وحده — لأن مَن طلب التباين يخبرنا أنه يفقد موضعه. <b>Outline فقط</b> فلا تُزحزح تخطيطاً.<br><br><b>البندان الآخران في البطاقة الأصلية سقطا بالفحص:</b> «قلّل الحركة» كان مطبَّقاً في <b>٢٨ ملفاً</b> لا ٣؛ و«ملف API ميت للمحادثة» ادّعاءٌ خاطئ — <code>ChatList.tsx:173</code> يناديه وحذفه يكسر استئناف المحادثة. وبند «الملف ٨٤٥ سطراً» له بطاقته <code>SLUG1</code>.",
+   "ref": "٢٠ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"
   },
   {
    "id": "QA7",
@@ -2358,7 +2360,8 @@
    "t": "صفحة الشريك الجديدة — سبعة قرارات تنتظرك قبل أي كود",
    "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Zero code by design; seven decisions await Khalid.<br><b>الحالة:</b> الفكرة والموكب جاهزان · <b>صفر كود</b> · لا يبدأ التنفيذ إلا باعتماد صريح.<br><br><b>كانتا في:</b> <code>فكرة-صفحة-الشريك.html</code> <span style='opacity:.6'>(حُذف بعد النقل — محتواه هنا)</span> (الفكرة والقرارات) · <code>موكب-صفحة-الشريك.html</code> <span style='opacity:.6'>(حُذف بعد النقل — محتواه هنا)</span> (موكب v4 — د. علاء الدين بدوي).<br><br><b>الفكرة في سطر:</b> واجهة محلّ بثلاثة أعمدة (نظام <code>/modonty</code>) بدل التمريرة الطويلة، مع قوالب لكل شريك ونطاق فرعي باسمه.<br><br><b>القرارات السبعة — كلٌّ ومعه توصيتي:</b><br><b>١·</b> الشكل: ثلاثة أعمدة وحذف التمريرة الطويلة؟ <i>توصيتي: نعم — العمق موجود في الصفحات الفرعية أصلاً.</i><br><b>٢·</b> أوّل شاشة: أيّ زرّين؟ <i>توصيتي: واتساب + احجز موعداً (الموقع الخارجي زرّ ثانوي).</i><br><b>٣·</b> شريط الحقائق فيه التقييم — ونظام التقييم لم يُبنَ بعد (بند <code>PREV</code>). <i>توصيتي: نُبقيه مكاناً ويظهر عند أوّل رأي.</i><br><b>٤·</b> القوالب: قالبان أوّل مرة (المتجر · المكتب) والثالث لاحقاً كميزة باقة؟<br><b>٥·</b> اللون: من هوية الشريك أم لون مدونتي للجميع؟ <i>توصيتي: لون واحد من هويته بشرط التباين.</i><br><b>٦·</b> النطاق الفرعي: مرآة بـcanonical على المسار (أ) أم مستقلّ (ب)؟ ومَن يحقّ له؟ <i>توصيتي: أ.</i><br><b>٧·</b> الترتيب: تبدأ صفحة الشريك قبل <code>/trust</code> و<code>/about</code>؟ <i>توصيتي: نعم — أعلى صفحة قيمة للشريك الذي يدفع.</i>",
    "ref": "١٧ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس",
-   "ease": 3
+   "ease": 3,
+   "area": "partner"
   },
   {
    "id": "PARTNERSITE",
@@ -2373,7 +2376,8 @@
    "date": "٢٢ أغسطس ٢٠٢٦",
    "t": "بانِي موقع الشريك — المتبقّي بعد ما شُحن الأساس",
    "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> Base shipped (console my-site + 5 headers, 4 footers in shared/components/partner-site/free/). None of 3ب/3ج/4/6 done — no token/draft preview under modonty/app/(partner)/clients/[slug].<br><b>🔴 الوثيقة تخالف الكود — الأهمّ في البطاقة:</b> <code>باني-موقع-الشريك.html</code> <span style='opacity:.6'>(حُذف بعد النقل — محتواه هنا)</span> تقترح جدول <code>PageTemplate</code> وحقلَي <code>templateId</code>/<code>themeSettings</code>. <b>الذي شُحن مختلف:</b> نموذج <code>ClientSite</code> (<code>shared/prisma/schema/schema.prisma:739-753</code>) فيه <code>headerTemplate</code> · <code>footerTemplate</code> · <code>primaryColor</code> · <code>hiddenSections</code> · <code>subdomain</code>. <b>صفر أثر لـ<code>PageTemplate</code> أو <code>templateId</code> في السكيما</b> (مقيس بالبحث). فالوثيقة مرجع تاريخي للفكرة، لا مواصفة تُنفَّذ حرفياً.<br><br><b>المشحون فعلاً على <code>modonty-ui</code> (مقيس):</b> <code>console/app/(dashboard)/dashboard/my-site/</code> (page · actions · components · helpers) · <code>shared/lib/partner-site/</code> · <b>٥ قوالب هيدر</b> (classic · centered · pill · transparent · utility) و<b>٤ قوالب فوتر</b> (columns · brand · centered · simple) في <code>shared/components/partner-site/free/</code>.<br><br><b>المتبقّي من خطة الوثيقة:</b><br><b>٣ب·</b> نقل الغلاف والشعار وزرّ الطلب إلى يد الشريك.<br><b>٣ج·</b> جاهزية الموقع بلغة نتيجة + توجيه الوصف + التسميات.<br><b>٤·</b> المعاينة بالتوكن (draft) على مدونتي — «المعاينة = الموقع بعد الحفظ حرفياً».<br><b>٦·</b> مسار القالب البريميوم (يحتاج قرار: جدول كتالوج ولّا نكمّل بمنطق الهيدر/الفوتر الحالي).<br><br><b>النطاق الفرعي:</b> بند <code>SUBDOM</code> منفصل.",
-   "ref": "١٧ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس"
+   "ref": "١٧ أغسطس ٢٠٢٦ — نُقل للّوحة ٢٢ أغسطس",
+   "area": "partner"
   },
   {
    "id": "PREV",
@@ -2390,7 +2394,8 @@
    "t": "⏸ نظام الثقة والتقييمات — «هدية من مدونتي» + تقييمات الزوّار للشركاء (بعد الريفاكتور)",
    "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Seven decisions plus roadmap await Khalid; console-side review approval (client-review-actions.ts) not yet moved to admin.<br><b>الحالة:</b> الرؤية والفلو والشاشات متّفق عليها · <b>صفر كود</b> · مؤجَّل بقرار خالد (١٧ أغسطس): «نخلص أوّل حاجة الريفاكتور العام لمدونتي، بعدها نرجع للمزايا هذي».<br><br><b>الوثيقة الواحدة — كل ما يخصّ الفكرة:</b> <code>فكرة-الثقة-والتقييمات.html</code> <span style='opacity:.6'>(حُذف بعد النقل — محتواه هنا)</span> — المقدّمة تشرح الفكرة كاملة، النوعان جنباً لجنب، نصوص جوجل، المقترحات، شاشات «هدية من مدونتي» الثلاث والنموذج (٤ب/٤ج)، المحرّك الواحد، خارطة الطريق A→E، والقرارات السبعة.<br><br><b>الفكرة في سطرين:</b> نوعان من التقييم — الشريك يقيّم مدونتي (ثقة للمبيعات؛ بلا نجوم جوجل لأنها تقييم الكيان لنفسه) · الزائر يقيّم الشريك (نجوم جوجل؛ <b>مبنيّ بالكود من قبل</b> — <code>ClientReview</code> <code>schema.prisma:1942</code> — لكنه فاضٍ: صفر معتمد/٣٠ شريكاً). محرّك واحد «هدية من مدونتي»: هدية (شهر · مقال · أخرى) + مطلوب مقابلها (تقييم · فيديو · اجمع تقييمات عملائك · بلا مقابل) + اختيار الشركاء من الأدمن → البطاقة للمدعوّين فقط → اعتماد عندنا → منح → الأصول (مدونتي · بني/سوشيال · صفحة الشريك).<br><br><b>اكتشاف سيو يحسم أوّل خطوة:</b> الشريك يعتمد تقييماته عن نفسه من الكونسول (<code>console/.../client-reviews/actions/client-review-actions.ts:51</code>) — ونصّ جوجل (Review snippet، جُلب ١٧ أغسطس): «If the entity that's being reviewed controls the reviews about itself … ineligible for star review feature». <b>الخطوة A:</b> نقل الاعتماد إلى الأدمن قبل أي جمع.<br><br><b>القرارات السبعة التي تنتظرك — كلٌّ ومعه توصيتي:</b><br><b>١·</b> نقل اعتماد تقييمات الزوّار من الكونسول إلى الأدمن (الشريك يردّ ويبلّغ فقط). <i>توصيتي: نعم</i><br><b>٢·</b> الترتيب A→B→C→D→E (تقييمات جوجل أوّلاً) أم الهدية أوّلاً؟ <i>توصيتي: A أوّلاً</i><br><b>٣·</b> «اجمع تقييمات عملائك» مطلباً ثالثاً في الهدية. <i>توصيتي: نعم</i><br><b>٤·</b> سطر الإفصاح تحت تقييمات الشركاء لمدونتي. <i>توصيتي: نعم، صغيراً</i><br><b>٥·</b> تقييم الشريك لمدونتي يُعرض شفّافاً (كل معتمد حتى المنخفض؛ الرفض للإساءة فقط). <i>توصيتي: شفّاف</i><br><b>٦·</b> مكان بطاقة الهدية في الكونسول: رئيسية <code>/dashboard</code> + سجلّ في الإعدادات. <i>توصيتي: نعم</i><br><b>٧·</b> تنبيهات: تيليجرام للأدمن على كل جديد + إشعار للشريك عند الاعتماد/المنح. <i>توصيتي: نعم</i><br><br><b>عند الاستئناف:</b> اقفل السبعة أعلاه ثم A→B→C→D→E، كل مرحلة تاسك يُتحقَّق منه حيّاً.",
    "ref": "١٧ أغسطس ٢٠٢٦",
-   "ease": 3
+   "ease": 3,
+   "area": "partner"
   },
   {
    "id": "ADM-AUTH-IMG",
@@ -2458,11 +2463,11 @@
    ],
    "tab": "open",
    "sev": "normal",
-   "who": "k",
-   "t": "قرار: فتح فهرسة صفحة الريلز",
-   "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> One-line flip awaiting Khalid; still noindex at modonty/app/(site)/reels/page.tsx:15.<br><code>modonty/app/reels/page.tsx</code> فيها <code>robots:{index:false, follow:false}</code> عمداً حتى الإطلاق. رفعها سطر واحد — بس القرار قرارك.",
+   "who": "c",
+   "t": "⚠️ آخر شيء قبل الدمج مع main — رفع noindex عن صفحة الطلّات",
+   "d": "<b>قرار خالد ٢٤ أغسطس ٢٠٢٦: تبقى مغلقة، وتُفتح آخر شيء قبل الدمج النهائي مع <code>main</code>.</b> (نفس معاملة <code>DEVREELS</code>.)<br><b>الموضع:</b> <code>modonty/app/(site)/reels/page.tsx:13</code> — <code>robots: { index: false, follow: false }</code>.<br><b>ليست سهواً بل عمداً:</b> فهرسة تغذية بلا طلّات منشورة تعني صفحة فارغة في عين جوجل، والصفحة الرقيقة التي تُفهرس مبكّراً أصعب في الترتيب لاحقاً من التي تُفهرس يوم يكون فيها محتوى.<br><b>التنفيذ:</b> سطر واحد — <code>index: true</code> — في نفس جلسة الدمج، وبحلولها يكون <code>PRODDATA</code> قد وضع طلّات حقيقية خلفها.<br><b>وُضع تحذير في الكود</b> فوق الكتلة: «FLIP <code>index</code> TO TRUE BEFORE MERGING» مع السبب والتاريخ.",
    "ref": "بند ٨٣",
-   "ease": 1
+   "last": true
   },
   {
    "id": "DIMWRONG",
@@ -3798,7 +3803,8 @@
    "t": "مراجعات Google على صفحة العميل",
    "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Blocked on Khalid: Places API key + spend cap, and whether AggregateRating is shown at all.<br>سحب تقييمات Google للعميل عبر Places API. موقوف على قرارين منك: مفتاح الـAPI وحدّ الاستهلاك · وهل نعرض <code>AggregateRating</code> أصلاً.<br><b>متحقَّق ٦ أغسطس:</b> كان يحمل في وصفه «وآراء العملاء على modonty.com» وهو نصّ بند <code>29</code> حرفياً — أُزيل التداخل، والاثنان الآن منفصلان.",
    "ref": "بند ٢٨",
-   "ease": 2
+   "ease": 2,
+   "area": "partner"
   },
   {
    "id": "30",
@@ -3997,7 +4003,8 @@
    "t": "قوالب جاهزة لصفحة العميل",
    "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — جزئي:</b> Built: ClientSite model (schema.prisma:739-751), console my-site, shared/components/partner-site/ registries. Missing: paid-template catalog and the JSON-LD/titles guarantee.<br>زي سلّة وزد — العميل يختار قالباً يناسب نشاطه، ولاحقاً قوالب مدفوعة كمصدر دخل. <b>أخطر سؤال:</b> تغيير القالب لازم ما يمسّ JSON-LD ولا العناوين.",
    "ref": "فكرة مسجَّلة ٥ أغسطس",
-   "ease": 2
+   "ease": 2,
+   "area": "partner"
   },
   {
    "id": "I3",
@@ -4405,12 +4412,11 @@
    "app": [
     "modonty"
    ],
-   "tab": "next",
+   "tab": "done",
    "sev": "normal",
-   "who": "k",
-   "ease": 1,
-   "t": "سبعة مكوّنات بلا مستهلك — قرارك: تُحذف أم تبقى؟",
-   "d": "<b>مقيس ٢٤ أغسطس (عدّ المستوردين الحقيقيين، لا ذِكْر التعليقات):</b><br><code>ClientsCard.tsx</code> ٠ · <code>ClientsCardMobile.tsx</code> ٠ · <code>ModontyCard.tsx</code> ٠ · <code>ModontyCardMobile.tsx</code> ٠ · <code>mobile-bottom-bar/BottomBar.tsx</code> ٠ · <code>mobile-bottom-bar/ServiceBar.tsx</code> ٠ · <code>AboutBar</code> (في <code>about-card/AboutCard.tsx</code>) ٠.<br><b>انتبه:</b> ذِكْرهم في <code>LeftSidebar.tsx:12,34</code> و<code>RightSidebar.tsx:13,15</code> <b>تعليقات لا استيراد</b> — فُتحت الملفات وتُحقِّق منها.<br><b>قاعدة المستودع:</b> «ملف بلا مستهلك = كود ميت، يُحذف لا يُنقل». وقاعدتك المضادّة: «الإخفاء ≠ الحذف».<br><b>القرار المطلوب:</b> حذف الآن، أو إبقاء حتى تُقفل مرحلة الجوّال ثم حذف دفعةً واحدة.<br><b>مصدره:</b> بنود T7 · M3 · M4 من لوحة الرئيسية + ما ظهر في نقاش HOMEMOB.",
+   "who": "c",
+   "t": "ستّة مكوّنات ميّتة حُذفت — وكشفت استعلاماً يُنفَّذ في كل رسمة بلا مستهلك",
+   "d": "<b>حُذفت ٢٤ أغسطس ٢٠٢٦ بأمر خالد («do it if you sure not used») بعد فحص بمسار الاستيراد.</b><br><b>طريقة التأكّد — بالمسار لا بالرمز</b> (درس بند ٧١ في TECH-NOTES: بحثٌ باسم الرمز أدّى مرّةً إلى ادّعاء موتٍ لملفَّين حيَّين): <code>grep -rE \"(from|import()[[:space:]]*[quote][^quote]*NAME[quote]\"</code> على التطبيقات الأربعة.<br><b>الناتج:</b> <code>ClientsCard 0 · ClientsCardMobile 0 · ModontyCard 0 · ModontyCardMobile 0 · BottomBar 0 · ServiceBar 1</code> — والواحد هو <code>BottomBar.tsx</code> نفسه، وهو بلا مستهلك، فالاثنان يموتان معاً. وكل ذكرٍ متبقٍّ للأسماء في المستودع كان <b>تعليقاً</b>، فُتح وقُرئ واحداً واحداً.<br><b>حُذف:</b> الملفّات الستّة (المجلّدات الثلاثة فرغت تماماً) + دالّة <code>AboutBar</code> داخل <code>AboutCard.tsx</code> (صفر مرجع) ومعها استيراد <code>IconChevronRight</code> الذي مات بموتها.<br><br><b>🔍 ما كشفه الحذف — أهمّ من الحذف نفسه:</b> <code>LeftSidebar</code> كان يعلن <code>articles: FeedPost[]</code> و<code>brandLogoUrl</code> ولا يفكّهما أصلاً — كانا موجودَين لتغذية <code>ModontyCard</code> المخفيّة. تتبّعتُ السلسلة صعوداً فوجدت <code>getCorePublisherArticles()</code> <b>يُستدعى داخل <code>Promise.all</code> في كل رسمة للرئيسية، وناتجه يمرّ عبر طبقتين ثم يُرمى</b>. استعلام قاعدة كامل لا يراه أحد.<br><b>نُظّفت السلسلة:</b> <code>CachedHomePage</code> (الاستدعاء + الاستيراد + تمرير الخاصّيتين) → <code>PageLayout</code> (الخاصّيتان) → <code>LeftSidebar</code> (الخاصّيتان + استيراد <code>FeedPost</code>). و<code>getBrandMedia</code> <b>بقي</b> — له أربعة مستوردين آخرين (<code>trust/page</code> · <code>LogoNav</code> · <code>build-metadata-from-page-row</code> · <code>seo/index</code>).<br><br><b>الدليل بعد التنظيف:</b> <code>pnpm tsc --noEmit</code> على مدونتي = <b>exit 0</b>؛ و<code>/ 200 · /articles 200 · /clients 200</code>؛ والرئيسية على ٣٩٠ ترسم <b>١٠ بطاقات مقال</b> و<b>رفَّين</b> وبطاقة «مدونتي» موجودة، بلا نصّ خطأ.<br><br><b>⏳ باقٍ بند واحد يحتاج كلمتك:</b> <code>modonty/app/(site)/(homepage)/data/get-core-publisher-articles.ts</code> صار <b>صفر مستوردين</b> بعد هذا التنظيف. لم أحذفه — حذف ملف بيانات وزنٌ مختلف عن حذف بطاقة مخفيّة، وأنت أذنت بالسبعة لا به.",
    "ref": "بنود T7 · M3 · M4 (لوحة الرئيسية المحذوفة)",
    "date": "٢٤ أغسطس ٢٠٢٦"
   },
@@ -4450,14 +4456,14 @@
    "app": [
     "modonty"
    ],
-   "tab": "next",
+   "tab": "open",
    "sev": "normal",
-   "who": "k",
-   "ease": 1,
-   "t": "طلّات وهمية تُصنع في وضع التطوير — قرارك: تبقى أم تُحذف؟",
-   "d": "<b>مقيس ٢٤ أغسطس:</b> <code>modonty/app/(site)/(homepage)/components/page-layout/CachedHomePage.tsx:64</code> — الشرط <code>process.env.NODE_ENV === \"development\" && reels.items.length === 0</code> يصنع ٣ طلّات بديلة من مقالات التغذية.<br>لا تصل الإنتاج، لكنها كود مؤقّت داخل صفحة مخبّأة بـ<code>\"use cache\"</code>.<br><b>القرار:</b> تبقى (تسهّل التطوير حين تكون القاعدة فارغة) أو تُحذف قبل الدمج.<br><b>مصدره:</b> بند T10 من لوحة الرئيسية.",
+   "who": "c",
+   "t": "⚠️ آخر شيء قبل الدمج مع main — حذف الطلّات الوهمية من صفحة التطوير",
+   "d": "<b>قرار خالد ٢٤ أغسطس ٢٠٢٦: تبقى، وتُحذف آخر شيء قبل الدمج النهائي مع <code>main</code>.</b><br><b>ما هي:</b> <code>modonty/app/(site)/(homepage)/components/page-layout/CachedHomePage.tsx</code> — شرط <code>process.env.NODE_ENV === \"development\" && reels.items.length === 0</code> يبني ٣ طلّات بديلة من مقالات التغذية.<br><b>لماذا وُجدت:</b> <code>modonty_dev</code> بلا صفوف طلّات، فالبطاقة تُرسم فارغة ولا يمكن الحكم على شكلها.<br><b>لماذا تبقى الآن:</b> مرحلة الواجهة ما زالت جارية، وحذفها اليوم يفقد المعاينة قبل أن يُحسم مكان البطاقة.<br><b>لماذا يجب أن تخرج:</b> حارس <code>NODE_ENV</code> يمنعها من الإنتاج، لكنها تبقى سقالة داخل صفحة مخبّأة بـ<code>\"use cache\"</code> — والسقالة التي تُنسى تصير جزءاً من البناء.<br><b>وُضع تحذير صريح في الكود:</b> «DELETE THIS BLOCK BEFORE MERGING <code>modonty-ui</code> INTO <code>main</code>» فوق الكتلة مباشرةً، مع سبب البقاء وتاريخه — كي لا يحذفها أحد مبكّراً ولا ينساها أحد متأخّراً.<br><b>متى تُنفَّذ:</b> في نفس جلسة الدمج، قبل الكوميت الأخير. حذف الكتلة يترك <code>const reelItems = reels.items;</code> ولا شيء غيره.",
    "ref": "بند T10 (لوحة الرئيسية المحذوفة)",
-   "date": "٢٤ أغسطس ٢٠٢٦"
+   "date": "٢٤ أغسطس ٢٠٢٦",
+   "last": true
   },
   {
    "id": "FOOTCONTRAST",
@@ -4515,7 +4521,8 @@
    "t": "<code>USE_CACHE_TIMEOUT</code> على صفحة الشريك — مرشَّح لا عطل مثبت",
    "d": "<b>مؤشّر، لم يُعَد التحقّق منه في ٢٤ أغسطس.</b><br>ظهر <code>USE_CACHE_TIMEOUT</code> من <code>getClientsGA4Stats</code> (<code>modonty/lib/analytics/ga4.ts:208</code>) على مسار <code>/clients/[slug]</code> — <b>في <code>next build --debug-prerender</code> فقط</b>؛ البناء العادي ونشر فيرسل نجحا كلاهما.<br><b>لذلك هو مرشَّح للمراجعة لا عطل مثبت</b> — أي حكم عليه يحتاج إعادة إنتاج أوّلاً.<br><b>أول خطوة عند الفتح:</b> شغّل <code>next build --debug-prerender</code> وأثبت أنه ما زال يظهر قبل لمس أي سطر.<br><b>مصدره:</b> بند L6 من لوحة الرئيسية.",
    "ref": "بند L6 (لوحة الرئيسية المحذوفة)",
-   "date": "٢٤ أغسطس ٢٠٢٦"
+   "date": "٢٤ أغسطس ٢٠٢٦",
+   "area": "partner"
   },
   {
    "id": "PWPLAIN",

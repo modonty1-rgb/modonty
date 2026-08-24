@@ -19,8 +19,6 @@ interface PageLayoutProps {
   hasMore: boolean;
   /** Chunk of the paginated series being shown: 1 = `/`, n = `/page/n`. */
   page: number;
-  corePublisherArticles: FeedPost[];
-  brandLogoUrl: string | null;
   industries: Array<{ id: string; name: string; slug: string; clientCount: number; socialImage?: string | null; description?: string | null }>;
   reels: ReelItem[];
   /** Per-request slot created outside the cached page (reads the session). Passed through, never read. */
@@ -29,7 +27,7 @@ interface PageLayoutProps {
   readingTimeCounts: Record<ReadingTimeBucket, number>;
 }
 
-export function PageLayout({ posts, hasMore, page, corePublisherArticles, brandLogoUrl, industries, reels, userCard, readingTimeCounts }: PageLayoutProps) {
+export function PageLayout({ posts, hasMore, page, industries, reels, userCard, readingTimeCounts }: PageLayoutProps) {
   const pageArabic = page.toLocaleString("ar-SA");
   return (
     <>
@@ -95,7 +93,7 @@ export function PageLayout({ posts, hasMore, page, corePublisherArticles, brandL
             </section>
           </div>
         }
-        left={<LeftSidebar articles={corePublisherArticles} brandLogoUrl={brandLogoUrl} userCard={userCard} />}
+        left={<LeftSidebar userCard={userCard} />}
       />
     </>
   );

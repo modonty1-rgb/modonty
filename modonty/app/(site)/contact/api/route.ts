@@ -26,15 +26,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Capture metadata
-    const ipAddress = request.headers.get("x-forwarded-for") ||
-                     request.headers.get("x-real-ip") ||
-                     "unknown";
+    /**
+     * The identity the hourly cap is counted against, so the sender must not be able to choose
+     * it. `x-forwarded-for` is a list: whatever the sender put in it stays at the FRONT and each
+     * proxy appends the address it accepted the connection from, so only the LAST entry was
+     * written by infrastructure we run. Reading the whole header — as this did — handed the
+     * sender a fresh key on every request: `9.9.9.9, <real ip>` then `9.9.9.10, <real ip>` are
+     * two different strings, the count is always 0, and the cap never bites.
+     * On Vercel the platform overwrites this header and refuses to forward an external one
+     * (vercel.com/docs/headers/request-headers), so today the list holds one true address; the
+     * tail keeps that true the moment anything is put in front of it.
+     */
+    const forwardedFor = request.headers.get("x-forwarded-for")?.split(",") ?? [];
+    const ipAddress = forwardedFor[forwardedFor.length - 1]?.trim() || "unknown";
 
     // Rate limit: max 3 messages per IP per hour (DB-based, works across instances)
     const recentCount = await db.contactMessage.count({
       where: {
-        ipAddress: Array.isArray(ipAddress) ? ipAddress[0] : ipAddress,
+        ipAddress,
         createdAt: { gt: new Date(Date.now() - CONTACT_WINDOW_MS) },
       },
     });
@@ -46,14 +55,13 @@ export async function POST(request: NextRequest) {
     }
     const userAgent = request.headers.get("user-agent") || "unknown";
     const referrer = request.headers.get("referer") || request.headers.get("referrer") || null;
-    const resolvedIp = Array.isArray(ipAddress) ? ipAddress[0] : ipAddress;
 
     const result = await submitContactMessage({
       name,
       email,
       subject,
       message,
-      ipAddress: resolvedIp,
+      ipAddress,
       userAgent,
       referrer,
       clientId: typeof clientId === "string" ? clientId : undefined,

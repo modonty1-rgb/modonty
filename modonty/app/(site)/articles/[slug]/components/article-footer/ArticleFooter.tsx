@@ -142,7 +142,15 @@ export function ArticleFooter({
             values line up under each other and are read as a column, not as five sentences. */}
         <dl className="self-start">
           <Row label="نشر بواسطة">
-            <Link href={`/clients/${client.slug}`} className="font-medium text-link hover:underline">
+            {/* 171×17 measured on a phone, 24 Aug — a third of a fingertip. An invisible `after:`
+                overlay was tried first and did NOT work: the `<dd>` carries `truncate`, so
+                `overflow: hidden` clips any patch taller than the row. Growing the link itself is
+                the only thing the clip cannot defeat — same `max-lg:flex max-lg:min-h-11` this
+                file already uses above. Phone only; the desktop table keeps its 17px rhythm. */}
+            <Link
+              href={`/clients/${client.slug}`}
+              className="font-medium text-link hover:underline max-lg:flex max-lg:min-h-11 max-lg:items-center"
+            >
               {client.name}
             </Link>
           </Row>
@@ -162,7 +170,12 @@ export function ArticleFooter({
               {license.startsWith("http") ? (
                 /* The raw URL used to be printed in full — a line of latin characters in an
                    Arabic footer, and nothing a reader needs to read. */
-                <Link href={license} target="_blank" rel="noopener noreferrer" className="text-link hover:underline">
+                <Link
+                  href={license}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-link hover:underline max-lg:flex max-lg:min-h-11 max-lg:items-center"
+                >
                   سياسة حقوق النشر
                 </Link>
               ) : (

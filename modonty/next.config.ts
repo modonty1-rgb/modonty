@@ -13,6 +13,50 @@ loadDotenv({ path: path.resolve(process.cwd(), "../.env.shared") });
 // three environments, so the condition would never fire on the test domain.
 const isProduction = process.env.VERCEL_ENV === "production";
 
+// Content-Security-Policy — REPORT-ONLY on purpose (24 Aug 2026, card SEC15).
+//
+// Enforcing a CSP written from a reading of the code, without first watching what real pages
+// actually request, is how a site breaks silently: the audio player stops, analytics goes quiet,
+// an image turns blank — and nobody notices for days because nothing errors server-side. So this
+// ships as `-Report-Only`: the browser evaluates it and logs every violation, and blocks nothing.
+//
+// The origin list below was gathered from the code, not from a dev page load (a dev page proved
+// useless — the analytics scripts are env-gated off locally, so it reported zero external hosts).
+//
+// `'unsafe-inline'` for scripts is not laziness: this app server-renders 137 inline scripts per
+// page (measured on the homepage). Removing it needs per-request nonces threaded through the
+// framework — a separate task, not a line in this file. Even with it, the policy still blocks
+// script injection from any origin we did not list, which is the common case.
+//
+// TO ENFORCE LATER: watch the console on test.modonty.com across the audio page, an article, a
+// partner page and the homepage; add whatever legitimately appears; only then rename the header
+// to `Content-Security-Policy`.
+const CSP_REPORT_ONLY = [
+  "default-src 'self'",
+  // GTM · GA4 · Clarity are the three that inject their own script tags.
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms",
+  // Tailwind ships classes, but 53 inline `style` attributes remain on the homepage alone.
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' https://fonts.gstatic.com data:",
+  // b-cdn.net covers all four Bunny zones (reels · clients · assets · stream covers).
+  "img-src 'self' data: blob: https://*.b-cdn.net https://res.cloudinary.com https://api.dicebear.com https://www.google-analytics.com https://www.googletagmanager.com",
+  // The Quran recitations stream from numbered mp3quran servers AND from cdn.islamic.network;
+  // Bunny serves reel video. islamic.network was NOT in the code grep — report-only mode caught
+  // it on the first load of /audio ("Loading media from cdn.islamic.network violates..."), which
+  // is precisely the failure an enforced-on-day-one policy would have shipped as silence.
+  "media-src 'self' blob: https://*.mp3quran.net https://cdn.islamic.network https://*.b-cdn.net",
+  "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://*.clarity.ms https://vitals.vercel-insights.com",
+  "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
+  // Matches X-Frame-Options: DENY above — kept in both because old browsers read only the latter.
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "object-src 'none'",
+  // NOT `upgrade-insecure-requests`: the browser logs "ignored when delivered in a report-only
+  // policy" and it adds nothing but console noise while we are still collecting violations.
+  // Add it in the same edit that renames the header to the enforcing one.
+].join("; ");
+
 const nextConfig: NextConfig = {
   // NO global /articles → / redirect.
   // Reason: when a request arrives as /articles/{arabic-slug} (raw, non-percent-encoded),
@@ -30,7 +74,11 @@ const nextConfig: NextConfig = {
       source: "/(.*)",
       headers: [
         { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+        // Resolves the DNS of linked third parties early. The project standard lists it; it was
+        // the one header of the seven still missing (checked 24 Aug).
+        { key: "X-DNS-Prefetch-Control", value: "on" },
         { key: "X-Content-Type-Options", value: "nosniff" },
+        { key: "Content-Security-Policy-Report-Only", value: CSP_REPORT_ONLY },
         { key: "X-Frame-Options", value: "DENY" },
         { key: "X-XSS-Protection", value: "1; mode=block" },
         { key: "Referrer-Policy", value: "origin-when-cross-origin" },

@@ -614,6 +614,43 @@ footer[role="contentinfo"] {
 }
 
 
+/* ═══ prefers-contrast: more ═══
+   Windows «Contrast themes» and iOS «Increase Contrast» ask for this. Until 24 Aug 2026 the
+   site ignored it entirely (`prefers-contrast` appeared 0 times in the repo), so a reader who
+   had explicitly told their system "I cannot see low-contrast UI" got the same faint borders
+   and grey secondary text as everyone else.
+
+   Done at the TOKEN level, not with `contrast-more:` utilities on elements: the tokens already
+   feed every border, input and muted line in the app, so one block covers surfaces we would
+   otherwise have to remember to annotate one by one — and can never drift out of sync.
+   This strengthens what exists; it changes no layout, no spacing and no brand colour.
+
+   Flat, not nested — same reason as the block above: a nested at-rule is dropped silently. */
+@media (prefers-contrast: more) {
+  :root {
+    /* #dbdbdb → #5b5b5b: the card edge becomes a line you can actually see. */
+    --border: var(--brand-gray-dark);
+    --input: var(--brand-gray-dark);
+    /* #5b5b5b → #333333: secondary text (dates, counts, hints) stops fading into the sheet. */
+    --muted-foreground: 0 0% 20%;
+  }
+
+  .dark {
+    /* Mirror image: on the dark sheet the same two tokens move UP, not down. */
+    --border: 245 8% 45%;
+    --input: 245 8% 45%;
+    --muted-foreground: 215 20% 85%;
+  }
+
+  /* The focus ring normally waits for `:focus-visible` — i.e. keyboard use. A reader on high
+     contrast is telling us they lose track of where they are, so show it on every focus,
+     pointer included. Outline only: it paints outside the box and shifts no layout. */
+  :focus {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+}
+
 @layer components {
   /* Prev/next links under an infinite feed.
      They are server-rendered from the FIRST chunk's `hasMore`, so once the scroll has
