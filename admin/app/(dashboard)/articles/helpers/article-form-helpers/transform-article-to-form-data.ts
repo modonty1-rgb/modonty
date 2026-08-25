@@ -6,6 +6,29 @@ import { normalizeArticleCanonicalForForm } from "../seo-generation";
 
 type ArticleFromDb = NonNullable<Awaited<ReturnType<typeof getArticleById>>>;
 
+/**
+ * The article's own robots directive, read back out of the baked metadata blob.
+ *
+ * There is no `metaRobots` column on Article — the blob is the only place the directive
+ * survives a save. `undefined` means "this article never had one", which is a different
+ * answer from "index": it lets the Settings default fill in, instead of the form silently
+ * asserting `index, follow` over a directive the editor set on purpose.
+ */
+function readStoredMetaRobots(nextjsMetadata: ArticleFromDb["nextjsMetadata"]): string | undefined {
+  if (typeof nextjsMetadata !== "object" || nextjsMetadata === null || Array.isArray(nextjsMetadata)) {
+    return undefined;
+  }
+  const robots = nextjsMetadata.robots;
+  if (typeof robots !== "object" || robots === null || Array.isArray(robots)) {
+    return undefined;
+  }
+  const { index, follow } = robots;
+  if (typeof index !== "boolean" || typeof follow !== "boolean") {
+    return undefined;
+  }
+  return `${index ? "index" : "noindex"}, ${follow ? "follow" : "nofollow"}`;
+}
+
 export function transformArticleToFormData(article: ArticleFromDb): Partial<ArticleFormData> {
   return {
     // Optimistic locking — user-initiated edits only (NOT bumped by SEO/cron/system writes)
@@ -45,6 +68,9 @@ export function transformArticleToFormData(article: ArticleFromDb): Partial<Arti
     // SEO Meta Tags
     seoTitle: article.seoTitle || undefined,
     seoDescription: article.seoDescription || undefined,
+    // Without this the form opened on the store default `index, follow`, and the first
+    // save wrote that back over a hand-set noindex.
+    metaRobots: readStoredMetaRobots(article.nextjsMetadata),
 
     // Open Graph
     ogArticleAuthor: article.ogArticleAuthor || undefined,

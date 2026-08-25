@@ -9,8 +9,10 @@ import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 import type { CategoryResponse, CategoryQueryOptions } from "@/lib/types";
 
 export const getCategoriesEnhanced = unstable_cache(
-  async (options: CategoryQueryOptions = {}): Promise<CategoryResponse[]> => {
-    const { search, sortBy = 'articles', featured } = options;
+  async (
+    options: CategoryQueryOptions & { includeEmpty?: boolean } = {},
+  ): Promise<CategoryResponse[]> => {
+    const { search, sortBy = 'articles', featured, includeEmpty = false } = options;
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -163,7 +165,9 @@ export const getCategoriesEnhanced = unstable_cache(
     // published articles nor active partners (applies to both the listing and
     // the "related categories" widget). Runs before search/sort/pagination so
     // hero counts + page slices reflect only content-bearing categories.
-    results = results.filter((cat) => cat.articleCount > 0 || (cat.clientCount ?? 0) > 0);
+    if (!includeEmpty) {
+      results = results.filter((cat) => cat.articleCount > 0 || (cat.clientCount ?? 0) > 0);
+    }
 
     if (search) {
       const searchLower = search.toLowerCase();

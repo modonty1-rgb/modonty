@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth";
 import { slugify } from "@/lib/utils";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { logAction } from "@/lib/audit/log-action";
+import { recordRedirect } from "@/lib/redirect/record-redirect";
 import { generateClientSEO } from "./generate-client-seo";
 import { randomInt } from "crypto";
 
@@ -129,6 +130,10 @@ export async function verifyAndChangeSlug(
       canonicalUrl: newCanonicalUrl,
     },
   });
+
+  // The old address is live and indexed — without this hop it starts answering 410 and the
+  // link equity is lost. Same 308 layer the tag/industry/category merges already write to.
+  await recordRedirect(db, "clients", oldSlug, newSlug);
 
   // Regenerate JSON-LD + metadata (contains embedded slug)
   await generateClientSEO(clientId);

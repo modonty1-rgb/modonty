@@ -130,7 +130,15 @@ export async function generateMetadataFromSEO(data: SEOData, options?: MetadataO
     languages: languagesInput,
   } = data;
 
-  const fullTitle = title ? `${title} - ${siteName}` : siteName;
+  // The brand is appended ONCE, by whoever owns that job:
+  //   <title>      ← the root layout's template, `%s | مدونتي` (layout.tsx:34)
+  //   og: / twitter ← the separate `og:site_name` field, which is what it is for
+  //
+  // This line used to append it here as well, so every page that did not opt out with
+  // `title.absolute` shipped it twice — measured 25 Aug 2026: "بحث - مدونتي | مدونتي" ·
+  // "مركز المساعدة - مدونتي | مدونتي" · "اشترك في النشرة - مدونتي | مدونتي".
+  // Google (10 Dec 2025): "avoid repeated or boilerplate text · brand your titles concisely".
+  const pageTitle = title || siteName;
   const siteUrl = SITE_URL;
   let canonicalUrl: string;
   if (!url) {
@@ -156,7 +164,7 @@ export async function generateMetadataFromSEO(data: SEOData, options?: MetadataO
   const shouldFollow = !robotsDirective.includes("nofollow");
 
   const openGraph: Metadata["openGraph"] = {
-    title: fullTitle,
+    title: pageTitle,
     description: description || "",
     url: canonicalUrl,
     siteName: siteName,
@@ -193,7 +201,7 @@ export async function generateMetadataFromSEO(data: SEOData, options?: MetadataO
 
   const twitter: Metadata["twitter"] = {
     card: "summary_large_image",
-    title: fullTitle,
+    title: pageTitle,
     description: description || "",
     images: ogImages ? [{ url: ogImages[0].url, alt: imageAltResolved }] : undefined,
   };
@@ -226,7 +234,7 @@ export async function generateMetadataFromSEO(data: SEOData, options?: MetadataO
         );
 
   return {
-    title: fullTitle,
+    title: pageTitle,
     description: description || "منصة مدونات احترافية لإدارة المحتوى عبر شركاء متعددين",
     keywords: keywords || [],
     alternates: {

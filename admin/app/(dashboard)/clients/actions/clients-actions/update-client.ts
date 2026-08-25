@@ -191,7 +191,12 @@ export async function updateClient(id: string, data: ClientFormData) {
       revalidateModontyTag("clients"),
       revalidateModontyTag("articles"),
     ]);
-    
+
+    // The /clients listing blob embeds each partner's name, url, email, phone and address,
+    // so an edit here makes it stale. create-client and delete-client already rebuild it;
+    // update did not, which left the listing JSON-LD serving the pre-edit values.
+    try { const { regenerateClientsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateClientsListingCache(); } catch {}
+
     return warning ? { success: true, client, warning } : { success: true, client };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update client";

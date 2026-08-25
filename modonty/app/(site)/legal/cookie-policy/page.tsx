@@ -45,7 +45,9 @@ async function CookiePolicyContent() {
   const pageContent = hasContent ? page!.content : text.fallbackContent;
 
   // Prefer the stored, admin-validated card; build live ONLY when it is absent.
-  const storedJsonLd = page?.jsonLdStructuredData?.trim();
+  const storedJsonLd = page?.jsonLdStructuredData?.includes('"@type":"WebPage"')
+    ? page.jsonLdStructuredData.trim()
+    : undefined;
   const buildFallbackStructuredData = () => generateStructuredData({
     type: "WebPage",
     name: `${pageTitle} - مدونتي`,

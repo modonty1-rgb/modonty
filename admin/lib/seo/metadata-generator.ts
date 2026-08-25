@@ -36,6 +36,12 @@ export interface ArticleWithMetadataRelations {
   ogArticleTag?: string[] | null;
   datePublished?: Date | null;
   scheduledAt?: Date | null;
+  /**
+   * True when the page is served from the client's own domain. Then THEY are "the overall
+   * site" og:site_name asks for, so the client's name stays; every other article is served
+   * from modonty and takes the platform name.
+   */
+  isClientSiteArticle?: boolean | null;
   twitterCard?: string | null;
   twitterTitle?: string | null;
   twitterDescription?: string | null;
@@ -104,6 +110,8 @@ function buildLanguagesMap(
 export interface GenerateMetadataOptions {
   robots?: string;
   siteUrl?: string;
+  /** `Settings.siteName` — the source of truth for og:site_name. See SITE_NAME_FALLBACK. */
+  siteName?: string;
 }
 
 /**
@@ -140,7 +148,19 @@ export async function generateNextjsMetadata(
   options?: GenerateMetadataOptions
 ): Promise<Metadata> {
   const siteUrl = options?.siteUrl || (await loadSiteUrl());
-  const siteName = article.client.name || SITE_NAME_FALLBACK;
+
+  // The partner the article was written for. It brands the TITLE (seoTitle already ends
+  // with " | {client}") — it is not the name of the site the page is served from.
+  const clientName = article.client.name || SITE_NAME_FALLBACK;
+
+  // og:site_name is "the name which should be displayed for the overall site" (ogp.me).
+  // It used to be the client's name, so WhatsApp and X showed a modonty article as coming
+  // from a site called «MBC clinic-عيادة دكتور ة رحاب منصور لعلاج الألم» (measured on
+  // /articles/علاج-الديسك). Order matches the one already used for content pages in
+  // shared/lib/seo/build-content-page-metadata.ts: the page's own override, then Settings.
+  const siteName = article.isClientSiteArticle
+    ? clientName
+    : article.ogSiteName?.trim() || options?.siteName?.trim() || SITE_NAME_FALLBACK;
 
   // Effective values
   const effectiveTitle = article.seoTitle || article.title || "";
@@ -180,10 +200,10 @@ export async function generateNextjsMetadata(
   }
   // Avoid double-branding: seoTitle already ends with " | {client}" (generateSEOTitle),
   // so only append the site name when the title isn't already branded with it.
-  const alreadyBranded = [` | ${siteName}`, ` - ${siteName}`].some((suffix) =>
+  const alreadyBranded = [` | ${clientName}`, ` - ${clientName}`].some((suffix) =>
     effectiveTitle.endsWith(suffix)
   );
-  const fullTitle = alreadyBranded ? effectiveTitle : `${effectiveTitle} - ${siteName}`;
+  const fullTitle = alreadyBranded ? effectiveTitle : `${effectiveTitle} - ${clientName}`;
 
   // Featured image. Last link was `${siteUrl}/og-image.jpg` — a file that does not exist
   // (measured HTTP 404 on 2026-08-07), so an article with no image whose client had neither
@@ -216,7 +236,7 @@ export async function generateNextjsMetadata(
         url: ogImage,
         width: article.featuredImage?.width || 1200,
         height: article.featuredImage?.height || 630,
-        alt: article.featuredImage?.altText || effectiveTitle || siteName,
+        alt: article.featuredImage?.altText || effectiveTitle || clientName,
       },
     ],
     locale: article.ogLocale || article.inLanguage || "ar_SA",
@@ -233,7 +253,7 @@ export async function generateNextjsMetadata(
   };
 
   // Twitter metadata — Twitter title/description use article seoTitle/seoDescription (SOT)
-  const imageAlt = article.featuredImage?.altText || effectiveTitle || siteName;
+  const imageAlt = article.featuredImage?.altText || effectiveTitle || clientName;
   const twitter: Metadata["twitter"] = {
     card: (article.twitterCard as "summary_large_image") || "summary_large_image",
     title: effectiveTitle,
@@ -245,12 +265,14 @@ export async function generateNextjsMetadata(
     twitter.site = article.twitterSite;
   }
 
+  // `creator` is an account handle, never a display name — Next.js documents it as
+  // `creator: '@nextjs'` (generate-metadata, Metadata Fields → twitter). The old fallback
+  // wrote the author's name straight in, so every article with no handle shipped
+  // `twitter:creator="Modonty"` (measured on /articles/علاج-الديسك). No tag beats a wrong
+  // one, so when there is no handle the field is simply not emitted.
   if (article.twitterCreator) {
     const creatorHandle = article.twitterCreator.replace(/^@/, "");
     twitter.creator = `@${creatorHandle}`;
-  } else if (article.author.name) {
-    // Fallback to author name if no Twitter creator specified
-    twitter.creator = article.author.name;
   }
 
   // Robots configuration

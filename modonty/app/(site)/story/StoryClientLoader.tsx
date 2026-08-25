@@ -7,7 +7,6 @@ import type { SalesPitchProps } from "./SalesPitchPage";
 const SalesPitchPage = dynamic(
   () => import("./SalesPitchPage").then((m) => ({ default: m.SalesPitchPage })),
   {
-    ssr: false,
     loading: () => <StorySkeleton />,
   },
 );

@@ -205,8 +205,13 @@ export function generateArticleKnowledgeGraph(
   const ids = {
     webPage: articleUrl,
     article: `${articleUrl}#article`,
+    // The platform-brand author IS the site's Organization, so it carries the SAME @id the
+    // home page and the site-identity script use (`${siteUrl}/#organization`). It used to get
+    // `/authors/modonty#organization`, which put two nodes describing one company on the same
+    // page — measured live on /articles/علاج-الديسك: `/authors/modonty#organization` in the
+    // article graph and `/#organization` in the identity script, same name, same logo.
     author: isPlatformAuthor
-      ? `${siteUrl}/authors/${article.author.slug}#organization`
+      ? `${siteUrl}/#organization`
       : `${siteUrl}/authors/${article.author.slug}#person`,
     publisher: `${siteUrl}/clients/${article.client.slug}#organization`,
     breadcrumb: `${articleUrl}#breadcrumb`,
@@ -300,6 +305,8 @@ export function generateArticleKnowledgeGraph(
           imageUrl: null,
         };
       })(),
+      // Same clinic, same page as the nodes above — so the same @ids.
+      ids: { organization: ids.publisher, webPage: ids.webPage },
       article: {
         pageUrl: articleUrl,
         lastReviewedIso: article.lastReviewed

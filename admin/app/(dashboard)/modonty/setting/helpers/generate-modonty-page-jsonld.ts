@@ -1,5 +1,5 @@
 /**
- * Generate full @graph JSON-LD for Modonty page (Organization, WebSite, WebPage/AboutPage, BreadcrumbList).
+ * Generate full @graph JSON-LD for Modonty page (Organization, WebSite, WebPage, BreadcrumbList).
  * Caller passes site config from env; no env access inside.
  */
 
@@ -70,7 +70,8 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
   const imageUrl = (page.ogImage || page.socialImage || page.heroImage || "").trim();
   const absImageUrl = imageUrl ? absoluteImageUrl(imageUrl, siteUrl) : undefined;
   const pageConfig = getPageConfig(page.slug);
-  const isAboutPage = !!pageConfig;
+  const pageType = page.slug === "about" ? "AboutPage" : page.slug === "contact" ? "ContactPage" : "WebPage";
+  const isAboutPage = pageType === "AboutPage";
   const inLang = page.inLanguage || "ar";
 
   const graph: Record<string, unknown>[] = [];
@@ -143,8 +144,7 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
   }
   graph.push(website);
 
-  const pageType = isAboutPage ? "AboutPage" : "WebPage";
-  const pageNodeId = isAboutPage ? `${pageUrl}#aboutpage` : `${pageUrl}#webpage`;
+  const pageNodeId = `${pageUrl}#${pageType.toLowerCase()}`;
   const webPage: Record<string, unknown> = {
     "@type": pageType,
     "@id": pageNodeId,
@@ -169,12 +169,12 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
       height: 630,
     };
   }
-  if (isAboutPage) {
+  if (pageConfig) {
     webPage.breadcrumb = { "@id": `${pageUrl}#breadcrumb` };
   }
   graph.push(webPage);
 
-  if (isAboutPage && pageConfig) {
+  if (pageConfig) {
     const breadcrumb: Record<string, unknown> = {
       "@type": "BreadcrumbList",
       "@id": `${pageUrl}#breadcrumb`,

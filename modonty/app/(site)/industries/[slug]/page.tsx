@@ -28,7 +28,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: IndustryPageProps): Promise<Metadata> {
   const { slug } = await params;
   const industry = await getIndustryBySlug(decodeURIComponent(slug));
-  if (!industry) return { title: "المجال غير موجود - مدونتي" };
+  if (!industry) return { title: "المجال غير موجود" };
   // Serve-the-stored pattern (same as the client/category/tag pages): the admin generator
   // bakes the full metadata (og:image included) — a hand-built object here would drop it.
   if (industry.nextjsMetadata) {
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: IndustryPageProps): Promise<M
     if (stored.title) return stored;
   }
   return {
-    title: `${industry.name} - المجالات | مدونتي`,
+    title: `${industry.name} — المجالات`,
     description: industry.description ?? `اكتشف شركاء ${industry.name} الموثوقين على مدونتي`,
     alternates: { canonical: `${SITE_URL}/industries/${slug}` },
   };

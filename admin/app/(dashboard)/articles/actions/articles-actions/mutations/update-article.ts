@@ -24,15 +24,6 @@ import { articleServerSchema } from "../article-server-schema";
 import { sanitizeHtmlContent } from "@/lib/sanitize-html";
 import { isValidTransition } from "../../../helpers/article-status-machine";
 
-function sanitizeText(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;");
-}
-
 export async function updateArticle(articleId: string, data: ArticleFormData) {
   try {
     const session = await auth(); if (!session) return { success: false, error: "غير مصرح" };
@@ -261,8 +252,8 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
         await tx.articleFAQ.createMany({
           data: validFaqs.map((faq: FAQItem, index: number) => ({
             articleId: article.id,
-            question: sanitizeText(faq.question),
-            answer: sanitizeText(faq.answer),
+            question: faq.question,
+            answer: faq.answer,
             position: faq.position ?? index,
           })),
         });

@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
     const { slug } = await params;
     const decodedSlug = decodeURIComponent(slug);
     const tag = await getTagForMetadata(decodedSlug);
-    if (!tag) return { title: "وسم غير موجود - مدونتي" };
+    if (!tag) return { title: "وسم غير موجود" };
     if (tag.nextjsMetadata) {
       const { robots: _r, ...stored } = tag.nextjsMetadata as Metadata & { robots?: unknown };
       if (stored.title) return stored;
@@ -78,7 +78,7 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
       image: tag.socialImage || undefined,
     });
   } catch {
-    return { title: "الوسوم - مدونتي" };
+    return { title: "الوسوم" };
   }
 }
 

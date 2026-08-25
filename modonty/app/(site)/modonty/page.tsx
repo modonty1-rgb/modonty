@@ -39,8 +39,8 @@ const MODONTY_CLIENT_SLUG = "مدونتي";
  * invisible to a crawler, and the only trail left to article eleven is the paginated URLs.
  * The visible prev/next links carry that trail, these tags declare it.
  *
- * `canonical` stays pinned to the bare `/modonty` on every variant so the filtered and
- * paged URLs consolidate instead of competing with the page they belong to.
+ * Each paginated URL keeps its own canonical; filtered views still consolidate through
+ * the same page URL because `view` is intentionally excluded here.
  */
 export async function generateMetadata({ searchParams }: ModontyPageProps): Promise<Metadata> {
   const { page: pageParam } = await searchParams;
@@ -58,10 +58,9 @@ export async function generateMetadata({ searchParams }: ModontyPageProps): Prom
   return {
     title: { absolute: page > 1 ? `مقالات مدونتي — الصفحة ${page.toLocaleString("ar-SA")} | مدونتي` : "مقالات مدونتي | مدونتي" },
     description: "كل مقالات مدونتي الخاصة — بمعرضها وأرقامها الحقيقية، من نفس صفّها في قاعدة الشركاء.",
-    // Its own canonical (the bare page, not the paged view — pagination is declared below),
-    // and the locales from Settings. It used to ship the canonical alone, which in Next means
-    // the layout's alternates are replaced, not extended — so the page shipped zero hreflang.
-    alternates: await buildPageAlternates("/modonty"),
+    // Its own canonical and the locales from Settings. It used to ship the canonical alone,
+    // which in Next means the layout's alternates are replaced, not extended.
+    alternates: await buildPageAlternates(page > 1 ? `/modonty?page=${page}` : "/modonty"),
     pagination: {
       previous: page > 1 ? pageUrl(page - 1) : undefined,
       next: hasNext ? pageUrl(page + 1) : undefined,

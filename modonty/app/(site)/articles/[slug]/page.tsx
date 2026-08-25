@@ -113,7 +113,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
     if (!article) {
       return {
-        title: "مقال غير موجود - مدونتي",
+        title: "مقال غير موجود",
       };
     }
 
@@ -218,7 +218,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     });
   } catch {
     return {
-      title: "مقال - مدونتي",
+      title: "مقال",
     };
   }
 }

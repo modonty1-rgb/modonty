@@ -46,14 +46,18 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
 
   const [seo, all] = await Promise.all([
     getListingPageSeo("categories"),
-    getCategoriesEnhanced({ search, sortBy }),
+    getCategoriesEnhanced({ search, sortBy, includeEmpty: true }),
   ]);
 
-  // Hero copy comes from the admin SEO cache (single source of truth) — the visible H1
-  // reuses the SEO title minus the "| مدونتي" brand suffix (kept only in <title>); the
-  // paragraph reuses the SEO description. Fallbacks mirror generateMetadata above.
+  // Hero copy comes from the admin SEO cache (single source of truth): the visible H1 reuses
+  // the SEO title, the paragraph reuses the SEO description.
+  //
+  // The title used to be stripped of a trailing "| مدونتي" here. That was treating the symptom:
+  // the brand had been typed into the stored title, and the root layout's template appends it
+  // again — so <title> read it twice and the H1 needed a regex to look right. The brand was
+  // removed from the stored title instead (25 Aug 2026), so there is nothing left to strip.
   const seoTitle = typeof seo.metadata?.title === "string" ? seo.metadata.title : undefined;
-  const heroTitle = (seoTitle ?? "تصنيفات المحتوى").replace(/\s*\|\s*مدونتي\s*$/, "").trim();
+  const heroTitle = seoTitle ?? "تصنيفات المحتوى";
   const heroDescription =
     (typeof seo.metadata?.description === "string" && seo.metadata.description) ||
     "استعرض جميع تصنيفات مدونتي — اختر تصنيفك المفضل وتابع أحدث المقالات في التقنية والأعمال والتسويق وغيرها من المجالات.";

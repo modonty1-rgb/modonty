@@ -6,9 +6,22 @@ import { toLegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getStoryPageForMetadata } from "./helpers/story-metadata";
 import { jsonLdHtml } from "@/lib/seo";
+import storyManifest from "../../../public/help/audio/general-pitch/manifest.json";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
 const PAGE_URL = `${SITE_URL}/story`;
+const STORY_TRANSCRIPT_IDS = new Set(["02", "03", "04"]);
+const STORY_TRANSCRIPT = storyManifest.sections.flatMap((section) =>
+  STORY_TRANSCRIPT_IDS.has(section.id) && "text" in section
+    ? [
+        {
+          id: section.id,
+          title: section.label.split("—")[0].trim(),
+          text: section.text,
+        },
+      ]
+    : [],
+);
 
 // Title and description come from the page's own row, edited at /modonty/pages/story.
 // The constants below stay as the fallback for a row that does not exist yet — an indexed
@@ -83,6 +96,37 @@ export default async function StoryPage() {
         audioBase="/help/audio/general-pitch"
         legal={toLegalEntityDisplay(entity)}
       />
+      <section
+        aria-labelledby="story-transcript-heading"
+        className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:py-16"
+        dir="rtl"
+      >
+        <h2
+          id="story-transcript-heading"
+          className="text-2xl font-extrabold text-foreground sm:text-3xl"
+        >
+          اقرأ قصة مدونتي
+        </h2>
+        <p className="mt-3 text-base leading-8 text-muted-foreground">
+          النص المكتوب للمقاطع الافتتاحية من القصة الصوتية، لمن يفضّل القراءة أو
+          لا يستطيع تشغيل الصوت.
+        </p>
+        <div className="mt-8 space-y-10">
+          {STORY_TRANSCRIPT.map((section) => (
+            <section key={section.id} aria-labelledby={`story-section-${section.id}`}>
+              <h3
+                id={`story-section-${section.id}`}
+                className="text-xl font-bold text-foreground"
+              >
+                {section.title}
+              </h3>
+              <p className="mt-3 text-base leading-8 text-muted-foreground">
+                {section.text}
+              </p>
+            </section>
+          ))}
+        </div>
+      </section>
     </>
   );
 }

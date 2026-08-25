@@ -58,14 +58,17 @@ export async function generateMetadata({ params }: UserPageProps): Promise<Metad
       }
 
       return {
-        title: "مستخدم غير موجود - مدونتي",
+        title: "مستخدم غير موجود",
       };
     }
 
     // Plain members (not authors): never leak the email into the description,
     // and keep the page out of every index — robots.txt alone doesn't reach
     // crawlers that fetch on user request (GEO audit 2026-07-13, finding ن١٠).
-    const memberMeta = generateMetadataFromSEO({
+    // Same missing `await` as the partner page — the function is async, so this was spreading
+    // a promise and shipping {}. The page is noindex, so the SEO cost is near zero; the
+    // correctness cost is not, and the two sites are one mistake with one shape.
+    const memberMeta = await generateMetadataFromSEO({
       title: user.name || "مستخدم",
       description: `ملف شخصي لـ ${user.name || "مستخدم"} على مدونتي`,
       image: user.image || undefined,
@@ -75,7 +78,7 @@ export async function generateMetadata({ params }: UserPageProps): Promise<Metad
     return { ...memberMeta, robots: { index: false, follow: true } };
   } catch {
     return {
-      title: "الملف الشخصي - مدونتي",
+      title: "الملف الشخصي",
     };
   }
 }

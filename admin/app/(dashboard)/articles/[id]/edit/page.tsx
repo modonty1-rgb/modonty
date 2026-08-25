@@ -44,7 +44,14 @@ export default async function EditArticlePage({ params }: { params: Promise<{ id
 
   const transformedData = transformArticleToFormData(article);
   const settingsArticleDefaults = getArticleDefaultsFromSettings(settings);
-  const initialData = { ...transformedData, ...settingsArticleDefaults };
+  const initialData = {
+    ...transformedData,
+    ...settingsArticleDefaults,
+    // The Settings default is a fallback, not an override: an article that carries its own
+    // robots directive keeps it. Spread last so it wins, and only when the article has one —
+    // otherwise the default above stands.
+    ...(transformedData.metaRobots ? { metaRobots: transformedData.metaRobots } : {}),
+  };
 
   const dbMetaAndJsonLd = {
     nextjsMetadata: (article.nextjsMetadata ?? null) as Record<string, unknown> | null,

@@ -139,6 +139,9 @@ section.grp{margin:0 0 28px}
 .card[data-apps~="console"]{background:color-mix(in srgb,var(--cyan) 7%,var(--card))}
 .card[data-apps~="admin"]{background:color-mix(in srgb,var(--blue) 7%,var(--card))}
 .card[data-apps~="modonty"]{background:color-mix(in srgb,var(--violet) 9%,var(--card))}
+/* تنفيذ كودكس المكتمل يبقى أخضر بصرياً حتى قبل أن ينقل كلود البطاقة إلى الأرشيف. */
+.card[data-codex-done="1"]{background:color-mix(in srgb,var(--green) 20%,var(--card));border-color:color-mix(in srgb,var(--green) 65%,var(--line))}
+.card[data-codex-done="1"]::before{background:var(--green)}
 /* شريط لوني رفيع أعلى البطاقة — إشارة ثانية لمن لا يميّز الفروق الخفيفة في الخلفية */
 .card{position:relative}
 .card::before{content:"";position:absolute;inset-block-start:0;inset-inline:0;height:2px;background:var(--line)}
@@ -183,6 +186,7 @@ section.grp{margin:0 0 28px}
 /* ملاحظة كودكس (مراجع مستقلّ ثانٍ) — تبقى ظاهرة بجانب حكمي حتى يقارن خالد بنفسه */
 .codex{background:color-mix(in srgb,var(--blue) 10%,transparent);border:1px solid color-mix(in srgb,var(--blue) 40%,transparent);border-inline-start:4px solid var(--blue);border-radius:10px;padding:8px 10px;font-size:13px;color:var(--fg);display:flex;flex-direction:column;gap:3px}
 .codex>b{color:var(--blue)}.codex .src{font-size:11.5px;color:var(--dim)}.codex .src a{color:var(--blue)}
+.codex-work{margin:7px -2px 3px;padding:8px 10px;border-radius:8px;background:color-mix(in srgb,var(--blue) 20%,transparent);border:1px solid color-mix(in srgb,var(--blue) 55%,transparent);font-size:13.5px;line-height:1.7}.codex-work b{color:var(--blue)}
 .codex[data-verdict="wrong"]{border-inline-start-color:var(--red)}.codex[data-verdict="mixed"]{border-inline-start-color:var(--amber)}.codex[data-verdict="confirmed"]{border-inline-start-color:var(--green)}
 .ask{background:color-mix(in srgb,var(--amber) 14%,transparent);border:1px solid color-mix(in srgb,var(--amber) 45%,transparent);border-radius:10px;padding:8px 10px;font-size:13.5px}
 .ask b{color:var(--amber)}
@@ -208,19 +212,35 @@ function cardHTML(t) {
     t.ease === 3 ? `<span class="tag ease-3">🤔 يحتاج جلسة</span>` : "";
   const ask = t.who === "k" ? (t.ask ? `<div class="ask"><b>المطلوب منك:</b> ${esc(t.ask)}</div>` : `<div class="ask missing"><b>المطلوب منك:</b> لم يُصَغ بعد — افتح التفاصيل.</div>`) : "";
   const runningTag = t.running ? `<span class="tag running">⏳ جارٍ الآن</span>` : "";
+  // Who holds this card, and whether it is waiting on Claude. Four workers share one branch,
+  // so a card with no visible owner is a card two of them may pick up (Khalid, 25 Aug 2026).
+  //
+  // `ready: true` is the ONLY field a worker writes: it means "I finished, audit me". The card
+  // turns green so Claude can check that one immediately instead of waiting for a whole batch.
+  const OWNERS = { codex: "كودكس", agent2: "وكيل ٢", agent3: "وكيل ٣", agent4: "وكيل ٤" };
+  const ownerTag = t.owner && t.tab !== "done" ? `<span class="tag owner owner-${t.owner}">👷 ${OWNERS[t.owner] || t.owner}</span>` : "";
+  const readyTag = t.ready && t.tab !== "done" ? `<span class="tag ready">✅ خلص — بانتظار تدقيق كلود</span>` : "";
+  // The banner sits at the TOP of the card, above the title — the one place a state is read
+  // without hunting. `ready` wins over `working`: a worker who finished but forgot to clear
+  // the start flag is finished, and the green must not be hidden behind an amber.
+  const stateBanner = t.tab === "done" ? ""
+    : t.ready ? `<div class="state st-ready">✅ خلص — بانتظار تدقيق كلود</div>`
+    : t.working ? `<div class="state st-working">🔨 تحت الشغل الآن — ${OWNERS[t.owner] || t.owner || "؟"}</div>`
+    : "";
   // بند مؤجَّل عمداً إلى ما قبل الدمج — يُوسم كي لا يُقرأ تأخيرُه إهمالاً.
   const lastTag = t.last ? `<span class="tag last-before-merge">🏁 قبل الدمج مع main</span>` : "";
   // شارة «جاهز لوكيل»: بند فُحص حجمه ولا يحتاج قراراً — الرقم هو ترتيب التنفيذ المقترح.
   const agentTag = t.agent
     ? `<span class="tag ${t.agentKind === "قياس" ? "agent-measure" : "agent"}">🤖 وكيل ${t.agent}${t.agentKind === "قياس" ? " · قياس" : ""}</span>`
     : "";
-  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.agent ? ` data-agent="${t.agent}"` : ""}${t.last ? " data-last=\"1\"" : ""}${t.area ? ` data-area="${esc(t.area)}"` : ""}${t.running ? ' data-running="1"' : ""}${t.n ? ` data-n="${t.n}"` : ""}${t.prod ? ` data-prod="${esc(t.prod.state)}"` : ""}>
+  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.agent ? ` data-agent="${t.agent}"` : ""}${t.last ? " data-last=\"1\"" : ""}${t.area ? ` data-area="${esc(t.area)}"` : ""}${t.running ? ' data-running="1"' : ""}${t.owner ? ` data-owner="${esc(t.owner)}"` : ""}${t.ready && t.tab !== "done" ? ' data-ready="1"' : ""}${t.working && !t.ready && t.tab !== "done" ? ' data-working="1"' : ""}${t.codex?.done ? ' data-codex-done="1"' : ""}${t.n ? ` data-n="${t.n}"` : ""}${t.prod ? ` data-prod="${esc(t.prod.state)}"` : ""}>
   <div class="hd">${t.n ? `<span class="num" title="رقم البند — قل «بند ${t.n}» في الشات">${t.n}</span>` : ""}<span class="id">${esc(t.id)}</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ${esc(t.id)}">⧉</button></div>
+  ${stateBanner}
   <div class="t">${t.t}</div>
-  <div class="meta">${lastTag}${agentTag}${runningTag}${easeTag}<span class="tag tab-${esc(t.tab)}">${tabL}</span><span class="tag">${sevL}</span>${apps}<span class="tag">${esc(t.board)}</span>${t.date ? `<span>${esc(t.date)}</span>` : ""}</div>
+  <div class="meta">${readyTag}${ownerTag}${lastTag}${agentTag}${runningTag}${easeTag}<span class="tag tab-${esc(t.tab)}">${tabL}</span><span class="tag">${sevL}</span>${apps}<span class="tag">${esc(t.board)}</span>${t.date ? `<span>${esc(t.date)}</span>` : ""}</div>
   ${t.prod ? `<div class="prod" data-state="${esc(t.prod.state)}"><b>${{ yes: "🌐 موجود على الإنتاج", no: "🌐 غير موجود على الإنتاج", admin: "🌐 جذره في الأدمن — لا يُقاس من الخارج", nm: "🌐 لم يُقَس على الإنتاج" }[t.prod.state]}:</b> ${esc(t.prod.ev)} <span class="when">(${esc(t.prod.base)} · ${esc(t.prod.when)})</span></div>` : ""}
   ${t.review?.length ? `<div class="review"><b>🔴 حكمي بعد المراجعة العكسية:</b><ul>${t.review.map(r => `<li>${esc(r)}</li>`).join("")}</ul></div>` : ""}
-  ${t.codex ? `<div class="codex" data-verdict="${esc(t.codex.verdict)}"><b>🔵 كودكس (مراجع مستقلّ) — ${esc(t.codex.label)}:</b><div><b>الكود:</b> ${esc(t.codex.evidence)}</div><div><b>ملاحظته:</b> ${esc(t.codex.note)}</div>${t.codex.sources?.length ? `<div class="src">${t.codex.sources.map(s => s[1] ? `<a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a>` : `<span>${esc(s[0])}</span>`).join(" · ")}</div>` : ""}</div>` : ""}
+  ${t.codex ? `<div class="codex" data-verdict="${esc(t.codex.verdict)}"><b>🔵 كودكس (مراجع مستقلّ) — ${esc(t.codex.label)}:</b><div><b>الكود:</b> ${esc(t.codex.evidence)}</div><div><b>ملاحظته:</b> ${esc(t.codex.note)}</div>${t.codex.work ? `<div class="codex-work"><b>${t.codex.done ? "✅ تنفيذ كودكس:" : "📝 ملاحظة كودكس:"}</b> ${esc(t.codex.work)}</div>` : ""}${t.codex.sources?.length ? `<div class="src">${t.codex.sources.map(s => s[1] ? `<a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a>` : `<span>${esc(s[0])}</span>`).join(" · ")}</div>` : ""}</div>` : ""}
   ${t.plain ? `<div class="plain">
     <div><b>المشكلة:</b> ${esc(t.plain.p)}</div>
     <div><b>ليش تهمّنا:</b> ${esc(t.plain.x)}</div>
@@ -465,17 +485,29 @@ const SEO_PHASES = [
 const byOrd = (a, b) => (a.ord ?? 99) - (b.ord ?? 99) || bySev(a, b);
 // خالد (٢٤ أغسطس، ليلاً): «اعمل تاب جديد واللي أنت وكودكس متّفقين عليه ١٠٠٪ حطّه فيه عشان نبدأ نشتغل عليه؛
 // الخلاف نرجع نناقشه بعدين». الاتفاق = كودكس «مثبت» + شدّتي ليست «مراقبة» + ليس قراراً معلّقاً.
-const seoLane = (t) => (t.phase === 0 || t.who === "k") ? "decide" : (t.codex?.verdict === "confirmed" && t.sev !== "ok") ? "agreed" : "disputed";
+// `owner: "codex"` wins over every other lane: a card handed to Codex must appear in ONE
+// place, or two of us pick it up and edit the same file on the same branch (Khalid, 25 Aug —
+// Codex works this list in parallel while Claude takes the heavy cards).
+const seoLane = (t) => t.owner ? t.owner : (t.phase === 0 || t.who === "k") ? "decide" : (t.codex?.verdict === "confirmed" && t.sev !== "ok") ? "agreed" : "disputed";
 const SEO_LANES = [
   { k: "agreed", n: "متّفق عليه ١٠٠٪", s: "كلود وكودكس على كلمة واحدة: العطل مثبت والحلّ واضح. هذا اللي نشتغل عليه الآن — بترتيب المراحل، والأسهل أوّل كل مرحلة." },
+  { k: "codex", n: "كودكس · صفحات الموقع", s: "صفحات مدونتي العامّة — <code>modonty/app/(site)/**</code>. أربعة عمّال على فرع واحد، والفصل بينهم <b>بالمنطقة لا بالملف</b>: من التزم بمنطقته لا يلتقي بأحد. كلّهم ممنوعون من إغلاق البطاقات — كلود يدقّق ويقفل، و«الدليل قبل الحكم» سارية على الجميع." },
+  { k: "agent2", n: "وكيل ٢ · الأدمن", s: "شاشات الأدمن ونماذجه ومسارات الحفظ — `admin/app/(dashboard)/**`. لا يلمس `admin/lib/seo` (وكيل ٤) ولا `modonty/` (كودكس ووكيل ٣)." },
+  { k: "agent3", n: "وكيل ٣ · الشريك", s: "صفحات الشريك ومكوّناتها — `modonty/app/(partner)/**`. منطقة مستقلّة عن صفحات الموقع العامّة التي يشتغل عليها كودكس." },
+  { k: "agent4", n: "وكيل ٤ · البيانات المنظَّمة", s: "بُناة JSON-LD والمحقّقات والمقيّمات — `admin/lib/seo/**` عدا المولّدات التي يملكها كلود. عائلة واحدة: هوية الكيان وصحّة ما يُبثّ." },
   { k: "disputed", n: "فيه خلاف", s: "كودكس قال «جزئي» أو «غلط» أو «خارج السيو» أو «غير مثبت». ما نلمسه إلا بعد ما نخلّص المتّفق عليه — نناقشه بنداً بنداً." },
   { k: "reports", n: "تقارير", s: "جرد مقيس بالكامل — كود الإنتاج + قياس حيّ + قراءة القاعدة + المصدر الرسمي. ليست مهامّ: هذه هي الأرضية التي تُبنى عليها المهامّ." },
   { k: "decide", n: "قرارك", s: "ينتظر كلمتك — لا يبدأ قبلها. قراران يفتحان الطريق (SEOFAQ · SEOMETATAGS-DEAD) وفكرة مؤجَّلة بقرارك (AUTOLINK)." },
 ];
 const REPORTS = DATA.reports || [];
+// A closed report keeps every word of its inventory — that is the point of the tab — but the
+// outcome has to be visible in the first line. Khalid opened one at the top, saw the original
+// finding, and read it as "not updated" (25 Aug 2026). The closure was there, eight sections
+// down. A verdict at the bottom of a long page is a verdict nobody reads.
 const reportHTML = (r) => `<article class="report" id="report-${esc(r.id)}">
-  <h3>${r.n ? `<span class="num">${r.n}</span>` : ""}${esc(r.title)}</h3>
+  <h3>${r.n ? `<span class="num">${r.n}</span>` : ""}${esc(r.title)}${r.status === "closed" ? `<span class="rstate">أُغلق${r.closedOn ? ` · ${esc(r.closedOn)}` : ""}</span>` : ""}</h3>
   <p class="when">${esc(r.when)} · المصدر: ${esc(r.base)}</p>
+  ${r.outcome ? `<p class="outcome">${noScript(r.outcome)}</p>` : ""}
   ${r.lead ? `<p class="lead">${r.lead}</p>` : ""}
   ${(r.sections || []).map(s => `<section><h4>${esc(s.h)}</h4>
     ${s.body ? `<div>${noScript(s.body)}</div>` : ""}
@@ -501,8 +533,46 @@ const seoLanes = SEO_LANES.map(l => {
   }
 }
 const seoHigh = seoOpen.filter(t => /critical|high/.test(t.sev)).length;
+
+// Progress, stated once and honestly. The lane badges count only what is left in each lane,
+// so a day of real work moved twelve cards out and every visible number stayed where it was —
+// Khalid, 25 Aug 2026: «we do a lot but the number still». A board that cannot show progress
+// makes the work look stalled to the person paying for it.
+//
+// `closedToday` uses the card's own `date`, which is written at closing time, so it counts
+// what was actually finished rather than what was touched.
+// `enriched` already holds open AND done, so this is the whole set — concatenating `done`
+// on top counted every closed card twice and showed "30 of 124" where the truth was 17 of 117.
+const seoAll = enriched.filter(isSeoCard);
+const seoClosed = seoAll.length - seoOpen.length;
+const seoPercent = seoAll.length ? Math.round((seoClosed / seoAll.length) * 100) : 0;
+
+// The badge names its DATE rather than saying "today", so it can never claim a stale count
+// is from today. Update the constant when a new working day starts; forget to, and the label
+// still tells the truth about which day it counts.
+const LAST_WORKING_DAY = "٢٥ أغسطس ٢٠٢٦";
+const seoClosedThatDay = seoAll.filter(t => isDone(t) && t.date === LAST_WORKING_DAY).length;
 const SEO_TABS_CSS = `.report{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
 .report h3{margin:0 0 4px;font-size:19px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.state{margin:2px 0 8px;padding:7px 11px;border-radius:9px;font-size:12.5px;font-weight:700;letter-spacing:.1px}
+.state.st-working{background:rgba(246,174,49,.16);color:#f6ae31;border:1px solid rgba(246,174,49,.45)}
+.state.st-ready{background:rgba(34,197,94,.18);color:#4ade80;border:1px solid rgba(34,197,94,.5)}
+.card[data-working="1"]{background:linear-gradient(180deg,rgba(246,174,49,.10),rgba(246,174,49,.03));border-color:rgba(246,174,49,.5)}
+.card[data-ready="1"]{background:linear-gradient(180deg,rgba(34,197,94,.13),rgba(34,197,94,.05));border-color:rgba(34,197,94,.55);box-shadow:0 0 0 1px rgba(34,197,94,.2)}
+.tag.ready{background:rgba(34,197,94,.2);color:#4ade80;border-color:rgba(34,197,94,.45);font-weight:700}
+.tag.owner{font-weight:700}
+.tag.owner-codex{background:rgba(96,165,250,.16);color:#60a5fa;border-color:rgba(96,165,250,.4)}
+.tag.owner-agent2{background:rgba(167,139,250,.16);color:#a78bfa;border-color:rgba(167,139,250,.4)}
+.tag.owner-agent3{background:rgba(34,211,238,.16);color:#22d3ee;border-color:rgba(34,211,238,.4)}
+.tag.owner-agent4{background:rgba(246,174,49,.16);color:#f6ae31;border-color:rgba(246,174,49,.4)}
+.progress{display:flex;align-items:center;gap:12px;margin:8px 0 2px}
+.progress .bar{flex:1;height:7px;border-radius:999px;background:var(--line);overflow:hidden}
+.progress .bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#22c55e,#4ade80)}
+.progress .pnums{font-size:12.5px;color:var(--mut);white-space:nowrap}
+.progress .pnums b{color:var(--fg)}
+.progress .today{font-style:normal;margin-inline-start:10px;padding:2px 9px;border-radius:999px;background:rgba(34,197,94,.14);color:#4ade80;border:1px solid rgba(34,197,94,.3);font-weight:600}
+.report .rstate{font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:999px;background:rgba(16,185,129,.14);color:#34d399;border:1px solid rgba(16,185,129,.3)}
+.report .outcome{margin:0 0 10px;padding:10px 13px;border-radius:10px;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.22);font-size:13.5px;line-height:1.75}
 .report .when{color:var(--dim);font-size:12.5px;margin:0 0 10px}
 .report .lead{margin:0 0 14px;font-size:14.5px}
 .report h4{margin:16px 0 6px;font-size:15px;color:var(--amber)}
@@ -521,8 +591,19 @@ const seoHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="u
 <style>${CSS}${SEO_TABS_CSS}</style></head><body>
 <header class="top"><div class="wrap">
 <h1>سيو مدونتي — ${seoOpen.length} بنداً مفتوحاً <span style="color:var(--dim);font-weight:500;font-size:13px">· ${seoHigh} مهمّاً · ثماني مراحل بترتيب التنفيذ، والأسهل أوّل كل مرحلة · التقرير: <a href="../modonty/seo/SEO-AUDIT-2026-08-24.html">SEO-AUDIT-2026-08-24.html</a> · باقي الشغل: <a href="TASK.html">TASK.html</a></span></h1>
+<div class="progress">
+  <div class="bar"><span style="width:${seoPercent}%"></span></div>
+  <div class="pnums">
+    <b>${seoClosed}</b> أُغلق من <b>${seoAll.length}</b> · ${seoPercent}%
+    ${seoClosedThatDay ? `<em class="today">${LAST_WORKING_DAY}: ${seoClosedThatDay}</em>` : ""}
+  </div>
+</div>
 <div class="lanes" role="tablist">${seoLanes.map((l, i) => `<button class="lane" role="tab" data-lane-btn="${l.k}" aria-selected="${i === 0}">${l.n}<span class="n">${l.count}</span></button>`).join("")}</div>
-<div class="tools"><input id="q" type="search" placeholder="ابحث بالكلمة أو رقم البند…" aria-label="بحث">
+<!-- No search box here on purpose. Khalid, 25 Aug 2026: "I will not search, I want final
+     result" — this board is read to decide what to do next, not to look something up. A box
+     nobody types in is a row of empty pixels above the thing they came for. The two filters
+     stay: they narrow the list without asking for input. -->
+<div class="tools">
 <button class="chip" data-sev="critical high" aria-pressed="false">المهمّ فقط</button>
 <button class="chip" id="prodOnly" aria-pressed="false">مؤكَّد على الإنتاج فقط</button></div>
 </div></header>
@@ -533,11 +614,13 @@ ${l.groups.map(g => `<section class="grp" data-grp="${g.k}"><h2>${g.n} <span cla
 </main>
 <footer>هذه اللوحة تخصّ سيو مدونتي وحده — نُقلت بطاقاته من <a href="TASK.html">TASK.html</a> نقلاً لا نسخاً. المنجز في <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a>.</footer>
 <script>
-(() => { const q = document.getElementById('q'); const chip = document.querySelector('.chip'); const prodChip = document.getElementById('prodOnly'); const cards = [...document.querySelectorAll('.card')];
-  const apply = () => { const t = q.value.trim().toLowerCase(); const sevOnly = chip.getAttribute('aria-pressed') === 'true'; const prodOnly = prodChip.getAttribute('aria-pressed') === 'true';
-    cards.forEach(c => { let ok = !t || (c._s ||= c.textContent.toLowerCase()).includes(t) || c.dataset.id.toLowerCase().includes(t); if (ok && sevOnly) ok = /critical|high/.test(c.dataset.sev); if (ok && prodOnly) ok = c.dataset.prod === 'yes'; c.classList.toggle('hidden', !ok); });
+(() => { const chip = document.querySelector('.chip'); const prodChip = document.getElementById('prodOnly'); const cards = [...document.querySelectorAll('.card')];
+  // The search input is gone (see the note above the toolbar), so this reads the two chips
+  // only. Leaving the old \`q.value\` read here would throw on the first click and take both
+  // chips down with it — a removed control has to leave its handler too, not just the markup.
+  const apply = () => { const sevOnly = chip.getAttribute('aria-pressed') === 'true'; const prodOnly = prodChip.getAttribute('aria-pressed') === 'true';
+    cards.forEach(c => { let ok = true; if (sevOnly) ok = /critical|high/.test(c.dataset.sev); if (ok && prodOnly) ok = c.dataset.prod === 'yes'; c.classList.toggle('hidden', !ok); });
     document.querySelectorAll('.grp').forEach(g => { const n = g.querySelectorAll('.card:not(.hidden)').length; g.querySelector('[data-count]').textContent = n; g.classList.toggle('hidden', n === 0); }); };
-  q.addEventListener('input', apply);
   [chip, prodChip].forEach(b => b.addEventListener('click', () => { b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); apply(); }));
   const showLane = (k) => { document.querySelectorAll('[data-lane]').forEach(l => l.classList.toggle('hidden', l.dataset.lane !== k)); document.querySelectorAll('[data-lane-btn]').forEach(b => b.setAttribute('aria-selected', b.dataset.laneBtn === k)); try { localStorage.setItem('seo-lane', k); } catch {} };
   document.querySelectorAll('[data-lane-btn]').forEach(b => b.addEventListener('click', () => showLane(b.dataset.laneBtn)));

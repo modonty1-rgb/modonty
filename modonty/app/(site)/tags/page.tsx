@@ -12,8 +12,6 @@ import { EntitySortFilter, type EntitySortOption } from "@/components/listing/En
 import { IconSearch } from "@/lib/icons";
 import type { EntityCardProps } from "@/components/listing/EntityCard";
 
-const PAGE_SIZE = 20;
-
 const SORT_OPTIONS: EntitySortOption[] = [
   { value: "articles", label: "الأكثر مقالات" },
   { value: "trending", label: "الأكثر رواجًا" },
@@ -53,11 +51,13 @@ export default async function TagsPage({ searchParams }: TagsPageProps) {
     getListingPageSeo("tags"),
   ]);
 
-  // Hero copy comes from the admin SEO cache (single source of truth) — the visible H1
-  // reuses the SEO title minus the "| مدونتي" brand suffix (kept only in <title>); the
-  // paragraph reuses the SEO description. Fallbacks mirror generateMetadata above.
+  // Hero copy comes from the admin SEO cache (single source of truth): the visible H1 reuses
+  // the SEO title, the paragraph reuses the SEO description.
+  //
+  // The trailing-brand strip that used to live here was treating the symptom — see the same
+  // note on `/categories`. The brand left the stored title on 25 Aug 2026.
   const seoTitle = typeof seo.metadata?.title === "string" ? seo.metadata.title : undefined;
-  const heroTitle = (seoTitle ?? "الوسوم").replace(/\s*\|\s*مدونتي\s*$/, "").trim();
+  const heroTitle = seoTitle ?? "الوسوم";
   const heroDescription =
     (typeof seo.metadata?.description === "string" && seo.metadata.description) ||
     "تصفح جميع الوسوم في مدونتي واكتشف المقالات المصنّفة حسب المواضيع والاهتمامات";
@@ -76,8 +76,7 @@ export default async function TagsPage({ searchParams }: TagsPageProps) {
     digitalImpact: tag.digitalImpact,
   });
 
-  const pageOne = all.slice(0, PAGE_SIZE).map(toCard);
-  const hasMore = all.length > PAGE_SIZE;
+  const initialItems = all.map(toCard);
   const loadMore = loadMoreTags.bind(null, { search, sortBy });
 
   // Prefer the admin-generated + validated JSON-LD cache (Settings.tagsPageJsonLdStructuredData —
@@ -174,8 +173,8 @@ export default async function TagsPage({ searchParams }: TagsPageProps) {
             // from the new (filtered) initialItems instead of keeping stale client state.
             <InfiniteEntityGrid
               key={`${search ?? ""}|${sortBy}`}
-              initialItems={pageOne}
-              initialHasMore={hasMore}
+              initialItems={initialItems}
+              initialHasMore={false}
               loadMoreAction={loadMore}
               columns={4}
               emptyState={null}

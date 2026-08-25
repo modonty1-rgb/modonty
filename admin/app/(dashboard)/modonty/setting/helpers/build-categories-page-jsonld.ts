@@ -66,7 +66,9 @@ function categoryToThing(
   if (category.parent?.slug) {
     thing.broader = { "@id": `${siteUrl}/categories/${category.parent.slug}` };
   }
-  if (category.id) thing.identifier = category.id;
+  // No `identifier` — same reason as the taxonomy builder: the raw Mongo _id was reaching
+  // public JSON-LD (measured 25 Aug 2026 — 15 on /categories). The absolute `url` already
+  // identifies the entity.
 
   return {
     "@type": "ListItem",

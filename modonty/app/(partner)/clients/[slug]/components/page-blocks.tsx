@@ -6,10 +6,12 @@ import { getWhatsAppLink, bookingWhatsappMessage } from "@/lib/whatsapp";
 import { getPartnerSite } from "../helpers/get-partner-site";
 import { getCachedHomeData } from "../helpers/get-cached-home-data";
 import { BookingCard, BookingCardSkeleton } from "./home/booking-card";
+import { PageFrame } from "./page-frame";
 
 interface PageBlocksProps {
   slug: string;
   blocks: readonly HomeBlock[];
+  titlePrefix?: string;
 }
 
 /**
@@ -18,7 +20,7 @@ interface PageBlocksProps {
  * he saw is what ships. The booking block gets the live form (it owns the server
  * action); everything else is data → markup.
  */
-export async function PageBlocks({ slug, blocks }: PageBlocksProps) {
+export async function PageBlocks({ slug, blocks, titlePrefix }: PageBlocksProps) {
   const decodedSlug = decodeURIComponent(slug);
   const [site, home] = await Promise.all([getPartnerSite(decodedSlug), getCachedHomeData(decodedSlug)]);
   if (!site || !home) notFound();
@@ -30,7 +32,7 @@ export async function PageBlocks({ slug, blocks }: PageBlocksProps) {
   const hidden = new Set(site.site?.hiddenSections ?? []);
   const visible = blocks.filter((b) => !hidden.has(b.key) && !b.isEmpty(data));
 
-  return (
+  const content = (
     <>
       {visible.map((b) =>
         b.key === "booking" && data.booking.mode === "FORM" ? (
@@ -55,5 +57,18 @@ export async function PageBlocks({ slug, blocks }: PageBlocksProps) {
         ),
       )}
     </>
+  );
+
+  if (!titlePrefix) return content;
+
+  return (
+    <PageFrame
+      siteName={site.name}
+      base={`/clients/${encodeURIComponent(site.slug)}`}
+      eyebrow="موقع الشريك"
+      title={`${titlePrefix} ${site.name}`}
+    >
+      {content}
+    </PageFrame>
   );
 }

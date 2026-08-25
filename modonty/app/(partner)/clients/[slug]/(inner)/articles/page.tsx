@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OptimizedImage } from "@modonty/shared/components/optimized-image";
 import { getClientPageData } from "../../helpers/client-page-data";
+import { buildPartnerPageMetadata } from "../../helpers/build-partner-page-metadata";
 import { PageFrame } from "../../components/page-frame";
 
 interface PageProps {
@@ -17,10 +18,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const data = await getClientPageData(slug);
   if (!data) return { title: "غير موجود" };
-  return {
+  return buildPartnerPageMetadata({
+    slug,
+    sub: "articles",
     title: `مقالات ${data.client.name}`.slice(0, 51),
     description: `كل ما كتبه ${data.client.name} على مدونتي — ${data.client._count.articles} مقالاً`,
-  };
+    heroImage: data.client.heroImageMedia,
+    logo: data.client.logoMedia,
+  });
 }
 
 /** «مقالاته» — every published article by this partner, newest first. */
@@ -28,5 +33,5 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 /** Rendered from the shared block registry — same components the partner previewed in the console. */
 export default async function Page({ params }: PageProps) {
   const { slug } = await params;
-  return <PageBlocks slug={slug} blocks={BLOG_BLOCKS} />;
+  return <PageBlocks slug={slug} blocks={BLOG_BLOCKS} titlePrefix="مقالات" />;
 }

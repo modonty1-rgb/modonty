@@ -5,7 +5,7 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
 import { SubscriptionStatus, ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { generateMetadataFromSEO, generateStructuredData, generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
+import { generateMetadataFromSEO, generateStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { cacheTag, cacheLife } from "next/cache";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { HOME_BLOCKS } from "@modonty/shared/components/partner-site/free/home";
@@ -74,7 +74,7 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
 
     if (!client) {
       return {
-        title: "عميل غير موجود - مدونتي",
+        title: "عميل غير موجود",
       };
     }
 
@@ -120,20 +120,29 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
         },
       };
     }
+    // `await`, because `generateMetadataFromSEO` is async — spreading the promise itself
+    // spreads an object with no own enumerable keys, so this branch returned {} and the page
+    // fell back to the root layout's title with no canonical, no og: and no hreflang.
+    //
+    // It never showed: all 35 active partners carry a stored blob and take the branch above.
+    // Reproduced 25 Aug 2026 by clearing one dev partner's blob — the page served
+    // "مدونتي - منصة المدونات متعددة الشركاء" with canonical MISSING and hreflang 0.
+    // The first partner published before their blob is generated is an indexable page with
+    // no identity at all.
     return {
-      ...generateMetadataFromSEO({
+      ...(await generateMetadataFromSEO({
         title: (client.seoTitle || client.name)?.slice(0, 51),
         description: client.seoDescription || `استكشف مقالات ${client.name}`,
         image: mediaSrc(client.heroImageMedia) || mediaSrc(client.logoMedia) || undefined,
         url: canonicalUrl,
         type: "website",
         languages: hreflangLanguages,
-      }),
+      })),
       ...(robots ? { robots } : {}),
     };
   } catch {
     return {
-      title: "الشركاء - مدونتي",
+      title: "الشركاء",
     };
   }
 }
@@ -174,12 +183,6 @@ async function ClientPageMeta({ params }: ClientPageProps) {
           : undefined,
       });
 
-    const breadcrumbData = generateBreadcrumbStructuredData([
-      { name: "الرئيسية", url: "/" },
-      { name: "الشركاء", url: "/clients" },
-      { name: client.name, url: `/clients/${encodeURIComponent(slug)}` },
-    ]);
-
     return (
       <>
         {client.jsonLdStructuredData ? (
@@ -187,7 +190,6 @@ async function ClientPageMeta({ params }: ClientPageProps) {
         ) : (
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(buildFallbackOrganization()) }} />
         )}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbData) }} />
         {faqs.length > 0 && (
           <script
             type="application/ld+json"

@@ -64,7 +64,7 @@ export async function generateMetadata({ params }: CategoryDetailPageProps): Pro
     const { slug: rawSlug } = await params;
     const slug = decodeURIComponent(rawSlug);
     const category = await getCategoryForMetadata(slug);
-    if (!category) return { title: "فئة غير موجودة - مدونتي" };
+    if (!category) return { title: "فئة غير موجودة" };
     if (category.nextjsMetadata) {
       const stored = category.nextjsMetadata as Metadata;
       if (stored.title) return stored;
@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: CategoryDetailPageProps): Pro
       image: category.socialImage || undefined,
     });
   } catch {
-    return { title: "الفئات - مدونتي" };
+    return { title: "الفئات" };
   }
 }
 

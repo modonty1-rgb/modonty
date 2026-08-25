@@ -83,7 +83,10 @@ function itemToListItem(
       ...(item.socialImageAlt?.trim() && { caption: item.socialImageAlt.trim() }),
     };
   }
-  if (item.id) thing.identifier = item.id;
+  // No `identifier`: this used to ship the raw Mongo _id into public JSON-LD (measured
+  // 25 Aug 2026 — 20 on /tags, 8 on /industries). It is an internal primary key, it means
+  // nothing to any consumer, and schema.org identifiers are meant to be identifiers the
+  // outside world can resolve. The entity is already identified by its absolute `url`.
 
   return {
     "@type": "ListItem",

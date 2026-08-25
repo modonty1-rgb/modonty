@@ -3,6 +3,7 @@ import { GALLERY_BLOCKS } from "@modonty/shared/components/partner-site/free/gal
 import { PageBlocks } from "../../components/page-blocks";
 import { notFound } from "next/navigation";
 import { getClientPageData } from "../../helpers/client-page-data";
+import { buildPartnerPageMetadata } from "../../helpers/build-partner-page-metadata";
 import { ClientPhotosPreview } from "../../components/client-photos-preview";
 
 interface ClientPhotosPageProps {
@@ -13,15 +14,19 @@ export async function generateMetadata({ params }: ClientPhotosPageProps): Promi
   const { slug } = await params;
   const data = await getClientPageData(slug);
   if (!data) return { title: "غير موجود" };
-  return {
+  return buildPartnerPageMetadata({
+    slug,
+    sub: "photos",
     title: `صور ${data.client.name}`.slice(0, 51),
     description: `معرض صور ومحتوى مرئي لـ ${data.client.name}`,
-  };
+    heroImage: data.client.heroImageMedia,
+    logo: data.client.logoMedia,
+  });
 }
 
 
 /** Rendered from the shared block registry — same components the partner previewed in the console. */
 export default async function Page({ params }: ClientPhotosPageProps) {
   const { slug } = await params;
-  return <PageBlocks slug={slug} blocks={GALLERY_BLOCKS} />;
+  return <PageBlocks slug={slug} blocks={GALLERY_BLOCKS} titlePrefix="صور" />;
 }

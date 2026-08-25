@@ -44,6 +44,23 @@ export interface YmylArticleContext {
 }
 
 /**
+ * The @ids the rest of the graph already uses for these entities.
+ *
+ * These nodes describe the SAME clinic and the SAME page the main generator describes, so
+ * they must carry the same identifiers or they arrive as extra entities. Before this,
+ * `@id` was rebuilt here from `client.url` and `pageUrl + "#webpage"`, which put a second
+ * page node next to the real one — measured on /articles/علاج-الديسك:
+ * `WebPage @id .../علاج-الديسك` and `MedicalWebPage @id .../علاج-الديسك#webpage`, with
+ * `reviewedBy` sitting on the second. Passing the ids in is what keeps them one node.
+ */
+export interface YmylGraphIds {
+  /** @id of the client's Organization node in the main graph. */
+  organization: string;
+  /** @id of the page's WebPage node in the main graph. */
+  webPage: string;
+}
+
+/**
  * Reviewer is ALWAYS a Person. Physician/Attorney are LocalBusiness subtypes in
  * schema.org, so typing a human reviewer with them makes Google's LocalBusiness
  * validation demand telephone/priceRange/address on a person. Google's article
@@ -58,8 +75,9 @@ export function buildYmylJsonLdGraph(input: {
   client: YmylClientForJsonLd;
   reviewer?: YmylReviewerForJsonLd | null;
   article?: YmylArticleContext | null;
+  ids: YmylGraphIds;
 }): Record<string, unknown>[] {
-  const { client, reviewer, article } = input;
+  const { client, reviewer, article, ids } = input;
 
   if (!client.isYmyl) return [];
 
@@ -75,7 +93,7 @@ export function buildYmylJsonLdGraph(input: {
   // Build the organization node (MedicalClinic / LegalService / FinancialService / etc.)
   const orgNode: Record<string, unknown> = {
     "@type": orgSchemaType,
-    "@id": `${client.url ?? ""}#organization`,
+    "@id": ids.organization,
     name: client.name,
   };
   if (client.url) orgNode.url = client.url;
@@ -149,7 +167,7 @@ export function buildYmylJsonLdGraph(input: {
   if (article && client.ymylCategory === "medical") {
     const webPageNode: Record<string, unknown> = {
       "@type": "MedicalWebPage",
-      "@id": `${article.pageUrl}#webpage`,
+      "@id": ids.webPage,
       url: article.pageUrl,
     };
     if (reviewerNodeId) webPageNode.reviewedBy = { "@id": reviewerNodeId };

@@ -108,6 +108,8 @@ export async function generateAndSaveNextjsMetadata(
     // Generate metadata
     const metadata = await generateNextjsMetadata(articleWithDefaults, {
       robots: options?.robots || articleWithDefaults.metaRobots || undefined,
+      // og:site_name names the site the page is served from — Settings is its only source.
+      siteName: settings?.siteName || undefined,
     });
 
     // Calculate generation time

@@ -108,8 +108,13 @@ export function useClientForm({ initialData, clientId, onCreated, schema }: UseC
     loadTierConfigs();
   }, []);
 
-  // Auto-update slug when name changes — uses same slugify as categories/tags/industries
+  // Auto-update slug when name changes — uses same slugify as categories/tags/industries.
+  // Create mode only: once the client exists the slug is frozen (updateRequiredFields pins
+  // it back to the stored value, and a real rename goes through the OTP dialog). Left
+  // running in edit mode it rewrote the slug on screen while the badge beside it still read
+  // "locked" — the form promised a URL change the save would never make.
   useEffect(() => {
+    if (isEditMode) return;
     const subscription = form.watch((value, { name: fieldName }) => {
       if (fieldName === "name") {
         const newSlug = slugify(value.name || "");
@@ -121,7 +126,7 @@ export function useClientForm({ initialData, clientId, onCreated, schema }: UseC
       }
     });
     return () => subscription.unsubscribe();
-  }, [form]);
+  }, [form, isEditMode]);
 
   // Auto-calculate subscription end date (18 months from start)
   useEffect(() => {

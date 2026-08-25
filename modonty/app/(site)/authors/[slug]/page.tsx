@@ -17,6 +17,7 @@ import { getPlatformSocialLinks } from "@/lib/settings/get-platform-social-links
 import { IconFacebook, IconLinkedin, IconTwitter, IconExternal, IconEmail } from "@/lib/icons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { FeedPagination } from "@/components/shared/pagination/FeedPagination";
 
 // Channel key → brand icon (registry only; no barrel lucide imports). Others fall back to a
 // generic external-link glyph — the Arabic label carries the platform name.
@@ -25,6 +26,18 @@ const CHANNEL_ICON: Record<string, typeof IconExternal> = {
   linkedin: IconLinkedin,
   twitter: IconTwitter,
 };
+
+const AUTHOR_PAGE_SIZE = 20;
+
+interface AuthorPageProps {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ page?: string | string[] }>;
+}
+
+function parseAuthorPage(value: string | string[] | undefined): number {
+  const page = Number.parseInt(Array.isArray(value) ? value[0] : value || "", 10);
+  return Number.isFinite(page) && page > 1 ? page : 1;
+}
 
 export async function generateStaticParams() {
   try {
@@ -71,7 +84,7 @@ async function getAuthorBySlug(slug: string) {
   });
 }
 
-async function getAuthorArticles(authorId: string) {
+async function getAuthorArticles(authorId: string, page: number) {
   // Cached for the same reason as the helpers below — the publish-date guard reads the
   // clock, and Next 16 forbids the current time in an uncached prerender scope.
   "use cache";
@@ -96,7 +109,8 @@ async function getAuthorArticles(authorId: string) {
       },
     },
     orderBy: { datePublished: "desc" },
-    take: 20,
+    skip: (page - 1) * AUTHOR_PAGE_SIZE,
+    take: AUTHOR_PAGE_SIZE + 1,
   });
 }
 
@@ -109,6 +123,7 @@ async function getAuthorForMetadata(slug: string) {
   return db.author.findUnique({
     where: { slug },
     select: {
+      id: true,
       name: true,
       slug: true,
       seoTitle: true,
@@ -120,8 +135,9 @@ async function getAuthorForMetadata(slug: string) {
   });
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
+export async function generateMetadata({ params, searchParams }: AuthorPageProps): Promise<Metadata> {
+  const [{ slug }, query] = await Promise.all([params, searchParams]);
+  const page = parseAuthorPage(query.page);
   const author = await getAuthorForMetadata(slug);
 
   if (!author) return { title: "Author Not Found" };
@@ -131,10 +147,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // title already embeds the brand (admin generator appends it), so letting the
   // template run again shipped «… | مدونتي | مدونتي» (GEO audit, بند ٥ب).
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
-  const authorUrl = `${siteUrl}/authors/${author.slug}`;
+  const baseAuthorUrl = `${siteUrl}/authors/${author.slug}`;
+  const authorUrl = page > 1 ? `${baseAuthorUrl}?page=${page}` : baseAuthorUrl;
+  const articleChunk = await getAuthorArticles(author.id, page);
+  const pagination = {
+    previous: page > 1 ? (page === 2 ? baseAuthorUrl : `${baseAuthorUrl}?page=${page - 1}`) : undefined,
+    next: articleChunk.length > AUTHOR_PAGE_SIZE ? `${baseAuthorUrl}?page=${page + 1}` : undefined,
+  };
 
   if (author.nextjsMetadata && typeof author.nextjsMetadata === "object") {
     const stored = author.nextjsMetadata as Metadata;
+    const canonicalUrl = page > 1 ? authorUrl : String(stored.alternates?.canonical ?? authorUrl);
     return {
       ...stored,
       ...(typeof stored.title === "string" && { title: { absolute: stored.title } }),
@@ -142,13 +165,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       // 2026-08-15 carry a single locale because the generator hardcoded one.
       alternates: {
         ...stored.alternates,
-        canonical: stored.alternates?.canonical ?? authorUrl,
+        canonical: canonicalUrl,
         languages: buildHreflangLanguages(
           (await getPageSeoDefaults()).alternateLanguages,
-          String(stored.alternates?.canonical ?? authorUrl),
+          canonicalUrl,
           siteUrl,
         ),
       },
+      pagination,
     };
   }
   const title = (author.seoTitle || `${author.name} — Author`)?.slice(0, 51);
@@ -166,23 +190,27 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         siteUrl,
       ),
     },
+    pagination,
     openGraph: {
       title,
       description,
       type: "profile",
-      url: `${siteUrl}/authors/${author.slug}`,
+      url: authorUrl,
       ...(author.image && { images: [{ url: author.image }] }),
     },
   };
 }
 
-export default async function AuthorPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function AuthorPage({ params, searchParams }: AuthorPageProps) {
+  const [{ slug }, query] = await Promise.all([params, searchParams]);
+  const page = parseAuthorPage(query.page);
   const author = await getAuthorBySlug(slug);
 
   if (!author) notFound();
 
-  const articles = await getAuthorArticles(author.id);
+  const articleChunk = await getAuthorArticles(author.id, page);
+  const hasMore = articleChunk.length > AUTHOR_PAGE_SIZE;
+  const articles = articleChunk.slice(0, AUTHOR_PAGE_SIZE);
   const siteUrl = SITE_URL;
 
   // Modonty is the platform-brand publisher → a rich "publisher profile" header with the
@@ -397,6 +425,18 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
                 </Link>
               ))}
             </div>
+            {(page > 1 || hasMore) && (
+              <div className="mt-6">
+                <FeedPagination
+                  page={page}
+                  hasMore={hasMore}
+                  buildHref={(target) =>
+                    target === 1 ? `/authors/${author.slug}` : `/authors/${author.slug}?page=${target}`
+                  }
+                  label="تنقّل بين صفحات مقالات الكاتب"
+                />
+              </div>
+            )}
           </section>
         )}
       </div>

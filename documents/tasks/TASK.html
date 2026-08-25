@@ -58,6 +58,9 @@ section.grp{margin:0 0 28px}
 .card[data-apps~="console"]{background:color-mix(in srgb,var(--cyan) 7%,var(--card))}
 .card[data-apps~="admin"]{background:color-mix(in srgb,var(--blue) 7%,var(--card))}
 .card[data-apps~="modonty"]{background:color-mix(in srgb,var(--violet) 9%,var(--card))}
+/* تنفيذ كودكس المكتمل يبقى أخضر بصرياً حتى قبل أن ينقل كلود البطاقة إلى الأرشيف. */
+.card[data-codex-done="1"]{background:color-mix(in srgb,var(--green) 20%,var(--card));border-color:color-mix(in srgb,var(--green) 65%,var(--line))}
+.card[data-codex-done="1"]::before{background:var(--green)}
 /* شريط لوني رفيع أعلى البطاقة — إشارة ثانية لمن لا يميّز الفروق الخفيفة في الخلفية */
 .card{position:relative}
 .card::before{content:"";position:absolute;inset-block-start:0;inset-inline:0;height:2px;background:var(--line)}
@@ -102,6 +105,7 @@ section.grp{margin:0 0 28px}
 /* ملاحظة كودكس (مراجع مستقلّ ثانٍ) — تبقى ظاهرة بجانب حكمي حتى يقارن خالد بنفسه */
 .codex{background:color-mix(in srgb,var(--blue) 10%,transparent);border:1px solid color-mix(in srgb,var(--blue) 40%,transparent);border-inline-start:4px solid var(--blue);border-radius:10px;padding:8px 10px;font-size:13px;color:var(--fg);display:flex;flex-direction:column;gap:3px}
 .codex>b{color:var(--blue)}.codex .src{font-size:11.5px;color:var(--dim)}.codex .src a{color:var(--blue)}
+.codex-work{margin:7px -2px 3px;padding:8px 10px;border-radius:8px;background:color-mix(in srgb,var(--blue) 20%,transparent);border:1px solid color-mix(in srgb,var(--blue) 55%,transparent);font-size:13.5px;line-height:1.7}.codex-work b{color:var(--blue)}
 .codex[data-verdict="wrong"]{border-inline-start-color:var(--red)}.codex[data-verdict="mixed"]{border-inline-start-color:var(--amber)}.codex[data-verdict="confirmed"]{border-inline-start-color:var(--green)}
 .ask{background:color-mix(in srgb,var(--amber) 14%,transparent);border:1px solid color-mix(in srgb,var(--amber) 45%,transparent);border-radius:10px;padding:8px 10px;font-size:13.5px}
 .ask b{color:var(--amber)}
@@ -115,7 +119,7 @@ summary::before{content:"▸";transition:transform .15s}details[open]>summary::b
 footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </style></head><body>
 <header class="top"><div class="wrap">
-<h1>لوحة الشغل — 50 بنداً مفتوحاً <span style="color:var(--dim);font-weight:500;font-size:13px">· و13 في «قبل الدمج» · <b>سيو مدونتي (103) في <a href="SEO.html">SEO.html</a></b> · تحديث البيانات في <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> · المنجز في <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a></span></h1>
+<h1>لوحة الشغل — 50 بنداً مفتوحاً <span style="color:var(--dim);font-weight:500;font-size:13px">· و13 في «قبل الدمج» · <b>سيو مدونتي (84) في <a href="SEO.html">SEO.html</a></b> · تحديث البيانات في <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> · المنجز في <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a></span></h1>
 <!-- لا صفّ إحصاءات إطلاقاً (خالد، ٢٤ أغسطس: «only the counter for what remain, no حشو»).
      كانت عشرون رقماً على الشاشة، ثم واحد بارز مع مطويّة — وكلّها ما زالت حشواً فوق ما يلزم.
      أرقام التبويبات وحدها تقول ما بقي، وعناوين الأقسام تقول توزيعه. الباقي كان يشرح لا يفيد. -->
@@ -127,6 +131,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 <main class="wrap">
 <section class="grp" data-grp="decide"><h2>يحتاج قرارك <span class="n" data-count>34</span></h2><p>الأسهل أولاً: ⚡ = كلمة «ابدأ» تكفي · 🤔 سهل = نعم/لا · 🤔 قصير = جواب سطر · 🤔 جلسة = نقاش. كلود لا يبدأ قبل كلمتك.</p><div class="grid"><article class="card" data-id="S11" data-sev="high" data-who="k" data-tab="open" data-board="ca" data-apps="admin">
   <div class="hd"><span class="id">S11</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند S11">⧉</button></div>
+  
   <div class="t">⏳ ١١ · انتهاء الاشتراك — قرار إداري مؤجَّل</div>
   <div class="meta"><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">مقالات العملاء</span></div>
   
@@ -138,6 +143,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="TGREVOKE" data-sev="high" data-who="k" data-tab="next" data-board="prod" data-apps="console">
   <div class="hd"><span class="id">TGREVOKE</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند TGREVOKE">⧉</button></div>
+  
   <div class="t">🔑 توكن بوت تيليجرام تسرّب في محادثة — هل أُبطل؟</div>
   <div class="meta"><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-next">التالي</span><span class="tag">مهم</span><span class="tag app-console">console</span><span class="tag">إنتاج</span><span>٢٤ أغسطس ٢٠٢٦</span></div>
   
@@ -149,6 +155,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="82" data-sev="normal" data-who="k" data-tab="open" data-board="seo" data-apps="admin">
   <div class="hd"><span class="id">82</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 82">⧉</button></div>
+  
   <div class="t">ذاكرة فاحص صحّة المقالات بين التشغيلات</div>
   <div class="meta"><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">سيو وأداء</span></div>
   
@@ -160,6 +167,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="12" data-sev="normal" data-who="k" data-tab="open" data-board="projects" data-apps="dataLayer">
   <div class="hd"><span class="id">12</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 12">⧉</button></div>
+  
   <div class="t">توحيد موديلات المشتركين الثلاثة</div>
   <div class="meta"><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-dataLayer">dataLayer</span><span class="tag">To Do</span></div>
   
@@ -171,6 +179,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="31" data-sev="normal" data-who="k" data-tab="open" data-board="backlog" data-apps="dataLayer">
   <div class="hd"><span class="id">31</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 31">⧉</button></div>
+  
   <div class="t">بطاقة عروض الشركاء</div>
   <div class="meta"><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-dataLayer">dataLayer</span><span class="tag">قائمة الانتظار</span></div>
   
@@ -182,6 +191,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="43" data-sev="normal" data-who="k" data-tab="open" data-board="backlog" data-apps="admin">
   <div class="hd"><span class="id">43</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 43">⧉</button></div>
+  
   <div class="t">قرار: هل نستثمر <code>admin/lib/gsc/indexing.ts</code>؟ — كود يتيم لا نحذفه</div>
   <div class="meta"><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">قائمة الانتظار</span></div>
   
@@ -193,6 +203,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="PARTNERMOB" data-sev="critical" data-who="k" data-tab="next" data-board="projects" data-apps="modonty" data-area="partner">
   <div class="hd"><span class="id">PARTNERMOB</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PARTNERMOB">⧉</button></div>
+  
   <div class="t">ريفاكتور الجوّال لصفحة الشريك — مرحلة، لا بند</div>
   <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-next">التالي</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">To Do</span><span>٢٢ أغسطس ٢٠٢٦</span></div>
   
@@ -204,6 +215,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="UVBACKFILL" data-sev="high" data-who="k" data-tab="next" data-board="sot" data-apps="admin">
   <div class="hd"><span class="id">UVBACKFILL</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند UVBACKFILL">⧉</button></div>
+  
   <div class="t">حقل <code>userVersion</code> على مقالات الإنتاج — هل عُبّئ؟</div>
   <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-next">التالي</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">مصدر بيانات السيو</span><span>٢٤ أغسطس ٢٠٢٦</span></div>
   
@@ -215,6 +227,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="INVREV" data-sev="normal" data-who="k" data-tab="now" data-board="projects" data-apps="admin">
   <div class="hd"><span class="id">INVREV</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند INVREV">⧉</button></div>
+  
   <div class="t">مراجعة الفواتير — الدورة كاملة من الإصدار إلى بريد العميل</div>
   <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-now">الآن</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">To Do</span><span>٢٠ أغسطس ٢٠٢٦</span></div>
   
@@ -226,6 +239,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="BUNNYDASH" data-sev="normal" data-who="k" data-tab="open" data-board="bunny" data-apps="console">
   <div class="hd"><span class="id">BUNNYDASH</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند BUNNYDASH">⧉</button></div>
+  
   <div class="t">لوحة بني — تفعيل التفريغ الصوتي وتنبيه الفوترة</div>
   <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-console">console</span><span class="tag">بني</span><span>٢٢ أغسطس ٢٠٢٦</span></div>
   
@@ -237,6 +251,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="REELS56" data-sev="normal" data-who="k" data-tab="open" data-board="projects" data-apps="console admin">
   <div class="hd"><span class="id">REELS56</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند REELS56">⧉</button></div>
+  
   <div class="t">٥٦ طلّة واقفة ما اختارها أحد — قرارك</div>
   <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-console">console</span><span class="tag app-admin">admin</span><span class="tag">To Do</span><span>٢٢ أغسطس ٢٠٢٦</span></div>
   
@@ -248,6 +263,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="BNMAP" data-sev="normal" data-who="k" data-tab="open" data-board="projects" data-apps="admin">
   <div class="hd"><span class="id">BNMAP</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند BNMAP">⧉</button></div>
+  
   <div class="t">صفحة «خريطة بني» في الأدمن — عرض حي لبنية التخزين</div>
   <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">To Do</span></div>
   
@@ -259,6 +275,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="34" data-sev="normal" data-who="k" data-tab="open" data-board="projects" data-apps="admin">
   <div class="hd"><span class="id">34</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 34">⧉</button></div>
+  
   <div class="t">قسم «نشاط العميل» في صفحة العميل بالأدمن</div>
   <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">To Do</span></div>
   
@@ -270,6 +287,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="28" data-sev="normal" data-who="k" data-tab="open" data-board="backlog" data-apps="modonty" data-area="partner">
   <div class="hd"><span class="id">28</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 28">⧉</button></div>
+  
   <div class="t">مراجعات Google على صفحة العميل</div>
   <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-modonty">modonty</span><span class="tag">قائمة الانتظار</span></div>
   
@@ -281,6 +299,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="I1" data-sev="idea" data-who="k" data-tab="idea" data-board="ideas" data-apps="modonty" data-area="partner">
   <div class="hd"><span class="id">I1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند I1">⧉</button></div>
+  
   <div class="t">قوالب جاهزة لصفحة العميل</div>
   <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-idea">فكرة</span><span class="tag">فكرة</span><span class="tag app-modonty">modonty</span><span class="tag">أفكار</span></div>
   
@@ -292,6 +311,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="PARTNERPAGE" data-sev="critical" data-who="k" data-tab="open" data-board="projects" data-apps="modonty console" data-area="partner">
   <div class="hd"><span class="id">PARTNERPAGE</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PARTNERPAGE">⧉</button></div>
+  
   <div class="t">صفحة الشريك الجديدة — سبعة قرارات تنتظرك قبل أي كود</div>
   <div class="meta"><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-open">مفتوح</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag app-console">console</span><span class="tag">To Do</span><span>٢٢ أغسطس ٢٠٢٦</span></div>
   
@@ -303,6 +323,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="PREV" data-sev="high" data-who="k" data-tab="open" data-board="projects" data-apps="console admin modonty" data-area="partner">
   <div class="hd"><span class="id">PREV</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PREV">⧉</button></div>
+  
   <div class="t">⏸ نظام الثقة والتقييمات — «هدية من مدونتي» + تقييمات الزوّار للشركاء (بعد الريفاكتور)</div>
   <div class="meta"><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-console">console</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">To Do</span><span>١٧ أغسطس ٢٠٢٦</span></div>
   
@@ -314,6 +335,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="11" data-sev="high" data-who="k" data-tab="open" data-board="projects" data-apps="admin">
   <div class="hd"><span class="id">11</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 11">⧉</button></div>
+  
   <div class="t">صلاحيات الأدمن لكل دور — ٥ قرارات</div>
   <div class="meta"><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">To Do</span></div>
   
@@ -325,6 +347,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="10" data-sev="high" data-who="k" data-tab="open" data-board="projects" data-apps="dataLayer">
   <div class="hd"><span class="id">10</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 10">⧉</button></div>
+  
   <div class="t">مراجعة سكيما شاملة + سياسة تكلفة مونجو</div>
   <div class="meta"><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-dataLayer">dataLayer</span><span class="tag">To Do</span></div>
   
@@ -336,6 +359,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="ARTCTA" data-sev="normal" data-who="k" data-tab="next" data-board="projects" data-apps="modonty" data-area="partner">
   <div class="hd"><span class="id">ARTCTA</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ARTCTA">⧉</button></div>
+  
   <div class="t">CTA خاص بالمقال نفسه — يودّي على المنتج لا على الصفحة العامة</div>
   <div class="meta"><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-next">التالي</span><span class="tag">عادي</span><span class="tag app-modonty">modonty</span><span class="tag">To Do</span><span>٢١ أغسطس ٢٠٢٦</span></div>
   
@@ -347,6 +371,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="19" data-sev="normal" data-who="k" data-tab="open" data-board="backlog" data-apps="">
   <div class="hd"><span class="id">19</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 19">⧉</button></div>
+  
   <div class="t">نظام الروابط المختصرة — ٩ مراحل + ٣ قرارات</div>
   <div class="meta"><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag">قائمة الانتظار</span></div>
   
@@ -358,6 +383,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="22" data-sev="normal" data-who="k" data-tab="open" data-board="backlog" data-apps="admin">
   <div class="hd"><span class="id">22</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 22">⧉</button></div>
+  
   <div class="t">صيانة القاعدة داخل Run-All — تنفيذ سياسة الاحتفاظ</div>
   <div class="meta"><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">قائمة الانتظار</span></div>
   
@@ -369,6 +395,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="CONSOLE-CHAT" data-sev="idea" data-who="k" data-tab="now" data-board="fs" data-apps="console">
   <div class="hd"><span class="id">CONSOLE-CHAT</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند CONSOLE-CHAT">⧉</button></div>
+  
   <div class="t">محادثة مباشرة في الكونسول للتواصل مع العميل — فكرة مسجَّلة، لا تنفيذ قبل النقاش</div>
   <div class="meta"><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-now">الآن</span><span class="tag">فكرة</span><span class="tag app-console">console</span><span class="tag">بنية مدونتي</span><span>٢٠ أغسطس ٢٠٢٦</span></div>
   
@@ -380,6 +407,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="I3" data-sev="idea" data-who="k" data-tab="open" data-board="ideas" data-apps="modonty" data-area="partner">
   <div class="hd"><span class="id">I3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند I3">⧉</button></div>
+  
   <div class="t">بريد رسمي لكل شريك — قرار تشغيلي</div>
   <div class="meta"><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-open">مفتوح</span><span class="tag">فكرة</span><span class="tag app-modonty">modonty</span><span class="tag">أفكار</span></div>
   
@@ -391,6 +419,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="HOMEMOB" data-sev="high" data-who="k" data-tab="open" data-board="projects" data-apps="modonty" data-last="1">
   <div class="hd"><span class="id">HOMEMOB</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند HOMEMOB">⧉</button></div>
+  
   <div class="t">🏁 قبل الدمج — مراجعتك الكلّية للرئيسية على الجوّال كزائر</div>
   <div class="meta"><span class="tag last-before-merge">🏁 قبل الدمج مع main</span><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-modonty">modonty</span><span class="tag">To Do</span><span>٢٢ أغسطس ٢٠٢٦</span></div>
   
@@ -402,6 +431,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="14b" data-sev="normal" data-who="k" data-tab="open" data-board="backlog" data-apps="modonty" data-last="1">
   <div class="hd"><span class="id">14b</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 14b">⧉</button></div>
+  
   <div class="t">🏁 قبل الدمج — قرار: كوتا الريلز لكل باقة</div>
   <div class="meta"><span class="tag last-before-merge">🏁 قبل الدمج مع main</span><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-modonty">modonty</span><span class="tag">قائمة الانتظار</span></div>
   
@@ -413,6 +443,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="29" data-sev="normal" data-who="k" data-tab="open" data-board="backlog" data-apps="modonty" data-last="1">
   <div class="hd"><span class="id">29</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 29">⧉</button></div>
+  
   <div class="t">🏁 قبل الدمج — نظام آراء لمودونتي نفسها</div>
   <div class="meta"><span class="tag last-before-merge">🏁 قبل الدمج مع main</span><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-modonty">modonty</span><span class="tag">قائمة الانتظار</span></div>
   
@@ -424,6 +455,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="BNOPT" data-sev="high" data-who="k" data-tab="open" data-board="bunny" data-apps="modonty" data-last="1">
   <div class="hd"><span class="id">BNOPT</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند BNOPT">⧉</button></div>
+  
   <div class="t">🏁 قبل الدمج — نقل تحسين الصور من محسّن Vercel إلى بني</div>
   <div class="meta"><span class="tag last-before-merge">🏁 قبل الدمج مع main</span><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-modonty">modonty</span><span class="tag">بني</span></div>
   
@@ -438,6 +470,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="SUBDOM" data-sev="high" data-who="k" data-tab="open" data-board="projects" data-apps="modonty console" data-last="1">
   <div class="hd"><span class="id">SUBDOM</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند SUBDOM">⧉</button></div>
+  
   <div class="t">🏁 قبل الدمج — النطاق الفرعي للشريك &lt;name&gt;.modonty.com — مؤجَّل بقرار خالد (ميزة بريميوم اختيارية، لا افتراضية)</div>
   <div class="meta"><span class="tag last-before-merge">🏁 قبل الدمج مع main</span><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-modonty">modonty</span><span class="tag app-console">console</span><span class="tag">To Do</span><span>١٨ أغسطس ٢٠٢٦</span></div>
   
@@ -449,6 +482,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="65b" data-sev="normal" data-who="k" data-tab="open" data-board="backlog" data-apps="modonty" data-last="1">
   <div class="hd"><span class="id">65b</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 65b">⧉</button></div>
+  
   <div class="t">🏁 قبل الدمج — فولباك الصورة المكسورة وقت العرض</div>
   <div class="meta"><span class="tag last-before-merge">🏁 قبل الدمج مع main</span><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-modonty">modonty</span><span class="tag">قائمة الانتظار</span></div>
   
@@ -460,6 +494,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="PENDDEC" data-sev="normal" data-who="k" data-tab="open" data-board="projects" data-apps="modonty" data-last="1">
   <div class="hd"><span class="id">PENDDEC</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PENDDEC">⧉</button></div>
+  
   <div class="t">🏁 قبل الدمج — مودو: ١١ قراراً موقوفة بأمرك</div>
   <div class="meta"><span class="tag last-before-merge">🏁 قبل الدمج مع main</span><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-modonty">modonty</span><span class="tag">To Do</span><span>٢٢ أغسطس ٢٠٢٦</span></div>
   
@@ -471,6 +506,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="LOGIN-SOCIAL" data-sev="idea" data-who="k" data-tab="now" data-board="fs" data-apps="modonty" data-last="1">
   <div class="hd"><span class="id">LOGIN-SOCIAL</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند LOGIN-SOCIAL">⧉</button></div>
+  
   <div class="t">🏁 قبل الدمج — دخول بفيسبوك وتويتر، وإلغاء اسم المستخدم وكلمة السر — مؤجَّل لجلسة نقاش</div>
   <div class="meta"><span class="tag last-before-merge">🏁 قبل الدمج مع main</span><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-now">الآن</span><span class="tag">فكرة</span><span class="tag app-modonty">modonty</span><span class="tag">بنية مدونتي</span><span>٢٠ أغسطس ٢٠٢٦</span></div>
   
@@ -482,6 +518,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="BUILD-SCALE" data-sev="idea" data-who="k" data-tab="now" data-board="prod" data-apps="modonty" data-last="1">
   <div class="hd"><span class="id">BUILD-SCALE</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند BUILD-SCALE">⧉</button></div>
+  
   <div class="t">🏁 قبل الدمج — توليد كل مقال وقت البناء بلا حدّ — سليم اليوم، ويصير فاتورة عند آلاف المقالات</div>
   <div class="meta"><span class="tag last-before-merge">🏁 قبل الدمج مع main</span><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-now">الآن</span><span class="tag">فكرة</span><span class="tag app-modonty">modonty</span><span class="tag">إنتاج</span><span>١٩ أغسطس ٢٠٢٦</span></div>
   
@@ -493,6 +530,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="WHEEL" data-sev="idea" data-who="k" data-tab="idea" data-board="ideas" data-apps="modonty" data-last="1">
   <div class="hd"><span class="id">WHEEL</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند WHEEL">⧉</button></div>
+  
   <div class="t">🏁 قبل الدمج — عجلة الحظ واكتشف الفروقات — أربعة أشياء تُحسم قبل أي كود</div>
   <div class="meta"><span class="tag last-before-merge">🏁 قبل الدمج مع main</span><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-idea">فكرة</span><span class="tag">فكرة</span><span class="tag app-modonty">modonty</span><span class="tag">أفكار</span><span>٢٢ أغسطس ٢٠٢٦</span></div>
   
@@ -504,6 +542,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article></div></section>
 <section class="grp" data-grp="visible"><h2>🔴 كسر يراه الزائر <span class="n" data-count>11</span></h2><p>شيء مكسور على الشاشة الآن — يسبق كل تحسين.</p><div class="grid"><article class="card" data-id="CACHETMO" data-sev="normal" data-who="c" data-tab="open" data-board="bugs" data-apps="modonty" data-area="partner">
   <div class="hd"><span class="id">CACHETMO</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند CACHETMO">⧉</button></div>
+  
   <div class="t"><code>USE_CACHE_TIMEOUT</code> على صفحة الشريك — مرشَّح لا عطل مثبت</div>
   <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-modonty">modonty</span><span class="tag">عيوب وإصلاحات</span><span>٢٤ أغسطس ٢٠٢٦</span></div>
   
@@ -515,6 +554,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="MI-RISK" data-sev="critical" data-who="c" data-tab="ref" data-board="mediaimg" data-apps="modonty dataLayer">
   <div class="hd"><span class="id">MI-RISK</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند MI-RISK">⧉</button></div>
+  
   <div class="t">سجلّ المخاطر — يُدرَس بنداً بنداً قبل أول سطر كود</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag app-dataLayer">dataLayer</span><span class="tag">مكوّن الصور</span></div>
   
@@ -526,6 +566,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="BN6" data-sev="critical" data-who="c" data-tab="ref" data-board="bunny" data-apps="">
   <div class="hd"><span class="id">BN6</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند BN6">⧉</button></div>
+  
   <div class="t">🔴 الجاري الآن — تصفير زون clients ثم الترحيل على الإنتاج</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">حرج</span><span class="tag">بني</span></div>
   
@@ -537,6 +578,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="BN4" data-sev="critical" data-who="c" data-tab="ref" data-board="bunny" data-apps="">
   <div class="hd"><span class="id">BN4</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند BN4">⧉</button></div>
+  
   <div class="t">قرار التصفير — الحالة الراهنة ٧ أغسطس</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">حرج</span><span class="tag">بني</span></div>
   
@@ -548,6 +590,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="MI0" data-sev="high" data-who="c" data-tab="ref" data-board="mediaimg" data-apps="modonty dataLayer">
   <div class="hd"><span class="id">MI0</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند MI0">⧉</button></div>
+  
   <div class="t">مرجع — عقد مكوّن الصور + جرد الاحتياجات</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag app-modonty">modonty</span><span class="tag app-dataLayer">dataLayer</span><span class="tag">مكوّن الصور</span></div>
   
@@ -559,6 +602,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="BN0" data-sev="high" data-who="c" data-tab="ref" data-board="bunny" data-apps="">
   <div class="hd"><span class="id">BN0</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند BN0">⧉</button></div>
+  
   <div class="t">الزونات الأربعة — الخريطة الكاملة</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag">بني</span></div>
   
@@ -570,6 +614,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="BN1" data-sev="high" data-who="c" data-tab="ref" data-board="bunny" data-apps="">
   <div class="hd"><span class="id">BN1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند BN1">⧉</button></div>
+  
   <div class="t">بنية المجلدات داخل كل زون</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag">بني</span></div>
   
@@ -581,6 +626,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="BN2" data-sev="high" data-who="c" data-tab="ref" data-board="bunny" data-apps="">
   <div class="hd"><span class="id">BN2</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند BN2">⧉</button></div>
+  
   <div class="t">المفاتيح — أين تعيش ومَن يقرأها</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag">بني</span></div>
   
@@ -592,6 +638,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="BN3" data-sev="high" data-who="c" data-tab="ref" data-board="bunny" data-apps="">
   <div class="hd"><span class="id">BN3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند BN3">⧉</button></div>
+  
   <div class="t">صفحة الترحيل <code>/bunny-migration</code> — الأداة المركزية</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag">بني</span></div>
   
@@ -603,6 +650,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="BUNNYWH" data-sev="normal" data-who="c" data-tab="open" data-board="bunny" data-apps="console admin">
   <div class="hd"><span class="id">BUNNYWH</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند BUNNYWH">⧉</button></div>
+  
   <div class="t">توقيع إشعارات بني ستريم غير متحقَّق منه — المفتاح الرابع بلا مستهلك</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-console">console</span><span class="tag app-admin">admin</span><span class="tag">بني</span><span>٢٢ أغسطس ٢٠٢٦</span></div>
   
@@ -614,6 +662,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="BN5" data-sev="normal" data-who="c" data-tab="ref" data-board="bunny" data-apps="">
   <div class="hd"><span class="id">BN5</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند BN5">⧉</button></div>
+  
   <div class="t">فخاخ مجرَّبة — لا تُعاد</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">عادي</span><span class="tag">بني</span></div>
   
@@ -625,6 +674,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article></div></section>
 <section class="grp" data-grp="seo"><h2>🔍 سيو <span class="n" data-count>1</span></h2><p>ما يجلب زائراً جديداً من البحث.</p><div class="grid"><article class="card" data-id="77" data-sev="normal" data-who="c" data-tab="open" data-board="seo" data-apps="dataLayer">
   <div class="hd"><span class="id">77</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 77">⧉</button></div>
+  
   <div class="t">فحص خارجي مستقل لكل السكيما</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-dataLayer">dataLayer</span><span class="tag">سيو وأداء</span></div>
   
@@ -636,6 +686,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article></div></section>
 <section class="grp" data-grp="analytics"><h2>📊 قياس وتتبّع <span class="n" data-count>1</span></h2><p>بلا رقم لا نعرف هل نجح ما بنيناه.</p><div class="grid"><article class="card" data-id="15" data-sev="normal" data-who="c" data-tab="open" data-board="projects" data-apps="admin modonty">
   <div class="hd"><span class="id">15</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 15">⧉</button></div>
+  
   <div class="t">تيليجرام — مرآة الأدمن + سجل موحّد</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">To Do</span></div>
   
@@ -647,6 +698,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article></div></section>
 <section class="grp" data-grp="code"><h2>🧱 بنية الكود <span class="n" data-count>1</span></h2><p>ريفاكتور وتوحيد — بلا أثر مباشر على الزائر.</p><div class="grid"><article class="card" data-id="LOAD1" data-sev="high" data-who="c" data-tab="open" data-board="fs" data-apps="modonty" data-last="1">
   <div class="hd"><span class="id">LOAD1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند LOAD1">⧉</button></div>
+  
   <div class="t">سكيلتون التحميل ينحرف عن الصفحة — ٦٦ من ٦٧ يرسم تخطيطه بيده</div>
   <div class="meta"><span class="tag last-before-merge">🏁 قبل الدمج مع main</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-modonty">modonty</span><span class="tag">بنية مدونتي</span><span>١٩ أغسطس ٢٠٢٦</span></div>
   
@@ -658,6 +710,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article></div></section>
 <section class="grp" data-grp="qa"><h2>🧪 فحص وجودة <span class="n" data-count>1</span></h2><p>مسارات لم تُختبر بعد.</p><div class="grid"><article class="card" data-id="QA7" data-sev="high" data-who="c" data-tab="open" data-board="projects" data-apps="modonty console admin" data-last="1">
   <div class="hd"><span class="id">QA7</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند QA7">⧉</button></div>
+  
   <div class="t">🏁 قبل الدمج — سبع مراحل فحص لم تبدأ — أهمّها «ما يُحفظ» و«مستخدمون معاً»</div>
   <div class="meta"><span class="tag last-before-merge">🏁 قبل الدمج مع main</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-modonty">modonty</span><span class="tag app-console">console</span><span class="tag app-admin">admin</span><span class="tag">To Do</span><span>٢٢ أغسطس ٢٠٢٦</span></div>
   
@@ -669,6 +722,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article></div></section>
 <section class="grp" data-grp="other"><h2>بنود أخرى — دوري <span class="n" data-count>41</span></h2><p>لم تُصنَّف بعد؛ تُنقل إلى قسمها عند فتح مرحلتها.</p><div class="grid"><article class="card" data-id="FAQKPI" data-sev="normal" data-who="c" data-tab="open" data-board="projects" data-apps="admin">
   <div class="hd"><span class="id">FAQKPI</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند FAQKPI">⧉</button></div>
+  
   <div class="t">عدّاد «أسئلة تنتظر ردّك» في لوحة الأدمن يضخّم الرقم</div>
   <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">To Do</span><span>٢٤ أغسطس ٢٠٢٦</span></div>
   
@@ -680,6 +734,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="ADMMEDIAOBS" data-sev="normal" data-who="c" data-tab="open" data-board="projects" data-apps="admin">
   <div class="hd"><span class="id">ADMMEDIAOBS</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ADMMEDIAOBS">⧉</button></div>
+  
   <div class="t">تسع ملاحظات على وسائط الأدمن — تُقاس قبل أن تُصدَّق</div>
   <div class="meta"><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">To Do</span><span>٢٤ أغسطس ٢٠٢٦</span></div>
   
@@ -691,6 +746,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="M6" data-sev="critical" data-who="c" data-tab="ref" data-board="method" data-apps="">
   <div class="hd"><span class="id">M6</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند M6">⧉</button></div>
+  
   <div class="t">الخطوة ٦ — قبل إعلان أي رقم: هل يُحمَّل هذا الملف أصلاً؟</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">حرج</span><span class="tag">منهجية القياس</span></div>
   
@@ -702,6 +758,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="VERCEL-NOBUILD" data-sev="critical" data-who="c" data-tab="now" data-board="deploy" data-apps="admin" data-n="107">
   <div class="hd"><span class="num" title="رقم البند — قل «بند 107» في الشات">107</span><span class="id">VERCEL-NOBUILD</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند VERCEL-NOBUILD">⧉</button></div>
+  
   <div class="t">🚨 الدفع لـmain ما عاد يبني على Vercel — الإنتاج واقف على كوميت ١٣ أغسطس</div>
   <div class="meta"><span class="tag tab-now">الآن</span><span class="tag">حرج</span><span class="tag app-admin">admin</span><span class="tag">خط سير النشر</span><span>٢٥ أغسطس ٢٠٢٦</span></div>
   
@@ -713,6 +770,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="ADM-GAPS" data-sev="high" data-who="c" data-tab="open" data-board="projects" data-apps="admin">
   <div class="hd"><span class="id">ADM-GAPS</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ADM-GAPS">⧉</button></div>
+  
   <div class="t">⚡ عاجل — كرت «مشاكل صفحات العملاء» في الأدمن (لروان)</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">To Do</span><span>١٦ أغسطس ٢٠٢٦</span></div>
   
@@ -724,6 +782,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="CREQ" data-sev="high" data-who="c" data-tab="open" data-board="ca" data-apps="console">
   <div class="hd"><span class="id">CREQ</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند CREQ">⧉</button></div>
+  
   <div class="t">📋 المطلوب من العميل — مرجع، ليس شغلاً علينا</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-console">console</span><span class="tag">مقالات العملاء</span></div>
   
@@ -735,6 +794,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="S8" data-sev="high" data-who="c" data-tab="open" data-board="ca" data-apps="console">
   <div class="hd"><span class="id">S8</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند S8">⧉</button></div>
+  
   <div class="t">✅ ٨ · السحب والعرض — كاش ساعة</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-console">console</span><span class="tag">مقالات العملاء</span></div>
   
@@ -746,6 +806,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="CAP" data-sev="high" data-who="c" data-tab="ref" data-board="ca" data-apps="admin console">
   <div class="hd"><span class="id">CAP</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند CAP">⧉</button></div>
+  
   <div class="t">مقالات العملاء — روابط المعاينة صارت قديمة (الفرع مدموج؛ العنوان الحيّ api.modonty.com/v1/sites/&lt;id&gt;)</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-console">console</span><span class="tag">مقالات العملاء</span></div>
   
@@ -757,6 +818,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="CA5" data-sev="high" data-who="c" data-tab="open" data-board="ca" data-apps="console">
   <div class="hd"><span class="id">CA5</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند CA5">⧉</button></div>
+  
   <div class="t">٧ · جبر سيو يسحب من المعاينة — تجربة طارق</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-console">console</span><span class="tag">مقالات العملاء</span></div>
   
@@ -768,6 +830,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="CA7" data-sev="high" data-who="c" data-tab="open" data-board="ca" data-apps="admin console">
   <div class="hd"><span class="id">CA7</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند CA7">⧉</button></div>
+  
   <div class="t">٨ · التحقّق النهائي + الدمج — دليل خام لكل ادّعاء</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-console">console</span><span class="tag">مقالات العملاء</span></div>
   
@@ -779,6 +842,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="CAD2" data-sev="high" data-who="c" data-tab="ref" data-board="ca" data-apps="admin">
   <div class="hd"><span class="id">CAD2</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند CAD2">⧉</button></div>
+  
   <div class="t">✅ لماذا لا رابط أساسي عبر النطاقات — بمصدر رسمي</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">مقالات العملاء</span></div>
   
@@ -790,6 +854,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="JBR7" data-sev="high" data-who="c" data-tab="ref" data-board="ca" data-apps="admin">
   <div class="hd"><span class="id">JBR7</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR7">⧉</button></div>
+  
   <div class="t">✅ المؤلف «مدونتي» — عصفوران بحجر</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">مقالات العملاء</span></div>
   
@@ -801,6 +866,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="M0" data-sev="high" data-who="c" data-tab="ref" data-board="method" data-apps="">
   <div class="hd"><span class="id">M0</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند M0">⧉</button></div>
+  
   <div class="t">المبدأ الحاكم — ما الذي يُقاس محلياً وما الذي لا يُقاس</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag">منهجية القياس</span></div>
   
@@ -812,6 +878,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="M1" data-sev="high" data-who="c" data-tab="ref" data-board="method" data-apps="">
   <div class="hd"><span class="id">M1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند M1">⧉</button></div>
+  
   <div class="t">الخطوة ١ — التوثيق الرسمي قبل أي أمر (والمصدر محلّي لا شبكي)</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag">منهجية القياس</span></div>
   
@@ -823,6 +890,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="M2" data-sev="high" data-who="c" data-tab="ref" data-board="method" data-apps="">
   <div class="hd"><span class="id">M2</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند M2">⧉</button></div>
+  
   <div class="t">الخطوة ٢ — تجهيز البيئة: اطبع رابط القاعدة، ثم حرِّر المنفذ</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag">منهجية القياس</span></div>
   
@@ -834,6 +902,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="M3" data-sev="high" data-who="c" data-tab="ref" data-board="method" data-apps="">
   <div class="hd"><span class="id">M3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند M3">⧉</button></div>
+  
   <div class="t">الخطوة ٣ — البناء ثم وزن الأصول كلّها (gzip وbrotli)</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag">منهجية القياس</span></div>
   
@@ -845,6 +914,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="M4" data-sev="high" data-who="c" data-tab="ref" data-board="method" data-apps="">
   <div class="hd"><span class="id">M4</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند M4">⧉</button></div>
+  
   <div class="t">الخطوة ٤ — الوزن الحقيقي لكل صفحة (من HTML سيرفر الإنتاج)</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag">منهجية القياس</span></div>
   
@@ -856,6 +926,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="M5" data-sev="high" data-who="c" data-tab="ref" data-board="method" data-apps="">
   <div class="hd"><span class="id">M5</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند M5">⧉</button></div>
+  
   <div class="t">الخطوة ٥ — تفكيك الأرضية المشتركة وتسمية القطع المجهولة</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag">منهجية القياس</span></div>
   
@@ -867,6 +938,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="M7" data-sev="high" data-who="c" data-tab="ref" data-board="method" data-apps="">
   <div class="hd"><span class="id">M7</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند M7">⧉</button></div>
+  
   <div class="t">الخطوة ٧ — لا تتّهم مكتبة قبل إثبات استيرادها</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag">منهجية القياس</span></div>
   
@@ -878,6 +950,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="M8" data-sev="high" data-who="c" data-tab="ref" data-board="method" data-apps="">
   <div class="hd"><span class="id">M8</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند M8">⧉</button></div>
+  
   <div class="t">الخطوة ٨ — راجع الـlayout الجذري بعينك، لا بالأداة وحدها</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag">منهجية القياس</span></div>
   
@@ -889,6 +962,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="HEALTHCHK" data-sev="normal" data-who="c" data-tab="open" data-board="projects" data-apps="admin">
   <div class="hd"><span class="id">HEALTHCHK</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند HEALTHCHK">⧉</button></div>
+  
   <div class="t">فاحص صحّة المقالات — مصمَّم بالكامل، صفر كود</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">To Do</span><span>٢٢ أغسطس ٢٠٢٦</span></div>
   
@@ -900,6 +974,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="PARTNERSITE" data-sev="normal" data-who="c" data-tab="open" data-board="projects" data-apps="console modonty" data-area="partner">
   <div class="hd"><span class="id">PARTNERSITE</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PARTNERSITE">⧉</button></div>
+  
   <div class="t">بانِي موقع الشريك — المتبقّي بعد ما شُحن الأساس</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-console">console</span><span class="tag app-modonty">modonty</span><span class="tag">To Do</span><span>٢٢ أغسطس ٢٠٢٦</span></div>
   
@@ -911,6 +986,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="ADM-AUTH-IMG" data-sev="normal" data-who="c" data-tab="open" data-board="projects" data-apps="admin">
   <div class="hd"><span class="id">ADM-AUTH-IMG</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ADM-AUTH-IMG">⧉</button></div>
+  
   <div class="t">الأدمن بلا حقل لصورة الكاتب — اضطررنا لكتابتها في القاعدة</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">To Do</span></div>
   
@@ -922,6 +998,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="S3" data-sev="normal" data-who="c" data-tab="open" data-board="ca" data-apps="admin">
   <div class="hd"><span class="id">S3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند S3">⧉</button></div>
+  
   <div class="t">✅ ٣ · المفتاح — كل ما يخصّه</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">مقالات العملاء</span></div>
   
@@ -933,6 +1010,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="CAD3" data-sev="normal" data-who="c" data-tab="ref" data-board="ca" data-apps="dataLayer">
   <div class="hd"><span class="id">CAD3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند CAD3">⧉</button></div>
+  
   <div class="t">✅ البوّابة إذنٌ مستقلّ — لا حقل الباقة</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">عادي</span><span class="tag app-dataLayer">dataLayer</span><span class="tag">مقالات العملاء</span></div>
   
@@ -944,6 +1022,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="BKPRUNE" data-sev="normal" data-who="c" data-tab="open" data-board="projects" data-apps="admin dataLayer">
   <div class="hd"><span class="id">BKPRUNE</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند BKPRUNE">⧉</button></div>
+  
   <div class="t">تقليم النسخ الاحتياطية مكتوب لكنه لا يُستدعى — الملفات تتراكم</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-dataLayer">dataLayer</span><span class="tag">To Do</span></div>
   
@@ -955,6 +1034,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="12c" data-sev="normal" data-who="c" data-tab="open" data-board="projects" data-apps="admin console">
   <div class="hd"><span class="id">12c</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 12c">⧉</button></div>
+  
   <div class="t">واجهة إطلاق الحملة</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-console">console</span><span class="tag">To Do</span></div>
   
@@ -966,6 +1046,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="P6" data-sev="normal" data-who="c" data-tab="open" data-board="projects" data-apps="admin">
   <div class="hd"><span class="id">P6</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند P6">⧉</button></div>
+  
   <div class="t">دمج الكيانات — تست الأب/الابن</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">To Do</span></div>
   
@@ -977,6 +1058,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="16b" data-sev="normal" data-who="c" data-tab="open" data-board="projects" data-apps="admin">
   <div class="hd"><span class="id">16b</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 16b">⧉</button></div>
+  
   <div class="t">شيل معرض العميل من <code>/media</code></div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">To Do</span></div>
   
@@ -988,6 +1070,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="30" data-sev="normal" data-who="c" data-tab="open" data-board="backlog" data-apps="">
   <div class="hd"><span class="id">30</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 30">⧉</button></div>
+  
   <div class="t">تدقيق فاتورة Vercel</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag">قائمة الانتظار</span></div>
   
@@ -999,6 +1082,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="20" data-sev="normal" data-who="c" data-tab="open" data-board="backlog" data-apps="admin">
   <div class="hd"><span class="id">20</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 20">⧉</button></div>
+  
   <div class="t">جرد الإيميلات الشامل</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">قائمة الانتظار</span></div>
   
@@ -1010,6 +1094,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="24" data-sev="normal" data-who="c" data-tab="open" data-board="backlog" data-apps="console">
   <div class="hd"><span class="id">24</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 24">⧉</button></div>
+  
   <div class="t">كروبر صورة الغلاف في الكونسول</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-console">console</span><span class="tag">قائمة الانتظار</span></div>
   
@@ -1021,6 +1106,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="40" data-sev="normal" data-who="c" data-tab="open" data-board="backlog" data-apps="">
   <div class="hd"><span class="id">40</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 40">⧉</button></div>
+  
   <div class="t">تدقيق الكود الميت</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag">قائمة الانتظار</span></div>
   
@@ -1032,6 +1118,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="41" data-sev="normal" data-who="c" data-tab="open" data-board="backlog" data-apps="admin">
   <div class="hd"><span class="id">41</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند 41">⧉</button></div>
+  
   <div class="t">بنود Client Edit / Impersonation + المشاريع القديمة</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">قائمة الانتظار</span></div>
   
@@ -1043,6 +1130,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="ARTREF" data-sev="normal" data-who="c" data-tab="open" data-board="projects" data-apps="admin console">
   <div class="hd"><span class="id">ARTREF</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ARTREF">⧉</button></div>
+  
   <div class="t">رقم مرجعي بشري لكل مقال — يُنطق ويُكتب، بدل معرّف ٢٤ خانة</div>
   <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-console">console</span><span class="tag">To Do</span></div>
   
@@ -1054,6 +1142,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="INV0" data-sev="ok" data-who="c" data-tab="ref" data-board="sot" data-apps="modonty admin console">
   <div class="hd"><span class="id">INV0</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند INV0">⧉</button></div>
+  
   <div class="t">📍 الجرد الشامل — كل المفتوح، وأين يسكن</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">هادئ</span><span class="tag app-modonty">modonty</span><span class="tag app-admin">admin</span><span class="tag app-console">console</span><span class="tag">مصدر بيانات السيو</span><span>١٩ أغسطس ٢٠٢٦</span></div>
   
@@ -1065,6 +1154,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="PG0" data-sev="ok" data-who="c" data-tab="ref" data-board="sot" data-apps="modonty">
   <div class="hd"><span class="id">PG0</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PG0">⧉</button></div>
+  
   <div class="t">جرد صفحات مدونتي — 57 صفحة</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">هادئ</span><span class="tag app-modonty">modonty</span><span class="tag">مصدر بيانات السيو</span><span>١٤ أغسطس ٢٠٢٦</span></div>
   
@@ -1076,6 +1166,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="SOT0" data-sev="ok" data-who="c" data-tab="ref" data-board="sot" data-apps="modonty">
   <div class="hd"><span class="id">SOT0</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند SOT0">⧉</button></div>
+  
   <div class="t">خلاصة الوضع</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">هادئ</span><span class="tag app-modonty">modonty</span><span class="tag">مصدر بيانات السيو</span><span>١٤ أغسطس ٢٠٢٦</span></div>
   
@@ -1087,6 +1178,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="DOC1" data-sev="ok" data-who="c" data-tab="ref" data-board="docs" data-apps="">
   <div class="hd"><span class="id">DOC1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند DOC1">⧉</button></div>
+  
   <div class="t">نظام التصميم — المرجع الذي يحكم كل قرار بصري</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">هادئ</span><span class="tag">وثائق</span></div>
   
@@ -1098,6 +1190,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="JBR3" data-sev="ok" data-who="c" data-tab="ref" data-board="ca" data-apps="admin">
   <div class="hd"><span class="id">JBR3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR3">⧉</button></div>
+  
   <div class="t">✅ بلا تصنيفات — قائمة واحدة + صفحة ركيزة</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">هادئ</span><span class="tag app-admin">admin</span><span class="tag">مقالات العملاء</span></div>
   
@@ -1109,6 +1202,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="DEVREELS" data-sev="normal" data-who="c" data-tab="open" data-board="projects" data-apps="modonty" data-last="1">
   <div class="hd"><span class="id">DEVREELS</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند DEVREELS">⧉</button></div>
+  
   <div class="t">⚠️ آخر شيء قبل الدمج مع main — حذف الطلّات الوهمية من صفحة التطوير</div>
   <div class="meta"><span class="tag last-before-merge">🏁 قبل الدمج مع main</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-modonty">modonty</span><span class="tag">To Do</span><span>٢٤ أغسطس ٢٠٢٦</span></div>
   
@@ -1120,6 +1214,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article></div></section>
 <section class="grp" data-grp="ref"><h2>مراجع — لا مهامّ <span class="n" data-count>9</span></h2><p>طرق قياس ومفاتيح وخرائط. تُفتح عند الحاجة.</p><details><summary>اعرض 9 مرجعاً</summary><div class="grid"><article class="card" data-id="CA0" data-sev="high" data-who="k" data-tab="ref" data-board="ca" data-apps="admin console">
   <div class="hd"><span class="id">CA0</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند CA0">⧉</button></div>
+  
   <div class="t">🗺️ الرحلة كاملة — من كِتابة طارق إلى فهرسة قوقل</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-console">console</span><span class="tag">مقالات العملاء</span></div>
   
@@ -1131,6 +1226,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="CAD1" data-sev="high" data-who="k" data-tab="ref" data-board="ca" data-apps="admin console dataLayer">
   <div class="hd"><span class="id">CAD1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند CAD1">⧉</button></div>
+  
   <div class="t">✅ المنعطف المعماري — من ترقيعٍ لموقع إلى خدمةٍ تُباع</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-console">console</span><span class="tag app-dataLayer">dataLayer</span><span class="tag">مقالات العملاء</span></div>
   
@@ -1142,6 +1238,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="JBR11" data-sev="high" data-who="k" data-tab="ref" data-board="ca" data-apps="admin">
   <div class="hd"><span class="id">JBR11</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR11">⧉</button></div>
+  
   <div class="t">✅ نطاق إدارة المحتوى — نصوص الموقع فقط · بلا أسعار</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">مقالات العملاء</span></div>
   
@@ -1153,6 +1250,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="JBR12" data-sev="normal" data-who="k" data-tab="ref" data-board="ca" data-apps="admin">
   <div class="hd"><span class="id">JBR12</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR12">⧉</button></div>
+  
   <div class="t">✅ الكاش — نقبل تأخير الدقيقة · صفر تعديل في كود جبر سيو</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">مقالات العملاء</span></div>
   
@@ -1164,6 +1262,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="DOC2" data-sev="ok" data-who="k" data-tab="ref" data-board="docs" data-apps="">
   <div class="hd"><span class="id">DOC2</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند DOC2">⧉</button></div>
+  
   <div class="t">دليل بوابة العملاء — ما يُسلَّم للشريك</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">هادئ</span><span class="tag">وثائق</span></div>
   
@@ -1175,6 +1274,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="DOC3" data-sev="ok" data-who="k" data-tab="ref" data-board="docs" data-apps="">
   <div class="hd"><span class="id">DOC3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند DOC3">⧉</button></div>
+  
   <div class="t">قواعد كتّاب مدونتي — ما يُسلَّم للكاتب عند التعاقد</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">هادئ</span><span class="tag">وثائق</span></div>
   
@@ -1186,6 +1286,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="DOC4" data-sev="ok" data-who="k" data-tab="ref" data-board="docs" data-apps="">
   <div class="hd"><span class="id">DOC4</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند DOC4">⧉</button></div>
+  
   <div class="t">الشروط والأحكام — النسخة الوحيدة</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">هادئ</span><span class="tag">وثائق</span></div>
   
@@ -1197,6 +1298,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="DOC5" data-sev="ok" data-who="k" data-tab="ref" data-board="docs" data-apps="">
   <div class="hd"><span class="id">DOC5</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند DOC5">⧉</button></div>
+  
   <div class="t">سياسة الخصوصية — النسخة الوحيدة</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">هادئ</span><span class="tag">وثائق</span></div>
   
@@ -1208,6 +1310,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article>
 <article class="card" data-id="DOC6" data-sev="ok" data-who="k" data-tab="ref" data-board="docs" data-apps="">
   <div class="hd"><span class="id">DOC6</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند DOC6">⧉</button></div>
+  
   <div class="t">عقد الاشتراك — ما يُرسل للعميل</div>
   <div class="meta"><span class="tag tab-ref">مرجع</span><span class="tag">هادئ</span><span class="tag">وثائق</span></div>
   

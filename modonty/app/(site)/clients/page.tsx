@@ -7,11 +7,20 @@ import { getClientsList } from "@/lib/queries/get-clients-list";
 import { getIndustriesEnhanced } from "@/lib/queries/get-industries-enhanced";
 import { getCoreClientId } from "@/lib/settings/get-core-client-id";
 import { parsePartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
+import { filterPartners } from "@/app/(site)/clients/helpers/filter-partners";
 import { PageLayout } from "@/app/(site)/clients/components/page-layout/PageLayout";
 import { SITE_URL } from "@/constants";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { metadata } = await getListingPageSeo("clients");
+export async function generateMetadata({ searchParams }: ClientsPageProps): Promise<Metadata> {
+  const [params, { metadata }, allPartners, coreClientId] = await Promise.all([
+    searchParams,
+    getListingPageSeo("clients"),
+    getClientsList(),
+    getCoreClientId(),
+  ]);
+  const partners = coreClientId ? allPartners.filter((partner) => partner.id !== coreClientId) : allPartners;
+  const hasResults = filterPartners(partners, parsePartnersQuery(params)).length > 0;
+
   return {
     description:
       "اكتشف أبرز العلامات التجارية والشركات الناشرة على مدونتي — محتوى عربي متخصص وموثوق من مصادر معتمدة في السعودية ومصر والخليج.",
@@ -22,6 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
       ...(metadata as { alternates?: object } | null)?.alternates,
       canonical: `${SITE_URL}/clients`,
     },
+    ...(!hasResults && { robots: { index: false, follow: true } }),
   };
 }
 
