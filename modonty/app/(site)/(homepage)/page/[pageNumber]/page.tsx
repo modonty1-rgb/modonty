@@ -4,6 +4,7 @@ import { UserCard } from "@/components/shared/user-card/UserCard";
 import { SITE_URL } from "@/constants";
 
 import type { Metadata } from "next";
+import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 
 // The crawlable half of the homepage's infinite scroll. Google's requirement
 // (developers.google.com/search/docs/crawling-indexing/javascript/lazy-loading):
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description: `الصفحة ${pageArabic} من آخر مقالات مدونتي — محتوى عربي موثوق من شركاء معتمدين.`,
     // Self-referencing on purpose: Google treats paginated URLs as separate pages
     // and warns against pointing the whole series at page 1.
-    alternates: { canonical: `${SITE_URL}/page/${page}` },
+    alternates: { canonical: `${SITE_URL}/page/${page}`, types: FEED_ALTERNATE_TYPES },
   };
 }
 

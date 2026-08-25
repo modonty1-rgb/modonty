@@ -49,6 +49,7 @@ import { PartnerCardMobile } from "./components/partner-card/PartnerCardMobile";
 import { ReaderPartnerDetails } from "./components/partner-card/ReaderPartnerDetails";
 import { ReaderComments } from "./components/comments/ReaderComments";
 import { ReaderFaq } from "./components/faq/ReaderFaq";
+import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
@@ -157,6 +158,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
                 canonicalUrl,
                 siteUrl,
               ),
+              types: FEED_ALTERNATE_TYPES,
             },
           };
         }

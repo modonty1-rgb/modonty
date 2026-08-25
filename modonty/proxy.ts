@@ -44,7 +44,7 @@ export const config = {
     "/categories/:slug",
     "/tags/:slug",
     "/industries/:slug",
-    "/clients/:slug",
+    "/clients/:slug/:path*",
     "/authors/:slug",
     "/reels/:slug",
     "/users/:id",

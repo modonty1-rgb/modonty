@@ -13,7 +13,6 @@ import { AudioTabs, AudioTabBar, AudioPanel } from "./components/audio-tabs/Audi
 import { ListenQueue } from "./components/listen-queue/ListenQueue";
 import { QuranPlayer } from "./components/quran-player/QuranPlayer";
 import { getAudioArticles } from "./data/get-audio-articles";
-import { SURAHS } from "./data/quran-surahs";
 
 /**
  * Through the shared builder like every other public page.
@@ -55,27 +54,6 @@ export default async function AudioArticlesPage() {
               { name: t.breadcrumbLabel, url: "/audio" },
             ])
           ),
-        }}
-      />
-
-      {/* The 114 surahs as a named list, so a search engine sees a catalogue rather than a wall of
-          buttons. `ItemList` is the vocabulary for exactly this: an ordered set of named things on
-          one page. Only names and positions — never a word of the Qur'an itself. */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: jsonLdHtml({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            name: t.quranListName,
-            numberOfItems: SURAHS.length,
-            itemListOrder: "https://schema.org/ItemListOrderAscending",
-            itemListElement: SURAHS.map((s) => ({
-              "@type": "ListItem",
-              position: s.n,
-              name: s.name,
-            })),
-          }),
         }}
       />
 

@@ -113,7 +113,10 @@ export function buildModontyAuthorSeo(a: ModontyAuthorSeoSource, settings: AllSe
 
   const metadata: Record<string, unknown> = {
     title,
-    description: a.seoDescription || entityDescription || `Articles by ${orgName}`,
+    // Arabic fallback, not `Articles by ${orgName}`: this string is the meta description on an
+    // ar-SA page that Google indexes, and an English sentence there reads as a different site's
+    // page. The page's own copy is Arabic; the last-resort text has to match it.
+    description: a.seoDescription || entityDescription || `مقالات ${orgName}`,
     robots: metaRobots,
     alternates: {
       canonical: `${siteUrl}/authors/${a.slug}`,

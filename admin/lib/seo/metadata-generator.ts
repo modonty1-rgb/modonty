@@ -56,8 +56,22 @@ export interface ArticleWithMetadataRelations {
   client: Client & {
     name: string;
     slug?: string | null;
-    heroImageMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
-    logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
+    heroImageMedia?: {
+      url: string;
+      bunnyUrl: string | null;
+      blurDataURL: string | null;
+      altText?: string | null;
+      width?: number | null;
+      height?: number | null;
+    } | null;
+    logoMedia?: {
+      url: string;
+      bunnyUrl: string | null;
+      blurDataURL: string | null;
+      altText?: string | null;
+      width?: number | null;
+      height?: number | null;
+    } | null;
   };
   author: Author & {
     name: string;
@@ -208,11 +222,9 @@ export async function generateNextjsMetadata(
   // Featured image. Last link was `${siteUrl}/og-image.jpg` — a file that does not exist
   // (measured HTTP 404 on 2026-08-07), so an article with no image whose client had neither
   // hero nor logo shipped a dead og:image. The brand logo is a real asset on Bunny.
-  const ogImage =
-    mediaSrc(article.featuredImage) ||
-    mediaSrc(article.client.heroImageMedia) ||
-    mediaSrc(article.client.logoMedia) ||
-    BRAND_LOGO_URL;
+  const ogImageMedia =
+    article.featuredImage || article.client.heroImageMedia || article.client.logoMedia;
+  const ogImage = mediaSrc(ogImageMedia) || BRAND_LOGO_URL;
 
   // Open Graph metadata — OG title/description use article seoTitle/seoDescription (SOT)
   // datePublished is the single source of truth for published time
@@ -234,9 +246,10 @@ export async function generateNextjsMetadata(
     images: [
       {
         url: ogImage,
-        width: article.featuredImage?.width || 1200,
-        height: article.featuredImage?.height || 630,
-        alt: article.featuredImage?.altText || effectiveTitle || clientName,
+        ...(ogImageMedia?.width && ogImageMedia.height
+          ? { width: ogImageMedia.width, height: ogImageMedia.height }
+          : {}),
+        alt: ogImageMedia?.altText || effectiveTitle || clientName,
       },
     ],
     locale: article.ogLocale || article.inLanguage || "ar_SA",

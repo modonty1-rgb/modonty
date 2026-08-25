@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { generateStructuredData } from "@/lib/seo";
+import { generateStructuredData, normalizeStoredSiteEntityIds } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ContactForm } from "@/components/shared/contact-form/ContactForm";
 import { auth } from "@/lib/auth";
@@ -53,7 +53,9 @@ export default async function ContactPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: storedJsonLd ?? sanitizeJsonLd(buildFallbackStructuredData()),
+          __html: storedJsonLd
+            ? normalizeStoredSiteEntityIds(storedJsonLd)
+            : sanitizeJsonLd(buildFallbackStructuredData()),
         }}
       />
       <div className="container mx-auto max-w-2xl px-4 py-8">

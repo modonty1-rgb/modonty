@@ -6,6 +6,7 @@ import { SITE_URL } from "@/constants";
 import { db } from "@/lib/db";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
+import { FEED_ALTERNATE_TYPES } from "./feed-alternate-types";
 
 import type { Metadata } from "next";
 
@@ -114,6 +115,8 @@ export async function getListingPageSeo(page: ListingPageKey): Promise<ListingPa
     ...alternates,
     canonical,
     languages: buildHreflangLanguages(defaults.alternateLanguages, canonical, SITE_URL),
+    // Setting `alternates` at all drops the root layout's copy, feed link included.
+    types: FEED_ALTERNATE_TYPES,
   };
 
   return {

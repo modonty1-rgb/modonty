@@ -8,10 +8,12 @@ import { db } from "@/lib/db";
 import { getCoreClientId } from "@/lib/settings/get-core-client-id";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
-import { generateMetadataFromSEO, jsonLdHtmlFromString } from "@/lib/seo";
+import { generateMetadataFromSEO, localizedStoredBreadcrumbJsonLd } from "@/lib/seo";
+import { messages } from "@/lib/i18n/messages";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ClientCard } from "@/components/client/client-card";
 import { ReadArticlesLink } from "@/components/shared/read-articles-link/ReadArticlesLink";
+import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 
 interface TagPageProps {
   params: Promise<{ slug: string }>;
@@ -66,7 +68,10 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
     if (!tag) return { title: "وسم غير موجود" };
     if (tag.nextjsMetadata) {
       const { robots: _r, ...stored } = tag.nextjsMetadata as Metadata & { robots?: unknown };
-      if (stored.title) return stored;
+      // Blob as baked, plus the feed link — see the same note on the category page.
+      if (stored.title) {
+        return { ...stored, alternates: { ...stored.alternates, types: FEED_ALTERNATE_TYPES } };
+      }
     }
     return generateMetadataFromSEO({
       title: (tag.seoTitle || `شركاء وسم: ${tag.name}`)?.slice(0, 51),
@@ -156,7 +161,12 @@ export default async function TagPage({ params }: TagPageProps) {
         {tag.jsonLdStructuredData && (
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(tag.jsonLdStructuredData) }}
+            dangerouslySetInnerHTML={{
+              __html: localizedStoredBreadcrumbJsonLd(tag.jsonLdStructuredData, {
+                Home: messages.chrome.footer.home,
+                Tags: messages.chrome.footer.tags,
+              }),
+            }}
           />
         )}
         <Breadcrumb

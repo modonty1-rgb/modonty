@@ -217,7 +217,7 @@ function cardHTML(t) {
   //
   // `ready: true` is the ONLY field a worker writes: it means "I finished, audit me". The card
   // turns green so Claude can check that one immediately instead of waiting for a whole batch.
-  const OWNERS = { codex: "كودكس", agent2: "وكيل ٢", agent3: "وكيل ٣", agent4: "وكيل ٤" };
+  const OWNERS = { codex: "كودكس", agent2: "وكيل ٢", agent3: "وكيل ٣", agent4: "وكيل ٤", claude: "كلود" };
   const ownerTag = t.owner && t.tab !== "done" ? `<span class="tag owner owner-${t.owner}">👷 ${OWNERS[t.owner] || t.owner}</span>` : "";
   const readyTag = t.ready && t.tab !== "done" ? `<span class="tag ready">✅ خلص — بانتظار تدقيق كلود</span>` : "";
   // The banner sits at the TOP of the card, above the title — the one place a state is read
@@ -495,6 +495,7 @@ const SEO_LANES = [
   { k: "agent2", n: "وكيل ٢ · الأدمن", s: "شاشات الأدمن ونماذجه ومسارات الحفظ — `admin/app/(dashboard)/**`. لا يلمس `admin/lib/seo` (وكيل ٤) ولا `modonty/` (كودكس ووكيل ٣)." },
   { k: "agent3", n: "وكيل ٣ · الشريك", s: "صفحات الشريك ومكوّناتها — `modonty/app/(partner)/**`. منطقة مستقلّة عن صفحات الموقع العامّة التي يشتغل عليها كودكس." },
   { k: "agent4", n: "وكيل ٤ · البيانات المنظَّمة", s: "بُناة JSON-LD والمحقّقات والمقيّمات — `admin/lib/seo/**` عدا المولّدات التي يملكها كلود. عائلة واحدة: هوية الكيان وصحّة ما يُبثّ." },
+  { k: "claude", n: "كلود · بيدي", s: "البطاقات التي أنفّذها بنفسي: <code>shared/</code> والمولّدات والبوّابات الأمنية وأي بند يمسّ عدّة تطبيقات. كانت تسقط في ممرّ بلا زرّ فلا تُرى — أُصلح ٢٥ أغسطس." },
   { k: "disputed", n: "فيه خلاف", s: "كودكس قال «جزئي» أو «غلط» أو «خارج السيو» أو «غير مثبت». ما نلمسه إلا بعد ما نخلّص المتّفق عليه — نناقشه بنداً بنداً." },
   { k: "reports", n: "تقارير", s: "جرد مقيس بالكامل — كود الإنتاج + قياس حيّ + قراءة القاعدة + المصدر الرسمي. ليست مهامّ: هذه هي الأرضية التي تُبنى عليها المهامّ." },
   { k: "decide", n: "قرارك", s: "ينتظر كلمتك — لا يبدأ قبلها. قراران يفتحان الطريق (SEOFAQ · SEOMETATAGS-DEAD) وفكرة مؤجَّلة بقرارك (AUTOLINK)." },
@@ -517,7 +518,11 @@ const reportHTML = (r) => `<article class="report" id="report-${esc(r.id)}">
 const seoLanes = SEO_LANES.map(l => {
   if (l.k === "reports") return { ...l, count: REPORTS.length, reports: REPORTS, groups: [] };
   const items = seoOpen.filter(t => seoLane(t) === l.k);
-  return { ...l, count: items.length, groups: SEO_PHASES.map(p => ({ ...p, items: items.filter(t => (t.phase ?? 7) === p.k).sort(byOrd) })).filter(g => g.items.length) };
+  const active = items.filter(t => t.running || (t.working && !t.ready)).sort(byOrd);
+  const queued = items.filter(t => !active.includes(t));
+  const groups = SEO_PHASES.map(p => ({ ...p, items: queued.filter(t => (t.phase ?? 7) === p.k).sort(byOrd) })).filter(g => g.items.length);
+  if (active.length) groups.unshift({ k: "active", n: "🔴 جارٍ الآن", s: "البطاقة النشطة في الأعلى دائماً حتى انتهاء التحقق.", items: active });
+  return { ...l, count: items.filter(t => !t.ready).length, groups };
 });
 // رقم قصير ثابت لكل بند سيو، ليقول خالد «بند ٧» بدل معرّف طويل (٢٥ أغسطس).
 // يُكتب مرّة في task-data.json ولا يتغيّر بعدها مهما أُعيد الترتيب أو أُغلقت بطاقات —

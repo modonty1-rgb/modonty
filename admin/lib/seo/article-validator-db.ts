@@ -323,25 +323,61 @@ function pushJsonLdArticleCheck(checks: ValidationCheck[], a: DbArticleInput) {
 function pushJsonLdAdobeErrorsCheck(checks: ValidationCheck[], a: DbArticleInput) {
   const report = parseValidationReport(a.jsonLdValidationReport);
   const rawErrors = (report?.adobe?.errors ?? []) as unknown[];
-  // Adobe entries may be strings or objects ({message}) — normalize, then drop any
+  // Adobe entries may be strings or objects ({message, type}) — normalize, then drop any
   // error a clearer dedicated check already reports (no duplicate messages).
   const remaining = rawErrors
     .map((e) =>
-      typeof e === "string" ? e : (e as { message?: string })?.message ?? "Invalid structured data",
+      typeof e === "string"
+        ? { message: e, type: undefined as string | undefined }
+        : {
+            message: (e as { message?: string })?.message ?? "Invalid structured data",
+            type: (e as { type?: string })?.type,
+          },
     )
-    .filter((msg) => !isCoveredByDedicatedCheck(msg, checks));
+    .filter((e) => !isCoveredByDedicatedCheck(e.message, checks));
   const ok = remaining.length === 0;
-  const messages = remaining.map(humanizeSchemaError);
+
+  // A run that never happened is not a run that found faults. The validator downloads the
+  // schema.org vocabulary over the network, and when that download fails it returns
+  // `{valid:false, type:"VALIDATION_FAILED"}` — indistinguishable, until here, from a real
+  // schema error. The editor was shown the raw DNS text ("getaddrinfo ENOTFOUND schema.org")
+  // under the advice "usually a missing client detail", and went looking for a fault in a
+  // field that was fine.
+  //
+  // The gate still closes — Khalid, 25 Aug 2026: nothing ships with an unverified problem.
+  // What changes is that the message says which of the two happened, so the editor knows
+  // whether to fix the article or simply try again.
+  const blockedByOutage = remaining.length > 0 && remaining.every(isValidatorOutage);
+
   checks.push({
     id: "jsonld-adobe-errors",
-    label: "Search-engine data passes the official validator",
+    label: blockedByOutage
+      ? "Search-engine data — could not be checked"
+      : "Search-engine data passes the official validator",
     severity: "critical",
     passed: ok,
-    detail: ok ? undefined : messages.join(" · "),
+    detail: ok
+      ? undefined
+      : blockedByOutage
+        ? "The validator could not reach schema.org, so this article was never actually checked. Nothing is known to be wrong with it."
+        : remaining.map((e) => humanizeSchemaError(e.message)).join(" · "),
     fix: ok
       ? undefined
-      : "Usually a missing client detail (logo, business type) or a stale schema. Fix the client's profile, then re-save the article or run Auto-fix schema.",
+      : blockedByOutage
+        ? "This is a connection problem, not a problem with your article. Re-save the article (or run Auto-fix schema) once the connection is back, and this check runs again."
+        : "Fix each field named above, then re-save the article or run Auto-fix schema.",
   });
+}
+
+/**
+ * Did the validator fail to RUN, rather than find a fault?
+ *
+ * `jsonld-validator.ts` wraps every failure — network, DNS, timeout, a 5xx from schema.org —
+ * as `{type:"VALIDATION_FAILED", message:"Validation failed: …"}`. Both markers are checked
+ * because the older stored reports carry the message without the type.
+ */
+function isValidatorOutage(e: { message: string; type?: string }): boolean {
+  return e.type === "VALIDATION_FAILED" || /^Validation failed:/i.test(e.message);
 }
 
 // (jsonld-adobe-warnings REMOVED — Google: "warnings don't prevent rich results"
@@ -633,11 +669,74 @@ function humanizeSchemaError(raw: string): string {
       "The search-engine data is malformed — re-generate it (Auto-fix schema or re-save).",
   };
   if (map[raw]) return map[raw];
-  // Ajv path-style / "must …" messages → generic, non-technical guidance.
+
+  // The validator failed to run — say so in words, not in the raw DNS/timeout text. The
+  // caller already routes this case to its own message; this covers a stray one reaching here.
+  if (/^Validation failed:/i.test(raw)) {
+    return "The official validator could not be reached, so this article was not checked.";
+  }
+
+  // Ajv messages carry the one thing the editor actually needs — WHICH field — either as a
+  // leading path (`/author/name must have …`) or inside the quotes (`must have required
+  // property 'headline'`). This used to throw both away and return "a required field is
+  // missing", which is true of every possible failure and therefore tells nobody anything.
+  // Khalid, 25 Aug 2026: the message must name the field, or the editor searches a field
+  // that was never the problem.
+  const missing = raw.match(/must have required property ['"]([^'"]+)['"]/i)?.[1];
+  const path = raw.match(/^(\/\S+)/)?.[1];
+  const field = readableSchemaField(path, missing);
+  if (field) {
+    // "Missing" and "wrong" send the editor to different places: one field to fill, one field
+    // to correct. Only an Ajv `required property` message means absent.
+    return missing
+      ? `The search-engine data is missing ${field}. Fill it in, then re-save the article (or run Auto-fix schema).`
+      : `${capitalize(field)} in the search-engine data is not valid (${raw.replace(/^\/\S+\s*/, "")}). Correct it, then re-save the article (or run Auto-fix schema).`;
+  }
   if (/^\//.test(raw) || /must (have|not|be)/i.test(raw)) {
-    return "A required field is missing in the search-engine data — re-generate it (Auto-fix schema or re-save).";
+    return `The search-engine data is invalid: ${raw}. Re-save the article or run Auto-fix schema.`;
   }
   return raw;
+}
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+/**
+ * The field an Ajv message points at, in words an editor can act on.
+ *
+ * Both halves are used because Ajv gives them separately: the path says WHERE
+ * (`/author/name`), the `required property` name says WHAT. Anything not in the table is
+ * still returned — a raw `articleSection` beats no field name at all.
+ */
+function readableSchemaField(path: string | undefined, missing: string | undefined): string | null {
+  const LABELS: Record<string, string> = {
+    headline: "the article title",
+    author: "the author",
+    name: "a name",
+    publisher: "the client (publisher)",
+    logo: "the client's logo",
+    image: "the featured image",
+    datePublished: "the publish date",
+    dateModified: "the last-updated date",
+    description: "the description",
+    url: "the page address",
+    mainEntityOfPage: "the page address",
+    inLanguage: "the content language",
+  };
+  // These mean nothing on their own — every node has a name and a url — so they take the
+  // parent as a qualifier ("a name on the author"). The rest already say who they belong to,
+  // and adding the parent produced "the client's logo on the client (publisher)".
+  const NEEDS_OWNER = new Set(["name", "url", "description", "image", "mainEntityOfPage"]);
+
+  const leaf = missing ?? path?.split("/").filter(Boolean).pop();
+  if (!leaf) return null;
+  const label = LABELS[leaf] ?? `\`${leaf}\``;
+  const parent = path?.split("/").filter(Boolean).slice(-2, -1)[0];
+  if (NEEDS_OWNER.has(leaf) && parent && LABELS[parent] && parent !== leaf) {
+    return `${label} on ${LABELS[parent]}`;
+  }
+  return label;
 }
 
 function parseValidationReport(value: Prisma.JsonValue | null): ValidationReport | null {

@@ -5,6 +5,7 @@
 
 import type { SettingsForHomeJsonLd } from "./build-home-jsonld-from-settings";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): string | undefined {
   if (!url?.trim()) return undefined;
@@ -75,8 +76,7 @@ export function buildSiteOrgAndWebSite(
   settings: SettingsForHomeJsonLd,
   siteUrl: string
 ): { org: Record<string, unknown>; website: Record<string, unknown>; inLangCodes: string | string[] } {
-  const orgId = `${siteUrl}/#organization`;
-  const websiteId = `${siteUrl}/#website`;
+  const { organization: orgId, website: websiteId } = buildSiteEntityIds(siteUrl);
   const inLangCodes = parseLanguageCodes(settings.inLanguage);
   const availLangCodes = parseLanguageCodes(settings.orgContactAvailableLanguage ?? settings.inLanguage);
   const siteName = settings.siteName?.trim() || "Modonty";
@@ -199,7 +199,7 @@ function clientToOrganization(
     node.logo = { "@type": "ImageObject", url: absLogo, width: 512, height: 512 };
   }
   if (absImage) {
-    node.image = { "@type": "ImageObject", url: absImage, width: 1200, height: 630 };
+    node.image = { "@type": "ImageObject", url: absImage };
   }
 
   const sameAs = Array.isArray(client.sameAs)
@@ -323,7 +323,7 @@ export function buildClientsPageJsonLd(
     url: pageUrl,
     description,
     inLanguage: inLangCodes,
-    isPartOf: { "@id": `${siteUrl}/#website` },
+    isPartOf: { "@id": website["@id"] },
     dateModified: dateModified.toISOString(),
     mainEntity: itemList,
     breadcrumb: {
@@ -338,8 +338,12 @@ export function buildClientsPageJsonLd(
     collectionPage.primaryImageOfPage = {
       "@type": "ImageObject",
       url: absOgImage,
-      width: 1200,
-      height: 630,
+      // No width/height: nothing here measured this file. The pair was a literal 1200x630 on every
+      // image — measured 25 Aug 2026 across four category images, two of them 2048x2048 squares. A
+      // declared size that is not the file’s is worse than none: schema.org ImageObject width/height
+      // describe the actual image, and a consumer that trusts them lays out a crop that does not
+      // exist. Omitted until the row carries real dimensions — the same rule the modonty side applies
+      // in withHonestOpenGraphImageDimensions.
     };
   }
 

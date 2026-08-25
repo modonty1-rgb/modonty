@@ -12,6 +12,7 @@
 
 import { buildSiteOrgAndWebSite } from "./build-clients-page-jsonld";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 import type { ArticleForHomeJsonLd, SettingsForHomeJsonLd } from "./build-home-jsonld-from-settings";
 
@@ -44,7 +45,7 @@ function articleToListItem(article: ArticleForHomeJsonLd, siteUrl: string, index
       article.dateModified instanceof Date ? article.dateModified.toISOString() : article.dateModified ?? undefined,
     inLanguage: article.inLanguage,
     author: { "@type": "Person", name: article.author.name },
-    publisher: { "@id": `${siteUrl}/#organization` },
+    publisher: { "@id": buildSiteEntityIds(siteUrl).organization },
   };
   // A size is declared only where one was measured — never 1200×630 over an untouched original.
   if (absImage) articleNode.image = { "@type": "ImageObject", url: absImage };
@@ -86,7 +87,7 @@ export function buildArticlesPageJsonLd(
     url: pageUrl,
     description,
     inLanguage: inLangCodes,
-    isPartOf: { "@id": `${siteUrl}/#website` },
+    isPartOf: { "@id": website["@id"] },
     dateModified: dateModified.toISOString(),
     mainEntity: itemList,
     breadcrumb: {

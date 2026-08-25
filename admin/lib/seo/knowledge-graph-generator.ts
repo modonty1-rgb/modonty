@@ -15,6 +15,7 @@
 import { SITE_NAME_FALLBACK } from "@/lib/constants/site-name";
 import { safeOrganizationType, resolveOrganizationType, isLocalFamilyType } from "@modonty/shared/lib/seo/organization-schema-types";
 import { deriveClientType } from "@modonty/shared/lib/seo/generate-organization-jsonld";
+import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 import {
   Article,
   Client,
@@ -166,6 +167,7 @@ export function generateArticleKnowledgeGraph(
 ): JsonLdGraph {
   // branding.siteUrl SHOULD come from loadSiteUrl() (DB-backed). Hardcoded fallback only as safety net.
   const siteUrl = branding?.siteUrl || "https://www.modonty.com";
+  const siteIds = buildSiteEntityIds(siteUrl);
   // Settings is the source of truth for the brand name — it already arrives in `branding`.
   const resolvedSiteName = branding?.siteName?.trim() || SITE_NAME_FALLBACK;
 
@@ -211,7 +213,7 @@ export function generateArticleKnowledgeGraph(
     // page — measured live on /articles/علاج-الديسك: `/authors/modonty#organization` in the
     // article graph and `/#organization` in the identity script, same name, same logo.
     author: isPlatformAuthor
-      ? `${siteUrl}/#organization`
+      ? siteIds.organization
       : `${siteUrl}/authors/${article.author.slug}#person`,
     publisher: `${siteUrl}/clients/${article.client.slug}#organization`,
     breadcrumb: `${articleUrl}#breadcrumb`,
@@ -355,7 +357,10 @@ function generateWebPageNode(
     // opposite of Google's "use your site name consistently" (SOT5, 2026-08-15).
     isPartOf: {
       "@type": "WebSite",
-      "@id": `${siteUrl}/#website`,
+      // Derived here, not read from the caller: `siteIds` is a local of
+      // `generateArticleKnowledgeGraph`, and this function is a separate one that only
+      // receives `siteUrl`. Same builder, so the id is identical either way.
+      "@id": buildSiteEntityIds(siteUrl).website,
       name: siteName,
       url: siteUrl,
     },

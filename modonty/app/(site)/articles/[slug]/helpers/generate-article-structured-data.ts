@@ -1,4 +1,5 @@
 import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 import { BRAND_EN, SITE_URL } from "@/constants";
 
@@ -6,6 +7,7 @@ import { buildArticleImageObjects } from "./image-aspect-ratios";
 
 export function generateArticleStructuredData(article: any) {
   const siteUrl = SITE_URL;
+  const siteIds = buildSiteEntityIds(siteUrl);
   // Always build from current slug — never trust article.canonicalUrl (may be stale after slug rename)
   const articleUrl = new URL(`/articles/${article.slug}`, siteUrl).href;
 
@@ -33,7 +35,7 @@ export function generateArticleStructuredData(article: any) {
     // shows the same name (schema ↔ visible match, required by Google).
     author: {
       "@type": "Organization",
-      "@id": `${siteUrl}/#organization`,
+      "@id": siteIds.organization,
       name: article.author?.name || BRAND_EN,
       url: siteUrl,
     },

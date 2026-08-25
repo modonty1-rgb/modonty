@@ -8,10 +8,12 @@ import { db } from "@/lib/db";
 import { getCoreClientId } from "@/lib/settings/get-core-client-id";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
-import { generateMetadataFromSEO, jsonLdHtmlFromString } from "@/lib/seo";
+import { generateMetadataFromSEO, localizedStoredBreadcrumbJsonLd } from "@/lib/seo";
+import { messages } from "@/lib/i18n/messages";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ClientCard } from "@/components/client/client-card";
 import { ReadArticlesLink } from "@/components/shared/read-articles-link/ReadArticlesLink";
+import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 
 interface CategoryDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -67,7 +69,12 @@ export async function generateMetadata({ params }: CategoryDetailPageProps): Pro
     if (!category) return { title: "فئة غير موجودة" };
     if (category.nextjsMetadata) {
       const stored = category.nextjsMetadata as Metadata;
-      if (stored.title) return stored;
+      // Blob as baked, plus the feed link — admin never writes `alternates.types`, and
+      // returning the blob sets `alternates`, which replaces the root layout's copy in Next
+      // instead of merging with it.
+      if (stored.title) {
+        return { ...stored, alternates: { ...stored.alternates, types: FEED_ALTERNATE_TYPES } };
+      }
     }
     return generateMetadataFromSEO({
       title: (category.seoTitle || category.name)?.slice(0, 51),
@@ -156,7 +163,12 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
         {category.jsonLdStructuredData && (
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(category.jsonLdStructuredData) }}
+            dangerouslySetInnerHTML={{
+              __html: localizedStoredBreadcrumbJsonLd(category.jsonLdStructuredData, {
+                Home: messages.chrome.footer.home,
+                Categories: messages.chrome.menuItems.categories,
+              }),
+            }}
           />
         )}
         <Breadcrumb

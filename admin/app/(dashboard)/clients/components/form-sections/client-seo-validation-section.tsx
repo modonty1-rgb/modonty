@@ -146,8 +146,7 @@ export function ClientSEOValidationSection({
         '@type': 'ImageObject',
         url: u,
         contentUrl: u,
-        width: ogImg.width && ogImg.width >= 1200 ? ogImg.width : 1200,
-        height: ogImg.height && ogImg.height >= 630 ? ogImg.height : 630,
+        ...(ogImg.width && ogImg.height ? { width: ogImg.width, height: ogImg.height } : {}),
         ...(ogImg.altText && { caption: ogImg.altText }),
       };
     } else if (logo?.url) {
@@ -156,8 +155,7 @@ export function ClientSEOValidationSection({
         '@type': 'ImageObject',
         url: u,
         contentUrl: u,
-        width: logo.width && logo.width >= 112 ? logo.width : 112,
-        height: logo.height && logo.height >= 112 ? logo.height : 112,
+        ...(logo.width && logo.height ? { width: logo.width, height: logo.height } : {}),
         ...(logo.altText && { caption: logo.altText }),
       };
     }
@@ -180,8 +178,7 @@ export function ClientSEOValidationSection({
       url: u,
       secure_url: u.replace('http://', 'https://'),
       type: 'image/jpeg',
-      width: w && w >= 1200 ? w : 1200,
-      height: h && h >= 630 ? h : 630,
+      ...(w && h ? { width: w, height: h } : {}),
       alt: alt || defaultAlt,
     });
 
@@ -193,7 +190,7 @@ export function ClientSEOValidationSection({
       siteName: string;
       locale: string;
       localeAlternate?: string[];
-      images?: Array<{ url: string; secure_url: string; type: string; width: number; height: number; alt: string }>;
+      images?: Array<{ url: string; secure_url: string; type: string; width?: number; height?: number; alt: string }>;
     } = {
       title: title || '(no name)',
       description: description || '',

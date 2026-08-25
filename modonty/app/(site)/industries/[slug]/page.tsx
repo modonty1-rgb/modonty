@@ -7,8 +7,10 @@ import { getIndustryFeed } from "@/app/(site)/industries/data/get-industry-feed"
 import { getClientsList } from "@/lib/queries/get-clients-list";
 import { IndustryPageLayout } from "@/app/(site)/industries/components/page-layout/IndustryPageLayout";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { jsonLdHtmlFromString } from "@/lib/seo";
+import { localizedStoredBreadcrumbJsonLd } from "@/lib/seo";
+import { messages } from "@/lib/i18n/messages";
 import { SITE_URL } from "@/constants";
+import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 
 interface IndustryPageProps {
   params: Promise<{ slug: string }>;
@@ -33,12 +35,18 @@ export async function generateMetadata({ params }: IndustryPageProps): Promise<M
   // bakes the full metadata (og:image included) — a hand-built object here would drop it.
   if (industry.nextjsMetadata) {
     const stored = industry.nextjsMetadata as Metadata;
-    if (stored.title) return stored;
+    // The blob is returned as it was baked, with one addition: the feed link. Admin never
+    // writes `alternates.types`, and returning the blob untouched sets `alternates` — which
+    // in Next replaces the root layout's copy rather than merging with it, taking the feed
+    // link with it. Everything else the blob carries is left exactly as stored.
+    if (stored.title) {
+      return { ...stored, alternates: { ...stored.alternates, types: FEED_ALTERNATE_TYPES } };
+    }
   }
   return {
     title: `${industry.name} — المجالات`,
     description: industry.description ?? `اكتشف شركاء ${industry.name} الموثوقين على مدونتي`,
-    alternates: { canonical: `${SITE_URL}/industries/${slug}` },
+    alternates: { canonical: `${SITE_URL}/industries/${slug}`, types: FEED_ALTERNATE_TYPES },
   };
 }
 
@@ -66,7 +74,12 @@ export default async function IndustryPage({ params, searchParams }: IndustryPag
       {industry.jsonLdStructuredData && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(industry.jsonLdStructuredData) }}
+          dangerouslySetInnerHTML={{
+            __html: localizedStoredBreadcrumbJsonLd(industry.jsonLdStructuredData, {
+              Home: messages.chrome.footer.home,
+              Industries: messages.chrome.footer.industries,
+            }),
+          }}
         />
       )}
 

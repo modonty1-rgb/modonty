@@ -4,6 +4,7 @@ import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-l
 
 import { SITE_URL } from "@/constants";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
+import { FEED_ALTERNATE_TYPES } from "./feed-alternate-types";
 
 /**
  * A page's `alternates`: its own canonical, plus every locale Settings lists — each pointing
@@ -24,5 +25,6 @@ export async function buildPageAlternates(path: string): Promise<Metadata["alter
   return {
     canonical,
     languages: buildHreflangLanguages(alternateLanguages, canonical, SITE_URL),
+    types: FEED_ALTERNATE_TYPES,
   };
 }

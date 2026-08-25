@@ -63,6 +63,20 @@ function notTestSlug<T extends { slug: string }>(e: T): boolean {
   return !isFixtureSlug(e.slug);
 }
 
+/**
+ * The same "substantive" test `resolveClientPageState` applies before it returns "not-ready",
+ * fed by the same three signals `generateMetadata` uses to decide noindex on the partner page
+ * (description ?? seoDescription, and the published-article count). Kept as one expression so
+ * the two stay readable side by side: if the page's gate moves, this moves with it.
+ */
+function isIndexableClient(c: {
+  description: string | null;
+  seoDescription: string | null;
+  _count: { articles: number };
+}): boolean {
+  return !!(c.description || c.seoDescription)?.trim() || c._count.articles > 0;
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_URL;
 
@@ -83,7 +97,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       // URLs in the file.
     }).then((rows) => rows.filter(notTestSlug)),
     db.category.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
-    db.client.findMany({ where: { subscriptionStatus: SubscriptionStatus.ACTIVE }, select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
+    // An ACTIVE subscription is not the same as a page worth indexing. A partner with no
+    // description and no published article renders the "قيد التجهيز" panel and serves
+    // noindex (see `resolveClientPageState` — clients/[slug]/page.tsx). Listing those in the
+    // sitemap tells Google "crawl this" while the page itself says "don't index this" —
+    // Google: "Don't include URLs in your sitemap that are blocked from indexing."
+    // Measured 25 Aug 2026: 4 of 35 active partners were in this state.
+    db.client
+      .findMany({
+        where: { subscriptionStatus: SubscriptionStatus.ACTIVE },
+        select: {
+          slug: true,
+          updatedAt: true,
+          description: true,
+          seoDescription: true,
+          _count: { select: { articles: { where: { status: ArticleStatus.PUBLISHED } } } },
+        },
+      })
+      .then((rows) => rows.filter(notTestSlug).filter(isIndexableClient)),
     db.author.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     db.tag.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     db.industry.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
@@ -155,6 +186,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // here would flood the sitemap with URLs that differ only by a query string.
     { url: new URL("/articles", baseUrl).href, lastModified: lastArticleModified },
     { url: new URL("/trending", baseUrl).href, lastModified: lastArticleModified },
+    { url: new URL("/modonty", baseUrl).href, lastModified: lastArticleModified },
     { url: new URL("/categories", baseUrl).href, lastModified: lastCategoryModified },
     { url: new URL("/clients", baseUrl).href, lastModified: lastClientModified },
     { url: new URL("/tags", baseUrl).href, lastModified: lastTagModified },
@@ -167,6 +199,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Omitting lastmod is the explicit official-recommended approach for this case.
   const staticPages: MetadataRoute.Sitemap = [
     { url: new URL("/about", baseUrl).href },
+    { url: new URL("/story", baseUrl).href },
+    { url: new URL("/team", baseUrl).href },
     { url: new URL("/contact", baseUrl).href },
     { url: new URL("/news", baseUrl).href },
     { url: new URL("/legal", baseUrl).href },
@@ -185,8 +219,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: new URL("/shop", baseUrl).href },
     { url: new URL("/help", baseUrl).href },
     { url: new URL("/help/faq", baseUrl).href },
-    { url: new URL("/help/feedback", baseUrl).href },
     // /news/subscribe excluded — form-only page, no value in search.
+    // /search excluded — its metadata is noindex,nofollow.
+    // /page/[n] excluded — crawlable pagination links already expose the feed sequence.
+    // Partner subpages are conditional child views; each live partner root links to the ones it serves.
   ];
 
   return [

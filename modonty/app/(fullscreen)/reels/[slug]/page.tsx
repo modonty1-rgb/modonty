@@ -11,6 +11,7 @@ import { IconVideo } from "@/lib/icons";
 import { getReelBySlug } from "./data/get-reel-by-slug";
 import { generateReelVideoJsonld } from "./helpers/generate-reel-video-jsonld";
 import { ReelWatchPlayer } from "./components/reel-watch-player";
+import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 
 interface ReelPageProps {
   params: Promise<{ slug: string }>;
@@ -42,6 +43,7 @@ export async function generateMetadata({ params }: ReelPageProps): Promise<Metad
     alternates: {
       canonical,
       languages: buildHreflangLanguages(alternateLanguages, canonical, SITE_URL),
+      types: FEED_ALTERNATE_TYPES,
     },
     openGraph: {
       title: reel.title,

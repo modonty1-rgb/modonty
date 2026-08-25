@@ -47,6 +47,44 @@ const idleState: Record<string, StepState> = Object.fromEntries(
   STEPS.map((s) => [s.key, { status: "idle" as Status }]),
 );
 
+/** Long enough for the slowest step (canonical sweeps 7 tables), short enough to notice. */
+const STEP_TIMEOUT_MS = 45_000;
+
+/**
+ * One step, and it always settles.
+ *
+ * The runners already return `{ ok: false }` on a thrown error, so what got through was the
+ * third case: a promise that neither resolves nor rejects. One of those froze the strip at
+ * "checking… 4/5" indefinitely (observed 25 Aug 2026). A hung step is now reported as a
+ * failed step — "refresh to retry" is already on screen for that — instead of hiding as a
+ * spinner that never stops.
+ */
+async function runStep(step: StepDef): Promise<SeoMaintenanceStepResult> {
+  const timedOut: SeoMaintenanceStepResult = {
+    key: step.key,
+    label: step.label,
+    ok: false,
+    count: 0,
+    detail: `no response after ${STEP_TIMEOUT_MS / 1000}s`,
+  };
+  try {
+    return await Promise.race([
+      step.runner(),
+      new Promise<SeoMaintenanceStepResult>((resolve) =>
+        setTimeout(() => resolve(timedOut), STEP_TIMEOUT_MS),
+      ),
+    ]);
+  } catch (e) {
+    return {
+      key: step.key,
+      label: step.label,
+      ok: false,
+      count: 0,
+      detail: e instanceof Error ? e.message : String(e),
+    };
+  }
+}
+
 /**
  * Standard fixes — no button, by design.
  *
@@ -87,17 +125,24 @@ export function SeoAutoMaintenance({
       setSteps(Object.fromEntries(STEPS.map((s) => [s.key, { status: "pending" as Status }])));
       const startedAt = Date.now();
 
-      for (const step of STEPS) {
-        setSteps((prev) => ({ ...prev, [step.key]: { status: "running" } }));
-        const result = await step.runner();
-        setSteps((prev) => ({
-          ...prev,
-          [step.key]: { status: result.ok ? "done" : "failed", result },
-        }));
+      try {
+        for (const step of STEPS) {
+          setSteps((prev) => ({ ...prev, [step.key]: { status: "running" } }));
+          const result = await runStep(step);
+          setSteps((prev) => ({
+            ...prev,
+            [step.key]: { status: result.ok ? "done" : "failed", result },
+          }));
+        }
+      } finally {
+        // `finally`, not a trailing statement: this strip gates Full Rebuild through
+        // `onRunningChange`, so a step that never settles used to disable the site's only
+        // regenerate button permanently — the page had to be reloaded to get it back, and a
+        // reload restarted the same hang. Whatever happens above, the gate reopens.
+        setElapsedMs(Date.now() - startedAt);
+        setRunning(false);
       }
 
-      setElapsedMs(Date.now() - startedAt);
-      setRunning(false);
       await revalidateSeoPage();
       router.refresh();
     })();

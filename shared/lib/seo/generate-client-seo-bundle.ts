@@ -69,8 +69,8 @@ export interface ClientMetaTags {
       url: string;
       secure_url: string;
       type: string;
-      width: number;
-      height: number;
+      width?: number;
+      height?: number;
       alt: string;
     }>;
   };
@@ -326,8 +326,7 @@ export async function generateClientSeoBundle(
       url: u,
       secure_url: secure,
       type: "image/jpeg",
-      width: w && w >= 1200 ? w : 1200,
-      height: h && h >= 630 ? h : 630,
+      ...(w && h ? { width: w, height: h } : {}),
       alt: alt || defaultAlt,
     };
   };

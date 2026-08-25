@@ -3,8 +3,10 @@
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
+import { arabicBreadcrumbMessages } from "./arabic-breadcrumb-messages";
 
 interface SeoSettings {
   siteUrl: string;
@@ -71,6 +73,7 @@ export async function buildTagMetadata(tag: TagData, s: SeoSettings) {
 
 export async function buildTagJsonLd(tag: TagData, s: SeoSettings) {
   const pageUrl = tag.canonicalUrl || `${s.siteUrl}/tags/${tag.slug}`;
+  const siteIds = buildSiteEntityIds(s.siteUrl);
   const title = tag.seoTitle || tag.name;
   const description = tag.seoDescription || tag.description || `مقالات بتاج ${tag.name}`;
 
@@ -84,8 +87,8 @@ export async function buildTagJsonLd(tag: TagData, s: SeoSettings) {
         description,
         url: pageUrl,
         inLanguage: s.inLanguage,
-        isPartOf: { "@id": `${s.siteUrl}#website` },
-        publisher: { "@id": `${s.siteUrl}#organization` },
+        isPartOf: { "@id": siteIds.website },
+        publisher: { "@id": siteIds.organization },
         ...(tag.socialImage && {
           image: { "@type": "ImageObject", url: tag.socialImage, description: tag.socialImageAlt || title },
         }),
@@ -94,21 +97,26 @@ export async function buildTagJsonLd(tag: TagData, s: SeoSettings) {
         "@type": "BreadcrumbList",
         "@id": `${pageUrl}#breadcrumb`,
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: s.siteUrl },
-          { "@type": "ListItem", position: 2, name: "Tags", item: `${s.siteUrl}/tags` },
+          { "@type": "ListItem", position: 1, name: arabicBreadcrumbMessages.home, item: s.siteUrl },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: arabicBreadcrumbMessages.tags,
+            item: `${s.siteUrl}/tags`,
+          },
           { "@type": "ListItem", position: 3, name: tag.name, item: pageUrl },
         ],
       },
       { "@type": "DefinedTerm", "@id": `${pageUrl}#term`, name: tag.name, description, url: pageUrl },
       {
         "@type": "Organization",
-        "@id": `${s.siteUrl}#organization`,
+        "@id": siteIds.organization,
         name: s.siteName,
         url: s.siteUrl,
       },
       {
         "@type": "WebSite",
-        "@id": `${s.siteUrl}#website`,
+        "@id": siteIds.website,
         name: s.siteName,
         url: s.siteUrl,
       },

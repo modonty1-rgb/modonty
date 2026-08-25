@@ -3,8 +3,10 @@
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
+import { arabicBreadcrumbMessages } from "./arabic-breadcrumb-messages";
 
 interface SeoSettings {
   siteUrl: string;
@@ -71,6 +73,7 @@ export async function buildCategoryMetadata(category: CategoryData, s: SeoSettin
 
 export async function buildCategoryJsonLd(category: CategoryData, s: SeoSettings) {
   const pageUrl = category.canonicalUrl || `${s.siteUrl}/categories/${category.slug}`;
+  const siteIds = buildSiteEntityIds(s.siteUrl);
   const title = category.seoTitle || category.name;
   const description = category.seoDescription || category.description || `تصفح مقالات ${category.name}`;
 
@@ -84,8 +87,8 @@ export async function buildCategoryJsonLd(category: CategoryData, s: SeoSettings
         description,
         url: pageUrl,
         inLanguage: s.inLanguage,
-        isPartOf: { "@id": `${s.siteUrl}#website` },
-        publisher: { "@id": `${s.siteUrl}#organization` },
+        isPartOf: { "@id": siteIds.website },
+        publisher: { "@id": siteIds.organization },
         ...(category.socialImage && {
           image: { "@type": "ImageObject", url: category.socialImage, description: category.socialImageAlt || title },
         }),
@@ -94,21 +97,26 @@ export async function buildCategoryJsonLd(category: CategoryData, s: SeoSettings
         "@type": "BreadcrumbList",
         "@id": `${pageUrl}#breadcrumb`,
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: s.siteUrl },
-          { "@type": "ListItem", position: 2, name: "Categories", item: `${s.siteUrl}/categories` },
+          { "@type": "ListItem", position: 1, name: arabicBreadcrumbMessages.home, item: s.siteUrl },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: arabicBreadcrumbMessages.categories,
+            item: `${s.siteUrl}/categories`,
+          },
           { "@type": "ListItem", position: 3, name: category.name, item: pageUrl },
         ],
       },
       { "@type": "DefinedTerm", "@id": `${pageUrl}#term`, name: category.name, description, url: pageUrl },
       {
         "@type": "Organization",
-        "@id": `${s.siteUrl}#organization`,
+        "@id": siteIds.organization,
         name: s.siteName,
         url: s.siteUrl,
       },
       {
         "@type": "WebSite",
-        "@id": `${s.siteUrl}#website`,
+        "@id": siteIds.website,
         name: s.siteName,
         url: s.siteUrl,
       },

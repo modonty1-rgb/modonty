@@ -4,6 +4,7 @@
  */
 
 import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 export interface SettingsForHomeJsonLd {
   siteUrl?: string | null;
@@ -114,8 +115,7 @@ export function buildHomeJsonLdFromSettings(
   totalArticleCount: number
 ): object {
   const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
-  const orgId = `${siteUrl}/#organization`;
-  const websiteId = `${siteUrl}/#website`;
+  const { organization: orgId, website: websiteId } = buildSiteEntityIds(siteUrl);
   const collectionPageId = `${siteUrl}/#collectionpage`;
   const inLangCodes = parseLanguageCodes(settings.inLanguage);
   const availLangCodes = parseLanguageCodes(
@@ -125,7 +125,6 @@ export function buildHomeJsonLdFromSettings(
   const name = settings.modontySeoTitle?.trim() || siteName;
   const description = settings.modontySeoDescription?.trim() || settings.brandDescription?.trim() || "";
   const logoUrl = (settings.logoUrl ?? "").trim() || (settings.ogImageUrl ?? "").trim();
-  const logoIsWide = !(settings.logoUrl ?? "").trim() && !!(settings.ogImageUrl ?? "").trim();
   const absLogo = logoUrl ? ensureAbsoluteUrl(logoUrl, siteUrl) : undefined;
   const ogImageUrl = (settings.ogImageUrl ?? settings.logoUrl ?? "").trim();
   const absOgImage = ogImageUrl ? ensureAbsoluteUrl(ogImageUrl, siteUrl) : undefined;
@@ -143,9 +142,7 @@ export function buildHomeJsonLdFromSettings(
     sameAs,
   };
   if (absLogo) {
-    org.logo = logoIsWide
-      ? { "@type": "ImageObject", url: absLogo, width: 1200, height: 630 }
-      : { "@type": "ImageObject", url: absLogo, width: 512, height: 512 };
+    org.logo = { "@type": "ImageObject", url: absLogo };
   }
   if (
     settings.orgContactType ||
@@ -260,8 +257,6 @@ export function buildHomeJsonLdFromSettings(
         image: {
           "@type": "ImageObject",
           url: absImage,
-          width: 1200,
-          height: 630,
         },
       }),
     };
@@ -315,8 +310,6 @@ export function buildHomeJsonLdFromSettings(
     collectionPage.primaryImageOfPage = {
       "@type": "ImageObject",
       url: absOgImage,
-      width: 1200,
-      height: 630,
     };
   }
 
@@ -369,8 +362,7 @@ export function buildListPageJsonLdFromSettings(
     description: descMap[pageType]?.trim() || fallback.description,
   };
   const pageUrl = `${siteUrl}${meta.path}`;
-  const orgId = `${siteUrl}/#organization`;
-  const websiteId = `${siteUrl}/#website`;
+  const { organization: orgId, website: websiteId } = buildSiteEntityIds(siteUrl);
   const collectionPageId = `${pageUrl}#collectionpage`;
   const inLangCodes = parseLanguageCodes(settings.inLanguage);
   const availLangCodes = parseLanguageCodes(
@@ -378,7 +370,6 @@ export function buildListPageJsonLdFromSettings(
   );
   const siteName = settings.siteName?.trim() || "Modonty";
   const logoUrl = (settings.logoUrl ?? "").trim() || (settings.ogImageUrl ?? "").trim();
-  const logoIsWide2 = !(settings.logoUrl ?? "").trim() && !!(settings.ogImageUrl ?? "").trim();
   const absLogo = logoUrl ? ensureAbsoluteUrl(logoUrl, siteUrl) : undefined;
   const ogImageUrl = (settings.ogImageUrl ?? settings.logoUrl ?? "").trim();
   const absOgImage = ogImageUrl ? ensureAbsoluteUrl(ogImageUrl, siteUrl) : undefined;
@@ -395,9 +386,7 @@ export function buildListPageJsonLdFromSettings(
     description: settings.brandDescription?.trim() ?? "",
     sameAs: sameAsList,
   };
-  if (absLogo) org.logo = logoIsWide2
-    ? { "@type": "ImageObject", url: absLogo, width: 1200, height: 630 }
-    : { "@type": "ImageObject", url: absLogo, width: 512, height: 512 };
+  if (absLogo) org.logo = { "@type": "ImageObject", url: absLogo };
   if (
     settings.orgContactType ||
     settings.orgContactEmail ||
@@ -435,11 +424,6 @@ export function buildListPageJsonLdFromSettings(
     inLanguage: inLangCodes,
     isPartOf: { "@id": websiteId },
     dateModified: new Date().toISOString(),
-    mainEntity: {
-      "@type": "ItemList",
-      numberOfItems: 0,
-      itemListElement: [],
-    },
     breadcrumb: {
       "@type": "BreadcrumbList",
       itemListElement: [
@@ -466,8 +450,6 @@ export function buildListPageJsonLdFromSettings(
     collectionPage.primaryImageOfPage = {
       "@type": "ImageObject",
       url: absOgImage,
-      width: 1200,
-      height: 630,
     };
   }
 

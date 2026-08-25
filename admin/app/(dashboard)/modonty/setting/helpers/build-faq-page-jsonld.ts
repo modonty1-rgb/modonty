@@ -67,7 +67,7 @@ export function buildFaqPageJsonLd(
     description,
     url: faqPageUrl,
     inLanguage: inLangCodes,
-    isPartOf: { "@id": `${siteUrl}/#website` },
+    isPartOf: { "@id": website["@id"] },
     mainEntity,
     breadcrumb: {
       "@type": "BreadcrumbList",

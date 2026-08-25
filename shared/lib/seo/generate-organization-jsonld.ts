@@ -7,6 +7,7 @@ import {
   resolveImageAttribution,
   type ModontyImageDefaults,
 } from "./media/build-image-object";
+import { buildSiteEntityIds } from "./site-entity-ids";
 
 /**
  * The most specific schema.org type we can justify for this client from what we KNOW
@@ -199,7 +200,7 @@ export function generateCompleteOrganizationJsonLd(
   const absoluteClientPageUrl = ensureAbsoluteUrl(clientPageUrl, siteUrl) || clientPageUrl;
 
   const organizationId = `${siteUrl}/clients/${client.slug}#organization`;
-  const websiteId = `${siteUrl}#website`;
+  const websiteId = buildSiteEntityIds(siteUrl).website;
   const webPageId = absoluteClientPageUrl;
 
   // The ONE decision about what this client IS — made here, inside the builder, so every
@@ -786,8 +787,14 @@ export function generateCompleteOrganizationJsonLd(
     "@id": websiteId,
     url: siteUrl,
     name: siteName,
+    // The platform, not the partner. `organizationId` above is `<siteUrl>/clients/<slug>#organization`,
+    // so this line used to state that every partner is the publisher of modonty.com — measured
+    // 25 Aug 2026 on a partner page: WebSite `…modonty.com#website` carried
+    // `publisher: {@id: …/clients/عيادات-سمايل-تاون…#organization}`. A site has one publisher,
+    // and this graph already names it: the homepage declares `…modonty.com/#organization`.
+    // Referencing an @id defined on another page is how schema.org links entities across a site.
     publisher: {
-      "@id": organizationId,
+      "@id": buildSiteEntityIds(siteUrl).organization,
     },
     potentialAction: {
       "@type": "SearchAction",

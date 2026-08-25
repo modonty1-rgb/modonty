@@ -5,6 +5,9 @@ import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-l
 import { SITE_URL } from "@/constants";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
+import { FEED_ALTERNATE_TYPES } from "./feed-alternate-types";
+import { toShareImage } from "./index";
+import { withHonestOpenGraphImageDimensions } from "./open-graph-image-dimensions";
 
 /** The SEO columns every editable page row exposes. All optional — a row may be half-filled. */
 export interface PageSeoRow {
@@ -59,7 +62,7 @@ export async function buildMetadataFromPageRow(
   // object on every request (Khalid, 25 Aug 2026 — every page reads ready-made data).
   const stored = (page as { nextjsMetadata?: unknown } | null)?.nextjsMetadata;
   if (stored && typeof stored === "object" && Object.keys(stored as object).length > 0) {
-    return stored as Metadata;
+    return withHonestOpenGraphImageDimensions(stored as Metadata);
   }
 
   // No blob yet (a page saved before this existed, or never generated): build it here so the
@@ -107,6 +110,7 @@ export async function buildMetadataFromPageRow(
     alternates: {
       canonical: canonicalUrl,
       languages: buildHreflangLanguages(defaults.alternateLanguages, canonicalUrl, SITE_URL),
+      types: FEED_ALTERNATE_TYPES,
     },
     openGraph: {
       title: row.ogTitle?.trim() || title,
@@ -116,7 +120,7 @@ export async function buildMetadataFromPageRow(
       locale,
       type: (row.ogType as "website" | "article" | "profile") || "website",
       images: ogImage
-        ? [{ url: ogImage, width: 1200, height: 630, alt: row.socialImageAlt?.trim() || title }]
+        ? [{ ...toShareImage(ogImage), alt: row.socialImageAlt?.trim() || title }]
         : undefined,
     },
     twitter,

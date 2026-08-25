@@ -3,8 +3,10 @@
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
+import { arabicBreadcrumbMessages } from "./arabic-breadcrumb-messages";
 
 interface SeoSettings {
   siteUrl: string;
@@ -71,6 +73,7 @@ export async function buildIndustryMetadata(industry: IndustryData, s: SeoSettin
 
 export async function buildIndustryJsonLd(industry: IndustryData, s: SeoSettings) {
   const pageUrl = industry.canonicalUrl || `${s.siteUrl}/industries/${industry.slug}`;
+  const siteIds = buildSiteEntityIds(s.siteUrl);
   const title = industry.seoTitle || industry.name;
   const description = industry.seoDescription || industry.description || `شركات ومقالات في قطاع ${industry.name}`;
 
@@ -84,8 +87,8 @@ export async function buildIndustryJsonLd(industry: IndustryData, s: SeoSettings
         description,
         url: pageUrl,
         inLanguage: s.inLanguage,
-        isPartOf: { "@id": `${s.siteUrl}#website` },
-        publisher: { "@id": `${s.siteUrl}#organization` },
+        isPartOf: { "@id": siteIds.website },
+        publisher: { "@id": siteIds.organization },
         ...(industry.socialImage && {
           image: { "@type": "ImageObject", url: industry.socialImage, description: industry.socialImageAlt || title },
         }),
@@ -94,21 +97,26 @@ export async function buildIndustryJsonLd(industry: IndustryData, s: SeoSettings
         "@type": "BreadcrumbList",
         "@id": `${pageUrl}#breadcrumb`,
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: s.siteUrl },
-          { "@type": "ListItem", position: 2, name: "Industries", item: `${s.siteUrl}/industries` },
+          { "@type": "ListItem", position: 1, name: arabicBreadcrumbMessages.home, item: s.siteUrl },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: arabicBreadcrumbMessages.industries,
+            item: `${s.siteUrl}/industries`,
+          },
           { "@type": "ListItem", position: 3, name: industry.name, item: pageUrl },
         ],
       },
       { "@type": "DefinedTerm", "@id": `${pageUrl}#term`, name: industry.name, description, url: pageUrl },
       {
         "@type": "Organization",
-        "@id": `${s.siteUrl}#organization`,
+        "@id": siteIds.organization,
         name: s.siteName,
         url: s.siteUrl,
       },
       {
         "@type": "WebSite",
-        "@id": `${s.siteUrl}#website`,
+        "@id": siteIds.website,
         name: s.siteName,
         url: s.siteUrl,
       },

@@ -112,7 +112,7 @@ export function buildTrendingPageJsonLd(
     url: pageUrl,
     description,
     inLanguage: inLangCodes,
-    isPartOf: { "@id": `${siteUrl}/#website` },
+    isPartOf: { "@id": website["@id"] },
     dateModified: dateModified.toISOString(),
     mainEntity: itemList,
     breadcrumb: {

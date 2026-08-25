@@ -3,6 +3,8 @@
  * Caller passes site config from env; no env access inside.
  */
 
+import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
+
 import { getPageConfig } from "./page-config";
 
 export interface ModontySiteConfig {
@@ -76,7 +78,7 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
 
   const graph: Record<string, unknown>[] = [];
 
-  const orgId = `${siteUrl}#organization`;
+  const { organization: orgId, website: websiteId } = buildSiteEntityIds(siteUrl);
   const org: Record<string, unknown> = {
     "@type": "Organization",
     "@id": orgId,
@@ -122,7 +124,6 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
   }
   graph.push(org);
 
-  const websiteId = `${siteUrl}#website`;
   const website: Record<string, unknown> = {
     "@type": "WebSite",
     "@id": websiteId,

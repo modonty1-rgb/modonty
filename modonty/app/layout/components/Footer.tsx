@@ -56,6 +56,7 @@ export function Footer() {
         <Link href="/industries" className={linkClass}>{messages.chrome.footer.industries}</Link>
         <Link href="/categories" className={linkClass}>{messages.chrome.footer.categories}</Link>
         <Link href="/reels" className={linkClass}>{messages.chrome.footer.reels}</Link>
+        <Link href="/news" className={linkClass}>{messages.chrome.footer.news}</Link>
         <Link href="/tags" className={linkClass}>{messages.chrome.footer.tags}</Link>
         <Link href="/help" className={linkClass}>{messages.chrome.footer.help}</Link>
         <Link href="/help/faq" className={linkClass}>{messages.chrome.footer.faq}</Link>

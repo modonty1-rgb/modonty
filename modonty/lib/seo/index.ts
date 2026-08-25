@@ -1,9 +1,16 @@
 import { Metadata } from "next";
 import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl, hasBunnyAspectCrops } from "@modonty/shared/lib/bunny";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+import { normalizeSiteEntityIdsInJson } from "@modonty/shared/lib/seo/site-entity-ids";
 import { BRAND_AR, SITE_URL } from "@/constants";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
+import { FEED_ALTERNATE_TYPES } from "./feed-alternate-types";
+
+export {
+  withHonestOpenGraphImageDimensions,
+  type KnownOpenGraphImageDimensions,
+} from "./open-graph-image-dimensions";
 
 /**
  * Serialize JSON-LD for safe inline injection inside <script type="application/ld+json">.
@@ -21,7 +28,48 @@ export function jsonLdHtml(data: object): string {
  * markup-breakout risk dies. Apply at EVERY stored-blob injection point.
  */
 export function jsonLdHtmlFromString(json: string): string {
-  return json.replace(/</g, "\\u003c");
+  return normalizeStoredSiteEntityIds(json).replace(/</g, "\\u003c");
+}
+
+export function normalizeStoredSiteEntityIds(json: string): string {
+  return normalizeSiteEntityIdsInJson(json, SITE_URL);
+}
+
+/** Localize known labels inside a stored BreadcrumbList without rewriting the database row. */
+export function localizedStoredBreadcrumbJsonLd(
+  json: string,
+  names: Readonly<Record<string, string>>,
+): string {
+  let data: unknown;
+
+  try {
+    data = JSON.parse(normalizeStoredSiteEntityIds(json));
+  } catch {
+    return jsonLdHtmlFromString(json);
+  }
+
+  const visit = (value: unknown): void => {
+    if (Array.isArray(value)) {
+      value.forEach(visit);
+      return;
+    }
+
+    if (!value || typeof value !== "object") return;
+
+    const node = value as Record<string, unknown>;
+    if (node["@type"] === "BreadcrumbList" && Array.isArray(node.itemListElement)) {
+      for (const element of node.itemListElement) {
+        if (!element || typeof element !== "object") continue;
+        const item = element as Record<string, unknown>;
+        if (typeof item.name === "string" && names[item.name]) item.name = names[item.name];
+      }
+    }
+
+    Object.values(node).forEach(visit);
+  };
+
+  visit(data);
+  return jsonLdHtml(data as object);
 }
 
 /**
@@ -240,6 +288,7 @@ export async function generateMetadataFromSEO(data: SEOData, options?: MetadataO
     alternates: {
       canonical: canonicalUrl,
       languages,
+      types: FEED_ALTERNATE_TYPES,
     },
     openGraph,
     twitter,

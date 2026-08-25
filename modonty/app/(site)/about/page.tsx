@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { generateStructuredData } from "@/lib/seo";
+import { generateStructuredData, normalizeStoredSiteEntityIds } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { BecomePartnerBanner } from "@/components/shared/become-partner-banner/BecomePartnerBanner";
 import { getClientsList } from "@/lib/queries/get-clients-list";
@@ -69,7 +69,11 @@ async function AboutContent() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: storedJsonLd ?? sanitizeJsonLd(buildFallbackStructuredData()) }}
+        dangerouslySetInnerHTML={{
+          __html: storedJsonLd
+            ? normalizeStoredSiteEntityIds(storedJsonLd)
+            : sanitizeJsonLd(buildFallbackStructuredData()),
+        }}
       />
 
       <div className="container mx-auto max-w-4xl space-y-8 px-4 py-6 sm:py-8">

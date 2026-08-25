@@ -1,4 +1,5 @@
 import { BRAND_AR, BRAND_EN, SITE_URL, LOGO_URL } from "@/constants";
+import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 /**
  * The site-identity @graph is emitted once, on the article page — it is the surface Google
@@ -19,8 +20,7 @@ export function generateSiteIdentityStructuredData(options?: {
   /** Settings → Content Language. Was spelled "ar" here while admin held the real value. */
   inLanguage?: string;
 }): object {
-  const orgId = `${SITE_URL}/#organization`;
-  const siteId = `${SITE_URL}/#website`;
+  const { organization: orgId, website: siteId } = buildSiteEntityIds(SITE_URL);
   const sameAs = (options?.sameAs || []).filter(
     (u) => typeof u === "string" && u.trim().length > 0,
   );

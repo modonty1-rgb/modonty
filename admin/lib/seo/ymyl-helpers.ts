@@ -126,6 +126,42 @@ export function validateYmylData(
 }
 
 /**
+ * WHICH fields are missing or wrong — in English field labels, ready to put in front of a
+ * person.
+ *
+ * `validateYmylData` already knows this: it returns `errors` keyed by field. Every caller
+ * then collapsed it to a boolean, so the quality-check screen could only say "verification
+ * is incomplete" and the editor had no way to learn which field that meant. On 25 Aug 2026
+ * that cost a client a blocked article and an hour of code-reading to answer a question the
+ * data could have answered on screen.
+ *
+ * Returns [] when the client is complete, so `length === 0` is the same gate as before.
+ */
+export function listYmylMissingFields(
+  client: {
+    isYmyl: boolean;
+    ymylCategory: string | null;
+    ymylData: unknown;
+    addressCountry?: string | null;
+  },
+  authorityCodes?: string[]
+): string[] {
+  if (!client.isYmyl) return [];
+  const cfg = getYmylConfig(client.ymylCategory);
+  if (!cfg) return ["a valid YMYL category"];
+
+  const { errors } = validateYmylData(client.ymylCategory, client.ymylData, {
+    country: client.addressCountry ?? null,
+    authorityCodes,
+  });
+
+  return Object.keys(errors).map((key) => {
+    const field = cfg.fields.find((f) => f.key === key);
+    return field ? field.label.en : key;
+  });
+}
+
+/**
  * Quick predicate: is this client fully YMYL-ready (category set + required fields present)?
  *
  * `authorityCodes` MUST be the live Reference Data list (`getYmylAuthorityCodes`) wherever

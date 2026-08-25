@@ -9,6 +9,7 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { ArticleStatus } from "@prisma/client";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 import { generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
@@ -18,6 +19,7 @@ import { IconFacebook, IconLinkedin, IconTwitter, IconExternal, IconEmail } from
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { FeedPagination } from "@/components/shared/pagination/FeedPagination";
+import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 
 // Channel key → brand icon (registry only; no barrel lucide imports). Others fall back to a
 // generic external-link glyph — the Arabic label carries the platform name.
@@ -171,12 +173,16 @@ export async function generateMetadata({ params, searchParams }: AuthorPageProps
           canonicalUrl,
           siteUrl,
         ),
+        types: FEED_ALTERNATE_TYPES,
       },
       pagination,
     };
   }
-  const title = (author.seoTitle || `${author.name} — Author`)?.slice(0, 51);
-  const description = author.seoDescription || author.bio || `Articles by ${author.name}`;
+  // Arabic fallbacks. These are the `<title>` and meta description of an indexed ar-SA page,
+  // so an English one ("… — Author", "Articles by …") is not a neutral placeholder — it is what
+  // Google shows in the results for an Arabic site. Measured on /authors/modonty, 25 Aug 2026.
+  const title = (author.seoTitle || `${author.name} — كاتب في مدونتي`)?.slice(0, 51);
+  const description = author.seoDescription || author.bio || `مقالات ${author.name} على مدونتي`;
 
   return {
     // Live titles may embed the brand too (seoTitle) — same template opt-out.
@@ -189,6 +195,7 @@ export async function generateMetadata({ params, searchParams }: AuthorPageProps
         authorUrl,
         siteUrl,
       ),
+      types: FEED_ALTERNATE_TYPES,
     },
     pagination,
     openGraph: {
@@ -237,7 +244,7 @@ export default async function AuthorPage({ params, searchParams }: AuthorPagePro
         ? {
             "@context": "https://schema.org",
             "@type": "Organization",
-            "@id": `${siteUrl}/#organization`,
+            "@id": buildSiteEntityIds(siteUrl).organization,
             name: author.name,
             url: siteUrl,
             logo: { "@type": "ImageObject", url: LOGO_URL },

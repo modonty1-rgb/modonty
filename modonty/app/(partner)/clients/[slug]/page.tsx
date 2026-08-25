@@ -5,7 +5,13 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
 import { SubscriptionStatus, ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { generateMetadataFromSEO, generateStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
+import {
+  generateMetadataFromSEO,
+  generateStructuredData,
+  jsonLdHtml,
+  jsonLdHtmlFromString,
+  withHonestOpenGraphImageDimensions,
+} from "@/lib/seo";
 import { cacheTag, cacheLife } from "next/cache";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { HOME_BLOCKS } from "@modonty/shared/components/partner-site/free/home";
@@ -17,6 +23,7 @@ import { resolveClientPageState } from "./components/client-page-state";
 import { ClientNotReadyPanel } from "./components/states/client-not-ready-panel";
 import { ClientViewTracker } from "./components/client-view-tracker";
 import { PartnerHomeSkeleton } from "./components/home/partner-home-skeleton";
+import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 
 interface ClientPageProps {
   params: Promise<{ slug: string }>;
@@ -59,8 +66,8 @@ async function getClientForMetadata(decodedSlug: string) {
       email: true,
       addressCity: true,
       achievements: true,
-      logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
-      heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
+      logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, width: true, height: true } },
+      heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, width: true, height: true } },
       _count: { select: { articles: { where: { status: ArticleStatus.PUBLISHED } } } },
     },
   });
@@ -106,17 +113,24 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
 
     const stored = client.nextjsMetadata as Metadata | null;
     if (stored?.title) {
+      const knownImages = [client.heroImageMedia, client.logoMedia].flatMap((media) => {
+        const url = mediaSrc(media);
+        return url ? [{ url, width: media?.width, height: media?.height }] : [];
+      });
+      const honestStored = withHonestOpenGraphImageDimensions(stored, knownImages);
+
       return {
-        ...stored,
-        description: (stored.description as string | undefined) || client.seoDescription || `استكشف مقالات وخدمات ${client.name} على مدونتي`,
+        ...honestStored,
+        description: (honestStored.description as string | undefined) || client.seoDescription || `استكشف مقالات وخدمات ${client.name} على مدونتي`,
         ...(robots ? { robots } : {}),
         openGraph: {
-          ...(stored.openGraph as object | undefined),
+          ...(honestStored.openGraph as object | undefined),
           url: canonicalUrl,
         },
         alternates: {
           canonical: canonicalUrl,
           languages: hreflangLanguages,
+          types: FEED_ALTERNATE_TYPES,
         },
       };
     }

@@ -9,7 +9,7 @@ import { buildArticleUrlForArticle } from "@/lib/seo/url-builders";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
 import { needsRegeneration, regenerateJsonLd } from "@/lib/seo/jsonld-storage";
-import { isYmylClientComplete } from "@/lib/seo/ymyl-helpers";
+import { isYmylClientComplete, listYmylMissingFields } from "@/lib/seo/ymyl-helpers";
 import { getYmylAuthorityCodes } from "@modonty/shared/lib/seo/ymyl-authorities";
 import type { ValidationCheck } from "@/lib/seo/article-validator";
 import { SendToClientButton } from "./components/send-to-client-button";
@@ -187,6 +187,21 @@ export default async function QualityCheckPage({ params }: PageProps) {
         article.client.ymylCategory ?? null,
       ),
     );
+    // The field names, not just "incomplete". Same data, same gate — `missingYmylFields`
+    // reads the errors `validateYmylData` already produces instead of throwing them away.
+    // Khalid, 25 Aug 2026: a message that blocks must say which field to go and fill.
+    const missingYmylFields = listYmylMissingFields(
+      {
+        isYmyl: true,
+        ymylCategory: article.client.ymylCategory ?? null,
+        ymylData: article.client.ymylData,
+        addressCountry: article.client.addressCountry ?? null,
+      },
+      await getYmylAuthorityCodes(
+        article.client.addressCountry ?? null,
+        article.client.ymylCategory ?? null,
+      ),
+    );
     ymylChecks.push({
       id: "ymyl-client-verification",
       label: "Client professional verification is complete (YMYL)",
@@ -194,7 +209,10 @@ export default async function QualityCheckPage({ params }: PageProps) {
       passed: clientVerified,
       detail: clientVerified
         ? undefined
-        : "This is a medical/legal/financial (YMYL) client. Their professional verification is incomplete — the client must finish it in their console (including the reviewing professional's name) before this article can be sent. The actual review happens when the client approves the article in their console.",
+        : `This is a medical/legal/financial (YMYL) client, and their professional verification is missing: ${missingYmylFields.join(" · ")}. The client fills these in their console under Professional Verification. The review itself happens when the client approves the article there.`,
+      fix: clientVerified
+        ? undefined
+        : `Ask the client to complete Professional Verification in their console. To see what they have entered so far, open /clients/${article.client.id}/edit.`,
     });
   }
 

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { cacheTag, cacheLife } from "next/cache";
+import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 import { db } from "@/lib/db";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
@@ -138,6 +139,7 @@ export function buildOrganizationJsonLd(legal: LegalEntity): Record<string, unkn
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": buildSiteEntityIds(SITE_URL).organization,
     name: BRAND_AR,
     alternateName: BRAND_EN,
     ...(legal.legalName && { legalName: legal.legalName }),

@@ -8,6 +8,7 @@ import { buildListingPageMetadata } from "@modonty/shared/lib/seo/build-listing-
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { getMetadataSettings } from "@/lib/settings/get-metadata-settings";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
+import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 import { SITE_URL } from "@/constants";
 
 import { getArticlesArchive, type ArchiveSort } from "@/lib/articles/archive/get-articles-archive";
@@ -153,6 +154,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
     alternates: {
       canonical,
       languages: buildHreflangLanguages(settings.defaultAlternateLanguages, canonical, SITE_URL),
+      types: FEED_ALTERNATE_TYPES,
     },
     openGraph: { ...(blob.openGraph as object | undefined), title, description, url: canonical },
     twitter: { ...(blob.twitter as object | undefined), title, description },

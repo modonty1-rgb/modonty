@@ -58,8 +58,12 @@ function categoryToThing(
     thing.image = {
       "@type": "ImageObject",
       url: absImage,
-      width: 1200,
-      height: 630,
+      // No width/height: nothing here measured this file. The pair was a literal 1200x630 on every
+      // image — measured 25 Aug 2026 across four category images, two of them 2048x2048 squares. A
+      // declared size that is not the file’s is worse than none: schema.org ImageObject width/height
+      // describe the actual image, and a consumer that trusts them lays out a crop that does not
+      // exist. Omitted until the row carries real dimensions — the same rule the modonty side applies
+      // in withHonestOpenGraphImageDimensions.
       ...(category.socialImageAlt?.trim() && { caption: category.socialImageAlt.trim() }),
     };
   }
@@ -109,7 +113,7 @@ export function buildCategoriesPageJsonLd(
     url: pageUrl,
     description,
     inLanguage: inLangCodes,
-    isPartOf: { "@id": `${siteUrl}/#website` },
+    isPartOf: { "@id": website["@id"] },
     dateModified: dateModified.toISOString(),
     mainEntity: itemList,
     breadcrumb: {
@@ -124,8 +128,12 @@ export function buildCategoriesPageJsonLd(
     collectionPage.primaryImageOfPage = {
       "@type": "ImageObject",
       url: absOgImage,
-      width: 1200,
-      height: 630,
+      // No width/height: nothing here measured this file. The pair was a literal 1200x630 on every
+      // image — measured 25 Aug 2026 across four category images, two of them 2048x2048 squares. A
+      // declared size that is not the file’s is worse than none: schema.org ImageObject width/height
+      // describe the actual image, and a consumer that trusts them lays out a crop that does not
+      // exist. Omitted until the row carries real dimensions — the same rule the modonty side applies
+      // in withHonestOpenGraphImageDimensions.
     };
   }
 

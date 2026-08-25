@@ -37,12 +37,18 @@ export async function fetchArticleForMetadata(
             select: {
               url: true,
               bunnyUrl: true, blurDataURL: true,
+              altText: true,
+              width: true,
+              height: true,
             },
           },
           logoMedia: {
             select: {
               url: true,
               bunnyUrl: true, blurDataURL: true,
+              altText: true,
+              width: true,
+              height: true,
             },
           },
         },

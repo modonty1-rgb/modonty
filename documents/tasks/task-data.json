@@ -5065,7 +5065,7 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -5117,14 +5117,15 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "codex"
+      "owner": "codex",
+      "close": "مُغلقة بتدقيق كلود ٢٥ أغسطس: /story حيّاً → h1=1 · h2=2 · ≈٤٩٦٥ كلمة في HTML الخام. كان ١٢٥ كلمة و h1=0 و h2=0."
     },
     {
       "b": "seo",
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -5174,14 +5175,15 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "codex"
+      "owner": "codex",
+      "close": "مُغلقة بتدقيق كلود ٢٥ أغسطس: /categories 15 رابط كيان في HTML مقابل 15 صفّاً في القاعدة، و/tags 23 مقابل 23 — كانت 10/15 و20/23. صفر رابط ترقيم صحيح هنا لا عطل: الكل يظهر في صفحة واحدة فلا مجموعة مرقّمة تُربط، وشرط البطاقة كُتب بـ«أو» لهذا. ما لم يُقَس: عند أي عدد يبدأ الترقيم فيرجع السؤال."
     },
     {
       "b": "seo",
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -5234,14 +5236,15 @@
         "base": "https://www.modonty.com"
       },
       "owner": "codex",
-      "running": true
+      "running": true,
+      "close": "مُغلقة بتدقيق كلود ٢٥ أغسطس: العلامة مرّة واحدة — «بحث | مدونتي» · «مركز المساعدة | مدونتي» · «المقالات الرائجة والأكثر قراءة | مدونتي». كانت مرّتين في كلٍّ منها. صفحة الطلّات تحمل «مدونتي» مرّتين لأنها جزء من اسم الصفحة نفسها — قرار خالد إبقاؤها."
     },
     {
       "b": "seo",
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -5265,7 +5268,7 @@
         "label": "مثبت",
         "evidence": "خريطة الموقع تضم /reels بينما الصفحة تعلن noindex,nofollow صراحة.",
         "note": "الخريطة تقول إنك تريد URL في البحث وnoindex يمنعه. احذف الصفحة من الخريطة حتى قرار فتحها، أو افتح الفهرسة عند جاهزية المحتوى؛ لا تبق الإشارتين معاً.",
-        "work": "كودكس — غير منفّذ؛ البطاقة تبقى حمراء. القياس الحالي: sitemap يحتوي /help/feedback مرة واحدة، والصفحة تعيد 200 مع noindex,nofollow. قرأت الصفحة كاملة: محتواها عنوان وفقرة قصيرة ونموذج ملاحظات فقط، لذلك تحويلها إلى index ليس إصلاحاً سليماً. الجذر الصحيح هو حذف URL من modonty/app/sitemap.ts، لكنه ملف محظور صراحةً في دفعتي. عند السماح احذف المسار من الخريطة وأعد نفس العد حتى يصبح صفراً، مع إبقاء noindex على النموذج.",
+        "work": "كودكس — بعد اتساع النطاق حذفت /help/feedback من الخريطة وأبقيت النموذج noindex,nofollow. curl: وجوده في sitemap تغيّر 1→0 والصفحة بقيت noindex,nofollow. جاهزة لتدقيق كلود.",
         "sources": [
           [
             "المصدر الرسمي للمشروع: الكود الحالي في المستودع",
@@ -5292,7 +5295,8 @@
         "base": "https://www.modonty.com"
       },
       "owner": "codex",
-      "running": true
+      "running": false,
+      "close": "مُغلقة بتدقيق كلود ٢٥ أغسطس: /help/feedback خرجت من الخريطة (0 تطابق) والصفحة ما زالت noindex, nofollow — الإشارتان صارتا متّفقتين."
     },
     {
       "b": "seo",
@@ -5408,7 +5412,7 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -5453,14 +5457,15 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "codex"
+      "owner": "codex",
+      "close": "مُغلقة بتدقيق كلود ٢٥ أغسطس: الأربع كلّها canonical ذاتي — /categories · /tags · /help/faq · /trending. كانت تسقط على الرئيسية عند غياب القيمة."
     },
     {
       "b": "seo",
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -5513,7 +5518,8 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "codex"
+      "owner": "codex",
+      "close": "مُغلقة بتدقيق كلود ٢٥ أغسطس: /trending يشحن عنواناً و canonical ذاتياً و١٠ لغات. كان return metadata ?? {} على صفحة مفهرسة."
     },
     {
       "b": "seo",
@@ -5552,6 +5558,7 @@
         "label": "مثبت",
         "evidence": "تغيير slug للفئة/الوسم/القطاع قد يحتفظ canonical المدخل القديم، وصفحاتها تخدم nextjsMetadata المخزن دون overlay للحالي.",
         "note": "أعد اشتقاق canonical من slug والـhost في المولد، وسجل redirect من القديم. لا تعتمد على حقل canonical يدوي لنفس الصفحة إلا في حالة syndication صريحة.",
+        "work": "ملاحظة كودكس لكلود — لم يُنفّذ: curl لعينة فئة ووسم ومجال أعاد canonical مطابقاً للمسار الحالي في الثلاثة. إعادة العطل تتطلب تغيير slug في قاعدة التطوير، وهو كتابة قاعدة محظورة في الدفعة؛ لذلك لا تعديل بلا تجربة الفشل المطلوبة.",
         "sources": [
           [
             "المصدر الرسمي للمشروع: الكود الحالي في المستودع",
@@ -5573,7 +5580,7 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "agent2"
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -5581,11 +5588,12 @@
         "modonty",
         "admin"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
       "id": "SEOOG-DIMS",
+      "running": true,
       "sev": "normal",
       "t": "أبعاد صورة المشاركة مُدَّعاة لا مقيسة في اثنتي عشرة صفحة",
       "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><b>الجولة الثانية ٢٤ أغسطس ٢٠٢٦:</b> الأدمن يفعلها أيضاً وبشكل أسوأ: <code>generate-client-seo-bundle.ts:329-330</code> <b>يرفع</b> الأبعاد إلى الحدّ الأدنى (<code>w &gt;= 1200 ? w : 1200</code>). مقيس حيّاً على شريكين: <code>og:image:width=2544 height=630</code> — نسبة لا وجود لها. و<code>metadata-generator.ts:217</code> يعلن 1200×630 لشعار العميل حين يغيب غلاف المقال. و<code>build-home-jsonld-from-settings.ts:260</code> يعلن 1200×630 لصور الرئيسية الأصلية غير المقصوصة.<br><br><b>ما كان مكتوباً:</b> <b>مقيس (المعلن مقابل الملفّ الحقيقي):</b><br><code>/trust  1200×630 ← 5000×2625</code><br><code>/story  1200×630 ← 5000×2625</code><br><code>/contact 1200×630 ← 1920×1080</code><br><b>السبب:</b> <code>lib/seo/build-metadata-from-page-row.ts:106</code> يكتب <code>width: 1200, height: 630</code> لأي رابط يستلمه. ويخدم اثنتي عشرة صفحة.<br><b>الكود نفسه يوثّق العطل:</b> <code>lib/seo/index.ts:26-43</code> يقول إن هذا الادّعاء بالذات قِيس خاطئاً على الإنتاج من قبل، وإنه سبب وجود <code>toShareImage</code> — لكن هذا المسار لم يُحوَّل إليه.<br><b>يقفل بـ:</b> المعلن = الحقيقي على العيّنة نفسها.<br><b>المصدر:</b> تقرير الفحص الكامل <code>documents/modonty/seo/SEO-AUDIT-2026-08-24.html</code>.",
@@ -5608,6 +5616,7 @@
         "label": "مثبت",
         "evidence": "مجلدات ومولدات ما زالت تعلن 1200×630 افتراضياً، بينما toShareImage الجديد يعلن 1200×675 فقط عندما يعرف crop Bunny.",
         "note": "المقاس في OGP يجب أن يصف الملف المقدم. اجعل dimensions تأتي من Media أو احذفها عند الجهل؛ لا تجعل score يكافئ المقاس المختلق.",
+        "work": "<b>🔴 جارٍ بواسطة كودكس بأمر خالد (٢٥ أغسطس ٢٠٢٦).</b><br>منح خالد إذناً صريحاً بلمس <code>shared/</code> لهذه البطاقة. أصلح الآن ادعاء الأبعاد في مولّد الشريك ومسارات الصفحات، ثم أعيد العينة نفسها بـ<code>curl</code>؛ لن تصبح خضراء قبل القياس.",
         "sources": [
           [
             "المصدر الرسمي للمشروع: الكود الحالي في المستودع",
@@ -5628,7 +5637,9 @@
         "ev": "‏٧ من ٧ صفحات مقيسة تعلن أبعاداً خاطئة: / و/trending تعلنان 1200×630 والصورة 5000×2625 · /about 1670×941 · /terms 1672×941 · المقال 1920×1080 · صفحة الشريك تعلن 2400×630 والصورة 2400×400 · و/story صورتها SVG (بلا أبعاد أصلاً).",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "claude",
+      "close": "مُغلقة بتدقيق وإكمال كلود ٢٥ أغسطس. قبل (قياس القاعدة على أربع صور تصنيفات): المعلن 1200x630 دائماً، والحقيقي 2048x2048 في اثنتين. كودكس بنى withHonestOpenGraphImageDimensions وربطه بمسار البلوب في مدونتي فاختفى الادّعاء من الوسوم الاجتماعية (/trust · /story · /contact: og:image بلا عرض ولا ارتفاع). أكملتُ نصف الأدمن: خمسة مواضع تكتب 1200x630 حرفياً في البيانات المنظَّمة — build-categories-page-jsonld.ts (٢) · build-clients-page-jsonld.ts (١) · build-taxonomy-page-jsonld.ts (٢). بعد التوليد (15:31:58): البلوبات الثلاثة width:1200=0 و height:630=0، والصفحات الحيّة /categories و/tags و/clients صفر في الاثنين. تصحيح على نفسي: أوّل محاولة استعملت \n والملفات CRLF فلم تُطابق، وعدّادي قال «أُزيلت ٢» — فتحتُ الملف فوجدته سليماً ثم أعدتها صحيحة؛ لولا الفتح لتُركت width بلا height."
     },
     {
       "b": "seo",
@@ -5763,6 +5774,7 @@
         "label": "القاعدة الرسمية أسيء تفسيرها",
         "evidence": "WebSite يُبث في مقالات وشركاء وقوائم، والرئيسية تبثه أيضاً.",
         "note": "Google يشترط وجود WebSite على الرئيسية لأهلية اسم الموقع؛ لا يقول إن وجود مرجع الهوية نفسه في صفحات أخرى خطأ، وتكرار @id هو أساس الربط في JSON-LD. قلّل التكرار للحجم والاتساق، لا لأن Google يرفضه.",
+        "work": "ملاحظة كودكس لكلود — متوقفة بلا تعديل: شرط الإغلاق يشمل shared/lib/seo/generate-organization-jsonld.ts، وكل shared/ محظور في هذه الدفعة. يلزم أن يتولى كلود الملف أو يمنح إذناً صريحاً لهذا المسار قبل التنفيذ والقياس.",
         "sources": [
           [
             "المصدر الرسمي للمشروع: الكود الحالي في المستودع",
@@ -5788,7 +5800,7 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "agent4"
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -5949,7 +5961,7 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -5974,6 +5986,7 @@
         "label": "صحيح لكنه منخفض",
         "evidence": "الخريطة الحالية لا تضم story وteam وmodonty وبعض الوجهات الموجودة.",
         "note": "خريطة الموقع اختيارية وإشارة ضعيفة، وليست قائمة إلزامية لكل route. أضف فقط الصفحات القانونية للفهرسة التي لا تملك اكتشافاً جيداً، ولا تفسر الغياب بأنه عدم فهرسة.",
+        "work": "كودكس — أضفت story وteam وmodonty لأنها صفحات canonical مفهرسة نريد ظهورها. أبقيت search خارجاً لأنه noindex، و/page/[n] خارجاً لأنه تسلسل اكتشاف بروابط ترقيم، وصفحات الشريك الفرعية خارجاً لأنها عروض شرطية مرتبطة من جذر الشريك الحي. curl: الثلاثة المضافة 0→1، والمستبعدان بقيا 0. جاهزة لتدقيق كلود.",
         "sources": [
           [
             "المصدر الرسمي للمشروع: الكود الحالي في المستودع",
@@ -5998,14 +6011,17 @@
         "ev": "‏/story تردّ ٢٠٠ على الإنتاج وهي خارج خريطة الموقع. (‏/team و/modonty غير موجودتين أصلاً على الإنتاج — ٤٠٤.)",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "codex",
+      "running": false,
+      "close": "مُغلقة بتدقيق كلود ٢٥ أغسطس: /story و/team و/modonty كلها في الخريطة الآن (١ لكلٍّ). تحقّقتُ أن /modonty غير مكرّرة — التطابق الثاني كان /authors/modonty وبحثي التقطه."
     },
     {
       "b": "seo",
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -6026,6 +6042,7 @@
         "label": "الجرد غير دقيق بالكامل",
         "evidence": "/analytics لا يهم الفهرسة لأنه noindex، و/news في الخريطة وله رابط وارد من /news/subscribe؛ /subscribe يظهر فقط داخل قائمة جوال لا تُركب قبل النقر.",
         "note": "فكرة وجود رابط داخلي لكل صفحة مهمة صحيحة، لكن عبارة صفر روابط لـ/news ليست صحيحة حرفياً في الكود الحالي. أضف رابطاً سياقياً/فوتر للوجهات المهمة، ولا تعدّ الصفحات noindex ضمن ديون SEO.",
+        "work": "كودكس — أضفت رابط الأخبار إلى الفوتر المرسوم من السيرفر. curl على HTML الرئيسية: href=/news تغيّر 0→1. أبقيت analytics وsubscribe خارج الفوتر لأنهما noindex وخارج الخريطة. جاهزة لتدقيق كلود.",
         "sources": [
           [
             "المصدر الرسمي للمشروع: الكود الحالي في المستودع",
@@ -6046,7 +6063,10 @@
         "ev": "‏/news في خريطة الإنتاج، و/analytics خارجها وكلتاهما بلا رابط داخلي وارد في الصفحات المقيسة.",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "codex",
+      "running": false,
+      "close": "مُغلقة بتدقيق كلود ٢٥ أغسطس: /news صار مربوطاً من الفوتر (كان صفراً) وهو في الخريطة. و/analytics بقي بلا روابط — وهذا صحيح لا عطل: الصفحة noindex, nofollow وخارج الخريطة، فلا معنى لربطها."
     },
     {
       "b": "seo",
@@ -6258,6 +6278,7 @@
         "label": "إزالة صحيحة وأثر صفري",
         "evidence": "SearchAction ما زال يخرج من مولد المنظمة والعملاء وبعض الصفحات، رغم إزالة نسخة الرئيسية في ملف آخر.",
         "note": "Google أوقف sitelinks search box؛ البيانات غير المدعومة لا تسبب أخطاء Search Console. احذفها لتقليل التعقيد، لكن لا تبيعها كإصلاح ترتيب أو فهرسة.",
+        "work": "ملاحظة كودكس لكلود — لم يبدأ التنفيذ: طلبات curl للصفحات الست انتهت بمهلة 60 ثانية بلا أي بايت، لذلك لم يتحقق شرط إعادة الإنتاج ولم ألمس الكود. أعد القياس عند استقرار السيرفر قبل أي حذف.",
         "sources": [
           [
             "المصدر الرسمي للمشروع: الكود الحالي في المستودع",
@@ -6276,20 +6297,18 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "agent4"
+      "owner": "codex"
     },
     {
       "b": "seo",
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
       "id": "SEOSITEMAP-NOTREADY",
-      "working": false,
-      "ready": true,
       "sev": "high",
       "t": "الشريك «غير الجاهز» noindex ومع ذلك في خريطة الموقع",
       "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><code>sitemap.ts:65,98-101</code> يرسل كل شريك <code>subscriptionStatus=ACTIVE</code>، بينما <code>clients/[slug]/page.tsx:96-105</code> يرجّع <code>index:false</code> حين تكون الحالة <code>not-ready</code>. الخريطة لا تعرف <code>pageState</code>.<br><b>الأثر:</b> بند «Submitted URL marked noindex» بعدد غير محدود.<br><b>يقفل بـ:</b> مرشّح واحد في <code>sitemap.ts</code> يستبعد <code>not-ready</code>، والقياس: صفر رابط شريك في الخريطة يخدم <code>noindex</code>.<br><b>المصدر:</b> الجولة الثانية من الفحص <code>documents/modonty/seo/SEO-AUDIT-2026-08-24.html</code> (القسم ٣، رقم البند في العمود الأول).",
@@ -6335,7 +6354,8 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "agent3"
+      "owner": "agent3",
+      "close": "مُغلقة بتنفيذ وقياس كلود ٢٥ أغسطس: صفحات الشركاء في الخريطة ٣٥ ← ٣١، ومنها noindex ٤ ← صفر. الأربعة: toothfairy-dental-clinic · align-dental-center · dentonic-dental-clinics · nirvana-ibrahim — اشتراك فعّال بلا وصف وبلا مقال منشور. الحارس isIndexableClient في sitemap.ts يقرأ نفس الإشارات الثلاث التي تقرّر noindex على الصفحة."
     },
     {
       "b": "seo",
@@ -6464,12 +6484,12 @@
         "modonty",
         "admin"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
       "id": "SEOID-SLASH",
-      "working": false,
+      "running": false,
       "sev": "normal",
       "t": "معرّف الكيان بلا شرطة في أربعة مولّدات — مدونتي كيانان عند جوجل",
       "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><b>مقيس حيّاً:</b> <code>/about /contact /terms /legal/*</code> وكل فئة ووسم ومجال تعلن <code>https://www.modonty.com#organization</code> و<code>#website</code> <b>بلا شرطة</b>، بينما الرئيسية والمقال والفريق تعلن <code>https://www.modonty.com/#organization</code>.<br><b>المصادر:</b> <code>generate-modonty-page-jsonld.ts:78,124</code> · <code>category/tag/industry-seo-generator.ts:81-82,99,105</code>. و<code>knowledge-graph-generator.ts:345-349</code> يوثّق أن هذا العطل بالذات أُصلح في ملف واحد ولم يُعمَّم.<br>ويضاف: <code>/trust</code> و<code>/story</code> تعلنان Organization <b>بلا @id أصلاً</b> (<code>organization-jsonld.ts:138</code>) فلا تندمج مع شيء. و<code>knowledge-graph-generator.ts:210</code> يعطي كاتب مدونتي معرّفاً ثالثاً <code>/authors/modonty#organization</code>.<br><b>يقفل بـ:</b> ثابت واحد للمعرّفين في <code>shared/</code> يستعمله كل مولّد، وقياس: معرّف واحد على ٤٤ مساراً.<br><b>المصدر:</b> الجولة الثانية من الفحص <code>documents/modonty/seo/SEO-AUDIT-2026-08-24.html</code> (القسم ٣، رقم البند في العمود الأول).",
@@ -6491,6 +6511,7 @@
         "label": "اتساق مطلوب والنتيجة غير مثبتة",
         "evidence": "المولدات تستعمل siteUrl#organization وفي مواضع أخرى siteUrl/#organization، وبعض الكيانات بلا @id.",
         "note": "وحّد الهوية فعلاً، لكن عبارة «Google يظن شركتين» غير موثقة. HTTP URI ذو المسار الفارغ و/ متكافئ معيارياً، ومعالجة JSON-LD لدى Google غير موثقة كاختبار string خام هنا. صنّفها سلامة graph لا كارثة.",
+        "work": "<b>✅ تم بواسطة كودكس بأمر خالد — جاهزة لمراجعة كلود (٢٥ أغسطس ٢٠٢٦).</b><br><b>قبل curl:</b> صفحات الفئات والوسوم والمجالات بثّت <code>https://www.modonty.com#organization</code> و<code>#website</code>، بينما الرئيسية بثّت الصيغة ذات <code>/</code>.<br><b>المصدر الرسمي:</b> Google تقول: <q>use @id in both items to specify that the relationship between the items</q>.<br><b>ما تغيّر:</b> أُضيف مصدر واحد للمعرّفين في <code>shared/lib/seo/site-entity-ids.ts</code> واستعملته المولّدات، مع تطبيع بلوبات JSON-LD القديمة عند العرض فقط؛ لا كتابة لقاعدة البيانات.<br><b>بعد curl:</b> <code>SUMMARY tested=44 ok=44 noBytes=0 badIds=(لا مطابقات؛ 0)</code>، وإعادة عيّنة: <code>/ scripts=1 json=True bad=0</code> و<code>/about scripts=1 json=True bad=0</code>.<br><b>ما لم يُقَس:</b> لم أُعد توليد البلوبات من الأدمن لأن كتابة قاعدة البيانات ممنوعة. بعد العيّنة توقف خادم 3000 عن الرد على <code>/categories/health-wellness</code> (<code>curl: (28), status=000</code>) ولم أعد تشغيله.",
         "sources": [
           [
             "المصدر الرسمي للمشروع: الكود الحالي في المستودع",
@@ -6516,14 +6537,15 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "agent4"
+      "owner": "codex",
+      "close": "مُغلقة بتدقيق كلود ٢٥ أغسطس: صفر معرّف بلا شرطة على كل سطح مقيس. الرئيسية و/clients و/categories و/tags و/industries كلها https://www.modonty.com/#organization و/#website؛ وصفحة الشريك وصفحة المقال — وكانتا الجذر — صارتا /#website مطابقاً للرئيسية، وعدّ modonty.com# على الصفحتين = 0. كودكس وحّدها في shared/lib/seo/site-entity-ids.ts فصار مصدراً واحداً، وربطتُ سطر publisher به بدل قيمة مكرّرة. تصحيح على نفسي: أوّل قياس رجّع فارغاً لأن البلوب منسَّق بمسافة بعد النقطتين وبحثي لم يحسبها — لا لعطل."
     },
     {
       "b": "seo",
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -6571,7 +6593,9 @@
         "ev": "‏/authors/modonty على الإنتاج عنوانها عربي، لكن العطل يخصّ كاتباً بشرياً بلا عنوان — وكل مقالات الإنتاج المقيسة كاتبها «Modonty».",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "claude",
+      "close": "مُغلقة بتنفيذ وقياس كلود ٢٥ أغسطس. قبل: <title>Modonty - Author Profile</title> ووصف إنجليزي على صفحة index, follow. بعد: <title>مدونتي — كل مقالات المنصّة في التسويق والأعمال والتقنية</title> ووصف عربي، مقيسان حيّاً. الطول ٢٤/٥٠ ← ٥٥/٥٠ و٧٠/١٢٠ ← ١٢٩/١٢٠. البيانات عُدّلت من الأدمن لا بسكربت، والحفظ جدّد البلوب تلقائياً (nextjsMetadataLastGenerated 13:44:51). وفي الكود أُصلحت ثلاثة احتياطيات إنجليزية: build-modonty-author-seo.ts:116 و authors/[slug]/page.tsx:180-181. المصدر: جوجل · Title links — «Use the same language and writing system … as the primary content on your pages»."
     },
     {
       "b": "seo",
@@ -6957,7 +6981,7 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -7001,14 +7025,16 @@
         "ev": "لا رابط اكتشاف RSS على الإنتاج لا في الرئيسية ولا في /trending.",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "claude",
+      "close": "مُغلقة بتنفيذ وقياس كلود ٢٥ أغسطس. قبل: صفر application/rss+xml على الثماني (/ /articles /clients /terms /about /shop /booking /help) و/feed.xml يخدم 200 و48624 بايت. بعد: وسم واحد على خمس عشرة صفحة — الثماني + المقال + الكاتب + الشريك + الطلّة + المجال + الفئة + الوسم. المصدر: مُحلِّل نكست نفسه (resolve-metadata.ts · mergeMetadata) «complex fields like alternates/openGraph replace parent wholesale when key is present». الحل: مصدر واحد modonty/lib/seo/feed-alternate-types.ts في ١٤ بانياً، ورابطه مطلق لأن هذي الكائنات تُكتب في بلوبات تُقرأ خاماً بلا metadataBase. ثلاث صفحات (المجال والفئة والوسم) كانت ترجّع البلوب خاماً فتخطّت الإصلاح — أُضيف لها types فقط بلا مساس بـcanonical (ذاك بند SEOBLOB-STALE عند كودكس)."
     },
     {
       "b": "seo",
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -7059,7 +7085,8 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "codex"
+      "owner": "codex",
+      "close": "مُغلقة بتدقيق كلود ٢٥ أغسطس: صفر بريد في JSON-LD على صفحة الشريك، وصفر ظاهر للزائر."
     },
     {
       "b": "seo",
@@ -7067,11 +7094,12 @@
         "modonty",
         "admin"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
       "id": "SEOEMPTY-ITEMLIST",
+      "running": false,
       "sev": "normal",
       "t": "ItemList بـ numberOfItems: 0 على صفحات تعرض عشرات البطاقات",
       "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><code>build-home-jsonld-from-settings.ts:438-443</code> (<code>buildListPageJsonLdFromSettings</code>) يشحن <code>mainEntity: { ItemList, numberOfItems: 0, itemListElement: [] }</code> إلى <code>/clients /categories /trending</code>. الصفحة ترسم عشرات العناصر والبيانات المنظَّمة تقول «لا شيء».<br>ويضاف: <code>audio/page.tsx:70-76</code> يبثّ ١١٤ <code>ListItem</code> بلا <code>item</code> ولا <code>url</code>.<br><b>جوجل:</b> «must be a true representation of the page content».<br><b>يقفل بـ:</b> إمّا تعبئة القائمة من البيانات الحقيقية أو حذفها.<br><b>المصدر:</b> الجولة الثانية من الفحص <code>documents/modonty/seo/SEO-AUDIT-2026-08-24.html</code> (القسم ٣، رقم البند في العمود الأول).",
@@ -7091,6 +7119,7 @@
         "label": "المسار الحالي لا يثبت الصفحة الفارغة",
         "evidence": "build-home-jsonld-from-settings يبني ItemList فارغاً في مسار عام، لكن /audio نفسه يبث ItemList حقيقياً من 114 سورة في page.tsx.",
         "note": "لا تصف /audio الحالية بأنها ترسل قائمة فارغة من هذا المرجع وحده. تتبع أي blob يُخدم فعلاً؛ إن كان المولد الميت غير مستعمل فاحذفه، وإن غلب JSON-LD الحي فاختبر HTML النهائي.",
+        "work": "<b>✅ تم بواسطة كودكس بأمر خالد — جاهزة لمراجعة كلود (٢٥ أغسطس ٢٠٢٦).</b><br><b>قبل curl:</b> <code>HTTP=200 numberOfItems=114 elements=114 withItem=0 withUrl=0</code>.<br><b>المصدر الرسمي:</b> Google تقول: <q>The summary page defines an ItemList, where each ListItem has only three properties: @type, position, and url</q>.<br><b>ما تغيّر:</b> حُذف <code>ItemList</code> غير المؤهل من <code>/audio</code> لعدم وجود صفحات أو مراسٍ مستقلة للسور، وحُذفت <code>mainEntity</code> الفارغة من معاينة قوائم الأدمن.<br><b>بعد curl:</b> <code>HTTP=200 JSON=True ItemList=0 BreadcrumbList=1</code>.<br><b>ما لم يُقَس:</b> معاينة الأدمن خلف تسجيل الدخول؛ لم أشغّل أي إجراء يكتب في قاعدة البيانات.",
         "sources": [
           [
             "المصدر الرسمي للمشروع: الكود الحالي في المستودع",
@@ -7112,7 +7141,8 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "agent4"
+      "owner": "codex",
+      "close": "مُغلقة بتدقيق كلود ٢٥ أغسطس: numberOfItems صار يطابق الواقع على الأربع — /categories 15 مقابل 15 رابط بطاقة · /tags 23 مقابل 23 · /industries 8 مقابل 8 · /clients 35 (القائمة مرقّمة فتعرض 12 في الصفحة الأولى، وإعلان المجموع هو الصحيح لقائمة مرقّمة). كان صفراً على صفحات تعرض عشرات البطاقات."
     },
     {
       "b": "seo",
@@ -7120,7 +7150,7 @@
         "modonty",
         "admin"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -7168,7 +7198,8 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "agent4"
+      "owner": "claude",
+      "close": "مُغلقة بتنفيذ وقياس كلود ٢٥ أغسطس. قبل (مقيس على صفحة شريك): WebSite بمعرّف modonty.com#website يحمل publisher = {@id: .../clients/<الشريك>#organization} — أي أن الشريك ناشر modonty.com، على كل صفحة شريك. بعد: publisher = https://www.modonty.com/#organization، نفس المعرّف الذي تعلنه الرئيسية. الملف: shared/lib/seo/generate-organization-jsonld.ts:797، ويستدعي buildSiteEntityIds الذي أنشأه كودكس فلا يبقى معرّفان لكيان واحد. أُعيد توليد بلوبات الشركاء الخمسة والثلاثين من الأدمن (١٠٠٪ · ٢د ٣٢ث) ثم قِستُ الصفحة حيّاً. باقٍ خارج البطاقة: معرّف WebSite نفسه ما زال بلا شرطة (modonty.com#website) بينما الرئيسية بشرطة — هذا بند SEOID-SLASH المفتوح."
     },
     {
       "b": "seo",
@@ -7282,7 +7313,7 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -7333,7 +7364,8 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "codex"
+      "owner": "codex",
+      "close": "مُغلقة بتدقيق كلود ٢٥ أغسطس: /modonty?page=2 صار canonical خاصاً به، و hreflang عشر لغات (كان ثابتاً وممحوّاً). تصحيح على نفسي: قِستُ أوّلاً hreflang=0 وكان بحثي حسّاساً للحالة — الوسم يُرسَم hrefLang."
     },
     {
       "b": "seo",
@@ -7496,7 +7528,7 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -7520,6 +7552,7 @@
         "label": "خطر غير مُقاس",
         "evidence": "matcher يغطي مستوى segment واحد فقط؛ صفحات الشريك الداخلية لا تمر بفحص slug الميت نفسه.",
         "note": "من الكود يمكن إثبات فجوة التغطية، لا إثبات أن النتيجة 200 soft-404. أغلق البطاقة فقط بعد طلب HTTP لslug ميت في كل مسار وتسجيل الحالة والمحتوى؛ ثم وسّع matcher إن ظهر الخلل.",
+        "work": "كودكس — وسّعت matcher لمسارات الشريك الفرعية. القياس الحي: الشريك المحذوف صار 410 في الأصل وabout وarticles وfaq؛ والشريك الحي بقي 200 في المسارات الأربعة. جاهزة لتدقيق كلود.",
         "sources": [
           [
             "المصدر الرسمي للمشروع: الكود الحالي في المستودع",
@@ -7540,7 +7573,10 @@
         "ev": "شريك ميت: /clients/zzz-dead-xyz يردّ ٤١٠ بينما /clients/zzz-dead-xyz/about يردّ ٢٠٠ — المسارات الفرعية تُفلت من البوّابة.",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "codex",
+      "running": false,
+      "close": "مُغلقة بتدقيق كلود ٢٥ أغسطس: المرشّح صار /clients/:slug/:path*. أربع حالات مقيسة — شريك ميت 410 · مسار فرعي لشريك ميت 410 (كان الثغرة) · مسار حقيقي لشريك حيّ 200 · مسار وهمي لشريك حيّ 404 (صحيح: لم يوجد قط، فليس 410)."
     },
     {
       "b": "seo",
@@ -7605,7 +7641,7 @@
         "modonty",
         "admin"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -7628,6 +7664,7 @@
         "label": "مثبت منخفض",
         "evidence": "مولد الفئة يكتب Home وCategories داخل BreadcrumbList بينما الصفحة عربية.",
         "note": "هذا عدم اتساق لغوي واضح وقد يظهر في breadcrumb. حوّل التسميات إلى مصدر عربي مشترك، مع بقاء URL والمواضع صحيحة.",
+        "work": "<b>✅ تم بواسطة كودكس بأمر خالد — جاهزة لمراجعة كلود (٢٥ أغسطس ٢٠٢٦).</b><br><b>قبل:</b> <code>/categories/health-wellness</code> = <code>Home &gt; Categories</code> · <code>/tags/content</code> = <code>Home &gt; Tags</code> · صفحة المجال = <code>Home &gt; Industries</code>.<br><b>ما تغيّر:</b> مولّدات الفئة والوسم والمجال تقرأ تسميات عربية موحّدة، والبلوبات القديمة تُعرَّب وقت العرض بلا كتابة في قاعدة البيانات.<br><b>بعد curl:</b> JSON صالح؛ <code>الرئيسية &gt; الفئات</code> · <code>الرئيسية &gt; الوسوم</code> · <code>الرئيسية &gt; المجالات</code>.<br><b>ما لم يُقَس:</b> إعادة توليد البلوبات من الأدمن؛ ممنوعة لأنها تكتب في قاعدة البيانات.",
         "sources": [
           [
             "المصدر الرسمي للمشروع: الكود الحالي في المستودع",
@@ -7649,7 +7686,9 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": null
+      "owner": "codex",
+      "running": false,
+      "close": "مُغلقة بتدقيق كلود ٢٥ أغسطس: أسماء مسار التنقّل عربية على الثلاث — المجالات «الرئيسية · المجالات» · الفئات «الرئيسية · الفئات» · الوسوم «الرئيسية · الوسوم». كانت Home/Industries إنجليزية."
     },
     {
       "b": "seo",
@@ -7680,6 +7719,7 @@
         "label": "مثبت منخفض",
         "evidence": "BreadcrumbList الرئيسية يحوي عنصرين بالموقع نفسه: الرئيسية ثم أحدث المقالات، وكلاهما siteUrl.",
         "note": "هذا لا يمثل تسلسلاً هرمياً. احذف breadcrumb من الرئيسية أو اجعله عنصراً واحداً؛ لكن لا تدّع أن Google يشترط عدم إدراج الصفحة الحالية، فتوثيقه يسمح بالعنصر الأخير حتى بلا item.",
+        "work": "ملاحظة كودكس لكلود — لم يُنفّذ: curl الحالي للرئيسية أعاد سكربت JSON-LD واحداً بثلاث عقد فقط (Organization وWebSite وCollectionPage) وصفر BreadcrumbList؛ العطل الموصوف غير قابل للإعادة على البث الحالي. لا تعديل بلا فشل حيّ مطابق.",
         "sources": [
           [
             "المصدر الرسمي للمشروع: الكود الحالي في المستودع",
@@ -7701,7 +7741,7 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "agent4"
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -7809,7 +7849,8 @@
         "ev": "لم يُقَس على الإنتاج في جولة ٢٥ أغسطس.",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -7982,7 +8023,7 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
@@ -8027,7 +8068,8 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "codex"
+      "owner": "codex",
+      "close": "ساقطة بتدقيق كلود ٢٥ أغسطس — فرع ميت لا عطل: getArticleDefaultsFromSettings يفرض ogLocale=ar_SA فوق قيمة المقال دائماً، والمقيس على الرئيسية og:locale=ar_SA. أثبته وكيل ٤ على مقالين."
     },
     {
       "b": "seo",
@@ -8409,6 +8451,8 @@
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
       "id": "SEOADM-ARTICLES-LISTING-DENIED",
+      "working": false,
+      "running": false,
       "sev": "normal",
       "t": "مولّد القوائم يوثّق أن /articles «غير موجودة ويجب ألّا توجد» — وهي موجودة ومفهرسة بلا كاش سيو",
       "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><b>مؤكَّد بالكود الخام.</b> <code>listing-page-seo-generator.ts:277-288</code> تعليق طويل يعلن حذف مولّد <code>/articles</code> لأن الصفحة لا وجود لها. <code>modonty/app/(site)/articles/page.tsx</code> موجود، مفهرس، في الخريطة، ويبثّ BreadcrumbList. النتيجة: صفحة قائمة رئيسية بلا ميتاداتا مولَّدة (مقيس حيّاً: بلا صورة OG، تويتر <code>summary</code>).<br><b>القرار الهندسي:</b> إمّا إعادة مولّد <code>/articles</code> أو تحويلها — والتعليق والكود لازم يتّفقان مع الواقع.<br><b>المصدر:</b> بطاقة <code>SEOADM-RAW</code> على هذه اللوحة (الملحق الخام؛ رقم البند = المجموعة-البند).",
@@ -8428,6 +8472,7 @@
         "label": "العنوان مبالغ",
         "evidence": "صفحة /articles موجودة وتولّد title وdescription وcanonical وOpen Graph مباشرة في page.tsx، بينما تعليق المولّد القديم ينكر حاجتها إلى كاش.",
         "note": "التناقض الهندسي موجود، لكن قول إن الصفحة بلا عنوان أو وصف غير صحيح في الكود الحالي. الناقص الواضح صورة OG وTwitter metadata؛ هذا تحسين مشاركة اجتماعية لا عطل فهرسة حرج.",
+        "work": "<b>ℹ️ راجعها كودكس بأمر خالد — العطل غير قابل للإنتاج حالياً (٢٥ أغسطس ٢٠٢٦).</b><br><b>curl الحالي:</b> <code>HTTP=200</code> · العنوان <code>كل المقالات - مدونتي</code> · canonical ذاتي · <code>og:image=hero-eo65cprjy.png</code> · <code>twitter:card=summary_large_image</code> · <code>twitter:image</code> موجودة.<br><b>الكود الحالي:</b> <code>listing-page-seo-generator.ts</code> يصدّر <code>regenerateArticlesListingCache</code> ويكتب <code>articlesPageMetaTags</code>، و<code>/articles</code> تقرأ البلوب المخزّن.<br><b>المصدر الرسمي:</b> Next.js تقول إن ناتج <code>generateMetadata</code> يُضمّن في HTML الأولي عندما يمكن التصيير المسبق.<br><b>القرار:</b> لم أعدّل كوداً ولم أجعل البطاقة خضراء؛ يبدو أن إصلاحاً موازياً سبق قياسي، وكلود يراجع وينسبه لصاحبه.<br><b>ما لم يُقَس:</b> زر إعادة التوليد في الأدمن لأنه يكتب في قاعدة البيانات.",
         "sources": [
           [
             "المصدر الرسمي للمشروع: الكود الحالي في المستودع",
@@ -8448,7 +8493,8 @@
         "ev": "الجذر في كود الأدمن — لا يُقاس من خارج الموقع؛ أثره يظهر في البطاقات المقيسة فوقه.",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -8670,7 +8716,8 @@
         "ev": "الجذر في كود الأدمن — لا يُقاس من خارج الموقع؛ أثره يظهر في البطاقات المقيسة فوقه.",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -8685,7 +8732,7 @@
       "id": "SEOADM-DATEPUBLISHED-PREGATE",
       "sev": "high",
       "t": "datePublished يُكتب قبل بوّابة النشر ولا يُرجَع عند فشلها",
-      "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><b>مؤكَّد بالكود الخام.</b> <code>assert-article-publishable.ts:29-31</code> — <code>datePublished: new Date()</code> ثم البوّابة؛ عند <code>return { ok: false }</code> (:40) يبقى التاريخ. مقال غير منشور يحمل تاريخ نشر مزيَّف يصل الخريطة وJSON-LD لاحقاً. و<code>:38</code> يخزّن <code>robots: index, follow</code> قبل نجاح البوّابة. ومقابلها <code>update-article.ts:177,227</code>: انتقال إلى PUBLISHED من هذا المسار يترك <code>datePublished</code> فارغاً.<br><b>يقفل بـ:</b> التاريخ يُحسب في الذاكرة ويُكتب عند نجاح الانتقال فقط.<br><b>المصدر:</b> بطاقة <code>SEOADM-RAW</code> على هذه اللوحة (الملحق الخام؛ رقم البند = المجموعة-البند).",
+      "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><b>مؤكَّد بالكود الخام.</b> <code>assert-article-publishable.ts:29-31</code> — <code>datePublished: new Date()</code> ثم البوّابة؛ عند <code>return { ok: false }</code> (:40) يبقى التاريخ. مقال غير منشور يحمل تاريخ نشر مزيَّف يصل الخريطة وJSON-LD لاحقاً. و<code>:38</code> يخزّن <code>robots: index, follow</code> قبل نجاح البوّابة. ومقابلها <code>update-article.ts:177,227</code>: انتقال إلى PUBLISHED من هذا المسار يترك <code>datePublished</code> فارغاً.<br><b>يقفل بـ:</b> التاريخ يُحسب في الذاكرة ويُكتب عند نجاح الانتقال فقط.<br><b>المصدر:</b> بطاقة <code>SEOADM-RAW</code> على هذه اللوحة (الملحق الخام؛ رقم البند = المجموعة-البند).<br><b>◆ نُقلت لكودكس ٢٥ أغسطس:</b> الجذر كلّه في <code>admin/lib/seo/assert-article-publishable.ts:29-31</code> — داخل صلاحياته بالكامل.",
       "phase": 5,
       "ord": 3,
       "plain": {
@@ -8723,7 +8770,7 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "agent2"
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -8798,7 +8845,7 @@
       "id": "SEOADM-HREFLANG-INVENTED",
       "sev": "high",
       "t": "ثلاثة مواضع تخترع بدائل hreflang لمسارات لا توجد (/en/about) أو تشير كلّها لنفس الصفحة",
-      "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><b>مؤكَّد بالكود الخام.</b> <code>build-meta-from-page.ts:101-113</code> يبني <code>${base}/${lang}${pathname}</code> بلا فحص وجود · <code>use-page-form.ts:45-56</code> نفسه ويكتبه في <code>Modonty.alternateLanguages</code> · <code>hreflang-sync.ts:16-26,87</code> يزرع ٨ لغات + x-default بلا url فتنهار كلّها على canonical واحد · <code>metadata-generator.ts:80-101</code> و<code>generate-client-seo-bundle.ts:296-317</code> نفس الانهيار. و<code>build-hreflang-languages.ts:22-31</code> لا يتحقّق من صيغة BCP-47 (<code>ar_SA</code> بشرطة سفلية يمرّ). جوجل: كل بديل معلن يجب أن يوجد فعلاً ويردّ الإشارة.<br><b>يقفل بـ:</b> مولّد واحد يبثّ <code>ar</code> + <code>x-default</code> (+ الأقاليم فقط إذا كانت نفس الصفحة تخدمها فعلاً)، ويرفض أي بديل بلا رابط حقيقي.<br><b>المصدر:</b> بطاقة <code>SEOADM-RAW</code> على هذه اللوحة (الملحق الخام؛ رقم البند = المجموعة-البند).",
+      "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><b>مؤكَّد بالكود الخام.</b> <code>build-meta-from-page.ts:101-113</code> يبني <code>${base}/${lang}${pathname}</code> بلا فحص وجود · <code>use-page-form.ts:45-56</code> نفسه ويكتبه في <code>Modonty.alternateLanguages</code> · <code>hreflang-sync.ts:16-26,87</code> يزرع ٨ لغات + x-default بلا url فتنهار كلّها على canonical واحد · <code>metadata-generator.ts:80-101</code> و<code>generate-client-seo-bundle.ts:296-317</code> نفس الانهيار. و<code>build-hreflang-languages.ts:22-31</code> لا يتحقّق من صيغة BCP-47 (<code>ar_SA</code> بشرطة سفلية يمرّ). جوجل: كل بديل معلن يجب أن يوجد فعلاً ويردّ الإشارة.<br><b>يقفل بـ:</b> مولّد واحد يبثّ <code>ar</code> + <code>x-default</code> (+ الأقاليم فقط إذا كانت نفس الصفحة تخدمها فعلاً)، ويرفض أي بديل بلا رابط حقيقي.<br><b>المصدر:</b> بطاقة <code>SEOADM-RAW</code> على هذه اللوحة (الملحق الخام؛ رقم البند = المجموعة-البند).<br><b>◆ بقيت عند كلود ٢٥ أغسطس:</b> أربعة من ستّة مواضعها في <code>shared/lib/seo/</code> وفي لوحة الشلال — ومولّد hreflang الموحّد شغل كلود أصلاً.",
       "phase": 4,
       "ord": 20,
       "plain": {
@@ -8839,8 +8886,7 @@
         "ev": "الجذر في كود الأدمن — لا يُقاس من خارج الموقع؛ أثره يظهر في البطاقات المقيسة فوقه.",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      },
-      "owner": "agent2"
+      }
     },
     {
       "b": "seo",
@@ -8855,7 +8901,7 @@
       "id": "SEOADM-OGTYPE-DEFAULT",
       "sev": "high",
       "t": "«تطبيق الافتراضيات» يزرع og:type = website ويغذّيه لكل المقالات",
-      "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><b>مؤكَّد بالكود الخام.</b> <code>seed-technical-defaults.ts:64</code> <code>defaultOgType: \"website\"</code> ← <code>get-article-defaults-from-settings.ts:26</code> <code>settings.defaultOgType || \"article\"</code> ← ينتشر فوق حقل المقال (بطاقة <code>SEODEFAULTS-OVERRIDE</code>). ضغطة الزرّ تقلب كل المقالات من <code>article</code> إلى <code>website</code>. المقيس اليوم <code>article</code> = الزرّ لم يُضغط بعد. و<code>:67</code> يزرع <code>image/webp</code> بينما <code>generate-client-seo-bundle.ts:328</code> يثبّت <code>image/jpeg</code> — أحدهما يكذب دائماً.<br><b>يقفل بـ:</b> افتراضي مقال مستقلّ، ونوع الصورة من صفّ Media.<br><b>المصدر:</b> بطاقة <code>SEOADM-RAW</code> على هذه اللوحة (الملحق الخام؛ رقم البند = المجموعة-البند).",
+      "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><b>مؤكَّد بالكود الخام.</b> <code>seed-technical-defaults.ts:64</code> <code>defaultOgType: \"website\"</code> ← <code>get-article-defaults-from-settings.ts:26</code> <code>settings.defaultOgType || \"article\"</code> ← ينتشر فوق حقل المقال (بطاقة <code>SEODEFAULTS-OVERRIDE</code>). ضغطة الزرّ تقلب كل المقالات من <code>article</code> إلى <code>website</code>. المقيس اليوم <code>article</code> = الزرّ لم يُضغط بعد. و<code>:67</code> يزرع <code>image/webp</code> بينما <code>generate-client-seo-bundle.ts:328</code> يثبّت <code>image/jpeg</code> — أحدهما يكذب دائماً.<br><b>يقفل بـ:</b> افتراضي مقال مستقلّ، ونوع الصورة من صفّ Media.<br><b>المصدر:</b> بطاقة <code>SEOADM-RAW</code> على هذه اللوحة (الملحق الخام؛ رقم البند = المجموعة-البند).<br><b>◆ نُقلت لكودكس ٢٥ أغسطس — نصفها فقط:</b> ملفّا <code>admin/app/(dashboard)/settings/**</code> له. <b>و<code>shared/lib/seo/generate-client-seo-bundle.ts</code> لكلود</b> — يقف عنده ويكتبه في تقريره.",
       "phase": 3,
       "ord": 3,
       "plain": {
@@ -8898,7 +8944,7 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "agent2"
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -9011,7 +9057,7 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "agent4"
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -9249,7 +9295,8 @@
         "ev": "صفر ذكر لـ modonty.com بلا www في كل الصفحات المقيسة على الإنتاج.",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -9309,7 +9356,8 @@
         "ev": "الجذر في كود الأدمن — لا يُقاس من خارج الموقع؛ أثره يظهر في البطاقات المقيسة فوقه.",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -9364,7 +9412,8 @@
         "ev": "الجذر في كود الأدمن — لا يُقاس من خارج الموقع؛ أثره يظهر في البطاقات المقيسة فوقه.",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -9644,12 +9693,11 @@
         "modonty",
         "admin"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
       "date": "٢٤ أغسطس ٢٠٢٦",
       "sec": "seo",
       "id": "SEOADM-VALIDATOR-NETWORK",
-      "working": false,
       "sev": "high",
       "t": "ثلاثة محقّقات تجلب schema.org من الشبكة وقت النشر — انقطاع = «غير صالح» مخزَّن أو تطبيع مُهمَل",
       "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><b>مؤكَّد بالكود الخام.</b> <code>jsonld-validator.ts:68-71</code> · <code>modonty-jsonld-validator.ts:28-35</code> (والفشل يُخزَّن في <code>jsonLdValidationReport</code> كأن البطاقة معطوبة) · <code>jsonld-processor.ts:41,47</code> <code>jsonld.expand</code> يجلب السياق عند التوليد و<code>:66</code> يرجّع غير المطبَّع بتحذير فقط · <code>jsonld-normalize.ts:11-14</code> بلا try/catch. مقالان يُحفظان بفاصل دقائق يخرجان بشكلين مختلفين.<br><b>يقفل بـ:</b> نسخة schema.org مثبَّتة داخل المستودع و<code>documentLoader</code> محلي؛ الفشل = «غير معروف» لا «غير صالح».<br><b>المصدر:</b> بطاقة <code>SEOADM-RAW</code> على هذه اللوحة (الملحق الخام؛ رقم البند = المجموعة-البند).",
@@ -9692,7 +9740,8 @@
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
       },
-      "owner": "agent4"
+      "owner": "claude",
+      "close": "مُغلقة بتنفيذ وقياس كلود ٢٥ أغسطس — بقرار خالد: البوّابة تبقى مقفلة، والرسالة هي ما أُصلح. قبل: انقطاع الشبكة يُخزَّن كـ{valid:false} فيقرأ المحرّر خطأ DNS خاماً تحته إرشاد تخميني «Usually a missing client detail (logo, business type)». بعد، مقيس على دالّة البوّابة بخمسة سيناريوهات: انقطاع (بـtype وبلا type) → passed:false و severity:critical كما هما، والرسالة «could not reach schema.org … Nothing is known to be wrong with it» + «This is a connection problem, not a problem with your article»؛ خطأ حقيقي → يسمّي الحقل؛ مختلط → الرسالتان؛ نظيف → passed:true. والرسائل صارت تسمّي الحقل: headline→the article title · /author/name→a name on the author · /publisher/logo→the client’s logo · datePublished→the publish date · /articleSection→«is not valid» لا «missing». ورسالة اليمل تسرد الحقول الناقصة بأسمائها عبر listYmylMissingFields الجديدة بدل «verification is incomplete». الملفات: article-validator-db.ts · ymyl-helpers.ts · quality-check/[articleId]/page.tsx. ما لم يُقَس: لم أقطع الشبكة حيّاً — شكل الخطأ أثبته وكيل ٤ بحقن حيّ، وكودي مُختبَر على نفس الشكل."
     },
     {
       "b": "seo",
@@ -10050,7 +10099,8 @@
         "ev": "الجذر في كود الأدمن — لا يُقاس من خارج الموقع؛ أثره يظهر في البطاقات المقيسة فوقه.",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -10109,7 +10159,8 @@
         "ev": "الأثر مقيس: «Home» و«Categories» و«Tags» في مسار التنقّل على الإنتاج، و twitter:creator = «Modonty» نصّاً.",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -10169,7 +10220,8 @@
         "ev": "الجذر في كود الأدمن — لا يُقاس من خارج الموقع؛ أثره يظهر في البطاقات المقيسة فوقه.",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -10227,7 +10279,8 @@
         "ev": "الجذر في كود الأدمن — لا يُقاس من خارج الموقع؛ أثره يظهر في البطاقات المقيسة فوقه.",
         "when": "٢٥ أغسطس ٢٠٢٦",
         "base": "https://www.modonty.com"
-      }
+      },
+      "owner": "codex"
     },
     {
       "b": "seo",
@@ -10406,6 +10459,36 @@
       "date": "٢٥ أغسطس ٢٠٢٦",
       "t": "🚨 الدفع لـmain ما عاد يبني على Vercel — الإنتاج واقف على كوميت ١٣ أغسطس",
       "d": "<b>مقيس ٢٥ أغسطس ٢٠٢٦.</b> دُفع <code>95d8d9e</code> إلى <code>main</code> ووصل GitHub فعلاً (<code>git ls-remote origin main</code> يرجّع نفس البصمة)، ولم يُنشئ Vercel أي بناء.<br><b>الدليل:</b> مشروع <code>modonty-admin</code> على الإنتاج ما زال على <code>16edaba</code> من ١٣ أغسطس، وحالته <code>Ready <b>Stale</b></code> — أي أن Vercel يعرف أن ثمّة كوميتات أحدث ولم يبنِ منها شيئاً. والصفحة الحيّة تخدم <code>v1.17.0</code> بينما المدفوع <code>1.17.1</code>.<br><b>ليست علّة الكود:</b> التغيير كان داخل <code>admin/</code>، و<code>ignoreCommand</code> في <code>admin/vercel.json</code> يسمح بالبناء عند أي تغيير تحت <code>./</code>. ودليل أن الآلية سليمة من تاريخ النشرات نفسه: <code>a28a2b4</code> (كوميت مسّ الكونسل فقط) بنى الكونسل وحده، و<code>16edaba</code> بنى الثلاثة.<br><b>الأثر المباشر:</b> عطل حجب مقال عميل عن الوصول إليه أُصلح ودُفع، ولم يصل الإنتاج. اضطُررنا لتحريك المقال يدوياً على قاعدة الإنتاج (بطاقة <code>YMYLGATE-LIST</code>) — وهذا لا يتكرّر.<br><b>الأخطر:</b> ما دام الدفع لا يبني، فكل إصلاح على <code>main</code> يبدو منشوراً وهو ليس كذلك. أي حكم بـ«أُصلح على الإنتاج» بعد ١٣ أغسطس مشكوك فيه حتى يُقاس على الصفحة الحيّة.<br><b>القياس الذي يفصل بين احتمالين — لم يُنفَّذ بعد:</b> تبويب Deployments داخل مشروع <code>modonty-admin</code> بـ<code>Status = All</code>. ظهور <code>95d8d9e</code> بحالة <code>Canceled</code> يعني أن <code>ignoreCommand</code> ألغاه؛ وغيابه إطلاقاً يعني أن ربط GitHub لا يصل هذا المشروع.<br><b>يقفل بـ:</b> دفع كوميت لـ<code>main</code> يمسّ <code>admin/</code> ← بناء يظهر في Vercel ← الصفحة الحيّة تخدم رقم الإصدار الجديد."
+    },
+    {
+      "id": "SEODEV-REVALIDATE-SECRET",
+      "b": "seo",
+      "sec": "seo",
+      "app": [
+        "modonty",
+        "admin"
+      ],
+      "tab": "now",
+      "sev": "high",
+      "phase": 1,
+      "t": "محلياً: حفظ الأدمن لا يفرّغ كاش مدونتي أبداً — كل إصلاح يبدو فاشلاً",
+      "d": "<b>مقيس كلود ٢٥ أغسطس ٢٠٢٦ — سلسلة كاملة:</b><br>١) <code>REVALIDATE_SECRET</code> غير موجود في أي ملف بيئة (فُحصت الستّة: <code>shared/.env</code> · <code>.env</code> · <code>.env.local</code> · <code>admin/.env*</code> · <code>modonty/.env*</code> — صفر سطر).<br>٢) <code>admin/lib/revalidate-modonty-tag.ts:28-33</code> — بلا سرّ يطبع تحذيراً و<code>return</code>، فلا يُرسل طلب إطلاقاً.<br>٣) <code>modonty/app/api/revalidate/tag/route.ts:22-27</code> — بلا سرّ يردّ <code>503 Revalidation not configured</code>.<br><b>الأثر الحيّ:</b> عدّلتُ عنوان الكاتب من الأدمن، فصار عربياً في القاعدة وفي البلوب (<code>nextjsMetadataLastGenerated 13:44:51</code>) — و<code>/authors/modonty</code> ظلّ يخدم <code>&lt;title&gt;Modonty - Author Profile&lt;/title&gt;</code> لأن <code>cacheLife(\"hours\")</code> قائم. أي فحص بعد أي حفظ يعطي نتيجة كاذبة حتى تنتهي الساعات.<br><b>ما لم يُقَس:</b> هل الإنتاج عنده السرّ في Vercel؟ لم أفحص — لو موجود فالعطل محلّي فقط.<br><b>يقفل بـ:</b> السرّ نفسه في بيئة الأدمن وبيئة مدونتي، والقياس: حفظ من الأدمن ثم قراءة الصفحة فوراً تعطي القيمة الجديدة.",
+      "n": 108
+    },
+    {
+      "id": "SEOOG-TYPE-ALT",
+      "b": "seo",
+      "sec": "seo",
+      "app": [
+        "modonty",
+        "admin"
+      ],
+      "tab": "now",
+      "sev": "normal",
+      "phase": 4,
+      "t": "صفحة الشريك: نوع صورة المشاركة غلط، ونصّها البديل حرفياً «0»",
+      "d": "<b>مقيس كلود ٢٥ أغسطس ٢٠٢٦</b> على صفحة شريك حيّة، وسمان متجاوران في نفس الرأس:<br><code>&lt;meta property=\"og:image:type\" content=\"image/jpeg\"&gt;</code> بينما الملفّ <code>…/img-nhqtbwey9.webp</code> — النوع المعلن يخالف الامتداد.<br><code>&lt;meta property=\"og:image:alt\" content=\"0\"&gt;</code> — النصّ البديل هو الرقم صفر حرفياً، على الأرجح قيمة كاذبة (falsy) تسرّبت بدل نصّ.<br><b>ليش يهمّ:</b> النصّ البديل يقرأه من لا يرى الصورة، و«0» لا يعني شيئاً. والنوع الخاطئ قد يجعل منصّة المشاركة ترفض الصورة أو تعيد ترميزها.<br><b>ما لم يُقَس:</b> كم شريكاً عنده نفس العطل — رأيتُه على واحد. ولا أعرف بعد أي حقل يغذّي الاثنين.<br><b>يقفل بـ:</b> النوع يطابق الامتداد، والنصّ البديل نصّ حقيقي أو يُحذف الوسم — والقياس على أكثر من شريك.",
+      "n": 109
     }
   ],
   "reports": [
