@@ -10267,14 +10267,14 @@
       "app": [
         "modonty"
       ],
-      "tab": "ref",
+      "tab": "done",
       "who": "c",
       "sec": "seo",
       "id": "SEOHREF-MAP",
       "sev": "normal",
       "date": "٢٥ أغسطس ٢٠٢٦",
-      "t": "جرد hreflang على الإنتاج — من يستعمل buildAlternates وأين تضيع لغات الإعدادات التسع",
-      "d": "<b>قياس ٢٥ أغسطس ٢٠٢٦ — على الإنتاج (origin/main) وعلى الحيّ معاً.</b> سؤال خالد: أي صفحة تستعمل <code>buildAlternates</code>؟<br><b>١ · الدالّة نفسها (ثابتة، لا تقرأ الإعدادات):</b><br><code>modonty/lib/seo/build-alternates.ts:8</code> → <code>languages: { ar-SA, ar-EG, ar, x-default }</code> كلّها تشير إلى نفس الرابط.<br><b>٢ · المستدعون المباشرون — سبعة ملفات، ثماني استدعاءات:</b><br><code>app/about/page.tsx:62</code> · <code>app/terms/page.tsx:67</code> · <code>app/legal/privacy-policy/page.tsx:69</code> · <code>app/legal/cookie-policy/page.tsx:69</code> · <code>app/legal/copyright-policy/page.tsx:69</code> · <code>app/legal/user-agreement/page.tsx:67</code> · <code>app/authors/[slug]/page.tsx:139</code> · <code>lib/seo/modonty-seo.ts:44</code><br><b>٣ · القياس الحيّ لكل واحدة (curl على www.modonty.com):</b><br><code>/about → ar-SA ar-EG ar x-default</code><br><code>/terms → ar-SA ar-EG ar x-default</code><br><code>/legal/privacy-policy → ar-SA ar-EG ar x-default</code><br><code>/legal/cookie-policy → ar-SA ar-EG ar x-default</code><br><code>/legal/copyright-policy → ar-SA ar-EG ar x-default</code><br><code>/legal/user-agreement → ar-SA ar-EG ar x-default</code><br><code>/authors/modonty → <b>ar-SA فقط</b></code> ← تستدعي الدالّة ولا تصل الصفحة.<br><b>لماذا صفحة الكاتب شاذّة:</b> <code>authors/[slug]/page.tsx:124-130</code> يرجّع البلوب المخزَّن <code>nextjsMetadata</code> ويخرج قبل أن يصل إلى السطر ١٣٩ — فالاستدعاء ميت لكل كاتب عنده بلوب. والبلوب يحمل <code>ar-SA</code> وحدها.<br><b>٤ · مصدر ثانٍ لنفس الأربعة (ليس الدالّة):</b> <code>lib/seo/index.ts:200-208</code> داخل <code>generateMetadataFromSEO</code> — نفس المجموعة الأربعة مكتوبة ثانيةً لأي مستدعٍ لا يمرّر <code>languages</code>. أي أن الرقم أربعة له جذران لا جذر واحد.<br><b>٥ · وصفحات القوائم لا تمرّ من هنا إطلاقاً:</b> <code>/trending</code> · <code>/categories</code> · <code>/help/faq</code> تقرأ البلوب المخزَّن من الإعدادات، وبلوبها يحمل <code>canonical</code> فقط — قياس القاعدة: <code>trendingPageMetaTags.alternates = {\"canonical\":\"…/trending\"}</code> — فتخرج بصفر hreflang.<br><b>٦ · والإعدادات مملوءة صح:</b> قراءة واحدة من قاعدة الإنتاج <code>modonty.settings</code>: <code>defaultAlternateLanguages = [ar-SA, ar-EG, ar-AE, ar-KW, ar-QA, ar-BH, ar-OM, ar, x-default]</code> — <b>تسع</b> لغات، ولا واحدة تصل صفحةً واحدة.<br><b>الخلاصة:</b> ثلاث طبقات مستقلّة تقرّر hreflang على الإنتاج، ولا واحدة منها تقرأ الإعدادات: (أ) <code>buildAlternates</code> أربعة ثابتة لسبع صفحات · (ب) افتراضي <code>generateMetadataFromSEO</code> أربعة ثابتة · (ج) البلوب المخزَّن من الأدمن بلا لغات أصلاً. والجذر الذي يمنع الإعدادات من الوصول: <code>admin/lib/seo/listing-page-seo-generator.ts:53</code> يكتب <code>alternates: { canonical }</code> وحده.<br><b>المرجع الرسمي (جوجل — النسخ المحلية):</b> hreflang اختياري لا إلزامي («Google might still find alternate language versions… but it is usually best for you to explicitly indicate»)، والقاعدة عند استخدامه: «Each language version must list itself as well as all other language versions».<br><b>لم يُقَس بعد:</b> هل في فرعنا شاشة أدمن تحرّر <code>defaultAlternateLanguages</code>.",
+      "t": "hreflang: أربع طبقات هارد كود سقطت، والتسع لغات تصل ٢٦ سطحاً من مصدر واحد",
+      "d": "<b>أُغلقت ٢٥ أغسطس ٢٠٢٦ بقياس حيّ على كل سطح.</b><br><b>ما كان:</b> الإعدادات تحمل تسع لغات ولا واحدة تصل صفحةً واحدة، لأن طبقات مستقلّة كانت تقرّر hreflang بنفسها ولا تسأل القاعدة. الجرد قال ثلاثاً — والقياس كشف <b>رابعة</b> لم تكن فيه.<br><br><b>الطبقات الأربع:</b><br>١ · جذر <code>layout.tsx</code> يعلن أربع لغات كلها تشير إلى <code>\"/\"</code>، فنحو ٢٥ مساراً كان يقول لجوجل إن نسخته السعودية هي الصفحة الرئيسية — عكس القاعدة الرسمية «Each language version must list itself as well as all other language versions». <b>حُذفت.</b><br>٢ · افتراضي <code>lib/seo/index.ts</code> — أربع مكتوبة في الملف. <b>صار يقرأ الإعدادات.</b><br>٣ · <code>build-alternates.ts</code> — أربع ثابتة لسبع صفحات. <b>كان محذوفاً أصلاً في هذا الفرع.</b><br>٤ · <b>الطبقة التي لم يرها الجرد:</b> <code>category-seo-generator.ts:40</code> و<code>tag-*</code> و<code>industry-*</code> تكتب <code>languages: { \"ar-SA\": pageUrl }</code> — لغة واحدة مكتوبة في الملف. مقيس على البلوب قبل الإصلاح: <code>{\"ar-SA\": \"…/categories/real-estate-investment\"}</code>. <b>الثلاثة تقرأ الإعدادات الآن.</b><br><br><b>وأربع صفحات كانت تمحو ما بناه الأدمن:</b> <code>industries</code> · <code>modonty</code> · <code>booking</code> · <code>shop</code> كانت تكتب <code>alternates</code> كاملاً فوق البلوب. <b>«canonical وحده» في Next حذفٌ لا إضافة</b> — الطبقة الأعلى تُستبدَل ولا تُدمَج.<br><br><b>والقرار خرج من الكود:</b> محرّر جديد في <code>/settings/system</code> يضيف اللغات ويحذفها بتحقّق BCP 47 (رفض <code>ARABIC_SAUDI</code> حيّاً)، ويضمن <code>x-default</code>. إضافة سوق صارت بياناً لا نشرة.<br><br><b>الدليل — دورة كاملة:</b> أُضيف <code>ar-JO</code> من الواجهة ← نزل في القاعدة ← الكاسكيد نشره ← <b>١٩/١٩ صفحة ثابتة</b> و<b>٧/٧ عائلة ديناميكية</b> (تصنيف · وسم · قطاع · مقال · شريك · كاتب · طلّة) تشحن العشر، وكل وسم يشير إلى صفحته هي لا إلى الجذر. <b>٢٦ سطحاً، صفر سطر لغة باقٍ في الكود.</b><br><b>لم يُقَس:</b> الإنتاج — يشغّل <code>main</code> بلا هذه الكوميتات.",
       "phase": 1,
       "ord": 1,
       "plain": {
@@ -10295,6 +10295,35 @@
         "base": "https://www.modonty.com"
       },
       "n": 105
+    },
+    {
+      "id": "YMYLGATE-LIST",
+      "n": 106,
+      "b": "seo",
+      "app": [
+        "admin"
+      ],
+      "tab": "done",
+      "sev": "high",
+      "who": "c",
+      "sec": "seo",
+      "date": "٢٥ أغسطس ٢٠٢٦",
+      "t": "شاشة فحص الجودة كانت تقفل مقال عميل بياناته مكتملة — قائمة ثابتة بدل الحيّة",
+      "d": "<b>أُصلحت على <code>main</code> ودُفعت للإنتاج (admin 1.17.1)، ٢٥ أغسطس ٢٠٢٦.</b><br><b>ما حصل حيّاً:</b> عيادة أسنان في مصر (Dawi Smile Elite) عبّأت توثيقها كاملاً في الكونسل — ستّة حقول — واختارت جهة الترخيص <code>eds</code> من القائمة التي عرضها لها النظام نفسه. ومع ذلك كانت شاشة فحص الجودة تقول <code>1 issue blocking the send</code> و«التوثيق المهني ناقص»، وزرّ الإرسال <code>disabled: true</code>. المقال بقي واقفاً والعميل ينتظر.<br><b>الدليل الخام من قاعدة الإنتاج:</b> <code>ymylData.authority = \"eds\"</code> · وفي <code>licensing_authorities</code>: <code>code=\"eds\" category=medical isActive=true</code> — «النقابة العامة لأطباء الأسنان بجمهورية مصر العربية»، وهي الجهة الصحيحة لطبيب أسنان.<br><b>السبب:</b> <code>quality-check/[articleId]/page.tsx:166</code> ينادي <code>isYmylClientComplete</code> <b>بلا الوسيط الثاني</b>، فيسقط على المصفوفة الثابتة <code>ymyl-config.ts:89</code> التي تحمل <code>EG: [\"MOHP\",\"EMS\"]</code> فقط.<br><b>وتعليق الدالّة كان يحذّر من هذا حرفياً منذ ٤ أغسطس:</b> «a client who picked an admin-added authority would then read as <b>incomplete forever</b> even though the dropdown offered that exact value».<br><b>كل النداءات الأخرى سليمة</b> — فعل الإرسال (<code>gated-transition.ts:182</code>) والكونسل في موضعين يمرّرون القائمة الحيّة. شاشة الفحص وحدها كانت تنساها، فكانت تعرض إنذاراً لا يعكس البوّابة الحقيقية.<br><b>الدرس القابل للتعميم — يُفحَص في الأدمن كله:</b> أي دالّة يقول توثيقها إن وسيطاً «MUST» يُمرَّر، ثم يجعله اختيارياً في توقيعها، ستُنسى في مكان ما. الحاجز الحقيقي أن يكون الوسيط <b>إلزامياً</b> في النوع، لا موصى به في تعليق.<br><b>يقفل بـ:</b> فتح الصفحة على الإنتاج لنفس المقال — صفر مانع وزرّ مفعَّل."
+    },
+    {
+      "id": "VERCEL-NOBUILD",
+      "n": 107,
+      "b": "deploy",
+      "app": [
+        "admin"
+      ],
+      "tab": "now",
+      "sev": "critical",
+      "who": "c",
+      "date": "٢٥ أغسطس ٢٠٢٦",
+      "t": "🚨 الدفع لـmain ما عاد يبني على Vercel — الإنتاج واقف على كوميت ١٣ أغسطس",
+      "d": "<b>مقيس ٢٥ أغسطس ٢٠٢٦.</b> دُفع <code>95d8d9e</code> إلى <code>main</code> ووصل GitHub فعلاً (<code>git ls-remote origin main</code> يرجّع نفس البصمة)، ولم يُنشئ Vercel أي بناء.<br><b>الدليل:</b> مشروع <code>modonty-admin</code> على الإنتاج ما زال على <code>16edaba</code> من ١٣ أغسطس، وحالته <code>Ready <b>Stale</b></code> — أي أن Vercel يعرف أن ثمّة كوميتات أحدث ولم يبنِ منها شيئاً. والصفحة الحيّة تخدم <code>v1.17.0</code> بينما المدفوع <code>1.17.1</code>.<br><b>ليست علّة الكود:</b> التغيير كان داخل <code>admin/</code>، و<code>ignoreCommand</code> في <code>admin/vercel.json</code> يسمح بالبناء عند أي تغيير تحت <code>./</code>. ودليل أن الآلية سليمة من تاريخ النشرات نفسه: <code>a28a2b4</code> (كوميت مسّ الكونسل فقط) بنى الكونسل وحده، و<code>16edaba</code> بنى الثلاثة.<br><b>الأثر المباشر:</b> عطل حجب مقال عميل عن الوصول إليه أُصلح ودُفع، ولم يصل الإنتاج. اضطُررنا لتحريك المقال يدوياً على قاعدة الإنتاج (بطاقة <code>YMYLGATE-LIST</code>) — وهذا لا يتكرّر.<br><b>الأخطر:</b> ما دام الدفع لا يبني، فكل إصلاح على <code>main</code> يبدو منشوراً وهو ليس كذلك. أي حكم بـ«أُصلح على الإنتاج» بعد ١٣ أغسطس مشكوك فيه حتى يُقاس على الصفحة الحيّة.<br><b>القياس الذي يفصل بين احتمالين — لم يُنفَّذ بعد:</b> تبويب Deployments داخل مشروع <code>modonty-admin</code> بـ<code>Status = All</code>. ظهور <code>95d8d9e</code> بحالة <code>Canceled</code> يعني أن <code>ignoreCommand</code> ألغاه؛ وغيابه إطلاقاً يعني أن ربط GitHub لا يصل هذا المشروع.<br><b>يقفل بـ:</b> دفع كوميت لـ<code>main</code> يمسّ <code>admin/</code> ← بناء يظهر في Vercel ← الصفحة الحيّة تخدم رقم الإصدار الجديد."
     }
   ],
   "reports": [

@@ -1,5 +1,5 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>أرشيف المنجز — 212 بنداً</title>
+<title>أرشيف المنجز — 214 بنداً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f1013;--panel:#17181d;--card:#1d1e24;--line:#2c2d36;--fg:#f3f4f6;--mut:#9aa3b2;--dim:#6b7280;
@@ -114,7 +114,7 @@ summary::before{content:"▸";transition:transform .15s}details[open]>summary::b
 .hidden{display:none!important}
 footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </style></head><body>
-<header class="top"><div class="wrap"><h1>أرشيف المنجز — 212 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
+<header class="top"><div class="wrap"><h1>أرشيف المنجز — 214 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
 <div class="tools"><input id="q" type="search" placeholder="ابحث في المنجز…" aria-label="بحث"></div></div></header>
 <main class="wrap"><section class="grp"><div class="grid"><article class="card" data-id="TRUST1" data-sev="ok" data-who="c" data-tab="done" data-board="fs" data-apps="modonty">
   <div class="hd"><span class="id">TRUST1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند TRUST1">⧉</button></div>
@@ -2564,6 +2564,33 @@ tsc كونسول  : صفر ✅  (بعد إغلاق ذيل BL2)
   </div>
   
   <details><summary>التفاصيل الكاملة</summary><div class="full"><b>أُغلقت ٢٥ أغسطس ٢٠٢٦ بقياس حيّ.</b><br><b>الثغرة كانت مزدوجة، والثانية تخفي الأولى:</b> المرشّح كان مطبَّقاً على خمسة أنواع من سبعة — <b>و</b>كان نمطه <code>endsWith("-test")</code> وحده. والأمثلة التي قاستها هذه البطاقة نفسها — <code>reel-test-mt1ci48p-1</code> و<code>dev-modonty-reel-1</code> — <b>لا تنتهي بـ<code>-test</code></b>، فتوسيع المدى بلا توسيع النمط ما كان ليغيّر شيئاً. هذا ما نبّه إليه كوديكس حين قال إن الاصطلاح لا يُثبت أن كل الـfixtures تتبعه.<br><b>ما تغيّر:</b> نمط واحد <code>FIXTURE_SLUG</code> يمسك <code>test</code> · <code>dev</code> · <code>demo</code> · <code>e2e</code> · <code>sample</code> · <code>dummy</code> في أول الاسم أو آخره أو بين شرطتين، ويُطبَّق الآن على السبعة — المقالات والطلّات كانتا الغائبتين، والطلّات مفتاحها <code>reelSlug</code> لا <code>slug</code> فلها مرشّحها.<br><b>الدليل:</b> ١٩ حالة اختبار تمرّ — تمسك الخمسة المقيسة في هذه البطاقة، ولا تبتلع <code>devops-guide</code> ولا <code>contest-rules</code> ولا أي رابط عربي. والخريطة الحيّة: <b>٢٥٣ رابطاً · صفر تسريب</b>.<br><b>ما لم يُقَس:</b> خريطة الإنتاج — الإنتاج على <code>main</code> بالكود القديم. تُقاس بعد الدمج بنفس الأمر.<br><b>ملاحظة باقية:</b> هذا اصطلاح تسمية لا علامة على الصفّ. عمود <code>isFixture</code> أمتن، ويستحقّ التنفيذ يوم تصير الـfixtures تُنشأ بغير أن يكتب مطوّر اسماً.</div></details>
+</article>
+<article class="card" data-id="SEOHREF-MAP" data-sev="normal" data-who="c" data-tab="done" data-board="seo" data-apps="modonty" data-n="105" data-prod="yes">
+  <div class="hd"><span class="num" title="رقم البند — قل «بند 105» في الشات">105</span><span class="id">SEOHREF-MAP</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند SEOHREF-MAP">⧉</button></div>
+  <div class="t">hreflang: أربع طبقات هارد كود سقطت، والتسع لغات تصل ٢٦ سطحاً من مصدر واحد</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">عادي</span><span class="tag app-modonty">modonty</span><span class="tag">سيو وأداء</span><span>٢٥ أغسطس ٢٠٢٦</span></div>
+  <div class="prod" data-state="yes"><b>🌐 موجود على الإنتاج:</b> مقيس حيّاً: ستّ صفحات تعرض أربع لغات، /authors/modonty واحدة، و/trending و/categories و/help/faq صفر — بينما الإعدادات تحمل تسعاً. <span class="when">(https://www.modonty.com · ٢٥ أغسطس ٢٠٢٦)</span></div>
+  
+  
+  <div class="plain">
+    <div><b>المشكلة:</b> الإعدادات فيها تسع لغات، والصفحات تعرض أربعاً أو صفراً — لأن ثلاث طبقات في الكود تقرّر بنفسها ولا تقرأ الإعدادات.</div>
+    <div><b>ليش تهمّنا:</b> اللي تكتبه في لوحة التحكم ما يوصل جوجل، وأنت تظنّه وصل.</div>
+    <div><b>الحلّ:</b> مصدر واحد يقرأ الإعدادات، وتُحذف النسختان الثابتتان.</div>
+    <div class="files"><b>الملفات:</b> <code>lib/seo/build-alternates.ts</code> <code>lib/seo/index.ts</code> <code>app/authors/[slug]/page.ts</code> <code>admin/lib/seo/listing-page-seo-generator.ts</code></div>
+  </div>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>أُغلقت ٢٥ أغسطس ٢٠٢٦ بقياس حيّ على كل سطح.</b><br><b>ما كان:</b> الإعدادات تحمل تسع لغات ولا واحدة تصل صفحةً واحدة، لأن طبقات مستقلّة كانت تقرّر hreflang بنفسها ولا تسأل القاعدة. الجرد قال ثلاثاً — والقياس كشف <b>رابعة</b> لم تكن فيه.<br><br><b>الطبقات الأربع:</b><br>١ · جذر <code>layout.tsx</code> يعلن أربع لغات كلها تشير إلى <code>"/"</code>، فنحو ٢٥ مساراً كان يقول لجوجل إن نسخته السعودية هي الصفحة الرئيسية — عكس القاعدة الرسمية «Each language version must list itself as well as all other language versions». <b>حُذفت.</b><br>٢ · افتراضي <code>lib/seo/index.ts</code> — أربع مكتوبة في الملف. <b>صار يقرأ الإعدادات.</b><br>٣ · <code>build-alternates.ts</code> — أربع ثابتة لسبع صفحات. <b>كان محذوفاً أصلاً في هذا الفرع.</b><br>٤ · <b>الطبقة التي لم يرها الجرد:</b> <code>category-seo-generator.ts:40</code> و<code>tag-*</code> و<code>industry-*</code> تكتب <code>languages: { "ar-SA": pageUrl }</code> — لغة واحدة مكتوبة في الملف. مقيس على البلوب قبل الإصلاح: <code>{"ar-SA": "…/categories/real-estate-investment"}</code>. <b>الثلاثة تقرأ الإعدادات الآن.</b><br><br><b>وأربع صفحات كانت تمحو ما بناه الأدمن:</b> <code>industries</code> · <code>modonty</code> · <code>booking</code> · <code>shop</code> كانت تكتب <code>alternates</code> كاملاً فوق البلوب. <b>«canonical وحده» في Next حذفٌ لا إضافة</b> — الطبقة الأعلى تُستبدَل ولا تُدمَج.<br><br><b>والقرار خرج من الكود:</b> محرّر جديد في <code>/settings/system</code> يضيف اللغات ويحذفها بتحقّق BCP 47 (رفض <code>ARABIC_SAUDI</code> حيّاً)، ويضمن <code>x-default</code>. إضافة سوق صارت بياناً لا نشرة.<br><br><b>الدليل — دورة كاملة:</b> أُضيف <code>ar-JO</code> من الواجهة ← نزل في القاعدة ← الكاسكيد نشره ← <b>١٩/١٩ صفحة ثابتة</b> و<b>٧/٧ عائلة ديناميكية</b> (تصنيف · وسم · قطاع · مقال · شريك · كاتب · طلّة) تشحن العشر، وكل وسم يشير إلى صفحته هي لا إلى الجذر. <b>٢٦ سطحاً، صفر سطر لغة باقٍ في الكود.</b><br><b>لم يُقَس:</b> الإنتاج — يشغّل <code>main</code> بلا هذه الكوميتات.</div></details>
+</article>
+<article class="card" data-id="YMYLGATE-LIST" data-sev="high" data-who="c" data-tab="done" data-board="seo" data-apps="admin" data-n="106">
+  <div class="hd"><span class="num" title="رقم البند — قل «بند 106» في الشات">106</span><span class="id">YMYLGATE-LIST</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند YMYLGATE-LIST">⧉</button></div>
+  <div class="t">شاشة فحص الجودة كانت تقفل مقال عميل بياناته مكتملة — قائمة ثابتة بدل الحيّة</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">سيو وأداء</span><span>٢٥ أغسطس ٢٠٢٦</span></div>
+  
+  
+  
+  <p class="sum">ما حصل حيّاً: عيادة أسنان في مصر (Dawi Smile Elite) عبّأت توثيقها كاملاً في الكونسل — ستّة حقول — واختارت جهة الترخيص eds من القائمة التي عرضها لها النظام نفسه.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>أُصلحت على <code>main</code> ودُفعت للإنتاج (admin 1.17.1)، ٢٥ أغسطس ٢٠٢٦.</b><br><b>ما حصل حيّاً:</b> عيادة أسنان في مصر (Dawi Smile Elite) عبّأت توثيقها كاملاً في الكونسل — ستّة حقول — واختارت جهة الترخيص <code>eds</code> من القائمة التي عرضها لها النظام نفسه. ومع ذلك كانت شاشة فحص الجودة تقول <code>1 issue blocking the send</code> و«التوثيق المهني ناقص»، وزرّ الإرسال <code>disabled: true</code>. المقال بقي واقفاً والعميل ينتظر.<br><b>الدليل الخام من قاعدة الإنتاج:</b> <code>ymylData.authority = "eds"</code> · وفي <code>licensing_authorities</code>: <code>code="eds" category=medical isActive=true</code> — «النقابة العامة لأطباء الأسنان بجمهورية مصر العربية»، وهي الجهة الصحيحة لطبيب أسنان.<br><b>السبب:</b> <code>quality-check/[articleId]/page.tsx:166</code> ينادي <code>isYmylClientComplete</code> <b>بلا الوسيط الثاني</b>، فيسقط على المصفوفة الثابتة <code>ymyl-config.ts:89</code> التي تحمل <code>EG: ["MOHP","EMS"]</code> فقط.<br><b>وتعليق الدالّة كان يحذّر من هذا حرفياً منذ ٤ أغسطس:</b> «a client who picked an admin-added authority would then read as <b>incomplete forever</b> even though the dropdown offered that exact value».<br><b>كل النداءات الأخرى سليمة</b> — فعل الإرسال (<code>gated-transition.ts:182</code>) والكونسل في موضعين يمرّرون القائمة الحيّة. شاشة الفحص وحدها كانت تنساها، فكانت تعرض إنذاراً لا يعكس البوّابة الحقيقية.<br><b>الدرس القابل للتعميم — يُفحَص في الأدمن كله:</b> أي دالّة يقول توثيقها إن وسيطاً «MUST» يُمرَّر، ثم يجعله اختيارياً في توقيعها، ستُنسى في مكان ما. الحاجز الحقيقي أن يكون الوسيط <b>إلزامياً</b> في النوع، لا موصى به في تعليق.<br><b>يقفل بـ:</b> فتح الصفحة على الإنتاج لنفس المقال — صفر مانع وزرّ مفعَّل.</div></details>
 </article></div></section></main>
 <script>
 (() => { const q = document.getElementById('q'); const cards = [...document.querySelectorAll('.card')];

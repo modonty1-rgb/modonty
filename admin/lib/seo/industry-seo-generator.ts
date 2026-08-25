@@ -2,10 +2,14 @@
 
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
+import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 
 interface SeoSettings {
   siteUrl: string;
+  /** Settings.defaultAlternateLanguages — the one list every page declares. */
+  alternateLanguages: unknown;
   siteName: string;
   inLanguage: string;
   ogLocale: string;
@@ -37,7 +41,9 @@ export async function buildIndustryMetadata(industry: IndustryData, s: SeoSettin
     robots: s.metaRobots,
     alternates: {
       canonical: pageUrl,
-      languages: { "ar-SA": pageUrl },
+      // Was { "ar-SA": pageUrl } — one locale typed into the file while Settings held nine,
+      // so every taxonomy page shipped a single hreflang. Same source as every other page.
+      languages: buildHreflangLanguages(s.alternateLanguages, pageUrl, s.siteUrl),
     },
     openGraph: {
       title,
@@ -114,6 +120,8 @@ async function resolveSettings(): Promise<SeoSettings> {
   const settings = await getAllSettings();
   return {
     siteUrl: settings.siteUrl || "https://www.modonty.com",
+
+    alternateLanguages: (settings as { defaultAlternateLanguages?: unknown }).defaultAlternateLanguages ?? null,
     siteName: settings.siteName || "Modonty",
     inLanguage: settings.inLanguage || "ar",
     ogLocale: settings.defaultOgLocale || "ar_SA",
