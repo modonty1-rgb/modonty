@@ -10,6 +10,7 @@ import { loadSiteUrl } from "@/lib/seo/site-url";
 import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
 import { needsRegeneration, regenerateJsonLd } from "@/lib/seo/jsonld-storage";
 import { isYmylClientComplete } from "@/lib/seo/ymyl-helpers";
+import { getYmylAuthorityCodes } from "@modonty/database/lib/seo/ymyl-authorities";
 import type { ValidationCheck } from "@/lib/seo/article-validator";
 import { SendToClientButton } from "./components/send-to-client-button";
 import { ReRunButton } from "./components/re-run-button";
@@ -163,12 +164,28 @@ export default async function QualityCheckPage({ params }: PageProps) {
   // so the page tells the truth instead of showing "Ready" then failing silently on Send.
   const ymylChecks: ValidationCheck[] = [];
   if (article.client?.isYmyl) {
-    const clientVerified = isYmylClientComplete({
-      isYmyl: true,
-      ymylCategory: article.client.ymylCategory ?? null,
-      ymylData: article.client.ymylData ?? null,
-      addressCountry: article.client.addressCountry ?? null,
-    });
+    // The SAME live authority list `gated-transition.ts` passes, and the same one the
+    // console dropdown is built from. Omitting it here fell back to the hardcoded matrix in
+    // `ymyl-config.ts`, which is a strict subset — so an authority the admin added in
+    // Reference Data was offered to the client, chosen by them, and then read as invalid.
+    //
+    // Measured on production 25 Aug 2026: Dawi Smile Elite (medical · EG) holds
+    // `authority: "eds"` — the Egyptian Dental Syndicate, active in Reference Data and the
+    // correct body for a dentist. The hardcoded matrix lists only ["MOHP","EMS"], so this
+    // page reported "1 issue blocking the send" and disabled the button on a client whose
+    // profile was complete. The article sat undeliverable while the client waited.
+    const clientVerified = isYmylClientComplete(
+      {
+        isYmyl: true,
+        ymylCategory: article.client.ymylCategory ?? null,
+        ymylData: article.client.ymylData ?? null,
+        addressCountry: article.client.addressCountry ?? null,
+      },
+      await getYmylAuthorityCodes(
+        article.client.addressCountry ?? null,
+        article.client.ymylCategory ?? null,
+      ),
+    );
     ymylChecks.push({
       id: "ymyl-client-verification",
       label: "Client professional verification is complete (YMYL)",
