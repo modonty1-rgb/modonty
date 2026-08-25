@@ -2,15 +2,22 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
+import { buildPageAlternates } from "@/lib/seo/build-page-alternates";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getArticles } from "@/lib/queries/get-articles";
 import { IconEmail, IconCheckCircle, IconForward } from "@/lib/icons";
 
-export const metadata: Metadata = {
-  title: "أخبار مدونتي",
-  description: "اشترك في النشرة الإخبارية واحصل على رؤى وتحديثات أسبوعية من مدونتي في بريدك.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "أخبار مدونتي",
+    description:
+      "اشترك في النشرة الإخبارية واحصل على رؤى وتحديثات أسبوعية من مدونتي في بريدك.",
+    // Was inheriting the root layout's four locales, all pointing at "/" — this page told
+    // Google its Saudi version was the homepage. Now: its own canonical, locales from Settings.
+    alternates: await buildPageAlternates("/news"),
+  };
+}
 
 export default async function NewsPage() {
   const { articles } = await getArticles({ limit: 5 });

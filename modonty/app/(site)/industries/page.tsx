@@ -13,10 +13,16 @@ const FALLBACK_DESCRIPTION =
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getListingPageSeo("industries");
+  // Spread the stored `alternates` and replace only the canonical. Writing the whole object
+  // wiped the `languages` the admin had just built from Settings — measured 25 Aug 2026:
+  // this was the ONE page of nineteen shipping zero hreflang while its sisters shipped nine.
   const merged: Metadata = {
     description: FALLBACK_DESCRIPTION,
     ...(metadata ?? {}),
-    alternates: { canonical: `${SITE_URL}/industries` },
+    alternates: {
+      ...(metadata?.alternates ?? {}),
+      canonical: `${SITE_URL}/industries`,
+    },
   };
   if (typeof merged.title === "string") {
     merged.title = { absolute: merged.title };

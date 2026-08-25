@@ -23,6 +23,7 @@ import { messages } from "@/lib/i18n/messages";
 import type { FeedPost } from "@/lib/types";
 import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
 import { SITE_URL } from "@/constants";
+import { buildPageAlternates } from "@/lib/seo/build-page-alternates";
 import { reveal } from "./helpers/reveal";
 
 /** modonty's own slug in the `Client` table — the same row every partner card reads. */
@@ -57,7 +58,10 @@ export async function generateMetadata({ searchParams }: ModontyPageProps): Prom
   return {
     title: { absolute: page > 1 ? `مقالات مدونتي — الصفحة ${page.toLocaleString("ar-SA")} | مدونتي` : "مقالات مدونتي | مدونتي" },
     description: "كل مقالات مدونتي الخاصة — بمعرضها وأرقامها الحقيقية، من نفس صفّها في قاعدة الشركاء.",
-    alternates: { canonical: `${SITE_URL}/modonty` },
+    // Its own canonical (the bare page, not the paged view — pagination is declared below),
+    // and the locales from Settings. It used to ship the canonical alone, which in Next means
+    // the layout's alternates are replaced, not extended — so the page shipped zero hreflang.
+    alternates: await buildPageAlternates("/modonty"),
     pagination: {
       previous: page > 1 ? pageUrl(page - 1) : undefined,
       next: hasNext ? pageUrl(page + 1) : undefined,

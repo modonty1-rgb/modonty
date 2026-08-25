@@ -7,13 +7,19 @@ import { SITE_URL } from "@/constants";
 
 import type { Metadata } from "next";
 
+import { buildPageAlternates } from "@/lib/seo/build-page-alternates";
+
 const text = messages.shop;
 
-export const metadata: Metadata = {
-  title: { absolute: "تسوّق الآن — متاجر شركاء مدونتي | مدونتي" },
-  description: "تسوّق من متاجر شركاء مدونتي — علامات تجارية موثوقة بمنتجات وعروض في السعودية ومصر والخليج.",
-  alternates: { canonical: `${SITE_URL}/shop` },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: { absolute: "تسوّق الآن — متاجر شركاء مدونتي | مدونتي" },
+    description:
+      "تسوّق من متاجر شركاء مدونتي — علامات تجارية موثوقة بمنتجات وعروض في السعودية ومصر والخليج.",
+    // A lone canonical is a deletion, not an addition — Next replaces the layout's alternates.
+    alternates: await buildPageAlternates("/shop"),
+  };
+}
 
 /**
  * The shopping door: same partner card as `/clients` and `/booking` (Khalid, 2026-08-16

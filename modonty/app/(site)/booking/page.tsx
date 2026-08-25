@@ -7,13 +7,20 @@ import { SITE_URL } from "@/constants";
 
 import type { Metadata } from "next";
 
+import { buildPageAlternates } from "@/lib/seo/build-page-alternates";
+
 const text = messages.booking;
 
-export const metadata: Metadata = {
-  title: { absolute: "احجز الآن — الشركاء الذين يستقبلون الحجوزات | مدونتي" },
-  description: "احجز موعدك مباشرة مع شركاء مدونتي الذين يستقبلون الحجوزات — عيادات ومراكز وخدمات موثوقة في السعودية ومصر والخليج.",
-  alternates: { canonical: `${SITE_URL}/booking` },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: { absolute: "احجز الآن — الشركاء الذين يستقبلون الحجوزات | مدونتي" },
+    description:
+      "احجز موعدك مباشرة مع شركاء مدونتي الذين يستقبلون الحجوزات — عيادات ومراكز وخدمات موثوقة في السعودية ومصر والخليج.",
+    // Declaring only a canonical dropped this page to zero hreflang: Next replaces the
+    // layout's `alternates` rather than merging them, so a lone canonical is also a deletion.
+    alternates: await buildPageAlternates("/booking"),
+  };
+}
 
 /**
  * The booking door: the same partner card as `/clients` (Khalid, 2026-08-16 — «خلي الكرت

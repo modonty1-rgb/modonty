@@ -1,7 +1,9 @@
 import { Metadata } from "next";
 import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl, hasBunnyAspectCrops } from "@modonty/shared/lib/bunny";
+import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
 import { BRAND_AR, SITE_URL } from "@/constants";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 
 /**
  * Serialize JSON-LD for safe inline injection inside <script type="application/ld+json">.
@@ -206,18 +208,22 @@ export async function generateMetadataFromSEO(data: SEOData, options?: MetadataO
     twitter.site = `@${siteHandle}`;
   }
 
-  // Default = the FULL platform set (same as buildAlternates). Next.js REPLACES the
-  // layout's alternates rather than merging, so a lean default here silently stripped
-  // ar-SA/ar-EG from every page that relied on it (GEO audit 2026-07-13, ن١٣).
+  // Read from Settings, not written here. This default used to be four locales typed into
+  // the file, and it was one of three independent places that decided hreflang without ever
+  // asking the database — while `Settings.defaultAlternateLanguages` held nine and not one of
+  // them reached a page (production inventory, card 105).
+  //
+  // Next.js REPLACES the layout's `alternates` rather than merging them, so an empty default
+  // here is not "inherit" — it is "none". The list therefore comes from the same Settings
+  // column every other page reads.
   const languages =
     languagesInput && Object.keys(languagesInput).length > 0
       ? languagesInput
-      : {
-          "ar-SA": canonicalUrl,
-          "ar-EG": canonicalUrl,
-          ar: canonicalUrl,
-          "x-default": canonicalUrl,
-        };
+      : buildHreflangLanguages(
+          (await getPageSeoDefaults()).alternateLanguages,
+          canonicalUrl,
+          SITE_URL,
+        );
 
   return {
     title: fullTitle,

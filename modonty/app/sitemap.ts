@@ -36,12 +36,31 @@ function maxDate(dates: Array<Date | null | undefined>): Date | undefined {
 }
 
 /**
- * Exclude YMYL-test fixture slugs from sitemap (slugs ending in `-test`).
- * They're development leftovers that pollute Google's view + waste crawl budget.
- * If a real content slug ever legitimately ends in `-test`, rename it.
+ * Fixture slugs, kept out of the sitemap: development leftovers pollute Google's view of the
+ * site and spend crawl budget on pages nobody should reach.
+ *
+ * The rule used to be `endsWith("-test")` alone, and it was applied to five entity types out
+ * of seven. Both halves were wrong, and the second one hid the first: the fixtures actually
+ * measured in the sitemap on 24 Aug 2026 were `reel-test-mt1ci48p-1`, `dev-modonty-reel-1`
+ * and friends — none of which END in `-test`, so widening the reach without widening the
+ * pattern would have changed nothing.
+ *
+ * Every shape here is ASCII with an English prefix. Real content slugs on this site are
+ * Arabic, so the false-positive risk is a slug someone deliberately names in English with one
+ * of these prefixes — and the fix for that is to rename it, as it always was.
+ *
+ * This is still a naming convention, not a flag on the row. A real `isFixture` column would
+ * be sturdier and is worth doing the day fixtures start being created by anything other than
+ * a developer typing a name.
  */
+const FIXTURE_SLUG = /(^|-)(test|dev|demo|e2e|sample|dummy)(-|$)/i;
+
+function isFixtureSlug(slug: string | null | undefined): boolean {
+  return !!slug && FIXTURE_SLUG.test(slug);
+}
+
 function notTestSlug<T extends { slug: string }>(e: T): boolean {
-  return !e.slug.endsWith("-test");
+  return !isFixtureSlug(e.slug);
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -60,19 +79,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
       },
       orderBy: { datePublished: "desc" },
-    }),
+      // Articles were the one type the fixture filter never reached, on the biggest set of
+      // URLs in the file.
+    }).then((rows) => rows.filter(notTestSlug)),
     db.category.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     db.client.findMany({ where: { subscriptionStatus: SubscriptionStatus.ACTIVE }, select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     db.author.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     db.tag.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     db.industry.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
-    // Published reels carry a standalone, indexable watch page each (the feed itself is noindex).
-    // Only rows with a slug are listed — a reel without one has no URL to point at.
+    // Published reels carry a standalone, indexable watch page each. Only rows with a slug
+    // are listed — a reel without one has no URL to point at. (The feed at /reels was noindex
+    // while it had no content; it is indexable since 25 Aug 2026 — card 83c.)
     db.media.findMany({
       where: { inReels: true, reelStatus: "PUBLISHED", reelSlug: { not: null }, client: { isNot: null } },
       select: { reelSlug: true, reelPublishedAt: true, thumbnailUrl: true },
       orderBy: { reelPublishedAt: "desc" },
-    }),
+      // A reel's public key is `reelSlug`, so it cannot use `notTestSlug` as written.
+    }).then((rows) => rows.filter((r) => !isFixtureSlug(r.reelSlug))),
   ]);
 
   // ── DYNAMIC ENTITY URLS (lastmod from real DB timestamps) ────────────

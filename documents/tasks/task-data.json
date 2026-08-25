@@ -2759,13 +2759,14 @@
       "app": [
         "modonty"
       ],
-      "tab": "open",
+      "tab": "done",
       "sev": "normal",
       "who": "c",
-      "t": "⚠️ آخر شيء قبل الدمج مع main — رفع noindex عن صفحة الطلّات",
-      "d": "<b>قرار خالد ٢٤ أغسطس ٢٠٢٦: تبقى مغلقة، وتُفتح آخر شيء قبل الدمج النهائي مع <code>main</code>.</b> (نفس معاملة <code>DEVREELS</code>.)<br><b>الموضع:</b> <code>modonty/app/(site)/reels/page.tsx:13</code> — <code>robots: { index: false, follow: false }</code>.<br><b>ليست سهواً بل عمداً:</b> فهرسة تغذية بلا طلّات منشورة تعني صفحة فارغة في عين جوجل، والصفحة الرقيقة التي تُفهرس مبكّراً أصعب في الترتيب لاحقاً من التي تُفهرس يوم يكون فيها محتوى.<br><b>التنفيذ:</b> سطر واحد — <code>index: true</code> — في نفس جلسة الدمج، وبحلولها يكون <code>PRODDATA</code> قد وضع طلّات حقيقية خلفها.<br><b>وُضع تحذير في الكود</b> فوق الكتلة: «FLIP <code>index</code> TO TRUE BEFORE MERGING» مع السبب والتاريخ.",
+      "t": "الطلّات صارت مفهرسة — والقرار خرج من الكود إلى الأدمن",
+      "d": "<b>أُغلقت ٢٥ أغسطس ٢٠٢٦ بقياس حيّ.</b><br><b>قبل:</b> <code>robots: noindex, nofollow</code> — والصفحة في خريطة الموقع، فالموقع يقول للزاحف «ازحف» و«لا تفهرس» عن نفس الرابط. والأسوأ أن <code>nofollow</code> كانت تمنعه من اتّباع الروابط إلى صفحات المشاهدة، وهي السطح الوحيد المفهرس للطلّات.<br><b>بعد:</b> <code>index, follow</code> مقيسة على الصفحة الحيّة، و<code>googlebot</code> صارت متطابقة معها بعد إصلاح تناقض كانت تشحنه (<code>index:false</code> جنب <code>googleBot.index:true</code>).<br><b>ولم يعد سطراً في الكود:</b> الحالة صارت حقل <code>metaRobots</code> على صفّ الصفحة في الأدمن (<code>/modonty/pages/reels</code>)، وإغلاقها مجدّداً مفتاح لا نشرة.<br><b>وخلفها محتوى فعلاً:</b> ١٧ طلّة منشورة، كل واحدة صفحتها ٢٠٠ وبياناتها المنظّمة كاملة وملفّها حيّ على بني — فالسبب الذي أُغلقت لأجله (تغذية فارغة تُفهرس مبكّراً) سقط.",
       "ref": "بند ٨٣",
-      "last": true
+      "last": true,
+      "date": "٢٥ أغسطس ٢٠٢٦"
     },
     {
       "id": "DIMWRONG",
@@ -5237,8 +5238,8 @@
       "sec": "seo",
       "id": "SEOSITEMAP-NOINDEX",
       "sev": "high",
-      "t": "صفحتان في خريطة الموقع وهما noindex",
-      "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><b>الجولة الثانية ٢٤ أغسطس ٢٠٢٦:</b> مؤكَّد بالسطر: <code>sitemap.ts:158</code> و<code>:165</code>. (حالة الشركاء «غير الجاهزين» صارت بطاقة مستقلّة <code>SEOSITEMAP-NOTREADY</code> لأن إصلاحها مرشّح مختلف.)<br><br><b>ما كان مكتوباً:</b> <b>مقيس:</b> <code>/reels</code> و<code>/help/feedback</code> كلتاهما في <code>sitemap.xml</code> <b>وتخدمان</b> <code>&lt;meta name=\"robots\" content=\"noindex, nofollow\"&gt;</code>.<br>إشارتان متضاربتان: الخريطة تقول «افهرسني» والصفحة تقول «لا». بند خطأ صريح في سيمرَش وأهرفس، ويُهدر ميزانية زحف.<br><b>ليس نسياناً:</b> <code>app/(fullscreen)/reels/page.tsx:15-23</code> يحمل تعليقاً صريحاً بأن <code>index</code> يُقلَب قبل دمج <code>modonty-ui</code> مع <code>main</code> — بطاقة <code>83c</code>. فالمطلوب هنا هو <b>حسم <code>/help/feedback</code></b> وربط قلب الطلّات ببطاقتها القائمة.<br><b>يقفل بـ:</b> كل رابط في الخريطة يخدم <code>index</code>، أو يخرج منها.<br><b>المصدر:</b> تقرير الفحص الكامل <code>documents/modonty/seo/SEO-AUDIT-2026-08-24.html</code>.",
+      "t": "صفحة في خريطة الموقع وهي noindex — بقيت /help/feedback",
+      "d": "<b>تحديث ٢٥ أغسطس ٢٠٢٦ — نصفها أُغلق:</b> <code>/reels</code> صارت <code>index, follow</code> (بطاقة <code>83c</code>)، والتضارب عليها انتهى.<br><b>الباقي مقيس اليوم:</b> <code>/help/feedback</code> ما زالت تخدم <code>&lt;meta name=\"robots\" content=\"noindex, nofollow\"&gt;</code> وهي في <code>sitemap.xml</code> — مرّة واحدة، مؤكَّدة بالعدّ.<br><b>القرار المطلوب:</b> تُفهرس أم تخرج من الخريطة. صفحة «رأيك يهمّنا» ليس فيها ما يُفهرس عادةً، فالأرجح إخراجها.<br><b>يقفل بـ:</b> <code>curl -s /sitemap.xml | grep -c help/feedback</code> = صفر، أو الصفحة تخدم <code>index</code>.<br><b>المصدر:</b> تقرير الفحص الكامل <code>documents/modonty/seo/SEO-AUDIT-2026-08-24.html</code>.",
       "phase": 2,
       "ord": 1,
       "plain": {
@@ -5875,14 +5876,14 @@
       "app": [
         "modonty"
       ],
-      "tab": "now",
+      "tab": "done",
       "who": "c",
-      "date": "٢٤ أغسطس ٢٠٢٦",
+      "date": "٢٥ أغسطس ٢٠٢٦",
       "sec": "seo",
       "id": "SEOSITEMAP-TEST",
       "sev": "normal",
-      "t": "مرشّح روابط التست لا يشمل المقالات ولا الطلّات",
-      "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><code>app/sitemap.ts:64-68</code> — <code>notTestSlug</code> مطبَّق على الفئات والشركاء والكتّاب والوسوم والمجالات، و<b>غير مطبَّق</b> على المقالات ولا الطلّات.<br><b>مقيس على قاعدة التطوير:</b> <code>/reels/reel-test-mt1ci48p-1</code> · <code>reel-test-mt1ci41m-0</code> · <code>dev-modonty-reel-1</code> · <code>-2</code> · <code>-3</code>.<br><b>⚠️ حدّ ما قِستُه:</b> هذي قاعدة التطوير. <b>لم أفحص الإنتاج</b>، فقد لا تكون هذي الروابط عليه. الثابت المؤكَّد هو <b>ثغرة المرشّح في الكود</b>، لا عدد الروابط على الإنتاج.<br><b>يقفل بـ:</b> المرشّح يشمل السبعة، وفحص خريطة الإنتاج يرجع صفر رابط تست.<br><b>المصدر:</b> تقرير الفحص الكامل <code>documents/modonty/seo/SEO-AUDIT-2026-08-24.html</code>.",
+      "t": "مرشّح روابط التست — صار يغطّي السبعة، ونمطه يمسك ما كان يفلت",
+      "d": "<b>أُغلقت ٢٥ أغسطس ٢٠٢٦ بقياس حيّ.</b><br><b>الثغرة كانت مزدوجة، والثانية تخفي الأولى:</b> المرشّح كان مطبَّقاً على خمسة أنواع من سبعة — <b>و</b>كان نمطه <code>endsWith(\"-test\")</code> وحده. والأمثلة التي قاستها هذه البطاقة نفسها — <code>reel-test-mt1ci48p-1</code> و<code>dev-modonty-reel-1</code> — <b>لا تنتهي بـ<code>-test</code></b>، فتوسيع المدى بلا توسيع النمط ما كان ليغيّر شيئاً. هذا ما نبّه إليه كوديكس حين قال إن الاصطلاح لا يُثبت أن كل الـfixtures تتبعه.<br><b>ما تغيّر:</b> نمط واحد <code>FIXTURE_SLUG</code> يمسك <code>test</code> · <code>dev</code> · <code>demo</code> · <code>e2e</code> · <code>sample</code> · <code>dummy</code> في أول الاسم أو آخره أو بين شرطتين، ويُطبَّق الآن على السبعة — المقالات والطلّات كانتا الغائبتين، والطلّات مفتاحها <code>reelSlug</code> لا <code>slug</code> فلها مرشّحها.<br><b>الدليل:</b> ١٩ حالة اختبار تمرّ — تمسك الخمسة المقيسة في هذه البطاقة، ولا تبتلع <code>devops-guide</code> ولا <code>contest-rules</code> ولا أي رابط عربي. والخريطة الحيّة: <b>٢٥٣ رابطاً · صفر تسريب</b>.<br><b>ما لم يُقَس:</b> خريطة الإنتاج — الإنتاج على <code>main</code> بالكود القديم. تُقاس بعد الدمج بنفس الأمر.<br><b>ملاحظة باقية:</b> هذا اصطلاح تسمية لا علامة على الصفّ. عمود <code>isFixture</code> أمتن، ويستحقّ التنفيذ يوم تصير الـfixtures تُنشأ بغير أن يكتب مطوّر اسماً.",
       "phase": 2,
       "ord": 2,
       "plain": {
@@ -7449,8 +7450,8 @@
       "sec": "seo",
       "id": "SEOPROXY-SEG",
       "sev": "normal",
-      "t": "مرشّح البروكسي مقطع واحد — المسارات الفرعية تُفلت من ٤١٠",
-      "d": "<b>✔ تحقّق خالد-غيت ٢٤ أغسطس ٢٠٢٦:</b> فتحتُ كل مرجع <code>ملف:سطر</code> في هذه البطاقة بنفسي وقرأت الكود الخام — الادّعاء قائم كما هو.<br><code>proxy.ts:37-46</code> يطابق <code>/clients/:slug</code> لا <code>/clients/:slug/about</code>. فشريك محذوف تحت <code>/about /articles /faq …</code> و<code>/reels/&lt;محذوف&gt;</code> يتجاوز ٤١٠ ويعتمد على <code>notFound()</code> داخل الصفحة تحت <code>cacheComponents: true</code> — وهذا بالضبط «الهيكل يُرسل بـ٢٠٠ ثم يعمل notFound» الموثَّق في <code>proxy.ts:19-21</code>.<br><b>يقفل بـ:</b> توسيع المطابق للمسارات الفرعية، والقياس: <code>curl -I /clients/xyz-dead/about</code> = ٤١٠/٤٠٤ لا ٢٠٠.<br><b>المصدر:</b> الجولة الثانية من الفحص <code>documents/modonty/seo/SEO-AUDIT-2026-08-24.html</code> (القسم ٣، رقم البند في العمود الأول).",
+      "t": "مرشّح البروكسي مقطع واحد — بقيت المسارات الفرعية للشريك",
+      "d": "<b>تحديث ٢٥ أغسطس ٢٠٢٦ — نصفها أُغلق:</b> <code>/reels/&lt;محذوف&gt;</code> كانت ترجع <b>٢٠٠</b> بينما كل الأقسام ترجع ٤١٠ — قياس جنب قياس: <code>410 /articles/zzz</code> · <code>410 /clients/zzz</code> · <code>410 /categories/zzz</code> · <code>410 /authors/zzz</code> · <code>200 /reels/zzz</code>. أُضيف <code>/reels/:slug</code> للمطابق وقسم <code>reels</code> لكاش الأرشيف، والقياس بعده: <code>410</code> للمحذوف و<code>200</code> للطلّات الحيّة الثلاث المفحوصة.<br><b>الباقي:</b> الصفحات الفرعية للشريك — <code>/clients/&lt;محذوف&gt;/about</code> و<code>/articles</code> و<code>/faq</code> — ما زالت تُفلت لأن المطابق مقطع واحد.<br><b>يقفل بـ:</b> <code>curl -I /clients/xyz-dead/about</code> = ٤١٠ لا ٢٠٠.",
       "phase": 2,
       "ord": 6,
       "plain": {

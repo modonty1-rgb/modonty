@@ -34,16 +34,16 @@ export const metadata: Metadata = {
     template: `%s | ${BRAND_AR}`,
   },
   description: "منصة مدونات احترافية لإدارة المحتوى عبر شركاء متعددين",
-  // Site-wide hreflang signals to AI search engines + Google geo-targeting.
-  // Mariam audit 2026-05-27: site had ZERO hreflang on homepage; only ar+x-default on articles.
-  // Per-page generateMetadata can override `alternates.canonical` but inherits these languages.
+  // No `languages` here on purpose. This block used to declare four locales all pointing at
+  // "/", and any page that did not define its own inherited them — so ~25 paths told Google
+  // "the Saudi version of this page is the homepage", which is false for every one of them
+  // except the homepage. Google's rule is the opposite: "Each language version must list
+  // itself as well as all other language versions"
+  // (developers.google.com/search/docs/specialty/international/localized-versions).
+  //
+  // Every page now builds its own set from `Settings.defaultAlternateLanguages`, pointing at
+  // its OWN canonical — nine locales, one source, no copy in code.
   alternates: {
-    languages: {
-      "ar-SA": "/",
-      "ar-EG": "/",
-      ar: "/",
-      "x-default": "/",
-    },
     // RSS auto-discovery (<link rel="alternate" type="application/rss+xml">) —
     // feed readers and AI aggregators find /feed.xml through this.
     types: {

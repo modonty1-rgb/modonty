@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getSiteAnalytics, type NameVal } from "@/lib/analytics/ga4";
+import { buildPageAlternates } from "@/lib/seo/build-page-alternates";
 import {
   IconTrending,
   IconViews,
@@ -8,11 +9,17 @@ import {
   IconUsers,
 } from "@/lib/icons";
 
-export const metadata: Metadata = {
-  title: "تحاليل مدوّنتي — الأرقام الحقيقية",
-  description: "تحاليل مباشرة لمنصة مدوّنتي من Google Analytics: زيارات، مشاهدات، مصادر، أجهزة، دول، وتفاعلات.",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "تحاليل مدوّنتي — الأرقام الحقيقية",
+    description:
+      "تحاليل مباشرة لمنصة مدوّنتي من Google Analytics: زيارات، مشاهدات، مصادر، أجهزة، دول، وتفاعلات.",
+    robots: { index: false, follow: false },
+    // noindex and still given a canonical: the page is reachable, and inheriting the root's
+    // four locales pointing at "/" was a false statement whether or not it is indexed.
+    alternates: await buildPageAlternates("/analytics"),
+  };
+}
 
 // Public Looker Studio report (anyone-with-link, owner credentials) — Google-hosted,
 // read-only proof the numbers come straight from Google Analytics.

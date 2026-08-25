@@ -10,6 +10,7 @@ import { Section } from "../../_shared/section";
 import { applyTechnicalDefaults } from "../../actions/seed-technical-defaults";
 import { recalculateArticleCounts } from "../../actions/recalculate-article-counts";
 import { getAllSettings, type AllSettings } from "../../actions/settings-actions";
+import { HreflangLocalesEditor } from "./hreflang-locales-editor";
 
 interface RuleRow {
   label: string;
@@ -146,6 +147,16 @@ export function SystemForm({ initialSettings }: Props) {
         description="Industry standards (charset, robots, OG types). Rarely change."
       >
         <DefaultsTable rows={TECHNICAL_DEFAULTS} settings={settings} />
+      </Section>
+
+      {/* The one editable block on this page. Everything above is a threshold a maintenance
+          job seeds; this is a business decision — which markets we claim — and it drives the
+          hreflang tags on every page modonty serves. It had no screen at all until now. */}
+      <Section
+        title="hreflang Markets"
+        description="The locales every page declares. One list, read by every page — adding a market is data, not a deploy."
+      >
+        <HreflangLocalesEditor initial={settings.defaultAlternateLanguages} />
       </Section>
 
       <Section
