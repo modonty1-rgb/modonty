@@ -5,7 +5,9 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { messages } from "@/lib/messages";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import {
+  bestRendition,
   createTusTicket,
   deleteStreamVideo,
   getStreamVideo,
@@ -185,7 +187,22 @@ export async function getVideoEncodingState(
   if (!state) return { ready: false, failed: false, progress: 0 };
 
   const ready = state.status === 3 || state.status === 4;
-  if (ready) revalidatePath("/dashboard/videos");
+  if (ready) {
+    // The row was written with the default 720p MP4 before a byte went out, because the
+    // renditions are only known once Bunny has encoded. Bunny encodes DOWN from the source
+    // and never up, so a 480p upload produces no 720p file at all — and `play_720p.mp4`
+    // would 404 for both the feed's player and the `contentUrl` Google fetches to verify
+    // the clip. Now that the real set is known, point at the best one that exists.
+    const best = bestRendition(state.availableResolutions);
+    if (best) {
+      const urls = streamUrls(media.bunnyVideoId, best);
+      await db.media.update({
+        where: { id: mediaId },
+        data: { mp4Url: urls.mp4Url, contentUrl: urls.mp4Url, url: urls.mp4Url },
+      });
+    }
+    revalidatePath("/dashboard/videos");
+  }
   return { ready, failed: state.status === 5, progress: state.encodeProgress };
 }
 
@@ -259,6 +276,12 @@ export async function removeVideoReel(mediaId: string): Promise<Result> {
     } else {
       await discardVideo(owned.id, owned.bunnyVideoId);
     }
+
+    // A reel the visitors could already see has to leave modonty NOW. `revalidatePath` below
+    // busts this console route only — modonty caches the feed and each watch page under its
+    // own "reels" tag, so without this hit the removed reel kept serving at HTTP 200 for the
+    // whole cache window (measured 25 Aug 2026).
+    if (seenByVisitors) await revalidateModontyTag("reels").catch(() => {});
 
     revalidatePath("/dashboard/videos");
     return { success: true };

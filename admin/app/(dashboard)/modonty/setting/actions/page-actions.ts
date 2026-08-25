@@ -117,6 +117,18 @@ export async function updatePage(slug: string, data: PageFormData) {
       create: createPayload,
     });
 
+    // The stored Metadata blob modonty reads — regenerated here so a save never leaves the
+    // page serving the previous title. Failure surfaces as a warning, same as the JSON-LD path.
+    let metaWarning: string | undefined;
+    try {
+      const { regenerateContentPageCache } = await import("@/lib/seo/content-page-seo-generator");
+      const metaResult = await regenerateContentPageCache(slug);
+      if (!metaResult.success) metaWarning = metaResult.error || "Metadata generation failed";
+    } catch (e) {
+      metaWarning = e instanceof Error ? e.message : "Metadata generation failed";
+    }
+    if (metaWarning) console.error(`Metadata generation failed for "${slug}":`, metaWarning);
+
     // Generate SEO with proper error handling
     let seoWarning: string | undefined;
     try {

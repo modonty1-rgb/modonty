@@ -36,6 +36,30 @@ import {
 
 const MAX_BYTES = 20 * 1024 * 1024;
 
+/**
+ * The transformed file's real pixel size, read in the browser before it is handed over.
+ *
+ * Stored on the row so the reel can declare its dimensions — the feed reserves the right
+ * box instead of reflowing when the picture lands, and the structured data describes the
+ * file that actually exists. Returns null rather than a guess when the decode fails.
+ */
+async function readImageSize(file: File): Promise<{ width: number; height: number } | null> {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = new Image();
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("decode failed"));
+      img.src = url;
+    });
+    return { width: img.naturalWidth, height: img.naturalHeight };
+  } catch {
+    return null;
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
 const STATUS: Record<string, { label: string; cls: string }> = {
   PENDING_APPROVAL: { label: "بانتظار موافقة مُدَوَّنَتِي", cls: "bg-amber-50 text-amber-700 ring-amber-200" },
   DRAFT: { label: "بانتظار موافقة مُدَوَّنَتِي", cls: "bg-amber-50 text-amber-700 ring-amber-200" },
@@ -58,10 +82,26 @@ export function ReelsManager({ initial }: { initial: ClientReel[] }) {
           idle: "ارفع صورة للريلز",
           hint: "أفضل مقاس 1080 × 1920 (طولية) · حتى 20 ميجا",
         }}
-        onUploaded={async ({ response, original }) => {
-          const url = (response as { url?: string } | null)?.url;
+        onUploaded={async ({ response, file, original }) => {
+          const res = response as { url?: string; bytes?: number; blurDataURL?: string } | null;
+          const url = res?.url;
           if (!url) return { ok: false, error: "ما وصلنا رابط الصورة" };
-          const created = await createImageReel({ url, filename: original.name });
+
+          // Everything the row needs, measured rather than assumed. It used to send the URL
+          // and the file name alone, so every image reel landed with no dimensions, no size,
+          // no blur placeholder, and `image/jpeg` hardcoded — while `compressToWebP` had just
+          // turned the file into a WebP. The row was describing a file that did not exist.
+          const size = await readImageSize(file);
+
+          const created = await createImageReel({
+            url,
+            filename: original.name,
+            mimeType: file.type || null,
+            fileSize: res.bytes ?? file.size,
+            width: size?.width ?? null,
+            height: size?.height ?? null,
+            blurDataURL: res.blurDataURL ?? null,
+          });
           if (!created.success) return { ok: false, error: created.error };
           return { ok: true };
         }}

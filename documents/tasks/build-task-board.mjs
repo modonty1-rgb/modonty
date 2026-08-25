@@ -29,13 +29,18 @@ function segments(d) {
 }
 const ASK_RE = /قرار|المطلوب|الخيار|بانتظار|يُسأل|سؤال|تختار|قرّر|بيدك|دورك/;
 
+// وصف البطاقة HTML مقصود (<b> <code> <br>)، لكن ذكر كلمة <script> في نصّ بطاقة
+// يفتح عنصر سكربت حقيقياً فيبتلع بقيّة الصفحة ويعطّل جافاسكربت اللوحة كلّها
+// (حصل في بطاقة SEOADM-RAW: زرّ النسخ توقّف وخرج خطأ Unexpected token في الكونسول).
+const noScript = (s) => (s || "").replace(/<(\/?)script/gi, "&lt;$1script");
+
 const OVERRIDES = JSON.parse(fs.readFileSync(path.join(here, "task-overrides.json"), "utf8"));
 
 const enriched = TASKS.map(t => {
   const segs = segments(t.d || "");
   const o = OVERRIDES[t.id] || {};
   const sum = o.sum || cut(segs.slice(0, 2).map(s => (s.label ? s.label + ": " : "") + s.text).join(" · "), 230);
-  let ask = o.ask || null;
+  let ask = o.ask || t.ask || null;
   if (!ask && t.who === "k") {
     const seg = segs.find(s => ASK_RE.test(s.label)) || segs.find(s => ASK_RE.test(s.text.slice(0, 80)));
     if (seg) ask = cut((seg.label && !/^(دليل|الدليل)$/.test(seg.label) ? seg.label + ": " : "") + seg.text, 260);
@@ -43,12 +48,17 @@ const enriched = TASKS.map(t => {
   return { ...t, sum, ask, board: boardName[t.b] || t.b };
 });
 
+const SEC_FROM_BOARD_EARLY = { seo: "seo" };
 const isDone = (t) => t.tab === "done";
 const allOpen = enriched.filter(t => !isDone(t));
 const done = enriched.filter(isDone);
 // بنود «تحديث البيانات» (file:"data") تخرج للوحة مستقلة DATA-REFACTOR.html
 const dataOpen = allOpen.filter(t => t.file === "data");
-const open = allOpen.filter(t => t.file !== "data");
+// سيو مدونتي كلّه يخرج إلى لوحة مستقلّة SEO.html (خالد ٢٤ أغسطس: «أبغى أركّز ١٠٠٪ على السيو، هو قلب مدونتي»).
+// نقل لا نسخ: البطاقة إمّا هنا وإمّا هناك. المراجع تبقى في اللوحة الرئيسية.
+const isSeoCard = (t) => t.file !== "data" && t.tab !== "ref" && (t.sec || SEC_FROM_BOARD_EARLY[t.b]) === "seo" && (t.app || []).includes("modonty");
+const seoOpen = allOpen.filter(isSeoCard);
+const open = allOpen.filter(t => t.file !== "data" && !isSeoCard(t));
 // الشغل الحقيقي: بلا بطاقات المرجع وبلا «قبل الدمج» — وهو الرقم الذي تعرضه شارات التبويبات.
 // العنوان كان يقول `open.length` فيعدّ ٣٦ بطاقة مرجع بنوداً مفتوحة: ١٢١ مقابل ٧١ على الشاشة.
 const openWork = open.filter(t => t.tab !== "ref" && !t.last);
@@ -63,7 +73,8 @@ const COPY_JS = `
     const btn = e.target.closest('.copy'); if (!btn) return;
     const card = btn.closest('.card');
     // مرجع فقط — كلود يفتح البطاقة بنفسه من الملف (خالد ٢٣ أغسطس)
-    const text = 'documents/tasks/' + location.pathname.split('/').pop() + '#' + card.dataset.id;
+    const n = card.querySelector('.num');
+    const text = (n ? 'بند ' + n.textContent + ' — ' : '') + 'documents/tasks/' + location.pathname.split('/').pop() + '#' + card.dataset.id;
     const done = () => { btn.classList.add('ok'); btn.textContent = '✓'; setTimeout(() => { btn.classList.remove('ok'); btn.textContent = '⧉'; }, 1200); };
     const fallback = () => { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); done(); };
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(fallback);
@@ -139,11 +150,14 @@ section.grp{margin:0 0 28px}
 .card[data-running="1"]{background:color-mix(in srgb,var(--red) 16%,var(--card));border-color:var(--red);border-inline-start:4px solid var(--red);box-shadow:0 0 0 1px color-mix(in srgb,var(--red) 30%,transparent)}
 .card[data-running="1"] .id{background:var(--red);color:#fff;border-color:var(--red)}
 .tag.running{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
-.hd{display:flex;gap:8px;align-items:flex-start}
-.id{font:700 11px ui-monospace,monospace;color:var(--dim);background:var(--panel);border:1px solid var(--line);padding:2px 6px;border-radius:6px;white-space:nowrap;margin-top:3px}
+/* المعرّف في سطر مستقلّ: كان يجلس بجانب العنوان بـnowrap، فمعرّف طويل مثل
+   SEOADM-ARTICLES-LISTING-DENIED يعصر العنوان في عمود بعرض ٦٠px (خالد ٢٤ أغسطس: «bad ux، كيف أقرأ»). */
+.hd{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.id{font:700 11px ui-monospace,monospace;color:var(--dim);background:var(--panel);border:1px solid var(--line);padding:2px 6px;border-radius:6px;white-space:nowrap;direction:ltr;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.num{flex:none;min-width:26px;height:26px;padding:0 6px;border-radius:8px;background:var(--amber);color:#141722;font-weight:800;font-size:14px;display:inline-flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
 .copy{margin-inline-start:auto;flex:none;width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--mut);font-size:13px;cursor:pointer;line-height:1}
 .copy:hover{color:var(--fg);border-color:var(--fg)}.copy.ok{color:var(--green);border-color:var(--green)}
-.t{font-weight:700;font-size:15px;line-height:1.45;flex:1;min-width:0}
+.t{font-weight:700;font-size:16px;line-height:1.5;min-width:0}
 .meta{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--mut)}
 .tag{border:1px solid var(--line);border-radius:999px;padding:1px 8px}
 .tag.app-modonty{color:var(--violet)}.tag.app-admin{color:var(--blue)}.tag.app-console{color:var(--cyan)}.tag.app-dataLayer{color:var(--green)}
@@ -153,6 +167,23 @@ section.grp{margin:0 0 28px}
 .tag.ease-2{border-color:var(--blue);color:var(--blue)}
 .tag.ease-3{border-color:var(--red);color:var(--red)}
 .sum{font-size:13.5px;color:var(--mut);margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+/* الشرح البشري (خالد ٢٤ أغسطس: «أبغى أفهم كبشر») — أربعة أسطر ثابتة قبل أي تفصيل تقني */
+.plain{display:flex;flex-direction:column;gap:5px;font-size:13.5px;line-height:1.7}
+.plain b{color:var(--fg)}.plain>div{color:var(--mut)}
+.plain .files{display:flex;flex-wrap:wrap;gap:4px;align-items:center}.plain .files code{font-size:11px;direction:ltr}
+/* ملاحظات المراجعة العكسية (خالد ٢٤ أغسطس: «سجّل ملاحظاتك الجديدة في نفس الكرت باللون الأحمر») —
+   ما اكتشفه مراجع مستقلّ حاول تكذيب البطاقة: ثبت / نزل / سقط، والسبب. */
+.prod{border-radius:10px;padding:8px 10px;font-size:13.5px;color:var(--fg);border:1px solid var(--line);background:var(--panel)}
+.prod .when{color:var(--dim);font-size:12px}
+.prod[data-state="yes"]{background:color-mix(in srgb,var(--red) 14%,transparent);border-color:color-mix(in srgb,var(--red) 50%,transparent)}
+.prod[data-state="no"]{background:color-mix(in srgb,var(--green) 12%,transparent);border-color:color-mix(in srgb,var(--green) 45%,transparent)}
+.prod[data-state="admin"]{background:color-mix(in srgb,var(--amber) 10%,transparent);border-color:color-mix(in srgb,var(--amber) 40%,transparent)}
+.review{background:color-mix(in srgb,var(--red) 12%,transparent);border:1px solid color-mix(in srgb,var(--red) 45%,transparent);border-radius:10px;padding:8px 10px;font-size:13.5px;color:var(--fg)}
+.review b{color:var(--red)}.review ul{margin:4px 0 0;padding-inline-start:18px}.review li{margin:3px 0}
+/* ملاحظة كودكس (مراجع مستقلّ ثانٍ) — تبقى ظاهرة بجانب حكمي حتى يقارن خالد بنفسه */
+.codex{background:color-mix(in srgb,var(--blue) 10%,transparent);border:1px solid color-mix(in srgb,var(--blue) 40%,transparent);border-inline-start:4px solid var(--blue);border-radius:10px;padding:8px 10px;font-size:13px;color:var(--fg);display:flex;flex-direction:column;gap:3px}
+.codex>b{color:var(--blue)}.codex .src{font-size:11.5px;color:var(--dim)}.codex .src a{color:var(--blue)}
+.codex[data-verdict="wrong"]{border-inline-start-color:var(--red)}.codex[data-verdict="mixed"]{border-inline-start-color:var(--amber)}.codex[data-verdict="confirmed"]{border-inline-start-color:var(--green)}
 .ask{background:color-mix(in srgb,var(--amber) 14%,transparent);border:1px solid color-mix(in srgb,var(--amber) 45%,transparent);border-radius:10px;padding:8px 10px;font-size:13.5px}
 .ask b{color:var(--amber)}
 .ask.missing{border-style:dashed;color:var(--mut)}
@@ -183,12 +214,21 @@ function cardHTML(t) {
   const agentTag = t.agent
     ? `<span class="tag ${t.agentKind === "قياس" ? "agent-measure" : "agent"}">🤖 وكيل ${t.agent}${t.agentKind === "قياس" ? " · قياس" : ""}</span>`
     : "";
-  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.agent ? ` data-agent="${t.agent}"` : ""}${t.last ? " data-last=\"1\"" : ""}${t.area ? ` data-area="${esc(t.area)}"` : ""}${t.running ? ' data-running="1"' : ""}>
-  <div class="hd"><span class="id">${esc(t.id)}</span><div class="t">${t.t}</div><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ${esc(t.id)}">⧉</button></div>
+  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.agent ? ` data-agent="${t.agent}"` : ""}${t.last ? " data-last=\"1\"" : ""}${t.area ? ` data-area="${esc(t.area)}"` : ""}${t.running ? ' data-running="1"' : ""}${t.n ? ` data-n="${t.n}"` : ""}${t.prod ? ` data-prod="${esc(t.prod.state)}"` : ""}>
+  <div class="hd">${t.n ? `<span class="num" title="رقم البند — قل «بند ${t.n}» في الشات">${t.n}</span>` : ""}<span class="id">${esc(t.id)}</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ${esc(t.id)}">⧉</button></div>
+  <div class="t">${t.t}</div>
   <div class="meta">${lastTag}${agentTag}${runningTag}${easeTag}<span class="tag tab-${esc(t.tab)}">${tabL}</span><span class="tag">${sevL}</span>${apps}<span class="tag">${esc(t.board)}</span>${t.date ? `<span>${esc(t.date)}</span>` : ""}</div>
-  <p class="sum">${esc(t.sum)}</p>
+  ${t.prod ? `<div class="prod" data-state="${esc(t.prod.state)}"><b>${{ yes: "🌐 موجود على الإنتاج", no: "🌐 غير موجود على الإنتاج", admin: "🌐 جذره في الأدمن — لا يُقاس من الخارج", nm: "🌐 لم يُقَس على الإنتاج" }[t.prod.state]}:</b> ${esc(t.prod.ev)} <span class="when">(${esc(t.prod.base)} · ${esc(t.prod.when)})</span></div>` : ""}
+  ${t.review?.length ? `<div class="review"><b>🔴 حكمي بعد المراجعة العكسية:</b><ul>${t.review.map(r => `<li>${esc(r)}</li>`).join("")}</ul></div>` : ""}
+  ${t.codex ? `<div class="codex" data-verdict="${esc(t.codex.verdict)}"><b>🔵 كودكس (مراجع مستقلّ) — ${esc(t.codex.label)}:</b><div><b>الكود:</b> ${esc(t.codex.evidence)}</div><div><b>ملاحظته:</b> ${esc(t.codex.note)}</div>${t.codex.sources?.length ? `<div class="src">${t.codex.sources.map(s => s[1] ? `<a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a>` : `<span>${esc(s[0])}</span>`).join(" · ")}</div>` : ""}</div>` : ""}
+  ${t.plain ? `<div class="plain">
+    <div><b>المشكلة:</b> ${esc(t.plain.p)}</div>
+    <div><b>ليش تهمّنا:</b> ${esc(t.plain.x)}</div>
+    <div><b>الحلّ:</b> ${esc(t.plain.s)}</div>
+    ${t.plain.f?.length ? `<div class="files"><b>الملفات:</b> ${t.plain.f.map(f => `<code>${esc(f)}</code>`).join(" ")}</div>` : ""}
+  </div>` : `<p class="sum">${esc(t.sum)}</p>`}
   ${ask}
-  <details><summary>التفاصيل الكاملة</summary><div class="full">${t.d || ""}</div></details>
+  <details><summary>التفاصيل الكاملة</summary><div class="full">${noScript(t.d)}</div></details>
 </article>`;
 }
 
@@ -276,7 +316,7 @@ const boardHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset=
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>${CSS}</style></head><body>
 <header class="top"><div class="wrap">
-<h1>لوحة الشغل — ${openWork.length} بنداً مفتوحاً <span style="color:var(--dim);font-weight:500;font-size:13px">· و${lastWork.length} في «قبل الدمج» · تحديث البيانات في <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> · المنجز في <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a></span></h1>
+<h1>لوحة الشغل — ${openWork.length} بنداً مفتوحاً <span style="color:var(--dim);font-weight:500;font-size:13px">· و${lastWork.length} في «قبل الدمج» · <b>سيو مدونتي (${seoOpen.length}) في <a href="SEO.html">SEO.html</a></b> · تحديث البيانات في <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> · المنجز في <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a></span></h1>
 <!-- لا صفّ إحصاءات إطلاقاً (خالد، ٢٤ أغسطس: «only the counter for what remain, no حشو»).
      كانت عشرون رقماً على الشاشة، ثم واحد بارز مع مطويّة — وكلّها ما زالت حشواً فوق ما يلزم.
      أرقام التبويبات وحدها تقول ما بقي، وعناوين الأقسام تقول توزيعه. الباقي كان يشرح لا يفيد. -->
@@ -405,7 +445,112 @@ ${COPY_JS}
 })();
 </script></body></html>`;
 
+// ── SEO.html — لوحة سيو مدونتي وحدها ──
+// الترتيب: ما ينتظر قرار خالد أوّلاً، ثم ما يُصلَح في مدونتي بشدّته، ثم ما جذره في مولّد الأدمن.
+const sevRankS = { critical: 0, high: 1, normal: 2, ok: 3, idea: 4 };
+const bySev = (a, b) => (sevRankS[a.sev] ?? 9) - (sevRankS[b.sev] ?? 9);
+// خالد (٢٤ أغسطس): «رتّبه حسب الأولوية حسب القسم وابدأ بالأسهل للأصعب — التسلسل المنطقي مهم».
+// المراحل تسلسل تنفيذ لا تصنيف: الأدمن يُصلَح أساسُه (المرحلة ٣) قبل مولّداته (٤) قبل تجديده (٥)،
+// وإلا أعدنا التوليد على أساس مكسور. حقل `phase` + `ord` على كل بطاقة (سكربت seo-phases).
+const SEO_PHASES = [
+  { k: 0, n: "٠ · قرارك أولاً — يفتح الطريق", s: "أربع كلمات منك تفكّ ما بعدها. كلود لا يبدأ قبل كلمتك." },
+  { k: 1, n: "١ · سطر واحد في مدونتي", s: "إصلاحات صغيرة معزولة بلا اعتماد على شيء — تُقفل في جلسة واحدة وتُقاس بأمر curl." },
+  { k: 2, n: "٢ · الخريطة والزحف", s: "ما يقرّر أي صفحات يراها جوجل أصلاً: sitemap · robots · الروابط الداخلية · الترقيم · المحتوى على السيرفر." },
+  { k: 3, n: "٣ · أساس الأدمن — قبل أي إعادة توليد", s: "الحرّاس والسكيمات والروابط والافتراضيات. لو أعدنا التوليد قبل هذه المرحلة، خزّنّا الأعطال نفسها من جديد." },
+  { k: 4, n: "٤ · المولّدات — ما يدخل البلوب", s: "JSON-LD والميتاداتا المخزَّنة: SearchAction · @id · القيم المختلَقة · الأبعاد · hreflang. بعدها إعادة توليد شاملة واحدة." },
+  { k: 5, n: "٥ · التواريخ والتجديد", s: "متى يُعاد التوليد ومتى يُفرَّغ الكاش وما يبصم التاريخ — صحّة خطّ الأنابيب نفسه." },
+  { k: 6, n: "٦ · البوّابات والمقيّمات", s: "ما يمنع النشر وما يصادق عليه — تُصلَح آخراً لأنها تقيس ما سبق." },
+  { k: 7, n: "٧ · مراقبة ومرجع", s: "بنود تُراقَب لا تُصلَح الآن، والبطاقات القديمة، والملحق الخام." },
+];
+const byOrd = (a, b) => (a.ord ?? 99) - (b.ord ?? 99) || bySev(a, b);
+// خالد (٢٤ أغسطس، ليلاً): «اعمل تاب جديد واللي أنت وكودكس متّفقين عليه ١٠٠٪ حطّه فيه عشان نبدأ نشتغل عليه؛
+// الخلاف نرجع نناقشه بعدين». الاتفاق = كودكس «مثبت» + شدّتي ليست «مراقبة» + ليس قراراً معلّقاً.
+const seoLane = (t) => (t.phase === 0 || t.who === "k") ? "decide" : (t.codex?.verdict === "confirmed" && t.sev !== "ok") ? "agreed" : "disputed";
+const SEO_LANES = [
+  { k: "agreed", n: "متّفق عليه ١٠٠٪", s: "كلود وكودكس على كلمة واحدة: العطل مثبت والحلّ واضح. هذا اللي نشتغل عليه الآن — بترتيب المراحل، والأسهل أوّل كل مرحلة." },
+  { k: "disputed", n: "فيه خلاف", s: "كودكس قال «جزئي» أو «غلط» أو «خارج السيو» أو «غير مثبت». ما نلمسه إلا بعد ما نخلّص المتّفق عليه — نناقشه بنداً بنداً." },
+  { k: "reports", n: "تقارير", s: "جرد مقيس بالكامل — كود الإنتاج + قياس حيّ + قراءة القاعدة + المصدر الرسمي. ليست مهامّ: هذه هي الأرضية التي تُبنى عليها المهامّ." },
+  { k: "decide", n: "قرارك", s: "ينتظر كلمتك — لا يبدأ قبلها. قراران يفتحان الطريق (SEOFAQ · SEOMETATAGS-DEAD) وفكرة مؤجَّلة بقرارك (AUTOLINK)." },
+];
+const REPORTS = DATA.reports || [];
+const reportHTML = (r) => `<article class="report" id="report-${esc(r.id)}">
+  <h3>${r.n ? `<span class="num">${r.n}</span>` : ""}${esc(r.title)}</h3>
+  <p class="when">${esc(r.when)} · المصدر: ${esc(r.base)}</p>
+  ${r.lead ? `<p class="lead">${r.lead}</p>` : ""}
+  ${(r.sections || []).map(s => `<section><h4>${esc(s.h)}</h4>
+    ${s.body ? `<div>${noScript(s.body)}</div>` : ""}
+    ${s.table ? `<div class="tw"><table><thead><tr>${s.table.head.map(h => `<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${s.table.rows.map(row => `<tr>${row.map(c => `<td>${noScript(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>` : ""}
+  </section>`).join("")}
+</article>`;
+const seoLanes = SEO_LANES.map(l => {
+  if (l.k === "reports") return { ...l, count: REPORTS.length, reports: REPORTS, groups: [] };
+  const items = seoOpen.filter(t => seoLane(t) === l.k);
+  return { ...l, count: items.length, groups: SEO_PHASES.map(p => ({ ...p, items: items.filter(t => (t.phase ?? 7) === p.k).sort(byOrd) })).filter(g => g.items.length) };
+});
+// رقم قصير ثابت لكل بند سيو، ليقول خالد «بند ٧» بدل معرّف طويل (٢٥ أغسطس).
+// يُكتب مرّة في task-data.json ولا يتغيّر بعدها مهما أُعيد الترتيب أو أُغلقت بطاقات —
+// الرقم المتغيّر يجعل الإشارة في الشات تدلّ على بطاقة أخرى بعد أسبوع.
+{
+  const srcById = new Map(TASKS.map(t => [t.id, t]));
+  let next = Math.max(0, ...TASKS.map(t => t.n || 0));
+  const fresh = seoLanes.flatMap(l => l.groups.flatMap(g => g.items)).filter(t => !t.n);
+  fresh.forEach(t => { t.n = ++next; srcById.get(t.id).n = t.n; });
+  if (fresh.length) {
+    fs.writeFileSync(path.join(here, "task-data.json"), JSON.stringify(DATA, null, 2) + "\n");
+    console.log(`أرقام سيو جديدة: ${fresh.length} (حتى ${next})`);
+  }
+}
+const seoHigh = seoOpen.filter(t => /critical|high/.test(t.sev)).length;
+const SEO_TABS_CSS = `.report{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
+.report h3{margin:0 0 4px;font-size:19px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.report .when{color:var(--dim);font-size:12.5px;margin:0 0 10px}
+.report .lead{margin:0 0 14px;font-size:14.5px}
+.report h4{margin:16px 0 6px;font-size:15px;color:var(--amber)}
+.report section>div{font-size:14px;line-height:1.85}
+.report pre{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;font-size:12.5px;direction:ltr;text-align:left;margin:8px 0}
+.report .tw{overflow-x:auto}
+.report table{border-collapse:collapse;width:100%;font-size:13px;margin:6px 0}
+.report th,.report td{border:1px solid var(--line);padding:7px 9px;text-align:start;vertical-align:top}
+.report th{background:var(--panel);font-weight:700}
+.report .src{margin-top:8px;font-size:12.5px}
+.lanes{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}.lane{border:1px solid var(--line);background:var(--card);color:var(--txt);border-radius:10px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer}.lane[aria-selected="true"]{background:var(--amber);color:#141722;border-color:var(--amber)}.lane .n{opacity:.7;font-weight:500;margin-inline-start:4px}[data-lane].hidden{display:none}`;
+
+const seoHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>سيو مدونتي — ${seoOpen.length} بنداً</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>${CSS}${SEO_TABS_CSS}</style></head><body>
+<header class="top"><div class="wrap">
+<h1>سيو مدونتي — ${seoOpen.length} بنداً مفتوحاً <span style="color:var(--dim);font-weight:500;font-size:13px">· ${seoHigh} مهمّاً · ثماني مراحل بترتيب التنفيذ، والأسهل أوّل كل مرحلة · التقرير: <a href="../modonty/seo/SEO-AUDIT-2026-08-24.html">SEO-AUDIT-2026-08-24.html</a> · باقي الشغل: <a href="TASK.html">TASK.html</a></span></h1>
+<div class="lanes" role="tablist">${seoLanes.map((l, i) => `<button class="lane" role="tab" data-lane-btn="${l.k}" aria-selected="${i === 0}">${l.n}<span class="n">${l.count}</span></button>`).join("")}</div>
+<div class="tools"><input id="q" type="search" placeholder="ابحث بالكلمة أو رقم البند…" aria-label="بحث">
+<button class="chip" data-sev="critical high" aria-pressed="false">المهمّ فقط</button>
+<button class="chip" id="prodOnly" aria-pressed="false">مؤكَّد على الإنتاج فقط</button></div>
+</div></header>
+<main class="wrap">
+${seoLanes.map((l, i) => `<div data-lane="${l.k}" class="${i ? "hidden" : ""}"><p style="color:var(--dim);margin:14px 0 4px">${l.s}</p>
+${(l.reports || []).map(reportHTML).join("\n")}
+${l.groups.map(g => `<section class="grp" data-grp="${g.k}"><h2>${g.n} <span class="n" data-count>${g.items.length}</span></h2><p>${g.s}</p><div class="grid">${g.items.map(cardHTML).join("\n")}</div></section>`).join("\n")}</div>`).join("\n")}
+</main>
+<footer>هذه اللوحة تخصّ سيو مدونتي وحده — نُقلت بطاقاته من <a href="TASK.html">TASK.html</a> نقلاً لا نسخاً. المنجز في <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a>.</footer>
+<script>
+(() => { const q = document.getElementById('q'); const chip = document.querySelector('.chip'); const prodChip = document.getElementById('prodOnly'); const cards = [...document.querySelectorAll('.card')];
+  const apply = () => { const t = q.value.trim().toLowerCase(); const sevOnly = chip.getAttribute('aria-pressed') === 'true'; const prodOnly = prodChip.getAttribute('aria-pressed') === 'true';
+    cards.forEach(c => { let ok = !t || (c._s ||= c.textContent.toLowerCase()).includes(t) || c.dataset.id.toLowerCase().includes(t); if (ok && sevOnly) ok = /critical|high/.test(c.dataset.sev); if (ok && prodOnly) ok = c.dataset.prod === 'yes'; c.classList.toggle('hidden', !ok); });
+    document.querySelectorAll('.grp').forEach(g => { const n = g.querySelectorAll('.card:not(.hidden)').length; g.querySelector('[data-count]').textContent = n; g.classList.toggle('hidden', n === 0); }); };
+  q.addEventListener('input', apply);
+  [chip, prodChip].forEach(b => b.addEventListener('click', () => { b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); apply(); }));
+  const showLane = (k) => { document.querySelectorAll('[data-lane]').forEach(l => l.classList.toggle('hidden', l.dataset.lane !== k)); document.querySelectorAll('[data-lane-btn]').forEach(b => b.setAttribute('aria-selected', b.dataset.laneBtn === k)); try { localStorage.setItem('seo-lane', k); } catch {} };
+  document.querySelectorAll('[data-lane-btn]').forEach(b => b.addEventListener('click', () => showLane(b.dataset.laneBtn)));
+  try { const s = localStorage.getItem('seo-lane'); if (s && document.querySelector('[data-lane="' + s + '"]')) showLane(s); } catch {}
+  if (location.hash) { const h = location.hash.slice(1);
+    const el = document.querySelector(/^\\d+$/.test(h) ? '.card[data-n="' + h + '"]' : '.card[data-id="' + CSS.escape(h) + '"]');
+    if (el) { showLane(el.closest('[data-lane]').dataset.lane); el.querySelector('details').open = true; el.scrollIntoView({ block: 'center' }); } }
+${COPY_JS}
+})();
+</script></body></html>`;
+
 fs.mkdirSync(outDir, { recursive: true });
+fs.writeFileSync(path.join(outDir, "SEO.html"), seoHTML);
 fs.writeFileSync(path.join(outDir, "TASK.html"), boardHTML);
 fs.writeFileSync(path.join(outDir, "TASK-ARCHIVE.html"), archiveHTML);
 fs.writeFileSync(path.join(outDir, "DATA-REFACTOR.html"), dataHTML);

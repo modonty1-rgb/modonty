@@ -7,6 +7,7 @@ import { messages } from "@/lib/messages";
 import { updatePage } from "../../actions/page-actions";
 import { generateModontyPageSEO } from "../../actions/generate-modonty-page-seo";
 import { pageSchema, type PageFormData } from "../page-schema";
+import { PAGE_CONFIGS } from "../page-config";
 import type { SettingsDefaults } from "../../components/page-form";
 
 function deriveInLanguageFromOgLocale(ogLocale: string | null | undefined): string {
@@ -211,7 +212,11 @@ export function usePageForm({ slug, initialData, settingsDefaults, onRegenerated
         setLoading(false);
         return;
       }
-      if (!formData.content.trim()) {
+      // A `seoOnly` page renders no editor — its body is built in code — so an empty content
+      // is correct, not a mistake. Demanding it here blocked every save on /reels and /audio,
+      // which is what put their SEO out of the team's reach.
+      const hasEditor = !PAGE_CONFIGS.find((c) => c.slug === slug)?.seoOnly;
+      if (hasEditor && !formData.content.trim()) {
         setError("Content is required");
         setLoading(false);
         return;

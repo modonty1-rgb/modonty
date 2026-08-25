@@ -160,26 +160,59 @@ export async function regenerateBulkIndustriesCascade(): Promise<{
   return { success: true, total: r.total, successful: r.successful };
 }
 
-export async function regenerateListingsCascade(): Promise<{
-  success: boolean;
-  successful: number;
-  total: number;
-}> {
+/** One stored-blob page: which generator owns it, plus the name the panel shows. */
+export interface StoredPageTarget {
+  kind: "listing" | "content";
+  key: string;
+  label: string;
+  path: string;
+}
+
+/**
+ * Every page modonty serves from a stored blob, in rebuild order: the eight listing pages
+ * (home, articles, categories, tags, industries, clients, trending, faq) and the eleven
+ * content pages (about … reels).
+ *
+ * The content half used to run only inside the settings-save `after()` cascade, so this
+ * panel rebuilt 8 while its seeded counter claimed 19 — Khalid watched it start at 19 and
+ * land on 8 (25 Aug 2026). The list is now the single source of both the count and the work.
+ */
+export async function getStoredPageTargets(): Promise<StoredPageTarget[]> {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
+  const [{ listListingPageTargets }, { PAGE_CONFIGS }] = await Promise.all([
+    import("@/lib/seo/listing-page-seo-generator"),
+    import("@/app/(dashboard)/modonty/setting/helpers/page-config"),
+  ]);
+
+  const listings = await listListingPageTargets();
+  return [
+    ...listings.map((p): StoredPageTarget => ({ kind: "listing", key: p.name, label: p.label, path: p.path })),
+    ...PAGE_CONFIGS.map((c): StoredPageTarget => ({
+      kind: "content",
+      key: c.slug,
+      label: c.label,
+      path: c.modontyPath,
+    })),
+  ];
+}
+
+/** Rebuild exactly one page, so the panel can name what is under way instead of a number. */
+export async function regenerateOneStoredPageCascade(
+  target: Pick<StoredPageTarget, "kind" | "key">,
+): Promise<{ success: boolean; error?: string }> {
   const session = await auth();
   if (!session) throw new Error("Unauthorized");
   try {
-    const { regenerateAllListingCaches } = await import(
-      "@/lib/seo/listing-page-seo-generator"
-    );
-    // One call rebuilds every listing page (home, categories, tags, industries,
-    // clients, trending, faq) — report them individually so the panel shows real
-    // progress instead of a meaningless 1/1.
-    const { results } = await regenerateAllListingCaches();
-    const entries = Object.values(results);
-    const successful = entries.filter(Boolean).length;
-    return { success: successful === entries.length, successful, total: entries.length };
-  } catch {
-    return { success: false, successful: 0, total: 0 };
+    if (target.kind === "listing") {
+      const { regenerateOneListingCache } = await import("@/lib/seo/listing-page-seo-generator");
+      return await regenerateOneListingCache(target.key);
+    }
+    const { regenerateContentPageCache } = await import("@/lib/seo/content-page-seo-generator");
+    return await regenerateContentPageCache(target.key);
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 }
 
@@ -193,5 +226,8 @@ export async function finalizeCascadeRevalidation(): Promise<void> {
     revalidateModontyTag("tags"),
     revalidateModontyTag("industries"),
     revalidateModontyTag("settings"),
+    // The content pages read the "pages" tag; their per-page calls already bust it, but the
+    // finalize step must not depend on which phases the operator selected.
+    revalidateModontyTag("pages"),
   ]);
 }

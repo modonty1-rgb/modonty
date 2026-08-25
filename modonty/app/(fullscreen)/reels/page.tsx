@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { auth } from "@/lib/auth";
+import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
+import { getContentPageRow } from "@/lib/seo/get-content-page-row";
 import { ModontyLogoutMark } from "@/components/icons/modonty-logout-mark";
 
 import { ReelsFeedClient } from "./components/reels-feed-client";
@@ -12,16 +14,25 @@ import { getUserReelFlags } from "@/lib/queries/get-user-reel-flags";
 
 // Immersive feed: fixed full-viewport layer above the site chrome (header/footer).
 //
-// ⚠️ FLIP `index` TO TRUE BEFORE MERGING `modonty-ui` INTO `main` — one line, board card 83c.
+// SEO — including whether this page is indexed — lives in its admin row
+// (`/modonty/pages/reels`), like every other content page.
 //
-// It is noindex on purpose, not by oversight: an indexed feed with no published reels is an
-// empty page in Google's eyes, and a thin page indexed early is harder to rank later than one
-// indexed the day it has content. Khalid, 24 Aug 2026: keep it closed through the UI phase and
-// open it LAST, right before the final merge — by then PRODDATA has real reels behind it.
-export const metadata: Metadata = {
-  title: "الريلز — مُدَوَّنَتِي",
-  robots: { index: false, follow: false },
-};
+// It shipped `noindex` while the feed was empty. It is indexable now that it has published
+// reels, and the old default had become a contradiction: `app/sitemap.ts` lists `/reels`, so
+// the site was telling Google "crawl this" and "do not index this" about the same URL. The
+// `nofollow` half was worse — it told the crawler not to follow the links into the watch
+// pages, which are the reels' only indexable surface.
+//
+// No brand in the fallback title: the root layout's template already appends "| مدونتي"
+// (layout.tsx:35), and the old fallback carried "مُدَوَّنَتِي" itself — the tag rendered
+// "الريلز — مُدَوَّنَتِي | مدونتي", the brand twice, in two different spellings.
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadataFromPageRow(await getContentPageRow("reels"), {
+    path: "/reels",
+    fallbackTitle: "الريلز",
+    fallbackDescription: "مقاطع قصيرة من مقالات شركاء مدونتي — شاهدها كاملة الشاشة.",
+  });
+}
 
 export default async function ReelsPage() {
   const { items, nextCursor } = await getReelsFeedPage();

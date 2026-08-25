@@ -10,10 +10,15 @@ import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
  *   merged/renamed slug  → **308 Permanent Redirect** to the successor slug
  *   gone / never existed → **410 Gone**
  *
- * Sections (see matcher): articles, categories, tags, industries, clients, authors.
+ * Sections (see matcher): articles, categories, tags, industries, clients, authors, reels.
  *
  * `authors` joined 2026-08-07: a deleted author's URL was measured returning HTTP 200
  * with an empty noindex page (soft 404) while every other section already returned 410.
+ *
+ * `reels` joined 2026-08-25 for that same symptom, measured side by side: every other
+ * section answered 410 for a slug that does not exist and `/reels/zzz-nope` answered 200.
+ * A reel the client removes is exactly the case — its URL was in the sitemap the day
+ * before, so leaving it a soft 404 keeps a dead clip in the index.
  *
  * Per Google Search Central: 4xx tells the indexing pipeline the content doesn't
  * exist → the URL is removed from the index; 308 (treated as ≡ 301) moves the URL
@@ -41,6 +46,7 @@ export const config = {
     "/industries/:slug",
     "/clients/:slug",
     "/authors/:slug",
+    "/reels/:slug",
     "/users/:id",
     "/page/:pageNumber",
   ],

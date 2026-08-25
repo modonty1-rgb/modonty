@@ -74,6 +74,25 @@ export const PAGE_CONFIGS: PageConfig[] = [
     modontyPath: "/story",
     seoOnly: true,
   },
+  {
+    // Audio and Reels were the last two pages whose title, description and robots directive were
+    // written in code: /audio hand-rolled its copy inside `generateMetadata`, /reels shipped a
+    // title and a hardcoded `noindex` with no canonical, OG or twitter card at all. Both are
+    // meant to be indexed — the reels feed is closed only while the UI phase runs, and closing
+    // it from the database means opening it is a switch here, not an edit-and-deploy.
+    slug: "audio",
+    label: "Audio",
+    description: "Audio page SEO (page body is built in code)",
+    modontyPath: "/audio",
+    seoOnly: true,
+  },
+  {
+    slug: "reels",
+    label: "Reels",
+    description: "Reels feed SEO — its robots directive lives here, not in code",
+    modontyPath: "/reels",
+    seoOnly: true,
+  },
 ];
 
 export function getPageConfig(slug: string): PageConfig | undefined {

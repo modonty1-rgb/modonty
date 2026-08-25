@@ -15,7 +15,8 @@ import {
   regenerateBulkCategoriesCascade,
   regenerateBulkTagsCascade,
   regenerateBulkIndustriesCascade,
-  regenerateListingsCascade,
+  getStoredPageTargets,
+  regenerateOneStoredPageCascade,
   finalizeCascadeRevalidation,
 } from "../actions/cascade-step-actions";
 
@@ -33,8 +34,14 @@ const PHASE_DEFS: { key: PhaseKey; label: string }[] = [
 ];
 
 // What "Listings" actually rebuilds — shown in the UI so the number is not a mystery.
-const LISTING_PAGES = "Home · Categories · Tags · Industries · Clients · Trending · FAQ";
-const LISTING_PAGE_COUNT = 7;
+// Every page modonty serves from a stored blob is here: the eight listing pages and the
+// eleven content pages. This is only the seed shown before the run; the server returns the
+// real total when the step finishes, and the two must agree — they did not until
+// `regenerateListingsCascade` started rebuilding the content pages too (25 Aug 2026).
+const LISTING_PAGES =
+  "Home · Articles · Categories · Tags · Industries · Clients · Trending · FAQ — " +
+  "و١١ صفحة محتوى: About · Contact · Terms · User Agreement · Privacy · Cookies · Copyright · Trust · Story · Audio · Reels";
+const LISTING_PAGE_COUNT = 19;
 
 const ALL_SELECTED: Record<PhaseKey, boolean> = {
   categories: true,
@@ -109,6 +116,10 @@ export function CascadeStatusPanel({ blocked = false }: { blocked?: boolean }) {
   const [tick, setTick] = useState(0);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [selected, setSelected] = useState<Record<PhaseKey, boolean>>(ALL_SELECTED);
+  // What is being rebuilt right now. A bar at 79% says how much is left but not what is
+  // running, so a stuck page looked identical to a slow one (Khalid, 25 Aug 2026).
+  const [currentTask, setCurrentTask] = useState<string | null>(null);
+  const [failedPages, setFailedPages] = useState<string[]>([]);
   const cancelRef = useRef(false);
   const [, startTransition] = useTransition();
 
@@ -142,9 +153,12 @@ export function CascadeStatusPanel({ blocked = false }: { blocked?: boolean }) {
     setStartedAt(Date.now());
     setCompletedAt(null);
     setErrorMsg(null);
+    setCurrentTask(null);
+    setFailedPages([]);
     const t0 = Date.now();
 
     const bail = () => {
+      setCurrentTask(null);
       setCompletedAt(Date.now());
       setState("cancelled");
       toast({ title: "Cascade cancelled", description: "Progress so far is saved — regeneration is idempotent." });
@@ -166,18 +180,21 @@ export function CascadeStatusPanel({ blocked = false }: { blocked?: boolean }) {
       });
 
       if (selected.categories) {
+        setCurrentTask("التصنيفات — دفعة واحدة");
         const cats = await regenerateBulkCategoriesCascade();
         setProgress((p) => ({ ...p, categories: { done: cats.successful, total: cats.total, ok: cats.success } }));
         if (cancelRef.current) return bail();
       }
 
       if (selected.tags) {
+        setCurrentTask("الوسوم — دفعة واحدة");
         const tags = await regenerateBulkTagsCascade();
         setProgress((p) => ({ ...p, tags: { done: tags.successful, total: tags.total, ok: tags.success } }));
         if (cancelRef.current) return bail();
       }
 
       if (selected.industries) {
+        setCurrentTask("القطاعات — دفعة واحدة");
         const inds = await regenerateBulkIndustriesCascade();
         setProgress((p) => ({ ...p, industries: { done: inds.successful, total: inds.total, ok: inds.success } }));
         if (cancelRef.current) return bail();
@@ -203,6 +220,7 @@ export function CascadeStatusPanel({ blocked = false }: { blocked?: boolean }) {
           for (let i = 0; i < clientIds.length; i += CONCURRENCY) {
             if (cancelRef.current) return bail();
             const chunk = clientIds.slice(i, i + CONCURRENCY);
+            setCurrentTask(`الشركاء — ${i + 1}-${i + chunk.length} من ${clientIds.length}`);
             const results = await Promise.all(chunk.map((id) => regenerateOneClientCascade(id)));
             clientOk += results.filter((r) => r.success).length;
             setProgress((p) => ({ ...p, clients: { ...p.clients, done: i + chunk.length } }));
@@ -215,6 +233,7 @@ export function CascadeStatusPanel({ blocked = false }: { blocked?: boolean }) {
           for (let i = 0; i < articleIds.length; i += CONCURRENCY) {
             if (cancelRef.current) return bail();
             const chunk = articleIds.slice(i, i + CONCURRENCY);
+            setCurrentTask(`المقالات — ${i + 1}-${i + chunk.length} من ${articleIds.length}`);
             const results = await Promise.all(chunk.map((id) => regenerateOneArticleCascade(id)));
             articleOk += results.filter((r) => r.success).length;
             setProgress((p) => ({ ...p, articles: { ...p.articles, done: i + chunk.length } }));
@@ -225,14 +244,30 @@ export function CascadeStatusPanel({ blocked = false }: { blocked?: boolean }) {
 
       if (selected.listings) {
         if (cancelRef.current) return bail();
-        const listings = await regenerateListingsCascade();
+        // Page by page, so the panel can name the one under way. Sequential on purpose:
+        // they all write the same Settings singleton, and five parallel upserts on one
+        // document is a lost-update race, not speed.
+        const targets = await getStoredPageTargets();
+        setProgress((p) => ({ ...p, listings: { ...p.listings, total: targets.length } }));
+
+        let pagesOk = 0;
+        for (const [index, target] of targets.entries()) {
+          if (cancelRef.current) return bail();
+          setCurrentTask(`${target.label} — ${target.path}`);
+          const r = await regenerateOneStoredPageCascade({ kind: target.kind, key: target.key });
+          if (r.success) pagesOk += 1;
+          else setFailedPages((f) => [...f, `${target.label} (${target.path})`]);
+          setProgress((p) => ({ ...p, listings: { ...p.listings, done: index + 1 } }));
+        }
         setProgress((p) => ({
           ...p,
-          listings: { done: listings.successful, total: listings.total, ok: listings.success },
+          listings: { done: targets.length, total: targets.length, ok: pagesOk === targets.length },
         }));
       }
 
+      setCurrentTask("تحديث الكاش على مدونتي");
       await finalizeCascadeRevalidation();
+      setCurrentTask(null);
 
       setCompletedAt(Date.now());
       setState("done");
@@ -241,6 +276,7 @@ export function CascadeStatusPanel({ blocked = false }: { blocked?: boolean }) {
         // Trigger router refresh so KPIs reflect new state (no-op fn, transition wraps no work)
       });
     } catch (err) {
+      setCurrentTask(null);
       setErrorMsg(err instanceof Error ? err.message : "Unknown error");
       setState("error");
       toast({ title: "Cascade failed", description: err instanceof Error ? err.message : "Unknown error", variant: "destructive" });
@@ -313,10 +349,35 @@ export function CascadeStatusPanel({ blocked = false }: { blocked?: boolean }) {
             </div>
           </div>
           <Progress value={percent} className="h-2" />
+          {/* The one line that says WHAT is running. Without it a stalled page and a slow
+              page look the same, and the only way to tell was the server log. */}
+          {currentTask && state === "running" && (
+            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+              <Loader2 className="h-3 w-3 animate-spin text-amber-500 shrink-0" />
+              <span className="truncate" dir="rtl">
+                جارٍ الآن: <span className="font-medium text-foreground">{currentTask}</span>
+              </span>
+            </div>
+          )}
         </div>
       )}
 
       {state !== "idle" && <ProgressGrid progress={progress} state={state} />}
+
+      {/* A page that failed is named, not swallowed into "18 of 19". */}
+      {failedPages.length > 0 && (
+        <div className="rounded-md border border-red-500/30 bg-red-500/5 p-3 text-xs space-y-1" dir="rtl">
+          <div className="flex items-center gap-1.5 text-red-600 dark:text-red-300 font-medium">
+            <XCircle className="h-3.5 w-3.5 shrink-0" />
+            صفحات فشل توليدها ({failedPages.length})
+          </div>
+          <ul className="ps-5 list-disc text-red-600/90 dark:text-red-300/90 space-y-0.5">
+            {failedPages.map((p) => (
+              <li key={p}>{p}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {errorMsg && (
         <div className="rounded-md border border-red-500/30 bg-red-500/5 p-3 text-xs flex items-start gap-2">

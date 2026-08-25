@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useTransition, useCallback } from "react";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, RefreshCw } from "lucide-react";
+
+import { regenerateHomePageCache } from "@/lib/seo/listing-page-seo-generator";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -52,6 +54,7 @@ export function ModontyForm({ initialSettings, coreClientId }: Props) {
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [savingTab, setSavingTab] = useState<string | null>(null);
   const [isSaving, startSaving] = useTransition();
+  const [isRegenerating, startRegenerating] = useTransition();
 
   const set = useCallback(<K extends keyof AllSettings>(key: K, value: AllSettings[K]) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
@@ -82,6 +85,23 @@ export function ModontyForm({ initialSettings, coreClientId }: Props) {
 
   const cacheLabel = formatTimeAgo(settings.jsonLdLastGenerated);
 
+  /**
+   * Regenerate the homepage's stored meta + JSON-LD, the same button its six sister listing
+   * pages carry (`_shared/listing-page-form.tsx`). The homepage had none: its only rebuild path
+   * was the dashboard's «إصلاح» row or a full cascade, so a Settings change could sit unbuilt
+   * with nothing on this screen to say so.
+   */
+  function handleRegenerate() {
+    startRegenerating(async () => {
+      const r = await regenerateHomePageCache();
+      if (!r.success) {
+        toast({ title: messages.error.operation_failed, description: r.error || "فشل التوليد", variant: "destructive" });
+        return;
+      }
+      toast({ title: "تم تحديث الكاش", description: "Homepage cache regenerated.", variant: "success" });
+    });
+  }
+
   // Per-tab save footer — bleeds to the Section card edges.
   const tabFooter = (tabKey: string, fields: readonly (keyof AllSettings)[], label: string) => {
     const dirty = isTabDirty(fields);
@@ -89,10 +109,26 @@ export function ModontyForm({ initialSettings, coreClientId }: Props) {
     return (
       <div className="-mx-5 -mb-5 mt-1 flex items-center justify-between gap-3 border-t bg-muted/20 px-5 py-3.5">
         <StatusBadge isDirty={dirty} isSaving={saving} savedAt={savedAt} />
-        <Button onClick={() => handleSaveTab(tabKey, fields)} disabled={isSaving || !dirty} size="sm" className="h-8 gap-1.5">
-          {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
-          {saving ? "Saving..." : `Save ${label}`}
-        </Button>
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] text-muted-foreground">
+            Cache: <span suppressHydrationWarning className="text-foreground">{cacheLabel}</span>
+          </span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-8 gap-1.5"
+            onClick={handleRegenerate}
+            disabled={isRegenerating || isSaving}
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isRegenerating ? "animate-spin" : ""}`} />
+            {isRegenerating ? "Regenerating..." : "Regenerate cache"}
+          </Button>
+          <Button onClick={() => handleSaveTab(tabKey, fields)} disabled={isSaving || !dirty} size="sm" className="h-8 gap-1.5">
+            {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+            {saving ? "Saving..." : `Save ${label}`}
+          </Button>
+        </div>
       </div>
     );
   };

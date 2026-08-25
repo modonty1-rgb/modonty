@@ -3,9 +3,11 @@ import { notFound } from "next/navigation";
 
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+import { buildListingPageMetadata } from "@modonty/shared/lib/seo/build-listing-page-metadata";
 
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
-import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
+import { getMetadataSettings } from "@/lib/settings/get-metadata-settings";
+import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { SITE_URL } from "@/constants";
 
 import { getArticlesArchive, type ArchiveSort } from "@/lib/articles/archive/get-articles-archive";
@@ -122,17 +124,39 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
    * Each entry points at THIS filtered canonical, not at the bare `/articles` — the same single
    * source of Arabic content serving every Gulf market, per filter view.
    */
-  const { alternateLanguages } = await getPageSeoDefaults();
+  /**
+   * The archive is a master page like its sisters: the admin generates and stores its meta
+   * (`Settings.articlesPageMetaTags`, one shared builder, every default included) and this page
+   * READS that blob — no second hand-rolled object to drift from it.
+   *
+   * Two things are per-request and cannot live in a stored column, so they are layered on top:
+   * the canonical (one per filter combination — collapsing them onto the bare page would ask
+   * Google to drop exactly the URLs worth indexing) and the scoped title/description.
+   * The blob's own alternates are replaced for the same reason: hreflang must follow THIS
+   * canonical, not the bare one.
+   */
+  const [{ metadata: stored }, settings] = await Promise.all([
+    getListingPageSeo("articles"),
+    getMetadataSettings(),
+  ]);
+  // Named `blob`, not `base` — that name already belongs to the title stem twenty lines up,
+  // and the collision made every spread below apply to a string instead of the metadata.
+  const blob =
+    stored ??
+    buildListingPageMetadata({ settings, pageUrl: canonical, siteUrl: SITE_URL, title, description });
 
   return {
+    ...blob,
+    // The archive's title already carries the brand, so the root template must not append it again.
     title: { absolute: title },
     description,
     alternates: {
       canonical,
-      languages: buildHreflangLanguages(alternateLanguages, canonical, SITE_URL),
+      languages: buildHreflangLanguages(settings.defaultAlternateLanguages, canonical, SITE_URL),
     },
+    openGraph: { ...(blob.openGraph as object | undefined), title, description, url: canonical },
+    twitter: { ...(blob.twitter as object | undefined), title, description },
     ...(outOfRange && { robots: { index: false, follow: false } }),
-    openGraph: { title, description, url: canonical, type: "website" },
   };
 }
 

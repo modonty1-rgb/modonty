@@ -93,6 +93,16 @@ export async function cascadeSettingsToAllEntities(): Promise<{
     // Non-critical
   }
 
+  // 5. Content pages — about, contact, terms, the four legal pages, trust, story, audio, reels.
+  // They read a stored blob like everything else, so a Settings change has to reach them here
+  // or their copy of the defaults goes stale the moment one is edited.
+  try {
+    const { regenerateAllContentPageCaches } = await import("@/lib/seo/content-page-seo-generator");
+    await regenerateAllContentPageCaches();
+  } catch {
+    // Non-critical
+  }
+
   // 5. Revalidate all public site tags
   await Promise.all([
     revalidateModontyTag("articles"),

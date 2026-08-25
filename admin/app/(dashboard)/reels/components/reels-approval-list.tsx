@@ -8,6 +8,7 @@ import {
   Clapperboard,
   Clock,
   Image as ImageIcon,
+  RefreshCw,
   Video,
   XCircle,
 } from "lucide-react";
@@ -37,6 +38,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 import { approveReel, rejectReel } from "../actions/reel-approval";
+import { repairReelMedia } from "../actions/repair-reel-media";
 import type { PendingReelRow } from "../helpers/load-reels";
 
 // The approval queue (أ٥). One card per waiting reel; the two ق9 guards render as an
@@ -86,6 +88,23 @@ export function ReelsApprovalList({ reels }: { reels: PendingReelRow[] }) {
     });
   };
 
+  const handleRepair = (reel: PendingReelRow) => {
+    setBusyId(reel.id);
+    startTransition(async () => {
+      const result = await repairReelMedia(reel.id);
+      setBusyId(null);
+      if (result.success) {
+        toast({
+          title: "رجعت البيانات",
+          description: `المقطع ${result.durationSec} ثانية — الاعتماد صار مفتوح.`,
+        });
+        router.refresh();
+      } else {
+        toast({ title: "ما قدرنا نجيبها", description: result.error, variant: "destructive" });
+      }
+    });
+  };
+
   const handleReject = () => {
     if (!rejectTarget) return;
     const target = rejectTarget;
@@ -111,7 +130,7 @@ export function ReelsApprovalList({ reels }: { reels: PendingReelRow[] }) {
     <div className="space-y-4">
       {reels.map((reel) => {
         const missingText = !reel.title?.trim() || !reel.description?.trim();
-        const locked = missingText || reel.duplicateTitle;
+        const locked = missingText || reel.duplicateTitle || reel.incompleteUpload;
         const busy = isPending && busyId === reel.id;
 
         return (
@@ -175,7 +194,30 @@ export function ReelsApprovalList({ reels }: { reels: PendingReelRow[] }) {
                 {!reel.isVideo && <Field label="النص البديل" value={reel.altText} />}
               </div>
 
-              {/* Guard notices — say why, and whose move it is */}
+              {/* Guard notices — say why, and whose move it is.
+                  This one goes FIRST: a reel whose file never arrived has nothing to fix a
+                  title for, and the client cannot see the failure from their side — the
+                  uploader showed them a toast that is long gone. Khalid, 25 Aug 2026: the
+                  client is not technical, so the admin sees the problem and explains it. */}
+              {reel.incompleteUpload && (
+                <div className="space-y-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2">
+                  <p className="text-xs text-red-700 dark:text-red-400">
+                    الاعتماد مقفول — الرفع ما اكتمل. ما عندنا مدّة المقطع ولا مقاسه، لأن
+                    المتصفّح ما رجّعها بعد الرفع. لو الملف وصل بني فعلاً، الزرّ تحت يجيبها؛ ولو
+                    بني ما يعرفه، كلّم العميل يرفعه من جديد من صفحة الفيديوهات في الكونسل.
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 gap-1.5 text-xs"
+                    disabled={busy}
+                    onClick={() => handleRepair(reel)}
+                  >
+                    <RefreshCw className="h-3 w-3" aria-hidden="true" />
+                    جِب البيانات من بني
+                  </Button>
+                </div>
+              )}
               {missingText && (
                 <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-400">
                   الاعتماد مقفول — {!reel.title?.trim() ? "العنوان" : "الوصف"} فاضي. العميل

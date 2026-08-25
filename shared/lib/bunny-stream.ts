@@ -50,13 +50,37 @@ export interface StreamUrls {
   thumbnailUrl: string;
 }
 
-export function streamUrls(videoId: string): StreamUrls {
+/**
+ * Renditions Bunny can produce, best first. Used to pick the MP4 that actually exists —
+ * Bunny only encodes DOWN from the source, so a 480p upload never gets a 720p file.
+ */
+const RENDITIONS = ["1080p", "720p", "480p", "360p", "240p"] as const;
+
+/**
+ * @param resolution Which MP4 rendition to point at. Defaults to 720p — the value used
+ *   before encoding finishes, when the available set is not known yet. Once Bunny reports
+ *   `availableResolutions`, callers pass the real best one: `play_720p.mp4` on a video that
+ *   has no 720p rendition is a 404, which would break both the feed's `<video>` and the
+ *   `contentUrl` Google fetches to verify the clip.
+ */
+export function streamUrls(videoId: string, resolution: string = "720p"): StreamUrls {
   const { cdn } = streamConfig();
   return {
     playbackUrl: `https://${cdn}/${videoId}/playlist.m3u8`,
-    mp4Url: `https://${cdn}/${videoId}/play_720p.mp4`,
+    mp4Url: `https://${cdn}/${videoId}/play_${resolution}.mp4`,
     thumbnailUrl: `https://${cdn}/${videoId}/thumbnail.jpg`,
   };
+}
+
+/** The best rendition Bunny actually produced, or null while it has produced none. */
+export function bestRendition(availableResolutions: string | null | undefined): string | null {
+  const have = new Set(
+    (availableResolutions ?? "")
+      .split(",")
+      .map((r) => r.trim())
+      .filter(Boolean),
+  );
+  return RENDITIONS.find((r) => have.has(r)) ?? null;
 }
 
 /** Everything the browser needs to upload — and nothing it must never see. */
@@ -119,6 +143,8 @@ export interface StreamVideoState {
   length: number;
   width: number;
   height: number;
+  /** Comma-separated, e.g. "360p,480p,720p" — Bunny encodes down only, never up. */
+  availableResolutions: string;
 }
 
 /** Read the encoding state of one video. */
@@ -136,6 +162,7 @@ export async function getStreamVideo(videoId: string): Promise<StreamVideoState 
     length?: number;
     width?: number;
     height?: number;
+    availableResolutions?: string | null;
   };
   return {
     status: v.status ?? 0,
@@ -143,5 +170,6 @@ export async function getStreamVideo(videoId: string): Promise<StreamVideoState 
     length: v.length ?? 0,
     width: v.width ?? 0,
     height: v.height ?? 0,
+    availableResolutions: v.availableResolutions ?? "",
   };
 }

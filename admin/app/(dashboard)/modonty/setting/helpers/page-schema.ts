@@ -12,7 +12,12 @@ const sitemapChangeFreqEnum = z.enum(["always", "hourly", "daily", "weekly", "mo
 
 export const pageSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  content: z.string().min(1, "Content is required"),
+  // Not `.min(1)`: four pages (`seoOnly` in PAGE_CONFIGS — audio, reels, …) build their body
+  // in code and render no editor, so their row's content is legitimately empty. Requiring it
+  // here made their SEO unsaveable — the form refused with "Content is required" next to its
+  // own note saying there is no editor. Pages that DO have an editor are checked in the form
+  // hook, where the page's config is known.
+  content: z.string(),
   heroImage: z.string().optional(),
   heroImageAlt: z.string().optional(),
   heroImageCloudinaryPublicId: z.string().optional(),

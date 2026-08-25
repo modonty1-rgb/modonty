@@ -35,6 +35,12 @@ interface Options {
   /** Shown when the row is missing or its title is empty — never an empty tag. */
   fallbackTitle: string;
   fallbackDescription: string;
+  /**
+   * Robots directive to use while the row carries none. Defaults to the Settings default
+   * (indexable). `/reels` passes "noindex, nofollow": its feed is closed until it has content,
+   * and until someone saves its row, code must not open it by omission.
+   */
+  fallbackRobots?: string;
 }
 
 /**
@@ -46,11 +52,18 @@ interface Options {
  */
 export async function buildMetadataFromPageRow(
   page: PageSeoRow | null,
-  { path, fallbackTitle, fallbackDescription }: Options,
+  { path, fallbackTitle, fallbackDescription, fallbackRobots }: Options,
 ): Promise<Metadata> {
-  // A missing row is an EMPTY row, not a different code path: every field below already
-  // falls back, so the page still ships og:, twitter: and robots exactly as before. An
-  // early return here would silently drop them until someone filled the form.
+  // The stored blob is the source of truth: the admin generated it from this row plus every
+  // Settings default, so reading it is one property access instead of rebuilding the same
+  // object on every request (Khalid, 25 Aug 2026 — every page reads ready-made data).
+  const stored = (page as { nextjsMetadata?: unknown } | null)?.nextjsMetadata;
+  if (stored && typeof stored === "object" && Object.keys(stored as object).length > 0) {
+    return stored as Metadata;
+  }
+
+  // No blob yet (a page saved before this existed, or never generated): build it here so the
+  // page still ships og:, twitter: and robots rather than waiting for someone to press a button.
   const row: PageSeoRow = page ?? {};
 
   // The chain is page column → Settings default → literal. The middle link is the one the
@@ -68,7 +81,7 @@ export async function buildMetadataFromPageRow(
     row.ogImage?.trim() || row.socialImage?.trim() || brandMedia.ogImageUrl || undefined;
 
   // The column stores the directive as written ("index, follow"); absence means indexable.
-  const robotsDirective = row.metaRobots?.trim() || defaults.metaRobots;
+  const robotsDirective = row.metaRobots?.trim() || fallbackRobots || defaults.metaRobots;
   const shouldIndex = !robotsDirective.includes("noindex");
   const shouldFollow = !robotsDirective.includes("nofollow");
 

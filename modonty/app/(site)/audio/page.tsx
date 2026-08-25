@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
+import { getContentPageRow } from "@/lib/seo/get-content-page-row";
 import { messages } from "@/lib/i18n/messages";
 import { IconVolume2 } from "@/lib/icons";
 
@@ -27,7 +28,9 @@ import { SURAHS } from "./data/quran-surahs";
  * recitation first now, because that is what the page actually is.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  return buildMetadataFromPageRow(null, {
+  // The copy now comes from the page's own row in the admin (`/modonty/pages/audio`); the
+  // literals below are only the seed for a row that has not been saved yet.
+  return buildMetadataFromPageRow(await getContentPageRow("audio"), {
     path: "/audio",
     fallbackTitle: "استمع للقرآن الكريم كاملاً بعشرين قارئاً — ومقالات مدونتي مقروءة",
     fallbackDescription:

@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 
-const ALLOWED_TAGS = ["articles", "settings", "categories", "clients", "tags", "industries", "faqs", "authors", "ga4-clients", "reels"] as const;
+// "pages" is the tag `getContentPageRow` caches the eleven content pages under (about,
+// contact, terms, the four legal pages, trust, story, audio, reels). It was missing here, so
+// every admin save of one of those pages fired a revalidation this route answered with 400 —
+// the row changed in the database and the live page kept serving the old blob for hours.
+const ALLOWED_TAGS = ["articles", "settings", "categories", "clients", "tags", "industries", "faqs", "authors", "ga4-clients", "reels", "pages"] as const;
 
 export async function POST(req: NextRequest) {
   try {

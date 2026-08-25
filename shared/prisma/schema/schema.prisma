@@ -2657,6 +2657,9 @@ model Settings {
   tagsSeoDescription    String?
   industriesSeoTitle    String?
   industriesSeoDescription String?
+  // Article archive (/articles) — a master page like its sisters: its own editable SEO copy.
+  articlesSeoTitle      String?
+  articlesSeoDescription String?
 
   // Cached site-level JSON-LD (optional; same pattern as Client/Modonty)
   jsonLdStructuredData   String?   @db.String // Cached @graph JSON string
@@ -2677,6 +2680,15 @@ model Settings {
   categoriesPageJsonLdStructuredData  String?   @db.String
   categoriesPageJsonLdLastGenerated   DateTime?
   categoriesPageJsonLdValidationReport Json?
+
+  // Article archive (/articles) meta + JSON-LD — same cached pattern as every listing page.
+  // The page exists (modonty/app/(site)/articles/page.tsx) and was the ONLY listing without a
+  // cached blob, so it hand-rolled four OpenGraph fields and inherited none of the defaults.
+  // Filtered views derive their own canonical from this base at request time.
+  articlesPageMetaTags              Json?
+  articlesPageJsonLdStructuredData  String?   @db.String
+  articlesPageJsonLdLastGenerated   DateTime?
+  articlesPageJsonLdValidationReport Json?
 
   // Trending list page meta + JSON-LD
   trendingPageMetaTags              Json?
@@ -2805,6 +2817,12 @@ model Modonty {
   
   // Cached SEO (meta tags + JSON-LD, generated on save)
   metaTags              Json?    // Client-shaped meta object
+  // The cached Next.js Metadata object, written by the admin and read RAW by modonty — the
+  // same contract every listing page and every client page already follows. `metaTags` above
+  // is NOT this: it holds organizationSeo/ogLocaleAlternate, which is why these pages were
+  // still building their metadata per request while everything else read a blob.
+  nextjsMetadata        Json?
+  metaLastGenerated     DateTime?
   jsonLdStructuredData  String?  // WebPage @graph JSON-LD string
   jsonLdLastGenerated   DateTime?
   jsonLdValidationReport Json?   // { adobe, ajv, custom }

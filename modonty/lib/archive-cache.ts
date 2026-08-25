@@ -92,6 +92,21 @@ const caches = {
       await db.client.findMany({ where: { subscriptionStatus: "ACTIVE" }, select: { slug: true } }),
     ),
   ),
+  // Reels joined 2026-08-25 with the SAME measured symptom that brought `authors` here in
+  // August: a reel the client removed kept answering HTTP 200 with a "ريل غير موجود" body,
+  // while every other section already returned 410. A soft 404 keeps the URL in the index.
+  // `reelSlug` is the public key, and only a PUBLISHED reel still in the feed serves a page —
+  // the same condition `getReelBySlug` enforces.
+  reels: createSlugCache(async () =>
+    new Set(
+      (
+        await db.media.findMany({
+          where: { inReels: true, reelStatus: "PUBLISHED", reelSlug: { not: null } },
+          select: { reelSlug: true },
+        })
+      ).map((r) => r.reelSlug as string),
+    ),
+  ),
 } as const;
 
 export type LiveSection = keyof typeof caches;

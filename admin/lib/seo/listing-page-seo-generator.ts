@@ -15,7 +15,7 @@
  * Called when: items are created, updated, or deleted in that entity, and by the SEO cascade.
  */
 
-import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+import { buildListingPageMetadata } from "@modonty/shared/lib/seo/build-listing-page-metadata";
 
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
@@ -50,55 +50,21 @@ interface ListingPageConfig {
 }
 
 /**
- * The hreflang map, from `Settings.defaultAlternateLanguages` — the same list modonty reads.
- *
- * This used to be the literal `{ "ar-SA": url, "ar-EG": url }`. Settings holds nine locales,
- * so seven Gulf-and-default entries never reached Google, `x-default` included (measured
- * 2026-08-15). A cached blob generated here is what modonty ships, so a literal here was a
- * hardcoded value wearing a database's clothes.
+ * Thin adapter over the ONE shared builder. Every listing page — the home page included —
+ * goes through `buildListingPageMetadata`, so a default added to Settings reaches all seven
+ * at once. The home page used to hand-roll its own object here, which is how its locale set
+ * drifted from its sisters'.
  */
-function buildHreflang(pageUrl: string, settings: Record<string, unknown>, siteUrl: string) {
-  return buildHreflangLanguages(settings?.defaultAlternateLanguages, pageUrl, siteUrl);
-}
-
 function buildListingMetadata(config: ListingPageConfig) {
-  const s = config.settings;
-  // Robots comes from Settings so a change there actually reaches Google. It used to be
-  // the literal "index, follow", which silently ignored defaultMetaRobots.
-  const robots = (s.defaultMetaRobots as string)?.trim() || "index, follow";
-  const twitterSite = (s.twitterSite as string)?.trim() || undefined;
-  const twitterCreator = ((s.twitterCreator as string) || (s.twitterSite as string))?.trim() || undefined;
-  const author = (s.siteAuthor as string)?.trim() || undefined;
-
-  return {
+  return buildListingPageMetadata({
+    settings: config.settings,
+    pageUrl: config.pageUrl,
+    siteUrl: config.siteUrl,
     title: config.title,
     description: config.description,
-    robots,
-    ...(author && { authors: [{ name: author }] }),
-    alternates: {
-      canonical: config.pageUrl,
-      languages: buildHreflang(config.pageUrl, s, config.siteUrl),
-    },
-    openGraph: {
-      title: config.title,
-      description: config.description,
-      type: "website",
-      url: config.pageUrl,
-      siteName: config.siteName,
-      locale: (s.defaultOgLocale as string)?.trim() || "ar_SA",
-      ...(config.ogImage && {
-        images: [{ url: config.ogImage, width: 1200, height: 630, alt: config.ogImageAlt || config.title }],
-      }),
-    },
-    twitter: {
-      card: (config.ogImage ? "summary_large_image" : "summary") as "summary_large_image" | "summary",
-      title: config.title,
-      description: config.description,
-      ...(twitterSite && { site: twitterSite }),
-      ...(twitterCreator && { creator: twitterCreator }),
-      ...(config.ogImage && { images: [config.ogImage] }),
-    },
-  };
+    ogImage: config.ogImage,
+    ogImageAlt: config.ogImageAlt,
+  });
 }
 
 // ─── JSON-LD source ───
@@ -301,25 +267,20 @@ export async function regenerateHomePageCache(): Promise<{ success: boolean; err
     const description = (s.modontySeoDescription as string) || (s.brandDescription as string) || "منصة محتوى عربية متخصصة";
     const ogImageUrl = (s.ogImageUrl as string) || undefined;
 
-    // Build metadata (valid Next.js Metadata shape — consumed directly by modonty getHomePageSeo).
-    const twitterSite = (s.twitterSite as string) || undefined;
-    const ogMeta: Record<string, unknown> = { title, description, type: "website", url: siteUrl, siteName, locale: "ar_SA" };
-    if (ogImageUrl) ogMeta.images = [{ url: ogImageUrl, width: 1200, height: 630, alt: (s.altImage as string) || title }];
-    const twMeta: Record<string, unknown> = { card: ogImageUrl ? "summary_large_image" : "summary", title, description };
-    if (twitterSite) twMeta.site = twitterSite;
-    const twitterCreator = ((s.twitterCreator as string) || twitterSite)?.trim();
-    if (twitterCreator) twMeta.creator = twitterCreator;
-    if (ogImageUrl) twMeta.images = [ogImageUrl];
-    const author = (s.siteAuthor as string)?.trim();
-    const metadata = {
+    // Same builder as its six sisters — the home page has no second opinion any more.
+    // It used to hand-roll this object here, and that copy is how `locale` and the hreflang
+    // set drifted from the shared one (measured 2026-08-25: nine locales in Settings, none on any page).
+    const metadata = buildListingMetadata({
+      pageUrl: siteUrl,
       title,
       description,
-      robots: (s.defaultMetaRobots as string)?.trim() || "index, follow",
-      ...(author && { authors: [{ name: author }] }),
-      alternates: { canonical: siteUrl, languages: buildHreflang(siteUrl, s, siteUrl) },
-      openGraph: ogMeta,
-      twitter: twMeta,
-    };
+      siteName,
+      siteUrl,
+      breadcrumbName: siteName,
+      ogImage: ogImageUrl,
+      ogImageAlt: (s.altImage as string) || title,
+      settings: s,
+    });
 
     // JSON-LD from the rich, validated home builder (Organization + WebSite + CollectionPage +
     // ItemList of latest articles). sameAs (incl. WhatsApp/Telegram) flows in via getSameAsFromSettings.
@@ -373,6 +334,41 @@ export async function regenerateTrendingPageCache(): Promise<{ success: boolean;
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// PAGE: ARTICLES ARCHIVE (/articles) — a master page like its sisters
+//
+// It used to be documented here as "deliberately absent". The route exists now
+// (modonty/app/(site)/articles/page.tsx) and is the site's core listing, so it gets the same
+// cached blob: meta from the shared builder, JSON-LD from `previewPageSeo`. The blob describes
+// the BARE /articles; filtered views derive their own canonical on modonty's side.
+// ═══════════════════════════════════════════════════════════════════
+
+export async function regenerateArticlesListingCache(): Promise<{ success: boolean; error?: string }> {
+  try {
+    const settings = await getAllSettings();
+    const s = settings as unknown as Record<string, unknown>;
+    const siteUrl = getSiteUrl(s);
+    const siteName = getSiteName(s);
+    const title = (s.articlesSeoTitle as string) || "كل المقالات";
+    const description =
+      (s.articlesSeoDescription as string) ||
+      "كل مقالات مدونتي في مكان واحد — صفِّ بالمجال أو التصنيف، واختر حسب الوقت اللي عندك.";
+    const pageUrl = `${siteUrl}/articles`;
+
+    const config: ListingPageConfig = {
+      pageUrl, title, description, siteName, siteUrl, breadcrumbName: "المقالات",
+      ogImage: (s.ogImageUrl as string) || undefined,
+      ogImageAlt: (s.altImage as string) || undefined,
+      settings: s,
+    };
+
+    await updateSettingsPageCache("articlesPageMetaTags", "articlesPageJsonLdStructuredData", "articlesPageJsonLdLastGenerated", "articlesPageJsonLdValidationReport", buildListingMetadata(config), await richJsonLdFor("articles"));
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // PAGE: FAQ
 // ═══════════════════════════════════════════════════════════════════
 
@@ -404,19 +400,41 @@ export async function regenerateFaqPageCache(): Promise<{ success: boolean; erro
 // REGENERATE ALL LISTING CACHES
 // ═══════════════════════════════════════════════════════════════════
 
+/**
+ * The eight listing pages, in the order the cascade rebuilds them. Module-level and not
+ * exported: a `"use server"` file may only export async functions, and the cascade panel
+ * needs to name the page it is on, so it asks through `listListingPageTargets()` below.
+ */
+const LISTING_PAGES: { name: string; label: string; path: string; fn: () => Promise<{ success: boolean }> }[] = [
+  { name: "home", label: "الرئيسية", path: "/", fn: regenerateHomePageCache },
+  { name: "articles", label: "المقالات", path: "/articles", fn: regenerateArticlesListingCache },
+  { name: "categories", label: "التصنيفات", path: "/categories", fn: regenerateCategoriesListingCache },
+  { name: "tags", label: "الوسوم", path: "/tags", fn: regenerateTagsListingCache },
+  { name: "industries", label: "القطاعات", path: "/industries", fn: regenerateIndustriesListingCache },
+  { name: "clients", label: "الشركاء", path: "/clients", fn: regenerateClientsListingCache },
+  { name: "trending", label: "الرائج", path: "/trending", fn: regenerateTrendingPageCache },
+  { name: "faq", label: "الأسئلة الشائعة", path: "/help/faq", fn: regenerateFaqPageCache },
+];
+
+/** Names and paths only — what the panel needs to show which page is under way. */
+export async function listListingPageTargets(): Promise<{ name: string; label: string; path: string }[]> {
+  return LISTING_PAGES.map(({ name, label, path }) => ({ name, label, path }));
+}
+
+/** One page, so the caller can report progress per page instead of after all eight. */
+export async function regenerateOneListingCache(name: string): Promise<{ success: boolean; error?: string }> {
+  const page = LISTING_PAGES.find((p) => p.name === name);
+  if (!page) return { success: false, error: `Unknown listing page "${name}"` };
+  try {
+    return await page.fn();
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
+  }
+}
+
 export async function regenerateAllListingCaches(): Promise<{ results: Record<string, boolean>; error?: string }> {
   const results: Record<string, boolean> = {};
-  const pages = [
-    { name: "home", fn: regenerateHomePageCache },
-    { name: "categories", fn: regenerateCategoriesListingCache },
-    { name: "tags", fn: regenerateTagsListingCache },
-    { name: "industries", fn: regenerateIndustriesListingCache },
-    { name: "clients", fn: regenerateClientsListingCache },
-    { name: "trending", fn: regenerateTrendingPageCache },
-    { name: "faq", fn: regenerateFaqPageCache },
-  ];
-
-  for (const page of pages) {
+  for (const page of LISTING_PAGES) {
     const r = await page.fn();
     results[page.name] = r.success;
   }

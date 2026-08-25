@@ -15,7 +15,14 @@ import { ImageField } from "./image-field";
 import { formatTimeAgo } from "./format-time-ago";
 import { SEO_HINTS } from "./seo-hints";
 
-type ListingKey = "categories" | "tags" | "industries" | "trending" | "clients" | "faq";
+type ListingKey =
+  | "categories"
+  | "tags"
+  | "industries"
+  | "trending"
+  | "clients"
+  | "faq"
+  | "articles";
 
 interface Props {
   pageKey: ListingKey;
@@ -105,6 +112,13 @@ const KEY_MAP: Record<ListingKey, {
     cacheDateKey: "trendingPageJsonLdLastGenerated",
     regenerator: "regenerateTrendingPageCache",
     fieldList: ["trendingSeoTitle", "trendingSeoDescription"],
+  },
+  articles: {
+    titleKey: "articlesSeoTitle",
+    descKey: "articlesSeoDescription",
+    cacheDateKey: "articlesPageJsonLdLastGenerated",
+    regenerator: "regenerateArticlesListingCache",
+    fieldList: ["articlesSeoTitle", "articlesSeoDescription"],
   },
 };
 

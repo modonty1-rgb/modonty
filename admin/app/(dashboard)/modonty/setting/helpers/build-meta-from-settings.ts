@@ -3,6 +3,8 @@
  * PRD: spec Section 3 → Section 5. Used for home, clients, categories, trending.
  */
 
+import { tightenGooglebot } from "@modonty/shared/lib/seo/tighten-googlebot";
+
 import { ensureAbsoluteUrl } from "./build-meta-from-page";
 
 export interface SettingsForMeta {
@@ -93,7 +95,8 @@ export function buildMetaFromSettings(
 
   const robotsBase = settings.defaultMetaRobots?.trim() || FALLBACK_ROBOTS;
   const robots = `${robotsBase}, max-snippet:-1, max-image-preview:large`;
-  const googlebot = settings.defaultGooglebot?.trim() || robots;
+  // Tightened, never lifted — a crawler-specific tag may only add restrictions.
+  const googlebot = tightenGooglebot(robots, settings.defaultGooglebot?.trim() || robots);
 
   const primaryLang = (settings.defaultOgLocale ?? settings.inLanguage ?? FALLBACK_OG_LOCALE).split("_")[0] || "ar";
   const notranslate = settings.defaultNotranslate ?? primaryLang === "ar";
@@ -177,7 +180,10 @@ export type PageTypeForMeta =
   | "trending"
   | "faq"
   | "tags"
-  | "industries";
+  | "industries"
+  // The article archive is a master page like the rest — its own SEO title, description and
+  // cached blob (Khalid, 25 Aug 2026: it is a core page, do not forget it).
+  | "articles";
 
 const LIST_PAGE_FALLBACKS: Record<
   Exclude<PageTypeForMeta, "home">,
@@ -213,6 +219,11 @@ const LIST_PAGE_FALLBACKS: Record<
     description: "استكشف الشركات والمحتوى حسب القطاع - كل القطاعات المتاحة",
     path: "/industries",
   },
+  articles: {
+    title: "كل المقالات",
+    description: "كل مقالات مدونتي في مكان واحد — صفِّ بالمجال أو التصنيف، واختر حسب الوقت اللي عندك.",
+    path: "/articles",
+  },
 };
 
 export function buildMetaFromSettingsForPageType(
@@ -231,6 +242,7 @@ export function buildMetaFromSettingsForPageType(
     faq: s.faqSeoTitle as string | null | undefined,
     tags: s.tagsSeoTitle as string | null | undefined,
     industries: s.industriesSeoTitle as string | null | undefined,
+    articles: s.articlesSeoTitle as string | null | undefined,
   } as const;
   const descMap = {
     clients: settings.clientsSeoDescription,
@@ -239,6 +251,7 @@ export function buildMetaFromSettingsForPageType(
     faq: s.faqSeoDescription as string | null | undefined,
     tags: s.tagsSeoDescription as string | null | undefined,
     industries: s.industriesSeoDescription as string | null | undefined,
+    articles: s.articlesSeoDescription as string | null | undefined,
   } as const;
   const title = titleMap[pageType]?.trim() || fallback.title;
   const description = descMap[pageType]?.trim() || fallback.description;

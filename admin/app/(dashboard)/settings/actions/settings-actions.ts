@@ -61,6 +61,8 @@ export interface ModontySettings {
   categoriesSeoDescription: string | null;
   trendingSeoTitle: string | null;
   trendingSeoDescription: string | null;
+  articlesSeoTitle: string | null;
+  articlesSeoDescription: string | null;
   faqSeoTitle: string | null;
   faqSeoDescription: string | null;
   tagsSeoTitle: string | null;
@@ -105,6 +107,10 @@ export interface SettingsGeneratedSeo {
   trendingPageJsonLdStructuredData: string | null;
   trendingPageJsonLdLastGenerated: Date | null;
   trendingPageJsonLdValidationReport: Record<string, unknown> | null;
+  articlesPageMetaTags: Record<string, unknown> | null;
+  articlesPageJsonLdStructuredData: string | null;
+  articlesPageJsonLdLastGenerated: Date | null;
+  articlesPageJsonLdValidationReport: Record<string, unknown> | null;
   tagsPageMetaTags: Record<string, unknown> | null;
   tagsPageJsonLdStructuredData: string | null;
   tagsPageJsonLdLastGenerated: Date | null;
@@ -298,6 +304,8 @@ const DEFAULT_SETTINGS: AllSettings = {
   categoriesSeoDescription: null,
   trendingSeoTitle: null,
   trendingSeoDescription: null,
+  articlesSeoTitle: null,
+  articlesSeoDescription: null,
   faqSeoTitle: null,
   faqSeoDescription: null,
   tagsSeoTitle: null,
@@ -320,6 +328,10 @@ const DEFAULT_SETTINGS: AllSettings = {
   trendingPageJsonLdStructuredData: null,
   trendingPageJsonLdLastGenerated: null,
   trendingPageJsonLdValidationReport: null,
+  articlesPageMetaTags: null,
+  articlesPageJsonLdStructuredData: null,
+  articlesPageJsonLdLastGenerated: null,
+  articlesPageJsonLdValidationReport: null,
   tagsPageMetaTags: null,
   tagsPageJsonLdStructuredData: null,
   tagsPageJsonLdLastGenerated: null,
@@ -499,6 +511,8 @@ export async function getAllSettings(): Promise<AllSettings> {
         categoriesSeoTitle: (newSettings as Record<string, unknown>).categoriesSeoTitle as string | null,
         categoriesSeoDescription: (newSettings as Record<string, unknown>).categoriesSeoDescription as string | null,
         trendingSeoTitle: (newSettings as Record<string, unknown>).trendingSeoTitle as string | null,
+        articlesSeoTitle: (newSettings as Record<string, unknown>).articlesSeoTitle as string | null,
+        articlesSeoDescription: (newSettings as Record<string, unknown>).articlesSeoDescription as string | null,
         trendingSeoDescription: (newSettings as Record<string, unknown>).trendingSeoDescription as string | null,
         faqSeoTitle: (newSettings as Record<string, unknown>).faqSeoTitle as string | null,
         faqSeoDescription: (newSettings as Record<string, unknown>).faqSeoDescription as string | null,
@@ -534,6 +548,10 @@ export async function getAllSettings(): Promise<AllSettings> {
         categoriesPageJsonLdLastGenerated: ((newSettings as Record<string, unknown>).categoriesPageJsonLdLastGenerated ?? null) as Date | null,
         categoriesPageJsonLdValidationReport: ((newSettings as Record<string, unknown>).categoriesPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
         trendingPageMetaTags: ((newSettings as Record<string, unknown>).trendingPageMetaTags ?? null) as Record<string, unknown> | null,
+        articlesPageMetaTags: ((newSettings as Record<string, unknown>).articlesPageMetaTags ?? null) as Record<string, unknown> | null,
+        articlesPageJsonLdStructuredData: ((newSettings as Record<string, unknown>).articlesPageJsonLdStructuredData ?? null) as string | null,
+        articlesPageJsonLdLastGenerated: ((newSettings as Record<string, unknown>).articlesPageJsonLdLastGenerated ?? null) as Date | null,
+        articlesPageJsonLdValidationReport: ((newSettings as Record<string, unknown>).articlesPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
         trendingPageJsonLdStructuredData: ((newSettings as Record<string, unknown>).trendingPageJsonLdStructuredData ?? null) as string | null,
         trendingPageJsonLdLastGenerated: ((newSettings as Record<string, unknown>).trendingPageJsonLdLastGenerated ?? null) as Date | null,
         trendingPageJsonLdValidationReport: ((newSettings as Record<string, unknown>).trendingPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
@@ -648,6 +666,8 @@ export async function getAllSettings(): Promise<AllSettings> {
       categoriesSeoTitle: (settings as Record<string, unknown>).categoriesSeoTitle as string | null ?? null,
       categoriesSeoDescription: (settings as Record<string, unknown>).categoriesSeoDescription as string | null ?? null,
       trendingSeoTitle: (settings as Record<string, unknown>).trendingSeoTitle as string | null ?? null,
+      articlesSeoTitle: (settings as Record<string, unknown>).articlesSeoTitle as string | null ?? null,
+      articlesSeoDescription: (settings as Record<string, unknown>).articlesSeoDescription as string | null ?? null,
       trendingSeoDescription: (settings as Record<string, unknown>).trendingSeoDescription as string | null ?? null,
       faqSeoTitle: (settings as Record<string, unknown>).faqSeoTitle as string | null ?? null,
       faqSeoDescription: (settings as Record<string, unknown>).faqSeoDescription as string | null ?? null,
@@ -683,6 +703,10 @@ export async function getAllSettings(): Promise<AllSettings> {
       categoriesPageJsonLdLastGenerated: ((settings as Record<string, unknown>).categoriesPageJsonLdLastGenerated ?? null) as Date | null,
       categoriesPageJsonLdValidationReport: ((settings as Record<string, unknown>).categoriesPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
       trendingPageMetaTags: ((settings as Record<string, unknown>).trendingPageMetaTags ?? null) as Record<string, unknown> | null,
+      articlesPageMetaTags: ((settings as Record<string, unknown>).articlesPageMetaTags ?? null) as Record<string, unknown> | null,
+      articlesPageJsonLdStructuredData: ((settings as Record<string, unknown>).articlesPageJsonLdStructuredData ?? null) as string | null,
+      articlesPageJsonLdLastGenerated: ((settings as Record<string, unknown>).articlesPageJsonLdLastGenerated ?? null) as Date | null,
+      articlesPageJsonLdValidationReport: ((settings as Record<string, unknown>).articlesPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
       trendingPageJsonLdStructuredData: ((settings as Record<string, unknown>).trendingPageJsonLdStructuredData ?? null) as string | null,
       trendingPageJsonLdLastGenerated: ((settings as Record<string, unknown>).trendingPageJsonLdLastGenerated ?? null) as Date | null,
       trendingPageJsonLdValidationReport: ((settings as Record<string, unknown>).trendingPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
@@ -927,6 +951,8 @@ export async function saveModontySettings(data: Partial<ModontySettings>): Promi
         categoriesSeoTitle: data.categoriesSeoTitle,
         categoriesSeoDescription: data.categoriesSeoDescription,
         trendingSeoTitle: data.trendingSeoTitle,
+        articlesSeoTitle: data.articlesSeoTitle,
+        articlesSeoDescription: data.articlesSeoDescription,
         trendingSeoDescription: data.trendingSeoDescription,
         faqSeoTitle: data.faqSeoTitle,
         faqSeoDescription: data.faqSeoDescription,
@@ -1078,6 +1104,8 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           categoriesSeoTitle: data.categoriesSeoTitle,
           categoriesSeoDescription: data.categoriesSeoDescription,
           trendingSeoTitle: data.trendingSeoTitle,
+          articlesSeoTitle: data.articlesSeoTitle,
+          articlesSeoDescription: data.articlesSeoDescription,
           trendingSeoDescription: data.trendingSeoDescription,
           faqSeoTitle: data.faqSeoTitle,
           faqSeoDescription: data.faqSeoDescription,
@@ -1094,6 +1122,10 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           categoriesPageJsonLdLastGenerated: data.categoriesPageJsonLdLastGenerated,
           categoriesPageJsonLdValidationReport: data.categoriesPageJsonLdValidationReport as Prisma.InputJsonValue | undefined,
           trendingPageMetaTags: data.trendingPageMetaTags as Prisma.InputJsonValue | undefined,
+          articlesPageMetaTags: data.articlesPageMetaTags as Prisma.InputJsonValue | undefined,
+          articlesPageJsonLdStructuredData: data.articlesPageJsonLdStructuredData,
+          articlesPageJsonLdLastGenerated: data.articlesPageJsonLdLastGenerated,
+          articlesPageJsonLdValidationReport: data.articlesPageJsonLdValidationReport as Prisma.InputJsonValue | undefined,
           trendingPageJsonLdStructuredData: data.trendingPageJsonLdStructuredData,
           trendingPageJsonLdLastGenerated: data.trendingPageJsonLdLastGenerated,
           trendingPageJsonLdValidationReport: data.trendingPageJsonLdValidationReport as Prisma.InputJsonValue | undefined,

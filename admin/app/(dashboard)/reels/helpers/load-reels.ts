@@ -4,11 +4,12 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 // Data for the Reels Approval route — every media row a client pushed into the reels
 // flow that is still waiting for a Modonty decision (reelStatus = PENDING_APPROVAL).
 //
-// The two approval guards (ق9) are COMPUTED HERE, per row, so the UI can disable the
+// The three approval guards are COMPUTED HERE, per row, so the UI can disable the
 // approve button with a reason instead of letting the click fail server-side:
 //   Guard 1 — no title or no description → nothing useful reaches VideoObject/ImageObject.
 //   Guard 2 — title duplicated within the same client → Google requires a title unique
 //             to each clip, so approving the copy publishes something it will ignore.
+//   Guard 3 — the upload never finished, so there may be no file behind the card at all.
 
 /** Statuses whose titles a new reel must not collide with. A REJECTED or ARCHIVED
  *  title is reusable — that reel is out of the public surface. */
@@ -36,6 +37,19 @@ export interface PendingReelRow {
   clientLogoUrl: string | null;
   /** Guard 2 — same title on another reel of the same client (or twice in this queue). */
   duplicateTitle: boolean;
+  /**
+   * Guard 3 — the video's upload never finished.
+   *
+   * The row is created before the first byte goes out (it holds Bunny's guid), and every
+   * failure path in the uploader shows the client a message and leaves the row where it is —
+   * a dropped connection, a failed encode, a closed tab. `finalizeVideoReel` is what writes
+   * the dimensions, size and duration, so all three being empty means it never ran and there
+   * may be no file behind the card. Measured 25 Aug 2026: 6 of 18 video reels, and the three
+   * whose Bunny files answered 404 were all among them.
+   *
+   * Read straight off the row — no network call, so the queue stays as cheap as it was.
+   */
+  incompleteUpload: boolean;
 }
 
 const normalize = (t: string | null | undefined) => (t ?? "").trim().toLowerCase();
@@ -119,6 +133,9 @@ export async function getPendingReels(): Promise<PendingReelRow[]> {
       clientLogoUrl: mediaSrc(r.client?.logoMedia ?? null),
       // The row itself is one holder of its own title; a second holder means collision.
       duplicateTitle: !!key && count > 1,
+      // Videos only: an image reel is written in one call and has no second step to lose.
+      incompleteUpload:
+        isVideo && (r.width == null || r.height == null || r.durationSec == null),
     };
   });
 }

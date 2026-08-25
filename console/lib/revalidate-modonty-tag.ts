@@ -23,7 +23,17 @@ function modontyBaseUrl(): string {
 }
 
 export async function revalidateModontyTag(
-  tag: "articles" | "settings" | "categories" | "clients" | "tags" | "industries" | "faqs"
+  // Keep in sync with ALLOWED_TAGS in modonty/app/api/revalidate/tag/route.ts — a tag this
+  // union allows but that route rejects comes back as a 400 nobody reads.
+  tag:
+    | "articles"
+    | "settings"
+    | "categories"
+    | "clients"
+    | "tags"
+    | "industries"
+    | "faqs"
+    | "reels"
 ): Promise<void> {
   try {
     const secret = process.env.REVALIDATE_SECRET;

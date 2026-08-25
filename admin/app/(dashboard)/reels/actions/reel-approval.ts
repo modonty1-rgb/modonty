@@ -19,6 +19,25 @@ type Result = { success: true } | { success: false; error: string };
 /** Same set as the loader: statuses whose titles a new reel must not collide with. */
 const TITLE_HOLDERS = ["PENDING_APPROVAL", "APPROVED", "PUBLISHED"] as const;
 
+/**
+ * Returns the first URL that is missing or does not answer, or null when all are there.
+ * A `HEAD` is enough — the question is whether the CDN still holds the file, not its bytes.
+ * A network failure counts as unreachable: publishing on the benefit of the doubt is what
+ * put three dead reels in the feed.
+ */
+async function firstUnreachable(urls: (string | null)[]): Promise<string | null> {
+  for (const url of urls) {
+    if (!url?.trim()) return "الرابط فاضي";
+    try {
+      const res = await fetch(url, { method: "HEAD", signal: AbortSignal.timeout(8000) });
+      if (!res.ok) return `${res.status}`;
+    } catch {
+      return "ما رد";
+    }
+  }
+  return null;
+}
+
 export async function approveReel(mediaId: string): Promise<Result> {
   const session = await auth();
   if (!session) return { success: false, error: "غير مصرّح" };
@@ -27,7 +46,15 @@ export async function approveReel(mediaId: string): Promise<Result> {
   try {
     const reel = await db.media.findFirst({
       where: { id: mediaId, inReels: true, reelStatus: "PENDING_APPROVAL" },
-      select: { id: true, title: true, description: true, clientId: true },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        clientId: true,
+        mimeType: true,
+        mp4Url: true,
+        thumbnailUrl: true,
+      },
     });
     if (!reel) return { success: false, error: "الريل غير موجود أو خرج من قائمة الانتظار" };
 
@@ -52,6 +79,21 @@ export async function approveReel(mediaId: string): Promise<Result> {
       });
       if (duplicate) {
         return { success: false, error: "الاعتماد مقفول — العنوان مكرّر مع ريل ثاني لنفس العميل" };
+      }
+    }
+
+    // Guard 3 — the files have to exist. A video reel's watch page ships a `VideoObject`
+    // whose `thumbnailUrl` and `contentUrl` Google fetches to verify the clip, and both are
+    // required properties. Three reels were published on 25 Aug 2026 whose Bunny files were
+    // already 404: the queue checked the text and never the video, so the feed carried three
+    // black cards and three broken VideoObjects.
+    if (reel.mimeType?.startsWith("video/")) {
+      const dead = await firstUnreachable([reel.mp4Url, reel.thumbnailUrl]);
+      if (dead) {
+        return {
+          success: false,
+          error: `الاعتماد مقفول — ملف الريل مو موجود على السيرفر (${dead}). ارفعه من جديد قبل الاعتماد.`,
+        };
       }
     }
 
@@ -98,6 +140,12 @@ export async function rejectReel(mediaId: string, reason: string): Promise<Resul
       data: { reelStatus: "REJECTED", reelRejectionReason: cleanReason.slice(0, 500) },
     });
 
+    // The same cache hit approval fires, and for a stronger reason: approval only makes a
+    // reel appear late, rejection leaves one VISIBLE. `revalidatePath("/reels")` below busts
+    // this admin route, not modonty — so a rejected reel kept serving its watch page at
+    // HTTP 200 for the whole cache window (measured 25 Aug 2026: gone from the feed and the
+    // sitemap, still live at its own URL).
+    await revalidateModontyTag("reels").catch(() => {});
     revalidatePath("/reels");
     return { success: true };
   } catch (e) {

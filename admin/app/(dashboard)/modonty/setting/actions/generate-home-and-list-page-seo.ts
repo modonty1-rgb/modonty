@@ -20,6 +20,7 @@ import {
   type CategoryForCategoriesPageJsonLd,
 } from "../helpers/build-categories-page-jsonld";
 import { buildTrendingPageJsonLd } from "../helpers/build-trending-page-jsonld";
+import { buildArticlesPageJsonLd } from "../helpers/build-articles-page-jsonld";
 import {
   buildTaxonomyPageJsonLd,
   type TaxonomyItemForJsonLd,
@@ -36,7 +37,8 @@ export type PageKey =
   | "trending"
   | "faq"
   | "tags"
-  | "industries";
+  | "industries"
+  | "articles";
 
 // Preview result (no DB save)
 export interface PreviewSeoData {
@@ -427,6 +429,66 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
           errors,
         },
       };
+    } else if (page === "articles") {
+      // The archive card: newest published articles, exactly the order the page itself defaults to.
+      const articlesRaw = await db.article.findMany({
+        where: {
+          status: ArticleStatus.PUBLISHED,
+          OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
+        },
+        include: {
+          client: {
+            select: { name: true, slug: true, logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } } },
+          },
+          author: { select: { name: true, slug: true } },
+          category: { select: { name: true, slug: true } },
+          tags: { select: { tag: { select: { name: true } } } },
+          featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
+        },
+        orderBy: [{ datePublished: "desc" }, { createdAt: "desc" }],
+        take: 20,
+      });
+      const total = await db.article.count({
+        where: {
+          status: ArticleStatus.PUBLISHED,
+          OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
+        },
+      });
+      const maxUpdatedAt = articlesRaw.reduce<Date | null>(
+        (acc, a) => (!acc || a.updatedAt > acc ? a.updatedAt : acc),
+        null,
+      );
+      const articleDefaults = getArticleDefaultsFromSettings(settings);
+      const articlesForJsonLd: ArticleForHomeJsonLd[] = articlesRaw.map((a) => ({
+        title: a.title,
+        slug: a.slug,
+        excerpt: a.excerpt,
+        datePublished: a.datePublished,
+        dateModified: a.updatedAt,
+        wordCount: a.wordCount,
+        inLanguage: articleDefaults.inLanguage,
+        featuredImage: a.featuredImage,
+        client: { name: a.client.name, slug: a.client.slug, logoMedia: a.client.logoMedia },
+        author: { name: a.author.name, slug: a.author.slug },
+        category: a.category,
+        tags: a.tags.map((t) => ({ name: t.tag.name })),
+      }));
+      const jsonLdObj = buildArticlesPageJsonLd(
+        settingsWithSameAs as Parameters<typeof buildArticlesPageJsonLd>[0],
+        articlesForJsonLd,
+        total,
+        maxUpdatedAt ?? new Date(),
+      );
+      const report = await validateHomeOrListPageJsonLd(jsonLdObj);
+      const valid =
+        report.adobe.valid && report.ajv.valid && report.jsonldJs.valid && report.custom.errors.length === 0;
+      const errors = [
+        ...report.adobe.errors.map((e) => e.message),
+        ...report.ajv.errors,
+        ...report.jsonldJs.errors,
+        ...report.custom.errors,
+      ].filter(Boolean);
+      return { success: true, data: { metaTags: meta, jsonLd: JSON.stringify(jsonLdObj), report, valid, errors } };
     } else if (page === "faq") {
       const faqs = await db.fAQ.findMany({
         where: { isActive: true },

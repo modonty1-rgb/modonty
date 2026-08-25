@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ar-SA" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فحص سيو مدونتي — الجولة الثانية · ٢٤ أغسطس ٢٠٢٦</title>
+<style>
+  :root{--bg:#0f1115;--panel:#161a21;--panel2:#1c212a;--line:#2a313d;--tx:#e6e9ee;--dim:#98a2b3;--accent:#22d3ee;
+        --red:#f87171;--orange:#fb923c;--yellow:#facc15;--green:#4ade80;--blue:#60a5fa}
+  @media (prefers-color-scheme: light){:root{--bg:#f7f8fa;--panel:#fff;--panel2:#f0f2f5;--line:#dfe3e8;--tx:#1a1d23;--dim:#5b6472;--accent:#0e7490}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);font-family:"Tajawal","Segoe UI",system-ui,sans-serif;line-height:1.75;font-size:15px}
+  .wrap{max-width:1120px;margin:0 auto;padding:28px 18px 80px}
+  h1{font-size:26px;margin:0 0 6px;line-height:1.4}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:26px}
+  h2{font-size:19px;margin:38px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 8px}
+  p{margin:8px 0}
+  code{background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;direction:ltr;display:inline-block;unicode-bidi:isolate}
+  pre{background:#0b0e13;color:#d7dde7;border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow-x:auto;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.65;margin:10px 0}
+  @media (prefers-color-scheme: light){pre{background:#11151b;color:#dfe5ee}}
+  .verdict{background:var(--panel);border:1px solid var(--line);border-inline-start:5px solid var(--accent);border-radius:10px;padding:16px 18px;margin:18px 0 8px}
+  .kpis{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 4px}
+  .kpi{flex:1 1 140px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .kpi .n{font-size:28px;font-weight:800;line-height:1.1}.kpi .l{color:var(--dim);font-size:12.5px;margin-top:2px}
+  .r .n{color:var(--red)}.o .n{color:var(--orange)}.y .n{color:var(--yellow)}.g .n{color:var(--green)}.b .n{color:var(--blue)}
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin:14px 0}
+  table{border-collapse:collapse;width:100%;min-width:820px;font-size:13.2px}
+  th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:start;vertical-align:top}
+  th{background:var(--panel2);font-weight:700;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  .f{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:16px 0}
+  .f.red{border-inline-start:5px solid var(--red)}.f.orange{border-inline-start:5px solid var(--orange)}
+  .f.yellow{border-inline-start:5px solid var(--yellow)}.f.green{border-inline-start:5px solid var(--green)}.f.blue{border-inline-start:5px solid var(--blue)}
+  .f h3{margin-top:0}
+  .tag{display:inline-block;font-size:11.5px;padding:2px 9px;border-radius:99px;border:1px solid var(--line);color:var(--dim);margin-inline-end:6px}
+  .tag.red{color:var(--red);border-color:var(--red)}.tag.orange{color:var(--orange);border-color:var(--orange)}
+  .tag.yellow{color:var(--yellow);border-color:var(--yellow)}.tag.blue{color:var(--blue);border-color:var(--blue)}.tag.green{color:var(--green);border-color:var(--green)}
+  .src{color:var(--dim);font-size:12.5px;border-top:1px dashed var(--line);margin-top:10px;padding-top:8px}.src b{color:var(--tx)}
+  blockquote{margin:8px 0;padding:8px 14px;border-inline-start:3px solid var(--accent);background:var(--panel2);border-radius:0 6px 6px 0;direction:ltr;text-align:left;font-size:13px;color:var(--dim)}
+  .warn{background:var(--panel2);border:1px dashed var(--orange);border-radius:8px;padding:12px 14px;margin:14px 0}
+  ul{margin:8px 0;padding-inline-start:22px}li{margin:4px 0}
+  .foot{margin-top:44px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:12.5px}
+  .lay{font-size:11px;padding:1px 6px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>فحص سيو مدونتي — الجولة الثانية (كود + توثيق رسمي)</h1>
+<div class="sub">
+  ٢٤ أغسطس ٢٠٢٦ · فرع <code>modonty-ui</code> (متقدّم على الإنتاج بـ<code>122</code> كوميت) · قياس حيّ على السيرفر المحلي وقاعدة التطوير ·
+  النطاق: <code>modonty/</code> + <b>مولِّد السيو في الأدمن</b> (بطلبك) + <code>shared/lib/seo</code> بوصفه مصدراً ·
+  <b>صفر تعديل كود</b> · يحلّ هذا الملف محلّ تقرير الجولة الأولى بنفس المسار.
+</div>
+
+<div class="verdict">
+  <b>الحكم:</b> الأساس سليم (canonical مطلق · صور بأبعاد مفروضة · robots · تواريخ بمنطقة زمنية) — لكن الجولة الثانية كشفت أن
+  <b>نصف البيانات المنظَّمة التي نشحنها تصف أشياء جوجل ما عادت تقرأها أو لا يراها الزائر</b>، وأن <b>مولِّد الأدمن نفسه</b> يزرع أربعة أعطال
+  تصل الإنتاج مع كل حفظ.
+  <br><br>
+  <b>الحصيلة:</b> <b>٥٨ ملاحظة</b> — ٩ حرجة · ٢٤ عالية · ٢٥ متوسطة/منخفضة — مقابل ٢٥ في الجولة الأولى. ثلاث ملاحظات قديمة سُحبت أو أُعيد تأطيرها (القسم ٢).
+  <br><br>
+  <b>الشيء الواحد الذي يُبدأ به:</b> <b>خريطة الموقع</b> — فيها صفحتان <code>noindex</code> وشركاء «غير جاهزين» وروابط تست، وينقصها ٧ صفحات شريك × كل شريك و٣ صفحات ثابتة.
+  إصلاحها ملفّ واحد (<code>app/sitemap.ts</code>)، وأثره على كونسول البحث فوري.
+</div>
+
+<div class="kpis">
+  <div class="kpi r"><div class="n">٩</div><div class="l">حرجة</div></div>
+  <div class="kpi o"><div class="n">٢٤</div><div class="l">عالية</div></div>
+  <div class="kpi y"><div class="n">٢٥</div><div class="l">متوسطة / منخفضة</div></div>
+  <div class="kpi b"><div class="n">٣</div><div class="l">سُحبت من الجولة الأولى</div></div>
+  <div class="kpi g"><div class="n">٩</div><div class="l">سليم ومُثبَت</div></div>
+</div>
+
+<h2>١ · المرجع الرسمي — بتاريخ آخر تحديث لكل صفحة</h2>
+<p>كل مرجع أدناه جُلب اليوم من موقع جوجل مباشرة (لا من الذاكرة). التاريخ هو «آخر تحديث» المكتوب في أسفل الصفحة.</p>
+<div class="tblwrap"><table>
+<thead><tr><th>المصدر</th><th>آخر تحديث</th><th>القاعدة التي اعتمدناها</th></tr></thead>
+<tbody>
+<tr><td>سجلّ تحديثات Search Central</td><td>٢٠ أغسطس ٢٠٢٦</td><td><b>٨ مايو ٢٠٢٦: نتيجة الأسئلة الشائعة الغنية أُوقفت نهائياً ابتداءً من ٧ مايو ٢٠٢٦</b>، وحُذف توثيقها في ١٥ يونيو. · <b>١٥ يونيو ٢٠٢٦: ملف <code>llms.txt</code> ليس مطلوباً</b> للظهور أو الترتيب في جوجل.</td></tr>
+<tr><td>سياسات البيانات المنظَّمة</td><td>١٠ يوليو ٢٠٢٦</td><td>«Don't mark up content that is not visible to readers of the page» — مخالفتها قد تجلب إجراءً يدوياً.</td></tr>
+<tr><td>صندوق بحث الروابط (SearchAction)</td><td>٢٩ نوفمبر ٢٠٢٤</td><td>الميزة أُزيلت من نتائج البحث وحُذف توثيقها.</td></tr>
+<tr><td>HowTo</td><td>١٤ سبتمبر ٢٠٢٣</td><td>أُزيل — (لا نشحنه، سليم).</td></tr>
+<tr><td>Podcast</td><td>—</td><td>صفحة التوثيق <b>٤٠٤</b>: لا توجد ميزة بودكاست مدعومة في البحث.</td></tr>
+<tr><td>Article</td><td>١٠ ديسمبر ٢٠٢٥</td><td>لا حقول إلزامية · صور ≥ ٥٠ ألف بكسل بثلاث نسب · تواريخ ISO 8601 <b>يُوصى بالمنطقة الزمنية</b> · اسم الكاتب بلا ألقاب.</td></tr>
+<tr><td>اسم الموقع (WebSite)</td><td>١٠ ديسمبر ٢٠٢٥</td><td>«must be on the home page» — جذر النطاق فقط.</td></tr>
+<tr><td>Organization</td><td>١٥ أبريل ٢٠٢٦</td><td>الشعار ≥ ١١٢×١١٢ · يُوضع في الرئيسية أو صفحة واحدة تصف المنظّمة.</td></tr>
+<tr><td>BreadcrumbList</td><td>١٠ ديسمبر ٢٠٢٥</td><td>يمثّل مسار المستخدم لا بنية الرابط · آخر عنصر لا يلزمه <code>item</code>.</td></tr>
+<tr><td>VideoObject</td><td>١٣ فبراير ٢٠٢٦</td><td>إلزامي: <code>name</code> · <code>thumbnailUrl</code> · <code>uploadDate</code>.</td></tr>
+<tr><td>ترخيص الصور (ImageObject)</td><td>١٠ ديسمبر ٢٠٢٥</td><td><code>contentUrl</code> + أحد <code>creator / creditText / copyrightNotice / license</code>.</td></tr>
+<tr><td>الروابط الأساسية (canonical)</td><td>١٠ يوليو ٢٠٢٦</td><td>مطلق · ذاتي · طريقة واحدة · الخريطة إشارة أضعف من الوسم.</td></tr>
+<tr><td>hreflang</td><td>٢٢ ديسمبر ٢٠٢٥</td><td>كل نسخة تذكر نفسها والباقي · روابط مطلقة · <code>x-default</code>.</td></tr>
+<tr><td>وسم العنوان</td><td>١٠ ديسمبر ٢٠٢٥</td><td>لا حدّ طول، لكن «avoid repeated or boilerplate text» و«brand your titles concisely».</td></tr>
+<tr><td>وصف الميتا</td><td>٢٠ أبريل ٢٠٢٦</td><td>لا حدّ طول · يُقطع حسب عرض الجهاز · فريد لكل صفحة.</td></tr>
+<tr><td>خريطة الموقع</td><td>٨ يوليو ٢٠٢٦</td><td>٥٠ ألف رابط / ٥٠ ميجا · <code>lastmod</code> يُستعمل لو كان صادقاً باستمرار · <code>priority/changefreq</code> تُهمَل · روابط canonical قابلة للفهرسة فقط.</td></tr>
+<tr><td>التحميل الكسول والترقيم</td><td>١٠ ديسمبر ٢٠٢٥</td><td>«Google Search does not interact with your page» · رابط تسلسلي لكل صفحة.</td></tr>
+<tr><td>Robots meta</td><td>٢٤ مارس ٢٠٢٦</td><td>الأشدّ يفوز · صفحة <code>noindex</code> يجب أن تبقى قابلة للزحف.</td></tr>
+<tr><td>سيو الجافاسكربت</td><td>٤ مارس ٢٠٢٦</td><td>«If the content isn't visible in the rendered HTML, Google won't be able to index it».</td></tr>
+<tr><td>Next.js 16.2.9 (Context7)</td><td>المثبَّت</td><td><code>alternates</code> يُستبدل كاملاً لا يُدمج · <code>metadataBase</code> · <code>generateSitemaps</code> للتقسيم · حقن JSON-LD مع استبدال <code>&lt;</code>.</td></tr>
+</tbody></table></div>
+
+<h2>٢ · ما تغيّر عن الجولة الأولى — بصراحة</h2>
+<div class="f blue">
+<ul>
+<li><b>الملاحظة ١ (الأسئلة الشائعة) أُعيد تأطيرها:</b> كانت «إجابات غير مرئية تعرّض النتيجة الغنية للسحب». الحقيقة الأحدث: <b>النتيجة الغنية نفسها ما عادت موجودة منذ ٧ مايو ٢٠٢٦</b>. فمخالفة المحتوى المخفي قائمة، لكن الحلّ ليس «أظهر الإجابات كي تربح النتيجة الغنية» — الحلّ <b>احذف وسم <code>FAQPage</code> من الأسطح الثلاثة</b> (مركز المساعدة · المقال · صفحة الشريك) وأبقِ الأسئلة مرئية للقارئ. الكود في الأدمن يعرف ذلك (<code>modonty-jsonld-validator.ts:174</code>) لكنه ما زال يبثّه.</li>
+<li><b>سُحبت — ازدواج <code>/users/[slug]</code> مع <code>/authors/[slug]</code>:</b> ظننته رابطاً مكرّراً قابلاً للفهرسة. الحقيقة: <code>proxy.ts:129-131</code> يحوّله ٣٠٨ إلى <code>/authors/</code>. لا عطل.</li>
+<li><b>سُحبت — <code>/page/1</code> ترجّع ميتاداتا فارغة:</b> <code>proxy.ts:80-82</code> يحوّلها ٣٠٨ إلى <code>/</code> قبل أن تصل الصفحة. لا عطل.</li>
+<li><b>سُحبت — «<code>hrefLang</code> بحرف كبير خطأ»:</b> أسماء السمات في HTML لا تفرّق بين الحالتين؛ جوجل يقرؤها. قياسي كان غلط لا الكود.</li>
+<li><b>كان مؤشّراً وصار مؤكَّداً:</b> عطل نشر الوعد بلا <code>await</code> في صفحة الشريك — الوكيل أكّد أن الفرع في السطر ٤٨ من <code>users/[id]</code> <b>سليم</b> (return مباشر داخل دالّة غير متزامنة)، والعطل في السطر ٦٨-٧٥ فقط.</li>
+</ul>
+</div>
+
+<h2>٣ · جدول الحصيلة الكامل — ٥٨ ملاحظة</h2>
+<p>الطبقة: <span class="lay">مدونتي</span> يُصلَح في <code>modonty/</code> · <span class="lay">الأدمن</span> يُصلَح في مولِّد الأدمن أو <code>shared/lib/seo</code> ثم يُعاد التوليد · <span class="lay">قرار</span> يحتاج كلمتك.</p>
+<div class="tblwrap"><table>
+<thead><tr><th>#</th><th>الشدّة</th><th>الطبقة</th><th>أين</th><th>الملاحظة</th><th>الدليل / الموضع</th><th>البطاقة</th></tr></thead>
+<tbody>
+<tr><td>١</td><td>🔴</td><td><span class="lay">قرار</span></td><td>٣ أسطح</td><td>وسم <code>FAQPage</code> يُبثّ لميزة أوقفتها جوجل في ٧ مايو ٢٠٢٦ — ومع ذلك إجاباته مخفية على <code>/help/faq</code></td><td>١٠ معلنة · ١٠ غائبة · <code>accordion.tsx:103</code></td><td><code>SEOFAQ</code></td></tr>
+<tr><td>٢</td><td>🔴</td><td><span class="lay">الأدمن</span></td><td>~٢٠ صفحة</td><td><code>SearchAction</code> (أُزيل نوفمبر ٢٠٢٤) ما زال يُبثّ من ٣ مولّدات — بينما مولّد الرئيسية يوثّق أنه محذوف</td><td>حيّ على <code>/clients /about /terms /legal/* /help/faq /trending /categories /tags /industries</code> + كل شريك</td><td><code>SEOSEARCHACTION</code></td></tr>
+<tr><td>٣</td><td>🔴</td><td><span class="lay">مدونتي</span></td><td><code>/clients/[slug]</code></td><td>وعد يُنشَر بلا <code>await</code> → ميتاداتا فارغة لأول شريك بلا بلوب</td><td><code>page.tsx:123</code> · كامن</td><td><code>SEOMETA-AWAIT</code></td></tr>
+<tr><td>٤</td><td>🔴</td><td><span class="lay">مدونتي</span></td><td><code>/story</code></td><td>مفهرسة وبلا محتوى في HTML (عميل فقط) + <code>PodcastSeries</code> لميزة غير موجودة</td><td><code>h1: 0 · words: 117</code></td><td><code>SEOSTORY</code></td></tr>
+<tr><td>٥</td><td>🔴</td><td><span class="lay">مدونتي</span></td><td><code>/categories /tags</code></td><td>لا طريق زحف بعد البطاقة ٢٠ — تمرير لا نهائي بلا رابط</td><td>١٥←١٠ · ٢٣←٢٠ · ترقيم ٠</td><td><code>SEOCRAWL</code></td></tr>
+<tr><td>٦</td><td>🔴</td><td><span class="lay">مدونتي+الأدمن</span></td><td>العنوان</td><td>العلامة تُلحَق <b>ثلاث مرّات</b>: مولّد الأدمن + <code>lib/seo/index.ts:131</code> + قالب الجذر</td><td>مقال مقيس <b>١٠١</b> محرفاً · <code>… | مدونتي | مدونتي</code></td><td><code>SEOTITLE</code></td></tr>
+<tr><td>٧</td><td>🔴</td><td><span class="lay">مدونتي</span></td><td>خريطة الموقع</td><td>تضمّ <code>noindex</code>: <code>/reels</code> · <code>/help/feedback</code> · وكل شريك «غير جاهز»</td><td><code>sitemap.ts:65,158,165</code></td><td><code>SEOSITEMAP-NOINDEX</code> · <code>SEOSITEMAP-NOTREADY</code></td></tr>
+<tr><td>٨</td><td>🔴</td><td><span class="lay">الأدمن</span></td><td>كل مقال</td><td><code>dateModified</code> حقل <code>@updatedAt</code> — كل كتابة كاش تزيّف «حُدِّث»؛ حفظ الإعدادات يبصم كل المقالات</td><td><code>schema.prisma:1303</code> · حيّ: <code>og 08-23</code> مقابل <code>JSON-LD 08-19</code> على مقال واحد</td><td><code>SEODATE-UPDATEDAT</code></td></tr>
+<tr><td>٩</td><td>🔴</td><td><span class="lay">مدونتي</span></td><td>٧ صفحات</td><td>JSON-LD مخزَّن يُحقن <b>خاماً بلا هروب</b> — أي <code>&lt;/script&gt;</code> في حقل يكسر الوسم (أمن + سيو)</td><td><code>about:72 · contact:56 · terms:60 · legal/*:60</code></td><td><code>SEOJSONLD-ESC</code></td></tr>
+<tr><td>١٠</td><td>🟠</td><td><span class="lay">مدونتي</span></td><td>٧ صفحات شريك × N</td><td><code>about/articles/contact/faq/photos/reviews/services</code>: <b>بلا canonical</b> · hreflang يشير للرئيسية · بلا OG · <b>خارج الخريطة</b></td><td><code>(inner)/*/page.tsx</code></td><td><code>SEOPARTNER-SUB</code></td></tr>
+<tr><td>١١</td><td>🟠</td><td><span class="lay">مدونتي</span></td><td>~٢٥ مساراً</td><td>hreflang الجذر يتسرّب ويشير كلّه إلى <code>/</code></td><td><code>app/layout.tsx:41-46</code> · حيّ: <code>/news 4/N</code></td><td><code>SEOHREF-ROOT</code></td></tr>
+<tr><td>١٢</td><td>🟠</td><td><span class="lay">مدونتي</span></td><td><code>/industries</code></td><td>يمحو hreflang بعد بنائه</td><td>حيّ <code>hrefLang=0</code></td><td><code>SEOHREF-IND</code></td></tr>
+<tr><td>١٣</td><td>🟠</td><td><span class="lay">مدونتي</span></td><td>٤ قوائم</td><td>canonical يسقط على الرئيسية عند غياب القيمة</td><td><code>get-listing-page-seo.ts:108</code></td><td><code>SEOCANON-HOME</code></td></tr>
+<tr><td>١٤</td><td>🟠</td><td><span class="lay">مدونتي</span></td><td><code>/trending</code></td><td><code>metadata ?? {}</code> بلا احتياط</td><td><code>trending/page.tsx:17</code></td><td><code>SEOTREND-META</code></td></tr>
+<tr><td>١٥</td><td>🟠</td><td><span class="lay">مدونتي+الأدمن</span></td><td>فئة/وسم/مجال</td><td>البلوب يُعاد خاماً، <b>والأدمن نفسه لا يعيد حساب canonical عند تغيير الـslug</b> (يأخذه من النموذج)</td><td><code>[slug]/page.tsx:70/69/36</code> · <code>update-category.ts:65</code></td><td><code>SEOBLOB-STALE</code></td></tr>
+<tr><td>١٦</td><td>🟠</td><td><span class="lay">مدونتي+الأدمن</span></td><td>OG</td><td>أبعاد الصورة مُدَّعاة: مدونتي تكتب 1200×630 لأي رابط، والأدمن <b>يرفع</b> الأبعاد إلى الحدّ الأدنى</td><td>حيّ: شريك يعلن <b>2544×630</b> · <code>generate-client-seo-bundle.ts:329</code></td><td><code>SEOOG-DIMS</code></td></tr>
+<tr><td>١٧</td><td>🟠</td><td><span class="lay">الأدمن</span></td><td>الهوية</td><td>معرّف الكيان بلا شرطة (<code>#organization</code>) في ٤ مولّدات مقابل <code>/#organization</code> في الباقي → <b>كيانان</b> لمدونتي</td><td>حيّ: <code>/about</code> بلا شرطة · <code>/</code> بشرطة</td><td><code>SEOID-SLASH</code></td></tr>
+<tr><td>١٨</td><td>🟠</td><td><span class="lay">مدونتي+الأدمن</span></td><td>٢٠+ سطحاً</td><td><code>WebSite</code> يُبثّ على كل مقال وشريك وفئة بدل الرئيسية وحدها، ومعرّفه مكرّر</td><td>سكربتان بنفس <code>@id</code> على المقال</td><td><code>SEOWEBSITE</code></td></tr>
+<tr><td>١٩</td><td>🟠</td><td><span class="lay">مدونتي</span></td><td><code>/clients/[slug]</code></td><td>مسار التنقّل يُشحن مرّتين</td><td><code>layout:107</code> + <code>page:190</code></td><td><code>SEOBC-DUP</code></td></tr>
+<tr><td>٢٠</td><td>🟠</td><td><span class="lay">مدونتي</span></td><td><code>/authors/modonty</code></td><td>عنوان <b>إنجليزي</b> على صفحة مفهرسة ومدرجة في الخريطة</td><td>حيّ: <code>Modonty - Author Profile</code></td><td><code>SEOAUTHOR-TITLE</code></td></tr>
+<tr><td>٢١</td><td>🟠</td><td><span class="lay">الأدمن</span></td><td>فئة/وسم/مجال</td><td>تقرير التحقّق مزيَّف: يُكتب <code>{ valid: true }</code> بلا أي تحقّق، والمقيّم يمنح نقاطاً عليه</td><td><code>category/tag/industry-seo-generator.ts:146</code></td><td><code>SEOFAKE-VALID</code></td></tr>
+<tr><td>٢٢</td><td>🟠</td><td><span class="lay">الأدمن</span></td><td>كل مقال</td><td>افتراضيات الإعدادات تُكتب <b>فوق</b> حقول المقال (ترتيب النشر) — <code>metaRobots</code> الخاص بالمقال ميت عملياً</td><td><code>metadata-storage.ts:106</code></td><td><code>SEODEFAULTS-OVERRIDE</code></td></tr>
+<tr><td>٢٣</td><td>🟠</td><td><span class="lay">الأدمن</span></td><td>كل مقال</td><td><code>needsRegeneration()</code> صحيح دائماً — الطابع يُحسب قبل الكتابة و<code>@updatedAt</code> بعدها</td><td><code>jsonld-storage.ts:269</code></td><td><code>SEOREGEN-LOOP</code></td></tr>
+<tr><td>٢٤</td><td>🟠</td><td><span class="lay">الأدمن</span></td><td>الشريك</td><td>hreflang يعلن نسخة <code>en</code> غير موجودة، وبلا <code>x-default</code></td><td><code>generate-client-seo-bundle.ts:296-317</code></td><td><code>SEOHREFLANG-EN</code></td></tr>
+<tr><td>٢٥</td><td>🟠</td><td><span class="lay">الأدمن</span></td><td>كل مقال</td><td>تغيير اسم الكاتب/الوسم/الفئة لا يعيد توليد ميتاداتا المقال — <code>og:author</code> و<code>article:tag</code> تبقى قديمة</td><td><code>update-author.ts:110</code> · <code>tags-actions.ts:253</code></td><td><code>SEOSTALE-OG</code></td></tr>
+<tr><td>٢٦</td><td>🟠</td><td><span class="lay">الأدمن</span></td><td>٨ صفحات ثابتة</td><td><code>Modonty.metaTags</code> يُبنى ويُخزَّن ولا يقرؤه أحد — مدونتي تقرأ الأعمدة الخام</td><td><code>generate-modonty-page-seo.ts:177</code> · <code>about-metadata.ts:9</code></td><td><code>SEOMETATAGS-DEAD</code></td></tr>
+<tr><td>٢٧</td><td>🟠</td><td><span class="lay">الأدمن</span></td><td>بوّابة النشر</td><td>تمنع النشر على قواعد ألغتها جوجل: شعار الناشر «خطأ» · العنوان ٣٠–٦٠ · <code>headline ≥ 30</code></td><td><code>jsonld-validator.ts:425</code> · <code>meta-score.ts:18</code></td><td><code>SEOGATE-OUTDATED</code></td></tr>
+<tr><td>٢٨</td><td>🟠</td><td><span class="lay">مدونتي</span></td><td>كل الصفحات</td><td>رابط اكتشاف RSS يُعلن في الجذر ويُمحى في كل صفحة (استبدال <code>alternates</code>)</td><td>حيّ: <code>rss+xml = 0</code> على ٨ صفحات</td><td><code>SEORSS-LINK</code></td></tr>
+<tr><td>٢٩</td><td>🟠</td><td><span class="lay">مدونتي</span></td><td><code>/users/[id] · /authors/[slug]</code></td><td>البريد الإلكتروني في JSON-LD وهو مخفيّ عن كل زائر غير المالك</td><td><code>generate-author-structured-data.ts:9</code></td><td><code>SEOEMAIL-PII</code></td></tr>
+<tr><td>٣٠</td><td>🟠</td><td><span class="lay">الأدمن</span></td><td><code>/clients /categories /trending</code></td><td><code>ItemList</code> بـ<code>numberOfItems: 0</code> على صفحات تعرض عشرات البطاقات</td><td><code>build-home-jsonld-from-settings.ts:438</code></td><td><code>SEOEMPTY-ITEMLIST</code></td></tr>
+<tr><td>٣١</td><td>🟠</td><td><span class="lay">الأدمن</span></td><td>كل شريك</td><td><code>WebSite.publisher</code> يشير إلى منظّمة <b>الشريك</b> — أي أن الشريك ناشر modonty.com</td><td><code>generate-organization-jsonld.ts:789</code></td><td><code>SEOWEBSITE-PUBLISHER</code></td></tr>
+<tr><td>٣٢</td><td>🟠</td><td><span class="lay">مدونتي</span></td><td>كل الصفحات</td><td>قائمة الجوّال <code>ssr:false</code> + بوّابة ضغط — ٩ وجهات داخلية لا تصل الزاحف منها</td><td><code>MobileMenuClient.tsx:7-10</code></td><td><code>SEOMOBILE-NAV</code></td></tr>
+<tr><td>٣٣</td><td>🟠</td><td><span class="lay">مدونتي</span></td><td>المقال والشريك</td><td>المعارض <code>ssr:false</code> — صورها غير موجودة في HTML، غير مرئية لبحث الصور</td><td><code>GalleryLazy.tsx:15</code> · <code>gallery-interactive.tsx:11</code></td><td><code>SEOGALLERY-SSR</code></td></tr>
+<tr><td>٣٤</td><td>🟡</td><td><span class="lay">مدونتي</span></td><td><code>/modonty</code></td><td>canonical ثابت يلغي ترقيمه، وhreflang ممحوّ، وخارج الخريطة</td><td><code>modonty/page.tsx:60</code></td><td><code>SEOMODONTY-PAGE</code></td></tr>
+<tr><td>٣٥</td><td>🟡</td><td><span class="lay">مدونتي</span></td><td>خريطة الموقع</td><td>مرشّح التست لا يشمل المقالات ولا الطلّات</td><td>٥ روابط تست (تطوير)</td><td><code>SEOSITEMAP-TEST</code></td></tr>
+<tr><td>٣٦</td><td>🟡</td><td><span class="lay">مدونتي</span></td><td>خريطة الموقع</td><td><code>/story /team /modonty</code> خارجها</td><td>جرد</td><td><code>SEOSITEMAP-GAPS</code></td></tr>
+<tr><td>٣٧</td><td>🟡</td><td><span class="lay">مدونتي</span></td><td><code>/news /legal /subscribe</code></td><td>صفر رابط وارد من أي صفحة مرسومة على السيرفر</td><td>جرد</td><td><code>SEOORPHAN</code></td></tr>
+<tr><td>٣٨</td><td>🟡</td><td><span class="lay">قرار</span></td><td><code>/authors</code></td><td>صفحة القائمة غير موجودة — ٤٠٤ فوق كيانات مُرسَلة في الخريطة</td><td>حيّ ٤٠٤</td><td><code>SEOAUTHORS-404</code></td></tr>
+<tr><td>٣٩</td><td>🟡</td><td><span class="lay">مدونتي</span></td><td>٢٠+ مساراً</td><td>عناوين احتياطية بلا <code>noindex</code>، منها إنجليزية</td><td><code>"Author Not Found"</code> · ٧ صفحات شريك <code>"غير موجود"</code></td><td><code>SEOFALLBACK-TITLE</code></td></tr>
+<tr><td>٤٠</td><td>🟡</td><td><span class="lay">مدونتي</span></td><td>~١٠ مسارات</td><td>لا <code>twitter:card</code>: <code>/articles</code>(summary) · <code>/news /booking /shop /modonty</code>(لا شيء)</td><td>حيّ</td><td><code>SEOTWITTER-MISSING</code></td></tr>
+<tr><td>٤١</td><td>🟡</td><td><span class="lay">الأدمن</span></td><td>المقال</td><td><code>twitter:creator</code> يأخذ اسم الكاتب البشري بدل <code>@handle</code></td><td><code>metadata-generator.ts:251</code></td><td><code>SEOTWITTER-CREATOR</code></td></tr>
+<tr><td>٤٢</td><td>🟡</td><td><span class="lay">مدونتي</span></td><td><code>/authors/[slug]</code></td><td>يقف عند ٢٠ مقالاً بلا ترقيم — المقال ٢١ فما فوق بلا رابط</td><td><code>page.tsx:99</code></td><td><code>SEOAUTHOR-PAGINATION</code></td></tr>
+<tr><td>٤٣</td><td>🟡</td><td><span class="lay">مدونتي</span></td><td><code>/clients/&lt;ميت&gt;/about</code></td><td>مرشّح البروكسي مقطع واحد — المسارات الفرعية تُفلت من ٤١٠ وتخاطر بـ٢٠٠ زائف</td><td><code>proxy.ts:37-46</code></td><td><code>SEOPROXY-SEG</code></td></tr>
+<tr><td>٤٤</td><td>🟡</td><td><span class="lay">مدونتي</span></td><td><code>/clients?…</code></td><td>مرشّح بلا نتائج يرجّع ٢٠٠ + حالة فارغة (٤٠٤ ناعم)</td><td><code>PartnersList.tsx:52</code> · مسجَّل في <code>clients/TASK.md:11</code></td><td><code>SEOSOFT404</code></td></tr>
+<tr><td>٤٥</td><td>🟡</td><td><span class="lay">الأدمن</span></td><td>فئة/وسم/مجال</td><td>أسماء مسار التنقّل <b>إنجليزية</b> (<code>Home · Categories · Tags</code>) على صفحات عربية</td><td><code>category-seo-generator.ts:91</code></td><td><code>SEOBC-EN</code></td></tr>
+<tr><td>٤٦</td><td>🟡</td><td><span class="lay">الأدمن</span></td><td>الرئيسية</td><td>مسار التنقّل عنصراه يشيران إلى نفس الرابط</td><td><code>build-home-jsonld-from-settings.ts:296</code></td><td><code>SEOHOME-BC</code></td></tr>
+<tr><td>٤٧</td><td>🟡</td><td><span class="lay">الأدمن</span></td><td>الصفحات القانونية</td><td><code>privacy/cookie/terms/user-agreement</code> تُبثّ نوع <code>AboutPage</code></td><td>حيّ: <code>/terms → AboutPage</code></td><td><code>SEOLEGAL-ABOUTPAGE</code></td></tr>
+<tr><td>٤٨</td><td>🟡</td><td><span class="lay">الأدمن</span></td><td>المقال</td><td>رابط قصّ الصورة يُلحَق بأي رابط Bunny بلا حارس وجود القصّ (مدونتي عندها الحارس)</td><td><code>knowledge-graph-generator.ts:42</code> · <b>مؤشّر</b></td><td><code>SEOBUNNY-CROP</code></td></tr>
+<tr><td>٤٩</td><td>🟡</td><td><span class="lay">مدونتي</span></td><td>الرئيسية</td><td>canonical بشرطة <code>/</code> والخريطة بلا شرطة — سلسلتان لصفحة واحدة</td><td><code>(homepage)/page.tsx:29</code> · <code>sitemap.ts:129</code></td><td><code>SEOHOME-SLASH</code></td></tr>
+<tr><td>٥٠</td><td>🟡</td><td><span class="lay">مدونتي</span></td><td>الجذر</td><td>لا <code>app/global-error.tsx</code> — عطل في الجذر يرسم ٥٠٠ افتراضياً</td><td>جرد</td><td><code>SEOGLOBAL-ERROR</code></td></tr>
+<tr><td>٥١</td><td>🟢</td><td><span class="lay">مدونتي</span></td><td>٣ مسارات</td><td><code>/users/forgot-password · reset-password · verify-email</code> بلا ميتاداتا ولا <code>noindex</code> — تحميها <code>robots.txt</code> فقط (لا تمنع الفهرسة)</td><td>جرد</td><td><code>SEOUSERS-INDEX</code></td></tr>
+<tr><td>٥٢</td><td>🟢</td><td><span class="lay">مدونتي</span></td><td><code>og:locale</code></td><td>قد يخرج <code>ar</code> بدل <code>ar_SA</code> لو خلا الحقل</td><td><code>build-metadata-from-page-row.ts:65</code> · كامن</td><td><code>SEOOGLOCALE</code></td></tr>
+<tr><td>٥٣</td><td>🟢</td><td><span class="lay">مدونتي</span></td><td>الجذر</td><td><code>dir="rtl"</code> ثابت و<code>lang</code> من الإعدادات</td><td><code>layout.tsx:71</code></td><td><code>SEOWATCH</code></td></tr>
+<tr><td>٥٤</td><td>🟢</td><td><span class="lay">مدونتي</span></td><td>خريطة الموقع</td><td>بلا فهرس ولا حدّ · ٧ استعلامات بلا كاش</td><td>٢٢٤ رابطاً</td><td><code>SEOWATCH</code></td></tr>
+<tr><td>٥٥</td><td>🟢</td><td><span class="lay">مدونتي</span></td><td><code>next.config.ts:89</code></td><td><code>X-Robots-Tag: noindex</code> مشروط بـ<code>VERCEL_ENV === "production"</code> — صحيح على Vercel، وخطر لو شُغّل خارجها</td><td>حيّ محلياً</td><td><code>SEOWATCH</code></td></tr>
+<tr><td>٥٦</td><td>🟢</td><td><span class="lay">الأدمن</span></td><td>المقال</td><td><code>inLanguage: "ar"</code> ثابت بينما hreflang و<code>og:locale</code> يعلنان <code>ar-SA</code></td><td><code>knowledge-graph-generator.ts:344</code></td><td><code>SEOWATCH</code></td></tr>
+<tr><td>٥٧</td><td>🟢</td><td><span class="lay">الأدمن</span></td><td>الأدمن</td><td>٦ وحدات سيو ميتة مُصدَّرة من <code>lib/seo/index.ts</code> بقواعد متناقضة (منها مطالبة بـ٣٠٠ كلمة وبـ<code>Person</code> إلزامي)</td><td><code>index.ts:99-168</code></td><td><code>SEOWATCH</code></td></tr>
+<tr><td>٥٨</td><td>🟢</td><td><span class="lay">قرار</span></td><td>الجاهزية للوكلاء</td><td>فحص Cloudflare: <b>٢٠/١٠٠</b> — بندان فقط يستحقّان النظر (القسم ٦)</td><td>لقطة <code>.playwright-mcp/agent-ready-modonty.png</code></td><td><code>SEOAGENT-READY</code></td></tr>
+</tbody></table></div>
+
+<h2>٣ب · الجولة الثالثة — قراءة الأدمن سطراً سطراً (بطلبك: «تأكّد ١٠٠٪»)</h2>
+<div class="f red">
+<p><b>ما جرى:</b> ١٧٢ ملفاً سيو في <code>admin/</code> و<code>shared/lib/seo</code> (٣٨٬٠٥٧ سطراً) قُرئت كاملةً بستّة قرّاء، كلٌّ بجدول تغطية إلزامي. الناتج الخام كلّه داخل بطاقة
+<code>SEOADM-RAW</code> على <code>documents/tasks/SEO.html</code> (لا ملف إضافي — بقرارك)، والبطاقات هناك مجمَّعة بجذر العطل (٣٩ بطاقة جديدة بادئة <code>SEOADM-</code>).</p>
+<p><b>العشرة الحرجة — كلّها تحقّقتُ منها بالكود الخام:</b></p>
+<pre>settings-actions.ts:962      updateAllSettings بلا auth()  (الستّة save* عندها :714-918)
+settings-actions.ts:702-705  catch → DEFAULT_SETTINGS (siteUrl null) → المولّدات تكتب مضيفاً مخمَّناً
+seed-integration-test.ts:899 deleteMany({}) ×8 بلا where · بلا auth() · مقالات وهمية على شركاء حقيقيين
+use-client-form.ts:112-124   form.watch(name) → slug يُعاد اشتقاقه في وضع التعديل، بلا تحويل
+update-article.ts:296-308    فشل توليد السيو لمقال منشور → console.error → success:true
+update-client.ts:183-193     لا regenerateClientsListingCache (create:280 و delete:49 يستدعيانه)
+listing-page-seo-generator.ts:277-288  «/articles لا توجد ويجب ألّا توجد» — والملف موجود ومفهرس
+page-validator.ts:42-51      فشل الرندر → HTML مصطنع بلا canonical/robots → canPublish منه
+canonical-url-sanitizer.ts:401-439  ٧ update للعمود، صفر توليد، صفر revalidate
+knowledge-graph-generator.ts:504-541  أبعاد ثابتة؛ أصل غير مقصوص يُعلَن 1200×675</pre>
+<p><b>ما أُصلح في ذهننا:</b> الجولة الثانية قالت «٤ أعطال في قلب المولّد». الصحيح بعد القراءة الكاملة: <b>١٠ حرجة و~٣٠ عالية مجمَّعة</b>، وأغلبها من خمس عائلات: ابتلاع فشل التوليد بصمت (١٢ موضعاً) · قيم مختلَقة (بلد · سعر · لغات · أبعاد) · روابط بالجمع النصّي (~١٥) · تواريخ «الآن» · مقيّمات تصادق على اختراعها.</p>
+</div>
+
+<h2>٤ · الحرجة (الجولة الثانية) — بأدلّتها</h2>
+
+<div class="f red">
+<h3><span class="tag red">١</span> <code>FAQPage</code> يُبثّ لميزة ماتت — والإجابات مخفية فوق ذلك</h3>
+<pre>Google Search Central changelog:
+  2026-05-08  "Added a deprecation notice to the FAQ rich result documentation.
+               This feature will no longer appear in Google Search starting May 7, 2026."
+  2026-06-15  "Removing documentation for the FAQ rich result feature."
+
+/help/faq (live):  answers declared in FAQPage JSON-LD: 10  |  present in visible HTML: 0
+shared/components/ui/accordion.tsx:103   if (!isOpen) return null;</pre>
+<p>ثلاثة أسطح تبثّه: <code>/help/faq</code> (مخزَّن + حيّ) · كل مقال (<code>knowledge-graph-generator.ts:260</code> + <code>ArticleJsonLd.tsx:58</code>) · صفحة الشريك (<code>clients/[slug]/page.tsx:191</code>). والأدمن يعرف أن الميزة أُوقفت (<code>modonty-jsonld-validator.ts:174</code>) لكن <code>pre-publish-audit.ts:318</code> ما زال ينصح «أضف ٣–٥ أسئلة للحصول على FAQ rich results».</p>
+<p><b>القرار المطلوب منك:</b> حذف الوسم من الأسطح الثلاثة (توصيتي) — الأسئلة تبقى للقارئ، والوسم يروح. وإن أبقيته، فالإجابات لازم تكون في HTML، لأن سياسة المحتوى غير المرئي قائمة بمعزل عن الميزة.</p>
+<div class="src"><blockquote>"Don't mark up content that is not visible to readers of the page." — Google · Structured data policies (updated 2026-07-10)</blockquote></div>
+</div>
+
+<div class="f red">
+<h3><span class="tag red">٢</span> <code>SearchAction</code> ما زال يُبثّ من ثلاثة مولّدات</h3>
+<pre>shared/lib/seo/generate-organization-jsonld.ts:793          ← كل صفحة شريك، غير مشروط
+admin/.../helpers/build-clients-page-jsonld.ts:158          ← /clients · /help/faq
+admin/.../helpers/generate-modonty-page-jsonld.ts:136       ← /about /contact /terms /legal/*
+
+بينما:
+admin/.../helpers/build-home-jsonld-from-settings.ts:211    // "deprecated by Google in Nov 2024 — intentionally not emitted"
+modonty/.../generate-site-identity-structured-data.ts:12    // "NO SearchAction"</pre>
+<p>مقيس حيّاً: <code>"@type":"SearchAction"</code> على <code>/clients /about /terms /legal/* /help/faq /trending /categories /tags /industries</code> وعلى الشريكين المفحوصين. الإصلاح وصل لمولّدين من خمسة.</p>
+</div>
+
+<div class="f red">
+<h3><span class="tag red">٣</span> صفحة الشريك: وعد يُنشَر بلا <code>await</code></h3>
+<pre>lib/seo/index.ts:107                 export async function generateMetadataFromSEO(...): Promise&lt;Metadata&gt;
+app/(partner)/clients/[slug]/page.tsx:123
+  return { ...generateMetadataFromSEO({ ... }), ...(robots ? { robots } : {}) };   ← نشر وعد = كائن فارغ
+app/(site)/users/[id]/page.tsx:68-75   نفس الشكل (noindex فأثره ≈ صفر)</pre>
+<p>كامن: الستّة المقيسون سليمون لأن عندهم بلوب مخزَّن. أول شريك بلا بلوب يُنشر بلا عنوان ولا canonical.</p>
+</div>
+
+<div class="f red">
+<h3><span class="tag red">٤</span> <code>/story</code> مفهرسة وبلا محتوى</h3>
+<pre>/story   h1: 0 | words: 117 | robots: index, follow | JSON-LD: WebPage + Organization×6 + PodcastSeries×2
+StoryClientLoader.tsx:10   dynamic(..., { ssr: false })      ← السيرفر يرسم هياكل انتظار فقط
+Google: developers.google.com/search/docs/appearance/structured-data/podcast → 404 (لا ميزة مدعومة)</pre>
+</div>
+
+<div class="f red">
+<h3><span class="tag red">٥</span> فئات ووسوم بلا طريق زحف</h3>
+<pre>/categories  entity links=10 (of 15)  pagination links=0
+/tags        entity links=20 (of 23)  pagination links=0
+InfiniteEntityGrid.tsx:88-96   ?page=N يُكتب بـ history.pushState — والسيرفر لا يقرأ page (categories/page.tsx:42)</pre>
+<div class="src"><blockquote>"Link sequentially to the individual URLs so that search engines can discover the URLs in a paginated set." — Google · Lazy-loading (2025-12-10)</blockquote></div>
+</div>
+
+<div class="f red">
+<h3><span class="tag red">٦</span> العلامة تُلحَق ثلاث مرّات</h3>
+<pre>الأدمن   seo-generation.ts:12          `${title} | ${clientName}`
+الأدمن   metadata-generator.ts:183     + ` - ${siteName}`  (siteName = اسم العميل)
+مدونتي   lib/seo/index.ts:131          `${title} - ${siteName}`   (المسارات غير المخزَّنة)
+مدونتي   app/layout.tsx:34             template `%s | مدونتي`      (كل صفحة بلا title.absolute)
+
+مقيس:
+/articles/علاج-الانزلاق…   101 محرفاً:  … | د. عمرو سعيد - pain core clinic- دكتور عمرو سعيد | مدونتي
+/trending                   المقالات الرائجة والأكثر قراءة | مدونتي | مدونتي
+/help/faq                   الأسئلة الشائعة — كل ما تريد معرفته | مدونتي | مدونتي
+/help                       مركز المساعدة - مدونتي | مدونتي</pre>
+<p>ومقيّم الأدمن يقيس العنوان <b>قبل</b> قالب الجذر، فطوله المسجَّل أقصر مما يراه جوجل دائماً.</p>
+<div class="src"><blockquote>"Avoid repeated or boilerplate text in &lt;title&gt; elements … Brand your titles concisely." — Google · Title links (2025-12-10)</blockquote></div>
+</div>
+
+<div class="f red">
+<h3><span class="tag red">٧</span> خريطة الموقع تضمّ صفحات <code>noindex</code></h3>
+<pre>sitemap.ts:158  /reels          ← (fullscreen)/reels/page.tsx:23   robots: { index: false }   (مقصود حتى الدمج — بطاقة 83c)
+sitemap.ts:165  /help/feedback  ← help/feedback/page.tsx:17         "noindex,nofollow"
+sitemap.ts:65   كل شريك ACTIVE  ← clients/[slug]/page.tsx:105       not-ready → index:false  (بلا مرشّح pageState)</pre>
+<p>هذا بند «Submitted URL marked noindex» في كونسول البحث، وبعدد غير محدود في حالة الشركاء.</p>
+</div>
+
+<div class="f red">
+<h3><span class="tag red">٨</span> <code>dateModified</code> يتبصّم مع كل كتابة كاش</h3>
+<pre>shared/prisma/schema/schema.prisma:1303   dateModified DateTime @updatedAt
+admin/lib/seo/jsonld-storage.ts:180        db.article.update(...)   ← كتابة الكاش تبصم dateModified
+admin/.../seo/actions/cascade-all-seo.ts:66-82   حفظ الإعدادات → كل المقالات
+
+مقيس على مقال واحد حيّ:
+  article:modified_time (OG)   2026-08-23T22:26:35Z
+  dateModified (JSON-LD)       2026-08-19T14:32:54+03:00     ← تاريخان مختلفان لنفس الصفحة</pre>
+<p>خريطة الموقع تأخذ <code>lastmod</code> من نفس الحقل (<code>sitemap.ts:81</code>). جوجل تصرّح أنها تستعمل <code>lastmod</code> «if it's consistently and verifiably accurate» — وهذا الحقل ليس كذلك.</p>
+</div>
+
+<div class="f red">
+<h3><span class="tag red">٩</span> سبع صفحات تحقن بيانات مخزَّنة بلا هروب</h3>
+<pre>about:72 · contact:56 · terms:60 · legal/{privacy,cookie,copyright,user-agreement}:60
+  __html: storedJsonLd ?? sanitizeJsonLd(buildFallbackStructuredData())
+          ↑ خام                 ↑ الاحتياطي وحده يُهرَّب
+والأدمن يخزّن بـ JSON.stringify خام (generate-modonty-page-seo.ts:172)</pre>
+<div class="src"><blockquote>Next.js docs (JSON-LD guide): sanitize the payload — <code>JSON.stringify(jsonLd).replace(/&lt;/g, '\\u003c')</code></blockquote></div>
+</div>
+
+<h2>٥ · العالية والمتوسطة — مختصرة (التفاصيل في البطاقات)</h2>
+<div class="f orange">
+<ul>
+<li><b>١٠ · صفحات الشريك الفرعية:</b> سبع صفحات مفهرسة لكل شريك بلا canonical ولا OG، hreflang يشير للرئيسية، وليست في الخريطة. هذي صفحات المال في موقع الشريك.</li>
+<li><b>١٦ · أبعاد OG:</b> مقيس حيّاً على شريكين: <code>og:image:width=2544 height=630</code> — الأدمن يرفع الارتفاع إلى ٦٣٠ ويترك العرض الحقيقي، فينتج نسبة لا وجود لها.</li>
+<li><b>١٧ · معرّف الكيان:</b> <code>https://www.modonty.com#organization</code> (بلا شرطة) على <code>/about /contact /terms /legal/*</code> وكل فئة ووسم ومجال، مقابل <code>https://www.modonty.com/#organization</code> على الرئيسية والمقال والفريق. جوجل تراهما كيانين.</li>
+<li><b>٢١ · تقرير مزيَّف:</b> ثلاثة مولّدات تكتب <code>{ valid: true }</code> بلا تحقّق — و<code>listing-page-seo-generator.ts:112</code> يتباهى بأن هذا النمط «حُذف».</li>
+<li><b>٢٧ · بوّابة النشر:</b> جوجل: «There are no required properties» للمقال. الأدمن: شعار الناشر غيابه <b>خطأ يمنع النشر</b> (<code>jsonld-validator.ts:425</code>)، والعنوان خارج ٣٠–٦٠ يُسقط النقاط تحت عتبة ٦٠. والملف نفسه <code>article-validator-db.ts:47</code> يوثّق أن جوجل لا تحدّ الطول. ملفّان بسياستين متضادّتين والذي يملك الأنياب هو الغلط.</li>
+<li><b>٢٨ · RSS:</b> الجذر يعلن <code>alternates.types</code> وكل صفحة تعرّف <code>alternates</code> تمحوه (نكست يستبدل لا يدمج — Context7). مقيس: صفر رابط RSS على ٨ صفحات، و<code>/feed.xml</code> يعمل ولا يصله أحد.</li>
+<li><b>٢٩ · البريد:</b> <code>Person.email</code> في JSON-LD بينما الواجهة تخفيه عن غير المالك — بيانات شخصية غير مرئية = مخالفة سياسة + تسريب.</li>
+<li><b>٣٢ · قائمة الجوّال:</b> <code>/search /trending /articles /categories /clients /reels /audio /subscribe /help/*</code> تعيش داخل مكوّن <code>ssr:false</code> لا يُرسم إلا بعد ضغطة. الديسكتوب ينقذ أغلبها عبر الفوتر، لكن <code>/subscribe</code> بلا أي رابط آخر.</li>
+<li><b>٤٧ · الصفحات القانونية بنوع <code>AboutPage</code>:</b> مقيس حيّاً على <code>/terms</code> — <code>getPageConfig()</code> يطابق كل الـslugs.</li>
+<li><b>٤٨ · قصّ Bunny (مؤشّر):</b> في JSON-LD المقال نفسه رابطان لنفس الصورة: واحد مُرمَّز (٢٠٠) وواحد بحروف عربية خام (٤٠٤ من curl — قد يكون ترميز الأداة لا الملف). لم أثبته حيّاً بأداة ثانية، فيبقى مؤشّراً.</li>
+</ul>
+</div>
+
+<h2>٦ · فحص «هل موقعك جاهز للوكلاء؟» (Cloudflare) — بطلبك</h2>
+<div class="f blue">
+<pre>https://isitagentready.com/www.modonty.com   ← الإنتاج، ٢٤ أغسطس ٢٠٢٦ · لقطة: .playwright-mcp/agent-ready-modonty.png
+Score 20 / 100 — LEVEL 1 "Basic Web Presence"
+  Discoverability          2/4   ✓ robots.txt  ✓ sitemap(×2)  ✗ Link headers (rel)  ✗ DNS-AID
+  Content                  0/1   ✗ Markdown negotiation
+  Bot Access Control       1/2   ✓ rules for 13 AI bots   ✗ Content Signals in robots.txt
+  API/Auth/MCP/Skills      0/8   ✗ كلها (MCP · OAuth · Agent Skills · WebMCP · ARD · auth.md · API catalog)
+  Commerce                 —     لم يُفحص</pre>
+<p><b>رأيي بلا مجاملة:</b> الرقم ٢٠ لا يعني شيئاً لمدوّنة محتوى. ثمانية من الاثني عشر فاشلاً هي بروتوكولات وكلاء تنفيذيين (دفع · OAuth · MCP) لا علاقة لها بموقع يقرؤه الناس. والأداة نفسها تكتب أنها «توصيات مولَّدة بالذكاء الاصطناعي».</p>
+<p><b>بندان فقط يستحقّان كلمتك:</b></p>
+<ul>
+<li><b>إشارات المحتوى في <code>robots.txt</code></b> (<code>Content-Signal: search=yes, ai-input=yes, ai-train=no</code>) — ثلاثة أسطر في <code>app/robots.ts</code> تعبّر عن سياستنا القائمة فعلاً (نسمح بالبحث والإجابات ونمنع التدريب).</li>
+<li><b>تفاوض ماركداون</b> — طلب بترويسة <code>Accept: text/markdown</code> يرجّع المقال نصّاً. قابل للتنفيذ بمعالج مسار في نكست، لكنه معيار Cloudflare لا معيار جوجل، وقيمته اليوم غير مقيسة.</li>
+</ul>
+<p>والمقابل من جوجل مباشرة (١٥ يونيو ٢٠٢٦): <code>llms.txt</code> «ليس مطلوباً للظهور أو الترتيب» — فبطاقة <code>GEOAEO</code> لا تحسبه إنجازاً سيوياً.</p>
+</div>
+
+<h2>✅ ما هو سليم — مُثبَت، ولا يُعاد فحصه</h2>
+<div class="f green">
+<ul>
+<li><b>canonical مطلق دائماً</b> حيثما وُجد · <b>لا شرطة مائلة مزدوجة:</b> <code>/articles/</code> → ٣٠٨ → <code>/articles</code> (مقيس على ٥ مسارات).</li>
+<li><b>تواريخ المقال بمنطقة زمنية:</b> <code>2026-08-13T16:40:01+03:00</code> — التطبيق الوحيد الصحيح في المستودع (<code>knowledge-graph-generator.ts:145</code>).</li>
+<li><b>صور المقال:</b> ثلاث نسب ١٢٠٠×٦٧٥ / ٩٠٠ / ١٢٠٠ مخزَّنة فعلاً على Bunny · <code>alt</code> في ١٥/١٥ صورة · ترخيص <code>ImageObject</code> بحقوله الإلزامية.</li>
+<li><b>مسار التنقّل</b> يبدأ من ١ وآخر عنصر بلا <code>item</code> — مطابق للتوثيق.</li>
+<li><b>الرئيسية:</b> <code>WebSite</code> + <code>Organization</code> بمعرّفات <code>/#</code> صحيحة، وبلا <code>SearchAction</code>.</li>
+<li><b>الترقيم روابط حقيقية</b> على <code>/ /articles /clients /search /industries /modonty</code>.</li>
+<li><b><code>robots.txt</code></b>: ٤٧ زاحفاً · <code>/_next/</code> غير محجوب · الخريطة معلنة.</li>
+<li><b>حرّاس الأخطاء</b> ٦٦/٦٧ + وراثة = ١٠٠٪ · <code>proxy.ts</code> يعطي ٤١٠ للمحذوف و٣٠٨ للمدمج.</li>
+<li><b>لا <code>HowTo</code></b> · <b>لا <code>themeColor</code> داخل <code>metadata</code></b> · <code>viewport</code> مُصدَّر صحيحاً · <code>metadataBase</code> موجود.</li>
+</ul>
+</div>
+
+<h2>⚠️ ما لم يُقَس — يُقال صراحةً</h2>
+<div class="warn">
+<ul>
+<li><b>الإنتاج لم يُفحَص</b> إلا في فحص Cloudflare (القسم ٦). كل رقم آخر من <code>127.0.0.1:3000</code> على فرع <code>modonty-ui</code> المتقدّم بـ١٢٢ كوميت.</li>
+<li><b>لم تُشغَّل أدوات جوجل</b> (اختبار النتائج الغنية · كونسول البحث · لايتهاوس). الأحكام من مقارنة الكود والناتج بالنصوص الرسمية.</li>
+<li><b>مؤشّرات الأداء الأساسية</b> خارج النطاق — مع ملاحظة واحدة: HTML المقال <b>٨٦٧ كيلوبايت</b> (حدّ جوجل الافتراضي للملف ٢ ميجا، لسنا قريبين — لكنه ثقيل).</li>
+<li><b>٤٨</b> (قصّ Bunny) مؤشّر لا حكم. <b>٣</b> كامن لا ظاهر.</li>
+<li><b>الأدمن</b> فُحص بوصفه مولّداً فقط — واجهته وصلاحياته خارج النطاق.</li>
+</ul>
+</div>
+
+<h2>كيف تتحقّق بنفسك</h2>
+<pre># ١ · FAQ: الإجابات في JSON-LD وليست في الصفحة
+curl -s http://127.0.0.1:3000/help/faq | grep -o '"acceptedAnswer"' | wc -l
+
+# ٢ · SearchAction المحذوف
+curl -s http://127.0.0.1:3000/about | grep -c '"SearchAction"'
+
+# ٦ · العلامة مكرّرة
+curl -s http://127.0.0.1:3000/trending | grep -o '&lt;title&gt;[^&lt;]*'
+
+# ٧ · الخريطة مقابل noindex
+curl -s http://127.0.0.1:3000/help/feedback | grep -o '&lt;meta name="robots"[^&gt;]*&gt;'
+curl -s http://127.0.0.1:3000/sitemap.xml | grep -c 'help/feedback'
+
+# ٨ · تاريخان على مقال واحد
+curl -s "http://127.0.0.1:3000/articles/&lt;slug&gt;" | grep -oE '(modified_time" content="[^"]+|"dateModified":"[^"]+)'
+
+# ١٧ · معرّف بلا شرطة
+curl -s http://127.0.0.1:3000/about | grep -o 'modonty.com#organization' | head -1
+
+# ٢٠ · عنوان إنجليزي
+curl -s http://127.0.0.1:3000/authors/modonty | grep -o '&lt;title&gt;[^&lt;]*'
+
+# ٢٨ · لا رابط RSS
+curl -s http://127.0.0.1:3000/articles | grep -c 'application/rss+xml'</pre>
+
+<div class="foot">
+الجولة الثانية · ٢٤ أغسطس ٢٠٢٦ · فرع <code>modonty-ui</code> · أربعة وكلاء فحص كود (ميتاداتا · JSON-LD · مولّد الأدمن · الزحف) + قياس حيّ لـ٤٤ مساراً + ٢٢ صفحة توثيق رسمي جُلبت اليوم + Context7 لـNext.js 16.2.9 + فحص Cloudflare على الإنتاج.
+<br>كل ادّعاء حرج تحقّقت منه أنا على <code>ملف:سطر</code> بعد الوكلاء. ما لم يُقَس مكتوب في قسمه.
+</div>
+
+</div>
+</body>
+</html>

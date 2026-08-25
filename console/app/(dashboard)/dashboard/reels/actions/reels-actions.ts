@@ -6,6 +6,7 @@ import { after } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { messages } from "@/lib/messages";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 import { notifyReelPending } from "./notify-reel-pending";
 
@@ -79,10 +80,14 @@ export interface CreateImageReelInput {
   /** The uploaded file's own name — stored as the filename, never reused as the title. */
   filename: string;
   description?: string | null;
+  /** The type of what was actually stored, not of what the client picked: the uploader
+   *  converts to WebP, and the row used to keep saying "image/jpeg" about a `.webp` file. */
   mimeType?: string | null;
   width?: number | null;
   height?: number | null;
   fileSize?: number | null;
+  /** Tiny inline placeholder computed by the upload route — dropped on the floor until now. */
+  blurDataURL?: string | null;
 }
 
 /**
@@ -107,10 +112,11 @@ export async function createImageReel(input: CreateImageReelInput): Promise<Resu
         url,
         contentUrl: url,
         thumbnailUrl: url,
-        mimeType: input.mimeType ?? "image/jpeg",
+        mimeType: input.mimeType ?? "image/webp",
         fileSize: input.fileSize ?? null,
         width: input.width ?? null,
         height: input.height ?? null,
+        blurDataURL: input.blurDataURL ?? null,
         clientId,
         scope: "CLIENT",
         // Not a page image — it never appears in the gallery, only in the reels feed.
@@ -252,6 +258,11 @@ export async function removeReel(mediaId: string): Promise<Result> {
     } else {
       await db.media.delete({ where: { id: mediaId } });
     }
+
+    // A reel visitors could already see has to leave modonty NOW — `revalidatePath` below
+    // busts this console route only, and modonty caches the feed and every watch page under
+    // its own "reels" tag.
+    if (seenByVisitors) await revalidateModontyTag("reels").catch(() => {});
 
     revalidatePath("/dashboard/reels");
     return { success: true };

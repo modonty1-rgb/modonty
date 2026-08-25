@@ -21,7 +21,8 @@ export type ListingPageKey =
   | "industries"
   | "tags"
   | "trending"
-  | "faq";
+  | "faq"
+  | "articles";
 
 export interface ListingPageSeo {
   metadata: Metadata | null;
@@ -52,6 +53,8 @@ async function readSettingsSeoColumns() {
       trendingPageJsonLdStructuredData: true,
       faqPageMetaTags: true,
       faqPageJsonLdStructuredData: true,
+      articlesPageMetaTags: true,
+      articlesPageJsonLdStructuredData: true,
     },
   });
 }
@@ -78,6 +81,7 @@ const SEO_COLUMNS: Record<ListingPageKey, (s: SettingsSeoColumns) => RawSeoPair>
   tags: (s) => ({ meta: s.tagsPageMetaTags, jsonLd: s.tagsPageJsonLdStructuredData }),
   trending: (s) => ({ meta: s.trendingPageMetaTags, jsonLd: s.trendingPageJsonLdStructuredData }),
   faq: (s) => ({ meta: s.faqPageMetaTags, jsonLd: s.faqPageJsonLdStructuredData }),
+  articles: (s) => ({ meta: s.articlesPageMetaTags, jsonLd: s.articlesPageJsonLdStructuredData }),
 };
 
 // Reads the Metadata + JSON-LD that admin cached on Settings (source of truth).

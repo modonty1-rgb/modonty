@@ -2,6 +2,8 @@
  * Build meta tags object from a page-like object. Shared by generate-modonty-page-seo and get-live-preview-seo.
  */
 
+import { tightenGooglebot } from "@modonty/shared/lib/seo/tighten-googlebot";
+
 export function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): string | undefined {
   if (!url?.trim()) return undefined;
   const u = url.trim();
@@ -260,7 +262,9 @@ export function buildMetaFromPageLike(pageLike: PageLikeForMeta, options: BuildM
   const description = (pageLike.seoDescription || "").trim();
   const robotsDefault = defaultMetaRobots?.trim() || FALLBACK_ROBOTS;
   const robots = (pageLike.metaRobots || robotsDefault).trim();
-  const googlebotDefault = defaultGooglebot?.trim() || robots;
+  // Tightened, never lifted: the page's own noindex/nofollow survives whatever the Settings
+  // default says, because a crawler-specific tag may only add restrictions.
+  const googlebotDefault = tightenGooglebot(robots, defaultGooglebot?.trim() || robots);
   const imageUrl = (pageLike.ogImage || pageLike.socialImage || pageLike.heroImage || "").trim();
   const absImage = imageUrl ? (ensureAbsoluteUrl(imageUrl, siteUrl) || imageUrl) : undefined;
   const twitterImageUrl = (pageLike.twitterImage || "").trim();
@@ -299,7 +303,12 @@ export function buildMetaFromPageLike(pageLike: PageLikeForMeta, options: BuildM
     title: title.length > titleMax ? title.slice(0, titleMax - truncationSuffix.length) + truncationSuffix : title,
     description: description.length > descMax ? description.slice(0, descMax - truncationSuffix.length) + truncationSuffix : description,
     robots,
-    googlebot: (existingMeta.googlebot as string)?.trim() || googlebotDefault,
+    // A googlebot value stored on an earlier generate is tightened too — it was written when
+    // the page may have had a different robots directive, and must not resurrect the old one.
+    googlebot: tightenGooglebot(
+      robots,
+      (existingMeta.googlebot as string)?.trim() || googlebotDefault,
+    ),
     openGraph: {
       title: pageLike.ogTitle || title,
       description: pageLike.ogDescription || description,

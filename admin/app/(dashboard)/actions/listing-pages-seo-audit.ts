@@ -26,6 +26,7 @@ const PAGES = [
   { key: "industries", label: "الصناعات", path: "/industries", prefix: "industriesPage", copy: "industries" },
   { key: "trending", label: "الرائج", path: "/trending", prefix: "trendingPage", copy: "trending" },
   { key: "faq", label: "الأسئلة الشائعة", path: "/help/faq", prefix: "faqPage", copy: "faq" },
+  { key: "articles", label: "المقالات", path: "/articles", prefix: "articlesPage", copy: "articles" },
 ] as const;
 
 export type ListingPageKey = (typeof PAGES)[number]["key"];
@@ -85,6 +86,12 @@ const SETTINGS_SELECT = {
   trendingPageJsonLdLastGenerated: true,
   trendingSeoTitle: true,
   trendingSeoDescription: true,
+  articlesPageMetaTags: true,
+  articlesPageJsonLdStructuredData: true,
+  articlesPageJsonLdValidationReport: true,
+  articlesPageJsonLdLastGenerated: true,
+  articlesSeoTitle: true,
+  articlesSeoDescription: true,
   faqPageMetaTags: true,
   faqPageJsonLdStructuredData: true,
   faqPageJsonLdValidationReport: true,
@@ -212,6 +219,7 @@ const REGENERATORS: Record<ListingPageKey, string> = {
   industries: "regenerateIndustriesListingCache",
   trending: "regenerateTrendingPageCache",
   faq: "regenerateFaqPageCache",
+  articles: "regenerateArticlesListingCache",
 };
 
 /**

@@ -247,6 +247,8 @@ const menuGroups: MenuGroup[] = [
           { icon: Copyright, label: "Copyright", href: "/modonty/pages/copyright-policy" },
           { icon: BadgeCheck, label: "Trust", href: "/modonty/pages/trust" },
           { icon: BookOpen, label: "Story", href: "/modonty/pages/story" },
+          { icon: BookOpen, label: "Audio", href: "/modonty/pages/audio" },
+          { icon: BookOpen, label: "Reels", href: "/modonty/pages/reels" },
         ],
       },
       {
@@ -259,6 +261,7 @@ const menuGroups: MenuGroup[] = [
           { icon: Factory, label: "Industries", href: "/settings/industries" },
           { icon: Flame, label: "Trending", href: "/settings/trending" },
           { icon: HelpCircle, label: "FAQ", href: "/settings/faq" },
+          { icon: FileText, label: "Articles", href: "/settings/articles" },
         ],
       },
       { icon: UserPen, label: "Authors", href: "/authors" },

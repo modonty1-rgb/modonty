@@ -33,6 +33,9 @@ export async function generateMetadata({ params }: ReelPageProps): Promise<Metad
   const description =
     reel.description || `ريل من ${reel.clientName} على مُدَوَّنَتِي.`;
 
+  // A video shares its cover, a picture shares itself.
+  const shareImage = reel.posterUrl ?? reel.imageUrl;
+
   return {
     title: `${reel.title} — ${reel.clientName}`,
     description,
@@ -44,8 +47,19 @@ export async function generateMetadata({ params }: ReelPageProps): Promise<Metad
       title: reel.title,
       description,
       url: canonical,
-      type: "video.other",
-      ...(reel.posterUrl && { images: [{ url: reel.posterUrl }] }),
+      // An image reel is not a video, and saying so would promise players a file that is a
+      // still picture.
+      type: reel.isVideo ? "video.other" : "article",
+      // `posterUrl` is a video's cover and is null for an image reel — the share card for
+      // every picture reel went out with no image at all until this fell back to the reel's
+      // own file (measured 25 Aug 2026 on a freshly published image reel: og:image absent).
+      ...(shareImage && { images: [{ url: shareImage, alt: reel.title }] }),
+    },
+    twitter: {
+      card: shareImage ? "summary_large_image" : "summary",
+      title: reel.title,
+      description,
+      ...(shareImage && { images: [shareImage] }),
     },
   };
 }
