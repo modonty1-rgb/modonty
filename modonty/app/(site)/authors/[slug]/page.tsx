@@ -142,7 +142,12 @@ export async function generateMetadata({ params, searchParams }: AuthorPageProps
   const page = parseAuthorPage(query.page);
   const author = await getAuthorForMetadata(slug);
 
-  if (!author) return { title: "Author Not Found" };
+  // Arabic, like every other not-found title on this site — an English string here is what
+  // Google would show for an ar-SA URL. `noindex` because there is nothing to index: the page
+  // below calls notFound(), and proxy.ts answers 410 for a slug that no longer exists.
+  if (!author) {
+    return { title: "كاتب غير موجود", robots: { index: false, follow: false } };
+  }
 
   // Use cached metadata if available.
   // `absolute` opts out of the root layout's `%s | مدونتي` template: the stored

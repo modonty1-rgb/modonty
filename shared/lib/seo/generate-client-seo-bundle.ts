@@ -10,6 +10,11 @@
 // revalidate — that's the caller's job.
 
 import type { PrismaClient } from "@prisma/client";
+import { absoluteUrl, entityUrl } from "./absolute-url";
+import { imageMimeFromUrl } from "./image-mime-from-url";
+import { shareImageAlt } from "./share-image-alt";
+import { truncateAtWordBoundary } from "./truncate-at-word-boundary";
+import { requireSiteUrl } from "./require-site-url";
 import { generateCompleteOrganizationJsonLd } from "./generate-organization-jsonld";
 import { mediaSrc } from "../media-src";
 import { resolveOrganizationType } from "./organization-schema-types";
@@ -52,14 +57,14 @@ function deriveClientType(client: DerivableClient): string | null {
 
 export interface ClientMetaTags {
   title: string;
-  description: string;
+  /** Optional: a partner with no description of its own ships no description tag. */ description?: string;
   robots: string;
   author: string;
   language: string;
   charset: string;
   openGraph: {
     title: string;
-    description: string;
+    /** Optional: a partner with no description of its own ships no description tag. */ description?: string;
     type: string;
     url: string;
     siteName: string;
@@ -68,16 +73,18 @@ export interface ClientMetaTags {
     images?: Array<{
       url: string;
       secure_url: string;
-      type: string;
+      /** Optional: declared only when the file extension actually says what the type is. */
+      type?: string;
       width?: number;
       height?: number;
-      alt: string;
+      /** Optional: a real description from the database — never an invented one. */
+      alt?: string;
     }>;
   };
   twitter: {
     card: string;
     title: string;
-    description: string;
+    /** Optional: a partner with no description of its own ships no description tag. */ description?: string;
     image?: string;
     imageAlt?: string;
     site?: string;
@@ -210,7 +217,9 @@ export async function generateClientSeoBundle(
 
   // ── Platform-level values: ALL from Settings (single source of truth) ──
   const settings = await db.settings.findFirst({ select: SETTINGS_SEO_SELECT });
-  const siteUrl = settings?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+  // No literal fallback — this becomes the partner page's canonical and every `@id` in its
+  // stored JSON-LD bundle.
+  const siteUrl = requireSiteUrl(settings?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL);
   const siteName = settings?.siteName || "Modonty";
   const inLanguage = settings?.inLanguage || "ar";
   const ogLocale = settings?.defaultOgLocale || "ar_SA";
@@ -218,45 +227,35 @@ export async function generateClientSeoBundle(
   const twitterCard = settings?.defaultTwitterCard || "summary_large_image";
   const twitterSite = settings?.twitterSite || undefined;
   const twitterCreator = settings?.twitterCreator || undefined;
-  const clientPageUrl = client.canonicalUrl || `${siteUrl}/clients/${client.slug}`;
+  const clientPageUrl = client.canonicalUrl || entityUrl("clients", client.slug, siteUrl);
 
   const ensureAbsoluteUrl = (url: string | null | undefined): string | undefined => {
     if (!url) return undefined;
     if (url.startsWith("http://") || url.startsWith("https://")) {
       return url.replace("http://", "https://");
     }
-    if (url.startsWith("/")) return `${siteUrl}${url}`;
+    if (url.startsWith("/")) return absoluteUrl(url, siteUrl);
     return `https://${url}`;
   };
 
   const title = client.seoTitle || client.name;
-  const description = client.seoDescription || client.description || "";
+  // `undefined`, never `""`. Measured on modonty_dev 27 Aug 2026: FOUR indexed partner pages
+  // carried `description: ""`, `og:description: ""` and `twitter:description: ""` because their
+  // row has neither field. An empty tag is not a missing tag: the missing one lets Google pick
+  // text from the page, the empty one hands it a blank answer and it uses that.
+  const description = client.seoDescription?.trim() || client.description?.trim() || undefined;
   const canonicalUrl = ensureAbsoluteUrl(clientPageUrl) || clientPageUrl;
 
   const metaTags: ClientMetaTags = {
-    title:
-      title.length > 60
-        ? (() => {
-            const lastSpace = title.lastIndexOf(" ", 57);
-            return lastSpace > 0 ? title.substring(0, lastSpace) + "..." : title.substring(0, 57) + "...";
-          })()
-        : title,
-    description:
-      description.length > 160
-        ? (() => {
-            const lastSpace = description.lastIndexOf(" ", 157);
-            return lastSpace > 0
-              ? description.substring(0, lastSpace) + "..."
-              : description.substring(0, 157) + "...";
-          })()
-        : description,
+    title: truncateAtWordBoundary(title, 60),
+    ...(description && { description: truncateAtWordBoundary(description, 160) }),
     robots: metaRobots,
     author: client.name,
     language: inLanguage,
     charset: "UTF-8",
     openGraph: {
       title,
-      description,
+      ...(description && { description }),
       type: "website",
       url: canonicalUrl,
       siteName,
@@ -265,7 +264,7 @@ export async function generateClientSeoBundle(
     twitter: {
       card: mediaSrc(client.heroImageMedia) ? "summary_large_image" : twitterCard,
       title,
-      description,
+      ...(description && { description }),
       ...(twitterSite && { site: twitterSite }),
       ...(twitterCreator && { creator: twitterCreator }),
     },
@@ -317,17 +316,24 @@ export async function generateClientSeoBundle(
   }
 
   // OG image: heroImageMedia
-  const orgName = client.name;
-  const defaultAlt = `${orgName} - Organization`;
-  const makeOgImage = (url: string, alt: string, w?: number | null, h?: number | null) => {
+  const makeOgImage = (url: string, alt: string | undefined, w?: number | null, h?: number | null) => {
     const u = ensureAbsoluteUrl(url) || url;
     const secure = u.startsWith("https") ? u : u.replace("http://", "https://");
     return {
       url: u,
       secure_url: secure,
-      type: "image/jpeg",
+      // Was the literal "image/jpeg" while the seeded Settings default said "image/webp" —
+      // one of the two lied on every partner card, and after the Bunny migration most files
+      // are actually WebP. Read the real extension; declare nothing when it is unreadable.
+      ...(imageMimeFromUrl(u) ? { type: imageMimeFromUrl(u) } : {}),
       ...(w && h ? { width: w, height: h } : {}),
-      alt: alt || defaultAlt,
+      // Was `alt || `شعار ${client.name}``, and before that `${client.name} - Organization`:
+      // a sentence written in the code, in English on an Arabic site, calling a HERO photo a
+      // logo — this builder never runs on the logo. Open Graph asks for "A description of
+      // what is in the image (not a caption)" <https://ogp.me>, and the code does not know
+      // what is in the image. The team does, in altText or description; when both are empty
+      // the field is left out.
+      ...(alt ? { alt } : {}),
     };
   };
   const heroSrc = mediaSrc(client.heroImageMedia);
@@ -335,7 +341,7 @@ export async function generateClientSeoBundle(
     metaTags.openGraph.images = [
       makeOgImage(
         heroSrc,
-        client.heroImageMedia.altText || defaultAlt,
+        shareImageAlt(client.heroImageMedia.altText) || shareImageAlt(client.heroImageMedia.description),
         client.heroImageMedia.width,
         client.heroImageMedia.height
       ),
@@ -346,7 +352,7 @@ export async function generateClientSeoBundle(
   metaTags.twitter.card = ogImageUrl ? "summary_large_image" : "summary";
   if (ogImageUrl) {
     metaTags.twitter.image = ogImageUrl;
-    metaTags.twitter.imageAlt = ogImageAlt || defaultAlt;
+    if (ogImageAlt) metaTags.twitter.imageAlt = ogImageAlt;
   }
 
   // Reviews (ClientReview, APPROVED) → AggregateRating + Review[].
@@ -356,8 +362,8 @@ export async function generateClientSeoBundle(
     // referential integrity — Prisma only emulates `onDelete: Cascade` for its own deletes —
     // so a user removed any other way leaves an orphaned id, and joining a REQUIRED relation
     // then throws "Field reviewer is required to return data, got null". That killed SEO
-    // generation for 11 clients over 2 orphan rows (2026-07-30). Names are resolved below
-    // and a missing one simply falls back to "زائر".
+    // generation for 11 clients over 2 orphan rows (2026-07-30). Names are resolved below,
+    // and a review whose name cannot be resolved is dropped rather than given a stand-in.
     db.clientReview.findMany({
       where: { clientId, status: "APPROVED" },
       select: { rating: true, comment: true, createdAt: true, reviewerId: true },
@@ -392,21 +398,33 @@ export async function generateClientSeoBundle(
       : [],
   );
 
-  const reviewOptions =
-    reviewAgg._count > 0
-      ? {
-          aggregateRating: {
-            ratingValue: reviewAgg._avg.rating ?? 0,
-            reviewCount: reviewAgg._count,
-          },
-          reviews: approvedReviews.map((r) => ({
-            author: reviewerById.get(r.reviewerId) ?? "زائر",
-            rating: r.rating,
-            body: r.comment,
-            datePublished: r.createdAt.toISOString().slice(0, 10),
-          })),
-        }
-      : {};
+  // A review is published only when we can name its author. Google, Review snippet:
+  // "The reviewer's name must be a valid name." The "زائر" stand-in that stood here was
+  // not a name — it was the word "visitor" attached to a real person's review, and an
+  // orphaned reviewerId (Mongo keeps no cascade) turned every such review into one.
+  const namedReviews = approvedReviews.flatMap((r) => {
+    const author = reviewerById.get(r.reviewerId)?.trim();
+    if (!author) return [];
+    return [
+      {
+        author,
+        rating: r.rating,
+        body: r.comment,
+        datePublished: r.createdAt.toISOString().slice(0, 10),
+      },
+    ];
+  });
+
+  // ratingValue is published only when an average actually exists. The `?? 0` it replaces
+  // emitted a 0 on the 1–5 scale Google assumes by default — below worstRating, and a
+  // score no reviewer ever gave.
+  const averageRating = reviewAgg._avg.rating;
+  const reviewOptions = {
+    ...(reviewAgg._count > 0 && typeof averageRating === "number" && averageRating > 0
+      ? { aggregateRating: { ratingValue: averageRating, reviewCount: reviewAgg._count } }
+      : {}),
+    ...(namedReviews.length > 0 ? { reviews: namedReviews } : {}),
+  };
   const galleryImages = galleryMedia.map((m) => ({
     url: mediaSrc(m) ?? m.url,
     altText: m.altText,

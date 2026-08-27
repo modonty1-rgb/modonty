@@ -3,6 +3,7 @@
  * Caller passes site config from env; no env access inside.
  */
 
+import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 import { getPageConfig } from "./page-config";
@@ -28,6 +29,8 @@ export interface ModontySiteConfig {
     postalCode?: string;
   };
   geo?: { latitude: number; longitude: number };
+  /** @deprecated Unused since 27 Aug 2026 — the SearchAction it fed was removed with the
+   *  sitelinks search box. Kept in the shape only because `page-schema.ts:76` still parses it. */
   searchUrlTemplate?: string;
   areaServed?: string;
 }
@@ -52,7 +55,7 @@ function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): str
   if (!url?.trim()) return undefined;
   const u = url.trim();
   if (u.startsWith("http://") || u.startsWith("https://")) return u.replace("http://", "https://");
-  if (u.startsWith("/")) return `${siteUrl}${u}`;
+  if (u.startsWith("/")) return absoluteUrl(u, siteUrl);
   return `https://${u}`;
 }
 
@@ -60,13 +63,13 @@ function absoluteImageUrl(url: string | null | undefined, siteUrl: string): stri
   if (!url?.trim()) return undefined;
   const u = url.trim();
   if (u.startsWith("http://") || u.startsWith("https://")) return u.replace("http://", "https://");
-  if (u.startsWith("/")) return `${siteUrl}${u}`;
-  return `${siteUrl}/${u}`;
+  if (u.startsWith("/")) return absoluteUrl(u, siteUrl);
+  return absoluteUrl(u, siteUrl);
 }
 
 export function generateModontyPageJsonLd(config: ModontySiteConfig, page: ModontyPageForJsonLd): object {
   const siteUrl = config.siteUrl.replace(/\/$/, "");
-  const pageUrl = ensureAbsoluteUrl(page.canonicalUrl, siteUrl) || `${siteUrl}/${page.slug}`;
+  const pageUrl = ensureAbsoluteUrl(page.canonicalUrl, siteUrl) || absoluteUrl(`/${page.slug}`, siteUrl);
   const name = (page.seoTitle || page.title || "").trim() || "Modonty";
   const description = (page.seoDescription || "").trim();
   const imageUrl = (page.ogImage || page.socialImage || page.heroImage || "").trim();
@@ -79,21 +82,37 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
   const graph: Record<string, unknown>[] = [];
 
   const { organization: orgId, website: websiteId } = buildSiteEntityIds(siteUrl);
+  // Absent stays absent. Every line below used to publish a placeholder when Settings had
+  // nothing: `description: ""` told Google the organisation describes itself as the empty
+  // string, and `sameAs: []` declared "we have no profiles anywhere" as a fact. An omitted
+  // property says "not stated"; an empty one is an assertion, and a false one.
+  //
+  // `name` kept its `|| "Modonty"` for the longest, which made this file a FOURTH place the
+  // brand is spelled (see card BRAND-SPELLING). The name belongs to Settings; with no value
+  // there, no name is written here.
+  const orgName = config.siteName?.trim();
+  const orgDescription = config.brandDescription?.trim();
   const org: Record<string, unknown> = {
     "@type": "Organization",
     "@id": orgId,
-    name: config.siteName || "Modonty",
+    ...(orgName && { name: orgName }),
     url: siteUrl,
-    description: config.brandDescription ?? "",
-    sameAs: config.sameAs ?? [],
+    ...(orgDescription && { description: orgDescription }),
+    ...(config.sameAs?.length ? { sameAs: config.sameAs } : {}),
   };
-  org.contactPoint = {
-    "@type": "ContactPoint",
+
+  // The node itself is conditional, not just its fields. Each field was already guarded, so
+  // with an unconfigured contact this assigned a bare `{"@type":"ContactPoint"}` — a contact
+  // method with no way to contact anyone. It is attached only when it carries something.
+  const contactPoint = {
     ...(config.contactPoint?.contactType && { contactType: config.contactPoint.contactType }),
     ...(config.contactPoint?.email && { email: config.contactPoint.email }),
     ...(config.contactPoint?.telephone && { telephone: config.contactPoint.telephone }),
     ...(config.contactPoint?.areaServed && { areaServed: config.contactPoint.areaServed }),
   };
+  if (Object.keys(contactPoint).length > 0) {
+    org.contactPoint = { "@type": "ContactPoint", ...contactPoint };
+  }
   if (config.logo) {
     org.logo = {
       "@type": "ImageObject",
@@ -133,16 +152,8 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
     inLanguage: inLang,
     publisher: { "@id": orgId },
   };
-  if (config.searchUrlTemplate?.trim()) {
-    website.potentialAction = {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: config.searchUrlTemplate.trim(),
-      },
-      "query-input": "required name=search_term_string",
-    };
-  }
+  // SearchAction removed 27 Aug 2026 — the sitelinks search box it fed is retired
+  // ("no longer available", Google Search Central changelog, 29 Nov 2024).
   graph.push(website);
 
   const pageNodeId = `${pageUrl}#${pageType.toLowerCase()}`;
@@ -156,7 +167,11 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
     publisher: { "@id": orgId },
     isPartOf: { "@id": websiteId },
     inLanguage: inLang,
-    dateModified: page.updatedAt?.toISOString?.() || new Date().toISOString(),
+    // No `|| new Date()`. A content page with no stored `updatedAt` has no known modified
+    // date, and inventing "now" made every regeneration look like an edit to the page. The
+    // property is omitted instead — the same rule the article generator applies to
+    // `article:published_time`.
+    ...(page.updatedAt ? { dateModified: page.updatedAt.toISOString() } : {}),
   };
   if (isAboutPage) {
     webPage.headline = name;
@@ -184,7 +199,11 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
         {
           "@type": "ListItem",
           position: 1,
-          name: config.siteName || "Modonty",
+          // "الرئيسية", not the brand name: a breadcrumb crumb is a place on the site, and
+          // every other breadcrumb here says الرئيسية. `Settings.siteName` is the Latin
+          // "Modonty", so this crumb rendered a Latin word inside an Arabic trail —
+          // measured 25 Aug 2026, and the same defect SEOBC-EN fixed on the taxonomy pages.
+          name: "الرئيسية",
           item: { "@id": siteUrl },
         },
         {

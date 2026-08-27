@@ -217,7 +217,7 @@ function cardHTML(t) {
   //
   // `ready: true` is the ONLY field a worker writes: it means "I finished, audit me". The card
   // turns green so Claude can check that one immediately instead of waiting for a whole batch.
-  const OWNERS = { codex: "كودكس", agent2: "وكيل ٢", agent3: "وكيل ٣", agent4: "وكيل ٤", claude: "كلود" };
+  const OWNERS = { codex: "كودكس", agent2: "وكيل ٢", agent3: "وكيل ٣", agent4: "وكيل ٤", claude: "كلود", copilot: "كوبايلوت" };
   const ownerTag = t.owner && t.tab !== "done" ? `<span class="tag owner owner-${t.owner}">👷 ${OWNERS[t.owner] || t.owner}</span>` : "";
   const readyTag = t.ready && t.tab !== "done" ? `<span class="tag ready">✅ خلص — بانتظار تدقيق كلود</span>` : "";
   // The banner sits at the TOP of the card, above the title — the one place a state is read
@@ -488,17 +488,36 @@ const byOrd = (a, b) => (a.ord ?? 99) - (b.ord ?? 99) || bySev(a, b);
 // `owner: "codex"` wins over every other lane: a card handed to Codex must appear in ONE
 // place, or two of us pick it up and edit the same file on the same branch (Khalid, 25 Aug —
 // Codex works this list in parallel while Claude takes the heavy cards).
-const seoLane = (t) => t.owner ? t.owner : (t.phase === 0 || t.who === "k") ? "decide" : (t.codex?.verdict === "confirmed" && t.sev !== "ok") ? "agreed" : "disputed";
+//
+// الممرّات تُسمّى بما تعنيه لخالد: **ماذا أفعل بهذه البطاقة؟** — لا بحكم مراجع خارجي.
+// كانت البطاقة بلا حكم من كودكس تسقط في «فيه خلاف»، وبطاقةٌ كتبتُها أنا اليوم تظهر تحت
+// خلافٍ لم يحدث. والحكم `archive`/`wrong`/`outside` يعني «ليست عطلاً» لا «متنازَع عليها».
+// «ليست عطلاً» كان تبويباً واحداً يخلط ثلاثة أشياء مختلفة، فبدا الجردُ المرجعيّ والادّعاءُ
+// الساقط والشغلُ المؤجَّل شيئاً واحداً منتهياً — وخالد سأل «وش تقصد؟» وكان محقّاً.
+// التصنيف الآن **مكتوب على البطاقة** في حقل `park`، لا مستنتَجاً من حكم مراجع خارجي.
+const PARKED_VERDICTS = new Set(["archive", "wrong", "outside"]);
+const isParked = (t) => Boolean(t.park) || PARKED_VERDICTS.has(t.codex?.verdict) || t.sev === "ok";
+const seoLane = (t) =>
+  t.owner ? t.owner
+  : (t.phase === 0 || t.who === "k") ? "decide"
+  : isParked(t) ? (t.park || "triage")
+  : "work";
 const SEO_LANES = [
+  { k: "work", n: "شغل جاهز", s: "عطلٌ حقيقي يُصلَح الآن — بترتيب المراحل، والأسهل أوّل كل مرحلة. ما فيه هنا ينتظر أحداً: أفتحه، أصلحه، أقفله، وأنتقل." },
+  { k: "triage", n: "مؤجَّل — يحتاج فرزاً", s: "شغل حقيقي لكنه غير مفروز: البطاقة حاوية أو نطاقها غير محسوم. تُفتح، تُقسَّم بطاقاتٍ صغيرة، ثم تُشتغَل. <b>ليست منتهية.</b>" },
+  { k: "disproved", n: "فُحصت وسقطت", s: "ادّعاء البطاقة قِيس فثبت أنه غير صحيح أو خارج السيو. تبقى مكتوبةً كي لا يعيد أحد فتح نفس الطريق — ولا يُصلَح فيها شيء." },
+  { k: "reference", n: "مراجع", s: "جرد وتقارير بُنيت عليها البطاقات. ليست مهامّ ولا تُغلق: هذه هي الأرضية التي يُرجَع إليها." },
   { k: "agreed", n: "متّفق عليه ١٠٠٪", s: "كلود وكودكس على كلمة واحدة: العطل مثبت والحلّ واضح. هذا اللي نشتغل عليه الآن — بترتيب المراحل، والأسهل أوّل كل مرحلة." },
   { k: "codex", n: "كودكس · صفحات الموقع", s: "صفحات مدونتي العامّة — <code>modonty/app/(site)/**</code>. أربعة عمّال على فرع واحد، والفصل بينهم <b>بالمنطقة لا بالملف</b>: من التزم بمنطقته لا يلتقي بأحد. كلّهم ممنوعون من إغلاق البطاقات — كلود يدقّق ويقفل، و«الدليل قبل الحكم» سارية على الجميع." },
   { k: "agent2", n: "وكيل ٢ · الأدمن", s: "شاشات الأدمن ونماذجه ومسارات الحفظ — `admin/app/(dashboard)/**`. لا يلمس `admin/lib/seo` (وكيل ٤) ولا `modonty/` (كودكس ووكيل ٣)." },
   { k: "agent3", n: "وكيل ٣ · الشريك", s: "صفحات الشريك ومكوّناتها — `modonty/app/(partner)/**`. منطقة مستقلّة عن صفحات الموقع العامّة التي يشتغل عليها كودكس." },
   { k: "agent4", n: "وكيل ٤ · البيانات المنظَّمة", s: "بُناة JSON-LD والمحقّقات والمقيّمات — `admin/lib/seo/**` عدا المولّدات التي يملكها كلود. عائلة واحدة: هوية الكيان وصحّة ما يُبثّ." },
   { k: "claude", n: "كلود · بيدي", s: "البطاقات التي أنفّذها بنفسي: <code>shared/</code> والمولّدات والبوّابات الأمنية وأي بند يمسّ عدّة تطبيقات. كانت تسقط في ممرّ بلا زرّ فلا تُرى — أُصلح ٢٥ أغسطس." },
+  { k: "copilot", n: "كوبايلوت · الأدمن المعزول", s: "بطاقات مستقلّة تماماً عن ملفّات كلود وكودكس: التحقّق من المدخلات، حارس القصّ، ترتيب التوليد قبل تفريغ الكاش. تعليماته في <code>documents/tasks/COPILOT-PROMPT.md</code> — وكلود وحده يقفل." },
   { k: "disputed", n: "فيه خلاف", s: "كودكس قال «جزئي» أو «غلط» أو «خارج السيو» أو «غير مثبت». ما نلمسه إلا بعد ما نخلّص المتّفق عليه — نناقشه بنداً بنداً." },
   { k: "reports", n: "تقارير", s: "جرد مقيس بالكامل — كود الإنتاج + قياس حيّ + قراءة القاعدة + المصدر الرسمي. ليست مهامّ: هذه هي الأرضية التي تُبنى عليها المهامّ." },
   { k: "decide", n: "قرارك", s: "ينتظر كلمتك — لا يبدأ قبلها. قراران يفتحان الطريق (SEOFAQ · SEOMETATAGS-DEAD) وفكرة مؤجَّلة بقرارك (AUTOLINK)." },
+  { k: "shipped", n: "✅ خلص", s: "كل بطاقة أُغلقت على هذه اللوحة، بأحدث ما أُغلق أولاً. لكل واحدة سطر «كيف أُغلقت» بالقياس الخام الذي أثبته — السجل كامل في مكان واحد بدل أن يختفي المنجز." },
 ];
 const REPORTS = DATA.reports || [];
 // A closed report keeps every word of its inventory — that is the point of the tab — but the
@@ -517,13 +536,32 @@ const reportHTML = (r) => `<article class="report" id="report-${esc(r.id)}">
 </article>`;
 const seoLanes = SEO_LANES.map(l => {
   if (l.k === "reports") return { ...l, count: REPORTS.length, reports: REPORTS, groups: [] };
+  if (l.k === "shipped") {
+    // المنجَز لا يُحذف من الوعي — يُنقل. الأحدث أولاً، ومجموعة لكل يوم إغلاق.
+    const shipped = enriched.filter(t => isSeoCard(t) && isDone(t));
+    const byDay = new Map();
+    for (const t of shipped) {
+      const k = t.date || "قبل ذلك";
+      if (!byDay.has(k)) byDay.set(k, []);
+      byDay.get(k).push(t);
+    }
+    const groups = [...byDay.entries()]
+      // الأحدث أولاً: التواريخ عربية فلا تُقارن كنصّ — الترتيب بأول ظهور معكوساً، و«قبل ذلك» أخيراً.
+      .sort((a, b) => (a[0] === "قبل ذلك") - (b[0] === "قبل ذلك"))
+      .map(([day, items]) => ({ k: "day-" + day, n: day, s: "", items }));
+    return { ...l, count: shipped.length, groups };
+  }
   const items = seoOpen.filter(t => seoLane(t) === l.k);
   const active = items.filter(t => t.running || (t.working && !t.ready)).sort(byOrd);
   const queued = items.filter(t => !active.includes(t));
   const groups = SEO_PHASES.map(p => ({ ...p, items: queued.filter(t => (t.phase ?? 7) === p.k).sort(byOrd) })).filter(g => g.items.length);
   if (active.length) groups.unshift({ k: "active", n: "🔴 جارٍ الآن", s: "البطاقة النشطة في الأعلى دائماً حتى انتهاء التحقق.", items: active });
   return { ...l, count: items.filter(t => !t.ready).length, groups };
-});
+})
+  // ممرّ فارغ = تبويب يُضغط فيظهر لا شيء. كانت اللوحة تعرض أحد عشر تبويباً وأربعة فقط
+  // فيها بطاقات — ممرّات وكلاء انتهت جلساتهم. التبويب يظهر إذا كان فيه شيء، ولا يظهر إذا خلا.
+  // «تقارير» و«خلص» يبقيان دائماً: الأول مرجع، والثاني سجلّ الإنجاز الذي لا يُخفى.
+  .filter(l => l.k === "reports" || l.k === "shipped" || l.count > 0);
 // رقم قصير ثابت لكل بند سيو، ليقول خالد «بند ٧» بدل معرّف طويل (٢٥ أغسطس).
 // يُكتب مرّة في task-data.json ولا يتغيّر بعدها مهما أُعيد الترتيب أو أُغلقت بطاقات —
 // الرقم المتغيّر يجعل الإشارة في الشات تدلّ على بطاقة أخرى بعد أسبوع.
@@ -549,14 +587,41 @@ const seoHigh = seoOpen.filter(t => /critical|high/.test(t.sev)).length;
 // `enriched` already holds open AND done, so this is the whole set — concatenating `done`
 // on top counted every closed card twice and showed "30 of 124" where the truth was 17 of 117.
 const seoAll = enriched.filter(isSeoCard);
+// بطاقات على بورد `seo` لكنها لا تمرّ `isSeoCard`، فتختفي من هذه اللوحة بلا أثر. سببان
+// مشروعان — إدخال بيانات (`file:"data"` → DATA-REFACTOR.html) أو أنّها لا تمسّ مدونتي
+// (`app` بلا "modonty" → TASK.html) — لكن الاختفاء الصامت جعل عدّي من الملفّ يخالف ما على
+// شاشة خالد، فسأل «كيف اثنتان وثلاثون؟». الاختفاء يبقى، والسطر في الرأس يقول أين ذهبت.
+const seoElsewhere = enriched
+  .filter(t => t.b === "seo" && !isSeoCard(t) && !isDone(t))
+  .map(t => ({ ...t, dest: t.file === "data" ? "DATA-REFACTOR.html" : "TASK.html" }));
 const seoClosed = seoAll.length - seoOpen.length;
 const seoPercent = seoAll.length ? Math.round((seoClosed / seoAll.length) * 100) : 0;
 
 // The badge names its DATE rather than saying "today", so it can never claim a stale count
-// is from today. Update the constant when a new working day starts; forget to, and the label
-// still tells the truth about which day it counts.
-const LAST_WORKING_DAY = "٢٥ أغسطس ٢٠٢٦";
-const seoClosedThatDay = seoAll.filter(t => isDone(t) && t.date === LAST_WORKING_DAY).length;
+// is from today.
+//
+// It used to be a hand-written constant with "update it when a new working day starts" next
+// to it. It was left on ٢٥ أغسطس while ٣٠ cards closed on ٢٧ — the badge was truthful about
+// which day it named and useless about the work. A rule I keep forgetting becomes a
+// computation: the last working day IS the newest date any closed card carries.
+//
+// Arabic dates cannot be compared as strings, so they are parsed. An unparseable date sorts
+// last rather than throwing — a malformed `date` on one card must not blank the whole badge.
+const AR_MONTHS = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+const arDigits = (s) => s.replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+const dateKey = (s) => {
+  const m = /^\s*([٠-٩\d]+)\s+(\S+)\s+([٠-٩\d]+)\s*$/.exec(s || "");
+  if (!m) return -Infinity;
+  const month = AR_MONTHS.indexOf(m[2]);
+  if (month < 0) return -Infinity;
+  return Number(arDigits(m[3])) * 10000 + month * 100 + Number(arDigits(m[1]));
+};
+const LAST_WORKING_DAY = seoAll
+  .filter(t => isDone(t) && dateKey(t.date) > -Infinity)
+  .reduce((best, t) => (dateKey(t.date) > dateKey(best) ? t.date : best), "");
+const seoClosedThatDay = LAST_WORKING_DAY
+  ? seoAll.filter(t => isDone(t) && t.date === LAST_WORKING_DAY).length
+  : 0;
 const SEO_TABS_CSS = `.report{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
 .report h3{margin:0 0 4px;font-size:19px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .state{margin:2px 0 8px;padding:7px 11px;border-radius:9px;font-size:12.5px;font-weight:700;letter-spacing:.1px}
@@ -588,6 +653,7 @@ const SEO_TABS_CSS = `.report{background:var(--card);border:1px solid var(--line
 .report th,.report td{border:1px solid var(--line);padding:7px 9px;text-align:start;vertical-align:top}
 .report th{background:var(--panel);font-weight:700}
 .report .src{margin-top:8px;font-size:12.5px}
+.elsewhere{margin:10px 0 0;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--dim);font-size:12.5px;line-height:1.75}.elsewhere b{color:var(--txt)}.elsewhere code{font-size:12px}
 .lanes{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}.lane{border:1px solid var(--line);background:var(--card);color:var(--txt);border-radius:10px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer}.lane[aria-selected="true"]{background:var(--amber);color:#141722;border-color:var(--amber)}.lane .n{opacity:.7;font-weight:500;margin-inline-start:4px}[data-lane].hidden{display:none}`;
 
 const seoHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -603,6 +669,11 @@ const seoHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="u
     ${seoClosedThatDay ? `<em class="today">${LAST_WORKING_DAY}: ${seoClosedThatDay}</em>` : ""}
   </div>
 </div>
+${seoElsewhere.length ? `<p class="elsewhere">وفيه <b>${seoElsewhere.length}</b> بطاقة سيو ما تظهر هنا لأن مكانها لوحة ثانية — ${
+  [["DATA-REFACTOR.html", "إدخال بيانات"], ["TASK.html", "ما تمسّ صفحات مدونتي"]]
+    .map(([f, why]) => { const ids = seoElsewhere.filter(t => t.dest === f); return ids.length ? `<a href="${f}">${f}</a> (${why}): ${ids.map(t => `<code>${esc(t.id)}</code>`).join(" · ")}` : ""; })
+    .filter(Boolean).join(" — ")
+}. هذا السطر موجود لأن عدّ البطاقات من الملفّ كان يعطي رقماً أكبر ممّا على الشاشة، فيبدو أن اللوحة ناقصة وهي ليست كذلك.</p>` : ""}
 <div class="lanes" role="tablist">${seoLanes.map((l, i) => `<button class="lane" role="tab" data-lane-btn="${l.k}" aria-selected="${i === 0}">${l.n}<span class="n">${l.count}</span></button>`).join("")}</div>
 <!-- No search box here on purpose. Khalid, 25 Aug 2026: "I will not search, I want final
      result" — this board is read to decide what to do next, not to look something up. A box

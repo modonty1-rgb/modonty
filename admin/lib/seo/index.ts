@@ -32,13 +32,6 @@ export {
   type BusinessValidationResult,
 } from "./jsonld-validator";
 
-// ============================================
-// Phase 3: Publish Policy (Client-Safe)
-// ============================================
-export {
-  canPublishArticle,
-  type PublishDecision,
-} from "./publish-policy";
 
 // ============================================
 // Phase 4: JSON-LD Storage
@@ -56,6 +49,11 @@ export {
   type JsonLdGenerationResult,
 } from "./jsonld-storage";
 
+// Rebuilds BOTH stored blobs (JSON-LD + Next.js metadata) for a set of articles. Reach for
+// this whenever a renamed entity cascades onto its articles — `batchRegenerateJsonLd` above
+// rebuilds only half the published surface and leaves the Open Graph tags on the old name.
+export { batchRegenerateArticleSeo } from "./batch-regenerate-article-seo";
+
 // ============================================
 // Phase 5: JSON-LD Validation Action (Preview)
 // ============================================
@@ -66,19 +64,6 @@ export {
 // (Removed 2026-07-14: "Phase 9 AI Crawler Optimization" re-exports — ai-crawler-optimizer
 // had ZERO call sites anywhere (GEO audit, بند ٩); the file is deleted with them.)
 
-// ============================================
-// Phase 9: Content Quality Scoring
-// ============================================
-export {
-  scoreArticleQuality,
-  getScoreLabel,
-  type QualityScore,
-  type ReadabilityScore,
-  type SEOScore,
-  type EEATScore,
-  type MediaScore,
-  type Recommendation,
-} from "./content-quality-scorer";
 
 // ============================================
 // Phase 10: Auto-Fix Engine
@@ -118,19 +103,6 @@ export {
   type WikidataEntity,
 } from "./entity-disambiguator";
 
-// ============================================
-// Phase 11: Custom Validation Rules
-// ============================================
-export {
-  CUSTOM_RULES,
-  runCustomValidation,
-  getFailedRules,
-  customValidationPasses,
-  type ValidationRule,
-  type RuleContext,
-  type ValidationRuleResult,
-  type CustomValidationReport,
-} from "./custom-validation-rules";
 
 // ============================================
 // Phase 12: Core Web Vitals Monitor

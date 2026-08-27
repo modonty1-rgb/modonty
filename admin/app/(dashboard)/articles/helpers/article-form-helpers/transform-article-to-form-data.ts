@@ -29,7 +29,11 @@ function readStoredMetaRobots(nextjsMetadata: ArticleFromDb["nextjsMetadata"]): 
   return `${index ? "index" : "noindex"}, ${follow ? "follow" : "nofollow"}`;
 }
 
-export function transformArticleToFormData(article: ArticleFromDb): Partial<ArticleFormData> {
+export function transformArticleToFormData(
+  article: ArticleFromDb,
+  /** Settings.siteUrl, from the page's own `loadSiteUrl()` — see normalizeArticleCanonicalForForm. */
+  siteUrl: string,
+): Partial<ArticleFormData> {
   return {
     // Optimistic locking — user-initiated edits only (NOT bumped by SEO/cron/system writes)
     userVersion: article.userVersion ?? 0,
@@ -80,7 +84,7 @@ export function transformArticleToFormData(article: ArticleFromDb): Partial<Arti
     ogArticleTag: article.tags?.map((t: { tag: { name: string } }) => t.tag.name) || [],
 
     // Technical SEO — always use siteUrl/articles/slug (never /clients/.../articles/)
-    canonicalUrl: normalizeArticleCanonicalForForm(article.canonicalUrl, article.slug),
+    canonicalUrl: normalizeArticleCanonicalForForm(article.canonicalUrl, article.slug, siteUrl),
 
     // Breadcrumb Support
     breadcrumbPath: article.breadcrumbPath || undefined,

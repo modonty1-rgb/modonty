@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { regenerateAllStaleJsonLd } from "./jsonld-integrity";
-import { regenerateAllStaleCanonicalUrls } from "./canonical-url-sanitizer";
+import { sanitizeAllCanonicals } from "@/app/(dashboard)/database/actions/canonical-sanitizer";
 import { refreshAllSitemaps } from "./sitemap-freshness";
 import { syncHreflangLocales } from "./hreflang-sync";
 import { regenerateModontyAuthorSeo } from "./author-seo-repair";
@@ -36,13 +36,22 @@ export async function runSeoStepJsonLd(): Promise<SeoMaintenanceStepResult> {
 
 export async function runSeoStepCanonical(): Promise<SeoMaintenanceStepResult> {
   try {
-    const r = await regenerateAllStaleCanonicalUrls();
+    // Was `regenerateAllStaleCanonicalUrls` from `seo/actions/canonical-url-sanitizer.ts`.
+    // Two sanitizers existed for the same job and this was the lesser one: it wrote seven
+    // `canonicalUrl` columns and stopped there — no SEO regeneration, no modonty cache bust.
+    // modonty serves the STORED blob, so its "corrections" never reached a single public page,
+    // and this step reported them as successes.
+    //
+    // `sanitizeAllCanonicals` (database/actions) is the one that rebuilds the blob after the
+    // column, and as of today it counts a failed rebuild as a failure. One sanitizer, one
+    // answer.
+    const r = await sanitizeAllCanonicals();
     return {
       key: "canonical",
       label: "Canonical URLs Sanitized",
       ok: r.failed === 0,
       count: r.successful,
-      detail: r.failed > 0 ? `${r.failed} failed` : undefined,
+      detail: r.failed > 0 ? `${r.failed} failed — ${r.errors[0]?.error ?? ""}` : undefined,
     };
   } catch (e) {
     return fail("canonical", "Canonical URLs Sanitized", e);

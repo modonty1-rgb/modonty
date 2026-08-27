@@ -25,6 +25,7 @@ import {
 } from '../helpers/internal-link-audit';
 import { checkLinksAction } from '../actions/check-links';
 import { InternalLinkReviewDialog } from './internal-link-review-dialog';
+import { useToast } from '@/hooks/use-toast';
 import {
   FileText,
   Edit,
@@ -285,6 +286,7 @@ export function ArticleFormProvider({
   const [pendingNavHref, setPendingNavHref] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [currentStep, setCurrentStep] = useState<number>(1);
+  const { toast } = useToast();
   
   const totalSteps = STEP_CONFIGS.length;
 
@@ -369,6 +371,16 @@ export function ArticleFormProvider({
         setIsDirty(false);
         isDirtyRef.current = false; // sync immediately — beforeunload reads this ref
         setErrors({});
+        // The row saved but its stored SEO blob did not rebuild. Every save button goes
+        // through here, so raising it once covers all of them — and a green "saved"
+        // toast alone would be a lie: the public page still shows the old title.
+        if (result.seoWarning) {
+          toast({
+            title: 'الحفظ تمّ — بيانات السيو ما تجدّدت',
+            description: result.seoWarning,
+            variant: 'warning',
+          });
+        }
         // Sync userVersion + updatedAt from server — prevents optimistic locking conflict on next save
         if (result.article?.userVersion != null || result.article?.updatedAt) {
           setFormData((prev) => ({
@@ -390,7 +402,7 @@ export function ArticleFormProvider({
       setIsSaving(false);
       isSavingRef.current = false;
     }
-  }, [onSubmit, articleId]);
+  }, [onSubmit, articleId, toast]);
 
   /**
    * A link that points back at our own site while carrying `nofollow` is never a

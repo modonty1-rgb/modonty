@@ -19,18 +19,56 @@ import {
   getSearchConsoleCredentials,
   initSearchConsoleClient,
   fetchStructuredDataErrors,
-  fetchErrorTrends,
+  buildErrorTrends,
   isSearchConsoleConfigured,
 } from "@/lib/seo/search-console-api";
 import { db } from "@/lib/db";
 import Link from "next/link";
 import { SearchConsoleErrorsSection } from "./components/search-console-errors-section";
+import type { SearchConsoleSnapshot } from "./components/search-console-errors-section";
 import { PageValidator } from "./components/page-validator";
 
 export const metadata: Metadata = {
   title: "صحة SEO - لوحة المراقبة",
   description: "مراقبة حالة JSON-LD والبيانات المهيكلة للمقالات",
 };
+
+/**
+ * Read Search Console once, and say which of the three things happened: it is not set up,
+ * we could not read it, or we read it. The old code collapsed all three into an empty
+ * error array, so an auth failure rendered the green "no errors" all-clear.
+ */
+async function readSearchConsole(): Promise<SearchConsoleSnapshot> {
+  if (!isSearchConsoleConfigured()) {
+    return { status: "not-configured" };
+  }
+
+  const credentials = getSearchConsoleCredentials();
+  if (!credentials) {
+    return {
+      status: "unavailable",
+      reason: "Search Console credentials are incomplete",
+    };
+  }
+
+  try {
+    const auth = await initSearchConsoleClient(credentials);
+    if (!auth) {
+      return {
+        status: "unavailable",
+        reason: "Search Console authentication failed — see the server log for the cause",
+      };
+    }
+
+    const errors = await fetchStructuredDataErrors(credentials.siteUrl, auth);
+    return { status: "read", errors, trends: buildErrorTrends(errors) };
+  } catch (error) {
+    return {
+      status: "unavailable",
+      reason: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
 
 async function getSEOHealthData() {
   // Get JSON-LD stats
@@ -83,26 +121,7 @@ async function getSEOHealthData() {
     ? Math.round((jsonLdStats.withJsonLd / jsonLdStats.total) * 100)
     : 0;
 
-  // Fetch Search Console data if configured
-  let searchConsoleErrors: any[] = [];
-  let errorTrends: any[] = [];
-  let searchConsoleConfigured = false;
-
-  if (isSearchConsoleConfigured()) {
-    searchConsoleConfigured = true;
-    try {
-      const credentials = getSearchConsoleCredentials();
-      if (credentials) {
-        const auth = await initSearchConsoleClient(credentials);
-        if (auth) {
-          searchConsoleErrors = await fetchStructuredDataErrors(credentials.siteUrl, auth);
-          errorTrends = await fetchErrorTrends(credentials.siteUrl, auth, 30);
-        }
-      }
-    } catch (error) {
-      console.error("Failed to fetch Search Console data:", error);
-    }
-  }
+  const searchConsole = await readSearchConsole();
 
   return {
     jsonLdStats,
@@ -111,9 +130,7 @@ async function getSEOHealthData() {
     clientsWithoutLogos,
     validationRate,
     coverageRate,
-    searchConsoleErrors,
-    errorTrends,
-    searchConsoleConfigured,
+    searchConsole,
   };
 }
 
@@ -288,12 +305,9 @@ export default async function SEOHealthPage() {
         </Card>
       </div>
 
-      {/* Search Console Errors Section (if configured) */}
-      {data.searchConsoleConfigured && (
-        <SearchConsoleErrorsSection
-          errors={data.searchConsoleErrors}
-          trends={data.errorTrends}
-        />
+      {/* Search Console Errors Section (hidden only when Search Console is not set up) */}
+      {data.searchConsole.status !== "not-configured" && (
+        <SearchConsoleErrorsSection snapshot={data.searchConsole} />
       )}
 
       {/* Page Validator */}
@@ -321,7 +335,7 @@ export default async function SEOHealthPage() {
               إكمال بيانات الكتاب
             </Link>
           </Button>
-          {data.searchConsoleConfigured && (
+          {data.searchConsole.status !== "not-configured" && (
             <form action={handleGenerateWeeklyReport}>
               <Button variant="outline" type="submit" className="gap-2">
                 <FileText className="h-4 w-4" />

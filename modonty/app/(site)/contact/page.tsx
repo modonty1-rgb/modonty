@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { generateStructuredData, normalizeStoredSiteEntityIds } from "@/lib/seo";
+import { generateStructuredData, jsonLdHtmlFromString } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ContactForm } from "@/components/shared/contact-form/ContactForm";
 import { auth } from "@/lib/auth";
@@ -54,7 +54,7 @@ export default async function ContactPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: storedJsonLd
-            ? normalizeStoredSiteEntityIds(storedJsonLd)
+            ? jsonLdHtmlFromString(storedJsonLd)
             : sanitizeJsonLd(buildFallbackStructuredData()),
         }}
       />

@@ -113,7 +113,10 @@ export const clientFormSchema = z
       .or(z.literal("")),
 
     // SEO
-    seoTitle: z.string().max(51, "SEO title must be 51 characters or less (final title in Google: 60 chars)").optional().nullable().or(z.literal("")),
+    // Origin: MODONTY POLICY, not Google — 51 = our 60-char display budget minus the
+    // "- مودونتي" suffix. Google sets no title length limit (Title links doc).
+    // https://developers.google.com/search/docs/appearance/title-link
+    seoTitle: z.string().max(51, "SEO title is longer than 51 chars — shorten it. Modonty appends \"- مودونتي\" (60 total): MODONTY POLICY for title display, not a Google requirement").optional().nullable().or(z.literal("")),
     seoDescription: z
       .string()
       .max(160, "SEO description must be less than 160 characters")
@@ -309,9 +312,10 @@ export const clientCreateFormSchema = clientFormSchema.superRefine((data, ctx) =
 // The server (clientServerSchema) is the real gate and treats industryId/tier as optional.
 export const clientSeoFormSchema = z
   .object({
+    // Origin: MODONTY POLICY, not Google — see clientFormSchema.seoTitle above.
     seoTitle: z
       .string()
-      .max(51, "SEO title must be 51 characters or less (final title in Google: 60 chars)")
+      .max(51, "SEO title is longer than 51 chars — shorten it. Modonty appends \"- مودونتي\" (60 total): MODONTY POLICY for title display, not a Google requirement")
       .optional()
       .nullable()
       .or(z.literal("")),

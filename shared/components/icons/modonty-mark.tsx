@@ -10,7 +10,6 @@ import type { SVGProps } from "react";
 export function ModontyMark(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
       viewBox="18 18 64 64"
       width="1em"
       height="1em"

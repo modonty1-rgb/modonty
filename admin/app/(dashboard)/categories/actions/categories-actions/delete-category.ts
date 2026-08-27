@@ -61,8 +61,27 @@ export async function deleteCategory(id: string) {
     });
 
     revalidatePath("/categories");
-    await revalidateModontyTag("categories");
-    try { const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateCategoriesListingCache(); } catch (e) { console.error("Categories listing cache failed:", e); }
+
+    // Rebuild the listing blob BEFORE busting modonty's cache. It was the other way round,
+    // so the flush went out first and the next visitor rebuilt /categories from the blob
+    // that still listed the deleted category — the stale page served under a fresh cache.
+    // Same order the create and update paths already follow.
+    //
+    // And the answer is read: the generator returns `{ success, error }` and never throws,
+    // so `await` alone always looked successful. A failed rebuild holds the flush rather
+    // than publishing the old list as new.
+    let listingOk = true;
+    try {
+      const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator");
+      const r = await regenerateCategoriesListingCache();
+      listingOk = r.success;
+      if (!r.success) console.error("Categories listing cache failed:", r.error);
+    } catch (e) {
+      listingOk = false;
+      console.error("Categories listing cache failed:", e);
+    }
+    if (listingOk) await revalidateModontyTag("categories");
+
     return { success: true };
   } catch (error) {
     console.error("Error deleting category:", error);

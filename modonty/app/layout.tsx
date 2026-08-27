@@ -10,6 +10,7 @@ import { PageViewTracker } from "@/app/layout/components/analytics/PageViewTrack
 import { ClarityScript } from "@/app/layout/components/analytics/clarity-script";
 import { BRAND_AR, SITE_URL } from "@/constants";
 import { getSiteLanguage } from "@/lib/settings/get-site-language";
+import { textDirection } from "@modonty/shared/lib/seo/text-direction";
 
 const tajawal = Tajawal({
   subsets: ["arabic", "latin"],
@@ -69,7 +70,11 @@ export default async function RootLayout({
   return (
     <html
       lang={siteLanguage}
-      dir="rtl"
+      // Derived, not written. `dir` was the literal "rtl" while `lang` came from Settings —
+      // the two describe the same thing, so switching Content Language to English produced
+      // `lang="en" dir="rtl"`. Today it is Arabic and both agree; the point is that they
+      // cannot disagree any more.
+      dir={textDirection(siteLanguage)}
       // Next 16 stopped overriding `scroll-behavior` during navigation; without this attribute a
       // route change animates the whole scroll distance instead of jumping. We keep smooth
       // scrolling for in-page anchors, so we opt back into the override (version-16 upgrade guide).

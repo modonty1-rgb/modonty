@@ -132,7 +132,18 @@ function pushStatusCheck(checks: ValidationCheck[], a: DbArticleInput) {
 
 function pushSlugCheck(checks: ValidationCheck[], a: DbArticleInput) {
   const slug = a.slug?.trim() ?? "";
-  const ok = slug.length > 0 && /^[\p{L}\p{N}\-_/]+$/u.test(slug);
+  // `/` is no longer allowed. It was in the character class, so a slug could carry a slash
+  // and pass — but a slug IS one path segment: `a/b` makes `/articles/a/b`, which matches no
+  // route, and every canonical and `@id` built from it points at a 404.
+  //
+  // Measured on modonty_dev before tightening: 0 of 184 article slugs contain a slash, so
+  // this closes a door nobody has walked through rather than flagging existing content.
+  //
+  // Nothing else about the check changes. 14 of those 184 slugs carry an Arabic question mark
+  // and were ALREADY failing here — `؟` was never in the class. They are live indexed URLs,
+  // so fixing them means renaming a live URL, which needs redirects; that is a separate,
+  // deliberate job and not something to slip into a regex edit.
+  const ok = slug.length > 0 && /^[\p{L}\p{N}\-_]+$/u.test(slug);
   checks.push({
     id: "slug-valid",
     label: "URL slug is valid",
@@ -414,10 +425,14 @@ function pushJsonLdCacheFreshnessCheck(checks: ValidationCheck[], a: DbArticleIn
     });
     return;
   }
-  // Tolerance window for the Prisma @updatedAt race: when regenerateJsonLd writes
-  // jsonLdLastGenerated, dateModified is auto-bumped a few ms later by the same write.
-  // Anything within 60s of jsonLdLastGenerated is considered the same regen cycle.
-  const TOLERANCE_MS = 60_000;
+  // The race this covered is gone: jsonld-storage.ts now passes `dateModified` back
+  // unchanged, so a cache write no longer bumps it and a freshly generated article has
+  // NEGATIVE drift. What remains is legacy rows — every article whose cache was written
+  // before that fix carries a few milliseconds of positive drift, and dropping the window
+  // to zero would flag the entire library as stale on the day this ships. That is the false
+  // alarm, not the finding. So the window shrinks from 60s to 2s: wide enough for the
+  // millisecond-scale legacy drift, tight enough that a real post-generation edit shows up.
+  const TOLERANCE_MS = 2_000;
   const drift = a.dateModified.getTime() - a.jsonLdLastGenerated.getTime();
   const ok = drift <= TOLERANCE_MS;
   checks.push({
@@ -433,7 +448,10 @@ function pushJsonLdCacheFreshnessCheck(checks: ValidationCheck[], a: DbArticleIn
 // ═══ Group 7: Technical SEO ═══
 
 function pushCanonicalCheck(checks: ValidationCheck[], a: DbArticleInput) {
-  const ok = !a.canonicalUrl || sameHost(a.canonicalUrl, a.url);
+  // The WHOLE url, not just the host. See sameUrl below: a canonical pointing at another
+  // article on this same site used to pass, and that is the one case that actually hands the
+  // page away — Google is being told "index that one instead of me".
+  const ok = !a.canonicalUrl || sameUrl(a.canonicalUrl, a.url);
   checks.push({
     id: "canonical",
     label: "Canonical URL is valid (or auto-generated)",
@@ -441,7 +459,7 @@ function pushCanonicalCheck(checks: ValidationCheck[], a: DbArticleInput) {
     passed: ok,
     detail: ok
       ? undefined
-      : `The article's canonical link points to a different site (${a.canonicalUrl})`,
+      : `The article's canonical link points somewhere else (${a.canonicalUrl}) instead of its own address (${a.url})`,
     fix: ok
       ? undefined
       : "Edit Article SEO tab → clear canonicalUrl OR set it to match the article URL exactly.",
@@ -582,9 +600,33 @@ function isInternalHref(href: string): boolean {
   return /^https?:\/\/(www\.)?modonty\.com\b/i.test(href);
 }
 
-function sameHost(a: string, b: string): boolean {
+/**
+ * Do two absolute URLs address the SAME page?
+ *
+ * This replaces a host-only comparison. `sameHost` asked "is the canonical on our domain?",
+ * which let an article whose canonical pointed at a DIFFERENT article on the same site pass
+ * the gate — and a canonical is a request to drop this page in favour of that one. The check
+ * is marked `critical` precisely to stop a page being handed away, and it could not see the
+ * only case that matters.
+ *
+ * Normalised so the check reports real mismatches and nothing else:
+ *   · host lower-cased and `www.` ignored — the same page either way;
+ *   · protocol ignored — an http/https difference is a redirect concern, not a wrong target;
+ *   · a trailing slash ignored — `/articles/x` and `/articles/x/` are one page here;
+ *   · the query string and fragment ignored — neither changes which article is addressed.
+ *
+ * A URL that does not parse returns false, as before: an unparseable canonical is not a
+ * canonical, and passing it silently is how a broken value reaches Google.
+ */
+function sameUrl(a: string, b: string): boolean {
+  const norm = (raw: string) => {
+    const u = new URL(raw);
+    const host = u.host.toLowerCase().replace(/^www\./, "");
+    const path = u.pathname.replace(/\/+$/, "") || "/";
+    return `${host}${path}`;
+  };
   try {
-    return new URL(a).host === new URL(b).host;
+    return norm(a) === norm(b);
   } catch {
     return false;
   }

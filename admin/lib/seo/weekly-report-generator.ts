@@ -19,7 +19,6 @@ export interface WeeklyReport {
     articlesWithErrors: number;
     articlesWithWarnings: number;
     validationRate: number;
-    avgQualityScore: number;
     jsonLdCoverage: number;
   };
   topIssues: Array<{
@@ -38,13 +37,19 @@ export interface WeeklyReport {
 export async function generateWeeklyReport(
   weekStartDate?: Date
 ): Promise<WeeklyReport> {
-  const endDate = weekStartDate
-    ? new Date(weekStartDate)
-    : new Date();
+  // A closed week that has actually happened. Before this the no-argument case ran
+  // [now-7d … now+7d] — half the window in the future — and the argument case handed
+  // `startDate` the caller's own Date object and then mutated it.
+  const now = new Date();
+  const startDate = new Date(weekStartDate ?? now);
+  if (!weekStartDate) {
+    startDate.setDate(startDate.getDate() - 7);
+  }
+  const endDate = new Date(startDate);
   endDate.setDate(endDate.getDate() + 7);
-
-  const startDate = weekStartDate || new Date();
-  startDate.setDate(startDate.getDate() - 7);
+  if (endDate > now) {
+    endDate.setTime(now.getTime());
+  }
 
   // Fetch all published articles
   const articles = await db.article.findMany({
@@ -125,7 +130,9 @@ export async function generateWeeklyReport(
   // Get JSON-LD stats
   const jsonLdStats = await getJsonLdStats();
 
-  // Fetch error trends (if Search Console is configured)
+  // Current structured-data errors grouped by type (a snapshot, not a window — Search
+  // Console serves no history for rich-results issues). Empty here means either "Google
+  // reported none" or "we could not read Search Console"; `generateReportSummary` says so.
   let errorTrends: ErrorTrend[] = [];
   try {
     const {
@@ -137,11 +144,7 @@ export async function generateWeeklyReport(
     if (credentials) {
       const auth = await initSearchConsoleClient(credentials);
       if (auth) {
-        errorTrends = await fetchErrorTrends(
-          credentials.siteUrl,
-          auth,
-          7
-        );
+        errorTrends = await fetchErrorTrends(credentials.siteUrl, auth);
       }
     }
   } catch (error) {
@@ -170,7 +173,6 @@ export async function generateWeeklyReport(
       articlesWithErrors,
       articlesWithWarnings,
       validationRate,
-      avgQualityScore: 0, // TODO: Calculate from quality scores
       jsonLdCoverage,
     },
     topIssues,
@@ -282,9 +284,13 @@ export async function sendWeeklyReport(
 function generateReportSummary(report: WeeklyReport): string {
   const lines: string[] = [];
 
-  lines.push(`📊 Weekly SEO Report (${report.period.start.toLocaleDateString()} - ${report.period.end.toLocaleDateString()})`);
+  // Nothing in this report is scoped to the week: the article query carries no date
+  // filter, and Search Console serves no history for rich-results issues. The dates below
+  // are the report RUN window, so label them as such rather than implying the numbers
+  // were measured over them.
+  lines.push(`📊 SEO Report — generated for the week of ${report.period.start.toLocaleDateString()} - ${report.period.end.toLocaleDateString()} (all figures are a snapshot taken now, not a weekly delta)`);
   lines.push("");
-  lines.push(`📝 Total Articles: ${report.summary.totalArticles}`);
+  lines.push(`📝 Total Articles (all published, not only this week): ${report.summary.totalArticles}`);
   lines.push(`✅ Validation Rate: ${report.summary.validationRate}%`);
   lines.push(`📈 JSON-LD Coverage: ${report.summary.jsonLdCoverage}%`);
   lines.push(`❌ Articles with Errors: ${report.summary.articlesWithErrors}`);

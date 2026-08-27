@@ -3,6 +3,9 @@
  * Spec: importatn-TRENDING-PAGE-META-JSONLD-SPEC.md §4, §4a
  */
 
+import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
+import { buildListAuthorNode } from "@/lib/seo/build-list-author-node";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import type { SettingsForHomeJsonLd } from "./build-home-jsonld-from-settings";
 import type { ArticleForHomeJsonLd } from "./build-home-jsonld-from-settings";
 import { buildSiteOrgAndWebSite } from "./build-clients-page-jsonld";
@@ -12,16 +15,16 @@ function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): str
   if (!url?.trim()) return undefined;
   const u = url.trim();
   if (u.startsWith("http://") || u.startsWith("https://")) return u.replace("http://", "https://");
-  if (u.startsWith("/")) return `${siteUrl}${u}`;
+  if (u.startsWith("/")) return absoluteUrl(u, siteUrl);
   return `https://${u}`;
 }
 
 const SCHEMA_CONTEXT = "https://schema.org";
 
 function articleToListItem(article: ArticleForHomeJsonLd, siteUrl: string, index: number): Record<string, unknown> {
-  const articleUrl = `${siteUrl}/articles/${article.slug}`;
-  const clientUrl = `${siteUrl}/clients/${article.client.slug}`;
-  const authorUrl = article.author.slug ? `${siteUrl}/authors/${article.author.slug}` : undefined;
+  const articleUrl = entityUrl("articles", article.slug, siteUrl);
+  const clientUrl = entityUrl("clients", article.client.slug, siteUrl);
+  const authorUrl = article.author.slug ? entityUrl("authors", article.author.slug, siteUrl) : undefined;
   const imageUrl = mediaSrc(article.featuredImage)?.trim();
   const absImage = imageUrl ? ensureAbsoluteUrl(imageUrl, siteUrl) : undefined;
   const clientLogo = mediaSrc(article.client.logoMedia)?.trim();
@@ -47,11 +50,7 @@ function articleToListItem(article: ArticleForHomeJsonLd, siteUrl: string, index
           ? article.dateModified.toISOString()
           : String(article.dateModified),
     }),
-    author: {
-      "@type": "Person",
-      name: article.author.name || "Modonty",
-      ...(authorUrl && { url: authorUrl }),
-    },
+    author: buildListAuthorNode(article.author, siteUrl),
     publisher: {
       "@type": "Organization",
       name: article.client.name,
@@ -68,8 +67,9 @@ function articleToListItem(article: ArticleForHomeJsonLd, siteUrl: string, index
       image: {
         "@type": "ImageObject",
         url: absImage,
-        width: 1200,
-        height: 630,
+        // No width/height: nothing here measured this file. ArticleForHomeJsonLd.featuredImage
+        // carries url/bunnyUrl/blurDataURL only — no dimensions — so the pair was a literal
+        // 1200x630 on every article image whatever its real size.
       },
     }),
   };
@@ -84,15 +84,18 @@ export function buildTrendingPageJsonLd(
   settings: SettingsForHomeJsonLd,
   articles: ArticleForHomeJsonLd[],
   totalCount: number,
-  dateModified: Date
+  // `null` when the list is empty. An empty listing page has no content date, and the
+  // caller used to pass `new Date()` for it — a page announcing it changed today because it
+  // has nothing on it. Absent stays absent, the same rule the per-item dates below follow.
+  dateModified: Date | null
 ): object {
-  const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
-  const pageUrl = `${siteUrl}/trending`;
+  const siteUrl = requireSiteUrl(settings.siteUrl).replace(/\/$/, "");
+  const pageUrl = absoluteUrl("/trending", siteUrl);
   const { org, website, inLangCodes } = buildSiteOrgAndWebSite(settings, siteUrl);
 
   const name = settings.trendingSeoTitle?.trim() || "الأكثر رواجاً";
   const description =
-    settings.trendingSeoDescription?.trim() || "استكشف المقالات الأكثر رواجاً - محتوى يتابعه القراء الآن.";
+    settings.trendingSeoDescription?.trim() || undefined;
   const ogImageUrl = (settings.ogImageUrl ?? settings.logoUrl ?? "").trim();
   const absOgImage = ogImageUrl ? ensureAbsoluteUrl(ogImageUrl, siteUrl) : undefined;
 
@@ -110,10 +113,10 @@ export function buildTrendingPageJsonLd(
     "@id": `${pageUrl}#collectionpage`,
     name,
     url: pageUrl,
-    description,
+    ...(description && { description }),
     inLanguage: inLangCodes,
     isPartOf: { "@id": website["@id"] },
-    dateModified: dateModified.toISOString(),
+    ...(dateModified ? { dateModified: dateModified.toISOString() } : {}),
     mainEntity: itemList,
     breadcrumb: {
       "@type": "BreadcrumbList",
@@ -127,8 +130,9 @@ export function buildTrendingPageJsonLd(
     collectionPage.primaryImageOfPage = {
       "@type": "ImageObject",
       url: absOgImage,
-      width: 1200,
-      height: 630,
+      // No width/height: this is settings.ogImageUrl/logoUrl, a bare url with no Media row
+      // behind it. Measured 27 Aug 2026 on production, the declared 1200x630 described a
+      // 5000x2625 PNG.
     };
   }
 

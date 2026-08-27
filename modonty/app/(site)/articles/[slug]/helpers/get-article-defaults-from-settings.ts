@@ -48,7 +48,12 @@ export async function getArticleDefaultsFromSettings(): Promise<ArticleDefaultsF
   return {
     inLanguage: settings.inLanguage?.trim() || "ar",
     metaRobots: settings.defaultMetaRobots?.trim() || "index, follow",
-    ogType: settings.defaultOgType?.trim() || "article",
+    // Fixed, never read from Settings. `Settings.defaultOgType` is the LISTING pages' type
+    // ("website", and that is what the seed writes), so reading it here published
+    // `og:type="website"` on every article the moment the defaults button was pressed.
+    // og:type is a property of the object, not a site preference: ogp.me types an article as
+    // `article`. Nothing to edit in the admin, so nothing to read from the DB.
+    ogType: "article",
     ogLocale: settings.defaultOgLocale?.trim() || "ar_SA",
     twitterCard: settings.defaultTwitterCard?.trim() || "summary_large_image",
     twitterSite: settings.twitterSite?.trim() || "",

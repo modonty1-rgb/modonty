@@ -37,6 +37,16 @@ export async function saveClientSeo(
   }
   const { clientId, seoTitle, seoDescription } = parsed.data;
 
+  // Read the two columns BEFORE overwriting them. There is no transaction to roll back
+  // into here: the regeneration below is a separate call that reads the row after the
+  // write, so it cannot sit inside one. What the previous values buy is compensation —
+  // see the restore after the generator.
+  const before = await db.client.findUnique({
+    where: { id: clientId },
+    select: { seoTitle: true, seoDescription: true },
+  });
+  if (!before) return { success: false, error: "الشريك غير موجود." };
+
   let clientName: string | null = null;
   try {
     // Partial update — only the two writer-owned fields.
@@ -62,6 +72,23 @@ export async function saveClientSeo(
   // Regenerate JSON-LD + metaTags from DB through the shared bundle (single path).
   const gen = await generateClientSEO(clientId);
   if (!gen.success) {
+    // Compensate. The two columns are already written; the stored card is not. Leaving it
+    // there means the row says one title and its published card says another — and the next
+    // unrelated cache flush ships that mismatch to Google. The screen says "failed", so the
+    // database must say "unchanged": put the previous values back.
+    try {
+      await db.client.update({
+        where: { id: clientId },
+        data: { seoTitle: before.seoTitle, seoDescription: before.seoDescription },
+      });
+    } catch {
+      // The restore itself failed — the row IS now inconsistent, and hiding that behind the
+      // generator's message would send the writer away thinking nothing was saved.
+      return {
+        success: false,
+        error: "انحفظ العنوان والوصف لكن ما انبنى السيو، والرجوع للقيم القديمة فشل — افتح الشريك وتأكّد من الحقلين.",
+      };
+    }
     return { success: false, error: gen.error ?? "تعذّر إعادة توليد السيو." };
   }
 

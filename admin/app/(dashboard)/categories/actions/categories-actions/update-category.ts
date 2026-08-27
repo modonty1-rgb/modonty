@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { buildTaxonomyCanonical } from "@/lib/seo/build-taxonomy-canonical";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
@@ -32,11 +33,24 @@ export async function updateCategory(
       return { success: false, error: parsed.error.errors[0].message };
     }
 
+    const normalizedData = {
+      ...data,
+      slug: parsed.data.slug,
+    };
+
     const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
 
-    // Slug uniqueness check (exclude current)
+    // Slug uniqueness check — excluding THIS category, whichever way it was addressed.
+    //
+    // `id` is an ObjectId or a slug; line 82 below branches on exactly that. The exclusion
+    // used to be `id: { not: isObjectId ? id : undefined }`, and `not: undefined` excludes
+    // NOTHING — so a call made with a slug matched the category against itself, `existing`
+    // came back truthy, and the save was refused with "This slug is already in use" naming
+    // the category's own slug. Re-saving a category without touching its slug was rejected.
     const existing = await db.category.findFirst({
-      where: { slug: data.slug.trim(), id: { not: isObjectId ? id : undefined } },
+      where: isObjectId
+        ? { slug: normalizedData.slug, id: { not: id } }
+        : { slug: normalizedData.slug, NOT: { slug: id } },
       select: { id: true },
     });
     if (existing) {
@@ -56,13 +70,15 @@ export async function updateCategory(
       socialImageMediaId?: string | null;
       cloudinaryPublicId?: string | null;
     } = {
-      name: data.name,
-      slug: data.slug,
-      description: data.description || null,
-      parentId: data.parentId || null,
-      seoTitle: data.seoTitle || null,
-      seoDescription: data.seoDescription || null,
-      canonicalUrl: data.canonicalUrl || null,
+      name: normalizedData.name,
+      slug: normalizedData.slug,
+      description: normalizedData.description || null,
+      parentId: normalizedData.parentId || null,
+      seoTitle: normalizedData.seoTitle || null,
+      seoDescription: normalizedData.seoDescription || null,
+      // Rebuilt from the slug being saved, never taken from the form or the old row — a
+      // renamed category used to keep a canonical pointing at its previous address.
+      canonicalUrl: await buildTaxonomyCanonical("categories", normalizedData.slug),
     };
 
     if (data.socialImage !== undefined) updateData.socialImage = data.socialImage;
@@ -84,27 +100,56 @@ export async function updateCategory(
     revalidatePath("/categories");
     // Regenerate the stored SEO BEFORE revalidating modonty — otherwise the page rebuilds
     // with the stale cached metadata (og:image lags one save behind; caught live 2026-07-31).
-    try { const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator"); await generateAndSaveCategorySeo(category.id); } catch (e) { console.error("Category SEO gen failed:", e); }
-    try { const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateCategoriesListingCache(); } catch (e) { console.error("Categories listing cache failed:", e); }
-    await revalidateModontyTag("categories");
+    // Both generators RETURN { success, error } and never throw — read the result, or a
+    // failed regeneration passes as success and modonty keeps serving the old blob.
+    const seoFailures: string[] = [];
+    try {
+      const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator");
+      const result = await generateAndSaveCategorySeo(category.id);
+      if (!result.success) seoFailures.push(`سيو القسم: ${result.error || "سبب غير معروف"}`);
+    } catch (e) { seoFailures.push(`سيو القسم: ${e instanceof Error ? e.message : String(e)}`); }
+    try {
+      const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator");
+      const result = await regenerateCategoriesListingCache();
+      if (!result.success) seoFailures.push(`صفحة الأقسام: ${result.error || "سبب غير معروف"}`);
+    } catch (e) { seoFailures.push(`صفحة الأقسام: ${e instanceof Error ? e.message : String(e)}`); }
+    if (seoFailures.length > 0) console.error("Category SEO gen failed:", category.id, seoFailures.join(" · "));
+    else await revalidateModontyTag("categories");
 
-    // Cascade: regenerate JSON-LD for all articles in this category
+    // Cascade: regenerate BOTH stored blobs for every article in this category.
+    let articleCascadeFailed = 0;
     try {
       const categoryArticles = await db.article.findMany({
         where: { categoryId: category.id },
         select: { id: true },
       });
       if (categoryArticles.length > 0) {
-        const { batchRegenerateJsonLd } = await import("@/lib/seo");
-        await batchRegenerateJsonLd(categoryArticles.map((a) => a.id));
+        const { batchRegenerateArticleSeo } = await import("@/lib/seo");
+        // This rebuilt the JSON-LD only, so renaming a category left `article:section` in
+        // `Article.nextjsMetadata` on the old name. See the regeneration matrix in
+        // batch-regenerate-article-seo.ts.
+        //
+        // It counts its own failures instead of throwing — ignoring the count is how a
+        // half-finished cascade used to pass as done.
+        const batch = await batchRegenerateArticleSeo(categoryArticles.map((a) => a.id));
+        articleCascadeFailed = batch.failed;
+        if (batch.failed > 0) seoFailures.push(`${batch.failed} مقالاً ما تجدّدت بياناته`);
       }
-    } catch {
-      // Don't fail the category update if cascade fails
+    } catch (e) {
+      articleCascadeFailed = -1;
+      seoFailures.push(`مقالات القسم: ${e instanceof Error ? e.message : String(e)}`);
     }
 
-    await revalidateModontyTag("articles");
+    if (articleCascadeFailed === 0) await revalidateModontyTag("articles");
 
-    return { success: true, category };
+    return {
+      success: true,
+      category,
+      seoWarning:
+        seoFailures.length > 0
+          ? `القسم انحفظ، لكن بيانات السيو ما تجدّدت — جوجل بيبقى يشوف القديم. (${seoFailures.join(" · ")})`
+          : undefined,
+    };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update category";
     return { success: false, error: message };

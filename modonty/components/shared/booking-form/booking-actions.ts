@@ -19,6 +19,7 @@ import { getVisitorContext } from "@/lib/analytics/visitor-cookie";
 import { getGeoFromHeaders } from "@/lib/analytics/geo-headers";
 import { sendEmail } from "@/lib/email/resend-client";
 import { bookingNotificationEmail } from "@/lib/email/templates/booking-notification";
+import { notifyClientMobile } from "@/lib/mobile-push";
 
 export type BookingSource =
   | "article_dock"
@@ -100,7 +101,7 @@ export async function recordWhatsappLead(ctx: {
       h.get("cf-connecting-ip") ||
       null;
 
-    await db.bookingRequest.create({
+    const booking = await db.bookingRequest.create({
       data: {
         clientId: ctx.clientId,
         articleId: ctx.articleId ?? null,
@@ -116,8 +117,13 @@ export async function recordWhatsappLead(ctx: {
       },
       select: { id: true },
     });
-    // No provider notification here by design: the visitor's message reaches the provider
-    // on WhatsApp directly. The console row is the record; Telegram would be duplicate.
+    // Only a stored, non-duplicate lead alerts the client. No visitor data leaves Modonty.
+    void notifyClientMobile(ctx.clientId, {
+      event: "WHATSAPP_CONTACT",
+      title: "تواصل جديد عبر واتساب",
+      body: "لديك تواصل جديد من أحد مقالاتك.",
+      articleId: ctx.articleId,
+    });
   } catch {
     // recording must never block the WhatsApp handoff
   }
@@ -256,6 +262,14 @@ export async function submitBookingRequest(
   } catch {
     return fail("db_write_failed", "تعذّر حفظ طلب الحجز، حاول مرة ثانية.");
   }
+
+  // The alert confirms a stored request, not merely a press on the CTA.
+  void notifyClientMobile(client.id, {
+    event: "BOOKING_CREATED",
+    title: "طلب حجز جديد",
+    body: "لديك طلب حجز جديد من أحد مقالاتك.",
+    articleId: ctx.articleId,
+  });
 
   // 6. Internal notification → a staff admin (bell icon). Staff live in their own
   //    table now, so the recipient is a staffId (not a users row).

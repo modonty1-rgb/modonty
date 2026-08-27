@@ -724,8 +724,22 @@ export async function getAllSettings(): Promise<AllSettings> {
       industriesPageJsonLdValidationReport: ((settings as Record<string, unknown>).industriesPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
     };
   } catch (error) {
+    // This used to `return DEFAULT_SETTINGS` — and that is the most expensive line in the
+    // file, because of what reads it:
+    //
+    //   1. Every SEO generator. A blank row means `siteUrl: null`, so a single unreachable
+    //      moment made them build canonicals and `@id`s off nothing and write that to the DB.
+    //   2. `updateAllSettings` and `seedSiteOrgFromEnv` do `{ ...await getAllSettings(), ...data }`.
+    //      One failed read there does not degrade — it OVERWRITES the whole settings row with
+    //      the defaults, and the screen says "saved".
+    //
+    // A read that failed is not a row full of defaults; it is "we do not know". Throw, and the
+    // callers stop where they are. `DEFAULT_SETTINGS` keeps its real job: seeding a row that
+    // genuinely does not exist yet (the `create` above).
     console.error("Error fetching settings:", error);
-    return DEFAULT_SETTINGS;
+    throw new Error(
+      `تعذّرت قراءة إعدادات الموقع من القاعدة: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 }
 
@@ -981,18 +995,49 @@ export async function saveModontySettings(data: Partial<ModontySettings>): Promi
 }
 
 export async function updateSEOSettings(data: Partial<SEOSettings>) {
-  const all = await getAllSettings();
-  return updateAllSettings({ ...all, ...data });
+  // Guarded here too, not only in `updateAllSettings` below: this action reads the whole
+  // settings row first, so without its own check an unauthenticated caller could read every
+  // stored value back — including the ones the write guard is there to protect.
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
+
+  // `getAllSettings` now throws instead of handing back a row of defaults. Catch it here so
+  // the form gets the usual `{ success:false, error }` — and, more importantly, so the spread
+  // below never runs on values we did not actually read.
+  try {
+    const all = await getAllSettings();
+    return updateAllSettings({ ...all, ...data });
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
+  }
 }
 
 export async function updateAllSettings(data: Partial<AllSettings>) {
   try {
+    // The six `save*` actions above have carried this guard all along; this one — the action
+    // every settings form actually calls — did not. An unauthenticated POST could rewrite
+    // `siteUrl`, `defaultMetaRobots` and the seven listing titles, then trigger the cascade
+    // onto every article. Same guard, same shape, same message as its siblings.
+    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
+
     // Atomic singleton resolution — creates if missing, returns id.
     const id = await ensureSettingsId();
 
-    let settings;
-    {
-      await db.settings.update({
+    // The four chunks below are ONE write. They used to be four independent
+    // `db.settings.update` calls: when chunk 3 failed, chunks 1 and 2 stayed written, the
+    // catch returned "failed" to the screen, and the row was left half-new — `siteUrl` and
+    // the listing titles already changed. The cascade then rebuilds every article and client
+    // from that half-row. A transaction makes the failure total instead of partial.
+    //
+    // The chunking itself is NOT optional and does not change: MongoDB Atlas caps an
+    // aggregation pipeline at 50 stages, so one 73-field update fails outright. Four chunks
+    // inside one transaction satisfy both constraints.
+    //
+    // Prisma's MongoDB connector runs transactions on a replica set, which Atlas is — the
+    // connector already depends on them for nested writes, and seven other admin actions
+    // call `$transaction` against this same database. Timeout raised from the 5s default
+    // because the row carries ~238KB of stored JSON-LD blobs (measured on modonty_dev).
+    const settings = await db.$transaction(async (tx) => {
+      await tx.settings.update({
         where: { id },
         data: {
           seoTitleMin: data.seoTitleMin,
@@ -1024,7 +1069,7 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
       });
       // Split into 2 chunks (each < 50 fields) — MongoDB Atlas limits
       // aggregation pipeline to 50 stages. Combined update of 73 fields fails.
-      await db.settings.update({
+      await tx.settings.update({
         where: { id },
         data: {
           siteUrl: data.siteUrl,
@@ -1076,7 +1121,7 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
       // Third chunk: the legal-entity block. Kept separate on purpose — folding these
       // eight into the chunk above pushed it to 54 fields, past the 50-stage aggregation
       // limit MongoDB Atlas enforces, and the whole save would have failed.
-      await db.settings.update({
+      await tx.settings.update({
         where: { id },
         data: {
           orgAddressNeighborhood: data.orgAddressNeighborhood,
@@ -1089,7 +1134,7 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           orgFoundingDate: data.orgFoundingDate,
         },
       });
-      settings = await db.settings.update({
+      await tx.settings.update({
         where: { id },
         data: {
           logoUrl: data.logoUrl,
@@ -1136,7 +1181,7 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
       // (which save via updateAllSettings) silently dropped them. Kept as a
       // separate 4th update to stay under MongoDB Atlas's 50-field-per-update
       // limit. Bug fixed 2026-07-04.
-      settings = await db.settings.update({
+      return tx.settings.update({
         where: { id },
         data: {
           tagsSeoTitle: data.tagsSeoTitle,
@@ -1172,7 +1217,7 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           industriesPageImageAlt: data.industriesPageImageAlt,
         },
       });
-    }
+    }, { timeout: 20_000, maxWait: 10_000 });
 
     // A settings change is the widest action in the admin — it cascades to every article
     // and client on the site. Record which keys were touched, never their values: this
@@ -1184,7 +1229,7 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
     });
 
     revalidatePath("/settings");
-    await revalidateModontyTag("settings", settings?.siteUrl);
+    await revalidateModontyTag("settings", settings.siteUrl);
 
     // Cascade runs AFTER response via `after()` (Next.js stable since v15.1).
     // Vercel keeps the function alive via waitUntil — admin doesn't wait.
@@ -1211,8 +1256,15 @@ function siteOrgFromEnv(): Partial<SiteOrgSettings> {
   return {
     siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || null,
     siteName: process.env.NEXT_PUBLIC_SITE_NAME?.trim() || null,
-    // Brand description hardcoded (2026-04-30) — not a secret, doesn't belong in .env
-    brandDescription: "Modonty — your trusted dental and healthcare platform in the Gulf region.",
+    // Read like every other field here, never written in code. This line used to carry the
+    // literal "Modonty — your trusted dental and healthcare platform in the Gulf region." —
+    // English on an Arabic brand, and factually a description of a handful of partners rather
+    // than of a platform that publishes across marketing, business and technology.
+    //
+    // It becomes the Organization `description` in JSON-LD, i.e. the company's own account of
+    // itself, so it belongs where the team can edit it: Settings → Brand. Absent means absent;
+    // no sentence is invented here to fill the gap.
+    brandDescription: process.env.NEXT_PUBLIC_BRAND_DESCRIPTION?.trim() || null,
     siteAuthor: process.env.NEXT_PUBLIC_SITE_AUTHOR?.trim() || null,
     inLanguage: process.env.NEXT_PUBLIC_IN_LANGUAGE?.trim() || null,
     defaultMetaRobots: process.env.NEXT_PUBLIC_DEFAULT_META_ROBOTS?.trim() || null,
@@ -1262,6 +1314,10 @@ function siteOrgFromEnv(): Partial<SiteOrgSettings> {
 /** Populate Settings site/org fields from .env and save to DB. Does not remove .env. */
 export async function seedSiteOrgFromEnv(): Promise<{ success: boolean; error?: string }> {
   try {
+    // Writes the whole site/org block from env. `updateAllSettings` now refuses an
+    // unauthenticated caller, but this one reads every setting first — so it gets its own.
+    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
+
     const all = await getAllSettings();
     const fromEnv = siteOrgFromEnv();
     return await updateAllSettings({ ...all, ...fromEnv });

@@ -13,6 +13,8 @@
  */
 
 import { SITE_NAME_FALLBACK } from "@/lib/constants/site-name";
+import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import { safeOrganizationType, resolveOrganizationType, isLocalFamilyType } from "@modonty/shared/lib/seo/organization-schema-types";
 import { deriveClientType } from "@modonty/shared/lib/seo/generate-organization-jsonld";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
@@ -32,28 +34,79 @@ import {
   resolveImageAttribution,
   type ModontyImageDefaults,
 } from "@modonty/shared/lib/seo/media/build-image-object";
-import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl } from "@modonty/shared/lib/bunny";
+import {
+  BUNNY_ASPECT_SUFFIX,
+  bunnyAspectUrl,
+  hasBunnyAspectCrops,
+} from "@modonty/shared/lib/bunny";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { BRAND_LOGO_URL } from "@modonty/shared/lib/brand-assets";
 
+/** height = width x this, for each of Google's 3 article aspect ratios. */
+const ASPECT_HEIGHT_FACTOR = { "1:1": 1, "4:3": 3 / 4, "16:9": 9 / 16 } as const;
+
+/** Bunny crops are pre-generated at this width — media/actions/generate-aspect-crops.ts:16-20. */
+const BUNNY_CROP_WIDTH = 1200;
+
+/** A url plus the size of the file it actually points at — absent when nothing measured it. */
+interface AspectImage {
+  url: string;
+  width?: number;
+  height?: number;
+}
+
 /**
- * Build Cloudinary URL for a specific aspect ratio (1:1, 4:3, 16:9).
- * Google Article rich results recommends 3 aspect ratios.
- * Falls back to original URL when not Cloudinary.
+ * Build the aspect-ratio variant of an image url, and report dimensions ONLY when the url
+ * that comes back is a real crop whose size is known by construction:
+ *
+ *   - Bunny: the 3 crops are written at upload by `generate-aspect-crops.ts` with
+ *     `sharp.resize(1200, h, { fit: "cover" })`, and `cover` always emits exactly the
+ *     requested box — so a crop url is 1200 x (1200 * factor), measured at creation.
+ *   - Cloudinary: `c_fill,ar_<ratio>,w_<width>` yields exactly `width` x `width * factor`.
+ *
+ * Every other path returns the ORIGINAL, uncropped url unchanged — a Bunny asset outside the
+ * POST folder (client logo/hero carry no crops), a non-Cloudinary host, or a url that already
+ * carries an `ar_` transform of unknown size. Nothing here measured those, so no size is
+ * reported and the caller supplies the source Media row's real dimensions instead.
+ *
+ * This is the whole point of the shape: the old version declared the CROP's size (1200x675)
+ * even when it had handed back the untouched original, which on production meant a 5000x2625
+ * file advertised as 1200x630. Google's structured-data policy forbids markup that
+ * misrepresents the page, and schema.org width/height describe the actual image.
  */
-function buildAspectUrl(url: string, aspectRatio: "1:1" | "4:3" | "16:9", width = 1200): string {
-  // Bunny stores pre-generated crops next to the base image (Bunny has no on-the-fly crop).
+function buildAspectUrl(url: string, aspectRatio: "1:1" | "4:3" | "16:9", width = 1200): AspectImage {
+  const factor = ASPECT_HEIGHT_FACTOR[aspectRatio];
+  // Bunny stores pre-generated crops next to the base image (Bunny has no on-the-fly crop),
+  // but only in the POST folder. Client logo/hero assets do not carry these crops.
   if (url && url.includes(".b-cdn.net")) {
-    return bunnyAspectUrl(url, BUNNY_ASPECT_SUFFIX[aspectRatio]);
+    return hasBunnyAspectCrops(url)
+      ? {
+          url: bunnyAspectUrl(url, BUNNY_ASPECT_SUFFIX[aspectRatio]),
+          width: BUNNY_CROP_WIDTH,
+          height: Math.round(BUNNY_CROP_WIDTH * factor),
+        }
+      : { url };
   }
   if (!url || !url.includes("res.cloudinary.com") || !url.includes("/upload/")) {
-    return url;
+    return { url };
   }
-  if (url.includes(",ar_") || url.includes("/ar_")) return url;
+  if (url.includes(",ar_") || url.includes("/ar_")) return { url };
   const uploadIndex = url.indexOf("/upload/");
   const beforeUpload = url.substring(0, uploadIndex + 8);
   const afterUpload = url.substring(uploadIndex + 8);
-  return `${beforeUpload}c_fill,ar_${aspectRatio},g_auto,w_${width},f_auto,q_auto/${afterUpload}`;
+  return {
+    url: `${beforeUpload}c_fill,ar_${aspectRatio},g_auto,w_${width},f_auto,q_auto/${afterUpload}`,
+    width,
+    height: Math.round(width * factor),
+  };
+}
+
+/** Crop size when the url really is a crop; otherwise the source file's own recorded size. */
+function aspectDimensions(
+  image: AspectImage,
+  original: { width?: number; height?: number },
+): { width?: number; height?: number } {
+  return image.width && image.height ? { width: image.width, height: image.height } : original;
 }
 
 // Type for article with all relations needed for JSON-LD
@@ -69,6 +122,15 @@ export interface ArticleWithFullRelations extends Article {
   gallery?: Array<ArticleMedia & { media: Media }>;
   faqs?: ArticleFAQ[];
   reviewer?: Author | null;
+  /**
+   * Neither is an Article column. Both live on Settings (`inLanguage`,
+   * `defaultIsAccessibleForFree`) and arrive here through `mergeArticleWithDefaults`
+   * (jsonld-storage.ts:124), the same way the metadata path receives them. Declared so this
+   * generator can READ them instead of writing literals — `getArticleDefaultsFromSettings`
+   * always supplies both, so at runtime they are present.
+   */
+  inLanguage?: string | null;
+  isAccessibleForFree?: boolean | null;
 }
 
 // Platform-wide branding from Settings — used when author is the platform brand (Modonty)
@@ -121,7 +183,7 @@ export interface JsonLdNode {
  */
 function normalizeUrl(url: string | null | undefined, siteUrl: string, fallbackPath: string): string {
   if (!url) {
-    return `${siteUrl}${fallbackPath}`;
+    return absoluteUrl(fallbackPath, siteUrl);
   }
 
   // If URL already starts with the correct site URL, return as-is
@@ -133,12 +195,10 @@ function normalizeUrl(url: string | null | undefined, siteUrl: string, fallbackP
   try {
     const urlObj = new URL(url);
     // Extract pathname + search + hash
-    const path = urlObj.pathname + urlObj.search + urlObj.hash;
-    return `${siteUrl}${path}`;
+    return absoluteUrl(urlObj.pathname + urlObj.search + urlObj.hash, siteUrl);
   } catch {
     // If URL parsing fails, treat it as a relative path
-    const cleanPath = url.startsWith('/') ? url : `/${url}`;
-    return `${siteUrl}${cleanPath}`;
+    return absoluteUrl(url, siteUrl);
   }
 }
 
@@ -165,8 +225,10 @@ export function generateArticleKnowledgeGraph(
    */
   pageBaseUrl?: string | null
 ): JsonLdGraph {
-  // branding.siteUrl SHOULD come from loadSiteUrl() (DB-backed). Hardcoded fallback only as safety net.
-  const siteUrl = branding?.siteUrl || "https://www.modonty.com";
+  // `branding.siteUrl` comes from loadSiteUrl() (DB-backed). There is no literal fallback:
+  // this value becomes every `@id` in the graph, so an invented host here writes a whole
+  // second entity set into the stored blob and nothing on screen says so.
+  const siteUrl = requireSiteUrl(branding?.siteUrl);
   const siteIds = buildSiteEntityIds(siteUrl);
   // Settings is the source of truth for the brand name — it already arrives in `branding`.
   const resolvedSiteName = branding?.siteName?.trim() || SITE_NAME_FALLBACK;
@@ -193,10 +255,10 @@ export function generateArticleKnowledgeGraph(
   const articleUrl = pageBase
     ? raw && raw.startsWith(pageBase)
       ? raw
-      : `${pageBase}/${article.slug}`
+      : absoluteUrl(`/${article.slug}`, pageBase)
     : raw
       ? normalizeUrl(raw, siteUrl, `/articles/${article.slug}`)
-      : `${siteUrl}/articles/${article.slug}`;
+      : entityUrl("articles", article.slug, siteUrl);
 
   // Detect if author is the platform brand (Modonty) — emit as Organization
   const authorSlug = (article.author.slug || "").toLowerCase();
@@ -214,8 +276,8 @@ export function generateArticleKnowledgeGraph(
     // article graph and `/#organization` in the identity script, same name, same logo.
     author: isPlatformAuthor
       ? siteIds.organization
-      : `${siteUrl}/authors/${article.author.slug}#person`,
-    publisher: `${siteUrl}/clients/${article.client.slug}#organization`,
+      : entityUrl("authors", article.author.slug, siteUrl, "person"),
+    publisher: entityUrl("clients", article.client.slug, siteUrl, "organization"),
     breadcrumb: `${articleUrl}#breadcrumb`,
     primaryImage: `${articleUrl}#primary-image`,
   };
@@ -224,7 +286,7 @@ export function generateArticleKnowledgeGraph(
 
   // 1. WebPage (container for the article)
   graph.push(
-    generateWebPageNode(article, articleUrl, ids, siteUrl, !pageBase, resolvedSiteName)
+    generateWebPageNode(article, articleUrl, ids, siteUrl, !pageBase)
   );
 
   // 2. Article (main content)
@@ -284,7 +346,7 @@ export function generateArticleKnowledgeGraph(
       client: {
         id: article.client.id,
         name: article.client.name,
-        url: `${siteUrl}/clients/${article.client.slug}`,
+        url: entityUrl("clients", article.client.slug, siteUrl),
         isYmyl: article.client.isYmyl,
         ymylCategory: article.client.ymylCategory,
         ymylData: article.client.ymylData,
@@ -339,8 +401,8 @@ function generateWebPageNode(
   siteUrl: string,
   /** False for a client's own site, where no BreadcrumbList node is emitted. */
   hasBreadcrumb: boolean,
-  /** Settings.siteName — the one name Google should read. See the isPartOf note below. */
-  siteName: string
+  // `siteName` was dropped 25 Aug 2026: `isPartOf` became a bare @id reference, which was
+  // this parameter's only consumer.
 ): JsonLdNode {
   return {
     "@type": "WebPage",
@@ -349,21 +411,21 @@ function generateWebPageNode(
     name: article.seoTitle || article.title,
     description: article.seoDescription || article.excerpt || undefined,
     mainEntity: { "@id": ids.article },
-    inLanguage: "ar",
+    // Read, not written — same reason as the Article node below. Leaving the literal here
+    // while the Article node reads Settings would have been worse than either: one page
+    // declaring two different languages for itself.
+    ...(article.inLanguage ? { inLanguage: article.inLanguage } : {}),
     // The site entity, named from Settings and keyed with the SAME @id the home page uses.
     // Both were wrong: the name came from a hardcoded constant spelling the brand
     // «مودونتي» (117 stored cards carried it), and the id omitted the trailing slash, so
     // this shipped as a SECOND WebSite entity competing with the home page's — the exact
     // opposite of Google's "use your site name consistently" (SOT5, 2026-08-15).
-    isPartOf: {
-      "@type": "WebSite",
-      // Derived here, not read from the caller: `siteIds` is a local of
-      // `generateArticleKnowledgeGraph`, and this function is a separate one that only
-      // receives `siteUrl`. Same builder, so the id is identical either way.
-      "@id": buildSiteEntityIds(siteUrl).website,
-      name: siteName,
-      url: siteUrl,
-    },
+    // A reference, not a second definition. Carrying `@type`/`name`/`url` here re-declared the
+    // WebSite entity on every article page — and Google puts that entity on the home page:
+    // "The WebSite structured data must be on the home page of the site" (Site names,
+    // 10 Dec 2025). A bare `@id` says "this page belongs to that site" and lets the home page
+    // stay the one place the site describes itself.
+    isPartOf: { "@id": buildSiteEntityIds(siteUrl).website },
     // Dropped together with the node itself — a reference to an @id that is not in the
     // graph is a dangling pointer, worse than having no breadcrumb at all.
     ...(hasBreadcrumb && { breadcrumb: { "@id": ids.breadcrumb } }),
@@ -394,8 +456,17 @@ function generateArticleNode(
     author: { "@id": ids.author },
     publisher: { "@id": ids.publisher },
     mainEntityOfPage: { "@id": ids.webPage },
-    inLanguage: "ar",
-    isAccessibleForFree: true,
+    // Both values are read, not written. They used to be the literals `"ar"` and `true`,
+    // which meant the two Settings columns behind them — `Settings.inLanguage` and
+    // `Settings.defaultIsAccessibleForFree`, both editable on the settings screen — could
+    // not change what Google was told. An English article announced Arabic; a paywalled one
+    // announced free.
+    //
+    // Neither needs a new fetch: `jsonld-storage.ts:124` already merges the Settings article
+    // defaults into the row before calling this (`mergeArticleWithDefaults`), exactly as the
+    // metadata path does. The values were sitting on the object and being ignored.
+    ...(article.inLanguage ? { inLanguage: article.inLanguage } : {}),
+    isAccessibleForFree: article.isAccessibleForFree ?? true,
     ...(article.datePublished && {
       datePublished: toSaudiISOString(article.datePublished),
     }),
@@ -415,7 +486,7 @@ function generateArticleNode(
     node.articleSection = article.category.name;
     node.about = {
       "@type": "Thing",
-      "@id": `${siteUrl}/categories/${article.category.slug}`,
+      "@id": entityUrl("categories", article.category.slug, siteUrl),
       name: article.category.name,
     };
   }
@@ -483,7 +554,9 @@ function buildMentionsFromSemanticKeywords(
 function buildImageArray(
   article: ArticleWithFullRelations,
   articleUrl: string,
-  siteUrl: string = "https://www.modonty.com",
+  // Required, not defaulted: the only caller already holds the resolved value, and a default
+  // here would have quietly re-introduced the literal this file just removed.
+  siteUrl: string,
   imageLicensing: ModontyImageDefaults = {},
   platformFallbackImage: string = BRAND_LOGO_URL,
 ): JsonLdNode[] {
@@ -511,19 +584,26 @@ function buildImageArray(
       licensing: attr.licensing,
     };
 
-    const url16x9 = buildAspectUrl(sourceUrl, "16:9");
+    // When no crop exists the url below IS this Media row's file, so the row's own recorded
+    // size is the honest answer; when it is null the pair is simply omitted.
+    const original = {
+      width: article.featuredImage.width ?? undefined,
+      height: article.featuredImage.height ?? undefined,
+    };
+
+    const img16x9 = buildAspectUrl(sourceUrl, "16:9");
     images.push(
-      buildImageObject({ ...shared, id: `${articleUrl}#primary-image`, url: url16x9, width: 1200, height: 675, representativeOfPage: true }),
+      buildImageObject({ ...shared, id: `${articleUrl}#primary-image`, url: img16x9.url, ...aspectDimensions(img16x9, original), representativeOfPage: true }),
     );
 
-    const url4x3 = buildAspectUrl(sourceUrl, "4:3");
-    if (url4x3 !== url16x9) {
-      images.push(buildImageObject({ ...shared, id: `${articleUrl}#primary-image-4x3`, url: url4x3, width: 1200, height: 900 }));
+    const img4x3 = buildAspectUrl(sourceUrl, "4:3");
+    if (img4x3.url !== img16x9.url) {
+      images.push(buildImageObject({ ...shared, id: `${articleUrl}#primary-image-4x3`, url: img4x3.url, ...aspectDimensions(img4x3, original) }));
     }
 
-    const url1x1 = buildAspectUrl(sourceUrl, "1:1");
-    if (url1x1 !== url16x9) {
-      images.push(buildImageObject({ ...shared, id: `${articleUrl}#primary-image-1x1`, url: url1x1, width: 1200, height: 1200 }));
+    const img1x1 = buildAspectUrl(sourceUrl, "1:1");
+    if (img1x1.url !== img16x9.url) {
+      images.push(buildImageObject({ ...shared, id: `${articleUrl}#primary-image-1x1`, url: img1x1.url, ...aspectDimensions(img1x1, original) }));
     }
   } else {
     // Fallback: client hero image -> client logo -> platform share image (same chain as
@@ -531,26 +611,36 @@ function buildImageArray(
     // does not exist (measured HTTP 404 on 2026-08-07), so this branch baked a dead url into
     // the article's Google card. It now falls back to Settings.ogImageUrl, and to the brand
     // logo constant when even that is empty — both live on Bunny.
-    const fallbackUrl =
-      mediaSrc(article.client.heroImageMedia) ||
-      mediaSrc(article.client.logoMedia) ||
-      platformFallbackImage;
+    const heroSrc = mediaSrc(article.client.heroImageMedia);
+    const logoSrc = mediaSrc(article.client.logoMedia);
+    const fallbackUrl = heroSrc || logoSrc || platformFallbackImage;
+    // Track WHICH row won the chain, so the size reported belongs to the file actually linked.
+    // The last link is a brand constant with no row at all -> no dimensions.
+    const fallbackMedia = heroSrc
+      ? article.client.heroImageMedia
+      : logoSrc
+        ? article.client.logoMedia
+        : null;
+    const original = {
+      width: fallbackMedia?.width ?? undefined,
+      height: fallbackMedia?.height ?? undefined,
+    };
     const attr = resolveImageAttribution({ mediaType: "POST", articleTitle }, imageLicensing);
     const shared = { name: attr.name, licensing: attr.licensing };
 
-    const fallbackUrl16x9 = buildAspectUrl(fallbackUrl, "16:9");
+    const fallback16x9 = buildAspectUrl(fallbackUrl, "16:9");
     images.push(
-      buildImageObject({ ...shared, id: `${articleUrl}#primary-image`, url: fallbackUrl16x9, width: 1200, height: 675, representativeOfPage: true }),
+      buildImageObject({ ...shared, id: `${articleUrl}#primary-image`, url: fallback16x9.url, ...aspectDimensions(fallback16x9, original), representativeOfPage: true }),
     );
 
-    const fallbackUrl4x3 = buildAspectUrl(fallbackUrl, "4:3");
-    if (fallbackUrl4x3 !== fallbackUrl16x9) {
-      images.push(buildImageObject({ ...shared, id: `${articleUrl}#primary-image-4x3`, url: fallbackUrl4x3, width: 1200, height: 900 }));
+    const fallback4x3 = buildAspectUrl(fallbackUrl, "4:3");
+    if (fallback4x3.url !== fallback16x9.url) {
+      images.push(buildImageObject({ ...shared, id: `${articleUrl}#primary-image-4x3`, url: fallback4x3.url, ...aspectDimensions(fallback4x3, original) }));
     }
 
-    const fallbackUrl1x1 = buildAspectUrl(fallbackUrl, "1:1");
-    if (fallbackUrl1x1 !== fallbackUrl16x9) {
-      images.push(buildImageObject({ ...shared, id: `${articleUrl}#primary-image-1x1`, url: fallbackUrl1x1, width: 1200, height: 1200 }));
+    const fallback1x1 = buildAspectUrl(fallbackUrl, "1:1");
+    if (fallback1x1.url !== fallback16x9.url) {
+      images.push(buildImageObject({ ...shared, id: `${articleUrl}#primary-image-1x1`, url: fallback1x1.url, ...aspectDimensions(fallback1x1, original) }));
     }
   }
 
@@ -624,13 +714,19 @@ function generateOrganizationNode(
   };
 
   if (isLocalFamily) {
-    // Google reads `telephone` / `priceRange` off the LocalBusiness node itself —
-    // the telephone copy inside contactPoint doesn't count toward the rich-result card,
-    // and "$$" is the neutral marker when the client hasn't set a price range.
+    // Google reads `telephone` / `priceRange` off the LocalBusiness node itself — the
+    // telephone copy inside contactPoint doesn't count toward the rich-result card.
+    //
+    // priceRange is emitted ONLY when the partner set one. It is a recommended property,
+    // not a required one; the "$$" default that stood here invented a price claim about a
+    // real business. Google: "Don't use structured data to deceive or mislead users."
+    // https://developers.google.com/search/docs/appearance/structured-data/sd-policies
     if (client.phone) {
       node.telephone = client.phone;
     }
-    node.priceRange = client.priceRange || "$$";
+    if (client.priceRange?.trim()) {
+      node.priceRange = client.priceRange.trim();
+    }
   }
 
   // Logo (required for Article rich results) — same licensing block the client page emits,
@@ -697,10 +793,15 @@ function generateOrganizationNode(
     if (client.phone) {
       contactPoint.telephone = client.phone;
     }
-    contactPoint.areaServed = client.addressCountry || "SA";
-    contactPoint.availableLanguage = Array.isArray(client.knowsLanguage) && client.knowsLanguage.length > 0
-      ? client.knowsLanguage
-      : ["Arabic", "English"];
+    // areaServed and availableLanguage are published ONLY from stored values. The "SA"
+    // and ["Arabic","English"] defaults that stood here assigned every partner a country
+    // and a pair of support languages nobody entered.
+    if (client.addressCountry?.trim()) {
+      contactPoint.areaServed = client.addressCountry.trim();
+    }
+    if (Array.isArray(client.knowsLanguage) && client.knowsLanguage.length > 0) {
+      contactPoint.availableLanguage = client.knowsLanguage;
+    }
     contactPoints.push(contactPoint);
   }
   if (contactPoints.length > 0) {
@@ -760,12 +861,22 @@ function generateOrganizationNode(
     }
   }
 
-  // Parent organization relationship
+  // Parent organization relationship.
+  //
+  // No `@id`. It used to be `client.parentOrganization.id` — a raw Mongo ObjectId, which is
+  // not an IRI, does not resolve, and does not match the parent's real node identifier, so
+  // the graph edge pointed at nothing. An Organization node is valid with `name` and `url`
+  // alone; the correct identifier is built from the parent's SLUG, which this shape does not
+  // carry. Emitting nothing beats emitting a wrong one.
+  //
+  // The live client bundle already does it correctly — `shared/lib/seo/generate-organization-jsonld.ts`
+  // has the slug and emits `${siteUrl}/clients/${slug}#organization`. That is the path that
+  // produces the stored blobs modonty serves; this branch has never fired, because
+  // `fetchArticleForJsonLd` (jsonld-storage.ts:44) does not select the relation at all.
   if (client.parentOrganization) {
     node.parentOrganization = {
       "@type": "Organization",
       name: client.parentOrganization.name,
-      ...(client.parentOrganization.id && { "@id": client.parentOrganization.id }),
       ...(client.parentOrganization.url && { url: client.parentOrganization.url }),
     };
   }
@@ -864,7 +975,7 @@ function generatePersonNode(
     ...(author.lastName && { familyName: author.lastName }),
     ...(author.bio && { description: author.bio }),
     ...(author.image && { image: author.image }),
-    url: author.url || `${siteUrl}/authors/${author.slug}`,
+    url: author.url || entityUrl("authors", author.slug, siteUrl),
     ...(author.jobTitle && { jobTitle: author.jobTitle }),
     ...(publisherName && {
       worksFor: {
@@ -932,7 +1043,7 @@ function generateBreadcrumbNode(
       "@type": "ListItem",
       position: 2,
       name: article.category.name,
-      item: `${siteUrl}/categories/${article.category.slug}`,
+      item: entityUrl("categories", article.category.slug, siteUrl),
     });
   }
 

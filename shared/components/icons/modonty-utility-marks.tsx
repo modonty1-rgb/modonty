@@ -1,0 +1,13 @@
+import type { SVGProps } from "react";
+const Diamond = () => <rect x="53" y="53" width="14" height="14" rx="2" transform="rotate(45 60 60)" fill="hsl(var(--accent))" />;
+const Base = ({ children, ...props }: SVGProps<SVGSVGElement>) => <svg viewBox="0 0 120 120" fill="none" width="1em" height="1em" aria-hidden="true" {...props}>{children}</svg>;
+const n = "currentColor";
+export function ModontyFootprintsMark(p: SVGProps<SVGSVGElement>) { return <Base {...p}><ellipse cx="42" cy="76" rx="13" ry="23" transform="rotate(24 42 76)" stroke={n} strokeWidth="8"/><ellipse cx="79" cy="43" rx="13" ry="23" transform="rotate(24 79 43)" stroke={n} strokeWidth="8"/><Diamond/></Base>; }
+export function ModontyListenMark(p: SVGProps<SVGSVGElement>) { return <Base {...p}><path d="M25 68V57A35 35 0 0 1 95 57V68M25 68V86H40V68M95 68V86H80V68" stroke={n} strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/><Diamond/></Base>; }
+export function ModontyListenOffMark(p: SVGProps<SVGSVGElement>) { return <Base {...p}><path d="M25 68V57A35 35 0 0 1 95 57V68M25 68V86H40V68M95 68V86H80V68M24 24L96 96" stroke={n} strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/><Diamond/></Base>; }
+export function ModontyMenuMark(p: SVGProps<SVGSVGElement>) { return <Base {...p}><path d="M25 38H95M25 60H78M25 82H95" stroke={n} strokeWidth="8" strokeLinecap="round"/><Diamond/></Base>; }
+export function ModontyReplayMark(p: SVGProps<SVGSVGElement>) { return <Base {...p}><path d="M34 45A36 36 0 1 1 30 76M34 45H55M34 45L45 34M34 45L45 56" stroke={n} strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/><Diamond/></Base>; }
+export function ModontyTextBiggerMark(p: SVGProps<SVGSVGElement>) { return <Base {...p}><text x="27" y="79" fill={n} fontSize="42" fontWeight="700">A</text><path d="M89 34V57M79 44L89 34L99 44" stroke={n} strokeWidth="7" strokeLinecap="round"/><Diamond/></Base>; }
+export function ModontyTextNormalMark(p: SVGProps<SVGSVGElement>) { return <Base {...p}><text x="35" y="79" fill={n} fontSize="42" fontWeight="700">A</text><path d="M83 43H101M92 34V52" stroke={n} strokeWidth="7" strokeLinecap="round"/><Diamond/></Base>; }
+export function ModontyTextSmallerMark(p: SVGProps<SVGSVGElement>) { return <Base {...p}><text x="42" y="76" fill={n} fontSize="31" fontWeight="700">A</text><path d="M89 57V34M79 47L89 57L99 47" stroke={n} strokeWidth="7" strokeLinecap="round"/><Diamond/></Base>; }
+export function ModontyVideoMark(p: SVGProps<SVGSVGElement>) { return <Base {...p}><rect x="20" y="32" width="58" height="56" rx="8" stroke={n} strokeWidth="8"/><path d="M78 50L100 39V81L78 70V50Z" stroke={n} strokeWidth="8" strokeLinejoin="round"/><Diamond/></Base>; }

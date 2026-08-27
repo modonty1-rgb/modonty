@@ -175,7 +175,12 @@ export async function prepareCategoryMerge(input: {
  * listing, then revalidate modonty. modonty's in-memory caches pick up the change
  * within their 5-minute TTL (documented eventual consistency).
  */
-export async function finalizeCategoryMerge(input: { sourceId: string; targetId: string }): Promise<{ success: boolean; error?: string }> {
+export async function finalizeCategoryMerge(input: {
+  sourceId: string;
+  targetId: string;
+  /** How many articles phase 2 failed to rebuild. The articles flush is held on it. */
+  failedArticleCount: number;
+}): Promise<{ success: boolean; error?: string; warning?: string }> {
   try {
     const session = await auth();
     if (!session) return { success: false, error: "Unauthorized" };
@@ -183,15 +188,38 @@ export async function finalizeCategoryMerge(input: { sourceId: string; targetId:
     const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator");
     const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator");
 
+    // All three CATCH internally and return `{ success, error }` — they never throw, so the
+    // `.catch()` that used to sit on each was dead code wrapped around a discarded answer.
     // Target gains articles; source is now empty — refresh both entity caches.
-    await generateAndSaveCategorySeo(input.targetId).catch((e) => console.error("target category SEO:", e));
-    await generateAndSaveCategorySeo(input.sourceId).catch((e) => console.error("source category SEO:", e));
-    await regenerateCategoriesListingCache().catch((e) => console.error("categories listing:", e));
+    const [target, source, listing] = await Promise.all([
+      generateAndSaveCategorySeo(input.targetId),
+      generateAndSaveCategorySeo(input.sourceId),
+      regenerateCategoriesListingCache(),
+    ]);
+
+    const failures: string[] = [];
+    if (!target.success) failures.push(`الفئة الهدف: ${target.error ?? "سبب غير معروف"}`);
+    if (!source.success) failures.push(`الفئة المصدر: ${source.error ?? "سبب غير معروف"}`);
+    if (!listing.success) failures.push(`قائمة الفئات: ${listing.error ?? "سبب غير معروف"}`);
 
     revalidatePath("/categories");
     revalidatePath("/articles");
-    await revalidateModontyTag("categories");
-    await revalidateModontyTag("articles");
+
+    // Each flush is held on its own precondition — busting a tag whose card did not rebuild
+    // republishes the pre-merge card under a fresh timestamp.
+    if (failures.length === 0) await revalidateModontyTag("categories");
+    if (input.failedArticleCount === 0) await revalidateModontyTag("articles");
+
+    if (input.failedArticleCount > 0) {
+      failures.push(`${input.failedArticleCount} مقالاً ما تجدّدت بياناته`);
+    }
+    if (failures.length > 0) {
+      console.error("finalizeCategoryMerge partial:", failures.join(" · "));
+      return {
+        success: false,
+        warning: `الدمج تمّ في القاعدة، لكن ${failures.join(" · ")} — جوجل بيبقى يشوف القديم.`,
+      };
+    }
 
     return { success: true };
   } catch (error) {

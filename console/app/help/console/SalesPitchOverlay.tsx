@@ -890,13 +890,8 @@ export function SalesPitchOverlay({
                 }}
               />
             )}
-
-            <style jsx>{`
-              @keyframes pitch-eq {
-                from { transform: scaleY(0.4); }
-                to { transform: scaleY(2.2); }
-              }
-            `}</style>
+            {/* The `pitch-eq` keyframes moved to app/globals.css — `<style jsx>` needs
+                styled-jsx types this app does not declare, and it broke the typecheck. */}
           </motion.div>
         </motion.div>
       )}

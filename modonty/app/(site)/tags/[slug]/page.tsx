@@ -83,7 +83,10 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
       image: tag.socialImage || undefined,
     });
   } catch {
-    return { title: "الوسوم" };
+    // Transient read failure, not a missing page: `noindex, follow` so this render does not
+    // put a generic title into the index on a real URL, while the next successful crawl
+    // restores the real metadata. Same reasoning as the article page.
+    return { title: "الوسوم", robots: { index: false, follow: true } };
   }
 }
 

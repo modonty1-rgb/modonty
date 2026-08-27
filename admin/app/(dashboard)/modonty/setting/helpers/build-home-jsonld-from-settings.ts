@@ -3,6 +3,9 @@
  * Output: Organization, WebSite, CollectionPage, ItemList (up to 20 Articles).
  */
 
+import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
+import { buildListAuthorNode } from "@/lib/seo/build-list-author-node";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
@@ -62,7 +65,7 @@ function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): str
   if (!url?.trim()) return undefined;
   const u = url.trim();
   if (u.startsWith("http://") || u.startsWith("https://")) return u.replace("http://", "https://");
-  if (u.startsWith("/")) return `${siteUrl}${u}`;
+  if (u.startsWith("/")) return absoluteUrl(u, siteUrl);
   return `https://${u}`;
 }
 
@@ -84,14 +87,13 @@ function normalizeCountryToISO(raw: string | null | undefined): string | undefin
   return v;
 }
 
-// Modonty is a 24/7 online platform — its contact is always available, so this is a fixed fact (not editable).
-// Google best practice for round-the-clock availability: opens 00:00, closes 23:59, every day of the week.
-const ALWAYS_OPEN_24_7 = {
-  "@type": "OpeningHoursSpecification",
-  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-  opens: "00:00",
-  closes: "23:59",
-};
+// REMOVED: a hard-coded ALWAYS_OPEN_24_7 block that was attached as `hoursAvailable` to
+// the Organization contact point on the home page and on every list page. It declared the
+// contact reachable 00:00–23:59 on all seven days — a support-availability claim written
+// in code, with no Settings field behind it and nobody able to correct it from the admin
+// screen. Contact hours are published only once a stored value supplies them.
+// Google: "Your structured data must be a true representation of the page content."
+// https://developers.google.com/search/docs/appearance/structured-data/sd-policies
 
 /** Parse language string to BCP 47 format: single string or array for multiple. */
 function parseLanguageCodes(raw: string | null | undefined, fallback = "ar"): string | string[] {
@@ -114,9 +116,19 @@ export function buildHomeJsonLdFromSettings(
   articles: ArticleForHomeJsonLd[],
   totalArticleCount: number
 ): object {
-  const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
+  const siteUrl = requireSiteUrl(settings.siteUrl).replace(/\/$/, "");
   const { organization: orgId, website: websiteId } = buildSiteEntityIds(siteUrl);
-  const collectionPageId = `${siteUrl}/#collectionpage`;
+  const collectionPageId = absoluteUrl("/#collectionpage", siteUrl);
+
+  // The newest content date among the articles this page lists — the only date the homepage
+  // can honestly claim. Unparseable and absent values are skipped rather than treated as 0,
+  // which would silently make the oldest possible date win.
+  const homeDateModified = articles.reduce<string | null>((newest, a) => {
+    if (!a.dateModified) return newest;
+    const t = new Date(a.dateModified).getTime();
+    if (Number.isNaN(t)) return newest;
+    return !newest || t > new Date(newest).getTime() ? new Date(t).toISOString() : newest;
+  }, null);
   const inLangCodes = parseLanguageCodes(settings.inLanguage);
   const availLangCodes = parseLanguageCodes(
     settings.orgContactAvailableLanguage ?? settings.inLanguage
@@ -158,7 +170,6 @@ export function buildHomeJsonLdFromSettings(
       ...(settings.orgAreaServed && { areaServed: settings.orgAreaServed }),
       availableLanguage: availLangCodes,
       ...(settings.orgContactOption?.trim() && { contactOption: settings.orgContactOption.trim() }),
-      hoursAvailable: ALWAYS_OPEN_24_7,
     };
   }
 
@@ -208,9 +219,9 @@ export function buildHomeJsonLdFromSettings(
   // Sitelinks Searchbox (WebSite SearchAction) was deprecated by Google in Nov 2024 — intentionally not emitted.
 
   const itemListElements = articles.slice(0, 20).map((article, index) => {
-    const articleUrl = `${siteUrl}/articles/${article.slug}`;
-    const clientUrl = `${siteUrl}/clients/${article.client.slug}`;
-    const authorUrl = article.author.slug ? `${siteUrl}/authors/${article.author.slug}` : undefined;
+    const articleUrl = entityUrl("articles", article.slug, siteUrl);
+    const clientUrl = entityUrl("clients", article.client.slug, siteUrl);
+    const authorUrl = article.author.slug ? entityUrl("authors", article.author.slug, siteUrl) : undefined;
     const imageUrl = mediaSrc(article.featuredImage)?.trim();
     const absImage = imageUrl ? ensureAbsoluteUrl(imageUrl, siteUrl) : undefined;
     const clientLogo = mediaSrc(article.client.logoMedia)?.trim();
@@ -236,11 +247,7 @@ export function buildHomeJsonLdFromSettings(
             ? article.dateModified.toISOString()
             : String(article.dateModified),
       }),
-      author: {
-        "@type": "Person",
-        name: article.author.name || "Modonty",
-        ...(authorUrl && { url: authorUrl }),
-      },
+      author: buildListAuthorNode(article.author, siteUrl),
       publisher: {
         "@type": "Organization",
         name: article.client.name,
@@ -282,29 +289,29 @@ export function buildHomeJsonLdFromSettings(
     description: description || undefined,
     inLanguage: inLangCodes,
     isPartOf: { "@id": websiteId },
-    dateModified: new Date().toISOString(),
+    // Derived from the articles on the page, never `new Date()`. This was
+    // `dateModified: new Date().toISOString()`, so the homepage told Google it changed at the
+    // exact moment the blob was rebuilt — including rebuilds triggered by an unrelated
+    // settings save. Google uses lastmod only "if it's consistently and verifiably accurate".
+    // The honest value is the newest content date among the articles listed here; with no
+    // articles there is nothing to date, so the property is omitted.
+    ...(homeDateModified ? { dateModified: homeDateModified } : {}),
     mainEntity: itemList,
-    breadcrumb: {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          item: {
-            "@id": siteUrl,
-            name: "الرئيسية",
-          },
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          item: {
-            "@id": siteUrl,
-            name: name || "أحدث المقالات",
-          },
-        },
-      ],
-    },
+    // No `breadcrumb`. The home page has no trail to describe: it IS the top of the site.
+    //
+    // What stood here was a two-item BreadcrumbList whose BOTH items carried `"@id": siteUrl`
+    // — position 1 «الرئيسية» and position 2 «أحدث المقالات», the same URL twice. A breadcrumb
+    // is an ordered path between distinct pages, so that markup claimed a journey from a page
+    // to itself.
+    //
+    // Google, Breadcrumb structured data (checked 27 Aug 2026): "A breadcrumb trail on a page
+    // indicates the page's position in the site hierarchy", and "It is not required to include
+    // a breadcrumb `ListItem` for the top level path (your site's domain or host name), nor for
+    // the page itself." On the home page those two exclusions cover every item there was, so
+    // the correct list is no list.
+    //
+    // The LISTING pages keep theirs (see buildListPageJsonLdFromSettings below): «الرئيسية» →
+    // the page, two genuinely different URLs, which is exactly the trail this type describes.
   };
   if (absOgImage) {
     collectionPage.primaryImageOfPage = {
@@ -344,7 +351,7 @@ export function buildListPageJsonLdFromSettings(
   settings: SettingsForHomeJsonLd,
   pageType: ListPageType
 ): object {
-  const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
+  const siteUrl = requireSiteUrl(settings.siteUrl).replace(/\/$/, "");
   const fallback = LIST_PAGE_FALLBACKS[pageType];
   const nameMap = {
     clients: settings.clientsSeoTitle,
@@ -361,7 +368,7 @@ export function buildListPageJsonLdFromSettings(
     name: nameMap[pageType]?.trim() || fallback.name,
     description: descMap[pageType]?.trim() || fallback.description,
   };
-  const pageUrl = `${siteUrl}${meta.path}`;
+  const pageUrl = absoluteUrl(meta.path, siteUrl);
   const { organization: orgId, website: websiteId } = buildSiteEntityIds(siteUrl);
   const collectionPageId = `${pageUrl}#collectionpage`;
   const inLangCodes = parseLanguageCodes(settings.inLanguage);
@@ -401,7 +408,6 @@ export function buildListPageJsonLdFromSettings(
       ...(settings.orgAreaServed && { areaServed: settings.orgAreaServed }),
       availableLanguage: availLangCodes,
       ...(settings.orgContactOption?.trim() && { contactOption: settings.orgContactOption.trim() }),
-      hoursAvailable: ALWAYS_OPEN_24_7,
     };
   }
 
@@ -423,7 +429,11 @@ export function buildListPageJsonLdFromSettings(
     description: meta.description,
     inLanguage: inLangCodes,
     isPartOf: { "@id": websiteId },
-    dateModified: new Date().toISOString(),
+    // No `dateModified` at all. This builder receives only `settings` and a page type — it
+    // has no content to date, so the line it replaced (`new Date().toISOString()`) was
+    // literally "this page changed the instant I generated it", which was true of the blob
+    // and false of the page. Omitted rather than invented; if a real content date is wanted
+    // here, it has to be passed in from the rows the page actually lists.
     breadcrumb: {
       "@type": "BreadcrumbList",
       itemListElement: [

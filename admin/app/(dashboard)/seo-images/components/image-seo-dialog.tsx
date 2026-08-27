@@ -98,7 +98,13 @@ export function ImageSeoDialog({ image, open, onOpenChange, onSaved }: Props) {
     });
     setSaving(false);
     if (res.success) {
-      toast({ title: "تم حفظ سيو الصورة", variant: "success" });
+      // The image row saved, but a cached blob that embeds it may not have rebuilt —
+      // then the public page still carries the old alt text. Say which one happened.
+      if (res.seoWarning) {
+        toast({ title: "الحفظ تمّ — بيانات السيو ما تجدّدت", description: res.seoWarning, variant: "warning" });
+      } else {
+        toast({ title: "تم حفظ سيو الصورة", variant: "success" });
+      }
       onSaved?.();
       router.refresh();
       onOpenChange(false);

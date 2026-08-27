@@ -41,39 +41,56 @@ export async function extractStructuredData(html: string): Promise<ExtractedData
     const all: unknown[] = [];
     const locations: Record<string, unknown> = {};
 
-    // Process extracted data
-    if (extracted && Array.isArray(extracted)) {
-      for (const item of extracted) {
-        // Add to all collection
-        all.push(item);
+    // `parse()` returns an OBJECT keyed by format, and each format is itself keyed by
+    // schema.org type:
+    //
+    //   { metatags, microdata, rdfa, jsonld, headings, errors }
+    //   jsonld  ->  { Article: [ { "@context", "@type", "@location", … } ] }
+    //
+    // This code ran `Array.isArray(extracted)`, which is false for an object, so the whole
+    // loop below never executed once — the extractor always fell through to the manual
+    // script-tag fallback and reported zero microdata and zero RDFa on every page.
+    //
+    // Verified against the installed package (@marbec/web-auto-extractor 2.2.1), not from
+    // memory: its README states the output format, and running it on a page carrying JSON-LD,
+    // microdata and a meta tag printed `Array.isArray(parse()) = false` with keys
+    // `[metatags, microdata, rdfa, jsonld, headings, errors]`. `errors` is undocumented in the
+    // README and appeared only in the real run — which is why this reads the object rather
+    // than trusting a written list.
+    //
+    // `admin/lib/seo/marbec-extractor.d.ts` declared `parse(): unknown[]`; the package ships
+    // no types of its own, so that hand-written declaration is where the wrong shape came
+    // from. It is corrected alongside this.
+    // Through `unknown`: the declared result type has named keys, not an index signature, so a
+    // direct cast is the one tsc flags. Reading it by key is deliberate — see the note above
+    // about `errors` appearing in the real output but not in the README.
+    const byFormat = (extracted ?? {}) as unknown as Record<string, unknown>;
 
-        // Categorize by source
-        if (item && typeof item === "object") {
-          const itemObj = item as Record<string, unknown>;
-
-          // Check for JSON-LD
-          if (itemObj["@context"] || itemObj["@type"]) {
-            jsonLd.push(item);
-          }
-
-          // Check for Microdata (has itemscope or embedded source info)
-          if (itemObj["@source"] === "microdata" || itemObj.itemscope) {
-            microdata.push(item);
-          }
-
-          // Check for RDFa (has typeof or about attributes)
-          if (itemObj["@source"] === "rdfa" || itemObj["@about"] || itemObj["@typeof"]) {
-            rdfa.push(item);
-          }
-
-          // Extract location info if available
-          if (itemObj["@location"]) {
-            const itemId = itemObj["@id"] || itemObj["@type"] || String(all.length - 1);
-            locations[String(itemId)] = itemObj["@location"];
+    const collect = (formatKey: string, into: unknown[]) => {
+      const group = byFormat[formatKey];
+      if (!group || typeof group !== "object") return;
+      // Each format is `{ TypeName: item[] }` — flatten to a plain list of entities.
+      for (const entities of Object.values(group as Record<string, unknown>)) {
+        if (!Array.isArray(entities)) continue;
+        for (const item of entities) {
+          into.push(item);
+          all.push(item);
+          if (item && typeof item === "object") {
+            const itemObj = item as Record<string, unknown>;
+            if (itemObj["@location"]) {
+              const itemId = itemObj["@id"] || itemObj["@type"] || String(all.length - 1);
+              locations[String(itemId)] = itemObj["@location"];
+            }
           }
         }
       }
-    }
+    };
+
+    // The format is known from the key it arrived under — no guessing from `@source` or
+    // `itemscope`, which is what the old branch had to do because it had lost that context.
+    collect("jsonld", jsonLd);
+    collect("microdata", microdata);
+    collect("rdfa", rdfa);
 
     // If no data found, try alternative extraction
     if (all.length === 0) {

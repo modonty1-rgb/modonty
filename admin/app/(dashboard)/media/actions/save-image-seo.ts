@@ -65,7 +65,7 @@ function extOf(filename: string | null, url: string): string {
 
 export async function saveImageSeo(
   input: SaveImageSeoInput
-): Promise<{ success: true } | { success: false; error: string }> {
+): Promise<{ success: true; seoWarning?: string } | { success: false; error: string }> {
   const session = await auth();
   if (!session) return { success: false, error: "Unauthorized" };
 
@@ -80,6 +80,10 @@ export async function saveImageSeo(
   // synced, when the image isn't a Cloudinary asset, when it's embedded inside article body
   // HTML (renaming would break that inline <img> — the documented exception), or on API error.
   const renameData: Prisma.MediaUpdateInput = {};
+  // Set once the asset has actually moved on Cloudinary, so a failed DB write below can
+  // move it back. Cloudinary's rename is a MOVE — the old public_id stops existing — so
+  // committing it without a way back is what turned a DB hiccup into a dead image URL.
+  let renamedFrom: { from: string; to: string } | null = null;
   const newBase = filename ? sanitizeFileBase(filename) : "";
   if (newBase) {
     const media = await db.media.findUnique({
@@ -97,9 +101,22 @@ export async function saveImageSeo(
         const newPublicId = buildNewPublicId(oldPublicId, newBase);
         const result = await renameCloudinaryAsset(oldPublicId, newPublicId);
         if (result.success) {
-          renameData.url = result.newUrl;
-          renameData.cloudinaryPublicId = result.newPublicId;
-          renameData.filename = newBase + extOf(media!.filename, media!.url);
+          // Ask the CDN whether the new address actually serves the file BEFORE writing it
+          // into the row. Writing a URL we have not seen answer is how a rename that half
+          // landed became a 404 inside published JSON-LD.
+          const serves = await fetch(result.newUrl as string, { method: "HEAD" })
+            .then((r) => r.ok)
+            .catch(() => false);
+          if (serves) {
+            renamedFrom = { from: newPublicId, to: oldPublicId };
+            renameData.url = result.newUrl;
+            renameData.cloudinaryPublicId = result.newPublicId;
+            renameData.filename = newBase + extOf(media!.filename, media!.url);
+          } else {
+            // The move happened but the new address does not answer — put the file back
+            // and keep the row exactly as it was. Alt/description still save below.
+            await renameCloudinaryAsset(newPublicId, oldPublicId);
+          }
         }
       }
     }
@@ -140,16 +157,34 @@ export async function saveImageSeo(
     media.articleGallery.forEach((g) => articleIds.add(g.articleId));
     affectedArticleIds = [...articleIds];
   } catch {
-    return { success: false, error: "تعذّر حفظ بيانات الصورة — حاول مرة أخرى." };
+    // The row did not take the new address, so the file must not keep it either — move it
+    // back to where the row still points. Without this the image is reachable at a name
+    // nothing in the database knows.
+    if (renamedFrom) {
+      await renameCloudinaryAsset(renamedFrom.from, renamedFrom.to);
+    }
+    return { success: false, error: "ما قدرنا نحفظ بيانات الصورة — جرّب مرة ثانية." };
   }
 
-  // Regenerate each owning client so the new alt/description/url reaches its stored JSON-LD.
+  // Both generators RETURN { success, error } and never throw, so `.catch(() => null)`
+  // caught nothing: an entity whose blob failed to rebuild kept the OLD alt text and URL
+  // while the writer was told the save went through. Count the failures instead.
+  let staleClients = 0;
   for (const cid of affectedClientIds) {
-    await generateClientSEO(cid).catch(() => null);
+    const result = await generateClientSEO(cid).catch((e: unknown) => ({
+      success: false as const,
+      error: e instanceof Error ? e.message : String(e),
+    }));
+    if (!result.success) staleClients++;
   }
   // Same for each owning article (featured image / article gallery).
+  let staleArticles = 0;
   for (const aid of affectedArticleIds) {
-    await generateAndSaveJsonLd(aid).catch(() => null);
+    const result = await generateAndSaveJsonLd(aid).catch((e: unknown) => ({
+      success: false as const,
+      error: e instanceof Error ? e.message : String(e),
+    }));
+    if (!result.success) staleArticles++;
   }
 
   await logAction("media.seo", {
@@ -159,8 +194,21 @@ export async function saveImageSeo(
   });
 
   revalidatePath("/seo-images");
-  if (affectedClientIds.length > 0) await revalidateModontyTag("clients");
-  if (affectedArticleIds.length > 0) await revalidateModontyTag("articles");
+  // Only rebuild the public pages whose blob actually rebuilt — a rebuild on top of a
+  // stale blob republishes the old alt text as if it were fresh.
+  if (affectedClientIds.length > 0 && staleClients === 0) await revalidateModontyTag("clients");
+  if (affectedArticleIds.length > 0 && staleArticles === 0) await revalidateModontyTag("articles");
+
+  const seoFailures: string[] = [];
+  if (staleClients > 0) seoFailures.push(`${staleClients} شريكاً ما تجدّدت بياناته`);
+  if (staleArticles > 0) seoFailures.push(`${staleArticles} مقالاً ما تجدّدت بياناته`);
+  if (seoFailures.length > 0) {
+    console.error("Image SEO refresh failed:", mediaId, seoFailures.join(" · "));
+    return {
+      success: true,
+      seoWarning: `بيانات الصورة انحفظت، لكن بيانات السيو ما تجدّدت — جوجل بيبقى يشوف القديم. (${seoFailures.join(" · ")})`,
+    };
+  }
 
   return { success: true };
 }

@@ -45,8 +45,24 @@ export async function deleteClient(id: string) {
     });
 
     revalidatePath("/clients");
-    await revalidateModontyTag("clients");
-    try { const { regenerateClientsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateClientsListingCache(); } catch {}
+    // Rebuild the listing blob BEFORE busting modonty’s cache. It ran after, so the flush
+    // went out first and the next visitor rebuilt the listing from the blob that still
+    // contained the deleted row — the stale page served under a fresh cache. Same order the
+    // create and update paths already follow.
+    //
+    // The answer is read too: the generator returns `{ success, error }` and never throws, so
+    // `await` alone always looked successful. A failed rebuild holds the flush.
+    let listingOk = true;
+    try {
+      const { regenerateClientsListingCache } = await import("@/lib/seo/listing-page-seo-generator");
+      const r = await regenerateClientsListingCache();
+      listingOk = r.success;
+      if (!r.success) console.error("Clients listing cache failed:", r.error);
+    } catch (e) {
+      listingOk = false;
+      console.error("Clients listing cache failed:", e);
+    }
+    if (listingOk) await revalidateModontyTag("clients");
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to delete client";

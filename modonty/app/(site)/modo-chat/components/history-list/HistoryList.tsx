@@ -49,7 +49,12 @@ interface HistoryListProps {
   onResume?: (conversationId: string) => void;
 }
 
-export function HistoryList({ onResume }: HistoryListProps = {}) {
+// No `= {}` default. It widened the props type to `HistoryListProps | undefined`, and
+// `dynamic()` carried that through as `ComponentType<HistoryListProps | undefined>` — which is
+// not a valid JSX element type, so `<HistoryList />` in PageLayout failed to compile and
+// modonty did not typecheck at all. The default was never needed: every field here is already
+// optional, and React always passes a props object.
+export function HistoryList({ onResume }: HistoryListProps) {
   const [items, setItems] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

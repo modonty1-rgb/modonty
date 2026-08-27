@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modonty — جرد CTA المقال</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1020;--panel:#121a2c;--line:#27334a;--text:#f5f7fb;--muted:#9ba9bd;--cyan:#00d8d8;--blue:#5567ff;--ok:#33d17a;--warn:#f6c453}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:14px/1.65 Tahoma,Arial,sans-serif}
+    .shell{display:grid;grid-template-columns:210px minmax(0,1fr);min-height:100vh}.side{position:sticky;top:0;height:100vh;padding:22px 16px;border-left:1px solid var(--line);background:#0e1526}.brand{font-weight:700;font-size:16px}.brand span{color:var(--cyan)}.side p{color:var(--muted);font-size:12px;margin:5px 0 24px}.side a{display:block;color:var(--muted);padding:8px 10px;text-decoration:none;border-radius:7px}.side a:hover{background:var(--panel);color:var(--text)} main{max-width:1280px;width:100%;padding:28px 34px 56px;margin:auto}.title{display:flex;align-items:baseline;justify-content:space-between;gap:18px;border-bottom:1px solid var(--line);padding-bottom:16px}.title h1{font-size:20px;margin:0}.title small{color:var(--muted)}.note{margin:20px 0;padding:12px 14px;border:1px solid #31514e;background:#102522;border-radius:9px;color:#d3f6ec}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}.stat{padding:9px 12px;background:var(--panel);border:1px solid var(--line);border-radius:8px}.stat b{color:var(--cyan);margin-inline-start:6px}.section{margin-top:28px}.section h2{font-size:16px;margin:0 0 10px}.section p{color:var(--muted);margin:0 0 14px}table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}th,td{padding:12px;vertical-align:top;text-align:right;border-bottom:1px solid var(--line)}th{background:#172136;font-size:12px;color:#cbd7eb}tr:last-child td{border-bottom:0}td{color:#dce4f1}code{font:12px Consolas,monospace;color:#b9c8ff;word-break:break-word}.tag{display:inline-block;padding:2px 7px;border-radius:999px;font-size:11px;font-weight:bold;white-space:nowrap}.active{background:#163d2b;color:#9cf0be}.track{background:#183558;color:#9bd7ff}.pending{background:#4a3713;color:#ffe09a}.no{background:#333b4a;color:#c4ccd8}.foot{margin-top:18px;color:var(--muted);font-size:12px}@media(max-width:760px){.shell{display:block}.side{position:static;height:auto;border-left:0;border-bottom:1px solid var(--line);padding:14px}.side a{display:inline-block}.brand,.side p{display:inline}.side p{margin-inline:8px}main{padding:20px 14px}.title{display:block}.title small{display:block;margin-top:5px}table{display:block;overflow:auto;white-space:normal;min-width:760px}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side"><div class="brand">MODONTY <span>Console Mobile</span></div><p>جرد CTA من صفحة المقال</p><a href="#summary">الملخص</a><a href="#inventory">الـ CTA الفعلية</a><a href="#not-client">ليست CTA للعميل</a><a href="#push">ربط التنبيهات</a></aside>
+  <main>
+    <header class="title"><h1>جرد CTA — صفحة المقال</h1><small>فحص كود فعلي · 27 أغسطس 2026</small></header>
+    <section id="summary"><div class="note">النطاق هنا: كل فعل يمكن أن يولّد قيمة للعميل أو تواصلًا معه من داخل صفحة مقال. فصلت روابط التصفح والتسويق الخاصة بمدونتي حتى لا تُحسب خطأ كـ leads للعميل.</div><div class="stats"><div class="stat">CTA للعميل: <b>5</b></div><div class="stat">تسجّل lead فعليًا: <b>2</b></div><div class="stat">تحتاج Push: <b>2</b></div><div class="stat">روابط تصفح/غير عميل: <b>3</b></div></div></section>
+    <section id="inventory" class="section"><h2>CTA الفعلية للعميل</h2><p>الـ«موضع» قد يتكرر على الديسكتوب والموبايل، لكنه نفس السلوك ونفس الـevent—not a second business CTA.</p>
+      <table><thead><tr><th>CTA / الموضع</th><th>شرط الظهور</th><th>ما يحدث الآن</th><th>المصدر المسجّل</th><th>تنبيه الموبايل</th></tr></thead><tbody>
+        <tr><td><b>احجز الآن</b><br><small>Partner Strip + Partner Card</small></td><td><code>ctaMode = FORM</code></td><td>يفتح <code>/clients/[slug]/book</code> ثم يرسل نموذج الحجز.</td><td><span class="tag active">Lead</span> <code>BookingRequest</code> + Conversion + GA4 + CTA click + Admin bell + email + Telegram</td><td><span class="tag pending">يربط الآن</span><br><code>BOOKING_CREATED</code></td></tr>
+        <tr><td><b>تواصل — واتساب</b><br><small>Partner Strip</small></td><td>FORM + رقم هاتف صالح</td><td>يفتح <code>wa.me</code> برسالة مُسبقة، قبل المغادرة يسجل الحدث.</td><td><span class="tag active">Lead</span> <code>BookingRequest(channel: whatsapp)</code>، deduped لكل زيارة + GA4</td><td><span class="tag pending">يربط الآن</span><br><code>WHATSAPP_CONTACT</code></td></tr>
+        <tr><td><b>CTA خارجي مخصص</b><br><small>Partner Strip + Partner Card</small></td><td><code>ctaMode = LINK</code> و<code>ctaUrl</code></td><td>يفتح الرابط الخارجي (موقع/واتساب/هاتف حسب الرابط).</td><td><span class="tag track">Tracking</span> <code>CTAClick</code> + Telegram ضمن حد 20/ساعة</td><td><span class="tag no">لا</span><br>ليس lead مؤكداً؛ واتساب فقط يُقيّم كـlead عند استخدام مسار واتساب الموحد.</td></tr>
+        <tr><td><b>عندك سؤال؟</b><br><small>Partner Card + mobile details</small></td><td>يوجد عميل ومستخدم مسجّل دخول</td><td>يفتح نموذج سؤال؛ المسجّل يدخل للسؤال، وغير المسجّل يذهب للتسجيل.</td><td><span class="tag active">تفاعل جمهور</span> سؤال/FAQ في مسار <code>submitAskClient</code> + CTA tracking عند فتح الحوار</td><td><span class="tag pending">موجود بالخطة</span><br><code>AUDIENCE_QUESTION</code> عند وصول سؤال جديد</td></tr>
+        <tr><td><b>اتصال هاتفي</b><br><small>Partner Card</small></td><td>رقم هاتف صالح</td><td>يفتح <code>tel:</code>.</td><td><span class="tag no">غير مسجل</span> لا <code>CTAClick</code> ولا lead حاليًا</td><td><span class="tag no">لا</span><br>لا نعرف إن المكالمة تمت.</td></tr>
+      </tbody></table>
+    </section>
+    <section id="not-client" class="section"><h2>مستبعدة عمدًا من CTA العميل</h2><table><thead><tr><th>العنصر</th><th>لماذا مستبعد</th><th>سلوكه الحالي</th></tr></thead><tbody>
+      <tr><td>اسم العميل / بطاقة العميل</td><td>تنقّل لصفحة العميل، وليس تواصلًا أو lead.</td><td><code>CTAClick(type: LINK)</code> لأغراض التحليل فقط.</td></tr>
+      <tr><td>اقرأ أيضًا</td><td>تنقّل لمقالات أخرى، حتى لو نُسبت للعميل.</td><td><code>CTAClick(type: LINK)</code>؛ لا Push.</td></tr>
+      <tr><td>CTA «عملاء بلا إعلانات» في Footer</td><td>CTA لـ JBRSEO/Modonty، وليس للعميل صاحب المقال.</td><td><code>CTAClick(type: BANNER)</code>؛ لا يدخل في قياس العميل.</td></tr>
+      <tr><td>روابط التواصل الاجتماعي</td><td>خروج إلى حسابات اجتماعية؛ لا إثبات lead أو تواصل مباشر.</td><td>لا tracking موحّد حاليًا.</td></tr>
+    </tbody></table></section>
+    <section id="push" class="section"><h2>قرار Push المعتمد</h2><p>نرسل إشعارًا فقط بعد <b>كتابة سجل ناجح</b> في قاعدة البيانات—not merely on a tap. هذا يمنع إزعاج العميل ويجعل الإشعار متوافقًا مع بيانات الكونسول.</p><table><thead><tr><th>الحدث</th><th>متى يرسل</th><th>حمولة آمنة</th><th>لا نرسل</th></tr></thead><tbody><tr><td><code>BOOKING_CREATED</code></td><td>بعد حفظ طلب الحجز.</td><td>العنوان، اسم الزائر، <code>bookingId</code>، <code>articleId</code>.</td><td>رقم الهاتف، البريد، نص الرسالة.</td></tr><tr><td><code>WHATSAPP_CONTACT</code></td><td>بعد حفظ lead واتساب غير المكرر.</td><td>عنوان قصير، <code>bookingId</code>، <code>articleId</code>.</td><td>رقم واتساب أو بيانات الزائر.</td></tr><tr><td><code>AUDIENCE_QUESTION</code></td><td>عند حفظ سؤال الجمهور.</td><td>عنوان المقال و<code>questionId</code>.</td><td>نص السؤال كاملًا داخل Push.</td></tr></tbody></table></section>
+    <p class="foot">ملاحظة تنفيذية: الـ CTA الخارجي لا يُعامل كحجز؛ إن أردنا احتساب واتساب خارجي كـlead، نمرره عبر <code>WhatsAppLeadLink</code> بدل رابط <code>LINK</code> عام.</p>
+  </main>
+</div>
+</body>
+</html>

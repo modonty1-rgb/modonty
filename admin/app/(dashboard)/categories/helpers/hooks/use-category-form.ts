@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 import { slugify } from "@/lib/utils";
 import { CategoryWithRelations } from "@/lib/types";
 import { createCategory, updateCategory } from "../../actions/categories-actions";
@@ -27,6 +28,7 @@ interface UseCategoryFormParams {
 
 export function useCategoryForm({ initialData, categoryId }: UseCategoryFormParams) {
   const router = useRouter();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -80,6 +82,15 @@ export function useCategoryForm({ initialData, categoryId }: UseCategoryFormPara
         });
 
     if (result.success) {
+      // Saving and leaving silently would hide that the public page still shows the old
+      // data. The toast survives the navigation — the provider lives in the layout.
+      if (result.seoWarning) {
+        toast({
+          title: "الحفظ تمّ — بيانات السيو ما تجدّدت",
+          description: result.seoWarning,
+          variant: "warning",
+        });
+      }
       router.push("/categories");
       router.refresh();
     } else {

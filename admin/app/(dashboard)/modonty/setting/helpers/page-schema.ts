@@ -24,7 +24,10 @@ export const pageSchema = z.object({
   // Modonty Core (T2): Media relation ids — saved next to the raw strings (dual-field).
   heroImageMediaId: z.string().optional(),
   socialImageMediaId: z.string().optional(),
-  seoTitle: z.string().max(51, "عنوان SEO يجب أن يكون 51 حرف أو أقل (العنوان النهائي في جوجل: 60 حرف)").optional(),
+  // Origin: MODONTY POLICY, not Google — 51 = our 60-char display budget minus the
+  // "- مودونتي" suffix. Google sets no title length limit (Title links doc).
+  // https://developers.google.com/search/docs/appearance/title-link
+  seoTitle: z.string().max(51, "عنوان SEO أطول من 51 حرف — اختصره. مدونتي تضيف \"- مودونتي\" بعده (المجموع 60): سياسة مدونتي في عرض العنوان، لا شرط من جوجل").optional(),
   seoDescription: z.string().optional(),
   metaRobots: z.union([metaRobotsEnum, z.literal("")]).optional(),
   googlebot: z.string().optional(),

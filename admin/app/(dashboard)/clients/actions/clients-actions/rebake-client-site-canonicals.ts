@@ -21,6 +21,13 @@ import { db } from "@/lib/db";
 export interface RebakeResult {
   attempted: number;
   updated: number;
+  /**
+   * Articles whose baked URL could NOT be rewritten. They still point at the old address, and
+   * everything built from those columns afterwards inherits it — so the caller must not treat
+   * a run with failures as an address change that completed.
+   */
+  failed: number;
+  errors: Array<{ id: string; error: string }>;
 }
 
 export async function rebakeClientSiteCanonicals(
@@ -28,7 +35,7 @@ export async function rebakeClientSiteCanonicals(
   articlesBaseUrl: string | null,
 ): Promise<RebakeResult> {
   const base = (articlesBaseUrl ?? "").trim().replace(/\/+$/, "");
-  if (!base) return { attempted: 0, updated: 0 };
+  if (!base) return { attempted: 0, updated: 0, failed: 0, errors: [] };
 
   const articles = await db.article.findMany({
     where: { clientId, isClientSiteArticle: true },
@@ -37,21 +44,26 @@ export async function rebakeClientSiteCanonicals(
   });
 
   let updated = 0;
+  const errors: Array<{ id: string; error: string }> = [];
 
   for (const article of articles) {
     const next = `${base}/${article.slug}`;
     if (article.canonicalUrl === next) continue;
 
-    await db.article
-      .update({
+    // This used to end in `.catch(() => {})`. A row that refused the write was then
+    // indistinguishable from a row that was already correct: `updated` simply did not go up,
+    // and the caller went on to regenerate that article's card from the OLD address and
+    // publish it. The failure has to travel back up.
+    try {
+      await db.article.update({
         where: { id: article.id },
         data: { canonicalUrl: next, mainEntityOfPage: next },
-      })
-      .then(() => {
-        updated++;
-      })
-      .catch(() => {});
+      });
+      updated++;
+    } catch (e) {
+      errors.push({ id: article.id, error: e instanceof Error ? e.message : String(e) });
+    }
   }
 
-  return { attempted: articles.length, updated };
+  return { attempted: articles.length, updated, failed: errors.length, errors };
 }

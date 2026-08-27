@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { generateStructuredData, normalizeStoredSiteEntityIds } from "@/lib/seo";
+import { generateStructuredData, jsonLdHtmlFromString } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { BecomePartnerBanner } from "@/components/shared/become-partner-banner/BecomePartnerBanner";
 import { getClientsList } from "@/lib/queries/get-clients-list";
@@ -71,7 +71,7 @@ async function AboutContent() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: storedJsonLd
-            ? normalizeStoredSiteEntityIds(storedJsonLd)
+            ? jsonLdHtmlFromString(storedJsonLd)
             : sanitizeJsonLd(buildFallbackStructuredData()),
         }}
       />

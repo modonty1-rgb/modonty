@@ -131,15 +131,32 @@ export function CategoryMergeDialog({ source, candidates, open, onOpenChange, on
       setCurrent(i + 1);
     }
 
-    await finalizeCategoryMerge({ sourceId: source.id, targetId: target.id });
+    // The count travels to phase 3, which holds modonty's articles flush on it. Without it
+    // the finalize could not tell a clean merge from one where every article failed to
+    // rebuild — and it flushed the cache either way, republishing the stale cards as fresh.
+    const fin = await finalizeCategoryMerge({
+      sourceId: source.id,
+      targetId: target.id,
+      failedArticleCount: ids.length - regenerated,
+    });
 
     setRecap({ moved: prep.movedCount ?? 0, children: prep.childrenCount ?? 0, regenerated });
     setPhase("done");
-    toast({
-      title: "تمّ الدمج",
-      description: `نُقلت المقالات إلى «${target.name}».`,
-      variant: "success",
-    });
+    // The toast used to say "تمّ الدمج" unconditionally, with the finalize's answer thrown
+    // away — so a merge where nothing rebuilt looked identical to one that worked.
+    if (fin.success) {
+      toast({
+        title: "تمّ الدمج",
+        description: `نُقلت المقالات إلى «${target.name}».`,
+        variant: "success",
+      });
+    } else {
+      toast({
+        title: "الدمج تمّ، والتحديث ناقص",
+        description: fin.warning ?? fin.error ?? "بعض البيانات ما تجدّدت.",
+        variant: "destructive",
+      });
+    }
   };
 
   const pct = total > 0 ? Math.round((current / total) * 100) : 0;

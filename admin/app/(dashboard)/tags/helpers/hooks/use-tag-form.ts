@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 import { slugify } from "@/lib/utils";
 import { Tag } from "@prisma/client";
 import { createTag, updateTag } from "../../actions/tags-actions";
@@ -26,6 +27,7 @@ interface UseTagFormParams {
 
 export function useTagForm({ initialData, tagId }: UseTagFormParams) {
   const router = useRouter();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,6 +79,15 @@ export function useTagForm({ initialData, tagId }: UseTagFormParams) {
         });
 
     if (result.success) {
+      // Saving and leaving silently would hide that the public page still shows the old
+      // data. The toast survives the navigation — the provider lives in the layout.
+      if (result.seoWarning) {
+        toast({
+          title: "الحفظ تمّ — بيانات السيو ما تجدّدت",
+          description: result.seoWarning,
+          variant: "warning",
+        });
+      }
       router.push("/tags");
       router.refresh();
     } else {

@@ -1,0 +1,13 @@
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { fixtureMedia } from '@/src/data/client-fixtures';
+import { Card, PrimaryAction, Screen, SectionTitle, StatusPill } from '@/src/components/ui/MobileUI';
+import { ModontyIcon } from '@/src/components/brand/icons/ModontyIcon';
+import { fonts } from '@/src/theme/tokens';
+import { useAppTheme } from '@/src/theme/ThemeProvider';
+
+export function VideosRoute({ onUpload }: { onUpload: () => void }) {
+  const { theme } = useAppTheme();
+  return <Screen title="الفيديوهات" icon="reels"><PrimaryAction label="رفع فيديو أو Reel" icon="reels" onPress={onUpload}/><SectionTitle>آخر الرفوعات</SectionTitle>{fixtureMedia.map((media) => <Card key={media.id} style={styles.videoCard}><View style={[styles.thumb, { backgroundColor: theme.colors.surfaceRaised, borderColor: theme.colors.border }]}><ModontyIcon name="reels" size={38} primary={theme.colors.text} accent={theme.colors.primary}/></View><View style={styles.copy}><View style={styles.top}><StatusPill tone="warning">قيد المراجعة</StatusPill><Text style={[styles.time, { color: theme.colors.muted }]}>اليوم</Text></View><Text numberOfLines={1} style={[styles.filename, { color: theme.colors.text }]}>{media.filename}</Text><Text style={[styles.meta, { color: theme.colors.muted }]}>42 ثانية · رفعته أنت</Text></View></Card>)}<Pressable accessibilityRole="button" accessibilityLabel="رفع فيديو جديد" onPress={onUpload}><Card style={[styles.uploadHint, { borderColor: theme.colors.primary }]}><ModontyIcon name="reels" size={25} primary={theme.colors.text} accent={theme.colors.primary}/><Text style={[styles.uploadText, { color: theme.colors.text }]}>يمكنك التصوير أو الاختيار من الاستديو</Text></Card></Pressable></Screen>;
+}
+
+const styles = StyleSheet.create({ videoCard: { flexDirection: 'row-reverse', gap: 13, marginBottom: 12 }, thumb: { width: 74, height: 74, borderWidth: 1, borderRadius: 15, alignItems: 'center', justifyContent: 'center' }, copy: { flex: 1, minWidth: 0 }, top: { flexDirection: 'row-reverse', justifyContent: 'space-between', alignItems: 'center' }, time: { fontFamily: fonts.regular, fontSize: 11, writingDirection: 'rtl' }, filename: { fontFamily: fonts.medium, fontSize: 14, lineHeight: 21, writingDirection: 'rtl', textAlign: 'right', marginTop: 9 }, meta: { fontFamily: fonts.regular, fontSize: 12, lineHeight: 18, writingDirection: 'rtl', textAlign: 'right', marginTop: 3 }, uploadHint: { minHeight: 72, flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'center', gap: 10, borderStyle: 'dashed' }, uploadText: { fontFamily: fonts.medium, fontSize: 13, writingDirection: 'rtl' } });

@@ -338,22 +338,42 @@ export const validateTwitterImageAltForClient: SEOFieldValidator = (
 // ADDRESS VALIDATORS
 // ============================================================================
 
-// Saudi Arabia regions/provinces
-const SAUDI_REGIONS = [
-  "Riyadh",
-  "Makkah",
-  "Al Madinah",
-  "Eastern Province",
-  "Al Qassim",
-  "Asir",
-  "Tabuk",
-  "Hail",
-  "Northern Borders",
-  "Jazan",
-  "Najran",
-  "Al Bahah",
-  "Al Jawf",
+// Saudi Arabia regions/provinces.
+// Origin: MODONTY POLICY (data quality), not Google. schema.org places no constraint on
+// PostalAddress.addressRegion, and Google's Local Business structured data lists it as a
+// plain recommended property with no allowed-value list — so this is our own check that a
+// Saudi partner's address names one of the Kingdom's 13 official regions. It only ever
+// scores; it never blocks a save.
+// Arabic spellings are accepted: the console is Arabic-first, so a partner who typed
+// «الرياض» used to be scored down as an invalid region — a false negative, not a defect.
+const SAUDI_REGIONS: ReadonlyArray<{ en: string; names: readonly string[] }> = [
+  { en: "Riyadh", names: ["Riyadh", "Ar Riyadh", "الرياض", "منطقة الرياض"] },
+  { en: "Makkah", names: ["Makkah", "Mecca", "Makkah Al Mukarramah", "مكة المكرمة", "مكة", "منطقة مكة المكرمة"] },
+  { en: "Al Madinah", names: ["Al Madinah", "Madinah", "Medina", "المدينة المنورة", "المدينة", "منطقة المدينة المنورة"] },
+  { en: "Eastern Province", names: ["Eastern Province", "Ash Sharqiyah", "المنطقة الشرقية", "الشرقية"] },
+  { en: "Al Qassim", names: ["Al Qassim", "Qassim", "القصيم", "منطقة القصيم"] },
+  { en: "Asir", names: ["Asir", "Aseer", "عسير", "منطقة عسير"] },
+  { en: "Tabuk", names: ["Tabuk", "تبوك", "منطقة تبوك"] },
+  { en: "Hail", names: ["Hail", "Ha'il", "حائل", "منطقة حائل"] },
+  { en: "Northern Borders", names: ["Northern Borders", "Al Hudud Ash Shamaliyah", "الحدود الشمالية", "منطقة الحدود الشمالية"] },
+  { en: "Jazan", names: ["Jazan", "Jizan", "جازان", "جيزان", "منطقة جازان"] },
+  { en: "Najran", names: ["Najran", "نجران", "منطقة نجران"] },
+  { en: "Al Bahah", names: ["Al Bahah", "Al Baha", "الباحة", "منطقة الباحة"] },
+  { en: "Al Jawf", names: ["Al Jawf", "Aljouf", "الجوف", "منطقة الجوف"] },
 ];
+
+/** Fold case, Arabic diacritics and alef/ya/ta-marbuta variants so «الْمَدِينَة» matches «المدينه». */
+function normalizeRegionName(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[ً-ْٰ]/g, "")
+    .replace(/[آأإٱ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ة/g, "ه")
+    .replace(/[‌-‏]/g, "")
+    .replace(/\s+/g, " ");
+}
 
 export const validateAddress: SEOFieldValidator = (value, data) => {
   const hasAddress =
@@ -477,8 +497,9 @@ export const validateAddressRegion: SEOFieldValidator = (value, data) => {
   const region = addressRegion.trim();
 
   if (isSaudi) {
-    const isValidRegion = SAUDI_REGIONS.some(
-      (r) => r.toLowerCase() === region.toLowerCase()
+    const normalizedRegion = normalizeRegionName(region);
+    const isValidRegion = SAUDI_REGIONS.some((r) =>
+      r.names.some((name) => normalizeRegionName(name) === normalizedRegion)
     );
 
     if (isValidRegion) {
@@ -490,7 +511,7 @@ export const validateAddressRegion: SEOFieldValidator = (value, data) => {
     }
     return {
       status: "warning",
-      message: `Address Region should be one of Saudi Arabia's 13 regions: ${SAUDI_REGIONS.join(", ")}`,
+      message: `Address Region should be one of Saudi Arabia's 13 regions (Arabic spelling accepted): ${SAUDI_REGIONS.map((r) => r.en).join(", ")}`,
       score: 2,
     };
   }
@@ -528,6 +549,15 @@ export const validateNationalAddress: SEOFieldValidator = (value, data) => {
     };
   }
 
+  // Origin: SAUDI POST (SPL) National Address — NOT Google, and NOT an SEO requirement.
+  // The National Address pairs a 5-digit postal code with a 4-digit additional number, which
+  // written together read as 9 digits. Google asks for no such thing: `postalCode` is a plain
+  // recommended PostalAddress property in the Local Business structured data docs, with no
+  // format rule. We score it because a complete Saudi address is better business data.
+  // The former "(mandatory from 2026)" note is REMOVED: the 2026 deadline that exists is the
+  // Transport General Authority's PARCEL/COURIER mandate — shipments must carry a National or
+  // Short Address — which says nothing about this field or about search. No official source
+  // was found making a 9-digit postal code mandatory here, so the claim does not stand.
   if (hasPostalCode) {
     const postalCode = (data.addressPostalCode as string).replace(/\D/g, "");
     const is9Digit = postalCode.length === 9;
@@ -561,14 +591,14 @@ export const validateNationalAddress: SEOFieldValidator = (value, data) => {
       return {
         status: "warning",
         message:
-          "5-digit postal code provided - National Address format requires 9-digit postal code (mandatory from 2026)",
+          "5-digit postal code provided - add the 4-digit additional number for the full Saudi Post National Address (9 digits). Data-quality suggestion, not a Google or SEO requirement",
         score: 3,
       };
     }
     return {
       status: "warning",
       message:
-        "Postal code format invalid - National Address requires 9-digit postal code",
+        "Postal code is neither 5 digits nor 9 - the Saudi Post National Address uses a 5-digit postal code plus a 4-digit additional number. Data-quality suggestion, not a Google or SEO requirement",
       score: 1,
     };
   }

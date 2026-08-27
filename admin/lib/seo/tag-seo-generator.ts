@@ -2,11 +2,14 @@
 
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
+import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { arabicBreadcrumbMessages } from "./arabic-breadcrumb-messages";
+import { validateReferenceJsonLd } from "./validate-reference-jsonld";
 
 interface SeoSettings {
   siteUrl: string;
@@ -33,13 +36,16 @@ interface TagData {
 }
 
 export async function buildTagMetadata(tag: TagData, s: SeoSettings) {
-  const pageUrl = tag.canonicalUrl || `${s.siteUrl}/tags/${tag.slug}`;
+  const pageUrl = tag.canonicalUrl || entityUrl("tags", tag.slug, s.siteUrl);
   const title = tag.seoTitle || tag.name;
-  const description = tag.seoDescription || `مقالات بتاج ${tag.name}`;
+  // The row's own description, or none. A sentence written here would be a meta description
+  // Google reads that nobody can edit from the admin — the same value the tag's own field
+  // exists to hold. Absent stays absent; the tag's SEO screen is where it gets filled.
+  const description = tag.seoDescription?.trim() || tag.description?.trim() || undefined;
 
   return {
     title,
-    description,
+    ...(description && { description }),
     robots: s.metaRobots,
     alternates: {
       canonical: pageUrl,
@@ -49,19 +55,19 @@ export async function buildTagMetadata(tag: TagData, s: SeoSettings) {
     },
     openGraph: {
       title,
-      description,
+      ...(description && { description }),
       type: "website",
       url: pageUrl,
       siteName: s.siteName,
       locale: s.ogLocale,
       ...(tag.socialImage && {
-        images: [{ url: tag.socialImage, alt: tag.socialImageAlt || title }],
+        images: [{ url: tag.socialImage, alt: tag.socialImageAlt?.trim() || title }],
       }),
     },
     twitter: {
       card: s.twitterCard,
       title,
-      description,
+      ...(description && { description }),
       ...(s.twitterSite && { site: s.twitterSite }),
       ...(s.twitterCreator && { creator: s.twitterCreator }),
       ...(tag.socialImage && {
@@ -72,10 +78,11 @@ export async function buildTagMetadata(tag: TagData, s: SeoSettings) {
 }
 
 export async function buildTagJsonLd(tag: TagData, s: SeoSettings) {
-  const pageUrl = tag.canonicalUrl || `${s.siteUrl}/tags/${tag.slug}`;
+  const pageUrl = tag.canonicalUrl || entityUrl("tags", tag.slug, s.siteUrl);
   const siteIds = buildSiteEntityIds(s.siteUrl);
   const title = tag.seoTitle || tag.name;
-  const description = tag.seoDescription || tag.description || `مقالات بتاج ${tag.name}`;
+  // Same rule as the metadata builder: the row owns this text, or the node ships without it.
+  const description = tag.seoDescription?.trim() || tag.description?.trim() || undefined;
 
   return {
     "@context": "https://schema.org",
@@ -84,13 +91,13 @@ export async function buildTagJsonLd(tag: TagData, s: SeoSettings) {
         "@type": "CollectionPage",
         "@id": pageUrl,
         name: title,
-        description,
+        ...(description && { description }),
         url: pageUrl,
         inLanguage: s.inLanguage,
         isPartOf: { "@id": siteIds.website },
         publisher: { "@id": siteIds.organization },
         ...(tag.socialImage && {
-          image: { "@type": "ImageObject", url: tag.socialImage, description: tag.socialImageAlt || title },
+          image: { "@type": "ImageObject", url: tag.socialImage, description: tag.socialImageAlt?.trim() || title },
         }),
       },
       {
@@ -102,12 +109,18 @@ export async function buildTagJsonLd(tag: TagData, s: SeoSettings) {
             "@type": "ListItem",
             position: 2,
             name: arabicBreadcrumbMessages.tags,
-            item: `${s.siteUrl}/tags`,
+            item: absoluteUrl("/tags", s.siteUrl),
           },
           { "@type": "ListItem", position: 3, name: tag.name, item: pageUrl },
         ],
       },
-      { "@type": "DefinedTerm", "@id": `${pageUrl}#term`, name: tag.name, description, url: pageUrl },
+      {
+        "@type": "DefinedTerm",
+        "@id": `${pageUrl}#term`,
+        name: tag.name,
+        ...(description && { description }),
+        url: pageUrl,
+      },
       {
         "@type": "Organization",
         "@id": siteIds.organization,
@@ -127,7 +140,7 @@ export async function buildTagJsonLd(tag: TagData, s: SeoSettings) {
 async function resolveSettings(): Promise<SeoSettings> {
   const settings = await getAllSettings();
   return {
-    siteUrl: settings.siteUrl || "https://www.modonty.com",
+    siteUrl: requireSiteUrl(settings.siteUrl),
 
     alternateLanguages: (settings as { defaultAlternateLanguages?: unknown }).defaultAlternateLanguages ?? null,
     siteName: settings.siteName || "Modonty",
@@ -151,6 +164,9 @@ export async function generateAndSaveTagSeo(tagId: string): Promise<{ success: b
     const s = await resolveSettings();
     const metadata = await buildTagMetadata(tag, s);
     const jsonLd = await buildTagJsonLd(tag, s);
+    // The real three validators. This line used to be `{ valid: true, … }` — a constant that
+    // told the dashboard the graph was clean before anything had looked at it.
+    const validationReport = await validateReferenceJsonLd(jsonLd);
 
     await db.tag.update({
       where: { id: tagId },
@@ -159,7 +175,7 @@ export async function generateAndSaveTagSeo(tagId: string): Promise<{ success: b
         nextjsMetadataLastGenerated: new Date(),
         jsonLdStructuredData: JSON.stringify(jsonLd),
         jsonLdLastGenerated: new Date(),
-        jsonLdValidationReport: { valid: true, generatedAt: new Date().toISOString() } as Prisma.InputJsonValue,
+        jsonLdValidationReport: validationReport,
       },
     });
     return { success: true };

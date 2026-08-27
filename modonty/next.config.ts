@@ -11,7 +11,20 @@ loadDotenv({ path: path.resolve(process.cwd(), "../.env.shared") });
 // attached to a preview branch, so we send it ourselves.
 // NOT keyed on NEXT_PUBLIC_SITE_URL: that variable carries the SAME value in all
 // three environments, so the condition would never fire on the test domain.
-const isProduction = process.env.VERCEL_ENV === "production";
+//
+// The fallback matters more than it looks. This used to be exactly
+// `process.env.VERCEL_ENV === "production"`, which is right on Vercel and inverted anywhere
+// else: off Vercel `VERCEL_ENV` is undefined, so `isProduction` is false, so the header
+// below is ADDED — a self-hosted or differently-hosted production would serve
+// `X-Robots-Tag: noindex, nofollow` on every page and quietly leave Google's index.
+//
+// So: trust `VERCEL_ENV` when it exists (on Vercel it always does, and it is the only value
+// that distinguishes preview from production, since NODE_ENV is "production" for both). With
+// no `VERCEL_ENV` at all we are not on Vercel, and `NODE_ENV` is the honest signal — a real
+// build is indexable, `next dev` is not.
+const isProduction = process.env.VERCEL_ENV
+  ? process.env.VERCEL_ENV === "production"
+  : process.env.NODE_ENV === "production";
 
 // Content-Security-Policy — REPORT-ONLY on purpose (24 Aug 2026, card SEC15).
 //

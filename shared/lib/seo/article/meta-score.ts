@@ -13,6 +13,7 @@
 //   · articles carry an OG type of "article" and a published time — both scored
 
 import type { SeoScore, SeoCheck } from "../client/types";
+import { readCanonicalUrl, readRobotsState } from "../client/types";
 
 // Google best-practice lengths (chars).
 const TITLE_MIN = 30;
@@ -22,10 +23,19 @@ const DESC_MAX = 160;
 const OG_MIN_W = 1200;
 const OG_MIN_H = 630;
 
+/**
+ * Google, "Block Search indexing with noindex": «Google will drop that page entirely from
+ * Google Search results, regardless of whether other sites link to it.»
+ * https://developers.google.com/search/docs/crawling-indexing/block-indexing
+ */
+const NOINDEX_HINT =
+  "المقال محجوب عن الفهرسة (noindex) — قوقل يشيله من النتائج كلها، فالدرجة صفر حتى يُرفع الحجب";
+
 interface MetaTags {
   title?: unknown;
   description?: unknown;
   canonical?: unknown;
+  robots?: unknown;
   alternates?: { canonical?: unknown; languages?: unknown } | null;
   openGraph?: {
     title?: unknown;
@@ -50,15 +60,21 @@ function asMeta(v: unknown): MetaTags {
 function str(v: unknown): string {
   return typeof v === "string" ? v.trim() : "";
 }
-function firstOgImage(m: MetaTags): { width: number; height: number } | null {
+/**
+ * The first share image, and — separately — whether its size was ever recorded.
+ *
+ * `width`/`height` are absent on plenty of stored blobs. Treating an absent number as 0
+ * made the check announce «أبعاد الصورة أصغر من 1200×630» about an image nobody measured:
+ * a claim, not a reading. `measured` is what tells the two apart.
+ */
+function firstOgImage(m: MetaTags): { width: number; height: number; measured: boolean } | null {
   const imgs = m.openGraph?.images;
   if (!Array.isArray(imgs) || imgs.length === 0) return null;
   const i = imgs[0] as { url?: unknown; width?: unknown; height?: unknown };
   if (!str(i?.url)) return null;
-  return {
-    width: typeof i.width === "number" ? i.width : 0,
-    height: typeof i.height === "number" ? i.height : 0,
-  };
+  const width = typeof i.width === "number" ? i.width : 0;
+  const height = typeof i.height === "number" ? i.height : 0;
+  return { width, height, measured: width > 0 && height > 0 };
 }
 
 /**
@@ -119,12 +135,20 @@ export function computeArticleMetaScore(input: ArticleMetaInput): SeoScore {
   }
 
   // ── OG/Share image (25) — present + min dimensions (1200×630) ──
+  //
+  // Three states, not two. An image whose size was never recorded is «غير مقيس»: the old
+  // code read the missing numbers as 0, failed them against 1200×630, and told the editor
+  // to fix an image it had never looked at.
   {
     const og = firstOgImage(m);
     let earned = 0;
     let status: SeoCheck["status"] = "error";
     let hint: string | undefined = "أضف صورة مشاركة (1200×630)";
-    if (og) {
+    if (og && !og.measured) {
+      earned = 15;
+      status = "warning";
+      hint = "الصورة موجودة لكن مقاسها غير مقيس — أعد توليد الميتا عشان تُسجَّل أبعادها";
+    } else if (og) {
       const okDim = og.width >= OG_MIN_W && og.height >= OG_MIN_H;
       if (okDim) {
         earned = 25;
@@ -133,15 +157,39 @@ export function computeArticleMetaScore(input: ArticleMetaInput): SeoScore {
       } else {
         earned = 15;
         status = "warning";
-        hint = "أبعاد الصورة أصغر من 1200×630";
+        hint = `أبعاد الصورة ${og.width}×${og.height} أصغر من 1200×630`;
       }
     }
     checks.push({ key: "ogImage", label: "صورة المشاركة", status, hint, earned, max: 25 });
   }
 
+  // ── Robots (5) — the directive that decides whether any of the above matters ──
+  //
+  // It was not scored at all before, so a `noindex` article read 100/100. The stored blob
+  // keeps the Next.js OBJECT form (admin/lib/seo/metadata-generator.ts:315), which is why
+  // this reads through `readRobotsState` instead of testing a string.
+  let blockedFromIndex = false;
+  {
+    const state = readRobotsState(m.robots);
+    blockedFromIndex = state === "noindex";
+    checks.push({
+      key: "robots",
+      label: "توجيه الأرشفة (robots)",
+      status: state === "index" ? "good" : state === "noindex" ? "error" : "warning",
+      hint:
+        state === "index"
+          ? undefined
+          : state === "noindex"
+            ? NOINDEX_HINT
+            : "ما فيه robots في الميتا المخزَّنة — غير مقيس، أعد توليد الميتا",
+      earned: state === "index" ? 5 : 0,
+      max: 5,
+    });
+  }
+
   // ── Canonical (10) ──
   {
-    const canonical = str(m.canonical) || str(m.alternates?.canonical);
+    const canonical = readCanonicalUrl(m);
     const ok = Boolean(canonical);
     checks.push({
       key: "canonical",
@@ -184,6 +232,8 @@ export function computeArticleMetaScore(input: ArticleMetaInput): SeoScore {
 
   const earned = checks.reduce((s, c) => s + c.earned, 0);
   const max = checks.reduce((s, c) => s + c.max, 0);
-  const score = max > 0 ? Math.round((earned / max) * 100) : 0;
-  return { score, checks };
+  const raw = max > 0 ? Math.round((earned / max) * 100) : 0;
+  // Google drops a noindex page entirely, so there is no search performance left to grade.
+  // The checklist still renders in full — the reader sees the block AND everything else.
+  return { score: blockedFromIndex ? 0 : raw, checks };
 }

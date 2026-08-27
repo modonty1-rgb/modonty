@@ -7,8 +7,10 @@
 
 import type { Metadata } from "next";
 import type { Article, Client, Author, Category, Media } from "@prisma/client";
+import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { SITE_NAME_FALLBACK } from "@/lib/constants/site-name";
 import { loadSiteUrl } from "./site-url";
+import { getOGLocale } from "./international-seo";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { BRAND_LOGO_URL } from "@modonty/shared/lib/brand-assets";
 
@@ -35,6 +37,8 @@ export interface ArticleWithMetadataRelations {
   ogArticleSection?: string | null;
   ogArticleTag?: string[] | null;
   datePublished?: Date | null;
+  /** Fallback for `article:modified_time` when no explicit OG value is stored. */
+  dateModified?: Date | null;
   scheduledAt?: Date | null;
   /**
    * True when the page is served from the client's own domain. Then THEY are "the overall
@@ -112,7 +116,7 @@ function buildLanguagesMap(
       out[key] = url
         ? url.startsWith("http")
           ? url
-          : `${siteUrl}${url.startsWith("/") ? url : `/${url}`}`
+          : absoluteUrl(url, siteUrl)
         : canonicalUrl;
     }
   }
@@ -137,7 +141,7 @@ function normalizeUrl(
   fallbackPath: string
 ): string {
   if (!url) {
-    return `${siteUrl}${fallbackPath}`;
+    return absoluteUrl(fallbackPath, siteUrl);
   }
 
   if (url.startsWith(siteUrl)) {
@@ -146,11 +150,9 @@ function normalizeUrl(
 
   try {
     const urlObj = new URL(url);
-    const path = urlObj.pathname + urlObj.search + urlObj.hash;
-    return `${siteUrl}${path}`;
+    return absoluteUrl(urlObj.pathname + urlObj.search + urlObj.hash, siteUrl);
   } catch {
-    const cleanPath = url.startsWith("/") ? url : `/${url}`;
-    return `${siteUrl}${cleanPath}`;
+    return absoluteUrl(url, siteUrl);
   }
 }
 
@@ -178,9 +180,14 @@ export async function generateNextjsMetadata(
 
   // Effective values
   const effectiveTitle = article.seoTitle || article.title || "";
-  const effectiveDescription = article.seoDescription || article.excerpt || "";
+  // `undefined`, never `""`. An article with neither a meta description nor an excerpt used to
+  // ship `<meta name="description" content="">` plus empty `og:` and `twitter:` descriptions.
+  // An empty tag is not a missing tag: the missing one lets Google compose a snippet from the
+  // page, the empty one hands it a blank answer. Next.js omits a metadata field that is
+  // undefined, so absence stays absence all the way to the HTML.
+  const effectiveDescription = article.seoDescription || article.excerpt || undefined;
 
-  const defaultCanonical = `${siteUrl}/articles/${article.slug}`;
+  const defaultCanonical = entityUrl("articles", article.slug, siteUrl);
 
   let canonicalSource: string | null = article.canonicalUrl || null;
 
@@ -227,9 +234,23 @@ export async function generateNextjsMetadata(
   const ogImage = mediaSrc(ogImageMedia) || BRAND_LOGO_URL;
 
   // Open Graph metadata — OG title/description use article seoTitle/seoDescription (SOT)
-  // datePublished is the single source of truth for published time
-  const publishedTime = article.datePublished || article.scheduledAt;
-  const modifiedTime = article.ogArticleModifiedTime || new Date();
+  // datePublished is the single source of truth for published time.
+  // `|| article.scheduledAt` used to sit here, and metadata is regenerated on every
+  // create/update — not only on publish — so a SCHEDULED article shipped
+  // `article:published_time` set to a date that has not happened yet. og:article's
+  // published_time is "When the article was first published" (ogp.me, article namespace);
+  // an unpublished article has no such moment, so the tag is simply omitted.
+  const publishedTime = article.datePublished;
+  // No `new Date()`. This read `article.ogArticleModifiedTime || new Date()`, so an article
+  // with no stored modified time announced "modified right now" — on every regeneration, to
+  // every crawler, for content nobody had touched. Google uses lastmod only "if it's
+  // consistently and verifiably accurate"; a date that moves on its own is the opposite.
+  //
+  // The fallback is the article's own `dateModified` (which, since jsonld-storage.ts and
+  // metadata-storage.ts stopped restamping it, moves only on a real content edit). With
+  // neither, the tag is omitted — the rule this file already applies to
+  // `article:published_time`, `og:locale` and `twitter:creator` three lines up.
+  const modifiedTime = article.ogArticleModifiedTime || article.dateModified || null;
 
   const ogTags: string[] = [];
   if (article.ogArticleTag && article.ogArticleTag.length > 0) {
@@ -238,9 +259,23 @@ export async function generateNextjsMetadata(
     ogTags.push(...article.tags.map((t) => t.tag.name));
   }
 
+  // og:locale is "Of the format `language_TERRITORY`" (ogp.me, Optional Metadata) — never a
+  // bare language code. `article.inLanguage` is `String @default("ar")`
+  // (shared/prisma/schema/schema.prisma:2817), so falling straight back to it shipped
+  // `og:locale="ar"`. getOGLocale maps a language onto its territory form (ar → ar_SA); the
+  // map already existed in international-seo.ts and this path simply never called it.
+  // The old third operand — a written "ar_SA" — is deleted, not moved: Settings.defaultOgLocale
+  // already arrives in `article.ogLocale` here (metadata-storage.ts:111-112 →
+  // get-article-defaults-from-settings.ts:27), so the literal only duplicated a DB value.
+  // With no language at all the tag is omitted rather than invented — the rule this file
+  // already applies to article:published_time and twitter:creator.
+  const ogLocale =
+    article.ogLocale?.trim() ||
+    (article.inLanguage?.trim() ? getOGLocale(article.inLanguage.trim()) : "");
+
   const openGraph = {
     title: effectiveTitle,
-    description: effectiveDescription,
+    ...(effectiveDescription && { description: effectiveDescription }),
     url: effectiveCanonical,
     siteName: siteName,
     images: [
@@ -252,10 +287,10 @@ export async function generateNextjsMetadata(
         alt: ogImageMedia?.altText || effectiveTitle || clientName,
       },
     ],
-    locale: article.ogLocale || article.inLanguage || "ar_SA",
+    ...(ogLocale ? { locale: ogLocale } : {}),
     type: "article",
     ...(publishedTime && { publishedTime: new Date(publishedTime).toISOString() }),
-    modifiedTime: new Date(modifiedTime).toISOString(),
+    ...(modifiedTime ? { modifiedTime: new Date(modifiedTime).toISOString() } : {}),
     ...(article.ogArticleAuthor || article.author.name
       ? { authors: [article.ogArticleAuthor || article.author.name] }
       : {}),
@@ -270,7 +305,7 @@ export async function generateNextjsMetadata(
   const twitter: Metadata["twitter"] = {
     card: (article.twitterCard as "summary_large_image") || "summary_large_image",
     title: effectiveTitle,
-    description: effectiveDescription,
+    ...(effectiveDescription && { description: effectiveDescription }),
     images: [{ url: ogImage, alt: imageAlt }],
   };
 
@@ -308,7 +343,7 @@ export async function generateNextjsMetadata(
   // Build final metadata object
   const metadata: Metadata = {
     title: fullTitle,
-    description: effectiveDescription,
+    ...(effectiveDescription && { description: effectiveDescription }),
     alternates: {
       canonical: effectiveCanonical,
       languages: buildLanguagesMap(article.alternateLanguages, effectiveCanonical, siteUrl),

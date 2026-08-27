@@ -1,5 +1,6 @@
 import type { ClientFormSchemaType } from "./client-form-schema";
 import type { SubscriptionTier } from "@prisma/client";
+import { entityUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { slugify } from "@/lib/utils";
 
 interface GenerateClientTestDataOptions {
@@ -11,6 +12,12 @@ interface GenerateClientTestDataOptions {
     articlesPerMonth: number;
   }>;
   clients?: Array<{ id: string; name: string; slug: string }>;
+  /**
+   * Settings.siteUrl. Required: the canonical below was a literal `https://modonty.com` —
+   * WITHOUT the www the live site actually serves — so test rows carried a canonical pointing
+   * at a host that redirects, and those rows are edited and saved like any other.
+   */
+  siteUrl: string;
 }
 
 function pick<T>(arr: T[]): T | undefined {
@@ -20,7 +27,7 @@ function pick<T>(arr: T[]): T | undefined {
 export function generateClientTestData(
   options: GenerateClientTestDataOptions
 ): Partial<ClientFormSchemaType> {
-  const { industries, tierConfigs, clients = [] } = options;
+  const { industries, tierConfigs, clients = [], siteUrl } = options;
   const tier = pick(tierConfigs) ?? tierConfigs[0];
   const industry = pick(industries);
   const parent = clients.length > 0 ? pick(clients) : undefined;
@@ -52,7 +59,7 @@ export function generateClientTestData(
     phone: "+966501234567",
     contactType: "customer service",
     sameAs: ["https://twitter.com/example", "https://linkedin.com/company/example"],
-    slogan: "الابتكار beyond الحدود",
+    slogan: "الابتكار بلا حدود",
     numberOfEmployees: "50-100",
     commercialRegistrationNumber: "1234567890",
     businessBrief,
@@ -86,11 +93,11 @@ export function generateClientTestData(
     targetAudience: "مؤسسات صغيرة ومتوسطة، رواد أعمال، أصحاب متاجر إلكترونية",
     contentPriorities: ["مدونات", "أخبار", "دليل استخدام"],
     // --- SEO tab ---
-    seoTitle: `${name} - مودونتي`,
+    seoTitle: `${name} - مدونتي`,
     seoDescription: "وصف تجريبي للعميل لأغراض التطوير والاختبار. يظهر في نتائج البحث وبطاقات Open Graph.",
     description: businessBrief,
     metaRobots: "index, follow",
-    canonicalUrl: `https://modonty.com/clients/${slug}`,
+    canonicalUrl: entityUrl("clients", slug, siteUrl),
     keywords: ["تكنولوجيا", "استشارات", "تحول رقمي"],
     knowsLanguage: ["Arabic", "English"],
     parentOrganizationId: parent?.id ?? null,

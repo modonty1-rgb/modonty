@@ -2,13 +2,15 @@
  * Build meta tags object from a page-like object. Shared by generate-modonty-page-seo and get-live-preview-seo.
  */
 
+import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { tightenGooglebot } from "@modonty/shared/lib/seo/tighten-googlebot";
+import { truncateAtWordBoundary } from "@modonty/shared/lib/seo/truncate-at-word-boundary";
 
 export function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): string | undefined {
   if (!url?.trim()) return undefined;
   const u = url.trim();
   if (u.startsWith("http://") || u.startsWith("https://")) return u.replace("http://", "https://");
-  if (u.startsWith("/")) return `${siteUrl}${u}`;
+  if (u.startsWith("/")) return absoluteUrl(u, siteUrl);
   return `https://${u}`;
 }
 
@@ -85,7 +87,7 @@ function buildHreflangFromOgLocaleAlternate(
   let base: string;
   let pathname: string;
   try {
-    const url = new URL(canonicalUrl || `${siteUrl}/`);
+    const url = new URL(canonicalUrl || absoluteUrl("/", siteUrl));
     base = url.origin;
     pathname = url.pathname || fallbackPath;
   } catch {
@@ -103,14 +105,20 @@ function buildHreflangFromOgLocaleAlternate(
   for (const locale of locales) {
     const hreflang = toBcp47FromLocale(locale);
     if (!hreflang) continue;
-    const langSegment = hreflang.split("-")[0];
-    const href =
-      pathname === "/"
-        ? `${base}/${langSegment}`
-        : `${base}/${langSegment}${pathname.startsWith("/") ? pathname : `/${pathname}`}`;
+    // The href used to be built as `${base}/${langSegment}${pathname}` — `…/en/about`,
+    // `…/fr/contact`. Those pages do not exist: modonty has no locale segment in `app/`
+    // (measured 27 Aug 2026 — zero `[locale]`, `en` or `[lang]` route). So the annotation
+    // named a 404 as an alternate.
+    //
+    // That is not a cosmetic error. Google: "If two pages don't both point to each other,
+    // the tags will be ignored" — a 404 cannot point back, so ONE invented alternate
+    // discards the whole hreflang set for that page, including the real ones.
+    // https://developers.google.com/search/docs/specialty/international/localized-versions
+    //
+    // One page serves every market here, so every declared locale points at that page.
     if (!seen.has(hreflang)) {
       seen.add(hreflang);
-      result.push({ lang: hreflang, href });
+      result.push({ lang: hreflang, href: canonicalUrl });
     }
   }
   if (!seen.has(xDefault)) {
@@ -188,8 +196,6 @@ export interface BuildMetaOptions {
   defaultSitemapChangeFreq?: string;
   defaultCharset?: string;
   defaultOgImageType?: string;
-  defaultOgImageWidth?: number;
-  defaultOgImageHeight?: number;
   defaultHreflang?: string;
   defaultPathname?: string;
   titleMaxLength?: number;
@@ -210,8 +216,6 @@ const FALLBACK_SITEMAP_PRIORITY = 0.5;
 const FALLBACK_SITEMAP_CHANGE_FREQ = "monthly";
 const FALLBACK_CHARSET = "UTF-8";
 const FALLBACK_OG_IMAGE_TYPE = "image/jpeg";
-const FALLBACK_OG_IMAGE_WIDTH = 1200;
-const FALLBACK_OG_IMAGE_HEIGHT = 630;
 const FALLBACK_HREFLANG = "x-default";
 const FALLBACK_PATHNAME = "/";
 
@@ -236,8 +240,6 @@ export function buildMetaFromPageLike(pageLike: PageLikeForMeta, options: BuildM
     defaultSitemapChangeFreq,
     defaultCharset,
     defaultOgImageType,
-    defaultOgImageWidth,
-    defaultOgImageHeight,
     defaultHreflang,
     defaultPathname,
     titleMaxLength,
@@ -249,11 +251,9 @@ export function buildMetaFromPageLike(pageLike: PageLikeForMeta, options: BuildM
   const descMax = descriptionMaxLength ?? FALLBACK_DESCRIPTION_MAX;
   const truncationSuffix = (defaultTruncationSuffix?.trim() || "...");
   const ogImageType = defaultOgImageType?.trim() || FALLBACK_OG_IMAGE_TYPE;
-  const ogImageWidth = defaultOgImageWidth ?? FALLBACK_OG_IMAGE_WIDTH;
-  const ogImageHeight = defaultOgImageHeight ?? FALLBACK_OG_IMAGE_HEIGHT;
   const charsetValue = defaultCharset?.trim() || FALLBACK_CHARSET;
 
-  const canonicalUrl = ensureAbsoluteUrl(pageLike.canonicalUrl, siteUrl) || `${siteUrl}/${pageLike.slug}`;
+  const canonicalUrl = ensureAbsoluteUrl(pageLike.canonicalUrl, siteUrl) || absoluteUrl(`/${pageLike.slug}`, siteUrl);
   const ogUrlResolved = pageLike.ogUrl?.trim() ? ensureAbsoluteUrl(pageLike.ogUrl, siteUrl) : null;
   const openGraphUrl = ogUrlResolved || canonicalUrl;
 
@@ -300,8 +300,8 @@ export function buildMetaFromPageLike(pageLike: PageLikeForMeta, options: BuildM
 
   const built: Record<string, unknown> = {
     charset: charsetValue,
-    title: title.length > titleMax ? title.slice(0, titleMax - truncationSuffix.length) + truncationSuffix : title,
-    description: description.length > descMax ? description.slice(0, descMax - truncationSuffix.length) + truncationSuffix : description,
+    title: truncateAtWordBoundary(title, titleMax, truncationSuffix),
+    description: truncateAtWordBoundary(description, descMax, truncationSuffix),
     robots,
     // A googlebot value stored on an earlier generate is tightened too — it was written when
     // the page may have had a different robots directive, and must not resurrect the old one.
@@ -324,8 +324,12 @@ export function buildMetaFromPageLike(pageLike: PageLikeForMeta, options: BuildM
               url: absImage,
               secure_url: absImage,
               type: ogImageType,
-              width: ogImageWidth,
-              height: ogImageHeight,
+              // No width/height: Settings.defaultOgImage{Width,Height} is ONE global number
+              // seeded to 1200x630 (settings/actions/seed-technical-defaults.ts:68-69) and
+              // applied to every page's image, so it cannot describe more than one file. On
+              // production 27 Aug 2026 it declared 1200x630 for a 5000x2625 PNG. og:image
+              // width/height are optional in the OGP spec, so omitting is spec-legal; a false
+              // pair is not. Restore only from the Media row of the image the url points at.
               alt: ogImageAlt,
             },
           ]

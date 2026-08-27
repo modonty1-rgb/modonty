@@ -13,7 +13,9 @@ import {
  * This hook handles all the useEffect logic for auto-filling fields
  */
 export function useArticleFormAutoFill() {
-  const { formData, updateField, updateFields, clients, categories } = useArticleForm();
+  // `siteUrl` comes from Settings via the server parent — the canonical below used to be built
+  // from a literal host baked into the helper.
+  const { formData, updateField, updateFields, clients, categories, siteUrl } = useArticleForm();
 
   const selectedClient = clients.find((c) => c.id === formData.clientId);
 
@@ -36,9 +38,9 @@ export function useArticleFormAutoFill() {
   useEffect(() => {
     if (formData.slug && !formData.canonicalUrl) {
       const clientSlug = selectedClient?.slug;
-      updateField('canonicalUrl', generateCanonicalUrl(formData.slug, undefined, clientSlug));
+      updateField('canonicalUrl', generateCanonicalUrl(formData.slug, siteUrl, clientSlug));
     }
-  }, [formData.slug, formData.canonicalUrl, selectedClient, updateField]);
+  }, [formData.slug, formData.canonicalUrl, selectedClient, updateField, siteUrl]);
 
   // Social meta (Open Graph & Twitter) are now derived at render time
   // from SEO fields, canonical URL, category, tags, and featured image.

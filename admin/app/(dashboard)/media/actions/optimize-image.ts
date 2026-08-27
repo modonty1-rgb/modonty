@@ -31,7 +31,11 @@ export interface OptimizedImageInput {
   blurDataURL?: string | null;
 }
 
-type Result = { success: true } | { success: false; error: string };
+/**
+ * `seoWarning` — the Media row swapped, but at least one cached SEO blob that had copied
+ * the old URL failed to rebuild. The image is correct; the blob modonty serves is not.
+ */
+type Result = { success: true; seoWarning?: string } | { success: false; error: string };
 
 export async function saveOptimizedImage(
   mediaId: string,
@@ -51,6 +55,14 @@ export async function saveOptimizedImage(
     });
     if (!existing) return { success: false, error: "الصورة غير موجودة" };
 
+    // Ask the CDN whether the re-encoded file actually serves before the row starts naming
+    // it. The old asset gets deleted further down, so a row pointing at an address that
+    // never answered would leave the image with no working URL at all.
+    const serves = await fetch(url, { method: "HEAD" }).then((r) => r.ok).catch(() => false);
+    if (!serves) {
+      return { success: false, error: "الصورة الجديدة ما تفتح على الرابط — ما غيّرنا شي." };
+    }
+
     await db.media.update({
       where: { id: mediaId },
       data: {
@@ -58,7 +70,10 @@ export async function saveOptimizedImage(
         contentUrl: url,
         // Bunny-primary: the optimizer now uploads to Bunny — sync bunnyUrl with the new
         // url, else a stale bunnyUrl would keep serving the OLD image via mediaSrc().
-        ...(url.includes(".b-cdn.net/") ? { bunnyUrl: url } : {}),
+        // When the new file did NOT land on Bunny, the old bunnyUrl must be CLEARED, not
+        // left: mediaSrc() prefers it, so it would keep serving the old picture next to
+        // the new width/height/fileSize written below — wrong image, wrong dimensions.
+        bunnyUrl: url.includes(".b-cdn.net/") ? url : null,
         mimeType: input.mimeType || "image/webp",
         encodingFormat: input.mimeType || "image/webp",
         fileSize: input.fileSize ?? undefined,
@@ -86,32 +101,61 @@ export async function saveOptimizedImage(
     const articleMap = new Map<string, string>();
     for (const a of featuredArticles) articleMap.set(a.id, a.status);
     for (const g of galleryLinks) if (g.article) articleMap.set(g.article.id, g.article.status);
+    // All three generators RETURN { success, error } and never throw, so `.catch(() => {})`
+    // caught nothing: a blob that failed to rebuild kept the OLD image URL, and the caller
+    // was told the optimisation succeeded. Count the failures instead.
+    let staleArticles = 0;
     for (const [articleId, status] of articleMap) {
       const robots = status === "PUBLISHED" ? "index, follow" : "noindex, follow";
-      await generateAndSaveNextjsMetadata(articleId, { robots }).catch(() => {});
-      await generateAndSaveJsonLd(articleId).catch(() => {});
+      const metadataResult = await generateAndSaveNextjsMetadata(articleId, { robots }).catch(
+        (e: unknown) => ({ success: false as const, error: e instanceof Error ? e.message : String(e) }),
+      );
+      const jsonLdResult = await generateAndSaveJsonLd(articleId).catch(
+        (e: unknown) => ({ success: false as const, error: e instanceof Error ? e.message : String(e) }),
+      );
+      if (!metadataResult.success || !jsonLdResult.success) staleArticles++;
     }
 
     // 2. Owning client's SEO bundle (Organization.image[] dimensions/url changed).
+    let clientStale = false;
     if (existing.clientId) {
-      await generateClientSEO(existing.clientId).catch(() => {});
+      const clientResult = await generateClientSEO(existing.clientId).catch(
+        (e: unknown) => ({ success: false as const, error: e instanceof Error ? e.message : String(e) }),
+      );
+      clientStale = !clientResult.success;
     }
+
+    const seoFailures: string[] = [];
+    if (staleArticles > 0) seoFailures.push(`${staleArticles} مقالاً ما تجدّدت بياناته`);
+    if (clientStale) seoFailures.push("بيانات الشريك ما تجدّدت");
 
     // A third step used to live here: reels had copied this image's URL into their own
     // row, so optimizing the image left them pointing at a deleted file. The reel IS this
     // row now (2026-08-05), so the URL it shows is the one we just wrote. Nothing to sync.
 
-    // Now that nothing references the old URL, delete the old Cloudinary asset — no dead,
-    // billed storage. Best-effort: the DB is already correct; a failed delete just leaves
-    // one orphan for the Orphans cleaner.
+    // Delete the old Cloudinary asset ONLY once nothing still names it: the row was
+    // rewritten above and every cached blob that had copied the old URL was rebuilt. A
+    // blob that failed to rebuild still carries the old address, so deleting the file
+    // under it would turn a stale link into a dead one. It stays until the next run —
+    // one billed orphan is cheaper than a 404 inside published JSON-LD.
     const oldPublicId = existing.cloudinaryPublicId;
-    if (oldPublicId && oldPublicId !== input.publicId) {
+    if (oldPublicId && oldPublicId !== input.publicId && seoFailures.length === 0) {
       await deleteCloudinaryAsset(oldPublicId, "image").catch(() => {});
     }
 
-    await revalidateModontyTag("clients").catch(() => {});
-    await revalidateModontyTag("articles").catch(() => {});
+    // Only rebuild the public pages whose blob actually rebuilt — pushing a rebuild on top
+    // of a stale blob republishes the old image URL as if it were fresh.
+    if (!clientStale) await revalidateModontyTag("clients").catch(() => {});
+    if (staleArticles === 0) await revalidateModontyTag("articles").catch(() => {});
     revalidatePath("/media/maintenance");
+
+    if (seoFailures.length > 0) {
+      console.error("Optimized image SEO refresh failed:", mediaId, seoFailures.join(" · "));
+      return {
+        success: true,
+        seoWarning: `الصورة اتبدّلت، لكن بيانات السيو ما تجدّدت — جوجل بيبقى يشوف الصورة القديمة. (${seoFailures.join(" · ")})`,
+      };
+    }
     return { success: true };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message : "فشل تحديث الصورة" };

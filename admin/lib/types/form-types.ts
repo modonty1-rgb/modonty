@@ -358,6 +358,12 @@ export interface UserFormData {
 export interface FormSubmitResult {
   success: boolean;
   error?: string;
+  /**
+   * The row saved, but regenerating the stored SEO blob failed. modonty serves that
+   * blob, so Google keeps seeing the OLD title/description until it is regenerated.
+   * The save is NOT rolled back — the warning is how the admin learns about it.
+   */
+  seoWarning?: string;
   article?: {
     id: string;
     title?: string | null;

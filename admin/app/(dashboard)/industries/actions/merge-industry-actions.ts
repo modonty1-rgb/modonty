@@ -180,7 +180,12 @@ export async function regenerateClientSeoForMerge(clientId: string): Promise<Reg
  * listing, then revalidate modonty. modonty's in-memory caches pick up the change
  * within their 5-minute TTL (documented eventual consistency).
  */
-export async function finalizeIndustryMerge(input: { sourceId: string; targetId: string }): Promise<{ success: boolean; error?: string }> {
+export async function finalizeIndustryMerge(input: {
+  sourceId: string;
+  targetId: string;
+  /** How many clients phase 2 failed to rebuild. The clients flush is held on it. */
+  failedClientCount: number;
+}): Promise<{ success: boolean; error?: string; warning?: string }> {
   try {
     const session = await auth();
     if (!session) return { success: false, error: "Unauthorized" };
@@ -188,15 +193,38 @@ export async function finalizeIndustryMerge(input: { sourceId: string; targetId:
     const { generateAndSaveIndustrySeo } = await import("@/lib/seo/industry-seo-generator");
     const { regenerateIndustriesListingCache } = await import("@/lib/seo/listing-page-seo-generator");
 
+    // All three CATCH internally and return `{ success, error }` — they never throw, so the
+    // `.catch()` that used to sit on each was dead code wrapped around a discarded answer.
     // Target gains clients; source is now empty — refresh both entity caches.
-    await generateAndSaveIndustrySeo(input.targetId).catch((e) => console.error("target industry SEO:", e));
-    await generateAndSaveIndustrySeo(input.sourceId).catch((e) => console.error("source industry SEO:", e));
-    await regenerateIndustriesListingCache().catch((e) => console.error("industries listing:", e));
+    const [target, source, listing] = await Promise.all([
+      generateAndSaveIndustrySeo(input.targetId),
+      generateAndSaveIndustrySeo(input.sourceId),
+      regenerateIndustriesListingCache(),
+    ]);
+
+    const failures: string[] = [];
+    if (!target.success) failures.push(`القطاع الهدف: ${target.error ?? "سبب غير معروف"}`);
+    if (!source.success) failures.push(`القطاع المصدر: ${source.error ?? "سبب غير معروف"}`);
+    if (!listing.success) failures.push(`قائمة القطاعات: ${listing.error ?? "سبب غير معروف"}`);
 
     revalidatePath("/industries");
     revalidatePath("/clients");
-    await revalidateModontyTag("industries");
-    await revalidateModontyTag("clients");
+
+    // Each flush is held on its own precondition — busting a tag whose card did not rebuild
+    // republishes the pre-merge card under a fresh timestamp.
+    if (failures.length === 0) await revalidateModontyTag("industries");
+    if (input.failedClientCount === 0) await revalidateModontyTag("clients");
+
+    if (input.failedClientCount > 0) {
+      failures.push(`${input.failedClientCount} شريكاً ما تجدّدت بياناته`);
+    }
+    if (failures.length > 0) {
+      console.error("finalizeIndustryMerge partial:", failures.join(" · "));
+      return {
+        success: false,
+        warning: `الدمج تمّ في القاعدة، لكن ${failures.join(" · ")} — جوجل بيبقى يشوف القديم.`,
+      };
+    }
 
     return { success: true };
   } catch (error) {

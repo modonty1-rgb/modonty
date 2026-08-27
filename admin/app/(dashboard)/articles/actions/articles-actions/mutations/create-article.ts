@@ -1,5 +1,6 @@
 "use server";
 
+import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { db } from "@/lib/db";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { ArticleStatus, Prisma } from "@prisma/client";
@@ -35,9 +36,23 @@ export async function createArticle(data: ArticleFormData) {
       return { success: false, error: `بيانات غير صحيحة — ${errors}` };
     }
 
+    // ONE slug from here on — the schema's own normalised value.
+    //
+    // `articleServerSchema` already ends its slug rule with `.transform(slugify)`, and this
+    // function then threw that away and used the raw `data.slug` everywhere: the uniqueness
+    // check ran on `data.slug.trim()`, while the canonical, the breadcrumb and the stored row
+    // all took the untouched input. So `"  my post  "` was checked as `"my post"`, stored with
+    // its spaces, and its canonical became a `%20` url that could never match the page's own
+    // address — a permanent canonical mismatch created at birth.
+    //
+    // `slugify` keeps Arabic (`\p{L}`), so the Arabic slugs this site runs on pass through
+    // unchanged; it is spaces, slashes and stray punctuation that get normalised. Same
+    // `parsed.data` pattern create-category.ts already follows.
+    const slug = parsed.data.slug;
+
     // Validate slug uniqueness within client
     const existingArticle = await db.article.findFirst({
-      where: { clientId: data.clientId, slug: data.slug.trim() },
+      where: { clientId: data.clientId, slug },
       select: { id: true },
     });
     if (existingArticle) {
@@ -111,14 +126,14 @@ export async function createArticle(data: ArticleFormData) {
     // Always regenerate canonical from current slug — never trust input value
     // (prior logic kept user-provided canonicalUrl, allowing stale/wrong URLs)
     const canonicalUrl = isClientSiteArticle
-      ? `${baseUrl}/${data.slug}`
-      : generateCanonicalUrl(data.slug, baseUrl);
+      ? absoluteUrl(`/${slug}`, baseUrl)
+      : generateCanonicalUrl(slug, baseUrl);
 
     const breadcrumbPath = generateBreadcrumbPath(
       category?.name,
       category?.slug,
       data.title,
-      data.slug
+      slug
     );
 
     const datePublished =
@@ -138,8 +153,10 @@ export async function createArticle(data: ArticleFormData) {
     const article = await db.article.create({
       data: {
         title: data.title,
-        slug: data.slug,
-        excerpt: seoDescription || null,
+        slug,
+        // The writer's summary, kept as written — see update-article.ts for why it must
+        // not be overwritten with the truncated `seoDescription` derived from it.
+        excerpt: data.excerpt?.trim() || null,
         content: sanitizedContent,
         clientId: data.clientId,
         categoryId: data.categoryId || null,
@@ -161,7 +178,12 @@ export async function createArticle(data: ArticleFormData) {
         seoDescription: seoDescription || null,
         ogArticleAuthor: data.ogArticleAuthor || null,
         ogArticlePublishedTime: datePublished,
-        ogArticleModifiedTime: new Date(),
+        // Not `new Date()`. An article being created has not been MODIFIED — it has been
+        // written. Stamping a modified time at birth put `article:modified_time` on a draft
+        // that no one had edited, and made it differ from `datePublished` by the few
+        // milliseconds between the two lines. Left absent, the generator falls back to the
+        // row's own `dateModified`, which moves only on a real edit.
+        ogArticleModifiedTime: null,
         canonicalUrl,
         breadcrumbPath: JSON.parse(JSON.stringify(breadcrumbPath)) as Prisma.InputJsonValue,
         semanticKeywords:
@@ -222,17 +244,30 @@ export async function createArticle(data: ArticleFormData) {
       }
     });
 
+    // Both generators CATCH internally and RETURN { success:false, error } — they never
+    // throw, so the old bare `catch` was unreachable and a failed generation left no log
+    // at all. Read the result; see update-article.ts for the same rule.
+    const seoFailures: string[] = [];
     try {
-      await generateAndSaveNextjsMetadata(article.id, {
+      const metadataResult = await generateAndSaveNextjsMetadata(article.id, {
         robots: metaRobots,
       });
+      if (!metadataResult.success) {
+        seoFailures.push(`الميتاداتا: ${metadataResult.error || "سبب غير معروف"}`);
+      }
 
-      await generateAndSaveJsonLd(article.id);
+      const jsonLdResult = await generateAndSaveJsonLd(article.id);
+      if (!jsonLdResult.success) {
+        seoFailures.push(`البيانات المنظّمة: ${jsonLdResult.error || "سبب غير معروف"}`);
+      }
     } catch (error) {
+      seoFailures.push(error instanceof Error ? error.message : String(error));
+    }
+    if (seoFailures.length > 0) {
       console.error(
         "Failed to generate metadata/JSON-LD for article:",
         article.id,
-        error
+        seoFailures.join(" · ")
       );
     }
 
@@ -246,11 +281,22 @@ export async function createArticle(data: ArticleFormData) {
 
     revalidatePath("/articles");
     revalidateTag("article-status-counts", "max");
-    await revalidateModontyTag("articles");
+    // modonty renders the stored blob — don't rebuild its pages on top of a blob that
+    // failed to regenerate. Same rule as update-article.ts.
+    if (seoFailures.length === 0) {
+      await revalidateModontyTag("articles");
+    }
 
     // Re-fetch updatedAt after SEO generation
     const freshArticle = await db.article.findUnique({ where: { id: article.id }, select: { id: true, title: true, slug: true, status: true, updatedAt: true } });
-    return { success: true, article: freshArticle || article };
+    return {
+      success: true,
+      article: freshArticle || article,
+      seoWarning:
+        seoFailures.length > 0
+          ? `المقال انحفظ، لكن بيانات السيو ما تجدّدت — جوجل بيبقى يشوف العنوان والوصف القديم. (${seoFailures.join(" · ")})`
+          : undefined,
+    };
   } catch (error) {
     console.error("Error creating article:", error);
     const message =

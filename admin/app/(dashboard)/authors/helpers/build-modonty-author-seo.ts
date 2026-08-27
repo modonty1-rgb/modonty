@@ -1,3 +1,5 @@
+import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
 
 import type { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
@@ -27,7 +29,9 @@ export interface ModontyAuthorSeoSource {
 }
 
 export function buildModontyAuthorSeo(a: ModontyAuthorSeoSource, settings: AllSettings) {
-  const siteUrl = settings.siteUrl || "https://www.modonty.com";
+  // No literal fallback — this becomes the author page's canonical and the Organization
+  // `@id` inside the stored author blob.
+  const siteUrl = requireSiteUrl(settings.siteUrl);
   const siteName = settings.siteName || "مدونتي";
   const inLanguage = settings.inLanguage || "ar";
   const ogLocale = settings.defaultOgLocale || "ar_SA";
@@ -40,7 +44,12 @@ export function buildModontyAuthorSeo(a: ModontyAuthorSeoSource, settings: AllSe
   // The Organization entity description — single source: brandDescription (Settings), the SAME
   // text the site #organization / knowledge-graph node uses. Falls back to bio for old records.
   const entityDescription = settings.brandDescription || a.bio || undefined;
-  const description = a.seoDescription || entityDescription || "";
+  // `undefined`, never `""`. This ended in `|| ""`, so an author with no seoDescription and
+  // no brand description shipped `<meta name="description" content="">` and an empty
+  // `og:description` — a declared-but-blank summary, which is worse than none: the absent
+  // tag lets Google pick text from the page, the empty one offers nothing and still counts
+  // as an answer. Next.js omits a metadata field whose value is undefined.
+  const description = a.seoDescription || entityDescription || undefined;
 
   // sameAs = the org's verified profiles. Settings social (the brand's 11 official
   // channels) is authoritative; union with anything set on the author record. De-duped.
@@ -99,7 +108,7 @@ export function buildModontyAuthorSeo(a: ModontyAuthorSeoSource, settings: AllSe
   const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": `${siteUrl}/#organization`,
+    "@id": absoluteUrl("/#organization", siteUrl),
     name: orgName,
     url: siteUrl,
     ...(orgLogo && { logo: { "@type": "ImageObject", url: orgLogo } }),
@@ -113,18 +122,22 @@ export function buildModontyAuthorSeo(a: ModontyAuthorSeoSource, settings: AllSe
 
   const metadata: Record<string, unknown> = {
     title,
-    // Arabic fallback, not `Articles by ${orgName}`: this string is the meta description on an
-    // ar-SA page that Google indexes, and an English sentence there reads as a different site's
-    // page. The page's own copy is Arabic; the last-resort text has to match it.
-    description: a.seoDescription || entityDescription || `مقالات ${orgName}`,
+    // The row's text, or Settings' brand description, or nothing. It used to end in the
+    // English `Articles by ${orgName}`; replacing that with an Arabic sentence (25 Aug 2026,
+    // first attempt) fixed the language and kept the real problem — a meta description written
+    // in this file, which the author's SEO screen cannot edit. Both sources above are editable;
+    // an empty pair now ships no description at all.
+    ...(a.seoDescription?.trim() || entityDescription
+      ? { description: a.seoDescription?.trim() || entityDescription }
+      : {}),
     robots: metaRobots,
     alternates: {
-      canonical: `${siteUrl}/authors/${a.slug}`,
+      canonical: entityUrl("authors", a.slug, siteUrl),
       // Was the single `{ [inLanguage]: url }`, so an author page declared one locale while
       // Settings listed nine and every other page now declares all of them.
       languages: buildHreflangLanguages(
         settings.defaultAlternateLanguages,
-        `${siteUrl}/authors/${a.slug}`,
+        entityUrl("authors", a.slug, siteUrl),
         siteUrl,
       ),
     },
@@ -132,11 +145,13 @@ export function buildModontyAuthorSeo(a: ModontyAuthorSeoSource, settings: AllSe
       title,
       description,
       type: "website",
-      url: `${siteUrl}/authors/${a.slug}`,
+      url: entityUrl("authors", a.slug, siteUrl),
       siteName,
       locale: ogLocale,
       ...(ogImage && {
-        images: [{ url: ogImage, width: settings.defaultOgImageWidth || 1200, height: settings.defaultOgImageHeight || 630 }],
+        // No width/height: the global Settings default described no particular file, and the
+        // author's og image has no Media row here to measure.
+        images: [{ url: ogImage }],
       }),
     },
     twitter: {

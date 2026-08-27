@@ -3,6 +3,9 @@
  * Functions for generating SEO titles, descriptions, and URLs
  */
 
+import { entityUrl } from "@modonty/shared/lib/seo/absolute-url";
+import { truncateAtWordBoundary } from "@modonty/shared/lib/seo/truncate-at-word-boundary";
+
 /**
  * Generate SEO title with optional client name
  */
@@ -14,22 +17,23 @@ export function generateSEOTitle(title: string, clientName?: string): string {
     const suffix = ` | ${clientName}`;
     const maxTitleLen = 60 - suffix.length;
     if (maxTitleLen > 10) {
-      // Truncate at last space to avoid cutting Arabic words
-      const truncated = title.slice(0, maxTitleLen);
-      const lastSpace = truncated.lastIndexOf(' ');
-      const clean = lastSpace > 10 ? truncated.slice(0, lastSpace) : truncated;
+      // No ellipsis here: the client name already follows, so the title just stops.
+      const clean = truncateAtWordBoundary(title, maxTitleLen, "");
       return `${clean.trim()} | ${clientName}`;
     }
   }
-  if (title.length <= 60) return title;
-  const truncated = title.slice(0, 60);
-  const lastSpace = truncated.lastIndexOf(' ');
-  return lastSpace > 10 ? truncated.slice(0, lastSpace).trim() : truncated.trim();
+  return truncateAtWordBoundary(title, 60, "").trim();
 }
 
 /**
  * Generate SEO description from excerpt
- * Truncates to maxLength if needed
+ * Truncates to maxLength if needed — always at a word boundary.
+ *
+ * `maxLength` is a house limit for how much of a snippet we are willing to bake, NOT a
+ * Google rule: Google states there is no meta-description length limit and rewrites the
+ * snippet per query anyway.
+ * https://developers.google.com/search/docs/appearance/snippet
+ * «there's no limit on how long a meta description can be»
  */
 export function generateSEODescription(
   excerpt: string,
@@ -37,36 +41,36 @@ export function generateSEODescription(
 ): string {
   if (!excerpt) return "";
   const stripped = excerpt.replace(/<[^>]*>/g, "").trim();
-  if (stripped.length <= maxLength) return stripped;
-  return stripped.substring(0, maxLength - 3) + "...";
+  return truncateAtWordBoundary(stripped, maxLength);
 }
 
 /**
  * Generate canonical URL for article. Always siteUrl/articles/{slug} (no /clients/ in path).
  *
- * Priority for siteUrl:
- *   1. baseUrl param (from server-loaded Settings.siteUrl — preferred)
- *   2. NEXT_PUBLIC_SITE_URL env var
- *   3. Hardcoded `https://www.modonty.com` (matches live deployment — WITH www)
- *
- * Server callers should pass `baseUrl` from `loadSiteUrl()` (lib/seo/site-url).
+ * `baseUrl` is REQUIRED and comes from Settings.siteUrl — server callers via `loadSiteUrl()`
+ * (lib/seo/site-url), the form via the `siteUrl` the server parent already passes into the
+ * article form context. The old chain ended in a literal host, and this value is written
+ * straight into the article's `canonicalUrl` column: a guessed host became the canonical of a
+ * published article with nothing on screen saying so.
  */
 export function generateCanonicalUrl(
   slug: string,
-  baseUrl?: string,
+  baseUrl: string,
   _clientSlug?: string
 ): string {
-  const siteUrl = baseUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
-  return new URL(`/articles/${slug}`, siteUrl).href;
+  return new URL(`/articles/${slug}`, baseUrl).href;
 }
 
-/** Normalize stored canonical for form: reject /clients/.../articles/ and use siteUrl/articles/slug. */
+/**
+ * Normalize stored canonical for form: reject /clients/.../articles/ and use siteUrl/articles/slug.
+ * `siteUrl` is required for the same reason as above.
+ */
 export function normalizeArticleCanonicalForForm(
   canonicalUrl: string | null | undefined,
-  slug: string
+  slug: string,
+  siteUrl: string
 ): string | undefined {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
   if (!canonicalUrl?.trim()) return undefined;
-  if (canonicalUrl.includes("/clients/")) return `${siteUrl}/articles/${slug}`;
+  if (canonicalUrl.includes("/clients/")) return entityUrl("articles", slug, siteUrl);
   return canonicalUrl.trim();
 }

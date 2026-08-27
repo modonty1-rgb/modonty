@@ -1,4 +1,6 @@
 import "server-only";
+import { absoluteUrl, entityUrl, siteOrigin } from "@modonty/shared/lib/seo/absolute-url";
+
 import { loadSiteUrl } from "./site-url";
 
 /**
@@ -36,13 +38,9 @@ const PATHS = {
 // Internal helpers
 // ─────────────────────────────────────────────────────────────────
 
-function trimTrailingSlash(url: string): string {
-  return url.replace(/\/$/, "");
-}
-
-function normalizePath(path: string): string {
-  return path.startsWith("/") ? path : `/${path}`;
-}
+// URL assembly itself lives in one place for the whole monorepo — see
+// `@modonty/shared/lib/seo/absolute-url`. It percent-encodes the Arabic slug and swallows a
+// trailing slash on the base, which the string joins that used to be here did neither of.
 
 // ─────────────────────────────────────────────────────────────────
 // Async builders — default, fetches Settings.siteUrl from DB
@@ -87,25 +85,25 @@ export async function buildAuthorUrl(slug: string): Promise<string> {
 /** Homepage URL: {siteUrl} (no trailing slash) */
 export async function buildHomeUrl(): Promise<string> {
   const base = await loadSiteUrl();
-  return trimTrailingSlash(base);
+  return buildHomeUrlFromBase(base);
 }
 
 /** Sitemap URL: {siteUrl}/sitemap.xml */
 export async function buildSitemapUrl(): Promise<string> {
   const base = await loadSiteUrl();
-  return `${trimTrailingSlash(base)}${PATHS.sitemap}`;
+  return buildSitemapUrlFromBase(base);
 }
 
 /** Image sitemap URL: {siteUrl}/image-sitemap.xml */
 export async function buildImageSitemapUrl(): Promise<string> {
   const base = await loadSiteUrl();
-  return `${trimTrailingSlash(base)}${PATHS.imageSitemap}`;
+  return buildImageSitemapUrlFromBase(base);
 }
 
 /** Robots.txt URL: {siteUrl}/robots.txt */
 export async function buildRobotsUrl(): Promise<string> {
   const base = await loadSiteUrl();
-  return `${trimTrailingSlash(base)}${PATHS.robots}`;
+  return buildRobotsUrlFromBase(base);
 }
 
 /**
@@ -123,7 +121,7 @@ export async function buildAbsoluteUrl(path: string): Promise<string> {
 // ─────────────────────────────────────────────────────────────────
 
 export function buildArticleUrlFromBase(slug: string, baseUrl: string): string {
-  return `${trimTrailingSlash(baseUrl)}${PATHS.articles}/${slug}`;
+  return entityUrl(PATHS.articles, slug, baseUrl);
 }
 
 /**
@@ -140,47 +138,49 @@ export function buildArticleUrlForArticle(
 ): string {
   const clientBase = (article.client?.articlesBaseUrl ?? "").trim();
   if (article.isClientSiteArticle && clientBase) {
-    return `${trimTrailingSlash(clientBase)}/${article.slug}`;
+    // The partner's base may carry its own path (`https://x.com/blog`) — `absoluteUrl` appends
+    // to it instead of replacing it, which is why this is not `new URL(path, base)`.
+    return absoluteUrl(`/${article.slug}`, clientBase);
   }
   return buildArticleUrlFromBase(article.slug, modontyBaseUrl);
 }
 
 export function buildClientUrlFromBase(slug: string, baseUrl: string): string {
-  return `${trimTrailingSlash(baseUrl)}${PATHS.clients}/${slug}`;
+  return entityUrl(PATHS.clients, slug, baseUrl);
 }
 
 export function buildCategoryUrlFromBase(slug: string, baseUrl: string): string {
-  return `${trimTrailingSlash(baseUrl)}${PATHS.categories}/${slug}`;
+  return entityUrl(PATHS.categories, slug, baseUrl);
 }
 
 export function buildTagUrlFromBase(slug: string, baseUrl: string): string {
-  return `${trimTrailingSlash(baseUrl)}${PATHS.tags}/${slug}`;
+  return entityUrl(PATHS.tags, slug, baseUrl);
 }
 
 export function buildIndustryUrlFromBase(slug: string, baseUrl: string): string {
-  return `${trimTrailingSlash(baseUrl)}${PATHS.industries}/${slug}`;
+  return entityUrl(PATHS.industries, slug, baseUrl);
 }
 
 export function buildAuthorUrlFromBase(slug: string, baseUrl: string): string {
-  return `${trimTrailingSlash(baseUrl)}${PATHS.authors}/${slug}`;
+  return entityUrl(PATHS.authors, slug, baseUrl);
 }
 
 export function buildHomeUrlFromBase(baseUrl: string): string {
-  return trimTrailingSlash(baseUrl);
+  return siteOrigin(baseUrl);
 }
 
 export function buildSitemapUrlFromBase(baseUrl: string): string {
-  return `${trimTrailingSlash(baseUrl)}${PATHS.sitemap}`;
+  return absoluteUrl(PATHS.sitemap, baseUrl);
 }
 
 export function buildImageSitemapUrlFromBase(baseUrl: string): string {
-  return `${trimTrailingSlash(baseUrl)}${PATHS.imageSitemap}`;
+  return absoluteUrl(PATHS.imageSitemap, baseUrl);
 }
 
 export function buildRobotsUrlFromBase(baseUrl: string): string {
-  return `${trimTrailingSlash(baseUrl)}${PATHS.robots}`;
+  return absoluteUrl(PATHS.robots, baseUrl);
 }
 
 export function buildAbsoluteUrlFromBase(path: string, baseUrl: string): string {
-  return `${trimTrailingSlash(baseUrl)}${normalizePath(path)}`;
+  return absoluteUrl(path, baseUrl);
 }

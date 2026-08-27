@@ -7,7 +7,7 @@ import { MediaType, MediaScope } from "@prisma/client";
 import { generateAndSaveJsonLd } from "@/lib/seo";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
-import { buildBunnyMediaPath, moveBunnyMedia, bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/shared/lib/bunny";
+import { buildBunnyMediaPath, moveBunnyMedia, bunnyAspectUrl, extractBunnyPath, BUNNY_ASPECT_SUFFIX } from "@modonty/shared/lib/bunny";
 
 interface UpdateMediaData {
   scope?: MediaScope;
@@ -95,22 +95,46 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
             publicId: current.cloudinaryPublicId,
             uniqueKey: existingKey ?? id,
           });
-          const moved = await moveBunnyMedia("clients", current.bunnyUrl, newPath);
-          movedBunnyUrl = moved.url;
+          // ORDER MATTERS. The row's bunnyUrl names the BASE, and the JSON-LD crop URLs
+          // are derived from it — so the base must be the LAST file to move, and the row
+          // may only start naming the new folder once every derivative is already there.
+          // The old order moved the base first and assigned `movedBunnyUrl` immediately;
+          // a crop move failing afterwards was swallowed by the `catch` below, and the row
+          // was written pointing at the new folder while the three `__16x9`-style crops
+          // were still at the old one — dead image links inside published JSON-LD.
+          const oldBasePath = extractBunnyPath("clients", current.bunnyUrl);
+          if (!oldBasePath) throw new Error("bunnyUrl is not on the clients zone");
 
-          // Article images carry 3 pre-generated aspect crops next to the base —
-          // move them too, else the JSON-LD crop URLs 404 at the new folder.
-          if ((data.type ?? current.type) === "POST") {
-            for (const suffix of Object.values(BUNNY_ASPECT_SUFFIX)) {
-              await moveBunnyMedia(
-                "clients",
-                bunnyAspectUrl(current.bunnyUrl, suffix),
-                bunnyAspectUrl(newPath, suffix)
-              );
+          const isPost = (data.type ?? current.type) === "POST";
+          const cropMoves = isPost
+            ? Object.values(BUNNY_ASPECT_SUFFIX).map((suffix) => ({
+                from: bunnyAspectUrl(oldBasePath, suffix),
+                to: bunnyAspectUrl(newPath, suffix),
+              }))
+            : [];
+
+          const done: Array<{ from: string; to: string }> = [];
+          try {
+            for (const crop of cropMoves) {
+              await moveBunnyMedia("clients", crop.from, crop.to);
+              done.push(crop);
             }
+            const moved = await moveBunnyMedia("clients", current.bunnyUrl, newPath);
+            // Committed only now: base AND every crop are at the new folder.
+            movedBunnyUrl = moved.url;
+          } catch (moveError) {
+            // Put back whatever did move. `moveBunnyMedia` copies then deletes, so a crop
+            // left behind at the new path would be a dead link at the OLD path the row
+            // still names. The base never moved (it is moved last), so undoing the crops
+            // restores the exact state the row describes.
+            for (const crop of done) {
+              await moveBunnyMedia("clients", crop.to, crop.from).catch(() => {});
+            }
+            throw moveError;
           }
         } catch {
-          // Swallow — the metadata edit proceeds; a later repair reconciles the path.
+          // Swallow — the metadata edit proceeds; `movedBunnyUrl` stays undefined, so the
+          // row keeps its old, still-complete path. A later repair reconciles the folder.
         }
       }
     }

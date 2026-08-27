@@ -5,6 +5,7 @@ import { SITE_URL } from "@/constants";
 
 import type { Metadata } from "next";
 import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
+import { buildShareTags } from "@/lib/seo/build-share-tags";
 
 // The crawlable half of the homepage's infinite scroll. Google's requirement
 // (developers.google.com/search/docs/crawling-indexing/javascript/lazy-loading):
@@ -30,12 +31,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!page || page < 2) return {};
 
   const pageArabic = page.toLocaleString("ar-SA");
+  const title = `آخر المقالات — الصفحة ${pageArabic}`;
+  const description = `الصفحة ${pageArabic} من آخر مقالات مدونتي — محتوى عربي موثوق من شركاء معتمدين.`;
+
   return {
-    title: `آخر المقالات — الصفحة ${pageArabic}`,
-    description: `الصفحة ${pageArabic} من آخر مقالات مدونتي — محتوى عربي موثوق من شركاء معتمدين.`,
+    title,
+    description,
     // Self-referencing on purpose: Google treats paginated URLs as separate pages
     // and warns against pointing the whole series at page 1.
     alternates: { canonical: `${SITE_URL}/page/${page}`, types: FEED_ALTERNATE_TYPES },
+    // Shipped zero og:/twitter: until now — see `buildShareTags`. `og:url` is this chunk's
+    // own URL, matching the self-referencing canonical above.
+    ...(await buildShareTags({ path: `/page/${page}`, title, description })),
   };
 }
 

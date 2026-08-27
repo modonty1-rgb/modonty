@@ -9,6 +9,7 @@
  * 5. Generate comprehensive report
  */
 
+import { entityUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { renderPageToHTML } from "./page-renderer";
 import { extractStructuredData, combineExtractedData } from "./page-extractor";
 import { validateExtractedData, validateJsonLdComplete } from "./jsonld-validator";
@@ -39,15 +40,26 @@ export async function validateFullPage(
     let rendered = false;
     let url: string;
 
+    // The fallback that used to sit in this `catch` is gone. It called
+    // `generateHTMLFromDatabase`, which assembles a title, a description and the article's
+    // JSON-LD — and NOTHING else: no canonical, no robots, no hreflang, no Open Graph. The
+    // validator then judged that stand-in as if it were the page, so `canPublish` was decided
+    // on markup the visitor will never receive. Worse, it deleted the client's and the
+    // category's JSON-LD, so the report said NO_STRUCTURED_DATA about a page that has it.
+    //
+    // A render that failed is not a page with less markup; it is "we could not look".
+    // Refusing here keeps the publish gate CLOSED — the safe direction — and the message
+    // below names what failed instead of guessing why.
     try {
       html = await renderPageToHTML(pageType, identifier, { baseUrl });
       url = getPageUrl(pageType, identifier, baseUrl);
       rendered = true;
     } catch (error) {
-      // Fallback: generate from database (less accurate)
-      html = await generateHTMLFromDatabase(pageType, identifier);
-      url = getPageUrl(pageType, identifier, baseUrl);
-      rendered = false;
+      throw new Error(
+        `تعذّر عرض الصفحة للفحص (${pageType}: ${identifier}) — ` +
+          `${error instanceof Error ? error.message : String(error)}. ` +
+          `الفحص لم يجرِ، فالنشر يبقى مغلقاً حتى تُعرض الصفحة فعلاً.`,
+      );
     }
 
     // Step 2: Extract structured data
@@ -166,13 +178,13 @@ export async function validateFullPage(
 function getPageUrl(pageType: PageType, identifier: string, baseUrl: string): string {
   switch (pageType) {
     case "article":
-      return `${baseUrl}/articles/${identifier}`;
+      return entityUrl("articles", identifier, baseUrl);
     case "client":
-      return `${baseUrl}/clients/${identifier}`;
+      return entityUrl("clients", identifier, baseUrl);
     case "category":
-      return `${baseUrl}/categories/${identifier}`;
+      return entityUrl("categories", identifier, baseUrl);
     case "user":
-      return `${baseUrl}/users/${identifier}`;
+      return entityUrl("users", identifier, baseUrl);
     default:
       return baseUrl;
   }
@@ -306,110 +318,11 @@ function generateValidationIssues(
   return { critical, warnings, suggestions };
 }
 
-/**
- * Generate HTML from database as fallback
- * This is a simplified version for when page rendering fails
- */
-async function generateHTMLFromDatabase(
-  pageType: PageType,
-  identifier: string
-): Promise<string> {
-  const { db } = await import("@/lib/db");
-  
-  let html = "<!DOCTYPE html><html><head>";
-
-  try {
-    switch (pageType) {
-      case "article": {
-        const article = await db.article.findFirst({
-          where: { slug: identifier },
-          include: {
-            author: true,
-            client: true,
-            category: true,
-            featuredImage: true,
-          },
-        });
-
-        if (!article) {
-          throw new Error(`Article not found: ${identifier}`);
-        }
-
-        html += `<title>${escapeHtml(article.title)}</title>`;
-        html += `<meta name="description" content="${escapeHtml(article.seoDescription || article.excerpt || "")}">`;
-        if (article.jsonLdStructuredData) {
-          html += `<script type="application/ld+json">${article.jsonLdStructuredData}</script>`;
-        }
-        html += "</head><body>";
-        html += `<h1>${escapeHtml(article.title)}</h1>`;
-        html += `<div>${article.content}</div>`;
-        break;
-      }
-      case "client": {
-        const client = await db.client.findFirst({
-          where: { slug: identifier },
-        });
-
-        if (!client) {
-          throw new Error(`Client not found: ${identifier}`);
-        }
-
-        html += `<title>${escapeHtml(client.name)}</title>`;
-        html += `<meta name="description" content="${escapeHtml(client.seoDescription || "")}">`;
-        html += "</head><body>";
-        html += `<h1>${escapeHtml(client.name)}</h1>`;
-        break;
-      }
-      case "category": {
-        const category = await db.category.findFirst({
-          where: { slug: identifier },
-        });
-
-        if (!category) {
-          throw new Error(`Category not found: ${identifier}`);
-        }
-
-        html += `<title>${escapeHtml(category.name)}</title>`;
-        html += `<meta name="description" content="${escapeHtml(category.seoDescription || category.description || "")}">`;
-        html += "</head><body>";
-        html += `<h1>${escapeHtml(category.name)}</h1>`;
-        break;
-      }
-      case "user": {
-        const user = await db.user.findUnique({
-          where: { id: identifier },
-        });
-
-        if (!user) {
-          // Try author
-          const author = await db.author.findFirst({
-            where: { slug: identifier },
-          });
-
-          if (!author) {
-            throw new Error(`User/Author not found: ${identifier}`);
-          }
-
-          html += `<title>${escapeHtml(author.name)}</title>`;
-          html += "</head><body>";
-          html += `<h1>${escapeHtml(author.name)}</h1>`;
-        } else {
-          html += `<title>${escapeHtml(user.name || "User")}</title>`;
-          html += "</head><body>";
-          html += `<h1>${escapeHtml(user.name || "User")}</h1>`;
-        }
-        break;
-      }
-    }
-
-    html += "</body></html>";
-    return html;
-  } catch (error) {
-    throw new Error(
-      `Failed to generate HTML from database: ${error instanceof Error ? error.message : String(error)}`
-    );
-  }
-}
+// `generateHTMLFromDatabase` was deleted on 27 Aug 2026 with the fallback that called it.
+// It assembled a title, a description and one JSON-LD block — no canonical, no robots, no
+// hreflang, no Open Graph — and the validator judged that as if it were the page. A page
+// we could not render is not a page with less markup; leaving the builder here would only
+// invite the same swap back.
 
 /**
  * Escape HTML to prevent XSS

@@ -219,8 +219,17 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       languages,
     });
   } catch {
+    // A transient failure here — a database blip, a slow query — must not be allowed to
+    // publish a generic title on a real article URL. The page itself still renders (the
+    // body is fetched separately), so turning this into a 404 is the wrong cure: it was
+    // tried before and Search Console recorded genuine articles as "not found".
+    //
+    // `noindex, follow` is the honest state: we could not build this page's identity right
+    // now, so do not index THIS render, but keep following its links. The next crawl, once
+    // the read succeeds, gets the real metadata and the page returns to the index.
     return {
       title: "مقال",
+      robots: { index: false, follow: true },
     };
   }
 }
@@ -239,7 +248,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       storedHasFaq,
       buildFallbackArticleJsonLd,
       buildFallbackBreadcrumb,
-      siteIdentityJsonLd,
     } = data;
     // Every string modonty writes itself on this page comes from one file (see lib/i18n).
     const copy = messages.article;
@@ -251,7 +259,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
           storedHasFaq={storedHasFaq}
           buildFallbackArticleJsonLd={buildFallbackArticleJsonLd}
           buildFallbackBreadcrumb={buildFallbackBreadcrumb}
-          siteIdentityJsonLd={siteIdentityJsonLd}
           faqs={articleFaqsForJsonLd}
         />
 

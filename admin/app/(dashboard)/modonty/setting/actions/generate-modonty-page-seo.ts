@@ -1,5 +1,6 @@
 "use server";
 
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import { db } from "@/lib/db";
 import { MODONTY_AUTHOR_SLUG } from "@/lib/constants/modonty-author";
 import { revalidatePath } from "next/cache";
@@ -54,7 +55,7 @@ export async function generateModontyPageSEO(slug: string) {
 
     if (!page) return { success: false, error: `"${slug}" page has no content yet — go to Modonty Pages and add content before generating SEO` };
 
-    const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
+    const siteUrl = requireSiteUrl(settings.siteUrl).replace(/\/$/, "");
     const existingMeta = (page.metaTags ?? {}) as Record<string, unknown>;
     const defaultAuthorString = singletonAuthor
       ? (singletonAuthor.name ?? ([singletonAuthor.firstName, singletonAuthor.lastName].filter(Boolean).join(" ").trim() || ""))
@@ -83,8 +84,6 @@ export async function generateModontyPageSEO(slug: string) {
       defaultSitemapChangeFreq: settings.defaultSitemapChangeFreq?.trim() || undefined,
       defaultCharset: settings.defaultCharset?.trim() || undefined,
       defaultOgImageType: settings.defaultOgImageType?.trim() || undefined,
-      defaultOgImageWidth: settings.defaultOgImageWidth ?? undefined,
-      defaultOgImageHeight: settings.defaultOgImageHeight ?? undefined,
       defaultHreflang: settings.defaultHreflang?.trim() || undefined,
       defaultPathname: settings.defaultPathname?.trim() || undefined,
       titleMaxLength: settings.seoTitleMax ?? undefined,
@@ -125,7 +124,8 @@ export async function generateModontyPageSEO(slug: string) {
       }),
       areaServed,
       ...(logoUrl && { logo: logoUrl }),
-      ...(settings.orgSearchUrlTemplate?.trim() && { searchUrlTemplate: settings.orgSearchUrlTemplate.trim() }),
+      // `searchUrlTemplate` is no longer passed: its only consumer was the SearchAction node,
+      // removed 27 Aug 2026 with the sitelinks search box. The Settings column itself stays.
       knowsLanguage,
       ...(hasAddress && {
         address: {
@@ -184,7 +184,7 @@ export async function generateModontyPageSEO(slug: string) {
     revalidatePath("/modonty/pages", "layout");
     const pageConfig = getPageConfig(slug);
     if (pageConfig?.modontyPath) {
-      const modontyUrl = settings.siteUrl?.trim() || "https://www.modonty.com";
+      const modontyUrl = requireSiteUrl(settings.siteUrl);
       if (modontyUrl) {
         fetch(
           `${modontyUrl}/api/revalidate?path=${pageConfig.modontyPath}&secret=${process.env.REVALIDATE_SECRET}`,

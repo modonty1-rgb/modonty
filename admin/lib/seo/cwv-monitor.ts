@@ -7,6 +7,8 @@
  * - Performance budgets
  */
 
+import { truncateAtWordBoundary } from "@modonty/shared/lib/seo/truncate-at-word-boundary";
+
 export interface CWVMetrics {
   lcp: number; // Largest Contentful Paint (ms)
   cls: number; // Cumulative Layout Shift
@@ -204,11 +206,11 @@ export function optimizeJsonLdForPerformance(
   for (const node of graph) {
     // Truncate descriptions
     if (opts.truncateDescriptions) {
-      if (node.description && node.description.length > opts.truncateDescriptions) {
-        node.description = node.description.slice(0, opts.truncateDescriptions) + "...";
+      if (node.description) {
+        node.description = truncateAtWordBoundary(node.description, opts.truncateDescriptions);
       }
-      if (node.abstract && node.abstract.length > opts.truncateDescriptions) {
-        node.abstract = node.abstract.slice(0, opts.truncateDescriptions) + "...";
+      if (node.abstract) {
+        node.abstract = truncateAtWordBoundary(node.abstract, opts.truncateDescriptions);
       }
     }
 

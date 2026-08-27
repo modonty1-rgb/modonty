@@ -358,98 +358,10 @@ export async function getCanonicalUrlSanitizerStats(): Promise<CanonicalSanitize
   };
 }
 
-export async function regenerateAllStaleCanonicalUrls(): Promise<{
-  attempted: number;
-  successful: number;
-  failed: number;
-  perEntity: Record<EntityType, { attempted: number; successful: number; failed: number }>;
-}> {
-  const stats = await getCanonicalUrlSanitizerStats();
-  const emptyPerEntity: Record<EntityType, { attempted: number; successful: number; failed: number }> = {
-    article: { attempted: 0, successful: 0, failed: 0 },
-    client: { attempted: 0, successful: 0, failed: 0 },
-    category: { attempted: 0, successful: 0, failed: 0 },
-    tag: { attempted: 0, successful: 0, failed: 0 },
-    industry: { attempted: 0, successful: 0, failed: 0 },
-    author: { attempted: 0, successful: 0, failed: 0 },
-    modonty: { attempted: 0, successful: 0, failed: 0 },
-  };
-
-  if (!stats.expectedBase) {
-    return { attempted: 0, successful: 0, failed: 0, perEntity: emptyPerEntity };
-  }
-
-  let base: URL;
-  try {
-    base = new URL(stats.expectedBase);
-  } catch {
-    return { attempted: 0, successful: 0, failed: 0, perEntity: emptyPerEntity };
-  }
-
-  // Re-plan rather than trust the stats snapshot — a row can change between the two calls,
-  // and writing a stale plan is exactly the class of bug this file is being fixed for.
-  const { changes } = await planAllCanonicals(base);
-  if (changes.length === 0) {
-    return { attempted: 0, successful: 0, failed: 0, perEntity: emptyPerEntity };
-  }
-
-  let successful = 0;
-  let failed = 0;
-  let attempted = 0;
-  const applied: Array<{ entity: EntityType; id: string; fix: CanonicalFix; before: string; after: string }> = [];
-
-  for (const { entity, row, plan } of changes) {
-    const after = plan.after;
-    if (after === null) continue;
-
-    attempted++;
-    emptyPerEntity[entity].attempted++;
-    try {
-      // Type narrowing — Prisma delegate per entity
-      switch (entity) {
-        case "article":
-          await db.article.update({ where: { id: row.id }, data: { canonicalUrl: after } });
-          break;
-        case "client":
-          await db.client.update({ where: { id: row.id }, data: { canonicalUrl: after } });
-          break;
-        case "category":
-          await db.category.update({ where: { id: row.id }, data: { canonicalUrl: after } });
-          break;
-        case "tag":
-          await db.tag.update({ where: { id: row.id }, data: { canonicalUrl: after } });
-          break;
-        case "industry":
-          await db.industry.update({ where: { id: row.id }, data: { canonicalUrl: after } });
-          break;
-        case "author":
-          await db.author.update({ where: { id: row.id }, data: { canonicalUrl: after } });
-          break;
-        case "modonty":
-          await db.modonty.update({ where: { id: row.id }, data: { canonicalUrl: after } });
-          break;
-      }
-      successful++;
-      emptyPerEntity[entity].successful++;
-      applied.push({ entity, id: row.id, fix: plan.fix, before: row.canonicalUrl ?? "", after });
-    } catch {
-      failed++;
-      emptyPerEntity[entity].failed++;
-    }
-  }
-
-  // A canonical decides which URL Google indexes. Rewriting one without a record of the
-  // previous value leaves nothing to restore from if a rule here ever turns out wrong —
-  // which is precisely how the old "overwrite everything" behaviour went unnoticed.
-  if (applied.length > 0) {
-    await logAction("seo.canonicalSanitize", {
-      entity: "Seo",
-      summary: `تصحيح ${applied.length} رابطاً رسمياً (canonical)`,
-      metadata: { base: base.origin, changes: applied.slice(0, 50), truncated: applied.length > 50 },
-    });
-  }
-
-  revalidatePath("/database");
-  revalidatePath("/seo");
-  return { attempted, successful, failed, perEntity: emptyPerEntity };
-}
+// `regenerateAllStaleCanonicalUrls` was deleted on 27 Aug 2026. It wrote seven canonicalUrl
+// columns and stopped: no SEO regeneration, no modonty cache bust. modonty serves the STORED
+// blob, so its corrections never reached a public page while the maintenance panel counted
+// them as successes. The one sanitizer left is `sanitizeAllCanonicals` in
+// database/actions/canonical-sanitizer.ts, which rebuilds the blob after the column and
+// counts a failed rebuild as a failure. The read-only `getCanonicalUrlSanitizerStats` above
+// stays — it is what the SEO panel displays.

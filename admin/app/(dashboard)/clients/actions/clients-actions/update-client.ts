@@ -131,10 +131,35 @@ export async function updateClient(id: string, data: ClientFormData) {
     // they are rewritten first, and the cascade that follows picks up the new value.
     // `baseUrlChangedFrom` is present only on a real change, so an ordinary save of any
     // other section rewrites nothing.
-    const clientSiteResult = results[13] as { baseUrlChangedFrom?: string | null };
-    if ("baseUrlChangedFrom" in clientSiteResult) {
+    // Every article whose stored card is now suspect. The tag flush at the end is gated on
+    // this: modonty serves the STORED card, so busting its cache while a card was built from
+    // the old address is what publishes the wrong URL — the old data under a fresh timestamp.
+    const articleSeoFailures: string[] = [];
+
+    // Found by shape, not by position. This read `results[13]` — the fourteenth entry of the
+    // `Promise.all` above — so inserting or reordering ONE writer in that list would have
+    // pointed it at a different group's result. It would not have thrown: the `in` check
+    // below would simply be false, the rebake would never run, and a moved articles address
+    // would silently publish stale URLs. A silent miss on a list people edit is the bug.
+    const clientSiteResult = results.find(
+      (r): r is typeof r & { baseUrlChangedFrom?: string | null } => r != null && "baseUrlChangedFrom" in r,
+    );
+    if (clientSiteResult) {
       const { rebakeClientSiteCanonicals } = await import("./rebake-client-site-canonicals");
-      await rebakeClientSiteCanonicals(id, client?.articlesBaseUrl ?? null).catch(() => {});
+      // This used to end in `.catch(() => {})`. The address had moved, the rebake had failed,
+      // and the cascade below then rebuilt every card from the OLD columns and flushed
+      // modonty's cache — publishing the stale URLs as if they were the new ones, under a
+      // green "Saved successfully".
+      try {
+        const rebake = await rebakeClientSiteCanonicals(id, client?.articlesBaseUrl ?? null);
+        if (rebake.failed > 0) {
+          articleSeoFailures.push(`${rebake.failed} مقالاً ما انكتب فيه العنوان الجديد`);
+        }
+      } catch (e) {
+        articleSeoFailures.push(
+          `تعذّر تحديث روابط مقالات موقع الشريك: ${e instanceof Error ? e.message : String(e)}`,
+        );
+      }
     }
 
     // Fetch articles once for cascade
@@ -143,8 +168,13 @@ export async function updateClient(id: string, data: ClientFormData) {
       select: { id: true },
     }).catch(() => [] as { id: string }[]);
 
-    // Run client SEO + full article cascade in parallel
-    const [seoResult] = await Promise.all([
+    // Run client SEO + full article cascade in parallel.
+    //
+    // Both generators CATCH internally and return `{ success, error }` — neither ever throws —
+    // so the old `.catch(() => {})` on each was a swallow on top of a swallow: a card that
+    // failed to rebuild was counted exactly like one that succeeded, and the flush below went
+    // out regardless. The answers are read now, and the count decides what gets published.
+    const [seoResult, articleCascadeFailed] = await Promise.all([
       generateClientSEO(id),
       clientArticles.length > 0
         ? (async () => {
@@ -152,21 +182,37 @@ export async function updateClient(id: string, data: ClientFormData) {
               import("@/lib/seo"),
               import("@/lib/seo/metadata-storage"),
             ]);
-            await Promise.all(
-              clientArticles.map((a) =>
-                Promise.all([
-                  generateAndSaveJsonLd(a.id).catch(() => {}),
-                  generateAndSaveNextjsMetadata(a.id).catch(() => {}),
-                ])
-              )
+            const outcomes = await Promise.all(
+              clientArticles.map(async (a) => {
+                try {
+                  const [jsonLd, metadata] = await Promise.all([
+                    generateAndSaveJsonLd(a.id),
+                    generateAndSaveNextjsMetadata(a.id),
+                  ]);
+                  return jsonLd?.success !== false && metadata?.success !== false;
+                } catch {
+                  return false;
+                }
+              }),
             );
-          })().catch(() => {})
-        : Promise.resolve(undefined),
+            return outcomes.filter((done) => !done).length;
+          })().catch(() => clientArticles.length)
+        : Promise.resolve(0),
     ]);
+
+    if (articleCascadeFailed > 0) {
+      articleSeoFailures.push(`${articleCascadeFailed} مقالاً ما تجدّدت بياناته`);
+    }
 
     if (!seoResult.success) {
       const seoWarning = "Saved successfully, but SEO data generation failed. You can update it later.";
       warning = warning ? `${warning} | ${seoWarning}` : seoWarning;
+    }
+
+    if (articleSeoFailures.length > 0) {
+      const articleWarning = `الشريك انحفظ، لكن بيانات مقالاته ما تجدّدت — جوجل بيبقى يشوف القديم. (${articleSeoFailures.join(" · ")})`;
+      warning = warning ? `${warning} | ${articleWarning}` : articleWarning;
+      console.error("Client article SEO cascade failed:", id, articleSeoFailures.join(" · "));
     }
 
     // `client` was re-read above, so the name is the one saved a moment ago.
@@ -187,15 +233,45 @@ export async function updateClient(id: string, data: ClientFormData) {
       revalidatePath(`/clients/${client.slug}`);
     }
 
-    await Promise.all([
-      revalidateModontyTag("clients"),
-      revalidateModontyTag("articles"),
-    ]);
+    // Flush the tag that is clean, hold the one that is not — the rule update-author.ts
+    // already follows. modonty builds a page from the row's live columns AND its stored card;
+    // when a card failed to rebuild, the columns are new and the card is old, so busting that
+    // tag publishes a half-new page and stamps the stale half as fresh. That is how a moved
+    // address gets served back to Google under a green "Saved successfully". Holding the tag
+    // keeps the page consistently old until the warning above is acted on.
+    //
+    // `failedGroups.length > 0` joins that gate for the same reason. The check above only
+    // fails the whole action when ALL FOURTEEN writers fail — so thirteen could fail, the
+    // screen would say "Partially saved", and the flush still went out. modonty would then
+    // publish a row where some sections are new and the rest are the pre-edit values,
+    // stamped fresh. A partial write is exactly the state that must not be published.
+    const wroteCleanly = failedGroups.length === 0;
 
     // The /clients listing blob embeds each partner's name, url, email, phone and address,
-    // so an edit here makes it stale. create-client and delete-client already rebuild it;
-    // update did not, which left the listing JSON-LD serving the pre-edit values.
-    try { const { regenerateClientsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateClientsListingCache(); } catch {}
+    // so an edit here makes it stale. It is rebuilt BEFORE the flush below — it used to run
+    // after, so busting the `clients` tag sent the next visitor to a /clients page rebuilt
+    // from the pre-edit listing, i.e. the stale list served under a fresh cache.
+    //
+    // Its answer is read as well. The generator returns `{ success, error }` and never
+    // throws, and the old call ended in `catch {}` — a swallow wrapped around a discarded
+    // result, so a failed rebuild was indistinguishable from a good one.
+    let listingOk = true;
+    try {
+      const { regenerateClientsListingCache } = await import("@/lib/seo/listing-page-seo-generator");
+      const r = await regenerateClientsListingCache();
+      listingOk = r.success;
+      // NOT pushed into `articleSeoFailures`: that list gates the ARTICLES flush below, and
+      // the partners listing has nothing to do with article cards. It also feeds a warning
+      // that was already assembled further up, so a message added here would never reach the
+      // screen. The failure is logged and holds only the flush it actually concerns.
+      if (!r.success) console.error("Clients listing cache failed:", id, r.error);
+    } catch (e) {
+      listingOk = false;
+      console.error("Clients listing cache failed:", id, e);
+    }
+
+    if (wroteCleanly && seoResult.success && listingOk) await revalidateModontyTag("clients");
+    if (wroteCleanly && articleSeoFailures.length === 0) await revalidateModontyTag("articles");
 
     return warning ? { success: true, client, warning } : { success: true, client };
   } catch (error) {

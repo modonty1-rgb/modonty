@@ -5,11 +5,13 @@
  * Supports articles, clients, categories, and user pages.
  */
 
+import { entityUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { db } from "@/lib/db";
 import type { PageType } from "./types";
 
 export interface RenderOptions {
-  baseUrl?: string;
+  /** Settings.siteUrl, from `loadSiteUrl()`. Required — see getPageUrl below. */
+  baseUrl: string;
   includeMetadata?: boolean;
 }
 
@@ -19,20 +21,20 @@ export interface RenderOptions {
 function getPageUrl(
   pageType: PageType,
   identifier: string,
-  baseUrl?: string
+  /** From `loadSiteUrl()`. Required — a default would render and validate the wrong host. */
+  baseUrl: string
 ): string {
-  // Callers should pass baseUrl from `loadSiteUrl()`. Hardcoded fallback only as safety net.
-  const siteUrl = baseUrl || "https://www.modonty.com";
+  const siteUrl = baseUrl;
   
   switch (pageType) {
     case "article":
-      return `${siteUrl}/articles/${identifier}`;
+      return entityUrl("articles", identifier, siteUrl);
     case "client":
-      return `${siteUrl}/clients/${identifier}`;
+      return entityUrl("clients", identifier, siteUrl);
     case "category":
-      return `${siteUrl}/categories/${identifier}`;
+      return entityUrl("categories", identifier, siteUrl);
     case "user":
-      return `${siteUrl}/users/${identifier}`;
+      return entityUrl("users", identifier, siteUrl);
     default:
       throw new Error(`Unknown page type: ${pageType}`);
   }
@@ -45,9 +47,9 @@ function getPageUrl(
 export async function renderPageToHTML(
   pageType: PageType,
   identifier: string,
-  options?: RenderOptions
+  options: RenderOptions
 ): Promise<string> {
-  const url = getPageUrl(pageType, identifier, options?.baseUrl);
+  const url = getPageUrl(pageType, identifier, options.baseUrl);
   
   try {
     // Fetch from live URL (best for accurate validation)
@@ -69,116 +71,21 @@ export async function renderPageToHTML(
     const html = await response.text();
     return html;
   } catch (error) {
-    // Fallback: Try to generate HTML from database data
-    if (error instanceof Error && error.message.includes("fetch")) {
-      return await generateHTMLFromDatabase(pageType, identifier);
-    }
+    // The same swap `page-validator` carried: a failed fetch used to return a stand-in built
+    // from DB columns — a title, a description, and none of the tags a validator exists to
+    // check. Whatever consumed the result then judged that stand-in as the page.
+    //
+    // "The site did not answer" is not "the page looks like this". Rethrow so the caller
+    // knows it never saw the page, instead of being handed something that resembles one.
     throw error;
   }
 }
 
-/**
- * Generate HTML from database data as fallback
- * This is less accurate but works when page isn't accessible
- */
-async function generateHTMLFromDatabase(
-  pageType: PageType,
-  identifier: string
-): Promise<string> {
-  let html = "<!DOCTYPE html><html><head>";
-
-  try {
-    switch (pageType) {
-      case "article": {
-        const article = await db.article.findFirst({
-          where: { slug: identifier },
-          include: {
-            author: true,
-            client: true,
-            category: true,
-            featuredImage: true,
-          },
-        });
-
-        if (!article) {
-          throw new Error(`Article not found: ${identifier}`);
-        }
-
-        html += `<title>${article.title}</title>`;
-        html += `<meta name="description" content="${article.seoDescription || article.excerpt || ""}">`;
-        if (article.jsonLdStructuredData) {
-          html += `<script type="application/ld+json">${article.jsonLdStructuredData}</script>`;
-        }
-        html += "</head><body>";
-        html += `<h1>${article.title}</h1>`;
-        html += `<div>${article.content}</div>`;
-        break;
-      }
-      case "client": {
-        const client = await db.client.findFirst({
-          where: { slug: identifier },
-        });
-
-        if (!client) {
-          throw new Error(`Client not found: ${identifier}`);
-        }
-
-        html += `<title>${client.name}</title>`;
-        html += `<meta name="description" content="${client.seoDescription || ""}">`;
-        html += "</head><body>";
-        html += `<h1>${client.name}</h1>`;
-        break;
-      }
-      case "category": {
-        const category = await db.category.findFirst({
-          where: { slug: identifier },
-        });
-
-        if (!category) {
-          throw new Error(`Category not found: ${identifier}`);
-        }
-
-        html += `<title>${category.name}</title>`;
-        html += `<meta name="description" content="${category.seoDescription || category.description || ""}">`;
-        html += "</head><body>";
-        html += `<h1>${category.name}</h1>`;
-        break;
-      }
-      case "user": {
-        const user = await db.user.findUnique({
-          where: { id: identifier },
-        });
-
-        if (!user) {
-          // Try author
-          const author = await db.author.findFirst({
-            where: { slug: identifier },
-          });
-
-          if (!author) {
-            throw new Error(`User/Author not found: ${identifier}`);
-          }
-
-          html += `<title>${author.name}</title>`;
-          html += "</head><body>";
-          html += `<h1>${author.name}</h1>`;
-        } else {
-          html += `<title>${user.name || "User"}</title>`;
-          html += "</head><body>";
-          html += `<h1>${user.name || "User"}</h1>`;
-        }
-        break;
-      }
-    }
-
-    html += "</body></html>";
-    return html;
-  } catch (error) {
-    throw new Error(
-      `Failed to generate HTML from database: ${error instanceof Error ? error.message : String(error)}`
-    );
-  }
-}
+// `generateHTMLFromDatabase` was deleted on 27 Aug 2026 with the fallback that called it.
+// It assembled a title, a description and one JSON-LD block — no canonical, no robots, no
+// hreflang, no Open Graph — and the validator judged that as if it were the page. A page
+// we could not render is not a page with less markup; leaving the builder here would only
+// invite the same swap back.
 
 /**
  * Extract rendered HTML from URL

@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { MODONTY_AUTHOR_SLUG } from "@/lib/constants/modonty-author";
 import { getModontyAuthor } from "./get-modonty-author";
 import { buildModontyAuthorSeo } from "../../helpers/build-modonty-author-seo";
-import { batchRegenerateJsonLd } from "@/lib/seo";
+import { batchRegenerateArticleSeo } from "@/lib/seo";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { auth } from "@/lib/auth";
@@ -107,16 +107,29 @@ export async function updateAuthor(
     });
 
     // Cascade: regenerate JSON-LD + metadata for all author's articles
+    const seoFailures: string[] = [];
+    let articleCascadeFailed = 0;
     try {
       const authorArticles = await db.article.findMany({
         where: { authorId: modontyAuthor.id },
         select: { id: true },
       });
       if (authorArticles.length > 0) {
-        await batchRegenerateJsonLd(authorArticles.map((a) => a.id));
+        // Both blobs, not just the graph. This called `batchRegenerateJsonLd`, so renaming an
+        // author rebuilt the JSON-LD `author.name` and left `openGraph.authors` and
+        // `twitter.creator` in `Article.nextjsMetadata` on the OLD name — the page then
+        // carried two different names for the same person, and the social crawlers read the
+        // stale one. See the regeneration matrix in batch-regenerate-article-seo.ts.
+        //
+        // It counts its own failures instead of throwing — ignoring the count is how a
+        // half-finished cascade used to pass as done.
+        const batch = await batchRegenerateArticleSeo(authorArticles.map((a) => a.id));
+        articleCascadeFailed = batch.failed;
+        if (batch.failed > 0) seoFailures.push(`${batch.failed} مقالاً ما تجدّدت بياناته`);
       }
-    } catch {
-      // Don't fail the author update if cascade fails
+    } catch (e) {
+      articleCascadeFailed = -1;
+      seoFailures.push(`مقالات الكاتب: ${e instanceof Error ? e.message : String(e)}`);
     }
 
     await logAction("author.update", {
@@ -127,10 +140,21 @@ export async function updateAuthor(
 
     revalidatePath("/authors");
     revalidatePath("/articles");
+    // The author's own blob was written above (no generator involved), so /authors always
+    // refreshes. Article pages do NOT when their cascade left stale blobs behind.
     await revalidateModontyTag("authors");
-    await revalidateModontyTag("articles");
+    if (articleCascadeFailed === 0) await revalidateModontyTag("articles");
 
-    return { success: true, author };
+    if (seoFailures.length > 0) console.error("Author SEO cascade failed:", id, seoFailures.join(" · "));
+
+    return {
+      success: true,
+      author,
+      seoWarning:
+        seoFailures.length > 0
+          ? `الكاتب انحفظ، لكن بيانات السيو ما تجدّدت — جوجل بيبقى يشوف القديم. (${seoFailures.join(" · ")})`
+          : undefined,
+    };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update author";
     return { success: false, error: message };

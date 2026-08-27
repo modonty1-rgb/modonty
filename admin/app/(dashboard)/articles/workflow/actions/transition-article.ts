@@ -9,6 +9,7 @@ import { ArticleStatus } from "@prisma/client";
 import { isValidTransition } from "../../helpers/article-status-machine";
 import { logAction } from "@/lib/audit/log-action";
 import { assertArticlePublishable } from "@/lib/seo/assert-article-publishable";
+import { loadSiteUrl } from "@/lib/seo/site-url";
 
 export interface TransitionResult {
   success: boolean;
@@ -153,7 +154,9 @@ export async function transitionArticleAction(
       // JSON-LD + metadata were already generated (indexable, with publish date) by the
       // publish gate above — no need to regenerate here.
       try {
-        const articleUrl = `https://www.modonty.com/articles/${article.slug}`;
+        // Was the literal host. IndexNow submits this exact string to Bing/Yandex, so a
+        // guessed host asks them to crawl an address we do not control.
+        const articleUrl = `${await loadSiteUrl()}/articles/${article.slug}`;
         const indexNowResult = await submitToIndexNow([articleUrl]);
         if (!indexNowResult.ok) {
           console.warn("transitionArticleAction: IndexNow not ok", indexNowResult);

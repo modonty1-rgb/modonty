@@ -56,7 +56,11 @@ export function mapFormDataToClientData(data: ClientFormData) {
     // Saudi Arabia & Gulf Identifiers
     commercialRegistrationNumber: data.commercialRegistrationNumber || null,
     vatID: data.vatID || null,
-    taxID: data.taxID || data.vatID || null, // Fallback to VAT ID only if Tax ID is not provided
+    // taxID is NEVER copied from vatID. schema.org keeps them apart: taxID is "The Tax /
+    // Fiscal ID of the organization or person, e.g. the TIN in the US or the CIF/NIF in
+    // Spain", vatID is "The value-added Tax ID … with national prefix". Copying one into
+    // the other published a fiscal number the partner never gave us.
+    taxID: data.taxID || null,
     legalForm: data.legalForm || null,
 
     // Address Enhancement (National Address Format)

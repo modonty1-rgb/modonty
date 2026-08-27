@@ -26,7 +26,13 @@
 // ten existing consumers keep scoring exactly what they scored before.
 
 import type { SeoScore, SeoCheck, JsonLdValidationReport } from "../client/types";
-import { countReportErrors, countReportWarnings } from "../client/types";
+import {
+  countReportErrors,
+  countReportWarnings,
+  hasValidatorOutput,
+  readCanonicalUrl,
+  readRobotsState,
+} from "../client/types";
 
 const TITLE_MIN = 30;
 const TITLE_MAX = 60;
@@ -39,6 +45,16 @@ const OG_IMAGE_MIN_HEIGHT = 630;
 
 /** Both markets Modonty targets — a page missing either is invisible to half the audience. */
 const REQUIRED_HREFLANGS = ["ar-SA", "ar-EG"] as const;
+
+/**
+ * What the reader is told when the stored metadata blocks indexing.
+ *
+ * Google, "Block Search indexing with noindex": «Google will drop that page entirely from
+ * Google Search results, regardless of whether other sites link to it.»
+ * https://developers.google.com/search/docs/crawling-indexing/block-indexing
+ */
+const NOINDEX_HINT =
+  "الصفحة محجوبة عن الفهرسة (noindex) — قوقل يشيلها من النتائج كلها، فالدرجة صفر حتى يُرفع الحجب";
 
 export interface ReferenceSeoInput {
   /** Display name — to catch a title that is a bare echo of it. */
@@ -206,6 +222,8 @@ export function computeReferenceSeoScore(input: ReferenceSeoInput): SeoScore {
   const name = str(input.name);
   const graph = walkGraph(input.jsonLdStructuredData);
   const checks: SeoCheck[] = [];
+  /** Set by the robots check below; zeroes the final number (see the return). */
+  let blockedFromIndex = false;
 
   const push = (
     key: string,
@@ -248,7 +266,7 @@ export function computeReferenceSeoScore(input: ReferenceSeoInput): SeoScore {
 
   // ── Canonical (6) — must be absolute: Google ignores a relative canonical. ──
   {
-    const canonical = str(m.canonical) || str(m.alternates?.canonical);
+    const canonical = readCanonicalUrl(m);
     if (!canonical) {
       push("canonical", "الرابط الأساسي (Canonical)", "error", 0, 6, "لا يوجد canonical");
     } else if (!isAbsolute(canonical)) {
@@ -301,16 +319,29 @@ export function computeReferenceSeoScore(input: ReferenceSeoInput): SeoScore {
   }
 
   // ── Robots (3) — must be stored, so a settings change actually reaches Google. ──
+  //
+  // Read through `readRobotsState`, which handles BOTH stored shapes. This check used to
+  // flatten the object form to the literal string "object", test THAT for /noindex/, and
+  // hand a blocked page 3/3. The placeholder is gone; an unreadable value now says so.
   {
-    const robots = m.robots;
-    const value = typeof robots === "string" ? robots.trim() : isObj(robots) ? "object" : "";
-    if (!value) {
-      push("robots", "توجيه الأرشفة (robots)", "error", 0, 3, "لا يوجد robots في الميتا المخزَّنة");
-    } else if (/noindex/i.test(value)) {
-      push("robots", "توجيه الأرشفة (robots)", "error", 0, 3, "الصفحة محجوبة عن الفهرسة (noindex)");
+    const state = readRobotsState(m.robots);
+    if (state === "unknown") {
+      push(
+        "robots",
+        "توجيه الأرشفة (robots)",
+        "warning",
+        0,
+        3,
+        m.robots === undefined || m.robots === null
+          ? "لا يوجد robots في الميتا المخزَّنة — اضغط «إعادة توليد»"
+          : "قيمة robots المخزَّنة ما انقرت — غير مقيس، أعد التوليد",
+      );
+    } else if (state === "noindex") {
+      push("robots", "توجيه الأرشفة (robots)", "error", 0, 3, NOINDEX_HINT);
     } else {
       push("robots", "توجيه الأرشفة (robots)", "good", 3, 3);
     }
+    blockedFromIndex = state === "noindex";
   }
 
   // ── hreflang (4) — Modonty serves ar-SA and ar-EG; both must be declared. ──
@@ -457,14 +488,30 @@ export function computeReferenceSeoScore(input: ReferenceSeoInput): SeoScore {
   }
 
   // ── Validator report (8) — the three validators that ran at generation time. ──
+  //
+  // «لم يُفحص» is a state of its own, never a pass. A stored object is not a measurement:
+  // the category/tag/industry generators used to write a literal `{ valid: true }` with no
+  // validator behind it, and this check handed it the full 8/8 because it counted zero
+  // errors in arrays that were never there. `hasValidatorOutput` is what separates a real
+  // report from a claim — see its comment in ../client/types.ts.
   {
     const report = input.jsonLdValidationReport;
     const errors = countReportErrors(report);
     const warnings = countReportWarnings(report);
     if (!graph) {
       push("jsonld.valid", "تقرير المدقّقات", "error", 0, 8, "لا يوجد JSON-LD ليُدقَّق");
-    } else if (!report) {
-      push("jsonld.valid", "تقرير المدقّقات", "warning", 4, 8, "JSON-LD موجود لكن لم يُتحقّق منه بعد");
+    } else if (!hasValidatorOutput(report)) {
+      const reason = str(report?.uncheckedReason);
+      push(
+        "jsonld.valid",
+        "تقرير المدقّقات",
+        "warning",
+        4,
+        8,
+        reason
+          ? `ما انفحص — المدقّق ما اشتغل: ${reason}. اضغط «إعادة توليد»`
+          : "ما انفحص بعد — احفظ الصفحة أو اضغط «إعادة توليد» عشان تشتغل المدقّقات",
+      );
     } else if (errors > 0) {
       const first = firstReportError(report);
       const suffix = errors > 1 ? ` (+${errors - 1})` : "";
@@ -534,6 +581,9 @@ export function computeReferenceSeoScore(input: ReferenceSeoInput): SeoScore {
 
   const earned = checks.reduce((s, c) => s + c.earned, 0);
   const max = checks.reduce((s, c) => s + c.max, 0);
-  const score = max > 0 ? Math.round((earned / max) * 100) : 0;
-  return { score, checks };
+  const raw = max > 0 ? Math.round((earned / max) * 100) : 0;
+  // A page Google drops entirely has no search performance left to grade. Losing 3 of 100
+  // points for it said the opposite: a blocked page still read 97/100, «ممتاز». The
+  // checklist below still renders in full, so the reader sees the block AND everything else.
+  return { score: blockedFromIndex ? 0 : raw, checks };
 }

@@ -10,6 +10,7 @@
  */
 
 import { db } from "@/lib/db";
+import { truncateAtWordBoundary } from "@modonty/shared/lib/seo/truncate-at-word-boundary";
 
 export interface AutoFixResult {
   articleId: string;
@@ -61,10 +62,7 @@ function calculateReadingTime(wordCount: number, wpm: number = 200): number {
  * Generate SEO title from article title
  */
 function generateSeoTitle(title: string, maxLength: number = 60): string {
-  if (title.length <= maxLength) {
-    return title;
-  }
-  return title.slice(0, maxLength - 3).trim() + "...";
+  return truncateAtWordBoundary(title, maxLength);
 }
 
 /**
@@ -77,10 +75,7 @@ function generateSeoDescription(
 ): string {
   // Prefer excerpt if available
   if (excerpt && excerpt.length >= 50) {
-    if (excerpt.length <= maxLength) {
-      return excerpt;
-    }
-    return excerpt.slice(0, maxLength - 3).trim() + "...";
+    return truncateAtWordBoundary(excerpt, maxLength);
   }
 
   // Extract first paragraph from content
@@ -89,13 +84,15 @@ function generateSeoDescription(
     .replace(/\s+/g, " ")
     .trim();
 
-  const firstParagraph = plainText.split(/[.،。!؟?]/)[0]?.trim() || "";
+  // «،» (U+060C ARABIC COMMA) is NOT a sentence end and used to be in this class, so the
+  // first "sentence" of an Arabic article ended at its first comma — «…في السعودية ومصر»,
+  // 85 characters, chopped mid-thought — and that string was written to `excerpt` and
+  // `seoDescription`. Unicode UAX #29 assigns U+060C the Sentence_Break value SContinue,
+  // the class whose whole meaning is that the sentence continues, alongside U+002C COMMA
+  // and U+003B SEMICOLON. <https://www.unicode.org/reports/tr29/>
+  const firstParagraph = plainText.split(/[.。!؟?]/)[0]?.trim() || "";
 
-  if (firstParagraph.length <= maxLength) {
-    return firstParagraph;
-  }
-
-  return firstParagraph.slice(0, maxLength - 3).trim() + "...";
+  return truncateAtWordBoundary(firstParagraph, maxLength);
 }
 
 /**
@@ -120,13 +117,24 @@ export async function autoFixArticle(articleId: string): Promise<AutoFixResult> 
 
     const updates: Record<string, unknown> = {};
 
-    // Fix: Missing or outdated dateModified
-    if (!article.dateModified || article.dateModified < article.updatedAt) {
+    // Fix: MISSING dateModified. Only missing.
+    //
+    // The condition used to be `!dateModified || dateModified < updatedAt`, and the second
+    // half was always true. Article carries BOTH `dateModified @updatedAt` and
+    // `updatedAt @updatedAt` (schema.prisma:1304, 1371). Every write bumps both, so
+    // `dateModified < updatedAt` is not evidence of a stale date — it is the ordinary state
+    // of every row, and this branch restamped the date on each run. The article had not
+    // changed; Google was told it had.
+    //
+    // It also fought the fix in jsonld-storage.ts / metadata-storage.ts, which preserve
+    // `dateModified` across a cache write precisely so it stops moving on its own. Those
+    // writes still bump `updatedAt`, so the old rule would have undone them on the next run.
+    if (!article.dateModified) {
       fixes.push({
         field: "dateModified",
-        oldValue: article.dateModified?.toISOString() || null,
+        oldValue: null,
         newValue: new Date().toISOString(),
-        reason: "dateModified was missing or outdated",
+        reason: "dateModified was missing",
       });
       updates.dateModified = new Date();
     }
@@ -287,13 +295,16 @@ export async function previewAutoFix(articleId: string): Promise<FixAction[]> {
 
   if (!article) return fixes;
 
-  // Check all fixable fields
-  if (!article.dateModified || article.dateModified < article.updatedAt) {
+  // Check all fixable fields. `dateModified` only when MISSING — see the same check in
+  // applyAutoFixes above: `dateModified < updatedAt` is true on every row, because both
+  // fields carry `@updatedAt` and every write bumps both. As a preview it reported a fix
+  // that was never warranted, on every article, every run.
+  if (!article.dateModified) {
     fixes.push({
       field: "dateModified",
-      oldValue: article.dateModified?.toISOString() || null,
+      oldValue: null,
       newValue: new Date().toISOString(),
-      reason: "dateModified was missing or outdated",
+      reason: "dateModified was missing",
     });
   }
 

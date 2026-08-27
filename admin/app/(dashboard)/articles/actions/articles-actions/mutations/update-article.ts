@@ -1,5 +1,6 @@
 "use server";
 
+import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { ArticleStatus, Prisma } from "@prisma/client";
@@ -82,9 +83,14 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     }
 
     // Validate slug uniqueness within client when slug changed
-    if (data.slug && data.slug !== existingArticle.slug) {
+    // The schema's normalised slug, not the raw input — same fix as create-article.ts, and
+    // applied here because a create-only fix would leave every EDIT able to reintroduce the
+    // untrimmed slug the create path now rejects.
+    const slug = parsed.data.slug;
+
+    if (slug && slug !== existingArticle.slug) {
       const existingSlug = await db.article.findFirst({
-        where: { clientId: data.clientId || existingArticle.clientId, slug: data.slug.trim(), id: { not: articleId } },
+        where: { clientId: data.clientId || existingArticle.clientId, slug, id: { not: articleId } },
         select: { id: true },
       });
       if (existingSlug) {
@@ -155,17 +161,34 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     // Always regenerate canonical from current slug — never trust DB value
     // (prior logic kept stale canonicalUrl when slug changed, breaking JSON-LD @id)
     const canonicalUrl = bakeOnClientSite
-      ? `${baseUrl}/${data.slug}`
-      : generateCanonicalUrl(data.slug, baseUrl);
+      ? absoluteUrl(`/${slug}`, baseUrl)
+      : generateCanonicalUrl(slug, baseUrl);
 
     const breadcrumbPath = generateBreadcrumbPath(
       category?.name,
       category?.slug,
       data.title,
-      data.slug
+      slug
     );
 
-    const datePublished = data.datePublished !== undefined ? data.datePublished : existingArticle.datePublished;
+    // A live article must carry a publish date. This was
+    // `data.datePublished !== undefined ? data.datePublished : existingArticle.datePublished`
+    // — it preserved a date but never established one, so a row reaching PUBLISHED through
+    // this action stayed at `null`. Measured on modonty_dev 27 Aug 2026: 13 published
+    // articles have no `datePublished`, and all 13 ship JSON-LD with no `datePublished` at
+    // all. Google, Article: it is "The date and time the article was first published"; a
+    // live page that cannot say when it was published loses the freshness signal entirely.
+    //
+    // Only stamped on the transition INTO a live state, and only when there is none —
+    // an article that already has a date keeps it, so an edit never rewrites publication
+    // history. `PUBLISHED_ON_CLIENT_SITE` counts: the page is live, on their domain.
+    const goingLive =
+      data.status === ArticleStatus.PUBLISHED ||
+      data.status === ArticleStatus.PUBLISHED_ON_CLIENT_SITE;
+    const datePublished =
+      data.datePublished !== undefined
+        ? data.datePublished
+        : existingArticle.datePublished ?? (goingLive ? new Date() : null);
 
     const metaRobots =
       data.metaRobots ||
@@ -194,8 +217,12 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       data: {
         userVersion: nextUserVersion,
         title: data.title,
-        slug: data.slug,
-        excerpt: seoDescription || null,
+        slug,
+        // The excerpt is the WRITER's summary and is shown to the reader on cards and
+        // feeds. It used to be overwritten with `seoDescription` — which is DERIVED from
+        // it by truncation — so every save fed a shorter cut of itself back in. Keep what
+        // was written; an empty excerpt stays empty rather than borrowing the meta text.
+        excerpt: data.excerpt?.trim() || null,
         content: sanitizedContent,
         clientId: data.clientId,
         categoryId: data.categoryId || null,
@@ -284,17 +311,31 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       }
     });
 
+    // Both generators CATCH internally and RETURN { success:false, error } — they do not
+    // throw. So the old `try { … } catch { console.error }` never fired: a failed
+    // regeneration left no log, no warning, and still answered `success: true`.
+    // Read the returned result, or the failure stays invisible.
+    const seoFailures: string[] = [];
     try {
-      await generateAndSaveNextjsMetadata(article.id, {
+      const metadataResult = await generateAndSaveNextjsMetadata(article.id, {
         robots: metaRobots,
       });
+      if (!metadataResult.success) {
+        seoFailures.push(`الميتاداتا: ${metadataResult.error || "سبب غير معروف"}`);
+      }
 
-      await generateAndSaveJsonLd(article.id);
+      const jsonLdResult = await generateAndSaveJsonLd(article.id);
+      if (!jsonLdResult.success) {
+        seoFailures.push(`البيانات المنظّمة: ${jsonLdResult.error || "سبب غير معروف"}`);
+      }
     } catch (error) {
+      seoFailures.push(error instanceof Error ? error.message : String(error));
+    }
+    if (seoFailures.length > 0) {
       console.error(
         "Failed to generate metadata/JSON-LD for article:",
         article.id,
-        error
+        seoFailures.join(" · ")
       );
     }
 
@@ -307,15 +348,28 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       metadata: { status: article.status, version: nextUserVersion },
     });
 
+    // Admin paths always refresh — the team must see what it just saved.
     revalidatePath("/articles");
     revalidatePath(`/articles/${article.id}`);
     revalidatePath(`/articles/${article.slug}`);
-    await revalidateModontyTag("articles");
+    // modonty does NOT: it renders the stored blob, so rebuilding it after a failed
+    // regeneration publishes the new body under the old title. Leave the page on its
+    // previous build until the blob is rebuilt.
+    if (seoFailures.length === 0) {
+      await revalidateModontyTag("articles");
+    }
 
     // Re-fetch userVersion + updatedAt after SEO generation
     // (SEO ops bump updatedAt but NOT userVersion — keep userVersion fresh from this action)
     const freshArticle = await db.article.findUnique({ where: { id: article.id }, select: { id: true, title: true, slug: true, status: true, userVersion: true, updatedAt: true } });
-    return { success: true, article: freshArticle || article };
+    return {
+      success: true,
+      article: freshArticle || article,
+      seoWarning:
+        seoFailures.length > 0
+          ? `المقال انحفظ، لكن بيانات السيو ما تجدّدت — جوجل بيبقى يشوف العنوان والوصف القديم. (${seoFailures.join(" · ")})`
+          : undefined,
+    };
   } catch (error) {
     console.error("Error updating article:", error);
     const message =

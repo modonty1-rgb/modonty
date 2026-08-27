@@ -1,5 +1,6 @@
 "use server";
 
+import { entityUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
@@ -76,7 +77,16 @@ export async function verifyAndChangeSlug(
   clientId: string,
   otp: string,
   newName: string
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{
+  success: boolean;
+  error?: string;
+  /**
+   * Set when the slug moved but its SEO did not rebuild — a partial success the caller has to
+   * show. The type omitted it while the body already returned it, so tsc rejected the file and
+   * admin did not compile; the message existed and could never have reached a screen.
+   */
+  warning?: string;
+}> {
   const session = await auth();
   if (!session) return { success: false, error: "Unauthorized" };
 
@@ -113,7 +123,7 @@ export async function verifyAndChangeSlug(
   const oldSlug = oldClient.slug;
   const { loadSiteUrl } = await import("@/lib/seo/site-url");
   const siteUrl = await loadSiteUrl();
-  const newCanonicalUrl = `${siteUrl}/clients/${newSlug}`;
+  const newCanonicalUrl = entityUrl("clients", newSlug, siteUrl);
 
   // Mark OTP as used
   await db.slugChangeOtp.update({
@@ -135,8 +145,18 @@ export async function verifyAndChangeSlug(
   // link equity is lost. Same 308 layer the tag/industry/category merges already write to.
   await recordRedirect(db, "clients", oldSlug, newSlug);
 
-  // Regenerate JSON-LD + metadata (contains embedded slug)
-  await generateClientSEO(clientId);
+  // Regenerate JSON-LD + metadata (the slug is baked into both).
+  //
+  // This was a bare `await generateClientSEO(clientId)`. Three things had already happened by
+  // the time it ran — the OTP was consumed, the slug was written, the 308 was recorded — and
+  // `generateClientSEO` does not throw: it CATCHES internally and returns `{ success, error }`.
+  // So a failed rebuild passed silently, and the flush below then busted modonty's cache while
+  // the stored card still carried the OLD slug: the page came back rebuilt, and wrong.
+  //
+  // The write cannot be rolled back (the OTP is spent and the redirect is live), so the honest
+  // answer is to finish the move, refuse to flush a stale card, and say exactly what is left.
+  const seoResult = await generateClientSEO(clientId);
+  const seoFailed = seoResult && seoResult.success === false;
 
   await logAction("client.slugChange", {
     entity: "Client",
@@ -148,12 +168,25 @@ export async function verifyAndChangeSlug(
   revalidatePath(`/clients/${oldSlug}`);
   revalidatePath(`/clients/${newSlug}`);
   revalidatePath("/clients");
-  await revalidateModontyTag("clients");
+  // modonty renders the stored card. Flushing it after a failed rebuild republishes the old
+  // slug under a fresh timestamp — worse than leaving the previous build in place.
+  if (!seoFailed) await revalidateModontyTag("clients");
 
   // Notify via Telegram
   await sendTelegramMessage(
     `✅ <b>Slug Changed Successfully</b>\n\nOld slug: <code>${oldSlug}</code>\nNew slug: <code>${newSlug}</code>\nNew name: <b>${newNameTrimmed}</b>`
   ).catch(() => {}); // non-blocking
+
+  // The move succeeded; the rebuild may not have. Saying so is the difference between the
+  // team pressing "Regenerate" today and finding out from Google next week.
+  if (seoFailed) {
+    return {
+      success: true,
+      warning:
+        `الرابط تغيّر و٣٠٨ اتسجّل، لكن بيانات السيو ما تجدّدت — الصفحة العامة ما زالت على الرابط القديم. ` +
+        `اضغط «إعادة توليد» على الشريك. (${seoResult?.error || "سبب غير معروف"})`,
+    };
+  }
 
   return { success: true };
 }

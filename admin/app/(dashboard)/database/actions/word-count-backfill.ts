@@ -30,16 +30,30 @@ import {
 const TOLERANCE = 0.02;
 
 export interface WordCountBackfillStats {
+  /** Every article in the database — counted, not capped. */
   totalArticles: number;
+  /** How many of them this pass actually read. Below `totalArticles` = the rest went unexamined. */
+  scanned: number;
   /** Rows whose stored count disagrees with their body. */
   wrong: number;
   sample: Array<{ id: string; title: string; stored: number | null; real: number }>;
 }
 
 export async function getWordCountBackfillStats(): Promise<WordCountBackfillStats> {
+  // The cap is real, so it is REPORTED rather than hidden. This read `take: 1000` and then
+  // handed the caller `rows.length` as `totalArticles` — so past a thousand articles the
+  // screen would say "1000 articles, 0 wrong" while the rest of the library went unexamined.
+  // A silent truncation reads as "we covered everything", which is worse than a visible
+  // failure: nobody investigates good news.
+  //
+  // The cap stays (each row carries a full article body; lifting it turns one dashboard click
+  // into a multi-megabyte read), but the true total is counted separately and the difference
+  // is surfaced through `scanned` / `totalArticles`.
+  const SCAN_CAP = 1000;
+  const totalArticles = await db.article.count();
   const rows = await db.article.findMany({
     select: { id: true, title: true, content: true, wordCount: true, jsonLdStructuredData: true },
-    take: 1000,
+    take: SCAN_CAP,
   });
 
   const wrongRows = rows
@@ -49,7 +63,8 @@ export async function getWordCountBackfillStats(): Promise<WordCountBackfillStat
     .filter((r) => r.real > 0 && isStale(r.wordCount, r.jsonLdStructuredData, r.real));
 
   return {
-    totalArticles: rows.length,
+    totalArticles,
+    scanned: rows.length,
     wrong: wrongRows.length,
     sample: wrongRows.slice(0, 5).map((r) => ({
       id: r.id,
@@ -83,12 +98,20 @@ export interface WordCountBackfillResult {
   attempted: number;
   successful: number;
   failed: number;
+  /** Rows the cap left unread. Above zero = the sweep was partial; run it again. */
+  unscanned: number;
 }
 
 export async function backfillArticleWordCount(): Promise<WordCountBackfillResult> {
+  // Same cap, same rule: it is reported, not hidden. A run that fixed the first thousand and
+  // returned `{ attempted, successful, failed }` looked identical to one that fixed the whole
+  // library — so Run-All could report a clean sweep while thousands of rows stayed untouched.
+  // `unscanned` is what the panel needs to say "there are more; run it again".
+  const SCAN_CAP = 1000;
+  const totalArticles = await db.article.count();
   const rows = await db.article.findMany({
     select: { id: true, content: true, wordCount: true, jsonLdStructuredData: true },
-    take: 1000,
+    take: SCAN_CAP,
   });
 
   const targets = rows
@@ -128,5 +151,5 @@ export async function backfillArticleWordCount(): Promise<WordCountBackfillResul
     for (const done of results) done ? successful++ : failed++;
   }
 
-  return { attempted: targets.length, successful, failed };
+  return { attempted: targets.length, successful, failed, unscanned: Math.max(0, totalArticles - rows.length) };
 }

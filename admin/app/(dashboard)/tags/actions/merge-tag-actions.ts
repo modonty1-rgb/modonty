@@ -188,7 +188,12 @@ export async function regenerateArticleSeoForMerge(articleId: string): Promise<R
  * pick up the change within their 5-minute TTL (cross-app synchronous clearing
  * isn't possible — documented eventual consistency).
  */
-export async function finalizeTagMerge(input: { sourceId: string; targetId: string }): Promise<{ success: boolean; error?: string }> {
+export async function finalizeTagMerge(input: {
+  sourceId: string;
+  targetId: string;
+  /** How many articles phase 2 failed to rebuild. The articles flush is held on it. */
+  failedArticleCount: number;
+}): Promise<{ success: boolean; error?: string; warning?: string }> {
   try {
     const session = await auth();
     if (!session) return { success: false, error: "Unauthorized" };
@@ -196,15 +201,40 @@ export async function finalizeTagMerge(input: { sourceId: string; targetId: stri
     const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator");
     const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator");
 
+    // All three CATCH internally and return `{ success, error }` — they never throw, so the
+    // `.catch()` that used to sit on each was dead code wrapped around a discarded answer.
+    // A tag whose card failed to rebuild was counted exactly like one that succeeded.
     // Target gains articles; source is now empty — refresh both entity caches.
-    await generateAndSaveTagSeo(input.targetId).catch((e) => console.error("target tag SEO:", e));
-    await generateAndSaveTagSeo(input.sourceId).catch((e) => console.error("source tag SEO:", e));
-    await regenerateTagsListingCache().catch((e) => console.error("tags listing:", e));
+    const [target, source, listing] = await Promise.all([
+      generateAndSaveTagSeo(input.targetId),
+      generateAndSaveTagSeo(input.sourceId),
+      regenerateTagsListingCache(),
+    ]);
+
+    const failures: string[] = [];
+    if (!target.success) failures.push(`الوسم الهدف: ${target.error ?? "سبب غير معروف"}`);
+    if (!source.success) failures.push(`الوسم المصدر: ${source.error ?? "سبب غير معروف"}`);
+    if (!listing.success) failures.push(`قائمة الوسوم: ${listing.error ?? "سبب غير معروف"}`);
 
     revalidatePath("/tags");
     revalidatePath("/articles");
-    await revalidateModontyTag("tags");
-    await revalidateModontyTag("articles");
+
+    // Each flush is held on its own precondition. Busting a tag whose card did not rebuild
+    // republishes the pre-merge card under a fresh timestamp — the stale half stamped new.
+    // Holding it keeps modonty consistently old until someone acts on the warning.
+    if (failures.length === 0) await revalidateModontyTag("tags");
+    if (input.failedArticleCount === 0) await revalidateModontyTag("articles");
+
+    if (input.failedArticleCount > 0) {
+      failures.push(`${input.failedArticleCount} مقالاً ما تجدّدت بياناته`);
+    }
+    if (failures.length > 0) {
+      console.error("finalizeTagMerge partial:", failures.join(" · "));
+      return {
+        success: false,
+        warning: `الدمج تمّ في القاعدة، لكن ${failures.join(" · ")} — جوجل بيبقى يشوف القديم.`,
+      };
+    }
 
     return { success: true };
   } catch (error) {

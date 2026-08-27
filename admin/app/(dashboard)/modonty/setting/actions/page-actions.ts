@@ -148,7 +148,15 @@ export async function updatePage(slug: string, data: PageFormData) {
     if (pageConfig) {
       try {
         const settings = await getAllSettings();
-        const modontyUrl = settings.siteUrl?.trim() || "https://www.modonty.com";
+        // The literal used to sit here as an `||` fallback, so the `if` below could never be
+        // false — a blank Settings row pinged a host nobody configured. Now the ping is simply
+        // skipped and says why, instead of hitting a guessed address.
+        const modontyUrl = settings.siteUrl?.trim();
+        if (!modontyUrl) {
+          console.error(
+            "[page revalidate] تخطّيت تفريغ كاش مدونتي — الحقل الناقص: Settings.siteUrl. اضبطه من /settings.",
+          );
+        }
         if (modontyUrl) {
           await fetch(
             `${modontyUrl}/api/revalidate?path=${pageConfig.modontyPath}&secret=${process.env.REVALIDATE_SECRET}`,

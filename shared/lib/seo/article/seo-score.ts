@@ -16,6 +16,7 @@
 // "is the editor filled in", which is a different question and a different number.
 
 import type { EntitySeoScore, SeoCheck, SeoScore } from "../client/types";
+import { isBlockedFromIndex } from "../client/types";
 import { computeArticleMetaScore, type ArticleMetaInput } from "./meta-score";
 import { computeArticleJsonLdScore, type ArticleJsonLdInput } from "./jsonld-score";
 
@@ -27,7 +28,11 @@ export interface ArticleSeoInput extends ArticleMetaInput, ArticleJsonLdInput {}
 export function computeArticleEntitySeo(article: ArticleSeoInput): EntitySeoScore {
   const meta = computeArticleMetaScore(article);
   const jsonLd = computeArticleJsonLdScore(article);
-  const overall = Math.round((meta.score + jsonLd.score) / 2);
+  // A blocked page is dropped from Google's results entirely, so a flawless @graph does not
+  // rescue half the number: averaging a zeroed meta with a perfect JSON-LD still read 50.
+  const overall = isBlockedFromIndex(article.nextjsMetadata)
+    ? 0
+    : Math.round((meta.score + jsonLd.score) / 2);
   return { meta, jsonLd, overall };
 }
 

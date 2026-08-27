@@ -14,193 +14,190 @@
  *   - Tree-shaking is preserved: only imported icons enter the bundle
  *
  * DECISIONS (LinkedIn-aligned + 2024 best practices):
- *   - Like      = ThumbsUp   (LinkedIn uses ThumbsUp)
- *   - Save      = Bookmark   (LinkedIn uses Bookmark)
- *   - Heart     = REMOVED    (ThumbsUp is the unified like icon)
+ *   - Like      = ModontyLikeMark
+ *   - Save      = ModontyBookmarkMark
+ *   - Heart     = REMOVED    (ModontyLikeMark is the unified like icon)
  *   - ThumbsDown = REMOVED   (LinkedIn doesn't use it)
  */
 
 // ── Navigation ───────────────────────────────────────────────────────────────
-export { House            as IconHome          } from 'lucide-react';
-export { TrendingUp       as IconTrending      } from 'lucide-react';
-export { Tags             as IconCategories    } from 'lucide-react';
-export { Tag              as IconCategory      } from 'lucide-react';
-export { Building2        as IconClients       } from 'lucide-react';
-export { Factory          as IconIndustry      } from 'lucide-react';
-export { Bookmark         as IconSaved         } from 'lucide-react';
-export { Bell             as IconNotifications } from 'lucide-react';
-export { Search           as IconSearch        } from 'lucide-react';
-export { Menu             as IconMenu          } from 'lucide-react';
+export { ModontyHomeMark  as IconHome          } from '../components/icons/modonty-home-mark';
+export { ModontyTrendingMark as IconTrending   } from '../components/icons/modonty-trending-mark';
+export { ModontyCategoriesMark as IconCategories } from '../components/icons/modonty-categories-mark';
+export { ModontyTagsMark  as IconCategory      } from '../components/icons/modonty-tags-mark';
+export { ModontyPartnerMark as IconClients } from '../components/icons/modonty-partner-mark';
+export { ModontyIndustriesMark as IconIndustry } from '../components/icons/modonty-industries-mark';
+export { ModontyBookmarkMark as IconSaved      } from '../components/icons/modonty-bookmark-mark';
+export { ModontyNotificationsMark as IconNotifications } from '../components/icons/modonty-notifications-mark';
+export { ModontySearchMark as IconSearch       } from '../components/icons/modonty-search-mark';
+export { ModontyMenuMark as IconMenu } from '../components/icons/modonty-utility-marks';
 
 // ── Directional ──────────────────────────────────────────────────────────────
-export { ArrowRight       as IconBack          } from 'lucide-react';
-export { ArrowLeft        as IconForward       } from 'lucide-react';
-export { ChevronLeft      as IconChevronLeft   } from 'lucide-react';
-export { ChevronRight     as IconChevronRight  } from 'lucide-react';
-export { ChevronDown      as IconChevronDown   } from 'lucide-react';
-export { ChevronUp        as IconChevronUp     } from 'lucide-react';
-export { ArrowUpDown      as IconSort          } from 'lucide-react';
+export { ModontyArrowMark as IconForward } from '../components/icons/modonty-arrow-mark';
+export { ModontyArrowMark as IconChevronLeft } from '../components/icons/modonty-arrow-mark';
+export { ModontyArrowMark as IconChevronRight } from '../components/icons/modonty-arrow-mark';
+export { ModontyArrowMark as IconChevronDown } from '../components/icons/modonty-arrow-mark';
+export { ModontyArrowMark as IconChevronUp } from '../components/icons/modonty-arrow-mark';
+export { ModontySortMark  as IconSort          } from '../components/icons/modonty-sort-mark';
 
 // ── Auth & User ───────────────────────────────────────────────────────────────
-export { User             as IconUser          } from 'lucide-react';
-export { Users            as IconUsers         } from 'lucide-react';
-export { LogIn            as IconLogin         } from 'lucide-react';
-export { LogOut           as IconLogout        } from 'lucide-react';
-export { Upload           as IconUpload        } from 'lucide-react';
+export { ModontyProfileMark as IconUser        } from '../components/icons/modonty-profile-mark';
+export { ModontyProfessionalsMark as IconUsers } from '../components/icons/modonty-professionals-mark';
+export { ModontyLoginMark as IconLogin         } from '../components/icons/modonty-login-mark';
+export { ModontyLogoutMark as IconLogout       } from '../components/icons/modonty-logout-mark';
+export { ModontyUploadMark as IconUpload } from '../components/icons/modonty-brand-icons';
 
 // ── Article Interactions ─────────────────────────────────────────────────────
-// ThumbsUp  = the ONE like icon everywhere (article bar + profile tabs)
+// ModontyLikeMark = the ONE like icon everywhere (article bar + profile tabs)
 // ThumbsDown = REMOVED from articles/profile — IconDislike is FAQ /help/faq only
 // Heart      = REMOVED
-export { ThumbsUp         as IconLike          } from 'lucide-react';
-export { ThumbsDown       as IconDislike       } from 'lucide-react';
-export { MessageCircle    as IconComment       } from 'lucide-react';
-export { Share2           as IconShare         } from 'lucide-react';
-export { Eye              as IconViews         } from 'lucide-react';
-export { BookOpen         as IconRead          } from 'lucide-react';
-export { FileText         as IconArticle       } from 'lucide-react';
-export { Newspaper        as IconNews          } from 'lucide-react';
-export { Rss              as IconFeed          } from 'lucide-react';
-export { LayoutList       as IconArticleList   } from 'lucide-react';
-export { Link2            as IconLink          } from 'lucide-react';
-export { Sparkles         as IconAi            } from 'lucide-react';
-export { Star             as IconFeatured      } from 'lucide-react';
-export { Reply            as IconReply         } from 'lucide-react';
+export { ModontyLikeMark  as IconLike          } from '../components/icons/modonty-like-mark';
+export { ModontyFeedbackMark as IconDislike } from '../components/icons/modonty-feedback-mark';
+export { ModontyCommentMark as IconComment     } from '../components/icons/modonty-comment-mark';
+export { ModontyShareMark as IconShare         } from '../components/icons/modonty-share-mark';
+export { ModontyViewsMark as IconViews         } from '../components/icons/modonty-views-mark';
+export { ModontyArticlesMark as IconRead } from '../components/icons/modonty-articles-mark';
+export { ModontyArticlesMark as IconArticle    } from '../components/icons/modonty-articles-mark';
+export { ModontyArticlesMark as IconNews } from '../components/icons/modonty-articles-mark';
+export { ModontyArticlesMark as IconFeed } from '../components/icons/modonty-articles-mark';
+export { ModontyArticlesMark as IconArticleList } from '../components/icons/modonty-articles-mark';
+export { ModontyLinkMark as IconLink } from '../components/icons/modonty-brand-icons';
+export { ModontyAiMark as IconAi } from '../components/icons/modonty-brand-icons';
+export { ModontyFeaturedMark as IconFeatured   } from '../components/icons/modonty-featured-mark';
+export { ModontyCommentMark as IconReply } from '../components/icons/modonty-comment-mark';
 
 // ── Client & Contact ─────────────────────────────────────────────────────────
-export { Globe            as IconWebsite       } from 'lucide-react';
-export { Phone            as IconPhone         } from 'lucide-react';
-export { Mail             as IconEmail         } from 'lucide-react';
-export { Copy             as IconCopy          } from 'lucide-react';
-export { ExternalLink     as IconExternal      } from 'lucide-react';
-export { Linkedin         as IconLinkedin      } from 'lucide-react';
-export { Twitter          as IconTwitter       } from 'lucide-react';
-export { Facebook         as IconFacebook      } from 'lucide-react';
-export { MessageSquare    as IconMessage       } from 'lucide-react';
-export { MapPin           as IconMapPin        } from 'lucide-react';
+export { ModontyWebsiteMark as IconWebsite } from '../components/icons/modonty-brand-icons';
+export { ModontyPhoneMark as IconPhone         } from '../components/icons/modonty-phone-mark';
+export { ModontyEmailMark as IconEmail         } from '../components/icons/modonty-email-mark';
+export { ModontyCopyMark as IconCopy } from '../components/icons/modonty-brand-icons';
+export { ModontyArrowMark as IconExternal } from '../components/icons/modonty-arrow-mark';
+export { Linkedin as IconLinkedin } from '../components/icons/linkedin';
+export { Twitter as IconTwitter } from '../components/icons/twitter';
+export { SocialFacebookOutline as IconFacebook } from '../components/icons/facebook';
+export { ModontySupportMark as IconMessage } from '../components/icons/modonty-support-mark';
+export { ModontyLocationMark as IconMapPin     } from '../components/icons/modonty-location-mark';
 
 // ── Analytics & Stats ────────────────────────────────────────────────────────
-export { ChartColumn      as IconAnalytics     } from 'lucide-react';
-export { Sigma            as IconTotal         } from 'lucide-react';
-export { Activity         as IconActivity      } from 'lucide-react';
+export { ModontyAnalyticsMark as IconAnalytics } from '../components/icons/modonty-brand-icons';
+export { ModontyAnalyticsMark as IconTotal } from '../components/icons/modonty-brand-icons';
+export { ModontyActivityMark as IconActivity } from '../components/icons/modonty-brand-icons';
 
 // ── UI Controls ──────────────────────────────────────────────────────────────
-export { EllipsisVertical as IconMore          } from 'lucide-react';
-export { X                as IconClose         } from 'lucide-react';
-export { Plus             as IconAdd           } from 'lucide-react';
-export { Filter           as IconFilter        } from 'lucide-react';
-export { SlidersHorizontal as IconFilters      } from 'lucide-react';
-export { LayoutGrid       as IconGrid          } from 'lucide-react';
-export { List             as IconList          } from 'lucide-react';
-export { FolderOpen       as IconFolder        } from 'lucide-react';
-export { Image            as IconImage         } from 'lucide-react';
-export { Code             as IconCode          } from 'lucide-react';
-export { Briefcase        as IconBriefcase     } from 'lucide-react';
-export { Lightbulb        as IconLightbulb     } from 'lucide-react';
-export { Zap              as IconZap           } from 'lucide-react';
-export { Coffee           as IconCoffee        } from 'lucide-react';
-export { Footprints       as IconFootprints    } from 'lucide-react';
-export { Armchair         as IconArmchair      } from 'lucide-react';
-export { Rocket           as IconRocket        } from 'lucide-react';
-export { Target           as IconTarget        } from 'lucide-react';
-export { Clock            as IconClock         } from 'lucide-react';
-export { AlignJustify     as IconAlignJustify  } from 'lucide-react';
-export { AlignJustify     as IconContent       } from 'lucide-react';
-export { Play             as IconPlay          } from 'lucide-react';
-export { Video            as IconVideo         } from 'lucide-react'; // فيديو تعريفي (≠ Play الذي يعني تشغيل)
-export { FileCheck        as IconFileCheck     } from 'lucide-react';
-export { Scale            as IconScale         } from 'lucide-react';
-export { Hash             as IconHash          } from 'lucide-react';
-export { Languages        as IconLanguages     } from 'lucide-react';
-export { SearchX          as IconSearchX       } from 'lucide-react';
-export { Calendar         as IconCalendar      } from 'lucide-react';
-export { CalendarCheck    as IconCalendarCheck } from 'lucide-react'; // «احجز» — a booked slot, not a bare calendar
-export { ShoppingBag      as IconShoppingBag   } from 'lucide-react';
-export { Ellipsis as IconEllipsis } from 'lucide-react'; // أفقي (≠ EllipsisVertical)
-export { Check as IconCheck } from 'lucide-react';
-export { ArrowUp     as IconScrollTop  } from 'lucide-react';
-export { RefreshCw   as IconRefresh    } from 'lucide-react';
+export { ModontyCloseMark as IconClose         } from '../components/icons/modonty-close-mark';
+export { ModontyAddMark as IconAdd } from '../components/icons/modonty-brand-icons';
+export { ModontyFilterMark as IconFilter       } from '../components/icons/modonty-filter-mark';
+export { ModontyFilterMark as IconFilters      } from '../components/icons/modonty-filter-mark';
+export { ModontyGridMark as IconGrid } from '../components/icons/modonty-brand-icons';
+export { ModontyListMark as IconList } from '../components/icons/modonty-brand-icons';
+export { ModontyFolderMark as IconFolder } from '../components/icons/modonty-brand-icons';
+export { ModontyGalleryMark as IconImage       } from '../components/icons/modonty-gallery-mark';
+// Technology / programming scope: the approved AI mark is the closest Modonty digital-technology symbol.
+export { ModontyAiMark as IconCode } from '../components/icons/modonty-brand-icons';
+export { ModontyProfessionalsMark as IconBriefcase } from '../components/icons/modonty-professionals-mark';
+export { ModontyAiMark as IconLightbulb } from '../components/icons/modonty-brand-icons';
+export { ModontyActivityMark as IconZap } from '../components/icons/modonty-brand-icons';
+export { ModontyCoffeeMark as IconCoffee } from '../components/icons/modonty-coffee-mark';
+export { ModontyFootprintsMark as IconFootprints } from '../components/icons/modonty-utility-marks';
+export { ModontyArmchairMark as IconArmchair } from '../components/icons/modonty-armchair-mark';
+export { ModontyTrendingMark as IconRocket } from '../components/icons/modonty-trending-mark';
+export { ModontyDirectionsMark as IconTarget } from '../components/icons/modonty-directions-mark';
+export { ModontyClockMark as IconClock         } from '../components/icons/modonty-clock-mark';
+export { ModontyTocMark   as IconAlignJustify  } from '../components/icons/modonty-toc-mark';
+export { ModontyTocMark   as IconContent       } from '../components/icons/modonty-toc-mark';
+export { ModontyPlayMark  as IconPlay          } from '../components/icons/modonty-play-mark';
+export { ModontyVideoMark as IconVideo } from '../components/icons/modonty-utility-marks';
+export { ModontyTrustMark as IconFileCheck } from '../components/icons/modonty-trust-mark';
+export { ModontyTagsMark  as IconHash          } from '../components/icons/modonty-tags-mark';
+export { ModontySearchMark as IconSearchX } from '../components/icons/modonty-search-mark';
+export { ModontyCalendarMark as IconCalendar   } from '../components/icons/modonty-calendar-mark';
+export { ModontyBookingMark as IconCalendarCheck } from '../components/icons/modonty-booking-mark';
+export { ModontyShoppingMark as IconShoppingBag } from '../components/icons/modonty-shopping-mark';
+export { ModontyCheckMark as IconCheck } from '../components/icons/modonty-check-mark';
+export { ModontyArrowMark as IconScrollTop } from '../components/icons/modonty-arrow-mark';
+export { ModontyRefreshMark as IconRefresh     } from '../components/icons/modonty-refresh-mark';
 
 // ── Status & Feedback ────────────────────────────────────────────────────────
-export { CheckCircle2 as IconCheckCircle } from 'lucide-react';
-export { BadgeCheck       as IconVerified      } from 'lucide-react';
-export { CircleCheck      as IconSuccess       } from 'lucide-react';
-export { AlertCircle      as IconError         } from 'lucide-react';
-export { CircleHelp       as IconHelp          } from 'lucide-react';
-export { Info             as IconInfo          } from 'lucide-react';
-export { Loader2          as IconLoading       } from 'lucide-react';
+// `modonty-success-mark` does not exist — ModontySuccessMark lives in modonty-brand-icons
+// (same file the IconSuccess alias below already points at). The dangling path broke
+// `tsc` for console; found 27 Aug 2026.
+export { ModontySuccessMark as IconCheckCircle } from '../components/icons/modonty-brand-icons';
+export { ModontyTrustMark as IconVerified } from '../components/icons/modonty-trust-mark';
+export { ModontySuccessMark as IconSuccess } from '../components/icons/modonty-brand-icons';
+export { ModontyErrorMark as IconError         } from '../components/icons/modonty-error-mark';
+export { ModontyQuestionMark as IconHelp       } from '../components/icons/modonty-question-mark';
+export { ModontyInfoMark  as IconInfo          } from '../components/icons/modonty-info-mark';
+export { ModontyLoadingMark as IconLoading     } from '../components/icons/modonty-loading-mark';
 
 // ── Settings ─────────────────────────────────────────────────────────────────
-export { Lock             as IconLock          } from 'lucide-react';
-export { Shield           as IconShield        } from 'lucide-react';
-export { Palette          as IconTheme         } from 'lucide-react';
-export { Trash2           as IconDelete        } from 'lucide-react';
-export { Settings         as IconSettings      } from 'lucide-react';
+export { ModontyTrustMark as IconLock } from '../components/icons/modonty-trust-mark';
+export { ModontyTrustMark as IconShield } from '../components/icons/modonty-trust-mark';
+export { ModontyThemeLightMark as IconTheme } from '../components/icons/modonty-brand-icons';
+export { ModontyDeleteMark as IconDelete } from '../components/icons/modonty-brand-icons';
+export { ModontySettingsMark as IconSettings } from '../components/icons/modonty-brand-icons';
 
-// ── Aliases & extras (same Lucide icon, second export name) ───────────────────
-export { ArrowRight       as IconArrowRight    } from 'lucide-react';
-export { Bell             as IconBell          } from 'lucide-react';
-export { UserPlus         as IconRegister      } from 'lucide-react';
-export { MessageCircleQuestion as IconFaqQuestion } from 'lucide-react';
-export { HelpCircle       as IconHelpCircle    } from 'lucide-react';
-export { Chrome           as IconChrome        } from 'lucide-react';
-export { EyeOff           as IconEyeOff        } from 'lucide-react';
-// Same glyph as IconViews, under the name that reads right next to IconEyeOff in a show/hide pair.
-export { Eye              as IconEye           } from 'lucide-react';
+// ── Aliases & extras ─────────────────────────────────────────────────────────
+export { ModontyArrowMark as IconArrowRight } from '../components/icons/modonty-arrow-mark';
+export { ModontyNotificationsMark as IconBell  } from '../components/icons/modonty-notifications-mark';
+export { ModontyProfileMark as IconRegister } from '../components/icons/modonty-profile-mark';
+export { ModontyQuestionMark as IconFaqQuestion } from '../components/icons/modonty-question-mark';
+export { ModontyQuestionMark as IconHelpCircle } from '../components/icons/modonty-question-mark';
+export { ModontyViewsMark as IconEyeOff } from '../components/icons/modonty-views-mark';
+// Lucide visibility glyph paired with IconEyeOff; IconViews uses the branded analytics mark.
+export { ModontyViewsMark as IconEye } from '../components/icons/modonty-views-mark';
 // The three text-size marks — an A shrinking, an A and a small a, an A growing. The shape a
 // reader already knows from every word processor, so the control needs no label.
-export { AArrowDown       as IconTextSmaller   } from 'lucide-react';
-export { ALargeSmall      as IconTextNormal    } from 'lucide-react';
-export { AArrowUp         as IconTextBigger    } from 'lucide-react';
+export { ModontyTextSmallerMark as IconTextSmaller } from '../components/icons/modonty-utility-marks';
+export { ModontyTextNormalMark as IconTextNormal } from '../components/icons/modonty-utility-marks';
+export { ModontyTextBiggerMark as IconTextBigger } from '../components/icons/modonty-utility-marks';
 // The listen tab — headphones when the article has an audio version, struck through when not.
-export { Headphones       as IconListen        } from 'lucide-react';
-export { HeadphoneOff     as IconListenOff     } from 'lucide-react';
-export { Link2Off         as IconLinkOff       } from 'lucide-react';
-export { History          as IconHistory       } from 'lucide-react';
-export { Send             as IconSend          } from 'lucide-react';
-export { MoreVertical     as IconMoreVertical  } from 'lucide-react';
-export { FileQuestion     as IconFileQuestion  } from 'lucide-react';
-export { Download         as IconDownload      } from 'lucide-react';
-export { AlertTriangle    as IconAlertTriangle } from 'lucide-react';
-export { Volume2          as IconVolume2       } from 'lucide-react';
-export { VolumeX          as IconVolumeX       } from 'lucide-react';
-export { Pause            as IconPause         } from 'lucide-react';
-export { Circle           as IconCircle        } from 'lucide-react';
-export { MoreHorizontal   as IconMoreHorizontal } from 'lucide-react';
+export { ModontyListenMark as IconListen } from '../components/icons/modonty-utility-marks';
+export { ModontyListenOffMark as IconListenOff } from '../components/icons/modonty-utility-marks';
+export { ModontyLinkOffMark as IconLinkOff } from '../components/icons/modonty-brand-icons';
+export { ModontyClockMark as IconHistory } from '../components/icons/modonty-clock-mark';
+export { ModontyShareMark as IconSend } from '../components/icons/modonty-share-mark';
+export { ModontyMoreVerticalMark as IconMoreVertical } from '../components/icons/modonty-brand-icons';
+// 404 / missing-route state: an error is clearer than a generic file-question glyph.
+export { ModontyErrorMark as IconFileQuestion } from '../components/icons/modonty-error-mark';
+export { ModontyDownloadMark as IconDownload } from '../components/icons/modonty-brand-icons';
+export { ModontyAlertTriangleMark as IconAlertTriangle } from '../components/icons/modonty-brand-icons';
+export { ModontyAudioMark as IconVolume2 } from '../components/icons/modonty-audio-mark';
+export { ModontyAudioMark as IconVolumeX } from '../components/icons/modonty-audio-mark';
+export { ModontyPauseMark as IconPause } from '../components/icons/modonty-brand-icons';
+export { ModontyCircleMark as IconCircle } from '../components/icons/modonty-brand-icons';
+export { ModontyMoreHorizontalMark as IconMoreHorizontal } from '../components/icons/modonty-brand-icons';
 
 // ── Incentives / Marketing ───────────────────────────────────────────────────
-export { Gift             as IconGift          } from 'lucide-react';
-export { BadgePercent     as IconDiscount      } from 'lucide-react';
-export { Ticket           as IconTicket        } from 'lucide-react';
-export { Compass          as IconCompass       } from 'lucide-react';
+export { ModontyOffersMark as IconGift } from '../components/icons/modonty-offers-mark';
+export { ModontyOffersMark as IconDiscount } from '../components/icons/modonty-offers-mark';
+export { ModontyOffersMark as IconTicket } from '../components/icons/modonty-offers-mark';
+export { ModontyDirectionsMark as IconCompass  } from '../components/icons/modonty-directions-mark';
 
 // ── Media player (story / testimonial) ───────────────────────────────────────
-export { SkipBack         as IconSkipBack      } from 'lucide-react';
-export { SkipForward      as IconSkipForward   } from 'lucide-react';
-export { Square           as IconStop          } from 'lucide-react';
-export { Gauge            as IconSpeed         } from 'lucide-react';
-export { RotateCcw        as IconReplay        } from 'lucide-react';
+export { ModontySkipBackMark as IconSkipBack } from '../components/icons/modonty-brand-icons';
+export { ModontySkipForwardMark as IconSkipForward } from '../components/icons/modonty-brand-icons';
+// The approved media-control mark is used for the player's terminal control.
+export { ModontyPauseMark as IconStop } from '../components/icons/modonty-brand-icons';
+export { ModontySpeedMark as IconSpeed } from '../components/icons/modonty-brand-icons';
+export { ModontyReplayMark as IconReplay } from '../components/icons/modonty-utility-marks';
 // The +15s twin of IconReplay. SkipForward means "next track" everywhere else, so it would
 // read as the wrong promise on an article's audio version.
-export { RotateCw         as IconAdvance       } from 'lucide-react';
+export { ModontyAdvanceMark as IconAdvance } from '../components/icons/modonty-advance-mark';
 
 // ── Devices ──────────────────────────────────────────────────────────────────
-export { Smartphone       as IconMobile        } from 'lucide-react';
-export { Monitor          as IconDesktop       } from 'lucide-react';
+export { ModontyMobileMark as IconMobile } from '../components/icons/modonty-brand-icons';
+export { ModontyDesktopMark as IconDesktop } from '../components/icons/modonty-brand-icons';
 
 // ── Theme ────────────────────────────────────────────────────────────────────
-export { Sun              as IconSun           } from 'lucide-react';
-export { Moon             as IconMoon          } from 'lucide-react';
+export { ModontyThemeLightMark as IconSun } from '../components/icons/modonty-brand-icons';
+export { ModontyThemeDarkMark as IconMoon } from '../components/icons/modonty-brand-icons';
 
 // ── Trust & commerce ─────────────────────────────────────────────────────────
-export { ShieldCheck      as IconShieldCheck   } from 'lucide-react';
-export { Wallet           as IconWallet        } from 'lucide-react';
-export { Handshake        as IconHandshake     } from 'lucide-react';
-export { Award            as IconAward         } from 'lucide-react';
-export { Layers           as IconLayers        } from 'lucide-react'; // ترابط المحتوى — لا يعني «طبقات UI»
+export { ModontyTrustMark as IconShieldCheck } from '../components/icons/modonty-trust-mark';
+export { ModontyPaymentMark as IconWallet } from '../components/icons/modonty-payment-mark';
+export { ModontyPartnerMark as IconHandshake } from '../components/icons/modonty-partner-mark';
 
 // ── Controls (counter) ───────────────────────────────────────────────────────
-export { Minus            as IconRemove        } from 'lucide-react';
+export { ModontyRemoveMark as IconRemove } from '../components/icons/modonty-brand-icons';
 
 // ── Entities ─────────────────────────────────────────────────────────────────
-export { Building         as IconBuilding      } from 'lucide-react';

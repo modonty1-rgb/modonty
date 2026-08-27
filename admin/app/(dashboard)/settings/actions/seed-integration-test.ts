@@ -36,6 +36,7 @@ import { deleteArticle } from "@/app/(dashboard)/articles/actions/articles-actio
 import { getModontyAuthor } from "@/app/(dashboard)/authors/actions/authors-actions/get-modonty-author";
 import { createFAQ, updateFAQ, deleteFAQ } from "@/app/(dashboard)/modonty/faq/actions/faq-actions";
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 
 // ─── Types ───
 export type TestResult = {
@@ -895,12 +896,36 @@ async function seedInteractions(): Promise<SectionResult> {
     return { section: "Interactions", results: [{ action: "prerequisites (run Articles + Clients first)", phase: "validate", status: "skip", detail: "No articles or clients found" }], passed: 0, failed: 0 };
   }
 
-  // Clean
-  await db.commentLike.deleteMany({}); await db.commentDislike.deleteMany({});
-  await db.comment.deleteMany({ where: { parentId: { not: null } } }); await db.comment.deleteMany({});
-  await db.articleLike.deleteMany({}); await db.articleView.deleteMany({});
-  await db.clientView.deleteMany({}); await db.subscriber.deleteMany({});
-  await db.contactMessage.deleteMany({});
+  // Clean — scoped to exactly what this section creates further down.
+  //
+  // These five lines were `deleteMany({})` with no `where` at all: every comment, like, view,
+  // subscriber and contact message in the database, on whichever database the running admin
+  // was pointed at. The section picks the FIRST article and client it finds (`findFirst`
+  // above), so on a populated database it wiped real readers' interactions and real contact
+  // messages to make room for two test rows.
+  //
+  // Scope now follows the create calls below: comments/likes/views on the one article this
+  // run uses, views/subscribers on the one client, and contact messages by the two seed
+  // addresses. Anything a person actually left is out of range.
+  const seedContactEmails = ["tariq@test.sa", "mona@test.sa"];
+  const seedSubscriberEmails = ["sub1@test.com", "sub2@test.com"];
+  const articleComments = await db.comment.findMany({
+    where: { articleId: article.id },
+    select: { id: true },
+  });
+  const commentIds = articleComments.map((c) => c.id);
+  if (commentIds.length > 0) {
+    await db.commentLike.deleteMany({ where: { commentId: { in: commentIds } } });
+    await db.commentDislike.deleteMany({ where: { commentId: { in: commentIds } } });
+  }
+  // Replies first: a parent row cannot go while a child still points at it.
+  await db.comment.deleteMany({ where: { articleId: article.id, parentId: { not: null } } });
+  await db.comment.deleteMany({ where: { articleId: article.id } });
+  await db.articleLike.deleteMany({ where: { articleId: article.id } });
+  await db.articleView.deleteMany({ where: { articleId: article.id } });
+  await db.clientView.deleteMany({ where: { clientId: client.id } });
+  await db.subscriber.deleteMany({ where: { clientId: client.id, email: { in: seedSubscriberEmails } } });
+  await db.contactMessage.deleteMany({ where: { email: { in: seedContactEmails } } });
 
   const S = () => `sess_${crypto.randomUUID().slice(0, 8)}`;
 
@@ -1024,7 +1049,27 @@ async function writeLog(sections: SectionResult[]): Promise<string> {
 // MAIN ENTRY
 // ═══════════════════════════════════════════════════════════════════
 
+/**
+ * Two gates, both missing until 27 Aug 2026. This file is `"use server"`, so every exported
+ * function here is an HTTP endpoint anyone can POST to — and these seeders delete rows and
+ * write dozens of fake articles. Signed in is not enough on its own: the whole file only
+ * makes sense against a development database, and the admin can be deployed.
+ */
+async function assertSeedAllowed(): Promise<string | null> {
+  if (process.env.NODE_ENV === "production") {
+    return "بذر بيانات التست ممنوع على بيئة الإنتاج.";
+  }
+  const session = await auth();
+  if (!session) return "Unauthorized";
+  return null;
+}
+
 export async function runSeedSection(section: SeedSection): Promise<SectionResult & { logFile?: string }> {
+  const blocked = await assertSeedAllowed();
+  if (blocked) {
+    return { section: "Blocked", results: [{ action: "seed guard", phase: "validate", status: "fail", detail: blocked }], passed: 0, failed: 1 };
+  }
+
   let result: SectionResult;
   switch (section) {
     case "categories": result = await seedCategories(); break;
@@ -1042,6 +1087,16 @@ export async function runSeedSection(section: SeedSection): Promise<SectionResul
 }
 
 export async function runAllSeedSections(): Promise<{ sections: SectionResult[]; logFile: string }> {
+  // Guarded here as well, not only through `runSeedSection`: this is its own endpoint, and a
+  // caller blocked section-by-section would otherwise still get seven blocked rounds and a log.
+  const blocked = await assertSeedAllowed();
+  if (blocked) {
+    return {
+      sections: [{ section: "Blocked", results: [{ action: "seed guard", phase: "validate", status: "fail", detail: blocked }], passed: 0, failed: 1 }],
+      logFile: "",
+    };
+  }
+
   const order: SeedSection[] = ["categories", "tags", "industries", "clients", "articles", "faqs", "interactions"];
   const sections: SectionResult[] = [];
   for (const s of order) sections.push(await runSeedSection(s));
@@ -1052,5 +1107,10 @@ export async function runAllSeedSections(): Promise<{ sections: SectionResult[];
 
 // Save combined log from UI (called after all sections finish)
 export async function saveCombinedLog(sections: SectionResult[]): Promise<string> {
+  // The third endpoint in this file: it writes a caller-supplied payload to disk on the
+  // server. Same gate as the seeders — an unauthenticated caller has no business writing files.
+  const blocked = await assertSeedAllowed();
+  if (blocked) return "";
+
   return writeLog(sections);
 }

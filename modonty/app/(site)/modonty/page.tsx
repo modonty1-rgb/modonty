@@ -24,6 +24,7 @@ import type { FeedPost } from "@/lib/types";
 import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
 import { SITE_URL } from "@/constants";
 import { buildPageAlternates } from "@/lib/seo/build-page-alternates";
+import { buildShareTags } from "@/lib/seo/build-share-tags";
 import { reveal } from "./helpers/reveal";
 
 /** modonty's own slug in the `Client` table — the same row every partner card reads. */
@@ -55,16 +56,27 @@ export async function generateMetadata({ searchParams }: ModontyPageProps): Prom
   const total = profile ? (await getModontyArticles(profile.id)).length : 0;
   const hasNext = total > page * FEED_PAGE_SIZE;
 
+  // Brand appended by hand in `<title>` (`absolute`); the share tags take the bare headline
+  // because `og:site_name` already carries the brand on a card.
+  const headline =
+    page > 1 ? `مقالات مدونتي — الصفحة ${page.toLocaleString("ar-SA")}` : "مقالات مدونتي";
+  const description =
+    "كل مقالات مدونتي الخاصة — بمعرضها وأرقامها الحقيقية، من نفس صفّها في قاعدة الشركاء.";
+  const path = page > 1 ? `/modonty?page=${page}` : "/modonty";
+
   return {
-    title: { absolute: page > 1 ? `مقالات مدونتي — الصفحة ${page.toLocaleString("ar-SA")} | مدونتي` : "مقالات مدونتي | مدونتي" },
-    description: "كل مقالات مدونتي الخاصة — بمعرضها وأرقامها الحقيقية، من نفس صفّها في قاعدة الشركاء.",
+    title: { absolute: `${headline} | مدونتي` },
+    description,
     // Its own canonical and the locales from Settings. It used to ship the canonical alone,
     // which in Next means the layout's alternates are replaced, not extended.
-    alternates: await buildPageAlternates(page > 1 ? `/modonty?page=${page}` : "/modonty"),
+    alternates: await buildPageAlternates(path),
     pagination: {
       previous: page > 1 ? pageUrl(page - 1) : undefined,
       next: hasNext ? pageUrl(page + 1) : undefined,
     },
+    // Shipped zero og:/twitter: until now — see `buildShareTags`. `og:url` follows the same
+    // paged path as the canonical, so page 2 does not claim to be page 1.
+    ...(await buildShareTags({ path, title: headline, description })),
   };
 }
 

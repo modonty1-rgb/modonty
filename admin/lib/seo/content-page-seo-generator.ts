@@ -11,6 +11,7 @@
  */
 
 import { buildContentPageMetadata } from "@modonty/shared/lib/seo/build-content-page-metadata";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 
 import { db } from "@/lib/db";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
@@ -52,7 +53,9 @@ export async function regenerateContentPageCache(slug: string): Promise<{ succes
     if (!config) return { success: false, error: `Unknown content page "${slug}"` };
 
     const settings = (await getAllSettings()) as unknown as Record<string, unknown>;
-    const siteUrl = ((settings.siteUrl as string) || "https://www.modonty.com").replace(/\/$/, "");
+    // No literal fallback — this becomes the canonical of /about, /contact, /terms and the
+    // legal pages, all of which are indexable.
+    const siteUrl = requireSiteUrl(settings.siteUrl as string | undefined).replace(/\/$/, "");
     const row = await db.modonty.findUnique({ where: { slug } });
     const fallback = FALLBACKS[slug] ?? { title: config.label, description: config.description };
 

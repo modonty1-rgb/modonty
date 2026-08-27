@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "Modonty Console",
+    "slug": "modonty-console",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/brand/modonty-mark.png",
+    "scheme": "modontyconsole",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0E065A",
+        "foregroundImage": "./assets/brand/modonty-mark.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/brand/modonty-mark.png",
+          "imageWidth": 120,
+          "resizeMode": "contain",
+          "backgroundColor": "#0E065A",
+          "dark": {
+            "backgroundColor": "#0E065A"
+          }
+        }
+      ]
+    ],
+    "experiments": { "reactCompiler": true }
+  }
+}

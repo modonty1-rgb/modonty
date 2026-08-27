@@ -1,5 +1,6 @@
 "use client";
 
+import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
@@ -34,7 +35,7 @@ function deriveAlternateLanguages(
   let base: string;
   let pathname: string;
   try {
-    const url = new URL(canonicalUrl || `${siteUrl}/`);
+    const url = new URL(canonicalUrl || absoluteUrl("/", siteUrl));
     base = url.origin;
     pathname = url.pathname || "/";
   } catch {
@@ -47,11 +48,15 @@ function deriveAlternateLanguages(
     .map((locale) => {
       const hreflang = toBcp47FromLocale(locale);
       if (!hreflang) return null;
-      const langSegment = hreflang.split("-")[0];
-      const url =
-        pathname === "/"
-          ? `${base}/${langSegment}`
-          : `${base}/${langSegment}${pathname.startsWith("/") ? pathname : `/${pathname}`}`;
+      // Was `${base}/${langSegment}${pathname}` — and this one is worse than its twin in
+      // `build-meta-from-page`, because the form WRITES the result into
+      // `Modonty.alternateLanguages`. So the invented `…/en/about` was not just rendered, it
+      // was stored, and every later regeneration read it back as if someone had chosen it.
+      //
+      // modonty serves no locale segment (zero `[locale]`/`en`/`[lang]` route, measured
+      // 27 Aug 2026), so those URLs are 404s. Google: "If two pages don't both point to each
+      // other, the tags will be ignored" — one dead alternate voids the whole set.
+      const url = pathname === "/" ? `${base}/` : `${base}${pathname.startsWith("/") ? pathname : `/${pathname}`}`;
       return { hreflang, url };
     })
     .filter((item): item is { hreflang: string; url: string } => item !== null);
@@ -113,7 +118,7 @@ interface UsePageFormParams {
 }
 
 function buildFormData(slug: string, initialData: PageInitialData | undefined, settingsDefaults: SettingsDefaults): PageFormData {
-  const defaultCanonical = `${settingsDefaults.siteUrl}/${slug}`;
+  const defaultCanonical = absoluteUrl(`/${slug}`, settingsDefaults.siteUrl);
   const m = (initialData?.metaTags as Record<string, unknown> | undefined)?.organizationSeo as PageFormData["organizationSeo"] | undefined;
   const defaultLogo = settingsDefaults.logoUrl ?? "";
 
@@ -223,7 +228,7 @@ export function usePageForm({ slug, initialData, settingsDefaults, onRegenerated
       }
 
       const derivedInLanguage = deriveInLanguageFromOgLocale(formData.ogLocale);
-      const fallbackCanonical = formData.canonicalUrl || `${settingsDefaults.siteUrl}/${slug}`;
+      const fallbackCanonical = formData.canonicalUrl || absoluteUrl(`/${slug}`, settingsDefaults.siteUrl);
       const derivedAlternateLanguages = deriveAlternateLanguages(
         formData.ogLocaleAlternate,
         fallbackCanonical,

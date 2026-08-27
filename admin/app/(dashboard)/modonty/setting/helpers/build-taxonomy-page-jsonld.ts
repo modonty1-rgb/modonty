@@ -7,6 +7,8 @@
  * CollectionPage builder the listing generator used to fall back to.
  */
 
+import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import type { SettingsForHomeJsonLd } from "./build-home-jsonld-from-settings";
 import { buildSiteOrgAndWebSite } from "./build-clients-page-jsonld";
 
@@ -14,7 +16,7 @@ function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): str
   if (!url?.trim()) return undefined;
   const u = url.trim();
   if (u.startsWith("http://") || u.startsWith("https://")) return u.replace("http://", "https://");
-  if (u.startsWith("/")) return `${siteUrl}${u}`;
+  if (u.startsWith("/")) return absoluteUrl(u, siteUrl);
   return `https://${u}`;
 }
 
@@ -56,7 +58,7 @@ function itemToListItem(
   siteUrl: string,
   index: number
 ): Record<string, unknown> {
-  const profileUrl = `${siteUrl}${basePath}/${item.slug}`;
+  const profileUrl = entityUrl(basePath, item.slug, siteUrl);
   const url = item.canonicalUrl?.trim() || profileUrl;
   const absUrl = ensureAbsoluteUrl(url, siteUrl) || profileUrl;
   const absImage = item.socialImage ? ensureAbsoluteUrl(item.socialImage, siteUrl) : undefined;
@@ -104,11 +106,14 @@ export function buildTaxonomyPageJsonLd(
   pageType: TaxonomyPageType,
   items: TaxonomyItemForJsonLd[],
   totalCount: number,
-  dateModified: Date
+  // `null` when the list is empty. An empty listing page has no content date, and the
+  // caller used to pass `new Date()` for it — a page announcing it changed today because it
+  // has nothing on it. Absent stays absent, the same rule the per-item dates below follow.
+  dateModified: Date | null
 ): object {
-  const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
+  const siteUrl = requireSiteUrl(settings.siteUrl).replace(/\/$/, "");
   const fallback = TAXONOMY_FALLBACKS[pageType];
-  const pageUrl = `${siteUrl}${fallback.path}`;
+  const pageUrl = absoluteUrl(fallback.path, siteUrl);
   const { org, website, inLangCodes } = buildSiteOrgAndWebSite(settings, siteUrl);
 
   const titleMap = {
@@ -121,7 +126,7 @@ export function buildTaxonomyPageJsonLd(
   } as const;
 
   const name = titleMap[pageType]?.trim() || fallback.name;
-  const description = descMap[pageType]?.trim() || fallback.description;
+  const description = descMap[pageType]?.trim() || undefined;
   const ogImageUrl = (settings.ogImageUrl ?? settings.logoUrl ?? "").trim();
   const absOgImage = ogImageUrl ? ensureAbsoluteUrl(ogImageUrl, siteUrl) : undefined;
 
@@ -141,10 +146,10 @@ export function buildTaxonomyPageJsonLd(
     "@id": `${pageUrl}#collectionpage`,
     name,
     url: pageUrl,
-    description,
+    ...(description && { description }),
     inLanguage: inLangCodes,
     isPartOf: { "@id": website["@id"] },
-    dateModified: dateModified.toISOString(),
+    ...(dateModified ? { dateModified: dateModified.toISOString() } : {}),
     mainEntity: itemList,
     breadcrumb: {
       "@type": "BreadcrumbList",

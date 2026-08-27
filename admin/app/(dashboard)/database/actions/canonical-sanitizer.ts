@@ -8,6 +8,7 @@ import { generateAndSaveTagSeo } from "@/lib/seo/tag-seo-generator";
 import { generateAndSaveIndustrySeo } from "@/lib/seo/industry-seo-generator";
 import { regenerateNextjsMetadata } from "@/lib/seo/metadata-storage";
 import { regenerateJsonLd } from "@/lib/seo/jsonld-storage";
+import { assertRegenerated } from "../helpers/assert-regenerated";
 
 /**
  * Canonical URL sanitizer (site-wide: clients · articles · categories · tags · industries · authors).
@@ -35,18 +36,23 @@ interface EntityConfig {
 
 // Author has no SEO generator (its page builds canonical at runtime) → column-only fix.
 const ENTITIES: EntityConfig[] = [
-  { kind: "client", path: "clients", regen: (id) => generateClientSEO(id) },
+  // Every generator below CATCHES internally and RETURNS `{ success, error }` — none of them
+  // throws. So awaiting one and moving on proves nothing: `assertRegenerated` reads the answer
+  // and throws when it is false, which is what makes the caller's failure counter honest.
+  { kind: "client", path: "clients", regen: (id) => assertRegenerated(generateClientSEO(id), "الشريك") },
   {
     kind: "article",
     path: "articles",
     regen: async (id) => {
-      await regenerateNextjsMetadata(id).catch(() => {});
-      await regenerateJsonLd(id).catch(() => {});
+      // Both used to end in `.catch(() => {})` — a swallow on top of a generator that never
+      // throws, so a failed rebuild passed twice over in silence.
+      await assertRegenerated(regenerateNextjsMetadata(id), "ميتاداتا المقال");
+      await assertRegenerated(regenerateJsonLd(id), "بيانات المقال المنظّمة");
     },
   },
-  { kind: "category", path: "categories", regen: (id) => generateAndSaveCategorySeo(id) },
-  { kind: "tag", path: "tags", regen: (id) => generateAndSaveTagSeo(id) },
-  { kind: "industry", path: "industries", regen: (id) => generateAndSaveIndustrySeo(id) },
+  { kind: "category", path: "categories", regen: (id) => assertRegenerated(generateAndSaveCategorySeo(id), "التصنيف") },
+  { kind: "tag", path: "tags", regen: (id) => assertRegenerated(generateAndSaveTagSeo(id), "الوسم") },
+  { kind: "industry", path: "industries", regen: (id) => assertRegenerated(generateAndSaveIndustrySeo(id), "القطاع") },
   { kind: "author", path: "authors" }, // column-only
 ];
 
@@ -191,9 +197,26 @@ export async function sanitizeAllCanonicals(): Promise<CanonicalSanitizerResult>
   for (const issue of stats.issues) {
     try {
       await updateCanonical(issue.kind, issue.id, issue.after);
+
       // Regenerate stored SEO so the live page reflects the corrected canonical.
+      //
+      // This used to end in `.catch(() => {})`, and that swallow was the whole defect: modonty
+      // serves the STORED blob, so a corrected column with a failed regeneration leaves the
+      // public page on the old canonical — while this counter says "successful". The row is
+      // fixed and the page is not, and nothing on screen says so.
       const regen = regenByKind.get(issue.kind);
-      if (regen) await regen(issue.id).catch(() => {});
+      if (regen) {
+        try {
+          await regen(issue.id);
+        } catch (e) {
+          result.failed++;
+          result.errors.push({
+            id: issue.id,
+            error: `الرابط انصحّح في القاعدة، لكن بيانات السيو ما تجدّدت — الصفحة العامة ما زالت على الرابط القديم: ${e instanceof Error ? e.message : String(e)}`,
+          });
+          continue;
+        }
+      }
       result.successful++;
     } catch (e) {
       result.failed++;

@@ -3,6 +3,8 @@
  * Spec: importatn-CATEGORIES-PAGE-META-JSONLD-SPEC.md §4, §4a
  */
 
+import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import type { SettingsForHomeJsonLd } from "./build-home-jsonld-from-settings";
 import { buildSiteOrgAndWebSite } from "./build-clients-page-jsonld";
 
@@ -10,7 +12,7 @@ function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): str
   if (!url?.trim()) return undefined;
   const u = url.trim();
   if (u.startsWith("http://") || u.startsWith("https://")) return u.replace("http://", "https://");
-  if (u.startsWith("/")) return `${siteUrl}${u}`;
+  if (u.startsWith("/")) return absoluteUrl(u, siteUrl);
   return `https://${u}`;
 }
 
@@ -36,7 +38,7 @@ function categoryToThing(
   siteUrl: string,
   index: number
 ): Record<string, unknown> {
-  const profileUrl = `${siteUrl}/categories/${category.slug}`;
+  const profileUrl = entityUrl("categories", category.slug, siteUrl);
   const url = category.canonicalUrl?.trim() || profileUrl;
   const absUrl = ensureAbsoluteUrl(url, siteUrl) || profileUrl;
   const absImage = category.socialImage ? ensureAbsoluteUrl(category.socialImage, siteUrl) : undefined;
@@ -68,7 +70,7 @@ function categoryToThing(
     };
   }
   if (category.parent?.slug) {
-    thing.broader = { "@id": `${siteUrl}/categories/${category.parent.slug}` };
+    thing.broader = { "@id": entityUrl("categories", category.parent.slug, siteUrl) };
   }
   // No `identifier` — same reason as the taxonomy builder: the raw Mongo _id was reaching
   // public JSON-LD (measured 25 Aug 2026 — 15 on /categories). The absolute `url` already
@@ -85,15 +87,18 @@ export function buildCategoriesPageJsonLd(
   settings: SettingsForHomeJsonLd,
   categories: CategoryForCategoriesPageJsonLd[],
   totalCount: number,
-  dateModified: Date
+  // `null` when the list is empty. An empty listing page has no content date, and the
+  // caller used to pass `new Date()` for it — a page announcing it changed today because it
+  // has nothing on it. Absent stays absent, the same rule the per-item dates below follow.
+  dateModified: Date | null
 ): object {
-  const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
-  const pageUrl = `${siteUrl}/categories`;
+  const siteUrl = requireSiteUrl(settings.siteUrl).replace(/\/$/, "");
+  const pageUrl = absoluteUrl("/categories", siteUrl);
   const { org, website, inLangCodes } = buildSiteOrgAndWebSite(settings, siteUrl);
 
   const name = settings.categoriesSeoTitle?.trim() || "الفئات";
   const description =
-    settings.categoriesSeoDescription?.trim() || "استكشف المقالات حسب الفئة - تصفح جميع فئات المحتوى المتاحة.";
+    settings.categoriesSeoDescription?.trim() || undefined;
   const ogImageUrl = (settings.ogImageUrl ?? settings.logoUrl ?? "").trim();
   const absOgImage = ogImageUrl ? ensureAbsoluteUrl(ogImageUrl, siteUrl) : undefined;
 
@@ -111,10 +116,10 @@ export function buildCategoriesPageJsonLd(
     "@id": `${pageUrl}#collectionpage`,
     name,
     url: pageUrl,
-    description,
+    ...(description && { description }),
     inLanguage: inLangCodes,
     isPartOf: { "@id": website["@id"] },
-    dateModified: dateModified.toISOString(),
+    ...(dateModified ? { dateModified: dateModified.toISOString() } : {}),
     mainEntity: itemList,
     breadcrumb: {
       "@type": "BreadcrumbList",

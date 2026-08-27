@@ -3,6 +3,8 @@
  * Spec: importatn-CLIENTS-PAGE-META-JSONLD-SPEC.md §4, §4a
  */
 
+import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import type { SettingsForHomeJsonLd } from "./build-home-jsonld-from-settings";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
@@ -11,7 +13,7 @@ function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): str
   if (!url?.trim()) return undefined;
   const u = url.trim();
   if (u.startsWith("http://") || u.startsWith("https://")) return u.replace("http://", "https://");
-  if (u.startsWith("/")) return `${siteUrl}${u}`;
+  if (u.startsWith("/")) return absoluteUrl(u, siteUrl);
   return `https://${u}`;
 }
 
@@ -91,7 +93,9 @@ export function buildSiteOrgAndWebSite(
     "@id": orgId,
     name: siteName,
     url: siteUrl,
-    description: settings.brandDescription?.trim() ?? "",
+    // Omitted when Settings has none — an empty `description` asserts that the organisation
+    // describes itself as nothing, which is a claim; an absent one says "not stated".
+    ...(settings.brandDescription?.trim() ? { description: settings.brandDescription.trim() } : {}),
     sameAs: sameAsList,
   };
   if (absLogo) org.logo = { "@type": "ImageObject", url: absLogo, width: 512, height: 512 };
@@ -148,21 +152,16 @@ export function buildSiteOrgAndWebSite(
     "@id": websiteId,
     name: siteName,
     url: siteUrl,
-    description: settings.brandDescription?.trim() ?? "",
+    // Omitted when Settings has none — an empty `description` asserts that the organisation
+    // describes itself as nothing, which is a claim; an absent one says "not stated".
+    ...(settings.brandDescription?.trim() ? { description: settings.brandDescription.trim() } : {}),
     inLanguage: inLangCodes,
     publisher: { "@id": orgId },
   };
-  const searchTemplate = settings.orgSearchUrlTemplate?.trim();
-  if (searchTemplate) {
-    website.potentialAction = {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: searchTemplate.includes("{") ? searchTemplate : `${searchTemplate}?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    };
-  }
+  // The SearchAction block that stood here was removed on 27 Aug 2026 — Google retired the
+  // sitelinks search box ("no longer available", Search Central changelog, 29 Nov 2024).
+  // `Settings.orgSearchUrlTemplate` stays in the DB: it is the site's own search URL and other
+  // things may use it. Nothing reads it for structured data any more.
 
   return { org, website, inLangCodes };
 }
@@ -172,7 +171,7 @@ function clientToOrganization(
   siteUrl: string,
   index: number
 ): Record<string, unknown> {
-  const profileUrl = `${siteUrl}/clients/${client.slug}`;
+  const profileUrl = entityUrl("clients", client.slug, siteUrl);
   const url = client.canonicalUrl?.trim() || client.url?.trim() || profileUrl;
   const absUrl = ensureAbsoluteUrl(url, siteUrl) || profileUrl;
   const logoSrc = mediaSrc(client.logoMedia);
@@ -275,7 +274,7 @@ function clientToOrganization(
     };
   }
   if (client.parent?.slug) {
-    node.parentOrganization = { "@id": `${siteUrl}/clients/${client.parent.slug}` };
+    node.parentOrganization = { "@id": entityUrl("clients", client.parent.slug, siteUrl) };
   }
   if (client.isicV4?.trim()) node.isicV4 = client.isicV4.trim();
   if (client.commercialRegistrationNumber?.trim()) {
@@ -294,16 +293,19 @@ export function buildClientsPageJsonLd(
   settings: SettingsForHomeJsonLd,
   clients: ClientForClientsPageJsonLd[],
   totalCount: number,
-  dateModified: Date
+  // `null` when the list is empty. An empty listing page has no content date, and the
+  // caller used to pass `new Date()` for it — a page announcing it changed today because it
+  // has nothing on it. Absent stays absent, the same rule the per-item dates below follow.
+  dateModified: Date | null
 ): object {
-  const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
-  const pageUrl = `${siteUrl}/clients`;
+  const siteUrl = requireSiteUrl(settings.siteUrl).replace(/\/$/, "");
+  const pageUrl = absoluteUrl("/clients", siteUrl);
   const { org, website, inLangCodes } = buildSiteOrgAndWebSite(settings, siteUrl);
 
   const name =
     settings.clientsSeoTitle?.trim() || "العملاء - دليل الشركات والمؤسسات";
   const description =
-    settings.clientsSeoDescription?.trim() || "استكشف دليل شامل للشركات والمؤسسات الرائدة.";
+    settings.clientsSeoDescription?.trim() || undefined;
   const ogImageUrl = (settings.ogImageUrl ?? settings.logoUrl ?? "").trim();
   const absOgImage = ogImageUrl ? ensureAbsoluteUrl(ogImageUrl, siteUrl) : undefined;
 
@@ -321,10 +323,10 @@ export function buildClientsPageJsonLd(
     "@id": `${pageUrl}#collectionpage`,
     name,
     url: pageUrl,
-    description,
+    ...(description && { description }),
     inLanguage: inLangCodes,
     isPartOf: { "@id": website["@id"] },
-    dateModified: dateModified.toISOString(),
+    ...(dateModified ? { dateModified: dateModified.toISOString() } : {}),
     mainEntity: itemList,
     breadcrumb: {
       "@type": "BreadcrumbList",

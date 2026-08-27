@@ -42,7 +42,7 @@ export default async function EditArticlePage({ params }: { params: Promise<{ id
 
   const realSeoScore = seoRow ? getArticleSeoScore(seoRow) : 0;
 
-  const transformedData = transformArticleToFormData(article);
+  const transformedData = transformArticleToFormData(article, siteUrl);
   const settingsArticleDefaults = getArticleDefaultsFromSettings(settings);
   const initialData = {
     ...transformedData,

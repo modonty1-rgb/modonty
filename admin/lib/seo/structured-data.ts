@@ -1,6 +1,7 @@
 import { Article, Client, Author, Category, ArticleFAQ } from "@prisma/client";
 import { ArticleStructuredData } from "@/lib/types";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
 
 interface ArticleWithRelations extends Article {
   client: Client & {
@@ -13,14 +14,15 @@ interface ArticleWithRelations extends Article {
 }
 
 /**
- * Generate Article JSON-LD. Pass siteUrl from `loadSiteUrl()` for DB-backed source of truth.
- * The default fallback is a last-resort safety net only.
+ * Generate Article JSON-LD. `siteUrl` comes from `loadSiteUrl()` (DB-backed) and is required:
+ * it becomes the article's `url` whenever no canonical is stored, so a default here would
+ * write a host nobody chose into published structured data.
  */
 export function generateArticleStructuredData(
   article: ArticleWithRelations,
-  siteUrl: string = "https://www.modonty.com",
+  siteUrl: string,
 ): ArticleStructuredData {
-  const articleUrl = article.canonicalUrl || `${siteUrl}/articles/${article.slug}`;
+  const articleUrl = article.canonicalUrl || entityUrl("articles", article.slug, siteUrl);
 
   const structuredData: ArticleStructuredData = {
     "@context": "https://schema.org",
@@ -59,7 +61,8 @@ export function generateArticleStructuredData(
 
 export function generateBreadcrumbStructuredData(
   items: Array<{ name: string; url: string }>,
-  siteUrl: string = "https://www.modonty.com",
+  /** Required for the same reason as above — it prefixes every trail item's `item` URL. */
+  siteUrl: string,
 ) {
   return {
     "@context": "https://schema.org",
@@ -68,7 +71,7 @@ export function generateBreadcrumbStructuredData(
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: `${siteUrl}${item.url}`,
+      item: absoluteUrl(item.url, siteUrl),
     })),
   };
 }
@@ -187,10 +190,16 @@ export function generateOrganizationStructuredData(client: Client & {
     if (client.phone) {
       contactPoint.telephone = client.phone;
     }
-    contactPoint.areaServed = client.addressCountry || "SA";
-    contactPoint.availableLanguage = Array.isArray(client.knowsLanguage) && client.knowsLanguage.length > 0
-      ? client.knowsLanguage
-      : ["Arabic", "English"];
+    // Stored values only — an unset country is not "SA" and an unset language list is not
+    // ["Arabic","English"]. Google: "Your structured data must be a true representation of
+    // the page content."
+    // https://developers.google.com/search/docs/appearance/structured-data/sd-policies
+    if (client.addressCountry?.trim()) {
+      contactPoint.areaServed = client.addressCountry.trim();
+    }
+    if (Array.isArray(client.knowsLanguage) && client.knowsLanguage.length > 0) {
+      contactPoint.availableLanguage = client.knowsLanguage;
+    }
     contactPoints.push(contactPoint);
   }
   
@@ -251,12 +260,13 @@ export function generateOrganizationStructuredData(client: Client & {
     }
   }
 
-  // Parent organization relationship
+  // Parent organization relationship. No `@id` — see knowledge-graph-generator.ts: a raw
+  // Mongo ObjectId is not an IRI, does not resolve, and does not match the parent's real
+  // node. The correct identifier is built from the parent's slug, which this shape lacks.
   if (client.parentOrganization) {
     structuredData.parentOrganization = {
       "@type": "Organization",
       name: client.parentOrganization.name,
-      ...(client.parentOrganization.id && { "@id": client.parentOrganization.id }),
       ...(client.parentOrganization.url && { url: client.parentOrganization.url }),
     };
   }

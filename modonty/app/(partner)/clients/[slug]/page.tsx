@@ -155,8 +155,12 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
       ...(robots ? { robots } : {}),
     };
   } catch {
+    // Transient read failure, not a missing page: `noindex, follow` so this render does not
+    // put a generic title into the index on a real URL, while the next successful crawl
+    // restores the real metadata. Same reasoning as the article page.
     return {
       title: "الشركاء",
+      robots: { index: false, follow: true },
     };
   }
 }

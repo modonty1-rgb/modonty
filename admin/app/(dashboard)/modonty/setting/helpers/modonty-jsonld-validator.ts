@@ -136,6 +136,33 @@ function resolveType(obj: unknown): string | undefined {
   return typeof t === "string" ? t : undefined;
 }
 
+// The rule is "the graph must describe a page", and CollectionPage is only ONE of the
+// schema.org WebPage subtypes that does. /help/faq legitimately uses FAQPage, and this
+// rule warned on it forever — the dashboard read «1 تحذير» on a page that was correct.
+// (FAQPage no longer earns a rich result: Google retired the FAQ feature 2026-05-07 and
+// removed its docs 2026-06-15. The markup stays valid, it just buys no rich result.)
+const PAGE_TYPES = ["CollectionPage", "FAQPage", "WebPage", "AboutPage", "ItemPage"];
+
+/**
+ * Is this graph the site HOME PAGE? Read from the page node's own `url`: the home page's
+ * CollectionPage carries the bare site root, every list page carries a sub-path
+ * (…/articles, …/clients). Google draws the same line — it defines the home page as
+ * "the domain or subdomain level root URI".
+ */
+function isHomePageGraph(graph: unknown[]): boolean {
+  const pageNode = graph.find(
+    (n: unknown) =>
+      typeof n === "object" && n !== null && PAGE_TYPES.includes(resolveType(n) ?? "")
+  ) as { url?: unknown } | undefined;
+  const url = typeof pageNode?.url === "string" ? pageNode.url : undefined;
+  if (!url) return false;
+  try {
+    return new URL(url).pathname === "/";
+  } catch {
+    return false;
+  }
+}
+
 function validateModontyPageBusinessRules(jsonLd: object): ModontyValidationReport["custom"] {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -158,7 +185,8 @@ function validateModontyPageBusinessRules(jsonLd: object): ModontyValidationRepo
   return { errors, warnings };
 }
 
-function validateHomeOrListPageBusinessRules(jsonLd: object): ModontyValidationReport["custom"] {
+/** Exported so the WebSite/home-page rule can be exercised without the network validators. */
+export function validateHomeOrListPageBusinessRules(jsonLd: object): ModontyValidationReport["custom"] {
   const errors: string[] = [];
   const warnings: string[] = [];
   const graph = (jsonLd as { "@graph"?: unknown[] })["@graph"];
@@ -168,15 +196,29 @@ function validateHomeOrListPageBusinessRules(jsonLd: object): ModontyValidationR
   }
   const hasOrg = graph.some((n: unknown) => resolveType(n) === "Organization");
   const hasWebSite = graph.some((n: unknown) => resolveType(n) === "WebSite");
-  // The rule is "the graph must describe a page", and CollectionPage is only ONE of the
-  // schema.org WebPage subtypes that does. /help/faq legitimately uses FAQPage, and this
-  // rule warned on it forever — the dashboard read «1 تحذير» on a page that was correct.
-  // (FAQPage no longer earns a rich result: Google retired the FAQ feature 2026-05-07 and
-  // removed its docs 2026-06-15. The markup stays valid, it just buys no rich result.)
-  const PAGE_TYPES = ["CollectionPage", "FAQPage", "WebPage", "AboutPage", "ItemPage"];
   const hasPageNode = graph.some((n: unknown) => PAGE_TYPES.includes(resolveType(n) ?? ""));
   if (!hasOrg) errors.push("Missing Organization node in @graph");
-  if (!hasWebSite) errors.push("Missing WebSite node in @graph");
+
+  // Origin: GOOGLE, official — and this rule used to contradict it. Google's Site names page
+  // says: "The WebSite structured data must be on the home page of the site" and "You don't
+  // need to include this markup on every page of your site; you only need to add this markup
+  // to the home page of your site."
+  // https://developers.google.com/search/docs/appearance/site-names
+  // So a MISSING WebSite node is an error on the home page only. On a list page the defect is
+  // the opposite one — a WebSite node that should not be there — reported as a warning so the
+  // list-page builders can be corrected (this error previously pinned them to the violation).
+  if (isHomePageGraph(graph)) {
+    if (!hasWebSite) {
+      errors.push(
+        "Missing WebSite node in @graph — Google requires the WebSite structured data on the home page"
+      );
+    }
+  } else if (hasWebSite) {
+    warnings.push(
+      "WebSite node on a non-home page — Google: the WebSite structured data must be on the home page of the site only"
+    );
+  }
+
   if (!hasPageNode) warnings.push("Home/list JSON-LD should have a page node (CollectionPage, FAQPage…)");
   return { errors, warnings };
 }

@@ -166,6 +166,13 @@ export function summarizeStage(
     return { status: "not-run", passed: 0, failed: 0, total: stage.checkIds.length, hasCritical: false };
   }
   const stageChecks = checkResults.filter((c) => stage.checkIds.includes(c.id));
+  // Zero checks ran for this stage — that is "not measured", never "ready". Stages 12
+  // (performance) and 13 (final-check) carry `checkIds: []` because their data comes from
+  // PageSpeed / Search Console, so before this guard they both scored `status: "ready"`
+  // with `total: 0` on every run — two permanently green stages nobody ever measured.
+  if (stageChecks.length === 0) {
+    return { status: "not-run", passed: 0, failed: 0, total: stage.checkIds.length, hasCritical: false };
+  }
   const passed = stageChecks.filter((c) => c.passed).length;
   const failed = stageChecks.filter((c) => !c.passed);
   const hasCritical = failed.some((c) => c.severity === "critical");

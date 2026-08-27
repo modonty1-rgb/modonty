@@ -1,5 +1,7 @@
 import { Client } from "@prisma/client";
 import { safeOrganizationType, resolveOrganizationType, isLocalFamilyType } from "./organization-schema-types";
+import { absoluteUrl, entityUrl } from "./absolute-url";
+import { requireSiteUrl } from "./require-site-url";
 import { YMYL_CATEGORIES, isYmylCategory } from "./ymyl-config";
 import { mediaSrc } from "../media-src";
 import {
@@ -108,7 +110,7 @@ function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): str
     return url.replace("http://", "https://");
   }
   if (url.startsWith("/")) {
-    return `${siteUrl}${url}`;
+    return absoluteUrl(url, siteUrl);
   }
   return `https://${url}`;
 }
@@ -140,20 +142,37 @@ function mapLanguageToCode(lang: string): string {
 // the medical type and then denied the address and hours that type exists to carry.
 const isLocalBusinessType = isLocalFamilyType;
 
-// Helper function to get country code from country name
-function getCountryCode(country: string | null | undefined): string {
-  if (!country) return "SA"; // Default to Saudi Arabia
-  const countryUpper = country.toUpperCase();
-  // Map common country names to ISO 3166-1 alpha-2 codes
-  if (countryUpper.includes("SAUDI") || countryUpper === "SA") return "SA";
-  if (countryUpper.includes("UAE") || countryUpper === "AE") return "AE";
-  if (countryUpper.includes("KUWAIT") || countryUpper === "KW") return "KW";
-  if (countryUpper.includes("QATAR") || countryUpper === "QA") return "QA";
-  if (countryUpper.includes("BAHRAIN") || countryUpper === "BH") return "BH";
-  if (countryUpper.includes("OMAN") || countryUpper === "OM") return "OM";
-  // If already a 2-letter code, return it
-  if (countryUpper.length === 2) return countryUpper;
-  return "SA"; // Default
+// Normalises whatever the admin typed into Client.addressCountry. It NEVER invents a
+// country: an empty field returns undefined and every caller then omits the property.
+//
+// The version this replaces returned "SA" twice — for an empty field AND for anything it
+// failed to recognise. Its table only matched Latin names, so a partner whose country was
+// typed "المملكة العربية السعودية" hit the fall-through, and an Egyptian partner ("مصر",
+// or even "Egypt" — EG was never in the table) was published to Google as Saudi.
+//
+// Google, Structured data general guidelines: "Your structured data must be a true
+// representation of the page content."
+// https://developers.google.com/search/docs/appearance/structured-data/sd-policies
+//
+// Recognised names map to their ISO 3166-1 alpha-2 code; anything else passes through
+// unchanged — schema.org types addressCountry and areaServed as Text, so the words the
+// admin actually entered are valid output and are the only truth we hold.
+const COUNTRY_NAME_TO_ISO: ReadonlyArray<readonly [RegExp, string]> = [
+  [/SAUDI|السعودي/i, "SA"],
+  [/\bEGYPT\b|مصر/i, "EG"],
+  [/\bUAE\b|UNITED ARAB EMIRATES|الإمارات|الامارات/i, "AE"],
+  [/KUWAIT|الكويت/i, "KW"],
+  [/QATAR|قطر/i, "QA"],
+  [/BAHRAIN|البحرين/i, "BH"],
+  [/\bOMAN\b|سلطنة عمان/i, "OM"],
+];
+
+function normalizeCountry(country: string | null | undefined): string | undefined {
+  const raw = country?.trim();
+  if (!raw) return undefined;
+  if (/^[A-Za-z]{2}$/.test(raw)) return raw.toUpperCase();
+  const match = COUNTRY_NAME_TO_ISO.find(([pattern]) => pattern.test(raw));
+  return match ? match[1] : raw;
 }
 
 export function generateCompleteOrganizationJsonLd(
@@ -187,8 +206,9 @@ export function generateCompleteOrganizationJsonLd(
     imageLicensing?: ModontyImageDefaults;
   }
 ): JsonLdGraph {
-  // Caller MUST pass options.siteUrl (loaded from loadSiteUrl()). Hardcoded fallback only as a safety net.
-  const siteUrl = options?.siteUrl || "https://www.modonty.com";
+  // Caller MUST pass options.siteUrl (loaded from loadSiteUrl()). There is no literal
+  // fallback: this value becomes the Organization's `@id` and `url` in the stored blob.
+  const siteUrl = requireSiteUrl(options?.siteUrl);
   const siteName = options?.siteName || "Modonty";
   const imageLicensing: ModontyImageDefaults = {
     organizationUrl: siteUrl,
@@ -199,7 +219,7 @@ export function generateCompleteOrganizationJsonLd(
   // Ensure clientPageUrl is absolute
   const absoluteClientPageUrl = ensureAbsoluteUrl(clientPageUrl, siteUrl) || clientPageUrl;
 
-  const organizationId = `${siteUrl}/clients/${client.slug}#organization`;
+  const organizationId = entityUrl("clients", client.slug, siteUrl, "organization");
   const websiteId = buildSiteEntityIds(siteUrl).website;
   const webPageId = absoluteClientPageUrl;
 
@@ -236,15 +256,18 @@ export function generateCompleteOrganizationJsonLd(
   if (client.url) {
     organizationNode.url = ensureAbsoluteUrl(client.url, siteUrl) || client.url;
   } else {
-    organizationNode.url = `${siteUrl}/clients/${client.slug}`;
+    organizationNode.url = entityUrl("clients", client.slug, siteUrl);
   }
 
-  // Logo as ImageObject with validation (minimum 112x112 per Google guidelines)
+  // Logo as ImageObject. Google asks that an Organization logo be at least 112x112, but that
+  // is a requirement on the FILE, not on the number we print: rounding a 60px logo up to a
+  // declared 112 does not make it comply, it just states a size the file does not have. The
+  // real dimensions are reported, and omitted when the Media row never recorded them.
   const logoSrc = mediaSrc(client.logoMedia);
   if (logoSrc && client.logoMedia) {
     const logoUrl = ensureAbsoluteUrl(logoSrc, siteUrl) || logoSrc;
-    const logoWidth = client.logoMedia.width && client.logoMedia.width >= 112 ? client.logoMedia.width : 112;
-    const logoHeight = client.logoMedia.height && client.logoMedia.height >= 112 ? client.logoMedia.height : 112;
+    const logoWidth = client.logoMedia.width ?? undefined;
+    const logoHeight = client.logoMedia.height ?? undefined;
     
     const logoAttr = resolveImageAttribution(
       {
@@ -293,26 +316,30 @@ export function generateCompleteOrganizationJsonLd(
       value: client.commercialRegistrationNumber,
     });
 
-    const countryCode = getCountryCode(client.addressCountry);
-    identifiers.push({
-      "@type": "PropertyValue",
-      name: "ISO6523Code",
-      value: `0199:${countryCode}${client.commercialRegistrationNumber}`,
-    });
+    // REMOVED: a second identifier `0199:{country}{CR}` labelled "ISO6523Code".
+    // ISO 6523 ICD 0199 is the Legal Entity Identifier (LEI) — "established as the ISO
+    // 17442 standard … implemented by the Global Legal Entity Identifier Foundation
+    // (GLEIF)" (https://docs.peppol.eu/poacc/billing/3.0/codelist/ICD/). A Saudi
+    // commercial-registration number is not an LEI and GLEIF never issued it, so that
+    // string told Google the partner holds an LEI it does not hold. The plain
+    // "Commercial Registration Number" entry above is the true one and stays.
   }
   if (identifiers.length > 0) {
     organizationNode.identifier = identifiers;
   }
 
-  // companyRegistration (Schema.org Certification) when CR exists
+  // companyRegistration (Schema.org Certification) when CR exists.
+  //
+  // `issuedBy` is GONE, not defaulted. It used to be the literal "Ministry of Commerce",
+  // written in after Client.licenseAuthority was dropped (YMYL data moved into
+  // Client.ymylData JSON) — so every partner named that ministry as its registrar whether
+  // or not it was, including partners outside Saudi Arabia. No column feeds it today, and
+  // an issuer we cannot read is an issuer we do not publish.
   if (client.commercialRegistrationNumber) {
-    // (Issuer formerly read from Client.licenseAuthority — that column was removed when YMYL data moved into Client.ymylData JSON.)
-    const issuer = "Ministry of Commerce";
     organizationNode.companyRegistration = {
       "@type": "Certification",
       name: "Commercial Registration",
       certificationIdentification: client.commercialRegistrationNumber,
-      issuedBy: { "@type": "Organization", name: issuer },
     };
   }
   if (client.vatID) {
@@ -340,16 +367,19 @@ export function generateCompleteOrganizationJsonLd(
       contactPoint.telephone = client.phone;
     }
     
-    // Use ISO 3166-1 alpha-2 country code for areaServed
-    const countryCode = getCountryCode(client.addressCountry);
-    contactPoint.areaServed = countryCode;
-    
-    // Map languages to ISO 639-1 codes
-    const availableLanguages = Array.isArray(client.knowsLanguage) && client.knowsLanguage.length > 0
-      ? client.knowsLanguage.map(mapLanguageToCode)
-      : ["ar", "en"];
-    contactPoint.availableLanguage = availableLanguages;
-    
+    // areaServed only when the partner actually recorded a country — no "SA" stand-in.
+    const countryCode = normalizeCountry(client.addressCountry);
+    if (countryCode) {
+      contactPoint.areaServed = countryCode;
+    }
+
+    // availableLanguage only when the partner recorded its languages. The ["ar","en"]
+    // default this replaces promised Google that every partner's support desk answers in
+    // English — a promise nobody made and many cannot keep.
+    if (Array.isArray(client.knowsLanguage) && client.knowsLanguage.length > 0) {
+      contactPoint.availableLanguage = client.knowsLanguage.map(mapLanguageToCode);
+    }
+
     contactPoints.push(contactPoint);
   }
 
@@ -358,8 +388,9 @@ export function generateCompleteOrganizationJsonLd(
   }
   
   // Add areaServed at Organization level if applicable
-  if (client.addressCountry) {
-    organizationNode.areaServed = getCountryCode(client.addressCountry);
+  const organizationAreaServed = normalizeCountry(client.addressCountry);
+  if (organizationAreaServed) {
+    organizationNode.areaServed = organizationAreaServed;
   }
 
   // Enhanced Address (National Address Format) with building number in streetAddress
@@ -401,9 +432,10 @@ export function generateCompleteOrganizationJsonLd(
     if (client.addressRegion) {
       address.addressRegion = client.addressRegion;
     }
-    if (client.addressCountry) {
-      // Use ISO 3166-1 alpha-2 country code
-      address.addressCountry = getCountryCode(client.addressCountry);
+    const addressCountry = normalizeCountry(client.addressCountry);
+    if (addressCountry) {
+      // ISO 3166-1 alpha-2 when the name is recognised, otherwise the text as entered.
+      address.addressCountry = addressCountry;
     }
     if (client.addressPostalCode) {
       address.postalCode = client.addressPostalCode;
@@ -471,9 +503,15 @@ export function generateCompleteOrganizationJsonLd(
       } catch { /* Invalid JSON — skip */ }
     }
 
-    // Price range (Google recommends for LocalBusiness). "$$" is the neutral mid-range
-    // marker when the client hasn't set one — an empty field costs a rich-result warning.
-    organizationNode.priceRange = client.priceRange || "$$";
+    // Price range — published ONLY when the partner set one. `priceRange` is a recommended
+    // property, never a required one, so an empty field costs nothing; the "$$" that used
+    // to fill it told Google every silent partner is mid-range, which is a price claim we
+    // invented about a real business. Google: "Don't use structured data to deceive or
+    // mislead users."
+    // https://developers.google.com/search/docs/appearance/structured-data/sd-policies
+    if (client.priceRange?.trim()) {
+      organizationNode.priceRange = client.priceRange.trim();
+    }
 
     // hasMap — schema.org/hasMap (Place/LocalBusiness). A Google Business Profile
     // Place ID is the most precise link to the exact listing, so prefer it; fall
@@ -530,7 +568,7 @@ export function generateCompleteOrganizationJsonLd(
     const parent = client.parentOrganization;
     let parentId: string | undefined;
     if (parent.slug) {
-      parentId = `${siteUrl}/clients/${parent.slug}#organization`;
+      parentId = entityUrl("clients", parent.slug, siteUrl, "organization");
     } else if (parent.url) {
       parentId = ensureAbsoluteUrl(parent.url, siteUrl);
     }
@@ -796,14 +834,14 @@ export function generateCompleteOrganizationJsonLd(
     publisher: {
       "@id": buildSiteEntityIds(siteUrl).organization,
     },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${siteUrl}/search?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
+    // `potentialAction: SearchAction` was removed on 27 Aug 2026. Google retired the sitelinks
+    // search box: "Removed the sitelinks search box documentation … no longer available"
+    // (Search Central changelog, 29 Nov 2024). Two other generators in this repo had already
+    // dropped it and say so in their own comments; this one kept emitting it unconditionally,
+    // so it shipped on every partner page and every content page.
+    // This is cleanup, not a rescue — Google also states dead markup is harmless: "Structured
+    // data that's not being used does not cause problems for Search, but also has no visible
+    // effects" (8 Aug 2023). Removed because it is a claim about a feature that no longer exists.
   };
 
   graph.push(websiteNode);

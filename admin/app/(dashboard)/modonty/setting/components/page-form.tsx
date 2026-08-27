@@ -1,5 +1,6 @@
 "use client";
 
+import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,7 +58,7 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
 
   const seoTitle = formData.seoTitle || formData.title || "Page title";
   const seoDesc = formData.seoDescription || "Page description";
-  const canonicalUrl = formData.canonicalUrl || `${settingsDefaults.siteUrl}/${slug}`;
+  const canonicalUrl = formData.canonicalUrl || absoluteUrl(`/${slug}`, settingsDefaults.siteUrl);
   const displayUrl = canonicalUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
   const previewImage = formData.socialImage || formData.ogImage || formData.heroImage || "";
 
@@ -272,7 +273,7 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
                   value={formData.seoTitle || ""}
                   onChange={(e) => updateField("seoTitle", e.target.value)}
                   placeholder="e.g., About Us - Modonty"
-                  hint='Max 51 chars — "- Modonty" is appended automatically (final Google title: 60 chars)'
+                  hint='Max 51 chars — "- Modonty" is appended automatically (60 total): MODONTY POLICY, not a Google limit'
                   maxLength={51}
                 />
                 <CharacterCounter current={(formData.seoTitle || "").length} min={30} max={51} className="mt-1 ms-1" />

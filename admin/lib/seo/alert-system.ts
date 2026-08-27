@@ -161,78 +161,25 @@ async function sendDiscordAlert(
 }
 
 /**
- * Send Email alert (using Resend or similar service)
+ * Send Email alert — NOT IMPLEMENTED.
+ *
+ * This used to `console.log` the alert and return normally, so `sendAlert`'s
+ * `Promise.allSettled` recorded a fulfilled promise and every caller believed the mail
+ * had gone out. It never did, with or without `RESEND_API_KEY`. Wiring Resend needs a
+ * verified sender domain, which is Khalid's call — until then this reports the truth.
+ *
+ * The unused `generateEmailHTML` template that sat below was deleted with it: zero
+ * consumers, so it only made the feature look half-built when it was not built at all.
  */
 async function sendEmailAlert(
   alert: Alert,
   recipients: string[]
 ): Promise<void> {
-  try {
-    // Check if Resend is available
-    const resendApiKey = process.env.RESEND_API_KEY;
-    if (!resendApiKey) {
-      console.warn(
-        "RESEND_API_KEY not configured. Email alerts will not be sent."
-      );
-      return;
-    }
-
-    // In a real implementation, use Resend or similar service
-    // For now, log the alert
-    console.log("Email Alert:", {
-      to: recipients,
-      subject: alert.title,
-      message: alert.message,
-      url: alert.url,
-      timestamp: alert.timestamp,
-    });
-
-    // TODO: Implement actual email sending when Resend is added
-    // Example:
-    // const { Resend } = await import('resend');
-    // const resend = new Resend(resendApiKey);
-    // await resend.emails.send({
-    //   from: 'seo-alerts@modonty.com',
-    //   to: recipients,
-    //   subject: alert.title,
-    //   html: generateEmailHTML(alert),
-    // });
-  } catch (error) {
-    console.error("Failed to send email alert:", error);
-    throw error;
-  }
-}
-
-/**
- * Generate email HTML template
- */
-function generateEmailHTML(alert: Alert): string {
-  return `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${alert.title}</title>
-      </head>
-      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h1 style="color: ${getColorForSeverity(alert.severity || "medium")};">
-            ${alert.title}
-          </h1>
-          <p>${alert.message}</p>
-          ${alert.url ? `<p><a href="${alert.url}" style="color: #0073b1;">View Details</a></p>` : ""}
-          <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
-          <p style="color: #666; font-size: 12px;">
-            Severity: ${alert.severity || "medium"} | ${new Date(alert.timestamp).toLocaleString()}
-          </p>
-          <p style="color: #666; font-size: 12px;">
-            This is an automated alert from Modonty SEO Alert System.
-          </p>
-        </div>
-      </body>
-    </html>
-  `;
+  const error = new Error(
+    `Email alerts are not implemented — ${recipients.length} recipient(s) were NOT notified about "${alert.title}"`
+  );
+  console.error("Failed to send email alert:", error);
+  throw error;
 }
 
 /**

@@ -1,5 +1,40 @@
+# Every deployable and every shared package belongs in this list — including the ones
+# Vercel does NOT build.
+#
+# Vercel decides what to rebuild from this file. Its own words, Using Monorepos
+# (docs updated 11 Aug 2026):
+#
+#   "Vercel automatically skips builds for projects in a monorepo that are unchanged
+#    by the commit."
+#   "Changes that are not a part of the workspace definition will be considered
+#    GLOBAL changes and deploy all applications in the repository."
+#
+# So leaving a mobile app out of this list is the expensive choice, not the safe one:
+# every commit to it would look like a repo-wide change and rebuild admin, modonty and
+# console for nothing.
+#
+# The three requirements Vercel lists are already met here — a unique `name` per
+# package.json (`@modonty/*`), `packageManager` set in the root package.json
+# (pnpm@10.12.3), and a GitHub-connected repo.
+#
+# Adding the modonty mobile app later is ONE line below. Nothing else changes:
+# the per-project `installCommand` already scopes each build with `--filter <pkg>...`,
+# so a new package cannot slow down anyone else's install.
+#
+# One thing a new mobile package MUST do: if it consumes `@modonty/shared` (types,
+# brand icons, the Prisma client), declare it in its own package.json as
+# `"@modonty/shared": "workspace:*"`. Vercel builds the dependency graph from those
+# declarations — an undeclared import is invisible to it, and the app will not rebuild
+# when shared changes.
+#
+# Expo apps are fine on pnpm as-is: "Expo has first-class support for monorepos managed
+# with package managers supporting workspaces: Bun, npm, pnpm, and Yarn", and from SDK 54
+# it "supports isolated dependencies" — so no `nodeLinker: hoisted` override is needed
+# while every Expo package here stays on 54+. https://docs.expo.dev/guides/monorepos/
 packages:
   - 'admin'
   - 'modonty'
   - 'console'
   - 'shared'
+  - 'console-mobile'
+  # - 'modonty-mobile'   ← الخطوة الوحيدة عند البدء

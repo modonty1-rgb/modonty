@@ -2,11 +2,14 @@
 
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
+import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { arabicBreadcrumbMessages } from "./arabic-breadcrumb-messages";
+import { validateReferenceJsonLd } from "./validate-reference-jsonld";
 
 interface SeoSettings {
   siteUrl: string;
@@ -33,13 +36,16 @@ interface IndustryData {
 }
 
 export async function buildIndustryMetadata(industry: IndustryData, s: SeoSettings) {
-  const pageUrl = industry.canonicalUrl || `${s.siteUrl}/industries/${industry.slug}`;
+  const pageUrl = industry.canonicalUrl || entityUrl("industries", industry.slug, s.siteUrl);
   const title = industry.seoTitle || industry.name;
-  const description = industry.seoDescription || `شركات ومقالات في قطاع ${industry.name}`;
+  // The row's own text, or none. A sentence written here becomes a meta description Google
+  // reads and nobody can edit from the admin — the value this row's own field exists to hold.
+  // Absent stays absent; the industry's SEO screen is where it gets filled.
+  const description = industry.seoDescription?.trim() || industry.description?.trim() || undefined;
 
   return {
     title,
-    description,
+    ...(description && { description }),
     robots: s.metaRobots,
     alternates: {
       canonical: pageUrl,
@@ -49,19 +55,19 @@ export async function buildIndustryMetadata(industry: IndustryData, s: SeoSettin
     },
     openGraph: {
       title,
-      description,
+      ...(description && { description }),
       type: "website",
       url: pageUrl,
       siteName: s.siteName,
       locale: s.ogLocale,
       ...(industry.socialImage && {
-        images: [{ url: industry.socialImage, alt: industry.socialImageAlt || title }],
+        images: [{ url: industry.socialImage, alt: industry.socialImageAlt?.trim() || title }],
       }),
     },
     twitter: {
       card: s.twitterCard,
       title,
-      description,
+      ...(description && { description }),
       ...(s.twitterSite && { site: s.twitterSite }),
       ...(s.twitterCreator && { creator: s.twitterCreator }),
       ...(industry.socialImage && {
@@ -72,10 +78,13 @@ export async function buildIndustryMetadata(industry: IndustryData, s: SeoSettin
 }
 
 export async function buildIndustryJsonLd(industry: IndustryData, s: SeoSettings) {
-  const pageUrl = industry.canonicalUrl || `${s.siteUrl}/industries/${industry.slug}`;
+  const pageUrl = industry.canonicalUrl || entityUrl("industries", industry.slug, s.siteUrl);
   const siteIds = buildSiteEntityIds(s.siteUrl);
   const title = industry.seoTitle || industry.name;
-  const description = industry.seoDescription || industry.description || `شركات ومقالات في قطاع ${industry.name}`;
+  // The row's own text, or none. A sentence written here becomes a meta description Google
+  // reads and nobody can edit from the admin — the value this row's own field exists to hold.
+  // Absent stays absent; the industry's SEO screen is where it gets filled.
+  const description = industry.seoDescription?.trim() || industry.description?.trim() || undefined;
 
   return {
     "@context": "https://schema.org",
@@ -84,13 +93,13 @@ export async function buildIndustryJsonLd(industry: IndustryData, s: SeoSettings
         "@type": "CollectionPage",
         "@id": pageUrl,
         name: title,
-        description,
+        ...(description && { description }),
         url: pageUrl,
         inLanguage: s.inLanguage,
         isPartOf: { "@id": siteIds.website },
         publisher: { "@id": siteIds.organization },
         ...(industry.socialImage && {
-          image: { "@type": "ImageObject", url: industry.socialImage, description: industry.socialImageAlt || title },
+          image: { "@type": "ImageObject", url: industry.socialImage, description: industry.socialImageAlt?.trim() || title },
         }),
       },
       {
@@ -102,12 +111,12 @@ export async function buildIndustryJsonLd(industry: IndustryData, s: SeoSettings
             "@type": "ListItem",
             position: 2,
             name: arabicBreadcrumbMessages.industries,
-            item: `${s.siteUrl}/industries`,
+            item: absoluteUrl("/industries", s.siteUrl),
           },
           { "@type": "ListItem", position: 3, name: industry.name, item: pageUrl },
         ],
       },
-      { "@type": "DefinedTerm", "@id": `${pageUrl}#term`, name: industry.name, description, url: pageUrl },
+      { "@type": "DefinedTerm", "@id": `${pageUrl}#term`, name: industry.name, ...(description && { description }), url: pageUrl },
       {
         "@type": "Organization",
         "@id": siteIds.organization,
@@ -127,8 +136,8 @@ export async function buildIndustryJsonLd(industry: IndustryData, s: SeoSettings
 async function resolveSettings(): Promise<SeoSettings> {
   const settings = await getAllSettings();
   return {
-    siteUrl: settings.siteUrl || "https://www.modonty.com",
-
+    // No literal fallback — this becomes the canonical of every industry page.
+    siteUrl: requireSiteUrl(settings.siteUrl),
     alternateLanguages: (settings as { defaultAlternateLanguages?: unknown }).defaultAlternateLanguages ?? null,
     siteName: settings.siteName || "Modonty",
     inLanguage: settings.inLanguage || "ar",
@@ -151,6 +160,9 @@ export async function generateAndSaveIndustrySeo(industryId: string): Promise<{ 
     const s = await resolveSettings();
     const metadata = await buildIndustryMetadata(industry, s);
     const jsonLd = await buildIndustryJsonLd(industry, s);
+    // The real three validators. This line used to be `{ valid: true, … }` — a constant that
+    // told the dashboard the graph was clean before anything had looked at it.
+    const validationReport = await validateReferenceJsonLd(jsonLd);
 
     await db.industry.update({
       where: { id: industryId },
@@ -159,7 +171,7 @@ export async function generateAndSaveIndustrySeo(industryId: string): Promise<{ 
         nextjsMetadataLastGenerated: new Date(),
         jsonLdStructuredData: JSON.stringify(jsonLd),
         jsonLdLastGenerated: new Date(),
-        jsonLdValidationReport: { valid: true, generatedAt: new Date().toISOString() } as Prisma.InputJsonValue,
+        jsonLdValidationReport: validationReport,
       },
     });
     return { success: true };

@@ -10,6 +10,9 @@
  * own canonical at request time on modonty's side; their content is the same archive.
  */
 
+import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
+import { buildListAuthorNode } from "@/lib/seo/build-list-author-node";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import { buildSiteOrgAndWebSite } from "./build-clients-page-jsonld";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
@@ -22,12 +25,12 @@ function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): str
   if (!url?.trim()) return undefined;
   const u = url.trim();
   if (u.startsWith("http://") || u.startsWith("https://")) return u.replace("http://", "https://");
-  if (u.startsWith("/")) return `${siteUrl}${u}`;
+  if (u.startsWith("/")) return absoluteUrl(u, siteUrl);
   return `https://${u}`;
 }
 
 function articleToListItem(article: ArticleForHomeJsonLd, siteUrl: string, index: number): Record<string, unknown> {
-  const articleUrl = `${siteUrl}/articles/${article.slug}`;
+  const articleUrl = entityUrl("articles", article.slug, siteUrl);
   const imageUrl = mediaSrc(article.featuredImage)?.trim();
   const absImage = imageUrl ? ensureAbsoluteUrl(imageUrl, siteUrl) : undefined;
 
@@ -44,7 +47,7 @@ function articleToListItem(article: ArticleForHomeJsonLd, siteUrl: string, index
     dateModified:
       article.dateModified instanceof Date ? article.dateModified.toISOString() : article.dateModified ?? undefined,
     inLanguage: article.inLanguage,
-    author: { "@type": "Person", name: article.author.name },
+    author: buildListAuthorNode(article.author, siteUrl),
     publisher: { "@id": buildSiteEntityIds(siteUrl).organization },
   };
   // A size is declared only where one was measured — never 1200×630 over an untouched original.
@@ -60,16 +63,18 @@ export function buildArticlesPageJsonLd(
   settings: SettingsForHomeJsonLd & { articlesSeoTitle?: string | null; articlesSeoDescription?: string | null },
   articles: ArticleForHomeJsonLd[],
   totalCount: number,
-  dateModified: Date,
+  // `null` when the list is empty. An empty listing page has no content date, and the
+  // caller used to pass `new Date()` for it — a page announcing it changed today because it
+  // has nothing on it. Absent stays absent, the same rule the per-item dates below follow.
+  dateModified: Date | null,
 ): object {
-  const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
-  const pageUrl = `${siteUrl}/articles`;
+  const siteUrl = requireSiteUrl(settings.siteUrl).replace(/\/$/, "");
+  const pageUrl = absoluteUrl("/articles", siteUrl);
   const { org, website, inLangCodes } = buildSiteOrgAndWebSite(settings, siteUrl);
 
   const name = settings.articlesSeoTitle?.trim() || "كل المقالات";
   const description =
-    settings.articlesSeoDescription?.trim() ||
-    "كل مقالات مدونتي في مكان واحد — صفِّ بالمجال أو التصنيف، واختر حسب الوقت اللي عندك.";
+    settings.articlesSeoDescription?.trim() || undefined;
   const ogImageUrl = (settings.ogImageUrl ?? settings.logoUrl ?? "").trim();
   const absOgImage = ogImageUrl ? ensureAbsoluteUrl(ogImageUrl, siteUrl) : undefined;
 
@@ -85,10 +90,10 @@ export function buildArticlesPageJsonLd(
     "@id": `${pageUrl}#collectionpage`,
     name,
     url: pageUrl,
-    description,
+    ...(description && { description }),
     inLanguage: inLangCodes,
     isPartOf: { "@id": website["@id"] },
-    dateModified: dateModified.toISOString(),
+    ...(dateModified ? { dateModified: dateModified.toISOString() } : {}),
     mainEntity: itemList,
     breadcrumb: {
       "@type": "BreadcrumbList",

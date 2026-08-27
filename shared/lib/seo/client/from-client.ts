@@ -4,6 +4,47 @@
 
 import type { ClientSeoInput } from "./seo-score";
 
+/**
+ * Paste this into any Prisma `select` whose rows will be scored — the client-side twin of
+ * `ARTICLE_SEO_SELECT`. Every field is required: `clientToSeoInput` cannot tell "not
+ * selected" from "empty", so omitting one silently drags every row to the same low number.
+ * Spread it, do not retype it.
+ */
+export const CLIENT_SEO_SELECT = {
+  nextjsMetadata: true,
+  name: true,
+  jsonLdStructuredData: true,
+  jsonLdValidationReport: true,
+  url: true,
+  logoMediaId: true,
+  heroImageMediaId: true,
+  description: true,
+  alternateName: true,
+  slogan: true,
+  phone: true,
+  email: true,
+  contactType: true,
+  addressStreet: true,
+  addressCity: true,
+  addressRegion: true,
+  addressPostalCode: true,
+  addressCountry: true,
+  sameAs: true,
+  legalName: true,
+  foundingDate: true,
+  vatID: true,
+  taxID: true,
+  commercialRegistrationNumber: true,
+  businessActivityCode: true,
+  numberOfEmployees: true,
+  addressLatitude: true,
+  addressLongitude: true,
+  openingHoursSpecification: true,
+  priceRange: true,
+  gbpPlaceId: true,
+  organizationType: true,
+} as const;
+
 export function clientToSeoInput(c: Record<string, unknown> | null | undefined): ClientSeoInput {
   const g = <T>(k: string): T | null => (c ? ((c[k] as T) ?? null) : null);
   return {

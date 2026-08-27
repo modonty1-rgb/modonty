@@ -15,18 +15,24 @@
  * Called when: items are created, updated, or deleted in that entity, and by the SEO cascade.
  */
 
+import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { buildListingPageMetadata } from "@modonty/shared/lib/seo/build-listing-page-metadata";
+
+import { listingPageConfig, type ListingPageKey, type ListingPageConfig } from "./listing-page-config";
 
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { ensureSettingsId } from "@/lib/settings/settings-singleton";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import type { PageKey } from "@/app/(dashboard)/modonty/setting/actions/generate-home-and-list-page-seo";
 
 function getSiteUrl(settings: Record<string, unknown>): string {
-  // Caller fetches settings via getAllSettings() (DB-backed). Hardcoded fallback only as safety net.
-  return (settings?.siteUrl as string) || "https://www.modonty.com";
+  // Caller fetches settings via getAllSettings() (DB-backed). No literal fallback: this value
+  // becomes the canonical and every hreflang href of seven listing pages, and a blank Settings
+  // row used to publish an invented host under a green "saved".
+  return requireSiteUrl(settings?.siteUrl as string | undefined);
 }
 
 function getSiteName(settings: Record<string, unknown>): string {
@@ -35,19 +41,10 @@ function getSiteName(settings: Record<string, unknown>): string {
 
 // ─── Meta builder ───
 
-interface ListingPageConfig {
-  pageUrl: string;
-  title: string;
-  description: string;
-  siteName: string;
-  siteUrl: string;
-  /** Kept for the JSON-LD breadcrumb built on the modonty/setting side; unused by the meta shape. */
-  breadcrumbName: string;
-  ogImage?: string;
-  ogImageAlt?: string;
-  /** The whole settings row — the directives below must come from it, never from a literal. */
-  settings: Record<string, unknown>;
-}
+// The config shape lives in ./listing-page-config, imported above — it was DUPLICATED here.
+// Two declarations of one type is how the preview and the writer drifted in the first place,
+// and tsc caught the second copy the moment they stopped matching (`ogImage?: string` here vs
+// `string | null` there). One declaration, one source.
 
 /**
  * Thin adapter over the ONE shared builder. Every listing page — the home page included —
@@ -131,9 +128,9 @@ export async function regenerateCategoriesListingCache(): Promise<{ success: boo
     const s = settings as unknown as Record<string, unknown>;
     const siteUrl = getSiteUrl(s);
     const siteName = getSiteName(s);
-    const title = (s.categoriesSeoTitle as string) || "التصنيفات";
-    const description = (s.categoriesSeoDescription as string) || "تصفح جميع تصنيفات المقالات";
-    const pageUrl = `${siteUrl}/categories`;
+    const title = (s.categoriesSeoTitle as string | null)?.trim() || undefined;
+    const description = (s.categoriesSeoDescription as string | null)?.trim() || undefined;
+    const pageUrl = absoluteUrl("/categories", siteUrl);
 
     // Per-page hero image (also the og:image) falls back to the global site image.
     const ogImage = (s.categoriesPageImage as string) || (s.ogImageUrl as string) || undefined;
@@ -161,9 +158,9 @@ export async function regenerateTagsListingCache(): Promise<{ success: boolean; 
     const s = settings as unknown as Record<string, unknown>;
     const siteUrl = getSiteUrl(s);
     const siteName = getSiteName(s);
-    const title = (s.tagsSeoTitle as string) || "التاجات";
-    const description = (s.tagsSeoDescription as string) || "تصفح جميع التاجات";
-    const pageUrl = `${siteUrl}/tags`;
+    const title = (s.tagsSeoTitle as string | null)?.trim() || undefined;
+    const description = (s.tagsSeoDescription as string | null)?.trim() || undefined;
+    const pageUrl = absoluteUrl("/tags", siteUrl);
 
     // Per-page hero image (also the og:image) falls back to the global site image.
     const ogImage = (s.tagsPageImage as string) || (s.ogImageUrl as string) || undefined;
@@ -191,9 +188,9 @@ export async function regenerateIndustriesListingCache(): Promise<{ success: boo
     const s = settings as unknown as Record<string, unknown>;
     const siteUrl = getSiteUrl(s);
     const siteName = getSiteName(s);
-    const title = (s.industriesSeoTitle as string) || "القطاعات";
-    const description = (s.industriesSeoDescription as string) || "تصفح جميع القطاعات";
-    const pageUrl = `${siteUrl}/industries`;
+    const title = (s.industriesSeoTitle as string | null)?.trim() || undefined;
+    const description = (s.industriesSeoDescription as string | null)?.trim() || undefined;
+    const pageUrl = absoluteUrl("/industries", siteUrl);
 
     // Per-page hero image (also the og:image) falls back to the global site image.
     const ogImage = (s.industriesPageImage as string) || (s.ogImageUrl as string) || undefined;
@@ -221,9 +218,9 @@ export async function regenerateClientsListingCache(): Promise<{ success: boolea
     const s = settings as unknown as Record<string, unknown>;
     const siteUrl = getSiteUrl(s);
     const siteName = getSiteName(s);
-    const title = (s.clientsSeoTitle as string) || "العملاء";
-    const description = (s.clientsSeoDescription as string) || "تصفح جميع عملاء مدونتي";
-    const pageUrl = `${siteUrl}/clients`;
+    const title = (s.clientsSeoTitle as string | null)?.trim() || undefined;
+    const description = (s.clientsSeoDescription as string | null)?.trim() || undefined;
+    const pageUrl = absoluteUrl("/clients", siteUrl);
 
     const ogImage = (s.ogImageUrl as string) || undefined;
     const ogImageAlt = (s.altImage as string) || undefined;
@@ -240,18 +237,18 @@ export async function regenerateClientsListingCache(): Promise<{ success: boolea
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// PAGE: ARTICLES LISTING — deliberately absent
+// A long comment used to stand here declaring that `/articles` does not exist and must never
+// exist, and that the `articlesPage*` Settings columns were dead leftovers. Both statements
+// stopped being true on 19 Aug 2026, when the archive was built: `modonty/app/(site)/articles/
+// page.tsx` is live, indexable and listed in the sitemap, and its generator sits further down
+// this file (`regenerateArticlesListingCache`, registered in the page list).
 //
-// There is no /articles listing route on modonty and there must not be one: next.config.ts
-// documents that Vercel's URL normalizer corrupts Arabic article slugs, so any rule matching
-// `/articles` redirected real article URLs to the homepage and Google read the chain as a
-// soft 404 (17+ articles at de-indexing risk). The path is left to 404 cleanly on purpose.
-//
-// So this file used to regenerate SEO for a page that does not exist — on every article
-// create/update/delete plus every cascade — and stored a canonical pointing at that 404.
-// Removed 2026-08-02. The Settings columns (articlesPage*) are stale leftovers nothing reads.
-// ═══════════════════════════════════════════════════════════════════
+// It is kept out of the record only as a warning about WHY it was ever written: a redirect rule
+// matching `/articles` once corrupted Arabic article slugs through Vercel's URL normalizer and
+// sent real articles to the homepage — Google read the chain as a soft 404. That hazard belongs
+// to redirect rules in `next.config.ts`, not to the existence of the page. Removed 27 Aug 2026:
+// a comment that contradicts the code beside it is worse than no comment, because it is read
+// as a decision.
 
 // ═══════════════════════════════════════════════════════════════════
 // PAGE: HOME (أهم صفحة — meta here + JSON-LD delegated to the rich validated home builder)
@@ -264,7 +261,7 @@ export async function regenerateHomePageCache(): Promise<{ success: boolean; err
     const siteUrl = getSiteUrl(s);
     const siteName = getSiteName(s);
     const title = (s.modontySeoTitle as string) || siteName;
-    const description = (s.modontySeoDescription as string) || (s.brandDescription as string) || "منصة محتوى عربية متخصصة";
+    const description = (s.modontySeoDescription as string) || (s.brandDescription as string | null)?.trim() || undefined;
     const ogImageUrl = (s.ogImageUrl as string) || undefined;
 
     // Same builder as its six sisters — the home page has no second opinion any more.
@@ -314,9 +311,9 @@ export async function regenerateTrendingPageCache(): Promise<{ success: boolean;
     const s = settings as unknown as Record<string, unknown>;
     const siteUrl = getSiteUrl(s);
     const siteName = getSiteName(s);
-    const title = (s.trendingSeoTitle as string) || "الرائج";
-    const description = (s.trendingSeoDescription as string) || "المقالات الأكثر قراءة ومشاركة";
-    const pageUrl = `${siteUrl}/trending`;
+    const title = (s.trendingSeoTitle as string | null)?.trim() || undefined;
+    const description = (s.trendingSeoDescription as string | null)?.trim() || undefined;
+    const pageUrl = absoluteUrl("/trending", siteUrl);
 
     const ogImage = (s.ogImageUrl as string) || undefined;
     const ogImageAlt = (s.altImage as string) || undefined;
@@ -348,11 +345,10 @@ export async function regenerateArticlesListingCache(): Promise<{ success: boole
     const s = settings as unknown as Record<string, unknown>;
     const siteUrl = getSiteUrl(s);
     const siteName = getSiteName(s);
-    const title = (s.articlesSeoTitle as string) || "كل المقالات";
+    const title = (s.articlesSeoTitle as string | null)?.trim() || undefined;
     const description =
-      (s.articlesSeoDescription as string) ||
-      "كل مقالات مدونتي في مكان واحد — صفِّ بالمجال أو التصنيف، واختر حسب الوقت اللي عندك.";
-    const pageUrl = `${siteUrl}/articles`;
+      (s.articlesSeoDescription as string | null)?.trim() || undefined;
+    const pageUrl = absoluteUrl("/articles", siteUrl);
 
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "المقالات",
@@ -378,9 +374,9 @@ export async function regenerateFaqPageCache(): Promise<{ success: boolean; erro
     const s = settings as unknown as Record<string, unknown>;
     const siteUrl = getSiteUrl(s);
     const siteName = getSiteName(s);
-    const title = (s.faqSeoTitle as string) || "الأسئلة الشائعة";
-    const description = (s.faqSeoDescription as string) || "إجابات على الأسئلة الأكثر شيوعاً حول مدونتي";
-    const pageUrl = `${siteUrl}/help/faq`;
+    const title = (s.faqSeoTitle as string | null)?.trim() || undefined;
+    const description = (s.faqSeoDescription as string | null)?.trim() || undefined;
+    const pageUrl = absoluteUrl("/help/faq", siteUrl);
 
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "الأسئلة الشائعة",
@@ -430,6 +426,26 @@ export async function regenerateOneListingCache(name: string): Promise<{ success
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
+}
+
+/**
+ * The metadata a listing page WOULD be given, without writing anything.
+ *
+ * It lives in this file, next to the writers, and goes through the same
+ * `buildListingMetadata` they do — that is the whole point. The preview screen used to build
+ * its own object through `buildMetaFromSettingsForPageType`, which carried seven Arabic
+ * titles and descriptions written in code (`LIST_PAGE_FALLBACKS`). An editor opening
+ * `/categories` with an empty Settings title was shown «الفئات», approved it, saved — and the
+ * writer stored no title, because it invents nothing. What was reviewed was never what
+ * shipped, which makes the review worthless in exactly the cases it exists for.
+ *
+ * Home is not here: it has its own shape (its Settings columns are unprefixed) and its own
+ * writer above.
+ */
+export async function previewListingMetadata(page: ListingPageKey) {
+  const settings = await getAllSettings();
+  const s = settings as unknown as Record<string, unknown>;
+  return buildListingMetadata(listingPageConfig(page, s, getSiteUrl(s), getSiteName(s)));
 }
 
 export async function regenerateAllListingCaches(): Promise<{ results: Record<string, boolean>; error?: string }> {

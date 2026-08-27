@@ -17,6 +17,7 @@ import {
   runStepHreflang,
   runStepWordCount,
   runStepClientSiteFlag,
+  runStepEntityNameDrift,
   runStepMediaReelsBackfill,
   runStepBlurBackfill,
   runStepDimensionsBackfill,
@@ -25,7 +26,9 @@ import {
   runStepIntakeSeed,
   revalidateDatabasePage,
   logMaintenanceRunAction,
+  flushModontyAfterMaintenance,
   type MaintenanceStepResult,
+  type MaintenanceFlushReport,
 } from "../actions/run-all-maintenance";
 
 type Status = "idle" | "pending" | "running" | "done" | "failed";
@@ -48,6 +51,7 @@ const STEPS: StepDef[] = [
   { key: "canonical", label: "Canonical URLs", description: "Wrong-host or double-encoded canonical URLs across articles, clients, categories, tags, industries, authors", runner: runStepCanonical },
   { key: "hreflang", label: "Article hreflang", description: "Articles whose stored metadata carries no hreflang — the live page adds it, the SEO score does not see it, so every one of them is under-scored by 10 points until this runs", runner: runStepHreflang },
   { key: "wordCount", label: "Article Word Count / Reading Time", description: "Articles whose stored word count disagrees with their own body. The mutations used to accept a caller-supplied number (`data.wordCount || calculate(...)`), so a wrong value stuck for good — measured 2026-08-19: 23 of 160, one storing 14 words for a 1,978-word article. The number is printed under the title, sent to Google in the article's structured data, graded by the SEO analyser, and it is what the reading-time filter on /articles buckets by, so a ten-minute article was filed under 'على الماشي ≤3 دقائق'. Recomputes word count, reading time and content depth with the same helper the mutations use. Idempotent.", runner: runStepWordCount },
+  { key: "entityNameDrift", label: "Old Tag/Category Name in Article SEO", description: "Merging a tag or a category rebuilds its articles in a loop that runs in the BROWSER, so the editor can watch a progress bar. Close the tab mid-merge and the database move is done, some articles were rebuilt, and the finalize never ran — the rest keep publishing the pre-merge name to Google. Nothing else catches it: a merge never touches the Article row, so every timestamp check reports the article as healthy, and the existing JSON-LD repair only looks for a wrong host. This compares each stored blob against the entity's CURRENT name and rebuilds the ones that disagree. Idempotent — measured on modonty_dev: 264 tag links and 128 category articles checked, 0 flagged; a simulated rename on a real row flipped it to flagged, so it is not merely silent.", runner: runStepEntityNameDrift },
   { key: "clientSiteFlag", label: "Client-Site Flag", description: "Articles written before `isClientSiteArticle` existed carry no such key. An absent key matches NO filter in MongoDB, so the moment the articles list filters on it every one of them disappears from the table. Writes `false` where the key is missing. Idempotent.", runner: runStepClientSiteFlag },
   { key: "mediaReelsBackfill", label: "Media Reels Fields", description: "Media rows written before the reels merge carry no `inGallery` key and no counters. An absent key matches NO filter in MongoDB — every client gallery renders empty, and every counter increment is silently lost, until this runs. Idempotent.", runner: runStepMediaReelsBackfill },
   { key: "blurBackfill", label: "Image Blur Placeholders", description: "Images already on Bunny that carry no `blurDataURL`. The migration builds one from the buffer it downloads, but the generator returns null instead of throwing — a corrupt or exotic file migrates without a placeholder, and the migration never revisits a row that already has `bunnyUrl`. So the gap is permanent and silent until this runs. Batches of 50, one download each, idempotent.", runner: runStepBlurBackfill },
@@ -76,6 +80,7 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
   const [steps, setSteps] = useState<Record<string, StepState>>(idleState);
   const [finished, setFinished] = useState(false);
   const [elapsedMs, setElapsedMs] = useState<number | null>(null);
+  const [flush, setFlush] = useState<MaintenanceFlushReport | null>(null);
 
   const hasWork = attentionCount > 0;
 
@@ -84,6 +89,7 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
     setStarted(true);
     setFinished(false);
     setElapsedMs(null);
+    setFlush(null);
     // Mark all as pending
     setSteps(Object.fromEntries(STEPS.map((s) => [s.key, { status: "pending" as Status }])));
     const startedAt = Date.now();
@@ -111,6 +117,22 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
       results.map((r) => ({ key: r.key, ok: r.ok, count: r.count })),
     ).catch(() => {});
 
+    // A fix nobody can see is not a fix: modonty serves cached pages, so the pass has to bust
+    // the tags it dirtied. Reported below rather than swallowed — the operator needs to know
+    // which fixes went out and which are still sitting behind a stale cache.
+    setFlush(
+      await flushModontyAfterMaintenance(results).catch(() => ({
+        flushed: [],
+        held: [
+          {
+            key: "flush",
+            detail: "تعذّر الاتصال بمدونتي — الإصلاحات محفوظة لكن ما وصلت الصفحة العامة",
+            blockedTags: [],
+          },
+        ],
+      })),
+    );
+
     await revalidateDatabasePage();
     router.refresh();
   };
@@ -120,6 +142,7 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
     setStarted(false);
     setFinished(false);
     setElapsedMs(null);
+    setFlush(null);
   };
 
   const completedCount = STEPS.filter((s) => steps[s.key].status === "done" || steps[s.key].status === "failed").length;
@@ -193,6 +216,32 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
             </div>
             <Progress value={overallPercent} className="h-2" />
           </div>
+
+          {/* Did the work reach a reader? The counts above only prove the DB changed. */}
+          {flush && (
+            <div className="rounded-md border bg-background/60 px-3 py-2 space-y-1 text-xs">
+              <p className={flush.flushed.length > 0 ? "text-foreground" : "text-muted-foreground"}>
+                <span className="font-semibold">Public cache: </span>
+                {flush.flushed.length > 0
+                  ? `refreshed ${flush.flushed.join(" · ")} on modonty`
+                  : "nothing to refresh — no public data changed"}
+              </p>
+              {flush.held.length > 0 && (
+                <p className="text-amber-600 dark:text-amber-400">
+                  <span className="font-semibold">Held back: </span>
+                  {flush.held
+                    .map((h) => {
+                      const why = [h.detail, h.blockedTags.length > 0 ? `blocks ${h.blockedTags.join(",")}` : undefined]
+                        .filter(Boolean)
+                        .join(" · ");
+                      return why ? `${h.key} (${why})` : h.key;
+                    })
+                    .join(" · ")}
+                  {" — "}fix the errors above and run again; the public page is still on the old data.
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Per-step rows */}
           <ul className="space-y-2.5 pt-1">

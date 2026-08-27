@@ -66,12 +66,16 @@ export function generateOrganizationStructuredData(
       value: data.commercialRegistrationNumber as string,
     });
   }
+  // Each ID is published from its OWN field. They are not "equal": schema.org defines
+  // taxID as "The Tax / Fiscal ID of the organization or person, e.g. the TIN in the US or
+  // the CIF/NIF in Spain" and vatID as "The value-added Tax ID of the organization or
+  // person with national prefix (for example IT123456789)". The branch this replaces
+  // stamped the VAT number into taxID for every partner that had a VAT number, publishing
+  // a fiscal ID that partner never supplied.
   if (data.vatID) {
     structuredData.vatID = data.vatID as string;
-    // Use VAT ID as Tax ID since they are equal
-    structuredData.taxID = data.vatID as string;
-  } else if (data.taxID) {
-    // Fallback to Tax ID if VAT ID is not provided
+  }
+  if (data.taxID) {
     structuredData.taxID = data.taxID as string;
   }
   if (identifiers.length > 0) {
@@ -92,20 +96,19 @@ export function generateOrganizationStructuredData(
     if (data.email) contactPoint.email = data.email as string;
     if (data.phone) contactPoint.telephone = data.phone as string;
     
-    // Area served and available language
+    // Area served and available language — stored values only. The two `else` branches
+    // that stood here handed every partner who had left these fields empty a country
+    // ("SA") and a support-language pair (["Arabic","English"]) nobody had entered.
+    // Google: "Your structured data must be a true representation of the page content."
+    // https://developers.google.com/search/docs/appearance/structured-data/sd-policies
     if (data.addressCountry) {
       contactPoint.areaServed = data.addressCountry as string;
-    } else {
-      contactPoint.areaServed = "SA"; // Default to Saudi Arabia
     }
-    
-    // Available languages
+
     if (Array.isArray(data.knowsLanguage) && data.knowsLanguage.length > 0) {
       contactPoint.availableLanguage = data.knowsLanguage;
-    } else {
-      contactPoint.availableLanguage = ["Arabic", "English"];
     }
-    
+
     contactPoints.push(contactPoint);
   }
   
@@ -186,13 +189,14 @@ export function generateOrganizationStructuredData(
     }
   }
 
-  // Parent organization relationship
+  // Parent organization relationship. No `@id` — see knowledge-graph-generator.ts: a raw
+  // Mongo ObjectId is not an IRI, does not resolve, and does not match the parent's real
+  // node. The correct identifier is built from the parent's slug, which this shape lacks.
   if (data.parentOrganizationId && data.parentOrganization) {
-    const parentOrg = data.parentOrganization as { name: string; id?: string; url?: string };
+    const parentOrg = data.parentOrganization as { name: string; url?: string };
     structuredData.parentOrganization = {
       "@type": "Organization",
       name: parentOrg.name,
-      ...(parentOrg.id && { "@id": parentOrg.id }),
       ...(parentOrg.url && { url: parentOrg.url }),
     };
   }

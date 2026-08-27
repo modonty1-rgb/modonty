@@ -11,6 +11,10 @@
  * An entry without a `url` means "same Arabic content for that market", so it points at the
  * page's own canonical — a single-source site, many locales.
  */
+
+import { absoluteUrl } from "./absolute-url";
+import { normalizeHreflang } from "./normalize-hreflang";
+
 export function buildHreflangLanguages(
   alternateLanguages: unknown,
   canonicalUrl: string,
@@ -20,13 +24,16 @@ export function buildHreflangLanguages(
 
   if (Array.isArray(alternateLanguages)) {
     for (const entry of alternateLanguages as Array<{ hreflang?: string; url?: string }>) {
-      const key = entry?.hreflang?.trim();
+      // Normalised, not trusted. The stored list is edited by hand and carried the Open Graph
+      // spelling `ar_SA`; `hreflang` wants `ar-SA`, and a malformed value makes Google drop
+      // the annotation rather than read a smaller one.
+      const key = normalizeHreflang(entry?.hreflang);
       if (!key) continue;
       const url = entry?.url?.trim();
       out[key] = url
         ? url.startsWith("http")
           ? url
-          : `${siteUrl}${url.startsWith("/") ? url : `/${url}`}`
+          : absoluteUrl(url, siteUrl)
         : canonicalUrl;
     }
   }

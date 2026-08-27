@@ -10,6 +10,7 @@ import { tagServerSchema } from "./tag-server-schema";
 import { Prisma, ArticleStatus } from "@prisma/client";
 import { computeReferenceSeoScore } from "@modonty/shared/lib/seo/reference/seo-score";
 import type { JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
+import { buildTaxonomyCanonical } from "@/lib/seo/build-taxonomy-canonical";
 
 export interface TagFilters {
   createdFrom?: Date;
@@ -169,17 +170,45 @@ export async function createTag(data: {
     const parsed = tagServerSchema.safeParse(data);
     if (!parsed.success) return { success: false, error: parsed.error.errors[0].message };
 
+    const normalizedData = {
+      ...data,
+      slug: parsed.data.slug,
+    };
+
     // Slug uniqueness check
-    const existing = await db.tag.findFirst({ where: { slug: data.slug.trim() }, select: { id: true } });
+    const existing = await db.tag.findFirst({ where: { slug: normalizedData.slug }, select: { id: true } });
     if (existing) return { success: false, error: "This slug is already in use. Try a different one." };
 
-    const tag = await db.tag.create({ data });
+    // Canonical derived from the slug, same rule as the update path.
+    const tag = await db.tag.create({
+      data: { ...normalizedData, canonicalUrl: await buildTaxonomyCanonical("tags", normalizedData.slug) },
+    });
     await logAction("tag.create", { entity: "Tag", entityId: tag.id, summary: tag.name });
     revalidatePath("/tags");
-    await revalidateModontyTag("tags");
-    try { const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator"); await generateAndSaveTagSeo(tag.id); } catch (e) { console.error("Tag SEO gen failed:", e); }
-    try { const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateTagsListingCache(); } catch (e) { console.error("Tags listing cache failed:", e); }
-    return { success: true, tag };
+    // Generate BEFORE revalidating modonty — it renders the stored blob. Both generators
+    // RETURN { success, error } and never throw, so the result has to be read.
+    const seoFailures: string[] = [];
+    try {
+      const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator");
+      const result = await generateAndSaveTagSeo(tag.id);
+      if (!result.success) seoFailures.push(`سيو الوسم: ${result.error || "سبب غير معروف"}`);
+    } catch (e) { seoFailures.push(`سيو الوسم: ${e instanceof Error ? e.message : String(e)}`); }
+    try {
+      const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator");
+      const result = await regenerateTagsListingCache();
+      if (!result.success) seoFailures.push(`صفحة الوسوم: ${result.error || "سبب غير معروف"}`);
+    } catch (e) { seoFailures.push(`صفحة الوسوم: ${e instanceof Error ? e.message : String(e)}`); }
+    if (seoFailures.length > 0) console.error("Tag SEO gen failed:", tag.id, seoFailures.join(" · "));
+    else await revalidateModontyTag("tags");
+
+    return {
+      success: true,
+      tag,
+      seoWarning:
+        seoFailures.length > 0
+          ? `الوسم انحفظ، لكن بيانات السيو ما تجدّدت — جوجل بيبقى يشوف القديم. (${seoFailures.join(" · ")})`
+          : undefined,
+    };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to create tag";
     return { success: false, error: message };
@@ -208,8 +237,13 @@ export async function updateTag(
     const parsed = tagServerSchema.safeParse(data);
     if (!parsed.success) return { success: false, error: parsed.error.errors[0].message };
 
+    const normalizedData = {
+      ...data,
+      slug: parsed.data.slug,
+    };
+
     // Slug uniqueness check (exclude current)
-    const existingSlug = await db.tag.findFirst({ where: { slug: data.slug.trim(), id: { not: id } }, select: { id: true } });
+    const existingSlug = await db.tag.findFirst({ where: { slug: normalizedData.slug, id: { not: id } }, select: { id: true } });
     if (existingSlug) return { success: false, error: "This slug is already in use. Try a different one." };
 
     const updateData: {
@@ -224,12 +258,13 @@ export async function updateTag(
       socialImageMediaId?: string | null;
       cloudinaryPublicId?: string | null;
     } = {
-      name: data.name,
-      slug: data.slug,
-      description: data.description || null,
-      seoTitle: data.seoTitle || null,
-      seoDescription: data.seoDescription || null,
-      canonicalUrl: data.canonicalUrl || null,
+      name: normalizedData.name,
+      slug: normalizedData.slug,
+      description: normalizedData.description || null,
+      seoTitle: normalizedData.seoTitle || null,
+      seoDescription: normalizedData.seoDescription || null,
+      // Rebuilt from the slug being saved — see build-taxonomy-canonical.
+      canonicalUrl: await buildTaxonomyCanonical("tags", normalizedData.slug),
     };
 
     // Only update socialImage fields if they are explicitly provided (including null for removal)
@@ -251,10 +286,58 @@ export async function updateTag(
     revalidatePath("/tags");
     // Regenerate the stored SEO BEFORE revalidating modonty — otherwise the page rebuilds
     // with the stale cached metadata (og:image lags one save behind; caught live 2026-07-31).
-    try { const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator"); await generateAndSaveTagSeo(tag.id); } catch (e) { console.error("Tag SEO gen failed:", e); }
-    try { const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateTagsListingCache(); } catch (e) { console.error("Tags listing cache failed:", e); }
-    await revalidateModontyTag("tags");
-    return { success: true, tag };
+    // Both generators RETURN { success, error } and never throw — read the result, or a
+    // failed regeneration passes as success and modonty keeps serving the old blob.
+    const seoFailures: string[] = [];
+    try {
+      const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator");
+      const result = await generateAndSaveTagSeo(tag.id);
+      if (!result.success) seoFailures.push(`سيو الوسم: ${result.error || "سبب غير معروف"}`);
+    } catch (e) { seoFailures.push(`سيو الوسم: ${e instanceof Error ? e.message : String(e)}`); }
+    try {
+      const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator");
+      const result = await regenerateTagsListingCache();
+      if (!result.success) seoFailures.push(`صفحة الوسوم: ${result.error || "سبب غير معروف"}`);
+    } catch (e) { seoFailures.push(`صفحة الوسوم: ${e instanceof Error ? e.message : String(e)}`); }
+    if (seoFailures.length > 0) console.error("Tag SEO gen failed:", tag.id, seoFailures.join(" · "));
+    else await revalidateModontyTag("tags");
+
+    // Cascade onto the articles carrying this tag. There was NO cascade here at all — the tag
+    // rebuilt its own card and its listing, and every article kept the old name in both the
+    // graph and `keywords`/`article:tag` in `Article.nextjsMetadata`. Renaming a tag changed
+    // it in exactly one place and nowhere a crawler looks. Author and category already
+    // cascaded; the tag was the gap. Matrix: batch-regenerate-article-seo.ts.
+    //
+    // Only on update. `createTag` shares this tail but a brand-new tag has no articles.
+    let articleCascadeFailed = 0;
+    try {
+      const taggedArticles = await db.articleTag.findMany({
+        where: { tagId: tag.id },
+        select: { articleId: true },
+      });
+      if (taggedArticles.length > 0) {
+        const { batchRegenerateArticleSeo } = await import("@/lib/seo");
+        const batch = await batchRegenerateArticleSeo(taggedArticles.map((a) => a.articleId));
+        articleCascadeFailed = batch.failed;
+        if (batch.failed > 0) seoFailures.push(`${batch.failed} مقالاً ما تجدّدت بياناته`);
+      }
+    } catch (e) {
+      articleCascadeFailed = -1;
+      seoFailures.push(`مقالات الوسم: ${e instanceof Error ? e.message : String(e)}`);
+    }
+
+    // Hold the flush when a rebuild failed — busting the tag republishes the stale cards
+    // under a fresh timestamp, which is exactly what holding it prevents.
+    if (articleCascadeFailed === 0) await revalidateModontyTag("articles");
+
+    return {
+      success: true,
+      tag,
+      seoWarning:
+        seoFailures.length > 0
+          ? `الوسم انحفظ، لكن بيانات السيو ما تجدّدت — جوجل بيبقى يشوف القديم. (${seoFailures.join(" · ")})`
+          : undefined,
+    };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update tag";
     return { success: false, error: message };
@@ -301,9 +384,23 @@ export async function deleteTag(id: string) {
     });
 
     revalidatePath("/tags");
-    await revalidateModontyTag("tags");
-    try { const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateTagsListingCache(); } catch (e) { console.error("Tags listing cache failed:", e); }
-    return { success: true };
+    // Rebuild the listing blob BEFORE revalidating modonty — it renders the stored blob,
+    // and regenerateTagsListingCache RETURNS { success, error } instead of throwing.
+    let listingError: string | undefined;
+    try {
+      const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator");
+      const result = await regenerateTagsListingCache();
+      if (!result.success) listingError = result.error || "سبب غير معروف";
+    } catch (e) { listingError = e instanceof Error ? e.message : String(e); }
+    if (listingError) console.error("Tags listing cache failed:", id, listingError);
+    else await revalidateModontyTag("tags");
+
+    return {
+      success: true,
+      seoWarning: listingError
+        ? `الوسم انحذف، لكن صفحة الوسوم ما تجدّدت — جوجل بيبقى يشوفه في القائمة. (${listingError})`
+        : undefined,
+    };
   } catch (error) {
     console.error("Error deleting tag:", error);
     const message = error instanceof Error ? error.message : "Failed to delete tag";

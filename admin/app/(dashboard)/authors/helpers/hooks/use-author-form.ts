@@ -1,5 +1,6 @@
 "use client";
 
+import { entityUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthorWithRelations } from "@/lib/types";
@@ -47,7 +48,10 @@ export function useAuthorForm({ initialData, authorId, onSuccess, siteUrl }: Use
   const [formData, setFormData] = useState<AuthorFormDataState>({
     name: initialData?.name || MODONTY_AUTHOR_NAME,
     slug: initialData?.slug || MODONTY_AUTHOR_SLUG,
-    jobTitle: initialData?.jobTitle || "Content Platform",
+    // Empty, not a guessed job title. Whatever stands here is saved to the row on the first
+    // submit and then travels into the author's JSON-LD as `jobTitle` — so a default written
+    // in this file becomes a claim about a real person that nobody chose to make.
+    jobTitle: initialData?.jobTitle || "",
     bio: initialData?.bio || "",
     image: initialData?.image || "",
     imageAlt: initialData?.imageAlt || "",
@@ -62,7 +66,7 @@ export function useAuthorForm({ initialData, authorId, onSuccess, siteUrl }: Use
     verificationStatus: initialData?.verificationStatus ?? true,
     seoTitle: initialData?.seoTitle || "",
     seoDescription: initialData?.seoDescription || "",
-    canonicalUrl: initialData?.canonicalUrl || `${siteUrl}/authors/${initialData?.slug || MODONTY_AUTHOR_SLUG}`,
+    canonicalUrl: initialData?.canonicalUrl || entityUrl("authors", initialData?.slug || MODONTY_AUTHOR_SLUG, siteUrl),
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -103,11 +107,21 @@ export function useAuthorForm({ initialData, authorId, onSuccess, siteUrl }: Use
     const result = await updateAuthor(authorId, submitData);
 
     if (result.success) {
-      toast({
-        title: messages.success.updated,
-        description: "تم تحديث بيانات الكاتب بنجاح",
-        variant: "success",
-      });
+      // A plain green "saved" would be a lie when the stored SEO blob did not rebuild —
+      // the public page still shows the old data. Say which one happened.
+      toast(
+        result.seoWarning
+          ? {
+              title: "الحفظ تمّ — بيانات السيو ما تجدّدت",
+              description: result.seoWarning,
+              variant: "warning",
+            }
+          : {
+              title: messages.success.updated,
+              description: "تم تحديث بيانات الكاتب بنجاح",
+              variant: "success",
+            },
+      );
 
       if (onSuccess) {
         onSuccess();

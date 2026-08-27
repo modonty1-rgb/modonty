@@ -5,6 +5,8 @@ import {
   normalizeLegalForm,
   normalizeOrganizationType,
 } from "@modonty/shared/lib/constants/client-classification";
+import { generateClientSEO } from "@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo";
+import { assertRegenerated } from "../helpers/assert-regenerated";
 
 /**
  * Classification sanitizer (legalForm + organizationType).
@@ -94,11 +96,30 @@ async function sanitize(field: ClassificationField): Promise<SanitizerResult> {
         where: { id: issue.id },
         data: field === "legalForm" ? { legalForm: issue.after } : { organizationType: issue.after },
       });
-      result.successful++;
     } catch (e) {
       result.failed++;
       result.errors.push({ id: issue.id, error: e instanceof Error ? e.message : String(e) });
+      continue;
     }
+
+    // Rebuild the partner's stored card so the fix reaches a reader.
+    //
+    // `organizationType` IS the card's `@type` (generate-organization-jsonld.ts:236) and
+    // `legalForm` travels in the same card. modonty serves the STORED card, so a corrected
+    // column with an un-rebuilt card leaves the public page on the old type — while this
+    // counter says "successful". Same swallow the canonical sanitizer closed one file over,
+    // and `generateClientSEO` never throws, so its answer has to be read, not just awaited.
+    try {
+      await assertRegenerated(generateClientSEO(issue.id), "بطاقة الشريك");
+    } catch (e) {
+      result.failed++;
+      result.errors.push({
+        id: issue.id,
+        error: `التصنيف انصحّح في القاعدة، لكن بطاقة الشريك ما تجدّدت — الصفحة العامة ما زالت على النوع القديم: ${e instanceof Error ? e.message : String(e)}`,
+      });
+      continue;
+    }
+    result.successful++;
   }
 
   return result;

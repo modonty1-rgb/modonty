@@ -1,3 +1,4 @@
+import { absoluteUrl } from "./absolute-url";
 import { buildHreflangLanguages } from "./build-hreflang-languages";
 import { toReferrerPolicy } from "./referrer-policy";
 import { tightenGooglebot } from "./tighten-googlebot";
@@ -62,7 +63,7 @@ export function buildContentPageMetadata(input: ContentPageMetadataInput) {
   const { settings: s, siteUrl, path, fallbackTitle, fallbackDescription } = input;
   const row = input.row ?? {};
 
-  const canonicalUrl = str(row.canonicalUrl) || `${siteUrl}${path}`;
+  const canonicalUrl = str(row.canonicalUrl) || absoluteUrl(path, siteUrl);
   const siteName = str(row.ogSiteName) || str(s.siteName) || "Modonty";
   const title = str(row.seoTitle) || str(row.title) || fallbackTitle;
   const description = str(row.seoDescription) || fallbackDescription;

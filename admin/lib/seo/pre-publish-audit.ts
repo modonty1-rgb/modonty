@@ -207,12 +207,16 @@ export function auditBeforePublish(
   // === MEDIA CHECKS ===
 
   // Hero image
+  // Origin: MODONTY POLICY, not Google. Google's Article page says "There are no
+  // required properties" and lists `image` as recommended, so a missing cover does not
+  // make the page ineligible — we block on it because Khalid wants every published
+  // article to carry one. https://developers.google.com/search/docs/appearance/structured-data/article
   if (!article.featuredImageId) {
     blocking.push({
       code: "HERO_IMAGE_MISSING",
       category: "media",
-      message: "الصورة الرئيسية مفقودة",
-      fix: "أضف صورة رئيسية (1200×630 أو أكبر)",
+      message: "الصورة الرئيسية مفقودة (سياسة مدونتي، لا شرط من جوجل)",
+      fix: "أضف صورة رئيسية تمثّل المقال",
       field: "featuredImageId",
     });
   } else if (article.featuredImage) {
@@ -227,15 +231,22 @@ export function auditBeforePublish(
       });
     }
 
-    // Check dimensions
+    // Check dimensions.
+    // Source (official): Google, Article structured data — "For best results, we
+    // recommend providing multiple high-resolution images (minimum of 50K pixels when
+    // multiplying width and height)".
+    // https://developers.google.com/search/docs/appearance/structured-data/article
+    // The threshold used to be `width < 1200 || height < 630`, which is the Open Graph
+    // share-card size wearing a Google label — it failed images Google is happy with.
+    // Unknown dimensions (0) are NOT a finding: we simply did not measure them.
     const width = article.featuredImage.width || 0;
     const height = article.featuredImage.height || 0;
-    if (width < 1200 || height < 630) {
+    if (width > 0 && height > 0 && width * height < 50_000) {
       suggestions.push({
         code: "HERO_SIZE_SMALL",
         category: "media",
-        message: `حجم الصورة صغير (${width}×${height})`,
-        fix: "استخدم صورة 1200×630 أو أكبر لأفضل عرض",
+        message: `حجم الصورة صغير (${width}×${height} = ${width * height} بكسل)`,
+        fix: "جوجل توصي بصورة مساحتها ٥٠ ألف بكسل على الأقل (العرض × الارتفاع)",
         field: "featuredImage",
       });
     }

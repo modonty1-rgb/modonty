@@ -9,6 +9,7 @@
  */
 
 import { db } from "@/lib/db";
+import { mergeArticleWithDefaults } from "./merge-article-with-defaults";
 import { convert } from "html-to-text";
 import type { Prisma } from "@prisma/client";
 import {
@@ -120,7 +121,7 @@ export async function generateAndSaveJsonLd(
     // Merge article with Settings defaults (12 SOT fields)
     const settings = await getAllSettings();
     const articleDefaults = getArticleDefaultsFromSettings(settings);
-    const articleWithDefaults = { ...article, ...articleDefaults } as ArticleWithFullRelations;
+    const articleWithDefaults = mergeArticleWithDefaults(article, articleDefaults) as unknown as ArticleWithFullRelations;
 
     // Extract plain text for articleBody
     const articleBodyText = extractPlainText(articleWithDefaults.content);
@@ -176,10 +177,26 @@ export async function generateAndSaveJsonLd(
     // Stringify normalized graph for storage
     const jsonLdString = stringifyKnowledgeGraph(normalizedGraph);
 
-    // Save to database
+    // Save to database.
+    //
+    // `dateModified` is passed back UNCHANGED on purpose. It carries `@updatedAt`, so without
+    // this line every cache write restamped it — and a cache write is not an edit to the
+    // article. Two things broke from that:
+    //
+    //  1. `needsRegeneration` below compares `dateModified > jsonLdLastGenerated`. The stamp
+    //     here is built in JavaScript BEFORE the write and `@updatedAt` fired milliseconds
+    //     AFTER it, so the comparison was true even immediately after a successful
+    //     generation. Every status transition regenerated, and `getArticlesNeedingRegeneration`
+    //     returned every published article forever.
+    //  2. The date is what Google reads. An article untouched since April announced today.
+    //
+    // Prisma honours an explicit value here — Schema Reference, @updatedAt: "If no timestamp
+    // is manually supplied, Prisma Client sets it automatically." A real content edit still
+    // moves the date, because those writes supply nothing and `@updatedAt` fires normally.
     await db.article.update({
       where: { id: articleId },
       data: {
+        dateModified: article.dateModified,
         jsonLdStructuredData: jsonLdString,
         jsonLdLastGenerated: new Date(),
         jsonLdValidationReport: JSON.parse(

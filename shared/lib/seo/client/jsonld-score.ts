@@ -13,7 +13,7 @@
 // matches what's actually published, identical across every surface.
 
 import type { SeoScore, SeoCheck, JsonLdValidationReport } from "./types";
-import { countReportErrors, countReportWarnings } from "./types";
+import { countReportErrors, countReportWarnings, hasValidatorOutput } from "./types";
 import { isLocalFamilyType } from "../organization-schema-types";
 
 // Raw client fields that feed the JSON-LD (presence = the recommended property
@@ -121,21 +121,33 @@ export function computeClientJsonLdScore(input: ClientJsonLdInput): SeoScore {
     earned: graphOk ? 20 : 0, max: 20,
   });
 
+  // «لم يُفحص» is a state of its own, never a pass. Two separate lies lived here:
+  //   · no report at all → `countReportErrors(null)` is 0 → status "good" over data nothing
+  //     had inspected (the points were silently withheld, so the badge said green at 0/30);
+  //   · a literal `{ valid: true, generatedAt }` written by a generator with no validator
+  //     behind it → `Boolean(report)` was true → the full 30 + 10.
+  // `hasValidatorOutput` is what separates a real report from a claim — see ./types.ts.
   const errors = countReportErrors(input.jsonLdValidationReport);
   const warnings = countReportWarnings(input.jsonLdValidationReport);
-  // Only meaningful when a graph + report exist.
-  const hasReport = Boolean(input.jsonLdValidationReport) && graphOk;
+  const measured = graphOk && hasValidatorOutput(input.jsonLdValidationReport);
+  const uncheckedReason = input.jsonLdValidationReport?.uncheckedReason?.trim();
+  const notMeasuredHint = !graphOk
+    ? "بانتظار التوليد"
+    : uncheckedReason
+      ? `ما انفحص — المدقّق ما اشتغل: ${uncheckedReason}. اضغط «إعادة توليد»`
+      : "ما انفحص بعد — احفظ الشريك أو اضغط «إعادة توليد» عشان تشتغل المدقّقات";
+
   checks.push({
     key: "jsonld.valid", label: "صحّة البنية (بلا أخطاء)",
-    status: !graphOk ? "error" : errors === 0 ? "good" : "error",
-    hint: !graphOk ? "بانتظار التوليد" : errors === 0 ? undefined : `${errors} خطأ بنيوي يمنع Rich Results`,
-    earned: hasReport && errors === 0 ? 30 : 0, max: 30,
+    status: !measured ? "warning" : errors === 0 ? "good" : "error",
+    hint: !measured ? notMeasuredHint : errors === 0 ? undefined : `${errors} خطأ بنيوي يمنع Rich Results`,
+    earned: measured && errors === 0 ? 30 : 0, max: 30,
   });
   checks.push({
     key: "jsonld.warnings", label: "بلا تحذيرات",
-    status: !graphOk ? "warning" : warnings === 0 ? "good" : "warning",
-    hint: warnings === 0 ? undefined : `${warnings} تحذير — يُفضّل معالجته`,
-    earned: hasReport && warnings === 0 ? 10 : 0, max: 10,
+    status: !measured ? "warning" : warnings === 0 ? "good" : "warning",
+    hint: !measured ? notMeasuredHint : warnings === 0 ? undefined : `${warnings} تحذير — يُفضّل معالجته`,
+    earned: measured && warnings === 0 ? 10 : 0, max: 10,
   });
 
   // ── Logo (10) — STANDALONE + required. Google: a logo is required for the

@@ -23,7 +23,9 @@ export function getArticleDefaultsFromSettings(settings: AllSettings): {
   return {
     inLanguage: settings.inLanguage?.trim() || "ar",
     metaRobots: settings.defaultMetaRobots?.trim() || "index, follow",
-    ogType: settings.defaultOgType?.trim() || "article",
+    // Fixed — see the twin in modonty. `Settings.defaultOgType` is the listing pages' type
+    // ("website"), so reading it here handed every article the wrong OG type.
+    ogType: "article",
     ogLocale: settings.defaultOgLocale?.trim() || "ar_SA",
     twitterCard: settings.defaultTwitterCard?.trim() || "summary_large_image",
     twitterSite: settings.twitterSite?.trim() || "",

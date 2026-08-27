@@ -267,3 +267,13 @@
 .driver-active-element {
   transition: none !important;
 }
+
+/* Equaliser bars on the sales-pitch audio player (SalesPitchOverlay).
+   It lived in a `<style jsx>` block inside that component, which needs styled-jsx types —
+   and `styled-jsx` is not a declared dependency of this app, so `console` failed to
+   typecheck on it (unchanged since 22 May 2026). The animation is referenced BY NAME from an
+   inline style, and `@keyframes` names are global anyway, so scoping bought nothing. */
+@keyframes pitch-eq {
+  from { transform: scaleY(0.4); }
+  to   { transform: scaleY(2.2); }
+}

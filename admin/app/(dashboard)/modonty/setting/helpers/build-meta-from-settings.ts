@@ -3,6 +3,8 @@
  * PRD: spec Section 3 → Section 5. Used for home, clients, categories, trending.
  */
 
+import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import { tightenGooglebot } from "@modonty/shared/lib/seo/tighten-googlebot";
 
 import { ensureAbsoluteUrl } from "./build-meta-from-page";
@@ -28,8 +30,6 @@ export interface SettingsForMeta {
   defaultTwitterCard?: string | null;
   defaultCharset?: string | null;
   defaultOgImageType?: string | null;
-  defaultOgImageWidth?: number | null;
-  defaultOgImageHeight?: number | null;
   defaultHreflang?: string | null;
   defaultPathname?: string | null;
   defaultSitemapPriority?: number | null;
@@ -52,7 +52,6 @@ export interface BuildMetaFromSettingsOverrides {
   path?: string;
 }
 
-const FALLBACK_SITE_URL = "https://www.modonty.com";
 const FALLBACK_TITLE = "Modonty";
 const FALLBACK_ROBOTS = "index, follow";
 const FALLBACK_OG_TYPE = "website";
@@ -63,8 +62,6 @@ const FALLBACK_SITEMAP_PRIORITY = 0.5;
 const FALLBACK_SITEMAP_CHANGE_FREQ = "monthly";
 const FALLBACK_CHARSET = "UTF-8";
 const FALLBACK_OG_IMAGE_TYPE = "image/jpeg";
-const FALLBACK_OG_IMAGE_WIDTH = 1200;
-const FALLBACK_OG_IMAGE_HEIGHT = 630;
 const FALLBACK_HREFLANG = "x-default";
 const FALLBACK_PATH = "/";
 
@@ -85,9 +82,9 @@ export function buildMetaFromSettings(
   settings: SettingsForMeta,
   overrides?: BuildMetaFromSettingsOverrides
 ): Record<string, unknown> {
-  const siteUrl = (settings.siteUrl?.trim() || FALLBACK_SITE_URL).replace(/\/$/, "");
+  const siteUrl = requireSiteUrl(settings.siteUrl).replace(/\/$/, "");
   const path = (overrides?.path ?? settings.defaultPathname ?? FALLBACK_PATH).replace(/^\//, "") || "";
-  const canonicalUrl = path ? `${siteUrl}/${path}` : `${siteUrl}/`;
+  const canonicalUrl = absoluteUrl(`/${path}`, siteUrl);
 
   const titleFallback = settings.siteName?.trim() || FALLBACK_TITLE;
   const title = (overrides?.title ?? settings.modontySeoTitle ?? "").trim() || titleFallback;
@@ -105,8 +102,6 @@ export function buildMetaFromSettings(
   const absImage = imageUrl ? (ensureAbsoluteUrl(imageUrl, siteUrl) || imageUrl) : undefined;
   // Derive the OG image MIME type from the actual file extension so the declared type always matches the file.
   const ogImageType = imageMimeFromUrl(absImage) || settings.defaultOgImageType?.trim() || FALLBACK_OG_IMAGE_TYPE;
-  const ogImageWidth = settings.defaultOgImageWidth ?? FALLBACK_OG_IMAGE_WIDTH;
-  const ogImageHeight = settings.defaultOgImageHeight ?? FALLBACK_OG_IMAGE_HEIGHT;
   const ogImageAlt = (settings.altImage ?? settings.siteName ?? "").trim();
 
   const hreflangDefault = settings.defaultHreflang?.trim() || FALLBACK_HREFLANG;
@@ -130,8 +125,9 @@ export function buildMetaFromSettings(
             url: absImage,
             secure_url: absImage,
             type: ogImageType,
-            width: ogImageWidth,
-            height: ogImageHeight,
+            // No width/height: same reason as build-meta-from-page — one global seeded
+            // 1200x630 stood in for every image. The type above IS derived from the real file
+            // (imageMimeFromUrl), which is why it stays and the invented pair does not.
             alt: ogImageAlt,
           },
         ]
@@ -143,11 +139,17 @@ export function buildMetaFromSettings(
     title,
     description,
     imageAlt: ogImageAlt,
-    site: settings.twitterSite?.trim() ?? "",
-    creator: (settings.twitterCreator ?? settings.twitterSite)?.trim() ?? "",
-    image: absImage ?? "",
-    siteId: settings.twitterSiteId?.trim() ?? "",
-    creatorId: settings.twitterCreatorId?.trim() ?? "",
+    // Each of these is omitted when Settings has no value. They used to fall back to `""`,
+    // which renders `<meta name="twitter:site" content="">` — a declared-but-empty handle,
+    // which reads to a parser as "the account is the empty string" rather than "no account".
+    // Same rule the OG block above already follows.
+    ...(settings.twitterSite?.trim() ? { site: settings.twitterSite.trim() } : {}),
+    ...((settings.twitterCreator ?? settings.twitterSite)?.trim()
+      ? { creator: (settings.twitterCreator ?? settings.twitterSite)!.trim() }
+      : {}),
+    ...(absImage ? { image: absImage } : {}),
+    ...(settings.twitterSiteId?.trim() ? { siteId: settings.twitterSiteId.trim() } : {}),
+    ...(settings.twitterCreatorId?.trim() ? { creatorId: settings.twitterCreatorId.trim() } : {}),
   };
 
   const built: Record<string, unknown> = {

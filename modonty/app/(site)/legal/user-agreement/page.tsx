@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { generateStructuredData, normalizeStoredSiteEntityIds } from "@/lib/seo";
+import { generateStructuredData, jsonLdHtmlFromString } from "@/lib/seo";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { messages } from "@/lib/i18n/messages";
 
@@ -59,7 +59,7 @@ async function UserAgreementContent() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: storedJsonLd
-            ? normalizeStoredSiteEntityIds(storedJsonLd)
+            ? jsonLdHtmlFromString(storedJsonLd)
             : sanitizeJsonLd(buildFallbackStructuredData()),
         }}
       />

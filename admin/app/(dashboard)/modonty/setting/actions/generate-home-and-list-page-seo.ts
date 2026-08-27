@@ -5,6 +5,7 @@ import { ArticleStatus } from "@prisma/client";
 import { getAllSettings, getSameAsFromSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { getArticleDefaultsFromSettings } from "@/app/(dashboard)/settings/helpers/get-article-defaults-from-settings";
 import { buildMetaFromSettingsForPageType, type SettingsForMeta } from "../helpers/build-meta-from-settings";
+import { previewListingMetadata } from "@/lib/seo/listing-page-seo-generator";
 import {
   buildHomeJsonLdFromSettings,
   buildListPageJsonLdFromSettings,
@@ -98,7 +99,21 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
     const [settings, sameAs] = await Promise.all([getAllSettings(), getSameAsFromSettings()]);
     const settingsWithSameAs = { ...settings, sameAs };
 
-    const meta = buildMetaFromSettingsForPageType(settings as SettingsForMeta, page);
+    // The preview shows what the WRITER would store — it calls the writer's own builder.
+    //
+    // This was `buildMetaFromSettingsForPageType`, a second builder that carried seven Arabic
+    // titles and descriptions written in code (`LIST_PAGE_FALLBACKS` in
+    // helpers/build-meta-from-settings.ts). With an empty Settings title the editor was shown
+    // «الفئات», approved it, saved — and `listing-page-seo-generator.ts` stored no title,
+    // because it invents nothing. The screen and the database disagreed in exactly the case
+    // the review exists to catch.
+    //
+    // Home keeps the old helper: its Settings columns are unprefixed and it has its own
+    // writer path, so it is not one of the seven listing pages.
+    const meta =
+      page === "home"
+        ? buildMetaFromSettingsForPageType(settings as SettingsForMeta, page)
+        : await previewListingMetadata(page);
 
     if (page === "home") {
       const [articles, total] = await Promise.all([
@@ -143,7 +158,11 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         slug: a.slug,
         excerpt: a.excerpt,
         datePublished: a.datePublished,
-        dateModified: a.updatedAt,
+        // `a.dateModified`, not `a.updatedAt`. Article carries BOTH as `@updatedAt`
+        // (schema.prisma:1304, 1371) and every write bumps both — so `updatedAt` moved on
+        // each cache rebuild and this listing announced articles as freshly modified that
+        // nobody had touched. `dateModified` now moves only on a real content edit.
+        dateModified: a.dateModified,
         wordCount: a.wordCount,
         inLanguage: articleDefaults.inLanguage,
         featuredImage: a.featuredImage,
@@ -248,7 +267,7 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         settingsWithSameAs as Parameters<typeof buildClientsPageJsonLd>[0],
         clientsForJsonLd,
         total,
-        maxUpdatedAt ?? new Date()
+        maxUpdatedAt
       );
       const report = await validateHomeOrListPageJsonLd(jsonLdObj);
       const valid =
@@ -305,7 +324,7 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         settingsWithSameAs as Parameters<typeof buildCategoriesPageJsonLd>[0],
         categoriesForJsonLd,
         total,
-        maxUpdatedAt ?? new Date()
+        maxUpdatedAt
       );
       const report = await validateHomeOrListPageJsonLd(jsonLdObj);
       const valid =
@@ -388,7 +407,11 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         slug: a.slug,
         excerpt: a.excerpt,
         datePublished: a.datePublished,
-        dateModified: a.updatedAt,
+        // `a.dateModified`, not `a.updatedAt`. Article carries BOTH as `@updatedAt`
+        // (schema.prisma:1304, 1371) and every write bumps both — so `updatedAt` moved on
+        // each cache rebuild and this listing announced articles as freshly modified that
+        // nobody had touched. `dateModified` now moves only on a real content edit.
+        dateModified: a.dateModified,
         wordCount: a.wordCount,
         inLanguage: articleDefaults.inLanguage,
         featuredImage: a.featuredImage,
@@ -405,7 +428,7 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         settingsWithSameAs as Parameters<typeof buildTrendingPageJsonLd>[0],
         articlesForJsonLd,
         total,
-        maxUpdatedAt ?? new Date()
+        maxUpdatedAt
       );
       const report = await validateHomeOrListPageJsonLd(jsonLdObj);
       const valid =
@@ -464,7 +487,11 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         slug: a.slug,
         excerpt: a.excerpt,
         datePublished: a.datePublished,
-        dateModified: a.updatedAt,
+        // `a.dateModified`, not `a.updatedAt`. Article carries BOTH as `@updatedAt`
+        // (schema.prisma:1304, 1371) and every write bumps both — so `updatedAt` moved on
+        // each cache rebuild and this listing announced articles as freshly modified that
+        // nobody had touched. `dateModified` now moves only on a real content edit.
+        dateModified: a.dateModified,
         wordCount: a.wordCount,
         inLanguage: articleDefaults.inLanguage,
         featuredImage: a.featuredImage,
@@ -477,7 +504,7 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         settingsWithSameAs as Parameters<typeof buildArticlesPageJsonLd>[0],
         articlesForJsonLd,
         total,
-        maxUpdatedAt ?? new Date(),
+        maxUpdatedAt,
       );
       const report = await validateHomeOrListPageJsonLd(jsonLdObj);
       const valid =
@@ -565,7 +592,7 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         page as TaxonomyPageType,
         items,
         total,
-        maxUpdatedAt ?? new Date()
+        maxUpdatedAt
       );
       return finalizePreview(meta, jsonLdObj);
     } else {

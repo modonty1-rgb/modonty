@@ -14,7 +14,6 @@ interface ArticleJsonLdProps {
    *  for an article that has a stored card. */
   buildFallbackArticleJsonLd: () => object;
   buildFallbackBreadcrumb: () => object;
-  siteIdentityJsonLd: object;
   faqs: ArticleFaq[];
 }
 
@@ -35,7 +34,6 @@ export function ArticleJsonLd({
   storedHasFaq,
   buildFallbackArticleJsonLd,
   buildFallbackBreadcrumb,
-  siteIdentityJsonLd,
   faqs,
 }: ArticleJsonLdProps) {
   return (
@@ -54,7 +52,20 @@ export function ArticleJsonLd({
           />
         </>
       )}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(siteIdentityJsonLd) }} />
+      {/* The site-identity script used to sit here. It was removed on 25 Aug 2026 for three
+          reasons, in order of weight:
+
+          1. It defined `/#organization` a second time on the page. The comment that justified
+             it ("its @id does not collide with the stored card's nodes") had gone stale: the
+             stored card now carries that node too, so one page shipped two different
+             definitions of the same entity — measured on /articles/العلاج-الجدلي-السلوكي.
+          2. It built the brand from constants in code (BRAND_AR, BRAND_EN, LOGO_URL), while
+             the stored card builds it from Settings. The richer and editable one is the card:
+             it carries the description, the licensing block and five sameAs links.
+          3. Its `WebSite` node put site-level markup on an article. Google: "The WebSite
+             structured data must be on the home page of the site" (Site names, 10 Dec 2025).
+
+          Nothing is lost — `isPartOf` still references the site entity by @id. */}
       {faqs.length > 0 && !storedHasFaq && (
         <script
           type="application/ld+json"

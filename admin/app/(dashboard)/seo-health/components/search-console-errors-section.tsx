@@ -1,17 +1,50 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { XCircle, AlertTriangle, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { XCircle, CheckCircle, HelpCircle, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import type { StructuredDataError, ErrorTrend } from "@/lib/seo/search-console-api";
 
+/**
+ * What we know about Search Console right now. "We could not read it" is its own state:
+ * folding it into an empty error list is what printed a green all-clear over a failed read.
+ */
+export type SearchConsoleSnapshot =
+  | { status: "not-configured" }
+  | { status: "unavailable"; reason: string }
+  | { status: "read"; errors: StructuredDataError[]; trends: ErrorTrend[] };
+
 interface SearchConsoleErrorsSectionProps {
-  errors: StructuredDataError[];
-  trends: ErrorTrend[];
+  snapshot: SearchConsoleSnapshot;
 }
 
 export function SearchConsoleErrorsSection({
-  errors,
-  trends,
+  snapshot,
 }: SearchConsoleErrorsSectionProps) {
+  if (snapshot.status === "not-configured") {
+    return null;
+  }
+
+  if (snapshot.status === "unavailable") {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <HelpCircle className="h-5 w-5 text-amber-500" />
+            Search Console — not measured
+          </CardTitle>
+          <CardDescription>
+            Structured data was NOT checked this time. This is not an all-clear.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-amber-600 dark:text-amber-400">
+            {snapshot.reason}
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const { errors, trends } = snapshot;
   const criticalErrors = errors.filter((e) => e.severity === "ERROR");
   const warnings = errors.filter((e) => e.severity === "WARNING");
 
@@ -29,9 +62,9 @@ export function SearchConsoleErrorsSection({
         </CardHeader>
         <CardContent>
           {errors.length === 0 ? (
-            <div className="flex items-center gap-2 text-green-500 py-4">
-              <AlertTriangle className="h-5 w-5" />
-              <span>لا توجد أخطاء في Search Console</span>
+            <div className="flex items-center gap-2 text-green-600 dark:text-green-500 py-4">
+              <CheckCircle className="h-5 w-5" />
+              <span>Google was asked, and reported no structured-data issues</span>
             </div>
           ) : (
             <div className="space-y-4">
@@ -98,10 +131,12 @@ export function SearchConsoleErrorsSection({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-blue-500" />
-              Error Trends (Last 30 Days)
+              Errors by type — snapshot
             </CardTitle>
             <CardDescription>
-              Trends in structured data errors over time
+              Counts as of this inspection. Search Console does not serve past
+              rich-results issues, so the direction of travel is not measured
+              until we store our own snapshots.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -118,22 +153,26 @@ export function SearchConsoleErrorsSection({
                         Current: {trend.currentCount}
                       </span>
                       <span className="text-xs text-muted-foreground">
-                        Previous: {trend.previousCount}
+                        Previous:{" "}
+                        {trend.previousCount === null
+                          ? "not measured"
+                          : trend.previousCount}
                       </span>
-                      {trend.changePercentage !== 0 && (
-                        <span
-                          className={`text-xs ${
-                            trend.trend === "increasing"
-                              ? "text-red-500"
-                              : trend.trend === "decreasing"
-                                ? "text-green-500"
-                                : "text-muted-foreground"
-                          }`}
-                        >
-                          {trend.changePercentage > 0 ? "+" : ""}
-                          {trend.changePercentage.toFixed(1)}%
-                        </span>
-                      )}
+                      {trend.changePercentage !== null &&
+                        trend.changePercentage !== 0 && (
+                          <span
+                            className={`text-xs ${
+                              trend.trend === "increasing"
+                                ? "text-red-500"
+                                : trend.trend === "decreasing"
+                                  ? "text-green-500"
+                                  : "text-muted-foreground"
+                            }`}
+                          >
+                            {trend.changePercentage > 0 ? "+" : ""}
+                            {trend.changePercentage.toFixed(1)}%
+                          </span>
+                        )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -146,6 +185,9 @@ export function SearchConsoleErrorsSection({
                     {trend.trend === "stable" && (
                       <Minus className="h-4 w-4 text-muted-foreground" />
                     )}
+                    {trend.trend === "not-measured" && (
+                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                    )}
                     <Badge
                       variant={
                         trend.trend === "increasing"
@@ -155,7 +197,9 @@ export function SearchConsoleErrorsSection({
                             : "secondary"
                       }
                     >
-                      {trend.trend}
+                      {trend.trend === "not-measured"
+                        ? "trend not measured"
+                        : trend.trend}
                     </Badge>
                   </div>
                 </div>

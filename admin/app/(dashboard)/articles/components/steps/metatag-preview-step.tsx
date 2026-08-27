@@ -331,7 +331,7 @@ export function MetaTagPreviewStep() {
       ...(selectedCategory ? [{ name: selectedCategory.name, url: `/categories/${selectedCategory.slug}` }] : []),
       { name: effectiveTitle, url: articlePath },
     ];
-    const breadcrumb = generateBreadcrumbStructuredData(breadcrumbItems) as Record<string, unknown>;
+    const breadcrumb = generateBreadcrumbStructuredData(breadcrumbItems, siteUrl) as Record<string, unknown>;
     delete breadcrumb['@context'];
     breadcrumb['@id'] = ids.breadcrumb;
     graph.push(breadcrumb);

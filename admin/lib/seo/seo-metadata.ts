@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import { SITE_NAME_FALLBACK } from "@/lib/constants/site-name";
+import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import { BRAND_LOGO_URL } from "@modonty/shared/lib/brand-assets";
 
 export interface SEOData {
@@ -52,14 +54,16 @@ export function generateMetadataFromSEO(data: SEOData, options?: SEOOptions): Me
   } = data;
 
   const fullTitle = title ? `${title} - ${siteName}` : siteName;
-  const siteUrl = options?.siteUrl || "https://www.modonty.com";
+  // No literal fallback: this prefixes the canonical and both social image URLs. Callers pass
+  // it from `loadSiteUrl()` / Settings; absence must surface, not be papered over.
+  const siteUrl = requireSiteUrl(options?.siteUrl);
   let canonicalUrl: string;
   if (!url) {
     canonicalUrl = siteUrl;
   } else if (/^https?:\/\//.test(url)) {
     canonicalUrl = url;
   } else {
-    canonicalUrl = `${siteUrl}${url}`;
+    canonicalUrl = absoluteUrl(url, siteUrl);
   }
   // Never `${siteUrl}/og-image.jpg` — that file does not exist (measured HTTP 404 on
   // 2026-08-07). The brand logo is a real asset on Bunny.

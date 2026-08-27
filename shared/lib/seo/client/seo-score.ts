@@ -10,6 +10,7 @@
 // under shared/lib/seo/article/ with the same SeoScore/EntitySeoScore contract.
 
 import type { EntitySeoScore, SeoCheck, SeoScore } from "./types";
+import { isBlockedFromIndex } from "./types";
 import { computeClientMetaScore, type ClientMetaInput } from "./meta-score";
 import { computeClientJsonLdScore, type ClientJsonLdInput } from "./jsonld-score";
 
@@ -21,7 +22,11 @@ export interface ClientSeoInput extends ClientMetaInput, ClientJsonLdInput {}
 export function computeClientEntitySeo(client: ClientSeoInput): EntitySeoScore {
   const meta = computeClientMetaScore(client);
   const jsonLd = computeClientJsonLdScore(client);
-  const overall = Math.round((meta.score + jsonLd.score) / 2);
+  // A blocked page is dropped from Google's results entirely, so a flawless @graph does not
+  // rescue half the number: averaging a zeroed meta with a perfect JSON-LD still read 50.
+  const overall = isBlockedFromIndex(client.nextjsMetadata)
+    ? 0
+    : Math.round((meta.score + jsonLd.score) / 2);
   return { meta, jsonLd, overall };
 }
 

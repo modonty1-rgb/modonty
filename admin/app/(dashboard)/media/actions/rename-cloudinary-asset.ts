@@ -27,10 +27,13 @@ function buildCloudinaryUrl(
   version: string | null
 ): string {
   // Format: https://res.cloudinary.com/{cloud_name}/{resource_type}/upload/v{version}/{public_id}.{format}
-  // Note: public_id from Cloudinary doesn't include the extension, so we add it
+  // Note: public_id from Cloudinary doesn't include the extension, so we add it.
+  // The id may carry Arabic letters (the SEO filename is deliberately descriptive), so
+  // percent-encode each SEGMENT — the slashes are folder separators and must survive.
+  const encodedId = publicId.split("/").map(encodeURIComponent).join("/");
   return version
-    ? `https://res.cloudinary.com/${cloudName}/${resourceType}/upload/v${version}/${publicId}.${format}`
-    : `https://res.cloudinary.com/${cloudName}/${resourceType}/upload/${publicId}.${format}`;
+    ? `https://res.cloudinary.com/${cloudName}/${resourceType}/upload/v${version}/${encodedId}.${format}`
+    : `https://res.cloudinary.com/${cloudName}/${resourceType}/upload/${encodedId}.${format}`;
 }
 
 /**
@@ -140,7 +143,11 @@ export async function renameCloudinaryAsset(
     // Prefer the canonical URL Cloudinary returns in the response (always valid).
     // Only fall back to manual construction if the API omits it — manual building
     // can produce a dead URL if version/format are guessed wrong.
-    const format = result.format || oldPublicId.split('.').pop() || "png";
+    // `split('.').pop()` on a dotless public_id returns the WHOLE id, which would build
+    // `.../name.name` — a dead URL. Only treat it as an extension when there IS a dot,
+    // and only when what follows it looks like one.
+    const extFromOldId = /\.([a-z0-9]{2,5})$/i.exec(oldPublicId)?.[1];
+    const format = result.format || extFromOldId || "png";
     const version = result.version || null;
     const newUrl =
       result.secure_url ||

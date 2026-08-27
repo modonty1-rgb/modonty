@@ -34,8 +34,24 @@ export async function deleteIndustry(id: string) {
     });
 
     revalidatePath("/industries");
-    await revalidateModontyTag("industries");
-    try { const { regenerateIndustriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateIndustriesListingCache(); } catch (e) { console.error("Industries listing cache failed:", e); }
+    // Rebuild the listing blob BEFORE busting modonty’s cache. It ran after, so the flush
+    // went out first and the next visitor rebuilt the listing from the blob that still
+    // contained the deleted row — the stale page served under a fresh cache. Same order the
+    // create and update paths already follow.
+    //
+    // The answer is read too: the generator returns `{ success, error }` and never throws, so
+    // `await` alone always looked successful. A failed rebuild holds the flush.
+    let listingOk = true;
+    try {
+      const { regenerateIndustriesListingCache } = await import("@/lib/seo/listing-page-seo-generator");
+      const r = await regenerateIndustriesListingCache();
+      listingOk = r.success;
+      if (!r.success) console.error("Industries listing cache failed:", r.error);
+    } catch (e) {
+      listingOk = false;
+      console.error("Industries listing cache failed:", e);
+    }
+    if (listingOk) await revalidateModontyTag("industries");
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to delete industry";

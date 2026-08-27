@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { buildTaxonomyCanonical } from "@/lib/seo/build-taxonomy-canonical";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
@@ -29,25 +30,32 @@ export async function createCategory(data: {
       return { success: false, error: parsed.error.errors[0].message };
     }
 
+    const normalizedData = {
+      ...data,
+      slug: parsed.data.slug,
+    };
+
     // Slug uniqueness check
-    const existing = await db.category.findFirst({ where: { slug: data.slug.trim() }, select: { id: true } });
+    const existing = await db.category.findFirst({ where: { slug: normalizedData.slug }, select: { id: true } });
     if (existing) {
       return { success: false, error: "This slug is already in use. Try a different one." };
     }
 
     const category = await db.category.create({
       data: {
-        name: data.name,
-        slug: data.slug,
-        description: data.description,
-        parentId: data.parentId || null,
-        seoTitle: data.seoTitle,
-        seoDescription: data.seoDescription,
-        canonicalUrl: data.canonicalUrl,
-        socialImage: data.socialImage,
-        socialImageAlt: data.socialImageAlt,
-        socialImageMediaId: data.socialImageMediaId || null,
-        cloudinaryPublicId: data.cloudinaryPublicId,
+        name: normalizedData.name,
+        slug: normalizedData.slug,
+        description: normalizedData.description,
+        parentId: normalizedData.parentId || null,
+        seoTitle: normalizedData.seoTitle,
+        seoDescription: normalizedData.seoDescription,
+        // Derived from the slug, exactly as the update path does — a category created with an
+        // empty (or hand-typed) canonical used to keep it until someone noticed.
+        canonicalUrl: await buildTaxonomyCanonical("categories", normalizedData.slug),
+        socialImage: normalizedData.socialImage,
+        socialImageAlt: normalizedData.socialImageAlt,
+        socialImageMediaId: normalizedData.socialImageMediaId || null,
+        cloudinaryPublicId: normalizedData.cloudinaryPublicId,
       },
     });
     await logAction("category.create", {
@@ -57,16 +65,32 @@ export async function createCategory(data: {
     });
 
     revalidatePath("/categories");
-    await revalidateModontyTag("categories");
+    // Generate BEFORE revalidating modonty — it renders the stored blob, so rebuilding
+    // first serves the page without one. Same order as update-category.ts.
+    // Both generators RETURN { success, error } and never throw: read the result or the
+    // failure is invisible.
+    const seoFailures: string[] = [];
     try {
       const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator");
-      await generateAndSaveCategorySeo(category.id);
-    } catch (e) { console.error("Category SEO gen failed:", e); }
+      const result = await generateAndSaveCategorySeo(category.id);
+      if (!result.success) seoFailures.push(`سيو القسم: ${result.error || "سبب غير معروف"}`);
+    } catch (e) { seoFailures.push(`سيو القسم: ${e instanceof Error ? e.message : String(e)}`); }
     try {
       const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator");
-      await regenerateCategoriesListingCache();
-    } catch (e) { console.error("Categories listing cache failed:", e); }
-    return { success: true, category };
+      const result = await regenerateCategoriesListingCache();
+      if (!result.success) seoFailures.push(`صفحة الأقسام: ${result.error || "سبب غير معروف"}`);
+    } catch (e) { seoFailures.push(`صفحة الأقسام: ${e instanceof Error ? e.message : String(e)}`); }
+    if (seoFailures.length > 0) console.error("Category SEO gen failed:", category.id, seoFailures.join(" · "));
+    else await revalidateModontyTag("categories");
+
+    return {
+      success: true,
+      category,
+      seoWarning:
+        seoFailures.length > 0
+          ? `القسم انحفظ، لكن بيانات السيو ما تجدّدت — جوجل بيبقى يشوف القديم. (${seoFailures.join(" · ")})`
+          : undefined,
+    };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to create category";
     return { success: false, error: message };

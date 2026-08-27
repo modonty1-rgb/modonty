@@ -1,8 +1,9 @@
 import { z } from "zod";
+import { slugify } from "@/lib/utils";
 
 export const categoryServerSchema = z.object({
   name: z.string().min(1, "Category name is required").max(200),
-  slug: z.string().min(1, "Slug is required").max(200),
+  slug: z.string().min(1, "Slug is required").max(200).transform((val) => slugify(val)),
   description: z.string().max(1000).optional().nullable(),
   parentId: z.string().optional().nullable(),
   seoTitle: z.string().max(200).optional().nullable(),

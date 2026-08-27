@@ -198,7 +198,10 @@ export function useClientForm({ initialData, clientId, onCreated, schema }: UseC
         addressLongitude: data.addressLongitude || null,
         commercialRegistrationNumber: data.commercialRegistrationNumber || null,
         vatID: data.vatID || null,
-        taxID: data.taxID || data.vatID || null, // Fallback to VAT ID only if Tax ID is not provided
+        // No vatID fallback — taxID (fiscal/TIN) and vatID are different numbers in
+        // schema.org, and inventing one from the other stores a value the partner never
+        // entered. Same rule as client-field-mapper.ts.
+        taxID: data.taxID || null,
         legalForm: data.legalForm || null,
         businessActivityCode: data.businessActivityCode || null,
         isicV4: data.isicV4 || null,
@@ -240,6 +243,16 @@ export function useClientForm({ initialData, clientId, onCreated, schema }: UseC
             ? `${clientName} has been updated successfully.`
             : `${clientName} has been created successfully and is ready for use.`,
         });
+        // The row saved but its cached SEO blob did not rebuild — modonty serves that
+        // blob, so a plain success toast alone would hide a stale public page.
+        const seoWarning = "seoWarning" in result ? result.seoWarning : undefined;
+        if (seoWarning) {
+          toast({
+            title: "الحفظ تمّ — بيانات السيو ما تجدّدت",
+            description: seoWarning,
+            variant: "warning",
+          });
+        }
         setLoading(false);
         // Create mode with a handler: hand control to the caller (welcome-email
         // dialog) instead of navigating immediately. result.data carries id/email.

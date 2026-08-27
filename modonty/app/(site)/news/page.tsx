@@ -3,19 +3,30 @@ import Link from "next/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { buildPageAlternates } from "@/lib/seo/build-page-alternates";
+import { buildShareTags } from "@/lib/seo/build-share-tags";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getArticles } from "@/lib/queries/get-articles";
 import { IconEmail, IconCheckCircle, IconForward } from "@/lib/icons";
 
+const NEWS_TITLE = "أخبار مدونتي";
+const NEWS_DESCRIPTION =
+  "اشترك في النشرة الإخبارية واحصل على رؤى وتحديثات أسبوعية من مدونتي في بريدك.";
+
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "أخبار مدونتي",
-    description:
-      "اشترك في النشرة الإخبارية واحصل على رؤى وتحديثات أسبوعية من مدونتي في بريدك.",
+    title: NEWS_TITLE,
+    description: NEWS_DESCRIPTION,
     // Was inheriting the root layout's four locales, all pointing at "/" — this page told
     // Google its Saudi version was the homepage. Now: its own canonical, locales from Settings.
     alternates: await buildPageAlternates("/news"),
+    // Shipped zero og:/twitter: until now — a shared link rendered as bare text. Both halves
+    // come from the same Settings columns every other page reads; nothing new is invented.
+    ...(await buildShareTags({
+      path: "/news",
+      title: NEWS_TITLE,
+      description: NEWS_DESCRIPTION,
+    })),
   };
 }
 

@@ -10,7 +10,6 @@ import { sanitizeHtml } from "./sanitize-html";
 import { readArticleOutline } from "./read-article-outline";
 import { getArticleDefaultsFromSettings } from "./get-article-defaults-from-settings";
 import { generateArticleStructuredData } from "./generate-article-structured-data";
-import { generateSiteIdentityStructuredData } from "./generate-site-identity-structured-data";
 import {
   getArticleBySlugMinimal,
   getArticleFaqs,
@@ -197,16 +196,6 @@ export async function getArticlePageData(slug: string) {
       { name: article.client.name, url: `/clients/${article.client.slug}` },
       { name: article.title, url: `/articles/${article.slug}` },
     ]);
-  // Site identity (Modonty Organization + WebSite brand entity) for knowledge-graph + AI/GEO.
-  // Always emitted: its @id (/#organization) does not collide with the stored card's
-  // nodes (client publisher + /authors/... author).
-  const siteIdentityJsonLd = generateSiteIdentityStructuredData({
-    sameAs: platformSocialLinks.map((l) => l.href),
-    imageLicenseUrl: platformImageLicensing.imageLicenseUrl,
-    imageAcquireLicensePageUrl: platformImageLicensing.imageAcquireLicensePageUrl,
-    inLanguage: articleDefaults.inLanguage,
-  });
-
   return {
     article,
     articleFaqsForJsonLd,
@@ -224,6 +213,5 @@ export async function getArticlePageData(slug: string) {
     storedHasFaq,
     buildFallbackArticleJsonLd,
     buildFallbackBreadcrumb,
-    siteIdentityJsonLd,
   };
 }

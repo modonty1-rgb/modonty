@@ -26,9 +26,10 @@ export function SEOSection({ form }: SEOSectionProps) {
     }));
   };
   
-  const seoTitleHint = seoSettings
-    ? `عنوان SEO — الحد الأقصى 51 حرف (العنوان النهائي في جوجل: 60 حرف)`
-    : "عنوان SEO — الحد الأقصى 51 حرف (يُضاف '- مودونتي' تلقائياً)";
+  // 51 = سياسة مدونتي، لا شرط من جوجل: جوجل لا يحدّ طول العنوان.
+  // https://developers.google.com/search/docs/appearance/title-link
+  const seoTitleHint =
+    "عنوان SEO — الحد الأقصى 51 حرف، لأن '- مودونتي' يُضاف تلقائياً (المجموع 60): سياسة مدونتي، لا شرط من جوجل";
 
   const seoDescriptionHint = seoSettings
     ? `وصف SEO — الطول الأمثل ${seoSettings.seoDescriptionMin}-${seoSettings.seoDescriptionMax} حرف`

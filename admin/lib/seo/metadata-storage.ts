@@ -8,6 +8,7 @@
  */
 
 import { performance } from "perf_hooks";
+import { mergeArticleWithDefaults } from "./merge-article-with-defaults";
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
 import { generateNextjsMetadata, type ArticleWithMetadataRelations } from "./metadata-generator";
@@ -109,7 +110,7 @@ export async function generateAndSaveNextjsMetadata(
     // Merge article with Settings defaults (12 SOT fields)
     const settings = await getAllSettings();
     const articleDefaults = getArticleDefaultsFromSettings(settings);
-    const articleWithDefaults = { ...article, ...articleDefaults } as ArticleWithMetadataRelations;
+    const articleWithDefaults = mergeArticleWithDefaults(article, articleDefaults) as unknown as ArticleWithMetadataRelations;
 
     // Generate metadata
     const metadata = await generateNextjsMetadata(articleWithDefaults, {
@@ -121,10 +122,21 @@ export async function generateAndSaveNextjsMetadata(
     // Calculate generation time
     const generationTimeMs = Math.round(performance.now() - startTime);
 
-    // Save to database
+    // Save to database.
+    //
+    // `dateModified` is passed back UNCHANGED — same reason as jsonld-storage.ts: it carries
+    // `@updatedAt`, and a cache write is not an edit to the article. Restamping it here made
+    // `article:modified_time` disagree with the JSON-LD `dateModified` on the same page, and
+    // told Google an untouched article had just changed. Prisma honours the explicit value
+    // (Schema Reference, @updatedAt: "If no timestamp is manually supplied, Prisma Client
+    // sets it automatically"); a real content edit supplies nothing, so it still bumps.
     await db.article.update({
       where: { id: articleId },
       data: {
+        // Guarded: `dateModified` is optional on the merged article type, and Prisma refuses
+        // `null` for a non-nullable column. Absent -> the field is simply not written, and
+        // `@updatedAt` behaves as before for that row.
+        ...(article.dateModified ? { dateModified: article.dateModified } : {}),
         nextjsMetadata: JSON.parse(JSON.stringify(metadata)) as Prisma.InputJsonValue,
         nextjsMetadataLastGenerated: new Date(),
       },

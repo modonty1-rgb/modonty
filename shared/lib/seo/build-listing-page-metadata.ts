@@ -20,8 +20,13 @@ export interface ListingPageMetadataInput {
   /** Absolute canonical URL of this page. */
   pageUrl: string;
   siteUrl: string;
-  title: string;
-  description: string;
+  /**
+   * Optional: these come from the Settings columns and nowhere else. The callers used to
+   * pass a literal when the column was empty — text Google reads that the Settings screen
+   * could not change. An empty column now ships no tag instead of a sentence from code.
+   */
+  title?: string;
+  description?: string;
   /** Absolute share-image URL, already resolved (crop applied by the caller). */
   ogImage?: string | null;
   ogImageAlt?: string | null;
@@ -89,8 +94,8 @@ export function buildListingPageMetadata(input: ListingPageMetadataInput) {
   const siteName = str(s.siteName) || "Modonty";
 
   return {
-    title,
-    description,
+    ...(title ? { title } : {}),
+    ...(description ? { description } : {}),
     ...(author ? { authors: [{ name: author }] } : {}),
     ...(toReferrerPolicy(s.defaultReferrerPolicy)
       ? { referrer: toReferrerPolicy(s.defaultReferrerPolicy) }
@@ -101,8 +106,8 @@ export function buildListingPageMetadata(input: ListingPageMetadataInput) {
       languages: buildHreflangLanguages(s.defaultAlternateLanguages, pageUrl, siteUrl),
     },
     openGraph: {
-      title,
-      description,
+      ...(title ? { title } : {}),
+      ...(description ? { description } : {}),
       url: pageUrl,
       siteName,
       type: str(s.defaultOgType) || "website",
@@ -114,8 +119,8 @@ export function buildListingPageMetadata(input: ListingPageMetadataInput) {
       card: (str(s.defaultTwitterCard) || (ogImage ? "summary_large_image" : "summary")) as
         | "summary"
         | "summary_large_image",
-      title,
-      description,
+      ...(title ? { title } : {}),
+      ...(description ? { description } : {}),
       ...(twitterSite ? { site: twitterSite } : {}),
       ...(str(s.twitterSiteId) ? { siteId: str(s.twitterSiteId) } : {}),
       ...(twitterCreator ? { creator: twitterCreator } : {}),

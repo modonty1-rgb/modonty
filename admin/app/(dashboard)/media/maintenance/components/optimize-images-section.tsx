@@ -91,7 +91,13 @@ export function OptimizeImagesSection({ images }: { images: OptimizableImage[] }
       const saved = optimized.fileSize;
       const before = image.fileSize ?? 0;
       const cut = before > 0 && saved < before ? ` — ${Math.round((1 - saved / before) * 100)}%` : "";
-      toast({ title: `تم التحسين — ${formatBytes(saved)}${cut}`, variant: "success" });
+      // The lighter image is in place, but a cached blob that copied its URL may not have
+      // rebuilt — then the public page still points at the old file.
+      if (res.seoWarning) {
+        toast({ title: `تم التحسين — ${formatBytes(saved)}${cut}`, description: res.seoWarning, variant: "warning" });
+      } else {
+        toast({ title: `تم التحسين — ${formatBytes(saved)}${cut}`, variant: "success" });
+      }
       setDoneIds((prev) => new Set(prev).add(image.id));
       router.refresh();
     } catch (e) {

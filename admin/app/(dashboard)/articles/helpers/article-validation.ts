@@ -44,7 +44,12 @@ export const articleFormSchema = z.object({
   featuredImageId: z.string().optional().nullable(),
   featuredImageAlt: z.string().optional().nullable(),
 
-  seoTitle: z.string().max(51, "عنوان SEO يجب أن يكون 51 حرف أو أقل (العنوان النهائي في جوجل: 60 حرف)").optional(),
+  // Origin: MODONTY POLICY, not Google. Google's Title links page says "While there's no
+  // limit on how long a <title> element can be, the title link is truncated in Google Search
+  // results as needed, typically to fit the device width" — so 60 is a display convention we
+  // chose, not a Google limit. 51 = that budget minus the "- مودونتي" suffix we append (9).
+  // https://developers.google.com/search/docs/appearance/title-link
+  seoTitle: z.string().max(51, "عنوان SEO أطول من 51 حرف — اختصره. مدونتي تضيف \"- مودونتي\" بعده (المجموع 60): سياسة مدونتي في عرض العنوان، لا شرط من جوجل").optional(),
   seoDescription: z.string().max(160, "وصف SEO يجب أن يكون أقل من 160 حرف").optional(),
   metaRobots: z.string().optional(),
 

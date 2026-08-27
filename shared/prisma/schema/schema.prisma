@@ -705,6 +705,7 @@ model Client {
   engagementDuration EngagementDuration[]
   contactMessages  ContactMessage[]
   notifications    Notification[]
+  mobileDevices    MobileDevice[]
   bookingRequests  BookingRequest[]
 
   // SEO Intake relations
@@ -3476,6 +3477,32 @@ model ClientNotification {
   @@index([clientId, createdAt])
   @@index([createdAt])
   @@map("client_notifications")
+}
+
+/// One row per installed mobile device. It owns the Expo token, not the Client row,
+/// because one client account may be active on several phones and tokens rotate.
+model MobileDevice {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  /// ExpoPushToken[...] or ExponentPushToken[...]. Unique so a re-login moves the
+  /// token to the current authenticated client rather than creating a duplicate.
+  expoPushToken String @unique
+  platform      String // "android" | "ios"
+  deviceName    String?
+  appVersion    String?
+
+  enabled      Boolean  @default(true)
+  lastSeenAt   DateTime @default(now())
+  disabledAt   DateTime?
+  disabledReason String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([clientId, enabled])
+  @@map("mobile_devices")
 }
 
 enum ReelStatus {

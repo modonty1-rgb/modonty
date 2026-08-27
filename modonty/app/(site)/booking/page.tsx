@@ -8,17 +8,29 @@ import { SITE_URL } from "@/constants";
 import type { Metadata } from "next";
 
 import { buildPageAlternates } from "@/lib/seo/build-page-alternates";
+import { buildShareTags } from "@/lib/seo/build-share-tags";
 
 const text = messages.booking;
 
+// The brand is appended by hand in `<title>` here (`absolute`), so the share tags get the
+// bare headline — `og:site_name` is what carries the brand on a card.
+const BOOKING_TITLE = "احجز الآن — الشركاء الذين يستقبلون الحجوزات";
+const BOOKING_DESCRIPTION =
+  "احجز موعدك مباشرة مع شركاء مدونتي الذين يستقبلون الحجوزات — عيادات ومراكز وخدمات موثوقة في السعودية ومصر والخليج.";
+
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: { absolute: "احجز الآن — الشركاء الذين يستقبلون الحجوزات | مدونتي" },
-    description:
-      "احجز موعدك مباشرة مع شركاء مدونتي الذين يستقبلون الحجوزات — عيادات ومراكز وخدمات موثوقة في السعودية ومصر والخليج.",
+    title: { absolute: `${BOOKING_TITLE} | مدونتي` },
+    description: BOOKING_DESCRIPTION,
     // Declaring only a canonical dropped this page to zero hreflang: Next replaces the
     // layout's `alternates` rather than merging them, so a lone canonical is also a deletion.
     alternates: await buildPageAlternates("/booking"),
+    // Shipped zero og:/twitter: until now — see `buildShareTags`.
+    ...(await buildShareTags({
+      path: "/booking",
+      title: BOOKING_TITLE,
+      description: BOOKING_DESCRIPTION,
+    })),
   };
 }
 

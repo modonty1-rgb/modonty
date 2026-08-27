@@ -8,6 +8,8 @@
  * result working, while adding the publisher context the other pages already carry.
  */
 
+import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
+import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import type { SettingsForHomeJsonLd } from "./build-home-jsonld-from-settings";
 import { buildSiteOrgAndWebSite } from "./build-clients-page-jsonld";
 
@@ -25,8 +27,8 @@ export function buildFaqPageJsonLd(
   settings: SettingsForHomeJsonLd,
   faqs: FaqForJsonLd[]
 ): Record<string, unknown> {
-  const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
-  const faqPageUrl = `${siteUrl}/help/faq`;
+  const siteUrl = requireSiteUrl(settings.siteUrl).replace(/\/$/, "");
+  const faqPageUrl = absoluteUrl("/help/faq", siteUrl);
   const { org, website, inLangCodes } = buildSiteOrgAndWebSite(settings, siteUrl);
   const name =
     ((settings as Record<string, unknown>).faqSeoTitle as string | null)?.trim() || "الأسئلة الشائعة";
@@ -42,8 +44,14 @@ export function buildFaqPageJsonLd(
         "@type": "Answer",
         text: faq.answer,
         ...(faq.dateCreated && { dateCreated: faq.dateCreated.toISOString() }),
-        ...(faq.upvoteCount != null && { upvoteCount: faq.upvoteCount }),
-        ...(faq.author && { author: { "@type": "Person", name: faq.author } }),
+        // No `upvoteCount` and no `author` here. `FaqForJsonLd` carries ONE of each, and they
+        // describe the QUESTION — who asked it and how many people voted it up. Copying them
+        // onto the Answer told Google that the person who asked also wrote the answer, and
+        // that the answer had earned the question's votes. Two different entities, one set of
+        // values, and the second claim was invented.
+        //
+        // schema.org gives Answer its own `upvoteCount` and `author`; when the row holds no
+        // separate value for them, the honest markup is to omit them.
       },
     };
 

@@ -193,11 +193,33 @@ const articleSchema = {
               properties: { "@type": { const: "Article" } }
             },
             then: {
-              required: ["@id", "headline", "datePublished", "dateModified", "author", "publisher"],
+              // `datePublished` is NOT required here. Google, Article structured data:
+              // "There are no required properties; instead, add the properties that
+              // apply to your content."
+              // https://developers.google.com/search/docs/appearance/structured-data/article
+              // A DRAFT / AWAITING_APPROVAL / SCHEDULED article legitimately carries
+              // datePublished = null — which is exactly what this same file states at
+              // `validateBusinessRules` below, so Ajv used to fail the very shape the
+              // business rules deliberately allowed. Measured 25 Aug 2026:
+              //   ajv.valid = false · "/@graph/0: must have required property 'datePublished'"
+              // The remaining entries are a Modonty publishing policy, not Google's list.
+              required: ["@id", "headline", "dateModified", "author", "publisher"],
               properties: {
                 headline: {
                   type: "string",
-                  minLength: 30,
+                  // No `minLength`. It was 30, and it was an Ajv ERROR — a short-but-correct
+                  // Arabic headline could not be published. Google, Article structured data
+                  // (checked 27 Aug 2026): "There are no required properties" and, on the
+                  // headline, only "Consider using a concise title, as long titles may be
+                  // truncated on some devices." No minimum is stated anywhere, so 30 was a
+                  // number this codebase invented and then enforced as a publishing block.
+                  //
+                  // A short headline is still surfaced — as a WARNING, in validateBusinessRules
+                  // below ("Headline too short … Recommended: 30+"). That is the right severity
+                  // for advice: the editor sees it and decides.
+                  //
+                  // `maxLength` stays at 110: unlike the minimum it is not a Modonty invention,
+                  // and over-long headlines are the truncation Google's own sentence warns about.
                   maxLength: 110,
                 },
                 datePublished: {
@@ -423,7 +445,14 @@ export async function validateBusinessRules(
     if (!orgNode) {
       errors.push("Publisher Organization node not found in @graph");
     } else if (opts.requirePublisherLogo && !orgNode.logo) {
-      errors.push("Publisher logo missing (required for Article rich results)");
+      // A WARNING, not an error. This blocked publishing on the claim that the logo is
+      // "required for Article rich results" — it is not. Google, Article structured data
+      // (checked 27 Aug 2026): "There are no required properties; instead, add the properties
+      // that apply to your content." The old AMP-era logo requirement is gone from that page.
+      //
+      // The publisher REFERENCE above stays an error: a graph whose Article points at a
+      // publisher node that does not exist is broken markup, not a missing nicety.
+      warnings.push("Publisher logo missing — recommended for Article rich results, not required");
     }
   }
 

@@ -93,7 +93,20 @@ export async function cascadeSettingsToAllEntities(): Promise<{
     // Non-critical
   }
 
-  // 5. Content pages — about, contact, terms, the four legal pages, trust, story, audio, reels.
+  // 5. The Modonty author — /authors/modonty serves a stored card like everything else
+  // (modonty/app/(site)/authors/[slug]/page.tsx reads `nextjsMetadata` and takes its canonical
+  // straight out of it). Nothing in this cascade touched it, so the author page kept the
+  // siteName, siteUrl and logo from before the settings change until somebody happened to open
+  // the author form. `regenerateModontyAuthorSeo` is idempotent and busts the "authors" tag
+  // itself, which is why it is not in the tag list below.
+  try {
+    const { regenerateModontyAuthorSeo } = await import("./author-seo-repair");
+    await regenerateModontyAuthorSeo();
+  } catch (e) {
+    console.error("[cascade] author SEO regeneration failed:", e);
+  }
+
+  // 6. Content pages — about, contact, terms, the four legal pages, trust, story, audio, reels.
   // They read a stored blob like everything else, so a Settings change has to reach them here
   // or their copy of the defaults goes stale the moment one is edited.
   try {
@@ -103,7 +116,7 @@ export async function cascadeSettingsToAllEntities(): Promise<{
     // Non-critical
   }
 
-  // 5. Revalidate all public site tags
+  // 7. Revalidate all public site tags
   await Promise.all([
     revalidateModontyTag("articles"),
     revalidateModontyTag("clients"),
