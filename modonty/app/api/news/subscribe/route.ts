@@ -8,6 +8,7 @@ import { sendEmail } from "@/lib/email/resend-client";
 import { newsletterWelcomeEmail } from "@modonty/shared/lib/email/templates/newsletter-welcome";
 import { sendAdminTelegram } from "@modonty/shared/lib/telegram/client";
 import { isSubscribeRateLimited } from "./is-subscribe-rate-limited";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 /**
  * `email.includes("@")` accepted `"@"` itself, a header injection, or a 100KB string — and the
@@ -70,7 +71,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Notify Telegram group — non-blocking
-    const now = new Date().toLocaleString("ar-SA", { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
+    const now = new Date().toLocaleString(SITE_LOCALE, { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
     sendAdminTelegram(`🔔 <b>مشترك جديد — نشرة مدونتي</b>\n📧 ${normalizedEmail}\n📅 ${now}`).catch(() => null);
 
     // Send welcome email — non-blocking, failure doesn't affect subscription

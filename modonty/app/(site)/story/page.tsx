@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
+import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 import { StoryClientLoader } from "./StoryClientLoader";
 import { STORY_OG_IMAGE as OG_IMAGE } from "./_constants";
 import { getLegalEntity, buildOrganizationJsonLd } from "@/lib/seo/organization-jsonld";
 import { toLegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getStoryPageForMetadata } from "./helpers/story-metadata";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { jsonLdHtml } from "@/lib/seo";
 import storyManifest from "../../../public/help/audio/general-pitch/manifest.json";
+import { SITE_URL } from "@/constants";
+import { messages } from "@/lib/i18n/messages";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
 const PAGE_URL = `${SITE_URL}/story`;
 const STORY_TRANSCRIPT_IDS = new Set(["02", "03", "04"]);
 const STORY_TRANSCRIPT = storyManifest.sections.flatMap((section) =>
@@ -23,15 +26,14 @@ const STORY_TRANSCRIPT = storyManifest.sections.flatMap((section) =>
     : [],
 );
 
-// Title and description come from the page's own row, edited at /modonty/pages/story.
-// The constants below stay as the fallback for a row that does not exist yet — an indexed
-// page must never ship with an empty title while someone fills a form.
+// العنوان والوصف من صفّ الصفحة، يُحرَّران على `/modonty/pages/story`.
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadataFromPageRow(await getStoryPageForMetadata(), {
     path: "/story",
-    fallbackTitle: "قصة مدونتي — البنيان الرقمي للعالم العربي",
-    fallbackDescription:
-      "اسمع قصة مدونتي بصوت احترافي: كيف نبني منظومة رقمية كاملة لكل نشاط عربي — من نقطة الشعار حتى البنيان المرصوص.",
+    // لا احتياط للعنوان: صفّ `/story` يحمله (مقيس ٢٨ أغسطس — ١١ من ١١ صفّاً تحمل عنواناً)،
+    // فالحذف لا يغيّر شيئاً اليوم ويجعل الفراغ غداً ظاهراً بدل أن يُغطّى بنصّ من الكود.
+    // والوصف يبقى مؤقّتاً: هذا الصفّ **بلا وصف** اليوم، وحذفه يُسقط وسماً حيّاً.
+    fallbackDescription: messages.seo.story.description,
   });
 }
 
@@ -45,11 +47,10 @@ function buildPodcastSeries(organization: Record<string, unknown>) {
   return {
     "@context": "https://schema.org",
     "@type": "PodcastSeries",
-    name: "قصة مدونتي — البنيان الرقمي للعالم العربي",
+    name: messages.seo.story.podcastName,
     alternateName: "Modonty Story",
     url: PAGE_URL,
-    description:
-      "بودكاست قصير (٥ دقائق) يشرح فلسفة مدونتي، الفرق بيننا وبين الوكالات والفريلانسرز، وكيف نساهم في رؤية المملكة ٢٠٣٠.",
+    description: messages.seo.story.podcastDescription,
     inLanguage: "ar",
     image: OG_IMAGE,
     author: organization,
@@ -60,19 +61,20 @@ function buildPodcastSeries(organization: Record<string, unknown>) {
 
 export default async function StoryPage() {
   // The legal entity is one cached read shared with /trust — never a second constant.
-  const entity = await getLegalEntity();
+  // الاسم يُقرأ هنا (سيرفر) ويُمرَّر — فلا يحمل باندل العميل ثابتاً ولا يقرأ القاعدة.
+  const [entity, { siteName }] = await Promise.all([getLegalEntity(), getPageSeoDefaults()]);
   const ORGANIZATION = buildOrganizationJsonLd(entity);
   const PODCAST_SERIES = buildPodcastSeries(ORGANIZATION);
 
   const webPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: "قصة مدونتي — البنيان الرقمي للعالم العربي",
-    description:
-      "اسمع قصة مدونتي بصوت احترافي: كيف نبني منظومة رقمية كاملة لكل نشاط عربي.",
+    name: messages.seo.story.podcastName,
+    description: messages.seo.story.episodeDescription,
     url: PAGE_URL,
-    inLanguage: "ar",
-    isPartOf: { "@type": "WebSite", name: "مدونتي", url: SITE_URL },
+    // اسم الموقع ولغته يعيشان في عقدة الهوية الواحدة — الإشارة إليها بـ`@id` بدل نسخِ
+    // الاسم هنا، لأن النسخة الثانية تصير كياناً منافساً بمجرّد أن يتغيّر الاسم من الأدمن.
+    isPartOf: { "@id": buildSiteEntityIds(SITE_URL).website },
     publisher: ORGANIZATION,
     mainEntity: PODCAST_SERIES,
   };
@@ -95,6 +97,7 @@ export default async function StoryPage() {
         manifestUrl="/help/audio/general-pitch/manifest.json"
         audioBase="/help/audio/general-pitch"
         legal={toLegalEntityDisplay(entity)}
+        siteName={siteName}
       />
       <section
         aria-labelledby="story-transcript-heading"

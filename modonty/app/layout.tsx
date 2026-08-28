@@ -8,8 +8,9 @@ import { GTMContainer } from "@/app/layout/components/gtm/GTMContainer";
 import { WebVitals } from "@/app/layout/components/gtm/WebVitals";
 import { PageViewTracker } from "@/app/layout/components/analytics/PageViewTracker";
 import { ClarityScript } from "@/app/layout/components/analytics/clarity-script";
-import { BRAND_AR, SITE_URL } from "@/constants";
+import { SITE_URL } from "@/constants";
 import { getSiteLanguage } from "@/lib/settings/get-site-language";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { textDirection } from "@modonty/shared/lib/seo/text-direction";
 
 const tajawal = Tajawal({
@@ -28,30 +29,39 @@ const montserrat = Montserrat({
   preload: true,
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: `${BRAND_AR} - منصة المدونات متعددة الشركاء`,
-    template: `%s | ${BRAND_AR}`,
-  },
-  description: "منصة مدونات احترافية لإدارة المحتوى عبر شركاء متعددين",
-  // No `languages` here on purpose. This block used to declare four locales all pointing at
-  // "/", and any page that did not define its own inherited them — so ~25 paths told Google
-  // "the Saudi version of this page is the homepage", which is false for every one of them
-  // except the homepage. Google's rule is the opposite: "Each language version must list
-  // itself as well as all other language versions"
-  // (developers.google.com/search/docs/specialty/international/localized-versions).
-  //
-  // Every page now builds its own set from `Settings.defaultAlternateLanguages`, pointing at
-  // its OWN canonical — nine locales, one source, no copy in code.
-  alternates: {
-    // RSS auto-discovery (<link rel="alternate" type="application/rss+xml">) —
-    // feed readers and AI aggregators find /feed.xml through this.
-    types: {
-      "application/rss+xml": "/feed.xml",
+// كانت `export const metadata` ثابتة، فاسم الماركة في قالب العنوان — وهو الذي يُلحَق
+// بعنوان **كل صفحة** على الموقع — مكتوبٌ في الكود. صارت دالّة كي تقرأه من الإعدادات:
+// نداءٌ واحد مخزَّن (`"use cache"` + وسم `settings`)، وهو نفس الوسم الذي يفرّغه كل حفظ أدمن.
+// وبغياب العمود لا يُلحَق شيء — العنوان يُشحن كما كتبته الصفحة، لا بماركة قديمة.
+export async function generateMetadata(): Promise<Metadata> {
+  const { siteName } = await getPageSeoDefaults();
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    // `TemplateString` يشترط `template` نصّاً لا اختيارياً، فالفرع كله يُبدَّل: بوجود الاسم
+    // قالبٌ يُلحقه، وبغيابه `default` وحده — والعنوان يُشحن كما كتبته الصفحة.
+    title: siteName
+      ? { default: `${siteName} - منصة المدونات متعددة الشركاء`, template: `%s | ${siteName}` }
+      : "منصة المدونات متعددة الشركاء",
+    description: "منصة مدونات احترافية لإدارة المحتوى عبر شركاء متعددين",
+    // No `languages` here on purpose. This block used to declare four locales all pointing at
+    // "/", and any page that did not define its own inherited them — so ~25 paths told Google
+    // "the Saudi version of this page is the homepage", which is false for every one of them
+    // except the homepage. Google's rule is the opposite: "Each language version must list
+    // itself as well as all other language versions"
+    // (developers.google.com/search/docs/specialty/international/localized-versions).
+    //
+    // Every page now builds its own set from `Settings.defaultAlternateLanguages`, pointing at
+    // its OWN canonical — nine locales, one source, no copy in code.
+    alternates: {
+      // RSS auto-discovery (<link rel="alternate" type="application/rss+xml">) —
+      // feed readers and AI aggregators find /feed.xml through this.
+      types: {
+        "application/rss+xml": "/feed.xml",
+      },
     },
-  },
-};
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",

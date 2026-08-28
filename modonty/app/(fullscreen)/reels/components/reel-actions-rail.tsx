@@ -12,6 +12,7 @@ import { toggleReelLike, toggleReelFavorite } from "../actions/reel-interactions
 import { trackReelShareEvent } from "../actions/track-reel-share";
 import { ReelCommentsSheetLazy, warmReelCommentsSheet } from "./reel-comments-sheet-lazy";
 import { ReelViewerAvatar } from "./reel-viewer-avatar";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface ReelActionsRailProps {
   reelId: string;
@@ -170,7 +171,7 @@ export function ReelActionsRail({
               screen), but hiding the line entirely left three buttons blank beside a fourth
               carrying «مشاركة», so the column stood uneven on every reel with no counts yet
               (Khalid saw it on the phone, 24 Aug). One line under all four, always. */}
-          <span className="text-xs font-bold">{likes > 0 ? likes.toLocaleString("ar-SA") : "إعجاب"}</span>
+          <span className="text-xs font-bold">{likes > 0 ? likes.toLocaleString(SITE_LOCALE) : "إعجاب"}</span>
         </button>
         <button
           type="button"
@@ -183,7 +184,7 @@ export function ReelActionsRail({
           <span className={iconWrap}>
             <ModontyCommentMark className={iconGlyph} aria-hidden />
           </span>
-          <span className="text-xs font-bold">{commentsCount > 0 ? commentsCount.toLocaleString("ar-SA") : "تعليق"}</span>
+          <span className="text-xs font-bold">{commentsCount > 0 ? commentsCount.toLocaleString(SITE_LOCALE) : "تعليق"}</span>
         </button>
         <button
           type="button"
@@ -200,7 +201,7 @@ export function ReelActionsRail({
           <span className={`${iconWrap} ${saved ? "text-accent" : ""}`}>
             <ModontyBookmarkMark className={`${iconGlyph} ${saved ? "[&>rect]:fill-current" : ""}`} aria-hidden />
           </span>
-          <span className="text-xs font-bold">{saves > 0 ? saves.toLocaleString("ar-SA") : "حفظ"}</span>
+          <span className="text-xs font-bold">{saves > 0 ? saves.toLocaleString(SITE_LOCALE) : "حفظ"}</span>
         </button>
         <button type="button" onClick={handleShare} className={btn} aria-label="مشاركة">
           <span className={iconWrap}>

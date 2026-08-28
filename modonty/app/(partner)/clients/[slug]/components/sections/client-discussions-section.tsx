@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { SectionCard } from "./section-card";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface DiscussionComment {
   id: string;
@@ -15,7 +16,7 @@ interface Props {
 }
 
 function fmtDate(d: Date): string {
-  return new Intl.DateTimeFormat("ar-SA", {
+  return new Intl.DateTimeFormat(SITE_LOCALE, {
     year: "numeric",
     month: "short",
     day: "numeric",

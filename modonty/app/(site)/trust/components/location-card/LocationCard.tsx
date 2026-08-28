@@ -17,13 +17,15 @@ const mapEmbedUrl = (lat: number, lng: number) =>
 const mapLinkUrl = (lat: number, lng: number) => `https://www.google.com/maps?q=${lat},${lng}`;
 
 interface LocationCardProps {
+  /** اسم الموقع من `Settings.siteName` — يُمرَّر من الصفحة، لا يُقرأ من ثابتٍ في الكود. */
+  siteName?: string;
   contact: ContactRow[];
   map: { lat: number; lng: number } | null;
   legal: LegalEntityDisplay;
 }
 
 /** «فين تلقانا» — the contact rows, with the map beside them when coordinates exist. */
-export function LocationCard({ contact, map, legal }: LocationCardProps) {
+export function LocationCard({ contact, map, legal, siteName }: LocationCardProps) {
   return (
     <Card>
       <CardHeader>
@@ -48,7 +50,7 @@ export function LocationCard({ contact, map, legal }: LocationCardProps) {
           {map && (
             <div className="overflow-hidden rounded-lg border border-border">
               <iframe
-                title={`${text.mapTitlePrefix} ${legal.legalName ?? BRAND_AR}${legal.city ? ` — ${legal.city}` : ""}`}
+                title={`${text.mapTitlePrefix} ${legal.legalName ?? siteName ?? ""}${legal.city ? ` — ${legal.city}` : ""}`}
                 src={mapEmbedUrl(map.lat, map.lng)}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"

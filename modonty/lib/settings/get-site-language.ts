@@ -3,7 +3,13 @@ import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 
-/** BCP-47 tag used when Settings has no value — the site's primary market. */
+/**
+ * **الاستثناء الوحيد لقاعدة «الغياب يبقى غياباً»** في هذا الملفّ، وهو مقصود.
+ *
+ * هذه القيمة تذهب إلى `<html lang>`، ووثيقةٌ بلا لغة معلَنة لا يعرف قارئ الشاشة كيف
+ * ينطقها ولا المتصفّح كيف يفصلها. فالغياب هنا ليس «نقصاً يُرى» بل عطلٌ في العرض.
+ * تبقى مكتوبة، ويبقى العمود في الإعدادات هو المصدر متى حمل قيمة.
+ */
 const DEFAULT_SITE_LANGUAGE = "ar-SA";
 
 /**

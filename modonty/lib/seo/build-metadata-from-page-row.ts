@@ -35,9 +35,18 @@ export interface PageSeoRow {
 interface Options {
   /** Route path used to build the canonical when the row does not carry one, e.g. "/trust". */
   path: string;
-  /** Shown when the row is missing or its title is empty — never an empty tag. */
-  fallbackTitle: string;
-  fallbackDescription: string;
+  /**
+   * نصٌّ يُعرض حين يخلو الصفّ — وهو **مخالفة** لا ميزة: صفحةٌ بلا عنوان في القاعدة كانت
+   * تُنشَر بعنوان كتبه الكود، فيبدو البيان مكتملاً ولا يعرف أحد أن الصفّ فارغ.
+   *
+   * قِيس ٢٨ أغسطس ٢٠٢٦ على `modonty_dev` — ١١ صفّاً: **١١ تحمل عنواناً** (فحذف الاحتياط
+   * لا يغيّر شيئاً)، و**٤ بلا وصف** (`contact` · `trust` · `story` · `audio`) — هذه وحدها
+   * تفقد وسم الوصف، وجوجل تبني المقتطف من المتن، وهو أصدق من جملةٍ عامّة تتكرّر.
+   *
+   * كلاهما اختياريّ الآن: مرّرْه فقط حيث يكون النصّ قراراً تحريرياً واعياً.
+   */
+  fallbackTitle?: string;
+  fallbackDescription?: string;
   /**
    * Robots directive to use while the row carries none. Defaults to the Settings default
    * (indexable). `/reels` passes "noindex, nofollow": its feed is closed until it has content,
@@ -84,14 +93,18 @@ export async function buildMetadataFromPageRow(
     row.ogImage?.trim() || row.socialImage?.trim() || brandMedia.ogImageUrl || undefined;
 
   // The column stores the directive as written ("index, follow"); absence means indexable.
-  const robotsDirective = row.metaRobots?.trim() || fallbackRobots || defaults.metaRobots;
+  // ولهذا الغياب هنا **ليس** فراغ بيان: صفحةٌ بلا توجيه تُفهرَس، وهو ما ينصّ عليه معيار
+  // الروبوتس نفسه. فالسلسلة تنتهي بنصّ فارغ، والصفحة تُفهرَس كما لو لم يُكتب وسم.
+  const robotsDirective = row.metaRobots?.trim() || fallbackRobots || defaults.metaRobots || "";
   const shouldIndex = !robotsDirective.includes("noindex");
   const shouldFollow = !robotsDirective.includes("nofollow");
 
   const twitter: NonNullable<Metadata["twitter"]> = {
     card: (row.twitterCard?.trim() || defaults.twitterCard) as "summary" | "summary_large_image",
-    title: row.twitterTitle?.trim() || title,
-    description: row.twitterDescription?.trim() || description,
+    ...(row.twitterTitle?.trim() || title ? { title: row.twitterTitle?.trim() || title } : {}),
+    ...(row.twitterDescription?.trim() || description
+      ? { description: row.twitterDescription?.trim() || description }
+      : {}),
     images: ogImage ? [ogImage] : undefined,
   };
 
@@ -105,19 +118,21 @@ export async function buildMetadataFromPageRow(
     // No brand suffix here: the root layout's title template already appends "| مدونتي"
     // (layout.tsx:35). The seven older pages each append it a second time, so their tags
     // read "… - مدونتي | مدونتي" — measured on /about, 2026-08-15.
-    title,
-    description,
+    ...(title ? { title } : {}),
+    ...(description ? { description } : {}),
     alternates: {
       canonical: canonicalUrl,
       languages: buildHreflangLanguages(defaults.alternateLanguages, canonicalUrl, SITE_URL),
       types: FEED_ALTERNATE_TYPES,
     },
     openGraph: {
-      title: row.ogTitle?.trim() || title,
-      description: row.ogDescription?.trim() || description,
+      ...(row.ogTitle?.trim() || title ? { title: row.ogTitle?.trim() || title } : {}),
+      ...(row.ogDescription?.trim() || description
+        ? { description: row.ogDescription?.trim() || description }
+        : {}),
       url: canonicalUrl,
-      siteName,
-      locale,
+      ...(siteName ? { siteName } : {}),
+      ...(locale ? { locale } : {}),
       type: (row.ogType as "website" | "article" | "profile") || "website",
       images: ogImage
         ? [{ ...toShareImage(ogImage), alt: row.socialImageAlt?.trim() || title }]

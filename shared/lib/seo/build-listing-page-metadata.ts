@@ -91,7 +91,8 @@ export function buildListingPageMetadata(input: ListingPageMetadataInput) {
   const twitterSite = handle(s.twitterSite);
   const twitterCreator = handle(s.twitterCreator) || twitterSite;
   const author = str(s.siteAuthor);
-  const siteName = str(s.siteName) || "Modonty";
+  // لا احتياط: عمودٌ فارغ يعني وسماً غائباً، لا اسماً كتبه الكود فبدا البيان مكتملاً.
+  const siteName = str(s.siteName);
 
   return {
     ...(title ? { title } : {}),
@@ -109,9 +110,9 @@ export function buildListingPageMetadata(input: ListingPageMetadataInput) {
       ...(title ? { title } : {}),
       ...(description ? { description } : {}),
       url: pageUrl,
-      siteName,
+      ...(siteName ? { siteName } : {}),
       type: str(s.defaultOgType) || "website",
-      locale: str(s.defaultOgLocale) || "ar_SA",
+      ...(str(s.defaultOgLocale) ? { locale: str(s.defaultOgLocale) } : {}),
       ...(str(s.defaultOgDeterminer) ? { determiner: str(s.defaultOgDeterminer) } : {}),
       ...(images ? { images } : {}),
     },

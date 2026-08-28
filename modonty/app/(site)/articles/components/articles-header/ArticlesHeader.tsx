@@ -1,3 +1,5 @@
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+
 interface ArticlesHeaderProps {
   /** Page number, so the `h1` on `?page=3` is not a duplicate of the one on page one. */
   page: number;
@@ -17,7 +19,7 @@ export function ArticlesHeader({ page }: ArticlesHeaderProps) {
   return (
     <header className="min-[1240px]:sr-only">
       <h1 className="relative ps-3 text-[28px] font-black leading-[1.15] tracking-tight text-foreground before:absolute before:inset-y-1 before:start-0 before:w-[3px] before:rounded-full before:bg-accent">
-        {page > 1 ? `المقالات — صفحة ${page.toLocaleString("ar-SA")}` : "المقالات"}
+        {page > 1 ? `المقالات — صفحة ${page.toLocaleString(SITE_LOCALE)}` : "المقالات"}
       </h1>
       {/* Aimed at someone who came to read, not at someone deciding whether to buy — the
           same reading `/modonty`'s promise line was rewritten under on 22 Aug. */}

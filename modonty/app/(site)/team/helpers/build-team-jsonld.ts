@@ -37,8 +37,9 @@ export function buildTeamJsonLd(organization: Record<string, unknown>) {
         url: TEAM_PAGE_URL,
         name: messages.team.seoTitle,
         description: messages.team.seoDescription,
-        inLanguage: "ar",
-        isPartOf: { "@type": "WebSite", name: "مدونتي", url: SITE_URL },
+        // اسم الموقع ولغته من عقدة الهوية عبر `@id` — لا نسخة ثانية مكتوبة هنا. عقدة
+        // `WebSite` تُبنى مرّة واحدة من `Settings`، وتكرار اسمها كان يخلق كياناً منافساً.
+        isPartOf: { "@id": buildSiteEntityIds(SITE_URL).website },
         about: { "@id": ORGANIZATION_ID },
         mainEntity: {
           "@type": "ItemList",

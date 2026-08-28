@@ -9,6 +9,7 @@ import { HeroChips } from "./hero-chips";
 import { HeroStats } from "./hero-stats";
 import { HeroGoogleStat } from "./hero-google-stat";
 import { HeroCtaRow } from "./hero-cta-row";
+import { messages } from "@/lib/i18n/messages";
 
 export type HeroPageState = "strong" | "sparse" | "not-ready";
 export type HeroCtaMode = "FORM" | "LINK" | "NONE";
@@ -145,8 +146,8 @@ export function ClientHeroV2({
                 <PartnerAvatar media={logoMedia} name={client.name} size="big" />
                 <span
                   className="absolute -bottom-1 -start-1 grid h-6 w-6 place-items-center rounded-full border-2 border-card bg-accent text-white shadow-sm"
-                  aria-label="موثّق من مدوّنتي"
-                  title="موثّق من مدوّنتي"
+                  aria-label={messages.shared.badges.verifiedPartnerLabel}
+                  title={messages.shared.badges.verifiedPartnerLabel}
                 >
                   <IconCheck className="h-3.5 w-3.5" />
                 </span>

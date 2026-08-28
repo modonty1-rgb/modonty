@@ -45,7 +45,9 @@ interface ArticleFooterProps {
   dateModified: Date | null;
   lastReviewed: Date | null;
   contentDepth: string | null;
-  license: string | null;
+  /** `null` من صفّ المقال، و`undefined` حين لا يحمل عمود `Settings.defaultLicense` قيمة —
+   *  والحالتان تعنيان الشيء نفسه هنا: لا رخصة تُعرض. */
+  license?: string | null;
 }
 
 /**

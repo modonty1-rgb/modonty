@@ -10,7 +10,7 @@ const text = messages.feedback;
 export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataFromSEO({
     title: "إرسال ملاحظات",
-    description: "شاركنا ملاحظاتك واقتراحاتك لمساعدتنا على تحسين منصة مدونتي",
+    description: messages.seo.feedback.description,
     keywords: ["ملاحظات", "اقتراحات", "تغذية راجعة", "تحسين"],
     url: "/help/feedback",
     type: "website",

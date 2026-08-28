@@ -5,6 +5,7 @@ import { IconChevronLeft, IconMapPin, IconFeatured } from "@/lib/icons";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { WhatsAppAction } from "@/components/shared/whatsapp-action/WhatsAppAction";
 import { getWhatsAppLink } from "@/lib/whatsapp";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface ClientCardProps {
   /** Client id — enables WhatsApp lead recording from the card. */
@@ -25,7 +26,7 @@ interface ClientCardProps {
   priority?: boolean;
 }
 
-const compact = new Intl.NumberFormat("ar-SA", { notation: "compact", maximumFractionDigits: 1 });
+const compact = new Intl.NumberFormat(SITE_LOCALE, { notation: "compact", maximumFractionDigits: 1 });
 
 export function ClientCard({
   id,

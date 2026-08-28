@@ -4,6 +4,7 @@ import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { ClientListItem } from "@/lib/queries/get-clients-list";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 /** Rail cards, not the full directory — enough to answer «مين يقدّم هذا؟» without leaving the page. */
 const MAX_VISIBLE = 6;
@@ -46,7 +47,7 @@ export function PartnersRail({ partners, heading, browseAllHref, className }: Pa
             href={browseAllHref}
             className={buttonVariants({ variant: "outline", className: "min-h-11 w-full" })}
           >
-            كل الشركاء ({partners.length.toLocaleString("ar-SA")})
+            كل الشركاء ({partners.length.toLocaleString(SITE_LOCALE)})
           </Link>
         )}
       </div>

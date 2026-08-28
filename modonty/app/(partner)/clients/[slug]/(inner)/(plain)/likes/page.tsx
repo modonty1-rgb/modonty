@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getClientEngagementBySlug } from "../../../helpers/client-engagement";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,7 +53,7 @@ export default async function ClientLikesPage({ params }: ClientLikesPageProps) 
         </CardHeader>
         <CardContent>
           <p className="text-2xl font-semibold text-foreground">
-            {followersCount.toLocaleString("ar-SA")}
+            {followersCount.toLocaleString(SITE_LOCALE)}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
             عدد المستخدمين الذين تابعوا {client.name}
@@ -69,7 +70,7 @@ export default async function ClientLikesPage({ params }: ClientLikesPageProps) 
         </CardHeader>
         <CardContent>
           <p className="text-2xl font-semibold text-foreground">
-            {favoritesCount.toLocaleString("ar-SA")}
+            {favoritesCount.toLocaleString(SITE_LOCALE)}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
             عدد المستخدمين الذين أضافوا {client.name} إلى المفضّلة
@@ -86,7 +87,7 @@ export default async function ClientLikesPage({ params }: ClientLikesPageProps) 
         </CardHeader>
         <CardContent>
           <p className="text-2xl font-semibold text-foreground">
-            {articleLikesCount.toLocaleString("ar-SA")}
+            {articleLikesCount.toLocaleString(SITE_LOCALE)}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
             إجمالي الإعجابات على مقالات هذا العميل

@@ -31,9 +31,9 @@ export async function generateMetadata(): Promise<Metadata> {
   // literals below are only the seed for a row that has not been saved yet.
   return buildMetadataFromPageRow(await getContentPageRow("audio"), {
     path: "/audio",
-    fallbackTitle: "استمع للقرآن الكريم كاملاً بعشرين قارئاً — ومقالات مدونتي مقروءة",
-    fallbackDescription:
-      "المصحف كامل ١١٤ سورة برواية حفص عن عاصم، بصوت العفاسي والسديس والمعيقلي والحصري والمنشاوي وغيرهم — اسمع أي سورة بأي قارئ، ومعها النسخ الصوتية من مقالات مدونتي.",
+    // لا احتياط للعنوان: صفّ `/audio` يحمله، والفارغ غداً يجب أن يُرى لا أن يُغطّى.
+    // الوصف يبقى مؤقّتاً — صفّ هذه الصفحة بلا وصف اليوم (مقيس)، فحذفه يُسقط وسماً حيّاً.
+    fallbackDescription: messages.seo.audio.description,
   });
 }
 

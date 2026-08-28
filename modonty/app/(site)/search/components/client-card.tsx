@@ -6,6 +6,7 @@ import { highlightQuery } from "@/lib/highlight-query";
 import { IconArticle, IconViews, IconCheck } from "@/lib/icons";
 
 import { formatMetric } from "../helpers/format-metrics";
+import { messages } from "@/lib/i18n/messages";
 
 interface ClientCardProps {
   id: string;
@@ -79,7 +80,7 @@ export function ClientCard(props: ClientCardProps) {
           />
           <span
             className="absolute -bottom-1 -start-1 grid h-[18px] w-[18px] place-items-center rounded-full border-2 border-white bg-accent text-white"
-            aria-label="موثّق من مدوّنتي"
+            aria-label={messages.shared.badges.verifiedPartnerLabel}
           >
             <IconCheck className="h-2.5 w-2.5" />
           </span>

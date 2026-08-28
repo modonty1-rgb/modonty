@@ -7,12 +7,14 @@ import { OptimizedImage } from "@modonty/shared/components/optimized-image";
 import { getClientPageData } from "../../helpers/client-page-data";
 import { buildPartnerPageMetadata } from "../../helpers/build-partner-page-metadata";
 import { PageFrame } from "../../components/page-frame";
+import { messages } from "@/lib/i18n/messages";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-const DATE_FMT = new Intl.DateTimeFormat("ar-SA", { day: "numeric", month: "long", year: "numeric" });
+const DATE_FMT = new Intl.DateTimeFormat(SITE_LOCALE, { day: "numeric", month: "long", year: "numeric" });
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -22,7 +24,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     slug,
     sub: "articles",
     title: `مقالات ${data.client.name}`.slice(0, 51),
-    description: `كل ما كتبه ${data.client.name} على مدونتي — ${data.client._count.articles} مقالاً`,
+    description: messages.seo.partner.articlesDescription
+      .replace("{name}", data.client.name)
+      .replace("{count}", String(data.client._count.articles)),
     heroImage: data.client.heroImageMedia,
     logo: data.client.logoMedia,
   });

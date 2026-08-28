@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadataFromPageRow(await getTermsPageForMetadata(), {
     path: "/terms",
     fallbackTitle: "الشروط والأحكام",
-    fallbackDescription: "اقرأ شروط وأحكام استخدام منصة مدونتي",
+    fallbackDescription: messages.seo.terms.description,
   });
 }
 
@@ -50,8 +50,10 @@ async function TermsContent() {
     : undefined;
   const buildFallbackStructuredData = () => generateStructuredData({
     type: "WebPage",
-    name: `${pageTitle} - مدونتي`,
-    description: "اقرأ شروط وأحكام استخدام منصة مدونتي",
+    // بلا لاحقة الماركة: هذا اسم **الصفحة** في البيانات المنظَّمة، واسم الموقع يعيش على
+    // عقدة `WebSite` وفي `og:site_name`. إلحاقه هنا كرّر الماركة وكتبها في الكود معاً.
+    name: pageTitle,
+    description: messages.seo.terms.description,
     url: "/terms",
   });
 

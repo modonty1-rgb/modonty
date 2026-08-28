@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
-const arNum = new Intl.NumberFormat("ar-SA");
+const arNum = new Intl.NumberFormat(SITE_LOCALE);
 
 interface HeroGoogleStatProps {
   /** Digital-impact total from GA4 (pageViews + sessions + activeUsers + events). */

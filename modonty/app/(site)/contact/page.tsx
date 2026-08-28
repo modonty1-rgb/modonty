@@ -6,11 +6,11 @@ import { auth } from "@/lib/auth";
 import { getContactPageForMetadata } from "./helpers/contact-metadata";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getContactPageContent } from "./helpers/contact-content";
-import { BRAND_AR } from "@/constants";
 import { ContactIntro } from "./components/contact-intro/ContactIntro";
+import { messages } from "@/lib/i18n/messages";
 
 const FALLBACK_TITLE = "اتصل بنا";
-const FALLBACK_DESCRIPTION = "تواصل مع فريق مدونتي. نحن هنا للإجابة على أسئلتك ومساعدتك";
+const FALLBACK_DESCRIPTION = messages.seo.contact.description;
 
 // Contact holds the phone, email and address a visitor acts on — the details most likely
 // to change. It was the last modonty page whose copy needed a deploy to edit; now it reads
@@ -21,7 +21,8 @@ const FALLBACK_DESCRIPTION = "تواصل مع فريق مدونتي. نحن هن
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadataFromPageRow(await getContactPageForMetadata(), {
     path: "/contact",
-    fallbackTitle: FALLBACK_TITLE,
+    // لا احتياط للعنوان: صفّ `/contact` يحمله. والوصف يبقى مؤقّتاً — الصفّ بلا وصف
+    // اليوم (مقيس ٢٨ أغسطس)، وحذفه يُسقط وسماً حيّاً بدل أن يكشف نقصاً.
     fallbackDescription: FALLBACK_DESCRIPTION,
   });
 }
@@ -43,7 +44,8 @@ export default async function ContactPage() {
   const buildFallbackStructuredData = () =>
     generateStructuredData({
       type: "ContactPage",
-      name: `${pageTitle} - ${BRAND_AR}`,
+      // بلا لاحقة الماركة: هذا اسم الصفحة، واسم الموقع على عقدة WebSite وفي og:site_name.
+      name: pageTitle,
       description: FALLBACK_DESCRIPTION,
       url: "/contact",
     });

@@ -70,7 +70,9 @@ export function mapFeedArticleToResponse(article: FeedArticlePayload): ArticleRe
     publishedAt: (article.datePublished || article.createdAt).toISOString(),
     author: {
       id: article.author.id,
-      name: article.author.name || "Modonty",
+      // اسم الكاتب من صفّه. كان الاحتياط يكتب اسم الماركة مكان كاتبٍ بلا اسم — فيظهر
+      // للقارئ أن الماركة كتبت المقال، وهو ادّعاءٌ عن المؤلِّف لا احتياط عرض.
+      name: article.author.name || "",
       image: article.author.image || undefined,
     },
     client: {

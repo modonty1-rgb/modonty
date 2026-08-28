@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BRAND_AR, CONTACT_EMAIL, SAUDI_BUSINESS_VERIFY_URL } from "@/constants";
+import { CONTACT_EMAIL, SAUDI_BUSINESS_VERIFY_URL } from "@/constants";
 import type { LegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 import { LazyMotion, domAnimation, m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { IconPlay, IconPause, IconSkipBack, IconSkipForward, IconVolume2, IconSpeed, IconReplay, IconStop, IconEmail, IconChevronDown, IconWallet, IconMapPin, IconShieldCheck } from "@/lib/icons";
@@ -71,8 +71,12 @@ const SALES_WHATSAPP = process.env.NEXT_PUBLIC_SALES_WHATSAPP || "966541018020";
 const SALES_WHATSAPP_DISPLAY =
   process.env.NEXT_PUBLIC_SALES_WHATSAPP_DISPLAY || "+966 54 101 8020";
 const SALES_EMAIL = process.env.NEXT_PUBLIC_SALES_EMAIL || CONTACT_EMAIL;
-const SALES_WHATSAPP_PREFILL = `السلام عليكم، شفت قصة ${BRAND_AR} وعندي سؤال:`;
-const SALES_WHATSAPP_URL = `https://wa.me/${SALES_WHATSAPP}?text=${encodeURIComponent(SALES_WHATSAPP_PREFILL)}`;
+// نصّ الواتساب يحمل اسم الموقع، فصار دالّةً تأخذه بدل ثابتٍ يقرأ `BRAND_AR`.
+// وبغياب الاسم يُرسَل الرابط بلا نصّ — رسالةٌ تبدأ بـ«شفت قصة» ثم فراغ أسوأ من لا نصّ.
+const salesWhatsappUrl = (siteName?: string) =>
+  siteName
+    ? `https://wa.me/${SALES_WHATSAPP}?text=${encodeURIComponent(`السلام عليكم، شفت قصة ${siteName} وعندي سؤال:`)}`
+    : `https://wa.me/${SALES_WHATSAPP}`;
 const SALES_EMAIL_URL = `mailto:${SALES_EMAIL}`;
 
 function formatTime(t: number): string {
@@ -86,9 +90,14 @@ export interface SalesPitchProps {
   audioBase: string;
   /** Read from Settings by the server page — the trust strip below renders it as-is. */
   legal: LegalEntityDisplay;
+  /**
+   * اسم الموقع من `Settings.siteName`، يُمرَّر من صفحة السيرفر — فلا يقرأ هذا المكوّن
+   * العميل ثابتاً من الكود ولا يضرب القاعدة. غيابه يعني عموداً فارغاً، لا اسماً قديماً.
+   */
+  siteName?: string;
 }
 
-export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProps) {
+export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName }: SalesPitchProps) {
   const [manifest, setManifest] = useState<Manifest | null>(null);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -869,6 +878,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                         isPlaying={isPlaying}
                         words={words}
                         activeWordIdx={activeWordIdx}
+                        siteName={siteName}
                       />
                     )}
 
@@ -878,6 +888,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                         isPlaying={isPlaying}
                         words={words}
                         activeWordIdx={activeWordIdx}
+                        siteName={siteName}
                       />
                     )}
 
@@ -1285,7 +1296,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                     {/* Tertiary — compact contact links (no headers, no cards) */}
                     <div className="mb-5 pt-3 border-t border-border/40 space-y-1">
                       <a
-                        href={SALES_WHATSAPP_URL}
+                        href={salesWhatsappUrl(siteName)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="group flex items-center gap-2 text-[12px] py-1 max-md:min-h-11 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500 rounded"
@@ -1324,7 +1335,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                       {/* Row 1: Brand/DBA + verification cluster (نشط badge + تحقّق link) */}
                       <div className="flex items-center justify-between gap-2">
                         <p className="text-[10px] leading-snug min-w-0 flex-1">
-                          <span className="font-bold text-foreground/95">{BRAND_AR}</span>
+                          <span className="font-bold text-foreground/95">{siteName}</span>
                           {legal.legalName && (
                             <span className="text-foreground/65"> · تحت مظلة {legal.legalName}</span>
                           )}
@@ -1651,7 +1662,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal }: SalesPitchProp
                         </p>
                         <div className="flex items-center gap-1.5 shrink-0">
                           <a
-                            href={SALES_WHATSAPP_URL}
+                            href={salesWhatsappUrl(siteName)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="w-7 h-7 max-md:w-11 max-md:h-11 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center transition-colors shadow-sm"

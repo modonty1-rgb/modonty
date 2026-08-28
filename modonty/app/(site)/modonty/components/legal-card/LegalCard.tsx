@@ -6,6 +6,7 @@ import { WhatsAppLeadLink } from "@/components/cta/whatsapp-icon-link";
 import { messages } from "@/lib/i18n/messages";
 import type { LegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 import type { ComponentType, ReactNode } from "react";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 const text = messages.modonty.legal;
 
@@ -42,7 +43,7 @@ export function LegalCard({ legal, clientId, clientName, whatsappPhone }: LegalC
   // City + district only — whoever wants the street opens the map (Khalid, 2026-08-17: «جدة، حي الشرفية كافية»).
   const location = [legal.city, legal.district].filter(Boolean).join("، ") || null;
   // «منذ ٢٠٢٤» rides with the operator line (Khalid, 2026-08-17: «تأسّست خذها مع المشغّل الرسمي»).
-  const sinceYear = legal.foundedYear ? Number(legal.foundedYear).toLocaleString("ar-SA", { useGrouping: false }) : null;
+  const sinceYear = legal.foundedYear ? Number(legal.foundedYear).toLocaleString(SITE_LOCALE, { useGrouping: false }) : null;
 
   return (
     <section aria-labelledby="modonty-legal-heading" className="rounded-lg bg-card p-3 ring-1 ring-primary/10">

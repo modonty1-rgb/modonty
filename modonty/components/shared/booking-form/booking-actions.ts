@@ -20,6 +20,7 @@ import { getGeoFromHeaders } from "@/lib/analytics/geo-headers";
 import { sendEmail } from "@/lib/email/resend-client";
 import { bookingNotificationEmail } from "@/lib/email/templates/booking-notification";
 import { notifyClientMobile } from "@/lib/mobile-push";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 export type BookingSource =
   | "article_dock"
@@ -309,7 +310,7 @@ export async function submitBookingRequest(
         visitorName: name,
         phone,
         email,
-        preferredAtLabel: preferredAt ? preferredAt.toLocaleString("ar-EG") : null,
+        preferredAtLabel: preferredAt ? preferredAt.toLocaleString(SITE_LOCALE) : null,
         message,
         bookingsUrl: "https://console.modonty.com/dashboard/bookings",
       });
@@ -325,7 +326,7 @@ export async function submitBookingRequest(
     body: `${name || "زائر"} — ${phone}`,
     meta: {
       "البريد": email,
-      ...(preferredAt ? { "الموعد المفضّل": preferredAt.toLocaleString("ar-EG") } : {}),
+      ...(preferredAt ? { "الموعد المفضّل": preferredAt.toLocaleString(SITE_LOCALE) } : {}),
       ...(message ? { "ملاحظة": message.slice(0, 120) } : {}),
     },
     link: { label: "إدارة الحجوزات", url: "https://console.modonty.com/dashboard/bookings" },

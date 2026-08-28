@@ -9,8 +9,10 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
 import { getProfileBookings } from "../helpers/profile-bookings";
+import { messages } from "@/lib/i18n/messages";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
-const dateFormatter = new Intl.DateTimeFormat("ar-SA", {
+const dateFormatter = new Intl.DateTimeFormat(SITE_LOCALE, {
   year: "numeric",
   month: "short",
   day: "numeric",
@@ -55,7 +57,7 @@ export default async function ProfileBookingsPage() {
               <EmptyState
                 icon={IconCalendar}
                 title="ما عندك حجوزات بعد"
-                description="لما تطلب حجزاً من أي شركة على مدوّنتي، تلاقيه هنا مع حالته."
+                description={messages.shared.bookings.emptyDescription}
                 actionLabel="استكشف الشركات"
                 actionHref="/clients"
               />

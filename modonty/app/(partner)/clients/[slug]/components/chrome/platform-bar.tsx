@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { messages } from "@/lib/i18n/messages";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 import Link from "next/link";
 import { ModontyMark } from "@/components/icons/modonty-mark";
@@ -16,13 +17,17 @@ interface PlatformBarProps {
  * the theme. It replaces modonty's full header here — the partner's own header sits
  * right under it; StickyChrome slides both up on scroll so the partner's chrome owns the screen.
  */
-export function PlatformBar({ isVerified }: PlatformBarProps) {
+// اسم الموقع من الإعدادات: شريط الشريك كان يعرض «مُدَوَّنَتِي» بالتشكيل الكامل — تهجئة
+// رابعة للماركة على شاشة واحدة، ولّدتها كتابة الاسم بيدٍ في كل مكوّن.
+export async function PlatformBar({ isVerified }: PlatformBarProps) {
+  const { siteName } = await getPageSeoDefaults();
+
   return (
       <div className="bg-[#0b0d1f] text-xs text-[#c9ccdf]">
         <div className="mx-auto flex h-9 max-w-[1216px] items-center gap-4 px-4 max-md:h-11">
-          <Link href="/" className="flex items-center gap-2 font-medium text-white hover:text-white/80 max-md:min-h-11" aria-label="الرجوع إلى مدونتي">
+          <Link href="/" className="flex items-center gap-2 font-medium text-white hover:text-white/80 max-md:min-h-11" aria-label={siteName ? `الرجوع إلى ${siteName}` : "الرجوع إلى الرئيسية"}>
             <ModontyMark className="h-4 w-4 text-primary" aria-hidden />
-            مُدَوَّنَتِي
+            {siteName}
           </Link>
           {isVerified ? (
             <>

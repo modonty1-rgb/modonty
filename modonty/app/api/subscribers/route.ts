@@ -7,6 +7,7 @@ import { ConversionType } from "@prisma/client";
 import { sendAdminTelegram } from "@modonty/shared/lib/telegram/client";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { trackNewsletterSubscribe } from "@/lib/analytics/events-registry";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 const subscribeSchema = z.object({
   email: z.string().email().max(254),
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
     void newSubscriber;
 
     // Notify Telegram group (admin) — non-blocking
-    const now = new Date().toLocaleString("ar-SA", { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
+    const now = new Date().toLocaleString(SITE_LOCALE, { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
     sendAdminTelegram(`🔔 <b>مشترك جديد</b>\n📧 ${email}\n🏢 ${client?.name || clientId}\n📅 ${now}`).catch(() => null);
 
     // Notify Client's Telegram (per-client) — non-blocking

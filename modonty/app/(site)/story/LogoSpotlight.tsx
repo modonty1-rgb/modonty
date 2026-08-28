@@ -11,6 +11,8 @@ interface Props {
   isPlaying: boolean;
   words?: string[];
   activeWordIdx?: number;
+  /** اسم الموقع من `Settings.siteName` — يُمرَّر من الأب، لا يُقرأ من ثابتٍ في الكود. */
+  siteName?: string;
 }
 
 function LogoSpotlightImpl({
@@ -18,6 +20,7 @@ function LogoSpotlightImpl({
   isPlaying,
   words = [],
   activeWordIdx = -1,
+  siteName,
 }: Props) {
   const hasPoint = /نقط|بكسل|بِكْسِل|طوب|طُوب|حرف|حَرْف/.test(activeWord);
   const hasLogoWord = /شعار|مدونت|مُدَوَّن|بنيان|بُنْيَان|مرصوص|مَرْصُوص/.test(activeWord);
@@ -74,7 +77,7 @@ function LogoSpotlightImpl({
         >
           <OptimizedImage
             media={asMedia(MODONTY_LOGO_URL)}
-            alt="مُدَوَّنَتِي"
+            alt={siteName ?? ""}
             fill
             sizes="(max-width: 768px) 100vw, 800px"
             // The one hero of this slide — keeps its preload.

@@ -8,14 +8,22 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { getArticles } from "@/lib/queries/get-articles";
 import { IconEmail, IconCheckCircle, IconForward } from "@/lib/icons";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
+import { messages } from "@/lib/i18n/messages";
 
-const NEWS_TITLE = "أخبار مدونتي";
-const NEWS_DESCRIPTION =
-  "اشترك في النشرة الإخبارية واحصل على رؤى وتحديثات أسبوعية من مدونتي في بريدك.";
+// عنوان القسم يُبنى من اسم الموقع في الإعدادات — «أخبار X» تصحّ عربياً ولاتينياً معاً،
+// وبغياب العمود يبقى «الأخبار» وحده: اسم قسمٍ صحيح، لا اسم ماركة قديم.
+const newsTitle = (siteName?: string) => (siteName ? `أخبار ${siteName}` : "الأخبار");
+const NEWS_DESCRIPTION = messages.seo.news.description;
 
 export async function generateMetadata(): Promise<Metadata> {
+  const { siteName } = await getPageSeoDefaults();
+  const title = newsTitle(siteName);
   return {
-    title: NEWS_TITLE,
+    // قالب الجذر يُلحق اسم الموقع بكل عنوان (`%s | مدونتي`)، وهذا العنوان يحمل الاسم
+    // أصلاً — فتركُه بلا `absolute` شحن «أخبار مدونتي | مدونتي» (مقيس حيّاً ٢٩ أغسطس).
+    // الاسم يُذكر مرّة واحدة: هنا، لأنه جزء من اسم القسم لا لاحقةَ ماركة.
+    title: { absolute: title },
     description: NEWS_DESCRIPTION,
     // Was inheriting the root layout's four locales, all pointing at "/" — this page told
     // Google its Saudi version was the homepage. Now: its own canonical, locales from Settings.
@@ -24,14 +32,18 @@ export async function generateMetadata(): Promise<Metadata> {
     // come from the same Settings columns every other page reads; nothing new is invented.
     ...(await buildShareTags({
       path: "/news",
-      title: NEWS_TITLE,
+      title,
       description: NEWS_DESCRIPTION,
     })),
   };
 }
 
 export default async function NewsPage() {
-  const { articles } = await getArticles({ limit: 5 });
+  const [{ articles }, { siteName }] = await Promise.all([
+    getArticles({ limit: 5 }),
+    getPageSeoDefaults(),
+  ]);
+  const title = newsTitle(siteName);
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8">
@@ -42,7 +54,8 @@ export default async function NewsPage() {
           __html: jsonLdHtml(
             generateBreadcrumbStructuredData([
               { name: "الرئيسية", url: "/" },
-              { name: "أخبار مدونتي", url: "/news" },
+              // فتات الخبز يسمّي **القسم** لا الموقع — اسم الموقع على عقدة WebSite.
+              { name: "الأخبار", url: "/news" },
             ])
           ),
         }}
@@ -50,12 +63,12 @@ export default async function NewsPage() {
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "أخبار مدونتي" },
+          { label: title },
         ]}
       />
 
       <div className="mt-8">
-        <h1 className="text-3xl font-bold mb-6">أخبار مدونتي</h1>
+        <h1 className="text-3xl font-bold mb-6">{title}</h1>
         <p className="text-muted-foreground mb-8">
           نقطة التجمع لكل ما هو جديد من مدونتي. اشترك في النشرة لتحصل على أهم الأخبار
           والمقالات في رسالة أسبوعية مختصرة.

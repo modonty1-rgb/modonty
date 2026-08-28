@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadataFromPageRow(await getCookiePolicyPageForMetadata(), {
     path: "/legal/cookie-policy",
     fallbackTitle: "سياسة ملفات تعريف الارتباط",
-    fallbackDescription: "تعرف على كيفية استخدام منصة مدونتي لملفات تعريف الارتباط (Cookies)",
+    fallbackDescription: messages.seo.cookiePolicy.description,
   });
 }
 
@@ -50,8 +50,10 @@ async function CookiePolicyContent() {
     : undefined;
   const buildFallbackStructuredData = () => generateStructuredData({
     type: "WebPage",
-    name: `${pageTitle} - مدونتي`,
-    description: "تعرف على كيفية استخدام منصة مدونتي لملفات تعريف الارتباط (Cookies)",
+    // بلا لاحقة الماركة: هذا اسم **الصفحة** في البيانات المنظَّمة، واسم الموقع يعيش على
+    // عقدة `WebSite` وفي `og:site_name`. إلحاقه هنا كرّر الماركة وكتبها في الكود معاً.
+    name: pageTitle,
+    description: messages.seo.cookiePolicy.description,
     url: "/legal/cookie-policy",
   });
 

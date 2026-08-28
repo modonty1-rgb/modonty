@@ -4,7 +4,8 @@ import { UserCard } from "@/components/shared/user-card/UserCard";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
-import { SITE_URL, BRAND_AR } from "@/constants";
+import { SITE_URL } from "@/constants";
+import { messages } from "@/lib/i18n/messages";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getListingPageSeo("home");
@@ -21,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title: Metadata["title"] =
     typeof storedTitle === "string" ? { absolute: storedTitle } : (storedTitle as Metadata["title"]);
   return {
-    description: `${BRAND_AR} — منصة المحتوى العربي المتخصصة. اكتشف مقالات في التقنية والأعمال والتسويق والسياحة والأزياء من أبرز الكتّاب والخبراء العرب.`,
+    description: messages.seo.home.description,
     ...safeMetadata,
     ...(title ? { title } : {}),
     alternates: {

@@ -209,7 +209,9 @@ export function generateCompleteOrganizationJsonLd(
   // Caller MUST pass options.siteUrl (loaded from loadSiteUrl()). There is no literal
   // fallback: this value becomes the Organization's `@id` and `url` in the stored blob.
   const siteUrl = requireSiteUrl(options?.siteUrl);
-  const siteName = options?.siteName || "Modonty";
+  // مثل `siteUrl` فوقه: لا احتياط. الاسم يأتي من `Settings.siteName`، وبغيابه لا تحمل
+  // عقدة `WebSite` اسماً — بدل أن تحمل اسماً كتبه الكود فيبدو البيان مكتملاً وهو ناقص.
+  const siteName = options?.siteName?.trim() || undefined;
   const imageLicensing: ModontyImageDefaults = {
     organizationUrl: siteUrl,
     ...(options?.imageLicensing ?? {}),
@@ -355,10 +357,11 @@ export function generateCompleteOrganizationJsonLd(
     const contactPoint: Record<string, unknown> = {
       "@type": "ContactPoint",
     };
+    // نوع جهة الاتصال من صفّ الشريك وحده. كان الكود يكتب `"customer service"` حين
+    // يجتمع بريدٌ وهاتف — أي أنه يقرّر عن الشريك نيابةً عنه. و`contactType` اختياري في
+    // schema.org، فعقدةُ اتصالٍ ببريدٍ وهاتفٍ صحيحة بلا نوع، والادّعاء أسوأ من الصمت.
     if (client.contactType) {
       contactPoint.contactType = client.contactType;
-    } else if (client.email && client.phone) {
-      contactPoint.contactType = "customer service";
     }
     if (client.email) {
       contactPoint.email = client.email;
@@ -824,7 +827,7 @@ export function generateCompleteOrganizationJsonLd(
     "@type": "WebSite",
     "@id": websiteId,
     url: siteUrl,
-    name: siteName,
+    ...(siteName && { name: siteName }),
     // The platform, not the partner. `organizationId` above is `<siteUrl>/clients/<slug>#organization`,
     // so this line used to state that every partner is the publisher of modonty.com — measured
     // 25 Aug 2026 on a partner page: WebSite `…modonty.com#website` carried

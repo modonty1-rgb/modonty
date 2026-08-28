@@ -4,6 +4,7 @@ import { VerifiedBadge } from "@modonty/shared/components/verified-badge/Verifie
 import { RelativeTime } from "@/components/date/RelativeTime";
 import { cn } from "@/lib/utils";
 import { IconViews, IconHelp } from "@/lib/icons";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface ArticleHeaderProps {
   title: string;
@@ -95,13 +96,13 @@ export function ArticleHeader({
         {readingTimeMinutes && (
           <span>⏱️ {readingTimeMinutes} دقيقة قراءة</span>
         )}
-        {wordCount && <span className="max-sm:hidden">📝 {wordCount.toLocaleString("ar-SA")} كلمة</span>}
+        {wordCount && <span className="max-sm:hidden">📝 {wordCount.toLocaleString(SITE_LOCALE)} كلمة</span>}
         {/* A zero is worse than nothing: printing «٠ مشاهدة» under the title tells every new
             reader that nobody has read this. The counter appears once there is one. */}
         {views !== undefined && views > 0 && (
           <span className="flex items-center gap-1">
             <IconViews className="h-3.5 w-3.5 shrink-0" />
-            <span className="tabular-nums">{views.toLocaleString('ar-SA')}</span>
+            <span className="tabular-nums">{views.toLocaleString(SITE_LOCALE)}</span>
           </span>
         )}
         {questionsCount !== undefined && questionsCount > 0 && (
@@ -114,7 +115,7 @@ export function ArticleHeader({
             aria-label="انتقل إلى الأسئلة الشائعة"
           >
             <IconHelp className="h-3.5 w-3.5 shrink-0" />
-            <span className="tabular-nums">{questionsCount.toLocaleString('ar-SA')}</span>
+            <span className="tabular-nums">{questionsCount.toLocaleString(SITE_LOCALE)}</span>
           </a>
         )}
       </div>

@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import { computeReferenceSeoScore } from "@modonty/shared/lib/seo/reference/seo-score";
+import { hreflangCodes } from "@modonty/shared/lib/seo/hreflang-codes";
 import type { SeoCheck, JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
 
 /**
@@ -48,6 +49,8 @@ export interface ListingPageAudit {
 const SETTINGS_SELECT = {
   // The public host — the row's «open page» link must leave the admin domain.
   siteUrl: true,
+  // الأسواق التي يُقاس نقص hreflang عليها — من الإعدادات لا من قائمة داخل المقياس.
+  defaultAlternateLanguages: true,
   // home (unprefixed)
   homeMetaTags: true,
   jsonLdStructuredData: true,
@@ -136,16 +139,19 @@ export async function getContentPagesSeoAudit(): Promise<ListingPageAudit[]> {
       },
       take: CONTENT_PAGES.length,
     }),
-    db.settings.findUnique({ where: SETTINGS_SINGLETON_WHERE, select: { siteUrl: true } }),
+    db.settings.findUnique({ where: SETTINGS_SINGLETON_WHERE, select: { siteUrl: true, defaultAlternateLanguages: true } }),
   ]);
 
   const siteUrl = (settings?.siteUrl || "https://www.modonty.com").replace(/\/$/, "");
+  // الأسواق من الإعدادات لا من قائمة مكتوبة في المقياس — إضافة سوق تصل الفحص وحدها.
+  const requiredHreflangs = hreflangCodes(settings?.defaultAlternateLanguages);
   const bySlug = new Map(rows.map((r) => [r.slug, r]));
 
   return CONTENT_PAGES.map((page) => {
     const row = bySlug.get(page.slug);
     const { score, checks } = computeReferenceSeoScore({
       name: page.label,
+      requiredHreflangs,
       nextjsMetadata: row?.metaTags,
       jsonLdStructuredData: row?.jsonLdStructuredData ?? null,
       jsonLdValidationReport: (row?.jsonLdValidationReport as JsonLdValidationReport | null) ?? null,
@@ -176,6 +182,7 @@ export async function getListingPagesSeoAudit(): Promise<ListingPageAudit[]> {
 
   const s = (settings ?? {}) as Record<string, unknown>;
   const siteUrl = ((s.siteUrl as string) || "https://www.modonty.com").replace(/\/$/, "");
+  const requiredHreflangs = hreflangCodes(s.defaultAlternateLanguages);
 
   return PAGES.map((page) => {
     const meta = page.prefix ? s[`${page.prefix}MetaTags`] : s.homeMetaTags;
@@ -185,6 +192,7 @@ export async function getListingPagesSeoAudit(): Promise<ListingPageAudit[]> {
 
     const { score, checks } = computeReferenceSeoScore({
       name: page.label,
+      requiredHreflangs,
       nextjsMetadata: meta,
       jsonLdStructuredData: (jsonLd as string | null) ?? null,
       jsonLdValidationReport: (report as JsonLdValidationReport | null) ?? null,

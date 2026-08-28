@@ -10,6 +10,7 @@ import { getArticlesArchive } from "@/lib/articles/archive/get-articles-archive"
 import { countByReadingTime } from "@/lib/articles/archive/reading-time-buckets";
 import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
+import { messages } from "@/lib/i18n/messages";
 import { jsonLdHtmlFromString } from "@/lib/seo";
 import type { FeedPost } from "@/lib/types";
 
@@ -76,7 +77,7 @@ export async function CachedHomePage({ page, userCard }: CachedHomePageProps) {
           dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(jsonLd) }}
         />
       )}
-      {page === 1 && <h1 className="sr-only">مدونتي — منصة المحتوى العربي</h1>}
+      {page === 1 && <h1 className="sr-only">{messages.modonty.homeHeading}</h1>}
       <PageLayout
         posts={feed.articles}
         hasMore={feed.hasMore}

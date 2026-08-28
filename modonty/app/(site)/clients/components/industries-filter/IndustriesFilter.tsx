@@ -4,6 +4,7 @@ import { buildPartnersHref } from "@/app/(site)/clients/helpers/build-partners-h
 import { messages, formatCount } from "@/lib/i18n/messages";
 import type { IndustryFilterRow } from "@/app/(site)/clients/helpers/count-industries";
 import type { PartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 const text = messages.clients.industryFilter;
 
@@ -44,7 +45,7 @@ export function IndustriesFilter({ rows, total, query }: IndustriesFilterProps) 
               >
                 <span className="truncate">{option.name}</span>
                 <span className={cn("shrink-0 text-xs", isActive ? "text-link" : "text-muted-foreground")}>
-                  {option.count.toLocaleString("ar-SA")}
+                  {option.count.toLocaleString(SITE_LOCALE)}
                 </span>
               </Link>
             </li>

@@ -2,6 +2,7 @@ import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { ModontyIndustriesMark } from "@/components/icons/modonty-industries-mark";
 import { messages } from "@/lib/i18n/messages";
 import type { ComponentType } from "react";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 const text = messages.about.liveStats;
 
@@ -17,7 +18,7 @@ function Stat({ icon: Icon, value, label }: { icon: ComponentType<{ className?: 
         <Icon className="h-5 w-5" />
       </span>
       <div>
-        <p className="text-xl font-bold text-foreground">{value.toLocaleString("ar-SA")}</p>
+        <p className="text-xl font-bold text-foreground">{value.toLocaleString(SITE_LOCALE)}</p>
         <p className="text-xs text-muted-foreground">{label}</p>
       </div>
     </div>

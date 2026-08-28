@@ -2,7 +2,6 @@ import { VerifiedBadge } from "@modonty/shared/components/verified-badge/Verifie
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 import { Card } from "@/components/ui/card";
-import { BRAND_AR } from "@/constants";
 import { messages, fill } from "@/lib/i18n/messages";
 import { cn } from "@/lib/utils";
 import type { LegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
@@ -11,11 +10,13 @@ const text = messages.trust.identity;
 
 interface IdentityCardProps {
   ogImageUrl: string | null;
+  /** اسم الموقع من `Settings.siteName` — يُمرَّر من الصفحة لأن هذا مكوّن عرض لا يقرأ القاعدة. */
+  siteName?: string;
   legal: LegalEntityDisplay;
 }
 
 /** The company-profile header: banner, brand mark, name, and the registry line under it. */
-export function IdentityCard({ ogImageUrl, legal }: IdentityCardProps) {
+export function IdentityCard({ ogImageUrl, siteName, legal }: IdentityCardProps) {
   return (
     <Card className="overflow-hidden">
       <div className="relative h-44 w-full overflow-hidden bg-[#0e065a] sm:h-56">
@@ -36,7 +37,7 @@ export function IdentityCard({ ogImageUrl, legal }: IdentityCardProps) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/modonty-mark.svg"
-            alt={BRAND_AR}
+            alt={siteName ?? ""}
             width={80}
             height={80}
             className="h-20 w-20 rounded-xl"
@@ -45,7 +46,7 @@ export function IdentityCard({ ogImageUrl, legal }: IdentityCardProps) {
       </div>
       <div className="px-6 pb-6 pt-5">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <h1 className="text-2xl font-semibold">{BRAND_AR}</h1>
+          {siteName && <h1 className="text-2xl font-semibold">{siteName}</h1>}
           {/* A verification claim needs a live registration behind it — otherwise the
               badge would contradict the status row below it. */}
           {legal.cr && legal.isRegistrationActive && (

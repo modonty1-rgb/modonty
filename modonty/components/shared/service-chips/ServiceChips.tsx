@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface ServiceChipsProps {
   /** What the partner does, in his own words. */
@@ -30,7 +31,7 @@ export function ServiceChips({ services, fallback, max = 3, className }: Service
         </li>
       ))}
       {hidden > 0 && (
-        <li className="rounded-full px-2.5 py-1 text-xs text-muted-foreground">+{hidden.toLocaleString("ar-SA")}</li>
+        <li className="rounded-full px-2.5 py-1 text-xs text-muted-foreground">+{hidden.toLocaleString(SITE_LOCALE)}</li>
       )}
     </ul>
   );

@@ -6,6 +6,7 @@ import { getClientsSearch } from "@/app/(site)/search/helpers/get-clients-search
 import type { ClientSortOption } from "./helpers/client-sort";
 import type { ArticleResponse, ClientResponse, FeedPost } from "@/lib/types";
 import { generateMetadataFromSEO } from "@/lib/seo";
+import { messages } from "@/lib/i18n/messages";
 
 const SearchSection = dynamic(
   () => import("./components/SearchSection").then((m) => ({ default: m.SearchSection })),
@@ -56,8 +57,8 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
   return generateMetadataFromSEO({
     title: q ? `بحث: ${q.slice(0, 43)}` : "بحث",
     description: q
-      ? `نتائج البحث عن "${q}" في مقالات وشركاء مدونتي`
-      : "ابحث في مقالات وشركاء مدونة مدونتي",
+      ? messages.seo.search.queryDescription.replace("{q}", q)
+      : messages.seo.search.description,
     url: q ? `/search?q=${encodeURIComponent(q)}${typeParam}` : "/search",
     robots: "noindex,nofollow",
   });
@@ -121,7 +122,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     readingTimeMinutes: article.readingTimeMinutes,
     author: {
       id: article.author.id,
-      name: article.author.name || "Modonty",
+      // اسم الكاتب من صفّه. كان الاحتياط يكتب اسم الماركة مكان كاتبٍ بلا اسم — فيظهر
+      // للقارئ أن الماركة كتبت المقال، وهو ادّعاءٌ عن المؤلِّف لا احتياط عرض.
+      name: article.author.name || "",
       title: "",
       company: article.client.name,
       avatar: article.author.image || "",

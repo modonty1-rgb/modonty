@@ -50,6 +50,7 @@ import { ReaderPartnerDetails } from "./components/partner-card/ReaderPartnerDet
 import { ReaderComments } from "./components/comments/ReaderComments";
 import { ReaderFaq } from "./components/faq/ReaderFaq";
 import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
+import { SITE_URL } from "@/constants";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
@@ -124,7 +125,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
         if (stored.title) {
           // Always regenerate canonical + hreflang — stored values may be stale/truncated.
           // Source of truth: NEXT_PUBLIC_SITE_URL env (mirror of admin Settings.siteUrl).
-          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+          const siteUrl = SITE_URL;
           const canonicalUrl = new URL(`/articles/${slug}`, siteUrl).href;
           // Normalize cached og:image to the recommended 1200×630 (cached metadata may carry
           // an undersized image like 1000×563 with mismatched declared dimensions).
@@ -179,7 +180,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const imageAlt =
       articleForGeneration.featuredImage?.altText || title || undefined;
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+    const siteUrl = SITE_URL;
 
     // Always build canonical from current slug — ignore DB articleForGeneration.canonicalUrl
     // (prevents stale URL when slug was renamed; URL constructor handles percent-encoding)
@@ -192,6 +193,13 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       siteUrl,
     );
 
+    // نفس مصدر hreflang، بصياغة أوبن جراف (`ar-SA` ← `ar_SA`)، بلا السوق الأساسي ولا
+    // `x-default` — فالأخير ثابت بروتوكول لا سوقاً. إشارةٌ واحدة من عمودٍ واحد.
+    const ogLocaleAlternate = Object.keys(languages)
+      .filter((code) => code !== "x-default")
+      .map((code) => code.replace("-", "_"))
+      .filter((code) => code !== articleDefaults.ogLocale);
+
     return generateMetadataFromSEO({
       title,
       description,
@@ -200,8 +208,11 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       url: urlForMetadata,
       type: "article",
       siteName: articleDefaults.siteName,
-      locale: articleDefaults.ogLocale || "ar_SA",
-      localeAlternate: ["ar_EG", "en_US"],
+      locale: articleDefaults.ogLocale,
+      // كانت `["ar_EG", "en_US"]` مكتوبةً هنا — سوقان يُعلنان لجوجل من الكود، أحدهما
+      // بلغة لا ننشر بها. الأسواق تُحرَّر من الأدمن (`Settings.defaultAlternateLanguages`)،
+      // وهي نفسها التي تُبنى منها وسوم hreflang أسفل الصفحة، فتتّفق الإشارتان.
+      localeAlternate: ogLocaleAlternate,
       publishedTime: articleForGeneration.datePublished || undefined,
       modifiedTime: articleForGeneration.dateModified || articleForGeneration.updatedAt,
       authors: articleForGeneration.author?.name

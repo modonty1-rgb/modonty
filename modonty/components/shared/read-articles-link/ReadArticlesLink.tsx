@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { IconArticle, IconChevronLeft } from "@/lib/icons";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface ReadArticlesLinkProps {
   /** What the visitor is looking at, in his words: a category name or a tag name. */
@@ -30,7 +31,7 @@ export function ReadArticlesLink({ label, href, count }: ReadArticlesLinkProps) 
         <span className="flex items-center gap-3">
           <IconArticle className="h-5 w-5 shrink-0 text-primary" aria-hidden />
           <span className="text-sm font-medium text-foreground">
-            اقرأ {count.toLocaleString("ar-SA")} مقالاً في {label}
+            اقرأ {count.toLocaleString(SITE_LOCALE)} مقالاً في {label}
           </span>
         </span>
         <IconChevronLeft className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />

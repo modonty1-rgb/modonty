@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { IconUser, IconEmail, IconCalendar } from "@/lib/icons";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import { messages } from "@/lib/i18n/messages";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface UserPageProps {
   params: Promise<{ id: string }>;
@@ -70,7 +72,7 @@ export async function generateMetadata({ params }: UserPageProps): Promise<Metad
     // correctness cost is not, and the two sites are one mistake with one shape.
     const memberMeta = await generateMetadataFromSEO({
       title: user.name || "مستخدم",
-      description: `ملف شخصي لـ ${user.name || "مستخدم"} على مدونتي`,
+      description: messages.seo.userProfile.description.replace("{name}", user.name || "مستخدم"),
       image: user.image || undefined,
       url: `/users/${id}`,
       type: "profile",
@@ -263,7 +265,7 @@ export default async function UserPage({ params }: UserPageProps) {
                         انضم في{" "}
                         {new Date(
                           (user?.createdAt || author?.createdAt) as Date
-                        ).toLocaleDateString("ar-SA")}
+                        ).toLocaleDateString(SITE_LOCALE)}
                       </span>
                     </div>
                   )}
@@ -311,7 +313,7 @@ export default async function UserPage({ params }: UserPageProps) {
                             </Link>
                             {article.datePublished && (
                               <span>
-                                {new Date(article.datePublished).toLocaleDateString("ar-SA")}
+                                {new Date(article.datePublished).toLocaleDateString(SITE_LOCALE)}
                               </span>
                             )}
                           </div>

@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: CategoryDetailPageProps): Pro
       description:
         category.seoDescription ||
         category.description ||
-        `استكشف شركاء متخصصين في ${category.name} على مدونتي`,
+        messages.seo.categories.partnersDescription.replace("{name}", category.name),
       keywords: [category.name],
       url: `/categories/${slug}`,
       type: "website",

@@ -11,6 +11,7 @@ import { localizedStoredBreadcrumbJsonLd } from "@/lib/seo";
 import { messages } from "@/lib/i18n/messages";
 import { SITE_URL } from "@/constants";
 import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface IndustryPageProps {
   params: Promise<{ slug: string }>;
@@ -45,7 +46,9 @@ export async function generateMetadata({ params }: IndustryPageProps): Promise<M
   }
   return {
     title: `${industry.name} — المجالات`,
-    description: industry.description ?? `اكتشف شركاء ${industry.name} الموثوقين على مدونتي`,
+    description:
+      industry.description ??
+      messages.seo.industries.partnersDescription.replace("{name}", industry.name),
     alternates: { canonical: `${SITE_URL}/industries/${slug}`, types: FEED_ALTERNATE_TYPES },
   };
 }
@@ -97,7 +100,7 @@ export default async function IndustryPage({ params, searchParams }: IndustryPag
         industryName={industry.name}
         articles={articles}
         partners={partners}
-        partnersHeading={`${partners.length.toLocaleString("ar-SA")} في هذا المجال`}
+        partnersHeading={`${partners.length.toLocaleString(SITE_LOCALE)} في هذا المجال`}
         partnersBrowseAllHref={`/clients?industry=${encodeURIComponent(decodedSlug)}`}
         page={page}
         buildPageHref={buildPageHref}

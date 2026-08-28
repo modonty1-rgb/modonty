@@ -20,6 +20,7 @@ import { RateAnswer } from "../shared/RateAnswer";
 import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
 import { getScopeIcon } from "../../helpers/get-scope-icon";
 import { cn } from "@/lib/utils";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 /**
  * Silence budget, not a total budget. A stream still delivering tokens is healthy however long
@@ -33,7 +34,7 @@ const STALL_TIMEOUT_MS = 25_000;
 function formatPartnerCount(count: number): string {
   if (count === 1) return "شريك واحد جاهز";
   if (count === 2) return "شريكان جاهزان";
-  return `${new Intl.NumberFormat("ar-SA").format(count)} شريك جاهز`;
+  return `${new Intl.NumberFormat(SITE_LOCALE).format(count)} شريك جاهز`;
 }
 
 const AskClientDialog = dynamic(

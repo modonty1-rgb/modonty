@@ -75,6 +75,9 @@ function AccordionTrigger({ className, children }: AccordionTriggerProps) {
       )}
       onClick={() => context.onValueChange(isOpen ? null : itemContext.value)}
       aria-expanded={isOpen}
+      // The panel now stays mounted (see AccordionContent), so `aria-expanded` finally has a
+      // panel to point at — a screen reader can announce what this button controls.
+      aria-controls={`${itemContext.value}-panel`}
     >
       {children}
       <IconChevronDown
@@ -89,10 +92,24 @@ function AccordionTrigger({ className, children }: AccordionTriggerProps) {
 
 interface AccordionContentProps {
   className?: string;
+  /**
+   * Keep the closed panel in the DOM and hide it with CSS instead of unmounting it.
+   *
+   * Set this wherever the page ships structured data naming this content. `/help/faq` and a
+   * partner page both emit `FAQPage` JSON-LD listing every answer, while the default unmount
+   * left those answers out of the HTML entirely — Google: "Don't mark up content that is not
+   * visible to readers of the page." The article FAQ already hides with CSS
+   * (`FaqCollapsibleBody.tsx:48`); this is the same behavior for the shared primitive.
+   *
+   * It stays opt-in because the default is right for the admin: `article-form-sections.tsx:77`
+   * mounts a whole form section per panel, and mounting all six at once would change what the
+   * form does, not just what it shows.
+   */
+  keepMounted?: boolean;
   children: React.ReactNode;
 }
 
-function AccordionContent({ className, children }: AccordionContentProps) {
+function AccordionContent({ className, keepMounted = false, children }: AccordionContentProps) {
   const context = React.useContext(AccordionContext);
   const itemContext = React.useContext(AccordionItemContext);
   if (!context) throw new Error("AccordionContent must be used within Accordion");
@@ -100,10 +117,16 @@ function AccordionContent({ className, children }: AccordionContentProps) {
 
   const isOpen = context.value === itemContext.value;
 
-  if (!isOpen) return null;
+  if (!isOpen && !keepMounted) return null;
 
+  // `hidden` keeps the panel out of the a11y tree and out of find-in-page, so a closed panel
+  // behaves for a reader exactly as an unmounted one did — the difference is only that the
+  // text now exists in the HTML the crawler receives.
   return (
-    <div className={cn("overflow-hidden text-sm transition-all pb-4 pt-0", className)}>
+    <div
+      id={`${itemContext.value}-panel`}
+      className={cn("overflow-hidden text-sm transition-all pb-4 pt-0", !isOpen && "hidden", className)}
+    >
       {children}
     </div>
   );

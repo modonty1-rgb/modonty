@@ -627,3 +627,196 @@ grep -rnE "(from|import\()\s*['\"][^'\"]*<اسم-الملف>" --include="*.ts" -
 `diff build-paths-before.txt build-paths-after.txt` → **متطابقان**، و`build-routes-before/after` → **متطابقان**.
 أي أن النقل لم يغيّر مساراً ولا نوع تصيير — وهذا كان شرط قبوله («ميكانيكي، بلا سلوك»).
 المجموعة الناتجة موجودة على الفرع: `modonty/app/(partner)/clients`.
+
+---
+
+## شواهد قبر سيو — ادّعاءان قِيسا فسقطا (نُقلا من اللوحة ٢٨ أغسطس ٢٠٢٦)
+
+**لمن هذا القسم؟ لكلود.** خالد سأل عنهما فقال: «تضيفها لك أنت أم لي؟» — والجواب: لي. اللوحة
+تجيب سؤالاً واحداً («إيش الدور عليّ؟») وهذان لا دور فيهما لأحد. فالقاعدة التي ثبّتها:
+**الـHTML لخالد، والـMD لي.**
+
+**لماذا تُحفظان أصلاً؟** لأن كليهما بدا عطلاً حقيقياً مرّة، ومن يقرأ الكود بعد شهرين سيراه
+عطلاً مرّة ثانية. مكتوبان هنا كي لا يُفتح الطريق نفسه ويُستهلك وقت خالد في شرحٍ انتهى.
+
+### ١ · «وصف الميتا يتجاوز ١٦٠ محرفاً» — لم يكن عطلاً قطّ (كان بند ٨٨ · `SEODESC-LEN`)
+
+المقيس (٢٤ أغسطس ٢٠٢٦، والأرقام صحيحة):
+
+```
+/audio 292 · /industries 286 · /clients 269 · /contact 257 · /trending 251
+/ 247 · /story 198 · /trust 188 · /legal 186
+السليمة: /articles 151 · /help 106 · /reels 99 · /search 63
+على الإنتاج: مسار واحد فقط يتجاوز ١٦٠ — /clients = ١٨٠
+```
+
+**الكود كما وُصف، لكن القاعدة التي بُنيت عليها البطاقة غلط.** الـ١٦٠ رقم متداوَل لا رقم جوجل.
+توثيق جوجل للمقتطف (محدَّث ٢٠ أبريل ٢٠٢٦) ينصّ على أنه **لا حدّ لطول الوصف**؛ المقتطف يُقصّ
+حسب الجهاز، وقد يُستبدل من المتن أصلاً. لا عقوبة، ولا إشارة سلبية.
+
+**ما يبقى منها — وما هو ممنوع:** تبقى ملاحظة تحريرية (الوصف دقيق ومميّز). و**ممنوع القصّ
+الآلي عند ١٦٠** — لأنه يقطع الجملة فعلاً، بينما ما نُصلحه لم يكن مكسوراً.
+
+المصدر: <https://developers.google.com/search/docs/appearance/snippet>
+
+### ٢ · «canonical الرئيسية بشرطة والخريطة بلا شرطة» — صيغتان لرابط واحد (كان بند ٩٢ · `SEOHOME-SLASH`)
+
+المقيس، وما زال قائماً اليوم (٢٨ أغسطس، أعدتُ فتح الملفّين):
+
+```
+modonty/app/(site)/(homepage)/page.tsx:29   canonical: `${SITE_URL}/`     → .../  بشرطة
+modonty/app/sitemap.ts:182                  { url: baseUrl }              → ...   بلا شرطة
+modonty/constants/brand.ts:27               SITE_URL = (...).replace(/\/+$/, "")  ← هي التي تقصّها
+```
+
+**ليست إشارتين متعارضتين.** RFC 3986 §6.2.3 ينصّ على أن المسار الفارغ في `http`/`https`
+مكافئ لـ`/` — فالصيغتان **رابط واحد** لا رابطان. وقاعدة جوجل عن الإشارات المتضاربة تخصّ
+روابط **مختلفة**، وهذان ليسا كذلك. ونكست يطبّع الشرطة عند تركيب `metadataBase`.
+
+**الحكم:** توحيد أسلوبي اختياري عند المرور على الملفّ — لا بند سيو، ولا أولوية.
+
+المصادر: <https://www.rfc-editor.org/info/rfc3986/> · <https://nextjs.org/docs/app/api-reference/functions/generate-metadata>
+
+### ٣ · الملحق الخام لقراءة الأدمن → ملفّ مستقلّ
+
+`SEOADM-RAW` (بند ١٠١، ٣٥ ألف محرف) نُقل إلى **`SEO-ADMIN-RAW-SCAN.md`** بجوار هذا الملف.
+بطاقات `SEOADM-*` الحيّة على اللوحة تشير إلى أرقامه (مثل `G4-#8`) — فمرجعها هناك الآن.
+
+---
+
+## جرد hreflang — من يقرّر اللغات على الإنتاج، وأين تضيع لغات الإعدادات التسع
+
+**نُقل من تبويب «تقارير» على اللوحة ٢٨ أغسطس ٢٠٢٦** — كان بند 105 (`HREFLANG-MAP`).
+الجرد **قديم**: يصف `modonty/lib/seo/build-alternates.ts` وقد حُذف الملفّ، وصفر استدعاء لـ`buildAlternates` في مدونتي (مقيس ٢٨ أغسطس). بديله `modonty/lib/seo/build-page-alternates.ts:24` يقرأ `Settings.defaultAlternateLanguages`. يُحفظ لأنه يشرح **لماذا** بُنيت الطبقة الحالية بهذا الشكل.
+
+- **متى:** ٢٥ أغسطس ٢٠٢٦
+- **الأساس:** origin/main + قياس حيّ على www.modonty.com + قراءة واحدة من قاعدة الإنتاج
+- **الحالة:** closed
+- **أُغلق:** ٢٥ أغسطس ٢٠٢٦
+- **النتيجة:** **الخلاصة بعد الإغلاق:** الجرد قال ثلاث طبقات هارد كود — والقياس أثناء الإصلاح كشف **رابعة** (مولّدات التصنيف والوسم والقطاع تكتب `ar-SA` وحدها). الأربع سقطت، ومعها أربع صفحات كانت تمحو ما يبنيه الأدمن. النتيجة المقيسة: **١٩ صفحة ثابتة + ٧ عائلات ديناميكية = ٢٦ سطحاً** تشحن قائمة الإعدادات كاملة، كلٌّ يشير إلى صفحته هي، و**صفر سطر لغة باقٍ في الكود**. واللغات صارت تُحرَّر من `/settings/system` — إضافة سوق بيانٌ لا نشرة. التفصيل في القسم ٧ أسفل هذا التقرير.
+
+خالد سأل: أي صفحة تستعمل `buildAlternates`؟ الجواب: سبع صفحات — لكن الجرد كشف أن الرقم أربعة له جذران، وأن الإعدادات لا تصل أي صفحة.
+
+### ١ · الدالّة نفسها — ثابتة، لا تقرأ الإعدادات
+
+`modonty/lib/seo/build-alternates.ts:8`
+
+```
+export function buildAlternates(canonicalUrl) {
+  return { canonical: canonicalUrl,
+    languages: { "ar-SA": canonicalUrl, "ar-EG": canonicalUrl,
+                 ar: canonicalUrl, "x-default": canonicalUrl } };
+}
+```
+
+أربع لغات مكتوبة في الكود، كلّها تشير إلى نفس الرابط.
+
+### ٢ · المستدعون والقياس الحيّ لكل واحد
+
+
+| الملف (origin/main) | المسار الحيّ | ما يخدمه فعلاً |
+|---|---|---|
+| app/about/page.tsx:62 | /about | ar-SA ar-EG ar x-default |
+| app/terms/page.tsx:67 | /terms | ar-SA ar-EG ar x-default |
+| app/legal/privacy-policy/page.tsx:69 | /legal/privacy-policy | ar-SA ar-EG ar x-default |
+| app/legal/cookie-policy/page.tsx:69 | /legal/cookie-policy | ar-SA ar-EG ar x-default |
+| app/legal/copyright-policy/page.tsx:69 | /legal/copyright-policy | ar-SA ar-EG ar x-default |
+| app/legal/user-agreement/page.tsx:67 | /legal/user-agreement | ar-SA ar-EG ar x-default |
+| app/authors/[slug]/page.tsx:139 | /authors/modonty | **ar-SA فقط** — الاستدعاء ميت |
+| lib/seo/modonty-seo.ts:44 | — | صفر مستهلك في app/ |
+
+### ٣ · لماذا صفحة الكاتب شاذّة
+
+`app/authors/[slug]/page.tsx:124-130` يرجّع البلوب المخزَّن `nextjsMetadata` ويخرج **قبل** أن يصل إلى السطر ١٣٩. فالاستدعاء ميت لكل كاتب عنده بلوب، والبلوب يحمل `ar-SA` وحدها.
+
+### ٤ · جذر ثانٍ لنفس الأربعة
+
+`modonty/lib/seo/index.ts:200-208` داخل `generateMetadataFromSEO` يكتب نفس المجموعة الأربعة لأي مستدعٍ لا يمرّر `languages`. أي أن حذف `buildAlternates` وحدها لا يكفي.
+
+### ٥ · صفحات القوائم لا تمرّ من هنا إطلاقاً
+
+`/trending` · `/categories` · `/help/faq` تقرأ البلوب المخزَّن من الإعدادات. قراءة قاعدة الإنتاج:
+
+```
+trendingPageMetaTags.alternates   = {"canonical":"https://www.modonty.com/trending"}
+categoriesPageMetaTags.alternates = {"canonical":"https://www.modonty.com/categories"}
+faqPageMetaTags.alternates        = {"canonical":"https://www.modonty.com/help/faq"}
+```
+
+لا لغات فيها → صفر hreflang على تلك الصفحات (مقيس بـcurl).
+
+### ٦ · والإعدادات مملوءة صحّ
+
+قراءة واحدة من `modonty.settings` على الإنتاج:
+
+```
+defaultAlternateLanguages = [ar-SA, ar-EG, ar-AE, ar-KW, ar-QA, ar-BH, ar-OM, ar, x-default]
+inLanguage = "ar-SA"   defaultHreflang = "ar-SA"   siteUrl = "https://www.modonty.com"
+```
+
+**تسع لغات** جاهزة، ولا واحدة تصل صفحةً واحدة.
+
+### ٧ · الجذر في الأدمن
+
+`origin/main : admin/lib/seo/listing-page-seo-generator.ts:53`
+
+```
+alternates: { canonical: config.pageUrl },   ← ولا كلمة عن languages
+```
+
+لذلك **إعادة التوليد من أدمن الإنتاج اليوم لن تغيّر شيئاً** — المولّد نفسه لا يقرأ الحقل. (في فرعنا مُصلَح: `languages: buildHreflang(...)`.)
+
+### ٨ · المرجع الرسمي — جوجل، النسخ المحلية
+
+hreflang **اختياري لا إلزامي**: «Google might still find alternate language versions of your page, but it is usually best for you to explicitly indicate your language- or region-specific pages». والقاعدة عند استخدامه: «Each language version must list itself as well as all other language versions». و`x-default` موصى به للاحتياط.developers.google.com — Localized versions
+
+### ٩ · ما لم يُقَس
+
+هل يوجد في فرعنا شاشة أدمن تحرّر `defaultAlternateLanguages` — لم أفحصها بعد.
+
+### ٧ · الإغلاق — ما وُجد بعد الجرد، وما صار (٢٥ أغسطس ٢٠٢٦)
+
+**الجرد قال ثلاث طبقات. القياس أثناء الإصلاح كشف رابعة لم تكن فيه:** `admin/lib/seo/category-seo-generator.ts:40` وأختاها للوسم والقطاع تكتب `languages: { "ar-SA": pageUrl }` — لغة واحدة مكتوبة في الملف. الدليل من البلوب المخزَّن قبل الإصلاح: `{"ar-SA":"…/categories/real-estate-investment"}`. فكل صفحة تصنيف ووسم وقطاع كانت تشحن وسماً واحداً.
+
+**وأربع صفحات كانت تمحو ما بناه الأدمن:** `industries` · `modonty` · `booking` · `shop` تكتب `alternates` كاملاً فوق البلوب. الدرس الذي يستحق التذكّر: **«canonical وحده» في Next حذفٌ لا إضافة** — الطبقة الأعلى تُستبدَل ولا تُدمَج.
+
+**الحالة بعد الإصلاح — كل سطح مقيس:**
+
+```
+١٩/١٩  صفحة ثابتة      ← / · /articles · /trending · /categories · /tags
+                          /industries · /clients · /help/faq · /about · /terms
+                          /legal×4 · /trust · /story · /audio · /reels · /contact
+                          /news · /booking · /shop · /modonty
+ ٧/٧   عائلة ديناميكية  ← تصنيف · وسم · قطاع · مقال · شريك · كاتب · طلّة
+─────
+٢٦ سطحاً، كلٌّ يشحن قائمة الإعدادات كاملة، وكل وسم يشير إلى صفحته هي لا إلى الجذر.
+صفر سطر لغة باقٍ في الكود.
+```
+
+**والقرار خرج من الكود:** محرّر في `/settings/system` يضيف اللغات ويحذفها بتحقّق BCP 47 — جوجل تتجاهل الوسم كله لو الرمز غلط، فالتحقّق ليس تجميلاً. أُضيف `ar-JO` من الواجهة ووصل الأسطح الستّة والعشرين بعد الكاسكيد. إضافة سوق صارت بياناً لا نشرة.
+
+**ما لم يُقَس:** الإنتاج — يشغّل `main` بلا هذه الكوميتات، فوصف هذا التقرير للإنتاج يبقى صحيحاً حتى الدمج.
+
+---
+
+## فحص يُجرى بعد الدمج — تواريخ النشر على الإنتاج
+
+**ليس بطاقة.** أُغلقت `PUBDATE-BACKFILL-13` في ٢٨ أغسطس ٢٠٢٦ لأن الكود يبصم التاريخ في
+الأبواب الثلاثة التي تصل إلى «منشور»، والصفوف الثلاثة عشر التي قِستُها كانت على
+`modonty_dev` — نسخةٌ تُمحى في أول مزامنة (`admin/app/api/dev/sync-local-from-prod/route.ts`).
+
+**ما لم يُقَس:** هل الإنتاج يحمل نفس الثلاثة عشر. الإصلاح على الفرع `modonty-ui` لا على `main`،
+فالباب على الإنتاج ما زال مفتوحاً حتى الدمج.
+
+**بعد الدمج، عدٌّ للقراءة فقط:**
+
+```
+status = PUBLISHED  AND  datePublished = null
+```
+
+- **صفر** → انتهى الموضوع، يُحذف هذا القسم.
+- **أكثر من صفر** → **خطوة صيانة داخل Run-All** (نمط `IMGDIM` و`hreflang-backfill`)، لا سكربتاً
+  منفصلاً، ويضغطها خالد على الإنتاج. القيمة المكتوبة `createdAt` — لأن `ArticleHeader.tsx:92`
+  يعرضه للقارئ أصلاً (`date={datePublished ?? createdAt}`)، وجوجل تشترط تطابق المعروض
+  والمُرسَل: «Ensure that the date … match between the equivalent user-visible and structured
+  values». ولا بدّ من تمرير `dateModified` صريحاً مع الكتابة، وإلا بصمت Prisma تاريخ تعديل كاذباً.

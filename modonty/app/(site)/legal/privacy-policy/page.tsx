@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadataFromPageRow(await getPrivacyPolicyPageForMetadata(), {
     path: "/legal/privacy-policy",
     fallbackTitle: "سياسة الخصوصية",
-    fallbackDescription: "تعرف على كيفية جمع واستخدام وحماية معلوماتك الشخصية في منصة مدونتي",
+    fallbackDescription: messages.seo.privacyPolicy.description,
   });
 }
 
@@ -50,8 +50,10 @@ async function PrivacyPolicyContent() {
     : undefined;
   const buildFallbackStructuredData = () => generateStructuredData({
     type: "WebPage",
-    name: `${pageTitle} - مدونتي`,
-    description: "تعرف على كيفية جمع واستخدام وحماية معلوماتك الشخصية في منصة مدونتي",
+    // بلا لاحقة الماركة: هذا اسم **الصفحة** في البيانات المنظَّمة، واسم الموقع يعيش على
+    // عقدة `WebSite` وفي `og:site_name`. إلحاقه هنا كرّر الماركة وكتبها في الكود معاً.
+    name: pageTitle,
+    description: messages.seo.privacyPolicy.description,
     url: "/legal/privacy-policy",
   });
 

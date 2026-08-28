@@ -12,6 +12,7 @@ import { IconUsers, IconCheck, IconShare, IconFeatured, IconClients, IconSaved }
 import { cn } from "@/lib/utils";
 
 import { ClientContactSheet } from "./client-contact-sheet";
+import { messages } from "@/lib/i18n/messages";
 
 interface ClientBottomBarProps {
   clientId: string;
@@ -158,7 +159,7 @@ export function ClientBottomBar({
         {/* verified mark — مدوّنتي */}
         <span
           className="absolute -bottom-0.5 -start-0.5 grid size-5 place-items-center rounded-full border-2 border-background bg-accent text-white"
-          title="موثّق من مدوّنتي"
+          title={messages.shared.badges.verifiedPartnerLabel}
           aria-hidden
         >
           <IconCheck className="size-3" />

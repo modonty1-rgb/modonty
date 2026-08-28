@@ -77,7 +77,7 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
       title: (tag.seoTitle || `شركاء وسم: ${tag.name}`)?.slice(0, 51),
       description:
         tag.seoDescription ||
-        `استكشف الشركاء المتخصصين في "${tag.name}" على مدونتي`,
+        messages.seo.tags.partnersDescription.replace("{name}", tag.name),
       url: `/tags/${decodedSlug}`,
       type: "website",
       image: tag.socialImage || undefined,

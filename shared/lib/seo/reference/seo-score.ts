@@ -43,8 +43,14 @@ const DESC_MAX = 160;
 const OG_IMAGE_MIN_WIDTH = 1200;
 const OG_IMAGE_MIN_HEIGHT = 630;
 
-/** Both markets Modonty targets — a page missing either is invisible to half the audience. */
-const REQUIRED_HREFLANGS = ["ar-SA", "ar-EG"] as const;
+/**
+ * الأسواق التي يُقاس النقص عليها — تأتي من `Settings.defaultAlternateLanguages` عبر
+ * `input.requiredHreflangs`. كانت مكتوبة هنا `["ar-SA", "ar-EG"]`، فإضافة سوق من الأدمن
+ * لم تكن تصل المقياس: صفحةٌ تخدم تسعة أسواق تُقيَّم على اثنين.
+ *
+ * وبغياب القائمة لا يُقاس النقص إطلاقاً — الفحص يُتخطّى بدل أن يُحكم بمعيار مخترَع.
+ */
+const DEFAULT_REQUIRED_HREFLANGS: readonly string[] = [];
 
 /**
  * What the reader is told when the stored metadata blocks indexing.
@@ -65,6 +71,8 @@ export interface ReferenceSeoInput {
   jsonLdValidationReport?: JsonLdValidationReport | null;
 
   // ── Optional context. Each unlocks one SOURCE check; omit it and the check is skipped. ──
+  /** الأسواق المطلوبة، من `Settings.defaultAlternateLanguages`. تُحذف → فحص hreflang يُتخطّى. */
+  requiredHreflangs?: readonly string[];
   /** The row's own SEO title column — proves the copy is authored, not a generator fallback. */
   sourceTitle?: string | null;
   /** The row's own SEO description column. */
@@ -286,7 +294,8 @@ export function computeReferenceSeoScore(input: ReferenceSeoInput): SeoScore {
     if (!isAbsolute(og?.url)) missing.push("الرابط");
     if (!str(og?.siteName)) missing.push("اسم الموقع");
     // `ar` alone is not enough — Facebook wants the full locale.
-    if (!/^[a-z]{2}_[A-Z]{2}$/.test(str(og?.locale))) missing.push("اللغة (ar_SA)");
+    // الشكل هو المطلوب (`xx_XX`)، لا سوقٌ بعينه — فيسبوك يريد لغةً كاملة لا `ar` وحدها.
+    if (!/^[a-z]{2}_[A-Z]{2}$/.test(str(og?.locale))) missing.push("اللغة (بصيغة xx_XX)");
     if (!imgUrl) missing.push("الصورة");
     else if (/\.svg($|\?)/i.test(imgUrl)) missing.push("صيغة الصورة (SVG مرفوضة)");
     else if (!str(img?.alt)) missing.push("النص البديل للصورة");
@@ -358,9 +367,12 @@ export function computeReferenceSeoScore(input: ReferenceSeoInput): SeoScore {
       : Array.isArray(flat)
         ? flat.map((e) => (isObj(e) ? str(e.lang) : "")).filter(Boolean)
         : [];
-    const missing = REQUIRED_HREFLANGS.filter((l) => !keys.includes(l));
+    const required = input.requiredHreflangs ?? DEFAULT_REQUIRED_HREFLANGS;
+    const missing = required.filter((l) => !keys.includes(l));
     if (keys.length === 0) {
-      push("hreflang", "نسخ اللغة (hreflang)", "error", 0, 4, "لا يوجد hreflang — أضف ar-SA و ar-EG");
+      // الرسالة تسمّي الأسواق التي تنقص فعلاً كما هي في الإعدادات، لا سوقين مكتوبين هنا.
+      const wanted = required.length > 0 ? ` — أضف ${required.join(" و")}` : "";
+      push("hreflang", "نسخ اللغة (hreflang)", "error", 0, 4, `لا يوجد hreflang${wanted}`);
     } else if (missing.length > 0) {
       push("hreflang", "نسخ اللغة (hreflang)", "warning", 2, 4, `ناقص: ${missing.join(" · ")}`);
     } else {

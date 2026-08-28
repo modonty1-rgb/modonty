@@ -9,7 +9,9 @@
  */
 import { ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { SITE_URL, BRAND_AR } from "@/constants";
+import { SITE_URL } from "@/constants";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
+import { getBrandDescription } from "@/lib/settings/get-brand-description";
 
 function escapeXml(s: string): string {
   return s
@@ -21,7 +23,11 @@ function escapeXml(s: string): string {
 }
 
 export async function GET() {
-  const articles = await db.article.findMany({
+  // اسم القناة ووصفها ولغتها من الإعدادات — كانت `BRAND_AR` وجملةً مكتوبةً و`ar` ثابتة،
+  // فقارئ الخلاصة يرى اسماً لا يملك الأدمن تغييره. تُقرأ مع المقالات لا قبلها: نداءان
+  // مخزَّنان بنفس وسم الكاش، فلا شلّال.
+  const [articles, seo, brandDescription] = await Promise.all([
+    db.article.findMany({
     // Platform-wide convention (sitemap + every query helper): scheduled articles
     // (future datePublished) stay hidden until their moment.
     where: {
@@ -35,9 +41,12 @@ export async function GET() {
       datePublished: true,
       client: { select: { name: true } },
     },
-    orderBy: { datePublished: "desc" },
-    take: 50,
-  });
+      orderBy: { datePublished: "desc" },
+      take: 50,
+    }),
+    getPageSeoDefaults(),
+    getBrandDescription(),
+  ]);
 
   const lastBuildDate = (articles[0]?.datePublished ?? new Date()).toUTCString();
 
@@ -61,10 +70,10 @@ export async function GET() {
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
     `<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n` +
     `  <channel>\n` +
-    `    <title>${escapeXml(BRAND_AR)}</title>\n` +
+    (seo.siteName ? `    <title>${escapeXml(seo.siteName)}</title>\n` : "") +
     `    <link>${SITE_URL}</link>\n` +
-    `    <description>${escapeXml("منصة محتوى عربية ودليل أعمال — مقالات موثوقة لشركاء موثوقين في السعودية ومصر")}</description>\n` +
-    `    <language>ar</language>\n` +
+    (brandDescription ? `    <description>${escapeXml(brandDescription)}</description>\n` : "") +
+    (seo.inLanguage ? `    <language>${escapeXml(seo.inLanguage)}</language>\n` : "") +
     `    <lastBuildDate>${lastBuildDate}</lastBuildDate>\n` +
     `    <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml"/>\n` +
     `${items}\n` +

@@ -1,4 +1,5 @@
 import { cacheLife } from "next/cache";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 /**
  * The footer's © year. Read under `use cache` because Next 16 forbids `new Date()` in a
@@ -8,5 +9,5 @@ import { cacheLife } from "next/cache";
 export async function getCopyrightYear(): Promise<string> {
   "use cache";
   cacheLife("days");
-  return new Intl.DateTimeFormat("ar-SA", { year: "numeric" }).format(new Date());
+  return new Intl.DateTimeFormat(SITE_LOCALE, { year: "numeric" }).format(new Date());
 }

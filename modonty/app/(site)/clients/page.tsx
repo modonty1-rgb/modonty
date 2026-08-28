@@ -10,6 +10,7 @@ import { parsePartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-
 import { filterPartners } from "@/app/(site)/clients/helpers/filter-partners";
 import { PageLayout } from "@/app/(site)/clients/components/page-layout/PageLayout";
 import { SITE_URL } from "@/constants";
+import { messages } from "@/lib/i18n/messages";
 
 export async function generateMetadata({ searchParams }: ClientsPageProps): Promise<Metadata> {
   const [params, { metadata }, allPartners, coreClientId] = await Promise.all([
@@ -22,8 +23,7 @@ export async function generateMetadata({ searchParams }: ClientsPageProps): Prom
   const hasResults = filterPartners(partners, parsePartnersQuery(params)).length > 0;
 
   return {
-    description:
-      "اكتشف أبرز العلامات التجارية والشركات الناشرة على مدونتي — محتوى عربي متخصص وموثوق من مصادر معتمدة في السعودية ومصر والخليج.",
+    description: messages.seo.clients.description,
     ...(metadata ?? {}),
     // Search, industry and page live in the URL, so one canonical for all of them —
     // a filtered view is the same directory, not a new page.

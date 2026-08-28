@@ -13,6 +13,7 @@
 import { ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { SITE_URL } from "@/constants";
 
 interface ArticleImagesRow {
   slug: string;
@@ -52,7 +53,9 @@ function uniqueAbsolute(urls: Array<string | null | undefined>): string[] {
 }
 
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+  // `SITE_URL` يقرأ نفس المتغيّر ويقصّ الشرطة الأخيرة، فالرابط واحد في المستودع كلّه.
+  // كان السطر يكرّر الرابط حرفياً، فأي تغيير للنطاق يحتاج تعديل هذا الملفّ وحده.
+  const baseUrl = SITE_URL;
 
   const articles = await db.article.findMany({
     // Same scheduled-article guard as sitemap.ts: future datePublished stays hidden.

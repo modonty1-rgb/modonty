@@ -8,6 +8,7 @@ import { FOCUS_RING } from "@/lib/articles/archive/focus-ring";
 import { READING_TIME_BUCKETS, type ReadingTimeBucket } from "@/lib/articles/archive/reading-time-buckets";
 
 import type { ComponentType, SVGProps } from "react";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 const ICONS: Record<ReadingTimeBucket, ComponentType<SVGProps<SVGSVGElement>>> = {
   short: IconFootprints,
@@ -89,7 +90,7 @@ export function ReadingTimeBar({ counts, current }: ReadingTimeBarProps) {
                   zero IS a dot, so «١٦ ·» read as «١٦٠» — Khalid caught it on the live
                   screen (23 Aug) as a wrong number, not a separator. */}
               <span className={cn("block whitespace-nowrap text-[10px]", active ? "opacity-80" : "text-muted-foreground")}>
-                {bucket.hint} ({count.toLocaleString("ar-SA")})
+                {bucket.hint} ({count.toLocaleString(SITE_LOCALE)})
               </span>
             </span>
           </Link>

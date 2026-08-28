@@ -2,6 +2,8 @@
 
 import { db } from "@/lib/db";
 import { computeReferenceSeoScore } from "@modonty/shared/lib/seo/reference/seo-score";
+import { hreflangCodes } from "@modonty/shared/lib/seo/hreflang-codes";
+import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import type { JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
 
 /**
@@ -45,7 +47,13 @@ interface Row {
   jsonLdValidationReport: unknown;
 }
 
-function summarise(rows: Row[]): { total: number; failing: number } {
+/** الأسواق تُمرَّر من المستدعي — المقياس لا يحمل قائمةً خاصّة به (انظر hreflang-codes). */
+async function requiredHreflangs(): Promise<string[]> {
+  const s = await db.settings.findUnique({ where: SETTINGS_SINGLETON_WHERE, select: { defaultAlternateLanguages: true } });
+  return hreflangCodes(s?.defaultAlternateLanguages);
+}
+
+function summarise(rows: Row[], required: string[]): { total: number; failing: number } {
   const scores = rows.map(
     (r) =>
       computeReferenceSeoScore({
@@ -62,18 +70,19 @@ function summarise(rows: Row[]): { total: number; failing: number } {
 }
 
 export async function getReferenceSeoCounts(): Promise<ReferenceGroup[]> {
-  const [categories, tags, industries, authors] = await Promise.all([
+  const [categories, tags, industries, authors, required] = await Promise.all([
     db.category.findMany({ select: SEO_SELECT, take: 500 }),
     db.tag.findMany({ select: SEO_SELECT, take: 500 }),
     db.industry.findMany({ select: SEO_SELECT, take: 500 }),
     db.author.findMany({ select: SEO_SELECT, take: 500 }),
+    requiredHreflangs(),
   ]);
 
   return [
-    { key: "categories", label: "Categories", ...summarise(categories) },
-    { key: "tags", label: "Tags", ...summarise(tags) },
-    { key: "industries", label: "Industries", ...summarise(industries) },
-    { key: "authors", label: "Authors", ...summarise(authors) },
+    { key: "categories", label: "Categories", ...summarise(categories, required) },
+    { key: "tags", label: "Tags", ...summarise(tags, required) },
+    { key: "industries", label: "Industries", ...summarise(industries, required) },
+    { key: "authors", label: "Authors", ...summarise(authors, required) },
   ];
 }
 
@@ -106,6 +115,9 @@ export async function getReferenceRows(key: ReferenceGroup["key"]): Promise<Refe
           ? await db.industry.findMany(args)
           : await db.author.findMany(args);
 
+  // نفس قائمة الأسواق التي تُقاس بها البطاقات أعلاه — وإلا اختلف رقم البطاقة عن صفحتها.
+  const required = await requiredHreflangs();
+
   return rows.map((r) => ({
     id: r.id,
     name: r.name,
@@ -114,6 +126,7 @@ export async function getReferenceRows(key: ReferenceGroup["key"]): Promise<Refe
     hasJsonLd: Boolean(r.jsonLdStructuredData?.trim()),
     seoScore: computeReferenceSeoScore({
       name: r.name,
+      requiredHreflangs: required,
       nextjsMetadata: r.nextjsMetadata,
       jsonLdStructuredData: r.jsonLdStructuredData,
       jsonLdValidationReport: (r.jsonLdValidationReport ?? null) as JsonLdValidationReport | null,

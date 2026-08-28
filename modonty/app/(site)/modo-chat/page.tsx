@@ -4,11 +4,11 @@ import type { Metadata } from "next";
 
 import { PageLayout } from "./components/page-layout/PageLayout";
 import { PageSkeleton } from "./components/page-layout/PageSkeleton";
+import { messages } from "@/lib/i18n/messages";
 
 export const metadata: Metadata = {
-  title: "مودو شات — مساعدك الذكي في مدونتي",
-  description:
-    "اسأل مودو عن أي مقال أو فئة في مدونتي، واحصل على إجابة مبنية على محتوى المنصة مع روابط المصادر.",
+  title: messages.seo.modoChat.title,
+  description: messages.seo.modoChat.description,
   robots: { index: false, follow: true },
 };
 

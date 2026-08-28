@@ -56,7 +56,9 @@ export function ClientFaqSection({ faqs, slug }: ClientFaqSectionProps) {
                 <AccordionTrigger className="px-4 py-3 text-start text-[13px] font-extrabold text-foreground no-underline hover:no-underline">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pb-3.5 pt-0 text-[12.5px] leading-[1.65] text-muted-foreground">
+                {/* keepMounted: the partner page emits FAQPage JSON-LD for all of these, but
+                    only `faqs[0]` opens by default — the rest were absent from the HTML. */}
+                <AccordionContent keepMounted className="px-4 pb-3.5 pt-0 text-[12.5px] leading-[1.65] text-muted-foreground">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { getSiteAnalytics, type NameVal } from "@/lib/analytics/ga4";
 import { buildPageAlternates } from "@/lib/seo/build-page-alternates";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
+import { messages } from "@/lib/i18n/messages";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import {
   IconTrending,
   IconViews,
@@ -9,11 +12,16 @@ import {
   IconUsers,
 } from "@/lib/icons";
 
+// العنوان من اسم الموقع في الإعدادات. كان مكتوباً بالشدّة «مدوّنتي» بينما الموقع كلّه
+// بلا شدّة — تهجئة ثالثة للماركة وُلدت من كتابة الاسم بيدٍ في كل صفحة.
 export async function generateMetadata(): Promise<Metadata> {
+  const { siteName } = await getPageSeoDefaults();
   return {
-    title: "تحاليل مدوّنتي — الأرقام الحقيقية",
-    description:
-      "تحاليل مباشرة لمنصة مدوّنتي من Google Analytics: زيارات، مشاهدات، مصادر، أجهزة، دول، وتفاعلات.",
+    // `absolute` لأن العنوان يحمل اسم الموقع أصلاً — وبدونها يُلحقه قالب الجذر مرّة ثانية.
+    title: {
+      absolute: siteName ? `تحاليل ${siteName} — الأرقام الحقيقية` : "التحاليل — الأرقام الحقيقية",
+    },
+    description: messages.seo.analytics.description,
     robots: { index: false, follow: false },
     // noindex and still given a canonical: the page is reachable, and inheriting the root's
     // four locales pointing at "/" was a false statement whether or not it is indexed.
@@ -26,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const LOOKER_PUBLIC_URL = "https://datastudio.google.com/s/nBnyGkiUdGw";
 
 // ── format helpers ───────────────────────────────────────────────────────────
-const ar = (n: number) => Math.round(n).toLocaleString("ar-SA");
+const ar = (n: number) => Math.round(n).toLocaleString(SITE_LOCALE);
 function prettyDate(yyyymmdd: string): string {
   if (yyyymmdd.length !== 8) return yyyymmdd;
   return `${yyyymmdd.slice(6, 8)}/${yyyymmdd.slice(4, 6)}`;
@@ -121,12 +129,13 @@ function TimeSeries({ data }: { data: Array<{ date: string; sessions: number; pa
 }
 
 export default async function AnalyticsPage() {
-  const a = await getSiteAnalytics();
+  const [a, { siteName }] = await Promise.all([getSiteAnalytics(), getPageSeoDefaults()]);
+  const heading = siteName ? `تحاليل ${siteName}` : "التحاليل";
 
   if (!a) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-20 text-center">
-        <h1 className="text-2xl font-bold">تحاليل مدوّنتي</h1>
+        <h1 className="text-2xl font-bold">{heading}</h1>
         <p className="mt-4 text-muted-foreground">التحاليل غير متاحة حاليًا. حاول لاحقًا.</p>
       </main>
     );
@@ -140,14 +149,14 @@ export default async function AnalyticsPage() {
   const hourItems: NameVal[] = a.byHour
     .slice()
     .sort((x, y) => Number(x.name) - Number(y.name))
-    .map((h) => ({ name: `${Number(h.name).toLocaleString("ar-SA")}:٠٠`, value: h.value }));
+    .map((h) => ({ name: `${Number(h.name).toLocaleString(SITE_LOCALE)}:٠٠`, value: h.value }));
   const sourceItems: NameVal[] = a.sources.map((s) => ({ name: `${s.source} / ${s.medium}`, value: s.sessions }));
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 md:py-12">
       {/* Header */}
       <header className="mb-8">
-        <h1 className="text-3xl font-extrabold tracking-tight">تحاليل مدوّنتي</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight">{heading}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           أرقام حقيقية مباشرة من Google Analytics — لا تقديرات. كل النشاط على منصة مدوّنتي.
         </p>
@@ -167,7 +176,7 @@ export default async function AnalyticsPage() {
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <Kpi icon={IconUsers} label="زوّار" value={ar(k.users)} sub={`${ar(k.newUsers)} جديد`} />
         <Kpi icon={IconTrending} label="زيارات" value={ar(k.sessions)} />
-        <Kpi icon={IconViews} label="مشاهدات الصفحات" value={ar(k.pageViews)} sub={`${k.viewsPerSession.toLocaleString("ar-SA", { maximumFractionDigits: 1 })} لكل زيارة`} />
+        <Kpi icon={IconViews} label="مشاهدات الصفحات" value={ar(k.pageViews)} sub={`${k.viewsPerSession.toLocaleString(SITE_LOCALE, { maximumFractionDigits: 1 })} لكل زيارة`} />
         <Kpi icon={IconTotal} label="إجمالي النشاط" value={ar(k.events)} />
         <Kpi icon={IconActivity} label="تفاعلات مباشرة" value={ar(k.interactions)} />
       </div>

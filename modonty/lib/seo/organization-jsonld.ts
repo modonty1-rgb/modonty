@@ -5,7 +5,7 @@ import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 import { db } from "@/lib/db";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
-import { BRAND_AR, BRAND_EN, SITE_URL, LOGO_URL, CONTACT_EMAIL } from "@/constants";
+import { SITE_URL, LOGO_URL } from "@/constants";
 
 /**
  * The legal entity behind Modonty — read from Settings, never hardcoded.
@@ -19,6 +19,12 @@ import { BRAND_AR, BRAND_EN, SITE_URL, LOGO_URL, CONTACT_EMAIL } from "@/constan
  * it lives with the other non-entity constants in `@/constants/legal`.
  */
 export interface LegalEntity {
+  /** `Settings.siteName` — الاسم الذي يراه الزائر، وهو ما تعرضه جوجل. */
+  siteName: string | null;
+  /** `Settings.alternateName` — الاسم الثاني للماركة على الكيان نفسه (schema.org). */
+  alternateName: string | null;
+  /** `Settings.orgContactEmail` — بريد الاتصال المعلَن في بنية المؤسسة. */
+  contactEmail: string | null;
   legalName: string | null;
   cr: string | null;
   crStatus: string | null;
@@ -37,6 +43,7 @@ export interface LegalEntity {
 
 /** Every field null — returned when Settings has no row yet. */
 export const EMPTY_LEGAL_ENTITY: LegalEntity = {
+  siteName: null, alternateName: null, contactEmail: null,
   legalName: null, cr: null, crStatus: null, unifiedNumber: null, entityType: null,
   capital: null, street: null, district: null, city: null, region: null, country: null,
   latitude: null, longitude: null, foundingDate: null,
@@ -50,6 +57,9 @@ export async function getLegalEntity(): Promise<LegalEntity> {
   const s = await db.settings.findUnique({
     where: SETTINGS_SINGLETON_WHERE,
     select: {
+      siteName: true,
+      alternateName: true,
+      orgContactEmail: true,
       orgLegalName: true,
       orgCommercialRegistrationNumber: true,
       orgCommercialRegistrationStatus: true,
@@ -74,6 +84,9 @@ export async function getLegalEntity(): Promise<LegalEntity> {
   const t = (v: string | null) => v?.trim() || null;
 
   return {
+    siteName: t(s.siteName),
+    alternateName: t(s.alternateName),
+    contactEmail: t(s.orgContactEmail),
     legalName: t(s.orgLegalName),
     cr: t(s.orgCommercialRegistrationNumber),
     crStatus: t(s.orgCommercialRegistrationStatus),
@@ -140,22 +153,29 @@ export function buildOrganizationJsonLd(legal: LegalEntity): Record<string, unkn
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": buildSiteEntityIds(SITE_URL).organization,
-    name: BRAND_AR,
-    alternateName: BRAND_EN,
+    // الاسمان من القاعدة لا من ثوابت الكود. كانا `BRAND_AR` و`BRAND_EN`، فتغيير اسم
+    // الماركة كان يحتاج نشرةً — وجوجل تنصّ: الاسم في البيانات المنظَّمة يطابق ما تسمّي
+    // به موقعك على رئيسيتك، وهذا قرار تحريري يملكه الأدمن لا الكود.
+    ...(legal.siteName && { name: legal.siteName }),
+    ...(legal.alternateName && { alternateName: legal.alternateName }),
     ...(legal.legalName && { legalName: legal.legalName }),
     url: SITE_URL,
     logo: { "@type": "ImageObject", url: LOGO_URL },
     ...(identifier.length > 0 && { identifier }),
     ...(legal.foundingDate && { foundingDate: legal.foundingDate.toISOString().slice(0, 10) }),
     ...(Object.keys(address).length > 1 && { address }),
-    contactPoint: [
-      {
-        "@type": "ContactPoint",
-        contactType: "customer support",
-        email: CONTACT_EMAIL,
-        availableLanguage: ["ar", "en"],
-      },
-    ],
+    // تُبنى فقط حين يحمل العمود بريداً: عقدةُ اتصالٍ بلا بريد لا تفيد جوجل، وبريدٌ مكتوب
+    // في الكود يبقى معلَناً بعد تغييره من الأدمن — والعمود `orgContactEmail` موجود ومملوء.
+    ...(legal.contactEmail && {
+      contactPoint: [
+        {
+          "@type": "ContactPoint",
+          contactType: "customer support",
+          email: legal.contactEmail,
+          availableLanguage: ["ar", "en"],
+        },
+      ],
+    }),
     knowsAbout: [
       "Saudi Vision 2030",
       "رؤية المملكة 2030",

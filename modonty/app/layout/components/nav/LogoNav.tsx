@@ -4,7 +4,7 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 
 import { ModontyMark } from "@/components/icons/modonty-mark";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
-import { BRAND_AR } from "@/constants";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 
 interface LogoNavProps {
   className?: string;
@@ -19,7 +19,9 @@ interface LogoNavProps {
 // The navbar uses the compact logomark. The full wordmark is reserved for surfaces
 // with enough room, such as the publisher sticker in the Home experience.
 export async function LogoNav({ className, variant = "image" }: LogoNavProps) {
-  const { logoIconUrl, logoUrl } = await getBrandMedia();
+  // اسم الماركة من الإعدادات لا من ثابت في الكود — هو نفسه الذي يظهر في 
+  // وفي عقدة الهوية، فيبقى الظاهر على الشاشة والمُرسَل لجوجل شيئاً واحداً.
+  const [{ logoIconUrl, logoUrl }, { siteName }] = await Promise.all([getBrandMedia(), getPageSeoDefaults()]);
   const source = variant === "mark" ? null : logoIconUrl ?? logoUrl;
 
   return (
@@ -30,7 +32,8 @@ export async function LogoNav({ className, variant = "image" }: LogoNavProps) {
         // height, and this is the way home — the one target no one should have to aim at.
         variant === "mark" ? "w-11 justify-center motion-safe:active:scale-95" : ""
       }`}
-      aria-label={`${BRAND_AR} - الصفحة الرئيسية`}
+      // اسم الرابط لا يُترك فارغاً لو خلا العمود: «الصفحة الرئيسية» وصفُ وجهةٍ لا اسمُ ماركة.
+      aria-label={siteName ? `${siteName} - الصفحة الرئيسية` : "الصفحة الرئيسية"}
     >
       {variant === "mark" ? (
         <ModontyMark className={`size-7 text-primary ${className ?? ""}`} />
@@ -40,8 +43,8 @@ export async function LogoNav({ className, variant = "image" }: LogoNavProps) {
         // a 48px-wide file (measured 2026-08-15). A square icon uploaded later still fits:
         // the browser keeps the natural aspect and only the height is fixed.
         <OptimizedImage
-          media={asMedia(source, BRAND_AR)}
-          alt={BRAND_AR}
+          media={asMedia(source, siteName ?? "")}
+          alt={siteName ?? ""}
           width={160}
           height={40}
           // `eager` but NOT high priority. The logo is small and above the fold, so it must not
@@ -53,7 +56,7 @@ export async function LogoNav({ className, variant = "image" }: LogoNavProps) {
           className={`h-7 w-auto max-w-full object-contain md:h-8 ${className ?? ""}`}
         />
       ) : (
-        <span className="text-lg font-bold text-link">{BRAND_AR}</span>
+        siteName ? <span className="text-lg font-bold text-link">{siteName}</span> : null
       )}
     </Link>
   );

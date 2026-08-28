@@ -14,6 +14,7 @@ import { parseCategorySearchParams } from "./helpers/parse-category-search-param
 import type { CategoryPageParams } from "./helpers/category-page-params";
 import type { CategoryResponse } from "@/lib/types";
 import type { EntityCardProps } from "@/components/listing/EntityCard";
+import { messages } from "@/lib/i18n/messages";
 
 const PAGE_SIZE = 20;
 
@@ -27,8 +28,7 @@ const SORT_OPTIONS: EntitySortOption[] = [
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getListingPageSeo("categories");
   const merged: Metadata = {
-    description:
-      "استعرض جميع تصنيفات مدونتي — اختر تصنيفك المفضل وتابع أحدث المقالات في التقنية والأعمال والتسويق وغيرها من المجالات.",
+    description: messages.seo.categories.description,
     ...(metadata ?? {}),
   };
   // Admin-stored title already includes the brand; wrap in `absolute` so the
@@ -60,7 +60,7 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
   const heroTitle = seoTitle ?? "تصنيفات المحتوى";
   const heroDescription =
     (typeof seo.metadata?.description === "string" && seo.metadata.description) ||
-    "استعرض جميع تصنيفات مدونتي — اختر تصنيفك المفضل وتابع أحدث المقالات في التقنية والأعمال والتسويق وغيرها من المجالات.";
+    messages.seo.categories.description;
   const { url: heroImageUrl, alt: heroImageAlt } = extractOgImageFromMetadata(seo.metadata);
 
   const toCard = (cat: CategoryResponse): EntityCardProps => ({

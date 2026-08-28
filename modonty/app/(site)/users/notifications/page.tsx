@@ -8,6 +8,7 @@ import { IconEmail } from "@/lib/icons";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { MarkAsReadOnOpen } from "./components/mark-as-read-on-open";
 import { BellRevalidateTrigger } from "./components/bell-revalidate-trigger";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 export const metadata: Metadata = {
   title: "الإشعارات",
@@ -161,7 +162,7 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
                               {n.body}
                             </p>
                             <p className="text-xs text-muted-foreground mt-1">
-                              {n.createdAt.toLocaleString("ar-SA")}
+                              {n.createdAt.toLocaleString(SITE_LOCALE)}
                             </p>
                           </div>
                         </div>
@@ -270,7 +271,7 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
                   <div>
                     <p className="text-sm text-muted-foreground mb-1">تاريخ الاستلام</p>
                     <p className="text-sm text-foreground">
-                      {contactMessage.createdAt.toLocaleString("ar-SA")}
+                      {contactMessage.createdAt.toLocaleString(SITE_LOCALE)}
                     </p>
                   </div>
                 </div>

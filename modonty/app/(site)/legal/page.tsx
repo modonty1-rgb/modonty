@@ -19,8 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadataFromPageRow(null, {
     path: "/legal",
     fallbackTitle: "الصفحات القانونية",
-    fallbackDescription:
-      "سياسات مدونتي القانونية في مكان واحد: الخصوصية · ملفات تعريف الارتباط · حقوق النشر · اتفاقية المستخدم.",
+    fallbackDescription: messages.seo.legalIndex.description,
   });
 }
 

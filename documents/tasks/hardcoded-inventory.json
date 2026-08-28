@@ -1,0 +1,1155 @@
+{
+ "db": "modonty_dev",
+ "filesScanned": 1093,
+ "settingsColumns": 164,
+ "valuesProbed": 58,
+ "workHits": 0,
+ "workFiles": 0,
+ "totalHits": 49,
+ "fileCount": 28,
+ "compare": {
+  "admin": 365,
+  "console": 108
+ },
+ "phases": [
+  {
+   "p": "2",
+   "n": "المرحلة ٢ — ما يصل جوجل",
+   "s": "مولّدات الميتا والبيانات المنظَّمة والخلاصة والخريطة. أعلى أثر: قيمة غلط هنا تُنشر على كل صفحة.",
+   "close": "أغيّر القيمة من الأدمن → أُفرّغ الكاش → تتغيّر حيّاً في <code>og:</code> و<code>JSON-LD</code>.",
+   "hits": 0,
+   "fileCount": 0,
+   "files": []
+  },
+  {
+   "p": "3",
+   "n": "المرحلة ٣ — ما يراه الزائر",
+   "s": "الهيدر والفوتر ونصوص الصفحات — ومنها <code>&lt;h1&gt;</code> الرئيسية المكتوب حرفياً.",
+   "close": "الاسم على الشاشة يطابق الاسم في البيانات المنظَّمة — وهذا نصّ جوجل صراحةً.",
+   "hits": 0,
+   "fileCount": 0,
+   "files": []
+  },
+  {
+   "p": "4",
+   "n": "المرحلة ٤ — البريد والفريق",
+   "s": "قوالب البريد وبيانات الفريق والاتصال.",
+   "close": "تغيير بريد أو عضو فريق من الأدمن بلا نشر.",
+   "hits": 0,
+   "fileCount": 0,
+   "files": []
+  },
+  {
+   "p": "keep",
+   "n": "مقصود — يبقى",
+   "s": "قِيس، ونوقش، وقُرِّر بقاؤه. ليس شغلاً معلَّقاً ولا ديناً — كلّ سطر هنا معه سببُ بقائه. يبقى مكتوباً كي لا يُعاد فتح النقاش نفسه بعد شهر.",
+   "close": "لا يُقفل. يُعاد النظر فيه فقط لو تغيّر القرار.",
+   "hits": 49,
+   "fileCount": 28,
+   "files": [
+    {
+     "f": "modonty/constants/brand.ts",
+     "keepWhy": "ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — محجوزان بمستهلكٍ واحدٍ باقٍ: تعليمات مودو. يُحذفان يوم تُحذف، لا قبله.",
+     "hits": 5,
+     "lines": [
+      17,
+      20,
+      27
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName",
+      "تهجئات الماركة",
+      "قيمة عمود — Settings.alternateName",
+      "قيمة عمود — Settings.siteUrl"
+     ],
+     "values": [
+      "مدونتي",
+      "BRAND_AR",
+      "Modonty",
+      "BRAND_EN",
+      "https://www.modonty.com"
+     ],
+     "isSource": true,
+     "sample": "export const BRAND_AR = \"مدونتي\";"
+    },
+    {
+     "f": "modonty/app/(site)/modo-chat/components/chat-list/ChatList.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 4,
+     "lines": [
+      673,
+      724,
+      743,
+      801
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "<AvatarImage src={CHARACTER_URL} alt=\"مدونتي الذكية\" />"
+    },
+    {
+     "f": "modonty/app/(site)/modo-chat/helpers/build-category-db-prompt.ts",
+     "keepWhy": "مودو — اسم المساعد ونصّ تعليماته. «مدونتي الذكية» اسمُ شخصية لا اسمُ موقع، والتعليمات تُملى على النموذج ولا تصل جوجل ولا الزائر.",
+     "hits": 4,
+     "lines": [
+      6,
+      10,
+      14
+     ],
+     "kinds": [
+      "تهجئات الماركة"
+     ],
+     "values": [
+      "BRAND_AR"
+     ],
+     "isSource": false,
+     "sample": "return `أنت \"${BRAND_AR} الذكي\"، مساعد متخصص حصراً في موضوع \"${categoryName}\" على منصة ${BRAND_AR} للمحتوى."
+    },
+    {
+     "f": "shared/lib/email/email-theme.ts",
+     "keepWhy": "ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = \"مُدَوَّنَتِي\"` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.",
+     "hits": 4,
+     "lines": [
+      17,
+      24,
+      26,
+      35
+     ],
+     "kinds": [
+      "تهجئات الماركة",
+      "قيمة عمود — Settings.siteUrl",
+      "قيمة عمود — Settings.orgContactEmail",
+      "قيمة عمود — Settings.orgStreetAddress"
+     ],
+     "values": [
+      "\"مُدَوَّنَتِي\"",
+      "https://www.modonty.com",
+      "modonty@modonty.com",
+      "شارع أبو بكر الصديق"
+     ],
+     "isSource": false,
+     "sample": "export const EMAIL_BRAND_AR = \"مُدَوَّنَتِي\";"
+    },
+    {
+     "f": "modonty/app/(site)/story/TestimonialPlayer.tsx",
+     "keepWhy": "محتوى منشور — روابط فيديو الشهادات وقناة اليوتيوب. مادّةٌ يختارها المحرّر، لا إعدادٌ يملكه الأدمن.",
+     "hits": 3,
+     "lines": [
+      30,
+      41,
+      170
+     ],
+     "kinds": [
+      "روابط جهات خارجية"
+     ],
+     "values": [
+      "https://www.youtube.com/shorts/s4nYJRY3heE",
+      "https://www.youtube.com/watch?v=87TI084Jc6E",
+      "https://www.youtube.com/@modonty"
+     ],
+     "isSource": false,
+     "sample": "watchUrl: \"https://www.youtube.com/shorts/s4nYJRY3heE\","
+    },
+    {
+     "f": "modonty/constants/contact.ts",
+     "keepWhy": "ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = \"مُدَوَّنَتِي\"` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.",
+     "hits": 3,
+     "lines": [
+      6,
+      9
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.orgContactEmail",
+      "تهجئات الماركة",
+      "بريد الفريق والاتصال"
+     ],
+     "values": [
+      "modonty@modonty.com",
+      "BRAND_EN",
+      "no-reply@modonty.com"
+     ],
+     "isSource": false,
+     "sample": "export const CONTACT_EMAIL = \"modonty@modonty.com\";"
+    },
+    {
+     "f": "modonty/app/(site)/modo-chat/helpers/build-article-db-prompt.ts",
+     "keepWhy": "مودو — اسم المساعد ونصّ تعليماته. «مدونتي الذكية» اسمُ شخصية لا اسمُ موقع، والتعليمات تُملى على النموذج ولا تصل جوجل ولا الزائر.",
+     "hits": 2,
+     "lines": [
+      6
+     ],
+     "kinds": [
+      "تهجئات الماركة"
+     ],
+     "values": [
+      "BRAND_AR"
+     ],
+     "isSource": false,
+     "sample": "return `أنت \"${BRAND_AR} الذكي\"، تساعد القارئ في فهم مقال \"${articleTitle}\" ضمن موضوع \"${categoryName}\" على منصة ${BRAND_AR}."
+    },
+    {
+     "f": "modonty/app/(site)/modo-chat/helpers/build-identity-prompt.ts",
+     "keepWhy": "مودو — اسم المساعد ونصّ تعليماته. «مدونتي الذكية» اسمُ شخصية لا اسمُ موقع، والتعليمات تُملى على النموذج ولا تصل جوجل ولا الزائر.",
+     "hits": 2,
+     "lines": [
+      11,
+      13
+     ],
+     "kinds": [
+      "تهجئات الماركة"
+     ],
+     "values": [
+      "BRAND_AR"
+     ],
+     "isSource": false,
+     "sample": "return `أنت \"مودو\"، مساعد منصّة ${BRAND_AR}."
+    },
+    {
+     "f": "modonty/constants/index.ts",
+     "keepWhy": "ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — محجوزان بمستهلكٍ واحدٍ باقٍ: تعليمات مودو. يُحذفان يوم تُحذف، لا قبله.",
+     "hits": 2,
+     "lines": [
+      14,
+      15
+     ],
+     "kinds": [
+      "تهجئات الماركة"
+     ],
+     "values": [
+      "BRAND_AR",
+      "BRAND_EN"
+     ],
+     "isSource": false,
+     "sample": "BRAND_AR,"
+    },
+    {
+     "f": "shared/lib/partner-site/get-home-data.ts",
+     "keepWhy": "لغة تنسيق الأرقام والتواريخ — `Intl` تحتاج رمز لغة، وليست بياناً عن العمل.",
+     "hits": 2,
+     "lines": [
+      89,
+      90
+     ],
+     "kinds": [
+      "لغة تنسيق الأرقام والتواريخ"
+     ],
+     "values": [
+      "\"ar-SA\""
+     ],
+     "isSource": false,
+     "sample": "const foundingYear = client.foundingDate ? new Intl.DateTimeFormat(\"ar-SA\", { year: \"numeric\" }).format(client.foundingDate) : null;"
+    },
+    {
+     "f": "modonty/app/(partner)/clients/[slug]/components/share-client-button.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      14
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "const title = `اطلع على ${clientName} على مدونتي`;"
+    },
+    {
+     "f": "modonty/app/(site)/about/error.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      16
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "what=\"صفحة «عن مدونتي»\""
+    },
+    {
+     "f": "modonty/app/(site)/modonty/components/profile-hero/ModontyProfileHero.tsx",
+     "keepWhy": "اسم منتَج أو معرّف تتبّع — «Modonty Story» اسم البودكاست، و«Modonty Hero — become a partner» معرّفٌ يُرسَل إلى التحليلات لا نصٌّ يراه زائر. أسماءُ أعلامٍ لا حقولُ هوية.",
+     "hits": 1,
+     "lines": [
+      114
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.alternateName"
+     ],
+     "values": [
+      "Modonty"
+     ],
+     "isSource": false,
+     "sample": "label=\"Modonty Hero — become a partner\""
+    },
+    {
+     "f": "modonty/app/(site)/modonty/error.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      16
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "what=\"صفحة مدونتي\""
+    },
+    {
+     "f": "modonty/app/(site)/story/page.tsx",
+     "keepWhy": "اسم منتَج أو معرّف تتبّع — «Modonty Story» اسم البودكاست، و«Modonty Hero — become a partner» معرّفٌ يُرسَل إلى التحليلات لا نصٌّ يراه زائر. أسماءُ أعلامٍ لا حقولُ هوية.",
+     "hits": 1,
+     "lines": [
+      51
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.alternateName"
+     ],
+     "values": [
+      "Modonty"
+     ],
+     "isSource": false,
+     "sample": "alternateName: \"Modonty Story\","
+    },
+    {
+     "f": "modonty/app/(site)/story/PartnersShowcase.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      83
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "alt={`شعار ${partner.name} — شريك مدونتي`}"
+    },
+    {
+     "f": "modonty/app/(site)/story/SalesPitchPage.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      560
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "title=\"اضغط للاستماع: مدونتي ٢٠٣٠ — لبنة في الرؤية\""
+    },
+    {
+     "f": "modonty/app/(site)/story/TeamCarousel.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      155
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "alt={`صورة ${member.name} — فريق مدونتي`}"
+    },
+    {
+     "f": "modonty/app/(site)/users/register/actions/register-actions.ts",
+     "keepWhy": "إشعار تشغيلي — يُرسَل إلى تلغرام الفريق، ولا يراه زائر. وملفّ الرسائل يقول عن نفسه «كل نصّ يراه الزائر»؛ إدخال رسائل الآلة فيه يُفقده معناه.",
+     "hits": 1,
+     "lines": [
+      71
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "sendAdminTelegram(`👤 <b>مستخدم جديد — مدونتي</b>\\n📧 ${escapeTgHtml(user.email ?? \"—\")}\\n🙋 ${escapeTgHtml(user.name || \"—\")}\\n📅 ${now}`).catch(() => null);"
+    },
+    {
+     "f": "modonty/app/(site)/users/register/components/register-form.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      94
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.imageOwnerName"
+     ],
+     "values": [
+      "مدوّنتي"
+     ],
+     "isSource": false,
+     "sample": "<CardTitle className=\"text-2xl text-center\">انضم لمجتمع مدوّنتي</CardTitle>"
+    },
+    {
+     "f": "modonty/app/api/news/subscribe/route.ts",
+     "keepWhy": "إشعار تشغيلي — يُرسَل إلى تلغرام الفريق، ولا يراه زائر. وملفّ الرسائل يقول عن نفسه «كل نصّ يراه الزائر»؛ إدخال رسائل الآلة فيه يُفقده معناه.",
+     "hits": 1,
+     "lines": [
+      75
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "sendAdminTelegram(`🔔 <b>مشترك جديد — نشرة مدونتي</b>\\n📧 ${normalizedEmail}\\n📅 ${now}`).catch(() => null);"
+    },
+    {
+     "f": "modonty/app/layout/components/user-menu/MobileAccountBenefitsMenu.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      70
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "<h2 className=\"pe-9 text-base font-bold leading-6 text-foreground\">تجربة مدونتي أفضل بحسابك</h2>"
+    },
+    {
+     "f": "modonty/lib/settings/get-site-language.ts",
+     "keepWhy": "استثناء موثَّق في الملفّ نفسه: لغة الوثيقة (`<html lang>`) ولغة تنسيق التاريخ. غيابها عطلٌ في العرض لا نقصٌ يُرى.",
+     "hits": 1,
+     "lines": [
+      13
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.inLanguage"
+     ],
+     "values": [
+      "ar-SA"
+     ],
+     "isSource": false,
+     "sample": "const DEFAULT_SITE_LANGUAGE = \"ar-SA\";"
+    },
+    {
+     "f": "modonty/lib/whatsapp.ts",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      25
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.imageOwnerName"
+     ],
+     "values": [
+      "مدوّنتي"
+     ],
+     "isSource": false,
+     "sample": "return `السلام عليكم 👋 وصلت لكم عبر منصّة «مدوّنتي» وأبغى أحجز موعد في ${clientName} 🌟`;"
+    },
+    {
+     "f": "shared/components/partner-site/free/footer/parts/legal-bar.tsx",
+     "keepWhy": "مكوّن في `shared/` — يخدم الأدمن والكونسول ومدونتي معاً، و`messages/ar.json` ملفّ مدونتي وحدها. نقلُه يربط التطبيقات الثلاثة بملفّ رسائل تطبيقٍ واحد.",
+     "hits": 1,
+     "lines": [
+      15
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteUrl"
+     ],
+     "values": [
+      "https://www.modonty.com"
+     ],
+     "isSource": false,
+     "sample": "<a href=\"https://www.modonty.com\" className=\"transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center\">موقع مبني على مدونت"
+    },
+    {
+     "f": "shared/components/partner-site/free/testimonials/reviews-list.tsx",
+     "keepWhy": "لغة تنسيق الأرقام والتواريخ — `Intl` تحتاج رمز لغة، وليست بياناً عن العمل.",
+     "hits": 1,
+     "lines": [
+      26
+     ],
+     "kinds": [
+      "لغة تنسيق الأرقام والتواريخ"
+     ],
+     "values": [
+      "\"ar-SA\""
+     ],
+     "isSource": false,
+     "sample": "const fmt = new Intl.NumberFormat(\"ar-SA\", { maximumFractionDigits: 1 });"
+    },
+    {
+     "f": "shared/components/partner-site/free/trust/trust-strip.tsx",
+     "keepWhy": "مكوّن في `shared/` — يخدم الأدمن والكونسول ومدونتي معاً، و`messages/ar.json` ملفّ مدونتي وحدها. نقلُه يربط التطبيقات الثلاثة بملفّ رسائل تطبيقٍ واحد.",
+     "hits": 1,
+     "lines": [
+      14
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "<ShieldCheck className=\"h-4 w-4 text-primary\" aria-hidden /> شريك موثَّق في مدونتي"
+    },
+    {
+     "f": "shared/lib/seo/generate-client-seo-bundle.ts",
+     "keepWhy": "استثناء موثَّق في الملفّ نفسه: لغة الوثيقة (`<html lang>`) ولغة تنسيق التاريخ. غيابها عطلٌ في العرض لا نقصٌ يُرى.",
+     "hits": 1,
+     "lines": [
+      298
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.defaultOgLocale"
+     ],
+     "values": [
+      "ar_SA"
+     ],
+     "isSource": false,
+     "sample": "const LOCALE_BY_LANGUAGE: Record<string, string> = { arabic: \"ar_SA\", ar: \"ar_SA\", english: \"en_US\", en: \"en_US\" };"
+    }
+   ]
+  }
+ ],
+ "kinds": [
+  {
+   "k": "settings",
+   "name": "قيمة عمود مكتوبة حرفياً",
+   "sev": "high",
+   "owner": "Settings — أعمدة شتّى",
+   "why": "القيمة نفسها موجودة في القاعدة، والكود يكتبها بيده بدل أن يقرأها.",
+   "hits": 28,
+   "fileCount": 21,
+   "cols": [
+    "Settings.siteName",
+    "Settings.alternateName",
+    "Settings.imageOwnerName",
+    "Settings.siteUrl",
+    "Settings.orgContactEmail",
+    "Settings.inLanguage",
+    "Settings.orgStreetAddress",
+    "Settings.defaultOgLocale"
+   ],
+   "files": [
+    {
+     "f": "modonty/app/(site)/modo-chat/components/chat-list/ChatList.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 4,
+     "lines": [
+      673,
+      724,
+      743,
+      801
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "<AvatarImage src={CHARACTER_URL} alt=\"مدونتي الذكية\" />"
+    },
+    {
+     "f": "modonty/constants/brand.ts",
+     "keepWhy": "ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — محجوزان بمستهلكٍ واحدٍ باقٍ: تعليمات مودو. يُحذفان يوم تُحذف، لا قبله.",
+     "hits": 3,
+     "lines": [
+      17,
+      20,
+      27
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName",
+      "قيمة عمود — Settings.alternateName",
+      "قيمة عمود — Settings.siteUrl"
+     ],
+     "values": [
+      "مدونتي",
+      "Modonty",
+      "https://www.modonty.com"
+     ],
+     "isSource": true,
+     "sample": "export const BRAND_AR = \"مدونتي\";"
+    },
+    {
+     "f": "shared/lib/email/email-theme.ts",
+     "keepWhy": "ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = \"مُدَوَّنَتِي\"` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.",
+     "hits": 3,
+     "lines": [
+      24,
+      26,
+      35
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteUrl",
+      "قيمة عمود — Settings.orgContactEmail",
+      "قيمة عمود — Settings.orgStreetAddress"
+     ],
+     "values": [
+      "https://www.modonty.com",
+      "modonty@modonty.com",
+      "شارع أبو بكر الصديق"
+     ],
+     "isSource": false,
+     "sample": "export const EMAIL_SITE_URL = \"https://www.modonty.com\";"
+    },
+    {
+     "f": "modonty/app/(partner)/clients/[slug]/components/share-client-button.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      14
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "const title = `اطلع على ${clientName} على مدونتي`;"
+    },
+    {
+     "f": "modonty/app/(site)/about/error.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      16
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "what=\"صفحة «عن مدونتي»\""
+    },
+    {
+     "f": "modonty/app/(site)/modonty/components/profile-hero/ModontyProfileHero.tsx",
+     "keepWhy": "اسم منتَج أو معرّف تتبّع — «Modonty Story» اسم البودكاست، و«Modonty Hero — become a partner» معرّفٌ يُرسَل إلى التحليلات لا نصٌّ يراه زائر. أسماءُ أعلامٍ لا حقولُ هوية.",
+     "hits": 1,
+     "lines": [
+      114
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.alternateName"
+     ],
+     "values": [
+      "Modonty"
+     ],
+     "isSource": false,
+     "sample": "label=\"Modonty Hero — become a partner\""
+    },
+    {
+     "f": "modonty/app/(site)/modonty/error.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      16
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "what=\"صفحة مدونتي\""
+    },
+    {
+     "f": "modonty/app/(site)/story/page.tsx",
+     "keepWhy": "اسم منتَج أو معرّف تتبّع — «Modonty Story» اسم البودكاست، و«Modonty Hero — become a partner» معرّفٌ يُرسَل إلى التحليلات لا نصٌّ يراه زائر. أسماءُ أعلامٍ لا حقولُ هوية.",
+     "hits": 1,
+     "lines": [
+      51
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.alternateName"
+     ],
+     "values": [
+      "Modonty"
+     ],
+     "isSource": false,
+     "sample": "alternateName: \"Modonty Story\","
+    },
+    {
+     "f": "modonty/app/(site)/story/PartnersShowcase.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      83
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "alt={`شعار ${partner.name} — شريك مدونتي`}"
+    },
+    {
+     "f": "modonty/app/(site)/story/SalesPitchPage.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      560
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "title=\"اضغط للاستماع: مدونتي ٢٠٣٠ — لبنة في الرؤية\""
+    },
+    {
+     "f": "modonty/app/(site)/story/TeamCarousel.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      155
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "alt={`صورة ${member.name} — فريق مدونتي`}"
+    },
+    {
+     "f": "modonty/app/(site)/users/register/actions/register-actions.ts",
+     "keepWhy": "إشعار تشغيلي — يُرسَل إلى تلغرام الفريق، ولا يراه زائر. وملفّ الرسائل يقول عن نفسه «كل نصّ يراه الزائر»؛ إدخال رسائل الآلة فيه يُفقده معناه.",
+     "hits": 1,
+     "lines": [
+      71
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "sendAdminTelegram(`👤 <b>مستخدم جديد — مدونتي</b>\\n📧 ${escapeTgHtml(user.email ?? \"—\")}\\n🙋 ${escapeTgHtml(user.name || \"—\")}\\n📅 ${now}`).catch(() => null);"
+    },
+    {
+     "f": "modonty/app/(site)/users/register/components/register-form.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      94
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.imageOwnerName"
+     ],
+     "values": [
+      "مدوّنتي"
+     ],
+     "isSource": false,
+     "sample": "<CardTitle className=\"text-2xl text-center\">انضم لمجتمع مدوّنتي</CardTitle>"
+    },
+    {
+     "f": "modonty/app/api/news/subscribe/route.ts",
+     "keepWhy": "إشعار تشغيلي — يُرسَل إلى تلغرام الفريق، ولا يراه زائر. وملفّ الرسائل يقول عن نفسه «كل نصّ يراه الزائر»؛ إدخال رسائل الآلة فيه يُفقده معناه.",
+     "hits": 1,
+     "lines": [
+      75
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "sendAdminTelegram(`🔔 <b>مشترك جديد — نشرة مدونتي</b>\\n📧 ${normalizedEmail}\\n📅 ${now}`).catch(() => null);"
+    },
+    {
+     "f": "modonty/app/layout/components/user-menu/MobileAccountBenefitsMenu.tsx",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      70
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "<h2 className=\"pe-9 text-base font-bold leading-6 text-foreground\">تجربة مدونتي أفضل بحسابك</h2>"
+    },
+    {
+     "f": "modonty/constants/contact.ts",
+     "keepWhy": "ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = \"مُدَوَّنَتِي\"` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.",
+     "hits": 1,
+     "lines": [
+      6
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.orgContactEmail"
+     ],
+     "values": [
+      "modonty@modonty.com"
+     ],
+     "isSource": false,
+     "sample": "export const CONTACT_EMAIL = \"modonty@modonty.com\";"
+    },
+    {
+     "f": "modonty/lib/settings/get-site-language.ts",
+     "keepWhy": "استثناء موثَّق في الملفّ نفسه: لغة الوثيقة (`<html lang>`) ولغة تنسيق التاريخ. غيابها عطلٌ في العرض لا نقصٌ يُرى.",
+     "hits": 1,
+     "lines": [
+      13
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.inLanguage"
+     ],
+     "values": [
+      "ar-SA"
+     ],
+     "isSource": false,
+     "sample": "const DEFAULT_SITE_LANGUAGE = \"ar-SA\";"
+    },
+    {
+     "f": "modonty/lib/whatsapp.ts",
+     "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
+     "hits": 1,
+     "lines": [
+      25
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.imageOwnerName"
+     ],
+     "values": [
+      "مدوّنتي"
+     ],
+     "isSource": false,
+     "sample": "return `السلام عليكم 👋 وصلت لكم عبر منصّة «مدوّنتي» وأبغى أحجز موعد في ${clientName} 🌟`;"
+    },
+    {
+     "f": "shared/components/partner-site/free/footer/parts/legal-bar.tsx",
+     "keepWhy": "مكوّن في `shared/` — يخدم الأدمن والكونسول ومدونتي معاً، و`messages/ar.json` ملفّ مدونتي وحدها. نقلُه يربط التطبيقات الثلاثة بملفّ رسائل تطبيقٍ واحد.",
+     "hits": 1,
+     "lines": [
+      15
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteUrl"
+     ],
+     "values": [
+      "https://www.modonty.com"
+     ],
+     "isSource": false,
+     "sample": "<a href=\"https://www.modonty.com\" className=\"transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center\">موقع مبني على مدونت"
+    },
+    {
+     "f": "shared/components/partner-site/free/trust/trust-strip.tsx",
+     "keepWhy": "مكوّن في `shared/` — يخدم الأدمن والكونسول ومدونتي معاً، و`messages/ar.json` ملفّ مدونتي وحدها. نقلُه يربط التطبيقات الثلاثة بملفّ رسائل تطبيقٍ واحد.",
+     "hits": 1,
+     "lines": [
+      14
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteName"
+     ],
+     "values": [
+      "مدونتي"
+     ],
+     "isSource": false,
+     "sample": "<ShieldCheck className=\"h-4 w-4 text-primary\" aria-hidden /> شريك موثَّق في مدونتي"
+    },
+    {
+     "f": "shared/lib/seo/generate-client-seo-bundle.ts",
+     "keepWhy": "استثناء موثَّق في الملفّ نفسه: لغة الوثيقة (`<html lang>`) ولغة تنسيق التاريخ. غيابها عطلٌ في العرض لا نقصٌ يُرى.",
+     "hits": 1,
+     "lines": [
+      298
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.defaultOgLocale"
+     ],
+     "values": [
+      "ar_SA"
+     ],
+     "isSource": false,
+     "sample": "const LOCALE_BY_LANGUAGE: Record<string, string> = { arabic: \"ar_SA\", ar: \"ar_SA\", english: \"en_US\", en: \"en_US\" };"
+    }
+   ]
+  },
+  {
+   "k": "brand",
+   "name": "تهجئات الماركة",
+   "sev": "high",
+   "owner": "Settings.siteName + alternateName (العمود الثاني غير موجود بعد)",
+   "why": "أربع تهجئات منشورة، والاسم في البيانات المنظَّمة لا يظهر على الصفحة.",
+   "hits": 14,
+   "fileCount": 7,
+   "cols": [
+    "Settings.siteName + alternateName (العمود الثاني غير موجود بعد)"
+   ],
+   "files": [
+    {
+     "f": "modonty/app/(site)/modo-chat/helpers/build-category-db-prompt.ts",
+     "keepWhy": "مودو — اسم المساعد ونصّ تعليماته. «مدونتي الذكية» اسمُ شخصية لا اسمُ موقع، والتعليمات تُملى على النموذج ولا تصل جوجل ولا الزائر.",
+     "hits": 4,
+     "lines": [
+      6,
+      10,
+      14
+     ],
+     "kinds": [
+      "تهجئات الماركة"
+     ],
+     "values": [
+      "BRAND_AR"
+     ],
+     "isSource": false,
+     "sample": "return `أنت \"${BRAND_AR} الذكي\"، مساعد متخصص حصراً في موضوع \"${categoryName}\" على منصة ${BRAND_AR} للمحتوى."
+    },
+    {
+     "f": "modonty/app/(site)/modo-chat/helpers/build-article-db-prompt.ts",
+     "keepWhy": "مودو — اسم المساعد ونصّ تعليماته. «مدونتي الذكية» اسمُ شخصية لا اسمُ موقع، والتعليمات تُملى على النموذج ولا تصل جوجل ولا الزائر.",
+     "hits": 2,
+     "lines": [
+      6
+     ],
+     "kinds": [
+      "تهجئات الماركة"
+     ],
+     "values": [
+      "BRAND_AR"
+     ],
+     "isSource": false,
+     "sample": "return `أنت \"${BRAND_AR} الذكي\"، تساعد القارئ في فهم مقال \"${articleTitle}\" ضمن موضوع \"${categoryName}\" على منصة ${BRAND_AR}."
+    },
+    {
+     "f": "modonty/app/(site)/modo-chat/helpers/build-identity-prompt.ts",
+     "keepWhy": "مودو — اسم المساعد ونصّ تعليماته. «مدونتي الذكية» اسمُ شخصية لا اسمُ موقع، والتعليمات تُملى على النموذج ولا تصل جوجل ولا الزائر.",
+     "hits": 2,
+     "lines": [
+      11,
+      13
+     ],
+     "kinds": [
+      "تهجئات الماركة"
+     ],
+     "values": [
+      "BRAND_AR"
+     ],
+     "isSource": false,
+     "sample": "return `أنت \"مودو\"، مساعد منصّة ${BRAND_AR}."
+    },
+    {
+     "f": "modonty/constants/brand.ts",
+     "keepWhy": "ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — محجوزان بمستهلكٍ واحدٍ باقٍ: تعليمات مودو. يُحذفان يوم تُحذف، لا قبله.",
+     "hits": 2,
+     "lines": [
+      17,
+      20
+     ],
+     "kinds": [
+      "تهجئات الماركة"
+     ],
+     "values": [
+      "BRAND_AR",
+      "BRAND_EN"
+     ],
+     "isSource": true,
+     "sample": "export const BRAND_AR = \"مدونتي\";"
+    },
+    {
+     "f": "modonty/constants/index.ts",
+     "keepWhy": "ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — محجوزان بمستهلكٍ واحدٍ باقٍ: تعليمات مودو. يُحذفان يوم تُحذف، لا قبله.",
+     "hits": 2,
+     "lines": [
+      14,
+      15
+     ],
+     "kinds": [
+      "تهجئات الماركة"
+     ],
+     "values": [
+      "BRAND_AR",
+      "BRAND_EN"
+     ],
+     "isSource": false,
+     "sample": "BRAND_AR,"
+    },
+    {
+     "f": "modonty/constants/contact.ts",
+     "keepWhy": "ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = \"مُدَوَّنَتِي\"` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.",
+     "hits": 1,
+     "lines": [
+      9
+     ],
+     "kinds": [
+      "تهجئات الماركة"
+     ],
+     "values": [
+      "BRAND_EN"
+     ],
+     "isSource": false,
+     "sample": "export const NOREPLY_FROM = `${BRAND_EN} <no-reply@modonty.com>`;"
+    },
+    {
+     "f": "shared/lib/email/email-theme.ts",
+     "keepWhy": "ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = \"مُدَوَّنَتِي\"` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.",
+     "hits": 1,
+     "lines": [
+      17
+     ],
+     "kinds": [
+      "تهجئات الماركة"
+     ],
+     "values": [
+      "\"مُدَوَّنَتِي\""
+     ],
+     "isSource": false,
+     "sample": "export const EMAIL_BRAND_AR = \"مُدَوَّنَتِي\";"
+    }
+   ]
+  },
+  {
+   "k": "extern",
+   "name": "روابط جهات خارجية",
+   "sev": "normal",
+   "owner": "Settings — الروابط الرسمية",
+   "why": "روابط منصّات وجهات توثيق تظهر للزائر أو في البيانات المنظَّمة.",
+   "hits": 3,
+   "fileCount": 1,
+   "cols": [
+    "Settings — الروابط الرسمية"
+   ],
+   "files": [
+    {
+     "f": "modonty/app/(site)/story/TestimonialPlayer.tsx",
+     "keepWhy": "محتوى منشور — روابط فيديو الشهادات وقناة اليوتيوب. مادّةٌ يختارها المحرّر، لا إعدادٌ يملكه الأدمن.",
+     "hits": 3,
+     "lines": [
+      30,
+      41,
+      170
+     ],
+     "kinds": [
+      "روابط جهات خارجية"
+     ],
+     "values": [
+      "https://www.youtube.com/shorts/s4nYJRY3heE",
+      "https://www.youtube.com/watch?v=87TI084Jc6E",
+      "https://www.youtube.com/@modonty"
+     ],
+     "isSource": false,
+     "sample": "watchUrl: \"https://www.youtube.com/shorts/s4nYJRY3heE\","
+    }
+   ]
+  },
+  {
+   "k": "mail",
+   "name": "بريد الفريق والاتصال",
+   "sev": "normal",
+   "owner": "Settings.orgContactEmail · وجدول للفريق",
+   "why": "يظهر للزائر وفي بنية المؤسسة؛ تغييره اليوم يحتاج نشراً.",
+   "hits": 1,
+   "fileCount": 1,
+   "cols": [
+    "Settings.orgContactEmail · وجدول للفريق"
+   ],
+   "files": [
+    {
+     "f": "modonty/constants/contact.ts",
+     "keepWhy": "ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = \"مُدَوَّنَتِي\"` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.",
+     "hits": 1,
+     "lines": [
+      9
+     ],
+     "kinds": [
+      "بريد الفريق والاتصال"
+     ],
+     "values": [
+      "no-reply@modonty.com"
+     ],
+     "isSource": false,
+     "sample": "export const NOREPLY_FROM = `${BRAND_EN} <no-reply@modonty.com>`;"
+    }
+   ]
+  },
+  {
+   "k": "fmt",
+   "name": "لغة تنسيق الأرقام والتواريخ",
+   "sev": "low",
+   "owner": "قرار عرض — لا يملكه الأدمن",
+   "why": "`Intl` تأخذ لغة لتنسيق الرقم والتاريخ. لا تصل جوجل — مدرَجة للاكتمال وحدها.",
+   "hits": 3,
+   "fileCount": 2,
+   "cols": [
+    "قرار عرض — لا يملكه الأدمن"
+   ],
+   "files": [
+    {
+     "f": "shared/lib/partner-site/get-home-data.ts",
+     "keepWhy": "لغة تنسيق الأرقام والتواريخ — `Intl` تحتاج رمز لغة، وليست بياناً عن العمل.",
+     "hits": 2,
+     "lines": [
+      89,
+      90
+     ],
+     "kinds": [
+      "لغة تنسيق الأرقام والتواريخ"
+     ],
+     "values": [
+      "\"ar-SA\""
+     ],
+     "isSource": false,
+     "sample": "const foundingYear = client.foundingDate ? new Intl.DateTimeFormat(\"ar-SA\", { year: \"numeric\" }).format(client.foundingDate) : null;"
+    },
+    {
+     "f": "shared/components/partner-site/free/testimonials/reviews-list.tsx",
+     "keepWhy": "لغة تنسيق الأرقام والتواريخ — `Intl` تحتاج رمز لغة، وليست بياناً عن العمل.",
+     "hits": 1,
+     "lines": [
+      26
+     ],
+     "kinds": [
+      "لغة تنسيق الأرقام والتواريخ"
+     ],
+     "values": [
+      "\"ar-SA\""
+     ],
+     "isSource": false,
+     "sample": "const fmt = new Intl.NumberFormat(\"ar-SA\", { maximumFractionDigits: 1 });"
+    }
+   ]
+  }
+ ]
+}

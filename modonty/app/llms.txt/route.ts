@@ -13,6 +13,7 @@
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { SITE_URL } from "@/constants";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 
 /** Markdown link labels break on square brackets — swap them, keep everything else. */
 function mdText(s: string): string {
@@ -41,6 +42,9 @@ export async function GET() {
     }),
   ]);
 
+  // اسم المنصّة ينضمّ إلى نفس القراءة المخزَّنة — لا نداء متسلسل بعد الأربعة.
+  const { siteName } = await getPageSeoDefaults();
+
   const articleLines = articles.map((a) => {
     const desc = a.excerpt ? `: ${mdText(a.excerpt).slice(0, 120)}` : "";
     return `- [${mdText(a.title)}](${SITE_URL}/articles/${encodeURIComponent(a.slug)})${desc}`;
@@ -55,7 +59,9 @@ export async function GET() {
     (c) => `- [${mdText(c.name)}](${SITE_URL}/clients/${encodeURIComponent(c.slug)})`
   );
 
-  const body = `# Modonty
+  // عنوان الملفّ هو اسم المنصّة — من الإعدادات لا من الكود. أمّا فقرات الوصف تحته
+  // فنصٌّ تحريري إنجليزي يصف المنصّة، وهو كتابة لا حقل هوية.
+  const body = `# ${siteName ?? ""}
 
 > Modonty (مدونتي) is a bilingual Arabic-first content platform and business directory focused on Saudi Arabia and Egypt. We publish SEO-optimized articles and detailed business profiles for Arabic-speaking audiences.
 

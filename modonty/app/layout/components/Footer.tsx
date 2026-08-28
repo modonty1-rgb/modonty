@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FooterCopyright } from "@/app/layout/components/FooterCopyright";
 import { FooterStats } from "@/app/layout/components/FooterStats";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
-import { BRAND_AR } from "@/constants";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 // `max-lg:min-h-11` — the fingertip floor, on phones and tablets only (Khalid, 22 Aug: mobile
 // refactor). These links measured 16px tall on a phone: eighteen targets stacked two to a row,
 // each a third of a fingertip, in the one place a lost reader goes looking for a way out.
@@ -19,7 +19,10 @@ function FooterStatsSkeleton() {
   return <div className="w-full h-[76px] rounded-lg bg-primary/80 skeleton-shimmer" aria-hidden />;
 }
 
-export function Footer() {
+export async function Footer() {
+  // اسم الماركة في رابط «عن …» من الإعدادات — نفس الاسم الذي يعرضه الشعار وسطر الحقوق.
+  const { siteName } = await getPageSeoDefaults();
+
   return (
     <footer
       role="contentinfo"
@@ -61,7 +64,7 @@ export function Footer() {
         <Link href="/help" className={linkClass}>{messages.chrome.footer.help}</Link>
         <Link href="/help/faq" className={linkClass}>{messages.chrome.footer.faq}</Link>
         <Link href="/contact" className={linkClass}>{messages.chrome.footer.contact}</Link>
-        <Link href="/about" className={linkClass}>{messages.chrome.footer.about} {BRAND_AR}</Link>
+        <Link href="/about" className={linkClass}>{messages.chrome.footer.about}{siteName ? ` ${siteName}` : ""}</Link>
       </nav>
 
       {/* Legal links */}

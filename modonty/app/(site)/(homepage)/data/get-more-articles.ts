@@ -50,7 +50,9 @@ export async function getMoreArticles(
       hasAudio: article.hasAudio,
       author: {
         id: article.author.id,
-        name: article.author.name || "Modonty",
+        // اسم الكاتب من صفّه. كان الاحتياط يكتب اسم الماركة مكان كاتبٍ بلا اسم — فيظهر
+        // للقارئ أن الماركة كتبت المقال، وهو ادّعاءٌ عن المؤلِّف لا احتياط عرض.
+        name: article.author.name || "",
         title: "",
         company: article.client.name,
         avatar: article.author.image || "",

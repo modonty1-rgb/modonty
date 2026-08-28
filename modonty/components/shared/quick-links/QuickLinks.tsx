@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ModontyMark } from "@/components/icons/modonty-mark";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { ModontyIndustriesMark } from "@/components/icons/modonty-industries-mark";
 import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { ModontyReelsMark } from "@/components/icons/modonty-reels-mark";
@@ -9,7 +10,8 @@ import type { ComponentType, SVGProps } from "react";
 
 interface QuickLink {
   href: string;
-  label: string;
+  /** `null` = التسمية هي اسم الموقع نفسه، يُقرأ من الإعدادات وقت الرسم. */
+  label: string | null;
   icon: ComponentType<SVGProps<SVGSVGElement>>;
   /** Action-token pair — the same colored-tab language as the article's engagement tabs. */
   tone: string;
@@ -23,7 +25,8 @@ interface QuickLink {
  */
 const QUICK_LINKS: QuickLink[] = [
   // «مدونتي» leads (Khalid, 21 Aug) — the brand's own door opens the row.
-  { href: "/modonty", label: "مدونتي", icon: ModontyMark, tone: "bg-action-like text-action-like-foreground" },
+  // التسمية هنا **هي** اسم الموقع، فتُقرأ من الإعدادات لا تُكتب بيدٍ.
+  { href: "/modonty", label: null, icon: ModontyMark, tone: "bg-action-like text-action-like-foreground" },
   { href: "/articles", label: "المقالات", icon: ModontyArticlesMark, tone: "bg-action-listen text-action-listen-foreground" },
   // The approved `categories` mark — the master reference names it «Categories / Industries»,
   // so one drawing serves both and the hand-made `industries` one was retired 22 Aug.
@@ -50,7 +53,9 @@ const QUICK_LINKS: QuickLink[] = [
  * container top padding cancelled). Colors are the action tokens, so dark mode and
  * legible text come for free. Hidden ≥1024px where the rails carry these doorways.
  */
-export function QuickLinks() {
+export async function QuickLinks() {
+  const { siteName } = await getPageSeoDefaults();
+
   return (
     // No tab declares a diamond colour any more. Every mark defaults to the brand accent,
     // and the two tiles that used to swallow it — «الطلّات» on the accent token itself,
@@ -87,7 +92,7 @@ export function QuickLinks() {
         >
           <Icon className="size-5" aria-hidden />
           {/* Five tabs on a 390px row: the label may need to shrink a hair rather than wrap. */}
-          <span className="text-[10px] font-semibold leading-none sm:text-[11px]">{label}</span>
+          <span className="text-[10px] font-semibold leading-none sm:text-[11px]">{label ?? siteName}</span>
         </Link>
       ))}
     </nav>

@@ -500,13 +500,19 @@ const isParked = (t) => Boolean(t.park) || PARKED_VERDICTS.has(t.codex?.verdict)
 const seoLane = (t) =>
   t.owner ? t.owner
   : (t.phase === 0 || t.who === "k") ? "decide"
-  : isParked(t) ? (t.park || "triage")
+  : isParked(t) ? "parked"
   : "work";
 const SEO_LANES = [
-  { k: "work", n: "شغل جاهز", s: "عطلٌ حقيقي يُصلَح الآن — بترتيب المراحل، والأسهل أوّل كل مرحلة. ما فيه هنا ينتظر أحداً: أفتحه، أصلحه، أقفله، وأنتقل." },
-  { k: "triage", n: "مؤجَّل — يحتاج فرزاً", s: "شغل حقيقي لكنه غير مفروز: البطاقة حاوية أو نطاقها غير محسوم. تُفتح، تُقسَّم بطاقاتٍ صغيرة، ثم تُشتغَل. <b>ليست منتهية.</b>" },
-  { k: "disproved", n: "فُحصت وسقطت", s: "ادّعاء البطاقة قِيس فثبت أنه غير صحيح أو خارج السيو. تبقى مكتوبةً كي لا يعيد أحد فتح نفس الطريق — ولا يُصلَح فيها شيء." },
-  { k: "reference", n: "مراجع", s: "جرد وتقارير بُنيت عليها البطاقات. ليست مهامّ ولا تُغلق: هذه هي الأرضية التي يُرجَع إليها." },
+  // أربعة تبويبات لا سبعة، والأهمّ أوّلاً. سبعةٌ جعلت «قرارك» — وهو التبويب الوحيد الذي
+  // يفعل فيه خالد شيئاً — سادسَ زرّ في السطر، وفرّقت ثلاثة أصناف لا شغل في أيٍّ منها
+  // على ثلاثة أزرار بثلاثة أسماء. الترتيب الآن يجيب سؤالاً واحداً: مَن الدور عليه؟
+  { k: "decide", n: "① قرارك", s: "ينتظر كلمتك — لا يبدأ قبلها. هذا هو التبويب الوحيد الذي يحتاج منك فعلاً." },
+  { k: "work", n: "② دوري", s: "عطلٌ حقيقي أُصلحه أنا بلا انتظار: أفتحه، أصلحه، أقفله، وأنتقل." },
+  // هذا التبويب لا يفترض أن يظهر. خالد ٢٨ أغسطس: «الـHTML لي، والـMD لك» — واللوحة تجيب
+  // سؤالاً واحداً: مَن الدور عليه؟ فبطاقةٌ لا شغل فيها ليست جواباً، بل ضجيج على شاشته.
+  // مكانها `TECH-NOTES.md` (شواهد القبر) أو ملفّ مستقلّ (المراجع الضخمة).
+  // ظهورُه = بطاقةٌ تسرّبت: تُنقل إلى الماركداون ثم تُحذف من `task-data.json`.
+  { k: "parked", n: "⚠️ تسرّبت — مكانها ماركداون", s: "بطاقات لا شغل فيها لأحد: فُحصت وسقطت · مراجع · تحتاج فرزاً. مكانها <code>documents/tasks/TECH-NOTES.md</code> لا هذه اللوحة. ظهور هذا التبويب معناه أن كلود نسي النقل." },
   { k: "agreed", n: "متّفق عليه ١٠٠٪", s: "كلود وكودكس على كلمة واحدة: العطل مثبت والحلّ واضح. هذا اللي نشتغل عليه الآن — بترتيب المراحل، والأسهل أوّل كل مرحلة." },
   { k: "codex", n: "كودكس · صفحات الموقع", s: "صفحات مدونتي العامّة — <code>modonty/app/(site)/**</code>. أربعة عمّال على فرع واحد، والفصل بينهم <b>بالمنطقة لا بالملف</b>: من التزم بمنطقته لا يلتقي بأحد. كلّهم ممنوعون من إغلاق البطاقات — كلود يدقّق ويقفل، و«الدليل قبل الحكم» سارية على الجميع." },
   { k: "agent2", n: "وكيل ٢ · الأدمن", s: "شاشات الأدمن ونماذجه ومسارات الحفظ — `admin/app/(dashboard)/**`. لا يلمس `admin/lib/seo` (وكيل ٤) ولا `modonty/` (كودكس ووكيل ٣)." },
@@ -516,10 +522,145 @@ const SEO_LANES = [
   { k: "copilot", n: "كوبايلوت · الأدمن المعزول", s: "بطاقات مستقلّة تماماً عن ملفّات كلود وكودكس: التحقّق من المدخلات، حارس القصّ، ترتيب التوليد قبل تفريغ الكاش. تعليماته في <code>documents/tasks/COPILOT-PROMPT.md</code> — وكلود وحده يقفل." },
   { k: "disputed", n: "فيه خلاف", s: "كودكس قال «جزئي» أو «غلط» أو «خارج السيو» أو «غير مثبت». ما نلمسه إلا بعد ما نخلّص المتّفق عليه — نناقشه بنداً بنداً." },
   { k: "reports", n: "تقارير", s: "جرد مقيس بالكامل — كود الإنتاج + قياس حيّ + قراءة القاعدة + المصدر الرسمي. ليست مهامّ: هذه هي الأرضية التي تُبنى عليها المهامّ." },
-  { k: "decide", n: "قرارك", s: "ينتظر كلمتك — لا يبدأ قبلها. قراران يفتحان الطريق (SEOFAQ · SEOMETATAGS-DEAD) وفكرة مؤجَّلة بقرارك (AUTOLINK)." },
+  // خالد، ٢٨ أغسطس ٢٠٢٦، بعد ما كشف بند BRAND-SPELLING أن اسم الماركة يعيش في الكود:
+  // «اعمل جرداً كاملاً لكل ما هو هارد كود — ليس هذا وحده». التبويب يُبنى من مسح آليّ
+  // (`scan-hardcoded.mjs`) لا من قراءة يدوية، فيُعاد تشغيله فيتحدّث الرقم بلا اجتهاد.
+  { k: "hardcoded", n: "🔒 هارد كود", s: "الشغل المتبقّي وحده — قيم بيانات مكتوبة في الكود بدل أن تُقرأ من القاعدة. مرتّبة <b>بالمرحلة</b> (أين نفتح المحرّر) لا بالصنف. ما قُرِّر بقاؤه انتقل إلى تبويب «مقصود»." },
+  // خالد، ٢٨ أغسطس: «اللي قرّرنا يبقى، انقله لتبويب ثاني، وخلّ هذا التبويب لللي تشتغل عليه».
+  // ممرٌّ منفصل لأن خلطهما يجعل الرقم يكذب: بندٌ قُرِّر بقاؤه ليس ديناً مؤجَّلاً.
+  { k: "kept", n: "✋ مقصود — يبقى", s: "قِيس، ونوقش، وقُرِّر بقاؤه. ليس شغلاً معلَّقاً — كل سطر هنا معه <b>سببُ بقائه</b>، مكتوباً كي لا يُعاد فتح النقاش نفسه بعد شهر." },
+  // خالد، ٢٨ أغسطس ٢٠٢٦: «اعمل جرد كامل في المدونة وكونسل وأدمن، فين البرومبت هذه إحنا
+  // بنستخدمها، عشان أنا أبغى أحولها كلها تقرأ من الداتابيز… عبارة عن كروت».
+  { k: "prompts", n: "🤖 البرومبت", s: "كل نصّ يُملى على نموذج ذكاء اصطناعي في المستودع — بطاقةٌ لكلٍّ: أين يعيش، مَن يناديه، ما متغيّراته، وماذا ينكسر لو غاب. الهدف: تحويلها كلها لتُقرأ من القاعدة وتُحرَّر من الأدمن." },
   { k: "shipped", n: "✅ خلص", s: "كل بطاقة أُغلقت على هذه اللوحة، بأحدث ما أُغلق أولاً. لكل واحدة سطر «كيف أُغلقت» بالقياس الخام الذي أثبته — السجل كامل في مكان واحد بدل أن يختفي المنجز." },
 ];
 const REPORTS = DATA.reports || [];
+
+// ── جرد الهارد كود ─────────────────────────────────────────────────────────
+// يُقرأ من ناتج `scan-hardcoded.mjs`. الملفّ غائب؟ التبويب لا يظهر — بدل جدول فارغ
+// يوحي أن المستودع نظيف. الرقم الوحيد الصادق هو رقمٌ قِيس، لا رقمٌ افتُرض.
+const hcPath = path.join(here, "hardcoded-inventory.json");
+const HC = fs.existsSync(hcPath) ? JSON.parse(fs.readFileSync(hcPath, "utf8")) : null;
+
+// ── جرد البرومبت ───────────────────────────────────────────────────────────
+// من ناتج `scan-prompts.mjs`، وهو يتحقّق من كل مدخل عند كل تشغيل (الملفّ · النصّ
+// المرجعي · نقطة الدخول)، فلا يعرض بطاقةً لبرومبت انزاح أو حُذف.
+const prPath = path.join(here, "prompts-inventory.json");
+const PR = fs.existsSync(prPath) ? JSON.parse(fs.readFileSync(prPath, "utf8")) : null;
+
+const APP_AR = { modonty: "مدونتي", admin: "الأدمن", console: "الكونسول", shared: "المشترك" };
+
+const promptsHTML = !PR ? "" : `<article class="report">
+  <h3>البرومبت — ${PR.live} حيّاً في ${Object.keys(PR.byApp).length} تطبيقين</h3>
+  <p class="when">${Object.entries(PR.byApp).map(([a, n]) => `${APP_AR[a] ?? a} ${n}`).join(" · ")} · الكونسول صفر · المزوّدون: ${PR.providers.join(" · ")} · ${PR.chars.toLocaleString("ar-SA")} محرفاً · يُعاد بأمر <code>node documents/tasks/scan-prompts.mjs</code></p>
+  <p class="outcome"><b>الهدف: كلها تُقرأ من القاعدة وتُحرَّر من الأدمن.</b> البرومبت سياسة وأسلوب لا منطق — يتغيّر بالذوق لا بالمتطلّبات، فتعديله لا يفترض أن يمرّ بنشر. وتكلفته صفر على الزائر: يُقرأ مرّة على السيرفر قبل نداء النموذج، والنداء أصلاً يضرب القاعدة وينتظر النموذج مئات الملّي ثانية.</p>
+  ${PR.problems.length ? `<p class="state st-working">⚠️ ${PR.problems.length} تحذيراً من التحقّق: ${PR.problems.map(esc).join(" · ")}</p>` : ""}
+  <div class="pgrid">
+  ${PR.rows.map(r => `<div class="pcard">
+    <div class="ph"><code class="pkey">${esc(r.key)}</code><span class="ptag app-${r.app}">${APP_AR[r.app] ?? r.app}</span><span class="ptag">${esc(r.provider)}</span><span class="ptag">${r.lang === "ar" ? "عربي" : "إنجليزي"}</span></div>
+    <p class="psurface">${esc(r.surface)}</p>
+    <p class="pwhat">${esc(r.what)}</p>
+    <dl class="pmeta">
+      <dt>الملفّ</dt><dd><code>${esc(r.file)}:${r.line}</code> · ${r.promptLines} سطراً · ${r.chars} محرفاً</dd>
+      <dt>مَن يناديه</dt><dd>${r.entry.map(e => `<code>${esc(e)}</code>`).join("<br>")}</dd>
+      <dt>المتغيّرات</dt><dd>${r.varsInBody.length ? r.varsInBody.map(v => `<code>${esc(v)}</code>`).join(" · ") : "<span class=\"dim\">بلا متغيّرات</span>"}${r.varsMissing.length ? ` <b class="warn">— معلَن وغير موجود: ${r.varsMissing.map(esc).join(", ")}</b>` : ""}</dd>
+      <dt>لو غاب الصفّ</dt><dd class="prisk">${esc(r.onEmpty)}</dd>
+      ${r.note ? `<dt>ملاحظة</dt><dd>${esc(r.note)}</dd>` : ""}
+    </dl>
+  </div>`).join("")}
+  </div>
+
+  <h4>الهيكل المقترح — جدول <code>AiPrompt</code> في السكيما المشتركة</h4>
+  <div class="tw"><table>
+    <thead><tr><th>الحقل</th><th>لماذا</th></tr></thead>
+    <tbody>
+      <tr><td><code>key</code> فريد</td><td>المفاتيح السبعة أعلاه كما هي — <code>modo.identity</code> · <code>admin.image.article</code> …</td></tr>
+      <tr><td><code>app</code> · <code>title</code> · <code>body</code></td><td>مَن يملكه، واسم بشري في الشاشة، والنصّ نفسه.</td></tr>
+      <tr><td><code>requiredVars[]</code></td><td><b>العقد.</b> الحفظ يُرفض لو نقص متغيّر، والرسالة تسمّيه — وإلا فقد البرومبت سياقه بصمت بعد تعديل بريء.</td></tr>
+      <tr><td><code>isActive</code> · <code>updatedAt</code> · <code>updatedById</code></td><td>مَن عدّل ومتى — وأنت طلبت أن تراجعها.</td></tr>
+    </tbody></table></div>
+  <p>وثلاثة شروط لازمة، بدونها النقل ينقلب علينا: <b>١ ·</b> الصفّ الناقص <b>يوقف النداء</b> ويسجّل خطأ نظام — لا يُشغَّل نموذجٌ بلا تعليمات، لأن مخرَجه حينها أسوأ من برومبت قديم. <b>٢ ·</b> المتغيّرات يُتحقَّق منها عند الحفظ. <b>٣ ·</b> كاش يُفرَّغ عند الحفظ، وإلا صار كل سؤال قراءةَ قاعدة.</p>
+
+  <h4>مكسب جانبي — سبعة بنود هارد كود تسقط معها</h4>
+  <p>ثابتا <code>BRAND_AR</code>/<code>BRAND_EN</code> باقيان في الكود <b>بمستهلكٍ واحد: برومبتات مودو الثلاثة</b> (مقيس). فيوم ينتقل البرومبت إلى القاعدة، يُحذف الثابتان ومُعيدا تصديرهما — ٧ بنود + ٨ أسطر برومبت = <b>١٥ بنداً يُغلقون بتاسك واحد</b>.</p>
+
+  <h4>كود ميت — لا يدخل الهيكل</h4>
+  ${PR.dead.map(d => `<p><code>${esc(d.file)}</code> — <b>${d.prompts} برومبتات في ${d.lines} سطراً، وصفر مستورد.</b> الستّة كلها بصفر مستهلك: ${d.exports.map(x => `<code>${esc(x)}</code>`).join(" · ")}. ${esc(d.why)} <b>يُحذف بأمرك.</b></p>`).join("")}
+</article>`;
+
+// ممرّ «مقصود» — ما قُرِّر بقاؤه، مجمَّعاً بسبب البقاء لا بالملفّ: القارئ يريد أن يعرف
+// **لماذا** بقيت هذه السطور، لا أين هي. الملفّات تحت كل سبب لمن أراد أن يتحقّق.
+const keptHTML = (() => {
+  const kept = HC?.phases.find((p) => p.p === "keep");
+  if (!kept || !kept.files.length) return "";
+  const byWhy = new Map();
+  for (const f of kept.files) {
+    const why = f.keepWhy || "بلا سبب مسجَّل — يُراجَع.";
+    if (!byWhy.has(why)) byWhy.set(why, []);
+    byWhy.get(why).push(f);
+  }
+  return `<article class="report">
+  <h3>مقصود — ${kept.hits} سطراً في ${kept.fileCount} ملفاً</h3>
+  <p class="when">قُرِّر بقاؤها ٢٨ أغسطس ٢٠٢٦ · يُعاد بناؤها بأمر <code>node documents/tasks/scan-hardcoded.mjs</code></p>
+  <p class="outcome"><b>هذا ليس ديناً ولا شغلاً مؤجَّلاً.</b> كل سطر هنا قِيس ونوقش وقُرِّر بقاؤه، وسببه مكتوب معه — فلا يُعاد فتح النقاش نفسه بعد شهر، ولا يتضخّم رقم الشغل بما ليس شغلاً.</p>
+  ${[...byWhy.entries()].map(([why, files]) => `<section><h4>${esc(why.split("—")[0].trim())} — ${files.reduce((s, f) => s + f.hits, 0)} سطراً</h4>
+    <p>${esc(why)}</p>
+    <div class="tw"><table>
+      <thead><tr><th>الملفّ</th><th>الأسطر</th><th>كم</th></tr></thead>
+      <tbody>${files.sort((a, b) => b.hits - a.hits).map(f => `<tr>
+        <td><code>${esc(f.f)}</code></td>
+        <td><code>${f.lines.slice(0, 12).join(", ")}${f.lines.length > 12 ? ` +${f.lines.length - 12}` : ""}</code></td>
+        <td>${f.hits}</td></tr>`).join("")}
+      </tbody></table></div></section>`).join("")}
+</article>`;
+})();
+
+// الترتيب بالمرحلة لا بالصنف. خالد، ٢٨ أغسطس: «رتب لي الملفّ عشان نفهم حنشتغل فين»
+// — الصنف يقول ما نوع العطل، والمرحلة تقول أين نفتح المحرّر. والثاني هو ما يُخطَّط عليه.
+// ورقم واحد فقط في الصدر (`workHits`)؛ الخام يُذكر مرّةً في سطر واحد كي لا يتنقّل الرقم.
+const hardcodedHTML = !HC ? "" : `<article class="report">
+  <h3>أين نشتغل — ${HC.workHits} قيمة في ${HC.workFiles} ملفاً</h3>
+  <p class="when">مسح آليّ على ${HC.filesScanned} ملفّ <code>.ts/.tsx</code> في <code>modonty/</code> و<code>shared/</code> · مقيساً على صفّ <code>Settings</code> الحيّ في <code>${esc(HC.db)}</code> · يُعاد بأمر <code>node documents/tasks/scan-hardcoded.mjs</code></p>
+  <p class="outcome"><b>الرقم واحد ولا يتغيّر: ${HC.workHits}.</b> المسح الخام يرجع ${HC.totalHits}، والفرق (${HC.totalHits - HC.workHits}) لغة تنسيق أرقام وتواريخ — ليست بياناً عن العمل، ومدرَجة أسفل الصفحة للاكتمال وحدها.</p>
+  <p class="lead"><b>ليس جرد براند — جرد الإعدادات كلّها.</b> السكربت يقرأ صفّ <code>Settings</code> بأعمدته الـ${HC.settingsColumns}، يأخذ منه <b>${HC.valuesProbed}</b> قيمة نصّية مميّزة، ويبحث عن كل واحدة حرفياً في الكود. فأي عمود يُضاف غداً يدخل الجرد وحده بلا تعديل السكربت.</p>
+  <p class="lead"><b>يلتقط شكلين:</b> <b>(١) قيمة مطابقة</b> — نصّ الصفّ نفسه مكتوب في الكود. <b>(٢) احتياط بعد <code>||</code></b> — <code>settings?.x || "قيمة"</code>، وهو <b>الأخطر</b>: يجعل غياب البيان من القاعدة لا يُكتشف أبداً، فيبقى الموقع يعرض قيمة الكود إلى الأبد. ومعهما أصناف لا يملكها <code>Settings</code> بعدُ وهي بيانات بلا شكّ: تهجئات الماركة · بريد الفريق · الإحداثيات · الأسعار.</p>
+
+  <section><h4>الخطّة — ست مراحل، وترتيبها إجباري</h4>
+  <div class="tw"><table>
+    <thead><tr><th>المرحلة</th><th>الشغل</th><th>الحجم</th><th>يُقفل بـ</th></tr></thead>
+    <tbody>
+      <tr><td><b>٠ · البوّابة</b></td><td>حقول إدخال في الأدمن لهوية الموقع — اليوم <code>settings/system/components/system-form.tsx:39-52</code> جدول عرض بلا حقل إدخال واحد. <b>يحتاج عموداً جديداً <code>alternateName</code></b> (تغيير سكيما · <code>prisma db push</code> على الإنتاج بيد خالد).</td><td>—</td><td>أغيّر الاسم من الأدمن وأراه في القاعدة.</td></tr>
+      <tr><td><b>١ · القيمة</b></td><td><code>siteName = "مدونتي"</code> · <code>alternateName = "Modonty"</code> — من الأدمن لا من سكربت.</td><td>—</td><td>الصفّ يحمل القيمتين.</td></tr>
+      ${HC.phases.filter(p => p.p !== "keep").map(p => `<tr><td><b>${esc(p.n.replace("المرحلة ", "").replace(" — ", " · "))}</b></td><td>${p.s}</td><td><b>${p.hits}</b> قيمة · ${p.fileCount} ملفاً</td><td>${p.close}</td></tr>`).join("")}
+      <tr><td><b>٥ · الحارس</b></td><td>هذا المسح يصير فحصاً قبل الدفع برقم مرجعي — أي زيادة توقف الدفع. القاعدة التي تُخالَف باستمرار تتحوّل إلى فحص، لا إلى تذكير.</td><td>—</td><td>دفعة تجريبية بقيمة جديدة تُرفض.</td></tr>
+    </tbody></table></div></section>
+
+  ${HC.phases.filter(p => p.p !== "keep").map(p => `<section><h4>${esc(p.n)} — ${p.hits} قيمة في ${p.fileCount} ملفاً</h4>
+    <p>${p.s}</p>
+    <div class="tw"><table>
+      <thead><tr><th>الملفّ</th><th>الأسطر</th><th>كم</th><th>ما فيه</th></tr></thead>
+      <tbody>${p.files.map(f => `<tr>
+        <td><code>${esc(f.f)}</code>${f.isSource ? ' <b>← المصدر</b>' : ""}</td>
+        <td><code>${f.lines.slice(0, 12).join(", ")}${f.lines.length > 12 ? ` +${f.lines.length - 12}` : ""}</code></td>
+        <td>${f.hits}</td>
+        <td>${esc(f.kinds.join(" · "))}${f.values.length ? ` — <code>${esc(f.values.join(" · ").slice(0, 70))}</code>` : ""}</td></tr>`).join("")}
+      </tbody></table></div></section>`).join("")}
+
+  <section><h4>حسب الصنف — أي نوع مخالفة، ومَن يملك القيمة</h4>
+  <div class="tw"><table>
+    <thead><tr><th>الصنف</th><th>كم</th><th>ملفات</th><th>الأعمدة المصابة</th><th>ليش تهمّ</th></tr></thead>
+    <tbody>${HC.kinds.map(k => `<tr>
+      <td>${k.sev === "high" ? "🔴 " : k.sev === "low" ? "⚪ " : ""}<b>${esc(k.name)}</b></td>
+      <td>${k.hits}</td><td>${k.fileCount}</td>
+      <td><code>${esc((k.cols || [k.owner]).join(" · ").slice(0, 220))}</code></td>
+      <td>${esc(k.why)}</td></tr>`).join("")}
+    </tbody></table></div></section>
+
+  <section><h4>ما هو مستبعَد عمداً — وكلٌّ لسبب</h4>
+  <p>كلمات JSON-LD المحجوزة (<code>@id</code> · <code>@type</code>) نحوٌ لا بيانات · <code>x-default</code> و<code>UTF-8</code> و<code>summary_large_image</code> وأخواتها ثوابت بروتوكول لا قيماً تجارية · <code>next.config.ts</code> قائمة سماح أمنية يغيّرها مهندس بنشر لا خالد من الأدمن · التعليقات لا تصل زائراً ولا زاحفاً · <code>placeholder</code> نصّ واجهة · بذور الاختبار لا تُقدَّم على الموقع · نقاط نهاية المشاركة والتضمين آليّةٌ لا محتوى · الأعمدة الداخلية (<code>id</code> · <code>singletonKey</code> · المعرّفات) لا يراها زائر · القيم أقصر من أربعة محارف لأن مطابقتها صدفةٌ لا دليل.</p>
+  <p>للمقارنة، نفس القواعد على التطبيقات الأخرى: <b>admin ${HC.compare.admin ?? "—"}</b> · <b>console ${HC.compare.console ?? "—"}</b>. الأدمن هو <b>مصدر</b> البيانات لا مستهلكها، فوجود القيم فيه ليس بالضرورة عطلاً — بينما وجودها في مدونتي يعني أن المستهلك يتجاوز القاعدة.</p></section>
+</article>`;
+
 // A closed report keeps every word of its inventory — that is the point of the tab — but the
 // outcome has to be visible in the first line. Khalid opened one at the top, saw the original
 // finding, and read it as "not updated" (25 Aug 2026). The closure was there, eight sections
@@ -536,6 +677,14 @@ const reportHTML = (r) => `<article class="report" id="report-${esc(r.id)}">
 </article>`;
 const seoLanes = SEO_LANES.map(l => {
   if (l.k === "reports") return { ...l, count: REPORTS.length, reports: REPORTS, groups: [] };
+  // العدّاد على الزرّ = الشغل، لا الخام. زرٌّ يقول ٢١٣ وصفحةٌ تقول ١٢٨ هو نفس
+  // الالتباس الذي شكا منه خالد: «مرة تقولي رقم وتديني رقم تاني».
+  if (l.k === "hardcoded") return { ...l, count: HC ? HC.workHits : 0, html: hardcodedHTML, groups: [] };
+  if (l.k === "prompts") return { ...l, count: PR ? PR.live : 0, html: promptsHTML, groups: [] };
+  if (l.k === "kept") {
+    const kept = HC?.phases.find((p) => p.p === "keep");
+    return { ...l, count: kept ? kept.hits : 0, html: keptHTML, groups: [] };
+  }
   if (l.k === "shipped") {
     // المنجَز لا يُحذف من الوعي — يُنقل. الأحدث أولاً، ومجموعة لكل يوم إغلاق.
     const shipped = enriched.filter(t => isSeoCard(t) && isDone(t));
@@ -560,8 +709,9 @@ const seoLanes = SEO_LANES.map(l => {
 })
   // ممرّ فارغ = تبويب يُضغط فيظهر لا شيء. كانت اللوحة تعرض أحد عشر تبويباً وأربعة فقط
   // فيها بطاقات — ممرّات وكلاء انتهت جلساتهم. التبويب يظهر إذا كان فيه شيء، ولا يظهر إذا خلا.
-  // «تقارير» و«خلص» يبقيان دائماً: الأول مرجع، والثاني سجلّ الإنجاز الذي لا يُخفى.
-  .filter(l => l.k === "reports" || l.k === "shipped" || l.count > 0);
+  // «خلص» وحده يبقى دائماً — سجلّ الإنجاز لا يُخفى. و«تقارير» فقد تثبيته ٢٨ أغسطس: جرد
+  // بلا شغل فيه مكانه ماركداون لا لوحة خالد، فتبويبٌ فارغ اسمه «تقارير ٠» زرٌّ ميت على شاشته.
+  .filter(l => l.k === "shipped" || l.count > 0);
 // رقم قصير ثابت لكل بند سيو، ليقول خالد «بند ٧» بدل معرّف طويل (٢٥ أغسطس).
 // يُكتب مرّة في task-data.json ولا يتغيّر بعدها مهما أُعيد الترتيب أو أُغلقت بطاقات —
 // الرقم المتغيّر يجعل الإشارة في الشات تدلّ على بطاقة أخرى بعد أسبوع.
@@ -653,6 +803,22 @@ const SEO_TABS_CSS = `.report{background:var(--card);border:1px solid var(--line
 .report th,.report td{border:1px solid var(--line);padding:7px 9px;text-align:start;vertical-align:top}
 .report th{background:var(--panel);font-weight:700}
 .report .src{margin-top:8px;font-size:12.5px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;margin:12px 0 4px}
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+.pcard .ph{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:7px}
+.pcard .pkey{font-size:13px;font-weight:700;color:var(--amber);background:none;padding:0}
+.pcard .ptag{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mut);background:var(--card)}
+.pcard .ptag.app-modonty{background:rgba(34,197,94,.14);color:#4ade80;border-color:rgba(34,197,94,.35)}
+.pcard .ptag.app-admin{background:rgba(167,139,250,.14);color:#a78bfa;border-color:rgba(167,139,250,.35)}
+.pcard .psurface{margin:0 0 4px;font-size:14px;font-weight:600}
+.pcard .pwhat{margin:0 0 9px;font-size:13px;color:var(--mut);line-height:1.7}
+.pcard .pmeta{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:12.5px;line-height:1.65}
+.pcard .pmeta dt{color:var(--dim);white-space:nowrap}
+.pcard .pmeta dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.pcard .pmeta code{font-size:11.5px}
+.pcard .prisk{color:#f6ae31}
+.pcard .warn{color:#f87171}
+.pcard .dim{color:var(--dim)}
 .elsewhere{margin:10px 0 0;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--dim);font-size:12.5px;line-height:1.75}.elsewhere b{color:var(--txt)}.elsewhere code{font-size:12px}
 .lanes{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}.lane{border:1px solid var(--line);background:var(--card);color:var(--txt);border-radius:10px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer}.lane[aria-selected="true"]{background:var(--amber);color:#141722;border-color:var(--amber)}.lane .n{opacity:.7;font-weight:500;margin-inline-start:4px}[data-lane].hidden{display:none}`;
 
@@ -685,6 +851,7 @@ ${seoElsewhere.length ? `<p class="elsewhere">وفيه <b>${seoElsewhere.length}
 </div></header>
 <main class="wrap">
 ${seoLanes.map((l, i) => `<div data-lane="${l.k}" class="${i ? "hidden" : ""}"><p style="color:var(--dim);margin:14px 0 4px">${l.s}</p>
+${l.html || ""}
 ${(l.reports || []).map(reportHTML).join("\n")}
 ${l.groups.map(g => `<section class="grp" data-grp="${g.k}"><h2>${g.n} <span class="n" data-count>${g.items.length}</span></h2><p>${g.s}</p><div class="grid">${g.items.map(cardHTML).join("\n")}</div></section>`).join("\n")}</div>`).join("\n")}
 </main>

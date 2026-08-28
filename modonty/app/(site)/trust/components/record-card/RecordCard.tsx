@@ -2,7 +2,7 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 
 import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
-import { BRAND_AR, SAUDI_BUSINESS_VERIFY_URL } from "@/constants";
+import { SAUDI_BUSINESS_VERIFY_URL } from "@/constants";
 import { messages, fill } from "@/lib/i18n/messages";
 import { IconFileCheck, IconExternal } from "@/lib/icons";
 import { cn } from "@/lib/utils";
@@ -13,13 +13,15 @@ import type { LegalFact } from "../../helpers/build-legal-facts";
 const text = messages.trust.record;
 
 interface RecordCardProps {
+  /** اسم الموقع من `Settings.siteName` — يُمرَّر من الصفحة، لا يُقرأ من ثابتٍ في الكود. */
+  siteName?: string;
   certificateSrc: string;
   legal: LegalEntityDisplay;
   facts: LegalFact[];
 }
 
 /** The commercial-registry card: the certificate image beside the rows it certifies. */
-export function RecordCard({ certificateSrc, legal, facts }: RecordCardProps) {
+export function RecordCard({ certificateSrc, siteName, legal, facts }: RecordCardProps) {
   return (
     <Card>
       <CardHeader>
@@ -100,7 +102,7 @@ export function RecordCard({ certificateSrc, legal, facts }: RecordCardProps) {
             {legal.legalName && (
               <p className="mt-4 border-t border-border pt-4 text-sm text-muted-foreground">
                 {text.umbrellaLead}{" "}
-                <span className="font-semibold text-foreground">{BRAND_AR}</span>{" "}
+                <span className="font-semibold text-foreground">{siteName}</span>{" "}
                 {text.umbrellaMid}{" "}
                 <span className="font-semibold text-foreground">{legal.legalName}</span>{" "}
                 {text.umbrellaTail}

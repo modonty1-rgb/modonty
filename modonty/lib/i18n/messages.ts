@@ -1,4 +1,5 @@
 import ar from "@/messages/ar.json";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 /**
  * Every visitor-facing string modonty writes itself, in one file — so changing a word is
@@ -34,7 +35,7 @@ export interface CountForms {
 export function formatCount(count: number, forms: CountForms): string {
   if (count === 1) return forms.one;
   if (count === 2) return forms.two;
-  const digits = count.toLocaleString("ar-SA");
+  const digits = count.toLocaleString(SITE_LOCALE);
   return count <= 10 ? `${digits} ${forms.few}` : `${digits} ${forms.many}`;
 }
 

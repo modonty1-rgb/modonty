@@ -4,6 +4,7 @@ import { IconClose } from "@/lib/icons";
 
 import { buildArchiveHref, type ArchiveState } from "@/lib/articles/archive/build-archive-href";
 import { FOCUS_RING } from "@/lib/articles/archive/focus-ring";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface ResultsLineProps {
   total: number;
@@ -29,7 +30,7 @@ export function ResultsLine({ total, scopeLabel, current }: ResultsLineProps) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
       <p className="text-sm text-muted-foreground">
-        <span className="font-bold text-foreground">{total.toLocaleString("ar-SA")}</span>{" "}
+        <span className="font-bold text-foreground">{total.toLocaleString(SITE_LOCALE)}</span>{" "}
         {total === 1 ? "مقال" : "مقالاً"}
         {scopeLabel ? ` في ${scopeLabel}` : ""}
       </p>
@@ -43,7 +44,7 @@ export function ResultsLine({ total, scopeLabel, current }: ResultsLineProps) {
           }
         >
           <IconClose className="h-3.5 w-3.5 shrink-0" aria-hidden />
-          امسح التصفية ({activeCount.toLocaleString("ar-SA")})
+          امسح التصفية ({activeCount.toLocaleString(SITE_LOCALE)})
         </Link>
       )}
     </div>

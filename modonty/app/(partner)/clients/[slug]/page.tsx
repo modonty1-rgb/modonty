@@ -14,6 +14,7 @@ import {
 } from "@/lib/seo";
 import { cacheTag, cacheLife } from "next/cache";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
+import { messages } from "@/lib/i18n/messages";
 import { HOME_BLOCKS } from "@modonty/shared/components/partner-site/free/home";
 import { PageBlocks } from "./components/page-blocks";
 import { getClientPageData } from "./helpers/client-page-data";
@@ -24,6 +25,7 @@ import { ClientNotReadyPanel } from "./components/states/client-not-ready-panel"
 import { ClientViewTracker } from "./components/client-view-tracker";
 import { PartnerHomeSkeleton } from "./components/home/partner-home-skeleton";
 import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
+import { SITE_URL } from "@/constants";
 
 interface ClientPageProps {
   params: Promise<{ slug: string }>;
@@ -85,7 +87,9 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
       };
     }
 
-    const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+    // `SITE_URL` يقرأ نفس المتغيّر ويقصّ الشرطة الأخيرة (constants/brand.ts:27) — نسخةٌ ثانية
+  // هنا تعني رابطين قد يفترقان، وأحدهما يصير canonical على صفحة حيّة.
+    const rawSiteUrl = SITE_URL;
     // Normalize: modonty.com → www.modonty.com
     const siteUrl = rawSiteUrl.replace(/^(https?:\/\/)(?!www\.)modonty\.com/, "$1www.modonty.com").replace(/\/$/, "");
     const canonicalUrl = `${siteUrl}/clients/${encodeURIComponent(decodedSlug)}`;
@@ -121,7 +125,10 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
 
       return {
         ...honestStored,
-        description: (honestStored.description as string | undefined) || client.seoDescription || `استكشف مقالات وخدمات ${client.name} على مدونتي`,
+        description:
+          (honestStored.description as string | undefined) ||
+          client.seoDescription ||
+          messages.seo.partner.description.replace("{name}", client.name),
         ...(robots ? { robots } : {}),
         openGraph: {
           ...(honestStored.openGraph as object | undefined),

@@ -11,6 +11,8 @@ interface Props {
   isPlaying: boolean;
   words?: string[];
   activeWordIdx?: number;
+  /** اسم الموقع من `Settings.siteName` — يُمرَّر من الأب، لا يُقرأ من ثابتٍ في الكود. */
+  siteName?: string;
 }
 
 /**
@@ -26,6 +28,7 @@ function Vision2030SpotlightImpl({
   isPlaying,
   words = [],
   activeWordIdx = -1,
+  siteName,
 }: Props) {
   const has2030 = /٢٠٣٠|2030|الرُّؤْيَة|الرؤية/.test(activeWord);
   const hasSME = /مُنْشَأَة|منشأة|مَلْيُون|مليون|سُّعُودِيَّة|السعودية/.test(activeWord);
@@ -145,7 +148,7 @@ function Vision2030SpotlightImpl({
             <div className="relative w-24 h-24 md:w-28 md:h-28">
               <OptimizedImage
                 media={asMedia(MODONTY_LOGO_URL)}
-                alt="مُدَوَّنَتِي"
+                alt={siteName ?? ""}
                 fill
                 sizes="(max-width: 768px) 96px, 112px"
                 loading="eager"

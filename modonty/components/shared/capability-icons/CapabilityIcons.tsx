@@ -3,6 +3,7 @@ import { IconArticle, IconImage, IconPlay, IconVideo } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { messages } from "@/lib/i18n/messages";
 import type { ComponentType } from "react";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 const text = messages.shared.partnerCapabilities;
 
@@ -21,7 +22,7 @@ type Capability = { icon: ComponentType<{ className?: string }>; label: string }
  * see his work, watch him, then read him.
  */
 function collect(capabilities: PartnerCapabilities): Capability[] {
-  const withCount = (label: string, count: number) => `${label} (${count.toLocaleString("ar-SA")})`;
+  const withCount = (label: string, count: number) => `${label} (${count.toLocaleString(SITE_LOCALE)})`;
   const found: Capability[] = [];
   if (capabilities.hasWhatsapp) found.push({ icon: WhatsAppIcon, label: text.whatsappChat });
   if (capabilities.galleryCount) found.push({ icon: IconImage, label: withCount(text.photoGallery, capabilities.galleryCount) });

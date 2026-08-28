@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 const rtf = new Intl.RelativeTimeFormat("ar", { numeric: "always" });
 
@@ -18,7 +19,7 @@ function formatRelative(date: Date, now: Date): string {
 }
 
 function formatAbsolute(date: Date): string {
-  return new Intl.DateTimeFormat("ar-SA", {
+  return new Intl.DateTimeFormat(SITE_LOCALE, {
     year: "numeric",
     month: "short",
     day: "numeric",

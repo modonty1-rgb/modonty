@@ -1,8 +1,10 @@
+import { messages } from "@/lib/i18n/messages";
+
 export function StorySkeleton() {
   return (
     <div
       className="w-full min-h-[60vh] flex items-center justify-center bg-card rounded-3xl ring-2 ring-foreground/5 shadow-xl"
-      aria-label="جارٍ تحميل قصة مدونتي"
+      aria-label={messages.modonty.story.loadingLabel}
       role="status"
       dir="rtl"
     >

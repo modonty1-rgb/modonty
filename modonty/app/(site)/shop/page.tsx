@@ -9,18 +9,21 @@ import type { Metadata } from "next";
 
 import { buildPageAlternates } from "@/lib/seo/build-page-alternates";
 import { buildShareTags } from "@/lib/seo/build-share-tags";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 
 const text = messages.shop;
 
 // Brand appended by hand in `<title>` (`absolute`); the share tags take the bare headline
 // because `og:site_name` already carries the brand on a card.
-const SHOP_TITLE = "تسوّق الآن — متاجر شركاء مدونتي";
-const SHOP_DESCRIPTION =
-  "تسوّق من متاجر شركاء مدونتي — علامات تجارية موثوقة بمنتجات وعروض في السعودية ومصر والخليج.";
+const SHOP_TITLE = messages.seo.shop.title;
+const SHOP_DESCRIPTION = messages.seo.shop.description;
 
 export async function generateMetadata(): Promise<Metadata> {
+  const { siteName } = await getPageSeoDefaults();
   return {
-    title: { absolute: `${SHOP_TITLE} | مدونتي` },
+    // اللاحقة من `Settings.siteName` لا من الكود — وبغياب العمود يُشحن العنوان وحده،
+    // لأن عنواناً بلا ماركة أهون من ماركة بالاسم القديم بعد تغييره من الأدمن.
+    title: { absolute: siteName ? `${SHOP_TITLE} | ${siteName}` : SHOP_TITLE },
     description: SHOP_DESCRIPTION,
     // A lone canonical is a deletion, not an addition — Next replaces the layout's alternates.
     alternates: await buildPageAlternates("/shop"),

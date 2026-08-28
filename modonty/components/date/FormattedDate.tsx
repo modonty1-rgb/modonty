@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface FormattedDateProps {
   date: Date | string;
@@ -16,7 +17,7 @@ const defaultOptions: Intl.DateTimeFormatOptions = {
 
 export function FormattedDate({
   date,
-  locale = "ar-SA",
+  locale = SITE_LOCALE,
   options = defaultOptions,
 }: FormattedDateProps) {
   const [formatted, setFormatted] = useState("");

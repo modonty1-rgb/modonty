@@ -6,6 +6,8 @@ import { SITE_URL } from "@/constants";
 import type { Metadata } from "next";
 import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 import { buildShareTags } from "@/lib/seo/build-share-tags";
+import { messages } from "@/lib/i18n/messages";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 // The crawlable half of the homepage's infinite scroll. Google's requirement
 // (developers.google.com/search/docs/crawling-indexing/javascript/lazy-loading):
@@ -30,9 +32,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const page = parsePageNumber(pageNumber);
   if (!page || page < 2) return {};
 
-  const pageArabic = page.toLocaleString("ar-SA");
+  const pageArabic = page.toLocaleString(SITE_LOCALE);
   const title = `آخر المقالات — الصفحة ${pageArabic}`;
-  const description = `الصفحة ${pageArabic} من آخر مقالات مدونتي — محتوى عربي موثوق من شركاء معتمدين.`;
+  const description = messages.seo.home.pagedDescription.replace("{page}", pageArabic);
 
   return {
     title,

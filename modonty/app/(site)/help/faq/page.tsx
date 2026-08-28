@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   if (metadata) return metadata;
   return generateMetadataFromSEO({
     title: "الأسئلة الشائعة",
-    description: "إجابات على الأسئلة الأكثر شيوعاً حول منصة مدونتي",
+    description: messages.seo.faq.description,
     keywords: ["أسئلة", "شائعة", "مساعدة", "دعم"],
     url: "/help/faq",
     type: "website",

@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadataFromPageRow(await getCopyrightPolicyPageForMetadata(), {
     path: "/legal/copyright-policy",
     fallbackTitle: "سياسة حقوق النشر",
-    fallbackDescription: "سياسة حقوق النشر والملكية الفكرية لمنصة مدونتي",
+    fallbackDescription: messages.seo.copyrightPolicy.description,
   });
 }
 
@@ -50,8 +50,10 @@ async function CopyrightPolicyContent() {
     : undefined;
   const buildFallbackStructuredData = () => generateStructuredData({
     type: "WebPage",
-    name: `${pageTitle} - مدونتي`,
-    description: "سياسة حقوق النشر والملكية الفكرية لمنصة مدونتي",
+    // بلا لاحقة الماركة: هذا اسم **الصفحة** في البيانات المنظَّمة، واسم الموقع يعيش على
+    // عقدة `WebSite` وفي `og:site_name`. إلحاقه هنا كرّر الماركة وكتبها في الكود معاً.
+    name: pageTitle,
+    description: messages.seo.copyrightPolicy.description,
     url: "/legal/copyright-policy",
   });
 

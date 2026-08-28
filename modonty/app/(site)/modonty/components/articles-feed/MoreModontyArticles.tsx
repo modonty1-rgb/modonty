@@ -9,6 +9,7 @@ import { IconLoading } from "@/lib/icons";
 import type { FeedPost } from "@/lib/types";
 
 import type { FeedView } from "./feed-views";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface MoreModontyArticlesProps {
   /** modonty's own slug — the endpoint filters the feed down to this publisher. */
@@ -69,7 +70,7 @@ export function MoreModontyArticles({ clientSlug, startIndex, initialPage, baseP
       renderLoading={(seen) => (
         <div className="flex items-center justify-center gap-2 border-t border-border py-4 text-muted-foreground">
           <IconLoading className="h-4 w-4 animate-spin" aria-hidden />
-          <span className="text-xs">نجيب لك المزيد… (شفت {seen.toLocaleString("ar-SA")} مقالاً)</span>
+          <span className="text-xs">نجيب لك المزيد… (شفت {seen.toLocaleString(SITE_LOCALE)} مقالاً)</span>
         </div>
       )}
       renderError={(retry) => (
@@ -90,7 +91,7 @@ export function MoreModontyArticles({ clientSlug, startIndex, initialPage, baseP
          this page where a count belongs to the READER rather than to us. */
       renderEnd={(seen) => (
         <p className="border-t border-border py-4 text-center text-xs text-muted-foreground">
-          خلصت مقالات مدونتي — {seen.toLocaleString("ar-SA")} مقالاً.
+          خلصت مقالات مدونتي — {seen.toLocaleString(SITE_LOCALE)} مقالاً.
         </p>
       )}
     />

@@ -7,9 +7,10 @@ import { getClientsList } from "@/lib/queries/get-clients-list";
 import { IndustryPageLayout } from "@/app/(site)/industries/components/page-layout/IndustryPageLayout";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { SITE_URL } from "@/constants";
+import { messages } from "@/lib/i18n/messages";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
-const FALLBACK_DESCRIPTION =
-  "استعرض جميع القطاعات والصناعات على مدونتي — اكتشف الشركات والخبراء في كل مجال من التقنية والرعاية الصحية والتجارة الإلكترونية وغيرها.";
+const FALLBACK_DESCRIPTION = messages.seo.industries.description;
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getListingPageSeo("industries");
@@ -81,7 +82,7 @@ export default async function IndustriesPage({ searchParams }: IndustriesPagePro
         currentSlug=""
         articles={articles}
         partners={partners}
-        partnersHeading={`${partners.length.toLocaleString("ar-SA")} شريك في كل المجالات`}
+        partnersHeading={`${partners.length.toLocaleString(SITE_LOCALE)} شريك في كل المجالات`}
         partnersBrowseAllHref="/clients"
         page={page}
         buildPageHref={buildPageHref}

@@ -2,6 +2,7 @@ import { FeedPagination } from "@/components/shared/pagination/FeedPagination";
 import { PostCard } from "@/components/feed/postcard/PostCard";
 import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
 import type { FeedPost } from "@/lib/types";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface ArticlesFeedProps {
   /** Every article in scope — this component only chunks and draws. */
@@ -30,7 +31,7 @@ export function ArticlesFeed({ articles, page, industryName, buildPageHref }: Ar
   return (
     <section aria-labelledby="industry-feed-heading" className="space-y-4">
       <h1 id="industry-feed-heading" className="text-base font-bold text-foreground">
-        {page > 1 ? `${title} — الصفحة ${page.toLocaleString("ar-SA")}` : title}
+        {page > 1 ? `${title} — الصفحة ${page.toLocaleString(SITE_LOCALE)}` : title}
       </h1>
 
       {rows.length === 0 ? (

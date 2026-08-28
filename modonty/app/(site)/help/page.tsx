@@ -11,7 +11,7 @@ const text = messages.help;
 export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataFromSEO({
     title: "مركز المساعدة",
-    description: "مركز المساعدة والدعم لمنصة مدونتي - ابحث عن إجابات لأسئلتك",
+    description: messages.seo.help.description,
     keywords: ["مساعدة", "دعم", "مركز المساعدة", "أسئلة"],
     url: "/help",
     type: "website",

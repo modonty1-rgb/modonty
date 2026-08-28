@@ -126,7 +126,10 @@ export function FAQAccordion({ items }: FAQAccordionProps) {
                 </div>
               </div>
             </AccordionTrigger>
+            {/* keepMounted: this page ships FAQPage JSON-LD naming every answer, so every
+                answer has to exist in the HTML — a closed panel hides, it does not disappear. */}
             <AccordionContent
+              keepMounted
               className="text-muted-foreground leading-relaxed pb-5"
             >
               <div

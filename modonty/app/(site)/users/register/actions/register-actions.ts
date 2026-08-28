@@ -12,6 +12,7 @@ import { sendEmail } from "@/lib/email/resend-client";
 import { welcomeEmail } from "@modonty/shared/lib/email/templates/welcome";
 import { emailVerificationEmail } from "@modonty/shared/lib/email/templates/email-verification";
 import { sendAdminTelegram, escapeTgHtml } from "@modonty/shared/lib/telegram/client";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 export async function registerUser(data: unknown) {
   // A server action is a public HTTP endpoint: the form's zodResolver only ever
@@ -66,7 +67,7 @@ export async function registerUser(data: unknown) {
     // because this goes out in HTML parse mode: a registrant who signs up as
     // `<b>مدفوع</b>` would otherwise forge formatting in the admin's alert, and
     // a stray `<` breaks the whole message so the notification never arrives.
-    const now = new Date().toLocaleString("ar-SA", { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
+    const now = new Date().toLocaleString(SITE_LOCALE, { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
     sendAdminTelegram(`👤 <b>مستخدم جديد — مدونتي</b>\n📧 ${escapeTgHtml(user.email ?? "—")}\n🙋 ${escapeTgHtml(user.name || "—")}\n📅 ${now}`).catch(() => null);
 
     if (user.email) {

@@ -8,6 +8,7 @@ import type { FeedPost } from "@/lib/types";
 import { FeedFilterMenu } from "./FeedFilterMenu";
 import { MoreModontyArticlesOnScroll } from "./MoreModontyArticlesOnScroll";
 import type { FeedView } from "./feed-views";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface ModontyArticlesFeedProps {
   articles: FeedPost[];
@@ -44,7 +45,7 @@ export function ModontyArticlesFeed({ articles, page, view, clientSlug, buildPag
           (`card-mockup.html` — `.feedhead`). */}
       <div className="flex items-center justify-between gap-3">
         <AccentHeading id="modonty-articles-heading" size="title">
-          {page > 1 ? fill(messages.modonty.feedTitlePaged, { page: page.toLocaleString("ar-SA") }) : messages.modonty.feedTitle}
+          {page > 1 ? fill(messages.modonty.feedTitlePaged, { page: page.toLocaleString(SITE_LOCALE) }) : messages.modonty.feedTitle}
         </AccentHeading>
         <FeedFilterMenu view={view} hrefs={viewHrefs} />
       </div>

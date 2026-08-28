@@ -1,5 +1,7 @@
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+
 /** Arabic-Indic digits, so a number reads in the same script as the words beside it. */
-const AR_NUM = new Intl.NumberFormat("ar-SA");
+const AR_NUM = new Intl.NumberFormat(SITE_LOCALE);
 
 interface FactProps {
   /** A number gets localised; a ready string (e.g. «١٠٠٪») is printed as-is. */

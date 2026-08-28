@@ -1,7 +1,7 @@
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
-import { BRAND_EN, SITE_URL } from "@/constants";
+import { SITE_URL } from "@/constants";
 
 import { buildArticleImageObjects } from "./image-aspect-ratios";
 
@@ -36,7 +36,10 @@ export function generateArticleStructuredData(article: any) {
     author: {
       "@type": "Organization",
       "@id": siteIds.organization,
-      name: article.author?.name || BRAND_EN,
+      // العقدة تحمل `@id` هوية الموقع، وتلك العقدة تُعلن اسمها من `Settings.siteName`.
+      // فاسم كاتبٍ غائب لا يُستبدل باسم ماركة مكتوب في الكود: `@id` يكفي جوجل لدمج
+      // العقدتين، والاسم المخترَع كان يخلق كياناً ثانياً باسم مختلف على نفس الصفحة.
+      ...(article.author?.name && { name: article.author.name }),
       url: siteUrl,
     },
     publisher: {
@@ -60,7 +63,9 @@ export function generateArticleStructuredData(article: any) {
     ...(Array.isArray(article.tags) && article.tags.length > 0 && {
       keywords: article.tags.map((t: any) => t?.tag?.name).filter(Boolean),
     }),
-    inLanguage: article.inLanguage || "ar",
+    // اللغة تُدمَج على المقال من `Settings.inLanguage` قبل الوصول إلى هنا. وبغيابها لا
+    // تُعلَن — إعلانُ لغةٍ لم يقلها أحد ادّعاءٌ عن المحتوى، لا احتياط.
+    ...(article.inLanguage && { inLanguage: article.inLanguage }),
     isAccessibleForFree: article.isAccessibleForFree ?? true,
     ...(article.license && { license: article.license }),
     // What the page actually gives a reader who needs it. Every term is from the approved W3C

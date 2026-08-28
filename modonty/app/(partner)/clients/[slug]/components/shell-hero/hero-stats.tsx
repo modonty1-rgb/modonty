@@ -2,6 +2,7 @@ import type { HeroPageState } from "./client-hero-v2";
 import { IconUsers, IconArticle, IconViews, IconFeatured } from "@/lib/icons";
 import { SHOW_CLIENT_ENGAGEMENT_STATS } from "@/constants";
 import { cn } from "@/lib/utils";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface HeroStatsData {
   followers: number;
@@ -19,7 +20,7 @@ interface HeroStatsProps {
   className?: string;
 }
 
-const arNum = new Intl.NumberFormat("ar-SA");
+const arNum = new Intl.NumberFormat(SITE_LOCALE);
 
 /** 1234 → "1.2k", below 1000 stays as-is (Arabic numerals). */
 function formatCompact(n: number): string {

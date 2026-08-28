@@ -11,6 +11,8 @@ import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
 import { EntitySortFilter, type EntitySortOption } from "@/components/listing/EntitySortFilter";
 import { IconSearch } from "@/lib/icons";
 import type { EntityCardProps } from "@/components/listing/EntityCard";
+import { SITE_URL } from "@/constants";
+import { messages } from "@/lib/i18n/messages";
 
 const SORT_OPTIONS: EntitySortOption[] = [
   { value: "articles", label: "الأكثر مقالات" },
@@ -22,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getListingPageSeo("tags");
   const fallback = await generateMetadataFromSEO({
     title: "الوسوم",
-    description: "تصفح جميع الوسوم في مدونتي واكتشف المقالات المصنّفة حسب المواضيع والاهتمامات",
+    description: messages.seo.tags.description,
     url: "/tags",
     type: "website",
   });
@@ -60,7 +62,7 @@ export default async function TagsPage({ searchParams }: TagsPageProps) {
   const heroTitle = seoTitle ?? "الوسوم";
   const heroDescription =
     (typeof seo.metadata?.description === "string" && seo.metadata.description) ||
-    "تصفح جميع الوسوم في مدونتي واكتشف المقالات المصنّفة حسب المواضيع والاهتمامات";
+    messages.seo.tags.description;
   const { url: heroImageUrl, alt: heroImageAlt } = extractOgImageFromMetadata(seo.metadata);
 
   const toCard = (tag: (typeof all)[number]): EntityCardProps => ({
@@ -87,7 +89,8 @@ export default async function TagsPage({ searchParams }: TagsPageProps) {
   // Built only when the cache is empty — mapping the tag list on every request just to throw
   // the result away is work nobody reads.
   const buildFallbackJsonLd = () => {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.modonty.com";
+    // `SITE_URL` يقرأ نفس المتغيّر ويقصّ الشرطة — نسخةٌ ثانية تعني رابطين قد يفترقان.
+    const siteUrl = SITE_URL;
     return {
       breadcrumb: generateBreadcrumbStructuredData([
         { name: "الرئيسية", url: "/" },
@@ -96,8 +99,9 @@ export default async function TagsPage({ searchParams }: TagsPageProps) {
       collection: {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
-        name: "الوسوم - مدونتي",
-        description: "تصفح جميع الوسوم في مدونتي واكتشف المقالات المصنّفة حسب المواضيع",
+        // بلا لاحقة الماركة — اسم المجموعة وحده.
+        name: "الوسوم",
+        description: messages.seo.tags.shortDescription,
         url: `${siteUrl}/tags`,
         mainEntity: {
           "@type": "ItemList",

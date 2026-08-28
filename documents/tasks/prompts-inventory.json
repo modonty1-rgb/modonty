@@ -1,0 +1,234 @@
+{
+  "generatedBy": "documents/tasks/scan-prompts.mjs",
+  "live": 7,
+  "byApp": {
+    "modonty": 3,
+    "admin": 4
+  },
+  "providers": [
+    "Cohere",
+    "OpenAI",
+    "Gemini"
+  ],
+  "chars": 4822,
+  "rows": [
+    {
+      "key": "modo.identity",
+      "app": "modonty",
+      "provider": "Cohere",
+      "surface": "مودو شات — سؤال عن نفسه",
+      "file": "modonty/app/(site)/modo-chat/helpers/build-identity-prompt.ts",
+      "fn": "buildIdentityPrompt",
+      "anchor": "أنت \"مودو\"، مساعد منصّة",
+      "vars": [
+        "BRAND_AR"
+      ],
+      "entry": [
+        "modonty/app/(site)/modo-chat/api/chat/route.ts:324",
+        "modonty/app/(site)/modo-chat/api/article/[slug]/route.ts:270"
+      ],
+      "what": "التحيّة و«مين أنت؟» — لا مستندات خلفها، فلها برومبت ثالث خاصّ.",
+      "onEmpty": "مودو يجاوب كنموذج خام: يقول «أنا نموذج لغوي» ويخترع خدمات.",
+      "line": 11,
+      "endLine": 20,
+      "chars": 374,
+      "promptLines": 10,
+      "varsInBody": [
+        "BRAND_AR"
+      ],
+      "varsMissing": [],
+      "lang": "ar"
+    },
+    {
+      "key": "modo.category",
+      "app": "modonty",
+      "provider": "Cohere",
+      "surface": "مودو شات — سؤال داخل تصنيف",
+      "file": "modonty/app/(site)/modo-chat/helpers/build-category-db-prompt.ts",
+      "fn": "buildCategoryDbPrompt",
+      "anchor": "مساعد متخصص حصراً في موضوع",
+      "vars": [
+        "BRAND_AR",
+        "categoryName"
+      ],
+      "entry": [
+        "modonty/app/(site)/modo-chat/api/chat/route.ts:324"
+      ],
+      "what": "الوضع الصارم: يجيب من مقالات المنصّة وحدها، وبغيابها يقول الجملة المحدَّدة.",
+      "onEmpty": "تسقط قاعدة «لا معرفة خارجية» — مودو يجيب من معرفته العامّة كأنها محتوانا.",
+      "line": 6,
+      "endLine": 14,
+      "chars": 598,
+      "promptLines": 9,
+      "varsInBody": [
+        "BRAND_AR",
+        "categoryName"
+      ],
+      "varsMissing": [],
+      "lang": "ar"
+    },
+    {
+      "key": "modo.article",
+      "app": "modonty",
+      "provider": "Cohere",
+      "surface": "مودو شات — قارئ داخل مقال",
+      "file": "modonty/app/(site)/modo-chat/helpers/build-article-db-prompt.ts",
+      "fn": "buildArticleDbPrompt",
+      "anchor": "تساعد القارئ في فهم مقال",
+      "vars": [
+        "BRAND_AR",
+        "articleTitle",
+        "categoryName"
+      ],
+      "entry": [
+        "modonty/app/(site)/modo-chat/api/article/[slug]/route.ts:271"
+      ],
+      "what": "الإجابة من نصّ هذا المقال وحده — أضيق نطاقاً من برومبت التصنيف.",
+      "onEmpty": "يفقد ربطه بالمقال، فيجيب عن الموضوع عموماً لا عمّا يقرؤه الزائر أمامه.",
+      "line": 6,
+      "endLine": 14,
+      "chars": 456,
+      "promptLines": 9,
+      "varsInBody": [
+        "BRAND_AR",
+        "articleTitle",
+        "categoryName"
+      ],
+      "varsMissing": [],
+      "lang": "ar"
+    },
+    {
+      "key": "admin.article.system",
+      "app": "admin",
+      "provider": "OpenAI",
+      "surface": "توليد مقال — رسالة النظام",
+      "file": "admin/lib/openai-article-generator.ts",
+      "fn": "generateComprehensiveArticleData",
+      "anchor": "You are a senior Arabic article editor",
+      "vars": [],
+      "entry": [
+        "admin/app/(dashboard)/articles/actions/generate-article-ai.ts:3"
+      ],
+      "what": "يحدّد دور المحرّر ولغته ومعايير السيو. مكتوب بالإنجليزية.",
+      "onEmpty": "يختفي الدور والمعايير — المخرَج يفقد بنية العناوين وتكامل الكلمات المفتاحية.",
+      "note": "البرومبت الوحيد الإنجليزي في المستودع.",
+      "line": 45,
+      "endLine": 68,
+      "chars": 1009,
+      "promptLines": 24,
+      "varsInBody": [],
+      "varsMissing": [],
+      "lang": "en"
+    },
+    {
+      "key": "admin.article.user",
+      "app": "admin",
+      "provider": "OpenAI",
+      "surface": "توليد مقال — رسالة الطلب",
+      "file": "admin/lib/openai-article-generator.ts",
+      "fn": "generateComprehensiveArticleData",
+      "anchor": "اكتب مقالاً احترافياً باللغة العربية",
+      "vars": [
+        "keywords",
+        "clientName",
+        "categoryName",
+        "length",
+        "targetWordCount"
+      ],
+      "entry": [
+        "admin/app/(dashboard)/articles/actions/generate-article-ai.ts:3"
+      ],
+      "what": "الطلب نفسه: الكلمات المفتاحية والعميل والتصنيف والطول المستهدف.",
+      "onEmpty": "لا طلب أصلاً — النداء يرجع محتوى بلا موضوع.",
+      "line": 70,
+      "endLine": 113,
+      "chars": 1605,
+      "promptLines": 44,
+      "varsInBody": [
+        "keywords",
+        "clientName",
+        "categoryName",
+        "length",
+        "targetWordCount",
+        "Math"
+      ],
+      "varsMissing": [],
+      "lang": "ar"
+    },
+    {
+      "key": "admin.image.article",
+      "app": "admin",
+      "provider": "Gemini",
+      "surface": "سيو صورة داخل مقال",
+      "file": "admin/lib/ai/gemini-image-seo.ts",
+      "fn": "generateImageSeoField",
+      "anchor": "الصورة التالية تخص المقال أدناه",
+      "vars": [
+        "aLines",
+        "spec"
+      ],
+      "entry": [
+        "admin/app/(dashboard)/media/actions/generate-image-seo-ai.ts:5"
+      ],
+      "what": "نصّ بديل ووصف للصورة مستنداً إلى موضوع المقال لا إلى تحليل الصورة.",
+      "onEmpty": "يختفي قيد «لا تخترع تفاصيل» — نصوص بديلة فيها أرقام وجوائز موهومة تصل جوجل.",
+      "line": 66,
+      "endLine": 75,
+      "chars": 368,
+      "promptLines": 10,
+      "varsInBody": [
+        "aLines",
+        "spec"
+      ],
+      "varsMissing": [],
+      "lang": "ar"
+    },
+    {
+      "key": "admin.image.gallery",
+      "app": "admin",
+      "provider": "Gemini",
+      "surface": "سيو صورة في معرض الشريك",
+      "file": "admin/lib/ai/gemini-image-seo.ts",
+      "fn": "generateImageSeoField",
+      "anchor": "هذه صورة من معرض أعمال العميل",
+      "vars": [
+        "lines",
+        "indexNote",
+        "spec"
+      ],
+      "entry": [
+        "admin/app/(dashboard)/media/actions/generate-image-seo-ai.ts:5"
+      ],
+      "what": "نفس المهمّة لصور المعرض، مستندةً إلى بيانات العميل.",
+      "onEmpty": "نفس الخطر، وعلى صفحات الشركاء التي تُفهرس.",
+      "line": 77,
+      "endLine": 87,
+      "chars": 412,
+      "promptLines": 11,
+      "varsInBody": [
+        "lines",
+        "indexNote",
+        "spec"
+      ],
+      "varsMissing": [],
+      "lang": "ar"
+    }
+  ],
+  "dead": [
+    {
+      "file": "admin/lib/openai-seed.ts",
+      "prompts": 6,
+      "lines": 609,
+      "exports": [
+        "generateArticleWithOpenAI",
+        "generateCategoriesWithOpenAI",
+        "generateTagsWithOpenAI",
+        "generateIndustriesWithOpenAI",
+        "generateArticleTitlesWithOpenAI",
+        "generateFAQTemplatesWithOpenAI"
+      ],
+      "why": "صفر مستورد في المستودع كلّه، وصفر مستهلك لكل تصدير من الستّة. وفيه كتلة «السياق الصناعي» مكرَّرة ستّ مرّات بصياغتين مختلفتين — انحراف نسخٍ ولصق، وهو بالضبط ما يمنعه الجدول الواحد."
+    }
+  ],
+  "problems": []
+}

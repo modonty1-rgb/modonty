@@ -13,6 +13,8 @@ import {
 import { IconExternal } from "@/lib/icons";
 
 import { SectionCard } from "../sections/section-card";
+import { messages } from "@/lib/i18n/messages";
+import { SITE_LOCALE_LATN } from "@modonty/shared/lib/constants/locale";
 
 interface ClientTrustCardProps {
   name: string;
@@ -57,7 +59,7 @@ function VRow({ label, value }: { label: string; value: string }) {
 }
 
 /**
- * Green-tinted trust card (sidebar) — «موثّق من مدوّنتي» badge + a Dialog showing
+ * Green-tinted trust card (sidebar) — «شريك موثّق» badge + a Dialog showing
  * the verified official credentials (legal name · CR · authority · VAT · address ·
  * founding year) + an optional Maarouf external CTA + a verified-date note.
  * Renders nothing when the client has no CR, no legal name, and no verification image.
@@ -81,7 +83,7 @@ export function ClientTrustCard({
   }
 
   const foundingYear = foundingDate
-    ? new Intl.DateTimeFormat("ar-SA-u-nu-latn", { year: "numeric" }).format(
+    ? new Intl.DateTimeFormat(SITE_LOCALE_LATN, { year: "numeric" }).format(
         foundingDate
       )
     : null;
@@ -118,7 +120,7 @@ export function ClientTrustCard({
         </span>
         <div className="min-w-0">
           <h4 className="text-[13.5px] font-extrabold text-foreground">
-            موثّق من مدوّنتي
+            {messages.shared.badges.verifiedPartnerLabel}
           </h4>
           {commercialRegistrationNumber && (
             <p className="mt-0.5 text-[11.5px] text-muted-foreground">

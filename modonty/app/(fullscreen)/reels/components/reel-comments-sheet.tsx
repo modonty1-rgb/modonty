@@ -23,6 +23,7 @@ import { submitReelComment } from "../actions/submit-reel-comment";
 import { submitReelCommentReply } from "../actions/submit-reel-comment-reply";
 import { toggleReelCommentLike } from "../actions/toggle-reel-comment-like";
 import type { ReelComment } from "../data/get-reel-comments";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface ReelCommentsSheetProps {
   mediaId: string;
@@ -102,7 +103,7 @@ export function ReelCommentsSheet({
         >
           <SheetHeader className="border-b border-neutral-800 px-4 py-3 text-center">
             <SheetTitle className="text-sm font-bold text-white">
-              التعليقات ({shownCount.toLocaleString("ar-SA")})
+              التعليقات ({shownCount.toLocaleString(SITE_LOCALE)})
             </SheetTitle>
             <SheetDescription className="sr-only">
               تعليقات الزوّار على هذا الريل

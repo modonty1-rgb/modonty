@@ -9,8 +9,9 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
 import { getProfileFavorites } from "../helpers/profile-favorites";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
-const dateFormatter = new Intl.DateTimeFormat("ar-SA", {
+const dateFormatter = new Intl.DateTimeFormat(SITE_LOCALE, {
   year: "numeric",
   month: "short",
   day: "numeric",

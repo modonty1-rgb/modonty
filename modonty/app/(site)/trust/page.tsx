@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { BRAND_AR, SITE_URL, CR_CERTIFICATE_FALLBACK_IMAGE } from "@/constants";
+import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
+import { SITE_URL, CR_CERTIFICATE_FALLBACK_IMAGE } from "@/constants";
 import { messages } from "@/lib/i18n/messages";
 import { jsonLdHtml } from "@/lib/seo";
 import { getLegalEntity, buildOrganizationJsonLd } from "@/lib/seo/organization-jsonld";
 import { toLegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 
 import { getWhatsappContactUrl } from "./helpers/get-whatsapp-contact";
 import { getTrustPageForMetadata } from "./helpers/trust-metadata";
@@ -43,7 +45,7 @@ export default async function TrustPage() {
   let certificateSrc: string = CR_CERTIFICATE_FALLBACK_IMAGE;
   // The legal entity joins the same parallel read — it is one cached Settings query
   // shared with /story, so the two pages can never publish conflicting Organization data.
-  const [entity] = await Promise.all([getLegalEntity()]);
+  const [entity, { siteName }] = await Promise.all([getLegalEntity(), getPageSeoDefaults()]);
   try {
     const [media, wa] = await Promise.all([getBrandMedia(), getWhatsappContactUrl()]);
     ogImageUrl = media.ogImageUrl;
@@ -65,11 +67,13 @@ export default async function TrustPage() {
   const webPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: "الموثوقية — مدونتي",
+    // اسم **الصفحة** وحده — اسم الموقع يعيش على عقدة `WebSite`، والإشارة إليها بـ`@id`
+    // بدل نسخِ الاسم: النسخة الثانية تصير كياناً منافساً بمجرّد أن يتغيّر الاسم من الأدمن.
+    name: "الموثوقية",
     description: PAGE_DESC,
     url: PAGE_URL,
     inLanguage: "ar",
-    isPartOf: { "@type": "WebSite", name: BRAND_AR, url: SITE_URL },
+    isPartOf: { "@id": buildSiteEntityIds(SITE_URL).website },
     about: organizationJsonLd,
   };
 
@@ -90,10 +94,10 @@ export default async function TrustPage() {
         />
 
         <div className="space-y-4">
-          <IdentityCard ogImageUrl={ogImageUrl} legal={legal} />
-          <RecordCard certificateSrc={certificateSrc} legal={legal} facts={buildLegalFacts(legal)} />
+          <IdentityCard ogImageUrl={ogImageUrl} siteName={siteName} legal={legal} />
+          <RecordCard certificateSrc={certificateSrc} siteName={siteName} legal={legal} facts={buildLegalFacts(legal)} />
           <PillarsCard />
-          <LocationCard contact={buildContactRows(legal)} map={map} legal={legal} />
+          <LocationCard contact={buildContactRows(legal)} map={map} legal={legal} siteName={siteName} />
           <PromisesCard />
           <QuestionCard whatsappHref={whatsappHref} />
         </div>

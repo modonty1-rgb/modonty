@@ -2573,6 +2573,12 @@ model Settings {
   // Site & Organization (from .env defaults, editable in Settings UI)
   siteUrl             String?
   siteName            String?
+  // الاسم الثاني للماركة على الكيان نفسه — schema.org `alternateName`، وجوجل تسمّيه
+  // "another common name that your organization goes by" وتوصي باستعماله على `Organization`
+  // و`WebSite` معاً. سببه المقيس (٢٨ أغسطس ٢٠٢٦): الاسم العربي هو ما يراه الزائر ٢٣ مرّة
+  // على الرئيسية، واللاتيني هو ما يكتبه من يبحث بالإنجليزية — وبعمود واحد كان لا بدّ من
+  // خسارة أحدهما. الاسم الأساسي يبقى `siteName`، وهذا يجاوره ولا ينافسه.
+  alternateName       String?
   brandDescription    String?
   siteAuthor          String?
   inLanguage            String?  // Default language code (e.g., "ar", "en") for hreflang

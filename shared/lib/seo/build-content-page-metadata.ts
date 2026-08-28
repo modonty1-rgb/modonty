@@ -64,10 +64,12 @@ export function buildContentPageMetadata(input: ContentPageMetadataInput) {
   const row = input.row ?? {};
 
   const canonicalUrl = str(row.canonicalUrl) || absoluteUrl(path, siteUrl);
-  const siteName = str(row.ogSiteName) || str(s.siteName) || "Modonty";
+  // التدرّج بين مصادر في القاعدة (صفّ الصفحة ثم الإعدادات) سليم — والاحتياط المكتوب
+  // في آخر السلسلة هو المخالفة: يجعل فراغ العمودين معاً غير مرئي إلى الأبد.
+  const siteName = str(row.ogSiteName) || str(s.siteName);
   const title = str(row.seoTitle) || str(row.title) || fallbackTitle;
   const description = str(row.seoDescription) || fallbackDescription;
-  const locale = str(row.ogLocale) || str(row.inLanguage) || str(s.defaultOgLocale) || "ar_SA";
+  const locale = str(row.ogLocale) || str(row.inLanguage) || str(s.defaultOgLocale);
 
   const ogImage =
     str(row.ogImage) || str(row.socialImage) || str(input.fallbackOgImage) || str(s.ogImageUrl);
@@ -112,8 +114,9 @@ export function buildContentPageMetadata(input: ContentPageMetadataInput) {
       title: str(row.ogTitle) || title,
       description: str(row.ogDescription) || description,
       url: canonicalUrl,
-      siteName,
-      locale,
+      ...(siteName ? { siteName } : {}),
+      ...(locale ? { locale } : {}),
+      // `og:type` وصفٌ للكائن لا إعدادُ موقع (ogp.me)، وهذه الصفحات كلّها من نوع واحد.
       type: str(row.ogType) || str(s.defaultOgType) || "website",
       ...(ogImage
         ? {

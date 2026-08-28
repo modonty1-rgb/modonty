@@ -1,4 +1,5 @@
 import type { LegalEntity } from "./organization-jsonld";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 /**
  * The legal entity in the shape a page renders — one derivation, two consumers.
@@ -13,6 +14,8 @@ import type { LegalEntity } from "./organization-jsonld";
  * nothing after it.
  */
 export interface LegalEntityDisplay {
+  /** `Settings.orgContactEmail` — يُعرَض في صفّ الاتصال على /trust. */
+  contactEmail: string | null;
   legalName: string | null;
   cr: string | null;
   crStatus: string | null;
@@ -54,7 +57,7 @@ const COUNTRY_NAMES_AR: Record<string, string> = {
  * the certificate states a Gregorian one. `-u-ca-gregory` pins it. UTC because the column
  * holds midnight UTC, and a local zone would slide it to the previous day.
  */
-const DATE_FORMAT = new Intl.DateTimeFormat("ar-SA-u-ca-gregory", {
+const DATE_FORMAT = new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
   day: "numeric",
   month: "long",
   year: "numeric",
@@ -75,6 +78,7 @@ export function toLegalEntityDisplay(legal: LegalEntity): LegalEntityDisplay {
   const address = [legal.city, legal.district, legal.street].filter(Boolean).join(" — ");
 
   return {
+    contactEmail: legal.contactEmail,
     legalName: legal.legalName,
     cr: legal.cr,
     crStatus: legal.crStatus,

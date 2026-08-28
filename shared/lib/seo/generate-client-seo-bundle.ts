@@ -58,17 +58,21 @@ function deriveClientType(client: DerivableClient): string | null {
 export interface ClientMetaTags {
   title: string;
   /** Optional: a partner with no description of its own ships no description tag. */ description?: string;
-  robots: string;
+  /** Optional: the directive comes from `Settings.defaultMetaRobots`; empty column → no tag. */
+  robots?: string;
   author: string;
-  language: string;
+  /** Optional: from `Settings.inLanguage`; empty column → no tag, never an assumed language. */
+  language?: string;
   charset: string;
   openGraph: {
     title: string;
     /** Optional: a partner with no description of its own ships no description tag. */ description?: string;
     type: string;
     url: string;
-    siteName: string;
-    locale: string;
+    /** Optional: from `Settings.siteName`; empty column → no `og:site_name`. */
+    siteName?: string;
+    /** Optional: from `Settings.defaultOgLocale`; empty column → no `og:locale`. */
+    locale?: string;
     localeAlternate?: string[];
     images?: Array<{
       url: string;
@@ -82,7 +86,8 @@ export interface ClientMetaTags {
     }>;
   };
   twitter: {
-    card: string;
+    /** Optional: a hero image decides it; otherwise `Settings.defaultTwitterCard`, else no tag. */
+    card?: string;
     title: string;
     /** Optional: a partner with no description of its own ships no description tag. */ description?: string;
     image?: string;
@@ -220,11 +225,15 @@ export async function generateClientSeoBundle(
   // No literal fallback — this becomes the partner page's canonical and every `@id` in its
   // stored JSON-LD bundle.
   const siteUrl = requireSiteUrl(settings?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL);
-  const siteName = settings?.siteName || "Modonty";
-  const inLanguage = settings?.inLanguage || "ar";
-  const ogLocale = settings?.defaultOgLocale || "ar_SA";
-  const metaRobots = settings?.defaultMetaRobots || "index, follow";
-  const twitterCard = settings?.defaultTwitterCard || "summary_large_image";
+  // لا احتياط بعد اليوم. الاحتياط المكتوب هنا كان يجعل عموداً فارغاً في القاعدة **غير
+  // مرئي**: الصفحة تُنشر بقيمة الكود، ولا أحد يعرف أن البيان ناقص. والملفّ نفسه يعرف
+  // القاعدة — السطر فوق يقول «No literal fallback» عن الرابط، ثم نسيها فيما تحته.
+  // الغياب يبقى غياباً: الوسم لا يُبثّ، تماماً كما يفعل `description` أسفل هذه الدالّة.
+  const siteName = settings?.siteName?.trim() || undefined;
+  const inLanguage = settings?.inLanguage?.trim() || undefined;
+  const ogLocale = settings?.defaultOgLocale?.trim() || undefined;
+  const metaRobots = settings?.defaultMetaRobots?.trim() || undefined;
+  const twitterCard = settings?.defaultTwitterCard?.trim() || undefined;
   const twitterSite = settings?.twitterSite || undefined;
   const twitterCreator = settings?.twitterCreator || undefined;
   const clientPageUrl = client.canonicalUrl || entityUrl("clients", client.slug, siteUrl);
@@ -249,20 +258,22 @@ export async function generateClientSeoBundle(
   const metaTags: ClientMetaTags = {
     title: truncateAtWordBoundary(title, 60),
     ...(description && { description: truncateAtWordBoundary(description, 160) }),
-    robots: metaRobots,
+    ...(metaRobots && { robots: metaRobots }),
     author: client.name,
-    language: inLanguage,
+    ...(inLanguage && { language: inLanguage }),
     charset: "UTF-8",
     openGraph: {
       title,
       ...(description && { description }),
       type: "website",
       url: canonicalUrl,
-      siteName,
-      locale: ogLocale,
+      ...(siteName && { siteName }),
+      ...(ogLocale && { locale: ogLocale }),
     },
     twitter: {
-      card: mediaSrc(client.heroImageMedia) ? "summary_large_image" : twitterCard,
+      // بطاقة الصورة الكبيرة قرارُ محتوى لا إعداد: للصفحة صورة بطل فتستحقّها. وبغيابها
+      // يعود القرار إلى الإعدادات، وإن خلت فلا وسم — لا قيمة مخترَعة.
+      ...(mediaSrc(client.heroImageMedia) ? { card: "summary_large_image" } : twitterCard ? { card: twitterCard } : {}),
       title,
       ...(description && { description }),
       ...(twitterSite && { site: twitterSite }),
@@ -276,29 +287,33 @@ export async function generateClientSeoBundle(
     },
   };
 
-  // og:locale:alternate when multi-language (ogp.me)
-  const supportedLanguages =
-    Array.isArray(client.knowsLanguage) && client.knowsLanguage.length > 0
-      ? client.knowsLanguage.map((lang) => {
-          if (lang.toLowerCase().includes("arabic") || lang.toLowerCase().includes("ar")) return "ar_SA";
-          if (lang.toLowerCase().includes("english") || lang.toLowerCase().includes("en")) return "en_US";
-          return "ar_SA";
-        })
-      : ["ar_SA"];
-  const uniqueLocales = [...new Set(supportedLanguages)];
-  if (uniqueLocales.length > 1) {
-    metaTags.openGraph.localeAlternate = uniqueLocales.filter((l) => l !== "ar_SA");
+  // `og:locale:alternate` عند تعدّد اللغات (ogp.me).
+  //
+  // كان هنا تخمينٌ مكتوب: `includes("ar")` تُطابق «Arabic» و«Mandarin» معاً، و«en» تُطابق
+  // «French»؛ وأي لغة لا يعرفها السطران تُرَدّ `"ar_SA"` — أي أن العميل يُعلَن سعوديّ اللغة
+  // لأن الكود لم يفهم ما كُتب. والسوق الأساسي كان مكتوباً في أربعة مواضع من هذا الملفّ.
+  //
+  // الآن: خريطة صريحة للغات المعروفة، والسوق الأساسي من `Settings.defaultOgLocale`.
+  // اللغة غير المعروفة لا تُترجَم إلى شيء — الغياب أصدق من ادّعاء.
+  const LOCALE_BY_LANGUAGE: Record<string, string> = { arabic: "ar_SA", ar: "ar_SA", english: "en_US", en: "en_US" };
+  const toLocale = (lang: string) => LOCALE_BY_LANGUAGE[lang.trim().toLowerCase()];
+
+  const declaredLocales = Array.isArray(client.knowsLanguage)
+    ? client.knowsLanguage.map(toLocale).filter(Boolean)
+    : [];
+  const uniqueLocales = [...new Set(declaredLocales)];
+  const alternateLocales = uniqueLocales.filter((l) => l !== ogLocale);
+  if (alternateLocales.length > 0) {
+    metaTags.openGraph.localeAlternate = alternateLocales;
   }
 
   // alternates.languages for hreflang. Client languages win; else fall back to the
   // PLATFORM defaults from Settings (defaultAlternateLanguages / defaultHreflang).
   const hreflangMap: Record<string, string> = {};
-  if (Array.isArray(client.knowsLanguage) && client.knowsLanguage.length > 0) {
-    for (const lang of client.knowsLanguage) {
-      const lower = lang.toLowerCase();
-      if (lower.includes("arabic") || lower.includes("ar")) hreflangMap["ar-SA"] = canonicalUrl;
-      else if (lower.includes("english") || lower.includes("en")) hreflangMap["en"] = canonicalUrl;
-    }
+  // نفس الخريطة الصريحة أعلاه، بصياغة hreflang (`ar_SA` ← `ar-SA`) — لا تخمين ثانٍ
+  // بنفس عيوب الأوّل، ولا رمز سوق مكتوب هنا: مصدره `Settings.defaultOgLocale`.
+  for (const locale of uniqueLocales) {
+    hreflangMap[locale.replace("_", "-")] = canonicalUrl;
   }
   if (Object.keys(hreflangMap).length === 0) {
     const altList = Array.isArray(settings?.defaultAlternateLanguages)
@@ -308,7 +323,9 @@ export async function generateClientSeoBundle(
       const code = typeof entry?.hreflang === "string" ? entry.hreflang.trim() : "";
       if (code) hreflangMap[code] = canonicalUrl;
     }
-    const primary = (settings?.defaultHreflang || inLanguage || "ar-SA").trim();
+    // السوق الأساسي من عمودَين في القاعدة، وبفراغهما لا يُضاف سطرٌ ثالث: وسم hreflang
+    // يعلن لجوجل أن نسخةً بهذه اللغة موجودة، فاختراعه ادّعاءٌ عن المحتوى لا احتياط.
+    const primary = (settings?.defaultHreflang || inLanguage || "").trim();
     if (primary && !hreflangMap[primary]) hreflangMap[primary] = canonicalUrl;
   }
   if (Object.keys(hreflangMap).length > 0) {

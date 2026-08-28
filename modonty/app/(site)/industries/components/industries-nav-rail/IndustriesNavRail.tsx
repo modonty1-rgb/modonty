@@ -2,6 +2,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { formatCount } from "@/lib/i18n/messages";
 import type { IndustryListItem } from "@/lib/types";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 const INDUSTRY_COUNT = { one: "مجال واحد", two: "مجالين", few: "مجالات", many: "مجالاً" } as const;
 
@@ -37,7 +38,7 @@ export function IndustriesNavRail({ industries, currentSlug }: IndustriesNavRail
               >
                 <span className="truncate">{industry.name}</span>
                 <span className={cn("shrink-0 text-xs", isActive ? "text-link" : "text-muted-foreground")}>
-                  {industry.clientCount.toLocaleString("ar-SA")}
+                  {industry.clientCount.toLocaleString(SITE_LOCALE)}
                 </span>
               </Link>
             </li>

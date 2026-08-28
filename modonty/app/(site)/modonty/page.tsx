@@ -5,6 +5,8 @@ import { getModontyArticles } from "@/app/(site)/modonty/data/get-modonty-articl
 import { getModontyGallery } from "@/app/(site)/modonty/data/get-modonty-gallery";
 import { getModontyReels } from "@/app/(site)/modonty/data/get-modonty-reels";
 import { getModontyPhone } from "@/app/(site)/modonty/data/get-modonty-phone";
+import { getCoreClientId } from "@/lib/settings/get-core-client-id";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { getLegalEntity } from "@/lib/seo/organization-jsonld";
 import { toLegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 import { ModontyProfileHero } from "@/app/(site)/modonty/components/profile-hero/ModontyProfileHero";
@@ -26,9 +28,13 @@ import { SITE_URL } from "@/constants";
 import { buildPageAlternates } from "@/lib/seo/build-page-alternates";
 import { buildShareTags } from "@/lib/seo/build-share-tags";
 import { reveal } from "./helpers/reveal";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
-/** modonty's own slug in the `Client` table — the same row every partner card reads. */
-const MODONTY_CLIENT_SLUG = "مدونتي";
+// كان هنا `const MODONTY_CLIENT_SLUG = "مدونتي"` والصفحة تبحث بالـslug نصّاً.
+// العمود الصحيح موجود منذ ٢٤ أغسطس (`Settings.coreClientId`) وخمسة مسارات تقرؤه —
+// الرئيسية وشريط الناشر والرائج واستعلاما المقالات — وهذه الصفحة وحدها شذّت.
+// والفخّ أن `slug` و`name` متطابقان اليوم، فتغيير الاسم من الأدمن كان سيكسرها لاحقاً
+// لا فوراً: عطلٌ مؤجَّل، وهو أسوأ ما يُترك في الكود.
 
 /**
  * `pagination` emits `<link rel="prev">` / `<link rel="next">` — the machine-readable half
@@ -51,21 +57,26 @@ export async function generateMetadata({ searchParams }: ModontyPageProps): Prom
   // Both reads are `use cache` and React dedups them against the page's own calls, so
   // asking here costs nothing — and a `rel="next"` that points past the last page is worse
   // than none at all.
-  const partners = await getClientsList();
-  const profile = partners.find((partner) => partner.slug === MODONTY_CLIENT_SLUG);
+  const [partners, coreClientId, { siteName }] = await Promise.all([
+    getClientsList(),
+    getCoreClientId(),
+    getPageSeoDefaults(),
+  ]);
+  const profile = partners.find((partner) => partner.id === coreClientId);
   const total = profile ? (await getModontyArticles(profile.id)).length : 0;
   const hasNext = total > page * FEED_PAGE_SIZE;
 
   // Brand appended by hand in `<title>` (`absolute`); the share tags take the bare headline
   // because `og:site_name` already carries the brand on a card.
   const headline =
-    page > 1 ? `مقالات مدونتي — الصفحة ${page.toLocaleString("ar-SA")}` : "مقالات مدونتي";
-  const description =
-    "كل مقالات مدونتي الخاصة — بمعرضها وأرقامها الحقيقية، من نفس صفّها في قاعدة الشركاء.";
+    page > 1 ? `مقالات مدونتي — الصفحة ${page.toLocaleString(SITE_LOCALE)}` : "مقالات مدونتي";
+  const description = messages.seo.modontyPage.description;
   const path = page > 1 ? `/modonty?page=${page}` : "/modonty";
 
   return {
-    title: { absolute: `${headline} | مدونتي` },
+    // اللاحقة من `Settings.siteName` لا من الكود — وبغياب العمود يُشحن العنوان وحده،
+    // لأن عنواناً بلا ماركة أهون من ماركة بالاسم القديم بعد تغييره من الأدمن.
+    title: { absolute: siteName ? `${headline} | ${siteName}` : headline },
     description,
     // Its own canonical and the locales from Settings. It used to ship the canonical alone,
     // which in Next means the layout's alternates are replaced, not extended.
@@ -109,8 +120,12 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
   const { page: pageParam, view: viewParam } = await searchParams;
   const page = Number.isFinite(Number(pageParam)) && Number(pageParam) > 1 ? Number(pageParam) : 1;
   const view: FeedView = FEED_VIEWS.includes(viewParam as FeedView) ? (viewParam as FeedView) : "latest";
-  const partners = await getClientsList();
-  const profile = partners.find((partner) => partner.slug === MODONTY_CLIENT_SLUG);
+  const [partners, coreClientId, { siteName }] = await Promise.all([
+    getClientsList(),
+    getCoreClientId(),
+    getPageSeoDefaults(),
+  ]);
+  const profile = partners.find((partner) => partner.id === coreClientId);
   if (!profile) notFound();
   const [articles, gallery, reels, legalEntity, whatsappPhone] = await Promise.all([
     getModontyArticles(profile.id),
@@ -145,7 +160,8 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
         __html: jsonLdHtml(
           generateBreadcrumbStructuredData([
             { name: "الرئيسية", url: "/" },
-            { name: "مدونتي", url: "/modonty" },
+            // اسم هذا القسم هو اسم الموقع نفسه — فيُقرأ من الإعدادات لا يُكتب بيدٍ.
+            { name: siteName ?? "", url: "/modonty" },
           ])
         ),
       }}
@@ -156,7 +172,7 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
           <Breadcrumb
             items={[
               { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-              { label: "مدونتي" },
+              { label: siteName ?? "" },
             ]}
           />
           <ModontyProfileHero
@@ -215,7 +231,7 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
         (jbrseo.com, same destination as before — Khalid, 21 Aug: the funnel is there,
         not on /story). */}
     <MobileCtaBar
-      ariaLabel="تابع مدونتي أو صِر شريكاً"
+      ariaLabel={messages.modonty.ctaBarLabel}
       primarySlot={<FollowCtaButton />}
       secondary={{ href: "https://www.jbrseo.com", label: "صِر شريكاً", icon: IconHandshake, external: true }}
     />

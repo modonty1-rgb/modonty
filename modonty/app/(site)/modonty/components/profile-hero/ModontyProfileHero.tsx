@@ -6,6 +6,7 @@ import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { buttonVariants } from "@/components/ui/button";
 import { IconAdd, IconChevronRight } from "@/lib/icons";
 import { messages } from "@/lib/i18n/messages";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 /**
  * The "dot" motif from the logo story (a dot → a brick → a building), as a faint grid
@@ -171,12 +172,12 @@ function TrustStrip() {
               aria-hidden
               className="grid size-6 shrink-0 place-items-center rounded-full bg-card text-[11px] font-medium text-link-accent ring-1 ring-accent/50"
             >
-              {(index + 1).toLocaleString("ar-SA")}
+              {(index + 1).toLocaleString(SITE_LOCALE)}
             </span>
             {/* <640px the step labels wrap in full — clamped they read «نتأكّد من وج…»,
                 and these four facts are the badge's whole force (Khalid, 21 Aug). */}
             <span className="w-full text-xs leading-tight text-foreground/80 sm:truncate sm:text-sm">
-              <span className="sr-only">{(index + 1).toLocaleString("ar-SA")}. </span>
+              <span className="sr-only">{(index + 1).toLocaleString(SITE_LOCALE)}. </span>
               {step}
             </span>
           </li>

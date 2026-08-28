@@ -6,7 +6,9 @@ export default function NewsLoading() {
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "أخبار مدونتي" },
+          // شاشة تحميل: تُرسم قبل أي قراءة من القاعدة، فتحمل اسم القسم بلا اسم الماركة
+          // بدل انتظارٍ يؤخّر الهيكل — والصفحة نفسها تعرض الاسم الكامل بعد لحظة.
+          { label: "الأخبار" },
         ]}
       />
       <div className="mt-8 animate-pulse space-y-10">

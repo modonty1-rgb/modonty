@@ -22,8 +22,9 @@ const text = messages.about;
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadataFromPageRow(await getAboutPageForMetadata(), {
     path: "/about",
-    fallbackTitle: "عن مدونتي",
-    fallbackDescription: "مدونتي — منظومة عربية سعودية تربط الباحث عن المعلومة بالخبير والشريك الموثوق.",
+    // لا احتياط: العنوان والوصف يعيشان في صفّ الصفحة ويُحرَّران من الأدمن. القياس
+    // (٢٨ أغسطس، `modonty_dev`): ١١ من ١١ صفّاً تحمل عنواناً — فالحذف لا يغيّر شيئاً
+    // اليوم، ويجعل الصفّ الفارغ غداً ظاهراً بدل أن يُغطّى بنصّ كتبه الكود.
   });
 }
 
@@ -52,7 +53,8 @@ async function AboutContent() {
     getIndustriesEnhanced({ sortBy: "clients" }),
   ]);
 
-  const pageTitle = page?.title || "عن مدونتي";
+  // عنوان الصفحة من صفّها. الاحتياط كان يكتب اسم الماركة، فيبقى بالاسم القديم بعد تغييره.
+  const pageTitle = page?.title?.trim() || "";
   const hasEditorialContent = Boolean(page?.content?.trim());
 
   // Prefer the stored, admin-validated card; build live ONLY when it is absent.
@@ -60,8 +62,10 @@ async function AboutContent() {
   const buildFallbackStructuredData = () =>
     generateStructuredData({
       type: "AboutPage",
-      name: `${pageTitle} - مدونتي`,
-      description: "مدونتي — منظومة عربية سعودية تربط الباحث عن المعلومة بالخبير والشريك الموثوق.",
+      // بلا لاحقة الماركة: هذا اسم **الصفحة** في البيانات المنظَّمة، واسم الموقع يعيش على
+      // عقدة `WebSite` وفي `og:site_name`. إلحاقه هنا كرّر الماركة وكتبها في الكود معاً.
+      name: pageTitle,
+      description: messages.seo.about.description,
       url: "/about",
     });
 

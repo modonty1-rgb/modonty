@@ -9,6 +9,7 @@ import { ProfileTabs } from "./components/profile-tabs";
 import { ActivityFeed } from "./components/activity-feed";
 import { getProfileStats, getProfileBio } from "./helpers/profile-stats";
 import { getProfileActivity } from "./helpers/profile-activity";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface ProfilePageProps {
   searchParams: Promise<{ page?: string }>;
@@ -48,8 +49,8 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
     { href: "/users/profile/bookings", label: "حجز", value: stats.bookingsCount },
   ];
   const hasAnyActivityNumbers = mobileStats.some((s) => s.value > 0);
-  const arabicCount = new Intl.NumberFormat("ar-SA");
-  const joinedText = new Intl.DateTimeFormat("ar-SA", {
+  const arabicCount = new Intl.NumberFormat(SITE_LOCALE);
+  const joinedText = new Intl.DateTimeFormat(SITE_LOCALE, {
     year: "numeric",
     month: "long",
     day: "numeric",

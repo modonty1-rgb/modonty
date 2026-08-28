@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { FAQAccordion } from "./faq-accordion";
 import { FAQSearch } from "./faq-search";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface FAQ {
   id: string;
@@ -68,7 +69,7 @@ export function FAQPageContent({ faqs, lastUpdated }: FAQPageContentProps) {
             </span>
             {lastUpdated && (
               <span>
-                آخر تحديث: {new Date(lastUpdated).toLocaleDateString("ar-SA", {
+                آخر تحديث: {new Date(lastUpdated).toLocaleDateString(SITE_LOCALE, {
                   year: "numeric",
                   month: "long",
                   day: "numeric",

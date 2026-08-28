@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 import { SavePostButton } from "./SavePostButton";
 import type { PostCardProps } from "./PostCard.types";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 /**
  * Month + year, nothing finer. A feed date answers «هل هذا حديث؟», and the exact day is
@@ -14,7 +15,7 @@ import type { PostCardProps } from "./PostCard.types";
  * on a twenty-card feed. Fixed time zone so the string never depends on where the server
  * happens to run.
  */
-const CARD_DATE = new Intl.DateTimeFormat("ar-SA-u-ca-gregory", {
+const CARD_DATE = new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
   month: "long",
   year: "numeric",
   timeZone: "Asia/Riyadh",

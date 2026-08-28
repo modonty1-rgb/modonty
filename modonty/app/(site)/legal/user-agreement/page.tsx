@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadataFromPageRow(await getUserAgreementPageForMetadata(), {
     path: "/legal/user-agreement",
     fallbackTitle: "اتفاقية المستخدم",
-    fallbackDescription: "اتفاقية استخدام منصة مدونتي - الشروط والأحكام التي تحكم استخدامك للمنصة",
+    fallbackDescription: messages.seo.userAgreement.description,
   });
 }
 
@@ -48,8 +48,10 @@ async function UserAgreementContent() {
   const storedJsonLd = page?.jsonLdStructuredData?.trim();
   const buildFallbackStructuredData = () => generateStructuredData({
     type: "WebPage",
-    name: `${pageTitle} - مدونتي`,
-    description: "اتفاقية استخدام منصة مدونتي - الشروط والأحكام التي تحكم استخدامك للمنصة",
+    // بلا لاحقة الماركة: هذا اسم **الصفحة** في البيانات المنظَّمة، واسم الموقع يعيش على
+    // عقدة `WebSite` وفي `og:site_name`. إلحاقه هنا كرّر الماركة وكتبها في الكود معاً.
+    name: pageTitle,
+    description: messages.seo.userAgreement.description,
     url: "/legal/user-agreement",
   });
 

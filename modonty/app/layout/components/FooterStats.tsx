@@ -10,6 +10,7 @@ import {
   IconTotal,
 } from "@/lib/icons";
 import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 // «بالأرقام» — site-wide traffic from GA4 (sessions / page views / activity /
 // interactions), cached ~1min so the global footer stays fast. If GA4 is
@@ -53,26 +54,26 @@ export async function FooterStats() {
             {/* Hero — الأثر الرقمي (grand total) */}
             <div className="flex flex-col items-center justify-center px-6 py-5">
               <span className="text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">
-                {grandTotal.toLocaleString("ar-SA")}
+                {grandTotal.toLocaleString(SITE_LOCALE)}
               </span>
               <span className="mt-1.5 text-[11px] font-medium text-white/75">الأثر الرقمي</span>
             </div>
             {/* Secondary */}
             <div className="grid flex-1 grid-cols-2 divide-x divide-x-reverse divide-white/[0.06] sm:grid-cols-4">
               <div className="flex flex-col items-center justify-center py-5">
-                <span className="text-lg font-black leading-none text-white/80 sm:text-xl">{ga4.events.toLocaleString("ar-SA")}</span>
+                <span className="text-lg font-black leading-none text-white/80 sm:text-xl">{ga4.events.toLocaleString(SITE_LOCALE)}</span>
                 <span className="mt-1.5 text-[11px] font-medium text-white/70">نشاط</span>
               </div>
               <div className="flex flex-col items-center justify-center py-5">
-                <span className="text-lg font-black leading-none text-white/80 sm:text-xl">{ga4.sessions.toLocaleString("ar-SA")}</span>
+                <span className="text-lg font-black leading-none text-white/80 sm:text-xl">{ga4.sessions.toLocaleString(SITE_LOCALE)}</span>
                 <span className="mt-1.5 text-[11px] font-medium text-white/70">زيارات</span>
               </div>
               <div className="hidden sm:flex flex-col items-center justify-center py-5">
-                <span className="text-lg font-black leading-none text-white/80 sm:text-xl">{ga4.pageViews.toLocaleString("ar-SA")}</span>
+                <span className="text-lg font-black leading-none text-white/80 sm:text-xl">{ga4.pageViews.toLocaleString(SITE_LOCALE)}</span>
                 <span className="mt-1.5 text-[11px] font-medium text-white/70">مشاهدات</span>
               </div>
               <div className="hidden sm:flex flex-col items-center justify-center py-5">
-                <span className="text-lg font-black leading-none text-white/80 sm:text-xl">{ga4.interactions.toLocaleString("ar-SA")}</span>
+                <span className="text-lg font-black leading-none text-white/80 sm:text-xl">{ga4.interactions.toLocaleString(SITE_LOCALE)}</span>
                 <span className="mt-1.5 text-[11px] font-medium text-white/70">تفاعلات</span>
               </div>
             </div>
@@ -105,11 +106,11 @@ export async function FooterStats() {
   return (
     <div className="w-full rounded-lg bg-primary overflow-hidden shadow-sm">
       <div className="grid grid-cols-3 sm:grid-cols-5 divide-x divide-x-reverse divide-primary-foreground/15">
-        <Stat icon={IconArticle}  label="المقالات" value={stats.articles.toLocaleString("ar-SA")} />
-        <Stat icon={IconViews}    label="مشاهدات"  value={stats.views.toLocaleString("ar-SA")} highlight />
-        <Stat icon={IconActivity} label="تفاعلات"  value={stats.interactions.toLocaleString("ar-SA")} />
-        <Stat icon={IconUsers}    label="إعجابات"  value={stats.likes.toLocaleString("ar-SA")} />
-        <Stat icon={ModontyPartnerMark}  label="الشركاء"  value={stats.partners.toLocaleString("ar-SA")} />
+        <Stat icon={IconArticle}  label="المقالات" value={stats.articles.toLocaleString(SITE_LOCALE)} />
+        <Stat icon={IconViews}    label="مشاهدات"  value={stats.views.toLocaleString(SITE_LOCALE)} highlight />
+        <Stat icon={IconActivity} label="تفاعلات"  value={stats.interactions.toLocaleString(SITE_LOCALE)} />
+        <Stat icon={IconUsers}    label="إعجابات"  value={stats.likes.toLocaleString(SITE_LOCALE)} />
+        <Stat icon={ModontyPartnerMark}  label="الشركاء"  value={stats.partners.toLocaleString(SITE_LOCALE)} />
       </div>
     </div>
   );

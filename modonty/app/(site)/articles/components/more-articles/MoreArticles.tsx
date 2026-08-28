@@ -8,6 +8,7 @@ import { buildArchiveHref, type ArchiveState } from "@/lib/articles/archive/buil
 
 import type { InfiniteListPage } from "@modonty/shared/components/infinite-list";
 import type { ArchiveArticle } from "@/lib/articles/archive/get-articles-archive";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface MoreArticlesProps {
   /** Everything the visitor filtered by — every scrolled chunk must obey the same filters. */
@@ -65,7 +66,7 @@ export function MoreArticles({ current, startIndex, initialPage }: MoreArticlesP
       renderLoading={(seen) => (
         <div className="flex items-center justify-center gap-2 border-t border-border py-4 text-muted-foreground">
           <IconLoading className="h-4 w-4 animate-spin" aria-hidden />
-          <span className="text-xs">نجيب لك المزيد… (شفت {seen.toLocaleString("ar-SA")} مقالاً)</span>
+          <span className="text-xs">نجيب لك المزيد… (شفت {seen.toLocaleString(SITE_LOCALE)} مقالاً)</span>
         </div>
       )}
       renderError={(retry) => (
@@ -82,7 +83,7 @@ export function MoreArticles({ current, startIndex, initialPage }: MoreArticlesP
       )}
       renderEnd={(seen) => (
         <p className="border-t border-border py-4 text-center text-xs text-muted-foreground">
-          خلصت المقالات — {seen.toLocaleString("ar-SA")} مقالاً.
+          خلصت المقالات — {seen.toLocaleString(SITE_LOCALE)} مقالاً.
         </p>
       )}
     />

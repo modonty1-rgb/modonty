@@ -12,6 +12,7 @@ import type { ReactNode } from "react";
 import type { FeedPost } from "@/lib/types";
 import type { ReelItem } from "@/components/shared/reels-card/ReelsCard";
 import type { ReadingTimeBucket } from "@/lib/articles/archive/reading-time-buckets";
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface PageLayoutProps {
   posts: FeedPost[];
@@ -28,7 +29,7 @@ interface PageLayoutProps {
 }
 
 export function PageLayout({ posts, hasMore, page, industries, reels, userCard, readingTimeCounts }: PageLayoutProps) {
-  const pageArabic = page.toLocaleString("ar-SA");
+  const pageArabic = page.toLocaleString(SITE_LOCALE);
   return (
     <>
       <ScrollButtons />

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl, hasBunnyAspectCrops } from "@modonty/shared/lib/bunny";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
 import { normalizeSiteEntityIdsInJson } from "@modonty/shared/lib/seo/site-entity-ids";
-import { BRAND_AR, SITE_URL } from "@/constants";
+import { SITE_URL } from "@/constants";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { FEED_ALTERNATE_TYPES } from "./feed-alternate-types";
@@ -163,8 +163,11 @@ export async function generateMetadataFromSEO(data: SEOData, options?: MetadataO
     imageAlt,
     url,
     type = "website",
-    siteName = BRAND_AR,
-    locale = "ar_SA",
+    // لا قيمة افتراضية للاسم ولا للسوق. كانت `siteName = BRAND_AR` و`locale = "ar_SA"`
+    // تعيدان حقن قيمة الكود حتى بعد أن ينظّف المستدعي نفسه — فسلسلة الاحتياطات تُصلَح من
+    // طرفها الأخير أوّلاً وإلا لم يتغيّر شيء. الغياب يبقى غياباً: الوسم لا يُبثّ.
+    siteName,
+    locale,
     firstName,
     lastName,
     twitterCreator,
@@ -215,9 +218,9 @@ export async function generateMetadataFromSEO(data: SEOData, options?: MetadataO
     title: pageTitle,
     description: description || "",
     url: canonicalUrl,
-    siteName: siteName,
+    ...(siteName && { siteName }),
     images: ogImages,
-    locale: locale,
+    ...(locale && { locale }),
     ...(localeAlternate && localeAlternate.length > 0 && { localeAlternate }),
     type: type,
   };
@@ -283,7 +286,9 @@ export async function generateMetadataFromSEO(data: SEOData, options?: MetadataO
 
   return {
     title: pageTitle,
-    description: description || "منصة مدونات احترافية لإدارة المحتوى عبر شركاء متعددين",
+    // وصفٌ مكتوب في الكود يصل جوجل باسم الصفحة وهو لا يصفها. صفحةٌ بلا وصف في القاعدة
+    // تشحن بلا وسم وصف — وجوجل تبني المقتطف من متنها، وهو أصدق من جملة عامّة تتكرّر.
+    ...(description && { description }),
     keywords: keywords || [],
     alternates: {
       canonical: canonicalUrl,

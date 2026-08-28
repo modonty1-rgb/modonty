@@ -1,4 +1,5 @@
 import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoColumnLayout";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
 import { AiDisclaimer } from "@/components/shared/ai-disclaimer/AiDisclaimer";
@@ -43,7 +44,7 @@ interface ArticlesPageLayoutProps {
  * The main column keeps the order that research produced: which field → what am I looking for →
  * how long do I have → the list.
  */
-export function ArticlesPageLayout({
+export async function ArticlesPageLayout({
   breadcrumb,
   articles,
   total,
@@ -52,6 +53,8 @@ export function ArticlesPageLayout({
   current,
   scopeLabel,
 }: ArticlesPageLayoutProps) {
+  const { siteName } = await getPageSeoDefaults();
+
   return (
     <>
     <TwoColumnLayout
@@ -102,7 +105,8 @@ export function ArticlesPageLayout({
       }
       rail={
         <StickyRail
-          label="عن مدونتي"
+          // تسمية الرَّف تحمل اسم الموقع — من الإعدادات لا من الكود.
+          label={siteName ? `عن ${siteName}` : "عن المنصّة"}
           className="w-full shrink-0 self-start lg:w-[300px] min-[1240px]:sticky"
         >
           {/* MOBILE: this rail stacked BELOW twenty cards — 458px of trust copy starting at

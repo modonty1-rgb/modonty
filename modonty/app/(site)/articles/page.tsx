@@ -23,6 +23,8 @@ import {
   type ReadingTimeBucket,
 } from "@/lib/articles/archive/reading-time-buckets";
 import { ArticlesPageLayout } from "./components/page-layout/ArticlesPageLayout";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
+import { messages } from "@/lib/i18n/messages";
 
 const SORTS: ArchiveSort[] = ["newest", "mostRead", "mostEngaged"];
 const TIMES: ReadingTimeBucket[] = ["short", "medium", "long"];
@@ -103,11 +105,14 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
     : undefined;
 
   const base = scope ? `مقالات ${scope}` : "كل المقالات";
-  const title = `${base}${timeLabel ? ` — ${timeLabel}` : ""}${page > 1 ? ` — صفحة ${page}` : ""} - مدونتي`;
+  // اللاحقة من `Settings.siteName` لا من الكود — وبغيابه يُشحن العنوان وحده.
+  const { siteName } = await getPageSeoDefaults();
+  const heading = `${base}${timeLabel ? ` — ${timeLabel}` : ""}${page > 1 ? ` — صفحة ${page}` : ""}`;
+  const title = siteName ? `${heading} - ${siteName}` : heading;
 
   const description = scope
-    ? `اقرأ مقالات ${scope} على مدونتي — محتوى يكتبه شركاء موثوقون، مرتّب بالأحدث والأكثر قراءة.`
-    : "كل مقالات مدونتي في مكان واحد — صفِّ بالمجال أو التصنيف، واختر حسب الوقت اللي عندك.";
+    ? messages.seo.articles.scopedDescription.replace("{scope}", scope)
+    : messages.seo.articles.description;
 
   /**
    * Every filter combination gets its OWN canonical, not one pointing at `/articles`: the filtered
