@@ -17,6 +17,7 @@ import { backfillMediaDimensions } from "./dimensions-backfill";
 import { sweepCloudinaryOrphans } from "./cloudinary-orphans";
 import { hardDeleteOldSoftDeletedComments } from "./soft-deleted-comments";
 import { seedIntakeForm } from "./seed-intake";
+import { seedAiPrompts } from "./seed-ai-prompts";
 import { scanOrphans } from "./orphan-scan";
 
 /** The public cache tags a fix can make stale — same union the revalidate helper accepts. */
@@ -402,6 +403,23 @@ export async function runStepIntakeSeed(): Promise<MaintenanceStepResult> {
     return ok("intakeSeed", "Intake Questionnaire Seeded", created, parts.join(" · ") || undefined);
   } catch (e) {
     return fail("intakeSeed", "Intake Questionnaire Seeded", e);
+  }
+}
+
+/**
+ * تعبئة برومبتات الذكاء الاصطناعي — إنشاء فقط. يُعاد تشغيلها بأمان: بعد أن يعدّل خالد
+ * برومبتاً من الشاشة ترجع صفر إنشاءً، ولا تُرجع النصّ القديم أبداً.
+ */
+export async function runStepAiPrompts(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await seedAiPrompts();
+    const parts: string[] = [];
+    if (r.created) parts.push(`${r.created} created: ${r.keys.join(", ")}`);
+    if (r.metaUpdated) parts.push(`${r.metaUpdated} labels refreshed`);
+    if (r.untouched) parts.push(`${r.untouched} already in DB`);
+    return ok("aiPrompts", "AI Prompts Seeded", r.created, parts.join(" · ") || undefined);
+  } catch (e) {
+    return fail("aiPrompts", "AI Prompts Seeded", e);
   }
 }
 

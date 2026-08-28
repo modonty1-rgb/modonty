@@ -24,6 +24,7 @@ import {
   runStepOrphanRows,
   runStepSoftDeletedComments,
   runStepIntakeSeed,
+  runStepAiPrompts,
   revalidateDatabasePage,
   logMaintenanceRunAction,
   flushModontyAfterMaintenance,
@@ -62,6 +63,7 @@ const STEPS: StepDef[] = [
   // Redesign as review-before-delete (MASTER-TODO).
   { key: "softDeletedComments", label: "Soft-Deleted Comments (30d+)", description: "Permanently delete comments marked DELETED older than 30 days", runner: runStepSoftDeletedComments },
   { key: "intakeSeed", label: "Intake Questionnaire", description: "Bootstrap the client intake questions into the DB (create-only — never overwrites edits)", runner: runStepIntakeSeed },
+  { key: "aiPrompts", label: "AI Prompts", description: "Bootstrap the 7 AI prompts into the DB from their code defaults (create-only — never overwrites an edited prompt)", runner: runStepAiPrompts },
 ];
 
 interface StepState {

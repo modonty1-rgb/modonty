@@ -30,6 +30,7 @@ import {
   Folder,
   Tag,
   UserPen,
+  Bot,
   Factory,
   Info,
   CircleHelp,
@@ -264,6 +265,9 @@ const menuGroups: MenuGroup[] = [
           { icon: FileText, label: "Articles", href: "/settings/articles" },
         ],
       },
+      // بند مستقلّ لا داخل مجموعة فرعية (خالد، ٢٨ أغسطس: «أبغى مودو صفحة لوحده»):
+      // شخصية المساعد وتعليماته ليست إعداداً من إعدادات الصفحات — هي ما يقوله لكل زائر.
+      { icon: Bot, label: "Modo AI", href: "/modonty/modo" },
       { icon: UserPen, label: "Authors", href: "/authors" },
       // Visible homepage content (not SEO) — future home for landing/hero options.
       { icon: PanelTop, label: "Homepage Banner", href: "/settings/banner" },

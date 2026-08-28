@@ -13,11 +13,14 @@
 
 import { BRAND_LOGO_URL, BRAND_CHARACTER_URL } from "@modonty/shared/lib/brand-assets";
 
-// Display name — Arabic UI. Official spelling = «مدونتي» (from «مدوّنة»), NOT «مودونتي» (wrong transliteration).
-export const BRAND_AR = "مدونتي";
-
-// Latin name — used in JSON-LD Organization/WebSite name, og:site_name, email "from".
-export const BRAND_EN = "Modonty";
+// `BRAND_AR` و`BRAND_EN` حُذفا في ٢٨ أغسطس ٢٠٢٦، بعد أن سقط آخر مستهلك لهما.
+//
+// اسم المنصّة صار يُقرأ من `Settings.siteName` و`Settings.alternateName` — يُحرَّران من
+// الأدمن. وآخر ما كان يمسك بالثابتَين هو برومبتات مودو الثلاثة، ولمّا انتقلت إلى جدول
+// `ai_prompts` صار الاسم يُحقن فيها كمتغيّر `{siteName}` من الإعدادات.
+//
+// ولا يُعادان: اسمٌ في الكود يعني أن تغييره من الأدمن يترك نسخةً قديمة تعمل في الظلّ —
+// وهذا بالضبط ما أنتج ثلاث تهجئات للماركة على الموقع نفسه (BRAND-SPELLING).
 
 // The one platform-brand author. Its /authors/[slug] page + article author node render as
 // the Modonty Organization (not a Person). Locked to this slug in admin (update-author).

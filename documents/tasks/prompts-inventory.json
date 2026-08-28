@@ -10,225 +10,152 @@
     "OpenAI",
     "Gemini"
   ],
-  "chars": 4822,
+  "chars": 4504,
+  "storage": "جدول `ai_prompts` — الكود يقرأ بالمفتاح، ونصّ `prompt-defaults.ts` احتياطٌ لا مصدر",
   "rows": [
     {
       "key": "modo.identity",
       "app": "modonty",
       "provider": "Cohere",
-      "surface": "مودو شات — سؤال عن نفسه",
-      "file": "modonty/app/(site)/modo-chat/helpers/build-identity-prompt.ts",
-      "fn": "buildIdentityPrompt",
-      "anchor": "أنت \"مودو\"، مساعد منصّة",
-      "vars": [
-        "BRAND_AR"
+      "title": "مودو — يعرّف بنفسه",
+      "surface": "مودو شات، لمّا يسأله الزائر «مين أنت؟» أو يسلّم عليه",
+      "onEmpty": "مودو يجاوب كنموذج خام: يقول «أنا نموذج لغوي» ويخترع خدمات وأسعاراً.",
+      "body": "أنت \"مودو\"، مساعد منصّة {siteName}.\n\nمن أنت: مساعد يساعد الزائر يوصل لمقالات {siteName} وللشركاء الموثوقين فيها.\n\nالقواعد:\n١. ردّ قصير وودّي — سطران أو ثلاثة على الأكثر.\n٢. عرّف بنفسك وبما تقدر تساعد فيه، واطلب منه يسأل سؤاله.\n٣. لا تقل \"لا تتوفر لديّ معلومات\" — هذا سؤال عنك أنت، لا عن المحتوى.\n٤. لا تخترع خدمات أو أسعاراً أو أسماء شركاء.\n٥. عربي واضح وبسيط.",
+      "requiredVars": [
+        "siteName"
       ],
-      "entry": [
+      "callers": [
+        "modonty/app/(site)/modo-chat/api/article/[slug]/route.ts:269",
         "modonty/app/(site)/modo-chat/api/chat/route.ts:324",
-        "modonty/app/(site)/modo-chat/api/article/[slug]/route.ts:270"
+        "modonty/lib/ai/resolve-modo-prompt.ts:34"
       ],
-      "what": "التحيّة و«مين أنت؟» — لا مستندات خلفها، فلها برومبت ثالث خاصّ.",
-      "onEmpty": "مودو يجاوب كنموذج خام: يقول «أنا نموذج لغوي» ويخترع خدمات.",
-      "line": 11,
-      "endLine": 20,
-      "chars": 374,
+      "chars": 360,
       "promptLines": 10,
-      "varsInBody": [
-        "BRAND_AR"
-      ],
-      "varsMissing": [],
       "lang": "ar"
     },
     {
       "key": "modo.category",
       "app": "modonty",
       "provider": "Cohere",
-      "surface": "مودو شات — سؤال داخل تصنيف",
-      "file": "modonty/app/(site)/modo-chat/helpers/build-category-db-prompt.ts",
-      "fn": "buildCategoryDbPrompt",
-      "anchor": "مساعد متخصص حصراً في موضوع",
-      "vars": [
-        "BRAND_AR",
-        "categoryName"
-      ],
-      "entry": [
-        "modonty/app/(site)/modo-chat/api/chat/route.ts:324"
-      ],
-      "what": "الوضع الصارم: يجيب من مقالات المنصّة وحدها، وبغيابها يقول الجملة المحدَّدة.",
+      "title": "مودو — يجيب من مقالات تصنيف",
+      "surface": "مودو شات، سؤال عامّ داخل تصنيف — الوضع الصارم",
       "onEmpty": "تسقط قاعدة «لا معرفة خارجية» — مودو يجيب من معرفته العامّة كأنها محتوانا.",
-      "line": 6,
-      "endLine": 14,
-      "chars": 598,
-      "promptLines": 9,
-      "varsInBody": [
-        "BRAND_AR",
+      "body": "أنت \"{siteName} الذكي\"، مساعد متخصص حصراً في موضوع \"{categoryName}\" على منصة {siteName} للمحتوى.\n\nالقواعد الصارمة — لا تخالفها أبداً:\n١. أجب فقط من المستندات المرفقة — لا تستخدم أي معرفة خارجية.\n٢. إذا لم تجد إجابة واضحة في المستندات، قل بالضبط: \"لا تتوفر لديّ معلومات كافية حول هذا السؤال في محتوى {siteName}.\"\n٣. الرد باللغة العربية الفصيحة الواضحة — ٣ فقرات كحد أقصى.\n٤. لا تستخدم أبداً عبارات مثل: \"وفقاً للمستندات\"، \"بناءً على السياق\"، \"في النص المقدم\".\n٥. ابدأ الإجابة مباشرة — لا مقدمات ولا تكرار للسؤال.\n٦. لا تذكر أنك \"ذكاء اصطناعي\" أو \"نموذج لغوي\" — أنت مساعد {siteName}.",
+      "requiredVars": [
+        "siteName",
         "categoryName"
       ],
-      "varsMissing": [],
+      "callers": [
+        "modonty/app/(site)/modo-chat/api/chat/route.ts:325",
+        "modonty/lib/ai/resolve-modo-prompt.ts:34"
+      ],
+      "chars": 581,
+      "promptLines": 9,
       "lang": "ar"
     },
     {
       "key": "modo.article",
       "app": "modonty",
       "provider": "Cohere",
-      "surface": "مودو شات — قارئ داخل مقال",
-      "file": "modonty/app/(site)/modo-chat/helpers/build-article-db-prompt.ts",
-      "fn": "buildArticleDbPrompt",
-      "anchor": "تساعد القارئ في فهم مقال",
-      "vars": [
-        "BRAND_AR",
-        "articleTitle",
-        "categoryName"
-      ],
-      "entry": [
-        "modonty/app/(site)/modo-chat/api/article/[slug]/route.ts:271"
-      ],
-      "what": "الإجابة من نصّ هذا المقال وحده — أضيق نطاقاً من برومبت التصنيف.",
+      "title": "مودو — يجيب من مقال بعينه",
+      "surface": "مودو شات، والقارئ فاتح مقالاً ويسأل عنه",
       "onEmpty": "يفقد ربطه بالمقال، فيجيب عن الموضوع عموماً لا عمّا يقرؤه الزائر أمامه.",
-      "line": 6,
-      "endLine": 14,
-      "chars": 456,
-      "promptLines": 9,
-      "varsInBody": [
-        "BRAND_AR",
+      "body": "أنت \"{siteName} الذكي\"، تساعد القارئ في فهم مقال \"{articleTitle}\" ضمن موضوع \"{categoryName}\" على منصة {siteName}.\n\nالقواعد الصارمة — لا تخالفها أبداً:\n١. أجب حصراً من محتوى المقال المرفق.\n٢. إذا لم يتناول المقال هذا الجانب مباشرةً، قل: \"هذا المقال لا يتناول هذا الجانب بشكل مباشر.\"\n٣. الرد باللغة العربية الفصيحة الواضحة — ٣ فقرات كحد أقصى.\n٤. لا تستخدم عبارات مثل: \"وفقاً للمستندات\"، \"في النص\".\n٥. لا تخترع معلومات.\n٦. ابدأ الإجابة مباشرة.",
+      "requiredVars": [
+        "siteName",
         "articleTitle",
         "categoryName"
       ],
-      "varsMissing": [],
+      "callers": [
+        "modonty/app/(site)/modo-chat/api/article/[slug]/route.ts:270",
+        "modonty/lib/ai/resolve-modo-prompt.ts:34"
+      ],
+      "chars": 440,
+      "promptLines": 9,
       "lang": "ar"
     },
     {
       "key": "admin.article.system",
       "app": "admin",
       "provider": "OpenAI",
-      "surface": "توليد مقال — رسالة النظام",
-      "file": "admin/lib/openai-article-generator.ts",
-      "fn": "generateComprehensiveArticleData",
-      "anchor": "You are a senior Arabic article editor",
-      "vars": [],
-      "entry": [
-        "admin/app/(dashboard)/articles/actions/generate-article-ai.ts:3"
+      "title": "توليد مقال — دور المحرّر",
+      "surface": "زرّ «توليد بالذكاء الاصطناعي» في شاشة المقال — رسالة النظام",
+      "onEmpty": "يختفي الدور ومعايير الـHTML — المخرَج يفقد بنية العناوين وقد يرجع markdown يكسر المحرّر.",
+      "body": "You are a senior Arabic article editor with 15+ years of experience in content creation and SEO optimization. Your expertise includes:\n- Creating high-quality, publication-ready Arabic content\n- Perfect Arabic grammar, RTL formatting, and cultural context\n- SEO optimization with natural keyword integration\n- Structuring content with proper hierarchy and readability\n- Generating comprehensive, valuable content that serves readers\n\nYour primary focus is QUALITY: depth, accuracy, readability, and value. SEO optimization is secondary but important.\n\nAlways generate content in TipTap-compatible HTML format. Use only these HTML tags:\n- <h1>, <h2>, <h3> for headings\n- <p> for paragraphs\n- <ul>, <ol>, <li> for lists\n- <strong>, <em> for emphasis\n- <a href=\"...\"> for links\n- <blockquote> for quotes\n\nDO NOT use:\n- Inline styles (style=\"...\")\n- Script tags\n- Complex nested structures\n- Non-semantic HTML\n\nAlways respond with valid JSON only, no markdown formatting or code blocks.",
+      "requiredVars": [],
+      "callers": [
+        "admin/lib/ai/resolve-admin-prompt.ts:17",
+        "admin/lib/openai-article-generator.ts:49"
       ],
-      "what": "يحدّد دور المحرّر ولغته ومعايير السيو. مكتوب بالإنجليزية.",
-      "onEmpty": "يختفي الدور والمعايير — المخرَج يفقد بنية العناوين وتكامل الكلمات المفتاحية.",
-      "note": "البرومبت الوحيد الإنجليزي في المستودع.",
-      "line": 45,
-      "endLine": 68,
-      "chars": 1009,
+      "chars": 982,
       "promptLines": 24,
-      "varsInBody": [],
-      "varsMissing": [],
       "lang": "en"
     },
     {
       "key": "admin.article.user",
       "app": "admin",
       "provider": "OpenAI",
-      "surface": "توليد مقال — رسالة الطلب",
-      "file": "admin/lib/openai-article-generator.ts",
-      "fn": "generateComprehensiveArticleData",
-      "anchor": "اكتب مقالاً احترافياً باللغة العربية",
-      "vars": [
+      "title": "توليد مقال — الطلب",
+      "surface": "نفس الزرّ — الطلب نفسه: الكلمات المفتاحية والعميل والطول",
+      "onEmpty": "لا طلب أصلاً — النداء يرجع محتوى بلا موضوع ولا بنية JSON متوقَّعة.",
+      "body": "اكتب مقالاً احترافياً باللغة العربية حول الموضوع التالي:\n\nالكلمات المفتاحية: \"{keywords}\"\n{clientLine}\n{categoryLine}\nالطول المطلوب: {lengthLabel} ({targetWordCount} كلمة تقريباً)\n\nالمتطلبات:\n1. العنوان: عنوان جذاب ومحسّن لـ SEO (40-60 حرفاً)\n2. المحتوى: مقال كامل بصيغة TipTap HTML مع:\n   - هيكل واضح مع عناوين فرعية (h1, h2, h3)\n   - فقرات منظمة ومقروءة\n   - قوائم حيثما يكون مناسباً\n   - تأكيد على النقاط المهمة (<strong>, <em>)\n   - روابط داخلية/خارجية ذات صلة\n3. الملخص: ملخص قصير (130-170 حرفاً)\n4. SEO Title: عنوان محسّن (40-60 حرفاً)\n5. SEO Description: وصف محسّن (130-170 حرفاً)\n6. الكلمات المفتاحية: 5-8 كلمات مفتاحية ذات صلة\n7. الأسئلة الشائعة: 3-5 أسئلة شائعة مع إجابات مفصلة\n\nأرجع JSON فقط بالشكل التالي (بدون markdown أو code blocks):\n{\n  \"title\": \"عنوان المقال\",\n  \"content\": \"<h1>العنوان الرئيسي</h1><p>المحتوى بصيغة TipTap HTML...</p>\",\n  \"excerpt\": \"ملخص المقال (130-170 حرفاً)\",\n  \"seoTitle\": \"عنوان SEO (40-60 حرفاً)\",\n  \"seoDescription\": \"وصف SEO (130-170 حرفاً)\",\n  \"keywords\": [\"كلمة 1\", \"كلمة 2\", \"كلمة 3\"],\n  \"faqs\": [\n    {\"question\": \"سؤال 1؟\", \"answer\": \"إجابة مفصلة...\"},\n    {\"question\": \"سؤال 2؟\", \"answer\": \"إجابة مفصلة...\"}\n  ],\n  \"wordCount\": {targetWordCount},\n  \"readingTimeMinutes\": {readingTimeMinutes},\n  \"contentDepth\": \"{length}\"\n}\n\nتأكد من:\n- المحتوى جاهز للنشر مباشرة\n- HTML صحيح وصالح لـ TipTap\n- اللغة العربية صحيحة ومحترفة\n- الكلمات المفتاحية مدمجة بشكل طبيعي\n- المحتوى ذو قيمة حقيقية للقارئ",
+      "requiredVars": [
         "keywords",
-        "clientName",
-        "categoryName",
-        "length",
-        "targetWordCount"
-      ],
-      "entry": [
-        "admin/app/(dashboard)/articles/actions/generate-article-ai.ts:3"
-      ],
-      "what": "الطلب نفسه: الكلمات المفتاحية والعميل والتصنيف والطول المستهدف.",
-      "onEmpty": "لا طلب أصلاً — النداء يرجع محتوى بلا موضوع.",
-      "line": 70,
-      "endLine": 113,
-      "chars": 1605,
-      "promptLines": 44,
-      "varsInBody": [
-        "keywords",
-        "clientName",
-        "categoryName",
-        "length",
         "targetWordCount",
-        "Math"
+        "lengthLabel",
+        "length",
+        "readingTimeMinutes"
       ],
-      "varsMissing": [],
+      "callers": [
+        "admin/lib/ai/resolve-admin-prompt.ts:18",
+        "admin/lib/openai-article-generator.ts:50"
+      ],
+      "chars": 1437,
+      "promptLines": 44,
       "lang": "ar"
     },
     {
       "key": "admin.image.article",
       "app": "admin",
       "provider": "Gemini",
-      "surface": "سيو صورة داخل مقال",
-      "file": "admin/lib/ai/gemini-image-seo.ts",
-      "fn": "generateImageSeoField",
-      "anchor": "الصورة التالية تخص المقال أدناه",
-      "vars": [
-        "aLines",
+      "title": "سيو صورة — داخل مقال",
+      "surface": "مكتبة الوسائط: توليد نصّ بديل ووصف لصورة تخصّ مقالاً",
+      "onEmpty": "يسقط قيد «لا تخترع تفاصيل» — نصوص بديلة فيها أرقام وجوائز موهومة تصل جوجل.",
+      "body": "أنت كاتب محتوى سعودي محترف متخصص في سيو الصور. الصورة التالية تخص المقال أدناه — اكتب نصاً يعكس موضوع المقال نفسه.\nمهم: لا تحلّل الصورة نفسها؛ استند لموضوع المقال.\n\nبيانات المقال:\n{articleLines}\n\nلا تخترع تفاصيل غير مؤكدة (أرقام، أسماء، جوائز). اكتب بلهجة سعودية خليجية طبيعية وواضحة.\n\nاكتب: {spec}\nأعِد النتيجة بصيغة JSON فقط: { \"text\": \"...\" }",
+      "requiredVars": [
+        "articleLines",
         "spec"
       ],
-      "entry": [
-        "admin/app/(dashboard)/media/actions/generate-image-seo-ai.ts:5"
+      "callers": [
+        "admin/lib/ai/gemini-image-seo.ts:69",
+        "admin/lib/ai/resolve-admin-prompt.ts:19"
       ],
-      "what": "نصّ بديل ووصف للصورة مستنداً إلى موضوع المقال لا إلى تحليل الصورة.",
-      "onEmpty": "يختفي قيد «لا تخترع تفاصيل» — نصوص بديلة فيها أرقام وجوائز موهومة تصل جوجل.",
-      "line": 66,
-      "endLine": 75,
-      "chars": 368,
+      "chars": 345,
       "promptLines": 10,
-      "varsInBody": [
-        "aLines",
-        "spec"
-      ],
-      "varsMissing": [],
       "lang": "ar"
     },
     {
       "key": "admin.image.gallery",
       "app": "admin",
       "provider": "Gemini",
-      "surface": "سيو صورة في معرض الشريك",
-      "file": "admin/lib/ai/gemini-image-seo.ts",
-      "fn": "generateImageSeoField",
-      "anchor": "هذه صورة من معرض أعمال العميل",
-      "vars": [
-        "lines",
-        "indexNote",
-        "spec"
-      ],
-      "entry": [
-        "admin/app/(dashboard)/media/actions/generate-image-seo-ai.ts:5"
-      ],
-      "what": "نفس المهمّة لصور المعرض، مستندةً إلى بيانات العميل.",
+      "title": "سيو صورة — معرض الشريك",
+      "surface": "مكتبة الوسائط: نفس المهمّة لصور معارض الشركاء",
       "onEmpty": "نفس الخطر، وعلى صفحات الشركاء التي تُفهرس.",
-      "line": 77,
-      "endLine": 87,
-      "chars": 412,
-      "promptLines": 11,
-      "varsInBody": [
-        "lines",
+      "body": "أنت كاتب محتوى سعودي محترف متخصص في سيو الصور. هذه صورة من معرض أعمال العميل التالي.\nمهم: لا تحلّل الصورة نفسها — اكتب بناءً على بيانات العميل أدناه فقط.\n\nبيانات العميل:\n{clientLines}\n\n{indexNote}\nلا تخترع تفاصيل غير مؤكدة (أجهزة محددة، جوائز، أرقام، أسماء). اكتب بلهجة سعودية خليجية طبيعية وواضحة.\n\nاكتب: {spec}\nأعِد النتيجة بصيغة JSON فقط: { \"text\": \"...\" }",
+      "requiredVars": [
+        "clientLines",
         "indexNote",
         "spec"
       ],
-      "varsMissing": [],
+      "callers": [
+        "admin/lib/ai/gemini-image-seo.ts:74",
+        "admin/lib/ai/resolve-admin-prompt.ts:20"
+      ],
+      "chars": 359,
+      "promptLines": 11,
       "lang": "ar"
     }
   ],
-  "dead": [
-    {
-      "file": "admin/lib/openai-seed.ts",
-      "prompts": 6,
-      "lines": 609,
-      "exports": [
-        "generateArticleWithOpenAI",
-        "generateCategoriesWithOpenAI",
-        "generateTagsWithOpenAI",
-        "generateIndustriesWithOpenAI",
-        "generateArticleTitlesWithOpenAI",
-        "generateFAQTemplatesWithOpenAI"
-      ],
-      "why": "صفر مستورد في المستودع كلّه، وصفر مستهلك لكل تصدير من الستّة. وفيه كتلة «السياق الصناعي» مكرَّرة ستّ مرّات بصياغتين مختلفتين — انحراف نسخٍ ولصق، وهو بالضبط ما يمنعه الجدول الواحد."
-    }
-  ],
+  "dead": [],
   "problems": []
 }

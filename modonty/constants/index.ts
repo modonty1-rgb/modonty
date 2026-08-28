@@ -11,8 +11,6 @@
  */
 
 export {
-  BRAND_AR,
-  BRAND_EN,
   MODONTY_AUTHOR_SLUG,
   SITE_URL,
   LOGO_URL,

@@ -13,8 +13,7 @@ import { streamAnswerResponse } from "@/app/(site)/modo-chat/data/stream-answer-
 import { saveChatbotMessage } from "@/app/(site)/modo-chat/data/save-chatbot-message";
 import { isOutOfScope } from "@/app/(site)/modo-chat/data/is-out-of-scope";
 import { isGreetingOrShortPleasantry } from "@/app/(site)/modo-chat/helpers/is-greeting";
-import { buildArticleDbPrompt } from "@/app/(site)/modo-chat/helpers/build-article-db-prompt";
-import { buildIdentityPrompt } from "@/app/(site)/modo-chat/helpers/build-identity-prompt";
+import { resolveModoPrompt } from "@/lib/ai/resolve-modo-prompt";
 
 import type { ChatMessage } from "@/app/(site)/modo-chat/data/cohere-client";
 import type { ApiResponse } from "@/lib/types";
@@ -267,8 +266,8 @@ export async function POST(
     }
 
     const systemPrompt = isIdentityQuestion
-      ? buildIdentityPrompt()
-      : buildArticleDbPrompt(article.title, categoryName);
+      ? await resolveModoPrompt("modo.identity")
+      : await resolveModoPrompt("modo.article", { articleTitle: article.title, categoryName });
 
     const chatMessages: ChatMessage[] = [
       { role: "system", content: systemPrompt },

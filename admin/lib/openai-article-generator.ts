@@ -1,5 +1,7 @@
 import OpenAI from "openai";
 
+import { resolveAdminPrompt } from "./ai/resolve-admin-prompt";
+
 export interface GeneratedArticleData {
   title: string;
   content: string; // TipTap HTML format
@@ -42,75 +44,19 @@ export async function generateComprehensiveArticleData(params: {
   const targetWordCount =
     length === "short" ? 500 : length === "medium" ? 1000 : 2000;
 
-  const systemMessage = `You are a senior Arabic article editor with 15+ years of experience in content creation and SEO optimization. Your expertise includes:
-- Creating high-quality, publication-ready Arabic content
-- Perfect Arabic grammar, RTL formatting, and cultural context
-- SEO optimization with natural keyword integration
-- Structuring content with proper hierarchy and readability
-- Generating comprehensive, valuable content that serves readers
+  // النصّان من `ai_prompts` (`admin.article.system` · `admin.article.user`) — يُحرَّران من
+  // الأدمن لا من هنا. والاحتياط عند غياب الصفّ هو نفس النصّ في `prompt-defaults.ts`.
+  const systemMessage = await resolveAdminPrompt("admin.article.system");
+  const userPrompt = await resolveAdminPrompt("admin.article.user", {
+    keywords,
+    clientLine: clientName ? `العميل: ${clientName}` : "",
+    categoryLine: categoryName ? `التصنيف: ${categoryName}` : "",
+    lengthLabel: length === "short" ? "قصير" : length === "medium" ? "متوسط" : "طويل",
+    targetWordCount,
+    readingTimeMinutes: Math.ceil(targetWordCount / 200),
+    length,
+  });
 
-Your primary focus is QUALITY: depth, accuracy, readability, and value. SEO optimization is secondary but important.
-
-Always generate content in TipTap-compatible HTML format. Use only these HTML tags:
-- <h1>, <h2>, <h3> for headings
-- <p> for paragraphs
-- <ul>, <ol>, <li> for lists
-- <strong>, <em> for emphasis
-- <a href="..."> for links
-- <blockquote> for quotes
-
-DO NOT use:
-- Inline styles (style="...")
-- Script tags
-- Complex nested structures
-- Non-semantic HTML
-
-Always respond with valid JSON only, no markdown formatting or code blocks.`;
-
-  const userPrompt = `اكتب مقالاً احترافياً باللغة العربية حول الموضوع التالي:
-
-الكلمات المفتاحية: "${keywords}"
-${clientName ? `العميل: ${clientName}` : ''}
-${categoryName ? `التصنيف: ${categoryName}` : ''}
-الطول المطلوب: ${length === 'short' ? 'قصير' : length === 'medium' ? 'متوسط' : 'طويل'} (${targetWordCount} كلمة تقريباً)
-
-المتطلبات:
-1. العنوان: عنوان جذاب ومحسّن لـ SEO (40-60 حرفاً)
-2. المحتوى: مقال كامل بصيغة TipTap HTML مع:
-   - هيكل واضح مع عناوين فرعية (h1, h2, h3)
-   - فقرات منظمة ومقروءة
-   - قوائم حيثما يكون مناسباً
-   - تأكيد على النقاط المهمة (<strong>, <em>)
-   - روابط داخلية/خارجية ذات صلة
-3. الملخص: ملخص قصير (130-170 حرفاً)
-4. SEO Title: عنوان محسّن (40-60 حرفاً)
-5. SEO Description: وصف محسّن (130-170 حرفاً)
-6. الكلمات المفتاحية: 5-8 كلمات مفتاحية ذات صلة
-7. الأسئلة الشائعة: 3-5 أسئلة شائعة مع إجابات مفصلة
-
-أرجع JSON فقط بالشكل التالي (بدون markdown أو code blocks):
-{
-  "title": "عنوان المقال",
-  "content": "<h1>العنوان الرئيسي</h1><p>المحتوى بصيغة TipTap HTML...</p>",
-  "excerpt": "ملخص المقال (130-170 حرفاً)",
-  "seoTitle": "عنوان SEO (40-60 حرفاً)",
-  "seoDescription": "وصف SEO (130-170 حرفاً)",
-  "keywords": ["كلمة 1", "كلمة 2", "كلمة 3"],
-  "faqs": [
-    {"question": "سؤال 1؟", "answer": "إجابة مفصلة..."},
-    {"question": "سؤال 2؟", "answer": "إجابة مفصلة..."}
-  ],
-  "wordCount": ${targetWordCount},
-  "readingTimeMinutes": ${Math.ceil(targetWordCount / 200)},
-  "contentDepth": "${length}"
-}
-
-تأكد من:
-- المحتوى جاهز للنشر مباشرة
-- HTML صحيح وصالح لـ TipTap
-- اللغة العربية صحيحة ومحترفة
-- الكلمات المفتاحية مدمجة بشكل طبيعي
-- المحتوى ذو قيمة حقيقية للقارئ`;
 
   try {
     const response = await openaiClient.chat.completions.create({

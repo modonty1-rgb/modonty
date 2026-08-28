@@ -1,5 +1,7 @@
 import "server-only";
 
+import { resolveAdminPrompt } from "./resolve-admin-prompt";
+
 // Gemini → alt text + description for one gallery image, written PURELY from the owning
 // client's data — the image itself is NOT analysed (the doctor uploads case photos; pixel
 // analysis reads generic/wrong, the client's field/city/services are what matter). Same REST
@@ -63,28 +65,17 @@ export async function generateImageSeoField(
       ctx.clientName && `- الناشر: ${ctx.clientName}${ctx.city ? ` — ${ctx.city}` : ""}`,
     ].filter(Boolean);
 
-    prompt = `أنت كاتب محتوى سعودي محترف متخصص في سيو الصور. الصورة التالية تخص المقال أدناه — اكتب نصاً يعكس موضوع المقال نفسه.
-مهم: لا تحلّل الصورة نفسها؛ استند لموضوع المقال.
-
-بيانات المقال:
-${aLines.join("\n")}
-
-لا تخترع تفاصيل غير مؤكدة (أرقام، أسماء، جوائز). اكتب بلهجة سعودية خليجية طبيعية وواضحة.
-
-اكتب: ${spec}
-أعِد النتيجة بصيغة JSON فقط: { "text": "..." }`;
+    // النصّ من `ai_prompts` تحت `admin.image.article` — يُحرَّر من الأدمن لا من هنا.
+    prompt = await resolveAdminPrompt("admin.image.article", {
+      articleLines: aLines.join("\n"),
+      spec,
+    });
   } else {
-    prompt = `أنت كاتب محتوى سعودي محترف متخصص في سيو الصور. هذه صورة من معرض أعمال العميل التالي.
-مهم: لا تحلّل الصورة نفسها — اكتب بناءً على بيانات العميل أدناه فقط.
-
-بيانات العميل:
-${lines.join("\n") || "(لا تتوفر بيانات كافية)"}
-
-${indexNote}
-لا تخترع تفاصيل غير مؤكدة (أجهزة محددة، جوائز، أرقام، أسماء). اكتب بلهجة سعودية خليجية طبيعية وواضحة.
-
-اكتب: ${spec}
-أعِد النتيجة بصيغة JSON فقط: { "text": "..." }`;
+    prompt = await resolveAdminPrompt("admin.image.gallery", {
+      clientLines: lines.join("\n") || "(لا تتوفر بيانات كافية)",
+      indexNote,
+      spec,
+    });
   }
 
   const body = {

@@ -552,7 +552,7 @@ const APP_AR = { modonty: "مدونتي", admin: "الأدمن", console: "ال�
 
 const promptsHTML = !PR ? "" : `<article class="report">
   <h3>البرومبت — ${PR.live} حيّاً في ${Object.keys(PR.byApp).length} تطبيقين</h3>
-  <p class="when">${Object.entries(PR.byApp).map(([a, n]) => `${APP_AR[a] ?? a} ${n}`).join(" · ")} · الكونسول صفر · المزوّدون: ${PR.providers.join(" · ")} · ${PR.chars.toLocaleString("ar-SA")} محرفاً · يُعاد بأمر <code>node documents/tasks/scan-prompts.mjs</code></p>
+  <p class="when">${Object.entries(PR.byApp).map(([a, n]) => `${APP_AR[a] ?? a} ${n}`).join(" · ")} · الكونسول صفر · المزوّدون: ${PR.providers.join(" · ")} · ${PR.chars.toLocaleString("ar-SA")} محرفاً · ${esc(PR.storage ?? "")} · يُعاد بأمر <code>node documents/tasks/scan-prompts.mjs</code></p>
   <p class="outcome"><b>الهدف: كلها تُقرأ من القاعدة وتُحرَّر من الأدمن.</b> البرومبت سياسة وأسلوب لا منطق — يتغيّر بالذوق لا بالمتطلّبات، فتعديله لا يفترض أن يمرّ بنشر. وتكلفته صفر على الزائر: يُقرأ مرّة على السيرفر قبل نداء النموذج، والنداء أصلاً يضرب القاعدة وينتظر النموذج مئات الملّي ثانية.</p>
   ${PR.problems.length ? `<p class="state st-working">⚠️ ${PR.problems.length} تحذيراً من التحقّق: ${PR.problems.map(esc).join(" · ")}</p>` : ""}
   <div class="pgrid">
@@ -561,9 +561,9 @@ const promptsHTML = !PR ? "" : `<article class="report">
     <p class="psurface">${esc(r.surface)}</p>
     <p class="pwhat">${esc(r.what)}</p>
     <dl class="pmeta">
-      <dt>الملفّ</dt><dd><code>${esc(r.file)}:${r.line}</code> · ${r.promptLines} سطراً · ${r.chars} محرفاً</dd>
-      <dt>مَن يناديه</dt><dd>${r.entry.map(e => `<code>${esc(e)}</code>`).join("<br>")}</dd>
-      <dt>المتغيّرات</dt><dd>${r.varsInBody.length ? r.varsInBody.map(v => `<code>${esc(v)}</code>`).join(" · ") : "<span class=\"dim\">بلا متغيّرات</span>"}${r.varsMissing.length ? ` <b class="warn">— معلَن وغير موجود: ${r.varsMissing.map(esc).join(", ")}</b>` : ""}</dd>
+      <dt>مكان النصّ</dt><dd><code>ai_prompts</code> · مفتاح <code>${esc(r.key)}</code> · ${r.promptLines} سطراً · ${r.chars} محرفاً</dd>
+      <dt>مَن يناديه</dt><dd>${(r.callers ?? r.entry ?? []).map(e => `<code>${esc(e)}</code>`).join("<br>")}</dd>
+      <dt>المتغيّرات</dt><dd>${r.requiredVars.length ? r.requiredVars.map(v => `<code>{${esc(v)}}</code>`).join(" · ") : "<span class=\"dim\">بلا متغيّرات</span>"}<br><span class="dim">الحفظ من الأدمن يُرفض إن نقص واحد منها.</span></dd>
       <dt>لو غاب الصفّ</dt><dd class="prisk">${esc(r.onEmpty)}</dd>
       ${r.note ? `<dt>ملاحظة</dt><dd>${esc(r.note)}</dd>` : ""}
     </dl>

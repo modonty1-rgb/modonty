@@ -13,8 +13,7 @@ import { streamAnswerResponse } from "@/app/(site)/modo-chat/data/stream-answer-
 import { saveChatbotMessage } from "@/app/(site)/modo-chat/data/save-chatbot-message";
 import { isGreetingOrShortPleasantry } from "@/app/(site)/modo-chat/helpers/is-greeting";
 import { isPriceOrAppointmentQuestion } from "@/app/(site)/modo-chat/helpers/is-price-or-appointment-question";
-import { buildCategoryDbPrompt } from "@/app/(site)/modo-chat/helpers/build-category-db-prompt";
-import { buildIdentityPrompt } from "@/app/(site)/modo-chat/helpers/build-identity-prompt";
+import { resolveModoPrompt } from "@/lib/ai/resolve-modo-prompt";
 
 import type { ChatMessage } from "@/app/(site)/modo-chat/data/cohere-client";
 import type { ApiResponse } from "@/lib/types";
@@ -321,7 +320,9 @@ export async function POST(request: NextRequest) {
 
     // Two cases — an identity question has no documents by design, and the documents-only
     // prompt turns that into a refusal.
-    const systemPrompt = isIdentityQuestion ? buildIdentityPrompt() : buildCategoryDbPrompt(scopeName);
+    const systemPrompt = isIdentityQuestion
+      ? await resolveModoPrompt("modo.identity")
+      : await resolveModoPrompt("modo.category", { categoryName: scopeName });
 
     const chatMessages: ChatMessage[] = [
       { role: "system", content: systemPrompt },

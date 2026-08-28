@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
-import { BRAND_AR } from "@/constants";
 import { messages } from "@/lib/i18n/messages";
 import { IconMapPin, IconExternal } from "@/lib/icons";
 import { cn } from "@/lib/utils";

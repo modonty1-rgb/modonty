@@ -176,7 +176,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
   </div>
 </div>
 <p class="elsewhere">وفيه <b>7</b> بطاقة سيو ما تظهر هنا لأن مكانها لوحة ثانية — <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> (إدخال بيانات): <code>BRAND-ID</code> · <code>HREF0</code> · <code>METADESC</code> · <code>ADDR12</code> · <code>CATNAME-BILINGUAL</code> — <a href="TASK.html">TASK.html</a> (ما تمسّ صفحات مدونتي): <code>77</code> · <code>82</code>. هذا السطر موجود لأن عدّ البطاقات من الملفّ كان يعطي رقماً أكبر ممّا على الشاشة، فيبدو أن اللوحة ناقصة وهي ليست كذلك.</p>
-<div class="lanes" role="tablist"><button class="lane" role="tab" data-lane-btn="decide" aria-selected="true">① قرارك<span class="n">4</span></button><button class="lane" role="tab" data-lane-btn="work" aria-selected="false">② دوري<span class="n">1</span></button><button class="lane" role="tab" data-lane-btn="kept" aria-selected="false">✋ مقصود — يبقى<span class="n">49</span></button><button class="lane" role="tab" data-lane-btn="prompts" aria-selected="false">🤖 البرومبت<span class="n">7</span></button><button class="lane" role="tab" data-lane-btn="shipped" aria-selected="false">✅ خلص<span class="n">111</span></button></div>
+<div class="lanes" role="tablist"><button class="lane" role="tab" data-lane-btn="decide" aria-selected="true">① قرارك<span class="n">4</span></button><button class="lane" role="tab" data-lane-btn="work" aria-selected="false">② دوري<span class="n">1</span></button><button class="lane" role="tab" data-lane-btn="kept" aria-selected="false">✋ مقصود — يبقى<span class="n">35</span></button><button class="lane" role="tab" data-lane-btn="prompts" aria-selected="false">🤖 البرومبت<span class="n">7</span></button><button class="lane" role="tab" data-lane-btn="shipped" aria-selected="false">✅ خلص<span class="n">111</span></button></div>
 <!-- No search box here on purpose. Khalid, 25 Aug 2026: "I will not search, I want final
      result" — this board is read to decide what to do next, not to look something up. A box
      nobody types in is a row of empty pixels above the thing they came for. The two filters
@@ -282,21 +282,10 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </article></div></section></div>
 <div data-lane="kept" class="hidden"><p style="color:var(--dim);margin:14px 0 4px">قِيس، ونوقش، وقُرِّر بقاؤه. ليس شغلاً معلَّقاً — كل سطر هنا معه <b>سببُ بقائه</b>، مكتوباً كي لا يُعاد فتح النقاش نفسه بعد شهر.</p>
 <article class="report">
-  <h3>مقصود — 49 سطراً في 28 ملفاً</h3>
+  <h3>مقصود — 35 سطراً في 24 ملفاً</h3>
   <p class="when">قُرِّر بقاؤها ٢٨ أغسطس ٢٠٢٦ · يُعاد بناؤها بأمر <code>node documents/tasks/scan-hardcoded.mjs</code></p>
   <p class="outcome"><b>هذا ليس ديناً ولا شغلاً مؤجَّلاً.</b> كل سطر هنا قِيس ونوقش وقُرِّر بقاؤه، وسببه مكتوب معه — فلا يُعاد فتح النقاش نفسه بعد شهر، ولا يتضخّم رقم الشغل بما ليس شغلاً.</p>
-  <section><h4>ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — 7 سطراً</h4>
-    <p>ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — محجوزان بمستهلكٍ واحدٍ باقٍ: تعليمات مودو. يُحذفان يوم تُحذف، لا قبله.</p>
-    <div class="tw"><table>
-      <thead><tr><th>الملفّ</th><th>الأسطر</th><th>كم</th></tr></thead>
-      <tbody><tr>
-        <td><code>modonty/constants/brand.ts</code></td>
-        <td><code>17, 20, 27</code></td>
-        <td>5</td></tr><tr>
-        <td><code>modonty/constants/index.ts</code></td>
-        <td><code>14, 15</code></td>
-        <td>2</td></tr>
-      </tbody></table></div></section><section><h4>مكوّن عميل — 13 سطراً</h4>
+  <section><h4>مكوّن عميل — 13 سطراً</h4>
     <p>مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from &quot;ar.json&quot;` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.</p>
     <div class="tw"><table>
       <thead><tr><th>الملفّ</th><th>الأسطر</th><th>كم</th></tr></thead>
@@ -317,7 +306,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
         <td><code>83</code></td>
         <td>1</td></tr><tr>
         <td><code>modonty/app/(site)/story/SalesPitchPage.tsx</code></td>
-        <td><code>560</code></td>
+        <td><code>565</code></td>
         <td>1</td></tr><tr>
         <td><code>modonty/app/(site)/story/TeamCarousel.tsx</code></td>
         <td><code>155</code></td>
@@ -331,20 +320,6 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
         <td><code>modonty/lib/whatsapp.ts</code></td>
         <td><code>25</code></td>
         <td>1</td></tr>
-      </tbody></table></div></section><section><h4>مودو — 8 سطراً</h4>
-    <p>مودو — اسم المساعد ونصّ تعليماته. «مدونتي الذكية» اسمُ شخصية لا اسمُ موقع، والتعليمات تُملى على النموذج ولا تصل جوجل ولا الزائر.</p>
-    <div class="tw"><table>
-      <thead><tr><th>الملفّ</th><th>الأسطر</th><th>كم</th></tr></thead>
-      <tbody><tr>
-        <td><code>modonty/app/(site)/modo-chat/helpers/build-category-db-prompt.ts</code></td>
-        <td><code>6, 10, 14</code></td>
-        <td>4</td></tr><tr>
-        <td><code>modonty/app/(site)/modo-chat/helpers/build-article-db-prompt.ts</code></td>
-        <td><code>6</code></td>
-        <td>2</td></tr><tr>
-        <td><code>modonty/app/(site)/modo-chat/helpers/build-identity-prompt.ts</code></td>
-        <td><code>11, 13</code></td>
-        <td>2</td></tr>
       </tbody></table></div></section><section><h4>ثوابت البريد المشتركة — 7 سطراً</h4>
     <p>ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = &quot;مُدَوَّنَتِي&quot;` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.</p>
     <div class="tw"><table>
@@ -354,7 +329,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
         <td><code>17, 24, 26, 35</code></td>
         <td>4</td></tr><tr>
         <td><code>modonty/constants/contact.ts</code></td>
-        <td><code>6, 9</code></td>
+        <td><code>4, 10</code></td>
         <td>3</td></tr>
       </tbody></table></div></section><section><h4>محتوى منشور — 3 سطراً</h4>
     <p>محتوى منشور — روابط فيديو الشهادات وقناة اليوتيوب. مادّةٌ يختارها المحرّر، لا إعدادٌ يملكه الأدمن.</p>
@@ -397,6 +372,14 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
         <td><code>modonty/app/api/news/subscribe/route.ts</code></td>
         <td><code>75</code></td>
         <td>1</td></tr>
+      </tbody></table></div></section><section><h4>ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — 1 سطراً</h4>
+    <p>ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — محجوزان بمستهلكٍ واحدٍ باقٍ: تعليمات مودو. يُحذفان يوم تُحذف، لا قبله.</p>
+    <div class="tw"><table>
+      <thead><tr><th>الملفّ</th><th>الأسطر</th><th>كم</th></tr></thead>
+      <tbody><tr>
+        <td><code>modonty/constants/brand.ts</code></td>
+        <td><code>30</code></td>
+        <td>1</td></tr>
       </tbody></table></div></section><section><h4>استثناء موثَّق في الملفّ نفسه: لغة الوثيقة (`&lt;html lang&gt;`) ولغة تنسيق التاريخ. غيابها عطلٌ في العرض لا نقصٌ يُرى. — 2 سطراً</h4>
     <p>استثناء موثَّق في الملفّ نفسه: لغة الوثيقة (`&lt;html lang&gt;`) ولغة تنسيق التاريخ. غيابها عطلٌ في العرض لا نقصٌ يُرى.</p>
     <div class="tw"><table>
@@ -426,84 +409,84 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 <div data-lane="prompts" class="hidden"><p style="color:var(--dim);margin:14px 0 4px">كل نصّ يُملى على نموذج ذكاء اصطناعي في المستودع — بطاقةٌ لكلٍّ: أين يعيش، مَن يناديه، ما متغيّراته، وماذا ينكسر لو غاب. الهدف: تحويلها كلها لتُقرأ من القاعدة وتُحرَّر من الأدمن.</p>
 <article class="report">
   <h3>البرومبت — 7 حيّاً في 2 تطبيقين</h3>
-  <p class="when">مدونتي 3 · الأدمن 4 · الكونسول صفر · المزوّدون: Cohere · OpenAI · Gemini · ٤٬٨٢٢ محرفاً · يُعاد بأمر <code>node documents/tasks/scan-prompts.mjs</code></p>
+  <p class="when">مدونتي 3 · الأدمن 4 · الكونسول صفر · المزوّدون: Cohere · OpenAI · Gemini · ٤٬٥٠٤ محرفاً · جدول `ai_prompts` — الكود يقرأ بالمفتاح، ونصّ `prompt-defaults.ts` احتياطٌ لا مصدر · يُعاد بأمر <code>node documents/tasks/scan-prompts.mjs</code></p>
   <p class="outcome"><b>الهدف: كلها تُقرأ من القاعدة وتُحرَّر من الأدمن.</b> البرومبت سياسة وأسلوب لا منطق — يتغيّر بالذوق لا بالمتطلّبات، فتعديله لا يفترض أن يمرّ بنشر. وتكلفته صفر على الزائر: يُقرأ مرّة على السيرفر قبل نداء النموذج، والنداء أصلاً يضرب القاعدة وينتظر النموذج مئات الملّي ثانية.</p>
   
   <div class="pgrid">
   <div class="pcard">
     <div class="ph"><code class="pkey">modo.identity</code><span class="ptag app-modonty">مدونتي</span><span class="ptag">Cohere</span><span class="ptag">عربي</span></div>
-    <p class="psurface">مودو شات — سؤال عن نفسه</p>
-    <p class="pwhat">التحيّة و«مين أنت؟» — لا مستندات خلفها، فلها برومبت ثالث خاصّ.</p>
+    <p class="psurface">مودو شات، لمّا يسأله الزائر «مين أنت؟» أو يسلّم عليه</p>
+    <p class="pwhat">undefined</p>
     <dl class="pmeta">
-      <dt>الملفّ</dt><dd><code>modonty/app/(site)/modo-chat/helpers/build-identity-prompt.ts:11</code> · 10 سطراً · 374 محرفاً</dd>
-      <dt>مَن يناديه</dt><dd><code>modonty/app/(site)/modo-chat/api/chat/route.ts:324</code><br><code>modonty/app/(site)/modo-chat/api/article/[slug]/route.ts:270</code></dd>
-      <dt>المتغيّرات</dt><dd><code>BRAND_AR</code></dd>
-      <dt>لو غاب الصفّ</dt><dd class="prisk">مودو يجاوب كنموذج خام: يقول «أنا نموذج لغوي» ويخترع خدمات.</dd>
+      <dt>مكان النصّ</dt><dd><code>ai_prompts</code> · مفتاح <code>modo.identity</code> · 10 سطراً · 360 محرفاً</dd>
+      <dt>مَن يناديه</dt><dd><code>modonty/app/(site)/modo-chat/api/article/[slug]/route.ts:269</code><br><code>modonty/app/(site)/modo-chat/api/chat/route.ts:324</code><br><code>modonty/lib/ai/resolve-modo-prompt.ts:34</code></dd>
+      <dt>المتغيّرات</dt><dd><code>{siteName}</code><br><span class="dim">الحفظ من الأدمن يُرفض إن نقص واحد منها.</span></dd>
+      <dt>لو غاب الصفّ</dt><dd class="prisk">مودو يجاوب كنموذج خام: يقول «أنا نموذج لغوي» ويخترع خدمات وأسعاراً.</dd>
       
     </dl>
   </div><div class="pcard">
     <div class="ph"><code class="pkey">modo.category</code><span class="ptag app-modonty">مدونتي</span><span class="ptag">Cohere</span><span class="ptag">عربي</span></div>
-    <p class="psurface">مودو شات — سؤال داخل تصنيف</p>
-    <p class="pwhat">الوضع الصارم: يجيب من مقالات المنصّة وحدها، وبغيابها يقول الجملة المحدَّدة.</p>
+    <p class="psurface">مودو شات، سؤال عامّ داخل تصنيف — الوضع الصارم</p>
+    <p class="pwhat">undefined</p>
     <dl class="pmeta">
-      <dt>الملفّ</dt><dd><code>modonty/app/(site)/modo-chat/helpers/build-category-db-prompt.ts:6</code> · 9 سطراً · 598 محرفاً</dd>
-      <dt>مَن يناديه</dt><dd><code>modonty/app/(site)/modo-chat/api/chat/route.ts:324</code></dd>
-      <dt>المتغيّرات</dt><dd><code>BRAND_AR</code> · <code>categoryName</code></dd>
+      <dt>مكان النصّ</dt><dd><code>ai_prompts</code> · مفتاح <code>modo.category</code> · 9 سطراً · 581 محرفاً</dd>
+      <dt>مَن يناديه</dt><dd><code>modonty/app/(site)/modo-chat/api/chat/route.ts:325</code><br><code>modonty/lib/ai/resolve-modo-prompt.ts:34</code></dd>
+      <dt>المتغيّرات</dt><dd><code>{siteName}</code> · <code>{categoryName}</code><br><span class="dim">الحفظ من الأدمن يُرفض إن نقص واحد منها.</span></dd>
       <dt>لو غاب الصفّ</dt><dd class="prisk">تسقط قاعدة «لا معرفة خارجية» — مودو يجيب من معرفته العامّة كأنها محتوانا.</dd>
       
     </dl>
   </div><div class="pcard">
     <div class="ph"><code class="pkey">modo.article</code><span class="ptag app-modonty">مدونتي</span><span class="ptag">Cohere</span><span class="ptag">عربي</span></div>
-    <p class="psurface">مودو شات — قارئ داخل مقال</p>
-    <p class="pwhat">الإجابة من نصّ هذا المقال وحده — أضيق نطاقاً من برومبت التصنيف.</p>
+    <p class="psurface">مودو شات، والقارئ فاتح مقالاً ويسأل عنه</p>
+    <p class="pwhat">undefined</p>
     <dl class="pmeta">
-      <dt>الملفّ</dt><dd><code>modonty/app/(site)/modo-chat/helpers/build-article-db-prompt.ts:6</code> · 9 سطراً · 456 محرفاً</dd>
-      <dt>مَن يناديه</dt><dd><code>modonty/app/(site)/modo-chat/api/article/[slug]/route.ts:271</code></dd>
-      <dt>المتغيّرات</dt><dd><code>BRAND_AR</code> · <code>articleTitle</code> · <code>categoryName</code></dd>
+      <dt>مكان النصّ</dt><dd><code>ai_prompts</code> · مفتاح <code>modo.article</code> · 9 سطراً · 440 محرفاً</dd>
+      <dt>مَن يناديه</dt><dd><code>modonty/app/(site)/modo-chat/api/article/[slug]/route.ts:270</code><br><code>modonty/lib/ai/resolve-modo-prompt.ts:34</code></dd>
+      <dt>المتغيّرات</dt><dd><code>{siteName}</code> · <code>{articleTitle}</code> · <code>{categoryName}</code><br><span class="dim">الحفظ من الأدمن يُرفض إن نقص واحد منها.</span></dd>
       <dt>لو غاب الصفّ</dt><dd class="prisk">يفقد ربطه بالمقال، فيجيب عن الموضوع عموماً لا عمّا يقرؤه الزائر أمامه.</dd>
       
     </dl>
   </div><div class="pcard">
     <div class="ph"><code class="pkey">admin.article.system</code><span class="ptag app-admin">الأدمن</span><span class="ptag">OpenAI</span><span class="ptag">إنجليزي</span></div>
-    <p class="psurface">توليد مقال — رسالة النظام</p>
-    <p class="pwhat">يحدّد دور المحرّر ولغته ومعايير السيو. مكتوب بالإنجليزية.</p>
+    <p class="psurface">زرّ «توليد بالذكاء الاصطناعي» في شاشة المقال — رسالة النظام</p>
+    <p class="pwhat">undefined</p>
     <dl class="pmeta">
-      <dt>الملفّ</dt><dd><code>admin/lib/openai-article-generator.ts:45</code> · 24 سطراً · 1009 محرفاً</dd>
-      <dt>مَن يناديه</dt><dd><code>admin/app/(dashboard)/articles/actions/generate-article-ai.ts:3</code></dd>
-      <dt>المتغيّرات</dt><dd><span class="dim">بلا متغيّرات</span></dd>
-      <dt>لو غاب الصفّ</dt><dd class="prisk">يختفي الدور والمعايير — المخرَج يفقد بنية العناوين وتكامل الكلمات المفتاحية.</dd>
-      <dt>ملاحظة</dt><dd>البرومبت الوحيد الإنجليزي في المستودع.</dd>
+      <dt>مكان النصّ</dt><dd><code>ai_prompts</code> · مفتاح <code>admin.article.system</code> · 24 سطراً · 982 محرفاً</dd>
+      <dt>مَن يناديه</dt><dd><code>admin/lib/ai/resolve-admin-prompt.ts:17</code><br><code>admin/lib/openai-article-generator.ts:49</code></dd>
+      <dt>المتغيّرات</dt><dd><span class="dim">بلا متغيّرات</span><br><span class="dim">الحفظ من الأدمن يُرفض إن نقص واحد منها.</span></dd>
+      <dt>لو غاب الصفّ</dt><dd class="prisk">يختفي الدور ومعايير الـHTML — المخرَج يفقد بنية العناوين وقد يرجع markdown يكسر المحرّر.</dd>
+      
     </dl>
   </div><div class="pcard">
     <div class="ph"><code class="pkey">admin.article.user</code><span class="ptag app-admin">الأدمن</span><span class="ptag">OpenAI</span><span class="ptag">عربي</span></div>
-    <p class="psurface">توليد مقال — رسالة الطلب</p>
-    <p class="pwhat">الطلب نفسه: الكلمات المفتاحية والعميل والتصنيف والطول المستهدف.</p>
+    <p class="psurface">نفس الزرّ — الطلب نفسه: الكلمات المفتاحية والعميل والطول</p>
+    <p class="pwhat">undefined</p>
     <dl class="pmeta">
-      <dt>الملفّ</dt><dd><code>admin/lib/openai-article-generator.ts:70</code> · 44 سطراً · 1605 محرفاً</dd>
-      <dt>مَن يناديه</dt><dd><code>admin/app/(dashboard)/articles/actions/generate-article-ai.ts:3</code></dd>
-      <dt>المتغيّرات</dt><dd><code>keywords</code> · <code>clientName</code> · <code>categoryName</code> · <code>length</code> · <code>targetWordCount</code> · <code>Math</code></dd>
-      <dt>لو غاب الصفّ</dt><dd class="prisk">لا طلب أصلاً — النداء يرجع محتوى بلا موضوع.</dd>
+      <dt>مكان النصّ</dt><dd><code>ai_prompts</code> · مفتاح <code>admin.article.user</code> · 44 سطراً · 1437 محرفاً</dd>
+      <dt>مَن يناديه</dt><dd><code>admin/lib/ai/resolve-admin-prompt.ts:18</code><br><code>admin/lib/openai-article-generator.ts:50</code></dd>
+      <dt>المتغيّرات</dt><dd><code>{keywords}</code> · <code>{targetWordCount}</code> · <code>{lengthLabel}</code> · <code>{length}</code> · <code>{readingTimeMinutes}</code><br><span class="dim">الحفظ من الأدمن يُرفض إن نقص واحد منها.</span></dd>
+      <dt>لو غاب الصفّ</dt><dd class="prisk">لا طلب أصلاً — النداء يرجع محتوى بلا موضوع ولا بنية JSON متوقَّعة.</dd>
       
     </dl>
   </div><div class="pcard">
     <div class="ph"><code class="pkey">admin.image.article</code><span class="ptag app-admin">الأدمن</span><span class="ptag">Gemini</span><span class="ptag">عربي</span></div>
-    <p class="psurface">سيو صورة داخل مقال</p>
-    <p class="pwhat">نصّ بديل ووصف للصورة مستنداً إلى موضوع المقال لا إلى تحليل الصورة.</p>
+    <p class="psurface">مكتبة الوسائط: توليد نصّ بديل ووصف لصورة تخصّ مقالاً</p>
+    <p class="pwhat">undefined</p>
     <dl class="pmeta">
-      <dt>الملفّ</dt><dd><code>admin/lib/ai/gemini-image-seo.ts:66</code> · 10 سطراً · 368 محرفاً</dd>
-      <dt>مَن يناديه</dt><dd><code>admin/app/(dashboard)/media/actions/generate-image-seo-ai.ts:5</code></dd>
-      <dt>المتغيّرات</dt><dd><code>aLines</code> · <code>spec</code></dd>
-      <dt>لو غاب الصفّ</dt><dd class="prisk">يختفي قيد «لا تخترع تفاصيل» — نصوص بديلة فيها أرقام وجوائز موهومة تصل جوجل.</dd>
+      <dt>مكان النصّ</dt><dd><code>ai_prompts</code> · مفتاح <code>admin.image.article</code> · 10 سطراً · 345 محرفاً</dd>
+      <dt>مَن يناديه</dt><dd><code>admin/lib/ai/gemini-image-seo.ts:69</code><br><code>admin/lib/ai/resolve-admin-prompt.ts:19</code></dd>
+      <dt>المتغيّرات</dt><dd><code>{articleLines}</code> · <code>{spec}</code><br><span class="dim">الحفظ من الأدمن يُرفض إن نقص واحد منها.</span></dd>
+      <dt>لو غاب الصفّ</dt><dd class="prisk">يسقط قيد «لا تخترع تفاصيل» — نصوص بديلة فيها أرقام وجوائز موهومة تصل جوجل.</dd>
       
     </dl>
   </div><div class="pcard">
     <div class="ph"><code class="pkey">admin.image.gallery</code><span class="ptag app-admin">الأدمن</span><span class="ptag">Gemini</span><span class="ptag">عربي</span></div>
-    <p class="psurface">سيو صورة في معرض الشريك</p>
-    <p class="pwhat">نفس المهمّة لصور المعرض، مستندةً إلى بيانات العميل.</p>
+    <p class="psurface">مكتبة الوسائط: نفس المهمّة لصور معارض الشركاء</p>
+    <p class="pwhat">undefined</p>
     <dl class="pmeta">
-      <dt>الملفّ</dt><dd><code>admin/lib/ai/gemini-image-seo.ts:77</code> · 11 سطراً · 412 محرفاً</dd>
-      <dt>مَن يناديه</dt><dd><code>admin/app/(dashboard)/media/actions/generate-image-seo-ai.ts:5</code></dd>
-      <dt>المتغيّرات</dt><dd><code>lines</code> · <code>indexNote</code> · <code>spec</code></dd>
+      <dt>مكان النصّ</dt><dd><code>ai_prompts</code> · مفتاح <code>admin.image.gallery</code> · 11 سطراً · 359 محرفاً</dd>
+      <dt>مَن يناديه</dt><dd><code>admin/lib/ai/gemini-image-seo.ts:74</code><br><code>admin/lib/ai/resolve-admin-prompt.ts:20</code></dd>
+      <dt>المتغيّرات</dt><dd><code>{clientLines}</code> · <code>{indexNote}</code> · <code>{spec}</code><br><span class="dim">الحفظ من الأدمن يُرفض إن نقص واحد منها.</span></dd>
       <dt>لو غاب الصفّ</dt><dd class="prisk">نفس الخطر، وعلى صفحات الشركاء التي تُفهرس.</dd>
       
     </dl>
@@ -525,7 +508,7 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
   <p>ثابتا <code>BRAND_AR</code>/<code>BRAND_EN</code> باقيان في الكود <b>بمستهلكٍ واحد: برومبتات مودو الثلاثة</b> (مقيس). فيوم ينتقل البرومبت إلى القاعدة، يُحذف الثابتان ومُعيدا تصديرهما — ٧ بنود + ٨ أسطر برومبت = <b>١٥ بنداً يُغلقون بتاسك واحد</b>.</p>
 
   <h4>كود ميت — لا يدخل الهيكل</h4>
-  <p><code>admin/lib/openai-seed.ts</code> — <b>6 برومبتات في 609 سطراً، وصفر مستورد.</b> الستّة كلها بصفر مستهلك: <code>generateArticleWithOpenAI</code> · <code>generateCategoriesWithOpenAI</code> · <code>generateTagsWithOpenAI</code> · <code>generateIndustriesWithOpenAI</code> · <code>generateArticleTitlesWithOpenAI</code> · <code>generateFAQTemplatesWithOpenAI</code>. صفر مستورد في المستودع كلّه، وصفر مستهلك لكل تصدير من الستّة. وفيه كتلة «السياق الصناعي» مكرَّرة ستّ مرّات بصياغتين مختلفتين — انحراف نسخٍ ولصق، وهو بالضبط ما يمنعه الجدول الواحد. <b>يُحذف بأمرك.</b></p>
+  
 </article>
 
 </div>

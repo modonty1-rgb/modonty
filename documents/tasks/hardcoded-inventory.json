@@ -5,10 +5,10 @@
  "valuesProbed": 58,
  "workHits": 0,
  "workFiles": 0,
- "totalHits": 49,
- "fileCount": 28,
+ "totalHits": 35,
+ "fileCount": 24,
  "compare": {
-  "admin": 365,
+  "admin": 369,
   "console": 108
  },
  "phases": [
@@ -44,34 +44,9 @@
    "n": "مقصود — يبقى",
    "s": "قِيس، ونوقش، وقُرِّر بقاؤه. ليس شغلاً معلَّقاً ولا ديناً — كلّ سطر هنا معه سببُ بقائه. يبقى مكتوباً كي لا يُعاد فتح النقاش نفسه بعد شهر.",
    "close": "لا يُقفل. يُعاد النظر فيه فقط لو تغيّر القرار.",
-   "hits": 49,
-   "fileCount": 28,
+   "hits": 35,
+   "fileCount": 24,
    "files": [
-    {
-     "f": "modonty/constants/brand.ts",
-     "keepWhy": "ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — محجوزان بمستهلكٍ واحدٍ باقٍ: تعليمات مودو. يُحذفان يوم تُحذف، لا قبله.",
-     "hits": 5,
-     "lines": [
-      17,
-      20,
-      27
-     ],
-     "kinds": [
-      "قيمة عمود — Settings.siteName",
-      "تهجئات الماركة",
-      "قيمة عمود — Settings.alternateName",
-      "قيمة عمود — Settings.siteUrl"
-     ],
-     "values": [
-      "مدونتي",
-      "BRAND_AR",
-      "Modonty",
-      "BRAND_EN",
-      "https://www.modonty.com"
-     ],
-     "isSource": true,
-     "sample": "export const BRAND_AR = \"مدونتي\";"
-    },
     {
      "f": "modonty/app/(site)/modo-chat/components/chat-list/ChatList.tsx",
      "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
@@ -90,24 +65,6 @@
      ],
      "isSource": false,
      "sample": "<AvatarImage src={CHARACTER_URL} alt=\"مدونتي الذكية\" />"
-    },
-    {
-     "f": "modonty/app/(site)/modo-chat/helpers/build-category-db-prompt.ts",
-     "keepWhy": "مودو — اسم المساعد ونصّ تعليماته. «مدونتي الذكية» اسمُ شخصية لا اسمُ موقع، والتعليمات تُملى على النموذج ولا تصل جوجل ولا الزائر.",
-     "hits": 4,
-     "lines": [
-      6,
-      10,
-      14
-     ],
-     "kinds": [
-      "تهجئات الماركة"
-     ],
-     "values": [
-      "BRAND_AR"
-     ],
-     "isSource": false,
-     "sample": "return `أنت \"${BRAND_AR} الذكي\"، مساعد متخصص حصراً في موضوع \"${categoryName}\" على منصة ${BRAND_AR} للمحتوى."
     },
     {
      "f": "shared/lib/email/email-theme.ts",
@@ -159,72 +116,21 @@
      "keepWhy": "ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = \"مُدَوَّنَتِي\"` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.",
      "hits": 3,
      "lines": [
-      6,
-      9
+      4,
+      10
      ],
      "kinds": [
       "قيمة عمود — Settings.orgContactEmail",
-      "تهجئات الماركة",
+      "قيمة عمود — Settings.alternateName",
       "بريد الفريق والاتصال"
      ],
      "values": [
       "modonty@modonty.com",
-      "BRAND_EN",
+      "Modonty",
       "no-reply@modonty.com"
      ],
      "isSource": false,
      "sample": "export const CONTACT_EMAIL = \"modonty@modonty.com\";"
-    },
-    {
-     "f": "modonty/app/(site)/modo-chat/helpers/build-article-db-prompt.ts",
-     "keepWhy": "مودو — اسم المساعد ونصّ تعليماته. «مدونتي الذكية» اسمُ شخصية لا اسمُ موقع، والتعليمات تُملى على النموذج ولا تصل جوجل ولا الزائر.",
-     "hits": 2,
-     "lines": [
-      6
-     ],
-     "kinds": [
-      "تهجئات الماركة"
-     ],
-     "values": [
-      "BRAND_AR"
-     ],
-     "isSource": false,
-     "sample": "return `أنت \"${BRAND_AR} الذكي\"، تساعد القارئ في فهم مقال \"${articleTitle}\" ضمن موضوع \"${categoryName}\" على منصة ${BRAND_AR}."
-    },
-    {
-     "f": "modonty/app/(site)/modo-chat/helpers/build-identity-prompt.ts",
-     "keepWhy": "مودو — اسم المساعد ونصّ تعليماته. «مدونتي الذكية» اسمُ شخصية لا اسمُ موقع، والتعليمات تُملى على النموذج ولا تصل جوجل ولا الزائر.",
-     "hits": 2,
-     "lines": [
-      11,
-      13
-     ],
-     "kinds": [
-      "تهجئات الماركة"
-     ],
-     "values": [
-      "BRAND_AR"
-     ],
-     "isSource": false,
-     "sample": "return `أنت \"مودو\"، مساعد منصّة ${BRAND_AR}."
-    },
-    {
-     "f": "modonty/constants/index.ts",
-     "keepWhy": "ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — محجوزان بمستهلكٍ واحدٍ باقٍ: تعليمات مودو. يُحذفان يوم تُحذف، لا قبله.",
-     "hits": 2,
-     "lines": [
-      14,
-      15
-     ],
-     "kinds": [
-      "تهجئات الماركة"
-     ],
-     "values": [
-      "BRAND_AR",
-      "BRAND_EN"
-     ],
-     "isSource": false,
-     "sample": "BRAND_AR,"
     },
     {
      "f": "shared/lib/partner-site/get-home-data.ts",
@@ -344,7 +250,7 @@
      "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
      "hits": 1,
      "lines": [
-      560
+      565
      ],
      "kinds": [
       "قيمة عمود — Settings.siteName"
@@ -434,6 +340,22 @@
      ],
      "isSource": false,
      "sample": "<h2 className=\"pe-9 text-base font-bold leading-6 text-foreground\">تجربة مدونتي أفضل بحسابك</h2>"
+    },
+    {
+     "f": "modonty/constants/brand.ts",
+     "keepWhy": "ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — محجوزان بمستهلكٍ واحدٍ باقٍ: تعليمات مودو. يُحذفان يوم تُحذف، لا قبله.",
+     "hits": 1,
+     "lines": [
+      30
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.siteUrl"
+     ],
+     "values": [
+      "https://www.modonty.com"
+     ],
+     "isSource": true,
+     "sample": "export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || \"https://www.modonty.com\").replace(/\\/+$/, \"\");"
     },
     {
      "f": "modonty/lib/settings/get-site-language.ts",
@@ -541,7 +463,7 @@
    "sev": "high",
    "owner": "Settings — أعمدة شتّى",
    "why": "القيمة نفسها موجودة في القاعدة، والكود يكتبها بيده بدل أن يقرأها.",
-   "hits": 28,
+   "hits": 27,
    "fileCount": 21,
    "cols": [
     "Settings.siteName",
@@ -574,28 +496,6 @@
      "sample": "<AvatarImage src={CHARACTER_URL} alt=\"مدونتي الذكية\" />"
     },
     {
-     "f": "modonty/constants/brand.ts",
-     "keepWhy": "ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — محجوزان بمستهلكٍ واحدٍ باقٍ: تعليمات مودو. يُحذفان يوم تُحذف، لا قبله.",
-     "hits": 3,
-     "lines": [
-      17,
-      20,
-      27
-     ],
-     "kinds": [
-      "قيمة عمود — Settings.siteName",
-      "قيمة عمود — Settings.alternateName",
-      "قيمة عمود — Settings.siteUrl"
-     ],
-     "values": [
-      "مدونتي",
-      "Modonty",
-      "https://www.modonty.com"
-     ],
-     "isSource": true,
-     "sample": "export const BRAND_AR = \"مدونتي\";"
-    },
-    {
      "f": "shared/lib/email/email-theme.ts",
      "keepWhy": "ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = \"مُدَوَّنَتِي\"` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.",
      "hits": 3,
@@ -616,6 +516,25 @@
      ],
      "isSource": false,
      "sample": "export const EMAIL_SITE_URL = \"https://www.modonty.com\";"
+    },
+    {
+     "f": "modonty/constants/contact.ts",
+     "keepWhy": "ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = \"مُدَوَّنَتِي\"` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.",
+     "hits": 2,
+     "lines": [
+      4,
+      10
+     ],
+     "kinds": [
+      "قيمة عمود — Settings.orgContactEmail",
+      "قيمة عمود — Settings.alternateName"
+     ],
+     "values": [
+      "modonty@modonty.com",
+      "Modonty"
+     ],
+     "isSource": false,
+     "sample": "export const CONTACT_EMAIL = \"modonty@modonty.com\";"
     },
     {
      "f": "modonty/app/(partner)/clients/[slug]/components/share-client-button.tsx",
@@ -718,7 +637,7 @@
      "keepWhy": "مكوّن عميل — نقلُه إلى `messages/ar.json` يشحن الملفّ كلّه في باندل مساره. الاستيراد لا يُشجَّر: `import ar from \"ar.json\"` يأتي بالكائن كاملاً، فمكسبُ «تعديل واحد» يُدفع ثمنه بايتات على كل زائر. الطريق الصحيح تمرير النصّ خاصّيةً من الأب السيرفر — تاسك منفصل، لا سطرٌ يُبدَّل. و`error.tsx` بلا أبٍ سيرفر أصلاً.",
      "hits": 1,
      "lines": [
-      560
+      565
      ],
      "kinds": [
       "قيمة عمود — Settings.siteName"
@@ -810,20 +729,20 @@
      "sample": "<h2 className=\"pe-9 text-base font-bold leading-6 text-foreground\">تجربة مدونتي أفضل بحسابك</h2>"
     },
     {
-     "f": "modonty/constants/contact.ts",
-     "keepWhy": "ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = \"مُدَوَّنَتِي\"` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.",
+     "f": "modonty/constants/brand.ts",
+     "keepWhy": "ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — محجوزان بمستهلكٍ واحدٍ باقٍ: تعليمات مودو. يُحذفان يوم تُحذف، لا قبله.",
      "hits": 1,
      "lines": [
-      6
+      30
      ],
      "kinds": [
-      "قيمة عمود — Settings.orgContactEmail"
+      "قيمة عمود — Settings.siteUrl"
      ],
      "values": [
-      "modonty@modonty.com"
+      "https://www.modonty.com"
      ],
-     "isSource": false,
-     "sample": "export const CONTACT_EMAIL = \"modonty@modonty.com\";"
+     "isSource": true,
+     "sample": "export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || \"https://www.modonty.com\").replace(/\\/+$/, \"\");"
     },
     {
      "f": "modonty/lib/settings/get-site-language.ts",
@@ -913,115 +832,12 @@
    "sev": "high",
    "owner": "Settings.siteName + alternateName (العمود الثاني غير موجود بعد)",
    "why": "أربع تهجئات منشورة، والاسم في البيانات المنظَّمة لا يظهر على الصفحة.",
-   "hits": 14,
-   "fileCount": 7,
+   "hits": 1,
+   "fileCount": 1,
    "cols": [
     "Settings.siteName + alternateName (العمود الثاني غير موجود بعد)"
    ],
    "files": [
-    {
-     "f": "modonty/app/(site)/modo-chat/helpers/build-category-db-prompt.ts",
-     "keepWhy": "مودو — اسم المساعد ونصّ تعليماته. «مدونتي الذكية» اسمُ شخصية لا اسمُ موقع، والتعليمات تُملى على النموذج ولا تصل جوجل ولا الزائر.",
-     "hits": 4,
-     "lines": [
-      6,
-      10,
-      14
-     ],
-     "kinds": [
-      "تهجئات الماركة"
-     ],
-     "values": [
-      "BRAND_AR"
-     ],
-     "isSource": false,
-     "sample": "return `أنت \"${BRAND_AR} الذكي\"، مساعد متخصص حصراً في موضوع \"${categoryName}\" على منصة ${BRAND_AR} للمحتوى."
-    },
-    {
-     "f": "modonty/app/(site)/modo-chat/helpers/build-article-db-prompt.ts",
-     "keepWhy": "مودو — اسم المساعد ونصّ تعليماته. «مدونتي الذكية» اسمُ شخصية لا اسمُ موقع، والتعليمات تُملى على النموذج ولا تصل جوجل ولا الزائر.",
-     "hits": 2,
-     "lines": [
-      6
-     ],
-     "kinds": [
-      "تهجئات الماركة"
-     ],
-     "values": [
-      "BRAND_AR"
-     ],
-     "isSource": false,
-     "sample": "return `أنت \"${BRAND_AR} الذكي\"، تساعد القارئ في فهم مقال \"${articleTitle}\" ضمن موضوع \"${categoryName}\" على منصة ${BRAND_AR}."
-    },
-    {
-     "f": "modonty/app/(site)/modo-chat/helpers/build-identity-prompt.ts",
-     "keepWhy": "مودو — اسم المساعد ونصّ تعليماته. «مدونتي الذكية» اسمُ شخصية لا اسمُ موقع، والتعليمات تُملى على النموذج ولا تصل جوجل ولا الزائر.",
-     "hits": 2,
-     "lines": [
-      11,
-      13
-     ],
-     "kinds": [
-      "تهجئات الماركة"
-     ],
-     "values": [
-      "BRAND_AR"
-     ],
-     "isSource": false,
-     "sample": "return `أنت \"مودو\"، مساعد منصّة ${BRAND_AR}."
-    },
-    {
-     "f": "modonty/constants/brand.ts",
-     "keepWhy": "ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — محجوزان بمستهلكٍ واحدٍ باقٍ: تعليمات مودو. يُحذفان يوم تُحذف، لا قبله.",
-     "hits": 2,
-     "lines": [
-      17,
-      20
-     ],
-     "kinds": [
-      "تهجئات الماركة"
-     ],
-     "values": [
-      "BRAND_AR",
-      "BRAND_EN"
-     ],
-     "isSource": true,
-     "sample": "export const BRAND_AR = \"مدونتي\";"
-    },
-    {
-     "f": "modonty/constants/index.ts",
-     "keepWhy": "ثابتا `BRAND_AR`/`BRAND_EN` ومُعيدا تصديرهما — محجوزان بمستهلكٍ واحدٍ باقٍ: تعليمات مودو. يُحذفان يوم تُحذف، لا قبله.",
-     "hits": 2,
-     "lines": [
-      14,
-      15
-     ],
-     "kinds": [
-      "تهجئات الماركة"
-     ],
-     "values": [
-      "BRAND_AR",
-      "BRAND_EN"
-     ],
-     "isSource": false,
-     "sample": "BRAND_AR,"
-    },
-    {
-     "f": "modonty/constants/contact.ts",
-     "keepWhy": "ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = \"مُدَوَّنَتِي\"` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.",
-     "hits": 1,
-     "lines": [
-      9
-     ],
-     "kinds": [
-      "تهجئات الماركة"
-     ],
-     "values": [
-      "BRAND_EN"
-     ],
-     "isSource": false,
-     "sample": "export const NOREPLY_FROM = `${BRAND_EN} <no-reply@modonty.com>`;"
-    },
     {
      "f": "shared/lib/email/email-theme.ts",
      "keepWhy": "ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = \"مُدَوَّنَتِي\"` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.",
@@ -1091,7 +907,7 @@
      "keepWhy": "ثوابت البريد المشتركة — `shared/lib/email/` و`constants/contact.ts`. الملفّ يخدم الأدمن والكونسول ومدونتي معاً، وتعليقه يقول صراحةً «Hardcoded on purpose — NEXT_PUBLIC_SITE_URL differs per app»: تحويلها إلى قراءة من القاعدة يجعل **كل قالب بريد** `async` في التطبيقات الثلاثة. و`EMAIL_BRAND_AR = \"مُدَوَّنَتِي\"` هو الإملاء الرسمي، والموضع الوحيد في المستودع الذي يحمله — فهو **تابعٌ لقرار `BRAND-SPELLING`** لا بندٌ مستقلّ.",
      "hits": 1,
      "lines": [
-      9
+      10
      ],
      "kinds": [
       "بريد الفريق والاتصال"
@@ -1100,7 +916,7 @@
       "no-reply@modonty.com"
      ],
      "isSource": false,
-     "sample": "export const NOREPLY_FROM = `${BRAND_EN} <no-reply@modonty.com>`;"
+     "sample": "export const NOREPLY_FROM = \"Modonty <no-reply@modonty.com>\";"
     }
    ]
   },
