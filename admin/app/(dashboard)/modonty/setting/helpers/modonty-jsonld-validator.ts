@@ -8,6 +8,8 @@ import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import * as jsonld from "jsonld";
 
+import { schemaOrgDocumentLoader } from "@/lib/seo/schema-org-document-loader";
+
 export interface ModontyValidationReport {
   adobe: { valid: boolean; errors: Array<{ message: string; path?: string }>; warnings: unknown[] };
   ajv: { valid: boolean; errors: string[]; warnings: string[] };
@@ -120,7 +122,8 @@ function validateWithAjv(jsonLd: object): ModontyValidationReport["ajv"] {
 
 async function validateWithJsonLdJs(jsonLd: object): Promise<ModontyValidationReport["jsonldJs"]> {
   try {
-    await jsonld.expand(jsonLd);
+    // Local context — a network hiccup must not be reported to the editor as invalid JSON-LD.
+    await jsonld.expand(jsonLd, { documentLoader: schemaOrgDocumentLoader });
     return { valid: true, errors: [] };
   } catch (e) {
     return {

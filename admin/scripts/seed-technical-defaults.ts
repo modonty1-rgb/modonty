@@ -98,17 +98,21 @@ const SEO_RULES = {
   ogDescriptionRestrict: false,
 } as const;
 
-// Business defaults — stable for 6+ months
+// Business defaults — kept identical to the "Apply Defaults" button, which is the real
+// source: admin/app/(dashboard)/settings/actions/seed-technical-defaults.ts. Two values
+// here were wrong and would have been written over the live ones on any run (28 Aug 2026):
+// `siteUrl` had NO `www` (contradicting the canonical host) and the brand was Latin on an
+// all-Arabic site. `orgSearchUrlTemplate` was dropped — Google retired the sitelinks search
+// box on 29 Nov 2024 and no generator reads it any more.
 const BUSINESS_DEFAULTS = {
-  siteUrl: "https://modonty.com",
-  siteName: "Modonty",
-  siteAuthor: "Modonty Team",
+  siteUrl: "https://www.modonty.com",
+  siteName: "مدونتي",
+  siteAuthor: "فريق مدونتي",
   inLanguage: "ar-SA",
   orgAddressCountry: "SA",
   orgAreaServed: "SA",
   orgContactType: "customer service",
   orgContactAvailableLanguage: "ar, en",
-  orgSearchUrlTemplate: "https://modonty.com/search?q={search_term_string}",
 } as const;
 
 const ALL_DEFAULTS = { ...SEO_RULES, ...TECHNICAL_DEFAULTS, ...BUSINESS_DEFAULTS };

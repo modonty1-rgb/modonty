@@ -12,6 +12,14 @@ import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 export interface SettingsForHomeJsonLd {
   siteUrl?: string | null;
   siteName?: string | null;
+  /**
+   * الاسم الثاني للموقع — Google · Site names: «backup options … acronyms, shorter
+   * variants, or domain names (in lowercase)»، و«Google Search only supports one site
+   * name per site» فالبدائل كلها هنا لا في `name`.
+   * ووثيقة Organization تربط الاثنين: «Use the same `name` and `alternateName` that
+   * you're using for your site name» — فيُبثّ على العقدتين معاً.
+   */
+  alternateName?: string | null;
   brandDescription?: string | null;
   inLanguage?: string | null;
   modontySeoTitle?: string | null;
@@ -134,6 +142,7 @@ export function buildHomeJsonLdFromSettings(
     settings.orgContactAvailableLanguage ?? settings.inLanguage
   );
   const siteName = settings.siteName?.trim() || "Modonty";
+  const altName = settings.alternateName?.trim();
   const name = settings.modontySeoTitle?.trim() || siteName;
   const description = settings.modontySeoDescription?.trim() || settings.brandDescription?.trim() || "";
   const logoUrl = (settings.logoUrl ?? "").trim() || (settings.ogImageUrl ?? "").trim();
@@ -149,6 +158,7 @@ export function buildHomeJsonLdFromSettings(
     "@type": "Organization",
     "@id": orgId,
     name: siteName,
+    ...(altName && { alternateName: altName }),
     url: siteUrl,
     description: settings.brandDescription?.trim() ?? "",
     sameAs,
@@ -211,6 +221,7 @@ export function buildHomeJsonLdFromSettings(
     "@type": "WebSite",
     "@id": websiteId,
     name: siteName,
+    ...(altName && { alternateName: altName }),
     url: siteUrl,
     description: settings.brandDescription?.trim() ?? "",
     inLanguage: inLangCodes,
@@ -376,6 +387,7 @@ export function buildListPageJsonLdFromSettings(
     settings.orgContactAvailableLanguage ?? settings.inLanguage
   );
   const siteName = settings.siteName?.trim() || "Modonty";
+  const altName = settings.alternateName?.trim();
   const logoUrl = (settings.logoUrl ?? "").trim() || (settings.ogImageUrl ?? "").trim();
   const absLogo = logoUrl ? ensureAbsoluteUrl(logoUrl, siteUrl) : undefined;
   const ogImageUrl = (settings.ogImageUrl ?? settings.logoUrl ?? "").trim();
@@ -389,6 +401,7 @@ export function buildListPageJsonLdFromSettings(
     "@type": "Organization",
     "@id": orgId,
     name: siteName,
+    ...(altName && { alternateName: altName }),
     url: siteUrl,
     description: settings.brandDescription?.trim() ?? "",
     sameAs: sameAsList,
@@ -415,6 +428,7 @@ export function buildListPageJsonLdFromSettings(
     "@type": "WebSite",
     "@id": websiteId,
     name: siteName,
+    ...(altName && { alternateName: altName }),
     url: siteUrl,
     description: settings.brandDescription?.trim() ?? "",
     inLanguage: inLangCodes,
@@ -463,8 +477,17 @@ export function buildListPageJsonLdFromSettings(
     };
   }
 
+  // `website` is built above but deliberately NOT placed in this graph. This builder serves the
+  // LIST pages (/categories, /tags, /industries, /trending, …), and Google is explicit: "The
+  // WebSite structured data must be on the home page of the site … you only need to add this
+  // markup to the home page of your site"
+  // (developers.google.com/search/docs/appearance/site-names). The node stays built because
+  // `collectionPage.isPartOf` carries its `@id` — a reference to the entity the home page
+  // defines, which is the correct cross-page pattern. Removed from the graph 28 Aug 2026,
+  // measured live afterwards: /categories · /tags · /industries · /trending → 0 each, and the
+  // home page keeps exactly one.
   return {
     "@context": SCHEMA_CONTEXT,
-    "@graph": [org, website, collectionPage],
+    "@graph": [org, collectionPage],
   };
 }

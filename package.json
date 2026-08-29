@@ -13,6 +13,8 @@
     "build:all": "pnpm build:admin && pnpm build:modonty && pnpm build:console",
     "lint": "pnpm --filter \"@modonty/*\" lint",
     "format": "prettier --write .",
+    "audit:brand-icons": "node scripts/audit-brand-icons.mjs",
+    "audit:image-dimensions": "node scripts/audit-image-dimensions.mjs",
     "prisma:generate": "pnpm --filter @modonty/shared prisma:generate",
     "prisma:push": "pnpm --filter @modonty/shared prisma:push",
     "prisma:dedupe-push": "pnpm --filter @modonty/shared dedupe-before-push && pnpm prisma:push",

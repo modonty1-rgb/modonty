@@ -58,7 +58,19 @@ export function buildFaqPageJsonLd(
     if (faq.dateCreated) question.dateCreated = faq.dateCreated.toISOString();
     if (faq.datePublished) question.datePublished = faq.datePublished.toISOString();
     if (faq.upvoteCount != null) question.upvoteCount = faq.upvoteCount;
-    if (faq.author) question.author = { "@type": "Person", name: faq.author };
+    // `FAQ.author` is declared `String? @db.ObjectId` — it holds a database id, never a name.
+    // Writing it straight into `name` published the raw id to Google as a human's name:
+    // {"@type":"Person","name":"69d0209fbe4b3c3ed2425ce6"} appeared twice on /help/faq
+    // (measured live 28 Aug 2026). An id is not a name in any language, and marking one up as
+    // a Person is both meaningless to a reader and an internal identifier leaked to a third
+    // party. Until this column carries a resolvable name, the honest markup is no author at
+    // all — same rule as `shareImageAlt`, which refuses a value that is not a description
+    // rather than inventing a fallback.
+    const authorName = faq.author?.trim();
+    const looksLikeObjectId = !!authorName && /^[0-9a-f]{24}$/i.test(authorName);
+    if (authorName && !looksLikeObjectId) {
+      question.author = { "@type": "Person", name: authorName };
+    }
 
     return question;
   });
@@ -91,6 +103,11 @@ export function buildFaqPageJsonLd(
 
   return {
     "@context": "https://schema.org",
-    "@graph": [org, website, faqPage],
+    // `website` is built above but deliberately NOT in this graph — /help/faq is not the home
+    // page, and Google is explicit: "The WebSite structured data must be on the home page of
+    // the site … you only need to add this markup to the home page of your site"
+    // (developers.google.com/search/docs/appearance/site-names). `isPartOf` still carries its
+    // `@id`, which is the correct cross-page reference. Removed 28 Aug 2026.
+    "@graph": [org, faqPage],
   };
 }

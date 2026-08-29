@@ -1,25 +1,132 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { AppText as Text } from '@/src/components/ui/AppText';
 import { ModontyIcon } from '@/src/components/brand/icons/ModontyIcon';
-import { Card, EmptyState, Screen, SectionTitle, StatusPill } from '@/src/components/ui/MobileUI';
-import { MobileSubscription } from '@/src/services/mobile-api';
-import { control, fonts, radii, spacing, typography } from '@/src/theme/tokens';
+import { EmptyState, ErrorState, OfflineState, SkeletonBar } from '@/src/components/ui/MobileUI';
+import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
+import { getSubscriptionScreen, networkCopy, type SubscriptionDetailRow, type SubscriptionScreen } from '@/src/services/account-api';
+import { MobileOfflineError } from '@/src/services/mobile-api';
+import { control, fonts, radii, skeleton, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
 
-type SubscriptionRouteProps = { subscription: MobileSubscription | null; onBack: () => void };
-const statusTone = (status: string) => status === 'ACTIVE' ? 'primary' : status === 'EXPIRED' ? 'danger' : 'warning';
-const formatDate = (value: string) => new Intl.DateTimeFormat('ar-SA', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(value));
+type SubscriptionRouteProps = { accessToken: string | null; onBack: () => void; onSupport: () => void };
 
-export function SubscriptionRoute({ subscription, onBack }: SubscriptionRouteProps) {
+export function SubscriptionRoute({ accessToken, onBack, onSupport }: SubscriptionRouteProps) {
   const { theme } = useAppTheme();
-  if (!subscription) return <Screen title="تفاصيل الاشتراك" icon="toc"><EmptyState icon="toc" title="لا تتوفر تفاصيل اشتراك" copy="لم تصل تفاصيل الاشتراك من الحساب." actionLabel="رجوع" onAction={onBack} /></Screen>;
-  return <Screen title="تفاصيل الاشتراك" icon="toc">
-    <Card style={styles.hero}><View style={styles.heroHeader}><View><Text style={[styles.tier, { color: theme.colors.text }]}>{subscription.tierName}</Text><Text style={[styles.status, { color: theme.colors.muted }]}>{subscription.statusLabel}</Text></View><ModontyIcon name="toc" size={control.iconSize} primary={theme.colors.text} accent={theme.colors.primary} /></View><StatusPill tone={statusTone(subscription.status)}>{subscription.statusLabel}</StatusPill>{subscription.daysRemaining !== null ? <Text style={[styles.days, { color: theme.colors.text }]}>{subscription.daysRemaining} يومًا متبقيًا</Text> : null}</Card>
-    <SectionTitle>الاستخدام الشهري</SectionTitle><Card style={styles.usage}>{subscription.articlesPerMonth !== null ? <DetailRow label="حد المقالات الشهري" value={String(subscription.articlesPerMonth)} /> : null}<DetailRow label="المقالات المنشورة هذا الشهر" value={String(subscription.articlesPublishedThisMonth)} />{subscription.articlesRemaining !== null ? <DetailRow label="المقالات المتبقية" value={String(subscription.articlesRemaining)} /> : null}</Card>
-    <SectionTitle>تفاصيل المدة</SectionTitle><Card>{subscription.startDate ? <DetailRow label="تاريخ البداية" value={formatDate(subscription.startDate)} /> : null}{subscription.endDate ? <DetailRow label="تاريخ النهاية" value={formatDate(subscription.endDate)} /> : null}{subscription.durationDays !== null ? <DetailRow label="مدة الاشتراك" value={`${subscription.durationDays} يومًا`} /> : null}{subscription.price ? <DetailRow label="سعر الاشتراك" value={subscription.price.display} /> : null}</Card>
-    <Pressable accessibilityRole="button" accessibilityLabel="رجوع" onPress={onBack} style={styles.backButton}><Text style={[styles.backText, { color: theme.colors.textInteractive }]}>رجوع</Text></Pressable>
-  </Screen>;
+  const [screen, setScreen] = useState<SubscriptionScreen | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isOffline, setOffline] = useState(false);
+
+  const load = useCallback(() => {
+    if (!accessToken) return;
+    setError(null);
+    setOffline(false);
+    setScreen(null);
+    void getSubscriptionScreen(accessToken)
+      .then(setScreen)
+      .catch((reason: unknown) => {
+        if (reason instanceof MobileOfflineError) {
+          setOffline(true);
+          return;
+        }
+        setError(reason instanceof Error && reason.message ? reason.message : networkCopy.loadFailed);
+      });
+  }, [accessToken]);
+
+  useEffect(load, [load]);
+
+  const subscription = screen?.subscription ?? null;
+  const statusColor = subscription?.statusTone === 'positive' ? theme.colors.textInteractive
+    : subscription?.statusTone === 'danger' ? theme.colors.errorText
+      : theme.colors.warning;
+
+  const body = isOffline
+    ? <OfflineState title={networkCopy.offlineTitle} description={networkCopy.offlineDescription} retryLabel={networkCopy.retryLabel} onRetry={load} />
+    : error !== null
+      ? <ErrorState message={error} retryLabel={networkCopy.retryLabel} onRetry={load} />
+      : screen === null
+        ? <View style={styles.skeletonStack}>
+          <SkeletonBar height={skeleton.blockHeight} radius={radii.card} />
+          <SkeletonBar height={skeleton.blockHeight} radius={radii.card} />
+          <SkeletonBar height={skeleton.blockHeight} radius={radii.card} />
+        </View>
+        : screen.empty !== null
+          ? <EmptyState icon="info" title={screen.empty.title} copy={screen.empty.description} actionLabel={screen.empty.actionLabel} onAction={onSupport} />
+          : subscription === null
+            ? null
+            : <>
+              <View style={[styles.hero, { backgroundColor: theme.colors.surfaceRaised, borderColor: theme.colors.border }]}>
+                <View style={[styles.statusPill, { borderColor: statusColor }]}>
+                  <Text maxFontSizeMultiplier={1} style={[styles.statusText, { color: statusColor }]}>{subscription.statusLabel}</Text>
+                </View>
+                {subscription.daysRemainingLabel ? <Text maxFontSizeMultiplier={1} style={[styles.daysRemaining, { color: theme.colors.text }]}>{subscription.daysRemainingLabel}</Text> : null}
+              </View>
+
+              {subscription.planPayment ? <View style={styles.section}>
+                <Text maxFontSizeMultiplier={1} style={[styles.sectionTitle, { color: theme.colors.text }]}>{subscription.planPayment.title}</Text>
+                <DetailCard rows={subscription.planPayment.rows} />
+              </View> : null}
+
+              {subscription.usage ? <View style={styles.section}>
+                <Text maxFontSizeMultiplier={1} style={[styles.sectionTitle, { color: theme.colors.text }]}>{subscription.usage.title}</Text>
+                <View style={[styles.usageCard, { backgroundColor: theme.colors.surfaceRaised, borderColor: theme.colors.border }]}>
+                  <View style={styles.usageRow}>
+                    <Text maxFontSizeMultiplier={1} style={[styles.usageValue, { color: theme.colors.textInteractive }]}>{subscription.usage.valueLabel}</Text>
+                    <Text maxFontSizeMultiplier={1} style={[styles.usageLabel, { color: theme.colors.text }]}>{subscription.usage.remainingLabel}</Text>
+                  </View>
+                  <View
+                    accessibilityRole="progressbar"
+                    accessibilityLabel={subscription.usage.remainingLabel}
+                    accessibilityValue={{ now: subscription.usage.remainingPercent, min: 0, max: 100 }}
+                    style={[styles.progressTrack, { backgroundColor: theme.colors.inputSurface, borderColor: theme.colors.inputBorder }]}
+                  >
+                    <View style={[styles.progressValue, { backgroundColor: theme.colors.brandFill, width: `${subscription.usage.remainingPercent}%` }]} />
+                  </View>
+                  <Text maxFontSizeMultiplier={1} style={[styles.usageNote, { color: theme.colors.muted }]}>{subscription.usage.note}</Text>
+                </View>
+              </View> : null}
+
+              {subscription.period ? <View style={styles.section}>
+                <Text maxFontSizeMultiplier={1} style={[styles.sectionTitle, { color: theme.colors.text }]}>{subscription.period.title}</Text>
+                <DetailCard rows={subscription.period.rows} />
+              </View> : null}
+            </>;
+
+  return <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <ScreenHeader title={screen?.screenTitle ?? null} backLabel={screen?.backLabel ?? networkCopy.backLabel} onBack={onBack} />
+    {body}
+  </ScrollView>;
 }
 
-function DetailRow({ label, value }: { label: string; value: string }) { const { theme } = useAppTheme(); return <View style={[styles.detailRow, { borderBottomColor: theme.colors.border }]}><Text style={[styles.detailValue, { color: theme.colors.text }]}>{value}</Text><Text style={[styles.detailLabel, { color: theme.colors.muted }]}>{label}</Text></View>; }
+function DetailCard({ rows }: { rows: SubscriptionDetailRow[] }) {
+  const { theme } = useAppTheme();
+  return <View style={[styles.detailCard, { backgroundColor: theme.colors.surfaceRaised, borderColor: theme.colors.border }]}>
+    {rows.map((row, index) => <View key={row.label} style={[styles.detailRow, index > 0 && { borderTopColor: theme.colors.border, borderTopWidth: StyleSheet.hairlineWidth }]}>
+      <Text maxFontSizeMultiplier={1} style={[styles.detailValue, { color: theme.colors.text }]}>{row.value}</Text>
+      <Text maxFontSizeMultiplier={1} style={[styles.detailLabel, { color: theme.colors.muted }]}>{row.label}</Text>
+    </View>)}
+  </View>;
+}
 
-const styles = StyleSheet.create({ hero: { gap: spacing.sm }, heroHeader: { flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between' }, tier: { fontFamily: fonts.medium, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, writingDirection: 'rtl' }, status: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, writingDirection: 'rtl' }, days: { fontFamily: fonts.medium, fontSize: typography.pageTitle, lineHeight: typography.lineHeightPageTitle, writingDirection: 'rtl' }, usage: { paddingVertical: spacing.xs }, detailRow: { minHeight: control.headerHeight, borderBottomWidth: 1, flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between' }, detailLabel: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, writingDirection: 'rtl' }, detailValue: { fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightBody, writingDirection: 'rtl' }, backButton: { minHeight: control.minTouchTarget, alignItems: 'center', justifyContent: 'center', marginTop: spacing.md, borderRadius: radii.button }, backText: { fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightBody, writingDirection: 'rtl' } });
+const styles = StyleSheet.create({
+  pressed: { opacity: 0.72 },
+  content: { paddingBottom: spacing.screenBottom, paddingHorizontal: spacing.screenHorizontal },
+  skeletonStack: { gap: spacing.sm },
+  hero: { alignItems: 'flex-end', borderRadius: radii.card, borderWidth: StyleSheet.hairlineWidth, padding: spacing.md },
+  statusPill: { borderWidth: control.inputBorderWidth, alignItems: 'center', borderRadius: radii.button, justifyContent: 'center', minHeight: control.iconSize + spacing.sm, paddingHorizontal: spacing.md },
+  statusText: { fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, writingDirection: 'rtl' },
+  daysRemaining: { fontFamily: fonts.bold, fontSize: typography.pageTitle, lineHeight: typography.lineHeightPageTitle, marginTop: spacing.sm, textAlign: 'right', writingDirection: 'rtl' },
+  section: { marginTop: spacing.xl },
+  sectionTitle: { fontFamily: fonts.medium, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, marginBottom: spacing.sm, textAlign: 'right', writingDirection: 'rtl' },
+  detailCard: { borderRadius: radii.card, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden', paddingHorizontal: spacing.md },
+  detailRow: { alignItems: 'center', flexDirection: 'row-reverse', justifyContent: 'space-between', minHeight: control.headerHeight },
+  detailLabel: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'left', writingDirection: 'rtl' },
+  detailValue: { flexShrink: 1, fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, marginEnd: spacing.sm, textAlign: 'right', writingDirection: 'rtl' },
+  usageCard: { borderRadius: radii.card, borderWidth: StyleSheet.hairlineWidth, padding: spacing.md },
+  usageRow: { alignItems: 'center', flexDirection: 'row-reverse', justifyContent: 'space-between' },
+  usageLabel: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'left', writingDirection: 'rtl' },
+  usageValue: { fontFamily: fonts.bold, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, writingDirection: 'rtl' },
+  progressTrack: { borderWidth: control.inputBorderWidth, borderRadius: radii.field, height: spacing.xs, marginTop: spacing.md, overflow: 'hidden', width: '100%' },
+  progressValue: { borderRadius: radii.field, height: '100%' },
+  usageNote: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, marginTop: spacing.sm, textAlign: 'right', writingDirection: 'rtl' },
+});

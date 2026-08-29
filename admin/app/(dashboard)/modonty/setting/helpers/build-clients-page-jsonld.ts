@@ -44,9 +44,8 @@ export interface ClientForClientsPageJsonLd {
   logoMedia?: { url?: string | null; bunnyUrl: string | null; blurDataURL: string | null } | null;
   heroImageMedia?: { url?: string | null; bunnyUrl: string | null; blurDataURL: string | null } | null;
   sameAs?: string[];
-  email?: string | null;
-  phone?: string | null;
-  contactType?: string | null;
+  // بلا `email` ولا `phone` ولا `contactType` — الحقول الثلاثة حُذفت من هذا النوع مع
+  // العقدة التي كانت تبثّها؛ إبقاؤها هنا يغري بإرجاعها. تفسير الحذف عند بناء العقدة أدناه.
   addressStreet?: string | null;
   addressCity?: string | null;
   addressRegion?: string | null;
@@ -245,15 +244,32 @@ function clientToOrganization(
     };
   }
 
-  if (client.email?.trim() || client.phone?.trim() || client.contactType?.trim()) {
-    node.contactPoint = {
-      "@type": "ContactPoint",
-      ...(client.email?.trim() && { email: client.email.trim() }),
-      ...(client.phone?.trim() && { telephone: client.phone.trim() }),
-      ...(client.contactType?.trim() && { contactType: client.contactType.trim() }),
-      areaServed: "SA",
-    };
-  }
+  // NO `email` here — deliberately.
+  //
+  // This is the /clients LISTING. It renders a card per partner: name, logo, a line of
+  // description. It never renders a partner's email, yet this node was publishing one for
+  // every partner that has one — 21 addresses on a single page, measured live 28 Aug 2026,
+  // and most of them are personal, not business: Aseaclinic@gmail.com,
+  // dr_efat_am@yahoo.com, y_zaghloul@yahoo.com and eighteen more belonging to named doctors.
+  //
+  // Two rules meet here and both say the same thing. Google's structured data policy: "Don't
+  // mark up content that is not visible to readers of the page." And the plainer one: these
+  // addresses belong to real people who gave them to us for contact, not for publication to a
+  // third party in machine-readable form on a page that never displays them.
+  //
+  // NO `telephone` either — corrected 29 Aug 2026.
+  //
+  // The first pass kept the phone on the reasoning that "a business line is shown on the
+  // partner's own page". That reasoning was wrong, because the policy is per-page: this
+  // node ships on /clients, and /clients shows no phone. Measured after the email fix:
+  // 20 partner numbers were still being published invisibly on this one page, including
+  // personal Egyptian and Saudi mobiles (+2010…, +9665…). Same rule, same class of data.
+  //
+  // The whole contactPoint goes: contactType and areaServed alone describe a channel that
+  // carries no way to reach anyone, which is noise rather than markup. A partner's real
+  // contact details belong on /clients/[slug], where the visitor can see them.
+  //
+  // Bring anything back here ONLY together with the card that renders it.
 
   if (client.foundingDate) {
     const d = client.foundingDate instanceof Date ? client.foundingDate : new Date(client.foundingDate);
@@ -349,8 +365,14 @@ export function buildClientsPageJsonLd(
     };
   }
 
+  // `website` is deliberately NOT in this graph. /clients is a list page, and Google is
+  // explicit: "The WebSite structured data must be on the home page of the site … you only
+  // need to add this markup to the home page of your site"
+  // (developers.google.com/search/docs/appearance/site-names). The node is still BUILT above
+  // because `collectionPage.isPartOf` needs its `@id` — a reference to the entity the home
+  // page defines, which is the correct cross-page pattern. Removed from the graph 28 Aug 2026.
   return {
     "@context": SCHEMA_CONTEXT,
-    "@graph": [org, website, collectionPage],
+    "@graph": [org, collectionPage],
   };
 }

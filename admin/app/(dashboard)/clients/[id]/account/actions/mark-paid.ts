@@ -6,6 +6,7 @@ import { SubscriptionStatus, PaymentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
+import { advanceReferralOnPayment } from "@/lib/referrals/advance-referral-on-payment";
 import { NOT_ARCHIVED, recomputeSubscriptionEnd } from "../helpers/billing";
 
 export interface MarkPaidInput {
@@ -71,6 +72,12 @@ export async function markInvoicePaidAction(input: MarkPaidInput): Promise<MarkP
         ...(stillOutstanding === 0 ? { paymentStatus: PaymentStatus.PAID } : {}),
       },
     });
+
+    // العميل قد يكون جاء بإحالة من عميل آخر — وهذه هي اللحظة الوحيدة التي يصير فيها
+    // السداد حقيقةً. تنقل الإحالة إلى `PAID` ولا تمنح المكافأة: المنح ضغطةٌ بشرية في
+    // شاشة الإحالات، لأنه شهرٌ مجّاني. وتفشل بصمت — السداد عملٌ محاسبيّ لا يسقط لأن
+    // صفّ إحالة تعثّر.
+    await advanceReferralOnPayment(invoice.clientId, invoice.id);
 
     await logAction("invoice.paid", {
       entity: "Invoice",

@@ -128,6 +128,8 @@ export interface SettingsGeneratedSeo {
 export interface SiteOrgSettings {
   siteUrl: string | null;
   siteName: string | null;
+  /** الاسم الثاني للموقع — schema.org alternateName على WebSite وOrganization. يملكه الكود (seed-technical-defaults) لا موظّف. */
+  alternateName: string | null;
   brandDescription: string | null;
   siteAuthor: string | null;
   inLanguage: string | null;
@@ -235,6 +237,7 @@ const DEFAULT_SETTINGS: AllSettings = {
   googleBusinessProfileUrl: null,
   siteUrl: null,
   siteName: null,
+  alternateName: null,
   brandDescription: null,
   siteAuthor: null,
   inLanguage: null,
@@ -443,6 +446,7 @@ export async function getAllSettings(): Promise<AllSettings> {
         googleBusinessProfileUrl: newSettings.googleBusinessProfileUrl,
         siteUrl: newSettings.siteUrl,
         siteName: newSettings.siteName,
+        alternateName: newSettings.alternateName,
         brandDescription: newSettings.brandDescription,
         siteAuthor: newSettings.siteAuthor,
         inLanguage: newSettings.inLanguage,
@@ -598,6 +602,7 @@ export async function getAllSettings(): Promise<AllSettings> {
       googleBusinessProfileUrl: settings.googleBusinessProfileUrl,
       siteUrl: settings.siteUrl,
       siteName: settings.siteName,
+      alternateName: settings.alternateName,
       brandDescription: settings.brandDescription,
       siteAuthor: settings.siteAuthor,
       inLanguage: settings.inLanguage,

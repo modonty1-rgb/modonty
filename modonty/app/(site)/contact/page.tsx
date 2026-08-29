@@ -7,6 +7,9 @@ import { getContactPageForMetadata } from "./helpers/contact-metadata";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getContactPageContent } from "./helpers/contact-content";
 import { ContactIntro } from "./components/contact-intro/ContactIntro";
+import { ContactDetails } from "./components/contact-details/ContactDetails";
+import { getLegalEntity } from "@/lib/seo/organization-jsonld";
+import { toLegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 import { messages } from "@/lib/i18n/messages";
 
 const FALLBACK_TITLE = "اتصل بنا";
@@ -32,7 +35,12 @@ function sanitizeJsonLd(json: object): string {
 }
 
 export default async function ContactPage() {
-  const [session, page] = await Promise.all([auth(), getContactPageContent()]);
+  const [session, page, legal] = await Promise.all([
+    auth(),
+    getContactPageContent(),
+    getLegalEntity(),
+  ]);
+  const entity = toLegalEntityDisplay(legal);
   const defaultName = session?.user?.name ?? null;
   const defaultEmail = session?.user?.email ?? null;
 
@@ -68,6 +76,11 @@ export default async function ContactPage() {
           ]}
         />
         <ContactIntro title={pageTitle} html={intro} />
+        <ContactDetails
+          email={entity.contactEmail}
+          telephone={entity.contactTelephone}
+          address={entity.address}
+        />
         <ContactForm defaultName={defaultName} defaultEmail={defaultEmail} />
       </div>
     </>

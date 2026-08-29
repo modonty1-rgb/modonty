@@ -123,12 +123,13 @@ export async function buildIndustryJsonLd(industry: IndustryData, s: SeoSettings
         name: s.siteName,
         url: s.siteUrl,
       },
-      {
-        "@type": "WebSite",
-        "@id": siteIds.website,
-        name: s.siteName,
-        url: s.siteUrl,
-      },
+      // No WebSite node here on purpose. Google: "The WebSite structured data must be on the
+      // home page of the site … you only need to add this markup to the home page"
+      // (developers.google.com/search/docs/appearance/site-names). `isPartOf` above still
+      // points at the site's WebSite `@id`, which is the correct cross-page reference — the
+      // entity is DEFINED once, on the home page, and referred to from everywhere else.
+      // The repo's own validator already flags a WebSite node on a list page as a defect
+      // (modonty-jsonld-validator.ts). Removed 28 Aug 2026.
     ],
   };
 }

@@ -685,6 +685,9 @@ model Client {
   // Relationships
   articles          Article[]
   subscribers       Subscriber[]
+  // الإحالات التي رفعها هذا العميل. الاتجاه واحد: العميل مُحيلٌ لا مُحالٌ إليه —
+  // المُرشَّح ليس عميلاً بعد، وحين يصير عميلاً يُسجَّل معرّفه في `convertedClientId`.
+  referralLeads     ReferralLead[] @relation("ClientReferralLeads")
   media             Media[]      @relation("ClientMedia")
   parentOrganization Client?     @relation("ClientParent", fields: [parentOrganizationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   subOrganizations  Client[]     @relation("ClientParent")
@@ -1301,7 +1304,21 @@ model Article {
 
   // Schema.org Article - Required fields
   datePublished    DateTime? // ISO 8601
-  dateModified     DateTime  @updatedAt
+  /// تاريخ تعديل **المحتوى**، وهو ما تقرأه جوجل — لا تاريخ آخر لمسة تقنية على الصفّ.
+  ///
+  /// كان `@updatedAt`، ومعناه في توثيق Prisma: «automatically refresh the field with the
+  /// current timestamp **on record modification**» — أي كل كتابة، ولو لم تمسّ حرفاً من
+  /// المقال. وعلى هذا الصفّ ٢٦ موضع كتابة، أغلبها ليس تعديل محتوى: ترحيل بني · منظّف
+  /// الكانونيكال · إعادة حساب العدّادات · تغييرات الحالة الأربعة · الأرشفة · عدّاد
+  /// التعليقات · قرارات الموبايل. فمقال لم يُمسّ منذ أبريل كان يعلن «حُدِّث اليوم».
+  ///
+  /// Google · Publication dates: «The dates must describe the publication or update date
+  /// of the page, not the stories or events described therein.»
+  ///
+  /// `@default(now())` لا `@updatedAt`: موضعا إنشاء المقال لا يمرّران قيمة (مقيس ٢٩ أغسطس)،
+  /// فحقلٌ إلزاميّ بلا افتراضي كان سيكسر الإنشاء. والتحديث الحقيقي يضبطه `update-article.ts`
+  /// صراحةً. والتتبّع التقني له حقله المستقلّ `updatedAt` أدناه.
+  dateModified     DateTime  @default(now())
   lastReviewed     DateTime? // Content freshness signal
   mainEntityOfPage String? // Canonical URL
 
@@ -3351,6 +3368,84 @@ model Country {
   updatedAt DateTime @updatedAt
 
   @@map("countries")
+}
+
+// ============================================
+// REFERRAL — إحالة عميل لعميل
+// ============================================
+
+/// حالة الإحالة. المسار في اتجاه واحد: كل حالة تُغلق ما قبلها ولا ترجع.
+/// `REJECTED` و`LOST` نهايتان مختلفتان: الأولى رفضٌ من المُرشَّح، والثانية انقطاعٌ
+/// بلا رفض صريح — والتمييز بينهما هو ما يجعل تقرير الإحالات صادقاً.
+enum ReferralLeadStatus {
+  NEW
+  CONTACTED
+  SUBSCRIBED
+  PAID
+  REWARDED
+  REJECTED
+  LOST
+}
+
+/// إحالة يرفعها عميل قائم لمُرشَّح جديد.
+///
+/// نموذج مستقلّ عمداً، لا `ContactMessage` ولا `LeadScoring`: الأول رسالة زائر مجهول
+/// بلا مُحيل ولا مسار، والثاني تسجيلُ نقاطٍ على عميل قائم. هذا صفٌّ له مُحيلٌ معلوم
+/// ومسارُ حالاتٍ ينتهي بمكافأة مالية — فخلطه بأيٍّ منهما يجعل الاستعلام يكذب.
+///
+/// **لا افتراض سعودية في أي حقل.** المفتاح الدولي يكتبه المُحيل داخل الرقم نفسه بصيغة
+/// `(+20) 100 123 4567`، والخادم يطبّعه إلى E.164. لا يعتمد هذا النموذج على
+/// `Client.addressCountry` لأنه حقل غير نظيف (مقيس ٢٩ أغسطس على modonty_dev).
+model ReferralLead {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  /// العميل صاحب الإحالة — مالك المكافأة.
+  referrerClientId String @db.ObjectId
+  referrerClient   Client @relation("ClientReferralLeads", fields: [referrerClientId], references: [id], onDelete: Cascade)
+
+  /// اسم المُرشَّح كما كتبه المُحيل. اختياري: الرقم وحده يكفي للتواصل.
+  candidateName String?
+
+  /// ملاحظة يكتبها المُحيل عن العميل المرشّح لتظهر لفريق المتابعة.
+  /// اختيارية؛ الغياب يبقى غياباً ولا تملؤه الواجهة بقيمة بديلة.
+  candidateNote String?
+
+  /// يكتب العميل الرقم في الحقل النصّي الواحد بصيغة `(+20) 100 123 4567`؛ الخادم
+  /// يتحقق منه ثم يخزّنه دائماً بصيغة E.164 (`+201001234567`). لا نكرر بلد الرقم
+  /// في حقل ثانٍ لأن المفتاح الدولي جزء من الرقم نفسه.
+  /// `@unique` على الزوج أدناه يمنع إحالتين لنفس الرقم من نفس المُحيل، ويُبقي
+  /// إحالة نفس الرقم من مُحيل آخر مسموحة (يقرّرها الأدمن).
+  phoneE164 String
+
+  /// لحظة تأكيد المُحيل أنّ المُرشَّح وافق على التواصل. إلزامية — بلا هذا الوقت لا يُنشأ
+  /// الصفّ إطلاقاً، فالموافقة ليست خانةً في نموذج بل شرطُ وجودٍ للسجلّ.
+  consentConfirmedAt DateTime
+
+  status ReferralLeadStatus @default(NEW)
+
+  /// السجلّ الزمني — كلٌّ منها يُكتب مرّة واحدة عند دخول حالته، ويبقى بعدها.
+  contactedAt   DateTime?
+  subscribedAt  DateTime?
+  paidAt        DateTime?
+  rewardedAt    DateTime?
+
+  /// الفاتورة التي أثبتت السداد. هي مصدر `paidAt` ومفتاح عدم التكرار: منح المكافأة
+  /// يشترط `rewardedAt == null`، فلا تُمنح مرّتين مهما أُعيد تشغيل العملية.
+  paidInvoiceId String? @db.ObjectId
+
+  /// العميل الذي صار منه المُرشَّح بعد الاشتراك — يُملأ عند `SUBSCRIBED`.
+  convertedClientId String? @db.ObjectId
+
+  /// سبب الرفض أو الانقطاع، بخطّ الأدمن. يُعرض في السجلّ الزمني كما هو.
+  closingNote String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([referrerClientId, phoneE164])
+  @@index([status, createdAt])
+  @@index([referrerClientId, createdAt])
+  @@map("referral_leads")
 }
 
 // REMOVED 2026-07-30 (Khalid): the whole social-publishing feature is gone — the

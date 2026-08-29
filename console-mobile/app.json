@@ -12,6 +12,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.modonty.console",
       "adaptiveIcon": {
         "backgroundColor": "#0E065A",
         "foregroundImage": "./assets/brand/modonty-mark.png"
@@ -37,6 +38,20 @@
         }
       ]
     ],
-    "experiments": { "reactCompiler": true }
+    "experiments": {
+      "reactCompiler": true
+    },
+    "owner": "modontys-team",
+    "extra": {
+      "eas": {
+        "projectId": "6cc8b8ea-cc0c-46e9-bb4f-56810fed5616"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/6cc8b8ea-cc0c-46e9-bb4f-56810fed5616"
+    }
   }
 }

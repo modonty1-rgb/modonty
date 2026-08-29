@@ -14,8 +14,10 @@ import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
  * nothing after it.
  */
 export interface LegalEntityDisplay {
-  /** `Settings.orgContactEmail` — يُعرَض في صفّ الاتصال على /trust. */
+  /** `Settings.orgContactEmail` — يُعرَض في صفّ الاتصال على /trust و/contact. */
   contactEmail: string | null;
+  /** `Settings.orgContactTelephone` — تعرضه /contact لأن بنية المؤسسة هناك تعلنه. */
+  contactTelephone: string | null;
   legalName: string | null;
   cr: string | null;
   crStatus: string | null;
@@ -79,6 +81,7 @@ export function toLegalEntityDisplay(legal: LegalEntity): LegalEntityDisplay {
 
   return {
     contactEmail: legal.contactEmail,
+    contactTelephone: legal.contactTelephone,
     legalName: legal.legalName,
     cr: legal.cr,
     crStatus: legal.crStatus,

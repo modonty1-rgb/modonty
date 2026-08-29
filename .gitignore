@@ -69,3 +69,7 @@ backups/
 !brand/favicon/*.png
 !modonty/public/trust/*.png
 .vercel
+
+# نسخ احتياطية يخلّفها سكربت تدقيق الأيقونات (scripts/refresh-icon-inventory.mjs).
+# دخلت الكوميت مرّة سهواً — سبعة ملفّات لا كود فيها ولا وثيقة.
+*.bak

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600">
+  <rect width="1200" height="600" fill="#101827"/>
+  <style>text{font-family:Arial,sans-serif;fill:#FFFFFF;font-weight:700}.label{font-size:22px}.caption{font-size:14px;font-weight:400;fill:#D6E0F0}</style>
+  <text x="120" y="32" text-anchor="middle" class="label">S01 · الدخول</text>
+  <text x="360" y="32" text-anchor="middle" class="label">S02 · الرئيسية</text>
+  <text x="600" y="32" text-anchor="middle" class="label">S03 · المقالات المنشورة</text>
+  <text x="840" y="32" text-anchor="middle" class="label">S04 · بانتظار القرار</text>
+  <text x="1080" y="32" text-anchor="middle" class="label">S05 · مراجعة المقال</text>
+  <image href="S01-login.png" x="12" y="52" width="216" height="480" preserveAspectRatio="xMidYMid meet"/>
+  <image href="S02-home.png" x="252" y="52" width="216" height="480" preserveAspectRatio="xMidYMid meet"/>
+  <image href="S03-published-articles.png" x="492" y="52" width="216" height="480" preserveAspectRatio="xMidYMid meet"/>
+  <image href="S04-decision-articles.png" x="732" y="52" width="216" height="480" preserveAspectRatio="xMidYMid meet"/>
+  <image href="S05-article-review.png" x="972" y="52" width="216" height="480" preserveAspectRatio="xMidYMid meet"/>
+  <text x="600" y="575" text-anchor="middle" class="caption">Console Mobile · Android screenshots · Flow v1 · in review</text>
+</svg>

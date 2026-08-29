@@ -86,8 +86,28 @@ export async function regenerateContentPageCache(slug: string): Promise<{ succes
       },
     });
 
+    // The JSON-LD card too — NOT just the metadata above.
+    //
+    // Until 28 Aug 2026 this function wrote `nextjsMetadata` and stopped, while the only
+    // writer of `jsonLdStructuredData` was the per-page "Generate SEO" button. So the cascade
+    // reported every content page rebuilt and their cards stayed frozen: /about, /terms,
+    // /privacy-policy, /user-agreement, /cookie-policy and /copyright-policy were all still
+    // serving cards generated 7 Aug 2026 — each carrying a WebSite node that belongs only on
+    // the home page, and a SearchAction for the sitelinks search box Google retired on
+    // 29 Nov 2024. Two fixes had landed in the builders in between and reached nobody.
+    //
+    // A "regenerate" that rebuilds half the row is worse than one that fails: the panel says
+    // done, so nobody looks again.
+    const { generateModontyPageSEO } = await import(
+      "@/app/(dashboard)/modonty/setting/actions/generate-modonty-page-seo"
+    );
+    const jsonLd = await generateModontyPageSEO(slug);
+
     await revalidateModontyTag("pages");
-    return { success: true };
+    if (jsonLd.success) return { success: true };
+    // The metadata above IS written; only the card failed. Say which, so a page with no
+    // content yet ("has no content yet — go to Modonty Pages…") is not mistaken for a crash.
+    return { success: false, error: `JSON-LD: ${"error" in jsonLd ? jsonLd.error : "unknown"}` };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : String(error) };
   }

@@ -143,18 +143,17 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
   }
   graph.push(org);
 
-  const website: Record<string, unknown> = {
-    "@type": "WebSite",
-    "@id": websiteId,
-    name: config.siteName || "Modonty",
-    url: siteUrl,
-    description: config.brandDescription ?? "",
-    inLanguage: inLang,
-    publisher: { "@id": orgId },
-  };
-  // SearchAction removed 27 Aug 2026 — the sitelinks search box it fed is retired
-  // ("no longer available", Google Search Central changelog, 29 Nov 2024).
-  graph.push(website);
+  // No WebSite node here. This builder serves inner content pages (/about, /contact, /terms,
+  // the legal pages), and Google is explicit: "The WebSite structured data must be on the home
+  // page of the site … you only need to add this markup to the home page of your site"
+  // (developers.google.com/search/docs/appearance/site-names).
+  //
+  // Nothing is lost: `webPage.isPartOf` below already points at `websiteId`, which is a
+  // reference to the entity the home page defines — the correct cross-page pattern. The node
+  // object that used to be assembled here had no other consumer, so it is gone rather than
+  // left dangling. (Its SearchAction block went on 27 Aug 2026 — the sitelinks search box it
+  // fed is retired, "no longer available", Google Search Central changelog, 29 Nov 2024.)
+  // Removed 28 Aug 2026.
 
   const pageNodeId = `${pageUrl}#${pageType.toLowerCase()}`;
   const webPage: Record<string, unknown> = {

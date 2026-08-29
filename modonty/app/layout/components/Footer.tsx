@@ -5,6 +5,8 @@ import { FooterCopyright } from "@/app/layout/components/FooterCopyright";
 import { FooterStats } from "@/app/layout/components/FooterStats";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
+import { getLegalEntity } from "@/lib/seo/organization-jsonld";
+import { IconEmail, IconPhone } from "@/lib/icons";
 // `max-lg:min-h-11` — the fingertip floor, on phones and tablets only (Khalid, 22 Aug: mobile
 // refactor). These links measured 16px tall on a phone: eighteen targets stacked two to a row,
 // each a third of a fingertip, in the one place a lost reader goes looking for a way out.
@@ -21,7 +23,11 @@ function FooterStatsSkeleton() {
 
 export async function Footer() {
   // اسم الماركة في رابط «عن …» من الإعدادات — نفس الاسم الذي يعرضه الشعار وسطر الحقوق.
-  const { siteName } = await getPageSeoDefaults();
+  // والكيان معه: عقدة المؤسسة تعلن البريد والهاتف لجوجل على كل صفحة، وسياسات البيانات
+  // المنظَّمة تنصّ «Don't mark up content that is not visible to readers of the page»،
+  // وعقوبتها وسم البيانات بالسبام. الفوتر يرسم على كل صفحة، فهو المكان الذي يجعل
+  // ما يقرأه الروبوت هو نفسه ما يقرأه الإنسان — بتعديل واحد لا سبعة.
+  const [{ siteName }, legal] = await Promise.all([getPageSeoDefaults(), getLegalEntity()]);
 
   return (
     <footer
@@ -66,6 +72,24 @@ export async function Footer() {
         <Link href="/contact" className={linkClass}>{messages.chrome.footer.contact}</Link>
         <Link href="/about" className={linkClass}>{messages.chrome.footer.about}{siteName ? ` ${siteName}` : ""}</Link>
       </nav>
+
+      {/* Contact — the same email and phone the Organization node declares to Google */}
+      {(legal.contactEmail || legal.contactTelephone) && (
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+          {legal.contactEmail && (
+            <a href={`mailto:${legal.contactEmail}`} dir="ltr" className={linkClass}>
+              <IconEmail className="h-3.5 w-3.5" aria-hidden />
+              {legal.contactEmail}
+            </a>
+          )}
+          {legal.contactTelephone && (
+            <a href={`tel:${legal.contactTelephone}`} dir="ltr" className={linkClass}>
+              <IconPhone className="h-3.5 w-3.5" aria-hidden />
+              {legal.contactTelephone}
+            </a>
+          )}
+        </div>
+      )}
 
       {/* Legal links */}
       <nav

@@ -10,6 +10,7 @@ import { sanitizeAllLegalForms, sanitizeAllOrganizationTypes } from "./legalform
 import { sanitizeAllCanonicals } from "./canonical-sanitizer";
 import { backfillArticleHreflang } from "./hreflang-backfill";
 import { backfillArticleWordCount } from "./word-count-backfill";
+import { backfillArticleDatePublished } from "./date-published-backfill";
 import { backfillClientSiteFlag } from "./client-site-flag-backfill";
 import { backfillMediaReelsFields } from "./media-reels-backfill";
 import { backfillBlurPlaceholders } from "./blur-backfill";
@@ -205,6 +206,24 @@ export async function runStepWordCount(): Promise<MaintenanceStepResult> {
     );
   } catch (e) {
     return fail("wordCount", "Article Word Count / Reading Time Recomputed", e);
+  }
+}
+
+export async function runStepDatePublished(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await backfillArticleDatePublished();
+    return withTags(
+      {
+        key: "datePublished",
+        label: "Published Articles Given a datePublished",
+        ok: r.failed === 0,
+        count: r.successful,
+        detail: r.failed > 0 ? `${r.failed} failed` : undefined,
+      },
+      ["articles"],
+    );
+  } catch (e) {
+    return fail("datePublished", "Published Articles Given a datePublished", e);
   }
 }
 

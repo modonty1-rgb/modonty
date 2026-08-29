@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { encodeGraphUrls } from "@modonty/shared/lib/seo/encode-url-for-jsonld";
 import { ArticleStatus } from "@prisma/client";
 import { getAllSettings, getSameAsFromSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { getArticleDefaultsFromSettings } from "@/app/(dashboard)/settings/helpers/get-article-defaults-from-settings";
@@ -72,7 +73,14 @@ const TAXONOMY_SELECT = {
 } as const;
 
 /** Run the three validators and shape the preview result — same contract as the inline branches. */
-async function finalizePreview(meta: unknown, jsonLdObj: object): Promise<PreviewSeoResult> {
+async function finalizePreview(meta: unknown, rawJsonLd: object): Promise<PreviewSeoResult> {
+  // Percent-encode every URL in the graph before it is validated or stored. Bunny media paths
+  // are built from Arabic partner and article names, so most image URLs arrive here with raw
+  // Arabic in the path — 98 of them across /, /clients and /trending alone (28 Aug 2026).
+  // Google's URL-structure page recommends the encoded form and RFC 3986 §2.5 defines it.
+  // Done here, at the one point every list and content page passes through, rather than in
+  // each builder — see encode-url-for-jsonld.ts for why.
+  const jsonLdObj = encodeGraphUrls(rawJsonLd);
   const report = await validateHomeOrListPageJsonLd(jsonLdObj);
   const valid =
     report.adobe.valid &&
@@ -176,10 +184,15 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         tags: a.tags.map((t) => ({ name: t.tag.name })),
       }));
 
-      const jsonLdObj = buildHomeJsonLdFromSettings(
-        settingsWithSameAs as Parameters<typeof buildHomeJsonLdFromSettings>[0],
-        articlesForJsonLd,
-        total
+      // Home does not go through `finalizePreview` (it builds its own article list first), so
+      // it needs the same URL encoding explicitly — 38 of the raw-Arabic URLs measured on
+      // 28 Aug 2026 were on the home page alone.
+      const jsonLdObj = encodeGraphUrls(
+        buildHomeJsonLdFromSettings(
+          settingsWithSameAs as Parameters<typeof buildHomeJsonLdFromSettings>[0],
+          articlesForJsonLd,
+          total
+        )
       );
       const report = await validateHomeOrListPageJsonLd(jsonLdObj);
       const valid =
@@ -263,12 +276,14 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         parent: c.parentOrganization ? { slug: c.parentOrganization.slug } : null,
         updatedAt: c.updatedAt,
       }));
-      const jsonLdObj = buildClientsPageJsonLd(
+      const rawJsonLdObj = buildClientsPageJsonLd(
         settingsWithSameAs as Parameters<typeof buildClientsPageJsonLd>[0],
         clientsForJsonLd,
         total,
         maxUpdatedAt
       );
+      // ترميز الروابط نفسه الذي يطبّقه finalizePreview — هذا الفرع لا يمرّ به.
+      const jsonLdObj = encodeGraphUrls(rawJsonLdObj);
       const report = await validateHomeOrListPageJsonLd(jsonLdObj);
       const valid =
         report.adobe.valid &&
@@ -320,12 +335,14 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         id: c.id,
         updatedAt: c.updatedAt,
       }));
-      const jsonLdObj = buildCategoriesPageJsonLd(
+      const rawJsonLdObj = buildCategoriesPageJsonLd(
         settingsWithSameAs as Parameters<typeof buildCategoriesPageJsonLd>[0],
         categoriesForJsonLd,
         total,
         maxUpdatedAt
       );
+      // ترميز الروابط نفسه الذي يطبّقه finalizePreview — هذا الفرع لا يمرّ به.
+      const jsonLdObj = encodeGraphUrls(rawJsonLdObj);
       const report = await validateHomeOrListPageJsonLd(jsonLdObj);
       const valid =
         report.adobe.valid &&
@@ -424,12 +441,14 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         category: a.category,
         tags: a.tags.map((t) => ({ name: t.tag.name })),
       }));
-      const jsonLdObj = buildTrendingPageJsonLd(
+      const rawJsonLdObj = buildTrendingPageJsonLd(
         settingsWithSameAs as Parameters<typeof buildTrendingPageJsonLd>[0],
         articlesForJsonLd,
         total,
         maxUpdatedAt
       );
+      // ترميز الروابط نفسه الذي يطبّقه finalizePreview — هذا الفرع لا يمرّ به.
+      const jsonLdObj = encodeGraphUrls(rawJsonLdObj);
       const report = await validateHomeOrListPageJsonLd(jsonLdObj);
       const valid =
         report.adobe.valid &&
@@ -500,12 +519,14 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         category: a.category,
         tags: a.tags.map((t) => ({ name: t.tag.name })),
       }));
-      const jsonLdObj = buildArticlesPageJsonLd(
+      const rawJsonLdObj = buildArticlesPageJsonLd(
         settingsWithSameAs as Parameters<typeof buildArticlesPageJsonLd>[0],
         articlesForJsonLd,
         total,
         maxUpdatedAt,
       );
+      // ترميز الروابط نفسه الذي يطبّقه finalizePreview — هذا الفرع لا يمرّ به.
+      const jsonLdObj = encodeGraphUrls(rawJsonLdObj);
       const report = await validateHomeOrListPageJsonLd(jsonLdObj);
       const valid =
         report.adobe.valid && report.ajv.valid && report.jsonldJs.valid && report.custom.errors.length === 0;
@@ -539,10 +560,12 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         upvoteCount: f.upvoteCount,
         lastReviewed: f.lastReviewed,
       }));
-      const jsonLdObj = buildFaqPageJsonLd(
+      const rawJsonLdObj = buildFaqPageJsonLd(
         settingsWithSameAs as Parameters<typeof buildFaqPageJsonLd>[0],
         faqsForJsonLd
       );
+      // ترميز الروابط نفسه الذي يطبّقه finalizePreview — هذا الفرع لا يمرّ به.
+      const jsonLdObj = encodeGraphUrls(rawJsonLdObj);
       const report = await validateHomeOrListPageJsonLd(jsonLdObj);
       const valid =
         report.adobe.valid &&
@@ -587,19 +610,23 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         canonicalUrl: r.canonicalUrl,
         id: r.id,
       }));
-      const jsonLdObj = buildTaxonomyPageJsonLd(
+      const rawJsonLdObj = buildTaxonomyPageJsonLd(
         settingsWithSameAs as Parameters<typeof buildTaxonomyPageJsonLd>[0],
         page as TaxonomyPageType,
         items,
         total,
         maxUpdatedAt
       );
+      // ترميز الروابط نفسه الذي يطبّقه finalizePreview — هذا الفرع لا يمرّ به.
+      const jsonLdObj = encodeGraphUrls(rawJsonLdObj);
       return finalizePreview(meta, jsonLdObj);
     } else {
-      const jsonLdObj = buildListPageJsonLdFromSettings(
+      const rawJsonLdObj = buildListPageJsonLdFromSettings(
         settingsWithSameAs as Parameters<typeof buildListPageJsonLdFromSettings>[0],
         page as ListPageType
       );
+      // ترميز الروابط نفسه الذي يطبّقه finalizePreview — هذا الفرع لا يمرّ به.
+      const jsonLdObj = encodeGraphUrls(rawJsonLdObj);
       return finalizePreview(meta, jsonLdObj);
     }
   } catch (e) {

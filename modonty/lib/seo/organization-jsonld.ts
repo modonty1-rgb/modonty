@@ -25,6 +25,8 @@ export interface LegalEntity {
   alternateName: string | null;
   /** `Settings.orgContactEmail` — بريد الاتصال المعلَن في بنية المؤسسة. */
   contactEmail: string | null;
+  /** `Settings.orgContactTelephone` — الهاتف المعلَن في نفس البنية، وصفحة الاتصال تعرضه. */
+  contactTelephone: string | null;
   legalName: string | null;
   cr: string | null;
   crStatus: string | null;
@@ -43,7 +45,7 @@ export interface LegalEntity {
 
 /** Every field null — returned when Settings has no row yet. */
 export const EMPTY_LEGAL_ENTITY: LegalEntity = {
-  siteName: null, alternateName: null, contactEmail: null,
+  siteName: null, alternateName: null, contactEmail: null, contactTelephone: null,
   legalName: null, cr: null, crStatus: null, unifiedNumber: null, entityType: null,
   capital: null, street: null, district: null, city: null, region: null, country: null,
   latitude: null, longitude: null, foundingDate: null,
@@ -60,6 +62,7 @@ export async function getLegalEntity(): Promise<LegalEntity> {
       siteName: true,
       alternateName: true,
       orgContactEmail: true,
+      orgContactTelephone: true,
       orgLegalName: true,
       orgCommercialRegistrationNumber: true,
       orgCommercialRegistrationStatus: true,
@@ -87,6 +90,7 @@ export async function getLegalEntity(): Promise<LegalEntity> {
     siteName: t(s.siteName),
     alternateName: t(s.alternateName),
     contactEmail: t(s.orgContactEmail),
+    contactTelephone: t(s.orgContactTelephone),
     legalName: t(s.orgLegalName),
     cr: t(s.orgCommercialRegistrationNumber),
     crStatus: t(s.orgCommercialRegistrationStatus),

@@ -16,6 +16,7 @@ import { cacheTag, cacheLife } from "next/cache";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { messages } from "@/lib/i18n/messages";
 import { HOME_BLOCKS } from "@modonty/shared/components/partner-site/free/home";
+import { HOME_FAQ_LIMIT } from "@modonty/shared/components/partner-site/free/faq/faq-accordion";
 import { PageBlocks } from "./components/page-blocks";
 import { getClientPageData } from "./helpers/client-page-data";
 import { getClientPageFaqs } from "./helpers/client-faqs";
@@ -215,6 +216,13 @@ async function ClientPageMeta({ params }: ClientPageProps) {
         ) : (
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(buildFallbackOrganization()) }} />
         )}
+        {/*
+          Only the questions this page actually renders. The accordion below shows
+          HOME_FAQ_LIMIT of them, and Google's structured data policy is explicit: "Don't mark
+          up content that is not visible to readers of the page". Declaring all thirty while
+          showing six promised Google twenty questions and answers that were nowhere in the
+          HTML. The complete set is declared on the partner's /faq page, which renders it all.
+        */}
         {faqs.length > 0 && (
           <script
             type="application/ld+json"
@@ -222,7 +230,9 @@ async function ClientPageMeta({ params }: ClientPageProps) {
               __html: jsonLdHtml({
                 "@context": "https://schema.org",
                 "@type": "FAQPage",
-                mainEntity: faqs.map((faq) => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })),
+                mainEntity: faqs
+                  .slice(0, HOME_FAQ_LIMIT)
+                  .map((faq) => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })),
               }),
             }}
           />

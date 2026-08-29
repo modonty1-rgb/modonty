@@ -153,6 +153,9 @@ const menuGroups: MenuGroup[] = [
       { icon: UserPlus, label: "New Client", href: "/clients/new" },
       { icon: BadgeCheck, label: "Activate Client", href: "/clients/activate" },
       { icon: PauseCircle, label: "Suspend Client", href: "/clients/suspend" },
+      // تحت «Clients» لا تحت قسم مستقلّ: الإحالة يرفعها عميلٌ قائم عن مُرشَّح، فمصدرها
+      // وصاحب مكافأتها كلاهما عميل — والفريق يفتحها وهو يفكّر في العملاء لا في التسويق.
+      { icon: Handshake, label: "Referrals", href: "/referrals" },
     ],
   },
   {

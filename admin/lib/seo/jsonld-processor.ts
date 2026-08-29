@@ -6,7 +6,16 @@
  */
 
 import * as jsonld from "jsonld";
+
+import { schemaOrgDocumentLoader } from "./schema-org-document-loader";
 import type { JsonLdGraph } from "./knowledge-graph-generator";
+
+/**
+ * Passed to EVERY jsonld.js call below. Without it the library dereferences
+ * `"@context": "https://schema.org"` over the network on each call, which put schema.org on
+ * the article publish path (see schema-org-document-loader.ts for the measurement).
+ */
+const LOADER = { documentLoader: schemaOrgDocumentLoader };
 
 /**
  * Recursively fix JSON-LD @ keywords after jsonld.compact() with Schema.org context.
@@ -38,13 +47,13 @@ export async function normalizeJsonLd(
 ): Promise<JsonLdGraph> {
   try {
     // Expand to fully expanded form (resolves all @context references)
-    const expanded = await jsonld.expand(jsonLd as jsonld.JsonLdDocument);
+    const expanded = await jsonld.expand(jsonLd as jsonld.JsonLdDocument, LOADER);
 
     // Compact back to Schema.org context (ensures consistent structure)
     const context = {
       "@context": "https://schema.org",
     };
-    const compacted = await jsonld.compact(expanded, context);
+    const compacted = await jsonld.compact(expanded, context, LOADER);
 
     // Ensure @graph structure is maintained
     let result: JsonLdGraph;
@@ -78,7 +87,7 @@ export async function expandJsonLd(
   jsonLd: JsonLdGraph | object
 ): Promise<object> {
   try {
-    return await jsonld.expand(jsonLd as jsonld.JsonLdDocument);
+    return await jsonld.expand(jsonLd as jsonld.JsonLdDocument, LOADER);
   } catch (error) {
     throw new Error(
       `JSON-LD expansion failed: ${error instanceof Error ? error.message : String(error)}`
@@ -97,7 +106,7 @@ export async function compactJsonLd(
     const context = {
       "@context": "https://schema.org",
     };
-    const compacted = await jsonld.compact(jsonLd as jsonld.JsonLdDocument, context);
+    const compacted = await jsonld.compact(jsonLd as jsonld.JsonLdDocument, context, LOADER);
 
     // Ensure @graph structure
     if (compacted && typeof compacted === 'object' && "@graph" in compacted) {
@@ -123,7 +132,7 @@ export async function validateJsonLdStructure(
   jsonLd: JsonLdGraph | object
 ): Promise<{ valid: boolean; error?: string }> {
   try {
-    await jsonld.expand(jsonLd as jsonld.JsonLdDocument);
+    await jsonld.expand(jsonLd as jsonld.JsonLdDocument, LOADER);
     return { valid: true };
   } catch (error) {
     return {
@@ -141,7 +150,10 @@ export async function flattenJsonLd(
   jsonLd: JsonLdGraph | object
 ): Promise<object> {
   try {
-    return await jsonld.flatten(jsonLd as jsonld.JsonLdDocument);
+    // `undefined` لا `null` للوسيط الثاني: هو سياق الضغط، و`@types/jsonld@1.5.15` يقبل
+    // `ContextDefinition | undefined` وحدها. والسلوك واحد — توثيق jsonld.js: «Flatten
+    // without compaction: `jsonld.flatten(doc)`»، أي أن إغفال السياق هو ألّا يُضغط.
+    return await jsonld.flatten(jsonLd as jsonld.JsonLdDocument, undefined, LOADER);
   } catch (error) {
     throw new Error(
       `JSON-LD flattening failed: ${error instanceof Error ? error.message : String(error)}`

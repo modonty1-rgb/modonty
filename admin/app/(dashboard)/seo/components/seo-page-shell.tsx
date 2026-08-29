@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { GoogleIcon } from "@/components/admin/icons/google-icon";
 import { SeoKpiStrip } from "./seo-kpi-strip";
 import { SeoFixSequence } from "./seo-fix-sequence";
+import { SeoLiveSweepPanel } from "./seo-live-sweep-panel";
 
 interface Props {
   publishedArticles: number;
@@ -47,6 +48,10 @@ export function SeoPageShell({
       />
 
       <SeoFixSequence attentionCount={attentionCount} />
+
+      {/* الفحص يقيس ما يراه جوجل على الصفحة الحيّة — بخلاف البطاقات فوقه، فهي تقيس القاعدة.
+          فالقاعدة قد تكون صحيحة والصفحة تعرض قديماً، وهذا ما يكشفه هذا الصفّ وحده. */}
+      <SeoLiveSweepPanel />
 
       <ArticleSeoLink below={articlesBelowPerfect} perfect={articlesPerfect} />
     </div>

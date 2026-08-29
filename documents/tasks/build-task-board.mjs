@@ -223,6 +223,16 @@ function cardHTML(t) {
   // The banner sits at the TOP of the card, above the title — the one place a state is read
   // without hunting. `ready` wins over `working`: a worker who finished but forgot to clear
   // the start flag is finished, and the green must not be hidden behind an amber.
+  // المراجعة العكسية (خالد، ٢٨ أغسطس): البطاقة تحت الفحص تحمل شريطها الخاصّ وتصعد لأعلى
+  // اللوحة، والملاحظات تنزل داخلها، ولا تُوسم «نجت» إلا باعتماده هو. فالوسم الأزرق يعني
+  // «شغّال عليها الآن»، لا حكماً — والحكم أخضر أو أحمر، وكلاهما بيد خالد لا بيدي.
+  const AUDIT_BANNER = {
+    wip: `<div class="state st-audit">🔎 تحت المراجعة العكسية الآن</div>`,
+    pass: `<div class="perfect-badge"><span class="pb-mark">💯</span><span class="pb-txt">سليمة ١٠٠٪<small>هوجمت ولم تسقط · بدليل خام ومصدر رسمي</small></span></div>`,
+    fail: `<div class="state st-fail">🔴 سقطت في النقد العكسي — الملاحظة أدناه، والقرار قرارك</div>`,
+    stamped: `<div class="perfect-badge stamped"><span class="pb-mark">🏅</span><span class="pb-txt">معتمَدة منك<small>مقفلة نهائياً</small></span></div>`,
+  };
+  const auditBanner = t.audit ? (AUDIT_BANNER[t.audit.state] ?? "") : "";
   const stateBanner = t.tab === "done" ? ""
     : t.ready ? `<div class="state st-ready">✅ خلص — بانتظار تدقيق كلود</div>`
     : t.working ? `<div class="state st-working">🔨 تحت الشغل الآن — ${OWNERS[t.owner] || t.owner || "؟"}</div>`
@@ -233,13 +243,31 @@ function cardHTML(t) {
   const agentTag = t.agent
     ? `<span class="tag ${t.agentKind === "قياس" ? "agent-measure" : "agent"}">🤖 وكيل ${t.agent}${t.agentKind === "قياس" ? " · قياس" : ""}</span>`
     : "";
-  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.agent ? ` data-agent="${t.agent}"` : ""}${t.last ? " data-last=\"1\"" : ""}${t.area ? ` data-area="${esc(t.area)}"` : ""}${t.running ? ' data-running="1"' : ""}${t.owner ? ` data-owner="${esc(t.owner)}"` : ""}${t.ready && t.tab !== "done" ? ' data-ready="1"' : ""}${t.working && !t.ready && t.tab !== "done" ? ' data-working="1"' : ""}${t.codex?.done ? ' data-codex-done="1"' : ""}${t.n ? ` data-n="${t.n}"` : ""}${t.prod ? ` data-prod="${esc(t.prod.state)}"` : ""}>
+  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.agent ? ` data-agent="${t.agent}"` : ""}${t.last ? " data-last=\"1\"" : ""}${t.area ? ` data-area="${esc(t.area)}"` : ""}${t.running ? ' data-running="1"' : ""}${t.owner ? ` data-owner="${esc(t.owner)}"` : ""}${t.ready && t.tab !== "done" ? ' data-ready="1"' : ""}${t.working && !t.ready && t.tab !== "done" ? ' data-working="1"' : ""}${t.codex?.done ? ' data-codex-done="1"' : ""}${t.n ? ` data-n="${t.n}"` : ""}${t.prod ? ` data-prod="${esc(t.prod.state)}"` : ""}${t.audit ? ` data-audit="${esc(t.audit.state)}"` : ""}${t.audit?.fix ? ' data-fixed="1"' : ""}>
   <div class="hd">${t.n ? `<span class="num" title="رقم البند — قل «بند ${t.n}» في الشات">${t.n}</span>` : ""}<span class="id">${esc(t.id)}</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ${esc(t.id)}">⧉</button></div>
-  ${stateBanner}
+  ${auditBanner}${stateBanner}
   <div class="t">${t.t}</div>
   <div class="meta">${readyTag}${ownerTag}${lastTag}${agentTag}${runningTag}${easeTag}<span class="tag tab-${esc(t.tab)}">${tabL}</span><span class="tag">${sevL}</span>${apps}<span class="tag">${esc(t.board)}</span>${t.date ? `<span>${esc(t.date)}</span>` : ""}</div>
   ${t.prod ? `<div class="prod" data-state="${esc(t.prod.state)}"><b>${{ yes: "🌐 موجود على الإنتاج", no: "🌐 غير موجود على الإنتاج", admin: "🌐 جذره في الأدمن — لا يُقاس من الخارج", nm: "🌐 لم يُقَس على الإنتاج" }[t.prod.state]}:</b> ${esc(t.prod.ev)} <span class="when">(${esc(t.prod.base)} · ${esc(t.prod.when)})</span></div>` : ""}
   ${t.review?.length ? `<div class="review"><b>🔴 حكمي بعد المراجعة العكسية:</b><ul>${t.review.map(r => `<li>${esc(r)}</li>`).join("")}</ul></div>` : ""}
+  ${t.audit ? `<div class="audit" data-state="${esc(t.audit.state)}">
+    <b>${{ wip: "🔎 المراجعة العكسية — جارية", pass: "💯 المراجعة العكسية — نجت بلا انتقاد", fail: "🔴 المراجعة العكسية — سقطت", stamped: "🏅 معتمَدة منك بعد النقد" }[t.audit.state]}</b>
+    ${t.audit.attack ? `<div class="a-attack"><b>حاولتُ إسقاطها بـ:</b> ${esc(t.audit.attack)}</div>` : ""}
+    ${t.audit.findings?.length ? `<ul>${t.audit.findings.map(f => `<li>${esc(f)}</li>`).join("")}</ul>` : ""}
+    ${t.audit.raw ? `<pre>${esc(t.audit.raw)}</pre>` : ""}
+    ${t.audit.sources?.length ? `<div class="src"><b>المصادر الرسمية:</b> ${t.audit.sources.map(s => s[1] ? `<a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a>` : `<span>${esc(s[0])}</span>`).join(" · ")}</div>` : ""}
+    ${t.audit.state === "wip" ? `<div class="a-wait">⏳ القياس جارٍ.</div>` : ""}
+    ${t.audit.state === "pass" ? `<div class="a-wait">✋ تنتقل إلى «معتمَد» بكلمتك أنت وحدك.</div>` : ""}
+    ${t.audit.state === "fail" && !t.audit.fix ? `<div class="a-wait">✋ لم ألمس الكود — الإصلاح قرارك.</div>` : ""}
+    ${t.audit.when ? `<div class="when">${esc(t.audit.when)}</div>` : ""}
+    ${t.audit.fix ? `<div class="afix">
+      <b>🛠️ أُصلحت — بانتظار تعميدك</b>
+      ${t.audit.fix.what?.length ? `<ul>${t.audit.fix.what.map(w => `<li>${esc(w)}</li>`).join("")}</ul>` : ""}
+      ${t.audit.fix.raw ? `<pre>${esc(t.audit.fix.raw)}</pre>` : ""}
+      ${t.audit.fix.files?.length ? `<div class="src"><b>الملفات:</b> ${t.audit.fix.files.map(f => `<code>${esc(f)}</code>`).join(" · ")}</div>` : ""}
+      ${t.audit.fix.when ? `<div class="when">${esc(t.audit.fix.when)}</div>` : ""}
+    </div>` : ""}
+  </div>` : ""}
   ${t.codex ? `<div class="codex" data-verdict="${esc(t.codex.verdict)}"><b>🔵 كودكس (مراجع مستقلّ) — ${esc(t.codex.label)}:</b><div><b>الكود:</b> ${esc(t.codex.evidence)}</div><div><b>ملاحظته:</b> ${esc(t.codex.note)}</div>${t.codex.work ? `<div class="codex-work"><b>${t.codex.done ? "✅ تنفيذ كودكس:" : "📝 ملاحظة كودكس:"}</b> ${esc(t.codex.work)}</div>` : ""}${t.codex.sources?.length ? `<div class="src">${t.codex.sources.map(s => s[1] ? `<a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a>` : `<span>${esc(s[0])}</span>`).join(" · ")}</div>` : ""}</div>` : ""}
   ${t.plain ? `<div class="plain">
     <div><b>المشكلة:</b> ${esc(t.plain.p)}</div>
@@ -532,7 +560,13 @@ const SEO_LANES = [
   // خالد، ٢٨ أغسطس ٢٠٢٦: «اعمل جرد كامل في المدونة وكونسل وأدمن، فين البرومبت هذه إحنا
   // بنستخدمها، عشان أنا أبغى أحولها كلها تقرأ من الداتابيز… عبارة عن كروت».
   { k: "prompts", n: "🤖 البرومبت", s: "كل نصّ يُملى على نموذج ذكاء اصطناعي في المستودع — بطاقةٌ لكلٍّ: أين يعيش، مَن يناديه، ما متغيّراته، وماذا ينكسر لو غاب. الهدف: تحويلها كلها لتُقرأ من القاعدة وتُحرَّر من الأدمن." },
-  { k: "shipped", n: "✅ خلص", s: "كل بطاقة أُغلقت على هذه اللوحة، بأحدث ما أُغلق أولاً. لكل واحدة سطر «كيف أُغلقت» بالقياس الخام الذي أثبته — السجل كامل في مكان واحد بدل أن يختفي المنجز." },
+  // المراجعة العكسية (خالد، ٢٨ أغسطس): «خلص» لم تعد كومة واحدة. البطاقة تنتقل بين أربع
+  // حالات، وثلاثة تبويبات منها فوق كي يُرى الدور على مَن. وأنا أنقل إلى «سليمة» و«تعميدك»
+  // فقط — النقل إلى «معتمَد» بكلمة خالد وحدها.
+  { k: "perfect", n: "💯 خلص ١٠٠٪", s: "هاجمتُ إغلاقها محاولاً <b>إسقاطه</b> لا تأكيده، على الفرع ببيانات الإنتاج المُزامَنة، ومعي المصدر الرسمي — <b>وفشل الهجوم</b>. صفر انتقاد." },
+  { k: "needsok", n: "✋ محتاج تعميدك", s: "الهجوم <b>نجح</b>: وجدتُ عطلاً قائماً بدليل خام وجذر مسمّى.<br><b style='color:#4ade80'>🟩 البطاقة الخضراء = أصلحتُها فعلاً، وتنتظر كلمتك.</b> اقرأ كتلة «أُصلحت» في آخرها، فإن اقتنعت قل لي «اعتمد» ومعها رقم البطاقة، فتنتقل إلى «🏅 معتمَد».<br><b style='color:#f87171'>🟥 البطاقة الحمراء = لم أُصلحها بعد</b> — إمّا تحتاج قرارك، أو لم يجئ دورها. والأخضر مرفوع لأعلى القائمة." },
+  { k: "stamped", n: "🏅 معتمَد منك", s: "ختمتَها أنت بعد قراءة النقد. هذه وحدها التي تُحسب مقفلةً نهائياً." },
+  { k: "shipped", n: "✅ خلص — لم تُراجَع بعد", s: "أُغلقت سابقاً ولم تمرّ على النقد العكسي بعد. بقاؤها هنا يعني: <b>لم تُثبَت، ولم تسقط</b>." },
 ];
 const REPORTS = DATA.reports || [];
 
@@ -680,14 +714,40 @@ const seoLanes = SEO_LANES.map(l => {
   // العدّاد على الزرّ = الشغل، لا الخام. زرٌّ يقول ٢١٣ وصفحةٌ تقول ١٢٨ هو نفس
   // الالتباس الذي شكا منه خالد: «مرة تقولي رقم وتديني رقم تاني».
   if (l.k === "hardcoded") return { ...l, count: HC ? HC.workHits : 0, html: hardcodedHTML, groups: [] };
-  if (l.k === "prompts") return { ...l, count: PR ? PR.live : 0, html: promptsHTML, groups: [] };
+  // ممرّ البرومبت أُزيل ٢٩ أغسطس بأمر خالد: «موضوع البرومبت هذا كله خلاص محلول».
+  // والقياس يوافقه — prompts-inventory.json: problems: [] · dead: []. الرقم ٧ جردٌ
+  // للبرومبتات الحيّة في جدول ai_prompts، لا شغلٌ مفتوح. الجرد يبقى في الملفّ
+  // ويُحدَّث بـscan-prompts.mjs، لكنه لا يأخذ زرّاً على شاشة خالد.
+  if (l.k === "prompts") return { ...l, count: 0, html: "", groups: [] };
   if (l.k === "kept") {
     const kept = HC?.phases.find((p) => p.p === "keep");
     return { ...l, count: kept ? kept.hits : 0, html: keptHTML, groups: [] };
   }
+  // ثلاثة ممرّات المراجعة العكسية — البطاقة في واحد منها فقط، فالرقم لا يكذب.
+  if (l.k === "perfect" || l.k === "needsok" || l.k === "stamped") {
+    const want = { perfect: "pass", needsok: "fail", stamped: "stamped" }[l.k];
+    const items = enriched.filter(t => isSeoCard(t) && isDone(t) && t.audit?.state === want);
+    // البطاقة المُصلَحة تبقى هنا حتى يعتمدها خالد — فالعدّاد وحده لا يتحرّك، وهذا أربكه
+    // (٢٨ أغسطس: «العدّاد زي ما هو»). فيُعلَن الرقمان: كم بقي، وكم منها أُصلح وينتظر ختمه.
+    // والمُصلَح يصعد لأعلى القائمة كي لا يُبحث عنه.
+    const fixed = items.filter(t => t.audit?.fix);
+    const ordered = [...fixed, ...items.filter(t => !t.audit?.fix)];
+    return {
+      ...l,
+      count: items.length,
+      fixed: fixed.length,
+      groups: items.length ? [{ k: l.k, n: l.n, s: "", items: ordered }] : [],
+    };
+  }
   if (l.k === "shipped") {
     // المنجَز لا يُحذف من الوعي — يُنقل. الأحدث أولاً، ومجموعة لكل يوم إغلاق.
-    const shipped = enriched.filter(t => isSeoCard(t) && isDone(t));
+    // وما مرّ على النقد خرج من هنا إلى ممرّه — فالعدّاد هنا = ما لم يُراجَع بعد.
+    const REVIEWED = new Set(["pass", "fail", "stamped"]);
+    const all = enriched.filter(t => isSeoCard(t) && isDone(t) && !REVIEWED.has(t.audit?.state));
+    // البطاقة تحت المراجعة تصعد لأعلى اللوحة في مجموعتها الخاصّة (خالد، ٢٨ أغسطس:
+    // «اللي إنت شغال عليه ترفعه ليا فوق»)، فلا يُبحث عنها بين مئة وإحدى عشرة.
+    const wip = all.filter(t => t.audit?.state === "wip");
+    const shipped = all.filter(t => t.audit?.state !== "wip");
     const byDay = new Map();
     for (const t of shipped) {
       const k = t.date || "قبل ذلك";
@@ -698,7 +758,15 @@ const seoLanes = SEO_LANES.map(l => {
       // الأحدث أولاً: التواريخ عربية فلا تُقارن كنصّ — الترتيب بأول ظهور معكوساً، و«قبل ذلك» أخيراً.
       .sort((a, b) => (a[0] === "قبل ذلك") - (b[0] === "قبل ذلك"))
       .map(([day, items]) => ({ k: "day-" + day, n: day, s: "", items }));
-    return { ...l, count: shipped.length, groups };
+    if (wip.length) {
+      groups.unshift({
+        k: "audit-wip",
+        n: "🔎 تحت المراجعة العكسية الآن",
+        s: "أشتغل على هذه البطاقة الآن: أحاول <b>إسقاط</b> إغلاقها لا تأكيده. كل ملاحظة تنزل داخلها بناتجها الخام ومصدرها الرسمي — <b>ولا تُلوَّن خضراء أو حمراء حتى تعتمدها أنت</b>.",
+        items: wip,
+      });
+    }
+    return { ...l, count: shipped.length + wip.length, groups };
   }
   const items = seoOpen.filter(t => seoLane(t) === l.k);
   const active = items.filter(t => t.running || (t.working && !t.ready)).sort(byOrd);
@@ -711,7 +779,12 @@ const seoLanes = SEO_LANES.map(l => {
   // فيها بطاقات — ممرّات وكلاء انتهت جلساتهم. التبويب يظهر إذا كان فيه شيء، ولا يظهر إذا خلا.
   // «خلص» وحده يبقى دائماً — سجلّ الإنجاز لا يُخفى. و«تقارير» فقد تثبيته ٢٨ أغسطس: جرد
   // بلا شغل فيه مكانه ماركداون لا لوحة خالد، فتبويبٌ فارغ اسمه «تقارير ٠» زرٌّ ميت على شاشته.
-  .filter(l => l.k === "shipped" || l.count > 0);
+  // ممرّات المراجعة تبقى ظاهرة ولو فارغة: الصفر هنا معلومة («ولا بطاقة أخذت تعميدك بعد»)،
+  // لا فراغ يُخفى. أمّا ممرّات الشغل فتختفي حين تفرغ كي لا تزحم السطر.
+  // كل ممرّ فارغ يختفي — بلا استثناء. كانت ثلاثة ممرّات أصفار تبقى ظاهرة بحجّة أن
+  // «الصفر معلومة»، فصار السطر سبعة أزرار أربعةٌ منها لا شغل فيها. خالد (٢٩ أغسطس):
+  // «هذه القائمة ملخبطاني، موتراني». الزرّ الذي لا يفتح على شيء ليس معلومة، هو ضجيج.
+  .filter(l => l.count > 0);
 // رقم قصير ثابت لكل بند سيو، ليقول خالد «بند ٧» بدل معرّف طويل (٢٥ أغسطس).
 // يُكتب مرّة في task-data.json ولا يتغيّر بعدها مهما أُعيد الترتيب أو أُغلقت بطاقات —
 // الرقم المتغيّر يجعل الإشارة في الشات تدلّ على بطاقة أخرى بعد أسبوع.
@@ -803,6 +876,37 @@ const SEO_TABS_CSS = `.report{background:var(--card);border:1px solid var(--line
 .report th,.report td{border:1px solid var(--line);padding:7px 9px;text-align:start;vertical-align:top}
 .report th{background:var(--panel);font-weight:700}
 .report .src{margin-top:8px;font-size:12.5px}
+.perfect-badge{display:flex;align-items:center;gap:11px;margin:4px 0 9px;padding:11px 15px;border-radius:12px;background:linear-gradient(135deg,rgba(34,197,94,.22),rgba(34,197,94,.07));border:2px solid rgba(34,197,94,.6);box-shadow:0 0 0 1px rgba(34,197,94,.15)}
+.perfect-badge .pb-mark{font-size:30px;line-height:1}
+.perfect-badge .pb-txt{display:flex;flex-direction:column;font-size:19px;font-weight:800;letter-spacing:.2px;color:#4ade80}
+.perfect-badge .pb-txt small{font-size:11.5px;font-weight:500;color:var(--mut);letter-spacing:0;margin-top:2px}
+.perfect-badge.stamped{background:linear-gradient(135deg,rgba(246,174,49,.22),rgba(246,174,49,.07));border-color:rgba(246,174,49,.65)}
+.perfect-badge.stamped .pb-txt{color:#f6ae31}
+.card[data-audit="stamped"]{border-color:rgba(246,174,49,.5)}
+.state.st-audit{background:rgba(96,165,250,.16);color:#60a5fa;border:1px solid rgba(96,165,250,.5)}
+.state.st-pass{background:rgba(34,197,94,.18);color:#4ade80;border:1px solid rgba(34,197,94,.5)}
+.state.st-fail{background:rgba(248,113,113,.16);color:#f87171;border:1px solid rgba(248,113,113,.5)}
+.card[data-audit="wip"]{background:linear-gradient(180deg,rgba(96,165,250,.12),rgba(96,165,250,.03));border-color:rgba(96,165,250,.55);box-shadow:0 0 0 1px rgba(96,165,250,.22)}
+.card[data-audit="pass"]{border-color:rgba(34,197,94,.45)}
+.card[data-audit="fail"]{background:linear-gradient(180deg,rgba(248,113,113,.10),rgba(248,113,113,.02));border-color:rgba(248,113,113,.55)}
+.audit{margin:8px 0 0;padding:9px 12px;border-radius:10px;font-size:13px;line-height:1.8;border:1px solid var(--line);background:var(--panel)}
+.audit[data-state="wip"]{border-color:rgba(96,165,250,.35);background:rgba(96,165,250,.06)}
+.audit[data-state="pass"]{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.06)}
+.audit[data-state="fail"]{border-color:rgba(248,113,113,.4);background:rgba(248,113,113,.07)}
+.audit ul{margin:6px 0 0;padding-inline-start:18px}.audit li{margin:3px 0}
+/* شارة «جاهزة لختمك»: لون صلب لا شفّاف — التبويب المختار خلفيّته برتقالية، والشفّاف عليها
+   يصير طيناً لا يُقرأ (خالد، ٢٨ أغسطس). فتُقرأ على التبويبين بنفس الوضوح. */
+.lane .n.fixed{background:#15803d;color:#fff;border:1px solid #22c55e;font-weight:700;letter-spacing:0}
+.lane[aria-selected="true"] .n.fixed{background:#14532d;border-color:#4ade80}
+.card[data-audit="fail"][data-fixed="1"]{background:linear-gradient(180deg,rgba(34,197,94,.10),rgba(34,197,94,.02));border-color:rgba(34,197,94,.5)}
+.afix{margin:9px -12px -9px;padding:9px 12px;border-top:1px solid rgba(34,197,94,.35);background:rgba(34,197,94,.08);border-radius:0 0 10px 10px}
+.afix>b{color:#4ade80}
+.afix code{font-size:11px;background:rgba(0,0,0,.25);padding:1px 5px;border-radius:4px;direction:ltr;display:inline-block}
+.audit .a-attack{margin-top:5px;color:var(--mut)}
+.audit .a-wait{margin-top:7px;font-weight:700;color:#60a5fa}
+.audit pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;overflow-x:auto;font-size:12px;direction:ltr;text-align:left;margin:7px 0;white-space:pre-wrap}
+.audit .src{margin-top:7px;font-size:12.5px}
+.audit .when{margin-top:5px;color:var(--dim);font-size:12px}
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;margin:12px 0 4px}
 .pcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
 .pcard .ph{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:7px}

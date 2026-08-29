@@ -24,6 +24,7 @@ import {
   ValidationReport,
 } from "./jsonld-validator";
 import { normalizeJsonLd } from "./jsonld-processor";
+import { encodeGraphUrls } from "@modonty/shared/lib/seo/encode-url-for-jsonld";
 
 // Result of JSON-LD generation
 export interface JsonLdGenerationResult {
@@ -164,8 +165,14 @@ export async function generateAndSaveJsonLd(
 
     const knowledgeGraph = generateArticleKnowledgeGraph(articleWithText, branding, pageBaseUrl);
 
-    // Normalize JSON-LD structure (ensures consistency)
-    const normalizedGraph = await normalizeJsonLd(knowledgeGraph);
+    // Normalize JSON-LD structure (ensures consistency), then percent-encode every URL in it.
+    //
+    // Article graphs carry the most URLs on the site, and their Bunny media paths are built
+    // from Arabic partner and article names: 1,480 of them across the 135 published articles
+    // arrived here with raw Arabic in the path (measured 28 Aug 2026), while zero site URLs
+    // did — `absoluteUrl()` already handles those. Google's URL-structure page recommends the
+    // encoded form; RFC 3986 §2.5 defines it. See encode-url-for-jsonld.ts.
+    const normalizedGraph = encodeGraphUrls(await normalizeJsonLd(knowledgeGraph));
 
     // Validate (Adobe + Ajv + business rules)
     const validationReport = await validateJsonLdComplete(normalizedGraph, {

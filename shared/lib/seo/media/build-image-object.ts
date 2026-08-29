@@ -18,6 +18,8 @@
 // URLs come from the type-ownership resolver in step 3 and Settings in step 2) and only
 // assembles the node, omitting every empty field. No DB, no Prisma, no I/O.
 
+import { encodeUrlForJsonLd } from "../encode-url-for-jsonld";
+
 /** A JSON-LD node — a plain object keyed by schema.org property names. */
 export type JsonLdNode = Record<string, unknown>;
 
@@ -213,13 +215,16 @@ export function resolveImageAttribution(
  * empty/absent is omitted — a node never carries a blank field.
  */
 export function buildImageObject(input: BuildImageObjectInput): JsonLdNode {
+  // Percent-encoded on the way out. Bunny paths are built from Arabic partner and article
+  // names, so most image URLs in this graph carried raw Arabic — see encode-url-for-jsonld.ts
+  // for the measurement and the two specs that ask for the encoded form.
   const node: JsonLdNode = {
     "@type": "ImageObject",
-    url: input.url,
-    contentUrl: (input.contentUrl && input.contentUrl.trim()) || input.url,
+    url: encodeUrlForJsonLd(input.url),
+    contentUrl: encodeUrlForJsonLd((input.contentUrl && input.contentUrl.trim()) || input.url),
   };
 
-  if (input.id?.trim()) node["@id"] = input.id.trim();
+  if (input.id?.trim()) node["@id"] = encodeUrlForJsonLd(input.id);
   if (input.name?.trim()) node.name = input.name.trim();
   if (input.caption?.trim()) node.caption = input.caption.trim();
   if (input.description?.trim()) node.description = input.description.trim();

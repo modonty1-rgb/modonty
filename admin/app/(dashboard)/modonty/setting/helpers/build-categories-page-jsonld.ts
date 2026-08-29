@@ -144,6 +144,12 @@ export function buildCategoriesPageJsonLd(
 
   return {
     "@context": SCHEMA_CONTEXT,
-    "@graph": [org, website, collectionPage],
+    // `website` is built above but deliberately NOT in this graph. /categories is a list page,
+    // and Google is explicit: "The WebSite structured data must be on the home page of the site
+    // … you only need to add this markup to the home page of your site"
+    // (developers.google.com/search/docs/appearance/site-names). `isPartOf` above still carries
+    // its `@id` — a reference to the entity the home page defines, which is the correct
+    // cross-page pattern. Removed 28 Aug 2026.
+    "@graph": [org, collectionPage],
   };
 }
