@@ -132,7 +132,10 @@ export async function getContentPagesSeoAudit(): Promise<ListingPageAudit[]> {
         title: true,
         seoTitle: true,
         seoDescription: true,
-        metaTags: true,
+        // البلوب الذي تخدم منه مدونتي فعلاً (build-metadata-from-page-row.ts:72).
+        // `metaTags` عمودٌ آخر بشكل مختلف (organizationSeo/ogLocaleAlternate) — قياسه
+        // يعطي درجةً لا يراها الزائر: الفرق المقيس ٥ إلى ١٣ نقطة على الإحدى عشرة كلّها.
+        nextjsMetadata: true,
         jsonLdStructuredData: true,
         jsonLdValidationReport: true,
         jsonLdLastGenerated: true,
@@ -152,7 +155,7 @@ export async function getContentPagesSeoAudit(): Promise<ListingPageAudit[]> {
     const { score, checks } = computeReferenceSeoScore({
       name: page.label,
       requiredHreflangs,
-      nextjsMetadata: row?.metaTags,
+      nextjsMetadata: row?.nextjsMetadata,
       jsonLdStructuredData: row?.jsonLdStructuredData ?? null,
       jsonLdValidationReport: (row?.jsonLdValidationReport as JsonLdValidationReport | null) ?? null,
       sourceTitle: row?.seoTitle ?? null,

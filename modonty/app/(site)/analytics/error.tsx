@@ -4,15 +4,15 @@ import { RouteError } from "@/components/shared/route-error/RouteError";
 
 export default function AnalyticsError({
   error,
-  reset,
+  unstable_retry: retry,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
+  unstable_retry: () => void;
 }) {
   return (
     <RouteError
       error={error}
-      reset={reset}
+      retry={retry}
       what="صفحة الأرقام"
     />
   );

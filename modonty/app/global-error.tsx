@@ -16,7 +16,7 @@ export default function GlobalError({
         <title>تعذّر فتح مدونتي</title>
       </head>
       <body className="bg-background font-sans overflow-x-hidden">
-        <RouteError error={error} reset={unstable_retry} what="الموقع" />
+        <RouteError error={error} retry={unstable_retry} what="الموقع" />
       </body>
     </html>
   );

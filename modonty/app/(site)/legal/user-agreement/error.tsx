@@ -4,15 +4,15 @@ import { RouteError } from "@/components/shared/route-error/RouteError";
 
 export default function UserAgreementError({
   error,
-  reset,
+  unstable_retry: retry,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
+  unstable_retry: () => void;
 }) {
   return (
     <RouteError
       error={error}
-      reset={reset}
+      retry={retry}
       what="اتفاقية المستخدم"
       back={{ href: "/legal", label: "الصفحات القانونية" }}
     />
