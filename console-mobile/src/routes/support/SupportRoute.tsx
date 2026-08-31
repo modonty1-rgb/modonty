@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { AppText as Text } from '@/src/components/ui/AppText';
-import { ModontyIcon } from '@/src/components/brand/icons/ModontyIcon';
 import { ErrorState, OfflineState, SkeletonCards } from '@/src/components/ui/MobileUI';
 import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
 import { arabicDigits, getSupportReview, sendSupportMessage } from '@/src/services/engagement-api';
@@ -90,7 +89,7 @@ export function SupportRoute({ accessToken, onDone }: Props) {
           accessibilityState={{ disabled: !canSend, busy: isSending }}
           disabled={!canSend}
           onPress={send}
-          style={[styles.submit, { backgroundColor: theme.colors.primary }, canSend ? null : styles.submitDisabled]}
+          style={({ pressed }) => [styles.submit, { backgroundColor: theme.colors.primary }, canSend ? null : styles.submitDisabled, pressed && canSend ? styles.pressed : null]}
         >
           <Text style={[styles.submitLabel, { color: theme.colors.textOnPrimary }]}>{isSending ? review.submittingLabel : review.submitLabel}</Text>
         </Pressable>
@@ -106,9 +105,6 @@ const styles = StyleSheet.create({
   fill: { flex: 1 },
   state: { flex: 1, paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.md },
   screen: { paddingHorizontal: spacing.screenHorizontal, paddingBottom: spacing.screenBottom },
-  heading: { flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: StyleSheet.hairlineWidth, marginTop: spacing.md, paddingBottom: spacing.md },
-  pageTitle: { fontFamily: fonts.medium, fontSize: typography.pageTitle, lineHeight: typography.lineHeightPageTitle, textAlign: 'right', writingDirection: 'rtl' },
-  backButton: { width: control.minTouchTarget, height: control.minTouchTarget, alignItems: 'center', justifyContent: 'center' },
   card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: radii.card, padding: spacing.md, marginTop: spacing.lg, alignItems: 'flex-end' },
   cardTitle: { fontFamily: fonts.medium, fontSize: typography.pageTitle, lineHeight: typography.lineHeightPageTitle, textAlign: 'right', writingDirection: 'rtl' },
   cardBody: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.xxs },
@@ -120,5 +116,6 @@ const styles = StyleSheet.create({
   error: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.xs },
   submit: { minHeight: control.buttonHeight, borderRadius: radii.button, alignItems: 'center', justifyContent: 'center', marginTop: spacing.md },
   submitDisabled: { opacity: 0.5 },
+  pressed: { opacity: 0.72 },
   submitLabel: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, writingDirection: 'rtl' },
 });

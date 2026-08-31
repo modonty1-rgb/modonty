@@ -1,3 +1,4 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MobileOfflineError } from '@/src/services/mobile-api';
 
@@ -31,32 +32,63 @@ export type Resource<T> = { status: ResourceStatus; data: T | null; message: str
 
 const LOADING: Resource<never> = { status: 'loading', data: null, message: null };
 
-export function useEngagementResource<T>(accessToken: string, load: (accessToken: string) => Promise<T>): { resource: Resource<T>; reload: () => void; replace: (data: T) => void } {
+export function useEngagementResource<T>(accessToken: string, load: (accessToken: string) => Promise<T>): { resource: Resource<T>; reload: () => void; refresh: () => void; isRefreshing: boolean; replace: (data: T) => void } {
   const [resource, setResource] = useState<Resource<T>>(LOADING);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const mounted = useRef(true);
   const requestId = useRef(0);
+  const hasLoaded = useRef(false);
   useEffect(() => () => { mounted.current = false; }, []);
 
-  const run = useCallback(() => {
+  /**
+   * `silent` يفرّق بين **جلبٍ أوّل** و**تحديثٍ لمحتوى قائم**.
+   *
+   * كانت كل إعادة جلب تمسح البيانات إلى `LOADING`، فالسحب للتحديث كان يقذف القارئ إلى
+   * هيكل تحميل ويفقد موضعه في القائمة — عقوبةٌ على أنه طلب أحدث البيانات. والتحديث الصامت
+   * يُبقي ما يقرأه ويستبدله حين يصل.
+   */
+  const run = useCallback((silent: boolean) => {
     const id = requestId.current + 1;
     requestId.current = id;
-    setResource(LOADING);
+    if (silent) setIsRefreshing(true); else setResource(LOADING);
     load(accessToken).then((data) => {
       if (!mounted.current || requestId.current !== id) return;
       setResource({ status: 'ready', data, message: null });
     }).catch((reason: unknown) => {
       if (!mounted.current || requestId.current !== id) return;
       const message = reason instanceof Error ? reason.message : null;
-      setResource({ status: reason instanceof MobileOfflineError ? 'offline' : 'error', data: null, message });
-    });
+      /**
+       * التحديث الصامت **لا يهدم شاشة تعمل**: لو سقط النداء والبيانات حاضرة تبقى كما هي.
+       * فالعميل الذي يسحب في نفق يخسر التحديث لا الشاشة.
+       */
+      setResource((current) => silent && current.data !== null ? current
+        : { status: reason instanceof MobileOfflineError ? 'offline' : 'error', data: null, message });
+    }).finally(() => { if (mounted.current) setIsRefreshing(false); });
   }, [accessToken, load]);
 
-  useEffect(run, [run]);
+  const reload = useCallback(() => run(false), [run]);
+  const refresh = useCallback(() => run(true), [run]);
+
+  /**
+   * إعادة الجلب عند العودة للشاشة — الخطّاف يخدم **٧ شاشات**، فموضعه هنا لا في كلٍّ منها.
+   *
+   * العميل يفتح سؤالاً ويردّ عليه ثم يرجع، فتبقى القائمة تقول إنّه بلا ردّ. وقد وقع هذا
+   * فعلاً على الرئيسية («رد على طلبات التواصل ٠» وفيها طلبات) وأُصلح هناك وحدها.
+   * والجلب الأوّل يبقى بهيكل تحميل، وما بعده صامت — فلا يومض المحتوى عند كل تنقّل.
+   *
+   * `useFocusEffect` مع `useCallback` إلزاميان معاً بنصّ توثيق React Navigation: بدونه
+   * تُعاد الدالة كل رندر فيُشغَّل الأثر بلا نهاية.
+   */
+  useFocusEffect(useCallback(() => {
+    if (hasLoaded.current) { run(true); return; }
+    hasLoaded.current = true;
+    run(false);
+  }, [run]));
 
   const replace = useCallback((data: T) => {
     if (!mounted.current) return;
     setResource({ status: 'ready', data, message: null });
   }, []);
 
-  return { resource, reload: run, replace };
+  return { resource, reload, refresh, isRefreshing, replace };
 }

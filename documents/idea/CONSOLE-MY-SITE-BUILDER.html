@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>موكب — «موقعي»: أيقونات فوق، والموقع كلّه تحت</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f4f5fa; --panel:#fff; --ink:#111426; --muted:#6b7080;
+    --line:#e4e6ef; --line-soft:#eef0f6;
+    --brand:#3030ff; --brand-soft:#ecebff;
+    --ok:#128a5b; --ok-soft:#e6f5ee;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal",system-ui,"Segoe UI",sans-serif;font-size:14px;line-height:1.6}
+  button{font-family:inherit}
+
+  .console-top{height:50px;background:#0b0d1f;color:#c9ccdf;display:flex;align-items:center;gap:14px;padding:0 16px;font-size:13px}
+  .console-top .logo{font-weight:700;color:#fff}
+  .console-top .now{color:#fff;font-weight:700}
+  .console-top .sp{margin-inline-start:auto}
+  .console-top .g{opacity:.6}
+
+  /* ===== الشريط العلوي: الأيقونات بدل السايدبار ===== */
+  .toolbar{
+    background:var(--panel);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:6px;padding:8px 14px;position:sticky;top:0;z-index:20;flex-wrap:wrap;
+  }
+  .tool{
+    border:1.5px solid transparent;background:transparent;border-radius:12px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:2px;
+    padding:7px 12px;min-width:82px;min-height:58px;color:var(--muted);position:relative;
+  }
+  .tool .ic{font-size:19px;line-height:1}
+  .tool .lb{font-size:12px;font-weight:600}
+  .tool:hover{background:#f5f6fd;color:var(--ink)}
+  .tool[aria-expanded="true"]{background:var(--brand-soft);border-color:var(--brand);color:#2a2a8a}
+  .tool .dot{position:absolute;top:6px;inset-inline-end:8px;width:7px;height:7px;border-radius:50%;background:#cfd3e2}
+  .tool[data-done="true"] .dot{background:var(--ok)}
+
+  .tb-sep{width:1px;height:34px;background:var(--line);margin-inline:6px}
+  .tb-end{margin-inline-start:auto;display:flex;align-items:center;gap:8px}
+  .seg{display:inline-flex;background:var(--line-soft);border-radius:10px;padding:3px}
+  .seg button{border:0;background:transparent;color:var(--muted);padding:7px 13px;border-radius:8px;font-size:13px;cursor:pointer;min-height:38px}
+  .seg button[aria-pressed="true"]{background:#fff;color:var(--ink);font-weight:700;box-shadow:0 1px 2px rgba(17,20,38,.1)}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-size:13px;cursor:pointer;min-height:40px}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700}
+  .saved{font-size:12px;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:5px 11px}
+
+  /* ===== الشيت السفلي: ٧٠٪ من الشاشة، والموقع خلفه يتغيّر مع كل ضغطة ===== */
+  /* بلا تعتيم: الغرض أن يشوف أثر اختياره على الموقع، لا أن يُحجب عنه */
+  .backdrop{position:fixed;inset:0;background:transparent;z-index:40;display:none}
+  .backdrop[data-open="true"]{display:block}
+  /* من الجنب: يدخل من الحافّة التي فيها الأيقونات (يمين في RTL) */
+  .panel{
+    position:fixed;inset-block:0;inset-inline-start:0;z-index:50;
+    width:clamp(360px,30vw,460px);max-width:92vw;
+    background:var(--panel);border-inline-end:1px solid var(--line);
+    box-shadow:-14px 0 40px rgba(17,20,38,.20);
+    display:none;flex-direction:column;
+  }
+  .panel[data-open="true"]{display:flex;animation:slide .22s ease-out}
+  @keyframes slide{from{transform:translateX(18px);opacity:.5}to{transform:none;opacity:1}}
+  .panel .grip{display:none}
+  .panel .head{display:flex;align-items:flex-start;gap:10px;padding:10px 18px 12px;border-bottom:1px solid var(--line-soft)}
+  .panel h2{margin:0;font-size:16px}
+  .panel .hint{margin:2px 0 0;color:var(--muted);font-size:12.5px}
+  .panel .close{margin-inline-start:auto;border:0;background:var(--line-soft);border-radius:10px;width:40px;height:40px;cursor:pointer;font-size:15px;flex:0 0 auto}
+  .panel .scroll{overflow-y:auto;padding:14px 18px 24px;flex:1}
+
+  /* كل قالب يُعرض مرسوماً حيّاً — الضغط على الشكل نفسه هو الاختيار */
+  .choices{display:grid;gap:12px}
+  .choice{
+    border:2px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;cursor:pointer;
+    padding:0;text-align:start;display:block;position:relative;
+  }
+  .choice:hover{border-color:#b9bdd2}
+  .choice[aria-pressed="true"]{border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-soft)}
+  .choice .cap{
+    display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--line-soft);
+    font-size:12.5px;color:var(--muted);background:#fbfbfe;
+  }
+  .choice[aria-pressed="true"] .cap{color:#2a2a8a;font-weight:700;background:var(--brand-soft)}
+  .choice .cap .pick{margin-inline-start:auto;font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;background:#fff}
+  .choice[aria-pressed="true"] .cap .pick{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+  /* صفحات + مفاتيح */
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+  .chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;min-height:40px}
+  .chip[aria-current="true"]{border-color:var(--brand);background:var(--brand-soft);color:#2a2a8a;font-weight:700}
+  .blkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px}
+  .blk{display:flex;align-items:center;gap:9px;border:1px solid var(--line-soft);border-radius:10px;padding:8px 10px;background:#fff}
+  .blk .nm{flex:1;font-size:13px}
+  .blk .lock{font-size:11px;color:var(--muted)}
+  .sw{width:38px;height:22px;border-radius:999px;border:0;background:#cfd3e2;position:relative;cursor:pointer;flex:0 0 auto}
+  .sw::after{content:"";position:absolute;top:3px;inset-inline-end:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:inset-inline-end .15s}
+  .sw[aria-checked="true"]{background:var(--brand)}
+  .sw[aria-checked="true"]::after{inset-inline-end:19px}
+  .sw[disabled]{opacity:.45;cursor:not-allowed}
+
+  .swatches{display:flex;gap:9px;flex-wrap:wrap}
+  .sw-color{width:40px;height:40px;border-radius:11px;border:2px solid transparent;cursor:pointer}
+  .sw-color[aria-pressed="true"]{border-color:var(--ink)}
+  .field{display:inline-flex;align-items:center;gap:6px;background:var(--line-soft);border-radius:10px;padding:9px 12px;font-size:13px}
+  .field input{border:0;background:transparent;outline:0;font:inherit;width:190px;text-align:start}
+
+  /* ===== المسرح: الجهازان جنب بعض ===== */
+  /* الشيت يطفو فوق المسرح ولا يزيحه: المعاينة تبقى بحجمها وقت القرار */
+  .stage{padding:20px}
+  .stage-bar{display:flex;align-items:center;gap:10px;margin:0 auto 12px;max-width:1180px;font-size:12.5px;color:var(--muted)}
+
+  /* الجهازان يلتصقان بالحافّة البعيدة عن الشيت، فلا يختفيان تحته */
+  .canvas{display:flex;gap:22px;align-items:flex-start;justify-content:flex-end;flex-wrap:wrap}
+  .device{display:flex;flex-direction:column;gap:8px}
+  .device .cap{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);font-weight:600}
+  .device .cap code{background:var(--line-soft);border-radius:5px;padding:1px 6px;direction:ltr;font-size:11.5px}
+
+  /* كمبيوتر: ١٢٨٠×٨٠٠ (مرجع المشروع) مصغَّراً ليدخل العرض المتاح */
+  .d-desk .viewport{overflow:hidden;border-radius:14px;border:1px solid var(--line);box-shadow:0 10px 30px rgba(17,20,38,.10);background:#fff}
+  .d-desk .page{width:1280px;transform-origin:top right;background:#fff}
+
+  /* جوّال: ٣٩٠×٨٤٤ — مقاس التصميم الشائع (آيفون ١٢/١٣/١٤) */
+  .d-mob .phone{
+    width:390px;height:844px;overflow-y:auto;overflow-x:hidden;background:#fff;
+    border:9px solid #12142a;border-radius:34px;box-shadow:0 10px 30px rgba(17,20,38,.16);
+  }
+  .d-mob .phone::-webkit-scrollbar{width:0}
+  .slot{border:2px dashed #c9ccdf;background:#fbfbfe;color:var(--muted);text-align:center;padding:20px;margin:10px;border-radius:10px;font-size:13px}
+  .piece{position:relative}
+  .piece.hl{outline:2px solid var(--brand);outline-offset:-2px}
+
+  /* ===== قطع الموقع (نفس الرسم في اللوحة وفي المسرح) ===== */
+  .h-classic,.h-centered,.h-pill,.h-transparent{--pc:var(--pcolor,#3030ff)}
+  .hrow{display:flex;align-items:center;gap:12px;padding:13px 18px}
+  .logo{width:30px;height:30px;border-radius:50%;background:var(--pcolor,#3030ff);flex:0 0 auto}
+  .nm{font-weight:700;font-size:14px}
+  .nav{display:flex;gap:14px;margin-inline-start:auto;color:var(--muted);font-size:12.5px}
+  .cta{background:var(--pcolor,#3030ff);color:#fff;border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700}
+  .h-classic{border-bottom:1px solid var(--line)}
+  .h-centered{border-bottom:1px solid var(--line);text-align:center}
+  .h-centered .hrow{flex-direction:column;gap:8px}
+  .h-centered .nav{margin:0}
+  .h-pill{padding:12px}
+  .h-pill .hrow{border:1px solid var(--line);border-radius:999px;box-shadow:0 5px 16px rgba(17,20,38,.08)}
+  .h-transparent{background:linear-gradient(135deg,#12142a,#2a2d55);color:#fff}
+  .h-transparent .nav{color:#dce0f0}
+  .h-utility{border-bottom:1px solid var(--line)}
+  .h-utility .strip{background:#12142a;color:#c9ccdf;font-size:11.5px;padding:6px 18px;display:flex;gap:14px}
+  .h-utility .strip .sp{margin-inline-start:auto}
+
+  /* الجوّال يعرض ما يعرضه فعلاً: برغر بدل القائمة، واسم مختصر */
+  .burger{display:none;font-size:19px}
+  #frameMob .burger{display:inline}
+  #frameMob .nav{display:none}
+  #frameMob .nm{font-size:13px;margin-inline-start:auto}
+  #frameMob .cta{padding:5px 11px;font-size:11.5px}
+  #frameMob .h-utility .strip{font-size:10.5px;padding:5px 12px;gap:9px}
+  #frameMob .hrow{padding:10px 12px;gap:9px}
+  #frameMob .hero{padding:34px 16px}
+  #frameMob .sec{padding:16px}
+  #frameMob .f-columns{gap:14px}
+
+  .hero{background:linear-gradient(135deg,var(--pcolor,#3030ff),#12142a);color:#fff;padding:44px 22px;text-align:center}
+  .hero b{display:block;font-size:20px;margin-bottom:5px}
+  .hero span{opacity:.85;font-size:13px}
+  .sec{padding:20px 22px;border-bottom:1px solid var(--line-soft)}
+  .sec h3{margin:0 0 4px;font-size:15px}
+  .sec p{margin:0;color:var(--muted);font-size:12.5px}
+  .sec .cards{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .sec .cards i{display:block;height:50px;flex:1 1 110px;border-radius:8px;background:var(--line-soft)}
+
+  .f{background:#12142a;color:#aab0c6;padding:20px;font-size:12px}
+  .f b{color:#fff;display:block;margin-bottom:5px;font-size:12.5px}
+  .f-columns{display:flex;gap:26px;flex-wrap:wrap}
+  .f-columns>div{flex:1 1 120px}
+  .f-brand .mark{width:34px;height:34px;border-radius:9px;background:var(--pcolor,#3030ff);margin-bottom:8px}
+  .f-centered{text-align:center}
+  .f-simple{padding:13px 20px;text-align:center}
+
+  .notes{max-width:1180px;margin:22px auto 0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .notes h2{margin:0 0 8px;font-size:15px}
+  .notes table{width:100%;border-collapse:collapse;font-size:13px}
+  .notes th,.notes td{border-bottom:1px solid var(--line-soft);padding:7px 6px;text-align:start;vertical-align:top}
+  .notes th{color:var(--muted);font-size:12px}
+  .notes code{background:var(--line-soft);border-radius:5px;padding:1px 5px;font-size:12px;direction:ltr;display:inline-block}
+</style>
+</head>
+<body>
+
+<div class="console-top">
+  <span class="logo">مُدَوَّنَتِي · الكونسول</span>
+  <span class="g">لوحة التحكّم</span><span class="g">مقالاتي</span>
+  <span class="now">موقعي</span>
+  <span class="g">جمهوري</span><span class="g">حسابي</span>
+  <span class="sp"></span><span class="g">د. علاء الدين بدوي</span>
+</div>
+
+<!-- الشريط العلوي: كل ما كان في السايدبار صار أيقونات هنا -->
+<div class="toolbar" id="toolbar">
+  <button class="tool" data-key="identity"><span class="dot"></span><span class="ic">🎨</span><span class="lb">هويتك</span></button>
+  <button class="tool" data-key="header"><span class="dot"></span><span class="ic">▤</span><span class="lb">الشريط العلوي</span></button>
+  <button class="tool" data-key="pages"><span class="dot"></span><span class="ic">📄</span><span class="lb">صفحاتك</span></button>
+  <button class="tool" data-key="footer"><span class="dot"></span><span class="ic">▭</span><span class="lb">الذيل</span></button>
+  <button class="tool" data-key="domain"><span class="dot"></span><span class="ic">🌐</span><span class="lb">العنوان</span></button>
+  <span class="tb-sep"></span>
+  <span class="saved">كل تغيير يُحفظ فوراً</span>
+  <div class="tb-end">
+    <button class="btn primary">افتح موقعي ↗</button>
+  </div>
+</div>
+
+<div class="backdrop" id="backdrop"></div>
+<section class="panel" id="panel" role="dialog" aria-modal="false" aria-labelledby="panelTitle"></section>
+
+<main class="stage" id="stage" data-view="desktop">
+  <div class="stage-bar">
+    <span id="stageLabel"></span>
+    <span style="margin-inline-start:auto" id="stageCount"></span>
+  </div>
+
+  <div class="canvas">
+    <div class="device d-desk">
+      <span class="cap">🖥️ كمبيوتر <code>1280×800</code></span>
+      <div class="viewport" id="deskView"><div class="page" id="frameDesk"></div></div>
+    </div>
+    <div class="device d-mob">
+      <span class="cap">📱 جوّال <code>390×844</code></span>
+      <div class="phone" id="frameMob"></div>
+    </div>
+  </div>
+
+  <section class="notes">
+    <h2>ما الذي تغيّر عن النسخة الأولى</h2>
+    <table>
+      <thead><tr><th style="width:50%">النسخة الأولى (مرفوضة)</th><th style="width:50%">هنا</th></tr></thead>
+      <tbody>
+        <tr><td>سايدبار يأكل ٣٠٠px من عرض المعاينة</td><td>خمس أيقونات في الشريط العلوي — الموقع يأخذ العرض كلّه</td></tr>
+        <tr><td>الاختيار باسم ومستطيل رمادي: «كلاسيكي» · «حبّة عائمة»</td><td>كل قالب مرسوم بشعارك واسمك وقائمتك — تضغط الشكل نفسه</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:10px 0 0;color:var(--muted);font-size:12.5px">
+      القوالب والأقسام من الكود لا من الخيال: <code>shared/components/partner-site/free/</code> (٥ هيدر · ٤ فوتر) و<code>console/.../site-pages/helpers/blocks-pages.ts</code> (٩ صفحات).
+      المعروض مخطَّط؛ في التنفيذ يُركَّب المكوّن الحقيقي نفسه.
+    </p>
+  </section>
+</main>
+
+<script>
+/* ===== بيانات من سجلّات الكود ===== */
+const HEADERS=[
+  {k:"classic",n:"كلاسيكي — الشعار يمين، القائمة يسار، زرّ الحجز في الطرف"},
+  {k:"centered",n:"مركزي — الاسم في النصّ والقائمة تحته"},
+  {k:"pill",n:"حبّة عائمة — شريط مدوّر بظلّ خفيف"},
+  {k:"transparent",n:"شفّاف — غامق يمتزج بالغلاف"},
+  {k:"utility",n:"خدمي — شريط رفيع فوقه هاتفك ودوامك"},
+];
+const FOOTERS=[
+  {k:"columns",n:"أعمدة — نبذة وصفحات وتواصل"},
+  {k:"brand",n:"هوية — علامتك كبيرة وسطر واحد"},
+  {k:"centered",n:"مركزي — كل شيء في المنتصف"},
+  {k:"simple",n:"بسيط — سطر حقوق فقط"},
+];
+const COLORS=["#3030ff","#0e8f6f","#b4472b","#7a3fbf","#1f6fd0","#c39112"];
+const PAGES=[
+  {k:"home",n:"الرئيسية",blocks:[["hero","الغلاف",0,1],["trust","شريط الثقة",1,1],["about","تعرّف علينا",1,1],["services","خدماتنا",1,1],["booking","احجز",1,1],["stats","أرقامنا",1,1],["testimonials","آراء العملاء",1,1],["gallery","المعرض",1,1],["team","الفريق",1,0],["video","فيديو تعريفي",1,0],["faq","الأسئلة الشائعة",1,1],["blog","المدونة",1,1],["contact","تواصل",1,1],["cta","النداء الأخير",0,1],["newsletter","النشرة البريدية",1,1]]},
+  {k:"about",n:"من نحن",blocks:[["hero","البيان",0,1],["about","قصّتنا",1,1],["trust","شريط الثقة",1,1],["stats","أرقامنا",1,1],["team","الفريق",1,0],["video","فيديو تعريفي",1,0],["testimonials","آراء العملاء",1,1],["cta","النداء الأخير",0,1]]},
+  {k:"services",n:"خدماتنا",blocks:[["services","الخدمات بالتفصيل",0,1],["booking","احجز",1,1],["trust","شريط الثقة",1,1],["stats","أرقامنا",1,1],["testimonials","آراء العملاء",1,1],["faq","الأسئلة الشائعة",1,1],["contact","تواصل",1,1],["cta","النداء الأخير",0,1]]},
+  {k:"photos",n:"أعمالنا",blocks:[["gallery","كل الصور",0,1],["video","فيديو تعريفي",1,0],["testimonials","آراء العملاء",1,1],["cta","النداء الأخير",0,1]]},
+  {k:"faq",n:"الأسئلة الشائعة",blocks:[["faq","كل الأسئلة",0,1],["contact","ما لقيت سؤالك؟ تواصل",1,1],["cta","النداء الأخير",0,1]]},
+  {k:"contact",n:"تواصل معنا",blocks:[["contact","طرق التواصل",0,1],["map","الخريطة",1,0],["lead-form","نموذج «اترك رقمك»",1,1],["cta","النداء الأخير",0,1]]},
+  {k:"articles",n:"مقالاتي",blocks:[["blog","كل المقالات",0,1],["newsletter","النشرة البريدية",1,1],["cta","النداء الأخير",0,1]]},
+  {k:"book",n:"احجز",blocks:[["booking","نموذج الحجز",0,1],["contact","طرق أخرى للتواصل",1,1],["cta","النداء الأخير",0,1]]},
+  {k:"reviews",n:"آراء العملاء",blocks:[["testimonials","كل الآراء",0,1],["stats","أرقامنا",1,1],["cta","النداء الأخير",0,1]]},
+];
+
+const S={open:null,color:"#3030ff",header:"classic",footer:"columns",page:"home",hidden:new Set(["team","video"]),subdomain:"",hl:null};
+const $=(s,r=document)=>r.querySelector(s);
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const NAME="د. علاء الدين بدوي", TAG="جراحة تجميل · جدة";
+
+/* ===== رسم القطع — نفس الدالّة تُستعمل في لوحة الاختيار وفي المسرح ===== */
+function headerHTML(k){
+  const nav=`<span class="nav"><span>الرئيسية</span><span>خدماتنا</span><span>أعمالنا</span><span>مقالاتي</span><span>تواصل</span></span>`;
+  const core=`<span class="burger">☰</span><span class="logo"></span><span class="nm">${NAME}</span>${nav}<span class="cta">احجز الآن</span>`;
+  if(k==="utility") return `<div class="h-utility"><div class="strip"><span>📞 0500000000</span><span>السبت–الخميس ٩ص–٩م</span><span class="sp"></span><span>جدة</span></div><div class="hrow">${core}</div></div>`;
+  if(k==="centered") return `<div class="h-centered"><div class="hrow"><span class="logo"></span><span class="nm">${NAME}</span>${nav}</div></div>`;
+  if(k==="pill")     return `<div class="h-pill"><div class="hrow">${core}</div></div>`;
+  if(k==="transparent") return `<div class="h-transparent"><div class="hrow">${core}</div></div>`;
+  return `<div class="h-classic"><div class="hrow">${core}</div></div>`;
+}
+function footerHTML(k){
+  if(k==="columns") return `<div class="f f-columns"><div><b>${NAME}</b>${TAG}</div><div><b>صفحاتي</b>الرئيسية · خدماتنا · أعمالنا · تواصل</div><div><b>تواصل</b>جدة · 0500000000</div></div>`;
+  if(k==="brand")   return `<div class="f f-brand"><span class="mark"></span><b>${NAME}</b>${TAG} — جميع الحقوق محفوظة ٢٠٢٦</div>`;
+  if(k==="centered")return `<div class="f f-centered"><b>${NAME}</b>الرئيسية · خدماتنا · أعمالنا · تواصل</div>`;
+  return `<div class="f f-simple">جميع الحقوق محفوظة © ٢٠٢٦ — ${NAME}</div>`;
+}
+
+/* ===== اللوحة المنسدلة ===== */
+function openPanel(key){
+  S.open = (S.open===key? null : key); S.hl = S.open; render();
+}
+const SHEET_TITLES={
+  identity:["هويتك","لونك يمشي على الأزرار والغلاف والروابط. الشعار يُرفع من «حسابي»."],
+  header:["الشريط العلوي","اضغط الشكل الذي يعجبك — كلٌّ مرسوم ببياناتك أنت، والموقع خلفك يتغيّر فوراً."],
+  pages:["صفحاتك","اختر صفحة تشوفها خلفك، وأطفئ الأقسام التي ما تبغاها."],
+  footer:["ذيل الموقع","اضغط الشكل الذي يعجبك — والموقع خلفك يتغيّر فوراً."],
+  domain:["عنوان موقعك","العنوان الذي تكتبه على بطاقتك. موقعك يبقى يعمل على العنوان الطويل أيضاً."],
+};
+
+function buildPanel(){
+  const box=$("#panel"); box.dataset.open=String(!!S.open);
+  $("#backdrop").dataset.open=String(!!S.open);
+  document.body.dataset.sheet=String(!!S.open);
+  box.innerHTML="";
+  if(!S.open) return;
+
+  const [title,hint]=SHEET_TITLES[S.open];
+  box.appendChild(el("div","grip"));
+  const head=el("div","head");
+  head.innerHTML=`<div><h2 id="panelTitle">${title}</h2><p class="hint">${hint}</p></div>`;
+  const close=el("button","close","✕"); close.setAttribute("aria-label","إغلاق");
+  close.onclick=()=>{S.open=null;S.hl=null;render()};
+  head.appendChild(close); box.appendChild(head);
+
+  const p=el("div","scroll"); box.appendChild(p);
+
+  if(S.open==="identity"){
+    const sw=el("div","swatches");
+    COLORS.forEach(c=>{const b=el("button","sw-color");b.style.background=c;b.setAttribute("aria-pressed",String(S.color===c));
+      b.onclick=()=>{S.color=c;render()};sw.appendChild(b)});
+    p.appendChild(sw);
+  }
+
+  if(S.open==="header"||S.open==="footer"){
+    const isH=S.open==="header", list=isH?HEADERS:FOOTERS, cur=isH?S.header:S.footer;
+    const g=el("div","choices");
+    list.forEach(t=>{
+      const b=el("button","choice");
+      b.setAttribute("aria-pressed",String(cur===t.k));
+      b.innerHTML=(isH?headerHTML(t.k):footerHTML(t.k))+
+        `<span class="cap">${t.n}<span class="pick">${cur===t.k?"مختار ✓":"اختر"}</span></span>`;
+      b.onclick=()=>{ if(isH)S.header=t.k; else S.footer=t.k; render(); };
+      g.appendChild(b);
+    });
+    p.appendChild(g);
+  }
+
+  if(S.open==="pages"){
+    const chips=el("div","chips");
+    PAGES.forEach(pg=>{
+      const on=pg.blocks.filter(b=>!S.hidden.has(b[0])).length;
+      const c=el("button","chip",`${pg.n} <span style="opacity:.6;font-size:11.5px">${on}/${pg.blocks.length}</span>`);
+      c.setAttribute("aria-current",String(S.page===pg.k));
+      c.onclick=()=>{S.page=pg.k;render()};
+      chips.appendChild(c);
+    });
+    p.appendChild(chips);
+    const cur=PAGES.find(x=>x.k===S.page), grid=el("div","blkgrid");
+    cur.blocks.forEach(([k,n,tog,has])=>{
+      const r=el("div","blk"); r.appendChild(el("span","nm",n));
+      if(!has) r.appendChild(el("span","lock","لا توجد بيانات"));
+      if(tog){
+        const s=el("button","sw"); s.setAttribute("role","switch");
+        s.setAttribute("aria-checked",String(!S.hidden.has(k))); s.setAttribute("aria-label",n);
+        if(!has) s.disabled=true;
+        s.onclick=()=>{S.hidden.has(k)?S.hidden.delete(k):S.hidden.add(k);render()};
+        r.appendChild(s);
+      } else r.appendChild(el("span","lock","🔒 ثابت"));
+      grid.appendChild(r);
+    });
+    p.appendChild(grid);
+  }
+
+  if(S.open==="domain"){
+    const f=el("div","field",`<span style="color:var(--muted);direction:ltr">.modonty.com</span>`);
+    const i=el("input"); i.dir="ltr"; i.placeholder="اسم-نشاطك"; i.value=S.subdomain;
+    i.oninput=e=>{S.subdomain=e.target.value.replace(/[^a-z0-9-]/gi,"").toLowerCase();paintStage();markTools()};
+    f.prepend(i); p.appendChild(f);
+  }
+}
+
+/* ===== المسرح — نفس الموقع يُرسم في الجهازين معاً ===== */
+function paintInto(f){
+  f.innerHTML=""; f.style.setProperty("--pcolor",S.color);
+  const cur=PAGES.find(x=>x.k===S.page);
+  const hp=el("div","piece"+(S.hl==="header"?" hl":"")); hp.innerHTML=headerHTML(S.header); f.appendChild(hp);
+
+  const shown=cur.blocks.filter(b=>!S.hidden.has(b[0]));
+  shown.forEach(([k,n])=>{
+    const d=el("div","piece"+(S.hl==="pages"?" hl":""));
+    d.innerHTML = k==="hero"
+      ? `<div class="hero"><b>${NAME}</b><span>${TAG}</span></div>`
+      : `<div class="sec"><h3>${n}</h3><p>محتواك الحقيقي يظهر هنا كما يراه الزائر.</p><div class="cards"><i></i><i></i><i></i></div></div>`;
+    f.appendChild(d);
+  });
+  if(!shown.length) f.appendChild(el("div","slot","كل أقسام هذه الصفحة مطفأة — الزائر يرى صفحة فارغة."));
+  const fp=el("div","piece"+(S.hl==="footer"?" hl":"")); fp.innerHTML=footerHTML(S.footer); f.appendChild(fp);
+  return {cur,shown};
+}
+
+/* شاشة ١٢٨٠ تُصغَّر لتدخل العرض المتبقّي بعد الجوّال والشيت — بلا قصّ */
+function fitDesktop(){
+  const page=$("#frameDesk"), view=$("#deskView");
+  const avail=$(".canvas").clientWidth - 390 - 22 - 4;   /* عرض الجوّال + الفجوة */
+  const k=Math.max(.28,Math.min(1,avail/1280));
+  page.style.transform=`scale(${k})`;
+  view.style.width=Math.round(1280*k)+"px";
+  view.style.height=Math.round(Math.min(page.scrollHeight,900)*k)+"px";
+}
+
+function paintStage(){
+  const {cur,shown}=paintInto($("#frameDesk"));
+  paintInto($("#frameMob"));
+  fitDesktop();
+  $("#stageLabel").textContent=`${cur.n}${S.subdomain?" · "+S.subdomain+".modonty.com":""}`;
+  $("#stageCount").textContent=`${shown.length} من ${cur.blocks.length} قسماً ظاهر — الجهازان يتغيّران معاً`;
+}
+window.addEventListener("resize",fitDesktop);
+
+function markTools(){
+  document.querySelectorAll(".tool").forEach(t=>{
+    const k=t.dataset.key;
+    t.setAttribute("aria-expanded",String(S.open===k));
+    const done = k==="identity"?!!S.color : k==="header"?!!S.header : k==="footer"?!!S.footer
+               : k==="domain"?!!S.subdomain : true;
+    t.dataset.done=String(done);
+  });
+}
+/* القطعة التي تُحرَّر تُساق إلى مرأى العين داخل الجوّال (٨٤٤ لا تسع الصفحة كلّها) */
+function focusPiece(){
+  if(!S.hl) return;
+  const ph=$("#frameMob");
+  const t = S.hl==="footer" ? ph.lastElementChild
+          : S.hl==="header" ? ph.firstElementChild
+          : ph.children[1] || ph.firstElementChild;
+  if(t) ph.scrollTo({top:Math.max(0,t.offsetTop-8),behavior:"smooth"});
+}
+
+function render(){ buildPanel(); paintStage(); markTools(); focusPiece(); }
+
+document.querySelectorAll(".tool").forEach(t=>t.onclick=()=>openPanel(t.dataset.key));
+$("#backdrop").onclick=()=>{S.open=null;S.hl=null;render()};
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&S.open){S.open=null;S.hl=null;render()} });
+render();
+</script>
+</body>
+</html>

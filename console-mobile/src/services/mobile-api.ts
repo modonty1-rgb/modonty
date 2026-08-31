@@ -177,6 +177,11 @@ export type MobileAudience = {
   };
 };
 
+/** تسجيل رمز الدفع عند الخادم — الجانب المفقود: النقطة موجودة منذ البداية ولا ينادِها أحد. */
+export function registerPushDevice(accessToken: string, device: { expoPushToken: string; platform: 'android' | 'ios'; deviceName?: string; appVersion?: string }): Promise<{ device: { id: string; platform: string; enabled: boolean } }> {
+  return mobileRequest<{ device: { id: string; platform: string; enabled: boolean } }>('/devices/register', accessToken, 'تعذّر تسجيل الجهاز للتنبيهات.', { method: 'POST', body: device });
+}
+
 export async function loginWithEmail(email: string, password: string): Promise<MobileSession> {
   const response = await fetch(`${baseUrl}/auth/login`, {
     method: 'POST',

@@ -1,0 +1,185 @@
+<title>جرد تطبيق الكونسول</title>
+<style>
+  :root{
+    --page:#F4F7FC; --card:#FFFFFF; --ink:#101827; --muted:#54637A; --line:#C6D3E8;
+    --teal:#0B605E; --warn:#96450A; --danger:#B4241A; --ok:#0B605E;
+    --chip:#EBF0F8;
+  }
+  :root:not([data-theme="light"]){}
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --page:#070B14; --card:#111827; --ink:#E9EDF5; --muted:#A9B6CC; --line:#243043;
+      --teal:#00D8D8; --warn:#F5A524; --danger:#FF6B6B; --ok:#00D8D8; --chip:#1B2436;
+    }
+  }
+  :root[data-theme="dark"]{
+    --page:#070B14; --card:#111827; --ink:#E9EDF5; --muted:#A9B6CC; --line:#243043;
+    --teal:#00D8D8; --warn:#F5A524; --danger:#FF6B6B; --ok:#00D8D8; --chip:#1B2436;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:24px 16px 64px; background:var(--page); color:var(--ink);
+    font-family:"Tajawal",system-ui,-apple-system,"Segoe UI",sans-serif;
+    direction:rtl; line-height:1.75; font-size:16px;
+  }
+  .wrap{max-width:960px;margin:0 auto}
+  h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 8px}
+  .stamp{color:var(--muted);font-size:12.5px;margin:0 0 28px;border-inline-start:3px solid var(--teal);padding-inline-start:10px}
+  h2{font-size:19px;margin:36px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:14px 0 4px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .kpi b{display:block;font-size:26px;line-height:1.25}
+  .kpi span{color:var(--muted);font-size:13px}
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;min-width:520px}
+  th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);font-size:14.5px;vertical-align:top}
+  th{background:var(--chip);font-weight:700;font-size:13.5px;white-space:nowrap}
+  tr:last-child td{border-bottom:0}
+  .done{color:var(--ok);font-weight:700}
+  .open{color:var(--warn);font-weight:700}
+  .gap{color:var(--danger);font-weight:700}
+  code{background:var(--chip);padding:1.5px 6px;border-radius:6px;font-size:13px;font-family:ui-monospace,"Cascadia Code",Consolas,monospace;direction:ltr;display:inline-block}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+  .card h3{margin:0 0 6px;font-size:16px}
+  .card p{margin:6px 0;font-size:14.5px}
+  .ev{color:var(--muted);font-size:13px;margin-top:8px}
+  ul{margin:8px 0;padding-inline-start:20px}
+  li{margin:5px 0;font-size:14.5px}
+  .note{border-inline-start:4px solid var(--warn);background:var(--card);border-radius:0 14px 14px 0;padding:14px 16px;margin:14px 0}
+  .phase2{opacity:.72}
+</style>
+
+<div class="wrap">
+<h1>جرد تطبيق الكونسول للجوّال</h1>
+<p class="sub">ما أُنجز · ما بقي · ما لم يُقَس. الرفع من الجوّال خارج النطاق — مرحلة ثانية بقرار خالد.</p>
+<p class="stamp">٢٩ أغسطس ٢٠٢٦ · كل رقم أدناه مقيس من الكود أو من الجهاز نفسه، وما لم يُقَس مكتوب أنه لم يُقَس.<br><b>آخر تحديث: الخمس شاشات الباقية أُقفلت</b> — التحقّق كلّه على جهاز SM-A217F عبر <code>adb</code>، لا على المتصفّح.</p>
+
+<div class="grid">
+  <div class="kpi"><b>١٤</b><span>شاشة في التطبيق</span></div>
+  <div class="kpi"><b>١٤</b><span>مرّت تمريرة واجهة كاملة</span></div>
+  <div class="kpi"><b>٠</b><span>لم تُراجَع بعد</span></div>
+  <div class="kpi"><b>٢٥</b><span>نقطة API موجودة</span></div>
+  <div class="kpi"><b>٢</b><span>نقطة مبنيّة لا يناديها التطبيق</span></div>
+  <div class="kpi"><b>٠</b><span>أخطاء <code>tsc</code> في التطبيقين</span></div>
+</div>
+
+<h2>١ · الشاشات</h2>
+<div class="scroll">
+<table>
+  <tr><th>#</th><th>الشاشة</th><th>الحالة</th><th>الناقص المقيس</th></tr>
+  <tr><td>S01</td><td>الدخول</td><td class="done">خلصت</td><td>—</td></tr>
+  <tr><td>S02</td><td>الرئيسية</td><td class="done">خلصت</td><td>—</td></tr>
+  <tr><td>S03</td><td>الإحالة</td><td class="done">خلصت</td><td>—</td></tr>
+  <tr><td>S04</td><td>الاشتراك</td><td class="done">خلصت</td><td>مصدر السعر ينتظر قرارك</td></tr>
+  <tr><td>S05</td><td>طابور القرارات</td><td class="done">خلصت</td><td>—</td></tr>
+  <tr><td>S07</td><td>المقال والأسئلة</td><td class="done">خلصت</td><td>—</td></tr>
+  <tr><td>S09</td><td>الطلّات</td><td class="done">خلصت</td><td>—</td></tr>
+  <tr><td>S11</td><td>المقالات المنشورة</td><td class="done">خلصت</td><td>—</td></tr>
+  <tr><td>S15</td><td>الحجوزات</td><td class="done">خلصت</td><td>—</td></tr>
+  <tr><td>S08</td><td>الجمهور</td><td class="done">خلصت</td><td>السحب للتحديث كان <b>مزعوماً في تعليق الشاشة وغير موجود</b> — فالصندوق الفارغ بلا زرّ إعادة وبلا سحب = بلا مخرج</td></tr>
+  <tr><td>S08‑رد</td><td>الرد على سؤال</td><td class="done">خلصت</td><td>زرّ الإرسال <b>2.39:1</b> فاتحاً · إرسال علنيّ دائم بلا تأكيد · بلا أثر ضغط</td></tr>
+  <tr><td>S12</td><td>التنبيهات</td><td class="done">خلصت</td><td>التنبيه <b>لا يُوسَم مقروءاً أبداً</b> — الشارة ما تصل صفراً</td></tr>
+  <tr><td>S13</td><td>الحساب</td><td class="done">خلصت</td><td>ضاغطان بلا أثر ضغط · نمطان ميّتان</td></tr>
+  <tr><td>S14</td><td>الدعم</td><td class="done">خلصت</td><td>ضاغط بلا أثر ضغط · وارد ونمطان ميّتون</td></tr>
+  <tr class="phase2"><td>S10</td><td>رفع طلّة</td><td>مؤجَّلة — مرحلة ثانية</td><td>خارج النطاق بقرارك</td></tr>
+</table>
+</div>
+<p class="ev">القياس: مسحُ كل ملفّ شاشة عن حالات التحميل والخطأ والفارغ والأوفلاين والسحب‑للتحديث. الشاشات غير المراجَعة ٦٠٧ سطراً مجتمعةً.</p>
+
+<h2>٢ · ما أُغلق في جولة الخمس شاشات</h2>
+<div class="card">
+  <h3>الخطّاف المشترك — إصلاحٌ واحد غطّى ٧ شاشات</h3>
+  <p><code>useEngagementResource</code> يخدم ٧ شاشات، فثلاثة أعطال أُصلحت في موضع واحد بدل سبعة:</p>
+  <ul>
+    <li><b>التحديث كان يهدم الشاشة</b> — كل إعادة جلب تمسح البيانات إلى هيكل تحميل، فالسحب للتحديث يقذف القارئ من موضعه. صار صامتاً يُبقي المحتوى.</li>
+    <li><b>لا إعادة جلب عند العودة للشاشة</b> — يردّ على سؤال ثم يرجع فيجده «بلا ردّ». صار يُعاد الجلب عند كل عودة.</li>
+    <li><b>سقوط التحديث كان يهدم شاشة تعمل</b> — الآن لو سقط النداء والبيانات حاضرة تبقى.</li>
+  </ul>
+</div>
+<div class="card">
+  <h3>S12 — التنبيه ما كان يُوسَم مقروءاً قطّ</h3>
+  <p>نقطة التنبيهات <code>GET</code> فقط، و<code>readAt</code> يُقرأ ولا يكتبه أي فعل في العقد كلّه. فالشارة لا تصل صفراً والتنبيه «جديد» للأبد — وشارةٌ لا تُطفأ يتعلّم صاحبها تجاهلها.</p>
+  <p>بُنيت <code>POST /notifications/:id/read</code> بنفس حرّاس ملكية <code>GET</code> حرفياً.</p>
+  <p class="ev">الدليل من الجهاز: قبل ← الشارة ٢ · «٢ جديد» · البطاقة «جديد» بحدّ تركوازي. بعد ← الشارة ١ · «١ جديد» · البطاقة «تمت رؤيته» بلا حدّ. الرقم نزل في ثلاثة مواضع معاً.</p>
+</div>
+<div class="card">
+  <h3>S08‑رد — تأكيد قبل فعلٍ علنيّ لا رجعة فيه</h3>
+  <p>الردّ يظهر للزوّار تحت المقال باسم العميل، و<code>questions/[faqId]/reply</code> فعل واحد بلا نظير يعدّله أو يحذفه. وكان يخرج بضغطة ثم تُغلق الشاشة بلا إشعار.</p>
+  <p>والتأكيد <b>يسمّي</b> ما لا رجعة فيه: «الرد يظهر للزوّار تحت المقال باسمك، وما تقدر تعدّله من التطبيق بعدها».</p>
+  <p class="ev">وزرّ الإرسال كان <code>navy</code> على <code>brandFill</code> = <b>2.39:1</b> في الفاتح (يلزم 4.5). صار <code>onBrandFill</code> = 7.37:1 فاتحاً و9.91:1 داكناً.</p>
+</div>
+
+<h2>٣ · التنبيهات الفورية — تعمل، ومقيسة على جهاز حقيقي</h2>
+<div class="card">
+  <h3>كانت ثلاث قطع، وحدة موجودة</h3>
+  <ul>
+    <li><b>تخزين الجهاز</b> — كان جاهزاً من البداية (<code>MobileDevice</code> + <code>devices/register</code>)، ولا ينادِه أحد.</li>
+    <li><b>التطبيق يسجّل جهازه</b> — بُني: إذن، رمز، تسجيل عند الخادم، وقناة أندرويد (بدونها تصل التنبيهات صامتة، وهو أسوأ من ألّا تصل).</li>
+    <li><b>المُرسِل</b> — بُني: يحترم مفتاحَي S13، ويعطّل الجهاز الميّت عند <code>DeviceNotRegistered</code>، ولا يُسقط صفّ الصندوق لو سقطت الشبكة.</li>
+  </ul>
+  <p class="ev">تحقّق العقد بردّ حقيقي من <code>exp.host</code>: <code>{"status":"error","details":{"error":"DeviceNotRegistered"}}</code> — بنفس الشكل الذي يقرؤه الكود.</p>
+</div>
+<div class="card">
+  <h3>الوصل: ركب على قِمع موجود لا على مواضع متفرّقة</h3>
+  <p><code>notifyTelegram</code> نقطة دخول واحدة لـ١٧ حدثاً تُنادى من كل أفعال الخادم — فالدفع يركب معها، بلا صيد مواضع ولا نداء جديد في كل فعل.</p>
+  <p><b>والدفع لستّة أحداث فقط:</b> الأربعة المباشرة (طلب تواصل · دعم · سؤال · اهتمام بحملة) + التعليق وردّه. أمّا المشاهدة والإعجاب والمشاركة فتبقى في تيليجرام وحده — <b>دفعةٌ عند كل مشاهدة تدرّب العميل على إسكات التطبيق</b>، فيخسر معها ما وُجد الدفع لأجله.</p>
+  <p><b>والدفع خارج بوّابة تيليجرام:</b> من لم يربط تيليجرام يصله تنبيه تطبيقه — الربط ليس شرطاً.</p>
+</div>
+<div class="card">
+  <h3>البوّابة الأخيرة عبرت: التنبيه وصل جهاز خالد فعلاً — ٣٠ أغسطس</h3>
+  <p>كانت البوّابة اعتمادات جوجل لا كوداً. أُنشئ مشروع Firebase (<code>modonty-c0b31</code>) ورُفع مفتاح FCM V1 إلى EAS، ودخل <code>google-services.json</code> في الحزمة. سلسلة الأدلّة الخام:</p>
+  <ul>
+    <li><b>الرمز جُلب وسُجّل:</b> صفّ في <code>mobile_devices</code> على <code>modonty_dev</code> — <code>ExponentPushToken[cG4ad7…]</code> · <code>khalid's A21s</code> · <code>enabled</code>، وقتُه نفس لحظة فتح التطبيق.</li>
+    <li><b>الدفعة سُلّمت:</b> تذكرة إكسبو <code>{"status":"ok"}</code> ثم <b>الإيصال</b> <code>{"status":"ok"}</code> — الإيصال هو ما يقول إنّ جوجل سلّمت، لا التذكرة.</li>
+    <li><b>ظهرت في درج الجهاز:</b> لقطة <code>.playwright-mcp/push-shade2.png</code>.</li>
+    <li><b>الضغطة تفتح تبويبها:</b> <code>{"type":"faq_new"} → audience</code>، والشاشة انتقلت إلى «الجمهور» (S08) — لقطة <code>push-after-tap2.png</code>.</li>
+  </ul>
+</div>
+<div class="card">
+  <h3>والتحقّق الحيّ كشف ثلاثة أعطال ما كان يكشفها إلّا جهاز حقيقي</h3>
+  <ul>
+    <li><b>التنبيه كان يهبط في قناة أجنبية.</b> القياس: <code>channel=fcm_fallback_notification_channel · sound=null · vibrate=null</code> — القناة العربية «تنبيهات مدونتي» تُنشأ ولا تُستعمل، ويرى العميل في إعداداته اسم «Miscellaneous» لا يعرف ما يطفئه. المبدأ ومصدره: <code>channelId</code> حقلٌ في رسالة الدفع نفسها (docs.expo.dev/push-notifications/sending-notifications). الحلّ في المُرسِل لا في الشاشة. أُعيد القياس: <code>channel=default</code>.</li>
+    <li><b>والتطبيق مفتوح، لا يظهر شيء.</b> دفعةٌ ردّها <code>ok</code> وإيصالها <code>ok</code> ولا أثر في الدرج — التوثيق صريح: «By default, if no handler is configured … the application will not show the notification». فالعميل الذي يتصفّح تطبيقه كان <b>آخر من يعلم</b> بسؤال وصله للتوّ. أُضيف <code>setNotificationHandler</code>؛ التنبيه ظهر والتطبيق في المقدّمة.</li>
+    <li><b>والضغطة كانت بلا أثر.</b> الخادم يضع <code>data.type</code> في كل دفعة ولا أحد يقرؤه في التطبيق: يفتح على آخر شاشة كان عليها، فيقرأ العميل «سؤال من قارئ» ويبحث عنه بيده. أُضيف <code>addNotificationResponseReceivedListener</code> + <code>getLastNotificationResponse()</code> للفتح البارد، والاشتقاق بنفس بادئات <code>targetOf</code> في الخادم لا بترجمة جديدة.</li>
+  </ul>
+</div>
+
+<h2>٤ · بوّابات لم تُقَس ولا مرّة في التطبيق كلّه</h2>
+<div class="card">
+  <h3>١ · ما بُني ملفّ تطبيق <b>إنتاجي</b> قطّ</h3>
+  <p>بناء التطوير صار يعمل (٣٠ أغسطس، حزمة ١٩٠ ميجا مثبَّتة على SM-A217F). لكن ملفّ الإصدار النهائي — <code>--profile production</code> — لم يُشغَّل، فسلوكه (الحجم · زمن البدء · التصغير) <b>لا يزال مجهولاً</b>.</p>
+  <p class="ev">وفي كل بناء يُرفع أرشيف <b>٢٤٤ ميجا</b>: <code>.easignore</code> الجذري لا يستثني <code>admin/</code> ولا <code>modonty/</code> ولا <code>console/</code>. الوقت يُدفع في كل بناء لا مرّة واحدة — والاستثناء يحتاج فحصاً أوّلاً حتى لا يكسر <code>pnpm install</code> على الخادم.</p>
+</div>
+<div class="card">
+  <h3>٢ · الاتجاه من اليمين مضبوط يدوياً لا بالنظام</h3>
+  <p>ما فيه <code>I18nManager.forceRTL</code>؛ كل مكوّن أُدير بأنماطه. يعمل اليوم، لكن أي مكوّن جديد يبدأ من اليسار حتى يُضبط — والخطأ لا يظهر إلّا بالعين.</p>
+</div>
+<div class="card">
+  <h3>٣ · الوضع الفاتح محسوب لا مُصوَّر</h3>
+  <p>ألوانه صُحّحت بالأرقام على مستوى التوكنات وعبرت العتبات، لكنّه <b>لم يُلتقط بالعين على أغلب الشاشات</b>. والخلل الذي يُرى ولا يُحسب: تراكب، ظلّ ضائع، حدّ يختفي.</p>
+</div>
+
+<h2>٥ · معلّق ينتظر قرارك أنت</h2>
+<div class="note">
+  <ul>
+    <li><b>الرفع من الجوّال</b> — مؤجَّل بقرارك اليوم. مرحلة ثانية.</li>
+    <li><b>مصدر سعر الاشتراك</b> ودلالة <code>pricing.yr</code> في S04.</li>
+    <li><b>فهرس الإحالة على الإنتاج</b> — مؤشّر لم يُتحقَّق؛ يُحسم بأمر واحد على Atlas.</li>
+    <li><b>ملفّا اعتمادات Firebase في <code>Downloads</code></b> — أحدهما سرّ. حذفهما قرارُك، بعد أن ثبت أنّ البناء يعمل بهما.</li>
+    <li><b>مراجعة تقسيم الأحداث بين القناتين</b> — طلبتَها ٣٠ أغسطس. <b>لكن السبب الذي ذكرتَه غير صحيح:</b> رسائل Firebase <b>مجانية تماماً</b> بنصّ التوثيق الرسمي — «There's no cost to using Cloud Messaging» — على الخطّتين وبلا سقف، ولو كان المستخدمون بالملايين؛ وخدمة إكسبو التي نمرّ بها مجانية كذلك. فما في فاتورة تُحمى.<br>والمعيار الحقيقي هو <b>انتباه العميل</b>: دفعةٌ عند كل مشاهدة تدرّبه على إسكات التطبيق فيخسر ما يهمّه. وعليه بُني التقسيم القائم: <b>١٧ حدثاً على تيليجرام · ٦ منها فقط تُدفع للجوال</b> (تواصل · دعم · سؤال · اهتمام بحملة · تعليق · ردّ). فلنراجع <b>أيّ الستّة تستحقّ</b>، لا كم تكلّف.</li>
+  </ul>
+</div>
+
+<h2>٦ · الترتيب الذي أقترحه</h2>
+<div class="card">
+  <p><b>الشاشات كلّها أُقفلت، والتنبيهات صارت تصل فعلاً</b> — لم يبقَ في التطبيق شاشة بلا تمريرة واجهة، ولا قطعة في سلسلة الدفع غير مُثبتة على جهاز حقيقي.</p>
+  <p><b>فالمتبقّي:</b></p>
+  <ul>
+    <li><b>الدفع إلى المستودع</b> — شغل التنبيهات كلّه وشغل الشاشات لم يُدفع بعد.</li>
+    <li><b>بناء إنتاجي</b> (<code>--profile production</code>) — الوحيد الذي قد يكشف مفاجأة لا نعرفها اليوم.</li>
+    <li><b>الرفع من الجوّال</b> — مؤجَّل بقرارك، مرحلة ثانية.</li>
+  </ul>
+</div>
+
+</div>

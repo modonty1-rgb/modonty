@@ -18,7 +18,8 @@
         "foregroundImage": "./assets/brand/modonty-mark.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "output": "single",

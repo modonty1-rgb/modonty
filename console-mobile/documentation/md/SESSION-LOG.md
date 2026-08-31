@@ -1,5 +1,99 @@
 # Session Log — console-mobile
 
+## Session: 2026-08-30 00:00 — التنبيهات الفورية وصلت الجهاز فعلاً
+
+### 🎯 وين وقفت
+- آخر تاسك: سلسلة الدفع كاملة — من تسجيل الجهاز إلى الضغطة التي تفتح التبويب. **متحقَّقة على SM-A217F**.
+- **ثم كُشف عطلٌ يُبطل خمسة أسداس الشغل** (أسفله). الجلسة توقّفت عند سؤال خالد «أصلحها؟» ولم يُجَب بعد.
+- **الفعل التالي الواحد:** ربط `pushToClient` بمنبّه الموقع العام `modonty/lib/telegram/notify-telegram.ts` — بنفس قائمة الأحداث الستّة وبنفس ترتيب النداء (قبل بوّابات تيليجرام).
+
+### 🔴 العطل المكتشَف آخر الجلسة — الدفع ميّت في ٥ من ٦
+
+في **نظامان منفصلان** للتنبيه، وأنا ربطتُ الدفع بواحد فقط:
+
+```
+modonty/lib/telegram/notify-telegram.ts   →  لا ذكر لـpushToClient
+console/lib/telegram/notify.ts:142        →  void pushToClient({
+```
+
+ومن الأحداث الستّة التي أعلنتُها «مربوطة»، خمسة تُطلَق من الموقع العام لا من الكونسول (عدٌّ خام على مواضع النداء، باستثناء ملفّات `lib/telegram` نفسها):
+
+```
+supportMessage     -> modonty:1   console+admin:0
+askClientQuestion  -> modonty:3   console+admin:0
+bookingRequest     -> modonty:1   console+admin:0
+commentNew         -> modonty:2   console+admin:0
+commentReply       -> modonty:2   console+admin:0
+campaignInterest   -> modonty:0   console+admin:1   ← الوحيد الحيّ
+```
+
+**الأثر:** لو سأل قارئ سؤالاً اليوم، لا يصل جوال العميل شيء. وهذا بالضبط ما كانت تجربة «الدفع من الخادم نفسه» ستكشفه — ولهذا لا يجوز الاكتفاء بإرسال يدوي إلى نقطة إكسبو.
+
+**درسٌ يُحمل:** أرسلتُ الدفعات بيدي إلى `exp.host` فرأيتُ النجاح، والطريق الحقيقي لم يُمسّ. **الاختبار الذي يتجاوز الطبقة المعطلة يُثبت سلامة كل شيء عداها.**
+
+### ✅ اللي خلص
+
+**البوّابة كانت اعتمادات جوجل لا كوداً.** أُنشئ مشروع Firebase (`modonty-c0b31`، الحزمة `com.modonty.console`) ورُفع مفتاح FCM V1 إلى EAS — الرفع بيد خالد لا بيد وكيل: إضافة بلاي رايت تمنع حقن الملفّات (`DOM.setFileInputFiles: Not allowed`). ثم `google-services.json` دخل الحزمة و`app.json` صار يشير إليه؛ الملفّان مُستثنيان من git (مؤكَّد بـ`git check-ignore -v`).
+
+**سلسلة الأدلّة الخام — أربع حلقات:**
+1. **الرمز جُلب وسُجّل:** صفّ في `mobile_devices` على `modonty_dev` — `ExponentPushToken[cG4ad7…]` · `khalid's A21s` · `enabled`، ختمُه نفس لحظة فتح التطبيق.
+2. **الدفعة سُلّمت:** تذكرة إكسبو `ok` ثم **الإيصال** `{"status":"ok"}` — الإيصال هو ما يقول إن جوجل سلّمت، لا التذكرة.
+3. **ظهرت في الدرج:** `.playwright-mcp/push-shade2.png`.
+4. **الضغطة تفتح تبويبها:** `{"type":"faq_new"} → audience`، والشاشة انتقلت إلى «الجمهور» (S08) — `push-after-tap2.png`.
+
+**والتحقّق الحيّ كشف ثلاثة أعطال ما كان يكشفها إلّا جهاز:**
+- **قناة أجنبية:** `channel=fcm_fallback_notification_channel · sound=null · vibrate=null` — القناة العربية تُنشأ ولا تُستعمل، ويرى العميل «Miscellaneous» في إعداداته. السبب: `channelId` حقلٌ في **رسالة الدفع** لا في التطبيق (توثيق إكسبو الرسمي). أُصلح في المُرسِل؛ أُعيد القياس: `channel=default`.
+- **والتطبيق مفتوح لا يظهر شيء:** دفعة ردّها `ok` وإيصالها `ok` بلا أثر في الدرج. التوثيق صريح: بلا `setNotificationHandler` لا يُعرض شيء. فالعميل الذي يتصفّح تطبيقه كان آخر من يعلم بسؤال وصله للتوّ.
+- **والضغطة بلا أثر:** الخادم يضع `data.type` ولا أحد يقرؤه. أُضيف `addNotificationResponseReceivedListener` + `getLastNotificationResponse()` للفتح البارد، والاشتقاق بنفس بادئات `targetOf` في الخادم لا بترجمة جديدة.
+
+### 📝 القرارات وأسبابها
+- **`shouldPlaySound: false` في المقدّمة** → صوتٌ وأنت داخل التطبيق مقاطعةٌ لا تنبيه؛ العميل حاضر، تكفيه لافتة. والصوت يبقى في القناة حين يكون التطبيق مغلقاً.
+- **الهدف غير المعروف يفتح «التنبيهات»** لا يُهمَل → الضغطة لا تذهب سدى؛ يجد الخبر مكتوباً.
+- **`useNavigationContainerRef` + `isReady()`** → تغيير التبويب وحده يقع **تحت** أي شاشة مكدَّسة فلا يراه العميل؛ والفتح البارد قد يسبق تركيب الشجرة.
+
+### ⚠️ غير متحقَّق — لا يُدَّعى
+- **بناء إنتاجي (`--profile production`) لم يُشغَّل** — الذي نجح هو `development`. حجم الإصدار وزمن بدئه مجهولان.
+- **الدفع الحقيقي من الخادم لم يُجرَّب** — الدفعات التي أرسلتُها ذهبت إلى نقطة إكسبو مباشرة، لا عبر `notifyClient`؛ فبوّابة تفضيلات S13 وتعطيل الجهاز الميت **مقروءان في الكود لا مقيسان حيّاً**.
+- `I18nManager` لا يزال غير مستعمل · الوضع الفاتح محسوب لا مُصوَّر على أغلب الشاشات.
+
+### 🔒 يحتاج قرار خالد
+- **ملفّا اعتمادات Firebase في `Downloads`** — أحدهما سرّ (`*firebase-adminsdk*.json`). حذفهما قرارُه، بعد أن ثبت أن البناء يعمل بهما.
+- **`.easignore` الجذري لا يستثني `admin/` ولا `modonty/` ولا `console/`** → كل بناء يرفع **٢٤٤ ميجا**. الاستثناء يحتاج فحصاً أوّلاً حتى لا يكسر `pnpm install` على الخادم.
+- **مراجعة تقسيم الأحداث بين تيليجرام والدفع** — طلبها خالد. **وسببه المذكور غير صحيح ويجب ألّا نبني عليه:** Firebase مجاني تماماً («There's no cost to using Cloud Messaging»، على الخطّتين وبلا سقف)، وإكسبو مجانية. فالمعيار **انتباه العميل** لا التكلفة. التقسيم القائم: ١٧ حدثاً على تيليجرام، ٦ منها تُدفع (تواصل · دعم · سؤال · اهتمام بحملة · تعليق · ردّ). السؤال المطروح: أيّ الستّة تستحقّ.
+- **«أصلحها؟»** — سؤالٌ مطروح على خالد ولم يُجَب: ربط الدفع بمنبّه الموقع العام.
+
+### 📂 الملفّات الملموسة (مقيسة بـ`git status --porcelain`)
+
+**معدَّلة:**
+- `console-mobile/App.tsx` — تسجيل الدفع + عرض المقدّمة + مراقب الضغط + `ref` على `NavigationContainer` (‎+43/−3)
+- `console-mobile/app.json` — `android.googleServicesFile` (‎+3/−1)
+- `console-mobile/.gitignore` · `package.json` — استثناء ملفّي جوجل · حزمتا التنبيهات
+- `console/lib/telegram/notify.ts` — وصل `pushToClient` بقِمع الأحداث
+- `console/app/api/mobile/v1/audience/questions/[faqId]/route.ts`
+- شاشات الجلسة السابقة: `AccountRoute` · `AudienceApiRoute` · `AudienceReplyRoute` · `NotificationsRoute` · `SupportRoute` · `engagement-api` · `mobile-api` · `use-engagement-resource`
+
+**جديدة غير متتبَّعة:**
+- `console-mobile/src/services/push-registration.ts` — التسجيل + العرض + مراقب الضغط
+- `console/lib/push/` — المُرسِل (`notify-client.ts`)
+- `console/app/api/mobile/v1/notifications/[notificationId]/` — نقطة «وسم مقروءاً»
+- `console-mobile/.easignore` · `documentation/html/JARD-MOBILE-APP.html`
+- `console-mobile/google-services.json` — **موجود على القرص ومستثنى من git عمداً** (مؤكَّد بـ`git check-ignore -v`)
+
+### 🔁 حالة git والنشر
+- **الفرع:** `modonty-ui`
+- **مقابل البعيد:** `git rev-list --left-right --count origin/modonty-ui...modonty-ui` = `0	0` — **لا كوميت محبوس**
+- **آخر كوميت:** `c1d9178` — «سيو: ١١٢ بطاقة أُغلقت · إحالة العملاء تعمل من الجوّال إلى الأدمن…»
+- **غير مثبَّت:** نعم — **٤٨ ملفاً** في الشجرة كلها. لا كوميت ولا دفع لشغل هذه الجلسة ولا التي قبلها.
+- **`tsc`:** لم يُشغَّل هذه الجلسة (ممنوع إلا بطلب صريح أو قبل الدفع).
+- **بناء EAS:** `development` نجح — `be6ab8db-aba6-43e4-bf2b-f09152a34742`، الحزمة ١٩٠ ميجا مثبَّتة على الجهاز. `production` لم يُشغَّل.
+
+### 🚀 الاستئناف في ٣٠ ثانية
+1. `adb devices` — الجهاز `R58NB38X98D`؛ ثم `adb reverse tcp:8081 tcp:8081` و`adb reverse tcp:3100 tcp:3100`.
+2. افتح `modonty/lib/telegram/notify-telegram.ts` وقارنه بـ`console/lib/telegram/notify.ts:118-150` (خريطة `PUSH_EVENTS` وموضع النداء قبل بوّابات تيليجرام).
+3. القرار الأول: هل يُنسخ `pushToClient` إلى الموقع العام، أم يُرقّى إلى `dataLayer/` ليخدم الاثنين؟ (النسخ يخالف DRY، والترقية تلمس تطبيقين — يُعرض على خالد.)
+
+---
+
 ## Session: 2026-08-29 21:00 — سطح المقال · بطاقة المنشور · الهدرات · الهياكل · حلقة الديسكتوب
 
 ### 🎯 وين وقفت

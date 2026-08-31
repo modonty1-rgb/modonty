@@ -73,6 +73,11 @@ export type AudienceQuestionDetail = {
     answerPlaceholder: string;
     submitLabel: string;
     submittingLabel: string;
+    confirmTitle: string;
+    confirmBody: string;
+    confirmAction: string;
+    confirmCancel: string;
+    sentToastLabel: string;
     counterMaxLabel: string;
     answerMaxLength: number;
     answeredLabel: string;
@@ -194,6 +199,11 @@ export function getVideoCollection(accessToken: string): Promise<VideoCollection
 
 export function getNotificationCollection(accessToken: string): Promise<NotificationCollection> {
   return mobileRequest<NotificationCollection>('/notifications', accessToken, 'تعذّر تحميل التنبيهات.');
+}
+
+/** يُوسَم التنبيه مقروءاً عند فتحه، ويرجع العدّ الجديد فلا يحتاج التطبيق نداءً ثانياً ليصحّح شارته. */
+export function markNotificationRead(accessToken: string, notificationId: string): Promise<{ notificationId: string; unreadCount: number }> {
+  return mobileRequest<{ notificationId: string; unreadCount: number }>(`/notifications/${notificationId}/read`, accessToken, 'تعذّر تحديث حالة التنبيه.', { method: 'POST' });
 }
 
 export function getAccountOverview(accessToken: string): Promise<AccountOverview> {

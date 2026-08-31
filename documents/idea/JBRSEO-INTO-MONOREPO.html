@@ -1,0 +1,287 @@
+<meta charset="utf-8">
+<title>ضمّ جبر سيو إلى المستودع الواحد</title>
+<style>
+  :root{
+    --bg:#0e1117; --panel:#161b22; --panel2:#1c2430; --line:#2a3441;
+    --txt:#e6edf3; --dim:#8b98a5; --accent:#4c9aff; --ok:#3fb950;
+    --warn:#d29922; --bad:#f85149; --code:#1a2029;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);direction:rtl;
+    font-family:"Tajawal","Segoe UI",system-ui,sans-serif;line-height:1.85;font-size:16px}
+  .wrap{max-width:1080px;margin:0 auto;padding:48px 24px 96px}
+  h1{font-size:2rem;line-height:1.35;margin:0 0 8px;font-weight:800}
+  .sub{color:var(--dim);margin:0 0 40px;font-size:.95rem}
+  h2{font-size:1.35rem;margin:56px 0 18px;padding-bottom:10px;border-bottom:2px solid var(--line);font-weight:800}
+  h3{font-size:1.05rem;margin:32px 0 12px;font-weight:700;color:var(--accent)}
+  p{margin:0 0 14px}
+  code{background:var(--code);border:1px solid var(--line);border-radius:5px;
+    padding:1px 6px;font-family:"Cascadia Code",Consolas,monospace;font-size:.85em;
+    direction:ltr;display:inline-block;color:#a5d6ff}
+  pre{background:var(--code);border:1px solid var(--line);border-radius:10px;
+    padding:16px 18px;overflow-x:auto;direction:ltr;text-align:left;
+    font-family:"Cascadia Code",Consolas,monospace;font-size:.82rem;line-height:1.7;color:#c9d1d9}
+  table{width:100%;border-collapse:collapse;margin:18px 0;font-size:.92rem}
+  th,td{border:1px solid var(--line);padding:10px 12px;text-align:right;vertical-align:top}
+  th{background:var(--panel2);font-weight:700}
+  tr:nth-child(even) td{background:#12171f}
+  .box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:20px 0}
+  .box.bad{border-inline-start:4px solid var(--bad)}
+  .box.warn{border-inline-start:4px solid var(--warn)}
+  .box.ok{border-inline-start:4px solid var(--ok)}
+  .box.acc{border-inline-start:4px solid var(--accent)}
+  .box h4{margin:0 0 10px;font-size:1rem;font-weight:800}
+  .tag{display:inline-block;font-size:.72rem;font-weight:800;padding:2px 9px;
+    border-radius:999px;vertical-align:middle;margin-inline-start:6px}
+  .t-bad{background:#3d1418;color:#ff9b95}
+  .t-warn{background:#3a2d09;color:#e3b341}
+  .t-ok{background:#0f2d17;color:#56d364}
+  .t-acc{background:#0d2847;color:#79b8ff}
+  .lead{font-size:1.08rem;background:var(--panel);border-inline-start:4px solid var(--accent);
+    border-radius:12px;padding:20px 22px;margin:0 0 32px}
+  ul,ol{margin:0 0 14px;padding-inline-start:22px}
+  li{margin-bottom:8px}
+  .num{color:var(--dim);font-size:.85rem}
+  .foot{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);
+    color:var(--dim);font-size:.85rem}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:18px 0}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .stat b{display:block;font-size:1.7rem;font-weight:800;line-height:1.2}
+  .stat span{color:var(--dim);font-size:.85rem}
+</style>
+
+<div class="wrap">
+
+<h1>ضمّ «جبر سيو» إلى مستودع مدونتي — وسكيما واحدة</h1>
+<p class="sub">دراسة · ٣٠ أغسطس ٢٠٢٦ · صفر كود · كل رقم هنا مقيس من الملفّات، ولا شيء منه من قاعدة الإنتاج</p>
+
+<div class="lead">
+  <b>الخلاصة في ثلاثة أسطر:</b><br>
+  التمركز الذي تطلبه <b>نصفه حاصل بالفعل وأنت لا تدري</b> — موقع جبر سيو يقرأ ويكتب على <b>نفس قاعدة مدونتي بالضبط</b>، لا على قاعدة مجاورة.<br>
+  الناقص ليس القاعدة، بل <b>السكيما</b>: ملفّان يصفان نفس المجموعات بأشكال مختلفة، ومعهما <b>٧١٩ سطراً</b> من كود جسور، ونسختان من نفس البيانات داخل القاعدة الواحدة.<br>
+  <b>والأخطر:</b> سكيما جبر سيو تعلن مجموعة <code>clients</code> بـ<b>١١ حقلاً</b>، وسكيما مدونتي تعلن نفسها بـ<b>١٥٥</b> — على قاعدة الإنتاج نفسها.
+</div>
+
+<h2>١ · الوضع الحالي — مقيس</h2>
+
+<h3>الخريطة: عنقود واحد، أربع قواعد، ستّة تطبيقات</h3>
+
+<p>كل الاتصالات على عنقود واحد: <code>modonty-cluster.tgixa8h.mongodb.net</code>. هذا ناتج فحص ملفّات البيئة، مع تمييز السطر المفعَّل من المعلَّق:</p>
+
+<pre>✅ مفعَّل MODONTY/.env.shared:19   DATABASE_URL         → …/modonty_dev
+⬜ معلَّق MODONTY/.env.shared:18   DATABASE_URL         → …/modonty
+✅ مفعَّل MODONTY/.env.shared:31   JBRSEO_DATABASE_URL  → …/modonty      ← الإنتاج
+✅ مفعَّل MODONTY/shared/.env:4    DATABASE_URL         → …/modonty_dev
+
+✅ مفعَّل JBRSEO/jbrseo.com/.env:5        DATABASE_URL              → …/modonty      ← نفس قاعدة مدونتي
+✅ مفعَّل JBRSEO/jbrseo.com/.env.local:1  DATABASE_URL              → …/modonty_dev  ← نفس قاعدة مدونتي
+✅ مفعَّل JBRSEO/jbrseo.com/.env.local:8  MODONTY_PROD_DATABASE_URL → …/modonty
+
+✅ مفعَّل JBRSEO/content/.env:5    DATABASE_URL         → …/jbr-content        ← قاعدة منفصلة
+✅ مفعَّل JBRSEO/sales/.env:3      DATABASE_URL         → …/jbrseo_sales_dev   ← قاعدة منفصلة
+✅ مفعَّل JBRSEO/sales/.env:8      MODONTY_DATABASE_URL → …/modonty            ← قراءة فقط</pre>
+
+<table>
+  <tr><th>القاعدة</th><th>من يستعملها</th><th>موديلات</th></tr>
+  <tr><td><code>modonty</code> / <code>modonty_dev</code></td><td><b>مدونتي</b> (٣ تطبيقات) <b>+ jbrseo.com</b></td><td>٩١ + ١٣</td></tr>
+  <tr><td><code>jbr-content</code></td><td>تقويم المحتوى</td><td>٢</td></tr>
+  <tr><td><code>jbrseo_sales_dev</code></td><td>المبيعات (ويقرأ <code>modonty</code> للأسعار والصناعات)</td><td>٦</td></tr>
+</table>
+
+<div class="box ok">
+  <h4>ما هو سليم اليوم <span class="tag t-ok">لا يُعاد فحصه</span></h4>
+  <ul style="margin-bottom:0">
+    <li><b>الاستاك متطابق</b> — لا ترقية ولا هجرة إطار. جدول التوافق في القسم ٣.</li>
+    <li><b>جبر سيو لا يكتب على مجموعات مدونتي</b> — استدعاء واحد فقط، قراءة:
+      <code>app/actions/modonty-client-logos.ts:104 → modontyDb.modontyClient.findMany</code>.
+      كل كتاباته على مجموعاته هو.</li>
+    <li><b>المبيعات كذلك</b> — اتصاله موسوم في الكود نفسه: <code>⚠️ PRODUCTION — READ ONLY … ممنوع أي كتابة عبر هذا الاتصال</code>.</li>
+  </ul>
+</div>
+
+<h3>العطل ١ · ستّ مجموعات يصفها ملفّان <span class="tag t-bad">حرج</span></h3>
+
+<p>نفس المجموعة في مونجو، معلَنة في سكيمتين، بعدد حقول مختلف:</p>
+
+<table>
+  <tr><th>المجموعة</th><th>مدونتي</th><th>جبر سيو</th><th>الفارق</th></tr>
+  <tr><td><code>clients</code></td><td><code>Client</code> — ١٥٥ حقلاً</td><td><code>ModontyClient</code> — ١١</td><td><b>١٤٤ حقلاً غائباً</b></td></tr>
+  <tr><td><code>media</code></td><td><code>Media</code> — ٧٠</td><td><code>ModontyMedia</code> — ٤</td><td>٦٦</td></tr>
+  <tr><td><code>industries</code></td><td><code>Industry</code> — ٢١</td><td><code>ModontyIndustry</code> — ٤</td><td>١٧</td></tr>
+  <tr><td><code>SiteSettings</code></td><td><code>JbrSiteSettings</code> — ٤</td><td><code>SiteSettings</code> — ٤</td><td>متطابقتان</td></tr>
+  <tr><td><code>LandingSection</code></td><td><code>JbrLandingSection</code> — ٤</td><td><code>LandingSection</code> — ٤</td><td>متطابقتان</td></tr>
+  <tr><td><code>Client</code></td><td>—</td><td>المحتوى ٩ · المبيعات ٢٨</td><td>قاعدتان مختلفتان اليوم</td></tr>
+</table>
+
+<div class="box bad">
+  <h4>الخطر الذي يجب أن يُسمّى قبل أي خطوة</h4>
+  <p style="margin-bottom:8px">سكيما جبر سيو تعلن <code>clients</code> بأحد عشر حقلاً — ولا تعرف بوجود مئة وأربعة وأربعين غيرها. <b>القراءة آمنة</b> (برِزما يرجّع المعلَن فقط)، لكن بقيت مساران لم أتحقّق منهما بعد:</p>
+  <ul style="margin-bottom:8px">
+    <li><b>‏<code>prisma db push</code> من مجلّد جبر سيو على قاعدة الإنتاج</b> — ماذا يفعل بفهارس مجموعة يعرف عُشرها فقط؟ <b>ما تحقّقت من التوثيق بعد.</b></li>
+    <li><b>إنشاء مستند جديد</b> من سكيما ناقصة — يولد عميلاً بلا ١٤٤ حقلاً. لا يحدث اليوم (صفر كتابة مقيسة)، لكن لا شيء في الكود يمنعه غداً.</li>
+  </ul>
+  <p style="margin:0"><b>هذا وحده سبب كافٍ للتوحيد</b>، بمعزل عن أي مكسب آخر.</p>
+</div>
+
+<h3>العطل ٢ · ٧١٩ سطراً موجودة فقط لأن السكيما مقسومة <span class="tag t-warn">تكلفة</span></h3>
+
+<pre> 37  MODONTY/admin/lib/jbrseo-client.ts                          اتصال مونجو خام ثانٍ
+ 97  MODONTY/admin/…/subscription-tiers/actions/sync-subscribers.ts   نسخ المشتركين
+ 89  MODONTY/admin/…/subscription-tiers/helpers/jbrseo-queries.ts
+ 89  MODONTY/admin/lib/pricing/get-tier-pricing.ts
+ 47  MODONTY/admin/scripts/sync-tier-pricing.ts                  نسخ الأسعار
+ 43  JBRSEO/sales/lib/external-db.ts                             اتصال مونجو خام ثالث
+ 53  JBRSEO/sales/lib/jbrseo.ts
+ 31  JBRSEO/sales/lib/modonty.ts
+ 32  JBRSEO/jbrseo.com/lib/modontyDb.ts                          عميل برِزما ثانٍ
+201  JBRSEO/jbrseo.com/app/actions/modonty-client-logos.ts
+───
+719 سطراً</pre>
+
+<p>هذه ليست مِزَة — هي ثمن الانقسام. بسكيما واحدة تصير استعلاماً عادياً بنوعٍ مضمون من المترجم.</p>
+
+<h3>العطل ٣ · نسختان من نفس البيانات <b>داخل القاعدة الواحدة</b> <span class="tag t-bad">حرج</span></h3>
+
+<p>هذا أغرب ما وجدته. حالتان:</p>
+
+<table>
+  <tr><th>الأصل</th><th>النسخة</th><th>الآلة</th></tr>
+  <tr>
+    <td>مجموعة <code>Subscriber</code><br><span class="num">يكتبها jbrseo.com</span></td>
+    <td>مجموعة <code>jbrseo_subscribers</code><br><span class="num">موديل <code>JbrseoSubscriber</code></span></td>
+    <td><code>sync-subscribers.ts</code> ٩٧ سطراً<br>+ حقلا <code>jbrseoId</code> و<code>syncedAt</code></td>
+  </tr>
+  <tr>
+    <td>مجموعة <code>Plan</code><br><span class="num">باقات جبر سيو</span></td>
+    <td><code>SubscriptionTierConfig</code></td>
+    <td><code>sync-tier-pricing.ts</code> ٤٧ سطراً<br>+ <code>jbrseoId</code> · <code>pricing</code> · <code>syncedAtSA</code> · <code>syncedAtEG</code></td>
+  </tr>
+</table>
+
+<div class="box bad">
+  <h4>والمجموعتان في نفس القاعدة</h4>
+  <p style="margin:0">
+    <code>JBRSEO_DATABASE_URL → …/modonty</code> — وهي القاعدة التي الأدمن <b>متصل بها أصلاً</b> عبر برِزما.<br>
+    فالأدمن يفتح <b>اتصال مونجو ثانياً</b> إلى القاعدة نفسها، لينسخ مستندات من مجموعة إلى مجموعة <b>جارتها</b>. والنسخة تتأخّر بقدر ما يتأخّر تشغيل السكربت.
+  </p>
+</div>
+
+<h2>٢ · الحصيلة بالأرقام</h2>
+
+<div class="grid">
+  <div class="stat"><b>٦</b><span>مجموعات يصفها ملفّا سكيما</span></div>
+  <div class="stat"><b>٧١٩</b><span>سطر كود جسور</span></div>
+  <div class="stat"><b>٣</b><span>اتصالات مونجو خام زائدة</span></div>
+  <div class="stat"><b>٢</b><span>سكربتا مزامنة داخل القاعدة الواحدة</span></div>
+  <div class="stat"><b>١٤٤</b><span>حقلاً لا تراه سكيما جبر سيو في <code>clients</code></span></div>
+  <div class="stat"><b>١١٢</b><span>موديلاً في السكيما الموحّدة (٩١+١٣+٦+٢)</span></div>
+</div>
+
+<h2>٣ · هل الضمّ ممكن تقنياً؟ نعم — الاستاك متطابق</h2>
+
+<table>
+  <tr><th>الحزمة</th><th>مدونتي (٣ تطبيقات)</th><th>jbrseo.com</th><th>المحتوى</th><th>المبيعات</th></tr>
+  <tr><td>Next.js</td><td>16.2.9</td><td>^16.1.1</td><td>^16.1.1</td><td>16.2.9 <span class="tag t-ok">مطابق</span></td></tr>
+  <tr><td>React</td><td>^19.2.4</td><td>^19.2.3</td><td>^19.2.3</td><td>19.2.4 <span class="tag t-ok">مطابق</span></td></tr>
+  <tr><td>Prisma</td><td>^6.19.1</td><td>^6.9.0</td><td>^6.9.0</td><td>^6.19.3</td></tr>
+  <tr><td>Tailwind</td><td>4</td><td>^4.1.18</td><td>^4.1.18</td><td>^4</td></tr>
+  <tr><td>Zod</td><td>4</td><td>^4.3.6</td><td>^4.3.6</td><td>^4.4.3</td></tr>
+</table>
+
+<p>لا ترقية إطار ولا تبديل مكتبة. أعلى فارق هو برِزما من <code>6.9</code> إلى <code>6.19</code> داخل نفس الإصدار الكبير.</p>
+
+<p>ومساحة الشغل جاهزة: <code>pnpm-workspace.yaml</code> يقول بنصّه إنّ إضافة حزمة <b>سطرٌ واحد</b>، وإنّ ترك حزمة خارج القائمة هو الخيار المكلف لا الآمن — لأن كل كوميت عليها يبدو لـVercel تغييراً يعمّ المستودع فيعيد بناء الثلاثة بلا سبب.</p>
+
+<table>
+  <tr><th>الريبو</th><th>الريموت</th><th>ملفّات متتبَّعة</th><th>غير مثبَّت</th><th>صفحات · API</th></tr>
+  <tr><td><code>jbrseo.com</code></td><td><code>modonty1-rgb/jbrseo</code></td><td>٦٠٥</td><td>٤</td><td>٣٠ · ١١</td></tr>
+  <tr><td><code>sales</code></td><td><code>modonty1-rgb/modonty_sales</code></td><td>١٧٢</td><td>٧</td><td>٢٤ · ١</td></tr>
+  <tr><td><code>content</code></td><td><code>modonty1-rgb/contentClaender</code></td><td>٩٦</td><td><b>٥٠</b> <span class="tag t-warn">شغل غير محفوظ</span></td><td>١٦ · ٣</td></tr>
+</table>
+
+<h2>٤ · المقترح — ثلاث مراحل، وواحدة تكفي لتقبض المكسب</h2>
+
+<div class="box acc">
+  <h4>المرحلة ١ — <code>jbrseo.com</code> وحده <span class="tag t-acc">ابدأ هنا</span></h4>
+  <p><b>لماذا هو الأول:</b> هو الوحيد الذي <b>يتقاسم قاعدة مدونتي فعلاً</b>. فالتوحيد هنا ليس نقل بيانات — هو دمج ملفّي سكيما يصفان قاعدة واحدة. صفر هجرة، صفر مخاطرة على البيانات.</p>
+  <p><b>ما يسقط فور اكتماله:</b></p>
+  <ul>
+    <li>ملفّات الجسور الخمسة في الأدمن (٣٥٩ سطراً) + <code>modontyDb.ts</code></li>
+    <li>اتصال <code>JBRSEO_DATABASE_URL</code> — الأدمن يتصل بالقاعدة نفسها مرّتين</li>
+    <li>مجموعة <code>jbrseo_subscribers</code> ومزامنتها — يُقرأ <code>Subscriber</code> مباشرةً</li>
+    <li>حقول المزامنة في <code>SubscriptionTierConfig</code> (<code>jbrseoId</code> · <code>syncedAtSA</code> · <code>syncedAtEG</code>)</li>
+    <li><b>وخطر السكيما الناقصة على <code>clients</code> ينتهي</b> — وهذا وحده يبرّر المرحلة</li>
+  </ul>
+  <p style="margin:0"><b>ما يُحلّ فيها:</b> تعارض ثلاثة أسماء (<code>SiteSettings</code> · <code>LandingSection</code> · <code>Subscriber</code>) — ولمدونتي أسماء جاهزة لها بالفعل: <code>JbrSiteSettings</code> و<code>JbrLandingSection</code>.</p>
+</div>
+
+<div class="box">
+  <h4>المرحلة ٢ — <code>sales</code></h4>
+  <p style="margin:0">قاعدة منفصلة (<code>jbrseo_sales_dev</code>) وستّة موديلات، لكنه يقرأ مدونتي أصلاً بالسائق الخام. الضمّ يحوّل ثلاثة ملفّات جسور إلى استعلام مكتوب. <b>قرارٌ يسبق:</b> هل تنتقل بيانات المبيعات إلى قاعدة مدونتي أم تبقى قاعدةً ثانية بسكيما واحدة؟ (برِزما لا يخدم قاعدتين من سكيما واحدة — تفصيله في «ما لم يُقَس»).</p>
+</div>
+
+<div class="box">
+  <h4>المرحلة ٣ — <code>content</code></h4>
+  <p style="margin:0">قاعدة منفصلة تماماً وصفر تقاطع مع مدونتي — أقلّها ربحاً وأقلّها إلحاحاً. <b>وقبل لمسه:</b> ٥٠ ملفاً غير مثبَّت فيه. يُثبَّت أوّلاً وإلا ضاع.</p>
+</div>
+
+<h2>٥ · ما يجب أن تعرفه قبل أن تقول «نفّذ» — الثمن</h2>
+
+<div class="box warn">
+  <h4>سكيما واحدة = نصف قطر انفجار واحد</h4>
+  <p style="margin-bottom:8px">اليوم: خطأ <code>db push</code> من مجلّد جبر سيو يمسّ ١٣ موديلاً. بعد التوحيد: يمسّ <b>١١٢</b>.</p>
+  <p style="margin:0">هذا ليس سبباً للرفض — هو سبب لأن تبقى بوّابة <code>prisma db push</code> على الإنتاج <b>بيدك وحدك</b>، كما هي اليوم في بطاقة <code>CA7</code>.</p>
+</div>
+
+<div class="box warn">
+  <h4>ثلاثة أشياء أخرى تدفع ثمنها</h4>
+  <ul style="margin:0">
+    <li><b>تاريخ git يتفكّك.</b> ضمّ ثلاثة مستودعات بتاريخها يحتاج <code>subtree</code>؛ وبلا ذلك تفقد ٦٠٥+١٧٢+٩٦ ملفّاً تاريخَها. قرار يُتّخذ مرّة.</li>
+    <li><b>ملفّ سكيما بـ١١٢ موديلاً</b> يصير أصعب قراءةً. مدونتي تحلّها اليوم بمجلّد <code>prisma/schema/</code> (ميزة الملفّات المتعدّدة) — يبقى أن نتحقّق أن نسختنا تدعمها رسمياً.</li>
+    <li><b>ثلاث نسخ ميتة في المجلّد</b> (<code>bak1</code> · <code>bak002</code> · <code>jbrBackup</code>) كلٌّ منها بسكيما. تُحسم قبل الضمّ كي لا تُنسخ معه.</li>
+  </ul>
+</div>
+
+<h2>٦ · ما لم يُقَس — بصراحة</h2>
+
+<p>هذا التقرير كلّه من <b>الملفّات</b>. لم ألمس قاعدة الإنتاج ولا لوحة Vercel. الناقص:</p>
+
+<ul>
+  <li><b>عدد المستندات الفعلي</b> في <code>clients</code> و<code>Subscriber</code> و<code>jbrseo_subscribers</code> — لا أعرف حجم الازدواج بالأرقام.</li>
+  <li><b>ماذا يفعل <code>prisma db push</code> بفهارس مجموعة تعرف سكيمتُه عُشرها.</b> ما تحقّقت من التوثيق بعد — وهو <b>أول ما يُسأل</b> قبل أي تنفيذ.</li>
+  <li><b>هل تدعم نسختنا من برِزما مجلّد سكيما متعدّد الملفّات رسمياً</b> — مدونتي تستعمله اليوم، لكنّي لم أراجع التوثيق.</li>
+  <li><b>كم مشروعاً على Vercel</b> ولأي نطاقات، وهل الضمّ يغيّر شيئاً في ربطها.</li>
+  <li><b>هل في <code>jbr-content</code> و<code>jbrseo_sales_dev</code> بيانات حيّة</b> أم تطوير — يغيّر المرحلتين ٢ و٣ كلّياً.</li>
+  <li><b>هل برِزما يخدم قاعدتين من سكيما واحدة</b> — إن لم يكن، فالمبيعات والمحتوى إمّا تنتقل بياناتهما إلى <code>modonty</code>، وإمّا يبقيان بعميل ثانٍ. لم أتحقّق.</li>
+</ul>
+
+<h2>٧ · ما أوصي به</h2>
+
+<div class="box acc">
+  <h4>واحد: المرحلة ١ وحدها الآن — وبعد الدمج، لا قبله</h4>
+  <p>جبر سيو يتقاسم قاعدتك فعلاً، والخطر قائم اليوم على <code>clients</code>. والمكسب لا يحتاج نقل بيانات — يحتاج دمج ملفّين. أمّا المبيعات والمحتوى فقاعدتاهما منفصلتان، ونقلهما قرارُ بيانات لا قرارُ كود.</p>
+  <p style="margin:0"><b>ولا شيء من هذا يبدأ قبل أن يستقرّ <code>modonty-ui</code> على <code>main</code></b> — فرعٌ فيه ٦٤ ملفاً غير مثبَّت لا يستقبل ضمّ مستودع.</p>
+</div>
+
+<div class="box acc">
+  <h4>اثنان: قبل أي سطر — ثلاث إجابات</h4>
+  <ol style="margin:0">
+    <li>ما الذي يفعله <code>prisma db push</code> بالفهارس غير المعلَنة؟ <span class="num">(توثيق رسمي، لا ذاكرة)</span></li>
+    <li>كم مستنداً في المجموعات الستّ المتقاسَمة على الإنتاج؟</li>
+    <li>هل نحتفظ بتاريخ git للمستودعات الثلاثة؟</li>
+  </ol>
+</div>
+
+<div class="box">
+  <h4>ثلاثة: القرار الذي لا يملكه الكود — قرارك أنت</h4>
+  <p style="margin:0">هل «جبر سيو» و«مدونتي» <b>منتج واحد بواجهتين</b>، أم <b>شركتان تتقاسمان بنية</b>؟<br>
+  إن كان الأول فالسكيما الواحدة هي الصواب بلا نقاش. وإن كان الثاني، فربّما الصواب أن تبقى قاعدتان وتُصلَح الجسور بدل حذفها. <b>الكود لا يملك هذا الجواب</b> — وقد بنيت التوصية على الأول لأنه ما يقوله الوضع القائم: قاعدة واحدة يتقاسمانها منذ اليوم.</p>
+</div>
+
+<div class="foot">
+  دراسة · صفر تعديل على أي ملفّ · كل رقم من قراءة الملفّات في
+  <code>c:\dreamToApp\MODONTY</code> و<code>c:\dreamToApp\JBRSEO</code> يوم ٣٠ أغسطس ٢٠٢٦.<br>
+  قاعدة الإنتاج ولوحة Vercel لم تُلمسا. ما ورد في «ما لم يُقَس» غير متحقَّق ولا يُبنى عليه قرار.
+</div>
+
+</div>

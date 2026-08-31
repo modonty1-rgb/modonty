@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useConfirm } from '@/src/components/ui/ConfirmProvider';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { AppText as Text } from '@/src/components/ui/AppText';
 import { ModontyIcon } from '@/src/components/brand/icons/ModontyIcon';
@@ -20,6 +21,7 @@ type Props = { accessToken: string; questionId: string; onBack: () => void; onSe
 
 export function AudienceReplyRoute({ accessToken, questionId, onBack, onSent }: Props) {
   const { theme } = useAppTheme();
+  const confirm = useConfirm();
   const load = useCallback((token: string) => getAudienceQuestion(token, questionId), [questionId]);
   const { resource, reload } = useEngagementResource(accessToken, load);
   const [answer, setAnswer] = useState('');
@@ -30,15 +32,26 @@ export function AudienceReplyRoute({ accessToken, questionId, onBack, onSent }: 
   const trimmed = answer.trim();
   const canSend = trimmed.length > 0 && !isSending;
 
-  const send = useCallback(() => {
-    if (!canSend) return;
+  /**
+   * تأكيد قبل الإرسال — الردّ علنيّ ودائم.
+   *
+   * كان يخرج بضغطة واحدة ثم تُغلق الشاشة بلا إشعار: يظهر للزوّار تحت المقال باسم العميل،
+   * ولا مسار في المنتَج لتعديله أو حذفه. فعلٌ خارجيّ لا رجعة فيه، فيسبقه تأكيدٌ **يسمّي**
+   * ما لا رجعة فيه — لا يسأل «هل أنت متأكد؟» ويترك العميل يخمّن ماذا يؤكّد.
+   */
+  const send = useCallback(async () => {
+    if (!canSend || detail === null) return;
+    const { review } = detail;
+    // `tone: 'brand'` لا الافتراضي الأحمر: الأحمر لغة الحذف، والردّ على قارئك فعلٌ تريده لا تخافه.
+    const approved = await confirm({ title: review.confirmTitle, description: review.confirmBody, confirmLabel: review.confirmAction, cancelLabel: review.confirmCancel, tone: 'brand' });
+    if (!approved) return;
     setSending(true);
     setSendError(null);
     sendAudienceReply(accessToken, questionId, trimmed)
       .then(onSent)
       .catch((reason: unknown) => setSendError(reason instanceof Error ? reason.message : CONNECTION_COPY.errorTitle))
       .finally(() => setSending(false));
-  }, [accessToken, canSend, onSent, questionId, trimmed]);
+  }, [accessToken, canSend, confirm, detail, onSent, questionId, trimmed]);
 
   /**
    * رأس التطبيق الموحَّد — كان مبنيّاً هنا بيده، بالرجوع **يساراً** وعنوان `?? ''` غير مرئي
@@ -88,9 +101,10 @@ export function AudienceReplyRoute({ accessToken, questionId, onBack, onSent }: 
           accessibilityState={{ disabled: !canSend, busy: isSending }}
           disabled={!canSend}
           onPress={send}
-          style={[styles.submit, { backgroundColor: theme.colors.brandFill }, canSend ? null : styles.submitDisabled]}
+          style={({ pressed }) => [styles.submit, { backgroundColor: theme.colors.brandFill }, canSend ? null : styles.submitDisabled, pressed && canSend ? styles.pressed : null]}
         >
-          <Text style={[styles.submitLabel, { color: theme.colors.navy }]}>{isSending ? review.submittingLabel : review.submitLabel}</Text>
+          {/* `onBrandFill` لا `navy`: قِيس navy على brandFill = **2.39:1** في الفاتح (يلزم 4.5). والتوكن موجود لهذا الغرض: 7.37:1 فاتحاً و9.91:1 داكناً. */}
+          <Text style={[styles.submitLabel, { color: theme.colors.onBrandFill }]}>{isSending ? review.submittingLabel : review.submitLabel}</Text>
         </Pressable>
       </> : <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
         <Text style={[styles.cardLabel, { color: theme.colors.textInteractive }]}>{review.answeredLabel}</Text>
@@ -118,5 +132,6 @@ const styles = StyleSheet.create({
   error: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.xs },
   submit: { minHeight: control.buttonHeight, borderRadius: radii.button, alignItems: 'center', justifyContent: 'center', marginTop: spacing.md },
   submitDisabled: { opacity: 0.5 },
+  pressed: { opacity: 0.72 },
   submitLabel: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, writingDirection: 'rtl' },
 });

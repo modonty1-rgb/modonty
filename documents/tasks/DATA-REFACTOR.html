@@ -1,5 +1,5 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>تحديث البيانات — 10 بنداً</title>
+<title>تحديث البيانات — 3 بنداً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f1013;--panel:#17181d;--card:#1d1e24;--line:#2c2d36;--fg:#f3f4f6;--mut:#9aa3b2;--dim:#6b7280;
@@ -7,8 +7,12 @@
 /* الوضع الفاتح كان يبدّل الأسطح فقط ويترك ألوان التطبيقات كما هي — وهي باستيل مصمَّم لخلفية
    داكنة. النتيجة: رقم التبويب النشط بتباين ١٫٦٩–٢٫٥٤ على الأبيض (مقيس ٢٤ أغسطس)، أي غير مقروء.
    فلكل لون نسخته الغامقة هنا، وكلّها فوق ٤٫٥:١ على الأبيض. */
-@media (prefers-color-scheme: light){:root{--bg:#f6f7fb;--panel:#fff;--card:#fff;--line:#e4e6ee;--fg:#141722;--mut:#5b6472;--dim:#8a93a3;
---amber:#b45309;--red:#be123c;--green:#15803d;--blue:#1d4ed8;--violet:#6d28d9;--cyan:#0e7490;--k:#b45309;--c:#1d4ed8}}
+/* خالد (٢٩ أغسطس): «خليها دارك مود». كانت اللوحة تتبع نظام ويندوز، وهو على الفاتح
+   عنده — فتنقلب بيضاء بلا أن يطلبها. الداكن ثابت الآن، ولا يتغيّر بتغيّر إعداد النظام.
+   الكتلة محفوظة تحت مُحدِّد لا يُطابَق تلقائياً: من أرادها يوماً يضيف data-theme="light"
+   على <html> — ولا تعود بتغيّر النظام وحده. */
+:root[data-theme="light"]{--bg:#f6f7fb;--panel:#fff;--card:#fff;--line:#e4e6ee;--fg:#141722;--mut:#5b6472;--dim:#8a93a3;
+--amber:#b45309;--red:#be123c;--green:#15803d;--blue:#1d4ed8;--violet:#6d28d9;--cyan:#0e7490;--k:#b45309;--c:#1d4ed8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 Tajawal,system-ui,sans-serif}
 a{color:inherit}code{font:12px ui-monospace,monospace;background:var(--panel);padding:1px 5px;border-radius:4px;border:1px solid var(--line)}
 header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:12px 16px}
@@ -18,12 +22,19 @@ h1{font-size:18px;margin:0 0 8px}
 .tools input{flex:1;min-width:220px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:0 12px;font:inherit}
 .chip{height:34px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--mut);padding:0 12px;font:inherit;font-size:13px;cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
-/* شريط التبويبات — تطبيق واحد في المرّة. الاختيار الواحد هو المقصود: الخلط بين التطبيقات هو ما كان يُتيه. */
-.apptabs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 10px;border-bottom:2px solid var(--line);padding-bottom:0}
-.apptab{position:relative;display:flex;align-items:center;gap:7px;height:42px;padding:0 16px;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;background:none;color:var(--mut);font:inherit;font-size:14px;font-weight:600;cursor:pointer;border-radius:8px 8px 0 0}
-.apptab:hover{background:var(--panel);color:var(--fg)}
+/* قائمة التبويبات — تطبيق واحد في المرّة. الاختيار الواحد هو المقصود: الخلط بين التطبيقات هو ما كان يُتيه.
+   صارت عموداً جانبياً بأمر خالد (٣٠ أغسطس): «القائمة هذي جيبها سايدبار». سببه أن الأسماء
+   السبعة في سطر أفقي كانت تُقرأ ككلمات متلاصقة، وكل بحث عن تبويب يبدأ بمسح السطر كلّه.
+   العمود يجعلها قائمةً تُمسح بالعين مرّة واحدة، والعدّاد في نهاية كل سطر على استقامة واحدة. */
+body{padding-inline-start:212px}
+.apptabs{position:fixed;inset-inline-start:0;top:0;bottom:0;width:212px;z-index:10;display:flex;flex-direction:column;gap:4px;padding:16px 10px;background:var(--panel);border-inline-end:1px solid var(--line);overflow-y:auto}
+.apptab{position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;height:40px;padding:0 12px;border:0;border-inline-start:3px solid transparent;background:none;color:var(--mut);font:inherit;font-size:14px;font-weight:600;cursor:pointer;border-radius:8px;text-align:start}
+.apptab:hover{background:var(--bg);color:var(--fg)}
 .apptab b{font-size:12px;font-weight:800;min-width:22px;padding:2px 6px;border-radius:999px;background:var(--line);color:var(--mut)}
-.apptab[aria-selected="true"]{color:var(--fg);border-bottom-color:currentColor;background:var(--panel)}
+.apptab[aria-selected="true"]{color:var(--fg);border-inline-start-color:currentColor;background:var(--bg)}
+@media (max-width:900px){body{padding-inline-start:0}
+.apptabs{position:static;width:auto;flex-direction:row;flex-wrap:wrap;border-inline-end:0;border-bottom:1px solid var(--line)}
+.apptab{width:auto}}
 /* كان: background:currentColor مع color:var(--bg) على نفس العنصر — وقيمة currentColor تُحسب من
    لون العنصر النهائي، فصارت الخلفية بلون النصّ تماماً واختفى رقم التبويب النشط (خالد رآه دائرةً
    فاضية، ٢٤ أغسطس). الآن: تظليل شفّاف من لون التبويب، والنصّ يبقى بلونه. */
@@ -38,6 +49,7 @@ h1{font-size:18px;margin:0 0 8px}
 /* بند «قبل الدمج» — مؤجَّل بقرار، لا متأخّر بإهمال. يبقى مرئياً لكنه يهدأ في الأسفل. */
 .card[data-last]{opacity:.72;border-inline-start:4px solid var(--dim)}
 .card[data-last]:hover{opacity:1}
+.tag.step-tag{background:var(--accent,#0d6efd);color:#fff;font-weight:800;letter-spacing:.02em}
 .tag.last-before-merge{background:transparent;color:var(--dim);border:1px dashed var(--dim);font-weight:700}
 /* الجاهز لوكيل — بند فحصتُه وأعرف حجمه، ولا يحتاج قراراً من خالد. الحافّة الخضراء تكفي لتمييزه من بعيد. */
 .card[data-agent]{border-inline-start:4px solid var(--green)}
@@ -69,6 +81,8 @@ section.grp{margin:0 0 28px}
 .card[data-apps~="admin"]::before{background:var(--blue)}
 .card[data-apps~="modonty"]::before{background:var(--violet)}
 /* البند الجاري الآن: خلفية حمراء صريحة — خالد يلمحه من أول نظرة بلا قراءة (٢٤ أغسطس) */
+.tag.next-release{background:color-mix(in srgb,#8b5cf6 18%,transparent);color:#a78bfa;border-color:color-mix(in srgb,#8b5cf6 45%,transparent)}
+.card[data-next="1"]{opacity:.85}
 .card[data-running="1"]{background:color-mix(in srgb,var(--red) 16%,var(--card));border-color:var(--red);border-inline-start:4px solid var(--red);box-shadow:0 0 0 1px color-mix(in srgb,var(--red) 30%,transparent)}
 .card[data-running="1"] .id{background:var(--red);color:#fff;border-color:var(--red)}
 .tag.running{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
@@ -120,79 +134,14 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </style></head><body>
 <header class="top"><div class="wrap">
 <h1>تحديث البيانات — شغل على القاعدة لا على الكود <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة الرئيسية: <a href="TASK.html">TASK.html</a> · آخر بناء ٢٣ أغسطس ٢٠٢٦</span></h1>
-<div class="stats"><span class="stat"><b>9</b>بيدك</span><span class="stat"><b>1</b>دوري</span><span class="stat"><b>10</b>الإجمالي</span></div>
+<div class="stats"><span class="stat"><b>2</b>بيدك</span><span class="stat"><b>1</b>دوري</span><span class="stat"><b>3</b>الإجمالي</span></div>
 <div class="tools"><input id="q" type="search" placeholder="ابحث بالكلمة أو رقم البند…" aria-label="بحث"></div>
 </div></header>
 <main class="wrap">
-<section class="grp"><h2>بيدك أو بيد الفريق <span class="n" data-count>9</span></h2><p>إدخال أو تصحيح بيانات على الإنتاج — قرارك أو ضغطتك.</p><div class="grid"><article class="card" data-id="WC-PROD" data-sev="high" data-who="k" data-tab="now" data-board="prod" data-apps="admin">
-  <div class="hd"><span class="id">WC-PROD</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند WC-PROD">⧉</button></div>
-  
-  <div class="t">تشغيل Run-All على الإنتاج — تصحيح عدد الكلمات وزمن القراءة</div>
-  <div class="meta"><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-now">الآن</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">إنتاج</span><span>١٩ أغسطس ٢٠٢٦</span></div>
-  
-  
-  
-  
-  <p class="sum">تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك: Code root verified fixed in git: d9203a6 (wordCount derived from body) + 62a6f9e (structured-data card refreshed in Run-All). Remaining is the prod Run-All click. متحقَّق ١٩ أغسطس —</p>
-  <div class="ask"><b>المطلوب منك:</b> Code root verified fixed in git: d9203a6 (wordCount derived from body) + 62a6f9e (structured-data card refreshed in Run-All). Remaining is the prod Run-All click.</div>
-  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Code root verified fixed in git: d9203a6 (wordCount derived from body) + 62a6f9e (structured-data card refreshed in Run-All). Remaining is the prod Run-All click.<br><b>متحقَّق ١٩ أغسطس — الجذر أُصلح في الكود</b> (<code>admin/app/(dashboard)/articles/actions/articles-actions/mutations/create-article.ts</code> و<code>update-article.ts</code>): كانا يقبلان رقماً جاهزاً من الطلب (<code>data.wordCount || calculate(...)</code>) فيدخل الرقم الغلط ويبقى. صار يُشتقّ من المتن دائماً في المسارين (<code>d9203a6</code>).<br><b>وخطوة صيانة جديدة داخل Run-All</b> تصحّح الصفوف القديمة وتجدّد معها بطاقة البيانات المنظَّمة — لأن البطاقة تحمل نسخة ثانية من الرقم ولا تتحدّث بتحديث العمود (<code>62a6f9e</code>).<br><b>على التطوير:</b> «Article Word Count / Reading Time — <b>79 fixed</b>» على <code>modonty_dev</code>. الصفحة والبيانات المنظَّمة صارتا تقولان <code>1835</code> بدل <code>14</code>.<br><b>المطلوب:</b> ضغطة Run-All على الإنتاج. الأثر يتعدّى العرض: الرقم يُرسَل لجوجل، ويصنّف السيو الأدمن المقال عليه، وهو ما يبني عليه مرشِّح «عندك كم دقيقة؟» في <code>/articles</code> — فمقال عشر دقائق كان مصنَّفاً «على الماشي ≤٣ دقائق».<br><b>أنت تنفّذ وأنا أراقب</b> — قاعدة الإنتاج.</div></details>
-</article>
-<article class="card" data-id="IMGDIM" data-sev="high" data-who="k" data-tab="open" data-board="prod" data-apps="admin">
-  <div class="hd"><span class="id">IMGDIM</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند IMGDIM">⧉</button></div>
-  
-  <div class="t">تعبئة أبعاد الصور — <b>29 صفّاً</b></div>
-  <div class="meta"><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">إنتاج</span><span>٨ أغسطس</span></div>
-  
-  
-  
-  
-  <p class="sum">تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك: Code shipped: commit 71c1622 + run-all-maintenance.ts:225 `dimensionsBackfill`. Remaining is the prod Run-All click. الكود جاهز ومُختبَر محلّياً (كوميت 71c1622). الباقي ضغطة واحدة منك بعد الدفع. ·</p>
-  <div class="ask"><b>المطلوب منك:</b> ضغطة واحدة بيدك على الإنتاج: admin.modonty.com/maintenance → Run All → سطر Image Dimensions = 29 fixed.</div>
-  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Code shipped: commit 71c1622 + run-all-maintenance.ts:225 `dimensionsBackfill`. Remaining is the prod Run-All click.<br><b>الكود جاهز ومُختبَر محلّياً (كوميت <code>71c1622</code>). الباقي ضغطة واحدة منك بعد الدفع.</b><br><br><b>الخطوات:</b><br>① افتح <code>admin.modonty.com/maintenance</code><br>② اضغط <code>Run All Auto-Maintenance</code><br>③ اقرأ سطر <b>Image Dimensions</b><br><br><b>المتوقَّع:</b> <code>29 fixed</code>. وضغطة ثانية تعطي <code>clean</code> — الخطوة لا تكرّر عملها.<br><br><b>ليش على الإنتاج تحديداً:</b> ٢٩ صفّاً هناك بلا <code>width</code>/<code>height</code>، ومنها الصور الافتراضية الثلاث التي تُعرَض لكل عميل لم يرفع صورته. على <code>modonty_dev</code> هذه الثلاث بلا <code>bunnyUrl</code> فتُتخطّى — التجربة المحلية أثبتت الكود (٢١ صفّاً ثم <code>clean</code>) لا الرقم.<br><br><b>الأثر:</b> الرقمان يحجزان مساحة الصورة قبل وصولها. بدونهما تُدفع الصفحة لأسفل عند تحميل الصورة — قفزٌ يشعر به الزائر وتقيسه Google.<br><br><b>الأمان:</b> قراءة مقاس + كتابة رقمين. لا حذف ولا نقل ولا لمس للملفات.</div></details>
-</article>
-<article class="card" data-id="LEGALPASTE" data-sev="high" data-who="k" data-tab="open" data-board="projects" data-apps="admin modonty">
-  <div class="hd"><span class="id">LEGALPASTE</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند LEGALPASTE">⧉</button></div>
-  
-  <div class="t">الإنتاج يعرض نصّاً قانونياً أقصر من مسوّدتنا — الصق النصّين</div>
-  <div class="meta"><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">To Do</span><span>٢٢ أغسطس ٢٠٢٦</span></div>
-  
-  
-  
-  
-  <p class="sum">تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك: Prod-only paste into DB `content` where slug=terms/privacy-policy, plus the file's own lawyer-review advice. No code path to change. متحقَّق بالجلب الحيّ ٢٢ أغسطس (curl على www.modonty.</p>
-  <div class="ask"><b>المطلوب منك:</b> بيدك: الصق نصّي الشروط والخصوصية من وثائق-مدونتي.html (DOC4/DOC5) في الأدمن على /terms و/legal/privacy-policy، ثم قل «تحقّق» وأقيس الصفحتين وأحذف المسوّدتين. يُستحسن مراجعة محامٍ قبلها.</div>
-  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Prod-only paste into DB `content` where slug=terms/privacy-policy, plus the file's own lawyer-review advice. No code path to change.<br><b>متحقَّق بالجلب الحيّ ٢٢ أغسطس</b> (<code>curl</code> على <code>www.modonty.com</code>، الاثنتان <code>HTTP 200</code>):<br><br><b>على <code>/terms</code>:</b> ✗ «طبيعة المنصّة» · ✗ «إخلاء المسؤولية» · ✗ «الحجز ونقل الطلب» · ✗ «حدود المسؤولية» — والموجود ✓ «تعريفات» و✓ «الملكية الفكرية» فقط. النصّ المرئي ١٦١٥٨ حرفاً.<br><b>على <code>/legal/privacy-policy</code>:</b> ✗ «جهة التحكّم» · ✗ «الأساس النظامي» · ✗ «خصوصية الأطفال» · ✗ «إتلاف البيانات» — والموجود ✓ «ملفات تعريف الارتباط» فقط. النصّ المرئي ١٢٢٤٠ حرفاً.<br><br><b>يعني:</b> النصّان الحيّان نسخة أقدم وأقصر، ومسوّدتانا في <code>documents/HTML/وثائق-مدونتي.html</code> (بطاقتا <code>DOC4</code> و<code>DOC5</code>) <b>لم تُلصقا بعد</b>. الملفّان يبدآن حرفياً بـ«📋 للصقّ في قاعدة البيانات: انسخ… إلى حقل <code>content</code> حيث <code>slug = "terms"</code>».<br><br><b>لماذا يهمّ:</b> الناقص هو بند إخلاء المسؤولية وبند المحتوى الطبّي (YMYL) — وهما ما يحمي مدونتي كوسيط بين الزائر وطبيب أو محامٍ. والمسوّدة مبنيّة على نظام حماية البيانات الشخصية السعودي.<br><br><b>⚠️ الملفّان نفساهما يوصيان:</b> «يُفضَّل مراجعتها من محامٍ سعودي مرخّص قبل النشر».<br><br><b>بعد اللصق والتحقّق من الصفحتين حيّاً، يُحذف الملفّان</b> — يصيران نسخة مكرّرة عندها فعلاً.</div></details>
-</article>
-<article class="card" data-id="AR15" data-sev="high" data-who="k" data-tab="now" data-board="data" data-apps="modonty">
-  <div class="hd"><span class="id">AR15</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند AR15">⧉</button></div>
-  
-  <div class="t">لاتيني وسط الجمل العربية — تحرير بيانات لا كود</div>
-  <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-now">الآن</span><span class="tag">مهم</span><span class="tag app-modonty">modonty</span><span class="tag">مشاكل البيانات</span><span>١٩ أغسطس ٢٠٢٦</span></div>
-  
-  
-  
-  
-  <p class="sum">تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك: Pure data edit in the admin + Khalid's ruling on whether partners must supply an Arabic display name; no code involved. ·</p>
-  <div class="ask"><b>المطلوب منك:</b> Pure data edit in the admin + Khalid's ruling on whether partners must supply an Arabic display name; no code involved.</div>
-  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Pure data edit in the admin + Khalid's ruling on whether partners must supply an Arabic display name; no code involved.<br><b>متحقَّق ١٩ أغسطس:</b> فُحص كل لاتيني ظاهر على صفحة المقال، ولا واحد منه مكتوب في الكود — كلّها قيم مخزَّنة تصل من القاعدة عبر <code>ArticleAuthorBio</code> و<code>PartnerCard</code>، فالإصلاح تحرير في لوحة التحكم:<br>• <code>Modonty</code> و<code>Content Platform</code> — اسم كاتب مدونتي ومسمّاه الوظيفي. <b>سجلّنا نحن</b>: الأدمن ← Authors ← مدونتي. يظهر في كل مقال تحت «عن الكاتب».<br>• <code>Giza</code> (مدينة الشريك) · <code>Pain Core Clinic</code> (اسمه) · <code>Health Care</code> (اسم التصنيف) — بيانات يملكها الشريك أو قائمة التصنيفات.<br><b>القرار المطلوب منك:</b> القاعدة الذهبية تخصّ ما نكتبه نحن للقارئ؛ اسم علامة الشريك يبقى كما سجّله. هل نلزم الشريك باسم عربي معروض إلى جانب اسمه اللاتيني؟</div></details>
-</article>
-<article class="card" data-id="LE1" data-sev="high" data-who="k" data-tab="open" data-board="deploy" data-apps="admin">
-  <div class="hd"><span class="id">LE1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند LE1">⧉</button></div>
-  
-  <div class="t">إدخال بيانات الكيان القانوني على الإنتاج</div>
-  <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">خط سير النشر</span><span>١٤ أغسطس ٢٠٢٦</span></div>
-  
-  
-  
-  
-  <p class="sum">تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك: Fields exist in schema (orgCommercialRegistrationStatus:2632 · orgUnifiedNationalNumber:2633 · orgCapitalAmount:2635). Remaining is prod db push + manual data entry + certificate image. ·</p>
-  <div class="ask"><b>المطلوب منك:</b> Fields exist in schema (orgCommercialRegistrationStatus:2632 · orgUnifiedNationalNumber:2633 · orgCapitalAmount:2635). Remaining is prod db push + manual data entry + certificate image.</div>
-  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Fields exist in schema (orgCommercialRegistrationStatus:2632 · orgUnifiedNationalNumber:2633 · orgCapitalAmount:2635). Remaining is prod db push + manual data entry + certificate image.<br><b>الوضع:</b> صفحتا <code>/trust</code> و<code>/story</code> صارتا تقرآن بيانات جبر الجنوبية من القاعدة بدل ما تكون مكتوبة في الكود. الحقل الفاضي ما يظهر سطره أصلاً — يعني قبل ما تُدخَل البيانات على الإنتاج، الصفحتان تطلعان ناقصتين.<br><b>المطلوب بعد الدفع:</b> افتح الأدمن ← العميل الأساسي (<code>Settings.coreClientId</code> = مدونتي) ← عدّل، واملأ:<br><code>legalName</code> شركة جبر الجنوبية للمقاولات · <code>commercialRegistrationNumber</code> 4030524305 · <code>commercialRegistrationStatus</code> نشط · <code>unifiedNationalNumber</code> 7036024383 · <code>legalForm</code> شركة ذات مسؤولية محدودة · <code>capitalAmount</code> 8,000,000 · <code>foundingDate</code> ١٣ سبتمبر ٢٠٢٣ · والعنوان والإحداثيات <b>ليست هنا</b> — مكانها <code>Settings</code> عبر Business Info في الأدمن (بند SOT2)<br><b>وصورة الشهادة:</b> <code>Settings.certificateImageUrl</code> — بدونها بلوك الشهادة في <code>/trust</code> ما يظهر (ما عاد فيه ملف احتياطي في <code>public/</code>).<br><b>القيم مصدرها</b> شهادة وزارة التجارة الرسمية، متحقَّقة عبر الـQR بتاريخ ٣ يونيو ٢٠٢٦.<br><b>وحقلان جديدان في السكيما</b> (<code>commercialRegistrationStatus</code> · <code>unifiedNationalNumber</code> · <code>capitalAmount</code>) يبغى لهم <code>prisma db push</code> على الإنتاج — ما انعمل بعد.</div></details>
-</article>
-<article class="card" data-id="FS16" data-sev="high" data-who="k" data-tab="open" data-board="fs" data-apps="admin">
+<section class="grp"><h2>بيدك أو بيد الفريق <span class="n" data-count>2</span></h2><p>إدخال أو تصحيح بيانات على الإنتاج — قرارك أو ضغطتك.</p><div class="grid"><article class="card" data-id="FS16" data-sev="high" data-who="k" data-tab="open" data-board="fs" data-apps="admin">
   <div class="hd"><span class="id">FS16</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند FS16">⧉</button></div>
   
-  <div class="t">صور مقالات محتواها PNG خلف اسم <code>.webp</code> — عشرة أضعاف الوزن</div>
+  <div class="t">🔧 سطران · صور مقالات محتواها PNG خلف اسم <code>.webp</code> — عشرة أضعاف الوزن</div>
   <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">بنية مدونتي</span></div>
   
   
@@ -202,57 +151,31 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
   <div class="ask"><b>المطلوب منك:</b> admin upload still never re-encodes the original (upload-image.ts:55-59 keeps the raw buffer + file.type) — needs Khalid's call on re-encode + regeneration.</div>
   <details><summary>التفاصيل الكاملة</summary><div class="full"><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> admin upload still never re-encodes the original (upload-image.ts:55-59 keeps the raw buffer + file.type) — needs Khalid's call on re-encode + regeneration.<br><b>القياس على الإنتاج (١٤ أغسطس، أربعة مقالات):</b> ملفان من الأربعة بصمتهما <code>89504e47</code> — أي <b>PNG</b> — رغم الامتداد <code>.webp</code> وترويسة <code>content-type: image/webp</code>. الوزن <b>٦٦٢KB</b> و<b>٥٩٦KB</b>، مقابل ١١٤ و١٢٧ للمقالين الآخرين (WebP حقيقي). ونسخة <code>16x9</code> المولَّدة من نفس الصورة <b>٦٨KB</b> — أي أن الأصل المخدوم أثقل من نسخته بعشرة أضعاف.<br><br><b>أين المشكلة:</b> ليست في مدونتي — العرض يقرأ ما هو مخزَّن. هي في مسار الرفع بالأدمن: الملف يُسمّى <code>.webp</code> ويُرفع بنوع <code>image/webp</code> دون إعادة ترميز فعلية للأصل. لاحظ أن <code>generateAspectCrops</code> تعيد الترميز للنسخ الثلاث (<code>.webp({ quality: 82 })</code>) لكن <b>الأصل يُرفع كما هو</b> (<code>bunny-mirror-core.ts:53</code>).<br><br><b>الأثر:</b> الأصل هو ما يُعرض في بطل المقال — أي أن أثقل صورة في الصفحة، وهي عنصر LCP، تُخدَم بعشرة أضعاف حجمها اللازم.<br><br><b>لم يُلمس:</b> يحتاج قراراً في الأدمن — هل يُعاد ترميز الأصل عند الرفع، وهل يُعاد توليد ما رُفع سابقاً.</div></details>
 </article>
-<article class="card" data-id="PRODDATA" data-sev="high" data-who="k" data-tab="open" data-board="data" data-apps="modonty">
-  <div class="hd"><span class="id">PRODDATA</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PRODDATA">⧉</button></div>
-  
-  <div class="t">صفحات حيّة فاضية — الكود جاهز وينتظر المحتوى</div>
-  <div class="meta"><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-modonty">modonty</span><span class="tag">مشاكل البيانات</span><span>٢٢ أغسطس ٢٠٢٦</span></div>
-  
-  
-  
-  
-  <p class="sum">تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك: Content/data entry on the production DB by Khalid and the team — not a code task. · مقيس على قاعدة الإنتاج مباشرة (قراءة فقط، ٢٠ أغسطس): ١· الطلّات: صفر منشور — لا فيديو ولا صورة.</p>
-  <div class="ask"><b>المطلوب منك:</b> بيدك وبيد الفريق (لا كود): ريل واحد منشور · مقال مسموع واحد · مؤلّف حقيقي للمقالات · أوراق توثيق الشركاء · تصنيف لمقالين. أيّها أوّلاً؟</div>
-  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Content/data entry on the production DB by Khalid and the team — not a code task.<br><b>مقيس على قاعدة الإنتاج مباشرة (قراءة فقط، ٢٠ أغسطس):</b><br><br><b>١· الطلّات: صفر منشور</b> — لا فيديو ولا صورة. <code>/reels</code> على الإنتاج تعرض «لا توجد ريلز». <b>الخطّ كامل ومتحقَّق:</b> كونسول يرفع ← أدمن يعتمد ← تظهر.<br><b>٢· «اسمع»: صفر مقال مسموع</b> — لا <code>audioUrl</code> على أي مقال من ١٢٥. عمود المقالات المسموعة فاضٍ (القرآن يعمل لأنه ثابت في الكود). ومعها تعبئة مدد الصوت.<br><b>٣· مؤلّف واحد لكل ١٢٥ مقالاً</b> («Modonty | Content Platform») — أكبر فجوة ثقة في محتوى طبّي، ولهذا الواجهة ترفض عرض المؤلّف حالياً.<br><b>٤· أوراق توثيق الشركاء: صفر</b> — خانة شارة التوثيق جاهزة في الكروت وتظهر وحدها متى رُفعت الأوراق.<br><b>٥· مقالان بلا تصنيف</b> من ١٢٥ — فمجموع أعداد التصنيفات لا يساوي المجموع الكلّي.<br><br><b>هذي مو كود</b> — بيدك وبيد الفريق، وتمشي بالتوازي مع شغل الكود.</div></details>
-</article>
-<article class="card" data-id="CONTENTTEAM" data-sev="high" data-who="k" data-tab="open" data-board="projects" data-apps="admin">
-  <div class="hd"><span class="id">CONTENTTEAM</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند CONTENTTEAM">⧉</button></div>
-  
-  <div class="t">شغل الفريق — أربعة بنود محتوى ومراجعة (نُقلت للّوحة اليوم)</div>
-  <div class="meta"><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">To Do</span><span>٢٢ أغسطس ٢٠٢٦</span></div>
-  
-  
-  
-  
-  <p class="sum">تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك: Duplicate-article choice, 12 client addresses, SEO expert review, 7 open team decisions — content-team/Khalid actions on prod data.</p>
-  <div class="ask"><b>المطلوب منك:</b> Duplicate-article choice, 12 client addresses, SEO expert review, 7 open team decisions — content-team/Khalid actions on prod data.</div>
-  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Duplicate-article choice, 12 client addresses, SEO expert review, 7 open team decisions — content-team/Khalid actions on prod data.<br><b>⚠️ هذا ينقض فصلاً ثبّته أنت ٦ أغسطس</b> («شغل الفريق مش هنا» في ذيل اللوحة). نقلته بأمرك اليوم: ملف تاسك واحد. الذيل حُدّث.<br><br><b>١· مقالان مكرّران بنفس العنوان لجبر سيو — <span style='color:#ef4444'>عاجل</span>:</b> <code>6a6ee349…</code> بانتظار الموافقة و<code>6a60a5dd…</code> قيد الكتابة — نفس العنوان بالحرف ونفس العميل ونفس المحرّر. <b>القرار:</b> أيّهما يبقى، والثاني يُدمج أو يُؤرشف أو يتغيّر عنوانه. <b>لِمَ عاجل:</b> نشرهما معاً = محتوى مطابق على نفس النطاق، وجوجل يختار واحداً ويهمل الثاني.<br><br><b>٢· عناوين ١٢ عميلاً ناقصة</b> — من ٢٩. <b>أربعة بلا أي عنوان:</b> Dream to App · جبر سيو · كيما زون · متجر باقتك. من <code>/clients/[id]/edit</code> ← بيانات العنوان ← حفظ ← إعادة توليد السيو. العنوان يقوّي الظهور المحلّي.<br><br><b>٣· مراجعة خبير سيو لكلمات الصفحة الرئيسية</b> بعد النشر.<br><br><b>٤· إقفال قرارات جلسة الفريق — ٧ من ١١ مفتوحة.</b> نصّها في <code>نقاش-فريق-المحتوى.html</code> <span style='opacity:.6'>(حُذف بعد النقل — محتواه هنا)</span> القسم ٣.</div></details>
-</article>
 <article class="card" data-id="GALPNG" data-sev="high" data-who="k" data-tab="open" data-board="mediaimg" data-apps="admin modonty">
   <div class="hd"><span class="id">GALPNG</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند GALPNG">⧉</button></div>
   
-  <div class="t">🖼️ صور المعارض الثقيلة على Bunny: PNG ~1.7MB بلا نوع محتوى → تنكسر على صفحة الشريك</div>
-  <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">مكوّن الصور</span><span>١٧ أغسطس ٢٠٢٦</span></div>
+  <div class="t">🖼️ صور المعارض الثقيلة على Bunny: PNG ~1.7MB بلا نوع محتوى → تنكسر على صفحة العميل</div>
+  <div class="meta"><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">مكوّن الصور</span><span>١٧ أغسطس ٢٠٢٦</span></div>
   
   
   
   
   <p class="sum">تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح: No GALLERY re-encode/migration action in admin (sharp used only in blur/dimensions/aspect-crops/bunny-mirror), and upload-image.ts has no size/format gate. ·</p>
   <div class="ask missing"><b>المطلوب منك:</b> لم يُصَغ بعد — افتح التفاصيل.</div>
-  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>نُقل إلى «تحديث البيانات» بقرار خالد (٢٤ أغسطس ٢٠٢٦): «الأدمن بيصلّح هذا كلّه — فهو تحديث بيانات لا كود».</b><br><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> No GALLERY re-encode/migration action in admin (sharp used only in blur/dimensions/aspect-crops/bunny-mirror), and upload-image.ts has no size/format gate.<br><b>الظاهرة (خالد، ١٧ أغسطس):</b> على <code>/clients/مؤسسة-فرسان-التعافي</code> صورة واحدة من ست تظهر والباقي مكسور.<br><br><b>السبب بالدليل الخام:</b> صور المعرض على <code>modonty-clients.b-cdn.net/gallery/…</code> ملفات <b>PNG 1600×900 بحجم 1.6–1.8MB</b>، بلا امتداد، و<code>Content-Type: application/octet-stream</code>. سجل السيرفر: <code>10 × GET /_next/image?…&w=640 → 500 in 9.2–9.8s</code>؛ منفردة عبر <code>curl</code> تنجح (200 image/png في 2–4 ثوانٍ) — معاً تتجاوز مهلة محسِّن الصور فتفشل، وأوّل واحدة فقط تسبق. ليس عيباً في الصفحة الجديدة (نفس الملفات كانت في القسم القديم).<br><br><b>احتمال خالد:</b> هذه صور قديمة سُجّلت قبل مسار الرفع الحالي — يُتحقّق: هل الرفع الحالي (كونسول/أدمن → Bunny) يرسل نوع المحتوى ويقلّص الحجم؟ لو نعم فالمشكلة في القديم فقط ويكفي ترحيل.<br><br><b>الحلّ المقترح:</b> ١) زرّ ترحيل في الأدمن: يعيد ترميز صور <code>Media type=GALLERY</code> القديمة إلى webp ≤ 300KB ويرفعها بنوع محتوى صحيح ويحدّث <code>width/height</code> · ٢) بوّابة على الرفع: كل صورة جديدة تُقلَّص وتُرمَّز قبل Bunny · ٣) بعدها لا تعديل في مدونتي — <code>OptimizedImage</code> يستهلكها كما هي.<br><br><b>الأثر لو تُرك:</b> كل معرض شريك قديم يظهر مكسوراً عند التحميل المتوازي (dev أوّلاً، والإنتاج تحت ضغط)، وLCP سيّئ.</div></details>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>نُقل إلى «تحديث البيانات» بقرار خالد (٢٤ أغسطس ٢٠٢٦): «الأدمن بيصلّح هذا كلّه — فهو تحديث بيانات لا كود».</b><br><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> No GALLERY re-encode/migration action in admin (sharp used only in blur/dimensions/aspect-crops/bunny-mirror), and upload-image.ts has no size/format gate.<br><b>الظاهرة (خالد، ١٧ أغسطس):</b> على <code>/clients/مؤسسة-فرسان-التعافي</code> صورة واحدة من ست تظهر والباقي مكسور.<br><br><b>السبب بالدليل الخام:</b> صور المعرض على <code>modonty-clients.b-cdn.net/gallery/…</code> ملفات <b>PNG 1600×900 بحجم 1.6–1.8MB</b>، بلا امتداد، و<code>Content-Type: application/octet-stream</code>. سجل السيرفر: <code>10 × GET /_next/image?…&w=640 → 500 in 9.2–9.8s</code>؛ منفردة عبر <code>curl</code> تنجح (200 image/png في 2–4 ثوانٍ) — معاً تتجاوز مهلة محسِّن الصور فتفشل، وأوّل واحدة فقط تسبق. ليس عيباً في الصفحة الجديدة (نفس الملفات كانت في القسم القديم).<br><br><b>احتمال خالد:</b> هذه صور قديمة سُجّلت قبل مسار الرفع الحالي — يُتحقّق: هل الرفع الحالي (كونسول/أدمن → Bunny) يرسل نوع المحتوى ويقلّص الحجم؟ لو نعم فالمشكلة في القديم فقط ويكفي ترحيل.<br><br><b>الحلّ المقترح:</b> ١) زرّ ترحيل في الأدمن: يعيد ترميز صور <code>Media type=GALLERY</code> القديمة إلى webp ≤ 300KB ويرفعها بنوع محتوى صحيح ويحدّث <code>width/height</code> · ٢) بوّابة على الرفع: كل صورة جديدة تُقلَّص وتُرمَّز قبل Bunny · ٣) بعدها لا تعديل في مدونتي — <code>OptimizedImage</code> يستهلكها كما هي.<br><br><b>الأثر لو تُرك:</b> كل معرض عميل قديم يظهر مكسوراً عند التحميل المتوازي (dev أوّلاً، والإنتاج تحت ضغط)، وLCP سيّئ.</div></details>
 </article></div></section>
-<section class="grp"><h2>دوري <span class="n" data-count>1</span></h2><p>تصحيح بيانات أنفّذه أنا متى قلت «ابدأ».</p><div class="grid"><article class="card" data-id="DIMWRONG" data-sev="normal" data-who="c" data-tab="open" data-board="data" data-apps="admin">
+<section class="grp"><h2>دوري <span class="n" data-count>1</span></h2><p>تصحيح بيانات أنفّذه أنا متى قلت «ابدأ».</p><div class="grid"><article class="card" data-id="DIMWRONG" data-sev="normal" data-who="c" data-tab="open" data-board="data" data-apps="admin" data-next="1">
   <div class="hd"><span class="id">DIMWRONG</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند DIMWRONG">⧉</button></div>
   
   <div class="t">3 صفوف تخزّن أبعاداً تخالف الملفّ الذي تشير إليه</div>
-  <div class="meta"><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">مشاكل البيانات</span></div>
+  <div class="meta"><span class="tag next-release">📦 الإصدار الجاي</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag">مشاكل البيانات</span></div>
   
   
   
   
   <p class="sum">تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح: Still unverified/unfixed — no commit touching the 3 rows; the prerequisite check never run. انكشف بالقياس أثناء GALJUST (٨ أغسطس) — ليس عطل تخطيط. ثلاثة صفوف مختلفة تُخدّم نفس الملف og-image_ueprdl.</p>
   
-  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> Still unverified/unfixed — no commit touching the 3 rows; the prerequisite check never run.<br><b>انكشف بالقياس أثناء <code>GALJUST</code> (٨ أغسطس) — ليس عطل تخطيط.</b><br><br>ثلاثة صفوف <b>مختلفة</b> تُخدّم نفس الملف <code>og-image_ueprdl.png</code> (5000×2625، نسبة 1.9)، بينما كلٌّ منها يخزّن أبعاداً مختلفة — النِّسَب المرسومة: <code>1.5</code> · <code>1.78</code> · <code>1.0</code>.<br><br><b>يعني اثنان على الأقلّ من الثلاثة أبعادهما غلط.</b> التخطيط يحترم المخزَّن بأمانة، فالخلل في البيانات.<br><br><b>الفرضية الأرجح:</b> ملفّات هذه الصفوف مفقودة فتسقط على صورة OG الافتراضية، والأبعاد بقيت من الملفّ الأصلي.<br><b>لم يُتحقَّق بعد:</b> هل الملفّ الأصلي مفقود فعلاً على بني؟ يُفحص قبل أي تعديل.<br><br><b>الأثر:</b> صغير — الصورة تُعرَض بنسبة خاطئة في المعرض. لا يكسر شيئاً.</div></details>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — مفتوح:</b> Still unverified/unfixed — no commit touching the 3 rows; the prerequisite check never run.<br><b>انكشف بالقياس أثناء <code>GALJUST</code> (٨ أغسطس) — ليس عطل تخطيط.</b><br><br>ثلاثة صفوف <b>مختلفة</b> تُخدّم نفس الملف <code>og-image_ueprdl.png</code> (5000×2625، نسبة 1.9)، بينما كلٌّ منها يخزّن أبعاداً مختلفة — النِّسَب المرسومة: <code>1.5</code> · <code>1.78</code> · <code>1.0</code>.<br><br><b>يعني اثنان على الأقلّ من الثلاثة أبعادهما غلط.</b> التخطيط يحترم المخزَّن بأمانة، فالخلل في البيانات.<br><br><b>الفرضية الأرجح:</b> ملفّات هذه الصفوف مفقودة فتسقط على صورة OG الافتراضية، والأبعاد بقيت من الملفّ الأصلي.<br><b>لم يُتحقَّق بعد:</b> هل الملفّ الأصلي مفقود فعلاً على بني؟ يُفحص قبل أي تعديل.<br><br><b>الأثر:</b> صغير — الصورة تُعرَض بنسبة خاطئة في المعرض. لا يكسر شيئاً.<hr><b>📦 نُقلت إلى «الإصدار الجاي» ٣٠ أغسطس ٢٠٢٦ — تصفيةُ ما قبل الدمج بأمر خالد: «نبتدي نقفل وندخل في مرحلة الاندماج».</b><br><b>لماذا تُؤجَّل بلا خسارة:</b> لا تمنع الدمج ولا يراها زائر — إمّا بياناتٌ تُصلَح بلا نشر، أو شاشةُ أدمن، أو ميزةٌ جديدة لا إصلاح عطل.</div></details>
 </article></div></section>
 </main>
 <footer>هذه اللوحة تخصّ إدخال وتصحيح البيانات فقط — بنود الكود في <a href="TASK.html">TASK.html</a>.</footer>

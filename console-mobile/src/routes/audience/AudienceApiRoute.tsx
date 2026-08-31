@@ -1,6 +1,6 @@
 import { FlashList } from '@shopify/flash-list';
 import { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { RefreshControl, StyleSheet, View } from 'react-native';
 import { AppText as Text } from '@/src/components/ui/AppText';
 import { AudienceCommentCard } from '@/src/components/audience/AudienceCommentCard';
 import { AudienceQuestionCard } from '@/src/components/audience/AudienceQuestionCard';
@@ -21,7 +21,7 @@ const commentKey = (item: AudienceCommentSummary) => item.id;
 export function AudienceApiRoute({ accessToken, onOpenQuestion }: Props) {
   const { theme } = useAppTheme();
   const [activeTab, setActiveTab] = useState<AudienceTabKey>('questions');
-  const { resource, reload } = useEngagementResource(accessToken, getAudienceInbox);
+  const { resource, reload, refresh, isRefreshing } = useEngagementResource(accessToken, getAudienceInbox);
   const inbox = resource.data;
   const review = inbox?.review;
 
@@ -47,15 +47,18 @@ export function AudienceApiRoute({ accessToken, onOpenQuestion }: Props) {
   /**
    * بلا زرّ «إعادة المحاولة» — نصّ الحالة نفسه ينفي الفشل: «الأسئلة توصلك هنا لما يسأل قارئ».
    * لا شيء انكسر ليُعاد؛ الصندوق فارغ لأن أحداً لم يسأل بعد، والزرّ يدعو لإصلاح ما ليس مكسوراً.
-   * وإعادة السؤال متاحة أصلاً بالسحب للتحديث.
+   * وإعادة السؤال بالسحب للتحديث — **وهو ما كان هذا التعليق يزعمه ولم يكن موجوداً**: لا
+   * `refreshControl` على أيّ من القائمتين، فبقي الصندوق الفارغ بلا أي مخرج إطلاقاً.
    */
   const listEmpty = activeTab === 'questions'
     ? <EmptyState icon="question" title={review.emptyQuestionsTitle} copy={review.emptyQuestionsDescription} />
     : <EmptyState icon="comment" title={review.emptyCommentsTitle} copy={review.emptyCommentsDescription} />;
 
+  const refreshControl = <RefreshControl refreshing={isRefreshing} onRefresh={refresh} tintColor={theme.colors.textInteractive} colors={[theme.colors.textInteractive]} />;
+
   return activeTab === 'questions'
-    ? <FlashList data={inbox.questions} renderItem={renderQuestion} keyExtractor={questionKey} contentContainerStyle={styles.list} ListHeaderComponent={heading} ListEmptyComponent={listEmpty} />
-    : <FlashList data={inbox.comments} renderItem={renderComment} keyExtractor={commentKey} contentContainerStyle={styles.list} ListHeaderComponent={heading} ListEmptyComponent={listEmpty} />;
+    ? <FlashList data={inbox.questions} renderItem={renderQuestion} keyExtractor={questionKey} contentContainerStyle={styles.list} ListHeaderComponent={heading} ListEmptyComponent={listEmpty} refreshControl={refreshControl} />
+    : <FlashList data={inbox.comments} renderItem={renderComment} keyExtractor={commentKey} contentContainerStyle={styles.list} ListHeaderComponent={heading} ListEmptyComponent={listEmpty} refreshControl={refreshControl} />;
 }
 
 const styles = StyleSheet.create({

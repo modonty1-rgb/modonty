@@ -1,6 +1,174 @@
 # أر
 
 
+## Session: 2026-08-23 (مساءً، حتى ≈ 21:45) — 📱 تدقيق الجوّال على معيار أبل (٧ صفحات) + الرئيسية: بلا شريط سفلي · بحث وفلتر · بطاقة واجهة هجينة + مضغوط ١٦ · محرّك الأرشيف صار مشتركاً (فرع `modonty-ui` · ٣ دفعات `5795fb9` → `3d1cadb` → `5d25bef` · modonty 1.99.0 · shared 0.3.4 · **مدفوع**)
+
+### 🎯 أين توقفت
+- **آخر تاسك:** الهجين المعتمد من الموكب مبنيّ ومدفوع (`5d25bef`). خالد سأل «نعمّمه؟» → الجواب: الرئيسية فقط، وهذا المطبَّق.
+- **الفعل التالي:** انتظر أمره. مرشَّحات واضحة: `LEGALPASTE` · بطاقات صفحة المقال السبع (تنتظر موكب+ابروف) · `BottomBar`/`ServiceBar` بلا مستهلك (حذف أم إبقاء) · `pb-20` في `ThreeColumnLayout.tsx:34` · تحقّق `test.modonty.com` بعد `5d25bef` (**لم يُنفَّذ**).
+
+### ✅ المنجز (بترتيبه)
+1. **`hh>` + `pl>modonty`** — السيرفر كان مطفأً، شُغّل. `test.modonty.com/clients` تحقّق أنه يحمل `e443146` (١٦ `w-[86px]` · ٠ `w-[118px]`).
+2. **قائمة البرغر** (`MobileMenu.tsx`): ما كانت تسكرل (القائمة بلا قيد ارتفاع، آخر رابط عند `y=938` على ٨٤٤) → `flex-col` + `min-h-0 flex-1 overscroll-contain` + safe-area؛ `side="left"` (كانت تطلع من عكس جهة زرّها) · فتح ٠٫٣ث بدل ٠٫٥ · حافّة سكرول متدرّجة بدل `border-b`. خالد ثبّت اتجاه السهم «<» كما هو بعد نقاش (RTL صحيح).
+3. **بطاقة الحساب** (`MobileAccountBenefitsMenu.tsx`): تكبر من زرّها (`origin x=77` مقابل مركز الزرّ ٧٨، كانت ١٧٢) عبر سهم Radix صفري + `origin-[--radix…]` **في `shared/components/ui/dropdown-menu.tsx`** (خالد: «all shadcn should be in shared — DRY») · زواياها رجعت ١٦px: `:focus-visible{border-radius:4px}` عام في `globals.css` كان يضرب كل عنصر مركَّز — حُذف.
+4. **شريط التبويبات** (`SiteShell.tsx` · `TopNav.tsx` · `globals.css`): الهيدر والشريط مادّة واحدة (كانا `card/90` + `background` معتم وبينهما خطّ) · التدرّج انتقل لقاع الشريط · باق قديم: `prefers-reduced-transparency` كان يخسر أمام Tailwind (بقي ٩٠٪) — سلكتور مضاعَف (0,2,1).
+5. **بطاقة المقال**: زرّ الحفظ هدف ٤٤ بامتداد `before:` (الشكل ٣٢) · ضغط البطاقة `scale .99`.
+6. **الرئيسية «مقالات فقط»** (أمر خالد): الشريط السفلي (احجز · تسوّق · مودو) **مخفيّ** من `CachedHomePage` (ملفّاه باقيان بلا مستهلك) · مودو صار شريطاً داخل الخلاصة بعد البطاقة الثانية (`AskModo` رُقّي إلى `components/shared/ask-modo/`) · «ارجع لفوق» نزل ٨٠→١٦px · خطّ التقدّم نزل من رؤوس التبويبات (`y=56`) إلى قاع الكروم (`y=123`؛ على المقال `top-[var(--sticky-chrome)]`=١٣٥) · الترقيم: الرئيسية صارت تستعمل `FeedPagination` المشترك وترفع `data-infinite-live` (كانت تُظهر «الصفحة التالية» تحت خلاصة خلّصها السكرول — نفس عطل `/modonty` ٢٢ أغسطس).
+7. **الفوتر**: ردّ ضغط للجوّال (`max-lg:active:text-link`) — ١٨ رابطاً كلها ≥٤٤ أصلاً.
+8. **مسح الصفحات** (`/articles` · `/clients` · `/industries` · `/reels` · `/audio` · `/modonty` · `/articles/[slug]`) — كل ما سقط: مسار التنقّل ٧٠×٢٠→٤٤ (`shared/components/ui/breadcrumb.tsx`, جوّال فقط) · زرّ مسح البحث ٢٨→٤٤ + `enterKeyHint=search` + `role=search` (`EntitySearchForm.tsx`) · بلاطات `/clients` وصفوف الشركاء تضغط · «كل الشركاء ←» ٢٠→٤٤ · شريحة الشريك على الريل ٣٦→٤٤ + ضغط الخروج/الصوت · زرّ «تصفية» على `/modonty` هدف ٤٤ · صفحة المقال: خطّ القراءة، مصغّرات المعرض ٥٦×٣٢→هدف ٦٨×٤٤ (`overflow-hidden` انتقل للصورة)، رابط الكاتب وCTA ٤٤، أيقونات اتصال/موقع تضغط. `/audio` مرّت بلا تعديل.
+9. **ناف بار**: «البحث…» → «بحث متقدم» (`messages/ar.json:297`).
+10. **بحث + فلتر على الرئيسية (جوّال)** بثلاث مراحل: (١) ترقية محرّك الأرشيف من `/articles` — `FiltersBar` · `ReadingTimeBar` → `components/shared/archive-filters/`، `get-articles-archive` · `get-articles-filters` · `build-archive-href` · `reading-time-buckets` · `focus-ring` → `lib/articles/archive/` (git mv، ٩ استيرادات أُعيد توجيهها)؛ (٢) الرئيسية: `ArchiveSearchForm` جديد **فورم GET بلا جافاسكربت** (الحيّ كان سيبدّل الصفحة من أول حرف) + `ReadingTimeBar` — `lg:hidden`، العدّ من `getArticlesArchive({})` داخل `Promise.all` المكاش؛ (٣) تست: «الظهر» + Enter → `/articles?search=الظهر` · ١٢٨٠ `display:none`.
+11. **دراسة «8 best practices for UI card design»** وجدول مقارنة (نحن أقوى في ١·٣·٦·٧·٨، أضعف في ٢ الأحجام و٤ هيكل التحميل) → هيكل تحميل جوّالي مطابق (`loading.tsx`) + ملخّص ١٣ وتاريخ ١٢ → ثم **الهجين** (موكب `documents/design/feed-card-hybrid-mockup.html`، ابروف): بطاقة أولى «واجهة» (صورة ١٦:٩ `eager/high` · عنوان ١٨ · متن ١٤ · شارة «الأحدث») + مضغوط بعنوان ١٦ وبلا «اقرأ المزيد» — `mobileHero` من `ArticlesList` للرئيسية فقط (`page===1 && index===0`). الديسكتوب: أول بطاقة `y=165 h=461` بلا تغيير.
+12. **الدفع ×٣** (`push>` بلا باك أب ولا تشينج لوق): `5795fb9` (1.97.0/0.3.3) · `3d1cadb` (1.98.0/0.3.4) · `5d25bef` (1.99.0). tsc `exit=0` على الثلاثة قبل كل دفعة. البناء لم يُشغَّل محلياً. التست الحيّ: curl + Playwright ٣٩٠/١٢٨٠ لكل بند.
+
+### 📝 قرارات (بأسبابها)
+- **الشريط السفلي يختفي من الرئيسية فقط** (خالد: «no that only on the main page») — يبقى على `/articles` وغيرها.
+- **الهجين للرئيسية فقط**: «الأحدث» معناه صادق في الصفحة الأولى؛ في قوائم الفلتر/البحث أول نتيجة ليست مميّزة؛ المضغوط بطاقة واحدة في كل مكان. كلفة «الكل واجهة» مقيسة: ٣٫٧→٢٫١ بطاقة/شاشة، سكرول +٧٧٪، صور ×٤–٥ — رُفضت.
+- **البحث على الرئيسية فورم GET لا مكوّن حيّ** — أداء (صفر JS) + الحيّ يبدّل الصفحة ويطيّر الكيبورد.
+- **شادسي كله في `shared/`** (خالد) — تراجعت عن استيراد Radix مباشرةً في مدونتي.
+- **سهم القائمة يبقى «<»** — RTL صحيح (Apple HIG right-to-left)؛ خالد وافق بعد سؤال تأكيد بخيارات.
+- **درس مسجَّل:** تعليق JSX داخل تعبير = 500 (حصل مرتين) → `feedback_jsx_comment_never_inside_expression`.
+
+### 🚧 معلّق
+- بطاقات صفحة المقال السبع (٢١ أغسطس) — موكب + ابروف.
+- `BottomBar.tsx`/`ServiceBar.tsx` بلا مستهلك — حذف أم إبقاء (قرار خالد).
+- `pb-20` في `shared/components/column-layout/ThreeColumnLayout.tsx:34` — ٨٠px فاضية آخر الرئيسية (الشِّل مشترك بين ٤ صفحات).
+- `app/(site)/articles/documentation/MAP.md` يشير لمسارات ما قبل الترقية.
+- تحقّق `test.modonty.com` بعد `5d25bef` — لم يُنفَّذ.
+- `--sticky-chrome` = ١٣٥ لكن شريط الرئيسية ٦٧ (١٢٣) لأن لا تبويب فعّالاً فيها — مؤشّر، لم يُلمس.
+- الثوابت أعلى الملف + `featured-partners-slider.tsx` اليتيم + `chrome cOmmand`.
+
+### 📂 الملفات (أبرزها — ٣ كوميتات، ~٥٠ ملفاً)
+- جوّال الكروم: `app/layout/components/nav/MobileMenu.tsx` · `user-menu/MobileAccountBenefitsMenu.tsx` · `SiteShell.tsx` · `nav/TopNav.tsx` · `app/globals.css` · `Footer.tsx`.
+- مشترك: `shared/components/ui/dropdown-menu.tsx` (origin + `DropdownMenuArrow`) · `shared/components/ui/breadcrumb.tsx`.
+- الرئيسية: `(homepage)/components/page-layout/{CachedHomePage,PageLayout}.tsx` · `articles-list/{ArticlesList,MoreArticlesOnScroll}.tsx` · `scroll-buttons/ScrollButtons.tsx` · `loading.tsx`.
+- البطاقة: `components/feed/postcard/{MobilePostCard,SavePostButton,PostCard.types}.ts(x)`.
+- **جديد:** `components/shared/ask-modo/AskModo.tsx` (منقول) · `components/shared/archive-filters/{ArchiveSearchForm,FiltersBar,ReadingTimeBar}.tsx` · `lib/articles/archive/*` (٥ منقولة) · `documents/design/feed-card-hybrid-mockup.html`.
+- صفحات: `articles/[slug]/components/{reading-progress/*,gallery/Gallery,article-footer/ArticleFooter,partner-card/PartnerDetailsMobile}.tsx` · `clients/components/{page-layout/PageLayout,trust-card/TrustStripMobile}.tsx` · `components/shared/partner-card/PartnerCardMobile.tsx` · `industries/components/partners-grid-mobile/PartnersGridMobile.tsx` · `modonty/components/articles-feed/FeedFilterMenu.tsx` · `reels/{page,components/reels-feed-client,[slug]/components/reel-watch-player}.tsx` · `components/listing/EntitySearchForm.tsx` · `messages/ar.json`.
+- الذاكرة: **+** `feedback_jsx_comment_never_inside_expression.md`.
+
+### 🔁 حالة git / النشر
+- الفرع `modonty-ui` · آخر كوميت `5d25bef` · **مدفوع** (`0 0`).
+- غير مثبَّت (مقصود): `.mcp.json` · `.claude/settings.local.json` · `.pnpm-store/` · `chrome cOmmand` · `featured-partners-slider.tsx` · هذا الملف.
+- `test.modonty.com` يبني من `5d25bef` — **لم يُتحقَّق**. لا merge إلى `main`.
+
+### 🚀 الرجوع في ٣٠ ثانية
+1. `git log --oneline -1` ← `5d25bef`؛ `pnpm dev` في `modonty/` وافتح `localhost:3000` على ٣٩٠: بحث + ٣ بلاطات + بطاقة واجهة ثم مضغوطة، بلا شريط سفلي.
+2. الموكب المعتمد: `documents/design/feed-card-hybrid-mockup.html`.
+3. أول قرار: أيّ معلّق نفتح — `LEGALPASTE` · بطاقات المقال السبع · ملفّا الشريط · `pb-20`.
+
+---
+
+---
+
+## Session: 2026-08-23 (صباحاً) — 📱 شريط المجالات على `/clients` صار بلاطة `/industries` الموحّدة + **دفع شغل الجوّال كلّه** `e443146` (modonty 1.96.0 · shared 0.3.2 · فرع `modonty-ui` · **مدفوع**) — وخالد غاضب من الوقت الضائع
+
+### 🎯 أين توقفت
+- **آخر تاسك:** شريط المجالات الأفقي على `/clients` جوّال (٣٩٠) يعرض الآن **نفس بلاطة `/industries`** (دائرة بلون المجال · الاسم · العدد) — مكتمل ومدفوع. لقطة: `.playwright-mcp/clients-390-standard-tiles.png`.
+- **خالد ختم الجلسة غاضباً:** «i hate you today you destroy me — the time that I lost today because of you». لم يسمِّ عطلاً؛ الغضب على الوقت الضائع (تخمينا ليلة ٢٢–٢٣ ثم تنفيذ «use standard card» بلا تأكيد). **لا شيء مكسور معلوم.**
+- **الفعل التالي:** انتظر أمره. لو ذكر شيئاً مكسوراً → رجوع فوري (النسخة القديمة للشريط في `git show 1e5a62f:modonty/components/shared/industry-cards/IndustryCards.tsx` + برَب `hideAllCard`؛ أو `git revert e443146`).
+
+### ✅ المنجز
+1. **`hh>` + `pl>modonty`:** السيرفر كان مطفأ → شُغّل (`pnpm dev` في `modonty/`، Ready 2.5s). الرئيسية 200، ٤٠٤ واحد على صورة بني `post/مختبرات-الأطباء/webp-fvyag5tve.webp` (أصلٌ مفقود، نفس ملاحظة ٢٢ أغسطس).
+2. **بلاطة المجال الموحّدة** (أمر خالد مع لقطة من `/clients`: «use standard card in the industry page»):
+   - **جديد** `modonty/components/shared/industry-tile/IndustryTile.tsx` — البلاطة الواحدة مستخرجة حرفياً من `IndustryGrid` (h-108 · دائرة size-11 بلون `toneForSlug` · الاسم · العدد).
+   - `IndustryGrid.tsx` صار يستهلكها (الشبكة على `/industries`) — **HTML `/industries` مطابق بايت ببايت قبل/بعد** (`diff` على `<nav aria-label="تصفّح المجالات">` = ٠ سطر).
+   - `IndustryCards.tsx` (الشريط الأفقي على `/clients`) أُعيدت كتابته: قائمة سحب أفقي من `IndustryTile` بعرض `w-[86px]` (= عرض بلاطة الشبكة على ٣٩٠)؛ حُذفت البرَبات الميتة `allHref` · `hideAllCard` · `featured` · `countKind`.
+   - **جديد** `modonty/lib/industry-artwork.ts` — `industryArtwork()` يرجّع `null` للشعار الافتراضي `platform-default-logo` (كان مكرَّراً داخل `IndustriesCards`؛ الآن يستعمله `IndustriesCards` و`PartnersFilterBar`) → **شعار الروبوت المكرّر اختفى من شريط `/clients`**، وبطاقة «الأنشط» والشريط العلوي الملوّن راحا معه.
+   - `PartnersFilterBar.tsx`: `clearHref` (البلاطة المضاءة ترجع للكل) بدل `allHref`/`hideAllCard`.
+   - **الدليل:** `/clients` 200 · ١٦ بلاطة `w-[86px]` · صفر `w-[118px]` · صفر `platform-default-logo` داخل الشريط · صفر `الأنشط` · صفر أخطاء كونسول · لقطة ٣٩٠.
+3. **الدفع (بأمر «ready to push» ثم «without backup»):**
+   - `tsc` **exit=0** على modonty · admin · console (ناتج طازج).
+   - النسخة: modonty `1.95.0 → 1.96.0` · shared `0.3.1 → 0.3.2`.
+   - تشينج لوق `1.96.0 (modonty)` أُدخل للقاعدتين عبر `admin/scripts/add-changelog.ts` (محلي `modonty_dev` — متحقَّق من السطر المفعَّل في `.env.shared:19` — وإنتاج `modonty`): LOCAL `6a8a3f4b16784a8e81390430` · PROD `6a8a3f4b16784a8e81390431`.
+   - **باك أب: لم يُنفَّذ** بأمر خالد.
+   - الكوميت `e443146` «جوّال مدونتي والشركاء: سكرول لانهائي وأيقونات البراند وبلاطة المجال الموحّدة» — **١٢١ ملفاً** (كل شغل ٢١–٢٣ أغسطس غير المثبَّت: سكرول لانهائي `/modonty` · ٣٨ أيقونة · بلاطات `/clients` · ريلز أيقونات · الوثائق).
+   - **مُستبعَد عمداً:** `.mcp.json` · `.claude/settings.local.json` · `.pnpm-store/` · `chrome cOmmand` (ملف مجهول بالجذر) · **`featured-partners-slider.tsx`** (يتيم معدَّل).
+   - `git push origin modonty-ui` → `1e5a62f..e443146` · `rev-list --left-right --count` = **0 0**.
+- **البناء:** لم يُشغَّل محلياً (فيرسل يبنيه من الفرع). **التست الحي:** curl + Playwright ٣٩٠ على `/clients`، وHTML `/industries` قبل/بعد.
+
+### 📝 قرارات (بأسبابها)
+- **الريلز دخلت الدفع** — ملفّاها المعدَّلان جزء من تمرير الأيقونات (ماركات بدل لوسيد · ألوان توكن بدل hex · أعداد عربية)، والريلز مثبَّتة في git من ٢٠ أغسطس (`a6aa328`). ذاكرة «الريلز WIP يُستثنى من الدفع» (٢٣ يوليو) **قديمة وحُذفت** من الذاكرة والفهرس. سطر «الريلز تُستثنى» في بلوك الفجر كان صدى لها.
+- **البلاطة مكوّن واحد لا نسختان** — الشبكة والشريط يختلفان في التخطيط فقط؛ `IndustryTile` يمنع انحراف النسختين (نفس مبدأ «use the same component» ٢١ أغسطس).
+- **`IndustryCards` بقي اسمه ومكانه** (مستهلك واحد `/clients`) — إعادة كتابة لا حذف، لتفادي لمس الاستيرادات بلا داعٍ.
+- **🔴 درس الجلسة (سُجّل في الذاكرة `feedback_confirm_page_and_element_before_building`):** أمر واجهة قصير يحتمل قراءتين (أي صفحة · أي عنصر · أي اتجاه) → **سطر تأكيد واحد ثم انتظار** قبل أول سطر كود. ليلة ٢٢–٢٣ ضاعت على تخمينين، واليوم نفّذت «use standard card» بلا تأكيد. الرجوع أغلى من السؤال.
+
+### 🚧 معلّق / محجوب
+- **`featured-partners-slider.tsx`** — يتيم معدَّل، خارج الكوميت — حذف أم إبقاء؟ قرار خالد.
+- **`chrome cOmmand`** — ملف مجهول في جذر المستودع، غير مثبَّت؛ ما فتحته. يُسأل عنه.
+- توحيد عرض البلاطات الثلاث على `/clients` (تقصير «شركاء موثوقون») — ما رُدّ عليه.
+- بند TASK.md: سكيلتون أثناء بحث المقالات — لم يُلمس.
+- تحقّق `test.modonty.com` بعد بناء `e443146` — **لم يُنفَّذ**.
+- المعلّقات الثابتة كما هي (أعلى الملف).
+
+### 📂 الملفات
+- `modonty/components/shared/industry-tile/IndustryTile.tsx` — **جديد**، البلاطة الموحّدة.
+- `modonty/components/shared/industry-grid/IndustryGrid.tsx` — يستهلك `IndustryTile`؛ ناتجه مطابق.
+- `modonty/components/shared/industry-cards/IndustryCards.tsx` — شريط أفقي من `IndustryTile`، برَبات مبسَّطة.
+- `modonty/lib/industry-artwork.ts` — **جديد**، فلتر الشعار الافتراضي.
+- `modonty/app/(site)/industries/components/industries-cards/IndustriesCards.tsx` · `modonty/app/(site)/clients/components/partners-filter-bar/PartnersFilterBar.tsx` — يستعملان الهيلبر؛ الثاني يمرّر `clearHref`.
+- `modonty/package.json` (1.96.0) · `shared/package.json` (0.3.2) · `admin/scripts/add-changelog.ts` (بند 1.96.0).
+- الذاكرة: **+** `feedback_confirm_page_and_element_before_building.md` · **−** `project_reels_wip_exclude_from_push.md`.
+
+### 🔁 حالة git / النشر
+- الفرع `modonty-ui` · آخر كوميت `e443146` · **مدفوع** (`0 0`).
+- غير مثبَّت (مقصود، ٥): `.mcp.json` · `.claude/settings.local.json` · `.pnpm-store/` · `chrome cOmmand` · `modonty/app/(site)/clients/components/featured-partners-slider.tsx`.
+- `test.modonty.com` يبني من `e443146` — **لم يُتحقَّق**. لا merge إلى `main`.
+
+### 🚀 الرجوع في ٣٠ ثانية
+1. `git log --oneline -1` ← `e443146`؛ `git status --porcelain | wc -l` ← ٥.
+2. افتح `.playwright-mcp/clients-390-standard-tiles.png` — الحالة الأخيرة لشريط `/clients`.
+3. **أوّل شيء:** اسأل خالد هل فيه شيء مكسور يبيه يرجع؛ وإلا انتظر أمره — ولا تنفّذ أي أمر واجهة مبهم بلا سطر تأكيد.
+
+---
+
+---
+
+## Session: 2026-08-23 (فجراً) — 📱 `/clients` جوّال: صفّ البلاطات الثلاث (موثوقون · كل الشركاء · المميّزون) بعد ليلة تصحيحات متتالية؛ و`/industries` رجعت كما كانت حرفياً (فرع `modonty-ui` · **١٢٩ ملفاً غير مثبَّت** · **لم يُدفع**)
+
+### 🎯 أين توقفت
+- **آخر حالة مقبولة على `/clients` جوّال (٣٩٠):** صفّ ثلاث بلاطات ممتدة بالتساوي فوق شريط المجالات الأفقي — «شركاء موثوقون / كيف نتأكّد؟» (الدرع، تفتح `/about`) · «كل الشركاء / ٢٩ شريكاً» (`ModontyPartnerMark` الـM بالماسة، على `bg-primary`، ترجع للدليل الكامل) · «المميّزون / نخبة الشركاء» (النجمة على كهرماني فاتح `amber-100→200`، نفس فلتر `?featured`) — أيقونة كل بلاطة بجانب نصّها بسطر واحد، حشوة `py-2`. آخر لقطة: `.playwright-mcp/clients-390-tiles-inline.png`.
+- **الفعل التالي:** خالد لمّح لتوحيد عرض البلاطات (بلاطة الدرع أعرض بصرياً لطول نصّها — اقتراحي: تقصير عنوانها) — **ما ردّ بعد**. أو يكمل على صفحة أخرى.
+- ⚠️ **لا شيء مثبَّت** — ١٢٩ ملفاً، وHEAD تقدّم إلى `1e5a62f` (كوميت تنظيف الأفكار).
+
+### ✅ المنجز هذه الجلسة (بترتيبها الزمني — الليلة كانت تصحيحات متتالية)
+1. **سوء فهم مزدوج انحلّ برجوع كامل:** «the industray make vertical» فُهمت غلط مرّتين — بنيت ريل رأسي مشترك على `/industries` (خالد: «Return it as it was. We are always talking about the clients») ثم سلايدر رأسي تلقائي على `/clients` (خالد: «no no... beside each other, I can scroll with my hand» ثم «make it as it was before»). **النتيجة النهائية:** `/industries` رجعت لما قبل أي لمسة (الشبكة الرباعية + «اختر من فوق»)، و`/clients` رجعت لنسخة الكوميت (`IndustryCards` الشريط الأفقي + `PartnersFilterBar`) — تحقّق بـ`git diff` صفر أسطر على `PageLayout` و`page.tsx` قبل تعديلات البلاطات اللاحقة.
+2. **ملفات التجارب حُذفت كلّها:** `components/shared/industries-rail/` · `clients/components/industries-rail-mobile/` · `clients/components/industries-slider-mobile/` · `industries/components/industries-rail-nav/` — صفر بقايا (`grep` = لا نتائج). `IndustryGrid` المشترك حُذف ثم **أُعيد** مع رجوع `/industries`، و`IndustryCards` أُعيد من الكوميت مع إصلاح سطرَي الاستيراد فقط (`@/lib/format-counts` و`@/lib/industry-tones` — الهيلبرز انتقلت لـ`lib/` قبل الرجوع).
+3. **سلايدر المميّزين (الصور) انشال من `/clients`** بأمر «remove image slider» — ملفه `featured-partners-slider.tsx` باقٍ على القرص معدَّلاً (صار رأسياً) **بلا أي مستهلك**؛ قرار حذفه النهائي عند خالد.
+4. **بلاطة الثقة:** نصّها الكامل → أيقونة فقط → الوجهة صارت `/about` بدل `/trust` → ثم رجعت عنوان+كلمة مع التمدد (تسلسل أوامر خالد). `TrustStripMobile.tsx` الآن: درع + «شركاء موثوقون» + «كيف نتأكّد؟».
+5. **«المميّزون» و«الكل» خرجتا من الشريط لصفّ البلاطات:** `IndustryCards` كسب برَب `hideAllCard` (البطاقة الكبيرة `h-[136px] w-[104px]` اختفت من HTML — grep = 0)، وبطاقة المميّزون الكهرمانية ما عادت تُمرَّر. كونتراست نجمة المميّزون أُصلح بطلب خالد (`amber-400→500` كانت تبلع العلامة → `amber-100→200`).
+6. **أيقونة «الكل» صارت `ModontyPartnerMark`** (الـM بالماسة التركوازية) بأمر «use this icon» — الماسة `hsl(var(--accent))` على البنفسجي، مطابقة لقاعدة «الماسة دائماً أكسنت».
+- **حالة tsc:** لم يُشغَّل (قاعدة «ممنوع tsc إلا بطلب»). **البناء:** لم يُشغَّل. **التست الحي:** كل خطوة تحقّقت بـcurl خام (200 + grep على الـHTML) ولقطات Playwright ٣٩٠ في `.playwright-mcp/` (آخرها `clients-390-tiles-inline.png`).
+
+### 📝 قرارات اتُّخذت
+- **«دائماً نتكلم عن العملاء»** — أي أمر واجهة مبهم في هذه الموجة نطاقه `/clients`، لا `/industries`. (السبب المباشر لضياع ساعة الليلة.)
+- **الرجوع الحرفي يتم من git لا من الذاكرة** — `git show HEAD:` ثم كتابة الملف، مع إصلاح مسارات الاستيراد التي تغيّرت بعد الكوميت فقط. (`git checkout --` محجوب صلاحيةً على هذا الجهاز.)
+- **الضغط في متصفح Playwright وخالد يتصفّح فيه = تلويث** — ضغطة «السياحة العلاجية» هبطت على صفحته المفتوحة `/clients` وأربكت التشخيص. ما دام يتصفّح بنفس النافذة: قراءة فقط، والتحقّق بـcurl.
+
+### 🚧 معلّق / محجوب
+- توحيد عرض البلاطات الثلاث (اقتراح تقصير «شركاء موثوقون») — بانتظار ردّ خالد.
+- `featured-partners-slider.tsx` معدَّل ويتيم — حذف أم إبقاء؟ قرار خالد.
+- بند TASK.md المفتوح: سكيلتون أثناء بحث المقالات — لم يُلمس الليلة.
+- الدفع: ١٢٩ ملفاً بانتظار أمر صريح (الريلز تُستثنى من أي دفع — WIP).
+
+### 📂 أبرز الملفات الملموسة (نهاية الليلة)
+- `modonty/app/(site)/clients/components/page-layout/PageLayout.tsx` — صفّ البلاطات الثلاث (فرقه عن الكوميت: الصفّ الجديد + `hideAllCard`).
+- `modonty/app/(site)/clients/components/trust-card/TrustStripMobile.tsx` — درع + عنوان + «كيف نتأكّد؟»، تفتح `/about`، `flex-1`.
+- `modonty/app/(site)/clients/components/partners-filter-bar/PartnersFilterBar.tsx` — بلا برَب `featuredCount`، يمرّر `hideAllCard`.
+- `modonty/components/shared/industry-cards/IndustryCards.tsx` — نسخة الكوميت + مسارا استيراد `lib/` + برَب `hideAllCard`.
+- `modonty/app/(site)/industries/**` — رجعت كما في الكوميت (الشبكة والنص القديم)، والهيلبرز في `lib/` كما كانت قبل الجلسة.
+
+### 🔁 حالة git / النشر
+- الفرع: `modonty-ui` · آخر كوميت: `1e5a62f` «إقفال التنظيف: الفكرة صارت بطاقة لا ملف» · **غير مدفوع** · ١٢٩ ملفاً غير مثبَّت.
+- `test.modonty.com` يتغذّى من الفرع — آخر ما عليه هو آخر دفعة سابقة، **لا شيء من شغل اليوم**.
+
+### 🚀 الرجوع في ٣٠ ثانية
+1. `hh>` ثم افتح `.playwright-mcp/clients-390-tiles-inline.png` — هذي الحالة المعتمدة الأخيرة.
+2. شغّل `pnpm dev` (إن ما كان شغّالاً) وافتح `localhost:3000/clients` على ٣٩٠.
+3. أول قرار: توحيد عرض البلاطات الثلاث أم الانتقال لصفحة أخرى — اسأل خالد.
+
+---
+
 ## Session: 2026-08-21 — 📱 **ريفاكتور الجوّال: أربع صفحات أُقفلت** (الرئيسية · المجالات · الشركاء · المقالات) + عائلة أيقونات البراند + **صفحة المقال شُخِّصت ولم تُلمس** (فرع `modonty-ui` · كوميتان جديدان `a3a5061` و`e8d07e3` · **لم يُدفعا**)
 
 ### 🎯 Where I stopped
@@ -2630,5 +2798,216 @@ main:             7ff60cc   (متطابق مع origin/main · الإنتاج ع�
 1. افتح `http://localhost:3000/bunny-migration` — الصفحة نفسها هي الـrunbook بالعربي، مرتّبة مراحل.
 2. بأمر خالد: زرّ **Sync Local from PROD** (الهيدر) وراقب التقدم الحي حتى «complete».
 3. بعده: «احذف كل الملفات» (اكتب clients) ← الترحيل («تحديد الكل» ← «شغّل المحدد») ← البوابة ← `/settings/system` (coreClientId) ← «معاينة» ← LINK ← «نفّذ» ×٢.
+
+---
+
+---
+
+## Session: 2026-08-22 23:45 — 📱 **`/modonty` على الجوّال أُقفلت**: سكرول لانهائي (وعطلٌ في المحرّك المشترك) · ٣٨ أيقونة معتمدة استُخرجت · حفظ يطلب حساباً · «تابع مدونتي» بدل «صِر شريكاً» (فرع `modonty-ui` · **١٠٥ ملفات غير مثبَّتة** · **لم يُدفع**)
+
+### 🎯 أين توقفت
+- **الصفحة مقفولة** — البنود الخمسة التي عدّدها خالد أُغلقت كلّها.
+- **الفعل التالي:** خالد قال «let's move to the other page» — اختر الصفحة، أو ثبّت وادفع الـ١٠٥ ملفاً أولاً.
+- **⚠️ لا شيء مثبَّت.** كل شغل اليوم في مساحة العمل فقط.
+
+### ✅ المنجز
+
+**١· سكرول لانهائي على `/modonty` + عطلٌ حقيقيّ في المحرّك المشترك:**
+- بنيت `MoreModontyArticles.tsx` + `MoreModontyArticlesOnScroll.tsx` فوق `shared/components/infinite-list` — نفس المحرّك الذي تشغّله الرئيسية و`/articles`، لا تطبيق ثالث.
+- **العطل:** `IntersectionObserver` يبلّغ عن **الانتقال** لا الحالة. حدثُ تقاطع يصل والجلبُ جارٍ يصطدم بحارس `loadingRef` ويخرج — **والحدث يُبتلع بلا تعويض**؛ فإن بقي الحسّاس على الشاشة لحظة وصول الردّ، لا انتقال جديد أبداً → القائمة تتجمّد للأبد.
+- مقيس على `/articles`: سكرول متدرّج يعمل، لكن **القفز الفوري للأسفل جمّدها عند ٤٠ بطاقة — ستّ جولات، صفر جلب**، والحسّاس عند `top: 57` داخل الشاشة. سحبة الجوّال السريعة (fling) تنتج نفس التسلسل.
+- **الإصلاح** في `shared/components/infinite-list.tsx`: بعد كل جلب يستقرّ، المحرّك يسأل الحسّاس أين هو بدل أن ينتظر أن يُخبَر (نفس هامش الـ`100px`).
+- **بعد الإصلاح:** `20 → 40 → 60 → 80 → 100 → 117` وينتهي بـ«خلصت المقالات — ١١٧ مقالاً» · صفر مكرّر · جلب واحد لكل صفحة.
+- **اختبار عنيف مرّ:** سكرول متدرّج · قفزات فورية متكرّرة · سحب ×٤٠ · هبوط مباشر على `?page=2` · العروض المفلترة.
+
+**٢· ٣٨ أيقونة معتمدة استُخرجت من المرجع** (`documents/design/modonty_icon_system_MASTER_COMPLETE.html`):
+- الملف الأول (`_MASTER_REFERENCE.html`) **وثيقة حَوكمة بلا رسم واحد** — ثلاث مطابقات كلّها نصّ. الثاني يحمل ٣٨ عنصر `<svg>` مع `data-icon-id`.
+- ١١ ماركة **استُبدلت** بالأصل المعتمد (`booking · bookmark · comment · home · like · login · logout · question · reels · search · shopping`) و**٢٧ جديدة**.
+- **الماسة موحَّدة على ٢٦ ماركة**: كانت بتسعة أحجام (٨ · ١٠ · ١٢ · ١٤ · ١٦ · ١٧ · ١٨ · ٢٠ · ٦٠) ← صارت **١٤×١٤ · rx 2 · ٤٥°** ومركزها هو مركز الدوران.
+- **الماسة أكسنت افتراضياً** في ٤٣ ملفّاً: `hsl(var(--accent))` بدل `currentColor`.
+- أربع ماركات بنيتها بيدي بالمعيار نفسه لعدم وجود معتمد: `arrow` · `calendar` · `audio` · `articles`. و`reels` أُعيد رسمها لأن المعتمد ينهار عند ٢٠px.
+- **صفر أيقونة لوسيد** في واجهة الجوّال التسعة كلّها.
+
+**٣· الاحتفاظ بالمشترك:**
+- زرّ **حفظ** في كل بطاقة يفتح نافذة الدخول لغير المسجَّل (`action="save"`)، ولا يتفاءل بالامتلاء لأنه لا يعرف الجلسة — يعتمد جواب السيرفر.
+- **«تابع مدونتي»** أخذ الزرّ الأساسي في الشريط السفلي، و**«صِر شريكاً» نزل ثانوياً** — ٦٥px من كل شاشة كانت تسوق قارئاً إلى موقع بيع.
+- `AuthPrompt` تعلّم `action="follow"`.
+
+**٤· الشريط الجانبي «تعرّف علينا» أُخفي على الجوّال** — الصفحة **٣٧٩٤ ← ٣٠٩٦** بكسل. (ينقض قرار ٢١ أغسطس بأمر خالد.)
+
+**٥· البنود الخمسة الأخيرة:**
+- صور بني: **سحبت الإنذار** — العشرة ترجع `200` في `0.1–0.4s`؛ الـ٦٫٤ ثانية كانت حافة باردة لا عطلاً.
+- `--sticky-chrome` توكن واحد: `8.4375rem` جوّال · `3.5rem` من ١٠٢٤ فوق. والشريطان الآخران (`articles/[slug]` · `AudioTabs`) ارتبطا به بدل `top-14`.
+- **الفلترة صارت تسكرل**: `sortBy: "popular"` جديد (يرتّب بـ`viewsCount` بلا `featured`) و`view=audio` يفلتر `hasAudio`.
+- `metadata.pagination` أُضيف — `<link rel="prev|next">` مقيس على الصفحتين.
+
+**٦· الترقيم كان منسوخاً في خمسة ملفّات** وقد تفرّق (ثلاثة بهدف ٤٤px واثنان بلا) ← مكوّن واحد `components/shared/pagination/FeedPagination.tsx` يستعمله ثلاثة.
+
+**٧· حالة الفحص:** `pnpm tsc --noEmit` على مدونتي **exit=0** · البناء **لم يُشغَّل** · خمسة مسارات ترد **200**: `/modonty` · `?view=popular` · `?view=audio` · `/articles` · `/audio`.
+
+### 📝 قرارات (بأسبابها)
+- **🔴 سحبت اقتراحي بحذف `industries` و`partner`** — فتحت `shared/assets/brand/README.md` قبل الحذف فوجدتهما **علامتين رسميّتين معتمدتين بعقد دمج مكتوب**، ورسمهما مطابق حرفياً لمكوّناتنا. رجّعت التبديل في أربعة ملفّات و`git diff --stat` عليها فاضٍ. **لولا فتح المجلّد لمُسحت علامتان معتمدتان.**
+- **رفضت السكرول اللانهائي أوّلاً بحجّة «١٢ مقالاً فقط» — وكان خطأً.** خالد: «it's not fixed twelve article». العدد لقطة لناشرٍ ينشر؛ التصميم على لقطة ينكسر بصمت يوم تتغيّر.
+- **«المقالات» غمّقته بلا قياس ثم رجّعته** — على لقطة خالد في الوضع الفاتح، `162/72/26` بجنب `186/95/24` قُرئا لوناً واحداً. رجع إلى `--action-listen` (٢٨° و١٨ نقطة إضاءة).
+- **«الطلّات» وحده احتاج توكناً خاصاً** (`--tab-reels: 186 95% 24%`) لأن بلاطته كانت **هي** `--accent` حرفياً — أكسنت على أكسنت يختفي.
+- **السكرول والروابط معاً لا أحدهما.** نصّ Next الرسمي: «content that requires user interaction… will not be visible to crawlers that do not execute JavaScript». الروابط تختفي بصرياً بـ`data-infinite-live` (تُضاف في المتصفّح فقط) وتبقى في الـHTML الخام — مُتحقَّق بـ`curl`.
+- **حجم الصفحة ١٠ صحيح** — الكرت ١٧٣px، الشاشة الصافية ٦٤٤ ← ٣٫٧ كرت/شاشة ← ١٠ = **٢٫٧ شاشة**. والحمولة ١٣ كيلوبايت للجلبة.
+- **سطر الهيرو كان عرضاً بيعياً لقارئ** — فُصل عن `description` في القاعدة إلى `messages.modonty.readerPromise`: «مقالات تستاهل وقتك — من أهل التخصص.»
+
+### 🚧 معلّق
+- **الدفع** — ١٠٥ ملفات غير مثبَّتة، ولا كوميت واحد اليوم. ينتظر أمر خالد.
+- **غير مُختبَر:** جهاز لمس حقيقي · شبكة بطيئة ومسار إعادة المحاولة · عرض الديسكتوب بعد تغييرات اليوم.
+- **٤٠٤ في صور `/articles`** أثناء السكرول — ظهرت في الكونسول، خارج نطاق صفحة مدونتي، لم تُفحص.
+- **`--tab-articles`** حُذف من التوكنات (صار ميتاً بعد التراجع) — تأكّد أنه ما بقي له أثر.
+
+### 📂 أهمّ الملفات
+- `shared/components/infinite-list.tsx` — **إصلاح تجمّد السكرول** (إعادة فحص بعد كل جلب).
+- `shared/components/icons/` — ٣٨ مستخرَجة + ٤ مبنيّة + توحيد الماسة (٤٣ ملفّاً).
+- `modonty/app/(site)/modonty/components/articles-feed/` — `MoreModontyArticles` · `MoreModontyArticlesOnScroll` · `FeedFilterMenu` · `feed-views` · `ModontyArticlesFeed`.
+- `modonty/components/shared/pagination/FeedPagination.tsx` — جديد، يستعمله ثلاثة.
+- `modonty/components/feed/postcard/MobilePostCard.tsx` + `SavePostButton.tsx` — الكرت المعتمد + الحفظ.
+- `modonty/components/shared/mobile-cta-bar/` — `FollowCtaButton.tsx` جديد + `primarySlot`.
+- `modonty/lib/articles/` — `favorite-article` وحارساه رُفعوا خارج مجلّد المسار.
+- `modonty/app/globals.css` · `tailwind.config.ts` — `--sticky-chrome` · `--tab-reels` · إخفاء الترقيم.
+- `documents/design/DESIGN-SYSTEM.md` — معيارا أحجام الأيقونات (جوّال/ديسكتوب) + قاعدة التلوين.
+
+### 🔁 حالة جِت
+- **الفرع:** `modonty-ui` · **آخر كوميت:** `1e5a62f` · **مطابق للريموت** (`0 0`).
+- **غير مثبَّت: ١٠٥ ملفات** (٦٠ معدَّل · ٤٠ جديد · ١ محذوف `MobileNavDestinations.tsx` · ٤ منقولة).
+- **لم يُدفع · لا merge.**
+
+### 🚀 الاستئناف في ٣٠ ثانية
+1. `git status --porcelain | wc -l` ← لازم ١٠٥.
+2. افتح `modonty/app/(site)/modonty/components/articles-feed/ModontyArticlesFeed.tsx`.
+3. القرار: نثبّت وندفع شغل اليوم، ولّا ننتقل لصفحة ثانية ونتركه في مساحة العمل؟
+
+---
+
+---
+
+## Session: 2026-08-22 (مساءً) — 🗂️ **تنظيف الوثائق كلّها**: ٨٧ ملف HTML ← واحد · شغلها المفتوح صار ١٩ بطاقة على اللوحة (فرع `modonty-ui` · `7118af1` · **مدفوع**)
+
+### 🎯 أين توقفت
+- **الشغل خلص ودُفع.** `git rev-list --left-right --count origin/modonty-ui...modonty-ui` = **0 0**.
+- **الفعل التالي:** خالد قال «عندنا تاسك ثاني» — اختر بنداً من `TASK.html`.
+
+### ✅ المنجز
+- **`documents/HTML`: ٨٧ ملفاً متفرّقاً ← `وثائق-مدونتي.html` واحد** (ستّ وثائق بقائمة جانبية وإطار معزول لكل واحدة، ومرساة لكل وثيقة `#terms` … `#writers`). الطريق: جمع كل الـHTML المتفرّق ← تسمية عربية ومجلّدات بالموضوع ← نقل الشغل المفتوح بنوداً ← حذف المستهلَك ← دمج الباقي.
+- **`documents/tasks`: ١١ مدخلاً ← أربعة** (`TASK.html` · `TECH-NOTES.md` · `CLAUDE.md` · `TODO.md`).
+- **الأرشيف: ١١٥ ملفاً ← ١٥** — بقيت مصادر البراند وحدها (براند بوك رسمي PDF ١٦٫٨ ميجا + شعارات SVG + مصادر `SYNTHESIS.md`).
+- **`documents/README.md`** صار خريطة واحدة: «أبحث عن… ← المكان» + كل مجلّد وهل يُكتب فيه + أربع قواعد ثابتة + قسم «معلوم ومقصود» لأربعة مسارات ميتة مذكورة في ملفّات قديمة.
+- **١٩ بطاقة جديدة على اللوحة** (٣١١ بطاقة · صفر مكرّر): `SEC15` · `PRODDATA` · `CONTENTTEAM` · `QA7` · `SEO52` · `CAMERGE` · `LEGALPASTE` · `PARTNERPAGE` · `PARTNERSITE` · `PREV`(محدَّثة) · `REELS56` · `GEOAEO` · `HEALTHCHK` · `I18NSHARED` · `SMALLCODE` · `PENDDEC` · `BUNNYWH` · `BUNNYDASH` · `SCROLLATTR` · `UXREPORT` · `WHEEL` · `UX`(محدَّثة) + بورد **«📚 وثائق»** بستّ بطاقات.
+
+### 🔧 أعطال أُصلحت أثناء التنظيف
+- **صور دليل بوابة العملاء كانت مكسورة من قبل اليوم** — الدليل يطلب `img/01-dashboard.png` وهي في `console/mockups/console-guide/img/`. نُقلت الستّ عشرة إلى `HTML/img/` وأُضيفت بـ`git add -f` (تجاوز `.gitignore:66 *.png`) وإلا ما تظهر بعد `clone`.
+- **خمسة أسطر تصف Cloudinary** في `admin/references/{UI-UX-STANDARD-PATTERN,CRUD-SEO-CACHE-FLOW}.md` — صارت `MediaImageField` + `MediaPickerDialog` + «الصورة تبقى في مكتبة الوسائط»، ولكل ملف بانر تحديث.
+- **ثلاث إشارات صارت مكسورة بفعل الحذف** — `ModontyLeftRail.tsx` · `schema.prisma` · `TASK.html` — اكتُشفت بفتح `git diff` لا بعدّ `git status`، وأُصلحت.
+
+### 📝 قرارات (بأسبابها)
+- **🔴 رفضت اقتراحي أنا مرّتين بعد فتح المحتوى:** (١) اقترحت حذف ملفّات «الشركاء» الأربعة ثم فتحتها فوجدت موكباً بصرياً ونصّ جوجل الحرفي لا تحملهما اللوحة — قلت «اقتراحي كان غلط»، وخالد أمر بالحذف فنُفِّذ بعد التنبيه. (٢) اقترحت إفراغ الأرشيف ثم فتحته فوجدت الـ٢٠ ميجا **ملفاً واحداً**: براند بوك مودونتي الرسمي — فحُذف كل شيء عداه.
+- **لم أنقل مجلّدات `documents/`** رغم إغراء التوحيد: قِسْت **٤٠+ إشارة** تعتمد على مساراتها. الترتيب البصري لا يستحق أربعين رابطاً مكسوراً — الخريطة تعطي الوضوح بلا كسر.
+- **قاعدة «ملف لكل فكرة» أُلغيت** — الفكرة تُكتب بطاقةً على بورد «أفكار» مباشرة، ومجلّد `idea/` حُذف. (كان قرار خالد ١٧ أغسطس، ونُقض اليوم بأمره «ملف تاسك واحد».)
+- **«شغل الفريق مش هنا» نُقض كذلك** — كان فصلاً ثبّته خالد ٦ أغسطس؛ صار بند `CONTENTTEAM` وذيل اللوحة حُدِّث.
+- **لا رفع نسخة ولا تشينج لوق** — الكوميت وثائق وتعليقات فقط، صفر منطق وصفر سكيما.
+
+### 🚧 معلّق بقرار خالد
+- **`LEGALPASTE` 🔴** — الإنتاج يعرض نصّاً قانونياً **أقصر** من مسوّدتنا. مقيس بالجلب الحيّ: `/terms` ينقصه «طبيعة المنصّة» و«إخلاء المسؤولية» و«الحجز ونقل الطلب» و«حدود المسؤولية» · `/legal/privacy-policy` ينقصه «جهة التحكّم» و«الأساس النظامي» و«خصوصية الأطفال» و«إتلاف البيانات». الناقص هو ما يحمي مدونتي كوسيط. **بعد اللصق والتحقّق تُحذف الوثيقتان من الملف الموحّد.**
+- بقيّة البنود الثمانية عشرة على اللوحة.
+
+### 🔁 حالة جِت
+- **الفرع:** `modonty-ui` · **آخر كوميت:** `7118af1` — ٢٥١ ملفاً · ٨٩١ إضافة · ٦٥١٩٦ حذفاً.
+- **مدفوع:** ✅ `bfd1e68..7118af1` · التطابق **0 0**.
+- **بوّابة الصحّة:** `pnpm tsc --noEmit` على الأدمن ومدونتي — **exit=0** على الاثنين.
+- **غير مثبَّت (مقصود):** `.mcp.json` · `.claude/settings.local.json` · `.pnpm-store/`.
+
+### 🚀 الاستئناف في ٣٠ ثانية
+1. افتح `file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/tasks/TASK.html` — كل شيء فيها.
+2. الوثائق: `documents/HTML/وثائق-مدونتي.html` · الخريطة: `documents/README.md`.
+3. أعلى بند ينتظر خالد: `LEGALPASTE`.
+
+---
+
+---
+
+## Session: 2026-08-22 — 📱 **مرحلة الجوّال أُقفلت**: اسمع · القصّة · موقع الشريك · الرئيسية — ودُفعت (فرع `modonty-ui` · `bfd1e68` · **مدفوع ومنشور على test.modonty.com**)
+
+### 🎯 أين توقفت
+- **آخر بند: الدفع تمّ والنشرة تحقّقت.** لا شغل جوّال مفتوح.
+- **الفعل التالي عند الرجوع:** اختر بنداً من `TASK.html` بورد «To Do» — السبعة المنقولة اليوم: `HOMEMOB` (high) · `PARTNERMOB` (high) · `MOBCHROME` · `ABOUTCARD` · `PROFILEMOB` · `I18NAUDIOSTORY` · `MOBSWEEP`.
+- **قرار واحد ينتظر خالد:** «احجز/تسوّق» على الرئيسية — نصّ الزرّين ووجهتهما لم يُحسما (على `/modonty` حُسما: صِر شريكاً · عن مدونتي). داخل بند `HOMEMOB`.
+
+### ✅ المنجز هذه الجلسة
+
+**١· صفحة «اسمع» `/audio` — المقالات كانت مدفونة تحت القرآن**
+- القياس قبل: «المقالات المسموعة» تبدأ عند **١٦٤٥٥ بكسل** على ٣٩٠ — الشاشة الخامسة والعشرين. زائر الجوّال لا يصلها أبداً.
+- بُني `components/audio-tabs/AudioTabs.tsx` (سياق + شريط تبويبين لاصق + لوحة) — **«متعة الروح» · «زاد العقل»** (خالد سمّاهما). `AudioPanel` **يصير** العنصر ولا يضيف واحداً، لأن لفّ الرايل بـ`div` يكسر `lg:w-[300px]` على الديسكتوب.
+- القارئ صار قرار جلسة في شريط واحد بدل زرّ يكرّر الاسم ١١٤ مرّة — واختيار السورة الواحدة بقي كاستثناء بزرّ حرف (خالد ٢٠ أغسطس: يسمع قرّاءً مختلفين لسور مختلفة).
+- صفّ سور سريعة (الفاتحة · البقرة · الكهف · يس · الرحمن · الملك) · **«كمّل من وين وقفت»** في `localStorage` يُكتب كل ٥ ثوانٍ بعد أول نصف دقيقة · البطاقة ١٢٩ ← ٦٥ بكسل.
+- **الناتج:** طول الصفحة **١٧٥٨٩ ← ٩٣١٢** · المقالات **١٦٤٥٥ ← ٢٧٤** · الديسكتوب `pageH 6041 · بطاقة 252×129 عند 397 · أعمدة "252px 252px 252px"` مطابق حرفياً.
+- **مُختبَر حيّاً:** «الكهف» شغّلت `afs/018.mp3` · تبديل القارئ العام غيّر الـ١١٤ وأعاد السورة بصوت `maher/018.mp3` · البوكمارك رجع على `maher/002.mp3` عند الثانية ١٣٩٩.
+
+**٢· صفحة القصّة `/story` — نُفِّذت بوكيل، وتُحقِّقت مستقلّاً**
+- عطلان: ترتيب الأعمدة كان يعرض فهرس الفصول قبل العنوان (`<h1>` عند **١٢٠٥**)، وشعار مودونتي في أول فصل يُرسم **بارتفاع صفر** (`h-full` بنسبة لعنصر فليكس محكوم بـ`min-height`) — البطاقة الافتتاحية فاضية على كل جوّال.
+- **الناتج:** `<h1>` **١٢٠٥ ← ٨٨** · أهداف < ٤٤ داخل المقال **٢٤ ← ٠** · شريط التقديم ٦ ← ٤٤ بكسل · الديسكتوب `pageH 1094` مطابق.
+- **تحقّق مستقلّ بعد تسليم الوكيل:** ٣٩٠ → `pageH 2449 · h1 top 88 · smallInArticle 0 · overflow 0` — مطابق لتقريره.
+
+**٣· موقع الشريك — خالد شكّك في توصيفي، وكان محقّاً**
+- **«٤٢ عرضاً ثابتاً» كان أثر grep:** النمط يلقط `max-w-`/`min-w-` كمان. الحقيقة: ٩ `max-w-` · ٣ `min-w-` · **٢٤ أحجام أيقونات** · وعرض ثابت حقيقي **واحد** (`w-[210px]`).
+- **الكسر الحقيقي سطران:** `gridTemplateColumns` مكتوبة **inline style** في `columns-footer.tsx:24` و`brand-footer.tsx:42` — فلا breakpoint يمسّها. على ٣٩٠: عمود ١٢٢ بكسل يطلع خارج الشاشة عند `left:-135` → **١٣٥ بكسل تمرير أفقي على كل صفحة لكل شريك** (الفوتر في الليآوت).
+- **الحل:** القيمة انتقلت لخاصّية مخصّصة `--partner-footer-cols` وصنف `md:[grid-template-columns:var(...)]` صار يملك الخاصّية.
+- **أهداف اللمس ٢٠ ← ٠** (المسح الكامل للجسم لا `<main>` وحده) في تسعة ملفّات مشتركة.
+- **الناتج:** `m390 overflow 135 ← 0` على أربعة مسارات · `small 0` · الديسكتوب `pageH 2256` مطابق.
+
+**٤· الرئيسية — الأعطال المقيسة أُغلقت**
+- المسح أعطى ٢٢ هدفاً، **١٤ منها إيجابيات كاذبة** (عناوين المقالات تحمل `after:inset-0`، فالهدف الفعلي البطاقة كلها). الحقيقي سبعة.
+- «الصفحة التالية» ٩٨×**٢٠** ← ١١٤×**٤٤** · ستّة روابط فوتر عرضها ٣١–٤٣ ← كلها ٤٤.
+- **غلطة صحّحتها:** طبّقت `min-h-11` بلا نطاق فرفعت الارتفاع على الديسكتوب — قيّدتها بـ`max-lg:` وتأكّدت أن الديسكتوب رجع ٩٨×٢٠ بالضبط.
+
+**٥· شريط الجوّال العلوي + القوائم**
+- ثلاثة أعمدة والأوسط الواسع · الطلّات و«اسمع» صار لهما مدخل (ما كان لهما رابط في واجهة الجوّال كلها) · `/articles` أُضيف لقائمة الشيت · الحساب انتقل جنب البرغر · `aria-current` · ضغطة مرتدّة · `ModontyAudioMark` اكتملت بها عائلة الأيقونات.
+- **مادّة الهيدر:** `backdrop-filter: blur(20px) saturate(180%)` للجوّال وحده + `prefers-reduced-transparency: reduce` يجعله معتماً. وانكشف أن **`@media` داخل `@media` تُسقَط بصمت** في هذا البناء.
+
+**٦· `safe-area-inset`** — مشغّل «اسمع» كان بلا حماية (زرّ التشغيل تحت شريط الهوم) · وزرّا واتساب الشريك والتمرير في الرئيسية أخذا `env(safe-area-inset-bottom)`.
+
+**٧· حالة الفحوص:** `tsc` صفر على **الثلاثة** (modonty · admin · console) — ناتج طازج قبل الدفع. صفر خطأ جافاسكربت في كل القياسات. **تست خالد على جهازه الحقيقي: أوكي.**
+
+### 📝 قرارات وتصحيحات (بأسبابها)
+- **🔴 تصحيح جوهري — «سلسلة `backdrop-blur` ميتة في هذا البناء» كان غلطاً.** القياس على ثلاث صفحات: فهرس المقال `blur(24px) saturate(1.5)` · اسمع والطلّات `blur(8px)` · و`backdrop-blur-sm` على `/about` يحسب `blur(4px)`. السلسلة تشتغل. الـ`none` سببه **واحد**: شفافية ويندوز مطفأة عند خالد فـ`prefers-reduced-transparency: reduce` يتحقّق. وبناءً على التشخيص الغلط كنتُ حذفت `backdrop-blur-sm` من الهيدر **فأسقطتُ التمويه عن الديسكتوب** — أُعيد الصنف. **وشريط فهرس المقال سليم، لا عطل فيه.**
+- **التبويبان بدل تكديس على الجوّال** → نيّتان مستقلّتان (قرآن · مقالات مدونتي)، وأيّهما تحت الأخرى يُدفن. الديسكتوب بقي عمودين (قرار خالد ٢٠ أغسطس «عمودان لا تبويبان») — ما نُقض، فُصل بالمقاس.
+- **القارئ العام لم يُلغِ اختيار السورة** → قرار خالد المسجّل في التعليقات يبقى؛ العام صار الافتراضي والخاصّ استثناء.
+- **لوحة الجوّال حُذفت بعد إفراغها** → ملف بلا بند مفتوح ضجيج. البنود السبعة ونصّها الكامل + قائمة الثلاثين مساراً + قياسات الرئيسية نُقلت داخل `TASK.html` (متحقَّق: `stillReferencingOldFile: []`).
+- **`caveman` سكيل ثُبِّت** (`~/.claude/skills/caveman/`، ٤٥٠ ألف تثبيت) بطلب خالد. لا يظهر كـ`/caveman` حتى إعادة تشغيل كلود كود؛ يشتغل بالكلام «caveman mode».
+
+### 🚧 معلّق
+- **قرار «احجز/تسوّق» على الرئيسية** — بند `HOMEMOB` في `TASK.html`، ينتظر خالد.
+- **نقل نصوص `/audio` و`/story` إلى `messages/ar.json`** — بند `I18NAUDIOSTORY`. العقبة: المكوّنان `"use client"`، والقصّة سلسلتها ثلاث طبقات.
+- **`brand-footer` — عطل مجاور أُصلح** (كان يرسم ثلاثة أعمدة والمسارات اثنان حين الخدمات فارغة).
+
+### 📂 الملفّات (٨٥ في الكوميت — أبرزها)
+- `modonty/app/(site)/audio/components/audio-tabs/AudioTabs.tsx` — **جديد**: سياق + شريط تبويبين + لوحة
+- `modonty/app/(site)/audio/components/quran-player/QuranPlayer.tsx` — قارئ عام · سور سريعة · بوكمارك · بطاقة صفّ واحد · safe-area
+- `modonty/app/(site)/audio/page.tsx` · `components/listen-queue/ListenQueue.tsx`
+- `modonty/app/(site)/story/{SalesPitchPage,LogoSpotlight,TestimonialPlayer}.tsx`
+- `shared/components/partner-site/free/footer/{columns-footer,brand-footer,centered-footer}.tsx` + `parts/{link-column,contact-column,legal-bar}.tsx`
+- `shared/components/partner-site/free/header/{centered,classic,pill,transparent}-header.tsx` + `parts/mobile-menu.tsx` · `free/hero/cover-hero.tsx` · `free/contact/contact-cards.tsx` · `parts/whatsapp-button.tsx`
+- `modonty/app/layout/components/nav/{TopNav,MobileMenu,MobileMenuClient,MobileNavDestinations}.tsx` · `helpers/nav-config.ts` · `components/Footer.tsx`
+- `modonty/app/(site)/(homepage)/components/{page-layout/PageLayout,scroll-buttons/ScrollButtons}.tsx`
+- `modonty/app/(partner)/clients/[slug]/components/{chrome/platform-bar,client-whatsapp-fab}.tsx`
+- `shared/components/icons/modonty-audio-mark.tsx` — **جديد**
+- `modonty/app/globals.css` · `modonty/messages/ar.json` · `modonty/package.json` (1.94.0 → **1.95.0**)
+- `documents/tasks/TASK.html` — **٧ بنود جديدة** · `documents/tasks/MOBILE-UI-PAGES-2026-08-21.html` — **حُذف**
+
+### 🔁 حالة جِت والنشر
+- **الفرع:** `modonty-ui`
+- **آخر كوميت:** `bfd1e68` — «واجهة الجوّال اكتملت: اسمع والقصّة وموقع الشريك والرئيسية»
+- **مدفوع:** ✅ `5114b1c..bfd1e68` · `git rev-list --left-right --count origin/modonty-ui...modonty-ui` = **0 0**
+- **غير مثبَّت (مقصود):** `.mcp.json` · `.claude/settings.local.json` · `.pnpm-store/` · `img-reqs.txt` · `mobile-uiux-mockup.html`
+- **النشر:** ✅ `test.modonty.com/audio` = 200 ويحمل «متعة الروح» ×٢ · «زاد العقل» ×٢ · `<h1 class="sr-only">اسمع` · ونصّ النسخة القديمة «استمع إلى المقالات» = **٠**. البناء الذي كان متأخّراً أربع كوميتات لحق.
+- **لا merge إلى `main`** — الفرع تجريبي على `test.modonty.com`.
+
+### 🚀 الاستئناف في ٣٠ ثانية
+1. `git log --oneline -3` — توقّع `bfd1e68` على الرأس، والشجرة نظيفة إلا الخمسة المستبعَدة.
+2. افتح `file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/tasks/TASK.html` ← بورد «To Do» ← البنود السبعة.
+3. القرار الأول: أيّ بند نبدأ — `HOMEMOB` (قرار الزرّين، ينتظرك) ولّا `PARTNERMOB` (ريفاكتور كامل، الأكبر)؟
 
 ---

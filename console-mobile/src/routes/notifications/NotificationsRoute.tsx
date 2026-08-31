@@ -1,10 +1,10 @@
 import { FlashList } from '@shopify/flash-list';
 import { useCallback, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { RefreshControl, StyleSheet, View } from 'react-native';
 import { AppText as Text } from '@/src/components/ui/AppText';
 import { NotificationCard } from '@/src/components/notifications/NotificationCard';
 import { EmptyState, ErrorState, ListScreenSkeleton, OfflineState, StatusPill } from '@/src/components/ui/MobileUI';
-import { getNotificationCollection, type NotificationSummary } from '@/src/services/engagement-api';
+import { getNotificationCollection, markNotificationRead, type NotificationSummary } from '@/src/services/engagement-api';
 import { CONNECTION_COPY, useEngagementResource } from '@/src/services/use-engagement-resource';
 import { fonts, radii, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
@@ -25,7 +25,7 @@ const notificationKey = (item: NotificationSummary) => item.id;
 
 export function NotificationsRoute({ accessToken, onOpenArticle, onOpenAudience, onOpenVideos, onUnreadCountChange }: Props) {
   const { theme } = useAppTheme();
-  const { resource, reload } = useEngagementResource(accessToken, getNotificationCollection);
+  const { resource, reload, refresh, isRefreshing, replace } = useEngagementResource(accessToken, getNotificationCollection);
   const collection = resource.data;
   const review = collection?.review;
   const unreadCount = collection?.unreadCount;
@@ -34,11 +34,29 @@ export function NotificationsRoute({ accessToken, onOpenArticle, onOpenAudience,
     if (unreadCount !== undefined) onUnreadCountChange?.(unreadCount);
   }, [onUnreadCountChange, unreadCount]);
 
+  /**
+   * الفتح **يوسم مقروءاً** ثم ينتقل.
+   *
+   * كان ينتقل ولا يوسم — ولا فعل واحد في عقد الجوّال كان يكتب `readAt` أصلاً، فالشارة على
+   * التاب لا تصل صفراً أبداً والتنبيه يبقى «جديد» للأبد. وشارةٌ لا تُطفأ يتعلّم صاحبها
+   * تجاهلها، فتضيع معها التنبيهات الحقيقية.
+   *
+   * والتحديث محلّي **فوراً** لا بانتظار الشبكة: الانتقال يقع الآن، فلو انتظرنا الردّ لعاد
+   * العميل ليجد التنبيه ما زال «جديد». والخادم يرجع العدّ الجديد فيصحّح المحلّي إن اختلفا.
+   */
   const open = useCallback((item: NotificationSummary) => {
+    if (item.isUnread && collection !== null) {
+      replace({
+        ...collection,
+        unreadCount: Math.max(0, collection.unreadCount - 1),
+        notifications: collection.notifications.map((row) => row.id === item.id ? { ...row, isUnread: false } : row),
+      });
+      markNotificationRead(accessToken, item.id).then(() => refresh()).catch(() => refresh());
+    }
     if (item.target === 'article') return onOpenArticle();
     if (item.target === 'audience') return onOpenAudience();
     if (item.target === 'videos') return onOpenVideos();
-  }, [onOpenArticle, onOpenAudience, onOpenVideos]);
+  }, [accessToken, collection, onOpenArticle, onOpenAudience, onOpenVideos, refresh, replace]);
 
   const renderNotification = useCallback(({ item }: { item: NotificationSummary }) => review === undefined ? null
     : <NotificationCard item={item} openPrefix={review.openPrefix} onOpen={open} />, [open, review]);
@@ -57,7 +75,7 @@ export function NotificationsRoute({ accessToken, onOpenArticle, onOpenAudience,
     </View> : null}
   </View>;
 
-  // «ما في تنبيهات جديدة» حالة نجاح لا خطأ — فلا زرّ «إعادة المحاولة» في فراغها.
+  // «ما في تنبيهات جديدة» حالة نجاح لا خطأ — فلا زرّ «إعادة المحاولة» في فراغها، والسحب يكفي.
   return <FlashList
     data={collection.notifications}
     renderItem={renderNotification}
@@ -65,6 +83,7 @@ export function NotificationsRoute({ accessToken, onOpenArticle, onOpenAudience,
     contentContainerStyle={styles.list}
     ListHeaderComponent={header}
     ListEmptyComponent={<EmptyState icon="notifications" title={review.emptyTitle} copy={review.emptyDescription} />}
+    refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={refresh} tintColor={theme.colors.textInteractive} colors={[theme.colors.textInteractive]} />}
   />;
 }
 

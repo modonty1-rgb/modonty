@@ -89,7 +89,7 @@ export function AccountRoute({ accessToken, onBack, onSupport, onLogout }: Props
     {saveError ? <Text style={[styles.error, { color: theme.colors.errorText }]}>{saveError}</Text> : null}
 
     <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{review.helpSectionTitle}</Text>
-    <Pressable accessibilityRole="button" accessibilityLabel={review.supportTitle} onPress={onSupport} style={[styles.card, styles.supportRow, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+    <Pressable accessibilityRole="button" accessibilityLabel={review.supportTitle} onPress={onSupport} style={({ pressed }) => [styles.card, styles.supportRow, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }, pressed && styles.pressed]}>
       <View style={styles.supportCopy}>
         <Text style={[styles.toggleLabel, { color: theme.colors.text }]}>{review.supportTitle}</Text>
         <Text style={[styles.toggleDetail, { color: theme.colors.muted }]}>{review.supportDescription}</Text>
@@ -97,7 +97,7 @@ export function AccountRoute({ accessToken, onBack, onSupport, onLogout }: Props
       <ModontyIcon name="arrow-left" size={control.iconSize} primary={theme.colors.muted} accent={theme.colors.accent} />
     </Pressable>
 
-    <Pressable accessibilityRole="button" accessibilityLabel={review.logoutLabel} onPress={confirmLogout} style={[styles.card, styles.logout, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+    <Pressable accessibilityRole="button" accessibilityLabel={review.logoutLabel} onPress={confirmLogout} style={({ pressed }) => [styles.card, styles.logout, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }, pressed && styles.pressed]}>
       <Text style={[styles.logoutLabel, { color: theme.colors.danger }]}>{review.logoutLabel}</Text>
     </Pressable>
   </ScrollView>;
@@ -106,8 +106,7 @@ export function AccountRoute({ accessToken, onBack, onSupport, onLogout }: Props
 const styles = StyleSheet.create({
   state: { flex: 1, paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.md },
   screen: { paddingHorizontal: spacing.screenHorizontal, paddingBottom: spacing.screenBottom },
-  heading: { alignItems: 'flex-end', borderBottomWidth: StyleSheet.hairlineWidth, marginTop: spacing.md, paddingBottom: spacing.md },
-  pageTitle: { fontFamily: fonts.medium, fontSize: typography.pageTitle, lineHeight: typography.lineHeightPageTitle, textAlign: 'right', writingDirection: 'rtl' },
+  pressed: { opacity: 0.72 },
   card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: radii.card, padding: spacing.md, marginBottom: spacing.sm },
   profile: { alignItems: 'center', gap: spacing.xxs, marginTop: spacing.lg, paddingVertical: spacing.lg },
   name: { fontFamily: fonts.medium, fontSize: typography.pageTitle, lineHeight: typography.lineHeightPageTitle, writingDirection: 'rtl' },

@@ -88,8 +88,12 @@ const CSS = `
 /* الوضع الفاتح كان يبدّل الأسطح فقط ويترك ألوان التطبيقات كما هي — وهي باستيل مصمَّم لخلفية
    داكنة. النتيجة: رقم التبويب النشط بتباين ١٫٦٩–٢٫٥٤ على الأبيض (مقيس ٢٤ أغسطس)، أي غير مقروء.
    فلكل لون نسخته الغامقة هنا، وكلّها فوق ٤٫٥:١ على الأبيض. */
-@media (prefers-color-scheme: light){:root{--bg:#f6f7fb;--panel:#fff;--card:#fff;--line:#e4e6ee;--fg:#141722;--mut:#5b6472;--dim:#8a93a3;
---amber:#b45309;--red:#be123c;--green:#15803d;--blue:#1d4ed8;--violet:#6d28d9;--cyan:#0e7490;--k:#b45309;--c:#1d4ed8}}
+/* خالد (٢٩ أغسطس): «خليها دارك مود». كانت اللوحة تتبع نظام ويندوز، وهو على الفاتح
+   عنده — فتنقلب بيضاء بلا أن يطلبها. الداكن ثابت الآن، ولا يتغيّر بتغيّر إعداد النظام.
+   الكتلة محفوظة تحت مُحدِّد لا يُطابَق تلقائياً: من أرادها يوماً يضيف data-theme="light"
+   على <html> — ولا تعود بتغيّر النظام وحده. */
+:root[data-theme="light"]{--bg:#f6f7fb;--panel:#fff;--card:#fff;--line:#e4e6ee;--fg:#141722;--mut:#5b6472;--dim:#8a93a3;
+--amber:#b45309;--red:#be123c;--green:#15803d;--blue:#1d4ed8;--violet:#6d28d9;--cyan:#0e7490;--k:#b45309;--c:#1d4ed8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 Tajawal,system-ui,sans-serif}
 a{color:inherit}code{font:12px ui-monospace,monospace;background:var(--panel);padding:1px 5px;border-radius:4px;border:1px solid var(--line)}
 header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:12px 16px}
@@ -99,12 +103,19 @@ h1{font-size:18px;margin:0 0 8px}
 .tools input{flex:1;min-width:220px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:0 12px;font:inherit}
 .chip{height:34px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--mut);padding:0 12px;font:inherit;font-size:13px;cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
-/* شريط التبويبات — تطبيق واحد في المرّة. الاختيار الواحد هو المقصود: الخلط بين التطبيقات هو ما كان يُتيه. */
-.apptabs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 10px;border-bottom:2px solid var(--line);padding-bottom:0}
-.apptab{position:relative;display:flex;align-items:center;gap:7px;height:42px;padding:0 16px;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;background:none;color:var(--mut);font:inherit;font-size:14px;font-weight:600;cursor:pointer;border-radius:8px 8px 0 0}
-.apptab:hover{background:var(--panel);color:var(--fg)}
+/* قائمة التبويبات — تطبيق واحد في المرّة. الاختيار الواحد هو المقصود: الخلط بين التطبيقات هو ما كان يُتيه.
+   صارت عموداً جانبياً بأمر خالد (٣٠ أغسطس): «القائمة هذي جيبها سايدبار». سببه أن الأسماء
+   السبعة في سطر أفقي كانت تُقرأ ككلمات متلاصقة، وكل بحث عن تبويب يبدأ بمسح السطر كلّه.
+   العمود يجعلها قائمةً تُمسح بالعين مرّة واحدة، والعدّاد في نهاية كل سطر على استقامة واحدة. */
+body{padding-inline-start:212px}
+.apptabs{position:fixed;inset-inline-start:0;top:0;bottom:0;width:212px;z-index:10;display:flex;flex-direction:column;gap:4px;padding:16px 10px;background:var(--panel);border-inline-end:1px solid var(--line);overflow-y:auto}
+.apptab{position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;height:40px;padding:0 12px;border:0;border-inline-start:3px solid transparent;background:none;color:var(--mut);font:inherit;font-size:14px;font-weight:600;cursor:pointer;border-radius:8px;text-align:start}
+.apptab:hover{background:var(--bg);color:var(--fg)}
 .apptab b{font-size:12px;font-weight:800;min-width:22px;padding:2px 6px;border-radius:999px;background:var(--line);color:var(--mut)}
-.apptab[aria-selected="true"]{color:var(--fg);border-bottom-color:currentColor;background:var(--panel)}
+.apptab[aria-selected="true"]{color:var(--fg);border-inline-start-color:currentColor;background:var(--bg)}
+@media (max-width:900px){body{padding-inline-start:0}
+.apptabs{position:static;width:auto;flex-direction:row;flex-wrap:wrap;border-inline-end:0;border-bottom:1px solid var(--line)}
+.apptab{width:auto}}
 /* كان: background:currentColor مع color:var(--bg) على نفس العنصر — وقيمة currentColor تُحسب من
    لون العنصر النهائي، فصارت الخلفية بلون النصّ تماماً واختفى رقم التبويب النشط (خالد رآه دائرةً
    فاضية، ٢٤ أغسطس). الآن: تظليل شفّاف من لون التبويب، والنصّ يبقى بلونه. */
@@ -119,6 +130,7 @@ h1{font-size:18px;margin:0 0 8px}
 /* بند «قبل الدمج» — مؤجَّل بقرار، لا متأخّر بإهمال. يبقى مرئياً لكنه يهدأ في الأسفل. */
 .card[data-last]{opacity:.72;border-inline-start:4px solid var(--dim)}
 .card[data-last]:hover{opacity:1}
+.tag.step-tag{background:var(--accent,#0d6efd);color:#fff;font-weight:800;letter-spacing:.02em}
 .tag.last-before-merge{background:transparent;color:var(--dim);border:1px dashed var(--dim);font-weight:700}
 /* الجاهز لوكيل — بند فحصتُه وأعرف حجمه، ولا يحتاج قراراً من خالد. الحافّة الخضراء تكفي لتمييزه من بعيد. */
 .card[data-agent]{border-inline-start:4px solid var(--green)}
@@ -150,6 +162,8 @@ section.grp{margin:0 0 28px}
 .card[data-apps~="admin"]::before{background:var(--blue)}
 .card[data-apps~="modonty"]::before{background:var(--violet)}
 /* البند الجاري الآن: خلفية حمراء صريحة — خالد يلمحه من أول نظرة بلا قراءة (٢٤ أغسطس) */
+.tag.next-release{background:color-mix(in srgb,#8b5cf6 18%,transparent);color:#a78bfa;border-color:color-mix(in srgb,#8b5cf6 45%,transparent)}
+.card[data-next="1"]{opacity:.85}
 .card[data-running="1"]{background:color-mix(in srgb,var(--red) 16%,var(--card));border-color:var(--red);border-inline-start:4px solid var(--red);box-shadow:0 0 0 1px color-mix(in srgb,var(--red) 30%,transparent)}
 .card[data-running="1"] .id{background:var(--red);color:#fff;border-color:var(--red)}
 .tag.running{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
@@ -239,15 +253,21 @@ function cardHTML(t) {
     : "";
   // بند مؤجَّل عمداً إلى ما قبل الدمج — يُوسم كي لا يُقرأ تأخيرُه إهمالاً.
   const lastTag = t.last ? `<span class="tag last-before-merge">🏁 قبل الدمج مع main</span>` : "";
+  // بندٌ مؤجَّل بقرار إلى الدورة القادمة — يُوسم كي لا يُقرأ تأجيلُه إهمالاً.
+  const nextTag = t.next ? `<span class="tag next-release">📦 الإصدار الجاي</span>` : "";
+  // شارة الخطوة: ترتيبٌ إجباريّ داخل سلسلة، لا اقتراحَ أولوية. تُقرأ من `step`.
+  const stepTag = t.step
+    ? `<span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة ${t.step}${t.stepOf ? ` من ${t.stepOf}` : ""}</span>`
+    : "";
   // شارة «جاهز لوكيل»: بند فُحص حجمه ولا يحتاج قراراً — الرقم هو ترتيب التنفيذ المقترح.
   const agentTag = t.agent
     ? `<span class="tag ${t.agentKind === "قياس" ? "agent-measure" : "agent"}">🤖 وكيل ${t.agent}${t.agentKind === "قياس" ? " · قياس" : ""}</span>`
     : "";
-  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.agent ? ` data-agent="${t.agent}"` : ""}${t.last ? " data-last=\"1\"" : ""}${t.area ? ` data-area="${esc(t.area)}"` : ""}${t.running ? ' data-running="1"' : ""}${t.owner ? ` data-owner="${esc(t.owner)}"` : ""}${t.ready && t.tab !== "done" ? ' data-ready="1"' : ""}${t.working && !t.ready && t.tab !== "done" ? ' data-working="1"' : ""}${t.codex?.done ? ' data-codex-done="1"' : ""}${t.n ? ` data-n="${t.n}"` : ""}${t.prod ? ` data-prod="${esc(t.prod.state)}"` : ""}${t.audit ? ` data-audit="${esc(t.audit.state)}"` : ""}${t.audit?.fix ? ' data-fixed="1"' : ""}>
+  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.agent ? ` data-agent="${t.agent}"` : ""}${t.last ? " data-last=\"1\"" : ""}${t.next ? " data-next=\"1\"" : ""}${t.area ? ` data-area="${esc(t.area)}"` : ""}${isSession(t) ? ' data-session="1"' : ""}${t.running ? ' data-running="1"' : ""}${t.owner ? ` data-owner="${esc(t.owner)}"` : ""}${t.ready && t.tab !== "done" ? ' data-ready="1"' : ""}${t.working && !t.ready && t.tab !== "done" ? ' data-working="1"' : ""}${t.codex?.done ? ' data-codex-done="1"' : ""}${t.n ? ` data-n="${t.n}"` : ""}${t.prod ? ` data-prod="${esc(t.prod.state)}"` : ""}${t.audit ? ` data-audit="${esc(t.audit.state)}"` : ""}${t.audit?.fix ? ' data-fixed="1"' : ""}>
   <div class="hd">${t.n ? `<span class="num" title="رقم البند — قل «بند ${t.n}» في الشات">${t.n}</span>` : ""}<span class="id">${esc(t.id)}</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ${esc(t.id)}">⧉</button></div>
   ${auditBanner}${stateBanner}
   <div class="t">${t.t}</div>
-  <div class="meta">${readyTag}${ownerTag}${lastTag}${agentTag}${runningTag}${easeTag}<span class="tag tab-${esc(t.tab)}">${tabL}</span><span class="tag">${sevL}</span>${apps}<span class="tag">${esc(t.board)}</span>${t.date ? `<span>${esc(t.date)}</span>` : ""}</div>
+  <div class="meta">${stepTag}${readyTag}${ownerTag}${lastTag}${nextTag}${agentTag}${runningTag}${easeTag}<span class="tag tab-${esc(t.tab)}">${tabL}</span><span class="tag">${sevL}</span>${apps}<span class="tag">${esc(t.board)}</span>${t.date ? `<span>${esc(t.date)}</span>` : ""}</div>
   ${t.prod ? `<div class="prod" data-state="${esc(t.prod.state)}"><b>${{ yes: "🌐 موجود على الإنتاج", no: "🌐 غير موجود على الإنتاج", admin: "🌐 جذره في الأدمن — لا يُقاس من الخارج", nm: "🌐 لم يُقَس على الإنتاج" }[t.prod.state]}:</b> ${esc(t.prod.ev)} <span class="when">(${esc(t.prod.base)} · ${esc(t.prod.when)})</span></div>` : ""}
   ${t.review?.length ? `<div class="review"><b>🔴 حكمي بعد المراجعة العكسية:</b><ul>${t.review.map(r => `<li>${esc(r)}</li>`).join("")}</ul></div>` : ""}
   ${t.audit ? `<div class="audit" data-state="${esc(t.audit.state)}">
@@ -295,8 +315,22 @@ const SECTIONS = [
 const SEC_FROM_BOARD = { seo: "seo", fs: "code", mediaimg: "visible", bunny: "visible", bugs: "visible" };
 const secOf = (t) => t.sec || SEC_FROM_BOARD[t.b] || "other";
 
+// تبويب الموضوع = قسم واحد، لا قسمان (خالد ٣٠ أغسطس: «رتب لي الـtab تبع صفحة العميل حسب
+// السهولة»). قبلها كانت بطاقاته تتوزّع على «يحتاج قرارك» وأقسام الموضوع، فيُرتَّب كلٌّ على
+// حدة ولا تُقرأ قائمة واحدة من الأسهل للأصعب. وضعُها أوّلاً يجعلها حصريّة كما هي في `inTab`.
+const AREA_SECTIONS = [
+  { k: "sec-partner", n: "🏢 صفحة العميل", area: "partner" },
+  { k: "sec-autolink", n: "🔗 الربط الداخلي", area: "autolink" },
+  { k: "sec-deploy", n: "🚀 بعد النشر", area: "deploy" },
+  { k: "sec-jbrseo", n: "🔗 جبر سيو", area: "jbrseo" },
+];
+const EASE_LEGEND = "الأسهل أولاً: ⚡ = كلمة «ابدأ» تكفي · 🤔 سهل = نعم/لا · 🤔 قصير = جواب سطر · 🤔 جلسة = نقاش.";
+
 const groups = [
-  { k: "decide", n: "يحتاج قرارك", s: "الأسهل أولاً: ⚡ = كلمة «ابدأ» تكفي · 🤔 سهل = نعم/لا · 🤔 قصير = جواب سطر · 🤔 جلسة = نقاش. كلود لا يبدأ قبل كلمتك.", f: t => t.who === "k" && t.tab !== "ref" },
+  // `next`/`last` يسبقان الموضوع في `inTab`، فيسبقانه هنا أيضاً — وإلا بقيت البطاقة
+  // المنقولة إلى «الإصدار الجاي» مرسومةً داخل صندوق موضوعها، وافترق الصندوق عن التبويب.
+  ...AREA_SECTIONS.map(a => ({ k: a.k, n: a.n, s: EASE_LEGEND, f: t => t.area === a.area && t.tab !== "ref" && !t.next && !t.last })),
+  { k: "decide", n: "يحتاج قرارك", s: EASE_LEGEND + " كلود لا يبدأ قبل كلمتك.", f: t => t.who === "k" && t.tab !== "ref" },
   // ── شغلي أنا، مجمَّعاً بالموضوع لا بالحالة (خالد، ٢٤ أغسطس: «جمعهم حسب السكشن —
   // اللي يخصّ السيو في سكشن واللي يخصّ الواجهة في سكشن، عشان نبتدي حسب الأولوية»).
   // «الآن/التالي/مفتوح» كانت تقول متى أبدأ ولا تقول في ماذا — والقرار يحتاج الثانية.
@@ -313,7 +347,10 @@ const sections = groups.map(g => {
   const easeRank = (t) => t.go ? 0 : (t.ease ?? 9);
   // `last` ينزل تحت الكل مهما كانت شدّته: بنود «قبل الدمج مع main» لا تُعمل الآن، فوجودها في
   // الأعلى يزاحم ما يُعمل اليوم (خالد، ٢٤ أغسطس: «move both to the bottom»).
+  // `step` يسبق كل ترتيب آخر (خالد ٣٠ أغسطس: «خطوات بترتيب منطقي عشان ما أقدّم خطوة على خطوة»).
+  // الشدّة والسهولة تقولان «بأيّها أبدأ»؛ وهنا الترتيب إجباريّ لا اختياريّ — تقديمُ خطوة يفسد التي قبلها.
   items.sort((a, b) =>
+    (a.step ?? 99) - (b.step ?? 99) ||
     (a.last ? 1 : 0) - (b.last ? 1 : 0) ||
     easeRank(a) - easeRank(b) ||
     (sevRank[a.sev] ?? 9) - (sevRank[b.sev] ?? 9)
@@ -333,43 +370,89 @@ const appsAll = ["modonty", "admin", "console", "dataLayer"];
 // «صفحة الشريك» تبويب موضوع لا تبويب تطبيق (خالد، ٢٤ أغسطس). سببه أن شغلها متناثر: قرارات
 // تصميم وريفاكتور جوّال وباني موقع وتقييمات ومراجعات جوجل — كلّها تخصّ سطحاً واحداً يقرأه
 // الزائر، ولا يجمعها عمود «مدونتي» لأنه يجمع كل شيء. البطاقة تظهر في تبويبها وفي تبويب تطبيقها.
+// خالد (٢٩ أغسطس): «البار اللي فوق متوّهني». كانت ثمانية تبويبات تسأل «أي تطبيق؟» — وهو
+// سؤال المبرمج لا سؤال صاحب العمل. صاحب العمل يسأل «مين دوره الآن؟». فصارت ثلاثة تجيبه،
+// و«الكل» يبقى كي لا يختفي شيء. نفس العلاج الذي نجح على لوحة السيو قبلها بساعات.
 const APP_TABS = [
-  { k: "modonty", n: "مدونتي" },
-  { k: "partner", n: "صفحة الشريك" },
-  { k: "admin", n: "الأدمن" },
-  { k: "console", n: "الكونسول" },
-  { k: "dataLayer", n: "المشترك والقاعدة" },
-  { k: "__none", n: "بلا تطبيق" },
+  { k: "__decide", n: "① قرارك" },
+  { k: "__mine", n: "② دوري" },
+  // «صفحة العميل» رجع تبويباً بأمر خالد (٢٩ أغسطس): «فيها شغل كتير هنشتغله». الوسم
+  // `area: "partner"` كان موجوداً من ٢٤ أغسطس ومعطَّلاً بعد تبسيط البار — أُعيد تفعيله فقط.
+  { k: "partner", n: "🏢 صفحة العميل" },
+  // «الربط الداخلي» تبويب مستقلّ بأمر خالد (٣٠ أغسطس): «اعمل لي تاب للأوتولينك».
+  // موضوع واحد يمسّ ١٩٠ مقالاً ويتفرّع إلى محرّر وشاشة دفعة وخطوة صيانة — فمكانه تبويب لا صفّ.
+  { k: "autolink", n: "🔗 الربط الداخلي" },
+  // «الإصدار الجاي» (خالد ٢٩ أغسطس): بندٌ متّفق عليه ولن يُعمل في هذه الدورة. يخرج من
+  // «قرارك» و«دوري» كي لا يزاحم ما يُعمل اليوم، ولا يُحذف كي لا يُنسى. الوسم: next: true
+  { k: "__next", n: "📦 الإصدار الجاي" },
   { k: "__merge", n: "🏁 قبل الدمج" },
+  // «بعد النشر» (خالد ٣٠ أغسطس): «حط لي الخطوات عشان أنا ما أنسى أي خطوة». شغلٌ لا يُنفَّذ
+  // إلا على الإنتاج بعد وصول الكود، وكان مبعثراً بين «قرارك» و«قبل الدمج» — والثاني خطأ:
+  // البطاقة التي تُنفَّذ بعد الدمج ليست حاجزاً أمامه. الوسم: area: "deploy"
+  { k: "deploy", n: "🚀 بعد النشر" },
+  // «جبر سيو» (خالد ٣٠ أغسطس): «افتح لي Tab سميه جبر SEO واديني التقرير اللي هناك».
+  // ضمّ مستودعات جبر سيو وتوحيد السكيما — موضوع قائم بذاته، لا يُخلط بشغل مدونتي.
+  { k: "jbrseo", n: "🔗 جبر سيو" },
+  // «أفكار» (خالد ٣٠ أغسطس): ما لم يُقرَّر بعدُ أنه سيُعمل — يخرج من «قرارك» كي لا
+  // يزاحم قراراً على شغلٍ قائم، ويبقى مرئياً كي لا يُنسى. الوسم: sev === "idea"
+  // «الجلسة القادمة» (خالد ٣٠ أغسطس): ما لا يُحسم برسالة — يحتاج جلوساً ونقاشاً.
+  // وسمُه في العنوان نفسه منذ البداية: «💬 جلسة ·».
+  { k: "__session", n: "💬 الجلسة القادمة" },
+  { k: "__ideas", n: "💡 أفكار" },
   { k: "__all", n: "الكل" },
 ];
 // حصريّ لا مزدوج (خالد، ٢٤ أغسطس: «still duplicate in modonty»): بطاقة صفحة الشريك تخرج من
 // تبويب تطبيقها. البطاقة التي تظهر في تبويبين تُعدّ مرّتين وتُقرأ كبندين — وهذا نقيض سبب التبويب.
+/** تبويبات الموضوع: مفتاح التبويب = قيمة `area` على البطاقة. حصريّة — البطاقة الموسومة
+ *  بموضوعٍ لا تظهر في «قرارك» ولا «دوري» كي لا تُعدّ مرّتين. */
+const AREA_TABS = ["partner", "autolink", "deploy", "jbrseo"];
+/** «جلسة» ليست حقلاً بل وسمٌ في العنوان كُتب هكذا منذ البداية — نقرأه بدل تكرار البيانات. */
+const isSession = (t) => /💬\s*جلسة/.test(t.t || "");
 const inTab = (t, k) =>
   k === "__all" ? true
+  : k === "__next" ? !!t.next
+  : t.next ? false
   : k === "__merge" ? !!t.last
   : t.last ? false
-  : k === "partner" ? t.area === "partner"
-  : t.area === "partner" ? false
+  // «قرارك» = ما ينتظر كلمته هو · «دوري» = ما أنفّذه بلا انتظار. لا ثالث بينهما،
+  // فكل بطاقة في واحد منهما لا في اثنين — والعدّادان يجمعان الكل بلا تكرار.
+  // «صفحة العميل» قبل «قرارك» و«دوري» عمداً: التبويب لا يجمع الشغل إن كانت بطاقاته
+  // تُلتقط قبله. ستّ منها `who === "k"` — بالترتيب القديم كانت تبقى في «قرارك» ولا يصل
+  // إليها التبويب أبداً، فيقول العدّاد صفراً وفيه تسعة.
+  // تبويبات الموضوع تُقرأ من `area` — واحدة عامّة تخدم «صفحة العميل» و«الربط الداخلي» وما يأتي
+  : AREA_TABS.includes(k) ? t.area === k
+  : AREA_TABS.includes(t.area) ? false
+  // «أفكار» بعد «قبل الدمج» و«صفحة العميل» عمداً: بطاقةٌ تحمل وسم الفكرة وهي في الوقت
+  // نفسه حاجزُ دمجٍ أو شغلُ صفحة العميل تبقى حيث يُبحث عنها — الفكرة صفةٌ فيها لا مكانُها.
+  // «الجلسة القادمة» بعد تبويبات الموضوع: بطاقةُ صفحة العميل التي تحتاج جلسة تبقى مع
+  // أخواتها — الموضوع هو ما يُشتغل عليه، والجلسة صفةٌ فيه.
+  : k === "__session" ? isSession(t)
+  : isSession(t) ? false
+  : k === "__ideas" ? t.sev === "idea"
+  : t.sev === "idea" ? false
+  : k === "__decide" ? t.who === "k"
+  : k === "__mine" ? t.who !== "k"
   : k === "__none" ? !(t.app || []).length
   : (t.app || []).includes(k);
 // المراجع ليست مهامّ (طرق قياس ومفاتيح وخرائط) — إدخالها في العدّاد يضخّم الباقي
 // بـ٣٦ بنداً لا يُعمل فيها شيء (خالد، ٢٤ أغسطس: «only the remaining and open»).
 const tabCount = (k) => open.filter(t => t.tab !== "ref" && (k === "__merge" || !t.last) && inTab(t, k)).length;
 const appTabsHTML = APP_TABS
-  .map(a => `<button class="apptab" role="tab" data-app="${a.k}" aria-selected="${a.k === "modonty"}" title="${tabCount(a.k)} بنداً مفتوحاً في ${a.n} — الرقم الكهرماني فوق يعدّ ما ينتظر قرارك منها وحدها">${a.n}<b>${tabCount(a.k)}</b></button>`)
+  .map(a => `<button class="apptab" role="tab" data-app="${a.k}" aria-selected="${a.k === "__decide"}" title="${tabCount(a.k)} بنداً مفتوحاً في ${a.n} — الرقم الكهرماني فوق يعدّ ما ينتظر قرارك منها وحدها">${a.n}<b>${tabCount(a.k)}</b></button>`)
   .join("");
 const boardHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>لوحة مدونتي — ${openWork.length} بنداً مفتوحاً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>${CSS}</style></head><body>
+<div class="apptabs" role="tablist" aria-label="التبويبات">${appTabsHTML}</div>
 <header class="top"><div class="wrap">
 <h1>لوحة الشغل — ${openWork.length} بنداً مفتوحاً <span style="color:var(--dim);font-weight:500;font-size:13px">· و${lastWork.length} في «قبل الدمج» · <b>سيو مدونتي (${seoOpen.length}) في <a href="SEO.html">SEO.html</a></b> · تحديث البيانات في <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> · المنجز في <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a></span></h1>
 <!-- لا صفّ إحصاءات إطلاقاً (خالد، ٢٤ أغسطس: «only the counter for what remain, no حشو»).
      كانت عشرون رقماً على الشاشة، ثم واحد بارز مع مطويّة — وكلّها ما زالت حشواً فوق ما يلزم.
-     أرقام التبويبات وحدها تقول ما بقي، وعناوين الأقسام تقول توزيعه. الباقي كان يشرح لا يفيد. -->
-<div class="apptabs" role="tablist" aria-label="التطبيقات">${appTabsHTML}</div>
-<div class="tools"><input id="q" type="search" placeholder="ابحث بالكلمة أو رقم البند…" aria-label="بحث">
+     أرقام التبويبات وحدها تقول ما بقي، وعناوين الأقسام تقول توزيعه. الباقي كان يشرح لا يفيد.
+     ولا حقل بحث (خالد ٣٠ أغسطس: «البحث أنا ما أحتاجه») — التبويبات صارت هي طريق الوصول،
+     وكشفُ بطاقة مرجع عبر الرابط المباشر يتكفّل به forcedId في السكربت بدل كتابة معرّفها. -->
+<div class="tools">
 <button class="chip" data-sev="critical high" aria-pressed="false">الحرج والمهم فقط</button>
 <button class="chip" data-agent="1" aria-pressed="false">🤖 الجاهز لوكيل (${open.filter(t => t.agent).length})</button></div>
 </div></header>
@@ -379,27 +462,47 @@ ${sections.filter(g => g.items.length).map(g => `<section class="grp" data-grp="
 <footer>بيانات البطاقات كما هي (التفاصيل الكاملة داخل كل بطاقة) — الملخّص و«المطلوب منك» مستخلَصان. تحديث البيانات: <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> · المنجز: <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a>.</footer>
 <script>
 (() => {
-  const q = document.getElementById('q'); const chips = [...document.querySelectorAll('.chip')];
+  const chips = [...document.querySelectorAll('.chip')];
   const tabs = [...document.querySelectorAll('.apptab')];
+  // بديل حقل البحث المحذوف: معرّفٌ واحد يُفرَض عند فتح رابط مباشر لبطاقة مرجع — وهو
+  // الاستعمال الوحيد الذي كان البحث يخدمه بعد أن صارت التبويبات طريق الوصول.
+  let forcedId = '';
   const cards = [...document.querySelectorAll('.card')];
   // التبويب الفعّال يُخزَّن محلياً: يفتح خالد الملف فيجد آخر تطبيق كان فيه، لا الافتراضي كل مرّة.
-  let app = 'modonty';
+  // الافتراضي «قرارك»: هو التبويب الوحيد الذي يحتاج خالد أن يفعل فيه شيئاً.
+  // كان 'modonty' — واسمُ تبويبٍ حُذف يجعل كل التبويبات غير محدَّدة والقائمة شبه فارغة.
+  let app = '__decide';
   try { const s = localStorage.getItem('taskboard-app'); if (s && tabs.some(t => t.dataset.app === s)) app = s; } catch {}
   const matchApp = (c) => {
     // «الكل» يعني كل الشغل المفتوح — لا يشمل «قبل الدمج»، تماماً كما تستثنيه شارته.
     // قبل ٢٤ أغسطس كان يعرضها ولا يعدّها: ٧١ في الشارة و٨٥ على الشاشة.
     if (app === '__all') return !c.dataset.last;
     // تبويب «قبل الدمج» حصريّ: بنوده تخرج من كل تبويب آخر كي لا تُعدّ مرّتين
+    if (app === '__next') return !!c.dataset.next;
+    if (c.dataset.next) return false;
     if (app === '__merge') return !!c.dataset.last;
     if (c.dataset.last) return false;
-    if (app === 'partner') return c.dataset.area === 'partner';
-    // بطاقة الشريك لا تظهر في تبويب تطبيقها — حصريّة كي لا تُعدّ مرّتين
-    if (c.dataset.area === 'partner') return false;
+    // التبويبان الجديدان يقرآن data-who لا data-apps. غيابهما هنا جعل العدّاد يقول
+    // ٢٦ والقائمة تحته فارغة — الرقم يُحسب وقت البناء والتصفية تعمل في المتصفّح،
+    // فافترقا (خالد ٢٩ أغسطس: «سارت فاضية، وفوق في العدّاد ستة وعشرين»).
+    // نفس ترتيب inTab في البناء حرفياً — «صفحة العميل» أوّلاً ثم «قرارك»/«دوري».
+    // أي اختلاف بين الترتيبين يفرّق العدّاد عن القائمة، وهو عطل ٢٩ أغسطس بعينه.
+    // نفس قائمة تبويبات الموضوع في البناء حرفياً — أي اختلاف يفرّق العدّاد عن القائمة
+    const AREAS = ${JSON.stringify(AREA_TABS)};
+    if (AREAS.includes(app)) return c.dataset.area === app;
+    // بطاقة الموضوع لا تظهر في تبويب آخر — حصريّة كي لا تُعدّ مرّتين
+    if (AREAS.includes(c.dataset.area)) return false;
+    if (app === '__session') return !!c.dataset.session;
+    if (c.dataset.session) return false;
+    if (app === '__ideas') return c.dataset.sev === 'idea';
+    if (c.dataset.sev === 'idea') return false;
+    if (app === '__decide') return c.dataset.who === 'k';
+    if (app === '__mine') return c.dataset.who !== 'k';
     const list = (c.dataset.apps || '').split(' ').filter(Boolean);
     return app === '__none' ? list.length === 0 : list.includes(app);
   };
   const apply = () => {
-    const term = q.value.trim().toLowerCase();
+    const term = forcedId.toLowerCase();
     const sevOnly = chips.find(c => c.dataset.sev)?.getAttribute('aria-pressed') === 'true';
     const agentOnly = chips.find(c => c.dataset.agent)?.getAttribute('aria-pressed') === 'true';
     tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.app === app)));
@@ -423,23 +526,23 @@ ${sections.filter(g => g.items.length).map(g => `<section class="grp" data-grp="
       if (stat) stat.textContent = n;
     });
   };
-  q.addEventListener('input', apply);
   chips.forEach(c => c.addEventListener('click', () => { c.setAttribute('aria-pressed', c.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); apply(); }));
   tabs.forEach(t => t.addEventListener('click', () => {
     app = t.dataset.app;
+    forcedId = ''; // الخروج من بطاقة مرجع فُتحت برابط مباشر — وإلا بقي التبويب مقصوراً عليها
     try { localStorage.setItem('taskboard-app', app); } catch {}
     apply(); window.scrollTo({ top: 0, behavior: 'smooth' });
   }));
   apply(); // يطبّق التبويب المحفوظ فور الفتح
   // رابط مباشر ‎#ID: يفتح تفاصيل البطاقة — ويقفز إلى «الكل» أوّلاً وإلا بقيت مخفيّة خلف تبويب آخر.
   if (location.hash) {
-    const el = document.querySelector('.card[data-id="' + CSS.escape(location.hash.slice(1)) + '"]');
+    const el = document.querySelector('.card[data-id="' + CSS.escape(decodeURIComponent(location.hash.slice(1))) + '"]');
     if (el) {
       // بطاقة «قبل الدمج» أو بطاقة مرجع لن يفتحها «الكل» بعد اليوم — يُختار لها تبويبها،
-      // والمرجع يُكشف بكتابة معرّفه في البحث لأن هذا هو شرط ظهوره.
+      // والمرجع يُكشف بفرض معرّفه لأن هذا هو شرط ظهوره.
       if (!matchApp(el) || el.dataset.tab === 'ref') {
         app = el.dataset.last ? '__merge' : '__all';
-        if (el.dataset.tab === 'ref') q.value = el.dataset.id;
+        if (el.dataset.tab === 'ref') forcedId = el.dataset.id;
         apply();
       }
       el.querySelector('details').open = true;

@@ -41,3 +41,9 @@ app-example
 # generated native folders
 /ios
 /android
+
+# اعتماديات FCM — مفتاح الخدمة سرّ يفتح الإرسال باسمنا، فلا يدخل المستودع بحال.
+# و`google-services.json` ليس سرّاً (يُستخرج من أي APK) لكنه اعتمادية بيئة لا كود،
+# فمكانه EAS لا الشجرة.
+*firebase-adminsdk*.json
+google-services.json

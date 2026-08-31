@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>قرار الدمج مع main</title>
+<style>
+:root{
+  --bg:#0e1116; --panel:#161b22; --ink:#e6edf3; --muted:#9aa7b4; --line:#2a3240;
+  --accent:#00d8d8; --red:#ff6b6b; --amber:#ffb454; --green:#3fb950;
+  --mono:ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Tajawal","Segoe UI",system-ui,sans-serif;line-height:1.85;font-size:17px}
+.wrap{max-width:860px;margin:0 auto;padding:36px 20px 90px}
+h1{font-size:26px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 28px}
+h2{font-size:19px;margin:46px 0 6px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.verdict{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.3);
+  border-radius:14px;padding:20px 22px;margin:0 0 28px}
+.verdict b{color:var(--red);font-size:19px}
+.verdict p{margin:8px 0 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:18px 22px;margin:14px 0}
+.r{border-right:4px solid var(--red)}
+.a{border-right:4px solid var(--amber)}
+.y{border-right:4px solid #58a6ff}
+.card h3{font-size:18px;margin:0 0 10px;display:flex;gap:9px;align-items:baseline}
+.dot{font-size:13px}
+.line{display:grid;grid-template-columns:104px 1fr;gap:10px;margin:9px 0}
+.line .k{color:var(--muted);font-size:14px;padding-top:2px}
+.line .v{margin:0}
+.ev{color:var(--muted);font-size:13px;margin-top:12px;padding-top:10px;
+  border-top:1px dashed var(--line);font-family:var(--mono);direction:ltr;text-align:left;
+  overflow-x:auto;white-space:pre}
+code{font-family:var(--mono);font-size:14px;background:#0a0d12;border:1px solid var(--line);
+  border-radius:6px;padding:1px 6px;direction:ltr;display:inline-block}
+ol{padding-inline-start:22px;margin:10px 0}
+ol li{margin:11px 0}
+.step b{color:var(--accent)}
+.good{background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.28);
+  border-radius:14px;padding:16px 20px;margin:16px 0}
+.good b{color:var(--green)}
+.unk{color:var(--muted);font-size:15px}
+.unk li{margin:5px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>هل ندمج <span style="color:var(--accent);font-family:var(--mono);font-size:22px">modonty-ui</span> في <span style="color:var(--accent);font-family:var(--mono);font-size:22px">main</span> اليوم؟</h1>
+<p class="sub">٣١ أغسطس ٢٠٢٦ · قراءة فقط — ما دُمج شيء ولا دُفع شيء</p>
+
+<div class="verdict">
+<b>لا. ثلاثة أشياء تنكسر فعلاً، وكلها تُعالَج في جلسة واحدة.</b>
+<p>ولا واحد منها يوقفك <code>git</code> عنده — الدمج يمشي وينجح، والكسر يظهر بعدين على الإنتاج.</p>
+</div>
+
+<h2>الثلاثة اللي تنكسر</h2>
+
+<div class="card r">
+<h3><span class="dot">🔴</span> ١ · الشريك الثاني ما يقدر يحفظ موقعه</h3>
+<div class="line"><div class="k">إيش يصير</div><p class="v">أول شريك يحفظ شكل موقعه يمشي. الثاني ياخذ رسالة خطأ على حقل ما لمسه أصلاً، والحفظ يفشل.</p></div>
+<div class="line"><div class="k">ليش</div><p class="v">قيد قديم في قاعدة البيانات. <b>العطل انكشف وانصلح فعلاً على قاعدة التطوير يوم ٣٠ أغسطس</b> — لكن الإصلاح لسه على جهازك فقط، ما انحفظ في المستودع. فالدمج بياخذ النسخة المكسورة، لا المُصلَحة.</p></div>
+<div class="line"><div class="k">العلاج</div><p class="v">تثبيت تعديل القاعدة قبل الدمج · وأمر واحد يُنفَّذ على قاعدة الإنتاج بعد النشر.</p></div>
+<div class="ev">$ git show modonty-ui:shared/prisma/schema/schema.prisma | grep subdomain
+752:  subdomain  String?  @unique     ← المحفوظ في المستودع = المكسور</div>
+</div>
+
+<div class="card r">
+<h3><span class="dot">🔴</span> ٢ · شغل أسبوع كامل ما بيدخل الدمج</h3>
+<div class="line"><div class="k">إيش يصير</div><p class="v">تدمج، وتفتح الموقع، وتلاقي شغل الأسبوع مو موجود — لأنه ما انحفظ في المستودع أصلاً.</p></div>
+<div class="line"><div class="k">وش فيه</div><p class="v">٢٠١ ملفاً على جهازك فقط. أبرزها: محرّرات صفحة «محتوى الموقع» في الكونسول (٧١ ملفاً) · قائمة الجوّال والشارة في المشترك (٤٤) · مدونتي (٢٩) · الأدمن (١٥) · ومجلّد تطبيق الجوّال الجديد كامل.</p></div>
+<div class="line"><div class="k">العلاج</div><p class="v">تثبيتها ودفعها قبل الدمج. وانتبه: الفرع مربوط بالنشر التجريبي، فالدفع = نشر فوري.</p></div>
+<div class="ev">$ git status --porcelain | wc -l
+201     (71 console · 44 shared · 29 modonty · 18 mobile · 15 admin)</div>
+</div>
+
+<div class="card r">
+<h3><span class="dot">🔴</span> ٣ · ثلاثة إصلاحات شغّالة على الموقع الحيّ ممكن تنمسح</h3>
+<div class="line"><div class="k">إيش يصير</div><p class="v">الفرع أقدم من آخر أربعة إصلاحات نزلت على <code>main</code>. وقت حلّ التصادم، لو أخذنا نسخة الفرع بسرعة، ترجع ثلاثة أعطال كانت مقفولة — بلا أي رسالة تحذير.</p></div>
+<div class="line"><div class="k">الثلاثة</div><p class="v">زرّ الرجوع في دليل الكونسول (العميل كان يدخل ولا يلقى مخرج) · اسم الصورة يجيء من نصّها البديل · حساب المقالات المرتبطة.</p></div>
+<div class="line"><div class="k">الرابع</div><p class="v">إصلاح فحص الجودة (مقال عميل مكتمل كان ينقفل) — <b>هذا موجود على الفرع، بأمان.</b></p></div>
+<div class="line"><div class="k">العلاج</div><p class="v">نجيب الأربعة من <code>main</code> إلى الفرع أولاً، ونحلّ التصادم هناك — لا على <code>main</code>.</p></div>
+<div class="ev">$ git ls-tree -r --name-only modonty-ui | grep -E "alt-to-filename|links-score"
+(فارغ)   ← الملفّان غير موجودين على الفرع</div>
+</div>
+
+<h2>ثلاثة تحتاج انتباه، ما تكسر</h2>
+
+<div class="card a">
+<h3><span class="dot">🟠</span> ٤ · ١٤ مكان يتصادم فيه الفرعان</h3>
+<p style="margin:0">خمسة منها تنحلّ لحالها (أرقام إصدارات وملفّات انتقلت مكانها)، وثمانية تحتاج قراءة يدوية — وهي نفسها ملفّات الإصلاحات الثلاثة أعلاه، وواحد ملف زائد يُحذف بعدها. القراءة اليدوية للثمانية = نصف ساعة، لا أكثر.</p>
+<div class="ev">$ git merge-tree --write-tree main modonty-ui | grep -c CONFLICT
+14</div>
+</div>
+
+<div class="card a">
+<h3><span class="dot">🟠</span> ٥ · المستودع غيّر شكله، وVercel لازم يمشي معه</h3>
+<p style="margin:0">مجلّد المشترك تغيّر اسمه ومكانه بالكامل (٢٥١ ملفاً)، وطريقة بناء التطبيقات الثلاثة تغيّرت معه. الملفّات داخل المستودع مضبوطة — <b>اللي ما فحصته:</b> إعدادات المشاريع الثلاثة داخل لوحة Vercel نفسها. لو فيها أمر بناء أو تثبيت مكتوب باليد، فهو يتجاوز الملف ويكسر النشر.</p>
+</div>
+
+<div class="card a">
+<h3><span class="dot">🟠</span> ٦ · قاعدة البيانات: سبعة جداول جديدة</h3>
+<p style="margin:0 0 8px">تحتاج دفعة واحدة على الإنتاج بعد النشر، بيدك.</p>
+<div class="good" style="margin:0"><b>خبر مطمئن مقيس:</b> ولا حقل إلزاميّ جديد على جدول قديم — يعني <b>لا تعبئة رجعية</b> ولا خطر على بيانات موجودة.</div>
+</div>
+
+<h2>الترتيب اللي أوصي به</h2>
+<ol class="step">
+<li><b>نظافة:</b> حذف أربعة ملفات دشر من مخلّفات أوامر غلط، ومنع مجلّد الكاش من الدخول.</li>
+<li><b>تثبيت الـ٢٠١ ملفاً ودفعها</b> — وأهمّها إصلاح قاعدة البيانات (الخطر ١). هذا نشر تجريبي، فرتّبه وأنت قادر تراقب.</li>
+<li><b>سحب الأربعة من <code>main</code> إلى الفرع</b>، وحلّ التصادمات الثمانية هناك — أي كسر يظهر على التجريبي لا على الإنتاج.</li>
+<li><b>فحص أنواع + بناء كامل</b> للتطبيقات الثلاثة بعد الحلّ.</li>
+<li><b>تست حيّ</b> على شاشتَي الصور في الأدمن ودليل الكونسول تحديداً — مواضع الإصلاحات اللي كادت تنمسح.</li>
+<li><b>ثم الدمج</b> بأمرك الصريح · وبعد النشر مباشرةً: دفعة قاعدة البيانات، وأمر الفهرس، ومراجعة أربعة مفاتيح إعدادات جديدة.</li>
+</ol>
+
+<h2>ما لم أفحصه — لا تبنِ عليه قراراً</h2>
+<ul class="unk">
+<li>البناء الكامل للتطبيقات الثلاثة — لم يُشغَّل. (فحص الأنواع وحده مرّ بصفر أخطاء على الوضع الحالي، وهذا ليس البناء.)</li>
+<li>إعدادات البناء ومفاتيح الإعدادات داخل لوحة Vercel للإنتاج.</li>
+<li>تطبيقا الجوّال.</li>
+<li>سلوك الدمج بعد حلّ التصادمات — ما يُعرف إلا بعد حلّها فعلاً.</li>
+</ul>
+
+</div>
+</body>
+</html>

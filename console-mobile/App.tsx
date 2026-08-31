@@ -1,13 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Tajawal_400Regular, Tajawal_500Medium, Tajawal_700Bold } from '@expo-google-fonts/tajawal';
-import { DarkTheme, DefaultTheme, NavigationContainer, useFocusEffect, useNavigation } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, NavigationContainer, useFocusEffect, useNavigation, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Linking, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppShell } from '@/src/components/navigation/AppShell';
 import { ConfirmProvider } from '@/src/components/ui/ConfirmProvider';
+import { configureForegroundPresentation, ensureAndroidChannel, observeNotificationTaps, registerForPushNotifications } from '@/src/services/push-registration';
 import { ScreenRef } from '@/src/components/ui/ScreenRef';
 import { LoginRoute } from '@/src/routes/auth/LoginRoute';
 import { AccountRoute } from '@/src/routes/account/AccountRoute';
@@ -97,6 +98,44 @@ function MobileConsole() {
   const [isSessionRestoring, setSessionRestoring] = useState(true);
   const [sessionRestoreError, setSessionRestoreError] = useState<string | null>(null);
   const [fontsLoaded] = useFonts({ Tajawal_400Regular, Tajawal_500Medium, Tajawal_700Bold });
+
+  /**
+   * تسجيل الجهاز للتنبيهات — **مرّة واحدة لكل جلسة**.
+   *
+   * الخادم يملك `devices/register` وموديل `MobileDevice` منذ البداية، والتطبيق لم ينادِهما
+   * ولا مرّة: صندوقٌ ينتظر عنواناً لا يصله. فالعميل لا يعرف بالمقال المنتظر قراره إلّا لو
+   * فتح التطبيق بنفسه — وهذا يقلب التطبيق من «ينبّهك» إلى «تفقّده كل يوم».
+   *
+   * وموضعه بعد الجلسة لا قبلها: الرمز يُربط بعميل، ولا عميل قبل الدخول. والفشل لا يُعرض
+   * للعميل — تسجيلُ جهازٍ شأنٌ تشغيليّ، وإخفاقُه لا يمنعه من استعمال التطبيق.
+   */
+  const pushRegisteredFor = useRef<string | null>(null);
+  useEffect(() => {
+    if (accessToken === null || pushRegisteredFor.current === accessToken) return;
+    pushRegisteredFor.current = accessToken;
+    configureForegroundPresentation();
+    void ensureAndroidChannel();
+    void registerForPushNotifications(accessToken).then((outcome) => {
+      if (outcome.status !== 'registered') console.warn('تسجيل التنبيهات:', outcome);
+    });
+  }, [accessToken]);
+
+  /**
+   * الضغط على التنبيه يفتح تبويبه.
+   *
+   * التبويب وحده لا يكفي: لو كان العميل داخل شاشة مكدَّسة (مراجعة مقال · الردّ على سؤال)
+   * فتغييرُ التبويب يقع **تحتها** ولا يراه. فنعود إلى `tabs` أوّلاً بالمرجع الرسمي، و`isReady()`
+   * قبله لأنّ الفتح البارد قد يصل قبل أن تُركّب الشجرة.
+   */
+  const navigationRef = useNavigationContainerRef<RootStackParamList>();
+  useEffect(() => {
+    if (accessToken === null) return;
+    return observeNotificationTaps((target) => {
+      setTab(target);
+      if (navigationRef.isReady()) navigationRef.navigate('tabs');
+    });
+  }, [accessToken, navigationRef]);
+
   const { theme, mode } = useAppTheme();
 
   /**
@@ -200,7 +239,7 @@ function MobileConsole() {
 
   return <>
     <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
-    <NavigationContainer theme={navTheme}>
+    <NavigationContainer ref={navigationRef} theme={navTheme}>
       <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_left', contentStyle: { backgroundColor: theme.colors.page } }}>
         <Stack.Screen name="tabs">
           {() => dashboard === null ? null : <TabsShell tab={tab} onSelectTab={setTab} client={client} dashboard={dashboard} dashboardError={dashboardError} dashboardOffline={dashboardOffline} accessToken={accessToken} unreadCount={unreadCount} onUnreadCountChange={setUnreadCount} onReloadDashboard={loadDashboard} onRefreshDashboard={refreshDashboard} isDashboardRefreshing={isDashboardRefreshing} />}
