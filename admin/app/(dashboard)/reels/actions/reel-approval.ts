@@ -31,18 +31,26 @@ const TITLE_HOLDERS = ["PENDING_APPROVAL", "APPROVED", "PUBLISHED"] as const;
  * while Bunny's own API reported the video `status 4`, encode 100%, 150MB stored. A real reel
  * was refused with «ارفعه من جديد» on the strength of that false 404. The range GET both
  * answers the question and warms the edge, for one byte.
+ *
+ * `cache: "no-store"` because this asks about the world right now, not about a value: a probe
+ * whose answer can be replayed from a cache is not a probe.
+ *
+ * The reason NAMES the file and the code. A bare «(404)» sent us hunting the wrong CDN
+ * behaviour for an hour on 31 Aug 2026 — which of the two URLs failed was never in the message.
  */
 async function firstUnreachable(urls: (string | null)[]): Promise<string | null> {
   for (const url of urls) {
     if (!url?.trim()) return "الرابط فاضي";
+    const file = url.split("/").pop() || url;
     try {
       const res = await fetch(url, {
         headers: { range: "bytes=0-0" },
+        cache: "no-store",
         signal: AbortSignal.timeout(8000),
       });
-      if (!res.ok) return `${res.status}`;
-    } catch {
-      return "ما رد";
+      if (!res.ok) return `${file} ← ${res.status}`;
+    } catch (e) {
+      return `${file} ← ما رد (${e instanceof Error ? e.name : "?"})`;
     }
   }
   return null;
