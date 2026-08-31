@@ -318,7 +318,7 @@ export function CommentsTable({ comments }: Props) {
                   variant="outline"
                   onClick={handleBulkReject}
                   disabled={isPending}
-                  className="gap-1.5 text-destructive hover:text-destructive"
+                  className="gap-1.5 text-[hsl(var(--destructive-ink))] hover:text-[hsl(var(--destructive-ink))]"
                 >
                   <X className="h-3.5 w-3.5" />
                   {c.rejectSelected}
@@ -631,7 +631,7 @@ function RowActions({
           variant="outline"
           onClick={onReject}
           disabled={isWorking}
-          className="gap-1.5 border-destructive text-destructive hover:bg-destructive/10"
+          className="gap-1.5 border-destructive text-[hsl(var(--destructive-ink))] hover:bg-destructive/10"
         >
           <X className="h-3.5 w-3.5" />
           {c.rejectComment}
@@ -644,7 +644,7 @@ function RowActions({
         disabled={isWorking}
         title={c.deleteComment}
         aria-label={c.deleteComment}
-        className="h-8 w-8 text-destructive hover:bg-destructive/10"
+        className="h-8 w-8 text-[hsl(var(--destructive-ink))] hover:bg-destructive/10"
       >
         <Trash2 className="h-3.5 w-3.5" />
       </Button>

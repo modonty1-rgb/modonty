@@ -154,7 +154,7 @@ export function YmylSection({
                   <div key={field.key} className="space-y-1.5">
                     <Label className="text-sm font-medium">
                       {field.label.ar}
-                      {field.required && <span className="text-destructive ms-1">*</span>}
+                      {field.required && <span className="text-[hsl(var(--destructive-ink))] ms-1">*</span>}
                     </Label>
                     <Input
                       value={typeof value === "string" ? value : ""}
@@ -165,7 +165,7 @@ export function YmylSection({
                     {field.helpText && (
                       <p className="text-[11px] text-muted-foreground">{field.helpText.ar}</p>
                     )}
-                    {error && <p className="text-[11px] text-destructive">{error}</p>}
+                    {error && <p className="text-[11px] text-[hsl(var(--destructive-ink))]">{error}</p>}
                   </div>
                 );
               }
@@ -175,7 +175,7 @@ export function YmylSection({
                   <div key={field.key} className="space-y-1.5">
                     <Label className="text-sm font-medium">
                       {field.label.ar}
-                      {field.required && <span className="text-destructive ms-1">*</span>}
+                      {field.required && <span className="text-[hsl(var(--destructive-ink))] ms-1">*</span>}
                     </Label>
                     <Select
                       value={typeof value === "string" ? value : undefined}
@@ -202,7 +202,7 @@ export function YmylSection({
                     {field.helpText && (
                       <p className="text-[11px] text-muted-foreground">{field.helpText.ar}</p>
                     )}
-                    {error && <p className="text-[11px] text-destructive">{error}</p>}
+                    {error && <p className="text-[11px] text-[hsl(var(--destructive-ink))]">{error}</p>}
                   </div>
                 );
               }
@@ -212,7 +212,7 @@ export function YmylSection({
                   <div key={field.key} className="space-y-1.5 md:col-span-2">
                     <Label className="text-sm font-medium">
                       {field.label.ar}
-                      {field.required && <span className="text-destructive ms-1">*</span>}
+                      {field.required && <span className="text-[hsl(var(--destructive-ink))] ms-1">*</span>}
                     </Label>
                     <Select
                       value={typeof value === "string" ? value : undefined}
@@ -232,7 +232,7 @@ export function YmylSection({
                     {field.helpText && (
                       <p className="text-[11px] text-muted-foreground">{field.helpText.ar}</p>
                     )}
-                    {error && <p className="text-[11px] text-destructive">{error}</p>}
+                    {error && <p className="text-[11px] text-[hsl(var(--destructive-ink))]">{error}</p>}
                   </div>
                 );
               }
@@ -242,7 +242,7 @@ export function YmylSection({
                   <div key={field.key} className="space-y-1.5 md:col-span-2">
                     <Label className="text-sm font-medium">
                       {field.label.ar}
-                      {field.required && <span className="text-destructive ms-1">*</span>}
+                      {field.required && <span className="text-[hsl(var(--destructive-ink))] ms-1">*</span>}
                     </Label>
                     <LicenseUpload
                       value={typeof value === "string" ? value : ""}
@@ -251,7 +251,7 @@ export function YmylSection({
                     {field.helpText && (
                       <p className="text-[11px] text-muted-foreground">{field.helpText.ar}</p>
                     )}
-                    {error && <p className="text-[11px] text-destructive">{error}</p>}
+                    {error && <p className="text-[11px] text-[hsl(var(--destructive-ink))]">{error}</p>}
                   </div>
                 );
               }

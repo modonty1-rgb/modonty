@@ -208,7 +208,7 @@ export default async function ProfilePage() {
                 </span>
               ) : (
                 <span
-                  className="relative inline-flex items-center rounded-full border border-destructive/30 bg-destructive/10 px-3 py-1.5 text-xs font-bold text-destructive"
+                  className="relative inline-flex items-center rounded-full border border-destructive/30 bg-destructive/10 px-3 py-1.5 text-xs font-bold text-[hsl(var(--destructive-ink))]"
                   title="مجال حسّاس (YMYL) — يتطلب توثيقاً مهنياً"
                 >
                   {/* pulsing dot — blinks on/off */}

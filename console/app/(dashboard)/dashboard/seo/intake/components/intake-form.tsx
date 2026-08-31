@@ -328,7 +328,7 @@ export function IntakeForm({ initial, intakeUpdatedAt, detected, industryName, c
       </div>
 
       {error && (
-        <div className="flex items-start gap-2 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
+        <div className="flex items-start gap-2 p-3 text-sm text-[hsl(var(--destructive-ink))] bg-destructive/10 border border-destructive/20 rounded-lg">
           <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
           <span>{error}</span>
         </div>

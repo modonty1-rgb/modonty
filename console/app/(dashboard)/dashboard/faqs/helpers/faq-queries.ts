@@ -17,6 +17,8 @@ export interface ClientFAQWithArticle {
     id: string;
     title: string;
     slug: string;
+    /** حالة المقال نفسه: سؤالٌ منشور تحت مقال غير منشور لا يصل الزائر. */
+    status: string;
   };
 }
 
@@ -51,7 +53,7 @@ export async function getClientFaqs(
       submittedByEmail: true,
       createdAt: true,
       updatedAt: true,
-      article: { select: { id: true, title: true, slug: true } },
+      article: { select: { id: true, title: true, slug: true, status: true } },
     },
     orderBy: [{ position: "asc" }, { createdAt: "desc" }],
     take: PAGE_LIMIT,

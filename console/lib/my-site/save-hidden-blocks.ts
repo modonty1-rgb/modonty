@@ -39,6 +39,8 @@ export async function saveHiddenBlocks(hiddenSections: string[]): Promise<Result
   } catch {
     /* best-effort */
   }
+  // Both screens that own this field: the per-page settings and the «موقعي» builder.
   revalidatePath("/dashboard/site-pages", "layout");
+  revalidatePath("/dashboard/my-site");
   return { success: true };
 }

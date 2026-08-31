@@ -77,7 +77,7 @@ export function CompetitorsTab({ clientId, competitors }: CompetitorsTabProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         {error && (
-          <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">{error}</div>
+          <div className="p-3 text-sm text-[hsl(var(--destructive-ink))] bg-destructive/10 rounded-md">{error}</div>
         )}
 
         {adding && (
@@ -224,7 +224,7 @@ function CompetitorRow({
         <Button size="sm" variant="ghost" onClick={onEdit} disabled={loading}>
           {ar.seo.edit}
         </Button>
-        <Button size="sm" variant="ghost" onClick={onDelete} disabled={loading} className="text-destructive">
+        <Button size="sm" variant="ghost" onClick={onDelete} disabled={loading} className="text-[hsl(var(--destructive-ink))]">
           {ar.seo.delete}
         </Button>
       </div>

@@ -183,7 +183,7 @@ export function Sidebar({
           size="sm"
           onClick={() => signOut({ callbackUrl: "/signed-out" })}
           className={cn(
-            "text-destructive hover:bg-destructive/10 hover:text-destructive",
+            "text-[hsl(var(--destructive-ink))] hover:bg-destructive/10 hover:text-[hsl(var(--destructive-ink))]",
             isCollapsed ? "w-full justify-center px-0" : "flex-1 justify-start"
           )}
         >

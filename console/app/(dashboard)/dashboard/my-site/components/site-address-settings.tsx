@@ -79,7 +79,7 @@ export function SiteAddressSettings({ slug, subdomain, onSubdomainChange }: Site
             <span className="text-sm text-muted-foreground">.{SITE_HOST}</span>
           </div>
           {/* aria-live: inline validation is announced as he types, not on submit */}
-          <p id="subdomain-hint" aria-live="polite" className={cn("mt-2 text-xs", label.length > 0 && error ? "text-destructive" : "text-muted-foreground")}>
+          <p id="subdomain-hint" aria-live="polite" className={cn("mt-2 text-xs", label.length > 0 && error ? "text-[hsl(var(--destructive-ink))]" : "text-muted-foreground")}>
             {label.length > 0 && error
               ? ERROR_TEXT[error]
               : label.length > 0

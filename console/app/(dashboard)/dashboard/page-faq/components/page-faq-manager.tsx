@@ -261,7 +261,7 @@ function FaqCard({
           variant="ghost"
           onClick={doDelete}
           disabled={pending}
-          className="gap-1.5 text-destructive hover:bg-destructive/10"
+          className="gap-1.5 text-[hsl(var(--destructive-ink))] hover:bg-destructive/10"
         >
           <Trash2 className="h-3.5 w-3.5" />
           حذف

@@ -107,7 +107,10 @@ export function DashboardHeader({
               <span className="hidden text-muted-foreground sm:inline" aria-hidden>
                 /
               </span>
-              <span className="truncate text-sm font-medium text-foreground">
+              {/* على الجوّال يبتلع صفُّ الأيقونات الستّ ٢٥٠px من ٣٧١، فلا يبقى للعنوان
+                  إلا ٤١px — ثلاثة أحرف لا تُقرأ (مقيس ٣١ أغسطس). والصفحة تكتب عنوانها
+                  في `h1` تحته مباشرة، فإخفاؤه هنا لا يخسر معلومة. */}
+              <span className="hidden truncate text-sm font-medium text-foreground sm:inline">
                 {navTitle}
               </span>
             </>

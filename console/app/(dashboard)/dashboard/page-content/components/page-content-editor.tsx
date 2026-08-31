@@ -1,26 +1,18 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
+import { ModontyTrustMark } from "@modonty/shared/components/icons/modonty-trust-mark";
 import { toast } from "sonner";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Plus,
-  Trash2,
-  Save,
-  Loader2,
-  Briefcase,
-  BarChart3,
-  Users,
-  Award,
-  Video,
-  ImagePlus,
-  X,
-} from "lucide-react";
-import { compressToWebP } from "@/lib/compress-image";
+import { Trash2, Save, ChevronLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { PAGE_LABELS, type BlocksPage } from "@/lib/my-site/page-keys";
+import type { BlockView } from "@/lib/my-site/build-page-view";
+import { SITE_PAGE_TOOLS } from "@/app/(dashboard)/components/site-page-tools";
+import { SiteToolButton } from "@/app/(dashboard)/components/site-tool-button";
 import { VideoUpload } from "@/components/media/video-upload";
 import {
   createIntroVideoTicket,
@@ -29,13 +21,16 @@ import {
   removeIntroVideo,
   updateIntroVideoDetails,
 } from "../actions/intro-video-actions";
-import {
-  updatePageContent,
-  type ServiceInput,
-  type TeamMemberInput,
-  type AchievementInput,
-  type CredentialInput,
-} from "../actions/page-content-actions";
+import type {
+  ServiceInput,
+  TeamMemberInput,
+  AchievementInput,
+  CredentialInput,
+} from "../helpers/page-content-types";
+import { AchievementsEditor } from "./achievements-editor";
+import { CredentialsEditor } from "./credentials-editor";
+import { ServicesEditor } from "./services-editor";
+import { TeamEditor } from "./team-editor";
 
 interface Props {
   initial: {
@@ -54,135 +49,66 @@ interface Props {
       description: string | null;
     } | null;
   };
+  /** أقسام كل صفحة بترتيب الزائر مع بياناتها — محسوبة على الخادم (`isEmpty` تعيش في سجلّ
+   *  المكوّنات، وتمريرها للمتصفّح يجرّ كل مكوّنات الموقع إلى حزمة الكونسول). */
+  views: Record<BlocksPage, BlockView[]>;
+  /** ما يحتاجه رسم الشريط العلوي والغلاف — قيم الشريك نفسها، بلا تصميم. */
+  chrome: {
+    name: string;
+    logoUrl: string | null;
+    phone: string | null;
+    hero: { slogan: string | null; description: string | null; coverUrl: string | null };
+  };
 }
 
-export function PageContentEditor({ initial }: Props) {
+export function PageContentEditor({ initial, views, chrome }: Props) {
   const [services, setServices] = useState<ServiceInput[]>(initial.services);
   const [team, setTeam] = useState<TeamMemberInput[]>(initial.teamMembers);
   const [achievements, setAchievements] = useState<AchievementInput[]>(initial.achievements);
   const [credentials, setCredentials] = useState<CredentialInput[]>(initial.credentials);
-  const [pending, startTransition] = useTransition();
-
-  function save() {
-    startTransition(async () => {
-      // The intro video is no longer part of this form — it uploads and saves on its own,
-      // because a file transfer cannot wait behind a "save all" button.
-      const res = await updatePageContent({
-        services,
-        teamMembers: team,
-        achievements,
-        credentials,
-      });
-      if (res.success) toast.success("تم حفظ محتوى الموقع");
-      else toast.error(res.error || "فشل الحفظ");
-    });
-  }
+  const [page, setPage] = useState<BlocksPage>("home");
 
   return (
     <div className="space-y-10">
-      {/* Grouped by the site page each section lives on (Khalid 2026-08-18): the same
-          editors, ordered the way the pages are — so the partner knows where his words land. */}
-
-      <PageGroup page="الرئيسية">
-        <Section icon={BarChart3} title="إنجازاتنا بالأرقام" hint="رقم + وصفه، مثل: +500 عميل.">
-          {achievements.map((a, i) => (
-            <AchievementRow
-              key={i}
-              achievement={a}
-              onChange={(patch) => setAchievements(upd(achievements, i, patch))}
-              onRemove={() => setAchievements(achievements.filter((_, j) => j !== i))}
+      {/* ── نفس شريط «موقعي»، لا أكثر (خالد ٣١ أغسطس) ────────────────
+          مشترك لا منسوخ: `SiteToolButton` و`SITE_PAGE_TOOLS` ملفّان واحدان تقرأهما
+          الشاشتان، فلا ينحرفان بعد أوّل تعديل. */}
+      <div className="sticky top-0 z-[60] -mx-4 mb-5 border-y border-primary/20 bg-primary/[0.07] px-4 py-2.5 backdrop-blur sm:mx-0 sm:rounded-xl sm:border">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="shrink-0 pe-1 text-[11px] font-bold tracking-wide text-primary">الصفحات</span>
+          {SITE_PAGE_TOOLS.map(({ key, label, Icon }) => (
+            <SiteToolButton
+              key={key}
+              label={label}
+              Icon={Icon}
+              active={page === key}
+              onClick={() => setPage(key)}
             />
           ))}
-          <AddButton label="أضف إنجازاً" onClick={() => setAchievements([...achievements, { value: "", label: "", image: "", description: "" }])} />
-        </Section>
-      </PageGroup>
-
-      <PageGroup page="من نحن">
-      {/* Team */}
-      <Section icon={Users} title="فريق العمل" hint="الاسم والمسمّى وصورة.">
-        {team.map((m, i) => (
-          <Row key={i} onRemove={() => setTeam(team.filter((_, j) => j !== i))}>
-            <Input
-              placeholder="الاسم *"
-              value={m.name}
-              onChange={(e) => setTeam(upd(team, i, { name: e.target.value }))}
-            />
-            <Input
-              placeholder="المسمّى (اختياري)"
-              value={m.role ?? ""}
-              onChange={(e) => setTeam(upd(team, i, { role: e.target.value }))}
-            />
-            <Input
-              placeholder="رابط صورة (اختياري)"
-              value={m.photoUrl ?? ""}
-              onChange={(e) => setTeam(upd(team, i, { photoUrl: e.target.value }))}
-            />
-          </Row>
-        ))}
-        <AddButton label="أضف عضواً" onClick={() => setTeam([...team, { name: "", role: "", bio: "", photoUrl: "" }])} />
-      </Section>
-
-      {/* Credentials */}
-      <Section icon={Award} title="الاعتمادات والشهادات" hint="الشهادة والجهة والسنة.">
-        {credentials.map((c, i) => (
-          <Row key={i} onRemove={() => setCredentials(credentials.filter((_, j) => j !== i))}>
-            <Input
-              placeholder="اسم الاعتماد * (مثال: ISO 9001)"
-              value={c.name}
-              onChange={(e) => setCredentials(upd(credentials, i, { name: e.target.value }))}
-            />
-            <Input
-              placeholder="الجهة المانحة (اختياري)"
-              value={c.authority ?? ""}
-              onChange={(e) => setCredentials(upd(credentials, i, { authority: e.target.value }))}
-            />
-            <Input
-              placeholder="السنة (اختياري)"
-              value={c.year ?? ""}
-              onChange={(e) => setCredentials(upd(credentials, i, { year: e.target.value }))}
-            />
-          </Row>
-        ))}
-        <AddButton label="أضف اعتماداً" onClick={() => setCredentials([...credentials, { name: "", authority: "", year: "", url: "" }])} />
-      </Section>
-
-      {/* Intro video — uploaded to us now, not linked from someone else's channel */}
-      <Section
-        icon={Video}
-        title="فيديو التعريف"
-        hint="مقطع قصير يعرّف بنشاطك."
-      >
-        <IntroVideoSection video={initial.introVideo} legacyUrl={initial.introVideoUrl} />
-      </Section>
-      </PageGroup>
-
-      <PageGroup page="خدماتنا">
-        <Section icon={Briefcase} title="الخدمات" hint="اسم الخدمة وسطر يشرحها.">
-          {services.map((s, i) => (
-            <Row key={i} onRemove={() => setServices(services.filter((_, j) => j !== i))}>
-              <Input
-                placeholder="اسم الخدمة *"
-                value={s.title}
-                onChange={(e) => setServices(upd(services, i, { title: e.target.value }))}
-              />
-              <Input
-                placeholder="وصف مختصر (اختياري)"
-                value={s.description ?? ""}
-                onChange={(e) => setServices(upd(services, i, { description: e.target.value }))}
-              />
-            </Row>
-          ))}
-          <AddButton label="أضف خدمة" onClick={() => setServices([...services, { title: "", description: "", icon: "" }])} />
-        </Section>
-      </PageGroup>
-
-      {/* Sticky save */}
-      <div className="sticky bottom-4 z-10 flex justify-end">
-        <Button onClick={save} disabled={pending} size="lg" className="gap-2 shadow-lg">
-          {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-          حفظ محتوى الصفحة
-        </Button>
+          {/* ما عاد فيه زرّ حفظٍ عامّ (خالد ٣١ أغسطس): كل قسم يحفظ نفسه من حواره، فزرٌّ
+              اسمه «حفظ محتوى الصفحة» ما عاد يحفظ شيئاً — ووجوده يوهم أن الشغل غير محفوظ. */}
+        </div>
       </div>
+
+      {/* لا لوحات تعريفية (خالد ٣١ أغسطس): الشاشة تعرض البيانات، ووسم المصدر على البطاقة
+          يقول من أين تجيء — والكلام الزائد فوقه حشو. */}
+
+      {/* كل تاب يعرض بياناته الحقيقية بترتيب الزائر، والناقص يبان كهرمانياً (خالد ٣١ أغسطس)
+          — لا لوحة تعريفية وحدها. والمحرّر يعيش مع بطاقته في أيّ صفحة تظهر فيها: نفس
+          الحالة ونفس الحفظ، فما فيه نسختان تتناقضان. */}
+      <PageView
+        blocks={page === "home" ? views[page] : views[page].filter((b) => !REPEATED_TAIL.has(b.key))}
+        tail={page !== "home"}
+        page={PAGE_LABELS[page]}
+        chrome={chrome}
+        editors={{
+          trust: <CredentialsEditor credentials={credentials} onChange={setCredentials} />,
+          stats: <AchievementsEditor achievements={achievements} onChange={setAchievements} />,
+          team: <TeamEditor team={team} onChange={setTeam} />,
+          video: <IntroVideoSection video={initial.introVideo} legacyUrl={initial.introVideoUrl} />,
+          services: <ServicesEditor services={services} onChange={setServices} />,
+        }}
+      />
     </div>
   );
 }
@@ -348,221 +274,301 @@ function IntroVideoDetails({
   );
 }
 
-function upd<T>(arr: T[], i: number, patch: Partial<T>): T[] {
-  return arr.map((item, j) => (j === i ? { ...item, ...patch } : item));
-}
-
-function Section({
-  icon: Icon,
-  title,
-  hint,
-  children,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  title: string;
-  hint: string;
-  children: React.ReactNode;
-}) {
+/**
+ * وسم مصدر القسم. ثلاث حالات لا واحدة: بيانات الشريك (اسم شاشتها) · بيانات الأدمن
+ * (لا يملكها ولا يُطالَب بها) · نصّ مدونتي الثابت (ما له حقول أصلاً).
+ */
+function SourceTag({ block }: { block: BlockView }) {
+  // القسم الذي يُدخَل من هذه الشاشة نفسها لا يحمل وسم مصدر: «من: محتوى الموقع»
+  // وأنت واقف في محتوى الموقع كلامٌ فاضٍ (خالد ٣١ أغسطس).
+  if (block.href === "/dashboard/page-content") return null;
+  if (block.owner === "admin") {
+    return (
+      <span
+        title="يضبطها فريق مدونتي — زرّ الطلب وشكله"
+        className="rounded-full border border-sky-500/40 bg-sky-500/10 px-2 py-0.5 text-[11px] font-medium text-sky-700 dark:text-sky-300"
+      >
+        أدمن
+      </span>
+    );
+  }
+  if (block.owner === "modonty") {
+    return (
+      <span className="rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
+        نصّ مدونتي
+      </span>
+    );
+  }
+  // كهرماني لا رمادي (خالد ٣١ أغسطس): معناه «هذي البيانات ما تتعدّل من هنا» — والشريك
+  // لازم يلقاها بعينه لا يدوّر عليها. نفس لون النقص في هذي الشاشة، ومعناه واحد: فعلٌ مكانه غير هنا.
   return (
-    <Card className="shadow-sm">
-      <CardContent className="space-y-3 p-5">
-        <div className="flex items-start gap-3">
-          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/20">
-            <Icon className="h-5 w-5" />
-          </div>
-          <div className="min-w-0">
-            <h2 className="text-base font-semibold leading-tight text-foreground">{title}</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">{hint}</p>
-          </div>
-        </div>
-        <div className="space-y-2">{children}</div>
-      </CardContent>
-    </Card>
+    <span className="rounded-full border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:text-amber-300">
+      من: {block.where}
+    </span>
   );
 }
 
-/** A page heading over the editors whose content lands on that page («يظهر في: الرئيسية»). */
-function PageGroup({ page, children }: { page: string; children: React.ReactNode }) {
+/**
+ * الشريط العلوي، رسمةً عادية: شعار · اسم · روابط الصفحات · الهاتف — بترتيبها الحقيقي
+ * وبقيم الشريك نفسها. حدٌّ متقطّع ورماديّ متعمَّد: هذا مخطّطٌ لا الموقع، والشكل النهائي
+ * يُختار من «تصميم الموقع» (خمسة قوالب).
+ */
+function HeaderSketch({ chrome }: { chrome: Props["chrome"] }) {
   return (
-    <section className="space-y-4">
-      <h2 className="border-b pb-2 text-lg font-bold text-foreground">{page}</h2>
-      {children}
+    <div className="rounded-lg border border-dashed bg-muted/30 p-3">
+      <p className="mb-2 flex flex-wrap items-center gap-2 text-[11px] font-bold text-muted-foreground">
+        الشريط العلوي
+        <span className="rounded-full border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 font-medium text-amber-700 dark:text-amber-300">
+          من: بيانات نشاطك · الصور والملفات
+        </span>
+        <span className="rounded-full border px-2 py-0.5 font-medium">شكله: تصميم الموقع</span>
+      </p>
+      <div className="flex items-center gap-3 rounded-md border bg-background px-3 py-2.5">
+        <span className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded bg-muted text-[10px] text-muted-foreground">
+          {chrome.logoUrl ? (
+            <OptimizedImage media={asMedia(chrome.logoUrl)} alt="" width={32} height={32} sizes="32px" className="h-8 w-8 object-contain" />
+          ) : (
+            "شعار"
+          )}
+        </span>
+        <span className="truncate text-sm font-semibold text-foreground">{chrome.name}</span>
+        <span className="mx-1 hidden h-5 w-px bg-border md:block" aria-hidden />
+        <span className="hidden flex-wrap items-center gap-1.5 md:flex">
+          {SITE_PAGE_TOOLS.map(({ key, label }) => (
+            <span key={key} className="rounded border bg-muted/50 px-2 py-1 text-[11px] text-muted-foreground">
+              {label}
+            </span>
+          ))}
+        </span>
+        <span className="ms-auto shrink-0 rounded border bg-muted/50 px-2 py-1 text-[11px] text-muted-foreground" dir="ltr">
+          {chrome.phone ?? "لا يوجد هاتف"}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * الغلاف، رسمةً عادية بنفس التدفّق: صورة الغلاف ثم الشعار النصّي ثم الوصف.
+ * الصورة بنسبتها الحقيقية لا بمربّع — الزائر يراها كما هي.
+ */
+function HeroSketch({ chrome, block }: { chrome: Props["chrome"]; block: BlockView }) {
+  const { slogan, description, coverUrl } = chrome.hero;
+  return (
+    <div className="rounded-lg border border-dashed bg-muted/30 p-3">
+      <p className="mb-2 flex flex-wrap items-center gap-2 text-[11px] font-bold text-muted-foreground">
+        <span dir="ltr">1</span> · {block.name}
+        <SourceTag block={block} />
+      </p>
+      <div className="overflow-hidden rounded-md border bg-background">
+        {coverUrl ? (
+          <OptimizedImage media={asMedia(coverUrl)} alt="" width={1200} height={480} sizes="(max-width: 768px) 100vw, 900px" className="h-40 w-full object-cover" />
+        ) : (
+          <div className="grid h-40 w-full place-items-center bg-muted text-xs text-muted-foreground">
+            صورة الغلاف
+          </div>
+        )}
+        <div className="space-y-1.5 p-4">
+          {/* الشارة مع الغلاف (خالد ٣١ أغسطس) — ثابتة لكل شريك، بعلامة مدونتي الرسمية. */}
+          <p className="flex items-center gap-2 text-xs font-medium text-foreground">
+            <ModontyTrustMark className="h-4 w-4 shrink-0" />
+            شريك موثَّق في مدونتي
+          </p>
+          <p className="text-base font-bold text-foreground">{slogan ?? chrome.name}</p>
+          {description && <p className="line-clamp-2 text-xs text-muted-foreground">{description}</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * صفحة الموقع كما ستصل الزائر — أقسامها بترتيبها، بلا تصميم.
+ * القسم الذي فيه بيانات يعرضها نصّاً؛ والفارغ يُوسَم كهرمانياً ويقود إلى شاشة إدخاله.
+ * الكهرماني لا الأحمر: نقصٌ يُكمَّل، لا عطل.
+ */
+/**
+ * ذيلٌ يتكرّر أسفل كل صفحة: «النداء الأخير» و«النشرة». عرضه في كل تاب تكرارٌ يزحم
+ * القائمة بلا معلومة جديدة (خالد ٣١ أغسطس)، فيُعرض في الرئيسية ويُذكر في سطر واحد
+ * في البقيّة — لا يُحذف من الوعي، ولا يُعاد رسمه ثمان مرّات.
+ */
+const REPEATED_TAIL = new Set(["cta", "newsletter"]);
+
+/**
+ * «قسم واحد» لا «1 قسماً»: العربية تعدّ بثلاث صيغ، والرقم الملاصق لكلمة مفردة يُقرأ
+ * على أنه عدد محتوى القسم لا عدد الأقسام — خالد نفسه قرأ «1 قسماً» فظنّ العميل عنده
+ * مقال واحد وعنده مقالان.
+ */
+/** وحدة العدّ لكل قسم: [مفرد · مثنّى · جمع]. */
+const DEFAULT_UNIT: [string, string, string] = ["عنصر", "عنصران", "عناصر"];
+const BLOCK_UNIT: Record<string, [string, string, string]> = {
+  trust: ["اعتماد", "اعتمادان", "اعتمادات"],
+  services: ["خدمة", "خدمتان", "خدمات"],
+  stats: ["رقم", "رقمان", "أرقام"],
+  testimonials: ["رأي", "رأيان", "آراء"],
+  gallery: ["صورة", "صورتان", "صور"],
+  team: ["عضو", "عضوان", "أعضاء"],
+  faq: ["سؤال", "سؤالان", "أسئلة"],
+  blog: ["مقال", "مقالان", "مقالات"],
+};
+
+function arCount(n: number, one: string, two: string, many: string): string {
+  if (n === 1) return `${one} واحد`;
+  if (n === 2) return two;
+  if (n >= 3 && n <= 10) return `${n} ${many}`;
+  // ما فوق العشرة يأخذ تمييزاً مفرداً منصوباً: «15 قسماً» لا «15 قسم».
+  return `${n} ${one}اً`;
+}
+
+function PageView({
+  blocks,
+  page,
+  chrome,
+  editors,
+  tail = false,
+}: {
+  blocks: BlockView[];
+  page: string;
+  /** أضف سطر «ويتكرّر أسفلها…» — يُمرَّر في كل تاب غير الرئيسية. */
+  tail?: boolean;
+  chrome: Props["chrome"];
+  /** محرّر القسم — يحلّ محلّ سطوره داخل بطاقته حين يكون له محرّر هنا. */
+  editors?: Partial<Record<string, React.ReactNode>>;
+}) {
+  const missing = blocks.filter((b) => b.empty).length;
+  /**
+   * الرسمتان (الشريط العلوي والغلاف) للرئيسية وحدها: الشريط نفسه في كل صفحة فرسمه
+   * ثماني مرّات تكرار، و«الغلاف» في الصفحات الأخرى قسمٌ آخر باسم آخر («البيان» في من
+   * نحن) — رسمه كغلافٍ بصورة الرئيسية يُريه شيئاً لا يوجد.
+   */
+  const hero = tail ? undefined : blocks.find((b) => b.key === "hero");
+  const rest = hero ? blocks.filter((b) => b.key !== "hero") : blocks;
+  return (
+    <section className="space-y-3">
+      <div className="flex flex-wrap items-baseline gap-x-3 border-b pb-2">
+        <h2 className="text-lg font-bold text-foreground">صفحة {page}</h2>
+        <p className="text-xs text-muted-foreground">
+          {arCount(blocks.length, "قسم", "قسمان", "أقسام")} بترتيب ما يشوفه الزائر
+          {missing > 0 ? ` · ${missing} منها ناقص` : " · كلها فيها بيانات"}
+          {tail && " · ويتكرّر أسفلها النداء الأخير والنشرة"}
+        </p>
+      </div>
+
+      {/* الشريط العلوي مع الغلاف وحدهما — أي في الرئيسية (خالد ٣١ أغسطس): هو نفسه في كل
+          صفحة، فرسمه فوق كل تاب تكرارٌ يزحم الشاشة بلا معلومة جديدة. */}
+      {hero && (
+        <>
+          <HeaderSketch chrome={chrome} />
+          <HeroSketch chrome={chrome} block={hero} />
+        </>
+      )}
+
+      <ol className="space-y-2">
+        {rest.map((b, i) => (
+          <li
+            key={`${b.key}-${i}`}
+            className={cn(
+              "rounded-lg border bg-card px-4 py-3",
+              b.empty && "border-amber-500/60 bg-amber-500/5",
+            )}
+          >
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              {/* رقمه في الصفحة كاملةً لا في القائمة — الغلاف مرسومٌ فوق وهو الأوّل. */}
+              <span className="text-[11px] font-bold text-muted-foreground" dir="ltr">
+                {blocks.indexOf(b) + 1}
+              </span>
+              <h3 className="text-sm font-semibold text-foreground">{b.name}</h3>
+              {/* العدد بوحدته: رقمٌ عارٍ بجانب اسم القسم يُخلَط بترقيم الأقسام نفسه. */}
+              {b.count !== undefined && (
+                <span className="rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
+                  {arCount(b.count, ...(BLOCK_UNIT[b.key] ?? DEFAULT_UNIT))}
+                </span>
+              )}
+              {/* وسم المصدر على كل قسم: الشريك يستحقّ أن يعرف من أين تجيء كل بياناته،
+                  وأيّها ليس بيده أصلاً (خالد ٣١ أغسطس). */}
+              <SourceTag block={b} />
+
+              {/* الملاحظة في صفّ الوسوم لا تحت العنوان (خالد ٣١ أغسطس): تحت العنوان تُقرأ
+                  كأنها جزء من محتوى القسم، وهي كلامٌ عن القسم لا منه. */}
+              {/* نصٌّ كهرماني بلا إطار (خالد ٣١ أغسطس): لونه يربطه بوسم المصدر، وغياب
+                  الإطار يفرّقه عنه — هو تنبيه لا وسم. */}
+              {b.note && (
+                <span className="text-[11px] font-medium text-amber-700 dark:text-amber-300">
+                  {b.note}
+                </span>
+              )}
+
+              {/* الناقص الذي يملكه الشريك وحده يستحقّ مخرجاً: هدف ٤٤ بكسلاً وتسمية مكتوبة.
+                  والقسم الذي محرّره داخل بطاقته لا يُعطى رابطاً يشير إلى الشاشة نفسها. */}
+              {b.empty && b.owner === "client" && b.href !== "/dashboard/page-content" && (
+                <>
+                  <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                    محتاجين البيانات هذه
+                  </span>
+                  <a
+                    href={b.href}
+                    className="ms-auto flex min-h-11 items-center gap-1.5 rounded-lg border border-amber-500/50 bg-background px-3 text-xs font-medium hover:bg-amber-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    أدخلها من «{b.where}»
+                    <ChevronLeft className="h-4 w-4" aria-hidden />
+                  </a>
+                </>
+              )}
+            </div>
+
+            {editors?.[b.key] ? (
+              <div className="mt-3 space-y-2">{editors[b.key]}</div>
+            ) : b.thumbs ? (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {b.thumbs.map((url, j) => (
+                  <OptimizedImage
+                    key={j}
+                    media={asMedia(url)}
+                    alt=""
+                    width={56}
+                    height={56}
+                    sizes="56px"
+                    className="h-14 w-14 rounded-md border object-cover"
+                  />
+                ))}
+                {b.count !== undefined && b.count > b.thumbs.length && (
+                  <span className="grid h-14 w-14 place-items-center rounded-md border bg-muted/30 text-[11px] text-muted-foreground">
+                    +{b.count - b.thumbs.length}
+                  </span>
+                )}
+              </div>
+            ) : b.items ? (
+              /* عنصرٌ له عنوان ووصف يستحقّ بطاقته: الوصف هو ما يقرّر الزائر عليه. */
+              <ul className="mt-2 space-y-2">
+                {b.items.map((it, j) => (
+                  <li key={j} className="rounded-lg border bg-muted/20 px-3 py-2">
+                    <p className="text-xs font-semibold text-foreground">{it.title}</p>
+                    {it.sub && (
+                      <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
+                        {it.sub}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              b.lines.length > 0 && (
+                <ul className="mt-2 space-y-1 ps-6">
+                  {/* على الجوّال يُلفّ السطر بدل أن يُقصّ: العرض ٢٨١px والنصّ ٤٠٧،
+                      فالبتر يخفي نصف بيانات القسم عن صاحبها (مقيس ٣١ أغسطس). */}
+                  {b.lines.map((line, j) => (
+                    <li key={j} className="text-xs text-muted-foreground max-sm:line-clamp-2 sm:truncate">
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              )
+            )}
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }
 
-function Row({ children, onRemove }: { children: React.ReactNode; onRemove: () => void }) {
-  return (
-    <div className="flex items-start gap-2 rounded-lg border bg-muted/20 p-2">
-      <div className="grid flex-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">{children}</div>
-      <Button
-        type="button"
-        size="icon"
-        variant="ghost"
-        onClick={onRemove}
-        className="h-8 w-8 shrink-0 text-destructive hover:bg-destructive/10"
-        title="حذف"
-      >
-        <Trash2 className="h-3.5 w-3.5" />
-      </Button>
-    </div>
-  );
-}
-
-function AddButton({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <Button type="button" variant="outline" size="sm" onClick={onClick} className="gap-1.5">
-      <Plus className="h-3.5 w-3.5" />
-      {label}
-    </Button>
-  );
-}
-
-const LABEL_MAX = 52;
-const DESC_MAX = 250;
-const IMG_MAX_BYTES = 10 * 1024 * 1024;
-
-function AchievementRow({
-  achievement,
-  onChange,
-  onRemove,
-}: {
-  achievement: AchievementInput;
-  onChange: (patch: Partial<AchievementInput>) => void;
-  onRemove: () => void;
-}) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
-  const image = achievement.image ?? "";
-  const description = achievement.description ?? "";
-
-  async function handleFile(file: File) {
-    if (!file.type.startsWith("image/")) {
-      toast.error("الملف مش صورة");
-      return;
-    }
-    if (file.size > IMG_MAX_BYTES) {
-      toast.error("حجم الصورة كبير — الحد 10 ميجا");
-      return;
-    }
-    setUploading(true);
-    try {
-      const compressed = await compressToWebP(file);
-      const fd = new FormData();
-      fd.append("file", compressed);
-      fd.append("folder", "achievements");
-      const res = await fetch("/api/upload-bunny", { method: "POST", body: fd });
-      const json = await res.json().catch(() => null);
-      if (!res.ok || !json?.url) {
-        toast.error(json?.error || "فشل رفع الصورة");
-        return;
-      }
-      onChange({ image: json.url });
-    } catch {
-      toast.error("فشل رفع الصورة");
-    } finally {
-      setUploading(false);
-    }
-  }
-
-  return (
-    <div className="space-y-2 rounded-lg border bg-muted/20 p-3">
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f) handleFile(f);
-          e.target.value = "";
-        }}
-      />
-
-      <div className="flex items-start gap-2">
-        <div className="grid flex-1 gap-2 sm:grid-cols-2">
-          <Input
-            placeholder="القيمة * (مثال: +500)"
-            value={achievement.value}
-            onChange={(e) => onChange({ value: e.target.value })}
-          />
-          <Input
-            placeholder="العنوان * (مثال: عميل سعيد)"
-            value={achievement.label}
-            maxLength={LABEL_MAX}
-            onChange={(e) => onChange({ label: e.target.value })}
-          />
-        </div>
-        <Button
-          type="button"
-          size="icon"
-          variant="ghost"
-          onClick={onRemove}
-          className="h-8 w-8 shrink-0 text-destructive hover:bg-destructive/10"
-          title="حذف"
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-        </Button>
-      </div>
-
-      <div className="flex flex-col gap-2 sm:flex-row">
-        {image ? (
-          <div className="relative w-full overflow-hidden rounded-md border bg-muted sm:w-40" style={{ aspectRatio: "16/10" }}>
-            <OptimizedImage
-              media={asMedia(image, achievement.label || "صورة الإنجاز")}
-              alt={achievement.label || "صورة الإنجاز"}
-              fill
-              className="object-cover"
-              sizes="160px"
-            />
-            <Button
-              type="button"
-              size="sm"
-              variant="secondary"
-              disabled={uploading}
-              onClick={() => inputRef.current?.click()}
-              className="absolute inset-x-1 bottom-1 h-6 bg-background/90 px-2 text-[11px] backdrop-blur"
-            >
-              {uploading ? <Loader2 className="h-3 w-3 animate-spin" /> : "استبدال"}
-            </Button>
-            <Button
-              type="button"
-              size="icon"
-              variant="secondary"
-              onClick={() => onChange({ image: "" })}
-              aria-label="حذف الصورة"
-              className="absolute end-1 top-1 h-6 w-6 bg-background/90 text-destructive backdrop-blur hover:bg-destructive/10"
-            >
-              <X className="h-3.5 w-3.5" />
-            </Button>
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={uploading}
-            style={{ aspectRatio: "16/10" }}
-            className="flex w-full flex-col items-center justify-center gap-1 rounded-md border-2 border-dashed border-border py-4 text-muted-foreground transition-colors hover:border-primary/50 hover:bg-muted/30 disabled:opacity-50 sm:w-40"
-          >
-            {uploading ? <Loader2 className="h-5 w-5 animate-spin text-primary" /> : <ImagePlus className="h-5 w-5" />}
-            <span className="text-[11px] font-medium">{uploading ? "جاري الرفع..." : "أضف صورة (اختياري)"}</span>
-          </button>
-        )}
-
-        <div className="flex-1">
-          <Textarea
-            placeholder="فقرة قصيرة تحكي القصة (اختياري)"
-            value={description}
-            maxLength={DESC_MAX}
-            rows={3}
-            onChange={(e) => onChange({ description: e.target.value })}
-            className="resize-none text-sm"
-          />
-          <div className="mt-1 text-end text-[11px] text-muted-foreground">
-            {description.length}/{DESC_MAX}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+/** A page heading over the editors whose content lands on that page («يظهر في: الرئيسية»). */

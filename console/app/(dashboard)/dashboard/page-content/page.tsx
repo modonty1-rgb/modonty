@@ -1,6 +1,10 @@
-import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { getHomeData } from "@modonty/shared/lib/partner-site";
+
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { buildPageView, type BlockView } from "@/lib/my-site/build-page-view";
+import { BLOCKS_PAGES, type BlocksPage } from "@/lib/my-site/page-keys";
 import { PageContentEditor } from "./components/page-content-editor";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +14,9 @@ export default async function PageContentPage() {
   const clientId = (session as { clientId?: string })?.clientId;
   if (!clientId) redirect("/");
 
-  const client = await db.client.findUnique({
+  // متوازيان: قراءة صفّ التحرير وقراءة ما يراه الزائر لا يعتمد أحدهما على الآخر.
+  const [client, home] = await Promise.all([
+    db.client.findUnique({
     where: { id: clientId },
     select: {
       services: true,
@@ -28,7 +34,10 @@ export default async function PageContentPage() {
         },
       },
     },
-  });
+    }),
+    getHomeData(db, { id: clientId }),
+  ]);
+  if (!home) redirect("/");
 
   return (
     <div className="space-y-6">
@@ -47,6 +56,21 @@ export default async function PageContentPage() {
           credentials: client?.credentials ?? [],
           introVideoUrl: client?.introVideoUrl ?? null,
           introVideo: client?.introVideoMedia ?? null,
+        }}
+        views={
+          Object.fromEntries(
+            BLOCKS_PAGES.map((p) => [p, buildPageView(home.data, p)])
+          ) as Record<BlocksPage, BlockView[]>
+        }
+        chrome={{
+          name: home.data.name,
+          logoUrl: home.data.hero.logoUrl,
+          phone: home.data.phone,
+          hero: {
+            slogan: home.data.hero.slogan,
+            description: home.data.hero.description,
+            coverUrl: home.data.hero.coverUrl,
+          },
         }}
       />
     </div>

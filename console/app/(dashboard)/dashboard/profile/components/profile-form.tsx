@@ -282,7 +282,7 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
       <div key={String(k)} className={`space-y-1.5${opts?.full ? " lg:col-span-2" : ""}`}>
         <Label htmlFor={String(k)} className="text-sm">
           {label}
-          {opts?.required && <span className="text-destructive mr-1">*</span>}
+          {opts?.required && <span className="text-[hsl(var(--destructive-ink))] mr-1">*</span>}
         </Label>
         <Input
           id={String(k)}
@@ -317,7 +317,7 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {error && (
-        <div className="flex items-start gap-2 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
+        <div className="flex items-start gap-2 p-3 text-sm text-[hsl(var(--destructive-ink))] bg-destructive/10 border border-destructive/20 rounded-lg">
           <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
           <span>{error}</span>
         </div>

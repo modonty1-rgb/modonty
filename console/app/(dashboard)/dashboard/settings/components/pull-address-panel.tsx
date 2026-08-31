@@ -72,7 +72,7 @@ const { articles } = await res.json();`;
         </span>
         <span
           className={
-            suspended ? "text-xs font-medium text-destructive" : "text-xs font-medium text-emerald-600"
+            suspended ? "text-xs font-medium text-[hsl(var(--destructive-ink))]" : "text-xs font-medium text-emerald-600"
           }
         >
           {suspended ? "الخدمة موقوفة" : "الربط فعّال"}

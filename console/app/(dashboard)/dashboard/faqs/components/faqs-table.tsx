@@ -335,7 +335,7 @@ export function FaqsTable({ faqs }: Props) {
                   variant="outline"
                   onClick={handleBulkReject}
                   disabled={isPending}
-                  className="gap-1.5 text-destructive hover:text-destructive"
+                  className="gap-1.5 text-[hsl(var(--destructive-ink))] hover:text-[hsl(var(--destructive-ink))]"
                 >
                   <XCircle className="h-3.5 w-3.5" />
                   {f.bulkReject}
@@ -542,6 +542,14 @@ function FaqRow({
               {f.fromArticle}: {item.article.title}
               <ExternalLink className="h-3 w-3" />
             </Link>
+            {/* سؤال منشور تحت مقال لم يُنشر بعدُ لا يصل الزائر — والصمت عن ذلك يجعل
+                الشريك يظنّ أنه نشره فعلاً (مقيس ٣٠ أغسطس: سؤال PUBLISHED على مقال
+                AWAITING_APPROVAL، وصفر أسئلة وصلت الموقع). */}
+            {item.status === "PUBLISHED" && item.article.status !== "PUBLISHED" && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700 ring-1 ring-amber-200">
+                ما يظهر للزائر — مقاله لسّه ما اننشر
+              </span>
+            )}
           </div>
 
           {/* Question + open details */}
@@ -677,7 +685,7 @@ function RowActions({
           variant="outline"
           onClick={onReject}
           disabled={isWorking}
-          className="gap-1.5 border-destructive text-destructive hover:bg-destructive/10"
+          className="gap-1.5 border-destructive text-[hsl(var(--destructive-ink))] hover:bg-destructive/10"
         >
           <XCircle className="h-3.5 w-3.5" />
           {isWorking ? f.rejecting : f.reject}

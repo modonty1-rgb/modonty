@@ -260,7 +260,7 @@ export function BookingsList({ bookings }: Props) {
                   <Archive className="h-3.5 w-3.5" />
                   {s.bulkArchive}
                 </Button>
-                <Button size="sm" variant="outline" onClick={handleBulkDelete} disabled={isPending} className="gap-1.5 text-destructive hover:text-destructive">
+                <Button size="sm" variant="outline" onClick={handleBulkDelete} disabled={isPending} className="gap-1.5 text-[hsl(var(--destructive-ink))] hover:text-[hsl(var(--destructive-ink))]">
                   <Trash2 className="h-3.5 w-3.5" />
                   {s.bulkDelete}
                 </Button>
@@ -494,7 +494,7 @@ function BookingRow({
                   </Button>
                 </>
               )}
-              <Button size="icon" variant="ghost" onClick={onDelete} disabled={isWorking} title={s.delete} aria-label={s.delete} className="h-8 w-8 text-destructive hover:bg-destructive/10">
+              <Button size="icon" variant="ghost" onClick={onDelete} disabled={isWorking} title={s.delete} aria-label={s.delete} className="h-8 w-8 text-[hsl(var(--destructive-ink))] hover:bg-destructive/10">
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </div>
@@ -617,7 +617,7 @@ function BookingDetailSheet({ booking, onClose }: { booking: BookingWithDetails 
                   <CalendarCheck className="h-4 w-4" />
                   {formatDateTime(booking.confirmedAt)}
                 </span>
-                <Button size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10" disabled={isSaving} onClick={() => saveConfirmed(null)}>
+                <Button size="sm" variant="ghost" className="text-[hsl(var(--destructive-ink))] hover:bg-destructive/10" disabled={isSaving} onClick={() => saveConfirmed(null)}>
                   {s.clearConfirmed}
                 </Button>
               </div>

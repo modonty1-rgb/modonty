@@ -18,7 +18,7 @@ function Row({ status, message, recommendation }: { status: string; message: str
     status === "pass" ? (
       <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" aria-hidden="true" />
     ) : status === "fail" ? (
-      <X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-destructive" aria-hidden="true" />
+      <X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[hsl(var(--destructive-ink))]" aria-hidden="true" />
     ) : (
       <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" aria-hidden="true" />
     );

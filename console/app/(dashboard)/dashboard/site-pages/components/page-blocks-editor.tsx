@@ -15,7 +15,7 @@ import { BOOKING_BLOCKS } from "@modonty/shared/components/partner-site/free/boo
 import { REVIEWS_BLOCKS } from "@modonty/shared/components/partner-site/free/testimonials";
 
 import { cn } from "@/lib/utils";
-import { saveHiddenBlocks } from "../actions/save-hidden-blocks";
+import { saveHiddenBlocks } from "@/lib/my-site/save-hidden-blocks";
 
 import type { BlocksPage } from "../helpers/blocks-pages";
 

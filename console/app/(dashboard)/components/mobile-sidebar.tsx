@@ -147,7 +147,7 @@ export function MobileSidebar({
             variant="ghost"
             size="sm"
             onClick={() => signOut({ callbackUrl: "/signed-out" })}
-            className="flex-1 justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
+            className="flex-1 justify-start text-[hsl(var(--destructive-ink))] hover:bg-destructive/10 hover:text-[hsl(var(--destructive-ink))]"
           >
             <LogOut className="h-4 w-4" />
             <span className="ms-2">{ar.nav.signOut}</span>

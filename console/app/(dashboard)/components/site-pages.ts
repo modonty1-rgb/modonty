@@ -29,7 +29,7 @@ export const SITE_PAGES: readonly SitePageDef[] = [
   { key: "home", label: "الرئيسية", icon: Home },
   { key: "about", label: "من نحن", icon: Users },
   { key: "services", label: "خدماتنا", icon: Briefcase },
-  { key: "photos", label: "أعمالنا", icon: Images },
+  { key: "photos", label: "ألبوم أعمالنا", icon: Images },
   { key: "reviews", label: "آراء العملاء", icon: Star },
   { key: "articles", label: "المدونة", icon: Newspaper },
   { key: "faq", label: "الأسئلة الشائعة", icon: HelpCircle },

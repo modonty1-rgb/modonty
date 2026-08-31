@@ -42,6 +42,19 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       answerLabel: "ردك",
       answerPlaceholder: "اكتب ردك هنا",
       submitLabel: "إرسال الرد",
+      /**
+       * تأكيد قبل الإرسال — الردّ **علنيّ ودائم**.
+       *
+       * يظهر للزوّار تحت المقال باسم العميل، ولا مسار في المنتَج كلّه لتعديله أو حذفه
+       * (`questions/[faqId]/reply` فعل واحد بلا نظير). وكان يُرسَل بضغطة واحدة ثم تُغلق
+       * الشاشة بلا إشعار — فلا يعرف العميل أنّه خرج، ولا يستطيع سحبه لو تسرّع.
+       * والتأكيد يسمّي ما لا رجعة فيه، لا يسأل «هل أنت متأكد؟» فحسب.
+       */
+      confirmTitle: "نرسل ردك؟",
+      confirmBody: "الرد يظهر للزوّار تحت المقال باسمك، وما تقدر تعدّله من التطبيق بعدها.",
+      confirmAction: "أرسل",
+      confirmCancel: "رجوع للتعديل",
+      sentToastLabel: "انرسل ردك",
       submittingLabel: "يُرسل الرد…",
       counterMaxLabel: arabicNumber(ANSWER_MAX_LENGTH),
       answerMaxLength: ANSWER_MAX_LENGTH,

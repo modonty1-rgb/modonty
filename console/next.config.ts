@@ -8,6 +8,17 @@ loadDotenv({ path: path.resolve(process.cwd(), "../.env.shared") });
 
 const nextConfig: NextConfig = {
   images: {
+    /**
+     * الكونسول لا يعيد تحسين ما هو محسَّن أصلاً.
+     *
+     * كل صور المنظومة تُقدَّم من Bunny مُعاد ترميزها WebP، ثم كانت تمرّ على محسِّن Next
+     * مرّة ثانية. الكلفة مقيسة على شاشة «موقعي»: صورة واحدة بلغت ٢٨٢٢ms، وأحد عشر إطاراً
+     * معاً ≈٥٤٥ طلباً وزمن تحميل ١٢ ثانية — بلا مكسب، فالملفّ الأصل محسَّن.
+     * توثيق Next: «When set to true, the source image is served as-is from the src instead
+     * of undergoing quality, size, or format optimization» — و`images.unoptimized` تطبّقه
+     * على التطبيق كلّه. مودونتي (الموقع العام) لا يمسّه هذا: إعداده مستقلّ.
+     */
+    unoptimized: true,
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],

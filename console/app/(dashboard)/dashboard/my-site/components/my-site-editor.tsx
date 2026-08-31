@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 import { saveMySite } from "../actions/save-my-site";
-import type { MySiteData } from "../helpers/get-my-site-data";
+import type { MySiteData } from "@/lib/my-site/get-my-site-data";
 import { TemplateRadioPicker } from "./template-radio-picker";
 import { SiteAddressSettings } from "./site-address-settings";
 import { HEADER_TEMPLATES, type HeaderData, type HeaderTemplateKey } from "@modonty/shared/components/partner-site/free/header";

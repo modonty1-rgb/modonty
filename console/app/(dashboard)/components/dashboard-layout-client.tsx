@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { DashboardHeader } from "./dashboard-header";
 import { Sidebar } from "./sidebar";
 import { MobileSidebar } from "./mobile-sidebar";
@@ -62,6 +63,7 @@ export function DashboardLayoutClient({
 }: DashboardLayoutClientProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const isWide = usePathname()?.startsWith("/dashboard/my-site") ?? false;
 
   return (
     <div className="min-h-screen bg-background">
@@ -120,7 +122,9 @@ export function DashboardLayoutClient({
           pendingQuestionsCount={pendingQuestionsCount}
           pendingSupportCount={pendingSupportCount}
         />
-        <main className="container mx-auto w-full max-w-[1128px] px-4 py-8">
+        {/* «موقعي» يعرض جهازين حقيقيَّين جنب بعض (١٢٨٠ + ٣٩٠)، فحدّ ١١٢٨ يخنق الجوّال
+            ويخفيه. هذه الشاشة وحدها تأخذ العرض كلّه؛ الباقي يبقى على عمود القراءة. */}
+        <main className={cn("container mx-auto w-full px-4 py-8", isWide ? "max-w-none" : "max-w-[1128px]")}>
           {accountNotice && <div className="mb-6">{accountNotice}</div>}
           {children}
         </main>

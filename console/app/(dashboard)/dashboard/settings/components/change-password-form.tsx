@@ -186,7 +186,7 @@ function PasswordField({
           )}
         </button>
       </div>
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {error && <p className="text-xs text-[hsl(var(--destructive-ink))]">{error}</p>}
     </div>
   );
 }

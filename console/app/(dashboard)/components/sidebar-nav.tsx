@@ -60,7 +60,7 @@ export function SidebarNavItem({
               className={cn(
                 "relative inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-bold rounded border",
                 badgeVariant === "danger"
-                  ? "bg-destructive/10 text-destructive border-destructive/30"
+                  ? "bg-destructive/10 text-[hsl(var(--destructive-ink))] border-destructive/30"
                   : badgeVariant === "success"
                     ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
                     : "bg-primary/10 text-primary border-primary/20"

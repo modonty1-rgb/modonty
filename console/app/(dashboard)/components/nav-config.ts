@@ -20,7 +20,6 @@ import {
   Globe,
 } from "lucide-react";
 import { ar } from "@/lib/ar";
-import { SITE_PAGES } from "./site-pages";
 
 import type { LucideIcon } from "lucide-react";
 
@@ -93,11 +92,13 @@ export function buildNavGroups(counts: NavCounts): NavGroupConfig[] {
       key: "site",
       label: ar.nav.groupSite,
       items: [
-        { href: "/dashboard/my-site", icon: Globe, label: ar.nav.mySite },
-        // Every page of the site, in the visitor's order (Khalid 2026-08-17: «اسرد الصفحات كاملة»).
-        ...SITE_PAGES.map((p) => ({ href: `/dashboard/site-pages/${p.key}`, icon: p.icon, label: p.label })),
-        // Temporary: its fields get redistributed across the page screens above.
+        // المحتوى أوّلاً والتصميم تحته (خالد ٣١ أغسطس): الشريك يدخل ليكتب لا ليختار قالباً،
+        // والترتيب في القائمة هو ما يقول له أيّهما شغله اليومي.
         { href: "/dashboard/page-content", icon: LayoutTemplate, label: ar.nav.pageContent },
+        // The nine pages left this rail on 2026-08-30: they are icons across the top of
+        // «موقعي» itself, beside the live preview, so the choice and its result share one
+        // screen. Their routes still exist (`/dashboard/site-pages/<key>`) and still work.
+        { href: "/dashboard/my-site", icon: Globe, label: ar.nav.mySite },
       ],
     },
     {

@@ -1,8 +1,11 @@
 import { redirect } from "next/navigation";
+import { getHomeData } from "@modonty/shared/lib/partner-site";
 
 import { auth } from "@/lib/auth";
-import { getMySiteData } from "./helpers/get-my-site-data";
-import { MySiteEditor } from "./components/my-site-editor";
+import { db } from "@/lib/db";
+import { getMySiteData } from "@/lib/my-site/get-my-site-data";
+import { buildMissingData } from "@/lib/my-site/build-missing-data";
+import { SiteBuilder } from "./components/site-builder";
 
 export const dynamic = "force-dynamic";
 
@@ -11,26 +14,9 @@ export default async function MySitePage() {
   const clientId = (session as { clientId?: string })?.clientId;
   if (!clientId) redirect("/");
 
-  const data = await getMySiteData(clientId);
-  if (!data) redirect("/");
+  const [data, home] = await Promise.all([getMySiteData(clientId), getHomeData(db, { id: clientId })]);
+  if (!data || !home) redirect("/");
 
-  const savedAt = data.updatedAt
-    ? new Intl.DateTimeFormat("ar-SA", { dateStyle: "medium", timeStyle: "short" }).format(
-        data.updatedAt,
-      )
-    : null;
-
-  return (
-    <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-semibold leading-tight text-foreground">إعدادات الموقع</h1>
-        <p className="text-muted-foreground mt-1 max-w-2xl">
-          اللون والهيدر والفوتر — يظهر في كل صفحات موقعك.
-          {savedAt && <span className="text-xs"> · آخر حفظ: {savedAt}</span>}
-        </p>
-      </header>
-
-      <MySiteEditor initial={data} />
-    </div>
-  );
+  // بلا عنوان صفحة: اسم الشاشة في السايدبار، والمساحة فوق للمعاينة (خالد ٣٠ أغسطس).
+  return <SiteBuilder initial={data} missing={buildMissingData(home.data)} />;
 }

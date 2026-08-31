@@ -82,7 +82,7 @@ export function LoginForm({ variant = "default" }: LoginFormProps) {
           id={ID_ERROR}
           role="alert"
           aria-live="assertive"
-          className="rounded-md border border-destructive/20 bg-destructive/10 px-3 py-2.5 text-sm text-destructive transition-colors"
+          className="rounded-md border border-destructive/20 bg-destructive/10 px-3 py-2.5 text-sm text-[hsl(var(--destructive-ink))] transition-colors"
         >
           {error}
         </div>

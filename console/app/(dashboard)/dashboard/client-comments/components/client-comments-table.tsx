@@ -198,7 +198,7 @@ export function ClientCommentsTable({ comments }: Props) {
                               variant="outline"
                               onClick={() => run(c.id, () => rejectClientComment(c.id), "تم الرفض")}
                               disabled={isWorking}
-                              className="gap-1.5 border-destructive text-destructive hover:bg-destructive/10"
+                              className="gap-1.5 border-destructive text-[hsl(var(--destructive-ink))] hover:bg-destructive/10"
                             >
                               <X className="h-3.5 w-3.5" />
                               رفض
@@ -210,7 +210,7 @@ export function ClientCommentsTable({ comments }: Props) {
                               variant="ghost"
                               onClick={() => run(c.id, () => deleteClientComment(c.id), "تم الحذف")}
                               disabled={isWorking}
-                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                              className="h-8 w-8 text-[hsl(var(--destructive-ink))] hover:bg-destructive/10"
                               title="حذف"
                             >
                               <Trash2 className="h-3.5 w-3.5" />

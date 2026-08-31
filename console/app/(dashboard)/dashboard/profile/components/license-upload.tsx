@@ -108,7 +108,7 @@ export function LicenseUpload({ value, onChange }: LicenseUploadProps) {
               variant="ghost"
               onClick={() => onChange("")}
               disabled={uploading}
-              className="gap-1.5 text-destructive hover:bg-destructive/10"
+              className="gap-1.5 text-[hsl(var(--destructive-ink))] hover:bg-destructive/10"
             >
               <X className="h-3.5 w-3.5" />
               إزالة

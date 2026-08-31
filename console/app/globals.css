@@ -23,6 +23,13 @@
     --accent-foreground: 0 0% 0%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
+    /**
+     * حبر الخطر: الأحمر حين يكون **نصّاً** لا تعبئة.
+     * `--destructive` مضبوط ليحمل نصّاً أبيض فوقه (زرّ أحمر)، واستعماله نصّاً يسقط:
+     * مقيس ٣١ أغسطس على «تسجيل الخروج» في القائمة الداكنة = ٢٫٠:١، وWCAG 1.4.3 يفرض ٤٫٥.
+     * الفاتح L=40% ‏(٥٫٨٣ على أرضية الصفحة) · الداكن L=65% ‏(٤٫٧ على أفتح سطح داكن).
+     */
+    --destructive-ink: 0 84.2% 40%;
     /* LinkedIn's subtle border color */
     --border: 60 3% 88%;              /* #e0e0de - LinkedIn's subtle border */
     --input: 60 3% 88%;
@@ -52,6 +59,7 @@
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
+    --destructive-ink: 0 62.8% 65%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;

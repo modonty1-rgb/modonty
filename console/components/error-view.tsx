@@ -172,7 +172,7 @@ export function ErrorView({ error, retry, layout = "full" }: ErrorViewProps) {
         {/* Dev only: production hides the real message on purpose (Next serializes a
             generic one to avoid leaking server details to the browser). */}
         {process.env.NODE_ENV === "development" && (
-          <pre className="mt-4 overflow-x-auto rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-start font-mono text-xs text-destructive" dir="ltr">
+          <pre className="mt-4 overflow-x-auto rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-start font-mono text-xs text-[hsl(var(--destructive-ink))]" dir="ltr">
             {error.message}
           </pre>
         )}

@@ -413,7 +413,7 @@ function QuestionRow({
                   variant="outline"
                   onClick={onReject}
                   disabled={isWorking}
-                  className="gap-1.5 border-destructive text-destructive hover:bg-destructive/10"
+                  className="gap-1.5 border-destructive text-[hsl(var(--destructive-ink))] hover:bg-destructive/10"
                 >
                   <XCircle className="h-3.5 w-3.5" />
                   {isWorking ? q.rejectingQuestion : q.rejectQuestion}

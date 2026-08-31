@@ -24,12 +24,15 @@ export async function saveMySite(input: MySiteInput): Promise<Result> {
   const parsed = mySiteInputSchema.safeParse(input);
   if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? "القيم غير صحيحة" };
   const { headerTemplate, footerTemplate, primaryColor, subdomain } = parsed.data;
+  // `subdomain` غائب = لا يُكتب أصلاً؛ كتابته `null` على مونجو تصطدم بصفٍّ آخر بلا نطاق.
+  const look = { headerTemplate, footerTemplate, primaryColor };
+  const address = subdomain === undefined ? {} : { subdomain };
 
   try {
     await db.clientSite.upsert({
       where: { clientId },
-      create: { clientId, headerTemplate, footerTemplate, primaryColor, subdomain },
-      update: { headerTemplate, footerTemplate, primaryColor, subdomain },
+      create: { clientId, ...look, ...address },
+      update: { ...look, ...address },
     });
   } catch (e) {
     // P2002 on `subdomain`: someone else already owns that label.

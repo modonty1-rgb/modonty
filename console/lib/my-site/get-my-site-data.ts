@@ -58,7 +58,7 @@ export async function getMySiteData(clientId: string): Promise<MySiteData | null
   const pages = [
     "الرئيسية",
     servicesCount > 0 ? "خدماتنا" : null,
-    galleryImages > 0 ? "أعمالنا" : null,
+    galleryImages > 0 ? "ألبوم أعمالنا" : null,
     approvedReviews > 0 ? "آراء العملاء" : null,
     "من نحن",
     publishedArticles > 0 ? "المدونة" : null,
