@@ -1,5 +1,5 @@
 import type { Instrumentation } from "next";
-import { enrichError } from "@modonty/shared/lib/system-error/enrich";
+import { enrichError, isClientAbort } from "@modonty/shared/lib/system-error/enrich";
 
 export async function register() {}
 
@@ -17,6 +17,10 @@ export const onRequestError: Instrumentation.onRequestError = async (
   if (!secret) return;
 
   const message = (err as Error).message || "Unknown error";
+  // القارئ أغلق الاتصال — ليس عطلاً. React ترمي «Connection closed.» حين ينتهي بثّ الـRSC
+  // قبل اكتماله (ReactFlightClient.close، الخطأ ٤١٢)، وNext تبتلع نفس الصنف في pipe-readable.
+  // نطبّق سياستها هنا كي لا يرنّ تيليجرام على تصفّح طبيعي.
+  if (isClientAbort(message)) return;
   const renderType = (context as { renderType?: string }).renderType ?? null;
   const meta = enrichError(request.headers, message, renderType);
 

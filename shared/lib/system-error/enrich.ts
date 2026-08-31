@@ -54,6 +54,38 @@ export function classifyCategory(message: string, renderType?: string | null): "
   return "app";
 }
 
+/**
+ * The reader hung up — not a fault, and never worth an alert.
+ *
+ * «Connection closed.» is thrown by React itself, not by our code. `ReactFlightClient.close()`
+ * rejects every still-pending chunk when the RSC stream ends early:
+ *   `reportGlobalError(weakResponse, new Error('Connection closed.'))`
+ * and React's own `codes.json` maps it as error 412. It means the browser stopped reading before
+ * the stream finished — the visitor navigated away, backgrounded the tab, or a mobile connection
+ * dropped. The page itself is fine: measured 31 Aug 2026, the very article that produced 17 of
+ * these answered `HTTP 200` in 1.7s on three consecutive requests.
+ *
+ * Next.js already treats this class as noise inside its own pipeline. `pipe-readable.ts`:
+ *   `if (isAbortError(err)) return`  — «prevents noise from expected navigation cancellations»
+ * But that guard sits in Next's writer; this instance surfaces from React's Flight layer, so it
+ * escapes to `onRequestError` and reaches our log — and from there Telegram, at ~27/hour.
+ *
+ * So we apply Next's own policy at our sink: a hang-up is not an error. Everything else still
+ * logs, so a real failure on the same route is not hidden by this rule.
+ */
+const CLIENT_ABORT_SIGNATURES: RegExp[] = [
+  /^Connection closed\.?$/i,
+  /\bAbortError\b/,
+  /\bResponseAborted\b/,
+  /\bThe user aborted a request\b/i,
+  /\brequest aborted\b/i,
+];
+
+export function isClientAbort(message: string): boolean {
+  const m = (message || "").trim();
+  return CLIENT_ABORT_SIGNATURES.some((re) => re.test(m));
+}
+
 export interface ErrorEnrichment {
   category: "framework" | "app";
   device: string;
