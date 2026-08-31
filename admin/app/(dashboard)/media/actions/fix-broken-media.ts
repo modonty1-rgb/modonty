@@ -24,10 +24,13 @@ function roleForType(type: string): "LOGO" | "POST" | "HERO" {
   return "POST";
 }
 
-// A HEAD request is the cheapest way to learn whether the asset still exists.
+// A one-byte range GET, NOT a HEAD. Bunny answers HEAD with 404 for a file the edge does not
+// hold yet, even though it is intact at origin (measured 31 Aug 2026: HEAD 404 → range GET 206
+// → HEAD 200, same URL, same minute). This function REPLACES the row's url with a placeholder,
+// so a false 404 would blank a live image on the public site. One byte buys certainty.
 async function isBroken(url: string): Promise<boolean> {
   try {
-    const res = await fetch(url, { method: "HEAD", cache: "no-store" });
+    const res = await fetch(url, { headers: { range: "bytes=0-0" }, cache: "no-store" });
     return res.status === 404 || res.status === 410;
   } catch {
     // Network error ≠ confirmed missing — don't touch it.

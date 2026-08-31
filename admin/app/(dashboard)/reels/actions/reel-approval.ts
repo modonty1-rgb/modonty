@@ -21,15 +21,25 @@ const TITLE_HOLDERS = ["PENDING_APPROVAL", "APPROVED", "PUBLISHED"] as const;
 
 /**
  * Returns the first URL that is missing or does not answer, or null when all are there.
- * A `HEAD` is enough — the question is whether the CDN still holds the file, not its bytes.
  * A network failure counts as unreachable: publishing on the benefit of the doubt is what
  * put three dead reels in the feed.
+ *
+ * A one-byte range GET, NOT a `HEAD`. Bunny Stream answers `HEAD` with 404 for a rendition
+ * the edge does not hold yet — the file is intact at origin, the edge simply has no copy and
+ * a HEAD does not make it pull one. Measured 31 Aug 2026 on one URL, three calls in a row:
+ *   HEAD → 404 · GET Range 0-0 → 206 · HEAD → 200
+ * while Bunny's own API reported the video `status 4`, encode 100%, 150MB stored. A real reel
+ * was refused with «ارفعه من جديد» on the strength of that false 404. The range GET both
+ * answers the question and warms the edge, for one byte.
  */
 async function firstUnreachable(urls: (string | null)[]): Promise<string | null> {
   for (const url of urls) {
     if (!url?.trim()) return "الرابط فاضي";
     try {
-      const res = await fetch(url, { method: "HEAD", signal: AbortSignal.timeout(8000) });
+      const res = await fetch(url, {
+        headers: { range: "bytes=0-0" },
+        signal: AbortSignal.timeout(8000),
+      });
       if (!res.ok) return `${res.status}`;
     } catch {
       return "ما رد";

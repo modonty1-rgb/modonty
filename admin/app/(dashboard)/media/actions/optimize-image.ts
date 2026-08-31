@@ -58,7 +58,12 @@ export async function saveOptimizedImage(
     // Ask the CDN whether the re-encoded file actually serves before the row starts naming
     // it. The old asset gets deleted further down, so a row pointing at an address that
     // never answered would leave the image with no working URL at all.
-    const serves = await fetch(url, { method: "HEAD" }).then((r) => r.ok).catch(() => false);
+    // A one-byte range GET, NOT a HEAD: Bunny answers HEAD with 404 for a file its edge does
+    // not hold yet, and a file uploaded seconds ago is cold by definition — so a HEAD here
+    // would refuse the optimization of a perfectly good upload (measured 31 Aug 2026).
+    const serves = await fetch(url, { headers: { range: "bytes=0-0" } })
+      .then((r) => r.ok)
+      .catch(() => false);
     if (!serves) {
       return { success: false, error: "الصورة الجديدة ما تفتح على الرابط — ما غيّرنا شي." };
     }

@@ -27,7 +27,12 @@ export async function validateHeroImageUrl(url: string): Promise<ValidateHeroIma
   if (!/^https:\/\//i.test(trimmed))
     return { valid: false, error: "Image not correct (must be an https URL)" };
   try {
-    const res = await fetch(trimmed, { method: "HEAD", signal: AbortSignal.timeout(8000) });
+    // A one-byte range GET, NOT a HEAD: Bunny answers HEAD with 404 for a file its edge does
+    // not hold yet, so a valid image URL would be rejected here (measured 31 Aug 2026).
+    const res = await fetch(trimmed, {
+      headers: { range: "bytes=0-0" },
+      signal: AbortSignal.timeout(8000),
+    });
     if (!res.ok) return { valid: false, error: "Image not correct (URL did not return 200)" };
     const enhancedUrl = optimizeCloudinaryUrl(trimmed);
     return { valid: true, enhancedUrl };
