@@ -200,8 +200,16 @@ export function createHeadChecker(
       while (cursor < misses.length) {
         const url = misses[cursor++];
         fetched++;
-        const result = await probe(url, timeoutMs, retries);
-        resolvers.get(url)?.(result);
+        // كل وعدٍ سُجِّل أعلاه لا بدّ أن يُحلّ — وإلا انتظره `await cache.get(url)` إلى الأبد
+        // فتجمّد الفحص كلّه بلا رسالة ولا خطأ. `probe` اليوم لا يرمي (كل مساراته ملتقَطة)،
+        // لكن سطراً واحداً يُضاف داخلها غداً يكفي لصنع تعليقٍ صامت — وهذا أسوأ من عطلٍ يُعلن.
+        // فالحلّ في `finally`: يُحلّ الوعد بحكمٍ محافظ حتى لو انفجر الطَّرق.
+        let result: HeadResult = { url, verdict: "inconclusive", status: 0, attempts: 0, ok: false };
+        try {
+          result = await probe(url, timeoutMs, retries);
+        } finally {
+          resolvers.get(url)?.(result);
+        }
       }
     }
     await Promise.all(Array.from({ length: Math.min(concurrency, misses.length) }, worker));

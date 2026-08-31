@@ -4,7 +4,8 @@
  * This file documents how each client database field maps to MetaTags and JSON-LD properties.
  * Based on actual generation logic in:
  * - generate-client-seo.ts (MetaTags generation)
- * - generate-complete-organization-jsonld.ts (JSON-LD generation)
+ * - @modonty/shared/lib/seo/generate-organization-jsonld (JSON-LD generation)
+ *   كان يشير إلى shim في admin كان يُعيد التصدير منه — حُذف ٣٠ أغسطس ٢٠٢٦ بصفر مستورد.
  * 
  * This serves as the authoritative reference for field mappings, transformations, and SEO best practices.
  */

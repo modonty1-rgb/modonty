@@ -9,8 +9,13 @@ import {
   readBunnyBackupConfig,
   uploadCollection,
   uploadManifest,
+  listBunnyFolder,
+  foldersToPrune,
+  deleteBackupFolder,
+  RETENTION,
   SKIP_COLLECTIONS,
   type BackupManifest,
+  type BunnyBackupConfig,
 } from "@modonty/shared/lib/backup";
 
 /**
@@ -81,6 +86,56 @@ function riyadhTime(date: Date): string {
 
 function mb(bytes: number): string {
   return `${(bytes / 1048576).toFixed(1)} MB`;
+}
+
+/**
+ * Delete the backup folders that retention no longer claims — after tonight's copy is
+ * safely uploaded and its manifest written, never before.
+ *
+ * Four guards, because a scheduled delete that misbehaves destroys the very thing this job
+ * exists to protect:
+ *   1. It runs only on the success path, so a failed backup never shortens the archive.
+ *   2. Today's folder is excluded by name, whatever the selection says.
+ *   3. A folder with no `_manifest.json` is left alone — an incomplete upload is not a
+ *      backup, and deleting around it would trust a copy that was never finished.
+ *   4. At most MAX_PRUNE_PER_RUN folders go per night. If a bug ever widened the selection,
+ *      the damage is bounded and visible in the Telegram message long before it compounds.
+ *
+ * Never throws: the backup already succeeded, and a cleanup problem must not turn a good
+ * night into a reported failure.
+ */
+const MAX_PRUNE_PER_RUN = 3;
+
+async function pruneOldBackups(
+  config: BunnyBackupConfig,
+  dbName: string,
+  todayFolder: string,
+): Promise<{ removed: string[]; files: number; skipped: string[] } | { error: string }> {
+  try {
+    const prefix = `daily/${dbName}`;
+    const entries = await listBunnyFolder(config, prefix);
+    const names = entries.map((e) => e.ObjectName);
+    const doomed = foldersToPrune(names)
+      .filter((f) => f !== todayFolder)
+      .slice(0, MAX_PRUNE_PER_RUN);
+
+    const removed: string[] = [];
+    const skipped: string[] = [];
+    let files = 0;
+    for (const folder of doomed) {
+      const inside = await listBunnyFolder(config, `${prefix}/${folder}`);
+      if (!inside.some((f) => f.ObjectName === "_manifest.json")) {
+        skipped.push(folder);
+        continue;
+      }
+      const res = await deleteBackupFolder(config, `${prefix}/${folder}`);
+      if (res.failed === 0) removed.push(folder);
+      files += res.deleted;
+    }
+    return { removed, files, skipped };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Unknown error" };
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -191,6 +246,17 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Cleanup runs only here — after the upload AND the manifest, so the archive is never
+    // shortened on a night that failed to add to it.
+    const prune = await pruneOldBackups(config, dbName, folder.split("/").pop() as string);
+    const pruneLine =
+      "error" in prune
+        ? `🧹 التقليم تعثّر: ${prune.error}`
+        : prune.removed.length === 0
+          ? `🧹 لا شيء للتقليم (الاحتفاظ: ${RETENTION.daily} يومية · ${RETENTION.weekly} أسبوعية · ${RETENTION.monthly} شهرية)`
+          : `🧹 حُذفت ${prune.removed.length} نسخة قديمة (${prune.files} ملفاً): ${prune.removed.join(" · ")}` +
+            (prune.skipped.length ? ` · تُركت ${prune.skipped.length} بلا مانيفست` : "");
+
     // Real numbers, not a greeting — a message that changes daily still gets read after
     // a month, and its absence is the signal that something stopped.
     await notifyTelegram(
@@ -200,6 +266,7 @@ export async function POST(request: NextRequest) {
         `📦 ${collections.length} مجموعة · ${totalDocuments.toLocaleString("en-US")} وثيقة`,
         `💾 ${mb(totalBytes)} · ⏱️ ${Math.round(durationMs / 1000)} ثانية`,
         `📁 <code>${folder}</code>`,
+        pruneLine,
         `🕐 ${riyadhTime(finishedAt)}`,
       ].join("\n"),
     );
@@ -212,6 +279,7 @@ export async function POST(request: NextRequest) {
       documents: totalDocuments,
       sizeBytes: totalBytes,
       durationMs,
+      prune,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";

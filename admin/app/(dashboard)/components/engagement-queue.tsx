@@ -14,7 +14,8 @@ import { formatDistanceToNow } from "date-fns";
 interface EngagementQueueProps {
   pendingComments: number;
   newContactMessages: number;
-  pendingFAQs: number;
+  pendingFAQsAudience: number;
+  pendingFAQsTeam: number;
   views: { today: number; yesterday: number; thisWeek: number; trend: number };
   recentPendingComments: Array<{
     id: string;
@@ -40,7 +41,8 @@ interface EngagementQueueProps {
 export function EngagementQueue({
   pendingComments,
   newContactMessages,
-  pendingFAQs,
+  pendingFAQsAudience,
+  pendingFAQsTeam,
   views,
   recentPendingComments,
   recentContactMessages,
@@ -141,21 +143,32 @@ export function EngagementQueue({
         </CardContent>
       </Card>
 
-      {/* ── Pending FAQs ── */}
-      <Card className={`border-0 ring-1 ${pendingFAQs > 0 ? "ring-teal-500/30 bg-gradient-to-br from-teal-500/10 to-teal-500/5" : "ring-border/50 bg-muted/20"}`}>
+      {/*
+        ── Reader questions ──
+        سؤال القارئ وسؤال الفريق كانا عدّاداً واحداً، فقال «643 ينتظر ردّك» بينما القرّاء
+        اثنان (مقيس ٢٩ أغسطس: manual 641 · user 2). رقمٌ بهذا الحجم يُتجاهَل كل يوم،
+        فيضيع فيه السؤال الحقيقي. هذي البطاقة للقارئ وحده، والفريق في سطر هادئ تحتها.
+      */}
+      <Card className={`border-0 ring-1 ${pendingFAQsAudience > 0 ? "ring-teal-500/30 bg-gradient-to-br from-teal-500/10 to-teal-500/5" : "ring-border/50 bg-muted/20"}`}>
         <CardContent className="pt-4 pb-3 px-4 space-y-2">
           <div className="flex items-center justify-between">
-            <span className={`text-xs font-medium ${pendingFAQs > 0 ? "text-teal-600/80" : "text-muted-foreground"}`}>
-              FAQ Questions
+            <span className={`text-xs font-medium ${pendingFAQsAudience > 0 ? "text-teal-600/80" : "text-muted-foreground"}`}>
+              أسئلة القرّاء
             </span>
-            <div className={`h-7 w-7 rounded-lg flex items-center justify-center ${pendingFAQs > 0 ? "bg-teal-500/15" : "bg-muted"}`}>
-              <HelpCircle className={`h-4 w-4 ${pendingFAQs > 0 ? "text-teal-600" : "text-muted-foreground"}`} />
+            <div className={`h-7 w-7 rounded-lg flex items-center justify-center ${pendingFAQsAudience > 0 ? "bg-teal-500/15" : "bg-muted"}`}>
+              <HelpCircle className={`h-4 w-4 ${pendingFAQsAudience > 0 ? "text-teal-600" : "text-muted-foreground"}`} />
             </div>
           </div>
-          <div className={`text-3xl font-bold tabular-nums leading-none ${pendingFAQs > 0 ? "text-teal-700 dark:text-teal-400" : "text-muted-foreground"}`}>
-            {pendingFAQs}
+          <div className={`text-3xl font-bold tabular-nums leading-none ${pendingFAQsAudience > 0 ? "text-teal-700 dark:text-teal-400" : "text-muted-foreground"}`}>
+            {pendingFAQsAudience}
           </div>
-          {pendingFAQs > 0 && recentPendingFAQs.length > 0 ? (
+          {pendingFAQsTeam > 0 && (
+            <div className="text-[10px] text-muted-foreground">
+              ومعها <b className="text-foreground/70 tabular-nums">{pendingFAQsTeam}</b> سؤالاً كتبها الفريق —
+              محتوى ينتظر النشر، لا قارئاً ينتظر ردّاً.
+            </div>
+          )}
+          {pendingFAQsAudience > 0 && recentPendingFAQs.length > 0 ? (
             <div className="space-y-1">
               {recentPendingFAQs.slice(0, 2).map((f) => (
                 <div key={f.id} className="text-[10px] text-muted-foreground line-clamp-1">
@@ -164,11 +177,11 @@ export function EngagementQueue({
                 </div>
               ))}
               <Link href="/modonty/faq" className="flex items-center gap-0.5 text-[10px] text-teal-600 font-medium hover:underline mt-1">
-                Answer questions <ArrowRight className="h-3 w-3" />
+                الردّ على الأسئلة <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
           ) : (
-            <span className="text-[10px] text-muted-foreground">No pending questions</span>
+            <span className="text-[10px] text-muted-foreground">لا سؤال من قارئ ينتظر</span>
           )}
         </CardContent>
       </Card>

@@ -41,11 +41,4 @@ export function getSearchConsoleClient() {
   });
 }
 
-export function getIndexingClient() {
-  return google.indexing({
-    version: "v3",
-    auth: buildJwt(["https://www.googleapis.com/auth/indexing"]),
-  });
-}
-
 export const GSC_PROPERTY = process.env.GSC_MODONTY_PROPERTY ?? "sc-domain:modonty.com";

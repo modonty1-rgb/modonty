@@ -617,7 +617,8 @@ export async function getEngagementQueue() {
     const [
       pendingComments,
       newContactMessages,
-      pendingFAQs,
+      pendingFAQsAudience,
+      pendingFAQsTeam,
       viewsToday,
       viewsYesterday,
       viewsThisWeek,
@@ -628,7 +629,11 @@ export async function getEngagementQueue() {
       // counts
       db.comment.count({ where: { status: "PENDING" } }),
       db.contactMessage.count({ where: { status: "new" } }),
-      db.articleFAQ.count({ where: { status: "PENDING" } }),
+      // سؤال القارئ وسؤال الفريق صنفان لا صنف. العدّ الواحد كان يخلطهما فيقول «643
+      // ينتظر ردّك» بينما القرّاء اثنان — رقمٌ يُتجاهَل لأنه دائماً هائل، فيضيع فيه
+      // السؤال الحقيقي. مقيس على modonty_dev ٢٩ أغسطس: manual 641 · user 2.
+      db.articleFAQ.count({ where: { status: "PENDING", source: { in: ["user", "chatbot"] } } }),
+      db.articleFAQ.count({ where: { status: "PENDING", source: { notIn: ["user", "chatbot"] } } }),
       db.articleView.count({ where: { createdAt: { gte: todayStart } } }),
       db.articleView.count({ where: { createdAt: { gte: yesterday, lt: todayStart } } }),
       db.articleView.count({ where: { createdAt: { gte: weekStart } } }),
@@ -657,7 +662,8 @@ export async function getEngagementQueue() {
         },
       }),
       db.articleFAQ.findMany({
-        where: { status: "PENDING" },
+        // المعاينة تحت عدّاد الجمهور، فتتبعه: لا تعرض سؤالاً كتبه الفريق.
+        where: { status: "PENDING", source: { in: ["user", "chatbot"] } },
         orderBy: { createdAt: "desc" },
         take: 3,
         select: {
@@ -692,7 +698,8 @@ export async function getEngagementQueue() {
     return {
       pendingComments,
       newContactMessages,
-      pendingFAQs,
+      pendingFAQsAudience,
+      pendingFAQsTeam,
       views: { today: viewsToday, yesterday: viewsYesterday, thisWeek: viewsThisWeek, trend: viewsTrend },
       recentPendingComments,
       recentContactMessages,
@@ -703,7 +710,8 @@ export async function getEngagementQueue() {
     return {
       pendingComments: 0,
       newContactMessages: 0,
-      pendingFAQs: 0,
+      pendingFAQsAudience: 0,
+      pendingFAQsTeam: 0,
       views: { today: 0, yesterday: 0, thisWeek: 0, trend: 0 },
       recentPendingComments: [],
       recentContactMessages: [],
