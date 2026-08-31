@@ -121,10 +121,11 @@ export function ConsoleTourClient() {
     }, 600);
   }, []);
 
+  // pt-28 on the ROOT clears both fixed bars (back bar 44px + tools bar 54px).
   return (
-    <div className="min-h-dvh bg-background">
-      {/* Fixed top bar — sales-pitch player + start-tour button always reachable */}
-      <div className="fixed top-0 inset-x-0 z-40 backdrop-blur-md bg-background/90 border-b border-border shadow-sm">
+    <div className="min-h-dvh bg-background pt-28">
+      {/* Tools bar — sits under the layout's back bar (h-11), never on top of it */}
+      <div className="fixed top-11 inset-x-0 z-40 backdrop-blur-md bg-background/90 border-b border-border shadow-sm">
         <div className="max-w-[1100px] mx-auto px-4 md:px-6 py-2.5 flex items-center justify-between gap-3">
           <Link
             href="/help"
@@ -151,7 +152,7 @@ export function ConsoleTourClient() {
         </div>
       </div>
 
-      <div className="max-w-[1100px] mx-auto px-4 md:px-6 pt-14 py-10 md:py-12">
+      <div className="max-w-[1100px] mx-auto px-4 md:px-6 py-10 md:py-12">
         {/* Breadcrumb */}
         <nav className="mb-6 text-sm">
           <Link href="/help" className="text-muted-foreground hover:text-foreground">

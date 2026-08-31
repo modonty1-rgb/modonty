@@ -159,9 +159,16 @@ export function transformArticleToFormData(
         })
       ) || [],
 
-    // Related Articles
+    // Related Articles — read `relatedFrom` (rows where THIS article is the source), which is
+    // exactly what the editor writes back on save.
+    //
+    // It used to read `relatedTo`, the INCOMING side. An article nobody links to has none, so
+    // the picker reopened empty no matter what the writer had saved — and because the save
+    // path deletes every outgoing row before recreating the submitted list, the next save on
+    // that article silently ERASED the related articles instead of keeping them. Proven live
+    // 2026-08-13: saved 3, reopened at "0 / 5", saved again, 2 were gone.
     relatedArticles:
-      article.relatedTo?.map((rel: { relatedId: string; relationshipType: string | null }) => ({
+      article.relatedFrom?.map((rel: { relatedId: string; relationshipType: string | null }) => ({
         relatedId: rel.relatedId,
         relationshipType: (rel.relationshipType as "related" | "similar" | "recommended") || undefined,
       })) || [],

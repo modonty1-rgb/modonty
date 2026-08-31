@@ -133,7 +133,7 @@ export default function SeoVisualPage() {
                   <span className="text-xs font-bold text-violet-400">عنوان جوجل (SEO Title) — العنوان الأزرق الكبير</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed ps-7">
-                  أول شيء يقرأه الزائر في نتيجة البحث. يختلف عن عنوان المقال داخل الموقع — هذا مكتوب خصيصاً لجوجل. 50-60 حرف مثالي، الكلمة المفتاحية في البداية.
+                  أول شيء يقرأه الزائر في نتيجة البحث. يختلف عن عنوان المقال داخل الموقع — هذا مكتوب خصيصاً لجوجل. اكتب حتى 51 حرفاً (النظام يضيف اسم المنصّة فيكتمل 60)، والكلمة المفتاحية في البداية.
                 </p>
                 <div className="mt-2 ps-7 flex items-center gap-1.5 flex-wrap">
                   <span className="text-[11px] text-muted-foreground">📍 المسار:</span>
@@ -519,7 +519,7 @@ export default function SeoVisualPage() {
               {(
                 [
                   { element: "الصورة الكبيرة", field: "تعديل المقال › Media › الصورة الرئيسية (1200×630px)", note: "نفس الصورة تظهر في كل المنصات", dot: "bg-sky-500" },
-                  { element: "العنوان داخل البطاقة", field: "تعديل المقال › SEO › SEO Title", note: "50-60 حرف · يُقطَع إذا كان أطول", dot: "bg-violet-500" },
+                  { element: "العنوان داخل البطاقة", field: "تعديل المقال › SEO › SEO Title", note: "حتى 51 حرفاً · يُقطَع إذا كان أطول", dot: "bg-violet-500" },
                   { element: "الوصف تحت العنوان", field: "تعديل المقال › SEO › SEO Description", note: "140-160 حرف · بعض المنصات تُقصّره", dot: "bg-amber-500" },
                   { element: "اسم الدومين", field: "تلقائي — من رابط الموقع", note: "ما تحتاج تكتبه يدوياً", dot: "bg-emerald-500" },
                   { element: "اسم الموقع", field: "الإعدادات › اسم الموقع", note: "يظهر في LinkedIn + تسلسل المسار", dot: "bg-pink-500" },

@@ -25,7 +25,7 @@ const onboardingStages = [
     title: "الأساسيات — افهم Modonty قبل أي شي",
     summary: "هدف هذي المرحلة: تستوعب الـ Big Idea + التعريف + القواعد الذهبية. ما تنتقل قبل ما تحفظهم.",
     items: [
-      "اقرأ عن Modonty (/guidelines/about)",
+      "اقرأ دليل الفريق كاملاً (/guidelines)",
       "احفظ الـ Big Idea: «حضور لا وعود»",
       "اقرأ القواعد الذهبية الـ 22 (/guidelines/golden-rules)",
       "احفظ التعريف بالـ 8 ثواني + الـ Hero Headline",
@@ -71,7 +71,7 @@ const roles = [
       "الخطوط: Tajawal (عربي) + Montserrat (Latin)",
       "اقرأ /guidelines/brand قبل أي تصميم",
     ],
-    cta: { href: "/guidelines/brand", label: "دليل البراند" },
+    cta: { href: "/guidelines#identity", label: "الهوية والصوت" },
   },
   {
     icon: PenLine,
@@ -132,7 +132,7 @@ const universalRules = [
 ] as const;
 
 const onboardingChecklist = [
-  "قرأت /guidelines/about (التصور الكامل)",
+  "قرأت دليل الفريق كاملاً (/guidelines)",
   "حفظت التعريف بالـ 8 ثواني",
   "حفظت الـ Big Idea «حضور لا وعود»",
   "قرأت القواعد الذهبية الـ 22",

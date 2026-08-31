@@ -28,7 +28,7 @@ export function TocSidebarV2() {
   return (
     <aside
       data-master="toc"
-      className="md:fixed md:top-4 md:bottom-4 md:start-4 md:w-[260px] lg:w-[280px] md:overflow-y-auto bg-card border border-border rounded-2xl p-4 lg:p-5 z-20 shadow-md"
+      className="md:fixed md:top-28 md:bottom-4 md:start-4 md:w-[260px] lg:w-[280px] md:overflow-y-auto bg-card border border-border rounded-2xl p-4 lg:p-5 z-20 shadow-md"
     >
       <div className="flex items-center gap-2 mb-1">
         <span className="w-2.5 h-2.5 rounded-full bg-primary" />

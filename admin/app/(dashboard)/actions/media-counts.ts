@@ -126,6 +126,7 @@ function usedAs(m: RawMedia): string[] {
 function score(m: RawMedia): number {
   return computeMediaSeoScore({
     filename: m.filename,
+    servedUrl: m.bunnyUrl ?? m.url,
     altText: m.altText,
     description: m.description,
     width: m.width,

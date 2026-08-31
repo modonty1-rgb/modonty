@@ -5,8 +5,9 @@ import { motion } from "framer-motion";
 import { BookOpen, MousePointerClick, ArrowLeft, Clock, Sparkles } from "lucide-react";
 
 export function HelpLanding() {
+  // pt-11 clears the layout's fixed back bar — this screen has no tools bar of its own.
   return (
-    <div className="min-h-dvh bg-background">
+    <div className="min-h-dvh bg-background pt-11">
       <div className="max-w-[1100px] mx-auto px-4 md:px-6 py-10 md:py-16">
         {/* Hero */}
         <motion.section
