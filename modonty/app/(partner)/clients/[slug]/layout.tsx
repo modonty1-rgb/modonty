@@ -1,7 +1,7 @@
 import { ReactNode, Suspense } from "react";
 import dynamicImport from "next/dynamic";
 import { notFound } from "next/navigation";
-import { hexToHslTriplet } from "@modonty/shared/lib/partner-site";
+import { hexToHslTriplet, readableInkHsl } from "@modonty/shared/lib/partner-site";
 import { getHeaderTemplate } from "@modonty/shared/components/partner-site/free/header";
 import { getFooterTemplate } from "@modonty/shared/components/partner-site/free/footer";
 import { MobileCtaBar } from "@/components/shared/mobile-cta-bar/MobileCtaBar";
@@ -99,6 +99,20 @@ async function PartnerChrome({ params, slot }: PartnerChromeProps) {
   // header, his footer — never the platform bar. Same value in dark mode (every palette
   // colour keeps ≥ 4.5:1 under white button text as-is; see partner-site-palette.ts).
   const primaryHsl = header.primaryColor ? hexToHslTriplet(header.primaryColor) : null;
+  /**
+   * حبر الشريك: لونه حين يُكتب نصّاً لا حين يُملأ به سطح.
+   * مقيس ٣١ أغسطس: `#1D4ED8` نصّاً على أرضية الداكن `#151519` = ٢٫٧٣:١، وWCAG 1.4.3
+   * يفرض ٤٫٥:١ — ستّة عناصر في صفحة تواصل وحدها سقطت. اللوحة كانت مقيسة للحالة
+   * المعكوسة (أبيض فوق تعبئة)، فالنصّ احتاج متغيّراً خاصّاً به لكل سمة.
+   * الأرضيّتان من `globals.css`: الفاتح `--background: 45 8% 95%` والداكن `245 8% 9%`.
+   */
+  // الهدف ٤٫٦ لا ٤٫٥ بالضبط: تقريب HSL→RGB في المتصفّح يخسر جزءاً من المئة، فالقيمة
+  // المحسوبة على الحدّ تماماً تُقاس ٤٫٤٩ حيّاً — هامشٌ صغير يجعل الفحص يمرّ فعلاً لا نظرياً.
+  // المرجع أسوأ سطح لا أرضية الصفحة: النصّ يقع على بطاقات أفتح في الداكن (`#1f1f23`
+  // و`bg-muted` ‏`#26262c`) وأغمق في الفاتح — فحسابٌ على الأرضية وحدها ينجح فيها ويسقط
+  // على البطاقة (مقيس: ٤٫٢٤ على بطاقة الحجز بينما الأرضية ٤٫٦).
+  const inkLight = header.primaryColor ? readableInkHsl(header.primaryColor, "#e8e6e1", 4.6) : null;
+  const inkDark = header.primaryColor ? readableInkHsl(header.primaryColor, "#26262c", 4.6) : null;
 
   return (
     <>
@@ -107,7 +121,10 @@ async function PartnerChrome({ params, slot }: PartnerChromeProps) {
         dangerouslySetInnerHTML={{ __html: jsonLdHtml(generateBreadcrumbStructuredData(breadcrumbTrail)) }}
       />
       {primaryHsl && (
-        <style>{`#main-content,[data-partner-theme]{--primary:${primaryHsl};--ring:${primaryHsl}}`}</style>
+        <style>{
+          `#main-content,[data-partner-theme]{--primary:${primaryHsl};--ring:${primaryHsl};--primary-ink:${inkLight ?? primaryHsl}}` +
+          `.dark #main-content,.dark [data-partner-theme]{--primary-ink:${inkDark ?? primaryHsl}}`
+        }</style>
       )}
       <GTMClientTracker
         clientContext={{ client_id: site.id, client_slug: site.slug, client_name: site.name }}

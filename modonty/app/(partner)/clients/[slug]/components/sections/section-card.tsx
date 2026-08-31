@@ -54,7 +54,7 @@ export function SectionCard({
               "grid h-[31px] w-[31px] shrink-0 place-items-center rounded-[9px] text-[17px]",
               feature
                 ? "bg-gradient-to-br from-primary to-accent text-white"
-                : "bg-primary/[0.08] text-primary"
+                : "bg-primary/[0.08] text-[hsl(var(--primary-ink,var(--primary)))]"
             )}
             aria-hidden
           >
@@ -65,7 +65,7 @@ export function SectionCard({
         {moreHref && (
           <a
             href={moreHref}
-            className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-bold text-[hsl(var(--primary-ink,var(--primary)))] hover:underline"
           >
             {moreLabel ?? "الكل"} ›
           </a>

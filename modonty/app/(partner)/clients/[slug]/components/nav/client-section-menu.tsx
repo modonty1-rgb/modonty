@@ -124,7 +124,7 @@ export function ClientSectionMenu({ items }: ClientSectionMenuProps) {
                 "whitespace-nowrap rounded-md px-3 py-2 text-[13px] font-bold transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 isActive
-                  ? "bg-primary/[0.08] text-primary"
+                  ? "bg-primary/[0.08] text-[hsl(var(--primary-ink,var(--primary)))]"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
@@ -147,7 +147,7 @@ export function ClientSectionMenu({ items }: ClientSectionMenuProps) {
               "ms-auto inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-2 text-[13px] font-bold transition-colors",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               restActive || menuOpen
-                ? "bg-primary/[0.08] text-primary"
+                ? "bg-primary/[0.08] text-[hsl(var(--primary-ink,var(--primary)))]"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
             )}
           >
@@ -173,7 +173,7 @@ export function ClientSectionMenu({ items }: ClientSectionMenuProps) {
                 className={cn(
                   "flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-start text-[13px] font-bold transition-colors",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  isActive ? "bg-primary/[0.08] text-primary" : "text-foreground hover:bg-muted"
+                  isActive ? "bg-primary/[0.08] text-[hsl(var(--primary-ink,var(--primary)))]" : "text-foreground hover:bg-muted"
                 )}
               >
                 {item.icon && (

@@ -50,7 +50,7 @@ export function ClientResultsSection({ achievements }: Props) {
                     : "flex flex-1 flex-col items-center justify-center p-5 text-center"
                 }
               >
-                <b className="block text-[28px] font-black leading-none text-primary">{a.value}</b>
+                <b className="block text-[28px] font-black leading-none text-[hsl(var(--primary-ink,var(--primary)))]">{a.value}</b>
                 <div className="mt-2 text-sm font-bold text-foreground">{a.label}</div>
                 {description && (
                   <p className="mt-2 text-[12.5px] leading-relaxed text-muted-foreground">{description}</p>

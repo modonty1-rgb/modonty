@@ -35,7 +35,7 @@ export function ContactBlock({ site }: ContactBlockProps) {
             <p className="flex items-center gap-2 text-sm text-muted-foreground"><IconMapPin className="h-4 w-4" aria-hidden /> العنوان</p>
             <p className="mt-2 text-lg font-bold leading-snug text-foreground">{address}</p>
             {mapsHref ? (
-              <a href={mapsHref} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block text-sm text-primary hover:underline underline-offset-4">
+              <a href={mapsHref} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block text-sm text-[hsl(var(--primary-ink,var(--primary)))] hover:underline underline-offset-4">
                 افتح في خرائط قوقل ›
               </a>
             ) : null}

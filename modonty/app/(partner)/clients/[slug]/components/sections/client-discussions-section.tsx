@@ -59,7 +59,7 @@ export function ClientDiscussionsSection({ comments }: Props) {
               {c.article && (
                 <Link
                   href={`/articles/${c.article.slug}`}
-                  className="text-[10.5px] font-bold text-primary hover:underline"
+                  className="text-[10.5px] font-bold text-[hsl(var(--primary-ink,var(--primary)))] hover:underline"
                 >
                   على مقال: {c.article.title} ›
                 </Link>

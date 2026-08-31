@@ -72,7 +72,7 @@ export function ClientBottomBar({
         : null;
 
   const col =
-    "flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 text-[12px] font-medium text-muted-foreground transition-colors hover:text-primary";
+    "flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 text-[12px] font-medium text-muted-foreground transition-colors hover:text-[hsl(var(--primary-ink,var(--primary)))]";
   const chipClass =
     "group absolute inset-x-0 bottom-1.5 mx-auto flex w-[72px] flex-col items-center gap-0.5";
 
@@ -184,7 +184,7 @@ export function ClientBottomBar({
             disabled={busy}
             aria-pressed={following}
             aria-label="متابعة"
-            className={cn(col, following && "text-primary")}
+            className={cn(col, following && "text-[hsl(var(--primary-ink,var(--primary)))]")}
           >
             {following ? <IconCheck className="size-6" /> : <IconUsers className="size-6" />}
             <span>{following ? "متابَع" : "متابعة"}</span>
@@ -233,7 +233,7 @@ export function ClientBottomBar({
             disabled={favBusy}
             aria-pressed={favorited}
             aria-label="حفظ في المفضلة"
-            className={cn(col, favorited && "text-primary")}
+            className={cn(col, favorited && "text-[hsl(var(--primary-ink,var(--primary)))]")}
           >
             <IconSaved className={cn("size-6", favorited && "fill-current")} />
             <span>{favorited ? "محفوظ" : "حفظ"}</span>

@@ -213,7 +213,7 @@ export function ClientHeroV2({
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={link.platform.name}
-                      className="grid h-[38px] w-[38px] place-items-center rounded-[9px] border border-border bg-card text-muted-foreground transition-colors hover:border-primary hover:text-primary [&>svg]:h-[18px] [&>svg]:w-[18px]"
+                      className="grid h-[38px] w-[38px] place-items-center rounded-[9px] border border-border bg-card text-muted-foreground transition-colors hover:border-primary hover:text-[hsl(var(--primary-ink,var(--primary)))] [&>svg]:h-[18px] [&>svg]:w-[18px]"
                     >
                       <span aria-hidden="true">{link.platform.icon}</span>
                     </a>

@@ -9,10 +9,12 @@ export function buildSiteLinks(site: PartnerSite): { href: string; label: string
   const base = `/clients/${encodeURIComponent(site.slug)}`;
   const items = [{ href: base, label: "الرئيسية" }];
   if (site.services.length > 0) items.push({ href: `${base}/services`, label: "خدماتنا" });
-  if (site._count.media > 0) items.push({ href: `${base}/photos`, label: "أعمالنا" });
+  if (site._count.media > 0) items.push({ href: `${base}/photos`, label: "ألبوم أعمالنا" });
   if (site._count.reviews > 0) items.push({ href: `${base}/reviews`, label: "آراء العملاء" });
   items.push({ href: `${base}/about`, label: "من نحن" });
-  if (site._count.articles > 0) items.push({ href: `${base}/articles`, label: "المدونة" });
+  // «مقالاتي» لا «المدونة» (خالد ٣٠ أغسطس): «المدونة» اسم صنف، والصفّ كلّه يتكلّم
+  // بضمير صاحب النشاط — خدماتنا · أعمالنا · من نحن.
+  if (site._count.articles > 0) items.push({ href: `${base}/articles`, label: "مقالاتي" });
   if (site._count.clientFaqs > 0) items.push({ href: `${base}/faq`, label: "الأسئلة الشائعة" });
   items.push({ href: `${base}/contact`, label: "تواصل معنا" });
   return items;

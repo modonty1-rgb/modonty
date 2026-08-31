@@ -144,7 +144,7 @@ export function ClientContactSheet({
                   clientId={clientId}
                   className={`${row} hover:bg-muted`}
                 >
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/[0.08] text-primary">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/[0.08] text-[hsl(var(--primary-ink,var(--primary)))]">
                     <IconPhone className="h-[18px] w-[18px]" />
                   </span>
                   <span className="min-w-0 flex-1">

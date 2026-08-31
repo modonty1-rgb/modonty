@@ -32,7 +32,7 @@ interface ClientAboutSectionProps {
 function LegalRow({ icon, label, value }: { icon: string; label: string; value: string }) {
   return (
     <div className="flex gap-2.5">
-      <span className="mt-0.5 text-primary" aria-hidden>
+      <span className="mt-0.5 text-[hsl(var(--primary-ink,var(--primary)))]" aria-hidden>
         {icon}
       </span>
       <div>

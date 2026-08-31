@@ -145,7 +145,7 @@ export function BookingForm({
           firstTouch();
           setShowDetails((v) => !v);
         }}
-        className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-primary/40 bg-primary/[0.03] py-2.5 text-sm font-semibold text-primary"
+        className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-primary/40 bg-primary/[0.03] py-2.5 text-sm font-semibold text-[hsl(var(--primary-ink,var(--primary)))]"
       >
         {showDetails ? <IconRemove className="h-4 w-4" /> : <IconAdd className="h-4 w-4" />}
         {showDetails ? "إخفاء التفاصيل" : "أضف تفاصيل (اختياري)"}
@@ -187,8 +187,8 @@ export function BookingForm({
         <span aria-hidden>ℹ️</span>
         <span>
           بمتابعتك، أنت توافق على{" "}
-          <Link href="/terms" className="font-semibold text-primary underline">الشروط</Link> و
-          <Link href="/legal/privacy-policy" className="font-semibold text-primary underline">الخصوصية</Link> —
+          <Link href="/terms" className="font-semibold text-[hsl(var(--primary-ink,var(--primary)))] underline">الشروط</Link> و
+          <Link href="/legal/privacy-policy" className="font-semibold text-[hsl(var(--primary-ink,var(--primary)))] underline">الخصوصية</Link> —
           مدوّنتي منصّة تعريفية، لسنا مقدّم الخدمة.
         </span>
       </p>

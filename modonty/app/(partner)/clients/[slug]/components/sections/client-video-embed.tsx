@@ -102,7 +102,7 @@ export function ClientVideoEmbed({ url, poster, label }: ClientVideoEmbedProps) 
           className="object-cover"
         />
       )}
-      <span className="relative grid h-14 w-14 place-items-center rounded-full bg-white/95 text-primary shadow-[0_10px_26px_-8px_rgba(0,0,0,0.4)] transition-transform group-hover:scale-110">
+      <span className="relative grid h-14 w-14 place-items-center rounded-full bg-white/95 text-[hsl(var(--primary-ink,var(--primary)))] shadow-[0_10px_26px_-8px_rgba(0,0,0,0.4)] transition-transform group-hover:scale-110">
         <IconPlay className="h-6 w-6 ms-0.5 fill-current" />
       </span>
       {label && (

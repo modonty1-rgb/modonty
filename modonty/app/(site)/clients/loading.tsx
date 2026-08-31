@@ -1,27 +1,46 @@
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
 
-/** Same three columns, same widths, same card heights as the real page — nothing moves when it lands. */
+/**
+ * The partners skeleton — drawn through the SAME shell the page uses.
+ *
+ * This one was already the closest of the three: right widths, right breakpoints. It still
+ * hand-copied the container and the flex row, and that copy had gone stale in the small
+ * places the eye does not catch — no `max-lg:py-1.5` on the container, no `max-lg:gap-4`
+ * between the stacked columns, and `space-y-4` in the centre where the shell now says
+ * `space-y-3 sm:space-y-4`. Each is a few pixels; together they are a visible settle on a
+ * phone, and they were guaranteed to drift again on the next shell change.
+ *
+ * Taking `ThreeColumnLayout` ends that: the copy no longer exists. Only the rails' own
+ * widths and breakpoints stay here, verbatim from `RightSidebar`/`LeftSidebar`.
+ */
+
+/** Partners rail — appears only from 1240px up, exactly like the real one. */
+const RIGHT_RAIL = "hidden w-[300px] shrink-0 self-start space-y-4 min-[1240px]:block";
+/** Account rail — from `lg` up. */
+const LEFT_RAIL = "hidden w-[300px] shrink-0 self-start space-y-4 lg:block";
+
 export default function ClientsLoading() {
   return (
     <>
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "الشركاء" },
+          { label: "العملاء" },
         ]}
       />
-      <div className="container mx-auto max-w-[1128px] px-3 py-3 sm:px-4 sm:py-6">
-        <div className="flex flex-col items-start gap-6 lg:flex-row lg:justify-center min-[1240px]:gap-4 min-[1296px]:gap-6">
-          {/* Partners rail */}
-          <div className="hidden w-[300px] shrink-0 space-y-4 min-[1240px]:block" aria-hidden>
+      <ThreeColumnLayout
+        right={
+          <div className={RIGHT_RAIL} aria-hidden>
             <Skeleton className="h-[190px] w-full rounded-lg" />
             <Skeleton className="h-[280px] w-full rounded-lg" />
             <Skeleton className="h-[68px] w-full rounded-lg" />
             <Skeleton className="h-[68px] w-full rounded-lg" />
           </div>
-
-          <div className="mx-auto w-full space-y-4 pb-20 md:max-w-[600px] lg:pb-0 lg:mx-0 lg:flex-1 min-[1240px]:max-w-[560px] min-[1296px]:max-w-[600px]">
+        }
+        center={
+          <>
             <Skeleton className="h-[68px] w-full rounded-lg" />
             <div className="flex items-baseline justify-between">
               <Skeleton className="h-5 w-28" />
@@ -30,17 +49,17 @@ export default function ClientsLoading() {
             {Array.from({ length: 4 }).map((_, index) => (
               <Skeleton key={index} className="h-[188px] w-full rounded-lg" />
             ))}
-          </div>
-
-          {/* Account rail */}
-          <div className="hidden w-[300px] shrink-0 space-y-4 lg:block" aria-hidden>
+          </>
+        }
+        left={
+          <div className={LEFT_RAIL} aria-hidden>
             <Skeleton className="h-[190px] w-full rounded-lg" />
             <Skeleton className="h-[68px] w-full rounded-lg" />
             <Skeleton className="h-[68px] w-full rounded-lg" />
             <Skeleton className="h-[68px] w-full rounded-lg" />
           </div>
-        </div>
-      </div>
+        }
+      />
     </>
   );
 }

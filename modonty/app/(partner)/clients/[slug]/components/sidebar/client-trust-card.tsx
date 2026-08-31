@@ -133,7 +133,7 @@ export function ClientTrustCard({
               <Button
                 variant="ghost"
                 size="sm"
-                className="mt-1.5 h-auto p-0 text-[11.5px] font-extrabold text-primary hover:bg-transparent hover:underline"
+                className="mt-1.5 h-auto p-0 text-[11.5px] font-extrabold text-[hsl(var(--primary-ink,var(--primary)))] hover:bg-transparent hover:underline"
               >
                 عرض التوثيق ›
               </Button>

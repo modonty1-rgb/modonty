@@ -18,7 +18,7 @@ export function ClientFooterCta({ clientId }: ClientFooterCtaProps) {
         label="Client Page CTA — عملاء بلا إعلانات"
         type="BANNER"
         clientId={clientId}
-        className="inline-flex items-center gap-1.5 rounded-md bg-white px-5 py-2.5 text-sm font-bold text-primary transition-colors hover:bg-white/90"
+        className="inline-flex items-center gap-1.5 rounded-md bg-white px-5 py-2.5 text-sm font-bold text-[hsl(var(--primary-ink,var(--primary)))] transition-colors hover:bg-white/90"
       >
         عملاء بلا إعلانات <span aria-hidden="true">↗</span>
       </CtaTrackedLink>

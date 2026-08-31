@@ -31,7 +31,7 @@ export function ClientQuickContact({ phone, email, clientId }: ClientQuickContac
             className="flex items-center gap-[11px] rounded-md border bg-card p-[11px] transition-colors hover:bg-muted"
           >
             <span
-              className="grid h-[35px] w-[35px] shrink-0 place-items-center rounded-[9px] bg-primary/[0.08] text-primary"
+              className="grid h-[35px] w-[35px] shrink-0 place-items-center rounded-[9px] bg-primary/[0.08] text-[hsl(var(--primary-ink,var(--primary)))]"
               aria-hidden
             >
               <IconPhone className="h-[18px] w-[18px]" />

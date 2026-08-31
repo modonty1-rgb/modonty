@@ -20,12 +20,17 @@ export function PageFrame({ siteName, base, eyebrow, title, intro, children }: P
   return (
     <div>
       <nav aria-label="مسار الصفحة" className="flex items-center gap-1 text-sm text-muted-foreground">
-        <Link href={base} className="hover:text-foreground">{siteName}</Link>
+        {/* ٢٤px أدنى هدف في WCAG 2.5.8 — كان ٢٠. فتات الخبز تنقّل ثانوي، فلا تُرفع إلى
+            ٤٤ مثل روابط المحتوى، ولا تبقى تحت الحدّ. */}
+        <Link href={base} className="inline-flex min-h-6 items-center hover:text-foreground">{siteName}</Link>
         <IconChevronRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
         <span className="text-foreground">{title}</span>
       </nav>
       <div className="mt-6">
-        <p className="flex items-center gap-2 text-sm font-medium text-primary">
+        {/* حبر الشريك لا لونه الخام: `text-[hsl(var(--primary-ink,var(--primary)))]` هنا كان ٢٫٧٣:١ على السمة الداكنة
+            (مقيس ٣١ أغسطس) — نفس علّة روابط الموقع، وهذا العنصر خارج `[data-partner-theme]`
+            فما وصله المتغيّر إلا بعد تسميته صراحةً. */}
+        <p className="flex items-center gap-2 text-sm font-medium text-[hsl(var(--primary-ink,var(--primary)))]">
           <span className="h-0.5 w-6 rounded-full bg-accent" aria-hidden />
           {eyebrow}
         </p>

@@ -78,7 +78,7 @@ export function ClientFollowersList({ clientId, followers }: ClientFollowersList
                 label="View follower profile"
                 type="LINK"
                 clientId={clientId}
-                className="text-xs text-primary hover:underline whitespace-nowrap"
+                className="text-xs text-[hsl(var(--primary-ink,var(--primary)))] hover:underline whitespace-nowrap"
               >
                 عرض الملف
               </CtaTrackedLink>

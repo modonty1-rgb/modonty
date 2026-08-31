@@ -105,7 +105,7 @@ export function HeroCtaRow({
               target="_blank"
               rel="noopener noreferrer"
               aria-label={link.platform.name}
-              className="grid h-[38px] w-[38px] place-items-center rounded-[9px] border border-border bg-card text-muted-foreground transition-colors hover:text-primary hover:border-primary [&>svg]:h-[18px] [&>svg]:w-[18px]"
+              className="grid h-[38px] w-[38px] place-items-center rounded-[9px] border border-border bg-card text-muted-foreground transition-colors hover:text-[hsl(var(--primary-ink,var(--primary)))] hover:border-primary [&>svg]:h-[18px] [&>svg]:w-[18px]"
             >
               <span aria-hidden="true">{link.platform.icon}</span>
             </CtaTrackedLink>

@@ -45,7 +45,7 @@ export function RelatedClients({ clients, clientId }: RelatedClientsProps) {
                 <div className="flex items-center gap-2.5 py-2 px-2.5 rounded-lg border border-border hover:border-primary/50 hover:bg-accent/50 transition-all duration-300">
                   <PartnerAvatar media={client.logoMedia} name={client.name} size="small" />
                   <div className="flex-1 min-w-0 flex items-center gap-2">
-                    <h3 className="font-medium text-sm group-hover:text-primary transition-colors truncate">
+                    <h3 className="font-medium text-sm group-hover:text-[hsl(var(--primary-ink,var(--primary)))] transition-colors truncate">
                       {client.name}
                     </h3>
                     <span className="text-xs text-muted-foreground shrink-0">

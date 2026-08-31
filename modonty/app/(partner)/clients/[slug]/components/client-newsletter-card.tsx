@@ -49,7 +49,7 @@ export function ClientNewsletterCard({ clientId, clientName }: ClientNewsletterC
     return (
       <Card className="border-primary/20 bg-primary/5">
         <CardContent className="py-5 text-center space-y-1">
-          <p className="text-sm font-semibold text-primary">تم الاشتراك ✓</p>
+          <p className="text-sm font-semibold text-[hsl(var(--primary-ink,var(--primary)))]">تم الاشتراك ✓</p>
           <p className="text-xs text-muted-foreground">راح تصلك آخر مقالات {clientName} على بريدك</p>
         </CardContent>
       </Card>

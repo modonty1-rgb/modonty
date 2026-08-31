@@ -83,7 +83,7 @@ export function ClientSectionNav({ items }: ClientSectionNavProps) {
                 "whitespace-nowrap rounded-md px-3.5 py-2 text-[13px] font-bold transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 isActive
-                  ? "bg-primary/[0.08] text-primary"
+                  ? "bg-primary/[0.08] text-[hsl(var(--primary-ink,var(--primary)))]"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
               )}
             >
