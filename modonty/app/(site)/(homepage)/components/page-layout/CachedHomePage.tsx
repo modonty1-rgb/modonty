@@ -54,19 +54,7 @@ export async function CachedHomePage({ page, userCard }: CachedHomePageProps) {
   // Google: "make sure that page values adjust correctly … return a 404".
   if (page > 1 && feed.articles.length === 0) notFound();
 
-  // ⚠️ TEMPORARY — DELETE THIS BLOCK BEFORE MERGING `modonty-ui` INTO `main`.
-  //
-  // Dev only: modonty_dev has no reels rows, so the card would render empty and its shape could
-  // not be judged. Three stand-ins are built from feed articles instead. The `NODE_ENV` guard
-  // means production never sees them, but this is scaffolding living inside a cached page.
-  //
-  // Khalid, 24 Aug 2026, asked for it explicitly: it stays through the rest of the UI phase and
-  // comes out LAST, immediately before the final merge to main — so nobody removes it early and
-  // loses the preview while the phase is still running. Board card DEVREELS tracks it.
-  const reelItems =
-    process.env.NODE_ENV === "development" && reels.items.length === 0
-      ? feed.articles.slice(0, 3).map((a) => ({ id: `preview-${a.id}`, title: a.title, imageUrl: a.image ?? null, clientName: a.clientName, slug: null }))
-      : reels.items;
+  const reelItems = reels.items;
 
   return (
     <>

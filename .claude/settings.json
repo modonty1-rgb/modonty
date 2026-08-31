@@ -448,7 +448,8 @@
       "Bash(pnpm --filter @modonty/console-mobile exec tsc --noEmit)",
       "Edit(~/.claude/skills/ultra-ui-ux/**)",
       "Bash(curl -s -o /dev/null -w \"console %{http_code}\\\\n\" --max-time 120 http://localhost:3001/dashboard/page-content)",
-      "Bash(curl -s -o /dev/null -w \"modonty %{http_code}\\\\n\" --max-time 120 http://localhost:3000/)"
+      "Bash(curl -s -o /dev/null -w \"modonty %{http_code}\\\\n\" --max-time 120 http://localhost:3000/)",
+      "Bash(git branch *)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [

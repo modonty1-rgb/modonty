@@ -3,126 +3,286 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>قرار الدمج مع main</title>
+<title>لوحة الدمج مع main</title>
 <style>
-:root{
-  --bg:#0e1116; --panel:#161b22; --ink:#e6edf3; --muted:#9aa7b4; --line:#2a3240;
-  --accent:#00d8d8; --red:#ff6b6b; --amber:#ffb454; --green:#3fb950;
-  --mono:ui-monospace,Consolas,monospace;
-}
+:root{--bg:#0e1116;--panel:#161b22;--ink:#e6edf3;--muted:#9aa7b4;--line:#2a3240;
+--accent:#00d8d8;--red:#ff6b6b;--amber:#ffb454;--green:#3fb950;--mono:ui-monospace,Consolas,monospace}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);
-  font-family:"Tajawal","Segoe UI",system-ui,sans-serif;line-height:1.85;font-size:17px}
-.wrap{max-width:860px;margin:0 auto;padding:36px 20px 90px}
-h1{font-size:26px;margin:0 0 4px}
-.sub{color:var(--muted);font-size:14px;margin:0 0 28px}
-h2{font-size:19px;margin:46px 0 6px;padding-bottom:8px;border-bottom:1px solid var(--line)}
-.verdict{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.3);
-  border-radius:14px;padding:20px 22px;margin:0 0 28px}
-.verdict b{color:var(--red);font-size:19px}
-.verdict p{margin:8px 0 0}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
-  padding:18px 22px;margin:14px 0}
-.r{border-right:4px solid var(--red)}
+font-family:"Tajawal","Segoe UI",system-ui,sans-serif;line-height:1.8;font-size:17px}
+.wrap{max-width:900px;margin:0 auto;padding:36px 20px 90px}
+h1{font-size:25px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 24px}
+h2{font-size:19px;margin:42px 0 8px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.now{background:rgba(0,216,216,.07);border:1px solid rgba(0,216,216,.3);
+border-radius:14px;padding:18px 22px;margin:0 0 22px}
+.now b{color:var(--accent)}
+.done{background:rgba(63,185,80,.07);border:1px solid rgba(63,185,80,.28);
+border-radius:14px;padding:14px 20px;margin:14px 0;font-size:15.5px}
+.done b{color:var(--green)}
+.done ul{margin:6px 0 0;padding-inline-start:20px}
+.done li{margin:4px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:14px 0}
 .a{border-right:4px solid var(--amber)}
-.y{border-right:4px solid #58a6ff}
-.card h3{font-size:18px;margin:0 0 10px;display:flex;gap:9px;align-items:baseline}
-.dot{font-size:13px}
-.line{display:grid;grid-template-columns:104px 1fr;gap:10px;margin:9px 0}
-.line .k{color:var(--muted);font-size:14px;padding-top:2px}
-.line .v{margin:0}
-.ev{color:var(--muted);font-size:13px;margin-top:12px;padding-top:10px;
-  border-top:1px dashed var(--line);font-family:var(--mono);direction:ltr;text-align:left;
-  overflow-x:auto;white-space:pre}
+.g{border-right:4px solid var(--green)}
+.card h3{font-size:18px;margin:0 0 12px}
+.ev{color:var(--muted);font-size:13px;margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);
+font-family:var(--mono);direction:ltr;text-align:left;overflow-x:auto;white-space:pre}
+pre{background:#0a0d12;border:1px solid var(--line);border-radius:10px;padding:13px 15px;
+overflow-x:auto;direction:ltr;text-align:left;font-family:var(--mono);font-size:13.5px;
+line-height:1.7;color:#c9d5e1;margin:12px 0}
 code{font-family:var(--mono);font-size:14px;background:#0a0d12;border:1px solid var(--line);
-  border-radius:6px;padding:1px 6px;direction:ltr;display:inline-block}
-ol{padding-inline-start:22px;margin:10px 0}
-ol li{margin:11px 0}
-.step b{color:var(--accent)}
-.good{background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.28);
-  border-radius:14px;padding:16px 20px;margin:16px 0}
-.good b{color:var(--green)}
+border-radius:6px;padding:1px 6px;direction:ltr;display:inline-block}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:8px 11px;text-align:right;vertical-align:top}
+th{background:#1c2230;color:var(--muted);font-weight:600}
+td.n{font-family:var(--mono);direction:ltr;text-align:center;white-space:nowrap}
+ol{padding-inline-start:22px}
+ol li{margin:9px 0}
+ol.step b{color:var(--accent)}
+.step .no{color:var(--muted)}
+.scrollx{overflow-x:auto}
+/* البند الجاري الآن — لون مختلف كي يُعرف موضعنا من نظرة واحدة */
+ol.step li.doing{background:rgba(0,216,216,.1);border:1px solid rgba(0,216,216,.45);
+  border-radius:10px;padding:10px 14px;margin-inline-start:-6px;list-style-position:inside}
+ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#06222b;
+  font-size:12.5px;font-weight:700;border-radius:99px;padding:1px 10px;margin-inline-end:8px}
+.tk{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin:8px 0;overflow:hidden}
+.tk[open]{border-color:var(--accent)}
+.tk summary{cursor:pointer;padding:12px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:15.5px}
+.tk summary::-webkit-details-marker{display:none}
+.tk summary:hover{background:#1c2230}
+.tk .id{font-family:var(--mono);font-size:12.5px;color:var(--accent);background:#0a0d12;border:1px solid var(--line);border-radius:6px;padding:1px 7px;direction:ltr}
+.tk .sv{font-size:12px;border-radius:99px;padding:1px 9px;border:1px solid}
+.sv-h{color:var(--red);border-color:rgba(255,107,107,.35);background:rgba(255,107,107,.12)}
+.sv-n{color:var(--amber);border-color:rgba(255,180,84,.32);background:rgba(255,180,84,.1)}
+.sv-i{color:#58a6ff;border-color:rgba(88,166,255,.32);background:rgba(88,166,255,.1)}
+.tk .tt{flex:1;min-width:220px}
+.tk .ap{font-family:var(--mono);font-size:12px;color:var(--muted);direction:ltr}
+.tk .body{padding:4px 18px 18px;border-top:1px solid var(--line);font-size:15.5px;line-height:1.85;color:var(--ink)}
+.tk .body code{font-size:13px}
 .unk{color:var(--muted);font-size:15px}
-.unk li{margin:5px 0}
+.unk li{margin:4px 0}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<h1>هل ندمج <span style="color:var(--accent);font-family:var(--mono);font-size:22px">modonty-ui</span> في <span style="color:var(--accent);font-family:var(--mono);font-size:22px">main</span> اليوم؟</h1>
-<p class="sub">٣١ أغسطس ٢٠٢٦ · قراءة فقط — ما دُمج شيء ولا دُفع شيء</p>
+<h1>لوحة الدمج — <span style="color:var(--accent);font-family:var(--mono);font-size:21px">modonty-ui → main</span></h1>
+<p class="sub">٣١ أغسطس ٢٠٢٦ · <b>لم يُدمج شيء في <code>main</code>، ولن يُدمج إلا بأمر خالد الصريح</b></p>
 
-<div class="verdict">
-<b>لا. ثلاثة أشياء تنكسر فعلاً، وكلها تُعالَج في جلسة واحدة.</b>
-<p>ولا واحد منها يوقفك <code>git</code> عنده — الدمج يمشي وينجح، والكسر يظهر بعدين على الإنتاج.</p>
+<div class="now">
+<b>أين نحن الآن</b>
+<p style="margin:8px 0 0">فرعنا استوعب الموقع الحيّ بالكامل. ما عاد في <code>main</code> شيء ليس عندنا — والاتجاه كان واحداً: <code>main</code> يُقرأ، <code>modonty-ui</code> يُكتب.</p>
+<div class="ev">$ git rev-list --left-right --count main...HEAD
+0       138        ← صفر ناقص عندنا · ١٣٨ كوميت عندنا زيادة
+$ git rev-parse --abbrev-ref HEAD
+modonty-ui
+$ git log --oneline -1
+f99411f فرعنا استوعب الموقع الحيّ: ٣٩ ملفاً من main، و١٤ تصادماً حُلّت</div>
+<p style="margin:12px 0 0"><b>الخطوة التالية:</b> دفع الفرع إلى الأونلاين (البند ١ أدناه).</p>
 </div>
 
-<h2>الثلاثة اللي تنكسر</h2>
-
-<div class="card r">
-<h3><span class="dot">🔴</span> ١ · الشريك الثاني ما يقدر يحفظ موقعه</h3>
-<div class="line"><div class="k">إيش يصير</div><p class="v">أول شريك يحفظ شكل موقعه يمشي. الثاني ياخذ رسالة خطأ على حقل ما لمسه أصلاً، والحفظ يفشل.</p></div>
-<div class="line"><div class="k">ليش</div><p class="v">قيد قديم في قاعدة البيانات. <b>العطل انكشف وانصلح فعلاً على قاعدة التطوير يوم ٣٠ أغسطس</b> — لكن الإصلاح لسه على جهازك فقط، ما انحفظ في المستودع. فالدمج بياخذ النسخة المكسورة، لا المُصلَحة.</p></div>
-<div class="line"><div class="k">العلاج</div><p class="v">تثبيت تعديل القاعدة قبل الدمج · وأمر واحد يُنفَّذ على قاعدة الإنتاج بعد النشر.</p></div>
-<div class="ev">$ git show modonty-ui:shared/prisma/schema/schema.prisma | grep subdomain
-752:  subdomain  String?  @unique     ← المحفوظ في المستودع = المكسور</div>
+<h2>اللي يحمينا — بعد الله</h2>
+<div class="card g">
+<h3>ثلاث شبكات أمان، كلها مقيسة اليوم</h3>
+<ul style="margin:0;padding-inline-start:20px">
+<li><b>الموقع الحيّ ما اتلمس:</b> <code>main</code> صفر تغيير — كل الدمج تمّ على فرعنا.</li>
+<li><b>نسخة كود:</b> فرع <code>main-backup-2026-08-31</code> على GitHub، مطابق لـ<code>main</code> بالبصمة نفسها.</li>
+<li><b>نسخة قاعدة:</b> <code>backups/PROD-2026-08-31_19-22</code> — ٩٥ مجموعة · ٨٦ ميجابايت.</li>
+</ul>
+<p style="margin:12px 0 0"><b>يعني:</b> أسوأ حالة نرجّع <code>main</code> من فرع النسخة، والقاعدة من الدمب. ما فيه طريق بلا رجعة.</p>
+<div class="ev">$ git rev-list --left-right --count main...HEAD
+0       138        ← main صفر تغيير
+main:   95d8d9e...   backup: 95d8d9e...   remote: 95d8d9e...
+✓ Backup successful — Database: modonty · Collections: 95 · Size: 86M</div>
 </div>
 
-<div class="card r">
-<h3><span class="dot">🔴</span> ٢ · شغل أسبوع كامل ما بيدخل الدمج</h3>
-<div class="line"><div class="k">إيش يصير</div><p class="v">تدمج، وتفتح الموقع، وتلاقي شغل الأسبوع مو موجود — لأنه ما انحفظ في المستودع أصلاً.</p></div>
-<div class="line"><div class="k">وش فيه</div><p class="v">٢٠١ ملفاً على جهازك فقط. أبرزها: محرّرات صفحة «محتوى الموقع» في الكونسول (٧١ ملفاً) · قائمة الجوّال والشارة في المشترك (٤٤) · مدونتي (٢٩) · الأدمن (١٥) · ومجلّد تطبيق الجوّال الجديد كامل.</p></div>
-<div class="line"><div class="k">العلاج</div><p class="v">تثبيتها ودفعها قبل الدمج. وانتبه: الفرع مربوط بالنشر التجريبي، فالدفع = نشر فوري.</p></div>
-<div class="ev">$ git status --porcelain | wc -l
-201     (71 console · 44 shared · 29 modonty · 18 mobile · 15 admin)</div>
+<h2>ما أُغلق اليوم</h2>
+
+<div class="done">
+<b>٩ · إعدادات Vercel ومفاتيح البيئة — فُحصت من واجهة Vercel نفسها، ولا خطر فيها</b>
+<ul>
+<li><b>لا أمر بناء مكتوب باليد</b> في أيٍّ من المشاريع الثلاثة — الثلاثة تقرأ من <code>vercel.json</code> في المستودع، ومجلّد الجذر مضبوط لكلٍّ منها.</li>
+<li><b>المفاتيح الأربعة غير موجودة فعلاً</b> — فحصتُ كل مشروع وكل الصفحات، ومتغيّرات الفريق المشتركة (٨٣ مفتاحاً على صفحتين). ومع ذلك <b>لا واحد منها يضرّ:</b></li>
+</ul>
+<div class="ev">modonty-modonty | root: modonty | buildCommand: (من vercel.json) | node 24.x | prod branch: main
+modonty-console | root: console | buildCommand: (من vercel.json) | node 24.x | prod branch: main
+modonty-admin   | root: admin   | buildCommand: (من vercel.json) | node 24.x | prod branch: main
+
+MODO_DAILY_QUESTION_CAP  → له قيمة افتراضية في الكود:
+  check-rate-limit.ts:24  Number(process.env.MODO_DAILY_QUESTION_CAP) || 2000
+NEXT_PUBLIC_BRAND_DESCRIPTION → اختياريّ عمداً:
+  settings-actions.ts:1272  process.env.NEXT_PUBLIC_BRAND_DESCRIPTION?.trim() || null
+  والتعليق فوقه: «no sentence is invented here to fill the gap»
+MODO_BASE  → في سكربت محلّي فقط: scripts/calibrate-modo.mjs:15 ?? http://localhost:3000
+EXPO_PUBLIC_MOBILE_API_BASE_URL → تطبيق الجوّال، لا علاقة له بـVercel</div>
 </div>
 
-<div class="card r">
-<h3><span class="dot">🔴</span> ٣ · ثلاثة إصلاحات شغّالة على الموقع الحيّ ممكن تنمسح</h3>
-<div class="line"><div class="k">إيش يصير</div><p class="v">الفرع أقدم من آخر أربعة إصلاحات نزلت على <code>main</code>. وقت حلّ التصادم، لو أخذنا نسخة الفرع بسرعة، ترجع ثلاثة أعطال كانت مقفولة — بلا أي رسالة تحذير.</p></div>
-<div class="line"><div class="k">الثلاثة</div><p class="v">زرّ الرجوع في دليل الكونسول (العميل كان يدخل ولا يلقى مخرج) · اسم الصورة يجيء من نصّها البديل · حساب المقالات المرتبطة.</p></div>
-<div class="line"><div class="k">الرابع</div><p class="v">إصلاح فحص الجودة (مقال عميل مكتمل كان ينقفل) — <b>هذا موجود على الفرع، بأمان.</b></p></div>
-<div class="line"><div class="k">العلاج</div><p class="v">نجيب الأربعة من <code>main</code> إلى الفرع أولاً، ونحلّ التصادم هناك — لا على <code>main</code>.</p></div>
-<div class="ev">$ git ls-tree -r --name-only modonty-ui | grep -E "alt-to-filename|links-score"
-(فارغ)   ← الملفّان غير موجودين على الفرع</div>
+<div class="done">
+<b>٨ · فحص الكتابة الكامل — أخطر ما دمجتُه بيدي، وعمل من طرفه إلى طرفه</b>
+<p style="margin:6px 0 0">أخطر ملف في الدمج كان <code>save-image-seo.ts</code>: نسخة main تعيد التسمية على بني، ونسختنا كانت على كلاود إيناري، فبنيتُه من الاثنين بيدي. اختبرتُه الآن بصورة حقيقية رفعتُها تحت <code>_dev/</code> — والدورة كاملة اشتغلت.</p>
+<div class="ev">قبل : 1786455460584-testkey.png
+النصّ البديل: «شهادة السجل التجاري لشركة جبر سيو»
+بعد : شهادة-السجل-التجاري-لشركة-جبر-سيو.png
+url : _dev/post/rename-test/شهادة-السجل-التجاري-لشركة-جبر-سيو-6a95b323cd89f8d51448c711.png
+العنوان الجديد يخدم؟ HTTP 200
+تخزين بني (لا الكاش) — ملفات المجلّد:
+  · شهادة-السجل-التجاري-لشركة-جبر-سيو-6a95b323cd89f8d51448c711.png | 284954 بايت
+  (القديم لم يعد موجوداً — النقل تمّ لا نسخ)</div>
+<p style="margin:10px 0 0">الاسم اشتُقّ من النصّ البديل، والمفتاح الفريد بقي، والصفّ والملف تحرّكا معاً. وحارس الإنتاج ثبت أنه يعمل: كل صور الإنتاج رُفض تحريكها من التطوير.</p>
 </div>
 
-<h2>ثلاثة تحتاج انتباه، ما تكسر</h2>
-
-<div class="card a">
-<h3><span class="dot">🟠</span> ٤ · ١٤ مكان يتصادم فيه الفرعان</h3>
-<p style="margin:0">خمسة منها تنحلّ لحالها (أرقام إصدارات وملفّات انتقلت مكانها)، وثمانية تحتاج قراءة يدوية — وهي نفسها ملفّات الإصلاحات الثلاثة أعلاه، وواحد ملف زائد يُحذف بعدها. القراءة اليدوية للثمانية = نصف ساعة، لا أكثر.</p>
-<div class="ev">$ git merge-tree --write-tree main modonty-ui | grep -c CONFLICT
-14</div>
+<div class="done">
+<b>٧ · التست الحيّ — كل ما تغيّر بالدمج يرسم فعلاً</b>
+<p style="margin:6px 0 0">دليل الفريق بصفحاته الجديدة السبع يفتح، والشريط الجانبي يعرض ١٥ رابطاً من المصدر الموحّد الجديد، وشاشات الصور تفتح — صفر صورة مكسورة وصفر خطأ تطبيق.</p>
+<div class="ev">/guidelines                  200 · 259KB   h1: «دليل الفريق» · 19 عنواناً فرعياً
+/guidelines/image-seo        200 ·  79KB   ← جديدة من main
+/guidelines/seo-score        200 ·  77KB   ← جديدة
+/guidelines/briefs           200 ·  63KB   ← جديدة
+/guidelines/publishing       200 ·  92KB   ← جديدة
+/guidelines/reels            200 ·  67KB   ← جديدة
+/guidelines/client-articles  200 ·  67KB   ← جديدة
+/seo-images                  200 · 149KB
+/media                       200 · 392KB
+الشريط الجانبي: 15 رابطاً · صور مكسورة: 0 · أخطاء تطبيق: 0</div>
 </div>
 
-<div class="card a">
-<h3><span class="dot">🟠</span> ٥ · المستودع غيّر شكله، وVercel لازم يمشي معه</h3>
-<p style="margin:0">مجلّد المشترك تغيّر اسمه ومكانه بالكامل (٢٥١ ملفاً)، وطريقة بناء التطبيقات الثلاثة تغيّرت معه. الملفّات داخل المستودع مضبوطة — <b>اللي ما فحصته:</b> إعدادات المشاريع الثلاثة داخل لوحة Vercel نفسها. لو فيها أمر بناء أو تثبيت مكتوب باليد، فهو يتجاوز الملف ويكسر النشر.</p>
+<div class="done">
+<b>٦ · البناء الكامل نجح على التطبيقات الثلاثة</b>
+<p style="margin:6px 0 0">هذا كان أكبر مجهول: فحص الأنواع يفحص الأنواع فقط، أما البناء فيصرّف كل صفحة فعلاً — ومرّ. ومعه دليل الكونسول يرسم حيّاً.</p>
+<div class="ev">MODONTY_BUILD_EXIT:0
+ADMIN_BUILD_EXIT:0
+CONSOLE_BUILD_EXIT:0
+GET localhost:3001/help          → HTTP 200 · 3.85s
+GET localhost:3001/help/console  → HTTP 200 · 3.67s</div>
 </div>
 
-<div class="card a">
-<h3><span class="dot">🟠</span> ٦ · قاعدة البيانات: سبعة جداول جديدة</h3>
-<p style="margin:0 0 8px">تحتاج دفعة واحدة على الإنتاج بعد النشر، بيدك.</p>
-<div class="good" style="margin:0"><b>خبر مطمئن مقيس:</b> ولا حقل إلزاميّ جديد على جدول قديم — يعني <b>لا تعبئة رجعية</b> ولا خطر على بيانات موجودة.</div>
+<div class="done">
+<b>١ · شغل الأسبوع صار على الأونلاين</b>
+<ul><li>١٩٩ ملفاً محلّياً → خمسة كوميتات → مدفوعة، والبناء نجح على التطبيقات الثلاثة.</li>
+<li>نظافة: ملفّان دشر حُذفا، وصورة ١٫٤ ميجابايت أُنقذت بإعادة التسمية بدل الحذف.</li></ul>
 </div>
 
-<h2>الترتيب اللي أوصي به</h2>
+<div class="done">
+<b>٢ · فرعنا استوعب الموقع الحيّ — ٣٩ ملفاً، و١٤ تصادماً بلا فقدان طرف</b>
+<ul>
+<li><b>وصل من <code>main</code>:</b> دليل الفريق في الأدمن (١٦ ملفاً، سبع صفحات جديدة) · اسم الصورة من نصّها البديل، منقولاً من كلاود إيناري إلى بني (١٣) · حساب الروابط في درجة السيو بوزن ١٠٪ (٣) · زرّ الرجوع في دليل الكونسول (٥).</li>
+<li><b>حُفظ من فرعنا في نفس الملفات:</b> الصفحة المحجوبة عن جوجل تأخذ صفراً لا نصف الدرجة · فحص الجودة يسمّي الحقل الناقص · لا نُعيد بناء صفحة على قالب لم يتجدّد، والكاتب يُبلَّغ.</li>
+<li>مسارات <code>@modonty/database</code> بُدِّلت إلى <code>@modonty/shared</code> في كل ما وصل، والمجلّد <code>dataLayer/</code> اختفى تماماً.</li>
+<li>بطاقة <code>IMGRENAME</code> نُقلت من لوحة <code>main</code> إلى <code>task-data.json</code> بمسارات محدَّثة — كانت ستضيع.</li>
+</ul>
+<div class="ev">$ git status --porcelain | grep -c "^UU\|^UA\|^DU"
+0
+$ grep -rl "^&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD" --include=*.ts --include=*.tsx --include=*.json --include=*.html .
+(فارغ)
+$ tsc --noEmit    admin: 0   console: 0   modonty: 0</div>
+</div>
+
+<div class="done">
+<b>٥ · نسخة احتياطية لقاعدة الإنتاج + دورة مقالات العملاء مقيسة حيّاً</b>
+<ul>
+<li><b>النسخة الاحتياطية:</b> <code>backups/PROD-2026-08-31_19-22</code> — ٩٥ مجموعة · ٨٦ ميجابايت. (بند ٢ من CA7 أُغلق.)</li>
+<li><b>موقع العميل الحيّ يستقبل مقالاتنا فعلاً:</b> صفحة المقال على jbrseo.com سليمة بالكامل — عنوان وH1 وcanonical ووصف · صورة من بني · JSON-LD خمسة أنواع · ٣٣١١ كلمة · صفر صورة مكسورة.</li>
+<li><b>مسار السحب مقيس محلياً:</b> ١١ مقالاً · فلتر <code>since</code> يرجّع الأحدث وحده · معرّف مجهول يُرفض ٤٠٤.</li>
+</ul>
+<div class="ev">✓ Backup successful — Collections: 95 · Size: 86M
+GET /api/v1/sites/69d5ec61.../articles          → HTTP 200 · count: 11
+GET .../articles?since=2026-08-29T18:11:36Z     → count: 1
+GET /api/v1/sites/0000000000000000/articles     → HTTP 404
+jbrseo.com/articles/… → JSON-LD: WebPage+Article+Organization+FAQPage · BreadcrumbList
+                        3311 كلمة · 3 صور · brokenImgs: 0 · lang ar · dir rtl</div>
+</div>
+
+<div class="done">
+<b>٤ · الطلّات الوهمية حُذفت من رئيسية مدونتي (بطاقة DEVREELS)</b>
+<p style="margin:6px 0 0">١٣ سطر سقالة داخل صفحة مخبّأة صاروا سطراً واحداً — <code>const reelItems = reels.items;</code>. البطاقة أُغلقت.</p>
+<div class="ev">$ grep -rn "preview-|DELETE THIS BLOCK" modonty/app/(site)/(homepage)/
+(فارغ)</div>
+</div>
+
+<div class="done">
+<b>٣ · نسخة احتياطية من <code>main</code> على GitHub</b>
+<p style="margin:6px 0 0">الفرع <code>main-backup-2026-08-31</code> — نسخة طبق الأصل، للرجوع لو صار أي شيء.</p>
+<div class="ev">main:   95d8d9e...
+backup: 95d8d9e...
+remote: 95d8d9e...   origin/main-backup-2026-08-31
+$ git rev-list --left-right --count main...main-backup-2026-08-31
+0       0</div>
+</div>
+
+<h2>المتبقّي — بالترتيب</h2>
 <ol class="step">
-<li><b>نظافة:</b> حذف أربعة ملفات دشر من مخلّفات أوامر غلط، ومنع مجلّد الكاش من الدخول.</li>
-<li><b>تثبيت الـ٢٠١ ملفاً ودفعها</b> — وأهمّها إصلاح قاعدة البيانات (الخطر ١). هذا نشر تجريبي، فرتّبه وأنت قادر تراقب.</li>
-<li><b>سحب الأربعة من <code>main</code> إلى الفرع</b>، وحلّ التصادمات الثمانية هناك — أي كسر يظهر على التجريبي لا على الإنتاج.</li>
-<li><b>فحص أنواع + بناء كامل</b> للتطبيقات الثلاثة بعد الحلّ.</li>
-<li><b>تست حيّ</b> على شاشتَي الصور في الأدمن ودليل الكونسول تحديداً — مواضع الإصلاحات اللي كادت تنمسح.</li>
-<li><b>ثم الدمج</b> بأمرك الصريح · وبعد النشر مباشرةً: دفعة قاعدة البيانات، وأمر الفهرس، ومراجعة أربعة مفاتيح إعدادات جديدة.</li>
+<li><b>دفع الفرع إلى الأونلاين</b> — كوميت الدمج وبطاقة المهام وهذا التقرير. الدفع على هذا الفرع = نشر على <code>test.modonty.com</code>.</li>
+
+<li><b>تست حيّ</b> — تمّ: دليل الفريق (١٥ صفحة) · صور السيو · الوسائط · دليل الكونسول، كلها HTTP 200 بلا أخطاء.</li>
+<li><b>مراجعة إعدادات Vercel</b> ومفاتيح الإعدادات الأربعة.</li>
+<li><b>مفاتيح الإعدادات الأربعة</b> — البند ٥ أدناه.</li>
+<li><b>الدمج في <code>main</code></b> — <b>بأمر خالد الصريح وحده.</b></li>
+<li><b>بعد النشر:</b> <code>prisma db push</code> ← ثم أمر الفهرس فوراً (البند ٦).</li>
 </ol>
 
-<h2>ما لم أفحصه — لا تبنِ عليه قراراً</h2>
+
+
+<h2>بعد النشر — خمسة بنود</h2>
+<p style="color:var(--muted);font-size:15px;margin:0 0 10px">لا تبدأ إلا بعد ما يصل الكود إلى الإنتاج. الترتيب مقصود.</p>
+<details class="tk" open>
+<summary><span class="id">CA7</span><span class="sv sv-h">عالٍ</span><span class="tt">مقالات العملاء — بقيت خطوة واحدة: عدّل مقالاً وشوفه يوصل موقع العميل</span><span class="ap">admin · console</span></summary>
+<div class="body"><b style="color:#3fb950">خطوتان أُغلقتا اليوم:</b> النسخة الاحتياطية (٩٥ مجموعة · ٨٦ ميجابايت) · والتأكّد أن مقالاتنا تصل موقع العميل الحيّ (jbrseo.com سليم). <b style="color:#ff6b6b">الباقية واحدة: الخطوة ١ أدناه.</b><br><br><b>١ · جرّب المقال يوصل للعميل</b><br>عدّل أي مقال من الكونسول، وبعدها افتح موقع العميل وشوف التعديل ظهر.<br><span style="opacity:.7">الدورة صارت دقيقة تقريباً بدل ساعة.</span><br>✔ يقفل لمّا تشوف التعديل بعينك على موقع العميل.<br><br><b>٢ · بوّابة ما قبل الدفع</b><br>شغّل <code>tsc</code> على التطبيقات الثلاثة، وخذ نسخة احتياطية للقاعدة.<br>✔ يقفل بصفر أخطاء في الثلاثة + نسخة محفوظة.<br><br><b>٣ · فهرسان جديدان على قاعدة الإنتاج</b><br><code>prisma db push</code> يضيف فهرسَين: <code>clients.apiKey</code> و<code>articles[clientId,status,updatedAt]</code>،ثم تُعبَّأ الحقول الغائبة في المستندات القديمة.<br><span style="opacity:.7">للتحقّق: افتح مستنداً قديماً بـ<code>findRaw</code> لا بقراءة برِزما — القراءة العادية تعرض القيمة الافتراضية حتى لو الحقل غير موجود فعلاً في القاعدة، فتعطيك اطمئناناً كاذباً (توثيق برِزما الرسمي · بطاقة <code>UVBACKFILL</code>).</span><br>✔ يقفل لمّا <code>findRaw</code> يرجّع الحقل موجوداً على مستند قديم.<br><br><span style="opacity:.7">طلع منها عطل واحد له بطاقته: روابط تخرج من مقالات العميل إلينا — <code>CALINKOUT</code>.</span></div>
+</details>
+<details class="tk" open>
+<summary><span class="id">AFTER-DEPLOY</span><span class="sv sv-h">عالٍ</span><span class="tt">🚀 بعد النشر — ابدأ من هنا: خط السير كاملاً</span><span class="ap">admin · modonty</span></summary>
+<div class="body"><p><b>فُتحت ٣٠ أغسطس ٢٠٢٦ بأمر خالد:</b> «اعمل لي كرت ثاني بعد الدمج/Online — الخطوات المطلوبة مني عشان لا أنسى».</p><p><b>لا تبدأ إلا بعد ما يوصل الكود الإنتاج.</b> الترتيب مقصود — قلبه يخلّي القديم منشوراً أو يجبرك تعيد الخطوة.</p><hr><p><b>١ · تأكّد أن النشر وصل فعلاً</b><br>افتح لوحة Vercel وشوف آخر deployment للمشاريع الثلاثة حالته <code>Ready</code> ومبنيّ من <code>main</code>.<br>✔ يقفل بـ: تاريخ الـdeployment اليوم، لا ١٣ أغسطس.<br><span style="opacity:.7">ليش أوّلاً: كل اللي بعده يشتغل بالكود المنشور. لو النشر ما وصل، تعيد الخطوات من جديد.</span></p><p><b>٢ · اسم الموقع → «مدونتي»</b> <span style="opacity:.7">(بطاقة <code>BRAND-PROD-APPLY</code>)</span><br>ثلاث ضغطات بالترتيب: غيّر الاسم من الأدمن ← اضغط إعادة التوليد الشاملة ← فرّغ الكاش.<br>✔ يقفل بـ: <code>og:site_name</code> على <code>www.modonty.com</code> يعرض «مدونتي».<br><span style="opacity:.7">ليش الثلاث: الاسم منسوخ داخل ١٢٩ مقالاً منشوراً؛ تغيير الحقل وحده لا يمسّها (مقيس على التطوير).</span></p><p><b>٣ · اضغط Run All Auto-Maintenance</b><br><code>admin.modonty.com/maintenance</code> ← زرّ <code>Run All Auto-Maintenance</code>. ضغطة واحدة تغطّي بندين معلّقين:<br>· <b>عدد الكلمات وزمن القراءة</b> (<code>WC-PROD</code>) — الرقم يُرسَل لجوجل ويصنَّف عليه المقال.<br>· <b>أبعاد الصور</b> (<code>IMGDIM</code>) — المتوقَّع سطر <code>Image Dimensions: 29 fixed</code>. الرقمان يحجزان مساحة الصورة فتختفي قفزة الصفحة.<br>✔ يقفل بـ: السطران يظهران بأرقام، وضغطة ثانية تعطي <code>clean</code>.<br><span style="opacity:.7">آمن: قراءة ثم كتابة أرقام. لا حذف ولا نقل ولا لمس للملفات.</span></p><p><b>٤ · تحقّق بعينك على الموقع الحيّ</b><br>افتح <code>www.modonty.com</code> وافتح مقالاً، وتأكّد: الاسم «مدونتي» · عدد الكلمات صحيح · الصور ما تقفز عند التحميل.<br>✔ يقفل بـ: الثلاثة سليمة على مقال واحد على الأقل.</p></div>
+</details>
+<details class="tk" open>
+<summary><span class="id">BRAND-PROD-APPLY</span><span class="sv sv-h">عالٍ</span><span class="tt">🚀 بعد النشر — اسم الموقع: غيّره ثم أعد التوليد ثم فرّغ الكاش</span><span class="ap">modonty · admin</span></summary>
+<div class="body"><p><b>فُتحت ٢٨ أغسطس ٢٠٢٦ بأمر خالد:</b> «حدّثها على الإعدادات، واعمل بطاقة تُطبَّق على الإنتاج بعد الدمج».</p><p><b>ما نُفِّذ على التطوير:</b> <code>Settings.siteName</code> من <code>Modonty</code> إلى <code>مدونتي</code> على <code>modonty_dev</code>.</p><p><b>والقياس الحيّ كشف أن خطوةً واحدة لا تكفي</b> — غيّرتُ العمود، وفرّغتُ وسم <code>settings</code>، والصفحة ما زالت تعرض القديم:</p><pre>POST /api/revalidate/tag {"tag":"settings"}   HTTP 200
+/trending  → og:site_name = Modonty   (لم يتغيّر)
+
+السبب — الاسم مخزَّن في البلوبات لا يُقرأ من الإعدادات وقت الطلب:
+  صفوف Modonty:  11  ·  بلوب فيه "Modonty": 11
+  مقالات منشورة: 129 ·  JSON-LD فيه "Modonty": 129</pre><p><b>الترتيب الإجباري على الإنتاج (ثلاث خطوات، وقلبها يُبقي القديم منشوراً):</b></p><pre>١ · غيّر Settings.siteName من الأدمن          → «مدونتي»
+٢ · إعادة توليد شاملة (المقالات + صفحات القوائم + بطاقات العملاء)
+٣ · تفريغ الكاش  (وسم settings + وسوم المحتوى)</pre><p><b>ولماذا هذا الاسم:</b> جوجل تنصّ في دليل أسماء المواقع: «Make sure whatever you use as the site name in structured data is consistent with how you refer to your site in other sources on your home page». والمقيس على رئيسيتنا: «مدونتي» ٢٣ مرّة في النصّ المرئي، و<code>Modonty</code> صفر — بينما البيانات المنظَّمة كانت تقول <code>Modonty</code>.</p><p><b>معلَّق حتى عمود جديد:</b> <code>alternateName = Modonty</code> — جوجل تسمح بالاسمين معاً («another common name that your organization goes by»)، لكن العمود غير موجود في <code>Settings</code>؛ إضافته تغييرُ سكيما و<code>prisma db push</code> على الإنتاج بيد خالد.</p><p><b>يقفل بـ:</b> <code>og:site_name</code> و<code>WebSite.name</code> على <code>www.modonty.com</code> يعرضان «مدونتي» بعد الخطوات الثلاث.</p><br><br><b>📦 نُقلت من لوحة السيو إلى «⚡ إنتاج» ٢٩ أغسطس بأمر خالد:</b> «البيانات شيلها من ملف السيو ووديها على التاسك الرئيسي في البند تبع قبل الإنتاج». هذه بطاقة <b>بيانات لا كود</b> — تُنفَّذ على الإنتاج في وقتها، ووجودها في لوحة السيو كان يوهم بأن فيها شغل هندسيّاً مفتوحاً.</div>
+</details>
+<details class="tk" open>
+<summary><span class="id">WC-PROD</span><span class="sv sv-h">عالٍ</span><span class="tt">🚀 بعد النشر — Run All: تصحيح عدد الكلمات وزمن القراءة</span><span class="ap">admin</span></summary>
+<div class="body"><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Code root verified fixed in git: d9203a6 (wordCount derived from body) + 62a6f9e (structured-data card refreshed in Run-All). Remaining is the prod Run-All click.<br><b>متحقَّق ١٩ أغسطس — الجذر أُصلح في الكود</b> (<code>admin/app/(dashboard)/articles/actions/articles-actions/mutations/create-article.ts</code> و<code>update-article.ts</code>): كانا يقبلان رقماً جاهزاً من الطلب (<code>data.wordCount || calculate(...)</code>) فيدخل الرقم الغلط ويبقى. صار يُشتقّ من المتن دائماً في المسارين (<code>d9203a6</code>).<br><b>وخطوة صيانة جديدة داخل Run-All</b> تصحّح الصفوف القديمة وتجدّد معها بطاقة البيانات المنظَّمة — لأن البطاقة تحمل نسخة ثانية من الرقم ولا تتحدّث بتحديث العمود (<code>62a6f9e</code>).<br><b>على التطوير:</b> «Article Word Count / Reading Time — <b>79 fixed</b>» على <code>modonty_dev</code>. الصفحة والبيانات المنظَّمة صارتا تقولان <code>1835</code> بدل <code>14</code>.<br><b>المطلوب:</b> ضغطة Run-All على الإنتاج. الأثر يتعدّى العرض: الرقم يُرسَل لجوجل، ويصنّف السيو الأدمن المقال عليه، وهو ما يبني عليه مرشِّح «عندك كم دقيقة؟» في <code>/articles</code> — فمقال عشر دقائق كان مصنَّفاً «على الماشي ≤٣ دقائق».<br><b>أنت تنفّذ وأنا أراقب</b> — قاعدة الإنتاج.</div>
+</details>
+<details class="tk" open>
+<summary><span class="id">IMGDIM</span><span class="sv sv-h">عالٍ</span><span class="tt">🚀 بعد النشر — Run All: تعبئة أبعاد الصور (29 صفّاً)</span><span class="ap">admin</span></summary>
+<div class="body"><b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Code shipped: commit 71c1622 + run-all-maintenance.ts:225 `dimensionsBackfill`. Remaining is the prod Run-All click.<br><b>الكود جاهز ومُختبَر محلّياً (كوميت <code>71c1622</code>). الباقي ضغطة واحدة منك بعد الدفع.</b><br><br><b>الخطوات:</b><br>① افتح <code>admin.modonty.com/maintenance</code><br>② اضغط <code>Run All Auto-Maintenance</code><br>③ اقرأ سطر <b>Image Dimensions</b><br><br><b>المتوقَّع:</b> <code>29 fixed</code>. وضغطة ثانية تعطي <code>clean</code> — الخطوة لا تكرّر عملها.<br><br><b>ليش على الإنتاج تحديداً:</b> ٢٩ صفّاً هناك بلا <code>width</code>/<code>height</code>، ومنها الصور الافتراضية الثلاث التي تُعرَض لكل عميل لم يرفع صورته. على <code>modonty_dev</code> هذه الثلاث بلا <code>bunnyUrl</code> فتُتخطّى — التجربة المحلية أثبتت الكود (٢١ صفّاً ثم <code>clean</code>) لا الرقم.<br><br><b>الأثر:</b> الرقمان يحجزان مساحة الصورة قبل وصولها. بدونهما تُدفع الصفحة لأسفل عند تحميل الصورة — قفزٌ يشعر به الزائر وتقيسه Google.<br><br><b>الأمان:</b> قراءة مقاس + كتابة رقمين. لا حذف ولا نقل ولا لمس للملفات.</div>
+</details>
+
+<h2>بنود مؤجَّلة</h2>
+
+<div class="card g">
+<h3>٦ · النطاق الفرعي على الإنتاج — <span style="color:var(--green)">لا شيء مطلوب الآن</span></h3>
+<p style="margin:0 0 6px">فحصتُ قاعدة الإنتاج اليوم: المجموعة غير موجودة هناك أصلاً.</p>
+<div class="ev">القاعدة المستهدَفة: modonty (الإنتاج)
+هل المجموعة موجودة؟ لا — غير موجودة على الإنتاج
+عدد مجموعات القاعدة: 95</div>
+<p style="margin:12px 0 0"><b>وقتها:</b> فور أوّل <code>prisma db push</code> على الإنتاج — هو الذي ينشئ المجموعة. وبعده مباشرةً:</p>
+<pre>db.client_sites.createIndex(
+  { subdomain: 1 },
+  { unique: true,
+    name: "client_sites_subdomain_partial_unique",
+    partialFilterExpression: { subdomain: { $type: "string" } } }
+)</pre>
+<p style="margin:0;color:var(--muted);font-size:15px">لو نُسي: أوّل شريك يحفظ موقعه يمشي، والثاني يُرفض.</p>
+</div>
+
+<div class="card g">
+<h3>٧ · سبعة جداول جديدة — <span style="color:var(--green)">بلا خطر على البيانات</span></h3>
+<p style="margin:0">تحتاج <code>prisma db push</code> على الإنتاج بعد النشر. <b>مقيس:</b> ولا حقل إلزاميّ جديد على جدول قديم — لا تعبئة رجعية.</p>
+</div>
+
+<h2>لم يُفحص — لا تبنِ عليه قراراً</h2>
 <ul class="unk">
-<li>البناء الكامل للتطبيقات الثلاثة — لم يُشغَّل. (فحص الأنواع وحده مرّ بصفر أخطاء على الوضع الحالي، وهذا ليس البناء.)</li>
-<li>إعدادات البناء ومفاتيح الإعدادات داخل لوحة Vercel للإنتاج.</li>
+<li>البناء الكامل للتطبيقات الثلاثة بعد الدمج.</li>
+<li>رسم الصفحات حيّاً بعد الدمج — خاصةً دليل الفريق وشاشات الصور.</li>
+<li>لوحة Vercel للإنتاج.</li>
 <li>تطبيقا الجوّال.</li>
-<li>سلوك الدمج بعد حلّ التصادمات — ما يُعرف إلا بعد حلّها فعلاً.</li>
 </ul>
 
 </div>
