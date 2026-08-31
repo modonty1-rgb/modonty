@@ -10,10 +10,17 @@ export interface BrandLogoProps {
   size?: PartnerAvatarSize;
   /** White text — for bars drawn over an image or a brand-colour band. */
   light?: boolean;
+  /**
+   * Extra classes on the tagline line. A header that spends its width on other controls
+   * passes `max-md:hidden`: a two-word fragment ending in an ellipsis reads as broken,
+   * while an absent secondary line reads as deliberate — and the industry and city are
+   * repeated in «من نحن» and in the footer either way.
+   */
+  taglineClassName?: string;
 }
 
 /** Logo + name (+ tagline) — the same block in every header and footer template. */
-export function BrandLogo({ name, tagline, logoUrl, size = "small", light = false }: BrandLogoProps) {
+export function BrandLogo({ name, tagline, logoUrl, size = "small", light = false, taglineClassName }: BrandLogoProps) {
   return (
     <span className="flex min-w-0 items-center gap-3">
       {/* Was a `rounded-sm bg-white` square at a free px size. The white was the halo, the square
@@ -23,7 +30,7 @@ export function BrandLogo({ name, tagline, logoUrl, size = "small", light = fals
       <span className="min-w-0 leading-tight">
         <span className={cn("block truncate text-base font-bold", light && "text-white")}>{name}</span>
         {tagline && (
-          <span className={cn("block truncate text-xs", light ? "text-white/75" : "text-muted-foreground")}>{tagline}</span>
+          <span className={cn("block truncate text-xs", light ? "text-white/75" : "text-muted-foreground", taglineClassName)}>{tagline}</span>
         )}
       </span>
     </span>

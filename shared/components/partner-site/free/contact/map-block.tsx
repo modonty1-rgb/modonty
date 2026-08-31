@@ -24,7 +24,7 @@ export function MapBlock({ data, preview = false }: { data: HomeData; preview?: 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm">
         <p className="text-muted-foreground">{c.address}</p>
         {c.mapHref && (
-          <a href={c.mapHref} target="_blank" rel="noopener noreferrer" className="font-medium text-primary">افتح الاتجاهات</a>
+          <a href={c.mapHref} target="_blank" rel="noopener noreferrer" className="inline-flex items-center font-medium text-[hsl(var(--primary-ink,var(--primary)))] max-md:min-h-11">افتح الاتجاهات</a>
         )}
       </div>
     </Section>

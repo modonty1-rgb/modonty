@@ -1,4 +1,5 @@
 import { BrandLogo } from "../../parts/brand-logo";
+import { VerifiedBadge } from "../../parts/verified-badge";
 import { WhatsAppButton } from "../../parts/whatsapp-button";
 import { HeaderBar } from "./parts/header-bar";
 import { NavLinks } from "./parts/nav-links";
@@ -17,6 +18,7 @@ export function TransparentHeader({ data }: { data: HeaderData }) {
         <a href={data.homeHref} className="min-w-0 max-md:flex max-md:min-h-11 max-md:items-center">
           <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} light />
         </a>
+        <VerifiedBadge light />
         <NavLinks links={data.links} className="hidden md:flex" light />
         <div className="flex items-center gap-2">
           <WhatsAppButton href={data.whatsappHref} variant="outline-light" className="hidden md:inline-flex" />

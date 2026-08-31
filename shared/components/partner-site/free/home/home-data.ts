@@ -3,6 +3,10 @@
  * Each block reads only its slice; a block whose slice is empty is skipped on the site.
  */
 export interface HomeData {
+  /** صفّ الشريك — يحتاجه نموذج «اترك رقمك» ليربط الطلب بصاحبه. */
+  clientId: string;
+  /** نشاطٌ حسّاس (طبّي · قانوني · مالي): الطلب لا يُقبل بلا إقرار الزائر — يفرضه الخادم. */
+  isYmyl: boolean;
   name: string;
   primaryColor: string | null;
   whatsappHref?: string | null;
@@ -39,6 +43,8 @@ export interface HomeData {
   video: { url: string; posterUrl: string | null; title: string | null } | null;
   faqs: { question: string; answer: string }[];
   posts: { title: string; href: string; imageUrl: string | null; date: string | null; excerpt: string | null; category: string | null }[];
+  /** صفحة «مقالاتي» — وجهة زرّ «كل المقالات» حين تتجاوز المقالات الثلاثة المعروضة. */
+  blogHref?: string;
   contact: {
     address: string | null;
     email: string | null;

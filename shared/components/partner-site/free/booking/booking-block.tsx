@@ -52,10 +52,15 @@ export function BookingBlock({ data, preview = false, form }: BookingBlockProps)
             </div>
           )
         )}
-        <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
-          <span>أو</span>
-          <WhatsAppButton href={data.whatsappHref} variant="text" />
-        </div>
+        {/* البديل يُعرض مرّة واحدة: النموذج الحيّ يحمل «أو كلّمه واتساب» بنفسه، فكان
+            الزائر يقرأ العرض نفسه مرّتين على بُعد ٧٦px (مقيس ٣١ أغسطس). يبقى هنا حين لا
+            يوجد نموذج حيّ — أي في المعاينة وفي وضع الرابط. */}
+        {!form && (
+          <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+            <span>أو</span>
+            <WhatsAppButton href={data.whatsappHref} variant="text" />
+          </div>
+        )}
       </div>
     </Section>
   );

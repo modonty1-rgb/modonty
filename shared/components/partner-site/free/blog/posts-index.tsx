@@ -20,7 +20,7 @@ export function PostsIndex({ data }: { data: HomeData; preview?: boolean }) {
           <span className="text-xs text-muted-foreground">{[first.category, first.date].filter(Boolean).join(" · ")}</span>
           <span className="mt-2 text-2xl font-bold leading-tight text-foreground">{first.title}</span>
           {first.excerpt && <span className="mt-3 line-clamp-3 text-sm leading-7 text-muted-foreground">{first.excerpt}</span>}
-          <span className="mt-4 text-sm font-medium text-primary">اقرأ المقال</span>
+          <span className="mt-4 text-sm font-medium text-[hsl(var(--primary-ink,var(--primary)))]">اقرأ المقال</span>
         </span>
       </a>
       {rest.length > 0 && (

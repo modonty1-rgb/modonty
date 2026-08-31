@@ -21,7 +21,14 @@ export function GalleryJustified({ data }: { data: HomeData; preview?: boolean }
             {row.items.map(({ tile, grow }) => (
               <figure
                 key={tile.url}
-                className="relative min-w-0 overflow-hidden rounded-lg bg-muted"
+                /**
+                 * الصفّ الأخير لا يُمدَّد على الديسكتوب — يبقى بمقاسه الطبيعي كما يفعل أي
+                 * معرض مصفوف. لكنّ ذلك المقاس بكسلاتٌ محسوبة لعرض التعبئة ١٠٨٠، فعلى
+                 * ٣٩٠ كان الصفّ يخرج ٧٢٦px خارج الشاشة (مقيس ٣١ أغسطس: `scrollWidth`
+                 * ١١٠٤ مقابل ٣٧٨). تحت `md` يتمدّد كبقيّة الصفوف: لا خروج، ولا صورة
+                 * مجهرية.
+                 */
+                className="relative min-w-0 overflow-hidden rounded-lg bg-muted max-md:!w-auto max-md:!flex-1"
                 style={row.isLast ? { flex: "0 0 auto", width: `${row.height * grow}px` } : { flexGrow: grow, flexBasis: 0, minWidth: 0 }}
               >
                 <div style={{ aspectRatio: tileAspectRatio(tile) }} className="relative">

@@ -24,7 +24,9 @@ export function SimpleFooter({ data, preview = false }: { data: FooterData; prev
           <div className="flex items-center gap-6">
             <SocialLinks urls={data.socialLinks} inert={preview} />
             {data.phone && (
-              <a href={`tel:${data.phone}`} dir="ltr" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+              // هدف ٤٤ على الجوّال: المقيس كان ٢٠×٩٢ — رقم الهاتف في الذيل هو نداء
+              // الفعل الأخير في الصفحة، ولا يُضغط بإبهام على عشرين بكسلاً (Apple HIG).
+              <a href={`tel:${data.phone}`} dir="ltr" className="inline-flex items-center text-sm text-muted-foreground transition-colors hover:text-foreground max-md:min-h-11">
                 {data.phone}
               </a>
             )}

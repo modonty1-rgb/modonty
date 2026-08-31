@@ -19,6 +19,15 @@ export function LatestPosts({ data }: { data: HomeData; preview?: boolean }) {
           </li>
         ))}
       </ul>
+      {/* الرئيسية تعرض ثلاثة، والباقي في صفحة المقالات — لا قائمة كاملة داخل الرئيسية. */}
+      {data.posts.length > 3 && (
+        <a
+          href={`${data.blogHref ?? "#"}`}
+          className="mt-8 inline-flex min-h-11 items-center rounded-full border px-5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+        >
+          كل المقالات
+        </a>
+      )}
     </Section>
   );
 }

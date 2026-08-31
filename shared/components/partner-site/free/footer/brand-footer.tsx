@@ -4,7 +4,7 @@ import { OptimizedImage, asMedia } from "../../../optimized-image";
 import { PartnerAvatar } from "../../../partner-avatar/PartnerAvatar";
 import { WhatsAppIcon } from "../../../icons/whatsapp-icon";
 import { cn } from "../../../../lib/utils/index";
-import { WHATSAPP_GREEN } from "../../parts/whatsapp-button";
+import { WHATSAPP_SURFACE } from "../../parts/whatsapp-button";
 import { ContactColumn } from "./parts/contact-column";
 import { FooterWrap } from "./parts/footer-wrap";
 import { LegalBar } from "./parts/legal-bar";
@@ -14,13 +14,15 @@ import type { FooterData } from "./footer-data";
 /** «بلوك الهوية» — a brand-colour band (logo · closing line · WhatsApp) over the standard columns. */
 export function BrandFooter({ data, preview = false }: { data: FooterData; preview?: boolean }) {
   const cta = (
-    <span className="inline-flex h-10 items-center gap-2 rounded-full bg-white px-5 text-sm font-bold max-md:h-11" style={{ color: WHATSAPP_GREEN }}>
+    <span className="inline-flex h-10 items-center gap-2 rounded-full bg-white px-5 text-sm font-bold max-md:h-11" style={{ color: WHATSAPP_SURFACE }}>
       <WhatsAppIcon size={16} /> واتساب
     </span>
   );
   return (
     <footer className="bg-muted/30">
-      <div className={cn("text-white", !data.primaryColor && "bg-primary")} style={data.primaryColor ? { backgroundColor: data.primaryColor } : undefined}>
+      {/* نفس قاعدة «النداء الأخير»: لون الشريك يحمل أبيض (اللوحة مقيسة ≥ ٤٫٥:١)،
+          والافتراضي يستعمل زوج التوكن — الأبيض اليدوي كان ٣٫٦٨:١ في السمة الداكنة. */}
+      <div className={cn(data.primaryColor ? "text-white" : "bg-primary text-primary-foreground")} style={data.primaryColor ? { backgroundColor: data.primaryColor } : undefined}>
         <div className="mx-auto flex max-w-[1128px] flex-wrap items-center justify-between gap-6 px-6 py-6">
           <div className="flex items-center gap-4">
             <PartnerAvatar
@@ -30,7 +32,7 @@ export function BrandFooter({ data, preview = false }: { data: FooterData; previ
             />
             <div className="leading-tight">
               <p className="text-lg font-bold">جاهز تبدأ مع {data.name}؟</p>
-              <p className="mt-1 text-sm text-white/80">راسلنا الآن ونردّ عليك في نفس اليوم.</p>
+              <p className="mt-1 text-sm">راسلنا الآن ونردّ عليك في نفس اليوم.</p>
             </div>
           </div>
           {data.whatsappHref ? (

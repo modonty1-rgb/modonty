@@ -41,11 +41,11 @@ export async function getHomeData(db: PrismaClient, where: { id: string } | { sl
   const clientRow = await db.client.findUnique({ where, select: { id: true } });
   if (!clientRow) return null;
   const clientId = clientRow.id;
-  const [client, reviews, gallery, faqs, articles] = await Promise.all([
+  const [client, reviews, gallery, faqs, articleFaqs, articles] = await Promise.all([
     db.client.findUnique({
       where: { id: clientId },
       select: {
-        name: true, slug: true, slogan: true, description: true, legalName: true, phone: true, email: true, ctaMode: true, ctaLabel: true, ctaUrl: true,
+        name: true, slug: true, slogan: true, description: true, legalName: true, phone: true, email: true, ctaMode: true, ctaLabel: true, ctaUrl: true, isYmyl: true,
         addressStreet: true, addressCity: true, addressLatitude: true, addressLongitude: true,
         foundingDate: true, openingHoursSpecification: true, commercialRegistrationNumber: true, verificationImageUrl: true,
         site: { select: { primaryColor: true, hiddenSections: true } },
@@ -76,6 +76,17 @@ export async function getHomeData(db: PrismaClient, where: { id: string } | { sl
       take: 40, // the FAQ page shows them all; home takes its 6 from the front
       select: { question: true, answer: true },
     }),
+    /**
+     * أسئلة مقالاته أيضاً (خالد ٣٠ أغسطس: «برضو هذه أسئلة تخص العميل — ضيفها»).
+     * السؤال الذي وافق عليه الشريك تحت مقاله جوابٌ منه، فلا معنى لحجبه عن صفحة أسئلته.
+     * `PUBLISHED` وحدها: المعلّقة لم يوافق عليها بعد.
+     */
+    db.articleFAQ.findMany({
+      where: { status: "PUBLISHED", answer: { not: null }, article: { clientId, status: ArticleStatus.PUBLISHED } },
+      orderBy: [{ articleId: "asc" }, { position: "asc" }],
+      take: 40,
+      select: { question: true, answer: true },
+    }),
     db.article.findMany({
       where: { clientId, status: ArticleStatus.PUBLISHED },
       orderBy: { datePublished: "desc" },
@@ -88,12 +99,22 @@ export async function getHomeData(db: PrismaClient, where: { id: string } | { sl
 
   const foundingYear = client.foundingDate ? new Intl.DateTimeFormat("ar-SA", { year: "numeric" }).format(client.foundingDate) : null;
   const dateFmt = new Intl.DateTimeFormat("ar-SA", { dateStyle: "medium" });
-  const mapHref =
+  /**
+   * الخريطة من الإحداثيات إن وُجدت، وإلّا من العنوان النصّي.
+   *
+   * كانت على الإحداثيات وحدها، ولا حقل لها في شاشة «بيانات نشاطك» أصلاً (مقيس ٣١ أغسطس:
+   * صفر حقل lat/lng) — فقسم الخريطة كان فارغاً عند كل شريك مهما كتب عنوانه كاملاً، بلا
+   * طريق يملؤه به. وقوقل يقبل النصّ في `?q=` كما يقبل الإحداثيات، بلا مفتاح.
+   */
+  const mapQuery =
     client.addressLatitude != null && client.addressLongitude != null
-      ? `https://www.google.com/maps?q=${client.addressLatitude},${client.addressLongitude}`
-      : null;
+      ? `${client.addressLatitude},${client.addressLongitude}`
+      : [client.addressStreet, client.addressCity].filter(Boolean).join(", ") || null;
+  const mapHref = mapQuery ? `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}` : null;
 
   const data: HomeData = {
+    clientId,
+    isYmyl: client.isYmyl,
     name: client.name,
     primaryColor: client.site?.primaryColor ?? null,
     phone: client.phone,
@@ -122,7 +143,11 @@ export async function getHomeData(db: PrismaClient, where: { id: string } | { sl
     video: client.introVideoMedia?.mp4Url
       ? { url: client.introVideoMedia.mp4Url, posterUrl: client.introVideoMedia.thumbnailUrl ?? null, title: client.introVideoMedia.title ?? null }
       : null,
-    faqs: faqs.filter((f): f is { question: string; answer: string } => Boolean(f.answer)),
+    // أسئلة الصفحة أوّلاً (كتبها بنفسه)، ثم أسئلة مقالاته — بلا تكرار نصّ السؤال.
+    faqs: [...faqs, ...articleFaqs]
+      .filter((f): f is { question: string; answer: string } => Boolean(f.answer))
+      .filter((f, i, all) => all.findIndex((x) => x.question.trim() === f.question.trim()) === i),
+    blogHref: `/clients/${client.slug}/articles`,
     posts: articles.map((a) => ({
       title: a.title,
       href: `/articles/${a.slug}`,
@@ -135,10 +160,9 @@ export async function getHomeData(db: PrismaClient, where: { id: string } | { sl
       address: [client.addressStreet, client.addressCity].filter(Boolean).join("، ") || null,
       email: client.email,
       mapHref,
-      mapEmbedSrc:
-        client.addressLatitude != null && client.addressLongitude != null
-          ? `https://www.google.com/maps?q=${client.addressLatitude},${client.addressLongitude}&z=15&output=embed`
-          : null,
+      mapEmbedSrc: mapQuery
+        ? `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=15&output=embed`
+        : null,
       hours: parseHours(client.openingHoursSpecification),
     },
   };

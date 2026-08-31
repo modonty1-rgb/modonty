@@ -7,7 +7,6 @@ import { ServicesGrid } from "../services/services-grid";
 import { StatsRow } from "../stats/stats-row";
 import { TestimonialsGrid } from "../testimonials/testimonials-grid";
 import { GalleryMosaic } from "../gallery/gallery-mosaic";
-import { TeamGrid } from "../team/team-grid";
 import { IntroVideo } from "../video/intro-video";
 import { FaqAccordion } from "../faq/faq-accordion";
 import { LatestPosts } from "../blog/latest-posts";
@@ -58,15 +57,19 @@ export interface HomeBlock {
  */
 export const HOME_BLOCKS: readonly HomeBlock[] = [
   { key: "hero", name: "الغلاف", toggleable: false, isEmpty: () => false, Component: CoverHero },
-  { key: "trust", name: "شريط الثقة", toggleable: true, isEmpty: (d) => !d.trust.verified && d.trust.credentials.length === 0, Component: TrustStrip },
+  { key: "trust", name: "شريط الثقة", toggleable: true, isEmpty: (d) => d.trust.credentials.length === 0, Component: TrustStrip },
   { key: "about", name: "تعرّف علينا", toggleable: true, isEmpty: (d) => !d.about.description, Component: ImageTextAbout },
+  // الفيديو مع القصّة لا في ذيل الصفحة (خالد ٣١ أغسطس): هو «من نحن» محكيّاً — الزائر
+  // يقرأ سطرين ثم يشوف الوجه والمكان، فتُقفل الثقة قبل الخدمات. كان رقم ١٠ بعد الفريق،
+  // وهو أضعف موضع: اللي وصله إمّا اقتنع أو طلع.
+  { key: "video", name: "فيديو تعريفي", toggleable: true, isEmpty: (d) => !d.video, Component: IntroVideo },
   { key: "services", name: "خدماتنا", toggleable: true, isEmpty: (d) => d.services.length === 0, Component: ServicesGrid },
   { key: "booking", name: "احجز", toggleable: true, isEmpty: (d) => d.booking.mode === "NONE", Component: BookingBlock },
   { key: "stats", name: "أرقامنا", toggleable: true, isEmpty: (d) => d.stats.length === 0, Component: StatsRow },
   { key: "testimonials", name: "آراء العملاء", toggleable: true, isEmpty: (d) => d.testimonials.length === 0, Component: TestimonialsGrid },
   { key: "gallery", name: "المعرض", toggleable: true, isEmpty: (d) => d.gallery.length === 0, Component: GalleryMosaic },
-  { key: "team", name: "الفريق", toggleable: true, isEmpty: (d) => d.team.length === 0, Component: TeamGrid },
-  { key: "video", name: "فيديو تعريفي", toggleable: true, isEmpty: (d) => !d.video, Component: IntroVideo },
+  // الفريق غادر الرئيسية إلى «من نحن» (خالد ٣١ أغسطس): هو تعريفٌ بالناس، وصفحة «من نحن»
+  // هي بيت التعريف — ووجوده في الاثنتين تكرارٌ يطوّل الرئيسية بلا معلومة جديدة.
   { key: "faq", name: "الأسئلة الشائعة", toggleable: true, isEmpty: (d) => d.faqs.length === 0, Component: FaqAccordion },
   { key: "blog", name: "المدونة", toggleable: true, isEmpty: (d) => d.posts.length === 0, Component: LatestPosts },
   { key: "contact", name: "تواصل", toggleable: true, isEmpty: (d) => !d.contact.address && !d.contact.email && !d.phone, Component: ContactCards },

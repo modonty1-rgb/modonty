@@ -13,14 +13,20 @@ interface SectionProps {
   children: React.ReactNode;
 }
 
-/** Every home block sits in this: ≤ 1128px container, 64px vertical rhythm, one heading pattern. */
+/**
+ * حاوية كل قسم في موقع الشريك: عرض ١١٢٨ · حافة ٢٤ · إيقاع رأسي واحد · نمط عنوان واحد.
+ *
+ * الإيقاع صار سُلَّماً لا رقماً ثابتاً (٣١ أغسطس): كان ٦٤px فوق وتحت على الجوّال كما على
+ * الديسكتوب، فتضخّمت الصفحة إلى ٤٢٥٧px على ٣٩٠ — أي أن الزائر يمرّر فراغاً بمقدار ثلث
+ * شاشة بين كل قسمين. ٤٨ على الجوّال · ٦٤ من `md`، ومن هذا الملفّ وحده.
+ */
 export function Section({ id, eyebrow, heading, description, tone = "plain", className, children }: SectionProps) {
   return (
     <section id={id} className={cn(tone === "muted" && "bg-muted/30", className)}>
-      <div className="mx-auto max-w-[1128px] px-6 py-16">
+      <div className="mx-auto max-w-[1128px] px-6 py-12 md:py-16">
         {(eyebrow || heading) && (
           <div className="mb-10">
-            {eyebrow && <p className="text-sm font-medium text-primary">{eyebrow}</p>}
+            {eyebrow && <p className="text-sm font-medium text-[hsl(var(--primary-ink,var(--primary)))]">{eyebrow}</p>}
             {heading && <h2 className="mt-1 max-w-2xl text-2xl font-bold leading-tight text-foreground md:text-3xl">{heading}</h2>}
             {description && <p className="mt-2 max-w-2xl text-base leading-7 text-muted-foreground">{description}</p>}
           </div>

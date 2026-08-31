@@ -1,4 +1,7 @@
+"use client";
+
 import { cn } from "../../../../../lib/utils/index";
+import { useCurrentNavHref } from "./use-current-nav-href";
 import type { HeaderNavLink } from "../header-data";
 
 interface NavLinksProps {
@@ -10,9 +13,15 @@ interface NavLinksProps {
   gap?: "gap-8" | "gap-10";
 }
 
-/** 14px medium links, 32px apart — the convention shared by mainstream header templates. */
+/**
+ * 14px medium links, 32px apart — the convention shared by mainstream header templates.
+ *
+ * الصفحة الحالية تُعرف من المسار لا من الترتيب: كان `links[0]` يُعتبر الحالي دائماً،
+ * فتُضاء «الرئيسية» في كل صفحة (مقيس على `/photos` · ٣١ أغسطس).
+ */
 export function NavLinks({ links, currentHref, light = false, className, gap = "gap-8" }: NavLinksProps) {
-  const current = currentHref ?? links[0]?.href;
+  const active = useCurrentNavHref(links);
+  const current = currentHref ?? active;
   return (
     <ul className={cn("flex items-center text-sm font-medium", gap, className)}>
       {links.map((l) => {

@@ -1,4 +1,5 @@
 import { BrandLogo } from "../../parts/brand-logo";
+import { VerifiedBadge } from "../../parts/verified-badge";
 import { WhatsAppButton } from "../../parts/whatsapp-button";
 import { HeaderBar } from "./parts/header-bar";
 import { NavLinks } from "./parts/nav-links";
@@ -14,6 +15,7 @@ export function ClassicHeader({ data }: { data: HeaderData }) {
         <a href={data.homeHref} className="min-w-0 max-md:flex max-md:min-h-11 max-md:items-center">
           <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} />
         </a>
+        <VerifiedBadge />
         <NavLinks links={data.links} className="hidden md:flex" />
         <div className="hidden items-center gap-6 md:flex">
           <PhoneLine phone={data.phone} className="hidden lg:flex" />

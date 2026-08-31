@@ -135,13 +135,85 @@ export async function deleteBunnyFolder(
  */
 export const RETENTION = { daily: 7, weekly: 4, monthly: 12 } as const;
 
-export function foldersToPrune(
-  existing: string[],
-  tier: keyof typeof RETENTION,
-): string[] {
-  const keep = RETENTION[tier];
-  const sorted = [...existing].sort().reverse(); // folder names are ISO dates — lexical sort is chronological
-  return sorted.slice(keep);
+/** ISO week key (`2026-W35`) — Thursday rule, so a week belongs to the year holding its Thursday. */
+function isoWeekKey(iso: string): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  const day = (d.getUTCDay() + 6) % 7; // الاثنين = 0
+  d.setUTCDate(d.getUTCDate() - day + 3); // خميس ذلك الأسبوع
+  const year = d.getUTCFullYear();
+  const firstThursday = new Date(Date.UTC(year, 0, 4));
+  const firstDay = (firstThursday.getUTCDay() + 6) % 7;
+  firstThursday.setUTCDate(firstThursday.getUTCDate() - firstDay + 3);
+  const week = 1 + Math.round((d.getTime() - firstThursday.getTime()) / 604_800_000);
+  return `${year}-W${String(week).padStart(2, "0")}`;
+}
+
+/**
+ * Which dated backup folders may be deleted — by SELECTION, never by cutting a sorted tail.
+ *
+ * Only a `daily/` tier is written (one folder per day). A plain "keep the newest 7" would
+ * make the archive seven days deep, and the comment above says why that is not enough: silent
+ * corruption surfaces weeks later, and only an old copy helps then. So instead of copying
+ * files into weekly/monthly tiers — which would cost a download+upload of the whole archive
+ * every night — the same folders are KEPT under three overlapping rules:
+ *
+ *   • the newest `RETENTION.daily` days,
+ *   • the newest folder of each of the last `RETENTION.weekly` ISO weeks,
+ *   • the newest folder of each of the last `RETENTION.monthly` months.
+ *
+ * A folder survives if ANY rule claims it. Result at today's size: the archive holds roughly
+ * 7 + 4 + 12 folders instead of one per day forever, and still reaches a year back.
+ *
+ * Anything that does not parse as `YYYY-MM-DD` is kept, never deleted: an unknown name is
+ * not a licence to delete, it is a reason to leave it alone.
+ */
+export function foldersToPrune(existing: string[]): string[] {
+  const dated = existing.filter((f) => /^\d{4}-\d{2}-\d{2}$/.test(f));
+  const sorted = [...dated].sort().reverse(); // أسماء ISO — الترتيب المعجمي زمنيّ
+
+  const keep = new Set<string>(sorted.slice(0, RETENTION.daily));
+
+  const newestPer = (key: (iso: string) => string, limit: number) => {
+    const seen = new Map<string, string>();
+    for (const f of sorted) {
+      const k = key(f);
+      if (!seen.has(k)) seen.set(k, f); // `sorted` تنازليّ، فأول ما نراه هو الأحدث
+    }
+    for (const f of [...seen.values()].sort().reverse().slice(0, limit)) keep.add(f);
+  };
+  newestPer(isoWeekKey, RETENTION.weekly);
+  newestPer((iso) => iso.slice(0, 7), RETENTION.monthly);
+
+  return sorted.filter((f) => !keep.has(f));
+}
+
+/**
+ * Delete one dated folder file by file.
+ *
+ * Not a single DELETE on the directory path: that behaviour is not something this codebase
+ * has verified against Bunny's API, and an unverified delete is the wrong thing to schedule
+ * nightly. Deleting the listed files is the same operation the zone wipe already uses in
+ * production, so it is proven. An empty folder disappears on its own.
+ *
+ * Returns how many files were removed — the caller reports the number rather than claiming
+ * success blindly.
+ */
+export async function deleteBackupFolder(
+  config: BunnyBackupConfig,
+  folder: string,
+): Promise<{ deleted: number; failed: number }> {
+  const entries = await listBunnyFolder(config, folder);
+  let deleted = 0;
+  let failed = 0;
+  for (const e of entries) {
+    const res = await fetch(`https://${config.hostname}/${config.zone}/${folder}/${e.ObjectName}`, {
+      method: "DELETE",
+      headers: { AccessKey: config.password },
+    });
+    if (res.ok || res.status === 404) deleted++;
+    else failed++;
+  }
+  return { deleted, failed };
 }
 
 /** Collections whose contents are raw event firehoses — GA4 owns the truth, and copying

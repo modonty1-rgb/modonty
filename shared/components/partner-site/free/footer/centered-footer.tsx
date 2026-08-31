@@ -17,7 +17,9 @@ export function CenteredFooter({ data, preview = false }: { data: FooterData; pr
           <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
             {data.pages.map((p) => (
               <li key={p.href}>
-                <a href={p.href} className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{p.label}</a>
+                {/* الارتفاع كان ٤٤ سليماً والعرض ٣٨–٤٣ للتسميات القصيرة («خدماتنا» ٤١ ·
+                    «أعمالنا» ٣٨). الهدف مربّع لا خطّ: `min-w-11` يكمل البُعد الثاني. */}
+                <a href={p.href} className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:min-w-11 max-md:items-center max-md:justify-center">{p.label}</a>
               </li>
             ))}
           </ul>

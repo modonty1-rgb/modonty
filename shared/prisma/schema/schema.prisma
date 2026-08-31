@@ -749,7 +749,27 @@ model ClientSite {
   footerTemplate String   @default("columns") // FOOTER_TEMPLATES key
   primaryColor   String? // palette hex; null = modonty's colour
   hiddenSections String[] // block keys the partner switched OFF (any page); a new block is visible by default
-  subdomain      String?  @unique // `<label>.modonty.com`, validated by shared validateSubdomain
+  /// `<label>.modonty.com`, validated by shared validateSubdomain.
+  ///
+  /// NOT `@unique`, on purpose. `@unique` builds a PLAIN unique index, and MongoDB indexes a
+  /// missing field as null — so only ONE row may be without a subdomain. Reproduced on dev
+  /// 2026-08-30: the second partner to save his site's look got
+  /// `P2002 target: client_sites_subdomain_key` for a field he never touched, because another
+  /// row already held the null. (Prisma's "NULLs are distinct" note covers relational
+  /// databases only, and its MongoDB schema has no sparse/partial index syntax.)
+  ///
+  /// Uniqueness is still enforced by the database — a PARTIAL unique index that indexes real
+  /// strings only, created outside the schema because Prisma's MongoDB schema cannot express it:
+  ///     db.client_sites.createIndex({subdomain:1},
+  ///       {unique:true, name:"client_sites_subdomain_partial_unique",
+  ///        partialFilterExpression:{subdomain:{$type:"string"}}})
+  /// Verified on dev 2026-08-30: two rows without a subdomain coexist, and two rows claiming
+  /// the same label are rejected with P2002 on `client_sites_subdomain_partial_unique`, which
+  /// `saveMySite` turns into «هذا الاسم مستخدم — جرّب غيره».
+  ///
+  /// ⚠️ The index must be created on production too, or the same P2002 hits the second partner
+  /// there. `prisma db push` does NOT create it — it is not in this schema.
+  subdomain String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

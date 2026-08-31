@@ -16,7 +16,8 @@ export function CoverHero({ data }: { data: HomeData; preview?: boolean }) {
   const hasCover = Boolean(hero.coverUrl);
 
   return (
-    <section className={hasCover ? "bg-background" : "bg-gradient-to-b from-primary/10 to-background"}>
+    // `id` كبقيّة الأقسام: بدونه لا رابط عميق ولا قفزة إليه، وأي فحص يعدّ الأقسام يراه غائباً.
+    <section id="hero" className={hasCover ? "bg-background" : "bg-gradient-to-b from-primary/10 to-background"}>
       {hasCover && (
         <div
           className="relative w-full overflow-hidden bg-muted"
@@ -27,14 +28,22 @@ export function CoverHero({ data }: { data: HomeData; preview?: boolean }) {
       )}
       <div className={hasCover ? "mx-auto max-w-[1128px] px-6" : "mx-auto max-w-[1128px] px-6 pt-16"}>
         <div className="flex flex-col gap-6 pt-5 md:flex-row md:items-end md:justify-between">
-          <div className="flex min-w-0 items-end gap-5">
+          {/* الشعار فوق النصّ على الجوّال، لا بجانبه. المقيس على ٣٩٠: الشعار الكبير والفجوة
+              والحشو تأكل ١٦٨px، فيبقى للعنوان ٢٢٢ — ثلاثة أسطر بأربعة عشر محرفاً في السطر،
+              والمدى المريح للعناوين ٢٠–٤٠. مكدّساً يأخذ العنوان العرض كلّه. */}
+          <div className="flex min-w-0 items-end gap-5 max-md:flex-col max-md:items-start max-md:gap-3">
             {/* Was a white square with a ring — the halo, and the square kept the white corners
                 of a partner logo file visible. */}
+            {/* `relative z-10` ليس زينة: البانر فوقه `relative` والشعار كان `static`، وفي نفس
+                سياق التكديس يُرسم المموضَع فوق الساكن مهما كان ترتيب الـDOM — فكان نصف الشعار
+                يختفي خلف البانر (مقيس على ٣٩٠: الشعار يبدأ عند ٨٣ والبانر ينتهي عند ١٢٧).
+                والتداخل يصغر على الجوّال لأن البانر هناك ٦٢px فقط، أقصر من تداخل ٦٤ — شعارٌ
+                يعلو بانراً بكامله ليس «يركب حافّته». */}
             <PartnerAvatar
               media={hero.logoUrl ? asMedia(hero.logoUrl, data.name) : null}
               name={data.name}
               size="big"
-              className={hasCover ? "-mt-16 md:-mt-20" : undefined}
+              className={hasCover ? "relative z-10 -mt-6 md:-mt-20" : undefined}
             />
             <div className="min-w-0 pb-1">
               {meta && <p className="text-sm text-muted-foreground">{meta}</p>}

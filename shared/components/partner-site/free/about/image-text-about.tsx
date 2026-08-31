@@ -23,7 +23,7 @@ export function ImageTextAbout({ data }: { data: HomeData; preview?: boolean }) 
           <dl className="grid gap-4 rounded-lg bg-muted/40 p-6 ring-1 ring-border">
             {facts.map((f) => (
               <div key={f.label} className="flex items-start gap-3">
-                <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+                <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-[hsl(var(--primary-ink,var(--primary)))]">
                   <f.Icon className="h-4 w-4" aria-hidden />
                 </span>
                 <div className="min-w-0">
