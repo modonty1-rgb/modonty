@@ -229,8 +229,8 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
                   [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mb-3
                   [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mb-2
                   [&_p]:mb-4 [&_p]:leading-relaxed
-                  [&_ul]:list-disc [&_ul]:me-6 [&_ul]:mb-4
-                  [&_ol]:list-decimal [&_ol]:me-6 [&_ol]:mb-4
+                  [&_ul]:list-disc [&_ul]:ps-6 [&_ul]:mb-4
+                  [&_ol]:list-decimal [&_ol]:ps-6 [&_ol]:mb-4
                   [&_blockquote]:border-e-4 [&_blockquote]:border-primary [&_blockquote]:pe-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground [&_blockquote]:my-4
                   [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:font-mono
                   [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-md [&_pre]:overflow-x-auto [&_pre]:my-4

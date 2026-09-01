@@ -92,8 +92,11 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
           '[&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mb-3',
           '[&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mb-2',
           '[&_p]:mb-4 [&_p]:leading-relaxed',
-          '[&_ul]:list-disc [&_ul]:me-6 [&_ul]:mb-4',
-          '[&_ol]:list-decimal [&_ol]:me-6 [&_ol]:mb-4'
+          // الرقم يقعد في حشوة البداية للقائمة. `me-6` كان يزحزح الصندوق عن النهاية
+          // بدلاً منها، فيهبط الرقم على الجهة الغلط في العربي. `ps-6` هو ما يضعه فعلاً —
+          // نفس التصحيح المطبَّق في `rich-text-editor.tsx`، وهذه آخر شاشة بقيت عليه.
+          '[&_ul]:list-disc [&_ul]:ps-6 [&_ul]:mb-4',
+          '[&_ol]:list-decimal [&_ol]:ps-6 [&_ol]:mb-4'
         ),
         dir: 'rtl',
       },

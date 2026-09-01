@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import {
   createKeyword,
   updateKeyword,
@@ -38,6 +39,7 @@ export function KeywordsTab({ clientId, keywords }: KeywordsTabProps) {
     priority: "0",
     reason: "",
   });
+  const { confirmThen, confirmDialog } = useConfirm({ title: ar.seo.delete });
 
   async function handleAdd() {
     if (!form.keyword.trim()) return;
@@ -71,14 +73,20 @@ export function KeywordsTab({ clientId, keywords }: KeywordsTabProps) {
     } else setError(res.error ?? "Failed");
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm(ar.seo.deleteConfirm)) return;
-    setLoading(true);
-    setError(null);
-    const res = await deleteKeyword(id);
-    setLoading(false);
-    if (res.success) router.refresh();
-    else setError(res.error ?? "Failed");
+  function handleDelete(id: string) {
+    // نفس تحويل شاشة المنافسين: الحوار المشترك بدل `confirm()` الأصليّ.
+    confirmThen(
+      ar.seo.deleteConfirm,
+      async () => {
+        setLoading(true);
+        setError(null);
+        const res = await deleteKeyword(id);
+        setLoading(false);
+        if (res.success) router.refresh();
+        else setError(res.error ?? "Failed");
+      },
+      ar.seo.delete
+    );
   }
 
   return (
@@ -168,6 +176,7 @@ export function KeywordsTab({ clientId, keywords }: KeywordsTabProps) {
           </div>
         )}
       </CardContent>
+      {confirmDialog}
     </Card>
   );
 }

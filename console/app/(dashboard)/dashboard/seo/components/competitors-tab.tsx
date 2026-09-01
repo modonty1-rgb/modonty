@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import {
   createCompetitor,
   updateCompetitor,
@@ -27,6 +28,7 @@ export function CompetitorsTab({ clientId, competitors }: CompetitorsTabProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", url: "", notes: "" });
+  const { confirmThen, confirmDialog } = useConfirm({ title: ar.seo.delete });
 
   async function handleAdd() {
     if (!form.name.trim()) return;
@@ -57,14 +59,21 @@ export function CompetitorsTab({ clientId, competitors }: CompetitorsTabProps) {
     } else setError(res.error ?? "Failed");
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm(ar.seo.deleteConfirm)) return;
-    setLoading(true);
-    setError(null);
-    const res = await deleteCompetitor(id);
-    setLoading(false);
-    if (res.success) router.refresh();
-    else setError(res.error ?? "Failed");
+  function handleDelete(id: string) {
+    // `confirm()` الأصليّ يوقف الصفحة كلها ولا يتبع سمة الموقع ولا يُقرأ RTL؛ الحوار
+    // المشترك هو ما تستعمله بقية شاشات الكونسول، فبقاء اثنتين عليه كان الفرق الوحيد.
+    confirmThen(
+      ar.seo.deleteConfirm,
+      async () => {
+        setLoading(true);
+        setError(null);
+        const res = await deleteCompetitor(id);
+        setLoading(false);
+        if (res.success) router.refresh();
+        else setError(res.error ?? "Failed");
+      },
+      ar.seo.delete
+    );
   }
 
   return (
@@ -138,6 +147,7 @@ export function CompetitorsTab({ clientId, competitors }: CompetitorsTabProps) {
           </div>
         )}
       </CardContent>
+      {confirmDialog}
     </Card>
   );
 }

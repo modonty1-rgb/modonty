@@ -93,8 +93,7 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 <p class="sub">٣١ أغسطس ٢٠٢٦ · <b>دُمج ونُشر على الإنتاج</b> · هذا الملف يُحدَّث مع كل بند يُغلق</p>
 
 <div class="tabs" role="tablist">
-  <button role="tab" aria-selected="true"  data-pane="todo">الباقي<span class="n" id="n-todo"></span></button>
-  <button role="tab" aria-selected="false" data-pane="work" class="tb-amber">🔧 شغل مفتوح<span class="n" id="n-work"></span></button>
+  <button role="tab" aria-selected="true"  data-pane="todo">To Do<span class="n" id="n-todo"></span></button>
   <button role="tab" aria-selected="false" data-pane="later">⏸️ لاحقاً<span class="n" id="n-later"></span></button>
   <button role="tab" aria-selected="false" data-pane="data" class="tb-amber">🗄️ مشاكل الداتا<span class="n" id="n-data"></span></button>
   <button role="tab" aria-selected="false" data-pane="reels">🎬 الريلز<span class="n" id="n-reels"></span></button>
@@ -102,82 +101,23 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 </div>
 
 <section class="pane" id="pane-todo">
-
-
-<h2>المتبقّي — بالترتيب</h2>
-<ol class="step">
-<li class="doing"><span class="badge">◀ إحنا هنا</span> <b>Checkup</b> — التحقّق أن أثر البنود المغلقة ظاهر على الإنتاج. <b>المقيس ١ سبتمبر:</b> ٢٤٨ بنداً في «المنجز»، منها <b>٢٤٤ تحمل ناتجاً خاماً</b> (رقم · <code>ملف:سطر</code> · كود HTTP · بايت) و٤ بلا أثر: <code>BK1</code> · <code>T2</code> · <code>B3</code> · <code>BRAND-ID</code>. وما زال مفتوحاً: ٣٧ واجهة · ٣ داتا · ١ لاحقاً.<br><span style="opacity:.7">تصحيح: كان مكتوباً «٣٢٧ بنداً» — رقمٌ لا يقابله عدٌّ في أي نسخة. أكبر ما حملته جداول Checkup فعلاً ١٨١ صفاً (<code>642e639</code>: dbdone 27 · http 12 · code 16 · manual 126).</span></li>
-</ol>
-<div class="card a" style="margin-bottom:16px"><h3>🔑 ثلاثة تنتظر نظرةً خارج المستودع</h3><div class="scrollx"><table class="chkt"><tr><th>الرمز</th><th>البند</th><th>الحكم</th></tr><tr><td class="n">63</td><td>أرشيف نسخ احتياطي ليلي على بني + كرت Atlas المالي</td><td>🔴 حيّ: كرت Atlas ينتهي = القاعدة تموت · والأرشيف الليلي يقف = لا رجوع</td></tr><tr><td class="n">SEOWATCH</td><td>قائمة المراقبة — رُوجعت ٢٧ أغسطس</td><td>🟡 حيّ: ثلاثة تحت المراقبة، أرقامها اليوم تُقارَن بأرقام ٢٧ أغسطس</td></tr><tr><td class="n">T1</td><td>متغيّرا بوت المحتوى على Vercel</td><td>يُفحص بالوظيفة لا باللوحة: شغّل بوت المحتوى — يشتغل أو لا</td></tr></table></div></div>
-
-
-
-
-<details class="tk" open>
-<summary><span class="id">SUSPENSE-EXPOSED</span><span class="sv sv-h">عالٍ</span><span class="tt">🔴 أربعة مسارات فيها قراءة حيّة في جذر الشجرة — نفس آلية «المقال ما فتحت»</span><span class="ap">modonty</span></summary>
-<div class="body">
-<b>لماذا هذا البند خطر وليس تحسيناً:</b> هذه بالضبط الآلية التي أسقطت صفحة المقال اليوم — قراءة قاعدة غير مكيّشة تُنتظر في جذر الشجرة خارج أي <code>&lt;Suspense&gt;</code>، فتحجز الصفحة كلها، وإن تعثّرت مات كل شيء. والقاعدة الرسمية في <code>node_modules/next/dist/docs/01-app/02-guides/building.md:111</code>: «accessed outside of <code>&lt;Suspense&gt;</code> prevents the route from being prerendered, blocking the page load». والمشروع يفعّل <code>cacheComponents: true</code> (<code>modonty/next.config.ts:108</code>).<br><br>
-
-<b>المسارات الأربعة (من جرد Codex، بمراجع سطر — لم أفتحها بنفسي بعد):</b>
-<div class="scrollx"><table class="chkt">
-<tr><th>المسار</th><th>القراءات المكشوفة</th><th>ملف:سطر</th></tr>
-<tr><td class="n">/categories/[slug]</td><td><code>category.findUnique</code> · <code>client.findMany</code> · <code>clientReview.groupBy</code></td><td><code>page.tsx:108, 119, 152</code></td></tr>
-<tr><td class="n">/tags/[slug]</td><td>الثلاثة نفسها</td><td><code>page.tsx:103, 114, 150</code></td></tr>
-<tr><td class="n">/users/[id]</td><td><code>user.findUnique</code> · <code>author.findUnique/findFirst</code> ومعها <code>auth()</code></td><td><code>page.tsx:25,35,97,113,153</code></td></tr>
-<tr><td class="n">/users/notifications</td><td><code>notification</code> · <code>articleFAQ</code> · <code>contactMessage</code> · <code>client</code></td><td><code>page.tsx:42,54,59,68,79</code></td></tr>
+<div class="scrollx"><table id="t-todo">
+<tr><th>#</th><th>الرمز</th><th>التاسك</th><th>التطبيق</th></tr>
+<tr><td class="n">1</td><td class="n">63</td><td>أرشيف النسخ الليلي على بني + كرت Atlas المالي <span style="opacity:.6">(خارج المستودع)</span></td><td class="n">—</td></tr>
+<tr><td class="n">2</td><td class="n">80</td><td>تحقّق النسخ الاحتياطي على الإنتاج</td><td class="n">admin</td></tr>
+<tr><td class="n">3</td><td class="n">CAMERGE</td><td>مقالات العملاء — الفرع مدموج؛ أربعة بنود باقية (موافقة طارق · db push إنتاج · Run-All · المشهد ١١)</td><td class="n">admin · console · modonty</td></tr>
+<tr><td class="n">4</td><td class="n">IMG-FB</td><td>آخر حلقة في سلسلة صورة الاحتياط كانت ملفاً غير موجود</td><td class="n">admin</td></tr>
+<tr><td class="n">5</td><td class="n">25</td><td>روابط داخلية سياقية داخل جسم المقال</td><td class="n">modonty</td></tr>
+<tr><td class="n">6</td><td class="n">13</td><td>GEO/AEO — التنفيذ</td><td class="n">modonty</td></tr>
+<tr><td class="n">7</td><td class="n">SEO52</td><td>جرد سيو ٥٢ صفحة — أعلى عشرة إصلاحات بالأثر</td><td class="n">modonty</td></tr>
+<tr><td class="n">8</td><td class="n">SEOAGENT-READY</td><td>فحص «هل موقعك جاهز للوكلاء؟» (Cloudflare): ٢٠/١٠٠ — بندان فقط يستحقّان قرارك</td><td class="n">modonty</td></tr>
+<tr><td class="n">9</td><td class="n">GEOAEO</td><td>بقايا فحص الظهور في محرّكات الإجابة — يُعاد فرزها قبل العمل</td><td class="n">modonty</td></tr>
+<tr><td class="n">10</td><td class="n">SEOWATCH</td><td>قائمة مراقبة السيو — أرقام اليوم تُقارَن بأرقام ٢٧ أغسطس <span style="opacity:.6">(خارج المستودع)</span></td><td class="n">—</td></tr>
+<tr><td class="n">11</td><td class="n">47b</td><td>توحيد كل تأكيدات الكونسول على حوار واحد — بقي <code>confirm()</code> أصليّان: <code>competitors-tab.tsx:61</code> · <code>keywords-tab.tsx:75</code></td><td class="n">console</td></tr>
+<tr><td class="n">12</td><td class="n">LISTFIX</td><td>ترقيم مقلوب في RTL — بقيت شاشة واحدة على <code>me-6</code>: <code>ai-article-dialog.tsx:95-96</code></td><td class="n">admin</td></tr>
+<tr><td class="n">13</td><td class="n">JC5</td><td>٥ · تست حيّ — إدارة المحتوى <span style="opacity:.6">(بلا معيار قبول — يُكتب أو يُحذف)</span></td><td class="n">admin</td></tr>
+<tr><td class="n">14</td><td class="n">T1</td><td>متغيّرا بوت المحتوى على Vercel — يُفحص بالوظيفة: شغّله، يشتغل أو لا <span style="opacity:.6">(خارج المستودع)</span></td><td class="n">—</td></tr>
 </table></div>
-
-<b>وما هو سليم أصلاً (فلا يُلمس):</b> <code>/reels/[slug]</code> · <code>/clients/[slug]</code> · <code>/authors/[slug]</code> · <code>/audio</code> · <code>/industries/[slug]</code> · <code>/modonty</code> · <code>/</code> · <code>/search</code> · الصفحات القانونية — كلها <code>"use cache"</code>. والتذييل وجرس الإشعارات محروسان بحدّ Suspense.<br><br>
-
-<b>الأولوية بينها:</b> <code>/categories</code> و<code>/tags</code> أوّلاً — صفحتان عامّتان يزورهما القارئ وجوجل، وقراءاتهما قابلة للتكييش (فئة ووسم وقائمة شركاء تتغيّر نادراً). و<code>/users/*</code> بعدهما: ديناميكية بطبيعتها لأنها تقرأ الجلسة، فعلاجها حدّ <code>&lt;Suspense&gt;</code> لا تكييش.<br><br>
-
-<b>✔ يقفل بـ:</b> صفر قراءة غير مكيّشة في جذر المسارات الأربعة، وقياس حيّ على كلٍّ منها كما فعلنا مع المقال (١٢ طلباً متوازياً ⇒ صفر <code>$RX</code>).
-</div>
-</details>
-
-<details class="tk">
-<summary><span class="id">LINK-AUDIT</span><span class="sv sv-l">منخفض</span><span class="tt">🔗 بندان من جرد الروابط: rel ناقص، ونطاق مثبَّت في الكود</span><span class="ap">admin · console</span></summary>
-<div class="body">
-جرد Codex فحص ١١٧٦ سطراً مرشَّحاً في التطبيقات الثلاثة، و<b>لم يجد حالة أخرى</b> لاسم يعد بوجهة ويذهب لغيرها — فزرّ «Console» الذي أُصلح اليوم كان حالة فريدة لا نمطاً. وبقي بندان:<br><br>
-<b>١ · أمني (أُصلح ودُفع):</b> <code>admin/components/shared/media-picker-dialog.tsx:217</code> — زرّ <code>Upload</code> بـ<code>target="_blank"</code> بلا <code>rel="noopener noreferrer"</code>، فتملك الصفحة المفتوحة مرجعاً لنافذتنا عبر <code>window.opener</code>. أُصلح في <code>e9ede16</code>.<br><br>
-<b>٢ · بيئي (مفتوح):</b> <code>console/app/help/HelpClient.tsx:37-43</code> — «الصفحة العامة» تشير إلى <code>https://www.modonty.com/story</code> بنطاق مثبَّت في الكود بدل متغيّر البيئة، فينكسر في المحلي وفي المعاينة.<br><br>
-<span style="opacity:.75">وميّز الجرد صح بين هذا وبين الروابط الخارجية الحقيقية (Google · واتساب · YouTube) فلم يعدّها مخالفة.</span>
-</div>
-</details>
-
-<div class="card a" style="margin-bottom:16px">
-<h3>🔍 مراجعة Codex — ١ سبتمبر ٢٠٢٦ · <b style="color:var(--amber)">مرشَّحات لم تُتحقَّق بعد</b></h3>
-<p style="margin:6px 0 10px">التقرير الكامل في <code>documents/HTML/CODEX-REVIEW-2026-09-01.md</code>. فُحص <b>٣٣ بنداً</b> من التبويبات المفتوحة كلّها (الباقي · شغل مفتوح · لاحقاً · مشاكل الداتا · الريلز). تبويب «المنجز» لم يُفحص — استُبعد في التكليف الأول، وجولة ثانية تغطّيه.</p>
-<p style="margin:6px 0 10px"><b>لم يُنقَل من هذا التقرير بندٌ واحد إلى «المنجز»، ولا تغيّر عدّاد.</b> القاعدة قائمة: البطاقة لا تُغلق بتقرير وكيل، بل بقياس أفتحه بنفسي. ما يلي مرشَّحات بمراجعها، تنتظر ذلك:</p>
-<div class="scrollx"><table class="chkt">
-<tr><th>الرمز</th><th>حكم Codex</th><th>المرجع الذي أعطاه</th></tr>
-<tr><td class="n">37</td><td>قائم</td><td><code>shared/prisma/schema/schema.prisma:384-388</code> — السكيما تخزّن <code>services</code> نصّاً، ولا محرّر مخصّص</td></tr>
-<tr><td class="n">REEL-CTRL</td><td>قائم</td><td><code>admin/…/reels/helpers/load-reels.ts:58-61</code> — الجلب محصور بـ<code>PENDING_APPROVAL</code></td></tr>
-<tr><td class="n">REEL-LEAK</td><td>قائم</td><td><code>console/…/reels-actions.ts:250-257</code> — العميل يؤرشف ريلاً حيّاً بنفسه</td></tr>
-<tr><td class="n">B10</td><td>أُصلح، لم يُنقَل</td><td><code>admin/tests/e2e/articles.spec.ts:1,176</code> موجود — ينقصه تشغيله في CI</td></tr>
-<tr><td class="n">داتا-1</td><td>أُصلح، لم يُنقَل</td><td><code>run-all-maintenance.ts:423-429</code> موصولة — تنتظر ضغطة على الإنتاج</td></tr>
-<tr><td class="n">T9</td><td>إنذار كاذب</td><td>مؤجَّل عمداً لا خلل — قرار لا قياس</td></tr>
-</table></div>
-<p style="margin:6px 0 0;opacity:.75">و<b>٢٧ بنداً</b> وسمها «يحتاج قياساً حيّاً» ومعها القياس المطلوب لكلٍّ منها — وهي أنفع ما في التقرير: تحوّل بنوداً غامضة إلى خطوات محدّدة.</p>
-</div>
-
-<h2>الجذر المفتوح</h2>
-<details class="tk">
-<summary><span class="id">NEXT-UPGRADE</span><span class="sv sv-m">متوسّط</span><span class="tt">⏸️ ترقية Next 16.2.9 ← 16.3.4 — تحلّ باق <code>__next_metadata_boundary__</code></span><span class="ap">modonty</span></summary>
-<div class="body"><b style="color:var(--amber)"><b>✅ نُفِّذت — ١ سبتمبر ٢٠٢٦ على فرع <code>next-16.3.4-upgrade</code> (كوميت <code>5d48d4a</code>، غير مدفوع).</b><br><br><b>وتبيّن أنها ليست ترقية اختيارية:</b> نسختنا مصابة بـ<code>GHSA-2xp9-vwfh-vxw4</code> — تنفيذ كود عن بُعد بلا مصادقة عبر واجهة تحسين الصور مع AVIF. المصاب <code>&lt; 16.3.3</code> والمرقَّع <code>16.3.3</code>، <b>ولا رقعة على خطّ 16.2.x</b> (فُحص <code>16.2.12</code>: توثيق ودعم TypeScript 7 فقط). والتطبيقات الثلاثة تفعّل <code>formats: ["image/avif","image/webp"]</code>، والإنتاج يسلّم <code>Content-Type: image/avif</code> فعلاً.<br><br><b>فرق الكود الذي يغلق الباق:</b> <code>16.2.9</code> فيه <code>botType &amp;&amp; isRoutePPREnabled ? false</code> (<code>app-page.js:349</code>) — أي بوت مع PPR يُخدَم ميتاداتا حاجبة والقشرة بُنيت متدفّقة فتختلف الشجرتان. و<code>16.3.4</code> استبدله بـ<code>shouldForceDynamicPPRRender = isRoutePPREnabled &amp;&amp; !serveStreamingMetadata</code> (<code>app-page-runtime.js:343</code>) — الشرط القديم اختفى: صفر ورود.<br><br><b>الكاسر الوحيد:</b> <code>unstable_retry</code> ← <code>retry</code> في <b>٧٢ ملفاً</b> (<code>error.md:117</code> المشحون مع النسخة).<br><br><b>القياسات:</b> <code>tsc</code> صفر أخطاء × ٣ · بناء <code>exit=0</code> × ٣ · 316/30/27 صفحة · 20/20 طلب بوت ينجح.<br><br><b>وانحدار كاش <code>16.3</code> (<code>#96593</code>) لا يمسّنا:</b> مشروط بـ<code>htmlLimitedBots</code> مخصَّص ولا نضبطه — وبالضابط، <code>16.2.9</code> يعطي <code>no-store</code> نفسه محلّياً، فهو سلوك الخادم المحلّي لا عطل.<br><br><b>⚠️ ما لم يُقَس:</b> أن الباق توقّف فعلاً — لا يظهر إلا على نشرٍ حقيقي بزحف بوت. تستي المحلّي لم يُعِد إنتاجه على أيٍّ من النسختين (٢٠/٢٠ نجحت على الاثنتين)، فلا يصلح دليلاً في الاتجاهين.<br><br>مؤجَّلة بأمر خالد ٣١ أغسطس ٢٠٢٦:</b> «افتح له بطاقة، بعد ما نخلّص الأساس اللي عندنا نشوف موضوعه». <b>لا تُبدأ قبل إغلاق الأساس.</b><br><br><b>الخطأ كما يظهر في سجلّ الأدمن:</b><br><code>[FRAMEWORK] Expected the resume to render &lt;div&gt; in this slot but instead it rendered &lt;__next_metadata_boundary__&gt;</code><br><code>POST /articles?time=long · routeType: render · device: bot (Googlebot) · digest: 1487855941</code><br><br><b>الحسم بالتواريخ (متحقَّق ٣١ أغسطس من GitHub وnpm):</b><pre style="font-size:12px;margin:6px 0">نسختنا  next 16.2.9   نُشرت 2026-06-09
-الباق   issue #93401  صار CLOSED  (كان OPEN في تحقيقنا ٢٢ يوليو)
-الإصلاح PR #96364     دُمج 2026-07-29   ← بعد نسختنا بشهر ونصف
-أحدث مستقرّة 16.3.4   نُشرت 2026-08-31</pre>فالباق <b>اتحلّ عند Next</b>، ونحن على نسخة أقدم من الإصلاح — ولهذا ما زال يظهر.<br><br><b>الخطورة الآن: منخفضة.</b> موسوم <code>framework</code> في سجلّنا فلا يرنّ تيليجرام، والصفحة تشتغل لكنها تسقط لرِندَر العميل لحظة الطلب.<br><br><b style="color:var(--amber)">تصحيح لملاحظة قديمة:</b> ذاكرتنا (٢٢ يوليو) تقول «قوقل ما يتأثّر لأنه ما يعمل POST». سطر السجلّ يقول <code>device: bot (Googlebot)</code> على <code>POST</code> — <b>قوقل يمرّ بالحالة فعلاً</b>، والملاحظة كانت ناقصة.<br><br><b>ما تحتاجه الترقية:</b> ترقية إطار كاملة — <code>tsc</code> على الثلاثة · <code>pnpm build</code> · تست حيّ على مسارات PPR. البديل المضمون لكن الخاسر للأداء: <code>cacheComponents:false</code>.<br><br><b>✔ تقفل بـ:</b> صفر <code>__next_metadata_boundary__</code> في سجلّ الأخطاء بعد الترقية.</div>
-</details>
-
-<h2>لم يُفحص — لا تبنِ عليه قراراً</h2>
-<ul class="unk">
-<li>البناء الكامل للتطبيقات الثلاثة بعد الدمج.</li>
-<li>رسم الصفحات حيّاً بعد الدمج — خاصةً دليل الفريق وشاشات الصور.</li>
-<li>لوحة Vercel للإنتاج.</li>
-<li>تطبيقا الجوّال.</li>
-</ul>
-
 </section>
 
 <section class="pane" id="pane-reels" hidden>
@@ -283,10 +223,7 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 <section class="pane" id="pane-codex" hidden>
 <h2>🤖 Codex — بنود تنفيذية من الجرد</h2>
 
-<details class="tk" open>
-<summary><span class="id">SUSPENSE-PUBLIC</span><span class="sv sv-h">عالٍ</span><span class="tt">قراءات قاعدة غير مكيّشة في جذور صفحات عامة</span><span class="ap">modonty</span></summary>
-<div class="body"><b>ما يُعمل:</b> حسم قراءات الجذر في <code>/categories/[slug]</code> و<code>/tags/[slug]</code> ضمن نمط Cache Components المعتمد؛ ثم عزل قراءات <code>/users/[id]</code> و<code>/users/notifications</code> الديناميكية بحدّ تحميل مناسب.<br><b>الدليل:</b> <code>categories/[slug]/page.tsx:108,119,152</code> · <code>tags/[slug]/page.tsx:103,114,150</code> · <code>users/[id]/page.tsx:25,35,97,113,153</code> · <code>users/notifications/page.tsx:42,54,59,68,79</code>.<br><b>✔ ينغلق بـ:</b> ١٢ طلباً متوازياً لكل مسار على الإنتاج ⇒ صفر <code>$RX</code> وصفر صفحة محجوبة.</div>
-</details>
+
 
 <details class="tk" open>
 <summary><span class="id">REEL-LEAK</span><span class="sv sv-h">عالٍ</span><span class="tt">العميل يخرج الريل الحيّ وحذف الوسيط يترك Stream مدفوعاً</span><span class="ap">admin · console</span></summary>
@@ -303,15 +240,9 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 <div class="body"><b>ما يُعمل:</b> إتاحة إدارة عناصر الخدمات المخزنة للعميل من شاشة الأدمن، ثم التحقق من حفظها وظهورها في صفحة العميل.<br><b>الدليل:</b> <code>shared/prisma/schema/schema.prisma:384-388,680</code> يعرّف <code>ClientServiceItem[]</code>، والذكر في النموذج الحالي نص مساعد فقط: <code>admin/.../business-brief-section.tsx:45</code>.<br><b>✔ ينغلق بـ:</b> إدخال عنوان ووصف وأيقونة، إعادة فتح العميل، وظهور العناصر في الصفحة وOfferCatalog.</div>
 </details>
 
-<details class="tk">
-<summary><span class="id">LINK-SEC</span><span class="sv sv-n">متوسّط</span><span class="tt">رابط Upload يفتح تبويباً بلا حماية opener</span><span class="ap">admin</span></summary>
-<div class="body"><b>ما يُعمل:</b> حسم رابط فتح رفع الوسائط ضمن معيار الروابط الخارجية/التبويب الجديد المعتمد.<br><b>الدليل:</b> <code>admin/components/shared/media-picker-dialog.tsx:217</code> يحمل <code>target="_blank"</code> بلا <code>rel="noopener noreferrer"</code>.<br><b>✔ ينغلق بـ:</b> فحص العنصر في المتصفح: لا وصول للنافذة المفتوحة إلى <code>window.opener</code>.</div>
-</details>
 
-<details class="tk">
-<summary><span class="id">LINK-ENV</span><span class="sv sv-i">منخفض</span><span class="tt">رابط الصفحة العامة في الكونسول مثبّت على نطاق الإنتاج</span><span class="ap">console</span></summary>
-<div class="body"><b>ما يُعمل:</b> جعل وجهة «الصفحة العامة» تتبع أصل البيئة بدلاً من نطاق الإنتاج المكتوب.<br><b>الدليل:</b> <code>console/app/help/HelpClient.tsx:37-43</code> يشير إلى <code>https://www.modonty.com/story</code> مباشرة.<br><b>✔ ينغلق بـ:</b> فتح الزر في المحلي وpreview والإنتاج؛ كل واحدة تفتح أصلها الموافق.</div>
-</details>
+
+
 
 <details class="tk">
 <summary><span class="id">IMAGE-SIZES</span><span class="sv sv-i">منخفض</span><span class="tt">ثلاثة إعلانات sizes ثابتة تحتاج قياس عرض فعلي</span><span class="ap">modonty · admin · console</span></summary>
@@ -329,49 +260,6 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 </details>
 </section>
 
-<section class="pane" id="pane-work" hidden>
-<h2 style="color:var(--amber)">🔧 شغل مفتوح — تاسكات تُنفَّذ</h2>
-<p style="color:var(--muted);font-size:15px;margin:0 0 12px">كلّ بند هنا <b>فُتح في الكود أو على الإنتاج ١ سبتمبر ٢٠٢٦ وثبت أنه ناقص</b> — ليس ادّعاءً من عنوانه. التبويب كان اسمه «شغل واجهة» وكان مضلّلاً: أكثر ما بقي أدمن وكونسول وسيو، لا تصميم.</p>
-<input id="q-work" class="chkq" placeholder="تصفية…" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#0a0d12;color:var(--ink);font-family:inherit;font-size:15px;margin-bottom:12px">
-<p id="c-work" style="color:var(--muted);font-size:14px;margin:0 0 8px"></p>
-<div class="scrollx"><table id="t-work" class="chkt">
-<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th></tr>
-
-
-
-<tr><td class="n">75</td><td class="n">80</td><td>تحقّق النسخ الاحتياطي على الإنتاج</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">81</td><td class="n">IMG-FB</td><td>آخر حلقة في سلسلة صورة الاحتياط كانت ملفاً غير موجود</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">86</td><td class="n">B1</td><td>ذيل A2 — تبويبات الأدمن</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">87</td><td class="n">B6</td><td>مهمّة S1 من Epic INV — الحقول النصّية الخام</td><td class="n">—</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">88</td><td class="n">B10</td><td>مهمّة V1 من Epic INV — بوّابة التحقّق الحيّ بـPlaywright</td><td class="n">—</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">95</td><td class="n">47</td><td>تأكيد موافقة العميل — حوار بدل التوست المؤقّت</td><td class="n">console</td><td class="n">عيوب وإصلاحات</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">96</td><td class="n">47b</td><td>توحيد كل تأكيدات الكونسول على حوار واحد</td><td class="n">console</td><td class="n">عيوب وإصلاحات</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">100</td><td class="n">85</td><td>شعار الكونسول فوق الطيّة — تهيئة التحميل</td><td class="n">console</td><td class="n">عيوب وإصلاحات</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">112</td><td class="n">13</td><td>GEO/AEO — التنفيذ</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٨ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">113</td><td class="n">25</td><td>روابط داخلية سياقية داخل جسم المقال</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٨ أغسطس ٢٠٢٦</td></tr>
-
-<tr><td class="n">117</td><td class="n">CAMERGE</td><td>مقالات العملاء — الفرع مدموج؛ أربعة بنود باقية (موافقة طارق · db push إنتاج · Run-All · المشهد ١١)</td><td class="n">admin · console · modonty</td><td class="n">مقالات العملاء</td><td class="n">٢٢ أغسطس ٢٠٢٦</td></tr>
-
-<tr><td class="n">124</td><td class="n">SEO52</td><td>جرد سيو ٥٢ صفحة — أعلى عشرة إصلاحات بالأثر</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٨ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">125</td><td class="n">GEOAEO</td><td>بقايا فحص الظهور في محرّكات الإجابة — يُعاد فرزها قبل العمل</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٨ أغسطس ٢٠٢٦</td></tr>
-
-<tr><td class="n">132</td><td class="n">LISTFIX</td><td>📝 «القائمة المرقّمة ما تتحفظ» — الحفظ سليم، والمكسور هو ما تراه العين + ترقيم مقلوب في RTL</td><td class="n">admin</td><td class="n">عيوب وإصلاحات</td><td class="n">١١ أغسطس</td></tr>
-<tr><td class="n">137</td><td class="n">JC5</td><td>٥ · تست حيّ — إدارة المحتوى</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٨ أغسطس</td></tr>
-
-
-
-
-
-
-<tr><td class="n">195</td><td class="n">37</td><td><b>قسم خدمات العميل</b> — البنية موجودة والواجهة لا. <b>مقيس ١ سبتمبر:</b> <code>schema.prisma:384</code> فيه <code>type ClientServiceItem { title · description · icon }</code> و<code>:680</code> فيه <code>Client.services ClientServiceItem[]</code>. الناقص هو محرّر الخدمات في الأدمن: صفر حقل مخصَّص، والموجود ذكرٌ عابر في نصّ مساعد (<code>business-brief-section.tsx:45</code>). <span style="opacity:.7">تصحيح: كتبتُ سابقاً «موديل ClientService غير موجود» — التسمية <code>ClientServiceItem</code> وهو <code>type</code> مضمَّن لا <code>model</code>، وهذا هو النمذجة الصحيحة في مونجو.</span></td><td class="n">dataLayer</td><td class="n">قائمة الانتظار</td><td class="n">٦ أغسطس</td></tr>
-
-
-
-
-<tr><td class="n">276</td><td class="n">SEOAGENT-READY</td><td>فحص «هل موقعك جاهز للوكلاء؟» (Cloudflare): ٢٠/١٠٠ — بندان فقط يستحقّان قرارك</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٨ أغسطس ٢٠٢٦</td></tr>
-
-</table></div>
-</section>
 <section class="pane" id="pane-later" hidden>
 <h2 style="color:var(--muted)">⏸️ لاحقاً — مؤجَّل بقرار أو في قائمة الانتظار</h2>
 
@@ -391,20 +279,21 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
   const btns=[...document.querySelectorAll('.tabs button')];
   btns.forEach(b=>b.addEventListener('click',()=>{
     btns.forEach(x=>x.setAttribute('aria-selected', String(x===b)));
-    ['todo','done','reels','work','later','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
+    ['todo','reels','codex','later','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
     
     try{ localStorage.setItem('merge-board-tab', b.dataset.pane); }catch{}
   }));
   // العدّادات تُحسب لا تُكتب
-  document.getElementById('n-todo').textContent =
-    document.querySelectorAll('#pane-todo ol.step > li').length +
-    document.querySelectorAll('#pane-todo details.tk').length +
-    document.querySelectorAll('#pane-todo div.card').length;
+  document.getElementById('n-todo').textContent = Math.max(0, document.querySelectorAll('#t-todo tr').length - 1);
   document.getElementById('n-data').textContent = document.querySelectorAll('#pane-data div.card').length;
   document.getElementById('n-reels').textContent = document.querySelectorAll('#pane-reels details.tk').length;
-  ['work','later'].forEach(k=>{
+  { const el=document.getElementById('n-codex'); if(el) el.textContent = document.querySelectorAll('#pane-codex details.tk').length; }
+  // جدول `work` انتقل إلى To Do (١ سبتمبر ٢٠٢٦) — بحثه يبقى يعمل، وعدّاده لم يعد موجوداً
+  // لأن بنوده تُحسب ضمن عدّاد To Do أدناه.
+  ['later'].forEach(k=>{
     const rows=[...document.querySelectorAll('#t-'+k+' tr')].slice(1);
-    document.getElementById('n-'+k).textContent = rows.length;
+    const nEl=document.getElementById('n-'+k);
+    if(nEl) nEl.textContent = rows.length;
     const q=document.getElementById('q-'+k), cnt=document.getElementById('c-'+k);
     const render=()=>{const v=q.value.trim().toLowerCase();let n=0;
       rows.forEach(r=>{const hit=!v||r.innerText.toLowerCase().includes(v); r.hidden=!hit; if(hit)n++;});
@@ -517,20 +406,16 @@ seoDescription →  صفحة الكاتب «مدونتي»: كل المقالا�
   const btns=[...document.querySelectorAll('.tabs button')];
   btns.forEach(b=>b.addEventListener('click',()=>{
     btns.forEach(x=>x.setAttribute('aria-selected', String(x===b)));
-    ['todo','done','reels','work','later','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
+    ['todo','reels','codex','later','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
     
     try{ localStorage.setItem('merge-board-tab', b.dataset.pane); }catch{}
   }));
   // العدّادات تُحسب لا تُكتب
-  document.getElementById('n-todo').textContent =
-    document.querySelectorAll('#pane-todo ol.step > li').length +
-    document.querySelectorAll('#pane-todo details.tk').length +
-    document.querySelectorAll('#pane-todo div.card').length;
+  document.getElementById('n-todo').textContent = Math.max(0, document.querySelectorAll('#t-todo tr').length - 1);
   document.getElementById('n-data').textContent = document.querySelectorAll('#pane-data div.card').length;
   document.getElementById('n-reels').textContent = document.querySelectorAll('#pane-reels details.tk').length;
+  { const el=document.getElementById('n-codex'); if(el) el.textContent = document.querySelectorAll('#pane-codex details.tk').length; }
   // «شغل مفتوح» و«لاحقاً» يعدّان صفوف جدولهما، لا بطاقات — بنودهما تعيش في جدول واحد.
-  document.getElementById('n-work').textContent =
-    Math.max(0, document.querySelectorAll('#pane-work table tr').length - 1);
   document.getElementById('n-later').textContent =
     Math.max(0, document.querySelectorAll('#pane-later table tr').length - 1);
   // تبويب «المنجز» حُذف ١ سبتمبر ٢٠٢٦ بقاعدة الورك-فلو: اللوحة تحمل المفتوح فقط،

@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import { SeoSubNav } from "../components/seo-sub-nav";
 import { IntakeForm } from "./components/intake-form";
 import { DynamicIntakeForm } from "./components/dynamic-intake-form";
 import type { ClientIntake } from "./lib/intake-types";
@@ -49,6 +50,11 @@ export default async function SeoIntakePage() {
             "قائمة الإجابات هذه هي القاعدة التي يبني عليها الفريق محتوى موقعك. كل ما كانت إجاباتك أوضح، المحتوى أقوى."}
         </p>
       </header>
+
+      {/* الشريط كان مرسوماً في «المنافسون» و«الكلمات» وحدهما — وهما الشاشتان اللتان لا
+          يصلهما أحد، لأن `/dashboard/seo` يوجّه إلى `intake` وهي الوحيدة التي بلا شريط.
+          فكانت الشاشتان مبنيّتين ولا طريق إليهما إلا بكتابة الرابط. */}
+      <SeoSubNav />
 
       {formDef ? (
         // DB-driven (admin-managed) questionnaire — once seeded, this is the source of truth.
