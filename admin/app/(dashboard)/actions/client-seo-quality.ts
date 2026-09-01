@@ -59,35 +59,55 @@ export interface ClientSeoQuality {
 
 export const getClientSeoQuality = unstable_cache(
   async (): Promise<ClientSeoQuality> => {
-    const rows = await db.client.findMany({ take: 1000 });
+    // ترقيم لا سقف — نفس علّة `article-seo-quality.ts`: `take: 1000` كان يقرأ ألفاً
+    // ويسكت عن الباقي، فتُعرض نسبٌ واثقة عن جزءٍ من العملاء. القسمة على دفعات تُبقي
+    // الإحصاء صادقاً مهما نما العدد، والذاكرة تحمل دفعة واحدة لأن الناتج عدّادات.
+    const BATCH = 500;
     let perfect = 0;
     let below = 0;
     let sumScore = 0;
+    let counted = 0;
     const failing = new Map<string, number>();
     // Same single pass: collect the failing clients per check for the chip drill-down.
     const failingItems = new Map<string, SeoCheckItem[]>();
-    // The scorer's own fix hint per check — which fields solve it (single source of truth).
+    // The scorer's own fix hint per check — single source of truth.
     const hintByKey = new Map<string, string>();
-    for (const r of rows) {
-      const { score, checks } = computeClientSeoScore(
-        clientToSeoInput(r as unknown as Record<string, unknown>),
-      );
-      sumScore += score;
-      if (score >= 100) perfect += 1;
-      else below += 1;
-      for (const c of checks) {
-        if (c.earned < c.max) {
-          failing.set(c.key, (failing.get(c.key) ?? 0) + 1);
-          if (c.hint && !hintByKey.has(c.key)) hintByKey.set(c.key, c.hint);
-          const list = failingItems.get(c.key) ?? [];
-          if (list.length < MAX_ITEMS_PER_CHECK) {
-            list.push({ id: r.id, name: r.name || "بدون اسم", href: `/clients/${r.id}/edit` });
-            failingItems.set(c.key, list);
+    let cursor: string | undefined;
+
+    for (;;) {
+      const rows = await db.client.findMany({
+        orderBy: { id: "asc" },
+        take: BATCH,
+        ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+      });
+      if (rows.length === 0) break;
+
+      for (const r of rows) {
+        const { score, checks } = computeClientSeoScore(
+          clientToSeoInput(r as unknown as Record<string, unknown>),
+        );
+        sumScore += score;
+        counted += 1;
+        if (score >= 100) perfect += 1;
+        else below += 1;
+        for (const c of checks) {
+          if (c.earned < c.max) {
+            failing.set(c.key, (failing.get(c.key) ?? 0) + 1);
+            if (c.hint && !hintByKey.has(c.key)) hintByKey.set(c.key, c.hint);
+            const list = failingItems.get(c.key) ?? [];
+            if (list.length < MAX_ITEMS_PER_CHECK) {
+              list.push({ id: r.id, name: r.name || "بدون اسم", href: `/clients/${r.id}/edit` });
+              failingItems.set(c.key, list);
+            }
           }
         }
       }
+
+      if (rows.length < BATCH) break;
+      cursor = rows[rows.length - 1].id;
     }
-    const avgScore = rows.length > 0 ? Math.round(sumScore / rows.length) : 0;
+
+    const avgScore = counted > 0 ? Math.round(sumScore / counted) : 0;
     const checks: SeoCheckTally[] = [...failing.entries()]
       .map(([key, n]) => {
         const meta = CHECK_META[key];

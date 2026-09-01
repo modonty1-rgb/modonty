@@ -82,6 +82,8 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 .lgnd b{color:#ff6b6b}
 .tabs button.tb-red{color:#ff6b6b}
 .tabs button.tb-red .n{border-color:#ff6b6b;color:#ff6b6b}
+.tabs button.tb-amber{color:var(--amber)}
+.tabs button.tb-amber .n{border-color:var(--amber);color:var(--amber)}
 </style>
 </head>
 <body>
@@ -97,6 +99,7 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
   <button role="tab" aria-selected="false" data-pane="code" class="tb-red">CODE<span class="n" id="n-code"></span></button>
   <button role="tab" aria-selected="false" data-pane="db" class="tb-red">DB<span class="n" id="n-db"></span></button>
   <button role="tab" aria-selected="false" data-pane="manual">يدوي<span class="n" id="n-manual"></span></button>
+  <button role="tab" aria-selected="false" data-pane="data" class="tb-amber">🗄️ مشاكل الداتا<span class="n" id="n-data"></span></button>
   <button role="tab" aria-selected="false" data-pane="reels">🎬 الريلز<span class="n" id="n-reels"></span></button>
 </div>
 
@@ -109,6 +112,19 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 </ol>
 
 
+
+<h2>الجذر المفتوح</h2>
+<details class="tk">
+<summary><span class="id">NEXT-UPGRADE</span><span class="sv sv-m">متوسّط</span><span class="tt">⏸️ ترقية Next 16.2.9 ← 16.3.4 — تحلّ باق <code>__next_metadata_boundary__</code></span><span class="ap">modonty</span></summary>
+<div class="body"><b style="color:var(--amber)">مؤجَّلة بأمر خالد ٣١ أغسطس ٢٠٢٦:</b> «افتح له بطاقة، بعد ما نخلّص الأساس اللي عندنا نشوف موضوعه». <b>لا تُبدأ قبل إغلاق الأساس.</b><br><br><b>الخطأ كما يظهر في سجلّ الأدمن:</b><br><code>[FRAMEWORK] Expected the resume to render &lt;div&gt; in this slot but instead it rendered &lt;__next_metadata_boundary__&gt;</code><br><code>POST /articles?time=long · routeType: render · device: bot (Googlebot) · digest: 1487855941</code><br><br><b>الحسم بالتواريخ (متحقَّق ٣١ أغسطس من GitHub وnpm):</b><pre style="font-size:12px;margin:6px 0">نسختنا  next 16.2.9   نُشرت 2026-06-09
+الباق   issue #93401  صار CLOSED  (كان OPEN في تحقيقنا ٢٢ يوليو)
+الإصلاح PR #96364     دُمج 2026-07-29   ← بعد نسختنا بشهر ونصف
+أحدث مستقرّة 16.3.4   نُشرت 2026-08-31</pre>فالباق <b>اتحلّ عند Next</b>، ونحن على نسخة أقدم من الإصلاح — ولهذا ما زال يظهر.<br><br><b>الخطورة الآن: منخفضة.</b> موسوم <code>framework</code> في سجلّنا فلا يرنّ تيليجرام، والصفحة تشتغل لكنها تسقط لرِندَر العميل لحظة الطلب.<br><br><b style="color:var(--amber)">تصحيح لملاحظة قديمة:</b> ذاكرتنا (٢٢ يوليو) تقول «قوقل ما يتأثّر لأنه ما يعمل POST». سطر السجلّ يقول <code>device: bot (Googlebot)</code> على <code>POST</code> — <b>قوقل يمرّ بالحالة فعلاً</b>، والملاحظة كانت ناقصة.<br><br><b>ما تحتاجه الترقية:</b> ترقية إطار كاملة — <code>tsc</code> على الثلاثة · <code>pnpm build</code> · تست حيّ على مسارات PPR. البديل المضمون لكن الخاسر للأداء: <code>cacheComponents:false</code>.<br><br><b>✔ تقفل بـ:</b> صفر <code>__next_metadata_boundary__</code> في سجلّ الأخطاء بعد الترقية.</div>
+</details>
+<details class="tk" open>
+<summary><span class="id">RSC-CONNCLOSED</span><span class="sv sv-h">عالٍ</span><span class="tt">🔴 Connection closed أثناء رِندَر سيرفر كومبونت — يُفرغ حمولة الصفحة</span><span class="ap">modonty</span></summary>
+<div class="body"><b>فُتحت ٣١ أغسطس ٢٠٢٦ من عطل حيّ رآه خالد على جوّاله.</b><br><br><b>ما هو مقيس:</b> سجلّ أخطاء الأدمن يعرض <code>Connection closed.</code> على <code>render · react-server-components</code> لمسار <code>/articles/[slug]</code> بـ<code>digest: 1567489339</code>، متكرّراً. ومقيس على الإنتاج أن نسخة الكاش <code>STALE</code> ترجع أحياناً <b>200 بجسم فارغ</b> بدل الحمولة.<br><br><b>الأثر على الزائر:</b> يضغط مقالاً من داخل الموقع فتظهر شاشة الخطأ على مقال سليم. الفتح المباشر (ضغطة الإعلان) لم يفشل في أيٍّ من ٢٢ عيّنة قِيست.<br><br><b>ما لا يفعله إصلاح ٦٤٢e639:</b> يجعل الزائر يتعافى، ولا يمنع الانقطاع.<br><br><b>الفرضية الأقرب (غير مثبَتة):</b> اتصال برِزما/مونجو يُقطع أثناء تجديد ISR — نفس عائلة «٢٨ مقالاً بـ<code>Connection closed</code>» المسجَّلة في سجلّ الجلسات.<br><br><b>أول خطوة عند الفتح:</b> اجمع كل صفوف <code>Connection closed</code> من سجلّ الأخطاء وصنّفها بالمسار والوقت — هل تتركّز على تجديد الكاش أم على الحمل؟<br><br><b>✔ يقفل بـ:</b> صفر <code>Connection closed</code> في سجلّ الأخطاء على مدى ٢٤ ساعة بعد الإصلاح.</div>
+</details>
 
 <h2>مؤجَّل بأمرك — لا أبدأ فيه من نفسي</h2>
 <div class="card a">
@@ -235,6 +251,137 @@ main:   95d8d9e...   backup: 95d8d9e...   remote: 95d8d9e...
 </div>
 
 <h2>ما أُغلق</h2>
+<div class="done">
+<b>٣١ · تبويب <code>HTTP</code> — البندان الحقيقيّان: أحدهما أُصلح والآخر قرارك (٣١ أغسطس ٢٠٢٦)</b>
+<div class="ev">SEOAUTHOR-TITLE — عطل بيانات، أُصلح بخطوة صيانة
+  القاعدة modonty: authors/modonty
+    name           = "Modonty"
+    seoTitle       = "Modonty - Author Profile"
+    seoDescription = "Learn more about Modonty, the author behind all content on Modonty.com"
+    nextjsMetadata.title = نفس العنوان الإنجليزي
+  والصفحة مفهرسة وفي خريطة الموقع ⇒ هذا ما يعرضه جوجل للباحث العربي.
+  صفر مطابقة لـ«Author Profile» في المستودع كلّه — بيانات لا كود.
+  ← خطوة Run-All جديدة: Author Identity Arabized (تكتب العربي وتمسح البلوب ليُعاد بناؤه)
+
+CATNAME-BILINGUAL — مؤكَّد، لكنه اسمٌ يقرؤه الزائر فالقرار لخالد
+  categories: 3 من 3 مختلطة
+    «الرعاية الصحية Health Care»
+    «السيو SEO &amp; التسويق الرقمي»
+    «Modonty جديد مدونتي»          ← تخالف قرار الاسم العربي
+  tags: 0 مختلط · industries: 0
+  الاسم يُبثّ كما هو في article:section ويظهر في فتات الخبز.</div>
+<p style="margin:8px 0 0;opacity:.85">لم أغيّر أسماء الفئات: تغييرُ اسمٍ يقرأه الزائر ويصل جوجل قرارُ منتج لا صيانة.</p>
+</div>
+
+<div class="done">
+<b>٣٠ · تبويب HTTP — أربعة ادّعاءات سقطت بالقياس المباشر — 4 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">قِيس كلٌّ منها على الإنتاج بأداته: <code>sharp</code> لأبعاد الصورة الحقيقية · تمييز <code>&lt;loc&gt;</code> عن <code>&lt;image:loc&gt;</code> في الخريطة · قراءة وسوم <code>preload</code> نفسها · وفتح <code>LogoNav.tsx:50-53</code> حيث القرار موثَّق.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">231</td><td class="n">SEOOG-DIMS</td><td>أبعاد صورة المشاركة مُدَّعاة لا مقيسة في اثنتي عشرة صفحة</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">ساقط — قِيست الصورة الحقيقية بـsharp: og يعلن 1200×675 والمقيس 1200×675 (webp · 52KB) · مطابق تماماً. الادّعاء «مُدَّعاة لا مقيسة» بطل</td></tr>
+<tr><td class="n">301</td><td class="n">SLUG-ARABIC-QMARK</td><td>روابط مقالات تحمل «؟» — أُغلقت: الرابط عربيّ كلّه أصلاً، والقياس الحيّ سليم</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٨ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">ساقط — صفر «؟» داخل &lt;loc&gt; (روابط المقالات). الستّ مطابقات في &lt;image:loc&gt; أي روابط صور على بني، وكلها تُسلَّم HTTP 206 رغم أن الحرف خام. لا رابط مكسور ولا في نطاق البطاقة</td></tr>
+<tr><td class="n">190</td><td class="n">PRELOADX</td><td>تعدّد preload في الصفحة — من 5 صور إلى 2</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٨ أغسطس</td><td class="n" style="color:#3fb950">ساقط — الثلاثة: الشعار + صورة المقال الأول بمقاسين (srcSet لصورة واحدة). والشعار مقصود وموثَّق: LogoNav.tsx:50-53 «eager but NOT high priority» بنفس القياس المذكور</td></tr>
+<tr><td class="n">230</td><td class="n">SEOBLOB-STALE</td><td>canonical و hreflang لا يُجدَّدان بعد تغيير الـslug في ثلاث صفحات</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">ساقط بالقياس غير المباشر — تجديد البلوب بعد تغيير الحقول أُثبت اليوم في SEOSTALE-OG (3/3 مسارات تعيد التوليد) وSEOADM-CANON-SANITIZER-NOREGEN (المنظّف يعيد البناء). ولا يُفحص مباشرةً إلا بتغيير slug حيّ على الإنتاج</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٢٩ · تبويب HTTP — إعادة فحص بحارس كاش وبصيغ غير حسّاسة للحالة — 6 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">🔴 <b>إنذار كاذب مني كشفه هذا الفحص:</b> ثلاثة بنود hreflang كانت «مفتوحة» لأن بحثي كان عن <code>hreflang=</code> بحروف صغيرة، وNext يكتبها <code>hrefLang</code> بحرف L كبير. الحقيقة: تسعة وسوم تُبثّ على كل صفحة (<code>ar-SA · ar-EG · ar-AE · ar-KW · ar-QA · ar-BH · ar-OM · ar · x-default</code>). وكل صفحة طُلبت حتى <code>HIT</code> قبل أي حكم.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">3</td><td class="n">HREF0</td><td>✅ hreflang — الإنتاج صفر، والفرع يصلحه بالبناء الصحيح</td><td class="n">modonty</td><td class="n">إنتاج</td><td class="n">٣٠ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">hreflang على الرئيسية = 9</td></tr>
+<tr><td class="n">322</td><td class="n">SEOHREF-MAP</td><td>hreflang: أربع طبقات هارد كود سقطت، والتسع لغات تصل ٢٦ سطحاً من مصدر واحد</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">لغات hreflang = ar-SA,ar-EG,ar-AE,ar-KW,ar-QA,ar-BH,ar-OM,ar,x-default</td></tr>
+<tr><td class="n">227</td><td class="n">SEOHREF-IND</td><td>‏/industries صارت تشحن قائمة اللغات كاملة</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">hreflang على /industries = 9</td></tr>
+<tr><td class="n">220</td><td class="n">SEOFAQ</td><td>الأكورديون كان يحذف الإجابة من الصفحة ونحن نرسلها لجوجل — أُغلقت بقياس حيّ</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٨ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">FAQPage في JSON-LD=لا · قسم أسئلة في HTML=نعم</td></tr>
+<tr><td class="n">260</td><td class="n">SEOWEBSITE-PUBLISHER</td><td>WebSite.publisher على صفحة العميل يشير إلى منظّمة العميل</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">WebSite.publisher في /clients = غائب</td></tr>
+<tr><td class="n">243</td><td class="n">SEOSITEMAP-NOTREADY</td><td>العميل «غير الجاهز» noindex ومع ذلك في خريطة الموقع</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">عملاء في الخريطة: 34 · فُحص 8 · noindex منها: 0</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٢٨ · الملحق الخام أُعيد فحصه — والسلّة أُغلقت — 1 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">خالد: «يمكن يكونوا ready من اللي اشتغلنا عليهم». صحّ: نمطان من الملحق أُغلقا بالكامل عبر المستودع بشغل اليوم، وأربعة ملفّات أُصلحت في هذه الجولة، والباقي مطابقاتُ نمطٍ على تعليقات وملفّ بذر لا كودٍ حيّ.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">318</td><td class="n">SEOADM-MISC-MEDIUM</td><td>بقايا الأدمن المتوسطة — فُرزت ٢٧ أغسطس: اثنان أُصلحا، وثلاثة صاروا بطاقات، والباقي قِيس</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">أُعيد فحص الملحق الخام كلّه (165 مرجع ملف:سطر · 123 ملفاً): نمطان أُغلقا بالكامل عبر المستودع بشغل اليوم — الهروب عند التخزين صفر (كان 5) وreset في حارس الخطأ صفر (كان 68). وأُصلحت في هذه الجولة: modonty-jsonld-validator.ts (نفس عطل شقيقه) · rebake-client-site-canonicals.ts (كتابة canonical كانت تتوقّف عند الألف) · get-clients.ts وget-articles.ts (سقف صامت في قوائم الاختيار). والباقي من مطابقات النمط ثبت أنه تعليقات أو ملفّ بذر — لا كود حيّ</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٢٧ · الثلاثة أُصلحت جذرياً — الحاليّ والكامنان — 3 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">خالد: «ما أبغى قنابل موقوتة، أبغى حلاً جذرياً». الثلاثة أُصلحت في المصدر لا في العَرَض، وأُثبتت بالقياس الحيّ على قاعدة الإنتاج. <b>وعيبان في الإصلاح نفسه كُشفا بالاختبار وأُصلحا قبل الإقفال:</b> <code>stripHtmlTags</code> كان يترك محتوى <code>&lt;script&gt;</code> نصّاً، و<code>ARTICLE_SEO_SELECT</code> لا يجلب <code>id</code> فكان المؤشّر سيكسر.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">306</td><td class="n">SEOADM-FAQ-ESCAPED-STORAGE</td><td>أسئلة المقال ما عادت تُهرَّب عند التخزين — نفّذها كودكس، دقّقها كلود</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">أُصلح جذرياً — خمس نسخ sanitize تهرّب قبل التخزين استُبدلت بـshared/lib/strip-html-tags.ts (حذف الوسم لا هروبه). اختبار: 6/6 حالات · &lt;script&gt;alert(1)&lt;/script&gt; ⇒ نصّ نظيف · صفر كيان HTML في المخرجات. وخطوة صيانة decodeEscaped تفكّ المتراكم على الصفوف القديمة (فكّ متكرّر حتى الثبات، سقف 10)</td></tr>
+<tr><td class="n">307</td><td class="n">SEOADM-VALIDATOR-NETWORK</td><td>ثلاثة محقّقات تجلب schema.org من الشبكة وقت النشر — انقطاع = «غير صالح» مخزَّن أو تطبيع مُهمَل</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">أُصلح جذرياً — الشبكة لم تعد شرطاً: مصدر الحزمة (@adobe/structured-data-validator@1.6.0/src/validator.js:13-18) يتخطّى حارس schema.org إن لم يُمرَّر التعريف وتبقى الحرّاس النوعيّة عاملة. فصار الفشل يُنتج unavailable:true مع valid:true وتحذير، بدل valid:false على محتوى سليم</td></tr>
+<tr><td class="n">320</td><td class="n">SEOADM-STATS-TAKE-1000</td><td>سقف الألف صار يُعلَن بدل أن يُخفى — والإصلاح نفسه كان مقصوصاً لا الإحصاء وحده</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">أُصلح جذرياً — take:1000 استُبدل بترقيم بمؤشّر (دفعات 500) في article-seo-quality.ts وclient-seo-quality.ts معاً. إثبات على الإنتاج: مقالات 196/196 · عملاء 37/37 مطابق تماماً. لا سقف يبقى ليُبلَغ</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٢٦ · فحص واحداً واحداً بفتح كل ملف — بندان ساقطان — 2 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">خالد: «افحص لهم واحدة واحدة». فُتح كل ملف وقُرئ السطر وما حوله، وقيس الأثر على الإنتاج. الباقيان الكامنان (<code>SEOADM-VALIDATOR-NETWORK</code> · <code>SEOADM-STATS-TAKE-1000</code>) عطلٌ في الكود وأثرُه صفر اليوم — بقيا مفتوحين بالقاعدة: السليم يُقفل وما فيه شكّ يبقى.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">310</td><td class="n">SEOADM-PREVIEW-NOT-SHIPPED</td><td>المعاينة كانت تعرض غير المخزَّن — أُغلقت: المعاينة صارت تنادي بانِيَ الكاتب نفسه</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">ساقط — metatag-preview-step.tsx:413 يجلب nextjsMetadata المخزَّن · :531 computeLineDiff يقارنه بالنموذج سطراً بسطر · :774-790 يعرض المخزَّن بأيقونة Database. المعاينة تعرض الاثنين والفرق بينهما</td></tr>
+<tr><td class="n">114</td><td class="n">38</td><td>تدقيقات تنظيف JSON-LD — أُغلقت: لغة المقال كانت مكتوبة في الكود وتخالف الإعدادات</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">ساقط — الدالّة الحيّة modonty/.../generate-article-structured-data.ts:68 تقرأ article.inLanguage من الإعدادات؛ المخدوم للزائر "inLanguage":"ar-SA" مرّتين. والثابت inLanguage:"ar" في admin/lib/seo/structured-data.ts:55 صادراته بلا مستدعٍ حقيقي — كود ميت</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٢٥ · مراجعة يدوية بفتح كل ملف — خمسة إنذارات كاذبة سقطت — 5 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">خالد طلب إعادة فحص قبل فتح أي تذكرة. فُتح كل ملف وقُرئ السطر بالعين، لا بنمط. <b>خمسة من ثمانية كانت إنذارات كاذبة مني:</b> فحصي كان يبحث عن نمط، والكود مُصلَح بطريقة أخرى — لولا المراجعة لفُتحت خمس تذاكر على كود سليم.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">298</td><td class="n">SEOADM-HARDCODED-HOST</td><td>https://www.modonty.com ثابت في ٩ كاتبات سيو — عند فشل الإعدادات يُكتب في القاعدة</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">ساقط — article-validator.ts:211 نصّ إرشادي fix: يُعرض للمحرّر، لا كتابة في القاعدة</td></tr>
+<tr><td class="n">278</td><td class="n">SEOADM-SETTINGS-DEFAULTS</td><td>getAllSettings يرجّع الافتراضيات عند أي خطأ — وكل مولّد يكتب مضيفاً مخمَّناً في القاعدة</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مُصلَح — settings-actions.ts:744 يرمي بدل return DEFAULT_SETTINGS، والتعليق يشرح: «A read that failed is not a row full of defaults; it is we do not know»</td></tr>
+<tr><td class="n">288</td><td class="n">SEOADM-DATEPUBLISHED-PREGATE</td><td>بوّابة النشر كانت تكتب قبل أن تقرّر — أُغلقت: لا أثر عند الرفض، ولا نشر بلا تاريخ</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مُصلَح — assert-article-publishable.ts:45-73: التاريخ يُحسب في الذاكرة وrestore() يرجّع الصفّ عند الرفض («A gate must not leave a trace when it refuses»)</td></tr>
+<tr><td class="n">287</td><td class="n">SEOADM-REVALIDATE-BEFORE-GEN</td><td>تفريغ الكاش قبل التوليد — أُغلقت: الثلاثة المذكورة كانت مُصلَحة، وأربعة غيرها لم تكن</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">ساقط — tags-actions.ts:287 «Regenerate the stored SEO BEFORE revalidating modonty»؛ الترتيب: 192 توليد ← 202 revalidateModontyTag. وcreate-category.ts:74→84 نفسه</td></tr>
+<tr><td class="n">101</td><td class="n">79</td><td>تسمية «Total Articles» صارت تفصح عن الفرق</td><td class="n">admin</td><td class="n">عيوب وإصلاحات</td><td class="n">٦ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مُصلَح — client-tabs.tsx:256 publishedArticles محسوب و:536 يُمرَّر للعرض، والتعليق يشرح الفرق</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٢٤ · تبويب <code>CODE</code> — الدفعة ٥: البنود التي كانت تعلن نفسها مقفولة — 5 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">فُحصت بشرط الإغلاق المكتوب في كل بطاقة، لا بادّعائها. ٢,٧٤٣ ملفاً داخل التطبيقات الخمسة. الأرقام في <code>.playwright-mcp/code-check-batch5.json</code>.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">118</td><td class="n">SEC15</td><td>الثغرات الأمنية الخمس عشرة — أُغلقت أربع عشرة، وواحدة تحتاج سكيما</td><td class="n">modonty · admin</td><td class="n">عيوب وإصلاحات</td><td class="n">٢٢ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مسار revalidate/article محروس بسرّ</td></tr>
+<tr><td class="n">249</td><td class="n">SEODEFAULTS-OVERRIDE</td><td>افتراضيات الإعدادات تُكتب فوق حقول المقال — metaRobots الخاص بالمقال ميت</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">المقال يفوز على الافتراضي</td></tr>
+<tr><td class="n">256</td><td class="n">SEOGATE-OUTDATED</td><td>بوّابة النشر — أُغلقت: منعان بلا سند رُفعا، وثلاثة ادّعاءات ثبت أنها غلط بالقياس</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">صفر قاعدة ملغاة في shared/lib/seo/article/meta-score.ts</td></tr>
+<tr><td class="n">303</td><td class="n">SEOADM-STALE-CASCADES</td><td>خمس حالات تعديل لا تصل البلوب: الشعار/عناوين القوائم · التعميم يتخطّى الصفحات الثابتة · الكاتب canonical عند التركيب · الصيانة بلا revalidate</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">cascade-all-seo يغطّي كيانات متعدّدة</td></tr>
+<tr><td class="n">309</td><td class="n">SEOADM-GATE-RULES-2</td><td>قواعد بوّابة إضافية بلا مصدر أو ضدّ جوجل: WebSite إلزامي خارج الرئيسية · صورة الغلاف تمنع النشر · 51 حرفاً · بريد سعودي ٩ أرقام · شعار &gt;600 مرفوض</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">صفر قاعدة من الثلاث</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٢٣ · زرّ «جرّب مرة ثانية» كان ميتاً في ٦٨ شاشة — أُصلح ودُفع (٣١ أغسطس ٢٠٢٦ · <code>642e639</code>)</b>
+<p style="margin:6px 0 0">خالد فتح مقالاً من جوّاله فطلعت «المقال ما فتحت»، وضغط الزرّ فما تغيّر شيء.</p>
+<div class="ev">الجذر — من توثيق النسخة المثبَّتة نفسها (next 16.2.9):
+  node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/error.md:157
+  «reset … re-render without re-fetching. In most cases use unstable_retry() instead»
+  ٦٨ شاشة خطأ في مدونتي كانت كلها على reset ⇒ تعيد نفس الحمولة الفاسدة.
+
+ما يُفسد الحمولة (مقيس على الإنتاج):
+  المحاولة ١ (STALE): 200 · text/x-component · حمولة 0 بايت  ← ظهرت الشاشة
+  المحاولة ٢ (HIT)  : 259,491 بايت                          ← فتح المقال
+  وحارس Next (fetch-server-response.ts) يفحص وجود الجسم لا امتلاءه فيمرّ.
+
+ما تغيّر: ٦٧ غلافاً reset→unstable_retry · global-error · RouteError يتعافى تلقائياً
+  (إعادة جلب ← انتقال كامل ← البطاقة) بعدّاد sessionStorage ونافذة ٢٠ث.
+
+الإثبات بمسار اختبار افتُعل ثم حُذف:
+  عطل عابر : نجح التعافي true · بطاقة الخطأ false   ← الزائر شاف المحتوى
+  عطل دائم : بطاقة الخطأ true · عالق false          ← وصلت البطاقة بلا حلقة
+
+الدفع: 3c72536..642e639 · origin/main...main = 0 0 · tsc modonty=0 admin=0
+نسخة احتياطية: PROD-2026-09-01_02-12 — 101 مجموعة · 71 ميجابايت
+النشر نزل: بصمة «لحظة، نفتح» في /_next/static/chunks/2j6te7vqxym4a.js</div>
+<p style="margin:10px 0 0;opacity:.85"><b style="color:var(--amber)">⚠️ هذا ليس الجذر النهائي.</b> <code>reset</code> كان سبب عجز <b>التعافي</b>، لا سبب العطل. سبب العطل ظاهر في سجلّ أخطاء الأدمن: <code>Connection closed</code> على رِندَر سيرفر كومبونت (<code>digest: 1567489339</code>) — انقطاع اتصال القاعدة أثناء الرسم. <b>بطاقة جديدة مفتوحة له أدناه.</b></p>
+<p style="margin:8px 0 0;opacity:.8">وعيب في الإصلاح نفسه كشفه الاختبار الثاني: دالّة تنظيف كانت تُلغي مؤقّت التعافي عند إعادة التركيب فتعلق الشاشة على «لحظة، نفتح» أبداً على أي عطل دائم. أُزيلت قبل الدفع.</p>
+</div>
+
 <div class="done">
 <b>٢٢ · <code>SEOMETATAGS-DEAD</code> — شاشة فحص السيو كانت تقرأ عموداً والزائر يقرأ آخر · أُصلحت (٣١ أغسطس ٢٠٢٦)</b>
 <p style="margin:6px 0 0">العطل لم يكن ما وصفته البطاقة. مدونتي <b>صارت</b> تقرأ البلوب (<code>build-metadata-from-page-row.ts:72</code>) فمشكلتها الأصلية مقفولة. الباقي: عمودان مختلفان، والفحص يقيس غير المخدوم.</p>
@@ -706,18 +853,6 @@ $ git rev-list --left-right --count main...main-backup-2026-08-31
 <p id="c-http" class="chkc" style="color:var(--muted);font-size:14px;margin:0 0 8px"></p>
 <div class="scrollx"><table id="t-http" class="chkt">
 <tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th></tr>
-<tr><td class="n">3</td><td class="n">HREF0</td><td>✅ hreflang — الإنتاج صفر، والفرع يصلحه بالبناء الصحيح</td><td class="n">modonty</td><td class="n">إنتاج</td><td class="n">٣٠ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">190</td><td class="n">PRELOADX</td><td>تعدّد preload في الصفحة — من 5 صور إلى 2</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٨ أغسطس</td></tr>
-<tr><td class="n">220</td><td class="n">SEOFAQ</td><td>الأكورديون كان يحذف الإجابة من الصفحة ونحن نرسلها لجوجل — أُغلقت بقياس حيّ</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٨ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">227</td><td class="n">SEOHREF-IND</td><td>‏/industries صارت تشحن قائمة اللغات كاملة</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">230</td><td class="n">SEOBLOB-STALE</td><td>canonical و hreflang لا يُجدَّدان بعد تغيير الـslug في ثلاث صفحات</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">231</td><td class="n">SEOOG-DIMS</td><td>أبعاد صورة المشاركة مُدَّعاة لا مقيسة في اثنتي عشرة صفحة</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">243</td><td class="n">SEOSITEMAP-NOTREADY</td><td>العميل «غير الجاهز» noindex ومع ذلك في خريطة الموقع</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">247</td><td class="n">SEOAUTHOR-TITLE</td><td>‏/authors/modonty عنوانها إنجليزي على صفحة مفهرسة في الخريطة</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">253</td><td class="n">CATNAME-BILINGUAL</td><td>🏁 ثلاث فئات أسماؤها عربي وإنجليزي معاً — تُبثّ كما هي في article:section</td><td class="n">modonty</td><td class="n">إنتاج</td><td class="n">٢٩ أغسطس</td></tr>
-<tr><td class="n">260</td><td class="n">SEOWEBSITE-PUBLISHER</td><td>WebSite.publisher على صفحة العميل يشير إلى منظّمة العميل</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">301</td><td class="n">SLUG-ARABIC-QMARK</td><td>روابط مقالات تحمل «؟» — أُغلقت: الرابط عربيّ كلّه أصلاً، والقياس الحيّ سليم</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٨ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">322</td><td class="n">SEOHREF-MAP</td><td>hreflang: أربع طبقات هارد كود سقطت، والتسع لغات تصل ٢٦ سطحاً من مصدر واحد</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td></tr>
 </table></div>
 </section>
 
@@ -729,22 +864,6 @@ $ git rev-list --left-right --count main...main-backup-2026-08-31
 <p id="c-code" class="chkc" style="color:var(--muted);font-size:14px;margin:0 0 8px"></p>
 <div class="scrollx"><table id="t-code" class="chkt">
 <tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th></tr>
-<tr><td class="n">101</td><td class="n">79</td><td>تسمية «Total Articles» صارت تفصح عن الفرق</td><td class="n">admin</td><td class="n">عيوب وإصلاحات</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">114</td><td class="n">38</td><td>تدقيقات تنظيف JSON-LD — أُغلقت: لغة المقال كانت مكتوبة في الكود وتخالف الإعدادات</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">118</td><td class="n">SEC15</td><td>الثغرات الأمنية الخمس عشرة — أُغلقت أربع عشرة، وواحدة تحتاج سكيما</td><td class="n">modonty · admin</td><td class="n">عيوب وإصلاحات</td><td class="n">٢٢ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">249</td><td class="n">SEODEFAULTS-OVERRIDE</td><td>افتراضيات الإعدادات تُكتب فوق حقول المقال — metaRobots الخاص بالمقال ميت</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">256</td><td class="n">SEOGATE-OUTDATED</td><td>بوّابة النشر — أُغلقت: منعان بلا سند رُفعا، وثلاثة ادّعاءات ثبت أنها غلط بالقياس</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">278</td><td class="n">SEOADM-SETTINGS-DEFAULTS</td><td>getAllSettings يرجّع الافتراضيات عند أي خطأ — وكل مولّد يكتب مضيفاً مخمَّناً في القاعدة</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">287</td><td class="n">SEOADM-REVALIDATE-BEFORE-GEN</td><td>تفريغ الكاش قبل التوليد — أُغلقت: الثلاثة المذكورة كانت مُصلَحة، وأربعة غيرها لم تكن</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">288</td><td class="n">SEOADM-DATEPUBLISHED-PREGATE</td><td>بوّابة النشر كانت تكتب قبل أن تقرّر — أُغلقت: لا أثر عند الرفض، ولا نشر بلا تاريخ</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">298</td><td class="n">SEOADM-HARDCODED-HOST</td><td>https://www.modonty.com ثابت في ٩ كاتبات سيو — عند فشل الإعدادات يُكتب في القاعدة</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">303</td><td class="n">SEOADM-STALE-CASCADES</td><td>خمس حالات تعديل لا تصل البلوب: الشعار/عناوين القوائم · التعميم يتخطّى الصفحات الثابتة · الكاتب canonical عند التركيب · الصيانة بلا revalidate</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">306</td><td class="n">SEOADM-FAQ-ESCAPED-STORAGE</td><td>أسئلة المقال ما عادت تُهرَّب عند التخزين — نفّذها كودكس، دقّقها كلود</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">307</td><td class="n">SEOADM-VALIDATOR-NETWORK</td><td>ثلاثة محقّقات تجلب schema.org من الشبكة وقت النشر — انقطاع = «غير صالح» مخزَّن أو تطبيع مُهمَل</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">309</td><td class="n">SEOADM-GATE-RULES-2</td><td>قواعد بوّابة إضافية بلا مصدر أو ضدّ جوجل: WebSite إلزامي خارج الرئيسية · صورة الغلاف تمنع النشر · 51 حرفاً · بريد سعودي ٩ أرقام · شعار &gt;600 مرفوض</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">310</td><td class="n">SEOADM-PREVIEW-NOT-SHIPPED</td><td>المعاينة كانت تعرض غير المخزَّن — أُغلقت: المعاينة صارت تنادي بانِيَ الكاتب نفسه</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">318</td><td class="n">SEOADM-MISC-MEDIUM</td><td>بقايا الأدمن المتوسطة — فُرزت ٢٧ أغسطس: اثنان أُصلحا، وثلاثة صاروا بطاقات، والباقي قِيس</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">320</td><td class="n">SEOADM-STATS-TAKE-1000</td><td>سقف الألف صار يُعلَن بدل أن يُخفى — والإصلاح نفسه كان مقصوصاً لا الإحصاء وحده</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td></tr>
 </table></div>
 </section>
 
@@ -895,13 +1014,76 @@ $ git rev-list --left-right --count main...main-backup-2026-08-31
 <tr><td class="n">327</td><td class="n">REFERRAL-ADMIN</td><td>إحالة عميل لعميل — شاشة الأدمن وربط السداد</td><td class="n">admin · console</td><td class="n">To Do</td><td class="n">٢٩ أغسطس</td></tr>
 </table></div>
 </section>
+
+<section class="pane" id="pane-data" hidden>
+<h2 style="color:var(--amber)">🗄️ مشاكل الداتا — تُصلَح من الشاشة لا من الكود</h2>
+<p style="color:var(--muted);font-size:15px;margin:0 0 6px">كل بند هنا <b>نصٌّ مخزَّن في القاعدة كتبه إنسان</b>، لا سطرَ كودٍ يُعدَّل. الدليل في كل بطاقة: صفر مطابقة للنصّ في المستودع كلّه.</p>
+<p style="color:var(--muted);font-size:15px;margin:0 0 16px"><b>المسؤول: طارق</b> — كل بطاقة تقول: أين النصّ · ما الخطأ · مَن يراه · أين يُعدَّل · وكيف تتأكّد أنه انصلح.</p>
+
+<div class="card a" style="margin-bottom:16px">
+<h3>١ · اسم الكاتب وعنوان صفحته بالإنجليزي</h3>
+
+<p style="margin:0 0 8px"><b>ما الخطأ؟</b> صفحة الكاتب الوحيد على مدونتي تحمل اسماً ووصفاً إنجليزيَّين بالكامل.</p>
+<div class="ev">القاعدة: modonty (الإنتاج) · مجموعة authors · الصفّ slug = "modonty"
+
+  name           = "Modonty"
+  seoTitle       = "Modonty - Author Profile"
+  seoDescription = "Learn more about Modonty, the author behind all content on Modonty.com"</div>
+
+<p style="margin:10px 0 8px"><b>مَن يراه؟</b> الصفحة <code>www.modonty.com/authors/modonty</code> <b>مفهرسة في جوجل وموجودة في خريطة الموقع</b> — أي أن هذا العنوان الإنجليزي هو ما يظهر للباحث العربي في نتائج البحث. وكل مقال على المنصّة ينسب نفسه لهذا الكاتب.</p>
+
+<p style="margin:0 0 8px"><b>لماذا صار؟</b> اسم الموقع عُرِّب اليوم من <code>Modonty</code> إلى «مدونتي» في كل المقالات (٧ عيّنات: صفر مطابقة للاسم اللاتيني). لكن صفّ الكاتب لم يدخل تلك العملية، فبقي وحده بالإنجليزي.</p>
+
+<p style="margin:0 0 8px"><b>القيم المقترحة:</b></p>
+<div class="ev">name           →  مدونتي
+seoTitle       →  مدونتي — الكاتب
+seoDescription →  صفحة الكاتب «مدونتي»: كل المقالات المنشورة على المنصّة، مرتّبة بالأحدث.</div>
+
+<p style="margin:10px 0 0"><b>✅ جاهز — لا يحتاج عملاً يدوياً.</b> بُنيت خطوة صيانة تكتب القيم أعلاه وتمسح نسخة الميتاداتا المخزّنة كي يُعاد بناؤها (تصحيح الحقل وحده يُبقي جوجل يقرأ القديم). الخطوة تتخطّى أي حقل كتبه إنسان بالعربي سلفاً.</p>
+<div class="ev">الخطوة: admin.modonty.com/database ← Run All Auto-Maintenance
+        اسمها في القائمة: "Author Identity Arabized"
+
+للتأكّد بعدها: افتح www.modonty.com/authors/modonty
+                وشوف عنوان التبويب في المتصفّح — لازم يصير عربياً.</div>
+</div>
+
+<div class="card a">
+<h3>٢ · ثلاث فئات أسماؤها عربي وإنجليزي في اسم واحد</h3>
+
+<p style="margin:0 0 8px"><b>ما الخطأ؟</b> اسم الفئة نفسه يحمل اللغتين معاً.</p>
+<div class="ev">القاعدة: modonty (الإنتاج) · مجموعة categories · ٣ من ٣ مصابة
+
+  «الرعاية الصحية Health Care»
+  «السيو SEO &amp; التسويق الرقمي»
+  «Modonty جديد مدونتي»          ← تحمل الاسم اللاتيني والعربي للعلامة نفسها
+
+  الوسوم (tags): صفر مختلط  ·  المجالات (industries): صفر مختلط</div>
+
+<p style="margin:10px 0 8px"><b>مَن يراه؟</b> ثلاثة أماكن في وقت واحد:</p>
+<div class="ev">① الزائر — اسم الفئة في فتات الخبز أعلى كل مقال، وفي صفحة الفئة نفسها
+② جوجل  — الاسم يُبثّ كما هو في article:section داخل البيانات المنظَّمة
+③ القوائم — صفحة /categories وبطاقات التصنيف</div>
+
+<p style="margin:10px 0 8px"><b>ما الذي يحتاج قراراً؟</b> الاسم العربي البديل لكل واحدة. مثلاً «الرعاية الصحية» وحدها، أو «الصحة». وأصعبها الثالثة: «Modonty جديد مدونتي» تحمل العلامة مرّتين بلغتين، ويلزم حسم ماذا تسمّى.</p>
+
+<p style="margin:0 0 8px"><b>أين تُعدَّل؟</b></p>
+<div class="ev">admin.modonty.com ← Categories ← افتح الفئة ← حقل Name ← Save
+
+مهمّ: الحفظ من الأدمن يجدّد البيانات المنظَّمة تلقائياً، فلا تحتاج خطوة إضافية.</div>
+
+<p style="margin:10px 0 0"><b>للتأكّد بعدها:</b> افتح أي مقال في الفئة المعدَّلة، وشوف فتات الخبز أعلى الصفحة — لازم يظهر الاسم الجديد بلا لاتيني.</p>
+
+<p style="margin:10px 0 0;opacity:.8">⚠️ لم أغيّرها من طرفي: اسمٌ يقرأه الزائر ويصل جوجل قرارُ منتج لا صيانة.</p>
+</div>
+
+</section>
 </div>
 <script>
 (() => {
   const btns=[...document.querySelectorAll('.tabs button')];
   btns.forEach(b=>b.addEventListener('click',()=>{
     btns.forEach(x=>x.setAttribute('aria-selected', String(x===b)));
-    ['todo','done','reels','http','code','db','manual'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
+    ['todo','done','reels','http','code','db','manual','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
     
     try{ localStorage.setItem('merge-board-tab', b.dataset.pane); }catch{}
   }));
@@ -911,6 +1093,7 @@ $ git rev-list --left-right --count main...main-backup-2026-08-31
     document.querySelectorAll('#pane-todo details.tk').length +
     document.querySelectorAll('#pane-todo div.card').length;
   // المنجز يعدّ البنود لا البطاقات: بطاقة بلا جدول = بند، وبطاقة فيها جدول = صفوفه
+  document.getElementById('n-data').textContent = document.querySelectorAll('#pane-data div.card').length;
   document.getElementById('n-done').textContent =
     [...document.querySelectorAll('#pane-done .done')].reduce((sum, card) => {
       const t = card.querySelector('table');

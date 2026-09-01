@@ -37,11 +37,27 @@ export async function rebakeClientSiteCanonicals(
   const base = (articlesBaseUrl ?? "").trim().replace(/\/+$/, "");
   if (!base) return { attempted: 0, updated: 0, failed: 0, errors: [] };
 
-  const articles = await db.article.findMany({
-    where: { clientId, isClientSiteArticle: true },
-    select: { id: true, slug: true, canonicalUrl: true },
-    take: 1000,
-  });
+  // ── لماذا ترقيم لا سقف (٣١ أغسطس ٢٠٢٦) ──────────────────────────────
+  // كان هنا `take: 1000` بلا إعلان. وهذه ليست شاشة عرض بل **كتابة canonical**: مقالات
+  // العميل فوق الألف كانت تبقى بعنوانٍ أساسيّ قديم يشير إلى المكان الخطأ، وهو ما يصل
+  // جوجل ويُفهرَس عليه. والدالّة ترجع `attempted` فيبدو العمل مكتملاً وهو ناقص بصمت.
+  // الترقيم بمؤشّر يزيل الشرط: كل صفٍّ يُعالَج مهما نما العدد.
+  const BATCH = 500;
+  const articles: Array<{ id: string; slug: string; canonicalUrl: string | null }> = [];
+  let cursor: string | undefined;
+  for (;;) {
+    const page = await db.article.findMany({
+      where: { clientId, isClientSiteArticle: true },
+      select: { id: true, slug: true, canonicalUrl: true },
+      orderBy: { id: "asc" },
+      take: BATCH,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+    });
+    if (page.length === 0) break;
+    articles.push(...page);
+    if (page.length < BATCH) break;
+    cursor = page[page.length - 1].id;
+  }
 
   let updated = 0;
   const errors: Array<{ id: string; error: string }> = [];

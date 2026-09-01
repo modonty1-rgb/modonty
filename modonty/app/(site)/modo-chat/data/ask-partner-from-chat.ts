@@ -15,14 +15,7 @@ const schema = z.object({
 /** Same ceiling the article form uses — one visitor cannot flood a partner's inbox. */
 const MAX_PENDING_PER_VISITOR = 5;
 
-function sanitize(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;");
-}
+import { stripHtmlTags } from "@modonty/shared/lib/strip-html-tags";
 
 /**
  * Hands a question Modo could not answer to the partner who can.
@@ -102,7 +95,7 @@ export async function askPartnerFromChat(input: {
     await db.articleFAQ.create({
       data: {
         articleId: article.id,
-        question: sanitize(parsed.data.question.trim()),
+        question: stripHtmlTags(parsed.data.question.trim()),
         answer: null,
         position: (last?.position ?? -1) + 1,
         status: ArticleFAQStatus.PENDING,

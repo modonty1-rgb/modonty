@@ -9,14 +9,7 @@ import { askClientSchema, type AskClientFormData } from "./ask-client-schema";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { trackAskClientSubmit } from "@/lib/analytics/events-registry";
 
-function sanitizeText(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;");
-}
+import { stripHtmlTags } from "@modonty/shared/lib/strip-html-tags";
 
 /** A signed-in reader asks the article's client a question — lands PENDING in their console inbox. */
 export async function submitAskClient(
@@ -77,7 +70,7 @@ export async function submitAskClient(
   await db.articleFAQ.create({
     data: {
       articleId,
-      question: sanitizeText(parsed.data.question.trim()),
+      question: stripHtmlTags(parsed.data.question.trim()),
       answer: null,
       position,
       status: ArticleFAQStatus.PENDING,

@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { ArticleFAQStatus } from "@prisma/client";
 import { messages } from "@/lib/messages";
 import { regenerateClientSeo } from "../../profile/actions/regenerate-client-seo";
+import { stripHtmlTags } from "@modonty/shared/lib/strip-html-tags";
 
 type Result = { success: true } | { success: false; error: string };
 
@@ -14,14 +15,6 @@ async function getClientId(): Promise<string | null> {
   return (session as { clientId?: string })?.clientId ?? null;
 }
 
-function sanitize(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;");
-}
 
 /**
  * Create or update a client-page FAQ. A row with an answer is PUBLISHED (shows
@@ -36,10 +29,10 @@ export async function saveClientPageFaq(input: {
   const clientId = await getClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
-  const question = sanitize((input.question ?? "").trim());
+  const question = stripHtmlTags((input.question ?? "").trim());
   if (question.length < 3) return { success: false, error: "اكتب سؤالاً صحيحاً" };
   const answerRaw = (input.answer ?? "").trim();
-  const answer = answerRaw ? sanitize(answerRaw) : null;
+  const answer = answerRaw ? stripHtmlTags(answerRaw) : null;
   const status = answer ? ArticleFAQStatus.PUBLISHED : ArticleFAQStatus.PENDING;
 
   try {

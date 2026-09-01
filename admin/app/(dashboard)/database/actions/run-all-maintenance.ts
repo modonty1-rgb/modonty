@@ -20,6 +20,9 @@ import { hardDeleteOldSoftDeletedComments } from "./soft-deleted-comments";
 import { seedIntakeForm } from "./seed-intake";
 import { seedAiPrompts } from "./seed-ai-prompts";
 import { scanOrphans } from "./orphan-scan";
+import { pruneDeadMetaTags } from "./prune-dead-meta-tags";
+import { decodeEscapedText } from "./decode-escaped-text";
+import { arabizeAuthorSeo } from "./arabize-author-seo";
 
 /** The public cache tags a fix can make stale — same union the revalidate helper accepts. */
 type ModontyTag = Parameters<typeof revalidateModontyTag>[0];
@@ -406,6 +409,96 @@ export async function runStepSoftDeletedComments(): Promise<MaintenanceStepResul
     );
   } catch (e) {
     return fail("softDeletedComments", "Soft-Deleted Comments Purged (30d+)", e);
+  }
+}
+
+/**
+ * تعريب هوية الكاتب «مدونتي» — الاسم والعنوان والوصف.
+ *
+ * مقيس على الإنتاج ٣١ أغسطس: `seoTitle = "Modonty - Author Profile"` و`name = "Modonty"`
+ * على صفحة `/authors/modonty` **المفهرسة وفي خريطة الموقع** — أي أن هذا ما يقرؤه جوجل
+ * ويعرضه للباحث العربي. وهو باقٍ من عائلة اسم الموقع التي عولجت اليوم؛ صفّ الكاتب لم
+ * يدخل تلك الكاسكيد. بيانات لا كود: صفر مطابقة لـ«Author Profile» في المستودع كلّه.
+ */
+export async function runStepArabizeAuthor(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await arabizeAuthorSeo();
+    return withTags(
+      {
+        key: "arabizeAuthor",
+        label: "Author Identity Arabized",
+        ok: true,
+        count: r.updated,
+        detail: r.fields.length > 0 ? r.fields.join(" · ") : "معرَّب سلفاً",
+      },
+      ["articles", "pages"],
+    );
+  } catch (e) {
+    return fail("arabizeAuthor", "Author Identity Arabized", e);
+  }
+}
+
+/**
+ * فكّ كيانات HTML المتراكمة في نصوص المستخدمين — أسئلة العملاء والمقالات والتعليقات.
+ *
+ * خمس دوالّ `sanitize` كانت تهرّب قبل التخزين، والحقول تُعرض في JSX حيث يهرّب رياكت
+ * تلقائياً — فهروبٌ مرّتين، و`&` نفسه يُهرَّب فتتراكم الطبقات مع كل حفظ
+ * (`&quot;` ← `&amp;quot;` ← `&amp;amp;quot;`). أُصلح المصدر في
+ * `shared/lib/strip-html-tags.ts`، وهذه تنظّف ما كُتب قبله.
+ */
+export async function runStepDecodeEscapedText(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await decodeEscapedText();
+    const parts = Object.entries(r.byModel).map(([m, n]) => `${m} ${n}`);
+    const notes = [
+      parts.length > 0 ? parts.join(" · ") : undefined,
+      r.maxLayers > 1 ? `أعمق تراكم: ${r.maxLayers} طبقات` : undefined,
+    ].filter(Boolean);
+    return withTags(
+      {
+        key: "decodeEscaped",
+        label: "Escaped HTML Entities Decoded",
+        ok: true,
+        count: r.fixed,
+        detail: notes.length > 0 ? notes.join(" · ") : undefined,
+      },
+      ["articles", "clients", "pages"],
+    );
+  } catch (e) {
+    return fail("decodeEscaped", "Escaped HTML Entities Decoded", e);
+  }
+}
+
+/**
+ * حذف عمود `Modonty.metaTags` الميت — آخر خطوة في القائمة بأمر خالد (٣١ أغسطس ٢٠٢٦).
+ *
+ * صفحات مدونتي الثابتة تحمل بلوبين للميتاداتا: `nextjsMetadata` هو ما تخدم منه مدونتي
+ * فعلاً، و`metaTags` شكلٌ آخر لا يقرؤه أحد. كان الأخير يُغذّي شاشة فحص السيو خطأً
+ * (`listing-pages-seo-audit.ts:155`) فتقيس ما لا يراه الزائر — أُصلح في `642e639`،
+ * فصار العمود ميتاً بلا قارئ. هذه الخطوة تُخرجه من القاعدة.
+ *
+ * آخرُ خطوة عمداً: تكتب حذفاً، فلا تسبق أي خطوة تقرأ الصفحات.
+ */
+export async function runStepDeadMetaTags(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await pruneDeadMetaTags();
+    const notes = [
+      r.skipped > 0
+        ? `تُخطّيت ${r.skipped} صفحة بلا nextjsMetadata (${r.skippedSlugs.join(" · ")}) — حذفها يتركها بلا ميتاداتا مخزّنة`
+        : undefined,
+    ].filter(Boolean);
+    return withTags(
+      {
+        key: "deadMetaTags",
+        label: "Dead metaTags Column Pruned",
+        ok: true,
+        count: r.cleared,
+        detail: notes.length > 0 ? notes.join(" · ") : undefined,
+      },
+      ["pages"],
+    );
+  } catch (e) {
+    return fail("deadMetaTags", "Dead metaTags Column Pruned", e);
   }
 }
 

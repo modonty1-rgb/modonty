@@ -18,14 +18,7 @@ const clientQuestionSchema = z.object({
 
 export type ClientQuestionFormData = z.infer<typeof clientQuestionSchema>;
 
-function sanitizeText(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;");
-}
+import { stripHtmlTags } from "@modonty/shared/lib/strip-html-tags";
 
 export async function submitClientPageQuestion(
   data: ClientQuestionFormData,
@@ -80,7 +73,7 @@ export async function submitClientPageQuestion(
   await db.clientFAQ.create({
     data: {
       clientId: client.id,
-      question: sanitizeText(parsed.data.question.trim()),
+      question: stripHtmlTags(parsed.data.question.trim()),
       answer: null,
       position,
       status: ArticleFAQStatus.PENDING,

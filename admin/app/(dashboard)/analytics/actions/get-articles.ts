@@ -10,9 +10,11 @@ export async function getArticles() {
           in: ["DRAFT", "PUBLISHED", "ARCHIVED"],
         },
       },
+      // بلا سقف: قائمة اختيار في شاشة التحليلات. سقفٌ صامت عند الألف يعني أن المقال
+      // رقم ١٠٠١ يختفي من القائمة بلا رسالة، فيبدو غير موجود بدل أن يبدو غير معروض.
+      // الحقول الأربعة خفيفة، والعدد اليوم ١٩٦ مقالاً.
       select: { id: true, title: true, slug: true, clientId: true },
       orderBy: { title: "asc" },
-      take: 1000,
     });
   } catch (error) {
     console.error("Error fetching articles:", error);

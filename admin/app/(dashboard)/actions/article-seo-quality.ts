@@ -53,25 +53,50 @@ export interface ArticleSeoQuality {
 
 export const getArticleSeoQuality = unstable_cache(
   async (): Promise<ArticleSeoQuality> => {
-    const rows = await db.article.findMany({
-      select: ARTICLE_SEO_SELECT,
-      take: 1000,
-    });
+    // ── لماذا ترقيم لا سقف (٣١ أغسطس ٢٠٢٦) ──────────────────────────────
+    // كان هنا `take: 1000` بلا أي إعلان. الإحصاء يقرأ ألفاً ويسكت عن الباقي، فيظهر
+    // «متوسّط الدرجات» و«مقالات مكتملة» أرقاماً واثقة تخصّ جزءاً من المحتوى لا كلَّه.
+    // ولا شيء في الشاشة يقول ذلك. قِيس على الإنتاج ٣١ أغسطس: ١٩٦ مقالاً — أي أن العطل
+    // نائم حتى المقال رقم ١٠٠١، ثم يكذب بصمت وإلى الأبد.
+    //
+    // القسمة على دفعات تزيل الشرط كلّه: كل صفٍّ يُقاس، والذاكرة تحمل دفعة واحدة فقط
+    // لأن النتيجة عدّادات لا صفوف. لا سقف يُعلَن لأنه لم يعد موجوداً.
+    const BATCH = 500;
     let perfect = 0;
     let below = 0;
     let sumScore = 0;
+    let counted = 0;
     const failing = new Map<string, number>();
-    for (const r of rows) {
-      const { score, checks } = getArticleSeoScoreDetail(r);
-      sumScore += score;
-      if (score >= 100) perfect += 1;
-      else below += 1;
-      // A check that isn't at full marks is what prevents this article from hitting 100.
-      for (const c of checks) {
-        if (c.earned < c.max) failing.set(c.key, (failing.get(c.key) ?? 0) + 1);
+    let cursor: string | undefined;
+
+    for (;;) {
+      const rows = await db.article.findMany({
+        // `id` يُضاف هنا لا في `ARTICLE_SEO_SELECT`: ذاك عقد المقيّم ولا يحتاجه،
+        // والمؤشّر حاجة هذا الاستدعاء وحده.
+        select: { ...ARTICLE_SEO_SELECT, id: true },
+        orderBy: { id: "asc" },
+        take: BATCH,
+        ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+      });
+      if (rows.length === 0) break;
+
+      for (const r of rows) {
+        const { score, checks } = getArticleSeoScoreDetail(r);
+        sumScore += score;
+        counted += 1;
+        if (score >= 100) perfect += 1;
+        else below += 1;
+        // A check that isn't at full marks is what prevents this article from hitting 100.
+        for (const c of checks) {
+          if (c.earned < c.max) failing.set(c.key, (failing.get(c.key) ?? 0) + 1);
+        }
       }
+
+      if (rows.length < BATCH) break;
+      cursor = rows[rows.length - 1].id;
     }
-    const avgScore = rows.length > 0 ? Math.round(sumScore / rows.length) : 0;
+
+    const avgScore = counted > 0 ? Math.round(sumScore / counted) : 0;
     const checks: SeoCheckTally[] = [...failing.entries()]
       .map(([key, n]) => {
         const meta = CHECK_META[key];

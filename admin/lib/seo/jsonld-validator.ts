@@ -17,6 +17,16 @@ export interface ValidationResult {
   errors: ValidationError[];
   warnings: ValidationWarning[];
   timestamp: string;
+  /**
+   * الحالة الثالثة: **لم نستطع الفحص**، وهي غير «فحصنا فوجدناه خاطئاً».
+   *
+   * تعريف schema.org يُجلب من الشبكة، وانقطاعٌ لحظة النشر كان يسقط في `catch`
+   * فيُخزَّن `valid: false` على محتوى سليم — والسبب الشبكة لا المحتوى. من يقرأ
+   * التقرير بعدها (المقيّم · شاشة الجودة · بوّابة النشر) يراه عطلاً في المقال.
+   *
+   * فحين تُرفع هذه الراية: التقرير لا يحكم، ولا يُحسب فشلاً على المحتوى.
+   */
+  unavailable?: boolean;
 }
 
 export interface ValidationError {
@@ -98,9 +108,25 @@ async function getSchemaOrgDefinition(): Promise<unknown> {
 export async function validateJsonLd(jsonLd: object): Promise<ValidationResult> {
   const timestamp = new Date().toISOString();
 
+  // الشبكة لم تعد شرطاً للفحص.
+  //
+  // مصدر الحزمة المثبَّتة (`@adobe/structured-data-validator@1.6.0/src/validator.js:13-18`):
+  // `constructor(schemaOrgJson)` يضيف حارس schema.org **فقط إن مُرِّر التعريف**، وتبقى
+  // الحرّاس النوعيّة كلها (BreadcrumbList · ImageObject · Article …) عاملةً بدونه.
+  //
+  // فبدل أن يسقط الفحص كلّه لانقطاع شبكة — وكان يُخزَّن حينها «غير صالح» على محتوى سليم —
+  // نفحص بما لدينا ونرفع `unavailable` لنقول إن طبقة schema.org وحدها لم تُقَس.
+  let schemaOrg: unknown = null;
+  let schemaOrgUnavailable = false;
   try {
-    const schemaOrg = await getSchemaOrgDefinition();
-    const validator = new Validator(schemaOrg);
+    schemaOrg = await getSchemaOrgDefinition();
+  } catch (e) {
+    schemaOrgUnavailable = true;
+    console.error("schema.org definition unavailable — validating without it:", e);
+  }
+
+  try {
+    const validator = new Validator(schemaOrg ?? undefined);
     const result = await validator.validate(jsonLd);
 
     // Process errors
@@ -129,23 +155,40 @@ export async function validateJsonLd(jsonLd: object): Promise<ValidationResult> 
       }
     }
 
+    if (schemaOrgUnavailable) {
+      warnings.push({
+        message:
+          "تعذّر جلب تعريف schema.org، فحُصت القواعد النوعيّة وحدها ولم تُقَس مطابقة المفردات.",
+      });
+    }
+
     return {
       valid: errors.length === 0,
       errors,
       warnings,
       timestamp,
+      ...(schemaOrgUnavailable ? { unavailable: true } : {}),
     };
   } catch (error) {
-    // Return error result if validation fails
+    // فشل الفحص ليس فشل المحتوى.
+    //
+    // كان هذا الفرع يرجّع `valid: false` مع رسالة الشبكة، فيُخزَّن على المقال في
+    // `jsonLdValidationReport` أنه «غير صالح» — وكل قارئ بعدها (المقيّم، شاشة الجودة،
+    // بوّابة النشر) يقرؤها عطلاً في المحتوى. انقطاعُ شبكةٍ لحظةَ نشرٍ كان يكفي.
+    //
+    // فالآن نرفع `unavailable` ونُبقي `valid: true`: لم نجد خطأً لأننا لم نفحص، وهذا
+    // أصدق من ادّعاء خطأٍ لم نره. الرسالة تبقى تحذيراً كي لا يضيع السبب.
     return {
-      valid: false,
-      errors: [
+      valid: true,
+      unavailable: true,
+      errors: [],
+      warnings: [
         {
-          message: `Validation failed: ${error instanceof Error ? error.message : String(error)}`,
-          type: "VALIDATION_FAILED",
+          message: `تعذّر الفحص مقابل schema.org (لم يُقَس المحتوى): ${
+            error instanceof Error ? error.message : String(error)
+          }`,
         },
       ],
-      warnings: [],
       timestamp,
     };
   }

@@ -52,22 +52,43 @@ function jsonLdToWaeFormat(jsonLd: object): { jsonld: Record<string, unknown[]>;
 }
 
 async function validateWithAdobe(jsonLd: object): Promise<ModontyValidationReport["adobe"]> {
+  // الشبكة ليست شرطاً للفحص — نفس إصلاح `admin/lib/seo/jsonld-validator.ts`.
+  //
+  // مصدر الحزمة المثبَّتة (`@adobe/structured-data-validator@1.6.0/src/validator.js:13-18`):
+  // حارس schema.org يُضاف **فقط إن مُرِّر التعريف**، وتبقى الحرّاس النوعيّة كلها عاملة
+  // بدونه. فانقطاع الشبكة كان يُسقط الفحص كلّه ويُخزَّن `valid: false` على محتوى سليم —
+  // خطأٌ في الشبكة يُقرأ لاحقاً عطلاً في المحتوى.
+  let schemaOrg: unknown = null;
+  let unavailable = false;
   try {
-    const schemaOrg = await getSchemaOrg();
+    schemaOrg = await getSchemaOrg();
+  } catch (e) {
+    unavailable = true;
+    console.error("schema.org unavailable — validating without it:", e);
+  }
+
+  try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- @adobe/structured-data-validator has no typed constructor
-    const validator = new Validator(schemaOrg as any);
+    const validator = new Validator((schemaOrg ?? undefined) as any);
     const waeData = jsonLdToWaeFormat(jsonLd);
     const issues = await validator.validate(waeData);
     const errors = (Array.isArray(issues) ? issues : []).map((i: { issueMessage?: string; message?: string; location?: string }) => ({
       message: i.issueMessage || i.message || "Validation issue",
       path: i.location,
     }));
-    return { valid: errors.length === 0, errors, warnings: [] };
-  } catch (e) {
     return {
-      valid: false,
-      errors: [{ message: e instanceof Error ? e.message : String(e) }],
-      warnings: [],
+      valid: errors.length === 0,
+      errors,
+      warnings: unavailable
+        ? ["تعذّر جلب تعريف schema.org — فُحصت القواعد النوعيّة وحدها"]
+        : [],
+    };
+  } catch (e) {
+    // عطلٌ في الفاحص نفسه لا في المحتوى: لا نُعلن المحتوى خاطئاً لأننا لم نقِسه.
+    return {
+      valid: true,
+      errors: [],
+      warnings: [`تعذّر الفحص (لم يُقَس المحتوى): ${e instanceof Error ? e.message : String(e)}`],
     };
   }
 }

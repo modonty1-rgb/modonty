@@ -26,6 +26,9 @@ import {
   runStepSoftDeletedComments,
   runStepIntakeSeed,
   runStepAiPrompts,
+  runStepDecodeEscapedText,
+  runStepArabizeAuthor,
+  runStepDeadMetaTags,
   revalidateDatabasePage,
   logMaintenanceRunAction,
   flushModontyAfterMaintenance,
@@ -66,6 +69,9 @@ const STEPS: StepDef[] = [
   { key: "softDeletedComments", label: "Soft-Deleted Comments (30d+)", description: "Permanently delete comments marked DELETED older than 30 days", runner: runStepSoftDeletedComments },
   { key: "intakeSeed", label: "Intake Questionnaire", description: "Bootstrap the client intake questions into the DB (create-only — never overwrites edits)", runner: runStepIntakeSeed },
   { key: "aiPrompts", label: "AI Prompts", description: "Bootstrap the 7 AI prompts into the DB from their code defaults (create-only — never overwrites an edited prompt)", runner: runStepAiPrompts },
+  { key: "arabizeAuthor", label: "Author Identity Arabized", description: "The single author row still carried an English identity: name Modonty, seoTitle \"Modonty - Author Profile\", and an English description — measured on production 31 Aug 2026. /authors/modonty is indexed and sits in the sitemap, so that is exactly what Google shows an Arabic searcher for a platform whose content is entirely Arabic. It is a leftover of the same family the site-name cascade fixed today; the author row was never part of that cascade. Data, not code: zero matches for \"Author Profile\" anywhere in the repository. Writes the Arabic name, title and description, and clears the stored metadata blob so it is rebuilt — fixing the column alone would leave Google reading the old blob. Skips any field a human already wrote in Arabic.", runner: runStepArabizeAuthor },
+  { key: "decodeEscaped", label: "Escaped HTML Entities", description: "Five sanitize() copies escaped user text BEFORE storing it. But the fields render as {faq.question} in JSX, where React escapes automatically — so the text was escaped twice, and because & itself was escaped every save stacked another layer: &quot; then &amp;quot; then &amp;amp;quot;. Measured on production 31 Aug 2026: 18 rows affected, one seven layers deep, and the visitor read the raw entity instead of a quotation mark. The same text is also broadcast in FAQPage JSON-LD, where an HTML entity means nothing and reaches Google as-is. Source fixed in shared/lib/strip-html-tags.ts (strip the tag, do not escape it); this decodes what was written before. Decodes repeatedly until the text stops changing, capped at ten passes. Never touches the general FAQ collection: its answer field is documented rich HTML and is injected with dangerouslySetInnerHTML on /help/faq.", runner: runStepDecodeEscapedText },
+  { key: "deadMetaTags", label: "Dead metaTags Column", description: "Each static Modonty page stored TWO metadata blobs. `nextjsMetadata` is the one modonty actually serves (build-metadata-from-page-row.ts:72); `metaTags` is a different shape nobody reads. It used to feed the admin's SEO audit by mistake (listing-pages-seo-audit.ts:155) — the audit graded what the visitor never sees, 5-13 points off on all 11 pages. Fixed in 642e639, so the column is now dead. This removes it from the database. Skips any page that has no nextjsMetadata: there metaTags may be the only stored metadata, and dropping it would leave the page with none. Runs LAST — it writes a deletion, so no reading step follows it.", runner: runStepDeadMetaTags },
 ];
 
 interface StepState {
