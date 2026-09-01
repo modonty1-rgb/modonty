@@ -57,19 +57,23 @@ export default async function AudioArticlesPage() {
         }}
       />
 
-      <Breadcrumb
-        items={[
-          { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: t.breadcrumbLabel },
-        ]}
-      />
+      {/* The site chrome is sticky and overlays the document on phones. Unlike the other
+          listing pages, this page starts with controls rather than a hero, so it had no natural
+          breathing room and the controls painted through the orbit strip at the top. */}
+      <div className="pt-[var(--sticky-chrome)] lg:pt-0">
+        <Breadcrumb
+          items={[
+            { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
+            { label: t.breadcrumbLabel },
+          ]}
+        />
 
       {/* Two columns on desktop, not two tabs (Khalid, 20 Aug): the recitation is the page, and the
           articles sit beside it. The shared shell rather than a hand-rolled grid — same container,
           same gaps as every other two-column page on the site.
           On a phone the same two columns stack, and the second one landed 25 screens down — so
           `AudioTabs` puts a switch between them there and ONLY there. See its own comment. */}
-      <AudioTabs>
+        <AudioTabs>
         <TwoColumnLayout
           header={
             <>
@@ -116,7 +120,8 @@ export default async function AudioArticlesPage() {
             </AudioPanel>
           }
         />
-      </AudioTabs>
+        </AudioTabs>
+      </div>
     </>
   );
 }
