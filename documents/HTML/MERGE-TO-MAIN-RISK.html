@@ -113,6 +113,22 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 
 
 
+<div class="card a" style="margin-bottom:16px">
+<h3>🔍 مراجعة Codex — ١ سبتمبر ٢٠٢٦ · <b style="color:var(--amber)">مرشَّحات لم تُتحقَّق بعد</b></h3>
+<p style="margin:6px 0 10px">التقرير الكامل في <code>documents/HTML/CODEX-REVIEW-2026-09-01.md</code>. فُحص <b>٣٣ بنداً</b> من التبويبات المفتوحة كلّها (الباقي · شغل مفتوح · لاحقاً · مشاكل الداتا · الريلز). تبويب «المنجز» لم يُفحص — استُبعد في التكليف الأول، وجولة ثانية تغطّيه.</p>
+<p style="margin:6px 0 10px"><b>لم يُنقَل من هذا التقرير بندٌ واحد إلى «المنجز»، ولا تغيّر عدّاد.</b> القاعدة قائمة: البطاقة لا تُغلق بتقرير وكيل، بل بقياس أفتحه بنفسي. ما يلي مرشَّحات بمراجعها، تنتظر ذلك:</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>الرمز</th><th>حكم Codex</th><th>المرجع الذي أعطاه</th></tr>
+<tr><td class="n">37</td><td>قائم</td><td><code>shared/prisma/schema/schema.prisma:384-388</code> — السكيما تخزّن <code>services</code> نصّاً، ولا محرّر مخصّص</td></tr>
+<tr><td class="n">REEL-CTRL</td><td>قائم</td><td><code>admin/…/reels/helpers/load-reels.ts:58-61</code> — الجلب محصور بـ<code>PENDING_APPROVAL</code></td></tr>
+<tr><td class="n">REEL-LEAK</td><td>قائم</td><td><code>console/…/reels-actions.ts:250-257</code> — العميل يؤرشف ريلاً حيّاً بنفسه</td></tr>
+<tr><td class="n">B10</td><td>أُصلح، لم يُنقَل</td><td><code>admin/tests/e2e/articles.spec.ts:1,176</code> موجود — ينقصه تشغيله في CI</td></tr>
+<tr><td class="n">داتا-1</td><td>أُصلح، لم يُنقَل</td><td><code>run-all-maintenance.ts:423-429</code> موصولة — تنتظر ضغطة على الإنتاج</td></tr>
+<tr><td class="n">T9</td><td>إنذار كاذب</td><td>مؤجَّل عمداً لا خلل — قرار لا قياس</td></tr>
+</table></div>
+<p style="margin:6px 0 0;opacity:.75">و<b>٢٧ بنداً</b> وسمها «يحتاج قياساً حيّاً» ومعها القياس المطلوب لكلٍّ منها — وهي أنفع ما في التقرير: تحوّل بنوداً غامضة إلى خطوات محدّدة.</p>
+</div>
+
 <h2>الجذر المفتوح</h2>
 <details class="tk">
 <summary><span class="id">NEXT-UPGRADE</span><span class="sv sv-m">متوسّط</span><span class="tt">⏸️ ترقية Next 16.2.9 ← 16.3.4 — تحلّ باق <code>__next_metadata_boundary__</code></span><span class="ap">modonty</span></summary>

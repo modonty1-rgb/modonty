@@ -5,9 +5,10 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ImageIcon, Camera, ExternalLink, Monitor, Pencil } from "lucide-react";
+import { ImageIcon, Camera, ExternalLink, Pencil } from "lucide-react";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { DeleteClientButton } from "./delete-client-button";
+import { OpenClientConsoleButton } from "../../components/edit-workspace/open-client-console-button";
 import { ClientLogoModal } from "../../components/client-logo-modal";
 import { ClientHeroModal } from "../../components/client-hero-modal";
 import { YMYL_CATEGORIES, type YmylCategory } from "@modonty/shared/lib/seo/ymyl-config";
@@ -137,13 +138,12 @@ export function ClientHeader({ client, publicBaseUrl, seoScore }: ClientHeaderPr
             // The SEO score opens the full guide (/technical): where the fault is and how to fix it.
             <SeoScoreBadge score={seoScore} size="md" href={`/clients/${client.id}/technical`} />
           )}
-          {client.url && (
-            <Button variant="outline" size="sm" asChild>
-              <a href={client.url} target="_blank" rel="noopener noreferrer">
-                <Monitor className="h-4 w-4 me-1.5" /> Console
-              </a>
-            </Button>
-          )}
+          {/* Was an <a> labelled «Console» pointing at `client.url` — the client's own public
+              page, which is ALSO printed right above this row. So the button lied twice: it
+              promised the client console and delivered a duplicate of a link already on screen
+              (Khalid, 1 Sep 2026). This is the real handoff: it signs a short-lived ticket and
+              opens `/admin-access` on the console AS the client. */}
+          <OpenClientConsoleButton clientId={client.id} />
           <Button size="sm" asChild>
             <Link href={`/clients/${client.id}/edit`}>
               <Pencil className="h-4 w-4 me-1.5" /> Edit
