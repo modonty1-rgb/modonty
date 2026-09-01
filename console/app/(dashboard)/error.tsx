@@ -10,10 +10,10 @@ import { ErrorView } from "@/components/error-view";
  */
 export default function DashboardError({
   error,
-  unstable_retry,
+  retry,
 }: {
   error: Error & { digest?: string };
-  unstable_retry: () => void;
+  retry: () => void;
 }) {
-  return <ErrorView error={error} retry={unstable_retry} layout="inline" />;
+  return <ErrorView error={error} retry={ retry } layout="inline" />;
 }

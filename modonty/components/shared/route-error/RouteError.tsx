@@ -9,7 +9,7 @@ import { IconError, IconHome, IconRefresh } from "@/lib/icons";
 interface RouteErrorProps {
   error: Error & { digest?: string };
   /**
-   * Next 16's `unstable_retry` — re-FETCHES and re-renders the segment.
+   * Next 16's `retry` — re-FETCHES and re-renders the segment.
    * `reset` is deliberately not accepted: it re-renders without re-fetching
    * (`node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/error.md:157`),
    * so on a bad server payload it replays the same bad payload and the button does nothing.

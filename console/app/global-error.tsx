@@ -10,10 +10,10 @@ import { ErrorView } from "@/components/error-view";
  */
 export default function GlobalError({
   error,
-  unstable_retry,
+  retry,
 }: {
   error: Error & { digest?: string };
-  unstable_retry: () => void;
+  retry: () => void;
 }) {
   return (
     <html lang="ar" dir="rtl">
@@ -27,7 +27,7 @@ export default function GlobalError({
         />
       </head>
       <body className="bg-background">
-        <ErrorView error={error} retry={unstable_retry} />
+        <ErrorView error={error} retry={ retry } />
       </body>
     </html>
   );

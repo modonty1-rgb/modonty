@@ -4,10 +4,10 @@ import { RouteError } from "@/components/shared/route-error/RouteError";
 
 export default function SubscribeError({
   error,
-  unstable_retry: retry,
+  retry,
 }: {
   error: Error & { digest?: string };
-  unstable_retry: () => void;
+  retry: () => void;
 }) {
   return (
     <RouteError

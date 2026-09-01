@@ -5,10 +5,10 @@ import { RouteError } from "@/components/shared/route-error/RouteError";
 
 export default function GlobalError({
   error,
-  unstable_retry,
+  retry,
 }: {
   error: Error & { digest?: string };
-  unstable_retry: () => void;
+  retry: () => void;
 }) {
   return (
     <html lang="ar" dir="rtl">
@@ -16,7 +16,7 @@ export default function GlobalError({
         <title>تعذّر فتح مدونتي</title>
       </head>
       <body className="bg-background font-sans overflow-x-hidden">
-        <RouteError error={error} retry={unstable_retry} what="الموقع" />
+        <RouteError error={error} retry={ retry } what="الموقع" />
       </body>
     </html>
   );
