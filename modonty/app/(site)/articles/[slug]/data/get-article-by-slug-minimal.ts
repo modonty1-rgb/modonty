@@ -8,7 +8,6 @@ import { getArticleContentBySlug } from "./get-article-content-by-slug";
  * Wrapped by `getArticleLiveCountsSafe` below: a like tally is decoration, and it must never be
  * able to take an article down. See the note there.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept, unused during the isolation experiment
 async function getArticleLiveCounts(articleId: string) {
   return db.article.findUnique({
     where: { id: articleId },
@@ -41,7 +40,6 @@ async function getArticleLiveCounts(articleId: string) {
  * `catch` here — not a retry, not a rethrow: a retry doubles the latency on a connection that is
  * already unhealthy, and a rethrow is exactly the behaviour being removed.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept, unused during the isolation experiment
 async function getArticleLiveCountsSafe(articleId: string) {
   try {
     return await getArticleLiveCounts(articleId);
@@ -92,24 +90,14 @@ export async function getArticleBySlugMinimal(slug: string, userId?: string) {
   const article = await getArticleContentBySlug(slug);
   if (!article) return null;
 
-  // ⚠️ ISOLATION EXPERIMENT — 1 Sep 2026, one variable, revert after the measurement.
-  //
-  // Hypothesis under test: this LIVE counts query is what kills the article render. The article
-  // itself is cached, yet the page cannot paint a single byte until this uncached MongoDB read
-  // resolves — and when it stalls on a cold connection the Flight stream ends («Connection
-  // closed.»), boundary B:4 (the whole page) is rejected, and a healthy cached article is served
-  // as a 200 with no body, which then gets CACHED and handed to every visitor for five minutes.
-  //
-  // The guard added on 31 Aug catches a THROW from the query. It cannot catch a stream that ends
-  // while the query is still pending — which is the failure actually observed in the Vercel logs.
-  // So guarding is not enough; the read has to leave the critical path entirely.
-  //
-  // Nothing is lost meanwhile: `getArticleContentBySlug` already carries likes, dislikes,
-  // comments and the FAQ count in its cached payload. Only favourites and views fall back to
-  // zero for the duration of this test.
-  const reactions = userId
-    ? await getMyArticleReactionsSafe(article.id, userId)
-    : { userLiked: false, userDisliked: false, userFavorited: false };
+  // Both live reads are guarded: neither a counter nor a heart icon may cost the reader the
+  // article. `_count` falls back to zeros below, reactions to "not reacted".
+  const [counts, reactions] = await Promise.all([
+    getArticleLiveCountsSafe(article.id),
+    userId
+      ? getMyArticleReactionsSafe(article.id, userId)
+      : Promise.resolve({ userLiked: false, userDisliked: false, userFavorited: false }),
+  ]);
 
   const { likesCount, dislikesCount, favoritesCount, commentsCount, viewsCount, ...rest } = article;
 
@@ -120,14 +108,13 @@ export async function getArticleBySlugMinimal(slug: string, userId?: string) {
     userLiked: reactions.userLiked,
     userDisliked: reactions.userDisliked,
     userFavorited: reactions.userFavorited,
-    // Read from the CACHED payload during the isolation experiment — no live query on this path.
     _count: {
-      faqs: article._count?.faqs ?? 0,
-      likes: likesCount ?? 0,
-      dislikes: dislikesCount ?? 0,
-      favorites: favoritesCount ?? 0,
-      comments: commentsCount ?? 0,
-      views: viewsCount ?? 0,
+      faqs: counts?._count.faqs ?? 0,
+      likes: counts?.likesCount ?? 0,
+      dislikes: counts?.dislikesCount ?? 0,
+      favorites: counts?.favoritesCount ?? 0,
+      comments: counts?.commentsCount ?? 0,
+      views: counts?.viewsCount ?? 0,
     },
   };
 }
