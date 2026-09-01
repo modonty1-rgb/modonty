@@ -214,7 +214,14 @@ export function MediaPickerDialog({
                 </SelectContent>
               </Select>
             </div>
-            <Link href={`/media/upload?clientId=${clientId}`} target="_blank" className="shrink-0">
+            {/* `rel` مع `target="_blank"`: بدونه تملك الصفحة المفتوحة مرجعاً إلى نافذتنا
+                عبر `window.opener` وتقدر تعيد توجيهها. */}
+            <Link
+              href={`/media/upload?clientId=${clientId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0"
+            >
               <Button type="button" variant="outline" size="sm" className="h-9 gap-1.5">
                 <Upload className="h-3.5 w-3.5" />
                 Upload
