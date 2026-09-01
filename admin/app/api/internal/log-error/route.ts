@@ -34,6 +34,9 @@ export async function POST(request: NextRequest) {
     source: string;
     category?: string | null;
     renderType?: string | null;
+    // 'stale' | 'on-demand' = a background regeneration (no reader attached) · null = live request.
+    // Only used to classify a hang-up message; not persisted (no schema change).
+    revalidateReason?: "on-demand" | "stale" | null;
     device?: string | null;
     botName?: string | null;
     country?: string | null;
@@ -46,7 +49,11 @@ export async function POST(request: NextRequest) {
   const category =
     body.category === "framework" || body.category === "app"
       ? body.category
-      : classifyCategory(String(body.message), body.renderType);
+      : classifyCategory(
+          String(body.message),
+          body.renderType,
+          body.revalidateReason ?? undefined
+        );
 
   await db.systemError.create({
     data: {

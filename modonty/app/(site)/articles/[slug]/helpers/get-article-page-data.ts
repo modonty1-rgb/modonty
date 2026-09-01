@@ -104,7 +104,19 @@ export async function getArticlePageData(slug: string) {
 
   // No featured image → platform default (admin /settings/defaults). Fetched only when
   // actually missing — the common path pays nothing.
-  const defaultImages = article.featuredImage ? null : await getPlatformDefaultImages();
+  //
+  // Guarded, and it is the LAST live read on this path (audited 1 Sep 2026: every other query
+  // here is either `use cache` or wrapped in its own guard). Without the catch, an article that
+  // simply has no cover would be the one article a flaky connection could still kill — the
+  // rarest case producing the worst outcome. A missing default image costs a placeholder;
+  // it must never cost the article. `shared/lib/platform-defaults.ts` is left untouched so the
+  // guard stays a decision of this page, not of shared code.
+  const defaultImages = article.featuredImage
+    ? null
+    : await getPlatformDefaultImages().catch((err) => {
+        console.error(`[article/${slug}] platform default images unavailable:`, err);
+        return null;
+      });
   const featuredImage =
     article.featuredImage ??
     (defaultImages?.post

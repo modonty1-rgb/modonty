@@ -1,3 +1,4 @@
+import { cacheTag, cacheLife } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
@@ -105,6 +106,14 @@ async function getRelatedArticlesByCategoryTags(
 
 /** «مقالات ذات صلة» — reads the article's own category and tags, then fills the three rings. */
 export async function getRelatedArticlesByArticleId(articleId: string): Promise<RelatedArticleItem[]> {
+  // Cached for the same reason as `get-article-faqs`: awaited at the top of the article page, so
+  // an uncached read here holds back an article whose own content is already in cache. It is also
+  // the heaviest of the three related queries (it reads the article's category + tags first, then
+  // queries by them), which makes it the likeliest to be caught by a dropped connection.
+  // `revalidateTag("articles")` on publish keeps the list fresh.
+  "use cache";
+  cacheTag("articles");
+  cacheLife("hours");
   const article = await db.article.findFirst({
     where: { id: articleId, status: ArticleStatus.PUBLISHED },
     select: { categoryId: true, tags: { select: { tagId: true } } },

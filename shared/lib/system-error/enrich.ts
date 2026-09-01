@@ -48,7 +48,16 @@ const FRAMEWORK_SIGNATURES: RegExp[] = [
 ];
 
 /** framework = Next/React internals we can't fix in app code · app = ours to fix. */
-export function classifyCategory(message: string, renderType?: string | null): "framework" | "app" {
+export function classifyCategory(
+  message: string,
+  renderType?: string | null,
+  revalidateReason?: "on-demand" | "stale" | undefined
+): "framework" | "app" {
+  // A hang-up signature during a BACKGROUND regeneration is ours, not a reader's — see
+  // `isReaderHangUp` below. Checked first so it outranks the framework signatures.
+  if (isClientAbort(message)) {
+    return isReaderHangUp(message, revalidateReason) ? "framework" : "app";
+  }
   if (renderType === "dynamic-resume") return "framework";
   if (FRAMEWORK_SIGNATURES.some((re) => re.test(message || ""))) return "framework";
   return "app";
@@ -86,6 +95,32 @@ export function isClientAbort(message: string): boolean {
   return CLIENT_ABORT_SIGNATURES.some((re) => re.test(m));
 }
 
+/**
+ * Was there actually a reader to hang up?
+ *
+ * The signature alone cannot tell a visitor closing a tab from OUR render dying mid-stream:
+ * both surface as «Connection closed.». Dropping every match (as this module did from
+ * 3f98bdb until 1 Sep 2026) also dropped the genuine failures — the article error boundary
+ * fired live at 07:47 on 1 Sep and `system_errors` held zero rows for any `/articles/[slug]`
+ * path, because this exact rule deleted them before the sink.
+ *
+ * `revalidateReason` is the discriminator, and it is part of Next's documented
+ * `onRequestError` context (`next/dist/server/instrumentation/types.d.ts:6`):
+ *   'on-demand' | 'stale'  → a BACKGROUND regeneration. No browser is attached to it, so
+ *                            nothing can hang up: the stream died on our side.
+ *   undefined              → an ordinary request with a live reader, who may well have left.
+ *
+ * So: undefined ⇒ treat as a hang-up (logged, category `framework`, no Telegram).
+ * Set ⇒ treat as a real failure (logged, category `app`, Telegram rings).
+ * Either way the row is written — visibility is never traded for quiet.
+ */
+export function isReaderHangUp(
+  message: string,
+  revalidateReason?: "on-demand" | "stale" | undefined
+): boolean {
+  return isClientAbort(message) && revalidateReason === undefined;
+}
+
 export interface ErrorEnrichment {
   category: "framework" | "app";
   device: string;
@@ -102,12 +137,17 @@ const pick = (headers: Headers, key: string): string | null => {
   return s ? String(s) : null;
 };
 
-export function enrichError(headers: Headers, message: string, renderType?: string | null): ErrorEnrichment {
+export function enrichError(
+  headers: Headers,
+  message: string,
+  renderType?: string | null,
+  revalidateReason?: "on-demand" | "stale" | undefined
+): ErrorEnrichment {
   const ua = pick(headers, "user-agent") ?? "";
   const botName = ua ? detectBot(ua) : null;
   const cityRaw = pick(headers, "x-vercel-ip-city");
   return {
-    category: classifyCategory(message, renderType),
+    category: classifyCategory(message, renderType, revalidateReason),
     device: deviceFromUA(ua, Boolean(botName)),
     botName,
     country: pick(headers, "x-vercel-ip-country"),
