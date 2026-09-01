@@ -6,7 +6,10 @@ import type { PostCardProps } from "./PostCard.types";
 // The desktop card is `hidden lg:block`, so below 1024px this image is display:none —
 // yet an eager <img> still downloads. Declaring 1px there makes the browser pick the
 // smallest srcset candidate (16w) instead of a 100vw one for an image nobody sees.
-const LCP_SIZES = "(min-width: 1024px) 600px, 1px";
+// 800px, not 600: measured 1 Sep 2026 on /articles at a 1280 viewport, this hero paints at
+// 779px wide. Declaring 600 made the browser fetch a candidate 30% narrower than the box and
+// stretch it — on the LCP image of all things. 800 is the next srcset step above 779.
+const LCP_SIZES = "(min-width: 1024px) 800px, 1px";
 const DEFAULT_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
 
 interface PostCardHeroImageProps extends PostCardProps {
@@ -63,9 +66,15 @@ export function PostCardHeroImage({
   }
 
   return (
-    // 5:2 instead of 16:9 — the hero keeps the card's full width and loses ~29% of its
-    // height to a centred vertical crop (Khalid, 2026-08-15: the cover was too tall).
-    <div className="relative w-full overflow-hidden aspect-[5/2]">
+    // 16:9 — the SAME ratio the covers are stored at (measured: 600×337 = 1.78), so the
+    // image lands whole: `cover` has nothing left to trim, and there are no letterbox bars
+    // either. The frame was `aspect-[5/2]` (2.50) from 2026-08-15 to shorten a cover judged
+    // too tall, and the price was a 29% centred vertical crop — measured on three cards
+    // across the homepage, the feed and /articles. Khalid, 1 Sep 2026: «خل الصورة تكون
+    // واضحة… بدون قطع». A ratio that matches the source is the only crop-free way to fill
+    // a box; keeping 5:2 and merely moving `object-position` would relocate the loss, not
+    // remove it.
+    <div className="relative w-full overflow-hidden aspect-video">
       {audioBadge}
       <OptimizedImage
         // `post.image` is a resolved url on the feed payload, not a Media relation → asMedia,
