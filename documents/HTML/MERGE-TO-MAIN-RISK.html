@@ -121,72 +121,6 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 الإصلاح PR #96364     دُمج 2026-07-29   ← بعد نسختنا بشهر ونصف
 أحدث مستقرّة 16.3.4   نُشرت 2026-08-31</pre>فالباق <b>اتحلّ عند Next</b>، ونحن على نسخة أقدم من الإصلاح — ولهذا ما زال يظهر.<br><br><b>الخطورة الآن: منخفضة.</b> موسوم <code>framework</code> في سجلّنا فلا يرنّ تيليجرام، والصفحة تشتغل لكنها تسقط لرِندَر العميل لحظة الطلب.<br><br><b style="color:var(--amber)">تصحيح لملاحظة قديمة:</b> ذاكرتنا (٢٢ يوليو) تقول «قوقل ما يتأثّر لأنه ما يعمل POST». سطر السجلّ يقول <code>device: bot (Googlebot)</code> على <code>POST</code> — <b>قوقل يمرّ بالحالة فعلاً</b>، والملاحظة كانت ناقصة.<br><br><b>ما تحتاجه الترقية:</b> ترقية إطار كاملة — <code>tsc</code> على الثلاثة · <code>pnpm build</code> · تست حيّ على مسارات PPR. البديل المضمون لكن الخاسر للأداء: <code>cacheComponents:false</code>.<br><br><b>✔ تقفل بـ:</b> صفر <code>__next_metadata_boundary__</code> في سجلّ الأخطاء بعد الترقية.</div>
 </details>
-<details class="tk" open>
-<summary><span class="id">RSC-CONNCLOSED</span><span class="sv sv-h">عالٍ</span><span class="tt">🔴 Connection closed أثناء رِندَر سيرفر كومبونت — يُفرغ حمولة الصفحة</span><span class="ap">modonty</span></summary>
-<div class="body"><b>فُتحت ٣١ أغسطس ٢٠٢٦ من عطل حيّ رآه خالد على جوّاله.</b><br><br><b>ما هو مقيس:</b> سجلّ أخطاء الأدمن يعرض <code>Connection closed.</code> على <code>render · react-server-components</code> لمسار <code>/articles/[slug]</code> بـ<code>digest: 1567489339</code>، متكرّراً. ومقيس على الإنتاج أن نسخة الكاش <code>STALE</code> ترجع أحياناً <b>200 بجسم فارغ</b> بدل الحمولة.<br><br><b>الأثر على الزائر:</b> يضغط مقالاً من داخل الموقع فتظهر شاشة الخطأ على مقال سليم. الفتح المباشر (ضغطة الإعلان) لم يفشل في أيٍّ من ٢٢ عيّنة قِيست.<br><br><b>ما لا يفعله إصلاح ٦٤٢e639:</b> يجعل الزائر يتعافى، ولا يمنع الانقطاع.<br><br><b>الفرضية الأقرب (غير مثبَتة):</b> اتصال برِزما/مونجو يُقطع أثناء تجديد ISR — نفس عائلة «٢٨ مقالاً بـ<code>Connection closed</code>» المسجَّلة في سجلّ الجلسات.<br><br><b>أول خطوة عند الفتح:</b> اجمع كل صفوف <code>Connection closed</code> من سجلّ الأخطاء وصنّفها بالمسار والوقت — هل تتركّز على تجديد الكاش أم على الحمل؟<br><br><b>🛠️ الجذر أُصلح — ١ سبتمبر ٢٠٢٦، على فرع <code>next-16.3.4-upgrade</code> (غير مدفوع).</b><br><br><b>السبب المقيس:</b> المقال نفسه مكيَّش وجاهز (<code>getArticleContentBySlug</code> · <code>use cache</code>)، لكن الصفحة كانت تنتظر <b>ثلاثة استعلامات حيّة</b> قبل عرض حرف واحد: <code>getArticleLiveCounts</code> (إعجابات ومشاهدات) · <code>getArticleFaqs</code> · <code>getRelatedArticlesByArticleId</code>. سقوط أيٍّ منها يُنهي بثّ الـRSC مبكّراً فيسقط المقال كلّه — <b>وهو في الكاش طوال الوقت</b>.<br><br><b>الإصلاح — قاعدة واحدة:</b> ما دام المقال موجوداً يُعرض، وكل ما عداه زينة تسقط وحدها. وسِمَ الاستعلامان بـ<code>use cache</code> + <code>cacheTag("articles")</code>، ولُفَّت العدّادات والتفاعلات وصور الاحتياط بحارس يرجع صفراً بدل أن يرمي.<br><br><b>الجرد النهائي لمسار المقال:</b> ١١ عملية — <b>٨ مكيَّشة · ٣ محروسة · صفر حيّة غير محروسة</b>. لم يبقَ إلا <code>getArticleContentBySlug</code> نفسه، وسقوطه يعني أن المقال غير متاح حقاً.<br><br><b>الإثبات بالحقن:</b> حُقن <code>throw new Error("Connection closed.")</code> في الاستعلام الحيّ، ثم بُني وشُغِّل: <code>٣/٣ → HTTP 200 · 593,461 بايت · h1 موجود · «المقال ما فتحت» = صفر</code>، والحارس سجّل السقوط ثلاث مرّات. نفس السقوط كان قبلها يقتل الصفحة.<br><br><b>وفكّ عمى السجلّ (شرط رؤية أي علّة باقية):</b> كوميت <code>3f98bdb</code> كان يحذف كل <code>Connection closed</code> قبل التسجيل في التطبيقات الثلاثة، فمُسِحت الأعطال الحقيقية مع تنبيهات التصفّح العادي. الإسكات نُقل إلى <b>الإنذار</b> لا <b>السجلّ</b>: <code>revalidateReason</code> (موثَّق في <code>next/dist/server/instrumentation/types.d.ts:6</code>) يفرّق بين تجديد خلفيّ بلا قارئ (عطل حقيقي · تيليجرام يرنّ) وطلب حيّ (قارئ غادر · يُسجَّل صامتاً).<br><br><b>الفحوص:</b> <code>tsc</code> صفر أخطاء × ٣ · <code>build exit=0</code> · 316/316 صفحة.<br><br><b>✔ ما زال يقفل بـ:</b> صفر <code>Connection closed</code> بعد النشر بـ٢٤ ساعة — <b>والسجلّ الآن يرى</b>، فلو بقيت علّة أخرى تظهر برسالتها لا تُمحى.<br><br><b>🔴 تكرار حيّ مُمسَك — ١ سبتمبر ٢٠٢٦ ٠٧:٤٧ (بلاي رايت على الإنتاج).</b> الصفحة عرضت شاشتنا «المقال ما فتحت»، وكونسول المتصفّح سجّل ثلاث مرّات: <code>[1458ms] An error occurred in the Server Components render</code> · <code>[3027ms]</code> نفسه · <code>[4664ms]</code> نفسه — أي أن إعادة المحاولة التلقائية عملت مرّتين وفشلتا، ثم ظهرت البطاقة. <b>الإصلاح يشتغل كما صُمِّم، والجذر لم يُلمَس.</b><br><br><b>والقياس بعدها بدقائق يحصر العلّة في نسخة الكاش:</b> نفس الرابط بلا كسر كاش ٦/٦ سليم (<code>HIT · age 40-54 · 669,007 بايت · صفر خطأ</code>)، ورِندَر طازج بكسر كاش ١٠/١٠ سليم. فالنسخة المكسورة <b>دخلت الكاش لحظة تجديدها، خُدِمت، ثم استُبدلت</b> عند التجديد التالي.<br><br><b>الفرصة:</b> السجلّ صُفِّر ٠٤:٤٤ وهذا السقوط ٠٧:٤٧ — فهي <b>العيّنة الوحيدة في سجلّ نظيف</b>، ببصمتها ووقتها ومسارها.<br><br><b>⏳ العدّاد يعمل — الحكم بعد ٢٤ ساعة.</b> خالد <b>صفّر سجلّ الأخطاء ١ سبتمبر ٢٠٢٦ ≈ ٠٤:٤٤</b>، فالسجلّ الآن نظيف <b>بالتصفير لا بالإصلاح</b>. <b>موعد القراءة: ٢ سبتمبر ٢٠٢٦ بعد ٠٤:٤٤.</b><br><br><b>تشخيص خالد (١ سبتمبر):</b> «المشكلة كانت بسبب ملف الإرور — المقال ما يفتح، بالكاش الدافئ والبارد». ويطابق <code>642e639</code>: زرّ «حاول مرّة ثانية» كان يستدعي <code>reset</code> الذي يعيد الرسم <b>بلا إعادة جلب</b>، فتبقى الحمولة الفاسدة كما هي.<br><br><b>✔ يقفل بـ:</b> صفر <code>Connection closed</code> في سجلّ الأخطاء خلال تلك الـ٢٤ ساعة. <span style="opacity:.7">أي صفرٍ يُقرأ قبل ٢ سبتمبر ٠٤:٤٤ لا يثبت شيئاً — هو أثر التصفير.</span><br><br>
-
-<b style="color:var(--amber)">🎯 الجذر أُمسك ومُيِّز بالقياس — ١ سبتمبر ٢٠٢٦ عصراً. الإصلاح على <code>test</code>، والإنتاج ما زال مصاباً.</b><br><br>
-
-<b>الرسالة الحقيقية، من سجلّ تشغيل Vercel لا من تخمين:</b><br>
-<code>[articles/…] render failed: Error: Connection closed. · pprState: resuming · cache: STALE · responseStatusCode: 200</code><br>
-٣٨ صفّاً في ٨ دقائق على الإنتاج، ستّة مسارات، منها مقالان لم يطلبهما أحدٌ منّا — <b>زوّار حقيقيون</b>.<br><br>
-
-<b>لماذا لم يظهر في سجلّ الأدمن أصلاً:</b> <code>0 app · 59 framework</code>، وكلّها <code>/articles</code> بفلاتر و<b>صفر صفّ لمقال مفرد</b> — لأن الفشل يقع وقت التوليد الخلفيّ. وسبب ثانٍ مقيس: <code>modonty/instrumentation.ts:13</code> يرفض الإرسال من بيئة <code>preview</code>، و<code>INTERNAL_LOG_SECRET</code> غير مضبوط فيها.<br><br>
-
-<b>ما ينفيه القياس (متّهمان سقطا):</b><br>
-· <b>الجلسة:</b> العطل مُعاد إنتاجه <b>وأنا زائر غير مسجَّل</b> — فرضية «لا يظهر إلا للمسجَّل» ساقطة.<br>
-· <b>العدّادات:</b> عُزلت ودُفعت (<code>af73428</code>) ثم أُرجعت (<code>60871e8</code>) — الضابط أثبت أن فرع <code>test</code> <b>بالعدّادات الحيّة كما هي</b> سليم أيضاً. ليست السبب.<br>
-· <b>وليس باق <code>#93401</code>:</b> الميتاداتا تُبنى سليمة داخل النسخة المعطوبة نفسها (<code>title</code> · <code>description</code> · <code>canonical</code> حاضرة)، فالمشكلة ليست شجرة الميتاداتا.<br><br>
-
-<b>الفرق الحاسم بين <code>main</code> و<code>test</code> — فرق كود مكتوب:</b><br>
-<pre style="font-size:12px;margin:6px 0">main:  data/get-article-faqs.ts                  → بلا "use cache"   ← قراءة حيّة
-main:  data/get-related-articles-by-article-id.ts → بلا "use cache"   ← قراءة حيّة
-test:  كلاهما "use cache" + cacheTag("articles")</pre>
-وكلتاهما تُنتظران في <code>getArticlePageData</code> أي <b>في جذر الشجرة خارج كل <code>&lt;Suspense&gt;</code></b>. والتوثيق المشحون مع النسخة صريح — <code>node_modules/next/dist/docs/01-app/02-guides/building.md:111</code>:<br>
-<code>«fetch(...), cookies(), headers(), params, searchParams, or connection() accessed outside of &lt;Suspense&gt; prevents the route from being prerendered, blocking the page load»</code><br>
-<span style="opacity:.75">تحفّظ معلن: القائمة تسمّي <code>fetch()</code> و<code>connection()</code> ولا تسمّي Prisma — أن استعلام Prisma يخضع لنفس القاعدة استنتاج، وهو ما يفسّر سكوت البناء عن المخالفة.</span><br><br>
-
-<b>مسح كامل لمسار المقال:</b> كل القراءات الحيّة الأخرى داخل حدودها (<code>getMyArticleReactions</code> في <code>ReaderActions</code> · <code>getPendingFaqsForCurrentUser</code> في <code>ReaderFaq</code>/<code>ReaderPartnerCard</code>/<code>…Details</code> · <code>fetchArticleComments</code> في <code>ArticleComments</code>). المخالفات كانت في الجذر وحده.<br><br>
-
-<b>📊 القياس المقترن — نفس المقال، نفس اللحظات، نفس حالة الكاش:</b>
-<pre style="font-size:12px;margin:6px 0">15:25:36  test  0/12   493,525 بايت  h1=1  STALE age=103
-15:25:40  prod 12/12   237,513 بايت  h1=0  STALE age=101
-15:27:21  test  0/12                 h1=1
-15:27:24  prod 12/12   237,513 بايت  h1=0
-15:29:05  test  0/12                 h1=1
-15:29:10  prod 12/12   237,513 بايت  h1=0
-────────────────────────────────────────────
-الإجمالي:   test 0/96   ·   prod 48/96</pre>
-<code>h1=1</code> = المقال كامل · <code>h1=0</code> مع ٢٣٧ ألف بايت = قشرة بلا متن.<br><br>
-
-<b>✅ ما تحقّق على <code>test</code> (بعد ضبط <code>test.modonty.com → gitBranch = test</code>؛ كان مثبَّتاً على <code>modonty-ui</code> فكانت كل قياساتنا على نسخة ما قبل الإصلاح):</b><br>
-· <b>مسجَّل دخول:</b> ٢٠/٢٠ مقالاً سليمة · <code>$RX=0</code> · معظمها <code>STALE</code>. والجزر الخمس تعمل: أزرار التفاعل ٤ · التعليقات · الأسئلة · بطاقة الشريك.<br>
-· <b>غير مسجَّل:</b> ٢٠ مقالاً × ٦ جولات عبر دورات تجديد — صفر عطب.<br>
-· <b>خمسة وكلاء</b> (آيفون · أندرويد · سطح مكتب · Googlebot · Bingbot) × ١٢ طلباً متوازياً — صفر عطب.<br>
-· <b>سجلّ تشغيل نشر <code>test</code>:</b> ١٠٠ صفّ · <b>صفر أخطاء</b> — مقابل ٣٨ في ٨ دقائق على الإنتاج.<br>
-· <b>console</b> على <code>test</code>: <code>200</code>، صفحة الدخول ترسم، صفر أخطاء رِندَر.<br><br>
-
-<b>⚠️ قيود معلنة:</b> <b>admin لم يُختبر وظيفياً</b> على <code>test</code> — بناؤه <code>READY</code> فقط، ونشرته محميّة ولا مفتاح تجاوز (<code>404</code> من الواجهة). وتغييره ٣ ملفات (<code>unstable_retry→retry</code> · <code>instrumentation</code> · <code>log-error</code>).<br><br>
-
-<b>وما يبقى مفتوحاً بعد الدمج:</b> الردّ المعطوب <b>يُخزَّن ويُقدَّم خمس دقائق</b> (<code>X-Nextjs-Stale-Time: 300</code>) — أي أن فشل رسمٍ واحد يتحوّل إلى صفحة ميتة لكل الزوّار. هذه علّة مستقلّة عن سببها، ولم تُعالَج.<br><br>
-
-<b style="color:#3fb950">✅ أُقفل على الإنتاج — ١ سبتمبر ٢٠٢٦ ١٦:٠٢.</b> دُمج <code>test → main</code> بأمر خالد (تقديم مباشر <code>f59a0ae..e6b832e</code>، صفر تعارض)، وبُني <code>READY</code> في ١:٤٣ دقيقة.<br><br>
-
-<b>القياس على <code>www.modonty.com</code> بعد النشر — خمس جولات × ١٢ طلباً متوازياً عبر دورات تجديد:</b>
-<pre style="font-size:12px;margin:6px 0">16:03:53  ج1  معطوب 0/12 · 480,791 بايت · h1=1 · STALE age=0
-16:05:29  ج2  معطوب 0/12 · 480,778 بايت · h1=1 · STALE age=93
-16:07:05  ج3  معطوب 0/12 · h1=1
-16:08:40  ج4  معطوب 0/12 · h1=1
-16:10:14  ج5  معطوب 0/12 · h1=1
-──────────────────────────────────────
-بعد الدمج: 0/60      قبله: 48/96</pre>
-
-<b>وتستٌ حيّ بالتنقّل الداخلي</b> (السيناريو الذي كان يفشل، لا الفتح المباشر): «الفرق بين هوليود سمايل» ١٤٬٩٧٢ حرفاً · «فترة ما بعد الولادة» ١٢٬٥٧٢ · «أفضل دورات مجانية» ٢٦٬٢٣٥ — الثلاثة بـ<code>h1</code> كامل وصفر بطاقة خطأ. وكونسول المتصفّح: <b>صفر «Server Components render»</b> (الوحيد الباقي من Clarity، سكربت خارجي). وسجلّ تشغيل الإنتاج: <b>١٠٠ صفّ · صفر أخطاء</b>.<br><br>
-
-<b>شبكة الأمان:</b> <code>main-backup-2026-09-01</code> عند <code>f59a0ae</code> مدفوعة · الرجوع بأمر واحد: <code>git push origin main-backup-2026-09-01:main --force</code>.<br><br>
-
-<b>⏳ يبقى بند واحد للغد:</b> قراءة سجلّ الأخطاء بعد ٢٤ ساعة — والسجلّ <b>صار يرى</b>، لأن السطر الذي كان يمسح <code>Connection closed</code> أُزيل ودخل الإنتاج مع هذا الدمج.</div>
-</details>
 
 <h2>لم يُفحص — لا تبنِ عليه قراراً</h2>
 <ul class="unk">
@@ -288,6 +222,75 @@ test:  كلاهما "use cache" + cacheTag("articles")</pre>
 </section>
 
 <section class="pane" id="pane-done" hidden>
+
+<h2>أُقفل اليوم — ١ سبتمبر ٢٠٢٦</h2>
+<details class="tk" open>
+<summary><span class="id">RSC-CONNCLOSED</span><span class="sv sv-h">عالٍ</span><span class="tt">🔴 Connection closed أثناء رِندَر سيرفر كومبونت — يُفرغ حمولة الصفحة</span><span class="ap">modonty</span></summary>
+<div class="body"><b>فُتحت ٣١ أغسطس ٢٠٢٦ من عطل حيّ رآه خالد على جوّاله.</b><br><br><b>ما هو مقيس:</b> سجلّ أخطاء الأدمن يعرض <code>Connection closed.</code> على <code>render · react-server-components</code> لمسار <code>/articles/[slug]</code> بـ<code>digest: 1567489339</code>، متكرّراً. ومقيس على الإنتاج أن نسخة الكاش <code>STALE</code> ترجع أحياناً <b>200 بجسم فارغ</b> بدل الحمولة.<br><br><b>الأثر على الزائر:</b> يضغط مقالاً من داخل الموقع فتظهر شاشة الخطأ على مقال سليم. الفتح المباشر (ضغطة الإعلان) لم يفشل في أيٍّ من ٢٢ عيّنة قِيست.<br><br><b>ما لا يفعله إصلاح ٦٤٢e639:</b> يجعل الزائر يتعافى، ولا يمنع الانقطاع.<br><br><b>الفرضية الأقرب (غير مثبَتة):</b> اتصال برِزما/مونجو يُقطع أثناء تجديد ISR — نفس عائلة «٢٨ مقالاً بـ<code>Connection closed</code>» المسجَّلة في سجلّ الجلسات.<br><br><b>أول خطوة عند الفتح:</b> اجمع كل صفوف <code>Connection closed</code> من سجلّ الأخطاء وصنّفها بالمسار والوقت — هل تتركّز على تجديد الكاش أم على الحمل؟<br><br><b>🛠️ الجذر أُصلح — ١ سبتمبر ٢٠٢٦، على فرع <code>next-16.3.4-upgrade</code> (غير مدفوع).</b><br><br><b>السبب المقيس:</b> المقال نفسه مكيَّش وجاهز (<code>getArticleContentBySlug</code> · <code>use cache</code>)، لكن الصفحة كانت تنتظر <b>ثلاثة استعلامات حيّة</b> قبل عرض حرف واحد: <code>getArticleLiveCounts</code> (إعجابات ومشاهدات) · <code>getArticleFaqs</code> · <code>getRelatedArticlesByArticleId</code>. سقوط أيٍّ منها يُنهي بثّ الـRSC مبكّراً فيسقط المقال كلّه — <b>وهو في الكاش طوال الوقت</b>.<br><br><b>الإصلاح — قاعدة واحدة:</b> ما دام المقال موجوداً يُعرض، وكل ما عداه زينة تسقط وحدها. وسِمَ الاستعلامان بـ<code>use cache</code> + <code>cacheTag("articles")</code>، ولُفَّت العدّادات والتفاعلات وصور الاحتياط بحارس يرجع صفراً بدل أن يرمي.<br><br><b>الجرد النهائي لمسار المقال:</b> ١١ عملية — <b>٨ مكيَّشة · ٣ محروسة · صفر حيّة غير محروسة</b>. لم يبقَ إلا <code>getArticleContentBySlug</code> نفسه، وسقوطه يعني أن المقال غير متاح حقاً.<br><br><b>الإثبات بالحقن:</b> حُقن <code>throw new Error("Connection closed.")</code> في الاستعلام الحيّ، ثم بُني وشُغِّل: <code>٣/٣ → HTTP 200 · 593,461 بايت · h1 موجود · «المقال ما فتحت» = صفر</code>، والحارس سجّل السقوط ثلاث مرّات. نفس السقوط كان قبلها يقتل الصفحة.<br><br><b>وفكّ عمى السجلّ (شرط رؤية أي علّة باقية):</b> كوميت <code>3f98bdb</code> كان يحذف كل <code>Connection closed</code> قبل التسجيل في التطبيقات الثلاثة، فمُسِحت الأعطال الحقيقية مع تنبيهات التصفّح العادي. الإسكات نُقل إلى <b>الإنذار</b> لا <b>السجلّ</b>: <code>revalidateReason</code> (موثَّق في <code>next/dist/server/instrumentation/types.d.ts:6</code>) يفرّق بين تجديد خلفيّ بلا قارئ (عطل حقيقي · تيليجرام يرنّ) وطلب حيّ (قارئ غادر · يُسجَّل صامتاً).<br><br><b>الفحوص:</b> <code>tsc</code> صفر أخطاء × ٣ · <code>build exit=0</code> · 316/316 صفحة.<br><br><b>✔ ما زال يقفل بـ:</b> صفر <code>Connection closed</code> بعد النشر بـ٢٤ ساعة — <b>والسجلّ الآن يرى</b>، فلو بقيت علّة أخرى تظهر برسالتها لا تُمحى.<br><br><b>🔴 تكرار حيّ مُمسَك — ١ سبتمبر ٢٠٢٦ ٠٧:٤٧ (بلاي رايت على الإنتاج).</b> الصفحة عرضت شاشتنا «المقال ما فتحت»، وكونسول المتصفّح سجّل ثلاث مرّات: <code>[1458ms] An error occurred in the Server Components render</code> · <code>[3027ms]</code> نفسه · <code>[4664ms]</code> نفسه — أي أن إعادة المحاولة التلقائية عملت مرّتين وفشلتا، ثم ظهرت البطاقة. <b>الإصلاح يشتغل كما صُمِّم، والجذر لم يُلمَس.</b><br><br><b>والقياس بعدها بدقائق يحصر العلّة في نسخة الكاش:</b> نفس الرابط بلا كسر كاش ٦/٦ سليم (<code>HIT · age 40-54 · 669,007 بايت · صفر خطأ</code>)، ورِندَر طازج بكسر كاش ١٠/١٠ سليم. فالنسخة المكسورة <b>دخلت الكاش لحظة تجديدها، خُدِمت، ثم استُبدلت</b> عند التجديد التالي.<br><br><b>الفرصة:</b> السجلّ صُفِّر ٠٤:٤٤ وهذا السقوط ٠٧:٤٧ — فهي <b>العيّنة الوحيدة في سجلّ نظيف</b>، ببصمتها ووقتها ومسارها.<br><br><b>⏳ العدّاد يعمل — الحكم بعد ٢٤ ساعة.</b> خالد <b>صفّر سجلّ الأخطاء ١ سبتمبر ٢٠٢٦ ≈ ٠٤:٤٤</b>، فالسجلّ الآن نظيف <b>بالتصفير لا بالإصلاح</b>. <b>موعد القراءة: ٢ سبتمبر ٢٠٢٦ بعد ٠٤:٤٤.</b><br><br><b>تشخيص خالد (١ سبتمبر):</b> «المشكلة كانت بسبب ملف الإرور — المقال ما يفتح، بالكاش الدافئ والبارد». ويطابق <code>642e639</code>: زرّ «حاول مرّة ثانية» كان يستدعي <code>reset</code> الذي يعيد الرسم <b>بلا إعادة جلب</b>، فتبقى الحمولة الفاسدة كما هي.<br><br><b>✔ يقفل بـ:</b> صفر <code>Connection closed</code> في سجلّ الأخطاء خلال تلك الـ٢٤ ساعة. <span style="opacity:.7">أي صفرٍ يُقرأ قبل ٢ سبتمبر ٠٤:٤٤ لا يثبت شيئاً — هو أثر التصفير.</span><br><br>
+
+<b style="color:var(--amber)">🎯 الجذر أُمسك ومُيِّز بالقياس — ١ سبتمبر ٢٠٢٦ عصراً. الإصلاح على <code>test</code>، والإنتاج ما زال مصاباً.</b><br><br>
+
+<b>الرسالة الحقيقية، من سجلّ تشغيل Vercel لا من تخمين:</b><br>
+<code>[articles/…] render failed: Error: Connection closed. · pprState: resuming · cache: STALE · responseStatusCode: 200</code><br>
+٣٨ صفّاً في ٨ دقائق على الإنتاج، ستّة مسارات، منها مقالان لم يطلبهما أحدٌ منّا — <b>زوّار حقيقيون</b>.<br><br>
+
+<b>لماذا لم يظهر في سجلّ الأدمن أصلاً:</b> <code>0 app · 59 framework</code>، وكلّها <code>/articles</code> بفلاتر و<b>صفر صفّ لمقال مفرد</b> — لأن الفشل يقع وقت التوليد الخلفيّ. وسبب ثانٍ مقيس: <code>modonty/instrumentation.ts:13</code> يرفض الإرسال من بيئة <code>preview</code>، و<code>INTERNAL_LOG_SECRET</code> غير مضبوط فيها.<br><br>
+
+<b>ما ينفيه القياس (متّهمان سقطا):</b><br>
+· <b>الجلسة:</b> العطل مُعاد إنتاجه <b>وأنا زائر غير مسجَّل</b> — فرضية «لا يظهر إلا للمسجَّل» ساقطة.<br>
+· <b>العدّادات:</b> عُزلت ودُفعت (<code>af73428</code>) ثم أُرجعت (<code>60871e8</code>) — الضابط أثبت أن فرع <code>test</code> <b>بالعدّادات الحيّة كما هي</b> سليم أيضاً. ليست السبب.<br>
+· <b>وليس باق <code>#93401</code>:</b> الميتاداتا تُبنى سليمة داخل النسخة المعطوبة نفسها (<code>title</code> · <code>description</code> · <code>canonical</code> حاضرة)، فالمشكلة ليست شجرة الميتاداتا.<br><br>
+
+<b>الفرق الحاسم بين <code>main</code> و<code>test</code> — فرق كود مكتوب:</b><br>
+<pre style="font-size:12px;margin:6px 0">main:  data/get-article-faqs.ts                  → بلا "use cache"   ← قراءة حيّة
+main:  data/get-related-articles-by-article-id.ts → بلا "use cache"   ← قراءة حيّة
+test:  كلاهما "use cache" + cacheTag("articles")</pre>
+وكلتاهما تُنتظران في <code>getArticlePageData</code> أي <b>في جذر الشجرة خارج كل <code>&lt;Suspense&gt;</code></b>. والتوثيق المشحون مع النسخة صريح — <code>node_modules/next/dist/docs/01-app/02-guides/building.md:111</code>:<br>
+<code>«fetch(...), cookies(), headers(), params, searchParams, or connection() accessed outside of &lt;Suspense&gt; prevents the route from being prerendered, blocking the page load»</code><br>
+<span style="opacity:.75">تحفّظ معلن: القائمة تسمّي <code>fetch()</code> و<code>connection()</code> ولا تسمّي Prisma — أن استعلام Prisma يخضع لنفس القاعدة استنتاج، وهو ما يفسّر سكوت البناء عن المخالفة.</span><br><br>
+
+<b>مسح كامل لمسار المقال:</b> كل القراءات الحيّة الأخرى داخل حدودها (<code>getMyArticleReactions</code> في <code>ReaderActions</code> · <code>getPendingFaqsForCurrentUser</code> في <code>ReaderFaq</code>/<code>ReaderPartnerCard</code>/<code>…Details</code> · <code>fetchArticleComments</code> في <code>ArticleComments</code>). المخالفات كانت في الجذر وحده.<br><br>
+
+<b>📊 القياس المقترن — نفس المقال، نفس اللحظات، نفس حالة الكاش:</b>
+<pre style="font-size:12px;margin:6px 0">15:25:36  test  0/12   493,525 بايت  h1=1  STALE age=103
+15:25:40  prod 12/12   237,513 بايت  h1=0  STALE age=101
+15:27:21  test  0/12                 h1=1
+15:27:24  prod 12/12   237,513 بايت  h1=0
+15:29:05  test  0/12                 h1=1
+15:29:10  prod 12/12   237,513 بايت  h1=0
+────────────────────────────────────────────
+الإجمالي:   test 0/96   ·   prod 48/96</pre>
+<code>h1=1</code> = المقال كامل · <code>h1=0</code> مع ٢٣٧ ألف بايت = قشرة بلا متن.<br><br>
+
+<b>✅ ما تحقّق على <code>test</code> (بعد ضبط <code>test.modonty.com → gitBranch = test</code>؛ كان مثبَّتاً على <code>modonty-ui</code> فكانت كل قياساتنا على نسخة ما قبل الإصلاح):</b><br>
+· <b>مسجَّل دخول:</b> ٢٠/٢٠ مقالاً سليمة · <code>$RX=0</code> · معظمها <code>STALE</code>. والجزر الخمس تعمل: أزرار التفاعل ٤ · التعليقات · الأسئلة · بطاقة الشريك.<br>
+· <b>غير مسجَّل:</b> ٢٠ مقالاً × ٦ جولات عبر دورات تجديد — صفر عطب.<br>
+· <b>خمسة وكلاء</b> (آيفون · أندرويد · سطح مكتب · Googlebot · Bingbot) × ١٢ طلباً متوازياً — صفر عطب.<br>
+· <b>سجلّ تشغيل نشر <code>test</code>:</b> ١٠٠ صفّ · <b>صفر أخطاء</b> — مقابل ٣٨ في ٨ دقائق على الإنتاج.<br>
+· <b>console</b> على <code>test</code>: <code>200</code>، صفحة الدخول ترسم، صفر أخطاء رِندَر.<br><br>
+
+<b>⚠️ قيود معلنة:</b> <b>admin لم يُختبر وظيفياً</b> على <code>test</code> — بناؤه <code>READY</code> فقط، ونشرته محميّة ولا مفتاح تجاوز (<code>404</code> من الواجهة). وتغييره ٣ ملفات (<code>unstable_retry→retry</code> · <code>instrumentation</code> · <code>log-error</code>).<br><br>
+
+<b>وما يبقى مفتوحاً بعد الدمج:</b> الردّ المعطوب <b>يُخزَّن ويُقدَّم خمس دقائق</b> (<code>X-Nextjs-Stale-Time: 300</code>) — أي أن فشل رسمٍ واحد يتحوّل إلى صفحة ميتة لكل الزوّار. هذه علّة مستقلّة عن سببها، ولم تُعالَج.<br><br>
+
+<b style="color:#3fb950">✅ أُقفل على الإنتاج — ١ سبتمبر ٢٠٢٦ ١٦:٠٢.</b> دُمج <code>test → main</code> بأمر خالد (تقديم مباشر <code>f59a0ae..e6b832e</code>، صفر تعارض)، وبُني <code>READY</code> في ١:٤٣ دقيقة.<br><br>
+
+<b>القياس على <code>www.modonty.com</code> بعد النشر — خمس جولات × ١٢ طلباً متوازياً عبر دورات تجديد:</b>
+<pre style="font-size:12px;margin:6px 0">16:03:53  ج1  معطوب 0/12 · 480,791 بايت · h1=1 · STALE age=0
+16:05:29  ج2  معطوب 0/12 · 480,778 بايت · h1=1 · STALE age=93
+16:07:05  ج3  معطوب 0/12 · h1=1
+16:08:40  ج4  معطوب 0/12 · h1=1
+16:10:14  ج5  معطوب 0/12 · h1=1
+──────────────────────────────────────
+بعد الدمج: 0/60      قبله: 48/96</pre>
+
+<b>وتستٌ حيّ بالتنقّل الداخلي</b> (السيناريو الذي كان يفشل، لا الفتح المباشر): «الفرق بين هوليود سمايل» ١٤٬٩٧٢ حرفاً · «فترة ما بعد الولادة» ١٢٬٥٧٢ · «أفضل دورات مجانية» ٢٦٬٢٣٥ — الثلاثة بـ<code>h1</code> كامل وصفر بطاقة خطأ. وكونسول المتصفّح: <b>صفر «Server Components render»</b> (الوحيد الباقي من Clarity، سكربت خارجي). وسجلّ تشغيل الإنتاج: <b>١٠٠ صفّ · صفر أخطاء</b>.<br><br>
+
+<b>شبكة الأمان:</b> <code>main-backup-2026-09-01</code> عند <code>f59a0ae</code> مدفوعة · الرجوع بأمر واحد: <code>git push origin main-backup-2026-09-01:main --force</code>.<br><br>
+
+<b>⏳ يبقى بند واحد للغد:</b> قراءة سجلّ الأخطاء بعد ٢٤ ساعة — والسجلّ <b>صار يرى</b>، لأن السطر الذي كان يمسح <code>Connection closed</code> أُزيل ودخل الإنتاج مع هذا الدمج.</div>
+</details>
+
 <h2>اللي يحمينا — بعد الله</h2>
 <div class="card " style="margin-bottom:16px"><h3>☑️ ستّة تأكيدات سقطت — نافذة التأكيد أُغلقت</h3><div class="scrollx"><table class="chkt"><tr><th>الرمز</th><th>البند</th><th>الحكم</th></tr><tr><td class="n">62</td><td>مفاتيح Atlas على Vercel + نسخة احتياطية طازجة</td><td>مفاتيح Atlas تُثبتها الخدمة نفسها: /articles ردّ 200 بـ1,129,062 بايت و20 مقالاً من القاعدة. والنصف الثاني «نسخة طازجة قبل الدفع» لحظةٌ مضت</td></tr><tr><td class="n">66</td><td>إثبات أن ترحيل T2b idempotent — بصمة SHA256 متطابقة</td><td>الترحيل انتهى؛ البصمة كانت لتشغيلٍ مضى</td></tr><tr><td class="n">BK1</td><td>تأكيد لقطة Atlas اليومية قبل الدفع</td><td>لقطة قبل دفعٍ حصل قبل أسبوعين — نافذة التأكيد أُغلقت</td></tr><tr><td class="n">BK2</td><td>نسخة mongodump يدوية بتوقيت لحظة الصفر</td><td>mongodump للحظة صفرٍ مضت — نافذة التأكيد أُغلقت</td></tr><tr><td class="n">T2</td><td>وصول رسالتَي قرار العميل على تيليجرام</td><td>رسالتان وصلتا أو لم تصلا في وقتٍ مضى — لا فعل يترتّب</td></tr><tr><td class="n">B3</td><td>الرفع بعد النشر يكتب على بني — مُثبَت + اكتشاف وإصلاح عطل مفاتيح Vercel</td><td>العنوان نفسه يقول «مُثبَت» — لا شيء ينتظر</td></tr></table></div></div>
 <div class="card g">
