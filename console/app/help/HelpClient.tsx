@@ -34,7 +34,7 @@ export function HelpClient() {
       <div className="fixed top-11 inset-x-0 z-40 backdrop-blur-md bg-background/90 border-b border-border shadow-sm">
         <div className="max-w-[1100px] mx-auto px-4 md:px-6 py-2.5 flex items-center justify-end gap-3">
           <a
-            href="https://www.modonty.com/story"
+            href={`${process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com"}/story`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 bg-background hover:bg-muted text-foreground text-xs md:text-sm font-medium px-3 py-2 rounded-full border border-border transition-colors"
