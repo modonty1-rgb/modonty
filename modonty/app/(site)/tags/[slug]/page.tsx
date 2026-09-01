@@ -29,6 +29,81 @@ export async function generateStaticParams() {
   }
 }
 
+/**
+ * The three reads the page body needs — cached, same fix as `/categories/[slug]` and for the
+ * same reason the article page was fixed on 1 Sep 2026.
+ *
+ * They used to sit in a `Promise.all` at the root of `TagPage`: uncached database calls awaited
+ * before a single byte could render, outside any `<Suspense>`. The docs shipped with this
+ * version (`node_modules/next/dist/docs/01-app/02-guides/building.md:111`) say data accessed
+ * outside a boundary «prevents the route from being prerendered, blocking the page load» —
+ * the shape that took the article page down.
+ *
+ * All three are safely cacheable: a tag, the partners publishing under it, and their review
+ * averages change on publish or on a new review, and both fire `revalidateTag`.
+ */
+async function getTagBySlug(slug: string) {
+  "use cache";
+  cacheTag("tags");
+  cacheLife("hours");
+  return db.tag.findUnique({
+    where: { slug },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      description: true,
+      socialImage: true,
+      socialImageAlt: true,
+      jsonLdStructuredData: true,
+    },
+  });
+}
+
+async function getTagClients(slug: string, coreClientId: string | null) {
+  "use cache";
+  cacheTag("tags");
+  cacheTag("clients");
+  cacheLife("hours");
+  return db.client.findMany({
+    where: {
+      subscriptionStatus: SubscriptionStatus.ACTIVE,
+      ...(coreClientId ? { id: { not: coreClientId } } : {}),
+      articles: {
+        some: {
+          status: ArticleStatus.PUBLISHED,
+          tags: { some: { tag: { slug } } },
+        },
+      },
+    },
+    orderBy: { name: "asc" },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
+      heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
+      phone: true,
+      addressCity: true,
+      slogan: true,
+      _count: { select: { articles: true } },
+    },
+  });
+}
+
+/** Review averages for the listed partners, keyed by the id list. */
+async function getClientsRatings(clientIds: string[]) {
+  "use cache";
+  cacheTag("reviews");
+  cacheLife("hours");
+  if (clientIds.length === 0) return [];
+  return db.clientReview.groupBy({
+    by: ["clientId"],
+    where: { clientId: { in: clientIds }, status: CommentStatus.APPROVED },
+    _avg: { rating: true },
+  });
+}
+
 async function getTagForMetadata(slug: string) {
   "use cache";
   cacheTag("tags");
@@ -100,42 +175,8 @@ export default async function TagPage({ params }: TagPageProps) {
 
   try {
     const [tag, clients, articleCount] = await Promise.all([
-      db.tag.findUnique({
-        where: { slug: decodedSlug },
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          description: true,
-          socialImage: true,
-          socialImageAlt: true,
-          jsonLdStructuredData: true,
-        },
-      }),
-      db.client.findMany({
-        where: {
-          subscriptionStatus: SubscriptionStatus.ACTIVE,
-          ...(coreClientId ? { id: { not: coreClientId } } : {}),
-          articles: {
-            some: {
-              status: ArticleStatus.PUBLISHED,
-              tags: { some: { tag: { slug: decodedSlug } } },
-            },
-          },
-        },
-        orderBy: { name: "asc" },
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
-          heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
-          phone: true,
-          addressCity: true,
-          slogan: true,
-          _count: { select: { articles: true } },
-        },
-      }),
+      getTagBySlug(decodedSlug),
+      getTagClients(decodedSlug, coreClientId),
       // How many articles carry this tag — the read-link stays hidden at zero.
       countTagArticles(decodedSlug),
     ]);
@@ -146,13 +187,7 @@ export default async function TagPage({ params }: TagPageProps) {
 
     const [ga4Stats, ratingsRaw] = await Promise.all([
       getClientsGA4Stats(),
-      clientIds.length > 0
-        ? db.clientReview.groupBy({
-            by: ["clientId"],
-            where: { clientId: { in: clientIds }, status: CommentStatus.APPROVED },
-            _avg: { rating: true },
-          })
-        : Promise.resolve([]),
+      getClientsRatings(clientIds),
     ]);
 
     const ratingMap = new Map(ratingsRaw.map((r) => [r.clientId, r._avg.rating ?? 0]));

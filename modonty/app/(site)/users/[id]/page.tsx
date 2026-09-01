@@ -1,17 +1,19 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import { notFound, permanentRedirect, unstable_rethrow } from "next/navigation";
 import Link from "next/link";
+import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
-import { auth } from "@/lib/auth";
 import { ArticleStatus } from "@prisma/client";
 import { generateMetadataFromSEO, generateStructuredData, jsonLdHtml } from "@/lib/seo";
 import { generateAuthorStructuredData } from "@/app/(site)/users/[id]/helpers/generate-author-structured-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { IconUser, IconEmail, IconCalendar } from "@/lib/icons";
+import { IconUser, IconCalendar } from "@/lib/icons";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { messages } from "@/lib/i18n/messages";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { OwnerEmail } from "./components/owner-email";
 
 interface UserPageProps {
   params: Promise<{ id: string }>;
@@ -89,111 +91,79 @@ export async function generateMetadata({ params }: UserPageProps): Promise<Metad
   }
 }
 
+/** ما يُعرض من الملف الشخصي — نفس البايتات لكل زائر، فيُكيَّش.
+ *
+ *  كانت هذه القراءات الثلاث تُنتظر في جذر `UserPage` بلا تكييش ولا حدّ، ومعها `auth()` —
+ *  وهي الآلية نفسها التي أسقطت صفحة المقال (١ سبتمبر ٢٠٢٦). الجلب هنا، والتوجيه
+ *  و`notFound` يبقيان في الصفحة: `permanentRedirect` يرمي إشارة تنقّل، ومكانها ليس
+ *  داخل دالّة مكيّشة تُخزَّن نتيجتها.
+ *
+ *  والجزء الوحيد الذي يتغيّر بتغيّر الزائر — بريد صاحب الملف — خرج إلى `<OwnerEmail>`
+ *  خلف حدّ `<Suspense>` خاصّ به. */
+async function getProfileData(id: string) {
+  "use cache";
+  cacheTag("users");
+  cacheLife("hours");
+
+  const articlesInclude = {
+    articles: {
+      where: { status: ArticleStatus.PUBLISHED },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        datePublished: true,
+        client: { select: { id: true, name: true, slug: true } },
+      },
+      orderBy: { datePublished: "desc" },
+      take: 20,
+    },
+  } as const;
+
+  const user = await db.user.findUnique({
+    where: { id },
+    select: { id: true, name: true, email: true, image: true, createdAt: true },
+  });
+
+  // لا مستخدم بهذا المعرّف؟ جرّب أن يكون `id` سلَگ كاتب — الصفحة توجّه إلى بيته المعتمد.
+  if (!user) {
+    const authorBySlug = await db.author.findUnique({ where: { slug: id }, include: articlesInclude });
+    return { user: null, author: authorBySlug, matchedBySlug: true as const };
+  }
+
+  // نموذج الكاتب لا يحمل `userId`، فالربط بالبريد — كما كان.
+  const authorByEmail = await db.author.findFirst({
+    where: { email: user.email || undefined },
+    include: articlesInclude,
+  });
+  return { user, author: authorByEmail, matchedBySlug: false as const };
+}
+
 export default async function UserPage({ params }: UserPageProps) {
   const { id } = await params;
 
   try {
-    // Try to find user
-    let user = await db.user.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        image: true,
-        createdAt: true,
-      },
-    });
-
-    let author = null;
+    const profile = await getProfileData(id);
+    const user = profile.user;
+    let author = profile.author;
     let articles: unknown[] = [];
 
-    // If user not found, try author
-    if (!user) {
-      author = await db.author.findUnique({
-        where: { slug: id },
-        include: {
-          articles: {
-            where: {
-              status: ArticleStatus.PUBLISHED,
-            },
-            select: {
-              id: true,
-              title: true,
-              slug: true,
-              excerpt: true,
-              datePublished: true,
-              client: {
-                select: {
-                  id: true,
-                  name: true,
-                  slug: true,
-                },
-              },
-            },
-            orderBy: {
-              datePublished: "desc",
-            },
-            take: 20,
-          },
-        },
-      });
-
-      if (!author) {
-        notFound();
-      }
-
+    // كاتب طابق السلَگ: بيته المعتمد `/authors/[slug]`، فلا يُخدَم من هنا.
+    if (profile.matchedBySlug) {
+      if (!author) notFound();
       // Authors have ONE canonical home: /authors/[slug]. Serving the same Person on
       // /users/[slug] too split the entity across two URLs with two different schemas
       // (GEO audit 2026-07-13, ن١٧) — 308 to the canonical page instead.
       permanentRedirect(`/authors/${author.slug}`);
-    } else {
-      // For regular users, check if they have linked author
-      // Note: Author model doesn't have userId field, checking by email match
-      author = await db.author.findFirst({
-        where: { email: user.email || undefined },
-        include: {
-          articles: {
-            where: {
-              status: ArticleStatus.PUBLISHED,
-            },
-            select: {
-              id: true,
-              title: true,
-              slug: true,
-              excerpt: true,
-              datePublished: true,
-              client: {
-                select: {
-                  id: true,
-                  name: true,
-                  slug: true,
-                },
-              },
-            },
-            orderBy: {
-              datePublished: "desc",
-            },
-            take: 20,
-          },
-        },
-      });
-
-      if (author) {
-        articles = author.articles;
-      }
     }
+
+    if (author) articles = author.articles;
 
     const profileData = author || user;
     if (!profileData) {
       notFound();
     }
-
-    // The email is personal data on a page any visitor can open (S-01, QA 2026-08-20):
-    // it renders ONLY when the signed-in viewer IS this profile's owner. It stays in the
-    // db select above because the author-match reads it server-side.
-    const session = await auth();
-    const isOwner = !!session?.user?.id && session.user.id === user?.id;
 
     const initials = (author?.name || user?.name || "U")
       .split(" ")
@@ -252,12 +222,12 @@ export default async function UserPage({ params }: UserPageProps) {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {isOwner && user?.email && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <IconEmail className="h-4 w-4 text-muted-foreground" />
-                      <span>{user.email}</span>
-                    </div>
-                  )}
+                  {/* السطر الوحيد الذي يتغيّر بتغيّر الزائر — خلف حدّه، فلا يحجز الصفحة.
+                      لا هيكل عظمي في الـfallback: سطرٌ لا يراه إلا صاحب الملف، وإظهار
+                      مكانه لغيره يخبره أن ثمّة شيئاً مخفيّاً. */}
+                  <Suspense fallback={null}>
+                    <OwnerEmail ownerId={user?.id} email={user?.email} />
+                  </Suspense>
                   {(user?.createdAt || author?.createdAt) && (
                     <div className="flex items-center gap-2 text-sm">
                       <IconCalendar className="h-4 w-4 text-muted-foreground" />

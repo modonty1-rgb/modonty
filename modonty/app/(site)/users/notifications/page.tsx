@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
@@ -28,7 +29,42 @@ const TABS = [
   { value: TAB_READ, label: "مقروء" },
 ] as const;
 
-export default async function NotificationsPage({ searchParams }: NotificationsPageProps) {
+/**
+ * القشرة: عنوان الصفحة وحده، ثم حدٌّ يتدفّق خلفه كل ما يخصّ صاحب البريد.
+ *
+ * كان كل شيء يُنتظر في الجذر — `auth()` وستّ قراءات — فلا تظهر بايت واحدة قبل أن يرجع
+ * آخرها، وأي تعثّر فيها يُسقط الصفحة كلها. وهي الآلية نفسها التي أسقطت صفحة المقال
+ * (١ سبتمبر ٢٠٢٦). وتوثيق Next للـCache Components صريح: أي مكوّن يقرأ الجلسة يجب أن
+ * يقع خلف `<Suspense>`.
+ *
+ * ولا تكييش هنا بحال: كل صفّ في هذه الصفحة يخصّ شخصاً بعينه.
+ */
+export default function NotificationsPage({ searchParams }: NotificationsPageProps) {
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto max-w-[1128px] px-4 py-8">
+        <h1 className="text-2xl font-semibold leading-tight text-foreground mb-6">
+          صندوق البريد
+        </h1>
+        <Suspense fallback={<NotificationsSkeleton />}>
+          <NotificationsContent searchParams={searchParams} />
+        </Suspense>
+      </div>
+    </div>
+  );
+}
+
+/** هيكل بمقاس الشاشة الحقيقية: عمود القائمة وعمود التفاصيل، فلا تقفز الصفحة عند الوصول. */
+function NotificationsSkeleton() {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6" aria-hidden>
+      <div className="lg:col-span-1 h-[min(70vh,32rem)] rounded-xl border border-border bg-muted/30 animate-pulse" />
+      <div className="lg:col-span-2 h-[min(70vh,32rem)] rounded-xl border border-border bg-muted/20 animate-pulse" />
+    </div>
+  );
+}
+
+async function NotificationsContent({ searchParams }: NotificationsPageProps) {
   const session = await auth();
   if (!session?.user?.id) {
     redirect("/users/login");
@@ -92,12 +128,9 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
         ? notificationsList.filter((n) => n.readAt != null)
         : notificationsList;
 
+  // العنوان والحاوية صارا في القشرة أعلاه — هنا المحتوى وحده.
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto max-w-[1128px] px-4 py-8">
-        <h1 className="text-2xl font-semibold leading-tight text-foreground mb-6">
-          صندوق البريد
-        </h1>
+    <>
         {/* Refresh layout so bell count syncs on every visit */}
         <BellRevalidateTrigger justMarkedAsRead={true} />
         <MarkAsReadOnOpen
@@ -315,7 +348,6 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
           </CardContent>
         </Card>
       </div>
-    </div>
-  </div>
+    </>
   );
 }
