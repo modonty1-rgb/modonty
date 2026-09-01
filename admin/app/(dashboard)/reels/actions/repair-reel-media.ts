@@ -67,6 +67,6 @@ export async function repairReelMedia(
     },
   });
 
-  revalidatePath("/reels");
+  revalidatePath("/reels", "layout");
   return { success: true, durationSec: Math.round(state.length) };
 }

@@ -76,7 +76,9 @@ export async function notifyReelPending(
       `<b>الملف:</b> ${fileLine}\n` +
       `<b>بانتظار المراجعة:</b> ${waiting}\n`;
 
-    tg += `<a href="${ADMIN_ORIGIN}/reels">افتح شاشة الاعتماد</a>`;
+    // الطابور مباشرةً لا `/reels` — صار عنوان قسمٍ يحوّل، والتحويل قفزة زائدة على جوّال
+    // من يفتح التنبيه وهو يمشي.
+    tg += `<a href="${ADMIN_ORIGIN}/reels/pending">افتح شاشة الاعتماد</a>`;
 
     await sendContentTeamTelegram(tg);
   } catch {

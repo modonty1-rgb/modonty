@@ -81,6 +81,7 @@ import {
   PauseCircle,
   ClipboardList,
   Share2,
+  Archive,
 } from "lucide-react";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
@@ -217,8 +218,22 @@ const menuGroups: MenuGroup[] = [
     items: [
       { icon: Images, label: "Media Library", href: "/media" },
       { icon: GalleryThumbnails, label: "Client Galleries", href: "/client-galleries" },
-      { icon: Clapperboard, label: "Reels Approval", href: "/reels" },
       { icon: Wrench, label: "Maintenance", href: "/media/maintenance" },
+    ],
+  },
+  // Its own group, not one line under Media (Khalid 2026-09-01): a reel is a lifecycle
+  // the team runs — queue, live, rejected, archived — not a file sitting in a library.
+  // One entry pointing at the queue hid the other three states behind a count nobody
+  // could click, so a client pulling a live reel left no trace anyone would see.
+  {
+    title: "Reels",
+    icon: Clapperboard,
+    defaultOpen: false,
+    items: [
+      { icon: ListChecks, label: "Pending", href: "/reels/pending" },
+      { icon: CheckCircle2, label: "Published", href: "/reels/published" },
+      { icon: FileX, label: "Rejected", href: "/reels/rejected" },
+      { icon: Archive, label: "Archived", href: "/reels/archived" },
     ],
   },
   {

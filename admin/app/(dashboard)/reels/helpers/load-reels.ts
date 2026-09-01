@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 
@@ -50,15 +52,68 @@ export interface PendingReelRow {
    * Read straight off the row — no network call, so the queue stays as cheap as it was.
    */
   incompleteUpload: boolean;
+  /** لحظة النشر — الشاشات السجلّية ترتّب بها وتعرضها. `null` لما لم يُنشر بعد. */
+  publishedAt: string | null;
+  /** السبب الذي قرأه العميل عند الرفض — بدونه شاشة «مرفوض» تعرض صفوفاً بلا معنى. */
+  rejectionReason: string | null;
+  /** عنوان الريل على مودونتي (`/reels/<slug>`). `null` قبل أن يُولَّد. */
+  slug: string | null;
 }
 
 const normalize = (t: string | null | undefined) => (t ?? "").trim().toLowerCase();
 
 /** The approval queue, oldest first — the client who has waited longest is served first. */
+/** الحالات التي لها شاشة في الأدمن — ومنها تُشتقّ المسارات وبنود السايدبار. */
+export const REEL_VIEWS = ["pending", "published", "rejected", "archived"] as const;
+export type ReelView = (typeof REEL_VIEWS)[number];
+
+/** كل شاشة وحالتها في القاعدة، وترتيب صفوفها.
+ *
+ *  الطابور يُرتَّب بالأقدم أوّلاً — العميل الذي انتظر أطول يُخدَم أوّلاً، وهذا هو
+ *  السلوك القائم. أمّا الشاشات الثلاث الأخرى فسجلّ: الأحدث أوّلاً، لأن ما يُبحث عنه
+ *  فيها هو آخر ما تغيّر لا أوّل ما دخل. */
+export const REEL_VIEW_CONFIG: Record<
+  ReelView,
+  { status: string; order: "asc" | "desc"; title: string; lede: string }
+> = {
+  pending: {
+    status: "PENDING_APPROVAL",
+    order: "asc",
+    title: "بالانتظار",
+    lede: "ريلز رفعها العملاء من الكونسول وتستنى قرارك — الاعتماد ينشرها فوراً على مودونتي.",
+  },
+  published: {
+    status: "PUBLISHED",
+    order: "desc",
+    title: "منشور",
+    lede: "الريلز الحيّة على مودونتي الآن — يشوفها الزائر في الطلّات.",
+  },
+  rejected: {
+    status: "REJECTED",
+    order: "desc",
+    title: "مرفوض",
+    lede: "ريلز رُفضت بسبب مكتوب للعميل — يقدر يرفع بديلاً.",
+  },
+  archived: {
+    status: "ARCHIVED",
+    order: "desc",
+    title: "مؤرشف",
+    lede: "خرجت من الواجهة العامّة وبقي صفّها وتفاعل الزوّار عليه.",
+  },
+};
+
 export async function getPendingReels(): Promise<PendingReelRow[]> {
+  return getReelsByView("pending");
+}
+
+/** نفس استعلام الطابور، بحالةٍ وترتيبٍ يأتيان من `REEL_VIEW_CONFIG`.
+ *  الحقول والحرّاس واحدة عبر الشاشات الأربع — فنسخ الاستعلام كان سيُبقي شاشةً
+ *  تعرض حقلاً لا تعرضه أختها بعد أوّل تعديل. */
+export async function getReelsByView(view: ReelView): Promise<PendingReelRow[]> {
+  const cfg = REEL_VIEW_CONFIG[view];
   const pending = await db.media.findMany({
-    where: { inReels: true, reelStatus: "PENDING_APPROVAL" },
-    orderBy: { createdAt: "asc" },
+    where: { inReels: true, reelStatus: cfg.status as never },
+    orderBy: { createdAt: cfg.order },
     select: {
       id: true,
       url: true,
@@ -74,6 +129,9 @@ export async function getPendingReels(): Promise<PendingReelRow[]> {
       height: true,
       inGallery: true,
       reelUploadedBy: true,
+      reelPublishedAt: true,
+      reelRejectionReason: true,
+      reelSlug: true,
       createdAt: true,
       clientId: true,
       client: {
@@ -136,16 +194,24 @@ export async function getPendingReels(): Promise<PendingReelRow[]> {
       // Videos only: an image reel is written in one call and has no second step to lose.
       incompleteUpload:
         isVideo && (r.width == null || r.height == null || r.durationSec == null),
+      publishedAt: r.reelPublishedAt?.toISOString() ?? null,
+      rejectionReason: r.reelRejectionReason,
+      slug: r.reelSlug,
     };
   });
 }
 
-/** Header counts — how much sits in each stage of the reel lifecycle. */
-export async function getReelStatusCounts(): Promise<Record<string, number>> {
+/** Header counts — how much sits in each stage of the reel lifecycle.
+ *
+ *  `cache()` لأن طالبيه اثنان في نفس الطلب: التخطيط يجمعها في المجموع، والصفحة تمرّرها
+ *  إلى شريط الحالات. بدونه استعلامٌ واحد يُنفَّذ مرّتين في كل فتحة شاشة (`server-cache-react`). */
+export const getReelStatusCounts = cache(async function getReelStatusCounts(): Promise<
+  Record<string, number>
+> {
   const groups = await db.media.groupBy({
     by: ["reelStatus"],
     where: { inReels: true, reelStatus: { not: null } },
     _count: { _all: true },
   });
   return Object.fromEntries(groups.map((g) => [g.reelStatus ?? "?", g._count._all]));
-}
+});

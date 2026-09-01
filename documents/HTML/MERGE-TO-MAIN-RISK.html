@@ -133,10 +133,10 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 <h2>الأربعة في جدول واحد</h2>
 <table><thead><tr><th>البطاقة</th><th>الخطورة</th><th>المشكلة</th><th>الدليل / الموضع</th><th>ما يقفلها</th></tr></thead><tbody>
 <tr>
-  <td><code>REEL-CTRL</code></td><td style="color:var(--red)">عالٍ</td>
-  <td>ما عندنا تحكّم بالريلز المنشورة — لا إيقاف ولا حذف ولا حتى رؤية</td>
-  <td>الشاشة تعرض <code>PENDING_APPROVAL</code> وحدها — <code>load-reels.ts:60</code> · وثلاثة أرقام غير قابلة للنقر <code>reels/page.tsx:21-23</code></td>
-  <td>خمس مراحل (الجدول أدناه) تُسلَّم كل واحدة وحدها</td>
+  <td><code>REEL-CTRL</code></td><td style="color:var(--amber)">باقٍ منه الحذف النهائي</td>
+  <td><s>لا رؤية ولا إيقاف</s> — أربع شاشات وفعلان سُلّمت ٢ سبتمبر. الباقي: الحذف النهائي وقرار صلاحية العميل</td>
+  <td><code>reels/{pending,published,rejected,archived}/page.tsx</code> · <code>reel-lifecycle.ts</code> · قسم مستقلّ في السايدبار</td>
+  <td>مرحلة ٥ وحدها (الجدول أدناه)</td>
 </tr>
 <tr>
   <td><code>REEL-LEAK</code></td><td style="color:var(--red)">عالٍ</td>
@@ -160,24 +160,26 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 
 <details class="tk" open>
 <summary><span class="id">REEL-CTRL</span><span class="sv sv-h">عالٍ</span><span class="tt">ما عندنا تحكّم بالريلز المنشورة — لا إيقاف ولا حذف ولا حتى رؤية</span><span class="ap">admin</span></summary>
-<div class="body"><p><b>خالد ٣١ أغسطس:</b> «أبغى قائمة بحيث إني أقدر ألغي ريل، أوقف ريل، أمسح ريل كامل. أنا ما عندي الـcontrol هذا الآن.»</p>
-<p><b>الوضع المقيس اليوم:</b></p>
+<div class="body"><p style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.35);border-radius:8px;padding:10px 14px;margin:0 0 12px"><b style="color:var(--green)">نُفِّذ ٢ سبتمبر ٢٠٢٦ — أربع مراحل من خمس، مقيسة حيّاً على الأدمن (١٢٨٠×٨٠٠).</b><br>
+• <b>مرحلة ١ — الرؤية:</b> الريلز صارت <b>قسماً مستقلّاً</b> في السايدبار بأربعة بنود (كانت سطراً واحداً تحت Media)، وأربع شاشات لها عناوين تُنسخ وتُفتح: <code>/reels/pending</code> · <code>published</code> · <code>rejected</code> · <code>archived</code>. الحالة في المسار لا في <code>useState</code>، فزرّ الرجوع والتبويب الجديد يشتغلان. و<code>/reels</code> صار تحويلاً إلى الطابور.<br>
+• <b>مرحلة ٢ — الإيقاف:</b> زرّ «اسحبه من الواجهة» على المنشور (<code>archiveReel</code>) — <b>مقيس:</b> منشور ١ ← ٠ · مؤرشف ١ ← ٢، مع إبطال كاش مودونتي.<br>
+• <b>مرحلة ٤ — الإرجاع:</b> «رجّعه للواجهة» على المؤرشف (<code>republishReel</code>) — <b>مقيس:</b> رجع «زراعة الأسنان» منشوراً؛ وريل بلا عنوان <b>رُفض</b> برسالة تسمّي الحقل: «ما ينشر — حقل «العنوان» فاضي». تاريخ النشر الأوّل لا يُدهس.<br>
+• <b>مرحلة ٣</b> أُغلقت أمس ببطاقة <code>REEL-LEAK</code>.<br>
+<b>ملفّات:</b> <code>reels/layout.tsx</code> · <code>helpers/load-reels.ts</code> (<code>REEL_VIEW_CONFIG</code> + <code>cache()</code> للعدّادات) · <code>components/reel-view-nav.tsx</code> · <code>components/reel-record-list.tsx</code> · <code>components/reel-lifecycle-button.tsx</code> · <code>actions/reel-lifecycle.ts</code> · <code>components/admin/sidebar.tsx</code>. و<code>revalidatePath("/reels")</code> صارت <code>"layout"</code> في كل المسارات — الفعل ينقل الصفّ بين شاشتين، والافتراضيّ كان يُبطل التحويل وحده.</p>
+<p><b>خالد ٣١ أغسطس:</b> «أبغى قائمة بحيث إني أقدر ألغي ريل، أوقف ريل، أمسح ريل كامل. أنا ما عندي الـcontrol هذا الآن.»</p>
+<p><b>الوضع بعد التنفيذ:</b></p>
 <table><thead><tr><th>القدرة</th><th>أدمن</th><th>كونسول (العميل)</th></tr></thead><tbody>
-<tr><td>يشوف المنشور/المرفوض/المؤرشف</td><td>❌ لا قائمة إطلاقاً</td><td>✔ يشوف ريلزه</td></tr>
-<tr><td>يوقف ريلاً منشوراً</td><td>❌</td><td>✔ يسحبه من مدونتي بنفسه</td></tr>
-<tr><td>يحذف ريلاً نهائياً</td><td>❌</td><td>✔ للفيديو فقط</td></tr>
+<tr><td>يشوف المنشور/المرفوض/المؤرشف</td><td>✔ أربع شاشات</td><td>✔ يشوف ريلزه</td></tr>
+<tr><td>يوقف ريلاً منشوراً</td><td>✔ «اسحبه من الواجهة»</td><td>✔ يسحبه من مدونتي بنفسه</td></tr>
+<tr><td>يرجّع مؤرشفاً</td><td>✔ «رجّعه للواجهة»</td><td>❌</td></tr>
+<tr><td>يحذف ريلاً نهائياً</td><td>◐ من مكتبة الوسائط بعد الأرشفة</td><td>✔ للفيديو فقط</td></tr>
 <tr><td>يعدّل نصّ ريل منشور</td><td>❌</td><td>❌ مقفول</td></tr>
 </tbody></table>
-<p>الشاشة تعرض <code>PENDING_APPROVAL</code> وحدها (<code>admin/app/(dashboard)/reels/helpers/load-reels.ts:60</code>) وثلاثة أرقام غير قابلة للنقر (<code>reels/page.tsx:21-23</code>). و<code>DRAFT</code> و<code>APPROVED</code> و<code>reelRevealedAt</code> و<code>ReelUploader.ADMIN</code> معرَّفة في السكيما ولا يكتبها أيّ مسار.</p>
-<p><b>الخطة — خمس مراحل، كل واحدة تُسلَّم وتُختبر وحدها:</b></p>
-<table><thead><tr><th>#</th><th>المرحلة</th><th>الناتج الذي يُقفلها</th></tr></thead><tbody>
-<tr><td>١</td><td>تبويبات بالحالة في شاشة الريلز</td><td>تشوف المنشور والمرفوض والمؤرشف</td></tr>
-<tr><td>٢</td><td>زرّ «إيقاف» على المنشور</td><td>يختفي من مدونتي فوراً، الصفّ يبقى</td></tr>
-<tr><td>٣</td><td>سدّ الثغرتين (بطاقة <code>REEL-LEAK</code>)</td><td>العميل ما يسحب ريلاً حيّاً · الحذف يفحص الريل</td></tr>
-<tr><td>٤</td><td>زرّ «رجّعه للنشر»</td><td>المؤرشف يرجع منشوراً</td></tr>
-<tr><td>٥</td><td>«حذف نهائي»</td><td>صفّ + فيديو بني + ملف، بتأكيد بالاسم</td></tr>
-</tbody></table>
-<p><b>معلّق بقرار خالد:</b> نبدأ بالتبويبات (١) أم بسدّ الثغرتين (٣)؟</p></div>
+<p><b>الباقي — مرحلة ٥ وقرار:</b></p>
+<table><thead><tr><th>#</th><th>البند</th><th>الناتج الذي يُقفله</th></tr></thead><tbody>
+<tr><td>٥</td><td>«حذف نهائي» من شاشة الريلز نفسها</td><td>صفّ + فيديو بني + ملف، بتأكيد بالاسم. اليوم الطريق موجود لكنه في مكتبة الوسائط: الحارس يشترط الأرشفة أوّلاً ثم يحذف فيديو بني معه.</td></tr>
+<tr><td>—</td><td><b>قرارك:</b> يبقى العميل قادراً على سحب ريله المنشور من الكونسول؟</td><td>سلوك مصمَّم لا عطل (<code>reels-manager.tsx:322</code>). نزعه يعني أن السحب صار بيدنا وحدنا.</td></tr>
+</tbody></table></div>
 </details>
 
 <details class="tk" open>
@@ -226,7 +228,7 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 
 
 <section class="pane" id="pane-codex" hidden>
-<h2>🤖 Codex — بنود تنفيذية من الجرد</h2><p style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:10px;padding:12px 16px;margin:0 0 14px;font-size:15px"><b style="color:var(--green)">حصيلة ١ سبتمبر ٢٠٢٦ — ستّة بنود فُحصت بالكود، بقي واحد.</b><br>• <code>SERVICES-37</code> <b>ساقط:</b> المحرّر موجود — <code>console/.../services-editor.tsx</code> و<code>update-services.ts:39</code>، والكود يصرّح أن مالكه العميل (<code>block-source.ts:22</code>: <code>owner: "client"</code>). ومقيس حيّاً: قسم «خدماتنا» وزرّ «أضف خدمة» ظاهران في شاشة «محتوى الموقع».<br>• <code>IMAGE-SIZES</code> <b>ساقط بالحساب:</b> سلّمنا <code>…384 · 640 · 750…</code> والمرسوم ٤٤٦–٤٦٢، فأي إعلان بين ٣٨٥ و٦٤٠ يُنتج <code>640</code> نفسه. المخدوم اليوم هو الأمثل ولا يوفّر تغييرُه بايتاً.<br>• <code>REEL-LEAK</code> و<code>REEL-BUNNY-TRUST</code> <b>نُفِّذا</b> — التفصيل في تبويب «🎬 الريلز».<br>• <code>LIVE-CHECKUP</code> يحمل الآن ما ثبت من المفاتيح والكرون.<br>• <b>الباقي وحده:</b> <code>REEL-CTRL</code> — مؤكَّد بالكود (<code>load-reels.ts:60</code> يحصر الجلب في <code>PENDING_APPROVAL</code>، و<code>reels/page.tsx</code> يعرض ثلاثة أرقام غير قابلة للنقر)، وخطته خمس مراحل تنتظر «ابدأ».</p>
+<h2>🤖 Codex — بنود تنفيذية من الجرد</h2><p style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:10px;padding:12px 16px;margin:0 0 14px;font-size:15px"><b style="color:var(--green)">حصيلة ١ سبتمبر ٢٠٢٦ — ستّة بنود فُحصت بالكود، بقي واحد.</b><br>• <code>SERVICES-37</code> <b>ساقط:</b> المحرّر موجود — <code>console/.../services-editor.tsx</code> و<code>update-services.ts:39</code>، والكود يصرّح أن مالكه العميل (<code>block-source.ts:22</code>: <code>owner: "client"</code>). ومقيس حيّاً: قسم «خدماتنا» وزرّ «أضف خدمة» ظاهران في شاشة «محتوى الموقع».<br>• <code>IMAGE-SIZES</code> <b>ساقط بالحساب:</b> سلّمنا <code>…384 · 640 · 750…</code> والمرسوم ٤٤٦–٤٦٢، فأي إعلان بين ٣٨٥ و٦٤٠ يُنتج <code>640</code> نفسه. المخدوم اليوم هو الأمثل ولا يوفّر تغييرُه بايتاً.<br>• <code>REEL-LEAK</code> و<code>REEL-BUNNY-TRUST</code> <b>نُفِّذا</b> — التفصيل في تبويب «🎬 الريلز».<br>• <code>LIVE-CHECKUP</code> يحمل الآن ما ثبت من المفاتيح والكرون.<br>• <b>و<code>REEL-CTRL</code> نُفِّذ ٢ سبتمبر:</b> أربع شاشات بالحالة + قسم مستقلّ في السايدبار + «اسحبه من الواجهة» و«رجّعه للواجهة»، أربع مراحل من خمس مقيسة حيّاً. الباقي: الحذف النهائي داخل الشاشة، وقرار صلاحية العميل.</p>
 
 
 
@@ -234,7 +236,7 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 
 <details class="tk">
 <summary><span class="id">REEL-CTRL</span><span class="sv sv-h">عالٍ</span><span class="tt">الأدمن لا يرى إلا طابور الانتظار ولا يملك التحكم بالمنشور</span><span class="ap">admin</span></summary>
-<div class="body"><b>ما يُعمل:</b> تسليم قائمة إدارية تغطي المنشور والمرفوض والمؤرشف، مع أفعال الإدارة التي تبقى بيد الأدمن وحده.<br><b>الدليل:</b> <code>admin/app/(dashboard)/reels/helpers/load-reels.ts:58-61</code> يحصر الجلب في <code>PENDING_APPROVAL</code>، والصفحة تعرض عدّادات فقط: <code>reels/page.tsx:21-23</code>. كما أن <code>DRAFT</code> و<code>APPROVED</code> و<code>ReelUploader.ADMIN</code> لا يكتبها مسار: <code>shared/prisma/schema/schema.prisma:3629-3641</code>.<br><b>✔ ينغلق بـ:</b> الأدمن يرى كل حالة ويوقف/يحذف/يعيد نشر ريل من الشاشة، والعميل لا يملك تغيير المنشور.</div>
+<div class="body"><b style="color:var(--green)">نُفِّذ ٢ سبتمبر ٢٠٢٦ — الرؤية والإيقاف والإرجاع سُلّمت ومُقيست حيّاً.</b> التفصيل الكامل بالأدلّة في تبويب «🎬 الريلز» — البطاقة نفسها.<br><b>باقٍ منه:</b> «حذف نهائي» من شاشة الريلز (اليوم يمرّ من مكتبة الوسائط بعد الأرشفة)، وقرارُ خالد في صلاحية العميل بسحب ريله المنشور.<br><b>✔ ينغلق بـ:</b> زرّ حذف نهائي بتأكيد بالاسم في الشاشة نفسها + حسم صلاحية العميل.</div>
 </details>
 
 

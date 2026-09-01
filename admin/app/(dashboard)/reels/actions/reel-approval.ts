@@ -151,7 +151,10 @@ export async function approveReel(mediaId: string): Promise<Result> {
     // The public feed caches per page under this tag — without the hit, the approved
     // reel waits out the cache window instead of appearing "فوراً" as promised.
     await revalidateModontyTag("reels").catch(() => {});
-    revalidatePath("/reels");
+    // `"layout"` لا الافتراضيّ: الاعتماد ينقل الصفّ من `/reels/pending` إلى
+    // `/reels/published`، فالشاشتان تتغيّران معاً — والافتراضيّ يُبطل `/reels` وحدها،
+    // وهي اليوم تحويل لا شاشة. الرسمي: «Invalidates the layout … and all pages beneath».
+    revalidatePath("/reels", "layout");
     return { success: true };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message : "فشل اعتماد الريل" };
@@ -181,12 +184,13 @@ export async function rejectReel(mediaId: string, reason: string): Promise<Resul
     });
 
     // The same cache hit approval fires, and for a stronger reason: approval only makes a
-    // reel appear late, rejection leaves one VISIBLE. `revalidatePath("/reels")` below busts
+    // reel appear late, rejection leaves one VISIBLE. The `revalidatePath` below busts
     // this admin route, not modonty — so a rejected reel kept serving its watch page at
     // HTTP 200 for the whole cache window (measured 25 Aug 2026: gone from the feed and the
     // sitemap, still live at its own URL).
     await revalidateModontyTag("reels").catch(() => {});
-    revalidatePath("/reels");
+    // الصفّ ينتقل من «بالانتظار» إلى «مرفوض» — شاشتان، فالتبطيل على مستوى التخطيط.
+    revalidatePath("/reels", "layout");
     return { success: true };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message : "فشل رفض الريل" };
