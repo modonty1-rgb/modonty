@@ -41,12 +41,16 @@ export async function pruneDeadMetaTags(): Promise<{
 
   let cleared = 0;
   for (const row of safe) {
-    await db.modonty.update({
-      where: { id: row.id },
-      // `{ unset: true }` هو ما يحذف الحقل من المستند فعلاً — توثيق برِزما الرسمي
-      // لموصّل مونجو. و`undefined` تعني «لا تلمس» فتمرّ الخطوة صامتة بلا أثر،
-      // و`DbNull` تُبقي الحقل موجوداً بقيمة فارغة — وكلاهما ليس المطلوب هنا.
-      data: { metaTags: { unset: true } },
+    // ── لماذا `$runCommandRaw` لا `{ unset: true }` (مقيس على الإنتاج ٣١ أغسطس) ──
+    // `{ unset: true }` هو الصيغة الصحيحة لحقلٍ عاديّ في موصّل مونجو. لكن `metaTags`
+    // نوعه `Json?`، وحقلُ JSON يقبل **أي كائن قيمةً** — فمرّرته برِزما بياناتٍ لا أمراً،
+    // وصار المخزَّن حرفياً `{"unset":true}` بدل أن يُحذف الحقل. الأثر مقيس: الطول نزل
+    // من ٣٦٬١٤٤ حرفاً إلى ١٤، والحقل باقٍ في ١١/١١ صفحة.
+    //
+    // فالحذف يُطلب من مونجو مباشرةً. و`$unset` عمليّة ذرّية آمنة على حقل لا قارئ له.
+    await db.$runCommandRaw({
+      update: "modonty",
+      updates: [{ q: { _id: { $oid: row.id } }, u: { $unset: { metaTags: "" } } }],
     });
     cleared += 1;
   }
