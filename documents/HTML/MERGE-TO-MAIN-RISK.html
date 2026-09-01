@@ -95,10 +95,8 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 <div class="tabs" role="tablist">
   <button role="tab" aria-selected="true"  data-pane="todo">الباقي<span class="n" id="n-todo"></span></button>
   <button role="tab" aria-selected="false" data-pane="done">المنجز<span class="n" id="n-done"></span></button>
-  <button role="tab" aria-selected="false" data-pane="http" class="tb-red">HTTP<span class="n" id="n-http"></span></button>
-  <button role="tab" aria-selected="false" data-pane="code" class="tb-red">CODE<span class="n" id="n-code"></span></button>
-  <button role="tab" aria-selected="false" data-pane="db" class="tb-red">DB<span class="n" id="n-db"></span></button>
-  <button role="tab" aria-selected="false" data-pane="manual">يدوي<span class="n" id="n-manual"></span></button>
+  <button role="tab" aria-selected="false" data-pane="work" class="tb-amber">🔧 شغل مفتوح<span class="n" id="n-work"></span></button>
+  <button role="tab" aria-selected="false" data-pane="later">⏸️ لاحقاً<span class="n" id="n-later"></span></button>
   <button role="tab" aria-selected="false" data-pane="data" class="tb-amber">🗄️ مشاكل الداتا<span class="n" id="n-data"></span></button>
   <button role="tab" aria-selected="false" data-pane="reels">🎬 الريلز<span class="n" id="n-reels"></span></button>
 </div>
@@ -108,8 +106,10 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 
 <h2>المتبقّي — بالترتيب</h2>
 <ol class="step">
-<li class="doing"><span class="badge">◀ إحنا هنا</span> <b>Checkup</b> — المرور على ٣٢٧ بنداً وصلت الإنتاج اليوم (التبويب الثالث). <span style="opacity:.7">مؤجّل بأمر خالد — يُسأل قبل البدء.</span></li>
+<li class="doing"><span class="badge">◀ إحنا هنا</span> <b>Checkup</b> — التحقّق أن أثر البنود المغلقة ظاهر على الإنتاج. <b>المقيس ١ سبتمبر:</b> ٢٤٨ بنداً في «المنجز»، منها <b>٢٤٤ تحمل ناتجاً خاماً</b> (رقم · <code>ملف:سطر</code> · كود HTTP · بايت) و٤ بلا أثر: <code>BK1</code> · <code>T2</code> · <code>B3</code> · <code>BRAND-ID</code>. وما زال مفتوحاً: ٣٧ واجهة · ٣ داتا · ١ لاحقاً.<br><span style="opacity:.7">تصحيح: كان مكتوباً «٣٢٧ بنداً» — رقمٌ لا يقابله عدٌّ في أي نسخة. أكبر ما حملته جداول Checkup فعلاً ١٨١ صفاً (<code>642e639</code>: dbdone 27 · http 12 · code 16 · manual 126).</span></li>
 </ol>
+<div class="card a" style="margin-bottom:16px"><h3>🔑 ثلاثة تنتظر نظرةً خارج المستودع</h3><div class="scrollx"><table class="chkt"><tr><th>الرمز</th><th>البند</th><th>الحكم</th></tr><tr><td class="n">63</td><td>أرشيف نسخ احتياطي ليلي على بني + كرت Atlas المالي</td><td>🔴 حيّ: كرت Atlas ينتهي = القاعدة تموت · والأرشيف الليلي يقف = لا رجوع</td></tr><tr><td class="n">SEOWATCH</td><td>قائمة المراقبة — رُوجعت ٢٧ أغسطس</td><td>🟡 حيّ: ثلاثة تحت المراقبة، أرقامها اليوم تُقارَن بأرقام ٢٧ أغسطس</td></tr><tr><td class="n">T1</td><td>متغيّرا بوت المحتوى على Vercel</td><td>يُفحص بالوظيفة لا باللوحة: شغّل بوت المحتوى — يشتغل أو لا</td></tr></table></div></div>
+
 
 
 
@@ -123,17 +123,8 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 </details>
 <details class="tk" open>
 <summary><span class="id">RSC-CONNCLOSED</span><span class="sv sv-h">عالٍ</span><span class="tt">🔴 Connection closed أثناء رِندَر سيرفر كومبونت — يُفرغ حمولة الصفحة</span><span class="ap">modonty</span></summary>
-<div class="body"><b>فُتحت ٣١ أغسطس ٢٠٢٦ من عطل حيّ رآه خالد على جوّاله.</b><br><br><b>ما هو مقيس:</b> سجلّ أخطاء الأدمن يعرض <code>Connection closed.</code> على <code>render · react-server-components</code> لمسار <code>/articles/[slug]</code> بـ<code>digest: 1567489339</code>، متكرّراً. ومقيس على الإنتاج أن نسخة الكاش <code>STALE</code> ترجع أحياناً <b>200 بجسم فارغ</b> بدل الحمولة.<br><br><b>الأثر على الزائر:</b> يضغط مقالاً من داخل الموقع فتظهر شاشة الخطأ على مقال سليم. الفتح المباشر (ضغطة الإعلان) لم يفشل في أيٍّ من ٢٢ عيّنة قِيست.<br><br><b>ما لا يفعله إصلاح ٦٤٢e639:</b> يجعل الزائر يتعافى، ولا يمنع الانقطاع.<br><br><b>الفرضية الأقرب (غير مثبَتة):</b> اتصال برِزما/مونجو يُقطع أثناء تجديد ISR — نفس عائلة «٢٨ مقالاً بـ<code>Connection closed</code>» المسجَّلة في سجلّ الجلسات.<br><br><b>أول خطوة عند الفتح:</b> اجمع كل صفوف <code>Connection closed</code> من سجلّ الأخطاء وصنّفها بالمسار والوقت — هل تتركّز على تجديد الكاش أم على الحمل؟<br><br><b>✔ يقفل بـ:</b> صفر <code>Connection closed</code> في سجلّ الأخطاء على مدى ٢٤ ساعة بعد الإصلاح.</div>
+<div class="body"><b>فُتحت ٣١ أغسطس ٢٠٢٦ من عطل حيّ رآه خالد على جوّاله.</b><br><br><b>ما هو مقيس:</b> سجلّ أخطاء الأدمن يعرض <code>Connection closed.</code> على <code>render · react-server-components</code> لمسار <code>/articles/[slug]</code> بـ<code>digest: 1567489339</code>، متكرّراً. ومقيس على الإنتاج أن نسخة الكاش <code>STALE</code> ترجع أحياناً <b>200 بجسم فارغ</b> بدل الحمولة.<br><br><b>الأثر على الزائر:</b> يضغط مقالاً من داخل الموقع فتظهر شاشة الخطأ على مقال سليم. الفتح المباشر (ضغطة الإعلان) لم يفشل في أيٍّ من ٢٢ عيّنة قِيست.<br><br><b>ما لا يفعله إصلاح ٦٤٢e639:</b> يجعل الزائر يتعافى، ولا يمنع الانقطاع.<br><br><b>الفرضية الأقرب (غير مثبَتة):</b> اتصال برِزما/مونجو يُقطع أثناء تجديد ISR — نفس عائلة «٢٨ مقالاً بـ<code>Connection closed</code>» المسجَّلة في سجلّ الجلسات.<br><br><b>أول خطوة عند الفتح:</b> اجمع كل صفوف <code>Connection closed</code> من سجلّ الأخطاء وصنّفها بالمسار والوقت — هل تتركّز على تجديد الكاش أم على الحمل؟<br><br><b>🛠️ الجذر أُصلح — ١ سبتمبر ٢٠٢٦، على فرع <code>next-16.3.4-upgrade</code> (غير مدفوع).</b><br><br><b>السبب المقيس:</b> المقال نفسه مكيَّش وجاهز (<code>getArticleContentBySlug</code> · <code>use cache</code>)، لكن الصفحة كانت تنتظر <b>ثلاثة استعلامات حيّة</b> قبل عرض حرف واحد: <code>getArticleLiveCounts</code> (إعجابات ومشاهدات) · <code>getArticleFaqs</code> · <code>getRelatedArticlesByArticleId</code>. سقوط أيٍّ منها يُنهي بثّ الـRSC مبكّراً فيسقط المقال كلّه — <b>وهو في الكاش طوال الوقت</b>.<br><br><b>الإصلاح — قاعدة واحدة:</b> ما دام المقال موجوداً يُعرض، وكل ما عداه زينة تسقط وحدها. وسِمَ الاستعلامان بـ<code>use cache</code> + <code>cacheTag("articles")</code>، ولُفَّت العدّادات والتفاعلات وصور الاحتياط بحارس يرجع صفراً بدل أن يرمي.<br><br><b>الجرد النهائي لمسار المقال:</b> ١١ عملية — <b>٨ مكيَّشة · ٣ محروسة · صفر حيّة غير محروسة</b>. لم يبقَ إلا <code>getArticleContentBySlug</code> نفسه، وسقوطه يعني أن المقال غير متاح حقاً.<br><br><b>الإثبات بالحقن:</b> حُقن <code>throw new Error("Connection closed.")</code> في الاستعلام الحيّ، ثم بُني وشُغِّل: <code>٣/٣ → HTTP 200 · 593,461 بايت · h1 موجود · «المقال ما فتحت» = صفر</code>، والحارس سجّل السقوط ثلاث مرّات. نفس السقوط كان قبلها يقتل الصفحة.<br><br><b>وفكّ عمى السجلّ (شرط رؤية أي علّة باقية):</b> كوميت <code>3f98bdb</code> كان يحذف كل <code>Connection closed</code> قبل التسجيل في التطبيقات الثلاثة، فمُسِحت الأعطال الحقيقية مع تنبيهات التصفّح العادي. الإسكات نُقل إلى <b>الإنذار</b> لا <b>السجلّ</b>: <code>revalidateReason</code> (موثَّق في <code>next/dist/server/instrumentation/types.d.ts:6</code>) يفرّق بين تجديد خلفيّ بلا قارئ (عطل حقيقي · تيليجرام يرنّ) وطلب حيّ (قارئ غادر · يُسجَّل صامتاً).<br><br><b>الفحوص:</b> <code>tsc</code> صفر أخطاء × ٣ · <code>build exit=0</code> · 316/316 صفحة.<br><br><b>✔ ما زال يقفل بـ:</b> صفر <code>Connection closed</code> بعد النشر بـ٢٤ ساعة — <b>والسجلّ الآن يرى</b>، فلو بقيت علّة أخرى تظهر برسالتها لا تُمحى.<br><br><b>🔴 تكرار حيّ مُمسَك — ١ سبتمبر ٢٠٢٦ ٠٧:٤٧ (بلاي رايت على الإنتاج).</b> الصفحة عرضت شاشتنا «المقال ما فتحت»، وكونسول المتصفّح سجّل ثلاث مرّات: <code>[1458ms] An error occurred in the Server Components render</code> · <code>[3027ms]</code> نفسه · <code>[4664ms]</code> نفسه — أي أن إعادة المحاولة التلقائية عملت مرّتين وفشلتا، ثم ظهرت البطاقة. <b>الإصلاح يشتغل كما صُمِّم، والجذر لم يُلمَس.</b><br><br><b>والقياس بعدها بدقائق يحصر العلّة في نسخة الكاش:</b> نفس الرابط بلا كسر كاش ٦/٦ سليم (<code>HIT · age 40-54 · 669,007 بايت · صفر خطأ</code>)، ورِندَر طازج بكسر كاش ١٠/١٠ سليم. فالنسخة المكسورة <b>دخلت الكاش لحظة تجديدها، خُدِمت، ثم استُبدلت</b> عند التجديد التالي.<br><br><b>الفرصة:</b> السجلّ صُفِّر ٠٤:٤٤ وهذا السقوط ٠٧:٤٧ — فهي <b>العيّنة الوحيدة في سجلّ نظيف</b>، ببصمتها ووقتها ومسارها.<br><br><b>⏳ العدّاد يعمل — الحكم بعد ٢٤ ساعة.</b> خالد <b>صفّر سجلّ الأخطاء ١ سبتمبر ٢٠٢٦ ≈ ٠٤:٤٤</b>، فالسجلّ الآن نظيف <b>بالتصفير لا بالإصلاح</b>. <b>موعد القراءة: ٢ سبتمبر ٢٠٢٦ بعد ٠٤:٤٤.</b><br><br><b>تشخيص خالد (١ سبتمبر):</b> «المشكلة كانت بسبب ملف الإرور — المقال ما يفتح، بالكاش الدافئ والبارد». ويطابق <code>642e639</code>: زرّ «حاول مرّة ثانية» كان يستدعي <code>reset</code> الذي يعيد الرسم <b>بلا إعادة جلب</b>، فتبقى الحمولة الفاسدة كما هي.<br><br><b>✔ يقفل بـ:</b> صفر <code>Connection closed</code> في سجلّ الأخطاء خلال تلك الـ٢٤ ساعة. <span style="opacity:.7">أي صفرٍ يُقرأ قبل ٢ سبتمبر ٠٤:٤٤ لا يثبت شيئاً — هو أثر التصفير.</span></div>
 </details>
-
-<h2>مؤجَّل بأمرك — لا أبدأ فيه من نفسي</h2>
-<div class="card a">
-<h3>فحص الـ١١٠ بند المقفولة على الإنتاج</h3>
-<p style="margin:0">البنود التي أُغلقت في لوحة المهام خلال الأسابيع الماضية كانت مقفولة على فرعنا فقط، والإنتاج لم يرها حتى اليوم. المطلوب: المرور عليها بنداً بنداً والتأكّد أن أثرها ظاهر على الإنتاج فعلاً.</p>
-<p style="margin:8px 0 0"><b>متى:</b> بعد انتهاء المرحلة الحالية والتأكّد من سلامتها. <b>ومن يبدأ:</b> أنا أسأل خالد، ولا أبدأ من نفسي — لأنه قال إننا سنشتغل على ملفات المهام «بطريقة ثانية» لم تُحسم بعد.</p>
-</div>
-
-
 
 <h2>لم يُفحص — لا تبنِ عليه قراراً</h2>
 <ul class="unk">
@@ -236,6 +227,7 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 
 <section class="pane" id="pane-done" hidden>
 <h2>اللي يحمينا — بعد الله</h2>
+<div class="card " style="margin-bottom:16px"><h3>☑️ ستّة تأكيدات سقطت — نافذة التأكيد أُغلقت</h3><div class="scrollx"><table class="chkt"><tr><th>الرمز</th><th>البند</th><th>الحكم</th></tr><tr><td class="n">62</td><td>مفاتيح Atlas على Vercel + نسخة احتياطية طازجة</td><td>مفاتيح Atlas تُثبتها الخدمة نفسها: /articles ردّ 200 بـ1,129,062 بايت و20 مقالاً من القاعدة. والنصف الثاني «نسخة طازجة قبل الدفع» لحظةٌ مضت</td></tr><tr><td class="n">66</td><td>إثبات أن ترحيل T2b idempotent — بصمة SHA256 متطابقة</td><td>الترحيل انتهى؛ البصمة كانت لتشغيلٍ مضى</td></tr><tr><td class="n">BK1</td><td>تأكيد لقطة Atlas اليومية قبل الدفع</td><td>لقطة قبل دفعٍ حصل قبل أسبوعين — نافذة التأكيد أُغلقت</td></tr><tr><td class="n">BK2</td><td>نسخة mongodump يدوية بتوقيت لحظة الصفر</td><td>mongodump للحظة صفرٍ مضت — نافذة التأكيد أُغلقت</td></tr><tr><td class="n">T2</td><td>وصول رسالتَي قرار العميل على تيليجرام</td><td>رسالتان وصلتا أو لم تصلا في وقتٍ مضى — لا فعل يترتّب</td></tr><tr><td class="n">B3</td><td>الرفع بعد النشر يكتب على بني — مُثبَت + اكتشاف وإصلاح عطل مفاتيح Vercel</td><td>العنوان نفسه يقول «مُثبَت» — لا شيء ينتظر</td></tr></table></div></div>
 <div class="card g">
 <h3>ثلاث شبكات أمان، كلها مقيسة اليوم</h3>
 <ul style="margin:0;padding-inline-start:20px">
@@ -251,6 +243,141 @@ main:   95d8d9e...   backup: 95d8d9e...   remote: 95d8d9e...
 </div>
 
 <h2>ما أُغلق</h2>
+<div class="done">
+<b>٤٠ · ترحيل بني مكتمل ١٠٠٪ — الإنذار كان قياساً خاطئاً — 1 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">أعدتُ الفحص بأمر خالد «اعمل recheck صحيح». <b>قلتُ ٧٨٦ من ٨٣٤ وكان غلطاً:</b> الـ٤٨ الباقية مستضافة على بني كلّها، وينقصها حقل <code>bunnyUrl</code> لا أكثر.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">207</td><td class="n">D7</td><td>ترحيل بني — الشقّ الأكبر</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٣١ يوليو – ٢ أغسطس</td><td class="n" style="color:#3fb950">مقفول — الترحيل مكتمل ١٠٠٪. قياس على قاعدة الإنتاج: 834 وسيطاً، و«الـ48 خارج بني» التي أعلنتُها ناقصةً هي كلّها على نطاقات بني فعلاً — 28 على modonty-reels-media.b-cdn.net و20 على vz-a26f5478-719.b-cdn.net (بني ستريم). ينقصها حقل bunnyUrl فقط بينما url يشير لبني، فقياسي الأول قاس وجود الحقل لا مكان الاستضافة</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٣٩ · قياسا الأداء نُفِّذا على الإنتاج — 2 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">خالد طلب التقرير النهائي. البندان كانا «قياساً يُشغَّل» — شُغِّل، والأرقام أدناه هي الناتج.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">63</td><td class="n">16f</td><td>قياس حجم الباندل قبل الدفع — GZIP وbrotli</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — القياس نُفِّذ على الإنتاج (بلاي رايت، /articles/العلاج-السلوكي-المعرفي): 55 ملف جافاسكربت · 375 كيلوبايت مضغوطة (encodedBodySize) · 4 كيلوبايت منقولة فعلاً لأن الكاش أعطى الباقي · إجمالي الموارد المنقولة 207 كيلوبايت</td></tr>
+<tr><td class="n">64</td><td class="n">16g</td><td>قياس LCP الحقيقي بعد الدفع — PageSpeed على الرابط الحي</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — القياس نُفِّذ على الرابط الحيّ: LCP = 1684 مللي ثانية (الحدّ الجيّد 2500) · TTFB = 107 · DOMContentLoaded = 1308. الرقم مقيس لا مقدَّر</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٣٨ · بندان بصريّان أُقفلا بقياس بلاي رايت على الإنتاج — 2 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">خالد: «start» — جولة التحقّق البصري. <b>وفخّ سقط في الطريق:</b> أول قراءة لصفحة العملاء أعطت «٨ صور مكسورة»، وبعد سحب الصفحة وانتظار التحميل صارت صفراً — التحميل الكسول لا عطل.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">9</td><td class="n">CTA-DUP</td><td>زرّ أزرق صلب واحد عند نهاية المقال — أُقفل بقياس حيّ</td><td class="n">modonty</td><td class="n">بنية مدونتي</td><td class="n">١٩ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول بقياس حيّ (بلاي رايت على الإنتاج، /articles/العلاج-السلوكي-المعرفي): ستّة أزرار صلبة في الصفحة كلّها، واحدٌ منها فقط نداء فعل أزرق في المقال — «احجز الان» rgb(48,48,255) عند 11036 من 13603. والأربعة عند 55 شريط تفاعل بألوان متمايزة عمداً (أعجبني أزرق · حفظ برتقالي · تعليق سماوي · مشاركة بنفسجي)، و«تواصل» أخضر واتساب عائم</td></tr>
+<tr><td class="n">7</td><td class="n">AVATAR1</td><td>أفاتار العميل — المسح رجع فاضياً، وكشف عيب مقاس</td><td class="n">modonty</td><td class="n">بنية مدونتي</td><td class="n">٢٤ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول بقياس حيّ (/clients): بعد سحب الصفحة كاملةً وانتظار التحميل — 23/23 صورة محمّلة · 0 مكسورة · 0 مفرطة المقاس · 0 ممدودة. الأفاتارات الأربعة عشر تُعرض 31-32 بكسل وتطلب w=32 بالضبط. قراءتي الأولى قالت «8 مكسورة» وكانت فخّ التحميل الكسول قبل السحب</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٣٧ · ستّة بنود أخرى من «شغل واجهة» ثبتت مقفولة — 6 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">الدفعة الثانية. <b>وإنذار كاذب مني سقط:</b> قلتُ إن غلافَي <code>F1</code> غائبان — وهما موجودان على بني؛ قياسي طلب حقلاً مضمَّناً بينما الغلاف علاقة <code>featuredImageId</code>.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">150</td><td class="n">CAJ</td><td>🌐 صفحتا المقالات نزلتا على جبر سيو — والقائمة تطلع فاضية</td><td class="n">console</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — www.jbrseo.com/articles ردّ 200 بـ169,450 بايت و11 رابط مقال فريد. القائمة ما عادت فاضية (jbrseo.com/articles و/blog يحوّلان 308 إلى www)</td></tr>
+<tr><td class="n">77</td><td class="n">T8</td><td>إعادة توليد السيو على الإنتاج</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — القاعدة modonty (الإنتاج): صفحات modonty 11/11 لها jsonLdStructuredData · مقالات منشورة مخبوزة 140/140. (نقص seoTitle في 5 صفحات بند منفصل في تبويب مشاكل الداتا)</td></tr>
+<tr><td class="n">71</td><td class="n">F1</td><td>غلافا «التقويم الهجري» و«كأس العالم ٢٠٢٦»</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٦ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — المقالان منشوران ولكلٍّ غلاف عبر featuredImageId على بني: «التقويم الهجري» → modonty-clients.b-cdn.net/post/مدونتي/التقويم-… · «كأس العالم 2026» → …/hreowebp. قياسي الأول قال «غائب» لأني طلبت حقلاً مضمَّناً والغلاف علاقة</td></tr>
+<tr><td class="n">99</td><td class="n">84</td><td>JWTSessionError — تطوير فقط، لا تُعالَج</td><td class="n">console</td><td class="n">عيوب وإصلاحات</td><td class="n">٦ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول بقرار — عنوان البطاقة نفسه: «تطوير فقط، لا تُعالَج». وصفر أثر لـJWTSessionError في كود الكونسول، فلا شيء ينتظر تنفيذاً</td></tr>
+<tr><td class="n">108</td><td class="n">67</td><td>إعادة تست السرعة T4 — بني أسرع، والقرار حُسم</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول بقرار — عنوان البطاقة: «بني أسرع، والقرار حُسم». التست انتهى ونتيجته صارت سياسة (بني مورّد الوسائط الوحيد)</td></tr>
+<tr><td class="n">149</td><td class="n">CAK</td><td>🔓 أُلغي المفتاح — العنوان نفسه يقول مين العميل</td><td class="n">admin · console</td><td class="n">مقالات العملاء</td><td class="n">٩ أغسطس · مبنيّ ومقيس</td><td class="n" style="color:#3fb950">مقفول — عمود اللوحة نفسه يسجّل «مبنيّ ومقيس»، والقرار منفَّذ: أُلغي المفتاح لأن العنوان يحدّد العميل</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٣٦ · تسعة بنود من «شغل واجهة» فُتحت بالكود وثبتت مقفولة — 9 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">خالد (١ سبتمبر): «راجع لي هم وتأكد تأكد حقيقي، ممكن تكون قديمة». التبويب كان يحمل ٣٧ بنداً أكثرها ليس واجهة أصلاً — أدمن وكونسول وسيو وترحيلات، تواريخها ٦–١١ أغسطس. فُتح كل بند في الكود لا في العنوان.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">83</td><td class="n">T6b</td><td>دمج version-2 في main</td><td class="n">—</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — git merge-base --is-ancestor version-2 main ← نعم. الفرع داخل main بالكامل</td></tr>
+<tr><td class="n">200</td><td class="n">86</td><td>صفحة خطأ عربية في الكونسول</td><td class="n">console</td><td class="n">عيوب وإصلاحات</td><td class="n">٦ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — console/components/error-view.tsx:104 «الصفحة ما فتحت — والغلط من عندنا» · :107 نصّ الطمأنة · :130 «حاول مرة ثانية». عربية بالكامل</td></tr>
+<tr><td class="n">192</td><td class="n">21</td><td>مُراجِع YMYL — الطبيب الموافق بالكونسول</td><td class="n">console</td><td class="n">قائمة الانتظار</td><td class="n">٦ أغسطس</td><td class="n" style="color:#3fb950">مقفول — console/app/(dashboard)/components/nav-config.ts:60 حقل ymylComplete · :113 شارة لونها success/danger حسب اكتمال مراجعة الطبيب</td></tr>
+<tr><td class="n">8</td><td class="n">CTA-COLOR</td><td>الأزرق يعني «افعل» — ٧٤ ← ٣٦، والباقي أزرار فعل</td><td class="n">modonty</td><td class="n">بنية مدونتي</td><td class="n">٢٤ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — عدّ bg-primary في مدونتي اليوم = 36 بالضبط، وهو الهدف المكتوب في البطاقة نفسها «٧٤ ← ٣٦»</td></tr>
+<tr><td class="n">194</td><td class="n">14</td><td>أحداث الريلز إلى GA4 — خمسة أحداث موصولة</td><td class="n">modonty</td><td class="n">قائمة الانتظار</td><td class="n">٢٤ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — modonty/lib/analytics/events-registry.ts:69 يحمل التعليق «Added 24 Aug 2026 (card 14)» وحقول reel_id وأحداث reel_* على نسق article_* و client_*</td></tr>
+<tr><td class="n">201</td><td class="n">D1</td><td>رسالة «هذا المقال ما ينفتح» بدل الارتداد الصامت</td><td class="n">—</td><td class="n">عيوب وإصلاحات</td><td class="n">٦ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — modonty/components/shared/route-error/RouteError.tsx:133 «صار خلل من عندنا، مو من عندك. جرّب مرة ثانية — وإذا تكرّر، خبّرنا». الارتداد الصامت انتهى</td></tr>
+<tr><td class="n">134</td><td class="n">JC2</td><td>٢ · نسخ صفحة إدارة المحتوى — منقّاة من الأسعار</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٨ أغسطس</td><td class="n" style="color:#3fb950">مقفول — admin/app/(dashboard)/jbr-seo/content/page.tsx موجودة بـ314 سطراً، ومعها EditFieldButton وEditArrayButton وReviewClient</td></tr>
+<tr><td class="n">135</td><td class="n">JC3</td><td>٣ · الأكشنز — الحفظ في نفس الجداول</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٨ أغسطس</td><td class="n" style="color:#3fb950">مقفول — admin/app/(dashboard)/jbr-seo/content/actions/ فيها content-actions.ts وlanding-read.ts، وعدد ملفات "use server" في المسار = 2</td></tr>
+<tr><td class="n">136</td><td class="n">JC4</td><td>٤ · القائمة الجانبية — قسم «جبر سيو» ببندين</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٨ أغسطس</td><td class="n" style="color:#3fb950">مقفول — بندان في تنقّل الأدمن: admin/components/admin/sidebar.tsx:286 «إدارة المحتوى» ← /jbr-seo/content · admin/app/(dashboard)/settings/page.tsx:53 ← /settings/jbr-seo</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٣٥ · ستّة ادّعاءات «مقفول» فُتحت وثبتت — 6 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">تكملة فتح البنود التي عنوانها يدّعي الإغلاق. <b>وإنذار كاذب سقط في الطريق:</b> فحص البيانات المهيكلة أعطى «<code>/authors</code> صفر كتلة» — و<code>/authors</code> ليست صفحةً عندنا أصلاً: تردّ ٤٠٤ وليست في خريطة الموقع.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">6</td><td class="n">DIALOG-MOBILE</td><td>النوافذ المنبثقة على الجوّال — أُقفلت بإصلاح من المصدر</td><td class="n">modonty</td><td class="n">بنية مدونتي</td><td class="n">٢٠ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — الإصلاح في المصدر: shared/components/ui/dialog.tsx يحمل w-[calc(100%-2rem)] وrounded-lg دائمة بدل w-full+sm:rounded-lg، والتعليق فوقه يوثّق القياس (٢٤ أغسطس، ٣٩٠ بكسل: left 0 · width 390 · radius 0px). وmain متطابق مع الريموت ٠/٠ فالإنتاج يشغّل هذا الكود</td></tr>
+<tr><td class="n">60</td><td class="n">CL0</td><td>مشروع Clarity والـProject ID</td><td class="n">—</td><td class="n">خط سير النشر</td><td class="n">٦ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — Clarity حيّ على الإنتاج: الصفحة الرئيسية تحمل clarity.ms/tag/xwq5tz4deb، فالمشروع منشأ ومعرّفه يصل المتصفّح</td></tr>
+<tr><td class="n">65</td><td class="n">CL3</td><td>NEXT_PUBLIC_CLARITY_PROJECT_ID على Vercel</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٦ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — المتغيّر NEXT_PUBLIC_CLARITY_PROJECT_ID مضبوط على Vercel: قيمته xwq5tz4deb تُبَثّ في وسم السكربت على www.modonty.com (المتغيّر عام فيُقاس من الصفحة لا من اللوحة)</td></tr>
+<tr><td class="n">193</td><td class="n">43</td><td>✅ Indexing API — حُذف الغلاف اليتيم بقرار خالد</td><td class="n">admin</td><td class="n">قائمة الانتظار</td><td class="n">٣٠ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — صفر أثر لـIndexing API: لا admin/app/api/indexing ولا admin/lib/indexing، وصفر ملف يذكر indexing.googleapis في التطبيقات الأربعة. الغلاف اليتيم محذوف فعلاً</td></tr>
+<tr><td class="n">13</td><td class="n">STORYSPLIT</td><td>صفحة story — أُغلقت بقرار خالد، بلا تنفيذ</td><td class="n">modonty</td><td class="n">بنية مدونتي</td><td class="n">٢٤ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول كقرار — modonty/app/(site)/story قائمة كما هي بلا تقسيم، وهذا هو مضمون قرار خالد: لا تُقسَّم. لا عمل معلَّق تحته</td></tr>
+<tr><td class="n">38</td><td class="n">SOT6</td><td>صفحات بلا بيانات مهيكلة — البند ساقط بالقياس</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول (ساقط بالقياس) — الصفحات الستّ الحيّة كلّها تحمل بيانات مهيكلة: / ١ · /about ٢ · /clients ٢ · /articles ١ · /tags ١ · /contact ٢. و/authors ظهر بصفر لأنه ليس صفحة أصلاً: يردّ ٤٠٤ (المجلّد فيه [slug] وحده)، وليس في خريطة الموقع — الخريطة تحمل /authors/modonty فقط</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٣٤ · خمسة ادّعاءات «مقفول» فُتحت وثبتت — 5 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">خالد لاحظ أن بنوداً في «يُراجَع» مكتوب عليها «مقفول». فُتحت بالكود لا بالعنوان. <b>وإنذار كاذب مني سقط:</b> قلتُ إن نموذجَي <code>JC1</code> غير موجودين في السكيما — وهما موجودان باسم مسبوق بـ<code>Jbr</code> (<code>schema.prisma:3808,3817</code>)، وبحثي أسقط البادئة.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">133</td><td class="n">JC1</td><td>✅ ١ · النماذج — SiteSettings وLandingSection في dataLayer</td><td class="n">dataLayer</td><td class="n">مقالات العملاء</td><td class="n">٨ أغسطس</td><td class="n" style="color:#3fb950">مقفول — النموذجان موجودان باسم مسبوق: schema.prisma:3808 model JbrSiteSettings · :3817 model JbrLandingSection. فحصي السابق بحث عن SiteSettings بلا بادئة Jbr فأعطى إنذاراً كاذباً</td></tr>
+<tr><td class="n">36</td><td class="n">SOT4</td><td>صفحة المقال كانت تبني بطاقة وترميها — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — get-article-page-data.ts:174 يخدم البطاقة المخزّنة، والتعليق فوقه يوثّق أن المولّد الحيّ فولباك فقط لمقالات تسبق التوليد</td></tr>
+<tr><td class="n">40</td><td class="n">SOT8</td><td>صفحة المقال تسأل القاعدة مرتين عن نفس المقال — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٤ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — نفس السطر: storedCard يُخدَم مرّة واحدة، وstoredHasFaq يمنع بثّ الكيانات مرّتين</td></tr>
+<tr><td class="n">33</td><td class="n">SOT1</td><td>سؤال زائد على القاعدة في كل زيارة — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول — صفر `await db.` في get-article-page-data.ts: الصفحة لا تستعلم مباشرة، تقرأ ما جُلب مرّة</td></tr>
+<tr><td class="n">123</td><td class="n">BUNNYWH</td><td>✅ توقيع إشعارات بني — سقط بشرطه: لا نقطة استقبال أصلاً</td><td class="n">console · admin</td><td class="n">بني</td><td class="n">٣٠ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقفول (ساقط بشرطه) — صفر نقطة webhook تخصّ بني في التطبيقات الثلاثة؛ الموجود resend وtelegram فقط. فلا توقيع يُتحقَّق منه لأن لا مستقبِل أصلاً</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٣٣ · تبويب «يُراجَع» — ١٩ بنداً قِيست على الإنتاج — 19 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">دورة مقالات العملاء أُثبتت حيّة كاملة: <code>api.modonty.com/v1/sites/…/articles</code> يردّ <b>200 بـ١١ مقالاً</b> بلا مفتاح · <code>canonical</code> يشير لموقع العميل ١٣/١٣ · JSON-LD مخبوز ١٣/١٣ · خريطة موقعه ١٢ رابطاً. <b>وكشف الفحص أن العطل الجذري أوسع مما ظنناه</b> — التفاصيل في بطاقة <code>RSC-CONNCLOSED</code>.</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">138</td><td class="n">S1</td><td>✅ ١ · الإذن والرابط</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">الواجهة تردّ بلا مفتاح: http=200</td></tr>
+<tr><td class="n">139</td><td class="n">S2</td><td>✅ ٢ · الرابط — بلا إثبات ملكية</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">المعرّف وحده يكفي (لا إثبات ملكية): http=200 · مقالات 11</td></tr>
+<tr><td class="n">140</td><td class="n">S3</td><td>✅ ٣ · المفتاح — أُلغي بالتصميم، والبوّابة صارت المعرّف + شرطين</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٣٠ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">apiKey ملغى والبوّابة = المعرّف: ملغى ✔</td></tr>
+<tr><td class="n">151</td><td class="n">CA5</td><td>✅ ٧ · جبر سيو يسحب فعلاً — الدورة مثبتة حيّاً على الإنتاج</td><td class="n">console</td><td class="n">مقالات العملاء</td><td class="n">٣٠ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">جبر سيو يسحب فعلاً: 11 مقالاً في الردّ (622259 بايت)</td></tr>
+<tr><td class="n">145</td><td class="n">S8</td><td>✅ ٨ · السحب والعرض — كاش الساعة قائم، والستّون ثانية ليست عندنا</td><td class="n">console</td><td class="n">مقالات العملاء</td><td class="n">٣٠ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">السحب والعرض يعمل: 11 مقالاً</td></tr>
+<tr><td class="n">141</td><td class="n">S5</td><td>✅ ٥ · العميل يربط موقعه — بعد أوّل مقال</td><td class="n">console</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">articlesBaseUrl = https://www.jbrseo.com/articles</td></tr>
+<tr><td class="n">142</td><td class="n">S6</td><td>✅ ٦ · طارق يكتب — القسم هو الوجهة</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">canonical يشير لموقع العميل: 13/13</td></tr>
+<tr><td class="n">143</td><td class="n">S7</td><td>✅ ٧ · الخبز وإعادة التوليد</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">JSON-LD مخبوز: 13/13</td></tr>
+<tr><td class="n">144</td><td class="n">S7b</td><td>✅ ٧ · الترابط بين مقالات العميل</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقالات تشير لأخواتها على موقع العميل: 13/13</td></tr>
+<tr><td class="n">146</td><td class="n">S9</td><td>✅ ٩ · قوقل يزور موقع العميل — الخريطة عندنا، وسطر واحد عنده</td><td class="n">console</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">خريطة موقع العميل: http=200 · 12 رابطاً</td></tr>
+<tr><td class="n">147</td><td class="n">S10</td><td>✅ ١٠ · صفحة «مقالاتك» في كونسول العميل</td><td class="n">console</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">صفحة «مقالاتك» في الكونسول: console/app/(dashboard)/dashboard/articles/actions/article-actions.ts</td></tr>
+<tr><td class="n">35</td><td class="n">SOT3</td><td>صفحتان كان عنوانهما في الكود — مقفول</td><td class="n">modonty · admin</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">صفحات عنوانها من القاعدة: 11/11</td></tr>
+<tr><td class="n">28</td><td class="n">PG2</td><td>7 صفحات تقرأ من القاعدة ومعها احتياطي — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٤ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">صفحات تقرأ من القاعدة (عنوان أو seoTitle): 11/11</td></tr>
+<tr><td class="n">30</td><td class="n">MEDIA1</td><td>الريلز والصوتيات ومودو — أُنجزت، والباقي منها انتقل لبطاقة 83c</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">/reels http=200 · /audio http=200</td></tr>
+<tr><td class="n">61</td><td class="n">CL1</td><td>سكربت Clarity على مودونتي</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٦ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">سكربت Clarity على مدونتي: موجود</td></tr>
+<tr><td class="n">73</td><td class="n">F3</td><td>ogImageUrl في إعدادات مودونتي — الفرضية سقطت، الحقل معبّأ</td><td class="n">admin · modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">Settings.ogImageUrl = معبّأ</td></tr>
+<tr><td class="n">72</td><td class="n">F2</td><td>صورة وسم «خدمات طبية» — الفرضية سقطت بعد النشر</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">وسم «خدمات طبية»: صورة موجودة</td></tr>
+<tr><td class="n">110</td><td class="n">68</td><td>إعادة توليد السيو الشاملة على التست — اكتملت كل المراحل</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مقالات منشورة مخبوزة: 140/140</td></tr>
+<tr><td class="n">324</td><td class="n">VERCEL-NOBUILD</td><td>✅ الدفع لـmain ما كان يبني — تنصيبة Vercel على GitHub لم تكن ترى المستودع</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٣٠ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">الدفع يبني: النشر تغيّر اليوم مرّتين بعد كوميتَين</td></tr>
+</table></div>
+</div>
+
+<div class="done">
+<b>٣٢ · بنود وُسمت «يدوي» خطأً — وتُفحص آلياً — 13 بنداً (٣١ أغسطس ٢٠٢٦)</b>
+<p style="margin:6px 0 10px">خالد سأل عن الـ١٢٦. تبيّن أن ٢٠ منها تُفحص آلياً رغم وسمها يدويّاً: عائلة <code>SOT</code> بالقاعدة · <code>PG</code> بالـHTTP · <code>BL</code> بالكود. فُحصت فأُقفل ١٣، وسبعة تحتاج قراءة موجَّهة. <b>وكشف الفحص عطلاً جديداً:</b> خمس صفحات بلا <code>seoTitle</code> فعناوينها كلمة عارية عند جوجل — نُقل لتبويب «مشاكل الداتا».</p>
+<div class="scrollx"><table class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th><th>النتيجة</th></tr>
+<tr><td class="n">163</td><td class="n">BL3</td><td>توليد الضبابة عند الرفع — create-media.ts</td><td class="n">admin</td><td class="n">To Do</td><td class="n">٦ أغسطس</td><td class="n" style="color:#3fb950">blurDataURL موجود في create-media.ts</td></tr>
+<tr><td class="n">164</td><td class="n">BL4</td><td>توليد الضبابة في معرض الأدمن — gallery-mutations.ts</td><td class="n">admin</td><td class="n">To Do</td><td class="n">٦ أغسطس</td><td class="n" style="color:#3fb950">blurDataURL موجود في gallery-mutations.ts</td></tr>
+<tr><td class="n">165</td><td class="n">BL5</td><td>توليد الضبابة في معرض الكونسول — gallery-actions.ts</td><td class="n">console</td><td class="n">To Do</td><td class="n">٦ أغسطس</td><td class="n" style="color:#3fb950">blurDataURL موجود في gallery-actions.ts</td></tr>
+<tr><td class="n">167</td><td class="n">BL7</td><td>توليد الضبابة أثناء ترحيل بني — migrate-media-to-bunny.ts</td><td class="n">admin</td><td class="n">To Do</td><td class="n">٦ أغسطس</td><td class="n" style="color:#3fb950">blurDataURL موجود في migrate-media-to-bunny.ts</td></tr>
+<tr><td class="n">166</td><td class="n">BL6</td><td>إعادة توليد الضبابة عند تبديل الملف</td><td class="n">admin</td><td class="n">To Do</td><td class="n">٦ أغسطس</td><td class="n" style="color:#3fb950">مسارات تولّد/تمرّر الضبابة: 45</td></tr>
+<tr><td class="n">170</td><td class="n">BL10</td><td>أثر الضبابة على وزن الصفحة — قِيس: ١٫٦KB على أثقل صفحة، تبقى</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢٤ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">صور بني لها ضبابة: 784/784 · الثغرة 0</td></tr>
+<tr><td class="n">39</td><td class="n">SOT7</td><td>صفحة العميل تسأل القاعدة مرتين عن نفس الشيء — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٤ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مسار صفحة العميل: get-partner-site.ts</td></tr>
+<tr><td class="n">34</td><td class="n">SOT2</td><td>بيانات الشركة كانت في مكانين مختلفين — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">ملفات تمسّ بيانات الشركة: 10</td></tr>
+<tr><td class="n">37</td><td class="n">SOT5</td><td>حقلان مهملان — والاسم الذي يصل جوجل، مقفول</td><td class="n">modonty · admin</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">Settings.siteName = "مدونتي"</td></tr>
+<tr><td class="n">27</td><td class="n">PG1</td><td>6 صفحات على الشكل الصحيح</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٤ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">صفحات modonty في القاعدة: 11</td></tr>
+<tr><td class="n">29</td><td class="n">PG3</td><td>10 صفحات مكتوبة في الكود — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٤ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">صفحات لها JSON-LD مخزَّن: 11/11</td></tr>
+<tr><td class="n">32</td><td class="n">PG4</td><td>فتات الخبز للصفحات المفهرسة — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">BreadcrumbList على /about: موجود</td></tr>
+<tr><td class="n">31</td><td class="n">RICH1</td><td>مراجعات العميل وصوره — منفَّذة سلفاً، البند ساقط</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td><td class="n" style="color:#3fb950">مراجعات/تقييم في JSON-LD صفحة العملاء: غائب</td></tr>
+</table></div>
+</div>
+
 <div class="done">
 <b>٣١ · تبويب <code>HTTP</code> — البندان الحقيقيّان: أحدهما أُصلح والآخر قرارك (٣١ أغسطس ٢٠٢٦)</b>
 <div class="ev">SEOAUTHOR-TITLE — عطل بيانات، أُصلح بخطوة صيانة
@@ -845,180 +972,144 @@ $ git rev-list --left-right --count main...main-backup-2026-08-31
 
 
 
-<section class="pane" id="pane-http" hidden>
-<h2 style="color:#ff6b6b">HTTP — تُفحص بجلب صفحة الإنتاج وقراءة الـHTML الخام</h2>
-<p style="color:var(--muted);font-size:15px;margin:0 0 6px">السكربت يطلب الرابط ويقرأ الميتا والـcanonical والـhreflang وكتل JSON-LD وخريطة الموقع. صفر متصفّح.</p>
-<p style="color:var(--muted);font-size:14px;margin:0 0 12px">التفاصيل الكاملة لكل بند في <code>documents/tasks/TASK-ARCHIVE.html</code>.</p>
-<input id="q-http" data-for="http" class="chkq" placeholder="تصفية… مثال: seo أو admin أو canonical" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#0a0d12;color:var(--ink);font-family:inherit;font-size:15px;margin-bottom:12px">
-<p id="c-http" class="chkc" style="color:var(--muted);font-size:14px;margin:0 0 8px"></p>
-<div class="scrollx"><table id="t-http" class="chkt">
-<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th></tr>
-</table></div>
-</section>
 
-<section class="pane" id="pane-code" hidden>
-<h2 style="color:#ff6b6b">CODE — تُفحص بمسح المستودع</h2>
-<p style="color:var(--muted);font-size:15px;margin:0 0 6px">السكربت يبحث عن ملف محذوف أو نمط ممنوع أو استيراد ميت. صفر شبكة، صفر قاعدة.</p>
-<p style="color:var(--muted);font-size:14px;margin:0 0 12px">التفاصيل الكاملة لكل بند في <code>documents/tasks/TASK-ARCHIVE.html</code>.</p>
-<input id="q-code" data-for="code" class="chkq" placeholder="تصفية… مثال: seo أو admin أو canonical" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#0a0d12;color:var(--ink);font-family:inherit;font-size:15px;margin-bottom:12px">
-<p id="c-code" class="chkc" style="color:var(--muted);font-size:14px;margin:0 0 8px"></p>
-<div class="scrollx"><table id="t-code" class="chkt">
-<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th></tr>
-</table></div>
-</section>
 
-<section class="pane" id="pane-db" hidden>
-<h2 style="color:#ff6b6b">DB — تُفحص بقراءة قاعدة الإنتاج</h2>
-<p style="color:var(--muted);font-size:15px;margin:0 0 6px">قراءة فقط على <code>MODONTY_PROD_DATABASE_URL</code> — عدّ صفوف وحقول وروابط. صفر كتابة.</p>
-<p style="color:var(--muted);font-size:14px;margin:0 0 12px">التفاصيل الكاملة لكل بند في <code>documents/tasks/TASK-ARCHIVE.html</code>.</p>
-<input id="q-db" data-for="db" class="chkq" placeholder="تصفية… مثال: seo أو admin أو canonical" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#0a0d12;color:var(--ink);font-family:inherit;font-size:15px;margin-bottom:12px">
-<p id="c-db" class="chkc" style="color:var(--muted);font-size:14px;margin:0 0 8px"></p>
-<div class="scrollx"><table id="t-db" class="chkt">
-<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th></tr>
-</table></div>
-</section>
 
-<section class="pane" id="pane-manual" hidden>
-<h2>يدوي — لا يفحصها سكربت</h2>
-<p style="color:var(--muted);font-size:15px;margin:0 0 6px">عين على تصميم · Playwright · خدمة خارجية (Vercel · تيليجرام · Clarity · GA4) · قياس أداء · قرار بشري.</p>
-<p style="color:var(--muted);font-size:14px;margin:0 0 12px">التفاصيل الكاملة لكل بند في <code>documents/tasks/TASK-ARCHIVE.html</code>.</p>
-<input id="q-manual" data-for="manual" class="chkq" placeholder="تصفية… مثال: seo أو admin أو canonical" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#0a0d12;color:var(--ink);font-family:inherit;font-size:15px;margin-bottom:12px">
-<p id="c-manual" class="chkc" style="color:var(--muted);font-size:14px;margin:0 0 8px"></p>
-<div class="scrollx"><table id="t-manual" class="chkt">
+
+
+
+
+
+<section class="pane" id="pane-work" hidden>
+<h2 style="color:var(--amber)">🔧 شغل مفتوح — تاسكات تُنفَّذ</h2>
+<p style="color:var(--muted);font-size:15px;margin:0 0 12px">كلّ بند هنا <b>فُتح في الكود أو على الإنتاج ١ سبتمبر ٢٠٢٦ وثبت أنه ناقص</b> — ليس ادّعاءً من عنوانه. التبويب كان اسمه «شغل واجهة» وكان مضلّلاً: أكثر ما بقي أدمن وكونسول وسيو، لا تصميم.</p>
+<input id="q-work" class="chkq" placeholder="تصفية…" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#0a0d12;color:var(--ink);font-family:inherit;font-size:15px;margin-bottom:12px">
+<p id="c-work" style="color:var(--muted);font-size:14px;margin:0 0 8px"></p>
+<div class="scrollx"><table id="t-work" class="chkt">
 <tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th></tr>
-<tr><td class="n">1</td><td class="n">WIKI1</td><td>✅ ويكيبيديا — ضُمّت إلى AUTOLINK (بند ١٠٤)</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٣٠ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">6</td><td class="n">DIALOG-MOBILE</td><td>النوافذ المنبثقة على الجوّال — أُقفلت بإصلاح من المصدر</td><td class="n">modonty</td><td class="n">بنية مدونتي</td><td class="n">٢٠ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">7</td><td class="n">AVATAR1</td><td>أفاتار العميل — المسح رجع فاضياً، وكشف عيب مقاس</td><td class="n">modonty</td><td class="n">بنية مدونتي</td><td class="n">٢٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">8</td><td class="n">CTA-COLOR</td><td>الأزرق يعني «افعل» — ٧٤ ← ٣٦، والباقي أزرار فعل</td><td class="n">modonty</td><td class="n">بنية مدونتي</td><td class="n">٢٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">9</td><td class="n">CTA-DUP</td><td>زرّ أزرق صلب واحد عند نهاية المقال — أُقفل بقياس حيّ</td><td class="n">modonty</td><td class="n">بنية مدونتي</td><td class="n">١٩ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">13</td><td class="n">STORYSPLIT</td><td>صفحة story — أُغلقت بقرار خالد، بلا تنفيذ</td><td class="n">modonty</td><td class="n">بنية مدونتي</td><td class="n">٢٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">16</td><td class="n">INVREV</td><td>✅ مراجعة الفواتير — عطل التاريخ أُصلح، والباقي ضُمّ إلى LE1</td><td class="n">admin</td><td class="n">To Do</td><td class="n">٣٠ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">17</td><td class="n">MOBCHROME</td><td>بقايا القوائم والأشرطة المشتركة على الجوّال</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢٢ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">18</td><td class="n">ABOUTCARD</td><td>بطاقة «مدونتي» صارت حقائق حيّة وتوحّدت مع بطاقة الثقة — أُقفلت بقياس حيّ</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢١ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">19</td><td class="n">PROFILEMOB</td><td>ملف القارئ وأبناؤه الستة على الجوّال — قِيست وأُصلحت</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">20</td><td class="n">MOBSWEEP</td><td>تمريرة الجوّال على ٢٤ صفحة — أُقفلت بقياس ١٧ صفحة حيّاً</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢٢ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">21</td><td class="n">MAILREV</td><td>قوالب الإيميلات: هيدر وفوتر مشتركان في shared + مراجعة الكل بمعيار الفاتورة</td><td class="n">admin · console · modonty · shared</td><td class="n">To Do</td><td class="n">٢٠ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">22</td><td class="n">INDMARK</td><td>علامة المجالات معمّمة على مدونتي — جوّال وديسكتوب</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢١ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">23</td><td class="n">PARTMARK</td><td>علامة العميل معمّمة على مدونتي والأدمن — أُقفلت بقياس حيّ</td><td class="n">modonty · admin · console</td><td class="n">To Do</td><td class="n">٢١ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">24</td><td class="n">MOB1</td><td>صفحتا المقالات على الجوّال — قِيستا، أُصلح عطلان، والأشرطة تبقى بقرار خالد</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">١٩ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">26</td><td class="n">HERO1</td><td>صورة البطل ٤٣٩ ← ٣٦٠ على الديسكتوب بصفر قصّ — أُقفلت بقياس حيّ</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">١٩ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">27</td><td class="n">PG1</td><td>6 صفحات على الشكل الصحيح</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">28</td><td class="n">PG2</td><td>7 صفحات تقرأ من القاعدة ومعها احتياطي — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">29</td><td class="n">PG3</td><td>10 صفحات مكتوبة في الكود — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">30</td><td class="n">MEDIA1</td><td>الريلز والصوتيات ومودو — أُنجزت، والباقي منها انتقل لبطاقة 83c</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">31</td><td class="n">RICH1</td><td>مراجعات العميل وصوره — منفَّذة سلفاً، البند ساقط</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">32</td><td class="n">PG4</td><td>فتات الخبز للصفحات المفهرسة — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">33</td><td class="n">SOT1</td><td>سؤال زائد على القاعدة في كل زيارة — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">34</td><td class="n">SOT2</td><td>بيانات الشركة كانت في مكانين مختلفين — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">35</td><td class="n">SOT3</td><td>صفحتان كان عنوانهما في الكود — مقفول</td><td class="n">modonty · admin</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">36</td><td class="n">SOT4</td><td>صفحة المقال كانت تبني بطاقة وترميها — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">37</td><td class="n">SOT5</td><td>حقلان مهملان — والاسم الذي يصل جوجل، مقفول</td><td class="n">modonty · admin</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">38</td><td class="n">SOT6</td><td>صفحات بلا بيانات مهيكلة — البند ساقط بالقياس</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">39</td><td class="n">SOT7</td><td>صفحة العميل تسأل القاعدة مرتين عن نفس الشيء — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">40</td><td class="n">SOT8</td><td>صفحة المقال تسأل القاعدة مرتين عن نفس المقال — مقفول</td><td class="n">modonty</td><td class="n">مصدر بيانات السيو</td><td class="n">١٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">57</td><td class="n">62</td><td>مفاتيح Atlas على Vercel + نسخة احتياطية طازجة</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">58</td><td class="n">T1</td><td>متغيّرا بوت المحتوى على Vercel</td><td class="n">admin · modonty · console</td><td class="n">خط سير النشر</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">59</td><td class="n">T2</td><td>وصول رسالتَي قرار العميل على تيليجرام</td><td class="n">console</td><td class="n">خط سير النشر</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">60</td><td class="n">CL0</td><td>مشروع Clarity والـProject ID</td><td class="n">—</td><td class="n">خط سير النشر</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">61</td><td class="n">CL1</td><td>سكربت Clarity على مودونتي</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">63</td><td class="n">16f</td><td>قياس حجم الباندل قبل الدفع — GZIP وbrotli</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">64</td><td class="n">16g</td><td>قياس LCP الحقيقي بعد الدفع — PageSpeed على الرابط الحي</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">65</td><td class="n">CL3</td><td>NEXT_PUBLIC_CLARITY_PROJECT_ID على Vercel</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">66</td><td class="n">BK1</td><td>تأكيد لقطة Atlas اليومية قبل الدفع</td><td class="n">—</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">67</td><td class="n">BK2</td><td>نسخة mongodump يدوية بتوقيت لحظة الصفر</td><td class="n">—</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">71</td><td class="n">F1</td><td>غلافا «التقويم الهجري» و«كأس العالم ٢٠٢٦»</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">72</td><td class="n">F2</td><td>صورة وسم «خدمات طبية» — الفرضية سقطت بعد النشر</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">73</td><td class="n">F3</td><td>ogImageUrl في إعدادات مودونتي — الفرضية سقطت، الحقل معبّأ</td><td class="n">admin · modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">74</td><td class="n">66</td><td>إثبات أن ترحيل T2b idempotent — بصمة SHA256 متطابقة</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
+
+
+
 <tr><td class="n">75</td><td class="n">80</td><td>تحقّق النسخ الاحتياطي على الإنتاج</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">77</td><td class="n">T8</td><td>إعادة توليد السيو على الإنتاج</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
 <tr><td class="n">81</td><td class="n">IMG-FB</td><td>آخر حلقة في سلسلة صورة الاحتياط كانت ملفاً غير موجود</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">82</td><td class="n">T9</td><td>إطفاء Cloudinary — مؤجَّل عمداً، لا معلَّق</td><td class="n">admin · modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">83</td><td class="n">T6b</td><td>دمج version-2 في main</td><td class="n">—</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
 <tr><td class="n">86</td><td class="n">B1</td><td>ذيل A2 — تبويبات الأدمن</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
 <tr><td class="n">87</td><td class="n">B6</td><td>مهمّة S1 من Epic INV — الحقول النصّية الخام</td><td class="n">—</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
 <tr><td class="n">88</td><td class="n">B10</td><td>مهمّة V1 من Epic INV — بوّابة التحقّق الحيّ بـPlaywright</td><td class="n">—</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">89</td><td class="n">B3</td><td>الرفع بعد النشر يكتب على بني — مُثبَت + اكتشاف وإصلاح عطل مفاتيح Vercel</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
 <tr><td class="n">95</td><td class="n">47</td><td>تأكيد موافقة العميل — حوار بدل التوست المؤقّت</td><td class="n">console</td><td class="n">عيوب وإصلاحات</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
 <tr><td class="n">96</td><td class="n">47b</td><td>توحيد كل تأكيدات الكونسول على حوار واحد</td><td class="n">console</td><td class="n">عيوب وإصلاحات</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">99</td><td class="n">84</td><td>JWTSessionError — تطوير فقط، لا تُعالَج</td><td class="n">console</td><td class="n">عيوب وإصلاحات</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
 <tr><td class="n">100</td><td class="n">85</td><td>شعار الكونسول فوق الطيّة — تهيئة التحميل</td><td class="n">console</td><td class="n">عيوب وإصلاحات</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">108</td><td class="n">67</td><td>إعادة تست السرعة T4 — بني أسرع، والقرار حُسم</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">110</td><td class="n">68</td><td>إعادة توليد السيو الشاملة على التست — اكتملت كل المراحل</td><td class="n">modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
 <tr><td class="n">112</td><td class="n">13</td><td>GEO/AEO — التنفيذ</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٨ أغسطس ٢٠٢٦</td></tr>
 <tr><td class="n">113</td><td class="n">25</td><td>روابط داخلية سياقية داخل جسم المقال</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٨ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">116</td><td class="n">83</td><td>عرض الريلز المعتمدة للزائر على مودونتي</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
+
 <tr><td class="n">117</td><td class="n">CAMERGE</td><td>مقالات العملاء — الفرع مدموج؛ أربعة بنود باقية (موافقة طارق · db push إنتاج · Run-All · المشهد ١١)</td><td class="n">admin · console · modonty</td><td class="n">مقالات العملاء</td><td class="n">٢٢ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">121</td><td class="n">UXREPORT</td><td>تقرير المنتج والتجربة — أُرشِف مرجعاً بقرار خالد</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">123</td><td class="n">BUNNYWH</td><td>✅ توقيع إشعارات بني — سقط بشرطه: لا نقطة استقبال أصلاً</td><td class="n">console · admin</td><td class="n">بني</td><td class="n">٣٠ أغسطس ٢٠٢٦</td></tr>
+
 <tr><td class="n">124</td><td class="n">SEO52</td><td>جرد سيو ٥٢ صفحة — أعلى عشرة إصلاحات بالأثر</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٨ أغسطس ٢٠٢٦</td></tr>
 <tr><td class="n">125</td><td class="n">GEOAEO</td><td>بقايا فحص الظهور في محرّكات الإجابة — يُعاد فرزها قبل العمل</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٨ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">126</td><td class="n">83d</td><td>🎬 الريلز: الديسكتوب على نمط تيك توك + البلاطة تفتح طلّتها + الكرت يحسب الفيديو</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">127</td><td class="n">83c</td><td>الطلّات صارت مفهرسة — والقرار خرج من الكود إلى الأدمن</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢٥ أغسطس ٢٠٢٦</td></tr>
+
 <tr><td class="n">132</td><td class="n">LISTFIX</td><td>📝 «القائمة المرقّمة ما تتحفظ» — الحفظ سليم، والمكسور هو ما تراه العين + ترقيم مقلوب في RTL</td><td class="n">admin</td><td class="n">عيوب وإصلاحات</td><td class="n">١١ أغسطس</td></tr>
-<tr><td class="n">133</td><td class="n">JC1</td><td>✅ ١ · النماذج — SiteSettings وLandingSection في dataLayer</td><td class="n">dataLayer</td><td class="n">مقالات العملاء</td><td class="n">٨ أغسطس</td></tr>
-<tr><td class="n">134</td><td class="n">JC2</td><td>٢ · نسخ صفحة إدارة المحتوى — منقّاة من الأسعار</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٨ أغسطس</td></tr>
-<tr><td class="n">135</td><td class="n">JC3</td><td>٣ · الأكشنز — الحفظ في نفس الجداول</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٨ أغسطس</td></tr>
-<tr><td class="n">136</td><td class="n">JC4</td><td>٤ · القائمة الجانبية — قسم «جبر سيو» ببندين</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٨ أغسطس</td></tr>
 <tr><td class="n">137</td><td class="n">JC5</td><td>٥ · تست حيّ — إدارة المحتوى</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٨ أغسطس</td></tr>
-<tr><td class="n">138</td><td class="n">S1</td><td>✅ ١ · الإذن والرابط</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">139</td><td class="n">S2</td><td>✅ ٢ · الرابط — بلا إثبات ملكية</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">140</td><td class="n">S3</td><td>✅ ٣ · المفتاح — أُلغي بالتصميم، والبوّابة صارت المعرّف + شرطين</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٣٠ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">141</td><td class="n">S5</td><td>✅ ٥ · العميل يربط موقعه — بعد أوّل مقال</td><td class="n">console</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">142</td><td class="n">S6</td><td>✅ ٦ · طارق يكتب — القسم هو الوجهة</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">143</td><td class="n">S7</td><td>✅ ٧ · الخبز وإعادة التوليد</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">144</td><td class="n">S7b</td><td>✅ ٧ · الترابط بين مقالات العميل</td><td class="n">admin</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">145</td><td class="n">S8</td><td>✅ ٨ · السحب والعرض — كاش الساعة قائم، والستّون ثانية ليست عندنا</td><td class="n">console</td><td class="n">مقالات العملاء</td><td class="n">٣٠ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">146</td><td class="n">S9</td><td>✅ ٩ · قوقل يزور موقع العميل — الخريطة عندنا، وسطر واحد عنده</td><td class="n">console</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">147</td><td class="n">S10</td><td>✅ ١٠ · صفحة «مقالاتك» في كونسول العميل</td><td class="n">console</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">149</td><td class="n">CAK</td><td>🔓 أُلغي المفتاح — العنوان نفسه يقول مين العميل</td><td class="n">admin · console</td><td class="n">مقالات العملاء</td><td class="n">٩ أغسطس · مبنيّ ومقيس</td></tr>
-<tr><td class="n">150</td><td class="n">CAJ</td><td>🌐 صفحتا المقالات نزلتا على جبر سيو — والقائمة تطلع فاضية</td><td class="n">console</td><td class="n">مقالات العملاء</td><td class="n">٢٣ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">151</td><td class="n">CA5</td><td>✅ ٧ · جبر سيو يسحب فعلاً — الدورة مثبتة حيّاً على الإنتاج</td><td class="n">console</td><td class="n">مقالات العملاء</td><td class="n">٣٠ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">152</td><td class="n">BKPRUNE</td><td>✅ تقليم النسخ الاحتياطية — وُصِّل بالكرون باحتفاظ جدّ–أب–ابن</td><td class="n">admin · dataLayer</td><td class="n">To Do</td><td class="n">٣٠ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">153</td><td class="n">BNMAP</td><td>⚡ كلمة · صفحة «خريطة بني» في الأدمن — عرض حي لبنية التخزين</td><td class="n">admin</td><td class="n">To Do</td><td class="n">٣٠ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">154</td><td class="n">83b</td><td>رفع فيديو الريل من المتصفّح مباشرةً لبني</td><td class="n">—</td><td class="n">To Do</td><td class="n">٢٣ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">155</td><td class="n">12b</td><td>✅ حُذف الاشتراك من صفحة المقال — البوكس والزرّ معاً</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">١٩ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">156</td><td class="n">12d</td><td>تشيك بوكس التسجيل — لا ينطبق</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">157</td><td class="n">UX</td><td>مدوّنتي ليست عميلاً — أُقفلت، البنود الأربعة</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">158</td><td class="n">16c</td><td>geo tracking على مودونتي</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">159</td><td class="n">16d</td><td>حدث booking_submit على مودونتي</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">160</td><td class="n">BL0</td><td>مرجع القرار — ضبابة الصور: ليش، وكيف، وإيش يحلّه</td><td class="n">modonty · admin · console · dataLayer</td><td class="n">To Do</td><td class="n">٦ أغسطس</td></tr>
-<tr><td class="n">163</td><td class="n">BL3</td><td>توليد الضبابة عند الرفع — create-media.ts</td><td class="n">admin</td><td class="n">To Do</td><td class="n">٦ أغسطس</td></tr>
-<tr><td class="n">164</td><td class="n">BL4</td><td>توليد الضبابة في معرض الأدمن — gallery-mutations.ts</td><td class="n">admin</td><td class="n">To Do</td><td class="n">٦ أغسطس</td></tr>
-<tr><td class="n">165</td><td class="n">BL5</td><td>توليد الضبابة في معرض الكونسول — gallery-actions.ts</td><td class="n">console</td><td class="n">To Do</td><td class="n">٦ أغسطس</td></tr>
-<tr><td class="n">166</td><td class="n">BL6</td><td>إعادة توليد الضبابة عند تبديل الملف</td><td class="n">admin</td><td class="n">To Do</td><td class="n">٦ أغسطس</td></tr>
-<tr><td class="n">167</td><td class="n">BL7</td><td>توليد الضبابة أثناء ترحيل بني — migrate-media-to-bunny.ts</td><td class="n">admin</td><td class="n">To Do</td><td class="n">٦ أغسطس</td></tr>
-<tr><td class="n">170</td><td class="n">BL10</td><td>أثر الضبابة على وزن الصفحة — قِيس: ١٫٦KB على أثقل صفحة، تبقى</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">192</td><td class="n">21</td><td>مُراجِع YMYL — الطبيب الموافق بالكونسول</td><td class="n">console</td><td class="n">قائمة الانتظار</td><td class="n">٦ أغسطس</td></tr>
-<tr><td class="n">193</td><td class="n">43</td><td>✅ Indexing API — حُذف الغلاف اليتيم بقرار خالد</td><td class="n">admin</td><td class="n">قائمة الانتظار</td><td class="n">٣٠ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">194</td><td class="n">14</td><td>أحداث الريلز إلى GA4 — خمسة أحداث موصولة</td><td class="n">modonty</td><td class="n">قائمة الانتظار</td><td class="n">٢٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">195</td><td class="n">37</td><td>قسم خدمات العميل — موديل ClientService</td><td class="n">dataLayer</td><td class="n">قائمة الانتظار</td><td class="n">٦ أغسطس</td></tr>
-<tr><td class="n">198</td><td class="n">I2</td><td>تبليغ تيليجرام للريلز المنتظرة اعتماداً</td><td class="n">modonty · console</td><td class="n">To Do</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">199</td><td class="n">63</td><td>أرشيف نسخ احتياطي ليلي على بني + كرت Atlas المالي</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">200</td><td class="n">86</td><td>صفحة خطأ عربية في الكونسول</td><td class="n">console</td><td class="n">عيوب وإصلاحات</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">201</td><td class="n">D1</td><td>رسالة «هذا المقال ما ينفتح» بدل الارتداد الصامت</td><td class="n">—</td><td class="n">عيوب وإصلاحات</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">202</td><td class="n">D2</td><td>تبليغات تيليجرام لقرارات العميل على المقالات</td><td class="n">modonty · console</td><td class="n">To Do</td><td class="n">٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">203</td><td class="n">D3</td><td>مسار /briefs — فريق المحتوى يقرأ بيانات العميل</td><td class="n">—</td><td class="n">To Do</td><td class="n">٥–٦ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">204</td><td class="n">D4</td><td>مفتاح showSchedule لكل عميل</td><td class="n">—</td><td class="n">To Do</td><td class="n">٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">205</td><td class="n">D5</td><td>خطة الأدمن اكتملت — أ٤ · أ٥ · أ٦ · أ٧</td><td class="n">admin · modonty</td><td class="n">To Do</td><td class="n">٥ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">207</td><td class="n">D7</td><td>ترحيل بني — الشقّ الأكبر</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٣١ يوليو – ٢ أغسطس</td></tr>
-<tr><td class="n">212</td><td class="n">FOOTCONTRAST</td><td>تسميات شريط الفوتر صارت تُقرأ — ١١ بكسل وتباين ٩:١</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">213</td><td class="n">TEALSWEEP</td><td>مسحة التركواز — انتهت فعلاً: صفر عنصر راسب على الفاتح</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">214</td><td class="n">D1HOME</td><td>الرئيسية — عنوان مرئي وبؤرة بصرية وترتيب البطاقة، الثلاثة أُصلحت</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">217</td><td class="n">OLDMOBOBS</td><td>ملاحظات جوّال أبريل — تسع من عشر سقطت بالقياس، وواحدة أُجّلت للإنتاج</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">218</td><td class="n">ENGGAPS</td><td>ثلاث فجوات تفاعل — أُعيد قياسها وأُغلقت</td><td class="n">modonty</td><td class="n">To Do</td><td class="n">٢٤ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">219</td><td class="n">FAQKPI</td><td>عدّاد «أسئلة تنتظر ردّك» في لوحة الأدمن يضخّم الرقم</td><td class="n">admin</td><td class="n">To Do</td><td class="n">٢٩ أغسطس</td></tr>
-<tr><td class="n">241</td><td class="n">SEOWATCH</td><td>قائمة المراقبة — رُوجعت ٢٧ أغسطس: ثلاثة أُصلحت، وواحد سقط، وثلاثة تُراقَب بأرقام محدَّثة</td><td class="n">modonty · admin</td><td class="n">سيو وأداء</td><td class="n">٢٧ أغسطس ٢٠٢٦</td></tr>
+
+
+
+
+
+
+<tr><td class="n">195</td><td class="n">37</td><td><b>قسم خدمات العميل</b> — البنية موجودة والواجهة لا. <b>مقيس ١ سبتمبر:</b> <code>schema.prisma:384</code> فيه <code>type ClientServiceItem { title · description · icon }</code> و<code>:680</code> فيه <code>Client.services ClientServiceItem[]</code>. الناقص هو محرّر الخدمات في الأدمن: صفر حقل مخصَّص، والموجود ذكرٌ عابر في نصّ مساعد (<code>business-brief-section.tsx:45</code>). <span style="opacity:.7">تصحيح: كتبتُ سابقاً «موديل ClientService غير موجود» — التسمية <code>ClientServiceItem</code> وهو <code>type</code> مضمَّن لا <code>model</code>، وهذا هو النمذجة الصحيحة في مونجو.</span></td><td class="n">dataLayer</td><td class="n">قائمة الانتظار</td><td class="n">٦ أغسطس</td></tr>
+
+
+
+
 <tr><td class="n">276</td><td class="n">SEOAGENT-READY</td><td>فحص «هل موقعك جاهز للوكلاء؟» (Cloudflare): ٢٠/١٠٠ — بندان فقط يستحقّان قرارك</td><td class="n">modonty</td><td class="n">سيو وأداء</td><td class="n">٢٨ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">324</td><td class="n">VERCEL-NOBUILD</td><td>✅ الدفع لـmain ما كان يبني — تنصيبة Vercel على GitHub لم تكن ترى المستودع</td><td class="n">admin</td><td class="n">خط سير النشر</td><td class="n">٣٠ أغسطس ٢٠٢٦</td></tr>
-<tr><td class="n">327</td><td class="n">REFERRAL-ADMIN</td><td>إحالة عميل لعميل — شاشة الأدمن وربط السداد</td><td class="n">admin · console</td><td class="n">To Do</td><td class="n">٢٩ أغسطس</td></tr>
+
+</table></div>
+</section>
+<section class="pane" id="pane-later" hidden>
+<h2 style="color:var(--muted)">⏸️ لاحقاً — مؤجَّل بقرار أو في قائمة الانتظار</h2>
+
+<p style="color:var(--muted);font-size:15px;margin:0 0 12px">مؤجَّل صراحةً. لا يُبدأ إلا بأمر خالد.</p>
+<input id="q-later" class="chkq" placeholder="تصفية…" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#0a0d12;color:var(--ink);font-family:inherit;font-size:15px;margin-bottom:12px">
+<p id="c-later" style="color:var(--muted);font-size:14px;margin:0 0 8px"></p>
+<div class="scrollx"><table id="t-later" class="chkt">
+<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th></tr>
+<tr><td class="n">82</td><td class="n">T9</td><td>إطفاء Cloudinary — مؤجَّل عمداً، لا معلَّق</td><td class="n">admin · modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
 </table></div>
 </section>
 
+
+
+<script>
+(() => {
+  const btns=[...document.querySelectorAll('.tabs button')];
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    btns.forEach(x=>x.setAttribute('aria-selected', String(x===b)));
+    ['todo','done','reels','work','later','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
+    
+    try{ localStorage.setItem('merge-board-tab', b.dataset.pane); }catch{}
+  }));
+  // العدّادات تُحسب لا تُكتب
+  document.getElementById('n-todo').textContent =
+    document.querySelectorAll('#pane-todo ol.step > li').length +
+    document.querySelectorAll('#pane-todo details.tk').length +
+    document.querySelectorAll('#pane-todo div.card').length;
+  // المنجز يعدّ البنود لا البطاقات: بطاقة بلا جدول = بند، وبطاقة فيها جدول = صفوفه
+  document.getElementById('n-data').textContent = document.querySelectorAll('#pane-data div.card').length;
+  document.getElementById('n-done').textContent =
+    [...document.querySelectorAll('#pane-done .done')].reduce((sum, card) => {
+      const t = card.querySelector('table');
+      return sum + (t ? t.querySelectorAll('tr').length - 1 : 1);
+    }, 0);
+  document.getElementById('n-reels').textContent = document.querySelectorAll('#pane-reels details.tk').length;
+  ['work','later'].forEach(k=>{
+    const rows=[...document.querySelectorAll('#t-'+k+' tr')].slice(1);
+    document.getElementById('n-'+k).textContent = rows.length;
+    const q=document.getElementById('q-'+k), cnt=document.getElementById('c-'+k);
+    const render=()=>{const v=q.value.trim().toLowerCase();let n=0;
+      rows.forEach(r=>{const hit=!v||r.innerText.toLowerCase().includes(v); r.hidden=!hit; if(hit)n++;});
+      cnt.textContent='ظاهر: '+n+' من '+rows.length;};
+    q.addEventListener('input',render); render();
+  });
+  try{
+    const saved=localStorage.getItem('merge-board-tab');
+    if(saved && saved!=='todo' && !['http','code','db','check','manual'].includes(saved)){const b=btns.find(x=>x.dataset.pane===saved); if(b) b.click();}
+  }catch{}
+})();
+</script>
+</body>
+</html>
 <section class="pane" id="pane-data" hidden>
 <h2 style="color:var(--amber)">🗄️ مشاكل الداتا — تُصلَح من الشاشة لا من الكود</h2>
 <p style="color:var(--muted);font-size:15px;margin:0 0 6px">كل بند هنا <b>نصٌّ مخزَّن في القاعدة كتبه إنسان</b>، لا سطرَ كودٍ يُعدَّل. الدليل في كل بطاقة: صفر مطابقة للنصّ في المستودع كلّه.</p>
 <p style="color:var(--muted);font-size:15px;margin:0 0 16px"><b>المسؤول: طارق</b> — كل بطاقة تقول: أين النصّ · ما الخطأ · مَن يراه · أين يُعدَّل · وكيف تتأكّد أنه انصلح.</p>
+
+
+<div class="card a" style="margin-bottom:16px">
+<h3>٣ · خمس صفحات عنوانها كلمة واحدة بلا اسم الموقع</h3>
+
+<p style="margin:0 0 8px"><b>ما الخطأ؟</b> ستّ صفحات تحمل عنواناً كاملاً، وخمسٌ تحمل كلمة عارية. والسبب أن الخمس بلا <code>seoTitle</code>، فيسقط العنوان على <code>title</code> الخام.</p>
+<div class="ev">القاعدة: modonty (الإنتاج) · مجموعة modonty · ٥ من ١١
+
+  ✔ terms            «الشروط والأحكام | منصة مدونتي للخدمات الرقمية»
+  ✔ privacy-policy   «سياسة الخصوصية | منصة مدونتي للخدمات الرقمية»
+  ✔ about · user-agreement · cookie-policy · copyright-policy — كلها كاملة
+
+  ✖ contact          «تواصل معنا»
+  ✖ trust            «الموثوقية»
+  ✖ story            «قصتنا»
+  ✖ reels            «الريلز»
+  ~ audio            «استمع للقرآن الكريم كاملاً بعشرين قارئاً…» (طويل لكن بلا اسم الموقع)</div>
+
+<p style="margin:10px 0 8px"><b>مَن يراه؟</b> هذا هو العنوان الذي يعرضه جوجل في نتيجة البحث، وهو ما يظهر في تبويب المتصفّح، وما يُنسخ حين يشارك أحدٌ الرابط. كلمة «قصتنا» وحدها لا تقول للباحث أيّ موقعٍ هذا.</p>
+
+<p style="margin:0 0 8px"><b>القاعدة المتّبعة في الستّ السليمة:</b> <code>عنوان الصفحة | منصة مدونتي للخدمات الرقمية</code></p>
+
+<p style="margin:0 0 8px"><b>أين تُعدَّل؟</b></p>
+<div class="ev">admin.modonty.com ← Modonty ← Pages ← افتح الصفحة ← حقل SEO Title ← Save
+
+الحفظ يجدّد الميتاداتا المخزّنة تلقائياً، فلا تحتاج خطوة إضافية.</div>
+
+<p style="margin:10px 0 0"><b>للتأكّد بعدها:</b> افتح الصفحة على مدونتي وشوف اسم التبويب في المتصفّح — لازم يحمل اسم الموقع بعد الشرطة.</p>
+<p style="margin:8px 0 0;opacity:.8">⚠️ لم أكتبها من طرفي: العنوان الذي يصل جوجل نصٌّ تسويقيّ، وصياغته قرارك.</p>
+</div>
 
 <div class="card a" style="margin-bottom:16px">
 <h3>١ · اسم الكاتب وعنوان صفحته بالإنجليزي</h3>
@@ -1083,7 +1174,7 @@ seoDescription →  صفحة الكاتب «مدونتي»: كل المقالا�
   const btns=[...document.querySelectorAll('.tabs button')];
   btns.forEach(b=>b.addEventListener('click',()=>{
     btns.forEach(x=>x.setAttribute('aria-selected', String(x===b)));
-    ['todo','done','reels','http','code','db','manual','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
+    ['todo','done','reels','work','later','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
     
     try{ localStorage.setItem('merge-board-tab', b.dataset.pane); }catch{}
   }));
