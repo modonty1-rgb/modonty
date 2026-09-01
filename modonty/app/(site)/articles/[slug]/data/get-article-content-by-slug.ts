@@ -14,7 +14,11 @@ import { db } from "@/lib/db";
 export async function getArticleContentBySlug(slug: string) {
   "use cache";
   cacheTag("articles");
-  cacheLife("hours");
+  // ⚠️ ISOLATION EXPERIMENT — 1 Sep 2026. `"hours"` gives stale=300, so a page needs five
+  // minutes before it enters the revalidation window where the failure happens; measuring that
+  // costs ~25 minutes per round. One minute reproduces the same window in a sixtieth of the time.
+  // Revert to `cacheLife("hours")` once the cause is settled.
+  cacheLife({ stale: 60, revalidate: 60, expire: 300 });
   return db.article.findFirst({
     where: {
       slug,
