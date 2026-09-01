@@ -63,6 +63,30 @@ export async function canDeleteMedia(id: string, clientId?: string) {
       };
     }
 
+    // ريل رآه الزائر — أو ما زال في الطابور. الحارس كان يجهل الريلز تماماً (صفر ورود
+    // لـ`inReels` أو `reelStatus`)، فصفّ ريل يُحذف من شاشة الوسائط بلا تحذير، ويبقى
+    // الفيديو عند بني بلا مالك: مساحة مدفوعة ورابط عامّ مكسور، ولا مسار يستدعي
+    // `deleteStreamVideo`. نفس صنف فقدان البيانات الذي عالجه حارس معرض المقال أعلاه.
+    //
+    // المؤرشف والمرفوض يُحذفان: خرجا من الواجهة العامّة وقرارهما اتُّخذ.
+    const REEL_LIVE_STATUSES = new Set<string>(["DRAFT", "PENDING_APPROVAL", "APPROVED", "PUBLISHED"]);
+    const reelStatus = usage.reelStatus as string | null;
+    if (usage.inReels || (reelStatus && REEL_LIVE_STATUSES.has(reelStatus))) {
+      const label =
+        reelStatus === "PUBLISHED"
+          ? "منشور على مدونتي"
+          : reelStatus === "APPROVED"
+            ? "معتمَد وينتظر النشر"
+            : reelStatus === "PENDING_APPROVAL"
+              ? "في طابور الاعتماد"
+              : "مسوّدة ريل";
+      return {
+        canDelete: false,
+        reason: `هذا الوسيط ريل ${label}. أرشفه من شاشة الريلز أوّلاً — الحذف من هنا يترك الفيديو عند بني بلا مالك.`,
+        usage,
+      };
+    }
+
     return { canDelete: true, usage };
   } catch (error) {
     return { canDelete: false, reason: "Failed to check media usage" };

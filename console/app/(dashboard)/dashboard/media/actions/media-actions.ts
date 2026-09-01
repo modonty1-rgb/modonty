@@ -29,6 +29,31 @@ export async function deleteMedia(mediaId: string, clientId: string) {
       };
     }
 
+    // الريل لا يُحذف من شاشة الوسائط. هذا المسار كان يفحص المقالات وحدها، فصفّ ريل
+    // منشور يُمحى من هنا: يختفي من مدونتي بلا علم أحد، ويبقى الفيديو عند بني بلا مالك.
+    // مسار الريلز نفسه يؤرشف ما رآه الزائر ولا يحذفه (`reels-actions.ts`) — فهذا الباب
+    // كان يلتفّ على ذلك القرار.
+    // المؤرشف والمرفوض يمرّان: خرجا من الواجهة العامّة وقرارهما اتُّخذ.
+    const REEL_LIVE_STATUSES: string[] = ["DRAFT", "PENDING_APPROVAL", "APPROVED", "PUBLISHED"];
+    if (media.inReels || (media.reelStatus && REEL_LIVE_STATUSES.includes(media.reelStatus))) {
+      return {
+        success: false,
+        error: "هذا الوسيط ريل — امسحه من شاشة الريلز لا من هنا.",
+      };
+    }
+
+    // فيديو بني ستريم يُخزَّن بمعرّفه، فحذف الصفّ وحده يتركه في المكتبة: مساحة مدفوعة
+    // بلا مالك. أفضل جهد — لا يعطّل حذف الصفّ، كما في مسار الأدمن.
+    if (media.bunnyVideoId) {
+      try {
+        const { deleteStreamVideo } = await import("@modonty/shared/lib/bunny-stream");
+        await deleteStreamVideo(media.bunnyVideoId);
+      } catch {
+        // يُسجَّل ولا يُوقف: الصفّ يُحذف، والفيديو اليتيم يلتقطه فحص الصيانة.
+        console.warn("Bunny Stream delete failed, continuing with DB deletion");
+      }
+    }
+
     await db.media.delete({
       where: { id: mediaId },
     });

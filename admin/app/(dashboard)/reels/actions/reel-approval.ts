@@ -49,6 +49,28 @@ async function firstUnreachable(urls: (string | null)[]): Promise<string | null>
         signal: AbortSignal.timeout(8000),
       });
       if (!res.ok) return `${file} ← ${res.status}`;
+
+      // أوّل بايت يقول «الملف موجود»، ولا يقول «الملف كامل». وبني ردّ علينا ٣١ أغسطس ٢٠٢٦
+      // بـ«مكتمل ١٠٠٪ · 150MB» عن ملف يعلن 11,542,896 بايت ويصل منه ~5.1 ميغا برقم مختلف
+      // كل مرّة من ثلاث نقاط توزيع (`curl exit=18`). فالحارس كان يمرّره.
+      //
+      // فنسأل عن **آخر** بايت كذلك: `Range: bytes=-1`. النقطة التي لا تملك إلا مقدّمة الملف
+      // لا تستطيع تسليم بايته الأخير — ترد ٤١٦ أو تفشل. وثمنه بايتٌ واحد، لا تنزيلٌ كامل
+      // لعشرات الميغابايتات عند كل اعتماد.
+      //
+      // ونقرأ `content-range` لنقارن الطول المعلن في الردّين: اختلافهما يعني أن ما عند
+      // النقطة ليس ما يعلنه الأصل.
+      const declared = res.headers.get("content-range")?.split("/")[1] ?? null;
+      const tail = await fetch(url, {
+        headers: { range: "bytes=-1" },
+        cache: "no-store",
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!tail.ok) return `${file} ← الملف ناقص عند نقطة التوزيع (آخر بايت ${tail.status})`;
+      const tailDeclared = tail.headers.get("content-range")?.split("/")[1] ?? null;
+      if (declared && tailDeclared && declared !== tailDeclared) {
+        return `${file} ← الطول غير ثابت (${declared} ثم ${tailDeclared}) — ارفعه من جديد`;
+      }
     } catch (e) {
       return `${file} ← ما رد (${e instanceof Error ? e.name : "?"})`;
     }

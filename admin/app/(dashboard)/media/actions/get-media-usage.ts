@@ -60,6 +60,12 @@ export async function getMediaUsage(id: string, clientId?: string) {
       // CLIENT_MINI images (live on the client page with no back-relation) from deletion.
       mediaType: media.type,
       ownerClientId: media.clientId,
+      // حالة الريل ومعرّف الفيديو على بني. الحارس كان يجهل الريلز تماماً، فصفّ ريل منشور
+      // يُحذف من شاشة الوسائط ويبقى الفيديو عند بني بلا مالك — مساحة مدفوعة ورابط عامّ
+      // مكسور. نفس صنف فقدان البيانات الذي عالجه حارس معرض المقال أعلاه.
+      inReels: media.inReels,
+      reelStatus: media.reelStatus,
+      bunnyVideoId: media.bunnyVideoId,
       clientUsage: {
         logoClients: media.logoClients,
         heroImageClients: media.heroImageClients,

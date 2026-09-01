@@ -117,11 +117,11 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 
 
 
-<tr><td class="n">1</td><td class="n">25</td><td><b>روابط داخلية سياقية — موجودة فعلاً.</b> مقيس على ١٤ مقالاً حيّاً: <b>١٤ من ١٤</b> فيه رابط داخليّ، المتوسّط <b>٢٫٩</b> للمقال (داخلي ٤٠ · خارجي ٢٤). المتن يُرسم من HTML الكاتب (<code>ArticleMainColumn.tsx:247</code>) فالروابط تحريرية، و<code>BodyLinkTracker</code> يقيس نقراتها أصلاً. الباقي — هل ٢٫٩ تكفي؟ — قرار تحريريّ</td><td class="n" style="color:var(--green)">🟩 قرار تحريريّ</td><td class="n">modonty</td></tr>
-<tr><td class="n">2</td><td class="n">80</td><td>تحقّق النسخ الاحتياطي. <b>الكود مبنيّ:</b> <code>getBackupRuns()</code> يقرأ <code>db.backupRun</code> · وشاشتان <code>backup-runs-panel.tsx</code> و<code>backup-restore-card.tsx</code>. الناقص: افتحها على الإنتاج واقرأ الصفوف</td><td class="n" style="color:var(--green)">🟩 قياس</td><td class="n">admin</td></tr>
-<tr><td class="n">3</td><td class="n">IMG-FB</td><td>آخر حلقة في سلسلة صورة الاحتياط. <b>قِست ١ سبتمبر:</b> السلسلة تنتهي عند <code>BRAND_LOGO_URL</code> على بني — معلن <code>4733</code> وواصل <code>4733</code> بتنزيل كامل ✔، والأربعة ترد <code>200/206</code></td><td class="n" style="color:var(--green)">🟩 قياس</td><td class="n">admin</td></tr>
-<tr><td class="n">4</td><td class="n">63 · SEOWATCH · T1</td><td>ثلاثة خارج المستودع: أرشيف النسخ على بني وكرت Atlas · مقارنة أرقام السيو بـ٢٧ أغسطس · تشغيل بوت المحتوى على Vercel</td><td class="n" style="color:var(--green)">🟩 تشغيل وقياس</td><td class="n">—</td></tr>
-<tr><td class="n">5</td><td class="n">JC5</td><td>٥ · تست حيّ — إدارة المحتوى. <b>لا نصّ له</b> في اللوحة ولا <code>task-data.json</code> ولا أرشيف أغسطس — عنوان فقط</td><td class="n" style="color:var(--muted)">⬜ بلا معيار</td><td class="n">admin</td></tr>
+
+
+
+
+
 </table></div>
 </section>
 
@@ -182,14 +182,14 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 
 <details class="tk" open>
 <summary><span class="id">REEL-LEAK</span><span class="sv sv-h">عالٍ</span><span class="tt">ثغرتان: العميل يسحب ريلاً حيّاً من الموقع · وحذف الوسائط يترك فيديو بني يتيماً</span><span class="ap">admin · console</span></summary>
-<div class="body"><p><b>ثغرة ١ — العميل يشيل ريلاً منشوراً من طرفه.</b> زرّ الحذف في الكونسول يظهر لأي ريل بغضّ النظر عن حالته (<code>reels-manager.tsx:314-329</code>)، وعلى المنشور ينفّذ <code>PUBLISHED → ARCHIVED</code> + <code>inReels:false</code> + <code>revalidateModontyTag("reels")</code> (<code>console/app/(dashboard)/dashboard/reels/actions/reels-actions.ts:254-257</code>). النتيجة: الريل يختفي من مدونتي بلا علمنا. ونفس المسار للفيديو (<code>video-actions.ts:270-278</code>).</p>
+<div class="body"><p style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.35);border-radius:8px;padding:10px 14px;margin:0 0 12px"><b style="color:var(--green)">نُفِّذ ١ سبتمبر ٢٠٢٦ — ثغرة الحذف سُدَّت في المسارين.</b><br>• <code>admin/.../can-delete-media.ts</code> صار يفحص <code>inReels</code> و<code>reelStatus</code>؛ الريل في <code>DRAFT/PENDING_APPROVAL/APPROVED/PUBLISHED</code> يُرفض حذفه برسالة تسمّي حالته. و<code>get-media-usage.ts</code> صار يجلب الحقول الثلاثة.<br>• <code>admin/.../delete-media.ts</code> صار يستدعي <code>deleteStreamVideo(bunnyVideoId)</code> — أفضل جهد لا يعطّل حذف الصفّ، نفس عقد مرآة الصور.<br>• <code>console/.../media-actions.ts</code> كان أخطر: يفحص المقالات وحدها. صار يرفض الريل الحيّ ويحذف فيديو بني.<br><b>وما ليس عطلاً:</b> سحب العميل لريله المنشور <b>سلوك مصمَّم</b> — <code>reels-manager.tsx:322</code> يخبره صراحةً «يطلع من الفيد، وتعليقات الزوّار وإعجاباتهم تبقى محفوظة». إبقاء الصلاحية أو نزعها <b>قرارك</b>.</p><p><b>ثغرة ١ — العميل يشيل ريلاً منشوراً من طرفه.</b> زرّ الحذف في الكونسول يظهر لأي ريل بغضّ النظر عن حالته (<code>reels-manager.tsx:314-329</code>)، وعلى المنشور ينفّذ <code>PUBLISHED → ARCHIVED</code> + <code>inReels:false</code> + <code>revalidateModontyTag("reels")</code> (<code>console/app/(dashboard)/dashboard/reels/actions/reels-actions.ts:254-257</code>). النتيجة: الريل يختفي من مدونتي بلا علمنا. ونفس المسار للفيديو (<code>video-actions.ts:270-278</code>).</p>
 <p><b>ثغرة ٢ — حذف الوسائط العام لا يفحص الريل.</b> <code>admin/app/(dashboard)/media/actions/delete-media.ts:83</code> يحذف الصفّ، وحارسه <code>can-delete-media.ts</code> يفحص المقالات وشعار العميل وأنواع المعرض — <b>ولا يفحص <code>inReels</code> ولا <code>reelStatus</code> إطلاقاً</b>، ولا يستدعي <code>deleteStreamVideo</code>. صفّ ريل مستقلّ يمرّ منه → فيديو بني يتيم ورابط عام مكسور. ونفس الغياب في <code>console/app/(dashboard)/dashboard/media/actions/media-actions.ts:32</code>.</p>
 <p><b>يقفل بـ:</b> محاولة حذف ريل منشور من الكونسول تُرفض برسالة تسمّي السبب · ومحاولة حذفه من شاشة الوسائط تُرفض أو تحذف فيديو بني معه.</p></div>
 </details>
 
 <details class="tk" open>
 <summary><span class="id">REEL-BUNNY-TRUST</span><span class="sv sv-n">متوسّط</span><span class="tt">بني يقول «مكتمل ١٠٠٪» عن ملف ناقص النصف — وحرّاسنا كانت تصدّقه</span><span class="ap">admin</span></summary>
-<div class="body"><p><b>الحادثة:</b> ريل «ثلاث خطوات» (<code>85d9c768…</code>) كان يُرفض بـ«ملف الريل مو موجود (404)»، وبني API يقول عنه <code>status 4 · encodeProgress 100 · storage 150MB</code>. القياس القاطع:</p>
+<div class="body"><p style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.35);border-radius:8px;padding:10px 14px;margin:0 0 12px"><b style="color:var(--green)">نُفِّذ ١ سبتمبر ٢٠٢٦ — الحارس ما عاد يصدّق أوّل بايت.</b><br><code>reel-approval.ts</code> صار يسأل عن <b>آخر</b> بايت أيضاً (<code>Range: bytes=-1</code>) ويقارن الطول المعلن في الردّين. النقطة التي لا تملك إلا مقدّمة الملف لا تسلّم بايته الأخير. الثمن بايتان، لا تنزيل عشرات الميغابايتات عند كل اعتماد.<br><b>مقيس على ملف سليم:</b> <code>0-0/4733</code> ثم <code>4732-4732/4733</code> — الطول متطابق فيمرّ.<br><b>الباقي:</b> فحص دوريّ على الريلز <b>المنشورة</b> سابقاً — هذا يحرس الاعتماد الجديد لا القديم.</p><p><b>الحادثة:</b> ريل «ثلاث خطوات» (<code>85d9c768…</code>) كان يُرفض بـ«ملف الريل مو موجود (404)»، وبني API يقول عنه <code>status 4 · encodeProgress 100 · storage 150MB</code>. القياس القاطع:</p>
 <pre>الترويسة تعلن :  Content-Length: 11,542,896
 اللي يصل فعلاً:  5,169,048 · 5,112,148 · 5,242,880   ← رقم مختلف كل مرّة
                  من ثلاث نقاط توزيع مختلفة · curl exit=18
@@ -226,42 +226,30 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 
 
 <section class="pane" id="pane-codex" hidden>
-<h2>🤖 Codex — بنود تنفيذية من الجرد</h2>
+<h2>🤖 Codex — بنود تنفيذية من الجرد</h2><p style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:10px;padding:12px 16px;margin:0 0 14px;font-size:15px"><b style="color:var(--green)">حصيلة ١ سبتمبر ٢٠٢٦ — ستّة بنود فُحصت بالكود، بقي واحد.</b><br>• <code>SERVICES-37</code> <b>ساقط:</b> المحرّر موجود — <code>console/.../services-editor.tsx</code> و<code>update-services.ts:39</code>، والكود يصرّح أن مالكه العميل (<code>block-source.ts:22</code>: <code>owner: "client"</code>). ومقيس حيّاً: قسم «خدماتنا» وزرّ «أضف خدمة» ظاهران في شاشة «محتوى الموقع».<br>• <code>IMAGE-SIZES</code> <b>ساقط بالحساب:</b> سلّمنا <code>…384 · 640 · 750…</code> والمرسوم ٤٤٦–٤٦٢، فأي إعلان بين ٣٨٥ و٦٤٠ يُنتج <code>640</code> نفسه. المخدوم اليوم هو الأمثل ولا يوفّر تغييرُه بايتاً.<br>• <code>REEL-LEAK</code> و<code>REEL-BUNNY-TRUST</code> <b>نُفِّذا</b> — التفصيل في تبويب «🎬 الريلز».<br>• <code>LIVE-CHECKUP</code> يحمل الآن ما ثبت من المفاتيح والكرون.<br>• <b>الباقي وحده:</b> <code>REEL-CTRL</code> — مؤكَّد بالكود (<code>load-reels.ts:60</code> يحصر الجلب في <code>PENDING_APPROVAL</code>، و<code>reels/page.tsx</code> يعرض ثلاثة أرقام غير قابلة للنقر)، وخطته خمس مراحل تنتظر «ابدأ».</p>
 
 
 
-<details class="tk" open>
-<summary><span class="id">REEL-LEAK</span><span class="sv sv-h">عالٍ</span><span class="tt">العميل يخرج الريل الحيّ وحذف الوسيط يترك Stream مدفوعاً</span><span class="ap">admin · console</span></summary>
-<div class="body"><b>ما يُعمل:</b> إغلاق أفعال العميل/الوسائط أمام الريل المنشور، وربط كل حذف صف ريل بحذف فيديو Bunny Stream المقابل أو رفض العملية بوضوح.<br><b>الدليل:</b> العميل يحوّل <code>PUBLISHED → ARCHIVED</code> في <code>console/.../reels-actions.ts:250-257</code>؛ حذف وسائط الكونسول <code>media-actions.ts:18-34</code> وحذف الأدمن <code>delete-media.ts:14-83</code> لا يفحصان <code>inReels/reelStatus</code> ولا يستدعيان حذف Stream.<br><b>✔ ينغلق بـ:</b> محاولة حذف ريل منشور من العميل والوسائط تُرفض؛ حذف ريل غير حيّ لا يترك <code>bunnyVideoId</code> في Bunny.</div>
-</details>
+
 
 <details class="tk">
 <summary><span class="id">REEL-CTRL</span><span class="sv sv-h">عالٍ</span><span class="tt">الأدمن لا يرى إلا طابور الانتظار ولا يملك التحكم بالمنشور</span><span class="ap">admin</span></summary>
 <div class="body"><b>ما يُعمل:</b> تسليم قائمة إدارية تغطي المنشور والمرفوض والمؤرشف، مع أفعال الإدارة التي تبقى بيد الأدمن وحده.<br><b>الدليل:</b> <code>admin/app/(dashboard)/reels/helpers/load-reels.ts:58-61</code> يحصر الجلب في <code>PENDING_APPROVAL</code>، والصفحة تعرض عدّادات فقط: <code>reels/page.tsx:21-23</code>. كما أن <code>DRAFT</code> و<code>APPROVED</code> و<code>ReelUploader.ADMIN</code> لا يكتبها مسار: <code>shared/prisma/schema/schema.prisma:3629-3641</code>.<br><b>✔ ينغلق بـ:</b> الأدمن يرى كل حالة ويوقف/يحذف/يعيد نشر ريل من الشاشة، والعميل لا يملك تغيير المنشور.</div>
 </details>
 
-<details class="tk">
-<summary><span class="id">SERVICES-37</span><span class="sv sv-n">متوسّط</span><span class="tt">خدمات العميل مخزّنة لكن لا محرّر إداري لها</span><span class="ap">admin · dataLayer</span></summary>
-<div class="body"><b>ما يُعمل:</b> إتاحة إدارة عناصر الخدمات المخزنة للعميل من شاشة الأدمن، ثم التحقق من حفظها وظهورها في صفحة العميل.<br><b>الدليل:</b> <code>shared/prisma/schema/schema.prisma:384-388,680</code> يعرّف <code>ClientServiceItem[]</code>، والذكر في النموذج الحالي نص مساعد فقط: <code>admin/.../business-brief-section.tsx:45</code>.<br><b>✔ ينغلق بـ:</b> إدخال عنوان ووصف وأيقونة، إعادة فتح العميل، وظهور العناصر في الصفحة وOfferCatalog.</div>
-</details>
 
 
 
 
 
-<details class="tk">
-<summary><span class="id">IMAGE-SIZES</span><span class="sv sv-i">منخفض</span><span class="tt">ثلاثة إعلانات sizes ثابتة تحتاج قياس عرض فعلي</span><span class="ap">modonty · admin · console</span></summary>
-<div class="body"><b>ما يُعمل:</b> قياس <code>rendered width</code> مقابل مورد الصورة في كل viewport قبل الحكم؛ لا يوجد قص مثبت آخر. أُسقطت بطاقات الشركاء: على <code>/clients</code> الأصل <code>559×93</code> (6.01) والقص 0%، فلا تُعاد.<br><b>الدليل:</b> <code>PartnerCard.tsx:61-68</code> يعلن <code>600px</code> داخل تخطيط مرن؛ <code>admin/.../page-form.tsx:127-157</code> يعلن <code>600px</code> للمعاينة؛ <code>console/.../page-content-editor.tsx:365</code> يعلن <code>900px</code> مع <code>w-full</code>.<br><b>✔ ينغلق بـ:</b> DevTools لكل viewport: <code>naturalWidth</code> مناسب للعرض المرصود ولا تمدد بصري؛ وإلا يبقى البند مفتوحاً بالقياس المسجل.</div>
-</details>
 
-<details class="tk">
-<summary><span class="id">REEL-BUNNY-TRUST</span><span class="sv sv-n">متوسّط</span><span class="tt">اكتمال Bunny لا يثبت أن كامل بايتات الفيديو تصل</span><span class="ap">admin · Bunny</span></summary>
-<div class="body"><b>قياس حي مطلوب:</b> لكل ريل منشور، طلب GET كامل من رابط النشر ثم مقارنة حجم البايتات الواصلة مع <code>Content-Length</code> المعلن؛ لا يكفي Range <code>0-0</code>.<br><b>الدليل:</b> حالة الملف الناقص مسجلة في <code>REEL-BUNNY-TRUST</code>، وحارس الاعتماد يتحقق من أول بايت فقط: <code>admin/.../reel-approval.ts:23-58</code>.<br><b>✔ ينغلق بـ:</b> جدول نتيجة لكل ريل منشور: الطول المعلن = الطول الواصل، أو حالة فشل ظاهرة قابلة للإصلاح.</div>
-</details>
+
+
+
 
 <details class="tk">
 <summary><span class="id">LIVE-CHECKUP</span><span class="sv sv-i">قياس حي</span><span class="tt">بنود لا يحسمها الكود: النسخ، Vercel، Search Console، وتطبيقات الجوال</span><span class="ap">الإنتاج</span></summary>
-<div class="body"><b>القياس المطلوب بالضبط:</b> <code>backup_runs</code> + ملف Bunny قابل للاستعادة (63/80)؛ مقارنة Search Console بلقطة 27 أغسطس (SEOWATCH)؛ تشغيل بوت المحتوى (T1)؛ آخر Vercel deployment/cron logs؛ <code>pnpm build</code> للتطبيقات الثلاثة ثم فتح دليل الفريق/شاشات الصور، والتطبيقين على جهاز.<br><b>المرجع:</b> <code>documents/HTML/CODEX-REVIEW-2026-09-01.md</code> — القياسات السابقة، ولا يحمل المستودع ناتجها.<br><b>✔ ينغلق بـ:</b> ناتج خام مؤرخ لكل قياس (HTTP/بايت/سجل/لقطة شاشة) في اللوحة.</div>
+<div class="body"><b>القياس المطلوب بالضبط:</b> <code>backup_runs</code> + ملف Bunny قابل للاستعادة (63/80)؛ مقارنة Search Console بلقطة 27 أغسطس (SEOWATCH)؛ تشغيل بوت المحتوى (T1)؛ آخر Vercel deployment/cron logs؛ <code>pnpm build</code> للتطبيقات الثلاثة ثم فتح دليل الفريق/شاشات الصور، والتطبيقين على جهاز.<br><b>المرجع:</b> <code>documents/HTML/CODEX-REVIEW-2026-09-01.md</code> — القياسات السابقة، ولا يحمل المستودع ناتجها.<br><b>مثبَت ١ سبتمبر (لا يُعاد فحصه):</b> الكرون معرَّف يومياً ٠١:٠٠ — <code>admin/vercel.json</code> · والمفاتيح كلها في بيئة إنتاج الأدمن، لُفَّت القائمة حتى نهايتها: <code>CRON_SECRET</code> · <code>BUNNY_BACKUP_STORAGE_HOSTNAME/ZONE_NAME/PASSWORD/READONLY_PASSWORD</code> · <code>ATLAS_PUBLIC_KEY/PRIVATE_KEY/ORG_ID/PROJECT_ID/CLUSTER_NAME</code> · <code>CONTENT_TEAM_BOT_TOKEN</code> · <code>CONTENT_TEAM_CHAT_ID</code>. <b>وما تعذّر عليّ:</b> سرد أرشيف بني — القيم مشفَّرة ولا يُخرجها الـAPI. و<code>25</code> انضمّ هنا: الروابط الداخلية مقيسة موجودة (١٤/١٤ · متوسّط ٢٫٩)، والباقي قرار تحريريّ لا قياس.<br><b>✔ ينغلق بـ:</b> ناتج خام مؤرخ لكل قياس (HTTP/بايت/سجل/لقطة شاشة) في اللوحة.</div>
 </details>
 </section>
 

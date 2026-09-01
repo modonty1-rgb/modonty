@@ -8,6 +8,7 @@ import { deleteCloudinaryAsset } from "./delete-cloudinary-asset";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
 import { deleteBunnyUrl, bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/shared/lib/bunny";
+import { deleteStreamVideo } from "@modonty/shared/lib/bunny-stream";
 
 export async function deleteMedia(id: string, clientId?: string) {
   try {
@@ -36,6 +37,9 @@ export async function deleteMedia(id: string, clientId?: string) {
         type: true,
         mimeType: true,
         clientId: true,
+        // فيديو بني ستريم يُخزَّن بمعرّفه لا برابطه، فلا يمسّه `deleteBunnyUrl`.
+        // بدونه يبقى الفيديو في المكتبة بعد حذف صفّه — مساحة مدفوعة بلا مالك.
+        bunnyVideoId: true,
       },
     });
 
@@ -76,6 +80,19 @@ export async function deleteMedia(id: string, clientId?: string) {
         }
       } catch {
         console.warn("Bunny delete failed (mirror), continuing with DB deletion");
+      }
+    }
+
+    // فيديو بني ستريم — نفس عقد المرآة أعلاه: أفضل جهد، ولا يعطّل حذف الصفّ أبداً.
+    // كان غائباً تماماً، فحذف صفّ الريل يترك الفيديو في المكتبة بلا مالك: مساحة مدفوعة
+    // ورابط عامّ لا يشير إليه شيء. والصور تُحذف بالرابط (`deleteBunnyUrl`)، أمّا الفيديو
+    // فبمعرّفه — فلا يكفي أحدهما عن الآخر.
+    if (media.bunnyVideoId) {
+      try {
+        const removed = await deleteStreamVideo(media.bunnyVideoId);
+        if (!removed) console.warn(`Bunny Stream refused to delete ${media.bunnyVideoId}`);
+      } catch {
+        console.warn("Bunny Stream delete failed, continuing with DB deletion");
       }
     }
 
