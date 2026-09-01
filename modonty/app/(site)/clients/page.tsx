@@ -22,7 +22,7 @@ export async function generateMetadata({ searchParams }: ClientsPageProps): Prom
   const partners = coreClientId ? allPartners.filter((partner) => partner.id !== coreClientId) : allPartners;
   const hasResults = filterPartners(partners, parsePartnersQuery(params)).length > 0;
 
-  return {
+  const merged: Metadata = {
     description: messages.seo.clients.description,
     ...(metadata ?? {}),
     // Search, industry and page live in the URL, so one canonical for all of them —
@@ -33,6 +33,8 @@ export async function generateMetadata({ searchParams }: ClientsPageProps): Prom
     },
     ...(!hasResults && { robots: { index: false, follow: true } }),
   };
+  // ازدواج العلامة يُعالَج مركزياً في `getListingPageSeo`، مشروطاً بوجودها في المخزَّن.
+  return merged;
 }
 
 interface ClientsPageProps {

@@ -15,14 +15,29 @@ const text = messages.faq;
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getListingPageSeo("faq");
-  if (metadata) return metadata;
-  return generateMetadataFromSEO({
-    title: "الأسئلة الشائعة",
-    description: messages.seo.faq.description,
-    keywords: ["أسئلة", "شائعة", "مساعدة", "دعم"],
-    url: "/help/faq",
-    type: "website",
-  });
+
+  const fallback = () =>
+    generateMetadataFromSEO({
+      title: "الأسئلة الشائعة",
+      description: messages.seo.faq.description,
+      keywords: ["أسئلة", "شائعة", "مساعدة", "دعم"],
+      url: "/help/faq",
+      type: "website",
+    });
+
+  // الشرط كان `if (metadata)` — والبلوب المخزَّن موجودٌ **بلا مفتاح `title`** (مقيس على
+  // القاعدة: عمود `faqPageMetaTags` بلا `title`). فالكائن صادق، والاحتياط لا يُستدعى أبداً،
+  // و«title.template has no effect if a route has not defined a title or title.default»
+  // (generate-metadata.md:294) ⇒ تُورَث `default` الجذر. النتيجة على الإنتاج ١ سبتمبر ٢٠٢٦:
+  // «مدونتي - منصة المدونات متعددة الشركاء» — عنوان الموقع لا عنوان الصفحة.
+  // الشرط الصحيح: بلوبٌ بلا عنوان = لا بلوب.
+  if (!metadata || typeof metadata.title === "undefined") return fallback();
+
+  // ومتى وُجد العنوان، يُلفّ كما في بقيّة صفحات القوائم كي لا يُلحق القالب العلامة ثانيةً.
+  if (typeof metadata.title === "string") {
+    return { ...metadata, title: { absolute: metadata.title } };
+  }
+  return metadata;
 }
 
 function sanitizeJsonLd(json: unknown): string {

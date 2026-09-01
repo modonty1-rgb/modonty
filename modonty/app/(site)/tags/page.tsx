@@ -29,13 +29,11 @@ export async function generateMetadata(): Promise<Metadata> {
     type: "website",
   });
   const merged: Metadata = { ...fallback, ...(metadata ?? {}) };
-  // Both the admin-stored title and the fallback already include the brand
-  // ("… | مدونتي"). Wrap in `absolute` so the root layout's `%s | مدونتي`
-  // template doesn't append it a second time (Next.js: title.absolute ignores
-  // the parent template). og:title is unaffected by the template — stays correct.
-  if (typeof merged.title === "string") {
-    merged.title = { absolute: merged.title };
-  }
+  // كان هنا لفٌّ غير مشروط في `absolute`، وتعليقه يقول إن العنوان المخزَّن والاحتياط
+  // «كلاهما يحمل العلامة». الشقّ الثاني لم يعد صحيحاً: `generateMetadataFromSEO` توقّفت
+  // عن إلحاقها (`pageTitle = title || siteName` — lib/seo/index.ts:192)، فالاحتياط اليوم
+  // «الوسوم» مجرّدة. واللفّ غير المشروط كان يمنع القالب من إلحاقها فتخرج الصفحة بلا علامة —
+  // مقيس على الديف. العلاج صار مركزياً في `getListingPageSeo` ومشروطاً بوجودها في المخزَّن.
   return merged;
 }
 

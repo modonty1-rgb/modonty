@@ -25,9 +25,8 @@ export async function generateMetadata(): Promise<Metadata> {
       canonical: `${SITE_URL}/industries`,
     },
   };
-  if (typeof merged.title === "string") {
-    merged.title = { absolute: merged.title };
-  }
+  // اللفّ في `absolute` صار مركزياً في `getListingPageSeo` ومشروطاً بأن العنوان المخزَّن
+  // ينتهي بالعلامة — كان هنا بلا شرط، فيُسقطها حين لا يحملها.
   return merged;
 }
 

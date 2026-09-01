@@ -16,8 +16,6 @@ import type { CategoryResponse } from "@/lib/types";
 import type { EntityCardProps } from "@/components/listing/EntityCard";
 import { messages } from "@/lib/i18n/messages";
 
-const PAGE_SIZE = 20;
-
 const SORT_OPTIONS: EntitySortOption[] = [
   { value: "articles", label: "الأكثر مقالات" },
   { value: "trending", label: "الأكثر رواجًا" },
@@ -31,11 +29,10 @@ export async function generateMetadata(): Promise<Metadata> {
     description: messages.seo.categories.description,
     ...(metadata ?? {}),
   };
-  // Admin-stored title already includes the brand; wrap in `absolute` so the
-  // root layout's `%s | مدونتي` template doesn't append it a second time.
-  if (typeof merged.title === "string") {
-    merged.title = { absolute: merged.title };
-  }
+  // كان هنا لفٌّ غير مشروط في `absolute` بافتراض «العنوان المخزَّن يحمل العلامة» — وهو
+  // افتراض يكذّبه القياس: على الديف العنوان بلا علامة، فمنع اللفُّ القالبَ من إلحاقها
+  // وخرجت الصفحة بلا علامة إطلاقاً. صار العلاج مركزياً في `getListingPageSeo` ومشروطاً
+  // بوجودها فعلاً في المخزَّن.
   return merged;
 }
 
@@ -76,8 +73,17 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
     digitalImpact: cat.digitalImpact,
   });
 
-  const pageOne = all.slice(0, PAGE_SIZE).map(toCard);
-  const hasMore = all.length > PAGE_SIZE;
+  // كانت `all.slice(0, 20)`، فما بعد العشرين لا يصل الزاحف: بقيّة العناصر تُجلب
+  // بجافاسكربت والرابط يُكتب بـ`history.pushState` (InfiniteEntityGrid.tsx:70) — والسيرفر
+  // لا يقرأ `page`، فلا وجود لعنوان ثابت يُزحف. وجوجل صريح: «Give each chunk its own
+  // persistent, unique URL … Link sequentially to the individual URLs so that search
+  // engines can discover the URLs in a paginated set» (crawling-indexing/javascript/lazy-loading).
+  //
+  // والفئات مجموعة محدودة تُدار من الأدمن — ١٥ اليوم — لا تدفّقٌ لا نهائيّ مثل المقالات.
+  // فالحلّ ليس بناء مسار `/page/n` لها، بل ما تفعله أخواتها الثلاث أصلاً: تُرسَل كاملةً
+  // من السيرفر (tags:79 · industries · clients كلها بلا حدّ). فتُزحف كلها مهما نمت،
+  // ويبقى الشريط للعرض لا للجلب.
+  const initialItems = all.map(toCard);
   const loadMore = loadMoreCategories.bind(null, { search, sortBy });
 
   // Prefer the admin-generated + validated JSON-LD cache; fall back to a live
@@ -145,8 +151,8 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
             // key = search+sort → remount on filter change so the grid re-seeds from filtered initialItems.
             <InfiniteEntityGrid
               key={`${search ?? ""}|${sortBy}`}
-              initialItems={pageOne}
-              initialHasMore={hasMore}
+              initialItems={initialItems}
+              initialHasMore={false}
               loadMoreAction={loadMore}
               columns={4}
               emptyState={null}

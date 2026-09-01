@@ -104,6 +104,28 @@ export async function getListingPageSeo(page: ListingPageKey): Promise<ListingPa
     return { metadata: null, jsonLd: rawJsonLd?.trim() ? rawJsonLd : null };
   }
 
+  // العنوان المخزَّن يكتبه إنسان في شاشة الأدمن، وكثيراً ما يُنهيه بالعلامة. والجذر يحمل
+  // قالب `%s | {siteName}` يُلحقها على مقاطع الأبناء — «title.template applies to child
+  // route segments» (generate-metadata.md:290، المشحون مع 16.3.4) — فتظهر مرّتين.
+  // مقيس على الإنتاج ١ سبتمبر ٢٠٢٦: `/trending` ⇒ «… | مدونتي | مدونتي».
+  //
+  // و`absolute` هو العلاج الرسميّ: «title.absolute can be used to provide a title that
+  // ignores title.template set in parent segments» (السطر ٢٩٣).
+  //
+  // **والشرط جوهريّ لا تزيين.** الصفحات الأربع التي طبّقت هذا قبلاً لفّت العنوان بلا شرط،
+  // فحين لا يحمل العلامة يُمنع القالب من إلحاقها وتضيع من العنوان كلّه. مقيس على الديف:
+  // `/trending` قبل «… | مدونتي» ⇒ بعد اللفّ غير المشروط «…» بلا علامة إطلاقاً.
+  // فاللفّ هنا لا يقع إلّا حين تكون العلامة موجودةً فعلاً — وإلّا تُرك للقالب.
+  const brand = defaults.siteName?.trim();
+  const storedTitle = typeof metaOnly.title === "string" ? metaOnly.title.trim() : null;
+  if (
+    brand &&
+    storedTitle &&
+    [` | ${brand}`, ` - ${brand}`, ` — ${brand}`].some((suffix) => storedTitle.endsWith(suffix))
+  ) {
+    metaOnly.title = { absolute: storedTitle };
+  }
+
   // hreflang is site-wide policy, not this page's content, so it is read live rather than
   // inherited from the blob. The blob is a cache the admin wrote at save time; these seven
   // pages were last generated when the generator hardcoded two locales, so they shipped

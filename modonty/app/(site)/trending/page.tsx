@@ -13,6 +13,8 @@ interface TrendingPageProps {
 
 // Metadata from Settings cache
 export async function generateMetadata(): Promise<Metadata> {
+  // ازدواج العلامة في العنوان يُعالَج مركزياً في `getListingPageSeo` — مشروطاً بأن
+  // العنوان المخزَّن ينتهي بها فعلاً، فلا تضيع حين لا يحملها.
   const { metadata } = await getListingPageSeo("trending");
   return metadata ?? {};
 }

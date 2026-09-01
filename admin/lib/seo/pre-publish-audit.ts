@@ -331,7 +331,11 @@ export function auditBeforePublish(
       code: "NO_FAQS",
       category: "structured-data",
       message: "لا توجد أسئلة شائعة",
-      fix: "أضف 3-5 أسئلة شائعة للحصول على FAQ rich results",
+      // كان النصّ «للحصول على FAQ rich results» — ووعدٌ لا يتحقّق: جوجل أوقفت الميزة
+      // («This feature will no longer appear in Google Search starting May 7, 2026»
+      //  — structured-data/faqpage). فالسبب الباقي حقيقيّ: النصّ نفسه يصل الزاحف
+      // ومحرّكات الإجابة، ويجيب سؤالاً يطرحه القارئ فعلاً.
+      fix: "أضف 3-5 أسئلة شائعة — تجيب ما يسأله القارئ فعلاً، ويقرؤها البحث ومحرّكات الإجابة",
     });
   }
 

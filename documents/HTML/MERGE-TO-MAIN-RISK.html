@@ -101,22 +101,27 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 </div>
 
 <section class="pane" id="pane-todo">
+<p style="color:var(--muted);font-size:14px;margin:0 0 10px;line-height:1.9">
+  <b style="color:var(--ink)">اللون = نوع الشغل، لا خطورته</b> — صُنِّف ١ سبتمبر بفتح الكود <b>وقياسه حيّاً على الإنتاج</b>، لا بعنوانه.<br>
+  <span style="color:var(--muted)">مقاييس هذه الجولة: ١٤ مقالاً من ١٤٢ على <code>www.modonty.com</code> · واستُخرج المتن بعدّ الوسوم لا بقصّ نصّ (القصّ أعطى «داخلي ٢٠» بينما المتن فيه ٣).</span><br>
+  <span style="color:var(--red)">🟥 كود</span> — يُكتب أو يُعدَّل في المستودع ·
+  <span style="color:var(--amber)">🟨 قرار ثم كود</span> — الكود صغير، والوقفة على قرارك ·
+  <span style="color:var(--green)">🟩 قياس/تشغيل</span> — الكود مبنيّ؛ الناقص فتح شاشة أو قراءة رقم على الإنتاج ·
+  <span style="color:var(--muted)">⬜ بلا معيار</span> — لا يُبدأ قبل ما يُكتب «إيش يقفله»
+</p>
 <div class="scrollx"><table id="t-todo">
-<tr><th>#</th><th>الرمز</th><th>التاسك</th><th>التطبيق</th></tr>
-<tr><td class="n">1</td><td class="n">63</td><td>أرشيف النسخ الليلي على بني + كرت Atlas المالي <span style="opacity:.6">(خارج المستودع)</span></td><td class="n">—</td></tr>
-<tr><td class="n">2</td><td class="n">80</td><td>تحقّق النسخ الاحتياطي على الإنتاج</td><td class="n">admin</td></tr>
-<tr><td class="n">3</td><td class="n">CAMERGE</td><td>مقالات العملاء — الفرع مدموج؛ أربعة بنود باقية (موافقة طارق · db push إنتاج · Run-All · المشهد ١١)</td><td class="n">admin · console · modonty</td></tr>
-<tr><td class="n">4</td><td class="n">IMG-FB</td><td>آخر حلقة في سلسلة صورة الاحتياط كانت ملفاً غير موجود</td><td class="n">admin</td></tr>
-<tr><td class="n">5</td><td class="n">25</td><td>روابط داخلية سياقية داخل جسم المقال</td><td class="n">modonty</td></tr>
-<tr><td class="n">6</td><td class="n">13</td><td>GEO/AEO — التنفيذ</td><td class="n">modonty</td></tr>
-<tr><td class="n">7</td><td class="n">SEO52</td><td>جرد سيو ٥٢ صفحة — أعلى عشرة إصلاحات بالأثر</td><td class="n">modonty</td></tr>
-<tr><td class="n">8</td><td class="n">SEOAGENT-READY</td><td>فحص «هل موقعك جاهز للوكلاء؟» (Cloudflare): ٢٠/١٠٠ — بندان فقط يستحقّان قرارك</td><td class="n">modonty</td></tr>
-<tr><td class="n">9</td><td class="n">GEOAEO</td><td>بقايا فحص الظهور في محرّكات الإجابة — يُعاد فرزها قبل العمل</td><td class="n">modonty</td></tr>
-<tr><td class="n">10</td><td class="n">SEOWATCH</td><td>قائمة مراقبة السيو — أرقام اليوم تُقارَن بأرقام ٢٧ أغسطس <span style="opacity:.6">(خارج المستودع)</span></td><td class="n">—</td></tr>
-<tr><td class="n">11</td><td class="n">47b</td><td>توحيد كل تأكيدات الكونسول على حوار واحد — بقي <code>confirm()</code> أصليّان: <code>competitors-tab.tsx:61</code> · <code>keywords-tab.tsx:75</code></td><td class="n">console</td></tr>
-<tr><td class="n">12</td><td class="n">LISTFIX</td><td>ترقيم مقلوب في RTL — بقيت شاشة واحدة على <code>me-6</code>: <code>ai-article-dialog.tsx:95-96</code></td><td class="n">admin</td></tr>
-<tr><td class="n">13</td><td class="n">JC5</td><td>٥ · تست حيّ — إدارة المحتوى <span style="opacity:.6">(بلا معيار قبول — يُكتب أو يُحذف)</span></td><td class="n">admin</td></tr>
-<tr><td class="n">14</td><td class="n">T1</td><td>متغيّرا بوت المحتوى على Vercel — يُفحص بالوظيفة: شغّله، يشتغل أو لا <span style="opacity:.6">(خارج المستودع)</span></td><td class="n">—</td></tr>
+<tr><th>#</th><th>الرمز</th><th>التاسك</th><th>النوع</th><th>التطبيق</th></tr>
+
+
+
+
+
+
+<tr><td class="n">1</td><td class="n">25</td><td><b>روابط داخلية سياقية — موجودة فعلاً.</b> مقيس على ١٤ مقالاً حيّاً: <b>١٤ من ١٤</b> فيه رابط داخليّ، المتوسّط <b>٢٫٩</b> للمقال (داخلي ٤٠ · خارجي ٢٤). المتن يُرسم من HTML الكاتب (<code>ArticleMainColumn.tsx:247</code>) فالروابط تحريرية، و<code>BodyLinkTracker</code> يقيس نقراتها أصلاً. الباقي — هل ٢٫٩ تكفي؟ — قرار تحريريّ</td><td class="n" style="color:var(--green)">🟩 قرار تحريريّ</td><td class="n">modonty</td></tr>
+<tr><td class="n">2</td><td class="n">80</td><td>تحقّق النسخ الاحتياطي. <b>الكود مبنيّ:</b> <code>getBackupRuns()</code> يقرأ <code>db.backupRun</code> · وشاشتان <code>backup-runs-panel.tsx</code> و<code>backup-restore-card.tsx</code>. الناقص: افتحها على الإنتاج واقرأ الصفوف</td><td class="n" style="color:var(--green)">🟩 قياس</td><td class="n">admin</td></tr>
+<tr><td class="n">3</td><td class="n">IMG-FB</td><td>آخر حلقة في سلسلة صورة الاحتياط. <b>قِست ١ سبتمبر:</b> السلسلة تنتهي عند <code>BRAND_LOGO_URL</code> على بني — معلن <code>4733</code> وواصل <code>4733</code> بتنزيل كامل ✔، والأربعة ترد <code>200/206</code></td><td class="n" style="color:var(--green)">🟩 قياس</td><td class="n">admin</td></tr>
+<tr><td class="n">4</td><td class="n">63 · SEOWATCH · T1</td><td>ثلاثة خارج المستودع: أرشيف النسخ على بني وكرت Atlas · مقارنة أرقام السيو بـ٢٧ أغسطس · تشغيل بوت المحتوى على Vercel</td><td class="n" style="color:var(--green)">🟩 تشغيل وقياس</td><td class="n">—</td></tr>
+<tr><td class="n">5</td><td class="n">JC5</td><td>٥ · تست حيّ — إدارة المحتوى. <b>لا نصّ له</b> في اللوحة ولا <code>task-data.json</code> ولا أرشيف أغسطس — عنوان فقط</td><td class="n" style="color:var(--muted)">⬜ بلا معيار</td><td class="n">admin</td></tr>
 </table></div>
 </section>
 
