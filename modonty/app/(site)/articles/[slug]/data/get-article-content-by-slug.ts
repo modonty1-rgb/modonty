@@ -21,6 +21,9 @@ export async function getArticleContentBySlug(slug: string) {
       status: ArticleStatus.PUBLISHED,
     },
     include: {
+      // The FAQ tally travels with the cached payload so the page never needs a live read for it
+      // (1 Sep 2026). It changes only when an FAQ is published, and that fires `revalidateTag`.
+      _count: { select: { faqs: true } },
       client: {
         include: {
           logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
