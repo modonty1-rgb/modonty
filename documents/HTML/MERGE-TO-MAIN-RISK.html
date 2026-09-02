@@ -108,11 +108,13 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 </p>
 <div class="scrollx"><table id="t-todo">
 <tr><th>#</th><th>الرمز</th><th>التاسك</th><th>النوع</th><th>التطبيق</th></tr>
-
-
-
-
-
+<tr>
+  <td class="n">1</td>
+  <td class="n">SITEMAP-VIDEO</td>
+  <td>السايتماب صار يحمل <code>&lt;video:video&gt;</code> لكل ريل — الكود مكتوب وناتجه مُثبَت، والباقي تثبيته في كوميت ودفعه. <b>التفصيل في البطاقة تحت الجدول.</b></td>
+  <td class="n" style="color:var(--red)">🟥 كود</td>
+  <td class="n">modonty</td>
+</tr>
 
 
 
@@ -120,6 +122,68 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 
 
 </table></div>
+
+<div class="card a">
+<h3>SITEMAP-VIDEO · وسم الفيديو في السايتماب — <span style="color:var(--amber)">مكتوب ومُثبَت، ينتظر الكوميت</span></h3>
+
+<p style="margin:0 0 10px"><b>ليش؟</b> سؤالك «ليش الريلز ما تتفهرس؟» — والجواب أنه <b>ما فيه عطل</b>: الريلز نُشرت ٣١ أغسطس، وتقرير الفيديو في سيرش كونسول آخر تحديثه ٣١/٨، فأُغلق قبل أن يزحف عليها. لكن الفحص كشف أن السايتماب يُدرج الريلز بوسم <b>صور</b> لا <b>فيديو</b> — وهذا يؤخّر اكتشافها.</p>
+
+<p style="margin:0 0 6px"><b>التشخيص — مقيس لا مستنتَج:</b></p>
+<div class="ev">فحص رابط ريل حيّ في Search Console (٢ سبتمبر):
+  URL is on Google · Page is indexed
+  Video indexing: 1 video indexed
+  Videos: 1 valid item detected
+
+Enhancements → Videos  (تحديث ١/٩):  صحيح ٦ · معطوب ٠
+Indexing → Video indexing (تحديث ٣١/٨): indexed 0 · not indexed 1
+تاريخ نشر الريلز الـ١٦ (lastmod):        كلّها 2026-08-31</div>
+
+<p style="margin:12px 0 6px">والفيديو المرفوض الوحيد <b>ليس ريلاً</b> — مقطع مضمَّن في صفحة العميل <code>dawi-smile-elite</code>، وسببه <code>Video isn't on a watch page</code>: الفيديو ليس محتوى الصفحة الرئيسي هناك. سلوك صحيح لا عطل.</p>
+
+<p style="margin:12px 0 6px"><b>فحوص تقنية — كلها خضراء:</b></p>
+<div class="scrollx"><table>
+<tr><th>الفحص</th><th>الناتج الخام</th></tr>
+<tr><td>VideoObject على صفحة الريل الحيّة</td><td class="n">موجود وكامل الحقول</td></tr>
+<tr><td>ملف MP4 بهويّة Googlebot</td><td class="n">HTTP 206 · video/mp4</td></tr>
+<tr><td>الصورة المصغّرة بهويّة Googlebot</td><td class="n">HTTP 200 · image/jpeg</td></tr>
+<tr><td>robots.txt على مودونتي</td><td class="n">لا يمنع /reels/</td></tr>
+<tr><td>robots.txt على بني</td><td class="n">404 = لا منع</td></tr>
+<tr><td>وسم noindex على صفحة الريل</td><td class="n">لا يوجد</td></tr>
+</table></div>
+
+<p style="margin:14px 0 6px"><b>وباقان في Next 16.3.4 اتحاصرا بالقياس — الأول خطر على السايتماب كلّه:</b></p>
+<div class="scrollx"><table>
+<tr><th>الباق</th><th>القياس</th><th>الأثر لو بقي</th></tr>
+<tr>
+  <td>السيريالايزر لا يهرّب رموز XML</td>
+  <td class="n">resolve-route-data.js</td>
+  <td><code>&amp;</code> واحدة يكتبها عميل في عنوان ريله من الكونسول ← الـXML معطوب ← <b>السايتماب كلّه يُرفض</b>، ومعه كل مقال وعميل وفئة</td>
+</tr>
+<tr>
+  <td><code>uploader</code> بلا <code>info</code></td>
+  <td class="n">&lt;video:uploaderundefined&gt;</td>
+  <td>وسم معطوب في كل صفّ ريل</td>
+</tr>
+</table></div>
+
+<p style="margin:14px 0 6px"><b>الإثبات — بسيريالايزر Next نفسه (<code>resolveSitemap</code>) على قيم إنتاج حقيقية، ومعها صفّ خصومة وصفّ صورة:</b></p>
+<pre>كتل الفيديو: 2   (المتوقّع ٢ — ريل الصورة مستثنى)
+نطاق video معلن: نعم
+uploaderundefined: غير موجود
+&amp; غير مهرَّب:      غير موجود
+
+&lt;video:title&gt;تسويق &amp;amp; سيو &amp;lt;قوي&amp;gt;&lt;/video:title&gt;
+&lt;video:uploader info="https://www.modonty.com/clients/jabr-seo"&gt;شركة جبر سيو&lt;/video:uploader&gt;</pre>
+
+<p style="margin:0 0 6px">الناتج كاملاً محفوظ في <code>C:/tmp/proof-sitemap.xml</code>.</p>
+
+<p style="margin:12px 0 0"><b>الباقي لإقفاله:</b> تثبيت <code>modonty/app/sitemap.ts</code> في كوميت، ثم دفعه ضمن جولة التست الكاملة. <code>tsc</code> لم يُشغَّل — محجوب بلا إذنك.</p>
+
+<p style="margin:10px 0 0;color:var(--muted);font-size:14.5px"><b>وتحفّظ لازم يُقال:</b> هذا يسرّع الاكتشاف ويسلّم جوجل كل ما يطلبه بلا نقص — لكنه لا يضمن فهرسة الفيديو. القرار قرار جوجل دائماً.</p>
+
+<div class="ev">modonty/app/sitemap.ts — غير مثبَّت · الفرع test · 21 كوميتاً غير مدفوعة</div>
+</div>
+
 </section>
 
 <section class="pane" id="pane-data" hidden>
