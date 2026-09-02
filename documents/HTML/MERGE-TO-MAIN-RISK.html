@@ -95,7 +95,6 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 <div class="tabs" role="tablist">
   <button role="tab" aria-selected="true"  data-pane="todo">To Do<span class="n" id="n-todo"></span></button>
   <button role="tab" aria-selected="false" data-pane="data" class="tb-amber">🗄️ مشاكل الداتا<span class="n" id="n-data"></span></button>
-  <button role="tab" aria-selected="false" data-pane="codex">🤖 Codex<span class="n" id="n-codex"></span></button>
 </div>
 
 <section class="pane" id="pane-todo">
@@ -121,47 +120,6 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 
 
 </table></div>
-</section>
-
-<section class="pane" id="pane-codex" hidden>
-<h2>🤖 Codex — بنود تنفيذية من الجرد</h2><p style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:10px;padding:12px 16px;margin:0 0 14px;font-size:15px"><b style="color:var(--green)">حصيلة ٢ سبتمبر ٢٠٢٦ — من ستّة بنود لم يبقَ إلا القياس الحيّ، ودخلت بطاقة واحدة جديدة.</b><br>• <code>SERVICES-37</code> <b>ساقط:</b> المحرّر موجود — <code>console/.../services-editor.tsx</code> و<code>update-services.ts:39</code>، والكود يصرّح أن مالكه العميل (<code>block-source.ts:22</code>: <code>owner: "client"</code>). ومقيس حيّاً: قسم «خدماتنا» وزرّ «أضف خدمة» ظاهران في شاشة «محتوى الموقع».<br>• <code>IMAGE-SIZES</code> <b>ساقط بالحساب:</b> سلّمنا <code>…384 · 640 · 750…</code> والمرسوم ٤٤٦–٤٦٢، فأي إعلان بين ٣٨٥ و٦٤٠ يُنتج <code>640</code> نفسه. المخدوم اليوم هو الأمثل ولا يوفّر تغييرُه بايتاً.<br>• <code>LIVE-CHECKUP</code> يحمل الآن ما ثبت من المفاتيح والكرون.<br>• <b>الريلز أُغلقت كلّها ١–٢ سبتمبر</b> وحُذف تبويبها؛ سجلّها في الكوميتات (<code>cdc8da8</code> · <code>0547780</code>) والمعلّق منها في <code>documents/tasks/PENDING-IDEAS-TODO.md</code> بند ٣.</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<details class="tk">
-<summary><span class="id">LIVE-CHECKUP</span><span class="sv sv-i">قياس حي</span><span class="tt">بنود لا يحسمها الكود: النسخ، Vercel، Search Console، وتطبيقات الجوال</span><span class="ap">الإنتاج</span></summary>
-<div class="body"><b>القياس المطلوب بالضبط:</b> <code>backup_runs</code> + ملف Bunny قابل للاستعادة (63/80)؛ مقارنة Search Console بلقطة 27 أغسطس (SEOWATCH)؛ تشغيل بوت المحتوى (T1)؛ آخر Vercel deployment/cron logs؛ <code>pnpm build</code> للتطبيقات الثلاثة ثم فتح دليل الفريق/شاشات الصور، والتطبيقين على جهاز.<br><b>المرجع:</b> <code>documents/HTML/CODEX-REVIEW-2026-09-01.md</code> — القياسات السابقة، ولا يحمل المستودع ناتجها.<br><b>مثبَت ١ سبتمبر (لا يُعاد فحصه):</b> الكرون معرَّف يومياً ٠١:٠٠ — <code>admin/vercel.json</code> · والمفاتيح كلها في بيئة إنتاج الأدمن، لُفَّت القائمة حتى نهايتها: <code>CRON_SECRET</code> · <code>BUNNY_BACKUP_STORAGE_HOSTNAME/ZONE_NAME/PASSWORD/READONLY_PASSWORD</code> · <code>ATLAS_PUBLIC_KEY/PRIVATE_KEY/ORG_ID/PROJECT_ID/CLUSTER_NAME</code> · <code>CONTENT_TEAM_BOT_TOKEN</code> · <code>CONTENT_TEAM_CHAT_ID</code>. <b>وما تعذّر عليّ:</b> سرد أرشيف بني — القيم مشفَّرة ولا يُخرجها الـAPI. و<code>25</code> انضمّ هنا: الروابط الداخلية مقيسة موجودة (١٤/١٤ · متوسّط ٢٫٩)، والباقي قرار تحريريّ لا قياس.<br><b>✔ ينغلق بـ:</b> ناتج خام مؤرخ لكل قياس (HTTP/بايت/سجل/لقطة شاشة) في اللوحة.<br><b style="color:var(--green)">مقيس ٢ سبتمبر ٢٠٢٦ من شاشة الإنتاج ومن أطلس مباشرةً:</b><br>• <b>النسخ الاحتياطي والكرون ✔:</b> عشرة أيام متتالية بلا فشل — <code>2 Sep 04:00 · modonty · Daily cron · 89 · 10,005 · 9.8MB · 49s · OK</code> … حتى <code>24 Aug 04:01 · 83 · 8,965 · 9.2MB · 48s · OK</code>. فلا حاجة لسجلّ Vercel: الصفوف نفسها دليل أن الكرون يشتغل.<br>• <b>لقطات أطلس ✔:</b> <code>Last 2026-09-01T09:25:32Z · Next 2026-09-02T09:24:41Z · Oldest 2026-08-25T09:25:41Z</code> (٨ أيام، Flex).<br>• <b>الاستعادة ✖ لا تُقاس من هنا:</b> الشاشة نفسها تقول «backup and restore are only available from your local machine».<br><b>• البناء ✔ (٢ سبتمبر، بعد إذن خالد «ابنِ»):</b> <code>EXIT_admin=0 · EXIT_console=0 · EXIT_modonty=0</code> — التطبيقات الثلاثة تبني بصفر أخطاء، ومدونتي تُخرج صفحاتٍ بالتصيير الجزئي (<code>◐ Partial Prerender</code>).<br><b>• Search Console ✔ (٢ سبتمبر، دخلتُ بحساب مدونتي):</b> <b style="color:var(--amber)">المقارنة بلقطة ٢٧ أغسطس مستحيلة — اللقطة لم تُسجَّل قطّ</b> (ملف Codex نفسه يقول «لا أرقامٍ جارية في المستودع»). فتُثبَّت أرقام اليوم <b>خطَّ أساسٍ</b> لما بعدها:<pre>الأداء · آخر ٢٨ يوماً   نقرات 498 · ظهور 59.6K · CTR 0.8% · الموضع 8.4
-الأداء · ٣ أشهر         1,042 نقرة (المنحنى صاعد بحدّة في آخر أسبوع)
-الفهرسة (حتى 8/28)      مفهرس 282  ·  غير مفهرس 1,256
-  Crawled - currently not indexed   1,103   ← الأكبر بفارق
-  Excluded by noindex                  79
-  Page with redirect                   41
-  Not found (404)                      20
-  Discovered - not indexed              6
-  Alternate page w/ canonical           4
-  Blocked by robots.txt                 3
-  Server error (5xx)                    0  ✔ Passed</pre><b>القراءة — بعد فتح التقريرين صفّاً صفّاً (٢ سبتمبر):</b> <b style="color:var(--red)">قراءتي الأولى كانت خاطئة.</b> قلتُ إن جوجل يرى ١٬١٠٣ صفحة «بلا قيمة»؛ والصحيح أنها ليست صفحاتٍ أصلاً. صُنِّفت عيّنة الألف المعروضة كاملةً:<pre>_next/static (JS + خطوط)   984   98.4٪  ← وهذا طبيعيّ ولا يُعالَج
-clients                       6
-test.modonty.com              2
-categories/tags               2
-authors ×2 · /news · favicon  4
-articles                      1
-feed.xml                      1</pre>وممنوع حجب <code>/_next/static/</code> في robots: جوجل يحتاج الجافاسكربت والخطوط ليرسم الصفحة، وحجبها يكسر التصيير. فالبند <b>ليس عطلاً</b>، والمحتوى غير المفهرَس ستّة عشر عنواناً لا ألفاً.<br><b style="color:var(--red)">لكن الفتح كشف عطلاً حقيقياً:</b> <code>test.modonty.com</code> <b>مفتوح لجوجل بالكامل</b> — <code>robots.txt</code> عليه نسخة الإنتاج حرفياً (<code>Allow: /</code>)، والصفحة تعلن <code>&lt;meta name="robots" content="index, follow"&gt;</code> وترد <code>200</code>. أي: موقعٌ مكرَّر كامل يزحف عليه جوجل ويقارنه بالإنتاج.<br><b>و<code>404</code>×٢٠ مفتوحة صفّاً صفّاً:</b> بيانات اختبار على الإنتاج (<code>/industries/automotive-test</code> · <code>/categories/web-design-test</code>) · عملاء محذوفون (<code>/clients/catchers</code>) · مقالات محذوفة · شكل رابط قديم (<code>/mbc-clinic</code>) · و<code>/articles/</code> بشرطة زائدة.<br><b>• «التطبيقان» — البند نفسه كان غلطاً (مقيس ٢ سبتمبر):</b> ما فيه إلا <b>تطبيق واحد</b> — <code>console-mobile</code> إصدار <code>1.2.0</code> (إكسبو، ومعه <code>eas.json</code> و<code>google-services.json</code>). أمّا <code>modonty-mobile/</code> فمجلّد فيه ملفّا توجيه فقط، بلا <code>package.json</code> ولا كود — فلا شيء يُشغَّل. يبقى تشغيل تطبيق الكونسول على جهاز خالد.<br><b>• بوت المحتوى:</b> مفتاحاه في بيئة إنتاج الأدمن (<code>CONTENT_TEAM_BOT_TOKEN</code> · <code>CONTENT_TEAM_CHAT_ID</code>، مثبَت ١ سبتمبر)، ولا يوجد منفذ تشخيصيّ: كل مسارات الإرسال الثلاثة (<code>briefs/actions/notify-content-team.ts</code> · <code>articles/.../notify-article-decision.ts</code> · <code>reels/.../notify-reel-pending.ts</code>) ترسل رسالةً حقيقية إلى قروب الفريق. فتشغيله <b>ينتظر إذن خالد الصريح</b> لا قدرةً ناقصة.<br><b>خلاصة البطاقة:</b> من ستّة قياسات بقي <b>اثنان</b>، وكلاهما فعلٌ بشريّ لا قياس: ضغطة إذن على البوت، وفتح تطبيق الكونسول على جوّال.</div>
-</details>
 </section>
 
 <section class="pane" id="pane-data" hidden>
@@ -262,14 +220,13 @@ seoDescription →  صفحة الكاتب «مدونتي»: كل المقالا�
   const btns=[...document.querySelectorAll('.tabs button')];
   btns.forEach(b=>b.addEventListener('click',()=>{
     btns.forEach(x=>x.setAttribute('aria-selected', String(x===b)));
-    ['todo','codex','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
+    ['todo','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
     
     try{ localStorage.setItem('merge-board-tab', b.dataset.pane); }catch{}
   }));
   // العدّادات تُحسب لا تُكتب
   document.getElementById('n-todo').textContent = Math.max(0, document.querySelectorAll('#t-todo tr').length - 1);
   document.getElementById('n-data').textContent = document.querySelectorAll('#pane-data div.card').length;
-  { const el=document.getElementById('n-codex'); if(el) el.textContent = document.querySelectorAll('#pane-codex details.tk').length; }
   // «شغل مفتوح» و«لاحقاً» يعدّان صفوف جدولهما، لا بطاقات — بنودهما تعيش في جدول واحد.
   // تبويب «المنجز» حُذف ١ سبتمبر ٢٠٢٦ بقاعدة الورك-فلو: اللوحة تحمل المفتوح فقط،
   // وتاريخ المنجز في `SESSION-LOG.md` وفي رسائل الكوميتات. فلا عدّاد له.
