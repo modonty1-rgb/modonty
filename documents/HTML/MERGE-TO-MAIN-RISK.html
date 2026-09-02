@@ -154,7 +154,13 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
   Discovered - not indexed              6
   Alternate page w/ canonical           4
   Blocked by robots.txt                 3
-  Server error (5xx)                    0  ✔ Passed</pre><b>القراءة:</b> ٢٨٢ مفهرساً ≈ المقالات + صفحات العملاء، فالمحتوى الأصلي داخلٌ كلّه. لكن <b>١٬١٠٣ صفحة زحف عليها جوجل ورفض فهرستها</b> — وهذا رقمٌ يستحقّ بنداً مستقلّاً: يتقاطع مع تشخيص ظهور الذكاء الاصطناعي (تُصنَّف صفحاتنا منخفضة القيمة). و<code>404</code>×٢٠ تحتاج فتحاً أيضاً.<br><b>وباقٍ على خالد:</b> بوت المحتوى · التطبيقان على جهازه.</div>
+  Server error (5xx)                    0  ✔ Passed</pre><b>القراءة — بعد فتح التقريرين صفّاً صفّاً (٢ سبتمبر):</b> <b style="color:var(--red)">قراءتي الأولى كانت خاطئة.</b> قلتُ إن جوجل يرى ١٬١٠٣ صفحة «بلا قيمة»؛ والصحيح أنها ليست صفحاتٍ أصلاً. صُنِّفت عيّنة الألف المعروضة كاملةً:<pre>_next/static (JS + خطوط)   984   98.4٪  ← وهذا طبيعيّ ولا يُعالَج
+clients                       6
+test.modonty.com              2
+categories/tags               2
+authors ×2 · /news · favicon  4
+articles                      1
+feed.xml                      1</pre>وممنوع حجب <code>/_next/static/</code> في robots: جوجل يحتاج الجافاسكربت والخطوط ليرسم الصفحة، وحجبها يكسر التصيير. فالبند <b>ليس عطلاً</b>، والمحتوى غير المفهرَس ستّة عشر عنواناً لا ألفاً.<br><b style="color:var(--red)">لكن الفتح كشف عطلاً حقيقياً:</b> <code>test.modonty.com</code> <b>مفتوح لجوجل بالكامل</b> — <code>robots.txt</code> عليه نسخة الإنتاج حرفياً (<code>Allow: /</code>)، والصفحة تعلن <code>&lt;meta name="robots" content="index, follow"&gt;</code> وترد <code>200</code>. أي: موقعٌ مكرَّر كامل يزحف عليه جوجل ويقارنه بالإنتاج.<br><b>و<code>404</code>×٢٠ مفتوحة صفّاً صفّاً:</b> بيانات اختبار على الإنتاج (<code>/industries/automotive-test</code> · <code>/categories/web-design-test</code>) · عملاء محذوفون (<code>/clients/catchers</code>) · مقالات محذوفة · شكل رابط قديم (<code>/mbc-clinic</code>) · و<code>/articles/</code> بشرطة زائدة.<br><b>وباقٍ على خالد:</b> بوت المحتوى · التطبيقان على جهازه.</div>
 </details>
 </section>
 
