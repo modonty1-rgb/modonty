@@ -1,5 +1,5 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>أرشيف المنجز — 11 بنداً</title>
+<title>أرشيف المنجز — 12 بنداً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f1013;--panel:#17181d;--card:#1d1e24;--line:#2c2d36;--fg:#f3f4f6;--mut:#9aa3b2;--dim:#6b7280;
@@ -132,7 +132,7 @@ summary::before{content:"▸";transition:transform .15s}details[open]>summary::b
 .hidden{display:none!important}
 footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </style></head><body>
-<header class="top"><div class="wrap"><h1>أرشيف المنجز — 11 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
+<header class="top"><div class="wrap"><h1>أرشيف المنجز — 12 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
 <div class="tools"><input id="q" type="search" placeholder="ابحث في المنجز…" aria-label="بحث"></div></div></header>
 <main class="wrap"><section class="grp"><div class="grid"><article class="card" data-id="G11" data-sev="normal" data-who="c" data-tab="done" data-board="seo" data-apps="admin modonty" data-n="113" data-audit="pass">
   <div class="hd"><span class="num" title="رقم البند — قل «بند 113» في الشات">113</span><span class="id">G11</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند G11">⧉</button></div>
@@ -287,6 +287,20 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
   <p class="sum">الوسم والتصنيف والصناعة — الثلاثة مبنية ومختبَرة حيّاً: نقل + إعادة توليد سيو + ٣٠٨ مسجَّل + المصدر يصير صفراً. وClient.editorId مع عمود Editor في جدولَي العملاء والمقالات.</p>
   
   <details><summary>التفاصيل الكاملة</summary><div class="full">الوسم والتصنيف والصناعة — الثلاثة مبنية ومختبَرة حيّاً: نقل + إعادة توليد سيو + ٣٠٨ مسجَّل + المصدر يصير صفراً. و<code>Client.editorId</code> مع عمود Editor في جدولَي العملاء والمقالات.</div></details>
+</article>
+<article class="card" data-id="TESTDOMAIN-INDEX" data-sev="ok" data-who="c" data-tab="done" data-board="seo" data-apps="modonty" data-n="135">
+  <div class="hd"><span class="num" title="رقم البند — قل «بند 135» في الشات">135</span><span class="id">TESTDOMAIN-INDEX</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند TESTDOMAIN-INDEX">⧉</button></div>
+  
+  <div class="t">إنذار كاذب: نطاق التست محميّ أصلاً بترويسة noindex</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">هادئ</span><span class="tag app-modonty">modonty</span><span class="tag">سيو وأداء</span><span>٢ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الناتج الخام: curl -sI https://test.modonty.com/ → X-Robots-Tag: noindex, nofollow ✔ curl -sI https://www.modonty.com/ → (بلا ترويسة) ✔ كما يجب · والحارس مكتوب من قبل ومعلَّل في مكانه: modonty/next.config.ts:99-104 —</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b style="color:var(--red)">إنذارٌ رفعتُه ٢ سبتمبر ٢٠٢٦ ثم أسقطتُه بالقياس في نفس الساعة.</b> حكمتُ من <code>robots.txt</code> ووسم <code>&lt;meta&gt;</code> وحدهما، ولم أقرأ الترويسات — وهي موضع الحكم.<br><br><b>الناتج الخام:</b><pre>curl -sI https://test.modonty.com/  →  X-Robots-Tag: noindex, nofollow   ✔
+curl -sI https://www.modonty.com/ →  (بلا ترويسة)                      ✔ كما يجب</pre><b>والحارس مكتوب من قبل ومعلَّل في مكانه:</b> <code>modonty/next.config.ts:99-104</code> — يضيف الترويسة على كل نشرةٍ غير إنتاجية، والتعليق فوقه يشرح لماذا يبقى <code>robots.txt</code> متساهلاً: «a Disallow would stop Google fetching the page, so it would never read this header».<br><b>وظهور روابط التست في تقرير <code>Crawled - currently not indexed</code> ليس عطلاً — هو الدليل على أن الحارس يعمل:</b> جوجل زحف، قرأ <code>noindex</code>، فلم يفهرس.<br><b>الباقي تنظيفاً لا خطراً:</b> الصفحة تعلن <code>&lt;meta name="robots" content="index, follow"&gt;</code> بينما الترويسة تقول العكس. جوجل يأخذ بالأشدّ فلا ضرر، لكن إشارتين متناقضتين تربكان أي مراجعة قادمة — يُوحَّدان حين نلمس بناء الميتاداتا.</div></details>
 </article></div></section></main>
 <script>
 (() => { const q = document.getElementById('q'); const cards = [...document.querySelectorAll('.card')];

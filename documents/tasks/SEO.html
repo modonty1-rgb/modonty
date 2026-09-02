@@ -216,12 +216,12 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 <div class="progress">
   <div class="bar"><span style="width:100%"></span></div>
   <div class="pnums">
-    <b>1</b> أُغلق من <b>1</b> · 100%
-    
+    <b>2</b> أُغلق من <b>2</b> · 100%
+    <em class="today">٢ سبتمبر ٢٠٢٦: 1</em>
   </div>
 </div>
 <p class="elsewhere">وفيه <b>1</b> بطاقة سيو ما تظهر هنا لأن مكانها لوحة ثانية — <a href="TASK.html">TASK.html</a> (ما تمسّ صفحات مدونتي): <code>77</code>. هذا السطر موجود لأن عدّ البطاقات من الملفّ كان يعطي رقماً أكبر ممّا على الشاشة، فيبدو أن اللوحة ناقصة وهي ليست كذلك.</p>
-<div class="lanes" role="tablist"><button class="lane" role="tab" data-lane-btn="kept" aria-selected="true">✋ مقصود — يبقى<span class="n">35</span></button><button class="lane" role="tab" data-lane-btn="perfect" aria-selected="false">💯 خلص ١٠٠٪<span class="n">1</span></button></div>
+<div class="lanes" role="tablist"><button class="lane" role="tab" data-lane-btn="kept" aria-selected="true">✋ مقصود — يبقى<span class="n">35</span></button><button class="lane" role="tab" data-lane-btn="perfect" aria-selected="false">💯 خلص ١٠٠٪<span class="n">1</span></button><button class="lane" role="tab" data-lane-btn="shipped" aria-selected="false">✅ خلص — لم تُراجَع بعد<span class="n">1</span></button></div>
 <!-- No search box here on purpose. Khalid, 25 Aug 2026: "I will not search, I want final
      result" — this board is read to decide what to do next, not to look something up. A box
      nobody types in is a row of empty pixels above the thing they came for. The two filters
@@ -383,6 +383,23 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
   <p class="sum">المشكلة: صورة بطل المقال في صفحة العرض بالأدمن هي أكبر عنصر فوق الطيّة (عنصر LCP)، وكانت بلا أي تهيئة — فيكتشفها المتصفّح متأخّراً ويصفّها خلف كل شيء. جانب الزائر كان سليماً أصلاً. ·</p>
   
   <details><summary>التفاصيل الكاملة</summary><div class="full"><b>أُقفلت ٢٤ أغسطس ٢٠٢٦ بقياس في الدوم.</b><br><b>المشكلة:</b> صورة بطل المقال في صفحة العرض بالأدمن هي أكبر عنصر فوق الطيّة (عنصر LCP)، وكانت بلا أي تهيئة — فيكتشفها المتصفّح متأخّراً ويصفّها خلف كل شيء. جانب الزائر كان سليماً أصلاً.<br><b>التعديل:</b> <code>admin/app/(dashboard)/articles/[id]/page.tsx:178</code> — <code>loading="eager"</code> + <code>fetchPriority="high"</code> على <code>OptimizedImage</code>، نفس الزوج الذي يستعمله بطل مقال الزائر.<br><b>الدليل الخام (مقالة <code>69d6830820251ee8497527b4</code>):</b><br><code>{ heroBlockFound: true, alt: "ما هو السيو وأهميته في التسويق", loading: "eager", fetchpriority: "high" }</code><br><b>ملاحظة على طريقة الفحص — يُسجَّل كي لا يُعاد:</b> أوّل محاولة قلت إنها «محجوبة: ما فيه مقالة بصورة». كان ذلك خطأ في العيّنة لا في البيانات: قائمة الأدمن مرتّبة بالأحدث، وآخر عشر مقالات مُدخلة صادف أنها بلا صور. الاستعلام على القاعدة أعطى <code>total 160 · withImg 142 · published 117 · pubWithImg 116</code> — أي أن <b>٩٩٪ من المنشور له صورة</b>. العيّنة الصغيرة من رأس قائمة مرتّبة ليست عيّنة.</div></details>
+</article></div></section></div>
+<div data-lane="shipped" class="hidden"><p style="color:var(--dim);margin:14px 0 4px">أُغلقت سابقاً ولم تمرّ على النقد العكسي بعد. بقاؤها هنا يعني: <b>لم تُثبَت، ولم تسقط</b>.</p>
+
+
+<section class="grp" data-grp="day-٢ سبتمبر ٢٠٢٦"><h2>٢ سبتمبر ٢٠٢٦ <span class="n" data-count>1</span></h2><p></p><div class="grid"><article class="card" data-id="TESTDOMAIN-INDEX" data-sev="ok" data-who="c" data-tab="done" data-board="seo" data-apps="modonty" data-n="135">
+  <div class="hd"><span class="num" title="رقم البند — قل «بند 135» في الشات">135</span><span class="id">TESTDOMAIN-INDEX</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند TESTDOMAIN-INDEX">⧉</button></div>
+  
+  <div class="t">إنذار كاذب: نطاق التست محميّ أصلاً بترويسة noindex</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">هادئ</span><span class="tag app-modonty">modonty</span><span class="tag">سيو وأداء</span><span>٢ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الناتج الخام: curl -sI https://test.modonty.com/ → X-Robots-Tag: noindex, nofollow ✔ curl -sI https://www.modonty.com/ → (بلا ترويسة) ✔ كما يجب · والحارس مكتوب من قبل ومعلَّل في مكانه: modonty/next.config.ts:99-104 —</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b style="color:var(--red)">إنذارٌ رفعتُه ٢ سبتمبر ٢٠٢٦ ثم أسقطتُه بالقياس في نفس الساعة.</b> حكمتُ من <code>robots.txt</code> ووسم <code>&lt;meta&gt;</code> وحدهما، ولم أقرأ الترويسات — وهي موضع الحكم.<br><br><b>الناتج الخام:</b><pre>curl -sI https://test.modonty.com/  →  X-Robots-Tag: noindex, nofollow   ✔
+curl -sI https://www.modonty.com/ →  (بلا ترويسة)                      ✔ كما يجب</pre><b>والحارس مكتوب من قبل ومعلَّل في مكانه:</b> <code>modonty/next.config.ts:99-104</code> — يضيف الترويسة على كل نشرةٍ غير إنتاجية، والتعليق فوقه يشرح لماذا يبقى <code>robots.txt</code> متساهلاً: «a Disallow would stop Google fetching the page, so it would never read this header».<br><b>وظهور روابط التست في تقرير <code>Crawled - currently not indexed</code> ليس عطلاً — هو الدليل على أن الحارس يعمل:</b> جوجل زحف، قرأ <code>noindex</code>، فلم يفهرس.<br><b>الباقي تنظيفاً لا خطراً:</b> الصفحة تعلن <code>&lt;meta name="robots" content="index, follow"&gt;</code> بينما الترويسة تقول العكس. جوجل يأخذ بالأشدّ فلا ضرر، لكن إشارتين متناقضتين تربكان أي مراجعة قادمة — يُوحَّدان حين نلمس بناء الميتاداتا.</div></details>
 </article></div></section></div>
 </main>
 <footer>هذه اللوحة تخصّ سيو مدونتي وحده — نُقلت بطاقاته من <a href="TASK.html">TASK.html</a> نقلاً لا نسخاً. المنجز في <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a>.</footer>

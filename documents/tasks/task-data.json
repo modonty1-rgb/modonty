@@ -2341,13 +2341,13 @@
       "app": [
         "modonty"
       ],
-      "tab": "open",
-      "sev": "high",
+      "tab": "done",
+      "sev": "ok",
       "who": "c",
       "date": "٢ سبتمبر ٢٠٢٦",
       "n": 135,
-      "t": "test.modonty.com مفتوح لجوجل — موقع مكرَّر كامل يزحف عليه",
-      "d": "<b>انكشف ٢ سبتمبر ٢٠٢٦</b> أثناء فتح تقرير الفهرسة: جوجل يزحف على نطاق التست، وظهرت روابطه داخل تقرير <code>Crawled - currently not indexed</code> لنطاق الإنتاج.<br><br><b>الدليل الخام:</b><pre>curl https://test.modonty.com/robots.txt   → User-Agent: * / Allow: /   (نسخة الإنتاج حرفياً)\ncurl -o /dev/null -w %{http_code} https://test.modonty.com/  → 200\nالصفحة تعلن: &lt;meta name=\"robots\" content=\"index, follow\"&gt;</pre><b>الخطر:</b> نسخة ثانية من الموقع كله بمحتوى متطابق. جوجل قد يختار نسخة التست قانونيةً لبعض الصفحات، أو يوزّع الإشارة بين نطاقين — وهذا يضرب صفحات العملاء تحديداً.<br><b>الحلّ (اثنان معاً، لا واحد):</b> <code>robots.txt</code> على التست يردّ <code>Disallow: /</code> · وترويسة <code>X-Robots-Tag: noindex</code> على كل ردّ من نطاق التست — لأن <code>robots.txt</code> يمنع الزحف لا الفهرسة، والصفحة المعروفة مسبقاً تبقى في الفهرس.<br><b>التنفيذ:</b> شرطٌ على <code>host</code> في <code>modonty/app/robots.ts</code> و<code>proxy.ts</code> — النطاق يُعرف من <code>NEXT_PUBLIC_SITE_URL</code> أو من ترويسة الطلب.<br><b>✔ ينغلق بـ:</b> <code>curl https://test.modonty.com/robots.txt</code> يردّ <code>Disallow: /</code> · وأي صفحة عليه تحمل <code>x-robots-tag: noindex</code> · والإنتاج بلا تغيير."
+      "t": "إنذار كاذب: نطاق التست محميّ أصلاً بترويسة noindex",
+      "d": "<b style=\"color:var(--red)\">إنذارٌ رفعتُه ٢ سبتمبر ٢٠٢٦ ثم أسقطتُه بالقياس في نفس الساعة.</b> حكمتُ من <code>robots.txt</code> ووسم <code>&lt;meta&gt;</code> وحدهما، ولم أقرأ الترويسات — وهي موضع الحكم.<br><br><b>الناتج الخام:</b><pre>curl -sI https://test.modonty.com/  →  X-Robots-Tag: noindex, nofollow   ✔\ncurl -sI https://www.modonty.com/ →  (بلا ترويسة)                      ✔ كما يجب</pre><b>والحارس مكتوب من قبل ومعلَّل في مكانه:</b> <code>modonty/next.config.ts:99-104</code> — يضيف الترويسة على كل نشرةٍ غير إنتاجية، والتعليق فوقه يشرح لماذا يبقى <code>robots.txt</code> متساهلاً: «a Disallow would stop Google fetching the page, so it would never read this header».<br><b>وظهور روابط التست في تقرير <code>Crawled - currently not indexed</code> ليس عطلاً — هو الدليل على أن الحارس يعمل:</b> جوجل زحف، قرأ <code>noindex</code>، فلم يفهرس.<br><b>الباقي تنظيفاً لا خطراً:</b> الصفحة تعلن <code>&lt;meta name=\"robots\" content=\"index, follow\"&gt;</code> بينما الترويسة تقول العكس. جوجل يأخذ بالأشدّ فلا ضرر، لكن إشارتين متناقضتين تربكان أي مراجعة قادمة — يُوحَّدان حين نلمس بناء الميتاداتا."
     }
   ],
   "reports": []
