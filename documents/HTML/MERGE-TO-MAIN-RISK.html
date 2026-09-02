@@ -110,8 +110,8 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 <tr><th>#</th><th>الرمز</th><th>التاسك</th><th>النوع</th><th>التطبيق</th></tr>
 <tr>
   <td class="n">1</td>
-  <td class="n">SITEMAP-VIDEO</td>
-  <td>السايتماب صار يحمل <code>&lt;video:video&gt;</code> لكل ريل — الكود مكتوب وناتجه مُثبَت، والباقي تثبيته في كوميت ودفعه. <b>التفصيل في البطاقة تحت الجدول.</b></td>
+  <td class="n">REELS-EMPTY-H1</td>
+  <td>صفحة <code>/reels</code> وهي فاضية ترسم <b>بلا <code>&lt;h1&gt;</code> خالص</b> — حالة الفراغ ترجع بدري قبل الترويسة اللي فيها العنوان. الإنتاج فيه ١٦ ريل فالعنوان ظاهر اليوم، بس أول ما تفضى تختفي. <b>التفصيل في البطاقة تحت الجدول.</b></td>
   <td class="n" style="color:var(--red)">🟥 كود</td>
   <td class="n">modonty</td>
 </tr>
@@ -124,65 +124,29 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 </table></div>
 
 <div class="card a">
-<h3>SITEMAP-VIDEO · وسم الفيديو في السايتماب — <span style="color:var(--amber)">مكتوب ومُثبَت، ينتظر الكوميت</span></h3>
+<h3>REELS-EMPTY-H1 · صفحة الريلز الفاضية بلا عنوان — <span style="color:var(--red)">مفتوح</span></h3>
 
-<p style="margin:0 0 10px"><b>ليش؟</b> سؤالك «ليش الريلز ما تتفهرس؟» — والجواب أنه <b>ما فيه عطل</b>: الريلز نُشرت ٣١ أغسطس، وتقرير الفيديو في سيرش كونسول آخر تحديثه ٣١/٨، فأُغلق قبل أن يزحف عليها. لكن الفحص كشف أن السايتماب يُدرج الريلز بوسم <b>صور</b> لا <b>فيديو</b> — وهذا يؤخّر اكتشافها.</p>
+<p style="margin:0 0 10px"><b>إيش المشكلة؟</b> صفحة <code>/reels</code> لما تكون فاضية ترجع شاشة «لا توجد ريلز بعد» — وما فيهاش <code>&lt;h1&gt;</code> ولا حتى عنوان واحد. العنوان <code>&lt;h1&gt;الريلز&lt;/h1&gt;</code> مكتوب في الترويسة العائمة، والترويسة دي جوّه الفرع المليان بس.</p>
 
-<p style="margin:0 0 6px"><b>التشخيص — مقيس لا مستنتَج:</b></p>
-<div class="ev">فحص رابط ريل حيّ في Search Console (٢ سبتمبر):
-  URL is on Google · Page is indexed
-  Video indexing: 1 video indexed
-  Videos: 1 valid item detected
+<div class="ev">modonty/app/(fullscreen)/reels/page.tsx:55-65 — الرجوع المبكّر لحالة الفراغ
+modonty/app/(fullscreen)/reels/page.tsx:76    — الـ&lt;h1&gt; جوّه الفرع المليان</div>
 
-Enhancements → Videos  (تحديث ١/٩):  صحيح ٦ · معطوب ٠
-Indexing → Video indexing (تحديث ٣١/٨): indexed 0 · not indexed 1
-تاريخ نشر الريلز الـ١٦ (lastmod):        كلّها 2026-08-31</div>
-
-<p style="margin:12px 0 6px">والفيديو المرفوض الوحيد <b>ليس ريلاً</b> — مقطع مضمَّن في صفحة العميل <code>dawi-smile-elite</code>، وسببه <code>Video isn't on a watch page</code>: الفيديو ليس محتوى الصفحة الرئيسي هناك. سلوك صحيح لا عطل.</p>
-
-<p style="margin:12px 0 6px"><b>فحوص تقنية — كلها خضراء:</b></p>
+<p style="margin:12px 0 6px"><b>مقيس ٢ سبتمبر — نفس الكود، قاعدتان مختلفتان:</b></p>
 <div class="scrollx"><table>
-<tr><th>الفحص</th><th>الناتج الخام</th></tr>
-<tr><td>VideoObject على صفحة الريل الحيّة</td><td class="n">موجود وكامل الحقول</td></tr>
-<tr><td>ملف MP4 بهويّة Googlebot</td><td class="n">HTTP 206 · video/mp4</td></tr>
-<tr><td>الصورة المصغّرة بهويّة Googlebot</td><td class="n">HTTP 200 · image/jpeg</td></tr>
-<tr><td>robots.txt على مودونتي</td><td class="n">لا يمنع /reels/</td></tr>
-<tr><td>robots.txt على بني</td><td class="n">404 = لا منع</td></tr>
-<tr><td>وسم noindex على صفحة الريل</td><td class="n">لا يوجد</td></tr>
+<tr><th>البيئة</th><th>عدد الريلز</th><th>عدد <code>h1</code></th><th>الحجم</th></tr>
+<tr><td>الإنتاج <code>www.modonty.com</code></td><td class="n">١٦</td><td class="n" style="color:var(--green)">١</td><td class="n">١٩٤ ك.ب</td></tr>
+<tr><td>التست <code>test.modonty.com</code></td><td class="n">٠</td><td class="n" style="color:var(--red)">٠</td><td class="n">٨٢ ك.ب</td></tr>
 </table></div>
 
-<p style="margin:14px 0 6px"><b>وباقان في Next 16.3.4 اتحاصرا بالقياس — الأول خطر على السايتماب كلّه:</b></p>
-<div class="scrollx"><table>
-<tr><th>الباق</th><th>القياس</th><th>الأثر لو بقي</th></tr>
-<tr>
-  <td>السيريالايزر لا يهرّب رموز XML</td>
-  <td class="n">resolve-route-data.js</td>
-  <td><code>&amp;</code> واحدة يكتبها عميل في عنوان ريله من الكونسول ← الـXML معطوب ← <b>السايتماب كلّه يُرفض</b>، ومعه كل مقال وعميل وفئة</td>
-</tr>
-<tr>
-  <td><code>uploader</code> بلا <code>info</code></td>
-  <td class="n">&lt;video:uploaderundefined&gt;</td>
-  <td>وسم معطوب في كل صفّ ريل</td>
-</tr>
-</table></div>
+<p style="margin:12px 0 6px"><b>مين يشوفه؟</b> جوجل والقارئ اللي بيتنقّل بلوحة المفاتيح. صفحة بلا عنوان أصلاً = ما لهاش عنوان في شجرة المحتوى، وده كسر في التسلسل مش تفصيلة شكل.</p>
 
-<p style="margin:14px 0 6px"><b>الإثبات — بسيريالايزر Next نفسه (<code>resolveSitemap</code>) على قيم إنتاج حقيقية، ومعها صفّ خصومة وصفّ صورة:</b></p>
-<pre>كتل الفيديو: 2   (المتوقّع ٢ — ريل الصورة مستثنى)
-نطاق video معلن: نعم
-uploaderundefined: غير موجود
-&amp; غير مهرَّب:      غير موجود
+<p style="margin:12px 0 6px"><b>ملاحظة مهمة:</b> العيب <b>قديم مش من شغل الدمج</b> — الملف ما اتلمسش في الـ٢٣ كوميت، وحالة الفراغ جاية من إصدار <code>78e6a27</code>. اتكشف بالصدفة لأن قاعدة التست فاضية من الريلز.</p>
 
-&lt;video:title&gt;تسويق &amp;amp; سيو &amp;lt;قوي&amp;gt;&lt;/video:title&gt;
-&lt;video:uploader info="https://www.modonty.com/clients/jabr-seo"&gt;شركة جبر سيو&lt;/video:uploader&gt;</pre>
+<p style="margin:12px 0 0"><b>إيش يقفله؟</b> العنوان يطلع بره الشرط فيرسم في الحالتين — يتقاس بفتح <code>/reels</code> على بيئة صفر ريل وعدّ <code>h1</code> = ١.</p>
 
-<p style="margin:0 0 6px">الناتج كاملاً محفوظ في <code>C:/tmp/proof-sitemap.xml</code>.</p>
-
-<p style="margin:12px 0 0"><b>الباقي لإقفاله:</b> تثبيت <code>modonty/app/sitemap.ts</code> في كوميت، ثم دفعه ضمن جولة التست الكاملة. <code>tsc</code> لم يُشغَّل — محجوب بلا إذنك.</p>
-
-<p style="margin:10px 0 0;color:var(--muted);font-size:14.5px"><b>وتحفّظ لازم يُقال:</b> هذا يسرّع الاكتشاف ويسلّم جوجل كل ما يطلبه بلا نقص — لكنه لا يضمن فهرسة الفيديو. القرار قرار جوجل دائماً.</p>
-
-<div class="ev">modonty/app/sitemap.ts — غير مثبَّت · الفرع test · 21 كوميتاً غير مدفوعة</div>
+<div class="ev">مفتوح · اتكشف ٢ سبتمبر ٢٠٢٦ في جولة التست قبل الدمج</div>
 </div>
+
 
 </section>
 
@@ -191,6 +155,30 @@ uploaderundefined: غير موجود
 <p style="color:var(--muted);font-size:15px;margin:0 0 6px">كل بند هنا <b>نصٌّ مخزَّن في القاعدة كتبه إنسان</b>، لا سطرَ كودٍ يُعدَّل. الدليل في كل بطاقة: صفر مطابقة للنصّ في المستودع كلّه.</p>
 <p style="color:var(--muted);font-size:15px;margin:0 0 16px"><b>المسؤول: طارق</b> — كل بطاقة تقول: أين النصّ · ما الخطأ · مَن يراه · أين يُعدَّل · وكيف تتأكّد أنه انصلح.</p>
 
+
+<div class="card a" style="margin-bottom:16px">
+<h3>٤ · مقال فيه عنوانان رئيسيان — التاني مكتوب جوّه المتن</h3>
+
+<p style="margin:0 0 8px"><b>ما الخطأ؟</b> مقال «علاج الادمان من الكبتاجون في مصر» فيه <code>&lt;h1&gt;</code> <b>مرتين</b>: واحد صحيح من الكود في ترويسة المقال، والتاني كتبه الكاتب <b>جوّه نصّ المقال نفسه</b>.</p>
+
+<div class="ev">مقيس ٢ سبتمبر على test.modonty.com — ١٤ مقالاً، واحد بس فيه العيب
+
+  ١٣ مقالاً  →  h1 = 1  ✔
+  علاج-الادمان-من-الكبتاجون-في-مصر  →  h1 = 2  ✖
+
+  الأول: &lt;h1 class="mb-4 break-words text-3xl…"&gt;  داخل &lt;header&gt;   ← من الكود، صحيح
+  التاني: &lt;h1&gt; بلا أي كلاس           داخل .article-body  ← من نصّ المقال
+          «ما أسباب انتشار تعاطي الكبتاجون؟»</div>
+
+<p style="margin:10px 0 8px"><b>مَن يراه؟</b> جوجل. العنوان الرئيسي المفروض يكون واحد بس في الصفحة — هو اللي بيقول للمحرّك «الصفحة دي عن إيه». اتنين يعني إشارتين متضاربتين، والسطر ده أصلاً <b>سؤال فرعي</b> المفروض يكون <code>h2</code>.</p>
+
+<p style="margin:0 0 8px"><b>أين يُعدَّل؟</b></p>
+<div class="ev">admin.modonty.com ← Articles ← افتح المقال ← المحرّر
+← غيّر السطر «ما أسباب انتشار تعاطي الكبتاجون؟» من H1 إلى H2 ← حفظ</div>
+
+<p style="margin:10px 0 0"><b>للتأكّد بعدها:</b> افتح المقال على مدونتي، كليك يمين ← فحص، ودوّر على <code>h1</code> — لازم يطلع واحد بس.</p>
+<p style="margin:8px 0 0;opacity:.8">⚠️ ما عدّلته من طرفي: ده نصّ المقال، والتعديل فيه قرار محتوى. ويستاهل فحص باقي الـ١٤٢ مقالاً بنفس العدّة.</p>
+</div>
 
 <div class="card a" style="margin-bottom:16px">
 <h3>٣ · خمس صفحات عنوانها كلمة واحدة بلا اسم الموقع</h3>
