@@ -1,42 +1,43 @@
 import type { TaskPriority, TaskStatus } from "@prisma/client";
 
-// The four columns, in board order. This array is the ONLY place the order lives:
-// the board renders from it, the counters map over it, and the move menu offers
-// every value except the card's own. Adding a column here adds it everywhere.
+// The four columns, in board order. This array is the ONLY place the order
+// lives: the board renders from it, the counters map over it, and the move menu
+// offers every value except the card's own. Adding a column here adds it
+// everywhere.
 export const TASK_STATUSES = ["TODO", "IN_PROGRESS", "REVIEW", "DONE"] as const;
 
 export type TaskStatusKey = (typeof TASK_STATUSES)[number];
 
 interface StatusMeta {
   label: string;
-  /** URL segment for `/tasks/[status]`, and what the drop zone reports. */
+  /** URL segment, and what a drop zone reports. */
   slug: string;
-  /** Column header tint. Semantic per the admin entity standard (#3). */
+  /** Semantic tone per the admin entity standard. */
   tone: string;
   dot: string;
 }
 
 export const TASK_STATUS_META: Record<TaskStatusKey, StatusMeta> = {
   TODO: {
-    label: "جديد",
+    label: "To Do",
     slug: "todo",
     tone: "bg-slate-500/15 text-slate-600 dark:text-slate-400",
     dot: "bg-slate-500",
   },
   IN_PROGRESS: {
-    label: "شغّال",
+    label: "In Progress",
     slug: "in-progress",
     tone: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
     dot: "bg-blue-500",
   },
   REVIEW: {
-    label: "مراجعة",
+    label: "Review",
     slug: "review",
     tone: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
     dot: "bg-amber-500",
   },
   DONE: {
-    label: "خلص",
+    label: "Done",
     slug: "done",
     tone: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
     dot: "bg-emerald-500",
@@ -46,10 +47,10 @@ export const TASK_STATUS_META: Record<TaskStatusKey, StatusMeta> = {
 export const TASK_PRIORITIES = ["LOW", "NORMAL", "HIGH", "URGENT"] as const;
 
 export const TASK_PRIORITY_META: Record<TaskPriority, { label: string; tone: string }> = {
-  LOW: { label: "هادية", tone: "bg-slate-500/15 text-slate-600 dark:text-slate-400" },
-  NORMAL: { label: "عادية", tone: "bg-blue-500/15 text-blue-600 dark:text-blue-400" },
-  HIGH: { label: "مهمة", tone: "bg-amber-500/15 text-amber-600 dark:text-amber-400" },
-  URGENT: { label: "عاجلة", tone: "bg-red-500/15 text-red-600 dark:text-red-400" },
+  LOW: { label: "Low", tone: "bg-slate-500/15 text-slate-600 dark:text-slate-400" },
+  NORMAL: { label: "Normal", tone: "bg-blue-500/15 text-blue-600 dark:text-blue-400" },
+  HIGH: { label: "High", tone: "bg-amber-500/15 text-amber-600 dark:text-amber-400" },
+  URGENT: { label: "Urgent", tone: "bg-red-500/15 text-red-600 dark:text-red-400" },
 };
 
 /** Sort order for priority — by severity, never alphabetically. */

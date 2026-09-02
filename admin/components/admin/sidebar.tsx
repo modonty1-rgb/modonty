@@ -239,21 +239,26 @@ const menuGroups: MenuGroup[] = [
       { icon: Archive, label: "Archived", href: "/reels/archived" },
     ],
   },
-  // Task management. Titled in Arabic on Khalid's explicit instruction (2026-09-02),
-  // unlike its English siblings — this section is for the whole team, not only the
-  // people who read English admin labels.
+  // Management — who does the work, and what work there is. Khalid, 2026-09-02:
+  // «أضيف قسم اسمه management · شيل الموظفين وحطه فيه · محتوى جبر SEO حطه فيه ·
+  // الشغل الإداري حطه لي إياه في management».
   //
-  // "Staff" points at the EXISTING `/users` screen rather than a second add/remove
-  // employee screen: that one already creates, edits, deletes and sets roles and
-  // avatars. Two screens writing the same table drift apart after the first edit.
+  // Staff and JBR content are MOVED here, not copied: `Staff` left the System
+  // group and the standalone «جبر سيو» group was dissolved into this one. A menu
+  // entry that appears twice teaches two different mental models of one screen.
+  // «إدارة المهام» is NOT a sidebar group — Khalid, 2026-09-02: «شيلها من
+  // sidebar وحطها في nav bar بالـmenu حقها». It is a dropdown in the top bar
+  // (`components/admin/tasks-menu.tsx`), reachable from every screen instead of
+  // costing a slot in a rail that is already eleven groups deep.
   {
-    title: "إدارة المهام",
-    icon: KanbanSquare,
+    title: "Management",
+    icon: Users2,
     defaultOpen: false,
     items: [
-      { icon: LayoutGrid, label: "اللوح", href: "/tasks", exact: true },
-      { icon: UserCheck, label: "مهامي", href: "/tasks/mine" },
-      { icon: Users2, label: "الموظفين", href: "/users" },
+      // The existing screen, not a second one: `/users` already creates, edits,
+      // deletes and sets roles and avatars for staff.
+      { icon: Users2, label: "Staff", href: "/users" },
+      { icon: FileText, label: "JBR SEO Content", href: "/jbr-seo/content" },
     ],
   },
   {
@@ -311,17 +316,9 @@ const menuGroups: MenuGroup[] = [
       { icon: PanelTop, label: "Homepage Banner", href: "/settings/banner" },
     ],
   },
-  // قسم مستقلّ لا بند تحت Modonty: جبر سيو منتج منفصل بقاعدة محتوى خاصّة به،
-  // ودمجه في مجموعة مودونتي يخلط منتجين (قرار JBR10 — العزل).
-  {
-    title: "جبر سيو",
-    icon: Megaphone,
-    defaultOpen: false,
-    items: [
-      { icon: FileText, label: "إدارة المحتوى", href: "/jbr-seo/content" },
-      // بند «المقالات» يُضاف مع بناء صفحته (JT2) — لا يُدرَج رابط قبل وجهته.
-    ],
-  },
+  // مجموعة «جبر سيو» المستقلّة حُلَّت في «Management» بأمر خالد (٢ سبتمبر ٢٠٢٦).
+  // عزل المنتجين (قرار JBR10) باقٍ كما هو — الفصل في البيانات والمسارات لا في
+  // موضع البند في القائمة. وبند «المقالات» يُضاف مع بناء صفحته (JT2).
   {
     title: "Audience",
     icon: Users2,
@@ -338,7 +335,8 @@ const menuGroups: MenuGroup[] = [
     icon: Wrench,
     defaultOpen: false,
     items: [
-      { icon: Users, label: "Staff", href: "/users" },
+      // «Staff» انتقل إلى مجموعة Management (خالد، ٢ سبتمبر ٢٠٢٦). بندٌ في مكانين
+      // يعلّم خريطتين ذهنيّتين لشاشة واحدة.
       { icon: ListChecks, label: "Dropdown Lists", href: "/settings/reference-data" },
       { icon: Download, label: "Export Data", href: "/export-data" },
       { icon: Database, label: "Database", href: "/database" },

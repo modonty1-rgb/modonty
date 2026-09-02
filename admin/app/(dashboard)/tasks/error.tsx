@@ -16,5 +16,5 @@ export default function TasksError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <PageError error={error} reset={reset} title="اللوح ما فتح" />;
+  return <PageError error={error} reset={reset} title="Could not load the board" />;
 }

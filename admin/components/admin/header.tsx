@@ -18,6 +18,7 @@ import { Breadcrumb } from "./breadcrumb";
 import { NotificationsBell } from "./notifications-bell";
 import { HeaderFeedbackButton } from "./header-feedback-button";
 import { SyncLocalButton } from "./sync-local-button";
+import { TasksMenu } from "./tasks-menu";
 import pkg from "@/package.json";
 
 export function Header({
@@ -49,6 +50,9 @@ export function Header({
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Task management lives here, not in the sidebar (Khalid, 2026-09-02) */}
+          <TasksMenu />
+
           {/* Which database this instance is on — rendered on the server, never guessed */}
           {dbBadge}
 
@@ -63,13 +67,19 @@ export function Header({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+              <button className="flex items-center gap-2 rounded-full pe-1 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={session.user.image || undefined} alt={session.user.name || ""} />
                   <AvatarFallback>
                     {session.user.name?.charAt(0) || session.user.email?.charAt(0) || "A"}
                   </AvatarFallback>
                 </Avatar>
+                {/* Hidden below `sm`: the phone header already carries the badges,
+                    the bell and the theme toggle, and a name would push them off.
+                    `max-w` + truncate so a long name cannot squeeze them either. */}
+                <span className="hidden max-w-32 truncate text-sm font-medium sm:inline">
+                  {session.user.name || session.user.email || "Admin"}
+                </span>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">

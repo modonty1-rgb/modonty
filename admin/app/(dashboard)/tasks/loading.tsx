@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { TASK_STATUSES } from "./helpers/task-config";
+import { TASK_STATUSES } from "@/lib/tasks/task-config";
 
 /**
  * Mirrors the real board: four columns, a header row inside each.

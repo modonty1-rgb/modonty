@@ -25,14 +25,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
 import { createTask, updateTask } from "../actions/task-actions";
-import type { AssignableStaff, BoardTask } from "../helpers/queries";
+import type { BoardTask } from "../helpers/queries";
 import {
   TASK_PRIORITIES,
   TASK_PRIORITY_META,
-  TASK_STATUSES,
   TASK_STATUS_META,
   type TaskStatusKey,
-} from "../helpers/task-config";
+} from "@/lib/tasks/task-config";
 
 const UNASSIGNED = "__none__";
 
@@ -70,12 +69,10 @@ const emptyForm = (status: TaskStatusKey): FormState => ({
  * always the one that misses a validation rule.
  */
 export function TaskDialog({
-  staff,
   task,
   createIn,
   onClose,
 }: {
-  staff: AssignableStaff[];
   task: BoardTask | null;
   createIn: TaskStatusKey | null;
   onClose: () => void;
@@ -119,72 +116,60 @@ export function TaskDialog({
       const result = isEdit ? await updateTask(payload) : await createTask(payload);
       if (result.success) {
         toast({
-          title: isEdit ? "اتحفظت" : "اتضافت",
-          description: `«${form.title.trim()}» ${isEdit ? "اتحدثت" : `راحت لعمود «${TASK_STATUS_META[form.status].label}»`}.`,
+          title: isEdit ? "Saved" : "Added",
+          description: `${form.title.trim()} ${isEdit ? "updated" : `added to ${TASK_STATUS_META[form.status].label}`}.`,
         });
         onClose();
         router.refresh();
       } else {
-        toast({ title: "ما اتحفظت", description: result.error, variant: "destructive" });
+        toast({ title: "Save failed", description: result.error, variant: "destructive" });
       }
     });
   };
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent dir="rtl" className="max-w-lg">
+      <DialogContent  className="max-w-lg">
         <DialogHeader className="text-start">
-          <DialogTitle>{isEdit ? "تعديل المهمة" : "مهمة جديدة"}</DialogTitle>
+          <DialogTitle>{isEdit ? "Edit task" : "New task"}</DialogTitle>
           <DialogDescription>
             {isEdit
-              ? "غيّر اللي تحتاجه واحفظ."
-              : "اكتب المطلوب وحدّد مين مسؤول عنه وإمتى لازم يخلص."}
+              ? "Change what you need and save."
+              : "Write what is needed, who owns it and when it is due."}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3">
           <div className="space-y-1.5">
-            <Label htmlFor="task-title">المهمة</Label>
+            <Label htmlFor="task-title">Task</Label>
             <Input
               id="task-title"
               value={form.title}
               onChange={(e) => set("title", e.target.value)}
-              placeholder="مثال: راجع مقالات جبر سيو قبل النشر"
+              placeholder="e.g. Review JBR SEO articles before publishing"
               autoFocus
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="task-desc">تفاصيل (اختياري)</Label>
+            <Label htmlFor="task-desc">Details (optional)</Label>
             <Textarea
               id="task-desc"
               value={form.description}
               onChange={(e) => set("description", e.target.value)}
               rows={3}
-              placeholder="أي حاجة تساعد اللي هينفّذها"
+              placeholder="Anything that helps whoever does it"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="task-assignee">المسؤول</Label>
-              <Select value={form.assigneeId} onValueChange={(v) => set("assigneeId", v)}>
-                <SelectTrigger id="task-assignee">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent dir="rtl">
-                  <SelectItem value={UNASSIGNED}>بلا مسؤول</SelectItem>
-                  {staff.map((s) => (
-                    <SelectItem key={s.id} value={s.id}>
-                      {s.name?.trim() || s.email || "بلا اسم"}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* No assignee field anywhere — Khalid, 2026-09-02. A task belongs to
+                whoever wrote it: the server stamps the owner from the session on
+                create, and editing carries that owner through untouched rather
+                than offering to hand the work to someone else. */}
 
             <div className="space-y-1.5">
-              <Label htmlFor="task-due">تاريخ التسليم</Label>
+              <Label htmlFor="task-due">Due date</Label>
               <Input
                 id="task-due"
                 type="date"
@@ -194,7 +179,7 @@ export function TaskDialog({
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="task-priority">الأولوية</Label>
+              <Label htmlFor="task-priority">Priority</Label>
               <Select
                 value={form.priority}
                 onValueChange={(v) => set("priority", v as FormState["priority"])}
@@ -202,7 +187,7 @@ export function TaskDialog({
                 <SelectTrigger id="task-priority">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent dir="rtl">
+                <SelectContent >
                   {TASK_PRIORITIES.map((p) => (
                     <SelectItem key={p} value={p}>
                       {TASK_PRIORITY_META[p].label}
@@ -212,33 +197,20 @@ export function TaskDialog({
               </Select>
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="task-status">العمود</Label>
-              <Select
-                value={form.status}
-                onValueChange={(v) => set("status", v as TaskStatusKey)}
-              >
-                <SelectTrigger id="task-status">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent dir="rtl">
-                  {TASK_STATUSES.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {TASK_STATUS_META[s].label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* No column field either — Khalid, 2026-09-02. A card moves by
+                being dragged, or by "Move to" on its own menu; a select buried
+                in a dialog is a third way to do the same thing, and the one
+                nobody would look for. The form still SENDS the current status so
+                saving an edit does not move the card. */}
           </div>
         </div>
 
         <DialogFooter className="gap-2">
           <Button variant="outline" onClick={onClose} disabled={isPending}>
-            إلغاء
+            Cancel
           </Button>
           <Button onClick={submit} disabled={isPending || form.title.trim().length < 3}>
-            {isPending ? "بيحفظ…" : isEdit ? "احفظ" : "أضف"}
+            {isPending ? "Saving…" : isEdit ? "Save" : "Add"}
           </Button>
         </DialogFooter>
       </DialogContent>

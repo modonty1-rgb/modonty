@@ -1,6 +1,6 @@
 import { cache } from "react";
 
-import { TASK_STATUSES, type TaskStatusKey } from "../task-config";
+import { TASK_STATUSES, type TaskStatusKey } from "@/lib/tasks/task-config";
 import { getBoardTasks } from "./get-board-tasks";
 
 export type TaskCounts = Record<TaskStatusKey, number> & { total: number };

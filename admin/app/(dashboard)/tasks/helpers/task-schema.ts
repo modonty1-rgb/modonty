@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { TASK_PRIORITIES, TASK_STATUSES } from "./task-config";
+import { TASK_PRIORITIES, TASK_STATUSES } from "@/lib/tasks/task-config";
 
 // Server-side validation is the real gate; the form's copy of these rules is UX.
 // Every message names the field and what is wrong with it, because "بيانات غير
@@ -8,15 +8,15 @@ import { TASK_PRIORITIES, TASK_STATUSES } from "./task-config";
 
 const objectId = z
   .string()
-  .regex(/^[0-9a-fA-F]{24}$/, "المعرّف غير صالح");
+  .regex(/^[0-9a-fA-F]{24}$/, "Invalid id");
 
 export const createTaskSchema = z.object({
   title: z
     .string()
     .trim()
-    .min(3, "العنوان قصير — اكتب ٣ حروف على الأقل")
-    .max(160, "العنوان طويل — الحدّ ١٦٠ حرفاً"),
-  description: z.string().trim().max(4000, "الوصف طويل — الحدّ ٤٠٠٠ حرف").optional().or(z.literal("")),
+    .min(3, "Title is too short — at least 3 characters")
+    .max(160, "Title is too long — 160 characters max"),
+  description: z.string().trim().max(4000, "Details are too long — 4000 characters max").optional().or(z.literal("")),
   status: z.enum(TASK_STATUSES).default("TODO"),
   priority: z.enum(TASK_PRIORITIES).default("NORMAL"),
   // Empty string is what an untouched date input submits — treated as "no due

@@ -2,7 +2,7 @@ import { cache } from "react";
 
 import { db } from "@/lib/db";
 
-import { TASK_STATUSES, type TaskStatusKey } from "../task-config";
+import { TASK_STATUSES, type TaskStatusKey } from "@/lib/tasks/task-config";
 
 export interface BoardTask {
   id: string;
@@ -29,6 +29,13 @@ export interface BoardTask {
  */
 export const getBoardTasks = cache(async (): Promise<Record<TaskStatusKey, BoardTask[]>> => {
   const rows = await db.task.findMany({
+    // Live cards only. An archived task KEEPS its status, so without this it
+    // would sit in its old column as if nothing had happened.
+    //
+    // Both shapes, not just `null`: in Mongo a field that was never written is
+    // ABSENT, and `archivedAt: null` does not match an absent field. Measured —
+    // six stored rows went invisible until this OR was added.
+    where: { OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }] },
     select: {
       id: true,
       title: true,

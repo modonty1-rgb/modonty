@@ -26,9 +26,9 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
-import { deleteTask, moveTask } from "../actions/task-actions";
-import type { AssignableStaff, BoardTask } from "../helpers/queries";
-import { TASK_STATUSES, TASK_STATUS_META, type TaskStatusKey } from "../helpers/task-config";
+import { archiveTask, moveTask } from "../actions/task-actions";
+import type { BoardTask } from "../helpers/queries";
+import { TASK_STATUSES, TASK_STATUS_META, type TaskStatusKey } from "@/lib/tasks/task-config";
 import { TaskCard } from "./task-card";
 import { TaskDialog } from "./task-dialog";
 
@@ -57,6 +57,7 @@ function Column({
         "flex min-h-0 w-72 shrink-0 flex-col rounded-xl border bg-muted/30 transition-colors sm:w-full",
         isOver && "border-primary/60 bg-primary/5",
       )}
+      data-column={status}
     >
       <header className="flex items-center gap-2 border-b px-3 py-2">
         <span className={cn("size-2 rounded-full", meta.dot)} aria-hidden />
@@ -70,13 +71,7 @@ function Column({
   );
 }
 
-export function TaskBoard({
-  initialBoard,
-  staff,
-}: {
-  initialBoard: Board;
-  staff: AssignableStaff[];
-}) {
+export function TaskBoard({ initialBoard }: { initialBoard: Board }) {
   const router = useRouter();
   const { toast } = useToast();
   const [, startTransition] = useTransition();
@@ -132,7 +127,7 @@ export function TaskBoard({
     startTransition(async () => {
       const result = await moveTask({ id: task.id, status: to, toIndex });
       if (!result.success) {
-        toast({ title: "ما اتنقلت", description: result.error, variant: "destructive" });
+        toast({ title: "Move failed", description: result.error, variant: "destructive" });
       }
       // Refresh either way: on success to pick up the real positions, on failure
       // to snap the card back to where the database actually has it.
@@ -160,13 +155,23 @@ export function TaskBoard({
     commitMove(task, to, toIndex < 0 ? board[to].length : toIndex);
   };
 
-  const handleDelete = (task: BoardTask) => {
+  const handleArchive = (task: BoardTask) => {
+    // Optimistic like a move: the card leaves the column at once, and the
+    // refresh below puts it back if the server refused.
+    setBoard((prev) => ({
+      ...prev,
+      [task.status]: prev[task.status].filter((t) => t.id !== task.id),
+    }));
+
     startTransition(async () => {
-      const result = await deleteTask(task.id);
+      const result = await archiveTask(task.id);
       toast(
         result.success
-          ? { title: "اتحذفت", description: `«${task.title}» راحت خالص.` }
-          : { title: "ما اتحذفت", description: result.error, variant: "destructive" },
+          ? {
+              title: "Archived",
+              description: `${task.title} is off the board — find it under Archive and restore it any time.`,
+            }
+          : { title: "Archive failed", description: result.error, variant: "destructive" },
       );
       router.refresh();
     });
@@ -174,6 +179,21 @@ export function TaskBoard({
 
   return (
     <>
+      {/* ONE place to add a task, not a button per column — Khalid, 2026-09-02:
+          "one place to add a task, then it moves". New cards land in To Do and
+          you drag them from there.
+
+          Pulled up onto the header's row, which is free now that the tab strip
+          and the duplicate counters are gone. A single small button does not
+          earn a strip of page height, and that height is what the columns
+          needed — they were 257px tall and scrolling over an empty page. */}
+      <div className="-mt-12 mb-2 flex items-center justify-end">
+        <Button size="sm" className="h-8 gap-1.5 text-xs" onClick={() => setCreatingIn("TODO")}>
+          <Plus className="size-3.5" aria-hidden />
+          New Task
+        </Button>
+      </div>
+
       <DndContext
         // A FIXED id, not the generated one. Without it dnd-kit numbers its
         // `aria-describedby` from a module counter that starts fresh on the
@@ -187,7 +207,12 @@ export function TaskBoard({
         onDragCancel={() => setActiveId(null)}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex min-h-0 flex-1 gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-x-visible lg:grid-cols-4">
+        {/* A real height, not `flex-1`. The columns sat at 257px and scrolled
+            internally while the page below them was empty, because `flex-1`
+            resolves against a parent chain that has no definite height here.
+            `min-h` off the viewport gives the cards the space that was already
+            on screen; the columns still scroll when a list outgrows it. */}
+        <div className="flex min-h-[calc(100dvh-10.5rem)] gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-x-visible lg:grid-cols-4">
           {TASK_STATUSES.map((status) => (
             <Column key={status} status={status} tasks={board[status]}>
               <SortableContext
@@ -200,26 +225,16 @@ export function TaskBoard({
                     task={task}
                     onEdit={setEditing}
                     onMove={(t, to) => commitMove(t, to, 0)}
-                    onDelete={handleDelete}
+                    onArchive={handleArchive}
                   />
                 ))}
               </SortableContext>
 
               {board[status].length === 0 && (
                 <p className="px-1 py-6 text-center text-[12px] text-muted-foreground/70">
-                  مافيش مهام هنا
+                  Nothing here
                 </p>
               )}
-
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setCreatingIn(status)}
-                className="mt-auto h-8 w-full justify-start gap-1.5 text-[12px] text-muted-foreground hover:text-foreground"
-              >
-                <Plus className="size-3.5" aria-hidden />
-                أضف مهمة
-              </Button>
             </Column>
           ))}
         </div>
@@ -233,14 +248,13 @@ export function TaskBoard({
               dragging
               onEdit={() => {}}
               onMove={() => {}}
-              onDelete={() => {}}
+              onArchive={() => {}}
             />
           )}
         </DragOverlay>
       </DndContext>
 
       <TaskDialog
-        staff={staff}
         task={editing}
         createIn={creatingIn}
         onClose={() => {

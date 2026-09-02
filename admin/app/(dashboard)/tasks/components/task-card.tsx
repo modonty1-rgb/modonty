@@ -20,9 +20,9 @@ import {
   TASK_STATUSES,
   TASK_STATUS_META,
   type TaskStatusKey,
-} from "../helpers/task-config";
+} from "@/lib/tasks/task-config";
 
-const dateFmt = new Intl.DateTimeFormat("ar-SA", { day: "numeric", month: "short" });
+const dateFmt = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" });
 
 /** Overdue is only meaningful while the task is unfinished. */
 function dueState(due: Date | null, status: TaskStatusKey) {
@@ -52,13 +52,13 @@ export function TaskCard({
   task,
   onEdit,
   onMove,
-  onDelete,
+  onArchive,
   dragging = false,
 }: {
   task: BoardTask;
   onEdit: (task: BoardTask) => void;
   onMove: (task: BoardTask, to: TaskStatusKey) => void;
-  onDelete: (task: BoardTask) => void;
+  onArchive: (task: BoardTask) => void;
   dragging?: boolean;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -86,7 +86,7 @@ export function TaskCard({
           type="button"
           {...attributes}
           {...listeners}
-          aria-label={`اسحب «${task.title}»`}
+          aria-label={`Drag ${task.title}`}
           className="mt-0.5 cursor-grab touch-none rounded p-0.5 text-muted-foreground/50 opacity-0 transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100 active:cursor-grabbing"
         >
           <GripVertical className="size-3.5" aria-hidden />
@@ -106,7 +106,7 @@ export function TaskCard({
               variant="ghost"
               size="icon"
               className="size-6 shrink-0 opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100"
-              aria-label={`خيارات «${task.title}»`}
+              aria-label={`Options for ${task.title}`}
             >
               <MoreHorizontal className="size-3.5" aria-hidden />
             </Button>
@@ -114,20 +114,18 @@ export function TaskCard({
           {/* The keyboard and touch path to the same move that dragging performs.
               Drag alone is not an accessible control, so it is never the only way. */}
           <DropdownMenuContent align="end" className="w-44 text-start">
-            <DropdownMenuItem onClick={() => onEdit(task)}>تعديل</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onEdit(task)}>Edit</DropdownMenuItem>
             <DropdownMenuSeparator />
             {TASK_STATUSES.filter((s) => s !== task.status).map((s) => (
               <DropdownMenuItem key={s} onClick={() => onMove(task, s)}>
-                انقل إلى «{TASK_STATUS_META[s].label}»
+                Move to {TASK_STATUS_META[s].label}
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => onDelete(task)}
-              className="text-red-600 focus:text-red-600 dark:text-red-400"
-            >
-              حذف
-            </DropdownMenuItem>
+            {/* Archive, never delete. It is reversible, so it does not need the
+                destructive confirm a delete would — the toast says where the
+                card went and the archive screen brings it back. */}
+            <DropdownMenuItem onClick={() => onArchive(task)}>Archive</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -150,7 +148,7 @@ export function TaskCard({
           >
             <CalendarClock className="size-3" aria-hidden />
             {due.label}
-            {due.late && <span className="sr-only"> — متأخرة</span>}
+            {due.late && <span className="sr-only"> — overdue</span>}
           </span>
         )}
 
@@ -158,12 +156,12 @@ export function TaskCard({
           {task.assignee ? (
             <>
               <span className="max-w-24 truncate text-[11px] text-muted-foreground">
-                {task.assignee.name ?? "بلا اسم"}
+                {task.assignee.name ?? "No name"}
               </span>
               <Initials name={task.assignee.name} image={task.assignee.image} />
             </>
           ) : (
-            <span className="text-[11px] text-muted-foreground/70">بلا مسؤول</span>
+            <span className="text-[11px] text-muted-foreground/70">Unassigned</span>
           )}
         </span>
       </div>

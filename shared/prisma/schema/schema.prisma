@@ -325,12 +325,21 @@ model Task {
   // `updatedAt` so editing a finished task does not rewrite when it finished.
   completedAt DateTime?
 
+  // Archived, never deleted — Khalid, 2026-09-02: «مافي حذف، أرشفه بدل الحذف».
+  //
+  // A DATE on the task, not a fifth column: archiving is orthogonal to where the
+  // work stands, so a card restored from the archive returns to the column it
+  // left. A fifth status would have to forget that, and would put a column on
+  // the board that is not part of the workflow.
+  archivedAt DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // The board's only read: one column, ordered. Both fields in one index so the
-  // sort is served by the index instead of in memory.
-  @@index([status, position])
+  // The board's only read: live cards in one column, ordered. `archivedAt` leads
+  // because every board query filters on it first — an index that starts with
+  // `status` would scan archived rows before discarding them.
+  @@index([archivedAt, status, position])
   @@index([assigneeId])
   @@index([dueDate])
   @@map("tasks")

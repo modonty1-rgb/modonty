@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
+import type { Prisma } from "@prisma/client";
+
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
@@ -21,6 +23,20 @@ const revalidateBoard = () => revalidatePath("/tasks", "layout");
 
 /** Empty string from a `<select>`/`<input>` means "not set", not "set to empty". */
 const orNull = (v: string | undefined) => (v && v.trim() ? v.trim() : null);
+
+/**
+ * "Not archived", in the only form Mongo answers correctly.
+ *
+ * An optional field that was never written is ABSENT, and `archivedAt: null`
+ * does NOT match an absent field. Measured: with a plain `archivedAt: null`
+ * filter, `create` reported success and every card vanished on the next reload
+ * — six rows were in the database and invisible.
+ */
+// NOT `as const`: that freezes `OR` into a readonly tuple, and Prisma's
+// `TaskWhereInput.OR` is a mutable array — three call sites failed to compile.
+const LIVE: Prisma.TaskWhereInput = {
+  OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
+};
 
 function parseDueDate(value: string | undefined): Date | null {
   const raw = orNull(value);
@@ -45,11 +61,11 @@ function positionAt(siblings: { position: number }[], toIndex: number): number {
 
 export async function createTask(raw: unknown): Promise<Result> {
   const session = await auth();
-  if (!session) return { success: false, error: "غير مصرّح" };
+  if (!session) return { success: false, error: "Not authorised" };
 
   const parsed = createTaskSchema.safeParse(raw);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0]?.message ?? "بيانات ناقصة" };
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Missing data" };
   }
   const data = parsed.data;
 
@@ -58,7 +74,7 @@ export async function createTask(raw: unknown): Promise<Result> {
     // you are thinking about, and burying it under fifty older rows is why
     // "add" and "then scroll to find it" became two steps in other tools.
     const first = await db.task.findFirst({
-      where: { status: data.status },
+      where: { status: data.status, ...LIVE },
       select: { position: true },
       orderBy: { position: "asc" },
     });
@@ -71,26 +87,35 @@ export async function createTask(raw: unknown): Promise<Result> {
         priority: data.priority,
         position: first ? first.position - 1000 : 1000,
         dueDate: parseDueDate(data.dueDate),
-        assigneeId: orNull(data.assigneeId),
+        // A new task belongs to whoever wrote it — Khalid, 2026-09-02: the
+        // employee adds their own tasks, so `New Task` has no assignee field to
+        // fill in. Reassigning is an EDIT, and only there.
+        //
+        // Taken from the SESSION, never from the payload: the form no longer
+        // sends one, and the action is reachable without the form.
+        assigneeId: (session.user as { id?: string })?.id ?? null,
         createdById: (session.user as { id?: string })?.id ?? null,
         completedAt: data.status === "DONE" ? new Date() : null,
+        // Written explicitly so the field EXISTS as null instead of being absent
+        // — see `LIVE` above for what absent costs.
+        archivedAt: null,
       },
     });
 
     revalidateBoard();
     return { success: true };
   } catch (e) {
-    return { success: false, error: e instanceof Error ? e.message : "فشل إنشاء المهمة" };
+    return { success: false, error: e instanceof Error ? e.message : "Could not create the task" };
   }
 }
 
 export async function updateTask(raw: unknown): Promise<Result> {
   const session = await auth();
-  if (!session) return { success: false, error: "غير مصرّح" };
+  if (!session) return { success: false, error: "Not authorised" };
 
   const parsed = updateTaskSchema.safeParse(raw);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0]?.message ?? "بيانات ناقصة" };
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Missing data" };
   }
   const data = parsed.data;
 
@@ -99,7 +124,7 @@ export async function updateTask(raw: unknown): Promise<Result> {
       where: { id: data.id },
       select: { id: true, status: true, completedAt: true },
     });
-    if (!existing) return { success: false, error: "المهمة مش موجودة — يمكن حد حذفها" };
+    if (!existing) return { success: false, error: "Task not found" };
 
     await db.task.update({
       where: { id: existing.id },
@@ -121,18 +146,18 @@ export async function updateTask(raw: unknown): Promise<Result> {
     revalidateBoard();
     return { success: true };
   } catch (e) {
-    return { success: false, error: e instanceof Error ? e.message : "فشل حفظ المهمة" };
+    return { success: false, error: e instanceof Error ? e.message : "Could not save the task" };
   }
 }
 
 /** Drag-drop and the keyboard "move to" menu both land here — one write path. */
 export async function moveTask(raw: unknown): Promise<Result> {
   const session = await auth();
-  if (!session) return { success: false, error: "غير مصرّح" };
+  if (!session) return { success: false, error: "Not authorised" };
 
   const parsed = moveTaskSchema.safeParse(raw);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0]?.message ?? "نقل غير صالح" };
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid move" };
   }
   const { id, status, toIndex } = parsed.data;
 
@@ -141,13 +166,15 @@ export async function moveTask(raw: unknown): Promise<Result> {
       where: { id },
       select: { id: true, status: true, completedAt: true },
     });
-    if (!task) return { success: false, error: "المهمة مش موجودة — يمكن حد حذفها" };
+    if (!task) return { success: false, error: "Task not found" };
 
     // Siblings EXCLUDING the moving card: if it is already in this column, its
     // own row would otherwise shift every index by one and land the card next
     // to where it was dropped instead of on it.
     const siblings = await db.task.findMany({
-      where: { status, NOT: { id: task.id } },
+      // Archived rows are excluded too: they hold positions the board does not
+      // show, so counting them would land the card at the wrong index.
+      where: { status, ...LIVE, NOT: { id: task.id } },
       select: { position: true },
       orderBy: { position: "asc" },
       take: 500,
@@ -165,23 +192,72 @@ export async function moveTask(raw: unknown): Promise<Result> {
     revalidateBoard();
     return { success: true };
   } catch (e) {
-    return { success: false, error: e instanceof Error ? e.message : "فشل نقل المهمة" };
+    return { success: false, error: e instanceof Error ? e.message : "Could not move the task" };
   }
 }
 
-export async function deleteTask(id: string): Promise<Result> {
+/**
+ * Take a task off the board without destroying it.
+ *
+ * There is no delete in this feature at all — Khalid, 2026-09-02: «مافي حذف،
+ * أرشفه بدل الحذف». Who did what and when is the point of a board a team shares;
+ * a row that can vanish makes that history a guess.
+ */
+export async function archiveTask(id: string): Promise<Result> {
   const session = await auth();
-  if (!session) return { success: false, error: "غير مصرّح" };
-  if (!/^[0-9a-fA-F]{24}$/.test(id)) return { success: false, error: "المعرّف غير صالح" };
+  if (!session) return { success: false, error: "Not authorised" };
+  if (!/^[0-9a-fA-F]{24}$/.test(id)) return { success: false, error: "Invalid id" };
 
   try {
-    const task = await db.task.findUnique({ where: { id }, select: { id: true } });
-    if (!task) return { success: false, error: "المهمة مش موجودة — يمكن حد حذفها قبلك" };
+    const task = await db.task.findUnique({
+      where: { id },
+      select: { id: true, archivedAt: true },
+    });
+    if (!task) return { success: false, error: "Task not found" };
+    if (task.archivedAt) return { success: false, error: "Task is already archived" };
 
-    await db.task.delete({ where: { id: task.id } });
+    await db.task.update({ where: { id: task.id }, data: { archivedAt: new Date() } });
     revalidateBoard();
     return { success: true };
   } catch (e) {
-    return { success: false, error: e instanceof Error ? e.message : "فشل حذف المهمة" };
+    return { success: false, error: e instanceof Error ? e.message : "Could not archive the task" };
+  }
+}
+
+/**
+ * Put an archived task back on the board.
+ *
+ * It returns to the column it left, and to the TOP of it: its old `position`
+ * may sit between two cards that no longer exist, and a card you deliberately
+ * brought back should be visible, not buried.
+ */
+export async function restoreTask(id: string): Promise<Result> {
+  const session = await auth();
+  if (!session) return { success: false, error: "Not authorised" };
+  if (!/^[0-9a-fA-F]{24}$/.test(id)) return { success: false, error: "Invalid id" };
+
+  try {
+    const task = await db.task.findUnique({
+      where: { id },
+      select: { id: true, status: true, archivedAt: true },
+    });
+    if (!task) return { success: false, error: "Task not found" };
+    if (!task.archivedAt) return { success: false, error: "Task is not archived" };
+
+    const first = await db.task.findFirst({
+      where: { status: task.status, ...LIVE },
+      select: { position: true },
+      orderBy: { position: "asc" },
+    });
+
+    await db.task.update({
+      where: { id: task.id },
+      data: { archivedAt: null, position: first ? first.position - 1000 : 1000 },
+    });
+
+    revalidateBoard();
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : "Could not restore the task" };
   }
 }
