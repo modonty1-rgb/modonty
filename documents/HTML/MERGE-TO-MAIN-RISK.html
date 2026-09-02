@@ -94,7 +94,6 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 
 <div class="tabs" role="tablist">
   <button role="tab" aria-selected="true"  data-pane="todo">To Do<span class="n" id="n-todo"></span></button>
-  <button role="tab" aria-selected="false" data-pane="later">⏸️ لاحقاً<span class="n" id="n-later"></span></button>
   <button role="tab" aria-selected="false" data-pane="data" class="tb-amber">🗄️ مشاكل الداتا<span class="n" id="n-data"></span></button>
   <button role="tab" aria-selected="false" data-pane="codex">🤖 Codex<span class="n" id="n-codex"></span></button>
 </div>
@@ -149,53 +148,6 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 </details>
 </section>
 
-<section class="pane" id="pane-later" hidden>
-<h2 style="color:var(--muted)">⏸️ لاحقاً — مؤجَّل بقرار أو في قائمة الانتظار</h2>
-
-<p style="color:var(--muted);font-size:15px;margin:0 0 12px">مؤجَّل صراحةً. لا يُبدأ إلا بأمر خالد.</p>
-<input id="q-later" class="chkq" placeholder="تصفية…" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#0a0d12;color:var(--ink);font-family:inherit;font-size:15px;margin-bottom:12px">
-<p id="c-later" style="color:var(--muted);font-size:14px;margin:0 0 8px"></p>
-<div class="scrollx"><table id="t-later" class="chkt">
-<tr><th>#</th><th>الرمز</th><th>البند</th><th>التطبيق</th><th>اللوحة</th><th>التاريخ</th></tr>
-<tr><td class="n">82</td><td class="n">T9</td><td>إطفاء Cloudinary — مؤجَّل عمداً، لا معلَّق</td><td class="n">admin · modonty</td><td class="n">خط سير النشر</td><td class="n">٧ أغسطس ٢٠٢٦</td></tr>
-</table></div>
-</section>
-
-
-
-<script>
-(() => {
-  const btns=[...document.querySelectorAll('.tabs button')];
-  btns.forEach(b=>b.addEventListener('click',()=>{
-    btns.forEach(x=>x.setAttribute('aria-selected', String(x===b)));
-    ['todo','codex','later','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
-    
-    try{ localStorage.setItem('merge-board-tab', b.dataset.pane); }catch{}
-  }));
-  // العدّادات تُحسب لا تُكتب
-  document.getElementById('n-todo').textContent = Math.max(0, document.querySelectorAll('#t-todo tr').length - 1);
-  document.getElementById('n-data').textContent = document.querySelectorAll('#pane-data div.card').length;
-  { const el=document.getElementById('n-codex'); if(el) el.textContent = document.querySelectorAll('#pane-codex details.tk').length; }
-  // جدول `work` انتقل إلى To Do (١ سبتمبر ٢٠٢٦) — بحثه يبقى يعمل، وعدّاده لم يعد موجوداً
-  // لأن بنوده تُحسب ضمن عدّاد To Do أدناه.
-  ['later'].forEach(k=>{
-    const rows=[...document.querySelectorAll('#t-'+k+' tr')].slice(1);
-    const nEl=document.getElementById('n-'+k);
-    if(nEl) nEl.textContent = rows.length;
-    const q=document.getElementById('q-'+k), cnt=document.getElementById('c-'+k);
-    const render=()=>{const v=q.value.trim().toLowerCase();let n=0;
-      rows.forEach(r=>{const hit=!v||r.innerText.toLowerCase().includes(v); r.hidden=!hit; if(hit)n++;});
-      cnt.textContent='ظاهر: '+n+' من '+rows.length;};
-    q.addEventListener('input',render); render();
-  });
-  try{
-    const saved=localStorage.getItem('merge-board-tab');
-    if(saved && saved!=='todo' && !['http','code','db','check','manual'].includes(saved)){const b=btns.find(x=>x.dataset.pane===saved); if(b) b.click();}
-  }catch{}
-})();
-</script>
-</body>
-</html>
 <section class="pane" id="pane-data" hidden>
 <h2 style="color:var(--amber)">🗄️ مشاكل الداتا — تُصلَح من الشاشة لا من الكود</h2>
 <p style="color:var(--muted);font-size:15px;margin:0 0 6px">كل بند هنا <b>نصٌّ مخزَّن في القاعدة كتبه إنسان</b>، لا سطرَ كودٍ يُعدَّل. الدليل في كل بطاقة: صفر مطابقة للنصّ في المستودع كلّه.</p>
@@ -294,7 +246,7 @@ seoDescription →  صفحة الكاتب «مدونتي»: كل المقالا�
   const btns=[...document.querySelectorAll('.tabs button')];
   btns.forEach(b=>b.addEventListener('click',()=>{
     btns.forEach(x=>x.setAttribute('aria-selected', String(x===b)));
-    ['todo','codex','later','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
+    ['todo','codex','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
     
     try{ localStorage.setItem('merge-board-tab', b.dataset.pane); }catch{}
   }));
@@ -303,8 +255,6 @@ seoDescription →  صفحة الكاتب «مدونتي»: كل المقالا�
   document.getElementById('n-data').textContent = document.querySelectorAll('#pane-data div.card').length;
   { const el=document.getElementById('n-codex'); if(el) el.textContent = document.querySelectorAll('#pane-codex details.tk').length; }
   // «شغل مفتوح» و«لاحقاً» يعدّان صفوف جدولهما، لا بطاقات — بنودهما تعيش في جدول واحد.
-  document.getElementById('n-later').textContent =
-    Math.max(0, document.querySelectorAll('#pane-later table tr').length - 1);
   // تبويب «المنجز» حُذف ١ سبتمبر ٢٠٢٦ بقاعدة الورك-فلو: اللوحة تحمل المفتوح فقط،
   // وتاريخ المنجز في `SESSION-LOG.md` وفي رسائل الكوميتات. فلا عدّاد له.
   ['http','code','db','manual'].forEach(k=>{
