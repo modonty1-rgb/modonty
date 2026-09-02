@@ -96,7 +96,6 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
   <button role="tab" aria-selected="true"  data-pane="todo">To Do<span class="n" id="n-todo"></span></button>
   <button role="tab" aria-selected="false" data-pane="later">⏸️ لاحقاً<span class="n" id="n-later"></span></button>
   <button role="tab" aria-selected="false" data-pane="data" class="tb-amber">🗄️ مشاكل الداتا<span class="n" id="n-data"></span></button>
-  <button role="tab" aria-selected="false" data-pane="reels">🎬 الريلز<span class="n" id="n-reels"></span></button>
   <button role="tab" aria-selected="false" data-pane="codex">🤖 Codex<span class="n" id="n-codex"></span></button>
 </div>
 
@@ -125,119 +124,13 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 </table></div>
 </section>
 
-<section class="pane" id="pane-reels" hidden>
-
-<h2>🎬 الريلز — فُتحت ٣١ أغسطس ٢٠٢٦</h2>
-<p style="color:var(--muted);font-size:15px;margin:0 0 10px">خالد: «نرجع لموضوع الريلز، هذا يبغاله درس كامل». الأربع بطاقات أدناه هي ما كشفته جلسة ٣١ أغسطس بالقياس.</p>
-
-<h2>الأربعة في جدول واحد</h2>
-<table><thead><tr><th>البطاقة</th><th>الخطورة</th><th>المشكلة</th><th>الدليل / الموضع</th><th>ما يقفلها</th></tr></thead><tbody>
-<tr>
-  <td><code>REEL-CTRL</code></td><td style="color:var(--amber)">باقٍ منه الحذف النهائي</td>
-  <td><s>لا رؤية ولا إيقاف</s> — أربع شاشات وفعلان سُلّمت ٢ سبتمبر. الباقي: الحذف النهائي وقرار صلاحية العميل</td>
-  <td><code>reels/{pending,published,rejected,archived}/page.tsx</code> · <code>reel-lifecycle.ts</code> · قسم مستقلّ في السايدبار</td>
-  <td>مرحلة ٥ وحدها (الجدول أدناه)</td>
-</tr>
-<tr>
-  <td><code>REEL-LEAK</code></td><td style="color:var(--red)">عالٍ</td>
-  <td>العميل يسحب ريلاً حيّاً من مدونتي بنفسه · وحذف الوسائط يترك فيديو بني يتيماً</td>
-  <td><code>reels-actions.ts:254-257</code> (<code>PUBLISHED→ARCHIVED</code> + إبطال كاش) · <code>delete-media.ts:83</code> بلا فحص <code>inReels/reelStatus</code></td>
-  <td>محاولة حذف ريل منشور تُرفض برسالة تسمّي السبب</td>
-</tr>
-<tr>
-  <td><code>REEL-BUNNY-TRUST</code></td><td style="color:var(--amber)">متوسّط</td>
-  <td>بني يقول «مكتمل ١٠٠٪» عن ملف ناقص النصف — وحرّاسنا كانت تصدّقه</td>
-  <td>معلن <code>11,542,896</code> · يصل <code>5.1MB</code> ورقم مختلف كل مرّة من ثلاث نقاط توزيع · <code>curl exit=18</code></td>
-  <td>فحص دوريّ يقارن <code>Content-Length</code> بما يصل فعلاً للمنشور</td>
-</tr>
-<tr>
-  <td><code>REEL-REUPLOAD</code></td><td style="color:var(--amber)">متوسّط</td>
-  <td>أربعة ريلز تنتظر رفعاً جديداً من العميل — لا زرّ يصلحها</td>
-  <td>ثلاثة <code>status 0 · storage 0</code> · ورابع ملفه ناقص فرُفض ٣١ أغسطس</td>
-  <td>العميل يرفعها فتظهر في الانتظار مكتملة</td>
-</tr>
-</tbody></table>
-
-<details class="tk" open>
-<summary><span class="id">REEL-CTRL</span><span class="sv sv-n">باقٍ منه الحذف النهائي</span><span class="tt">الرؤية والإيقاف والإرجاع سُلّمت ٢ سبتمبر — باقٍ الحذف النهائي وقرار صلاحية العميل</span><span class="ap">admin</span></summary>
-<div class="body"><p style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.35);border-radius:8px;padding:10px 14px;margin:0 0 12px"><b style="color:var(--green)">نُفِّذ ٢ سبتمبر ٢٠٢٦ — أربع مراحل من خمس، مقيسة حيّاً على الأدمن (١٢٨٠×٨٠٠).</b><br>
-• <b>مرحلة ١ — الرؤية:</b> الريلز صارت <b>قسماً مستقلّاً</b> في السايدبار بأربعة بنود (كانت سطراً واحداً تحت Media)، وأربع شاشات لها عناوين تُنسخ وتُفتح: <code>/reels/pending</code> · <code>published</code> · <code>rejected</code> · <code>archived</code>. الحالة في المسار لا في <code>useState</code>، فزرّ الرجوع والتبويب الجديد يشتغلان. و<code>/reels</code> صار تحويلاً إلى الطابور.<br>
-• <b>مرحلة ٢ — الإيقاف:</b> زرّ «اسحبه من الواجهة» على المنشور (<code>archiveReel</code>) — <b>مقيس:</b> منشور ١ ← ٠ · مؤرشف ١ ← ٢، مع إبطال كاش مودونتي.<br>
-• <b>مرحلة ٤ — الإرجاع:</b> «رجّعه للواجهة» على المؤرشف (<code>republishReel</code>) — <b>مقيس:</b> رجع «زراعة الأسنان» منشوراً؛ وريل بلا عنوان <b>رُفض</b> برسالة تسمّي الحقل: «ما ينشر — حقل «العنوان» فاضي». تاريخ النشر الأوّل لا يُدهس.<br>
-• <b>مرحلة ٣</b> أُغلقت أمس ببطاقة <code>REEL-LEAK</code>.<br>
-<b>ملفّات:</b> <code>reels/layout.tsx</code> · <code>helpers/load-reels.ts</code> (<code>REEL_VIEW_CONFIG</code> + <code>cache()</code> للعدّادات) · <code>components/reel-view-nav.tsx</code> · <code>components/reel-record-list.tsx</code> · <code>components/reel-lifecycle-button.tsx</code> · <code>actions/reel-lifecycle.ts</code> · <code>components/admin/sidebar.tsx</code>. و<code>revalidatePath("/reels")</code> صارت <code>"layout"</code> في كل المسارات — الفعل ينقل الصفّ بين شاشتين، والافتراضيّ كان يُبطل التحويل وحده.</p>
-<p><b>خالد ٣١ أغسطس:</b> «أبغى قائمة بحيث إني أقدر ألغي ريل، أوقف ريل، أمسح ريل كامل. أنا ما عندي الـcontrol هذا الآن.»</p>
-<p><b>الوضع بعد التنفيذ:</b></p>
-<table><thead><tr><th>القدرة</th><th>أدمن</th><th>كونسول (العميل)</th></tr></thead><tbody>
-<tr><td>يشوف المنشور/المرفوض/المؤرشف</td><td>✔ أربع شاشات</td><td>✔ يشوف ريلزه</td></tr>
-<tr><td>يوقف ريلاً منشوراً</td><td>✔ «اسحبه من الواجهة»</td><td>✔ يسحبه من مدونتي بنفسه</td></tr>
-<tr><td>يرجّع مؤرشفاً</td><td>✔ «رجّعه للواجهة»</td><td>❌</td></tr>
-<tr><td>يحذف ريلاً نهائياً</td><td>◐ من مكتبة الوسائط بعد الأرشفة</td><td>✔ للفيديو فقط</td></tr>
-<tr><td>يعدّل نصّ ريل منشور</td><td>❌</td><td>❌ مقفول</td></tr>
-</tbody></table>
-<p><b>الباقي — مرحلة ٥ وقرار:</b></p>
-<table><thead><tr><th>#</th><th>البند</th><th>الناتج الذي يُقفله</th></tr></thead><tbody>
-<tr><td>٥</td><td>«حذف نهائي» من شاشة الريلز نفسها</td><td>صفّ + فيديو بني + ملف، بتأكيد بالاسم. اليوم الطريق موجود لكنه في مكتبة الوسائط: الحارس يشترط الأرشفة أوّلاً ثم يحذف فيديو بني معه.</td></tr>
-<tr><td>—</td><td><b>قرارك:</b> يبقى العميل قادراً على سحب ريله المنشور من الكونسول؟</td><td>سلوك مصمَّم لا عطل (<code>reels-manager.tsx:322</code>). نزعه يعني أن السحب صار بيدنا وحدنا.</td></tr>
-</tbody></table></div>
-</details>
-
-<details class="tk" open>
-<summary><span class="id">REEL-LEAK</span><span class="sv sv-h">عالٍ</span><span class="tt">ثغرتان: العميل يسحب ريلاً حيّاً من الموقع · وحذف الوسائط يترك فيديو بني يتيماً</span><span class="ap">admin · console</span></summary>
-<div class="body"><p style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.35);border-radius:8px;padding:10px 14px;margin:0 0 12px"><b style="color:var(--green)">نُفِّذ ١ سبتمبر ٢٠٢٦ — ثغرة الحذف سُدَّت في المسارين.</b><br>• <code>admin/.../can-delete-media.ts</code> صار يفحص <code>inReels</code> و<code>reelStatus</code>؛ الريل في <code>DRAFT/PENDING_APPROVAL/APPROVED/PUBLISHED</code> يُرفض حذفه برسالة تسمّي حالته. و<code>get-media-usage.ts</code> صار يجلب الحقول الثلاثة.<br>• <code>admin/.../delete-media.ts</code> صار يستدعي <code>deleteStreamVideo(bunnyVideoId)</code> — أفضل جهد لا يعطّل حذف الصفّ، نفس عقد مرآة الصور.<br>• <code>console/.../media-actions.ts</code> كان أخطر: يفحص المقالات وحدها. صار يرفض الريل الحيّ ويحذف فيديو بني.<br><b>وما ليس عطلاً:</b> سحب العميل لريله المنشور <b>سلوك مصمَّم</b> — <code>reels-manager.tsx:322</code> يخبره صراحةً «يطلع من الفيد، وتعليقات الزوّار وإعجاباتهم تبقى محفوظة». إبقاء الصلاحية أو نزعها <b>قرارك</b>.</p><p><b>ثغرة ١ — العميل يشيل ريلاً منشوراً من طرفه.</b> زرّ الحذف في الكونسول يظهر لأي ريل بغضّ النظر عن حالته (<code>reels-manager.tsx:314-329</code>)، وعلى المنشور ينفّذ <code>PUBLISHED → ARCHIVED</code> + <code>inReels:false</code> + <code>revalidateModontyTag("reels")</code> (<code>console/app/(dashboard)/dashboard/reels/actions/reels-actions.ts:254-257</code>). النتيجة: الريل يختفي من مدونتي بلا علمنا. ونفس المسار للفيديو (<code>video-actions.ts:270-278</code>).</p>
-<p><b>ثغرة ٢ — حذف الوسائط العام لا يفحص الريل.</b> <code>admin/app/(dashboard)/media/actions/delete-media.ts:83</code> يحذف الصفّ، وحارسه <code>can-delete-media.ts</code> يفحص المقالات وشعار العميل وأنواع المعرض — <b>ولا يفحص <code>inReels</code> ولا <code>reelStatus</code> إطلاقاً</b>، ولا يستدعي <code>deleteStreamVideo</code>. صفّ ريل مستقلّ يمرّ منه → فيديو بني يتيم ورابط عام مكسور. ونفس الغياب في <code>console/app/(dashboard)/dashboard/media/actions/media-actions.ts:32</code>.</p>
-<p><b>يقفل بـ:</b> محاولة حذف ريل منشور من الكونسول تُرفض برسالة تسمّي السبب · ومحاولة حذفه من شاشة الوسائط تُرفض أو تحذف فيديو بني معه.</p></div>
-</details>
-
-<details class="tk" open>
-<summary><span class="id">REEL-BUNNY-TRUST</span><span class="sv sv-n">متوسّط</span><span class="tt">بني يقول «مكتمل ١٠٠٪» عن ملف ناقص النصف — وحرّاسنا كانت تصدّقه</span><span class="ap">admin</span></summary>
-<div class="body"><p style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.35);border-radius:8px;padding:10px 14px;margin:0 0 12px"><b style="color:var(--green)">نُفِّذ ١ سبتمبر ٢٠٢٦ — الحارس ما عاد يصدّق أوّل بايت.</b><br><code>reel-approval.ts</code> صار يسأل عن <b>آخر</b> بايت أيضاً (<code>Range: bytes=-1</code>) ويقارن الطول المعلن في الردّين. النقطة التي لا تملك إلا مقدّمة الملف لا تسلّم بايته الأخير. الثمن بايتان، لا تنزيل عشرات الميغابايتات عند كل اعتماد.<br><b>مقيس على ملف سليم:</b> <code>0-0/4733</code> ثم <code>4732-4732/4733</code> — الطول متطابق فيمرّ.<br><b>الباقي:</b> فحص دوريّ على الريلز <b>المنشورة</b> سابقاً — هذا يحرس الاعتماد الجديد لا القديم.</p><p><b>الحادثة:</b> ريل «ثلاث خطوات» (<code>85d9c768…</code>) كان يُرفض بـ«ملف الريل مو موجود (404)»، وبني API يقول عنه <code>status 4 · encodeProgress 100 · storage 150MB</code>. القياس القاطع:</p>
-<pre>الترويسة تعلن :  Content-Length: 11,542,896
-اللي يصل فعلاً:  5,169,048 · 5,112,148 · 5,242,880   ← رقم مختلف كل مرّة
-                 من ثلاث نقاط توزيع مختلفة · curl exit=18
-الفيديو السليم:  10,271,159 من 10,271,159  ✔ كامل</pre>
-<p>ومكتبة <code>modonty-reels</code> مفتوحة تماماً (<code>AllowedReferrers []</code> · <code>BlockNoneReferrer false</code> · <code>PlayerTokenAuthenticationEnabled false</code> · <code>AllowDirectPlay true</code>) — فالمنع ليس أمنياً.</p>
-<p><b>وفخّ ثانٍ في نفس العائلة:</b> بني يرد <code>404</code> على <code>HEAD</code> لملف لم تُخزّنه نقطة التوزيع بعد، والملف سليم: <code>HEAD 404 ← GET Range 0-0 206 ← HEAD 200</code>. أربعة فحوص كانت تصدّقه، وحُوّلت إلى <code>GET</code> بترويسة <code>Range: bytes=0-0</code> في <code>5d42cea</code>: <code>reel-approval.ts:32</code> · <code>fix-broken-media.ts:30</code> (كان يمسح رابط صورة شغّالة ويحطّ البديل مكانها على الموقع العام) · <code>optimize-image.ts:61</code> · <code>page-actions.ts:30</code>.</p>
-<p><b>الباقي المفتوح:</b> لا يوجد فحص يكتشف الملفّ الناقص. حارس الاعتماد يسأل عن أول بايت فقط، والملف المكسور يعطيه <code>206</code>. المقترح: فحص دوريّ يقارن <code>Content-Length</code> بما يصل فعلاً للريلز المنشورة.</p>
-<p><b>خالد هو من فتح الخيط:</b> «يمكن يكون موجود ويكون corrupted» — بعد فرضيتين خاطئتين منّي.</p></div>
-</details>
-
-<details class="tk" open>
-<summary><span class="id">REEL-REUPLOAD</span><span class="sv sv-n">متوسّط</span><span class="tt">أربعة ريلز تنتظر رفعاً جديداً من العميل — لا زرّ يصلحها</span><span class="ap">console</span></summary>
-<div class="body"><p><b>ثلاثة لم تصلها بايتات أصلاً</b> — الصفّ اتسجّل والرفع ما اكتمل:</p>
-<pre>6a85a0eff2335ac0df5ff2ca  جبر سيو   status 0 · storage 0 · resolutions null · GET 404
-6a85a1172384c25eb85d6d15  جبر سيو   status 0 · storage 0 · resolutions null · GET 404
-6a86b9b51f8fb3afde172c7a  مدونتي    status 0 · storage 0 · resolutions null · GET 404</pre>
-<p>زرّ «جِب البيانات من بني» لا ينفع معها — ما فيه بيانات عند بني ليجيبها.</p>
-<p><b>ورابع مرفوض لأن ملفه ناقص</b> — <code>6a86c5eda7f394a353bd0688</code> «ثلاث خطوات» (جبر سيو). رُفض ٣١ أغسطس بسبب مكتوب للعميل: الحجم المعلن مقابل الواصل.</p>
-<p><b>العدّاد بعد جلسة ٣١ أغسطس:</b> بالانتظار ٣ · منشور ١٦ · مرفوض ١.</p>
-<p><b>يقفل بـ:</b> العميل يرفع الأربعة من جديد وتظهر في قائمة الانتظار مكتملة.</p></div>
-</details>
-
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
 <section class="pane" id="pane-codex" hidden>
-<h2>🤖 Codex — بنود تنفيذية من الجرد</h2><p style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:10px;padding:12px 16px;margin:0 0 14px;font-size:15px"><b style="color:var(--green)">حصيلة ١ سبتمبر ٢٠٢٦ — ستّة بنود فُحصت بالكود، بقي واحد.</b><br>• <code>SERVICES-37</code> <b>ساقط:</b> المحرّر موجود — <code>console/.../services-editor.tsx</code> و<code>update-services.ts:39</code>، والكود يصرّح أن مالكه العميل (<code>block-source.ts:22</code>: <code>owner: "client"</code>). ومقيس حيّاً: قسم «خدماتنا» وزرّ «أضف خدمة» ظاهران في شاشة «محتوى الموقع».<br>• <code>IMAGE-SIZES</code> <b>ساقط بالحساب:</b> سلّمنا <code>…384 · 640 · 750…</code> والمرسوم ٤٤٦–٤٦٢، فأي إعلان بين ٣٨٥ و٦٤٠ يُنتج <code>640</code> نفسه. المخدوم اليوم هو الأمثل ولا يوفّر تغييرُه بايتاً.<br>• <code>REEL-LEAK</code> و<code>REEL-BUNNY-TRUST</code> <b>نُفِّذا</b> — التفصيل في تبويب «🎬 الريلز».<br>• <code>LIVE-CHECKUP</code> يحمل الآن ما ثبت من المفاتيح والكرون.<br>• <b>و<code>REEL-CTRL</code> نُفِّذ ٢ سبتمبر:</b> أربع شاشات بالحالة + قسم مستقلّ في السايدبار + «اسحبه من الواجهة» و«رجّعه للواجهة»، أربع مراحل من خمس مقيسة حيّاً. الباقي: الحذف النهائي داخل الشاشة، وقرار صلاحية العميل.</p>
+<h2>🤖 Codex — بنود تنفيذية من الجرد</h2><p style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:10px;padding:12px 16px;margin:0 0 14px;font-size:15px"><b style="color:var(--green)">حصيلة ١ سبتمبر ٢٠٢٦ — ستّة بنود فُحصت بالكود، بقي واحد.</b><br>• <code>SERVICES-37</code> <b>ساقط:</b> المحرّر موجود — <code>console/.../services-editor.tsx</code> و<code>update-services.ts:39</code>، والكود يصرّح أن مالكه العميل (<code>block-source.ts:22</code>: <code>owner: "client"</code>). ومقيس حيّاً: قسم «خدماتنا» وزرّ «أضف خدمة» ظاهران في شاشة «محتوى الموقع».<br>• <code>IMAGE-SIZES</code> <b>ساقط بالحساب:</b> سلّمنا <code>…384 · 640 · 750…</code> والمرسوم ٤٤٦–٤٦٢، فأي إعلان بين ٣٨٥ و٦٤٠ يُنتج <code>640</code> نفسه. المخدوم اليوم هو الأمثل ولا يوفّر تغييرُه بايتاً.<br>• <code>REEL-LEAK</code> و<code>REEL-BUNNY-TRUST</code> <b>نُفِّذا</b> ١ سبتمبر.<br>• <code>LIVE-CHECKUP</code> يحمل الآن ما ثبت من المفاتيح والكرون.<br>• <b>و<code>REEL-CTRL</code> نُفِّذ ٢ سبتمبر:</b> أربع شاشات بالحالة + قسم مستقلّ في السايدبار + «اسحبه من الواجهة» و«رجّعه للواجهة»، أربع مراحل من خمس مقيسة حيّاً. والباقي منه انتقل إلى <code>documents/tasks/PENDING-IDEAS-TODO.md</code> بند ٣: الحذف النهائي داخل الشاشة، قرار صلاحية العميل، والفحص الدوريّ على المنشور سابقاً — وتبويب «الريلز» حُذف من هذه اللوحة.</p>
 
 
 
 
 
-<details class="tk">
-<summary><span class="id">REEL-CTRL</span><span class="sv sv-n">باقٍ منه الحذف النهائي</span><span class="tt">الأدمن صار يرى الحالات الأربع ويسحب ويرجّع — باقٍ الحذف النهائي</span><span class="ap">admin</span></summary>
-<div class="body"><b style="color:var(--green)">نُفِّذ ٢ سبتمبر ٢٠٢٦ — الرؤية والإيقاف والإرجاع سُلّمت ومُقيست حيّاً.</b> التفصيل الكامل بالأدلّة في تبويب «🎬 الريلز» — البطاقة نفسها.<br><b>باقٍ منه:</b> «حذف نهائي» من شاشة الريلز (اليوم يمرّ من مكتبة الوسائط بعد الأرشفة)، وقرارُ خالد في صلاحية العميل بسحب ريله المنشور.<br><b>✔ ينغلق بـ:</b> زرّ حذف نهائي بتأكيد بالاسم في الشاشة نفسها + حسم صلاحية العميل.</div>
-</details>
 
 
 
@@ -274,14 +167,13 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
   const btns=[...document.querySelectorAll('.tabs button')];
   btns.forEach(b=>b.addEventListener('click',()=>{
     btns.forEach(x=>x.setAttribute('aria-selected', String(x===b)));
-    ['todo','reels','codex','later','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
+    ['todo','codex','later','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
     
     try{ localStorage.setItem('merge-board-tab', b.dataset.pane); }catch{}
   }));
   // العدّادات تُحسب لا تُكتب
   document.getElementById('n-todo').textContent = Math.max(0, document.querySelectorAll('#t-todo tr').length - 1);
   document.getElementById('n-data').textContent = document.querySelectorAll('#pane-data div.card').length;
-  document.getElementById('n-reels').textContent = document.querySelectorAll('#pane-reels details.tk').length;
   { const el=document.getElementById('n-codex'); if(el) el.textContent = document.querySelectorAll('#pane-codex details.tk').length; }
   // جدول `work` انتقل إلى To Do (١ سبتمبر ٢٠٢٦) — بحثه يبقى يعمل، وعدّاده لم يعد موجوداً
   // لأن بنوده تُحسب ضمن عدّاد To Do أدناه.
@@ -401,14 +293,13 @@ seoDescription →  صفحة الكاتب «مدونتي»: كل المقالا�
   const btns=[...document.querySelectorAll('.tabs button')];
   btns.forEach(b=>b.addEventListener('click',()=>{
     btns.forEach(x=>x.setAttribute('aria-selected', String(x===b)));
-    ['todo','reels','codex','later','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
+    ['todo','codex','later','data'].forEach(p=>{const el=document.getElementById('pane-'+p); if(el) el.hidden = b.dataset.pane!==p;});
     
     try{ localStorage.setItem('merge-board-tab', b.dataset.pane); }catch{}
   }));
   // العدّادات تُحسب لا تُكتب
   document.getElementById('n-todo').textContent = Math.max(0, document.querySelectorAll('#t-todo tr').length - 1);
   document.getElementById('n-data').textContent = document.querySelectorAll('#pane-data div.card').length;
-  document.getElementById('n-reels').textContent = document.querySelectorAll('#pane-reels details.tk').length;
   { const el=document.getElementById('n-codex'); if(el) el.textContent = document.querySelectorAll('#pane-codex details.tk').length; }
   // «شغل مفتوح» و«لاحقاً» يعدّان صفوف جدولهما، لا بطاقات — بنودهما تعيش في جدول واحد.
   document.getElementById('n-later').textContent =
