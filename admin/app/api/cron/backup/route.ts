@@ -5,6 +5,7 @@ import { MongoClient } from "mongodb";
 import { NextRequest } from "next/server";
 
 import { db } from "@/lib/db";
+import { runBillingAlert } from "@/lib/atlas/billing-alert";
 import {
   readBunnyBackupConfig,
   uploadCollection,
@@ -135,6 +136,19 @@ async function pruneOldBackups(
     return { removed, files, skipped };
   } catch (e) {
     return { error: e instanceof Error ? e.message : "Unknown error" };
+  }
+}
+
+/**
+ * فحص الفوترة يركب على هذه الرحلة الليلية بدل كرون ثانٍ: جدولٌ واحد يُراقَب ويُصان،
+ * وخطة Vercel المجّانية أصلاً تحدّ عدد الكرونات. ولا يعطّل النسخ أبداً — النسخة نجحت
+ * أو فشلت قبل أن يُنادى، وخطؤه يُبتلع.
+ */
+async function checkBillingQuietly(): Promise<void> {
+  try {
+    await runBillingAlert(new Date(), notifyTelegram);
+  } catch {
+    // تنبيهٌ لم يُرسَل لا يُفشل نسخةً احتياطية تمّت.
   }
 }
 
@@ -271,6 +285,8 @@ export async function POST(request: NextRequest) {
       ].join("\n"),
     );
 
+    await checkBillingQuietly();
+
     return Response.json({
       ok: true,
       dbName,
@@ -315,6 +331,10 @@ export async function POST(request: NextRequest) {
         `🕐 ${riyadhTime(finishedAt)}`,
       ].join("\n"),
     );
+
+    // حتى في ليلةٍ فشلت فيها النسخة: فشل الخصم مستقلٌّ عنها، وإسكاته لأن شيئاً آخر
+    // تعطّل هو بالضبط كيف تمرّ فاتورة مرفوضة شهراً كاملاً.
+    await checkBillingQuietly();
 
     return Response.json({ ok: false, error: message }, { status: 500 });
   } finally {
