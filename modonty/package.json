@@ -1,6 +1,6 @@
 {
   "name": "@modonty/modonty",
-  "version": "1.116.4",
+  "version": "1.116.5",
   "private": true,
   "prisma": {
     "schema": "../shared/prisma/schema/schema.prisma"
