@@ -30,6 +30,24 @@ enum StaffRole {
   SALES
 }
 
+// Board columns for staff task management. FIXED on purpose: the value lives in
+// the URL (`/tasks/in-progress`) and drives the counters, so a column cannot be
+// renamed out from under a bookmark or a count. Custom lists were the rejected
+// alternative — they need a second table and an admin screen to manage it.
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
 enum ArticleStatus {
   WRITING
   DRAFT
@@ -267,9 +285,55 @@ model Staff {
   notifications Notification[] @relation("StaffNotifications")
   salesClients  Client[]       @relation("StaffSalesClients")
   editorClients Client[]       @relation("StaffEditorClients")
+  assignedTasks Task[]         @relation("TaskAssignee")
+  createdTasks  Task[]         @relation("TaskCreatedBy")
 
   @@index([role])
   @@map("staff")
+}
+
+// A unit of work handed to one member of staff. Deliberately standalone: it
+// carries no article/client foreign key, because the board has to hold the work
+// that has no entity behind it ("call the printer", "renew the domain") — which
+// is most of what a small team actually tracks.
+model Task {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  title       String
+  description String?
+
+  status   TaskStatus   @default(TODO)
+  priority TaskPriority @default(NORMAL)
+
+  // Manual order inside a column. A FLOAT, not an int: dropping a card between
+  // two others writes the midpoint of its neighbours — ONE row updated instead
+  // of renumbering the whole column on every drag.
+  position Float @default(0)
+
+  dueDate DateTime?
+
+  // Both staff links are OPTIONAL and NoAction, matching Client.salesRep. Mongo
+  // has no real cascade, and a REQUIRED relation whose target is deleted turns
+  // every row into an orphan that drops the entire query — not just its own row.
+  assigneeId String? @db.ObjectId
+  assignee   Staff?  @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  createdById String? @db.ObjectId
+  createdBy   Staff?  @relation("TaskCreatedBy", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Stamped once, when the card first lands in DONE. Kept separate from
+  // `updatedAt` so editing a finished task does not rewrite when it finished.
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // The board's only read: one column, ordered. Both fields in one index so the
+  // sort is served by the index instead of in memory.
+  @@index([status, position])
+  @@index([assigneeId])
+  @@index([dueDate])
+  @@map("tasks")
 }
 
 model Account {

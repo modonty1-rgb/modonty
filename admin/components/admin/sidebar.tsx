@@ -46,6 +46,9 @@ import {
   MailOpen,
   Users,
   Users2,
+  KanbanSquare,
+  LayoutGrid,
+  UserCheck,
   CreditCard,
   Download,
   Database,
@@ -234,6 +237,23 @@ const menuGroups: MenuGroup[] = [
       { icon: CheckCircle2, label: "Published", href: "/reels/published" },
       { icon: FileX, label: "Rejected", href: "/reels/rejected" },
       { icon: Archive, label: "Archived", href: "/reels/archived" },
+    ],
+  },
+  // Task management. Titled in Arabic on Khalid's explicit instruction (2026-09-02),
+  // unlike its English siblings — this section is for the whole team, not only the
+  // people who read English admin labels.
+  //
+  // "Staff" points at the EXISTING `/users` screen rather than a second add/remove
+  // employee screen: that one already creates, edits, deletes and sets roles and
+  // avatars. Two screens writing the same table drift apart after the first edit.
+  {
+    title: "إدارة المهام",
+    icon: KanbanSquare,
+    defaultOpen: false,
+    items: [
+      { icon: LayoutGrid, label: "اللوح", href: "/tasks", exact: true },
+      { icon: UserCheck, label: "مهامي", href: "/tasks/mine" },
+      { icon: Users2, label: "الموظفين", href: "/users" },
     ],
   },
   {

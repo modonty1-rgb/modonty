@@ -1,6 +1,6 @@
 {
   "name": "@modonty/admin",
-  "version": "1.27.8",
+  "version": "1.28.0",
   "private": true,
   "prisma": {
     "schema": "../shared/prisma/schema/schema.prisma"
@@ -24,6 +24,9 @@
   "dependencies": {
     "@adobe/structured-data-validator": "^1.5.0",
     "@auth/prisma-adapter": "^2.7.2",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@emotion/is-prop-valid": "^1.4.0",
     "@google/genai": "^2.10.0",
     "@hookform/resolvers": "^3.9.1",
