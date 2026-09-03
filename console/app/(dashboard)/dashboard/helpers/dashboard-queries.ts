@@ -398,6 +398,12 @@ export async function getTopArticles(
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
+  // كان `take: 100` بلا `orderBy`، ثم تُحسب المقاييس لكلٍّ منها، ثم يُختار الأفضل
+  // خمسة **من تلك المئة**. فمقالُ العميل الأعلى مشاهدةً لا يظهر إن وقع خارجها —
+  // والشاشة تقول «أفضل ٥» وهي تعني «أفضل ٥ من مئةٍ اختيرت بلا ترتيب».
+  //
+  // لا سقف الآن: العميل الواحد له عشرات المقالات المنشورة (الإنتاج كلّه ١٤٤ منشوراً
+  // موزّعةً على ٣٧ عميلاً)، والحقول المقروءة خمسة. القصّ هنا كان يخفي الجواب نفسه.
   const articles = await db.article.findMany({
     where: {
       clientId,
@@ -410,57 +416,51 @@ export async function getTopArticles(
       category: { select: { name: true } },
       datePublished: true,
     },
-    take: 100,
   });
 
-  const articlesWithMetrics = await Promise.all(
-    articles.map(async (article) => {
-      const [views, engagementDuration, conversions] = await Promise.all([
-        db.articleView.count({
-          where: {
-            articleId: article.id,
-            createdAt: { gte: thirtyDaysAgo },
-          },
-        }),
-        db.engagementDuration.aggregate({
-          where: {
-            articleId: article.id,
-            createdAt: { gte: thirtyDaysAgo },
-          },
-          _avg: {
-            timeOnPage: true,
-            scrollDepth: true,
-            completionRate: true,
-          },
-        }),
-        db.conversion.count({
-          where: {
-            articleId: article.id,
-            createdAt: { gte: thirtyDaysAgo },
-          },
-        }),
-      ]);
+  const articleIds = articles.map((a) => a.id);
+  if (articleIds.length === 0) return [];
 
-      const engagementScore = calculateEngagementScore({
-        avgTimeOnPage: engagementDuration._avg.timeOnPage ?? 0,
-        avgScrollDepth: engagementDuration._avg.scrollDepth ?? 0,
-        completionRate: engagementDuration._avg.completionRate ?? 0,
+  // ثلاثة استعلامات تجميع بدل ثلاثة لكل مقال. كانت المئةُ تُترجَم إلى **٣٠٠ رحلة**
+  // إلى القاعدة لعرض خمسة صفوف — و`Promise.all` يوازيها ولا يقلّلها؛ التوازي يجعلها
+  // أسرع وأثقل على القاعدة في آنٍ واحد. الفهرس `[articleId, createdAt]` قائمٌ على
+  // الثلاثة، فالتجميع يقرأ منه مباشرةً.
+  const window = { articleId: { in: articleIds }, createdAt: { gte: thirtyDaysAgo } };
+  const [viewRows, engagementRows, conversionRows] = await Promise.all([
+    db.articleView.groupBy({ by: ["articleId"], where: window, _count: { _all: true } }),
+    db.engagementDuration.groupBy({
+      by: ["articleId"],
+      where: window,
+      _avg: { timeOnPage: true, scrollDepth: true, completionRate: true },
+    }),
+    db.conversion.groupBy({ by: ["articleId"], where: window, _count: { _all: true } }),
+  ]);
+
+  // التجميع لا يُرجع صفّاً لمقالٍ بلا قياسات، والمقال بصفر مشاهدة يبقى مقالاً يُعرض
+  // — فالغياب يُقرأ صفراً لا يُسقِط الصفّ.
+  const viewsBy = new Map(viewRows.map((r) => [r.articleId, r._count._all]));
+  const convBy = new Map(conversionRows.map((r) => [r.articleId, r._count._all]));
+  const engBy = new Map(engagementRows.map((r) => [r.articleId, r._avg]));
+
+  const articlesWithMetrics = articles.map((article) => {
+    const eng = engBy.get(article.id);
+    return {
+      id: article.id,
+      title: article.title,
+      slug: article.slug,
+      views: viewsBy.get(article.id) ?? 0,
+      engagementScore: calculateEngagementScore({
+        avgTimeOnPage: eng?.timeOnPage ?? 0,
+        avgScrollDepth: eng?.scrollDepth ?? 0,
+        completionRate: eng?.completionRate ?? 0,
         interactionRate: 0,
         engagementRate: 0,
-      });
-
-      return {
-        id: article.id,
-        title: article.title,
-        slug: article.slug,
-        views,
-        engagementScore,
-        conversions,
-        category: article.category?.name ?? null,
-        datePublished: article.datePublished,
-      };
-    })
-  );
+      }),
+      conversions: convBy.get(article.id) ?? 0,
+      category: article.category?.name ?? null,
+      datePublished: article.datePublished,
+    };
+  });
 
   const sorted = articlesWithMetrics.sort((a, b) => {
     switch (metric) {
