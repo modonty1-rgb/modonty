@@ -1,0 +1,770 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>جبر سيو — 24 بنداً</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1013;--panel:#17181d;--card:#1d1e24;--line:#2c2d36;--fg:#f3f4f6;--mut:#9aa3b2;--dim:#6b7280;
+--amber:#f6ae31;--red:#ff6b7f;--green:#4ade80;--blue:#60a5fa;--violet:#a78bfa;--cyan:#22d3ee;--k:#f6ae31;--c:#60a5fa;}
+/* الوضع الفاتح كان يبدّل الأسطح فقط ويترك ألوان التطبيقات كما هي — وهي باستيل مصمَّم لخلفية
+   داكنة. النتيجة: رقم التبويب النشط بتباين ١٫٦٩–٢٫٥٤ على الأبيض (مقيس ٢٤ أغسطس)، أي غير مقروء.
+   فلكل لون نسخته الغامقة هنا، وكلّها فوق ٤٫٥:١ على الأبيض. */
+/* خالد (٢٩ أغسطس): «خليها دارك مود». كانت اللوحة تتبع نظام ويندوز، وهو على الفاتح
+   عنده — فتنقلب بيضاء بلا أن يطلبها. الداكن ثابت الآن، ولا يتغيّر بتغيّر إعداد النظام.
+   الكتلة محفوظة تحت مُحدِّد لا يُطابَق تلقائياً: من أرادها يوماً يضيف data-theme="light"
+   على <html> — ولا تعود بتغيّر النظام وحده. */
+:root[data-theme="light"]{--bg:#f6f7fb;--panel:#fff;--card:#fff;--line:#e4e6ee;--fg:#141722;--mut:#5b6472;--dim:#8a93a3;
+--amber:#b45309;--red:#be123c;--green:#15803d;--blue:#1d4ed8;--violet:#6d28d9;--cyan:#0e7490;--k:#b45309;--c:#1d4ed8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 Tajawal,system-ui,sans-serif}
+a{color:inherit}code{font:12px ui-monospace,monospace;background:var(--panel);padding:1px 5px;border-radius:4px;border:1px solid var(--line)}
+header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:12px 16px}
+.wrap{max-width:1120px;margin:0 auto}
+h1{font-size:18px;margin:0 0 8px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tools input{flex:1;min-width:220px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:0 12px;font:inherit}
+.chip{height:34px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--mut);padding:0 12px;font:inherit;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+/* قائمة التبويبات — تطبيق واحد في المرّة. الاختيار الواحد هو المقصود: الخلط بين التطبيقات هو ما كان يُتيه.
+   صارت عموداً جانبياً بأمر خالد (٣٠ أغسطس): «القائمة هذي جيبها سايدبار». سببه أن الأسماء
+   السبعة في سطر أفقي كانت تُقرأ ككلمات متلاصقة، وكل بحث عن تبويب يبدأ بمسح السطر كلّه.
+   العمود يجعلها قائمةً تُمسح بالعين مرّة واحدة، والعدّاد في نهاية كل سطر على استقامة واحدة. */
+body{padding-inline-start:212px}
+.apptabs{position:fixed;inset-inline-start:0;top:0;bottom:0;width:212px;z-index:10;display:flex;flex-direction:column;gap:4px;padding:16px 10px;background:var(--panel);border-inline-end:1px solid var(--line);overflow-y:auto}
+.apptab{position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;height:40px;padding:0 12px;border:0;border-inline-start:3px solid transparent;background:none;color:var(--mut);font:inherit;font-size:14px;font-weight:600;cursor:pointer;border-radius:8px;text-align:start}
+.apptab:hover{background:var(--bg);color:var(--fg)}
+.apptab b{font-size:12px;font-weight:800;min-width:22px;padding:2px 6px;border-radius:999px;background:var(--line);color:var(--mut)}
+.apptab[aria-selected="true"]{color:var(--fg);border-inline-start-color:currentColor;background:var(--bg)}
+@media (max-width:900px){body{padding-inline-start:0}
+.apptabs{position:static;width:auto;flex-direction:row;flex-wrap:wrap;border-inline-end:0;border-bottom:1px solid var(--line)}
+.apptab{width:auto}}
+/* كان: background:currentColor مع color:var(--bg) على نفس العنصر — وقيمة currentColor تُحسب من
+   لون العنصر النهائي، فصارت الخلفية بلون النصّ تماماً واختفى رقم التبويب النشط (خالد رآه دائرةً
+   فاضية، ٢٤ أغسطس). الآن: تظليل شفّاف من لون التبويب، والنصّ يبقى بلونه. */
+.apptab[aria-selected="true"] b{background:var(--bg);color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
+.apptab[data-app="modonty"][aria-selected="true"]{color:var(--violet)}
+.apptab[data-app="admin"][aria-selected="true"]{color:var(--blue)}
+.apptab[data-app="console"][aria-selected="true"]{color:var(--cyan)}
+.apptab[data-app="dataLayer"][aria-selected="true"]{color:var(--green)}
+.apptab[data-app="partner"][aria-selected="true"]{color:var(--amber)}
+.apptab[data-app="__merge"][aria-selected="true"]{color:var(--dim)}
+.grp.hidden{display:none}
+/* بند «قبل الدمج» — مؤجَّل بقرار، لا متأخّر بإهمال. يبقى مرئياً لكنه يهدأ في الأسفل. */
+.card[data-last]{opacity:.72;border-inline-start:4px solid var(--dim)}
+.card[data-last]:hover{opacity:1}
+.tag.step-tag{background:var(--accent,#0d6efd);color:#fff;font-weight:800;letter-spacing:.02em}
+.tag.last-before-merge{background:transparent;color:var(--dim);border:1px dashed var(--dim);font-weight:700}
+/* الجاهز لوكيل — بند فحصتُه وأعرف حجمه، ولا يحتاج قراراً من خالد. الحافّة الخضراء تكفي لتمييزه من بعيد. */
+.card[data-agent]{border-inline-start:4px solid var(--green)}
+.tag.agent{background:var(--green);color:#04140c;font-weight:800}
+.tag.agent-measure{background:transparent;color:var(--green);border:1px solid var(--green);font-weight:700}
+main{padding:16px}
+section.grp{margin:0 0 28px}
+.grp>h2{font-size:16px;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+.grp>h2 .n{font-size:12px;color:var(--mut);font-weight:500}
+.grp>p{margin:0 0 12px;color:var(--mut);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card[data-sev="critical"]{border-inline-start:4px solid var(--red)}.card[data-sev="high"]{border-inline-start:4px solid var(--amber)}
+.card[data-sev="normal"]{border-inline-start:4px solid var(--blue)}.card[data-sev="ok"],.card[data-sev="idea"]{border-inline-start:4px solid var(--line)}
+/* خلفية البطاقة حسب التطبيق — خالد يعرف نطاق البند من لونه قبل ما يقرأ (٢٤ أغسطس).
+   الترتيب مقصود: مدونتي آخر قاعدة فتغلب لو كان البند على أكثر من تطبيق، لأنها النطاق الحالي. */
+.card[data-apps~="shared"],.card[data-apps~="dataLayer"]{background:color-mix(in srgb,var(--green) 7%,var(--card))}
+.card[data-apps~="console"]{background:color-mix(in srgb,var(--cyan) 7%,var(--card))}
+.card[data-apps~="admin"]{background:color-mix(in srgb,var(--blue) 7%,var(--card))}
+.card[data-apps~="modonty"]{background:color-mix(in srgb,var(--violet) 9%,var(--card))}
+/* تنفيذ كودكس المكتمل يبقى أخضر بصرياً حتى قبل أن ينقل كلود البطاقة إلى الأرشيف. */
+.card[data-codex-done="1"]{background:color-mix(in srgb,var(--green) 20%,var(--card));border-color:color-mix(in srgb,var(--green) 65%,var(--line))}
+.card[data-codex-done="1"]::before{background:var(--green)}
+/* شريط لوني رفيع أعلى البطاقة — إشارة ثانية لمن لا يميّز الفروق الخفيفة في الخلفية */
+.card{position:relative}
+.card::before{content:"";position:absolute;inset-block-start:0;inset-inline:0;height:2px;background:var(--line)}
+.card[data-apps~="shared"]::before,.card[data-apps~="dataLayer"]::before{background:var(--green)}
+.card[data-apps~="console"]::before{background:var(--cyan)}
+.card[data-apps~="admin"]::before{background:var(--blue)}
+.card[data-apps~="modonty"]::before{background:var(--violet)}
+/* البند الجاري الآن: خلفية حمراء صريحة — خالد يلمحه من أول نظرة بلا قراءة (٢٤ أغسطس) */
+.tag.next-release{background:color-mix(in srgb,#8b5cf6 18%,transparent);color:#a78bfa;border-color:color-mix(in srgb,#8b5cf6 45%,transparent)}
+.card[data-next="1"]{opacity:.85}
+.card[data-running="1"]{background:color-mix(in srgb,var(--red) 16%,var(--card));border-color:var(--red);border-inline-start:4px solid var(--red);box-shadow:0 0 0 1px color-mix(in srgb,var(--red) 30%,transparent)}
+.card[data-running="1"] .id{background:var(--red);color:#fff;border-color:var(--red)}
+.tag.running{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
+/* المعرّف في سطر مستقلّ: كان يجلس بجانب العنوان بـnowrap، فمعرّف طويل مثل
+   SEOADM-ARTICLES-LISTING-DENIED يعصر العنوان في عمود بعرض ٦٠px (خالد ٢٤ أغسطس: «bad ux، كيف أقرأ»). */
+.hd{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.id{font:700 11px ui-monospace,monospace;color:var(--dim);background:var(--panel);border:1px solid var(--line);padding:2px 6px;border-radius:6px;white-space:nowrap;direction:ltr;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.num{flex:none;min-width:26px;height:26px;padding:0 6px;border-radius:8px;background:var(--amber);color:#141722;font-weight:800;font-size:14px;display:inline-flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.copy{margin-inline-start:auto;flex:none;width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--mut);font-size:13px;cursor:pointer;line-height:1}
+.copy:hover{color:var(--fg);border-color:var(--fg)}.copy.ok{color:var(--green);border-color:var(--green)}
+.t{font-weight:700;font-size:16px;line-height:1.5;min-width:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--mut)}
+.tag{border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+.tag.app-modonty{color:var(--violet)}.tag.app-admin{color:var(--blue)}.tag.app-console{color:var(--cyan)}.tag.app-dataLayer{color:var(--green)}
+.tag.tab-now{background:var(--amber);color:#141722;border-color:var(--amber);font-weight:700}
+.tag.ease-go{background:color-mix(in srgb,var(--amber) 20%,transparent);border-color:var(--amber);color:var(--amber);font-weight:700}
+.tag.ease-1{border-color:var(--green);color:var(--green)}
+.tag.ease-2{border-color:var(--blue);color:var(--blue)}
+.tag.ease-3{border-color:var(--red);color:var(--red)}
+.sum{font-size:13.5px;color:var(--mut);margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+/* الشرح البشري (خالد ٢٤ أغسطس: «أبغى أفهم كبشر») — أربعة أسطر ثابتة قبل أي تفصيل تقني */
+.plain{display:flex;flex-direction:column;gap:5px;font-size:13.5px;line-height:1.7}
+.plain b{color:var(--fg)}.plain>div{color:var(--mut)}
+.plain .files{display:flex;flex-wrap:wrap;gap:4px;align-items:center}.plain .files code{font-size:11px;direction:ltr}
+/* ملاحظات المراجعة العكسية (خالد ٢٤ أغسطس: «سجّل ملاحظاتك الجديدة في نفس الكرت باللون الأحمر») —
+   ما اكتشفه مراجع مستقلّ حاول تكذيب البطاقة: ثبت / نزل / سقط، والسبب. */
+.prod{border-radius:10px;padding:8px 10px;font-size:13.5px;color:var(--fg);border:1px solid var(--line);background:var(--panel)}
+.prod .when{color:var(--dim);font-size:12px}
+.prod[data-state="yes"]{background:color-mix(in srgb,var(--red) 14%,transparent);border-color:color-mix(in srgb,var(--red) 50%,transparent)}
+.prod[data-state="no"]{background:color-mix(in srgb,var(--green) 12%,transparent);border-color:color-mix(in srgb,var(--green) 45%,transparent)}
+.prod[data-state="admin"]{background:color-mix(in srgb,var(--amber) 10%,transparent);border-color:color-mix(in srgb,var(--amber) 40%,transparent)}
+.review{background:color-mix(in srgb,var(--red) 12%,transparent);border:1px solid color-mix(in srgb,var(--red) 45%,transparent);border-radius:10px;padding:8px 10px;font-size:13.5px;color:var(--fg)}
+.review b{color:var(--red)}.review ul{margin:4px 0 0;padding-inline-start:18px}.review li{margin:3px 0}
+/* ملاحظة كودكس (مراجع مستقلّ ثانٍ) — تبقى ظاهرة بجانب حكمي حتى يقارن خالد بنفسه */
+.codex{background:color-mix(in srgb,var(--blue) 10%,transparent);border:1px solid color-mix(in srgb,var(--blue) 40%,transparent);border-inline-start:4px solid var(--blue);border-radius:10px;padding:8px 10px;font-size:13px;color:var(--fg);display:flex;flex-direction:column;gap:3px}
+.codex>b{color:var(--blue)}.codex .src{font-size:11.5px;color:var(--dim)}.codex .src a{color:var(--blue)}
+.codex-work{margin:7px -2px 3px;padding:8px 10px;border-radius:8px;background:color-mix(in srgb,var(--blue) 20%,transparent);border:1px solid color-mix(in srgb,var(--blue) 55%,transparent);font-size:13.5px;line-height:1.7}.codex-work b{color:var(--blue)}
+.codex[data-verdict="wrong"]{border-inline-start-color:var(--red)}.codex[data-verdict="mixed"]{border-inline-start-color:var(--amber)}.codex[data-verdict="confirmed"]{border-inline-start-color:var(--green)}
+.ask{background:color-mix(in srgb,var(--amber) 14%,transparent);border:1px solid color-mix(in srgb,var(--amber) 45%,transparent);border-radius:10px;padding:8px 10px;font-size:13.5px}
+.ask b{color:var(--amber)}
+.ask.missing{border-style:dashed;color:var(--mut)}
+details{margin-top:2px}summary{cursor:pointer;font-size:12.5px;color:var(--blue);list-style:none;display:inline-flex;gap:6px;align-items:center;min-height:28px}
+summary::before{content:"▸";transition:transform .15s}details[open]>summary::before{transform:rotate(90deg)}
+.full{font-size:13.5px;color:var(--fg);border-top:1px solid var(--line);margin-top:8px;padding-top:8px;word-break:break-word}
+.full b{color:var(--fg)}.full code{white-space:pre-wrap}
+.empty{color:var(--dim);font-size:13px;padding:10px;border:1px dashed var(--line);border-radius:10px}
+.hidden{display:none!important}
+footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
+.report{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
+.report h3{margin:0 0 4px;font-size:19px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.state{margin:2px 0 8px;padding:7px 11px;border-radius:9px;font-size:12.5px;font-weight:700;letter-spacing:.1px}
+.state.st-working{background:rgba(246,174,49,.16);color:#f6ae31;border:1px solid rgba(246,174,49,.45)}
+.state.st-ready{background:rgba(34,197,94,.18);color:#4ade80;border:1px solid rgba(34,197,94,.5)}
+.card[data-working="1"]{background:linear-gradient(180deg,rgba(246,174,49,.10),rgba(246,174,49,.03));border-color:rgba(246,174,49,.5)}
+.card[data-ready="1"]{background:linear-gradient(180deg,rgba(34,197,94,.13),rgba(34,197,94,.05));border-color:rgba(34,197,94,.55);box-shadow:0 0 0 1px rgba(34,197,94,.2)}
+.tag.ready{background:rgba(34,197,94,.2);color:#4ade80;border-color:rgba(34,197,94,.45);font-weight:700}
+.tag.owner{font-weight:700}
+.tag.owner-codex{background:rgba(96,165,250,.16);color:#60a5fa;border-color:rgba(96,165,250,.4)}
+.tag.owner-agent2{background:rgba(167,139,250,.16);color:#a78bfa;border-color:rgba(167,139,250,.4)}
+.tag.owner-agent3{background:rgba(34,211,238,.16);color:#22d3ee;border-color:rgba(34,211,238,.4)}
+.tag.owner-agent4{background:rgba(246,174,49,.16);color:#f6ae31;border-color:rgba(246,174,49,.4)}
+.progress{display:flex;align-items:center;gap:12px;margin:8px 0 2px}
+.progress .bar{flex:1;height:7px;border-radius:999px;background:var(--line);overflow:hidden}
+.progress .bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#22c55e,#4ade80)}
+.progress .pnums{font-size:12.5px;color:var(--mut);white-space:nowrap}
+.progress .pnums b{color:var(--fg)}
+.progress .today{font-style:normal;margin-inline-start:10px;padding:2px 9px;border-radius:999px;background:rgba(34,197,94,.14);color:#4ade80;border:1px solid rgba(34,197,94,.3);font-weight:600}
+.report .rstate{font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:999px;background:rgba(16,185,129,.14);color:#34d399;border:1px solid rgba(16,185,129,.3)}
+.report .outcome{margin:0 0 10px;padding:10px 13px;border-radius:10px;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.22);font-size:13.5px;line-height:1.75}
+.report .when{color:var(--dim);font-size:12.5px;margin:0 0 10px}
+.report .lead{margin:0 0 14px;font-size:14.5px}
+.report h4{margin:16px 0 6px;font-size:15px;color:var(--amber)}
+.report section>div{font-size:14px;line-height:1.85}
+.report pre{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;font-size:12.5px;direction:ltr;text-align:left;margin:8px 0}
+.report .tw{overflow-x:auto}
+.report table{border-collapse:collapse;width:100%;font-size:13px;margin:6px 0}
+.report th,.report td{border:1px solid var(--line);padding:7px 9px;text-align:start;vertical-align:top}
+.report th{background:var(--panel);font-weight:700}
+.report .src{margin-top:8px;font-size:12.5px}
+.perfect-badge{display:flex;align-items:center;gap:11px;margin:4px 0 9px;padding:11px 15px;border-radius:12px;background:linear-gradient(135deg,rgba(34,197,94,.22),rgba(34,197,94,.07));border:2px solid rgba(34,197,94,.6);box-shadow:0 0 0 1px rgba(34,197,94,.15)}
+.perfect-badge .pb-mark{font-size:30px;line-height:1}
+.perfect-badge .pb-txt{display:flex;flex-direction:column;font-size:19px;font-weight:800;letter-spacing:.2px;color:#4ade80}
+.perfect-badge .pb-txt small{font-size:11.5px;font-weight:500;color:var(--mut);letter-spacing:0;margin-top:2px}
+.perfect-badge.stamped{background:linear-gradient(135deg,rgba(246,174,49,.22),rgba(246,174,49,.07));border-color:rgba(246,174,49,.65)}
+.perfect-badge.stamped .pb-txt{color:#f6ae31}
+.card[data-audit="stamped"]{border-color:rgba(246,174,49,.5)}
+.state.st-audit{background:rgba(96,165,250,.16);color:#60a5fa;border:1px solid rgba(96,165,250,.5)}
+.state.st-pass{background:rgba(34,197,94,.18);color:#4ade80;border:1px solid rgba(34,197,94,.5)}
+.state.st-fail{background:rgba(248,113,113,.16);color:#f87171;border:1px solid rgba(248,113,113,.5)}
+.card[data-audit="wip"]{background:linear-gradient(180deg,rgba(96,165,250,.12),rgba(96,165,250,.03));border-color:rgba(96,165,250,.55);box-shadow:0 0 0 1px rgba(96,165,250,.22)}
+.card[data-audit="pass"]{border-color:rgba(34,197,94,.45)}
+.card[data-audit="fail"]{background:linear-gradient(180deg,rgba(248,113,113,.10),rgba(248,113,113,.02));border-color:rgba(248,113,113,.55)}
+.audit{margin:8px 0 0;padding:9px 12px;border-radius:10px;font-size:13px;line-height:1.8;border:1px solid var(--line);background:var(--panel)}
+.audit[data-state="wip"]{border-color:rgba(96,165,250,.35);background:rgba(96,165,250,.06)}
+.audit[data-state="pass"]{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.06)}
+.audit[data-state="fail"]{border-color:rgba(248,113,113,.4);background:rgba(248,113,113,.07)}
+.audit ul{margin:6px 0 0;padding-inline-start:18px}.audit li{margin:3px 0}
+/* شارة «جاهزة لختمك»: لون صلب لا شفّاف — التبويب المختار خلفيّته برتقالية، والشفّاف عليها
+   يصير طيناً لا يُقرأ (خالد، ٢٨ أغسطس). فتُقرأ على التبويبين بنفس الوضوح. */
+.lane .n.fixed{background:#15803d;color:#fff;border:1px solid #22c55e;font-weight:700;letter-spacing:0}
+.lane[aria-selected="true"] .n.fixed{background:#14532d;border-color:#4ade80}
+.card[data-audit="fail"][data-fixed="1"]{background:linear-gradient(180deg,rgba(34,197,94,.10),rgba(34,197,94,.02));border-color:rgba(34,197,94,.5)}
+.afix{margin:9px -12px -9px;padding:9px 12px;border-top:1px solid rgba(34,197,94,.35);background:rgba(34,197,94,.08);border-radius:0 0 10px 10px}
+.afix>b{color:#4ade80}
+.afix code{font-size:11px;background:rgba(0,0,0,.25);padding:1px 5px;border-radius:4px;direction:ltr;display:inline-block}
+.audit .a-attack{margin-top:5px;color:var(--mut)}
+.audit .a-wait{margin-top:7px;font-weight:700;color:#60a5fa}
+.audit pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;overflow-x:auto;font-size:12px;direction:ltr;text-align:left;margin:7px 0;white-space:pre-wrap}
+.audit .src{margin-top:7px;font-size:12.5px}
+.audit .when{margin-top:5px;color:var(--dim);font-size:12px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;margin:12px 0 4px}
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+.pcard .ph{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:7px}
+.pcard .pkey{font-size:13px;font-weight:700;color:var(--amber);background:none;padding:0}
+.pcard .ptag{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mut);background:var(--card)}
+.pcard .ptag.app-modonty{background:rgba(34,197,94,.14);color:#4ade80;border-color:rgba(34,197,94,.35)}
+.pcard .ptag.app-admin{background:rgba(167,139,250,.14);color:#a78bfa;border-color:rgba(167,139,250,.35)}
+.pcard .psurface{margin:0 0 4px;font-size:14px;font-weight:600}
+.pcard .pwhat{margin:0 0 9px;font-size:13px;color:var(--mut);line-height:1.7}
+.pcard .pmeta{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:12.5px;line-height:1.65}
+.pcard .pmeta dt{color:var(--dim);white-space:nowrap}
+.pcard .pmeta dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.pcard .pmeta code{font-size:11.5px}
+.pcard .prisk{color:#f6ae31}
+.pcard .warn{color:#f87171}
+.pcard .dim{color:var(--dim)}
+.elsewhere{margin:10px 0 0;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--dim);font-size:12.5px;line-height:1.75}.elsewhere b{color:var(--txt)}.elsewhere code{font-size:12px}
+.lanes{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}.lane{border:1px solid var(--line);background:var(--card);color:var(--txt);border-radius:10px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer}.lane[aria-selected="true"]{background:var(--amber);color:#141722;border-color:var(--amber)}.lane .n{opacity:.7;font-weight:500;margin-inline-start:4px}[data-lane].hidden{display:none}
+/* عناوين أقسام العمود و«اللوحات الأخرى» — منسوختان من كتلة اللوحة الرئيسية لا من الكتلة
+   المشتركة: تلك تُحقن في SEO.html وDATA-REFACTOR.html وTASK-ARCHIVE.html، فأيّ قاعدة
+   تُضاف هناك تظهر في ثلاث لوحات لا تحتاجها (حدث فعلاً ٣ سبتمبر). ولا باكتيك هنا:
+   التعليق داخل قالب نصّي، والباكتيك يُنهيه فينكسر الملفّ كلّه. */
+.secttl{margin:14px 0 2px;padding:0 12px;font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+.secttl:first-child{margin-top:0}
+.boards{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.boards a{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--line);border-radius:8px;color:var(--mut);text-decoration:none;font-size:12px;font-weight:600}
+.boards a:hover{background:var(--panel);color:var(--fg)}
+.apptab[data-lane-btn="idea"][aria-selected="true"]{color:var(--violet)}
+.apptab[data-lane-btn="risk"][aria-selected="true"]{color:var(--red)}
+.apptab[data-lane-btn="decide"][aria-selected="true"]{color:var(--amber)}
+.apptab[data-lane-btn="plan"][aria-selected="true"]{color:var(--blue)}
+.apptab[data-lane-btn="state"][aria-selected="true"]{color:var(--mut)}
+.apptab[data-lane-btn="done"][aria-selected="true"]{color:var(--green)}
+@media(max-width:900px){.secttl{width:100%;margin:8px 0 0}}</style></head><body>
+<div class="apptabs" role="tablist" aria-label="ممرّات جبر سيو"><p class="secttl">ابدأ من هنا</p><button class="apptab" role="tab" data-lane-btn="idea" aria-selected="true" title="1 بنداً في 💡 الفكرة">💡 الفكرة<b>1</b></button><p class="secttl">الشغل</p><button class="apptab" role="tab" data-lane-btn="risk" aria-selected="false" title="3 بنداً في 🔴 مخاطر">🔴 مخاطر<b>3</b></button><button class="apptab" role="tab" data-lane-btn="decide" aria-selected="false" title="6 بنداً في 🤔 قرارك">🤔 قرارك<b>6</b></button><button class="apptab" role="tab" data-lane-btn="plan" aria-selected="false" title="8 بنداً في 🛠️ المراحل">🛠️ المراحل<b>8</b></button><p class="secttl">مرجع</p><button class="apptab" role="tab" data-lane-btn="state" aria-selected="false" title="6 بنداً في 📐 الوضع القائم">📐 الوضع القائم<b>6</b></button><button class="apptab" role="tab" data-lane-btn="done" aria-selected="false" title="1 بنداً في ✅ المنجز">✅ المنجز<b>1</b></button><p class="secttl">اللوحات</p>
+<nav class="boards" aria-label="اللوحات الأخرى" style="padding:0 8px">
+<a href="TASK.html">📋 لوحة الشغل</a><a href="SEO.html">🔍 سيو</a>
+</nav></div>
+<header class="top"><div class="wrap">
+<h1>جبر سيو — 24 بنداً مفتوحاً <span style="color:var(--dim);font-weight:500;font-size:13px">· 13 حرجاً أو مهمّاً · 14 ينتظر كلمتك</span></h1>
+<div class="progress">
+  <div class="bar"><span style="width:4%"></span></div>
+  <div class="pnums"><b>1</b> أُغلق من <b>25</b> · 4%</div>
+</div>
+<p class="elsewhere">كل بطاقة هنا مشتقّة من ممرّ <b>💡 الفكرة</b> — وهو مفتوح أمامك الآن. صحّح فيه قبل أن نبني: تغيّرُ سطرٍ هناك يعيد رسم المراحل كلّها.</p>
+<div class="tools"><button class="chip" data-sev="critical high" aria-pressed="false">الحرج والمهم فقط</button></div>
+</div></header>
+<main class="wrap">
+<div data-lane="idea" class=""><p style="color:var(--dim);margin:14px 0 4px">ما فهمته منك بالضبط، مكتوباً كي <b>تصحّحه قبل</b> أن يُبنى عليه. كل بطاقة في اللوحة مشتقّة من هذين — يتغيّران فتتغيّر.</p>
+<section class="grp" data-grp="idea"><h2 hidden><span data-count>1</span></h2><div class="grid"><article class="card" data-id="JBR-IDEA" data-sev="critical" data-who="k" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-IDEA</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-IDEA">⧉</button></div>
+  
+  <div class="t">💡 الفكرة</div>
+  <div class="meta"><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-now">الآن</span><span class="tag">حرج</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الفرق بين ① و③: جبر سيو يُنقَل كما هو. والمبيعات لا تُنقَل — تطبيق sales المستقلّ يُستبدَل بشاشات داخل الأدمن. · يبقى سؤال واحد في المبيعات: بيانات jbrseo_sales الحالية تُهاجَر، أم نبدأ من صفر؟ (بطاقة JBR-SALES-IDLE)</p>
+  <div class="ask"><b>المطلوب منك:</b> صح كده؟</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><pre>① جبر سيو ينضمّ لمستودع مدونتي — وسكيماه تنزل في dataLayer.
+② بياناته تستفيد من الموجود في مدونتي — بلا جداول جديدة.
+③ المبيعات تُبنى من جديد في أدمن مدونتي — فاتن تشتغل من هناك.</pre><p><b>الفرق بين ① و③:</b> جبر سيو <b>يُنقَل</b> كما هو. والمبيعات <b>لا تُنقَل</b> — تطبيق <code>sales</code> المستقلّ يُستبدَل بشاشات داخل الأدمن.</p><p><b>يبقى سؤال واحد في المبيعات:</b> بيانات <code>jbrseo_sales</code> الحالية تُهاجَر، أم نبدأ من صفر؟ (بطاقة <code>JBR-SALES-IDLE</code>)</p></div></details>
+</article></div></section></div>
+<div data-lane="risk" class="hidden"><p style="color:var(--dim);margin:14px 0 4px">ما يُغلق <b>قبل</b> أي سطر كود على هذا الملفّ. كلّها على قاعدة الإنتاج نفسها التي تخدم مدونتي.</p>
+<section class="grp" data-grp="risk"><h2 hidden><span data-count>3</span></h2><div class="grid"><article class="card" data-id="JBR-RISK-CLIENTS" data-sev="critical" data-who="k" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-RISK-CLIENTS</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-RISK-CLIENTS">⧉</button></div>
+  
+  <div class="t">🔴 سكيما جبر سيو تعلن <code>clients</code> بـ١١ حقلاً — ومدونتي تعلنها بـ١٥٥</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 6</span><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-now">الآن</span><span class="tag">حرج</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المشكلة: ستّ مجموعات في مونجو يصفها ملفّا سكيما بعدد حقول مختلف — على قاعدة الإنتاج نفسها. clients مدونتي:Client(155) | جبر سيو:ModontyClient(11) ← 144 حقلاً غائباً media مدونتي:Media(70) | جبر سيو:ModontyMedia(4) industries مدونت…</p>
+  <div class="ask"><b>المطلوب منك:</b> هل نغلق الباب الآن بمنع db push من مجلّد جبر سيو، أم ننتظر التوحيد؟</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المشكلة:</b> ستّ مجموعات في مونجو يصفها ملفّا سكيما بعدد حقول مختلف — على قاعدة الإنتاج نفسها.</p>
+<pre>clients         مدونتي:Client(155)          |  جبر سيو:ModontyClient(11)   ← 144 حقلاً غائباً
+media           مدونتي:Media(70)            |  جبر سيو:ModontyMedia(4)
+industries      مدونتي:Industry(21)         |  جبر سيو:ModontyIndustry(4)
+SiteSettings    مدونتي:JbrSiteSettings(4)   |  جبر سيو:SiteSettings(4)
+LandingSection  مدونتي:JbrLandingSection(4) |  جبر سيو:LandingSection(4)
+Client          المحتوى(9)                  |  المبيعات(28)  ← قاعدتان مختلفتان اليوم</pre>
+<p><b>ليش القراءة آمنة:</b> برِزما يرجّع المعلَن فقط. والمقيس: <b>صفر كتابة</b> من جبر سيو على مجموعات مدونتي — استدعاء واحد لا غير: <code>app/actions/modonty-client-logos.ts:104 → modontyClient.findMany</code>.</p>
+<p><b>ليش هو خطر رغم ذلك — مساران مفتوحان:</b><br>
+① <code>prisma db push</code> من مجلّد جبر سيو على الإنتاج — ماذا يفعل بفهارس مجموعة يعرف عُشرها؟ <b>ما تحقّقت من التوثيق بعد</b> (بطاقة <code>JBR-Q-PUSH</code>).<br>
+② إنشاء مستند من سكيما ناقصة يولّد عميلاً بلا ١٤٤ حقلاً. لا يحدث اليوم، ولا شيء في الكود يمنعه غداً.</p>
+<p><b>ما أضافه قياس ٤ سبتمبر:</b> المجموعات المشتركة تحمل فهارس حقيقية لا يعلنها ملفّ جبر سيو —
+<code>media</code> عليها <b>١١ فهرساً</b> · <code>clients</code> عليها <b>٧</b> · <code>industries</code> عليها <b>٢</b>. وسكيما جبر سيو تعلن الثلاثة <b>بلا فهرس واحد</b>. هذا هو بالضبط ما يجعل السؤال في <code>JBR-Q-PUSH</code> غير نظريّ.</p>
+<p><b>يقفل بـ:</b> إمّا سكيما واحدة (المرحلة ١)، وإمّا حاجز صريح يمنع <code>db push</code> من مجلّد جبر سيو.</p></div></details>
+</article>
+<article class="card" data-id="JBR-Q-PUSH" data-sev="high" data-who="k" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-Q-PUSH</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-Q-PUSH">⧉</button></div>
+  
+  <div class="t">❓ ما الذي يفعله <code>prisma db push</code> بفهارس مجموعة يعرف عُشرها؟</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 9</span><span class="tag ease-go">⚡ قل «ابدأ»</span><span class="tag tab-now">الآن</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">لماذا يهمّ بالرقم: media عليها ١١ فهرساً وclients عليها ٧، وسكيما جبر سيو تعلنهما بلا فهرس. لو أسقطها db push فمدونتي تفقد فهارسها في لحظة، وأوّل ما يظهر بطؤُ استعلامات لا رسالةُ خطأ. ·</p>
+  <div class="ask"><b>المطلوب منك:</b> أختبر db push على نسخة من القاعدة لأعرف مصير الفهارس؟ (لا يُلمس الإنتاج)</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>هذا أوّل ما يُسأل قبل أي سطر كود في هذا الملفّ.</b> عليه يتوقّف هل الخطر في <code>JBR-RISK-CLIENTS</code> نظريّ أم حيّ.</p>
+<p><b>الحالة: سُئل التوثيق الرسمي ولم يُجب — فيه مؤشّر، ولم يُتحقَّق بعد.</b></p>
+<p>سؤال Context7 على توثيق برِزما (٤ سبتمبر) رجع بصفحات <code>db push</code> مع مونجو وصفحات الفهارس، <b>ولا واحدة تذكر مصير فهرس موجود في القاعدة وغير معلَن في السكيما</b>. فلا أقول «يسقطها» ولا «لا يسقطها».</p>
+<p><b>لماذا يهمّ بالرقم:</b> <code>media</code> عليها ١١ فهرساً و<code>clients</code> عليها ٧، وسكيما جبر سيو تعلنهما بلا فهرس. لو أسقطها <code>db push</code> فمدونتي تفقد فهارسها في لحظة، وأوّل ما يظهر بطؤُ استعلامات لا رسالةُ خطأ.</p>
+<p><b>الطريق الوحيد الباقي:</b> اختبار على <b>نسخة</b> من القاعدة — نستنسخ <code>media</code> بفهارسها إلى قاعدة تجربة، نشغّل <code>db push</code> من مجلّد جبر سيو، ونعدّ الفهارس قبل وبعد. <b>ممنوع على الإنتاج.</b></p>
+<p><b>يقفل بـ:</b> عدّ فهارس خام قبل/بعد على النسخة.</p></div></details>
+</article>
+<article class="card" data-id="JBR-ENV-TRAP" data-sev="critical" data-who="c" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-ENV-TRAP</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-ENV-TRAP">⧉</button></div>
+  
+  <div class="t">🔴 سكربت يظنّ نفسه على dev فيكتب على الإنتاج — حصل فعلاً</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 8</span><span class="tag tab-now">الآن</span><span class="tag">حرج</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الآلية بالضبط: new PrismaClient() بلا datasources يقرأ .env — و.env هنا هو الإنتاج: JBRSEO/jbrseo.com/.env DATABASE_URL → …/modonty ← الإنتاج JBRSEO/jbrseo.com/.env.local DATABASE_URL → …/modonty_dev ← لا يقرؤه السكربت .env.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>ليست فرضية.</b> مسجَّلة في سجلّ جلسات جبر سيو نفسه (١١ أغسطس): شُغّل سكربت لتعديل نصّ في الصفحة الرئيسية باعتقاد أنه على dev، فكتب على <b>الإنتاج</b>. اكتُشف بمقارنة القاعدتين.</p>
+<p><b>الآلية بالضبط:</b> <code>new PrismaClient()</code> بلا <code>datasources</code> يقرأ <code>.env</code> — و<code>.env</code> هنا هو <b>الإنتاج</b>:</p>
+<pre>JBRSEO/jbrseo.com/.env        DATABASE_URL → …/modonty       ← الإنتاج
+JBRSEO/jbrseo.com/.env.local  DATABASE_URL → …/modonty_dev    ← لا يقرؤه السكربت</pre>
+<p><code>.env.local</code> اصطلاح Next.js وحده؛ برِزما خارج Next لا يراه. فالسكربت «الآمن» يضرب الإنتاج بلا تحذير.</p>
+<p><b>وهذا يضاعف كل ما فوقه:</b> نفس المجلّد الذي فيه هذا الفخّ هو المجلّد الذي منه يُشغَّل <code>prisma db push</code> (<code>JBR-Q-PUSH</code>).</p>
+<p><b>يقفل بـ:</b> حاجز يرفض التشغيل حين يكون الهدف <code>/modonty</code> ما لم تُمرَّر راية صريحة — نفس نمط <code>isProductionDb()</code> في <code>admin/lib/seo-images/rename-image-batch.ts</code>.</p></div></details>
+</article></div></section></div>
+<div data-lane="decide" class="hidden"><p style="color:var(--dim);margin:14px 0 4px">لا يبدأ قبل كلمتك. الأسهل أوّلاً — نعم/لا قبل ما يحتاج جلسة.</p>
+<section class="grp" data-grp="decide"><h2 hidden><span data-count>6</span></h2><div class="grid"><article class="card" data-id="JBR-Q-GIT" data-sev="normal" data-who="k" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-Q-GIT</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-Q-GIT">⧉</button></div>
+  
+  <div class="t">🤔 هل نحتفظ بتاريخ git للمستودعات الثلاثة عند الضمّ؟</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 17</span><span class="tag ease-2">🤔 قرار قصير</span><span class="tag tab-now">الآن</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٣٠ أغسطس ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الضمّ بلا subtree يُدخل الملفّات بلا تاريخها: ٦٠٥ + ١٧٢ + ٩٦ ملفاً تفقد كوميتاتها. jbrseo.com modonty1-rgb/jbrseo 605 ملفاً · 4 غير مثبَّت sales modonty1-rgb/modonty_sales 172 ملفاً ·</p>
+  <div class="ask"><b>المطلوب منك:</b> نحتفظ بالتاريخ (subtree) أم ندخلها كملفّات جديدة؟</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p>الضمّ بلا <code>subtree</code> يُدخل الملفّات <b>بلا تاريخها</b>: ٦٠٥ + ١٧٢ + ٩٦ ملفاً تفقد كوميتاتها.</p>
+<pre>jbrseo.com  modonty1-rgb/jbrseo          605 ملفاً  ·   4 غير مثبَّت
+sales       modonty1-rgb/modonty_sales   172 ملفاً  ·   7 غير مثبَّت
+content     modonty1-rgb/contentClaender  96 ملفاً  ·  50 غير مثبَّت</pre>
+<p><b>قرارٌ يُتّخذ مرّة</b> ولا يُتراجَع عنه بسهولة بعد الضمّ.</p></div></details>
+</article>
+<article class="card" data-id="JBR-DECIDE" data-sev="high" data-who="k" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-DECIDE</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-DECIDE">⧉</button></div>
+  
+  <div class="t">🤔 القرار الذي لا يملكه الكود: منتج واحد بواجهتين، أم شركتان تتقاسمان بنية؟</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 12</span><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-now">الآن</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٣٠ أغسطس ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">موقفي: بنيت التوصية على الأوّل — لأنه ما يقوله الوضع القائم لا ما أفترضه: قاعدة واحدة يتقاسمانها منذ اليوم، لا قاعدتان تتحدّثان. لكن الكود لا يملك هذا الجواب — هو قرار عمل، وهو الوحيد هنا الذي لا أستطيع تقريره عنك.</p>
+  <div class="ask"><b>المطلوب منك:</b> جبر سيو ومدونتي — واحد أم اثنان؟ هذا يقرّر كل ما تحته.</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>إن كانا منتجاً واحداً</b> → السكيما الواحدة هي الصواب بلا نقاش، والجسور تُحذف.</p>
+<p><b>وإن كانا شركتين</b> → ربّما الصواب أن تبقى قاعدتان وتُصلَح الجسور بدل حذفها، وتُبنى بينهما واجهة صريحة لا اتصال مباشر.</p>
+<p><b>موقفي:</b> بنيت التوصية على الأوّل — لأنه ما يقوله الوضع القائم لا ما أفترضه: قاعدة واحدة يتقاسمانها منذ اليوم، لا قاعدتان تتحدّثان.</p>
+<p><b>لكن الكود لا يملك هذا الجواب</b> — هو قرار عمل، وهو الوحيد هنا الذي لا أستطيع تقريره عنك.</p></div></details>
+</article>
+<article class="card" data-id="JBR-CONTENT-DIRTY" data-sev="high" data-who="k" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-CONTENT-DIRTY</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-CONTENT-DIRTY">⧉</button></div>
+  
+  <div class="t">⚠️ ٥٠ ملفاً غير مثبَّت في مستودع <code>content</code> — شغل معرَّض للضياع</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 18</span><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-now">الآن</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٣٠ أغسطس ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المقيس: git status --porcelain في JBRSEO/content = ٥٠ ملفاً، مقابل ٤ في جبر سيو و٧ في المبيعات. · ليش هي بطاقة الآن لا عند المرحلة ٣: الضمّ لا ينقل غير المثبَّت. وأيّ عملية على المجلّد قبل تثبيته تخاطر بشغلٍ لا نعرف ما هو.</p>
+  <div class="ask"><b>المطلوب منك:</b> أفتح المستودع وأعرض لك ما فيه، ثم تقرّر: يُثبَّت أم يُرمى؟</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المقيس:</b> <code>git status --porcelain</code> في <code>JBRSEO/content</code> = <b>٥٠ ملفاً</b>، مقابل ٤ في جبر سيو و٧ في المبيعات.</p>
+<p><b>ليش هي بطاقة الآن لا عند المرحلة ٣:</b> الضمّ لا ينقل غير المثبَّت. وأيّ عملية على المجلّد قبل تثبيته تخاطر بشغلٍ لا نعرف ما هو.</p>
+<p><b>يقفل بـ:</b> <code>git status</code> نظيف في <code>content</code> — إمّا بكوميت وإمّا بقرار صريح بالتخلّص.</p></div></details>
+</article>
+<article class="card" data-id="JBR-BAK" data-sev="normal" data-who="k" data-tab="open" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-BAK</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-BAK">⧉</button></div>
+  
+  <div class="t">🧹 ثلاث نسخ ميتة داخل مجلّد جبر سيو — تُحسم قبل الضمّ</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 19</span><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٣٠ أغسطس ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">ليش تُحسم قبل الضمّ: ملفّ سكيما ميت داخل مستودع موحّد يُقرأ لاحقاً كأنه مصدر — وهو نقيض سبب التوحيد كلّه. · يقفل بـ: قرارك — تُحذف أو تُنقل خارج مسار الضمّ.</p>
+  <div class="ask"><b>المطلوب منك:</b> أحذفها أم أبقيها؟ (ليست مستودعات git — نسخ ملفّات)</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><code>bak1</code> · <code>bak002</code> · <code>jbrBackup</code> — ثلاثة مجلّدات <b>ليس فيها <code>.git</code></b>، وكلٌّ منها يحمل <code>package.json</code> و<code>prisma/schema.prisma</code>.</p>
+<p><b>ليش تُحسم قبل الضمّ:</b> ملفّ سكيما ميت داخل مستودع موحّد يُقرأ لاحقاً كأنه مصدر — وهو نقيض سبب التوحيد كلّه.</p>
+<p><b>يقفل بـ:</b> قرارك — تُحذف أو تُنقل خارج مسار الضمّ.</p></div></details>
+</article>
+<article class="card" data-id="JBR-SALES-IDLE" data-sev="high" data-who="k" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-SALES-IDLE</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-SALES-IDLE">⧉</button></div>
+  
+  <div class="t">⏸️ <code>sales</code> ساكن منذ ٢٢ يونيو — نهاجر بياناته أم نبدأ من صفر؟</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 10</span><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-now">الآن</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المقيس: آخر كوميت 5142d5f يوم 2026-06-22 — مطابق لـorigin/main (0 0)، ولوحة Vercel تقول ٧٣ يوماً على sales.jbrseo.com. منشور وحيّ وساكن. · لماذا صار السؤال هجرةً لا حياة: بعد أمر ٤ سبتمبر لم يعد التطبيق يُضمّ —</p>
+  <div class="ask"><b>المطلوب منك:</b> في jbrseo_sales شغل حقيقي يُهاجَر، ولا نبدأ نظيفاً في الأدمن؟</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المقيس:</b> آخر كوميت <code>5142d5f</code> يوم <code>2026-06-22</code> — مطابق لـ<code>origin/main</code> (<code>0 0</code>)، ولوحة Vercel تقول ٧٣ يوماً على <code>sales.jbrseo.com</code>. منشور وحيّ وساكن.</p><p><b>لماذا صار السؤال هجرةً لا حياة:</b> بعد أمر ٤ سبتمبر لم يعد التطبيق يُضمّ — يُطفأ وتُبنى شاشاته في الأدمن. فالباقي منه <b>بياناته وحدها</b>.</p><p><b>وما فيه:</b> قاعدة <code>jbrseo_sales</code> منفصلة تماماً — مندوبون وعملاء واشتراكات وسندات مرقّمة <code>JBR-YYYY-NNNN</code> وكشوف عمولة <b>مجمَّدة</b> (لا تُحسب من جديد بحكم التصميم).</p><p><b>الفرق في العمل:</b> الهجرة تعني سكربت نقل + تسوية أرقام السندات. والبدء من صفر يعني شاشات نظيفة وفقدان تاريخ العمولات.</p><p><b>يقفل بـ:</b> عدّ خام لصفوف <code>jbrseo_sales</code> ثم قرارك.</p></div></details>
+</article>
+<article class="card" data-id="JBR-VERCEL-DUP" data-sev="normal" data-who="k" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-VERCEL-DUP</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-VERCEL-DUP">⧉</button></div>
+  
+  <div class="t">🧹 مشروعان على Vercel لموقع واحد — أحدهما ميت</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 11</span><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-now">الآن</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الضرر: صغير لكنه حقيقي — مشروع باسم مطابق للنطاق يجذب نشراً بالغلط، ويظهر في كل جرد فوترة كأنه شغّال. · يقفل بـ: قرارك بالحذف، ثم ناتج vercel project ls بعده.</p>
+  <div class="ask"><b>المطلوب منك:</b> مشروع Vercel اسمه jbrseo.com ميت جنب المشروع الحيّ — يُحذف؟</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>ناتج <code>vercel project ls</code> (٤ سبتمبر):</b></p>
+<pre>jbrseo        https://www.jbrseo.com                         21d   ← الحيّ
+jbrseo.com    https://jbrseocom-modonty-72c2a2ca.vercel.app   31d   ← لا نطاق، ولا يُحدَّث
+modonty-sales https://sales.jbrseo.com                        73d</pre>
+<p>المجلّد المحلّي مربوط بالحيّ وحده — <code>.vercel/project.json</code> فيه <code>"projectName":"jbrseo"</code>.</p>
+<p><b>الضرر:</b> صغير لكنه حقيقي — مشروع باسم مطابق للنطاق يجذب نشراً بالغلط، ويظهر في كل جرد فوترة كأنه شغّال.</p>
+<p><b>يقفل بـ:</b> قرارك بالحذف، ثم ناتج <code>vercel project ls</code> بعده.</p></div></details>
+</article></div></section></div>
+<div data-lane="plan" class="hidden"><p style="color:var(--dim);margin:14px 0 4px">الطريق من «ثلاثة مصادر للحقيقة» إلى «لوحة واحدة تكتب والباقي يقرأ». تُقرأ بالترتيب — تقديمُ مرحلة يفسد التي قبلها.</p>
+<section class="grp" data-grp="own"><h2>توحيد ملكيّة البيانات (① → ⑤) <span class="n" data-count>5</span></h2><p>لكل حقيقة مالك واحد — هذا هو الطلب الأصلي: «الـdata كلها تتدار من أدمن مدونتي».</p><div class="grid"><article class="card" data-id="JBR-M1" data-sev="high" data-who="c" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-M1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-M1">⧉</button></div>
+  
+  <div class="t">① مصدر واحد للسعر — الأدمن يكتب <code>Plan</code> مباشرةً</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 20</span><span class="tag tab-now">الآن</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">اليوم: السعر يُحرَّر في أدمن جبر سيو ويُكتب في Plan، ثم سكربت ينسخه إلى subscription_tier_configs في نفس القاعدة. فأدمن مدونتي يعرض نسخةً متأخّرة لا يملك تعديلها.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>اليوم:</b> السعر يُحرَّر في أدمن جبر سيو ويُكتب في <code>Plan</code>، ثم سكربت ينسخه إلى <code>subscription_tier_configs</code> في نفس القاعدة. فأدمن مدونتي يعرض <b>نسخةً متأخّرة</b> لا يملك تعديلها.</p>
+<pre>Plan                       = 8 مستندات   ← جبر سيو يكتب
+subscription_tier_configs  = 4 مستندات   ← النسخة التي يقرؤها الأدمن
+sync-tier-pricing.ts       = 47 سطراً    ← يموت</pre>
+<p><b>وثالثٌ يقرأ الأصل:</b> نظام المبيعات — <code>sales/lib/jbrseo.ts:22 → db.collection("Plan")</code>. فالسعر الواحد في ثلاثة مواضع.</p>
+<p><b>العمل:</b> شاشة الأسعار في أدمن مدونتي تكتب <code>Plan</code> مباشرةً بلا اتصال ثانٍ. تُحذف المجموعة المنسوخة وسكربتها.</p>
+<p><b>يقفل بـ:</b> تغيير سعر من أدمن مدونتي يظهر على <code>www.jbrseo.com</code> بلا تشغيل سكربت — بلقطة قبل/بعد.</p></div></details>
+</article>
+<article class="card" data-id="JBR-M2" data-sev="high" data-who="c" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-M2</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-M2">⧉</button></div>
+  
+  <div class="t">② مصدر واحد للمشترك — الأدمن يقرأ <code>Subscriber</code> مباشرةً</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 21</span><span class="tag tab-now">الآن</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">وآلة النسخ: admin/lib/jbrseo-client.ts:4 يفتح اتصال مونجو ثانياً بـJBRSEO_DATABASE_URL — وهو نفس القاعدة التي يخدمها admin/lib/db.ts عبر برِزما. اتصالان لقاعدة واحدة لنسخ مجموعة إلى جارتها. · العمل: jbrseo-queries.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الدليل على أن الرقم يكذب اليوم</b> (مقيس على الإنتاج ٤ سبتمبر):</p>
+<pre>Subscriber          = 25 مستنداً   ← الأصل، جبر سيو يكتبه
+jbrseo_subscribers  = 17 مستنداً   ← النسخة، الأدمن يعرضها
+                      ────────
+                      8 مشتركين لا يراهم الأدمن</pre>
+<p><b>وآلة النسخ:</b> <code>admin/lib/jbrseo-client.ts:4</code> يفتح <b>اتصال مونجو ثانياً</b> بـ<code>JBRSEO_DATABASE_URL</code> — وهو نفس القاعدة التي يخدمها <code>admin/lib/db.ts</code> عبر برِزما. اتصالان لقاعدة واحدة لنسخ مجموعة إلى جارتها.</p>
+<p><b>العمل:</b> <code>jbrseo-queries.ts</code> يقرأ <code>Subscriber</code> بدل <code>jbrseoSubscriber</code>. يُحمل حقلا <code>convertedToClientId</code> و<code>convertedAt</code> إلى الأصل (بذرة المرحلة ⑤). ثم يموت: المجموعة المنسوخة · <code>sync-subscribers.ts</code> (٩٧ سطراً) · <code>lib/jbrseo-client.ts</code> كاملاً.</p>
+<p><b>يقفل بـ:</b> شاشة المشتركين في الأدمن تعرض <b>٢٥</b> لا ١٧ — ولقطة تثبتها.</p></div></details>
+</article>
+<article class="card" data-id="JBR-M3" data-sev="high" data-who="k" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-M3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-M3">⧉</button></div>
+  
+  <div class="t">③ أدمن جبر سيو يذوب في أدمن مدونتي — ٨ شاشات</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 22</span><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-now">الآن</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">هذا جوهر الطلب: «كل الـdata تتدار من أدمن مدونتي». وما يمنعه اليوم أن لجبر سيو أدمن كامل خاصاً به تحت jbrseo.com/app/admin/. الشاشات الثماني: الموجود في أدمن مدونتي: analytics —</p>
+  <div class="ask"><b>المطلوب منك:</b> ٨ شاشات تنتقل من أدمن جبر سيو لأدمن مدونتي — أبدأ بأيّها؟ (شغل أسابيع لا أيام)</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>هذا جوهر الطلب:</b> «كل الـdata تتدار من أدمن مدونتي». وما يمنعه اليوم أن لجبر سيو <b>أدمن كامل خاصاً به</b> تحت <code>jbrseo.com/app/admin/</code>.</p>
+<pre>الشاشات الثماني:            الموجود في أدمن مدونتي:
+  analytics                  —
+  content                    ✅ jbr-seo/content
+  pricing                    ½ subscription-tiers (نسخة)
+  subscribers                ½ subscription-tiers (نسخة)
+  payment-failures           —
+  review                     —
+  settings                   ✅ settings/jbr-seo
+  ux-insights                —</pre>
+<p><b>الحصيلة:</b> اثنتان موجودتان، واثنتان نصف موجودتين على نسخة (تُصلحان في ① و②)، و<b>أربع غير موجودة</b>.</p>
+<p><b>الأربع غير الموجودة تحمل بيانات لا يراها أحد في مدونتي:</b> فشل الدفع (<code>PaymentAttempt</code> = ٨) · مؤشّرات التجربة (<code>clarity_daily</code> = ١٥٠) · التحليلات · المراجعة.</p>
+<p><b>يقفل بـ:</b> حذف مجلّد <code>jbrseo.com/app/admin/</code> كاملاً — وهذا هو الدليل الوحيد المقبول على أن الانتقال تمّ.</p></div></details>
+</article>
+<article class="card" data-id="JBR-M4" data-sev="normal" data-who="c" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-M4</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-M4">⧉</button></div>
+  
+  <div class="t">④ سكيما واحدة — ٣٠٨ أسطر تذوب في <code>shared/prisma/schema/</code></div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 23</span><span class="tag tab-now">الآن</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">ما يذوب: JBRSEO/jbrseo.com/prisma/schema.prisma (٣٠٨ أسطر · ١٣ موديلاً)، منها ثلاثة مرايا للقراءة (ModontyClient · ModontyMedia · ModontyIndustry) تختفي لأنها تصير الأصل نفسه. · ما يموت معها: jbrseo.com/lib/modontyDb.ts —</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>محجوبة حتى يُجاب <code>JBR-Q-PUSH</code></b> — لا يُلمس ملفّ سكيما قبل أن نعرف مصير فهارس <code>media</code> الإحدى عشرة.</p>
+<p><b>وجهتها: <code>dataLayer</code></b> (خالد ٤ سبتمبر: «الداتابيز تبع جبر سيو تكون موجودة معانا في الـdata layer»). <b>ما يذوب:</b> <code>JBRSEO/jbrseo.com/prisma/schema.prisma</code> (٣٠٨ أسطر · ١٣ موديلاً)، منها ثلاثة مرايا للقراءة (<code>ModontyClient</code> · <code>ModontyMedia</code> · <code>ModontyIndustry</code>) تختفي لأنها تصير الأصل نفسه.</p>
+<p><b>ما يموت معها:</b> <code>jbrseo.com/lib/modontyDb.ts</code> — عميل برِزما الثاني الموجود فقط لأن السكيما مقسومة.</p>
+<p><b>وما يُبنى:</b> حاجز يرفض <code>prisma db push</code> حين يكون الهدف <code>/modonty</code> بلا راية صريحة — نفس نمط <code>isProductionDb()</code> في <code>admin/lib/seo-images/rename-image-batch.ts</code>. يعالج <code>JBR-ENV-TRAP</code> و<code>JBR-COST</code> معاً.</p>
+<p><b>يقفل بـ:</b> ملفّ سكيما واحد · <code>tsc</code> صفر على التطبيقات الثلاثة · وعدّ فهارس <code>media</code> قبل/بعد = ١١ ← ١١.</p></div></details>
+</article>
+<article class="card" data-id="JBR-M5" data-sev="normal" data-who="k" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-M5</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-M5">⧉</button></div>
+  
+  <div class="t">⑤ رحلة واحدة بدل ثلاثة جداول لنفس الشخص</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 24</span><span class="tag ease-3">🤔 يحتاج جلسة</span><span class="tag tab-now">الآن</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">والحقول متداخلة فعلاً: الاسم والبريد والجوّال واسم النشاط وشخص التواصل مكرَّرة في الثلاثة. · البذرة موجودة: jbrseoSubscriber.convertedToClientId — نصف الوصلة مبنيّ أصلاً بين الدافع والعميل. الناقص طرف المندوب.</p>
+  <div class="ask"><b>المطلوب منك:</b> الرحلة الواحدة: محتمل ← دافع ← عميل. نبنيها بعد ما يُحسم JBR-DECIDE و JBR-SALES-IDLE.</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>هذا هو التوهان الحقيقي</b> — لا «كثرة الجداول». الشخص الواحد له ثلاثة سجلّات لا يعرف بعضها بعضاً:</p>
+<pre>المرحلة                الجدول        القاعدة        العدد
+────────────────────────────────────────────────────────
+محتمل عند المندوب      Client        jbrseo_sales   —
+دفع على الفاترينة      Subscriber    modonty        25
+تسلّم وله صفحة         clients       modonty        37</pre>
+<p><b>والحقول متداخلة فعلاً:</b> الاسم والبريد والجوّال واسم النشاط وشخص التواصل مكرَّرة في الثلاثة.</p>
+<p><b>البذرة موجودة:</b> <code>jbrseoSubscriber.convertedToClientId</code> — نصف الوصلة مبنيّ أصلاً بين الدافع والعميل. الناقص طرف المندوب.</p>
+<p><b>لماذا هو الأخير:</b> شكله يتغيّر كلّياً بجواب <code>JBR-DECIDE</code> (منتج واحد أم شركتان) و<code>JBR-SALES-IDLE</code> (هل للمبيعات بيانات حيّة تُنقل أصلاً).</p>
+<p><b>يقفل بـ:</b> فتح عميل واحد في الأدمن ورؤية رحلته كاملة — أي مندوب جابه، ومتى دفع، ومتى تسلّم.</p></div></details>
+</article></div></section>
+<section class="grp" data-grp="merge"><h2>ضمّ المستودعات <span class="n" data-count>3</span></h2><p>نقل المجلّدات إلى المستودع الواحد. شغلٌ آخر غير ما فوقه — ولا يبدأ قبل أن يُحسم <code>JBR-DECIDE</code>.</p><div class="grid"><article class="card" data-id="JBR-P1" data-sev="high" data-who="k" data-tab="open" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-P1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-P1">⧉</button></div>
+  
+  <div class="t">🚀 المرحلة ١ — ضمّ <code>jbrseo.com</code> وحده (أعلى ربح، أقلّ مخاطرة)</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 13</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٣٠ أغسطس ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">ليش هو الأوّل: هو الوحيد الذي يتقاسم قاعدة مدونتي فعلاً. فالتوحيد هنا ليس نقل بيانات — هو دمج ملفّي سكيما يصفان قاعدة واحدة. صفر هجرة، صفر مخاطرة على البيانات. · ما يسقط فور اكتماله: ·</p>
+  <div class="ask"><b>المطلوب منك:</b> محجوبة حتى: يستقرّ modonty-ui على main + يُجاب JBR-Q-PUSH + يُحسم JBR-DECIDE.</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>ليش هو الأوّل:</b> هو الوحيد الذي <b>يتقاسم قاعدة مدونتي فعلاً</b>. فالتوحيد هنا ليس نقل بيانات — هو دمج ملفّي سكيما يصفان قاعدة واحدة. صفر هجرة، صفر مخاطرة على البيانات.</p>
+<p><b>ما يسقط فور اكتماله:</b><br>
+· ملفّات الجسور الخمسة في الأدمن (٣٥٩ سطراً) + <code>modontyDb.ts</code><br>
+· اتصال <code>JBRSEO_DATABASE_URL</code> — الأدمن يتصل بالقاعدة نفسها مرّتين<br>
+· مجموعة <code>jbrseo_subscribers</code> ومزامنتها<br>
+· حقول المزامنة في <code>SubscriptionTierConfig</code><br>
+· <b>وخطر <code>JBR-RISK-CLIENTS</code> ينتهي</b> — وهذا وحده يبرّر المرحلة</p>
+<p><b>ما يُحلّ فيها:</b> تعارض ثلاثة أسماء (<code>SiteSettings</code> · <code>LandingSection</code> · <code>Subscriber</code>) — ولمدونتي أسماء جاهزة للأوّلين: <code>JbrSiteSettings</code> و<code>JbrLandingSection</code>.</p>
+<p><b>الاستاك لا يعترض:</b> Next ‎16 · React ‎19 · Prisma ‎6 · Tailwind ‎4 · Zod ‎4 على الجانبين. أعلى فارق برِزما <code>6.9</code> ← <code>6.19</code> داخل نفس الإصدار الكبير.</p>
+<p><b>ومساحة العمل جاهزة:</b> <code>pnpm-workspace.yaml</code> يقول بنصّه إن إضافة حزمة سطرٌ واحد، وإن ترك حزمة خارج القائمة هو الخيار المكلف لا الآمن.</p></div></details>
+</article>
+<article class="card" data-id="JBR-P2" data-sev="high" data-who="k" data-tab="open" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-P2</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-P2">⧉</button></div>
+  
+  <div class="t">المبيعات تُبنى في أدمن مدونتي — لا يُضمّ تطبيق <code>sales</code></div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 14</span><span class="tag ease-1">🤔 قرار سهل</span><span class="tag tab-open">مفتوح</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٣٠ أغسطس ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">تغيّرت بأمر خالد ٤ سبتمبر: «المبيعات اللي كانت بتحصل في sales نبغى نأسّسها في مدونتي، في الأدمن، بحيث إن فاتن تشتغل من الأدمن». فهذه ليست نقل مجلّد — هي بناء شاشات، والتطبيق المستقلّ يُطفأ.ما يُبنى (من سكيما sales الحالية —</p>
+  <div class="ask"><b>المطلوب منك:</b> بيانات jbrseo_sales تُهاجَر ولا نبدأ من صفر؟</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>تغيّرت بأمر خالد ٤ سبتمبر:</b> «المبيعات اللي كانت بتحصل في sales نبغى نأسّسها في مدونتي، في الأدمن، بحيث إن فاتن تشتغل من الأدمن». فهذه ليست نقل مجلّد — هي <b>بناء شاشات</b>، والتطبيق المستقلّ يُطفأ.</p><p><b>ما يُبنى</b> (من سكيما <code>sales</code> الحالية — ٢٣٦ سطراً · ٦ موديلات):</p><pre>المندوبون ومراحلهم وفِرَقهم        User + RepStage + teamLeaderId
+العملاء المحتملون والمتابعة         Client + LeadSource + Task
+الاشتراكات وسندات القبض             Subscription + receiptNo
+العمولات والكشوف الشهرية            CommissionStatement</pre><p><b>وما نستفيد منه بدل تكراره:</b> <code>clients</code> في مدونتي فيها ١٥٥ حقلاً و<code>invoices</code> فيها ١٥ مستنداً — فالعميل والفاتورة موجودان، والناقص طبقة المندوب والعمولة.</p><p><b>يقفل بـ:</b> فاتن تفتح أدمن مدونتي وتضيف عميلاً وتسجّل سنداً وترى عمولتها — و<code>sales.jbrseo.com</code> يُطفأ.</p></div></details>
+</article>
+<article class="card" data-id="JBR-P3" data-sev="normal" data-who="k" data-tab="open" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-P3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-P3">⧉</button></div>
+  
+  <div class="t">المرحلة ٣ — ضمّ <code>content</code></div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 15</span><span class="tag tab-open">مفتوح</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٣٠ أغسطس ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">وقبل لمسه: ٥٠ ملفاً غير مثبَّت فيه (بطاقة JBR-CONTENT-DIRTY).</p>
+  <div class="ask"><b>المطلوب منك:</b> بعد المرحلتين ١ و٢ — وبعد تثبيت الـ٥٠ ملفاً. متى؟</div>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p>قاعدة منفصلة تماماً (<code>jbr-content</code>) وصفر تقاطع مع مدونتي — <b>أقلّها ربحاً وأقلّها إلحاحاً</b>.</p>
+<p><b>وقبل لمسه:</b> ٥٠ ملفاً غير مثبَّت فيه (بطاقة <code>JBR-CONTENT-DIRTY</code>).</p></div></details>
+</article></div></section></div>
+<div data-lane="state" class="hidden"><p style="color:var(--dim);margin:14px 0 4px">ما هو قائم اليوم بالأرقام. ليست مهامّ — هذه الأرضية التي تُبنى عليها المهامّ.</p>
+<section class="grp" data-grp="state"><h2 hidden><span data-count>6</span></h2><div class="grid"><article class="card" data-id="JBR-STUDY" data-sev="ok" data-who="c" data-tab="open" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-STUDY</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-STUDY">⧉</button></div>
+  
+  <div class="t">📄 الدراسة الكاملة — التقرير المقيس</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 1</span><span class="tag tab-open">مفتوح</span><span class="tag">هادئ</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٣٠ أغسطس ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">نطاق القياس: الملفّات وحدها في MODONTY وJBRSEO يوم ٣٠ أغسطس. قاعدة الإنتاج ولوحة Vercel لم تُلمسا، وما ورد في «ما لم يُقَس» غير متحقَّق ولا يُبنى عليه قرار. · الحصيلة بالأرقام: ٦ مجموعات يصفها ملفّا سكيما · ٧١٩ سطر كود جسور ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p>كل ما في هذا التبويب مستخرَج من دراسة واحدة، والتقرير الكامل فيها بالأدلّة الخام والجداول:</p>
+<pre>file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/idea/JBRSEO-INTO-MONOREPO.html</pre>
+<p><b>نطاق القياس:</b> الملفّات وحدها في <code>MODONTY</code> و<code>JBRSEO</code> يوم ٣٠ أغسطس. <b>قاعدة الإنتاج ولوحة Vercel لم تُلمسا</b>، وما ورد في «ما لم يُقَس» غير متحقَّق ولا يُبنى عليه قرار.</p>
+<p><b>الحصيلة بالأرقام:</b> ٦ مجموعات يصفها ملفّا سكيما · ٧١٩ سطر كود جسور · ٣ اتصالات مونجو خام زائدة · سكربتا مزامنة داخل القاعدة الواحدة · ١١٢ موديلاً في السكيما الموحّدة.</p></div></details>
+</article>
+<article class="card" data-id="JBR-SHARED" data-sev="ok" data-who="c" data-tab="open" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-SHARED</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-SHARED">⧉</button></div>
+  
+  <div class="t">🗺️ الخريطة — عنقود واحد، أربع قواعد، وجبر سيو على قاعدة مدونتي نفسها</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 2</span><span class="tag tab-open">مفتوح</span><span class="tag">هادئ</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٣٠ أغسطس ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الاكتشاف الأساسي: موقع جبر سيو ليس على قاعدة مجاورة — هو على نفس قاعدة مدونتي بالضبط. فالتمركز الذي نطلبه نصفه حاصل، والناقص هو السكيما لا القاعدة.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الاكتشاف الأساسي:</b> موقع جبر سيو ليس على قاعدة مجاورة — هو على <b>نفس قاعدة مدونتي بالضبط</b>. فالتمركز الذي نطلبه <b>نصفه حاصل</b>، والناقص هو السكيما لا القاعدة.</p>
+<p><b>الدليل الخام</b> (فحص ملفّات البيئة مع تمييز السطر المفعَّل من المعلَّق):</p>
+<pre>✅ JBRSEO/jbrseo.com/.env:5        DATABASE_URL         → …/modonty
+✅ JBRSEO/jbrseo.com/.env.local:1  DATABASE_URL         → …/modonty_dev
+✅ MODONTY/.env.shared:31         JBRSEO_DATABASE_URL  → …/modonty
+✅ MODONTY/shared/.env:4          DATABASE_URL         → …/modonty_dev
+
+✅ JBRSEO/content/.env:5          DATABASE_URL         → …/jbr-content       (منفصلة)
+✅ JBRSEO/sales/.env:3            DATABASE_URL         → …/jbrseo_sales_dev  (منفصلة)
+✅ JBRSEO/sales/.env:8            MODONTY_DATABASE_URL → …/modonty  (قراءة فقط)</pre>
+<p>كلها على عنقود واحد: <code>modonty-cluster.tgixa8h.mongodb.net</code>.</p></div></details>
+</article>
+<article class="card" data-id="JBR-DUP-DATA" data-sev="high" data-who="c" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-DUP-DATA</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-DUP-DATA">⧉</button></div>
+  
+  <div class="t">♊ ٤٢ مستنداً مكرَّراً — نسختان من نفس البيانات في القاعدة الواحدة</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 5</span><span class="tag tab-now">الآن</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الفجوة تقول إن النسخ متأخّر: ٢٥ مقابل ١٧ — ثمانية مشتركين لم يصلوا النسخة. والسكربتان: sync-subscribers.ts (٩٧ سطراً) وsync-tier-pricing.ts (٤٧). · وثالثٌ لم يكن في الحسبان: نظام المبيعات يقرأ الأسعار من Plan مباشرةً —</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p>الأدمن يفتح <b>اتصال مونجو ثانياً</b> إلى القاعدة التي هو متصل بها أصلاً عبر برِزما، لينسخ مستندات من مجموعة إلى <b>جارتها</b>.</p>
+<p><b>الأرقام — مقيسة على الإنتاج ٤ سبتمبر</b> (قراءة فقط):</p>
+<pre>البيانات        عند جبر سيو (يكتب)      عند مدونتي (نسخة)
+────────────────────────────────────────────────────────────
+مشتركو الدفع    Subscriber = 25   →     jbrseo_subscribers = 17
+الباقات والأسعار Plan       = 8    →     subscription_tier_configs = 4</pre>
+<p><b>الفجوة تقول إن النسخ متأخّر:</b> ٢٥ مقابل ١٧ — ثمانية مشتركين لم يصلوا النسخة. والسكربتان: <code>sync-subscribers.ts</code> (٩٧ سطراً) و<code>sync-tier-pricing.ts</code> (٤٧).</p>
+<p><b>وثالثٌ لم يكن في الحسبان:</b> نظام المبيعات يقرأ الأسعار من <code>Plan</code> مباشرةً — <code>sales/lib/jbrseo.ts:22 → db.collection("Plan")</code> عبر اتصال مونجو خام. فالسعر الواحد له <b>ثلاثة مواضع</b>، أحدها في قاعدة أخرى.</p>
+<p><b>الإعلانان المتصادمان:</b><br>
+<code>JBRSEO/jbrseo.com/prisma/schema.prisma:33</code> — <code>model Subscriber</code> بلا <code>@@map</code> ⇒ مجموعة اسمها <code>Subscriber</code>.<br>
+<code>MODONTY/shared/prisma/schema/schema.prisma:1021</code> — <code>model JbrseoSubscriber</code> مع <code>@@map("jbrseo_subscribers")</code>.</p>
+<p><b>يقفل بـ:</b> اختفاء المجموعتين المنسوختين وسكربتَي المزامنة بعد المرحلة ١، ومصدر واحد للسعر تقرؤه المبيعات.</p></div></details>
+</article>
+<article class="card" data-id="JBR-BRIDGES" data-sev="normal" data-who="c" data-tab="now" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-BRIDGES</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-BRIDGES">⧉</button></div>
+  
+  <div class="t">🌉 ٧١٩ سطراً موجودة فقط لأن السكيما مقسومة</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 7</span><span class="tag tab-now">الآن</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٣٠ أغسطس ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">ليش تُحسب تكلفة لا مِزَة: كلّها تكتب بالسائق الخام ما يكتبه برِزما بنوعٍ مضمون من المترجم. بسكيما واحدة تصير استعلاماً عادياً.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><pre> 37  MODONTY/admin/lib/jbrseo-client.ts                     اتصال مونجو خام ثانٍ
+ 97  MODONTY/admin/…/subscription-tiers/actions/sync-subscribers.ts
+ 89  MODONTY/admin/…/subscription-tiers/helpers/jbrseo-queries.ts
+ 89  MODONTY/admin/lib/pricing/get-tier-pricing.ts
+ 47  MODONTY/admin/scripts/sync-tier-pricing.ts
+ 43  JBRSEO/sales/lib/external-db.ts                        اتصال مونجو خام ثالث
+ 53  JBRSEO/sales/lib/jbrseo.ts
+ 31  JBRSEO/sales/lib/modonty.ts
+ 32  JBRSEO/jbrseo.com/lib/modontyDb.ts                     عميل برِزما ثانٍ
+201  JBRSEO/jbrseo.com/app/actions/modonty-client-logos.ts
+───
+719 سطراً</pre>
+<p><b>ليش تُحسب تكلفة لا مِزَة:</b> كلّها تكتب بالسائق الخام ما يكتبه برِزما بنوعٍ مضمون من المترجم. بسكيما واحدة تصير استعلاماً عادياً.</p></div></details>
+</article>
+<article class="card" data-id="JBR-COST" data-sev="ok" data-who="c" data-tab="open" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-COST</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-COST">⧉</button></div>
+  
+  <div class="t">⚖️ الثمن — ما ندفعه مقابل السكيما الواحدة</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 16</span><span class="tag tab-open">مفتوح</span><span class="tag">هادئ</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٣٠ أغسطس ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">وثلاثة أخرى: · تاريخ git يتفكّك بلا subtree (JBR-Q-GIT). · ملفّ سكيما بـ١١٢ موديلاً أصعب قراءةً — ومدونتي تحلّها اليوم بمجلّد prisma/schema/، ويبقى أن نتحقّق أن نسختنا تدعم تعدّد الملفّات رسمياً. ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>نصف قطر انفجار واحد.</b> اليوم خطأ <code>db push</code> من مجلّد جبر سيو يمسّ ١٣ موديلاً؛ بعد التوحيد يمسّ <b>١١٢</b>.</p>
+<p>هذا ليس سبباً للرفض — هو سبب لأن تبقى بوّابة <code>prisma db push</code> على الإنتاج <b>بيد خالد وحده</b>، كما هي اليوم.</p>
+<p><b>وثلاثة أخرى:</b><br>
+· <b>تاريخ git</b> يتفكّك بلا <code>subtree</code> (<code>JBR-Q-GIT</code>).<br>
+· <b>ملفّ سكيما بـ١١٢ موديلاً</b> أصعب قراءةً — ومدونتي تحلّها اليوم بمجلّد <code>prisma/schema/</code>، ويبقى أن نتحقّق أن نسختنا تدعم تعدّد الملفّات رسمياً.<br>
+· <b>ثلاث نسخ ميتة</b> تُنسخ مع الضمّ إن لم تُحسم (<code>JBR-BAK</code>).</p></div></details>
+</article>
+<article class="card" data-id="JBR-INVENTORY" data-sev="ok" data-who="c" data-tab="open" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-INVENTORY</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-INVENTORY">⧉</button></div>
+  
+  <div class="t">📦 الاثنان على الطبيعة — جرد مقيس لِـ jbrseo.com و sales</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 3</span><span class="tag tab-open">مفتوح</span><span class="tag">هادئ</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">تصحيح لتصوّر شائع: jbrseo.com ليس موقعاً تعريفياً — جوّاه لوحة أدمن كاملة (تحليلات · محتوى · أسعار · مشتركون · فشل الدفع · مؤشّرات التجربة)، وبوّابتا دفع شغّالتان (N-Genius + Tamara)، وكرون يوميّ، ومقالات يسحبها من api.modonty.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>مقيس ٤ سبتمبر.</b> الدراسة الأولى (٣٠ أغسطس) قرأت السكيما؛ هذه قرأت التطبيقين نفسيهما.</p>
+<pre>                    jbrseo.com              sales
+النسخة              1.8.0 · Next 16.1       0.1.0 · Next 16.2
+الحجم               248 ملف · 26,877 سطر    120 ملف · 11,846 سطر
+الصفحات             30 صفحة · 11 مسار API   24 صفحة · مسار واحد
+منشور على           www.jbrseo.com          sales.jbrseo.com
+آخر كوميت           2026-08-13  (eb9da64)   2026-06-22  (5142d5f)
+مقابل origin/main   0  0                    0  0        (الاثنان مدفوعان)
+قاعدته              modonty  ← الإنتاج      jbrseo_sales  ← منفصلة</pre>
+<p><b>تصحيح لتصوّر شائع:</b> <code>jbrseo.com</code> ليس موقعاً تعريفياً — جوّاه لوحة أدمن كاملة (تحليلات · محتوى · أسعار · مشتركون · فشل الدفع · مؤشّرات التجربة)، وبوّابتا دفع شغّالتان (N-Genius + Tamara)، وكرون يوميّ، ومقالات يسحبها من <code>api.modonty.com</code>.</p>
+<p><b>وسجلّ نظام المبيعات يقول «الدفع محجوب»</b> — والقياس يقول إنه مدفوع منذ ٢٢ يونيو. السجلّ قديم لا صحيح.</p></div></details>
+</article></div></section></div>
+<div data-lane="done" class="hidden"><p style="color:var(--dim);margin:14px 0 4px">أُقفل بدليل خام. يبقى هنا كي لا يُعاد فتحه.</p>
+<section class="grp" data-grp="done"><h2 hidden><span data-count>1</span></h2><div class="grid"><article class="card" data-id="JBR-Q-COUNT" data-sev="normal" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">JBR-Q-COUNT</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند JBR-Q-COUNT">⧉</button></div>
+  
+  <div class="t">✅ العدّ على الإنتاج — ١٠٢ مجموعة، ١٠ منها لجبر سيو</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 4</span><span class="tag tab-done">منجز</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الجواب على السؤال الذي فُتحت له البطاقة: المرحلة ١ ليست دمج ملفّين — معها تسوية ٢٤٧ مستنداً، منها ٤٢ مكرَّرة (انظر JBR-DUP-DATA). وسكيما مدونتي تعرف ٢ فقط من العشرة (SiteSettings ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>قِيس ٤ سبتمبر</b> — قراءة فقط (<code>estimatedDocumentCount</code> + <code>indexes()</code>) على قاعدة <code>modonty</code> الإنتاجية. صفر كتابة.</p>
+<pre>إجمالي المجموعات في قاعدة modonty: 102
+
+مجموعات جبر سيو (يكتب فيها):
+  SiteSettings        1 مستند · 1 فهرس
+  Subscriber         25 مستند · 6 فهرس
+  WebhookEvent        2 مستند · 4 فهرس
+  LandingSection     18 مستند · 2 فهرس
+  ExitReason          3 مستند · 4 فهرس
+  PaymentAttempt      8 مستند · 1 فهرس
+  Plan                8 مستند · 3 فهرس
+  PriceSectionMeta    2 مستند · 2 فهرس
+  clarity_daily     150 مستند · 1 فهرس
+  clarity_sync_log   30 مستند · 1 فهرس
+                    ─────
+                    247 مستنداً في 10 مجموعات
+
+المجموعات التي يقرأها فقط:
+  media             870 مستند · 11 فهرس
+  clients            37 مستند ·  7 فهرس
+  industries          8 مستند ·  2 فهرس</pre>
+<p><b>الجواب على السؤال الذي فُتحت له البطاقة:</b> المرحلة ١ ليست دمج ملفّين — معها تسوية ٢٤٧ مستنداً، منها ٤٢ مكرَّرة (انظر <code>JBR-DUP-DATA</code>).</p>
+<p><b>وسكيما مدونتي تعرف ٢ فقط من العشرة</b> (<code>SiteSettings</code> · <code>LandingSection</code>)، وسكيما جبر سيو تعرف ٣ فقط من الـ٩٢ الباقية.</p></div></details>
+</article></div></section></div>
+</main>
+<footer>هذه اللوحة تخصّ جبر سيو وحده — نُقلت بطاقاته من <a href="TASK.html">TASK.html</a> نقلاً لا نسخاً، فلا يُراجَع البند مرّتين. الدراسة الكاملة: <a href="../idea/JBRSEO-INTO-MONOREPO.html">JBRSEO-INTO-MONOREPO.html</a></footer>
+<script>
+(() => { const chip = document.querySelector('.chip'); const cards = [...document.querySelectorAll('.card')];
+  const apply = () => { const sevOnly = chip.getAttribute('aria-pressed') === 'true';
+    cards.forEach(c => c.classList.toggle('hidden', sevOnly && !/critical|high/.test(c.dataset.sev)));
+    document.querySelectorAll('.grp').forEach(g => { const n = g.querySelectorAll('.card:not(.hidden)').length; g.querySelector('[data-count]').textContent = n; g.classList.toggle('hidden', n === 0); }); };
+  chip.addEventListener('click', () => { chip.setAttribute('aria-pressed', chip.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); apply(); });
+  const showLane = (k) => { document.querySelectorAll('[data-lane]').forEach(l => l.classList.toggle('hidden', l.dataset.lane !== k)); document.querySelectorAll('[data-lane-btn]').forEach(b => b.setAttribute('aria-selected', b.dataset.laneBtn === k)); try { localStorage.setItem('jbr-lane', k); } catch {} };
+  document.querySelectorAll('[data-lane-btn]').forEach(b => b.addEventListener('click', () => showLane(b.dataset.laneBtn)));
+  try { const s = localStorage.getItem('jbr-lane'); if (s && document.querySelector('[data-lane="' + s + '"]')) showLane(s); } catch {}
+  if (location.hash) { const h = location.hash.slice(1);
+    const el = document.querySelector('.card[data-id="' + CSS.escape(h) + '"]');
+    if (el) { showLane(el.closest('[data-lane]').dataset.lane); el.querySelector('details').open = true; el.scrollIntoView({ block: 'center' }); } }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.copy'); if (!btn) return;
+    const card = btn.closest('.card');
+    // مرجع فقط — كلود يفتح البطاقة بنفسه من الملف (خالد ٢٣ أغسطس)
+    const n = card.querySelector('.num');
+    const text = (n ? 'بند ' + n.textContent + ' — ' : '') + 'documents/tasks/' + location.pathname.split('/').pop() + '#' + card.dataset.id;
+    const done = () => { btn.classList.add('ok'); btn.textContent = '✓'; setTimeout(() => { btn.classList.remove('ok'); btn.textContent = '⧉'; }, 1200); };
+    const fallback = () => { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); done(); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(fallback);
+    else fallback();
+  });
+
+})();
+</script></body></html>

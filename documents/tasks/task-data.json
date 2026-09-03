@@ -1483,7 +1483,9 @@
       "who": "c",
       "ord": 0,
       "t": "📄 الدراسة الكاملة — التقرير المقيس",
-      "d": "<p>كل ما في هذا التبويب مستخرَج من دراسة واحدة، والتقرير الكامل فيها بالأدلّة الخام والجداول:</p>\n<pre>file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/idea/JBRSEO-INTO-MONOREPO.html</pre>\n<p><b>نطاق القياس:</b> الملفّات وحدها في <code>MODONTY</code> و<code>JBRSEO</code> يوم ٣٠ أغسطس. <b>قاعدة الإنتاج ولوحة Vercel لم تُلمسا</b>، وما ورد في «ما لم يُقَس» غير متحقَّق ولا يُبنى عليه قرار.</p>\n<p><b>الحصيلة بالأرقام:</b> ٦ مجموعات يصفها ملفّا سكيما · ٧١٩ سطر كود جسور · ٣ اتصالات مونجو خام زائدة · سكربتا مزامنة داخل القاعدة الواحدة · ١١٢ موديلاً في السكيما الموحّدة.</p>"
+      "d": "<p>كل ما في هذا التبويب مستخرَج من دراسة واحدة، والتقرير الكامل فيها بالأدلّة الخام والجداول:</p>\n<pre>file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/idea/JBRSEO-INTO-MONOREPO.html</pre>\n<p><b>نطاق القياس:</b> الملفّات وحدها في <code>MODONTY</code> و<code>JBRSEO</code> يوم ٣٠ أغسطس. <b>قاعدة الإنتاج ولوحة Vercel لم تُلمسا</b>، وما ورد في «ما لم يُقَس» غير متحقَّق ولا يُبنى عليه قرار.</p>\n<p><b>الحصيلة بالأرقام:</b> ٦ مجموعات يصفها ملفّا سكيما · ٧١٩ سطر كود جسور · ٣ اتصالات مونجو خام زائدة · سكربتا مزامنة داخل القاعدة الواحدة · ١١٢ موديلاً في السكيما الموحّدة.</p>",
+      "step": 1,
+      "jlane": "state"
     },
     {
       "b": "jbrseo",
@@ -1500,7 +1502,9 @@
       "who": "c",
       "ord": 1,
       "t": "🗺️ الخريطة — عنقود واحد، أربع قواعد، وجبر سيو على قاعدة مدونتي نفسها",
-      "d": "<p><b>الاكتشاف الأساسي:</b> موقع جبر سيو ليس على قاعدة مجاورة — هو على <b>نفس قاعدة مدونتي بالضبط</b>. فالتمركز الذي نطلبه <b>نصفه حاصل</b>، والناقص هو السكيما لا القاعدة.</p>\n<p><b>الدليل الخام</b> (فحص ملفّات البيئة مع تمييز السطر المفعَّل من المعلَّق):</p>\n<pre>✅ JBRSEO/jbrseo.com/.env:5        DATABASE_URL         → …/modonty\n✅ JBRSEO/jbrseo.com/.env.local:1  DATABASE_URL         → …/modonty_dev\n✅ MODONTY/.env.shared:31         JBRSEO_DATABASE_URL  → …/modonty\n✅ MODONTY/shared/.env:4          DATABASE_URL         → …/modonty_dev\n\n✅ JBRSEO/content/.env:5          DATABASE_URL         → …/jbr-content       (منفصلة)\n✅ JBRSEO/sales/.env:3            DATABASE_URL         → …/jbrseo_sales_dev  (منفصلة)\n✅ JBRSEO/sales/.env:8            MODONTY_DATABASE_URL → …/modonty  (قراءة فقط)</pre>\n<p>كلها على عنقود واحد: <code>modonty-cluster.tgixa8h.mongodb.net</code>.</p>"
+      "d": "<p><b>الاكتشاف الأساسي:</b> موقع جبر سيو ليس على قاعدة مجاورة — هو على <b>نفس قاعدة مدونتي بالضبط</b>. فالتمركز الذي نطلبه <b>نصفه حاصل</b>، والناقص هو السكيما لا القاعدة.</p>\n<p><b>الدليل الخام</b> (فحص ملفّات البيئة مع تمييز السطر المفعَّل من المعلَّق):</p>\n<pre>✅ JBRSEO/jbrseo.com/.env:5        DATABASE_URL         → …/modonty\n✅ JBRSEO/jbrseo.com/.env.local:1  DATABASE_URL         → …/modonty_dev\n✅ MODONTY/.env.shared:31         JBRSEO_DATABASE_URL  → …/modonty\n✅ MODONTY/shared/.env:4          DATABASE_URL         → …/modonty_dev\n\n✅ JBRSEO/content/.env:5          DATABASE_URL         → …/jbr-content       (منفصلة)\n✅ JBRSEO/sales/.env:3            DATABASE_URL         → …/jbrseo_sales_dev  (منفصلة)\n✅ JBRSEO/sales/.env:8            MODONTY_DATABASE_URL → …/modonty  (قراءة فقط)</pre>\n<p>كلها على عنقود واحد: <code>modonty-cluster.tgixa8h.mongodb.net</code>.</p>",
+      "step": 2,
+      "jlane": "state"
     },
     {
       "b": "jbrseo",
@@ -1509,7 +1513,7 @@
         "admin",
         "modonty"
       ],
-      "date": "٣٠ أغسطس ٢٠٢٦",
+      "date": "٤ سبتمبر ٢٠٢٦",
       "sec": "code",
       "id": "JBR-RISK-CLIENTS",
       "tab": "now",
@@ -1519,7 +1523,9 @@
       "ease": 1,
       "t": "🔴 سكيما جبر سيو تعلن <code>clients</code> بـ١١ حقلاً — ومدونتي تعلنها بـ١٥٥",
       "ask": "هل نغلق الباب الآن بمنع db push من مجلّد جبر سيو، أم ننتظر التوحيد؟",
-      "d": "<p><b>المشكلة:</b> ستّ مجموعات في مونجو يصفها ملفّا سكيما بعدد حقول مختلف — على قاعدة الإنتاج نفسها.</p>\n<pre>clients         مدونتي:Client(155)          |  جبر سيو:ModontyClient(11)   ← 144 حقلاً غائباً\nmedia           مدونتي:Media(70)            |  جبر سيو:ModontyMedia(4)\nindustries      مدونتي:Industry(21)         |  جبر سيو:ModontyIndustry(4)\nSiteSettings    مدونتي:JbrSiteSettings(4)   |  جبر سيو:SiteSettings(4)\nLandingSection  مدونتي:JbrLandingSection(4) |  جبر سيو:LandingSection(4)\nClient          المحتوى(9)                  |  المبيعات(28)  ← قاعدتان مختلفتان اليوم</pre>\n<p><b>ليش القراءة آمنة:</b> برِزما يرجّع المعلَن فقط. والمقيس: <b>صفر كتابة</b> من جبر سيو على مجموعات مدونتي — استدعاء واحد لا غير: <code>app/actions/modonty-client-logos.ts:104 → modontyClient.findMany</code>.</p>\n<p><b>ليش هو خطر رغم ذلك — مساران مفتوحان:</b><br>\n① <code>prisma db push</code> من مجلّد جبر سيو على الإنتاج — ماذا يفعل بفهارس مجموعة يعرف عُشرها؟ <b>ما تحقّقت من التوثيق بعد</b> (بطاقة <code>JBR-Q-PUSH</code>).<br>\n② إنشاء مستند من سكيما ناقصة يولّد عميلاً بلا ١٤٤ حقلاً. لا يحدث اليوم، ولا شيء في الكود يمنعه غداً.</p>\n<p><b>يقفل بـ:</b> إمّا سكيما واحدة (المرحلة ١)، وإمّا حاجز صريح يمنع <code>db push</code> من مجلّد جبر سيو.</p>"
+      "d": "<p><b>المشكلة:</b> ستّ مجموعات في مونجو يصفها ملفّا سكيما بعدد حقول مختلف — على قاعدة الإنتاج نفسها.</p>\n<pre>clients         مدونتي:Client(155)          |  جبر سيو:ModontyClient(11)   ← 144 حقلاً غائباً\nmedia           مدونتي:Media(70)            |  جبر سيو:ModontyMedia(4)\nindustries      مدونتي:Industry(21)         |  جبر سيو:ModontyIndustry(4)\nSiteSettings    مدونتي:JbrSiteSettings(4)   |  جبر سيو:SiteSettings(4)\nLandingSection  مدونتي:JbrLandingSection(4) |  جبر سيو:LandingSection(4)\nClient          المحتوى(9)                  |  المبيعات(28)  ← قاعدتان مختلفتان اليوم</pre>\n<p><b>ليش القراءة آمنة:</b> برِزما يرجّع المعلَن فقط. والمقيس: <b>صفر كتابة</b> من جبر سيو على مجموعات مدونتي — استدعاء واحد لا غير: <code>app/actions/modonty-client-logos.ts:104 → modontyClient.findMany</code>.</p>\n<p><b>ليش هو خطر رغم ذلك — مساران مفتوحان:</b><br>\n① <code>prisma db push</code> من مجلّد جبر سيو على الإنتاج — ماذا يفعل بفهارس مجموعة يعرف عُشرها؟ <b>ما تحقّقت من التوثيق بعد</b> (بطاقة <code>JBR-Q-PUSH</code>).<br>\n② إنشاء مستند من سكيما ناقصة يولّد عميلاً بلا ١٤٤ حقلاً. لا يحدث اليوم، ولا شيء في الكود يمنعه غداً.</p>\n<p><b>ما أضافه قياس ٤ سبتمبر:</b> المجموعات المشتركة تحمل فهارس حقيقية لا يعلنها ملفّ جبر سيو —\n<code>media</code> عليها <b>١١ فهرساً</b> · <code>clients</code> عليها <b>٧</b> · <code>industries</code> عليها <b>٢</b>. وسكيما جبر سيو تعلن الثلاثة <b>بلا فهرس واحد</b>. هذا هو بالضبط ما يجعل السؤال في <code>JBR-Q-PUSH</code> غير نظريّ.</p>\n<p><b>يقفل بـ:</b> إمّا سكيما واحدة (المرحلة ١)، وإمّا حاجز صريح يمنع <code>db push</code> من مجلّد جبر سيو.</p>",
+      "step": 6,
+      "jlane": "risk"
     },
     {
       "b": "jbrseo",
@@ -1528,15 +1534,17 @@
         "admin",
         "modonty"
       ],
-      "date": "٣٠ أغسطس ٢٠٢٦",
+      "date": "٤ سبتمبر ٢٠٢٦",
       "sec": "code",
       "id": "JBR-DUP-DATA",
       "tab": "now",
       "sev": "high",
       "who": "c",
       "ord": 3,
-      "t": "♊ نسختان من نفس البيانات — داخل القاعدة الواحدة",
-      "d": "<p>الأدمن يفتح <b>اتصال مونجو ثانياً</b> إلى القاعدة التي هو متصل بها أصلاً عبر برِزما، لينسخ مستندات من مجموعة إلى <b>جارتها</b>.</p>\n<pre>Subscriber  →  jbrseo_subscribers      sync-subscribers.ts (97 سطراً) + jbrseoId + syncedAt\nPlan        →  SubscriptionTierConfig  sync-tier-pricing.ts (47) + jbrseoId + pricing\n                                       + syncedAtSA + syncedAtEG</pre>\n<p><b>الدليل أنهما في قاعدة واحدة:</b> <code>JBRSEO_DATABASE_URL → …/modonty</code> — وهي نفسها قاعدة الأدمن على الإنتاج.</p>\n<p><b>الأثر:</b> النسخة تتأخّر بقدر ما يتأخّر تشغيل السكربت، ومصدر الحقيقة يصير اثنين.</p>\n<p><b>يقفل بـ:</b> اختفاء المجموعتين المنسوختين وسكربتَي المزامنة بعد المرحلة ١.</p>"
+      "t": "♊ ٤٢ مستنداً مكرَّراً — نسختان من نفس البيانات في القاعدة الواحدة",
+      "d": "<p>الأدمن يفتح <b>اتصال مونجو ثانياً</b> إلى القاعدة التي هو متصل بها أصلاً عبر برِزما، لينسخ مستندات من مجموعة إلى <b>جارتها</b>.</p>\n<p><b>الأرقام — مقيسة على الإنتاج ٤ سبتمبر</b> (قراءة فقط):</p>\n<pre>البيانات        عند جبر سيو (يكتب)      عند مدونتي (نسخة)\n────────────────────────────────────────────────────────────\nمشتركو الدفع    Subscriber = 25   →     jbrseo_subscribers = 17\nالباقات والأسعار Plan       = 8    →     subscription_tier_configs = 4</pre>\n<p><b>الفجوة تقول إن النسخ متأخّر:</b> ٢٥ مقابل ١٧ — ثمانية مشتركين لم يصلوا النسخة. والسكربتان: <code>sync-subscribers.ts</code> (٩٧ سطراً) و<code>sync-tier-pricing.ts</code> (٤٧).</p>\n<p><b>وثالثٌ لم يكن في الحسبان:</b> نظام المبيعات يقرأ الأسعار من <code>Plan</code> مباشرةً — <code>sales/lib/jbrseo.ts:22 → db.collection(\"Plan\")</code> عبر اتصال مونجو خام. فالسعر الواحد له <b>ثلاثة مواضع</b>، أحدها في قاعدة أخرى.</p>\n<p><b>الإعلانان المتصادمان:</b><br>\n<code>JBRSEO/jbrseo.com/prisma/schema.prisma:33</code> — <code>model Subscriber</code> بلا <code>@@map</code> ⇒ مجموعة اسمها <code>Subscriber</code>.<br>\n<code>MODONTY/shared/prisma/schema/schema.prisma:1021</code> — <code>model JbrseoSubscriber</code> مع <code>@@map(\"jbrseo_subscribers\")</code>.</p>\n<p><b>يقفل بـ:</b> اختفاء المجموعتين المنسوختين وسكربتَي المزامنة بعد المرحلة ١، ومصدر واحد للسعر تقرؤه المبيعات.</p>",
+      "step": 5,
+      "jlane": "state"
     },
     {
       "b": "jbrseo",
@@ -1553,7 +1561,9 @@
       "who": "c",
       "ord": 4,
       "t": "🌉 ٧١٩ سطراً موجودة فقط لأن السكيما مقسومة",
-      "d": "<pre> 37  MODONTY/admin/lib/jbrseo-client.ts                     اتصال مونجو خام ثانٍ\n 97  MODONTY/admin/…/subscription-tiers/actions/sync-subscribers.ts\n 89  MODONTY/admin/…/subscription-tiers/helpers/jbrseo-queries.ts\n 89  MODONTY/admin/lib/pricing/get-tier-pricing.ts\n 47  MODONTY/admin/scripts/sync-tier-pricing.ts\n 43  JBRSEO/sales/lib/external-db.ts                        اتصال مونجو خام ثالث\n 53  JBRSEO/sales/lib/jbrseo.ts\n 31  JBRSEO/sales/lib/modonty.ts\n 32  JBRSEO/jbrseo.com/lib/modontyDb.ts                     عميل برِزما ثانٍ\n201  JBRSEO/jbrseo.com/app/actions/modonty-client-logos.ts\n───\n719 سطراً</pre>\n<p><b>ليش تُحسب تكلفة لا مِزَة:</b> كلّها تكتب بالسائق الخام ما يكتبه برِزما بنوعٍ مضمون من المترجم. بسكيما واحدة تصير استعلاماً عادياً.</p>"
+      "d": "<pre> 37  MODONTY/admin/lib/jbrseo-client.ts                     اتصال مونجو خام ثانٍ\n 97  MODONTY/admin/…/subscription-tiers/actions/sync-subscribers.ts\n 89  MODONTY/admin/…/subscription-tiers/helpers/jbrseo-queries.ts\n 89  MODONTY/admin/lib/pricing/get-tier-pricing.ts\n 47  MODONTY/admin/scripts/sync-tier-pricing.ts\n 43  JBRSEO/sales/lib/external-db.ts                        اتصال مونجو خام ثالث\n 53  JBRSEO/sales/lib/jbrseo.ts\n 31  JBRSEO/sales/lib/modonty.ts\n 32  JBRSEO/jbrseo.com/lib/modontyDb.ts                     عميل برِزما ثانٍ\n201  JBRSEO/jbrseo.com/app/actions/modonty-client-logos.ts\n───\n719 سطراً</pre>\n<p><b>ليش تُحسب تكلفة لا مِزَة:</b> كلّها تكتب بالسائق الخام ما يكتبه برِزما بنوعٍ مضمون من المترجم. بسكيما واحدة تصير استعلاماً عادياً.</p>",
+      "step": 7,
+      "jlane": "state"
     },
     {
       "b": "jbrseo",
@@ -1562,16 +1572,20 @@
         "admin",
         "modonty"
       ],
-      "date": "٣٠ أغسطس ٢٠٢٦",
+      "date": "٤ سبتمبر ٢٠٢٦",
       "sec": "code",
       "id": "JBR-Q-PUSH",
       "tab": "now",
       "sev": "high",
-      "who": "c",
+      "who": "k",
       "ord": 5,
       "go": true,
       "t": "❓ ما الذي يفعله <code>prisma db push</code> بفهارس مجموعة يعرف عُشرها؟",
-      "d": "<p><b>هذا أوّل ما يُسأل قبل أي سطر كود في هذا الملفّ.</b> عليه يتوقّف هل الخطر في <code>JBR-RISK-CLIENTS</code> نظريّ أم حيّ.</p>\n<p><b>الحالة:</b> <b>ما تحقّقت من التوثيق بعد.</b></p>\n<p><b>الطريق:</b> توثيق برِزما الرسمي عبر Context7 — <code>db push</code> مع مونجو: هل يسقط فهارس غير معلَنة، وهل يمسّ مجموعات لا تصفها السكيما.</p>\n<p><b>يقفل بـ:</b> اقتباس حرفيّ من التوثيق ومصدره.</p>"
+      "d": "<p><b>هذا أوّل ما يُسأل قبل أي سطر كود في هذا الملفّ.</b> عليه يتوقّف هل الخطر في <code>JBR-RISK-CLIENTS</code> نظريّ أم حيّ.</p>\n<p><b>الحالة: سُئل التوثيق الرسمي ولم يُجب — فيه مؤشّر، ولم يُتحقَّق بعد.</b></p>\n<p>سؤال Context7 على توثيق برِزما (٤ سبتمبر) رجع بصفحات <code>db push</code> مع مونجو وصفحات الفهارس، <b>ولا واحدة تذكر مصير فهرس موجود في القاعدة وغير معلَن في السكيما</b>. فلا أقول «يسقطها» ولا «لا يسقطها».</p>\n<p><b>لماذا يهمّ بالرقم:</b> <code>media</code> عليها ١١ فهرساً و<code>clients</code> عليها ٧، وسكيما جبر سيو تعلنهما بلا فهرس. لو أسقطها <code>db push</code> فمدونتي تفقد فهارسها في لحظة، وأوّل ما يظهر بطؤُ استعلامات لا رسالةُ خطأ.</p>\n<p><b>الطريق الوحيد الباقي:</b> اختبار على <b>نسخة</b> من القاعدة — نستنسخ <code>media</code> بفهارسها إلى قاعدة تجربة، نشغّل <code>db push</code> من مجلّد جبر سيو، ونعدّ الفهارس قبل وبعد. <b>ممنوع على الإنتاج.</b></p>\n<p><b>يقفل بـ:</b> عدّ فهارس خام قبل/بعد على النسخة.</p>",
+      "ease": 1,
+      "ask": "أختبر db push على نسخة من القاعدة لأعرف مصير الفهارس؟ (لا يُلمس الإنتاج)",
+      "step": 9,
+      "jlane": "risk"
     },
     {
       "b": "jbrseo",
@@ -1580,17 +1594,16 @@
         "admin",
         "modonty"
       ],
-      "date": "٣٠ أغسطس ٢٠٢٦",
+      "date": "٤ سبتمبر ٢٠٢٦",
       "sec": "code",
       "id": "JBR-Q-COUNT",
-      "tab": "now",
+      "tab": "done",
       "sev": "normal",
-      "who": "k",
+      "who": "c",
       "ord": 6,
-      "ease": 1,
-      "t": "❓ كم مستنداً في المجموعات الستّ المتقاسَمة على الإنتاج؟",
-      "ask": "أقيسها؟ قراءة فقط على قاعدة الإنتاج — وأنت تراقب.",
-      "d": "<p>الدراسة كلّها من الملفّات؛ لم ألمس قاعدة الإنتاج. فلا أعرف <b>حجم</b> الازدواج بالأرقام: كم مستنداً في <code>clients</code> و<code>Subscriber</code> و<code>jbrseo_subscribers</code>.</p>\n<p><b>ليش يهمّ:</b> الرقم يقرّر هل المرحلة ١ دمج ملفّين فقط، أم دمجٌ ومعه تسوية بيانات.</p>\n<p><b>يقفل بـ:</b> جدول عدّ خام لكل مجموعة من الستّ.</p>"
+      "t": "✅ العدّ على الإنتاج — ١٠٢ مجموعة، ١٠ منها لجبر سيو",
+      "d": "<p><b>قِيس ٤ سبتمبر</b> — قراءة فقط (<code>estimatedDocumentCount</code> + <code>indexes()</code>) على قاعدة <code>modonty</code> الإنتاجية. صفر كتابة.</p>\n<pre>إجمالي المجموعات في قاعدة modonty: 102\n\nمجموعات جبر سيو (يكتب فيها):\n  SiteSettings        1 مستند · 1 فهرس\n  Subscriber         25 مستند · 6 فهرس\n  WebhookEvent        2 مستند · 4 فهرس\n  LandingSection     18 مستند · 2 فهرس\n  ExitReason          3 مستند · 4 فهرس\n  PaymentAttempt      8 مستند · 1 فهرس\n  Plan                8 مستند · 3 فهرس\n  PriceSectionMeta    2 مستند · 2 فهرس\n  clarity_daily     150 مستند · 1 فهرس\n  clarity_sync_log   30 مستند · 1 فهرس\n                    ─────\n                    247 مستنداً في 10 مجموعات\n\nالمجموعات التي يقرأها فقط:\n  media             870 مستند · 11 فهرس\n  clients            37 مستند ·  7 فهرس\n  industries          8 مستند ·  2 فهرس</pre>\n<p><b>الجواب على السؤال الذي فُتحت له البطاقة:</b> المرحلة ١ ليست دمج ملفّين — معها تسوية ٢٤٧ مستنداً، منها ٤٢ مكرَّرة (انظر <code>JBR-DUP-DATA</code>).</p>\n<p><b>وسكيما مدونتي تعرف ٢ فقط من العشرة</b> (<code>SiteSettings</code> · <code>LandingSection</code>)، وسكيما جبر سيو تعرف ٣ فقط من الـ٩٢ الباقية.</p>",
+      "step": 4
     },
     {
       "b": "jbrseo",
@@ -1609,7 +1622,9 @@
       "ease": 2,
       "t": "🤔 هل نحتفظ بتاريخ git للمستودعات الثلاثة عند الضمّ؟",
       "ask": "نحتفظ بالتاريخ (subtree) أم ندخلها كملفّات جديدة؟",
-      "d": "<p>الضمّ بلا <code>subtree</code> يُدخل الملفّات <b>بلا تاريخها</b>: ٦٠٥ + ١٧٢ + ٩٦ ملفاً تفقد كوميتاتها.</p>\n<pre>jbrseo.com  modonty1-rgb/jbrseo          605 ملفاً  ·   4 غير مثبَّت\nsales       modonty1-rgb/modonty_sales   172 ملفاً  ·   7 غير مثبَّت\ncontent     modonty1-rgb/contentClaender  96 ملفاً  ·  50 غير مثبَّت</pre>\n<p><b>قرارٌ يُتّخذ مرّة</b> ولا يُتراجَع عنه بسهولة بعد الضمّ.</p>"
+      "d": "<p>الضمّ بلا <code>subtree</code> يُدخل الملفّات <b>بلا تاريخها</b>: ٦٠٥ + ١٧٢ + ٩٦ ملفاً تفقد كوميتاتها.</p>\n<pre>jbrseo.com  modonty1-rgb/jbrseo          605 ملفاً  ·   4 غير مثبَّت\nsales       modonty1-rgb/modonty_sales   172 ملفاً  ·   7 غير مثبَّت\ncontent     modonty1-rgb/contentClaender  96 ملفاً  ·  50 غير مثبَّت</pre>\n<p><b>قرارٌ يُتّخذ مرّة</b> ولا يُتراجَع عنه بسهولة بعد الضمّ.</p>",
+      "step": 17,
+      "jlane": "decide"
     },
     {
       "b": "jbrseo",
@@ -1628,7 +1643,9 @@
       "ease": 3,
       "t": "🤔 القرار الذي لا يملكه الكود: منتج واحد بواجهتين، أم شركتان تتقاسمان بنية؟",
       "ask": "جبر سيو ومدونتي — واحد أم اثنان؟ هذا يقرّر كل ما تحته.",
-      "d": "<p><b>إن كانا منتجاً واحداً</b> → السكيما الواحدة هي الصواب بلا نقاش، والجسور تُحذف.</p>\n<p><b>وإن كانا شركتين</b> → ربّما الصواب أن تبقى قاعدتان وتُصلَح الجسور بدل حذفها، وتُبنى بينهما واجهة صريحة لا اتصال مباشر.</p>\n<p><b>موقفي:</b> بنيت التوصية على الأوّل — لأنه ما يقوله الوضع القائم لا ما أفترضه: قاعدة واحدة يتقاسمانها منذ اليوم، لا قاعدتان تتحدّثان.</p>\n<p><b>لكن الكود لا يملك هذا الجواب</b> — هو قرار عمل، وهو الوحيد هنا الذي لا أستطيع تقريره عنك.</p>"
+      "d": "<p><b>إن كانا منتجاً واحداً</b> → السكيما الواحدة هي الصواب بلا نقاش، والجسور تُحذف.</p>\n<p><b>وإن كانا شركتين</b> → ربّما الصواب أن تبقى قاعدتان وتُصلَح الجسور بدل حذفها، وتُبنى بينهما واجهة صريحة لا اتصال مباشر.</p>\n<p><b>موقفي:</b> بنيت التوصية على الأوّل — لأنه ما يقوله الوضع القائم لا ما أفترضه: قاعدة واحدة يتقاسمانها منذ اليوم، لا قاعدتان تتحدّثان.</p>\n<p><b>لكن الكود لا يملك هذا الجواب</b> — هو قرار عمل، وهو الوحيد هنا الذي لا أستطيع تقريره عنك.</p>",
+      "step": 12,
+      "jlane": "decide"
     },
     {
       "b": "jbrseo",
@@ -1647,7 +1664,10 @@
       "ref": "محجوب",
       "t": "🚀 المرحلة ١ — ضمّ <code>jbrseo.com</code> وحده (أعلى ربح، أقلّ مخاطرة)",
       "ask": "محجوبة حتى: يستقرّ modonty-ui على main + يُجاب JBR-Q-PUSH + يُحسم JBR-DECIDE.",
-      "d": "<p><b>ليش هو الأوّل:</b> هو الوحيد الذي <b>يتقاسم قاعدة مدونتي فعلاً</b>. فالتوحيد هنا ليس نقل بيانات — هو دمج ملفّي سكيما يصفان قاعدة واحدة. صفر هجرة، صفر مخاطرة على البيانات.</p>\n<p><b>ما يسقط فور اكتماله:</b><br>\n· ملفّات الجسور الخمسة في الأدمن (٣٥٩ سطراً) + <code>modontyDb.ts</code><br>\n· اتصال <code>JBRSEO_DATABASE_URL</code> — الأدمن يتصل بالقاعدة نفسها مرّتين<br>\n· مجموعة <code>jbrseo_subscribers</code> ومزامنتها<br>\n· حقول المزامنة في <code>SubscriptionTierConfig</code><br>\n· <b>وخطر <code>JBR-RISK-CLIENTS</code> ينتهي</b> — وهذا وحده يبرّر المرحلة</p>\n<p><b>ما يُحلّ فيها:</b> تعارض ثلاثة أسماء (<code>SiteSettings</code> · <code>LandingSection</code> · <code>Subscriber</code>) — ولمدونتي أسماء جاهزة للأوّلين: <code>JbrSiteSettings</code> و<code>JbrLandingSection</code>.</p>\n<p><b>الاستاك لا يعترض:</b> Next ‎16 · React ‎19 · Prisma ‎6 · Tailwind ‎4 · Zod ‎4 على الجانبين. أعلى فارق برِزما <code>6.9</code> ← <code>6.19</code> داخل نفس الإصدار الكبير.</p>\n<p><b>ومساحة العمل جاهزة:</b> <code>pnpm-workspace.yaml</code> يقول بنصّه إن إضافة حزمة سطرٌ واحد، وإن ترك حزمة خارج القائمة هو الخيار المكلف لا الآمن.</p>"
+      "d": "<p><b>ليش هو الأوّل:</b> هو الوحيد الذي <b>يتقاسم قاعدة مدونتي فعلاً</b>. فالتوحيد هنا ليس نقل بيانات — هو دمج ملفّي سكيما يصفان قاعدة واحدة. صفر هجرة، صفر مخاطرة على البيانات.</p>\n<p><b>ما يسقط فور اكتماله:</b><br>\n· ملفّات الجسور الخمسة في الأدمن (٣٥٩ سطراً) + <code>modontyDb.ts</code><br>\n· اتصال <code>JBRSEO_DATABASE_URL</code> — الأدمن يتصل بالقاعدة نفسها مرّتين<br>\n· مجموعة <code>jbrseo_subscribers</code> ومزامنتها<br>\n· حقول المزامنة في <code>SubscriptionTierConfig</code><br>\n· <b>وخطر <code>JBR-RISK-CLIENTS</code> ينتهي</b> — وهذا وحده يبرّر المرحلة</p>\n<p><b>ما يُحلّ فيها:</b> تعارض ثلاثة أسماء (<code>SiteSettings</code> · <code>LandingSection</code> · <code>Subscriber</code>) — ولمدونتي أسماء جاهزة للأوّلين: <code>JbrSiteSettings</code> و<code>JbrLandingSection</code>.</p>\n<p><b>الاستاك لا يعترض:</b> Next ‎16 · React ‎19 · Prisma ‎6 · Tailwind ‎4 · Zod ‎4 على الجانبين. أعلى فارق برِزما <code>6.9</code> ← <code>6.19</code> داخل نفس الإصدار الكبير.</p>\n<p><b>ومساحة العمل جاهزة:</b> <code>pnpm-workspace.yaml</code> يقول بنصّه إن إضافة حزمة سطرٌ واحد، وإن ترك حزمة خارج القائمة هو الخيار المكلف لا الآمن.</p>",
+      "step": 13,
+      "jlane": "plan",
+      "jgrp": "merge"
     },
     {
       "b": "jbrseo",
@@ -1660,12 +1680,16 @@
       "sec": "code",
       "id": "JBR-P2",
       "tab": "open",
-      "sev": "normal",
+      "sev": "high",
       "who": "k",
       "ord": 10,
-      "t": "المرحلة ٢ — ضمّ <code>sales</code>",
-      "d": "<p>قاعدة منفصلة (<code>jbrseo_sales_dev</code>) وستّة موديلات، لكنه يقرأ مدونتي أصلاً بالسائق الخام — واتصاله موسوم في الكود نفسه: <code>⚠️ PRODUCTION — READ ONLY … ممنوع أي كتابة عبر هذا الاتصال</code>.</p>\n<p><b>قرارٌ يسبقها:</b> هل تنتقل بيانات المبيعات إلى قاعدة مدونتي، أم تبقى قاعدةً ثانية بسكيما واحدة؟ <b>ولم أتحقّق بعد</b> هل يخدم برِزما قاعدتين من سكيما واحدة.</p>\n<p><b>تصادم اسم ينتظر:</b> <code>Client</code> عند المبيعات (٢٨ حقلاً) و<code>Client</code> عند مدونتي (١٥٥) — قاعدتان مختلفتان اليوم فلا تصادم، والسكيما الواحدة تجعله تصادماً.</p>",
-      "ask": "بعد المرحلة ١ — ويسبقها قرار: تنتقل بيانات المبيعات أم تبقى قاعدة ثانية؟"
+      "t": "المبيعات تُبنى في أدمن مدونتي — لا يُضمّ تطبيق <code>sales</code>",
+      "d": "<p><b>تغيّرت بأمر خالد ٤ سبتمبر:</b> «المبيعات اللي كانت بتحصل في sales نبغى نأسّسها في مدونتي، في الأدمن، بحيث إن فاتن تشتغل من الأدمن». فهذه ليست نقل مجلّد — هي <b>بناء شاشات</b>، والتطبيق المستقلّ يُطفأ.</p><p><b>ما يُبنى</b> (من سكيما <code>sales</code> الحالية — ٢٣٦ سطراً · ٦ موديلات):</p><pre>المندوبون ومراحلهم وفِرَقهم        User + RepStage + teamLeaderId\nالعملاء المحتملون والمتابعة         Client + LeadSource + Task\nالاشتراكات وسندات القبض             Subscription + receiptNo\nالعمولات والكشوف الشهرية            CommissionStatement</pre><p><b>وما نستفيد منه بدل تكراره:</b> <code>clients</code> في مدونتي فيها ١٥٥ حقلاً و<code>invoices</code> فيها ١٥ مستنداً — فالعميل والفاتورة موجودان، والناقص طبقة المندوب والعمولة.</p><p><b>يقفل بـ:</b> فاتن تفتح أدمن مدونتي وتضيف عميلاً وتسجّل سنداً وترى عمولتها — و<code>sales.jbrseo.com</code> يُطفأ.</p>",
+      "ask": "بيانات jbrseo_sales تُهاجَر ولا نبدأ من صفر؟",
+      "step": 14,
+      "jlane": "plan",
+      "jgrp": "merge",
+      "ease": 1
     },
     {
       "b": "jbrseo",
@@ -1683,7 +1707,10 @@
       "ord": 11,
       "t": "المرحلة ٣ — ضمّ <code>content</code>",
       "d": "<p>قاعدة منفصلة تماماً (<code>jbr-content</code>) وصفر تقاطع مع مدونتي — <b>أقلّها ربحاً وأقلّها إلحاحاً</b>.</p>\n<p><b>وقبل لمسه:</b> ٥٠ ملفاً غير مثبَّت فيه (بطاقة <code>JBR-CONTENT-DIRTY</code>).</p>",
-      "ask": "بعد المرحلتين ١ و٢ — وبعد تثبيت الـ٥٠ ملفاً. متى؟"
+      "ask": "بعد المرحلتين ١ و٢ — وبعد تثبيت الـ٥٠ ملفاً. متى؟",
+      "step": 15,
+      "jlane": "plan",
+      "jgrp": "merge"
     },
     {
       "b": "jbrseo",
@@ -1702,7 +1729,9 @@
       "ease": 1,
       "t": "⚠️ ٥٠ ملفاً غير مثبَّت في مستودع <code>content</code> — شغل معرَّض للضياع",
       "ask": "أفتح المستودع وأعرض لك ما فيه، ثم تقرّر: يُثبَّت أم يُرمى؟",
-      "d": "<p><b>المقيس:</b> <code>git status --porcelain</code> في <code>JBRSEO/content</code> = <b>٥٠ ملفاً</b>، مقابل ٤ في جبر سيو و٧ في المبيعات.</p>\n<p><b>ليش هي بطاقة الآن لا عند المرحلة ٣:</b> الضمّ لا ينقل غير المثبَّت. وأيّ عملية على المجلّد قبل تثبيته تخاطر بشغلٍ لا نعرف ما هو.</p>\n<p><b>يقفل بـ:</b> <code>git status</code> نظيف في <code>content</code> — إمّا بكوميت وإمّا بقرار صريح بالتخلّص.</p>"
+      "d": "<p><b>المقيس:</b> <code>git status --porcelain</code> في <code>JBRSEO/content</code> = <b>٥٠ ملفاً</b>، مقابل ٤ في جبر سيو و٧ في المبيعات.</p>\n<p><b>ليش هي بطاقة الآن لا عند المرحلة ٣:</b> الضمّ لا ينقل غير المثبَّت. وأيّ عملية على المجلّد قبل تثبيته تخاطر بشغلٍ لا نعرف ما هو.</p>\n<p><b>يقفل بـ:</b> <code>git status</code> نظيف في <code>content</code> — إمّا بكوميت وإمّا بقرار صريح بالتخلّص.</p>",
+      "step": 18,
+      "jlane": "decide"
     },
     {
       "b": "jbrseo",
@@ -1721,7 +1750,9 @@
       "ease": 1,
       "t": "🧹 ثلاث نسخ ميتة داخل مجلّد جبر سيو — تُحسم قبل الضمّ",
       "ask": "أحذفها أم أبقيها؟ (ليست مستودعات git — نسخ ملفّات)",
-      "d": "<p><code>bak1</code> · <code>bak002</code> · <code>jbrBackup</code> — ثلاثة مجلّدات <b>ليس فيها <code>.git</code></b>، وكلٌّ منها يحمل <code>package.json</code> و<code>prisma/schema.prisma</code>.</p>\n<p><b>ليش تُحسم قبل الضمّ:</b> ملفّ سكيما ميت داخل مستودع موحّد يُقرأ لاحقاً كأنه مصدر — وهو نقيض سبب التوحيد كلّه.</p>\n<p><b>يقفل بـ:</b> قرارك — تُحذف أو تُنقل خارج مسار الضمّ.</p>"
+      "d": "<p><code>bak1</code> · <code>bak002</code> · <code>jbrBackup</code> — ثلاثة مجلّدات <b>ليس فيها <code>.git</code></b>، وكلٌّ منها يحمل <code>package.json</code> و<code>prisma/schema.prisma</code>.</p>\n<p><b>ليش تُحسم قبل الضمّ:</b> ملفّ سكيما ميت داخل مستودع موحّد يُقرأ لاحقاً كأنه مصدر — وهو نقيض سبب التوحيد كلّه.</p>\n<p><b>يقفل بـ:</b> قرارك — تُحذف أو تُنقل خارج مسار الضمّ.</p>",
+      "step": 19,
+      "jlane": "decide"
     },
     {
       "b": "jbrseo",
@@ -1738,7 +1769,9 @@
       "who": "c",
       "ord": 14,
       "t": "⚖️ الثمن — ما ندفعه مقابل السكيما الواحدة",
-      "d": "<p><b>نصف قطر انفجار واحد.</b> اليوم خطأ <code>db push</code> من مجلّد جبر سيو يمسّ ١٣ موديلاً؛ بعد التوحيد يمسّ <b>١١٢</b>.</p>\n<p>هذا ليس سبباً للرفض — هو سبب لأن تبقى بوّابة <code>prisma db push</code> على الإنتاج <b>بيد خالد وحده</b>، كما هي اليوم.</p>\n<p><b>وثلاثة أخرى:</b><br>\n· <b>تاريخ git</b> يتفكّك بلا <code>subtree</code> (<code>JBR-Q-GIT</code>).<br>\n· <b>ملفّ سكيما بـ١١٢ موديلاً</b> أصعب قراءةً — ومدونتي تحلّها اليوم بمجلّد <code>prisma/schema/</code>، ويبقى أن نتحقّق أن نسختنا تدعم تعدّد الملفّات رسمياً.<br>\n· <b>ثلاث نسخ ميتة</b> تُنسخ مع الضمّ إن لم تُحسم (<code>JBR-BAK</code>).</p>"
+      "d": "<p><b>نصف قطر انفجار واحد.</b> اليوم خطأ <code>db push</code> من مجلّد جبر سيو يمسّ ١٣ موديلاً؛ بعد التوحيد يمسّ <b>١١٢</b>.</p>\n<p>هذا ليس سبباً للرفض — هو سبب لأن تبقى بوّابة <code>prisma db push</code> على الإنتاج <b>بيد خالد وحده</b>، كما هي اليوم.</p>\n<p><b>وثلاثة أخرى:</b><br>\n· <b>تاريخ git</b> يتفكّك بلا <code>subtree</code> (<code>JBR-Q-GIT</code>).<br>\n· <b>ملفّ سكيما بـ١١٢ موديلاً</b> أصعب قراءةً — ومدونتي تحلّها اليوم بمجلّد <code>prisma/schema/</code>، ويبقى أن نتحقّق أن نسختنا تدعم تعدّد الملفّات رسمياً.<br>\n· <b>ثلاث نسخ ميتة</b> تُنسخ مع الضمّ إن لم تُحسم (<code>JBR-BAK</code>).</p>",
+      "step": 16,
+      "jlane": "state"
     },
     {
       "id": "PROD-SUBDOM-INDEX",
@@ -2490,6 +2523,207 @@
       "date": "٣ سبتمبر ٢٠٢٦",
       "t": "📄 ترقيم ٤ · تطبيق الجوّال — ثلاث نقاط طرفية",
       "d": "<p>ترقيمٌ في الحمولة لا في الماركب: <code>page</code> في الطلب، و<code>total</code> و<code>hasMore</code> في الرد.</p><p><code>api/mobile/v1/articles/route.ts:28       100<br>api/mobile/v1/notifications/route.ts:43  100<br>api/mobile/v1/bookings/route.ts:43       100</code></p><p><b>عدّاداتها الثلاثة أُصلحت بالفعل</b> (٣ سبتمبر) فصارت تُعدّ في القاعدة — الباقي أن تصل الصفوف نفسها كاملةً.</p><p><b>آخرها ترتيباً:</b> التطبيق يعرض الأحدث ويندر أن يُمرَّر بعيداً، ومئةُ صفٍّ تكفي سنةً على الأرقام الحالية.</p><p><b>المرجع — لا تخترع نمطاً:</b> <code>modonty/components/shared/pagination/FeedPagination.tsx</code> مبنيّ وموثَّق ومستعمل في خمس صفحات، وروابطه <code>&lt;a href&gt;</code> حقيقية بهدف لمس ٤٤ بكسل (WCAG 2.2 SC 2.5.5). وهو مطابقٌ لما يوصي به جوجل حرفياً:<br><code>\"Give each page a unique URL … include a ?page=n query parameter\"<br>\"links from each page to the following page using &lt;a href&gt; tags\"<br>\"Google no longer uses [rel=next/prev]\"<br>\"Google's crawlers don't click buttons and generally don't trigger JavaScript<br> functions that require user actions\"</code></p><p><b>ومن توثيق برِزما:</b> «Choose offset pagination when users need to jump directly to a numbered page» — و«offset re-counts skipped rows on every page، which degrades … into large datasets». هذه القوائم عشرات لا آلاف، فالإزاحة (<code>skip</code>/<code>take</code>) هي الصحيحة، والمؤشّر (<code>cursor</code>) يُؤجَّل لما ينمو بلا حدّ.</p><p><b>وثلاثتها تشترط الإجمالي الحقيقي</b> من <code>count()</code> — لا طول المصفوفة بعد القصّ.</p>"
+    },
+    {
+      "b": "jbrseo",
+      "area": "jbrseo",
+      "app": [
+        "admin",
+        "modonty"
+      ],
+      "sec": "code",
+      "date": "٤ سبتمبر ٢٠٢٦",
+      "id": "JBR-INVENTORY",
+      "tab": "open",
+      "sev": "ok",
+      "who": "c",
+      "t": "📦 الاثنان على الطبيعة — جرد مقيس لِـ jbrseo.com و sales",
+      "d": "<p><b>مقيس ٤ سبتمبر.</b> الدراسة الأولى (٣٠ أغسطس) قرأت السكيما؛ هذه قرأت التطبيقين نفسيهما.</p>\n<pre>                    jbrseo.com              sales\nالنسخة              1.8.0 · Next 16.1       0.1.0 · Next 16.2\nالحجم               248 ملف · 26,877 سطر    120 ملف · 11,846 سطر\nالصفحات             30 صفحة · 11 مسار API   24 صفحة · مسار واحد\nمنشور على           www.jbrseo.com          sales.jbrseo.com\nآخر كوميت           2026-08-13  (eb9da64)   2026-06-22  (5142d5f)\nمقابل origin/main   0  0                    0  0        (الاثنان مدفوعان)\nقاعدته              modonty  ← الإنتاج      jbrseo_sales  ← منفصلة</pre>\n<p><b>تصحيح لتصوّر شائع:</b> <code>jbrseo.com</code> ليس موقعاً تعريفياً — جوّاه لوحة أدمن كاملة (تحليلات · محتوى · أسعار · مشتركون · فشل الدفع · مؤشّرات التجربة)، وبوّابتا دفع شغّالتان (N-Genius + Tamara)، وكرون يوميّ، ومقالات يسحبها من <code>api.modonty.com</code>.</p>\n<p><b>وسجلّ نظام المبيعات يقول «الدفع محجوب»</b> — والقياس يقول إنه مدفوع منذ ٢٢ يونيو. السجلّ قديم لا صحيح.</p>",
+      "step": 3,
+      "jlane": "state"
+    },
+    {
+      "b": "jbrseo",
+      "area": "jbrseo",
+      "app": [
+        "admin",
+        "modonty"
+      ],
+      "sec": "code",
+      "date": "٤ سبتمبر ٢٠٢٦",
+      "id": "JBR-ENV-TRAP",
+      "tab": "now",
+      "sev": "critical",
+      "who": "c",
+      "t": "🔴 سكربت يظنّ نفسه على dev فيكتب على الإنتاج — حصل فعلاً",
+      "d": "<p><b>ليست فرضية.</b> مسجَّلة في سجلّ جلسات جبر سيو نفسه (١١ أغسطس): شُغّل سكربت لتعديل نصّ في الصفحة الرئيسية باعتقاد أنه على dev، فكتب على <b>الإنتاج</b>. اكتُشف بمقارنة القاعدتين.</p>\n<p><b>الآلية بالضبط:</b> <code>new PrismaClient()</code> بلا <code>datasources</code> يقرأ <code>.env</code> — و<code>.env</code> هنا هو <b>الإنتاج</b>:</p>\n<pre>JBRSEO/jbrseo.com/.env        DATABASE_URL → …/modonty       ← الإنتاج\nJBRSEO/jbrseo.com/.env.local  DATABASE_URL → …/modonty_dev    ← لا يقرؤه السكربت</pre>\n<p><code>.env.local</code> اصطلاح Next.js وحده؛ برِزما خارج Next لا يراه. فالسكربت «الآمن» يضرب الإنتاج بلا تحذير.</p>\n<p><b>وهذا يضاعف كل ما فوقه:</b> نفس المجلّد الذي فيه هذا الفخّ هو المجلّد الذي منه يُشغَّل <code>prisma db push</code> (<code>JBR-Q-PUSH</code>).</p>\n<p><b>يقفل بـ:</b> حاجز يرفض التشغيل حين يكون الهدف <code>/modonty</code> ما لم تُمرَّر راية صريحة — نفس نمط <code>isProductionDb()</code> في <code>admin/lib/seo-images/rename-image-batch.ts</code>.</p>",
+      "step": 8,
+      "jlane": "risk"
+    },
+    {
+      "b": "jbrseo",
+      "area": "jbrseo",
+      "app": [
+        "admin",
+        "modonty"
+      ],
+      "sec": "code",
+      "date": "٤ سبتمبر ٢٠٢٦",
+      "id": "JBR-SALES-IDLE",
+      "tab": "now",
+      "sev": "high",
+      "who": "k",
+      "ease": 1,
+      "ask": "في jbrseo_sales شغل حقيقي يُهاجَر، ولا نبدأ نظيفاً في الأدمن؟",
+      "t": "⏸️ <code>sales</code> ساكن منذ ٢٢ يونيو — نهاجر بياناته أم نبدأ من صفر؟",
+      "d": "<p><b>المقيس:</b> آخر كوميت <code>5142d5f</code> يوم <code>2026-06-22</code> — مطابق لـ<code>origin/main</code> (<code>0 0</code>)، ولوحة Vercel تقول ٧٣ يوماً على <code>sales.jbrseo.com</code>. منشور وحيّ وساكن.</p><p><b>لماذا صار السؤال هجرةً لا حياة:</b> بعد أمر ٤ سبتمبر لم يعد التطبيق يُضمّ — يُطفأ وتُبنى شاشاته في الأدمن. فالباقي منه <b>بياناته وحدها</b>.</p><p><b>وما فيه:</b> قاعدة <code>jbrseo_sales</code> منفصلة تماماً — مندوبون وعملاء واشتراكات وسندات مرقّمة <code>JBR-YYYY-NNNN</code> وكشوف عمولة <b>مجمَّدة</b> (لا تُحسب من جديد بحكم التصميم).</p><p><b>الفرق في العمل:</b> الهجرة تعني سكربت نقل + تسوية أرقام السندات. والبدء من صفر يعني شاشات نظيفة وفقدان تاريخ العمولات.</p><p><b>يقفل بـ:</b> عدّ خام لصفوف <code>jbrseo_sales</code> ثم قرارك.</p>",
+      "step": 10,
+      "jlane": "decide"
+    },
+    {
+      "b": "jbrseo",
+      "area": "jbrseo",
+      "app": [
+        "admin",
+        "modonty"
+      ],
+      "sec": "code",
+      "date": "٤ سبتمبر ٢٠٢٦",
+      "id": "JBR-VERCEL-DUP",
+      "tab": "now",
+      "sev": "normal",
+      "who": "k",
+      "ease": 1,
+      "ask": "مشروع Vercel اسمه jbrseo.com ميت جنب المشروع الحيّ — يُحذف؟",
+      "t": "🧹 مشروعان على Vercel لموقع واحد — أحدهما ميت",
+      "d": "<p><b>ناتج <code>vercel project ls</code> (٤ سبتمبر):</b></p>\n<pre>jbrseo        https://www.jbrseo.com                         21d   ← الحيّ\njbrseo.com    https://jbrseocom-modonty-72c2a2ca.vercel.app   31d   ← لا نطاق، ولا يُحدَّث\nmodonty-sales https://sales.jbrseo.com                        73d</pre>\n<p>المجلّد المحلّي مربوط بالحيّ وحده — <code>.vercel/project.json</code> فيه <code>\"projectName\":\"jbrseo\"</code>.</p>\n<p><b>الضرر:</b> صغير لكنه حقيقي — مشروع باسم مطابق للنطاق يجذب نشراً بالغلط، ويظهر في كل جرد فوترة كأنه شغّال.</p>\n<p><b>يقفل بـ:</b> قرارك بالحذف، ثم ناتج <code>vercel project ls</code> بعده.</p>",
+      "step": 11,
+      "jlane": "decide"
+    },
+    {
+      "b": "jbrseo",
+      "area": "jbrseo",
+      "app": [
+        "admin",
+        "modonty"
+      ],
+      "sec": "code",
+      "date": "٤ سبتمبر ٢٠٢٦",
+      "jlane": "plan",
+      "id": "JBR-M1",
+      "tab": "now",
+      "sev": "high",
+      "who": "c",
+      "step": 20,
+      "ord": 20,
+      "t": "① مصدر واحد للسعر — الأدمن يكتب <code>Plan</code> مباشرةً",
+      "d": "<p><b>اليوم:</b> السعر يُحرَّر في أدمن جبر سيو ويُكتب في <code>Plan</code>، ثم سكربت ينسخه إلى <code>subscription_tier_configs</code> في نفس القاعدة. فأدمن مدونتي يعرض <b>نسخةً متأخّرة</b> لا يملك تعديلها.</p>\n<pre>Plan                       = 8 مستندات   ← جبر سيو يكتب\nsubscription_tier_configs  = 4 مستندات   ← النسخة التي يقرؤها الأدمن\nsync-tier-pricing.ts       = 47 سطراً    ← يموت</pre>\n<p><b>وثالثٌ يقرأ الأصل:</b> نظام المبيعات — <code>sales/lib/jbrseo.ts:22 → db.collection(\"Plan\")</code>. فالسعر الواحد في ثلاثة مواضع.</p>\n<p><b>العمل:</b> شاشة الأسعار في أدمن مدونتي تكتب <code>Plan</code> مباشرةً بلا اتصال ثانٍ. تُحذف المجموعة المنسوخة وسكربتها.</p>\n<p><b>يقفل بـ:</b> تغيير سعر من أدمن مدونتي يظهر على <code>www.jbrseo.com</code> بلا تشغيل سكربت — بلقطة قبل/بعد.</p>",
+      "jgrp": "own"
+    },
+    {
+      "b": "jbrseo",
+      "area": "jbrseo",
+      "app": [
+        "admin",
+        "modonty"
+      ],
+      "sec": "code",
+      "date": "٤ سبتمبر ٢٠٢٦",
+      "jlane": "plan",
+      "id": "JBR-M2",
+      "tab": "now",
+      "sev": "high",
+      "who": "c",
+      "step": 21,
+      "ord": 21,
+      "t": "② مصدر واحد للمشترك — الأدمن يقرأ <code>Subscriber</code> مباشرةً",
+      "d": "<p><b>الدليل على أن الرقم يكذب اليوم</b> (مقيس على الإنتاج ٤ سبتمبر):</p>\n<pre>Subscriber          = 25 مستنداً   ← الأصل، جبر سيو يكتبه\njbrseo_subscribers  = 17 مستنداً   ← النسخة، الأدمن يعرضها\n                      ────────\n                      8 مشتركين لا يراهم الأدمن</pre>\n<p><b>وآلة النسخ:</b> <code>admin/lib/jbrseo-client.ts:4</code> يفتح <b>اتصال مونجو ثانياً</b> بـ<code>JBRSEO_DATABASE_URL</code> — وهو نفس القاعدة التي يخدمها <code>admin/lib/db.ts</code> عبر برِزما. اتصالان لقاعدة واحدة لنسخ مجموعة إلى جارتها.</p>\n<p><b>العمل:</b> <code>jbrseo-queries.ts</code> يقرأ <code>Subscriber</code> بدل <code>jbrseoSubscriber</code>. يُحمل حقلا <code>convertedToClientId</code> و<code>convertedAt</code> إلى الأصل (بذرة المرحلة ⑤). ثم يموت: المجموعة المنسوخة · <code>sync-subscribers.ts</code> (٩٧ سطراً) · <code>lib/jbrseo-client.ts</code> كاملاً.</p>\n<p><b>يقفل بـ:</b> شاشة المشتركين في الأدمن تعرض <b>٢٥</b> لا ١٧ — ولقطة تثبتها.</p>",
+      "jgrp": "own"
+    },
+    {
+      "b": "jbrseo",
+      "area": "jbrseo",
+      "app": [
+        "admin",
+        "modonty"
+      ],
+      "sec": "code",
+      "date": "٤ سبتمبر ٢٠٢٦",
+      "jlane": "plan",
+      "id": "JBR-M3",
+      "tab": "now",
+      "sev": "high",
+      "who": "k",
+      "ease": 3,
+      "step": 22,
+      "ord": 22,
+      "ask": "٨ شاشات تنتقل من أدمن جبر سيو لأدمن مدونتي — أبدأ بأيّها؟ (شغل أسابيع لا أيام)",
+      "t": "③ أدمن جبر سيو يذوب في أدمن مدونتي — ٨ شاشات",
+      "d": "<p><b>هذا جوهر الطلب:</b> «كل الـdata تتدار من أدمن مدونتي». وما يمنعه اليوم أن لجبر سيو <b>أدمن كامل خاصاً به</b> تحت <code>jbrseo.com/app/admin/</code>.</p>\n<pre>الشاشات الثماني:            الموجود في أدمن مدونتي:\n  analytics                  —\n  content                    ✅ jbr-seo/content\n  pricing                    ½ subscription-tiers (نسخة)\n  subscribers                ½ subscription-tiers (نسخة)\n  payment-failures           —\n  review                     —\n  settings                   ✅ settings/jbr-seo\n  ux-insights                —</pre>\n<p><b>الحصيلة:</b> اثنتان موجودتان، واثنتان نصف موجودتين على نسخة (تُصلحان في ① و②)، و<b>أربع غير موجودة</b>.</p>\n<p><b>الأربع غير الموجودة تحمل بيانات لا يراها أحد في مدونتي:</b> فشل الدفع (<code>PaymentAttempt</code> = ٨) · مؤشّرات التجربة (<code>clarity_daily</code> = ١٥٠) · التحليلات · المراجعة.</p>\n<p><b>يقفل بـ:</b> حذف مجلّد <code>jbrseo.com/app/admin/</code> كاملاً — وهذا هو الدليل الوحيد المقبول على أن الانتقال تمّ.</p>",
+      "jgrp": "own"
+    },
+    {
+      "b": "jbrseo",
+      "area": "jbrseo",
+      "app": [
+        "admin",
+        "modonty"
+      ],
+      "sec": "code",
+      "date": "٤ سبتمبر ٢٠٢٦",
+      "jlane": "plan",
+      "id": "JBR-M4",
+      "tab": "now",
+      "sev": "normal",
+      "who": "c",
+      "step": 23,
+      "ord": 23,
+      "t": "④ سكيما واحدة — ٣٠٨ أسطر تذوب في <code>shared/prisma/schema/</code>",
+      "d": "<p><b>محجوبة حتى يُجاب <code>JBR-Q-PUSH</code></b> — لا يُلمس ملفّ سكيما قبل أن نعرف مصير فهارس <code>media</code> الإحدى عشرة.</p>\n<p><b>وجهتها: <code>dataLayer</code></b> (خالد ٤ سبتمبر: «الداتابيز تبع جبر سيو تكون موجودة معانا في الـdata layer»). <b>ما يذوب:</b> <code>JBRSEO/jbrseo.com/prisma/schema.prisma</code> (٣٠٨ أسطر · ١٣ موديلاً)، منها ثلاثة مرايا للقراءة (<code>ModontyClient</code> · <code>ModontyMedia</code> · <code>ModontyIndustry</code>) تختفي لأنها تصير الأصل نفسه.</p>\n<p><b>ما يموت معها:</b> <code>jbrseo.com/lib/modontyDb.ts</code> — عميل برِزما الثاني الموجود فقط لأن السكيما مقسومة.</p>\n<p><b>وما يُبنى:</b> حاجز يرفض <code>prisma db push</code> حين يكون الهدف <code>/modonty</code> بلا راية صريحة — نفس نمط <code>isProductionDb()</code> في <code>admin/lib/seo-images/rename-image-batch.ts</code>. يعالج <code>JBR-ENV-TRAP</code> و<code>JBR-COST</code> معاً.</p>\n<p><b>يقفل بـ:</b> ملفّ سكيما واحد · <code>tsc</code> صفر على التطبيقات الثلاثة · وعدّ فهارس <code>media</code> قبل/بعد = ١١ ← ١١.</p>",
+      "jgrp": "own"
+    },
+    {
+      "b": "jbrseo",
+      "area": "jbrseo",
+      "app": [
+        "admin",
+        "modonty"
+      ],
+      "sec": "code",
+      "date": "٤ سبتمبر ٢٠٢٦",
+      "jlane": "plan",
+      "id": "JBR-M5",
+      "tab": "now",
+      "sev": "normal",
+      "who": "k",
+      "ease": 3,
+      "step": 24,
+      "ord": 24,
+      "ask": "الرحلة الواحدة: محتمل ← دافع ← عميل. نبنيها بعد ما يُحسم JBR-DECIDE و JBR-SALES-IDLE.",
+      "t": "⑤ رحلة واحدة بدل ثلاثة جداول لنفس الشخص",
+      "d": "<p><b>هذا هو التوهان الحقيقي</b> — لا «كثرة الجداول». الشخص الواحد له ثلاثة سجلّات لا يعرف بعضها بعضاً:</p>\n<pre>المرحلة                الجدول        القاعدة        العدد\n────────────────────────────────────────────────────────\nمحتمل عند المندوب      Client        jbrseo_sales   —\nدفع على الفاترينة      Subscriber    modonty        25\nتسلّم وله صفحة         clients       modonty        37</pre>\n<p><b>والحقول متداخلة فعلاً:</b> الاسم والبريد والجوّال واسم النشاط وشخص التواصل مكرَّرة في الثلاثة.</p>\n<p><b>البذرة موجودة:</b> <code>jbrseoSubscriber.convertedToClientId</code> — نصف الوصلة مبنيّ أصلاً بين الدافع والعميل. الناقص طرف المندوب.</p>\n<p><b>لماذا هو الأخير:</b> شكله يتغيّر كلّياً بجواب <code>JBR-DECIDE</code> (منتج واحد أم شركتان) و<code>JBR-SALES-IDLE</code> (هل للمبيعات بيانات حيّة تُنقل أصلاً).</p>\n<p><b>يقفل بـ:</b> فتح عميل واحد في الأدمن ورؤية رحلته كاملة — أي مندوب جابه، ومتى دفع، ومتى تسلّم.</p>",
+      "jgrp": "own"
+    },
+    {
+      "b": "jbrseo",
+      "area": "jbrseo",
+      "app": [
+        "admin",
+        "modonty"
+      ],
+      "sec": "code",
+      "date": "٤ سبتمبر ٢٠٢٦",
+      "jlane": "idea",
+      "tab": "now",
+      "who": "k",
+      "ease": 1,
+      "sev": "critical",
+      "step": 0,
+      "ord": 0,
+      "id": "JBR-IDEA",
+      "t": "💡 الفكرة",
+      "ask": "صح كده؟",
+      "d": "<pre>① جبر سيو ينضمّ لمستودع مدونتي — وسكيماه تنزل في dataLayer.\n② بياناته تستفيد من الموجود في مدونتي — بلا جداول جديدة.\n③ المبيعات تُبنى من جديد في أدمن مدونتي — فاتن تشتغل من هناك.</pre><p><b>الفرق بين ① و③:</b> جبر سيو <b>يُنقَل</b> كما هو. والمبيعات <b>لا تُنقَل</b> — تطبيق <code>sales</code> المستقلّ يُستبدَل بشاشات داخل الأدمن.</p><p><b>يبقى سؤال واحد في المبيعات:</b> بيانات <code>jbrseo_sales</code> الحالية تُهاجَر، أم نبدأ من صفر؟ (بطاقة <code>JBR-SALES-IDLE</code>)</p>"
     }
   ],
   "reports": []

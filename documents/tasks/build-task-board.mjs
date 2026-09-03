@@ -141,7 +141,12 @@ const dataOpen = allOpen.filter(t => t.file === "data");
 // نقل لا نسخ: البطاقة إمّا هنا وإمّا هناك. المراجع تبقى في اللوحة الرئيسية.
 const isSeoCard = (t) => t.file !== "data" && t.tab !== "ref" && (t.sec || SEC_FROM_BOARD_EARLY[t.b]) === "seo" && (t.app || []).includes("modonty");
 const seoOpen = allOpen.filter(isSeoCard);
-const open = allOpen.filter(t => t.file !== "data" && !isSeoCard(t));
+// جبر سيو كلّه يخرج إلى لوحة مستقلّة JBRSEO.html (خالد ٤ سبتمبر: «فيه مخاطر كثيرة وشغل كثير،
+// نفتح له ملف خاص ونبتدي نشتغل منه»). نقلٌ لا نسخ كما في السيو: البطاقة في لوحة واحدة فقط —
+// بقاؤها في الاثنتين يعيد نفس المرض الذي أصلحناه: مراجعة البند مرّتين في مكانين.
+const isJbrCard = (t) => t.file !== "data" && t.area === "jbrseo";
+const jbrOpen = allOpen.filter(isJbrCard);
+const open = allOpen.filter(t => t.file !== "data" && !isSeoCard(t) && !isJbrCard(t));
 // الشغل الحقيقي: بلا بطاقات المرجع وبلا «قبل الدمج» — وهو الرقم الذي تعرضه شارات التبويبات.
 // العنوان كان يقول `open.length` فيعدّ ٣٦ بطاقة مرجع بنوداً مفتوحة: ١٢١ مقابل ٧١ على الشاشة.
 const openWork = open.filter(t => t.tab !== "ref" && !t.last);
@@ -413,7 +418,7 @@ const AREA_SECTIONS = [
   { k: "sec-partner", n: "🏢 صفحة العميل", area: "partner" },
   { k: "sec-autolink", n: "🔗 الربط الداخلي", area: "autolink" },
   { k: "sec-deploy", n: "🚀 بعد النشر", area: "deploy" },
-  { k: "sec-jbrseo", n: "🔗 جبر سيو", area: "jbrseo" },
+  // `area: "jbrseo"` لم يعد هنا — بطاقاته تخرج من `open` كلّها إلى `JBRSEO.html`.
 ];
 const EASE_LEGEND = "الأسهل أولاً: ⚡ = كلمة «ابدأ» تكفي · 🤔 سهل = نعم/لا · 🤔 قصير = جواب سطر · 🤔 جلسة = نقاش.";
 
@@ -491,9 +496,8 @@ const APP_TABS = [
   // «قرارك» و«دوري» كي لا يزاحم ما يُعمل اليوم، ولا يُحذف كي لا يُنسى. الوسم: next: true
   { k: "__next", n: "📦 الإصدار الجاي" },
   // حُذف تبويبا «🏁 قبل الدمج» و«🚀 بعد النشر» ٣ سبتمبر ٢٠٢٦ — التفصيل عند `TAB_SECTIONS`.
-  // «جبر سيو» (خالد ٣٠ أغسطس): «افتح لي Tab سميه جبر SEO واديني التقرير اللي هناك».
-  // ضمّ مستودعات جبر سيو وتوحيد السكيما — موضوع قائم بذاته، لا يُخلط بشغل مدونتي.
-  { k: "jbrseo", n: "🔗 جبر سيو" },
+  // وحُذف تبويب «🔗 جبر سيو» ٤ سبتمبر: صار لوحةً مستقلّة `JBRSEO.html` بأمر خالد
+  // («فيه مخاطر كثيرة وشغل كثير، نفتح له ملف خاص»). رابطها في رأس اللوحة مع السيو.
   // «أفكار» (خالد ٣٠ أغسطس): ما لم يُقرَّر بعدُ أنه سيُعمل — يخرج من «قرارك» كي لا
   // يزاحم قراراً على شغلٍ قائم، ويبقى مرئياً كي لا يُنسى. الوسم: sev === "idea"
   // «الجلسة القادمة» (خالد ٣٠ أغسطس): ما لا يُحسم برسالة — يحتاج جلوساً ونقاشاً.
@@ -524,7 +528,7 @@ const READ_TABS = new Set(["__ga4", "__codex"]);
  */
 const TAB_SECTIONS = [
   { title: "يحتاجك", keys: ["__todo", "__decide", "__mine"] },
-  { title: "مواضيع", keys: ["billing", "ai", "partner", "autolink", "jbrseo"] },
+  { title: "مواضيع", keys: ["billing", "ai", "partner", "autolink"] },
   // «مراحل» (قبل الدمج · بعد النشر) حُذف ٣ سبتمبر ٢٠٢٦ — خالد: «إحنا الآن بنشتغل
   // مباشرة على main». التبويبان كانا يصفان مساراً انتهى: فرعٌ يُجهَّز ثم يُدمج ثم
   // تُنفَّذ خطواتُ ما بعد النشر. وكانا صفراً على صفر — لا بطاقة حيّة ولا مؤرشَفة
@@ -562,7 +566,7 @@ const MONEY_TAB = null;
 // تبويب تطبيقها. البطاقة التي تظهر في تبويبين تُعدّ مرّتين وتُقرأ كبندين — وهذا نقيض سبب التبويب.
 /** تبويبات الموضوع: مفتاح التبويب = قيمة `area` على البطاقة. حصريّة — البطاقة الموسومة
  *  بموضوعٍ لا تظهر في «قرارك» ولا «دوري» كي لا تُعدّ مرّتين. */
-const AREA_TABS = ["billing", "ai", "partner", "autolink", "deploy", "jbrseo"];
+const AREA_TABS = ["billing", "ai", "partner", "autolink", "deploy"];
 /** «جلسة» ليست حقلاً بل وسمٌ في العنوان كُتب هكذا منذ البداية — نقرأه بدل تكرار البيانات. */
 const isSession = (t) => /💬\s*جلسة/.test(t.t || "");
 const inTab = (t, k) =>
@@ -659,6 +663,7 @@ const boardHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset=
 <div class="navtabs" role="tablist" aria-label="عدسات ولوحات">${navTabsHTML}</div>
 <nav class="boards" aria-label="اللوحات الأخرى">
 <a href="SEO.html">🔍 سيو مدونتي <b>${seoOpen.length}</b></a>
+<a href="JBRSEO.html">🔗 جبر سيو <b>${jbrOpen.length}</b></a>
 <a href="DATA-REFACTOR.html">🗄️ تحديث البيانات</a>
 <a href="TASK-ARCHIVE.html">✅ المنجز</a>
 </nav>
@@ -1353,7 +1358,117 @@ ${COPY_JS}
 })();
 </script></body></html>`;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// لوحة جبر سيو — خالد ٤ سبتمبر ٢٠٢٦: «فيه مخاطر كثيرة وفيه شغل كثير، نفتح له ملف
+// HTML خاص ونبتدي نشتغل منه». مولَّدة من `task-data.json` نفسه لا مكتوبة بيد: لوحةٌ
+// تُكتب يدوياً تنحرف عن مصدرها بعد أوّل تعديل — وهو بالضبط الوجع الذي أصلحناه.
+//
+// الممرّ صريح على البطاقة (`jlane`) لا مُستنتَج من حالتها. سبب ذلك أن الاستنتاج هنا
+// يكذب: بطاقة `who: "k"` قد تكون خطراً تقنياً ينتظر إذناً، لا قراراً تجارياً.
+// ─────────────────────────────────────────────────────────────────────────────
+// الممرّات عمودٌ جانبيّ لا سطرٌ أفقيّ (خالد ٤ سبتمبر: «أديني ملف sidebar عشان أشوف
+// الكروت كاملة»). ونفس السبب الذي جعل تبويبات اللوحة الرئيسية عموداً في ٣٠ أغسطس:
+// الأسماء في سطر واحد تُقرأ ككلمات متلاصقة، والعمود يُمسح بالعين مرّة واحدة.
+// وثمّ سببٌ ثانٍ خاصّ بهذه اللوحة: `body{padding-inline-start:212px}` في الكتلة
+// المشتركة يحجز العمود أصلاً — فالسطر الأفقيّ كان يترك ٢١٢ بكسل فارغة بلا مقابل.
+const JBR_LANES = [
+  // «الفكرة» أوّل ممرّ ومفتوحٌ افتراضياً (خالد ٤ سبتمبر: «الفكرة اعملها tab واديني اللي
+  // إنت فهمته مني بالضبط، لأنه من الفكرة هذي حنبتدي نشتغل»). كل ما بعده مشتقٌّ منه —
+  // فبدؤه بغير قراءته هو بناءٌ على فهمٍ لم يُصدَّق عليه.
+  { k: "idea", n: "💡 الفكرة", g: "ابدأ من هنا", s: "ما فهمته منك بالضبط، مكتوباً كي <b>تصحّحه قبل</b> أن يُبنى عليه. كل بطاقة في اللوحة مشتقّة من هذين — يتغيّران فتتغيّر." },
+  { k: "risk", n: "🔴 مخاطر", g: "الشغل", s: "ما يُغلق <b>قبل</b> أي سطر كود على هذا الملفّ. كلّها على قاعدة الإنتاج نفسها التي تخدم مدونتي." },
+  { k: "decide", n: "🤔 قرارك", g: "الشغل", s: "لا يبدأ قبل كلمتك. الأسهل أوّلاً — نعم/لا قبل ما يحتاج جلسة." },
+  { k: "plan", n: "🛠️ المراحل", g: "الشغل", s: "الطريق من «ثلاثة مصادر للحقيقة» إلى «لوحة واحدة تكتب والباقي يقرأ». تُقرأ بالترتيب — تقديمُ مرحلة يفسد التي قبلها." },
+  { k: "state", n: "📐 الوضع القائم", g: "مرجع", s: "ما هو قائم اليوم بالأرقام. ليست مهامّ — هذه الأرضية التي تُبنى عليها المهامّ." },
+  { k: "done", n: "✅ المنجز", g: "مرجع", s: "أُقفل بدليل خام. يبقى هنا كي لا يُعاد فتحه." },
+];
+const JBR_GROUPS = [
+  // ممرّ «الفكرة» مقسومٌ إلى ثلاث مجموعات لا بطاقتين مجمَلتين (خالد ٤ سبتمبر: «الفكرة مش
+  // واضحة… خلّي الـgroup sectioning تفاصيل كاملة عشان أعرف أتخذ القرار»). كل بطاقة تحمل
+  // بنداً واحداً فهمته + الوضع اليوم مقيساً + ماذا يترتّب لو صحّ + ماذا ينهار لو غلط.
+  { k: "idea-own", n: "أ · مَن يملك البيانات", s: "ثلاثة بنود تقرّر مَن يكتب وماذا. تغيّر واحد منها يعيد رسم المراحل كلّها." },
+  { k: "idea-sales", n: "ب · أين يقف نظام المبيعات", s: "حدود المندوب: أين يبدأ شغله وأين يسلّم." },
+  { k: "idea-pain", n: "ج · الوجع الذي نعالجه", s: "هنا أخالفك في التشخيص لا في الشكوى — ومعي رقم. وبعده الأسئلة الثلاثة التي لا يملك الكود جوابها." },
+  { k: "own", n: "توحيد ملكيّة البيانات (① → ⑤)", s: "لكل حقيقة مالك واحد — هذا هو الطلب الأصلي: «الـdata كلها تتدار من أدمن مدونتي»." },
+  { k: "merge", n: "ضمّ المستودعات", s: "نقل المجلّدات إلى المستودع الواحد. شغلٌ آخر غير ما فوقه — ولا يبدأ قبل أن يُحسم <code>JBR-DECIDE</code>." },
+  { k: "", n: "", s: "" },
+];
+const jbrDone = enriched.filter(t => isDone(t) && t.area === "jbrseo");
+const jbrLanes = JBR_LANES.map(l => {
+  const items = l.k === "done" ? jbrDone : jbrOpen.filter(t => t.jlane === l.k);
+  const groups = JBR_GROUPS
+    .map(g => ({ ...g, items: items.filter(t => (t.jgrp || "") === g.k).sort(byOrd) }))
+    .filter(g => g.items.length);
+  return { ...l, count: items.length, groups };
+}).filter(l => l.count > 0);
+
+const jbrHigh = jbrOpen.filter(t => /critical|high/.test(t.sev)).length;
+const jbrK = jbrOpen.filter(t => t.who === "k").length;
+const jbrAll = jbrOpen.length + jbrDone.length;
+const jbrPercent = jbrAll ? Math.round((jbrDone.length / jbrAll) * 100) : 0;
+
+const jbrHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>جبر سيو — ${jbrOpen.length} بنداً</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>${CSS}${SEO_TABS_CSS}
+/* عناوين أقسام العمود و«اللوحات الأخرى» — منسوختان من كتلة اللوحة الرئيسية لا من الكتلة
+   المشتركة: تلك تُحقن في SEO.html وDATA-REFACTOR.html وTASK-ARCHIVE.html، فأيّ قاعدة
+   تُضاف هناك تظهر في ثلاث لوحات لا تحتاجها (حدث فعلاً ٣ سبتمبر). ولا باكتيك هنا:
+   التعليق داخل قالب نصّي، والباكتيك يُنهيه فينكسر الملفّ كلّه. */
+.secttl{margin:14px 0 2px;padding:0 12px;font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+.secttl:first-child{margin-top:0}
+.boards{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.boards a{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--line);border-radius:8px;color:var(--mut);text-decoration:none;font-size:12px;font-weight:600}
+.boards a:hover{background:var(--panel);color:var(--fg)}
+.apptab[data-lane-btn="idea"][aria-selected="true"]{color:var(--violet)}
+.apptab[data-lane-btn="risk"][aria-selected="true"]{color:var(--red)}
+.apptab[data-lane-btn="decide"][aria-selected="true"]{color:var(--amber)}
+.apptab[data-lane-btn="plan"][aria-selected="true"]{color:var(--blue)}
+.apptab[data-lane-btn="state"][aria-selected="true"]{color:var(--mut)}
+.apptab[data-lane-btn="done"][aria-selected="true"]{color:var(--green)}
+@media(max-width:900px){.secttl{width:100%;margin:8px 0 0}}</style></head><body>
+<div class="apptabs" role="tablist" aria-label="ممرّات جبر سيو">${
+  ["ابدأ من هنا", "الشغل", "مرجع"].map(g => {
+    const btns = jbrLanes.filter(l => l.g === g)
+      .map(l => `<button class="apptab" role="tab" data-lane-btn="${l.k}" aria-selected="${l.k === jbrLanes[0].k}" title="${l.count} بنداً في ${l.n}">${l.n}<b>${l.count}</b></button>`).join("");
+    return btns ? `<p class="secttl">${g}</p>${btns}` : "";
+  }).join("")
+}<p class="secttl">اللوحات</p>
+<nav class="boards" aria-label="اللوحات الأخرى" style="padding:0 8px">
+<a href="TASK.html">📋 لوحة الشغل</a><a href="SEO.html">🔍 سيو</a>
+</nav></div>
+<header class="top"><div class="wrap">
+<h1>جبر سيو — ${jbrOpen.length} بنداً مفتوحاً <span style="color:var(--dim);font-weight:500;font-size:13px">· ${jbrHigh} حرجاً أو مهمّاً · ${jbrK} ينتظر كلمتك</span></h1>
+<div class="progress">
+  <div class="bar"><span style="width:${jbrPercent}%"></span></div>
+  <div class="pnums"><b>${jbrDone.length}</b> أُغلق من <b>${jbrAll}</b> · ${jbrPercent}%</div>
+</div>
+<p class="elsewhere">كل بطاقة هنا مشتقّة من ممرّ <b>💡 الفكرة</b> — وهو مفتوح أمامك الآن. صحّح فيه قبل أن نبني: تغيّرُ سطرٍ هناك يعيد رسم المراحل كلّها.</p>
+<div class="tools"><button class="chip" data-sev="critical high" aria-pressed="false">الحرج والمهم فقط</button></div>
+</div></header>
+<main class="wrap">
+${jbrLanes.map((l, i) => `<div data-lane="${l.k}" class="${i ? "hidden" : ""}"><p style="color:var(--dim);margin:14px 0 4px">${l.s}</p>
+${l.groups.map(g => `<section class="grp" data-grp="${g.k || l.k}">${g.n ? `<h2>${g.n} <span class="n" data-count>${g.items.length}</span></h2><p>${g.s}</p>` : `<h2 hidden><span data-count>${g.items.length}</span></h2>`}<div class="grid">${g.items.map(cardHTML).join("\n")}</div></section>`).join("\n")}</div>`).join("\n")}
+</main>
+<footer>هذه اللوحة تخصّ جبر سيو وحده — نُقلت بطاقاته من <a href="TASK.html">TASK.html</a> نقلاً لا نسخاً، فلا يُراجَع البند مرّتين. الدراسة الكاملة: <a href="../idea/JBRSEO-INTO-MONOREPO.html">JBRSEO-INTO-MONOREPO.html</a></footer>
+<script>
+(() => { const chip = document.querySelector('.chip'); const cards = [...document.querySelectorAll('.card')];
+  const apply = () => { const sevOnly = chip.getAttribute('aria-pressed') === 'true';
+    cards.forEach(c => c.classList.toggle('hidden', sevOnly && !/critical|high/.test(c.dataset.sev)));
+    document.querySelectorAll('.grp').forEach(g => { const n = g.querySelectorAll('.card:not(.hidden)').length; g.querySelector('[data-count]').textContent = n; g.classList.toggle('hidden', n === 0); }); };
+  chip.addEventListener('click', () => { chip.setAttribute('aria-pressed', chip.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); apply(); });
+  const showLane = (k) => { document.querySelectorAll('[data-lane]').forEach(l => l.classList.toggle('hidden', l.dataset.lane !== k)); document.querySelectorAll('[data-lane-btn]').forEach(b => b.setAttribute('aria-selected', b.dataset.laneBtn === k)); try { localStorage.setItem('jbr-lane', k); } catch {} };
+  document.querySelectorAll('[data-lane-btn]').forEach(b => b.addEventListener('click', () => showLane(b.dataset.laneBtn)));
+  try { const s = localStorage.getItem('jbr-lane'); if (s && document.querySelector('[data-lane="' + s + '"]')) showLane(s); } catch {}
+  if (location.hash) { const h = location.hash.slice(1);
+    const el = document.querySelector('.card[data-id="' + CSS.escape(h) + '"]');
+    if (el) { showLane(el.closest('[data-lane]').dataset.lane); el.querySelector('details').open = true; el.scrollIntoView({ block: 'center' }); } }
+${COPY_JS}
+})();
+</script></body></html>`;
+
 fs.mkdirSync(outDir, { recursive: true });
+fs.writeFileSync(path.join(outDir, "JBRSEO.html"), jbrHTML);
 fs.writeFileSync(path.join(outDir, "SEO.html"), seoHTML);
 fs.writeFileSync(path.join(outDir, "TASK.html"), boardHTML);
 fs.writeFileSync(path.join(outDir, "TASK-ARCHIVE.html"), archiveHTML);
