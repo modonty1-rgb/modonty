@@ -276,14 +276,19 @@ export function SyncLocalButton({ enabled }: { enabled: boolean }) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
+      {/* Icon only. The full «Sync Local from PROD» label was the widest thing in the bar
+          and it sits right next to the database badge that already says `modonty_dev` —
+          so the words repeated the context they stood in. Khalid (2026-09-04): «خلّي لي
+          أبو button صغير عشان ما اتلخبط في الـnav bar». The amber tint stays: this button
+          wipes the local database, and it should not read like the ones beside it. */}
       <DialogTrigger asChild>
         <button
           type="button"
+          aria-label="Sync local database from production"
           title="نسخ بيانات الإنتاج إلى التطوير المحلي (DEV فقط)"
-          className="inline-flex items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/10 px-2.5 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-500/20 dark:text-amber-400"
+          className="inline-flex size-8 items-center justify-center rounded-md border border-amber-500/30 bg-amber-500/10 text-amber-700 hover:bg-amber-500/20 dark:text-amber-400"
         >
-          <Database className="h-3.5 w-3.5" />
-          <span>Sync Local from PROD</span>
+          <Database className="size-4" aria-hidden />
         </button>
       </DialogTrigger>
 

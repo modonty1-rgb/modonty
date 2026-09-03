@@ -41,7 +41,6 @@ import {
   Copyright,
   BarChart3,
   LineChart,
-  TrendingUp,
   MailPlus,
   MailOpen,
   Users,
@@ -49,7 +48,6 @@ import {
   KanbanSquare,
   LayoutGrid,
   UserCheck,
-  CreditCard,
   Download,
   Database,
   Cloud,
@@ -73,6 +71,7 @@ import {
   MessageSquare,
   Bug,
   ScrollText,
+  MessageSquarePlus,
   Wrench,
   Settings2,
   Megaphone,
@@ -81,7 +80,6 @@ import {
   BadgeCheck,
   Globe,
   ListChecks,
-  Wallet,
   PauseCircle,
   ClipboardList,
   Share2,
@@ -140,16 +138,10 @@ interface MenuGroup {
 }
 
 const rawMenuGroups: MenuGroup[] = [
-  {
-    title: "Revenue",
-    icon: Wallet,
-    section: "Business",
-    items: [
-      { icon: Wallet, label: "Accounts", href: "/clients/accounts" },
-      { icon: TrendingUp, label: "Sales Report", href: "/clients/sales-report" },
-      { icon: CreditCard, label: "Subscription Tiers", href: "/subscription-tiers" },
-    ],
-  },
+  // «Revenue» moved to the top bar on 2026-09-04 — `components/admin/sales-menu.tsx`.
+  // Khalid: «الـtab تبع الـbusiness، اللي هو الـsales، شيله من الـsidebar وحطه جنب الـtask».
+  // Same reasoning as Tasks two days earlier: pages someone lives in all day should not
+  // sit behind a collapsed group. Its three items moved whole — nothing was dropped.
   {
     title: "Clients",
     icon: Briefcase,
@@ -360,6 +352,10 @@ const rawMenuGroups: MenuGroup[] = [
       { icon: MailOpen, label: "Email Templates", href: "/emails" },
       { icon: ScrollText, label: "Audit Log", href: "/audit-log" },
       { icon: Bug, label: "Error Logs", href: "/system-errors" },
+      // Came down from the top bar on 2026-09-04. It belongs beside the audit and error
+      // logs: all three answer «what did the system record?» — and unlike the bar's
+      // send-only button, this one also reads the reports back.
+      { icon: MessageSquarePlus, label: "Feedback", href: "/feedback" },
     ],
   },
 ];

@@ -20,9 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { MessageSquarePlus, Loader2, CheckCircle2, Bug, Lightbulb, MessageCircle } from "lucide-react";
-import { sendFeedback } from "@/app/(dashboard)/actions/send-feedback";
+import { sendFeedback } from "../actions";
 
 const TEAM_MEMBERS = [
   "Abu Omar",
@@ -49,7 +48,7 @@ const SEVERITIES = [
 
 type FeedbackType = "" | "bug" | "idea" | "other";
 
-export function HeaderFeedbackButton() {
+export function FeedbackDialog() {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [type, setType] = useState<FeedbackType>("");
@@ -118,27 +117,15 @@ export function HeaderFeedbackButton() {
 
   return (
     <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) { setSent(false); reset(); } }}>
-      <TooltipProvider delayDuration={300}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <DialogTrigger asChild>
-              <button
-                type="button"
-                className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-700 dark:text-amber-300 transition-colors"
-                aria-label="Beta — Send feedback"
-              >
-                <span className="text-[10px] font-bold tracking-wider uppercase leading-none">Beta</span>
-                <span className="h-3 w-px bg-amber-500/40" aria-hidden="true" />
-                <MessageSquarePlus className="h-3.5 w-3.5" />
-                <span className="text-[11px] font-medium hidden md:inline">Feedback</span>
-              </button>
-            </DialogTrigger>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            <p className="text-xs">This system is in beta — click to send feedback</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      {/* An ordinary button, not the amber "Beta" pill it wore in the top bar. The pill
+          was a permanent banner on every screen saying the system is unfinished — Khalid
+          dropped it with the move (2026-09-04): «شيل موضوع beta هذي ما نحتاجها». */}
+      <DialogTrigger asChild>
+        <Button size="sm" className="gap-1.5">
+          <MessageSquarePlus className="size-4" aria-hidden />
+          Send feedback
+        </Button>
+      </DialogTrigger>
 
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>

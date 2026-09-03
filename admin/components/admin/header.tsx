@@ -16,17 +16,23 @@ import {
 import { BookOpen, LogOut, Moon, Sun } from "lucide-react";
 import { Breadcrumb } from "./breadcrumb";
 import { NotificationsBell } from "./notifications-bell";
-import { HeaderFeedbackButton } from "./header-feedback-button";
+// «Feedback» left the bar for the sidebar's System group on 2026-09-04 —
+// `app/(dashboard)/feedback/`. The bar could only send; the page also reads back
+// what was sent, which is what the reports were being stored for all along.
 import { SyncLocalButton } from "./sync-local-button";
 import { TasksMenu } from "./tasks-menu";
+import { SalesMenu } from "./sales-menu";
 import pkg from "@/package.json";
 
 export function Header({
   dbBadge,
   canSyncLocal = false,
+  canViewReports = false,
 }: {
   dbBadge?: React.ReactNode;
   canSyncLocal?: boolean;
+  /** Computed on the server from the staff row — the session token does not carry it. */
+  canViewReports?: boolean;
 }) {
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
@@ -51,16 +57,17 @@ export function Header({
 
         <div className="flex items-center gap-2">
           {/* Task management lives here, not in the sidebar (Khalid, 2026-09-02) */}
-          <TasksMenu />
+          <TasksMenu canViewReports={canViewReports} />
+
+          {/* Sales followed Tasks out of the sidebar (Khalid, 2026-09-04) — Faten's
+              whole day is these three pages, so they sit beside Tasks not under it. */}
+          <SalesMenu />
 
           {/* Which database this instance is on — rendered on the server, never guessed */}
           {dbBadge}
 
           {/* Test-database only — sync local DB from PROD */}
           <SyncLocalButton enabled={canSyncLocal} />
-
-          {/* Beta feedback note button */}
-          <HeaderFeedbackButton />
 
           {/* Unified notifications bell */}
           <NotificationsBell />
