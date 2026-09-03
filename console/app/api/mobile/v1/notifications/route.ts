@@ -28,22 +28,30 @@ export async function GET(request: NextRequest) {
   const session = await mobileSessionFromRequest(request);
   if (!session) return fail("UNAUTHORIZED", "سجّل الدخول للمتابعة.");
   const now = new Date();
+  // مشتركٌ بين القائمة والعدّاد: نسخُ الشرط في موضعين يجعل عدّاداً يقيس مجموعةً غير
+  // التي تُعرض بعد أوّل تعديل على أحدهما.
+  const scopeWhere = {
+    clientId: session.clientId,
+    AND: [
+      { OR: [{ userId: null }, { userId: { isSet: false } }] },
+      { OR: [{ staffId: null }, { staffId: { isSet: false } }] },
+    ],
+  };
   const rows = await db.notification.findMany({
     // `userId: null` alone matches nothing: in MongoDB a row created without the field has no
     // such KEY, and an absent key equals neither `null` nor any value. Each recipient field
     // therefore needs both arms — measured on modonty_dev, the one-arm version returned 0 of 3.
-    where: {
-      clientId: session.clientId,
-      AND: [
-        { OR: [{ userId: null }, { userId: { isSet: false } }] },
-        { OR: [{ staffId: null }, { staffId: { isSet: false } }] },
-      ],
-    },
+    where: scopeWhere,
     orderBy: { createdAt: "desc" },
     take: 100,
     select: { id: true, type: true, title: true, body: true, relatedId: true, readAt: true, createdAt: true },
   });
-  const unreadCount = rows.filter((row) => row.readAt === null).length;
+  // يُعدّ في القاعدة لا من `rows`: تلك آخر مئة إشعار، فصاحب 140 غير مقروء كان يرى «100»
+  // — والشارة التي لا تتجاوز مئةً أبداً تُقرأ كسقفٍ للاهتمام لا كعدد.
+  // `readAt` غائبٌ في الصفوف القديمة لا `null`، فالطرفان لازمان — كما في شرط النطاق أعلاه.
+  const unreadCount = await db.notification.count({
+    where: { ...scopeWhere, OR: [{ readAt: null }, { readAt: { isSet: false } }] },
+  });
 
   const notifications = rows.map((row) => ({
     id: row.id,

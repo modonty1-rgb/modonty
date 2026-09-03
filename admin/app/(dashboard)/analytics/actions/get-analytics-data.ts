@@ -92,7 +92,14 @@ export async function getAnalyticsData(filters?: {
       take: 10000,
     });
 
-    const totalViews = analytics.length;
+    // يُعدّ في القاعدة لا من `analytics`: تلك مقصوصة عند 10,000 بترتيب الأحدث، فحسابُ
+    // «إجمالي المشاهدات» من طولها يعني أن الرقم يتوقّف عند عشرة آلاف مهما كبر —
+    // ونطاقُ الشهر يتجاوزها. والأسوأ أن ثباته يُقرأ كاستقرارٍ في الحركة لا كسقف.
+    //
+    // المتوسّطات أدناه تبقى على العيّنة عمداً: عشرة آلاف صفٍّ متوسّطاً كافٍ، وتحويلها
+    // إلى `aggregate` يكلّف استعلامات إضافية لأجل فرقٍ في الخانة العشرية. الفرق أن
+    // الإجمالي **حقيقة** والمتوسّط **تقدير** — والأول وحده كان يكذب.
+    const totalViews = await db.analytics.count({ where });
     const uniqueSessions = new Set(
       analytics.map((a: AnalyticsWithArticle) => a.sessionId).filter(Boolean)
     ).size;
@@ -108,10 +115,11 @@ export async function getAnalyticsData(filters?: {
           ) / validTimeOnPageRecords.length
         : 0;
 
-    const bounceRate =
-      totalViews > 0
-        ? (analytics.filter((a: AnalyticsWithArticle) => a.bounced).length / totalViews) * 100
-        : 0;
+    // البسط والمقام من نفس المجموعة — وإلا صار الكسر بلا معنى. حين صار `totalViews`
+    // يُعدّ في القاعدة بقي البسط من العيّنة المقصوصة، فكان الارتداد يُقسَم على مجموعٍ
+    // أكبر من مجموعته ويخرج أقلّ من حقيقته: نسبةٌ تُطمئن وهي كاذبة.
+    const bouncedCount = await db.analytics.count({ where: { ...where, bounced: true } });
+    const bounceRate = totalViews > 0 ? (bouncedCount / totalViews) * 100 : 0;
 
     const validScrollDepthRecords = analytics.filter(
       (a: AnalyticsWithArticle) => a.scrollDepth != null && a.scrollDepth !== undefined

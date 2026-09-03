@@ -28,7 +28,12 @@ export async function GET(request: NextRequest) {
     orderBy: { updatedAt: "desc" }, take: 100,
   });
   const statusLabels: Record<string, string> = { AWAITING_APPROVAL: "بانتظار قرارك", PUBLISHED: "منشور", PUBLISHED_ON_CLIENT_SITE: "منشور على موقعك" };
-  const decisionCount = scope === "decision" ? articles.length : 0;
+  // يُعدّ في القاعدة لا من `articles`: تلك قُصَّت عند 100، فالعميل الذي ينتظره 120 مقالاً
+  // كان يُقال له «100» — ويُطمأن إلى أنه أنهى العشرين الباقية وهي لم تظهر له أصلاً.
+  const decisionCount =
+    scope === "decision"
+      ? await db.article.count({ where: { clientId: session.clientId, ...statusFilter } })
+      : 0;
   const review = scope === "decision"
     ? {
       title: "مقالات بانتظار قرارك",

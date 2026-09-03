@@ -35,7 +35,12 @@ export async function GET(request: NextRequest) {
   if (!session) return fail("UNAUTHORIZED", "سجّل الدخول للمتابعة.");
   const clientId = session.clientId;
 
-  const [requests, whatsappCount] = await Promise.all([
+  /** المفتوح يساوي ما يعدّه العدّاد في الرئيسية حرفياً — رقمٌ واحد لا رقمان. */
+  const openStatuses = ["new", "contacted"];
+  /** نفس القائمة للفرز في الذاكرة — مصدرٌ واحد لتعريف «مفتوح». */
+  const isOpen = (s: string) => openStatuses.includes(s);
+
+  const [requests, whatsappCount, waiting] = await Promise.all([
     db.bookingRequest.findMany({
       where: { clientId, channel: "form" },
       select: { id: true, name: true, phone: true, email: true, message: true, source: true, status: true, createdAt: true, confirmedAt: true, article: { select: { title: true } } },
@@ -43,14 +48,13 @@ export async function GET(request: NextRequest) {
       take: 100,
     }),
     db.bookingRequest.count({ where: { clientId, channel: "whatsapp" } }),
+    // يُعدّ في القاعدة لا من `requests`: تلك آخر مئة طلب، وحجزٌ مفتوح أقدم منها كان
+    // يسقط من العدد — وهو أسوأ ما يسقط، لأن العدّاد وُجد ليقول «عندك عميل ينتظر».
+    db.bookingRequest.count({ where: { clientId, channel: "form", status: { in: openStatuses } } }),
   ]);
-
-  /** المفتوح يساوي ما يعدّه العدّاد في الرئيسية حرفياً — رقمٌ واحد لا رقمان. */
-  const openStatuses = new Set(["new", "contacted"]);
-  const waiting = requests.filter((row) => openStatuses.has(row.status)).length;
   // المفتوح أولاً ثم الأحدث: الشاشة تبدأ بما ينتظر عملاً، والمغلق تاريخٌ يليه.
   const ordered = [...requests].sort((a, b) => {
-    const openDelta = Number(openStatuses.has(b.status)) - Number(openStatuses.has(a.status));
+    const openDelta = Number(isOpen(b.status)) - Number(isOpen(a.status));
     return openDelta !== 0 ? openDelta : b.createdAt.getTime() - a.createdAt.getTime();
   });
 

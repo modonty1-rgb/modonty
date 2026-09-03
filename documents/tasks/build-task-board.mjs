@@ -55,6 +55,47 @@ const CLOSED_IN_TITLE = /✅|أُقفل|أُغلق|أُصلح|اكتمل|انت�
 // ادّعاء إغلاقٍ في العنوان = بطاقة تناقض نفسها: «خلصت» و«غير مقيسة» في آنٍ واحد.
 const UNMEASURED_BOILERPLATE = /حالتها غير مقيسة/;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// حاجز العدّاد الكاذب — العدّاد يُحسب هنا وقت البناء، والتصفية تعمل في المتصفّح
+// داخل `matchApp`. حين يعرف أحدُهما وسماً ولا يعرفه الآخر، تقول الشارة رقماً
+// والقائمة تحته فارغة. حصل في ٢٩ أغسطس («سارت فاضية وفوق في العدّاد ٢٦») وحصل
+// مرّة أخرى في ٣ سبتمبر مع `todo` — بعد قراءة التعليق المحذّر منه.
+//
+// فالقاعدة تتحوّل إلى فحص: كل وسمٍ يفرزه `inTab` لا بدّ أن يظهر في ثلاثة مواضع
+// — `inTab` و`matchApp` وسمة `data-*` على البطاقة. نقصُ أحدها يُفشل البناء.
+{
+  const src = fs.readFileSync(new URL(import.meta.url), "utf8");
+  const clientJs = src.slice(src.indexOf("const matchApp"));
+  // آخر تطابق لا أوّله: هذا الحاجز نفسه يذكر النصّ وهو فوق القالب في الملف، فـ`find`
+  // كانت ترجع سطره — فحصٌ يقيس نفسه ويرسب دائماً. حاولتُ استثناءه بشرطٍ إضافي فوقع
+  // في الفخّ ثانيةً لأن الشرط نفسه يحقّقه. اللاحق في الملف هو القالب دائماً.
+  const cardLines = src.split("\n").filter(l => l.includes('<article class="card"'));
+  const cardLine = cardLines[cardLines.length - 1] ?? "";
+  // ثلاثة فحوص لكل وسم، لا اثنان: وجودُ `dataset.X` وحده لا يكفي — حذفتُ فرعَ
+  // التبويب في اختبارٍ وبقي السطرُ الحصريّ الذي يليه، فمرّ الحاجز وهو مكسور.
+  // فرعُ التبويب هو ما يجعل الشارة والقائمة تتّفقان.
+  const FLAGS = [
+    { flag: "todo", tab: "__todo" },
+    { flag: "next", tab: "__next" },
+    { flag: "last", tab: "__merge" },
+    { flag: "session", tab: "__session" },
+  ];
+  const missing = [];
+  for (const { flag, tab } of FLAGS) {
+    if (!clientJs.includes(`app === '${tab}'`)) missing.push(`${flag} → لا فرع لـ«${tab}» في matchApp`);
+    if (!clientJs.includes(`dataset.${flag}`)) missing.push(`${flag} → غائب عن matchApp في المتصفّح`);
+    if (!cardLine.includes(`data-${flag}`)) missing.push(`${flag} → لا تُكتب كسمة data على البطاقة`);
+  }
+  if (missing.length) {
+    console.error(`\n🚫 حاجز العدّاد الكاذب — وسمٌ يفرزه البناء ولا تعرفه الواجهة:\n`);
+    missing.forEach(m => console.error(`  ${m}`));
+    console.error(`\n  الأثر: الشارة تقول رقماً والقائمة تحته فارغة.`);
+    console.error(`  الإصلاح: أضِف الوسم في المواضع الثلاثة — inTab · matchApp · سمة data على البطاقة.\n`);
+    process.exit(1);
+  }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 const staleClosed = TASKS.filter(
   t => !t.closedTitleOk && t.tab !== "done" && t.tab !== "ref" && CLOSED_IN_TITLE.test(t.t || ""),
 );
@@ -305,7 +346,7 @@ function cardHTML(t) {
   const agentTag = t.agent
     ? `<span class="tag ${t.agentKind === "قياس" ? "agent-measure" : "agent"}">🤖 وكيل ${t.agent}${t.agentKind === "قياس" ? " · قياس" : ""}</span>`
     : "";
-  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.agent ? ` data-agent="${t.agent}"` : ""}${t.last ? " data-last=\"1\"" : ""}${t.next ? " data-next=\"1\"" : ""}${t.area ? ` data-area="${esc(t.area)}"` : ""}${isSession(t) ? ' data-session="1"' : ""}${t.running ? ' data-running="1"' : ""}${t.owner ? ` data-owner="${esc(t.owner)}"` : ""}${t.ready && t.tab !== "done" ? ' data-ready="1"' : ""}${t.working && !t.ready && t.tab !== "done" ? ' data-working="1"' : ""}${t.codex?.done ? ' data-codex-done="1"' : ""}${t.n ? ` data-n="${t.n}"` : ""}${t.prod ? ` data-prod="${esc(t.prod.state)}"` : ""}${t.audit ? ` data-audit="${esc(t.audit.state)}"` : ""}${t.audit?.fix ? ' data-fixed="1"' : ""}>
+  return `<article class="card" data-id="${esc(t.id)}" data-sev="${esc(t.sev)}" data-who="${esc(t.who)}" data-tab="${esc(t.tab)}" data-board="${esc(t.b)}" data-apps="${esc((t.app||[]).join(" "))}"${t.agent ? ` data-agent="${t.agent}"` : ""}${t.last ? " data-last=\"1\"" : ""}${t.next ? " data-next=\"1\"" : ""}${t.todo ? " data-todo=\"1\"" : ""}${t.area ? ` data-area="${esc(t.area)}"` : ""}${isSession(t) ? ' data-session="1"' : ""}${t.running ? ' data-running="1"' : ""}${t.owner ? ` data-owner="${esc(t.owner)}"` : ""}${t.ready && t.tab !== "done" ? ' data-ready="1"' : ""}${t.working && !t.ready && t.tab !== "done" ? ' data-working="1"' : ""}${t.codex?.done ? ' data-codex-done="1"' : ""}${t.n ? ` data-n="${t.n}"` : ""}${t.prod ? ` data-prod="${esc(t.prod.state)}"` : ""}${t.audit ? ` data-audit="${esc(t.audit.state)}"` : ""}${t.audit?.fix ? ' data-fixed="1"' : ""}>
   <div class="hd">${t.n ? `<span class="num" title="رقم البند — قل «بند ${t.n}» في الشات">${t.n}</span>` : ""}<span class="id">${esc(t.id)}</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ${esc(t.id)}">⧉</button></div>
   ${auditBanner}${stateBanner}
   <div class="t">${t.t}</div>
@@ -424,6 +465,15 @@ const appsAll = ["modonty", "admin", "console", "dataLayer"];
 // سؤال المبرمج لا سؤال صاحب العمل. صاحب العمل يسأل «مين دوره الآن؟». فصارت ثلاثة تجيبه،
 // و«الكل» يبقى كي لا يختفي شيء. نفس العلاج الذي نجح على لوحة السيو قبلها بساعات.
 const APP_TABS = [
+  // «To Do» تبويبٌ رئيسي بأمر خالد (٣ سبتمبر): «اعمل لنا Tab رئيسي اسمه To Do، فيه
+  // الحاجات الرئيسية لازم تتعمل».
+  //
+  // وهو **مختار بيده** لا مشتقٌّ من حالة: «قرارك» و«دوري» يجيبان «مَن صاحب البند؟»،
+  // وهذا يجيب «ما الذي يُعمل الآن؟» — وهو سؤالٌ لا يعرف الكودُ جوابه. الوسم: todo: true
+  //
+  // وحصريّ كبقيّة التبويبات: البطاقة الموسومة تخرج من «قرارك» و«دوري» فلا تُعدّ مرّتين.
+  // قائمةٌ رابعة تتداخل مع الثلاث كانت ستعيد اللبس الذي نظّفناه هذا اليوم.
+  { k: "__todo", n: "📌 To Do" },
   { k: "__decide", n: "① قرارك" },
   { k: "__mine", n: "② دوري" },
   // «صفحة العميل» رجع تبويباً بأمر خالد (٢٩ أغسطس): «فيها شغل كتير هنشتغله». الوسم
@@ -440,11 +490,7 @@ const APP_TABS = [
   // «الإصدار الجاي» (خالد ٢٩ أغسطس): بندٌ متّفق عليه ولن يُعمل في هذه الدورة. يخرج من
   // «قرارك» و«دوري» كي لا يزاحم ما يُعمل اليوم، ولا يُحذف كي لا يُنسى. الوسم: next: true
   { k: "__next", n: "📦 الإصدار الجاي" },
-  { k: "__merge", n: "🏁 قبل الدمج" },
-  // «بعد النشر» (خالد ٣٠ أغسطس): «حط لي الخطوات عشان أنا ما أنسى أي خطوة». شغلٌ لا يُنفَّذ
-  // إلا على الإنتاج بعد وصول الكود، وكان مبعثراً بين «قرارك» و«قبل الدمج» — والثاني خطأ:
-  // البطاقة التي تُنفَّذ بعد الدمج ليست حاجزاً أمامه. الوسم: area: "deploy"
-  { k: "deploy", n: "🚀 بعد النشر" },
+  // حُذف تبويبا «🏁 قبل الدمج» و«🚀 بعد النشر» ٣ سبتمبر ٢٠٢٦ — التفصيل عند `TAB_SECTIONS`.
   // «جبر سيو» (خالد ٣٠ أغسطس): «افتح لي Tab سميه جبر SEO واديني التقرير اللي هناك».
   // ضمّ مستودعات جبر سيو وتوحيد السكيما — موضوع قائم بذاته، لا يُخلط بشغل مدونتي.
   { k: "jbrseo", n: "🔗 جبر سيو" },
@@ -459,7 +505,59 @@ const APP_TABS = [
   // `documents/HTML/GA4-BOARD.html` يُعرض بإطار لا منسوخاً: النسخ يعني ملفّين
   // ينحرفان عن بعضهما بعد أوّل تعديل، والإطار يجعل المصدر واحداً.
   { k: "__ga4", n: "📊 GA4" },
+  // «Codex» تبويب لا بطاقة (خالد ٣ سبتمبر): «Codex تكون عنده tab في ملف Task الرئيسي».
+  // تقاريره تُقرأ ولا تُنفَّذ من هنا، فمكانها لوح مرجع كـGA4 لا صفٌّ في «دوري».
+  { k: "__codex", n: "🤖 Codex" },
 ];
+/** تبويبات المراجع: لوحٌ يُقرأ بإطار، لا بطاقات ولا عدّاد — شارتها «↗». */
+const READ_TABS = new Set(["__ga4", "__codex"]);
+
+/**
+ * أقسام الشريط الجانبي — خالد ٣ سبتمبر: «رتّب لي الـsidebar… تكون الدنيا مرتبة وسهلة».
+ *
+ * خمسة عشر تبويباً في قائمة مسطّحة تُقرأ كقائمة واحدة طويلة، فيضيع الفرق بين
+ * «ما ينتظرك اليوم» و«ما أجّلناه» و«ما يُقرأ ولا يُنفَّذ». الترتيب هنا يتبع كيف
+ * يمرّ اليوم لا كيف كُتب الكود: ما يحتاجك أوّلاً، ثم المواضيع، ثم المراحل،
+ * ثم المؤجَّل، ثم المراجع.
+ *
+ * التبويب الذي لا يُذكر هنا يسقط في «مراجع» — فإضافة تبويب جديد لا تُخفيه أبداً.
+ */
+const TAB_SECTIONS = [
+  { title: "يحتاجك", keys: ["__todo", "__decide", "__mine"] },
+  { title: "مواضيع", keys: ["billing", "ai", "partner", "autolink", "jbrseo"] },
+  // «مراحل» (قبل الدمج · بعد النشر) حُذف ٣ سبتمبر ٢٠٢٦ — خالد: «إحنا الآن بنشتغل
+  // مباشرة على main». التبويبان كانا يصفان مساراً انتهى: فرعٌ يُجهَّز ثم يُدمج ثم
+  // تُنفَّذ خطواتُ ما بعد النشر. وكانا صفراً على صفر — لا بطاقة حيّة ولا مؤرشَفة
+  // تحمل `last` أو `area: "deploy"` (مقيس قبل الحذف)، فالحذف لا يُخفي شيئاً.
+  //
+  // الوسمان نفسهما باقيان في `inTab`: بطاقة قديمة تحملهما تُقرأ ولا تُسقَط، وتظهر
+  // في «الكل». إسقاطُ الوسم كان سيخفيها بصمت، وهو أسوأ من تبويب زائد.
+  { title: "مؤجَّل", keys: ["__next", "__session", "__ideas"] },
+];
+
+/**
+ * تبويبات تُعرض في النافبار لا في الشريط الجانبي — خالد ٣ سبتمبر: «استفيد من
+ * الـNavigation Bar… عشان الـSide Bar ما يتكدّس. تكدّس الـSide Bar حيتوّهنا».
+ *
+ * المعيار ليس المساحة بل الطبيعة: الشريط الجانبي طوابيرُ شغلٍ لها عدّاد يُستهلَك،
+ * وهذه ثلاثةٌ لا تُنقَص — «الكل» عدسةٌ على نفس البطاقات، وGA4 وCodex لوحان يُقرآن.
+ * وضعُها بين الطوابير يجعل العين تمرّ على خمسة عشر صفّاً بحثاً عن اثنين.
+ *
+ * تبقى أزرار `apptab` نفسها: نفس `data-app` ونفس السكربت — تغيّر مكانها لا سلوكها.
+ */
+const NAV_TABS = ["__all", "__ga4", "__codex"];
+
+/**
+ * «الفواتير» مرّت بموضعين في ساعة، والمستقرّ هو الثالث: بطاقتها في «To Do».
+ *
+ * نُقلت إلى النافبار ثم أُخرجت منه (خالد ٣ سبتمبر: «الفواتير من النافبار شيلها»).
+ * والسبب أن النقل عالج العَرَض لا العلّة: المشكلة لم تكن أين يجلس التبويب، بل أن
+ * البند لم يكن في قائمة ما يُعمل. ووجودُه في «To Do» يضعه أوّل ما تفتح اللوحة،
+ * ويُبقي تبويبه موضوعاً يُرجَع إليه لا مكاناً يُنتظر أن تمرّ عليه العين.
+ *
+ * لا وسم لونياً إذن: التمييز صار موضعاً لا لوناً.
+ */
+const MONEY_TAB = null;
 // حصريّ لا مزدوج (خالد، ٢٤ أغسطس: «still duplicate in modonty»): بطاقة صفحة الشريك تخرج من
 // تبويب تطبيقها. البطاقة التي تظهر في تبويبين تُعدّ مرّتين وتُقرأ كبندين — وهذا نقيض سبب التبويب.
 /** تبويبات الموضوع: مفتاح التبويب = قيمة `area` على البطاقة. حصريّة — البطاقة الموسومة
@@ -469,6 +567,11 @@ const AREA_TABS = ["billing", "ai", "partner", "autolink", "deploy", "jbrseo"];
 const isSession = (t) => /💬\s*جلسة/.test(t.t || "");
 const inTab = (t, k) =>
   k === "__all" ? true
+  // «To Do» قبل كل شيء عدا «الكل»: هو اختيارُ خالد لما يُعمل الآن، ويسحب البطاقة من
+  // أي تبويب آخر. ولو جاء بعد تبويبات الموضوع لالتُقطت بطاقةُ الفواتير هناك ولم تصل
+  // إليه أبداً — وهو نفس الفخّ الذي أفرغ «صفحة العميل» في ٢٩ أغسطس.
+  : k === "__todo" ? !!t.todo
+  : t.todo ? false
   : k === "__next" ? !!t.next
   : t.next ? false
   : k === "__merge" ? !!t.last
@@ -496,18 +599,70 @@ const inTab = (t, k) =>
 // المراجع ليست مهامّ (طرق قياس ومفاتيح وخرائط) — إدخالها في العدّاد يضخّم الباقي
 // بـ٣٦ بنداً لا يُعمل فيها شيء (خالد، ٢٤ أغسطس: «only the remaining and open»).
 const tabCount = (k) => open.filter(t => t.tab !== "ref" && (k === "__merge" || !t.last) && inTab(t, k)).length;
-const appTabsHTML = APP_TABS
+const appTabButtons = APP_TABS
   // «GA4» لوحة مرجع لا بطاقات، فشارتها «↗» لا رقم: صفرٌ بجانب اسمها يُقرأ «فاضية»
   // وهي مليئة — والعدّاد هنا يعدّ بطاقات مفتوحة، وهذه اللوحة لا تملك واحدة.
-  .map(a => `<button class="apptab" role="tab" data-app="${a.k}" aria-selected="${a.k === "__decide"}" title="${a.k === "__ga4" ? "لوحة GA4 — مرجع يُقرأ" : `${tabCount(a.k)} بنداً مفتوحاً في ${a.n} — الرقم الكهرماني فوق يعدّ ما ينتظر قرارك منها وحدها`}">${a.n}<b>${a.k === "__ga4" ? "↗" : tabCount(a.k)}</b></button>`)
+  .map(a => `<button class="apptab" role="tab" data-app="${a.k}" aria-selected="${a.k === "__decide"}" title="${READ_TABS.has(a.k) ? `${a.n} — لوح مرجع يُقرأ` : `${tabCount(a.k)} بنداً مفتوحاً في ${a.n} — الرقم الكهرماني فوق يعدّ ما ينتظر قرارك منها وحدها`}">${a.n}<b>${READ_TABS.has(a.k) ? "↗" : tabCount(a.k)}</b></button>`);
+
+const tabByKey = new Map(APP_TABS.map((a, i) => [a.k, appTabButtons[i]]));
+
+/** الشريط الجانبي: طوابير الشغل وحدها. تبويبٌ جديد لم يُذكر في أي قسم يسقط في
+ *  «مواضيع» بدل أن يختفي — الإخفاء الصامت أسوأ من موضع غير مثالي. */
+const appTabsHTML = (() => {
+  const placed = new Set([...TAB_SECTIONS.flatMap(s => s.keys), ...NAV_TABS]);
+  const orphans = APP_TABS.filter(a => !placed.has(a.k)).map(a => a.k);
+  return TAB_SECTIONS.map(s => {
+    const keys = s.title === "مواضيع" ? [...s.keys, ...orphans] : s.keys;
+    const btns = keys.map(k => tabByKey.get(k)).filter(Boolean).join("");
+    return btns ? `<p class="secttl">${s.title}</p>${btns}` : "";
+  }).join("");
+})();
+
+/** النافبار: الفواتير أوّلاً وبعلامتها، ثم العدسات واللوحات المقروءة. */
+const navTabsHTML = NAV_TABS.map(k => {
+  const btn = tabByKey.get(k);
+  if (!btn) return "";
+  // وسمٌ يفصلها بصرياً عن جيرانها: مالٌ بين عدسات، ولو لبست شكلها لضاعت فيها.
+  return k === MONEY_TAB ? btn.replace('class="apptab"', 'class="apptab money"') : btn;
+})
+  .filter(Boolean)
   .join("");
 const boardHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>لوحة مدونتي — ${openWork.length} بنداً مفتوحاً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-<style>${CSS}</style></head><body>
+<style>${CSS}</style>
+<style>/* شريط اللوحة ونافبارها — هنا لا في الستايل المشترك: ذاك يُحقن في SEO.html
+   وDATA-REFACTOR.html وTASK-ARCHIVE.html، ولا واحدة منها تملك سايدبار ولا صفّ
+   لوحات، فتصير القاعدة ميتة فيها. حصل فعلاً في هذه الجلسة نفسها. */
+.secttl{margin:14px 0 2px;padding:0 12px;font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+.secttl:first-child{margin-top:0}
+.navrow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.boards{display:flex;flex-wrap:wrap;gap:6px}
+.boards a{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--line);border-radius:8px;color:var(--mut);text-decoration:none;font-size:12px;font-weight:600}
+.boards a:hover{background:var(--panel);color:var(--fg)}
+.boards a b{font-size:11px;font-weight:800;padding:1px 6px;border-radius:999px;background:var(--line);color:var(--mut)}
+/* نفس أزرار التبويب، أفقيةً: ترث سلوك apptab وتُلغي ما يخصّ العمود فقط. */
+.navtabs{display:flex;flex-wrap:wrap;gap:4px}
+.navtabs .apptab{width:auto;height:32px;padding:0 10px;font-size:12.5px;border-inline-start:0;border:1px solid var(--line);border-radius:8px}
+.navtabs .apptab[aria-selected="true"]{border-color:currentColor;background:var(--panel)}
+.navtabs .apptab.money{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 45%,transparent);margin-inline-end:6px}
+.navtabs .apptab.money b{background:color-mix(in srgb,var(--amber) 20%,transparent);color:var(--amber)}
+.navtabs .apptab.money[aria-selected="true"]{background:color-mix(in srgb,var(--amber) 12%,transparent);border-color:var(--amber)}
+@media(max-width:900px){.secttl{width:100%;margin:8px 0 0}.navrow{gap:8px}}</style></head><body>
 <div class="apptabs" role="tablist" aria-label="التبويبات">${appTabsHTML}</div>
 <header class="top"><div class="wrap">
-<h1>لوحة الشغل — ${openWork.length} بنداً مفتوحاً <span style="color:var(--dim);font-weight:500;font-size:13px">· و${lastWork.length} في «قبل الدمج» · <b>سيو مدونتي (${seoOpen.length}) في <a href="SEO.html">SEO.html</a></b> · تحديث البيانات في <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> · المنجز في <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a></span></h1>
+<!-- العنوان يقول رقماً واحداً، والروابط صارت أزراراً في صفّها.
+     كان سطراً واحداً يحمل أربعة روابط وثلاثة أرقام داخل الجملة، فيُقرأ كفقرة
+     تُمسح بالعين — والرابط المدفون في نصّ لا يُرى كطريق. -->
+<div class="navrow">
+<h1>لوحة الشغل — ${openWork.length} بنداً مفتوحاً</h1>
+<div class="navtabs" role="tablist" aria-label="عدسات ولوحات">${navTabsHTML}</div>
+<nav class="boards" aria-label="اللوحات الأخرى">
+<a href="SEO.html">🔍 سيو مدونتي <b>${seoOpen.length}</b></a>
+<a href="DATA-REFACTOR.html">🗄️ تحديث البيانات</a>
+<a href="TASK-ARCHIVE.html">✅ المنجز</a>
+</nav>
+</div>
 <!-- لا صفّ إحصاءات إطلاقاً (خالد، ٢٤ أغسطس: «only the counter for what remain, no حشو»).
      كانت عشرون رقماً على الشاشة، ثم واحد بارز مع مطويّة — وكلّها ما زالت حشواً فوق ما يلزم.
      أرقام التبويبات وحدها تقول ما بقي، وعناوين الأقسام تقول توزيعه. الباقي كان يشرح لا يفيد.
@@ -519,14 +674,26 @@ const boardHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset=
 </div></header>
 <main class="wrap">
 ${sections.filter(g => g.items.length).map(g => `<section class="grp" data-grp="${g.k}"><h2>${g.n} <span class="n" data-count>${g.items.length}</span></h2><p>${g.s}</p>${g.collapsed ? `<details><summary>اعرض ${g.items.length} مرجعاً</summary>` : ""}<div class="grid">${g.items.map(cardHTML).join("\n") || '<div class="empty">لا شيء هنا.</div>'}</div>${g.collapsed ? "</details>" : ""}</section>`).join("\n")}
-<section class="grp ga4pane" data-grp="__ga4" hidden>
+<section class="grp readpane ga4pane" data-grp="__ga4" hidden>
 <style>/* داخل اللوح لا في الستايل المشترك: الأخير يُحقن في أربع لوحات (SEO ·
    DATA-REFACTOR · TASK-ARCHIVE) لا تملك هذا الإطار، فيصير فيها قاعدة ميتة. */
-.ga4pane iframe{width:100%;height:calc(100dvh - 190px);min-height:520px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
-.ga4pane h2{margin-bottom:6px}</style>
+.readpane iframe{width:100%;height:calc(100dvh - 230px);min-height:480px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.readpane h2{margin-bottom:6px}
+.readpane .srcs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 10px}
+.readpane .srcs button{font:inherit;font-size:12px;padding:5px 11px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer}
+.readpane .srcs button[aria-pressed="true"]{background:var(--panel);border-color:var(--fg);font-weight:700}</style>
 <h2>📊 لوحة GA4 — القياس والتتبّع</h2>
 <p>لوحة تُقرأ لا مهامّ. المصدر <code>documents/HTML/GA4-BOARD.html</code> — معروض بإطار، فأي تعديل عليه يظهر هنا فوراً. <a href="../HTML/GA4-BOARD.html" target="_blank" rel="noopener">افتحها في تبويب مستقلّ ↗</a></p>
 <iframe src="../HTML/GA4-BOARD.html" title="لوحة GA4" loading="lazy"></iframe>
+</section>
+<section class="grp readpane codexpane" data-grp="__codex" hidden>
+<h2>🤖 تقارير Codex</h2>
+<p>فحوصٌ يجريها Codex ويكتبها في ملفّه — تُقرأ هنا ولا تُنفَّذ. كلٌّ منها يفتح بنوداً مستقلّة عند اعتمادها. <span data-codex-open></span></p>
+<div class="srcs" role="tablist">
+<button type="button" role="tab" data-src="../HTML/CODEX-LIMIT-AUDIT.html" aria-pressed="true">📏 سقوف القصّ الصامت</button>
+<button type="button" role="tab" data-src="../HTML/CODEX-NPLUS1-AUDIT.html" aria-pressed="false">🔁 استعلامات N+1</button>
+</div>
+<iframe src="../HTML/CODEX-LIMIT-AUDIT.html" title="تقارير Codex" loading="lazy"></iframe>
 </section>
 </main>
 <footer>بيانات البطاقات كما هي (التفاصيل الكاملة داخل كل بطاقة) — الملخّص و«المطلوب منك» مستخلَصان. تحديث البيانات: <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> · المنجز: <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a>.</footer>
@@ -547,6 +714,11 @@ ${sections.filter(g => g.items.length).map(g => `<section class="grp" data-grp="
     // «الكل» يعني كل الشغل المفتوح — لا يشمل «قبل الدمج»، تماماً كما تستثنيه شارته.
     // قبل ٢٤ أغسطس كان يعرضها ولا يعدّها: ٧١ في الشارة و٨٥ على الشاشة.
     if (app === '__all') return !c.dataset.last;
+    // «To Do» هنا أوّلاً، بنفس ترتيب inTab حرفياً. غيابُه جعل الشارة تقول ١ والقائمة
+    // فارغة — العدّاد يُحسب وقت البناء والتصفية تعمل في المتصفّح، فيفترقان. وهو العطل
+    // نفسه الذي يحذّر منه التعليق أسفله منذ ٢٩ أغسطس، وقعتُ فيه بعد قراءته.
+    if (app === '__todo') return !!c.dataset.todo;
+    if (c.dataset.todo) return false;
     // تبويب «قبل الدمج» حصريّ: بنوده تخرج من كل تبويب آخر كي لا تُعدّ مرّتين
     if (app === '__next') return !!c.dataset.next;
     if (c.dataset.next) return false;
@@ -590,19 +762,42 @@ ${sections.filter(g => g.items.length).map(g => `<section class="grp" data-grp="
     // والعدّادات في الأعلى تتبع التبويب: رقمان مختلفان لنفس الشيء على شاشة واحدة هو أصل التيه.
     // «GA4» لوحة مرجع لا بطاقات: تظهر وحدها ويختفي معها كل قسم بطاقات، وإلا لظهر
     // الإطار فوق قائمة مهامّ لا علاقة لها به.
-    const ga4Pane = document.querySelector('.ga4pane');
-    const isGa4 = app === '__ga4';
-    if (ga4Pane) ga4Pane.hidden = !isGa4;
+    // أي عدد من ألواح المراجع، لا GA4 وحدها: كلٌّ يُظهَر حين يُختار تبويبه، ويختفي
+    // معه كل قسم بطاقات — وإلا ظهر الإطار فوق قائمة مهامّ لا علاقة لها به.
+    let isRead = false;
+    document.querySelectorAll('.readpane').forEach(p => {
+      const on = p.dataset.grp === app;
+      p.hidden = !on;
+      if (on) isRead = true;
+    });
 
-    document.querySelectorAll('.grp:not(.ga4pane)').forEach(g => {
+    document.querySelectorAll('.grp:not(.readpane)').forEach(g => {
       const n = g.querySelectorAll('.card:not(.hidden)').length;
       g.querySelector('[data-count]').textContent = n;
-      g.classList.toggle('hidden', isGa4 || n === 0);
+      g.classList.toggle('hidden', isRead || n === 0);
       const stat = document.querySelector('[data-stat="' + g.dataset.grp + '"]');
       if (stat) stat.textContent = n;
     });
   };
   chips.forEach(c => c.addEventListener('click', () => { c.setAttribute('aria-pressed', c.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); apply(); }));
+
+  // مبدّل مصادر لوح المراجع: تقريران في تبويب واحد بدل تبويبين — الملفّات الكثيرة
+  // تُوهِّم (خالد ٣ سبتمبر: «كثرة الملفات حتوّهني وتوّهك، فشغلنا كله الرئيسي على Task»).
+  document.querySelectorAll('.readpane .srcs button').forEach(b => {
+    b.addEventListener('click', () => {
+      const pane = b.closest('.readpane');
+      pane.querySelectorAll('.srcs button').forEach(o => o.setAttribute('aria-pressed', String(o === b)));
+      const frame = pane.querySelector('iframe');
+      if (frame) frame.src = b.dataset.src;
+      const open = pane.querySelector('[data-codex-open]');
+      if (open) open.innerHTML = '<a href="' + b.dataset.src + '" target="_blank" rel="noopener">افتح المعروض في تبويب مستقلّ ↗</a>';
+    });
+  });
+  // الرابط المستقلّ يبدأ على المصدر المعروض ابتداءً، لا فارغاً.
+  document.querySelectorAll('.readpane .srcs button[aria-pressed="true"]').forEach(b => {
+    const open = b.closest('.readpane').querySelector('[data-codex-open]');
+    if (open) open.innerHTML = '<a href="' + b.dataset.src + '" target="_blank" rel="noopener">افتح المعروض في تبويب مستقلّ ↗</a>';
+  });
   tabs.forEach(t => t.addEventListener('click', () => {
     app = t.dataset.app;
     forcedId = ''; // الخروج من بطاقة مرجع فُتحت برابط مباشر — وإلا بقي التبويب مقصوراً عليها
