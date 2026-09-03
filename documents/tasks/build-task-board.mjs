@@ -36,6 +36,48 @@ const noScript = (s) => (s || "").replace(/<(\/?)script/gi, "&lt;$1script");
 
 const OVERRIDES = JSON.parse(fs.readFileSync(path.join(here, "task-overrides.json"), "utf8"));
 
+// ─────────────────────────────────────────────────────────────────────────────
+// حاجز الإغلاق المعلَّق — خالد ٣ سبتمبر ٢٠٢٦: «بنشتغل في مكان والمصدر الرئيسي ما
+// قاعد يتعدل… بنعيد نفس التاسك، كل مرة بنعمل نفس الـcheck وإحنا مخلصينه في مكان ثاني».
+//
+// العطل المقيس يومها: ٢١ بطاقة عنوانها يقول «أُقفلت/✅» و`tab` لسه `open`. الإغلاق
+// كان مكتوباً في **العنوان** — نصٌّ لا تقرأه الآلة — بينما اللوحة تقرأ `tab` وحده.
+// فبقيت البطاقات مفتوحة إلى الأبد، وكل جلسة تعيد فحص ما أُغلق في أغسطس.
+//
+// القاعدة التي أخالفها باستمرار لا تُكتب بصوت أعلى — تتحوّل إلى فحص هيكلي. فهنا
+// يفشل البناء بدل أن يمرّ بصمت. المخرج الوحيد أحد اثنين، وكلاهما يُصلح المصدر:
+//   ١. `tab: "done"`            — البند أُغلق فعلاً.
+//   ٢. احذف ادّعاء الإغلاق من العنوان — البند لم يُغلق، فالعنوان كان يكذب.
+// و`closedTitleOk: true` على البطاقة لاستثناءٍ حقيقي (عنوانٌ يحمل الكلمة بلا معناها).
+// طوارئ فقط: SKIP_TASK_GATE=1 — يُبلِّغ ولا يمنع.
+const CLOSED_IN_TITLE = /✅|أُقفل|أُغلق|أُصلح|اكتمل|انتهت|انتهى|ضُمّت|ضُمّ\b|أُرشِف|لا ينطبق/;
+// النصّ المعلَّب الذي حلّ محلّ الدليل أثناء النقل من لوحة الدمج ٣١ أغسطس. وجودُه مع
+// ادّعاء إغلاقٍ في العنوان = بطاقة تناقض نفسها: «خلصت» و«غير مقيسة» في آنٍ واحد.
+const UNMEASURED_BOILERPLATE = /حالتها غير مقيسة/;
+
+const staleClosed = TASKS.filter(
+  t => !t.closedTitleOk && t.tab !== "done" && t.tab !== "ref" && CLOSED_IN_TITLE.test(t.t || ""),
+);
+if (staleClosed.length) {
+  const contradicting = staleClosed.filter(t => UNMEASURED_BOILERPLATE.test(t.d || ""));
+  console.error(`\n🚫 حاجز الإغلاق المعلَّق — ${staleClosed.length} بطاقة عنوانها يقول «أُغلقت» و\`tab\` لسه مفتوح.\n`);
+  for (const t of staleClosed) {
+    const clash = UNMEASURED_BOILERPLATE.test(t.d || "") ? "  ⚠️ ونصّها يقول «غير مقيسة» — تناقض" : "";
+    console.error(`  ${String(t.id).padEnd(16)} tab=${String(t.tab).padEnd(6)} ${strip(t.t).slice(0, 60)}${clash}`);
+  }
+  if (contradicting.length) {
+    console.error(`\n  ${contradicting.length} منها تحمل النصّ المعلَّب «حالتها غير مقيسة» — دليلها ضاع في النقل من لوحة الدمج،`);
+    console.error(`  ومكانه \`documents/context/SESSION-LOG-2026-08.md\` وسجلّ الكوميتات.`);
+  }
+  console.error(`\n  الإصلاح لكل بطاقة أحد اثنين:`);
+  console.error(`    ١. \`tab: "done"\` مع الدليل الخام في \`d\`   — إن كانت أُغلقت فعلاً.`);
+  console.error(`    ٢. احذف ادّعاء الإغلاق من \`t\`              — إن لم تُغلق، فالعنوان يكذب.`);
+  console.error(`  استثناء حقيقي: \`closedTitleOk: true\`. طوارئ: SKIP_TASK_GATE=1\n`);
+  if (!process.env.SKIP_TASK_GATE) process.exit(1);
+  console.error("  SKIP_TASK_GATE=1 — أُكمل البناء رغم ذلك.\n");
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 const enriched = TASKS.map(t => {
   const segs = segments(t.d || "");
   const o = OVERRIDES[t.id] || {};
@@ -413,6 +455,10 @@ const APP_TABS = [
   { k: "__session", n: "💬 الجلسة القادمة" },
   { k: "__ideas", n: "💡 أفكار" },
   { k: "__all", n: "الكل" },
+  // «GA4» ليس تبويب بطاقات — هو لوحة تُقرأ (خالد، ٣ سبتمبر ٢٠٢٦). محتواها
+  // `documents/HTML/GA4-BOARD.html` يُعرض بإطار لا منسوخاً: النسخ يعني ملفّين
+  // ينحرفان عن بعضهما بعد أوّل تعديل، والإطار يجعل المصدر واحداً.
+  { k: "__ga4", n: "📊 GA4" },
 ];
 // حصريّ لا مزدوج (خالد، ٢٤ أغسطس: «still duplicate in modonty»): بطاقة صفحة الشريك تخرج من
 // تبويب تطبيقها. البطاقة التي تظهر في تبويبين تُعدّ مرّتين وتُقرأ كبندين — وهذا نقيض سبب التبويب.
@@ -451,7 +497,9 @@ const inTab = (t, k) =>
 // بـ٣٦ بنداً لا يُعمل فيها شيء (خالد، ٢٤ أغسطس: «only the remaining and open»).
 const tabCount = (k) => open.filter(t => t.tab !== "ref" && (k === "__merge" || !t.last) && inTab(t, k)).length;
 const appTabsHTML = APP_TABS
-  .map(a => `<button class="apptab" role="tab" data-app="${a.k}" aria-selected="${a.k === "__decide"}" title="${tabCount(a.k)} بنداً مفتوحاً في ${a.n} — الرقم الكهرماني فوق يعدّ ما ينتظر قرارك منها وحدها">${a.n}<b>${tabCount(a.k)}</b></button>`)
+  // «GA4» لوحة مرجع لا بطاقات، فشارتها «↗» لا رقم: صفرٌ بجانب اسمها يُقرأ «فاضية»
+  // وهي مليئة — والعدّاد هنا يعدّ بطاقات مفتوحة، وهذه اللوحة لا تملك واحدة.
+  .map(a => `<button class="apptab" role="tab" data-app="${a.k}" aria-selected="${a.k === "__decide"}" title="${a.k === "__ga4" ? "لوحة GA4 — مرجع يُقرأ" : `${tabCount(a.k)} بنداً مفتوحاً في ${a.n} — الرقم الكهرماني فوق يعدّ ما ينتظر قرارك منها وحدها`}">${a.n}<b>${a.k === "__ga4" ? "↗" : tabCount(a.k)}</b></button>`)
   .join("");
 const boardHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>لوحة مدونتي — ${openWork.length} بنداً مفتوحاً</title>
@@ -471,6 +519,15 @@ const boardHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset=
 </div></header>
 <main class="wrap">
 ${sections.filter(g => g.items.length).map(g => `<section class="grp" data-grp="${g.k}"><h2>${g.n} <span class="n" data-count>${g.items.length}</span></h2><p>${g.s}</p>${g.collapsed ? `<details><summary>اعرض ${g.items.length} مرجعاً</summary>` : ""}<div class="grid">${g.items.map(cardHTML).join("\n") || '<div class="empty">لا شيء هنا.</div>'}</div>${g.collapsed ? "</details>" : ""}</section>`).join("\n")}
+<section class="grp ga4pane" data-grp="__ga4" hidden>
+<style>/* داخل اللوح لا في الستايل المشترك: الأخير يُحقن في أربع لوحات (SEO ·
+   DATA-REFACTOR · TASK-ARCHIVE) لا تملك هذا الإطار، فيصير فيها قاعدة ميتة. */
+.ga4pane iframe{width:100%;height:calc(100dvh - 190px);min-height:520px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.ga4pane h2{margin-bottom:6px}</style>
+<h2>📊 لوحة GA4 — القياس والتتبّع</h2>
+<p>لوحة تُقرأ لا مهامّ. المصدر <code>documents/HTML/GA4-BOARD.html</code> — معروض بإطار، فأي تعديل عليه يظهر هنا فوراً. <a href="../HTML/GA4-BOARD.html" target="_blank" rel="noopener">افتحها في تبويب مستقلّ ↗</a></p>
+<iframe src="../HTML/GA4-BOARD.html" title="لوحة GA4" loading="lazy"></iframe>
+</section>
 </main>
 <footer>بيانات البطاقات كما هي (التفاصيل الكاملة داخل كل بطاقة) — الملخّص و«المطلوب منك» مستخلَصان. تحديث البيانات: <a href="DATA-REFACTOR.html">DATA-REFACTOR.html</a> · المنجز: <a href="TASK-ARCHIVE.html">TASK-ARCHIVE.html</a>.</footer>
 <script>
@@ -531,10 +588,16 @@ ${sections.filter(g => g.items.length).map(g => `<section class="grp" data-grp="
     });
     // قسم بلا بطاقات مرئية يختفي كلّه — العنوان الفارغ ضجيج، وخالد جاء يقرأ لا يتصفّح.
     // والعدّادات في الأعلى تتبع التبويب: رقمان مختلفان لنفس الشيء على شاشة واحدة هو أصل التيه.
-    document.querySelectorAll('.grp').forEach(g => {
+    // «GA4» لوحة مرجع لا بطاقات: تظهر وحدها ويختفي معها كل قسم بطاقات، وإلا لظهر
+    // الإطار فوق قائمة مهامّ لا علاقة لها به.
+    const ga4Pane = document.querySelector('.ga4pane');
+    const isGa4 = app === '__ga4';
+    if (ga4Pane) ga4Pane.hidden = !isGa4;
+
+    document.querySelectorAll('.grp:not(.ga4pane)').forEach(g => {
       const n = g.querySelectorAll('.card:not(.hidden)').length;
       g.querySelector('[data-count]').textContent = n;
-      g.classList.toggle('hidden', n === 0);
+      g.classList.toggle('hidden', isGa4 || n === 0);
       const stat = document.querySelector('[data-stat="' + g.dataset.grp + '"]');
       if (stat) stat.textContent = n;
     });
