@@ -2164,12 +2164,12 @@
       "app": [
         "admin"
       ],
-      "tab": "open",
+      "tab": "done",
       "sev": "normal",
       "who": "c",
       "date": "٣٠ أغسطس ٢٠٢٦",
       "t": "⚡ كلمة · صفحة «خريطة بني» في الأدمن — عرض حي لبنية التخزين",
-      "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Explicitly waiting on Khalid; no bunny-map page exists in admin.<br><b>الفكرة (خالد ٧ أغسطس):</b> ما وثّقناه الليلة في بورد «🐰 بني» يصير <b>صفحة حيّة داخل الأدمن</b> بدل مسح يدوي كل مرة — شجرة الزونات ومجلداتها وأعدادها وأحجامها، تُقرأ لحظياً من بني.<br><b>الأساس جاهز ومتحقَّق:</b> أعمدة القراءة موجودة — <code>dataLayer/lib/bunny.ts:23 zoneConfig()</code> يحلّ الزونات الثلاثة، ومفاتيح القراءة فقط (<code>*_READONLY_PASSWORD</code>) مفعَّلة في <code>.env.shared</code>، و<code>admin/app/(dashboard)/bunny-migration/actions/storage-inventory.ts</code> فيه عدّ حي يُبنى عليه. والمسح الذي أنتج بورد «بني» تمّ بنفس هذه الأدوات (١١٢٦ + ٧٨ + ٨٠ + ٢٤٦ ملفاً).<br><b>⏸ ينتظر خالد:</b> «بعدين أوريك كيف نسويها» — التصميم والشكل بيده قبل أي كود.",
+      "d": "<b>تدقيق ٢٣ أغسطس ٢٠٢٦ — بيدك:</b> Explicitly waiting on Khalid; no bunny-map page exists in admin.<br><b>الفكرة (خالد ٧ أغسطس):</b> ما وثّقناه الليلة في بورد «🐰 بني» يصير <b>صفحة حيّة داخل الأدمن</b> بدل مسح يدوي كل مرة — شجرة الزونات ومجلداتها وأعدادها وأحجامها، تُقرأ لحظياً من بني.<br><b>الأساس جاهز ومتحقَّق:</b> أعمدة القراءة موجودة — <code>dataLayer/lib/bunny.ts:23 zoneConfig()</code> يحلّ الزونات الثلاثة، ومفاتيح القراءة فقط (<code>*_READONLY_PASSWORD</code>) مفعَّلة في <code>.env.shared</code>، و<code>admin/app/(dashboard)/bunny-migration/actions/storage-inventory.ts</code> فيه عدّ حي يُبنى عليه. والمسح الذي أنتج بورد «بني» تمّ بنفس هذه الأدوات (١١٢٦ + ٧٨ + ٨٠ + ٢٤٦ ملفاً).<br><b>⏸ ينتظر خالد:</b> «بعدين أوريك كيف نسويها» — التصميم والشكل بيده قبل أي كود.<hr><p><b>أُقفلت ٣ سبتمبر ٢٠٢٦ — الصفحة مبنيّة ومربوطة؛ تدقيق ٢٣ أغسطس («no bunny-map page exists») صار قديماً، بُنيت بعده.</b></p><p><b>الملفات:</b><br><code>admin/app/(dashboard)/bunny/page.tsx<br>admin/app/(dashboard)/bunny/loading.tsx<br>admin/app/(dashboard)/bunny/actions/bunny-report.ts</code></p><p><b>مربوطة في السايدبار تحت «System»</b> كما طلب خالد:<br><code>admin/components/admin/sidebar.tsx:344  title: \"System\"<br>admin/components/admin/sidebar.tsx:354  { icon: Cloud, label: \"Bunny\", href: \"/bunny\" }</code></p><p><b>وتنفّذ ما طلبته البطاقة حرفياً:</b> <code>StorageMap</code> يعرض الزونات الثلاث، كلٌّ بمجلداتها وأعداد ملفاتها وحجمها بالميجابايت، مقروءةً حيّاً من بني عبر <code>getMediaReport</code>؛ والمجلّد ذو الأبناء يُفتح بـ<code>&lt;details&gt;</code>. وثابت <code>ZONE_PURPOSE</code> يكتب دور كل زون بجانب رقمه — «رقمٌ بلا غرضه لا يمكن الحكم عليه».</p><p><b>زيادة على البطاقة:</b> تقرير فوترة (<code>getBillingReport</code>) بجانب خريطة التخزين.</p>",
       "ease": 2
     },
     {

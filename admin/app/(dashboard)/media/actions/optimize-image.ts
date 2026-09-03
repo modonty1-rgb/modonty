@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
-import { deleteCloudinaryAsset } from "./delete-cloudinary-asset";
+import { deleteCloudinaryAsset } from "@/lib/utils/cloudinary-delete";
 import { generateClientSEO } from "@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo";
 import { generateAndSaveJsonLd } from "@/lib/seo/jsonld-storage";
 import { generateAndSaveNextjsMetadata } from "@/lib/seo/metadata-storage";

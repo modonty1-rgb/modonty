@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { canDeleteMedia } from "./can-delete-media";
-import { deleteCloudinaryAsset } from "./delete-cloudinary-asset";
+import { deleteCloudinaryAsset } from "@/lib/utils/cloudinary-delete";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
 import { deleteBunnyUrl, bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/shared/lib/bunny";

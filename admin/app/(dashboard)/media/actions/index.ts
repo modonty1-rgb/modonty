@@ -5,10 +5,8 @@ export { getMediaStats } from "./get-media-stats";
 export { getClients } from "./get-clients";
 export { createMedia } from "./create-media";
 export { updateMedia } from "./update-media";
-export { renameCloudinaryAsset } from "./rename-cloudinary-asset";
 export { getMediaUsage } from "./get-media-usage";
 export { canDeleteMedia } from "./can-delete-media";
-export { deleteCloudinaryAsset } from "./delete-cloudinary-asset";
 export { deleteMedia } from "./delete-media";
 
 // Re-export types
