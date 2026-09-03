@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { ImageSeoDialog } from "../../components/image-seo-dialog";
+import { RenamePanel } from "./rename-panel";
 import type { SeoImageRow } from "../../helpers/load-groups";
 
 const PAGE_SIZE = 24;
@@ -91,6 +92,10 @@ export function ClientImagesGrid({ name, isModonty, avgScore, images }: Props) {
         </span>
       </div>
 
+      {/* Stage two lives here, next to the images it will rename — not on the clients
+          table, where the run would target rows nobody is looking at. */}
+      <RenamePanel images={images} onEdit={setOpenId} />
+
       {/* The rename plan for this client, at a glance, before anything is executed. */}
       <div className="flex flex-wrap items-center gap-2 text-[11px]">
         <span className="text-muted-foreground">خطة الأسماء:</span>
@@ -167,6 +172,16 @@ export function ClientImagesGrid({ name, isModonty, avgScore, images }: Props) {
             >
               <div className="relative grid aspect-video place-items-center overflow-hidden rounded-t-xl bg-muted/40">
                 <OptimizedImage fill media={asMedia(img.url, img.altText ?? "")} alt={img.altText ?? ""} sizes="(max-width: 768px) 50vw, 220px" className="h-full w-full object-cover" loading="lazy" />
+                {/* On the picture, not in a legend: this card's text was written by a model
+                    and the image is locked out of renaming until someone edits it. */}
+                {img.aiDraftedAt !== null && (
+                  <span
+                    className="absolute end-1.5 top-1.5 rounded bg-violet-600/90 px-1.5 py-0.5 text-[10px] font-bold text-white"
+                    title="مسوّدة آلة — عدّل النصّ لتدخل طابور التسمية"
+                  >
+                    🤖 مسوّدة
+                  </span>
+                )}
               </div>
               <div className="flex items-center justify-between gap-2 px-2.5 py-2">
                 <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-bold uppercase text-muted-foreground">

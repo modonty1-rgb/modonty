@@ -20,7 +20,24 @@ import {
 // Single source for the "SEO Images" grouping. BOTH the clients table (/seo-images) and the
 // per-client grid (/seo-images/[clientId]) call this — so a client's summary row and its
 // image grid can never diverge. Media can grow large; cap the first cut worst-first.
-const LIMIT = 500;
+/**
+ * A CRASH GUARD, not a display cap.
+ *
+ * It was `500` with `orderBy: createdAt desc`, and the comment above claimed the cut was
+ * "worst-first" — it was not: the cut kept the NEWEST rows, so the oldest images, which are
+ * exactly the ones written before alt text was asked for, fell out of the screen entirely.
+ * Measured on production 2026-09-03: 870 media rows, so 370 were invisible — 43% — while the
+ * page presented its totals as the whole picture.
+ *
+ * It also broke two things quietly, not just the list:
+ *   • `problems` per owner counted only what survived the cut, so the headline number lied;
+ *   • duplicate-alt detection below states it "can only be seen with the whole owner in hand",
+ *     and a truncated owner cannot be checked for duplicates at all.
+ *
+ * So the number is now high enough to hold the whole table, and when it IS hit the caller is
+ * told rather than shown a quiet half-truth — see `truncated` in the return value.
+ */
+const HARD_CEILING = 5000;
 export const MODONTY_KEY = "__modonty__";
 export const MODONTY_NAME = "صور مدوّنتي — مقالات وعامة";
 // An image is "done" only when its SEO score reaches the green tier (matches SeoScoreBadge).
@@ -33,6 +50,8 @@ export interface SeoImageRow {
   score: number;
   altText: string | null;
   description: string | null;
+  /** Non-null while the two texts are still a machine draft nobody has edited. */
+  aiDraftedAt: Date | null;
   /** Raw stored fields — the actual values behind the score, for a read-only data view. */
   width: number | null;
   height: number | null;
@@ -62,6 +81,35 @@ export interface TypeCount {
   count: number;
 }
 
+/**
+ * WHAT the work is, not just how much of it there is.
+ *
+ * The الحالة column used to read «25 مشاكل» — a number with no verb. Three images missing
+ * alt text and three whose name collides are the same number and completely different jobs:
+ * one needs writing, the other needs a decision. Counted from `rename.status`, which
+ * `buildSeoImageRow` already resolves per image, so this adds no second source of truth.
+ */
+export interface ProblemBreakdown {
+  /** Nothing to derive a name from — someone (or the AI drafter) must write the alt first. */
+  noAlt: number;
+  /**
+   * Carries `seoDraftedByAiAt` — a machine wrote the text and no person has edited it.
+   *
+   * Counted over ALL the owner's images, not only the ones below the score threshold: a
+   * draft can score well and still be unread, and that is precisely the state the badge
+   * exists to keep visible. Without it the row jumps straight from «اكتب وصف» to «تحتاج
+   * تسمية» the moment the batch finishes, and the fact that a machine wrote it disappears
+   * from the screen — which is how «مؤقت» quietly becomes permanent.
+   */
+  aiDrafted: number;
+  /** Two images of the same owner would land on one name; a human picks which is which. */
+  duplicate: number;
+  /** Has alt, name does not match it yet — the machine can propose, you approve. */
+  ready: number;
+  /** Below the score threshold for some other reason (dimensions, description). */
+  other: number;
+}
+
 export interface SeoImageGroup {
   key: string;
   name: string;
@@ -71,6 +119,8 @@ export interface SeoImageGroup {
   avgScore: number;
   /** Images whose SEO score is below the done threshold (i.e. still need work). */
   problems: number;
+  /** The same `problems` split by what actually has to be done to each. */
+  breakdown: ProblemBreakdown;
   /** How many images of each type (LOGO ×1, GALLERY ×3…), most first. */
   typeCounts: TypeCount[];
 }
@@ -82,6 +132,9 @@ export const MEDIA_SELECT = {
   type: true,
   altText: true,
   description: true,
+  // Set the moment the model writes the two texts, cleared the moment a person edits
+  // them — so it answers both "did a machine write this?" and "may it be renamed yet?".
+  seoDraftedByAiAt: true,
   width: true,
   height: true,
   fileSize: true,
@@ -118,6 +171,7 @@ export type SeoImageMediaRow = MediaRow & {
   bunnyUrl: string | null;
   blurDataURL: string | null;
   description: string | null;
+  seoDraftedByAiAt: Date | null;
   width: number | null;
   height: number | null;
   fileSize: number | null;
@@ -203,6 +257,7 @@ export function buildSeoImageRow(m: SeoImageMediaRow, defaults: ModontyImageDefa
     score,
     altText: m.altText,
     description: m.description,
+    aiDraftedAt: m.seoDraftedByAiAt ?? null,
     width: m.width,
     height: m.height,
     fileSize: m.fileSize,
@@ -219,10 +274,23 @@ export function buildSeoImageRow(m: SeoImageMediaRow, defaults: ModontyImageDefa
   };
 }
 
-export async function loadSeoImageGroups(): Promise<SeoImageGroup[]> {
-  const [media, defaults] = await Promise.all([
-    db.media.findMany({ select: MEDIA_SELECT, take: LIMIT, orderBy: { createdAt: "desc" } }),
+export interface SeoImageGroupsResult {
+  groups: SeoImageGroup[];
+  /** Every media row that exists, counted in the database — never the length of the list. */
+  total: number;
+  /** How many were actually graded. Equals `total` unless the ceiling was hit. */
+  loaded: number;
+  /** True only when rows were left out. The UI must say so; silence here is the old bug. */
+  truncated: boolean;
+}
+
+export async function loadSeoImageGroups(): Promise<SeoImageGroupsResult> {
+  const [media, defaults, total] = await Promise.all([
+    db.media.findMany({ select: MEDIA_SELECT, take: HARD_CEILING, orderBy: { createdAt: "desc" } }),
     loadImageDefaults(),
+    // Counted in the database, not derived from the list above — a count taken from a capped
+    // list is the cap, and it reports itself as the truth.
+    db.media.count(),
   ]);
 
   type PartialGroup = { key: string; name: string; isModonty: boolean; images: SeoImageRow[] };
@@ -254,15 +322,31 @@ export async function loadSeoImageGroups(): Promise<SeoImageGroup[]> {
     }
   }
 
-  return [...groupMap.values()].map((g) => {
+  const groups = [...groupMap.values()].map((g) => {
     const count = g.images.length;
     const avgScore = Math.round(g.images.reduce((s, i) => s + i.score, 0) / count);
-    const problems = g.images.filter((i) => i.score < DONE_THRESHOLD).length;
+    const needsWork = g.images.filter((i) => i.score < DONE_THRESHOLD);
+    const problems = needsWork.length;
+    // Only images that are actually below the bar are split — an image already good enough
+    // may still be `no-alt` for renaming purposes, and counting it here would inflate the
+    // work list with rows the screen calls done.
+    const breakdown: ProblemBreakdown = { noAlt: 0, aiDrafted: 0, duplicate: 0, ready: 0, other: 0 };
+    // Over ALL images, not `needsWork` — see the field's note: a good-scoring draft is
+    // still an unread draft.
+    breakdown.aiDrafted = g.images.filter((i) => i.aiDraftedAt !== null).length;
+    for (const i of needsWork) {
+      if (i.rename.status === "no-alt") breakdown.noAlt++;
+      else if (i.rename.status === "duplicate") breakdown.duplicate++;
+      else if (i.rename.status === "ready") breakdown.ready++;
+      else breakdown.other++;
+    }
     const byType = new Map<string, number>();
     for (const i of g.images) byType.set(i.type, (byType.get(i.type) ?? 0) + 1);
     const typeCounts: TypeCount[] = [...byType.entries()]
       .map(([type, c]) => ({ type, count: c }))
       .sort((a, b) => b.count - a.count || a.type.localeCompare(b.type));
-    return { ...g, count, avgScore, problems, typeCounts };
+    return { ...g, count, avgScore, problems, breakdown, typeCounts };
   });
+
+  return { groups, total, loaded: media.length, truncated: media.length < total };
 }

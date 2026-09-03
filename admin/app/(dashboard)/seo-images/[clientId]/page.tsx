@@ -15,7 +15,7 @@ export default async function SeoImagesClientPage({
   const { clientId } = await params;
   const key = decodeURIComponent(clientId);
 
-  const groups = await loadSeoImageGroups();
+  const { groups } = await loadSeoImageGroups();
   const group = groups.find((g) => g.key === key);
   if (!group) notFound();
 

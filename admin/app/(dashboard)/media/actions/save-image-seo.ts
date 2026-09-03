@@ -215,6 +215,16 @@ export async function saveImageSeo(
         altText: altText?.trim() || null,
         description: description?.trim() || null,
         title: title?.trim() || null,
+        // A person just saved these words, so they are no longer a machine draft: the 🤖
+        // badge comes off and the image becomes eligible for renaming. Scoped to THIS row
+        // by the `where` above — one edit must never clear the flag on the client's other
+        // images, which nobody has read yet.
+        //
+        // Cleared unconditionally rather than only when the text differs: reaching this
+        // action means a human opened the dialog and pressed save on this image, and that
+        // IS the review. Comparing strings would leave the badge on a draft someone read
+        // and judged good enough to keep word for word.
+        seoDraftedByAiAt: null,
         ...renameData,
       },
       select: {

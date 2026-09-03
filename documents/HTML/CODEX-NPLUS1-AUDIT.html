@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>تدقيق N+1 والشلالات — Modonty</title><style>
+:root{--n:#0e065a;--r:#b42318;--o:#b45309;--g:#15803d;--b:#eff6ff;--l:#e2e8f0}*{box-sizing:border-box}body{margin:0;background:#f8fafc;color:#1f2937;font-family:Tahoma,Arial,sans-serif;line-height:1.75}.w{max-width:1420px;margin:auto;padding:28px 20px 70px}header{background:linear-gradient(135deg,#0e065a,#2f208d);color:#fff;border-radius:18px;padding:28px}h1{margin:0;font-size:27px}header p{margin:7px 0 0}.tabs{position:sticky;top:0;padding:11px 0;background:#f8fafc;z-index:2}.tabs a{display:inline-block;background:#e9e8ff;color:#201870;text-decoration:none;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:bold;margin:2px}.box{background:#fff;border:1px solid var(--l);border-radius:15px;padding:23px;margin-top:17px}h2{color:var(--n);margin:0 0 10px;font-size:20px}h3{margin:24px 0 7px;font-size:16px}.path{font-family:Consolas,monospace;direction:ltr;display:inline-block;color:#0f3a75;font-size:12px}.table{overflow:auto}table{border-collapse:collapse;width:100%;min-width:930px;font-size:13px}th,td{padding:9px;border-bottom:1px solid var(--l);text-align:right;vertical-align:top}th{background:#f1f5f9}.tag{font-weight:bold;white-space:nowrap}.r{color:var(--r)}.o{color:var(--o)}.g{color:var(--g)}code{display:block;background:#111827;color:#e5e7eb;border-radius:9px;padding:13px;white-space:pre-wrap;direction:ltr;text-align:left;font:12px/1.55 Consolas,monospace;margin:9px 0}.inline{display:inline;padding:1px 4px}.note{background:#eff6ff;border-right:4px solid #60a5fa;padding:11px;border-radius:7px}.warn{background:#fff7ed;border-right:4px solid #fb923c;padding:11px;border-radius:7px}.ok{background:#f0fdf4;border-right:4px solid #4ade80;padding:11px;border-radius:7px;margin:9px 0}.f{border-top:1px solid var(--l);padding-top:18px;margin-top:18px}@media(max-width:700px){.w{padding:12px}.box{padding:15px}h1{font-size:22px}}</style></head><body><main class="w">
+<header><small>تقرير مستقل عن تدقيق السقوف · قراءة ساكنة فقط · لا تعديل إنتاجي</small><h1>تدقيق استعلامات N+1 والشلالات</h1><p>MODONTY — modonty / console / admin / shared. لا اتصال بقاعدة الإنتاج، ولذلك لا توجد أرقام N مخمّنة.</p></header>
+<nav class="tabs"><a href="#s">الملخص</a><a href="#red">N+1 مؤكد</a><a href="#orange">الشلالات</a><a href="#green">المستبعد</a><a href="#measure">ما لم يُقَس</a></nav>
+
+<section class="box" id="s"><h2>الملخص التنفيذي</h2><p>لم أجد N+1 صفّياً مؤكداً في مسارات الزائر التي فُحصت في <b>modonty</b>: قراءة المقال تعيد استخدام المحتوى المخزّن بين metadata والجسم، والقراءات المستقلة هناك متوازية. النتائج المؤكدة تبدأ في تحليلات العميل، ثم لوحة الأدمن، ثم أفعال صيانة يدوية.</p><div class="table"><table><thead><tr><th>الخطورة</th><th>الموضع</th><th>النمط</th><th>الاستعلامات الفعلية</th><th>من يتأثر</th><th>القياس</th></tr></thead><tbody>
+<tr><td class="tag r">🔴 1</td><td>console / views over time</td><td>await داخل حلقة الأيام</td><td><b>N</b> = 7 أو 30</td><td>مخطط العميل</td><td>غير مقيس</td></tr>
+<tr><td class="tag r">🔴 2</td><td>console / top clicked links</td><td>Promise.all(map → findMany)</td><td><b>1 + N</b></td><td>تحليلات العميل</td><td>غير مقيس</td></tr>
+<tr><td class="tag r">🔴 3</td><td>admin / dashboard alerts</td><td>map → count مرتين</td><td><b>1 + 2N</b></td><td>تنبيه الحصص</td><td>غير مقيس</td></tr>
+<tr><td class="tag r">🔴 4</td><td>admin / subscriber stats</td><td>map → findUnique</td><td><b>1 + N</b></td><td>لوحة الفريق</td><td>غير مقيس</td></tr>
+<tr><td class="tag r">🔴 5</td><td>admin / engagement stats</td><td>map → findUnique</td><td><b>1 + N</b>، N≤3</td><td>لوحة الفريق</td><td>غير مقيس</td></tr>
+<tr><td class="tag r">🔴 6</td><td>admin / breadcrumb</td><td>for…of + Server Action</td><td><b>N</b> متسلسلة</td><td>مسار الأدمن</td><td>غير مقيس</td></tr>
+<tr><td class="tag r">🔴 7</td><td>admin / link core media</td><td>update داخل حلقتين</td><td><b>2 + N1 + N2</b></td><td>ترحيل يدوي</td><td>غير مقيس</td></tr>
+<tr><td class="tag r">🔴 8</td><td>admin / AI prompts + intake</td><td>findUnique ثم write داخل حلقات</td><td><b>N إلى 2N</b></td><td>تهيئة يدوية</td><td>غير مقيس</td></tr>
+<tr><td class="tag o">🟠</td><td>admin / SEO image row</td><td>شلال مستقل</td><td><b>2</b> متتابعان</td><td>فتح صف صورة</td><td>غير مقيس</td></tr>
+</tbody></table></div><p class="warn">الترتيب: العميل أولاً، ثم شاشات الفريق، ثم الصيانة اليدوية. لم تُصنّف علاقات Prisma include/select خطأً: في Prisma+Mongo هي عدد ثابت لكل مستوى علاقة، لا استعلام لكل صف.</p></section>
+
+<section class="box" id="red"><h2>🔴 N+1 مؤكد — مع diff مقترح فقط</h2>
+<article class="f"><h3>1. عدّ مشاهدات كل يوم</h3><p><span class="path">console/app/(dashboard)/dashboard/helpers/dashboard-queries.ts:519–534</span> · <b>فعلياً N</b> استعلامات count: حلقة واحدة لكل يوم في مدى 7 أو 30. المستخدم اليوم ينتظر 7/30 رحلة DB؛ بلا النمط ستكون رحلة واحدة ثم تجميع محلي.</p><code>for (let d = days - 1; d &gt;= 0; d--) {
+  const count = await db.articleView.count({
+    where: { article: { clientId }, createdAt: { gte: day, lt: nextDay } },
+  });
+  result.push({ date: day.toISOString().slice(0, 10), views: count });
+}</code><p><b>البديل:</b> findMany واحد لفترة الرسم ثم Map حسب التاريخ.</p><code>@@ getViewsOverTime
+- for each day: await db.articleView.count({ where: dayWindow })
++ const rows = await db.articleView.findMany({
++   where: { article: { clientId }, createdAt: { gte: firstDay, lt: tomorrow } },
++   select: { createdAt: true },
++ });
++ const byDay = new Map();
++ for (const row of rows) increment(byDay, isoDay(row.createdAt));
++ return daysArray.map(date =&gt; ({ date, views: byDay.get(date) ?? 0 }));</code></article>
+
+<article class="f"><h3>2. المستخدمون الفريدون لكل رابط</h3><p><span class="path">console/app/(dashboard)/dashboard/analytics/helpers/link-clicks-queries.ts:32–48</span> · <b>1 + N</b>: groupBy واحد ثم findMany مستقل لكل رابط فريد. Promise.all ليس علاجاً؛ ما زال N استعلاماً (وقد يضغط القاعدة دفعة واحدة).</p><code>const linksWithUniqueUsers = await Promise.all(
+  linkClicks.map(async (link) =&gt; {
+    const uniqueUsers = await db.articleLinkClick.findMany({
+      where: { article: { clientId }, linkUrl: link.linkUrl, createdAt: { gte: since } },
+      select: { userId: true, sessionId: true }, distinct: ["sessionId"],
+    });
+    return { ...link, uniqueUsers: uniqueUsers.length };
+  })
+);</code><p><b>البديل:</b> قراءة ثانية واحدة لجميع النقرات في الفترة، ثم Set للجلسات/المستخدمين حسب linkUrl. الناتج: <b>2 ثابتة</b>.</p><code>@@ getTopClickedLinks
+- await Promise.all(linkClicks.map(link =&gt; db.articleLinkClick.findMany(...linkUrl...)))
++ const sessions = await db.articleLinkClick.findMany({
++   where: { article: { clientId }, createdAt: { gte: since } },
++   select: { linkUrl: true, userId: true, sessionId: true },
++ });
++ const uniqueByUrl = Map&lt;linkUrl, Set&lt;sessionId-or-userId&gt;&gt;;
++ const linksWithUniqueUsers = linkClicks.map(link =&gt; ({
++   ...link, clicks: link._count.id, uniqueUsers: uniqueByUrl.get(link.linkUrl)?.size ?? 0,
++ }));</code></article>
+
+<article class="f"><h3>3. عدّ حصة النشر لكل عميل مرشّح</h3><p><span class="path">admin/app/(dashboard)/actions/dashboard-actions.ts:249–286</span> · <b>1 + 2N</b> فوق الاستعلامات السابقة: published وscheduled count لكل عميل قريب من الحد.</p><code>const clientsAtLimitWithCounts = await Promise.all(
+  clientsAtLimit.map(async (client) =&gt; {
+    const [publishedThisMonth, scheduledThisMonth] = await Promise.all([
+      db.article.count({ where: { clientId: client.id, status: "PUBLISHED", ... } }),
+      db.article.count({ where: { clientId: client.id, status: "SCHEDULED", ... } }),
+    ]);
+  })
+);</code><p><b>البديل:</b> groupBy ثابت على clientId/status لكل ids المرشحة، ثم Map. يلزم الحفاظ على نافذتي التاريخ المختلفتين في where/OR كما في المنطق الحالي.</p><code>@@ getDashboardAlerts
+- clientsAtLimit.map(client =&gt; two db.article.count calls)
++ const ids = clientsAtLimit.map(c =&gt; c.id);
++ const rows = await db.article.groupBy({
++   by: ["clientId", "status"],
++   where: { clientId: { in: ids }, status: { in: ["PUBLISHED", "SCHEDULED"] }, OR: [publishedWindow, scheduledWindow] },
++   _count: { _all: true },
++ });
++ const counts = Map keyed by clientId + status;
++ const clientsAtLimitWithCounts = clientsAtLimit.map(client =&gt; use counts map);</code></article>
+
+<article class="f"><h3>4. اسم العميل لكل مجموعة اشتراكات</h3><p><span class="path">admin/app/(dashboard)/actions/dashboard-actions.ts:437–449</span> · <b>1 + N</b>: groupBy clientId ثم findUnique باسم العميل لكل نتيجة.</p><code>const clientSubscriberCounts = await Promise.all(
+  byClient.map(async (item) =&gt; {
+    const client = await db.client.findUnique({ where: { id: item.clientId }, select: { name: true } });
+    return { clientId: item.clientId, clientName: client?.name || "Unknown", count: item._count };
+  })
+);</code><p><b>البديل:</b> findMany واحد بـ id in ids ثم Map.</p><code>@@ getSubscriberStats
+- await Promise.all(byClient.map(item =&gt; db.client.findUnique({ where: { id: item.clientId } })))
++ const ids = byClient.map(item =&gt; item.clientId).filter(Boolean);
++ const clients = await db.client.findMany({ where: { id: { in: ids } }, select: { id: true, name: true } });
++ const nameById = new Map(clients.map(c =&gt; [c.id, c.name]));
++ const clientSubscriberCounts = byClient.map(item =&gt; ({ ...item, clientName: nameById.get(item.clientId) ?? "Unknown" }));</code></article>
+
+<article class="f"><h3>5. عناوين أكثر المقالات مشاركة</h3><p><span class="path">admin/app/(dashboard)/actions/dashboard-actions.ts:579–589</span> · <b>1 + N</b>، لكن N≤3 بسبب take:3. هي بنية N+1 مؤكدة لكنها محدودة الأثر.</p><code>topSharedArticles.filter(s =&gt; s.articleId !== null).map(async s =&gt; {
+  const article = await db.article.findUnique({ where: { id: s.articleId }, select: { id: true, title: true } });
+})</code><p><b>البديل:</b> ids مرة واحدة، findMany id in ids، ثم Map بالـid.</p><code>@@ getVisitorEngagementStats
+- Promise.all(topSharedArticles.map(s =&gt; db.article.findUnique(...)))
++ const ids = topSharedArticles.flatMap(s =&gt; s.articleId ? [s.articleId] : []);
++ const articles = await db.article.findMany({ where: { id: { in: ids } }, select: { id: true, title: true } });
++ const articleById = new Map(articles.map(a =&gt; [a.id, a]));
++ const topSharedWithTitles = topSharedArticles.map(s =&gt; ({ ...s, article: articleById.get(s.articleId) }));</code></article>
+
+<article class="f"><h3>6. أسماء Breadcrumb تتوالى عبر Server Action</h3><p><span class="path">admin/components/admin/breadcrumb.tsx:46–56</span> + <span class="path">admin/components/admin/breadcrumb-actions.ts:28–64</span> · <b>N</b> طلبات/قراءات متسلسلة. كل getEntityName ينتهي باستعلام get-by-id مختلف حسب النوع؛ هنا N+1 وشلال في آن.</p><code>for (const { type, id, cacheKey } of entityRequests) {
+  const name = await getEntityName(type, id);
+  if (name) names[cacheKey] = name;
+}</code><p><b>البديل:</b> Action دفعي واحد: يجمع ids حسب النوع، ويشغل findMany id in ids واحداً لكل نوع، ثم يعيد Record. Promise.all داخل المكوّن وحده يعالج الزمن لا عدد الاستعلامات.</p><code>@@ breadcrumb-actions
+- getEntityName(type, id) // switch -&gt; one getById each time
++ getEntityNames(requests) {
++   group request ids by normalized type;
++   await Promise.all([
++     db.article.findMany({ where: { id: { in: articleIds } }, select: { id: true, title: true } }),
++     db.client.findMany({ where: { id: { in: clientIds } }, select: { id: true, name: true } }),
++     // نفس المبدأ للـcategory/tag/industry/media/user
++   ]);
++   return Record keyed by type + id;
++ }
+@@ breadcrumb
+- for (...) await getEntityName(...)
++ const names = await getEntityNames(entityRequests);</code></article>
+
+<article class="f"><h3>7. ترحيل orphan/platform media</h3><p><span class="path">admin/app/(dashboard)/bunny-migration/actions/link-core-media.ts:171–185</span> · عند apply=true: قراءتان ثم <b>N1+N2</b> تحديثات متسلسلة. هذا فعل يدوي، لا مسار زائر، لكنه المثال المعطى صراحةً وله بديل updateMany متجانس.</p><code>for (const o of orphans) {
+  if (apply) await db.media.update({ where: { id: o.id }, data: { clientId: coreId } });
+}
+for (const r of platformRows) {
+  if (apply) await db.media.update({ where: { id: r.id }, data: { clientId: coreId, scope: "CLIENT" } });
+}</code><code>@@ link-core-media
+- each orphan: db.media.update({ id })
++ await db.media.updateMany({ where: { clientId: null, scope: { not: "PLATFORM" } }, data: { clientId: coreId } });
+- each platform row: db.media.update({ id })
++ await db.media.updateMany({ where: { scope: "PLATFORM" }, data: { clientId: coreId, scope: "CLIENT" } });
++ // احتفظ بالحلقات فقط لبناء عناصر الخطة في الذاكرة.</code></article>
+
+<article class="f"><h3>8. seed AI prompts وseed intake</h3><p><span class="path">admin/app/(dashboard)/database/actions/seed-ai-prompts.ts:31–67</span> و<span class="path">admin/app/(dashboard)/database/actions/seed-intake.ts:49–103</span> · prompts = <b>N + حتى N كتابة</b>. intake = Nsections + Nquestions + كتابات، مع حلقة متداخلة. كلاهما تشغيل يدوي.</p><code>for (const p of PROMPT_DEFAULTS) {
+  const existing = await db.aiPrompt.findUnique({ where: { key: p.key } });
+  if (!existing) await db.aiPrompt.create({ data: ... });
+  if (stale) await db.aiPrompt.update({ where: { key: p.key }, data: ... });
+}</code><p><b>البديل:</b> findMany key in كل المفاتيح ثم Map؛ ولـintake اقرأ الأقسام/الأسئلة الموجودة دفعة لكل formId قبل حلقات البناء. تبقى الكتابات المختلفة فردية أو createMany حيث يسمح المخطط.</p><code>@@ seed-ai-prompts
+- for each default: findUnique({ key })
++ const rows = await db.aiPrompt.findMany({
++   where: { key: { in: PROMPT_DEFAULTS.map(p =&gt; p.key) } }, select: { id: true, key: true, title: true, surface: true, onEmpty: true, provider: true, app: true },
++ });
++ const existingByKey = new Map(rows.map(row =&gt; [row.key, row]));
++ for (const p of PROMPT_DEFAULTS) {
++   const existing = existingByKey.get(p.key);
++   // create/update only: no read per item
++ }</code></article>
+</section>
+
+<section class="box" id="orange"><h2>🟠 الشلالات</h2><article class="f"><h3>صف SEO لصورة واحدة</h3><p><span class="path">admin/app/(dashboard)/media/actions/get-seo-image-row.ts:23–26</span> · N=1، وليس N+1. بعد فحص session، قراءة media وloadImageDefaults مستقلتان؛ انتظار الثانية بعد الأولى يجعل الزمن متتالياً.</p><code>- const media = await db.media.findUnique({ where: { id: mediaId }, select: MEDIA_SELECT });
+- if (!media) return null;
+- const defaults = await loadImageDefaults();
++ const [media, defaults] = await Promise.all([
++   db.media.findUnique({ where: { id: mediaId }, select: MEDIA_SELECT }),
++   loadImageDefaults(),
++ ]);
++ if (!media) return null;</code></article><article class="f"><h3>مسارات الزائر المستبعدة</h3><p>لا شلال مستقل مؤكد في صفحة المقال أو العميل: getRelatedClients يحتاج client.id؛ صورة المنصة الافتراضية للمقال لا تُقرأ إلا إن غابت الصورة؛ واستعلامات بيانات المقال الرئيسية تستخدم Promise.all. لا يصح تحويل هذه إلى توازي.</p></article></section>
+
+<section class="box" id="green"><h2>🟢 ما ليس خطأً في هذا التدقيق</h2>
+<div class="ok"><b>علاقات Prisma:</b> include/select لعلاقة في Prisma+Mongo ليست N+1؛ تصدر استعلاماً ثابتاً لكل مستوى علاقة، لا لكل صف.</div>
+<div class="ok"><b>المقال:</b> <span class="path">modonty/app/(site)/articles/[slug]/page.tsx:109–115</span> يقرأ getArticleContentBySlug في metadata، وgetArticleBySlugMinimal يصل إلى المصدر المخزّن نفسه. <span class="path">.../get-article-content-by-slug.ts:14–16</span> يحمل use cache؛ ليست قراءة مكررة بلا cache.</div>
+<div class="ok"><b>بيانات صفحة العميل:</b> <span class="path">modonty/app/(partner)/clients/[slug]/helpers/client-page-data.ts:99</span> يستخدم React cache. لا أبلغ عن استخدامه المتكرر كاستعلام مكرر في نفس الطلب.</div>
+<div class="ok"><b>getServicesCard:</b> <span class="path">modonty/app/(site)/(homepage)/data/get-services-card.ts:21–31</span> متتابع صحيح؛ groupBy يحتاج preset ids الناتجة من الاستعلام الأول.</div>
+<div class="ok"><b>محاولات slug حتى 5 مرات:</b> في console reels/gallery retry محدود لتفادي التصادم، وليس قائمة صفوف تجعل N غير محدود.</div>
+</section>
+
+<section class="box" id="measure"><h2>ما لم يُقَس</h2><p>لم يُنفّذ التقرير أي استعلام إنتاجي أو استخدام بيانات اعتماد؛ لذلك <b>كل N الفعلية غير مقيسة</b> ولا يوجد تخمين.</p><ul><li>links: N هو عدد مجموعات الرابط الفريدة خلال الفترة.</li><li>alerts/subscribers: N هو عدد clients الخارج من group/list.</li><li>breadcrumb: N هو عدد ids في المسار.</li><li>media/seeds: N هو عدد الصفوف أو التعريفات عند التشغيل.</li><li>أرقام 7 و30 في مخطط العميل ثابتة من نوع الدالة، لا قياساً لإنتاج.</li></ul><p class="note">القياس اللاحق الصحيح: Prisma query log أو trace APM آمن، مع تسجيل عدد المجموعات ومدة كل استعلام. لا تستخدم أرقاماً من هذا التقرير كأنها قياسات إنتاج.</p></section>
+<footer>الدليل الخام موجود داخل كتل code، وكل diff أعلاه مقترح فقط ولم يطبّق. لم يُعدل كود إنتاج أو ملفات المهام المحمية.</footer>
+</main></body></html>
