@@ -7,7 +7,7 @@ import { Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
-import { restoreTask } from "../actions/task-actions";
+import { restoreTask } from "@/lib/tasks/task-actions";
 
 /**
  * The only client island on the archive screen.

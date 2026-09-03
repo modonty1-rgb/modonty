@@ -74,6 +74,7 @@ import {
   Bug,
   ScrollText,
   Wrench,
+  Settings2,
   Megaphone,
   Briefcase,
   UserPlus,
@@ -134,14 +135,15 @@ interface MenuGroup {
   title: string;
   icon: IconComponent;
   items: GroupChild[];
+  section: "Core work" | "Business" | "Site" | "System";
   defaultOpen?: boolean;
 }
 
-const menuGroups: MenuGroup[] = [
+const rawMenuGroups: MenuGroup[] = [
   {
-    title: "Accounts",
+    title: "Revenue",
     icon: Wallet,
-    defaultOpen: true,
+    section: "Business",
     items: [
       { icon: Wallet, label: "Accounts", href: "/clients/accounts" },
       { icon: TrendingUp, label: "Sales Report", href: "/clients/sales-report" },
@@ -151,6 +153,7 @@ const menuGroups: MenuGroup[] = [
   {
     title: "Clients",
     icon: Briefcase,
+    section: "Core work",
     defaultOpen: false,
     items: [
       { icon: Users2, label: "All Clients", href: "/clients", exact: true },
@@ -165,6 +168,7 @@ const menuGroups: MenuGroup[] = [
   {
     title: "Articles",
     icon: Newspaper,
+    section: "Core work",
     defaultOpen: false,
     items: [
       { icon: FileText, label: "All Articles", href: "/articles", exact: true },
@@ -217,6 +221,7 @@ const menuGroups: MenuGroup[] = [
   {
     title: "Media",
     icon: Images,
+    section: "Core work",
     defaultOpen: false,
     items: [
       { icon: Images, label: "Media Library", href: "/media" },
@@ -231,6 +236,7 @@ const menuGroups: MenuGroup[] = [
   {
     title: "Reels",
     icon: Clapperboard,
+    section: "Core work",
     defaultOpen: false,
     items: [
       { icon: ListChecks, label: "Pending", href: "/reels/pending" },
@@ -252,7 +258,8 @@ const menuGroups: MenuGroup[] = [
   // costing a slot in a rail that is already eleven groups deep.
   {
     title: "Management",
-    icon: Users2,
+    icon: UserCheck,
+    section: "Core work",
     defaultOpen: false,
     items: [
       // The existing screen, not a second one: `/users` already creates, edits,
@@ -264,6 +271,7 @@ const menuGroups: MenuGroup[] = [
   {
     title: "Analytics & Channels",
     icon: LineChart,
+    section: "Business",
     defaultOpen: false,
     items: [
       { icon: GoogleSearchConsoleIcon, label: "Search Console", href: "/search-console" },
@@ -276,6 +284,7 @@ const menuGroups: MenuGroup[] = [
   {
     title: "Modonty",
     icon: BookOpen,
+    section: "Site",
     defaultOpen: false,
     items: [
       {
@@ -321,7 +330,8 @@ const menuGroups: MenuGroup[] = [
   // موضع البند في القائمة. وبند «المقالات» يُضاف مع بناء صفحته (JT2).
   {
     title: "Audience",
-    icon: Users2,
+    icon: Users,
+    section: "Site",
     defaultOpen: false,
     items: [
       { icon: Users, label: "Members", href: "/members" },
@@ -332,7 +342,8 @@ const menuGroups: MenuGroup[] = [
   },
   {
     title: "System",
-    icon: Wrench,
+    icon: Settings2,
+    section: "System",
     defaultOpen: false,
     items: [
       // «Staff» انتقل إلى مجموعة Management (خالد، ٢ سبتمبر ٢٠٢٦). بندٌ في مكانين
@@ -354,9 +365,23 @@ const menuGroups: MenuGroup[] = [
 ];
 
 const topItems: MenuItem[] = [
+  { icon: LayoutGrid, label: "Dashboard", href: "/", exact: true },
   // Traffic analytics stays prominent — it's the daily thermometer, always one click away.
   { icon: BarChart3, label: "Traffic Analytics", href: "/analytics" },
 ];
+
+const sectionOrder: Record<MenuGroup["section"], number> = {
+  "Core work": 0,
+  Business: 1,
+  Site: 2,
+  System: 3,
+};
+
+// Keep operational work at the top. The source declarations stay grouped by
+// domain, while the rendered order reflects how an admin moves through a day.
+const menuGroups = [...rawMenuGroups].sort(
+  (a, b) => sectionOrder[a.section] - sectionOrder[b.section],
+);
 
 function NavLink({
   item,
@@ -595,13 +620,14 @@ export function Sidebar({ articleStatusCounts }: { articleStatusCounts?: Article
         <div className="mx-2 border-t border-border/50 mb-3" />
 
         {/* Collapsible groups — accordion behavior: only one open at a time */}
-        {menuGroups.map((group) => {
+        {menuGroups.map((group, index) => {
           const GroupIcon = group.icon;
+          const startsSection = index === 0 || menuGroups[index - 1].section !== group.section;
 
           if (collapsed) {
             return (
               <div key={group.title} className="space-y-0.5">
-                <div className="mx-2 mb-1 border-t border-border/30" />
+                {startsSection && index > 0 && <div className="mx-2 my-2 border-t border-border/50" />}
                 {flattenItems(group.items).map((item) => (
                   <NavLink
                     key={item.href}
@@ -617,26 +643,32 @@ export function Sidebar({ articleStatusCounts }: { articleStatusCounts?: Article
 
           const isOpen = openGroupTitle === group.title;
           return (
-            <Collapsible
-              key={group.title}
-              open={isOpen}
-              onOpenChange={(open) => setOpenGroupTitle(open ? group.title : null)}
-            >
-              <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-1.5 rounded-md text-[13px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors group">
-                <div className="flex items-center gap-2.5">
-                  <GroupIcon className="h-4 w-4 shrink-0" />
-                  <span>{group.title}</span>
-                </div>
-                <ChevronDown className="h-3.5 w-3.5 shrink-0 transition-transform group-data-[state=open]:rotate-180" />
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <GroupItems
-                  items={group.items}
-                  pathname={pathname}
-                  statusCounts={articleStatusCounts}
-                />
-              </CollapsibleContent>
-            </Collapsible>
+            <div key={group.title} className={startsSection && index > 0 ? "mt-3" : ""}>
+              {startsSection && (
+                <p className="px-3 pb-1 pt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/70">
+                  {group.section}
+                </p>
+              )}
+              <Collapsible
+                open={isOpen}
+                onOpenChange={(open) => setOpenGroupTitle(open ? group.title : null)}
+              >
+                <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-1.5 rounded-md text-[13px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors group">
+                  <div className="flex items-center gap-2.5">
+                    <GroupIcon className="h-4 w-4 shrink-0" />
+                    <span>{group.title}</span>
+                  </div>
+                  <ChevronDown className="h-3.5 w-3.5 shrink-0 transition-transform group-data-[state=open]:rotate-180" />
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <GroupItems
+                    items={group.items}
+                    pathname={pathname}
+                    statusCounts={articleStatusCounts}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
           );
         })}
       </nav>

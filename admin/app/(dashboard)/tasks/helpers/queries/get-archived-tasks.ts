@@ -15,12 +15,12 @@ export interface ArchivedTask extends BoardTask {
  * archived rows out at the database, which is the point — pulling them back
  * into memory only to hide them would make the board pay for the archive.
  */
-export const getArchivedTasks = cache(async (): Promise<ArchivedTask[]> => {
+export const getArchivedTasks = cache(async (assigneeId: string): Promise<ArchivedTask[]> => {
   const rows = await db.task.findMany({
     // `isSet: true` — an ARCHIVED row is one where the field exists AND holds a
     // date. `NOT: { archivedAt: null }` would be the mirror of the board's bug:
     // in Mongo it also matches rows where the field is merely absent.
-    where: { archivedAt: { isSet: true, not: null } },
+    where: { assigneeId, archivedAt: { isSet: true, not: null } },
     select: {
       id: true,
       title: true,

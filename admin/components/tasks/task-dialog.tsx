@@ -24,8 +24,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
-import { createTask, updateTask } from "../actions/task-actions";
-import type { BoardTask } from "../helpers/queries";
+import { createTask, updateTask } from "@/lib/tasks/task-actions";
+import type { BoardTask } from "@/lib/tasks/task-types";
 import {
   TASK_PRIORITIES,
   TASK_PRIORITY_META,
@@ -34,6 +34,12 @@ import {
 } from "@/lib/tasks/task-config";
 
 const UNASSIGNED = "__none__";
+
+export interface TaskAssigneeOption {
+  id: string;
+  name: string | null;
+  email: string | null;
+}
 
 /** `Date` → `yyyy-mm-dd` in LOCAL time. `toISOString()` would shift the day for
  *  anyone east of UTC, which is everyone on this team. */
@@ -72,10 +78,13 @@ export function TaskDialog({
   task,
   createIn,
   onClose,
+  assignees = [],
 }: {
   task: BoardTask | null;
   createIn: TaskStatusKey | null;
   onClose: () => void;
+  /** Admin-only callers pass staff here to assign a new task on someone else's board. */
+  assignees?: TaskAssigneeOption[];
 }) {
   const router = useRouter();
   const { toast } = useToast();
@@ -84,6 +93,7 @@ export function TaskDialog({
 
   const open = Boolean(task || createIn);
   const isEdit = Boolean(task);
+  const canAssign = !isEdit && assignees.length > 0;
 
   useEffect(() => {
     if (task) {
@@ -135,7 +145,9 @@ export function TaskDialog({
           <DialogDescription>
             {isEdit
               ? "Change what you need and save."
-              : "Write what is needed, who owns it and when it is due."}
+              : canAssign
+                ? "Choose who owns this task, then set its priority and due date."
+                : "Write what is needed and when it is due."}
           </DialogDescription>
         </DialogHeader>
 
@@ -163,10 +175,26 @@ export function TaskDialog({
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            {/* No assignee field anywhere — Khalid, 2026-09-02. A task belongs to
-                whoever wrote it: the server stamps the owner from the session on
-                create, and editing carries that owner through untouched rather
-                than offering to hand the work to someone else. */}
+            {canAssign && (
+              <div className="col-span-2 space-y-1.5">
+                <Label htmlFor="task-assignee">Assign to</Label>
+                <Select
+                  value={form.assigneeId}
+                  onValueChange={(v) => set("assigneeId", v)}
+                >
+                  <SelectTrigger id="task-assignee">
+                    <SelectValue placeholder="Choose a user" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {assignees.map((assignee) => (
+                      <SelectItem key={assignee.id} value={assignee.id}>
+                        {assignee.name?.trim() || assignee.email || "No name"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             <div className="space-y-1.5">
               <Label htmlFor="task-due">Due date</Label>
@@ -209,7 +237,10 @@ export function TaskDialog({
           <Button variant="outline" onClick={onClose} disabled={isPending}>
             Cancel
           </Button>
-          <Button onClick={submit} disabled={isPending || form.title.trim().length < 3}>
+          <Button
+            onClick={submit}
+            disabled={isPending || form.title.trim().length < 3 || (canAssign && form.assigneeId === UNASSIGNED)}
+          >
             {isPending ? "Saving…" : isEdit ? "Save" : "Add"}
           </Button>
         </DialogFooter>

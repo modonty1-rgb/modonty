@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { getTaskCounts } from "./helpers/queries";
+import { auth } from "@/lib/auth";
 
 export const metadata = { title: "Tasks" };
 
@@ -13,7 +14,11 @@ export const metadata = { title: "Tasks" };
  * the strip repeated four numbers that were six inches below it.
  */
 export default async function TasksLayout({ children }: { children: ReactNode }) {
-  const counts = await getTaskCounts();
+  const session = await auth();
+  const userId = (session?.user as { id?: string } | undefined)?.id;
+  if (!userId) return null;
+
+  const counts = await getTaskCounts(userId);
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-3 p-4 sm:p-6">

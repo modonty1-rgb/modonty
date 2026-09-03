@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { getArchivedTasks } from "../helpers/queries";
 import { TASK_PRIORITY_META, TASK_STATUS_META } from "@/lib/tasks/task-config";
 import { RestoreTaskButton } from "../components/restore-task-button";
+import { auth } from "@/lib/auth";
 
 const dateFmt = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
@@ -21,7 +22,11 @@ const dateFmt = new Intl.DateTimeFormat("en-GB", {
  * names the column it will return to, so restoring holds no surprise.
  */
 export default async function ArchivedTasksPage() {
-  const tasks = await getArchivedTasks();
+  const session = await auth();
+  const userId = (session?.user as { id?: string } | undefined)?.id;
+  if (!userId) return null;
+
+  const tasks = await getArchivedTasks(userId);
 
   if (tasks.length === 0) {
     return (

@@ -13,8 +13,8 @@ export type TaskCounts = Record<TaskStatusKey, number> & { total: number };
  * number on the header and the cards under it, so the header can never announce
  * a count the column does not show.
  */
-export const getTaskCounts = cache(async (): Promise<TaskCounts> => {
-  const board = await getBoardTasks();
+export const getTaskCounts = cache(async (assigneeId: string): Promise<TaskCounts> => {
+  const board = await getBoardTasks(assigneeId);
   const counts = Object.fromEntries(TASK_STATUSES.map((s) => [s, board[s].length])) as Record<
     TaskStatusKey,
     number

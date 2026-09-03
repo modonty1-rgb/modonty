@@ -115,6 +115,20 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
   <td class="n" style="color:var(--red)">🟥 كود</td>
   <td class="n">modonty</td>
 </tr>
+<tr>
+  <td class="n">2</td>
+  <td class="n">LCP-ARTICLE</td>
+  <td>صفحة المقال بتاخد <b>٦٫٥ ثانية</b> لأول محتوى، وعنصر الـ<code>LCP</code> هو <b><code>H1</code> نصّ لا صورة</b> — يعني الصفحة نفسها بطيئة في الرسم مش صورة تقيلة. مقيس على الإنتاج بواجهة <code>largest-contentful-paint</code> الرسمية. <b>البطاقة تحت الجدول.</b></td>
+  <td class="n" style="color:var(--red)">🟥 كود</td>
+  <td class="n">modonty</td>
+</tr>
+<tr>
+  <td class="n">3</td>
+  <td class="n">CLS-GAP</td>
+  <td>Clarity يقول <code>CLS = 0.54</code> على مستخدمين حقيقيين، وقياسي المعملي على خمس صفحات رجّع <code>0.0007–0.0342</code> — كلها «جيّد». <b>التناقض مفتوح ولم يُحسم</b>، ومحجوب على مفتاح PageSpeed أو جلسة Clarity جديدة.</td>
+  <td class="n" style="color:var(--green)">🟩 قياس</td>
+  <td class="n">modonty</td>
+</tr>
 
 
 
@@ -122,6 +136,58 @@ ol.step li.doing .badge{display:inline-block;background:var(--accent);color:#062
 
 
 </table></div>
+
+<div class="card a">
+<h3>LCP-ARTICLE · المقال ٦٫٥ ثانية لأول محتوى — <span style="color:var(--red)">مفتوح</span></h3>
+
+<p style="margin:0 0 10px"><b>المصدر:</b> Microsoft Clarity، مشروع مدونتي، آخر ٣٠ يوماً — ١٬٤٢٩ جلسة. ثم قياس مباشر على الإنتاج بواجهات المتصفّح الرسمية.</p>
+
+<p style="margin:0 0 6px"><b>ما قاله الميدان (Clarity · ٨٦٤ مشاهدة صفحة):</b></p>
+<div class="ev">الدرجة الكلّية: 61/100   (٢١٫٤٪ جيّد · ٥٠٫٢٪ يحتاج تحسين · ٢٨٫٤٪ ضعيف)
+LCP 5.2s   ضعيف        الحدّ الرسمي: أقل من 2.5s
+CLS 0.54   ضعيف جداً    الحدّ الرسمي: 0.1 جيّد · فوق 0.25 ضعيف
+INP 360ms  يحتاج تحسين  الحدّ الرسمي: أقل من 200ms
+الجوّال ≈ ٥٩٪ من الجلسات (Chrome Mobile 42.48٪ · Safari 10.85٪ · Google App 5.32٪)</div>
+
+<p style="margin:12px 0 6px"><b>وما قاسته أنا على الإنتاج</b> — <code>PerformanceObserver</code> على <code>largest-contentful-paint</code> و<code>layout-shift</code>، عرض ٣٩٠ بكسل:</p>
+<div class="scrollx"><table>
+<tr><th>الصفحة</th><th>LCP</th><th>عنصر LCP</th><th>CLS مقيس</th></tr>
+<tr><td>مقال «اليوم الوطني»</td><td class="n" style="color:var(--red)">6.5s</td><td class="n">H1 — نصّ</td><td class="n">0.0007</td></tr>
+<tr><td>الرئيسية <code>/</code></td><td class="n">3.1s</td><td class="n">IMG</td><td class="n">0.0342</td></tr>
+<tr><td><code>/clients</code></td><td class="n">2.3s</td><td class="n">IMG</td><td class="n">0.0008</td></tr>
+<tr><td><code>/about</code></td><td class="n">0.8s</td><td class="n">P — نصّ</td><td class="n">0.0011</td></tr>
+<tr><td>صفحة عميل <code>dawi-smile-elite</code></td><td class="n">1.0s</td><td class="n">P — نصّ</td><td class="n">0.0008</td></tr>
+</table></div>
+
+<p style="margin:12px 0 0"><b>الدلالة:</b> عنصر الـ<code>LCP</code> في المقال <b>عنوان نصّي لا صورة</b>. يعني التأخير مش في تحميل صورة تقيلة — الصفحة نفسها بتاخد ٦٫٥ ثانية قبل ما ترسم عنوانها. وده أخطر صفحة لأنها <b>مدخل جوجل</b>: ١٥٨ مشاهدة في ٣٠ يوماً.</p>
+
+<p style="margin:10px 0 0"><b>إيش يقفله؟</b> عنصر <code>LCP</code> نصّي يظهر تحت ٢٫٥ ثانية على نفس القياس.</p>
+
+<div class="ev">مفتوح · قيس ٢ سبتمبر ٢٠٢٦ على www.modonty.com (الإنتاج)</div>
+</div>
+
+<div class="card a">
+<h3>CLS-GAP · الميدان يقول 0.54 والمعمل يقول 0.03 — <span style="color:var(--amber)">تناقض غير محسوم</span></h3>
+
+<p style="margin:0 0 10px"><b>الرقمان مقيسان، والاتنان ما يتفقوش:</b></p>
+<div class="ev">Clarity (مستخدمون حقيقيون · 864 مشاهدة):  CLS = 0.54   ← «ضعيف جداً»
+قياسي المعملي (5 صفحات · نت سريع):        CLS = 0.0007 – 0.0342   ← كلها «جيّد»
+
+معيار جوجل الرسمي (web.dev/articles/cls):
+  جيّد ≤ 0.1  ·  يحتاج تحسين 0.1–0.25  ·  ضعيف > 0.25
+  ويُقاس عند المئين الـ75 من تحميلات المستخدمين الحقيقيين.</div>
+
+<p style="margin:12px 0 6px"><b>أكبر قفزة مسكتها</b> — على الرئيسية:</p>
+<div class="ev">A.group.flex.items-center.gap-3   «اسأل مودو · اكتب احتياجك وسأرشدك…»
+  يتحرك dy = −691 بكسل عند 799ms   ·   قيمتها 0.0168</div>
+<p style="margin:6px 0 0">قيمتها في الحساب صغيرة، لكنها بصرياً <b>قفزة ٦٩١ بكسل</b> — والزائر اللي كان بيضغط وقتها ضغطته وقعت على فراغ.</p>
+
+<p style="margin:12px 0 6px"><b>ليش التناقض متوقّع ولا يُحسم بالتخمين:</b> قياسي على شبكة سريعة وجهاز قوي، وClarity يقيس زوّاراً حقيقيين ٥٩٪ منهم على الجوّال. محاولة خنق الشبكة عبر <code>CDP</code> رجعت <code>Not allowed</code> لأن بلاي رايت موصول بالإضافة، و<code>PageSpeed API</code> رجعت <code>429</code> بلا مفتاح.</p>
+
+<p style="margin:12px 0 0"><b>محجوب على واحد من اثنين:</b> مفتاح <code>PageSpeed API</code> (يعطي CrUX لكل صفحة + Lighthouse مخنوق)، أو جلسة Clarity جديدة لفتح تبويب <code>URL performance</code> اللي يقسّم الـ<code>CLS</code> على الصفحات.</p>
+
+<div class="ev">مفتوح · جلسة Clarity انتهت أثناء الفحص: «Your session has expired»</div>
+</div>
 
 <div class="card a">
 <h3>REELS-EMPTY-H1 · صفحة الريلز الفاضية بلا عنوان — <span style="color:var(--red)">مفتوح</span></h3>

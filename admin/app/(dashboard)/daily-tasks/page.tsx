@@ -2,6 +2,10 @@ import { getTasksByDay } from "./helpers/get-tasks-by-day";
 import { DayPicker } from "./components/day-picker";
 import { PersonFilter } from "./components/person-filter";
 import { ReportTable, type ReportRow } from "./components/report-table";
+import { ReportNewTaskButton } from "./components/report-new-task-button";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { redirect } from "next/navigation";
 
 const dayFmt = new Intl.DateTimeFormat("en-GB", {
   weekday: "long",
@@ -41,6 +45,20 @@ export default async function ReportPage({
 }) {
   const { date, person } = await searchParams;
   const day = parseDay(date);
+  const session = await auth();
+  const userId = (session?.user as { id?: string } | undefined)?.id;
+  if (!userId) return null;
+  const staff = await db.staff.findUnique({ where: { id: userId }, select: { role: true } });
+  if (staff?.role !== "ADMIN") redirect("/");
+
+  const assignees = await db.staff.findMany({
+    // Older staff rows may not have `isActive` written; absent means active.
+    where: { OR: [{ isActive: true }, { isActive: { isSet: false } }] },
+    select: { id: true, name: true, email: true },
+    orderBy: { name: "asc" },
+    take: 200,
+  });
+
   const lanes = await getTasksByDay(day);
 
   const laneKey = (l: (typeof lanes)[number]) => l.staffId ?? "unassigned";
@@ -86,7 +104,10 @@ export default async function ReportPage({
               : `${totalAll} ${totalAll === 1 ? "task" : "tasks"}`}
           </p>
         </div>
-        <DayPicker />
+        <div className="flex items-center gap-2">
+          <DayPicker />
+          <ReportNewTaskButton assignees={assignees} />
+        </div>
       </header>
 
       {totalAll === 0 ? (

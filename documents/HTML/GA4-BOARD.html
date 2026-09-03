@@ -1,0 +1,1047 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>لوحة التتبّع — الشرح · المشاكل · المقترحات</title>
+<style>
+  :root{--bg:#0b1020;--card:#131c33;--ink:#e9eef8;--muted:#93a3bd;--line:#243352;
+        --red:#f87171;--amber:#fbbf24;--green:#34d399;--blue:#60a5fa;--violet:#a78bfa}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.9 "Segoe UI",Tahoma,system-ui,sans-serif;padding:26px 16px 90px}
+  .wrap{max-width:1060px;margin:0 auto}
+  h1{font-size:26px;margin:0 0 4px}
+  h2{font-size:21px;margin:36px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  h3{font-size:16.5px;margin:20px 0 6px}
+  .sub{color:var(--muted);font-size:15px;margin:0 0 22px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+  .crit{border-right:4px solid var(--red)}
+  .warn{border-right:4px solid var(--amber)}
+  .ok{border-right:4px solid var(--green)}
+  .info{border-right:4px solid var(--blue)}
+  code{background:rgba(255,255,255,.08);padding:1px 6px;border-radius:5px;font-size:13.5px;direction:ltr;display:inline-block}
+  pre{background:#070c18;border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+      overflow-x:auto;direction:ltr;text-align:left;font-size:12.8px;line-height:1.7;margin:10px 0}
+  .src{background:rgba(96,165,250,.10);border:1px solid rgba(96,165,250,.35);border-radius:10px;
+       padding:10px 13px;margin:10px 0;font-size:14px}
+  .src b{color:var(--blue)}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;margin:10px 0}
+  th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+  th{font-size:12px;text-transform:uppercase;color:var(--muted);letter-spacing:.03em}
+  .n{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+  .red{color:var(--red)}.amber{color:var(--amber)}.green{color:var(--green)}.blue{color:var(--blue)}
+  .muted{color:var(--muted)}
+  .scrollx{overflow-x:auto}
+  .pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700}
+  .p-red{background:rgba(248,113,113,.16);color:var(--red)}
+  .p-amber{background:rgba(251,191,36,.16);color:var(--amber)}
+  .p-green{background:rgba(52,211,153,.16);color:var(--green)}
+  ul,ol{padding-inline-start:22px} li{margin:7px 0}
+  .big{font-size:18px;font-weight:700;line-height:1.75}
+
+  /* tabs */
+  .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px;
+        border-bottom:1px solid var(--line);padding-bottom:12px}
+  .tabs button{background:transparent;border:1px solid var(--line);color:var(--muted);
+        padding:8px 16px;border-radius:999px;font:inherit;font-size:14.5px;font-weight:700;
+        cursor:pointer;transition:all .15s}
+  .tabs button:hover{background:rgba(255,255,255,.05);color:var(--ink)}
+  .tabs button[aria-selected="true"]{background:var(--blue);border-color:var(--blue);color:#05101f}
+  .tabs .n{display:inline-block;margin-inline-start:7px;padding:1px 8px;border-radius:999px;
+        background:rgba(255,255,255,.12);font-size:12px}
+  .tabs button[aria-selected="true"] .n{background:rgba(5,16,31,.25)}
+  .pane[hidden]{display:none}
+  .pane > h2:first-child{margin-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>لوحة التتبّع — مدونتي</h1>
+<p class="sub">
+  GA4 + Clarity + قياس مباشر على الإنتاج · ٣ سبتمبر ٢٠٢٦ ·
+  النطاق: GA4 آخر ٢٨ يوماً (٥ أغسطس – ١ سبتمبر) · Clarity آخر ٣٠ يوماً.<br>
+  <b>كل رقم منسوخ من الشاشة أو من قياس شُغِّل بنفسي — ولا رقم مستنتَج.</b>
+</p>
+
+<div class="tabs" role="tablist">
+  <button role="tab" data-pane="explain" aria-selected="true">📘 الشرح والمصطلحات<span class="n" id="n-explain"></span></button>
+  <button role="tab" data-pane="problems" aria-selected="false">🔴 المشاكل<span class="n" id="n-problems"></span></button>
+  <button role="tab" data-pane="gtm" aria-selected="false">🏷️ GTM<span class="n" id="n-gtm"></span></button>
+  <button role="tab" data-pane="advice" aria-selected="false">💡 التوصيات<span class="n" id="n-advice"></span></button>
+  <button role="tab" data-pane="fix" aria-selected="false">🛠️ المقترحات<span class="n" id="n-fix"></span></button>
+</div>
+<section class="pane" id="pane-explain">
+<h2>١ · الفرق بين الاتنين — في سطرين</h2>
+<div class="card info">
+  <p style="margin:0 0 10px" class="big"><span class="blue">GA4</span> = الدفتر اللي بيتسجّل فيه كل حاجة.</p>
+  <p style="margin:0" class="big"><span class="violet">GTM</span> = ساعي البريد اللي بيوصّل الخبر للدفتر.</p>
+</div>
+<p>ممكن توصّل الخبر بنفسك بلا ساعي — وده اللي بنعمله في نصّ الأحداث عندنا. وهنا بالظبط بدأت المشكلة.</p>
+
+<h2>٢ · الزائر عندنا بيتسجّل من طريقين مختلفين</h2>
+
+<div class="scrollx">
+<svg viewBox="0 0 940 340" width="100%" style="max-width:940px;background:#0a1224;border:1px solid var(--line);border-radius:14px">
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#60a5fa"/></marker>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#f87171"/></marker>
+  </defs>
+
+  <rect x="700" y="130" width="200" height="76" rx="12" fill="#1a2542" stroke="#3b4a72"/>
+  <text x="800" y="162" fill="#e9eef8" font-size="16" font-weight="700" text-anchor="middle">زائر يفتح صفحة</text>
+  <text x="800" y="184" fill="#93a3bd" font-size="13" text-anchor="middle">modonty.com</text>
+
+  <!-- path A: server -->
+  <rect x="380" y="40" width="250" height="92" rx="12" fill="#2a1520" stroke="#f87171"/>
+  <text x="505" y="66" fill="#f87171" font-size="14" font-weight="700" text-anchor="middle">الطريق الأول — سيرفرنا</text>
+  <text x="505" y="88" fill="#e9eef8" font-size="13" text-anchor="middle">web_vitals · signup · article_view</text>
+  <text x="505" y="110" fill="#93a3bd" font-size="12.5" text-anchor="middle">هويّة: mdy_vid (بتاعتنا)</text>
+  <path d="M700,150 L634,86" stroke="#f87171" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+  <text x="668" y="108" fill="#f87171" font-size="12" text-anchor="middle">1.2 ث</text>
+
+  <!-- path B: gtm -->
+  <rect x="380" y="205" width="250" height="92" rx="12" fill="#151f3a" stroke="#60a5fa"/>
+  <text x="505" y="231" fill="#60a5fa" font-size="14" font-weight="700" text-anchor="middle">الطريق التاني — GTM</text>
+  <text x="505" y="253" fill="#e9eef8" font-size="13" text-anchor="middle">page_view · session_start</text>
+  <text x="505" y="275" fill="#93a3bd" font-size="12.5" text-anchor="middle">هويّة: ‎_ga (بتاعة جوجل)</text>
+  <path d="M700,186 L634,251" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#a)"/>
+  <text x="668" y="232" fill="#60a5fa" font-size="12" text-anchor="middle">2.1 ث</text>
+
+  <!-- GA4 -->
+  <rect x="60" y="120" width="230" height="96" rx="12" fill="#12233a" stroke="#34d399"/>
+  <text x="175" y="152" fill="#34d399" font-size="17" font-weight="700" text-anchor="middle">GA4</text>
+  <text x="175" y="176" fill="#e9eef8" font-size="13" text-anchor="middle">الدفتر</text>
+  <text x="175" y="198" fill="#93a3bd" font-size="12.5" text-anchor="middle">بيشوفهم شخصين مختلفين</text>
+
+  <path d="M380,86 L294,150" stroke="#f87171" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+  <path d="M380,251 L294,190" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#a)"/>
+
+  <text x="470" y="325" fill="#fbbf24" font-size="13.5" text-anchor="middle">الطريقان ما بيتعرّفوش على بعض — فالزائر الواحد بيتعدّ مرّتين</text>
+</svg>
+</div>
+
+<h2>٣ · إيه الـ«هويّة» دي ولماذا هي أهمّ حاجة</h2>
+<p>
+  GA4 مش شايف اسمك ولا وشّك. هو بيشوف <b>رقم واحد بس</b> اسمه <code>client_id</code> —
+  رقم عشوائي محفوظ في كوكي على متصفّح الزائر. ده اللي بيخلّي جوجل يقول
+  «الشخص ده فتح المقال، وبعدين راح لصفحة التسجيل، وبعدين سجّل».
+</p>
+<div class="card crit">
+  <p style="margin:0 0 8px"><b>عندنا رقمان مش رقم واحد:</b></p>
+  <table>
+    <tr><th>الطريق</th><th>الكوكي</th><th>مين بيكتبه</th></tr>
+    <tr><td>سيرفرنا</td><td><code>mdy_vid</code></td><td>كودنا</td></tr>
+    <tr><td>GTM</td><td><code>_ga</code></td><td>جوجل</td></tr>
+  </table>
+  <p style="margin:10px 0 0">
+    الكود بيحاول يوحّدهم: يقرا <code>_ga</code> الأول وياخد الرقم منه، ولو مالقاهوش يعمل
+    <code>mdy_vid</code>. الفكرة صح — <b>لكنها ما بتشتغلش</b>، والسبب في القسم اللي بعده.
+  </p>
+</div>
+
+<h2>٤ · فين بالظبط بينكسر — بالثواني</h2>
+<p>ده قياس حقيقي على متصفّح نضيف تماماً، على مقال حيّ:</p>
+<pre>الثانية 1.255   →  سيرفرنا بعت أول قياس أداء
+                   الكوكيز الموجودة: ولا واحدة ❌
+                   فالسيرفر عمل هويّة جديدة: mdy_vid
+
+الثانية 2.080   →  قياس أداء تاني — برضه بلا كوكي
+
+الثانية 2.083   →  دلوقتي بس جوجل بدأ يتحمّل  ⏰ متأخر
+
+بعد 12 ثانية    →  الكوكيز: mdy_vid ✅   ·   _ga ❌ مش موجود خالص</pre>
+
+<div class="card crit">
+  <p style="margin:0" class="big">
+    قياس الأداء بيتبعت <b>قبل جوجل بثانية كاملة</b>. وقتها مافيش كوكي <code>_ga</code>
+    نقرا منه، فبنعمل هويّة من عندنا. والزائر بيتسجّل في GA4 <b>شخصين</b>.
+  </p>
+</div>
+
+<h2>٥ · «صفحة الهبوط» وليه ٦٩٪ منها فاضية</h2>
+<p>
+  <b>صفحة الهبوط</b> = أول صفحة فتحها الزائر في الزيارة. جوجل بياخدها من
+  <b>أول <code>page_view</code> في الجلسة</b> — مش من أي حدث تاني.
+</p>
+<p>
+  الهويّة الوهميّة عندها <code>web_vitals</code> بس، <b>وما عندهاش <code>page_view</code> أبداً</b>
+  (لأن ده بيجي من GTM بالهويّة التانية). فجوجل يلاقي جلسة بلا أول صفحة، فيكتب
+  <code>(not set)</code>.
+</p>
+<div class="scrollx"><table>
+<tr><th>القياس في GA4</th><th>الرقم</th><th>المفروض</th></tr>
+<tr><td>مستخدمو <code>web_vitals</code></td><td class="n red">3,597</td><td class="muted">الهويّة الوهميّة</td></tr>
+<tr><td>مستخدمو <code>page_view</code></td><td class="n green">862</td><td class="muted">الهويّة الحقيقية</td></tr>
+<tr><td>جلسات صفحة هبوطها <code>(not set)</code></td><td class="n red">3,453 · ٦٩٪</td><td class="muted">—</td></tr>
+<tr><td>Clarity (أداة مستقلّة تماماً)</td><td class="n green">815 زائراً</td><td class="muted">✅ قريب من 862</td></tr>
+</table></div>
+<p><b>Clarity هو شاهدنا المحايد:</b> الرقم الحقيقي حوالي ٨٦٠، مش ٣٬٥٩٧. يعني <b>GA4 بيبالغ ٤ أضعاف</b>.</p>
+
+<h2>٦ · ليه ده يخرب كل رقم عندك</h2>
+<div class="card crit">
+<p class="q" style="margin-top:0">«نسبة الارتداد عالية»</p>
+<p style="margin:0 0 14px">٦٩٪ من الجلسات وهميّة، عمرها <code>0s</code>، وما فتحتش ولا صفحة.
+جوجل بيعدّها ارتداد. <b>الرقم مضخّم، والمشكلة في العدّاد مش في الزوّار.</b></p>
+
+<p class="q">«نسبة التحويل ضعيفة»</p>
+<p style="margin:0 0 14px">٢١ تسجيلاً مقسومة على مستخدمين متضخّمين ٤ أضعاف.
+<b>الحقيقة أحسن أربع مرّات من اللي شايفه.</b></p>
+
+<p class="q">«مش عارف الناس جاية منين»</p>
+<p style="margin:0">٦٩٪ من الجلسات بلا صفحة هبوط، يعني بلا مصدر معروف.
+<b>تقرير المصادر عندك ناقص ثلثيه.</b></p>
+</div>
+
+<h2>٧ · الجزء اللي شغّال صح — عشان الصورة تبقى كاملة</h2>
+<div class="card ok">
+<p style="margin:0 0 8px">مش كل حاجة مكسورة. قمع التسجيل <b>سليم</b> لأن أحداثه التلاتة بتيجي من <b>نفس الطريق</b> (سيرفرنا)، فبتتقارن مع بعض صح:</p>
+<pre>137  شافوا صفحة التسجيل   (signup_view)
+ 41  ضغطوا الزرّ           (signup_start)    ← ٣٠٪
+ 21  كمّلوا التسجيل        (signup_complete) ← ٥١٪ من اللي بدأوا</pre>
+<p style="margin:10px 0 0">والرقم ده <b>موثوق</b>، وبيقول حاجة واضحة: <b>٧٠٪ يفتحون صفحة التسجيل وما يلمسوش الزرّ.</b></p>
+</div>
+
+<h2>٨ · قاموس المصطلحات — اللي هتقابله في كل تقرير</h2>
+<p class="muted" style="font-size:14.5px">مرتّبة بالأهم لشغلك، مش أبجدياً.</p>
+
+<div class="scrollx"><table>
+<tr><th style="width:150px">المصطلح</th><th>يعني إيه ببساطة</th><th style="width:210px">عندنا الآن</th></tr>
+
+<tr>
+  <td><b>Session</b><br><span class="muted">جلسة / زيارة</span></td>
+  <td><b>زيارة واحدة.</b> تفتح الموقع، تتفرّج، تمشي — دي جلسة. لو سكتّ <b>٣٠ دقيقة</b> بلا أي حركة ورجعت، بتبدأ جلسة جديدة. والزائر الواحد ممكن يعمل ٢٠ جلسة في الشهر.</td>
+  <td class="n red">٦٩٪ منها وهميّة</td>
+</tr>
+
+<tr>
+  <td><b>User</b><br><span class="muted">مستخدم</span></td>
+  <td><b>جهاز واحد بمتصفّح واحد.</b> مش شخص — نفس الشخص على الجوّال والّابتوب = مستخدمان. ولو مسح الكوكيز بيبقى مستخدماً جديداً.</td>
+  <td class="n red">مضخّم ٤ أضعاف</td>
+</tr>
+
+<tr>
+  <td><b>Event</b><br><span class="muted">حدث</span></td>
+  <td><b>أي حاجة بتحصل</b> ولها اسم: فتح صفحة، ضغط زرّ، نزول لآخر المقال. في GA4 <b>كل حاجة حدث</b> — حتى فتح الصفحة نفسه اسمه <code>page_view</code>.</td>
+  <td class="n">٣٠ حدثاً</td>
+</tr>
+
+<tr>
+  <td><b>client_id</b><br><span class="muted">الهويّة</span></td>
+  <td><b>الرقم اللي بيميّز الجهاز.</b> محفوظ في كوكي. هو اللي بيخلّي جوجل يعرف إن اللي فتح المقال هو نفسه اللي سجّل بعدها بخمس دقايق.</td>
+  <td class="n red">رقمان بدل واحد</td>
+</tr>
+
+<tr>
+  <td><b>Landing page</b><br><span class="muted">صفحة الهبوط</span></td>
+  <td><b>أول صفحة في الزيارة.</b> لو جه من جوجل على مقال، المقال ده هو صفحة هبوط الجلسة كلها. هي اللي بتقولك أي محتوى بيجيب لك ناس.</td>
+  <td class="n red">٦٩٪ <code>(not set)</code></td>
+</tr>
+
+<tr>
+  <td><b>Engagement rate</b><br><span class="muted">نسبة التفاعل</span></td>
+  <td><b>نسبة الجلسات «المتفاعلة».</b> والجلسة تُحسب متفاعلة لو حصل فيها واحد من تلاتة: قعد <b>١٠ ثوانٍ+</b>، أو فتح <b>صفحتين+</b>، أو حصل فيها حدث مهم.</td>
+  <td class="n amber">محسوبة على بيانات ملوّثة</td>
+</tr>
+
+<tr>
+  <td><b>Bounce rate</b><br><span class="muted">نسبة الارتداد</span></td>
+  <td><b>عكس اللي فوق بالظبط</b> — الجلسات غير المتفاعلة. يعني <code>100% − نسبة التفاعل</code>. مش «دخل وخرج» زي زمان.</td>
+  <td class="n red">مضخّمة</td>
+</tr>
+
+<tr>
+  <td><b>Key event</b><br><span class="muted">حدث مهم</span></td>
+  <td><b>الحدث اللي إنت قايل إنه يهمّك</b> (تسجيل، تواصل، اشتراك). بتعلّمه بنفسك في الإعدادات، وجوجل بعدها يحسب «نسبة التحويل» عليه.</td>
+  <td class="n">١٦ آخر ٧ أيام</td>
+</tr>
+
+<tr>
+  <td><b>Average engagement<br>time</b></td>
+  <td><b>الوقت اللي الصفحة كانت فيه فعلاً قدّام الزائر</b> وشغّالة — مش مجرد مفتوحة في تبويب منسيّ.</td>
+  <td class="n amber">٢٧–٤٨ ث للمقال</td>
+</tr>
+
+<tr>
+  <td><b>Channel</b><br><span class="muted">القناة</span></td>
+  <td><b>الزائر جه منين:</b> بحث مجّاني (Organic)، مباشر (Direct)، سوشيال، إحالة من موقع تاني، إعلان مدفوع.</td>
+  <td class="n red">ناقصة ٦٩٪</td>
+</tr>
+
+<tr>
+  <td><b>GTM</b><br><span class="muted">مدير الوسوم</span></td>
+  <td><b>ساعي البريد.</b> أداة بتحطّ فيها أكواد التتبّع من غير ما تعدّل الموقع كل مرّة.</td>
+  <td class="n amber">بيتحمّل متأخر</td>
+</tr>
+
+<tr>
+  <td><b>Measurement<br>Protocol</b></td>
+  <td><b>طريق تاني للدفتر</b> — سيرفرك يبعت الحدث لجوجل مباشرةً بلا متصفّح. بنستعمله لكل أحداثنا.</td>
+  <td class="n amber">بهويّة مختلفة</td>
+</tr>
+
+<tr>
+  <td><b>(not set)</b></td>
+  <td><b>«جوجل ما يعرفش».</b> مش صفر ولا خطأ — معناها إن المعلومة ما وصلتش أصلاً.</td>
+  <td class="n red">علامة العطل</td>
+</tr>
+</table></div>
+
+<h2>٩ · الحلّ في جملة</h2>
+<div class="card info">
+<p style="margin:0" class="big">
+  خلّي الطريقين يستعملوا <b>نفس الهويّة</b> — إمّا نأخّر قياس الأداء لحد ما جوجل يكتب
+  كوكيّه، أو نوقف اعتمادنا على كوكي جوجل ونمشي بهويّتنا وحدها في كل حاجة.
+</p>
+<p style="margin:10px 0 0" class="muted">
+  التفصيل والترتيب في الملف التاني: «وضعنا العام — كل المشاكل».
+</p>
+</div>
+
+<p class="muted" style="margin-top:34px;font-size:13.5px">
+  كل رقم هنا مقيس من GA4 (خاصية Modonty · آخر ٢٨ يوماً · ٥ أغسطس – ١ سبتمبر ٢٠٢٦)
+  أو من قياس مباشر على <code>www.modonty.com</code> بمتصفّح نضيف.
+</p>
+</section>
+
+<section class="pane" id="pane-problems" hidden>
+<h2>الجواب على سؤالك: وضعنا كويس مع جوجل؟</h2>
+<div class="card warn">
+  <p style="margin:0 0 10px" class="big">
+    <span class="green">جوجل بيحبّك</span> — بس <span class="red">دفترك مكسور</span>،
+    و<span class="amber">الزائر بيدخل ويخرج</span>.
+  </p>
+  <p style="margin:0">
+    جوجل مبسوط: ٥٦٦ زيارة من البحث المجّاني في ٣٠ يوم، و٢٨٢ صفحة مفهرسة، وحتى
+    <b>Perplexity</b> بدأ يجيب لك ناس. المشكلة مش في الوصول — المشكلة في
+    <b>إنك مش شايف اللي بيحصل بعد الوصول</b>، وفي إن اللي بيوصل مش بيكمّل.
+  </p>
+</div>
+
+<h2>ترتيب المشاكل — بالأثر</h2>
+<div class="scrollx"><table>
+<tr><th>#</th><th>المشكلة</th><th>الدليل</th><th>الأثر</th></tr>
+<tr><td class="n">1</td><td><b>هويّتان بدل واحدة في GA4</b></td><td class="n">٦٩٪ جلسات <code>(not set)</code></td><td><span class="pill p-red">كل رقم غلط</span></td></tr>
+<tr><td class="n">2</td><td><b>٧٠٪ يفتحون التسجيل وما يضغطوش</b></td><td class="n">137 → 41</td><td><span class="pill p-red">التحويل</span></td></tr>
+<tr><td class="n">3</td><td><b>المقال ٦٫٥ ثانية لأول محتوى</b></td><td class="n">LCP قياس مباشر</td><td><span class="pill p-red">مدخل جوجل</span></td></tr>
+<tr><td class="n">4</td><td><b>١٤٫٥٪ نقر ميت</b></td><td class="n">207 جلسة</td><td><span class="pill p-amber">إحباط</span></td></tr>
+<tr><td class="n">5</td><td><b>التفاعل شبه صفر</b></td><td class="n">1,248 قراءة / 2 إعجاب</td><td><span class="pill p-amber">لا عودة</span></td></tr>
+<tr><td class="n">6</td><td><b>صفحات بلا <code>&lt;h1&gt;</code></b></td><td class="n">التسجيل · الريلز</td><td><span class="pill p-amber">سيو</span></td></tr>
+<tr><td class="n">7</td><td><b>واتساب يسحق النموذج ٣٨:١</b></td><td class="n">38 مقابل 1</td><td><span class="pill p-amber">تصميم</span></td></tr>
+</table></div>
+
+<h2>١ · هويّتان بدل واحدة — أمّ المشاكل</h2>
+<div class="card crit">
+<p style="margin:0 0 10px">الزائر الواحد بيتسجّل في GA4 <b>شخصين</b>: واحد من سيرفرنا وواحد من جوجل. مقيس على متصفّح نضيف:</p>
+<pre>الثانية 1.255   سيرفرنا بعت قياس أداء   ·   كوكيز: ولا واحدة ❌
+الثانية 2.080   قياس أداء تاني           ·   كوكيز: ولا واحدة ❌
+الثانية 2.083   دلوقتي بس جوجل بدأ يتحمّل   ⏰
+بعد 12 ثانية    mdy_vid ✅   ·   _ga ❌ مش موجود خالص</pre>
+
+<p style="margin:12px 0 6px"><b>النتيجة في الأرقام:</b></p>
+<div class="scrollx"><table>
+<tr><th>القياس</th><th>الرقم</th><th>الدلالة</th></tr>
+<tr><td>مستخدمو <code>web_vitals</code></td><td class="n red">3,597</td><td>الهويّة الوهميّة</td></tr>
+<tr><td>مستخدمو <code>page_view</code></td><td class="n green">862</td><td>الهويّة الحقيقية</td></tr>
+<tr><td>جلسات <code>(not set)</code></td><td class="n red">3,453 · ٦٩٪</td><td>بلا صفحة هبوط</td></tr>
+<tr><td><b>Clarity</b> — شاهد مستقلّ</td><td class="n green">815 زائراً</td><td>✅ يطابق الرقم الحقيقي</td></tr>
+</table></div>
+<p style="margin:10px 0 0"><b>يعني GA4 بيبالغ في المستخدمين ٤ أضعاف</b> — ونسبة الارتداد وكل نسبة تحويل عندك محسوبة على الرقم المتضخّم ده.</p>
+<p style="margin:8px 0 0" class="muted">الملف <code>GA4-EXPLAINED.html</code> فيه الشرح بالرسم.</p>
+</div>
+
+<h2>٢ · قمع التسجيل — الرقم الوحيد النظيف</h2>
+<div class="card crit">
+<p style="margin:0 0 8px">ده موثوق لأن أحداثه التلاتة بتيجي من <b>نفس المصدر</b>:</p>
+<pre>137  شافوا صفحة التسجيل     signup_view
+ ↓   ٧٠٪ وقعوا هنا  ←←← أكبر تسريب عندك
+ 41  ضغطوا الزرّ            signup_start
+ ↓   ٤٩٪ وقعوا هنا
+ 21  كمّلوا                 signup_complete</pre>
+<p style="margin:12px 0 0"><b>والمهمّ:</b> النموذج نفسه <b>سليم تماماً</b> — جرّبته لآخره: حقلان بس + جوجل، بلا حاجز تفعيل إيميل، ورسايل الخطأ عربية وواضحة. المرحلة التانية (٥١٪ يكمّلون) رقم محترم.</p>
+<p style="margin:8px 0 0"><b>المشكلة قبل النموذج:</b> ٩٦ شخصاً فتحوا الصفحة وما لمسوش الزرّ. <b>ومافيش عندنا حدث واحد يقول ليه</b> — ما نعرفش وصلوا لفين ولا لمسوا إيه.</p>
+</div>
+
+<h2>٣ · الأداء — عطل واحد مؤكَّد وتناقض مفتوح</h2>
+<div class="card crit">
+<h3 style="margin-top:0">المؤكَّد: <code>LCP</code> على المقال</h3>
+<div class="scrollx"><table>
+<tr><th>الصفحة</th><th>LCP</th><th>العنصر المسبّب</th></tr>
+<tr><td>مقال «اليوم الوطني»</td><td class="n red">6.5s</td><td><b><code>H1</code> نصّ — لا صورة</b></td></tr>
+<tr><td>الرئيسية</td><td class="n amber">3.1s</td><td>صورة</td></tr>
+<tr><td><code>/clients</code></td><td class="n amber">2.3s</td><td>صورة</td></tr>
+<tr><td><code>/about</code></td><td class="n green">0.8s</td><td>نصّ</td></tr>
+</table></div>
+<p style="margin:8px 0 0">عنصر الـ<code>LCP</code> <b>عنوان نصّي</b> — يعني التأخير مش صورة تقيلة، الصفحة نفسها بتاخد ٦٫٥ ثانية قبل ما ترسم عنوانها. والحدّ الرسمي عند جوجل <b>٢٫٥ ثانية</b>. وديه أهم صفحة: مدخل جوجل.</p>
+</div>
+
+<div class="card warn">
+<h3 style="margin-top:0">غير محسوم: <code>CLS</code></h3>
+<pre>Clarity (مستخدمون حقيقيون):   CLS = 0.54     ← «ضعيف جداً»
+قياسي المعملي (5 صفحات):       0.0007–0.0342  ← كلها «جيّد»
+معيار جوجل: جيّد ≤ 0.1 · ضعيف > 0.25   (web.dev/articles/cls)</pre>
+<p style="margin:10px 0 0"><b>ما قدرتش أعيد إنتاج الـ 0.54.</b> قياسي على نت سريع، وClarity بيقيس زوّاراً حقيقيين ٥٩٪ منهم على الجوّال.
+محاولة خنق الشبكة رجعت <code>Not allowed</code>، و<code>PageSpeed API</code> رجعت <code>429</code> بلا مفتاح.
+<b>محجوب على مفتاح PageSpeed أو جلسة Clarity جديدة.</b></p>
+<p style="margin:8px 0 0">أكبر قفزة مسكتها: عنصر «اسأل مودو» بيتحرك <b>٦٩١ بكسل</b> عند <code>799ms</code> على الرئيسية.</p>
+</div>
+
+<h2>٤ · النقر الميت — الزائر يضغط ولا يحصل شيء</h2>
+<div class="card warn">
+<p style="margin:0 0 8px"><b>٢٠٧ جلسة (١٤٫٤٩٪).</b> والنسبة لكل صفحة أهمّ من العدد:</p>
+<div class="scrollx"><table>
+<tr><th>الصفحة</th><th>نقر ميت</th><th>الإجمالي</th><th>النسبة</th></tr>
+<tr><td>مقال «استشارات نفسية»</td><td class="n">9</td><td class="n">36</td><td class="n red">٢٥٪</td></tr>
+<tr><td>مقال «اليوم الوطني»</td><td class="n">35</td><td class="n">158</td><td class="n red">٢٢٪</td></tr>
+<tr><td>صفحة عميل <code>dawi-smile</code></td><td class="n">16</td><td class="n">95</td><td class="n amber">١٧٪</td></tr>
+<tr><td><code>/clients</code></td><td class="n">22</td><td class="n">164</td><td class="n amber">١٣٪</td></tr>
+<tr><td>الرئيسية</td><td class="n">26</td><td class="n">427</td><td class="n green">٦٪</td></tr>
+</table></div>
+<p style="margin:8px 0 0"><b>مركّز في المقالات وصفحات العملاء لا في الرئيسية</b> — وديه مداخل جوجل، أول انطباع.</p>
+<p style="margin:8px 0 0" class="muted"><b>حدّ:</b> ما قدرتش أنسبه لعنصر بعينه — فلتر Clarity يصفّي الجلسات لا النقرات، فرجع نفس الترتيب. تحديد العنصر محتاج مشاهدة تسجيلات.</p>
+</div>
+
+<h2>٥ · الرجوع السريع — لفّة بلا وصول</h2>
+<div class="card warn">
+<p style="margin:0 0 8px"><b>٢٠٤ جلسة (١٤٫٢٨٪)</b> — وبصمتها تحكي:</p>
+<div class="scrollx"><table>
+<tr><th>المقياس</th><th>كل الجلسات</th><th>جلسات الرجوع السريع</th></tr>
+<tr><td>صفحات في الجلسة</td><td class="n">2.35</td><td class="n red">7.06</td></tr>
+<tr><td>وقت النشاط</td><td class="n">1.3 دقيقة</td><td class="n red">43 ثانية</td></tr>
+</table></div>
+<p style="margin:8px 0 8px"><b>يفتح ٧ صفحات في أقل من دقيقة نشاط</b> — مش تصفّح، ده بحث فاشل.</p>
+<div class="scrollx"><table>
+<tr><th>الصفحة</th><th>النسبة</th></tr>
+<tr><td><code>/about</code></td><td class="n red">٣٢٪</td></tr>
+<tr><td><code>/clients</code></td><td class="n red">٢٨٪</td></tr>
+<tr><td><code>/search</code></td><td class="n red">٢٨٪</td></tr>
+</table></div>
+<p style="margin:8px 0 0"><code>/about</code> و<code>/search</code> الأعلى — والاتنان صفحتا «أنا بدوّر على جواب».</p>
+</div>
+
+<h2>٦ · التفاعل شبه معدوم</h2>
+<div class="card warn">
+<pre>1,248  مشاهدة مقال
+    2  إعجاب        (article_like)
+    2  حفظ          (article_favorite)
+    1  تعليق        (comment_submit)
+    2  متابعة عميل  (follow_client)
+    2  اشتراك نشرة  (newsletter_subscribe)</pre>
+<p style="margin:10px 0 0"><b>ده مش عطل قياس — الأحداث دي واصلة GA4 فعلاً.</b> ده سلوك: الناس بتقرا وتمشي.
+ومتوسط التفاعل <b>٢٧–٤٨ ثانية</b> للمقال، وعمق التمرير <b>٥٣٪</b> — نصّ المقال ما بيتقراش.</p>
+</div>
+
+<h2>٧ · واتساب يسحق النموذج</h2>
+<div class="card warn">
+<pre>booking_whatsapp_click   38
+booking_form_start        1
+booking_submit            1
+contact_submit            1</pre>
+<p style="margin:10px 0 0"><b>٣٨ ضعفاً.</b> الزائر بيختار واتساب على النموذج بفارق ساحق.
+ده مش عطل — <b>ده تفضيل واضح</b>، والمنطقي إن واتساب يبقى الخيار الأول لا التاني.</p>
+</div>
+
+<h2>٨ · عيوب صغيرة مؤكَّدة</h2>
+<div class="card">
+<ul style="margin:0">
+  <li><b><code>/users/register</code> بلا <code>&lt;h1&gt;</code></b> — مقيس: <code>h1: []</code>.</li>
+  <li><b><code>/reels</code> وهي فاضية بلا <code>&lt;h1&gt;</code></b> — <code>reels/page.tsx:55-65</code>؛ الإنتاج فيه ريلز فالعنوان ظاهر اليوم بس.</li>
+  <li><b>مقال فيه <code>&lt;h1&gt;</code> مرتين</b> — «علاج الادمان من الكبتاجون»؛ التاني مكتوب جوّه المتن.</li>
+  <li><b>أخطاء جافاسكربت ٠٫٢٨٪ فقط</b> — <span class="pill p-green">مش سبب</span> وأغلبها من متصفّحات داخل تطبيقات.</li>
+</ul>
+</div>
+
+<h2>٩ · اللي شغّال كويس — عشان الصورة تبقى عادلة</h2>
+<div class="card ok">
+<ul style="margin:0">
+  <li><b>جوجل بيجيب لك ناس:</b> ٥٦٦ زيارة بحث مجّاني · ٢٨٢ صفحة مفهرسة · و<b>Perplexity</b> بدأ يجيب زيارات.</li>
+  <li><b>نموذج التسجيل نظيف:</b> حقلان + جوجل، بلا حاجز تفعيل، ورسايله واضحة. جرّبته لآخره.</li>
+  <li><b>٣٠ حدثاً واصلة GA4</b> — التغطية واسعة، والمشكلة في الهويّة لا في الأحداث.</li>
+  <li><b>نقرات الغضب ٠٫٥٦٪</b> و<b>التمرير المفرط ٠٪</b> — الإحباط الحادّ نادر.</li>
+  <li><b>٣٧٫٥٨٪ زوّار عائدون</b> — فيه ناس بترجع.</li>
+</ul>
+</div>
+
+<h2>الخطوة الجاية — بالترتيب</h2>
+<div class="scrollx"><table>
+<tr><th>#</th><th>الإصلاح</th><th>ليه أولاً</th></tr>
+<tr><td class="n">1</td><td><b>توحيد الهويّة في GA4</b></td><td>بدونها كل رقم تاني تخمين — ومش هتعرف تقيس أي إصلاح تعمله</td></tr>
+<tr><td class="n">2</td><td><b>أحداث تفصيلية لصفحة التسجيل</b><br><span class="muted">لمس الحقل · ظهور خطأ · مغادرة</span></td><td>عشان نعرف ليه ٧٠٪ ما بيضغطوش — دلوقتي مافيش أي دليل</td></tr>
+<tr><td class="n">3</td><td><b><code>LCP</code> المقال من 6.5s</b></td><td>مدخل جوجل، و٥٩٪ من الزوّار على الجوّال</td></tr>
+<tr><td class="n">4</td><td><b>مفتاح PageSpeed API</b></td><td>يقفل تناقض الـ<code>CLS</code> ويدّي بيانات حقيقية لكل صفحة</td></tr>
+<tr><td class="n">5</td><td><b>مشاهدة تسجيلات Clarity</b></td><td>يحسم أي عنصر بيتضغط بلا نتيجة</td></tr>
+</table></div>
+
+<h2>حدود هذا التقرير — ما لم يُقَس</h2>
+<ul class="muted" style="font-size:14.5px">
+  <li><b>لم أشاهد ولا تسجيل جلسة واحد</b> — كل شيء من اللوحات ومن قياس مباشر.</li>
+  <li><b>تناقض الـ<code>CLS</code> مفتوح</b> ولم يُحسم.</li>
+  <li><b>لم أنسب النقر الميت لعنصر.</b></li>
+  <li>أرقام GA4 نفسها ملوّثة بمشكلة الهويّة — عدا قمع التسجيل، فهو نظيف.</li>
+  <li>النطاق ٢٨–٣٠ يوماً، بلا مقارنة بفترة سابقة.</li>
+</ul>
+
+<p class="muted" style="margin-top:30px;font-size:13.5px">
+  الملف المرافق: <code>GA4-EXPLAINED.html</code> — شرح إزاي التتبّع بيشتغل + قاموس المصطلحات.
+</p>
+</section>
+
+<section class="pane" id="pane-gtm" hidden>
+<h2>فحص Google Tag Manager — من الحساب نفسه</h2>
+<p class="muted" style="font-size:14.5px">
+  حاوية <code>GTM-MNRR2NS9</code> · حساب «JBRSEO - modonty» · معرّفان لجوجل:
+  <code>G-V25C2PSHNB</code> و<code>GT-MRQHHXXV</code>.
+  <b>كل ما سبق في هذا التقرير عن GTM كان من الكود؛ هذا القسم من الحساب نفسه.</b>
+</p>
+
+<div class="card crit">
+<h3 style="margin-top:0">أ · ٤ بكسلات إعلانية مركّبة — و<b>ولا واحد منها يشتغل</b></h3>
+<div class="scrollx"><table>
+<tr><th>الوسم</th><th>النوع</th><th>المشغّل</th><th>شغّال فعلاً؟</th></tr>
+<tr><td>GA4 - Configuration</td><td>Google Tag</td><td>All Pages</td><td class="green">✅ نعم</td></tr>
+<tr><td>Meta Pixel</td><td>Custom HTML</td><td>All Pages</td><td class="red">❌ <code>fbq: false</code></td></tr>
+<tr><td>Snap Pixel</td><td>Snap</td><td>All Pages</td><td class="red">❌ <code>snaptr: false</code></td></tr>
+<tr><td>TikTok Pixel</td><td>Custom HTML</td><td>All Pages</td><td class="red">❌ <code>ttq: false</code></td></tr>
+<tr><td>Microsoft Clarity</td><td>Clarity</td><td>All Pages</td><td class="amber">مكرّر — الشغّال سكربتنا</td></tr>
+<tr><td>Event-1</td><td>Custom HTML</td><td>View Content (كل مقال)</td><td class="red">❌ تابع لميتا</td></tr>
+<tr><td>Register</td><td>Custom HTML</td><td>Registration Form Submit</td><td class="red">❌ لا يولع — أدناه</td></tr>
+</table></div>
+<p style="margin:10px 0 0"><b>مقيس على صفحة حيّة:</b></p>
+<pre>gtmLoaded: true   GTM-MNRR2NS9 ✅
+fbq: false   ttq: false   snaptr: false        ← لا بكسل يعمل
+سكربتات الصفحة حسب المضيف:
+  www.googletagmanager.com  1
+  www.clarity.ms            1     ← من كودنا لا من GTM
+  www.modonty.com          38
+  (لا facebook · لا tiktok · لا snapchat)</pre>
+<p style="margin:10px 0 0">
+  <b>الخبر الحلو:</b> مش بتبطّئ الصفحة — كنت خايف إنها سبب الـ<code>LCP</code> وطلعت مش محمّلة أصلاً.<br>
+  <b>الخبر الوحش:</b> لو معتمد عليها في أي إعلان، <b>فأنت تدفع بلا قياس</b>. والقرار قرارك: تُصلَح أم تُحذَف.
+</p>
+</div>
+
+<div class="card crit">
+<h3 style="margin-top:0">ب · وسم <code>Register</code> على مشغّل خطأ</h3>
+<pre>الوسم:   Register  ·  Custom HTML
+المشغّل: Registration Form Submit
+         النوع: Form Submission · Page URL contains register</pre>
+<div class="src" style="margin-top:10px">
+<b>المصدر الرسمي —</b> مركز مساعدة GTM، قسم Custom Event Trigger:<br>
+«<span dir="ltr">The most common use is when you want to track form submissions, but the default
+behavior for the form has been altered (e.g. the <code>submit</code> browser event has been overridden.)</span>»<br>
+<span class="muted">support.google.com/tagmanager/answer/7679219</span>
+</div>
+<p style="margin:10px 0 0">
+  نموذج تسجيلنا React ويتحكّم في الإرسال بنفسه (<code>signIn</code> ثم <code>router.push</code>)،
+  وهذا بالضبط الوضع الذي يوصي فيه جوجل بـ<b>Custom Event</b> لا <b>Form Submission</b>.
+  <b>وتحفّظ صريح:</b> جوجل لم يقل حرفياً «لن يولع» — قال إن الحالة هذه هي سبب وجود المشغّل الآخر.
+  فهذا <b>مرشَّح قوي لا حكم نهائي</b>، ويُحسم بتشغيل Preview في Tag Assistant.
+</p>
+</div>
+
+<div class="card crit">
+<h3 style="margin-top:0">ج · <code>gtag</code> غير موجود على الصفحة — وهذا يكسر مقترحنا</h3>
+<pre>gtagExists: false     ← window.gtag دالّة غير معرّفة
+dataLayer events: ["gtm.dom", "gtm.load"]   ← ولا حدث من عندنا</pre>
+<p style="margin:10px 0 0">
+  وسم <code>GA4 - Configuration</code> يرسل عبر GTM دون أن يعرّض <code>window.gtag</code>.
+  <b>يعني مقترح «الجسر» في تبويب المقترحات — المبنيّ على <code>gtag('get', …)</code> — لا يعمل بصيغته الحالية.</b>
+  البديلان: تحميل <code>gtag.js</code> مباشرةً بجانب GTM، أو قراءة الهويّة داخل GTM نفسه ودفعها في
+  <code>dataLayer</code>. <b>يحتاج تحقّقاً من التوثيق قبل الكتابة — لم أفعله بعد.</b>
+</p>
+</div>
+
+<div class="card ok">
+<h3 style="margin-top:0">د · تشخيص جوجل للحاوية: <span class="amber">Needs Attention</span> — بندان فقط</h3>
+<pre>303  صفحة مفحوصة
+226  موسومة        ✅
+ 75  بلا بيانات حديثة  ← كلها نطاق معاينة قديم git-version-2…vercel.app
+  2  بلا وسم:
+       www.modonty.com/tags/tools-tag-test
+       www.modonty.com/users/profile/following</pre>
+<p style="margin:10px 0 0">
+  <b>أهدأ مما توقّعت.</b> تغطية الوسم على الإنتاج شبه كاملة، والـ٧٥ ليست صفحات حيّة.
+  والبند الثاني إداريّ بحت: «أضف مديراً ثانياً للحساب» — وهو <b>تحذير حقيقي</b>:
+  مدير واحد يعني أنك لو فقدت الوصول، فقدت الحاوية.
+</p>
+</div>
+
+<div class="card info">
+<h3 style="margin-top:0">هـ · تصحيحان لكلامي أثناء هذا الفحص</h3>
+<ul style="margin:0">
+  <li><b>قلت إن البكسلات تبطّئ الصفحة</b> ⟵ <b>غلط.</b> القياس: لا يوجد ولا سكربت من فيسبوك أو تيك توك أو سناب.</li>
+  <li><b>قلت إن Clarity لا يعمل</b> ⟵ <b>غلط.</b> قِستُ مبكراً؛ <code>www.clarity.ms</code> محمّل فعلاً — لكن من كودنا لا من وسم GTM.</li>
+</ul>
+</div>
+</section>
+
+<section class="pane" id="pane-advice" hidden>
+
+<h2>القرار الأول — الأرقام المتضخّمة: نصلحها أم نتركها؟</h2>
+<div class="card crit">
+<p style="margin:0 0 10px" class="big">سؤالك: «محتاج الأرقام الكبيرة دي من مبدأ التسويق».
+<span class="red">وجوابي: لا — الرقم المتضخّم يضرّك لا ينفعك.</span></p>
+
+<p style="margin:0 0 8px"><b>أولاً، الحقيقة التقنية:</b> GA4 لا يعيد حساب بيانات مضت.
+الأرقام القديمة تبقى كما هي، والتغيير يبدأ من يوم الإصلاح — فيظهر <b>هبوط حادّ</b> في الرسم البياني
+يوم الإصلاح. لا لأن الزوّار قلّوا، بل لأن العدّ صحّ.</p>
+
+<p style="margin:12px 0 8px"><b>ثانياً، وهذا الأهم — الرقم الكبير يجعل أداءك يبدو أسوأ:</b></p>
+<div class="scrollx"><table>
+<tr><th>ما تعرضه اليوم</th><th>الحقيقة بعد الإصلاح</th></tr>
+<tr>
+  <td>٣٬٥٩٧ مستخدماً · ٢١ تسجيلاً<br><b class="red">نسبة تحويل ٠٫٦٪</b></td>
+  <td>٨٦٢ مستخدماً · ٢١ تسجيلاً<br><b class="green">نسبة تحويل ٢٫٤٪ — أربعة أضعاف</b></td>
+</tr>
+<tr>
+  <td>ارتداد مضخّم بـ٦٩٪ جلسة عمرها <code>0s</code></td>
+  <td><b class="green">ارتداد حقيقي، أقلّ بكثير</b></td>
+</tr>
+</table></div>
+<p style="margin:10px 0 0">
+  أي شخص يفحص أرقامك — عميل، مستثمر، شريك — سيقسم التسجيلات على المستخدمين.
+  <b>الرقم المتضخّم يعطيه نسبة فاشلة عن أداء ليس فاشلاً.</b>
+</p>
+</div>
+
+<div class="card ok">
+<h3 style="margin-top:0">وإن أردت أرقاماً كبيرة — عندك أرقام كبيرة <b>وصحيحة</b></h3>
+<pre>11,889  مشاهدة   (عدّاد الموقع نفسه)
+ 3,266  مشاهدة صفحة في GA4
+ 1,248  قراءة مقال
+   566  زيارة من بحث جوجل المجّاني
+   282  صفحة مفهرسة في جوجل
+    37  شريكاً</pre>
+<p style="margin:10px 0 0">
+  هذه أرقام تدافع عنها أمام أي فحص. <b>«المشاهدات» رقم تسويقي مشروع؛ «المستخدمون» رقم يجب أن يكون دقيقاً.</b>
+</p>
+</div>
+
+<div class="card warn">
+<h3 style="margin-top:0">وإن قرّرت التأجيل</h3>
+<p style="margin:0">
+  قرارك ويُنفَّذ. لكن يُسجَّل هنا أنه <b>قرار عمل لا توصية فنّية</b>، وأن ثمنه:
+  لا يمكن قياس أثر أي تحسين تعمله بعده — لأن عدّادك يقول أربعة أضعاف الحقيقة،
+  فأي تحسّن حقيقي سيضيع داخل الضجيج.
+</p>
+</div>
+
+<h2>أفضل الممارسات — ما يجب أن يكون عليه القياس</h2>
+
+<div class="card info">
+<h3 style="margin-top:0">١ · هويّة واحدة، لا اثنتان</h3>
+<div class="src">
+<b>المصدر الرسمي —</b> «<span dir="ltr">the <code>client_id</code> should match the ID generated
+by the Google Analytics tag on your website</span>»<br>
+<span class="muted">developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events</span>
+</div>
+<p style="margin:8px 0 0"><b>القاعدة:</b> كل حدث — من المتصفّح أو من السيرفر — يحمل نفس
+<code>client_id</code> ونفس <code>session_id</code>. وإلا فالرحلة تتقطّع والزائر يتعدّد.</p>
+</div>
+
+<div class="card info">
+<h3 style="margin-top:0">٢ · الأسماء الرسمية أولاً، والمخصّصة عند الضرورة</h3>
+<div class="src">
+<b>المصدر الرسمي —</b> الأحداث الموصى بها في GA4: <code>sign_up</code> · <code>login</code> ·
+<code>search</code> (ببارامتر <b>مطلوب</b> <code>search_term</code>) · <code>share</code> ·
+<code>select_content</code> · <code>generate_lead</code> · <code>join_group</code>.<br>
+<span class="muted">developers.google.com/analytics/devguides/collection/ga4/reference/events</span>
+</div>
+<p style="margin:8px 0 0"><b>لماذا يهمّ:</b> تقارير جوجل الجاهزة (Generate leads · Retention) تُبنى على
+الأسماء الرسمية. اسم مخصّص يعني تقريراً فارغاً — وهو سبب أن تقارير «توليد العملاء» عندنا فارغة اليوم.</p>
+<p style="margin:8px 0 0"><b>أعلى مكسب مفرد:</b> <code>search_term</code> — يكشف ما يبحث عنه الزائر
+<b>ولا يجده</b>. وهذا أسرع طريق لمقالات جديدة مضمونة الطلب.</p>
+</div>
+
+<div class="card info">
+<h3 style="margin-top:0">٣ · قِس المراحل لا النتيجة فقط</h3>
+<p style="margin:0 0 8px">«٢١ تسجيلاً» لا تخبرك بشيء تصلحه. الثلاثية تخبرك:</p>
+<pre>شاهد  →  بدأ  →  أكمل
+ 137     41      21
+        ↑
+   هنا التسريب (٧٠٪)</pre>
+<p style="margin:8px 0 0"><b>القاعدة:</b> كل مسار مهم (تسجيل · حجز · تواصل) يحتاج <b>ثلاثة أحداث على الأقل</b>.
+عندنا التسجيل وحده يملكها؛ الحجز والتواصل لا.</p>
+</div>
+
+<div class="card info">
+<h3 style="margin-top:0">٤ · حدث واحد لكل معنى — لا تكرار</h3>
+<p style="margin:0">لدينا <code>article_share</code> و<code>client_share</code> و<code>reel_share</code> منفصلة.
+الأفضل: <code>share</code> واحد ببارامتر <code>content_type</code>. النتيجة: تقرير واحد يجمعهم،
+وتقدر تفصّل وقت الحاجة. <b>ثلاثة أحداث لمعنى واحد تعني ثلاثة تقارير ناقصة بدل تقرير كامل.</b></p>
+</div>
+
+<div class="card info">
+<h3 style="margin-top:0">٥ · لا تقِس ما لا تنوي التصرّف بناءً عليه</h3>
+<p style="margin:0">لدينا ٣٠ حدثاً، وستّة منها بأرقام أحادية (إعجابان · تعليق واحد).
+هذه ليست بيانات — هذه ضجيج. <b>احذف أو ادمج ما لا يقود قراراً</b>، وركّز على المسارات التي تدرّ.</p>
+</div>
+
+<div class="card info">
+<h3 style="margin-top:0">٦ · أداتان لا واحدة — ولا ثلاثة</h3>
+<div class="scrollx"><table>
+<tr><th></th><th>GA4</th><th>Clarity</th></tr>
+<tr><td>يجيب على</td><td><b>كم؟ وأين؟</b></td><td><b>لماذا؟</b></td></tr>
+<tr><td>يعطيك</td><td>أرقام · قمع · مصادر</td><td>فيديو للزائر · خرائط حرارية</td></tr>
+<tr><td>نقر ميت / غضب</td><td class="red">❌</td><td class="green">✅</td></tr>
+<tr><td>السعر</td><td>مجاني</td><td>مجاني</td></tr>
+</table></div>
+<p style="margin:8px 0 0"><b>Clarity هو شاهدنا المحايد</b> — هو الذي كشف أن GA4 يبالغ أربعة أضعاف.
+<b>وHotjar لا لزوم له:</b> Clarity يؤدّي عمله مجاناً وبلا حدّ جلسات.</p>
+</div>
+
+<div class="card info">
+<h3 style="margin-top:0">٧ · وسم لا يعمل = دَيْن لا أصل</h3>
+<p style="margin:0">أربعة بكسلات إعلانية في GTM، <b>ولا واحد منها يُحمَّل</b> (مقيس:
+<code>fbq/ttq/snaptr = false</code>). كل وسم معطّل هو سطر في حساب يوهمك أنك تقيس شيئاً.
+<b>القاعدة: أصلحه أو احذفه — لا تتركه.</b></p>
+</div>
+
+<div class="card info">
+<h3 style="margin-top:0">٨ · مديران للحاوية، لا واحد</h3>
+<p style="margin:0">تشخيص جوجل نفسه يقولها: مدير واحد يعني أنك لو فقدت الوصول <b>فقدت الحاوية كلّها</b>.
+دقيقتان تُصلحها.</p>
+</div>
+
+<h2>ملاحظات على التجربة — لا على القياس</h2>
+
+<div class="card warn">
+<h3 style="margin-top:0">٩ · واتساب يسحق النموذج ٣٨:١ — اقرأ الإشارة</h3>
+<pre>booking_whatsapp_click   38
+booking_form_start        1</pre>
+<p style="margin:8px 0 0">هذا ليس عطلاً — <b>هذا تفضيل واضح</b>. الزائر العربي يثق في محادثة أكثر من نموذج.
+<b>التوصية:</b> واتساب يكون الخيار <b>الأول</b> لا الثاني، والنموذج بديلاً لمن يفضّله.</p>
+</div>
+
+<div class="card warn">
+<h3 style="margin-top:0">١٠ · صفحة التسجيل ضِعف ارتفاع الشاشة</h3>
+<p style="margin:0">مقيس: الصفحة <b>١٧٠٩ بكسل</b> والشاشة <b>٨٤٤</b>. <b>فرضية — غير مثبتة:</b>
+جزء من الـ٩٦ الذين لم يضغطوا ربما لم يروا الزرّ. يحسمها حدث <code>scroll_to_form</code> خلال أيام.</p>
+</div>
+
+<div class="card warn">
+<h3 style="margin-top:0">١١ · التفاعل شبه معدوم — وهذا سلوك لا عطل</h3>
+<pre>1,248 قراءة مقال  →  2 إعجاب  ·  2 حفظ  ·  1 تعليق</pre>
+<p style="margin:8px 0 0">الأحداث تصل GA4 فعلاً. الناس تقرأ وتمشي، وعمق التمرير <b>٥٣٪</b> — نصف المقال لا يُقرأ.
+<b>التوصية:</b> لا تلاحق الإعجابات؛ لاحق <b>سبب العودة</b> — نشرة، متابعة كاتب، تنبيه تخصّص.</p>
+</div>
+
+<h2>الترتيب الذي أوصي به</h2>
+<div class="card">
+<ol style="margin:0">
+  <li><b>الهويّة</b> — بدونها لا يُقاس أي إصلاح تالٍ. <span class="muted">(محجوبة على حسم بديل <code>gtag</code> — تبويب GTM)</span></li>
+  <li><b>أحداث صفحة التسجيل</b> — لحلّ لغز الـ٧٠٪.</li>
+  <li><b><code>LCP</code> المقال من ٦٫٥ ثانية</b> — <b>الإصلاح الوحيد ذو الأثر المباشر بلا وساطة قياس</b>.</li>
+  <li><b>الأسماء الرسمية</b> + <code>search_term</code>.</li>
+  <li><b>نظافة GTM</b> — أصلح البكسلات أو احذفها، وأضف مديراً ثانياً.</li>
+</ol>
+</div>
+
+<div class="card crit">
+<h3 style="margin-top:0">وصراحة أخيرة</h3>
+<p style="margin:0" class="big">
+  إصلاح القياس <b>لا يزيد زوّاراً ولا تسجيلات بذاته</b> — هو يجعلك <b>ترى</b>.
+  المكسب الحقيقي من القرارات التي تتخذها بعد أن ترى.
+  <br>الاستثناء الوحيد: <code>LCP</code> — أثره مباشر على ترتيبك في جوجل وعلى ٥٩٪ من زوّارك.
+</p>
+</div>
+
+</section>
+
+<section class="pane" id="pane-fix" hidden>
+<div class="card info">
+<p style="margin:0"><b>قاعدة هذا الملف:</b> ما فيه سطر واحد مبنيّ على «أظنّ». كل قرار مسنود
+إمّا بقياس شغّلته على الإنتاج، أو باقتباس حرفي من توثيق جوجل — والمصدر مكتوب مع كل بند.</p>
+</div>
+
+<h2>خلاصة المقترحات</h2>
+<div class="scrollx"><table>
+<tr><th>#</th><th>المقترح</th><th>يصلح</th><th>الخطورة</th><th>الحجم</th></tr>
+<tr><td class="n">1</td><td><b>توحيد الهويّة</b> — نقرأ <code>client_id</code> من API جوجل الرسمي</td><td>٦٩٪ جلسات <code>(not set)</code></td><td><span class="pill p-amber">متوسّطة</span></td><td class="n">ملفّان</td></tr>
+<tr><td class="n">2</td><td><b>تأجيل قياس الأداء</b> لحد ما الهويّة تجهز</td><td>المستخدمون الوهميّون</td><td><span class="pill p-green">منخفضة</span></td><td class="n">ملف واحد</td></tr>
+<tr><td class="n">3</td><td><b>الأسماء الرسمية</b> — <code>sign_up</code> · <code>login</code> · <code>search</code></td><td>تقارير جوجل الجاهزة</td><td><span class="pill p-green">منخفضة</span></td><td class="n">ملف واحد</td></tr>
+<tr><td class="n">4</td><td><b>أحداث صفحة التسجيل التفصيلية</b></td><td>لغز الـ٧٠٪</td><td><span class="pill p-green">منخفضة</span></td><td class="n">ملفّان</td></tr>
+<tr><td class="n">5</td><td><b><code>&lt;h1&gt;</code> للصفحات الناقصة</b></td><td>سيو + وصولية</td><td><span class="pill p-green">منخفضة</span></td><td class="n">سطران</td></tr>
+</table></div>
+
+<!-- ═══════════════ 1 ═══════════════ -->
+<h2>١ · توحيد الهويّة <span class="pill p-red">الأهم</span></h2>
+
+<div class="card crit">
+<h3 style="margin-top:0">العطل — مقيس على متصفّح نضيف</h3>
+<pre>الثانية 1.255   سيرفرنا بعت قياس أداء  ·  كوكيز: ولا واحدة
+الثانية 2.083   جوجل بدأ يتحمّل           ← متأخر ٨٣٠ مللي
+بعد 12 ثانية    mdy_vid ✅   ·   _ga ❌ غير موجود
+
+النتيجة في GA4:
+  مستخدمو web_vitals  3,597      ← هويّة mdy_vid
+  مستخدمو page_view     862      ← هويّة _ga
+  جلسات (not set)     3,453 = ٦٩٪</pre>
+</div>
+
+<div class="src">
+<b>المصدر الرسمي ١ —</b> Measurement Protocol (GA4):<br>
+«<span dir="ltr">the <code>client_id</code> should match the ID generated by the Google Analytics tag on your website</span>»<br>
+<span class="muted">developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events</span>
+<p style="margin:8px 0 0"><b>ونصّ ثانٍ من نفس الصفحة:</b> الأحداث المرسَلة بالـMP والمقصود دمجها مع أحداث
+<code>gtag.js</code> لازم تصل جوجل <b>خلال ٤٨ ساعة</b> من الحدث الأصلي.</p>
+</div>
+
+<div class="src">
+<b>المصدر الرسمي ٢ —</b> مرجع <code>gtag.js</code>: فيه <b>API رسمي لقراءة الهويّة</b>،
+ونحن لا نستعمله:
+<pre>gtag('get', 'G-XXXXXXXXXX', 'client_id', (clientID) => {
+  sendOfflineEvent(clientID, "tutorial_begin")
+});</pre>
+الحقول المدعومة رسمياً: <code>client_id</code> · <code>session_id</code> · <code>session_number</code>.<br>
+<span class="muted">developers.google.com/tag-platform/gtagjs/reference</span>
+</div>
+
+<div class="card warn">
+<h3 style="margin-top:0">ليه طريقتنا الحالية ما بتشتغلش</h3>
+<p style="margin:0 0 8px">الكود بيقرأ كوكي <code>_ga</code> ويفكّه بـregex:</p>
+<pre>// modonty/lib/analytics/visitor-cookie.ts:35-38
+function parseGaCookieClientId(gaCookie: string): string | null {
+  const match = gaCookie.match(/^GA\d+\.\d+\.(\d+\.\d+)$/);
+  return match ? match[1] : null;
+}</pre>
+<p style="margin:8px 0 0"><b>الفكرة صحيحة والتنفيذ غير رسمي.</b> جوجل ما وثّقش قراءة الكوكي بالـregex — وثّق
+<code>gtag('get')</code>. وصيغة الكوكي تفصيل داخلي قابل للتغيير بلا إشعار. والأهم:
+<b>الكوكي ما بيبقاش موجود أصلاً</b> وقت أول حدث (مقيس فوق).</p>
+</div>
+
+<div class="card crit">
+<h3 style="margin-top:0">⚠️ تحديث ٣ سبتمبر — هذا المقترح مكسور بصيغته الحالية</h3>
+<p style="margin:0">
+  بعد الدخول إلى GTM وقياس الصفحة الحيّة: <code>gtagExists: false</code>.
+  وسم <code>GA4 - Configuration</code> يرسل عبر GTM دون أن يعرّض <code>window.gtag</code>،
+  فاستدعاء <code>gtag('get', …)</code> أدناه <b>لن ينفّذ</b>.
+</p>
+<p style="margin:10px 0 0"><b>البدائل — ولم أتحقّق من أيٍّ منها بعد:</b></p>
+<ol style="margin:6px 0 0">
+  <li>تحميل <code>gtag.js</code> مباشرةً بجانب GTM ليصير <code>window.gtag</code> متاحاً.</li>
+  <li>قراءة الهويّة <b>داخل GTM</b> بمتغيّر مخصّص، ودفعها إلى <code>dataLayer</code> ليقرأها كودنا.</li>
+  <li>الاستغناء عن هويّة جوجل والمشي بهويّتنا وحدها في كل شيء — بما فيه إعداد GTM.</li>
+</ol>
+<p style="margin:10px 0 0"><b>الكود تحت يبقى للتوثيق، ولا يُنفَّذ قبل حسم البديل.</b></p>
+</div>
+
+<div class="card ok">
+<h3 style="margin-top:0">المقترح الأصلي — الهويّة من جوجل، وتُمرَّر مع كل حدث</h3>
+<p style="margin:0 0 10px"><b>أ ·</b> مكوّن صغير يقرأ الهويّة بالـAPI الرسمي ويحفظها في كوكي يقراه السيرفر:</p>
+<pre>// modonty/app/layout/components/gtm/GaIdentityBridge.tsx  — جديد
+"use client";
+import { useEffect } from "react";
+
+/**
+ * Reads the client_id and session_id from gtag using Google's DOCUMENTED
+ * `gtag('get', …)` API, then parks them in a cookie the server reads.
+ *
+ * Why not parse the `_ga` cookie: Google documents this API, not the cookie
+ * format — and the cookie does not exist yet when our first event fires
+ * (measured: first beacon at 1.255s, gtag requested at 2.083s).
+ */
+export function GaIdentityBridge({ measurementId }: { measurementId: string }) {
+  useEffect(() => {
+    const g = (window as { gtag?: (...a: unknown[]) => void }).gtag;
+    if (!g) return;
+    g("get", measurementId, "client_id", (cid: string) => {
+      g("get", measurementId, "session_id", (sid: string) => {
+        if (!cid) return;
+        // Not httpOnly on purpose: the value is an anonymous analytics id, and
+        // the client is the only place that can obtain it.
+        document.cookie =
+          `mdy_ga=${cid}|${sid ?? ""}; path=/; max-age=63072000; SameSite=Lax; Secure`;
+      });
+    });
+  }, [measurementId]);
+  return null;
+}</pre>
+
+<p style="margin:14px 0 10px"><b>ب ·</b> السيرفر يفضّل الهويّة الرسمية على المولَّدة:</p>
+<pre>// modonty/lib/analytics/visitor-cookie.ts  — تعديل getOrCreateVisitorId
+export async function getOrCreateVisitorId(): Promise<string> {
+  const store = await cookies();
+
+  // 1) The id gtag itself reported, via Google's documented `gtag('get')` API.
+  //    This is what makes server events join the same user as page_view.
+  const bridged = store.get("mdy_ga")?.value?.split("|")[0];
+  if (bridged) return bridged;
+
+  // 2) Legacy fallback — parsing `_ga` directly. Kept only until the bridge
+  //    has been live long enough for returning visitors to carry `mdy_ga`.
+  const ga = store.get(GA_COOKIE)?.value;
+  if (ga) { const fromGa = parseGaCookieClientId(ga); if (fromGa) return fromGa; }
+
+  const existing = store.get(VISITOR_COOKIE)?.value;
+  if (existing) return existing;
+  /* … كما هو … */
+}</pre>
+</div>
+
+<div class="card info">
+<h3 style="margin-top:0">كيف نتحقّق بعدها — بالأرقام لا بالإحساس</h3>
+<ol style="margin:0">
+  <li>على متصفّح نضيف: بعد التحميل لازم يوجد كوكي <code>mdy_ga</code>، وقيمته تطابق <code>_ga</code>.</li>
+  <li>بعد ٤٨ ساعة في GA4: <b>مستخدمو <code>web_vitals</code> يقتربون من مستخدمي <code>page_view</code></b>
+      (الآن 3,597 مقابل 862).</li>
+  <li>جلسات <code>(not set)</code> تنزل من <b>٦٩٪</b> نزولاً واضحاً.</li>
+  <li>الرقم الكلّي يقترب من Clarity (815 زائراً) — وهو شاهدنا المحايد.</li>
+</ol>
+</div>
+
+<!-- ═══════════════ 2 ═══════════════ -->
+<h2>٢ · تأجيل قياس الأداء لحد ما الهويّة تجهز</h2>
+<div class="card warn">
+<p style="margin:0 0 8px">حتى مع الجسر، لو الحدث سبق <code>gtag</code> فالهويّة لسّه مش جاهزة.
+الحلّ: صفّ انتظار قصير.</p>
+<pre>// modonty/app/layout/components/gtm/WebVitals.tsx — تعديل
+// Hold metrics until the identity bridge has parked `mdy_ga`, so no beacon
+// creates a phantom user. Measured gap: first metric 1.255s, gtag 2.083s.
+const queue: string[] = [];
+let flushed = false;
+
+function ready() {
+  return typeof document !== "undefined" && /(^|;\s*)mdy_ga=/.test(document.cookie);
+}
+
+function flush() {
+  if (flushed) return;
+  flushed = true;
+  for (const body of queue.splice(0)) send(body);
+}
+
+function send(body: string) {
+  try {
+    if (navigator?.sendBeacon) navigator.sendBeacon("/api/track/web-vitals", body);
+    else fetch("/api/track/web-vitals", { method: "POST", body, keepalive: true }).catch(() => {});
+  } catch {}
+}
+
+// in useReportWebVitals:
+if (ready()) send(body);
+else {
+  queue.push(body);
+  // A ceiling, not a promise: if gtag is blocked by an ad blocker the metric
+  // still ships — a phantom user is better than a lost measurement.
+  setTimeout(flush, 4000);
+}</pre>
+<p style="margin:8px 0 0" class="muted"><b>ملاحظة صريحة:</b> المهلة ٤ ثوانٍ اجتهاد مني، لا قاعدة رسمية.
+أساسها الفجوة المقيسة (٨٣٠ مللي) مضروبة بهامش. تُضبط بالقياس بعد النشر.</p>
+</div>
+
+<!-- ═══════════════ 3 ═══════════════ -->
+<h2>٣ · الأسماء الرسمية للأحداث</h2>
+<div class="src">
+<b>المصدر الرسمي —</b> الأحداث الموصى بها في GA4:
+<code>sign_up</code> (بارامتر <code>method</code>) · <code>login</code> (بارامتر <code>method</code>) ·
+<code>search</code> (بارامتر <b>مطلوب</b> <code>search_term</code>) ·
+<code>share</code> · <code>select_content</code> · <code>generate_lead</code> · <code>join_group</code>.<br>
+<span class="muted">developers.google.com/analytics/devguides/collection/ga4/reference/events</span>
+</div>
+<div class="card warn">
+<p style="margin:0 0 8px">أسماؤنا الحالية غير رسمية، فتقارير جوجل الجاهزة (Generate leads · Retention) <b>لا تراها</b>:</p>
+<div class="scrollx"><table>
+<tr><th>عندنا الآن</th><th>الاسم الرسمي</th><th>المكسب</th></tr>
+<tr><td><code>signup_complete</code></td><td><code>sign_up</code></td><td>يدخل تقارير التحويل الجاهزة</td></tr>
+<tr><td><code>login_start</code></td><td><code>login</code></td><td>نفس الشيء</td></tr>
+<tr><td><code>view_search_results</code></td><td><code>search</code> + <code>search_term</code></td><td><b>نعرف عمّاذا يبحثون</b></td></tr>
+<tr><td><code>article_share</code> · <code>client_share</code></td><td><code>share</code></td><td>تجميع موحّد</td></tr>
+<tr><td><code>contact_submit</code> · <code>booking_submit</code></td><td><code>generate_lead</code></td><td>قياس العملاء المحتملين</td></tr>
+<tr><td><code>follow_client</code></td><td><code>join_group</code></td><td>—</td></tr>
+</table></div>
+<p style="margin:10px 0 0"><b>مقترح:</b> نبعث <b>الاسمين معاً</b> فترةً — الرسمي للتقارير الجاهزة، والقديم حتى لا ينكسر تاريخنا.
+و<code>search_term</code> أعلى مكسب مفرد: يكشف ما يبحث عنه الزائر ولا يجده.</p>
+</div>
+
+<!-- ═══════════════ 4 ═══════════════ -->
+<h2>٤ · أحداث صفحة التسجيل — لحلّ لغز الـ٧٠٪</h2>
+<div class="card crit">
+<pre>137 شافوا  →  41 ضغطوا  →  21 كمّلوا
+              ↑
+        ٩٦ شخصاً وقعوا هنا، ومافيش حدث واحد يقول ليه</pre>
+<p style="margin:10px 0 8px"><b>المقترح — أربعة أحداث تملأ الفجوة:</b></p>
+<div class="scrollx"><table>
+<tr><th>الحدث</th><th>متى</th><th>يجاوب على</th></tr>
+<tr><td><code>form_field_focus</code></td><td>أول لمسة لأي حقل</td><td>وصلوا للنموذج أصلاً؟</td></tr>
+<tr><td><code>form_error</code></td><td>ظهور رسالة خطأ</td><td>الخطأ يصدّهم؟</td></tr>
+<tr><td><code>form_abandon</code></td><td>مغادرة بعد لمس حقل بلا إرسال</td><td>وقفوا عند أي حقل</td></tr>
+<tr><td><code>scroll_to_form</code></td><td>ظهور النموذج في الشاشة</td><td>شافوه أصلاً؟ <b>الصفحة 1709px والشاشة 844px</b></td></tr>
+</table></div>
+<p style="margin:10px 0 0"><b>الفرضية الأقوى عندي — وأقولها كفرضية لا كحقيقة:</b> صفحة التسجيل
+<b>ضِعف ارتفاع شاشة الجوّال</b> (١٧٠٩ مقابل ٨٤٤ بكسل، مقيس). فمن المحتمل أن جزءاً من الـ٩٦
+لم يروا الزرّ. <code>scroll_to_form</code> يحسم هذا خلال أيام.</p>
+</div>
+
+<!-- ═══════════════ 5 ═══════════════ -->
+<h2>٥ · العنوان الرئيسي الناقص</h2>
+<div class="src">
+<b>المصدر —</b> إرشادات جوجل للبحث: كل صفحة تحتاج عنواناً وصفياً واحداً في بنية المحتوى.
+والعنوان هو ما يبني شجرة المحتوى لقارئ الشاشة.
+</div>
+<div class="card warn">
+<div class="scrollx"><table>
+<tr><th>الصفحة</th><th>الحالة</th><th>الدليل</th></tr>
+<tr><td><code>/users/register</code></td><td class="red">بلا <code>h1</code></td><td class="n"><code>h1: []</code> مقيس</td></tr>
+<tr><td><code>/reels</code> وهي فاضية</td><td class="red">بلا <code>h1</code></td><td class="n"><code>reels/page.tsx:55-65</code></td></tr>
+<tr><td>مقال «الكبتاجون»</td><td class="amber"><code>h1</code> مرّتين</td><td class="n">التاني داخل المتن</td></tr>
+</table></div>
+<p style="margin:8px 0 0">الأول والثاني إصلاح كود من سطرين. الثالث تعديل محتوى — قرارك.</p>
+</div>
+
+<h2>الترتيب المقترح للتنفيذ</h2>
+<div class="card info">
+<ol style="margin:0">
+  <li><b>البند ١ + ٢ معاً</b> — لا معنى لأحدهما بدون الآخر. وبدونهما <b>لا يمكن قياس أثر أي إصلاح تالٍ</b>.</li>
+  <li><b>انتظار ٤٨ ساعة</b> ثم قراءة الأرقام — التوثيق الرسمي يذكر ٤٨ ساعة لدمج الأحداث.</li>
+  <li><b>البند ٤</b> — بعد نظافة البيانات، يصير لغز الـ٧٠٪ قابلاً للحلّ.</li>
+  <li><b>البند ٣ و٥</b> — منخفضا الخطورة، في أي وقت.</li>
+</ol>
+</div>
+
+<h2>ما لم أتحقّق منه — يُقال صراحةً</h2>
+<ul class="muted" style="font-size:14.5px">
+  <li><b>مهلة الـ٤ ثوانٍ اجتهاد</b> لا قاعدة رسمية — تُضبط بالقياس بعد النشر.</li>
+  <li><b>لم أختبر الجسر حيّاً</b> — مكتوب من التوثيق الرسمي، ولم يُنفَّذ بعد.</li>
+  <li><b>فرضية «الزرّ تحت الطيّة» غير مثبتة</b> — الارتفاع مقيس، وأثره على الـ٩٦ لا.</li>
+  <li><b>حاجبات الإعلانات</b> قد تمنع <code>gtag</code> كلياً؛ الصفّ يسقط بعد المهلة وتعود الهويّة المولَّدة.</li>
+  <li><b>تناقض الـ<code>CLS</code> ما زال مفتوحاً</b> ولا يعالجه أي بند هنا.</li>
+</ul>
+
+<p class="muted" style="margin-top:30px;font-size:13.5px">
+  الملفّان المرافقان: <code>GA4-EXPLAINED.html</code> (الشرح والمصطلحات) ·
+  <code>GA4-PROBLEMS.html</code> (كل المشاكل بالدليل).
+</p>
+</section>
+<script>
+(function () {
+  var tabs = document.querySelectorAll('.tabs button');
+  function show(key) {
+    tabs.forEach(function (b) {
+      b.setAttribute('aria-selected', String(b.dataset.pane === key));
+    });
+    document.querySelectorAll('.pane').forEach(function (p) {
+      p.hidden = p.id !== 'pane-' + key;
+    });
+    window.scrollTo(0, 0);
+  }
+  tabs.forEach(function (b) {
+    b.addEventListener('click', function () { show(b.dataset.pane); });
+  });
+
+  // Counters are COUNTED from the DOM, never typed by hand — a written number
+  // drifts from the content the first time a section is edited.
+  document.querySelectorAll('.pane').forEach(function (p) {
+    var key = p.id.replace('pane-', '');
+    var el = document.getElementById('n-' + key);
+    if (el) el.textContent = p.querySelectorAll('h2').length;
+  });
+})();
+</script>
+
+</div>
+</body>
+</html>

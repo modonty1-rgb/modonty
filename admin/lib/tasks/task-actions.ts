@@ -1,13 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { Session } from "next-auth";
 
 import type { Prisma } from "@prisma/client";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
-import { createTaskSchema, moveTaskSchema, updateTaskSchema } from "../helpers/task-schema";
+import { createTaskSchema, moveTaskSchema, updateTaskSchema } from "./task-schema";
 
 // Every action follows the same order: session → Zod → try/catch → revalidate.
 // Errors are RETURNED, never thrown: a thrown error inside a server action lands
@@ -38,6 +39,15 @@ const LIVE: Prisma.TaskWhereInput = {
   OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
 };
 
+/** Task cards are private to their assignee. Enforce this on the server too:
+ * hiding a card in the browser must not make its action endpoints public. */
+// `auth` has middleware overloads as well as its server-session overload. Using
+// ReturnType<typeof auth> selects the middleware signature in TypeScript, even
+// though this call site awaits a Session. Name the value we actually receive.
+function sessionUserId(session: Session | null): string | null {
+  return (session?.user as { id?: string } | undefined)?.id ?? null;
+}
+
 function parseDueDate(value: string | undefined): Date | null {
   const raw = orNull(value);
   if (!raw) return null;
@@ -61,7 +71,8 @@ function positionAt(siblings: { position: number }[], toIndex: number): number {
 
 export async function createTask(raw: unknown): Promise<Result> {
   const session = await auth();
-  if (!session) return { success: false, error: "Not authorised" };
+  const userId = sessionUserId(session);
+  if (!userId) return { success: false, error: "Not authorised" };
 
   const parsed = createTaskSchema.safeParse(raw);
   if (!parsed.success) {
@@ -70,11 +81,24 @@ export async function createTask(raw: unknown): Promise<Result> {
   const data = parsed.data;
 
   try {
+    // A normal staff member always creates work for themselves. An Admin may
+    // explicitly assign from the Report screen, but the id is still verified
+    // against an active staff record rather than trusted from the browser.
+    const actor = await db.staff.findUnique({ where: { id: userId }, select: { role: true } });
+    const assigneeId = actor?.role === "ADMIN" ? (orNull(data.assigneeId) ?? userId) : userId;
+    const assignee = await db.staff.findUnique({
+      where: { id: assigneeId },
+      select: { id: true, isActive: true },
+    });
+    if (!assignee || assignee.isActive === false) {
+      return { success: false, error: "Choose an active user" };
+    }
+
     // New cards go to the TOP of their column: a task you just wrote is the one
     // you are thinking about, and burying it under fifty older rows is why
     // "add" and "then scroll to find it" became two steps in other tools.
     const first = await db.task.findFirst({
-      where: { status: data.status, ...LIVE },
+      where: { status: data.status, assigneeId, ...LIVE },
       select: { position: true },
       orderBy: { position: "asc" },
     });
@@ -93,8 +117,8 @@ export async function createTask(raw: unknown): Promise<Result> {
         //
         // Taken from the SESSION, never from the payload: the form no longer
         // sends one, and the action is reachable without the form.
-        assigneeId: (session.user as { id?: string })?.id ?? null,
-        createdById: (session.user as { id?: string })?.id ?? null,
+        assigneeId,
+        createdById: userId,
         completedAt: data.status === "DONE" ? new Date() : null,
         // Written explicitly so the field EXISTS as null instead of being absent
         // — see `LIVE` above for what absent costs.
@@ -111,7 +135,8 @@ export async function createTask(raw: unknown): Promise<Result> {
 
 export async function updateTask(raw: unknown): Promise<Result> {
   const session = await auth();
-  if (!session) return { success: false, error: "Not authorised" };
+  const userId = sessionUserId(session);
+  if (!userId) return { success: false, error: "Not authorised" };
 
   const parsed = updateTaskSchema.safeParse(raw);
   if (!parsed.success) {
@@ -122,9 +147,10 @@ export async function updateTask(raw: unknown): Promise<Result> {
   try {
     const existing = await db.task.findUnique({
       where: { id: data.id },
-      select: { id: true, status: true, completedAt: true },
+      select: { id: true, status: true, completedAt: true, assigneeId: true },
     });
     if (!existing) return { success: false, error: "Task not found" };
+    if (existing.assigneeId !== userId) return { success: false, error: "Task not found" };
 
     await db.task.update({
       where: { id: existing.id },
@@ -134,7 +160,8 @@ export async function updateTask(raw: unknown): Promise<Result> {
         status: data.status,
         priority: data.priority,
         dueDate: parseDueDate(data.dueDate),
-        assigneeId: orNull(data.assigneeId),
+        // Tasks cannot be reassigned through a personal board.
+        assigneeId: userId,
         // Stamped the first time it reaches DONE and never overwritten after —
         // editing a finished task must not rewrite when it finished. Leaving
         // DONE clears it, so a reopened task does not claim a completion date.
@@ -153,7 +180,8 @@ export async function updateTask(raw: unknown): Promise<Result> {
 /** Drag-drop and the keyboard "move to" menu both land here — one write path. */
 export async function moveTask(raw: unknown): Promise<Result> {
   const session = await auth();
-  if (!session) return { success: false, error: "Not authorised" };
+  const userId = sessionUserId(session);
+  if (!userId) return { success: false, error: "Not authorised" };
 
   const parsed = moveTaskSchema.safeParse(raw);
   if (!parsed.success) {
@@ -164,9 +192,10 @@ export async function moveTask(raw: unknown): Promise<Result> {
   try {
     const task = await db.task.findUnique({
       where: { id },
-      select: { id: true, status: true, completedAt: true },
+      select: { id: true, status: true, completedAt: true, assigneeId: true },
     });
     if (!task) return { success: false, error: "Task not found" };
+    if (task.assigneeId !== userId) return { success: false, error: "Task not found" };
 
     // Siblings EXCLUDING the moving card: if it is already in this column, its
     // own row would otherwise shift every index by one and land the card next
@@ -174,7 +203,7 @@ export async function moveTask(raw: unknown): Promise<Result> {
     const siblings = await db.task.findMany({
       // Archived rows are excluded too: they hold positions the board does not
       // show, so counting them would land the card at the wrong index.
-      where: { status, ...LIVE, NOT: { id: task.id } },
+      where: { status, assigneeId: userId, ...LIVE, NOT: { id: task.id } },
       select: { position: true },
       orderBy: { position: "asc" },
       take: 500,
@@ -205,15 +234,17 @@ export async function moveTask(raw: unknown): Promise<Result> {
  */
 export async function archiveTask(id: string): Promise<Result> {
   const session = await auth();
-  if (!session) return { success: false, error: "Not authorised" };
+  const userId = sessionUserId(session);
+  if (!userId) return { success: false, error: "Not authorised" };
   if (!/^[0-9a-fA-F]{24}$/.test(id)) return { success: false, error: "Invalid id" };
 
   try {
     const task = await db.task.findUnique({
       where: { id },
-      select: { id: true, archivedAt: true },
+      select: { id: true, archivedAt: true, assigneeId: true },
     });
     if (!task) return { success: false, error: "Task not found" };
+    if (task.assigneeId !== userId) return { success: false, error: "Task not found" };
     if (task.archivedAt) return { success: false, error: "Task is already archived" };
 
     await db.task.update({ where: { id: task.id }, data: { archivedAt: new Date() } });
@@ -233,19 +264,21 @@ export async function archiveTask(id: string): Promise<Result> {
  */
 export async function restoreTask(id: string): Promise<Result> {
   const session = await auth();
-  if (!session) return { success: false, error: "Not authorised" };
+  const userId = sessionUserId(session);
+  if (!userId) return { success: false, error: "Not authorised" };
   if (!/^[0-9a-fA-F]{24}$/.test(id)) return { success: false, error: "Invalid id" };
 
   try {
     const task = await db.task.findUnique({
       where: { id },
-      select: { id: true, status: true, archivedAt: true },
+      select: { id: true, status: true, archivedAt: true, assigneeId: true },
     });
     if (!task) return { success: false, error: "Task not found" };
+    if (task.assigneeId !== userId) return { success: false, error: "Task not found" };
     if (!task.archivedAt) return { success: false, error: "Task is not archived" };
 
     const first = await db.task.findFirst({
-      where: { status: task.status, ...LIVE },
+      where: { status: task.status, assigneeId: userId, ...LIVE },
       select: { position: true },
       orderBy: { position: "asc" },
     });

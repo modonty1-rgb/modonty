@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Archive, KanbanSquare, LayoutGrid, UserCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -33,7 +34,11 @@ const ITEMS = [
  */
 export function TasksMenu() {
   const pathname = usePathname();
-  const active = ITEMS.some(
+  const { data: session } = useSession();
+  const items = ITEMS.filter(
+    (item) => item.href !== "/daily-tasks" || (session?.user as { role?: string } | undefined)?.role === "ADMIN",
+  );
+  const active = items.some(
     (i) => pathname === i.href || (i.href !== "/tasks" && pathname.startsWith(i.href)),
   );
 
@@ -57,7 +62,7 @@ export function TasksMenu() {
       <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuLabel>Tasks</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {ITEMS.map(({ href, label, icon: Icon, hint }) => {
+        {items.map(({ href, label, icon: Icon, hint }) => {
           const current = pathname === href;
           return (
             <DropdownMenuItem key={href} asChild>

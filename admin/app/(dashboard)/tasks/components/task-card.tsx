@@ -16,13 +16,20 @@ import { cn } from "@/lib/utils";
 
 import type { BoardTask } from "../helpers/queries";
 import {
-  TASK_PRIORITY_META,
   TASK_STATUSES,
   TASK_STATUS_META,
   type TaskStatusKey,
 } from "@/lib/tasks/task-config";
 
 const dateFmt = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" });
+
+/** Priority is a property of the card, not a chip that competes with its content. */
+const priorityAccent = {
+  LOW: "border-s-slate-400",
+  NORMAL: "border-s-blue-500",
+  HIGH: "border-s-amber-500",
+  URGENT: "border-s-red-500",
+} as const;
 
 /** Overdue is only meaningful while the task is unfinished. */
 function dueState(due: Date | null, status: TaskStatusKey) {
@@ -31,21 +38,6 @@ function dueState(due: Date | null, status: TaskStatusKey) {
   end.setHours(23, 59, 59, 999);
   const late = status !== "DONE" && end.getTime() < Date.now();
   return { label: dateFmt.format(due), late };
-}
-
-function Initials({ name, image }: { name: string | null; image: string | null }) {
-  const letter = (name?.trim()?.[0] ?? "؟").toUpperCase();
-  return image ? (
-    // eslint-disable-next-line @next/next/no-img-element -- avatars are remote Bunny URLs at 24px; next/image adds a request per card for no gain
-    <img src={image} alt="" className="size-6 shrink-0 rounded-full object-cover" />
-  ) : (
-    <span
-      className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-[10px] font-bold text-muted-foreground"
-      aria-hidden
-    >
-      {letter}
-    </span>
-  );
 }
 
 export function TaskCard({
@@ -66,14 +58,15 @@ export function TaskCard({
   });
 
   const due = dueState(task.dueDate, task.status);
-  const priority = TASK_PRIORITY_META[task.priority];
 
   return (
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className={cn(
-        "group rounded-lg border bg-card p-2.5 shadow-sm transition-shadow",
+        "group rounded-lg border border-s-4 bg-card p-2.5 shadow-sm transition-shadow",
+        priorityAccent[task.priority],
+        task.assignedByAdmin && "bg-violet-500/10 ring-1 ring-violet-500/60 dark:bg-violet-500/15",
         isDragging && "opacity-40",
         dragging && "rotate-2 shadow-lg",
       )}
@@ -131,12 +124,6 @@ export function TaskCard({
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-1.5 ps-5">
-        <span
-          className={cn("rounded px-1.5 py-0.5 text-[10px] font-semibold", priority.tone)}
-        >
-          {priority.label}
-        </span>
-
         {due && (
           <span
             className={cn(
@@ -152,18 +139,6 @@ export function TaskCard({
           </span>
         )}
 
-        <span className="ms-auto flex items-center gap-1.5">
-          {task.assignee ? (
-            <>
-              <span className="max-w-24 truncate text-[11px] text-muted-foreground">
-                {task.assignee.name ?? "No name"}
-              </span>
-              <Initials name={task.assignee.name} image={task.assignee.image} />
-            </>
-          ) : (
-            <span className="text-[11px] text-muted-foreground/70">Unassigned</span>
-          )}
-        </span>
       </div>
     </div>
   );

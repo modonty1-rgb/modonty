@@ -22,6 +22,7 @@ export default auth(async (req) => {
     (p) => pathname === p || pathname.startsWith(`${p}/`),
   );
   const userId = (req.auth?.user as { id?: string } | undefined)?.id;
+  const isDailyTasksReport = pathname === "/daily-tasks" || pathname.startsWith("/daily-tasks/");
 
   // Public auth pages: a signed-in ACTIVE staff member → dashboard; everyone else → allow.
   if (isPublic) {
@@ -41,10 +42,13 @@ export default auth(async (req) => {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
   const staffRow = await db.staff
-    .findUnique({ where: { id: userId }, select: { isActive: true } })
+    .findUnique({ where: { id: userId }, select: { isActive: true, role: true } })
     .catch(() => null);
   if (!staffRow || staffRow.isActive === false) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
+  }
+  if (isDailyTasksReport && staffRow.role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
   return NextResponse.next();

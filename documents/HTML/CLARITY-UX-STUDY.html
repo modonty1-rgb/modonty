@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>دراسة تجربة الزائر — مدونتي · Clarity آخر ٣٠ يوماً</title>
+<style>
+  :root{
+    --bg:#0b1020; --card:#121a30; --ink:#e8edf7; --muted:#94a3b8; --line:#22304d;
+    --red:#f87171; --amber:#fbbf24; --green:#34d399; --blue:#60a5fa;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.85 "Segoe UI",Tahoma,system-ui,sans-serif;padding:28px 18px 80px}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:26px;margin:0 0 6px}
+  h2{font-size:20px;margin:34px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  h3{font-size:16px;margin:20px 0 8px}
+  .sub{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;margin:10px 0}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);font-weight:700}
+  .n{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+  .red{color:var(--red)} .amber{color:var(--amber)} .green{color:var(--green)} .blue{color:var(--blue)}
+  .muted{color:var(--muted)}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700}
+  .p-red{background:rgba(248,113,113,.16);color:var(--red)}
+  .p-amber{background:rgba(251,191,36,.16);color:var(--amber)}
+  .p-green{background:rgba(52,211,153,.16);color:var(--green)}
+  code{background:rgba(255,255,255,.07);padding:1px 6px;border-radius:5px;font-size:13px;direction:ltr;display:inline-block}
+  .scrollx{overflow-x:auto}
+  .warn{border-right:4px solid var(--amber)}
+  .crit{border-right:4px solid var(--red)}
+  .ok{border-right:4px solid var(--green)}
+  ol,ul{padding-inline-start:22px}
+  li{margin:6px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>دراسة تجربة الزائر — مدونتي</h1>
+<p class="sub">
+  المصدر: Microsoft Clarity · مشروع <code>modonty</code> · نطاق <b>آخر ٣٠ يوماً</b> ·
+  <b>١٬٤٢٩ جلسة</b> (٢٤٠ جلسة بوت مستبعدة) · ٨١٥ زائراً فريداً · قُرئت ٢ سبتمبر ٢٠٢٦.
+  كل رقم هنا منسوخ من لوحة Clarity، لا مستنتَج.
+</p>
+
+<h2>الخلاصة في ثلاثة أسطر</h2>
+<div class="card crit">
+  <p style="margin:0 0 8px"><b>١ · أكبر مشكلة تجربة عندك تقنية لا تصميمية:</b>
+  الصفحة تقفز تحت إصبع الزائر. <code>CLS = 0.54</code> والحدّ المقبول عند جوجل
+  <code>0.1</code> — يعني <b>خمسة أضعاف</b> السقف.</p>
+  <p style="margin:0 0 8px"><b>٢ · ١٤٫٤٩٪ من الجلسات فيها نقرة ميتة</b> (٢٠٧ جلسة): الزائر يضغط ولا يحصل شيء.
+  وهذا بالضبط ما يفعله الـ<code>CLS</code> العالي — تضغط، فيقفز المحتوى، فتقع ضغطتك على فراغ.</p>
+  <p style="margin:0"><b>٣ · ١٤٫٢٨٪ «رجوع سريع»</b> (٢٠٤ جلسة) ببصمة واضحة:
+  <b>٧٫٠٦ صفحة في الجلسة مقابل ٤٣ ثانية نشاط فقط</b> — لفّة بلا وصول.</p>
+</div>
+
+<h2>١ · الأداء — الرقم الذي يفسّر أكثر من غيره</h2>
+<div class="scrollx"><table>
+<tr><th>المقياس</th><th>القيمة</th><th>حدّ جوجل «جيّد»</th><th>الحكم</th></tr>
+<tr><td>الدرجة الكلّية</td><td class="n">61/100</td><td class="muted">٩٠+</td><td><span class="pill p-amber">متوسّط</span></td></tr>
+<tr><td><code>LCP</code> — متى يظهر أكبر عنصر</td><td class="n red">5.2 ثانية</td><td class="muted">أقل من ٢٫٥ ث</td><td><span class="pill p-red">ضعيف</span></td></tr>
+<tr><td><code>CLS</code> — قفز التخطيط</td><td class="n red">0.54</td><td class="muted">أقل من 0.1</td><td><span class="pill p-red">ضعيف جداً</span></td></tr>
+<tr><td><code>INP</code> — سرعة استجابة الضغطة</td><td class="n amber">360 مللي</td><td class="muted">أقل من ٢٠٠</td><td><span class="pill p-amber">يحتاج تحسين</span></td></tr>
+</table></div>
+<p class="muted" style="font-size:14.5px">
+  توزيع ٨٦٤ مشاهدة صفحة: <b class="green">٢١٫٤٪ جيّد</b> · <b class="amber">٥٠٫٢٪ يحتاج تحسين</b> · <b class="red">٢٨٫٤٪ ضعيف</b>.
+  يعني <b>أربعة من كل خمسة زوّار</b> يرون صفحة دون المستوى.
+</p>
+
+<h2>٢ · النقر الميت — الزائر يضغط ولا يحصل شيء</h2>
+<p><b>٢٠٧ جلسة (١٤٫٤٩٪).</b> والنسبة لكل صفحة أهم من العدد الخام:</p>
+<div class="scrollx"><table>
+<tr><th>الصفحة</th><th>مشاهدات فيها نقر ميت</th><th>إجمالي مشاهداتها</th><th>النسبة</th></tr>
+<tr><td>مقال «استشارات نفسية اون لاين»</td><td class="n">9</td><td class="n">36</td><td class="n red">٢٥٪</td></tr>
+<tr><td>مقال «اليوم الوطني السعودي ٩٦»</td><td class="n">35</td><td class="n">158</td><td class="n red">٢٢٪</td></tr>
+<tr><td>صفحة عميل <code>dawi-smile-elite</code></td><td class="n">16</td><td class="n">95</td><td class="n amber">١٧٪</td></tr>
+<tr><td><code>/clients</code></td><td class="n">22</td><td class="n">164</td><td class="n amber">١٣٪</td></tr>
+<tr><td><code>/search</code></td><td class="n">4</td><td class="n">46</td><td class="n amber">٩٪</td></tr>
+<tr><td>الرئيسية <code>/</code></td><td class="n">26</td><td class="n">427</td><td class="n green">٦٪</td></tr>
+</table></div>
+<p style="margin-top:4px">
+  <b>المركّز في صفحات المقال وصفحات العملاء لا في الرئيسية</b> — وهذه هي الصفحات التي
+  يدخلها الزائر من جوجل مباشرةً، أي أول انطباع.
+</p>
+<div class="card warn">
+  <b>⚠️ حدّ في هذه النقطة — يُقال صراحةً:</b>
+  حاولتُ نسب النقر الميت إلى عنصر بعينه عبر الخريطة الحرارية مع فلتر
+  <code>deadClickCount=1</code>، <b>فرجع ترتيب العناصر مطابقاً تماماً لغير المفلتر</b> —
+  الفلتر يصفّي الجلسات لا النقرات. فلا أستطيع القول «العنصر الفلاني هو المشكلة».
+  تحديد العنصر يحتاج <b>مشاهدة تسجيلات</b>، وهي خطوة لم أنفّذها بعد.
+</div>
+
+<h2>٣ · الرجوع السريع — لفّة بلا وصول</h2>
+<p><b>٢٠٤ جلسة (١٤٫٢٨٪).</b> وبصمتها تقول القصة:</p>
+<div class="scrollx"><table>
+<tr><th>المقياس</th><th>كل الجلسات</th><th>جلسات الرجوع السريع</th></tr>
+<tr><td>صفحات في الجلسة</td><td class="n">2.35</td><td class="n red">7.06</td></tr>
+<tr><td>وقت النشاط</td><td class="n">1.3 دقيقة</td><td class="n red">43 ثانية</td></tr>
+</table></div>
+<p><b>يفتح سبع صفحات في أقل من دقيقة نشاط</b> — هذا ليس تصفّحاً، هذا بحث فاشل عن شيء.</p>
+<div class="scrollx"><table>
+<tr><th>الصفحة</th><th>رجوع سريع</th><th>إجمالي</th><th>النسبة</th></tr>
+<tr><td><code>/about</code></td><td class="n">21</td><td class="n">65</td><td class="n red">٣٢٪</td></tr>
+<tr><td><code>/clients</code></td><td class="n">46</td><td class="n">164</td><td class="n red">٢٨٪</td></tr>
+<tr><td><code>/search</code></td><td class="n">13</td><td class="n">46</td><td class="n red">٢٨٪</td></tr>
+<tr><td>الرئيسية <code>/</code></td><td class="n">95</td><td class="n">427</td><td class="n amber">٢٢٪</td></tr>
+</table></div>
+<p><code>/about</code> و<code>/search</code> أعلى صفحتين — والاثنتان صفحتا «أنا أبحث عن جواب».</p>
+
+<h2>٤ · الانخراط — نصف الصفحة لا يُرى</h2>
+<div class="scrollx"><table>
+<tr><th>المقياس</th><th>القيمة</th><th>ماذا يعني</th></tr>
+<tr><td>عمق التمرير</td><td class="n amber">53.50٪</td><td>نصف كل صفحة لم يره أحد</td></tr>
+<tr><td>وقت النشاط / الوقت الكلّي</td><td class="n red">1.3 من 5.0 دقيقة</td><td><b>٧٤٪ من الوقت الصفحة مفتوحة والزائر غير متفاعل</b></td></tr>
+<tr><td>صفحات في الجلسة</td><td class="n">2.35</td><td>—</td></tr>
+<tr><td>تمرير مفرط</td><td class="n green">0٪</td><td><span class="pill p-green">سليم</span> لا أحد يبحث بالتمرير الهائج</td></tr>
+<tr><td>نقرات الغضب</td><td class="n green">0.56٪ · 8 جلسات</td><td><span class="pill p-green">منخفض</span> الإحباط الحادّ نادر</td></tr>
+<tr><td>أخطاء جافاسكربت</td><td class="n green">0.28٪ · 7 أخطاء</td><td><span class="pill p-green">ليست السبب</span></td></tr>
+</table></div>
+<p class="muted" style="font-size:14.5px">
+  الأخطاء السبعة: <code>error invoking postmessage: java object is gone</code> (٥٧٪) ·
+  <code>can't find variable: config</code> (٢٩٪) · <code>React #418</code> (١٤٪).
+  الأولان من متصفّحات داخل تطبيقات (فيسبوك/جوجل)، لا من كودنا.
+</p>
+
+<h2>٥ · مَن الزائر ومن أين يأتي</h2>
+<div class="scrollx"><table>
+<tr><th>الجهاز/المتصفّح</th><th>الحصّة</th><th>جلسات</th></tr>
+<tr><td>Chrome Mobile</td><td class="n">42.48٪</td><td class="n">607</td></tr>
+<tr><td>Chrome (سطح مكتب)</td><td class="n">29.32٪</td><td class="n">419</td></tr>
+<tr><td>Mobile Safari</td><td class="n">10.85٪</td><td class="n">155</td></tr>
+<tr><td>Google App</td><td class="n">5.32٪</td><td class="n">76</td></tr>
+<tr><td>Edge</td><td class="n">4.34٪</td><td class="n">62</td></tr>
+</table></div>
+<p><b>الجوّال ≈ ٥٩٪ من الجلسات</b> (Chrome Mobile + Safari + تطبيق جوجل) — فأي إصلاح يبدأ من الجوّال.</p>
+<p class="muted" style="font-size:14.5px">
+  المصادر: <b>جوجل ٥٦٦</b> · مدونتي نفسها ١٣٩ · فيسبوك ٢٩ · بينج ١٨ ·
+  <b>Perplexity ٣</b> (ظهور في محرّك ذكاء اصطناعي).
+  والزوّار: ٦٢٫٤٢٪ جدد · ٣٧٫٥٨٪ عائدون.
+</p>
+
+<h2>٦ · التحويل — أين يقف القمع</h2>
+<div class="scrollx"><table>
+<tr><th>الحدث</th><th>جلسات</th><th>من ١٬٤٢٩</th></tr>
+<tr><td>نقرة خارجية</td><td class="n">63</td><td class="n">٤٫٤٪</td></tr>
+<tr><td>إرسال نموذج</td><td class="n">57</td><td class="n">٤٫٠٪</td></tr>
+<tr><td>تسجيل دخول</td><td class="n">33</td><td class="n">٢٫٣٪</td></tr>
+<tr><td>إنشاء حساب</td><td class="n red">16</td><td class="n red">١٫١٪</td></tr>
+<tr><td>تواصل معنا</td><td class="n">7</td><td class="n">٠٫٥٪</td></tr>
+<tr><td>اشتراك بالنشرة</td><td class="n red">4</td><td class="n red">٠٫٣٪</td></tr>
+</table></div>
+<p>
+  <code>/users/register</code> زارها <b>٦٧</b> ونتج عنها <b>١٦</b> تسجيلاً — أي
+  <b>٧٦٪ ممّن فتح صفحة التسجيل لم يكملها</b>. وهذا أضيق مكان في القمع.
+</p>
+
+<h2>٧ · الترتيب المقترح — بالأثر لا بالسهولة</h2>
+<div class="card crit">
+  <h3 style="margin-top:0">أولاً · <code>CLS 0.54</code> — قبل أي شيء آخر</h3>
+  <p style="margin:0">
+    هو <b>مشكلة تجربة بنفسه</b> (المحتوى يقفز تحت الإصبع) و<b>المرشّح الأول لتفسير ٢٠٧ جلسة نقر ميت</b>.
+    إصلاحه قد يُسقط رقمين معاً. البداية: حجز مساحة كل صورة وإطار (<code>width/height</code> أو
+    <code>aspect-ratio</code>)، والخطوط، وأي عنصر يُحقن بعد أول رسم.
+  </p>
+</div>
+<div class="card warn">
+  <h3 style="margin-top:0">ثانياً · <code>LCP 5.2s</code> على الجوّال</h3>
+  <p style="margin:0">٥٩٪ من زوّارك على الجوّال، و٥ ثوانٍ قبل أول محتوى حقيقي.
+  ابدأ من صفحات المقال وصفحات العملاء — هي مداخل جوجل.</p>
+</div>
+<div class="card warn">
+  <h3 style="margin-top:0">ثالثاً · شاهد تسجيلات النقر الميت</h3>
+  <p style="margin:0">٥–١٠ تسجيلات على مقال «اليوم الوطني» و<code>/clients</code>
+  تحسم <b>أي عنصر</b> يضغطه الزائر بلا نتيجة — وهو ما لم تحسمه اللوحة.</p>
+</div>
+<div class="card warn">
+  <h3 style="margin-top:0">رابعاً · <code>/about</code> و<code>/search</code></h3>
+  <p style="margin:0">أعلى صفحتين في الرجوع السريع (٣٢٪ و٢٨٪). الزائر وصل إليهما يسأل، وخرج بلا جواب.</p>
+</div>
+<div class="card">
+  <h3 style="margin-top:0">خامساً · صفحة التسجيل</h3>
+  <p style="margin:0">٧٦٪ يفتحونها ولا يكملون. تسجيلاتها ستقول أين يتوقّفون بالضبط.</p>
+</div>
+
+<h2>حدود هذه الدراسة — ما لم يُقَس</h2>
+<ul class="muted" style="font-size:14.5px">
+  <li><b>لم أشاهد أي تسجيل جلسة</b> — كل ما سبق من لوحة Clarity وخرائطها.</li>
+  <li><b>لم أنسب النقر الميت إلى عنصر</b> — الفلتر لم يغيّر ترتيب عناصر الخريطة (السبب موضّح في القسم ٢).</li>
+  <li><b>لم أفتح خرائط الجوّال منفصلة</b> عن الديسكتوب، رغم أن الجوّال ٥٩٪ من الجلسات.</li>
+  <li>أرقام الأداء من Clarity لا من PageSpeed — قياس ميداني حقيقي، لكنه لا يسمّي العنصر المسبّب.</li>
+  <li>النطاق ٣٠ يوماً فقط؛ لا مقارنة بفترة سابقة.</li>
+</ul>
+
+<p class="muted" style="margin-top:30px;font-size:13.5px">
+  رابط المشروع: <code>clarity.microsoft.com/projects/view/xwq5tz4deb</code>
+</p>
+
+</div>
+</body>
+</html>
