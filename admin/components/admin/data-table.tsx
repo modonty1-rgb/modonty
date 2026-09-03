@@ -22,6 +22,8 @@ interface DataTableProps<T> {
   searchPlaceholder?: string;
   onRowClick?: (item: T) => void;
   pageSize?: number;
+  /** Controls rendered beside the search box — filters that belong on the same line as it. */
+  toolbar?: React.ReactNode;
 }
 
 type SortDirection = "asc" | "desc" | null;
@@ -33,6 +35,7 @@ export function DataTable<T extends { id: string }>({
   searchPlaceholder = "Search...",
   onRowClick,
   pageSize = 10,
+  toolbar,
 }: DataTableProps<T>) {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -120,20 +123,28 @@ export function DataTable<T extends { id: string }>({
 
   return (
     <div className="space-y-4">
-      {searchKey && (
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder={searchPlaceholder}
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="pl-10"
-            />
-          </div>
+      {(searchKey || toolbar) && (
+        <div className="flex flex-wrap items-center gap-2">
+          {searchKey && (
+            <div className="relative w-full max-w-sm">
+              {/* `start-3`/`ps-10` لا `left-3`/`pl-10`: الجداول العربية (شاشات فاتن) تُرسم
+                  داخل `dir="rtl"`، والقيمة المثبّتة يساراً تضع الأيقونة فوق آخر ما يُكتب.
+                  في الإنجليزية `start` = يسار، فالرسم لا يتغيّر في أي جدول قائم. */}
+              <Search className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder={searchPlaceholder}
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="ps-10"
+              />
+            </div>
+          )}
+          {/* الفلاتر تجلس في صفّ البحث لا في صفٍّ فوقه. سطران أحدهما شبه فارغ يدفعان الجدول
+              — وهو المقصود من الصفحة — تحت الطيّة بلا مقابل. */}
+          {toolbar}
         </div>
       )}
 

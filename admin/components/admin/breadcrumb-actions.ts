@@ -8,6 +8,7 @@ import { getIndustryById } from '@/app/(dashboard)/industries/actions/industries
 import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
 import { getUserById } from '@/app/(dashboard)/users/actions/users-actions';
 import { getModontyAuthor } from '@/app/(dashboard)/authors/actions/authors-actions';
+import { getLeadName } from '@/app/(dashboard)/sales-leads/helpers/get-lead';
 
 function normalizeEntityType(type: string): string {
   const pluralToSingular: Record<string, string> = {
@@ -21,6 +22,8 @@ function normalizeEntityType(type: string): string {
     industries: 'industry',
     authors: 'author',
     users: 'user',
+    // فاتن تفتح بطاقة عميل محتمل، والفتات يقول اسمها لا معرّفها المشفّر.
+    'sales-leads': 'sales-lead',
   };
   return pluralToSingular[type] || type;
 }
@@ -56,6 +59,9 @@ export async function getEntityName(type: string, id: string): Promise<string | 
       case 'user': {
         const user = await getUserById(id);
         return user?.name || null;
+      }
+      case 'sales-lead': {
+        return await getLeadName(id);
       }
       case 'author': {
         const author = await getModontyAuthor();

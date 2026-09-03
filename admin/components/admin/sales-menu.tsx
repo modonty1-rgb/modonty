@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CreditCard, TrendingUp, Wallet } from "lucide-react";
+import { CreditCard, TrendingUp, UserPlus, Wallet } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,9 +16,12 @@ import {
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
-  { href: "/clients/accounts", label: "Accounts", icon: Wallet, hint: "What each client owes and paid" },
-  { href: "/clients/sales-report", label: "Sales Report", icon: TrendingUp, hint: "Revenue, month by month" },
-  { href: "/subscription-tiers", label: "Subscription Tiers", icon: CreditCard, hint: "Plans and their prices" },
+  // First in the menu because it is first in the journey: someone is a lead before they
+  // are a client with an account.
+  { href: "/sales-leads", label: "العملاء المحتملون", icon: UserPlus, hint: "اللي بنكلّمهم قبل ما يوقّعوا" },
+  { href: "/clients/accounts", label: "الحسابات", icon: Wallet, hint: "كل عميل عليه كام ودفع كام" },
+  { href: "/clients/sales-report", label: "تقرير المبيعات", icon: TrendingUp, hint: "الإيراد شهر بشهر" },
+  { href: "/subscription-tiers", label: "الباقات", icon: CreditCard, hint: "الباقات وأسعارها" },
 ] as const;
 
 /**
@@ -47,19 +50,21 @@ export function SalesMenu() {
         <Button
           variant="ghost"
           size="sm"
-          aria-label="Sales"
+          aria-label="المبيعات"
           className={cn(
             "h-8 gap-1.5 text-xs font-medium",
             active && "bg-accent text-accent-foreground",
           )}
         >
           <Wallet className="size-4" aria-hidden />
-          <span className="hidden sm:inline">Sales</span>
+          {/* عربيّ في شريطٍ إنجليزيّ — بقصد: هذه بوّابة فاتن وحدها، والاسم الذي تبحث عنه
+              هو الذي تعرفه. بقيّة الشريط لبقيّة الفريق ويبقى كما هو. */}
+          <span className="hidden sm:inline">المبيعات</span>
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-60">
-        <DropdownMenuLabel>Sales</DropdownMenuLabel>
+      <DropdownMenuContent align="end" dir="rtl" className="w-64">
+        <DropdownMenuLabel dir="rtl">المبيعات</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {ITEMS.map(({ href, label, icon: Icon, hint }) => {
           const current = pathname === href;

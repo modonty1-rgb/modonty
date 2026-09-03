@@ -73,6 +73,19 @@ const sectionLabels: Record<string, string> = {
   social: 'Social',
   technical: 'Technical',
   'tags-faq': 'Tags & FAQ',
+  // Faten's screens are Arabic end to end (Khalid, 2026-09-04), and the crumb is the first
+  // thing above them. Left alone it reads «Sales-leads» — the one English word on an
+  // otherwise Arabic page, sitting exactly where the eye lands first.
+  'sales-leads': 'العملاء المحتملون',
+};
+
+/**
+ * Segments whose label depends on the section above them. `new` under `sales-leads` is
+ * «عميل محتمل جديد»; anywhere else it stays "New". Keyed by parent so one Arabic screen
+ * does not rename the crumb on twenty English ones.
+ */
+const scopedLabels: Record<string, Record<string, string>> = {
+  'sales-leads': { new: 'عميل جديد', edit: 'تعديل' },
 };
 
 export function isObjectId(str: string): boolean {
@@ -89,6 +102,13 @@ export function parsePathname(pathname: string): string[] {
 }
 
 export function getRouteLabel(segment: string, index: number, segments: string[]): string {
+  // The section above wins over the global maps: `new` is a generic word whose right
+  // translation depends on where it sits, and only its parent knows that.
+  const parent = segments[index - 1];
+  if (parent && scopedLabels[parent]?.[segment]) {
+    return scopedLabels[parent][segment];
+  }
+
   if (routeLabels[segment]) {
     return routeLabels[segment];
   }
