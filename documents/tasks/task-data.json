@@ -2419,12 +2419,12 @@
         "console",
         "admin"
       ],
-      "tab": "now",
+      "tab": "done",
       "sev": "normal",
       "who": "c",
       "date": "٣ سبتمبر ٢٠٢٦",
-      "t": "📄 ثلاث عشرة قائمة تعرض جزءاً وتسكت — «X من Y» أولاً، والترقيم قرار لاحق",
-      "d": "<p><b>المصدر:</b> تقرير Codex في تبويب <b>🤖 Codex</b>. <b>لا قرار مطلوب على الحدّ الأدنى:</b> أن تقول القائمةُ كم أخفت ليس خياراً في التصميم — الصمت هو الخطأ.</p><p><b>يمسّ الزائر على مدونتي:</b><br><code>get-articles-archive.ts:152  300  الصفحة 16+ تبدو نهاية وهي ليست نهاية<br>get-clients-list.ts:114      500  كل الشركاء بلا ترقيم ولا إجمالي<br>get-clients-search.ts:59      10  «النتيجة 10» محسوبة من طول العشرة لا من count<br>get-audio-articles.ts:71     100  دالة اسمها «كل المقالات ذات التسجيل» تعيد أول مئة</code></p><p><b>يمسّ العميل في الكونسول:</b><br><code>gallery/page.tsx:45  60 · reel-queries.ts:90  60<br>article-queries.ts:312  200 · invoice-queries.ts:49  100</code></p><p><b>وفي الأدمن:</b><br><code>get-bookings-report.ts:81  300 · get-board-tasks.ts:50  500<br>get-archived-tasks.ts:37  200 — آخر مئتين كأنها الأرشيف كلّه</code></p><p><b>على خطوتين:</b> (١) الإجمالي الحقيقي معروضاً — رخيص وصحيح في كل موضع. (٢) <b>الترقيم أو «المزيد» قرار خالد</b> لأنه شغل واجهة، وعلى مدونتي يمسّ ما يزحف إليه جوجل.</p><p><b>وموضعٌ من هذه القائمة أُصلح اليوم:</b> <code>load-groups.ts</code> — كان 500 بترتيب الأحدث والتعليق يقول «الأسوأ أولاً»؛ المجموعات 14 ← 24.</p>"
+      "t": "📄 القوائم المقصوصة — قُسّمت إلى أربع مهامّ بعد القياس",
+      "d": "<p><b>المصدر:</b> تقرير Codex في تبويب <b>🤖 Codex</b>. <b>لا قرار مطلوب على الحدّ الأدنى:</b> أن تقول القائمةُ كم أخفت ليس خياراً في التصميم — الصمت هو الخطأ.</p><p><b>يمسّ الزائر على مدونتي:</b><br><code>get-articles-archive.ts:152  300  الصفحة 16+ تبدو نهاية وهي ليست نهاية<br>get-clients-list.ts:114      500  كل الشركاء بلا ترقيم ولا إجمالي<br>get-clients-search.ts:59      10  «النتيجة 10» محسوبة من طول العشرة لا من count<br>get-audio-articles.ts:71     100  دالة اسمها «كل المقالات ذات التسجيل» تعيد أول مئة</code></p><p><b>يمسّ العميل في الكونسول:</b><br><code>gallery/page.tsx:45  60 · reel-queries.ts:90  60<br>article-queries.ts:312  200 · invoice-queries.ts:49  100</code></p><p><b>وفي الأدمن:</b><br><code>get-bookings-report.ts:81  300 · get-board-tasks.ts:50  500<br>get-archived-tasks.ts:37  200 — آخر مئتين كأنها الأرشيف كلّه</code></p><p><b>على خطوتين:</b> (١) الإجمالي الحقيقي معروضاً — رخيص وصحيح في كل موضع. (٢) <b>الترقيم أو «المزيد» قرار خالد</b> لأنه شغل واجهة، وعلى مدونتي يمسّ ما يزحف إليه جوجل.</p><p><b>وموضعٌ من هذه القائمة أُصلح اليوم:</b> <code>load-groups.ts</code> — كان 500 بترتيب الأحدث والتعليق يقول «الأسوأ أولاً»؛ المجموعات 14 ← 24.</p><hr><p><b>قُسّمت ٣ سبتمبر ٢٠٢٦ بأمر خالد:</b> «ما أبغى مسكن، أبغى حل جذري… إذا كانت المهمّة ستأخذ وقتاً فصّل الكرت إلى مهامّ صغيرة».</p><p><b>ولا واحدة منها تقصّ اليوم — مقيس على الإنتاج:</b><br><code>أرشيف المقالات 300←144 · الشركاء 500←37 · الصوتيات 100←0<br>معرض العميل 60←24 · مقالات العميل 200←24 · فواتير العميل 100←2<br>حجوزات الأدمن 300←49 · لوحة المهام 500←3 · أرشيف المهام 200←0</code><br>فالخطر مؤجَّل لا قائم: أوّل تجاوزٍ للسقف يبدأ القصّ <b>بصمت</b>.</p><p><b>وأرشيف المقالات — أهمّها — مبنيّ صحيحاً بالفعل:</b> روابط <code>?page=n</code> مرسومة في الماركب والتمرير طبقةٌ فوقها، والتعليق في الكود يذكر السبب نفسه الذي يقوله توثيق جوجل. فبند Codex عنه كان عن الإجمالي الغائب لا عن الزحف.</p><p><b>المرجع — لا تخترع نمطاً:</b> <code>modonty/components/shared/pagination/FeedPagination.tsx</code> مبنيّ وموثَّق ومستعمل في خمس صفحات، وروابطه <code>&lt;a href&gt;</code> حقيقية بهدف لمس ٤٤ بكسل (WCAG 2.2 SC 2.5.5). وهو مطابقٌ لما يوصي به جوجل حرفياً:<br><code>\"Give each page a unique URL … include a ?page=n query parameter\"<br>\"links from each page to the following page using &lt;a href&gt; tags\"<br>\"Google no longer uses [rel=next/prev]\"<br>\"Google's crawlers don't click buttons and generally don't trigger JavaScript<br> functions that require user actions\"</code></p><p><b>ومن توثيق برِزما:</b> «Choose offset pagination when users need to jump directly to a numbered page» — و«offset re-counts skipped rows on every page، which degrades … into large datasets». هذه القوائم عشرات لا آلاف، فالإزاحة (<code>skip</code>/<code>take</code>) هي الصحيحة، والمؤشّر (<code>cursor</code>) يُؤجَّل لما ينمو بلا حدّ.</p><p><b>وثلاثتها تشترط الإجمالي الحقيقي</b> من <code>count()</code> — لا طول المصفوفة بعد القصّ.</p>"
     },
     {
       "id": "CLIENT-VIS",
@@ -2438,6 +2438,58 @@
       "date": "٣ سبتمبر ٢٠٢٦",
       "t": "🔒 العميل كان يرى مقالاً وهو WRITING — ثلاثة أبواب لا باب",
       "d": "<p><b>بلاغ طارق (٣ سبتمبر ٢٠٢٦):</b> العميل يرى المقال في الكونسول حتى وهو <code>draft</code> أو <code>writing</code>، والمفروض ألّا يرى إلا ما ينتظر قراره أو تعديله.</p><p><b>مقيس على الإنتاج قبل الإصلاح:</b><br><code>16 مقالاً غير جاهز ظاهرٌ لثمانية عملاء<br>WRITING 7 · ARCHIVED 4 · SCHEDULED 3 · DRAFT 2</code></p><p><b>السبب — استثناء بدل سماح:</b> <code>getAllArticles</code> كانت <code>status: { not: PUBLISHED_ON_CLIENT_SITE }</code>. فكلّ حالةٍ تُضاف إلى <code>ArticleStatus</code> تصير مرئيّةً للعميل تلقائياً ما لم يتذكّر أحدٌ استثناءها — والسهو يميل إلى الكشف لا إلى الكتمان.</p><p><b>وبابان أخطر من القائمة:</b> <code>getArticleForApproval</code> و<code>api/mobile/v1/articles/[articleId]</code> كانا يفلتران بـ<code>clientId</code> وحده بلا حالة. ذاك يمنع مقال عميلٍ آخر، ولا يمنع العميلَ من فتح مقاله هو وهو <code>WRITING</code> بمعرّفٍ في شريط العنوان أو باقٍ في سجلّ المتصفّح. <b>الإخفاء من القائمة يخفي عن العين لا عن الطلب.</b></p><p><b>العلاج — قائمة سماح في مكان واحد:</b> <code>console/lib/articles/client-visible-statuses.ts</code>. تسكن في <code>lib</code> لا في مجلّد الشاشة لأن الكونسول والجوّال راوتان مختلفان، وبابٌ يُغلق في أحدهما ويُترك في الآخر ليس مُغلقاً.<br>يُعرض: <code>AWAITING_APPROVAL · NEEDS_REVISION · SCHEDULED · PUBLISHED</code><br>يُخفى: <code>WRITING · DRAFT · ARCHIVED</code><br>و<code>PUBLISHED_ON_CLIENT_SITE</code> يُفتح بالمعرّف (له تبويبه) ولا يظهر في «كل المقالات».</p><p><b>قرار خالد في <code>SCHEDULED</code>:</b> يراه — متّفقٌ عليه وله موعد، ورؤيته تطمئنه أن شغله ماشٍ.</p><p><b>القياس بعد الإصلاح:</b><br><code>«كل المقالات» 191 → 178 · اختفى 13 (WRITING 7 · ARCHIVED 4 · DRAFT 2)<br>console tsc = 0</code></p><p><b>وما فُحص وكان سليماً:</b> الاعتماد وطلب التعديل يشترطان <code>AWAITING_APPROVAL</code> صراحةً (<code>lib/mobile-api/article-decisions.ts:18,35</code>) — الثغرة كانت في القراءة وحدها.</p><p><b>⚠️ ملاحظة جانبية لم تُلمَس:</b> <code>media-queries.ts:92</code> <code>getMediaUsageDetails</code> يقرأ عناوين مقالات بـ<code>featuredImageId</code> وحده — بلا <code>clientId</code> ولا حالة. <b>صفر مستدعين اليوم</b> فليس ثغرةً قائمة، لكنّ أوّل استدعاءٍ له يفتحها. يُصلَح أو يُحذف عند لمسه.</p>"
+    },
+    {
+      "id": "PAGE-1-SITE",
+      "b": "projects",
+      "app": [
+        "modonty"
+      ],
+      "tab": "now",
+      "sev": "normal",
+      "who": "c",
+      "date": "٣ سبتمبر ٢٠٢٦",
+      "t": "📄 ترقيم ١ · مدونتي — قائمة الشركاء والصوتيات",
+      "d": "<p><b>الأولى لأنها الوحيدة التي يقرؤها جوجل.</b> صفحةٌ لا يصلها زاحفٌ برابط لا تُفهرَس، وما لا يُفهرَس لا يجلب زائراً — وهذا هدف مدونتي الأول.</p><p><b>الموضعان:</b><br><code>modonty/lib/… get-clients-list.ts:114   سقف 500 · الفعلي 37<br>modonty/lib/… get-audio-articles.ts:71  سقف 100 · الفعلي 0</code><br>ودالةٌ اسمها «كل المقالات ذات التسجيل» تعيد أوّل مئة — الاسم يعِد بما لا يفي به.</p><p><b>المرجع — لا تخترع نمطاً:</b> <code>modonty/components/shared/pagination/FeedPagination.tsx</code> مبنيّ وموثَّق ومستعمل في خمس صفحات، وروابطه <code>&lt;a href&gt;</code> حقيقية بهدف لمس ٤٤ بكسل (WCAG 2.2 SC 2.5.5). وهو مطابقٌ لما يوصي به جوجل حرفياً:<br><code>\"Give each page a unique URL … include a ?page=n query parameter\"<br>\"links from each page to the following page using &lt;a href&gt; tags\"<br>\"Google no longer uses [rel=next/prev]\"<br>\"Google's crawlers don't click buttons and generally don't trigger JavaScript<br> functions that require user actions\"</code></p><p><b>ومن توثيق برِزما:</b> «Choose offset pagination when users need to jump directly to a numbered page» — و«offset re-counts skipped rows on every page، which degrades … into large datasets». هذه القوائم عشرات لا آلاف، فالإزاحة (<code>skip</code>/<code>take</code>) هي الصحيحة، والمؤشّر (<code>cursor</code>) يُؤجَّل لما ينمو بلا حدّ.</p><p><b>وثلاثتها تشترط الإجمالي الحقيقي</b> من <code>count()</code> — لا طول المصفوفة بعد القصّ.</p><p><b>يقفل بـ:</b> فتح <code>?page=2</code> على الصفحتين ورؤية الرابط في الماركب المخدوم — لا في المتصفّح بعد جافاسكربت.</p>"
+    },
+    {
+      "id": "PAGE-2-CONSOLE",
+      "b": "projects",
+      "app": [
+        "console"
+      ],
+      "tab": "open",
+      "sev": "normal",
+      "who": "c",
+      "date": "٣ سبتمبر ٢٠٢٦",
+      "t": "📄 ترقيم ٢ · الكونسول — المعرض والمقالات والريلز والفواتير",
+      "d": "<p>خلف تسجيل الدخول فلا شأن لجوجل بها — لكن العميل يرى جزءاً ويظنّه الكلّ.</p><p><code>gallery/page.tsx:45   60 · الفعلي 24 لأكبر عميل<br>reel-queries.ts:90    60<br>article-queries.ts:312 200 · الفعلي 24<br>invoice-queries.ts:49  100 · الفعلي 2</code></p><p><b>الفواتير أخطرها رغم صغر رقمها:</b> سجلٌّ ماليّ ناقصٌ بلا إشارةٍ إلى نقصه يُقرأ إقراراً بأن هذا كلّ ما دُفع.</p><p><b>المرجع — لا تخترع نمطاً:</b> <code>modonty/components/shared/pagination/FeedPagination.tsx</code> مبنيّ وموثَّق ومستعمل في خمس صفحات، وروابطه <code>&lt;a href&gt;</code> حقيقية بهدف لمس ٤٤ بكسل (WCAG 2.2 SC 2.5.5). وهو مطابقٌ لما يوصي به جوجل حرفياً:<br><code>\"Give each page a unique URL … include a ?page=n query parameter\"<br>\"links from each page to the following page using &lt;a href&gt; tags\"<br>\"Google no longer uses [rel=next/prev]\"<br>\"Google's crawlers don't click buttons and generally don't trigger JavaScript<br> functions that require user actions\"</code></p><p><b>ومن توثيق برِزما:</b> «Choose offset pagination when users need to jump directly to a numbered page» — و«offset re-counts skipped rows on every page، which degrades … into large datasets». هذه القوائم عشرات لا آلاف، فالإزاحة (<code>skip</code>/<code>take</code>) هي الصحيحة، والمؤشّر (<code>cursor</code>) يُؤجَّل لما ينمو بلا حدّ.</p><p><b>وثلاثتها تشترط الإجمالي الحقيقي</b> من <code>count()</code> — لا طول المصفوفة بعد القصّ.</p>"
+    },
+    {
+      "id": "PAGE-3-ADMIN",
+      "b": "projects",
+      "app": [
+        "admin"
+      ],
+      "tab": "open",
+      "sev": "normal",
+      "who": "c",
+      "date": "٣ سبتمبر ٢٠٢٦",
+      "t": "📄 ترقيم ٣ · الأدمن — الحجوزات ولوحة المهام وأرشيفها",
+      "d": "<p>شاشات الفريق: لا سيو ولا عميل، لكن القرار يُتخذ على ما يُعرض.</p><p><code>get-bookings-report.ts:81  300 · الفعلي 49<br>get-board-tasks.ts:50      500 · الفعلي 3<br>get-archived-tasks.ts:37   200 · الفعلي 0 — «آخر مئتين كأنها الأرشيف كلّه»</code></p><p><b>أرشيف المهام هو الذي سينكسر أولاً:</b> ينمو بلا سقفٍ طبيعي — كلّ بند يُغلق يدخله ولا يخرج.</p><p><b>المرجع — لا تخترع نمطاً:</b> <code>modonty/components/shared/pagination/FeedPagination.tsx</code> مبنيّ وموثَّق ومستعمل في خمس صفحات، وروابطه <code>&lt;a href&gt;</code> حقيقية بهدف لمس ٤٤ بكسل (WCAG 2.2 SC 2.5.5). وهو مطابقٌ لما يوصي به جوجل حرفياً:<br><code>\"Give each page a unique URL … include a ?page=n query parameter\"<br>\"links from each page to the following page using &lt;a href&gt; tags\"<br>\"Google no longer uses [rel=next/prev]\"<br>\"Google's crawlers don't click buttons and generally don't trigger JavaScript<br> functions that require user actions\"</code></p><p><b>ومن توثيق برِزما:</b> «Choose offset pagination when users need to jump directly to a numbered page» — و«offset re-counts skipped rows on every page، which degrades … into large datasets». هذه القوائم عشرات لا آلاف، فالإزاحة (<code>skip</code>/<code>take</code>) هي الصحيحة، والمؤشّر (<code>cursor</code>) يُؤجَّل لما ينمو بلا حدّ.</p><p><b>وثلاثتها تشترط الإجمالي الحقيقي</b> من <code>count()</code> — لا طول المصفوفة بعد القصّ.</p>"
+    },
+    {
+      "id": "PAGE-4-MOBILE",
+      "b": "projects",
+      "app": [
+        "console"
+      ],
+      "tab": "open",
+      "sev": "normal",
+      "who": "c",
+      "date": "٣ سبتمبر ٢٠٢٦",
+      "t": "📄 ترقيم ٤ · تطبيق الجوّال — ثلاث نقاط طرفية",
+      "d": "<p>ترقيمٌ في الحمولة لا في الماركب: <code>page</code> في الطلب، و<code>total</code> و<code>hasMore</code> في الرد.</p><p><code>api/mobile/v1/articles/route.ts:28       100<br>api/mobile/v1/notifications/route.ts:43  100<br>api/mobile/v1/bookings/route.ts:43       100</code></p><p><b>عدّاداتها الثلاثة أُصلحت بالفعل</b> (٣ سبتمبر) فصارت تُعدّ في القاعدة — الباقي أن تصل الصفوف نفسها كاملةً.</p><p><b>آخرها ترتيباً:</b> التطبيق يعرض الأحدث ويندر أن يُمرَّر بعيداً، ومئةُ صفٍّ تكفي سنةً على الأرقام الحالية.</p><p><b>المرجع — لا تخترع نمطاً:</b> <code>modonty/components/shared/pagination/FeedPagination.tsx</code> مبنيّ وموثَّق ومستعمل في خمس صفحات، وروابطه <code>&lt;a href&gt;</code> حقيقية بهدف لمس ٤٤ بكسل (WCAG 2.2 SC 2.5.5). وهو مطابقٌ لما يوصي به جوجل حرفياً:<br><code>\"Give each page a unique URL … include a ?page=n query parameter\"<br>\"links from each page to the following page using &lt;a href&gt; tags\"<br>\"Google no longer uses [rel=next/prev]\"<br>\"Google's crawlers don't click buttons and generally don't trigger JavaScript<br> functions that require user actions\"</code></p><p><b>ومن توثيق برِزما:</b> «Choose offset pagination when users need to jump directly to a numbered page» — و«offset re-counts skipped rows on every page، which degrades … into large datasets». هذه القوائم عشرات لا آلاف، فالإزاحة (<code>skip</code>/<code>take</code>) هي الصحيحة، والمؤشّر (<code>cursor</code>) يُؤجَّل لما ينمو بلا حدّ.</p><p><b>وثلاثتها تشترط الإجمالي الحقيقي</b> من <code>count()</code> — لا طول المصفوفة بعد القصّ.</p>"
     }
   ],
   "reports": []
