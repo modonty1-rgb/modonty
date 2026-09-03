@@ -3,6 +3,7 @@ import { ArticleFAQStatus, ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
+import { CLIENT_READABLE_STATUSES } from "@/lib/articles/client-visible-statuses";
 import { arabicCount, arabicMetaLine, arabicNumber } from "@/lib/mobile-api/arabic-format";
 
 const statusLabels: Record<string, string> = { AWAITING_APPROVAL: "بانتظار قرارك", NEEDS_REVISION: "طلبت تعديله", SCHEDULED: "مجدول للنشر", PUBLISHED: "منشور", PUBLISHED_ON_CLIENT_SITE: "منشور على موقعك" };
@@ -12,7 +13,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (!session) return fail("UNAUTHORIZED", "سجّل الدخول للمتابعة.");
   const { articleId } = await params;
   const article = await db.article.findFirst({
-    where: { id: articleId, clientId: session.clientId },
+    // نفس قائمة السماح التي تحكم الكونسول — الجوّال يقرأ من القاعدة نفسها بنفس
+    // الجلسة، فبابٌ يُغلق هناك ويُترك هنا ليس مُغلقاً. `clientId` يمنع مقال عميلٍ
+    // آخر، ولا يمنع العميلَ من فتح مقاله هو وهو `WRITING` عبر المعرّف مباشرة.
+    where: {
+      id: articleId,
+      clientId: session.clientId,
+      status: { in: [...CLIENT_READABLE_STATUSES] },
+    },
     select: { id: true, title: true, excerpt: true, content: true, status: true, wordCount: true, citations: true, client: { select: { isYmyl: true } }, featuredImage: { select: { url: true, bunnyUrl: true, altText: true } }, faqs: { where: { OR: [{ source: "manual" }, { source: null }, { source: { isSet: false } }] }, select: { id: true, question: true, answer: true, status: true, source: true, position: true }, orderBy: { position: "asc" } } },
   });
   if (!article) return fail("NOT_FOUND", "المقال غير موجود.");

@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { ArticleStatus, type Prisma } from "@prisma/client";
+import { CLIENT_READABLE_STATUSES, CLIENT_VISIBLE_STATUSES } from "@/lib/articles/client-visible-statuses";
 
 /**
  * Every list on this screen renders the same card, so every list must load the same
@@ -280,7 +281,9 @@ export async function getAllArticles(clientId: string): Promise<ArticleWithAllDa
   return db.article.findMany({
     where: {
       clientId,
-      status: { not: ArticleStatus.PUBLISHED_ON_CLIENT_SITE },
+      // قائمة سماحٍ لا استثناء — انظر `CLIENT_VISIBLE_STATUSES` أعلاه. وكانت
+      // `{ not: PUBLISHED_ON_CLIENT_SITE }` فتُظهر كلَّ ما عداها.
+      status: { in: [...CLIENT_VISIBLE_STATUSES] },
     },
     include: ARTICLE_LIST_INCLUDE,
     orderBy: {
@@ -321,6 +324,13 @@ export async function getArticleForApproval(
     where: {
       id: articleId,
       clientId,
+      // الحالة تُفحص هنا أيضاً لا في القائمة وحدها. `clientId` يمنع قراءة مقال عميلٍ
+      // آخر، ولا يمنع العميلَ من فتح مقاله هو وهو `WRITING` — ورابط الصفحة يحمل
+      // المعرّف، فيكفي أن يُعدَّل في شريط العنوان أو يبقى في السجلّ بعد نشرٍ سابق.
+      // إخفاؤه من القائمة وحدها يخفيه عن العين لا عن الطلب.
+      //
+      // ويشمل هذا مقالات موقع العميل: لها تبويبها، وليست حالةً مخفيّة.
+      status: { in: [...CLIENT_READABLE_STATUSES] },
     },
     include: {
       client: {
