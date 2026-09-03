@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { checkAdmin } from "@/lib/admin-guard";
+import { canSeeReports } from "@/lib/can-see-reports";
+import { db } from "@/lib/db";
 import { Sidebar } from "@/components/admin/sidebar";
 import { Header } from "@/components/admin/header";
 import { DbBadge } from "@/components/admin/db-badge";
@@ -35,6 +37,14 @@ export default async function DashboardLayout({
   // empty, alert the admin with a clear dialog instead of silently using a fallback.
   const missingSeoFields = await getMissingEssentialSeoFields().catch(() => []);
 
+  // Whether to show the Report link. Read on the SERVER because the permission now lives
+  // on the staff row, and the session token carries only the role — a token minted before
+  // the box was ticked would keep the link hidden until the next sign-in. The proxy and the
+  // page enforce the same rule; this only decides whether a link is drawn.
+  const reportViewer = await db.staff
+    .findUnique({ where: { id: gate.userId }, select: { role: true, canViewReports: true } })
+    .catch(() => null);
+
   return (
     <SidebarProvider>
       <EssentialSeoDialog missing={missingSeoFields} />
@@ -46,6 +56,7 @@ export default async function DashboardLayout({
           <Header
             dbBadge={<DbBadge />}
             canSyncLocal={(process.env.DATABASE_URL ?? "").includes("modonty_dev")}
+            canViewReports={canSeeReports(reportViewer)}
           />
           <main className="flex-1 overflow-y-auto scrollbar-thin p-4 sm:p-6">{children}</main>
         </div>

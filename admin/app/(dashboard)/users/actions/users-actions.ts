@@ -92,6 +92,7 @@ export async function getUserById(id: string) {
         image: true,
         role: true,
         isActive: true,
+        canViewReports: true,
         createdAt: true,
       },
     });
@@ -107,6 +108,7 @@ export async function createUser(data: {
   image?: string;
   role?: StaffRole;
   isActive?: boolean;
+  canViewReports?: boolean;
 }) {
   try {
     const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
@@ -128,6 +130,7 @@ export async function createUser(data: {
         password: hashedPassword,
         role,
         isActive: data.isActive ?? true,
+        canViewReports: data.canViewReports ?? false,
         image: optimizeAvatarUrl(data.image),
       },
     });
@@ -157,6 +160,7 @@ export async function updateUser(
     image?: string;
     role?: StaffRole;
     isActive?: boolean;
+    canViewReports?: boolean;
   }
 ) {
   try {
@@ -175,6 +179,7 @@ export async function updateUser(
       password?: string;
       role?: StaffRole;
       isActive?: boolean;
+      canViewReports?: boolean;
     } = {
       name: data.name,
       email: data.email,
@@ -183,6 +188,7 @@ export async function updateUser(
 
     if (data.role) updateData.role = data.role;
     if (data.isActive !== undefined) updateData.isActive = data.isActive;
+    if (data.canViewReports !== undefined) updateData.canViewReports = data.canViewReports;
 
     if (data.password) {
       updateData.password = await bcrypt.hash(data.password, 10);

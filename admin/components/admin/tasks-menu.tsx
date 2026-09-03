@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { Archive, KanbanSquare, LayoutGrid, UserCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -18,7 +17,10 @@ import { cn } from "@/lib/utils";
 
 const ITEMS = [
   { href: "/tasks", label: "Board", icon: LayoutGrid, hint: "Four columns — where the work stands" },
-  { href: "/daily-tasks", label: "Report", icon: UserCheck, hint: "Each person and their day" },
+  // «Report» said nothing about what is inside it — Khalid (2026-09-04): «الـdaily report
+  // إنه بيشوفوا الـtasks اللي موجودة، فخلّي المصطلح يكون واضح». The name now states the
+  // content: every person's tasks for a chosen day, next to «Board» which shows only stages.
+  { href: "/daily-tasks", label: "Everyone's Tasks", icon: UserCheck, hint: "Every person's tasks, day by day" },
   { href: "/tasks/archive", label: "Archive", icon: Archive, hint: "Taken off the board" },
 ] as const;
 
@@ -32,12 +34,13 @@ const ITEMS = [
  * The trigger lights up whenever any of its pages is open, so the bar still says
  * where you are.
  */
-export function TasksMenu() {
+export function TasksMenu({ canViewReports = false }: { canViewReports?: boolean }) {
   const pathname = usePathname();
-  const { data: session } = useSession();
-  const items = ITEMS.filter(
-    (item) => item.href !== "/daily-tasks" || (session?.user as { role?: string } | undefined)?.role === "ADMIN",
-  );
+  // The Report link used to be filtered on `session.user.role === "ADMIN"`. It is now a
+  // permission on the staff row (Khalid, 2026-09-04), and the session token does not carry
+  // it — a token minted before the box was ticked would keep the link hidden until the next
+  // sign-in. So the layout reads it on the server and passes it down.
+  const items = ITEMS.filter((item) => item.href !== "/daily-tasks" || canViewReports);
   const active = items.some(
     (i) => pathname === i.href || (i.href !== "/tasks" && pathname.startsWith(i.href)),
   );

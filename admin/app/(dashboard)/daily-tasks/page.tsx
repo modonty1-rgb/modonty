@@ -5,6 +5,7 @@ import { ReportTable, type ReportRow } from "./components/report-table";
 import { ReportNewTaskButton } from "./components/report-new-task-button";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { canSeeReports } from "@/lib/can-see-reports";
 import { redirect } from "next/navigation";
 
 const dayFmt = new Intl.DateTimeFormat("en-GB", {
@@ -48,8 +49,14 @@ export default async function ReportPage({
   const session = await auth();
   const userId = (session?.user as { id?: string } | undefined)?.id;
   if (!userId) return null;
-  const staff = await db.staff.findUnique({ where: { id: userId }, select: { role: true } });
-  if (staff?.role !== "ADMIN") redirect("/");
+  const staff = await db.staff.findUnique({
+    where: { id: userId },
+    select: { role: true, canViewReports: true },
+  });
+  // Same rule as the proxy, from the same function — see `lib/can-see-reports.ts`.
+  // Kept here as well: the proxy is the real gate, this is the one that survives a
+  // matcher change.
+  if (!canSeeReports(staff)) redirect("/");
 
   const assignees = await db.staff.findMany({
     // Older staff rows may not have `isActive` written; absent means active.
@@ -96,7 +103,7 @@ export default async function ReportPage({
     <div className="flex min-h-0 flex-col gap-3 p-4 sm:p-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-lg font-bold sm:text-xl">Report</h1>
+          <h1 className="text-lg font-bold sm:text-xl">Everyone&apos;s Tasks</h1>
           <p className="mt-0.5 text-[13px] text-muted-foreground">
             {dayFmt.format(day)} ·{" "}
             {selected

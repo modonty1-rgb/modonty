@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { canSeeReports } from "@/lib/can-see-reports";
 
 /**
  * Network-boundary auth gate (Next.js 16 proxy, nodejs runtime). Runs BEFORE any
@@ -42,12 +43,15 @@ export default auth(async (req) => {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
   const staffRow = await db.staff
-    .findUnique({ where: { id: userId }, select: { isActive: true, role: true } })
+    .findUnique({ where: { id: userId }, select: { isActive: true, role: true, canViewReports: true } })
     .catch(() => null);
   if (!staffRow || staffRow.isActive === false) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
-  if (isDailyTasksReport && staffRow.role !== "ADMIN") {
+  // Permission on the person, not on the role — see `lib/can-see-reports.ts`. Still read
+  // from the DB on every request, so ticking or clearing the box takes effect immediately
+  // rather than at the holder's next sign-in.
+  if (isDailyTasksReport && !canSeeReports(staffRow)) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 

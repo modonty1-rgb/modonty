@@ -24,6 +24,7 @@ import { format, formatDistanceToNow } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import type { StaffRole } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { createUser, updateUser, deleteUser } from "../actions/users-actions";
 import { STAFF_ROLES, roleMeta } from "../lib/roles";
@@ -36,6 +37,7 @@ interface UserFormProps {
     image: string | null;
     role?: string;
     isActive?: boolean | null;
+    canViewReports?: boolean | null;
     createdAt?: Date;
   };
   /** Edit mode only — the account's activity snapshot for the sidebar. */
@@ -79,6 +81,8 @@ export function UserForm({ initialData, activity, userId }: UserFormProps) {
     image: initialData?.image || "",
     role: (initialData?.role as StaffRole) || ("ADMIN" as StaffRole),
     isActive: initialData?.isActive !== false, // absent/null/true = active
+    // Absent on rows that predate the field — reads as false, which is the safe direction.
+    canViewReports: initialData?.canViewReports === true,
   });
 
   const passwordStrength = useMemo(() => getPasswordStrength(formData.password), [formData.password]);
@@ -117,6 +121,7 @@ export function UserForm({ initialData, activity, userId }: UserFormProps) {
           image: imageValue,
           role: formData.role,
           isActive: formData.isActive,
+          canViewReports: formData.canViewReports,
         })
       : await createUser({
           name: formData.name,
@@ -125,6 +130,7 @@ export function UserForm({ initialData, activity, userId }: UserFormProps) {
           image: imageValue || undefined,
           role: formData.role,
           isActive: formData.isActive,
+          canViewReports: formData.canViewReports,
         });
 
     if (result.success) {
@@ -432,6 +438,36 @@ export function UserForm({ initialData, activity, userId }: UserFormProps) {
                   This person will be signed out and blocked from the system on save.
                 </p>
               )}
+            </CardContent>
+          </Card>
+
+          {/* A permission on the person, not on the role (Khalid, 2026-09-04). Its own card
+              rather than a line under Employment status: employment decides whether they can
+              sign in at all, this decides what they see once inside — two different questions. */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Permissions</CardTitle>
+              <CardDescription>
+                What this person can open beyond their role.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <label className="flex cursor-pointer items-start gap-3">
+                <Checkbox
+                  checked={formData.role === "ADMIN" || formData.canViewReports}
+                  disabled={formData.role === "ADMIN"}
+                  onCheckedChange={(c) => setFormData({ ...formData, canViewReports: c === true })}
+                  className="mt-0.5"
+                />
+                <span className="min-w-0">
+                  <span className="block text-sm font-medium">See everyone&apos;s tasks</span>
+                  <span className="block text-xs text-muted-foreground">
+                    {formData.role === "ADMIN"
+                      ? "Admins always see it — no need to tick this."
+                      : "Opens Tasks → Everyone's Tasks: what every person has, day by day."}
+                  </span>
+                </span>
+              </label>
             </CardContent>
           </Card>
 

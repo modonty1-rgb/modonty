@@ -279,11 +279,21 @@ model Staff {
   // means "left" — the record + their history stay, but they can no longer sign in.
   isActive Boolean? @default(true)
 
+  /// Whether this person may open the daily report — a permission ON THE PERSON, not a
+  /// consequence of their role. Khalid (2026-09-04): «بدل ما يكون admin، الموظف نفسه في
+  /// تأسيسه يكون فيه زي الـcheckmark… مش شرط يكون admin».
+  ///
+  /// ADMIN passes without it (see `canSeeReports`): tying the report to this box alone
+  /// would lock the next admin out of their own report until someone remembered to tick it.
+  /// Absent on the rows that predate the field, which reads as false — the safe direction.
+  canViewReports Boolean? @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   notifications Notification[] @relation("StaffNotifications")
   salesClients  Client[]       @relation("StaffSalesClients")
+  salesLeads    SalesLead[]    @relation("StaffSalesLeads")
   editorClients Client[]       @relation("StaffEditorClients")
   assignedTasks Task[]         @relation("TaskAssignee")
   createdTasks  Task[]         @relation("TaskCreatedBy")
@@ -1239,8 +1249,9 @@ model Industry {
   updatedAt DateTime @updatedAt
 
   // Relationships
-  clients Client[]
-  faqs    IndustryFAQ[]
+  clients    Client[]
+  faqs       IndustryFAQ[]
+  salesLeads SalesLead[]
 
   @@map("industries")
 }
@@ -3553,6 +3564,100 @@ model ReferralLead {
   @@index([status, createdAt])
   @@index([referrerClientId, createdAt])
   @@map("referral_leads")
+}
+
+/// Where the sales team keeps a prospect BEFORE they become a client.
+///
+/// Brought over from the standalone `jbrseo_sales` database (Khalid, 2026-09-04): «أبغى بس
+/// الجدول اللي فيه الـdata بتاعة العملاء اللي هي مسجلة، لأنه هنبتدي نعمل شغل تاني عليها».
+/// Only the client sheet came across — reps, team leaders, targets, commission rates and
+/// frozen statements were deliberately left behind to be redesigned from scratch.
+///
+/// WHY NOT just add rows to `clients`. A prospect cannot satisfy what that model requires:
+/// `slug @unique`, `email`, and `subscriptionTier` are all mandatory there, and 6 of the 17
+/// rows measured in production carry no email at all. Widening those four fields would
+/// weaken the model every public page on modonty.com reads. The lead lives here until it
+/// is approved, and `convertedClientId` keeps the two halves of its journey joined.
+///
+/// The one real gain of sharing modonty's database: `industryId` is a REAL relation here.
+/// In the old sales app it was `industrySlug` + `industryName` — a text snapshot copied at
+/// pick time, which silently went stale whenever an industry was renamed.
+model SalesLead {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name    String
+  company String?
+  // NOT unique, unlike `Client.phone`. The same person may be entered twice before anyone
+  // sorts the list — a duplicate is a thing to merge later, not a write to reject now.
+  phone   String?
+  // Optional, unlike `Client.email`. Measured on production 2026-09-04: 11 of 17 rows have
+  // one. Requiring it here would make six real prospects unrecordable.
+  email   String?
+
+  contactName String?
+  contactRole String?
+
+  city           String?
+  website        String?
+  googleLocation String?
+
+  industryId String?   @db.ObjectId
+  industry   Industry? @relation(fields: [industryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  /// ISO alpha-2, matching `Country.code` — "SA" | "EG". A code rather than a relation:
+  /// the countries table is a three-row lookup, and a lead entered for a market we have not
+  /// created a row for yet should still save.
+  countryCode String?
+
+  source LeadSource?
+  status SalesLeadStatus @default(PROSPECT)
+
+  instagram String?
+  facebook  String?
+  tiktok    String?
+  snapchat  String?
+  twitter   String?
+  linkedin  String?
+
+  notes String?
+
+  /// Filled the moment the lead is approved and becomes a client on modonty. The lead row
+  /// is NOT deleted: it is the only record of how that client arrived.
+  convertedClientId String?   @db.ObjectId
+  convertedAt       DateTime?
+
+  /// Who entered the row. Optional + NoAction like every other Staff link in this file —
+  /// Mongo has no real cascade, and a required relation whose target is deleted turns the
+  /// row into an orphan that drops the whole query, not just itself.
+  createdById String? @db.ObjectId
+  createdBy   Staff?  @relation("StaffSalesLeads", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([createdById])
+  @@map("sales_leads")
+}
+
+/// How the lead reached us. Carried over unchanged from the sales app — every one of the
+/// 17 production rows is `SOCIAL`, so this list is inherited, not measured.
+enum LeadSource {
+  REFERRAL
+  AD
+  SOCIAL
+  SEARCH
+  PERSONAL
+  OTHER
+}
+
+/// The three states the data actually holds today. Khalid (2026-09-04): «هنعمل لها قائمة
+/// بالحالات اللي إحنا محتاجينها» — so this is a starting point, not the final pipeline.
+/// Adding a state later is one line here plus an update over 17 rows.
+enum SalesLeadStatus {
+  PROSPECT
+  ACTIVE
+  ARCHIVED
 }
 
 // REMOVED 2026-07-30 (Khalid): the whole social-publishing feature is gone — the
