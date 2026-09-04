@@ -9,7 +9,7 @@ import { DataTable, type Column } from "@/components/admin/data-table";
 import { cn } from "@/lib/utils";
 import {
   DUE_TONE, STAGES, STAGE_DOT, STAGE_LABEL, STAGE_TEXT,
-  describeDue, formatMoney, LOST_LABEL, type LostReason, type Stage,
+  describeDue, formatMoney, LOST_LABEL, waNumber, type LostReason, type Stage,
 } from "../helpers/funnel";
 import type { SalesLeadRow } from "../helpers/get-sales-leads";
 
@@ -89,9 +89,9 @@ export function LeadsTable({ rows }: { rows: SalesLeadRow[] }) {
       key: "expectedMonthly",
       header: "القيمة المتوقّعة",
       sortable: true,
-      sortFn: (a, b) => (a.expectedMonthly ?? 0) - (b.expectedMonthly ?? 0),
+      sortFn: (a, b) => (a.dealTotal ?? 0) - (b.dealTotal ?? 0),
       render: (r) => {
-        const money = formatMoney(r.expectedMonthly, r.currency);
+        const money = formatMoney(r.dealTotal, r.currency);
         return money ? (
           <span className="whitespace-nowrap text-xs font-medium tabular-nums">{money}</span>
         ) : (
@@ -103,7 +103,8 @@ export function LeadsTable({ rows }: { rows: SalesLeadRow[] }) {
       key: "phone",
       header: "التواصل",
       render: (r) => {
-        const digits = (r.phone ?? "").replace(/[^\d]/g, "");
+        // الرقم الدولي الكامل مبنيّاً من الدولة — `wa.me` لا يفتح رقماً محلّياً.
+        const digits = waNumber(r.phone, r.countryCode);
         return (
           <div className="min-w-0">
             {r.phone ? (

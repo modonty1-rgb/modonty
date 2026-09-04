@@ -1,4 +1,5 @@
 import "server-only";
+import { PLAN_DURATIONS, priceForDuration, type PlanDuration } from "@modonty/shared/lib/pricing-durations";
 
 import { db } from "@/lib/db";
 import type { Stage } from "./funnel";
@@ -16,6 +17,10 @@ export interface SalesLeadRow {
   lastContactAt: Date | null;
   expectedTier: string | null;
   expectedMonthly: number | null;
+  /** مدّة العرض — بدونها لا يُعرف إجماليّه، ويصير الرقم المعروض سعر شهرٍ واحد. */
+  expectedMonths: number | null;
+  /** إجماليّ العرض للمدّة كلّها — هو الرقم الذي قيل للعميل، لا سعر الشهر. */
+  dealTotal: number | null;
   currency: string | null;
   industryName: string | null;
   ownerName: string | null;
@@ -38,6 +43,7 @@ const SELECT = {
   lastContactAt: true,
   expectedTier: true,
   expectedMonthly: true,
+  expectedMonths: true,
   currency: true,
   countryCode: true,
   createdAt: true,
@@ -66,8 +72,24 @@ type Raw = {
 
 const shape = (l: Raw): SalesLeadRow => {
   const { industry, owner, createdBy, followUps, ...rest } = l;
+
+  /**
+   * إجماليّ العرض — بالدالّة نفسها التي حسبته بها الشاشة، لا بضربٍ مكتوبٍ هنا.
+   *
+   * كانت القائمة تعرض `expectedMonthly` وحده وتسمّيه «القيمة المتوقّعة»: المندوبة تقول للعميلة
+   * «٢٣٬٩٩٤» ثم يقرأ التقرير «٣٬٩٩٩» — نفس الصفقة برقمين يفترقان بمقدار المدّة. والباقات لا
+   * تُباع شهريّاً أصلاً؛ الشهريّ سعرُ وحدةٍ لا يُدفع وحده.
+   */
+  const monthly = l.expectedMonthly ?? null;
+  const months = (l.expectedMonths ?? null) as PlanDuration | null;
+  const dealTotal =
+    monthly && months && (PLAN_DURATIONS as readonly number[]).includes(months)
+      ? priceForDuration(monthly, months).total
+      : monthly;
+
   return {
-    ...(rest as unknown as Omit<SalesLeadRow, "industryName" | "ownerName" | "lastNote">),
+    ...(rest as unknown as Omit<SalesLeadRow, "industryName" | "ownerName" | "lastNote" | "dealTotal">),
+    dealTotal,
     industryName: industry?.name ?? null,
     ownerName: owner?.name ?? createdBy?.name ?? null,
     lastNote: followUps[0]?.body ?? null,
@@ -126,9 +148,10 @@ export async function getSalesLeads(): Promise<{
   const pipelineValue = { SAR: 0, EGP: 0 };
   for (const r of rows) {
     if (r.stage === "WON" || r.stage === "LOST") continue;
-    if (!r.expectedMonthly) continue;
+    // الإجماليّ لا الشهريّ: قيمة الفانل هي مجموع ما سيُدفع، لا مجموع أسعار الشهر الأوّل.
+    if (!r.dealTotal) continue;
     const cur = r.currency === "EGP" ? "EGP" : "SAR";
-    pipelineValue[cur] += r.expectedMonthly;
+    pipelineValue[cur] += r.dealTotal;
   }
 
   return {

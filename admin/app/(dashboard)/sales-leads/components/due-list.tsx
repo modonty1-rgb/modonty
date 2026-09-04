@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { completeFollowUp, snoozeFollowUp } from "../actions";
-import { CHANNEL_LABEL, DUE_TONE, STAGE_DOT, STAGE_LABEL, describeDue, type Channel, type Stage } from "../helpers/funnel";
+import { CHANNEL_LABEL, DUE_TONE, STAGE_DOT, STAGE_LABEL, describeDue, waNumber, type Channel, type Stage } from "../helpers/funnel";
 import type { DueRow } from "../helpers/get-due-follow-ups";
 
 const dayFmt = new Intl.DateTimeFormat("ar-EG", {
@@ -31,7 +31,8 @@ function Row({ row, onDone, onSnooze, busy }: {
   busy: boolean;
 }) {
   const due = describeDue(row.nextActionAt);
-  const waDigits = (row.phone ?? "").replace(/[^\d]/g, "");
+  // الرقم الدولي الكامل مبنيّاً من الدولة — `wa.me` لا يفتح رقماً محلّياً بصفره البادئ.
+  const waDigits = waNumber(row.phone, row.countryCode);
 
   return (
     <li className="flex flex-col gap-2 border-b py-3 last:border-0 sm:flex-row sm:items-start sm:justify-between sm:gap-4">

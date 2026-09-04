@@ -28,7 +28,7 @@ export default async function SalesLeadsPage() {
             <span className="tabular-nums">{open}</span> صفقة مفتوحة
             {value && (
               <>
-                {" · "}قيمتها <span className="font-medium text-foreground">{value}</span> في الشهر
+                {" · "}قيمتها <span className="font-medium text-foreground">{value}</span>
               </>
             )}
           </p>

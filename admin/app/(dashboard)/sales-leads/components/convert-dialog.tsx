@@ -14,18 +14,23 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { convertLeadToClient } from "../actions";
 
-const TIERS = [
-  { v: "BASIC", l: "الأساسية" },
-  { v: "STANDARD", l: "المتوسّطة" },
-  { v: "PRO", l: "الاحترافية" },
-  { v: "PREMIUM", l: "المتميّزة" },
-] as const;
+/**
+ * الباقات بأسمائها الحقيقية — تصل من القاعدة عبر `tierLabels`.
+ *
+ * كانت أسماءً مكتوبةً هنا («الاحترافية») لا وجود لها في أيّ عرضٍ أُرسل لعميل، بينما الاسم
+ * المتّفق عليه «الزخم». والترتيب ثابتٌ لأنه ترتيب السعر لا الأبجدية.
+ */
+const TIER_ORDER = ["BASIC", "STANDARD", "PRO", "PREMIUM"] as const;
 
 interface Props {
   leadId: string;
   leadName: string;
   suggestedSlug: string;
   email: string | null;
+  /** الباقة التي عُرضت على العميل فعلاً — هي الافتراضيّ، لا أرخص باقة. */
+  expectedTier: string | null;
+  /** أسماء الباقات من `modonty_plans`. */
+  tierLabels: Record<string, string>;
 }
 
 /**
@@ -37,13 +42,19 @@ interface Props {
  *
  * The slug arrives already checked against existing clients, so the usual case is one click.
  */
-export function ConvertDialog({ leadId, leadName, suggestedSlug, email }: Props) {
+export function ConvertDialog({ leadId, leadName, suggestedSlug, email, expectedTier, tierLabels }: Props) {
   const router = useRouter();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [slug, setSlug] = useState(suggestedSlug);
   const [mail, setMail] = useState(email ?? "");
-  const [tier, setTier] = useState<string>("BASIC");
+  /**
+   * تبدأ من الباقة المعروضة لا من `BASIC`.
+   *
+   * كانت ثابتةً على أرخص باقة: تُعرض «الزخم» على العميلة، ثم تُحوَّل فتصير «الأساسية» —
+   * وفرقُ ما بينهما إيرادٌ يضيع بصمت لأن الحوار لا يعرض ما تغيّر.
+   */
+  const [tier, setTier] = useState<string>(expectedTier ?? "BASIC");
   const [busy, setBusy] = useState(false);
 
   const run = async () => {
@@ -117,7 +128,12 @@ export function ConvertDialog({ leadId, leadName, suggestedSlug, email }: Props)
               onChange={(e) => setTier(e.target.value)}
               className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
             >
-              {TIERS.map((t) => <option key={t.v} value={t.v}>{t.l}</option>)}
+              {/* الباقة التي لا اسم لها في القاعدة لا تُعرض بمفتاحها الخام: `BASIC` تقابل
+                  `presence` وهي مخفيّة في السوقين، فلا تُباع — وإظهارها مفتاحاً لاتينياً وسط
+                  ثلاثة أسماء عربية يجعلها تُقرأ عطلاً. تظهر فقط إن كانت هي المختارة أصلاً. */}
+              {TIER_ORDER.filter((t) => tierLabels[t] || t === tier).map((t) => (
+                <option key={t} value={t}>{tierLabels[t] ?? t}</option>
+              ))}
             </select>
           </div>
         </div>

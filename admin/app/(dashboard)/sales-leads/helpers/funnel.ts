@@ -144,3 +144,34 @@ export const DUE_TONE: Record<DueTone, string> = {
   later: "text-muted-foreground",
   none: "text-muted-foreground/60",
 };
+
+/** رموز الاتصال الدولية للسوقين. */
+const DIAL_CODE: Record<string, string> = { SA: "966", EG: "20" };
+
+/**
+ * رقمٌ صالحٌ لرابط واتساب — دوليٌّ كامل بلا صفرٍ بادئ ولا رموز.
+ *
+ * `wa.me` لا يفتح المحادثة إلا برقمٍ دوليٍّ كامل. وكان الرابط يُبنى من الأرقام كما كُتبت،
+ * فمَن سُجِّل رقمها `01099887766` صار رابطها `wa.me/01099887766` — لا يفتح شيئاً. ومَن سُجِّل
+ * `+201115556677` عمل صحيحاً بالمصادفة، فبقي العطل مخفيّاً في نصف الصفوف.
+ *
+ * والدولة هي المصدر: الصفر البادئ محلّيّ يُسقط، ثم يُركَّب رمز سوق العميل — والرقم المكتوب
+ * دولياً أصلاً يُترك كما هو.
+ *
+ * تُرجع `null` لما لا يصلح، فلا يُرسم زرٌّ يقود إلى صفحة خطأ.
+ */
+export function waNumber(phone: string | null | undefined, countryCode: string | null | undefined): string | null {
+  const digits = (phone ?? "").replace(/\D/g, "");
+  if (digits.length < 8) return null;
+
+  const code = DIAL_CODE[countryCode ?? ""] ?? null;
+
+  // مكتوبٌ دولياً بالفعل (يبدأ برمز سوقٍ نعرفه) — يُترك.
+  for (const c of Object.values(DIAL_CODE)) {
+    if (digits.startsWith(`00${c}`)) return digits.slice(2);
+    if (digits.startsWith(c) && digits.length > c.length + 8) return digits;
+  }
+
+  if (!code) return null;
+  return `${code}${digits.replace(/^0+/, "")}`;
+}

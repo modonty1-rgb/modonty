@@ -12,8 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import {
-  DUE_TONE, LOST_LABEL, STAGE_DOT, STAGE_LABEL, TIER_LABEL,
-  describeDue, formatMoney, type Stage,
+  DUE_TONE, LOST_LABEL, STAGE_DOT, STAGE_LABEL,
+  describeDue, formatMoney, waNumber, type Stage,
 } from "../helpers/funnel";
 import type { LeadDetail } from "../helpers/get-lead";
 
@@ -46,17 +46,26 @@ export function LeadCard({
   lead,
   suggestedSlug,
   sourceLabel,
+  tierLabels,
+  dealTotal,
+  dealMonths,
 }: {
   lead: LeadDetail;
   suggestedSlug: string;
   /** اسم المصدر كما يقرأه البشر. يسقط إلى القيمة المخزَّنة لو حُذف صفّه. */
   sourceLabel: string | null;
+  /** أسماء الباقات من `modonty_plans` — تُعرض هنا وتُمرَّر لحوار التحويل. */
+  tierLabels: Record<string, string>;
+  /** إجماليّ الصفقة للمدّة كلّها، ومدّتها — محسوبان على السيرفر بنفس دالّة الشاشة. */
+  dealTotal: number | null;
+  dealMonths: number | null;
 }) {
   // المرحلة تُقرأ من الصفّ مباشرةً بلا حالةٍ محلّية: لم يبقَ في هذه البطاقة ما يحرّكها، وحالةٌ
   // محلّية لا يكتبها أحد تصير نسخةً ثانية تتأخّر عن الصفّ بعد أوّل تحديث من مكانٍ آخر.
   const stage = lead.stage as Stage;
 
-  const waDigits = (lead.phone ?? "").replace(/[^\d]/g, "");
+  // الرقم الدولي الكامل مبنيّاً من الدولة — `wa.me` لا يفتح رقماً محلّياً بصفره البادئ.
+  const waDigits = waNumber(lead.phone, lead.countryCode);
   const socials = SOCIALS.filter(([k]) => lead[k as keyof LeadDetail]);
   const hasWhere = lead.city || lead.website || lead.googleLocation;
 
@@ -102,6 +111,8 @@ export function LeadCard({
                 leadName={lead.name}
                 suggestedSlug={suggestedSlug}
                 email={lead.email}
+                expectedTier={lead.expectedTier}
+                tierLabels={tierLabels}
               />
             </>
           )}
@@ -276,12 +287,14 @@ export function LeadCard({
           <CardHeader><CardTitle className="text-base">الصفقة</CardTitle></CardHeader>
           <CardContent className="grid gap-x-6 gap-y-1 sm:grid-cols-3">
             <Row icon={Wallet} label="الباقة اللي مهتمّ بيها">
+              {/* الاسم من `modonty_plans` لا من خريطةٍ في الكود — «الزخم» لا «الاحترافية». */}
               {lead.expectedTier
-                ? TIER_LABEL[lead.expectedTier] ?? lead.expectedTier
+                ? tierLabels[lead.expectedTier] ?? lead.expectedTier
                 : <span className="text-muted-foreground">لسه مش معروف</span>}
             </Row>
-            <Row icon={Wallet} label="متوقّع في الشهر">
-              {formatMoney(lead.expectedMonthly, lead.currency) ?? (
+            {/* إجماليّ المدّة لا سعر الشهر: هو الرقم الذي قيل للعميلة في المكالمة. */}
+            <Row icon={Wallet} label={dealMonths ? `إجمالي ${dealMonths} شهور` : "قيمة الصفقة"}>
+              {formatMoney(dealTotal, lead.currency) ?? (
                 <span className="text-muted-foreground">مش محدّد</span>
               )}
             </Row>

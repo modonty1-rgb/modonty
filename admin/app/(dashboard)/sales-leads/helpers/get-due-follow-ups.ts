@@ -11,6 +11,8 @@ export interface DueRow {
   leadName: string;
   company: string | null;
   phone: string | null;
+  /** لازمٌ لبناء رابط واتساب الدوليّ — الرقم المحلّي وحده لا يفتح محادثة. */
+  countryCode: string | null;
   stage: Stage;
   channel: string;
   body: string;
@@ -71,6 +73,7 @@ export async function getDueFollowUps(): Promise<{
             name: true,
             company: true,
             phone: true,
+            countryCode: true,
             stage: true,
             owner: { select: { name: true } },
             createdBy: { select: { name: true } },
@@ -90,6 +93,7 @@ export async function getDueFollowUps(): Promise<{
       leadName: r.lead!.name,
       company: r.lead!.company,
       phone: r.lead!.phone,
+      countryCode: r.lead!.countryCode,
       stage: r.lead!.stage as Stage,
       channel: r.channel,
       body: r.body,
