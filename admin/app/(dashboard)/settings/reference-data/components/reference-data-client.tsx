@@ -16,6 +16,7 @@ import {
   AlertCircle,
   X,
   ListChecks,
+  Compass,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -66,11 +67,15 @@ import {
   saveCtaPreset,
   deleteCtaPreset,
   setCtaPresetActive,
+  saveLeadSource,
+  deleteLeadSource,
+  setLeadSourceActive,
   seedReferenceDefaults,
   type CountryDTO,
   type AuthorityDTO,
   type CtaPresetDTO,
   type CtaPresetMode,
+  type LeadSourceDTO,
 } from "../actions/reference-data-actions";
 
 type Category = AuthorityDTO["category"];
@@ -133,15 +138,18 @@ export function ReferenceDataClient({
   initialCountries,
   initialAuthorities,
   initialCtaPresets,
+  initialLeadSources,
 }: {
   initialCountries: CountryDTO[];
   initialAuthorities: AuthorityDTO[];
   initialCtaPresets: CtaPresetDTO[];
+  initialLeadSources: LeadSourceDTO[];
 }) {
   const router = useRouter();
   const [countries, setCountries] = useState<CountryDTO[]>(initialCountries);
   const [authorities, setAuthorities] = useState<AuthorityDTO[]>(initialAuthorities);
   const [ctaPresets, setCtaPresets] = useState<CtaPresetDTO[]>(initialCtaPresets);
+  const [leadSources, setLeadSources] = useState<LeadSourceDTO[]>(initialLeadSources);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -150,8 +158,47 @@ export function ReferenceDataClient({
   useEffect(() => setCountries(initialCountries), [initialCountries]);
   useEffect(() => setAuthorities(initialAuthorities), [initialAuthorities]);
   useEffect(() => setCtaPresets(initialCtaPresets), [initialCtaPresets]);
+  useEffect(() => setLeadSources(initialLeadSources), [initialLeadSources]);
 
   const fail = (msg?: string) => setError(msg ?? "Something went wrong.");
+
+  // ── Lead source handlers ──
+  const saveLeadSourceRow = async (row: {
+    id?: string;
+    label: string;
+    isActive: boolean;
+  }): Promise<boolean> => {
+    const res = await saveLeadSource(row);
+    if (!res.success || !res.leadSource) {
+      fail(res.error);
+      return false;
+    }
+    const saved = res.leadSource;
+    setLeadSources((prev) =>
+      prev.some((s) => s.id === saved.id)
+        ? prev.map((s) => (s.id === saved.id ? saved : s))
+        : [...prev, saved],
+    );
+    setError(null);
+    return true;
+  };
+  const deleteLeadSourceRow = (id: string) =>
+    startTransition(async () => {
+      const res = await deleteLeadSource(id);
+      // الرفض هنا ليس عطلاً — هو الرسالة التي تقول «مستعمل مع N عميل»، فتُعرض كما هي.
+      if (!res.success) return fail(res.error);
+      setLeadSources((prev) => prev.filter((s) => s.id !== id));
+    });
+  const toggleLeadSourceRow = (id: string, current: boolean) => {
+    setLeadSources((prev) => prev.map((s) => (s.id === id ? { ...s, isActive: !current } : s)));
+    startTransition(async () => {
+      const res = await setLeadSourceActive(id, !current);
+      if (!res.success) {
+        fail(res.error);
+        router.refresh();
+      }
+    });
+  };
 
   // ── Country handlers ──
   const saveCountryRow = async (row: {
@@ -326,8 +373,13 @@ export function ReferenceDataClient({
           </Button>
         </div>
       ) : (
-        <Tabs defaultValue="cta">
+        <Tabs defaultValue="lead-sources">
           <TabsList>
+            {/* أوّل تبويب: هو القائمة الوحيدة هنا التي تُفتح كل أسبوع، والباقي يُضبط مرّة. */}
+            <TabsTrigger value="lead-sources" className="gap-1.5">
+              <Compass className="h-3.5 w-3.5" />
+              Lead Sources
+            </TabsTrigger>
             <TabsTrigger value="cta" className="gap-1.5">
               <MousePointerClick className="h-3.5 w-3.5" />
               CTA Buttons
@@ -341,6 +393,17 @@ export function ReferenceDataClient({
               Countries
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="lead-sources" className="mt-4">
+            <LeadSourcesPanel
+              sources={leadSources}
+              onSave={saveLeadSourceRow}
+              onDelete={deleteLeadSourceRow}
+              onToggle={toggleLeadSourceRow}
+              onSeed={seed}
+              busy={pending}
+            />
+          </TabsContent>
 
           <TabsContent value="cta" className="mt-4">
             <CtaPresetsPanel
@@ -1251,6 +1314,237 @@ function CountryDialog({
           </Button>
           <Button onClick={submit} disabled={!valid || saving}>
             {saving ? "Saving…" : editing ? "Save changes" : "Add country"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ── Lead sources panel («العميل من فين جاي») ─────────────────────────────────
+/**
+ * The one list on this screen Khalid maintains himself, so it is the plainest: a label,
+ * a status, nothing else.
+ *
+ * No `value` column and no code chip like Countries has — the key is generated once and
+ * never shown, because a key on screen is a key someone will try to "fix", and every lead
+ * carries it. Ordering follows `order`, which the server assigns on create.
+ */
+function LeadSourcesPanel({
+  sources,
+  onSave,
+  onDelete,
+  onToggle,
+  onSeed,
+  busy,
+}: {
+  sources: LeadSourceDTO[];
+  onSave: (row: { id?: string; label: string; isActive: boolean }) => Promise<boolean>;
+  onDelete: (id: string) => void;
+  onToggle: (id: string, current: boolean) => void;
+  onSeed: () => void;
+  busy: boolean;
+}) {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editing, setEditing] = useState<LeadSourceDTO | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-muted-foreground">
+          {sources.length} sources · shown in the «مصدر العميل» picker on every lead
+        </span>
+        {/**
+         * الافتراضيات هنا لا في حالة الفراغ وحدها.
+         *
+         * الستّة الموروثة عن `enum LeadSource` مفاتيحها مكتوبة أصلاً على ١٨ عميلاً، ولا سبيل
+         * لكتابتها من «Add source» — فذاك يولّد مفتاحاً جديداً من الاسم. فبقي زرّها ظاهراً،
+         * وهو لا يكرّر شيئاً: يتخطّى كل قيمةٍ موجودة.
+         */}
+        <Button
+          onClick={onSeed}
+          disabled={busy}
+          size="sm"
+          variant="outline"
+          className="ms-auto gap-1.5"
+        >
+          <Sparkles className="h-4 w-4" />
+          Load defaults
+        </Button>
+        <Button
+          onClick={() => {
+            setEditing(null);
+            setDialogOpen(true);
+          }}
+          size="sm"
+          className="gap-1.5"
+        >
+          <Plus className="h-4 w-4" />
+          Add source
+        </Button>
+      </div>
+
+      <div className="rounded-xl border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Label</TableHead>
+              <TableHead className="w-[110px]">Status</TableHead>
+              <TableHead className="w-[90px] text-end">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sources.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={3} className="h-24 text-center text-sm text-muted-foreground">
+                  No sources yet — add one, or load the default data.
+                </TableCell>
+              </TableRow>
+            ) : (
+              sources.map((s) => (
+                <TableRow key={s.id}>
+                  <TableCell className="text-sm font-medium" dir="rtl">
+                    {s.label}
+                  </TableCell>
+                  <TableCell>
+                    <StatusToggle
+                      active={s.isActive}
+                      disabled={busy}
+                      onToggle={() => onToggle(s.id, s.isActive)}
+                    />
+                  </TableCell>
+                  <TableCell className="text-end">
+                    <RowActions
+                      onEdit={() => {
+                        setEditing(s);
+                        setDialogOpen(true);
+                      }}
+                      onDelete={() => setDeleteId(s.id)}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <LeadSourceDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        editing={editing}
+        onSave={onSave}
+      />
+
+      <AlertDialog open={deleteId !== null} onOpenChange={(o) => !o && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this source?</AlertDialogTitle>
+            {/* الرفض يأتي من السيرفر بعدد العملاء المستعملين — فلا وعد هنا بأن الحذف سيمرّ. */}
+            <AlertDialogDescription>
+              If any lead already uses it, the delete is refused and you are told how many —
+              switch it off instead, which keeps their history readable.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700"
+              onClick={() => {
+                if (deleteId) onDelete(deleteId);
+                setDeleteId(null);
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
+
+function LeadSourceDialog({
+  open,
+  onOpenChange,
+  editing,
+  onSave,
+}: {
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+  editing: LeadSourceDTO | null;
+  onSave: (row: { id?: string; label: string; isActive: boolean }) => Promise<boolean>;
+}) {
+  const [label, setLabel] = useState("");
+  const [isActive, setIsActive] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [syncKey, setSyncKey] = useState("");
+
+  // نفس نمط الحوارات الأخرى في هذا الملف: المزامنة عند فتحٍ جديد لا في كل رسم.
+  const key = `${open}-${editing?.id ?? "new"}`;
+  if (key !== syncKey) {
+    setSyncKey(key);
+    setLabel(editing?.label ?? "");
+    setIsActive(editing?.isActive ?? true);
+    setSaveError(null);
+  }
+
+  const submit = async () => {
+    setSaving(true);
+    setSaveError(null);
+    const ok = await onSave({ id: editing?.id, label, isActive });
+    setSaving(false);
+    if (ok) onOpenChange(false);
+    else setSaveError("تعذّر الحفظ — راجع الاسم.");
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{editing ? "Edit source" : "Add source"}</DialogTitle>
+          <DialogDescription>
+            Where the lead came from — this is what the sales team picks on the lead form.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-3">
+          <div>
+            <Label htmlFor="lead-source-label" className="text-xs">
+              Label (Arabic)
+            </Label>
+            <Input
+              id="lead-source-label"
+              value={label}
+              dir="rtl"
+              placeholder="معرض · توصية دكتور · واتساب"
+              onChange={(e) => setLabel(e.target.value)}
+              className="mt-1"
+            />
+          </div>
+
+          {editing && (
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={isActive}
+                onChange={(e) => setIsActive(e.target.checked)}
+              />
+              Active — appears in the picker
+            </label>
+          )}
+
+          {saveError && <p className="text-xs text-red-600">{saveError}</p>}
+        </div>
+
+        <DialogFooter>
+          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={saving}>
+            Cancel
+          </Button>
+          <Button onClick={submit} disabled={saving || label.trim().length < 2}>
+            {saving ? "Saving…" : "Save"}
           </Button>
         </DialogFooter>
       </DialogContent>

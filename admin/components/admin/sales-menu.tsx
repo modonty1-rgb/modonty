@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CreditCard, TrendingUp, UserPlus, Wallet } from "lucide-react";
+import { CalendarClock, CreditCard, TrendingUp, UserPlus, Wallet } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,8 +16,16 @@ import {
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
-  // First in the menu because it is first in the journey: someone is a lead before they
-  // are a client with an account.
+  /**
+   * المتابعة أوّلاً — وهي ليست ترتيباً أبجدياً ولا ترتيب رحلة العميل.
+   *
+   * القائمة مرتَّبة بترتيب **يوم فاتن** لا بترتيب النظام: أوّل ما تفتح الأدمن تسأل «مين
+   * عليّا النهارده؟» لا «مين عندنا؟». والجرد يأتي بعده لأنه يُتصفَّح، بينما هذه تُفرَغ.
+   *
+   * خالد (٤ سبتمبر): «مبيعات فيه menu اسمها follow up».
+   */
+  { href: "/sales-leads/follow-ups", label: "المتابعة", icon: CalendarClock, hint: "مين عليكي النهارده" },
+  // ثم الجرد: الشخص محتمَلٌ قبل أن يكون عميلاً له حساب.
   { href: "/sales-leads", label: "العملاء المحتملون", icon: UserPlus, hint: "اللي بنكلّمهم قبل ما يوقّعوا" },
   { href: "/clients/accounts", label: "الحسابات", icon: Wallet, hint: "كل عميل عليه كام ودفع كام" },
   { href: "/clients/sales-report", label: "تقرير المبيعات", icon: TrendingUp, hint: "الإيراد شهر بشهر" },
@@ -63,8 +71,10 @@ export function SalesMenu() {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" dir="rtl" className="w-64">
-        <DropdownMenuLabel dir="rtl">المبيعات</DropdownMenuLabel>
+      {/* الاتجاه على العنصر لا على المكوّن: `DropdownMenuContent` لا تُمرِّر `dir` (ليست في
+          واجهتها)، فيُكتب على الحاوية التي يُعرَض داخلها المحتوى فعلاً. */}
+      <DropdownMenuContent align="end" className="w-64" style={{ direction: "rtl" }}>
+        <DropdownMenuLabel>المبيعات</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {ITEMS.map(({ href, label, icon: Icon, hint }) => {
           const current = pathname === href;

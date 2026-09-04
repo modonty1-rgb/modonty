@@ -23,6 +23,7 @@ import { scanOrphans } from "./orphan-scan";
 import { pruneDeadMetaTags } from "./prune-dead-meta-tags";
 import { decodeEscapedText } from "./decode-escaped-text";
 import { arabizeAuthorSeo } from "./arabize-author-seo";
+import { backfillSalesLeadStages } from "./sales-lead-stage-backfill";
 
 /** The public cache tags a fix can make stale — same union the revalidate helper accepts. */
 type ModontyTag = Parameters<typeof revalidateModontyTag>[0];
@@ -532,6 +533,36 @@ export async function runStepAiPrompts(): Promise<MaintenanceStepResult> {
     return ok("aiPrompts", "AI Prompts Seeded", r.created, parts.join(" · ") || undefined);
   } catch (e) {
     return fail("aiPrompts", "AI Prompts Seeded", e);
+  }
+}
+
+/**
+ * ترحيل العملاء المحتملين إلى الفانل الجديد — ونقل عمود `notes` إلى سجلّ المتابعة.
+ *
+ * ليست تنظيفاً: `SalesLead.stage` حقلٌ مطلوب، والصفوف التي تسبقه لا تحمله، وبريزما ترمي عند
+ * قراءة حقلٍ مطلوب غائب. أي أن شاشة `/sales-leads` تنهار كاملةً حتى تمرّ هذه الخطوة — ولهذا
+ * `ok` مربوطة بـ`stillMissing` لا بعدد ما كُتب: صفرُ كتابةٍ مع بقاء صفٍّ بلا مرحلة فشلٌ لا
+ * «لا شيء ليُعمل».
+ *
+ * بلا `dirtyTags`: لا شيء من هذا يصل صفحةً عامّة على مدونتي.
+ */
+export async function runStepSalesLeadStages(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await backfillSalesLeadStages();
+    const notes = [
+      r.stagesWritten > 0 ? `${r.stagesWritten} مرحلة` : undefined,
+      r.notesMigrated > 0 ? `${r.notesMigrated} ملاحظة اتنقلت للسجلّ` : undefined,
+      r.stillMissing > 0 ? `⚠️ ${r.stillMissing} صفّ لسه بلا مرحلة — الشاشة هتفضل واقعة` : undefined,
+    ].filter(Boolean);
+    return {
+      key: "salesLeadStages",
+      label: "Sales Leads Migrated to Funnel",
+      ok: r.stillMissing === 0,
+      count: r.stagesWritten + r.notesMigrated,
+      detail: notes.length > 0 ? notes.join(" · ") : "مرحَّل سلفاً",
+    };
+  } catch (e) {
+    return fail("salesLeadStages", "Sales Leads Migrated to Funnel", e);
   }
 }
 

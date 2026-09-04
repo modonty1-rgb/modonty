@@ -28,6 +28,7 @@ import {
   runStepAiPrompts,
   runStepDecodeEscapedText,
   runStepArabizeAuthor,
+  runStepSalesLeadStages,
   runStepDeadMetaTags,
   revalidateDatabasePage,
   logMaintenanceRunAction,
@@ -62,6 +63,7 @@ const STEPS: StepDef[] = [
   { key: "mediaReelsBackfill", label: "Media Reels Fields", description: "Media rows written before the reels merge carry no `inGallery` key and no counters. An absent key matches NO filter in MongoDB — every client gallery renders empty, and every counter increment is silently lost, until this runs. Idempotent.", runner: runStepMediaReelsBackfill },
   { key: "blurBackfill", label: "Image Blur Placeholders", description: "Images already on Bunny that carry no `blurDataURL`. The migration builds one from the buffer it downloads, but the generator returns null instead of throwing — a corrupt or exotic file migrates without a placeholder, and the migration never revisits a row that already has `bunnyUrl`. So the gap is permanent and silent until this runs. Batches of 50, one download each, idempotent.", runner: runStepBlurBackfill },
   { key: "dimensionsBackfill", label: "Image Dimensions", description: "Images on Bunny whose `width`/`height` are missing — the two numbers that reserve the box before the file lands. Without them the text renders first and gets shoved down on arrival: a layout shift the visitor feels as the page jumping, and one Google measures (CLS). Includes the three platform defaults, shown to every client who has not uploaded their own. Note the Mongo trap this is built around: the fields are ABSENT, not null, so a plain `width: null` filter matches nothing — the selector pairs every check with `isSet: false`. Batches of 50, one download each, idempotent.", runner: runStepDimensionsBackfill },
+  { key: "salesLeadStages", label: "Sales Leads → Funnel", description: "SalesLead.stage is a REQUIRED field and the rows that predate it do not carry the key. In MongoDB an absent key is not null, and Prisma throws when a required field comes back missing — so /sales-leads does not degrade, it fails outright until this runs. Derives the stage from the old three-state `status` (PROSPECT→NEW, ACTIVE→CONTACTED, ARCHIVED→LOST), with convertedClientId overriding everything to WON because the conversion is the event and the status is only its echo. Then moves the old single `notes` column into the follow-up log as the lead's first entry, dated to when the row was created rather than today — that column was the only history these leads had, and the new screen does not read it. Uses $runCommandRaw for the stage write because Prisma cannot read the row it needs to repair. Idempotent: every step is conditional on what it writes being absent.", runner: runStepSalesLeadStages },
   { key: "orphanRows", label: "Orphan Rows (broken required relations)", description: "A row whose REQUIRED relation points at something deleted. Prisma refuses the whole query — not the bad row — so one dangling ArticleTag took the entire articles page away from a single client while everyone else was fine. Scans every required relation in the schema (read from Prisma's datamodel, so new ones are covered automatically). REPORT ONLY — deleting is a separate, reviewed action. Run this after every prod↔local sync: an import re-creates orphans silently.", runner: runStepOrphanRows },
   // ⛔ "Cloudinary Orphans" removed 2026-06-01 — blind mass-delete destroyed PROD assets when
   // run against dev. Disabled at source (sweepCloudinaryOrphans) + dropped from Run-All.
@@ -93,6 +95,27 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
   const [flush, setFlush] = useState<MaintenanceFlushReport | null>(null);
 
   const hasWork = attentionCount > 0;
+
+  /**
+   * تشغيل خطوة واحدة.
+   *
+   * كان الزرّ الوحيد يشغّل الأربعة والعشرين، فمن أراد خطوةً واحدة اضطرّ إلى كنس القاعدة
+   * كلّها — وهو ما حصل في ٤ سبتمبر ٢٠٢٦ لأجل ترحيلٍ يمسّ مجموعةً واحدة.
+   *
+   * ولا يسجّل في سجلّ التدقيق ولا يُفرغ كاش مدونتي: سطر التدقيق يصف **تمريرة** كاملة،
+   * والإفراغ قرارٌ يُتّخذ على نتائج التمريرة مجتمعةً (خطوةٌ غيّرت صفوفاً وفشلت تحجب وسمها).
+   * فتشغيل خطوةٍ وحدها أداة تشخيص، ويقول الصفّ ذلك تحته.
+   */
+  const runOne = async (key: string) => {
+    const step = STEPS.find((s) => s.key === key);
+    if (!step || running) return;
+    setRunning(true);
+    setSteps((prev) => ({ ...prev, [key]: { status: "running" } }));
+    const result = await step.runner();
+    setSteps((prev) => ({ ...prev, [key]: { status: result.ok ? "done" : "failed", result } }));
+    setRunning(false);
+    router.refresh();
+  };
 
   const runAll = async () => {
     setRunning(true);
@@ -199,9 +222,18 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
         </div>
       </div>
 
-      {/* Status strip — visible when running or finished */}
-      {started && (
-        <div className="p-4 space-y-3 bg-muted/20">
+      {/**
+       * The list used to be hidden behind `started`, so the only way to see the steps — or to
+       * touch one — was to run all 24. That is how a one-row migration ended up sweeping every
+       * collection on 2026-09-04, and the pass was then killed mid-run by a navigation, which
+       * skipped its last seven steps and its audit line.
+       *
+       * Now the list renders from the first paint and every row carries its own Run. The
+       * all-in-one button stays for the routine sweep.
+       */}
+      <div className="p-4 space-y-3 bg-muted/20">
+        {/* الملخّص وحده يظلّ خلف `started`: «Complete — 0 fixed» قبل أي تشغيل خبرٌ كاذب. */}
+        {started && (
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
               <span className="font-medium">
@@ -226,6 +258,7 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
             </div>
             <Progress value={overallPercent} className="h-2" />
           </div>
+        )}
 
           {/* Did the work reach a reader? The counts above only prove the DB changed. */}
           {flush && (
@@ -262,10 +295,24 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
                   <div className="flex items-center justify-between gap-3 text-sm">
                     <div className="flex items-center gap-2 min-w-0">
                       <StatusIcon status={state.status} />
-                      <span className="font-medium truncate">{step.label}</span>
+                      <span className="font-medium truncate" title={step.description}>{step.label}</span>
                     </div>
-                    <span className="text-xs font-semibold tabular-nums shrink-0 text-end">
-                      <StatusLabel state={state} />
+                    <span className="flex shrink-0 items-center gap-2 text-end">
+                      <span className="text-xs font-semibold tabular-nums">
+                        <StatusLabel state={state} />
+                      </span>
+                      {/* زرّ لكل خطوة — الغياب هو ما جعل الخطوة الواحدة تكلّف كنس القاعدة كلها. */}
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        disabled={running}
+                        onClick={() => runOne(step.key)}
+                        className="h-6 px-2 text-[11px]"
+                        title={`شغّل «${step.label}» وحدها — بلا سجلّ تدقيق وبلا إفراغ كاش`}
+                      >
+                        Run
+                      </Button>
                     </span>
                   </div>
                   <Progress
@@ -284,8 +331,7 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
               );
             })}
           </ul>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

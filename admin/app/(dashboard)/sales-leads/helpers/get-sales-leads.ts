@@ -1,6 +1,7 @@
 import "server-only";
+
 import { db } from "@/lib/db";
-import type { SalesLeadStatus } from "@prisma/client";
+import type { Stage } from "./funnel";
 
 export interface SalesLeadRow {
   id: string;
@@ -8,63 +9,134 @@ export interface SalesLeadRow {
   company: string | null;
   phone: string | null;
   email: string | null;
-  contactName: string | null;
-  city: string | null;
-  countryCode: string | null;
-  website: string | null;
-  source: string | null;
-  status: SalesLeadStatus;
+  stage: Stage;
+  lostReason: string | null;
+  nextActionAt: Date | null;
+  nextActionNote: string | null;
+  lastContactAt: Date | null;
+  expectedTier: string | null;
+  expectedMonthly: number | null;
+  currency: string | null;
   industryName: string | null;
+  ownerName: string | null;
+  countryCode: string | null;
   createdAt: Date;
   convertedClientId: string | null;
+  lastNote: string | null;
 }
 
-/**
- * Every prospect the sales team has recorded, newest first.
- *
- * `take` bounds the query; it is not a display rule. The caller gets the true total as
- * well, so the screen can say it is showing part of a longer list instead of ending at a
- * number nobody chose — the failure mode that made four counters in this repo lie.
- */
+const SELECT = {
+  id: true,
+  name: true,
+  company: true,
+  phone: true,
+  email: true,
+  stage: true,
+  lostReason: true,
+  nextActionAt: true,
+  nextActionNote: true,
+  lastContactAt: true,
+  expectedTier: true,
+  expectedMonthly: true,
+  currency: true,
+  countryCode: true,
+  createdAt: true,
+  convertedClientId: true,
+  industry: { select: { name: true } },
+  // المسؤول لا مَن سجّل: السؤال في القائمة «مين بيلاحقه؟»، وهو ما يتغيّر بالتسليم.
+  owner: { select: { name: true } },
+  createdBy: { select: { name: true } },
+  /**
+   * آخر سطر في السجلّ. صفٌّ واحد لكل عميل لا الجدول كلّه — القائمة تعرض سطراً، وجرّ التاريخ
+   * كاملاً لعشرين عميلاً يقرأ مئات الصفوف لعرض عشرين سطراً.
+   */
+  followUps: {
+    select: { body: true, channel: true, happenedAt: true },
+    orderBy: { happenedAt: "desc" as const },
+    take: 1,
+  },
+} as const;
+
+type Raw = {
+  industry: { name: string | null } | null;
+  owner: { name: string | null } | null;
+  createdBy: { name: string | null } | null;
+  followUps: { body: string; happenedAt: Date }[];
+} & Record<string, unknown>;
+
+const shape = (l: Raw): SalesLeadRow => {
+  const { industry, owner, createdBy, followUps, ...rest } = l;
+  return {
+    ...(rest as unknown as Omit<SalesLeadRow, "industryName" | "ownerName" | "lastNote">),
+    industryName: industry?.name ?? null,
+    ownerName: owner?.name ?? createdBy?.name ?? null,
+    lastNote: followUps[0]?.body ?? null,
+  };
+};
+
 const CEILING = 2000;
 
+/** نهاية اليوم محلّياً — «مستحقّ اليوم» يشمل موعد الساعة الخامسة مساءً لا حتى منتصف الليل UTC. */
+function endOfToday(): Date {
+  const d = new Date();
+  d.setHours(23, 59, 59, 999);
+  return d;
+}
+
 export async function getSalesLeads(): Promise<{
+  due: SalesLeadRow[];
   rows: SalesLeadRow[];
   total: number;
   truncated: boolean;
-  byStatus: Record<string, number>;
+  byStage: Record<string, number>;
+  pipelineValue: { SAR: number; EGP: number };
 }> {
-  const [total, leads, grouped] = await Promise.all([
+  const [total, all, dueRaw] = await Promise.all([
     db.salesLead.count(),
+    db.salesLead.findMany({ orderBy: { createdAt: "desc" }, take: CEILING, select: SELECT }),
+    /**
+     * «مَن عليّا النهارده» — استعلامٌ مستقلّ لا فلترةٌ على الصفوف المقروءة: القائمة مسقوفة
+     * بألفين، وموعدٌ مستحقّ خلف السقف هو بالضبط ما لا يجوز أن يضيع.
+     *
+     * `lte` تستبعد الغائب من نفسها: مقارنة تاريخٍ بحقلٍ غير موجود لا تطابق. فلا حاجة إلى
+     * `isSet` هنا، بخلاف المقارنة بـ`null` التي تطابق الغائب في مونجو.
+     */
     db.salesLead.findMany({
-      orderBy: { createdAt: "desc" },
-      take: CEILING,
-      select: {
-        id: true,
-        name: true,
-        company: true,
-        phone: true,
-        email: true,
-        contactName: true,
-        city: true,
-        countryCode: true,
-        website: true,
-        source: true,
-        status: true,
-        createdAt: true,
-        convertedClientId: true,
-        industry: { select: { name: true } },
+      where: {
+        nextActionAt: { lte: endOfToday() },
+        stage: { notIn: ["WON", "LOST"] },
       },
+      orderBy: { nextActionAt: "asc" },
+      take: 100,
+      select: SELECT,
     }),
-    // Counted in the database, not from the page above it: a tile summing a capped list
-    // stops being a total the moment the cap is reached.
-    db.salesLead.groupBy({ by: ["status"], _count: { _all: true } }),
   ]);
 
+  const rows = all.map((l) => shape(l as unknown as Raw));
+
+  const byStage: Record<string, number> = {};
+  for (const r of rows) byStage[r.stage] = (byStage[r.stage] ?? 0) + 1;
+
+  /**
+   * قيمة الفانل — المفتوح وحده.
+   *
+   * `WON` خارجها لأنه صار إيراداً لا احتمالاً، و`LOST` لأنه صفر. جمعُ الاثنين يعطي رقماً
+   * كبيراً جميلاً لا يعني شيئاً، وهو أوّل رقمٍ يُقتبس في اجتماع.
+   */
+  const pipelineValue = { SAR: 0, EGP: 0 };
+  for (const r of rows) {
+    if (r.stage === "WON" || r.stage === "LOST") continue;
+    if (!r.expectedMonthly) continue;
+    const cur = r.currency === "EGP" ? "EGP" : "SAR";
+    pipelineValue[cur] += r.expectedMonthly;
+  }
+
   return {
-    rows: leads.map(({ industry, ...l }) => ({ ...l, industryName: industry?.name ?? null })),
+    due: dueRaw.map((l) => shape(l as unknown as Raw)),
+    rows,
     total,
-    truncated: total > leads.length,
-    byStatus: Object.fromEntries(grouped.map((g) => [g.status, g._count._all])),
+    truncated: total > rows.length,
+    byStage,
+    pipelineValue,
   };
 }

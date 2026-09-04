@@ -1,32 +1,23 @@
-"use client";
-
-import { useState, useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
-  ArrowLeftRight, ArrowRight, Building2, Globe, Loader2, Mail, MapPin,
-  MessageCircle, Pencil, Phone, StickyNote, User,
+  ArrowLeftRight, ArrowRight, Building2, CalendarClock, Globe, Mail, MapPin,
+  MessageCircle, Pencil, Phone, StickyNote, User, Wallet,
 } from "lucide-react";
 
 import { ConvertDialog } from "./convert-dialog";
+import { LostDialog, ReopenButton } from "./lost-dialog";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { setLeadStatus } from "../actions";
+import {
+  DUE_TONE, LOST_LABEL, STAGE_DOT, STAGE_LABEL, TIER_LABEL,
+  describeDue, formatMoney, type Stage,
+} from "../helpers/funnel";
 import type { LeadDetail } from "../helpers/get-lead";
 
-const STATUS_LABEL: Record<string, string> = { PROSPECT: "محتمل", ACTIVE: "نشط", ARCHIVED: "مؤرشف" };
-const STATUS_TONE: Record<string, string> = {
-  PROSPECT: "bg-amber-500/15 text-amber-600 dark:text-amber-300",
-  ACTIVE: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300",
-  ARCHIVED: "bg-slate-500/15 text-slate-600 dark:text-slate-300",
-};
-const SOURCE_LABEL: Record<string, string> = {
-  REFERRAL: "إحالة", AD: "إعلان", SOCIAL: "سوشال", SEARCH: "بحث", PERSONAL: "معرفة شخصية", OTHER: "غير كده",
-};
+/* لا قائمة ثابتة هنا: الاسم يصل محلولاً من الصفحة، ومصدره `lead_source_options`. */
 const COUNTRY_LABEL: Record<string, string> = { SA: "السعودية", EG: "مصر" };
 const SOCIALS = [
   ["instagram", "انستقرام"], ["facebook", "فيسبوك"], ["tiktok", "تيك توك"],
@@ -51,23 +42,19 @@ function Row({ icon: Icon, label, children }: { icon: typeof User; label: string
   );
 }
 
-export function LeadCard({ lead, suggestedSlug }: { lead: LeadDetail; suggestedSlug: string }) {
-  const router = useRouter();
-  const { toast } = useToast();
-  const [pending, start] = useTransition();
-  const [status, setStatus] = useState(lead.status);
-
-  const move = (next: "PROSPECT" | "ACTIVE" | "ARCHIVED") =>
-    start(async () => {
-      const r = await setLeadStatus(lead.id, next);
-      if (r.success) {
-        setStatus(next);
-        toast({ title: `اتنقل إلى «${STATUS_LABEL[next]}»`, variant: "success" });
-        router.refresh();
-      } else {
-        toast({ title: r.error, variant: "destructive" });
-      }
-    });
+export function LeadCard({
+  lead,
+  suggestedSlug,
+  sourceLabel,
+}: {
+  lead: LeadDetail;
+  suggestedSlug: string;
+  /** اسم المصدر كما يقرأه البشر. يسقط إلى القيمة المخزَّنة لو حُذف صفّه. */
+  sourceLabel: string | null;
+}) {
+  // المرحلة تُقرأ من الصفّ مباشرةً بلا حالةٍ محلّية: لم يبقَ في هذه البطاقة ما يحرّكها، وحالةٌ
+  // محلّية لا يكتبها أحد تصير نسخةً ثانية تتأخّر عن الصفّ بعد أوّل تحديث من مكانٍ آخر.
+  const stage = lead.stage as Stage;
 
   const waDigits = (lead.phone ?? "").replace(/[^\d]/g, "");
   const socials = SOCIALS.filter(([k]) => lead[k as keyof LeadDetail]);
@@ -83,8 +70,9 @@ export function LeadCard({ lead, suggestedSlug }: { lead: LeadDetail; suggestedS
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-xl font-semibold leading-tight">{lead.name}</h1>
-              <Badge className={cn("border-transparent text-[11px]", STATUS_TONE[status])}>
-                {STATUS_LABEL[status]}
+              <Badge variant="outline" className="gap-1.5 text-[11px]">
+                <span className={cn("size-1.5 rounded-full", STAGE_DOT[stage])} aria-hidden />
+                {STAGE_LABEL[stage]}
               </Badge>
             </div>
             {lead.company && <p className="mt-0.5 text-sm text-muted-foreground">{lead.company}</p>}
@@ -104,43 +92,53 @@ export function LeadCard({ lead, suggestedSlug }: { lead: LeadDetail; suggestedS
                 <ArrowLeftRight className="size-3.5 rtl:rotate-180" aria-hidden /> افتح صفحته كعميل
               </Button>
             </Link>
+          ) : stage === "LOST" ? (
+            <ReopenButton leadId={lead.id} />
           ) : (
-            <ConvertDialog
-              leadId={lead.id}
-              leadName={lead.name}
-              suggestedSlug={suggestedSlug}
-              email={lead.email}
-            />
+            <>
+              <LostDialog leadId={lead.id} leadName={lead.name} />
+              <ConvertDialog
+                leadId={lead.id}
+                leadName={lead.name}
+                suggestedSlug={suggestedSlug}
+                email={lead.email}
+              />
+            </>
           )}
         </div>
       </div>
 
-      {/* The stage strip IS the action — one click moves them, no dropdown and no save.
-          The current stage is not clickable: a button that does nothing invites the click
-          that teaches you it does nothing. */}
-      <Card>
-        <CardContent className="flex flex-wrap items-center gap-2 py-3">
-          <span className="text-xs text-muted-foreground">غيّر الحالة إلى:</span>
-          {(["PROSPECT", "ACTIVE", "ARCHIVED"] as const).map((s) => (
-            <button
-              key={s}
-              type="button"
-              disabled={pending || status === s}
-              onClick={() => move(s)}
-              className={cn(
-                "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
-                status === s
-                  ? "cursor-default border-foreground bg-foreground text-background"
-                  : "border-border text-muted-foreground hover:border-foreground hover:text-foreground",
-                pending && "opacity-60",
-              )}
-            >
-              {STATUS_LABEL[s]}
-            </button>
-          ))}
-          {pending && <Loader2 className="size-3.5 animate-spin text-muted-foreground" aria-hidden />}
-        </CardContent>
-      </Card>
+      {/**
+       * ── حُذف شريط المراحل من هنا ──────────────────────────────────────────────────────
+       *
+       * كان يحرّك المرحلة بضغطة، وهو **ثقبٌ في التاريخ**: المرحلة تتحرّك بلا سطرٍ يقول لماذا،
+       * فتُقرأ القصة «كان جديداً ثم صار يفاوض» بلا ما بينهما. والجدول كلّه بُني لأجل ذلك
+       * «بينهما» (خالد ٤ سبتمبر: «قصة حياته كاملة في الـfollow up»).
+       *
+       * وكان كذلك مصدراً ثانياً لنفس الفعل: قِيس حيّاً — زرّان بنصّ «بعتّ عرض» في صفحةٍ
+       * واحدة، أحدهما هنا والآخر في نموذج المتابعة.
+       *
+       * فصارت القسمة: الحركة الطبيعية من **نموذج المتابعة** (ومعها سببها وتاريخها)،
+       * والتصحيح من **صفحة التعديل**، والعرض من الشارة جوار الاسم فوق.
+       */}
+      {stage === "WON" || stage === "LOST" ? (
+        <Card>
+          <CardContent className="flex flex-wrap items-center gap-2 py-3 text-sm">
+            <span className={cn("size-2 rounded-full", STAGE_DOT[stage])} aria-hidden />
+            {stage === "WON" ? "العميل ده اتقفل وبقى عميل عندنا." : "العميل ده اتقفل كخسارة."}
+            {/* السبب هو كل الفائدة من تسجيل الخسارة — فيُعرض حيث تُعرض الخسارة، لا في تقرير
+                منفصل يُفتح مرّة في السنة. */}
+            {stage === "LOST" && lead.lostReason && (
+              <span className="font-medium">
+                — {LOST_LABEL[lead.lostReason as keyof typeof LOST_LABEL] ?? lead.lostReason}
+              </span>
+            )}
+            {stage === "LOST" && lead.lostNote && (
+              <span className="text-muted-foreground">«{lead.lostNote}»</span>
+            )}
+          </CardContent>
+        </Card>
+      ) : null}
 
       <div className="grid gap-5 lg:grid-cols-2">
         <Card>
@@ -194,9 +192,25 @@ export function LeadCard({ lead, suggestedSlug }: { lead: LeadDetail; suggestedS
             </Row>
             <Row icon={Globe} label="جه منين">
               {lead.source
-                ? SOURCE_LABEL[lead.source] ?? lead.source
+                ? <>
+                    {sourceLabel ?? lead.source}
+                    {/* «إعلان» لصيقةٌ بالقناة لا سطرٌ ثانٍ: هي صفةٌ لها، وقراءتهما معاً
+                        «انستقرام · إعلان» هي الجملة التي تُقال فعلاً. */}
+                    {lead.isPaidAd && (
+                      <span className="ms-1.5 rounded bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-400">
+                        إعلان
+                      </span>
+                    )}
+                  </>
                 : <span className="text-muted-foreground">—</span>}
             </Row>
+            {/* يظهر الموجود منهما فقط — فلا يقرأ أحد «مش محدّد» في صفٍّ لا يعنيه. */}
+            {lead.isPaidAd && lead.campaign && (
+              <Row icon={Globe} label="الحملة">{lead.campaign}</Row>
+            )}
+            {!lead.isPaidAd && lead.sourceNote && (
+              <Row icon={Globe} label="ملاحظة">{lead.sourceNote}</Row>
+            )}
           </CardContent>
         </Card>
 
@@ -255,14 +269,35 @@ export function LeadCard({ lead, suggestedSlug }: { lead: LeadDetail; suggestedS
           </Card>
         )}
 
-        {lead.notes && (
-          <Card className="lg:col-span-2">
-            <CardHeader><CardTitle className="text-base">ملاحظات</CardTitle></CardHeader>
-            <CardContent>
-              <p className="whitespace-pre-wrap text-sm leading-relaxed">{lead.notes}</p>
-            </CardContent>
-          </Card>
-        )}
+        {/* الصفقة — حلّت محلّ كرت «ملاحظات».
+            الملاحظات كانت عموداً واحداً يمسحه كل حفظ، وصارت سجلّاً كاملاً تحت هذا الشبكة.
+            ومكانها هنا صار للسؤال الذي لم يكن يُسأل: بكام، وأي باقة، ومتى نرجع له. */}
+        <Card className="lg:col-span-2">
+          <CardHeader><CardTitle className="text-base">الصفقة</CardTitle></CardHeader>
+          <CardContent className="grid gap-x-6 gap-y-1 sm:grid-cols-3">
+            <Row icon={Wallet} label="الباقة اللي مهتمّ بيها">
+              {lead.expectedTier
+                ? TIER_LABEL[lead.expectedTier] ?? lead.expectedTier
+                : <span className="text-muted-foreground">لسه مش معروف</span>}
+            </Row>
+            <Row icon={Wallet} label="متوقّع في الشهر">
+              {formatMoney(lead.expectedMonthly, lead.currency) ?? (
+                <span className="text-muted-foreground">مش محدّد</span>
+              )}
+            </Row>
+            <Row icon={CalendarClock} label="الموعد الجاي">
+              {(() => {
+                const due = describeDue(lead.nextActionAt);
+                return (
+                  <span className={DUE_TONE[due.tone]}>
+                    {due.text}
+                    {lead.nextActionNote ? ` — ${lead.nextActionNote}` : ""}
+                  </span>
+                );
+              })()}
+            </Row>
+          </CardContent>
+        </Card>
       </div>
 
       <p className="text-[11px] text-muted-foreground">

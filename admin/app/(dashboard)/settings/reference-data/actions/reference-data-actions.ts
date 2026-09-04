@@ -44,6 +44,15 @@ export interface CtaPresetDTO {
   sortOrder: number;
 }
 
+/** «العميل من فين جاي» — the list Khalid grows himself, replacing `enum LeadSource`. */
+export interface LeadSourceDTO {
+  id: string;
+  value: string;
+  label: string;
+  order: number;
+  isActive: boolean;
+}
+
 
 // ── Validation ──────────────────────────────────────────────────────────────
 const codeUpper = z
@@ -97,9 +106,48 @@ const ctaPresetSchema = z
     path: ["defaultUrl"],
   });
 
+/**
+ * A source is just a label — the only field a human fills.
+ *
+ * `value` is not asked for: it is derived once from the label on create and then frozen,
+ * because it is written onto every lead. Asking for it would put a stable key in the hands
+ * of someone editing a display name, and renaming «سوشال» to «سوشيال ميديا» would silently
+ * orphan every lead that carried the old one.
+ */
+const leadSourceSchema = z.object({
+  id: z.string().optional(),
+  label: z.string().trim().min(2, "الاسم قصير أوي").max(60),
+  order: z.number().int().optional(),
+  isActive: z.boolean().default(true),
+});
+
 export type CountryInput = z.input<typeof countrySchema>;
 export type AuthorityInput = z.input<typeof authoritySchema>;
 export type CtaPresetInput = z.input<typeof ctaPresetSchema>;
+export type LeadSourceInput = z.input<typeof leadSourceSchema>;
+
+const LEAD_SOURCE_SELECT = {
+  id: true,
+  value: true,
+  label: true,
+  order: true,
+  isActive: true,
+} as const;
+
+/**
+ * A stable key from an Arabic label: `A–Z0–9_`, never empty, never colliding silently.
+ *
+ * Arabic letters carry no ASCII transliteration here, so a label written entirely in Arabic
+ * yields no usable stem — those fall back to a timestamp-free `SRC_<n>` assigned by the
+ * caller, which keeps the key opaque but stable. What matters is that it never changes again.
+ */
+function slugFromLabel(label: string): string {
+  const ascii = label
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+  return ascii.length >= 2 ? ascii.slice(0, 40) : "";
+}
 
 const COUNTRY_SELECT = {
   id: true,
@@ -147,8 +195,9 @@ export async function getReferenceData(): Promise<{
   countries: CountryDTO[];
   authorities: AuthorityDTO[];
   ctaPresets: CtaPresetDTO[];
+  leadSources: LeadSourceDTO[];
 }> {
-  const [countries, authorities, ctaPresets] = await Promise.all([
+  const [countries, authorities, ctaPresets, leadSources] = await Promise.all([
     db.country.findMany({
       orderBy: [{ sortOrder: "asc" }, { nameEn: "asc" }],
       select: COUNTRY_SELECT,
@@ -161,8 +210,26 @@ export async function getReferenceData(): Promise<{
       orderBy: [{ sortOrder: "asc" }, { labelAr: "asc" }],
       select: CTA_PRESET_SELECT,
     }),
+    db.leadSourceOption.findMany({
+      orderBy: [{ order: "asc" }, { label: "asc" }],
+      select: LEAD_SOURCE_SELECT,
+    }),
   ]);
-  return { countries, authorities, ctaPresets: ctaPresets.map(toCtaPresetDTO) };
+  return { countries, authorities, ctaPresets: ctaPresets.map(toCtaPresetDTO), leadSources };
+}
+
+/**
+ * Active sources only — for the «مصدر العميل» dropdown on the lead form.
+ *
+ * Retired options are excluded here but still resolve to a label on old leads, so a source
+ * Khalid stops using disappears from the picker without erasing where past clients came from.
+ */
+export async function getActiveLeadSources(): Promise<LeadSourceDTO[]> {
+  return db.leadSourceOption.findMany({
+    where: { isActive: true },
+    orderBy: [{ order: "asc" }, { label: "asc" }],
+    select: LEAD_SOURCE_SELECT,
+  });
 }
 
 /** Active presets only, for the CTA picker on the client form. */
@@ -234,6 +301,95 @@ export async function setCountryActive(
     return { success: true };
   } catch {
     return { success: false, error: "Could not update the country." };
+  }
+}
+
+// ── Lead sources («العميل من فين جاي») ───────────────────────────────────────
+export async function saveLeadSource(
+  input: LeadSourceInput,
+): Promise<{ success: boolean; error?: string; leadSource?: LeadSourceDTO }> {
+  const session = await auth();
+  if (!session) return { success: false, error: "Unauthorized" };
+
+  const parsed = leadSourceSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: "اكتب اسم المصدر (حرفين على الأقل)." };
+
+  const { id, label, order, isActive } = parsed.data;
+  try {
+    // التعديل لا يمسّ `value` أبداً — الاسم يتغيّر والمفتاح يثبت، فتاريخ العملاء لا يتحرّك.
+    if (id) {
+      const leadSource = await db.leadSourceOption.update({
+        where: { id },
+        data: { label, isActive, ...(order === undefined ? {} : { order }) },
+        select: LEAD_SOURCE_SELECT,
+      });
+      revalidatePath(PATH);
+      revalidatePath("/sales-leads");
+      return { success: true, leadSource };
+    }
+
+    // مفتاحٌ من الاسم، وإن كان عربياً كلّه فرقمٌ تسلسليّ بعد آخر واحد — المهم ألّا يتكرّر.
+    const count = await db.leadSourceOption.count();
+    let value = slugFromLabel(label) || `SRC_${count + 1}`;
+    if (await db.leadSourceOption.findUnique({ where: { value }, select: { id: true } })) {
+      value = `${value}_${count + 1}`;
+    }
+
+    const leadSource = await db.leadSourceOption.create({
+      data: { value, label, isActive, order: order ?? count },
+      select: LEAD_SOURCE_SELECT,
+    });
+    revalidatePath(PATH);
+    revalidatePath("/sales-leads");
+    return { success: true, leadSource };
+  } catch {
+    return { success: false, error: "تعذّر حفظ المصدر." };
+  }
+}
+
+/**
+ * الحذف يُرفض ما دام مستعملاً — ويقترح البديل بدل أن يقف عند «لا».
+ *
+ * مصدرٌ محذوف يترك على العملاء نصّاً لا يقابله صفّ، فتظهر خانة «مصدر العميل» فاضية عند
+ * عشرين عميلاً بلا أن يعرف أحد لماذا. والمطلوب غالباً «بطّل تعرضه» لا «امسح تاريخه».
+ */
+export async function deleteLeadSource(id: string): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session) return { success: false, error: "Unauthorized" };
+  try {
+    const row = await db.leadSourceOption.findUnique({ where: { id }, select: { value: true } });
+    if (!row) return { success: false, error: "المصدر مش موجود." };
+
+    const used = await db.salesLead.count({ where: { source: row.value } });
+    if (used > 0) {
+      return {
+        success: false,
+        error: `مستعمل مع ${used} عميل — اقفله بدل ما تمسحه عشان تاريخهم ما يضيعش.`,
+      };
+    }
+
+    await db.leadSourceOption.delete({ where: { id } });
+    revalidatePath(PATH);
+    revalidatePath("/sales-leads");
+    return { success: true };
+  } catch {
+    return { success: false, error: "تعذّر حذف المصدر." };
+  }
+}
+
+export async function setLeadSourceActive(
+  id: string,
+  isActive: boolean,
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session) return { success: false, error: "Unauthorized" };
+  try {
+    await db.leadSourceOption.update({ where: { id }, data: { isActive } });
+    revalidatePath(PATH);
+    revalidatePath("/sales-leads");
+    return { success: true };
+  } catch {
+    return { success: false, error: "تعذّر تحديث المصدر." };
   }
 }
 
@@ -399,17 +555,77 @@ const DEFAULT_CTA_PRESETS: Omit<CtaPresetDTO, "id">[] = [
   { labelAr: "تصفّح", mode: "LINK", defaultUrl: null, isActive: true, sortOrder: 5 },
 ];
 
-/** Insert the standard countries + authorities + CTA buttons. Skips rows that already
- *  exist (idempotent), so it's safe to click more than once. Admin-triggered only. */
+/**
+ * The six values inherited from `enum LeadSource`, now as rows.
+ *
+ * `value` reproduces the enum member EXACTLY — that string is already written on 18 of the
+ * 20 existing leads (measured: 17 × `SOCIAL`, 1 × `REFERRAL`), so a mismatch here would show
+ * an empty source on every one of them. The labels are free to change; these keys are not.
+ */
+/**
+ * القائمة القياسية — القناة وحدها، والمدفوع يفرزه `isPaidAd` لا بندٌ ثانٍ.
+ *
+ * مرتَّبة بأربع مجموعات كما تُقرأ لا كما تُخزَّن: المنصّات، ثم الويب، ثم الاتصال المباشر، ثم
+ * الناس والميدان. و«جوجل» بندٌ واحد لأن المدفوع والطبيعيّ منه يفرّقهما المفتاح — وهو سؤال
+ * خالد نفسه: «عندي حملات إعلانية وorganic، كيف نقسمها؟».
+ *
+ * وهي أطول ممّا أنصح به (خمسة إلى تسعة): بندٌ لا يُختار أبداً يستحقّ الإقفال حتى تبقى القائمة
+ * قصيرةً أمام المندوبة. ولذلك بُنيت شاشة التحرير أصلاً — تُقفل ما لا تستعمله بضغطة.
+ */
+const DEFAULT_LEAD_SOURCES: Omit<LeadSourceDTO, "id">[] = [
+  // ① المنصّات — بترتيب حضورها في السوقين لا أبجدياً.
+  { value: "INSTAGRAM", label: "انستقرام", order: 1, isActive: true },
+  { value: "TIKTOK", label: "تيك توك", order: 2, isActive: true },
+  { value: "SNAPCHAT", label: "سناب شات", order: 3, isActive: true },
+  { value: "FACEBOOK", label: "فيسبوك", order: 4, isActive: true },
+  { value: "X", label: "إكس", order: 5, isActive: true },
+  { value: "LINKEDIN", label: "لينكدإن", order: 6, isActive: true },
+  { value: "YOUTUBE", label: "يوتيوب", order: 7, isActive: true },
+
+  // ② الويب — البحث وموقعنا. «جوجل» يشمل الإعلان والنتيجة الطبيعية، والمفتاح يفرّقهما.
+  { value: "GOOGLE", label: "جوجل", order: 8, isActive: true },
+  { value: "WEBSITE", label: "موقعنا", order: 9, isActive: true },
+
+  // ③ وصلنا مباشرةً.
+  { value: "WHATSAPP", label: "واتساب", order: 10, isActive: true },
+  { value: "INBOUND_CALL", label: "اتصل بينا", order: 11, isActive: true },
+  { value: "EMAIL", label: "إيميل", order: 12, isActive: true },
+
+  // ④ الناس والميدان — أغلى المصادر تحويلاً وأقلّها عدداً، فآخر القائمة لا أوّلها.
+  { value: "CLIENT_REFERRAL", label: "ترشيح عميل", order: 13, isActive: true },
+  { value: "PERSONAL", label: "معرفة شخصية", order: 14, isActive: true },
+  { value: "EVENT", label: "معرض أو فعالية", order: 15, isActive: true },
+  { value: "FIELD_VISIT", label: "زيارة ميدانية", order: 16, isActive: true },
+
+  { value: "OTHER", label: "أخرى", order: 17, isActive: true },
+
+  /**
+   * الموروثة عن `enum LeadSource` — **مقفولة**، وموجودة كي لا يفقد أحدٌ تاريخه.
+   *
+   * ١٨ من ٢٠ صفّاً تحمل `SOCIAL` أو `REFERRAL` (مقيس)، فحذفها يترك هؤلاء بمصدرٍ لا يقابله
+   * اسم. ومقفولةٌ لأنها هي العطل الذي خرجنا منه: «سوشال» بندٌ يبلع ٨٥٪ فلا يجيب عن سؤاله.
+   * تختفي من قائمة الاختيار، وتبقى مقروءةً على العملاء القدامى.
+   */
+  { value: "SOCIAL", label: "سوشال (قديم)", order: 90, isActive: false },
+  { value: "REFERRAL", label: "إحالة (قديم)", order: 91, isActive: false },
+  { value: "AD", label: "إعلان (قديم)", order: 92, isActive: false },
+  { value: "SEARCH", label: "بحث (قديم)", order: 93, isActive: false },
+];
+
+/** Insert the standard countries + authorities + CTA buttons + lead sources. Skips rows that
+ *  already exist (idempotent), so it's safe to click more than once. Admin-triggered only. */
 export async function seedReferenceDefaults(): Promise<{ success: boolean; error?: string; added?: number }> {
   const session = await auth();
   if (!session) return { success: false, error: "Unauthorized" };
   try {
-    const [existingCountries, existingAuthorities, existingPresets] = await Promise.all([
+    const [existingCountries, existingAuthorities, existingPresets, existingSources] = await Promise.all([
       db.country.findMany({ select: { code: true } }),
       db.licensingAuthority.findMany({ select: { countryCode: true, category: true, code: true } }),
       db.ctaPreset.findMany({ select: { labelKey: true } }),
+      db.leadSourceOption.findMany({ select: { value: true } }),
     ]);
+    const haveSource = new Set(existingSources.map((s) => s.value));
+    const sourcesToAdd = DEFAULT_LEAD_SOURCES.filter((s) => !haveSource.has(s.value));
     const haveCountry = new Set(existingCountries.map((c) => c.code));
     const haveAuthority = new Set(
       existingAuthorities.map((a) => `${a.countryCode}|${a.category}|${a.code}`),
@@ -428,11 +644,50 @@ export async function seedReferenceDefaults(): Promise<{ success: boolean; error
     if (countriesToAdd.length) await db.country.createMany({ data: countriesToAdd });
     if (authoritiesToAdd.length) await db.licensingAuthority.createMany({ data: authoritiesToAdd });
     if (presetsToAdd.length) await db.ctaPreset.createMany({ data: presetsToAdd });
+    if (sourcesToAdd.length) await db.leadSourceOption.createMany({ data: sourcesToAdd });
+
+    /**
+     * الترتيب يُحدَّث على الموجود، والاسم لا يُمسّ.
+     *
+     * البذرة تتخطّى كل صفٍّ موجود، فبقيت الصفوف الأولى بترتيبها القديم واختلطت القائمة:
+     * «أخرى» في المنتصف و«معرفة شخصية» قبل «واتساب» (مقيس على الشاشة). والترتيب عرضٌ لا هويّة،
+     * وليس في الشاشة ما يغيّره بيد — فتحديثه لا ينقض قراراً لأحد، بخلاف الاسم.
+     */
+    for (const s of DEFAULT_LEAD_SOURCES) {
+      await db.leadSourceOption.updateMany({
+        where: { value: s.value, order: { not: s.order } },
+        data: { order: s.order },
+      });
+    }
+
+    /**
+     * تقاعُد الموروثة — الإضافة وحدها لا تكفي.
+     *
+     * البذرة تتخطّى كل قيمةٍ موجودة (وهو الصواب: لا تدهس تعديلاً بشرياً)، فالأربعة القديمة
+     * تبقى مفعَّلة وتصير القائمة أربعة عشر بنداً — وهو العطل نفسه الذي خرجنا منه، مضاعفاً.
+     *
+     * والشرط `label` هو الاحترام: لا يُقفَل إلا صفٌّ ما زال يحمل اسمه الأصليّ، أي لم يلمسه
+     * أحد. ولو أعاد خالد تسميته أو تفعيله فذاك قرارٌ، ولا تنقضه بذرةٌ تعمل خلفه.
+     */
+    const RETIRED: { value: string; was: string; label: string }[] = [
+      { value: "SOCIAL", was: "سوشال", label: "سوشال (قديم)" },
+      { value: "REFERRAL", was: "إحالة", label: "إحالة (قديم)" },
+      { value: "AD", was: "إعلان", label: "إعلان (قديم)" },
+      { value: "SEARCH", was: "بحث", label: "بحث (قديم)" },
+    ];
+    for (const r of RETIRED) {
+      await db.leadSourceOption.updateMany({
+        where: { value: r.value, label: r.was, isActive: true },
+        data: { label: r.label, isActive: false },
+      });
+    }
 
     revalidatePath(PATH);
+    revalidatePath("/sales-leads");
     return {
       success: true,
-      added: countriesToAdd.length + authoritiesToAdd.length + presetsToAdd.length,
+      added:
+        countriesToAdd.length + authoritiesToAdd.length + presetsToAdd.length + sourcesToAdd.length,
     };
   } catch {
     return { success: false, error: "Could not load the default data." };

@@ -298,6 +298,12 @@ model Staff {
   assignedTasks Task[]         @relation("TaskAssignee")
   createdTasks  Task[]         @relation("TaskCreatedBy")
 
+  /// Leads this person is RESPONSIBLE for, as opposed to `salesLeads` — the ones they
+  /// happened to type in. The two diverge the first time a lead is handed over, and the
+  /// question "who is chasing this?" is answered by this one, never by who created the row.
+  ownedLeads    SalesLead[]         @relation("StaffOwnedLeads")
+  leadFollowUps SalesLeadFollowUp[] @relation("StaffLeadFollowUps")
+
   @@index([role])
   @@map("staff")
 }
@@ -3604,13 +3610,114 @@ model SalesLead {
   industryId String?   @db.ObjectId
   industry   Industry? @relation(fields: [industryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+  /// What the rep typed when none of the eight industries fitted.
+  ///
+  /// The point is not this lead — it is the list. A rep who cannot classify someone picks the
+  /// nearest wrong row and the mistake is never visible; here she writes it instead, and the
+  /// answers accumulate into the evidence for which industries we are actually missing.
+  /// Measured before adding it: `industryId` was set on 1 of 20 leads, with 8 options offered.
+  industryOther String?
+
   /// ISO alpha-2, matching `Country.code` — "SA" | "EG". A code rather than a relation:
   /// the countries table is a three-row lookup, and a lead entered for a market we have not
   /// created a row for yet should still save.
   countryCode String?
 
-  source LeadSource?
+  /// The lead's origin, stored as the `value` of a `LeadSourceOption` row — NOT an enum.
+  ///
+  /// It was `LeadSource?`, a six-value enum, so adding one option meant a schema edit, a
+  /// client regenerate and a deploy. Khalid owns this list, not the code: he adds to it from
+  /// Dropdown Lists (`/settings/reference-data`).
+  ///
+  /// A plain string, not a relation: Mongo already stored the enum AS a string (measured —
+  /// 17 × "SOCIAL", 1 × "REFERRAL", 2 absent), so this change touches no document. And a
+  /// lead whose source row is later deleted keeps its own history rather than turning into
+  /// an orphan that drops the whole query.
+  source String?
+
+  /// Paid ad, or did the same channel reach us on its own?
+  ///
+  /// A separate flag rather than paid/organic variants of every channel: doubling the list
+  /// («انستقرام إعلان» + «انستقرام عادي») is where a picker starts getting mis-filled. This is
+  /// `utm_medium` — an axis that crosses every source rather than sitting inside one.
+  isPaidAd Boolean @default(false)
+
+  /// Which campaign brought them — `utm_campaign`, meaningful only when `isPaidAd`.
+  ///
+  /// Its own column, NOT a line in `notes`: free prose cannot be grouped, so "رمضان brought 12
+  /// leads and closed 3" is unanswerable from a note however carefully it was written. This is
+  /// the field a campaign report counts on.
+  campaign String?
+
+  /// The organic counterpart of `campaign`: how they found us when no ad was paid for.
+  ///
+  /// Its own column rather than sharing `campaign`: a column whose meaning flips based on a
+  /// neighbouring flag reads fine today and is misread the first time someone queries it
+  /// without the flag. `campaign` is grouped and counted; this is prose nobody groups.
+  sourceNote String?
+
+  /// DEPRECATED — superseded by `stage`. Kept mapped ONLY until every row is backfilled and
+  /// verified; the delete pass then drops it from this file. Removing it from the schema does
+  /// NOT drop the field from the documents (Prisma just stops mapping it, exactly as with the
+  /// `social_posts` note below), so the old value stays recoverable if the backfill was wrong.
   status SalesLeadStatus @default(PROSPECT)
+
+  /// Where this lead sits in the pipeline. Six stages, not the three of `status`: the missing
+  /// three are the ones a rep actually acts on — an offer sent and unanswered is a different
+  /// job from a negotiation, and both were "ACTIVE" before.
+  ///
+  /// `WON` is written by the conversion, `LOST` by the dialog that asks why. Neither is
+  /// pickable from the form (see `PICKABLE_STAGES`), so the funnel cannot be skipped by hand.
+  stage SalesStage @default(NEW)
+
+  /// Why we lost them. The single most useful column in a sales table and the one nobody adds
+  /// until a year in — without it "we lost 40 deals" is a number, with it it is a decision.
+  lostReason SalesLostReason?
+  lostNote   String?
+  lostAt     DateTime?
+
+  /// The deal. The old form asked WHO the lead was and never WHAT the deal was, so the list
+  /// could not be sorted by anything that matters.
+  ///
+  /// `SubscriptionTier` is reused rather than a parallel enum: the tier they are interested in
+  /// IS one of the real tiers, and a second list would drift from the first within a quarter.
+  expectedTier    SubscriptionTier?
+  /// السعر الشهري الأساسي للباقة في سوق العميل — منه يُشتقّ كل شيء.
+  expectedMonthly Float?
+  /// مدّة الصفقة بالشهور المدفوعة: ٣ · ٦ · ١٢.
+  ///
+  /// الباقات لا تُباع شهريّاً («no monthly billing» — قرار ٣ أغسطس، مثبَّت في
+  /// `pricing-durations.ts`)، فصفقةٌ بلا مدّة رقمٌ لا معنى له. والحافز شهورُ خدمةٍ مجانية لا
+  /// خصمٌ في السعر، فلا يُخزَّن إجماليٌّ ولا نسبةُ خصم — كلاهما يُحسب من هذين الحقلين وحدهما،
+  /// وتخزينهما يخلق رقماً ثانياً يتناقض مع الأوّل عند أوّل تغييرٍ في السعر.
+  expectedMonths  Int?
+  /// "SAR" | "EGP" — a string like `countryCode`, not an enum, and never assumed. Two markets
+  /// with different currencies means an amount without one is not a number, it is a guess.
+  currency        String?
+
+  /// ── Denormalised from the newest open follow-up ──────────────────────────────────────
+  /// `SalesLeadFollowUp` is the source of truth for the history. These two are a CACHE of its
+  /// newest open row, written in the same action that writes the follow-up.
+  ///
+  /// They exist because the screen's first question is "who do I owe a call today?", and in
+  /// MongoDB that means an aggregation over the child collection grouped per lead on every
+  /// page load. An indexed field on the parent turns it into one ordinary query.
+  ///
+  /// Rule for anyone touching this: never write these two on their own. Write the follow-up,
+  /// then refresh the cache from it — see `syncLeadNextAction`.
+  nextActionAt   DateTime?
+  nextActionNote String?
+  /// When we last actually spoke to them — answers "this one has gone quiet for three weeks",
+  /// which no `createdAt` or `updatedAt` can.
+  lastContactAt  DateTime?
+
+  /// Who is chasing this lead now. Distinct from `createdBy`, which is a fact about the past
+  /// and never changes. Optional + NoAction for the same reason as every Staff link here.
+  ownerId String? @db.ObjectId
+  owner   Staff?  @relation("StaffOwnedLeads", fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  /// The whole history of this lead — every call, message and visit.
+  followUps SalesLeadFollowUp[]
 
   instagram String?
   facebook  String?
@@ -3640,24 +3747,192 @@ model SalesLead {
   @@map("sales_leads")
 }
 
-/// How the lead reached us. Carried over unchanged from the sales app — every one of the
-/// 17 production rows is `SOCIAL`, so this list is inherited, not measured.
-enum LeadSource {
-  REFERRAL
-  AD
-  SOCIAL
-  SEARCH
-  PERSONAL
-  OTHER
+/// How the lead reached us — a row Khalid edits, not an enum a developer deploys.
+///
+/// It replaces `enum LeadSource`, whose six values were inherited from the old sales app and
+/// never measured (17 of 20 rows are `SOCIAL`). The list is his to grow: "معرض" today,
+/// "توصية دكتور" tomorrow, with no schema edit in between.
+///
+/// `value` is what gets written onto `SalesLead.source` and must stay stable — renaming a
+/// label must not rewrite history, so the label is edited freely while the value is not.
+model LeadSourceOption {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  /// Stored on the lead. Uppercase A–Z and underscores, generated once from the first label.
+  value String @unique
+
+  /// What a human reads in the dropdown. Editable at any time.
+  label String
+
+  /// Manual ordering in the dropdown; ties fall back to `label`.
+  order Int @default(0)
+
+  /// Retired options stay readable on old leads but leave the dropdown — the delete a user
+  /// reaches for is almost always "stop offering this", not "erase where these clients came
+  /// from".
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, order])
+  @@map("lead_source_options")
 }
 
-/// The three states the data actually holds today. Khalid (2026-09-04): «هنعمل لها قائمة
-/// بالحالات اللي إحنا محتاجينها» — so this is a starting point, not the final pipeline.
-/// Adding a state later is one line here plus an update over 17 rows.
+/// باقات البيع بأسعار كل سوق — **نسخة طبق الأصل** من `Plan` في جبر سيو.
+///
+/// خالد (٤ سبتمبر): «الـtable تبع الـprice اللي موجود في جبر سيو، اعمل واحد عندنا typical
+/// identical. هنشتغل عليه الآن، وبعدين لما نحوّل جبر سيو هننقل عليه».
+///
+/// ── لماذا نسخة لا قراءة من الأصل ─────────────────────────────────────────────────────────
+/// كنّا نقرأ مجموعة `Plan` بأمرٍ خام لأنها ليست في سكيمانا — تملكها جبر سيو وتكتب فيها.
+/// وذلك يعني: لا أنواع، ولا تحقّق، ولا قدرة على التعديل من الأدمن، وكسرٌ صامت لو غيّرت جبر
+/// سيو شكل صفوفها. وهذا الجدول يجعل مدونتي تملك نسخَتها فتكتب فيها وتحكمها، وحين يُنقل جبر
+/// سيو إلى المستودع تُدمج المجموعتان في هذه — لا في تلك.
+///
+/// ── مطابقة الحقول ───────────────────────────────────────────────────────────────────────
+/// كل حقلٍ هنا موجودٌ هناك بنفس الاسم والنوع والافتراضي، بلا زيادة ولا نقصان. التطابق مقصود:
+/// النقل يصير نسخاً مباشراً، وأي حقلٍ نخترعه اليوم يصير فرقاً نعالجه يومها.
+/// المصدر: `JBRSEO/jbrseo.com/prisma/schema.prisma:145-171`.
+///
+/// ── اسم المجموعة ────────────────────────────────────────────────────────────────────────
+/// `modonty_plans` لا `Plan`: الأخيرة قائمةٌ في القاعدة نفسها وتكتب فيها جبر سيو، وتسميتُنا
+/// إيّاها تجعل التطبيقين يكتبان في مكانٍ واحد بسكيمتين — وهو أسوأ من مصدرين منفصلين.
+model ModontyPlan {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Control
+  country      String // "SA" | "EG"
+  slug         String // "free" | "presence" | "starter" | "growth" | "scale"
+  visible      Boolean @default(true)
+  displayOrder Int
+
+  // Core content
+  name          String
+  tagline       String  @default("")
+  priceMonthly  Int     @default(0)
+  priceYearly   Int     @default(0)
+  articlesLabel String  @default("")
+  ctaText       String  @default("")
+  /// السطر المميّز الذي يُعرض قرب السعر — «الميزة التي تصطاد».
+  hook          String?
+  highlights    String[]
+
+  // Badges
+  badge         String?
+  featuredBadge String?
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([country, slug])
+  @@index([country, displayOrder])
+  @@map("modonty_plans")
+}
+
+/// DEPRECATED — the three states that predate `SalesStage`. Dropped once the backfill is
+/// verified. Khalid (2026-09-04): «هنعمل لها قائمة بالحالات اللي إحنا محتاجينها».
 enum SalesLeadStatus {
   PROSPECT
   ACTIVE
   ARCHIVED
+}
+
+/// The pipeline. Ordered — the list reads top to bottom as the deal progresses, and the two
+/// terminal stages sit at the end where a funnel chart expects them.
+enum SalesStage {
+  NEW
+  CONTACTED
+  QUOTED
+  NEGOTIATING
+  WON
+  LOST
+}
+
+/// Why a deal died. A closed list, not free text: free text cannot be counted, and the whole
+/// point of recording a loss is to count it. `OTHER` carries `lostNote` for the rest.
+enum SalesLostReason {
+  PRICE
+  COMPETITOR
+  NO_RESPONSE
+  NOT_NOW
+  NOT_A_FIT
+  OTHER
+}
+
+/// How the contact happened. `NOTE` is the escape hatch for "something I want on the record
+/// that was not a conversation" — a rep who has nowhere to put that writes it in the wrong
+/// field instead.
+enum FollowUpChannel {
+  CALL
+  WHATSAPP
+  EMAIL
+  MEETING
+  VISIT
+  NOTE
+}
+
+/// One contact with a lead — the row Khalid asked for (2026-09-04): «تليفون، واتصال، والكلام
+/// هذا كله يكون فيه follow up… لأن العميل ممكن يكون فيه قصة حياته كاملة في الـfollow up».
+///
+/// This replaces the single `SalesLead.notes` column, which was a real defect and not just a
+/// limitation: every save overwrote it, so a lead could be worked for six months and the row
+/// would show only the last sentence anyone typed.
+///
+/// ── Why "what happened" and "the next appointment" live on the SAME row ──────────────────
+/// Because that is one event. The rep calls, they talk, and at the end of that same call they
+/// agree on when to speak next. Splitting them into two tables creates two facts that must be
+/// kept in step by hand, and they drift the first week. So: a row is a contact that happened,
+/// optionally carrying the appointment it produced. The lead's current appointment is simply
+/// the newest row whose `doneAt` is still null.
+///
+/// ── On deleting a lead ───────────────────────────────────────────────────────────────────
+/// `onDelete: Cascade` is declared, but on MongoDB Prisma EMULATES it in the client — the
+/// official docs are explicit that the prisma relation mode "does not apply to raw queries".
+/// So it protects deletes made through this codebase and nothing else; a row removed in
+/// Compass or Atlas leaves its follow-ups orphaned, and an orphan breaks the whole query in
+/// Mongo, not just its own row. Two consequences, both deliberate:
+///   1. Nothing in the app deletes a lead. It archives (see `SalesStage.LOST`).
+///   2. Any read that starts from THIS model and includes `lead` must tolerate its absence.
+model SalesLeadFollowUp {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  leadId String    @db.ObjectId
+  lead   SalesLead @relation(fields: [leadId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  channel FollowUpChannel @default(CALL)
+
+  /// When the contact HAPPENED — not when it was typed. A rep logging yesterday's call this
+  /// morning is the normal case, and `createdAt` would file it under the wrong day.
+  happenedAt DateTime @default(now())
+
+  /// What was said. Required: a follow-up with no content is a row that costs a read and
+  /// tells the next person nothing.
+  body String
+
+  /// The appointment this contact produced, if any.
+  nextActionAt   DateTime?
+  nextActionNote String?
+
+  /// Set when the appointment has been acted on, so it drops out of "due today". Null while
+  /// it is still owed — which is what the due query filters on, together with `nextActionAt`.
+  doneAt DateTime?
+
+  /// The stage the lead moved to in this contact, when it moved. Lets the history read as a
+  /// story ("quoted on the 3rd, negotiating by the 11th") instead of a flat list of notes.
+  stageAfter SalesStage?
+
+  createdById String? @db.ObjectId
+  createdBy   Staff?  @relation("StaffLeadFollowUps", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// The lead's own timeline, newest first.
+  @@index([leadId, happenedAt])
+  /// "Who do I owe a call?" across every lead — the screen's opening question.
+  @@index([doneAt, nextActionAt])
+  @@index([createdById])
+  @@map("sales_lead_followups")
 }
 
 // REMOVED 2026-07-30 (Khalid): the whole social-publishing feature is gone — the

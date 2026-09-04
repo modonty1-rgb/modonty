@@ -7,8 +7,26 @@ export async function getLead(id: string) {
     include: {
       industry: { select: { id: true, name: true } },
       createdBy: { select: { name: true, email: true } },
+      owner: { select: { id: true, name: true } },
+      /**
+       * السجلّ كاملاً، الأحدث أوّلاً — وهو صلب الصفحة لا ملحقٌ بها: خالد (٤ سبتمبر) «العميل
+       * ممكن يكون فيه قصة حياته كاملة في الـfollow up».
+       *
+       * السقف ٢٠٠ صفّ: عميلٌ تجاوزها له تاريخ سنتين، وعرضه كاملاً في صفحة واحدة لا يُقرأ
+       * أصلاً. ويُذكر السقف في الشاشة حين يُبلَغ بدل أن يُبتر الباقي بصمت.
+       */
+      followUps: {
+        orderBy: { happenedAt: "desc" },
+        take: 200,
+        include: { createdBy: { select: { name: true } } },
+      },
     },
   });
+}
+
+/** عدد صفوف السجلّ كاملاً — يقول للشاشة هل السقف أعلاه بتر شيئاً. */
+export async function countLeadFollowUps(leadId: string): Promise<number> {
+  return db.salesLeadFollowUp.count({ where: { leadId } });
 }
 
 export type LeadDetail = NonNullable<Awaited<ReturnType<typeof getLead>>>;

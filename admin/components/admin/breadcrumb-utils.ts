@@ -85,7 +85,7 @@ const sectionLabels: Record<string, string> = {
  * does not rename the crumb on twenty English ones.
  */
 const scopedLabels: Record<string, Record<string, string>> = {
-  'sales-leads': { new: 'عميل جديد', edit: 'تعديل' },
+  'sales-leads': { new: 'عميل جديد', edit: 'تعديل', 'follow-ups': 'المتابعة' },
 };
 
 export function isObjectId(str: string): boolean {

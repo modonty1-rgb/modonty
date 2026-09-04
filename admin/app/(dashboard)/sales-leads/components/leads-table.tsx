@@ -7,47 +7,21 @@ import { MessageCircle, Users } from "lucide-react";
 
 import { DataTable, type Column } from "@/components/admin/data-table";
 import { cn } from "@/lib/utils";
+import {
+  DUE_TONE, STAGES, STAGE_DOT, STAGE_LABEL, STAGE_TEXT,
+  describeDue, formatMoney, LOST_LABEL, type LostReason, type Stage,
+} from "../helpers/funnel";
 import type { SalesLeadRow } from "../helpers/get-sales-leads";
 
-const STATUS_LABEL: Record<string, string> = { PROSPECT: "محتمل", ACTIVE: "نشط", ARCHIVED: "مؤرشف" };
-
-/**
- * نقطة صغيرة بدل شارة ملوّنة ممتلئة.
- *
- * الشارة الممتلئة كانت أثقل شيء في الصفّ، فتسحب العين إلى العمود الذي لا يتغيّر كثيراً
- * وتترك الاسم — وهو ما تبحث عنه فاتن فعلاً — بوزن عاديّ. النقطة تقول الحالة بلمحة،
- * ويبقى ثقل السطر لصاحبه.
- */
-const STATUS_DOT: Record<string, string> = {
-  PROSPECT: "bg-amber-500",
-  ACTIVE: "bg-emerald-500",
-  ARCHIVED: "bg-slate-400",
-};
-
-/** نفس ألوان النقاط، على الكلمة نفسها — فاللون والتسمية عنصرٌ واحد لا اثنان. */
-const STATUS_TEXT: Record<string, string> = {
-  PROSPECT: "text-amber-600 dark:text-amber-400",
-  ACTIVE: "text-emerald-600 dark:text-emerald-400",
-  ARCHIVED: "text-muted-foreground",
-};
-
-const SOURCE_LABEL: Record<string, string> = {
-  REFERRAL: "إحالة", AD: "إعلان", SOCIAL: "سوشال",
-  SEARCH: "بحث", PERSONAL: "معرفة شخصية", OTHER: "غير كده",
-};
 const COUNTRY_LABEL: Record<string, string> = { SA: "السعودية", EG: "مصر" };
-
-const dateFmt = new Intl.DateTimeFormat("ar-EG", {
-  day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Riyadh",
-});
 
 export function LeadsTable({ rows }: { rows: SalesLeadRow[] }) {
   const router = useRouter();
-  const [status, setStatus] = useState<string>("ALL");
-  const shown = status === "ALL" ? rows : rows.filter((r) => r.status === status);
+  const [stage, setStage] = useState<string>("ALL");
+  const shown = stage === "ALL" ? rows : rows.filter((r) => r.stage === stage);
 
   const counts: Record<string, number> = { ALL: rows.length };
-  for (const r of rows) counts[r.status] = (counts[r.status] ?? 0) + 1;
+  for (const r of rows) counts[r.stage] = (counts[r.stage] ?? 0) + 1;
 
   const columns: Column<SalesLeadRow>[] = [
     {
@@ -56,8 +30,6 @@ export function LeadsTable({ rows }: { rows: SalesLeadRow[] }) {
       sortable: true,
       render: (r) => (
         <div className="min-w-0">
-          {/* رابط حقيقي، لا صفٌّ قابل للنقر وحده: الصفّ يفتح بالفأرة، وهذا يفتح بالكيبورد
-              أيضاً ويُنسخ عنوانه بالزرّ الأيمن. `stopPropagation` كي لا يُفتح مرّتين. */}
           <Link
             href={`/sales-leads/${r.id}`}
             onClick={(e) => e.stopPropagation()}
@@ -65,13 +37,67 @@ export function LeadsTable({ rows }: { rows: SalesLeadRow[] }) {
           >
             {r.name}
           </Link>
-          {(r.company || r.contactName) && (
+          {/* آخر ما قيل — لا اسم الشركة. حين تعود فاتن لصفٍّ بعد أسبوع فسؤالها «وصلنا لفين
+              معاه؟» لا «شركته اسمها إيه؟»، والشركة موجودة في البطاقة على أي حال. */}
+          <div className="truncate text-[11px] text-muted-foreground">
+            {r.lastNote || r.company || "—"}
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "nextActionAt",
+      header: "المتابعة الجاية",
+      sortable: true,
+      // الفارغ ينزل آخر القائمة في الاتّجاهين: صفٌّ بلا موعد ليس «أقرب موعد»، وتصدّره
+      // للترتيب يدفن ما له موعد فعلاً.
+      sortFn: (a, b) =>
+        (a.nextActionAt ? a.nextActionAt.getTime() : Number.MAX_SAFE_INTEGER) -
+        (b.nextActionAt ? b.nextActionAt.getTime() : Number.MAX_SAFE_INTEGER),
+      render: (r) => {
+        const due = describeDue(r.nextActionAt);
+        return (
+          <div className="min-w-0">
+            <div className={cn("text-xs font-medium", DUE_TONE[due.tone])}>{due.text}</div>
+            {r.nextActionNote && (
+              <div className="truncate text-[11px] text-muted-foreground">{r.nextActionNote}</div>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      key: "stage",
+      header: "المرحلة",
+      sortable: true,
+      render: (r) => (
+        <div className="min-w-0">
+          <span className={cn("text-xs font-medium", STAGE_TEXT[r.stage as Stage])}>
+            {STAGE_LABEL[r.stage as Stage] ?? r.stage}
+          </span>
+          {/* السبب مُلحَق بالمرحلة لا في عمودٍ خاصّ: يخصّ صفوف «خسرناه» وحدها، وعمودٌ فارغ
+              في تسعين بالمئة من الصفوف يشغل عرضاً ولا يفيد. */}
+          {r.stage === "LOST" && r.lostReason && (
             <div className="truncate text-[11px] text-muted-foreground">
-              {[r.company, r.contactName].filter(Boolean).join(" · ")}
+              {LOST_LABEL[r.lostReason as LostReason] ?? r.lostReason}
             </div>
           )}
         </div>
       ),
+    },
+    {
+      key: "expectedMonthly",
+      header: "القيمة المتوقّعة",
+      sortable: true,
+      sortFn: (a, b) => (a.expectedMonthly ?? 0) - (b.expectedMonthly ?? 0),
+      render: (r) => {
+        const money = formatMoney(r.expectedMonthly, r.currency);
+        return money ? (
+          <span className="whitespace-nowrap text-xs font-medium tabular-nums">{money}</span>
+        ) : (
+          <span className="text-[11px] text-muted-foreground/60">مش محدّد</span>
+        );
+      },
     },
     {
       key: "phone",
@@ -82,9 +108,6 @@ export function LeadsTable({ rows }: { rows: SalesLeadRow[] }) {
           <div className="min-w-0">
             {r.phone ? (
               <div className="flex items-center gap-1.5">
-                {/* `tabular-nums` كي تصطفّ الأرقام رأسياً بين الصفوف، و`dir="ltr"` كي لا
-                    يعكس محرّك الاتجاهين مجموعات الرقم داخل سطر عربيّ: الرقم يبقى صحيحاً
-                    في القاعدة ويُقرأ مقلوباً على الشاشة — أسوأ خطأ في شيء يُطلَب للاتصال. */}
                 <bdi dir="ltr" className="font-mono text-xs tabular-nums">{r.phone}</bdi>
                 {digits && (
                   <a
@@ -102,97 +125,66 @@ export function LeadsTable({ rows }: { rows: SalesLeadRow[] }) {
             ) : (
               <span className="text-xs text-muted-foreground">مافيش رقم</span>
             )}
-            {r.email && (
-              <bdi dir="ltr" className="block truncate text-[11px] text-muted-foreground">{r.email}</bdi>
-            )}
+            <div className="truncate text-[11px] text-muted-foreground">
+              {[r.industryName, r.countryCode ? COUNTRY_LABEL[r.countryCode] : null]
+                .filter(Boolean)
+                .join(" · ") || "—"}
+            </div>
           </div>
         );
       },
     },
     {
-      key: "industryName",
-      header: "المجال والسوق",
-      render: (r) => (
-        <div className="min-w-0">
-          {r.industryName ? (
-            <div className="truncate text-xs">{r.industryName}</div>
-          ) : (
-            // ليست شرطة: خمسة صفوف وصلت من النظام القديم بتصنيف `healthcare-test` لا يقابله
-            // شيء. الشرطة تقول «فاضي»، وهذه تقول «فيه قيمة لكنها لا تربط» — وهو عمل ينتظر.
-            <div className="text-[11px] text-amber-600 dark:text-amber-400">مش مربوط</div>
-          )}
-          <div className="truncate text-[11px] text-muted-foreground">
-            {[r.countryCode ? COUNTRY_LABEL[r.countryCode] : null, r.source ? SOURCE_LABEL[r.source] : null]
-              .filter(Boolean)
-              .join(" · ") || "—"}
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: "status",
-      header: "الحالة",
+      key: "ownerName",
+      header: "مسؤول عنه",
       sortable: true,
-      // إشارة واحدة لا اثنتان: كانت نقطةٌ ملوّنة أوّل الصفّ **و** الكلمة هنا — وهما يقولان
-      // الشيء نفسه، وهو الحشو عينه الذي أزلناه من صفّ العدّادات. اللون على الكلمة يجمع
-      // اللمحة والتسمية في عنصر واحد، ولا يعتمد على اللون وحده كي يقرأه مَن لا يميّزه.
       render: (r) => (
-        <span className={cn("text-xs font-medium", STATUS_TEXT[r.status])}>
-          {STATUS_LABEL[r.status] ?? r.status}
-        </span>
-      ),
-    },
-    {
-      key: "createdAt",
-      header: "اتضاف",
-      sortable: true,
-      sortFn: (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
-      render: (r) => (
-        <span className="whitespace-nowrap text-[11px] tabular-nums text-muted-foreground">
-          {dateFmt.format(r.createdAt)}
-        </span>
+        <span className="whitespace-nowrap text-xs text-muted-foreground">{r.ownerName ?? "—"}</span>
       ),
     },
   ];
 
-  // الشرائح تُمرَّر إلى `DataTable` لتجلس في صفّ البحث نفسه. كانت في سطر مستقلّ فوقه، فصار
-  // فوق الجدول ثلاثة صفوف: أعداد، ثم شرائح، ثم بحث — وكلّها تدفع الجدول لأسفل، وهو المقصود.
   const filters = (
-    <div className="flex flex-wrap items-center gap-2">
-      {["ALL", "PROSPECT", "ACTIVE", "ARCHIVED"].map((s) => (
-        <button
-          key={s}
-          type="button"
-          onClick={() => setStatus(status === s ? "ALL" : s)}
-          aria-pressed={status === s}
-          className={cn(
-            "inline-flex h-9 items-center gap-2 rounded-full border px-3 text-xs font-medium transition-colors",
-            status === s
-              ? "border-foreground bg-foreground text-background"
-              : "border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground",
-          )}
-        >
-          {s !== "ALL" && <span className={cn("size-1.5 rounded-full", STATUS_DOT[s])} aria-hidden />}
-          {s === "ALL" ? "الكل" : STATUS_LABEL[s]}
-          <span className="tabular-nums opacity-60">{counts[s] ?? 0}</span>
-        </button>
-      ))}
+    <div className="flex flex-wrap items-center gap-1.5">
+      {(["ALL", ...STAGES] as const).map((s) => {
+        const n = counts[s] ?? 0;
+        // المرحلة الفارغة تختفي من الشريط — إلّا «الكل». سبعة أزرار أربعةٌ منها أصفار
+        // تجعل الشريط يُمسح بحثاً عمّا فيه شيء بدل أن يُقرأ.
+        if (s !== "ALL" && n === 0 && stage !== s) return null;
+        return (
+          <button
+            key={s}
+            type="button"
+            onClick={() => setStage(stage === s ? "ALL" : s)}
+            aria-pressed={stage === s}
+            className={cn(
+              "inline-flex h-9 items-center gap-2 rounded-full border px-3 text-xs font-medium transition-colors",
+              stage === s
+                ? "border-foreground bg-foreground text-background"
+                : "border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground",
+            )}
+          >
+            {s !== "ALL" && <span className={cn("size-1.5 rounded-full", STAGE_DOT[s as Stage])} aria-hidden />}
+            {s === "ALL" ? "الكل" : STAGE_LABEL[s as Stage]}
+            <span className="tabular-nums opacity-60">{n}</span>
+          </button>
+        );
+      })}
     </div>
   );
 
   return (
     <div className="space-y-3">
-      {/* الفلاتر تبقى ظاهرة حتى مع القائمة الفارغة — إخفاؤها يترك مَن فلتر بلا طريق للرجوع. */}
       {shown.length === 0 && filters}
 
       {shown.length === 0 ? (
         <div className="rounded-lg border border-dashed p-10 text-center">
           <Users className="mx-auto mb-3 size-8 text-muted-foreground" aria-hidden />
           <p className="text-sm font-medium">
-            {rows.length === 0 ? "مافيش عملاء لسه" : `مافيش حد في «${STATUS_LABEL[status]}»`}
+            {rows.length === 0 ? "مافيش عملاء لسه" : `مافيش حد في «${STAGE_LABEL[stage as Stage] ?? stage}»`}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            {rows.length === 0 ? "ضيف أول عميل وابدأ." : "جرّب فلتر تاني أو ارجع للكل."}
+            {rows.length === 0 ? "ضيف أول عميل وابدأ." : "جرّب مرحلة تانية أو ارجع للكل."}
           </p>
         </div>
       ) : (
