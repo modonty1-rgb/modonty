@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarClock, CreditCard, TrendingUp, UserPlus, Wallet } from "lucide-react";
+import { CalendarClock, CreditCard, Megaphone, TrendingUp, UserPlus, Wallet } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +27,12 @@ const ITEMS = [
   { href: "/sales-leads/follow-ups", label: "المتابعة", icon: CalendarClock, hint: "مين عليكي النهارده" },
   // ثم الجرد: الشخص محتمَلٌ قبل أن يكون عميلاً له حساب.
   { href: "/sales-leads", label: "العملاء المحتملون", icon: UserPlus, hint: "اللي بنكلّمهم قبل ما يوقّعوا" },
+  /**
+   * الحملات بعد العملاء المحتملين مباشرةً — لأنها مصدرهم لا موضوعٌ مستقلّ.
+   *
+   * تقرأ القائمة نزولاً فتقرأ يوماً: مَن عليّ اليوم ← مَن عندنا ← من أين جاؤوا ← بكم.
+   */
+  { href: "/campaigns", label: "الحملات", icon: Megaphone, hint: "الإعلان اللي بيجيب العملاء" },
   { href: "/clients/accounts", label: "الحسابات", icon: Wallet, hint: "كل عميل عليه كام ودفع كام" },
   { href: "/clients/sales-report", label: "تقرير المبيعات", icon: TrendingUp, hint: "الإيراد شهر بشهر" },
   { href: "/subscription-tiers", label: "الباقات", icon: CreditCard, hint: "الباقات وأسعارها" },

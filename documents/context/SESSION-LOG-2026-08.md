@@ -1,6 +1,104 @@
 # أر
 
 
+## Session: 2026-08-28 — 🔒 **جرد الهارد كود صار تبويباً حيّاً على اللوحة** · 🏷️ **اسم الماركة خرج من الكود إلى القاعدة لأوّل مرّة** · ✅ **٦ بطاقات سيو أُغلقت** (فرع `modonty-ui` · `01f37a3` **مدفوع ٠/٠** · **٧٣ ملفاً غير مثبَّت — كل شغل اليوم غير مدفوع**)
+
+### 🎯 أين توقفت
+- **المهمّة الجارية:** المرحلة ٣ من خطّة الهارد كود (٢٠٨ قيمة في ٩٥ ملفّ واجهة) — **لم تبدأ**، تنتظر أمرك.
+- **الفعل التالي عند الاستئناف:** اكتب **«تحقّق»** ليُشغَّل `tsc` على الثلاثة بعد آخر أربعة تعديلات (لم يُشغَّل بعدها)، ثم قرار الدفع.
+
+### ✅ المنجز في هذه الجلسة
+
+**أ · ست بطاقات سيو أُغلقت — أربعٌ سقطت بالقياس، وواحدة عطلٌ حقيقي أُصلح**
+
+| البطاقة | الحصيلة |
+|---|---|
+| `SEOFAQ` | **عطل حقيقي أُصلح.** `accordion.tsx:103` كان `return null` — الإجابة **محذوفة من الـDOM** لا مخفيّة، والصفحة تشحن `FAQPage` يسمّيها. جوجل: «Don't mark up content that is not visible to readers». |
+| `SEOMETATAGS-DEAD` | سقطت — الوضع تغيّر بعد كتابتها: `build-metadata-from-page-row.ts:63` يقرأ `nextjsMetadata` فعلاً، و`content-page-seo-generator.ts:4` يكتبه، و**١١ من ١١** صفّاً مملوء. |
+| `SLUG-ARABIC-QMARK` | سقطت — «؟» العربية (`U+061F`) تُشفَّر مثل الألف، وليست `?` الإنجليزية. القياس: `HTTP 200` · canonical مطابق · ١٥ «؟» في الخريطة بلا كسر. |
+| `PUBDATE-BACKFILL-13` | سقطت — الكود يبصم التاريخ في الأبواب الثلاثة، والصفوف على `modonty_dev` **بيانات تجربة تُمحى** بأوّل مزامنة (`sync-local-from-prod`). |
+| `SEOADM-APPLY-DEFAULTS-OVERWRITE` | سقطت — الخطر يفترض محرّراً غير موجود: الاثنا عشر حقلاً في `system-form.tsx:39-52` **جدول عرض بلا حقل إدخال**. |
+| `BRAND-PROD-APPLY` | **بطاقة جديدة** (🏁 قبل الدمج) — الاسم على الإنتاج بيد خالد بعد الدمج. |
+
+**ب · تبويب «🔒 هارد كود» — جرد آليّ مقيس على القاعدة لا على قائمة مكتوبة بيد**
+
+`documents/tasks/scan-hardcoded.mjs` يقرأ صفّ `Settings` بأعمدته الـ١٦٤، يأخذ ٥٨ قيمة نصّية مميّزة، ويبحث عن كل واحدة حرفياً في ١٬٠٩١ ملفّ `.ts/.tsx`. **أي عمود يُضاف غداً يدخل الجرد وحده.** يلتقط شكلين: قيمة مطابقة · احتياط بعد `||`.
+
+```
+الشغل: 236 قيمة في 103 ملفاً   (الخام 321 — الفرق لغة تنسيق أرقام، ليست بيانات)
+    7  المرحلة ٢ — ما يصل جوجل        5 ملفاً    ← كانت 15، أُنجز 95٪
+  208  المرحلة ٣ — ما يراه الزائر    95 ملفاً    ← لم تبدأ
+   21  المرحلة ٤ — البريد والفريق     3 ملفاً    ← لم تبدأ
+```
+
+**ج · الاحتياطات سقطت إلى صفر** — الصنف الأخطر، لأن `settings?.x || "قيمة"` يجعل فراغ العمود **لا يُكتشف أبداً**:
+
+```
+احتياط بعد ||   20 → 0   في 8 ملفات
+generate-client-seo-bundle.ts · generate-organization-jsonld.ts · lib/seo/index.ts
+get-article-defaults-from-settings.ts · get-page-seo-defaults.ts
+build-content-page-metadata.ts · build-listing-page-metadata.ts · build-metadata-from-page-row.ts
+```
+
+**د · اسم الماركة خرج من الكود إلى القاعدة — أوّل مرّة**
+
+```
+schema.prisma      + alternateName   (prisma:generate ✅ بعد إيقاف السيرفرات)
+Settings (dev)     siteName "Modonty" → "مدونتي"  ·  alternateName = "Modonty"
+organization-jsonld.ts   BRAND_AR/BRAND_EN → القاعدة
+
+القياس الحيّ /trust  HTTP 200:
+  Organization  name: "مدونتي"  alternateName: "Modonty"
+```
+
+**هـ · اللوحة نُظِّفت بثلاث خطوات بأمر خالد**
+- **تبويب «لا شغل فيها» أُلغي** — ثلاث بطاقات نُقلت إلى `TECH-NOTES.md` و`SEO-ADMIN-RAW-SCAN.md` (٣٥ ألف محرف)، و**٣٨ بطاقة** أُعيد توجيه مرجعها.
+- **تبويب «تقارير» أُلغي** — جرد hreflang قديم (يصف `build-alternates.ts` وقد حُذف الملفّ) نُقل إلى `TECH-NOTES.md`.
+- **خمس بطاقات مؤجَّلة أُغلقت** بأسبابها (`13` · `25` · `SEO52` · `GEOAEO` · `SEOAGENT-READY`).
+
+```
+اللوحة الآن:  ① قرارك 4  ·  ② دوري 1  ·  🔒 هارد كود 236  ·  ✅ خلص 111
+```
+
+### 📝 القرارات وأسبابها
+
+- **اسم الموقع = «مدونتي» عربياً + `Modonty` كـ`alternateName`** → جوجل تنصّ: «Make sure whatever you use as the site name in structured data is consistent with how you refer to your site in other sources on your home page». والمقيس: «مدونتي» **٢٣ مرّة** في النصّ المرئي على الرئيسية، و`Modonty` **صفر** — بينما البيانات المنظَّمة كانت تقول `Modonty`. ورُفض `مُدَوَّنَتِي` **للبيانات وحدها** لأنه يكرّر نفس المخالفة (صفر ظهور مرئي).
+- **`keepMounted` خيارٌ لا سلوكٌ افتراضي** → تغيير الأكورديون نفسه كان يركّب أقسام نموذج الأدمن الستّة دفعةً واحدة (`article-form-sections.tsx:77`) — تغييرٌ في ما يفعله النموذج لا في ما يعرضه. الأدمن: صفر تغيير.
+- **وسم `FAQPage` يبقى** → جوجل: «Structured data that's not being used does not cause problems for Search» و«there's no need to proactively remove it».
+- **مبدّلات السلوك المنطقية خرجت من المسح** → `telegramAdminMirrorAll ?? true` تنبيهٌ لا بيانٌ منشور، وقلبه يُسكت تنبيهات العملاء.
+- **التصنيف بالمرحلة لا بالصنف** (خالد: «رتب لي الملفّ عشان نفهم حنشتغل فين») → الصنف يقول نوع العطل، والمرحلة تقول أين يُفتح المحرّر. و**رقم واحد على الزرّ وفي الصفحة** بعد شكواه «مرّة تقولي رقم وتديني رقم تاني».
+
+### 🚧 المعلّق / المحجوز
+
+- **`tsc` لم يُشغَّل بعد آخر أربعة تعديلات:** `feed.xml/route.ts` · `generate-article-structured-data.ts` · `build-team-jsonld.ts` · `generate-client-seo-bundle.ts` (خريطة اللغات). **يُشغَّل بكلمة «تحقّق» قبل أي دفع.**
+- **ثلاث بطاقات تنتظر خالد:** `WIKI1` (موقوفة بأمره) · `AUTOLINK` (جلسة مطوّلة قبل الدمج) · `BRAND-SPELLING`.
+- **`BRAND-PROD-APPLY`** — على الإنتاج، بالترتيب الإجباري: غيّر العمود من الأدمن ← إعادة توليد ← تفريغ الكاش. **قلب الترتيب يُبقي القديم منشوراً.**
+- **المرحلتان ٣ و٤** من خطّة الهارد كود — ٢٢٩ قيمة، لم تبدآ.
+
+### 📂 الملفات التي لُمست
+
+**كود (١٦ ملفاً):** `shared/components/ui/accordion.tsx` (خيار `keepMounted` + `aria-controls`) · `shared/lib/seo/generate-client-seo-bundle.ts` · `generate-organization-jsonld.ts` · `build-content-page-metadata.ts` · `build-listing-page-metadata.ts` · `shared/prisma/schema/schema.prisma` (+`alternateName`) · `modonty/lib/seo/index.ts` · `organization-jsonld.ts` · `build-metadata-from-page-row.ts` · `modonty/lib/settings/get-page-seo-defaults.ts` · **جديد** `get-brand-description.ts` · `modonty/app/feed.xml/route.ts` · `articles/[slug]/page.tsx` · `helpers/get-article-defaults-from-settings.ts` · `helpers/generate-article-structured-data.ts` · `components/article-footer/ArticleFooter.tsx` · `help/faq/components/faq-accordion.tsx` · `clients/[slug]/components/sections/client-faq-section.tsx` · `team/helpers/build-team-jsonld.ts`
+
+**لوحة ووثائق:** `documents/tasks/scan-hardcoded.mjs` (**جديد**) · `hardcoded-inventory.json` (**جديد**) · `SEO-ADMIN-RAW-SCAN.md` (**جديد**) · `build-task-board.mjs` · `task-data.json` · `SEO.html` · `TECH-NOTES.md` · `SESSION-LOG.md`
+
+**ذاكرة:** `feedback_auto_update_prd_after_task` — رُقّيت إلى **أمر صارم**: اللوحة تُبنى مع التاسك لا بعده، بلا سؤال وبلا إعلان.
+
+### 🔁 حالة جِت والنشر
+- **الفرع:** `modonty-ui` · **آخر كوميت `01f37a3`** · **متطابق مع الريموت (٠/٠)**.
+- **غير مثبَّت: ٧٣ ملفاً** — كل شغل اليوم داخلها، **صفر دفع**.
+- **الإنتاج `main` لم يُمَسّ.** و`test.modonty.com` يبني من `01f37a3` — لا يحمل شيئاً من اليوم.
+
+### ⚠️ غير متحقَّق — لا يُقدَّم حقيقةً
+- **`tsc` أخضر (0/0/0)** — لكن **قبل** آخر أربعة تعديلات. غير متحقَّق الآن.
+- **كل القياس على `modonty_dev`** لا الإنتاج، وعلى سيرفر محلّي (المنفذ ٣٠٠٠ بعد إعادة التشغيل، كان ٣٠٠١).
+- **`prisma db push` لم يُنفَّذ** — العمود الجديد `alternateName` يعمل على مونجو بلا دفع سكيما، لكنه **غير موجود على الإنتاج**.
+- **صفر بناء (`pnpm build`)** في الجلسة.
+
+### 🚀 الاستئناف في ٣٠ ثانية
+1. اكتب **«تحقّق»** → `tsc` على الثلاثة (مطلوب قبل الدفع، وآخر أربعة تعديلات لم تُترجَم بعد).
+2. افتح `file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/tasks/SEO.html` → تبويب **🔒 هارد كود** → جدول «الخطّة».
+3. القرار: نبدأ **المرحلة ٣** (٢٠٨ قيمة · ٩٥ ملفّ واجهة)؟ أم ندفع أوّلاً؟
+
 ## Session: 2026-08-24 (مساءً، حتى ≈ 21:10) — 🔍 **فحص سيو مدونتي الكامل على ثلاث جولات** + **`SEO.html` لوحة سيو مستقلّة (١٠٤ بطاقة · ٨ مراحل · شرح بشري)** + الأدمن قُرئ سطراً سطراً (فرع `modonty-ui` · آخر كوميت `9542aab` مدفوع · **ملفات اللوحة والتقرير غير مدفوعة**)
 
 ### 🎯 أين توقفت

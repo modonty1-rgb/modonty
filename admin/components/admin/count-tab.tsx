@@ -13,19 +13,31 @@ export function CountTab({
   count,
   active,
   onClick,
+  disabled = false,
 }: {
   label: React.ReactNode;
-  count: number;
+  /** `ReactNode` لا `number`: الشاشات العربية تمرّر العدد منسَّقاً بأرقام هندية. */
+  count: React.ReactNode;
   active: boolean;
   onClick: () => void;
+  /**
+   * صفرٌ يُقرأ ولا يُضغط.
+   *
+   * الترشيح على صفر يعطي جدولاً فارغاً — طريقٌ مسدود يُدخَل ثم يُخرَج منه. والحبّة تبقى ظاهرة
+   * لأن الصفر نفسه معلومة: «هذه القناة لم تجب أحداً».
+   */
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
+      aria-pressed={active}
       className={cn(
-        "inline-flex items-center overflow-hidden rounded-full border text-xs font-medium transition-colors whitespace-nowrap",
-        active ? "border-primary" : "border-border hover:bg-accent",
+        "inline-flex items-center overflow-hidden whitespace-nowrap rounded-full border text-xs font-medium transition-colors",
+        active ? "border-primary" : "border-border",
+        disabled ? "cursor-default opacity-60" : !active && "hover:bg-accent",
       )}
     >
       <span className={cn("px-2.5 py-1", active ? "bg-primary text-primary-foreground" : "text-foreground")}>

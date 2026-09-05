@@ -28,6 +28,26 @@ export interface SalesLeadRow {
   createdAt: Date;
   convertedClientId: string | null;
   lastNote: string | null;
+
+  /** من أين جاء — معبّأ في **٨٥٪** من المفتوحين ولم يكن يُجلَب أصلاً. */
+  source: string | null;
+  /**
+   * مدفوعٌ أم طبيعيّ — الحقل الصريح، لا يُشتقّ من وجود الحملة.
+   *
+   * الاشتقاق من `campaign` يخطئ في حالةٍ واقعية: عميلٌ من إعلانٍ لم يُكتب اسم حملته بعد
+   * يُحسب «طبيعياً» فيختلّ تقرير القنوات. والعكس مستحيل: الحملة تُمسح على السيرفر متى كان
+   * طبيعياً، فالحقلان متّفقان بالبناء.
+   */
+  isPaidAd: boolean;
+  /** اسم الحملة — يُعرض تحت «مدفوع»، وهو ما يجيب «أي حملة تستحقّ ميزانيّتها». */
+  campaign: string | null;
+  /**
+   * آخر لمسة — آخر متابعة مسجّلة، أو `lastContactAt`، أو تاريخ الإنشاء.
+   *
+   * السقوط إلى الإنشاء مقصود: عميلٌ سُجِّل ولم يُكلَّم قطّ **ساكتٌ منذ تسجيله**، لا «بلا بيانات».
+   * وهو الحال الغالب هنا — ٩٥٪ منهم بلا متابعة واحدة.
+   */
+  lastTouchAt: Date;
 }
 
 const SELECT = {
@@ -46,6 +66,9 @@ const SELECT = {
   expectedMonths: true,
   currency: true,
   countryCode: true,
+  source: true,
+  isPaidAd: true,
+  campaign: true,
   createdAt: true,
   convertedClientId: true,
   industry: { select: { name: true } },
@@ -80,19 +103,28 @@ const shape = (l: Raw): SalesLeadRow => {
    * «٢٣٬٩٩٤» ثم يقرأ التقرير «٣٬٩٩٩» — نفس الصفقة برقمين يفترقان بمقدار المدّة. والباقات لا
    * تُباع شهريّاً أصلاً؛ الشهريّ سعرُ وحدةٍ لا يُدفع وحده.
    */
-  const monthly = l.expectedMonthly ?? null;
-  const months = (l.expectedMonths ?? null) as PlanDuration | null;
+  /**
+   * `l` من نوع `Record<string, unknown>`، فقيمه تصل `{}` لا أرقاماً — و`tsc` أمسكها بعد ما
+   * أُضيف `lastTouchAt` ووُسِّع نوع `Raw`. التحويل هنا صريحٌ عند حدّ القاعدة لا مبثوثٌ بعده.
+   */
+  const monthly = (l.expectedMonthly as number | null) ?? null;
+  const months = (l.expectedMonths as number | null) as PlanDuration | null;
   const dealTotal =
     monthly && months && (PLAN_DURATIONS as readonly number[]).includes(months)
       ? priceForDuration(monthly, months).total
       : monthly;
 
   return {
-    ...(rest as unknown as Omit<SalesLeadRow, "industryName" | "ownerName" | "lastNote" | "dealTotal">),
+    ...(rest as unknown as Omit<
+      SalesLeadRow,
+      "industryName" | "ownerName" | "lastNote" | "dealTotal" | "lastTouchAt"
+    >),
     dealTotal,
     industryName: industry?.name ?? null,
     ownerName: owner?.name ?? createdBy?.name ?? null,
     lastNote: followUps[0]?.body ?? null,
+    lastTouchAt:
+      followUps[0]?.happenedAt ?? (l.lastContactAt as Date | null) ?? (l.createdAt as Date),
   };
 };
 

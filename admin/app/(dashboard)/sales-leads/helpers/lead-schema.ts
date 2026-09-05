@@ -54,7 +54,7 @@ const optionalText = (max: number) =>
   z.preprocess(blankToUndefined, z.string().trim().max(max).optional());
 
 export const leadSchema = z.object({
-  name: z.string().trim().min(2, "الاسم قصير أوي").max(160),
+  name: z.string().trim().min(2, "الاسم قصير جداً").max(160),
   company: optionalText(160),
 
   /**
@@ -68,7 +68,7 @@ export const leadSchema = z.object({
    */
   phone: z.string().trim().min(6, "لازم رقم جوّال").max(40),
 
-  email: z.preprocess(blankToUndefined, z.string().trim().email("الإيميل مش مظبوط").optional()),
+  email: z.preprocess(blankToUndefined, z.string().trim().email("الإيميل غير صحيح").optional()),
 
   city: optionalText(120),
   website: optionalText(300),
@@ -82,6 +82,17 @@ export const leadSchema = z.object({
    * الشاشة ليست الحارس.
    */
   isPaidAd: z.preprocess((v) => v === true || v === "true" || v === "1", z.boolean()),
+
+  /**
+   * الحملة صارت **اختياراً من صفٍّ قائم** لا نصّاً يُكتب (خالد ٥ سبتمبر).
+   *
+   * النصّ الحرّ لا يُجمَّع: «رمضان-٢٠٢٦» و«رمضان ٢٠٢٦» و«ramadan26» ثلاثةُ صفوفٍ في أيّ
+   * تقرير، ولا يحمل كلفةً فيُقاس بها عائد. والمعرّف يربط العميل بميزانيةٍ حقيقية، فيصير
+   * «هذه الحملة صرفت كذا وجابت كذا» سؤالاً له جواب.
+   */
+  campaignId: z.preprocess(blankToUndefined, z.string().trim().optional()),
+
+  /** النصّ القديم — يبقى مقروءاً على الصفوف السابقة، ولا تكتبه الشاشة بعد اليوم. */
   campaign: optionalText(120),
   sourceNote: optionalText(200),
 
@@ -164,8 +175,8 @@ export const leadSchema = z.object({
       code: z.ZodIssueCode.custom,
       path: ["phone"],
       message: isMobileFor(v.phone, other)
-        ? `الرقم ده ${MOBILE[other].label} — بدّلي الدولة أو صحّحي الرقم`
-        : `مش رقم جوّال ${MOBILE[cc].label} — الشكل: ${MOBILE[cc].hint}`,
+        ? `هذا الرقم ${MOBILE[other].label} — بدّلي الدولة أو صحّحي الرقم`
+        : `ليس رقم جوّال ${MOBILE[cc].label} — الشكل: ${MOBILE[cc].hint}`,
     });
   })
   /**
@@ -181,7 +192,14 @@ export const leadSchema = z.object({
    * على عميلٍ لم يأتِ منها.
    */
   .transform((v) =>
-    v.isPaidAd ? { ...v, sourceNote: null } : { ...v, campaign: null },
+    v.isPaidAd
+      ? { ...v, sourceNote: null }
+      : // والمعرّف يُمسح مع النصّ: عميلٌ رجع إلى «طبيعي» وبقي مربوطاً بحملة يظلّ محسوباً
+        // عليها في تقريرها — وهو نفس العطل القديم بصورةٍ أحدث.
+        //
+        // و`null` لا `undefined` — الدرس نفسه المكتوب فوق: `undefined` في بريزما تعني «لا
+        // تمسّ هذا الحقل»، فيبقى الارتباط قائماً بعد التبديل بلا أن يظهر في الشاشة.
+        { ...v, campaign: null, campaignId: null },
   )
   /**
    * ومجالٌ من القائمة يمسح المكتوب بيد.

@@ -104,7 +104,7 @@ export async function createLead(input: LeadInput): Promise<Result> {
   if (clash) {
     return {
       success: false,
-      error: `الرقم ده مسجّل عند «${clash.name}»`,
+      error: `هذا الرقم مسجّل عند «${clash.name}»`,
       fieldErrors: { phone: [`مسجّل عند «${clash.name}»`] },
     };
   }
@@ -148,7 +148,7 @@ export async function createLead(input: LeadInput): Promise<Result> {
     revalidateLead();
     return { success: true, id: lead.id };
   } catch {
-    return { success: false, error: "تعذّر الحفظ. حاول مرة أخرى." };
+    return { success: false, error: "ما قدرنا نحفظ. حاول مرة ثانية." };
   }
 }
 
@@ -169,7 +169,7 @@ export async function updateLead(id: string, input: LeadInput): Promise<Result> 
   if (clash) {
     return {
       success: false,
-      error: `الرقم ده مسجّل عند «${clash.name}»`,
+      error: `هذا الرقم مسجّل عند «${clash.name}»`,
       fieldErrors: { phone: [`مسجّل عند «${clash.name}»`] },
     };
   }
@@ -188,7 +188,7 @@ export async function updateLead(id: string, input: LeadInput): Promise<Result> 
     revalidateLead(id);
     return { success: true, id };
   } catch {
-    return { success: false, error: "تعذّر الحفظ. حاول مرة أخرى." };
+    return { success: false, error: "ما قدرنا نحفظ. حاول مرة ثانية." };
   }
 }
 
@@ -263,7 +263,7 @@ export async function addFollowUp(leadId: string, input: FollowUpInput): Promise
     revalidateLead(leadId);
     return { success: true, id: row.id };
   } catch {
-    return { success: false, error: "ما قدرناش نسجّل المتابعة. جرّبي تاني." };
+    return { success: false, error: "ما قدرنا نسجّل المتابعة. حاولي مرة ثانية." };
   }
 }
 
@@ -282,7 +282,7 @@ export async function completeFollowUp(id: string): Promise<Result> {
     revalidateLead(row.leadId);
     return { success: true, id };
   } catch {
-    return { success: false, error: "ما قدرناش نقفل الموعد. جرّبي تاني." };
+    return { success: false, error: "ما قدرنا نقفل الموعد. حاولي مرة ثانية." };
   }
 }
 
@@ -299,7 +299,7 @@ export async function snoozeFollowUp(id: string, days: number): Promise<Result> 
       where: { id },
       select: { leadId: true, nextActionAt: true },
     });
-    if (!current) return { success: false, error: "الموعد مش موجود." };
+    if (!current) return { success: false, error: "الموعد غير موجود." };
 
     // يُحسب من اليوم لا من الموعد الفائت: تأجيل موعدٍ متأخر عشرة أيام «بكرة» يجب أن يعني
     // بكرة، لا بعد غدٍ بتسعة أيام.
@@ -312,7 +312,7 @@ export async function snoozeFollowUp(id: string, days: number): Promise<Result> 
     revalidateLead(current.leadId);
     return { success: true, id };
   } catch {
-    return { success: false, error: "ما قدرناش نأجّل. جرّبي تاني." };
+    return { success: false, error: "ما قدرنا نأجّل. حاولي مرة ثانية." };
   }
 }
 
@@ -331,7 +331,7 @@ export async function setLeadStage(
     revalidateLead(id);
     return { success: true, id };
   } catch {
-    return { success: false, error: "ما قدرناش نحدّث. جرّبي تاني." };
+    return { success: false, error: "ما قدرنا نحدّث. حاولي مرة ثانية." };
   }
 }
 
@@ -380,7 +380,7 @@ export async function markLost(id: string, input: LostInput): Promise<Result> {
         leadId: id,
         channel: "NOTE",
         happenedAt: now,
-        body: note?.trim() || "اتقفل كخسارة.",
+        body: note?.trim() || "أُغلق كخسارة.",
         nextActionAt: null,
         nextActionNote: null,
         doneAt: now,
@@ -392,7 +392,7 @@ export async function markLost(id: string, input: LostInput): Promise<Result> {
     revalidateLead(id);
     return { success: true, id };
   } catch {
-    return { success: false, error: "ما قدرناش نقفله. جرّبي تاني." };
+    return { success: false, error: "ما قدرنا نقفله. حاولي مرة ثانية." };
   }
 }
 
@@ -408,7 +408,7 @@ export async function reopenLead(id: string): Promise<Result> {
     revalidateLead(id);
     return { success: true, id };
   } catch {
-    return { success: false, error: "ما قدرناش نرجّعه. جرّبي تاني." };
+    return { success: false, error: "ما قدرنا نرجّعه. حاولي مرة ثانية." };
   }
 }
 
@@ -449,11 +449,11 @@ export async function convertLeadToClient(
   if (!created.success) {
     // رسالة `createClient` تُمرَّر كما هي: هي التي تعرف السبب («السلَق مستخدم» · «الإيميل
     // مستخدم من عميل آخر»)، واستبدالها برسالة عامّة يمسح الخطوة التالية من أمام فاتن.
-    return { success: false, error: created.error || "ما قدرناش ننشئ العميل." };
+    return { success: false, error: created.error || "ما قدرنا ننشئ العميل." };
   }
 
   const clientId = created.client?.id;
-  if (!clientId) return { success: false, error: "اتنشأ العميل بس ما قدرناش نربطه — راجعي قائمة العملاء." };
+  if (!clientId) return { success: false, error: "أُنشئ العميل لكن ما قدرنا نربطه — راجعي قائمة العملاء." };
 
   const now = new Date();
   await db.salesLead.update({
@@ -483,7 +483,7 @@ export async function convertLeadToClient(
       leadId: id,
       channel: "NOTE",
       happenedAt: now,
-      body: "اتحوّل لعميل على مدونتي. 🎉",
+      body: "تحوّل إلى عميل على مدونتي. 🎉",
       nextActionAt: null,
       nextActionNote: null,
       doneAt: now,

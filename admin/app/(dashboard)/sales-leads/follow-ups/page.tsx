@@ -1,4 +1,5 @@
 import { DueList } from "../components/due-list";
+import { formatCount } from "../helpers/format-count";
 import { getDueFollowUps } from "../helpers/get-due-follow-ups";
 
 export const metadata = { title: "المتابعة — أدمن مدونتي" };
@@ -19,14 +20,14 @@ export default async function FollowUpsPage() {
         <p className="mt-0.5 text-xs text-muted-foreground">
           {overdue.length > 0 ? (
             <>
-              <span className="font-medium text-rose-600 tabular-nums dark:text-rose-400">
-                {overdue.length}
+              <span className="font-medium text-rose-700 tabular-nums dark:text-rose-400">
+                {formatCount(overdue.length)}
               </span>{" "}
-              متأخر ·{" "}
+              متأخّر ·{" "}
             </>
           ) : null}
-          <span className="tabular-nums">{today.length}</span> النهارده ·{" "}
-          <span className="tabular-nums">{upcoming.length}</span> جاي
+          <span className="tabular-nums">{formatCount(today.length)}</span> اليوم ·{" "}
+          <span className="tabular-nums">{formatCount(upcoming.length)}</span> قادم
         </p>
       </header>
 
@@ -34,8 +35,8 @@ export default async function FollowUpsPage() {
 
       {truncated && (
         <p className="text-xs text-muted-foreground">
-          معروض أقرب <span className="tabular-nums">{overdue.length + today.length + upcoming.length}</span> من{" "}
-          <span className="tabular-nums">{total}</span> موعد مفتوح.
+          معروض أقرب <span className="tabular-nums">{formatCount(overdue.length + today.length + upcoming.length)}</span> من{" "}
+          <span className="tabular-nums">{formatCount(total)}</span> موعد مفتوح.
         </p>
       )}
     </div>

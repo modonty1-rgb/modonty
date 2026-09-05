@@ -27,7 +27,7 @@ export const followUpSchema = z.object({
     z.date(),
   ),
 
-  body: z.string().trim().min(2, "اكتبي اللي حصل").max(4000),
+  body: z.string().trim().min(2, "اكتبي ما حدث").max(4000),
 
   nextActionAt: z.preprocess(dayToDate, z.date().optional()),
   nextActionNote: z.preprocess(blankToUndefined, z.string().trim().max(200).optional()),

@@ -4,17 +4,19 @@ import { LeadForm } from "../../components/lead-form";
 import { getIndustryOptions, getLead } from "../../helpers/get-lead";
 import { getPlans } from "../../helpers/get-plans";
 import { getLeadSources } from "../../helpers/get-lead-sources";
+import { getCampaignOptions } from "../../helpers/get-campaign-options";
 import type { LeadInput } from "../../helpers/lead-schema";
 
 export const metadata = { title: "تعديل عميل — أدمن مدونتي" };
 
 export default async function EditLeadPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [lead, industries, plans, leadSources] = await Promise.all([
+  const [lead, industries, plans, leadSources, campaigns] = await Promise.all([
     getLead(id),
     getIndustryOptions(),
     getPlans(),
     getLeadSources(),
+    getCampaignOptions(),
   ]);
   if (!lead) notFound();
 
@@ -31,6 +33,7 @@ export default async function EditLeadPage({ params }: { params: Promise<{ id: s
         industries={industries}
         plans={plans}
         leadSources={leadSources}
+        campaigns={campaigns}
         initial={initial}
       />
     </div>

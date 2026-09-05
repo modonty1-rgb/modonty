@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { completeFollowUp, snoozeFollowUp } from "../actions";
+import { formatCount } from "../helpers/format-count";
 import { CHANNEL_LABEL, DUE_TONE, STAGE_DOT, STAGE_LABEL, describeDue, waNumber, type Channel, type Stage } from "../helpers/funnel";
 import type { DueRow } from "../helpers/get-due-follow-ups";
 
@@ -52,7 +53,7 @@ function Row({ row, onDone, onSnooze, busy }: {
         </div>
 
         {row.nextActionNote && (
-          <p className="mt-0.5 text-xs text-muted-foreground">علشان: {row.nextActionNote}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">السبب: {row.nextActionNote}</p>
         )}
         {/* آخر ما قيل — سطر واحد. هو الفرق بين «اتصلي بفلان» و«اتصلي بفلان اللي قال إنه
             هيراجع العرض مع شريكه». */}
@@ -77,7 +78,7 @@ function Row({ row, onDone, onSnooze, busy }: {
                 rel="noopener noreferrer"
                 aria-label={`واتساب ${row.leadName}`}
               >
-                <Button type="button" variant="ghost" size="sm" className="h-8 gap-1 px-2 text-xs text-emerald-600 dark:text-emerald-400">
+                <Button type="button" variant="ghost" size="sm" className="h-8 gap-1 px-2 text-xs text-emerald-700 dark:text-emerald-400">
                   <MessageCircle className="size-3.5" aria-hidden />
                 </Button>
               </a>
@@ -135,7 +136,7 @@ export function DueList({ overdue, today, upcoming }: Props) {
         toast({ title: okText, variant: "success" });
         router.refresh();
       } else {
-        toast({ title: r.error ?? "ما نفعش.", variant: "destructive" });
+        toast({ title: r.error ?? "ما نجح.", variant: "destructive" });
       }
     });
 
@@ -145,7 +146,7 @@ export function DueList({ overdue, today, upcoming }: Props) {
         <CardHeader className="pb-1">
           <CardTitle className={cn("text-base", tone)}>
             {title}
-            <span className="ms-2 text-xs font-normal text-muted-foreground tabular-nums">{rows.length}</span>
+            <span className="ms-2 text-xs font-normal tabular-nums text-muted-foreground">{formatCount(rows.length)}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -155,8 +156,8 @@ export function DueList({ overdue, today, upcoming }: Props) {
                 key={r.id}
                 row={r}
                 busy={pending}
-                onDone={() => act(() => completeFollowUp(r.id), "اتقفل")}
-                onSnooze={() => act(() => snoozeFollowUp(r.id, 3), "اتأجّل ٣ أيام")}
+                onDone={() => act(() => completeFollowUp(r.id), "أُغلق")}
+                onSnooze={() => act(() => snoozeFollowUp(r.id, 3), "تأجيل ٣ أيام")}
               />
             ))}
           </ul>
@@ -168,9 +169,9 @@ export function DueList({ overdue, today, upcoming }: Props) {
     return (
       <Card>
         <CardContent className="py-10 text-center">
-          <p className="text-sm font-medium">مافيش حاجة عليكي دلوقتي 🎉</p>
+          <p className="text-sm font-medium">ما عليك شيء الآن 🎉</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            كل ما تسجّلي متابعة ومعاها موعد، هتلاقيه هنا في يومه.
+            كل ما تسجّلين متابعة ومعها موعد، ستجدينه هنا في يومه.
           </p>
         </CardContent>
       </Card>
@@ -179,9 +180,9 @@ export function DueList({ overdue, today, upcoming }: Props) {
 
   return (
     <div className="space-y-4">
-      {group("متأخر", overdue, "text-rose-600 dark:text-rose-400")}
-      {group("النهارده", today, "text-amber-600 dark:text-amber-400")}
-      {group("جاي", upcoming)}
+      {group("متأخّر", overdue, "text-rose-700 dark:text-rose-400")}
+      {group("اليوم", today, "text-amber-700 dark:text-amber-400")}
+      {group("قادم", upcoming)}
     </div>
   );
 }

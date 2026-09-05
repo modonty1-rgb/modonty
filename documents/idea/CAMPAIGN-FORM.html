@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>حملة جديدة — النموذج كما سيظهر في الأدمن</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* الرموز نفسها من admin/app/globals.css — لا ألوان مخترعة. */
+  :root{
+    --background:45 8% 95%; --foreground:0 0% 0%;
+    --card:0 0% 100%; --card-foreground:0 0% 0%;
+    --primary:210 90% 40%; --primary-foreground:0 0% 100%;
+    --muted:0 0% 96%; --muted-foreground:0 0% 40%;
+    --accent:0 0% 96%; --border:60 3% 88%; --input:60 3% 88%; --ring:210 90% 40%;
+    --destructive:0 84.2% 60.2%;
+  }
+  html.dark{
+    --background:222.2 84% 4.9%; --foreground:210 40% 98%;
+    --card:222.2 84% 6%; --card-foreground:210 40% 98%;
+    --primary:217.2 91.2% 59.8%; --primary-foreground:222.2 84% 4.9%;
+    --muted:217.2 32.6% 17.5%; --muted-foreground:215 20.2% 65.1%;
+    --accent:217.2 32.6% 17.5%; --border:217.2 32.6% 17.5%; --input:217 19% 27%;
+    --ring:217.2 91.2% 59.8%; --destructive:0 72.2% 50.6%;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:hsl(var(--background));color:hsl(var(--foreground));
+       font-family:Tajawal,system-ui,sans-serif;font-size:14px;line-height:1.5}
+
+  .shell{max-width:1128px;margin:0 auto;padding:24px 16px 80px}
+  .cols{display:flex;align-items:flex-start;gap:24px}
+  .rail{width:260px;flex:0 0 260px;position:sticky;top:24px}
+  .mid{flex:1;max-width:600px;display:flex;flex-direction:column;gap:8px}
+
+  /* Card — rounded-md، حدّ واحد، بلا ظلّ. نفس ما يستعمله نموذج العميل. */
+  .card{border:1px solid hsl(var(--border));background:hsl(var(--card));border-radius:6px}
+  .card>h3{font-size:14px;font-weight:600;padding:12px 16px 6px;display:flex;align-items:center;gap:8px}
+  .card>h3 .sub{font-size:12px;font-weight:400;color:hsl(var(--muted-foreground))}
+  .card>.body{padding:16px;display:flex;flex-direction:column;gap:8px}
+  .card>h3+.body{padding-top:0;padding-bottom:12px}
+  .div{border-top:1px solid hsl(var(--border));padding-top:8px;margin-top:0}
+
+  label{display:block;font-size:12px;letter-spacing:.01em;color:hsl(var(--foreground))}
+  .in{margin-top:2px;height:32px;width:100%;border:1px solid hsl(var(--input));
+      background:hsl(var(--background));color:hsl(var(--foreground));
+      border-radius:4px;padding:4px 10px;font:400 14px Tajawal}
+  .in::placeholder{color:hsl(var(--muted-foreground))}
+  select.in{padding-inline-end:6px}
+  textarea.in{height:auto;padding:6px 10px;resize:vertical;font-size:14px}
+  .hint{font-size:11px;color:hsl(var(--muted-foreground));margin-top:2px}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+  /* مفتاح — نفس مفتاح الدولة في نموذج العميل */
+  .seg{margin-top:2px;display:inline-flex;border:1px solid hsl(var(--border));border-radius:4px;padding:2px}
+  .seg button{height:28px;padding:0 12px;border:0;border-radius:3px;background:transparent;
+              color:hsl(var(--muted-foreground));font:500 12px Tajawal;cursor:pointer}
+  .seg button[aria-checked="true"]{background:hsl(var(--foreground));color:hsl(var(--background))}
+  .seg.wide{display:flex}
+  .seg.wide button{flex:1;padding:0 8px}
+
+  .dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-inline-end:5px;vertical-align:middle}
+
+  .btn{height:32px;border-radius:4px;padding:0 14px;font:500 13px Tajawal;cursor:pointer;
+       border:1px solid hsl(var(--border));background:transparent;color:hsl(var(--foreground));
+       display:inline-flex;align-items:center;gap:6px}
+  .btn.pri{background:hsl(var(--primary));border-color:hsl(var(--primary));color:hsl(var(--primary-foreground))}
+  .btn.ghost{border-color:transparent;color:hsl(var(--muted-foreground))}
+  .btn.mini{height:26px;padding:0 10px;font-size:11.5px}
+  .actions{display:flex;align-items:center;gap:8px;border-top:1px solid hsl(var(--border));padding-top:12px;margin-top:4px}
+  .push{margin-inline-start:auto}
+
+  .head{display:flex;align-items:center;gap:8px;margin-bottom:24px}
+  .head h1{font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .back{width:32px;height:32px;border-radius:4px;border:0;background:transparent;
+        color:hsl(var(--foreground));font-size:16px;cursor:pointer}
+
+  .url{margin-top:2px;direction:ltr;border:1px solid hsl(var(--input));background:hsl(var(--background));
+       border-radius:4px;padding:7px 9px;font:400 11.5px/1.65 ui-monospace,monospace;word-break:break-all}
+  .calc{display:flex;justify-content:space-between;align-items:baseline;
+        border:1px solid hsl(var(--border));background:hsl(var(--muted));border-radius:4px;padding:6px 9px}
+  .calc b{font-size:14px;font-variant-numeric:tabular-nums}
+  .calc span{font-size:11px;color:hsl(var(--muted-foreground))}
+  .days{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;
+        color:hsl(var(--muted-foreground));border-bottom:1px solid hsl(var(--border));padding-bottom:8px}
+  .days b{font-size:13px;color:hsl(var(--foreground));font-variant-numeric:tabular-nums}
+  .req{color:hsl(var(--destructive))}
+
+  .themer{position:fixed;inset-block-start:10px;inset-inline-start:10px;z-index:9}
+  @media(max-width:1000px){.cols{flex-direction:column}.rail{width:100%;flex:none;position:static}}
+</style>
+</head>
+<body>
+
+<div class="themer">
+  <button class="btn mini" onclick="document.documentElement.classList.toggle('dark')">فاتح / داكن</button>
+</div>
+
+<div class="shell">
+
+  <div class="head">
+    <button class="back" aria-label="رجوع">→</button>
+    <h1>حملة جديدة</h1>
+  </div>
+
+  <div class="cols">
+
+    <!-- ══ يمين ٢٦٠ — أين تُنشر ══ -->
+    <aside class="rail">
+      <div class="card">
+        <h3>مكان النشر</h3>
+        <div class="body">
+          <div>
+            <label>السوق</label>
+            <div class="seg" role="radiogroup" aria-label="السوق" data-role="market">
+              <button role="radio" aria-checked="true" data-code="SA"><span class="dot" style="background:#10b981"></span>السعودية</button>
+              <button role="radio" aria-checked="false" data-code="EG"><span class="dot" style="background:#ef4444"></span>مصر</button>
+            </div>
+            <div class="hint">يحدّد العملة والضريبة وترتيب القنوات.</div>
+          </div>
+
+          <div class="div">
+            <label for="channel">القناة</label>
+            <select class="in" id="channel">
+              <option>تيك توك</option>
+              <option>يوتيوب</option>
+              <option selected>سناب شات</option>
+              <option>انستقرام</option>
+              <option>فيسبوك</option>
+              <option>إكس</option>
+              <option>لينكدإن</option>
+            </select>
+            <div class="hint" id="chHint">مرتّبةٌ بالوصول في السعودية.</div>
+          </div>
+
+          <div>
+            <label for="goal">الهدف</label>
+            <select class="in" id="goal">
+              <option selected>عملاء محتملون</option>
+              <option>مبيعات</option>
+              <option>زيارات</option>
+              <option>تفاعل</option>
+              <option>وعي</option>
+            </select>
+            <div class="hint">هو نفسه المضبوط في المنصّة.</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ══ الوسط — الحملة نفسها ══ -->
+    <div class="mid">
+
+      <div class="card">
+        <div class="body">
+          <div>
+            <label for="nm">اسم الحملة <span class="req">*</span></label>
+            <input class="in" id="nm" placeholder="تقويم الأسنان — سبتمبر" />
+          </div>
+
+          <div class="div g2">
+            <div>
+              <label for="d1">تبدأ <span class="req">*</span></label>
+              <input class="in" id="d1" type="date" dir="ltr" value="2026-09-01" />
+            </div>
+            <div>
+              <label for="d2">تنتهي <span class="req">*</span></label>
+              <input class="in" id="d2" type="date" dir="ltr" value="2026-09-30" />
+              <div class="hint">منه يُحسب اليوميّ والإجماليّ.</div>
+            </div>
+          </div>
+
+          <div class="div">
+            <label>الحالة</label>
+            <div class="seg" role="radiogroup" aria-label="الحالة">
+              <button role="radio" aria-checked="true">مسوّدة</button>
+              <button role="radio" aria-checked="false">شغّالة</button>
+              <button role="radio" aria-checked="false">موقوفة</button>
+              <button role="radio" aria-checked="false">منتهية</button>
+            </div>
+            <div class="hint">تبدأ مسوّدةً وتُشغَّل بعد ضبطها في المنصّة.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>الوصل بالمبيعات <span class="sub">مفتاحان — بهما يُعرف مَن جاء منها</span></h3>
+        <div class="body">
+          <div>
+            <label for="pid">معرّف الحملة في المنصّة</label>
+            <input class="in" id="pid" dir="ltr" placeholder="120210000000123456" />
+            <div class="hint">يُنسخ من المنصّة بعد إنشائها هناك — به يجيء المصروف.</div>
+          </div>
+
+          <div>
+            <label for="utm">وسم الرابط</label>
+            <input class="in" id="utm" dir="ltr" value="sa-snap-ortho-sep26" />
+            <div class="hint">يتولّد من السوق والقناة والاسم، ويُقفل بعد الإطلاق.</div>
+          </div>
+
+          <div class="div">
+            <label>الرابط الجاهز — يُنسخ ويُلصق في الإعلان</label>
+            <div class="url" id="link"></div>
+            <div class="hint" id="linkWarn">ناقصه معرّف المنصّة — أضفه فوق ليكتمل المفتاح الثاني.</div>
+            <div style="margin-top:6px"><button class="btn mini">نسخ الرابط</button></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>ملاحظة <span class="sub">اختيارية</span></h3>
+        <div class="body">
+          <textarea class="in" rows="2" placeholder="جرّبنا نفس الإعلان في أغسطس وجاب ٧ عملاء…"></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn pri">حفظ</button>
+        <button class="btn">حفظ وإضافة أخرى</button>
+        <button class="btn ghost push">إلغاء</button>
+      </div>
+    </div>
+
+    <!-- ══ شمال ٢٦٠ — الفلوس ══ -->
+    <aside class="rail">
+      <div class="card">
+        <h3>الميزانية <span class="sub" id="curName">بالريال السعودي</span></h3>
+        <div class="body">
+          <div class="days">
+            <span>مدّة الحملة</span>
+            <b><span id="days">٣٠</span> يوماً</b>
+          </div>
+
+          <div class="g2">
+            <div>
+              <label for="daily">في اليوم <span class="req">*</span></label>
+              <input class="in" id="daily" dir="ltr" inputmode="decimal" value="400" />
+              <div class="hint">هو المحفوظ.</div>
+            </div>
+            <div>
+              <label for="total">إجمالي المدّة</label>
+              <input class="in" id="total" dir="ltr" inputmode="numeric" value="12000" />
+              <div class="hint">محسوب.</div>
+            </div>
+          </div>
+          <div class="hint">
+            اكتب أيّهما تعرفه — الثاني يتبعه. ولو مدّدتَ الحملة لاحقاً، اليوميّ يبقى كما هو
+            والإجماليّ يكبر وحده.
+          </div>
+
+          <div>
+            <label>هذان الرقمان</label>
+            <div class="seg wide" role="radiogroup" aria-label="الضريبة">
+              <button role="radio" aria-checked="true" data-vat="0">قبل الضريبة</button>
+              <button role="radio" aria-checked="false" data-vat="1">شاملان</button>
+            </div>
+          </div>
+
+          <div class="calc">
+            <span>المدفوع فعلاً · ضريبة <span id="vatPc">١٥</span>٪</span>
+            <b id="paid">١٣٬٨٠٠</b>
+          </div>
+          <div class="hint" style="margin-top:0">
+            عليه تُحسب تكلفة العميل المحتمل — لا على <span id="typed">١٢٬٠٠٠</span>.
+          </div>
+
+          <div class="div">
+            <label for="cap">سقف الصرف <span style="color:hsl(var(--muted-foreground))">اختياري</span></label>
+            <input class="in" id="cap" dir="ltr" placeholder="15000" />
+            <div class="hint">حدٌّ لا يُتجاوز مهما حدث.</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<script>
+/* حيّ عمداً: القرار على «هل الرقمان أمامي معاً» لا يُتّخذ من صورة ساكنة. */
+const AR = new Intl.NumberFormat("ar-EG", { maximumFractionDigits: 0 });
+const MARKET = {
+  SA: { cur: "بالريال السعودي", vat: 0.15,
+        ch: ["تيك توك","يوتيوب","سناب شات","انستقرام","فيسبوك","إكس","لينكدإن"] },
+  EG: { cur: "بالجنيه المصري", vat: 0.14,
+        ch: ["يوتيوب","فيسبوك","تيك توك","انستقرام","سناب شات","لينكدإن","إكس"] },
+};
+const SLUG = { "تيك توك":"tiktok","يوتيوب":"youtube","سناب شات":"snapchat",
+               "انستقرام":"instagram","فيسبوك":"facebook","إكس":"twitter","لينكدإن":"linkedin" };
+let market = "SA", vatIncluded = false;
+
+const $ = (id) => document.getElementById(id);
+const days = () => {
+  const a = new Date($("d1").value), b = new Date($("d2").value);
+  const n = Math.round((b - a) / 86400000) + 1;
+  return n > 0 ? n : 1;
+};
+
+function render(from) {
+  const d = days(), m = MARKET[market];
+  $("days").textContent = AR.format(d);
+  $("curName").textContent = m.cur;
+  $("vatPc").textContent = AR.format(m.vat * 100);
+
+  /**
+   * اليوميّ هو المحفوظ، والإجماليّ مشتقٌّ منه — لا العكس (خالد).
+   *
+   * والفرق يظهر لحظة تغيير التاريخ: لو كان الإجماليّ هو المخزَّن، فمدُّ الحملة أسبوعاً يبقيه
+   * على حاله ويخفض اليوميّ سرّاً — وهو رقمٌ لم يضبطه أحد في أيّ منصّة. فتغييرُ التاريخ يحرّك
+   * الإجماليّ وحده، ويبقى اليوميّ كما ضُبط.
+   *
+   * والكتابة في خانة الإجماليّ ما زالت مسموحة — تُترجَم فوراً إلى يوميّ ويُحفظ هو.
+   */
+  if (from === "total") {
+    const per = (+$("total").value || 0) / d;
+    $("daily").value = Math.round(per * 100) / 100;
+  } else {
+    $("total").value = Math.round((+$("daily").value || 0) * d);
+  }
+
+  const typed = +$("total").value || 0;
+  const paid = vatIncluded ? typed : Math.round(typed * (1 + m.vat));
+  $("typed").textContent = AR.format(typed);
+  $("paid").textContent = AR.format(paid);
+
+  const ch = $("channel").value;
+  $("utm").value = `${market.toLowerCase()}-${SLUG[ch]}-ortho-sep26`;
+  // بلا معرّف المنصّة يبقى الرابط ناقص المفتاح الثاني — يُقال بالعربية تحته، ولا تُدسّ كلمة
+  // عربية داخل نصٍّ لاتينيّ فتُقرأ معكوسة.
+  const pid = $("pid").value.trim();
+  $("link").textContent =
+    `modonty.com/?utm_source=${SLUG[ch]}&utm_medium=cpc&utm_campaign=${$("utm").value}` +
+    (pid ? `&utm_id=${pid}` : "");
+  $("linkWarn").hidden = Boolean(pid);
+}
+
+["d1","d2","pid"].forEach((id) => $(id).addEventListener("input", () => render()));
+$("daily").addEventListener("input", () => render("daily"));
+$("total").addEventListener("input", () => render("total"));
+$("channel").addEventListener("change", () => render());
+
+document.querySelectorAll('[role="radiogroup"]').forEach((g) => {
+  g.addEventListener("click", (e) => {
+    const b = e.target.closest('[role="radio"]');
+    if (!b) return;
+    g.querySelectorAll('[role="radio"]').forEach((x) => x.setAttribute("aria-checked", String(x === b)));
+    if (g.dataset.role === "market") {
+      market = b.dataset.code;
+      const sel = $("channel"), keep = sel.value;
+      sel.innerHTML = MARKET[market].ch.map((c) => `<option>${c}</option>`).join("");
+      sel.value = MARKET[market].ch.includes(keep) ? keep : MARKET[market].ch[0];
+      $("chHint").textContent = `مرتّبةٌ بالوصول في ${market === "SA" ? "السعودية" : "مصر"}.`;
+    }
+    if (b.dataset.vat !== undefined) vatIncluded = b.dataset.vat === "1";
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>

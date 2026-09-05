@@ -12,6 +12,7 @@ import {
   DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import { convertLeadToClient } from "../actions";
 
 /**
@@ -31,6 +32,8 @@ interface Props {
   expectedTier: string | null;
   /** أسماء الباقات من `modonty_plans`. */
   tierLabels: Record<string, string>;
+  /** يمرّره العمود الجانبيّ ليمدّ الزرّ على عرضه — الشكل قرارُ المكان لا قرارُ الحوار. */
+  className?: string;
 }
 
 /**
@@ -42,19 +45,27 @@ interface Props {
  *
  * The slug arrives already checked against existing clients, so the usual case is one click.
  */
-export function ConvertDialog({ leadId, leadName, suggestedSlug, email, expectedTier, tierLabels }: Props) {
+export function ConvertDialog({
+  leadId, leadName, suggestedSlug, email, expectedTier, tierLabels, className,
+}: Props) {
   const router = useRouter();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [slug, setSlug] = useState(suggestedSlug);
   const [mail, setMail] = useState(email ?? "");
   /**
-   * تبدأ من الباقة المعروضة لا من `BASIC`.
+   * تبدأ من الباقة المعروضة لا من أرخص باقة.
    *
-   * كانت ثابتةً على أرخص باقة: تُعرض «الزخم» على العميلة، ثم تُحوَّل فتصير «الأساسية» —
-   * وفرقُ ما بينهما إيرادٌ يضيع بصمت لأن الحوار لا يعرض ما تغيّر.
+   * كانت ثابتةً على `BASIC`: تُعرض «الزخم» على العميلة، ثم تُحوَّل فتصير الأرخص — وفرقُ ما
+   * بينهما إيرادٌ يضيع بصمت لأن الحوار لا يعرض ما تغيّر.
+   *
+   * والاحتياطيّ **أوّل باقةٍ في القاعدة** لا `BASIC` المكتوبة هنا: `modonty_plans` لا تحوي
+   * صفّاً لـ`BASIC` (مقيس — الحوار كان يعرض `BASIC` خاماً بين «الانطلاقة» و«الزخم»
+   * و«الريادة»)، فقيمةٌ لا يقابلها صفّ تُرسل إلى القاعدة أو تُعرض بالإنجليزية في شاشةٍ عربية.
    */
-  const [tier, setTier] = useState<string>(expectedTier ?? "BASIC");
+  const [tier, setTier] = useState<string>(
+    expectedTier ?? TIER_ORDER.find((t) => tierLabels[t]) ?? "",
+  );
   const [busy, setBusy] = useState(false);
 
   const run = async () => {
@@ -62,7 +73,7 @@ export function ConvertDialog({ leadId, leadName, suggestedSlug, email, expected
     const r = await convertLeadToClient(leadId, { slug, email: mail, subscriptionTier: tier });
     setBusy(false);
     if (r.success) {
-      toast({ title: `${leadName} بقى عميل`, variant: "success" });
+      toast({ title: `${leadName} صار عميلاً`, variant: "success" });
       setOpen(false);
       router.refresh();
     } else {
@@ -73,8 +84,8 @@ export function ConvertDialog({ leadId, leadName, suggestedSlug, email, expected
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" className="gap-1.5">
-          <ArrowLeftRight className="size-3.5 rtl:rotate-180" aria-hidden /> حوّله لعميل
+        <Button size="sm" className={cn("gap-1.5", className)}>
+          <ArrowLeftRight className="size-3.5 rtl:rotate-180" aria-hidden /> حوّله إلى عميل
         </Button>
       </DialogTrigger>
 
@@ -82,8 +93,8 @@ export function ConvertDialog({ leadId, leadName, suggestedSlug, email, expected
         <DialogHeader>
           <DialogTitle className="text-start">تحويل «{leadName}» لعميل</DialogTitle>
           <DialogDescription className="text-start">
-            هيتفتح له حساب على مدونتي وصفحة باسمه. الباقي منقول من بياناته — دي التلاتة
-            اللي لازم تتأكّد منها.
+            سيُفتح له حساب على مدونتي وصفحة باسمه. الباقي منقول من بياناته — وهذه الثلاثة
+            التي تحتاج تأكيدك.
           </DialogDescription>
         </DialogHeader>
 
@@ -106,7 +117,7 @@ export function ConvertDialog({ leadId, leadName, suggestedSlug, email, expected
 
           <div>
             <Label htmlFor="cmail" className="text-xs">
-              الإيميل {email ? "" : "— مش موجود عنده، لازم تكتبه"}
+              الإيميل {email ? "" : "— غير موجود عنده، لا بدّ من كتابته"}
             </Label>
             <Input
               id="cmail"
@@ -117,7 +128,7 @@ export function ConvertDialog({ leadId, leadName, suggestedSlug, email, expected
               placeholder="owner@clinic.com"
               className="mt-1"
             />
-            <p className="mt-1 text-[11px] text-muted-foreground">بيدخل بيه على لوحته.</p>
+            <p className="mt-1 text-[11px] text-muted-foreground">يدخل به على لوحته.</p>
           </div>
 
           <div>
@@ -128,11 +139,16 @@ export function ConvertDialog({ leadId, leadName, suggestedSlug, email, expected
               onChange={(e) => setTier(e.target.value)}
               className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
             >
-              {/* الباقة التي لا اسم لها في القاعدة لا تُعرض بمفتاحها الخام: `BASIC` تقابل
-                  `presence` وهي مخفيّة في السوقين، فلا تُباع — وإظهارها مفتاحاً لاتينياً وسط
-                  ثلاثة أسماء عربية يجعلها تُقرأ عطلاً. تظهر فقط إن كانت هي المختارة أصلاً. */}
-              {TIER_ORDER.filter((t) => tierLabels[t] || t === tier).map((t) => (
-                <option key={t} value={t}>{tierLabels[t] ?? t}</option>
+              {/**
+               * الباقة التي لا اسم لها في القاعدة **لا تُعرض إطلاقاً**.
+               *
+               * كان الشرط `|| t === tier` يُبقيها إن كانت هي المختارة، والمختارة الافتراضية
+               * كانت `BASIC` — فظهر المفتاح اللاتينيّ الخام أوّلَ خيارٍ ومحدَّداً وسط ثلاثة
+               * أسماء عربية (مقيس في حوار التحويل). والافتراضيّ صار أوّل باقةٍ لها صفّ، فسقط
+               * سبب الاستثناء معه.
+               */}
+              {TIER_ORDER.filter((t) => tierLabels[t]).map((t) => (
+                <option key={t} value={t}>{tierLabels[t]}</option>
               ))}
             </select>
           </div>
@@ -141,7 +157,7 @@ export function ConvertDialog({ leadId, leadName, suggestedSlug, email, expected
         <DialogFooter className="gap-2 sm:justify-start">
           <Button onClick={run} disabled={busy || !slug.trim() || !mail.trim()} className="gap-2">
             {busy && <Loader2 className="size-4 animate-spin" aria-hidden />}
-            {busy ? "بنحوّله…" : "حوّله لعميل"}
+            {busy ? "جارٍ التحويل…" : "حوّله إلى عميل"}
           </Button>
           <Button variant="outline" onClick={() => setOpen(false)} disabled={busy}>إلغاء</Button>
         </DialogFooter>

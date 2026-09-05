@@ -27,6 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { KpiToggle } from "@/components/admin/kpi-toggle";
 import { cn } from "@/lib/utils";
 
 export interface AccountRow {
@@ -181,47 +182,6 @@ const KPI_ICONS: Record<KpiKey, React.ComponentType<{ className?: string }>> = {
   expired: CalendarX,
   expiring: CalendarClock,
 };
-
-function KpiToggle({
-  meta,
-  value,
-  active,
-  onClick,
-  icon: Icon,
-  trailing,
-}: {
-  meta: (typeof KPI_META)[number];
-  value: number;
-  active: boolean;
-  onClick: () => void;
-  icon: React.ComponentType<{ className?: string }>;
-  /** Rendered beside the toggle, never inside it — a button cannot nest a button. */
-  trailing?: React.ReactNode;
-}) {
-  return (
-    <div
-      className={cn(
-        "flex items-center gap-2 rounded-lg border bg-card px-2.5 py-2 transition-all",
-        active && `ring-2 ${meta.ring} border-transparent`,
-      )}
-    >
-      <button
-        type="button"
-        onClick={onClick}
-        aria-pressed={active}
-        title={`${meta.label} — اضغط للتصفية`}
-        className="flex min-w-0 flex-1 items-center gap-2 text-start transition-transform active:scale-[0.98]"
-      >
-        <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded", meta.tone)}>
-          <Icon className="h-3.5 w-3.5" />
-        </span>
-        <span className="text-base font-bold tabular-nums leading-none">{value}</span>
-        <span className="truncate text-[11px] leading-tight text-muted-foreground">{meta.label}</span>
-      </button>
-      {trailing}
-    </div>
-  );
-}
 
 /**
  * A renewal is «قريب» when 7 days or fewer remain — expired included, since a lapsed

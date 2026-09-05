@@ -580,24 +580,27 @@ const DEFAULT_LEAD_SOURCES: Omit<LeadSourceDTO, "id">[] = [
   { value: "FACEBOOK", label: "فيسبوك", order: 4, isActive: true },
   { value: "X", label: "إكس", order: 5, isActive: true },
   { value: "LINKEDIN", label: "لينكدإن", order: 6, isActive: true },
-  { value: "YOUTUBE", label: "يوتيوب", order: 7, isActive: true },
 
-  // ② الويب — البحث وموقعنا. «جوجل» يشمل الإعلان والنتيجة الطبيعية، والمفتاح يفرّقهما.
-  { value: "GOOGLE", label: "جوجل", order: 8, isActive: true },
-  { value: "WEBSITE", label: "موقعنا", order: 9, isActive: true },
+  // ② البحث — «جوجل» يشمل الإعلان والنتيجة الطبيعية، والمفتاح `isPaidAd` يفرّقهما.
+  { value: "GOOGLE", label: "جوجل", order: 7, isActive: true },
 
   // ③ وصلنا مباشرةً.
-  { value: "WHATSAPP", label: "واتساب", order: 10, isActive: true },
-  { value: "INBOUND_CALL", label: "اتصل بينا", order: 11, isActive: true },
-  { value: "EMAIL", label: "إيميل", order: 12, isActive: true },
+  { value: "WHATSAPP", label: "واتساب", order: 8, isActive: true },
+  { value: "INBOUND_CALL", label: "اتصل بنا", order: 9, isActive: true },
+  { value: "EMAIL", label: "إيميل", order: 10, isActive: true },
 
-  // ④ الناس والميدان — أغلى المصادر تحويلاً وأقلّها عدداً، فآخر القائمة لا أوّلها.
-  { value: "CLIENT_REFERRAL", label: "ترشيح عميل", order: 13, isActive: true },
-  { value: "PERSONAL", label: "معرفة شخصية", order: 14, isActive: true },
-  { value: "EVENT", label: "معرض أو فعالية", order: 15, isActive: true },
-  { value: "FIELD_VISIT", label: "زيارة ميدانية", order: 16, isActive: true },
-
-  { value: "OTHER", label: "أخرى", order: 17, isActive: true },
+  /**
+   * ④ الناس — أغلى المصادر تحويلاً وأقلّها عدداً.
+   *
+   * وأُسقطت ستٌّ بأمر خالد (٥ سبتمبر): **يوتيوب · موقعنا · معرفة شخصية · معرض أو فعالية ·
+   * زيارة ميدانية · أخرى** — قنواتٌ لا نعمل بها، و«أخرى» تحديداً بابٌ يبتلع الإسناد: تُختار
+   * حين يُستعجَل فيضيع الجواب الذي بُني الحقل لأجله.
+   *
+   * والحذف من هنا وحده لا يكفي: هذه بذرةُ «Load defaults» لقاعدةٍ جديدة، والقائمة الحيّة
+   * صفوفٌ في `lead_source_options` تُحذف من شاشة «Dropdown Lists». تُركت واحدةً منهما يعني
+   * رجوعَها بضغطة زرّ، أو بقاءَها في الشاشة بعد حذفها من الكود.
+   */
+  { value: "CLIENT_REFERRAL", label: "ترشيح عميل", order: 11, isActive: true },
 
   /**
    * الموروثة عن `enum LeadSource` — **مقفولة**، وموجودة كي لا يفقد أحدٌ تاريخه.

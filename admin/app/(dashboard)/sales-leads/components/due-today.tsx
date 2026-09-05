@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, CalendarClock } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { formatCount } from "../helpers/format-count";
 import { DUE_TONE, describeDue } from "../helpers/funnel";
 import type { SalesLeadRow } from "../helpers/get-sales-leads";
 
@@ -27,19 +28,19 @@ export function DueToday({ leads }: { leads: SalesLeadRow[] }) {
       href="/sales-leads/follow-ups"
       className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-amber-500/25 bg-amber-500/[0.04] px-4 py-3 transition-colors hover:bg-amber-500/[0.08]"
     >
-      <CalendarClock className="size-4 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden />
-      <span className="text-sm font-semibold">اللي عليكِ النهارده</span>
+      <CalendarClock className="size-4 shrink-0 text-amber-700 dark:text-amber-400" aria-hidden />
+      <span className="text-sm font-semibold">المطلوب منك اليوم</span>
 
       <span className="text-xs text-muted-foreground">
         {overdue > 0 && (
           <>
-            <span className="font-medium text-rose-600 dark:text-rose-400">
-              <span className="tabular-nums">{overdue}</span> متأخر
+            <span className="font-medium text-rose-700 dark:text-rose-400">
+              <span className="tabular-nums">{formatCount(overdue)}</span> متأخّر
             </span>
             {" · "}
           </>
         )}
-        <span className="tabular-nums">{leads.length}</span> في المجموع
+        <span className="tabular-nums">{formatCount(leads.length)}</span> في المجموع
       </span>
 
       {/* الأسماء لا الأرقام وحدها: رقمٌ مجرّد يُؤجَّل، واسمٌ معروف يُفتح. */}

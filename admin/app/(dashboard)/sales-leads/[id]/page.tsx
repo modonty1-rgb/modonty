@@ -1,11 +1,15 @@
 import { notFound } from "next/navigation";
 
 import { FollowUpLog } from "../components/follow-up-log";
-import { LeadCard } from "../components/lead-card";
+import { LeadDealRail } from "../components/lead-deal-rail";
+import { LeadHeader } from "../components/lead-header";
+import { LeadProfileRail } from "../components/lead-profile-rail";
 import { countLeadFollowUps, getLead } from "../helpers/get-lead";
 import { suggestSlug } from "../helpers/convert-lead";
 import { getLeadSourceLabels } from "../helpers/get-lead-source-labels";
 import { getTierLabels } from "../helpers/get-tier-labels";
+import type { Stage } from "../helpers/funnel";
+import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
 import { PLAN_DURATIONS, priceForDuration, type PlanDuration } from "@modonty/shared/lib/pricing-durations";
 
 export const metadata = { title: "العميل المحتمل — أدمن مدونتي" };
@@ -39,25 +43,54 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
   // مقروءاً عنده. الإقفال يمنع الاختيار الجديد لا يمحو القديم.
   const sourceLabel = lead.source ? sourceLabels[lead.source] ?? null : null;
 
-  const closed = lead.stage === "WON" || lead.stage === "LOST";
+  const stage = lead.stage as Stage;
+  const closed = stage === "WON" || stage === "LOST";
 
   return (
-    <div dir="rtl" className="space-y-5 p-4 sm:p-6">
-      <LeadCard
-        lead={lead}
-        suggestedSlug={suggestedSlug}
-        sourceLabel={sourceLabel}
-        tierLabels={tierLabels}
-        dealTotal={dealTotal}
-        dealMonths={months}
-      />
-      {/* السجلّ تحت البيانات لا بجانبها: البيانات تُقرأ مرّة، والسجلّ يُقرأ ويُكتب فيه كل
-          مكالمة — فهو الأطول والأكثر استعمالاً، ووضعه في عمودٍ ضيّق يخنقه. */}
-      <FollowUpLog
-        leadId={lead.id}
-        rows={lead.followUps}
-        total={followUpCount}
-        closed={closed}
+    /**
+     * الصدفة نفسها التي تستعملها شاشة التأسيس — الشاشتان أختان، والمندوبة تنتقل بينهما في
+     * الدقيقة الواحدة، فاختلاف الإيقاع بينهما يكلّف إعادة توجيهٍ بصريّ في كل انتقال.
+     *
+     * والقسمة بأولويّة الاستعمال لا بحجم البيانات: **الوسط** للسجلّ لأنه ما يُكتب فيه كل
+     * مكالمة، و**اليمين** لمَن هو (يُقرأ لمحةً)، و**اليسار** للموعد والصفقة والقرار.
+     *
+     * قبل التقسيم: `scroll 1457` مقابل `client 963` (مقيس على ١٢٨٠×١٠٢٠) — أي أن نموذج
+     * التسجيل، وهو أكثر ما يُستعمل، كان تحت الطيّة دائماً خلف `488` بكسلاً من بياناتٍ مرجعية
+     * نصفها فارغ.
+     *
+     * و`sticky` مباشرةً بلا `StickyRail`: تلك تحسب `top` من `window.innerHeight`، وهو صحيحٌ
+     * في مدونتي حيث تمرّر الصفحة — أمّا هنا فالمُمرِّر `main` (`overflow-y: auto`).
+     */
+    <div dir="rtl" className="p-4 sm:p-6">
+      <ThreeColumnLayout
+        className="!px-0 !py-0"
+        header={<div className="-mb-2">
+          <LeadHeader name={lead.name} company={lead.company} stage={stage} />
+        </div>}
+        right={
+          <aside aria-label="بيانات العميل" className="w-full shrink-0 lg:sticky lg:top-0 lg:w-[260px]">
+            <LeadProfileRail lead={lead} sourceLabel={sourceLabel} />
+          </aside>
+        }
+        center={
+          <FollowUpLog
+            leadId={lead.id}
+            rows={lead.followUps}
+            total={followUpCount}
+            closed={closed}
+          />
+        }
+        left={
+          <aside aria-label="الصفقة والقرار" className="w-full shrink-0 lg:sticky lg:top-0 lg:w-[260px]">
+            <LeadDealRail
+              lead={lead}
+              suggestedSlug={suggestedSlug}
+              tierLabels={tierLabels}
+              dealTotal={dealTotal}
+              dealMonths={months}
+            />
+          </aside>
+        }
       />
     </div>
   );

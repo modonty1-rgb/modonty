@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>الحملات — تصوّر كامل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#020a1c; --card:#0b1526; --line:#1e2b45; --line2:#2a3a5a;
+    --fg:#e8eefc; --mut:#8ea3c8; --mut2:#5d7096;
+    --pri:#3b82f6; --pri-fg:#fff;
+    --ok:#10b981; --warn:#f59e0b; --bad:#ef4444; --orange:#f97316; --violet:#8b5cf6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--fg);font-family:Tajawal,system-ui,sans-serif;font-size:14px;line-height:1.6}
+  .wrap{max-width:1180px;margin:0 auto;padding:20px 16px 80px}
+
+  /* ── شريط الشاشات ── */
+  .tabs{position:sticky;top:0;z-index:20;background:rgba(2,10,28,.94);backdrop-filter:blur(8px);
+        border-bottom:1px solid var(--line);margin:-20px -16px 22px;padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .tabs b{font-size:13px;color:var(--mut);margin-inline-end:6px}
+  .tab{background:transparent;border:1px solid var(--line2);color:var(--mut);border-radius:999px;
+       padding:5px 13px;font:500 12px Tajawal;cursor:pointer}
+  .tab:hover{color:var(--fg)}
+  .tab.on{background:var(--pri);border-color:var(--pri);color:#fff}
+  section[hidden]{display:none}
+
+  h2{font-size:19px;font-weight:700;margin-bottom:4px}
+  .sub{color:var(--mut);font-size:12.5px;margin-bottom:18px}
+  h3{font-size:14px;font-weight:700;margin:22px 0 9px}
+
+  .note{border:1px solid var(--line);border-inline-start:3px solid var(--pri);background:#0d1729;
+        border-radius:8px;padding:11px 13px;font-size:12.5px;color:var(--mut);margin:14px 0}
+  .note b{color:var(--fg)}
+
+  /* ── لوحة ── */
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .kpi{display:flex;align-items:center;gap:9px;border:1px solid var(--line);background:var(--card);border-radius:9px;padding:9px 10px}
+  .kpi i{width:25px;height:25px;border-radius:6px;display:grid;place-items:center;font-style:normal;font-size:12px;flex:0 0 auto}
+  .kpi .n{font-size:16px;font-weight:700}
+  .kpi .l{font-size:10.5px;color:var(--mut);line-height:1.25}
+
+  /* ── بطاقة حملة ── */
+  .cards{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+  .camp{border:1px solid var(--line);border-inline-start:3px solid var(--line2);background:var(--card);border-radius:9px;overflow:hidden}
+  .camp.live{border-inline-start-color:var(--ok)}
+  .camp.paused{border-inline-start-color:var(--warn)}
+  .camp.done{border-inline-start-color:var(--mut2)}
+  .camp .top{padding:11px 13px;display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+  .camp .nm{font-weight:700;font-size:14.5px}
+  .camp .meta{color:var(--mut);font-size:11.5px;margin-top:3px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+  .sep{color:var(--mut2)}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);background:#0a1322}
+  .stat{padding:8px 12px;border-inline-start:1px solid var(--line)}
+  .stat:first-child{border-inline-start:0}
+  .stat .v{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+  .stat .k{font-size:10.5px;color:var(--mut)}
+  .foot{display:flex;gap:7px;padding:8px 12px;border-top:1px solid var(--line);background:#08111f}
+
+  .btn{background:transparent;border:1px solid var(--line2);color:var(--fg);border-radius:6px;
+       padding:4px 10px;font:500 11.5px Tajawal;cursor:pointer}
+  .btn:hover{background:#12203a}
+  .btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+  .btn.mini{padding:3px 8px;font-size:11px}
+  .push{margin-inline-start:auto}
+
+  .pill{border:1px solid var(--line2);border-radius:999px;padding:2px 9px;font-size:11px;color:var(--mut);display:inline-flex;gap:5px;align-items:center}
+  .pill.ok{color:var(--ok);border-color:#10b98155;background:#10b98114}
+  .pill.warn{color:var(--warn);border-color:#f59e0b55;background:#f59e0b14}
+  .pill.bad{color:var(--bad);border-color:#ef444455;background:#ef444414}
+  .pill.mut{color:var(--mut2)}
+
+  /* ── نموذج ── */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .box{border:1px solid var(--line);background:var(--card);border-radius:9px;overflow:hidden;margin-bottom:12px}
+  .box>header{background:#0d1729;border-bottom:1px solid var(--line);padding:7px 12px;
+              font-size:11px;font-weight:500;color:var(--mut);display:flex;justify-content:space-between}
+  .box>.body{padding:12px}
+  label{display:block;font-size:11px;color:var(--mut);margin-bottom:4px}
+  .in{width:100%;background:#081120;border:1px solid var(--line2);border-radius:6px;
+      padding:7px 9px;color:var(--fg);font:400 13px Tajawal}
+  .in::placeholder{color:var(--mut2)}
+  .fld{margin-bottom:11px}
+  .hint{font-size:10.5px;color:var(--mut2);margin-top:3px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{border:1px solid var(--line2);border-radius:999px;padding:4px 11px;font-size:11.5px;color:var(--mut);cursor:pointer;background:transparent}
+  .chip.on{background:var(--fg);color:var(--bg);border-color:var(--fg);font-weight:500}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{text-align:start;font-size:10.5px;color:var(--mut);font-weight:500;padding:7px 10px;border-bottom:1px solid var(--line)}
+  td{padding:8px 10px;border-bottom:1px solid #16233c}
+  tr:last-child td{border-bottom:0}
+  .num{font-variant-numeric:tabular-nums}
+
+  .bar{height:7px;border-radius:99px;background:#16233c;overflow:hidden;margin-top:5px}
+  .bar span{display:block;height:100%;border-radius:99px}
+
+  .flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin:14px 0}
+  .step{flex:1;min-width:150px;border:1px solid var(--line);background:var(--card);padding:11px 12px;position:relative}
+  .step:first-child{border-radius:0 9px 9px 0}
+  .step:last-child{border-radius:9px 0 0 9px}
+  .step .t{font-size:12.5px;font-weight:700;margin-bottom:3px}
+  .step .d{font-size:11px;color:var(--mut);line-height:1.5}
+  .step .who{font-size:10px;color:var(--pri);margin-bottom:5px;font-weight:500}
+
+  code{background:#0d1729;border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:11.5px;direction:ltr;display:inline-block}
+  .warnbox{border:1px solid #f59e0b44;background:#f59e0b0d;border-radius:8px;padding:11px 13px;font-size:12.5px;margin:12px 0}
+  .warnbox b{color:var(--warn)}
+  @media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2,.grid3{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="tabs">
+    <b>الشاشات</b>
+    <button class="tab on" data-s="s1">١ · لوحة الحملات</button>
+    <button class="tab" data-s="s2">٢ · تأسيس حملة</button>
+    <button class="tab" data-s="s3">٣ · متابعة حملة</button>
+    <button class="tab" data-s="s4">٤ · الربط بالمبيعات</button>
+    <button class="tab" data-s="s5">٥ · الأدوار والقرارات</button>
+  </div>
+
+  <!-- ════════ ١ · اللوحة ════════ -->
+  <section id="s1">
+    <h2>لوحة الحملات</h2>
+    <p class="sub">يفتحها الميديا باير كل صباح، وتفتحها أنت مرّة في الأسبوع. سؤالها الواحد: <b>أي حملة تجيب، وبكم؟</b></p>
+
+    <div class="kpis">
+      <div class="kpi"><i style="background:#10b98126;color:#10b981">▶</i><div><div class="n">٣</div><div class="l">شغّالة الآن</div></div></div>
+      <div class="kpi"><i style="background:#3b82f626;color:#60a5fa">۱۲</i><div><div class="n">٤٧</div><div class="l">عميل هذا الشهر</div></div></div>
+      <div class="kpi"><i style="background:#8b5cf626;color:#a78bfa">✓</i><div><div class="n">٩</div><div class="l">تحوّلوا لعملاء</div></div></div>
+      <div class="kpi"><i style="background:#f59e0b26;color:#fbbf24">◎</i><div><div class="n">١٩٪</div><div class="l">معدّل التحويل</div></div></div>
+      <div class="kpi"><i style="background:#1e2b45;color:#8ea3c8">﷼</i><div><div class="n">١٨٤</div><div class="l">تكلفة العميل المحتمل</div></div></div>
+    </div>
+
+    <div class="note">
+      <b>الرقم الذي يقرّر:</b> «تكلفة العميل المحتمل» و«تكلفة العميل الفعليّ». حملةٌ تجيب مئة عميل محتمل بلا تحويل
+      أغلى من حملةٍ تجيب عشرة يتحوّل منهم ثلاثة — والعدد وحده يخفي ذلك.
+    </div>
+
+    <h3>الحملات</h3>
+    <div class="cards">
+
+      <article class="camp live">
+        <div class="top">
+          <div>
+            <div class="nm">تقويم الأسنان — سبتمبر</div>
+            <div class="meta">
+              <span class="dot" style="background:#1877f2"></span> فيسبوك · انستقرام
+              <span class="sep">·</span> <span class="dot" style="background:#ef4444"></span> مصر
+              <span class="sep">·</span> ١ ← ٣٠ سبتمبر
+              <span class="sep">·</span> باسم: أحمد (ميديا باير)
+            </div>
+          </div>
+          <span class="pill ok">● شغّالة · باقٍ ٢٥ يوماً</span>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="v">٢٨</div><div class="k">عميل محتمل</div></div>
+          <div class="stat"><div class="v">٦</div><div class="k">تحوّلوا</div></div>
+          <div class="stat"><div class="v">١٤٣ ج.م</div><div class="k">تكلفة المحتمل</div></div>
+          <div class="stat"><div class="v" style="color:#10b981">٦٦٧ ج.م</div><div class="k">تكلفة العميل</div></div>
+        </div>
+        <div class="foot">
+          <span class="pill">صُرف ٤٬٠٠٠ من ١٢٬٠٠٠ ج.م</span>
+          <button class="btn mini push">أوقفها</button>
+          <button class="btn mini">تعديل</button>
+          <button class="btn mini pri">افتحها</button>
+        </div>
+      </article>
+
+      <article class="camp live">
+        <div class="top">
+          <div>
+            <div class="nm">زراعة الأسنان — الرياض</div>
+            <div class="meta">
+              <span class="dot" style="background:#4285f4"></span> جوجل — بحث
+              <span class="sep">·</span> <span class="dot" style="background:#10b981"></span> السعودية
+              <span class="sep">·</span> ٢٠ أغسطس ← مفتوحة
+              <span class="sep">·</span> باسم: أحمد
+            </div>
+          </div>
+          <span class="pill ok">● شغّالة</span>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="v">١٢</div><div class="k">عميل محتمل</div></div>
+          <div class="stat"><div class="v">٣</div><div class="k">تحوّلوا</div></div>
+          <div class="stat"><div class="v">٣٧٥ ر.س</div><div class="k">تكلفة المحتمل</div></div>
+          <div class="stat"><div class="v" style="color:#f59e0b">١٬٥٠٠ ر.س</div><div class="k">تكلفة العميل</div></div>
+        </div>
+        <div class="foot">
+          <span class="pill">صُرف ٤٬٥٠٠ من ٦٬٠٠٠ ر.س</span>
+          <button class="btn mini push">أوقفها</button>
+          <button class="btn mini">تعديل</button>
+          <button class="btn mini pri">افتحها</button>
+        </div>
+      </article>
+
+      <article class="camp paused">
+        <div class="top">
+          <div>
+            <div class="nm">تجميل الأسنان — تيك توك</div>
+            <div class="meta">
+              <span class="dot" style="background:#e5e7eb"></span> تيك توك
+              <span class="sep">·</span> <span class="dot" style="background:#ef4444"></span> مصر
+              <span class="sep">·</span> ١٠ ← ٢٤ أغسطس
+              <span class="sep">·</span> باسم: أحمد
+            </div>
+          </div>
+          <span class="pill warn">⏸ موقوفة</span>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="v">٧</div><div class="k">عميل محتمل</div></div>
+          <div class="stat"><div class="v" style="color:#ef4444">٠</div><div class="k">تحوّلوا</div></div>
+          <div class="stat"><div class="v">٥٧١ ج.م</div><div class="k">تكلفة المحتمل</div></div>
+          <div class="stat"><div class="v" style="color:#ef4444">—</div><div class="k">تكلفة العميل</div></div>
+        </div>
+        <div class="foot">
+          <span class="pill bad">أُوقفت: ٧ محتملين بلا تحويل واحد</span>
+          <button class="btn mini push">شغّلها</button>
+          <button class="btn mini pri">افتحها</button>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="warnbox">
+      <b>لماذا الحافّة ملوّنة؟</b> نفس عرف الشاشات الأخرى: الحالة تُقرأ من طرف العين قبل قراءة كلمة —
+      أخضر شغّالة · كهرمانيّ موقوفة · رماديّ منتهية.
+    </div>
+  </section>
+
+  <!-- ════════ ٢ · التأسيس ════════ -->
+  <section id="s2" hidden>
+    <h2>تأسيس حملة</h2>
+    <p class="sub">مبنيّةٌ على <b>ما تملكه المنصّات فعلاً</b> — لا على تقديري. المصادر أسفل الصفحة.</p>
+
+    <div class="warnbox">
+      <b>المرور الأوّل صحّح البنية</b> — الجمهور والرسالة ليسا على الحملة، والميزانية يومية أو
+      إجمالية لا الاثنتان، والمعرّف يُنسَخ من المنصّة لا يُخترع.
+      <br /><br />
+      <b>وهذا المرور — بعين مشتري إعلانات في السوقين — أسقط ثلاثة أخرى:</b>
+      كانت قائمة القنوات <b>ثابتة الترتيب</b>، والوصول يختلف بين السوقين اختلافاً يقلب الترتيب.
+      وكانت <b>الضريبة غائبة كلّياً</b>، وهي ١٤–١٥٪ تدخل في كل رقم تكلفة نحسبه.
+      وكانت الحالة الافتراضية «شغّالة» — وتوثيق جوجل يوصي بعكسها حرفياً.
+    </div>
+
+    <div class="grid2">
+      <div>
+        <div class="box">
+          <header><span>① الهويّة</span><span>مَن يعرفها من اسمها</span></header>
+          <div class="body">
+            <div class="fld">
+              <label>اسم الحملة</label>
+              <input class="in" value="تقويم الأسنان — سبتمبر" />
+              <div class="hint">اسمٌ يقرؤه إنسان — يطابق ما كتبه الميديا باير في المنصّة.</div>
+            </div>
+            <div class="fld">
+              <label>السوق <span style="color:var(--mut2)">— يُختار أوّلاً</span></label>
+              <div class="chips">
+                <button class="chip"><span class="dot" style="background:#10b981"></span> السعودية</button>
+                <button class="chip on"><span class="dot" style="background:#ef4444"></span> مصر</button>
+              </div>
+              <div class="hint">
+                يحدّد العملة والضريبة، ويحصر الحملة على عملاء سوقها — و<b>يعيد ترتيب القنوات تحته</b>.
+              </div>
+            </div>
+            <div class="fld">
+              <label>القناة</label>
+              <div class="chips">
+                <button class="chip on">يوتيوب</button><button class="chip on">فيسبوك</button>
+                <button class="chip">تيك توك</button><button class="chip">انستقرام</button>
+                <button class="chip">سناب شات</button><button class="chip">لينكدإن</button>
+                <button class="chip">إكس</button>
+              </div>
+              <div class="hint">
+                مرتّبةٌ بالوصول الإعلانيّ في السوق المختار، لا أبجدياً ولا بعادةٍ قديمة.
+                والتسمية من نفس قائمة «مصدر العميل» فلا تفترق التسميتان.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="box">
+          <header><span>لماذا يتغيّر الترتيب</span><span>الوصول الإعلانيّ بالمليون</span></header>
+          <div class="body" style="padding:0">
+            <table>
+              <thead><tr><th>القناة</th><th class="num">السعودية</th><th class="num">مصر</th></tr></thead>
+              <tbody>
+                <tr><td>تيك توك</td><td class="num"><b>٣٤٫١</b></td><td class="num">٤١٫٣</td></tr>
+                <tr><td>يوتيوب</td><td class="num">٢٧٫٢</td><td class="num"><b>٥٠٫٧</b></td></tr>
+                <tr><td>سناب شات</td><td class="num"><b style="color:var(--ok)">٢٤٫٧</b></td><td class="num" style="color:var(--mut2)">١٩٫٧</td></tr>
+                <tr><td>انستقرام</td><td class="num">١٦٫٩</td><td class="num">٢٠٫١</td></tr>
+                <tr><td>فيسبوك</td><td class="num">١٦٫٤</td><td class="num"><b>٤٨٫٧</b></td></tr>
+                <tr><td>إكس</td><td class="num"><b style="color:var(--ok)">١٥٫٧</b></td><td class="num" style="color:var(--mut2)">٥٫٢</td></tr>
+                <tr><td>لينكدإن</td><td class="num">١١٫٠</td><td class="num">١٣٫٠</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="note">
+          <b>القراءة:</b> سناب شات في السعودية يصل <b>٨٧٫٧٪ من البالغين</b> ويسبق انستقرام وفيسبوك
+          معاً — وفي مصر يقع خامساً. وإكس ثلاثة أضعافه في السعودية عنه في مصر. فقائمةٌ ثابتة الترتيب
+          تدفع مشتري الإعلانات إلى القناة الخطأ في أحد السوقين حتماً.
+          <br /><br />
+          <b>وحذرٌ واجب:</b> هذه أرقام تنشرها المنصّات عن نفسها، وبعضها يتجاوز عدد السكّان
+          (تيك توك في السعودية يعلن ١٣٨٪ من البالغين ١٨+). فهي <b>ترتيبٌ يُستأنس به</b> لا عدّ أشخاص.
+        </div>
+
+        <div class="box">
+          <header><span>② الهدف</span><span>يقابل <code>campaign_objective</code></span></header>
+          <div class="body">
+            <div class="fld">
+              <div class="chips">
+                <button class="chip on">عملاء محتملون</button>
+                <button class="chip">مبيعات</button>
+                <button class="chip">زيارات</button>
+                <button class="chip">تفاعل</button>
+                <button class="chip">وعي</button>
+              </div>
+              <div class="hint">
+                الهدف يعيش على <b>الحملة</b> نفسها في ميتا وسناب شات وتيك توك، وميتا تفرضه على كل
+                إعلان داخلها. فهو الحقل الوحيد من «التوجّه» الذي يصحّ عندنا.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="box">
+          <header><span>الهدف عندنا ← الهدف عندهم</span><span>مطابقةٌ مقروءة من التوثيق</span></header>
+          <div class="body" style="padding:0">
+            <table>
+              <thead><tr><th>عندنا</th><th>ميتا</th><th>سناب شات</th></tr></thead>
+              <tbody>
+                <tr><td><b>عملاء محتملون</b></td><td><code>OUTCOME_LEADS</code></td><td><code>LEADS</code></td></tr>
+                <tr><td>مبيعات</td><td><code>OUTCOME_SALES</code></td><td><code>SALES</code></td></tr>
+                <tr><td>زيارات</td><td><code>OUTCOME_TRAFFIC</code></td><td><code>TRAFFIC</code></td></tr>
+                <tr><td>تفاعل</td><td><code>OUTCOME_ENGAGEMENT</code></td><td rowspan="2" style="color:var(--warn)"><code>AWARENESS_AND_ENGAGEMENT</code><div class="hint">واحدٌ للاثنين</div></td></tr>
+                <tr><td>وعي</td><td><code>OUTCOME_AWARENESS</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="note">
+          <b>ما لا يطابق:</b> سناب شات يدمج «تفاعل» و«وعي» في هدفٍ واحد — فحملتان مختلفتان عندنا
+          تصيران واحدةً عنده، ومقارنتهما لاحقاً مقارنةُ شيئين غير متكافئين.
+          و<b>جوجل لا يملك حقل هدفٍ أصلاً</b> على الحملة: عنده <code>advertising_channel_type</code>
+          واستراتيجية مزايدة، والمقصد يُستنتج منهما.
+          وتيك توك عنده <code>objective_type</code> إلزاميّ — <b>لكنّي لم أقرأ قيمه</b>، وسبب ذلك
+          مذكورٌ في جدول المصادر.
+        </div>
+
+        <div class="box" style="border-color:#f59e0b44">
+          <header style="background:#f59e0b0d"><span>✕ ما لا نطلبه — وليس سهواً</span><span>يعيش في طبقةٍ أخرى</span></header>
+          <div class="body" style="padding:0">
+            <table>
+              <tbody>
+                <tr><td style="width:120px"><b>الجمهور</b></td><td>على <code>ad set</code> لا الحملة. وحملةٌ واحدة فيها خمس مجموعات بخمسة جماهير — فأيّها نكتب؟</td></tr>
+                <tr><td><b>الرسالة والإبداع</b></td><td>على <code>ad</code>. تتغيّر يومياً في الاختبار، ونسخةٌ هنا تتقادم في أسبوع.</td></tr>
+                <tr><td><b>هدف التحسين والمزايدة</b></td><td>على <code>ad set</code> (<code>adsset_optimization_goal</code> · <code>adset_bid_strategy</code>).</td></tr>
+                <tr><td><b>المشاهدات والنقرات</b></td><td>تُقرأ في لوحة المنصّة. نسخُها هنا يعني رقمين يفترقان.</td></tr>
+                <tr><td><b>الفئة الخاصّة</b></td><td>إلزاميّ في ميتا (<code>special_ad_categories</code>) وفئاته الستّ: توظيف · سكن · ائتمان · سياسة · قمار · خدمات مالية. عملاؤنا عيادات ومطاعم ومحلّات — فالجواب <code>NONE</code> دائماً، وحقلٌ جوابه واحد ليس حقلاً.</td></tr>
+                <tr><td><b>نوع الشراء</b></td><td><code>buying_type</code> في ميتا و<code>buy_model</code> في سناب: مزادٌ أو حجز. نثبّته على المزاد ونكشفه يوم نشتري حجزاً فعلاً.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="box" style="border-color:#3b82f655">
+          <header style="background:#3b82f60d"><span>③ الميزانية</span><span>هنا تُصرف الفلوس</span></header>
+          <div class="body">
+            <div class="fld">
+              <label>نوع الميزانية</label>
+              <div class="chips">
+                <button class="chip on">إجمالية للمدّة</button>
+                <button class="chip">يومية</button>
+              </div>
+              <div class="hint">
+                <b>متنافيتان في المنصّات</b> — <code>campaign_lifetime_budget</code> أو
+                <code>campaign_daily_budget</code>، لا الاثنان. والإجمالية تفرض تاريخ نهاية.
+              </div>
+            </div>
+            <div class="grid2">
+              <div class="fld"><label>المبلغ</label><input class="in" value="١٢٬٠٠٠" /><div class="hint">بالجنيه المصريّ — عملة السوق.</div></div>
+              <div class="fld"><label>سقف الصرف <span style="color:var(--mut2)">(اختياري)</span></label><input class="in" value="١٥٬٠٠٠" /><div class="hint"><code>spend_cap</code> — حدٌّ لا يُتجاوز أبداً.</div></div>
+            </div>
+
+            <div class="fld">
+              <label>هذا المبلغ…</label>
+              <div class="chips">
+                <button class="chip on">قبل الضريبة</button>
+                <button class="chip">شامل الضريبة</button>
+              </div>
+              <div class="warnbox" style="margin:8px 0 0">
+                <b>الحقل الذي كان ناقصاً بالكامل.</b>
+                ميتا تضيف ضريبة القيمة المضافة بسعر بلدك إن لم يكن رقمك الضريبيّ مضافاً إلى الحساب
+                الإعلانيّ — <b>السعودية ١٥٪ · مصر ١٤٪</b>.
+                فمَن كتب «١٢٬٠٠٠» ثم حسب تكلفة العميل المحتمل عليها، حسبها على مبلغٍ لم يُدفع:
+                المدفوع فعلاً <b>١٣٬٦٨٠</b>، وكل رقم تكلفةٍ بعده أقلّ من الحقيقة بـ<b>١٤٪</b>.
+              </div>
+            </div>
+            <div class="fld">
+              <label>المصروف حتى الآن</label>
+              <input class="in" value="٤٬٠٠٠" />
+              <div class="bar" style="margin-top:6px"><span style="width:33%;background:var(--pri)"></span></div>
+              <div class="hint">يُحدَّث يدوياً الآن. ويأتي تلقائياً يوم نربط واجهة المنصّة.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="box">
+          <header><span>④ الجدولة والحالة</span><span><code>start</code> · <code>stop</code> · <code>status</code></span></header>
+          <div class="body">
+            <div class="grid2">
+              <div class="fld"><label>تبدأ</label><input class="in" value="٢٠٢٦-٠٩-٠١" dir="ltr" /></div>
+              <div class="fld"><label>تنتهي</label><input class="in" value="٢٠٢٦-٠٩-٣٠" dir="ltr" /><div class="hint">إلزاميّ مع الإجمالية.</div></div>
+            </div>
+            <div class="fld">
+              <label>الحالة</label>
+              <div class="chips">
+                <button class="chip on">مسوّدة</button><button class="chip">شغّالة</button>
+                <button class="chip">موقوفة</button><button class="chip">منتهية</button>
+              </div>
+              <div class="hint">
+                <b>الافتراضيّ «مسوّدة» لا «شغّالة»</b> — توثيق جوجل يقولها حرفياً: أنشئ الحملة
+                موقوفة كي لا تنطلق الإعلانات فوراً، وشغّلها بعد اكتمال الاستهداف.
+                والافتراضيّ الخطأ هنا يصرف فلوساً على حملةٍ نصف مبنيّة.
+                <br /><br />
+                والمنصّات تفرّق بين <code>status</code> (ما ضبطتَه) و<code>effective_status</code>
+                (ما يحدث فعلاً — قد تتوقّف لنفاد رصيد الحساب). عندنا واحدة، والفرق يُقال في المتابعة.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="box" style="border-color:#8b5cf655">
+          <header style="background:#8b5cf60d"><span>⑤ الوصل — مفتاحان لا واحد</span><span>الأهمّ في الشاشة</span></header>
+          <div class="body">
+            <div class="fld">
+              <label>معرّف الحملة في المنصّة</label>
+              <input class="in" dir="ltr" value="120210000000123456" />
+              <div class="hint">
+                يُنسَخ من ميتا/جوجل. هو ما يجعل صفَّنا وصفَّهم <b>الشيء نفسه</b> — وبدونه
+                تُطابَق الحملات بالاسم، وهو نفس مرض النصّ الحرّ.
+              </div>
+            </div>
+            <div class="fld">
+              <label>وسم الرابط <code>utm_campaign</code></label>
+              <input class="in" dir="ltr" value="eg-fb-ortho-sep26" />
+              <div class="hint">يتولّد من السوق والقناة والاسم — ويُقفل بعد الإطلاق.</div>
+            </div>
+            <div class="fld">
+              <label>الرابط الموسوم — تنسخه الشاشة جاهزاً</label>
+              <div dir="ltr" style="background:#081120;border:1px solid var(--line2);border-radius:6px;
+                   padding:8px 9px;font:400 11.5px/1.7 ui-monospace,monospace;word-break:break-all;color:var(--fg)">modonty.com/?utm_source=facebook&amp;utm_medium=cpc&amp;utm_campaign=eg-fb-ortho-sep26&amp;utm_id=120210000000123456</div>
+              <div class="hint">
+                <b><code>utm_id</code> هو الجديد.</b> جوجل تعرّفه حرفياً بأنه «معرّف الحملة —
+                استخدم نفس المعرّفات التي ترفع بها بيانات الحملة». فهو الحقل الذي يجعل العميل
+                الواصل والمصروف المنصرف يلتقيان على <b>رقمٍ واحد</b> بدل اسمٍ يُكتب مرّتين.
+              </div>
+            </div>
+            <button class="btn">نسخ الرابط</button>
+            <div class="note" style="margin-bottom:0">
+              <b>لماذا مفتاحان؟</b> معرّف المنصّة يجلب <b>المصروف</b> إلينا،
+              ووسم الرابط ينسب <b>العميل</b> إلينا. جهتان مختلفتان من نفس الجسر.
+              <br /><br />
+              <b>وفي جوجل يُملأ تلقائياً:</b> قالب التتبّع يقبل <code>{campaignid}</code> فتضع
+              المنصّة الرقم بنفسها في كل نقرة. وانتبه — <b><code>{campaignname}</code> غير موجود</b>
+              في قائمة جوجل، فالوصل بالاسم غير ممكنٍ أصلاً هناك، والمعرّف ليس اختياراً بل الطريق الوحيد.
+              <br />
+              أمّا صيغة ميتا (<code>{{campaign.id}}</code>) فلم أستطع قراءة صفحتها الرسمية —
+              انظر جدول المصادر.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
+      <button class="btn">حفظ كمسوّدة</button>
+      <button class="btn pri">أطلقها</button>
+    </div>
+
+    <h3>المصادر — مقروءة لا مذكورة</h3>
+    <div class="box">
+      <div class="body" style="padding:0">
+        <table>
+          <thead><tr><th>المصدر</th><th>ما أثبته</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="width:200px"><b>Meta — Campaign Structure</b><div class="hint" dir="ltr">developers.facebook.com/docs/marketing-api/campaign-structure</div></td>
+              <td>الحملة = <b>الهدف</b>، وتفرضه على كل إعلان داخلها. أمّا <b>الجدولة والميزانية والمزايدة والجمهور وهدف التحسين</b> فعلى <code>ad set</code>، و<b>الإبداع</b> على <code>ad</code>.</td>
+            </tr>
+            <tr>
+              <td><b>Meta Marketing API — حقول الحملة</b><div class="hint">٨٤٧ حقلاً · ٦٣ منها للإعداد</div></td>
+              <td><code>campaign_objective</code> · <code>campaign_daily_budget</code> · <code>campaign_lifetime_budget</code> · <code>campaign_spend_cap</code> · <code>campaign_buying_type</code> · <code>campaign_status</code> مقابل <code>campaign_effective_status</code> · <code>campaign_start_time</code> · <code>campaign_stop_time</code> · <code>campaign_special_ad_category</code></td>
+            </tr>
+            <tr>
+              <td><b>Google Ads API — Campaigns</b><div class="hint" dir="ltr">developers.google.com/google-ads/api/docs/campaigns/overview</div></td>
+              <td>على الحملة: <b>الميزانية</b> (كائن <code>CampaignBudget</code> مستقلّ) · <b>استراتيجية المزايدة</b> · <b>نوع القناة</b> · <b>اللغة والموقع</b> · <b>الحالة</b>. وعلى <code>ad group</code>: الكلمات والجماهير والإعلانات.</td>
+            </tr>
+            <tr>
+              <td><b>Google Ads API — إنشاء حملة</b><div class="hint" dir="ltr">developers.google.com/google-ads/api/docs/campaigns/create-campaigns</div></td>
+              <td>الميزانية تُنشأ <b>قبل</b> الحملة لأن الحملة تشير إليها. والمطلوب: الاسم · <code>advertising_channel_type</code> · <code>campaign_budget</code> · الحالة · استراتيجية المزايدة. والنصّ حرفياً: «اضبط الحملة على <code>PAUSED</code> عند إنشائها كي لا تنطلق الإعلانات فوراً».</td>
+            </tr>
+            <tr>
+              <td><b>Snapchat Marketing API — Campaigns</b><div class="hint" dir="ltr">developers.snap.com/api/marketing-api/Ads-API/campaigns</div></td>
+              <td>الإلزاميّ: الاسم · الحساب · <code>status</code> · <code>start_time</code> · <code>buy_model</code> · <code>objective_v2_properties</code>. والاختياريّ: <code>end_time</code> · <code>daily_budget_micro</code> · <code>lifetime_spend_cap_micro</code> — و<b>الحدّ الأدنى ٢٠ دولاراً</b> لكلٍّ منهما. والأهداف الخمسة الجديدة حلّت محلّ اثني عشر.</td>
+            </tr>
+            <tr>
+              <td><b>DataReportal — رقمنة ٢٠٢٥</b><div class="hint" dir="ltr">datareportal.com · السعودية ومصر</div></td>
+              <td>الوصول الإعلانيّ لكل منصّة في السوقين — هو ما قلب ترتيب القنوات. سناب في السعودية ٢٤٫٧ مليون (٨٧٫٧٪ من البالغين) مقابل ١٩٫٧ في مصر (١٩٫٥٪). إكس ١٥٫٧ مقابل ٥٫٢.</td>
+            </tr>
+            <tr>
+              <td><b>Meta — ضريبة القيمة المضافة</b><div class="hint" dir="ltr">facebook.com/business/help — السعودية ومصر</div></td>
+              <td>«إن كان عنوانك في السعودية ولم تُضِف رقمك الضريبيّ إلى الحساب، تضيف ميتا الضريبة بالسعر المحلّيّ إلى تكلفة شرائك». والسعر المحلّيّ: <b>السعودية ١٥٪ · مصر ١٤٪</b>.</td>
+            </tr>
+            <tr>
+              <td><b>Google — <code>utm_id</code> و ValueTrack</b><div class="hint" dir="ltr">support.google.com/analytics/answer/10917952 · /google-ads/answer/6305348</div></td>
+              <td><code>utm_id</code> = «معرّف الحملة… استخدم نفس المعرّفات التي ترفع بها بيانات الحملة». و<code>{campaignid}</code> موجود في قائمة ValueTrack — و<b><code>{campaignname}</code> غير موجود فيها</b>، فالتتبّع بالمعرّف لا بالاسم.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="warnbox">
+      <b>ما لم أستطع التحقّق منه — يُقال ولا يُبنى عليه:</b>
+      <table style="margin-top:8px">
+        <tbody>
+          <tr>
+            <td style="width:180px"><b>قيم <code>objective_type</code> في تيك توك</b></td>
+            <td>بوّابة توثيق تيك توك تُبنى بالجافاسكربت فلا يصلها القارئ. أثبتُّ من حزمة تيك توك الرسمية على GitHub أن الحقل <b>إلزاميّ</b> — ولم أقرأ قيمه. يُقرأ من داخل الحساب قبل البناء.</td>
+          </tr>
+          <tr>
+            <td><b>صيغة <code>{{campaign.id}}</code> في ميتا</b></td>
+            <td>صفحة «معاملات الرابط الديناميكية» في مركز مساعدة ميتا لا تُقرأ آلياً. الصيغة مستعملةٌ ومذكورة في منتدى مطوّري ميتا نفسه، لكنّي <b>لم أقرأ مواصفتها الرسمية</b> — تُثبَت بإعلان تجريبيّ بميزانية دولار قبل الاعتماد.</td>
+          </tr>
+          <tr>
+            <td><b>الحسابات الحيّة</b></td>
+            <td>لا حساب إعلانيّ مربوط عندنا لأيّ من المنصّات، فكل ما سبق <b>توثيقٌ لا قياس</b>. أوّل حملة حقيقية هي أوّل تحقّق.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <b>القرار المعماريّ:</b> لا نبني ثلاث طبقات. لسنا مدير إعلانات — نحن نحتاج الحملة
+      <b>وحدةَ إسنادٍ وتكلفة</b>. فنأخذ من كائن الحملة ما تملكه المنصّة فعلاً، ونترك ما دونه
+      في مكانه. ونسخُ طبقة <code>ad set</code> يعني بناء نسخةٍ أسوأ من ميتا.
+    </div>
+  </section>
+
+  <!-- ════════ ٣ · المتابعة ════════ -->
+  <section id="s3" hidden>
+    <h2>متابعة حملة — «تقويم الأسنان — سبتمبر»</h2>
+    <p class="sub">الشاشة التي تفتحها لتقرّر: أزيد ميزانيتها، أوقفها، أم أكرّرها الشهر القادم؟</p>
+
+    <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kpi"><i style="background:#3b82f626;color:#60a5fa">۱۲</i><div><div class="n">٢٨</div><div class="l">عميل محتمل</div></div></div>
+      <div class="kpi"><i style="background:#8b5cf626;color:#a78bfa">✓</i><div><div class="n">٦</div><div class="l">تحوّلوا لعملاء</div></div></div>
+      <div class="kpi"><i style="background:#10b98126;color:#10b981">◎</i><div><div class="n">٢١٪</div><div class="l">معدّل التحويل</div></div></div>
+      <div class="kpi"><i style="background:#1e2b45;color:#8ea3c8">﷼</i><div><div class="n">٦٦٧</div><div class="l">تكلفة العميل الفعليّ</div></div></div>
+    </div>
+
+    <div class="box" style="margin-top:12px">
+      <header><span>أين وقف الـ٢٨</span><span>الفانل</span></header>
+      <div class="body">
+        <table>
+          <tr><td style="width:130px">جديد</td><td style="width:60px" class="num">٤</td>
+              <td><div class="bar"><span style="width:14%;background:#64748b"></span></div></td></tr>
+          <tr><td>تم التواصل</td><td class="num">١١</td>
+              <td><div class="bar"><span style="width:39%;background:#0ea5e9"></span></div></td></tr>
+          <tr><td>عرض سعر مُرسل</td><td class="num">٥</td>
+              <td><div class="bar"><span style="width:18%;background:#f59e0b"></span></div></td></tr>
+          <tr><td>تفاوض</td><td class="num">٢</td>
+              <td><div class="bar"><span style="width:7%;background:#f97316"></span></div></td></tr>
+          <tr><td>تحوّلوا ✓</td><td class="num" style="color:#10b981">٦</td>
+              <td><div class="bar"><span style="width:21%;background:#10b981"></span></div></td></tr>
+          <tr><td>خسارة</td><td class="num" style="color:#ef4444">٠</td>
+              <td><div class="bar"><span style="width:0;background:#ef4444"></span></div></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="box">
+        <header><span>الصحّة</span><span>ما يستدعي قراراً</span></header>
+        <div class="body" style="display:flex;flex-direction:column;gap:9px">
+          <div class="pill ok" style="width:fit-content">✓ التكلفة تحت المستهدف (٦٦٧ مقابل ٩٠٠)</div>
+          <div class="pill warn" style="width:fit-content">⚠ ٤ عملاء بلا موعد متابعة</div>
+          <div class="pill bad" style="width:fit-content">✕ ٣ ساكتون أكثر من ١٤ يوماً</div>
+          <div class="hint">تُقرأ من نفس بيانات شاشة المبيعات — لا حساب ثانٍ.</div>
+        </div>
+      </div>
+      <div class="box">
+        <header><span>الميزانية</span><span>٢٥ يوماً باقية</span></header>
+        <div class="body">
+          <div style="display:flex;justify-content:space-between;font-size:12.5px"><span>صُرف</span><b class="num">٤٬٠٠٠ ج.م</b></div>
+          <div class="bar" style="margin:7px 0"><span style="width:33%;background:var(--pri)"></span></div>
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--mut)">
+            <span>الباقي ٨٬٠٠٠</span><span>من ١٢٬٠٠٠</span>
+          </div>
+          <div class="hint" style="margin-top:9px">بهذا المعدّل ستنفد الميزانية يوم ٢٨ سبتمبر — قبل نهايتها بيومين.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <header><span>عملاؤها</span><span>٢٨ — يُفتح كلٌّ في شاشته</span></header>
+      <div class="body" style="padding:0">
+        <table>
+          <thead><tr><th>العميل</th><th>ساكت منذ</th><th>المرحلة</th><th>القيمة</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>عيادة النور</td><td class="num" style="color:#f59e0b">٩ يوم</td><td style="color:#f59e0b">عرض سعر مُرسل</td><td class="num">٢٣٬٩٩٤ ج.م</td><td><button class="btn mini">افتح</button></td></tr>
+            <tr><td>د. سارة عبد الرحمن</td><td class="num">أمس</td><td style="color:#10b981">تحوّل ✓</td><td class="num">٢٣٬٩٩٤ ج.م</td><td><button class="btn mini">افتح</button></td></tr>
+            <tr><td>مركز الابتسامة</td><td class="num" style="color:#ef4444">٢١ يوم</td><td style="color:#0ea5e9">تم التواصل</td><td class="num" style="color:var(--mut2)">—</td><td><button class="btn mini">افتح</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn">أوقفها</button>
+      <button class="btn">كرّرها الشهر القادم</button>
+      <button class="btn pri">زد الميزانية</button>
+    </div>
+  </section>
+
+  <!-- ════════ ٤ · الربط ════════ -->
+  <section id="s4" hidden>
+    <h2>الربط بالمبيعات</h2>
+    <p class="sub">هنا يقع كل شيء: الميديا باير يصرف، وفاتن تتابع — والرقم لا يعني شيئاً حتى يلتقيا.</p>
+
+    <div class="flow">
+      <div class="step"><div class="who">الميديا باير</div><div class="t">① يؤسّس الحملة</div>
+        <div class="d">اسم · قناة · سوق · ميزانية · توجّه — ويأخذ الرابط الموسوم.</div></div>
+      <div class="step"><div class="who">المنصّة</div><div class="t">② الإعلان يعمل</div>
+        <div class="d">الزائر يضغط الرابط ويصل الموقع، والوسم معه.</div></div>
+      <div class="step"><div class="who">النظام</div><div class="t">③ العميل يُنسَب</div>
+        <div class="d">يُسجَّل بـ<code>campaignId</code> تلقائياً — بلا كتابة يد.</div></div>
+      <div class="step"><div class="who">فاتن</div><div class="t">④ تتابعه</div>
+        <div class="d">تكلّمه وتحرّك مرحلته — وهي لا تفكّر في الحملة أصلاً.</div></div>
+      <div class="step"><div class="who">أنت</div><div class="t">⑤ تقرأ النتيجة</div>
+        <div class="d">تكلفة العميل الفعليّ لكل حملة، بلا تقرير يُجمَع بيد.</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="box">
+        <header><span>في شاشة العميل المحتمل</span><span>اليوم</span></header>
+        <div class="body">
+          <div class="fld">
+            <label>الحملة</label>
+            <input class="in" value="رمضان-٢٠٢٦-انستقرام" />
+            <div class="hint" style="color:var(--bad)">نصّ حرّ يُكتب بيد.</div>
+          </div>
+          <div class="warnbox" style="margin:0">
+            <b>العطل:</b> «رمضان-انستقرام» و«رمضان انستقرام» و<span dir="ltr">Ramadan-IG</span> —
+            ثلاث حملات في التقرير وواحدة في الواقع. ولا ميزانية ولا تاريخ ولا صاحب.
+          </div>
+        </div>
+      </div>
+
+      <div class="box">
+        <header><span>في شاشة العميل المحتمل</span><span>بعد التغيير</span></header>
+        <div class="body">
+          <div class="fld">
+            <label>الحملة</label>
+            <select class="in">
+              <option>تقويم الأسنان — سبتمبر · فيسبوك · مصر</option>
+              <option>زراعة الأسنان — الرياض · جوجل · السعودية</option>
+              <option>— بلا حملة —</option>
+            </select>
+            <div class="hint" style="color:var(--ok)">اختيارٌ من الشغّالة في سوق هذا العميل وحدها.</div>
+          </div>
+          <div class="note" style="margin:0">
+            وحين يأتي من رابطٍ موسوم لا تُسأل فاتن أصلاً — الحقل يصل معبّأً ومقفولاً،
+            ومكتوبٌ تحته «جاء من الحملة تلقائياً».
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <header><span>ما يتغيّر في القاعدة</span><span>مقيس على الوضع الحالي</span></header>
+      <div class="body">
+        <table>
+          <thead><tr><th>اليوم</th><th>بعد</th><th>لماذا</th></tr></thead>
+          <tbody>
+            <tr><td><code>SalesLead.campaign String?</code></td><td><code>SalesLead.campaignId</code> → <code>Campaign</code></td><td>يُجمَع عليه، وله ميزانية وتاريخ وصاحب</td></tr>
+            <tr><td>—</td><td><code>Campaign</code> جدول جديد</td><td>الحملة كيانٌ لا كلمة</td></tr>
+            <tr><td><code>isPaidAd Boolean</code></td><td>يبقى</td><td>يفرّق المدفوع عن الطبيعيّ حتى بلا حملة مسجَّلة</td></tr>
+            <tr><td>قيمة نصّية واحدة في القاعدة</td><td>تُنقل إلى صفّها</td><td>«تقويم-سبتمبر-فيسبوك» — لا يضيع أحد</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ ٥ · الأدوار ════════ -->
+  <section id="s5" hidden>
+    <h2>الأدوار والقرارات المعلّقة</h2>
+    <p class="sub">ما لا أبنيه قبل جوابك.</p>
+
+    <div class="box">
+      <header><span>مَن يفعل ماذا</span><span>الصلاحيات</span></header>
+      <div class="body" style="padding:0">
+        <table>
+          <thead><tr><th>الدور</th><th>يؤسّس</th><th>يعدّل الميزانية</th><th>يوقف/يشغّل</th><th>يقرأ النتائج</th><th>يربط عميلاً</th></tr></thead>
+          <tbody>
+            <tr><td><b>الميديا باير</b></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>—</td></tr>
+            <tr><td><b>فاتن (مبيعات)</b></td><td>—</td><td>—</td><td>—</td><td>حملتها فقط</td><td>✅</td></tr>
+            <tr><td><b>خالد</b></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="box">
+      <header><span>قرارات تحتاج جوابك</span><span>٥</span></header>
+      <div class="body">
+        <table>
+          <tbody>
+            <tr><td style="width:26px">١</td><td><b>الميديا باير — موظّف في النظام؟</b><div class="hint">هل له حساب دخول ودورٌ جديد، أم أنت تؤسّس بالنيابة عنه الآن؟</div></td></tr>
+            <tr><td>٢</td><td><b>المصروف — يدويّ أم من المنصّة؟</b><div class="hint">اليدويّ يبدأ اليوم. الربط بواجهة ميتا/جوجل مشروعٌ مستقلّ.</div></td></tr>
+            <tr><td>٣</td><td><b>النسبة التلقائية (③ في المخطّط)</b><div class="hint">تحتاج التقاط <code>utm_campaign</code> في مدونتي وتمريره لصفّ العميل. نبنيها الآن أم اختيار يدويّ أوّلاً؟</div></td></tr>
+            <tr><td>٤</td><td><b>أين تسكن الشاشة؟</b><div class="hint"><code>/campaigns</code> مستقلّة، أم تحت <code>/sales-leads/campaigns</code>؟</div></td></tr>
+            <tr><td>٥</td><td><b>حملة بلا إعلان مدفوع</b><div class="hint">حملة محتوى أو إيميل — تُسجَّل هنا بميزانية صفر، أم للمدفوع وحده؟</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="warnbox">
+      <b>هذا موكب لا كود.</b> لا شيء منه مبنيّ. حدّد ما يُعتمد وما يُحذف، وأجب الخمسة أعلاه —
+      وبعدها أبني على مراحل: الجدول والشاشة أوّلاً، ثم الربط، ثم النسبة التلقائية.
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.toggle('on', x === t));
+    document.querySelectorAll('section').forEach(s => s.hidden = s.id !== t.dataset.s);
+    window.scrollTo({ top: 0 });
+  }));
+  document.querySelectorAll('.chip').forEach(c =>
+    c.addEventListener('click', () => c.classList.toggle('on')));
+</script>
+</body>
+</html>

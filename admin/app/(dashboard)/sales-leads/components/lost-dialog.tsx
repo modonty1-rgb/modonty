@@ -22,7 +22,16 @@ import { LOST_LABEL, LOST_REASONS, type LostReason } from "../helpers/funnel";
  * المتابعة تتأخّر أم السوق غلط. والسبب إلزاميّ هنا بينما كل شيء آخر في هذه الشاشة اختياري،
  * لأنه اللحظة الوحيدة التي يُعرف فيها الجواب: بعد أسبوع لن يتذكّره أحد.
  */
-export function LostDialog({ leadId, leadName }: { leadId: string; leadName: string }) {
+export function LostDialog({
+  leadId,
+  leadName,
+  className,
+}: {
+  leadId: string;
+  leadName: string;
+  /** يمرّره العمود الجانبيّ ليمدّ الزرّ على عرضه — الشكل قرارُ المكان لا قرارُ الحوار. */
+  className?: string;
+}) {
   const router = useRouter();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
@@ -36,7 +45,7 @@ export function LostDialog({ leadId, leadName }: { leadId: string; leadName: str
       const r = await markLost(leadId, { reason, note: note || undefined });
       if (r.success) {
         setOpen(false);
-        toast({ title: "اتقفل كخسارة", variant: "success" });
+        toast({ title: "أُغلق كخسارة", variant: "success" });
         router.refresh();
       } else {
         toast({ title: r.error, variant: "destructive" });
@@ -46,7 +55,7 @@ export function LostDialog({ leadId, leadName }: { leadId: string; leadName: str
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1.5 text-muted-foreground">
+        <Button variant="outline" size="sm" className={cn("gap-1.5 text-muted-foreground", className)}>
           <ThumbsDown className="size-3.5" aria-hidden /> خسرناه
         </Button>
       </DialogTrigger>
@@ -54,13 +63,13 @@ export function LostDialog({ leadId, leadName }: { leadId: string; leadName: str
         <DialogHeader className="text-start">
           <DialogTitle>قفل {leadName} كخسارة</DialogTitle>
           <DialogDescription>
-            هيختفي من الفانل ومن قايمة المتابعة. تقدري ترجّعيه في أي وقت.
+            سيختفي من القائمة ومن قائمة المتابعة. تقدرين ترجعينه في أي وقت.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div>
-            <Label className="text-xs">ليه خسرناه؟</Label>
+            <Label className="text-xs">لماذا خسرناه؟</Label>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {LOST_REASONS.map((r) => (
                 <button
@@ -82,13 +91,13 @@ export function LostDialog({ leadId, leadName }: { leadId: string; leadName: str
           </div>
 
           <div>
-            <Label htmlFor="lostNote" className="text-xs">تفاصيل زيادة (اختياري)</Label>
+            <Label htmlFor="lostNote" className="text-xs">تفاصيل إضافية (اختياري)</Label>
             <Textarea
               id="lostNote"
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={3}
-              placeholder="قال إن العرض أغلى من اللي عنده بـ٣٠٪."
+              placeholder="قال إن العرض أغلى من عرض غيرنا بـ٣٠٪."
               className="mt-1"
             />
           </div>
@@ -99,7 +108,7 @@ export function LostDialog({ leadId, leadName }: { leadId: string; leadName: str
               وزرٌّ مختفٍ يقول «مافيش زرّ». */}
           <Button onClick={submit} disabled={pending || !reason} variant="destructive" className="gap-2">
             {pending ? <Loader2 className="size-4 animate-spin" /> : null}
-            {pending ? "بنقفل…" : "اقفليه"}
+            {pending ? "جارٍ الإغلاق…" : "أغلقيه"}
           </Button>
           <Button type="button" variant="ghost" onClick={() => setOpen(false)} disabled={pending}>
             إلغاء
@@ -111,7 +120,7 @@ export function LostDialog({ leadId, leadName }: { leadId: string; leadName: str
 }
 
 /** الخسارة قرارٌ يُراجَع لا حائط — عميلٌ قال «مش دلوقتي» يرجع بعد ثلاثة شهور. */
-export function ReopenButton({ leadId }: { leadId: string }) {
+export function ReopenButton({ leadId, className }: { leadId: string; className?: string }) {
   const router = useRouter();
   const { toast } = useToast();
   const [pending, start] = useTransition();
@@ -121,13 +130,13 @@ export function ReopenButton({ leadId }: { leadId: string }) {
       type="button"
       variant="outline"
       size="sm"
-      className="gap-1.5"
+      className={cn("gap-1.5", className)}
       disabled={pending}
       onClick={() =>
         start(async () => {
           const r = await reopenLead(leadId);
           if (r.success) {
-            toast({ title: "رجع للفانل", variant: "success" });
+            toast({ title: "أرجعه للقائمة", variant: "success" });
             router.refresh();
           } else {
             toast({ title: r.error, variant: "destructive" });
@@ -136,7 +145,7 @@ export function ReopenButton({ leadId }: { leadId: string }) {
       }
     >
       {pending ? <Loader2 className="size-3.5 animate-spin" /> : <RotateCcw className="size-3.5" aria-hidden />}
-      رجّعه للفانل
+      أرجعه للقائمة
     </Button>
   );
 }

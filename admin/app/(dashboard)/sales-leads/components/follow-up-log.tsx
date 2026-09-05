@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { addFollowUp, completeFollowUp, snoozeFollowUp } from "../actions";
+import { formatCount } from "../helpers/format-count";
 import {
   CHANNELS, CHANNEL_LABEL, DUE_TONE, PICKABLE_STAGES, STAGE_DOT, STAGE_LABEL,
   describeDue, type Channel, type Stage,
@@ -43,9 +44,9 @@ function isoDay(offsetDays: number): string {
 }
 
 const WHEN_PRESETS = [
-  { label: "بكرة", days: 1 },
+  { label: "غداً", days: 1 },
   { label: "بعد ٣ أيام", days: 3 },
-  { label: "الأسبوع الجاي", days: 7 },
+  { label: "الأسبوع القادم", days: 7 },
   { label: "بعد أسبوعين", days: 14 },
 ] as const;
 
@@ -108,7 +109,7 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
       setWhenNote("");
       setStageAfter("");
       setChannel("CALL");
-      toast({ title: "اتسجّلت", variant: "success" });
+      toast({ title: "سُجِّلت", variant: "success" });
       router.refresh();
     });
 
@@ -121,7 +122,7 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
         toast({ title: okText, variant: "success" });
         router.refresh();
       } else {
-        toast({ title: r.error ?? "ما نفعش.", variant: "destructive" });
+        toast({ title: r.error ?? "ما نجح.", variant: "destructive" });
       }
     });
 
@@ -130,8 +131,8 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
       {!closed && (
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">سجّلي اللي حصل</CardTitle>
-            <CardDescription>كل مكالمة أو رسالة تتسجّل هنا، وتفضل في تاريخه للأبد.</CardDescription>
+            <CardTitle className="text-base">سجّلي ما حدث</CardTitle>
+            <CardDescription>كل مكالمة أو رسالة تُسجَّل هنا، وتبقى في تاريخه للأبد.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-wrap gap-1.5">
@@ -162,13 +163,13 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
               value={body}
               onChange={(e) => setBody(e.target.value)}
               rows={3}
-              placeholder="قال إنه هيراجع العرض مع شريكه ويرد الأسبوع الجاي."
-              aria-label="اللي حصل"
+              placeholder="قال إنه سيراجع العرض مع شريكه ويردّ الأسبوع القادم."
+              aria-label="ما حدث"
             />
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <Label className="text-xs">أكلّمه إمتى تاني؟</Label>
+                <Label className="text-xs">متى أكلّمه مرة ثانية؟</Label>
                 <div className="mt-1.5 grid grid-cols-2 gap-1.5">
                   {WHEN_PRESETS.map((p) => {
                     const value = isoDay(p.days);
@@ -195,7 +196,7 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
                   value={when}
                   onChange={(e) => setWhen(e.target.value)}
                   dir="ltr"
-                  aria-label="أو تاريخ تاني"
+                  aria-label="أو تاريخ آخر"
                   className="mt-1.5 h-9"
                 />
                 {/* الخانة الأصلية تكتب شكلها بلغة المتصفّح (`mm/dd/yyyy` على شاشة عربية) ولا
@@ -204,23 +205,23 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
                   {when
                     ? new Intl.DateTimeFormat("ar-EG", { weekday: "long", day: "numeric", month: "long" })
                         .format(new Date(`${when}T09:00:00`))
-                    : "من غير موعد، العميل بيتنسى"}
+                    : "بدون موعد، العميل يُنسى"}
                 </p>
               </div>
 
               <div className="space-y-3">
                 <div>
-                  <Label htmlFor="whenNote" className="text-xs">علشان إيه؟</Label>
+                  <Label htmlFor="whenNote" className="text-xs">لماذا؟</Label>
                   <Input
                     id="whenNote"
                     value={whenNote}
                     onChange={(e) => setWhenNote(e.target.value)}
-                    placeholder="هيرد بعد ما يكلّم شريكه"
+                    placeholder="سيردّ بعد ما يكلّم شريكه"
                     className="mt-1 h-9"
                   />
                 </div>
                 <div>
-                  <Label className="text-xs">اتحرّك لمرحلة تانية؟</Label>
+                  <Label className="text-xs">ينتقل إلى مرحلة أخرى؟</Label>
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
                     {PICKABLE_STAGES.map((s) => (
                       <button
@@ -246,7 +247,7 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
 
             <Button onClick={submit} disabled={pending || body.trim().length < 2} className="gap-2">
               {pending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4 rtl:rotate-180" />}
-              {pending ? "بنسجّل…" : "سجّلي"}
+              {pending ? "جارٍ التسجيل…" : "سجّلي"}
             </Button>
           </CardContent>
         </Card>
@@ -256,13 +257,17 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
         <CardHeader className="pb-3">
           <CardTitle className="text-base">
             التاريخ
-            {total > 0 && <span className="ms-2 text-xs font-normal text-muted-foreground tabular-nums">{total}</span>}
+            {total > 0 && (
+              <span className="ms-2 text-xs font-normal tabular-nums text-muted-foreground">
+                {formatCount(total)}
+              </span>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {rows.length === 0 ? (
             <p className="py-6 text-center text-sm text-muted-foreground">
-              مافيش حاجة اتسجّلت لسه. أوّل مكالمة تكتبيها هتبان هنا.
+              لا يوجد شيء مسجَّل بعد. أول مكالمة تكتبينها ستظهر هنا.
             </p>
           ) : (
             <ol className="relative space-y-0">
@@ -287,7 +292,7 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
                         {r.stageAfter && (
                           <span className="inline-flex items-center gap-1">
                             <span className={cn("size-1.5 rounded-full", STAGE_DOT[r.stageAfter as Stage])} aria-hidden />
-                            اتحرّك لـ«{STAGE_LABEL[r.stageAfter as Stage]}»
+                            انتقل إلى «{STAGE_LABEL[r.stageAfter as Stage]}»
                           </span>
                         )}
                       </div>
@@ -308,7 +313,7 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
                                 variant="outline"
                                 className="h-7 gap-1 px-2 text-xs"
                                 disabled={pending}
-                                onClick={() => rowAction(r.id, () => completeFollowUp(r.id), "اتقفل")}
+                                onClick={() => rowAction(r.id, () => completeFollowUp(r.id), "أُغلق")}
                               >
                                 {busyRow === r.id && pending ? (
                                   <Loader2 className="size-3 animate-spin" />
@@ -323,7 +328,7 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
                                 variant="ghost"
                                 className="h-7 px-2 text-xs"
                                 disabled={pending}
-                                onClick={() => rowAction(r.id, () => snoozeFollowUp(r.id, 3), "اتأجّل ٣ أيام")}
+                                onClick={() => rowAction(r.id, () => snoozeFollowUp(r.id, 3), "تأجيل ٣ أيام")}
                               >
                                 أجّليه ٣ أيام
                               </Button>
@@ -341,8 +346,8 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
           {/* السقف يُقال حين يُبلَغ. البتر الصامت يُقرأ كـ«ده كل التاريخ» وهو ليس كذلك. */}
           {total > rows.length && (
             <p className="mt-4 border-t pt-3 text-[11px] text-muted-foreground">
-              معروض أحدث <span className="tabular-nums">{rows.length}</span> من{" "}
-              <span className="tabular-nums">{total}</span> — الباقي في القاعدة ولم يُحذف.
+              معروض أحدث <span className="tabular-nums">{formatCount(rows.length)}</span> من{" "}
+              <span className="tabular-nums">{formatCount(total)}</span> — الباقي في القاعدة ولم يُحذف.
             </p>
           )}
         </CardContent>

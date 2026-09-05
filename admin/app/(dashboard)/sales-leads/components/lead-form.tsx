@@ -23,6 +23,9 @@ import { cn } from "@/lib/utils";
 import { createLead, updateLead } from "../actions";
 import { PICKABLE_STAGES, STAGE_DOT, STAGE_LABEL, type Stage } from "../helpers/funnel";
 import { MOBILE_HINT, type LeadInput } from "../helpers/lead-schema";
+import { MARKET_LABEL } from "../helpers/markets";
+import { AD_CHANNEL_LABEL } from "@/lib/ad-channel-label";
+import type { CampaignOption } from "../helpers/get-campaign-options";
 import {
   FREE_MONTHS, PLAN_DURATIONS, RECOMMENDED_DURATION, priceForDuration,
   type PlanDuration,
@@ -97,6 +100,8 @@ interface Props {
   plans: Record<"SA" | "EG", PlanOption[]>;
   /** «العميل من فين جاي» — المفعَّل منها فقط، من `lead_source_options`. */
   leadSources: { value: string; label: string }[];
+  /** الحملات المُطلَقة — تملأ قائمة «الحملة» حين يكون الوصول مدفوعاً. */
+  campaigns: CampaignOption[];
   initial?: Partial<LeadInput>;
 }
 
@@ -110,7 +115,7 @@ interface Props {
  * وما لا يُسأل في مكالمة (المدينة، الخرايط، ستّة حسابات) خلف طيّة واحدة — قِيس على الصفوف
  * السبعة عشر القادمة من النظام القديم: صفر من سبعة عشر في كلٍّ منها.
  */
-export function LeadForm({ leadId, industries, plans, leadSources, initial }: Props) {
+export function LeadForm({ leadId, industries, plans, leadSources, campaigns, initial }: Props) {
   const router = useRouter();
   const { toast } = useToast();
   const isEdit = Boolean(leadId);
@@ -131,7 +136,7 @@ export function LeadForm({ leadId, industries, plans, leadSources, initial }: Pr
     industryOther: blank("industryOther"),
     countryCode: blank("countryCode") || "SA", source: blank("source"),
     // الحالة كلّها نصوص، فالمنطقيّ يُخزَّن `"true"` أو فارغاً — لا `boolean` وسط `Record<string,string>`.
-    isPaidAd: initial?.isPaidAd ? "true" : "", campaign: blank("campaign"), note: "",
+    isPaidAd: initial?.isPaidAd ? "true" : "", campaignId: blank("campaignId"), note: "",
     sourceNote: blank("sourceNote"),
     ...Object.fromEntries(SOCIALS.map((s) => [s, blank(s)])),
   });
@@ -274,10 +279,24 @@ export function LeadForm({ leadId, industries, plans, leadSources, initial }: Pr
       document.getElementById("name")?.focus();
       return;
     }
-    // الحفظ يرجع للقائمة (خالد ٤ سبتمبر). كان ينقل لصفحة العميل، وهو منطقيّ لو كانت المتابعة
-    // هي الخطوة التالية — لكن المندوبة تسجّل ثم ترجع للجدول، فالانتقال لصفحةٍ فردية يفرض
-    // عليها ضغطة رجوعٍ في كل مرّة.
-    router.push(isEdit ? `/sales-leads/${leadId}` : "/sales-leads");
+    /**
+     * الحفظ يرجع للقائمة (خالد ٤ سبتمبر) — **ومعه معرّف الجديد**.
+     *
+     * كان يرجع إليها عارياً، فيسقط العميل الذي سُجِّل للتوّ خارج النظر: الترتيب الافتراضي
+     * «الأطول صمتاً» يضعه آخر القائمة (صمته صفر) والسقف عشرون. مقيس في اختبار الدورة —
+     * سجّلتُ «عيادة الدورة الكاملة» فارتفع العدّاد ٢٠ ← ٢١ ولم تظهر البطاقة في الشاشة.
+     *
+     * فيمرّ المعرّف في العنوان، وتثبّته اللوحة أوّلاً وتعلّمه. وفي العنوان لا في الحالة كي
+     * يبقى بعد التحديث ويُشارَك.
+     */
+    const created = (result as { id?: string }).id;
+    router.push(
+      isEdit
+        ? `/sales-leads/${leadId}`
+        : created
+          ? `/sales-leads?new=${created}`
+          : "/sales-leads",
+    );
     router.refresh();
   };
 
@@ -403,11 +422,13 @@ export function LeadForm({ leadId, industries, plans, leadSources, initial }: Pr
 
   const header = (
     <div className="flex items-center gap-2">
-      <Link href={isEdit ? `/sales-leads/${leadId}` : "/sales-leads"}>
-        <Button variant="ghost" size="icon" type="button" aria-label="رجوع" className="size-8">
+      {/* `asChild` لا `<Link><Button>` — زرٌّ داخل رابطٍ تعشيقٌ ممنوع في المواصفة، وقارئ
+          الشاشة يعلن عنصرين حيث يوجد فعلٌ واحد. مقيس: `main a button` كان ٢. */}
+      <Button variant="ghost" size="icon" type="button" asChild className="size-8">
+        <Link href={isEdit ? `/sales-leads/${leadId}` : "/sales-leads"} aria-label="رجوع">
           <ArrowRight className="size-4 rtl:rotate-180" />
-        </Button>
-      </Link>
+        </Link>
+      </Button>
       <h1 className="text-lg font-semibold tracking-[-0.01em] text-pretty">{isEdit ? "تعديل بيانات العميل" : "بيانات العميل"}</h1>
     </div>
   );
@@ -519,7 +540,7 @@ export function LeadForm({ leadId, industries, plans, leadSources, initial }: Pr
               "المجال",
               [
                 ...industries.map((i) => ({ v: i.id, l: i.name })),
-                { v: OTHER_INDUSTRY, l: "مجال تاني — مش في القايمة" },
+                { v: OTHER_INDUSTRY, l: "مجال آخر — غير موجود بالقائمة" },
               ],
               "غير محدّد",
             )}
@@ -581,7 +602,7 @@ export function LeadForm({ leadId, industries, plans, leadSources, initial }: Pr
                     setForm((f) => ({
                       ...f,
                       isPaidAd: o.v,
-                      campaign: o.v ? f.campaign : "",
+                      campaignId: o.v ? f.campaignId : "",
                       sourceNote: o.v ? "" : f.sourceNote,
                     }))
                   }
@@ -612,9 +633,40 @@ export function LeadForm({ leadId, industries, plans, leadSources, initial }: Pr
         <div className="grid items-start gap-2 border-t pt-2">
           {select("source", "مصدر العميل", leadSources.map((s) => ({ v: s.value, l: s.label })), "غير محدّد")}
 
-          {form.isPaidAd
-            ? field("campaign", "اسم الحملة", { placeholder: "رمضان-٢٠٢٦-انستقرام…" })
-            : field("sourceNote", "ملاحظة", { placeholder: "شافنا في ريل عن تقويم الأسنان…" })}
+          {/**
+           * الحملة اختيارٌ من صفٍّ قائم لا نصٌّ يُكتب (خالد ٥ سبتمبر).
+           *
+           * النصّ الحرّ لا يُجمَّع — «رمضان-٢٠٢٦» و«رمضان ٢٠٢٦» صفّان في التقرير — ولا يحمل
+           * كلفةً فيُقاس بها عائد. والمعرّف يربط العميل بميزانيةٍ حقيقية.
+           *
+           * وحين لا توجد حملةٌ مُطلَقة بعد، يُقال ذلك ويُفتح الطريق إليها بدل قائمةٍ فارغة
+           * تُقرأ عطلاً.
+           */}
+          {form.isPaidAd ? (
+            campaigns.length > 0 ? (
+              select(
+                "campaignId",
+                "الحملة",
+                campaigns.map((c) => ({
+                  v: c.id,
+                  l: `${c.name} — ${MARKET_LABEL[c.countryCode] ?? c.countryCode} · ${AD_CHANNEL_LABEL[c.channel] ?? c.channel}`,
+                })),
+                "غير محدّدة",
+              )
+            ) : (
+              <div>
+                <Label className="text-xs tracking-[0.01em]">الحملة</Label>
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  ما في حملة شغّالة.{" "}
+                  <Link href="/campaigns/new" className="underline hover:text-foreground">
+                    أسّس واحدة
+                  </Link>
+                </p>
+              </div>
+            )
+          ) : (
+            field("sourceNote", "ملاحظة", { placeholder: "شاهدنا في ريل عن تقويم الأسنان…" })
+          )}
         </div>
       </CardContent>
     </Card>
@@ -779,7 +831,7 @@ export function LeadForm({ leadId, industries, plans, leadSources, initial }: Pr
                         <span className="truncate text-xs font-medium">{p.name}</span>
                         {on && <Check className="size-3 shrink-0" aria-hidden />}
                         {!on && featured && (
-                          <span className="shrink-0 text-[10px] leading-none text-amber-600 dark:text-amber-400">✦</span>
+                          <span className="shrink-0 text-[10px] leading-none text-amber-700 dark:text-amber-400">✦</span>
                         )}
                       </span>
                       <span className="shrink-0 text-sm font-semibold tabular-nums">{money(price.total)}</span>
@@ -824,7 +876,7 @@ export function LeadForm({ leadId, industries, plans, leadSources, initial }: Pr
               value={form.note ?? ""}
               onChange={(e) => set("note", e.target.value)}
               rows={2}
-              placeholder="عايز يعرف الأسعار الأول، وقال يكلّمنا بعد ما يرجع من السفر…"
+              placeholder="يريد يعرف الأسعار أولاً، وقال نتواصل معه بعد رجوعه من السفر…"
               className="rounded text-sm"
             />
           </CardContent>
@@ -891,9 +943,9 @@ export function LeadForm({ leadId, industries, plans, leadSources, initial }: Pr
             {saving === "next" ? "جارٍ الحفظ…" : "حفظ وإضافة آخر"}
           </Button>
         )}
-        <Link href={isEdit ? `/sales-leads/${leadId}` : "/sales-leads"} className="ms-auto">
-          <Button type="button" variant="ghost" disabled={saving !== null} className="h-8 rounded">إلغاء</Button>
-        </Link>
+        <Button type="button" variant="ghost" asChild className="ms-auto h-8 rounded">
+          <Link href={isEdit ? `/sales-leads/${leadId}` : "/sales-leads"}>إلغاء</Link>
+        </Button>
     </div>
   );
 
