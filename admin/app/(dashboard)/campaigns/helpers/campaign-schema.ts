@@ -24,7 +24,7 @@ export const campaignSchema = z
     name: z.string().trim().min(2, "اسم الحملة ناقص — اكتب اسماً يعرفه مَن يقرؤه بعد شهرين"),
 
     countryCode: z.enum(["SA", "EG"], { message: "اختر السوق — منه تجيء العملة" }),
-    site: z.enum(["MODONTY", "JBRSEO"], { message: "اختر الموقع الذي يوصّل إليه الإعلان" }).default("MODONTY"),
+    site: z.enum(["MODONTY", "JBRSEO"], { message: "اختر الموقع الذي يوصّل إليه الإعلان" }),
     channel: z.enum(CHANNELS, { message: "اختر القناة — منها يُبنى وسم الرابط" }),
     objective: z.enum(OBJECTIVES, { message: "اختر هدف الحملة كما ضُبط في المنصّة" }),
     status: z.enum(STATUSES).default("DRAFT"),

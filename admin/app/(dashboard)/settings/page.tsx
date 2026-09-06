@@ -11,6 +11,7 @@ import {
   ArrowRight,
   Lock,
   Landmark,
+  Megaphone,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -94,6 +95,13 @@ const TELEGRAM: CardSpec = {
   icon: Send,
 };
 
+const ADVERTISING_PLATFORMS: CardSpec = {
+  href: "/settings/advertising-platforms",
+  title: "منصات الإعلان",
+  description: "حسابات مودونتي الإعلانية ومفاتيح المزامنة التي تُستخدم لجلب أداء الحملات.",
+  icon: Megaphone,
+};
+
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-2.5 mb-2.5 mt-5 first:mt-1">
@@ -104,8 +112,8 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 export default function SettingsDashboardPage() {
-  // Editable: Social, Business, Brand, JBR, Reference, Default Images, Disclaimer, Telegram (8) + System (read-only).
-  const editableCount = 8;
+  // Editable: Social, Business, Brand, JBR, Advertising Platforms, Reference, Default Images, Disclaimer, Telegram (9) + System (read-only).
+  const editableCount = 9;
   const total = editableCount + 1;
 
   return (
@@ -191,6 +199,21 @@ export default function SettingsDashboardPage() {
           B2B · jbrseo.com
         </span>
         <ArrowRight className="ms-auto h-4 w-4 flex-none text-muted-foreground/30 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all" />
+      </Link>
+
+      <Link
+        href={ADVERTISING_PLATFORMS.href}
+        title={ADVERTISING_PLATFORMS.description}
+        className="group mt-2 flex items-center gap-3.5 rounded-xl border bg-card px-4 py-3.5 transition-colors hover:bg-muted/30"
+      >
+        <div className="grid size-10 flex-none place-items-center rounded-lg bg-muted text-muted-foreground transition-colors group-hover:text-foreground">
+          <ADVERTISING_PLATFORMS.icon className="size-5" />
+        </div>
+        <h3 className="truncate text-sm font-bold">{ADVERTISING_PLATFORMS.title}</h3>
+        <span className="flex-none rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-[9.5px] font-bold tracking-wide text-primary">
+          Snapchat · TikTok · Meta · Google
+        </span>
+        <ArrowRight className="ms-auto size-4 flex-none text-muted-foreground/30 transition-all group-hover:translate-x-0.5 group-hover:text-muted-foreground" />
       </Link>
 
       {/* ── Reference data — admin-managed foundational lookups ── */}

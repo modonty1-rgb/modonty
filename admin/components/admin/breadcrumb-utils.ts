@@ -59,6 +59,10 @@ const routeLabels: Record<string, string> = {
   new: 'New',
   edit: 'Edit',
   preview: 'Preview',
+  // الحملات الإعلانية شاشة عربية بالكامل (تقارير Meta ولوحة الحملات) — نفس منطق
+  // sales-leads تحت: الكسرة الإنجليزية الوحيدة فوق شاشة عربية بالكامل.
+  campaigns: 'الحملات الإعلانية',
+  reports: 'التقارير',
 };
 
 const sectionLabels: Record<string, string> = {
@@ -86,6 +90,7 @@ const sectionLabels: Record<string, string> = {
  */
 const scopedLabels: Record<string, Record<string, string>> = {
   'sales-leads': { new: 'عميل جديد', edit: 'تعديل', 'follow-ups': 'المتابعة' },
+  reports: { modonty: 'مدونتي', jbrseo: 'جبر سيو' },
 };
 
 export function isObjectId(str: string): boolean {

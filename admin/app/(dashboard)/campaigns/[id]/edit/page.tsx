@@ -24,6 +24,10 @@ export default async function EditCampaignPage({ params }: { params: Promise<{ i
       campaignId={id}
       initial={{
         ...row,
+        // `countryCode` عمودُ نصٍّ في القاعدة لا تعداد (بقصد — جدول الدول ثلاثة صفوف، وعميلٌ
+        // من سوقٍ لم يُنشأ صفُّه بعد يجب أن يُحفظ). فالتضييق يقع هنا عند الحدّ، بنفس احتياطيّ
+        // `marketOf`: ما ليس «مصر» فهو السعودية.
+        countryCode: row.countryCode === "EG" ? "EG" : "SA",
         startAt: row.startAt.toISOString(),
         endAt: row.endAt.toISOString(),
       }}

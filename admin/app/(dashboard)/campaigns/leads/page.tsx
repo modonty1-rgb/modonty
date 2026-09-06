@@ -1,6 +1,7 @@
-import { Megaphone, Sparkles, CheckCircle2, XCircle } from "lucide-react";
+import { CircleAlert, Megaphone, Sparkles, CheckCircle2, XCircle } from "lucide-react";
 import { getCampaignLeads, getCampaignLeadStats } from "./actions/leads-actions";
 import { LeadsTable } from "./components/leads-table";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +27,17 @@ export default async function CampaignLeadsPage() {
           </div>
         </div>
       </header>
+
+      <Alert>
+        <CircleAlert />
+        <AlertTitle>كيف تُستخدم هذه الصفحة؟</AlertTitle>
+        <AlertDescription>
+          <ul className="flex flex-col gap-1">
+            <li>هذه قائمة متابعة للعملاء المهتمين، وليست تقرير أداء أو تحليلًا للحملات.</li>
+            <li>لا يُنسب العميل إلى حملة إعلانية إلا إذا ظهر في المصدر اسم الحملة أو وسم UTM واضح؛ مثلًا «Hero CTA» يعني اهتمامًا جاء من الموقع.</li>
+          </ul>
+        </AlertDescription>
+      </Alert>
 
       {/* KPI cards */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">

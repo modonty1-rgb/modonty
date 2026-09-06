@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -25,6 +25,9 @@ import {
   campaignDays, marketOf, suggestUtm, totalBudget, trackedUrl,
 } from "../helpers/channels";
 import type { CampaignInput } from "../helpers/campaign-schema";
+
+/** السوقان — نوعٌ ضيّق لا `string`، وإلّا تسرّبت قيمةٌ لا تقابل سوقاً إلى حالة الشاشة. */
+type Market = "SA" | "EG";
 
 const STATUSES: AdCampaignStatus[] = ["DRAFT", "ACTIVE", "PAUSED", "ENDED"];
 const OBJECTIVES: AdObjective[] = ["LEADS", "SALES", "TRAFFIC", "ENGAGEMENT", "AWARENESS"];
@@ -47,9 +50,38 @@ const isoDay = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const ar = new Intl.NumberFormat("ar-EG", { maximumFractionDigits: 0 });
 
+/**
+ * ما تُحمَّل به الشاشة عند التعديل — نوعٌ خاصٌّ بها، لا `Partial<CampaignInput>`.
+ *
+ * الاثنان ليسا الشيء نفسه: السكيما تستقبل `Date` للتاريخين (`z.coerce.date`)، والشاشة تُغذّي
+ * `<input type="date">` الذي لا يقبل إلا `YYYY-MM-DD`. فاستعارةُ نوع السكيما أجبرتني على
+ * `as string` فوق كل تاريخ، وهو تحويلٌ يخفي الفرق ولا يحلّه — و`tsc` رفضه بحقّ
+ * (`TS2352: Conversion of type 'Date' to type 'string' may be a mistake`).
+ */
+export interface CampaignInitial {
+  name?: string;
+  countryCode?: Market;
+  site?: AdSite;
+  channel?: AdChannel;
+  objective?: AdObjective;
+  status?: AdCampaignStatus;
+  /** `YYYY-MM-DD` — كما تقرؤه خانة التاريخ، لا `Date`. */
+  startAt?: string;
+  endAt?: string;
+  dailyBudget?: number | null;
+  spendCap?: number | null;
+  targetRegion?: string | null;
+  targetAge?: string | null;
+  targetAudience?: string | null;
+  landingPath?: string | null;
+  platformCampaignId?: string | null;
+  utmCampaign?: string;
+  note?: string | null;
+}
+
 interface Props {
   campaignId?: string;
-  initial?: Partial<CampaignInput>;
+  initial?: CampaignInitial;
 }
 
 /**
@@ -69,22 +101,22 @@ export function CampaignForm({ campaignId, initial }: Props) {
 
   const [form, setForm] = useState({
     name: initial?.name ?? "",
-    countryCode: initial?.countryCode ?? "SA",
-    site: (initial?.site as AdSite) ?? "MODONTY",
-    channel: (initial?.channel as AdChannel) ?? "SNAPCHAT",
-    objective: (initial?.objective as AdObjective) ?? "LEADS",
-    status: (initial?.status as AdCampaignStatus) ?? "DRAFT",
-    startAt: initial?.startAt ? isoDay(new Date(initial.startAt as string)) : isoDay(today),
-    endAt: initial?.endAt ? isoDay(new Date(initial.endAt as string)) : isoDay(monthEnd),
+    countryCode: (initial?.countryCode ?? "SA") as Market,
+    site: (initial?.site ?? "") as AdSite | "",
+    channel: (initial?.channel ?? "") as AdChannel | "",
+    objective: (initial?.objective ?? "") as AdObjective | "",
+    status: initial?.status ?? "DRAFT",
+    startAt: initial?.startAt ? isoDay(new Date(initial.startAt)) : isoDay(today),
+    endAt: initial?.endAt ? isoDay(new Date(initial.endAt)) : isoDay(monthEnd),
     dailyBudget: initial?.dailyBudget != null ? String(initial.dailyBudget) : "",
     spendCap: initial?.spendCap != null ? String(initial.spendCap) : "",
-    targetRegion: (initial?.targetRegion as string) ?? "",
-    targetAge: (initial?.targetAge as string) ?? "",
-    targetAudience: (initial?.targetAudience as string) ?? "",
-    landingPath: (initial?.landingPath as string) ?? "",
-    platformCampaignId: (initial?.platformCampaignId as string) ?? "",
+    targetRegion: initial?.targetRegion ?? "",
+    targetAge: initial?.targetAge ?? "",
+    targetAudience: initial?.targetAudience ?? "",
+    landingPath: initial?.landingPath ?? "",
+    platformCampaignId: initial?.platformCampaignId ?? "",
     utmCampaign: initial?.utmCampaign ?? "",
-    note: (initial?.note as string) ?? "",
+    note: initial?.note ?? "",
   });
 
   /** الوسم يُقترح ما لم يُلمس — فمَن كتبه بيده لا يُسحب من تحته عند تغيير الاسم. */
@@ -102,7 +134,9 @@ export function CampaignForm({ campaignId, initial }: Props) {
 
   const utm = utmTouched
     ? form.utmCampaign
-    : suggestUtm(form.countryCode, form.channel, form.name, new Date(form.startAt));
+    : form.channel
+      ? suggestUtm(form.countryCode, form.channel, form.name, new Date(form.startAt))
+      : "";
 
   /**
    * اليوميّ هو المصدر، والإجماليّ مشتقٌّ منه (خالد ٥ سبتمبر) — والمفتاح بينهما أُلغي.
@@ -224,12 +258,14 @@ export function CampaignForm({ campaignId, initial }: Props) {
       <label htmlFor={id} className="w-12 shrink-0 text-xs text-muted-foreground">{label}</label>
       <Select value={value} onValueChange={onPick}>
         <SelectTrigger id={id} aria-label={label} className={cn(FIELD, "mt-0 flex-1 text-sm")}>
-          <SelectValue />
+          <SelectValue placeholder={`اختر ${label}`} />
         </SelectTrigger>
         <SelectContent>
-          {options.map((o) => (
-            <SelectItem key={o.v} value={o.v}>{o.l}</SelectItem>
-          ))}
+          <SelectGroup>
+            {options.map((o) => (
+              <SelectItem key={o.v} value={o.v}>{o.l}</SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
     </div>
@@ -297,11 +333,12 @@ export function CampaignForm({ campaignId, initial }: Props) {
                 dot: m.code === "SA" ? "bg-emerald-500" : "bg-red-500",
               })),
               (v) => {
-                const next = CHANNELS_BY_MARKET[v] ?? CHANNELS_BY_MARKET.SA;
+                const code = v as Market;
+                const next = CHANNELS_BY_MARKET[code] ?? CHANNELS_BY_MARKET.SA;
                 setForm((f) => ({
                   ...f,
-                  countryCode: v,
-                  channel: next.includes(f.channel) ? f.channel : next[0],
+                  countryCode: code,
+                  channel: f.channel && next.includes(f.channel) ? f.channel : "",
                 }));
               },
             )}
@@ -583,7 +620,7 @@ export function CampaignForm({ campaignId, initial }: Props) {
                 </div>
 
                 <TrackedLink
-                  site={form.site as AdSite}
+                  site={form.site}
                   landingPath={form.landingPath}
                   channel={form.channel}
                   utmCampaign={utm}
@@ -640,12 +677,14 @@ export function CampaignForm({ campaignId, initial }: Props) {
 function TrackedLink({
   site, landingPath, channel, utmCampaign, platformCampaignId,
 }: {
-  site: AdSite; landingPath: string; channel: AdChannel;
+  site: AdSite | ""; landingPath: string; channel: AdChannel | "";
   utmCampaign: string; platformCampaignId: string;
 }) {
   const { toast } = useToast();
   const url = useMemo(
-    () => trackedUrl({ site, landingPath, channel, utmCampaign: utmCampaign || "…", platformCampaignId }),
+    () => site && channel
+      ? trackedUrl({ site, landingPath, channel, utmCampaign: utmCampaign || "…", platformCampaignId })
+      : null,
     [site, landingPath, channel, utmCampaign, platformCampaignId],
   );
 
@@ -654,9 +693,9 @@ function TrackedLink({
     <div className="border-t pt-2">
       <Label className="text-xs">الرابط الجاهز</Label>
       <p dir="ltr" className="mt-0.5 break-all rounded border bg-background px-2 py-1.5 font-mono text-[11px] leading-relaxed">
-        {url}
+        {url ?? "اختر الموقع والقناة لتجهيز الرابط"}
       </p>
-      {!platformCampaignId.trim() && (
+      {url && !platformCampaignId.trim() && (
         <p className="mt-0.5 text-[11px] text-muted-foreground">
           ناقصه معرّف المنصّة — أضفه فوق ليكتمل المفتاح الثاني.
         </p>
@@ -666,7 +705,9 @@ function TrackedLink({
         variant="outline"
         size="sm"
         className="mt-1.5 h-7 rounded px-2 text-[11px]"
+        disabled={!url}
         onClick={() => {
+          if (!url) return;
           navigator.clipboard.writeText(url);
           toast({ title: "اتنسخ", variant: "success" });
         }}

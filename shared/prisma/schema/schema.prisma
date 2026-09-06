@@ -2714,6 +2714,11 @@ model Settings {
   // mirrored to TELEGRAM_ADMIN_CHAT_ID (full site-activity firehose for the admin).
   telegramAdminMirrorAll Boolean @default(true)
 
+  // Advertising platforms — one server-only JSON document: { accounts, credentials }.
+  // Meta accounts are per brand; TikTok, Snapchat, Google and other providers are shared.
+  // Platform credentials are server-only and never selected into the browser.
+  adPlatformAccounts Json?
+
   // Site & Organization (from .env defaults, editable in Settings UI)
   siteUrl             String?
   siteName            String?

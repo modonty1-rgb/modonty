@@ -22,6 +22,7 @@ import { NotificationsBell } from "./notifications-bell";
 import { SyncLocalButton } from "./sync-local-button";
 import { TasksMenu } from "./tasks-menu";
 import { SalesMenu } from "./sales-menu";
+import { CampaignsMenu } from "./campaigns-menu";
 import pkg from "@/package.json";
 
 export function Header({
@@ -62,6 +63,7 @@ export function Header({
           {/* Sales followed Tasks out of the sidebar (Khalid, 2026-09-04) — Faten's
               whole day is these three pages, so they sit beside Tasks not under it. */}
           <SalesMenu />
+          <CampaignsMenu />
 
           {/* Which database this instance is on — rendered on the server, never guessed */}
           {dbBadge}

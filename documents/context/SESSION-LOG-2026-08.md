@@ -3408,3 +3408,190 @@ admin 0 · modonty 0 · console 0   (بعد الإصلاح)
 1. `cd documents/tasks && node build-task-board.mjs` ثم افتح `file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/tasks/SEO.html`
 2. أول ملف: البطاقة الخضراء `SEOADM-UPDATE-SILENT` — اقرأ دليلها ثم افتح مسار حفظ المقال في الأدمن.
 3. أول قرار لخالد: `SEOADM-PARTIAL-WRITES` — نستأنف وكيل٢ أم نعيد توزيعها؟
+
+---
+
+## Session: 2026-08-29 (≈ 09:00 → 13:05) — 🏅 **مسار التدقيق ١١١/١١١ · آخر بطاقة أُغلقت** · 🏷️ **الاسم اللاتيني دخل خانته `alternateName`** · 🧬 **`ReferralLead` كُتب ومُحقَّق ومحجوب عند `prisma generate`** · 🧹 **الجهاز نُظّف ١٫٥ جيجا استعداداً لإعادة التشغيل** (فرع `modonty-ui` · `0480223` **مدفوع ٠/٠** · ١٥٢ ملفاً غير مثبَّت)
+
+> ⚠️ **الجهاز يُعاد تشغيله بعد هذا البلوك.** كل السيرفرات أُوقفت بنظافة، و`.next` الثلاثة محذوفة — أول تشغيل بعد الإعادة سيكون بطيئاً (بناء بارد)، وهذا متوقَّع لا عطل.
+
+### 🎯 Where I stopped
+- **آخر ما طُلب:** تنظيف الكاش قبل إعادة تشغيل الجهاز — **تمّ**، والجلسة تُجمَّد هنا.
+- **الفعل التالي المحدَّد بعد الإعادة:**
+  ```bash
+  pnpm prisma:push        # تحقّق أن DATABASE_URL ينتهي بـ /modonty_dev
+  pnpm prisma:generate
+  ```
+  بعدهما فقط تُبنى مسارات الإحالة وشاشتها. **قبلهما لا يترجم سطر واحد.**
+
+### ✅ Done this session
+
+**١· `SEOEMAIL-PII` أُغلقت — مسار التدقيق صار `{"pass":111}`، صفر مفتوحة.**
+- النصّان الرسميان (مُحضَران): *Structured data policies* — «**Don't** mark up content that is not visible to readers of the page»، وعقوبتها «possibly cause it to be **marked as spam**». و*Organization* — «You **don't need to** include it on every page».
+- **تصحيح لنفسي:** قلت لخالد «فوتر **و** حذف العقدة»، والصحيح أن الحذف **توصية لا إلزام**؛ المخالفة الوحيدة هي الإخفاء. فالفوتر وحده يُغلق البند.
+- `modonty/app/layout/components/Footer.tsx` — صفّ اتصال يعرض `orgContactEmail` و`orgContactTelephone` كروابط `mailto:`/`tel:`. تعديل واحد أغلق سبع صفحات.
+- **عطل ثانٍ كشفه القياس بعد الفوتر:** `/clients` كانت لا تزال تبثّ **٢٠ رقم هاتف** لشركاء بلا عرض (`+2010…` · `+9665…`). تعليقي القديم برّر بقاءها بأن «الرقم يظهر على صفحة الشريك» — **والسياسة لكل صفحة لا لكل موقع**. حُذفت `contactPoint` كاملة من عقدة الشريك في `build-clients-page-jsonld.ts`، ومعها `email`/`phone`/`contactType` من النوع.
+- **الناتج الخام بعد إعادة توليد القوائم (١١ صفحة حيّة):** `قيم مُعلَنة وغير مرئية: 0 ✓` (كانت ٢٠ قبل الحذف · ٧ قبل الفوتر).
+
+**٢· الاسم اللاتيني — سؤال خالد «مدونتي منصّة عربية، هل هذا عدل؟» والجواب: لا، وله خانة.**
+- *Site names*: «Google Search only supports **one site name per site**» — والبدائل مكانها `alternateName`. *Organization*: «Use the **same `name` and `alternateName`** that you're using for your site name».
+- **عطل لم يكن في الخطة:** `Settings.alternateName` كان **حقلاً ميتاً من طرفيه** — صفر ذِكر في `settings-actions.ts`، و`getAllSettings()` تبني كائنها **حقلاً حقلاً** فما ليس مسروداً لا يصل البانِي. ولهذا بقيت العقدة صامتة **بعد كاسكيدين**.
+- أُصلح في: `settings-actions.ts` (٤ مواضع: الواجهة · الافتراضيات · الكائنان المُرجَعان) · `seed-technical-defaults.ts` (`BUSINESS_DEFAULTS`، فالهوية مملوكة بالكود لا بموظّف) · `build-home-jsonld-from-settings.ts` (٤ مواضع على `WebSite` و`Organization`).
+- **القياس:** `Organization name:"مدونتي" | alternateName:"Modonty"` · `WebSite` مثلها.
+- و`brandDescription` صار يبدأ بـ«مدونتي —» بدل «Modonty —».
+
+**٣· ثلاث فئات بأسماء مزدوجة — أُعيدت تسميتها، والـ`slug` لم يُمسّ.**
+```
+ 18 مقال  «Modonty جديد مدونتي»       → «جديد مدونتي»                  slug: مدونتي-modonty-جديد
+117 مقال  «الرعاية الصحية Health Care» → «الرعاية الصحية»                slug: health-wellness
+ 26 مقال  «السيو SEO & التسويق الرقمي» → «تحسين محركات البحث والتسويق الرقمي»  slug: digital-marketing
+فئات باسم مزدوج بعد التعديل: 0 ✓
+```
+**تصحيح:** ظننتُ الثالثة بيانات تجريبية واقترحت حذفها — القياس أظهر **١٨ مقالاً** عليها. فصار القرار تسميةً لا حذفاً.
+
+**٤· ترتيب `SEO.html` — سبب اللخبطة كان خطئي.**
+كنت أعدّ من `task-data.json` وخالد يقرأ الملفّ، و**خمس بطاقات سيو موسومة `file:"data"`** كانت تُرسَل إلى `DATA-REFACTOR.html`. نُقلت إلى لوحة السيو، و`77`/`82` تُركتا (ليستا سيو مدونتي). الآن الرقم على الزرّ = ما بداخله بالضبط:
+```
+① قرارك 7  →  BRAND-PROD-APPLY · WIKI1 · SEODATE-UPDATEDAT · METADESC · ADDR12 · CATNAME-BILINGUAL · AUTOLINK
+② دوري  3  →  BRAND-ID · HREF0 · BRAND-SPELLING
+```
+وكل بطاقة في «قرارك» تحمل سؤالها في صندوق «المطلوب منك» بلا فتح.
+
+**٥· `AUTOLINK` — التصميم تغيّر بفكرة خالد، والبنية موجودة أصلاً.**
+فكرته: «تجيله خريطة الأوتولينك ويعمل كونفيرم» — أي اقتراحٌ يعتمده إنسان لا حقنٌ آليّ. والقياس أظهر أن النافذة مبنيّة: `internal-link-review-dialog.tsx` (٢٢٩ سطراً) · `internal-link-audit.ts` (`auditContentLinks` · `applyLinkDecisions`) · `article-form-context.tsx:447` و`:688`. البطاقة وُسمت `last=true`.
+
+**٦· الإحالة الدولية — الدراسة والنموذج (المهمّة الجديدة).**
+- **القياس على `modonty_dev`:** `Country` ٣ صفوف (SA · EG · AE) · `Client.addressCountry`: `"EG"` ٢٨ · `"SA"` ٣ · `null` ٤ · `"المملكة العربية السعودية"` ١ — **ليس ISO دائماً** · `Invoice` ١٥ منها `paidAt` ١٣.
+- **حدث السداد موجود ونقطته واحدة:** `admin/app/(dashboard)/clients/[id]/account/actions/mark-paid.ts:55` وحارس idempotency في `:49`. **يدوي بيد الأدمن لا بوّابة دفع** — وهذا قرار خالد.
+- كُتب `enum ReferralLeadStatus` + `model ReferralLead` + `Client.referralLeads` في `schema.prisma`. **الناتج:** `The schema at prisma\schema\schema.prisma is valid 🚀`.
+- العقد كاملاً في `documents/tasks/REFERRAL-CONTRACT.md` — لتستهلكه `console-mobile` بلا انتظاري.
+
+**٧· الجهاز — نُظّف مرّتين، والثانية للإعادة.**
+```
+حُذف: modonty\.next 652 · admin\.next 455 · console\.next 128 · .playwright-mcp 174 · metro-cache 73
+FREED: 1482 MB   |   RAM free 5279 MB   |   Disk C: free 58.3 GB
+أُبقي عمداً: npm-cache\_cacache 3526 · pnpm-cache 1080 · pnpm\store\v10 3064
+```
+وفي التنظيف الأول (قبل الظهر): تحقّقت أن سيرفرَي `console:3100` و`console-mobile/Expo` **يتبعان `codex.exe` pid 14224** فتُركا، وأُوقف سيرفراي أنا (٣٫٣ جيجا) — الذاكرة الحرّة ٨٤١ ← ٣٩٤٦ ميجا.
+
+**٨· `.vscode/settings.json` (جديد، محلّي — `.gitignore:38` يتجاهل `.vscode/`).**
+`files.watcherExclude` + `search.exclude` + `files.exclude` لـ`.next`/`node_modules`/`.turbo`/`dist`/`.expo` · `typescript.disableAutomaticTypeAcquisition` · `typescript.tsdk`. **لم أضع `maxTsServerMemory` عمداً** — يخفض الذاكرة ويرفع المعالج وقد يُسقط الخادم.
+> **تصحيح مسجَّل:** قلت «VS Code ٥ نوافذ ≈ ١٫٣ جيجا» وهو **غلط**. القياس: نافذة **واحدة** (`pid 16748`) تشغّل **١٩ عملية** `Code.exe`؛ أكبرها `tsserver` ٤٧٣ ميجا. وسحبتُ وعد «Restart TS Server يرجّعه لأقل من ١٠٠ ميجا» — ثلاث صفحات رسمية لا تذكر الأمر ولا استهلاك الذاكرة.
+
+### 📝 Decisions taken (with reasoning)
+- **الفوتر لا حذف العقدة** → التوثيق يجعل الحذف توصية والإخفاء مخالفة. الفوتر يُغلق السبع بتعديل واحد ويحفظ إشارة لوحة المعرفة.
+- **`alternateName` في `BUSINESS_DEFAULTS` لا في نموذج الأدمن** → الهوية مملوكة بالكود (قرار خالد في زرّ Apply Defaults).
+- **الفئات: تسمية لا حذف** → ١٦١ مقالاً عليها؛ والـ`slug` ثابت فلا رابط ينكسر ولا تحويل يلزم.
+- **`ReferralLead` نموذج مستقلّ** → `ContactMessage` رسالة زائر مجهول، و`LeadScoring` نقاطٌ على عميل قائم. الخلط يجعل «كم إحالة تحوّلت؟» سؤالاً بلا جواب.
+- **لا افتراض سعودية** → اشتقاق البلد ثلاث خطوات وينتهي بـ`null` لا بـ`"SA"`.
+- **أُبقي كاش npm/pnpm** → حذفه يبطّئ ما بعد الإعادة لا يسرّعه؛ و`pnpm store` مربوط بـ`node_modules` بروابط صلبة.
+
+### 🚧 Pending / blocked
+- 🔴 **`ReferralLead` محجوب** — `db.referralLead` غير موجود في العميل المولَّد. التوثيق (`prisma/skills`): «Re-run `prisma generate` **after every schema change**» · MongoDB: «use `prisma db push` to **synchronize indexes and constraints**». المسارات والشاشة والاختبارات كلها خلف هذا الحاجز.
+- 🔴 **كاسكيد المقالات لم يُشغَّل** — أُلغي بأمر خالد («Codex will stack on you»). فبلوبات المقالات لا تزال تحمل: `«Modonty» 188 · «Health Care» 237 · «SEO &» 45`. **`BRAND-SPELLING` و`BRAND-ID` و`CATNAME-BILINGUAL` لا تُقفل قبله.**
+- **ثلاثة قرارات للإحالة** (§٦ من `REFERRAL-CONTRACT.md`): متى نوقف كل شيء للأمرين · المكافأة على `mark-paid` اليدوي أم ننتظر بوّابة · الخمسة بلا بلد ISO.
+- **سبع بطاقات في «① قرارك»** على لوحة السيو، كلٌّ بسؤالها.
+- ١٥٢ ملفاً غير مثبَّت · **لا `tsc` شُغِّل** بعد تعديلات اليوم · الإنتاج لم يُمسّ.
+
+### 📂 Files touched
+- `shared/prisma/schema/schema.prisma` — `enum ReferralLeadStatus` + `model ReferralLead` + `Client.referralLeads`.
+- `documents/tasks/REFERRAL-CONTRACT.md` — **جديد**: العقد والحواجز والقياسات.
+- `modonty/app/layout/components/Footer.tsx` — صفّ الاتصال المرئي.
+- `admin/app/(dashboard)/modonty/setting/helpers/build-clients-page-jsonld.ts` — حذف `contactPoint` من عقدة الشريك.
+- `admin/app/(dashboard)/modonty/setting/helpers/build-home-jsonld-from-settings.ts` — `alternateName` على أربع عقد.
+- `admin/app/(dashboard)/settings/actions/settings-actions.ts` — `alternateName` في ٤ مواضع.
+- `admin/app/(dashboard)/settings/actions/seed-technical-defaults.ts` — `alternateName: "Modonty"`.
+- `.vscode/settings.json` — **جديد**، محلّي (متجاهَل في git).
+- `documents/tasks/task-data.json` + `SEO.html` — ختم `SEOEMAIL-PII`، نقل ٥ بطاقات، إعادة توزيع الممرّين.
+- **قاعدة `modonty_dev`** (لا ملفات): `alternateName` · `brandDescription` · ٣ أسماء فئات.
+
+### 🔁 Git / deploy state
+- الفرع `modonty-ui` · آخر كوميت `0480223` (٢٨ أغسطس ١٨:٣٩) · `origin/modonty-ui...modonty-ui` = **`0 0`** (مدفوع).
+- غير مثبَّت: **١٥٢ ملفاً**. **لا كوميت ولا دفع في هذه الجلسة.** Vercel والإنتاج: لم يُلمسا.
+
+### 🚀 How to resume in 30 seconds
+1. **بعد إعادة التشغيل:** `pnpm prisma:push` ثم `pnpm prisma:generate` (تحقّق أن `DATABASE_URL` ينتهي بـ`/modonty_dev`) — بلا هذا لا يُبنى شيء من الإحالة.
+2. افتح `documents/tasks/REFERRAL-CONTRACT.md` §٦ ← الثلاثة قرارات.
+3. القرار الأول: كاسكيد المقالات (~٢٠ د) الآن ليُقفل ثلاث بطاقات ماركة، أم نبدأ بمسارات الإحالة؟
+
+---
+
+## Session: 2026-08-29 (حتى ≈ 01:50) — 🏅 **لوحة السيو أُقفلت عملياً: ١١٠ من ١١١ بطاقة** · 🏷️ **١٣ عنواناً كان يحمل اسم العلامة مرّتين → صفر** · 📧 **صفحة «اتصل بنا» صارت تعرض ما تعلنه لجوجل** (فرع `modonty-ui` · `0480223` **مدفوع ٠/٠** · ١١٤ ملفاً غير مثبَّت)
+
+> ⚠️ **انحراف يُقرأ أولاً:** الجلسة السابقة جُمِّدت على `01f37a3` و٢٥ ملفاً غير مثبَّت. الآن آخر كوميت **`0480223` (٢٨ أغسطس ١٨:٣٩)** ومعه `c42f8e4` و`5cee83e` — **ثلاثة كوميتات لم تصدر من هذه الجلسة** (موضوعها: مودو والبرومبتات والهارد كود). و`git rev-list --left-right --count origin/modonty-ui...modonty-ui` = **`0 0`** أي مدفوعة. غالباً جلسة أخرى لخالد — **لم يُتحقّق من محتواها في هذه الجلسة**.
+
+### 🎯 Where I stopped
+- **آخر ما طُلب:** «do» على التوصيات الثلاث المسنودة بالتوثيق الرسمي. **اثنتان أُغلقتا بدليل خام، والثالثة نصف مُغلقة وتنتظر سطراً واحداً من خالد.**
+- **الفعل التالي المحدَّد:** قرار خالد في بطاقة `SEOEMAIL-PII` — **إظهار `modonty@modonty.com` في فوتر الموقع** (تعديل واحد يُغلق سبع صفحات ويحفظ إشارة لوحة المعرفة) **أم** حذف `contactPoint` من عقدة المؤسسة على القوائم الستّ. بعدها اللوحة تصير ١١١/١١١.
+
+### ✅ Done this session
+
+**١· ختم ١٦ بطاقة بتفويض صريح من خالد** («الكروت اللي خلاص اتصلحت وتأكدت إنها صحيحة مية في المية … حولها للمنتهي»). سبقه مسح ختامي على ١٣ صفحة حيّة، الناتج الخام:
+```
+✓ عقدة WebSite خارج الرئيسية        0
+✓ name="Modonty" لاتيني في JSON-LD  0
+✓ عقد Person                        0
+✓ معرّف قاعدة يُبثّ كاسم            0
+✓ SearchAction الموقوفة             0
+✓ روابط بعربي غير مرمَّز (من 653)   0
+```
+المختومة: `SEOADM-APPLY-DEFAULTS-OVERWRITE` · `SEOAUTHOR-TITLE` · `SEOWEBSITE-PUBLISHER` · `SEOTWITTER-CREATOR` · `SEOFAKE-VALID` · `SEOADM-ARABIC-MIXUPS` · `SEOSEARCHACTION` · `SEOHOME-BC` · `SEOADM-DUP-IDS-LISTS` · `SEOOG-TYPE-ALT` · `PRELOADX` · `SEOADM-VALIDATOR-NETWORK` · `PUBDATE-BACKFILL-13` · `SEOFAQ` · `SEOWEBSITE` · `SEOADM-URL-JOIN`.
+
+**٢· `SEOTITLE` — اسم العلامة مرّتين في العنوان (أُغلقت).**
+- **النصّ الرسمي** (Google · Title links، مُحضَر في هذه الجلسة): «include **just your site name** at the beginning or end of each `<title>`» + تحذير من نصّ متكرّر على كل الصفحات.
+- **الجذر:** قالب الجذر يضيف `| مدونتي`، و**١٣ عنواناً مخزَّناً** يحمل الاسم أصلاً. (العيّنة الأولى قالت ٥ — كانت ناقصة، والفحص الشامل على القاعدة أعطى ١٣.)
+- **ما تغيّر — في المصدر لا في القالب:** ٦ حقول على `Settings` (`clientsSeoTitle` · `categoriesSeoTitle` · `trendingSeoTitle` · `tagsSeoTitle` · `industriesSeoTitle` · `articlesSeoTitle`) و٧ صفوف `modonty` (`about` · `terms` · `privacy-policy` · `user-agreement` · `cookie-policy` · `copyright-policy` · `audio`) — كلها على **`modonty_dev`** (طُبع سطر `DATABASE_URL` المفعَّل قبل التنفيذ).
+- **`modontySeoTitle` (الرئيسية) لم يُمسّ عمداً** — عنوانها لا يمرّ بالقالب، والاسم فيه مرّة واحدة، وجوجل تسمّي الرئيسية المكان المعقول للعلامة.
+- ثم **كاسكيد كامل من `/seo`**: `291/291` كياناً في **١٩ د ٥٨ ث** (`CATEGORIES 15/15 · TAGS 23/23 · INDUSTRIES 8/8 · CLIENTS 36/36 · ARTICLES 190/190 · LISTINGS 19/19`).
+- **القياس بعد على ١٨ صفحة حيّة: `عناوين فيها العلامة مرّتين: 0 ✓`.**
+
+**٣· `SEOOG-DIMS` — قرار مُغلق: الأبعاد تبقى غائبة.** ogp.me (مُحضَر): `og:image:width/height` **اختياريتان** ومعناهما «The number of pixels wide/high» — أي البكسل الحقيقي. الملفات المقيسة: `/trust` و`/story` **5000×2625**، `/contact` **1920×1080** — بينما الكود كان يدّعي `1200×630`. الغياب أصدق من رقم مخالف؛ تُرجَع فقط لو قِيست من الملف.
+
+**٤· `SEOEMAIL-PII` — نصف مُغلقة.** جوجل (Structured data policies، مُحضَر): «**Don't** mark up content that is not visible to readers of the page».
+- أُضيف `modonty/app/(site)/contact/components/contact-details/ContactDetails.tsx` — كتلة مرئية تعرض البريد والهاتف والعنوان، و`getLegalEntity`/`toLegalEntityDisplay` كُبِّرا بحقل `contactTelephone` (إضافة، بلا مساس بـ`/trust` و`/story`).
+- **الناتج الخام بعد التعديل:**
+```
+صفحة            | كود | البريد في JSON-LD | مرئي في HTML
+/               | 200 | نعم  | لا
+/clients        | 200 | نعم  | لا
+/categories     | 200 | نعم  | لا
+/tags           | 200 | نعم  | لا
+/industries     | 200 | نعم  | لا
+/trending       | 200 | نعم  | لا
+/help/faq       | 200 | نعم  | لا
+/contact        | 200 | نعم  | نعم   ← أُصلحت
+```
+- **التصحيح:** ظننتها صفحة واحدة، والقياس قال **سبعاً**. الفارق أن الكتلة المرئية تُغلق `/contact` وحدها.
+
+**٥· اللوحة تُبنى مع التاسك:** `documents/tasks/task-data.json` → `node build-task-board.mjs`. الحصيلة الآن **`{"pass":110,"fail":1}`**، والمفتوح الوحيد `SEOEMAIL-PII`.
+
+### 📝 Decisions taken (with reasoning)
+- **العنوان يُصلَح في المصدر لا في القالب** → القالب صحيح وموافق للتوثيق؛ الخطأ في ١٣ قيمة مخزَّنة. تعديل القالب كان سيكسر الصفحات السليمة.
+- **الرئيسية تُستثنى** → قِيس أن عنوانها لا يمرّ بالقالب (`<title>منصة محتوى عربي احترافي للمسوقين ورواد الأعمال | مدونتي</title>` — الاسم مرّة واحدة).
+- **الأبعاد تُترك غائبة لا تُعاد بقيمة افتراضية** → الاختيارية + الكذب المقيس. البديل المرفوض: إعادة `1200×630` «لأن الجميع يفعلها».
+- **البريد: الفوتر مُقترَح لا مُنفَّذ** → التعديل المعتمد كان «أعرضه في اتصل بنا» وقد نُفِّذ؛ توسيعه إلى فوتر سيتّي يمسّ كل صفحة ويحتاج إذناً جديداً.
+
+### 🚧 Pending / blocked
+- **`SEOEMAIL-PII`** — قرار خالد: فوتر أم حذف `contactPoint` من القوائم الستّ.
+- **`/help/faq` تخدم العنوان العام** — خام: `<title>مدونتي - منصة المدونات متعددة الشركاء</title>`، والسبب أن `faqSeoTitle` فارغ على `Settings`. **بند جديد، لا بطاقة له بعد.**
+- **الانحراف أعلى هذا البلوك** — الكوميتات الثلاثة المدفوعة التي لم تصدر من هنا، لم تُفحَص.
+- ١١٤ ملفاً غير مثبَّت على `modonty-ui` · **لا `tsc` شُغِّل بعد تعديلات اليوم** · الإنتاج لم يُمسّ إطلاقاً.
+
+### 📂 Files touched
+- `modonty/app/(site)/contact/components/contact-details/ContactDetails.tsx` — **جديد**: كتلة الاتصال المرئية.
+- `modonty/app/(site)/contact/page.tsx` — يقرأ الكيان ويعرض الكتلة (`Promise.all` بلا شلال).
+- `modonty/lib/seo/organization-jsonld.ts` — حقل `contactTelephone` (نوع + `EMPTY_LEGAL_ENTITY` + `select` + الإرجاع).
+- `modonty/lib/seo/to-legal-entity-display.ts` — تمرير `contactTelephone`.
+- `documents/tasks/task-data.json` + `SEO.html` — ختم ١٨ بطاقة وتحديث الثلاث.
+- **قاعدة `modonty_dev`** (لا ملفات): ٦ حقول `Settings` + ٧ صفوف `modonty`.
+
+### 🔁 Git / deploy state
+- الفرع: `modonty-ui` · آخر كوميت: `0480223` (٢٨ أغسطس ١٨:٣٩) · `origin/modonty-ui...modonty-ui` = **`0 0`** (مدفوع).
+- غير مثبَّت: **١١٤ ملفاً**. **لا كوميت ولا دفع في هذه الجلسة.**
+- Vercel: لم يُلمس. الإنتاج: لم يُلمس.
+
+### 🚀 How to resume in 30 seconds
+1. جاوب على السؤال المعلّق: **فوتر أم حذف `contactPoint`؟** ← يُغلق `SEOEMAIL-PII` وتصير اللوحة ١١١/١١١.
+2. افتح `file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/tasks/SEO.html` ← تبويب «محتاج تعميدك» فيه بطاقة واحدة.
+3. القرار الثاني: هل نفتح بطاقة لـ`/help/faq` (عنوان عام على صفحة مفهرسة)، ثم `tsc` وكوميت لشغل اليومين قبل أي دفع.
+

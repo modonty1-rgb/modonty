@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "businessManagerId": "545582405315442",
+    "appId": "2634180453617692",
+    "appName": "modonty",
+    "accessToken": "",
+    "brands": {
+      "modonty": {
+        "adAccountId": "790007510859024",
+        "label": "أمواج"
+      },
+      "jbrseo": {
+        "adAccountId": "1260508182300304",
+        "businessManagerId": "1593662981776462",
+        "label": "Jbrseo SA"
+      }
+    }
+  }
+}
