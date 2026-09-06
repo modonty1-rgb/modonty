@@ -72,6 +72,28 @@ export function AdvertisingPlatformsForm({
     });
   }
   function saveCredentials() { startTransition(async () => { const result = await saveAdvertisingPlatformCredentials(credentials); toast(result.ok ? { title: "تم حفظ مفاتيح API" } : { title: "لم يُحفظ التعديل", description: result.error, variant: "destructive" }); }); }
+  // زرّ بطاقة العلامة يقف تحت معرّف الحساب والتوكن معاً — فلازم يحفظ الاثنين، لا التوكن وحده
+  // (كان onClick={saveCredentials} فقط: التوكن يُحفظ ومعرّف الحساب يختفي بصمت). الحفظان
+  // متتاليان لا متوازيان: كل حفظ يكتب المستند الكامل، فحفظٌ متوازٍ قد يدهس الآخر.
+  function saveBrand(brand: BrandKey) {
+    startTransition(async () => {
+      const accountsResult = await saveAdvertisingPlatformAccounts({
+        meta: {
+          modonty: accounts.meta.modonty ?? { accountId: null, managerId: null },
+          jbrseo: accounts.meta.jbrseo ?? { accountId: null, managerId: null },
+        },
+        shared: {
+          tiktok: accounts.shared.tiktok ?? { accountId: null, managerId: null },
+          snapchat: accounts.shared.snapchat ?? { accountId: null, managerId: null },
+          google: accounts.shared.google ?? { accountId: null, managerId: null },
+        },
+      });
+      const credentialsResult = accountsResult.ok ? await saveAdvertisingPlatformCredentials(credentials) : accountsResult;
+      const ok = accountsResult.ok && credentialsResult.ok;
+      const brandName = brand === "modonty" ? "مدونتي" : "جبر SEO";
+      toast(ok ? { title: `تم حفظ بيانات ${brandName}` } : { title: "لم يُحفظ التعديل", description: "error" in accountsResult ? accountsResult.error : "error" in credentialsResult ? credentialsResult.error : undefined, variant: "destructive" });
+    });
+  }
   function testMeta(brand: BrandKey) { startTransition(async () => { const result = await testMetaConnection({ accountId: accounts.meta[brand].accountId ?? "", accessToken: credentials.meta.tokens[brand] }); toast(result.ok ? { title: "تم الاتصال بميتا", description: `${result.account.name || "الحساب"} · ${result.account.currency || ""}` } : { title: "فشل اختبار الاتصال", description: result.error, variant: "destructive" }); }); }
 
   return (
@@ -118,7 +140,7 @@ export function AdvertisingPlatformsForm({
                   />
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <Button type="button" size="sm" onClick={saveCredentials} disabled={pending}>
+                  <Button type="button" size="sm" onClick={() => saveBrand(brand.key)} disabled={pending}>
                     <Save data-icon="inline-start" />حفظ
                   </Button>
                   <Button type="button" size="sm" variant="secondary" onClick={() => testMeta(brand.key)} disabled={pending}>
