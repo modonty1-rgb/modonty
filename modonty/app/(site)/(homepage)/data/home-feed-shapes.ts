@@ -12,6 +12,7 @@ export const homeFeedSelect = {
   title: true,
   slug: true,
   excerpt: true,
+  seoDescription: true,
   datePublished: true,
   createdAt: true,
   featured: true,
@@ -45,7 +46,9 @@ export function mapHomeFeedArticle(a: HomeFeedPayload, coreClientId: string | nu
     isCore: coreClientId !== null && a.client.id === coreClientId,
     id: a.id,
     title: a.title,
-    excerpt: a.excerpt ?? undefined,
+    // The writer's excerpt is the preferred card preview. Older and imported articles may
+    // have only a search description, however, so use it rather than render an empty slot.
+    excerpt: a.excerpt ?? a.seoDescription ?? undefined,
     image: mediaSrc(a.featuredImage) ?? undefined,
     imageBlur: a.featuredImage?.blurDataURL ?? undefined,
     slug: a.slug,
