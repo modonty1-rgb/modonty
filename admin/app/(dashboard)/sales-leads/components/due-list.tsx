@@ -32,9 +32,8 @@ import {
   describeDue,
   waNumber,
   type Channel,
-  type Stage,
 } from "../helpers/funnel";
-import type { DueRow, FollowUpTimelineRow } from "../helpers/get-due-follow-ups";
+import type { FollowUpTimelineRow, LeadJourney } from "../helpers/get-due-follow-ups";
 
 const dayFmt = new Intl.DateTimeFormat("ar-EG", {
   day: "numeric",
@@ -57,63 +56,30 @@ const CHANNEL_ICON: Record<string, typeof PhoneCall> = {
   NOTE: StickyNote,
 };
 
-type LeadTimeline = {
-  id: string;
-  name: string;
-  company: string | null;
-  stage: Stage;
-  rows: FollowUpTimelineRow[];
-  /** أقرب موعد هو الذي يحدد أولوية مجموعة العميل كلها. */
-  next: DueRow;
-};
+type LeadTimeline = LeadJourney & { next: FollowUpTimelineRow | null };
 
-/** لا يمكن إغلاق أو تأجيل سجلٍ لم يحدّد موعداً تالياً أصلاً. */
-function hasOpenNextAction(row: FollowUpTimelineRow): row is FollowUpTimelineRow & DueRow {
-  return row.nextActionAt !== null && row.doneAt === null;
-}
-
-function groupByLead(rows: DueRow[], historyByLead: Record<string, FollowUpTimelineRow[]>): LeadTimeline[] {
-  const byLead = new Map<string, LeadTimeline>();
-
-  for (const row of rows) {
-    const current = byLead.get(row.leadId);
-    if (current) {
-      // حين وصل تاريخ العميل من الاستعلام الثاني فهو يحتوي هذا الصف بالفعل؛ لا نكرره لأن له
-      // موعداً مفتوحاً أيضاً.
-      if (!current.rows.some((event) => event.id === row.id)) {
-        current.rows.push({ ...row, doneAt: null });
-      }
-      if (row.nextActionAt < current.next.nextActionAt) current.next = row;
-      continue;
-    }
-    byLead.set(row.leadId, {
-      id: row.leadId,
-      name: row.leadName,
-      company: row.company,
-      stage: row.stage,
-      rows: historyByLead[row.leadId] ?? [row],
-      next: row,
-    });
-  }
-
-  return [...byLead.values()]
+function prepareJourneys(leads: LeadJourney[]): LeadTimeline[] {
+  return leads
     .map((lead) => ({
       ...lead,
-      // القصة تبدأ بآخر تواصل؛ الموعد القادم يبقى في رأس المجموعة فلا يضيع.
-      rows: [...lead.rows].sort((a, b) => b.happenedAt.getTime() - a.happenedAt.getTime()),
+      followUps: [...lead.followUps].sort((a, b) => b.happenedAt.getTime() - a.happenedAt.getTime()),
+      next: lead.followUps
+        .filter((row) => row.nextActionAt !== null && row.doneAt === null)
+        .sort((a, b) => a.nextActionAt!.getTime() - b.nextActionAt!.getTime())[0] ?? null,
     }))
-    .sort((a, b) => a.next.nextActionAt.getTime() - b.next.nextActionAt.getTime());
+    .sort((a, b) => (a.next?.nextActionAt?.getTime() ?? Number.MAX_SAFE_INTEGER) - (b.next?.nextActionAt?.getTime() ?? Number.MAX_SAFE_INTEGER));
 }
 
-function TimelineEvent({ row, onDone, onSnooze, busy, isLast }: {
+function TimelineEvent({ row, lead, onDone, onSnooze, busy, isLast }: {
   row: FollowUpTimelineRow;
+  lead: LeadJourney;
   onDone: () => void;
   onSnooze: () => void;
   busy: boolean;
   isLast: boolean;
 }) {
   const due = row.nextActionAt ? describeDue(row.nextActionAt) : null;
-  const waDigits = waNumber(row.phone, row.countryCode);
+  const waDigits = waNumber(lead.phone, lead.countryCode);
   const ChannelIcon = CHANNEL_ICON[row.channel] ?? StickyNote;
 
   return (
@@ -146,9 +112,9 @@ function TimelineEvent({ row, onDone, onSnooze, busy, isLast }: {
         )}
 
         <div className="mt-2.5 flex flex-wrap items-center gap-1.5 border-t pt-2">
-          {row.phone && (
+          {lead.phone && (
             <>
-              <a href={`tel:${row.phone}`} aria-label={`اتّصلي بـ${row.leadName}`}>
+              <a href={`tel:${lead.phone}`} aria-label={`اتّصلي بـ${lead.name}`}>
                 <Button type="button" variant="outline" size="sm" className="h-8 gap-1 px-2 text-xs">
                   <Phone className="size-3.5" aria-hidden /> اتّصلي
                 </Button>
@@ -158,7 +124,7 @@ function TimelineEvent({ row, onDone, onSnooze, busy, isLast }: {
                   href={`https://wa.me/${waDigits}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={`واتساب ${row.leadName}`}
+                  aria-label={`واتساب ${lead.name}`}
                 >
                   <Button type="button" variant="ghost" size="sm" className="h-8 gap-1 px-2 text-xs text-emerald-700 dark:text-emerald-400">
                     <MessageCircle className="size-3.5" aria-hidden /> واتساب
@@ -200,11 +166,11 @@ function TimelineEvent({ row, onDone, onSnooze, busy, isLast }: {
 
 function LeadTimelineCard({ lead, onDone, onSnooze, busy }: {
   lead: LeadTimeline;
-  onDone: (row: DueRow) => void;
-  onSnooze: (row: DueRow) => void;
+  onDone: (id: string) => void;
+  onSnooze: (id: string) => void;
   busy: boolean;
 }) {
-  const due = describeDue(lead.next.nextActionAt);
+  const due = lead.next?.nextActionAt ? describeDue(lead.next.nextActionAt) : null;
   const [open, setOpen] = useState(true);
 
   return (
@@ -227,13 +193,17 @@ function LeadTimelineCard({ lead, onDone, onSnooze, busy }: {
               </span>
               <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
                 <Clock3 className="size-3 shrink-0" aria-hidden />
-                الموعد القادم: <span className={cn("font-medium", DUE_TONE[due.tone])}>{due.text}</span>
-                <span>· {dayFmt.format(lead.next.nextActionAt)}</span>
-                {lead.next.nextActionNote && <span className="truncate">· {lead.next.nextActionNote}</span>}
+                {due ? (
+                  <>
+                    الموعد القادم: <span className={cn("font-medium", DUE_TONE[due.tone])}>{due.text}</span>
+                    <span>· {dayFmt.format(lead.next!.nextActionAt!)}</span>
+                    {lead.next?.nextActionNote && <span className="truncate">· {lead.next.nextActionNote}</span>}
+                  </>
+                ) : "لا يوجد موعد مفتوح"}
               </span>
             </span>
             <span className="hidden shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground sm:inline">
-              {formatCount(lead.rows.length)} متابعة
+              {formatCount(lead.followUps.length)} متابعة
             </span>
             <ChevronDown className={cn("size-4 shrink-0 text-muted-foreground transition-transform", open && "rotate-180")} aria-hidden />
           </button>
@@ -251,20 +221,21 @@ function LeadTimelineCard({ lead, onDone, onSnooze, busy }: {
               </Link>
             </div>
             <ol aria-label={`سجل متابعات ${lead.name}`}>
-              {lead.rows.map((row, index) => (
+              {lead.followUps.length > 0 ? lead.followUps.map((row, index) => (
                 <TimelineEvent
                   key={row.id}
                   row={row}
+                  lead={lead}
                   busy={busy}
-                  isLast={index === lead.rows.length - 1}
+                  isLast={index === lead.followUps.length - 1}
                   onDone={() => {
-                    if (hasOpenNextAction(row)) onDone(row);
+                    if (row.nextActionAt && !row.doneAt) onDone(row.id);
                   }}
                   onSnooze={() => {
-                    if (hasOpenNextAction(row)) onSnooze(row);
+                    if (row.nextActionAt && !row.doneAt) onSnooze(row.id);
                   }}
                 />
-              ))}
+              )) : <li className="rounded-lg border border-dashed px-3 py-4 text-center text-xs text-muted-foreground">لا توجد متابعات مسجلة بعد.</li>}
             </ol>
           </div>
         </CollapsibleContent>
@@ -274,23 +245,17 @@ function LeadTimelineCard({ lead, onDone, onSnooze, busy }: {
 }
 
 interface Props {
-  overdue: DueRow[];
-  today: DueRow[];
-  upcoming: DueRow[];
-  historyByLead: Record<string, FollowUpTimelineRow[]>;
+  leads: LeadJourney[];
 }
 
 /**
- * كل عميل مجموعة مستقلة؛ ترتيب المجموعات حسب الموعد الأقرب، وداخلها تايملاين آخر التواصلات.
+ * كل عميل غير مفقود مجموعة مستقلة؛ لا فلترة بتاريخ أو بالمستخدم الحالي.
  */
-export function DueList({ overdue, today, upcoming, historyByLead }: Props) {
+export function DueList({ leads: sourceLeads }: Props) {
   const router = useRouter();
   const { toast } = useToast();
   const [pending, start] = useTransition();
-  const leads = useMemo(
-    () => groupByLead([...overdue, ...today, ...upcoming], historyByLead),
-    [overdue, today, upcoming, historyByLead],
-  );
+  const leads = useMemo(() => prepareJourneys(sourceLeads), [sourceLeads]);
 
   const act = (fn: () => Promise<{ success: boolean; error?: string }>, okText: string) =>
     start(async () => {
@@ -307,9 +272,9 @@ export function DueList({ overdue, today, upcoming, historyByLead }: Props) {
     return (
       <Card>
         <CardContent className="py-10 text-center">
-          <p className="text-sm font-medium">ما عليك شيء الآن 🎉</p>
+          <p className="text-sm font-medium">لا يوجد عملاء في التقرير</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            كل ما تسجّلين متابعة ومعها موعد، ستجدينه هنا في يومه.
+            سيظهر هنا كل عميل غير مفقود مع رحلة متابعاته كاملة.
           </p>
         </CardContent>
       </Card>
@@ -319,15 +284,15 @@ export function DueList({ overdue, today, upcoming, historyByLead }: Props) {
   return (
     <div className="space-y-3">
       <p className="text-xs text-muted-foreground">
-        {formatCount(leads.length)} عميل لديهم مواعيد مفتوحة — المتابعة مرتبة حسب أقرب موعد لكل عميل.
+        {formatCount(leads.length)} عميل غير مفقود — رحلة العميل كاملة، مرتبة بأقرب موعد مفتوح ثم آخر تحديث.
       </p>
       {leads.map((lead) => (
         <LeadTimelineCard
           key={lead.id}
           lead={lead}
           busy={pending}
-          onDone={(row) => act(() => completeFollowUp(row.id), "أُغلق")}
-          onSnooze={(row) => act(() => snoozeFollowUp(row.id, 3), "تأجيل ٣ أيام")}
+          onDone={(id) => act(() => completeFollowUp(id), "أُغلق")}
+          onSnooze={(id) => act(() => snoozeFollowUp(id, 3), "تأجيل ٣ أيام")}
         />
       ))}
     </div>
