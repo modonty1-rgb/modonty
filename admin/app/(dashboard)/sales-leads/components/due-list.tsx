@@ -67,6 +67,11 @@ type LeadTimeline = {
   next: DueRow;
 };
 
+/** لا يمكن إغلاق أو تأجيل سجلٍ لم يحدّد موعداً تالياً أصلاً. */
+function hasOpenNextAction(row: FollowUpTimelineRow): row is FollowUpTimelineRow & DueRow {
+  return row.nextActionAt !== null && row.doneAt === null;
+}
+
 function groupByLead(rows: DueRow[], historyByLead: Record<string, FollowUpTimelineRow[]>): LeadTimeline[] {
   const byLead = new Map<string, LeadTimeline>();
 
@@ -253,10 +258,10 @@ function LeadTimelineCard({ lead, onDone, onSnooze, busy }: {
                   busy={busy}
                   isLast={index === lead.rows.length - 1}
                   onDone={() => {
-                    if (row.nextActionAt && !row.doneAt) onDone(row);
+                    if (hasOpenNextAction(row)) onDone(row);
                   }}
                   onSnooze={() => {
-                    if (row.nextActionAt && !row.doneAt) onSnooze(row);
+                    if (hasOpenNextAction(row)) onSnooze(row);
                   }}
                 />
               ))}
