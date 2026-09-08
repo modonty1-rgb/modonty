@@ -83,7 +83,7 @@ export function TaskDialog({
   task: BoardTask | null;
   createIn: TaskStatusKey | null;
   onClose: () => void;
-  /** Admin-only callers pass staff here to assign a new task on someone else's board. */
+  /** Report viewers pass staff here to assign a new task on someone else's board. */
   assignees?: TaskAssigneeOption[];
 }) {
   const router = useRouter();

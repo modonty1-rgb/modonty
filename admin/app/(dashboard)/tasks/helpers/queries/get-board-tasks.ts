@@ -44,7 +44,7 @@ export const getBoardTasks = cache(async (assigneeId: string): Promise<Record<Ta
       assigneeId: true,
       createdById: true,
       assignee: { select: { id: true, name: true, image: true } },
-      createdBy: { select: { role: true } },
+      createdBy: { select: { name: true, email: true } },
     },
     orderBy: [{ status: "asc" }, { position: "asc" }],
     take: 500,
@@ -57,7 +57,10 @@ export const getBoardTasks = cache(async (assigneeId: string): Promise<Record<Ta
   for (const row of rows) {
     board[row.status as TaskStatusKey].push({
       ...row,
-      assignedByAdmin: row.createdBy?.role === "ADMIN" && row.createdById !== row.assigneeId,
+      assignedBy:
+        row.createdById !== row.assigneeId && row.createdBy
+          ? { name: row.createdBy.name, email: row.createdBy.email }
+          : null,
     } as BoardTask);
   }
   return board;

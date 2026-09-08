@@ -42,6 +42,7 @@ const archiveSelect = {
   title: true,
   slug: true,
   excerpt: true,
+  seoDescription: true,
   datePublished: true,
   createdAt: true,
   readingTimeMinutes: true,
@@ -73,7 +74,9 @@ function mapArchiveArticle(a: ArchivePayload, coreClientId: string | null): Arch
     isCore: coreClientId !== null && a.client.id === coreClientId,
     id: a.id,
     title: a.title,
-    excerpt: a.excerpt ?? undefined,
+    // The writer's excerpt is preferred; imported articles may only have a search
+    // description, which is still better than leaving the feed card blank.
+    excerpt: a.excerpt ?? a.seoDescription ?? undefined,
     image: mediaSrc(a.featuredImage) ?? undefined,
     imageBlur: a.featuredImage?.blurDataURL ?? undefined,
     slug: a.slug,

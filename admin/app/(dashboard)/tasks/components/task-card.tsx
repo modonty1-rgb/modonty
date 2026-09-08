@@ -2,7 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { CalendarClock, GripVertical, MoreHorizontal } from "lucide-react";
+import { CalendarClock, GripVertical, MoreHorizontal, UserRound } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -58,6 +58,7 @@ export function TaskCard({
   });
 
   const due = dueState(task.dueDate, task.status);
+  const assignerName = task.assignedBy?.name?.trim() || task.assignedBy?.email || "a team member";
 
   return (
     <div
@@ -66,7 +67,7 @@ export function TaskCard({
       className={cn(
         "group rounded-lg border border-s-4 bg-card p-2.5 shadow-sm transition-shadow",
         priorityAccent[task.priority],
-        task.assignedByAdmin && "bg-violet-500/10 ring-1 ring-violet-500/60 dark:bg-violet-500/15",
+        task.assignedBy && "bg-violet-500/10 ring-1 ring-violet-500/60 dark:bg-violet-500/15",
         isDragging && "opacity-40",
         dragging && "rotate-2 shadow-lg",
       )}
@@ -124,6 +125,12 @@ export function TaskCard({
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-1.5 ps-5">
+        {task.assignedBy && (
+          <span className="inline-flex items-center gap-1 rounded bg-violet-500/15 px-1.5 py-0.5 text-[10px] font-medium text-violet-700 dark:text-violet-300">
+            <UserRound className="size-3" aria-hidden />
+            Assigned by {assignerName}
+          </span>
+        )}
         {due && (
           <span
             className={cn(

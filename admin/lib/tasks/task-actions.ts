@@ -6,6 +6,7 @@ import type { Session } from "next-auth";
 import type { Prisma } from "@prisma/client";
 
 import { auth } from "@/lib/auth";
+import { canSeeReports } from "@/lib/can-see-reports";
 import { db } from "@/lib/db";
 
 import { createTaskSchema, moveTaskSchema, updateTaskSchema } from "./task-schema";
@@ -81,11 +82,14 @@ export async function createTask(raw: unknown): Promise<Result> {
   const data = parsed.data;
 
   try {
-    // A normal staff member always creates work for themselves. An Admin may
-    // explicitly assign from the Report screen, but the id is still verified
+    // The report UI is available to Admins and staff with `canViewReports`; both
+    // may assign a newly created report task. The destination is still verified
     // against an active staff record rather than trusted from the browser.
-    const actor = await db.staff.findUnique({ where: { id: userId }, select: { role: true } });
-    const assigneeId = actor?.role === "ADMIN" ? (orNull(data.assigneeId) ?? userId) : userId;
+    const actor = await db.staff.findUnique({
+      where: { id: userId },
+      select: { role: true, canViewReports: true },
+    });
+    const assigneeId = canSeeReports(actor) ? (orNull(data.assigneeId) ?? userId) : userId;
     const assignee = await db.staff.findUnique({
       where: { id: assigneeId },
       select: { id: true, isActive: true },

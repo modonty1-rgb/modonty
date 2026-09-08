@@ -9,7 +9,7 @@ import {
   type TaskAssigneeOption,
 } from "@/components/tasks/task-dialog";
 
-/** The report is the Admin's team view, so this is the one place a task can be
+/** The report is the team's shared view, so this is the one place a task can be
  * handed to another staff member. The task board itself remains personal. */
 export function ReportNewTaskButton({ assignees }: { assignees: TaskAssigneeOption[] }) {
   const [open, setOpen] = useState(false);
