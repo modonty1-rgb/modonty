@@ -39,6 +39,12 @@ const TONE_OF: Record<"overdue" | "today" | "noDate", string> = {
 const isClosed = (r: SalesLeadRow) => r.stage === "WON" || r.stage === "LOST";
 
 /**
+ * البحث في الرقم يتجاهل فراغاته ورمز البلد وشكله المرئي؛ فـ `+966 50 123 4567`
+ * و`0501234567` يجب أن يصلا إلى العميل نفسه. الاسم والشركة يبقيان بحثاً نصياً عادياً.
+ */
+const phoneDigits = (value: string | null) => (value ?? "").replace(/\D/g, "");
+
+/**
  * مالك المرشّحات الوحيد.
  *
  * الإشارات والمراحل والجدول ثلاثتها تعرض نفس الصفوف من زوايا مختلفة، فحالةُ ترشيحٍ في كلٍّ
@@ -121,10 +127,14 @@ export function LeadsBoard({
     }
     const q = query.trim().toLowerCase();
     if (q) {
-      // الاسم والشركة معاً: تُبحث «الشفاء» فيصل مَن اسم مركزه ذلك ومَن شركته كذلك.
+      const phoneQuery = phoneDigits(q);
+      // الاسم والشركة والجوّال معاً: تُبحث «الشفاء» فيصل مَن اسم مركزه ذلك ومَن شركته كذلك،
+      // والرقم يُقارن كأرقام كي لا تمنع المسافات أو `+966` العثور عليه.
       out = out.filter(
         (r) =>
-          r.name.toLowerCase().includes(q) || (r.company ?? "").toLowerCase().includes(q),
+          r.name.toLowerCase().includes(q) ||
+          (r.company ?? "").toLowerCase().includes(q) ||
+          (phoneQuery.length > 0 && phoneDigits(r.phone).includes(phoneQuery)),
       );
     }
     return out;
@@ -347,8 +357,8 @@ export function LeadsBoard({
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="ابحث بالاسم أو الشركة…"
-              aria-label="ابحث بالاسم أو الشركة"
+              placeholder="ابحث بالاسم أو الشركة أو رقم الجوال…"
+              aria-label="ابحث بالاسم أو الشركة أو رقم الجوال"
               className="h-9 ps-8 text-xs"
             />
           </div>

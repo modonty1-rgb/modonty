@@ -22,6 +22,15 @@ export interface DueRow {
   ownerName: string | null;
 }
 
+/**
+ * أحداث تايملاين العميل. الموعد اختياري لأن المتابعة تُسجَّل حتى إن لم يتفق الطرفان على موعد
+ * تالٍ؛ إخفاؤها من التايملاين يمحو سياق المكالمة التالية.
+ */
+export interface FollowUpTimelineRow extends Omit<DueRow, "nextActionAt"> {
+  nextActionAt: Date | null;
+  doneAt: Date | null;
+}
+
 const CEILING = 500;
 
 /**
@@ -37,6 +46,7 @@ export async function getDueFollowUps(): Promise<{
   overdue: DueRow[];
   today: DueRow[];
   upcoming: DueRow[];
+  historyByLead: Record<string, FollowUpTimelineRow[]>;
   total: number;
   truncated: boolean;
 }> {
@@ -54,54 +64,83 @@ export async function getDueFollowUps(): Promise<{
     lead: { is: { stage: { notIn: ["WON", "LOST"] satisfies Stage[] } } },
   } satisfies Prisma.SalesLeadFollowUpWhereInput;
 
+  const followUpSelect = {
+    id: true,
+    leadId: true,
+    channel: true,
+    body: true,
+    happenedAt: true,
+    nextActionAt: true,
+    nextActionNote: true,
+    doneAt: true,
+    lead: {
+      select: {
+        name: true,
+        company: true,
+        phone: true,
+        countryCode: true,
+        stage: true,
+        owner: { select: { name: true } },
+        createdBy: { select: { name: true } },
+      },
+    },
+  } as const;
+
   const [total, rows] = await Promise.all([
     db.salesLeadFollowUp.count({ where }),
     db.salesLeadFollowUp.findMany({
       where,
       orderBy: { nextActionAt: "asc" },
       take: CEILING,
-      select: {
-        id: true,
-        leadId: true,
-        channel: true,
-        body: true,
-        happenedAt: true,
-        nextActionAt: true,
-        nextActionNote: true,
-        lead: {
-          select: {
-            name: true,
-            company: true,
-            phone: true,
-            countryCode: true,
-            stage: true,
-            owner: { select: { name: true } },
-            createdBy: { select: { name: true } },
-          },
-        },
-      },
+      select: followUpSelect,
     }),
   ]);
+
+  const shape = (r: (typeof rows)[number]): FollowUpTimelineRow | null => {
+    // `lead` قد يغيب لو حُذف العميل من خارج التطبيق — الكاسكيد على مونجو محاكاةٌ في العميل
+    // ولا تسري على Compass. الصفّ اليتيم يُتخطّى بدل أن يُسقط الشاشة كلها.
+    if (!r.lead) return null;
+    return {
+      id: r.id,
+      leadId: r.leadId,
+      leadName: r.lead.name,
+      company: r.lead.company,
+      phone: r.lead.phone,
+      countryCode: r.lead.countryCode,
+      stage: r.lead.stage as Stage,
+      channel: r.channel,
+      body: r.body,
+      happenedAt: r.happenedAt,
+      nextActionAt: r.nextActionAt,
+      nextActionNote: r.nextActionNote,
+      doneAt: r.doneAt,
+      ownerName: r.lead.owner?.name ?? r.lead.createdBy?.name ?? null,
+    };
+  };
 
   const shaped: DueRow[] = rows
     // `lead` قد يغيب لو حُذف العميل من خارج التطبيق — الكاسكيد على مونجو محاكاةٌ في العميل
     // ولا تسري على Compass. الصفّ اليتيم يُتخطّى بدل أن يُسقط الشاشة كلها.
     .filter((r) => r.lead != null && r.nextActionAt != null)
-    .map((r) => ({
-      id: r.id,
-      leadId: r.leadId,
-      leadName: r.lead!.name,
-      company: r.lead!.company,
-      phone: r.lead!.phone,
-      countryCode: r.lead!.countryCode,
-      stage: r.lead!.stage as Stage,
-      channel: r.channel,
-      body: r.body,
-      happenedAt: r.happenedAt,
-      nextActionAt: r.nextActionAt!,
-      nextActionNote: r.nextActionNote,
-      ownerName: r.lead!.owner?.name ?? r.lead!.createdBy?.name ?? null,
-    }));
+    .map(shape)
+    .filter((r): r is FollowUpTimelineRow & { nextActionAt: Date } => r !== null && r.nextActionAt !== null);
+
+  const leadIds = [...new Set(shaped.map((r) => r.leadId))];
+  const historyRows = leadIds.length === 0
+    ? []
+    : await db.salesLeadFollowUp.findMany({
+        where: { leadId: { in: leadIds } },
+        orderBy: { happenedAt: "desc" },
+        select: followUpSelect,
+      });
+  const historyByLead: Record<string, FollowUpTimelineRow[]> = {};
+  for (const row of historyRows) {
+    const item = shape(row as (typeof rows)[number]);
+    if (!item) continue;
+    const history = (historyByLead[item.leadId] ??= []);
+    // بعض الصفوف القديمة دخلت مكررة أثناء ترحيل البيانات؛ المعرف هو الحقيقة لا ترتيب القراءة.
+    if (!history.some((existing) => existing.id === item.id)) history.push(item);
+  }
 
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
@@ -110,6 +149,7 @@ export async function getDueFollowUps(): Promise<{
     overdue: shaped.filter((r) => r.nextActionAt < startOfToday),
     today: shaped.filter((r) => r.nextActionAt >= startOfToday && r.nextActionAt <= endOfToday),
     upcoming: shaped.filter((r) => r.nextActionAt > endOfToday),
+    historyByLead,
     total,
     truncated: total > rows.length,
   };

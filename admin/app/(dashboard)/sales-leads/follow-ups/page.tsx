@@ -11,7 +11,7 @@ export const metadata = { title: "المتابعة — أدمن مدونتي" };
  * الأوّل جردٌ يُتصفَّح، والثاني قائمة عملٍ تُفرَغ.
  */
 export default async function FollowUpsPage() {
-  const { overdue, today, upcoming, total, truncated } = await getDueFollowUps();
+  const { overdue, today, upcoming, historyByLead, total, truncated } = await getDueFollowUps();
 
   return (
     <div dir="rtl" className="space-y-4 p-4 sm:p-6">
@@ -31,7 +31,7 @@ export default async function FollowUpsPage() {
         </p>
       </header>
 
-      <DueList overdue={overdue} today={today} upcoming={upcoming} />
+      <DueList overdue={overdue} today={today} upcoming={upcoming} historyByLead={historyByLead} />
 
       {truncated && (
         <p className="text-xs text-muted-foreground">
