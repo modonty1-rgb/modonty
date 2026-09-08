@@ -20,6 +20,7 @@ export interface LeadJourney {
   phone: string | null;
   countryCode: string | null;
   stage: Stage;
+  ownerId: string | null;
   ownerName: string | null;
   followUps: FollowUpTimelineRow[];
 }
@@ -51,8 +52,8 @@ export async function getDueFollowUps(): Promise<{
         phone: true,
         countryCode: true,
         stage: true,
-        owner: { select: { name: true } },
-        createdBy: { select: { name: true } },
+        owner: { select: { id: true, name: true } },
+        createdBy: { select: { id: true, name: true } },
         followUps: {
           select: {
             id: true,
@@ -77,6 +78,7 @@ export async function getDueFollowUps(): Promise<{
       phone: lead.phone,
       countryCode: lead.countryCode,
       stage: lead.stage as Stage,
+      ownerId: lead.owner?.id ?? lead.createdBy?.id ?? null,
       ownerName: lead.owner?.name ?? lead.createdBy?.name ?? null,
       followUps: lead.followUps,
     })),

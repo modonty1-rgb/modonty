@@ -1,4 +1,4 @@
-import { getTasksByDay } from "./helpers/get-tasks-by-day";
+import { getTasksByDay, getTasksByRange } from "./helpers/get-tasks-by-day";
 import { DayPicker } from "./components/day-picker";
 import { PersonFilter } from "./components/person-filter";
 import { ReportTable, type ReportRow } from "./components/report-table";
@@ -8,7 +8,7 @@ import { db } from "@/lib/db";
 import { canSeeReports } from "@/lib/can-see-reports";
 import { redirect } from "next/navigation";
 
-const dayFmt = new Intl.DateTimeFormat("en-GB", {
+const dayFmt = new Intl.DateTimeFormat("ar-EG", {
   weekday: "long",
   day: "numeric",
   month: "long",
@@ -42,9 +42,9 @@ function isLate(due: Date | null, status: string) {
 export default async function ReportPage({
   searchParams,
 }: {
-  searchParams: Promise<{ date?: string; person?: string }>;
+  searchParams: Promise<{ date?: string; from?: string; to?: string; view?: string; person?: string }>;
 }) {
-  const { date, person } = await searchParams;
+  const { date, from, to, view, person } = await searchParams;
   const day = parseDay(date);
   const session = await auth();
   const userId = (session?.user as { id?: string } | undefined)?.id;
@@ -66,7 +66,12 @@ export default async function ReportPage({
     take: 200,
   });
 
-  const lanes = await getTasksByDay(day);
+  const rangeStart = from ? parseDay(from) : undefined;
+  const rangeEnd = to ? parseDay(to) : undefined;
+  if (rangeEnd) rangeEnd.setDate(rangeEnd.getDate() + 1);
+  const lanes = view === "all" ? await getTasksByRange() : view === "range" && rangeStart && rangeEnd
+    ? await getTasksByRange(rangeStart, rangeEnd)
+    : await getTasksByDay(day);
 
   const laneKey = (l: (typeof lanes)[number]) => l.staffId ?? "unassigned";
 
@@ -89,12 +94,15 @@ export default async function ReportPage({
     lane.tasks.map((t) => ({
       id: t.id,
       title: t.title,
+      description: t.description,
       person: lane.name,
       personImage: lane.image,
       role: lane.role,
       status: t.status,
       priority: t.priority,
       dueDate: t.dueDate,
+      createdAt: t.createdAt,
+      assignedBy: t.assignedBy,
       late: isLate(t.dueDate, t.status),
     })),
   );
@@ -103,12 +111,12 @@ export default async function ReportPage({
     <div className="flex min-h-0 flex-col gap-3 p-4 sm:p-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-lg font-bold sm:text-xl">Everyone&apos;s Tasks</h1>
+          <h1 className="text-lg font-bold sm:text-xl">مهام الفريق</h1>
           <p className="mt-0.5 text-[13px] text-muted-foreground">
-            {dayFmt.format(day)} ·{" "}
+            {view === "all" ? "كل المهام" : view === "range" && from && to ? `${dayFmt.format(rangeStart!)} — ${dayFmt.format(parseDay(to))}` : dayFmt.format(day)} ·{" "}
             {selected
-              ? `${rows.length} of ${totalAll} tasks`
-              : `${totalAll} ${totalAll === 1 ? "task" : "tasks"}`}
+              ? `${rows.length} من ${totalAll} مهمة`
+              : `${totalAll} مهمة`}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -119,9 +127,9 @@ export default async function ReportPage({
 
       {totalAll === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-xl border border-dashed p-10 text-center">
-          <p className="text-sm font-medium">Nobody logged tasks for this day</p>
+          <p className="text-sm font-medium">لا توجد مهام مسجلة في هذه الفترة</p>
           <p className="text-[13px] text-muted-foreground">
-            Each person writes theirs in the morning — an empty page means it is early, or a day off.
+            قد تكون بداية اليوم أو يوم إجازة.
           </p>
         </div>
       ) : (

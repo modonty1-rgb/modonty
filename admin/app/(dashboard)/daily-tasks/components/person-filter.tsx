@@ -75,7 +75,7 @@ export function PersonFilter({ people, total }: { people: PersonCount[]; total: 
       </span>
       {!!late && (
         <span className="border-s border-red-500/30 bg-red-500/15 px-2 py-1 font-bold tabular-nums text-red-600 dark:text-red-400">
-          {late} late
+          {late} متأخر
         </span>
       )}
     </button>
@@ -83,7 +83,7 @@ export function PersonFilter({ people, total }: { people: PersonCount[]; total: 
 
   return (
     <div className="flex flex-wrap gap-1.5">
-      <Pill label="All" count={total} isActive={!active} onClick={() => go(null)} />
+      <Pill label="الكل" count={total} isActive={!active} onClick={() => go(null)} />
       {people.map((p) => {
         const isActive = active === p.key;
         return (

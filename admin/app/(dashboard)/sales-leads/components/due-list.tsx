@@ -190,6 +190,9 @@ function LeadTimelineCard({ lead, onDone, onSnooze, busy }: {
                 <span className="text-[11px] font-normal text-muted-foreground">
                   {STAGE_LABEL[lead.stage]}
                 </span>
+                <span className="text-[11px] font-normal text-muted-foreground">
+                  {lead.ownerName ?? "بدون مندوب"}
+                </span>
               </span>
               <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
                 <Clock3 className="size-3 shrink-0" aria-hidden />
@@ -255,7 +258,21 @@ export function DueList({ leads: sourceLeads }: Props) {
   const router = useRouter();
   const { toast } = useToast();
   const [pending, start] = useTransition();
-  const leads = useMemo(() => prepareJourneys(sourceLeads), [sourceLeads]);
+  const [ownerFilter, setOwnerFilter] = useState("all");
+  const ownerFilters = useMemo(() => {
+    const owners = new Map<string, { label: string; count: number }>();
+    for (const lead of sourceLeads) {
+      const key = lead.ownerId ?? "unassigned";
+      const current = owners.get(key);
+      if (current) current.count += 1;
+      else owners.set(key, { label: lead.ownerName ?? "بدون مندوب", count: 1 });
+    }
+    return [...owners.entries()].sort(([, a], [, b]) => b.count - a.count || a.label.localeCompare(b.label, "ar"));
+  }, [sourceLeads]);
+  const leads = useMemo(
+    () => prepareJourneys(ownerFilter === "all" ? sourceLeads : sourceLeads.filter((lead) => (lead.ownerId ?? "unassigned") === ownerFilter)),
+    [sourceLeads, ownerFilter],
+  );
 
   const act = (fn: () => Promise<{ success: boolean; error?: string }>, okText: string) =>
     start(async () => {
@@ -272,7 +289,7 @@ export function DueList({ leads: sourceLeads }: Props) {
     return (
       <Card>
         <CardContent className="py-10 text-center">
-          <p className="text-sm font-medium">لا يوجد عملاء في التقرير</p>
+          <p className="text-sm font-medium">لا يوجد عملاء بهذا الترشيح</p>
           <p className="mt-1 text-xs text-muted-foreground">
             سيظهر هنا كل عميل غير مفقود مع رحلة متابعاته كاملة.
           </p>
@@ -283,6 +300,34 @@ export function DueList({ leads: sourceLeads }: Props) {
 
   return (
     <div className="space-y-3">
+      <div className="flex flex-wrap items-center gap-1.5" aria-label="فلترة العملاء بالمندوب">
+        <span className="me-1 text-xs text-muted-foreground">المندوب:</span>
+        <button
+          type="button"
+          aria-pressed={ownerFilter === "all"}
+          onClick={() => setOwnerFilter("all")}
+          className={cn(
+            "rounded-full px-2.5 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            ownerFilter === "all" ? "bg-foreground font-medium text-background" : "bg-muted text-muted-foreground hover:text-foreground",
+          )}
+        >
+          الكل <span className="ms-1 tabular-nums opacity-70">{formatCount(sourceLeads.length)}</span>
+        </button>
+        {ownerFilters.map(([id, owner]) => (
+          <button
+            key={id}
+            type="button"
+            aria-pressed={ownerFilter === id}
+            onClick={() => setOwnerFilter(id)}
+            className={cn(
+              "rounded-full px-2.5 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              ownerFilter === id ? "bg-primary font-medium text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {owner.label} <span className="ms-1 tabular-nums opacity-70">{formatCount(owner.count)}</span>
+          </button>
+        ))}
+      </div>
       <p className="text-xs text-muted-foreground">
         {formatCount(leads.length)} عميل غير مفقود — رحلة العميل كاملة، مرتبة بأقرب موعد مفتوح ثم آخر تحديث.
       </p>

@@ -6,18 +6,17 @@ import { useSearchParams } from "next/navigation";
 import { Plus, Search, X } from "lucide-react";
 
 import { LeadsList } from "./leads-list";
-import { SignalCards, type DueFilter } from "./signal-cards";
+import { type DueFilter } from "./signal-cards";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FilterCard, FilterRow } from "./filter-card";
-import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
 import { cn } from "@/lib/utils";
 import { SILENT_AFTER_DAYS, describeSilence } from "../helpers/describe-silence";
 import { formatCount } from "../helpers/format-count";
 import { MARKETS, MARKET_DOT, MARKET_LABEL, NO_MARKET } from "../helpers/markets";
 import {
-  PICKABLE_STAGES, STAGE_DOT, STAGE_LABEL, describeDue, type Stage,
+  PICKABLE_STAGES, STAGE_DOT, STAGE_LABEL, describeDue, formatMoney, type Stage,
 } from "../helpers/funnel";
 import type { SalesLeadRow } from "../helpers/get-sales-leads";
 import { NO_SOURCE, type LeadsSummary } from "../helpers/summarize-leads";
@@ -313,40 +312,119 @@ export function LeadsBoard({
     </FilterCard>
   );
 
-  /**
-   * ثلاثة أعمدة — نفس صدفة الشاشتين الأخريين (خالد ٥ سبتمبر: «طبّق الـlayout الثلاثة أعمدة»).
-   *
-   * والقسمة بأولويّة الاستعمال: **الوسط** للبطاقات لأنها الشغل، و**اليمين** للإشارات لأنها ما
-   * يُقرأ أوّلاً في العربية، و**اليسار** للمرشّحات لأنها تُلمس عند الحاجة لا في كل نظرة.
-   *
-   * والمكسب الأكبر أن البطاقة نزلت من `1113` بكسلاً إلى عرض العمود: بطاقةٌ بعرض الشاشة تترك
-   * وسطها فارغاً وتدفع طرفيها إلى حافّتين لا تُقرآن معاً. ومعها خرجت ثلاثة صفوفٍ من الحبّات من
-   * فوق القائمة، فصارت البطاقة الأولى تُرى بلا تمرير.
-   */
+  const dueFilter = (
+    <FilterCard
+      title="حالة المتابعة"
+      allLabel="الكل"
+      allCount={formatCount(base.length)}
+      isAll={due === "all"}
+      onAll={() => setDue("all")}
+    >
+      <FilterRow
+        dot="bg-red-500"
+        label="متأخر"
+        count={formatCount(summary.overdue)}
+        active={due === "overdue"}
+        disabled={summary.overdue === 0}
+        onClick={() => setDue(due === "overdue" ? "all" : "overdue")}
+      />
+      <FilterRow
+        dot="bg-amber-500"
+        label="موعد اليوم"
+        count={formatCount(summary.today)}
+        active={due === "today"}
+        disabled={summary.today === 0}
+        onClick={() => setDue(due === "today" ? "all" : "today")}
+      />
+      <FilterRow
+        dot="bg-orange-500"
+        label="بلا موعد"
+        count={formatCount(summary.noDate)}
+        active={due === "noDate"}
+        disabled={summary.noDate === 0}
+        onClick={() => setDue(due === "noDate" ? "all" : "noDate")}
+      />
+    </FilterCard>
+  );
+
+  const tabClass = (active: boolean) =>
+    cn(
+      "rounded-md px-2 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+      active ? "bg-primary font-medium text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground",
+    );
+
+  const topFilters = (
+    <nav aria-label="تصفية العملاء المحتملين" className="flex flex-wrap items-center gap-x-4 gap-y-2 border-y py-2">
+      <div className="flex items-center gap-1 overflow-hidden rounded-lg border bg-card p-1 ps-0">
+        <span className="flex self-stretch items-center border-e bg-muted/50 px-2 text-[11px] font-medium text-foreground">المرحلة</span>
+        <button type="button" onClick={() => setStage(null)} aria-pressed={stage === null} className={tabClass(stage === null)}>
+          المفتوح {formatCount(base.length)}
+        </button>
+        {PICKABLE_STAGES.map((value) => {
+          const count = summary.byStage[value] ?? 0;
+          if (count === 0 && stage !== value) return null;
+          return (
+            <button key={value} type="button" onClick={() => setStage(stage === value ? null : value)} aria-pressed={stage === value} className={tabClass(stage === value)}>
+              {STAGE_LABEL[value]} {formatCount(count)}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="flex items-center gap-1 overflow-hidden rounded-lg border bg-card p-1 ps-0">
+        <span className="flex self-stretch items-center border-e bg-muted/50 px-2 text-[11px] font-medium text-foreground">السوق</span>
+        <button type="button" onClick={() => setMarket(null)} aria-pressed={market === null} className={tabClass(market === null)}>
+          الكل
+        </button>
+        {MARKETS.map((value) => (
+          <button key={value} type="button" onClick={() => setMarket(market === value ? null : value)} aria-pressed={market === value} disabled={(summary.byMarket[value] ?? 0) === 0} className={tabClass(market === value)}>
+            {MARKET_LABEL[value]} {formatCount(summary.byMarket[value] ?? 0)}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex items-center gap-1 overflow-hidden rounded-lg border bg-card p-1 ps-0">
+        <span className="flex self-stretch items-center border-e bg-muted/50 px-2 text-[11px] font-medium text-foreground">المتابعة</span>
+        {(["overdue", "today", "noDate"] as const).map((value) => (
+          <button key={value} type="button" onClick={() => setDue(due === value ? "all" : value)} aria-pressed={due === value} disabled={summary[value] === 0} className={tabClass(due === value)}>
+            {DUE_LABEL[value]} {formatCount(summary[value])}
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+
+  const pipelineValue = [formatMoney(summary.pipeline.SAR, "SAR"), formatMoney(summary.pipeline.EGP, "EGP")]
+    .filter(Boolean)
+    .join(" · ");
+
   return (
-    <ThreeColumnLayout
-      className="!px-0 !py-0"
-      header={
-        /* العنوان · الإشارات · زرّ الإضافة — صفٌّ واحد (خالد: «طلّعه فوق جنب إضافة عميل»). */
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <h1 className="shrink-0 text-lg font-semibold leading-tight">{title}</h1>
+    <div className="container mx-auto max-w-[1128px] px-3 py-3 sm:px-4 sm:py-6">
+      <header className="mb-4 space-y-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="min-w-0 flex-1">
-            <SignalCards summary={summary} active={due} onPick={setDue} />
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <h1 className="text-xl font-semibold leading-tight">{title}</h1>
+              <span className="text-sm text-muted-foreground">
+                {formatCount(base.length)} عميل مفتوح
+              </span>
+              {pipelineValue && <span className="text-xs text-muted-foreground">قيمة الصفقات: {pipelineValue}</span>}
+            </div>
           </div>
-          <Button asChild size="sm" className="shrink-0 gap-1.5">
+          <Button asChild className="shrink-0 gap-1.5">
             <Link href="/sales-leads/new">
-              <Plus className="size-4" aria-hidden /> إضافة عميل
+              <Plus className="size-4" aria-hidden /> إضافة عميل محتمل
             </Link>
           </Button>
         </div>
-      }
-      right={
-        <aside aria-label="المرحلة والسوق" className="w-full shrink-0 lg:sticky lg:top-0 lg:w-[260px]">
-          <div className="space-y-3">{stageFilter}{marketFilter}</div>
+        {topFilters}
+      </header>
+
+      <div className="flex flex-col gap-4 lg:flex-row">
+        <aside aria-label="مصدر العملاء المحتملين" className="w-full shrink-0 lg:sticky lg:top-4 lg:w-[300px] lg:self-start">
+          {sourceFilter}
         </aside>
-      }
-      center={
-        <div className="space-y-3">
+        <main className="min-w-0 flex-1 space-y-3 pb-20 lg:pb-0">
           {/* البحث فوق البطاقات مباشرةً: هو أوّل ما يُلمس حين يكون الاسم معروفاً. */}
           <div className="relative">
             <Search
@@ -370,13 +448,8 @@ export function LeadsBoard({
             emptyBecauseFiltered={filtered && base.length > 0}
             highlightId={justCreated}
           />
-        </div>
-      }
-      left={
-        <aside aria-label="المصدر" className="w-full shrink-0 lg:w-[260px]">
-          <div className="space-y-3">{sourceFilter}</div>
-        </aside>
-      }
-    />
+        </main>
+      </div>
+    </div>
   );
 }

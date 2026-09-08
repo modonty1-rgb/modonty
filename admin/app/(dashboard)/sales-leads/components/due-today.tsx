@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft, CalendarClock } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import { formatCount } from "../helpers/format-count";
-import { DUE_TONE, describeDue } from "../helpers/funnel";
+import { describeDue } from "../helpers/funnel";
 import type { SalesLeadRow } from "../helpers/get-sales-leads";
 
 /**
@@ -21,15 +20,13 @@ export function DueToday({ leads }: { leads: SalesLeadRow[] }) {
   if (leads.length === 0) return null;
 
   const overdue = leads.filter((l) => describeDue(l.nextActionAt).tone === "overdue").length;
-  const preview = leads.slice(0, 3);
-
   return (
     <Link
       href="/sales-leads/follow-ups"
       className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-amber-500/25 bg-amber-500/[0.04] px-4 py-3 transition-colors hover:bg-amber-500/[0.08]"
     >
       <CalendarClock className="size-4 shrink-0 text-amber-700 dark:text-amber-400" aria-hidden />
-      <span className="text-sm font-semibold">المطلوب منك اليوم</span>
+      <span className="text-sm font-semibold">متابعات اليوم</span>
 
       <span className="text-xs text-muted-foreground">
         {overdue > 0 && (
@@ -43,23 +40,8 @@ export function DueToday({ leads }: { leads: SalesLeadRow[] }) {
         <span className="tabular-nums">{formatCount(leads.length)}</span> في المجموع
       </span>
 
-      {/* الأسماء لا الأرقام وحدها: رقمٌ مجرّد يُؤجَّل، واسمٌ معروف يُفتح. */}
-      <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">
-        {preview.map((l, i) => {
-          const due = describeDue(l.nextActionAt);
-          return (
-            <span key={l.id}>
-              {i > 0 && " · "}
-              <span className="text-foreground">{l.name}</span>{" "}
-              <span className={cn(DUE_TONE[due.tone])}>({due.text})</span>
-            </span>
-          );
-        })}
-        {leads.length > preview.length && ` · و${leads.length - preview.length} غيرهم`}
-      </span>
-
-      <span className="inline-flex shrink-0 items-center gap-1 text-xs font-medium">
-        افتحي المتابعة
+      <span className="ms-auto inline-flex shrink-0 items-center gap-1 text-xs font-medium">
+        عرض المتابعات
         <ArrowLeft className="size-3.5 rtl:rotate-180" aria-hidden />
       </span>
     </Link>

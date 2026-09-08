@@ -1,10 +1,9 @@
 "use client";
 
-import { AlertTriangle, CalendarClock, CalendarX, MessageSquareOff, Wallet } from "lucide-react";
+import { AlertTriangle, CalendarClock, CalendarX } from "lucide-react";
 
 import { KpiToggle, type KpiMeta } from "@/components/admin/kpi-toggle";
 import { formatCount } from "../helpers/format-count";
-import { formatMoney } from "../helpers/funnel";
 import type { LeadsSummary } from "../helpers/summarize-leads";
 
 /** مرشّح الموعد — قيمةٌ واحدة تحكم الجدول، فلا يتنازع مرشّحان على نفس الصفوف. */
@@ -48,20 +47,7 @@ const SIGNALS = [
       ring: "ring-orange-500",
     } satisfies KpiMeta,
   },
-  {
-    // مقيس: ١٧ من ٢٠ — أصدق رقمٍ عن صحّة الفانل، ولم يكن في الشاشة.
-    key: "silent" as const,
-    icon: MessageSquareOff,
-    meta: {
-      label: "ساكت ٣٠+ يوم",
-      tone: "bg-rose-500/15 text-rose-600 dark:text-rose-400",
-      ring: "ring-rose-500",
-    } satisfies KpiMeta,
-  },
 ];
-
-/** الرابعة تُقرأ ولا تُضغط: لا يوجد «اعرض لي القيمة»، فلونها محايد بحسب أعراف المعيار. */
-const VALUE_TONE = { tone: "bg-muted text-foreground", ring: "ring-foreground/40" };
 
 export function SignalCards({
   summary,
@@ -72,13 +58,8 @@ export function SignalCards({
   active: DueFilter;
   onPick: (f: DueFilter) => void;
 }) {
-  const money = [formatMoney(summary.pipeline.SAR, "SAR"), formatMoney(summary.pipeline.EGP, "EGP")]
-    .filter(Boolean)
-    .join(" · ");
-
   return (
-    // خمسٌ في صفٍّ واحد — مكانها صار رأس الصفحة بعرضها كلّه، لا رفّاً ضيّقاً.
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+    <div className="grid grid-cols-3 gap-2">
       {SIGNALS.map((s) => {
         const n = summary[s.key];
         return (
@@ -95,15 +76,6 @@ export function SignalCards({
         );
       })}
 
-      <KpiToggle
-        meta={{ ...VALUE_TONE, label: `قيمة ${formatCount(summary.open)} صفقة مفتوحة` }}
-        icon={Wallet}
-        // العدد انتقل إلى التسمية، فـ«—» هنا لا يُقرأ «سالب عشرين» كما كان.
-        value={money || <span className="text-muted-foreground">—</span>}
-        active={false}
-        disabled
-        onClick={() => {}}
-      />
     </div>
   );
 }

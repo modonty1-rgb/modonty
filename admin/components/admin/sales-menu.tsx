@@ -16,21 +16,12 @@ import {
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
-  /**
-   * المتابعة أوّلاً — وهي ليست ترتيباً أبجدياً ولا ترتيب رحلة العميل.
-   *
-   * القائمة مرتَّبة بترتيب **يوم فاتن** لا بترتيب النظام: أوّل ما تفتح الأدمن تسأل «مين
-   * عليّا النهارده؟» لا «مين عندنا؟». والجرد يأتي بعده لأنه يُتصفَّح، بينما هذه تُفرَغ.
-   *
-   * خالد (٤ سبتمبر): «مبيعات فيه menu اسمها follow up».
-   */
-  { href: "/sales-leads/follow-ups", label: "المتابعة", icon: CalendarClock, hint: "مين عليكي النهارده" },
-  // ثم الجرد: الشخص محتمَلٌ قبل أن يكون عميلاً له حساب.
-  { href: "/sales-leads", label: "العملاء المحتملون", icon: UserPlus, hint: "اللي بنكلّمهم قبل ما يوقّعوا" },
-  { href: "/campaigns/leads", label: "عملاء الحملات", icon: UsersRound, hint: "العملاء المهتمون القادمون من الترويج" },
-  { href: "/clients/accounts", label: "الحسابات", icon: Wallet, hint: "كل عميل عليه كام ودفع كام" },
-  { href: "/clients/sales-report", label: "تقرير المبيعات", icon: TrendingUp, hint: "الإيراد شهر بشهر" },
-  { href: "/subscription-tiers", label: "الباقات", icon: CreditCard, hint: "الباقات وأسعارها" },
+  { href: "/sales-leads/new", label: "إضافة عميل محتمل", icon: UserPlus },
+  { href: "/sales-leads/follow-ups", label: "متابعة العملاء", icon: CalendarClock },
+  { href: "/sales-leads", label: "إدارة العملاء المحتملين", icon: UsersRound },
+  { href: "/subscription-tiers", label: "إدارة الباقات", icon: CreditCard },
+  { href: "/clients/accounts", label: "حسابات وفواتير العملاء", icon: Wallet },
+  { href: "/clients/sales-report", label: "تقرير المبيعات", icon: TrendingUp },
 ] as const;
 
 /**
@@ -52,6 +43,9 @@ const ITEMS = [
 export function SalesMenu() {
   const pathname = usePathname();
   const active = ITEMS.some((i) => pathname === i.href || pathname.startsWith(i.href + "/"));
+  const activeItemHref = ITEMS
+    .filter((item) => pathname === item.href || pathname.startsWith(item.href + "/"))
+    .sort((first, second) => second.href.length - first.href.length)[0]?.href;
 
   return (
     <DropdownMenu>
@@ -77,20 +71,17 @@ export function SalesMenu() {
       <DropdownMenuContent align="end" className="w-64" style={{ direction: "rtl" }}>
         <DropdownMenuLabel>المبيعات</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {ITEMS.map(({ href, label, icon: Icon, hint }) => {
-          const current = pathname === href;
+        {ITEMS.map(({ href, label, icon: Icon }) => {
+          const current = activeItemHref === href;
           return (
             <DropdownMenuItem key={href} asChild>
               <Link
                 href={href}
                 aria-current={current ? "page" : undefined}
-                className={cn("flex items-start gap-2", current && "bg-accent")}
+                className={cn("flex items-center gap-2", current && "bg-accent")}
               >
-                <Icon className="mt-0.5 size-4 shrink-0" aria-hidden />
-                <span className="flex min-w-0 flex-col">
-                  <span className="text-[13px] font-medium">{label}</span>
-                  <span className="text-[11px] text-muted-foreground">{hint}</span>
-                </span>
+                <Icon className="size-4 shrink-0" aria-hidden />
+                <span className="text-[13px] font-medium">{label}</span>
               </Link>
             </DropdownMenuItem>
           );

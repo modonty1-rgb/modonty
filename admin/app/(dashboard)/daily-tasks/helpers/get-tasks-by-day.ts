@@ -14,6 +14,7 @@ export interface DayTask {
   completedAt: Date | null;
   createdAt: Date;
   assignee: { id: string; name: string | null; image: string | null; role: string | null } | null;
+  assignedBy: { name: string | null; email: string | null } | null;
 }
 
 export interface StaffDay {
@@ -47,10 +48,15 @@ export function dayBounds(day: Date) {
  */
 export async function getTasksByDay(day: Date): Promise<StaffDay[]> {
   const { from, to } = dayBounds(day);
+  return getTasksByRange(from, to);
+}
+
+/** Same report, optionally across the whole history or a local date range. */
+export async function getTasksByRange(from?: Date, to?: Date): Promise<StaffDay[]> {
 
   const rows = await db.task.findMany({
     where: {
-      createdAt: { gte: from, lt: to },
+      ...(from && to ? { createdAt: { gte: from, lt: to } } : {}),
       // Archived rows are off every board. Both shapes — a field never written
       // is ABSENT in Mongo and `archivedAt: null` does not match it.
       OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
@@ -64,7 +70,9 @@ export async function getTasksByDay(day: Date): Promise<StaffDay[]> {
       dueDate: true,
       completedAt: true,
       createdAt: true,
+      createdById: true,
       assignee: { select: { id: true, name: true, image: true, role: true } },
+      createdBy: { select: { name: true, email: true } },
     },
     orderBy: [{ createdAt: "asc" }],
     take: 500,
@@ -89,7 +97,12 @@ export async function getTasksByDay(day: Date): Promise<StaffDay[]> {
       });
     }
     const g = groups.get(key)!;
-    g.tasks.push(row as DayTask);
+    g.tasks.push({
+      ...row,
+      assignedBy: row.createdById !== row.assignee?.id && row.createdBy
+        ? { name: row.createdBy.name, email: row.createdBy.email }
+        : null,
+    } as DayTask);
     g.counts[row.status as TaskStatusKey] += 1;
     if (isLate(row)) g.counts.late += 1;
   }

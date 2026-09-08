@@ -795,14 +795,7 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
           {marketPlans.length === 0 ? (
             <p className="text-xs text-muted-foreground">لا توجد باقات لهذا السوق.</p>
           ) : (
-            /* بطاقةٌ في كل سطر، لا ثلاثٌ جنباً إلى جنب.
-
-               الصفقة صارت في رَيلٍ عرضه `260`، والثلاثة عرضاً تعني `~80` للبطاقة — وقد قِيس
-               أثرُ ذلك من قبل: الاسم يُقصّ إلى صفر ويبقى رقمٌ بلا هويّة. والصفّ الواحد يعطي كل
-               بطاقةٍ العرض كلّه، فالاسم يمين والسعر شمال كما صمّمناها أصلاً.
-
-               والمقارنة لم تُفقد: الثلاثة ما زالت في مجال نظرٍ واحد، تُقرأ رأسياً بدل أفقياً. */
-            <div className="grid w-full grid-cols-1 gap-1.5">
+            <div className="grid w-full grid-cols-3 gap-1">
               {marketPlans.map((p) => {
                 const on = form.expectedTier === p.tier;
                 const price = priceOf(p);
@@ -815,7 +808,7 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
                     onClick={() => pickPlan(p)}
                     aria-pressed={on}
                     className={cn(
-                      "rounded border px-2.5 py-1.5 text-start transition-[border-color,background-color,transform] duration-150 active:scale-[0.98]",
+                      "rounded border px-1.5 py-1.5 text-center transition-[border-color,background-color,transform] duration-150 active:scale-[0.98]",
                       TAP,
                       on
                         ? "border-foreground bg-foreground/[0.06]"
@@ -824,17 +817,15 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
                           : "border-border hover:border-foreground/40",
                     )}
                   >
-                    {/* الاسم والسعر على سطرٍ واحد داخل البطاقة: البطاقة تصير شريطاً
-                        ارتفاعه سطر، والثلاثة تُقرأ كصفٍّ واحد بنظرة. */}
-                    <span className="flex items-center justify-between gap-2">
+                    <span className="flex flex-col items-center gap-0.5">
                       <span className="flex min-w-0 items-center gap-1">
-                        <span className="truncate text-xs font-medium">{p.name}</span>
+                        <span className="truncate text-[11px] font-medium">{p.name}</span>
                         {on && <Check className="size-3 shrink-0" aria-hidden />}
                         {!on && featured && (
                           <span className="shrink-0 text-[10px] leading-none text-amber-700 dark:text-amber-400">✦</span>
                         )}
                       </span>
-                      <span className="shrink-0 text-sm font-semibold tabular-nums">{money(price.total)}</span>
+                      <span className="text-xs font-semibold tabular-nums">{money(price.total)}</span>
                     </span>
                   </button>
                 );
@@ -861,7 +852,7 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
        * كلّما صُحّح رقم تليفون — فيمتلئ سجلّ العميل بأحداث لم تقع.
        */}
       {!isEdit && (
-        <Card className="rounded-md">
+        <Card className="flex h-full max-h-full min-h-[260px] flex-col rounded-md">
           <CardHeader className="px-4 pb-1.5 pt-3">
             <CardTitle className="text-sm">
               ملاحظة أولى
@@ -870,14 +861,14 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
               </span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="px-4 pb-3">
+          <CardContent className="flex flex-1 flex-col px-4 pb-3">
             <Textarea
               id="note"
               value={form.note ?? ""}
               onChange={(e) => set("note", e.target.value)}
               rows={2}
               placeholder="يريد يعرف الأسعار أولاً، وقال نتواصل معه بعد رجوعه من السفر…"
-              className="rounded text-sm"
+              className="min-h-[120px] flex-1 resize-none rounded text-sm"
             />
           </CardContent>
         </Card>
@@ -926,20 +917,15 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
    * فهو صفٌّ يعبر العرض كلّه، بعد آخر ما يُكتب في أيٍّ من العمودين.
    */
   const actions = (
-    <div className="flex flex-wrap items-center gap-2 border-t pt-3">
-        <Button type="submit" disabled={saving !== null} className="h-8 gap-2 rounded">
-          {saving === "one" ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
-          {saving === "one" ? "جارٍ الحفظ…" : isEdit ? "حفظ التعديلات" : "حفظ"}
-        </Button>
+    <div className="sticky bottom-0 z-10 -mx-1 flex flex-wrap items-center gap-2 border-t bg-background/95 px-1 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         {!isEdit && (
           <Button
             type="button"
-            variant="outline"
             disabled={saving !== null}
             onClick={() => submit("next")}
             className="h-8 gap-2 rounded"
           >
-            {saving === "next" ? <Loader2 className="size-4 animate-spin" /> : null}
+            {saving === "next" ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
             {saving === "next" ? "جارٍ الحفظ…" : "حفظ وإضافة آخر"}
           </Button>
         )}
@@ -976,20 +962,20 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
         className="!px-0 !py-0"
         header={<div className="-mb-4">{header}</div>}
         right={
-          <aside aria-label="طريقة الوصول" className="w-full shrink-0 lg:sticky lg:top-0 lg:w-[260px]">
+          <aside aria-label="الصفقة وطريقة الوصول" className="w-full shrink-0 space-y-3 lg:sticky lg:top-0 lg:w-[260px]">
+            {deal}
             {howTheyCame}
           </aside>
         }
         center={
           <div className="space-y-2">
             {identity}
-            {firstNote}
             {actions}
           </div>
         }
         left={
-          <aside aria-label="الصفقة" className="w-full shrink-0 lg:sticky lg:top-0 lg:w-[260px]">
-            {deal}
+          <aside aria-label="ملاحظات وتفاصيل إضافية" className="flex w-full shrink-0 flex-col overflow-hidden lg:sticky lg:top-0 lg:!h-[284px] lg:!max-h-[284px] lg:w-[260px]">
+            {firstNote}
           </aside>
         }
       />

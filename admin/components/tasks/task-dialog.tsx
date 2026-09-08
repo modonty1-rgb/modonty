@@ -163,17 +163,6 @@ export function TaskDialog({
             />
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="task-desc">Details (optional)</Label>
-            <Textarea
-              id="task-desc"
-              value={form.description}
-              onChange={(e) => set("description", e.target.value)}
-              rows={3}
-              placeholder="Anything that helps whoever does it"
-            />
-          </div>
-
           <div className="grid grid-cols-2 gap-3">
             {canAssign && (
               <div className="col-span-2 space-y-1.5">
@@ -230,6 +219,18 @@ export function TaskDialog({
                 in a dialog is a third way to do the same thing, and the one
                 nobody would look for. The form still SENDS the current status so
                 saving an edit does not move the card. */}
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="task-desc">Details (optional)</Label>
+            <Textarea
+              id="task-desc"
+              value={form.description}
+              onChange={(e) => set("description", e.target.value)}
+              rows={6}
+              placeholder="Anything that helps whoever does it"
+              className="resize-y"
+            />
           </div>
         </div>
 

@@ -40,7 +40,11 @@ export function TasksMenu({ canViewReports = false }: { canViewReports?: boolean
   // permission on the staff row (Khalid, 2026-09-04), and the session token does not carry
   // it — a token minted before the box was ticked would keep the link hidden until the next
   // sign-in. So the layout reads it on the server and passes it down.
-  const items = ITEMS.filter((item) => item.href !== "/daily-tasks" || canViewReports);
+  const items = ITEMS
+    .filter((item) => item.href !== "/daily-tasks" || canViewReports)
+    .map((item) => item.href === "/tasks/archive" && canViewReports
+      ? { ...item, label: "Team Archive", hint: "Archived tasks from everyone" }
+      : item);
   const active = items.some(
     (i) => pathname === i.href || (i.href !== "/tasks" && pathname.startsWith(i.href)),
   );
