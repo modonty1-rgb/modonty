@@ -75,7 +75,9 @@ function groupByLead(rows: DueRow[], historyByLead: Record<string, FollowUpTimel
     if (current) {
       // حين وصل تاريخ العميل من الاستعلام الثاني فهو يحتوي هذا الصف بالفعل؛ لا نكرره لأن له
       // موعداً مفتوحاً أيضاً.
-      if (!current.rows.some((event) => event.id === row.id)) current.rows.push(row);
+      if (!current.rows.some((event) => event.id === row.id)) {
+        current.rows.push({ ...row, doneAt: null });
+      }
       if (row.nextActionAt < current.next.nextActionAt) current.next = row;
       continue;
     }
@@ -250,8 +252,12 @@ function LeadTimelineCard({ lead, onDone, onSnooze, busy }: {
                   row={row}
                   busy={busy}
                   isLast={index === lead.rows.length - 1}
-                  onDone={() => onDone(row)}
-                  onSnooze={() => onSnooze(row)}
+                  onDone={() => {
+                    if (row.nextActionAt && !row.doneAt) onDone(row);
+                  }}
+                  onSnooze={() => {
+                    if (row.nextActionAt && !row.doneAt) onSnooze(row);
+                  }}
                 />
               ))}
             </ol>
