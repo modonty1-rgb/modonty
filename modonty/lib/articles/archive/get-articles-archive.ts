@@ -4,6 +4,7 @@ import { Prisma, ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getCoreClientId } from "@modonty/shared/lib/core-client";
+import { safeLiteralSearch } from "@/lib/search/safe-literal-search";
 
 import type { FeedPost } from "@/lib/types";
 
@@ -115,6 +116,7 @@ export async function getArticlesArchive(query: ArchiveQuery = {}): Promise<Arch
   "use cache";
   cacheTag("articles");
   cacheLife("hours");
+  const literalSearch = safeLiteralSearch(query.search);
 
   // One extra read per query (cached alongside the articles), so every card downstream —
   // including the ones infinite scroll fetches later — knows whether modonty wrote it.
@@ -130,12 +132,12 @@ export async function getArticlesArchive(query: ArchiveQuery = {}): Promise<Arch
        */
       AND: [
         { OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }] },
-        ...(query.search
+        ...(literalSearch
           ? [
               {
                 OR: [
-                  { title: { contains: query.search, mode: "insensitive" as const } },
-                  { excerpt: { contains: query.search, mode: "insensitive" as const } },
+                  { title: { contains: literalSearch, mode: "insensitive" as const } },
+                  { excerpt: { contains: literalSearch, mode: "insensitive" as const } },
                 ],
               },
             ]

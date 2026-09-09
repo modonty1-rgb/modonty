@@ -3,6 +3,7 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus, ClientCtaMode, SubscriptionStatus } from "@prisma/client";
 import type { ClientResponse } from "@/lib/types";
+import { safeLiteralSearch } from "@/lib/search/safe-literal-search";
 import { ClientSortOption, clientOrderBy } from "./client-sort";
 
 export async function getClientsSearch(
@@ -13,17 +14,17 @@ export async function getClientsSearch(
   "use cache";
   cacheTag("clients");
   cacheLife("minutes");
-  const trimmed = search.trim();
-  if (!trimmed) return [];
+  const literalSearch = safeLiteralSearch(search);
+  if (!literalSearch) return [];
   const orderBy = clientOrderBy(sortBy);
   const clients = await db.client.findMany({
     where: {
       subscriptionStatus: SubscriptionStatus.ACTIVE,
       OR: [
-        { name: { contains: trimmed, mode: "insensitive" } },
-        { legalName: { contains: trimmed, mode: "insensitive" } },
-        { description: { contains: trimmed, mode: "insensitive" } },
-        { seoDescription: { contains: trimmed, mode: "insensitive" } },
+        { name: { contains: literalSearch, mode: "insensitive" } },
+        { legalName: { contains: literalSearch, mode: "insensitive" } },
+        { description: { contains: literalSearch, mode: "insensitive" } },
+        { seoDescription: { contains: literalSearch, mode: "insensitive" } },
       ],
     },
     include: {

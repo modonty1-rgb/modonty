@@ -6,6 +6,7 @@ import { Prisma, ArticleStatus } from "@prisma/client";
 import type { ArticleResponse, ArticleFilters, InteractionCounts } from "@/lib/types";
 import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
 import { getCoreClientId } from "@/lib/settings/get-core-client-id";
+import { safeLiteralSearch } from "@/lib/search/safe-literal-search";
 
 export const feedArticleSelect = {
   id: true,
@@ -126,6 +127,7 @@ export async function getArticlesCached(filters: ArticleFilters = {}) {
     status = ArticleStatus.PUBLISHED,
     sortBy = "newest",
   } = filters;
+  const literalSearch = safeLiteralSearch(search);
 
   // `id` is the final, unique tie-breaker — without it, rows sharing featured+datePublished
   // (notably the datePublished:null ties) reshuffle between requests, so offset pagination
@@ -164,13 +166,13 @@ export async function getArticlesCached(filters: ArticleFilters = {}) {
         { datePublished: { lte: new Date() } },
       ],
     }),
-    ...(search?.trim() && {
+    ...(literalSearch && {
       AND: [
         {
           OR: [
-            { title: { contains: search.trim(), mode: "insensitive" } },
-            { excerpt: { contains: search.trim(), mode: "insensitive" } },
-            { content: { contains: search.trim(), mode: "insensitive" } },
+            { title: { contains: literalSearch, mode: "insensitive" } },
+            { excerpt: { contains: literalSearch, mode: "insensitive" } },
+            { content: { contains: literalSearch, mode: "insensitive" } },
           ],
         },
       ],
