@@ -19,20 +19,29 @@ export async function getAuthorsStats() {
       };
     }
 
-    const [publishedArticleCount, draftArticleCount] = await Promise.all([
-      db.article.count({
-        where: { authorId: modontyAuthor.id, status: ArticleStatus.PUBLISHED },
-      }),
-      db.article.count({
-        where: { authorId: modontyAuthor.id, status: ArticleStatus.DRAFT },
-      }),
-    ]);
+    // Do not include the Article relation on Author just to count it. On MongoDB, Prisma
+    // implements that relation count through $lookup, which materializes every article body
+    // and exceeds the 16 MB aggregation-document limit for the Modonty publisher.
+    const [totalArticleCount, publishedArticleCount, draftArticleCount] =
+      await Promise.all([
+        db.article.count({ where: { authorId: modontyAuthor.id } }),
+        db.article.count({
+          where: {
+            authorId: modontyAuthor.id,
+            status: ArticleStatus.PUBLISHED,
+          },
+        }),
+        db.article.count({
+          where: { authorId: modontyAuthor.id, status: ArticleStatus.DRAFT },
+        }),
+      ]);
 
     const scoreResult = computeReferenceSeoScore({
       name: modontyAuthor.name,
       nextjsMetadata: modontyAuthor.nextjsMetadata,
       jsonLdStructuredData: modontyAuthor.jsonLdStructuredData,
-      jsonLdValidationReport: (modontyAuthor.jsonLdValidationReport ?? null) as JsonLdValidationReport | null,
+      jsonLdValidationReport: (modontyAuthor.jsonLdValidationReport ??
+        null) as JsonLdValidationReport | null,
     });
 
     const socialProfilesCount = [
@@ -43,7 +52,7 @@ export async function getAuthorsStats() {
     ].filter(Boolean).length;
 
     return {
-      totalArticles: modontyAuthor._count.articles,
+      totalArticles: totalArticleCount,
       publishedArticles: publishedArticleCount,
       draftArticles: draftArticleCount,
       averageSEO: scoreResult.score,

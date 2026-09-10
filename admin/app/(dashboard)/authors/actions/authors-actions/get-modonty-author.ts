@@ -1,14 +1,12 @@
 "use server";
 
 import { entityUrl } from "@modonty/shared/lib/seo/absolute-url";
-import type { Prisma } from "@prisma/client";
+import type { Author } from "@prisma/client";
 import { db } from "@/lib/db";
 import { MODONTY_AUTHOR_SLUG } from "@/lib/constants/modonty-author";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 
-type ModontyAuthor = Prisma.AuthorGetPayload<{
-  include: { _count: { select: { articles: true } } };
-}>;
+type ModontyAuthor = Author;
 
 export type ModontyAuthorLookup = {
   author: ModontyAuthor | null;
@@ -43,9 +41,6 @@ export async function getModontyAuthorLookup(): Promise<ModontyAuthorLookup> {
         canonicalUrl: entityUrl("authors", MODONTY_AUTHOR_SLUG, siteUrl),
         verificationStatus: true,
       },
-      include: {
-        _count: { select: { articles: true } },
-      },
     });
 
     return { author, error: null };
@@ -54,9 +49,6 @@ export async function getModontyAuthorLookup(): Promise<ModontyAuthorLookup> {
     try {
       const existingAuthor = await db.author.findUnique({
         where: { slug: MODONTY_AUTHOR_SLUG },
-        include: {
-          _count: { select: { articles: true } },
-        },
       });
       if (existingAuthor) {
         return { author: existingAuthor, error: null };
