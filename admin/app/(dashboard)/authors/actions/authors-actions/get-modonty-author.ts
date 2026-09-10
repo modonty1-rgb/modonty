@@ -5,7 +5,20 @@ import { db } from "@/lib/db";
 import { MODONTY_AUTHOR_SLUG } from "@/lib/constants/modonty-author";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 
-export async function getModontyAuthor() {
+type ModontyAuthor = Awaited<ReturnType<typeof db.author.upsert>>;
+
+export type ModontyAuthorLookup = {
+  author: ModontyAuthor | null;
+  error: string | null;
+};
+
+/** Keep deployment/database diagnostics useful without ever printing a connection password. */
+function safeErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.replace(/(mongodb(?:\+srv)?:\/\/)[^\s@/]+@/gi, "$1***@");
+}
+
+export async function getModontyAuthorLookup(): Promise<ModontyAuthorLookup> {
   try {
     // Both URLs below used to be literals. They are written into a real row on first call and
     // then travel into the author's JSON-LD `url` and `canonicalUrl` — a guessed host here
@@ -32,8 +45,9 @@ export async function getModontyAuthor() {
       },
     });
 
-    return author;
+    return { author, error: null };
   } catch (error) {
+    const primaryError = safeErrorMessage(error);
     try {
       const existingAuthor = await db.author.findUnique({
         where: { slug: MODONTY_AUTHOR_SLUG },
@@ -42,13 +56,22 @@ export async function getModontyAuthor() {
         },
       });
       if (existingAuthor) {
-        return existingAuthor;
+        return { author: existingAuthor, error: null };
       }
     } catch (fetchError) {
-      console.error("Error fetching existing Modonty author:", fetchError);
+      const fallbackError = safeErrorMessage(fetchError);
+      const diagnostic = `فشل إنشاء/قراءة Author slug=\"${MODONTY_AUTHOR_SLUG}\". الخطأ الأساسي: ${primaryError} | فشل البحث الاحتياطي: ${fallbackError}`;
+      console.error(diagnostic);
+      return { author: null, error: diagnostic };
     }
-    console.error("Error fetching/creating Modonty author:", error);
-    return null;
+
+    const diagnostic = `فشل إنشاء/قراءة Author slug=\"${MODONTY_AUTHOR_SLUG}\". الخطأ الأساسي: ${primaryError} | البحث الاحتياطي لم يجد سجلًا بهذا الـslug.`;
+    console.error(diagnostic);
+    return { author: null, error: diagnostic };
   }
 }
 
+/** Existing callers only need the record; the Authors screen uses the diagnostic variant. */
+export async function getModontyAuthor() {
+  return (await getModontyAuthorLookup()).author;
+}

@@ -1,4 +1,7 @@
-import { getModontyAuthor, getAuthorsStats } from "./actions/authors-actions";
+import {
+  getModontyAuthorLookup,
+  getAuthorsStats,
+} from "./actions/authors-actions";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 import { AuthorForm } from "./components/author-form";
@@ -8,25 +11,46 @@ import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { FileText, CheckCircle2, Share2 } from "lucide-react";
 
 export default async function AuthorsPage() {
-  const [author, stats, settings, siteUrl] = await Promise.all([
-    getModontyAuthor(),
+  const [authorLookup, stats, settings, siteUrl] = await Promise.all([
+    getModontyAuthorLookup(),
     getAuthorsStats(),
     getAllSettings(),
     loadSiteUrl(),
   ]);
 
+  const author = authorLookup.author;
+
   if (!author) {
     return (
-      <div className="mx-auto max-w-[1200px] py-12 text-center">
-        <p className="text-muted-foreground">Error: Modonty author not found</p>
+      <div className="mx-auto max-w-[1200px] space-y-3 py-12">
+        <h1 className="text-xl font-semibold text-destructive">
+          تعذّر تحميل كاتب مدونتي
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          هذه ليست رسالة “Author غير موجود”. هذا سبب الفشل الفعلي من السيرفر:
+        </p>
+        <pre
+          className="overflow-x-auto whitespace-pre-wrap rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-left text-xs leading-6 text-destructive"
+          dir="ltr"
+        >
+          {authorLookup.error ?? "لم يرجع السيرفر سببًا للتعذّر."}
+        </pre>
       </div>
     );
   }
 
   const channelCount = [
-    settings.facebookUrl, settings.twitterUrl, settings.linkedInUrl, settings.instagramUrl,
-    settings.youtubeUrl, settings.tiktokUrl, settings.snapchatUrl, settings.pinterestUrl,
-    settings.whatsappChannelUrl, settings.telegramChannelUrl, settings.googleBusinessProfileUrl,
+    settings.facebookUrl,
+    settings.twitterUrl,
+    settings.linkedInUrl,
+    settings.instagramUrl,
+    settings.youtubeUrl,
+    settings.tiktokUrl,
+    settings.snapchatUrl,
+    settings.pinterestUrl,
+    settings.whatsappChannelUrl,
+    settings.telegramChannelUrl,
+    settings.googleBusinessProfileUrl,
   ].filter(Boolean).length;
 
   const metric = "flex items-center gap-1.5 text-xs text-muted-foreground";
@@ -47,21 +71,40 @@ export default async function AuthorsPage() {
             </AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-xl font-semibold leading-tight">{settings.siteName || author.name}</h1>
-            <p className="mt-0.5 text-xs text-muted-foreground">Publisher · Organization</p>
+            <h1 className="text-xl font-semibold leading-tight">
+              {settings.siteName || author.name}
+            </h1>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Publisher · Organization
+            </p>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <span className={metric}><FileText className="h-3.5 w-3.5 text-violet-500" /><b className="text-foreground">{stats.totalArticles}</b> articles</span>
-          <span className={metric}><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /><b className="text-foreground">{stats.publishedArticles}</b> published</span>
-          <span className={metric}><Share2 className="h-3.5 w-3.5 text-blue-500" /><b className="text-foreground">{channelCount}</b> channels</span>
+          <span className={metric}>
+            <FileText className="h-3.5 w-3.5 text-violet-500" />
+            <b className="text-foreground">{stats.totalArticles}</b> articles
+          </span>
+          <span className={metric}>
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+            <b className="text-foreground">{stats.publishedArticles}</b>{" "}
+            published
+          </span>
+          <span className={metric}>
+            <Share2 className="h-3.5 w-3.5 text-blue-500" />
+            <b className="text-foreground">{channelCount}</b> channels
+          </span>
           <SeoScoreBadge score={stats.averageSEO} size="lg" />
         </div>
       </div>
 
       {/* Editor — search snippet (editable) + everything else (from Settings, read-only) */}
-      <AuthorForm initialData={author} authorId={author.id} settings={settings} siteUrl={siteUrl} />
+      <AuthorForm
+        initialData={author}
+        authorId={author.id}
+        settings={settings}
+        siteUrl={siteUrl}
+      />
 
       {/* Technical — raw JSON-LD + meta this record emits (same page, one record) */}
       <AuthorSeoTechnical
