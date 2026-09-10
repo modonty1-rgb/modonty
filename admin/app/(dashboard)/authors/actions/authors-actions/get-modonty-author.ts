@@ -1,11 +1,14 @@
 "use server";
 
 import { entityUrl } from "@modonty/shared/lib/seo/absolute-url";
+import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { MODONTY_AUTHOR_SLUG } from "@/lib/constants/modonty-author";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 
-type ModontyAuthor = Awaited<ReturnType<typeof db.author.upsert>>;
+type ModontyAuthor = Prisma.AuthorGetPayload<{
+  include: { _count: { select: { articles: true } } };
+}>;
 
 export type ModontyAuthorLookup = {
   author: ModontyAuthor | null;
