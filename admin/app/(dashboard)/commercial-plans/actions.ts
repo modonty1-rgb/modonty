@@ -1,5 +1,6 @@
 "use server";
 
+import { SubscriptionTier } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -12,6 +13,7 @@ const updatePlanSchema = z.object({
   name: z.string().trim().min(1, "اسم الباقة مطلوب").max(60, "اسم الباقة طويل جداً"),
   description: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(300).nullable()),
   badge: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(30).nullable()),
+  tier: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.nativeEnum(SubscriptionTier).nullable()),
 });
 
 /**
@@ -55,14 +57,20 @@ export async function createCommercialPlan(form: FormData) {
 
 export async function updateCommercialPlan(id: string, form: FormData) {
   await requireCommercialAdmin();
-  const parsed = updatePlanSchema.safeParse({ name: value(form, "name"), description: value(form, "description"), badge: value(form, "badge") });
+  const parsed = updatePlanSchema.safeParse({ name: value(form, "name"), description: value(form, "description"), badge: value(form, "badge"), tier: value(form, "tier") });
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "تحقق من بيانات الباقة");
-  await db.commercialPlan.update({ where: { id }, data: { name: parsed.data.name, description: parsed.data.description, badge: parsed.data.badge } });
+  await db.commercialPlan.update({ where: { id }, data: { name: parsed.data.name, description: parsed.data.description, badge: parsed.data.badge, tier: parsed.data.tier } });
   revalidatePath("/commercial-plans"); revalidatePath(`/commercial-plans/${id}`);
 }
 
 export async function setCommercialPlanPublished(id: string, isPublished: boolean) {
   await requireCommercialAdmin();
+  if (isPublished) {
+    const plan = await db.commercialPlan.findUnique({ where: { id }, select: { tier: true } });
+    if (!plan?.tier) throw new Error("حدّد فئة الاشتراك قبل النشر");
+    const conflict = await db.commercialPlan.findFirst({ where: { id: { not: id }, isPublished: true, tier: plan.tier }, select: { name: true } });
+    if (conflict) throw new Error(`الفئة مستعملة في باقة «${conflict.name}» المنشورة`);
+  }
   await db.commercialPlan.update({ where: { id }, data: { isPublished } });
   revalidatePath("/commercial-plans"); revalidatePath(`/commercial-plans/${id}`);
 }

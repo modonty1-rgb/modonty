@@ -1046,6 +1046,7 @@ model CommercialPlan {
     articlesPerMonth Int?
     highlights  String[]
   badge       String?
+  tier        SubscriptionTier?
   isPublished Boolean  @default(false)
   displayOrder Int    @default(0)
   prices      CommercialPlanPrice[]

@@ -1,9 +1,11 @@
+import { SubscriptionTier } from "@prisma/client";
 import { PackageOpen } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { db } from "@/lib/db";
@@ -15,16 +17,22 @@ import { PlanPanel } from "./components/plan-panel";
 
 export const dynamic = "force-dynamic";
 
+const TIER_VALUES = [SubscriptionTier.BASIC, SubscriptionTier.STANDARD, SubscriptionTier.PRO, SubscriptionTier.PREMIUM];
+
 /** The whole commercial catalogue stays on one screen: this product has 3–4 plans, not hundreds. */
 export default async function CommercialPlansPage() {
-  const plans = await db.commercialPlan.findMany({
+  const [plans, tierConfigs] = await Promise.all([
+    db.commercialPlan.findMany({
       include: {
         prices: { orderBy: { market: "desc" } },
         terms: { orderBy: { displayOrder: "asc" } },
         features: { include: { feature: true }, orderBy: { displayOrder: "asc" } },
       },
       orderBy: { displayOrder: "asc" },
-    });
+    }),
+    db.subscriptionTierConfig.findMany({ select: { tier: true, name: true } }),
+  ]);
+  const tierLabel = (tier: SubscriptionTier) => tierConfigs.find((config) => config.tier === tier)?.name ?? tier;
 
   return <main className="mx-auto flex max-w-6xl flex-col gap-5 pb-8" dir="rtl">
     <header className="flex flex-wrap items-end justify-between gap-2"><div className="flex flex-col gap-1"><h1 className="text-2xl font-semibold">الباقات والأسعار</h1><p className="text-sm text-muted-foreground">راجع الباقات وانشرها، وافتح التفاصيل عند الحاجة للتعديل.</p></div>{plans.length > 0 ? <p className="text-sm text-muted-foreground">{plans.length} باقات في الكتالوج</p> : null}</header>
@@ -40,6 +48,12 @@ export default async function CommercialPlansPage() {
               <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">الاسم<Input className="h-9" name="name" maxLength={60} defaultValue={plan.name} required/></label>
               <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">الوصف<Textarea name="description" maxLength={300} defaultValue={plan.description ?? ""} rows={2}/></label>
               <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">الشارة<Input className="h-9" name="badge" maxLength={30} placeholder="الأكثر طلباً" defaultValue={plan.badge ?? ""}/></label>
+              <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">فئة الاشتراك
+                <Select name="tier" defaultValue={plan.tier ?? undefined}>
+                  <SelectTrigger className="h-9"><SelectValue placeholder="بلا فئة — لن تُنشر"/></SelectTrigger>
+                  <SelectContent>{TIER_VALUES.map((tier) => <SelectItem key={tier} value={tier}>{tierLabel(tier)}</SelectItem>)}</SelectContent>
+                </Select>
+              </label>
               <Button className="h-9 self-start" type="submit" variant="outline">حفظ بيانات الباقة</Button>
             </form>
           </section>

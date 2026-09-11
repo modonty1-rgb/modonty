@@ -1,5 +1,5 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>أرشيف المنجز — 77 بنداً</title>
+<title>أرشيف المنجز — 78 بنداً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f1013;--panel:#17181d;--card:#1d1e24;--line:#2c2d36;--fg:#f3f4f6;--mut:#9aa3b2;--dim:#6b7280;
@@ -132,7 +132,7 @@ summary::before{content:"▸";transition:transform .15s}details[open]>summary::b
 .hidden{display:none!important}
 footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </style></head><body>
-<header class="top"><div class="wrap"><h1>أرشيف المنجز — 77 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
+<header class="top"><div class="wrap"><h1>أرشيف المنجز — 78 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
 <div class="tools"><input id="q" type="search" placeholder="ابحث في المنجز…" aria-label="بحث"></div></div></header>
 <main class="wrap"><section class="grp"><div class="grid"><article class="card" data-id="G11" data-sev="normal" data-who="c" data-tab="done" data-board="seo" data-apps="admin modonty" data-n="113" data-audit="pass">
   <div class="hd"><span class="num" title="رقم البند — قل «بند 113» في الشات">113</span><span class="id">G11</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند G11">⧉</button></div>
@@ -1392,6 +1392,51 @@ grep -nE "text-left|ml-|mr-|pl-|pr-" commercial-plans/page.tsx = صفر (أُص�
 لقطات فاتح/غامق ١٢٨٠×٩٠٠: C:/tmp/pay-a1-evidence/desktop-light.png و desktop-dark.png — الشارة "الأكثر طلباً" ظاهرة في رأس اللوحة بجانب "مسودة"، القسم بنفس نمط rounded-lg border p-4، توكنات لا ألوان حرفية.
 
 ملاحظة نطاق: خالد (١١ سبتمبر ٢٠٢٦) — الأدمن ديسكتوب فقط، لا علاقة له بالجوّال. لا لقطات ٣٩٠px لشاشات الأدمن.</pre></div></details>
+</article>
+<article class="card" data-id="PAY-A2" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-agent="Sonnet" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-A2</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-A2">⧉</button></div>
+  
+  <div class="t">حقل tier على الباقة — الوصلة إلى نظام العملاء القائم بلا إعادة كتابة ٥٢ ملفاً</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 2 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١١ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المقيس: Client.subscriptionTier تعداد SubscriptionTier (BASIC · STANDARD · PRO · PREMIUM — schema.prisma:76-81) في ٥٢ ملفاً، وInvoice.tier (:3433) يستعمله. CommercialPlan لا يحمل أي ربط به. ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المقيس:</b> <code>Client.subscriptionTier</code> تعداد <code>SubscriptionTier</code> (BASIC · STANDARD · PRO · PREMIUM — <code>schema.prisma:76-81</code>) في ٥٢ ملفاً، و<code>Invoice.tier</code> (<code>:3433</code>) يستعمله. <code>CommercialPlan</code> لا يحمل أي ربط به.</p>
+<p><b>المرجع:</b> <code>PAY-Q1</code>: «يحمل كل CommercialPlan حقل tier يربطه بقيمة منه».</p>
+<p><b>العمل:</b></p>
+<pre>١  السكيما: tier SubscriptionTier? على CommercialPlan ← generate + push
+٢  قسم «بيانات الباقة» (A1): قائمة اختيار بالقيم الأربع؛ الاسم المعروض = SubscriptionTierConfig.name
+   للقيمة إن وُجد صفّها، وإلا القيمة الخام. updateCommercialPlan يحفظه.
+٣  حارس النشر في setCommercialPlanPublished(id, true):
+   - tier فارغ ⇒ خطأ «حدّد فئة الاشتراك قبل النشر»
+   - باقة منشورة أخرى بنفس tier ⇒ خطأ يسمّيها «الفئة مستعملة في باقة «…» المنشورة»
+   (وإلا: أيّ باقة يأخذ العميل المشتري؟)</pre>
+<p><b>🎨 واجهة:</b> يُطبَّق <code>PAY-UIUX</code> كاملاً وقائمة فحصه (د) بنواتجها في دليل الإغلاق.</p><p><b>يُغلق بـ:</b> نشر بلا tier → الخطأ الأوّل؛ نشر باقتين بنفس القيمة → الخطأ الثاني؛ <code>findMany({ where: { isPublished: true }, select: { name, tier } })</code> قيم غير مكرّرة — ناتج خام.</p><hr><p><b>✅ أُغلق ١١ سبتمبر ٢٠٢٦ — الدليل الخام:</b></p><pre>schema.prisma:1049 — tier SubscriptionTier? على CommercialPlan. shared: pnpm run prisma:generate ثم من الجذر pnpm prisma:push على modonty_dev (تأكّدت من .env.shared سطر 19 مفعَّل = modonty_dev قبل الدفع):
+  [+] Collection commercial_plan_features + 3 فهارس — Done in 11.05s
+(أوقفتُ سيرفري admin:3001 و modonty:3000 قبل التوليد لتحرير قفل DLL على ويندوز، ثم أعدت تشغيلهما بعدها).
+
+actions.ts:16 تحقّق tier بـ z.nativeEnum(SubscriptionTier).nullable(). actions.ts:66-75 حارس setCommercialPlanPublished.
+page.tsx: Select name="tier" (uncontrolled — يُقرأ عبر Radix Select.Root name/defaultValue، تأكّدتُ منه بتوثيق Radix عبر Context7 قبل الكتابة) داخل قسم «بيانات الباقة»، والاسم المعروض من subscriptionTierConfig.findMany.
+
+اختبار حيّ عبر Playwright (localhost:3001 — modonty_dev):
+1) نشر «الانطلاقة» بلا tier → سجلّ السيرفر: Error: حدّد فئة الاشتراك قبل النشر (actions.ts:70) · POST 500 · الباقة بقيت مسودة.
+2) حفظ tier=BASIC على «الانطلاقة» ثم نشرها → نجح (200) — لا تعارض بلا منشورة أخرى.
+3) tier=BASIC على «الزخم» ثم نشرها → سجلّ السيرفر: Error: الفئة مستعملة في باقة «الانطلاقة» المنشورة (actions.ts:72) · POST 500 · بقيت مسودة.
+
+قراءة خام نهائية db.commercialPlan.findMany({ select: { name, tier, isPublished } }):
+  الانطلاقة  BASIC     isPublished:true
+  الزخم      STANDARD  isPublished:false   (صحّحتُها بعد اختبار التعارض)
+  الريادة    PRO       isPublished:false
+findMany({ where:{isPublished:true} }): صفّ واحد فقط (الانطلاقة/BASIC) — لا تكرار.
+
+grep -nE "#[0-9a-fA-F]{6}" page.tsx actions.ts = صفر · grep -nE "text-left|ml-|mr-|pl-|pr-" page.tsx actions.ts = صفر.
+
+⚠️ ملاحظة للمراجعة لا إصلاح الآن (قاعدة ٩ PAY-UIUX — «إن كان المعتمد هو العيب قل ذلك وانتظر»): الخطآن أعلاه لم يظهرا للمستخدم في الشاشة — نماذج هذه الصفحة كلّها (بما فيها الموجود من قبل: حذف مدة، إضافة مدة، إنشاء باقة) نماذج form action خام بلا useTransition، فرسالة السيرفر تُبتلع بصرياً رغم كونها 500 موثّقاً في السجلّ. هذا نمط الصفحة كلّها لا شيء أضفته أنا في A2 وحده، وتغييره يمسّ ٦ نماذج خارج نطاق هذا البند — يحتاج قرارك.
+
+⚠️ ملاحظة بيانات: SubscriptionTierConfig القديم يحمل أسماء (BASIC=مجاني · STANDARD=الانطلاقة · PRO=الزخم · PREMIUM=الريادة) تصطدم بأسماء الباقات الجديدة نفسها بترتيب مختلف — القائمة المنسدلة ستعرض هذه الأسماء القديمة حرفياً كما نصّت البطاقة، وقد تبدو مربكة حتى تُصحَّح أو تُحذف صفوف SubscriptionTierConfig.</pre></div></details>
 </article></div></section></main>
 <script>
 (() => { const q = document.getElementById('q'); const cards = [...document.querySelectorAll('.card')];
