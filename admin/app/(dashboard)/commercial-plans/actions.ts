@@ -50,7 +50,6 @@ export async function createCommercialPlan(form: FormData) {
   await db.commercialPlan.create({ data: {
     name, slug, articlesPerMonth, highlights: [], displayOrder: await db.commercialPlan.count(),
     prices: { create: [{ market: "SA", currency: "SAR", monthlyBase: sa }, { market: "EG", currency: "EGP", monthlyBase: eg }] },
-    terms: { create: [{ paidMonths: 3, bonusServiceMonths: 0, displayOrder: 1 }, { paidMonths: 6, bonusServiceMonths: 1, displayOrder: 2 }, { paidMonths: 12, bonusServiceMonths: 6, displayOrder: 3 }] },
   }});
   revalidatePath("/commercial-plans");
 }
@@ -75,14 +74,6 @@ export async function setCommercialPlanPublished(id: string, isPublished: boolea
   revalidatePath("/commercial-plans"); revalidatePath(`/commercial-plans/${id}`);
 }
 
-export async function addCommercialPlanTerm(id: string, form: FormData) {
-  await requireCommercialAdmin();
-  const paidMonths = Number(form.get("paidMonths")); const bonusServiceMonths = Number(form.get("bonusMonths"));
-  if (!Number.isInteger(paidMonths) || paidMonths < 1 || !Number.isInteger(bonusServiceMonths) || bonusServiceMonths < 0) throw new Error("مدة غير صحيحة");
-  await db.commercialPlanTerm.create({ data: { planId: id, paidMonths, bonusServiceMonths, displayOrder: paidMonths } });
-  revalidatePath(`/commercial-plans/${id}`);
-}
-
 export async function updateCommercialPlanPrice(id: string, form: FormData) {
   await requireCommercialAdmin();
   const amount = Number(form.get("amount"));
@@ -104,17 +95,30 @@ export async function updateCommercialPlanMarketPrices(planId: string, form: For
   revalidatePath("/commercial-plans");
 }
 
-export async function updateCommercialPlanTerm(id: string, form: FormData) {
+/** One duration policy applies to every plan — see PAY-Q3. No planId here on purpose. */
+export async function addCommercialTermPolicy(form: FormData) {
   await requireCommercialAdmin();
   const paidMonths = Number(form.get("paidMonths")); const bonusServiceMonths = Number(form.get("bonusMonths"));
   if (!Number.isInteger(paidMonths) || paidMonths < 1 || !Number.isInteger(bonusServiceMonths) || bonusServiceMonths < 0) throw new Error("مدة غير صحيحة");
-  await db.commercialPlanTerm.update({ where: { id }, data: { paidMonths, bonusServiceMonths, displayOrder: paidMonths } });
-  revalidatePath(`/commercial-plans/${String(form.get("planId"))}`);
+  await db.commercialTermPolicy.create({ data: { paidMonths, bonusServiceMonths, displayOrder: paidMonths } });
+  revalidatePath("/commercial-plans");
 }
 
-export async function deleteCommercialPlanTerm(id: string, planId: string) {
+export async function updateCommercialTermPolicy(id: string, form: FormData) {
   await requireCommercialAdmin();
-  await db.commercialPlanTerm.delete({ where: { id } }); revalidatePath(`/commercial-plans/${planId}`);
+  const paidMonths = Number(form.get("paidMonths")); const bonusServiceMonths = Number(form.get("bonusMonths"));
+  if (!Number.isInteger(paidMonths) || paidMonths < 1 || !Number.isInteger(bonusServiceMonths) || bonusServiceMonths < 0) throw new Error("مدة غير صحيحة");
+  await db.commercialTermPolicy.update({ where: { id }, data: { paidMonths, bonusServiceMonths, displayOrder: paidMonths } });
+  revalidatePath("/commercial-plans");
+}
+
+export async function deleteCommercialTermPolicy(id: string) {
+  await requireCommercialAdmin();
+  const activeCount = await db.commercialTermPolicy.count({ where: { isActive: true } });
+  const target = await db.commercialTermPolicy.findUnique({ where: { id }, select: { isActive: true } });
+  if (target?.isActive && activeCount <= 1) throw new Error("لا يمكن حذف آخر مدة نشطة — أضِف مدة بديلة أولاً");
+  await db.commercialTermPolicy.delete({ where: { id } });
+  revalidatePath("/commercial-plans");
 }
 
 export async function createCommercialFeature(form: FormData) {

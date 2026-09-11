@@ -1,5 +1,5 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>أرشيف المنجز — 78 بنداً</title>
+<title>أرشيف المنجز — 79 بنداً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f1013;--panel:#17181d;--card:#1d1e24;--line:#2c2d36;--fg:#f3f4f6;--mut:#9aa3b2;--dim:#6b7280;
@@ -132,7 +132,7 @@ summary::before{content:"▸";transition:transform .15s}details[open]>summary::b
 .hidden{display:none!important}
 footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </style></head><body>
-<header class="top"><div class="wrap"><h1>أرشيف المنجز — 78 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
+<header class="top"><div class="wrap"><h1>أرشيف المنجز — 79 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
 <div class="tools"><input id="q" type="search" placeholder="ابحث في المنجز…" aria-label="بحث"></div></div></header>
 <main class="wrap"><section class="grp"><div class="grid"><article class="card" data-id="G11" data-sev="normal" data-who="c" data-tab="done" data-board="seo" data-apps="admin modonty" data-n="113" data-audit="pass">
   <div class="hd"><span class="num" title="رقم البند — قل «بند 113» في الشات">113</span><span class="id">G11</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند G11">⧉</button></div>
@@ -1437,6 +1437,63 @@ grep -nE "#[0-9a-fA-F]{6}" page.tsx actions.ts = صفر · grep -nE "text-left|m
 ⚠️ ملاحظة للمراجعة لا إصلاح الآن (قاعدة ٩ PAY-UIUX — «إن كان المعتمد هو العيب قل ذلك وانتظر»): الخطآن أعلاه لم يظهرا للمستخدم في الشاشة — نماذج هذه الصفحة كلّها (بما فيها الموجود من قبل: حذف مدة، إضافة مدة، إنشاء باقة) نماذج form action خام بلا useTransition، فرسالة السيرفر تُبتلع بصرياً رغم كونها 500 موثّقاً في السجلّ. هذا نمط الصفحة كلّها لا شيء أضفته أنا في A2 وحده، وتغييره يمسّ ٦ نماذج خارج نطاق هذا البند — يحتاج قرارك.
 
 ⚠️ ملاحظة بيانات: SubscriptionTierConfig القديم يحمل أسماء (BASIC=مجاني · STANDARD=الانطلاقة · PRO=الزخم · PREMIUM=الريادة) تصطدم بأسماء الباقات الجديدة نفسها بترتيب مختلف — القائمة المنسدلة ستعرض هذه الأسماء القديمة حرفياً كما نصّت البطاقة، وقد تبدو مربكة حتى تُصحَّح أو تُحذف صفوف SubscriptionTierConfig.</pre></div></details>
+</article>
+<article class="card" data-id="PAY-A3" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-agent="Sonnet" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-A3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-A3">⧉</button></div>
+  
+  <div class="t">سياسة المدد الواحدة — جدول سياسة بلا planId، ويُنقل من داخل الباقة إلى أعلى الصفحة</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 3 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١١ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المقيس: CommercialPlanTerm مرتبط بـplanId (schema.prisma:1111-1125) · createCommercialPlan ينشئ ٣ مدد لكل باقة (actions.ts:44) · جدول المدد داخل كل باقة في page.tsx:46-57 ومكرَّر في [id]/page.tsx:22 ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المقيس:</b> <code>CommercialPlanTerm</code> مرتبط بـ<code>planId</code> (<code>schema.prisma:1111-1125</code>) · <code>createCommercialPlan</code> ينشئ ٣ مدد لكل باقة (<code>actions.ts:44</code>) · جدول المدد داخل كل باقة في <code>page.tsx:46-57</code> ومكرَّر في <code>[id]/page.tsx:22</code> · وثابتٌ ثانٍ للمدد نفسها في <code>shared/lib/pricing-durations.ts:19-23</code> (3/6/12 · 0/1/6) يستهلكه <code>sales-leads</code> — يُحوَّل في <code>PAY-R4</code> لا هنا.</p>
+<p><b>المرجع:</b> <code>PAY-Q3</code> — سياسة واحدة لكل الباقات. سبب رفض تكرار الصفوف مكتوب فيها.</p>
+<p><b>لماذا الآن:</b> المرحلة ٢ تحفظ لقطة الطلب من هذا الشكل (<code>paidMonths</code> · <code>bonusServiceMonths</code>). تغييره بعدها = لقطات بشكلين.</p>
+<p><b>العمل:</b></p>
+<pre>١  السكيما: model CommercialTermPolicy { paidMonths Int @unique · bonusServiceMonths Int @default(0)
+   · displayOrder Int @default(0) · isActive Boolean @default(true) · createdAt · updatedAt }
+   @@map("commercial_term_policies"). حذف CommercialPlanTerm وعلاقة terms من CommercialPlan.
+٢  actions.ts: addCommercialTermPolicy · updateCommercialTermPolicy · deleteCommercialTermPolicy
+   (تحلّ محلّ add/update/deleteCommercialPlanTerm — بلا planId). createCommercialPlan لا ينشئ مدداً.
+   الحذف بتأكيد (ConfirmDeleteButton القائم). لا يُسمح بحذف آخر صفّ نشط.
+٣  page.tsx: قسم «المدد والهدايا — سياسة واحدة لكل الباقات» تحت نموذج الإضافة وفوق قائمة الباقات.
+   داخل لوحة كل باقة يبقى جدول قراءة فقط: المدة × (السعر الشهري × المدة) لكل سوق من صفوف السياسة.
+٤  [id]/page.tsx: حذف بطاقة «المدد والهدايا».
+٥  الترحيل على modonty_dev فقط (سكربت tsx مؤقّت في scratchpad، لا في المستودع):
+   الصفوف المتميّزة (paidMonths, bonusServiceMonths) من commercial_plan_terms ← الجدول الجديد
+   ← حذف المجموعة. المقيس اليوم: ٣ باقات × ٣ مدد متطابقة ⇒ ٣ صفوف.
+٦  ممنوع أن تقرأ /pay أو أي كود جديد من pricing-durations.ts.</pre>
+<p><b>🎨 واجهة:</b> يُطبَّق <code>PAY-UIUX</code> كاملاً وقائمة فحصه (د) بنواتجها في دليل الإغلاق.</p><p><b>يُغلق بـ:</b> تعديل هدية «١٢ شهراً» من مكان واحد ثم <code>db.commercialTermPolicy.findMany()</code> يُظهر القيمة الجديدة، وكل الباقات تعرضها في جدول القراءة (لقطة). عدّ مجموعة <code>commercial_plan_terms</code> = المجموعة غير موجودة. <code>prisma:validate</code> ناجح.</p><hr><p><b>✅ أُغلق ١١ سبتمبر ٢٠٢٦ — الدليل الخام:</b></p><pre>schema.prisma: حذف model CommercialPlanTerm وحقل terms من CommercialPlan؛ model CommercialTermPolicy جديد
+(paidMonths @unique · bonusServiceMonths · displayOrder · isActive · @@map commercial_term_policies).
+prisma:validate → "The schema … is valid". prisma:push (modonty_dev، تأكّدت .env.shared سطر 19):
+  [+] Unique index commercial_term_policies_paidMonths_key
+  [+] Index commercial_term_policies_isActive_displayOrder_idx — Done in 12.29s
+
+ترحيل بيانات (سكربت مؤقّت في admin/__tmp-*.mjs، حُذف بعد التنفيذ — لا في المستودع):
+  قراءة خام commercial_plan_terms عبر $runCommandRaw: 9 صفوف (٣ باقات × ٣ مدد متطابقة، كما توقّعت البطاقة).
+  تمييز إلى 3 صفوف: {3,0} {6,1} {12,6} ← أُنشئت في commercial_term_policies.
+  db.$runCommandRaw({ drop: "commercial_plan_terms" }) → { ok: 1 }.
+  تحقّق: listCollections بفلتر commercial_plan_terms → صفر نتائج (المجموعة غير موجودة).
+
+actions.ts: addCommercialTermPolicy/updateCommercialTermPolicy/deleteCommercialTermPolicy بلا planId؛
+حذف بضمان عدم حذف آخر صفّ نشط (count نشط ≤ 1 ⇒ خطأ). createCommercialPlan لم يعد ينشئ مدداً.
+page.tsx: قسم «المدد والهدايا — سياسة واحدة لكل الباقات» أعلى قائمة الباقات؛ لوحة كل باقة أصبحت جدول
+قراءة فقط بلا نماذج ولا زر إضافة. [id]/page.tsx: بطاقة «المدد والهدايا» حُذفت بالكامل.
+
+اختبار حيّ عبر Playwright (localhost:3001 — modonty_dev): عدّلتُ هدية مدة ١٢ شهراً من 6 إلى 7 من القسم
+العلوي وحده، ثم فتحتُ لوحة «الانطلاقة» — جدول القراءة يُظهر فوراً: 3→(0)، 6→(1)، 12→(7) وأسعاراً
+محسوبة SAR 1197/2394/4788 و EGP 3597/7194/14388 — لقطة C:/tmp/pay-a3-evidence/plan-0-scrolled.png.
+زيارة /commercial-plans/6aa163e18a00cef23ea91b97 (تفاصيل الباقة): bodyText لا يحتوي "المدد والهدايا" إطلاقاً.
+
+grep -nE "#[0-9a-fA-F]{6}" page.tsx actions.ts [id]/page.tsx = صفر
+grep -nE "text-left|ml-|mr-|pl-|pr-" page.tsx actions.ts [id]/page.tsx = صفر
+grep لبقيّة المستودع (admin/app admin/lib admin/components shared/prisma shared/lib) عن
+CommercialPlanTerm/commercialPlanTerm = صفر.
+
+أوقفتُ admin:3001 وmodonty:3000 قبل generate/push لتحرير قفل DLL، وأعدتُ تشغيلهما بعدها.</pre></div></details>
 </article></div></section></main>
 <script>
 (() => { const q = document.getElementById('q'); const cards = [...document.querySelectorAll('.card')];
