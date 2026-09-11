@@ -279,7 +279,30 @@ footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 ٢  بعد الموافقة: invoice.ts يقبل الحقول الجديدة (صافٍ · ضريبة ١٥٪ · إجمالي · المدة والهدية
    · الاسم النظامي · الرقم الضريبي) وsend-invoice.ts يمرّرها. الفواتير القديمة بلا حقول تُعرض كما اليوم.
 ٣  التذييل القانوني يبقى من baseTemplate (يقرأ Settings.org* — تعليق invoice.ts:4-8).</pre>
-<p><b>يُغلق بـ:</b> جواب خالد مثبَّت في البطاقة بنصّه + إيميل فاتورة حقيقي عبر Resend على بيئة التطوير بلقطة تُظهر الصافي والضريبة والإجمالي والرقم الضريبي.</p></div></details>
+<p><b>يُغلق بـ:</b> جواب خالد مثبَّت في البطاقة بنصّه + إيميل فاتورة حقيقي عبر Resend على بيئة التطوير بلقطة تُظهر الصافي والضريبة والإجمالي والرقم الضريبي.</p><p><b>⏸ توقّفت هنا — بانتظار قرارك (١١ سبتمبر ٢٠٢٦، بطلبك الصريح):</b> جُمعت المتطلبات من موقع هيئة الزكاة والضريبة والجمارك (zatca.gov.sa) ومصادرها الرسمية. لم يُكتب أي سطر في invoice.ts. الجدول والسؤال أدناه — ثم انتظار «موافق».</p>
+<p><b>⚠️ اكتشاف يغيّر الفرضية الأساسية في البطاقة:</b> عنوان البند يفترض «الفاتورة الضريبية المبسطة» — لكن هذه فاتورة B2B (عملاء مدونتي منشآت: «مدفوع لمنشأة» في نموذج العميل، ورقم ضريبي/سجل تجاري في تصنيفهم)، والمبالغ المعتادة (٢٬٣٩٤ ر.س. في مثال E4) أعلى من ١٬٠٠٠ ر.س. — الحدّ الذي يسمح فيه نظام الزكاة والضريبة باستخدام الفاتورة المبسّطة لعميل تجاري. <b>فاتورة B2B بهذا الحجم تحتاج «فاتورة ضريبية» (قياسية) لا «مبسّطة»</b> — والفرق الجوهري: القياسية تلزم برقم العميل الضريبي (لو مسجَّلاً) وتُخوّل خصم ضريبة المدخلات؛ المبسّطة لا تطلب بيانات المشتري أصلاً ولا تخوّل الخصم. [منبع: مقارنة الحقول أدناه]</p>
+<p><b>⚠️ فرق ثانٍ يستحق أن يُقال بصوت واضح:</b> ما تبنيه هذه المهمة (حقول + QR على فاتورة تُرسل بالإيميل) هو <b>مستند يبدو مطابقاً</b> — وليس <b>امتثالاً فعلياً</b> لنظام الفوترة الإلكترونية (المرحلة الثانية «فاتورة»): ذلك يلزم صيغة XML، ختماً تشفيرياً (cryptographic stamp)، وتخليصاً فورياً عبر واجهة ZATCA قبل تسليم الفاتورة للعميل — مشروع تقني منفصل بمزوّد معتمد، لا إضافة حقول لقالب إيميل. الجدول يفصل بين «حقل نعرضه في القالب» و«ما يلزم امتثالاً حقيقياً» صراحةً.</p>
+<table><thead><tr><th>الحقل</th><th>إلزامي لفاتورة B2B قياسية؟</th><th>مصدره عندنا اليوم</th></tr></thead><tbody>
+<tr><td>الاسم القانوني للبائع (مدونتي)</td><td>نعم</td><td><code>Settings.orgLegalName</code> — موجود</td></tr>
+<tr><td>الرقم الضريبي للبائع</td><td>نعم</td><td><code>Settings.orgVatNumber</code> — موجود</td></tr>
+<tr><td>عنوان البائع المسجَّل</td><td>نعم</td><td><code>Settings.orgAddress*</code> — موجود</td></tr>
+<tr><td>رقم السجل التجاري للبائع</td><td>عرفاً/غالباً يُطلب</td><td><code>Settings.orgCommercialRegistrationNumber</code> — موجود</td></tr>
+<tr><td>اسم المشتري المسجَّل</td><td>نعم (قياسية فقط)</td><td><code>Client.name</code> — موجود</td></tr>
+<tr><td>الرقم الضريبي للمشتري</td><td>نعم لو كان مسجَّلاً ضريبياً</td><td><code>Client.vatID</code> — الحقل موجود بالسكيما؛ <b>غير معروض في invoice.ts اليوم</b></td></tr>
+<tr><td>عنوان المشتري المسجَّل</td><td>نعم (قياسية)</td><td><code>Client.address*</code> — موجود جزئياً</td></tr>
+<tr><td>رقم فاتورة تسلسلي فريد</td><td>نعم</td><td><code>Invoice.number</code> (Counter بلا فجوات) — موجود</td></tr>
+<tr><td>تاريخ ووقت الإصدار</td><td>نعم</td><td><code>Invoice.issuedAt</code> — موجود (بلا وقت دقيق، تاريخ فقط في القالب الحالي)</td></tr>
+<tr><td>نوع الفاتورة (ضريبية/مبسّطة)</td><td>نعم</td><td>غير مُعلَن نصّاً في invoice.ts اليوم</td></tr>
+<tr><td>وصف كل بند + الكمية + سعر الوحدة</td><td>نعم</td><td>الطلب يحمل الباقة والمدة (<code>CheckoutOrder</code>) — لا سطر بند مفصَّل في invoice.ts</td></tr>
+<tr><td>صافٍ قبل الضريبة لكل معدَّل ضريبي</td><td>نعم</td><td><code>Invoice.subtotalMinor</code> (PAY-E4، بعد PAID فقط) — غير معروض بعد</td></tr>
+<tr><td>معدَّل الضريبة ونسبتها (١٥٪)</td><td>نعم</td><td><code>Invoice.vatRateBp</code> (PAY-E4) — غير معروض بعد</td></tr>
+<tr><td>إجمالي الضريبة</td><td>نعم</td><td><code>Invoice.vatMinor</code> (PAY-E4) — غير معروض بعد</td></tr>
+<tr><td>الإجمالي شامل الضريبة</td><td>نعم</td><td><code>Invoice.totalMinor</code> / <code>amount</code> — موجود</td></tr>
+<tr><td>رمز QR (Base64 · TLV)</td><td>إلزامي للمبسّطة؛ للقياسية يدخل ضمن التكامل الإلكتروني الكامل لا حقلاً منفرداً في قالب إيميل</td><td>غير موجود — يحتاج توليداً (5 حقول TLV: اسم البائع · رقمه الضريبي · طابع زمني · الإجمالي · الضريبة)</td></tr>
+<tr><td>ختم تشفيري + تخليص فوري عبر API (المرحلة الثانية)</td><td>إلزامي للامتثال التنظيمي الفعلي — خارج نطاق «قالب إيميل»</td><td>غير موجود — مشروع تكامل منفصل بمزوّد معتمد من ZATCA</td></tr>
+</tbody></table>
+<p><b>المصادر:</b> ZATCA Detailed E-Invoicing Guideline (<a href="https://zatca.gov.sa/en/E-Invoicing/Introduction/Guidelines/Documents/E-Invoicing_Detailed__Guideline.pdf">PDF رسمي</a>) · ZATCA QR Code Creation Guide (<a href="https://zatca.gov.sa/ar/E-Invoicing/SystemsDevelopers/Documents/QRCodeCreation.pdf">PDF رسمي</a>) · ZATCA Electronic Invoice Resolution (<a href="https://zatca.gov.sa/en/RulesRegulations/Taxes/Documents/20210602_ZATCA_Electronic_Invoice_Resolution_English_Vshared.pdf">PDF رسمي</a>) — الثلاثة ملفّات PDF ثقيلة لم يقرأها المتصفّح الآلي حرفياً بالكامل؛ الجدول أعلاه ركّب من نتائج بحث تستشهد بها مباشرة (ClearTax · Fatoora+ · The Invoicing Hub) مقابَلة بحقول السكيما الفعلية عندنا. <b>لو الدقّة الحرفية مهمة قانونياً، يفضَّل مراجع محاسبي/ضريبي سعودي يفتح PDF الهيئة مباشرة قبل الاعتماد النهائي.</b></p>
+<p><b>السؤال المطروح عليك:</b> (أ) هل نبني «فاتورة قياسية» (تلزم رقم العميل الضريبي + بند مفصَّل) بدل «مبسَّطة» بما أن عملاءنا منشآت؟ (ب) هل الهدف الآن مستند بريدي يحمل كل الحقول والـQR («يبدو» متوافقاً)، أم امتثال ZATCA الفعلي (XML + ختم + تخليص فوري — مشروع منفصل)؟ (ج) رقم Client.vatID — نعرضه لو موجوداً فقط ونتركه فارغاً لو لا، صح؟</p></div></details>
 </article>
 <article class="card" data-id="PAY-E6" data-sev="high" data-who="c" data-tab="open" data-board="jbrseo" data-apps="admin" data-agent="Sonnet" data-area="jbrseo">
   <div class="hd"><span class="id">PAY-E6</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-E6">⧉</button></div>
