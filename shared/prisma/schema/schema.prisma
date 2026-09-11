@@ -1038,6 +1038,13 @@ model SubscriptionTierConfig {
 // operational tier enum, while this catalog must let the business add, retire,
 // price, and order sellable plans without a code change.
 
+enum CommercialPlanTheme {
+  NEUTRAL
+  PRIMARY
+  ACCENT
+  PREMIUM
+}
+
 model CommercialPlan {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   slug        String   @unique
@@ -1047,6 +1054,7 @@ model CommercialPlan {
     highlights  String[]
   badge       String?
   tier        SubscriptionTier?
+  theme       CommercialPlanTheme @default(NEUTRAL)
   isPublished Boolean  @default(false)
   displayOrder Int    @default(0)
   prices      CommercialPlanPrice[]
@@ -1063,6 +1071,10 @@ model CommercialFeature {
   name        String
   description String?
   unitLabel   String?  // e.g. مقال | حملة | فيديو; null means a fixed inclusion
+  /// Name from the icon registry (`shared/lib/icons.ts`, e.g. "IconArticle"). The admin
+  /// picks from a closed list and the action rejects anything else — PAY-Q11 keeps how a
+  /// feature is DRAWN in code; only WHICH registry entry is chosen lives in the DB.
+  icon        String?
   isActive    Boolean  @default(true)
   displayOrder Int     @default(0)
   assignments CommercialPlanFeature[]
@@ -1120,6 +1132,140 @@ model CommercialTermPolicy {
 
   @@index([isActive, displayOrder])
   @@map("commercial_term_policies")
+}
+
+// ============================================
+// CHECKOUT — an order is a SNAPSHOT, never a reference (PAY-P2 · PAY-AV-SNAPSHOT)
+// ============================================
+// jbrseo's `Subscriber` mixed buyer, payment attempt and customer in one row keyed by
+// (email, plan, billing), so a repeat purchase overwrote the previous order, and its
+// success page recomputed the total from TODAY's price. Here the order carries every
+// term it was sold under; changing or deleting the plan afterwards cannot touch it.
+// Money is in MINOR units (halala / piastre) as Int — never Float.
+
+enum CheckoutOrderStatus {
+  AWAITING_PAYMENT  // Saudi — gateway session opened, waiting for the provider
+  AWAITING_TRANSFER // Egypt — buyer transfers by hand, staff confirms (PAY-Q12)
+  PAID
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  NGENIUS
+  TAMARA
+  BANK_TRANSFER
+}
+
+model CheckoutOrder {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  /// Human order number, gapless per year via `Counter` (key `order-YYYY`): ORD-2026-00042.
+  /// Also sent to the provider as the merchant reference.
+  number String @unique
+
+  market   String // SA | EG
+  currency String // SAR | EGP
+
+  // ── Buyer ─────────────────────────────────────────────────────────────────────
+  buyerName    String
+  buyerEmail   String
+  buyerPhone   String // E.164 via shared/lib/phone
+  businessName String?
+  country      String?
+
+  // ── Plan snapshot — deliberately NO relation: deleting the plan must not cascade here
+  planId           String?           @db.ObjectId
+  planSlug         String
+  planName         String
+  planTier         SubscriptionTier?
+  articlesPerMonth Int?
+
+  // ── Price snapshot (minor units) ────────────────────────────────────────────────
+  monthlyBaseMinor   Int
+  paidMonths         Int
+  bonusServiceMonths Int
+  subtotalMinor      Int
+  vatRateBp          Int // basis points: 1500 = 15%
+  vatMinor           Int
+  totalMinor         Int // what the buyer pays = monthlyBase × paidMonths (VAT-inclusive, PAY-Q7)
+
+  // ── State ──────────────────────────────────────────────────────────────────────
+  status       CheckoutOrderStatus
+  paidAt       DateTime?
+  failedReason String?
+
+  // ── Manual confirmation (Egypt) — who said the money arrived, when, by which reference
+  transferReference String?
+  transferDate      DateTime?
+  confirmedByUserId String?   @db.ObjectId
+  confirmedAt       DateTime?
+
+  // ── What came after (PAY-Q6): the client account and the invoice issued from this order
+  clientId  String? @db.ObjectId
+  invoiceId String? @db.ObjectId
+
+  transactions PaymentTransaction[]
+  attempts     PaymentAttempt[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([buyerEmail])
+  @@map("checkout_orders")
+}
+
+model PaymentTransaction {
+  id      String        @id @default(auto()) @map("_id") @db.ObjectId
+  orderId String        @db.ObjectId
+  order   CheckoutOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  provider          PaymentProvider
+  providerOrderRef  String? // the provider's own order id (N-Genius order reference)
+  providerReference String? // settlement / transfer reference shown to humans
+  status            String // provider-native status, kept verbatim
+  amountMinor       Int
+  currency          String
+  rawStatus         String?
+  settledAt         DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([providerReference])
+  @@map("payment_transactions")
+}
+
+/// Idempotency for provider callbacks: the same providerEventId is stored once and any
+/// repeat returns 200 without touching the order (PAY-KEEP: منع التكرار).
+model PaymentWebhookEvent {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  provider        PaymentProvider
+  providerEventId String          @unique
+  orderId         String?         @db.ObjectId
+  eventType       String?
+  payload         Json
+  receivedAt      DateTime        @default(now())
+  processedAt     DateTime?
+  error           String?
+
+  @@map("payment_webhook_events")
+}
+
+/// Failure intelligence only — reason + message. NEVER card data.
+model PaymentAttempt {
+  id       String         @id @default(auto()) @map("_id") @db.ObjectId
+  orderId  String?        @db.ObjectId
+  order    CheckoutOrder? @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider PaymentProvider
+  reasonCode String?
+  message    String?
+  createdAt  DateTime @default(now())
+
+  @@index([orderId])
+  @@map("payment_attempts")
 }
 
 // ============================================
@@ -2878,6 +3024,9 @@ model Settings {
   orgCommercialRegistrationNumber String? // رقم السجل التجاري
   orgCommercialRegistrationStatus String? // حالة السجل كما تقولها وزارة التجارة («نشط»…)
   orgUnifiedNationalNumber        String? // الرقم الوطني الموحّد للمنشأة (سلسلة 700)
+  /// الرقم الضريبي (١٥ خانة) من شهادة هيئة الزكاة والضريبة والجمارك. تُطبع على الفاتورة
+  /// الضريبية وتُعرض في /trust. رقمٌ نظاميّ لا يُكتب في كود: خانةٌ خاطئة تُبطل كل فاتورة صادرة.
+  orgVatNumber                    String?
   orgLegalForm                    String? // نوع الكيان (ذات مسؤولية محدودة، مساهمة…)
   orgCapitalAmount                String? // رأس المال كما هو مقيّد. نصّ لا رقم: يُعرض كما هو ولا يدخل في حساب
   orgFoundingDate                 DateTime? // تاريخ القيد في السجل
@@ -3450,10 +3599,21 @@ model Invoice {
   // an invoice generated from it MUST be excluded from report revenue — it is a document,
   // not new money. Default false = a normal renewal invoice that DOES count.
   fromOpeningBalance Boolean         @default(false)
+  // ── Tax-invoice detail (PAY-Q14). Optional so every invoice issued before the checkout
+  // flow stays valid; an invoice born from a CheckoutOrder fills all of them from the
+  // order's snapshot — never from today's catalog price. Minor units, Int.
+  orderId            String?          @db.ObjectId
+  subtotalMinor      Int?
+  vatRateBp          Int? // 1500 = 15%
+  vatMinor           Int?
+  totalMinor         Int?
+  paidMonths         Int?
+  bonusServiceMonths Int?
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
 
   @@index([clientId, issuedAt])
+  @@index([orderId])
   @@map("invoices")
 }
 

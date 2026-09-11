@@ -1,6 +1,8 @@
-import { SubscriptionTier } from "@prisma/client";
-import { PackageOpen } from "lucide-react";
+import { SubscriptionTier, CommercialPlanTheme } from "@prisma/client";
+import { COMMERCIAL_PLAN_THEMES } from "@modonty/shared/lib/commercial/plan-themes";
+import { ArrowDown, ArrowUp, PackageOpen } from "lucide-react";
 import Link from "next/link";
+import { FeatureIcon } from "../commercial-features/components/feature-icon-select";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { db } from "@/lib/db";
-import { addCommercialTermPolicy, deleteCommercialPlan, deleteCommercialTermPolicy, setCommercialPlanPublished, updateCommercialPlan, updateCommercialPlanMarketPrices, updateCommercialTermPolicy } from "./actions";
+import { addCommercialTermPolicy, deleteCommercialPlan, deleteCommercialTermPolicy, moveCommercialPlan, setCommercialPlanPublished, updateCommercialPlan, updateCommercialPlanMarketPrices, updateCommercialTermPolicy } from "./actions";
 import { ConfirmDeleteButton } from "./components/confirm-delete-button";
 import { CreateCommercialPlanForm } from "./components/create-commercial-plan-form";
 import { DeleteCommercialPlanButton } from "./components/delete-commercial-plan-button";
@@ -18,6 +20,7 @@ import { PlanPanel } from "./components/plan-panel";
 export const dynamic = "force-dynamic";
 
 const TIER_VALUES = [SubscriptionTier.BASIC, SubscriptionTier.STANDARD, SubscriptionTier.PRO, SubscriptionTier.PREMIUM];
+const THEME_VALUES = [CommercialPlanTheme.NEUTRAL, CommercialPlanTheme.PRIMARY, CommercialPlanTheme.ACCENT, CommercialPlanTheme.PREMIUM];
 
 /** The whole commercial catalogue stays on one screen: this product has 3–4 plans, not hundreds. */
 export default async function CommercialPlansPage() {
@@ -51,9 +54,9 @@ export default async function CommercialPlansPage() {
       </div>
     </section>
 
-    {plans.length === 0 ? <section className="flex flex-col items-center gap-3 rounded-xl border border-dashed bg-muted/20 px-6 py-14 text-center"><PackageOpen className="size-9 text-muted-foreground" aria-hidden/><h2 className="font-semibold">لا توجد باقات تجارية بعد</h2><p className="max-w-md text-sm text-muted-foreground">استخدم «إضافة باقة جديدة» لإنشاء أول مسودة.</p></section> : <section className="flex flex-col gap-3" aria-label="الباقات الحالية">{plans.map((plan) => {
+    {plans.length === 0 ? <section className="flex flex-col items-center gap-3 rounded-xl border border-dashed bg-muted/20 px-6 py-14 text-center"><PackageOpen className="size-9 text-muted-foreground" aria-hidden/><h2 className="font-semibold">لا توجد باقات تجارية بعد</h2><p className="max-w-md text-sm text-muted-foreground">استخدم «إضافة باقة جديدة» لإنشاء أول مسودة.</p></section> : <section className="flex flex-col gap-3" aria-label="الباقات الحالية">{plans.map((plan, index) => {
       const sa = plan.prices.find((price) => price.market === "SA"); const eg = plan.prices.find((price) => price.market === "EG");
-      return <PlanPanel key={plan.id} defaultOpen={false} header={<div className="flex flex-wrap items-center gap-x-8 gap-y-3"><div className="flex items-center gap-2"><h2 className="font-semibold">{plan.name}</h2><Badge variant={plan.isPublished ? "default" : "secondary"}>{plan.isPublished ? "منشورة" : "مسودة"}</Badge>{plan.badge ? <Badge variant="outline">{plan.badge}</Badge> : null}</div><dl className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm"><div className="flex items-baseline gap-2"><dt className="text-muted-foreground">السعودية</dt><dd className="tabular-nums">{sa ? `${sa.monthlyBase} SAR` : "—"}<span className="ms-1 text-muted-foreground">/ شهر</span></dd></div><div className="flex items-baseline gap-2"><dt className="text-muted-foreground">مصر</dt><dd className="tabular-nums">{eg ? `${eg.monthlyBase} EGP` : "—"}<span className="ms-1 text-muted-foreground">/ شهر</span></dd></div><div className="flex items-baseline gap-2"><dt className="text-muted-foreground">المقالات</dt><dd className="tabular-nums">{plan.articlesPerMonth ?? 0}<span className="ms-1 text-muted-foreground">/ شهر</span></dd></div></dl></div>}>
+      return <PlanPanel key={plan.id} defaultOpen={false} header={<div className="flex flex-wrap items-center gap-x-8 gap-y-3"><div className="flex items-center gap-2"><div className="flex gap-0.5" aria-label="ترتيب الباقة"><form action={moveCommercialPlan.bind(null, plan.id, "up")}><Button type="submit" size="icon" variant="ghost" className="size-8" disabled={index === 0} aria-label={`تقديم «${plan.name}»`} title="تقديم"><ArrowUp /></Button></form><form action={moveCommercialPlan.bind(null, plan.id, "down")}><Button type="submit" size="icon" variant="ghost" className="size-8" disabled={index === plans.length - 1} aria-label={`تأخير «${plan.name}»`} title="تأخير"><ArrowDown /></Button></form></div><h2 className="font-semibold">{plan.name}</h2><Badge variant={plan.isPublished ? "default" : "secondary"}>{plan.isPublished ? "منشورة" : "مسودة"}</Badge>{plan.badge ? <Badge variant="outline">{plan.badge}</Badge> : null}</div><dl className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm"><div className="flex items-baseline gap-2"><dt className="text-muted-foreground">السعودية</dt><dd className="tabular-nums">{sa ? `${sa.monthlyBase} SAR` : "—"}<span className="ms-1 text-muted-foreground">/ شهر</span></dd></div><div className="flex items-baseline gap-2"><dt className="text-muted-foreground">مصر</dt><dd className="tabular-nums">{eg ? `${eg.monthlyBase} EGP` : "—"}<span className="ms-1 text-muted-foreground">/ شهر</span></dd></div><div className="flex items-baseline gap-2"><dt className="text-muted-foreground">المقالات</dt><dd className="tabular-nums">{plan.articlesPerMonth ?? 0}<span className="ms-1 text-muted-foreground">/ شهر</span></dd></div></dl></div>}>
         <div className="flex flex-col gap-4">
           <section className="rounded-lg border p-4">
             <div className="mb-3"><h3 className="text-sm font-semibold">بيانات الباقة</h3><p className="text-xs text-muted-foreground">الاسم والوصف والشارة كما تظهر للزائر.</p></div>
@@ -65,6 +68,12 @@ export default async function CommercialPlansPage() {
                 <Select name="tier" defaultValue={plan.tier ?? undefined}>
                   <SelectTrigger className="h-9"><SelectValue placeholder="بلا فئة — لن تُنشر"/></SelectTrigger>
                   <SelectContent>{TIER_VALUES.map((tier) => <SelectItem key={tier} value={tier}>{tierLabel(tier)}</SelectItem>)}</SelectContent>
+                </Select>
+              </label>
+              <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">الثيم
+                <Select name="theme" defaultValue={plan.theme}>
+                  <SelectTrigger className="h-9"><SelectValue/></SelectTrigger>
+                  <SelectContent>{THEME_VALUES.map((theme) => <SelectItem key={theme} value={theme}><span className="flex items-center gap-2"><span className={`size-3 rounded-full border border-border ${COMMERCIAL_PLAN_THEMES[theme].swatch}`} aria-hidden/>{COMMERCIAL_PLAN_THEMES[theme].label}</span></SelectItem>)}</SelectContent>
                 </Select>
               </label>
               <Button className="h-9 self-start" type="submit" variant="outline">حفظ بيانات الباقة</Button>
@@ -95,7 +104,7 @@ export default async function CommercialPlansPage() {
 
           <section className="rounded-lg border p-4">
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2"><h3 className="text-sm font-semibold">المزايا المتضمنة</h3><Link href={`/commercial-plans/${plan.id}`} className="text-xs text-primary underline-offset-2 hover:underline">إدارة المزايا وتفاصيل الباقة ←</Link></div>
-            {plan.features.length === 0 ? <p className="text-xs text-muted-foreground">لم تُربط مزايا بهذه الباقة بعد.</p> : <ul className="flex flex-wrap gap-1.5">{plan.features.map((item) => <li key={item.id}><Badge variant="secondary">{item.feature.name}</Badge></li>)}</ul>}
+            {plan.features.length === 0 ? <p className="text-xs text-muted-foreground">لم تُربط مزايا بهذه الباقة بعد.</p> : <ul className="flex flex-wrap gap-1.5">{plan.features.map((item) => <li key={item.id}><Badge variant="secondary" className="gap-1.5"><FeatureIcon name={item.feature.icon} className="size-3.5" />{item.quantity !== null ? <span className="tabular-nums">{item.quantity} {item.feature.unitLabel ?? ""}</span> : null}{item.feature.name}</Badge></li>)}</ul>}
           </section>
 
           <section className="flex flex-wrap items-center justify-between gap-3 border-t pt-4">

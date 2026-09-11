@@ -1,19 +1,52 @@
 "use server";
 
-import { SubscriptionTier } from "@prisma/client";
+import { CommercialPlanTheme, SubscriptionTier } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { isFeatureIconName } from "@modonty/shared/lib/commercial/feature-icon-names";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 
 function value(form: FormData, key: string): string { return String(form.get(key) ?? "").trim(); }
+
+const optionalText = (max: number) => z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(max).nullable());
+const featureSchema = z.object({
+  name: z.string().trim().min(1, "اسم الميزة مطلوب").max(80, "اسم الميزة طويل جداً"),
+  description: optionalText(300),
+  unitLabel: optionalText(20),
+  // "none" is the select's empty sentinel (Radix rejects an empty-string item value).
+  icon: z.preprocess((v) => (typeof v === "string" && v.trim() && v !== "none" ? v.trim() : null), z.string().nullable().refine((v) => v === null || isFeatureIconName(v), "أيقونة غير موجودة في السجلّ")),
+});
+function parseFeature(form: FormData) {
+  const parsed = featureSchema.safeParse({ name: value(form, "name"), description: value(form, "description"), unitLabel: value(form, "unitLabel"), icon: value(form, "icon") });
+  if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "تحقق من بيانات الميزة");
+  return parsed.data;
+}
+
+type Direction = "up" | "down";
+/**
+ * Swap with the neighbour and return ONLY the rows whose `displayOrder` must change.
+ * Normally that is the two swapped rows; rows left with duplicate/gapped orders by the
+ * `count()`-based inserts get normalised to 0..n-1 in the same batch. Writing every row
+ * blew Prisma's 5s interactive-transaction budget on Atlas (27 features) — measured.
+ */
+function moveInList(rows: { id: string; displayOrder: number }[], id: string, direction: Direction): { id: string; displayOrder: number }[] {
+  const index = rows.findIndex((row) => row.id === id);
+  if (index < 0) throw new Error("العنصر غير موجود");
+  const target = direction === "up" ? index - 1 : index + 1;
+  if (target < 0 || target >= rows.length) return [];
+  const order = [...rows];
+  [order[index], order[target]] = [order[target], order[index]];
+  return order.map((row, displayOrder) => ({ id: row.id, displayOrder })).filter((next) => rows.find((row) => row.id === next.id)?.displayOrder !== next.displayOrder);
+}
 
 const updatePlanSchema = z.object({
   name: z.string().trim().min(1, "اسم الباقة مطلوب").max(60, "اسم الباقة طويل جداً"),
   description: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(300).nullable()),
   badge: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(30).nullable()),
   tier: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.nativeEnum(SubscriptionTier).nullable()),
+  theme: z.nativeEnum(CommercialPlanTheme),
 });
 
 /**
@@ -56,9 +89,9 @@ export async function createCommercialPlan(form: FormData) {
 
 export async function updateCommercialPlan(id: string, form: FormData) {
   await requireCommercialAdmin();
-  const parsed = updatePlanSchema.safeParse({ name: value(form, "name"), description: value(form, "description"), badge: value(form, "badge"), tier: value(form, "tier") });
+  const parsed = updatePlanSchema.safeParse({ name: value(form, "name"), description: value(form, "description"), badge: value(form, "badge"), tier: value(form, "tier"), theme: value(form, "theme") });
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "تحقق من بيانات الباقة");
-  await db.commercialPlan.update({ where: { id }, data: { name: parsed.data.name, description: parsed.data.description, badge: parsed.data.badge, tier: parsed.data.tier } });
+  await db.commercialPlan.update({ where: { id }, data: { name: parsed.data.name, description: parsed.data.description, badge: parsed.data.badge, tier: parsed.data.tier, theme: parsed.data.theme } });
   revalidatePath("/commercial-plans"); revalidatePath(`/commercial-plans/${id}`);
 }
 
@@ -123,20 +156,43 @@ export async function deleteCommercialTermPolicy(id: string) {
 
 export async function createCommercialFeature(form: FormData) {
   await requireCommercialAdmin();
-  const name = value(form, "name");
-  const description = value(form, "description") || null;
-  const unitLabel = value(form, "unitLabel") || null;
-  if (!name) throw new Error("اسم الميزة مطلوب");
-  await db.commercialFeature.create({ data: { name, description, unitLabel, displayOrder: await db.commercialFeature.count() } });
+  const data = parseFeature(form);
+  await db.commercialFeature.create({ data: { ...data, displayOrder: await db.commercialFeature.count() } });
   revalidatePath("/commercial-features");
 }
 
 export async function updateCommercialFeature(id: string, form: FormData) {
   await requireCommercialAdmin();
-  const name = value(form, "name");
-  if (!name) throw new Error("اسم الميزة مطلوب");
-  await db.commercialFeature.update({ where: { id }, data: { name, description: value(form, "description") || null, unitLabel: value(form, "unitLabel") || null } });
+  await db.commercialFeature.update({ where: { id }, data: parseFeature(form) });
   revalidatePath("/commercial-features");
+  revalidatePath("/commercial-plans");
+}
+
+// ── Ordering (PAY-A7): what the /pay page shows first is decided here, not by creation date.
+export async function moveCommercialPlan(id: string, direction: Direction) {
+  await requireCommercialAdmin();
+  const rows = await db.commercialPlan.findMany({ select: { id: true, displayOrder: true }, orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }] });
+  const writes = moveInList(rows, id, direction);
+  if (writes.length) await db.$transaction(writes.map((w) => db.commercialPlan.update({ where: { id: w.id }, data: { displayOrder: w.displayOrder } })));
+  revalidatePath("/commercial-plans");
+}
+
+export async function moveCommercialFeature(id: string, direction: Direction) {
+  await requireCommercialAdmin();
+  const rows = await db.commercialFeature.findMany({ select: { id: true, displayOrder: true }, orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }] });
+  const writes = moveInList(rows, id, direction);
+  if (writes.length) await db.$transaction(writes.map((w) => db.commercialFeature.update({ where: { id: w.id }, data: { displayOrder: w.displayOrder } })));
+  revalidatePath("/commercial-features");
+  revalidatePath("/commercial-plans");
+}
+
+export async function moveCommercialPlanFeature(id: string, planId: string, direction: Direction) {
+  await requireCommercialAdmin();
+  const rows = await db.commercialPlanFeature.findMany({ where: { planId }, select: { id: true, displayOrder: true }, orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }] });
+  const writes = moveInList(rows, id, direction);
+  if (writes.length) await db.$transaction(writes.map((w) => db.commercialPlanFeature.update({ where: { id: w.id }, data: { displayOrder: w.displayOrder } })));
+  revalidatePath(`/commercial-plans/${planId}`);
+  revalidatePath("/commercial-plans");
 }
 
 export async function setCommercialFeatureActive(id: string, isActive: boolean) {
