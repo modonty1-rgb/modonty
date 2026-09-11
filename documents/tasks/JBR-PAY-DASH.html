@@ -480,7 +480,7 @@ grep -rn "modonty.com\|jbrseo"    shared/lib/payments modonty/app/(pay) = تعل
 <p>ثم جدول لخالد: الشاشة/الملف · كان يقرأ من · صار يقرأ من · حالته (محذوف/محوَّل/مجمَّد). مع تحديث <code>PAY-STUDY-ADMIN</code> بالنتيجة.</p>
 <p><b>يُغلق بـ:</b> النواتج الخام السبعة + الجدول + إغلاق <code>PAY-P7</code>.</p><p><b>⏸ بوّابة المرحلة:</b> بعد إغلاق هذا البند <u>توقّف</u>. لا تفتح بند المرحلة التالية. اكتب لخالد تقرير مراجعة المرحلة (ما بُني · الأدلّة · اللقطات · ما بقي · ما يحتاج قراره) وانتظر «موافق». — خالد: «خلص مرحلة نراجعها».</p></div></details>
 </article></div></section>
-<section class="grp" id="grp-admin-pay-done" data-grp="pay-done"><h2>✔ أُنجز <span class="n" data-count>12</span></h2><p>أُغلق بدليل خام. يبقى هنا كي لا يُعاد فتحه.</p><div class="grid"><article class="card" data-id="PAY-A1" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-agent="Sonnet" data-area="jbrseo">
+<section class="grp" id="grp-admin-pay-done" data-grp="pay-done"><h2>✔ أُنجز <span class="n" data-count>12</span></h2><p>أُغلق بدليل خام. يبقى هنا كي لا يُعاد فتحه.</p><details><summary>اعرض 12 بنداً مُنجَزاً بأدلّته</summary><div class="grid"><article class="card" data-id="PAY-A1" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-agent="Sonnet" data-area="jbrseo">
   <div class="hd"><span class="id">PAY-A1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-A1">⧉</button></div>
   
   <div class="t">بيانات الباقة تُعدَّل من الشاشة: الاسم · الوصف · الشارة</div>
@@ -947,8 +947,19 @@ order.invoiceId مكتوب فوراً · لقطة شاشة: بادج «الفا�
 grep -rn "#[0-9a-fA-F]{6}|text-left|ml-|mr-|pl-|pr-" admin/lib/invoices admin/app/(dashboard)/clients/[id]/account/components/account-ledger.tsx = صفر
 npx tsc --noEmit: صفر أخطاء تخصّ orders أو clients/[id]/account أو lib/invoices
 ⚠️ ملف helpers/billing.ts في clients/[id]/account صار بلا مستهلكين بعد الرفع — لم يُحذف (rm/git rm مرفوضان صلاحيةً في هذه الجلسة)، يحتاج حذفاً يدوياً أو بأمر صريح لاحقاً
-</pre></div></details>
-</article></div></section>
+</pre><p><b>مراجعة Fable — ١١ سبتمبر ٢٠٢٦ (بعد إصلاحات Sonnet 143eafc):</b></p>
+<pre>✓ tier من العميل (MOD-2026-00017 tier=STANDARD) · ✓ هللتان · ✓ «6 أشهر» بدل «سنوي» في الحساب · ✓ billing.ts حُذف (769b12f)
+✗ ثم أُصلح: العميل المُنشأ من طلب يحمل openingBalance = المبلغ (النموذج يشترط > 0)، وفاتورة الطلب كانت
+   غير موسومة fromOpeningBalance ← تقرير المبيعات (get-sales-report.ts:195-207) يعدّ المبلغ مرّتين.
+   الإصلاح: createInvoiceFromOrderAction يوسم fromOpeningBalance=true حين يكون العميل أُنشئ بعد الطلب
+   وله رصيد افتتاحي ولا فاتورة سابقة؛ طلب تجديد لعميل قائم يبقى إيراداً جديداً.
+   حيّ عبر الزرّ الحقيقي:
+   A founding {"number":"MOD-2026-00019","fromOpeningBalance":true,"tier":"STANDARD","amount":2394}
+   B renewal  {"number":"MOD-2026-00020","fromOpeningBalance":false,"tier":"STANDARD","amount":2394}
+   والفاتورة التجريبية MOD-2026-00017 وُسمت يدوياً.
+بيانات: فئات الكتالوج ضُبطت لتطابق النظام القديم — الانطلاقة=STANDARD · الزخم=PRO · الريادة=PREMIUM.
+ما زال مفتوحاً لـE5: إيميل الفاتورة (send-invoice.ts:49) يطبع «سنوي» لطلب 6 أشهر — يُصلح مع القالب.</pre></div></details>
+</article></div></details></section>
 <section class="grp" id="grp-admin-pay-plan" data-grp="pay-plan"><h2>🗺️ المراحل <span class="n" data-count>3</span></h2><p>المرحلة الجارية مفصَّلة في «الجاري»؛ التالية تُفصَّل حين نصل إليها.</p><div class="grid"><article class="card" data-id="PAY-P1" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
   <div class="hd"><span class="id">PAY-P1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-P1">⧉</button></div>
   
@@ -1350,7 +1361,7 @@ SubscriptionTierConfig يُجمَّد جسر قراءة                         
 ٤  فتح PAY-Q8 (tab now ← open في pay-decide) — «جبر سيو بعد النقل»</pre>
 <p><b>يُغلق بـ:</b> رقم الطلب الحقيقي والفاتورة ورسالة تيليجرام (لقطة) + إغلاق <code>PAY-P6</code>.</p><p><b>⏸ بوّابة المرحلة:</b> بعد إغلاق هذا البند <u>توقّف</u>. لا تفتح بند المرحلة التالية. اكتب لخالد تقرير مراجعة المرحلة (ما بُني · الأدلّة · اللقطات · ما بقي · ما يحتاج قراره) وانتظر «موافق». — خالد: «خلص مرحلة نراجعها».</p></div></details>
 </article></div></section>
-<section class="grp" id="grp-site-pay-done" data-grp="pay-done"><h2>✔ أُنجز <span class="n" data-count>3</span></h2><p>أُغلق بدليل خام. يبقى هنا كي لا يُعاد فتحه.</p><div class="grid"><article class="card" data-id="PAY-B1" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-agent="Sonnet" data-area="jbrseo">
+<section class="grp" id="grp-site-pay-done" data-grp="pay-done"><h2>✔ أُنجز <span class="n" data-count>3</span></h2><p>أُغلق بدليل خام. يبقى هنا كي لا يُعاد فتحه.</p><details><summary>اعرض 3 بنداً مُنجَزاً بأدلّته</summary><div class="grid"><article class="card" data-id="PAY-B1" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-agent="Sonnet" data-area="jbrseo">
   <div class="hd"><span class="id">PAY-B1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-B1">⧉</button></div>
   
   <div class="t">موديلات الطلب والمعاملة في السكيما — لقطة كاملة، والمال بوحدات صغرى</div>
@@ -1453,7 +1464,7 @@ tsx shared/__tmp-pay-b2.ts →
   3 order after price change: {"monthlyBaseMinor":39900,"totalMinor":239400,"subtotalMinor":208174,"vatMinor":31226}   ← لم يتغيّر
   4 حذف الباقة ← order after plan delete: {"number":"ORD-2026-00001","planId":"6aa4314…","planName":"باقة اختبار B3","totalMinor":239400} | plan rows: 0
   cleanup → orders: 0 | plans: 3</pre></div></details>
-</article></div></section>
+</article></div></details></section>
 <section class="grp" id="grp-site-pay-plan" data-grp="pay-plan"><h2>🗺️ المراحل <span class="n" data-count>4</span></h2><p>المرحلة الجارية مفصَّلة في «الجاري»؛ التالية تُفصَّل حين نصل إليها.</p><div class="grid"><article class="card" data-id="PAY-P2" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
   <div class="hd"><span class="id">PAY-P2</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-P2">⧉</button></div>
   

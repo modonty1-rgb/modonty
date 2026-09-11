@@ -105,9 +105,19 @@ export async function createInvoiceFromOrderAction(orderId: string): Promise<voi
 
   const client = await db.client.findUnique({
     where: { id: order.clientId },
-    select: { id: true, name: true, subscriptionEndDate: true, subscriptionTier: true, subscriptionTierConfig: { select: { name: true } } },
+    select: { id: true, name: true, createdAt: true, openingBalance: true, subscriptionEndDate: true, subscriptionTier: true, subscriptionTierConfig: { select: { name: true } }, _count: { select: { invoices: true } } },
   });
   if (!client) throw new Error("العميل غير موجود");
+
+  // Cash-basis rule of the sales report (get-sales-report.ts:195-207): a client's
+  // openingBalance is counted as revenue at founding, and an invoice flagged
+  // fromOpeningBalance only DOCUMENTS it. A client created FROM this order carries the
+  // order's total as its opening balance (PAY-E3 prefill — the form requires > 0), so the
+  // invoice issued from the same order must be flagged, or the one payment is counted
+  // twice (measured: 2394 + 2394). A renewal order linked to a pre-existing client is real
+  // new money and stays unflagged — told apart by the client having been created after
+  // the order, with no invoice yet.
+  const foundingInvoice = client.createdAt > order.createdAt && (client.openingBalance ?? 0) > 0 && client._count.invoices === 0;
   // The CLIENT's own tier, not order.planTier: PAY-E3 already resolved the checkout
   // catalog's plan onto this client's real SubscriptionTierConfig tier (by name — the two
   // catalogs' enum values don't match, e.g. "الانطلاقة" is BASIC on the order but STANDARD
@@ -146,6 +156,7 @@ export async function createInvoiceFromOrderAction(orderId: string): Promise<voi
       totalMinor: order.totalMinor,
       paidMonths: order.paidMonths,
       bonusServiceMonths: order.bonusServiceMonths,
+      fromOpeningBalance: foundingInvoice,
     },
     select: { id: true },
   });
@@ -157,7 +168,7 @@ export async function createInvoiceFromOrderAction(orderId: string): Promise<voi
     entity: "Invoice",
     entityId: created.id,
     summary: `${number} · من الطلب ${order.number} · ${client.name ?? client.id}`,
-    metadata: { orderId: order.id, totalMinor: order.totalMinor, paidMonths: order.paidMonths, bonusServiceMonths: order.bonusServiceMonths },
+    metadata: { orderId: order.id, totalMinor: order.totalMinor, paidMonths: order.paidMonths, bonusServiceMonths: order.bonusServiceMonths, fromOpeningBalance: foundingInvoice },
   });
 
   revalidatePath("/orders");

@@ -1960,7 +1960,18 @@ order.invoiceId مكتوب فوراً · لقطة شاشة: بادج «الفا�
 grep -rn "#[0-9a-fA-F]{6}|text-left|ml-|mr-|pl-|pr-" admin/lib/invoices admin/app/(dashboard)/clients/[id]/account/components/account-ledger.tsx = صفر
 npx tsc --noEmit: صفر أخطاء تخصّ orders أو clients/[id]/account أو lib/invoices
 ⚠️ ملف helpers/billing.ts في clients/[id]/account صار بلا مستهلكين بعد الرفع — لم يُحذف (rm/git rm مرفوضان صلاحيةً في هذه الجلسة)، يحتاج حذفاً يدوياً أو بأمر صريح لاحقاً
-</pre></div></details>
+</pre><p><b>مراجعة Fable — ١١ سبتمبر ٢٠٢٦ (بعد إصلاحات Sonnet 143eafc):</b></p>
+<pre>✓ tier من العميل (MOD-2026-00017 tier=STANDARD) · ✓ هللتان · ✓ «6 أشهر» بدل «سنوي» في الحساب · ✓ billing.ts حُذف (769b12f)
+✗ ثم أُصلح: العميل المُنشأ من طلب يحمل openingBalance = المبلغ (النموذج يشترط > 0)، وفاتورة الطلب كانت
+   غير موسومة fromOpeningBalance ← تقرير المبيعات (get-sales-report.ts:195-207) يعدّ المبلغ مرّتين.
+   الإصلاح: createInvoiceFromOrderAction يوسم fromOpeningBalance=true حين يكون العميل أُنشئ بعد الطلب
+   وله رصيد افتتاحي ولا فاتورة سابقة؛ طلب تجديد لعميل قائم يبقى إيراداً جديداً.
+   حيّ عبر الزرّ الحقيقي:
+   A founding {"number":"MOD-2026-00019","fromOpeningBalance":true,"tier":"STANDARD","amount":2394}
+   B renewal  {"number":"MOD-2026-00020","fromOpeningBalance":false,"tier":"STANDARD","amount":2394}
+   والفاتورة التجريبية MOD-2026-00017 وُسمت يدوياً.
+بيانات: فئات الكتالوج ضُبطت لتطابق النظام القديم — الانطلاقة=STANDARD · الزخم=PRO · الريادة=PREMIUM.
+ما زال مفتوحاً لـE5: إيميل الفاتورة (send-invoice.ts:49) يطبع «سنوي» لطلب 6 أشهر — يُصلح مع القالب.</pre></div></details>
 </article></div></section></main>
 <script>
 (() => { const q = document.getElementById('q'); const cards = [...document.querySelectorAll('.card')];

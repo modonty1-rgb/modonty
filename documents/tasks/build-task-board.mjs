@@ -1625,7 +1625,7 @@ ${payNext ? `<a class="nextq" href="#${esc(payNext.id)}">
 </div></header>
 <main class="wrap">
 ${paySections.map((sec, i) => `<div data-sec="${sec.k}" class="${i ? "hidden" : ""}"><h2 class="sech">${sec.n}</h2><p class="secs">${sec.s}</p>
-${sec.groups.map(g => `<section class="grp" id="grp-${sec.k}-${g.k}" data-grp="${g.k}"><h2>${g.n} <span class="n" data-count>${g.items.length}</span></h2><p>${g.s}</p><div class="grid">${g.items.map(cardHTML).join("\n")}</div></section>`).join("\n")}</div>`).join("\n")}
+${sec.groups.map(g => `<section class="grp" id="grp-${sec.k}-${g.k}" data-grp="${g.k}"><h2>${g.n} <span class="n" data-count>${g.items.length}</span></h2><p>${g.s}</p>${g.k === "pay-done" ? `<details><summary>اعرض ${g.items.length} بنداً مُنجَزاً بأدلّته</summary>` : ""}<div class="grid">${g.items.map(cardHTML).join("\n")}</div>${g.k === "pay-done" ? "</details>" : ""}</section>`).join("\n")}</div>`).join("\n")}
 </main>
 <footer>هذه اللوحة تخصّ انتقال الدفع وحده — بطاقاتها نُقلت من <a href="JBRSEO.html">JBRSEO.html</a> نقلاً لا نسخاً، ومصدرها <code>task-data.json</code> نفسه فلا تنحرف عنه. دفتر القرار: <a href="../HTML/modonty-payment-migration-workbook.html">modonty-payment-migration-workbook.html</a></footer>
 <script>
