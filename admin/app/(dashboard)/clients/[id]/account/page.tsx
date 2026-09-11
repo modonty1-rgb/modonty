@@ -157,7 +157,10 @@ export default async function ClientAccountPage({ params }: PageProps) {
     id: inv.id,
     number: inv.number,
     issuedAtLabel: fmtDate(inv.issuedAt),
-    description: `${inv.tierName} · ${inv.period === "monthly" ? "شهري" : "سنوي"}`,
+    // paidMonths (PAY-E4, an order-born invoice) is the real billed duration — "annual"
+    // is a lossy label for it (6 paid months showed "سنوي", which a client could read as
+    // 12; Fable, 11 Sep). Older invoices with no order behind them keep the period label.
+    description: `${inv.tierName} · ${inv.paidMonths ? `${inv.paidMonths} ${inv.paidMonths === 1 ? "شهر" : "أشهر"}` : inv.period === "monthly" ? "شهري" : "سنوي"}`,
     amount: inv.amount,
     currency: inv.currency === "EGP" ? "EGP" : "SAR",
     status: inv.paymentStatus === "PAID" ? "PAID" : "DUE",

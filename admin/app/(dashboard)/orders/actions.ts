@@ -102,10 +102,18 @@ export async function createInvoiceFromOrderAction(orderId: string): Promise<voi
   if (order.status !== "PAID") throw new Error("الطلب ليس مدفوعاً");
   if (!order.clientId) throw new Error("أنشئ حساب العميل أولاً");
   if (order.invoiceId) throw new Error("صدرت فاتورة لهذا الطلب مسبقاً");
-  if (!order.planTier) throw new Error("لا فئة اشتراك في لقطة الطلب");
 
-  const client = await db.client.findUnique({ where: { id: order.clientId }, select: { id: true, name: true, subscriptionEndDate: true } });
+  const client = await db.client.findUnique({
+    where: { id: order.clientId },
+    select: { id: true, name: true, subscriptionEndDate: true, subscriptionTier: true, subscriptionTierConfig: { select: { name: true } } },
+  });
   if (!client) throw new Error("العميل غير موجود");
+  // The CLIENT's own tier, not order.planTier: PAY-E3 already resolved the checkout
+  // catalog's plan onto this client's real SubscriptionTierConfig tier (by name — the two
+  // catalogs' enum values don't match, e.g. "الانطلاقة" is BASIC on the order but STANDARD
+  // here). Using the order's raw enum would silently invoice a paying client as BASIC/free
+  // (Fable, 11 Sep).
+  if (!client.subscriptionTier) throw new Error("لا فئة اشتراك على حساب العميل");
 
   const blocking = await findBlockingUnpaidInvoice(client.id);
   if (blocking) throw new Error(`فيه فاتورة غير مسدّدة (${blocking}) لهذا العميل — حدّدها مدفوعة أو أرشفها أولاً`);
@@ -120,8 +128,8 @@ export async function createInvoiceFromOrderAction(orderId: string): Promise<voi
     data: {
       number,
       clientId: client.id,
-      tier: order.planTier,
-      tierName: order.planName,
+      tier: client.subscriptionTier,
+      tierName: client.subscriptionTierConfig?.name ?? order.planName,
       period,
       currency: order.currency,
       amount: order.totalMinor / 100,

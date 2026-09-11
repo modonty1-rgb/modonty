@@ -39,6 +39,7 @@ interface OrderPrefill {
   subscriptionTier: string | null;
   planName: string;
   billingCycle: "monthly" | "annual";
+  openingBalance: number;
 }
 
 interface CreateClientFormProps {
@@ -99,6 +100,10 @@ export function CreateClientForm({ industries = [], siteUrl = null, countries = 
     if (prefill.email) setValue("email", prefill.email, { shouldDirty: true });
     if (prefill.phone) setValue("phone", prefill.phone, { shouldDirty: true });
     if (prefill.billingCycle) setValue("billingCycle", prefill.billingCycle, { shouldDirty: true });
+    // The order's own total — not the generic tier-catalog guess below (Fable, 11 Sep:
+    // measured 0 live — the catalog's own price bucket can differ from, or simply not
+    // yet be resolved for, this exact plan/market when the tier is still settling in).
+    if (prefill.openingBalance > 0) setValue("openingBalance", prefill.openingBalance, { shouldDirty: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -154,9 +159,12 @@ export function CreateClientForm({ industries = [], siteUrl = null, countries = 
 
   // Auto-fill the opening balance = unit price (country + cycle aware) × the cycle's months
   // (annual → 12, monthly → 1). Admin can override for a client who paid a different amount.
-  // Internal accounts are free, so they carry no balance.
+  // Internal accounts are free, so they carry no balance. Skipped when an order prefilled
+  // it already (see the identity effect above) — that is the real amount paid, and this
+  // catalog guess must never overwrite it once subscriptionTier finishes resolving.
   useEffect(() => {
     if (v.isInternal) return;
+    if (prefill) return;
     const cfg = tierConfigs.find((c) => c.tier === v.subscriptionTier);
     if (!cfg) return;
     const bucket = currency === "EGP" ? resolvePricing(cfg.name, cfg.pricing).EG : resolvePricing(cfg.name, cfg.pricing).SA;

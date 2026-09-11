@@ -29,10 +29,14 @@ export async function getOrderPrefillForClient(orderId: string): Promise<{
   subscriptionTier: string | null;
   planName: string;
   billingCycle: "monthly" | "annual";
+  /** The amount actually paid (major units) — the founding opening balance. Fable
+   *  (11 Sep): the generic tier-catalog auto-calc the form otherwise runs can miss or
+   *  drift from what this specific order charged; an order's own total is authoritative. */
+  openingBalance: number;
 } | null> {
   const order = await db.checkoutOrder.findUnique({
     where: { id: orderId },
-    select: { id: true, status: true, clientId: true, buyerName: true, buyerEmail: true, buyerPhone: true, businessName: true, country: true, planTier: true, planName: true, paidMonths: true },
+    select: { id: true, status: true, clientId: true, buyerName: true, buyerEmail: true, buyerPhone: true, businessName: true, country: true, planTier: true, planName: true, paidMonths: true, totalMinor: true },
   });
   if (!order || order.status !== "PAID" || order.clientId) return null;
   return {
@@ -44,5 +48,6 @@ export async function getOrderPrefillForClient(orderId: string): Promise<{
     subscriptionTier: order.planTier,
     planName: order.planName,
     billingCycle: order.paidMonths === 1 ? "monthly" : "annual",
+    openingBalance: order.totalMinor / 100,
   };
 }
