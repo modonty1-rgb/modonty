@@ -5,8 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import { db } from "@/lib/db";
-import { addCommercialPlanTerm, deleteCommercialPlan, deleteCommercialPlanTerm, setCommercialPlanPublished, updateCommercialPlanMarketPrices, updateCommercialPlanTerm } from "./actions";
+import { addCommercialPlanTerm, deleteCommercialPlan, deleteCommercialPlanTerm, setCommercialPlanPublished, updateCommercialPlan, updateCommercialPlanMarketPrices, updateCommercialPlanTerm } from "./actions";
 import { ConfirmDeleteButton } from "./components/confirm-delete-button";
 import { CreateCommercialPlanForm } from "./components/create-commercial-plan-form";
 import { DeleteCommercialPlanButton } from "./components/delete-commercial-plan-button";
@@ -31,8 +32,18 @@ export default async function CommercialPlansPage() {
 
     {plans.length === 0 ? <section className="flex flex-col items-center gap-3 rounded-xl border border-dashed bg-muted/20 px-6 py-14 text-center"><PackageOpen className="size-9 text-muted-foreground" aria-hidden/><h2 className="font-semibold">لا توجد باقات تجارية بعد</h2><p className="max-w-md text-sm text-muted-foreground">استخدم «إضافة باقة جديدة» لإنشاء أول مسودة.</p></section> : <section className="flex flex-col gap-3" aria-label="الباقات الحالية">{plans.map((plan) => {
       const sa = plan.prices.find((price) => price.market === "SA"); const eg = plan.prices.find((price) => price.market === "EG");
-      return <PlanPanel key={plan.id} defaultOpen={false} header={<div className="flex flex-wrap items-center gap-x-8 gap-y-3"><div className="flex items-center gap-2"><h2 className="font-semibold">{plan.name}</h2><Badge variant={plan.isPublished ? "default" : "secondary"}>{plan.isPublished ? "منشورة" : "مسودة"}</Badge></div><dl className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm"><div className="flex items-baseline gap-2"><dt className="text-muted-foreground">السعودية</dt><dd className="tabular-nums">{sa ? `${sa.monthlyBase} SAR` : "—"}<span className="mr-1 text-muted-foreground">/ شهر</span></dd></div><div className="flex items-baseline gap-2"><dt className="text-muted-foreground">مصر</dt><dd className="tabular-nums">{eg ? `${eg.monthlyBase} EGP` : "—"}<span className="mr-1 text-muted-foreground">/ شهر</span></dd></div><div className="flex items-baseline gap-2"><dt className="text-muted-foreground">المقالات</dt><dd className="tabular-nums">{plan.articlesPerMonth ?? 0}<span className="mr-1 text-muted-foreground">/ شهر</span></dd></div></dl></div>}>
+      return <PlanPanel key={plan.id} defaultOpen={false} header={<div className="flex flex-wrap items-center gap-x-8 gap-y-3"><div className="flex items-center gap-2"><h2 className="font-semibold">{plan.name}</h2><Badge variant={plan.isPublished ? "default" : "secondary"}>{plan.isPublished ? "منشورة" : "مسودة"}</Badge>{plan.badge ? <Badge variant="outline">{plan.badge}</Badge> : null}</div><dl className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm"><div className="flex items-baseline gap-2"><dt className="text-muted-foreground">السعودية</dt><dd className="tabular-nums">{sa ? `${sa.monthlyBase} SAR` : "—"}<span className="ms-1 text-muted-foreground">/ شهر</span></dd></div><div className="flex items-baseline gap-2"><dt className="text-muted-foreground">مصر</dt><dd className="tabular-nums">{eg ? `${eg.monthlyBase} EGP` : "—"}<span className="ms-1 text-muted-foreground">/ شهر</span></dd></div><div className="flex items-baseline gap-2"><dt className="text-muted-foreground">المقالات</dt><dd className="tabular-nums">{plan.articlesPerMonth ?? 0}<span className="ms-1 text-muted-foreground">/ شهر</span></dd></div></dl></div>}>
         <div className="flex flex-col gap-4">
+          <section className="rounded-lg border p-4">
+            <div className="mb-3"><h3 className="text-sm font-semibold">بيانات الباقة</h3><p className="text-xs text-muted-foreground">الاسم والوصف والشارة كما تظهر للزائر.</p></div>
+            <form action={updateCommercialPlan.bind(null, plan.id)} className="flex flex-col gap-3">
+              <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">الاسم<Input className="h-9" name="name" maxLength={60} defaultValue={plan.name} required/></label>
+              <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">الوصف<Textarea name="description" maxLength={300} defaultValue={plan.description ?? ""} rows={2}/></label>
+              <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">الشارة<Input className="h-9" name="badge" maxLength={30} placeholder="الأكثر طلباً" defaultValue={plan.badge ?? ""}/></label>
+              <Button className="h-9 self-start" type="submit" variant="outline">حفظ بيانات الباقة</Button>
+            </form>
+          </section>
+
           <section className="rounded-lg border bg-muted/30 p-4">
             <div className="mb-3"><h3 className="text-sm font-semibold">الأساس الشهري</h3><p className="text-xs text-muted-foreground">تُحسب أسعار المدد أدناه من هذه القيم.</p></div>
             <form action={updateCommercialPlanMarketPrices.bind(null, plan.id)} className="grid grid-cols-2 gap-3 lg:grid-cols-[repeat(3,minmax(0,1fr))_auto] lg:items-end">

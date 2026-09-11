@@ -2,10 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 
 function value(form: FormData, key: string): string { return String(form.get(key) ?? "").trim(); }
+
+const updatePlanSchema = z.object({
+  name: z.string().trim().min(1, "اسم الباقة مطلوب").max(60, "اسم الباقة طويل جداً"),
+  description: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(300).nullable()),
+  badge: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(30).nullable()),
+});
 
 /**
  * Read-only name lookup for the breadcrumb (see `breadcrumb-actions.ts`), same
@@ -44,6 +51,14 @@ export async function createCommercialPlan(form: FormData) {
     terms: { create: [{ paidMonths: 3, bonusServiceMonths: 0, displayOrder: 1 }, { paidMonths: 6, bonusServiceMonths: 1, displayOrder: 2 }, { paidMonths: 12, bonusServiceMonths: 6, displayOrder: 3 }] },
   }});
   revalidatePath("/commercial-plans");
+}
+
+export async function updateCommercialPlan(id: string, form: FormData) {
+  await requireCommercialAdmin();
+  const parsed = updatePlanSchema.safeParse({ name: value(form, "name"), description: value(form, "description"), badge: value(form, "badge") });
+  if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "تحقق من بيانات الباقة");
+  await db.commercialPlan.update({ where: { id }, data: { name: parsed.data.name, description: parsed.data.description, badge: parsed.data.badge } });
+  revalidatePath("/commercial-plans"); revalidatePath(`/commercial-plans/${id}`);
 }
 
 export async function setCommercialPlanPublished(id: string, isPublished: boolean) {
