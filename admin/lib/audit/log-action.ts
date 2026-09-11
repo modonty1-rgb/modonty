@@ -55,6 +55,7 @@ export type AuditAction =
   | "invoice.paid"
   | "invoice.archive"
   | "invoice.send"
+  | "order.confirmPayment"
   // 🟠 Client lifecycle + assets (each changes what a client shows or whether they're live)
   | "client.activate"
   | "client.suspend"
@@ -94,6 +95,7 @@ export type AuditEntity =
   | "User"
   | "Staff"
   | "Invoice"
+  | "Order"
   | "Author"
   | "Industry"
   | "Settings"

@@ -5,6 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { db } from "@/lib/db";
+import { checkFinanceAdmin } from "@/lib/require-finance-admin";
+import { confirmOrderPaymentAction } from "../actions";
+import { ConfirmTransferButton } from "../components/confirm-transfer-button";
 import { OrderStatusBadge } from "../components/order-status-badge";
 import { formatOrderDate } from "../helpers/format-order-date";
 import { formatOrderDateTime } from "../helpers/format-order-date-time";
@@ -19,11 +22,13 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const order = await db.checkoutOrder.findUnique({ where: { id } });
   if (!order) notFound();
 
-  const [transactions, webhookEvents, attempts] = await Promise.all([
+  const [transactions, webhookEvents, attempts, financeGate] = await Promise.all([
     db.paymentTransaction.findMany({ where: { orderId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
     db.paymentWebhookEvent.findMany({ where: { orderId: id }, orderBy: { receivedAt: "desc" }, take: 20 }),
     db.paymentAttempt.findMany({ where: { orderId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
+    checkFinanceAdmin(),
   ]);
+  const isFinanceAdmin = financeGate.status === "ok";
 
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-6 pb-12" dir="rtl">
@@ -73,11 +78,18 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           <CardTitle>الخطوات التالية</CardTitle>
           <CardDescription>حساب العميل وإصدار الفاتورة يُضافان كأزرار هنا في بنود لاحقة.</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-wrap gap-2">
+        <CardContent className="flex flex-wrap items-center gap-2">
           <Badge variant="outline">العميل: {order.clientId ? "مرتبط بحساب" : "لم يُنشأ بعد"}</Badge>
           <Badge variant="outline">الفاتورة: {order.invoiceId ? "صدرت" : "لم تصدر بعد"}</Badge>
           {order.confirmedAt ? <Badge variant="outline">أكّد التحويل: {formatOrderDate(order.confirmedAt)}{order.transferReference ? ` — مرجع ${order.transferReference}` : ""}</Badge> : null}
           {order.failedReason ? <Badge variant="destructive">سبب الفشل: {order.failedReason}</Badge> : null}
+          {order.status === "AWAITING_TRANSFER" && isFinanceAdmin ? (
+            <ConfirmTransferButton
+              action={confirmOrderPaymentAction.bind(null, order.id)}
+              buyerName={order.buyerName}
+              amountLabel={formatOrderMoney(order.totalMinor, order.currency)}
+            />
+          ) : null}
         </CardContent>
       </Card>
 

@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { isFeatureIconName } from "@modonty/shared/lib/commercial/feature-icon-names";
 import { db } from "@/lib/db";
-import { auth } from "@/lib/auth";
+import { requireFinanceAdmin } from "@/lib/require-finance-admin";
 
 function value(form: FormData, key: string): string { return String(form.get(key) ?? "").trim(); }
 
@@ -52,7 +52,7 @@ const updatePlanSchema = z.object({
 /**
  * Read-only name lookup for the breadcrumb (see `breadcrumb-actions.ts`), same
  * unguarded pattern as `getArticleById`/`getClientById`/etc — the plan's own
- * name isn't sensitive, and mutation stays behind `requireCommercialAdmin`.
+ * name isn't sensitive, and mutation stays behind `requireFinanceAdmin`.
  * Without this the breadcrumb falls through its default case and shows the
  * raw ObjectId instead of the plan name on `/commercial-plans/[id]`.
  */
@@ -61,17 +61,8 @@ export async function getCommercialPlanName(id: string): Promise<string | null> 
   return plan?.name ?? null;
 }
 
-/** Commercial pricing is deliberately restricted to active ADMIN staff. */
-async function requireCommercialAdmin() {
-  const session = await auth().catch(() => null);
-  const id = (session?.user as { id?: string } | undefined)?.id;
-  if (!id) throw new Error("غير مصرح");
-  const staff = await db.staff.findUnique({ where: { id }, select: { role: true, isActive: true } });
-  if (!staff || staff.isActive === false || staff.role !== "ADMIN") throw new Error("هذه الصفحة مخصصة لمدير النظام فقط");
-}
-
 export async function createCommercialPlan(form: FormData) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   const name = value(form, "name");
   const baseSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "plan";
   const slug = `${baseSlug}-${crypto.randomUUID().slice(0, 8)}`;
@@ -88,7 +79,7 @@ export async function createCommercialPlan(form: FormData) {
 }
 
 export async function updateCommercialPlan(id: string, form: FormData) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   const parsed = updatePlanSchema.safeParse({ name: value(form, "name"), description: value(form, "description"), badge: value(form, "badge"), tier: value(form, "tier"), theme: value(form, "theme") });
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "تحقق من بيانات الباقة");
   await db.commercialPlan.update({ where: { id }, data: { name: parsed.data.name, description: parsed.data.description, badge: parsed.data.badge, tier: parsed.data.tier, theme: parsed.data.theme } });
@@ -96,7 +87,7 @@ export async function updateCommercialPlan(id: string, form: FormData) {
 }
 
 export async function setCommercialPlanPublished(id: string, isPublished: boolean) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   if (isPublished) {
     const plan = await db.commercialPlan.findUnique({ where: { id }, select: { tier: true } });
     if (!plan?.tier) throw new Error("حدّد فئة الاشتراك قبل النشر");
@@ -108,7 +99,7 @@ export async function setCommercialPlanPublished(id: string, isPublished: boolea
 }
 
 export async function updateCommercialPlanPrice(id: string, form: FormData) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   const amount = Number(form.get("amount"));
   if (!Number.isInteger(amount) || amount < 0) throw new Error("سعر غير صحيح");
   await db.commercialPlanPrice.update({ where: { id }, data: { monthlyBase: amount } });
@@ -116,7 +107,7 @@ export async function updateCommercialPlanPrice(id: string, form: FormData) {
 }
 
 export async function updateCommercialPlanMarketPrices(planId: string, form: FormData) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   const sa = Number(value(form, "sa")); const eg = Number(value(form, "eg"));
   const articlesPerMonth = Number(value(form, "articlesPerMonth"));
   if (!Number.isInteger(sa) || sa < 0 || !Number.isInteger(eg) || eg < 0 || !Number.isInteger(articlesPerMonth) || articlesPerMonth < 0) throw new Error("تحقق من السعر وعدد المقالات");
@@ -130,7 +121,7 @@ export async function updateCommercialPlanMarketPrices(planId: string, form: For
 
 /** One duration policy applies to every plan — see PAY-Q3. No planId here on purpose. */
 export async function addCommercialTermPolicy(form: FormData) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   const paidMonths = Number(form.get("paidMonths")); const bonusServiceMonths = Number(form.get("bonusMonths"));
   if (!Number.isInteger(paidMonths) || paidMonths < 1 || !Number.isInteger(bonusServiceMonths) || bonusServiceMonths < 0) throw new Error("مدة غير صحيحة");
   await db.commercialTermPolicy.create({ data: { paidMonths, bonusServiceMonths, displayOrder: paidMonths } });
@@ -138,7 +129,7 @@ export async function addCommercialTermPolicy(form: FormData) {
 }
 
 export async function updateCommercialTermPolicy(id: string, form: FormData) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   const paidMonths = Number(form.get("paidMonths")); const bonusServiceMonths = Number(form.get("bonusMonths"));
   if (!Number.isInteger(paidMonths) || paidMonths < 1 || !Number.isInteger(bonusServiceMonths) || bonusServiceMonths < 0) throw new Error("مدة غير صحيحة");
   await db.commercialTermPolicy.update({ where: { id }, data: { paidMonths, bonusServiceMonths, displayOrder: paidMonths } });
@@ -146,7 +137,7 @@ export async function updateCommercialTermPolicy(id: string, form: FormData) {
 }
 
 export async function deleteCommercialTermPolicy(id: string) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   const activeCount = await db.commercialTermPolicy.count({ where: { isActive: true } });
   const target = await db.commercialTermPolicy.findUnique({ where: { id }, select: { isActive: true } });
   if (target?.isActive && activeCount <= 1) throw new Error("لا يمكن حذف آخر مدة نشطة — أضِف مدة بديلة أولاً");
@@ -155,14 +146,14 @@ export async function deleteCommercialTermPolicy(id: string) {
 }
 
 export async function createCommercialFeature(form: FormData) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   const data = parseFeature(form);
   await db.commercialFeature.create({ data: { ...data, displayOrder: await db.commercialFeature.count() } });
   revalidatePath("/commercial-features");
 }
 
 export async function updateCommercialFeature(id: string, form: FormData) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   await db.commercialFeature.update({ where: { id }, data: parseFeature(form) });
   revalidatePath("/commercial-features");
   revalidatePath("/commercial-plans");
@@ -170,7 +161,7 @@ export async function updateCommercialFeature(id: string, form: FormData) {
 
 // ── Ordering (PAY-A7): what the /pay page shows first is decided here, not by creation date.
 export async function moveCommercialPlan(id: string, direction: Direction) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   const rows = await db.commercialPlan.findMany({ select: { id: true, displayOrder: true }, orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }] });
   const writes = moveInList(rows, id, direction);
   if (writes.length) await db.$transaction(writes.map((w) => db.commercialPlan.update({ where: { id: w.id }, data: { displayOrder: w.displayOrder } })));
@@ -178,7 +169,7 @@ export async function moveCommercialPlan(id: string, direction: Direction) {
 }
 
 export async function moveCommercialFeature(id: string, direction: Direction) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   const rows = await db.commercialFeature.findMany({ select: { id: true, displayOrder: true }, orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }] });
   const writes = moveInList(rows, id, direction);
   if (writes.length) await db.$transaction(writes.map((w) => db.commercialFeature.update({ where: { id: w.id }, data: { displayOrder: w.displayOrder } })));
@@ -187,7 +178,7 @@ export async function moveCommercialFeature(id: string, direction: Direction) {
 }
 
 export async function moveCommercialPlanFeature(id: string, planId: string, direction: Direction) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   const rows = await db.commercialPlanFeature.findMany({ where: { planId }, select: { id: true, displayOrder: true }, orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }] });
   const writes = moveInList(rows, id, direction);
   if (writes.length) await db.$transaction(writes.map((w) => db.commercialPlanFeature.update({ where: { id: w.id }, data: { displayOrder: w.displayOrder } })));
@@ -196,14 +187,14 @@ export async function moveCommercialPlanFeature(id: string, planId: string, dire
 }
 
 export async function setCommercialFeatureActive(id: string, isActive: boolean) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   await db.commercialFeature.update({ where: { id }, data: { isActive } });
   revalidatePath("/commercial-features");
   revalidatePath("/commercial-plans");
 }
 
 export async function assignCommercialFeature(planId: string, form: FormData) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   const featureId = value(form, "featureId");
   const quantityText = value(form, "quantity");
   const quantity = quantityText ? Number(quantityText) : null;
@@ -217,7 +208,7 @@ export async function assignCommercialFeature(planId: string, form: FormData) {
 }
 
 export async function updateCommercialPlanFeature(id: string, planId: string, form: FormData) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   const quantityText = value(form, "quantity");
   const quantity = quantityText ? Number(quantityText) : null;
   if (quantity !== null && (!Number.isInteger(quantity) || quantity < 0)) throw new Error("كمية غير صحيحة");
@@ -226,14 +217,14 @@ export async function updateCommercialPlanFeature(id: string, planId: string, fo
 }
 
 export async function removeCommercialPlanFeature(id: string, planId: string) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   await db.commercialPlanFeature.delete({ where: { id } });
   revalidatePath(`/commercial-plans/${planId}`);
 }
 
 /** The feature library owns the simple “included in this plan” assignment. */
 export async function setCommercialFeaturePlanAssignments(featureId: string, form: FormData) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   const requestedPlanIds = [...new Set(form.getAll("planIds").map(String).filter(Boolean))];
   const [feature, validPlans, currentAssignments] = await Promise.all([
     db.commercialFeature.findUnique({ where: { id: featureId }, select: { id: true } }),
@@ -263,7 +254,7 @@ export async function setCommercialFeaturePlanAssignments(featureId: string, for
 }
 
 export async function deleteCommercialPlan(id: string) {
-  await requireCommercialAdmin();
+  await requireFinanceAdmin();
   await db.commercialPlan.delete({ where: { id } });
   revalidatePath("/commercial-plans");
   redirect("/commercial-plans");
