@@ -1516,40 +1516,24 @@ ${COPY_JS}
 // خالد ١١ سبتمبر ٢٠٢٦ (بعد حسم القرارات الثلاثة عشر): «نعملها to do، اللي يخلص ننزله تحت».
 // فاللوحة تنقلب من لوحة قرارات إلى لوحة تنفيذ: الجاري في الأعلى، والمنجز ينزل تحته مباشرةً،
 // والقرارات المجابة تنزل إلى المرجع. الترتيب يتبع ما يفعله القارئ لا ما حدث زمنياً.
-// خالد ١١ سبتمبر ٢٠٢٦: «قسم لي هو قسمين: قسم يخص الـadmin، وقسم يخص مدونتي… عشان أنا ما أتوه.
-// كل قسم بالبنية تبعته». فالقسم صريحٌ على البطاقة (`psec`) لا مُستنتَج — نفس مبدأ `jlane` في
-// لوحة جبر سيو: الاستنتاج يكذب حين تلمس بطاقةٌ التطبيقين.
-// ثلاثة أقسام كتبويبات: الأدمن · مدونتي · المرجع. داخل القسم لا شيء مخفيّ. والبنية واحدة في
-// قسمَي العمل: الجاري ← أُنجز ← المراحل القادمة. والمرجع يحمل ما يُقرأ ولا يُنفَّذ.
-const PAY_SECTIONS = [
-  { k: "admin", n: "🛠️ الأدمن", s: "يؤسّس الباقات ويسعّرها ويؤكّد المال ويُصدر الفاتورة. هنا المرحلة ١ الجارية.", groups: ["pay-work", "pay-done", "pay-plan"] },
-  { k: "site", n: "🌐 مدونتي — صفحة /pay", s: "ما يراه المشتري ويدفع منه. يبدأ بعد أن يُغلق الأدمن مرحلته الأولى.", groups: ["pay-work", "pay-done", "pay-plan"] },
-  { k: "ref", n: "📚 المرجع", s: "ما يُقرأ ولا يُنفَّذ: الحارس · القرارات المحسومة · الخريطة · دراسة جبر سيو.", groups: ["pay-guard", "pay-decide", "pay-plan", "pay-answered", "pay-later", "pay-how", "pay-avoid", "pay-keep", "pay-have"] },
-];
 const PAY_GROUPS = [
-  { k: "pay-work", n: "🔨 الجاري الآن", s: "بند واحد في كل بطاقة، بترتيب إجباريّ. يُغلق بدليل خام لا بـ«خلص»، وينزل إلى «أُنجز» تحته." },
-  { k: "pay-done", n: "✔ أُنجز", s: "أُغلق بدليل خام. يبقى هنا كي لا يُعاد فتحه." },
-  { k: "pay-plan", n: "🗺️ المراحل", s: "المرحلة الجارية مفصَّلة في «الجاري»؛ التالية تُفصَّل حين نصل إليها." },
-  { k: "pay-guard", n: "٠ · اقرأ قبل أي عمل", s: "ما يجعل الخطأ هنا مكلفاً، وما لم يُقَس بعد." },
+  { k: "pay-guard", n: "٠ · اقرأ قبل أي عمل", s: "ما يجعل الخطأ هنا مكلفاً، وما لم يُقَس بعد. فوق كل شيء عمداً." },
+  { k: "pay-p1", n: "🔨 المرحلة ١ · الأدمن — الجاري الآن", s: "بند واحد في كل بطاقة، بترتيب إجباريّ. يُغلق بدليل خام لا بـ«خلص»، وينزل إلى «أُنجز» تحته." },
+  { k: "pay-done", n: "✔ أُنجز من الخطة", s: "أُغلق بدليل خام. يبقى هنا كي لا يُعاد فتحه." },
   { k: "pay-decide", n: "★ قراراتك — هنا تجاوب", s: "سؤال واحد لكل بطاقة، وتحته توصيتي وسببها. اضغط ⧉ لنسخ المرجع، الصقه في الشات، واكتب جوابك بعده." },
-  { k: "pay-answered", n: "✔ القرارات المحسومة", s: "جوابك بنصّه وما ترتّب عليه من قواعد. كل بند في التنفيذ يشير إلى قراره هنا." },
-  // المؤجَّل بقرارٍ يخرج من عدّاد «المطلوب الآن» ويبقى مرئيّاً — التأجيل قرارٌ لا إهمال.
+  { k: "pay-plan", n: "🗺️ الخطة — الخريطة والمراحل القادمة", s: "المرحلة الجارية مفصَّلة أعلاه؛ التالية تُفصَّل حين نصل إليها." },
+  { k: "pay-answered", n: "✔ القرارات المحسومة — مرجع", s: "جوابك بنصّه وما ترتّب عليه من قواعد. كل بند في التنفيذ يشير إلى قراره هنا." },
+  // المؤجَّل بقرارٍ يخرج من عدّاد «المطلوب الآن» ويبقى مرئيّاً — التأجيل قرارٌ لا إهمال،
+  // وإخفاؤه يجعله يظهر فجأةً يوم الإطلاق كأنّه بندٌ نُسي.
   { k: "pay-later", n: "⏸ مؤجَّل بقرارك", s: "لا ينتظره شيء في البناء الحالي. يُفتح حين يقترب الإطلاق." },
   { k: "pay-how", n: "١ · كيف يعمل الدفع في جبر سيو اليوم", s: "مقروء من الملفّات لا من الذاكرة — كل خطوة بملفّها وسطرها." },
   { k: "pay-avoid", n: "٢ · أخطاء جبر سيو التي نتجنّبها", s: "كل بطاقة: العطل بدليله، وما يُبنى بدله في مدونتي." },
   { k: "pay-keep", n: "٣ · ما يُنقل كما هو", s: "دروس مدفوعة الثمن — تُنسخ بأسمائها ولا يُعاد اختراعها." },
   { k: "pay-have", n: "٤ · ما هو جاهز في مدونتي الآن", s: "الأرضية التي تبدأ منها الخطة." },
 ];
-const paySections = PAY_SECTIONS.map(sec => {
-  const cards = payCards.filter(t => (t.psec || "ref") === sec.k);
-  const groups = sec.groups
-    .map(k => PAY_GROUPS.find(g => g.k === k))
-    .map(g => ({ ...g, items: cards.filter(t => (t.jgrp || "") === g.k).sort(byOrd) }))
-    .filter(g => g.items.length);
-  // عدّاد قسم العمل = ما بقي مفتوحاً فيه؛ المرجع يعدّ بطاقاته كلّها لأنه ليس شغلاً.
-  const open = cards.filter(t => !isDone(t) && (t.jgrp === "pay-work" || t.jgrp === "pay-plan")).length;
-  return { ...sec, groups, count: sec.k === "ref" ? cards.length : open };
-});
+const payGroups = PAY_GROUPS
+  .map(g => ({ ...g, items: payCards.filter(t => (t.jgrp || "") === g.k).sort(byOrd) }))
+  .filter(g => g.items.length);
 
 // السؤال المطلوب الآن = أصغر `ord` بين أسئلة القرار المفتوحة. محسوبٌ لا مكتوب: سؤالٌ
 // أُجيب يخرج من الحساب من تلقائه، فلا يبقى الرأس يشير إلى بطاقة مغلقة.
@@ -1559,7 +1543,7 @@ const payNext = payDecideOpen[0] || null;
 const payAnswered = payDecideAll.length - payDecideOpen.length;
 // بعد حسم القرارات يتحوّل العدّاد إلى التنفيذ: بنود المرحلة الجارية، والمنجز منها.
 // والصندوق في الرأس يشير إلى أوّل بند مفتوح بترتيبه الإجباري — محسوباً لا مكتوباً.
-const payWorkAll = payCards.filter(t => t.jgrp === "pay-work" || t.jgrp === "pay-done");
+const payWorkAll = payCards.filter(t => t.jgrp === "pay-p1" || t.jgrp === "pay-done");
 const payWorkOpen = payWorkAll.filter(t => !isDone(t)).sort(byOrd);
 const payWorkNext = payWorkOpen[0] || null;
 const payWorkDone = payWorkAll.length - payWorkOpen.length;
@@ -1587,17 +1571,12 @@ const payHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="u
 .nextq .qa{display:block;margin-top:6px;font-size:13.5px;color:var(--mut);line-height:1.75}
 .nextq .qid{display:inline-block;margin-top:7px;font-size:11.5px;font-family:ui-monospace,monospace;color:var(--amber);border:1px solid rgba(246,174,49,.4);border-radius:6px;padding:1px 7px;direction:ltr}
 .grp[data-grp="pay-decide"]>h2,.grp[data-grp="pay-guard"]>h2{color:var(--amber)}
-.sech{margin:18px 0 2px;font-size:22px}.secs{margin:0 0 6px;color:var(--dim)}
-.grp[data-grp="pay-work"]>h2{color:var(--amber)}.grp[data-grp="pay-done"]>h2{color:var(--green)}
-[data-sec-nav].hidden,[data-sec].hidden{display:none}
 .grp[data-grp="pay-answered"]>h2{color:var(--green)}
 .scope{margin:10px 0 0;padding:10px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--mut);font-size:12.5px;line-height:1.8}
 .scope b{color:var(--fg)}
 @media(max-width:900px){.secttl{width:100%;margin:8px 0 0}}</style></head><body>
-<div class="apptabs" role="tablist" aria-label="أقسام لوحة الدفع"><p class="secttl">القسم</p>
-${paySections.map((sec, i) => `<button class="apptab" role="tab" data-sec-btn="${sec.k}" aria-selected="${i === 0}" title="${sec.n}">${sec.n}<b>${sec.count}</b></button>`).join("")}
-${paySections.map(sec => `<div data-sec-nav="${sec.k}" class="${sec.k === paySections[0].k ? "" : "hidden"}"><p class="secttl">داخل القسم</p>
-${sec.groups.map(g => `<a class="apptab" href="#grp-${sec.k}-${g.k}">${g.n.replace(/^[٠-٩★✔🔨🗺️⏸]+\s*·?\s*/, "")}<b>${g.items.length}</b></a>`).join("")}</div>`).join("")}
+<div class="apptabs" aria-label="أقسام لوحة الدفع"><p class="secttl">اقفز إلى</p>
+${payGroups.map(g => `<a class="apptab" href="#grp-${g.k}">${g.n.replace(/^[٠-٩★✔]+\s*·?\s*/, "")}<b>${g.items.length}</b></a>`).join("")}
 <p class="secttl">اللوحات</p>
 <nav class="boards" aria-label="اللوحات الأخرى">
 <a href="TASK.html">📋 لوحة الشغل</a><a href="JBRSEO.html">🔗 جبر سيو</a><a href="SEO.html">🔍 سيو</a>
@@ -1616,7 +1595,7 @@ ${payNext ? `<a class="nextq" href="#${esc(payNext.id)}">
   ${payNext.ask ? `<span class="qa">${esc(payNext.ask)}</span>` : ""}
   <span class="qid">${esc(payNext.id)}</span>
 </a>` : payWorkNext ? `<a class="nextq" href="#${esc(payWorkNext.id)}">
-  <span class="lbl">البند الجاري الآن — ${esc((PAY_SECTIONS.find(x => x.k === (payWorkNext.psec || "admin")) || PAY_SECTIONS[0]).n)}</span>
+  <span class="lbl">البند الجاري الآن — المرحلة ١ · الأدمن</span>
   <span class="qt">${payWorkNext.t}</span>
   <span class="qid">${esc(payWorkNext.id)}</span>
 </a>` : `<p class="elsewhere">المرحلة ١ مغلقة كلّها. التالية: بطاقة <code>PAY-P2</code>.</p>`}
@@ -1624,8 +1603,7 @@ ${payNext ? `<a class="nextq" href="#${esc(payNext.id)}">
 <div class="tools"><button class="chip" data-sev="critical high" aria-pressed="false">الحرج والمهم فقط</button></div>
 </div></header>
 <main class="wrap">
-${paySections.map((sec, i) => `<div data-sec="${sec.k}" class="${i ? "hidden" : ""}"><h2 class="sech">${sec.n}</h2><p class="secs">${sec.s}</p>
-${sec.groups.map(g => `<section class="grp" id="grp-${sec.k}-${g.k}" data-grp="${g.k}"><h2>${g.n} <span class="n" data-count>${g.items.length}</span></h2><p>${g.s}</p><div class="grid">${g.items.map(cardHTML).join("\n")}</div></section>`).join("\n")}</div>`).join("\n")}
+${payGroups.map(g => `<section class="grp" id="grp-${g.k}" data-grp="${g.k}"><h2>${g.n} <span class="n" data-count>${g.items.length}</span></h2><p>${g.s}</p><div class="grid">${g.items.map(cardHTML).join("\n")}</div></section>`).join("\n")}
 </main>
 <footer>هذه اللوحة تخصّ انتقال الدفع وحده — بطاقاتها نُقلت من <a href="JBRSEO.html">JBRSEO.html</a> نقلاً لا نسخاً، ومصدرها <code>task-data.json</code> نفسه فلا تنحرف عنه. دفتر القرار: <a href="../HTML/modonty-payment-migration-workbook.html">modonty-payment-migration-workbook.html</a></footer>
 <script>
@@ -1634,20 +1612,11 @@ ${sec.groups.map(g => `<section class="grp" id="grp-${sec.k}-${g.k}" data-grp="$
     cards.forEach(c => c.classList.toggle('hidden', sevOnly && !/critical|high/.test(c.dataset.sev)));
     document.querySelectorAll('.grp').forEach(g => { const n = g.querySelectorAll('.card:not(.hidden)').length; g.querySelector('[data-count]').textContent = n; g.classList.toggle('hidden', n === 0); }); };
   chip.addEventListener('click', () => { chip.setAttribute('aria-pressed', chip.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); apply(); });
-  // ثلاثة أقسام كتبويبات؛ داخل القسم لا شيء مخفيّ. الهاش يفتح قسم البطاقة ثم البطاقة.
-  const showSec = (k) => {
-    document.querySelectorAll('[data-sec]').forEach(el => el.classList.toggle('hidden', el.dataset.sec !== k));
-    document.querySelectorAll('[data-sec-nav]').forEach(el => el.classList.toggle('hidden', el.dataset.secNav !== k));
-    document.querySelectorAll('[data-sec-btn]').forEach(b => b.setAttribute('aria-selected', b.dataset.secBtn === k));
-    try { localStorage.setItem('pay-sec', k); } catch {} };
-  document.querySelectorAll('[data-sec-btn]').forEach(b => b.addEventListener('click', () => showSec(b.dataset.secBtn)));
-  try { const s = localStorage.getItem('pay-sec'); if (s && document.querySelector('[data-sec="' + s + '"]')) showSec(s); } catch {}
+  // لا ممرّات تُخفى هنا، فالهاش يفتح البطاقة ويمرّر إليها فقط.
   const openCard = (h) => { const el = document.querySelector('.card[data-id="' + CSS.escape(h) + '"]');
-    if (!el) return; showSec(el.closest('[data-sec]').dataset.sec);
-    const d = el.querySelector('details'); if (d) d.open = true; el.scrollIntoView({ block: 'center' }); };
-  const openGroup = (h) => { const el = document.getElementById(h); if (!el) return; showSec(el.closest('[data-sec]').dataset.sec); el.scrollIntoView({ block: 'start' }); };
-  const route = () => { const h = location.hash.slice(1); if (!h) return; h.startsWith('grp-') ? openGroup(h) : openCard(h); };
-  route(); window.addEventListener('hashchange', route);
+    if (el) { const d = el.querySelector('details'); if (d) d.open = true; el.scrollIntoView({ block: 'center' }); } };
+  if (location.hash && !location.hash.startsWith('#grp-')) openCard(location.hash.slice(1));
+  window.addEventListener('hashchange', () => { if (!location.hash.startsWith('#grp-')) openCard(location.hash.slice(1)); });
 ${COPY_JS}
 })();
 </script></body></html>`;
