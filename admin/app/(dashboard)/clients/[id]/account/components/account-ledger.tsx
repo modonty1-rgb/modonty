@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 
 import { createInvoiceAction } from "../actions/create-invoice";
 import { markInvoicePaidAction } from "../actions/mark-paid";
-import { sendInvoiceAction } from "../actions/send-invoice";
+import { sendInvoiceAction } from "@/lib/invoices/send-invoice-action";
 import { archiveInvoiceAction } from "../actions/archive-invoice";
 import { convertOpeningBalanceAction } from "../actions/convert-opening-balance";
 

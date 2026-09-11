@@ -40,6 +40,9 @@ export interface SendEmailParams {
   replyTo?: string;
   // Resend tags — surface in webhook payloads to identify the email (e.g. clientId, emailType).
   tags?: { name: string; value: string }[];
+  // Inline/attached files. `contentId` lets the HTML reference the file as <img src="cid:…">
+  // (Resend docs «Embed inline images»: content Buffer or Base64, filename, contentId, contentType).
+  attachments?: { filename: string; content: Buffer | string; contentType?: string; contentId?: string }[];
 }
 
 /**
@@ -140,6 +143,7 @@ export async function sendEmailWithRetry(
         text: params.text,
         replyTo: params.replyTo,
         tags: params.tags,
+        attachments: params.attachments,
       };
 
       console.log(`[Email] Attempt ${attempt + 1}/${maxRetries} - SENDING TO RESEND:`, {

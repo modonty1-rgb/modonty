@@ -10,6 +10,8 @@ import { findBlockingUnpaidInvoice } from "@/lib/invoices/find-blocking-unpaid-i
 import { nextInvoiceNumber } from "@/lib/invoices/next-invoice-number";
 import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 import { requireFinanceAdmin } from "@/lib/require-finance-admin";
+import { notifyPaymentReceived } from "@modonty/shared/lib/payments/notify-payment-received";
+import { sendInvoiceAction } from "@/lib/invoices/send-invoice-action";
 
 /**
  * Read-only name lookup for the breadcrumb (see breadcrumb-actions.ts), same unguarded
@@ -58,7 +60,7 @@ export async function confirmOrderPaymentAction(orderId: string, form: FormData)
   });
   if (count === 0) throw new Error("الطلب مؤكَّد مسبقاً أو ليس بانتظار تحويل");
 
-  const order = await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { totalMinor: true, currency: true } });
+  const order = await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { number: true, totalMinor: true, currency: true, market: true, planName: true, paidMonths: true, bonusServiceMonths: true, buyerName: true } });
   if (order) {
     await db.paymentTransaction.create({
       data: { orderId, provider: "BANK_TRANSFER", providerReference: parsed.data.transferReference, status: "SUCCESS", amountMinor: order.totalMinor, currency: order.currency, settledAt: now },
@@ -67,10 +69,42 @@ export async function confirmOrderPaymentAction(orderId: string, form: FormData)
 
   await logAction("order.confirmPayment", { entity: "Order", entityId: orderId, summary: `تأكيد تحويل — مرجع ${parsed.data.transferReference}` });
 
-  // shared/lib/payments/notify-payment-received.ts (PAY-E7) يُستدعى من هنا حين يُبنى.
+  // PAY-E7: the team hears about every arrival. Never fails the confirmation (no-op outside production).
+  if (order) {
+    const notice = await notifyPaymentReceived({ orderNumber: order.number, planName: order.planName, paidMonths: order.paidMonths, bonusServiceMonths: order.bonusServiceMonths, totalMinor: order.totalMinor, currency: order.currency, market: order.market, buyerName: order.buyerName, source: "manual-transfer" });
+    if (!notice.success) console.warn("[order.confirmPayment] telegram:", notice.error);
+  }
 
   revalidatePath("/orders");
   revalidatePath(`/orders/${orderId}`);
+}
+
+/**
+ * PAY-Q7: the invoice email is a human act too — a button on the order, after issuing.
+ * Delegates to the shared send action (same email the client ledger sends) and surfaces
+ * its error through the route's boundary.
+ */
+export async function sendOrderInvoiceEmailAction(orderId: string): Promise<void> {
+  await requireFinanceAdmin();
+  const order = await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { invoiceId: true } });
+  if (!order?.invoiceId) throw new Error("لا فاتورة لهذا الطلب بعد");
+  const result = await sendInvoiceAction(order.invoiceId);
+  if (!result.ok) throw new Error(result.error ?? "فشل إرسال الفاتورة");
+  revalidatePath(`/orders/${orderId}`);
+}
+
+/**
+ * PAY-E6 / PAY-Q13: WhatsApp is a link a staff member clicks, not an API — the send itself
+ * happens outside the system, so the only trace we can keep is WHO opened the ready
+ * message for WHICH invoice. Any active staff member may send it (not money).
+ */
+export async function logInvoiceWhatsappAction(orderId: string): Promise<void> {
+  const session = await auth();
+  if (!(session?.user as { id?: string } | undefined)?.id) throw new Error("غير مصرح");
+  const order = await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { number: true, invoiceId: true } });
+  if (!order?.invoiceId) throw new Error("لا فاتورة لهذا الطلب بعد");
+  const invoice = await db.invoice.findUnique({ where: { id: order.invoiceId }, select: { number: true } });
+  await logAction("invoice.whatsapp", { entity: "Invoice", entityId: order.invoiceId, summary: `${invoice?.number ?? order.invoiceId} · واتساب · من الطلب ${order.number}` });
 }
 
 /** For the order-detail "existing client?" check — same buyer email, read-only. */

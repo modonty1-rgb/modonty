@@ -9,8 +9,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { db } from "@/lib/db";
 import { linkOrderToClient } from "@/lib/orders/link-order-to-client";
 import { checkFinanceAdmin } from "@/lib/require-finance-admin";
-import { confirmOrderPaymentAction, createInvoiceFromOrderAction, getExistingClientForOrderEmail } from "../actions";
+import { confirmOrderPaymentAction, createInvoiceFromOrderAction, getExistingClientForOrderEmail, sendOrderInvoiceEmailAction } from "../actions";
 import { ConfirmTransferButton } from "../components/confirm-transfer-button";
+import { WhatsappInvoiceButton } from "../components/whatsapp-invoice-button";
+import { buildInvoiceWhatsappLink } from "../helpers/build-invoice-whatsapp-link";
 import { OrderStatusBadge } from "../components/order-status-badge";
 import { formatOrderDate } from "../helpers/format-order-date";
 import { formatOrderDateTime } from "../helpers/format-order-date-time";
@@ -25,14 +27,17 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const order = await db.checkoutOrder.findUnique({ where: { id } });
   if (!order) notFound();
 
-  const [transactions, webhookEvents, attempts, financeGate, existingClient] = await Promise.all([
+  const [transactions, webhookEvents, attempts, financeGate, existingClient, invoice] = await Promise.all([
     db.paymentTransaction.findMany({ where: { orderId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
     db.paymentWebhookEvent.findMany({ where: { orderId: id }, orderBy: { receivedAt: "desc" }, take: 20 }),
     db.paymentAttempt.findMany({ where: { orderId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
     checkFinanceAdmin(),
     order.status === "PAID" && !order.clientId ? getExistingClientForOrderEmail(id) : Promise.resolve(null),
+    order.invoiceId ? db.invoice.findUnique({ where: { id: order.invoiceId }, select: { number: true, emailSentAt: true, client: { select: { name: true } } } }) : Promise.resolve(null),
   ]);
   const isFinanceAdmin = financeGate.status === "ok";
+  // PAY-E6: the WhatsApp message is built here (server) — the button only opens it and logs the click.
+  const whatsapp = invoice ? buildInvoiceWhatsappLink({ phone: order.buyerPhone, clientName: invoice.client.name, invoiceNumber: invoice.number, totalLabel: formatOrderMoney(order.totalMinor, order.currency), consoleUrl: process.env.CONSOLE_BASE_URL ?? null }) : null;
 
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-6 pb-12" dir="rtl">
@@ -83,7 +88,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
         </CardHeader>
         <CardContent className="flex flex-wrap items-center gap-2">
           <Badge variant="outline">العميل: {order.clientId ? "مرتبط بحساب" : "لم يُنشأ بعد"}</Badge>
-          <Badge variant="outline">الفاتورة: {order.invoiceId ? "صدرت" : "لم تصدر بعد"}</Badge>
+          <Badge variant="outline">الفاتورة: {invoice ? `${invoice.number}${invoice.emailSentAt ? ` — أُرسلت ${formatOrderDate(invoice.emailSentAt)}` : " — لم تُرسل بعد"}` : "لم تصدر بعد"}</Badge>
           {order.confirmedAt ? <Badge variant="outline">أكّد التحويل: {formatOrderDate(order.confirmedAt)}{order.transferReference ? ` — مرجع ${order.transferReference}` : ""}</Badge> : null}
           {order.failedReason ? <Badge variant="destructive">سبب الفشل: {order.failedReason}</Badge> : null}
           {order.status === "AWAITING_TRANSFER" && isFinanceAdmin ? (
@@ -107,6 +112,12 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
               <Button type="submit">إصدار الفاتورة</Button>
             </form>
           ) : null}
+          {invoice && isFinanceAdmin ? (
+            <form action={sendOrderInvoiceEmailAction.bind(null, order.id)}>
+              <Button type="submit" variant={invoice.emailSentAt ? "outline" : "default"}>{invoice.emailSentAt ? "إعادة إرسال الفاتورة بالإيميل" : "إرسال الفاتورة بالإيميل"}</Button>
+            </form>
+          ) : null}
+          {invoice && whatsapp ? ("href" in whatsapp ? <WhatsappInvoiceButton href={whatsapp.href} orderId={order.id} /> : <Badge variant="destructive">{whatsapp.error}</Badge>) : null}
         </CardContent>
       </Card>
 
