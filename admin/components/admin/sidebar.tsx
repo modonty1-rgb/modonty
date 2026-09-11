@@ -84,6 +84,8 @@ import {
   ClipboardList,
   Share2,
   Archive,
+  CreditCard,
+  Receipt,
 } from "lucide-react";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
@@ -219,6 +221,17 @@ const rawMenuGroups: MenuGroup[] = [
       { icon: Images, label: "Media Library", href: "/media" },
       { icon: GalleryThumbnails, label: "Client Galleries", href: "/client-galleries" },
       { icon: Wrench, label: "Maintenance", href: "/media/maintenance" },
+    ],
+  },
+  {
+    title: "إدارة الدفع",
+    icon: CreditCard,
+    section: "Business",
+    defaultOpen: false,
+    items: [
+      { icon: CreditCard, label: "الباقات والأسعار", href: "/commercial-plans" },
+      { icon: Library, label: "مكتبة المزايا", href: "/commercial-features" },
+      { icon: Receipt, label: "الطلبات", href: "/orders" },
     ],
   },
   // Its own group, not one line under Media (Khalid 2026-09-01): a reel is a lifecycle

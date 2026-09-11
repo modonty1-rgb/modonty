@@ -10,6 +10,7 @@ import { getUserById } from '@/app/(dashboard)/users/actions/users-actions';
 import { getModontyAuthor } from '@/app/(dashboard)/authors/actions/authors-actions';
 import { getLeadName } from '@/app/(dashboard)/sales-leads/helpers/get-lead';
 import { getCommercialPlanName } from '@/app/(dashboard)/commercial-plans/actions';
+import { getOrderNumber } from '@/app/(dashboard)/orders/actions';
 
 function normalizeEntityType(type: string): string {
   const pluralToSingular: Record<string, string> = {
@@ -26,6 +27,7 @@ function normalizeEntityType(type: string): string {
     // فاتن تفتح بطاقة عميل محتمل، والفتات يقول اسمها لا معرّفها المشفّر.
     'sales-leads': 'sales-lead',
     'commercial-plans': 'commercial-plan',
+    orders: 'order',
   };
   return pluralToSingular[type] || type;
 }
@@ -71,6 +73,9 @@ export async function getEntityName(type: string, id: string): Promise<string | 
       }
       case 'commercial-plan': {
         return await getCommercialPlanName(id);
+      }
+      case 'order': {
+        return await getOrderNumber(id);
       }
       default:
         return null;

@@ -1,5 +1,5 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>أرشيف المنجز — 89 بنداً</title>
+<title>أرشيف المنجز — 90 بنداً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f1013;--panel:#17181d;--card:#1d1e24;--line:#2c2d36;--fg:#f3f4f6;--mut:#9aa3b2;--dim:#6b7280;
@@ -132,7 +132,7 @@ summary::before{content:"▸";transition:transform .15s}details[open]>summary::b
 .hidden{display:none!important}
 footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </style></head><body>
-<header class="top"><div class="wrap"><h1>أرشيف المنجز — 89 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
+<header class="top"><div class="wrap"><h1>أرشيف المنجز — 90 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
 <div class="tools"><input id="q" type="search" placeholder="ابحث في المنجز…" aria-label="بحث"></div></div></header>
 <main class="wrap"><section class="grp"><div class="grid"><article class="card" data-id="G11" data-sev="normal" data-who="c" data-tab="done" data-board="seo" data-apps="admin modonty" data-n="113" data-audit="pass">
   <div class="hd"><span class="num" title="رقم البند — قل «بند 113» في الشات">113</span><span class="id">G11</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند G11">⧉</button></div>
@@ -1778,6 +1778,43 @@ tsx shared/__tmp-pay-b2.ts →
   3 order after price change: {"monthlyBaseMinor":39900,"totalMinor":239400,"subtotalMinor":208174,"vatMinor":31226}   ← لم يتغيّر
   4 حذف الباقة ← order after plan delete: {"number":"ORD-2026-00001","planId":"6aa4314…","planName":"باقة اختبار B3","totalMinor":239400} | plan rows: 0
   cleanup → orders: 0 | plans: 3</pre></div></details>
+</article>
+<article class="card" data-id="PAY-E1" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-agent="Sonnet" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-E1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-E1">⧉</button></div>
+  
+  <div class="t">شاشة الطلبات في الأدمن — /orders بقائمة وتفاصيل</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 12 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١١ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المقيس: لا مسار طلبات في الأدمن. السايدبار يحمل مجموعة الكتالوج في admin/components/admin/sidebar.tsx:231-232. مسار الفتات يحتاج ربطاً في admin/components/admin/breadcrumb-actions.ts (كما فُعل لـcommercial-plan). ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المقيس:</b> لا مسار طلبات في الأدمن. السايدبار يحمل مجموعة الكتالوج في <code>admin/components/admin/sidebar.tsx:231-232</code>. مسار الفتات يحتاج ربطاً في <code>admin/components/admin/breadcrumb-actions.ts</code> (كما فُعل لـ<code>commercial-plan</code>).</p>
+<p><b>العمل:</b></p>
+<pre>admin/app/(dashboard)/orders/
+  page.tsx      جدول: الرقم · التاريخ · المشتري · السوق · الباقة · المدة · الإجمالي · الحالة · المزوّد
+                فلتر الحالة · take 50 · select محدود · فارغ/تحميل/خطأ
+  [id]/page.tsx اللقطة كاملة · المشتري · المعاملات · أحداث الويب هوك · محاولات الفشل
+                · شريط الأزرار (E2 · E3 · E4 · E6 تُضاف تباعاً) · حالة كل خطوة (عميل؟ فاتورة؟)
+  loading.tsx · error.tsx · components/ · actions.ts
+سايدبار: «الطلبات» تحت «الباقات والأسعار» · breadcrumb: orders ← رقم الطلب</pre>
+<p>القراءة لكل موظّف نشط (نمط <code>admin/lib/admin-guard.ts</code>)؛ الأزرار المالية ADMIN فقط (E2).</p>
+<p><b>🎨 واجهة:</b> يُطبَّق <code>PAY-UIUX</code> كاملاً وقائمة فحصه (د) بنواتجها في دليل الإغلاق.</p><p><b>يُغلق بـ:</b> لقطة القائمة والتفاصيل بطلبات المرحلتين ٣ و٤، وصفر استعلام بلا <code>take</code> في المجلّد (grep).</p><p><b>تصحيح على شرط الإغلاق المكتوب في البطاقة:</b> شرط الإغلاق الأصلي افترض «طلبات المرحلتين ٣ و٤» — لكن خالد أعاد ترتيب التنفيذ (١١ سبتمبر مساءً) بحيث تُنفَّذ المرحلة ٥ (E1–E8) قبل واجهة /pay (C) والدفع (D)، فلا طلبات حقيقية موجودة بعد. أُغلق بدلاً منه ببيانات اختبار مزروعة مباشرةً في modonty_dev عبر buildOrderSnapshot/nextOrderNumber (سكربت دائم يُعاد استعماله في E2–E8).</p><p><b>✔ أُغلق — ١١ سبتمبر ٢٠٢٦ (Sonnet):</b></p><pre>admin/app/(dashboard)/orders/page.tsx · [id]/page.tsx · loading.tsx · error.tsx · actions.ts · components/order-status-badge.tsx
+  · components/order-status-filter.tsx · helpers/format-order-money.ts · format-order-date.ts · format-order-date-time.ts
+  · order-status-copy.ts · order-provider-label.ts · order-market-label.ts
+sidebar.tsx:231-235 — «الطلبات» تحت «الباقات والأسعار» (Receipt) · breadcrumb-actions.ts — case order ← getOrderNumber
+admin/scripts/seed-test-orders.ts — ٦ طلبات اختبار (كل الحالات الست) على modonty_dev: buyerEmail بادئة seed-test-order-
+  PAID ORD-2026-00005 (٣٩٩×٦+١ — يطابق أرقام PAY-E4: subtotal 208174 · vat 31226 · total 239400)
+  AWAITING_PAYMENT ORD-2026-00006 · AWAITING_TRANSFER ORD-2026-00007 (مصر) · FAILED ORD-2026-00008 · CANCELLED ORD-2026-00009 · REFUNDED ORD-2026-00010
+grep -rn "#[0-9a-fA-F]{6}" admin/app/(dashboard)/orders = صفر · grep -rn "text-left|ml-|mr-|pl-|pr-" = صفر
+grep -n "findMany(" admin/app/(dashboard)/orders/**/*.ts* — كل استدعاء يحمل take (1 · 20 · 50)
+Playwright حيّ عبر claude-check@modonty.local على localhost:3001، ١٢٨٠×٨٠٠ و٣٩٠×٨٤٤ فاتح وغامق:
+  /orders — فلتر الحالة يعمل (الكل ٦ · كل حالة ١)، لا تمرير أفقي للصفحة (scrollWidth=clientWidth=1280)
+  /orders/[id] — لقطة الطلب (399 ر.س. × 6 أشهر، صافي 2081.74 ر.س.، ضريبة 312.26 ر.س. (15%)، إجمالي 2394 ر.س.) · المشتري · الخطوات التالية · معاملات/ويب هوك/محاولات فارغة أو معبّأة حسب الطلب
+  لا تمرير أفقي عند ٣٩٠ (الجدول وحده overflow-x-auto) · الفتات يحلّ رقم الطلب (عبر getOrderNumber) بعد التحميل
+ملاحظة غير مُصلَحة (خارج نطاق E1): PageError المشترك (admin/components/admin/page-error.tsx) نصّه إنجليزي بالكامل — نمط قائم مستخدم في كل شاشات الأدمن، لم أُعِد تصميمه (قاعدة PAY-UIUX ٩)
+</pre></div></details>
 </article></div></section></main>
 <script>
 (() => { const q = document.getElementById('q'); const cards = [...document.querySelectorAll('.card')];
