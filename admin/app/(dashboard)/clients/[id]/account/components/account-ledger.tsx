@@ -35,6 +35,9 @@ export interface LedgerInvoice {
   /** Voided — kept in the ledger for accounting, but owes nothing and blocks nothing. */
   isArchived: boolean;
   archivedReason: string | null;
+  /** PAY-E4: only present on an invoice born from a checkout order — the tax breakdown
+   *  from that order's own price snapshot, in minor units. Absent on every older invoice. */
+  taxBreakdown: { subtotalMinor: number; vatMinor: number; vatRateBp: number } | null;
 }
 
 interface Props {
@@ -223,6 +226,11 @@ function InvoiceRow({ invoice }: { invoice: LedgerInvoice }) {
       </td>
       <td className={`text-center tabular-nums font-semibold ${archived ? "line-through" : ""}`}>
         {money(invoice.amount, invoice.currency)}
+        {invoice.taxBreakdown ? (
+          <span className="block text-[10.5px] font-normal text-muted-foreground">
+            صافٍ {money(invoice.taxBreakdown.subtotalMinor / 100, invoice.currency)} + ضريبة {money(invoice.taxBreakdown.vatMinor / 100, invoice.currency)} ({invoice.taxBreakdown.vatRateBp / 100}٪)
+          </span>
+        ) : null}
       </td>
       <td className="text-center">
         <span

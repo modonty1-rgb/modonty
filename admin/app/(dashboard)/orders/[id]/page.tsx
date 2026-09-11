@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { db } from "@/lib/db";
 import { linkOrderToClient } from "@/lib/orders/link-order-to-client";
 import { checkFinanceAdmin } from "@/lib/require-finance-admin";
-import { confirmOrderPaymentAction, getExistingClientForOrderEmail } from "../actions";
+import { confirmOrderPaymentAction, createInvoiceFromOrderAction, getExistingClientForOrderEmail } from "../actions";
 import { ConfirmTransferButton } from "../components/confirm-transfer-button";
 import { OrderStatusBadge } from "../components/order-status-badge";
 import { formatOrderDate } from "../helpers/format-order-date";
@@ -80,7 +80,6 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
       <Card>
         <CardHeader>
           <CardTitle>الخطوات التالية</CardTitle>
-          <CardDescription>إصدار الفاتورة يُضاف كزرّ هنا في بند لاحق.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap items-center gap-2">
           <Badge variant="outline">العميل: {order.clientId ? "مرتبط بحساب" : "لم يُنشأ بعد"}</Badge>
@@ -102,6 +101,11 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             ) : (
               <Link href={`/clients/new?orderId=${order.id}`} className={buttonVariants({ variant: "default" })}>إنشاء حساب العميل</Link>
             )
+          ) : null}
+          {order.status === "PAID" && order.clientId && !order.invoiceId && isFinanceAdmin ? (
+            <form action={createInvoiceFromOrderAction.bind(null, order.id)}>
+              <Button type="submit">إصدار الفاتورة</Button>
+            </form>
           ) : null}
         </CardContent>
       </Card>

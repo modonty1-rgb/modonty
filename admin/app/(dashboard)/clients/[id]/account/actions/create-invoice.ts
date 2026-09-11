@@ -5,7 +5,10 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
-import { findBlockingUnpaidInvoice, recomputeSubscriptionEnd } from "../helpers/billing";
+import { addMonths } from "@/lib/invoices/add-months";
+import { findBlockingUnpaidInvoice } from "@/lib/invoices/find-blocking-unpaid-invoice";
+import { nextInvoiceNumber } from "@/lib/invoices/next-invoice-number";
+import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 
 export interface CreateInvoiceInput {
   clientId: string;
@@ -26,35 +29,10 @@ interface CreateInvoiceResult {
 
 const ALLOWED_MONTHS = [1, 2, 3, 6, 12, 18] as const;
 
-/**
- * Add whole months, clamping the day so 31 Jan + 1 month lands on 28/29 Feb, not 3 Mar.
- *
- * Deliberately in UTC. Local-time arithmetic makes the result depend on where the code
- * runs — the same renewal computed a day apart on a dev machine east of Greenwich and on
- * Vercel (UTC) — and the client preview does the same maths, so both must agree.
- */
-function addMonths(from: Date, months: number): Date {
-  const out = new Date(
-    Date.UTC(from.getUTCFullYear(), from.getUTCMonth() + months, from.getUTCDate())
-  );
-  if (out.getUTCDate() < from.getUTCDate()) out.setUTCDate(0);
-  return out;
-}
-
 // Egypt → EGP, everything else (default Saudi) → SAR.
 function currencyForCountry(country: string | null): "SAR" | "EGP" {
   const c = (country ?? "").toLowerCase();
   return /مصر|egypt|\beg\b/.test(c) ? "EGP" : "SAR";
-}
-
-// Atomic, gapless per-year sequence. Backstop: Invoice.number is @unique.
-async function nextInvoiceNumber(year: number): Promise<string> {
-  const counter = await db.counter.upsert({
-    where: { key: `invoice-${year}` },
-    create: { key: `invoice-${year}`, value: 1 },
-    update: { value: { increment: 1 } },
-  });
-  return `MOD-${year}-${String(counter.value).padStart(5, "0")}`;
 }
 
 /**

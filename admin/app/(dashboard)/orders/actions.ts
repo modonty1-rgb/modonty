@@ -5,6 +5,10 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
+import { addMonths } from "@/lib/invoices/add-months";
+import { findBlockingUnpaidInvoice } from "@/lib/invoices/find-blocking-unpaid-invoice";
+import { nextInvoiceNumber } from "@/lib/invoices/next-invoice-number";
+import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 import { requireFinanceAdmin } from "@/lib/require-finance-admin";
 
 /**
@@ -74,4 +78,83 @@ export async function getExistingClientForOrderEmail(orderId: string): Promise<{
   const order = await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { buyerEmail: true } });
   if (!order) return null;
   return db.client.findFirst({ where: { email: order.buyerEmail }, select: { id: true, name: true } });
+}
+
+/**
+ * PAY-E4: every field comes from the order's own snapshot, never today's catalog —
+ * changing a plan's price afterwards must not rewrite a past invoice. ADMIN-only
+ * (money), one click, gapless numbering via the same Counter every other invoice uses.
+ *
+ * `period` is set "monthly" | "annual" (not the card's literal "{paidMonths}m") —
+ * measured live: three consumers (sales-report, send-invoice, this account page's own
+ * ledger row label) switch on exactly those two strings and silently read anything
+ * else as "annual". A third format there is a defect, not a feature; paidMonths===1
+ * is the same simplification PAY-E3 already made for the client form's billingCycle.
+ */
+export async function createInvoiceFromOrderAction(orderId: string): Promise<void> {
+  await requireFinanceAdmin();
+  const session = await auth();
+  const userId = (session?.user as { id?: string } | undefined)?.id;
+  if (!userId) throw new Error("غير مصرح");
+
+  const order = await db.checkoutOrder.findUnique({ where: { id: orderId } });
+  if (!order) throw new Error("الطلب غير موجود");
+  if (order.status !== "PAID") throw new Error("الطلب ليس مدفوعاً");
+  if (!order.clientId) throw new Error("أنشئ حساب العميل أولاً");
+  if (order.invoiceId) throw new Error("صدرت فاتورة لهذا الطلب مسبقاً");
+  if (!order.planTier) throw new Error("لا فئة اشتراك في لقطة الطلب");
+
+  const client = await db.client.findUnique({ where: { id: order.clientId }, select: { id: true, name: true, subscriptionEndDate: true } });
+  if (!client) throw new Error("العميل غير موجود");
+
+  const blocking = await findBlockingUnpaidInvoice(client.id);
+  if (blocking) throw new Error(`فيه فاتورة غير مسدّدة (${blocking}) لهذا العميل — حدّدها مدفوعة أو أرشفها أولاً`);
+
+  const anchor = client.subscriptionEndDate ?? order.paidAt ?? new Date();
+  const totalMonths = order.paidMonths + order.bonusServiceMonths;
+  const subscriptionEnd = addMonths(anchor, totalMonths);
+  const period = order.paidMonths === 1 ? "monthly" : "annual";
+
+  const number = await nextInvoiceNumber(new Date().getFullYear());
+  const created = await db.invoice.create({
+    data: {
+      number,
+      clientId: client.id,
+      tier: order.planTier,
+      tierName: order.planName,
+      period,
+      currency: order.currency,
+      amount: order.totalMinor / 100,
+      paymentStatus: "PAID",
+      paidAt: order.paidAt,
+      subscriptionStart: anchor,
+      subscriptionEnd,
+      issuedAt: new Date(),
+      issuedByUserId: userId,
+      orderId: order.id,
+      subtotalMinor: order.subtotalMinor,
+      vatRateBp: order.vatRateBp,
+      vatMinor: order.vatMinor,
+      totalMinor: order.totalMinor,
+      paidMonths: order.paidMonths,
+      bonusServiceMonths: order.bonusServiceMonths,
+    },
+    select: { id: true },
+  });
+
+  await db.checkoutOrder.update({ where: { id: orderId }, data: { invoiceId: created.id } });
+  await recomputeSubscriptionEnd(client.id);
+
+  await logAction("invoice.create", {
+    entity: "Invoice",
+    entityId: created.id,
+    summary: `${number} · من الطلب ${order.number} · ${client.name ?? client.id}`,
+    metadata: { orderId: order.id, totalMinor: order.totalMinor, paidMonths: order.paidMonths, bonusServiceMonths: order.bonusServiceMonths },
+  });
+
+  revalidatePath("/orders");
+  revalidatePath(`/orders/${orderId}`);
+  revalidatePath(`/clients/${client.id}/account`);
+  revalidatePath("/clients/accounts");
+  revalidatePath("/");
 }

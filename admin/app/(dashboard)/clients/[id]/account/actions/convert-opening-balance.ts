@@ -5,7 +5,9 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
-import { recomputeSubscriptionEnd } from "../helpers/billing";
+import { addMonths } from "@/lib/invoices/add-months";
+import { nextInvoiceNumber } from "@/lib/invoices/next-invoice-number";
+import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 
 interface ConvertResult {
   ok: boolean;
@@ -13,27 +15,9 @@ interface ConvertResult {
   error?: string;
 }
 
-// Add whole months in UTC, clamping the day (31 Jan + 1m → 28/29 Feb) — the same formula
-// createInvoiceAction uses, so a converted period lines up with any later renewal.
-function addMonths(from: Date, months: number): Date {
-  const out = new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth() + months, from.getUTCDate()));
-  if (out.getUTCDate() < from.getUTCDate()) out.setUTCDate(0);
-  return out;
-}
-
 function currencyForCountry(country: string | null): "SAR" | "EGP" {
   const c = (country ?? "").toLowerCase();
   return /مصر|egypt|\beg\b/.test(c) ? "EGP" : "SAR";
-}
-
-// Atomic, gapless per-year sequence. Backstop: Invoice.number is @unique.
-async function nextInvoiceNumber(year: number): Promise<string> {
-  const counter = await db.counter.upsert({
-    where: { key: `invoice-${year}` },
-    create: { key: `invoice-${year}`, value: 1 },
-    update: { value: { increment: 1 } },
-  });
-  return `MOD-${year}-${String(counter.value).padStart(5, "0")}`;
 }
 
 /**

@@ -7,7 +7,8 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
 import { advanceReferralOnPayment } from "@/lib/referrals/advance-referral-on-payment";
-import { NOT_ARCHIVED, recomputeSubscriptionEnd } from "../helpers/billing";
+import { NOT_ARCHIVED } from "@/lib/invoices/not-archived";
+import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 
 export interface MarkPaidInput {
   invoiceId: string;

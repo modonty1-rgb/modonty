@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
-import { recomputeSubscriptionEnd } from "../helpers/billing";
+import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 
 export interface ArchiveInvoiceInput {
   invoiceId: string;

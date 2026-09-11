@@ -164,6 +164,10 @@ export default async function ClientAccountPage({ params }: PageProps) {
     emailSent: !!inv.emailSentAt,
     isArchived: !!inv.archivedAt,
     archivedReason: inv.archivedReason ?? null,
+    taxBreakdown:
+      inv.subtotalMinor != null && inv.vatMinor != null && inv.vatRateBp != null
+        ? { subtotalMinor: inv.subtotalMinor, vatMinor: inv.vatMinor, vatRateBp: inv.vatRateBp }
+        : null,
   }));
 
   return (
