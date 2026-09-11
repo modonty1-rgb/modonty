@@ -1032,6 +1032,99 @@ model SubscriptionTierConfig {
 }
 
 // ============================================
+// COMMERCIAL CATALOG — public plans and market-specific prices
+// ============================================
+// Deliberately separate from SubscriptionTierConfig: the latter is an internal
+// operational tier enum, while this catalog must let the business add, retire,
+// price, and order sellable plans without a code change.
+
+model CommercialPlan {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug        String   @unique
+    name        String
+    description String?
+    articlesPerMonth Int?
+    highlights  String[]
+  badge       String?
+  isPublished Boolean  @default(false)
+  displayOrder Int    @default(0)
+  prices      CommercialPlanPrice[]
+  terms       CommercialPlanTerm[]
+  features    CommercialPlanFeature[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished, displayOrder])
+  @@map("commercial_plans")
+}
+
+model CommercialFeature {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  unitLabel   String?  // e.g. مقال | حملة | فيديو; null means a fixed inclusion
+  isActive    Boolean  @default(true)
+  displayOrder Int     @default(0)
+  assignments CommercialPlanFeature[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive, displayOrder])
+  @@map("commercial_features")
+}
+
+model CommercialPlanFeature {
+  id        String            @id @default(auto()) @map("_id") @db.ObjectId
+  planId    String            @db.ObjectId
+  plan      CommercialPlan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+  featureId String            @db.ObjectId
+  feature   CommercialFeature @relation(fields: [featureId], references: [id], onDelete: Restrict)
+  quantity  Int?
+  note      String?
+  displayOrder Int            @default(0)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@unique([planId, featureId])
+  @@index([planId, displayOrder])
+  @@map("commercial_plan_features")
+}
+
+model CommercialPlanPrice {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  planId      String         @db.ObjectId
+  plan        CommercialPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  market      String         // SA | EG; market is selected by the request proxy
+  currency    String         // SAR | EGP
+  // Major unit base price. Checkout will snapshot and convert the final amount
+  // to a provider-specific minor unit; never use a Float for money.
+  monthlyBase Int
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@unique([planId, market])
+  @@index([market, isActive])
+  @@map("commercial_plan_prices")
+}
+
+model CommercialPlanTerm {
+  id                String         @id @default(auto()) @map("_id") @db.ObjectId
+  planId            String         @db.ObjectId
+  plan              CommercialPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  paidMonths        Int
+  bonusServiceMonths Int            @default(0)
+  displayOrder      Int            @default(0)
+  isActive          Boolean        @default(true)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@unique([planId, paidMonths])
+  @@index([planId, isActive, displayOrder])
+  @@map("commercial_plan_terms")
+}
+
+// ============================================
 // JBRSEO SUBSCRIBERS MIRROR
 // ============================================
 // Pure mirror of jbrseo's Subscriber collection — display only, no workflow.
