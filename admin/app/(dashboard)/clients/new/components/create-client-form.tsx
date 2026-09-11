@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, CreditCard, Shield, Plus, Loader2, Mail } from "lucide-react";
+import type { SubscriptionTier } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useClientForm } from "../../helpers/hooks/use-client-form";
 import { clientCreateFormSchema } from "../../helpers/client-form-schema";
 import { sendClientWelcome } from "../../actions/clients-actions";
+import { linkOrderToClient } from "@/lib/orders/link-order-to-client";
 import { DEFAULT_CLIENT_PASSWORD } from "@/lib/default-client-password";
 import { YMYL_CATEGORIES, type YmylCategory } from "@modonty/shared/lib/seo/ymyl-config";
 import { LEGAL_FORMS, type LegalForm } from "@modonty/shared/lib/constants/client-classification";
@@ -28,17 +30,32 @@ interface CreatedClient {
   email: string;
 }
 
+interface OrderPrefill {
+  orderId: string;
+  name: string;
+  email: string;
+  phone: string;
+  addressCountry: string | null;
+  subscriptionTier: string | null;
+  planName: string;
+  billingCycle: "monthly" | "annual";
+}
+
 interface CreateClientFormProps {
   industries?: Array<{ id: string; name: string }>;
   siteUrl?: string | null;
   countries?: Array<{ code: string; nameAr: string; nameEn: string }>;
   salesReps?: Array<{ id: string; name: string }>;
   editors?: Array<{ id: string; name: string }>;
+  /** PAY-E3: when set (from /clients/new?orderId=…), the identity + plan fields the
+   *  order already carries are pre-filled — the rest (industry, sales rep, opening
+   *  balance) stays a human decision, same as any other create. */
+  prefill?: OrderPrefill | null;
 }
 
 // Self-contained CREATE UI. Backend is shared via useClientForm (createClient).
 // Editing has its own UI (ClientForm) — changes here never affect it.
-export function CreateClientForm({ industries = [], siteUrl = null, countries = [], salesReps = [], editors = [] }: CreateClientFormProps) {
+export function CreateClientForm({ industries = [], siteUrl = null, countries = [], salesReps = [], editors = [], prefill = null }: CreateClientFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [created, setCreated] = useState<CreatedClient | null>(null);
@@ -46,19 +63,64 @@ export function CreateClientForm({ industries = [], siteUrl = null, countries = 
 
   const { form, handleSubmit, loading, error, tierConfigs } = useClientForm({
     schema: clientCreateFormSchema,
-    onCreated: (client) => setCreated(client),
+    onCreated: async (client) => {
+      if (prefill?.orderId) {
+        try {
+          await linkOrderToClient(prefill.orderId, client.id);
+        } catch (linkError) {
+          toast({
+            title: "العميل انحفظ، لكن الربط بالطلب فشل",
+            description: linkError instanceof Error ? linkError.message : "افتح الطلب واربطه يدوياً.",
+            variant: "destructive",
+          });
+        }
+      }
+      setCreated(client);
+    },
   });
   const { watch, setValue, register, formState: { errors } } = form;
 
   // New clients default to Saudi Arabia (the primary market) so the console's
   // country-aware logic (isSaudi → tax + national-address fields) is correct from
-  // creation. Admin changes it for EG/AE clients.
+  // creation. Admin changes it for EG/AE clients. An order's own country (if any)
+  // wins — this effect only fills the gap when there is no prefill to say otherwise.
   useEffect(() => {
     if (!form.getValues("addressCountry")) {
-      setValue("addressCountry", "SA", { shouldValidate: false });
+      setValue("addressCountry", prefill?.addressCountry || "SA", { shouldValidate: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Identity fields from the order snapshot — set once, on mount, same pattern as
+  // addressCountry above. The admin can still edit every field before submitting.
+  useEffect(() => {
+    if (!prefill) return;
+    if (prefill.name) setValue("name", prefill.name, { shouldDirty: true });
+    if (prefill.email) setValue("email", prefill.email, { shouldDirty: true });
+    if (prefill.phone) setValue("phone", prefill.phone, { shouldDirty: true });
+    if (prefill.billingCycle) setValue("billingCycle", prefill.billingCycle, { shouldDirty: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // subscriptionTier waits for tierConfigs to load (a plain useEffect([]) would fire
+  // before the async fetch resolves, and the watch()-driven articlesPerMonth/
+  // subscriptionTierConfigId sync in useClientForm needs a real tierConfigs entry to
+  // find — setting the value before that would silently skip that sync).
+  //
+  // Matched by NAME first, not the raw tier enum: CommercialPlan.tier (the checkout
+  // catalog) and SubscriptionTierConfig.tier (this form's catalog) do not share one
+  // mapping — "الانطلاقة" is BASIC in one and STANDARD in the other, and that catalog's
+  // own BASIC is an unrelated free tier. Matching the enum directly would silently drop
+  // a paying client onto the free tier (measured live testing this exact order).
+  useEffect(() => {
+    if (!prefill || tierConfigs.length === 0) return;
+    if (form.getValues("subscriptionTier")) return;
+    const byName = tierConfigs.find((cfg) => cfg.name === prefill.planName);
+    const tier = byName?.tier ?? (prefill.subscriptionTier as SubscriptionTier | undefined);
+    if (!tier) return;
+    setValue("subscriptionTier", tier, { shouldValidate: true, shouldDirty: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tierConfigs]);
 
   // After create: either send the welcome email (login creds) or skip — then go to list.
   const finishToList = () => {

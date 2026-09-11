@@ -68,3 +68,10 @@ export async function confirmOrderPaymentAction(orderId: string, form: FormData)
   revalidatePath("/orders");
   revalidatePath(`/orders/${orderId}`);
 }
+
+/** For the order-detail "existing client?" check — same buyer email, read-only. */
+export async function getExistingClientForOrderEmail(orderId: string): Promise<{ id: string; name: string } | null> {
+  const order = await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { buyerEmail: true } });
+  if (!order) return null;
+  return db.client.findFirst({ where: { email: order.buyerEmail }, select: { id: true, name: true } });
+}

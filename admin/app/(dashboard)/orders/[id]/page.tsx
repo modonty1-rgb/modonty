@@ -1,12 +1,15 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { db } from "@/lib/db";
+import { linkOrderToClient } from "@/lib/orders/link-order-to-client";
 import { checkFinanceAdmin } from "@/lib/require-finance-admin";
-import { confirmOrderPaymentAction } from "../actions";
+import { confirmOrderPaymentAction, getExistingClientForOrderEmail } from "../actions";
 import { ConfirmTransferButton } from "../components/confirm-transfer-button";
 import { OrderStatusBadge } from "../components/order-status-badge";
 import { formatOrderDate } from "../helpers/format-order-date";
@@ -22,11 +25,12 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const order = await db.checkoutOrder.findUnique({ where: { id } });
   if (!order) notFound();
 
-  const [transactions, webhookEvents, attempts, financeGate] = await Promise.all([
+  const [transactions, webhookEvents, attempts, financeGate, existingClient] = await Promise.all([
     db.paymentTransaction.findMany({ where: { orderId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
     db.paymentWebhookEvent.findMany({ where: { orderId: id }, orderBy: { receivedAt: "desc" }, take: 20 }),
     db.paymentAttempt.findMany({ where: { orderId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
     checkFinanceAdmin(),
+    order.status === "PAID" && !order.clientId ? getExistingClientForOrderEmail(id) : Promise.resolve(null),
   ]);
   const isFinanceAdmin = financeGate.status === "ok";
 
@@ -76,7 +80,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
       <Card>
         <CardHeader>
           <CardTitle>الخطوات التالية</CardTitle>
-          <CardDescription>حساب العميل وإصدار الفاتورة يُضافان كأزرار هنا في بنود لاحقة.</CardDescription>
+          <CardDescription>إصدار الفاتورة يُضاف كزرّ هنا في بند لاحق.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap items-center gap-2">
           <Badge variant="outline">العميل: {order.clientId ? "مرتبط بحساب" : "لم يُنشأ بعد"}</Badge>
@@ -89,6 +93,15 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
               buyerName={order.buyerName}
               amountLabel={formatOrderMoney(order.totalMinor, order.currency)}
             />
+          ) : null}
+          {order.status === "PAID" && !order.clientId ? (
+            existingClient ? (
+              <form action={linkOrderToClient.bind(null, order.id, existingClient.id)}>
+                <Button type="submit">ربط بالعميل القائم — {existingClient.name}</Button>
+              </form>
+            ) : (
+              <Link href={`/clients/new?orderId=${order.id}`} className={buttonVariants({ variant: "default" })}>إنشاء حساب العميل</Link>
+            )
           ) : null}
         </CardContent>
       </Card>

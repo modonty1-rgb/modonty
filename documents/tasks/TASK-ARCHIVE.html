@@ -1,5 +1,5 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>أرشيف المنجز — 91 بنداً</title>
+<title>أرشيف المنجز — 92 بنداً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f1013;--panel:#17181d;--card:#1d1e24;--line:#2c2d36;--fg:#f3f4f6;--mut:#9aa3b2;--dim:#6b7280;
@@ -132,7 +132,7 @@ summary::before{content:"▸";transition:transform .15s}details[open]>summary::b
 .hidden{display:none!important}
 footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </style></head><body>
-<header class="top"><div class="wrap"><h1>أرشيف المنجز — 91 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
+<header class="top"><div class="wrap"><h1>أرشيف المنجز — 92 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
 <div class="tools"><input id="q" type="search" placeholder="ابحث في المنجز…" aria-label="بحث"></div></div></header>
 <main class="wrap"><section class="grp"><div class="grid"><article class="card" data-id="G11" data-sev="normal" data-who="c" data-tab="done" data-board="seo" data-apps="admin modonty" data-n="113" data-audit="pass">
   <div class="hd"><span class="num" title="رقم البند — قل «بند 113» في الشات">113</span><span class="id">G11</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند G11">⧉</button></div>
@@ -1869,6 +1869,51 @@ admin/app/(dashboard)/orders/components/confirm-transfer-button.tsx — AlertDia
   الحارس نفسه (requireFinanceAdmin) هو أوّل سطر في confirmOrderPaymentAction — أي استدعاء مباشر لغير ADMIN يُرفض بالخطأ نفسه قبل أي كتابة
 
 grep -rn "#[0-9a-fA-F]{6}|text-left|ml-|mr-|pl-|pr-" admin/app/(dashboard)/orders admin/lib/require-finance-admin.ts = صفر
+</pre></div></details>
+</article>
+<article class="card" data-id="PAY-E3" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-agent="Sonnet" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-E3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-E3">⧉</button></div>
+  
+  <div class="t">إنشاء حساب العميل من الطلب — عبر createClient القائم، PENDING، والسلَق بيد الموظّف</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 14 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١١ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المرجع: PAY-Q6 (حساب ← فاتورة ← تفعيل يدوي). · المقيس: clients/actions/clients-actions/create-client.ts:20 — Zod (clientServerSchema) · تفرّد البريد والجوال (:41-59) · إعداد الفئة عبر getTierConfigByTier (:65).</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المرجع:</b> <code>PAY-Q6</code> (حساب ← فاتورة ← تفعيل يدوي).</p>
+<p><b>المقيس:</b> <code>clients/actions/clients-actions/create-client.ts:20</code> — Zod (<code>clientServerSchema</code>) · تفرّد البريد والجوال (<code>:41-59</code>) · إعداد الفئة عبر <code>getTierConfigByTier</code> (<code>:65</code>). بيانات الدخول تُرسل عند الإنشاء لا التفعيل (<code>convert-subscriber-to-client.ts:101-121</code>)، والتفعيل بيد موظّف (<code>activate-client.ts:16</code>). نموذج الإنشاء: <code>clients/new</code>.</p>
+<p><b>العمل:</b></p>
+<pre>١  في تفاصيل الطلب (PAID · clientId فارغ): زرّ «إنشاء حساب العميل» ← /clients/new?orderId=…
+   النموذج يُعبَّأ من لقطة الطلب: الاسم · البريد · الجوال · اسم المنشأة · الدولة
+   · subscriptionTier = planTier · articlesPerMonth · billingCycle. السلَق يكتبه الموظّف (قرار بشري).
+٢  بعد نجاح createClient: أكشن صغير linkOrderToClient(orderId, clientId) يكتب CheckoutOrder.clientId
+   (لا يُعدَّل createClient نفسه — يُستدعى الربط من صفحة النجاح حين يوجد orderId).
+٣  إن كان البريد لعميل قائم (تجديد): الزرّ يصير «ربط بالعميل القائم» ← linkOrderToClient فقط.
+٤  لا تفعيل هنا. العميل PENDING لا يظهر على الموقع حتى activateClientAction.</pre>
+<p><b>🎨 واجهة:</b> يُطبَّق <code>PAY-UIUX</code> كاملاً وقائمة فحصه (د) بنواتجها في دليل الإغلاق.</p><p><b>يُغلق بـ:</b> من طلب PAID إلى عميل <code>subscriptionStatus: PENDING</code> و<code>order.clientId = client.id</code> بلا كتابة يدوية لأي بيان كان في الطلب — لقطة النموذج المعبَّأ + قراءة خام للطلب والعميل.</p><p><b>✔ أُغلق — ١١ سبتمبر ٢٠٢٦ (Sonnet):</b></p><pre>admin/lib/orders/get-order-prefill-for-client.ts · link-order-to-client.ts — تحت lib لا orders/actions.ts (توأمان لسيّارتين شقيقتين clients/orders، والقاعدة تمنع استيراد بين مسارين شقيقين)
+clients/new/page.tsx: searchParams.orderId → getOrderPrefillForClient → CreateClientForm(prefill)
+create-client-form.tsx: تعبئة الاسم/البريد/الجوال/دورة الفوترة عند التحميل؛ الباقة بعد تحميل tierConfigs
+orders/[id]/page.tsx: PAID و!clientId → getExistingClientForOrderEmail: عميل موجود ← «ربط بالعميل القائم» (فورم مباشر)؛ غير موجود ← رابط /clients/new?orderId=
+
+⚠️ عيبان مكتشَفان حيّاً وأُصلحا في نفس الدفعة (لم يكونا موجودين قبل E3 — لم يُبنَ مسار الربط من قبل):
+  ١) عدم تطابق الفئات: CommercialPlan.tier=BASIC لـ«الانطلاقة» (A2) بينما SubscriptionTierConfig.tier=STANDARD لنفس الاسم؛ وBASIC هناك فئة أخرى منفصلة اسمها «مجاني».
+     الربط بالـenum مباشرة كان سيضع عميلاً دافعاً على الفئة المجانية بصمت. نفس فئة عطل PAY-A11 المرصود لجانب /pay.
+     الإصلاح: المطابقة بالاسم planName أولاً (tierConfigs.find(name===planName))، سقوط احتياطي على enum لو الاسم غاب.
+  ٢) linkOrderToClient: updateMany({where:{clientId:null}}) على Mongo لا يطابق مستنداً لم يُكتب فيه الحقل إطلاقاً (غياب ≠ null عند الكتابة رغم أن القراءة تُرجعه null) —
+     مقيس مباشرة: findMany({clientId:null}) رجع صفراً على طلب قراءته الفعلية clientId=null. أي ربط كان سيفشل صامتاً على كل طلب حقيقي (لا يمرّ clientId أصلاً عند الإنشاء).
+     الإصلاح: قراءة ثم كتابة بالمعرّف الأساسي id بدل الاعتماد على فلتر clientId:null.
+
+ناتج خام — تدفّق كامل حيّ (Playwright، طلب PAID تجريبي جديد ORD-2026-00011، claude-check@modonty.local):
+قبل: order.clientId null
+فتح /clients/new?orderId=… ← تعبئة: الاسم «منشأة اختبار» · البريد seed-test-order-paid@example.test · الجوال +966500000001 · الباقة «الانطلاقة» محدَّدة تلقائياً بعد تحميل tierConfigs · دورة سنوي · رصيد افتتاحي 4788 (399×12)
+استكمال الصناعة والمندوب يدوياً (كما يريد التصميم) ← ضغط «إنشاء العميل»:
+  db.client: {id, name: منشأة اختبار, subscriptionTier: STANDARD, subscriptionStatus: PENDING, articlesPerMonth: 4}
+  db.checkoutOrder: clientId = معرّف العميل الجديد فوراً بلا خطوة يدوية إضافية
+  لا رسالة خطأ · تأكيد بصري «تم إنشاء «منشأة اختبار»» + توست «تم الإنشاء بنجاح»
+grep -rn "#[0-9a-fA-F]{6}|text-left|ml-|mr-|pl-|pr-" admin/lib/orders admin/app/(dashboard)/orders admin/app/(dashboard)/clients/new = صفر
+npx tsc --noEmit: صفر أخطاء تخصّ orders أو clients/new (الأخطاء الوحيدة الظاهرة .next/types/validator.ts لصفحات guidelines — لا علاقة، من قبل هذا البند)
 </pre></div></details>
 </article></div></section></main>
 <script>
