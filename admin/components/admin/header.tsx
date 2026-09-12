@@ -65,6 +65,16 @@ export function Header({
           <SalesMenu />
           <CampaignsMenu />
 
+          {/* الـPlaybook في الشريط نفسه لا داخل قائمة الأفاتار (خالد، ١١ سبتمبر ٢٠٢٦):
+              مرجع يُفتح كل يوم لا يُخبّأ خلف نقرتين. */}
+          <Link
+            href="/playbook"
+            className="inline-flex h-9 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <BookOpen className="h-4 w-4" />
+            <span className="hidden sm:inline">دليل الفريق</span>
+          </Link>
+
           {/* Which database this instance is on — rendered on the server, never guessed */}
           {dbBadge}
 
@@ -99,12 +109,6 @@ export function Header({
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/guidelines" className="flex items-center gap-2">
-                  <BookOpen className="h-4 w-4" />
-                  Guidelines
-                </Link>
-              </DropdownMenuItem>
               <DropdownMenuItem
                 onSelect={(e) => {
                   e.preventDefault();

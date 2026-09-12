@@ -19,7 +19,7 @@ const ITEMS = [
   { href: "/sales-leads/new", label: "إضافة عميل محتمل", icon: UserPlus },
   { href: "/sales-leads/follow-ups", label: "متابعة العملاء", icon: CalendarClock },
   { href: "/sales-leads", label: "إدارة العملاء المحتملين", icon: UsersRound },
-  { href: "/subscription-tiers", label: "إدارة الباقات", icon: CreditCard },
+  { href: "/subscription-tiers", label: "الباقات التشغيلية", icon: CreditCard },
   { href: "/clients/accounts", label: "حسابات وفواتير العملاء", icon: Wallet },
   { href: "/clients/sales-report", label: "تقرير المبيعات", icon: TrendingUp },
 ] as const;

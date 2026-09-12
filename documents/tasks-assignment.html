@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>إسناد المهام — من يفعل ماذا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0f1c; --card:#111827; --card-2:#0f172a; --line:#1f2a3d;
+    --text:#e6edf7; --muted:#93a3b8; --accent:#00d8d8; --warn:#f5b544;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font-family:Tajawal,"Segoe UI",system-ui,sans-serif;font-size:15px;line-height:1.7;
+  }
+  .shell{display:grid;grid-template-columns:280px 1fr;gap:22px;max-width:1280px;margin:0 auto;padding:24px 20px 80px}
+
+  /* ——— الشريط الجانبي ——— */
+  aside{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto}
+  aside h2{font-size:15px;margin:0 0 10px;color:var(--muted)}
+  .emp{
+    display:flex;align-items:center;gap:9px;width:100%;text-align:right;
+    background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:9px 11px;margin-bottom:7px;cursor:pointer;color:var(--text);
+    font-family:inherit;font-size:14px;
+  }
+  .emp:hover{border-color:rgba(0,216,216,.45)}
+  .emp.on{border-color:var(--accent);background:rgba(0,216,216,.07)}
+  .emp .nm{font-weight:700;flex:1}
+  .emp .dept{font-size:11px;color:var(--muted)}
+  .emp .cnt{
+    min-width:26px;text-align:center;border-radius:7px;padding:1px 6px;
+    font-size:12.5px;font-weight:700;background:var(--card-2);color:var(--muted);border:1px solid var(--line);
+  }
+  .emp.on .cnt,.emp .cnt.has{background:var(--accent);color:#04252b;border-color:transparent}
+  .grp-btn{padding:7px 10px;margin-bottom:5px}
+  .grp-btn.full{border-color:rgba(0,216,216,.35)}
+  h3.grp{scroll-margin-top:14px}
+
+  .meter{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:14px}
+  .meter b{color:var(--accent);font-size:19px}
+  .meter .bar{height:6px;border-radius:99px;background:var(--card-2);margin-top:7px;overflow:hidden}
+  .meter .bar i{display:block;height:100%;background:var(--accent)}
+  .tools{display:flex;gap:6px;margin-top:12px}
+  .tools button{
+    flex:1;background:var(--card-2);border:1px solid var(--line);color:var(--muted);
+    border-radius:8px;padding:7px;font-family:inherit;font-size:12.5px;cursor:pointer;
+  }
+  .tools button:hover{color:var(--accent);border-color:rgba(0,216,216,.4)}
+
+  /* ——— المتن ——— */
+  h1{font-size:23px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13.5px;margin:0 0 20px}
+  h3.grp{font-size:15px;margin:26px 0 9px;color:var(--accent)}
+  h3.grp:first-of-type{margin-top:14px}
+
+  .row{
+    display:grid;grid-template-columns:40px 1fr 190px;gap:12px;align-items:center;
+    background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:9px 12px;margin-bottom:7px;
+  }
+  .row.free{border-inline-start:3px solid var(--warn)}
+  .row.done{border-inline-start:3px solid var(--accent)}
+  .row.hide{display:none}
+  .row.park{opacity:.45;border-inline-start:3px solid var(--line)}
+  .txt small.parked{color:var(--warn)}
+  .pri{
+    display:inline-block;background:var(--warn);color:#2b1c02;font-weight:700;
+    font-size:11px;border-radius:6px;padding:1px 7px;margin-inline-end:7px;vertical-align:middle;
+  }
+  .num{
+    text-align:center;font-weight:700;font-size:13px;color:var(--muted);
+    background:var(--card-2);border-radius:7px;padding:3px 0;
+  }
+  .txt{font-size:14px}
+  .txt small{display:block;color:var(--muted);font-size:12px}
+  select{
+    background:var(--card-2);color:var(--text);border:1px solid var(--line);
+    border-radius:8px;padding:7px 9px;font-family:inherit;font-size:13.5px;width:100%;
+  }
+  select.empty{color:var(--warn);border-color:rgba(245,181,68,.45)}
+
+  /* ——— حسب الموظف ——— */
+  .people{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;margin-top:12px}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+  .pcard h4{margin:0;font-size:16px}
+  .pcard .d{color:var(--muted);font-size:12px;margin-bottom:8px}
+  .pcard ol{margin:0;padding-inline-start:18px;font-size:13px;color:var(--muted)}
+  .pcard li{margin-bottom:4px}
+  .pcard .none{color:var(--warn);font-size:13px}
+
+  hr{border:none;border-top:1px solid var(--line);margin:34px 0 0}
+  @media (max-width:900px){ .shell{grid-template-columns:1fr} aside{position:static;max-height:none} .row{grid-template-columns:36px 1fr;gap:8px} .row select{grid-column:1 / -1} }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ═════ الشريط الجانبي ═════ -->
+  <aside>
+    <div class="meter">
+      <div><b id="mDone">0</b> <span class="dept">من</span> <b id="mAll">0</b> <span class="dept">مهمة مسنَدة</span></div>
+      <div class="bar"><i id="mBar" style="width:0"></i></div>
+    </div>
+
+    <h2>الموظفون — اضغط للتصفية</h2>
+    <div id="empList"></div>
+
+    <div class="tools">
+      <button id="btnAll">عرض الكلّ</button>
+      <button id="btnFree">غير المسنَدة</button>
+    </div>
+    <div class="tools">
+      <button id="btnCopy">نسخ النصّ</button>
+      <button id="btnJson">تنزيل ملف</button>
+    </div>
+    <div class="tools">
+      <button id="btnReset">تصفير</button>
+    </div>
+    <p id="msg" style="margin:8px 0 0;font-size:12px;color:var(--accent);min-height:16px"></p>
+  </aside>
+
+  <!-- ═════ المتن ═════ -->
+  <main>
+    <h1>إسناد المهام — من يفعل ماذا</h1>
+    <p class="sub">
+      اختر المالك لكل مهمة من القائمة. المهمة تنتقل فوراً إلى بطاقة صاحبها في الأسفل،
+      والعدّاد في الجانب يتحدّث. اختياراتك تُحفظ في هذا المتصفّح.
+    </p>
+
+    <div id="taskList"></div>
+
+    <hr>
+    <h2 class="grp" style="font-size:19px;margin-top:26px">حسب الموظف</h2>
+    <div class="people" id="people"></div>
+  </main>
+</div>
+
+<script>
+const EMPLOYEES = [
+  { id:"khaled",  name:"خالد",   dept:"الإدارة" },
+  { id:"faten",   name:"فاتن",   dept:"المبيعات" },
+  { id:"amani",   name:"أماني",  dept:"التسويق" },
+  { id:"maryam",  name:"مريم",   dept:"التسويق" },
+  { id:"tareq",   name:"طارق",   dept:"المحتوى — قائد" },
+  { id:"yasmin",  name:"ياسمين", dept:"المحتوى" },
+  { id:"maya",    name:"مايا",   dept:"المحتوى" },
+  { id:"mustafa", name:"مصطفى",  dept:"التصميم" },
+  { id:"mohamed", name:"محمد",   dept:"التصميم" },
+  { id:"rawan",   name:"روان",   dept:"التشغيل" },
+  { id:"writers", name:"الكتّاب الثلاثة", dept:"طارق · ياسمين · مايا" },
+  { id:"partner", name:"الشريك نفسه",    dept:"خارج الفريق — مسؤوليته هو" },
+];
+
+const GROUPS = [
+  { title:"١ · الاكتساب — كيف يصل إلينا شريك", from:1,  to:7  },
+  { title:"٢ · المال",                          from:8,  to:11 },
+  { title:"٣ · التأسيس — من التوقيع إلى جاهزية الملف", from:12, to:16 },
+  { title:"٤ · الموجز والإنتاج",                 from:17, to:23 },
+  { title:"٥ · النشر",                           from:24, to:26 },
+  { title:"٦ · بعد النشر — التوزيع والأثر",       from:27, to:32 },
+  { title:"٧ · قنوات مدفوعة",                     from:33, to:39 },
+  { title:"٨ · قنوات أورجانك",                    from:40, to:47 },
+  { title:"٩ · تواصل مباشر وفعاليات",              from:48, to:50 },
+  { title:"١٠ · شراكات وإحالة",                    from:51, to:54 },
+  { title:"١١ · سمعة ومصداقية",                    from:55, to:58 },
+  { title:"١٢ · المنصّة والتقنية",                  from:59, to:63 },
+  { title:"١٣ · الدعم",                            from:64, to:67 },
+  { title:"١٤ · الفهرسة وصحّة السيو",               from:68, to:71 },
+  { title:"١٥ · الباقات والتسعير",                  from:72, to:73 },
+  { title:"١٦ · التصنيف والمكتبة",                  from:74, to:77 },
+  { title:"١٧ · التقارير والبيانات",                from:78, to:80 },
+  { title:"١٨ · القانوني",                         from:81, to:82 },
+  { title:"١٩ · الفريق والإدارة",                   from:83, to:85 },
+  { title:"٢٠ · تفاعل الزوّار والشركاء",             from:86, to:90 },
+  { title:"٢١ · أنواع محتوى أخرى",                  from:91, to:93 },
+  { title:"٢٢ · صفحات ومحتوى قائم",                 from:94, to:95 },
+  { title:"٢٣ · صلاحيات وحملات وتأهيل",             from:96, to:98 },
+  { title:"٢٤ · ثغرات الدائرة — أخطرها",            from:99,  to:102 },
+  { title:"٢٥ · فجوات إدارية",                      from:103, to:109 },
+];
+
+const TASKS = [
+  { n:1,  t:"حملات مدفوعة لجلب شركاء", note:"مظلّة — تفصيلها في ٣٣–٣٩", d:"amani"  },
+  { n:2,  t:"نشر أورجانك على منصّات مدونتي", note:"مظلّة — تفصيلها في ٤٠–٤٧", d:"maryam" },
+  { n:3,  t:"إيميل بارد للشركات",        note:"بيع لا تسويق",   d:""       },
+  { n:4,  t:"رسائل لينكدإن المباشرة للشركات",                   d:""       },
+  { n:5,  t:"النشرة البريدية",           note:"هل توجد قائمة أصلاً؟", d:"" },
+  { n:6,  t:"استقبال المهتمّ والردّ عليه",                       d:"faten"  },
+  { n:7,  t:"العرض والتسعير والإقفال",                          d:"faten"  },
+
+  { n:8,  t:"إصدار الفاتورة بعد الإقفال",                       d:""       },
+  { n:9,  t:"متابعة التحصيل والتأخّر",                          d:""       },
+  { n:10, t:"الاسترداد والاعتراض على مبلغ",                     d:""       },
+  { n:11, t:"الإقرار الضريبي والالتزام",                        d:""       },
+
+  { n:12, t:"استلام أوراق التوثيق ومراجعتها قبل الاعتماد",      d:""       },
+  { n:13, t:"فتح حساب الكونسول للشريك",                        d:""       },
+  { n:14, t:"دعم الشريك لتعبئة بياناته في الكونسول",            d:"rawan"  },
+  { n:15, t:"إدخال أصول الشريك نيابةً عنه إن أرسلها خارج الكونسول", d:""   },
+  { n:16, t:"ملاحقة الشريك المتأخّر في إرسال أصوله",            d:""       },
+
+  { n:17, t:"تجهيز الموجز من بيانات الكونسول",                  d:"rawan"  },
+  { n:18, t:"دراسة العميل والكلمات المفتاحية وتصوّر المقال", note:"شرط قبل بدء الكتابة", d:"writers" },
+  { n:19, t:"كتابة المقال",                                     d:"writers" },
+  { n:20, t:"تصميم بصريات المقال",                              d:"mustafa" },
+  { n:21, t:"مونتاج الريلز والفيديو",                           d:"mohamed" },
+  { n:22, t:"فحص الجودة والتوقيع قبل الخروج",                   d:"tareq"  },
+
+  { n:24, t:"عرض المقال على الشريك لاعتماده",                   d:""       },
+  { n:25, t:"النشر الفعلي على مدونتي",  note:"التوقيع غير النشر", d:""     },
+  { n:26, t:"جدولة الإنتاج ومتابعة المتأخّر",                   d:""       },
+
+  { n:27, t:"تحويل المقال إلى قطع سوشيال",                      d:""       },
+  { n:28, t:"نشر القطع على منصّات مدونتي",                      d:"maryam" },
+  { n:29, t:"حملات ختامية مدفوعة لمدونتي",                      d:"amani"  },
+  { n:30, t:"الباك لينكس والـoff-page",  note:"لم يبدأ بعد",    d:""       },
+  { n:31, t:"تقرير للشريك عن صفحته هو", note:"تحويل أرقام كونسوله إلى كلام يفهمه — غير تقرير الإدارة (٧٨)", d:"" },
+  { n:32, t:"التجديد",                                          d:"faten"  },
+
+  { n:33, t:"إعلانات بحث جوجل",            note:"نيّة شراء مباشرة — أغلى نقرة وأقربها للبيع", d:"" },
+  { n:34, t:"إعلانات ميتا — فيسبوك وإنستغرام",                  d:"" },
+  { n:35, t:"إعلانات تيك توك",                                  d:"" },
+  { n:36, t:"إعلانات سناب شات",                                 d:"" },
+  { n:37, t:"إعلانات لينكدإن",             note:"الأغلى، والأدقّ في استهداف أصحاب القرار", d:"" },
+  { n:38, t:"إعلانات يوتيوب",                                   d:"" },
+  { n:39, t:"تجديد الاستهداف — من زار ولم يطلب",                d:"" },
+
+  { n:40, t:"سيو مدونتي نفسها لجذب أصحاب الأعمال", note:"غير سيو مقالات الشركاء — هذا يبيعنا نحن", d:"" },
+  { n:41, t:"قناة يوتيوب لمدونتي",                              d:"" },
+  { n:42, t:"تيك توك أورجانك",                                  d:"" },
+  { n:43, t:"إنستغرام أورجانك",                                 d:"" },
+  { n:44, t:"صفحة لينكدإن لمدونتي",        note:"نشر محتوى — غير الرسائل المباشرة (٤)", d:"" },
+  { n:45, t:"حساب إكس",                                         d:"" },
+  { n:46, t:"سناب شات أورجانك",                                 d:"" },
+  { n:47, t:"بودكاست أو صوتيات",                                d:"", park:true },
+
+  { n:48, t:"واتساب بزنس والاتصال المباشر",                     d:"" },
+  { n:49, t:"زيارات ميدانية للشركات",                           d:"", park:true },
+  { n:50, t:"المعارض والمؤتمرات والفعاليات", note:"فرصة عند سعر مناسب — لا خطة دائمة", d:"" },
+
+  { n:51, t:"برنامج إحالة: شريك يجيب شريكاً", note:"أرخص قناة وأعلاها ثقة — وتحتاج حافزاً مكتوباً", d:"" },
+  { n:52, t:"عمولة وأفلييت لوسطاء خارجيين",                     d:"" },
+  { n:53, t:"شراكات مع وكالات ومحاسبين ومستشارين", note:"من يخدم نفس أصحاب الأعمال قبلنا", d:"" },
+  { n:54, t:"الغرف التجارية والجمعيات المهنية",                 d:"" },
+
+  { n:55, t:"المؤثّرون ورواد الأعمال",                          d:"" },
+  { n:56, t:"العلاقات العامة والنشر الصحفي",                    d:"" },
+  { n:57, t:"دراسات الحالة وقصص نجاح الشركاء", note:"مادة بيع ومادة سيو في آن", d:"" },
+  { n:58, t:"آراء العملاء والتقييمات العامة",                   d:"" },
+
+  { n:59, t:"تطوير المنصّة وإصلاح الأعطال",                     d:"" },
+  { n:60, t:"مراقبة أخطاء النظام والردّ عليها", note:"system-errors", d:"" },
+  { n:61, t:"النشر والتحديثات ووضع الصيانة",  note:"maintenance · changelog", d:"" },
+  { n:62, t:"النسخ الاحتياطي وسلامة قاعدة البيانات", note:"database", d:"" },
+  { n:63, t:"التخزين والوسائط الخارجية",       note:"bunny", d:"" },
+
+  { n:64, t:"الردّ على رسائل التواصل من الموقع", note:"contact-messages · inbox — غير الليدز البيعية (٦)", d:"" },
+  { n:65, t:"الردّ على ملاحظات الزوّار",        note:"feedback", d:"" },
+  { n:66, t:"مراجعة أسئلة الشات بوت وتحسين ردوده", note:"chatbot-questions", d:"" },
+  { n:67, t:"دعم الشريك حين يتعطّل عليه الكونسول", note:"عطل تقني — غير دعم تعبئة البيانات (١٤)", d:"" },
+
+  { n:68, t:"متابعة Search Console والفهرسة",   note:"search-console", d:"" },
+  { n:69, t:"متابعة Bing Webmaster",            note:"bing-webmaster", d:"" },
+  { n:70, t:"فحص صحّة السيو على مستوى الموقع", note:"seo-health — غير فحص جودة المقال (٢٢)", d:"" },
+  { n:71, t:"سيو الصور: البدائل والأوصاف وأسماء الملفات", note:"seo-images — غير تصميم البصريات (٢٠)", d:"" },
+
+  { n:72, t:"تسعير الباقات ومراجعتها",          note:"commercial-plans · subscription-tiers", d:"" },
+  { n:73, t:"تعريف ميزات الباقة وحدودها",       note:"commercial-features", d:"" },
+
+  { n:74, t:"إدارة التصنيفات والوسوم",          note:"categories · tags", d:"" },
+  { n:75, t:"إدارة المجالات",                   note:"industries", d:"" },
+  { n:77, t:"تنظيم مكتبة الوسائط",              note:"media", d:"" },
+
+  { n:78, t:"قراءة تقرير الشهر واتّخاذ قرار عليه", note:"النظام يطلّع الأرقام من admin/analytics — والمهمّة هي القرار: ليش نزل التجديد؟ أي قناة صرفت وما رجّعت؟", d:"khaled" },
+  { n:79, t:"تصدير البيانات عند الطلب",         note:"export-data", d:"" },
+  { n:80, t:"مراجعة سجلّ التدقيق",              note:"audit-log", d:"" },
+
+  { n:81, t:"الشروط والأحكام وسياسة الخصوصية",  note:"legal · terms", d:"" },
+  { n:82, t:"صفحة الثقة وبيانات الكيان القانوني", note:"trust", d:"" },
+
+  { n:83, t:"التوظيف وسدّ الأدوار الناقصة",                     d:"" },
+  { n:84, t:"متابعة مهام الفريق اليومية",       note:"daily-tasks · tasks", d:"" },
+  { n:85, t:"التأكّد من اكتمال بيانات الناشر قبل النشر", note:"اسم الشريك وشعاره ورابطه تدخل publisher في Article schema — الناقص يخرج ناقصاً لجوجل", d:"" },
+
+  { n:86, t:"الردّ على تعليقات المقالات وإدارتها",  note:"comments", d:"" },
+  { n:87, t:"متابعة أسئلة الزوّار للشريك",          note:"console/questions", d:"" },
+  { n:88, t:"متابعة الحجوزات الواردة",              note:"console/bookings · site/booking", d:"" },
+  { n:89, t:"مراجعة تقييمات الشركاء وتعليقاتها",     note:"client-reviews · client-comments", d:"" },
+  { n:90, t:"ضمان ردّ الشريك على ليداته",           note:"console/leads — الليد يموت في الانتظار", d:"" },
+  { n:91, t:"أبواب الدخول: من يظهر في /shop و/booking و/clients وبأي ترتيب", note:"ليست متجراً — الثلاثة قوائم شركاء بنفس PartnerCard", d:"" },
+  { n:92, t:"الأخبار",                              note:"site/news", d:"" },
+  { n:93, t:"إنتاج الصوتيات",                       note:"site/audio — غير مونتاج الفيديو (٢١)", d:"" },
+  { n:94, t:"مراجعة صفحات موقع الشريك ومحتواها",     note:"site-pages · page-content · page-faq", d:"" },
+  { n:95, t:"تحديث صفحات مدونتي التعريفية",         note:"about · story · team · help", d:"" },
+  { n:96, t:"إدارة الأعضاء والصلاحيات",             note:"members · users", d:"" },
+  { n:97, t:"حملات الشريك في الكونسول",             note:"console/campaigns — غير حملاتنا نحن (٣٣–٣٩)", d:"" },
+  { n:98, t:"تأهيل الموظّف الجديد",                  note:"playbook/onboarding — غير التوظيف (٨٣)", d:"" },
+
+  { n:99,  t:"من يقرّر مواضيع الشهر الجاي لكل شريك؟", note:"الموجز يتعمل مرّة يوم يدخل الشريك، والنشر يتكرّر كل شهر. بلا مالك، أوّل موجز يخلص وكل كاتب يكتب ما يشوفه", d:"" },
+  { n:100, t:"من يغيّر الخطّة لما الأرقام تقول شيئاً؟", note:"مقال جاب زوّاراً ومقال لا. من يقرأ هذا ويقول «الشهر الجاي نكتب أكثر من النوع الأوّل»؟ بدونه نقرأ الأرقام ونكمّل بنفس الخطّة", d:"" },
+  { n:101, t:"الردّ على توقّف المنصّة أو عطلها الحرج", note:"ثغرة الدائرة ٣ — لو وقفت، وقفت الدائرة كلها", d:"" },
+  { n:102, t:"تحديد وجهة الـCTA في المقال", note:"اليوم ثابت: واتساب ← رابط الشريك ← /clients. لا خيار للحجز ولا للمتجر (ArticleCtaBar.tsx:41-44) — ومن يقرّر: نحن أم الشريك من كونسوله؟", d:"" },
+
+  { n:103, t:"تطبيق قيود الشريك الملغي", note:"القرار: الصفحة والمقالات تبقى. يتوقّف شيئان فقط — لا نكتب له مقالاً جديداً، ولا يقدر ينشر ريلز أو ألبوماً. (الحدّ غير مطبَّق في الكونسول اليوم — القراءة فقط في مسارات mobile/v1)", d:"" },
+  { n:104, t:"حساب طاقة الفريق قبل بيع الباقة الجاية", note:"٣ كتّاب ومصمّم ومونتير — كم شريكاً نقدر نخدم؟ بدونه المبيعات تبيع والمحتوى يغرق", d:"" },
+  { n:105, t:"العقد مع الشريك: صياغته وتوقيعه وحفظه", note:"غير صفحات الشروط العامة (٨١)", d:"" },
+  { n:106, t:"قبول الشريك أو رفضه لعدم الملاءمة", note:"١٢ يراجع الأوراق فقط — وهذا يقرّر: هل هذا النشاط يناسبنا أصلاً؟", d:"" },
+  { n:107, t:"الموردون والتكاليف الشهرية", note:"الاستضافة · bunny · الأدوات — من يتابع فواتيرها", d:"" },
+  { n:108, t:"الأمن والوصول لقاعدة الإنتاج", note:"من يملك مفاتيح الإنتاج — غير صلاحيات التطبيق (٩٦)", d:"" },
+  { n:109, t:"النسخة الإنجليزية", note:"modonty/messages/ فيه ar.json وحده", d:"", park:true },
+];
+
+const KEY = "modonty-task-assign-v1";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { state = {}; }
+TASKS.forEach(t => { if (state[t.n] === undefined) state[t.n] = t.d; });
+
+let filter = null;   // employee id, or "__free__", or null
+
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+const nameOf = id => (EMPLOYEES.find(e => e.id === id) || {}).name || "";
+
+function renderTasks(){
+  const host = document.getElementById("taskList");
+  host.innerHTML = "";
+  GROUPS.forEach(g => {
+    const h = document.createElement("h3");
+    h.className = "grp";
+    h.id = "g" + g.from;
+    h.textContent = g.title;
+    host.appendChild(h);
+
+    TASKS.filter(t => t.n >= g.from && t.n <= g.to).forEach(t => {
+      const owner = state[t.n];
+      const row = document.createElement("div");
+      row.className = "row " + (t.park ? "park" : owner ? "done" : "free");
+      if (filter === "__free__" && owner) row.classList.add("hide");
+      if (filter && filter !== "__free__" && owner !== filter) row.classList.add("hide");
+
+      const num = document.createElement("div");
+      num.className = "num";
+      num.textContent = t.n;
+
+      const txt = document.createElement("div");
+      txt.className = "txt";
+      txt.textContent = t.t;
+      if (t.pri) { const b = document.createElement("span"); b.className = "pri"; b.textContent = "أولوية " + t.pri; txt.prepend(b); }
+      if (t.park) { const p = document.createElement("small"); p.className = "parked"; p.textContent = "مؤجّلة — شغلنا أونلاين فقط"; txt.appendChild(p); }
+      if (t.note) { const s = document.createElement("small"); s.textContent = t.note; txt.appendChild(s); }
+
+      const sel = document.createElement("select");
+      if (!owner) sel.className = "empty";
+      const none = document.createElement("option");
+      none.value = ""; none.textContent = "— بلا مالك —";
+      sel.appendChild(none);
+      EMPLOYEES.forEach(e => {
+        const o = document.createElement("option");
+        o.value = e.id; o.textContent = e.name;
+        if (e.id === owner) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener("change", () => { state[t.n] = sel.value; save(); renderAll(); });
+
+      row.append(num, txt, sel);
+      host.appendChild(row);
+    });
+  });
+}
+
+function renderGroups(){
+  const host = document.getElementById("grpList");
+  if (!host) return;
+  host.innerHTML = "";
+  GROUPS.forEach(g => {
+    const inGroup = TASKS.filter(t => t.n >= g.from && t.n <= g.to && !t.park);
+    const done = inGroup.filter(t => state[t.n]).length;
+    const b = document.createElement("button");
+    b.className = "emp grp-btn" + (done === inGroup.length && inGroup.length ? " full" : "");
+    b.innerHTML =
+      '<span class="nm" style="font-weight:500;font-size:13px">' + g.title + '</span>' +
+      '<span class="cnt' + (done === inGroup.length && inGroup.length ? " has" : "") + '">' +
+      done + '/' + inGroup.length + '</span>';
+    b.addEventListener("click", () => {
+      filter = null; renderAll();
+      const el = document.getElementById("g" + g.from);
+      if (el) el.scrollIntoView({ behavior:"smooth", block:"start" });
+    });
+    host.appendChild(b);
+  });
+}
+
+function renderSidebar(){
+  const host = document.getElementById("empList");
+  host.innerHTML = "";
+  EMPLOYEES.forEach(e => {
+    const count = TASKS.filter(t => state[t.n] === e.id).length;
+    const b = document.createElement("button");
+    b.className = "emp" + (filter === e.id ? " on" : "");
+    b.innerHTML =
+      '<span class="nm">' + e.name + '<span class="dept" style="display:block">' + e.dept + '</span></span>' +
+      '<span class="cnt' + (count ? " has" : "") + '">' + count + '</span>';
+    b.addEventListener("click", () => { filter = (filter === e.id ? null : e.id); renderAll(); });
+    host.appendChild(b);
+  });
+
+  const live = TASKS.filter(t => !t.park);
+  const done = live.filter(t => state[t.n]).length;
+  document.getElementById("mDone").textContent = done;
+  document.getElementById("mAll").textContent = live.length;
+  document.getElementById("mBar").style.width = Math.round(done / live.length * 100) + "%";
+}
+
+function renderPeople(){
+  const host = document.getElementById("people");
+  host.innerHTML = "";
+  EMPLOYEES.forEach(e => {
+    const mine = TASKS.filter(t => state[t.n] === e.id);
+    const c = document.createElement("div");
+    c.className = "pcard";
+    let inner = "<h4>" + e.name + "</h4><div class='d'>" + e.dept + "</div>";
+    if (mine.length) {
+      inner += "<ol>" + mine.map(t => "<li>" + t.n + " · " + t.t + "</li>").join("") + "</ol>";
+    } else {
+      inner += "<div class='none'>لا مهمّة مسنَدة بعد</div>";
+    }
+    c.innerHTML = inner;
+    host.appendChild(c);
+  });
+
+  const orphans = TASKS.filter(t => !state[t.n]);
+  if (orphans.length){
+    const c = document.createElement("div");
+    c.className = "pcard";
+    c.style.borderColor = "rgba(245,181,68,.45)";
+    c.innerHTML = "<h4 style='color:var(--warn)'>بلا مالك</h4><div class='d'>" + orphans.length +
+      " مهمّة تنتظر قراراً</div><ol>" +
+      orphans.map(t => "<li>" + t.n + " · " + t.t + "</li>").join("") + "</ol>";
+    host.appendChild(c);
+  }
+}
+
+function renderAll(){ renderGroups(); renderSidebar(); renderTasks(); renderPeople(); }
+
+function buildText(){
+  const lines = ["# إسناد مهام مدونتي", "# " + new Date().toLocaleString("ar-SA"), ""];
+  EMPLOYEES.forEach(e => {
+    const mine = TASKS.filter(t => state[t.n] === e.id);
+    if (!mine.length) return;
+    lines.push("## " + e.name + " (" + mine.length + ")");
+    mine.forEach(t => lines.push("  " + t.n + ". " + t.t));
+    lines.push("");
+  });
+  const orphans = TASKS.filter(t => !state[t.n] && !t.park);
+  lines.push("## بلا مالك (" + orphans.length + ")");
+  orphans.forEach(t => lines.push("  " + t.n + ". " + t.t));
+  lines.push("");
+  const parked = TASKS.filter(t => t.park);
+  lines.push("## مؤجّلة (" + parked.length + ")");
+  parked.forEach(t => lines.push("  " + t.n + ". " + t.t));
+  return lines.join("\n");
+}
+
+function flash(s){ const m = document.getElementById("msg"); m.textContent = s; setTimeout(() => { m.textContent = ""; }, 2500); }
+
+document.getElementById("btnCopy").addEventListener("click", async () => {
+  const txt = buildText();
+  try { await navigator.clipboard.writeText(txt); flash("انتسخ — الصقه في المحادثة"); }
+  catch (e) { window.prompt("انسخ من هنا:", txt); }
+});
+
+document.getElementById("btnJson").addEventListener("click", () => {
+  const payload = { updatedAt: new Date().toISOString(), assignments: {} };
+  TASKS.forEach(t => { payload.assignments[t.n] = { task: t.t, owner: nameOf(state[t.n]) || null, parked: !!t.park }; });
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "modonty-tasks.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+  flash("نزّل modonty-tasks.json");
+});
+
+document.getElementById("btnAll").addEventListener("click", () => { filter = null; renderAll(); });
+document.getElementById("btnFree").addEventListener("click", () => { filter = "__free__"; renderAll(); });
+document.getElementById("btnReset").addEventListener("click", () => {
+  if (!confirm("تصفير كل الإسنادات والرجوع للمقترح الأوّل؟")) return;
+  state = {}; TASKS.forEach(t => state[t.n] = t.d); save(); filter = null; renderAll();
+});
+
+renderAll();
+</script>
+</body>
+</html>

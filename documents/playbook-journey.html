@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>التنظيم والرحلة — مستند عمل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0f1c; --card:#111827; --card-2:#0f172a; --line:#1f2a3d;
+    --text:#e6edf7; --muted:#93a3b8; --accent:#00d8d8; --warn:#f5b544; --danger:#ff7a7a;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;padding:30px 20px 90px;background:var(--bg);color:var(--text);
+    font-family:Tajawal,"Segoe UI",system-ui,sans-serif;font-size:16px;line-height:1.8;
+  }
+  .wrap{max-width:960px;margin:0 auto}
+  h1{font-size:24px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 10px}
+
+  nav{
+    display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 30px;
+    padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);
+  }
+  nav a{
+    color:var(--muted);text-decoration:none;font-size:13px;font-weight:700;
+    border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--card-2);
+  }
+  nav a:hover{color:var(--accent);border-color:rgba(0,216,216,.4)}
+
+  section{margin-bottom:38px;scroll-margin-top:16px}
+  h2.sec{
+    font-size:19px;margin:0 0 14px;padding-bottom:9px;border-bottom:2px solid var(--line);
+  }
+  h3.sub2{font-size:16px;margin:24px 0 10px;color:var(--accent)}
+
+  table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{padding:10px 13px;text-align:right;font-size:14px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--card-2);color:var(--muted);font-size:12.5px;font-weight:700}
+  td{background:var(--card)}
+  tr:last-child td{border-bottom:none}
+  td b{color:var(--text)}
+  .dim{color:var(--muted);font-size:13px}
+
+  /* ——— المسار ——— */
+  .flow{position:relative;padding-inline-start:28px}
+  .flow::before{content:"";position:absolute;inset-block:14px 14px;inset-inline-start:13px;width:2px;background:var(--line)}
+  .stop{position:relative;margin-bottom:13px}
+  .dot{
+    position:absolute;inset-inline-start:-28px;top:18px;width:28px;height:28px;border-radius:50%;
+    display:grid;place-items:center;background:var(--card);border:2px solid var(--line);
+    font-size:12.5px;font-weight:700;color:var(--muted);transform:translateX(50%);
+  }
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 16px}
+  .head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .who{font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 9px;border:1px solid var(--line);color:var(--muted);background:var(--card-2)}
+  .who.partner{color:#8ad2ff;border-color:#1d4b6b}
+  .who.sales{color:#ffd08a;border-color:#6b4f1d}
+  .who.content{color:#b7a8ff;border-color:#3d3570}
+  .who.platform{color:#7ff0e0;border-color:#12564f}
+  .stop h4{font-size:16px;margin:0;font-weight:700}
+  .body{color:var(--muted);font-size:13.5px;margin:6px 0 0}
+  .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+  .trio > div{background:var(--card-2);border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:12.5px}
+  .trio b{display:block;font-size:13px;margin-bottom:2px;color:var(--text)}
+  .trio span{color:var(--muted)}
+  .loop{margin-top:16px;border:1px dashed var(--accent);border-radius:12px;background:rgba(0,216,216,.05);padding:12px 16px}
+  .loop .t{color:var(--accent);font-weight:700;font-size:14px}
+  .loop p{margin:4px 0 0;color:var(--muted);font-size:13.5px}
+
+  /* ——— المخاطر ——— */
+  .risk{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:14px 16px;margin-bottom:12px}
+  .risk .t{font-weight:700;font-size:15px;margin-bottom:5px}
+  .risk.hot{border-color:rgba(255,122,122,.4)}
+  .risk.hot .t{color:var(--danger)}
+  .risk p{margin:0 0 6px;color:var(--muted);font-size:13.5px}
+  .src{
+    display:block;margin-top:8px;padding:9px 11px;background:var(--card-2);
+    border-inline-start:3px solid var(--line);border-radius:7px;
+    font-family:ui-monospace,Consolas,monospace;font-size:12px;color:#a9bed4;
+    direction:ltr;text-align:left;white-space:pre-wrap;line-height:1.6;
+  }
+  .verdict{font-size:12.5px;color:var(--warn);font-weight:700}
+
+  /* ——— الأسئلة ——— */
+  .q{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:14px 16px;margin-bottom:11px}
+  .q .n{
+    display:inline-block;background:var(--accent);color:#04252b;font-weight:700;
+    border-radius:6px;padding:1px 9px;font-size:12.5px;margin-inline-end:9px;
+  }
+  .q .ask{font-weight:700;font-size:15px}
+  .q p{margin:7px 0 0;color:var(--muted);font-size:13.5px}
+  .q .opts{margin:9px 0 0;padding:0;list-style:none;display:grid;gap:6px}
+  .q .opts li{
+    background:var(--card-2);border:1px solid var(--line);border-radius:8px;
+    padding:7px 11px;font-size:13px;color:var(--muted);
+  }
+  .q .opts li b{color:var(--text)}
+  .mine{margin-top:9px;font-size:13px;color:#7ff0e0}
+  .mine b{color:var(--accent)}
+
+  .decided{border-color:rgba(0,216,216,.35)}
+  .decided .t{color:var(--accent)}
+
+  @media (max-width:680px){ .trio{grid-template-columns:1fr} table{font-size:13px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>التنظيم والرحلة — مستند عمل</h1>
+  <p class="sub">
+    ١٢ سبتمبر ٢٠٢٦ · مسوّدة للنقاش. تُحسم هنا أوّلاً، ثم تُبنى الرحلة في React Flow داخل
+    <span dir="ltr">/playbook</span>.
+  </p>
+
+  <nav>
+    <a href="#team">الفريق</a>
+    <a href="#tasks">جدول المهام</a>
+    <a href="#split">التقسيم المقترح</a>
+    <a href="#risks">المخاطر</a>
+    <a href="#questions">الأسئلة</a>
+    <a href="#journey">الرحلة</a>
+    <a href="#decided">القرارات المعتمدة</a>
+  </nav>
+
+  <!-- ═════════ الفريق ═════════ -->
+  <section id="team">
+    <h2 class="sec">الفريق — عشرة</h2>
+    <table>
+      <tr><th style="width:110px">الاسم</th><th>ما قلتَه عنه</th><th style="width:190px">القسم المقترح</th></tr>
+      <tr><td><b>خالد</b></td><td>المدير التنفيذي</td><td>الإدارة</td></tr>
+      <tr><td><b>فاتن</b></td><td>مسؤولة المبيعات — تتواصل مع العميل، وتقفل معه، وتتابع نهاية اشتراكه</td><td>المبيعات وعلاقات الشركاء</td></tr>
+      <tr><td><b>أماني</b></td><td><span dir="ltr">Media Buyer</span> و<span dir="ltr">Media Performance</span></td><td>التسويق</td></tr>
+      <tr><td><b>مريم</b></td><td><span dir="ltr">Social Media Specialist</span></td><td>التسويق</td></tr>
+      <tr><td><b>طارق</b></td><td>قائد قسم المحتوى — مدير مايا وياسمين — وكاتب في الوقت نفسه</td><td>المحتوى (قائد)</td></tr>
+      <tr><td><b>ياسمين</b></td><td>كاتبة</td><td>المحتوى</td></tr>
+      <tr><td><b>مايا</b></td><td>كاتبة</td><td>المحتوى</td></tr>
+      <tr><td><b>مصطفى</b></td><td><span dir="ltr">Designer</span></td><td>الإنتاج البصري</td></tr>
+      <tr><td><b>محمد</b></td><td><span dir="ltr">Video Editor</span></td><td>الإنتاج البصري</td></tr>
+      <tr><td><b>روان</b></td><td>تجهّز الموجز من بيانات الشريك في الكونسول، وتدعمه لإكمال الناقص</td><td>التشغيل — مالكة الموجز</td></tr>
+    </table>
+  </section>
+
+  <!-- ═════════ جدول المهام ═════════ -->
+  <section id="tasks">
+    <h2 class="sec">جدول المهام — كل مهمة ومالكها</h2>
+    <p class="dim">
+      نبدأ من المهمة لا من القسم. كل سطر مهمة واحدة، ولها مالك واحد بالاسم.
+      <b>الصفوف المعلّمة بـ«؟» هي فجواتك</b> — مهام تُعمل أو يجب أن تُعمل ولا أحد مسمّى لها.
+      القسم يُشتقّ بعد ذلك من تجميع المهام، لا العكس.
+    </p>
+
+    <h3 class="sub2">١ · الاكتساب — كيف يصل إلينا شريك</h3>
+    <table>
+      <tr><th style="width:44px">#</th><th>المهمة</th><th style="width:150px">المالك</th></tr>
+      <tr><td>١</td><td>حملات مدفوعة لجلب شركاء</td><td><b>أماني</b></td></tr>
+      <tr><td>٢</td><td>نشر أورجانك على منصّات مدونتي</td><td><b>مريم</b></td></tr>
+      <tr><td>٣</td><td>إيميل بارد للشركات</td><td><span class="verdict">؟ — سؤال ١٨</span></td></tr>
+      <tr><td>٤</td><td>رسائل لينكدإن المباشرة للشركات</td><td><span class="verdict">؟ — سؤال ١٩</span></td></tr>
+      <tr><td>٥</td><td>النشرة البريدية</td><td><span class="verdict">؟ — سؤال ١٧</span></td></tr>
+      <tr><td>٦</td><td>استقبال المهتمّ والردّ عليه</td><td><b>فاتن</b></td></tr>
+      <tr><td>٧</td><td>العرض والتسعير والإقفال</td><td><b>فاتن</b></td></tr>
+    </table>
+
+    <h3 class="sub2">٢ · المال</h3>
+    <table>
+      <tr><th style="width:44px">#</th><th>المهمة</th><th style="width:150px">المالك</th></tr>
+      <tr><td>٨</td><td>إصدار الفاتورة بعد الإقفال</td><td><span class="verdict">خالد أو فاتن — سؤال ٢٦</span></td></tr>
+      <tr><td>٩</td><td>متابعة التحصيل والتأخّر</td><td><span class="verdict">خالد أو فاتن — سؤال ٢٦</span></td></tr>
+      <tr><td>١٠</td><td>الاسترداد والاعتراض على مبلغ</td><td><span class="verdict">؟ — سؤال ٢٦</span></td></tr>
+      <tr><td>١١</td><td>الإقرار الضريبي والالتزام</td><td><span class="verdict">؟ — سؤال ٢٦</span></td></tr>
+    </table>
+
+    <h3 class="sub2">٣ · التأسيس — من التوقيع إلى جاهزية الملف</h3>
+    <table>
+      <tr><th style="width:44px">#</th><th>المهمة</th><th style="width:150px">المالك</th></tr>
+      <tr><td>١٢</td><td>استلام أوراق التوثيق ومراجعتها قبل الاعتماد</td><td><span class="verdict">؟ — سؤال ٢٧</span></td></tr>
+      <tr><td>١٣</td><td>فتح حساب الكونسول للشريك</td><td><span class="verdict">؟ — سؤال ٢٧</span></td></tr>
+      <tr><td>١٤</td><td>دعم الشريك لتعبئة بياناته في الكونسول</td><td><b>روان</b></td></tr>
+      <tr><td>١٥</td><td>إدخال أصول الشريك نيابةً عنه إن أرسلها خارج الكونسول</td><td><span class="verdict">؟ — سؤال ٢٠</span></td></tr>
+      <tr><td>١٦</td><td>ملاحقة الشريك المتأخّر في إرسال أصوله</td><td><span class="verdict">؟ — سؤال ٢١</span></td></tr>
+    </table>
+
+    <h3 class="sub2">٤ · الموجز والإنتاج</h3>
+    <table>
+      <tr><th style="width:44px">#</th><th>المهمة</th><th style="width:150px">المالك</th></tr>
+      <tr><td>١٧</td><td>تجهيز الموجز من بيانات الكونسول</td><td><b>روان</b></td></tr>
+      <tr><td>١٨</td><td>دراسة العميل والكلمات المفتاحية وتصوّر المقال</td><td><b>كل كاتب</b><br><span class="dim">شرط قبل الكتابة</span></td></tr>
+      <tr><td>١٩</td><td>كتابة المقال</td><td><b>طارق · ياسمين · مايا</b></td></tr>
+      <tr><td>٢٠</td><td>تصميم بصريات المقال</td><td><b>مصطفى</b></td></tr>
+      <tr><td>٢١</td><td>مونتاج الريلز والفيديو</td><td><b>محمد</b></td></tr>
+      <tr><td>٢٢</td><td>فحص الجودة والتوقيع قبل الخروج</td><td><b>طارق</b></td></tr>
+      <tr><td>٢٣</td><td>فحص مقالات طارق نفسه</td><td><span class="verdict">؟ — سؤال ٢٤</span></td></tr>
+    </table>
+
+    <h3 class="sub2">٥ · النشر</h3>
+    <table>
+      <tr><th style="width:44px">#</th><th>المهمة</th><th style="width:150px">المالك</th></tr>
+      <tr><td>٢٤</td><td>عرض المقال على الشريك لاعتماده</td><td><span class="verdict">؟ — سؤال ١٢</span></td></tr>
+      <tr><td>٢٥</td><td>النشر الفعلي على مدونتي</td><td><span class="verdict">؟ — سؤال ٢٨</span></td></tr>
+      <tr><td>٢٦</td><td>جدولة الإنتاج ومتابعة المتأخّر</td><td><span class="verdict">؟ — سؤال ٢</span></td></tr>
+    </table>
+
+    <h3 class="sub2">٦ · بعد النشر — التوزيع والأثر</h3>
+    <table>
+      <tr><th style="width:44px">#</th><th>المهمة</th><th style="width:150px">المالك</th></tr>
+      <tr><td>٢٧</td><td>تحويل المقال إلى قطع سوشيال</td><td><span class="verdict">؟ — سؤال ١٦</span></td></tr>
+      <tr><td>٢٨</td><td>نشر القطع على منصّات مدونتي</td><td><b>مريم</b></td></tr>
+      <tr><td>٢٩</td><td>حملات ختامية مدفوعة لمدونتي</td><td><b>أماني</b></td></tr>
+      <tr><td>٣٠</td><td>الباك لينكس والـ<span dir="ltr">off-page</span></td><td><span class="verdict">لم يبدأ — سؤال ٢٣</span></td></tr>
+      <tr><td>٣١</td><td>قراءة التفاعلات وشرحها للشريك</td><td><span class="verdict">؟ — سؤال ٢٩</span></td></tr>
+      <tr><td>٣٢</td><td>التجديد</td><td><b>فاتن</b></td></tr>
+    </table>
+
+    <p class="dim" style="margin-top:16px">
+      <b>الحصيلة:</b> ٣٢ مهمة — ١٥ لها مالك بالاسم، و١٧ بلا مالك أو بمالكين اثنين.
+      وكل «؟» مربوط برقم سؤال، فإجابتك عليه تملأ الخانة مباشرةً.
+    </p>
+  </section>
+
+  <!-- ═════════ التقسيم ═════════ -->
+  <section id="split">
+    <h2 class="sec">التقسيم المقترح — أربعة أقسام ومكتب إدارة</h2>
+    <table>
+      <tr><th style="width:220px">القسم</th><th style="width:150px">من فيه</th><th>يملك</th></tr>
+      <tr>
+        <td><b>المبيعات وعلاقات الشركاء</b></td><td>فاتن</td>
+        <td>دورة حياة الشريك: الاكتساب · الإقفال · التأسيس · المتابعة حتى التجديد
+            <span class="dim">(الموجز ليس منها — هو لروان، قرار ٦)</span></td>
+      </tr>
+      <tr>
+        <td><b>التسويق</b></td><td>أماني · مريم</td>
+        <td>أماني: الحملات المدفوعة وقياسها — مريم: أورجانك المنصّات</td>
+      </tr>
+      <tr>
+        <td><b>المحتوى</b></td><td>طارق (قائد) · ياسمين · مايا</td>
+        <td>المقالات من الموجز إلى النصّ الجاهز</td>
+      </tr>
+      <tr>
+        <td><b>الإنتاج البصري</b></td><td>مصطفى · محمد</td>
+        <td>التصميم والمونتاج والريلز</td>
+      </tr>
+      <tr>
+        <td><b>التشغيل</b></td><td>روان</td>
+        <td>الموجز: تجهيزه من بيانات الكونسول، ودعم الشريك لإكمال الناقص
+            <span class="dim">— وهل يُضاف إليه جدول الإنتاج؟ سؤال ٢</span></td>
+      </tr>
+    </table>
+
+    <h3 class="sub2">التشخيص: عندك حلقتان لا رحلة واحدة</h3>
+    <p class="dim">
+      المسار ما يستقيم خطّاً واحداً لأن <b>التسويق يظهر مرّتين بوظيفتين مختلفتين</b>:
+      يجيب شريكاً في الأوّل، ويوزّع محتواه في الآخر. وهذا ليس خللاً في الترتيب —
+      هذا مؤشّر أن ما عندك رحلة واحدة، بل حلقتان تدوران بسرعتين مختلفتين:
+    </p>
+    <table style="margin-top:12px">
+      <tr><th style="width:190px">الحلقة</th><th style="width:130px">كم مرّة تدور</th><th>محطّاتها</th></tr>
+      <tr>
+        <td><b>حلقة الاكتساب</b></td><td>مرّة واحدة لكل شريك</td>
+        <td>التسويق (حملات بيعية) ← المبيعات ← الدفع والفاتورة ← التأسيس والتوثيق والكونسول</td>
+      </tr>
+      <tr>
+        <td><b>حلقة الإنتاج والأثر</b></td><td>تتكرّر كل دورة</td>
+        <td>الموجز ← المحتوى ← الإنتاج البصري ← الجودة والاعتماد ← النشر على مدونتي ←
+            التسويق (حملات ختامية + أورجانك) ← التفاعلات ← كونسول الشريك ← ويرجع للموجز</td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- ═════════ المخاطر ═════════ -->
+  <section id="risks">
+    <h2 class="sec">المخاطر — وما مصدر كل واحدة</h2>
+
+    <div class="risk hot">
+      <div class="t">١ · فاتن نقطة عطل مفردة</div>
+      <p>
+        بعد دمج قسم العملاء في المبيعات، صار الجانب العميلي على شخص واحد:
+        الاكتساب والإقفال والتأسيس والتجديد. يوم تغيب، تقف الأربعة معاً.
+        الدمج قرارك وأنا موافق عليه — لكن يلزمه بديل مكتوب.
+      </p>
+      <p class="dim">خفّ هذا الخطر جزئياً بقرار ٦: الموجز خرج من يدها إلى روان.</p>
+      <span class="src">المصدر: قائمة الأسماء التي أمليتَها — لا أحد غيرها في هذا الجانب.</span>
+    </div>
+
+    <div class="risk">
+      <div class="t">٢ · أماني تشتري وتقيس نفسها</div>
+      <p>
+        <span dir="ltr">Media Buyer</span> و<span dir="ltr">Media Performance</span> في شخص واحد.
+        في فريق بحجمكم مقبول، لكن اعرف أنك لا تملك رقماً مستقلاً عن المشتري.
+      </p>
+      <span class="src">المصدر: وصفك لأماني حرفياً.</span>
+    </div>
+
+    <div class="risk">
+      <div class="t">٣ · ثلاث قبّعات على طارق</div>
+      <p>
+        قائد القسم · كاتب · وبوّابة الجودة (قرار ٥). والكتابة لها موعد تسليم والقيادة ليس لها،
+        فأوّل ما يضغط الشهر تسقط القيادة لا الكتابة.
+        <span class="verdict">استنتاج من الأدوار الثلاثة — لم أقِس وقته ولا حِمله.</span>
+      </p>
+      <span class="src">المصدر: وصفك لطارق + جوابك على سؤال ٤.</span>
+    </div>
+
+    <p class="dim" style="margin-top:14px">
+      <b>خطران رُفعا بعد أن حُسما:</b> «تنسيق روان بلا مخرَج» (أغلقه قرار ٦ — الموجز مخرَجها)،
+      و«السيو وفحص الجودة بلا أشخاص» (أغلقه قرار ٣ للسيو وقرار ٥ للجودة).
+      و«المالية بلا قسم» أغلقه قرار ٧.
+    </p>
+  </section>
+
+  <!-- ═════════ الأسئلة ═════════ -->
+  <section id="questions">
+    <h2 class="sec">الأسئلة — جاوب برقم السؤال</h2>
+
+    <h3 class="sub2">أ · أسئلة التنظيم</h3>
+
+    <div class="q">
+      <div><span class="n">٢</span><span class="ask">روان: الموجز فقط، أم جدول الإنتاج أيضاً؟</span></div>
+      <p class="dim">
+        <b>ما «تقويم الإنتاج والنشر»؟</b> جدول واحد يعرض كل شغل جارٍ: أي مقال لأي شريك،
+        من يكتبه، ومتى يسلّم، ومتى يُصمَّم، ومتى يُنشر — فترى من تأخّر قبل أن يشتكي الشريك.
+        اقترحتُه لروان حين كان دورها «تنسيقاً» بلا مخرَج؛ والآن صار لها مخرَج مسمّى هو الموجز،
+        فالسؤال هل يُضاف الجدول إليه:
+      </p>
+      <ul class="opts">
+        <li><b>أ)</b> الموجز فقط. وكل قسم يمسك جدوله بنفسه.</li>
+        <li><b>ب)</b> الموجز + جدول الإنتاج: تتابع ما بعد التسليم أيضاً، فتعرف أين وقف الملف.</li>
+      </ul>
+      <p class="mine"><b>رأيي:</b> (ب). هي أصلاً من يجهّز الموجز، فهي تعرف ما الذي طُلب لكل شريك —
+        ومتابعة ما حدث له بعد التسليم امتدادٌ طبيعيّ، لا عملٌ ثانٍ.</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">٢٥</span><span class="ask">ما بنود الموجز؟ وهل للمحتوى ردّه؟</span></div>
+      <p class="dim">
+        صيغة سابقة لهذا السؤال كانت تفترض أن روان <b>تردّ</b> الموجز على المبيعات — وسقطت،
+        لأن روان هي من <b>يجهّزه</b> أصلاً. السؤال الصحيح في اتجاهين:
+      </p>
+      <p><b>أ) بنوده:</b> ما الذي بدونه لا يُسلَّم الموجز؟
+        (نشاط الشريك · جمهوره · خدماته وأسعارها · كلماته المفتاحية · أصوله البصرية · ما لا يُقال عنه …)
+        احتاج منك القائمة بكلامك.</p>
+      <p><b>ب) اتجاه الردّ:</b> إذا وصل الموجز ناقصاً، هل لقسم المحتوى أن يردّه على روان،
+        أم يكمله بنفسه؟</p>
+      <p class="mine"><b>رأيي:</b> له ردّه، مبرَّراً ببند من القائمة. بغير ذلك يصير نقص الموجز
+        تكلفةً خفيّة على الكتّاب لا تظهر في أي رقم.</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">٧</span><span class="ask">التسويق بوظيفتين: نفصلهما اسمياً؟</span></div>
+      <p>قلتَ: حملات بيعية في البداية، وحملات ختامية لمدونتي، وأورجانك على المنصّات.
+         هذان هدفان مختلفان بميزانيتين ومقياسين مختلفين تحت مسمّى واحد.</p>
+      <ul class="opts">
+        <li><b>أ)</b> نسمّيهما صراحةً: <b>تسويق الاكتساب</b> (يجيب شركاء) و<b>تسويق التوزيع</b> (يوزّع محتوى الشركاء).</li>
+        <li><b>ب)</b> يبقى «التسويق» واحداً، ونفرّق بينهما داخل الخطة فقط.</li>
+      </ul>
+      <p class="mine"><b>رأيي:</b> (أ). ما دام الاسم واحداً ستظلّ الميزانية تُسحب من التوزيع إلى الاكتساب كلّما ضغط الشهر، ولن ترى ذلك في أي تقرير.</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">٨</span><span class="ask">من يراجع أرقام أماني؟</span></div>
+      <p>المشتري نفسه هو المُبلِّغ عن الأداء. هل يقرأها أحد غيرها قبل أن تصل إليك؟</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">٩</span><span class="ask">البدائل: من يحلّ محلّ فاتن، ومن يحلّ محلّ روان؟</span></div>
+      <p class="dim">
+        كان هذا السؤال يقول «التأسيس والموجز» معاً — والموجز خرج من يد فاتن إلى روان (قرار ٦)،
+        فصار سؤالين لا واحداً.
+      </p>
+      <ul class="opts">
+        <li><b>فاتن تغيب أسبوعاً:</b> من يمسك العلاقة والتأسيس والإقفال الجاري؟</li>
+        <li><b>روان تغيب أسبوعاً:</b> من يجهّز الموجز فلا يقف المحتوى؟</li>
+      </ul>
+    </div>
+
+    <div class="q">
+      <div><span class="n">٢٢</span><span class="ask">المحتوى والتصميم: أيّهما أوّلاً؟</span></div>
+      <p>
+        وصفتَ التسليم هكذا: «يطلبوا <span dir="ltr">article</span> معيّن، ويعطوا بريفاً للمصمّم،
+        والمصمّم يسلّمهم، ثم يبدأوا يكتبوا». وظاهرها أن <b>التصميم يسبق الكتابة</b> — وهذا غير معتاد،
+        لأن البصريات عادةً تُبنى على نصّ موجود.
+      </p>
+      <ul class="opts">
+        <li><b>أ)</b> نعم كما قلت: التصميم يُنجَز أوّلاً، والكاتب يكتب حوله.</li>
+        <li><b>ب)</b> قصدتَ العكس: الكاتب يكتب، ثم يطلب البصريات، ثم يُنشر.</li>
+        <li><b>ج)</b> متوازيان: البريف يخرج للاثنين معاً من الموجز.</li>
+      </ul>
+      <p class="mine"><b>لماذا يهمّ:</b> الجواب يرسم سهم التسليم في الرحلة — ومن ينتظر مَن حين يتأخّر أحدهما.</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">٢٣</span><span class="ask">الـ<span dir="ltr">Off-page</span>: نبيعه ونحن لم نبدأه؟ <span class="verdict">— يمسّ ما يُقال للعميل</span></span></div>
+      <p>
+        قلتَ إن الـ<span dir="ltr">backlinks</span> لم ندخل فيها بعد. و«دفتر الوعود» في
+        <span dir="ltr">/playbook</span> يذكر الـ<span dir="ltr">Off-page</span> بوصفه جزءاً ممّا نقدّمه،
+        ويسمّي تنفيذه <b>عمل الفريق</b> — والفريق اليوم لا أحد فيه يؤدّيه.
+      </p>
+      <span class="src">playbook/page.tsx:85
+  "Off-page: السلطة والتوزيع والإشارات والمصادر والربط الداخلي.
+   المنصة ترشد وتفحص، والتنفيذ الخارجي عمل الفريق."
+
+playbook/page.tsx:96
+  { role: "المحتوى والسيو", answer: "... أما Off-page فخطة مستمرة، لا زر نشر." }</span>
+      <ul class="opts" style="margin-top:10px">
+        <li><b>أ)</b> يُحذف من دفتر الوعود حتى نبدأه فعلاً.</li>
+        <li><b>ب)</b> يبقى موصوفاً بوضوح كـ«قيد البناء» لا كخدمة قائمة.</li>
+        <li><b>ج)</b> نبدأه الآن ونسنده لأحد — ومن؟</li>
+      </ul>
+      <p class="mine"><b>رأيي:</b> (ب) الآن. الوعد بما لا يُنفَّذ أغلى من عدم ذكره، والـ«خطوط الحمراء»
+        عندك أصلاً تمنع الوعد بنتيجة لا نتحكّم فيها.</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">٢٤</span><span class="ask">من يفحص مقالات طارق نفسه؟</span></div>
+      <p>
+        طارق يكتب، وهو أيضاً من يوقّع على خروج المقال. فمقالاته تمرّ بلا فاحص —
+        وهي الوحيدة في القسم كذلك.
+      </p>
+      <ul class="opts">
+        <li><b>أ)</b> ياسمين أو مايا تفحص مقالات طارق بالتبادل.</li>
+        <li><b>ب)</b> أنت توقّع على مقالاته وحدها.</li>
+        <li><b>ج)</b> تمرّ بلا فحص — مقبول لأنه الأخبر.</li>
+      </ul>
+      <p class="mine"><b>رأيي:</b> (أ). الفحص ليس إثبات خبرة بل عينٌ ثانية، وأخبر الناس أكثرهم عمى عن نصّه.</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">٢٦</span><span class="ask">المالية: من يفعل ماذا بالضبط؟</span></div>
+      <p>«أنا وفاتن» مالكان اثنان. أربعة أفعال مختلفة، لكلٍّ منها مالك واحد:</p>
+      <ul class="opts">
+        <li><b>إصدار الفاتورة</b> بعد الإقفال — فاتن أم أنت؟</li>
+        <li><b>متابعة التحصيل</b> والتأخّر — فاتن أم أنت؟</li>
+        <li><b>الاسترداد والاعتراض</b> على مبلغ — قرارك وحدك؟</li>
+        <li><b>الإقرار الضريبي</b> والالتزام — أنت أم محاسب خارجي؟</li>
+      </ul>
+      <p class="mine"><b>رأيي:</b> الإصدار والتحصيل لفاتن (هي صاحبة العلاقة وهي من يُقاس عليها التجديد)،
+        والاسترداد والضريبة لك. لأن ما يمسّ المال الخارج أو الجهات الرسمية لا يُفوَّض.</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">٢٧</span><span class="ask">التوثيق وفتح الكونسول: من يفعلهما؟</span></div>
+      <p>مهمّتان في جدول المهام (١٢ و١٣) بلا مالك: استلام أوراق الشريك ومراجعتها قبل الاعتماد،
+         ثم فتح حسابه في الكونسول.</p>
+      <p class="mine"><b>رأيي:</b> فاتن — هي من يقفل، والأوراق تُطلب لحظة الإقفال لا بعده بأسبوع.</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">٢٨</span><span class="ask">من يضغط «نشر»؟</span></div>
+      <p>طارق يوقّع على الجودة (قرار ٥). لكن التوقيع غير النشر — من ينشر فعلياً، ومتى؟</p>
+      <ul class="opts">
+        <li><b>أ)</b> طارق ينشر بمجرّد توقيعه.</li>
+        <li><b>ب)</b> روان تنشر حسب الجدول، فيبقى توزيع النشر على الشهر بيد واحدة.</li>
+      </ul>
+    </div>
+
+    <div class="q">
+      <div><span class="n">٢٩</span><span class="ask">من يقرأ التفاعلات ويشرحها للشريك؟</span></div>
+      <p>الأرقام تصبّ في كونسول الشريك — لكن الرقم وحده لا يبيع ولا يُجدِّد. من يحوّله إلى كلام يفهمه؟</p>
+      <p class="mine"><b>رأيي:</b> فاتن، لأن التجديد عليها. وأماني تزوّدها بالقراءة الرقمية.</p>
+    </div>
+
+    <h3 class="sub2">ب · القنوات: ما هي، وما دورها، ومن يملكها</h3>
+
+    <p class="dim">
+      سألتَ عن أربع قنوات. قبل إسناد أيّ منها، لازم يُتّفق على <b>ما هي أصلاً</b> —
+      لأن اثنتين منها ليستا ما يبدو عليه اسمهما، وهذا بذاته سبب من أسباب التوهان.
+    </p>
+
+    <table style="margin-top:14px">
+      <tr>
+        <th style="width:150px">القناة</th>
+        <th>ما هي فعلاً · ودورها</th>
+        <th style="width:130px">المرشَّح</th>
+      </tr>
+      <tr>
+        <td><b>أورجانك السوشيال</b><br><span class="dim">نشر غير مدفوع</span></td>
+        <td>
+          النشر المنتظم على حسابات مدونتي بلا ميزانية إعلانية. وليس «نشر روابط»:
+          هو <b>إعادة تدوير</b> كل مقال منشور إلى ثلاث أو خمس قطع تُقرأ داخل المنصّة نفسها —
+          ريل · كاروسيل · اقتباس · سؤال.
+          <br><span class="dim">دوره ثلاثة، بهذا الترتيب:
+          (١) توزيع المحتوى المنشور ليصل قبل أن تجده Google —
+          (٢) بناء سمعة مدونتي نفسها فيسهل على المبيعات الإقفال —
+          (٣) تجميع جمهور مملوك لا يُستأجَر بالإعلان كل شهر.</span>
+          <br><span class="dim"><b>كيف يُقاس:</b> الوصول والحفظ والنقر — لا الإعجابات.</span>
+        </td>
+        <td>مريم<br><span class="dim">هذا عملها حرفياً</span></td>
+      </tr>
+      <tr>
+        <td><b>النشرة البريدية</b><br><span class="dim">إيميل تسويقي</span></td>
+        <td>
+          رسالة دورية لقائمة <b>مملوكة</b> اشتركت بنفسها، تحمل أفضل ما نُشر.
+          دورها: قناة توزيع لا تملكها منصّة غيرك — لا خوارزمية تخفضها ولا إعلان يوقفها.
+        </td>
+        <td>مريم أو أماني<br><span class="verdict">سؤال ١٧</span></td>
+      </tr>
+      <tr>
+        <td><b>الإيميل البارد</b><br><span class="dim">تواصل مع الشركات</span></td>
+        <td>
+          <b>هذه ليست تسويقاً — هذه بيع.</b> رسالة موجّهة لشركة لم تطلبها،
+          هدفها موعد أو ردّ. تُكتب بمنطق البيع، وتُقاس بالردود والمواعيد لا بالفتح والنقر،
+          ومن يرسلها يجب أن يكون قادراً على الردّ على «كم السعر؟» فوراً.
+          <br><span class="verdict">خلطها بالنشرة البريدية تحت اسم «حملات الإيميل» يخفي أنهما عملان مختلفان بمالكين مختلفين.</span>
+        </td>
+        <td>فاتن<br><span class="dim">مبيعات</span></td>
+      </tr>
+      <tr>
+        <td><b>لينكدإن</b><br><span class="dim">شيئان لا شيء واحد</span></td>
+        <td>
+          <b>(أ) النشر</b> على صفحة مدونتي — محتوى، وهذا أورجانك سوشيال.<br>
+          <b>(ب) الرسائل المباشرة</b> للشركات — تواصل بارد، وهذا بيع.
+          <br><span class="verdict">نفس الخلط: منصّة واحدة، وظيفتان، ومالكان مختلفان.</span>
+        </td>
+        <td>(أ) مريم<br>(ب) فاتن</td>
+      </tr>
+      <tr>
+        <td><b>استقبال أصول العميل</b><br><span class="dim">بيانات · ملفات · شغل</span></td>
+        <td>
+          العميل يرسل سجلّه وشعاره وصوره ونصوصه وأسعاره. والسؤال ليس «من يستلم»،
+          بل <b>من أين يدخل</b>: الرحلة مرسومة على أن الكونسول هو المدخل (المحطّتان ٢ و٣)،
+          فإن كنّا نقبلها أيضاً من واتساب والإيميل فالكونسول ديكور، والرحلة أعلاه غير صحيحة.
+        </td>
+        <td>فاتن أو روان<br><span class="verdict">سؤال ٢٠</span></td>
+      </tr>
+    </table>
+
+    <div class="q" style="margin-top:16px">
+      <div><span class="n">١٥</span><span class="ask">أورجانك السوشيال: لحسابات مدونتي فقط، أم لحسابات الشركاء أيضاً؟</span></div>
+      <p>الفرق ضخم في الحجم: حساب واحد، أم حساب لكل شريك. ولو للشركاء، فهذه خدمة تُباع ولها سعر — وما وجدتُها في باقاتكم.</p>
+      <p class="mine"><b>رأيي:</b> حسابات مدونتي فقط الآن. إدارة حسابات الشركاء عمل تشغيلي ثقيل يبتلع مريم وحدها خلال شهر.</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">١٦</span><span class="ask">من يصنع قطع السوشيال؟</span></div>
+      <p>كل مقال يتحوّل إلى ثلاث أو خمس قطع. من يقصّها ومن يصمّمها؟</p>
+      <ul class="opts">
+        <li><b>أ)</b> مريم كاملةً — تقرأ المقال، وتقصّ، وتصمّم، وتنشر.</li>
+        <li><b>ب)</b> المحتوى يسلّمها النصّ مقصوصاً، ومصطفى/محمد ينتجان الشكل، ومريم تنشر وتقيس.</li>
+      </ul>
+      <p class="mine"><b>رأيي:</b> (ب). لو صارت مريم تقصّ وتصمّم وتنشر، فهي ثلاثة أعمال في شخص، وأوّل ما يسقط هو القياس — وهو سبب وجود القناة.</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">١٧</span><span class="ask">النشرة البريدية: عندك قائمة بريدية أصلاً؟</span></div>
+      <p>قبل تحديد المالك: هل يوجد نموذج اشتراك على مدونتي، وكم عدد المشتركين، وبأي أداة تُرسل؟</p>
+      <p class="mine"><b>رأيي:</b> إن كانت القائمة صغيرة أو غير موجودة، فالنشرة ليست قناة بعد — تُؤجَّل، ولا يُسنَد لها أحد.</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">١٨</span><span class="ask">الإيميل البارد للشركات: تحت المبيعات؟</span></div>
+      <p>هو أداة بيع لا تسويق. وضعُه تحت التسويق يعني أن من يرسله لا يستطيع الردّ على أوّل سؤال يأتيه.</p>
+      <ul class="opts">
+        <li><b>أ)</b> فاتن تكتبه وترسله وتتابع ردوده.</li>
+        <li><b>ب)</b> التسويق يرسله، ويحوّل الردّ إلى فاتن.</li>
+      </ul>
+      <p class="mine"><b>رأيي:</b> (أ) ما دامت وحدها في المبيعات. (ب) لا تنفع إلا مع فريق مبيعات فيه أكثر من شخص.</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">١٩</span><span class="ask">لينكدإن: من ينشر ومن يراسل؟</span></div>
+      <p>تؤكّد الفصل — النشر لمريم والرسائل لفاتن؟ أم تريدهما بيد واحدة؟</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">٢٠</span><span class="ask">أصول العميل: الكونسول فقط، أم أي قناة؟ <span class="verdict">— أخطر سؤال في الصفحة</span></span></div>
+      <ul class="opts">
+        <li><b>أ)</b> الكونسول هو المدخل الوحيد. ما لم يدخل منه لم يصل — والرحلة أعلاه صحيحة.</li>
+        <li><b>ب)</b> نقبل من واتساب والإيميل أيضاً، وشخص منّا يدخلها للكونسول نيابةً عنه.</li>
+      </ul>
+      <p class="mine"><b>رأيي:</b> (ب) واقعياً في البداية — لكن بشرط أن يكون <b>مالكها شخصاً واحداً معروفاً</b>، وإلا ضاعت الملفات بين واتساب فاتن وإيميلك. ولو اخترت (ب) فالرحلة تحتاج محطّة اسمها «إدخال الأصول نيابةً عن الشريك».</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">٢١</span><span class="ask">من يلاحق الشريك المتأخّر؟</span></div>
+      <p>أكثر ما يوقف الإنتاج ليس عملنا، بل شريك لم يرسل أصوله. من يلاحقه، وبعد كم يوم، وماذا يحدث إن لم يردّ؟</p>
+      <p class="mine"><b>رأيي بعد قرار ٦:</b> الملاحقة لروان — هي من يجهّز الموجز، فهي أوّل من يرى النقص،
+        وقد قلتَ إنها تدعم الشريك لإكمال بياناته. وتُصعَّد لفاتن حين يصير الصمت مشكلة علاقة لا مشكلة بيانات.</p>
+    </div>
+
+    <h3 class="sub2">ج · أسئلة الرحلة نفسها</h3>
+
+    <div class="q">
+      <div><span class="n">١٠</span><span class="ask">المحطّة ٣: واحدة أم ثلاث؟</span></div>
+      <p>الريلز والألبوم وتصميم الصفحة — جمعتُها في محطّة واحدة لأن الشريك يفعلها كلّها من الكونسول وتجري معاً.
+         أتركها واحدة، أم أفصلها ثلاث محطّات؟</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">١١</span><span class="ask">المحطّة ٧: «التفاعلات» محطّة أم هي الخطّ الراجع نفسه؟</span></div>
+    </div>
+
+    <div class="q">
+      <div><span class="n">١٢</span><span class="ask">اعتماد الشريك: أين مكانه في المسار؟</span></div>
+      <p>«دفتر الوعود» ينصّ على أن الشريك يعتمد ما يُنشر باسمه. بين المقالات والنشر؟ أم داخل النشر؟</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">١٣</span><span class="ask">شكل الرسم: حلقتان أم خطّ واحد؟</span></div>
+      <ul class="opts">
+        <li><b>أ)</b> حلقتان منفصلتان (الاكتساب · الإنتاج) كما في التشخيص أعلاه.</li>
+        <li><b>ب)</b> خطّ واحد متسلسل بخطّ راجع، كما في الرسم أدناه.</li>
+      </ul>
+      <p class="mine"><b>رأيي:</b> (أ). الخطّ الواحد يكذب على القارئ: يوهمه أن التسويق محطّة تُقطع مرّة، وهو يدور كل شهر.</p>
+    </div>
+
+    <div class="q">
+      <div><span class="n">١٤</span><span class="ask">الاتّجاه: رأسي أم أفقي؟</span></div>
+      <p>رسمتُها رأسية لأن سبع محطّات في صفّ أفقي واحد تصغّر الخطّ إلى ٩ بكسل داخل حاوية عرضها ١١١٢.</p>
+    </div>
+  </section>
+
+  <!-- ═════════ الرحلة ═════════ -->
+  <section id="journey">
+    <h2 class="sec">الرحلة كما أمليتَها — النسخة الحالية</h2>
+    <p class="dim">هذه هي الرحلة قبل إدخال الأقسام. تُعدَّل بعد إجابات الأسئلة ١٠–١٤.</p>
+
+    <div class="flow">
+      <div class="stop">
+        <div class="dot">١</div>
+        <div class="card">
+          <div class="head"><h4>التوثيق</h4><span class="who partner">الشريك · ونحن نراجع</span></div>
+          <p class="body">يقدّم الشريك سجلّه التجاري وملفّه الضريبي وما تتطلّبه طبيعة نشاطه وبلده. نراجع قبل الاعتماد — لا تدخل جهة قبل أن تثبت أنها حقيقية.</p>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="dot">٢</div>
+        <div class="card">
+          <div class="head"><h4>الكونسول: بياناته</h4><span class="who partner">الشريك</span></div>
+          <p class="body">يدخل الشريك كونسوله ويعطينا بياناته: من هو، وماذا يقدّم، وكيف يُتواصل معه.</p>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="dot">٣</div>
+        <div class="card">
+          <div class="head"><h4>أصوله من الكونسول</h4><span class="who partner">الشريك، بنفسه</span></div>
+          <p class="body">من الكونسول نفسه يرفع الشريك أصوله ويضبط شكل صفحته — ثلاثة تجري معاً لا بالتتابع:</p>
+          <div class="trio">
+            <div><b>الريلز</b><span>يرفع ريلزه</span></div>
+            <div><b>الألبوم</b><span>يرفع ألبوم أعماله</span></div>
+            <div><b>صفحته</b><span>يصمّم شكل صفحته</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="dot">٤</div>
+        <div class="card">
+          <div class="head"><h4>الموجز</h4><span class="who sales">روان</span></div>
+          <p class="body">روان تجهّز الموجز من بيانات الشريك في الكونسول — وتدعمه لإكمال الناقص — ثم تسلّمه لقسم المحتوى. هذه هي النقطة التي ينتقل عندها العمل من الشريك إلينا.</p>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="dot">٥</div>
+        <div class="card">
+          <div class="head"><h4>المقالات</h4><span class="who content">قسم المحتوى</span></div>
+          <p class="body">قسم المحتوى يبدأ بتجهيز المقالات على الموجز.</p>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="dot">٦</div>
+        <div class="card">
+          <div class="head"><h4>النشر على مدونتي</h4><span class="who platform">مدونتي</span></div>
+          <p class="body">يبدأ النشر على مدونتي، فيصل الجمهور إلى المحتوى وإلى صفحة الشريك.</p>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="dot">٧</div>
+        <div class="card">
+          <div class="head"><h4>التفاعلات</h4><span class="who platform">صفحة الشريك</span></div>
+          <p class="body">كل تفاعل يتمّ على صفحة الشريك يُسجَّل كاملاً.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="loop">
+      <div class="t">↩ الخطّ الراجع: التفاعلات تصبّ في كونسول الشريك</div>
+      <p>من المحطّة ٧ إلى المحطّة ٢ — يرى الشريك أثر ما نُشر باسمه في كونسوله، فتُبنى عليه الجولة التالية. وهنا ينتهي المسار: لا محطّة بعده.</p>
+    </div>
+  </section>
+
+  <!-- ═════════ القرارات ═════════ -->
+  <section id="decided">
+    <h2 class="sec">القرارات المعتمدة</h2>
+    <div class="risk decided">
+      <div class="t">١ · قسم العملاء دُمج في قسم المبيعات — ١٢ سبتمبر ٢٠٢٦</div>
+      <p>
+        كل ما يخصّ الشريك يندرج تحت المبيعات: الاكتساب والإقفال والتأسيس والمتابعة
+        حتى نهاية الاشتراك، بمالك واحد هو مديرة المبيعات.
+      </p>
+      <p><b>السبب:</b> من يُقاس عليه التجديد يجب أن يملك العلاقة كاملة، والتسليم بين قسمين كان أكبر مصدر ضياع.</p>
+      <p><b>تصحيح ١٢ سبتمبر:</b> كان مكتوباً هنا أن «الموجز» من ضمنها. وهذا غلط —
+        الموجز مخرَج روان (قرار ٦)، لا مخرَج المبيعات.</p>
+    </div>
+    <div class="risk decided">
+      <div class="t">٧ · المالية والفوترة: خالد وفاتن <span class="dim">(جواب سؤال ٦)</span></div>
+      <p>
+        الطلب والدفع والفاتورة والضريبة على <span dir="ltr">pay.modonty.com</span> —
+        مالكاها المدير التنفيذي ومديرة المبيعات، ولا قسم مستقلّ لها.
+      </p>
+      <p><b>الخطر المقابل:</b> مالكان اثنان بلا تقسيم أفعال = لا مالك عند أوّل خلاف.
+        يعالجه السؤال ٢٦.</p>
+    </div>
+
+    <div class="risk decided">
+      <div class="t">٦ · روان تجهّز الموجز — هو مخرَجها <span class="dim">(جواب سؤال ٥)</span></div>
+      <p>
+        بعد أن يدخل الشريك كونسوله ويعبّئ بياناته، <b>روان هي من يجهّز الموجز</b> منها.
+        وإن كانت بيانات الشريك ناقصة، تدعمه وتساعده على إكمالها بحسب معلوماته —
+        فالموجز مخرَجها هي، لا مخرَج المبيعات.
+      </p>
+      <p><b>تصحيح:</b> كان مسجَّلاً هنا أن الموجز من مخرجات المبيعات ضمن دمج قسم العملاء (قرار ١).
+        هذا غلط، وقد صُحّح: المبيعات تملك العلاقة والإقفال والتجديد — والموجز لروان.</p>
+      <p><b>ويحسم نصف السؤال ٢:</b> روان لم تعد «منسّقة» بلا مخرَج — الموجز مخرَجها المسمّى.</p>
+    </div>
+
+    <div class="risk decided">
+      <div class="t">٥ · فحص الجودة قبل النشر: طارق يوقّع <span class="dim">(جواب سؤال ٤)</span></div>
+      <p>
+        لا يخرج مقال إلا بتوقيع طارق. هذا يغلق أكبر فجوة في «دفتر الوعود» —
+        كان الفحص موعوداً به بلا اسم يحمله.
+      </p>
+      <p><b>الخطر المقابل:</b> صارت على طارق ثلاث قبّعات — قائد القسم · كاتب · بوّابة الجودة.
+        وأخصّها إشكالاً أنه <b>يوقّع على ما كتبه هو</b>. يعالجه السؤال ٢٤.</p>
+      <span class="src">playbook/page.tsx:84
+  "فحص الجودة يراجع المحتوى والوسائط والبيانات المنظمة وE-E-A-T وYMYL،
+   ويعرض أخطاء Schema قبل خروج المقال."     ← صار له مالك اليوم</span>
+    </div>
+
+    <div class="risk decided">
+      <div class="t">٣ · السيو ليس دوراً مستقلاً — مقسوم بين المنصّة والكتّاب <span class="dim">(جواب سؤال ٣)</span></div>
+      <p><b>التقني:</b> تحلّه المنصّة بنفسها، مبنيّ فيها. <b>والـ<span dir="ltr">On-page</span>:</b> المنصّة كذلك.</p>
+      <p>
+        <b>الكلمات المفتاحية ودراسة العميل:</b> دور كل كاتب في فريق المحتوى، لا شخص مخصّص.
+        ولا يكتب أحدهم مقالاً إلا بعد تصوّر كامل له من كلمات مفتاحية ودراسة كاملة للعميل —
+        فهذه <b>شرط قبول قبل بدء الكتابة</b>، لا خطوة لاحقة.
+      </p>
+      <p><b>الـ<span dir="ltr">Off-page</span> والـ<span dir="ltr">backlinks</span>: لم يبدأ بعد.</b>
+        وهذا يجعل السؤال ٢٣ واجباً قبل أي بيع.</p>
+      <span class="src">تحقّق من الشقّ التقني — موجود فعلاً لا وعداً:
+
+$ ls modonty/app/robots.ts modonty/app/sitemap.ts
+  modonty/app/robots.ts
+  modonty/app/sitemap.ts
+
+$ grep -rl "application/ld+json" modonty/app modonty/lib   (أوّل ١٢)
+  (site)/articles/[slug]/components/article-json-ld/ArticleJsonLd.tsx
+  (partner)/clients/[slug]/layout.tsx · (site)/about · (site)/articles
+  (site)/authors/[slug] · (fullscreen)/reels/[slug] · … </span>
+    </div>
+
+    <div class="risk decided">
+      <div class="t">٢ · المسار ينتهي عند التفاعلات — لا محطّة بعدها</div>
+      <p>الـ<span dir="ltr">++</span> التي كتبتها كانت خطأً مطبعياً، لا إشارة إلى محطّات إضافية.</p>
+    </div>
+
+    <div class="risk decided">
+      <div class="t">٤ · أربعة أقسام: المحتوى والتصميم قسمان لا قسم واحد <span class="dim">(جواب سؤال ١)</span></div>
+      <p>
+        طارق قائد قسم المحتوى ومدير مايا وياسمين، وكاتب في الوقت نفسه.
+        والتصميم قسم قائم بذاته — مصطفى ومحمد — لا يتبع طارق.
+      </p>
+      <p><b>التسليم بين القسمين، كما وصفتَه:</b> المحتوى يطلب عملاً بصرياً لمقال معيّن،
+        فيكتب <b>بريفاً للمصمّم</b>، والتصميم يسلّم الأصول البصرية للمقال، ثم يكمل الكتّاب مقالهم.</p>
+      <p><b>الخطر المقابل:</b> طارق يقود ويكتب في آن واحد. أوّل ما يضغط الشهر يسقط أحد الدورين،
+        وغالباً تسقط القيادة — المراجعة والتوزيع — لأن الكتابة لها موعد تسليم والقيادة ليس لها.
+        <span class="dim">قلتَ إنك تستطيع توزيع الأدوار الناقصة على الفريق؛ هذا أوّل مرشّح لذلك.</span></p>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
